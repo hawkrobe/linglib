@@ -24,7 +24,8 @@
         "classical"
       ]
     ],
-    "comment": "Coda s-deletion before an anterior sonorant lengthens the preceding vowel."
+    "comment": "Coda s-deletion before an anterior sonorant lengthens the preceding vowel.",
+    "verified": "page-image"
   },
   {
     "id": "hayes1989_ex12b2",
@@ -51,7 +52,8 @@
         "classical"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "hayes1989_ex12b3",
@@ -78,7 +80,8 @@
         "classical"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "hayes1989_ex14a",
@@ -90,7 +93,7 @@
     "primaryText": "*smereoː > mereoː",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "deserve, 1sg present",
+    "translation": "deserve-1 sg.-pres.",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -105,7 +108,8 @@
         "onset deletion"
       ]
     ],
-    "comment": "Word-initial s-deletion strands no mora: no lengthening."
+    "comment": "Word-initial s-deletion strands no mora: no lengthening.",
+    "verified": "page-image"
   },
   {
     "id": "hayes1989_ex14b",
@@ -132,7 +136,8 @@
         "onset deletion"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "hayes1989_ex14c",
@@ -159,7 +164,8 @@
         "onset deletion"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "hayes1989_ex19a",
@@ -186,7 +192,8 @@
         "onset deletion"
       ]
     ],
-    "comment": "East Ionic: initial w-deletion without lengthening."
+    "comment": "East Ionic: initial w-deletion without lengthening.",
+    "verified": "page-image"
   },
   {
     "id": "hayes1989_ex19b",
@@ -213,7 +220,8 @@
         "onset deletion"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "hayes1989_ex19c",
@@ -240,7 +248,8 @@
         "double flop"
       ]
     ],
-    "comment": "The vowel that lengthens is not adjacent to the deleted consonant."
+    "comment": "The vowel that lengthens is not adjacent to the deleted consonant.",
+    "verified": "page-image"
   },
   {
     "id": "hayes1989_tale",
@@ -267,7 +276,8 @@
         "vowel loss"
       ]
     ],
-    "comment": "Minkova (1982): the stressed penult lengthens just when the final schwa drops."
+    "comment": "Minkova (1982): the stressed penult lengthens just when the final schwa drops.",
+    "verified": "page-image"
   },
   {
     "id": "hayes1989_ex27a1",
@@ -276,10 +286,10 @@
       "paperLabel": "(27a)"
     },
     "language": "ilok1237",
-    "primaryText": "luto ~ luttw-en",
+    "primaryText": "lúto ~ luttw-én, lutw-én",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "to cook ~ cook, goal focus",
+    "translation": "to cook ~ cook-goal focus",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -302,7 +312,8 @@
         "usual"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "hayes1989_ex27a4",
@@ -311,7 +322,7 @@
       "paperLabel": "(27a)"
     },
     "language": "ilok1237",
-    "primaryText": "bagi ~ baggy-en",
+    "primaryText": "bági ~ baggy-én, bagy-én",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "body, self ~ to have as one's own",
@@ -337,7 +348,8 @@
         "usual"
       ]
     ],
-    "comment": "The derivation of (38)–(40): glide formation, Parasitic Delinking, spreading from the right."
+    "comment": "The derivation of (38)–(40): glide formation, Parasitic Delinking, spreading from the right.",
+    "verified": "page-image"
   },
   {
     "id": "hayes1989_ex27b1",
@@ -346,13 +358,13 @@
       "paperLabel": "(27b)"
     },
     "language": "ilok1237",
-    "primaryText": "damo ~ damw-en, ?dammw-en",
+    "primaryText": "dámo ~ damw-én",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "the first time ~ to be new to something",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "alternatives": [{"form": "dámo ~ dammw-én", "judgment": "marginal"}],
     "readings": [],
     "paperFeatures": [
       [
@@ -372,7 +384,8 @@
         "sporadic"
       ]
     ],
-    "comment": ""
+    "comment": "The variant dammw-én is printed with ? (optionality, possibly lexical variation).",
+    "verified": "page-image"
   },
   {
     "id": "hayes1989_ex27c2",
@@ -381,7 +394,7 @@
       "paperLabel": "(27c)"
     },
     "language": "ilok1237",
-    "primaryText": "karo ~ karw-an",
+    "primaryText": "káro ~ karw-án",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "intense ~ to intensify",
@@ -407,7 +420,8 @@
         "never"
       ]
     ],
-    "comment": "Degemination (41) removes the geminate created by lengthening."
+    "comment": "Degemination (41) removes the geminate created by lengthening.",
+    "verified": "page-image"
   },
   {
     "id": "hayes1989_ex27d1",
@@ -416,7 +430,7 @@
       "paperLabel": "(27d)"
     },
     "language": "ilok1237",
-    "primaryText": "sakdo ~ pag-sakdw-an",
+    "primaryText": "sakdó ~ pag-sakdw-án",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "to fetch water ~ place where water is fetched",
@@ -442,7 +456,8 @@
         "never"
       ]
     ],
-    "comment": "Neither member of a cluster geminates: the first half cannot be syllabified and is erased."
+    "comment": "Neither member of a cluster geminates: the first half cannot be syllabified and is erased.",
+    "verified": "page-image"
   },
   {
     "id": "hayes1989_ex28",
@@ -451,7 +466,7 @@
       "paperLabel": "(28)"
     },
     "language": "ilok1237",
-    "primaryText": "botelya",
+    "primaryText": "botélya",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "bottle",
@@ -469,7 +484,8 @@
         "never"
       ]
     ],
-    "comment": "An underlying glide: consonants do not geminate before glides in general."
+    "comment": "An underlying glide: consonants do not geminate before glides in general.",
+    "verified": "page-image"
   },
   {
     "id": "hayes1989_ex42",
@@ -478,7 +494,7 @@
       "paperLabel": "(42)"
     },
     "language": "ilok1237",
-    "primaryText": "punno ~ punnwan, punwan",
+    "primaryText": "punnó ~ punnwán, punwán",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "to fill",
@@ -496,7 +512,8 @@
         "yes"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "hayes1989_ex46",
@@ -523,7 +540,8 @@
         "glide formation"
       ]
     ],
-    "comment": "Managerial Lengthening as compensatory lengthening from the left."
+    "comment": "Managerial Lengthening as compensatory lengthening from the left.",
+    "verified": "page-image"
   },
   {
     "id": "hayes1989_ex55a",
@@ -550,7 +568,8 @@
         "inverse"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "hayes1989_ex57",
@@ -577,7 +596,8 @@
         "onset deletion"
       ]
     ],
-    "comment": "Schematic: lengthening from onset loss is unattested."
+    "comment": "Schematic: lengthening from onset loss is unattested.",
+    "verified": "page-image"
   },
   {
     "id": "hayes1989_turkish1",
@@ -604,7 +624,8 @@
         "classical"
       ]
     ],
-    "comment": "Sezer (1986): coda v-deletion before a labial lengthens."
+    "comment": "Sezer (1986): coda v-deletion before a labial lengthens.",
+    "verified": "page-image"
   },
   {
     "id": "hayes1989_turkish2",
@@ -613,13 +634,13 @@
       "paperLabel": "§5.2.1"
     },
     "language": "nucl1301",
-    "primaryText": "davul > daul, not *daːul",
+    "primaryText": "davul > daul",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "drum",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "alternatives": [{"form": "davul > daːul", "judgment": "ungrammatical"}],
     "readings": [],
     "paperFeatures": [
       [
@@ -631,7 +652,8 @@
         "onset deletion"
       ]
     ],
-    "comment": "Onset v-deletion does not lengthen."
+    "comment": "Onset v-deletion does not lengthen.",
+    "verified": "page-image"
   },
   {
     "id": "hayes1989_ex61",
@@ -640,7 +662,7 @@
       "paperLabel": "(61)"
     },
     "language": "lati1261",
-    "primaryText": "#ala: no #laː",
+    "primaryText": "#əla: no #laː",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
@@ -658,7 +680,8 @@
         "vowel loss"
       ]
     ],
-    "comment": "Schematic: a deleted vowel never lengthens the vowel to its right."
+    "comment": "Schematic: a deleted vowel never lengthens the vowel to its right.",
+    "verified": "page-image"
   },
   {
     "id": "hayes1989_ex73a",
@@ -685,7 +708,8 @@
         "vowel loss"
       ]
     ],
-    "comment": "Komi Izma: l-loss lengthens when the l has its own mora."
+    "comment": "Komi Ižma: l-loss lengthens when the l has its own mora.",
+    "verified": "page-image"
   },
   {
     "id": "hayes1989_ex73b",
@@ -694,7 +718,7 @@
       "paperLabel": "(73)"
     },
     "language": "komi1268",
-    "primaryText": "sult.ni > sutni",
+    "primaryText": "sult.nɨ > sutnɨ",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "to stand up",
@@ -712,7 +736,8 @@
         "no lengthening"
       ]
     ],
-    "comment": "In a doubly closed syllable the deleted consonant shares a mora and strands nothing."
+    "comment": "In a doubly closed syllable the deleted consonant shares a mora and strands nothing.",
+    "verified": "page-image"
   },
   {
     "id": "hayes1989_ex74",
@@ -743,7 +768,8 @@
         "yes"
       ]
     ],
-    "comment": "Proto-Germanic: lengthening in a doubly closed syllable requires a trimoraic syllable."
+    "comment": "Proto-Germanic: lengthening in a doubly closed syllable requires a trimoraic syllable.",
+    "verified": "page-image"
   },
   {
     "id": "hayes1989_ex76a",
@@ -755,7 +781,7 @@
     "primaryText": "*sprikst > sprekst",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "speak, 2sg",
+    "translation": "speak-2 sg.",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -770,7 +796,8 @@
         "V"
       ]
     ],
-    "comment": "Dithmarschen/Stavenhagen German, after Hock (1986)."
+    "comment": "Dithmarschen/Stavenhagen German, after Hock (1986).",
+    "verified": "page-image"
   },
   {
     "id": "hayes1989_ex76b",
@@ -779,10 +806,10 @@
       "paperLabel": "(76b)"
     },
     "language": "stan1295",
-    "primaryText": "*sprekn > spreːkn",
+    "primaryText": "*sprekn̩ > spreːkn̩",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "speak, 1pl",
+    "translation": "speak-1 pl.",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -797,7 +824,8 @@
         "Vː"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "hayes1989_ex76c",
@@ -809,7 +837,7 @@
     "primaryText": "*sprekə > spreːkə > spreːːk",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "speak, 1sg",
+    "translation": "speak-1 sg.",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -828,6 +856,7 @@
         "vowel loss"
       ]
     ],
-    "comment": "Schwa loss with lengthening yields the three-way length contrast."
+    "comment": "Schwa loss with lengthening yields the three-way length contrast.",
+    "verified": "page-image"
   }
 ]

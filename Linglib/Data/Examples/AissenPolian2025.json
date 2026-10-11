@@ -18,7 +18,8 @@
       ["clause", "unaccusative"],
       ["construction", "lexicalUnaccusative"]
     ],
-    "comment": "Non-wh possessors follow the possessum."
+    "comment": "Non-wh possessors follow the possessum.",
+    "verified": "page-image"
   },
   {
     "id": "aissenpolian2025_ex2a",
@@ -42,7 +43,8 @@
       ["intervener", "none"],
       ["construction", "lexicalUnaccusative"]
     ],
-    "comment": "Pied-piping with inversion: the wh-possessor precedes the possessum."
+    "comment": "Pied-piping with inversion: the wh-possessor precedes the possessum.",
+    "verified": "page-image"
   },
   {
     "id": "aissenpolian2025_ex2b",
@@ -67,7 +69,8 @@
       ["construction", "lexicalUnaccusative"],
       ["table4", "T-none-unaccusative"]
     ],
-    "comment": "Table 4, first row: T°'s D-probe reaches the possessor of a non-specific S_O."
+    "comment": "Table 4, first row: T°'s D-probe reaches the possessor of a non-specific S_O.",
+    "verified": "page-image"
   },
   {
     "id": "aissenpolian2025_ex4",
@@ -91,7 +94,8 @@
       ["intervener", "none"],
       ["table4", "T-none-unaccusative"]
     ],
-    "comment": "Naturally produced stranding question, Tenejapa Tseltal text."
+    "comment": "Naturally produced stranding question, Tenejapa Tseltal text.",
+    "verified": "page-image"
   },
   {
     "id": "aissenpolian2025_ex5",
@@ -114,11 +118,12 @@
       ["clause", "transitive"],
       ["intervener", "none"]
     ],
-    "comment": "Naturally produced pied-piping question, Oxchuc Tseltal text."
+    "comment": "Naturally produced pied-piping question, Oxchuc Tseltal text.",
+    "verified": "page-image"
   },
   {
     "id": "aissenpolian2025_ex20a",
-    "source": {"bibkey": "little-2020b", "paperLabel": "(11)"},
+    "source": {"bibkey": "little-2020b", "paperLabel": "p. 11"},
     "reportedIn": {"bibkey": "aissen-polian-2025", "paperLabel": "(20a)"},
     "language": "chol1282",
     "primaryText": "[Majki i-wakax] ta' yajl-i?",
@@ -138,11 +143,12 @@
       ["clause", "unaccusative"],
       ["intervener", "none"]
     ],
-    "comment": "Little's Ch'ol data, cited as parallel to Tseltalan."
+    "comment": "Little's Ch'ol data, cited as parallel to Tseltalan.",
+    "verified": "page-image"
   },
   {
     "id": "aissenpolian2025_ex20b",
-    "source": {"bibkey": "little-2020b", "paperLabel": "(11)"},
+    "source": {"bibkey": "little-2020b", "paperLabel": "p. 11"},
     "reportedIn": {"bibkey": "aissen-polian-2025", "paperLabel": "(20b)"},
     "language": "chol1282",
     "primaryText": "Majki ta' yajl-i [i-wakax]?",
@@ -163,11 +169,12 @@
       ["intervener", "none"],
       ["table4", "T-none-unaccusative"]
     ],
-    "comment": "Little's Ch'ol data; Table 4 first row."
+    "comment": "Little's Ch'ol data; Table 4 first row.",
+    "verified": "page-image"
   },
   {
     "id": "aissenpolian2025_ex22a",
-    "source": {"bibkey": "little-2020b", "paperLabel": "(13)"},
+    "source": {"bibkey": "little-2020b", "paperLabel": "p. 13"},
     "reportedIn": {"bibkey": "aissen-polian-2025", "paperLabel": "(22a)"},
     "language": "chol1282",
     "primaryText": "[Majki i-chich] ta' a-k'el-e?",
@@ -187,11 +194,12 @@
       ["clause", "transitive"],
       ["intervener", "none"]
     ],
-    "comment": "Table 2: Psr-O extracts only with pied-piping."
+    "comment": "Table 2: Psr-O extracts only with pied-piping.",
+    "verified": "page-image"
   },
   {
     "id": "aissenpolian2025_ex22b",
-    "source": {"bibkey": "little-2020b", "paperLabel": "(13)"},
+    "source": {"bibkey": "little-2020b", "paperLabel": "p. 13"},
     "reportedIn": {"bibkey": "aissen-polian-2025", "paperLabel": "(22b)"},
     "language": "chol1282",
     "primaryText": "Majki ta' a-k'el-e [i-chich]?",
@@ -212,7 +220,8 @@
       ["intervener", "A"],
       ["table4", "T-A-transitive"]
     ],
-    "comment": "Table 2 and Table 4: the agent intervenes and no external position is available."
+    "comment": "Table 2 and Table 4: the agent intervenes and no external position is available.",
+    "verified": "page-image"
   },
   {
     "id": "aissenpolian2025_ex26b",
@@ -238,7 +247,8 @@
       ["probe", "Appl"],
       ["table4", "Appl-none-ditransitive"]
     ],
-    "comment": "The possessor extracts as applied object: external possession."
+    "comment": "The possessor extracts as applied object: external possession.",
+    "verified": "page-image"
   },
   {
     "id": "aissenpolian2025_ex23a",
@@ -262,7 +272,8 @@
       ["clause", "transitive"],
       ["intervener", "none"]
     ],
-    "comment": "Table 2: pied-piping of Psr-O."
+    "comment": "Table 2: pied-piping of Psr-O.",
+    "verified": "page-image"
   },
   {
     "id": "aissenpolian2025_ex23b",
@@ -287,7 +298,8 @@
       ["intervener", "A"],
       ["table4", "T-A-transitive"]
     ],
-    "comment": "Table 4: Psr-O cannot reach Spec,TP past the agent, and nominal opacity blocks subextraction."
+    "comment": "Table 4: Psr-O cannot reach Spec,TP past the agent, and nominal opacity blocks subextraction.",
+    "verified": "page-image"
   },
   {
     "id": "aissenpolian2025_ex24",
@@ -310,7 +322,8 @@
       ["construction", "lexicalTransitive"],
       ["possessum", "nonSpecific"]
     ],
-    "comment": "A non-specific possessive O with an overt possessor, against Little's obligatory object shift."
+    "comment": "A non-specific possessive O with an overt possessor, against Little's obligatory object shift.",
+    "verified": "page-image"
   },
   {
     "id": "aissenpolian2025_ex25",
@@ -335,7 +348,8 @@
       ["intervener", "A"],
       ["table4", "T-A-transitive"]
     ],
-    "comment": "Extraction of Psr-O is blocked whether O is specific or not: nominal opacity plus no external position."
+    "comment": "Extraction of Psr-O is blocked whether O is specific or not: nominal opacity plus no external position.",
+    "verified": "page-image"
   },
   {
     "id": "aissenpolian2025_ex27",
@@ -361,7 +375,8 @@
       ["probe", "Appl"],
       ["table4", "Appl-none-ditransitive"]
     ],
-    "comment": "Psr-O extracts as applied object via Appl°'s [EPP:D]."
+    "comment": "Psr-O extracts as applied object via Appl°'s [EPP:D].",
+    "verified": "page-image"
   },
   {
     "id": "aissenpolian2025_ex28b",
@@ -387,7 +402,8 @@
       ["probe", "Appl"],
       ["table4", "Appl-none-ditransitive"]
     ],
-    "comment": "Extraction of Psr-O only from the applicative construction."
+    "comment": "Extraction of Psr-O only from the applicative construction. The paper glosses a-man-bey as A2-buy, omitting APPL; (28a) glosses -bey as APPL.",
+    "verified": "page-image"
   },
   {
     "id": "aissenpolian2025_ex28c",
@@ -412,7 +428,8 @@
       ["intervener", "A"],
       ["table4", "T-A-transitive"]
     ],
-    "comment": "No applicative, no external position."
+    "comment": "No applicative, no external position.",
+    "verified": "page-image"
   },
   {
     "id": "aissenpolian2025_ex30",
@@ -437,7 +454,8 @@
       ["probe", "Appl"],
       ["table4", "Appl-goal-ditransitive"]
     ],
-    "comment": "Table 4, last row: the external position is occupied and subextraction is blocked by nominal opacity."
+    "comment": "Table 4, last row: the external position is occupied and subextraction is blocked by nominal opacity.",
+    "verified": "page-image"
   },
   {
     "id": "aissenpolian2025_ex31",
@@ -463,7 +481,8 @@
       ["probe", "Appl"],
       ["table4", "Appl-goal-ditransitive"]
     ],
-    "comment": "Table 4, last row."
+    "comment": "Table 4, last row.",
+    "verified": "page-image"
   },
   {
     "id": "aissenpolian2025_ex32",
@@ -486,7 +505,8 @@
       ["construction", "lexicalTransitive"],
       ["possessum", "nonSpecific"]
     ],
-    "comment": "A non-specific possessive O whose possessor cannot raise, against obligatory object shift."
+    "comment": "A non-specific possessive O whose possessor cannot raise, against obligatory object shift.",
+    "verified": "page-image"
   },
   {
     "id": "aissenpolian2025_ex35",
@@ -506,7 +526,8 @@
       ["clause", "unaccusative"],
       ["construction", "predicativePossession"]
     ],
-    "comment": "No Set B on the predicate: the agreement-determining argument is the third-person possessive; the clause is about its possessor."
+    "comment": "No Set B on the predicate: the agreement-determining argument is the third-person possessive; the clause is about its possessor.",
+    "verified": "page-image"
   },
   {
     "id": "aissenpolian2025_ex36",
@@ -515,7 +536,7 @@
     "primaryText": "Kap-em j-jol.",
     "discourseSegments": [],
     "glossedTokens": [
-      ["Kap-em", "mixed.up-PRF"], ["j-jol", "A1-head"]
+      ["Kap-em", "mixed.up.INTR-PRF"], ["j-jol", "A1-head"]
     ],
     "translation": "I am angry. (lit. my head is mixed up)",
     "context": "Experiential collocation.",
@@ -526,7 +547,8 @@
       ["clause", "unaccusative"],
       ["construction", "experientialCollocation"]
     ],
-    "comment": "The possessor of the body-part noun is the experiencer."
+    "comment": "The possessor of the body-part noun is the experiencer.",
+    "verified": "page-image"
   },
   {
     "id": "aissenpolian2025_ex37",
@@ -547,7 +569,8 @@
       ["construction", "lexicalUnaccusative"],
       ["possessum", "nonSpecific"]
     ],
-    "comment": "Tenejapa Tseltal."
+    "comment": "Tenejapa Tseltal.",
+    "verified": "page-image"
   },
   {
     "id": "aissenpolian2025_ex43",
@@ -568,7 +591,8 @@
       ["construction", "predicativePossession"],
       ["possessum", "nonSpecific"]
     ],
-    "comment": "The possessive itself cannot be ψ-subject; its specific possessor raises to Spec,TP."
+    "comment": "The possessive itself cannot be ψ-subject; its specific possessor raises to Spec,TP.",
+    "verified": "page-image"
   },
   {
     "id": "aissenpolian2025_ex45a",
@@ -589,7 +613,8 @@
       ["clause", "unaccusative"],
       ["construction", "predicativePossession"]
     ],
-    "comment": "Word-order evidence that the possessor has raised past the locative."
+    "comment": "Word-order evidence that the possessor has raised past the locative.",
+    "verified": "page-image"
   },
   {
     "id": "aissenpolian2025_ex45b",
@@ -610,7 +635,8 @@
       ["clause", "unaccusative"],
       ["construction", "predicativePossession"]
     ],
-    "comment": "Degraded: the locative is too high."
+    "comment": "Degraded: the locative is too high.",
+    "verified": "page-image"
   },
   {
     "id": "aissenpolian2025_ex46",
@@ -632,7 +658,8 @@
       ["construction", "locativeCopula"],
       ["possessum", "specific"]
     ],
-    "comment": "The entire DP raises to Spec,TP as ψ-subject: a locative copula clause, not predicative possession."
+    "comment": "The entire DP raises to Spec,TP as ψ-subject: a locative copula clause, not predicative possession.",
+    "verified": "page-image"
   },
   {
     "id": "aissenpolian2025_ex47",
@@ -653,7 +680,8 @@
       ["clause", "unaccusative"],
       ["construction", "predicativePossession"]
     ],
-    "comment": "Across-the-board A-movement of the possessor from coordinated VPs."
+    "comment": "Across-the-board A-movement of the possessor from coordinated VPs.",
+    "verified": "page-image"
   },
   {
     "id": "aissenpolian2025_ex48a",
@@ -678,7 +706,8 @@
       ["construction", "predicativePossession"],
       ["table4", "T-none-unaccusative"]
     ],
-    "comment": "The only way to interrogate the possessor in predicative possession."
+    "comment": "The only way to interrogate the possessor in predicative possession.",
+    "verified": "page-image"
   },
   {
     "id": "aissenpolian2025_ex48b",
@@ -702,7 +731,8 @@
       ["intervener", "none"],
       ["construction", "predicativePossession"]
     ],
-    "comment": "Possessor and possessum do not form a constituent, and a PossP cannot be wh-moved."
+    "comment": "Possessor and possessum do not form a constituent, and a PossP cannot be wh-moved.",
+    "verified": "page-image"
   },
   {
     "id": "aissenpolian2025_ex49a",
@@ -727,7 +757,8 @@
       ["construction", "predicativePossession"],
       ["table4", "T-none-unaccusative"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "aissenpolian2025_ex49b",
@@ -751,7 +782,8 @@
       ["intervener", "none"],
       ["construction", "predicativePossession"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "aissenpolian2025_ex50a",
@@ -771,7 +803,8 @@
       ["clause", "unaccusative"],
       ["construction", "experientialCollocation"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "aissenpolian2025_ex51",
@@ -791,7 +824,8 @@
       ["clause", "unaccusative"],
       ["construction", "experientialCollocation"]
     ],
-    "comment": "The possessor-experiencer cannot be indexed on the verb."
+    "comment": "The possessor-experiencer cannot be indexed on the verb.",
+    "verified": "page-image"
   },
   {
     "id": "aissenpolian2025_ex55a",
@@ -816,7 +850,8 @@
       ["construction", "experientialCollocation"],
       ["table4", "T-none-unaccusative"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "aissenpolian2025_ex55b",
@@ -840,7 +875,8 @@
       ["intervener", "none"],
       ["construction", "experientialCollocation"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "aissenpolian2025_ex57b",
@@ -869,7 +905,8 @@
       ["construction", "experientialCollocation"],
       ["table4", "T-none-unaccusative"]
     ],
-    "comment": "Stranding forces the idiomatic reading."
+    "comment": "Stranding forces the idiomatic reading.",
+    "verified": "page-image"
   },
   {
     "id": "aissenpolian2025_ex58b",
@@ -897,7 +934,8 @@
       ["intervener", "none"],
       ["construction", "lexicalUnaccusative"]
     ],
-    "comment": "Pied-piping forces the literal reading: the specific DP raises as ψ-subject."
+    "comment": "Pied-piping forces the literal reading: the specific DP raises as ψ-subject.",
+    "verified": "page-image"
   },
   {
     "id": "aissenpolian2025_ex59",
@@ -921,7 +959,8 @@
       ["clause", "unaccusative"],
       ["construction", "lexicalUnaccusative"]
     ],
-    "comment": "Under the definite reading the DP raises to Spec,TP; under the non-specific reading its possessor does."
+    "comment": "Under the definite reading the DP raises to Spec,TP; under the non-specific reading its possessor does.",
+    "verified": "page-image"
   },
   {
     "id": "aissenpolian2025_ex60",
@@ -943,7 +982,8 @@
       ["construction", "lexicalUnaccusative"],
       ["possessum", "specific"]
     ],
-    "comment": "Definite only: the entire possessive raised to Spec,TP."
+    "comment": "Definite only: the entire possessive raised to Spec,TP.",
+    "verified": "page-image"
   },
   {
     "id": "aissenpolian2025_ex61",
@@ -965,7 +1005,8 @@
       ["construction", "lexicalUnaccusative"],
       ["possessum", "nonSpecific"]
     ],
-    "comment": "Non-specific only: the possessor alone raised to Spec,TP."
+    "comment": "Non-specific only: the possessor alone raised to Spec,TP.",
+    "verified": "page-image"
   },
   {
     "id": "aissenpolian2025_ex62a",
@@ -989,7 +1030,8 @@
       ["intervener", "none"],
       ["construction", "lexicalUnaccusative"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "aissenpolian2025_ex62b",
@@ -1014,7 +1056,8 @@
       ["construction", "lexicalUnaccusative"],
       ["table4", "T-none-unaccusative"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "aissenpolian2025_ex65",
@@ -1038,7 +1081,8 @@
       ["clause", "transitive"],
       ["intervener", "none"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "aissenpolian2025_ex66",
@@ -1062,7 +1106,8 @@
       ["clause", "unergative"],
       ["intervener", "none"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "aissenpolian2025_ex67",
@@ -1087,7 +1132,8 @@
       ["intervener", "A"],
       ["table4", "T-A-transitive-OP"]
     ],
-    "comment": "The second-person A is closer to T° than the possessor; PP islandhood follows from nominal opacity."
+    "comment": "The second-person A is closer to T° than the possessor; PP islandhood follows from nominal opacity. The paper prints a stray apostrophe after the index of Much'u.",
+    "verified": "page-image"
   },
   {
     "id": "aissenpolian2025_ex68",
@@ -1099,7 +1145,7 @@
       ["Mach'a", "who"], ["ya", "ICP"], ["x-'a'tej-at", "ICP-work-B2"], ["ta", "P"],
       ["s-nah", "A3-house"]
     ],
-    "translation": "Intended: Whose house do you work in?",
+    "translation": "Intended: Whose house do you work in? / Who has a house that you work in?",
     "context": "Unergative with a specific (second-person) S_A.",
     "judgment": "ungrammatical",
     "alternatives": [],
@@ -1112,7 +1158,8 @@
       ["intervener", "S_A"],
       ["table4", "T-SA-unergative"]
     ],
-    "comment": "Table 4: the specific S_A intervenes."
+    "comment": "Table 4: the specific S_A intervenes.",
+    "verified": "page-image"
   },
   {
     "id": "aissenpolian2025_ex69",
@@ -1137,7 +1184,8 @@
       ["intervener", "none"],
       ["table4", "T-SA-unergative"]
     ],
-    "comment": "Table 4: a non-specific S_A is not a DP and does not stop T°'s probe."
+    "comment": "Table 4: a non-specific S_A is not a DP and does not stop T°'s probe.",
+    "verified": "page-image"
   },
   {
     "id": "aissenpolian2025_ex70",
@@ -1159,7 +1207,8 @@
     "paperFeatures": [
       ["clause", "transitive"]
     ],
-    "comment": "A's extract freely and an intervening A does not block Ā-movement of O: the intervention effects on possessors are effects on A-movement."
+    "comment": "A's extract freely and an intervening A does not block Ā-movement of O: the intervention effects on possessors are effects on A-movement.",
+    "verified": "page-image"
   },
   {
     "id": "aissenpolian2025_ex74",
@@ -1180,7 +1229,8 @@
       ["clause", "unaccusative"],
       ["construction", "pathVerb"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "aissenpolian2025_ex75a",
@@ -1205,7 +1255,8 @@
       ["construction", "pathVerb"],
       ["table4", "T-SO-unaccusative"]
     ],
-    "comment": "T°'s probe passes the NP theme and finds the possessor."
+    "comment": "T°'s probe passes the NP theme and finds the possessor.",
+    "verified": "page-image"
   },
   {
     "id": "aissenpolian2025_ex75b",
@@ -1216,7 +1267,7 @@
     "glossedTokens": [
       ["Mach'a", "who"], ["och-at", "CP.enter-B2SG"], ["ta", "P"], ["s-na", "A3-house"]
     ],
-    "translation": "Intended: Whose house did you enter?",
+    "translation": "Intended: Whose house did you enter? ~ Who had a house that you entered?",
     "context": "Path verb, specific (second-person) theme.",
     "judgment": "ungrammatical",
     "alternatives": [],
@@ -1230,7 +1281,8 @@
       ["construction", "pathVerb"],
       ["table4", "T-SO-unaccusative"]
     ],
-    "comment": "The DP theme is the closest goal and raises instead."
+    "comment": "The DP theme is the closest goal and raises instead.",
+    "verified": "page-image"
   },
   {
     "id": "aissenpolian2025_ex77b",
@@ -1255,7 +1307,8 @@
       ["construction", "locativeExistential"],
       ["table4", "T-none-locativeExistential"]
     ],
-    "comment": "Haviland's example."
+    "comment": "Haviland's example.",
+    "verified": "page-image"
   },
   {
     "id": "aissenpolian2025_ex78a",
@@ -1280,7 +1333,8 @@
       ["construction", "locativeCopula"],
       ["table4", "T-SO-locativeCopula"]
     ],
-    "comment": "The DP theme c-commands the PP and stops the probe; pied-piping is grammatical."
+    "comment": "The DP theme c-commands the PP and stops the probe; pied-piping is grammatical.",
+    "verified": "page-image"
   },
   {
     "id": "aissenpolian2025_ex78b",
@@ -1305,16 +1359,17 @@
       ["construction", "locativeCopula"],
       ["table4", "T-SO-locativeCopula"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "aissenpolian2025_ex81",
     "source": {"bibkey": "aissen-polian-2025", "paperLabel": "(81)"},
     "language": "tzel1254",
-    "primaryText": "Mach'u k'ux-at [ta y-o'tan]?",
+    "primaryText": "Mach'a k'ux-at [ta y-o'tan]?",
     "discourseSegments": [],
     "glossedTokens": [
-      ["Mach'u", "who"], ["k'ux-at", "painful-B2"], ["ta", "P"], ["y-o'tan", "A3-heart"]
+      ["Mach'a", "who"], ["k'ux-at", "painful-B2"], ["ta", "P"], ["y-o'tan", "A3-heart"]
     ],
     "translation": "Who loves you? (lit. who are you painful in their heart?)",
     "context": "Two-argument experiential collocation with a specific (second-person) theme.",
@@ -1330,7 +1385,8 @@
       ["construction", "twoArgExperiential"],
       ["table4", "T-none-experiential"]
     ],
-    "comment": "The experiencer PP is merged above the theme, so the theme does not c-command the possessor; pied-piping is ungrammatical."
+    "comment": "The experiencer PP is merged above the theme, so the theme does not c-command the possessor; pied-piping is ungrammatical. The paper prints Mach'u, the Tsotsil form; its structure (83) for this example and every other Tseltal example print mach'a.",
+    "verified": "page-image"
   },
   {
     "id": "aissenpolian2025_ex82",
@@ -1356,7 +1412,8 @@
       ["construction", "twoArgExperiential"],
       ["table4", "T-none-experiential"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "aissenpolian2025_ex85a",
@@ -1380,7 +1437,8 @@
       ["clause", "transitive"],
       ["intervener", "none"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "aissenpolian2025_ex85b",
@@ -1404,7 +1462,8 @@
       ["clause", "transitive"],
       ["intervener", "none"]
     ],
-    "comment": "A specific A is a DP: its possessor cannot reach Spec,TP."
+    "comment": "A specific A is a DP: its possessor cannot reach Spec,TP.",
+    "verified": "page-image"
   },
   {
     "id": "aissenpolian2025_ex86",
@@ -1428,7 +1487,8 @@
       ["clause", "transitive"],
       ["intervener", "none"]
     ],
-    "comment": "Psr-A extracts when the A is non-specific and its possessor is a good ψ-subject."
+    "comment": "Psr-A extracts when the A is non-specific and its possessor is a good ψ-subject.",
+    "verified": "page-image"
   },
   {
     "id": "aissenpolian2025_ex87",
@@ -1440,7 +1500,7 @@
       ["La", "CP"], ["s-wilunta-on", "A3-fly.onto-B1"], ["x-ch'akul", "A3-flea"],
       ["ajk'ube", "last.night"], ["te", "DET"], ["ts'i'=e", "dog=ENC"]
     ],
-    "translation": "The dog's fleas landed on me last night.",
+    "translation": "The dog's fleas landed on me last night. / The dog passed me his fleas last night.",
     "context": "Possessor and possessum separated by an adverb.",
     "judgment": "acceptable",
     "alternatives": [],
@@ -1450,6 +1510,7 @@
       ["construction", "lexicalTransitive"],
       ["possessum", "nonSpecific"]
     ],
-    "comment": "Psr-A externalizes to Spec,TP."
+    "comment": "Psr-A externalizes to Spec,TP.",
+    "verified": "page-image"
   }
 ]

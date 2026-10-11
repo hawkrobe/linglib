@@ -17,7 +17,7 @@ namespace JackendoffAudring2020.Examples
 
 def ex_6a : Datum :=
   { id := "jackendoffaudring2020_6a"
-    source := ⟨"jackendoff-audring-2020", "(6a)"⟩
+    source := ⟨"jackendoff-audring-2020", "ch. 3, (6a)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "assassin ~ assassinate"
@@ -30,7 +30,7 @@ def ex_6a : Datum :=
 
 def ex_6b : Datum :=
   { id := "jackendoffaudring2020_6b"
-    source := ⟨"jackendoff-audring-2020", "(6b)"⟩
+    source := ⟨"jackendoff-audring-2020", "ch. 3, (6b)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "chemist ~ chemistry"
@@ -43,7 +43,7 @@ def ex_6b : Datum :=
 
 def ex_6c : Datum :=
   { id := "jackendoffaudring2020_6c"
-    source := ⟨"jackendoff-audring-2020", "(6c)"⟩
+    source := ⟨"jackendoff-audring-2020", "ch. 3, (6c)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "critic ~ criticize"
@@ -56,7 +56,7 @@ def ex_6c : Datum :=
 
 def ex_6d : Datum :=
   { id := "jackendoffaudring2020_6d"
-    source := ⟨"jackendoff-audring-2020", "(6d)"⟩
+    source := ⟨"jackendoff-audring-2020", "ch. 3, (6d)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "linguist ~ linguistics"
@@ -69,7 +69,7 @@ def ex_6d : Datum :=
 
 def ex_4a : Datum :=
   { id := "jackendoffaudring2020_4a"
-    source := ⟨"jackendoff-audring-2020", "(4a)"⟩
+    source := ⟨"jackendoff-audring-2020", "ch. 3, (4)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "ambition ~ ambitious"
@@ -82,7 +82,7 @@ def ex_4a : Datum :=
 
 def ex_4b : Datum :=
   { id := "jackendoffaudring2020_4b"
-    source := ⟨"jackendoff-audring-2020", "(4b)"⟩
+    source := ⟨"jackendoff-audring-2020", "ch. 3, (4)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "contagion ~ contagious"
@@ -95,7 +95,7 @@ def ex_4b : Datum :=
 
 def ex_4c : Datum :=
   { id := "jackendoffaudring2020_4c"
-    source := ⟨"jackendoff-audring-2020", "(4c)"⟩
+    source := ⟨"jackendoff-audring-2020", "ch. 3, (4)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "ostentation ~ ostentatious"
@@ -108,7 +108,7 @@ def ex_4c : Datum :=
 
 def ex_4d : Datum :=
   { id := "jackendoffaudring2020_4d"
-    source := ⟨"jackendoff-audring-2020", "(4d)"⟩
+    source := ⟨"jackendoff-audring-2020", "ch. 3, (4)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "sedition ~ seditious"
@@ -121,7 +121,7 @@ def ex_4d : Datum :=
 
 def ex_44a_1 : Datum :=
   { id := "jackendoffaudring2020_44a_1"
-    source := ⟨"jackendoff-audring-2020", "(44a)"⟩
+    source := ⟨"jackendoff-audring-2020", "ch. 4, (44a)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "behaviorism ~ behaviorist"
@@ -134,7 +134,7 @@ def ex_44a_1 : Datum :=
 
 def ex_44a_2 : Datum :=
   { id := "jackendoffaudring2020_44a_2"
-    source := ⟨"jackendoff-audring-2020", "(44a)"⟩
+    source := ⟨"jackendoff-audring-2020", "ch. 4, (44a)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "impressionism ~ impressionist"
@@ -147,7 +147,7 @@ def ex_44a_2 : Datum :=
 
 def ex_44a_3 : Datum :=
   { id := "jackendoffaudring2020_44a_3"
-    source := ⟨"jackendoff-audring-2020", "(44a)"⟩
+    source := ⟨"jackendoff-audring-2020", "ch. 4, (44a)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "minimalism ~ minimalist"
@@ -160,7 +160,7 @@ def ex_44a_3 : Datum :=
 
 def ex_44a_4 : Datum :=
   { id := "jackendoffaudring2020_44a_4"
-    source := ⟨"jackendoff-audring-2020", "(44a)"⟩
+    source := ⟨"jackendoff-audring-2020", "ch. 4, (44a)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "communism ~ communist"
@@ -173,7 +173,7 @@ def ex_44a_4 : Datum :=
 
 def ex_44a_5 : Datum :=
   { id := "jackendoffaudring2020_44a_5"
-    source := ⟨"jackendoff-audring-2020", "(44a)"⟩
+    source := ⟨"jackendoff-audring-2020", "ch. 4, (44a)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "terrorism ~ terrorist"
@@ -186,7 +186,7 @@ def ex_44a_5 : Datum :=
 
 def ex_44b_1 : Datum :=
   { id := "jackendoffaudring2020_44b_1"
-    source := ⟨"jackendoff-audring-2020", "(44b)"⟩
+    source := ⟨"jackendoff-audring-2020", "ch. 4, (44b)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "pacifism ~ pacifist"
@@ -199,7 +199,7 @@ def ex_44b_1 : Datum :=
 
 def ex_44b_2 : Datum :=
   { id := "jackendoffaudring2020_44b_2"
-    source := ⟨"jackendoff-audring-2020", "(44b)"⟩
+    source := ⟨"jackendoff-audring-2020", "ch. 4, (44b)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "atheism ~ atheist"
@@ -212,7 +212,7 @@ def ex_44b_2 : Datum :=
 
 def ex_44b_3 : Datum :=
   { id := "jackendoffaudring2020_44b_3"
-    source := ⟨"jackendoff-audring-2020", "(44b)"⟩
+    source := ⟨"jackendoff-audring-2020", "ch. 4, (44b)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "pessimism ~ pessimist"
@@ -228,7 +228,7 @@ def trumpism : Datum :=
     source := ⟨"jackendoff-audring-2020", "§4.8.2"⟩
     reportedIn := none
     language := "stan1293"
-    primaryText := "Trumpism ~ Trumpist"
+    primaryText := "Trumpism ~ Trumpists"
     glossedTokens := []
     context := ""
     judgment := .acceptable
@@ -264,7 +264,7 @@ def casuist : Datum :=
 
 def ex_48a_1 : Datum :=
   { id := "jackendoffaudring2020_48a_1"
-    source := ⟨"jackendoff-audring-2020", "(48a)"⟩
+    source := ⟨"jackendoff-audring-2020", "ch. 4, (48a)"⟩
     reportedIn := none
     language := "dutc1256"
     primaryText := "werker ~ werkster"
@@ -277,7 +277,7 @@ def ex_48a_1 : Datum :=
 
 def ex_48a_2 : Datum :=
   { id := "jackendoffaudring2020_48a_2"
-    source := ⟨"jackendoff-audring-2020", "(48a)"⟩
+    source := ⟨"jackendoff-audring-2020", "ch. 4, (48a)"⟩
     reportedIn := none
     language := "dutc1256"
     primaryText := "bewoner ~ bewoonster"
@@ -290,7 +290,7 @@ def ex_48a_2 : Datum :=
 
 def ex_48a_3 : Datum :=
   { id := "jackendoffaudring2020_48a_3"
-    source := ⟨"jackendoff-audring-2020", "(48a)"⟩
+    source := ⟨"jackendoff-audring-2020", "ch. 4, (48a)"⟩
     reportedIn := none
     language := "dutc1256"
     primaryText := "reiziger ~ reizigster"
@@ -303,7 +303,7 @@ def ex_48a_3 : Datum :=
 
 def ex_48b_1 : Datum :=
   { id := "jackendoffaudring2020_48b_1"
-    source := ⟨"jackendoff-audring-2020", "(48b)"⟩
+    source := ⟨"jackendoff-audring-2020", "ch. 4, (48b)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "candid ~ candor"
@@ -316,7 +316,7 @@ def ex_48b_1 : Datum :=
 
 def ex_48b_2 : Datum :=
   { id := "jackendoffaudring2020_48b_2"
-    source := ⟨"jackendoff-audring-2020", "(48b)"⟩
+    source := ⟨"jackendoff-audring-2020", "ch. 4, (48b)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "fervid ~ fervor"
@@ -329,7 +329,7 @@ def ex_48b_2 : Datum :=
 
 def ex_48b_3 : Datum :=
   { id := "jackendoffaudring2020_48b_3"
-    source := ⟨"jackendoff-audring-2020", "(48b)"⟩
+    source := ⟨"jackendoff-audring-2020", "ch. 4, (48b)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "horrid ~ horror"
@@ -368,7 +368,7 @@ def ex_48b_vigor : Datum :=
 
 def ex_19a : Datum :=
   { id := "jackendoffaudring2020_19a"
-    source := ⟨"jackendoff-audring-2020", "(19a)"⟩
+    source := ⟨"jackendoff-audring-2020", "ch. 5, (19a)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "walk"
@@ -381,7 +381,7 @@ def ex_19a : Datum :=
 
 def ex_19b : Datum :=
   { id := "jackendoffaudring2020_19b"
-    source := ⟨"jackendoff-audring-2020", "(19b)"⟩
+    source := ⟨"jackendoff-audring-2020", "ch. 5, (19b)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "walks"
@@ -394,7 +394,7 @@ def ex_19b : Datum :=
 
 def ex_19c : Datum :=
   { id := "jackendoffaudring2020_19c"
-    source := ⟨"jackendoff-audring-2020", "(19c)"⟩
+    source := ⟨"jackendoff-audring-2020", "ch. 5, (19c)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "walked"
@@ -407,7 +407,7 @@ def ex_19c : Datum :=
 
 def ex_19d : Datum :=
   { id := "jackendoffaudring2020_19d"
-    source := ⟨"jackendoff-audring-2020", "(19d)"⟩
+    source := ⟨"jackendoff-audring-2020", "ch. 5, (19d)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "walk"
@@ -420,7 +420,7 @@ def ex_19d : Datum :=
 
 def ex_19e : Datum :=
   { id := "jackendoffaudring2020_19e"
-    source := ⟨"jackendoff-audring-2020", "(19e)"⟩
+    source := ⟨"jackendoff-audring-2020", "ch. 5, (19e)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "walking"
@@ -433,7 +433,7 @@ def ex_19e : Datum :=
 
 def ex_19f : Datum :=
   { id := "jackendoffaudring2020_19f"
-    source := ⟨"jackendoff-audring-2020", "(19f)"⟩
+    source := ⟨"jackendoff-audring-2020", "ch. 5, (19f)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "walked"
@@ -446,7 +446,7 @@ def ex_19f : Datum :=
 
 def ex_24 : Datum :=
   { id := "jackendoffaudring2020_24"
-    source := ⟨"jackendoff-audring-2020", "(24)"⟩
+    source := ⟨"jackendoff-audring-2020", "ch. 5, (24)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "sing ~ sang"
@@ -524,7 +524,7 @@ def t51_run : Datum :=
 
 def ex_41_1sg : Datum :=
   { id := "jackendoffaudring2020_41_1sg"
-    source := ⟨"jackendoff-audring-2020", "(41)"⟩
+    source := ⟨"jackendoff-audring-2020", "ch. 5, (41)"⟩
     reportedIn := none
     language := "stan1295"
     primaryText := "sprech-e"
@@ -537,7 +537,7 @@ def ex_41_1sg : Datum :=
 
 def ex_41_2sg : Datum :=
   { id := "jackendoffaudring2020_41_2sg"
-    source := ⟨"jackendoff-audring-2020", "(41)"⟩
+    source := ⟨"jackendoff-audring-2020", "ch. 5, (41)"⟩
     reportedIn := none
     language := "stan1295"
     primaryText := "sprich-st"
@@ -550,7 +550,7 @@ def ex_41_2sg : Datum :=
 
 def ex_41_3sg : Datum :=
   { id := "jackendoffaudring2020_41_3sg"
-    source := ⟨"jackendoff-audring-2020", "(41)"⟩
+    source := ⟨"jackendoff-audring-2020", "ch. 5, (41)"⟩
     reportedIn := none
     language := "stan1295"
     primaryText := "sprich-t"
@@ -563,7 +563,7 @@ def ex_41_3sg : Datum :=
 
 def ex_41_1pl : Datum :=
   { id := "jackendoffaudring2020_41_1pl"
-    source := ⟨"jackendoff-audring-2020", "(41)"⟩
+    source := ⟨"jackendoff-audring-2020", "ch. 5, (41)"⟩
     reportedIn := none
     language := "stan1295"
     primaryText := "sprech-en"
@@ -576,7 +576,7 @@ def ex_41_1pl : Datum :=
 
 def ex_41_2pl : Datum :=
   { id := "jackendoffaudring2020_41_2pl"
-    source := ⟨"jackendoff-audring-2020", "(41)"⟩
+    source := ⟨"jackendoff-audring-2020", "ch. 5, (41)"⟩
     reportedIn := none
     language := "stan1295"
     primaryText := "sprech-t"
@@ -589,7 +589,7 @@ def ex_41_2pl : Datum :=
 
 def ex_41_3pl : Datum :=
   { id := "jackendoffaudring2020_41_3pl"
-    source := ⟨"jackendoff-audring-2020", "(41)"⟩
+    source := ⟨"jackendoff-audring-2020", "ch. 5, (41)"⟩
     reportedIn := none
     language := "stan1295"
     primaryText := "sprech-en"
@@ -602,7 +602,7 @@ def ex_41_3pl : Datum :=
 
 def ex_42 : Datum :=
   { id := "jackendoffaudring2020_42"
-    source := ⟨"jackendoff-audring-2020", "(42)"⟩
+    source := ⟨"jackendoff-audring-2020", "ch. 5, (42)"⟩
     reportedIn := none
     language := "stan1295"
     primaryText := "sprechen ~ sprach"
@@ -615,7 +615,7 @@ def ex_42 : Datum :=
 
 def ex_43 : Datum :=
   { id := "jackendoffaudring2020_43"
-    source := ⟨"jackendoff-audring-2020", "(43)"⟩
+    source := ⟨"jackendoff-audring-2020", "ch. 5, (43)"⟩
     reportedIn := none
     language := "stan1295"
     primaryText := "spricht"
@@ -628,7 +628,7 @@ def ex_43 : Datum :=
 
 def ex_44a : Datum :=
   { id := "jackendoffaudring2020_44a"
-    source := ⟨"jackendoff-audring-2020", "(44a)"⟩
+    source := ⟨"jackendoff-audring-2020", "ch. 5, (44a)"⟩
     reportedIn := none
     language := "stan1295"
     primaryText := "sprechen/spricht, helfen/hilft, geben/gibt"
@@ -641,7 +641,7 @@ def ex_44a : Datum :=
 
 def ex_44b : Datum :=
   { id := "jackendoffaudring2020_44b"
-    source := ⟨"jackendoff-audring-2020", "(44b)"⟩
+    source := ⟨"jackendoff-audring-2020", "ch. 5, (44b)"⟩
     reportedIn := none
     language := "stan1295"
     primaryText := "halten/hält, schlafen/schläft"
@@ -654,7 +654,7 @@ def ex_44b : Datum :=
 
 def ex_44c : Datum :=
   { id := "jackendoffaudring2020_44c"
-    source := ⟨"jackendoff-audring-2020", "(44c)"⟩
+    source := ⟨"jackendoff-audring-2020", "ch. 5, (44c)"⟩
     reportedIn := none
     language := "stan1295"
     primaryText := "lesen/liest, sehen/sieht"
@@ -667,7 +667,7 @@ def ex_44c : Datum :=
 
 def ex_44d : Datum :=
   { id := "jackendoffaudring2020_44d"
-    source := ⟨"jackendoff-audring-2020", "(44d)"⟩
+    source := ⟨"jackendoff-audring-2020", "ch. 5, (44d)"⟩
     reportedIn := none
     language := "stan1295"
     primaryText := "laufen/läuft"
@@ -680,7 +680,7 @@ def ex_44d : Datum :=
 
 def ex_44e : Datum :=
   { id := "jackendoffaudring2020_44e"
-    source := ⟨"jackendoff-audring-2020", "(44e)"⟩
+    source := ⟨"jackendoff-audring-2020", "ch. 5, (44e)"⟩
     reportedIn := none
     language := "stan1295"
     primaryText := "stossen/stösst"
@@ -709,7 +709,7 @@ def ex_56_do : Datum :=
     source := ⟨"jackendoff-audring-2020", "§5.6"⟩
     reportedIn := none
     language := "stan1293"
-    primaryText := "did a dance / I did too / did London / undid / he didn't win"
+    primaryText := "did a dance / I did too / We did London / We did the dishes / undid / He didn't win"
     glossedTokens := []
     context := ""
     judgment := .acceptable
@@ -735,7 +735,7 @@ def ex_56_draw : Datum :=
     source := ⟨"jackendoff-audring-2020", "§5.6"⟩
     reportedIn := none
     language := "stan1293"
-    primaryText := "drew a picture / drew blood / drew a cart / drew a conclusion"
+    primaryText := "draw a picture / draw blood / draw a cart / draw a conclusion ~ drew"
     glossedTokens := []
     context := ""
     judgment := .acceptable
@@ -774,7 +774,7 @@ def ex_56_ring : Datum :=
     source := ⟨"jackendoff-audring-2020", "§5.6"⟩
     reportedIn := none
     language := "stan1293"
-    primaryText := "ring a bell ~ rang; wring out a towel ~ wrung; ring a city ~ ringed"
+    primaryText := "ring a bell ~ rang; wring out a towel ~ wrung; ring a city with highways ~ ringed"
     glossedTokens := []
     context := ""
     judgment := .acceptable
@@ -797,7 +797,7 @@ def ex_56_zeggen : Datum :=
 
 def ex_60a : Datum :=
   { id := "jackendoffaudring2020_60a"
-    source := ⟨"jackendoff-audring-2020", "(60a)"⟩
+    source := ⟨"jackendoff-audring-2020", "ch. 5, (60a)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "draw (a picture)"
@@ -810,7 +810,7 @@ def ex_60a : Datum :=
 
 def ex_60b : Datum :=
   { id := "jackendoffaudring2020_60b"
-    source := ⟨"jackendoff-audring-2020", "(60b)"⟩
+    source := ⟨"jackendoff-audring-2020", "ch. 5, (60b)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "draw (praise)"
@@ -823,7 +823,7 @@ def ex_60b : Datum :=
 
 def ex_61 : Datum :=
   { id := "jackendoffaudring2020_61"
-    source := ⟨"jackendoff-audring-2020", "(61)"⟩
+    source := ⟨"jackendoff-audring-2020", "ch. 5, (61)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "drew (a picture) / drew (praise)"
@@ -836,7 +836,7 @@ def ex_61 : Datum :=
 
 def ex_62 : Datum :=
   { id := "jackendoffaudring2020_62"
-    source := ⟨"jackendoff-audring-2020", "(62)"⟩
+    source := ⟨"jackendoff-audring-2020", "ch. 5, (62)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "withdraw ~ withdrew"

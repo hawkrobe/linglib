@@ -28,19 +28,6 @@ def yomaseru : Datum :=
     readings := []
     paperFeatures := [("section", "2"), ("form", "ase"), ("contentful", "yes"), ("root", "no")] }
 
-def geology : Datum :=
-  { id := "haspelmath2025b_geology"
-    source := ⟨"haspelmath-2025b", "§2"⟩
-    reportedIn := none
-    language := "stan1293"
-    primaryText := "geo-logy"
-    glossedTokens := []
-    context := ""
-    judgment := .acceptable
-    alternatives := []
-    readings := []
-    paperFeatures := [("section", "2"), ("form", "geo"), ("contentful", "yes"), ("root", "no")] }
-
 def hello : Datum :=
   { id := "haspelmath2025b_hello"
     source := ⟨"haspelmath-2025b", "fn. 10"⟩
@@ -124,7 +111,7 @@ def ex5c : Datum :=
     source := ⟨"haspelmath-2025b", "(5)"⟩
     reportedIn := none
     language := "stan1295"
-    primaryText := "lauf!"
+    primaryText := "lauf-Ø!"
     glossedTokens := []
     context := ""
     judgment := .acceptable
@@ -470,6 +457,6 @@ def laudab : Datum :=
     readings := []
     paperFeatures := [("section", "3"), ("stem", "yes")] }
 
-def all : List Datum := [yomaseru, geology, hello, zona, zony, zonu, ex5a, ex5b, ex5c, ex5d, ex5e, ex6a, ex6b, ex6c, ex6d, ex8a1, ex8a2, ex8a3, ex8b1, ex8b2, ex8b3, ex8c1, ex8c2, ex8c3, ex12a, ex12b, ex13a, ex13b, ex14a, ex14b, ex15a, ex15b, ex18a, ex18b, laudab]
+def all : List Datum := [yomaseru, hello, zona, zony, zonu, ex5a, ex5b, ex5c, ex5d, ex5e, ex6a, ex6b, ex6c, ex6d, ex8a1, ex8a2, ex8a3, ex8b1, ex8b2, ex8b3, ex8c1, ex8c2, ex8c3, ex12a, ex12b, ex13a, ex13b, ex14a, ex14b, ex15a, ex15b, ex18a, ex18b, laudab]
 
 end Haspelmath2025b.Examples

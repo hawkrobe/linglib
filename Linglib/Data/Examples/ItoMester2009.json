@@ -6,7 +6,7 @@
       "paperLabel": "(20a)"
     },
     "language": "stan1293",
-    "primaryText": "[φ [ω the] [ω dinosaurs]]",
+    "primaryText": "[φ [ω (ðə)][ω (daɪnə)(sɔɹz)]]",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
@@ -28,7 +28,8 @@
         "FtBin"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "itomester2009_s20b",
@@ -37,7 +38,7 @@
       "paperLabel": "(20b)"
     },
     "language": "stan1293",
-    "primaryText": "[ω the dinosaurs]",
+    "primaryText": "[φ [ω ðə (daɪnə)(sɔɹz)]]",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
@@ -59,7 +60,8 @@
         "Lex-to-ω"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "itomester2009_s20c",
@@ -68,7 +70,7 @@
       "paperLabel": "(20c)"
     },
     "language": "stan1293",
-    "primaryText": "[ω the [ω dinosaurs]]",
+    "primaryText": "[φ [ω ðə [ω (daɪnə)(sɔɹz)]]]",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
@@ -90,7 +92,8 @@
         "No-Recursion"
       ]
     ],
-    "comment": "The structure argued for, against Selkirk's φ-attachment."
+    "comment": "The structure argued for, against Selkirk's φ-attachment.",
+    "verified": "page-image"
   },
   {
     "id": "itomester2009_s20d",
@@ -99,7 +102,7 @@
       "paperLabel": "(20d)"
     },
     "language": "stan1293",
-    "primaryText": "[φ the [ω dinosaurs]]",
+    "primaryText": "[φ ðə [ω (daɪnə)(sɔɹz)]]",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
@@ -121,7 +124,8 @@
         "Parse-into-ω"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "itomester2009_s24a",
@@ -148,7 +152,8 @@
         "the function word is prosodically subordinated to its lexical host"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "itomester2009_s24b",
@@ -175,7 +180,8 @@
         "the function word is prosodically subordinated to its lexical host"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "itomester2009_s24c",
@@ -202,7 +208,8 @@
         "the function word is prosodically subordinated to its lexical host"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "itomester2009_s24d",
@@ -229,7 +236,8 @@
         "the function word is prosodically subordinated to its lexical host"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "itomester2009_s24e",
@@ -256,7 +264,8 @@
         "the function word is prosodically subordinated to its lexical host"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "itomester2009_s24f",
@@ -283,7 +292,8 @@
         "the function word is prosodically subordinated to its lexical host"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "itomester2009_s24g",
@@ -310,7 +320,8 @@
         "the function word is prosodically subordinated to its lexical host"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "itomester2009_s24h",
@@ -319,7 +330,7 @@
       "paperLabel": "(24)"
     },
     "language": "mode1248",
-    "primaryText": "eis Rodou",
+    "primaryText": "εις Ροδον",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "to Rhodes",
@@ -337,7 +348,8 @@
         "the function word is prosodically subordinated to its lexical host"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "itomester2009_s24i",
@@ -364,7 +376,8 @@
         "the function word is prosodically subordinated to its lexical host"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "itomester2009_s26",
@@ -391,7 +404,8 @@
         "the four sites, unranked"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "itomester2009_s28a1",
@@ -400,7 +414,7 @@
       "paperLabel": "(28a)"
     },
     "language": "stan1293",
-    "primaryText": "[ə('ledʒ)] allege",
+    "primaryText": "[.ə̆.(ˈlɛd͡ʒ.)] allege",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
@@ -418,7 +432,8 @@
         "a single pretonic syllable stays unfooted"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "itomester2009_s28a2",
@@ -427,7 +442,7 @@
       "paperLabel": "(28a)"
     },
     "language": "stan1293",
-    "primaryText": "[bə('nænə)] banana",
+    "primaryText": "[.bə̆.(ˈnæ.nə.)] banana",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
@@ -445,7 +460,8 @@
         "a single pretonic syllable stays unfooted"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "itomester2009_s28b1",
@@ -454,10 +470,10 @@
       "paperLabel": "(28b)"
     },
     "language": "stan1295",
-    "primaryText": "[a('drɛsə)] Adresse",
+    "primaryText": "[.ă.(ˈdrɛ.sə.)] Adresse",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "the address",
+    "translation": "(the) address",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -472,7 +488,8 @@
         "a single pretonic syllable stays unfooted"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "itomester2009_s28b2",
@@ -481,10 +498,10 @@
       "paperLabel": "(28b)"
     },
     "language": "stan1295",
-    "primaryText": "[ma('ʃiːnə)] Maschine",
+    "primaryText": "[.mă.(ˈʃiː.nə.)] Maschine",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "the machine",
+    "translation": "(the) machine",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -499,7 +516,8 @@
         "a single pretonic syllable stays unfooted"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "itomester2009_s30a1",
@@ -526,7 +544,8 @@
         "secondary stress on the initial syllable, cf. allege"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "itomester2009_s30a2",
@@ -553,7 +572,8 @@
         "secondary stress on the initial syllable, cf. phonetics"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "itomester2009_s30b1",
@@ -580,7 +600,8 @@
         "secondary stress on the initial syllable, cf. Adresse"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "itomester2009_s30b2",
@@ -592,7 +613,7 @@
     "primaryText": "ˌprotesˈtieren",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "to protest",
+    "translation": "(to) protest",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -607,7 +628,8 @@
         "secondary stress on the initial syllable, cf. Protest"
       ]
     ],
-    "comment": ""
+    "comment": "The paper prints ˌprotesˈtíeren, with a stray acute.",
+    "verified": "page-image"
   },
   {
     "id": "itomester2009_s32a1",
@@ -616,7 +638,7 @@
       "paperLabel": "(32a)"
     },
     "language": "stan1293",
-    "primaryText": "[ə lə('guːnə)] a laguna",
+    "primaryText": "[ə̆ lə̆ (ˈguːnə)] a laguna",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
@@ -634,7 +656,8 @@
         "an initial lapse: the subminimal function word plus the unfooted initial syllable"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "itomester2009_s32a2",
@@ -643,7 +666,7 @@
       "paperLabel": "(32a)"
     },
     "language": "stan1293",
-    "primaryText": "[ə mə('ʃiːn)] a machine",
+    "primaryText": "[ə̆ mə̆ (ˈʃiːn)] a machine",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
@@ -661,7 +684,8 @@
         "an initial lapse: the subminimal function word plus the unfooted initial syllable"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "itomester2009_s32a3",
@@ -670,7 +694,7 @@
       "paperLabel": "(32a)"
     },
     "language": "stan1293",
-    "primaryText": "[ə mə('sɑːʒ)] a massage",
+    "primaryText": "[ə̆ mə̆ (ˈsaːʒ)] a massage",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
@@ -688,7 +712,8 @@
         "an initial lapse: the subminimal function word plus the unfooted initial syllable"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "itomester2009_s32a4",
@@ -697,7 +722,7 @@
       "paperLabel": "(32a)"
     },
     "language": "stan1293",
-    "primaryText": "[ə bə('kwɛst)] a bequest",
+    "primaryText": "[ə̆ bə̆ (ˈkwɛst)] a bequest",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
@@ -715,7 +740,8 @@
         "an initial lapse: the subminimal function word plus the unfooted initial syllable"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "itomester2009_s32b1",
@@ -724,7 +750,7 @@
       "paperLabel": "(32b)"
     },
     "language": "stan1295",
-    "primaryText": "[nə lə('guːnə)] 'ne Lagune",
+    "primaryText": "[nə̆ lă (ˈguː nə)] 'ne Lagune",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "a laguna",
@@ -742,7 +768,8 @@
         "an initial lapse: the subminimal function word plus the unfooted initial syllable"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "itomester2009_s32b2",
@@ -751,7 +778,7 @@
       "paperLabel": "(32b)"
     },
     "language": "stan1295",
-    "primaryText": "[nə ma('ʃiːnə)] 'ne Maschine",
+    "primaryText": "[nə̆ mă (ˈʃiː nə)] 'ne Maschine",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "a machine",
@@ -769,7 +796,8 @@
         "an initial lapse: the subminimal function word plus the unfooted initial syllable"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "itomester2009_s32b3",
@@ -778,7 +806,7 @@
       "paperLabel": "(32b)"
     },
     "language": "stan1295",
-    "primaryText": "[nə ma('saːʒə)] 'ne Massage",
+    "primaryText": "[nə̆ mă (ˈsaːʒə)] 'ne Massage",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "a massage",
@@ -796,7 +824,8 @@
         "an initial lapse: the subminimal function word plus the unfooted initial syllable"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "itomester2009_s32b4",
@@ -805,7 +834,7 @@
       "paperLabel": "(32b)"
     },
     "language": "stan1295",
-    "primaryText": "[nə bə('dɪŋʊŋ)] 'ne Bedingung",
+    "primaryText": "[nə̆ bə̆ (ˈdɪ ŋʊŋ)] 'ne Bedingung",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "a condition",
@@ -823,7 +852,8 @@
         "an initial lapse: the subminimal function word plus the unfooted initial syllable"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "itomester2009_s33",
@@ -850,7 +880,8 @@
         "FtBin, Lex-to-ω(L), Parse-into-f: the ω-adjoined and φ-attached candidates tie"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "itomester2009_s34",
@@ -877,7 +908,8 @@
         "FtBin, Lex-to-ω(L), Parse-into-f: the ω-adjoined and φ-attached candidates tie"
       ]
     ],
-    "comment": ""
+    "comment": "The tableau's input prints ne without the apostrophe; 'ne as in (32b) and the prose.",
+    "verified": "page-image"
   },
   {
     "id": "itomester2009_s36a1",
@@ -886,7 +918,7 @@
       "paperLabel": "(36a)"
     },
     "language": "stan1295",
-    "primaryText": "(hat) geˈpredigt",
+    "primaryText": "(hat) gĕ-ˈpredig-t",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "(has) preached",
@@ -904,7 +936,8 @@
         "ge- appears before main stress"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "itomester2009_s36a2",
@@ -913,7 +946,7 @@
       "paperLabel": "(36a)"
     },
     "language": "stan1295",
-    "primaryText": "(hat) geˈkiebitzt",
+    "primaryText": "(hat) gĕ-ˈkiebitz-t",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "(has) spied",
@@ -931,7 +964,8 @@
         "ge- appears before main stress"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "itomester2009_s36b1",
@@ -940,7 +974,7 @@
       "paperLabel": "(36b)"
     },
     "language": "stan1295",
-    "primaryText": "(hat) stuˈdiert",
+    "primaryText": "(hat) stŭˈdier-t",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "(has) studied",
@@ -958,7 +992,8 @@
         "ge- absent before an unstressed syllable"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "itomester2009_s36b2",
@@ -967,7 +1002,7 @@
       "paperLabel": "(36b)"
     },
     "language": "stan1295",
-    "primaryText": "(hat) schmaˈrotzt",
+    "primaryText": "(hat) schmăˈrotz-t",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "(has) sponged",
@@ -985,7 +1020,8 @@
         "ge- absent before an unstressed syllable"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "itomester2009_s36c",
@@ -994,7 +1030,7 @@
       "paperLabel": "(36c)"
     },
     "language": "stan1295",
-    "primaryText": "(hat) geˈliebkost / ˌliebˈkost",
+    "primaryText": "(hat) gĕ-ˈliebˌkos-t / ˌliebˈkos-t",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "(has) caressed",
@@ -1012,7 +1048,8 @@
         "ge- tracks the location of main stress"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "itomester2009_s37a",
@@ -1021,7 +1058,7 @@
       "paperLabel": "(37a)"
     },
     "language": "stan1293",
-    "primaryText": "[ω fnc [ω lex]]",
+    "primaryText": "[φ [ω the [ω dinosaur]]]",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
@@ -1043,7 +1080,8 @@
         "No-Recursion"
       ]
     ],
-    "comment": ""
+    "comment": "Linearizes the printed tree.",
+    "verified": "page-image"
   },
   {
     "id": "itomester2009_s37b",
@@ -1052,7 +1090,7 @@
       "paperLabel": "(37b)"
     },
     "language": "stan1293",
-    "primaryText": "[φ fnc [ω lex]]",
+    "primaryText": "[φ the [ω dinosaur]]",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
@@ -1074,7 +1112,8 @@
         "Parse-into-ω"
       ]
     ],
-    "comment": ""
+    "comment": "Linearizes the printed tree.",
+    "verified": "page-image"
   },
   {
     "id": "itomester2009_s39",
@@ -1101,7 +1140,8 @@
         "function-word initial t flapped: Selkirk's argument for φ-attachment"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "itomester2009_s40a",
@@ -1110,7 +1150,7 @@
       "paperLabel": "(40a)"
     },
     "language": "stan1293",
-    "primaryText": "[ι [tʰ]o London.]",
+    "primaryText": "[υ [tʰ]o London.]",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
@@ -1128,6 +1168,7 @@
         "aspiration at the left edge of an initial function-word complex"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   }
 ]

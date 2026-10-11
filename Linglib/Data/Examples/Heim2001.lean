@@ -241,10 +241,10 @@ def ex_26 : Datum :=
     source := ⟨"heim-2001", "(26)"⟩
     reportedIn := none
     language := "stan1293"
-    primaryText := "?Mary was less impressed with every candidate than that."
+    primaryText := "Mary was less impressed with every candidate than that."
     glossedTokens := []
     context := "John gave every candidate an A."
-    judgment := .acceptable
+    judgment := .marginal
     alternatives := []
     readings := [("low DegP", .acceptable), ("high DegP", .unacceptable)]
     paperFeatures := [("section", "2.2"), ("operator", "universal internal argument"), ("comparative", "less")] }
@@ -337,7 +337,7 @@ def ex_33 : Datum :=
     context := ""
     judgment := .acceptable
     alternatives := []
-    readings := [("low DegP", .acceptable), ("high DegP", .unacceptable)]
+    readings := [("low DegP", .acceptable), ("high DegP", .ungrammatical)]
     paperFeatures := [("section", "2.3"), ("verb", "might"), ("class", "epistemic"), ("highDegP", "no")] }
 
 def ex_34a : Datum :=
@@ -350,7 +350,7 @@ def ex_34a : Datum :=
     context := ""
     judgment := .acceptable
     alternatives := []
-    readings := [("low DegP", .acceptable), ("high DegP", .unacceptable)]
+    readings := [("low DegP", .acceptable), ("high DegP", .ungrammatical)]
     paperFeatures := [("section", "2.3"), ("verb", "should"), ("class", "negRaising"), ("highDegP", "no")] }
 
 def ex_34b : Datum :=
@@ -363,7 +363,7 @@ def ex_34b : Datum :=
     context := ""
     judgment := .acceptable
     alternatives := []
-    readings := [("low DegP", .acceptable), ("high DegP", .unacceptable)]
+    readings := [("low DegP", .acceptable), ("high DegP", .ungrammatical)]
     paperFeatures := [("section", "2.3"), ("verb", "be supposed to"), ("class", "negRaising"), ("highDegP", "no")] }
 
 def ex_34c : Datum :=
@@ -376,21 +376,8 @@ def ex_34c : Datum :=
     context := ""
     judgment := .acceptable
     alternatives := []
-    readings := [("low DegP", .acceptable), ("high DegP", .unacceptable)]
+    readings := [("low DegP", .acceptable), ("high DegP", .ungrammatical)]
     paperFeatures := [("section", "2.3"), ("verb", "want"), ("class", "negRaising"), ("highDegP", "no")] }
-
-def ex_36 : Datum :=
-  { id := "heim2001_36"
-    source := ⟨"heim-2001", "(36)"⟩
-    reportedIn := none
-    language := "stan1293"
-    primaryText := "I want the paper to be less long than 10pp."
-    glossedTokens := []
-    context := ""
-    judgment := .acceptable
-    alternatives := []
-    readings := []
-    paperFeatures := [("section", "2.3"), ("verb", "want"), ("claim", "with the maximum of (35) the high-DegP LF (36b) is equivalent to (36a)")] }
 
 def ex_37 : Datum :=
   { id := "heim2001_37"
@@ -496,6 +483,6 @@ def ex_63 : Datum :=
     readings := [("low DegP", .acceptable), ("high DegP", .acceptable)]
     paperFeatures := [("section", "3.2"), ("claim", "two readings by scoping too, (62)")] }
 
-def all : List Datum := [ex_7, ex_8, ex_11, ex_13a, ex_13b, ex_14a, ex_14b, ex_15a, ex_15b, ex_17a, ex_18a, ex_19a, ex_20a, ex_21a, ex_22a, ex_24a, ex_25, ex_26, ex_28a, ex_29a, ex_30a, ex_31a, ex_32a, ex_32b, ex_33, ex_34a, ex_34b, ex_34c, ex_36, ex_37, ex_38, ex_41, ex_42, ex_58, ex_60a, ex_60b, ex_63]
+def all : List Datum := [ex_7, ex_8, ex_11, ex_13a, ex_13b, ex_14a, ex_14b, ex_15a, ex_15b, ex_17a, ex_18a, ex_19a, ex_20a, ex_21a, ex_22a, ex_24a, ex_25, ex_26, ex_28a, ex_29a, ex_30a, ex_31a, ex_32a, ex_32b, ex_33, ex_34a, ex_34b, ex_34c, ex_37, ex_38, ex_41, ex_42, ex_58, ex_60a, ex_60b, ex_63]
 
 end Heim2001.Examples

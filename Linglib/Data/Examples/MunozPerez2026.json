@@ -47,7 +47,8 @@
     "se"
    ]
   ],
-  "comment": ""
+  "comment": "",
+  "verified": "page-image"
  },
  {
   "id": "munozperez2026_5",
@@ -110,7 +111,8 @@
     "se me"
    ]
   ],
-  "comment": ""
+  "comment": "",
+  "verified": "page-image"
  },
  {
   "id": "munozperez2026_6a",
@@ -173,7 +175,8 @@
     "me le"
    ]
   ],
-  "comment": ""
+  "comment": "",
+  "verified": "page-image"
  },
  {
   "id": "munozperez2026_6b",
@@ -231,7 +234,8 @@
     "se me le"
    ]
   ],
-  "comment": "The paper gives no free translation."
+  "comment": "The paper gives no free translation.",
+  "verified": "page-image"
  },
  {
   "id": "munozperez2026_7a",
@@ -294,7 +298,8 @@
     "se me"
    ]
   ],
-  "comment": ""
+  "comment": "",
+  "verified": "page-image"
  },
  {
   "id": "munozperez2026_7b",
@@ -348,7 +353,8 @@
     "me le"
    ]
   ],
-  "comment": "The paper gives no free translation."
+  "comment": "The paper gives no free translation.",
+  "verified": "page-image"
  },
  {
   "id": "munozperez2026_7c",
@@ -406,7 +412,8 @@
     "se me le"
    ]
   ],
-  "comment": "The paper gives no free translation."
+  "comment": "The paper gives no free translation.",
+  "verified": "page-image"
  },
  {
   "id": "munozperez2026_8a",
@@ -469,7 +476,8 @@
     "se me"
    ]
   ],
-  "comment": ""
+  "comment": "",
+  "verified": "page-image"
  },
  {
   "id": "munozperez2026_8b",
@@ -480,26 +488,26 @@
   "language": "stan1288",
   "primaryText": "Me le hundió el bote.",
   "glossedTokens": [
-   [
-    "Me",
-    "1SG.DAT"
-   ],
-   [
-    "le",
-    "LE"
-   ],
-   [
-    "hundió",
-    "sank.3SG"
-   ],
-   [
-    "el",
-    "the"
-   ],
-   [
-    "bote",
-    "boat"
-   ]
+    [
+      "Me",
+      "DAT.1SG"
+    ],
+    [
+      "le",
+      "LE"
+    ],
+    [
+      "hundió",
+      "sank.3SG"
+    ],
+    [
+      "el",
+      "the"
+    ],
+    [
+      "bote",
+      "boat"
+    ]
   ],
   "translation": "",
   "context": "",
@@ -523,7 +531,8 @@
     "me le"
    ]
   ],
-  "comment": "The paper gives no free translation."
+  "comment": "The paper gives no free translation.",
+  "verified": "page-image"
  },
  {
   "id": "munozperez2026_8c",
@@ -581,7 +590,8 @@
     "se me le"
    ]
   ],
-  "comment": "The paper gives no free translation."
+  "comment": "The paper gives no free translation.",
+  "verified": "page-image"
  },
  {
   "id": "munozperez2026_9a",
@@ -644,7 +654,8 @@
     "se me"
    ]
   ],
-  "comment": ""
+  "comment": "",
+  "verified": "page-image"
  },
  {
   "id": "munozperez2026_9b",
@@ -698,7 +709,8 @@
     "me le"
    ]
   ],
-  "comment": "The paper gives no free translation."
+  "comment": "The paper gives no free translation.",
+  "verified": "page-image"
  },
  {
   "id": "munozperez2026_9c",
@@ -756,7 +768,8 @@
     "se me le"
    ]
   ],
-  "comment": "The paper gives no free translation."
+  "comment": "The paper gives no free translation.",
+  "verified": "page-image"
  },
  {
   "id": "munozperez2026_10a",
@@ -819,7 +832,8 @@
     "se me"
    ]
   ],
-  "comment": ""
+  "comment": "",
+  "verified": "page-image"
  },
  {
   "id": "munozperez2026_10b",
@@ -873,7 +887,8 @@
     "me le"
    ]
   ],
-  "comment": "The paper gives no free translation."
+  "comment": "The paper gives no free translation.",
+  "verified": "page-image"
  },
  {
   "id": "munozperez2026_10c",
@@ -931,7 +946,8 @@
     "se me le"
    ]
   ],
-  "comment": "The paper gives no free translation."
+  "comment": "The paper gives no free translation.",
+  "verified": "page-image"
  },
  {
   "id": "munozperez2026_11a",
@@ -981,7 +997,8 @@
     "se me"
    ]
   ],
-  "comment": ""
+  "comment": "",
+  "verified": "page-image"
  },
  {
   "id": "munozperez2026_11b",
@@ -1031,7 +1048,8 @@
     "me le"
    ]
   ],
-  "comment": "The paper gives no free translation."
+  "comment": "The paper gives no free translation.",
+  "verified": "page-image"
  },
  {
   "id": "munozperez2026_11c",
@@ -1085,7 +1103,8 @@
     "se me le"
    ]
   ],
-  "comment": "The paper gives no free translation."
+  "comment": "The paper gives no free translation.",
+  "verified": "page-image"
  },
  {
   "id": "munozperez2026_12a",
@@ -1139,7 +1158,8 @@
     "se me"
    ]
   ],
-  "comment": ""
+  "comment": "",
+  "verified": "page-image"
  },
  {
   "id": "munozperez2026_12b",
@@ -1193,7 +1213,8 @@
     "me le"
    ]
   ],
-  "comment": "The paper gives no free translation."
+  "comment": "The paper gives no free translation.",
+  "verified": "page-image"
  },
  {
   "id": "munozperez2026_12c",
@@ -1251,7 +1272,8 @@
     "se me le"
    ]
   ],
-  "comment": "The paper gives no free translation."
+  "comment": "The paper gives no free translation.",
+  "verified": "page-image"
  },
  {
   "id": "munozperez2026_13a",
@@ -1301,7 +1323,8 @@
     "se me"
    ]
   ],
-  "comment": ""
+  "comment": "",
+  "verified": "page-image"
  },
  {
   "id": "munozperez2026_13b",
@@ -1359,7 +1382,8 @@
     "me le"
    ]
   ],
-  "comment": "The paper gives no free translation."
+  "comment": "The paper gives no free translation.",
+  "verified": "page-image"
  },
  {
   "id": "munozperez2026_13c",
@@ -1421,7 +1445,8 @@
     "se me le"
    ]
   ],
-  "comment": "The paper gives no free translation."
+  "comment": "The paper gives no free translation.",
+  "verified": "page-image"
  },
  {
   "id": "munozperez2026_14a",
@@ -1483,7 +1508,8 @@
     "se me"
    ]
   ],
-  "comment": ""
+  "comment": "",
+  "verified": "page-image"
  },
  {
   "id": "munozperez2026_14b",
@@ -1545,7 +1571,8 @@
     "me le"
    ]
   ],
-  "comment": "The paper gives no free translation."
+  "comment": "The paper gives no free translation.",
+  "verified": "page-image"
  },
  {
   "id": "munozperez2026_14c",
@@ -1611,7 +1638,8 @@
     "se me le"
    ]
   ],
-  "comment": "The paper gives no free translation."
+  "comment": "The paper gives no free translation.",
+  "verified": "page-image"
  },
  {
   "id": "munozperez2026_15a",
@@ -1674,7 +1702,8 @@
     "se me"
    ]
   ],
-  "comment": ""
+  "comment": "",
+  "verified": "page-image"
  },
  {
   "id": "munozperez2026_15b",
@@ -1728,7 +1757,8 @@
     "me le"
    ]
   ],
-  "comment": "The paper gives no free translation."
+  "comment": "The paper gives no free translation.",
+  "verified": "page-image"
  },
  {
   "id": "munozperez2026_15c",
@@ -1786,7 +1816,8 @@
     "se me le"
    ]
   ],
-  "comment": "The paper gives no free translation."
+  "comment": "The paper gives no free translation.",
+  "verified": "page-image"
  },
  {
   "id": "munozperez2026_16a",
@@ -1849,7 +1880,8 @@
     "se te"
    ]
   ],
-  "comment": ""
+  "comment": "",
+  "verified": "page-image"
  },
  {
   "id": "munozperez2026_16b",
@@ -1903,7 +1935,8 @@
     "te le"
    ]
   ],
-  "comment": "The paper gives no free translation."
+  "comment": "The paper gives no free translation.",
+  "verified": "page-image"
  },
  {
   "id": "munozperez2026_16c",
@@ -1961,7 +1994,8 @@
     "se te le"
    ]
   ],
-  "comment": "The paper gives no free translation."
+  "comment": "The paper gives no free translation.",
+  "verified": "page-image"
  },
  {
   "id": "munozperez2026_17a",
@@ -2024,7 +2058,8 @@
     "se le"
    ]
   ],
-  "comment": ""
+  "comment": "",
+  "verified": "page-image"
  },
  {
   "id": "munozperez2026_17b",
@@ -2078,7 +2113,8 @@
     "le le"
    ]
   ],
-  "comment": "The paper gives no free translation."
+  "comment": "The paper gives no free translation.",
+  "verified": "page-image"
  },
  {
   "id": "munozperez2026_17c",
@@ -2136,7 +2172,8 @@
     "se le le"
    ]
   ],
-  "comment": "The paper gives no free translation."
+  "comment": "The paper gives no free translation.",
+  "verified": "page-image"
  },
  {
   "id": "munozperez2026_18a",
@@ -2199,7 +2236,8 @@
     "se nos"
    ]
   ],
-  "comment": ""
+  "comment": "",
+  "verified": "page-image"
  },
  {
   "id": "munozperez2026_18b",
@@ -2253,7 +2291,8 @@
     "nos le"
    ]
   ],
-  "comment": "The paper gives no free translation."
+  "comment": "The paper gives no free translation.",
+  "verified": "page-image"
  },
  {
   "id": "munozperez2026_18c",
@@ -2311,7 +2350,8 @@
     "se nos le"
    ]
   ],
-  "comment": "The paper gives no free translation."
+  "comment": "The paper gives no free translation.",
+  "verified": "page-image"
  },
  {
   "id": "munozperez2026_19a",
@@ -2374,7 +2414,8 @@
     "se les"
    ]
   ],
-  "comment": ""
+  "comment": "",
+  "verified": "page-image"
  },
  {
   "id": "munozperez2026_19b",
@@ -2428,7 +2469,8 @@
     "les le"
    ]
   ],
-  "comment": "The paper gives no free translation."
+  "comment": "The paper gives no free translation.",
+  "verified": "page-image"
  },
  {
   "id": "munozperez2026_19c",
@@ -2486,7 +2528,8 @@
     "se les le"
    ]
   ],
-  "comment": "The paper gives no free translation."
+  "comment": "The paper gives no free translation.",
+  "verified": "page-image"
  },
  {
   "id": "munozperez2026_23",
@@ -2536,7 +2579,8 @@
     "nos le"
    ]
   ],
-  "comment": ""
+  "comment": "",
+  "verified": "page-image"
  },
  {
   "id": "munozperez2026_24",
@@ -2586,7 +2630,8 @@
     "me le"
    ]
   ],
-  "comment": ""
+  "comment": "",
+  "verified": "page-image"
  },
  {
   "id": "munozperez2026_29",
@@ -2649,7 +2694,8 @@
     "se les"
    ]
   ],
-  "comment": "The verb is plural and glossed 3SG in the paper."
+  "comment": "The verb is plural and glossed 3SG in the paper.",
+  "verified": "page-image"
  },
  {
   "id": "munozperez2026_30a",
@@ -2703,7 +2749,8 @@
     "me les"
    ]
   ],
-  "comment": "The verb is plural and glossed 3SG in the paper."
+  "comment": "The verb is plural and glossed 3SG in the paper.",
+  "verified": "page-image"
  },
  {
   "id": "munozperez2026_30b",
@@ -2739,7 +2786,7 @@
     "doors"
    ]
   ],
-  "translation": "The door opened for/on/to me.",
+  "translation": "The doors opened for/on/to me.",
   "context": "",
   "judgment": "ungrammatical",
   "readings": [],
@@ -2761,7 +2808,8 @@
     "se me les"
    ]
   ],
-  "comment": "The verb is plural and glossed 3SG in the paper."
+  "comment": "The verb is plural and glossed 3SG in the paper. The paper prints the translation 'The door opened for/on/to me.'; its second translation and (30a) have 'the doors'.",
+  "verified": "page-image"
  },
  {
   "id": "munozperez2026_36b",
@@ -2807,7 +2855,8 @@
     ""
    ]
   ],
-  "comment": ""
+  "comment": "",
+  "verified": "page-image"
  },
  {
   "id": "munozperez2026_37",
@@ -2857,7 +2906,8 @@
     "se"
    ]
   ],
-  "comment": ""
+  "comment": "",
+  "verified": "page-image"
  },
  {
   "id": "munozperez2026_38b",
@@ -2903,7 +2953,8 @@
     ""
    ]
   ],
-  "comment": "The gloss of the verb is printed without the period."
+  "comment": "The gloss of the verb is printed without the period.",
+  "verified": "page-image"
  },
  {
   "id": "munozperez2026_38c",
@@ -2953,7 +3004,8 @@
     "se"
    ]
   ],
-  "comment": ""
+  "comment": "",
+  "verified": "page-image"
  },
  {
   "id": "munozperez2026_39a",
@@ -3016,7 +3068,8 @@
     "se me"
    ]
   ],
-  "comment": ""
+  "comment": "",
+  "verified": "page-image"
  },
  {
   "id": "munozperez2026_39b",
@@ -3070,7 +3123,8 @@
     "me le"
    ]
   ],
-  "comment": "The paper gives no free translation."
+  "comment": "The paper gives no free translation.",
+  "verified": "page-image"
  },
  {
   "id": "munozperez2026_39c",
@@ -3128,7 +3182,8 @@
     "se me le"
    ]
   ],
-  "comment": "The paper gives no free translation."
+  "comment": "The paper gives no free translation.",
+  "verified": "page-image"
  },
  {
   "id": "munozperez2026_40a",
@@ -3187,7 +3242,8 @@
     "me"
    ]
   ],
-  "comment": ""
+  "comment": "",
+  "verified": "page-image"
  },
  {
   "id": "munozperez2026_40b",
@@ -3241,7 +3297,8 @@
     "me le"
    ]
   ],
-  "comment": "The paper gives no free translation."
+  "comment": "The paper gives no free translation.",
+  "verified": "page-image"
  },
  {
   "id": "munozperez2026_41b",
@@ -3287,7 +3344,8 @@
     ""
    ]
   ],
-  "comment": ""
+  "comment": "",
+  "verified": "page-image"
  },
  {
   "id": "munozperez2026_42",
@@ -3337,7 +3395,8 @@
     "se"
    ]
   ],
-  "comment": ""
+  "comment": "",
+  "verified": "page-image"
  },
  {
   "id": "munozperez2026_43a",
@@ -3396,7 +3455,8 @@
     "me"
    ]
   ],
-  "comment": ""
+  "comment": "",
+  "verified": "page-image"
  },
  {
   "id": "munozperez2026_43b",
@@ -3459,7 +3519,8 @@
     "se me"
    ]
   ],
-  "comment": ""
+  "comment": "",
+  "verified": "page-image"
  },
  {
   "id": "munozperez2026_44a",
@@ -3522,7 +3583,8 @@
     "me le"
    ]
   ],
-  "comment": ""
+  "comment": "",
+  "verified": "page-image"
  },
  {
   "id": "munozperez2026_44b",
@@ -3580,7 +3642,8 @@
     "se me le"
    ]
   ],
-  "comment": "The paper gives no free translation."
+  "comment": "The paper gives no free translation.",
+  "verified": "page-image"
  },
  {
   "id": "munozperez2026_49a",
@@ -3643,7 +3706,8 @@
     "se me"
    ]
   ],
-  "comment": ""
+  "comment": "",
+  "verified": "page-image"
  },
  {
   "id": "munozperez2026_49b",
@@ -3697,7 +3761,8 @@
     "me le"
    ]
   ],
-  "comment": "The paper gives no free translation."
+  "comment": "The paper gives no free translation.",
+  "verified": "page-image"
  },
  {
   "id": "munozperez2026_49c",
@@ -3755,7 +3820,8 @@
     "se me le"
    ]
   ],
-  "comment": "The paper gives no free translation."
+  "comment": "The paper gives no free translation.",
+  "verified": "page-image"
  },
  {
   "id": "munozperez2026_50a",
@@ -3818,7 +3884,8 @@
     "se me"
    ]
   ],
-  "comment": "The paper attributes the missing reading to world knowledge, a blackout being spontaneous."
+  "comment": "The paper attributes the missing reading to world knowledge, a blackout being spontaneous.",
+  "verified": "page-image"
  },
  {
   "id": "munozperez2026_50b",
@@ -3872,7 +3939,8 @@
     "me le"
    ]
   ],
-  "comment": "The paper gives no free translation."
+  "comment": "The paper gives no free translation.",
+  "verified": "page-image"
  },
  {
   "id": "munozperez2026_50c",
@@ -3930,6 +3998,7 @@
     "se me le"
    ]
   ],
-  "comment": "The paper gives no free translation."
+  "comment": "The paper gives no free translation.",
+  "verified": "page-image"
  }
 ]

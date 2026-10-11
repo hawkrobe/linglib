@@ -38,12 +38,8 @@
         "barbarians"
       ],
       [
-        "mesa",
+        "mesa se",
         "within"
-      ],
-      [
-        "se",
-        "in"
       ],
       [
         "tris",
@@ -73,7 +69,8 @@
         "external argument introduced by a preposition"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "imanishi2014_s91",
@@ -82,7 +79,7 @@
       "paperLabel": "(91)"
     },
     "language": "kaqc1270",
-    "primaryText": "ri ru-k'at-ïk ri tinamit [ri x-ø-b'än ri a Juan] x-ø-xib'i-n.",
+    "primaryText": "ri ru-k'at-ïk ri tinamït [ri x-ø-b'en ri a Juan] x-ø-xib'i-n.",
     "discourseSegments": [],
     "glossedTokens": [
       [
@@ -98,7 +95,7 @@
         "DET"
       ],
       [
-        "tinamit",
+        "tinamït",
         "city"
       ],
       [
@@ -106,7 +103,7 @@
         "DET"
       ],
       [
-        "x-ø-b'än",
+        "x-ø-b'en",
         "PRFV-ABS3S-do"
       ],
       [
@@ -141,7 +138,8 @@
         "only the internal argument inside; the agent in a relative clause"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "imanishi2014_s92",
@@ -174,7 +172,7 @@
         "PRFV-ABS3S-scare-AP"
       ]
     ],
-    "translation": "Juan's burning was scary. (Juan was burned; not: Juan burned something.)",
+    "translation": "Juan's burning was scary.",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -189,7 +187,8 @@
         "a sole argument is the internal argument"
       ]
     ],
-    "comment": ""
+    "comment": "The paper adds: = Juan was burned. (*Juan burned something.)",
+    "verified": "page-image"
   },
   {
     "id": "imanishi2014_s93a",
@@ -198,7 +197,7 @@
       "paperLabel": "(93a)"
     },
     "language": "kaqc1270",
-    "primaryText": "y-in-ajin che [ki-k'ul-ik ak'wal-a'].",
+    "primaryText": "y-in-ajin che [ki-k'ul-ïk ak'wal-a'].",
     "discourseSegments": [],
     "glossedTokens": [
       [
@@ -210,7 +209,7 @@
         "PREP"
       ],
       [
-        "ki-k'ul-ik",
+        "ki-k'ul-ïk",
         "ERG3P-meet.PAS-NOML"
       ],
       [
@@ -233,7 +232,8 @@
         "S/A=ABS on ajin, O=ERG on the nominalized verb"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "imanishi2014_s93b",
@@ -273,7 +273,8 @@
         "S=ABS on ajin"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "imanishi2014_s94a",
@@ -282,11 +283,11 @@
       "paperLabel": "(94a)"
     },
     "language": "kaqc1270",
-    "primaryText": "roj x-ø-qa-chäp [ki-k'ul-ik rje'].",
+    "primaryText": "röj x-ø-qa-chäp [ki-k'ul-ïk rje'].",
     "discourseSegments": [],
     "glossedTokens": [
       [
-        "roj",
+        "röj",
         "we"
       ],
       [
@@ -294,7 +295,7 @@
         "PRFV-ABS3S-ERG1P-begin"
       ],
       [
-        "ki-k'ul-ik",
+        "ki-k'ul-ïk",
         "ERG3P-meet.PAS-NOML"
       ],
       [
@@ -317,7 +318,8 @@
         "embedding verb chäp 'begin'"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "imanishi2014_s99b",
@@ -326,7 +328,7 @@
       "paperLabel": "(99b)"
     },
     "language": "kaqc1270",
-    "primaryText": "y-oj-ajin che ru-tik-ik jun k'otz'i'j.",
+    "primaryText": "y-oj-ajin che ru-tik-ïk jun k'otz'i'j.",
     "discourseSegments": [],
     "glossedTokens": [
       [
@@ -338,7 +340,7 @@
         "PREP"
       ],
       [
-        "ru-tik-ik",
+        "ru-tik-ïk",
         "ERG3S-plant.PAS-NOML"
       ],
       [
@@ -365,7 +367,8 @@
         "tensed vowel of the root transitive under nominalization"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "imanishi2014_s100b",
@@ -374,7 +377,7 @@
       "paperLabel": "(100b)"
     },
     "language": "kaqc1270",
-    "primaryText": "rje' y-e-ajin che ru-tuk-ik sopa.",
+    "primaryText": "rje' y-e-ajin che ru-tuk-ïk sopa.",
     "discourseSegments": [],
     "glossedTokens": [
       [
@@ -390,7 +393,7 @@
         "PREP"
       ],
       [
-        "ru-tuk-ik",
+        "ru-tuk-ïk",
         "ERG3S-stir.PAS-NOML"
       ],
       [
@@ -413,7 +416,8 @@
         "tensed vowel of the root transitive under nominalization"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "imanishi2014_s102b",
@@ -422,11 +426,11 @@
       "paperLabel": "(102b)"
     },
     "language": "kaqc1270",
-    "primaryText": "roj y-oj-ajin che ki-q'ete-x-ïk ri ak'wal-a'.",
+    "primaryText": "röj y-oj-ajin che ki-q'ete-x-ïk ri ak'wal-a'.",
     "discourseSegments": [],
     "glossedTokens": [
       [
-        "roj",
+        "röj",
         "we"
       ],
       [
@@ -465,7 +469,8 @@
         "the passive suffix -x on the derived transitive under nominalization"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "imanishi2014_s137a",
@@ -505,7 +510,8 @@
         "A=ERG, O=ABS inside the nominalized clause"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "imanishi2014_s137b",
@@ -545,7 +551,8 @@
         "S=ERG"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "imanishi2014_s138a",
@@ -589,7 +596,8 @@
         "A=ERG, O=ABS, the suffix -on supplying object Case"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "imanishi2014_s138b",
@@ -629,7 +637,8 @@
         "S=ERG"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "imanishi2014_s181",
@@ -638,11 +647,11 @@
       "paperLabel": "(181)"
     },
     "language": "mamm1241",
-    "primaryText": "at-s txab'an siich' ok q-ook-a juu7n priim.",
+    "primaryText": "at-ø txab'an siich' ok q-ook-a juu7n priim.",
     "discourseSegments": [],
     "glossedTokens": [
       [
-        "at-s",
+        "at-ø",
         "LOC-ABS3S"
       ],
       [
@@ -689,7 +698,8 @@
         "S=ERG in an aspectless temporal clause"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "imanishi2014_s182",
@@ -698,7 +708,7 @@
       "paperLabel": "(182)"
     },
     "language": "mamm1241",
-    "primaryText": "ok qo tzaalaj-al ok t-q-il u7j t-e yool t-e I7tzal",
+    "primaryText": "ok qo tzaalaj-al ok t-q-il u7j t-e yool t-e l7tzal",
     "discourseSegments": [],
     "glossedTokens": [
       [
@@ -738,7 +748,7 @@
         "ERG3S-RN"
       ],
       [
-        "I7tzal",
+        "l7tzal",
         "Ixtahuacán"
       ]
     ],
@@ -761,7 +771,8 @@
         "double ergative: A and O both ERG"
       ]
     ],
-    "comment": "An apparent counterexample to phase head ergative Case; attributed to a second, covert phase head."
+    "comment": "An apparent counterexample to phase head ergative Case; attributed to a second, covert phase head. The page prints l7tzal with a lowercase l (glossed Ixtahuacán); a capital I7tzal may be intended, but that is not certain.",
+    "verified": "page-image"
   },
   {
     "id": "imanishi2014_t178_kaqchikel",
@@ -796,7 +807,8 @@
         "S/A=ABS, O=ERG"
       ]
     ],
-    "comment": "Summary of the nominative-accusative alignment in non-perfective clauses."
+    "comment": "Summary of the nominative-accusative alignment in non-perfective clauses.",
+    "verified": "page-image"
   },
   {
     "id": "imanishi2014_t178_tojolabal",
@@ -831,7 +843,8 @@
         "S/A=ABS, O=ERG"
       ]
     ],
-    "comment": "Summary of the nominative-accusative alignment in non-perfective clauses."
+    "comment": "Summary of the nominative-accusative alignment in non-perfective clauses.",
+    "verified": "page-image"
   },
   {
     "id": "imanishi2014_t178_chol",
@@ -866,7 +879,8 @@
         "S/A=ERG, O=ABS"
       ]
     ],
-    "comment": "Summary of the nominative-accusative alignment in non-perfective clauses."
+    "comment": "Summary of the nominative-accusative alignment in non-perfective clauses.",
+    "verified": "page-image"
   },
   {
     "id": "imanishi2014_t178_qanjobal",
@@ -901,7 +915,8 @@
         "S/A=ERG, O=ABS"
       ]
     ],
-    "comment": "Summary of the nominative-accusative alignment in non-perfective clauses."
+    "comment": "Summary of the nominative-accusative alignment in non-perfective clauses.",
+    "verified": "page-image"
   },
   {
     "id": "imanishi2014_t178_chuj",
@@ -936,7 +951,8 @@
         "S/A=ERG, O=ABS"
       ]
     ],
-    "comment": "Summary of the nominative-accusative alignment in non-perfective clauses."
+    "comment": "Summary of the nominative-accusative alignment in non-perfective clauses.",
+    "verified": "page-image"
   },
   {
     "id": "imanishi2014_t178_ixil",
@@ -971,7 +987,8 @@
         "S/A=ERG, O=ABS"
       ]
     ],
-    "comment": "Summary of the nominative-accusative alignment in non-perfective clauses."
+    "comment": "Summary of the nominative-accusative alignment in non-perfective clauses.",
+    "verified": "page-image"
   },
   {
     "id": "imanishi2014_t178_yucatec",
@@ -1006,6 +1023,7 @@
         "S/A=ERG, O=ABS"
       ]
     ],
-    "comment": "Summary of the nominative-accusative alignment in non-perfective clauses."
+    "comment": "Summary of the nominative-accusative alignment in non-perfective clauses.",
+    "verified": "page-image"
   }
 ]

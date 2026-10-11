@@ -1,7 +1,7 @@
 [
   {
     "id": "cohenerteschikshir2002_boys_brave",
-    "source": {"bibkey": "cohen-erteschik-shir-2002", "paperLabel": "UNVERIFIED §2.1"},
+    "source": {"bibkey": "cohen-erteschik-shir-2002", "paperLabel": "(1a)"},
     "language": "stan1293",
     "primaryText": "Boys are brave.",
     "discourseSegments": [],
@@ -17,51 +17,12 @@
     "paperFeatures": [
       ["predicate_level", "individual"]
     ],
-    "comment": "Migrated from Phenomena/Generics/BarePlurals.lean boysAreBrave. I-level predicate forces the generic reading of the bare plural subject."
-  },
-  {
-    "id": "cohenerteschikshir2002_italians_good_looking",
-    "source": {"bibkey": "cohen-erteschik-shir-2002", "paperLabel": "UNVERIFIED §2.1"},
-    "language": "stan1293",
-    "primaryText": "Italians are good-looking.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "alternatives": [],
-    "readings": [
-      {"name": "generic", "judgment": "acceptable"},
-      {"name": "existential", "judgment": "unacceptable"}
-    ],
-    "paperFeatures": [
-      ["predicate_level", "individual"]
-    ],
-    "comment": "Migrated from Phenomena/Generics/BarePlurals.lean italiansGoodLooking. I-level predicate; no existential reading."
-  },
-  {
-    "id": "cohenerteschikshir2002_lawyers_intelligent",
-    "source": {"bibkey": "cohen-erteschik-shir-2002", "paperLabel": "UNVERIFIED §2.1"},
-    "language": "stan1293",
-    "primaryText": "Lawyers are intelligent.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "alternatives": [],
-    "readings": [
-      {"name": "generic", "judgment": "acceptable"},
-      {"name": "existential", "judgment": "unacceptable"}
-    ],
-    "paperFeatures": [
-      ["predicate_level", "individual"]
-    ],
-    "comment": "Migrated from Phenomena/Generics/BarePlurals.lean lawyersIntelligent. I-level predicate forces the generic reading."
+    "comment": "Migrated from Phenomena/Generics/BarePlurals.lean boysAreBrave. I-level predicate forces the generic reading of the bare plural subject.",
+    "verified": "page-image"
   },
   {
     "id": "cohenerteschikshir2002_boys_present",
-    "source": {"bibkey": "cohen-erteschik-shir-2002", "paperLabel": "UNVERIFIED §2.2"},
+    "source": {"bibkey": "cohen-erteschik-shir-2002", "paperLabel": "(1b)"},
     "language": "stan1293",
     "primaryText": "Boys are present.",
     "discourseSegments": [],
@@ -78,13 +39,14 @@
       ["predicate_level", "stage"],
       ["locative_status", "argument"]
     ],
-    "comment": "Migrated from Phenomena/Generics/BarePlurals.lean boysArePresent. S-level predicate with a locative ARGUMENT licenses the existential reading ('there are boys here')."
+    "comment": "Migrated from Phenomena/Generics/BarePlurals.lean boysArePresent. S-level predicate with a locative ARGUMENT licenses the existential reading ('there are boys here').",
+    "verified": "page-image"
   },
   {
     "id": "cohenerteschikshir2002_firemen_available",
-    "source": {"bibkey": "cohen-erteschik-shir-2002", "paperLabel": "UNVERIFIED §2.2"},
+    "source": {"bibkey": "cohen-erteschik-shir-2002", "paperLabel": "(64)"},
     "language": "stan1293",
-    "primaryText": "Firemen are available.",
+    "primaryText": "A: Who is available? B: FIREMEN are available.",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
@@ -92,34 +54,16 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [
-      {"name": "generic", "judgment": "acceptable"},
-      {"name": "existential", "judgment": "acceptable"}
+      {
+        "name": "existential",
+        "judgment": "acceptable"
+      }
     ],
     "paperFeatures": [
       ["predicate_level", "stage"],
       ["locative_status", "argument"]
     ],
-    "comment": "Migrated from Phenomena/Generics/BarePlurals.lean firemenAvailable. S-level predicate with an implicit locative argument (for some task/location)."
-  },
-  {
-    "id": "cohenerteschikshir2002_soldiers_arrived",
-    "source": {"bibkey": "cohen-erteschik-shir-2002", "paperLabel": "UNVERIFIED §2.2"},
-    "language": "stan1293",
-    "primaryText": "Soldiers arrived.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "alternatives": [],
-    "readings": [
-      {"name": "generic", "judgment": "acceptable"},
-      {"name": "existential", "judgment": "acceptable"}
-    ],
-    "paperFeatures": [
-      ["predicate_level", "stage"],
-      ["locative_status", "argument"]
-    ],
-    "comment": "Migrated from Phenomena/Generics/BarePlurals.lean soldiersArrived. Motion verb with an implicit goal argument; existential reading available."
+    "comment": "The wh-question test shows that the stressed bare plural is a focus; with another potential topic available, the existential reading is possible (§5.1).",
+    "verified": "page-image"
   }
 ]

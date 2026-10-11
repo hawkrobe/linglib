@@ -4,10 +4,10 @@
     "source": {"bibkey": "wang-sun-2026", "paperLabel": "(4c)"},
     "reportedIn": null,
     "language": "mand1415",
-    "primaryText": "yī hěn cōngmíng de gè xuéshēng",
+    "primaryText": "yī hěn cōngming de gè xuéshēng",
     "discourseSegments": [],
     "glossedTokens": [
-      ["yī", "one"], ["hěn", "very"], ["cōngmíng", "clever"], ["de", "DE"], ["gè", "CL"],
+      ["yī", "one"], ["hěn", "very"], ["cōngming", "clever"], ["de", "DE"], ["gè", "CL"],
       ["xuéshēng", "student"]
     ],
     "translation": "a very clever student",
@@ -19,18 +19,18 @@
       ["modifier", "degree"],
       ["position", "Num _ Cl"]
     ],
-    "comment": "A degree-modified adjective between the numeral and the classifier."
+    "comment": "A degree-modified adjective between the numeral and the classifier.",
+    "verified": "page-image"
   },
   {
     "id": "wangsun2026_2",
     "source": {"bibkey": "wang-sun-2026", "paperLabel": "(8a)"},
     "reportedIn": null,
     "language": "mand1415",
-    "primaryText": "yī gè cōngmíng (de) xuéshēng",
+    "primaryText": "yí gè cōngming (de) xuéshēng",
     "discourseSegments": [],
     "glossedTokens": [
-      ["yī", "one"], ["gè", "CL"], ["cōngmíng", "clever"], ["(de)", "(DE)"],
-      ["xuéshēng", "student"]
+      ["yí", "one"], ["gè", "CL"], ["cōngming", "clever"], ["(de)", "DE"], ["xuéshēng", "student"]
     ],
     "translation": "a clever student",
     "context": "",
@@ -41,7 +41,8 @@
       ["modifier", "bare"],
       ["position", "Cl _ N"]
     ],
-    "comment": "The adjective follows the classifier."
+    "comment": "The adjective follows the classifier.",
+    "verified": "page-image"
   },
   {
     "id": "wangsun2026_3",
@@ -51,7 +52,7 @@
     "primaryText": "yī hěn dà (de) zhāng zhuōzi",
     "discourseSegments": [],
     "glossedTokens": [
-      ["yī", "one"], ["hěn", "very"], ["dà", "big"], ["(de)", "(DE)"], ["zhāng", "CL"],
+      ["yī", "one"], ["hěn", "very"], ["dà", "big"], ["(de)", "DE"], ["zhāng", "CL"],
       ["zhuōzi", "table"]
     ],
     "translation": "a very big table",
@@ -63,17 +64,18 @@
       ["modifier", "degree"],
       ["position", "Num _ Cl"]
     ],
-    "comment": "A degree-modified adjective between the numeral and the classifier."
+    "comment": "A degree-modified adjective between the numeral and the classifier.",
+    "verified": "page-image"
   },
   {
     "id": "wangsun2026_4",
     "source": {"bibkey": "wang-sun-2026", "paperLabel": "(29b)"},
     "reportedIn": null,
     "language": "mand1415",
-    "primaryText": "yī dà zhāng zhuōzi",
+    "primaryText": "yí dà zhāng zhuōzi",
     "discourseSegments": [],
     "glossedTokens": [
-      ["yī", "one"], ["dà", "big"], ["zhāng", "CL"], ["zhuōzi", "table"]
+      ["yí", "one"], ["dà", "big"], ["zhāng", "CL"], ["zhuōzi", "table"]
     ],
     "translation": "a big table",
     "context": "",
@@ -84,7 +86,8 @@
       ["modifier", "bare"],
       ["position", "Num _ Cl"]
     ],
-    "comment": "A bare size adjective before the classifier, spelled out with Q."
+    "comment": "A bare size adjective before the classifier, spelled out with Q.",
+    "verified": "page-image"
   },
   {
     "id": "wangsun2026_5",
@@ -106,7 +109,8 @@
       ["modifier", "degree"],
       ["position", "Cl _ N"]
     ],
-    "comment": "A degree-modified adjective after the classifier."
+    "comment": "A degree-modified adjective after the classifier.",
+    "verified": "page-image"
   },
   {
     "id": "wangsun2026_6",
@@ -119,7 +123,7 @@
       ["Gè", "CL"], ["píngguǒ", "apple"], ["Zhāngsān", "Zhangsan"], ["chī-le", "eat-PFV"],
       ["sān", "three"]
     ],
-    "translation": "As to apples, Zhangsan ate three.",
+    "translation": "(As to) apples, Zhangsan ate three.",
     "context": "",
     "judgment": "ungrammatical",
     "alternatives": [],
@@ -127,7 +131,8 @@
     "paperFeatures": [
       ["dislocation", "Cl N"]
     ],
-    "comment": "Classifier and noun topicalized together, stranding the numeral."
+    "comment": "Classifier and noun topicalized together, stranding the numeral.",
+    "verified": "page-image"
   },
   {
     "id": "wangsun2026_7",
@@ -140,7 +145,7 @@
       ["Píngguǒ", "apple"], ["Zhāngsān", "Zhangsan"], ["chī-le", "eat-PFV"], ["sān", "three"],
       ["gè", "CL"]
     ],
-    "translation": "As to apples, Zhangsan ate three.",
+    "translation": "(As to) apples, Zhangsan ate three.",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -148,7 +153,8 @@
     "paperFeatures": [
       ["dislocation", "N"]
     ],
-    "comment": "The noun topicalized alone."
+    "comment": "The noun topicalized alone. The paper's gloss line prints ate-PFV for chī-le (eat-PFV in the same sentence as (5a) and (43b)).",
+    "verified": "page-image"
   },
   {
     "id": "wangsun2026_8",
@@ -158,7 +164,7 @@
     "primaryText": "Sān gè, Zhāngsān chī-le píngguǒ",
     "discourseSegments": [],
     "glossedTokens": [
-      ["Sān", "three"], ["gè", "CL"], ["Zhāngsān", "Zhangsan"], ["chī-le", "eat-PFV"],
+      ["Sān", "three"], ["gè", "CL"], ["Zhāngsān", "Zhāngsān"], ["chī-le", "eat-PFV"],
       ["píngguǒ", "apple"]
     ],
     "translation": "Zhangsan ate three apples.",
@@ -169,7 +175,8 @@
     "paperFeatures": [
       ["dislocation", "Num Cl"]
     ],
-    "comment": "Numeral and classifier topicalized without the noun."
+    "comment": "Numeral and classifier topicalized without the noun.",
+    "verified": "page-image"
   },
   {
     "id": "wangsun2026_9",
@@ -179,10 +186,10 @@
     "primaryText": "Zhāngsān mǎi-le jǐ zhāng hěn dà de zhuōzi?",
     "discourseSegments": [],
     "glossedTokens": [
-      ["Zhāngsān", "Zhangsan"], ["mǎi-le", "buy-PFV"], ["jǐ", "how.many"], ["zhāng", "CL"],
+      ["Zhāngsān", "Zhangsān"], ["mǎi-le", "buy-PFV"], ["jǐ", "how-many"], ["zhāng", "CL"],
       ["hěn", "very"], ["dà", "big"], ["de", "DE"], ["zhuōzi", "table"]
     ],
-    "translation": "How many very big tables did Zhangsan buy?",
+    "translation": "How many very big tables did Zhangsān buy?",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -191,7 +198,8 @@
       ["wh", "numeral"],
       ["modifier", "post-classifier"]
     ],
-    "comment": "The wh-numeral precedes a post-classifier modifier."
+    "comment": "The wh-numeral precedes a post-classifier modifier.",
+    "verified": "page-image"
   },
   {
     "id": "wangsun2026_10",
@@ -201,10 +209,10 @@
     "primaryText": "Zhāngsān mǎi-le hěn dà de jǐ zhāng zhuōzi?",
     "discourseSegments": [],
     "glossedTokens": [
-      ["Zhāngsān", "Zhangsan"], ["mǎi-le", "buy-PFV"], ["hěn", "very"], ["dà", "big"],
-      ["de", "DE"], ["jǐ", "how.many"], ["zhāng", "CL"], ["zhuōzi", "table"]
+      ["Zhāngsān", "Zhangsān"], ["mǎi-le", "buy-PFV"], ["hěn", "very"], ["dà", "big"],
+      ["de", "DE"], ["jǐ", "how-many"], ["zhāng", "CL"], ["zhuōzi", "table"]
     ],
-    "translation": "How many very big tables did Zhangsan buy?",
+    "translation": "How many very big tables did Zhangsān buy?",
     "context": "",
     "judgment": "ungrammatical",
     "alternatives": [],
@@ -213,7 +221,8 @@
       ["wh", "numeral"],
       ["modifier", "pre-nominal"]
     ],
-    "comment": "The wh-numeral follows a pre-nominal modifier in D's second dimension."
+    "comment": "The wh-numeral follows a pre-nominal modifier in D's second dimension.",
+    "verified": "page-image"
   },
   {
     "id": "wangsun2026_11",
@@ -234,7 +243,8 @@
       ["particle", "none"],
       ["reading", "sortal"]
     ],
-    "comment": "Without de the container classifier denotes real glasses: the sortal reading."
+    "comment": "Without de the container classifier denotes real glasses: the sortal reading.",
+    "verified": "page-image"
   },
   {
     "id": "wangsun2026_12",
@@ -255,7 +265,8 @@
       ["particle", "de"],
       ["reading", "mensural"]
     ],
-    "comment": "With de the classifier denotes an abstract unit: the mensural reading."
+    "comment": "With de the classifier denotes an abstract unit: the mensural reading.",
+    "verified": "page-image"
   },
   {
     "id": "wangsun2026_13",
@@ -277,7 +288,8 @@
       ["modifier", "de-marked"],
       ["position", "D _ Num"]
     ],
-    "comment": "A de-marked modifier between the demonstrative and the numeral."
+    "comment": "A de-marked modifier between the demonstrative and the numeral.",
+    "verified": "page-image"
   },
   {
     "id": "wangsun2026_14",
@@ -299,7 +311,8 @@
       ["modifier", "two de-marked"],
       ["target", "D"]
     ],
-    "comment": "Two de-marked modifiers cannot both be 2-parts of D; acceptable only if the glasses are expensive."
+    "comment": "Two de-marked modifiers cannot both be 2-parts of D; acceptable only if the glasses are expensive.",
+    "verified": "page-image"
   },
   {
     "id": "wangsun2026_15",
@@ -320,7 +333,8 @@
     "paperFeatures": [
       ["modifier", "nested de-marked"]
     ],
-    "comment": "The outer modifier is part of the modifier of D, not of D."
+    "comment": "The outer modifier is part of the modifier of D, not of D.",
+    "verified": "page-image"
   },
   {
     "id": "wangsun2026_16",
@@ -330,10 +344,10 @@
     "primaryText": "Sān gè píngguǒ, Zhāngsān chī-le.",
     "discourseSegments": [],
     "glossedTokens": [
-      ["Sān", "three"], ["gè", "CL"], ["píngguǒ", "apple"], ["Zhāngsān", "Zhangsan"],
+      ["Sān", "three"], ["gè", "CL"], ["píngguǒ", "apple"], ["Zhāngsān", "Zhangsān"],
       ["chī-le", "eat-PFV"]
     ],
-    "translation": "Three apples, Zhangsan ate.",
+    "translation": "Three apples, Zhangsān ate.",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -341,7 +355,8 @@
     "paperFeatures": [
       ["topicalisation", "D"]
     ],
-    "comment": "The whole D topicalises: D is a part of O, a 1-part of C."
+    "comment": "The whole D topicalises: D is a part of O, a 1-part of C.",
+    "verified": "page-image"
   },
   {
     "id": "wangsun2026_17",
@@ -351,10 +366,10 @@
     "primaryText": "Píngguǒ, Zhāngsān chī-le sān gè hěn dà de.",
     "discourseSegments": [],
     "glossedTokens": [
-      ["Píngguǒ", "apple"], ["Zhāngsān", "Zhangsan"], ["chī-le", "eat-PFV"], ["sān", "three"],
+      ["Píngguǒ", "apple"], ["Zhāngsān", "Zhangsān"], ["chī-le", "eat-PFV"], ["sān", "three"],
       ["gè", "CL"], ["hěn", "very"], ["dà", "big"], ["de", "DE"]
     ],
-    "translation": "(As to) apples, Zhangsan ate three very big (ones).",
+    "translation": "(As to) apples, Zhangsān ate three very big (ones).",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -363,7 +378,8 @@
       ["topicalisation", "N"],
       ["modifier", "2-part of Cl"]
     ],
-    "comment": "N topicalises past a modifier that is the classifier's 2-part: D's 2-part is free."
+    "comment": "N topicalises past a modifier that is the classifier's 2-part: D's 2-part is free.",
+    "verified": "page-image"
   },
   {
     "id": "wangsun2026_18",
@@ -373,10 +389,10 @@
     "primaryText": "Píngguǒ, Zhāngsān chī-le hěn dà de sān gè.",
     "discourseSegments": [],
     "glossedTokens": [
-      ["Píngguǒ", "apple"], ["Zhāngsān", "Zhangsan"], ["chī-le", "eat-PFV"], ["hěn", "very"],
+      ["Píngguǒ", "apple"], ["Zhāngsān", "Zhangsān"], ["chī-le", "eat-PFV"], ["hěn", "very"],
       ["dà", "big"], ["de", "DE"], ["sān", "three"], ["gè", "CL"]
     ],
-    "translation": "(As to) apples, Zhangsan ate three very big (ones).",
+    "translation": "(As to) apples, Zhangsān ate three very big (ones).",
     "context": "",
     "judgment": "ungrammatical",
     "alternatives": [],
@@ -385,7 +401,8 @@
       ["topicalisation", "N"],
       ["modifier", "2-part of D"]
     ],
-    "comment": "N cannot topicalise when the modifier fills D's 2-part."
+    "comment": "N cannot topicalise when the modifier fills D's 2-part.",
+    "verified": "page-image"
   },
   {
     "id": "wangsun2026_19",
@@ -407,6 +424,7 @@
       ["use", "measure"],
       ["noun", "absent"]
     ],
-    "comment": "The measure use: the numeral and classifier with no noun, Q the 2-part of Deg."
+    "comment": "The measure use: the numeral and classifier with no noun, Q the 2-part of Deg.",
+    "verified": "page-image"
   }
 ]

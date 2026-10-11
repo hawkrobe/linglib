@@ -24,7 +24,8 @@
         "sae"
       ]
     ],
-    "comment": "Both a definite and an indefinite article."
+    "comment": "Both a definite and an indefinite article.",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath2001_relpro_en",
@@ -51,7 +52,8 @@
         "sae"
       ]
     ],
-    "comment": "Postnominal, an inflecting relative pronoun introducing the clause and resuming the head's role."
+    "comment": "Postnominal, an inflecting relative pronoun introducing the clause and resuming the head's role.",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath2001_relparticle_en",
@@ -78,7 +80,8 @@
         "particle"
       ]
     ],
-    "comment": "The postnominal relative clause introduced by a relative particle, the other widespread European type."
+    "comment": "The postnominal relative clause introduced by a relative particle, the other widespread European type.",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath2001_haveperf_en",
@@ -105,7 +108,8 @@
         "sae"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath2001_haveperf_sv",
@@ -132,7 +136,8 @@
         "sae"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath2001_haveperf_es",
@@ -159,7 +164,8 @@
         "sae"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath2001_perf_fi",
@@ -168,9 +174,9 @@
       "paperLabel": "§2.3"
     },
     "language": "finn1318",
-    "primaryText": "olen saanut",
+    "primaryText": "ole-n saa-nut",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [["ole-n", "be-1SG"], ["saa-nut", "receive-PTCP"]],
     "translation": "I have received",
     "context": "",
     "judgment": "acceptable",
@@ -186,7 +192,8 @@
         "participialCopula"
       ]
     ],
-    "comment": "An active participle with the copula, the Slavic, Finno-Ugrian and Armenian type."
+    "comment": "An active participle with the copula, the Slavic, Finno-Ugrian and Armenian type.",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath2001_perf_cy",
@@ -213,7 +220,8 @@
         "prepositional"
       ]
     ],
-    "comment": "The Welsh perfect is formed with the preposition 'after'."
+    "comment": "The Welsh perfect is formed with the preposition 'after'.",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath2001_nomexp_en",
@@ -240,7 +248,8 @@
         "generalizing"
       ]
     ],
-    "comment": "The experiencer coded as a nominative subject."
+    "comment": "The experiencer coded as a nominative subject.",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath2001_invexp_en",
@@ -267,7 +276,8 @@
         "inverting"
       ]
     ],
-    "comment": "The stimulus coded as the nominative subject."
+    "comment": "The stimulus coded as the nominative subject.",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath2001_getpass_cy",
@@ -294,7 +304,8 @@
         "getPassive"
       ]
     ],
-    "comment": "The Welsh 'get'-passive rendered word for word."
+    "comment": "The Welsh 'get'-passive rendered word for word.",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath2001_caus_mn",
@@ -306,7 +317,7 @@
     "primaryText": "xajl-uul-",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "melt (transitive)",
+    "translation": "melt (tr.)",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -321,7 +332,8 @@
         "causative"
       ]
     ],
-    "comment": "A causative derived from the inchoative xajl- 'melt (intransitive)'."
+    "comment": "A causative derived from the inchoative xajl- 'melt (intransitive)'.",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath2001_anticaus_ru",
@@ -333,7 +345,7 @@
     "primaryText": "izmenit'-sja",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "change (intransitive)",
+    "translation": "change (intr.)",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -348,7 +360,8 @@
         "anticausative"
       ]
     ],
-    "comment": "An anticausative derived from the causative izmenit' 'change (transitive)'."
+    "comment": "An anticausative derived from the causative izmenit' 'change (transitive)'.",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath2001_datposs_de",
@@ -375,7 +388,8 @@
         "dative"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath2001_locposs_sv",
@@ -402,7 +416,8 @@
         "locative"
       ]
     ],
-    "comment": "The North Germanic and Balto-Finnic locative external possessor."
+    "comment": "The North Germanic and Balto-Finnic locative external possessor.",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath2001_vni_de",
@@ -429,7 +444,8 @@
         "sae"
       ]
     ],
-    "comment": "V + NI: the negative indefinite without verbal negation."
+    "comment": "V + NI: the negative indefinite without verbal negation.",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath2001_nvni_el",
@@ -456,7 +472,8 @@
         "negatedVerb"
       ]
     ],
-    "comment": "NV + NI: the negated verb with the negative indefinite."
+    "comment": "NV + NI: the negated verb with the negative indefinite.",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath2001_mixed_it_pre",
@@ -483,7 +500,8 @@
         "mixed"
       ]
     ],
-    "comment": "The preverbal negative indefinite takes no verbal negation."
+    "comment": "The preverbal negative indefinite takes no verbal negation.",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath2001_mixed_it_post",
@@ -510,7 +528,8 @@
         "mixed"
       ]
     ],
-    "comment": "The postverbal negative indefinite cooccurs with verbal negation."
+    "comment": "The postverbal negative indefinite cooccurs with verbal negation.",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath2001_equative_ca",
@@ -537,7 +556,8 @@
         "sae"
       ]
     ],
-    "comment": "com is an adverbial relative pronoun and tan a correlative demonstrative."
+    "comment": "com is an adverbial relative pronoun and tan a correlative demonstrative.",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath2001_equative_pt",
@@ -564,7 +584,8 @@
         "sae"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath2001_equative_de",
@@ -591,7 +612,8 @@
         "sae"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath2001_equative_ru",
@@ -618,7 +640,8 @@
         "sae"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath2001_equative_hu",
@@ -645,7 +668,8 @@
         "sae"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath2001_equative_fi",
@@ -672,7 +696,8 @@
         "sae"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath2001_equative_ka",
@@ -699,7 +724,8 @@
         "sae"
       ]
     ],
-    "comment": "Listed in §2.10 although Map 107.10 leaves Georgian outside the isogloss."
+    "comment": "Listed in §2.10 although Map 107.10 leaves Georgian outside the isogloss.",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath2001_equative_bg",
@@ -726,7 +752,8 @@
         "sae"
       ]
     ],
-    "comment": "No correlative demonstrative, but a standard marker of relative-pronoun origin."
+    "comment": "No correlative demonstrative, but a standard marker of relative-pronoun origin.",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath2001_equative_ga",
@@ -753,7 +780,8 @@
         "special"
       ]
     ],
-    "comment": "The Celtic special marker on the adjective."
+    "comment": "The Celtic special marker on the adjective.",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath2001_equative_sv",
@@ -780,7 +808,8 @@
         "equally"
       ]
     ],
-    "comment": "The Scandinavian 'equally' on the adjective."
+    "comment": "The Scandinavian 'equally' on the adjective.",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath2001_agr_bg",
@@ -807,7 +836,8 @@
         "referential"
       ]
     ],
-    "comment": "The subject suffix can have a referential function on its own."
+    "comment": "The subject suffix can have a referential function on its own.",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath2001_agr_de",
@@ -834,7 +864,8 @@
         "sae"
       ]
     ],
-    "comment": "The agreement suffix has no referential function, so the pronoun cannot be omitted."
+    "comment": "The agreement suffix has no referential function, so the pronoun cannot be omitted.",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath2001_nopro_sv",
@@ -861,7 +892,8 @@
         "obligatoryPronouns"
       ]
     ],
-    "comment": "Obligatory subject pronouns with no agreement distinctions on the verb."
+    "comment": "Obligatory subject pronouns with no agreement distinctions on the verb.",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath2001_intref_de",
@@ -888,7 +920,8 @@
         "sae"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath2001_intref_ru",
@@ -915,7 +948,8 @@
         "sae"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath2001_intref_it",
@@ -942,7 +976,8 @@
         "sae"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath2001_intref_el",
@@ -969,7 +1004,8 @@
         "sae"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath2001_intref_fa",
@@ -980,7 +1016,7 @@
     "language": "west2369",
     "primaryText": "Hušang xodaš-rā did",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [["Hušang", "Hushang"], ["xodaš-rā", "self-ACC"], ["did", "saw"]],
     "translation": "Hushang saw himself",
     "context": "",
     "judgment": "acceptable",
@@ -996,7 +1032,8 @@
         "undifferentiated"
       ]
     ],
-    "comment": "The intensifier xod-aš 'himself' doubles as the reflexive."
+    "comment": "The intensifier xod-aš 'himself' doubles as the reflexive.",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath2001_comparative_ja",
@@ -1007,7 +1044,7 @@
     "language": "nucl1643",
     "primaryText": "inu-ga neko yori ookii",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [["inu-ga", "dog-SUBJ"], ["neko", "cat"], ["yori", "from"], ["ookii", "big"]],
     "translation": "the dog is bigger than the cat",
     "context": "",
     "judgment": "acceptable",
@@ -1023,7 +1060,8 @@
         "standardMarkerOnly"
       ]
     ],
-    "comment": "The comparative semantics carried by the standard marker alone."
+    "comment": "The comparative semantics carried by the standard marker alone.",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath2001_with_en",
@@ -1050,7 +1088,8 @@
         "sae"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath2001_negcoord_nl",
@@ -1077,6 +1116,7 @@
         "sae"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   }
 ]

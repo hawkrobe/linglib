@@ -21,7 +21,8 @@
       ["internal", "np"],
       ["aj", "no"]
     ],
-    "comment": "A transitive root under -w with a bare NP theme: the incorporation antipassive."
+    "comment": "A transitive root under -w with a bare NP theme: the incorporation antipassive.",
+    "verified": "page-image"
   },
   {
     "id": "coon2019_4b",
@@ -44,7 +45,8 @@
       ["internal", "none"],
       ["aj", "no"]
     ],
-    "comment": "A nominal root under -w: an unergative."
+    "comment": "A nominal root under -w: an unergative.",
+    "verified": "page-image"
   },
   {
     "id": "coon2019_4c",
@@ -67,7 +69,8 @@
       ["internal", "none"],
       ["aj", "no"]
     ],
-    "comment": "A positional root under -w."
+    "comment": "A positional root under -w.",
+    "verified": "page-image"
   },
   {
     "id": "coon2019_7a",
@@ -90,7 +93,8 @@
       ["internal", "dp"],
       ["aj", "no"]
     ],
-    "comment": "An intransitive root in an intransitive stem, with the null v/Voice⁰ head of §2.1."
+    "comment": "An intransitive root in an intransitive stem, with the null v/Voice⁰ head of §2.1.",
+    "verified": "page-image"
   },
   {
     "id": "coon2019_7c",
@@ -113,7 +117,8 @@
       ["internal", "dp"],
       ["aj", "no"]
     ],
-    "comment": "The irrealis status suffix in the prospective."
+    "comment": "The irrealis status suffix in the prospective.",
+    "verified": "page-image"
   },
   {
     "id": "coon2019_10a",
@@ -136,7 +141,8 @@
       ["internal", "dp"],
       ["aj", "no"]
     ],
-    "comment": "A transitive root in a bare transitive stem, §2.2."
+    "comment": "A transitive root in a bare transitive stem, §2.2.",
+    "verified": "page-image"
   },
   {
     "id": "coon2019_10c",
@@ -161,7 +167,8 @@
       ["internal", "dp"],
       ["aj", "no"]
     ],
-    "comment": "The transitive status suffix is dropped before postverbal material."
+    "comment": "The transitive status suffix is dropped before postverbal material.",
+    "verified": "page-image"
   },
   {
     "id": "coon2019_11b",
@@ -183,7 +190,8 @@
       ["construction", "derivedTransitive"],
       ["rootForm", "tz'ib'"]
     ],
-    "comment": "A zero-derived transitive from a nominal root, with the derived-transitive status suffix -ej; outside the four v/Voice⁰ heads."
+    "comment": "A zero-derived transitive from a nominal root, with the derived-transitive status suffix -ej; outside the four v/Voice⁰ heads.",
+    "verified": "page-image"
   },
   {
     "id": "coon2019_14a",
@@ -206,7 +214,8 @@
       ["construction", "stative"],
       ["rootForm", "chot"]
     ],
-    "comment": "A positional root in a stative -an stem, the diagnostic for the class, §2.4."
+    "comment": "A positional root in a stative -an stem, the diagnostic for the class, §2.4.",
+    "verified": "page-image"
   },
   {
     "id": "coon2019_19a",
@@ -231,7 +240,8 @@
       ["internal", "none"],
       ["aj", "no"]
     ],
-    "comment": "A denominal unergative, (17)."
+    "comment": "A denominal unergative, (17).",
+    "verified": "page-image"
   },
   {
     "id": "coon2019_19b",
@@ -254,7 +264,8 @@
       ["internal", "none"],
       ["aj", "no"]
     ],
-    "comment": "The -w stem with the irrealis status suffix in place of -i, footnote 9."
+    "comment": "The -w stem with the irrealis status suffix in place of -i, footnote 9.",
+    "verified": "page-image"
   },
   {
     "id": "coon2019_22a",
@@ -279,7 +290,8 @@
       ["internal", "none"],
       ["aj", "no"]
     ],
-    "comment": "A positional root in a -w verb stem, (20)."
+    "comment": "A positional root in a -w verb stem, (20).",
+    "verified": "page-image"
   },
   {
     "id": "coon2019_23a",
@@ -304,7 +316,8 @@
       ["internal", "none"],
       ["aj", "no"]
     ],
-    "comment": "The agentive intransitive whose structure is (23b): -w in v/Voice⁰ introduces the external argument without assigning ergative case."
+    "comment": "The agentive intransitive whose structure is (23b): -w in v/Voice⁰ introduces the external argument without assigning ergative case.",
+    "verified": "page-image"
   },
   {
     "id": "coon2019_26a",
@@ -329,7 +342,8 @@
       ["internal", "dp"],
       ["aj", "no"]
     ],
-    "comment": "The transitive member of the transitive ~ incorporation antipassive pair."
+    "comment": "The transitive member of the transitive ~ incorporation antipassive pair.",
+    "verified": "page-image"
   },
   {
     "id": "coon2019_26b",
@@ -353,7 +367,8 @@
       ["internal", "np"],
       ["aj", "no"]
     ],
-    "comment": "The incorporation antipassive: a single Set B marker, a classifierless theme."
+    "comment": "The incorporation antipassive: a single Set B marker, a classifierless theme.",
+    "verified": "page-image"
   },
   {
     "id": "coon2019_28a",
@@ -378,7 +393,8 @@
       ["internal", "dp"],
       ["aj", "no"]
     ],
-    "comment": "A numeral makes the theme a full DP, which the -w stem cannot license."
+    "comment": "A numeral makes the theme a full DP, which the -w stem cannot license.",
+    "verified": "page-image"
   },
   {
     "id": "coon2019_28b",
@@ -403,7 +419,8 @@
       ["internal", "dp"],
       ["aj", "no"]
     ],
-    "comment": "A demonstrative makes the theme a full DP."
+    "comment": "A demonstrative makes the theme a full DP.",
+    "verified": "page-image"
   },
   {
     "id": "coon2019_28c",
@@ -428,7 +445,8 @@
       ["internal", "dp"],
       ["aj", "no"]
     ],
-    "comment": "A noun classifier makes the theme a full DP."
+    "comment": "A noun classifier makes the theme a full DP.",
+    "verified": "page-image"
   },
   {
     "id": "coon2019_29a",
@@ -452,7 +470,8 @@
       ["internal", "dp"],
       ["aj", "no"]
     ],
-    "comment": "A possessed theme is a full DP."
+    "comment": "A possessed theme is a full DP.",
+    "verified": "page-image"
   },
   {
     "id": "coon2019_29b",
@@ -476,7 +495,8 @@
       ["internal", "dp"],
       ["aj", "no"]
     ],
-    "comment": "A pronominal theme is a full DP."
+    "comment": "A pronominal theme is a full DP.",
+    "verified": "page-image"
   },
   {
     "id": "coon2019_30",
@@ -501,7 +521,8 @@
       ["internal", "np"],
       ["aj", "no"]
     ],
-    "comment": "A true adjective keeps the theme a bare NP, against Maxwell's compound analysis."
+    "comment": "A true adjective keeps the theme a bare NP, against Maxwell's compound analysis.",
+    "verified": "page-image"
   },
   {
     "id": "coon2019_31",
@@ -524,7 +545,8 @@
       ["construction", "opacity"],
       ["rootForm", "man"]
     ],
-    "comment": "(31a) with the continuation (31b): the incorporated NP is discourse opaque, so the classifier pronoun cannot pick it up."
+    "comment": "(31a) with the continuation (31b): the incorporated NP is discourse opaque, so the classifier pronoun cannot pick it up.",
+    "verified": "page-image"
   },
   {
     "id": "coon2019_34b",
@@ -545,7 +567,8 @@
       ["construction", "derivedTransitive"],
       ["rootForm", "way"]
     ],
-    "comment": "No incorporation antipassive from a derived transitive stem, whatever the suffix order: -w attaches to roots."
+    "comment": "No incorporation antipassive from a derived transitive stem, whatever the suffix order: -w attaches to roots.",
+    "verified": "page-image"
   },
   {
     "id": "coon2019_35b",
@@ -566,7 +589,8 @@
       ["construction", "derivedTransitive"],
       ["rootForm", "tzil"]
     ],
-    "comment": "Nor from a pluractional derived transitive."
+    "comment": "Nor from a pluractional derived transitive.",
+    "verified": "page-image"
   },
   {
     "id": "coon2019_36b",
@@ -589,7 +613,8 @@
       ["construction", "adjacency"],
       ["rootForm", "chonh"]
     ],
-    "comment": "The bare NP must be stem-adjacent; compare (36a) with the theme before the subject."
+    "comment": "The bare NP must be stem-adjacent; compare (36a) with the theme before the subject.",
+    "verified": "page-image"
   },
   {
     "id": "coon2019_37",
@@ -614,7 +639,8 @@
       ["internal", "dp"],
       ["aj", "no"]
     ],
-    "comment": "A full DP theme cannot be licensed once Infl⁰ licenses the external argument, §3.2.2."
+    "comment": "The variant with the classifier of the printed Tz-in-chonh-w-i (*anh) onh.: a full DP theme cannot be licensed once Infl⁰ licenses the external argument, §3.2.2.",
+    "verified": "page-image"
   },
   {
     "id": "coon2019_38",
@@ -637,7 +663,8 @@
       ["internal", "none"],
       ["aj", "no"]
     ],
-    "comment": "A transitive root must compose with a complement: the incorporation antipassive requires its bare NP."
+    "comment": "A transitive root must compose with a complement: the incorporation antipassive requires its bare NP.",
+    "verified": "page-image"
   },
   {
     "id": "coon2019_39a",
@@ -661,7 +688,8 @@
       ["internal", "np"],
       ["aj", "no"]
     ],
-    "comment": "A nominal root under -w takes no complement."
+    "comment": "A nominal root under -w takes no complement.",
+    "verified": "page-image"
   },
   {
     "id": "coon2019_39b",
@@ -686,7 +714,8 @@
       ["internal", "none"],
       ["aj", "no"]
     ],
-    "comment": "With a preposition the nominal is an adjunct."
+    "comment": "With a preposition the nominal is an adjunct.",
+    "verified": "page-image"
   },
   {
     "id": "coon2019_42a",
@@ -711,7 +740,8 @@
       ["internal", "dp"],
       ["aj", "no"]
     ],
-    "comment": "The DP theme saturates the root by Functional Application, (43)."
+    "comment": "The DP theme saturates the root by Functional Application, (43).",
+    "verified": "page-image"
   },
   {
     "id": "coon2019_42b",
@@ -735,7 +765,8 @@
       ["internal", "np"],
       ["aj", "no"]
     ],
-    "comment": "The bare NP restricts the root and Existential Closure applies at once, (44)."
+    "comment": "The bare NP restricts the root and Existential Closure applies at once, (44).",
+    "verified": "page-image"
   },
   {
     "id": "coon2019_47a",
@@ -760,7 +791,8 @@
       ["internal", "dp"],
       ["aj", "no"]
     ],
-    "comment": "An intransitive root, unaccusative, with the null head."
+    "comment": "An intransitive root, unaccusative, with the null head.",
+    "verified": "page-image"
   },
   {
     "id": "coon2019_47b",
@@ -785,7 +817,8 @@
       ["internal", "dp"],
       ["aj", "no"]
     ],
-    "comment": "No -w on an intransitive root: its external argument would take Infl⁰ and leave the internal argument unlicensed, §3.3."
+    "comment": "No -w on an intransitive root: its external argument would take Infl⁰ and leave the internal argument unlicensed, §3.3.",
+    "verified": "page-image"
   },
   {
     "id": "coon2019_48a",
@@ -810,7 +843,8 @@
       ["internal", "dp"],
       ["aj", "no"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "coon2019_48b",
@@ -834,7 +868,8 @@
       ["internal", "np"],
       ["aj", "no"]
     ],
-    "comment": "Unaccusative subjects do not incorporate in Chuj, so the internal argument of an intransitive root is always a full DP."
+    "comment": "Unaccusative subjects do not incorporate in Chuj, so the internal argument of an intransitive root is always a full DP.",
+    "verified": "page-image"
   },
   {
     "id": "coon2019_54a",
@@ -858,7 +893,8 @@
       ["internal", "np"],
       ["aj", "no"]
     ],
-    "comment": "The incorporation antipassive, without -aj."
+    "comment": "The incorporation antipassive, without -aj.",
+    "verified": "page-image"
   },
   {
     "id": "coon2019_54b",
@@ -885,7 +921,8 @@
       ["internal", "none"],
       ["aj", "no"]
     ],
-    "comment": "The incorporation antipassive admits neither an oblique theme nor none at all; the paper stars the form with and without the PP."
+    "comment": "The incorporation antipassive admits neither an oblique theme nor none at all; the paper stars the form with and without the PP.",
+    "verified": "page-image"
   },
   {
     "id": "coon2019_55b",
@@ -914,7 +951,8 @@
       ["internal", "implicit"],
       ["aj", "yes"]
     ],
-    "comment": "The absolutive antipassive: an implicit theme, optionally an oblique, and -aj."
+    "comment": "The absolutive antipassive: an implicit theme, optionally an oblique, and -aj.",
+    "verified": "page-image"
   },
   {
     "id": "coon2019_55c",
@@ -937,7 +975,8 @@
       ["internal", "implicit"],
       ["aj", "yes"]
     ],
-    "comment": "The absolutive antipassive with the theme omitted."
+    "comment": "The absolutive antipassive with the theme omitted.",
+    "verified": "page-image"
   },
   {
     "id": "coon2019_57b",
@@ -958,7 +997,8 @@
       ["construction", "derivedIntransitive"],
       ["rootForm", "el"]
     ],
-    "comment": "-aj on a stem derived in -k', Hopkins's decomposition of the -C-aj suffixes, §4.1."
+    "comment": "-aj on a stem derived in -k', Hopkins's decomposition of the -C-aj suffixes, §4.1.",
+    "verified": "page-image"
   },
   {
     "id": "coon2019_59a",
@@ -983,7 +1023,8 @@
       ["internal", "dp"],
       ["aj", "no"]
     ],
-    "comment": "The agentless passive in -j: no external argument at all."
+    "comment": "The agentless passive in -j: no external argument at all.",
+    "verified": "page-image"
   },
   {
     "id": "coon2019_60a",
@@ -1011,7 +1052,8 @@
       ["internal", "dp"],
       ["aj", "yes"]
     ],
-    "comment": "The passive in -chaj, decomposed into -ch and -aj."
+    "comment": "The passive in -chaj, decomposed into -ch and -aj.",
+    "verified": "page-image"
   },
   {
     "id": "coon2019_62",
@@ -1042,7 +1084,8 @@
       ["aj", "yes"],
       ["oblique", "agent"]
     ],
-    "comment": "The implicit agent of -ch realized in an oblique -uj phrase. From Buenrostro 2013."
+    "comment": "The implicit agent of -ch realized in an oblique -uj phrase. From Buenrostro 2013.",
+    "verified": "page-image"
   },
   {
     "id": "coon2019_63a",
@@ -1067,7 +1110,8 @@
       ["head", "ch"],
       ["diagnostic", "agentAdverb"]
     ],
-    "comment": "An agent-oriented adverb with the -chaj passive."
+    "comment": "An agent-oriented adverb with the -chaj passive.",
+    "verified": "page-image"
   },
   {
     "id": "coon2019_63b",
@@ -1095,7 +1139,8 @@
       ["head", "ch"],
       ["diagnostic", "purposeClause"]
     ],
-    "comment": "Control into a purpose clause with the -chaj passive."
+    "comment": "Control into a purpose clause with the -chaj passive.",
+    "verified": "page-image"
   },
   {
     "id": "coon2019_65a",
@@ -1124,7 +1169,8 @@
       ["aj", "no"],
       ["oblique", "cause"]
     ],
-    "comment": "The oblique of an agentless passive is a cause, here inanimate."
+    "comment": "The oblique of an agentless passive is a cause, here inanimate.",
+    "verified": "page-image"
   },
   {
     "id": "coon2019_66a",
@@ -1153,7 +1199,8 @@
       ["aj", "yes"],
       ["oblique", "agent"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "coon2019_66b",
@@ -1182,7 +1229,8 @@
       ["aj", "no"],
       ["oblique", "cause"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "coon2019_67a",
@@ -1207,7 +1255,8 @@
       ["head", "j"],
       ["diagnostic", "agentAdverb"]
     ],
-    "comment": "No agent-oriented adverb with the agentless passive."
+    "comment": "No agent-oriented adverb with the agentless passive.",
+    "verified": "page-image"
   },
   {
     "id": "coon2019_67b",
@@ -1235,7 +1284,8 @@
       ["head", "j"],
       ["diagnostic", "purposeClause"]
     ],
-    "comment": "No control into a purpose clause with the agentless passive."
+    "comment": "No control into a purpose clause with the agentless passive.",
+    "verified": "page-image"
   },
   {
     "id": "coon2019_70a",
@@ -1260,7 +1310,8 @@
       ["rootForm", "mak"],
       ["head", "transitive"]
     ],
-    "comment": "Inanimate causers are dispreferred as transitive subjects, so -j introduces no implicit causer either."
+    "comment": "Inanimate causers are dispreferred as transitive subjects, so -j introduces no implicit causer either.",
+    "verified": "page-image"
   },
   {
     "id": "coon2019_70b",
@@ -1288,7 +1339,8 @@
       ["aj", "no"],
       ["oblique", "cause"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "coon2019_71",
@@ -1309,7 +1361,8 @@
       ["construction", "isolated"],
       ["head", "j"]
     ],
-    "comment": "-j on the adjectival root al 'heavy', an inchoative: -j verbalizes without introducing any external argument. From Hopkins 2012a; outside the four root classes."
+    "comment": "-j on the adjectival root al 'heavy', an inchoative: -j verbalizes without introducing any external argument. From Hopkins 2012a; outside the four root classes.",
+    "verified": "page-image"
   },
   {
     "id": "coon2019_72a",
@@ -1334,7 +1387,8 @@
       ["internal", "none"],
       ["aj", "no"]
     ],
-    "comment": "The incorporation antipassive prohibits an oblique theme; the bare NP variant is fine."
+    "comment": "The variant with the preposition of the printed Ix-in-tek'-w-i (*t'a) pelota.: the incorporation antipassive prohibits an oblique theme; the bare NP variant is fine.",
+    "verified": "page-image"
   },
   {
     "id": "coon2019_72b",
@@ -1360,7 +1414,8 @@
       ["internal", "implicit"],
       ["aj", "yes"]
     ],
-    "comment": "The absolutive antipassive requires the preposition on its oblique theme."
+    "comment": "The variant with the preposition of the printed Ix-in-tek'-w-aj *(t'a) nok' pelota.: the absolutive antipassive requires the preposition on its oblique theme.",
+    "verified": "page-image"
   },
   {
     "id": "coon2019_73a",
@@ -1385,7 +1440,8 @@
       ["aj", "no"],
       ["oblique", "cause"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "coon2019_73b",
@@ -1410,7 +1466,8 @@
       ["aj", "yes"],
       ["oblique", "agent"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "coon2019_74a",
@@ -1435,7 +1492,8 @@
       ["internal", "dp"],
       ["aj", "yes"]
     ],
-    "comment": "A passive with an implicit agent, structure (74b)."
+    "comment": "A passive with an implicit agent, structure (74b).",
+    "verified": "page-image"
   },
   {
     "id": "coon2019_75a",
@@ -1458,7 +1516,8 @@
       ["internal", "implicit"],
       ["aj", "yes"]
     ],
-    "comment": "An absolutive antipassive with an implicit patient, structure (75b)."
+    "comment": "An absolutive antipassive with an implicit patient, structure (75b).",
+    "verified": "page-image"
   },
   {
     "id": "coon2019_79a",
@@ -1483,7 +1542,8 @@
       ["internal", "dp"],
       ["aj", "no"]
     ],
-    "comment": "Table (78a): the external argument licensed by v/Voice⁰, the internal by Infl⁰."
+    "comment": "Table (78a): the external argument licensed by v/Voice⁰, the internal by Infl⁰.",
+    "verified": "page-image"
   },
   {
     "id": "coon2019_79b",
@@ -1508,7 +1568,8 @@
       ["internal", "dp"],
       ["aj", "yes"]
     ],
-    "comment": "Table (78b): an implicit agent, bound by -aj."
+    "comment": "Table (78b): an implicit agent, bound by -aj.",
+    "verified": "page-image"
   },
   {
     "id": "coon2019_79c",
@@ -1533,7 +1594,8 @@
       ["internal", "dp"],
       ["aj", "no"]
     ],
-    "comment": "Table (78c): no external argument. The paper glosses the stem PFV-corn-PASS-IV, a slip for grind."
+    "comment": "Table (78c): no external argument. The paper glosses the stem PFV-corn-PASS-IV, a slip for grind.",
+    "verified": "page-image"
   },
   {
     "id": "coon2019_79d",
@@ -1556,7 +1618,8 @@
       ["internal", "implicit"],
       ["aj", "yes"]
     ],
-    "comment": "Table (78d): the external argument licensed by Infl⁰, the internal argument implicit."
+    "comment": "Table (78d): the external argument licensed by Infl⁰, the internal argument implicit.",
+    "verified": "page-image"
   },
   {
     "id": "coon2019_79e",
@@ -1580,7 +1643,8 @@
       ["internal", "np"],
       ["aj", "no"]
     ],
-    "comment": "Table (78d): the internal argument a bare NP."
+    "comment": "Table (78d): the internal argument a bare NP.",
+    "verified": "page-image"
   },
   {
     "id": "coon2019_51a",
@@ -1601,7 +1665,8 @@
       ["construction", "chol"],
       ["stem", "unaccusative"]
     ],
-    "comment": "Ch'ol: an intransitive root in an unaccusative stem."
+    "comment": "Ch'ol: an intransitive root in an unaccusative stem.",
+    "verified": "page-image"
   },
   {
     "id": "coon2019_51b",
@@ -1622,7 +1687,8 @@
       ["construction", "chol"],
       ["stem", "agentiveIntransitive"]
     ],
-    "comment": "Ch'ol has no -w and no agentive intransitive stems: a nominal root cannot form an intransitive stem."
+    "comment": "Ch'ol has no -w and no agentive intransitive stems: a nominal root cannot form an intransitive stem.",
+    "verified": "page-image"
   },
   {
     "id": "coon2019_52a",
@@ -1644,7 +1710,8 @@
       ["construction", "chol"],
       ["stem", "lightVerb"]
     ],
-    "comment": "A verbal noun needs a light verb to serve as a predicate."
+    "comment": "A verbal noun needs a light verb to serve as a predicate.",
+    "verified": "page-image"
   },
   {
     "id": "coon2019_53b",
@@ -1666,6 +1733,7 @@
       ["construction", "chol"],
       ["stem", "lightVerb"]
     ],
-    "comment": "Ch'ol's incorporation antipassive is a nominal stem under a light verb."
+    "comment": "Ch'ol's incorporation antipassive is a nominal stem under a light verb.",
+    "verified": "page-image"
   }
 ]

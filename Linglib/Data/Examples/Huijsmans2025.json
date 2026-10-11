@@ -10,7 +10,7 @@
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
-    "context": "P visits M in the hospital and sees through the window that the doctors look worried.",
+    "context": "P visits M in the hospital. P sees through the window of the hospital room that the doctors look worried. P says:",
     "judgment": "acceptable",
     "alternatives": [
       {
@@ -33,7 +33,8 @@
       ]
     ],
     "readings": [],
-    "comment": "Reported from Hirayama and Matthewson (2022)."
+    "comment": "Reported from Hirayama and Matthewson (2022).",
+    "verified": "page-image"
   },
   {
     "id": "huijsmans2025_ex38",
@@ -46,7 +47,7 @@
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
-    "context": "P poisons M's food and leaves.",
+    "context": "P poisons M's food and leaves. Later P says:",
     "judgment": "acceptable",
     "alternatives": [
       {
@@ -69,7 +70,8 @@
       ]
     ],
     "readings": [],
-    "comment": "Reported from Hirayama and Matthewson (2022)."
+    "comment": "Adapted from Hirayama and Matthewson (2022, ex. (10)); fn. 11: they give no seems variant of this example, so the author supplied it and its felicity judgment.",
+    "verified": "page-image"
   },
   {
     "id": "huijsmans2025_ex40",
@@ -91,7 +93,7 @@
       ]
     ],
     "translation": "It will be cooked.",
-    "context": "We are outside, but I have a fish cooking in the oven. I check my watch and realize that it should be cooked.",
+    "context": "We're outside, but I have a fish cooking in the oven. I check my watch and realize that it should be cooked. I say to you:",
     "judgment": "acceptable",
     "alternatives": [
       {
@@ -114,7 +116,8 @@
       ]
     ],
     "readings": [],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "huijsmans2025_ex41",
@@ -150,7 +153,8 @@
       ]
     ],
     "readings": [],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "huijsmans2025_ex42",
@@ -199,7 +203,8 @@
       ]
     ],
     "readings": [],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "huijsmans2025_ex43",
@@ -235,7 +240,8 @@
       ]
     ],
     "readings": [],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "huijsmans2025_ex44",
@@ -280,7 +286,8 @@
       ]
     ],
     "readings": [],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "huijsmans2025_ex45",
@@ -316,7 +323,8 @@
       ]
     ],
     "readings": [],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "huijsmans2025_ex46",
@@ -329,7 +337,7 @@
     "discourseSegments": [],
     "glossedTokens": [
       [
-        "xʷit",
+        "x̌ʷit",
         "really"
       ],
       [
@@ -337,7 +345,7 @@
         "FUT=CL.DEM"
       ],
       [
-        "ƛəm̓-mut",
+        "ƛ̓əm̓-mut",
         "get.wet-INT"
       ],
       [
@@ -349,7 +357,7 @@
         "intense"
       ],
       [
-        "kʷ=čəɬ",
+        "kʷ=č̓əɬ",
         "DET=rain"
       ],
       [
@@ -361,12 +369,12 @@
         "not.exist"
       ],
       [
-        "čəɬ-ukʷt-s",
+        "č̓əɬ-ukʷt-s",
         "rain-jacket-3POSS"
       ]
     ],
     "translation": "Felipe will have gotten really soaked. It's pouring, and he didn't have a rain jacket.",
-    "context": "Felipe always bikes home at 5. I haven't been paying attention to the weather, but at 6 I look out the window and see that it is pouring and has been for some time. Then I notice that Felipe left his coat in my bag.",
+    "context": "Felipe always bikes home at 5. I haven't been paying attention to the weather, but at 6 I look out the window and see that it is pouring and has been for some time—the ground is really soaked. Then I notice that Felipe left his coat in my bag, which is with me on campus. I figure Felipe will be just home by now, but must have been soaked on his way. I say:",
     "judgment": "acceptable",
     "alternatives": [
       {
@@ -393,7 +401,8 @@
       ]
     ],
     "readings": [],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "huijsmans2025_ex47",
@@ -433,7 +442,8 @@
       ]
     ],
     "readings": [],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "huijsmans2025_ex48",
@@ -482,7 +492,8 @@
       ]
     ],
     "readings": [],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "huijsmans2025_ex49",
@@ -518,7 +529,8 @@
       ]
     ],
     "readings": [],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "huijsmans2025_ex50",
@@ -540,7 +552,7 @@
       ]
     ],
     "translation": "It must be cooked.",
-    "context": "I'm cooking a fish, and I'm guessing by the smell that it is cooked.",
+    "context": "I'm cooking a fish, and I'm guessing by the smell that it is cooked. I remark to you:",
     "judgment": "acceptable",
     "alternatives": [
       {
@@ -563,7 +575,8 @@
       ]
     ],
     "readings": [],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "huijsmans2025_ex51",
@@ -599,7 +612,8 @@
       ]
     ],
     "readings": [],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "huijsmans2025_ex52",
@@ -648,7 +662,8 @@
       ]
     ],
     "readings": [],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "huijsmans2025_ex53",
@@ -684,7 +699,8 @@
       ]
     ],
     "readings": [],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "huijsmans2025_ex54",
@@ -725,7 +741,8 @@
       ]
     ],
     "readings": [],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "huijsmans2025_ex55",
@@ -761,7 +778,8 @@
       ]
     ],
     "readings": [],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "huijsmans2025_ex56",
@@ -774,7 +792,7 @@
     "discourseSegments": [],
     "glossedTokens": [
       [
-        "qʷəl̓=ča=səm=ʔut",
+        "qʷəl̓=č̓a=səm=ʔut",
         "come=INFER=FUT=EXCL"
       ],
       [
@@ -791,7 +809,7 @@
       ]
     ],
     "translation": "He'll come back. Don't worry.",
-    "context": "Tim is Bailey's cat that's gone missing. Even though she doesn't have any knowledge of what is going on with him, Gloria is trying to reassure Bailey.",
+    "context": "Tim is Bailey's cat that's gone missing. He hasn't been seen for a while now. Even though she doesn't have any knowledge of what is going on with him, Gloria is trying to reassure Bailey:",
     "judgment": "unacceptable",
     "alternatives": [],
     "paperFeatures": [
@@ -809,7 +827,8 @@
       ]
     ],
     "readings": [],
-    "comment": "Based on Bhadra (2016): the inferential needs evidence arising at or after the prejacent."
+    "comment": "Based on Bhadra (2016): the inferential needs evidence arising at or after the prejacent.",
+    "verified": "page-image"
   },
   {
     "id": "huijsmans2025_ex57",
@@ -835,7 +854,7 @@
       ]
     ],
     "translation": "He must be home.",
-    "context": "It's after 6, the time when my brother would usually be home from work. I drive past his place and see that his car is in the driveway and his lights are on.",
+    "context": "It's after 6, so it's the time when my brother would usually be home from work. I drive past his place and see that his car is in the driveway and his lights are on. I think to myself.",
     "judgment": "acceptable",
     "alternatives": [
       {
@@ -858,7 +877,8 @@
       ]
     ],
     "readings": [],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "huijsmans2025_ex58",
@@ -894,7 +914,8 @@
       ]
     ],
     "readings": [],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "huijsmans2025_ex59",
@@ -943,7 +964,8 @@
       ]
     ],
     "readings": [],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "huijsmans2025_ex60",
@@ -979,7 +1001,8 @@
       ]
     ],
     "readings": [],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "huijsmans2025_ex68",
@@ -988,7 +1011,7 @@
       "paperLabel": "(68)"
     },
     "language": "como1259",
-    "primaryText": "hoθotoɬ Freddie sqʷols səm ʔəkʷ meeting, ʔi kʷa xʷaʔ qʷol̓əs.",
+    "primaryText": "hoθotoɬ Freddie sqʷols səm ʔəkʷ meeting, ʔi kʷa xʷaʔ qʷol̓əs. kʷʊnas čɛməm? χaχyɛmot hɛhɛw.",
     "discourseSegments": [],
     "glossedTokens": [
       [
@@ -1000,7 +1023,7 @@
         "Freddie"
       ],
       [
-        "s=qʷəl=s=səm",
+        "s=qʷəl̓=s=səm",
         "NMLZ=come=3POSS=FUT"
       ],
       [
@@ -1018,10 +1041,26 @@
       [
         "qʷəl̓=as",
         "come=3SBJV"
+      ],
+      [
+        "kʷən=as",
+        "COMP=3SBJV"
+      ],
+      [
+        "čəm̓-əm",
+        "what.is.with-MD"
+      ],
+      [
+        "x̌ax̌ya-mut",
+        "strange-INT"
+      ],
+      [
+        "hihiw",
+        "really"
       ]
     ],
-    "translation": "Freddie said he would come to the meeting, but he never arrived.",
-    "context": "We had a meeting this morning, and Freddie had told me he would come, but never showed up.",
+    "translation": "Freddie said he would come to the meeting, but he never arrived. What could have happened? It's really strange.",
+    "context": "We had a meeting this morning, and Freddie had told me he would come, but never showed up. Later I tell you, 'Freddie was going to come but he never came.'",
     "judgment": "acceptable",
     "alternatives": [],
     "paperFeatures": [
@@ -1043,7 +1082,8 @@
       ]
     ],
     "readings": [],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "huijsmans2025_ex69",
@@ -1107,7 +1147,8 @@
       ]
     ],
     "readings": [],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "huijsmans2025_ex70",
@@ -1129,7 +1170,7 @@
       ]
     ],
     "translation": "Her baby will be asleep.",
-    "context": "I know my friend's baby's naptime. I take a look at the clock and decide not to call because the baby will be asleep.",
+    "context": "I know my friend's baby's naptime. I take a look at the clock and decide not to call because the baby will be asleep, and she'll wake up if her mum tries to talk on the phone.",
     "judgment": "acceptable",
     "alternatives": [],
     "paperFeatures": [
@@ -1143,7 +1184,8 @@
       ]
     ],
     "readings": [],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "huijsmans2025_ex71",
@@ -1165,7 +1207,7 @@
       ]
     ],
     "translation": "Her baby will be asleep.",
-    "context": "Over breakfast on a Saturday Felipe suggests going to drop in on our cousin in the afternoon, but I know the time he's thinking is when her baby will be napping.",
+    "context": "Over breakfast on a Saturday Felipe suggests going to drop in on our cousin in the afternoon, but I know the time he's thinking after lunch is when her baby will be napping.",
     "judgment": "acceptable",
     "alternatives": [],
     "paperFeatures": [
@@ -1179,7 +1221,8 @@
       ]
     ],
     "readings": [],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "huijsmans2025_ex75",
@@ -1210,7 +1253,8 @@
       ]
     ],
     "readings": [],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "huijsmans2025_ex76",
@@ -1223,7 +1267,7 @@
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
-    "context": "I know my friend's baby's naptime. I take a look at the clock and decide not to call because the baby will be asleep.",
+    "context": "I know my friend's baby's naptime. I take a look at the clock and decide not to call because the baby will be asleep, and she'll wake up if her mum tries to talk on the phone.",
     "judgment": "acceptable",
     "alternatives": [],
     "paperFeatures": [
@@ -1241,7 +1285,8 @@
       ]
     ],
     "readings": [],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "huijsmans2025_ex77",
@@ -1254,7 +1299,7 @@
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
-    "context": "Over breakfast on a Saturday Felipe suggests going to drop in on our cousin in the afternoon, but I know the time he's thinking is when her baby will be napping.",
+    "context": "Over breakfast on a Saturday Felipe suggests going to drop in on our cousin in the afternoon, but I know the time he's thinking after lunch is when her baby will be napping.",
     "judgment": "acceptable",
     "alternatives": [],
     "paperFeatures": [
@@ -1272,7 +1317,8 @@
       ]
     ],
     "readings": [],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "huijsmans2025_ex91",
@@ -1293,7 +1339,7 @@
         "Freddie"
       ],
       [
-        "xʷəw̓-ít",
+        "x̌ʷəw̓-ít",
         "get.lit-STAT"
       ],
       [
@@ -1320,7 +1366,8 @@
       ]
     ],
     "readings": [],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "huijsmans2025_ex92",
@@ -1333,7 +1380,7 @@
     "discourseSegments": [],
     "glossedTokens": [
       [
-        "ʔi~ʔix̌aǰa-uɬ=ča",
+        "ʔi~ʔix̌aǰa-uɬ=č̓a",
         "PROG~clean.roots-PST=INFER"
       ],
       [
@@ -1354,7 +1401,7 @@
       ]
     ],
     "translation": "Betty must have been cleaning roots. The waste bits are scattered about.",
-    "context": "I go over to Betty's house for dinner, and as I'm approaching her front door, I see fresh shavings of cedar roots scattered on the grass.",
+    "context": "I go over to Betty's house for dinner, and as I'm approaching her front door, I see fresh shavings of cedar roots scattered on the grass. I say to Gloria, who's with me:",
     "judgment": "acceptable",
     "alternatives": [],
     "paperFeatures": [
@@ -1372,7 +1419,8 @@
       ]
     ],
     "readings": [],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "huijsmans2025_ex93",
@@ -1385,7 +1433,7 @@
     "discourseSegments": [],
     "glossedTokens": [
       [
-        "č̓əɬ=ča=səm",
+        "č̓əɬ=č̓a=səm",
         "rain=INFER=FUT"
       ],
       [
@@ -1420,7 +1468,8 @@
       ]
     ],
     "readings": [],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "huijsmans2025_ex97",
@@ -1433,7 +1482,7 @@
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
-    "context": "I know my friend's baby's naptime. I take a look at the clock and decide not to call because the baby will be asleep.",
+    "context": "I know my friend's baby's naptime. I take a look at the clock and decide not to call because the baby will be asleep, and she'll wake up if her mum tries to talk on the phone.",
     "judgment": "acceptable",
     "alternatives": [
       {
@@ -1456,6 +1505,7 @@
       ]
     ],
     "readings": [],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   }
 ]

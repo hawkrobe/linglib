@@ -557,7 +557,7 @@ theorem causative_valency :
 /-- In the portative derivation of Tswana (3) of chapter 12, the woman who brought the food
 came, and the food, which cannot come, is not the initial S. -/
 theorem portative_rows :
-    ex_12_3b.judgment = .acceptable ∧ ex_12_3c.judgment = .unacceptable ∧
+    ex_12_3b.judgment = .acceptable ∧ ex_12_3c.judgment = .ungrammatical ∧
     construction ex_12_3b 0 = .term .S ∧ construction ex_12_3c 1 = .term .S := by
   decide +kernel
 

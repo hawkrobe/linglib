@@ -6,7 +6,7 @@ public import Linglib.Phonology.Prosody.Grid
 # Hayes (1995): Metrical Stress Theory
 
 This file formalizes the moraic-trochee analysis of Cairene Arabic stress in Section 4.1.3 of
-[hayes-1995]: the word is parsed from left to right into moraic trochees, a heavy syllable or
+Hayes's book: the word is parsed from left to right into moraic trochees, a heavy syllable or
 two lights (13), and End Rule Right builds the word layer over the rightmost foot (16).
 `parse` is that construction over the post-extrametricality weight string, `Tree.columns`
 reads the stress off its grid, and the prominences of (12) follow, quantity moving the peak
@@ -98,7 +98,7 @@ def mudarrisit : Yield := [1, 2, 1, 1]
 /-- *ʔadwiyatúhu* 'his drugs (nom.)' (Classical) has a heavy initial, then an even run of
 lights. -/
 def Padwiyatuhu : Yield := [2, 1, 1, 1, 1]
-/-- *šajaratuhúma:* 'their (dual) tree (nom.)' (Classical) has six lights, the final long-vowel
+/-- *šaǰaratuhúma:* 'their (dual) tree (nom.)' (Classical) has six lights, the final long-vowel
 syllable light by Mora Extrametricality. -/
 def sajaratuhuma : Yield := [1, 1, 1, 1, 1, 1]
 
@@ -125,7 +125,7 @@ theorem gridColumns_mudarrisit : Tree.columns (parse mudarrisit) = [1, 2, 3, 1] 
 theorem gridColumns_Padwiyatuhu : Tree.columns (parse Padwiyatuhu) = [2, 2, 1, 3, 1] := by
   decide
 
-/-- *šajaratuhúma:* shows even parity from the left edge (12c.i), (15c), parsing as
+/-- *šaǰaratuhúma:* shows even parity from the left edge (12c.i), (15c), parsing as
 `(šà.ja)(rà.tu)(hú.ma)`. -/
 theorem gridColumns_sajaratuhuma :
     Tree.columns (parse sajaratuhuma) = [2, 1, 2, 1, 3, 1] := by decide

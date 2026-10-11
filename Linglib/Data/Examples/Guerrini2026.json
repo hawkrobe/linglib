@@ -33,7 +33,8 @@
         "kindDenotingPlural"
       ]
     ],
-    "comment": "True."
+    "comment": "True.",
+    "verified": "page-image"
   },
   {
     "id": "guerrini2026_21b",
@@ -69,7 +70,8 @@
         "singularIndefinite"
       ]
     ],
-    "comment": "True."
+    "comment": "True.",
+    "verified": "page-image"
   },
   {
     "id": "guerrini2026_21c",
@@ -105,7 +107,8 @@
         "kindDenotingPlural"
       ]
     ],
-    "comment": "True."
+    "comment": "True.",
+    "verified": "page-image"
   },
   {
     "id": "guerrini2026_21d",
@@ -141,7 +144,8 @@
         "singularIndefinite"
       ]
     ],
-    "comment": "False: a singular indefinite cannot express an accidental generalization."
+    "comment": "False: a singular indefinite cannot express an accidental generalization.",
+    "verified": "page-image"
   },
   {
     "id": "guerrini2026_22a",
@@ -202,7 +206,8 @@
         "kindDenotingPlural"
       ]
     ],
-    "comment": "True."
+    "comment": "True.",
+    "verified": "page-image"
   },
   {
     "id": "guerrini2026_22b",
@@ -263,7 +268,8 @@
         "singularIndefinite"
       ]
     ],
-    "comment": "True."
+    "comment": "True.",
+    "verified": "page-image"
   },
   {
     "id": "guerrini2026_22c",
@@ -316,7 +322,8 @@
         "kindDenotingPlural"
       ]
     ],
-    "comment": "True."
+    "comment": "True.",
+    "verified": "page-image"
   },
   {
     "id": "guerrini2026_22d",
@@ -369,7 +376,8 @@
         "singularIndefinite"
       ]
     ],
-    "comment": "False."
+    "comment": "False.",
+    "verified": "page-image"
   },
   {
     "id": "guerrini2026_4a",
@@ -405,7 +413,8 @@
         "kindDenotingPlural"
       ]
     ],
-    "comment": "The paper credits the example to Nickel (2008)."
+    "comment": "The paper credits the example to Nickel (2008).",
+    "verified": "page-image"
   },
   {
     "id": "guerrini2026_4b",
@@ -436,7 +445,8 @@
         "singularIndefinite"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "guerrini2026_5a",
@@ -476,7 +486,8 @@
         "kindDenotingPlural"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "guerrini2026_5b",
@@ -516,7 +527,8 @@
         "singularIndefinite"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "guerrini2026_6a",
@@ -556,7 +568,8 @@
         "kindDenotingPlural"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "guerrini2026_6b",
@@ -596,7 +609,8 @@
         "singularIndefinite"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "guerrini2026_7a",
@@ -627,7 +641,8 @@
         "kindDenotingPlural"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "guerrini2026_7b",
@@ -663,7 +678,8 @@
         "kindDenotingPlural"
       ]
     ],
-    "comment": "A quantificational variability effect: can mean 'few birds fly'."
+    "comment": "A quantificational variability effect: can mean 'few birds fly'.",
+    "verified": "page-image"
   },
   {
     "id": "guerrini2026_8",
@@ -699,7 +715,8 @@
         "kindDenotingPlural"
       ]
     ],
-    "comment": "Cannot mean 'few birds are migrating': no Gen in the episodic sentence."
+    "comment": "Cannot mean 'few birds are migrating': no Gen in the episodic sentence.",
+    "verified": "page-image"
   },
   {
     "id": "guerrini2026_25a",
@@ -713,7 +730,7 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -730,7 +747,8 @@
         "kindDenotingPlural"
       ]
     ],
-    "comment": "Direct kind predication resists Q-adverbs; the observation is Cohen's (2001)."
+    "comment": "Direct kind predication resists Q-adverbs; the observation is Cohen's (2001).",
+    "verified": "page-image"
   },
   {
     "id": "guerrini2026_25b",
@@ -761,7 +779,8 @@
         "kindDenotingPlural"
       ]
     ],
-    "comment": "An accidental generalization accepts a Q-adverb, which replaces Gen in a parse parallel to the Bona Fide Generic one."
+    "comment": "An accidental generalization accepts a Q-adverb, which replaces Gen in a parse parallel to the Bona Fide Generic one.",
+    "verified": "page-image"
   },
   {
     "id": "guerrini2026_32a",
@@ -796,7 +815,8 @@
         "none"
       ]
     ],
-    "comment": "Paper's reading annotation: nonMaximal ∀."
+    "comment": "Paper's reading annotation: ∼∀.",
+    "verified": "page-image"
   },
   {
     "id": "guerrini2026_32b",
@@ -831,7 +851,8 @@
         "none"
       ]
     ],
-    "comment": "Paper's reading annotation: nonMaximal ¬∃."
+    "comment": "Paper's reading annotation: ∼¬∃.",
+    "verified": "page-image"
   },
   {
     "id": "guerrini2026_33a",
@@ -866,7 +887,8 @@
         "all"
       ]
     ],
-    "comment": "Paper's reading annotation: ∀."
+    "comment": "Paper's reading annotation: ∀.",
+    "verified": "page-image"
   },
   {
     "id": "guerrini2026_33b",
@@ -901,7 +923,8 @@
         "all"
       ]
     ],
-    "comment": "Paper's reading annotation: ¬∀."
+    "comment": "Paper's reading annotation: ¬∀.",
+    "verified": "page-image"
   },
   {
     "id": "guerrini2026_34a",
@@ -936,7 +959,8 @@
         "none"
       ]
     ],
-    "comment": "Paper's reading annotation: possibly nonMaximal ∀."
+    "comment": "Paper's reading annotation: possibly non-maximal, ∼∀.",
+    "verified": "page-image"
   },
   {
     "id": "guerrini2026_34b",
@@ -971,7 +995,8 @@
         "none"
       ]
     ],
-    "comment": "Paper's reading annotation: possibly nonMaximal ¬∃."
+    "comment": "Paper's reading annotation: possibly non-maximal, ∼¬∃.",
+    "verified": "page-image"
   },
   {
     "id": "guerrini2026_35a",
@@ -1006,7 +1031,8 @@
         "all"
       ]
     ],
-    "comment": "Paper's reading annotation: maximal ∀."
+    "comment": "Paper's reading annotation: maximal ∀.",
+    "verified": "page-image"
   },
   {
     "id": "guerrini2026_35b",
@@ -1041,7 +1067,8 @@
         "all"
       ]
     ],
-    "comment": "Paper's reading annotation: maximal ¬∀."
+    "comment": "Paper's reading annotation: maximal ¬∀.",
+    "verified": "page-image"
   },
   {
     "id": "guerrini2026_36a",
@@ -1076,7 +1103,8 @@
         "none"
       ]
     ],
-    "comment": "Paper's reading annotation: possibly nonMaximal ∀."
+    "comment": "Paper's reading annotation: possibly non-maximal, ∼∀.",
+    "verified": "page-image"
   },
   {
     "id": "guerrini2026_36b",
@@ -1111,7 +1139,8 @@
         "none"
       ]
     ],
-    "comment": "Paper's reading annotation: possibly nonMaximal ¬∃."
+    "comment": "Paper's reading annotation: possibly non-maximal, ∼¬∃.",
+    "verified": "page-image"
   },
   {
     "id": "guerrini2026_37a",
@@ -1146,7 +1175,8 @@
         "always"
       ]
     ],
-    "comment": "Paper's reading annotation: maximal nonMaximal ∀."
+    "comment": "Paper's reading annotation: maximal, ∼∀.",
+    "verified": "page-image"
   },
   {
     "id": "guerrini2026_37b",
@@ -1181,7 +1211,8 @@
         "always"
       ]
     ],
-    "comment": "Paper's reading annotation: maximal nonMaximal ¬∀."
+    "comment": "Paper's reading annotation: maximal, ∼¬∀.",
+    "verified": "page-image"
   },
   {
     "id": "guerrini2026_38a",
@@ -1216,7 +1247,8 @@
         "always"
       ]
     ],
-    "comment": "Paper's reading annotation: maximal nonMaximal ∀."
+    "comment": "Paper's reading annotation: maximal, ∼∀.",
+    "verified": "page-image"
   },
   {
     "id": "guerrini2026_38b",
@@ -1251,7 +1283,8 @@
         "always"
       ]
     ],
-    "comment": "Paper's reading annotation: maximal nonMaximal ¬∀."
+    "comment": "Paper's reading annotation: maximal, ∼¬∀.",
+    "verified": "page-image"
   },
   {
     "id": "guerrini2026_38c",
@@ -1265,7 +1298,7 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -1286,7 +1319,8 @@
         "all"
       ]
     ],
-    "comment": "'all' cannot remove the homogeneity of a singular indefinite generic."
+    "comment": "'all' cannot remove the homogeneity of a singular indefinite generic.",
+    "verified": "page-image"
   },
   {
     "id": "guerrini2026_38d",
@@ -1300,7 +1334,7 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -1321,13 +1355,14 @@
         "all"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "guerrini2026_44",
     "source": {
       "bibkey": "guerrini-2026",
-      "paperLabel": "(44)"
+      "paperLabel": "(43)"
     },
     "language": "ital1282",
     "primaryText": "Un cane che abbia fame abbaia.",
@@ -1377,13 +1412,14 @@
         "singularIndefinite"
       ]
     ],
-    "comment": "The subjunctive is licensed in the restrictor of the generic quantifier; the paper takes the example from Panzeri (2006)."
+    "comment": "The subjunctive is licensed in the restrictor of the generic quantifier; the paper takes the example from Panzeri (2006).",
+    "verified": "page-image"
   },
   {
     "id": "guerrini2026_45_indicative",
     "source": {
       "bibkey": "guerrini-2026",
-      "paperLabel": "(45ind)"
+      "paperLabel": "(44ind)"
     },
     "language": "ital1282",
     "primaryText": "I candidati che si presentano con molto anticipo non vengono assunti.",
@@ -1466,13 +1502,14 @@
         "indicative"
       ]
     ],
-    "comment": "Law-like situation: nervous people unwanted, a rule disqualifies whoever shows up too early. Accidental situation: people who showed up very early happened not to get hired."
+    "comment": "Law-like situation: nervous people unwanted, a rule disqualifies whoever shows up too early. Accidental situation: people who showed up very early happened not to get hired.",
+    "verified": "page-image"
   },
   {
     "id": "guerrini2026_45_subjunctive",
     "source": {
       "bibkey": "guerrini-2026",
-      "paperLabel": "(45subj)"
+      "paperLabel": "(44subj)"
     },
     "language": "ital1282",
     "primaryText": "I candidati che si presentino con molto anticipo non vengono assunti.",
@@ -1555,13 +1592,14 @@
         "subjunctive"
       ]
     ],
-    "comment": "With the subjunctive only the law-like reading survives: the subject is inside the restrictor of Gen."
+    "comment": "With the subjunctive only the law-like reading survives: the subject is inside the restrictor of Gen.",
+    "verified": "page-image"
   },
   {
     "id": "guerrini2026_51a",
     "source": {
       "bibkey": "greenberg-2004",
-      "paperLabel": "(51a)"
+      "paperLabel": "(50a)"
     },
     "language": "stan1293",
     "primaryText": "Italian restaurants are closed today.",
@@ -1598,14 +1636,15 @@
     "comment": "Accidental situation: Italian restaurants in town happen to be closed today for no apparent reason. Law-like situation: today is a national holiday in Italy.",
     "reportedIn": {
       "bibkey": "guerrini-2026",
-      "paperLabel": "(51a)"
-    }
+      "paperLabel": "(50a)"
+    },
+    "verified": "page-image"
   },
   {
     "id": "guerrini2026_51b",
     "source": {
       "bibkey": "greenberg-2004",
-      "paperLabel": "(51b)"
+      "paperLabel": "(50b)"
     },
     "language": "stan1293",
     "primaryText": "An Italian restaurant is closed today.",
@@ -1642,14 +1681,15 @@
     "comment": "",
     "reportedIn": {
       "bibkey": "guerrini-2026",
-      "paperLabel": "(51b)"
-    }
+      "paperLabel": "(50b)"
+    },
+    "verified": "page-image"
   },
   {
     "id": "guerrini2026_52a",
     "source": {
       "bibkey": "greenberg-2007",
-      "paperLabel": "(52a)"
+      "paperLabel": "(51a)"
     },
     "language": "stan1293",
     "primaryText": "Norwegian students with names ending with \"s\" wear thick green socks.",
@@ -1677,14 +1717,15 @@
     "comment": "An extremely unnatural kind: true by Distributive Kind Predication without any law-like link.",
     "reportedIn": {
       "bibkey": "guerrini-2026",
-      "paperLabel": "(52a)"
-    }
+      "paperLabel": "(51a)"
+    },
+    "verified": "page-image"
   },
   {
     "id": "guerrini2026_52b",
     "source": {
       "bibkey": "greenberg-2007",
-      "paperLabel": "(52b)"
+      "paperLabel": "(51b)"
     },
     "language": "stan1293",
     "primaryText": "A Norwegian student with a name ending with \"s\" wears thick green socks.",
@@ -1712,14 +1753,15 @@
     "comment": "",
     "reportedIn": {
       "bibkey": "guerrini-2026",
-      "paperLabel": "(52b)"
-    }
+      "paperLabel": "(51b)"
+    },
+    "verified": "page-image"
   },
   {
     "id": "guerrini2026_58",
     "source": {
       "bibkey": "guerrini-2026",
-      "paperLabel": "(58)"
+      "paperLabel": "(57)"
     },
     "language": "stan1293",
     "primaryText": "Elephants live in Africa and Asia.",
@@ -1749,13 +1791,14 @@
         "kindDenotingPlural"
       ]
     ],
-    "comment": "The paper credits the example to Nickel (2008)."
+    "comment": "The paper credits the example to Nickel (2008).",
+    "verified": "page-image"
   },
   {
     "id": "guerrini2026_59",
     "source": {
       "bibkey": "guerrini-2026",
-      "paperLabel": "(59)"
+      "paperLabel": "(58)"
     },
     "language": "ital1282",
     "primaryText": "Gli elefanti vivono in Africa e in Asia.",
@@ -1818,13 +1861,14 @@
         "kindDenotingPlural"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "guerrini2026_69a",
     "source": {
       "bibkey": "guerrini-2026",
-      "paperLabel": "(69a)"
+      "paperLabel": "(68a)"
     },
     "language": "stan1293",
     "primaryText": "Wugs are black, white, green, and red.",
@@ -1858,13 +1902,14 @@
         "kindDenotingPlural"
       ]
     ],
-    "comment": "Cumulative situation: each wug is entirely of one of the four colors. At-the-same-time situation: each wug has stripes of all four colors."
+    "comment": "Cumulative situation: each wug is entirely of one of the four colors. At-the-same-time situation: each wug has stripes of all four colors.",
+    "verified": "page-image"
   },
   {
     "id": "guerrini2026_70",
     "source": {
       "bibkey": "guerrini-2026",
-      "paperLabel": "(70)"
+      "paperLabel": "(69)"
     },
     "language": "stan1293",
     "primaryText": "Wugs are {always, often, typically, generally, usually} black, white, green, and red.",
@@ -1898,13 +1943,14 @@
         "kindDenotingPlural"
       ]
     ],
-    "comment": "Overt Q-adverbs rule out the cumulative interpretation."
+    "comment": "Overt Q-adverbs rule out the cumulative interpretation.",
+    "verified": "page-image"
   },
   {
     "id": "guerrini2026_71",
     "source": {
       "bibkey": "guerrini-2026",
-      "paperLabel": "(71)"
+      "paperLabel": "(70)"
     },
     "language": "ital1282",
     "primaryText": "I linguisti che si occupano di semantica scrivono 1000 articoli all'anno.",
@@ -1987,13 +2033,14 @@
         "indicative"
       ]
     ],
-    "comment": "Cumulative: the whole profession produces 1000 papers a year. Distributive: each linguist does."
+    "comment": "Cumulative: the whole profession produces 1000 papers a year. Distributive: each linguist does.",
+    "verified": "page-image"
   },
   {
     "id": "guerrini2026_72",
     "source": {
       "bibkey": "guerrini-2026",
-      "paperLabel": "(72)"
+      "paperLabel": "(71)"
     },
     "language": "ital1282",
     "primaryText": "I linguisti che si occupino di semantica scrivono 1000 articoli all'anno.",
@@ -2076,13 +2123,14 @@
         "subjunctive"
       ]
     ],
-    "comment": "The subjunctive forces the subject into the restriction of Gen, and the cumulative reading disappears."
+    "comment": "The subjunctive forces the subject into the restriction of Gen, and the cumulative reading disappears.",
+    "verified": "page-image"
   },
   {
     "id": "guerrini2026_84a",
     "source": {
       "bibkey": "guerrini-2026",
-      "paperLabel": "(84a)"
+      "paperLabel": "(83a)"
     },
     "language": "stan1293",
     "primaryText": "Madrigals were popular in Italy and England.",
@@ -2112,13 +2160,14 @@
         "kindDenotingPlural"
       ]
     ],
-    "comment": "True, by cumulative kind predication."
+    "comment": "True, by cumulative kind predication.",
+    "verified": "page-image"
   },
   {
     "id": "guerrini2026_84b",
     "source": {
       "bibkey": "guerrini-2026",
-      "paperLabel": "(84b)"
+      "paperLabel": "(83b)"
     },
     "language": "stan1293",
     "primaryText": "A madrigal was popular in Italy or England.",
@@ -2148,7 +2197,8 @@
         "singularIndefinite"
       ]
     ],
-    "comment": "False: the singular indefinite is inside the restriction of Gen and implies a law-like connection."
+    "comment": "False: the singular indefinite is inside the restriction of Gen and implies a law-like connection.",
+    "verified": "page-image"
   },
   {
     "id": "guerrini2026_89a",
@@ -2183,7 +2233,8 @@
         "all"
       ]
     ],
-    "comment": "Paper's reading annotation: maximal nonMaximal ∀."
+    "comment": "Paper's reading annotation: maximal, ∼∀.",
+    "verified": "page-image"
   },
   {
     "id": "guerrini2026_89b",
@@ -2218,7 +2269,8 @@
         "all"
       ]
     ],
-    "comment": "Paper's reading annotation: maximal nonMaximal ¬∀."
+    "comment": "Paper's reading annotation: maximal, ∼¬∀.",
+    "verified": "page-image"
   },
   {
     "id": "guerrini2026_90a",
@@ -2253,7 +2305,8 @@
         "always"
       ]
     ],
-    "comment": "In the intended QVE reading: no Gen for 'always' to replace."
+    "comment": "In the intended QVE reading: no Gen for 'always' to replace.",
+    "verified": "page-image"
   },
   {
     "id": "guerrini2026_90b",
@@ -2288,7 +2341,8 @@
         "always"
       ]
     ],
-    "comment": "In the intended QVE reading."
+    "comment": "In the intended QVE reading.",
+    "verified": "page-image"
   },
   {
     "id": "guerrini2026_99a",
@@ -2332,7 +2386,8 @@
         "local"
       ]
     ],
-    "comment": "Adapted by the paper from Dayal (2013)."
+    "comment": "Adapted by the paper from Dayal (2013).",
+    "verified": "page-image"
   },
   {
     "id": "guerrini2026_99b",
@@ -2376,7 +2431,8 @@
         "nonlocal"
       ]
     ],
-    "comment": "In the reading entailing that it is not known to the speaker which journalists asked questions."
+    "comment": "In the reading entailing that it is not known to the speaker which journalists asked questions.",
+    "verified": "page-image"
   },
   {
     "id": "guerrini2026_100a",
@@ -2420,7 +2476,8 @@
         "local"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "guerrini2026_100b",
@@ -2464,7 +2521,8 @@
         "nonlocal"
       ]
     ],
-    "comment": "In the reading entailing that the identity of the voters handing in their ballots is not known to the speaker."
+    "comment": "In the reading entailing that the identity of the voters handing in their ballots is not known to the speaker.",
+    "verified": "page-image"
   },
   {
     "id": "guerrini2026_101a",
@@ -2502,7 +2560,8 @@
         "local"
       ]
     ],
-    "comment": "The objection is felicitous only against the near-universal reading, which the nonlocal adjective blocks."
+    "comment": "The objection is felicitous only against the near-universal reading, which the nonlocal adjective blocks.",
+    "verified": "page-image"
   },
   {
     "id": "guerrini2026_101b",
@@ -2540,7 +2599,8 @@
         "nonlocal"
       ]
     ],
-    "comment": "The objection is felicitous only against the near-universal reading, which the nonlocal adjective blocks."
+    "comment": "The objection is felicitous only against the near-universal reading, which the nonlocal adjective blocks.",
+    "verified": "page-image"
   },
   {
     "id": "guerrini2026_102a",
@@ -2575,7 +2635,8 @@
         "local"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "guerrini2026_102b",
@@ -2588,7 +2649,7 @@
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
-    "context": "",
+    "context": "When it comes to elections, it's important to consider the wide range of perspectives that influence voting behavior, as...",
     "judgment": "unacceptable",
     "alternatives": [],
     "readings": [],
@@ -2610,7 +2671,8 @@
         "nonlocal"
       ]
     ],
-    "comment": "In the intended reading: voters whose identity is unknown to the speaker come in many kinds."
+    "comment": "In the intended reading: voters whose identity is unknown to the speaker come in many kinds.",
+    "verified": "page-image"
   },
   {
     "id": "guerrini2026_103a",
@@ -2645,7 +2707,8 @@
         "local"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "guerrini2026_103b",
@@ -2680,7 +2743,8 @@
         "nonlocal"
       ]
     ],
-    "comment": "In the intended reading: journalists who are unknown to the speaker are extinct."
+    "comment": "In the intended reading: journalists who are unknown to the speaker are extinct.",
+    "verified": "page-image"
   },
   {
     "id": "guerrini2026_107",
@@ -2724,7 +2788,8 @@
     "reportedIn": {
       "bibkey": "guerrini-2026",
       "paperLabel": "(107)"
-    }
+    },
+    "verified": "page-image"
   },
   {
     "id": "guerrini2026_109",
@@ -2785,7 +2850,8 @@
         "italianBarePlural"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "guerrini2026_110",
@@ -2850,7 +2916,8 @@
         "italianDefinitePlural"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "guerrini2026_113",
@@ -2915,7 +2982,8 @@
         "italianDefinitePlural"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "guerrini2026_114",
@@ -2976,7 +3044,8 @@
         "italianBarePlural"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "guerrini2026_115a",
@@ -3016,7 +3085,8 @@
         "singularIndefinite"
       ]
     ],
-    "comment": "Wide scope: there are some mosquitoes that I have been killing for an hour. Low scope: I have engaged in mosquito killing for an hour."
+    "comment": "Wide scope: there are some mosquitoes that I have been killing for an hour. Low scope: I have engaged in mosquito killing for an hour.",
+    "verified": "page-image"
   },
   {
     "id": "guerrini2026_115b",
@@ -3056,7 +3126,8 @@
         "kindDenotingPlural"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "guerrini2026_133c",
@@ -3092,7 +3163,8 @@
         "singularDefinite"
       ]
     ],
-    "comment": "False: no accidental reading for a singular kind term."
+    "comment": "False: no accidental reading for a singular kind term.",
+    "verified": "page-image"
   },
   {
     "id": "guerrini2026_133d",
@@ -3128,7 +3200,8 @@
         "singularDefinite"
       ]
     ],
-    "comment": "True."
+    "comment": "True.",
+    "verified": "page-image"
   },
   {
     "id": "guerrini2026_135a_i",
@@ -3159,7 +3232,8 @@
         "kindDenotingPlural"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "guerrini2026_135a_ii",
@@ -3190,7 +3264,8 @@
         "singularDefinite"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "guerrini2026_135b_i",
@@ -3221,7 +3296,8 @@
         "kindDenotingPlural"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "guerrini2026_135b_ii",
@@ -3252,7 +3328,8 @@
         "singularDefinite"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "guerrini2026_136a",
@@ -3292,7 +3369,8 @@
         "kindDenotingPlural"
       ]
     ],
-    "comment": "Cumulative: each wug is of exactly one color. Purely distributive: each wug is of all colors."
+    "comment": "Cumulative: each wug is of exactly one color. Purely distributive: each wug is of all colors.",
+    "verified": "page-image"
   },
   {
     "id": "guerrini2026_136b",
@@ -3332,6 +3410,7 @@
         "singularDefinite"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   }
 ]

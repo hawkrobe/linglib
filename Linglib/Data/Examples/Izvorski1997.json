@@ -37,7 +37,8 @@
         "perfect of evidentiality only"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "izvorski1997_s1b",
@@ -46,7 +47,7 @@
       "paperLabel": "(1b)"
     },
     "language": "bulg1262",
-    "primaryText": "Az săm došăl.",
+    "primaryText": "Az sâm došâl.",
     "discourseSegments": [],
     "glossedTokens": [
       [
@@ -54,11 +55,11 @@
         "I"
       ],
       [
-        "săm",
-        "be-1SG.PRES"
+        "sâm",
+        "be-1SG, PRES"
       ],
       [
-        "došăl",
+        "došâl",
         "come-P.PART"
       ]
     ],
@@ -77,7 +78,8 @@
         "ambiguous: present perfect or perfect of evidentiality"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "izvorski1997_s1c",
@@ -95,7 +97,7 @@
       ],
       [
         "har",
-        "have-1SG.PRES"
+        "have-1SG, PRES"
       ],
       [
         "kommet",
@@ -117,7 +119,8 @@
         "ambiguous: present perfect or perfect of evidentiality"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "izvorski1997_s2a",
@@ -144,7 +147,8 @@
         "lexical evidentials keep their meaning in every configuration"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "izvorski1997_s2b",
@@ -167,7 +171,8 @@
         "1"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "izvorski1997_s2c",
@@ -190,7 +195,8 @@
         "1"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "izvorski1997_s2d",
@@ -213,7 +219,8 @@
         "1"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "izvorski1997_s3",
@@ -222,16 +229,12 @@
       "paperLabel": "(3)"
     },
     "language": "nucl1301",
-    "primaryText": "ol-müş adam",
+    "primaryText": "öl-müş adam",
     "discourseSegments": [],
     "glossedTokens": [
       [
-        "ol",
-        "die"
-      ],
-      [
-        "-müş",
-        "PERF"
+        "öl-müş",
+        "dead"
       ],
       [
         "adam",
@@ -253,7 +256,8 @@
         "no evidential reading of the adjectival participle"
       ]
     ],
-    "comment": "From Slobin and Aksu 1982; the reading 'a man who is apparently dead' is unavailable."
+    "comment": "From Slobin and Aksu 1982; the reading 'a man who is apparently dead' is unavailable.",
+    "verified": "page-image"
   },
   {
     "id": "izvorski1997_s4",
@@ -293,7 +297,8 @@
         "no evidential reading of the past perfect"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "izvorski1997_s5",
@@ -341,7 +346,8 @@
         "no evidential reading of the future perfect"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "izvorski1997_s6",
@@ -401,7 +407,8 @@
         "no evidential reading in non-finite clauses"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "izvorski1997_s7a",
@@ -428,7 +435,8 @@
         "direct: visual/auditory"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "izvorski1997_s7b",
@@ -455,7 +463,8 @@
         "indirect: inference/report"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "izvorski1997_s7c",
@@ -482,7 +491,8 @@
         "indirect: inference or report"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "izvorski1997_s9a",
@@ -509,7 +519,8 @@
         "Kratzer 1991"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "izvorski1997_s9b",
@@ -540,7 +551,8 @@
         "weaker than (9a): no entailment of p"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "izvorski1997_s10a",
@@ -567,7 +579,8 @@
         "general knowledge justifies must"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "izvorski1997_s10b",
@@ -594,7 +607,8 @@
         "general knowledge is no indirect evidence"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "izvorski1997_s11a",
@@ -603,7 +617,7 @@
       "paperLabel": "(11a)"
     },
     "language": "bulg1262",
-    "primaryText": "Znaejki kolko Ivan običa vino, toj trjabva da e izpil vsičkoto vino včera.",
+    "primaryText": "Knowing how much Ivan likes wine, toj trjabva da e izpil vsičkoto vino včera.",
     "discourseSegments": [],
     "glossedTokens": [
       [
@@ -616,7 +630,7 @@
       ],
       [
         "da",
-        "to"
+        ""
       ],
       [
         "e",
@@ -650,7 +664,8 @@
         "3"
       ]
     ],
-    "comment": ""
+    "comment": "The paper prints the frame \"Knowing how much Ivan likes wine...\" in English only, with the Bulgarian continuation.",
+    "verified": "page-image"
   },
   {
     "id": "izvorski1997_s11b",
@@ -659,7 +674,7 @@
       "paperLabel": "(11b)"
     },
     "language": "bulg1262",
-    "primaryText": "Znaejki kolko Ivan običa vino, toj izpil vsičkoto vino včera.",
+    "primaryText": "Knowing how much Ivan likes wine, toj izpil vsičkoto vino včera.",
     "discourseSegments": [],
     "glossedTokens": [
       [
@@ -694,7 +709,8 @@
         "3"
       ]
     ],
-    "comment": ""
+    "comment": "The paper prints the frame \"Knowing how much Ivan likes wine...\" in English only, with the Bulgarian continuation.",
+    "verified": "page-image"
   },
   {
     "id": "izvorski1997_s12",
@@ -724,7 +740,8 @@
         "must does not presuppose evidence"
       ]
     ],
-    "comment": "The continuation 'But I have no reason for believing that' is marked #."
+    "comment": "The continuation 'But I have no reason for believing that' is marked #.",
+    "verified": "page-image"
   },
   {
     "id": "izvorski1997_s13",
@@ -775,7 +792,8 @@
         "the evidential presupposes evidence"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "izvorski1997_s14",
@@ -818,7 +836,8 @@
         "the evidence must be indirect and cannot be cancelled"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "izvorski1997_s15a",
@@ -845,7 +864,8 @@
         "negation targets the proposition, not the evidence"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "izvorski1997_s15b",
@@ -889,7 +909,8 @@
         "negation targets the proposition, not the evidence"
       ]
     ],
-    "comment": "The reading 'it is not the case that it is said / I infer that Ivan passed' is unavailable."
+    "comment": "The reading 'it is not the case that it is said / I infer that Ivan passed' is unavailable.",
+    "verified": "page-image"
   },
   {
     "id": "izvorski1997_s16",
@@ -932,7 +953,8 @@
         "denial targets the proposition"
       ]
     ],
-    "comment": "The reading 'it is not true that it is said / you infer that Ivan passed' is unavailable."
+    "comment": "The reading 'it is not true that it is said / you infer that Ivan passed' is unavailable.",
+    "verified": "page-image"
   },
   {
     "id": "izvorski1997_s20a",
@@ -972,7 +994,8 @@
         "the present perfect rejects past-time adverbials"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "izvorski1997_s20b",
@@ -1008,7 +1031,8 @@
         "the evidential aorist accepts past-time adverbials"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "izvorski1997_s21a",
@@ -1017,7 +1041,7 @@
       "paperLabel": "(21a)"
     },
     "language": "bulg1262",
-    "primaryText": "Toj e pisel pismo (*točno sega)/(*točno v tozi moment).",
+    "primaryText": "Toj e pišel pismo (*točno sega)/(*točno v tozi moment).",
     "discourseSegments": [],
     "glossedTokens": [
       [
@@ -1029,7 +1053,7 @@
         "is"
       ],
       [
-        "pisel",
+        "pišel",
         "written-P.PART"
       ],
       [
@@ -1039,7 +1063,7 @@
     ],
     "translation": "He has written a letter right now / at this very moment.",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -1052,7 +1076,8 @@
         "the present perfect rejects speech-time adverbials"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "izvorski1997_s21b",
@@ -1061,7 +1086,7 @@
       "paperLabel": "(21b)"
     },
     "language": "bulg1262",
-    "primaryText": "Toj pisel pismo točno sega/točno v tozi moment.",
+    "primaryText": "Toj pišel pismo točno sega/točno v tozi moment.",
     "discourseSegments": [],
     "glossedTokens": [
       [
@@ -1069,7 +1094,7 @@
         "he"
       ],
       [
-        "pisel",
+        "pišel",
         "written-PE"
       ],
       [
@@ -1092,7 +1117,8 @@
         "the evidential present accepts speech-time adverbials"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "izvorski1997_s22",
@@ -1137,7 +1163,7 @@
         "four"
       ]
     ],
-    "translation": "Two plus two apparently equals four. (*Two plus two has equaled four.)",
+    "translation": "Two plus two apparently equals/equaled four. (*Two plus two has equaled four.)",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -1152,7 +1178,8 @@
         "individual-level predicates take the evidential, not the perfect"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "izvorski1997_s23a",
@@ -1179,7 +1206,8 @@
         "current relevance fails with a dead topic"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "izvorski1997_s23b",
@@ -1202,7 +1230,8 @@
         "4"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "izvorski1997_s24",
@@ -1211,7 +1240,7 @@
       "paperLabel": "(24)"
     },
     "language": "bulg1262",
-    "primaryText": "Ajnštajn (#e) posetil Prinstăn.",
+    "primaryText": "Ajnštajn (#e) posetil Prinstân.",
     "discourseSegments": [],
     "glossedTokens": [
       [
@@ -1227,7 +1256,7 @@
         "visited"
       ],
       [
-        "Prinstăn",
+        "Prinstân",
         "Princeton"
       ]
     ],
@@ -1246,7 +1275,8 @@
         "the evidential lacks the temporal interpretation of the present perfect"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "izvorski1997_s25",
@@ -1277,7 +1307,8 @@
         "past tense locates the topic time, not the situation"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "izvorski1997_s27",
@@ -1291,7 +1322,7 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -1304,6 +1335,7 @@
         "the present perfect requires the eventuality not to hold at speech time"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   }
 ]
