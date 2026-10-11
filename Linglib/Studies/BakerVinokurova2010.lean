@@ -17,7 +17,8 @@ passive theme is accusative exactly when a covert agent is present; the object o
 nominalization is accusative though no v is present; a subject raised into an impersonal clause
 stays unmarked; and a finite verb agrees with an NP exactly when it values that NP nominative.
 A purely configurational grammar with elsewhere cases overgenerates the Case-filter and
-agreement violations, and a purely Agree-based grammar never values a dative.
+agreement violations, and a purely Agree-based grammar never values a dative, and an accusative
+only where a `v` probes.
 
 ## Main definitions
 
@@ -34,8 +35,9 @@ agreement violations, and a purely Agree-based grammar never values a dative.
 
 * `dom`, `ditransitive`, `causative`, `passive`, `agentive_nominal`, `raising`, `promise`,
   `possessed`: the paper's constructions.
-* `no_elsewhere_case`, `pureChomsky_no_dative`: Sakha values nothing as unmarked, and an
-  Agree-only grammar values nothing dative, whatever the domain.
+* `no_elsewhere_case`, `pureChomsky_no_dative`, `pureChomsky_v_of_acc`: Sakha values nothing as
+  unmarked, and an Agree-only grammar values nothing dative and an accusative only where a `v`
+  probes, whatever the domain.
 * `rows_case`: acceptability is derivability under the two-modality grammar.
 * `pure_marantz_overgenerates`: without the Case filter and the agreement link, the
   configurational grammar derives rejected examples.
@@ -57,22 +59,22 @@ open Minimalist Case DependentCase
 
 /-! ### The grammars -/
 
-/-- The Sakha grammar of structural case: dative on the higher of two NPs in the verb phrase,
-    accusative on the lower of two in the clause, nominative from T and genitive from D under
-    Agree, and no elsewhere case in any domain. -/
+/-- The Sakha grammar of structural case values dative on the higher of two NPs in the verb
+    phrase, accusative on the lower of two in the clause, and nominative from T and genitive
+    from D under Agree, with no elsewhere case in any domain. -/
 def grammar : CaseAssigners where
   domains := [(.D, {}), (.v, { high := some .dat }), (.C, { low := some .acc })]
   agree := [(.T, .nom), (.D, .gen)]
 
-/-- A purely configurational grammar: dependent dative and accusative with elsewhere
-    nominative in the clause and verb phrase, elsewhere genitive in the noun phrase, and no
+/-- A purely configurational grammar has the dependent dative and accusative, elsewhere
+    nominative in the clause and verb phrase and elsewhere genitive in the noun phrase, and no
     Agree. -/
 def pureMarantz : CaseAssigners where
   domains := [(.D, { unmarked := some .gen }), (.v, { high := some .dat, unmarked := some .nom }),
     (.C, { low := some .acc, unmarked := some .nom })]
 
-/-- A purely Agree-based grammar: nominative from T, accusative from v, genitive from D, and
-    no dependent rule. -/
+/-- A purely Agree-based grammar values nominative from T, accusative from v and genitive from
+    D, and has no dependent rule. -/
 def pureChomsky : CaseAssigners where
   domains := [(.D, {}), (.v, {}), (.C, {})]
   agree := [(.T, .nom), (.v, .acc), (.D, .gen)]
@@ -94,6 +96,19 @@ theorem pureChomsky_no_dative {α : Type*} (np : α → PhasedNP) (probes : List
     rw [this] at h
     simp only [Option.some.injEq, Prod.mk.injEq, true_and] at h
     rw [h.1]
+
+/-- The Agree-based grammar values an NP accusative only where a `v` probes: in a derivation
+    without one, an accusative NP brought its case from the lexicon. -/
+theorem pureChomsky_v_of_acc {α : Type*} (np : α → PhasedNP) (probes : List (Cat × Cat))
+    {xs : List α} {i : ℕ} {x : α} {m : Mechanism} (hlex : (np x).lexicalCase = none)
+    (h : (pureChomsky.assign np probes xs)[i]? = some (x, some (.acc, m))) :
+    ∃ d, (Cat.v, d) ∈ probes := by
+  obtain rfl := CaseAssigners.mechanism_eq_agree (by decide) hlex h
+  obtain ⟨⟨hd, d⟩, hmem, hh⟩ := CaseAssigners.exists_probe_of_agree h
+  obtain rfl : hd = .v := by
+    change pureChomsky.agreeCase hd = some .acc at hh
+    revert hh; cases hd <;> decide
+  exact ⟨d, hmem⟩
 
 /-! ### Positions -/
 
@@ -126,14 +141,14 @@ attribute [local simp] cases CaseAssigners.assign domainPass probePass
   possessor pro finite
 
 
-/-- Differential object marking: a shifted object is accusative and an unshifted one caseless,
-    the subject nominative from T either way. -/
+/-- In differential object marking a shifted object is accusative and an unshifted one
+    caseless, the subject nominative from T either way. -/
 theorem dom (shifted : Bool) :
     cases grammar finite [subject, internal shifted] =
       [some .nom, if shifted then some .acc else none] := by
   cases shifted <;> simp
 
-/-- A ditransitive: the goal is dative on the verb-phrase cycle whether or not the theme
+/-- In a ditransitive the goal is dative on the verb-phrase cycle whether or not the theme
     shifts, and the theme accusative exactly when it does; a causative of a transitive base
     is the same configuration, with the causee the higher of the two. -/
 theorem ditransitive (shifted : Bool) :
@@ -141,7 +156,7 @@ theorem ditransitive (shifted : Bool) :
       [some .nom, some .dat, if shifted then some .acc else none] := by
   cases shifted <;> simp
 
-/-- A causative: the causee of a transitive base is dative, c-commanding the theme in the
+/-- In a causative the causee of a transitive base is dative, c-commanding the theme in the
     verb phrase, and the causee of an intransitive base, alone there, is accusative once it
     shifts and never dative. -/
 theorem causative (shifted : Bool) :
@@ -151,7 +166,7 @@ theorem causative (shifted : Bool) :
       [some .nom, if shifted then some .acc else none] :=
   ⟨ditransitive shifted, dom shifted⟩
 
-/-- A passive: the shifted theme is accusative exactly when a covert agent is present, and
+/-- In a passive the shifted theme is accusative exactly when a covert agent is present, and
     nominative from T otherwise; a goal is dative either way. -/
 theorem passive :
     cases grammar finite [pro, internal true] = [some .nom, some .acc] ∧
@@ -161,7 +176,7 @@ theorem passive :
     cases grammar finite [internal false, internal true] = [some .dat, some .nom] := by
   simp
 
-/-- An agentive nominalization: no T, but the covert agent makes the shifted object
+/-- An agentive nominalization has no T, but its covert agent makes the shifted object
     accusative; without the agent the object is caseless. -/
 theorem agentive_nominal :
     cases grammar [] [pro, internal true] = [none, some .acc] ∧
@@ -175,8 +190,8 @@ theorem raising :
     cases grammar finite [internal true] = [some .nom] := by
   simp
 
-/-- Raising into the complement of *promise*: the goal is dative once the raised subject is
-    below it in the verb phrase, and accusative when nothing is. -/
+/-- Under *promise* the goal is dative once the raised subject is below it in the verb phrase,
+    and accusative when nothing is. -/
 theorem promise :
     cases grammar finite [subject, internal false, internal true] =
       [some .nom, some .dat, some .acc] ∧
@@ -247,7 +262,7 @@ instance (v : Option (Case × Mechanism)) (o : Option Case) : Decidable (Realize
 /-- A row states a yes/no property. -/
 def yes (r : Datum) (k : String) : Bool := r.feature? k = some "yes"
 
-/-- An NP of a row's domain: its position, whether it is covert, whether it is adjacent to
+/-- An NP of a row's domain has its position, whether it is covert, whether it is adjacent to
     the verb, and the case its gloss shows. -/
 structure Occupant where
   np : PhasedNP
@@ -257,9 +272,9 @@ structure Occupant where
   observed : Option Case := none
   deriving DecidableEq, Repr
 
-/-- Where a slot is merged: a possessor in the noun phrase, the objects, goal, causee and
-    raised subject in the verb phrase, the subject in the clause unless the predicate is
-    unaccusative or takes a dative subject. -/
+/-- A possessor is merged in the noun phrase, the objects, goal, causee and raised subject in
+    the verb phrase, and the subject in the clause unless the predicate is unaccusative or takes
+    a dative subject. -/
 def Slot.phase (r : Datum) : Slot → Cat
   | .subject =>
     if yes r "unaccusative" || r.feature? "subjectPosition" = some "internal" then .v else .C
@@ -267,8 +282,8 @@ def Slot.phase (r : Datum) : Slot → Cat
   | .pObject => .C
   | .possessor => .D
 
-/-- Whether a VP-merged NP shifts to the clause edge: a specific one does, a nonspecific one
-    does not, a raised subject always does, and the paper leaves the rest free. -/
+/-- A VP-merged NP shifts to the clause edge if it is specific and not if it is nonspecific, a
+    raised subject always shifts, and the paper leaves the rest free. -/
 def Slot.shifts (r : Datum) (s : Slot) : List Bool :=
   match s.phase r with
   | .v =>
@@ -281,12 +296,12 @@ def Slot.shifts (r : Datum) (s : Slot) : List Bool :=
 
 /-- The occupants a stated slot contributes, one per shift option. -/
 def Slot.occupants (r : Datum) (s : Slot) : Option (List Occupant) :=
-  ((r.feature? (s.key ++ "Case")).bind parseCase?).map λ c =>
-    (s.shifts r).map λ sh =>
+  ((r.feature? (s.key ++ "Case")).bind parseCase?).map fun c ↦
+    (s.shifts r).map fun sh ↦
       { np := { phase := s.phase r, shifted := sh }, slot := some s,
         adjacent := yes r (s.key ++ "Adjacent"), observed := c }
 
-/-- The covert agent: forced in a passive with an agent-oriented adverb and in an agentive
+/-- The covert agent is forced in a passive with an agent-oriented adverb and in an agentive
     nominalization, excluded when the subject is overt or the predicate unaccusative, and
     otherwise free in a passive or event nominalization. -/
 def agentOptions (r : Datum) : List (List Occupant) :=
@@ -297,15 +312,15 @@ def agentOptions (r : Datum) : List (List Occupant) :=
     | some "passive" | some "eventNominal" => [[{ np := pro, covert := true }], []]
     | _ => [[]]
 
-/-- The domains a row may have: the covert agent, then each stated slot under each of its
+/-- The domains a row may have are the covert agent, then each stated slot under each of its
     shift options. -/
 def candidates (r : Datum) : List (List Occupant) :=
-  (Slot.all.foldr (λ s acc => match s.occupants r with
+  (Slot.all.foldr (fun s acc ↦ match s.occupants r with
       | none => acc
-      | some vs => vs.flatMap λ o => acc.map (o :: ·)) [[]]).flatMap λ d =>
+      | some vs => vs.flatMap fun o ↦ acc.map (o :: ·)) [[]]).flatMap fun d ↦
     (agentOptions r).map (· ++ d)
 
-/-- The probes a row's morphology shows: finite T where the verb agrees, the head noun's D
+/-- The probes a row's morphology shows are finite T where the verb agrees, the head noun's D
     reaching into the clause where it agrees with the subject, and the possessed noun's D
     where it agrees with its possessor. -/
 def probes (r : Datum) : List (Cat × Cat) :=
@@ -318,7 +333,7 @@ def derive (g : CaseAssigners) (r : Datum) (d : List Occupant) :
     Valuation Occupant (Case × Mechanism) :=
   g.assign Occupant.np (probes r) d
 
-/-- The Case filter: a caseless overt NP must be pseudo-incorporated — an unshifted
+/-- The Case filter requires a caseless overt NP to be pseudo-incorporated, an unshifted
     VP-internal NP adjacent to the verb. -/
 def Licensed (o : Occupant) (v : Option (Case × Mechanism)) : Prop :=
   o.covert = true ∨ v.isSome ∨ (o.np.phase = .v ∧ o.np.shifted = false ∧ o.adjacent = true)

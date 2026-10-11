@@ -43,6 +43,9 @@ probes present with the domain each agrees into.
   mention.
 * `CaseAssigners.mechanism_ne_unmarked`: assigners with no elsewhere case never value an NP as
   unmarked.
+* `CaseAssigners.exists_probe_of_agree`, `CaseAssigners.mechanism_eq_agree`: a case valued under
+  Agree is the case of a head that probes, and assigners with no configurational rule value under
+  Agree alone.
 
 ## References
 
@@ -66,8 +69,8 @@ section Agree
 
 variable {α β : Type*} {P : α → Bool} {v : β} {s t : Valuation α β}
 
-/-- Agree into the domain `P`, valuing `v`: the highest NP that `P` selects whose case is still
-    unvalued is valued `v`, the activity condition of [chomsky-2000]. -/
+/-- Agree into the domain `P` values `v` on the highest NP that `P` selects whose case is still
+    unvalued, the activity condition of [chomsky-2000]. -/
 def agreeValue (P : α → Bool) (v : β) : Valuation α β → Valuation α β
   | [] => []
   | p :: s => if p.2.isNone && P p.1 then (p.1, some v) :: s else p :: agreeValue P v s
@@ -175,9 +178,9 @@ theorem agreeValue_map {α' β' : Type*} {P' : α' → Bool} {v' : β'} (f : α 
 
 end Agree
 
-/-- An NP's position for case: any case a lexical head has valued, the phase head whose spell-out
-    domain merges it, and whether it has shifted to the clause edge, where C's domain spells it
-    out. -/
+/-- An NP's position for case is any case a lexical head has valued, the phase head whose
+    spell-out domain merges it, and whether it has shifted to the clause edge, where C's domain
+    spells it out. -/
 structure PhasedNP where
   lexicalCase : Option Case := none
   phase : Cat := .C
@@ -214,7 +217,7 @@ section Assign
 
 variable {α : Type*} (g : CaseAssigners) (np : α → PhasedNP)
 
-/-- The head `h` probing the domain of `c`: it values what the assigners let it. The NPs are of
+/-- The head `h` probing the domain of `c` values what the assigners let it. The NPs are of
     any type, `np` giving each its position. -/
 def probePass (c h : Cat) (s : Valuation α (Case × Mechanism)) : Valuation α (Case × Mechanism) :=
   match g.agreeCase h with
@@ -244,13 +247,15 @@ end Assign
 
 /-! ### What the assigners value -/
 
-/-- The valuations the assigners can make: those of the rules of a domain, and the case a head
-    values under Agree. -/
-def CaseAssigners.valuations (g : CaseAssigners) : Set (Case × Mechanism) :=
-  {v | (∃ d ∈ g.domains, v ∈ d.2.valuations) ∨ v.2 = .agree ∧ ∃ h, g.agreeCase h = some v.1}
+/-- The valuations the assigners can make in a derivation whose functional heads are `probes`:
+    those of the rules of a domain, and the case one of the heads values under Agree. -/
+def CaseAssigners.valuations (g : CaseAssigners) (probes : List (Cat × Cat)) :
+    Set (Case × Mechanism) :=
+  {v | (∃ d ∈ g.domains, v ∈ d.2.valuations) ∨
+    v.2 = .agree ∧ ∃ hp ∈ probes, g.agreeCase hp.1 = some v.1}
 
-theorem CaseAssigners.rules_valuations_subset (g : CaseAssigners) (c : Cat) :
-    (g.rules c).valuations ⊆ g.valuations := by
+theorem CaseAssigners.rules_valuations_subset (g : CaseAssigners) (probes : List (Cat × Cat))
+    (c : Cat) : (g.rules c).valuations ⊆ g.valuations probes := by
   intro v hv
   unfold CaseAssigners.rules at hv
   rcases hf : g.domains.find? (·.1 == c) with _ | d
@@ -265,9 +270,9 @@ theorem CaseAssigners.agreeCase_mem_cases {g : CaseAssigners} {h : Cat} {c : Cas
   subst hk
   exact List.mem_append_right _ (List.mem_map.2 ⟨(d, k), List.mem_of_find?_eq_some hf, rfl⟩)
 
-theorem CaseAssigners.fst_mem_cases {g : CaseAssigners} {v : Case × Mechanism}
-    (hv : v ∈ g.valuations) : v.1 ∈ g.cases := by
-  rcases hv with ⟨d, hd, hv⟩ | ⟨-, h, hh⟩
+theorem CaseAssigners.fst_mem_cases {g : CaseAssigners} {probes : List (Cat × Cat)}
+    {v : Case × Mechanism} (hv : v ∈ g.valuations probes) : v.1 ∈ g.cases := by
+  rcases hv with ⟨d, hd, hv⟩ | ⟨-, hp, -, hh⟩
   · exact List.mem_append_left _ (List.mem_flatMap.2 ⟨d, hd, Rules.fst_mem_cases hv⟩)
   · exact g.agreeCase_mem_cases hh
 
@@ -275,29 +280,32 @@ section Assign
 
 variable {α : Type*} (g : CaseAssigners) (np : α → PhasedNP)
 
-theorem extends_probePass (c h : Cat) (s : Valuation α (Case × Mechanism)) :
-    s.Extends (· ∈ g.valuations) (probePass g np c h s) := by
+theorem extends_probePass {probes : List (Cat × Cat)} {hp : Cat × Cat} (hmem : hp ∈ probes)
+    (c : Cat) (s : Valuation α (Case × Mechanism)) :
+    s.Extends (· ∈ g.valuations probes) (probePass g np c hp.1 s) := by
   unfold probePass
   split
-  · exact extends_agreeValue (.inr ⟨rfl, h, ‹_›⟩) s
+  · exact extends_agreeValue (.inr ⟨rfl, hp, hmem, ‹_›⟩) s
   · exact .refl s
 
 theorem extends_domainPass (probes : List (Cat × Cat)) (c : Cat)
     (s : Valuation α (Case × Mechanism)) :
-    s.Extends (· ∈ g.valuations) (domainPass g np probes c s) :=
-  (((g.rules c).extends_dependentPass _ s).mono fun _ h ↦ g.rules_valuations_subset c h).trans <|
-    (Valuation.Extends.foldl _ (fun (hp : Cat × Cat) _ ↦ extends_probePass g np c hp.1) _).trans <|
-      ((g.rules c).extends_unmarkedPass _ _).mono fun _ h ↦ g.rules_valuations_subset c h
+    s.Extends (· ∈ g.valuations probes) (domainPass g np probes c s) :=
+  (((g.rules c).extends_dependentPass _ s).mono fun _ h ↦
+      g.rules_valuations_subset probes c h).trans <|
+    (Valuation.Extends.foldl _ (fun _ hmem ↦
+      extends_probePass g np (List.mem_of_mem_filter hmem) c) _).trans <|
+      ((g.rules c).extends_unmarkedPass _ _).mono fun _ h ↦ g.rules_valuations_subset probes c h
 
 /-- A derivation extends the valuation by what the assigners value. -/
 theorem CaseAssigners.extends_derive (probes : List (Cat × Cat))
     (s : Valuation α (Case × Mechanism)) :
-    s.Extends (· ∈ g.valuations) (g.derive np probes s) :=
+    s.Extends (· ∈ g.valuations probes) (g.derive np probes s) :=
   Valuation.Extends.foldl _ (fun c _ st ↦ extends_domainPass g np probes c st) s
 
 /-- Assignment extends the lexical valuation by what the assigners value. -/
 theorem CaseAssigners.extends_assign (probes : List (Cat × Cat)) (xs : List α) :
-    (lexicalValuation (fun x ↦ (np x).lexicalCase) xs).Extends (· ∈ g.valuations)
+    (lexicalValuation (fun x ↦ (np x).lexicalCase) xs).Extends (· ∈ g.valuations probes)
       (g.assign np probes xs) :=
   g.extends_derive np probes _
 
@@ -334,6 +342,28 @@ theorem CaseAssigners.mechanism_ne_unmarked (hg : ∀ d ∈ g.domains, d.2.unmar
     · cases hm
     · simp [hg d hd] at hu
     · cases hm
+
+/-- A case valued under Agree is the case of a head that probes in the derivation. -/
+theorem CaseAssigners.exists_probe_of_agree {c : Case}
+    (h : (g.assign np probes xs)[i]? = some (x, some (c, .agree))) :
+    ∃ hp ∈ probes, g.agreeCase hp.1 = some c := by
+  rcases (g.extends_assign np probes xs).of_getElem? h with h | h
+  · simpa using (lexicalValuation_getElem? h).2
+  · rcases h with ⟨d, -, ⟨hm, -⟩ | ⟨hm, -⟩⟩ | ⟨-, h⟩
+    · cases hm
+    · cases hm
+    · exact h
+
+/-- Assigners with no dependent and no elsewhere case in any domain value a caseless NP under
+    Agree alone. -/
+theorem CaseAssigners.mechanism_eq_agree (hg : ∀ d ∈ g.domains, d.2 = {}) {c : Case}
+    {m : Mechanism} (hlex : (np x).lexicalCase = none)
+    (h : (g.assign np probes xs)[i]? = some (x, some (c, m))) : m = .agree := by
+  rcases (g.extends_assign np probes xs).of_getElem? h with h | h
+  · exact absurd (lexicalValuation_getElem? h).1 (by simp [hlex])
+  · rcases h with ⟨d, hd, hv⟩ | ⟨hm, -⟩
+    · simp [hg d hd, Rules.valuations] at hv
+    · exact hm
 
 end Assign
 

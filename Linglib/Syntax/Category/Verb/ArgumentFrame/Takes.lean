@@ -44,6 +44,9 @@ matched.
   `ArgumentFrame.Position.not_takes_of_blank_right`,
   `ArgumentFrame.Position.not_takes_of_not_isClausal` — matching needs
   positive evidence on both sides
+- `ArgumentFrame.Position.exists_takes_iff`, `Verb.not_takes_of_blank` — a typer
+  some position takes records a coding or a sentence type, and no verb takes one
+  that records neither
 - `ArgumentFrame.Position.takes_of_le` — the positive witness in general
 - `ArgumentFrame.Position.Takes.mono_of_compat`,
   `ArgumentFrame.Position.Takes.of_le_of_overlap` — guarded monotonicity
@@ -192,6 +195,12 @@ theorem not_takes_of_not_isClausal (h : ¬ p.IsClausal) : ¬ p.Takes z := by
 theorem Takes.isClausal (h : p.Takes z) : p.IsClausal :=
   of_not_not fun hn ↦ not_takes_of_not_isClausal hn h
 
+/-- Some position takes a typer exactly when the typer records a coding or a sentence type. -/
+theorem exists_takes_iff : (∃ p : Position, p.Takes z) ↔ z.coding ≠ none ∨ z.types ≠ ⊥ :=
+  ⟨fun ⟨_, h⟩ ↦ not_and_or.1 fun hz ↦ not_takes_of_blank_right hz.1 hz.2 h,
+    fun h ↦ ⟨typedBy z, typedBy_takes_self_iff.2 fun hz ↦
+      h.elim (· (congrFun hz .coding)) (· (congrFun hz .types))⟩⟩
+
 /-- A typer whose bundle lies below the position's, and records something,
     is taken: the positive witness in general. -/
 theorem takes_of_le (h : z.axes ≤ p.axes) (hz : z.axes ≠ ⊥) : p.Takes z :=
@@ -232,6 +241,10 @@ theorem Takes.mono (hsub : fr.complements ⊆ fr'.complements) (h : fr.Takes z) 
 /-- A frame taking a typer has a clausal complement. -/
 theorem Takes.hasClausal (h : fr.Takes z) : fr.HasClausal :=
   h.imp fun _ ⟨hp, ht⟩ ↦ ⟨hp, ht.isClausal⟩
+
+/-- No frame takes a typer recording neither axis. -/
+theorem not_takes_of_blank (hc : z.coding = none) (ht : z.types = ⊥) : ¬ fr.Takes z :=
+  fun ⟨_, _, h⟩ ↦ Position.not_takes_of_blank_right hc ht h
 
 /-- Small clauses take no clause-typer. -/
 theorem not_takes_smallClause (z : Complementizer) : ¬ smallClause.Takes z := by
@@ -285,6 +298,10 @@ instance : Decidable (v.Takes z) := inferInstanceAs (Decidable (∃ fr ∈ v.val
 /-- A verb taking a typer takes a clausal complement. -/
 theorem Takes.takesClausal (h : v.Takes z) : v.TakesClausal :=
   h.imp fun _ ⟨hf, ht⟩ ↦ ⟨hf, ht.hasClausal⟩
+
+/-- No verb takes a typer recording neither axis, as a converb suffix records none. -/
+theorem not_takes_of_blank (hc : z.coding = none) (ht : z.types = ⊥) : ¬ v.Takes z :=
+  fun ⟨_, _, h⟩ ↦ ArgumentFrame.not_takes_of_blank hc ht h
 
 /-- The typers of `v` within a language's complementizer inventory. -/
 def typers (v : Verb) (inv : List Complementizer) : List Complementizer :=
