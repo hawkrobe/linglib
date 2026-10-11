@@ -33,7 +33,7 @@ open English.Inflection
 
 /-- "charge" — DOC-only. Implicit second obj indef, implicit goal def (addressee). -/
 def charge : Verb := .mkRegular {
-  form := "charge"
+  morphs := [.root "charge"]
   valency := .of
     [(ArgumentFrame.np_np, [0, 1, 2]),
      (⟨some .nominal, [.nominal, .implicit (some .indef)]⟩, [0, 1, 2]),
@@ -43,7 +43,7 @@ def charge : Verb := .mkRegular {
 
 /-- "cost" — DOC-only. Implicit second obj indef, implicit goal def. -/
 def cost : Verb := .mkRegular {
-  form := "cost"
+  morphs := [.root "cost"]
   valency := .of
     [(ArgumentFrame.np_np, [0, 1, 2]),
      (⟨some .nominal, [.nominal, .implicit (some .indef)]⟩, [0, 1, 2]),
@@ -53,7 +53,7 @@ def cost : Verb := .mkRegular {
 
 /-- "fine" — DOC-only. Implicit second obj indef, implicit goal def. -/
 def fine : Verb := .mkRegular {
-  form := "fine"
+  morphs := [.root "fine"]
   valency := .of
     [(ArgumentFrame.np_np, [0, 1, 2]),
      (⟨some .nominal, [.nominal, .implicit (some .indef)]⟩, [0, 1, 2])]
@@ -62,7 +62,7 @@ def fine : Verb := .mkRegular {
 
 /-- "tip" — DOC-only. Implicit second obj indef, implicit goal def (unique). -/
 def tip : Verb where
-  form := "tip"
+  morphs := [.root "tip"]
   form3sg := "tips"
   formPast := "tipped"
   formPastPart := "tipped"
@@ -76,7 +76,7 @@ def tip : Verb where
 
 /-- "pay" — DOC-only. Implicit second obj indef, implicit goal def. -/
 def pay : Verb where
-  form := "pay"
+  morphs := [.root "pay"]
   form3sg := "pays"
   formPast := "paid"
   formPastPart := "paid"
@@ -91,7 +91,7 @@ def pay : Verb where
 
 /-- "strike" — DOC-only. Implicit second obj indef, implicit goal def (familiar). -/
 def strike_ : Verb where
-  form := "strike"
+  morphs := [.root "strike"]
   form3sg := "strikes"
   formPast := "struck"
   formPastPart := "struck"
@@ -106,7 +106,7 @@ def strike_ : Verb where
 
 /-- "forgive" — DOC-only. Implicit second obj def, implicit goal def (addressee). -/
 def forgive : Verb where
-  form := "forgive"
+  morphs := [.root "forgive"]
   form3sg := "forgives"
   formPast := "forgave"
   formPastPart := "forgiven"
@@ -120,7 +120,7 @@ def forgive : Verb where
 
 /-- "spare" — DOC-only. Implicit second obj def, no implicit goal. -/
 def spare : Verb := .mkRegular {
-  form := "spare"
+  morphs := [.root "spare"]
   valency := .of
     [(ArgumentFrame.np_np, [0, 1, 2]),
      (⟨some .nominal, [.nominal, .implicit (some .def)]⟩, [0, 1, 2])]
@@ -130,7 +130,7 @@ def spare : Verb := .mkRegular {
 /-- "deny" — DOC-only. Implicit goal def; second object obligatory
     ([bruening-2021] Table 56 row 3 col 1, ex. (32d) p. 1032). -/
 def deny : Verb where
-  form := "deny"
+  morphs := [.root "deny"]
   form3sg := "denies"
   formPast := "denied"
   formPastPart := "denied"
@@ -144,7 +144,7 @@ def deny : Verb where
 /-- "permit" — DOC-only. Implicit goal def (addressee); second object
     obligatory ([bruening-2021] Table 56 row 3 col 1, ex. (32e) p. 1032). -/
 def permit : Verb where
-  form := "permit"
+  morphs := [.root "permit"]
   form3sg := "permits"
   formPast := "permitted"
   formPastPart := "permitted"
@@ -157,7 +157,7 @@ def permit : Verb where
 /-- "assign" — alternating (DOC + PP). Implicit goal definite; the second
     object is obligatory, Pesetsky's observation as [bruening-2021] report it. -/
 def assign : Verb := .mkRegular {
-  form := "assign"
+  morphs := [.root "assign"]
   valency := .of
     [(ArgumentFrame.np_np, [0, 1, 2]),
      (ArgumentFrame.np_pp, [0, 2, 1]),
@@ -170,13 +170,13 @@ def assign : Verb := .mkRegular {
 
 /-- "begrudge" — DOC-only. Neither object implicit. -/
 def begrudge : Verb := .mkRegular {
-  form := "begrudge"
+  morphs := [.root "begrudge"]
   valency := .ofFrame ArgumentFrame.np_np
   vendlerClass := some .state }
 
 /-- "bet" — DOC-only. Neither object implicit. -/
 def bet : Verb where
-  form := "bet"
+  morphs := [.root "bet"]
   form3sg := "bets"
   formPast := "bet"
   formPastPart := "bet"
@@ -190,7 +190,7 @@ def bet : Verb where
 /-- "serve" — alternates DOC/PP. Implicit second obj indef (DOC).
     Implicit goal def (PP). -/
 def serve : Verb := .mkRegular {
-  form := "serve"
+  morphs := [.root "serve"]
   valency := .of
     [(ArgumentFrame.np_np, [0, 1, 2]),
      (ArgumentFrame.np_pp, [0, 2, 1]),
@@ -202,7 +202,7 @@ def serve : Verb := .mkRegular {
 /-- "teach" — alternates DOC/PP. Implicit goal indef (PP).
     When both implicit, both are indefinite. -/
 def teach : Verb where
-  form := "teach"
+  morphs := [.root "teach"]
   form3sg := "teaches"
   formPast := "taught"
   formPastPart := "taught"
@@ -218,7 +218,7 @@ def teach : Verb where
 /-- "feed" — alternates DOC/PP. Implicit second obj indef (DOC).
     No implicit goal. -/
 def feed : Verb where
-  form := "feed"
+  morphs := [.root "feed"]
   form3sg := "feeds"
   formPast := "fed"
   formPastPart := "fed"
@@ -232,7 +232,7 @@ def feed : Verb where
 
 /-- "show" — alternates DOC/PP. Implicit second obj def. No implicit goal. -/
 def show_ : Verb where
-  form := "show"
+  morphs := [.root "show"]
   form3sg := "shows"
   formPast := "showed"
   formPastPart := "shown"
@@ -246,7 +246,7 @@ def show_ : Verb where
 
 /-- "award" — alternates DOC/PP. Implicit goal def (PP). -/
 def award : Verb := .mkRegular {
-  form := "award"
+  morphs := [.root "award"]
   valency := .of
     [(ArgumentFrame.np_np, [0, 1, 2]),
      (ArgumentFrame.np_pp, [0, 2, 1]),
@@ -257,7 +257,7 @@ def award : Verb := .mkRegular {
 
 /-- "forward" — alternates DOC/PP. Implicit goal def (PP). -/
 def forward_ : Verb := .mkRegular {
-  form := "forward"
+  morphs := [.root "forward"]
   valency := .of
     [(ArgumentFrame.np_np, [0, 1, 2]),
      (ArgumentFrame.np_pp, [0, 2, 1]),
@@ -268,7 +268,7 @@ def forward_ : Verb := .mkRegular {
 
 /-- "grant" — alternates DOC/PP. Implicit goal def (PP). -/
 def grant : Verb := .mkRegular {
-  form := "grant"
+  morphs := [.root "grant"]
   valency := .of
     [(ArgumentFrame.np_np, [0, 1, 2]),
      (ArgumentFrame.np_pp, [0, 2, 1]),
@@ -278,7 +278,7 @@ def grant : Verb := .mkRegular {
 
 /-- "offer" — alternates DOC/PP. Implicit goal def (PP). -/
 def offer : Verb := .mkRegular {
-  form := "offer"
+  morphs := [.root "offer"]
   valency := .of
     [(ArgumentFrame.np_np, [0, 1, 2]),
      (ArgumentFrame.np_pp, [0, 2, 1]),
@@ -288,7 +288,7 @@ def offer : Verb := .mkRegular {
 
 /-- "reserve" — alternates DOC/PP. Implicit goal def (PP). -/
 def reserve : Verb := .mkRegular {
-  form := "reserve"
+  morphs := [.root "reserve"]
   valency := .of
     [(ArgumentFrame.np_np, [0, 1, 2]),
      (ArgumentFrame.np_pp, [0, 2, 1]),
@@ -299,7 +299,7 @@ def reserve : Verb := .mkRegular {
 
 /-- "pass" — alternates DOC/PP. Implicit DO def in PP frame only. -/
 def pass : Verb := .mkRegular {
-  form := "pass"
+  morphs := [.root "pass"]
   valency := .of
     [(ArgumentFrame.np, [0, 1]),
      (ArgumentFrame.np_pp, [0, 1, 2]),
@@ -315,7 +315,7 @@ def pass : Verb := .mkRegular {
 /-- "hand" — Levin 11.1 Send verbs; alternates DOC/PP, neither argument
     implicit. -/
 def hand : Verb := .mkRegular {
-  form := "hand"
+  morphs := [.root "hand"]
   valency := .of
     [(ArgumentFrame.np_np, [0, 1, 2]),
      (ArgumentFrame.np_pp, [0, 2, 1]),
@@ -325,7 +325,7 @@ def hand : Verb := .mkRegular {
 
 /-- "mail" — transitive, ditransitive, or with a *to*-phrase (*Paul mailed a letter*). -/
 def mail : Verb := .mkRegular {
-  form := "mail"
+  morphs := [.root "mail"]
   valency := .of
     [(ArgumentFrame.np, [0, 1]),
      (ArgumentFrame.np_np, [0, 2, 1]),
@@ -334,7 +334,7 @@ def mail : Verb := .mkRegular {
 
 /-- "lend" — alternates DOC/PP. Neither argument implicit. -/
 def lend : Verb where
-  form := "lend"
+  morphs := [.root "lend"]
   form3sg := "lends"
   formPast := "lent"
   formPastPart := "lent"

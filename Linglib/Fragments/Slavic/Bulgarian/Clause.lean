@@ -68,7 +68,7 @@ def emotiveFrames : List ArgumentFrame := [ArgumentFrame.finiteClause, ArgumentF
 
 /-- *săžaljavam* 'regret', the predicate of the projection trials (57). -/
 def sazhaljavam : Verb where
-  form := "săžaljavam"
+  morphs := [.root "săžaljavam"]
   valency := .of [(ArgumentFrame.finiteClause, [0, 1]), (ArgumentFrame.pp, [0, 1])]
   predicateClass := some .commentative
   attitude := some (.preferential .negative true)
@@ -76,7 +76,7 @@ def sazhaljavam : Verb where
 
 /-- *vinoven săm* 'be one's fault' ((57b)). -/
 def vinovenSam : Verb where
-  form := "vinoven săm"
+  morphs := [.root "vinoven", .free "săm"]
   valency := .of [(ArgumentFrame.finiteClause, [0, 1]), (ArgumentFrame.pp, [0, 1])]
   predicateClass := some .commentative
   attitude := some (.preferential .negative true)
@@ -84,7 +84,7 @@ def vinovenSam : Verb where
 
 /-- *jad me e* 'be sorry, regret' ((56b)). -/
 def jadMeE : Verb where
-  form := "jad me e"
+  morphs := [.root "jad", .free "me", .free "e"]
   valency := .of [(ArgumentFrame.finiteClause, [0, 1]), (ArgumentFrame.pp, [0, 1])]
   predicateClass := some .commentative
   attitude := some (.preferential .negative true)
@@ -92,7 +92,7 @@ def jadMeE : Verb where
 
 /-- *radvam se* 'be happy'. -/
 def radvamSe : Verb where
-  form := "radvam se"
+  morphs := [.root "radvam", .free "se"]
   valency := .of [(ArgumentFrame.finiteClause, [0, 1]), (ArgumentFrame.pp, [0, 1])]
   predicateClass := some .commentative
   attitude := some (.preferential .positive true)
@@ -100,7 +100,7 @@ def radvamSe : Verb where
 
 /-- *nedovolstvam* 'be dissatisfied'. -/
 def nedovolstvam : Verb where
-  form := "nedovolstvam"
+  morphs := [.root "nedovolstvam"]
   valency := .of [(ArgumentFrame.finiteClause, [0, 1]), (ArgumentFrame.pp, [0, 1])]
   predicateClass := some .commentative
   attitude := some (.preferential .negative true)
@@ -108,7 +108,7 @@ def nedovolstvam : Verb where
 
 /-- *pritesnjavam se* 'worry'. -/
 def pritesnjavamSe : Verb where
-  form := "pritesnjavam se"
+  morphs := [.root "pritesnjavam", .free "se"]
   valency := .of [(ArgumentFrame.finiteClause, [0, 1]), (ArgumentFrame.pp, [0, 1])]
   predicateClass := some .commentative
   attitude := some (.preferential .negative false)
@@ -116,7 +116,7 @@ def pritesnjavamSe : Verb where
 
 /-- *žal mi e* 'be sorry'. -/
 def zhalMiE : Verb where
-  form := "žal mi e"
+  morphs := [.root "žal", .free "mi", .free "e"]
   valency := .of [(ArgumentFrame.finiteClause, [0, 1]), (ArgumentFrame.pp, [0, 1])]
   predicateClass := some .commentative
   attitude := some (.preferential .negative true)
@@ -124,7 +124,7 @@ def zhalMiE : Verb where
 
 /-- *măčno mi e* 'be sad'. -/
 def machnoMiE : Verb where
-  form := "măčno mi e"
+  morphs := [.root "măčno", .free "mi", .free "e"]
   valency := .of [(ArgumentFrame.finiteClause, [0, 1]), (ArgumentFrame.pp, [0, 1])]
   predicateClass := some .commentative
   attitude := some (.preferential .negative true)
@@ -132,7 +132,7 @@ def machnoMiE : Verb where
 
 /-- *sram me e* 'feel ashamed'. -/
 def sramMeE : Verb where
-  form := "sram me e"
+  morphs := [.root "sram", .free "me", .free "e"]
   valency := .of [(ArgumentFrame.finiteClause, [0, 1]), (ArgumentFrame.pp, [0, 1])]
   predicateClass := some .commentative
   attitude := some (.preferential .negative true)
@@ -140,7 +140,7 @@ def sramMeE : Verb where
 
 /-- *văzmuštavam se* 'resent', emotive and factive but without a *za* phrase ((58a)). -/
 def vazmushtavamSe : Verb where
-  form := "văzmuštavam se"
+  morphs := [.root "văzmuštavam", .free "se"]
   valency := .ofFrame ArgumentFrame.finiteClause
   predicateClass := some .commentative
   attitude := some (.preferential .negative true)
@@ -148,7 +148,7 @@ def vazmushtavamSe : Verb where
 
 /-- *razbiram* 'comprehend', a transitive factive on Kiparsky and Kiparsky's list. -/
 def razbiram : Verb where
-  form := "razbiram"
+  morphs := [.root "razbiram"]
   valency := .ofFrame ArgumentFrame.finiteClause
   predicateClass := some .knowledge
   attitude := some (.doxastic .veridical)
@@ -156,7 +156,7 @@ def razbiram : Verb where
 
 /-- *vzemam predvid* 'take into account', printed *previd* in the paper. -/
 def vzemamPredvid : Verb where
-  form := "vzemam predvid"
+  morphs := [.root "vzemam", .free "predvid"]
   valency := .ofFrame ArgumentFrame.finiteClause
   predicateClass := none
   attitude := some (.doxastic .veridical)
@@ -164,7 +164,7 @@ def vzemamPredvid : Verb where
 
 /-- *imam predvid* 'bear in mind'. -/
 def imamPredvid : Verb where
-  form := "imam predvid"
+  morphs := [.root "imam", .free "predvid"]
   valency := .ofFrame ArgumentFrame.finiteClause
   predicateClass := none
   attitude := some (.doxastic .veridical)
@@ -172,7 +172,7 @@ def imamPredvid : Verb where
 
 /-- *prenebregvam* 'ignore'. -/
 def prenebregvam : Verb where
-  form := "prenebregvam"
+  morphs := [.root "prenebregvam"]
   valency := .ofFrame ArgumentFrame.finiteClause
   predicateClass := none
   attitude := some (.doxastic .veridical)
@@ -180,7 +180,7 @@ def prenebregvam : Verb where
 
 /-- *griža se* 'take care'. -/
 def grizhaSe : Verb where
-  form := "griža se"
+  morphs := [.root "griža", .free "se"]
   valency := .ofFrame ArgumentFrame.finiteClause
   predicateClass := none
   attitude := some (.doxastic .veridical)
@@ -188,7 +188,7 @@ def grizhaSe : Verb where
 
 /-- *znaja* 'know', a semi-factive. -/
 def znaja : Verb where
-  form := "znaja"
+  morphs := [.root "znaja"]
   valency := .ofFrame ArgumentFrame.finiteClause
   predicateClass := some .knowledge
   attitude := some (.doxastic .veridical)
@@ -196,7 +196,7 @@ def znaja : Verb where
 
 /-- *pomnja* 'remember'. -/
 def pomnja : Verb where
-  form := "pomnja"
+  morphs := [.root "pomnja"]
   valency := .ofFrame ArgumentFrame.finiteClause
   predicateClass := some .knowledge
   attitude := some (.doxastic .veridical)
@@ -204,7 +204,7 @@ def pomnja : Verb where
 
 /-- *otkrivam* 'find out'. -/
 def otkrivam : Verb where
-  form := "otkrivam"
+  morphs := [.root "otkrivam"]
   valency := .ofFrame ArgumentFrame.finiteClause
   predicateClass := some .knowledge
   attitude := some (.doxastic .veridical)
@@ -212,7 +212,7 @@ def otkrivam : Verb where
 
 /-- *viždam* 'see', on the propositional reading. -/
 def vizhdam : Verb where
-  form := "viždam"
+  morphs := [.root "viždam"]
   valency := .ofFrame ArgumentFrame.finiteClause
   predicateClass := some .perception
   attitude := some (.doxastic .veridical)
@@ -220,7 +220,7 @@ def vizhdam : Verb where
 
 /-- *čuvam* 'hear', on the propositional reading. -/
 def chuvam : Verb where
-  form := "čuvam"
+  morphs := [.root "čuvam"]
   valency := .ofFrame ArgumentFrame.finiteClause
   predicateClass := some .perception
   attitude := some (.doxastic .veridical)
@@ -228,7 +228,7 @@ def chuvam : Verb where
 
 /-- *zabeljazvam* 'notice'. -/
 def zabeljazvam : Verb where
-  form := "zabeljazvam"
+  morphs := [.root "zabeljazvam"]
   valency := .ofFrame ArgumentFrame.finiteClause
   predicateClass := none
   attitude := some (.doxastic .veridical)

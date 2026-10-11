@@ -66,7 +66,7 @@ structure Verb extends _root_.Verb where
     Usage:
     ```
     def kick : Verb := .mkRegular {
-      form := "kick", valency := .ofFrame ArgumentFrame.np }
+      morphs := [.root "kick"], valency := .ofFrame ArgumentFrame.np }
     ``` -/
 def Verb.mkRegular (core : _root_.Verb) : Verb :=
   { toVerb := core
@@ -109,7 +109,7 @@ def Verb.realize (e : Verb) : Verb.Cell → String
 
 /-- "sleep" — intransitive, no presupposition -/
 def sleep : Verb where
-  form := "sleep"
+  morphs := [.root "sleep"]
   form3sg := "sleeps"
   formPast := "slept"
   formPastPart := "slept"
@@ -121,14 +121,14 @@ def sleep : Verb where
 
 /-- "sneeze" — intransitive -/
 def sneeze : Verb := .mkRegular {
-  form := "sneeze"
+  morphs := [.root "sneeze"]
   valency := .ofFrame ArgumentFrame.intransitive
   passivizable := false
   levinClasses := {LevinClass.hiccup, .nonverbalExpression} }
 
 /-- "run" — intransitive, no presupposition -/
 def run : Verb where
-  form := "run"
+  morphs := [.root "run"]
   form3sg := "runs"
   formPast := "ran"
   formPastPart := "run"
@@ -149,7 +149,7 @@ def run : Verb where
 
 /-- "dance" — intransitive activity -/
 def dance : Verb := .mkRegular {
-  form := "dance"
+  morphs := [.root "dance"]
   valency := .ofFrame ArgumentFrame.intransitive
   passivizable := false
   vendlerClass := some .activity
@@ -157,7 +157,7 @@ def dance : Verb := .mkRegular {
 
 /-- "arrive" — unaccusative intransitive -/
 def arrive : Verb := .mkRegular {
-  form := "arrive"
+  morphs := [.root "arrive"]
   valency := .ofFrame ArgumentFrame.intransitive [some achievementSubjectProfile]
   voiceType := some .nonThematic
   passivizable := false
@@ -167,7 +167,7 @@ def arrive : Verb := .mkRegular {
 
 /-- "come" — Levin 51.1 inherently directed motion, like `arrive`. -/
 def come : Verb where
-  form := "come"
+  morphs := [.root "come"]
   form3sg := "comes"
   formPast := "came"
   formPastPart := "come"
@@ -180,7 +180,7 @@ def come : Verb where
 
 /-- "go" — Levin 51.1 inherently directed motion, suppletive in the past. -/
 def go : Verb where
-  form := "go"
+  morphs := [.root "go"]
   form3sg := "goes"
   formPast := "went"
   formPastPart := "gone"
@@ -206,7 +206,7 @@ example : dance.direction = none ∧ run.direction = some .place ∧ arrive.dire
 
 /-- "eat" — transitive, implicit object is indefinite ("Have you eaten?") -/
 def eat : Verb where
-  form := "eat"
+  morphs := [.root "eat"]
   form3sg := "eats"
   formPast := "ate"
   formPastPart := "eaten"
@@ -226,7 +226,7 @@ def eat : Verb where
 
 /-- "kick" — transitive -/
 def kick : Verb := .mkRegular {
-  form := "kick"
+  morphs := [.root "kick"]
   valency := .of
     [(ArgumentFrame.np, [0, 1]),
      (ArgumentFrame.pp (some Adpositions.at_), [0, 1]),
@@ -243,7 +243,7 @@ def kick : Verb := .mkRegular {
 
 /-- "aim" — with an *at*-phrase, and transitive with one -/
 def aim : Verb := .mkRegular {
-  form := "aim"
+  morphs := [.root "aim"]
   valency := .of
     [(ArgumentFrame.pp (some Adpositions.at_), [0, 1]),
      (ArgumentFrame.np_pp (some Adpositions.at_), [0, 2, 1])] }
@@ -252,7 +252,7 @@ def aim : Verb := .mkRegular {
     Implicit goal is definite ([fillmore-1986]: pragmatically recoverable).
     Neither object can be implicit alone. -/
 def give : Verb where
-  form := "give"
+  morphs := [.root "give"]
   form3sg := "gives"
   formPast := "gave"
   formPastPart := "given"
@@ -268,7 +268,7 @@ def give : Verb where
 
 /-- "put" — locative -/
 def put : Verb where
-  form := "put"
+  morphs := [.root "put"]
   form3sg := "puts"
   formPast := "put"
   formPastPart := "put"
@@ -279,14 +279,14 @@ def put : Verb where
 
 /-- "weigh" — measure predicate selecting for mass/weight. -/
 def weigh : Verb := .mkRegular {
-  form := "weigh"
+  morphs := [.root "weigh"]
   valency := .ofFrame ArgumentFrame.np
   vendlerClass := some .state
   levinClasses := {LevinClass.register} }
 
 /-- "cover" — motion/extent predicate selecting for distance. -/
 def cover : Verb := .mkRegular {
-  form := "cover"
+  morphs := [.root "cover"]
   valency := .ofFrame ArgumentFrame.np
   vendlerClass := some .accomplishment
   incrementality := some .strict
@@ -294,14 +294,14 @@ def cover : Verb := .mkRegular {
 
 /-- "measure" — general measurement predicate. -/
 def measure : Verb := .mkRegular {
-  form := "measure"
+  morphs := [.root "measure"]
   valency := .ofFrame ArgumentFrame.np
   vendlerClass := some .state
   levinClasses := {LevinClass.register} }
 
 /-- "buy" — irregular transitive -/
 def buy : Verb where
-  form := "buy"
+  morphs := [.root "buy"]
   form3sg := "buys"
   formPast := "bought"
   formPastPart := "bought"
@@ -316,7 +316,7 @@ def buy : Verb where
 
 /-- "meet" — irregular transitive -/
 def meet : Verb where
-  form := "meet"
+  morphs := [.root "meet"]
   form3sg := "meets"
   formPast := "met"
   formPastPart := "met"
@@ -327,7 +327,7 @@ def meet : Verb where
 
 /-- "set" — irregular; the base, past and past participle forms coincide. -/
 def set_ : Verb where
-  form := "set"
+  morphs := [.root "set"]
   form3sg := "sets"
   formPast := "set"
   formPastPart := "set"
@@ -338,7 +338,7 @@ def set_ : Verb where
 
 /-- "clarify" — regular transitive. -/
 def clarify : Verb where
-  form := "clarify"
+  morphs := [.root "clarify"]
   form3sg := "clarifies"
   formPast := "clarified"
   formPastPart := "clarified"
@@ -348,7 +348,7 @@ def clarify : Verb where
 /-- "sell" — change of possession, alternates DOC/PP.
     Implicit DO is definite; implicit goal is indefinite. -/
 def sell : Verb where
-  form := "sell"
+  morphs := [.root "sell"]
   form3sg := "sells"
   formPast := "sold"
   formPastPart := "sold"
@@ -366,7 +366,7 @@ def sell : Verb where
 
 /-- "leave" — transitive (also used intransitively with argument drop) -/
 def leave : Verb where
-  form := "leave"
+  morphs := [.root "leave"]
   form3sg := "leaves"
   formPast := "left"
   formPastPart := "left"
@@ -378,7 +378,7 @@ def leave : Verb where
 
 /-- "see" — transitive; factive with a finite-clause complement -/
 def see : Verb where
-  form := "see"
+  morphs := [.root "see"]
   form3sg := "sees"
   formPast := "saw"
   formPastPart := "seen"
@@ -396,7 +396,7 @@ def see : Verb where
 
 /-- "devour" — transitive, no presupposition -/
 def devour : Verb := .mkRegular {
-  form := "devour"
+  morphs := [.root "devour"]
   valency := .ofFrame ArgumentFrame.np
   vendlerClass := some .accomplishment
   incrementality := some .strict
@@ -408,7 +408,7 @@ def devour : Verb := .mkRegular {
 
 /-- "drink" — Levin 39.1 Eat verbs. -/
 def drink : Verb where
-  form := "drink"
+  morphs := [.root "drink"]
   form3sg := "drinks"
   formPast := "drank"
   formPastPart := "drunk"
@@ -424,7 +424,7 @@ def drink : Verb where
 /-- "read" — Levin 14 Learn verbs, with learn and study; also listed among the verbs of
     transfer of a message (37.1) and the register verbs (54.1). -/
 def read : Verb where
-  form := "read"
+  morphs := [.root "read"]
   form3sg := "reads"
   formPast := "read"
   formPastPart := "read"
@@ -437,7 +437,7 @@ def read : Verb where
 /-- "build" — creation verb, strictly incremental theme.
     Base transitive that productively takes DOC ("build us a house"). -/
 def build : Verb where
-  form := "build"
+  morphs := [.root "build"]
   form3sg := "builds"
   formPast := "built"
   formPastPart := "built"
@@ -459,7 +459,7 @@ def build : Verb where
     Alternates DOC/PP. Implicit DO in both frames (indefinite).
     Uniquely allows implicit DO in both DOC and PP ([bruening-2021]). -/
 def write : Verb where
-  form := "write"
+  morphs := [.root "write"]
   form3sg := "writes"
   formPast := "wrote"
   formPastPart := "written"
@@ -475,7 +475,7 @@ def write : Verb where
 
 /-- "sweep" — motion + sustained contact, variable agentivity (default sense). -/
 def sweep : Verb where
-  form := "sweep"
+  morphs := [.root "sweep"]
   form3sg := "sweeps"
   formPast := "swept"
   formPastPart := "swept"
@@ -498,7 +498,7 @@ def sweep : Verb where
 
 /-- "sweep" instrument sense — obligatorily agentive, broom lexicalized. -/
 def sweep_instr : Verb where
-  form := "sweep"
+  morphs := [.root "sweep"]
   form3sg := "sweeps"
   formPast := "swept"
   formPastPart := "swept"

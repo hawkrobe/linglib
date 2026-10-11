@@ -86,7 +86,7 @@ whose nominalized complement carries a presupposition that the event it describe
 before the thinking ([bondarenko-2020] (2), (21)). The `readings` rows record the alternation,
 nonveridical and opaque on the bare CP, veridical and transparent on the nominalized frame. -/
 def hanaxa : Verb where
-  form := "hanaxa"
+  morphs := [.root "hanaxa"]
   valency := .of [(ArgumentFrame.finiteClause, [0, 1]), (nominalizedFrame, [0, 1])]
   readings := [
     { frame := ArgumentFrame.finiteClause, attitude := some (.doxastic .nonVeridical),
@@ -97,7 +97,7 @@ def hanaxa : Verb where
 /-- *mɘdɘxɘ* 'know' — factive in both frames (ex. 36); embeds polar
 questions (ex. 3). -/
 def medexe : Verb where
-  form := "mɘdɘxɘ"
+  morphs := [.root "mɘdɘxɘ"]
   valency := .of
     [(ArgumentFrame.finiteClause, [0, 1]),
      (ArgumentFrame.gerund, [0, 1]),
@@ -108,14 +108,14 @@ def medexe : Verb where
 /-- *xɘlɘxɘ* 'say' — non-factive with bare CPs; nominalized complements
 are existence-entailing (ex. 51; speaker variation per fn. 30). -/
 def xelexe : Verb where
-  form := "xɘlɘxɘ"
+  morphs := [.root "xɘlɘxɘ"]
   valency := .of [(ArgumentFrame.finiteClause, [0, 1]), (ArgumentFrame.gerund, [0, 1])]
   speechActVerb := true
 
 /-- *duːlaxa* 'hear' — non-factive with bare CPs, existence-entailing
 with nominalized complements (ex. 50). -/
 def duulaxa : Verb where
-  form := "duːlaxa"
+  morphs := [.root "duːlaxa"]
   valency := .of [(ArgumentFrame.finiteClause, [0, 1]), (ArgumentFrame.gerund, [0, 1])]
 
 end Buryat

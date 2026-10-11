@@ -35,19 +35,19 @@ structure Verb extends _root_.Verb where
 
 /-- *wus-ke ha-ta* 'cause to smile', the periphrastic causative. -/
 def wus_ke_ha : Verb where
-  form := "wus-ke ha-ta"
+  morphs := [.root "wus", .suff "ke", .root "ha", .suff "ta"]
   valency := .ofFrame ArgumentFrame.infinitival
   readings := [{ frame := ArgumentFrame.infinitival, control := some .objectControl }]
 
 /-- *ilk-ke ha-ta* 'cause to read', the periphrastic causative. -/
 def ilk_ke_ha : Verb where
-  form := "ilk-ke ha-ta"
+  morphs := [.root "ilk", .suff "ke", .root "ha", .suff "ta"]
   valency := .ofFrame ArgumentFrame.infinitival
   readings := [{ frame := ArgumentFrame.infinitival, control := some .objectControl }]
 
 /-- *cwuk-i-ta* 'kill', the morphological causative of *cwuk-ta* 'die'. -/
 def cwuk_i : Verb where
-  form := "cwuk-i-ta"
+  morphs := [.root "cwuk", .suff "i", .suff "ta"]
   valency := .ofFrame ArgumentFrame.np
 
 /-- The inventory. -/

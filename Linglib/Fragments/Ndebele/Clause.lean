@@ -49,14 +49,14 @@ structure Verb extends _root_.Verb where
 
 /-- *cabanga* 'think', with an indicative complement ((4), (12)). -/
 def cabanga : Verb where
-  form := "cabanga"
+  morphs := [.root "cabanga"]
   valency := .ofFrame ArgumentFrame.finiteClause
   predicateClass := .propAttitude
   attitude := some (.doxastic .nonVeridical)
 
 /-- *funa* 'want', with a subjunctive complement and plain class-15 objects ((7)). -/
 def funa : Verb where
-  form := "funa"
+  morphs := [.root "funa"]
   valency := .of
     [({ complements := [.clausal (coding := some .subjunctive) (types := .only .declarative)] },
      [0, 1]),
@@ -66,13 +66,13 @@ def funa : Verb where
 
 /-- *zwa* 'hear', attested as a hearsay report ((18)). -/
 def zwa : Verb where
-  form := "zwa"
+  morphs := [.root "zwa"]
   valency := .ofFrame ArgumentFrame.finiteClause
   predicateClass := .perception
 
 /-- *khuluma nga* 'talk about', whose clause is the object of the preposition ((20b)). -/
 def khulumaNga : Verb where
-  form := "khuluma nga"
+  morphs := [.root "khuluma", .free "nga"]
   valency := .ofFrame ArgumentFrame.pp
   predicateClass := .utterance
   speechActVerb := true

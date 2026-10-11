@@ -57,7 +57,7 @@ structure Verb extends _root_.Verb, _root_.Verb.CaseArray Case where
 
 /-- `Verb.ofStem s` is the entry cited by the infinitive of `s`, with its forms and no further
 lexical information. -/
-def Verb.ofStem (s : Conjugation.Stem) : Verb := { form := s.infinitive, stem := s }
+def Verb.ofStem (s : Conjugation.Stem) : Verb := { morphs := [.root s.infinitive], stem := s }
 
 /-- The predicate the entry `v` forms with a path phrase of reading `p`. -/
 def Verb.withPath (v : Verb) (p : Adposition.SpatialReading) : Verb :=

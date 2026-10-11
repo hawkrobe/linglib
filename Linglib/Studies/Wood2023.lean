@@ -4,7 +4,6 @@ public import Linglib.Morphology.DistributedMorphology.Allosemy
 public import Linglib.Morphology.DistributedMorphology.ComplexHead
 public import Linglib.Fragments.Icelandic.Nouns
 public import Linglib.Data.Examples.Wood2023
-import all Init.Data.String.Defs  -- for unfolding `String.join`
 
 /-!
 # Wood (2023): Icelandic Nominalizations and Allosemy

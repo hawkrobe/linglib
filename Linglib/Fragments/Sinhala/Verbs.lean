@@ -49,41 +49,41 @@ instance : DecidablePred Verb.HasInvolitive := fun v ↦
 /-- *kadannə* 'break' has the involitive *kædennə* and an inchoative, as in
 *Eewa okkomə ibeemə kædenəwa* 'They all just break by themselves'. -/
 def kadann : Verb where
-  form := "kadannə"
+  morphs := [.root "kadannə"]
   involitive := some "kædennə"
   valency := .of [(.np, [0, 1]), (.intransitive, [1])]
 
 /-- *gilannə* 'drown' has the involitive *gilennə* and an inchoative, as in *Nimal giluna*
 'Nimal drowned'. -/
 def gilann : Verb where
-  form := "gilannə"
+  morphs := [.root "gilannə"]
   involitive := some "gilennə"
   valency := .of [(.np, [0, 1]), (.intransitive, [1])]
 
 /-- *marannə* 'kill' has the involitive *mærennə* 'die', which occurs only intransitively, as in
 *Nimal mæruna* 'Nimal died'. -/
 def marann : Verb where
-  form := "marannə"
+  morphs := [.root "marannə"]
   involitive := some "mærennə"
   valency := .of [(.np, [0, 1]), (.intransitive, [1])]
 
 /-- *minimarannə* 'murder' requires volition and so has neither an involitive stem nor an
 inchoative. -/
 def minimarann : Verb where
-  form := "minimarannə"
+  morphs := [.root "minimarannə"]
   valency := .ofFrame .np
 
 /-- *kapannə* 'cut' has an involitive stem, as in *Joon atiŋ pan kæpuna* 'John cut the bread
 (accidentally)', but no inchoative. -/
 def kapann : Verb where
-  form := "kapannə"
+  morphs := [.root "kapannə"]
   involitive := some "kæpennə"
   valency := .ofFrame .np
 
 /-- *vinaashə-kərannə* 'destroy' has the involitive *vinaashə-wennə* and, unlike English
 *destroy*, an inchoative. -/
 def vinaashKarann : Verb where
-  form := "vinaashə-kərannə"
+  morphs := [.root "vinaashə-kərannə"]
   involitive := some "vinaashə-wennə"
   valency := .of [(.np, [0, 1]), (.intransitive, [1])]
 

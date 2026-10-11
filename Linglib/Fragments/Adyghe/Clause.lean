@@ -65,7 +65,7 @@ structure Verb extends _root_.Verb where
 /-- *gʷəpšəsa* 'think', which rejects a bare finite complement, takes the relative-shaped one,
 and takes plain noun-phrase objects ((96), (98), (102)). -/
 def gwepshesa : Verb where
-  form := "gʷəpšəsa"
+  morphs := [.root "gʷəpšəsa"]
   valency := .of [(ArgumentFrame.finiteClause, [0, 1]), (ArgumentFrame.np, [0, 1])]
   predicateClass := some .propAttitude
   attitude := some (.doxastic .nonVeridical)
@@ -75,7 +75,7 @@ def gwepshesa : Verb where
 constituent-question complement is a headless relative; it takes plain noun-phrase objects
 ((69), (99), (103)). -/
 def chewepcha : Verb where
-  form := "qəč'ewəpč'a"
+  morphs := [.root "qəč'ewəpč'a"]
   valency := .of [(ArgumentFrame.question, [0, 1]), (ArgumentFrame.np, [0, 1])]
   predicateClass := some .utterance
   speechActVerb := true
@@ -84,7 +84,7 @@ def chewepcha : Verb where
 /-- *ŝe* 'know', also *jeŝe*, whose one relative-shaped complement is ambiguous between the
 declarative and the polar reading ((101)). -/
 def she : Verb where
-  form := "ŝe"
+  morphs := [.root "ŝe"]
   valency := .of [(ArgumentFrame.finiteClause, [0, 1]), (ArgumentFrame.question, [0, 1])]
   predicateClass := some .knowledge
   attitude := some (.doxastic .veridical)
@@ -94,7 +94,7 @@ def she : Verb where
 /-- *gʷərəʔʷe* 'understand', whose complement is truth-conditionally equivalent with and
 without an overt head noun 'news' or 'verity' ((108)–(110)). -/
 def gwereqwe : Verb where
-  form := "gʷərəʔʷe"
+  morphs := [.root "gʷərəʔʷe"]
   valency := .ofFrame ArgumentFrame.finiteClause
   predicateClass := some .knowledge
   attitude := some (.doxastic .veridical)
@@ -103,7 +103,7 @@ def gwereqwe : Verb where
 
 /-- *ʔʷa* 'say'. -/
 def qwa : Verb where
-  form := "ʔʷa"
+  morphs := [.root "ʔʷa"]
   valency := .ofFrame ArgumentFrame.finiteClause
   predicateClass := some .utterance
   speechActVerb := true
@@ -111,7 +111,7 @@ def qwa : Verb where
 
 /-- *raʔežʼa* 'begin', which takes an infinitive in *-new* ((54)). -/
 def raqezha : Verb where
-  form := "raʔežʼa"
+  morphs := [.root "raʔežʼa"]
   valency := .ofFrame ArgumentFrame.infinitival
   predicateClass := some .phasal
   complementCase := none

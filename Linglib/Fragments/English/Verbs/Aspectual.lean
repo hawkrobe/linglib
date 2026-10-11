@@ -25,7 +25,7 @@ open English.Inflection
 
 /-- "stop" — phasal cessation, presupposes activity was happening -/
 def stop : Verb where
-  form := "stop"
+  morphs := [.root "stop"]
   form3sg := "stops"
   formPast := "stopped"
   formPastPart := "stopped"
@@ -42,7 +42,7 @@ def stop : Verb where
 
 /-- "quit" — phasal cessation -/
 def quit : Verb where
-  form := "quit"
+  morphs := [.root "quit"]
   form3sg := "quits"
   formPast := "quit"
   formPastPart := "quit"
@@ -59,7 +59,7 @@ def quit : Verb where
 
 /-- "start" — phasal inception, presupposes activity wasn't happening -/
 def start : Verb := .mkRegular {
-  form := "start"
+  morphs := [.root "start"]
   valency := .of
     [(ArgumentFrame.gerund, [0, 1]),
      (ArgumentFrame.np, [0, 1]),
@@ -72,7 +72,7 @@ def start : Verb := .mkRegular {
 
 /-- "begin" — phasal inception -/
 def begin_ : Verb where
-  form := "begin"
+  morphs := [.root "begin"]
   form3sg := "begins"
   formPast := "began"
   formPastPart := "begun"
@@ -89,7 +89,7 @@ def begin_ : Verb where
 
 /-- "continue" — phasal continuation, presupposes activity was happening -/
 def continue_ : Verb := .mkRegular {
-  form := "continue"
+  morphs := [.root "continue"]
   valency := .of
     [(ArgumentFrame.gerund, [0, 1]),
      (ArgumentFrame.np, [0, 1]),
@@ -102,7 +102,7 @@ def continue_ : Verb := .mkRegular {
 
 /-- "keep" — phasal continuation -/
 def keep : Verb where
-  form := "keep"
+  morphs := [.root "keep"]
   form3sg := "keeps"
   formPast := "kept"
   formPastPart := "kept"

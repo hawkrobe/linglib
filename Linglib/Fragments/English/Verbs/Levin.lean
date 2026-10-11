@@ -28,21 +28,21 @@ open English.Inflection
 
 /-- "place" — Levin 9.1 Put verbs. Instantaneous placement. -/
 def place : Verb := .mkRegular {
-  form := "place"
+  morphs := [.root "place"]
   valency := .ofFrame ArgumentFrame.np_pp
   vendlerClass := some .achievement
   levinClasses := {LevinClass.put} }
 
 /-- "water" — Levin 9.9 Butter verbs (denominal putting). -/
 def water : Verb := .mkRegular {
-  form := "water"
+  morphs := [.root "water"]
   valency := .ofFrame ArgumentFrame.np
   vendlerClass := some .activity
   levinClasses := {LevinClass.butter} }
 
 /-- "pour" — Levin 9.5 Pour verbs. Manner of caused motion. -/
 def pour : Verb := .mkRegular {
-  form := "pour"
+  morphs := [.root "pour"]
   valency := .of [(ArgumentFrame.np, [0, 1]), (ArgumentFrame.intransitive, [1])]
   vendlerClass := some .activity
   incrementality := some .cumulative
@@ -50,7 +50,7 @@ def pour : Verb := .mkRegular {
 
 /-- "spray" — Levin 9.7 Spray/Load verbs. Locative alternation. -/
 def spray : Verb := .mkRegular {
-  form := "spray"
+  morphs := [.root "spray"]
   valency := .of
     [(ArgumentFrame.np, [0, 1]),
      (ArgumentFrame.intransitive, [1]),
@@ -63,7 +63,7 @@ def spray : Verb := .mkRegular {
 
 /-- "load" — Levin 9.7 Spray/Load verbs. Locative alternation. -/
 def load : Verb := .mkRegular {
-  form := "load"
+  morphs := [.root "load"]
   valency := .of
     [(ArgumentFrame.np, [0, 1]),
      (ArgumentFrame.intransitive, [1]),
@@ -78,7 +78,7 @@ def load : Verb := .mkRegular {
 
 /-- "remove" — Levin 10.1 Remove verbs. -/
 def remove : Verb := .mkRegular {
-  form := "remove"
+  morphs := [.root "remove"]
   valency := .ofFrame ArgumentFrame.np
   vendlerClass := some .accomplishment
   levinClasses := {LevinClass.banish, .remove} }
@@ -86,7 +86,7 @@ def remove : Verb := .mkRegular {
 /-- "clean" — Levin 10.3 Clear verbs. Incremental by surface area.
     Also a degree achievement: closed scale (maximally clean). -/
 def clean : Verb := .mkRegular {
-  form := "clean"
+  morphs := [.root "clean"]
   valency := .of
     [(ArgumentFrame.np, [0, 1]),
      (ArgumentFrame.intransitive, [1]),
@@ -99,7 +99,7 @@ def clean : Verb := .mkRegular {
 
 /-- "steal" — Levin 10.5 Steal verbs. -/
 def steal : Verb where
-  form := "steal"
+  morphs := [.root "steal"]
   form3sg := "steals"
   formPast := "stole"
   formPastPart := "stolen"
@@ -113,7 +113,7 @@ def steal : Verb where
 /-- "send" — Levin 11.1 Send verbs. Alternates DOC/PP.
     Goal does not entail possession (prospective). Neither object implicit alone. -/
 def send : Verb where
-  form := "send"
+  morphs := [.root "send"]
   form3sg := "sends"
   formPast := "sent"
   formPastPart := "sent"
@@ -128,7 +128,7 @@ def send : Verb where
 
 /-- "drive" — Levin 11.5 Drive verbs (vehicle-mediated motion). -/
 def drive : Verb where
-  form := "drive"
+  morphs := [.root "drive"]
   form3sg := "drives"
   formPast := "drove"
   formPastPart := "driven"
@@ -142,14 +142,14 @@ def drive : Verb where
 
 /-- "donate" — Levin 13.2 Contribute verbs. -/
 def donate : Verb := .mkRegular {
-  form := "donate"
+  morphs := [.root "donate"]
   valency := .ofFrame ArgumentFrame.np
   vendlerClass := some .accomplishment
   levinClasses := {LevinClass.contribute} }
 
 /-- "obtain" — Levin 13.5.2 Obtain verbs. -/
 def obtain : Verb := .mkRegular {
-  form := "obtain"
+  morphs := [.root "obtain"]
   valency := .of
     [(ArgumentFrame.np, [0, 1]),
      (ArgumentFrame.np_pp (some Adpositions.for_), [0, 1, 2])]
@@ -158,7 +158,7 @@ def obtain : Verb := .mkRegular {
 
 /-- "trade" — Levin 13.6 Exchange verbs. -/
 def trade : Verb := .mkRegular {
-  form := "trade"
+  morphs := [.root "trade"]
   valency := .ofFrame ArgumentFrame.np
   vendlerClass := some .achievement
   levinClasses := {LevinClass.exchange, .give} }
@@ -167,14 +167,14 @@ def trade : Verb := .mkRegular {
 
 /-- "learn" — Levin 14 Learn verbs. -/
 def learn : Verb := .mkRegular {
-  form := "learn"
+  morphs := [.root "learn"]
   valency := .ofFrame ArgumentFrame.np
   vendlerClass := some .accomplishment
   levinClasses := {LevinClass.learn} }
 
 /-- "hold" — Levin 15.1 Hold verbs. Stative. -/
 def hold : Verb where
-  form := "hold"
+  morphs := [.root "hold"]
   form3sg := "holds"
   formPast := "held"
   formPastPart := "held"
@@ -187,7 +187,7 @@ def hold : Verb where
 
 /-- "hide" — Levin 16 Conceal verbs. -/
 def hide : Verb where
-  form := "hide"
+  morphs := [.root "hide"]
   form3sg := "hides"
   formPast := "hid"
   formPastPart := "hidden"
@@ -201,7 +201,7 @@ def hide : Verb where
 /-- "throw" — Levin 17.1 Throw verbs. Ballistic motion. Alternates DOC/PP.
     Implicit DO in PP frame only (definite). -/
 def throw : Verb where
-  form := "throw"
+  morphs := [.root "throw"]
   form3sg := "throws"
   formPast := "threw"
   formPastPart := "thrown"
@@ -219,7 +219,7 @@ def throw : Verb where
 
 /-- "poke" — Levin 19 Poke verbs. Punctual contact. -/
 def poke : Verb := .mkRegular {
-  form := "poke"
+  morphs := [.root "poke"]
   valency := .of
     [(ArgumentFrame.np, [0, 1]),
      (ArgumentFrame.pp (some Adpositions.at_), [0, 1]),
@@ -230,7 +230,7 @@ def poke : Verb := .mkRegular {
 
 /-- "touch" — Levin 20 Touch verbs. Surface contact. -/
 def touch : Verb := .mkRegular {
-  form := "touch"
+  morphs := [.root "touch"]
   valency := .of
     [(ArgumentFrame.np, [0, 1]),
      (ArgumentFrame.np_pp (some Adpositions.on), [0, 2, 1]),
@@ -244,7 +244,7 @@ def touch : Verb := .mkRegular {
     [majid-boster-bowerman-2008] place cutting at the predictable end of their first
     dimension, a sharp instrument pressed into a firm but yielding object. -/
 def cut : Verb where
-  form := "cut"
+  morphs := [.root "cut"]
   form3sg := "cuts"
   formPast := "cut"
   formPastPart := "cut"
@@ -264,7 +264,7 @@ def cut : Verb where
 
 /-- "chop" — Levin 21.2 Carve verbs. -/
 def chop : Verb where
-  form := "chop"
+  morphs := [.root "chop"]
   form3sg := "chops"
   formPast := "chopped"
   formPastPart := "chopped"
@@ -281,7 +281,7 @@ def chop : Verb where
 
 /-- "mix" — Levin 22.1 Mix verbs. Incremental by proportion combined. -/
 def mix : Verb := .mkRegular {
-  form := "mix"
+  morphs := [.root "mix"]
   valency := .of [(ArgumentFrame.np, [0, 1]), (ArgumentFrame.intransitive, [1])]
   vendlerClass := some .accomplishment
   incrementality := some .strict
@@ -289,7 +289,7 @@ def mix : Verb := .mkRegular {
 
 /-- "separate" — Levin 23.1 Separate verbs. -/
 def separate : Verb := .mkRegular {
-  form := "separate"
+  morphs := [.root "separate"]
   valency := .of [(ArgumentFrame.np, [0, 1]), (ArgumentFrame.intransitive, [1])]
   vendlerClass := some .accomplishment
   levinClasses := {LevinClass.remove, .separate} }
@@ -298,7 +298,7 @@ def separate : Verb := .mkRegular {
 
 /-- "paint" — Levin 24 Color verbs. Incremental by surface area. -/
 def paint : Verb := .mkRegular {
-  form := "paint"
+  morphs := [.root "paint"]
   valency := .ofFrame ArgumentFrame.np
   vendlerClass := some .accomplishment
   incrementality := some .strict
@@ -306,7 +306,7 @@ def paint : Verb := .mkRegular {
 
 /-- "draw" — Levin 25 Image Creation verbs. Incremental by extent. -/
 def draw : Verb where
-  form := "draw"
+  morphs := [.root "draw"]
   form3sg := "draws"
   formPast := "drew"
   formPastPart := "drawn"
@@ -320,14 +320,14 @@ def draw : Verb where
 
 /-- "create" — Levin 26.4 Create verbs. -/
 def create : Verb := .mkRegular {
-  form := "create"
+  morphs := [.root "create"]
   valency := .ofFrame ArgumentFrame.np
   vendlerClass := some .accomplishment
   levinClasses := {LevinClass.create, .engender} }
 
 /-- "weave" — Levin 26.1 Build verbs. -/
 def weave : Verb where
-  form := "weave"
+  morphs := [.root "weave"]
   form3sg := "weaves"
   formPast := "wove"
   formPastPart := "woven"
@@ -344,7 +344,7 @@ def weave : Verb where
 
 /-- "grow" — Levin 26.2 Grow verbs. Incremental by size. -/
 def grow : Verb where
-  form := "grow"
+  morphs := [.root "grow"]
   form3sg := "grows"
   formPast := "grew"
   formPastPart := "grown"
@@ -361,7 +361,7 @@ def grow : Verb where
 
 /-- "perform" — Levin 26.7 Performance verbs. -/
 def perform : Verb := .mkRegular {
-  form := "perform"
+  morphs := [.root "perform"]
   valency := .of
     [(ArgumentFrame.np, [0, 1]),
      (ArgumentFrame.objectDrop (some .indef), [0, 1]),
@@ -375,7 +375,7 @@ def perform : Verb := .mkRegular {
 
 /-- "appoint" — Levin 29.1 Appoint verbs. -/
 def appoint : Verb := .mkRegular {
-  form := "appoint"
+  morphs := [.root "appoint"]
   valency := .ofFrame ArgumentFrame.np
   vendlerClass := some .achievement
   levinClasses := {LevinClass.appoint} }
@@ -385,7 +385,7 @@ def appoint : Verb := .mkRegular {
 /-- "hear" — Levin 30.1 See verbs. Stative perception. Also embeds
     finite clauses (optionally factive per [degen-tonhauser-2022]). -/
 def hear : Verb where
-  form := "hear"
+  morphs := [.root "hear"]
   form3sg := "hears"
   formPast := "heard"
   formPastPart := "heard"
@@ -399,7 +399,7 @@ def hear : Verb where
 /-- "blame" — a judgment verb by sense, absent from Levin's §33 member lists
     and named only for the blame alternation (§2.10). -/
 def blame : Verb := .mkRegular {
-  form := "blame"
+  morphs := [.root "blame"]
   valency := .ofFrame ArgumentFrame.np
   vendlerClass := some .activity
   incrementality := some .cumulative
@@ -407,7 +407,7 @@ def blame : Verb := .mkRegular {
 
 /-- "evaluate" — Levin 34 Assessment verbs. -/
 def evaluate : Verb := .mkRegular {
-  form := "evaluate"
+  morphs := [.root "evaluate"]
   valency := .ofFrame ArgumentFrame.np
   vendlerClass := some .activity
   incrementality := some .cumulative
@@ -417,7 +417,7 @@ def evaluate : Verb := .mkRegular {
 
 /-- "marry" — Levin 36 Social Interaction verbs. -/
 def marry : Verb where
-  form := "marry"
+  morphs := [.root "marry"]
   form3sg := "marries"
   formPast := "married"
   formPastPart := "married"
@@ -430,7 +430,7 @@ def marry : Verb where
 
 /-- "bark" — Levin 38 Animal Sound verbs. -/
 def bark : Verb := .mkRegular {
-  form := "bark"
+  morphs := [.root "bark"]
   valency := .ofFrame ArgumentFrame.intransitive
   passivizable := false
   vendlerClass := some .activity
@@ -440,7 +440,7 @@ def bark : Verb := .mkRegular {
 
 /-- "breathe" — Levin 40.1 Body Process verbs. -/
 def breathe : Verb := .mkRegular {
-  form := "breathe"
+  morphs := [.root "breathe"]
   valency := .ofFrame ArgumentFrame.intransitive
   passivizable := false
   vendlerClass := some .activity
@@ -448,7 +448,7 @@ def breathe : Verb := .mkRegular {
 
 /-- "laugh" — Levin 40.2 Nonverbal Expression verbs. -/
 def laugh : Verb := .mkRegular {
-  form := "laugh"
+  morphs := [.root "laugh"]
   valency := .ofFrame ArgumentFrame.intransitive
   passivizable := false
   vendlerClass := some .activity
@@ -457,7 +457,7 @@ def laugh : Verb := .mkRegular {
 /-- "cough" — Levin 40.1 Body Process verbs.
     Semelfactive: single involuntary event, no result state ([smith-1997] §2.4.3). -/
 def cough : Verb := .mkRegular {
-  form := "cough"
+  morphs := [.root "cough"]
   valency := .ofFrame ArgumentFrame.intransitive
   passivizable := false
   vendlerClass := some .semelfactive
@@ -466,7 +466,7 @@ def cough : Verb := .mkRegular {
 /-- "hiccup" — Levin 40.1 Body Process verbs.
     Semelfactive: single involuntary body event ([smith-1997] §2.4.3). -/
 def hiccup : Verb := .mkRegular {
-  form := "hiccup"
+  morphs := [.root "hiccup"]
   valency := .ofFrame ArgumentFrame.intransitive
   passivizable := false
   vendlerClass := some .semelfactive
@@ -477,7 +477,7 @@ def hiccup : Verb := .mkRegular {
     and *blink* among the light-emission verbs (§43.1); this entry is the eye movement, a
     class the library does not name. -/
 def blink : Verb where
-  form := "blink"
+  morphs := [.root "blink"]
   form3sg := "blinks"
   formPast := "blinked"
   formPastPart := "blinked"
@@ -495,7 +495,7 @@ def blink : Verb where
     Semelfactive: single percussive contact event, [smith-1997]'s standard
     example of the class. -/
 def knock : Verb := .mkRegular {
-  form := "knock"
+  morphs := [.root "knock"]
   valency := .of
     [(ArgumentFrame.intransitive, [0]),
      (ArgumentFrame.np, [0, 1]),
@@ -509,7 +509,7 @@ def knock : Verb := .mkRegular {
 /-- "tap" — Levin 18.1 Hit verbs (intransitive use).
     Semelfactive: single light percussive contact event ([smith-1997] §2.4.3). -/
 def tap : Verb := .mkRegular {
-  form := "tap"
+  morphs := [.root "tap"]
   valency := .of
     [(ArgumentFrame.intransitive, [0]),
      (ArgumentFrame.np, [0, 1]),
@@ -524,7 +524,7 @@ def tap : Verb := .mkRegular {
     Semelfactive: single instantaneous light event, by [smith-1997]'s
     characterization of the class. -/
 def flash : Verb := .mkRegular {
-  form := "flash"
+  morphs := [.root "flash"]
   valency := .of
     [(ArgumentFrame.intransitive, [0]),
      (ArgumentFrame.np, [1, 0]),
@@ -536,7 +536,7 @@ def flash : Verb := .mkRegular {
 
 /-- "flinch" — Levin 40.5 Flinch verbs. Involuntary reaction. -/
 def flinch : Verb := .mkRegular {
-  form := "flinch"
+  morphs := [.root "flinch"]
   valency := .ofFrame ArgumentFrame.intransitive
   passivizable := false
   vendlerClass := some .achievement
@@ -544,7 +544,7 @@ def flinch : Verb := .mkRegular {
 
 /-- "dress" — Levin 41.1 Dress verbs. -/
 def dress : Verb := .mkRegular {
-  form := "dress"
+  morphs := [.root "dress"]
   valency := .of
     [(ArgumentFrame.np, [0, 1]),
      (ArgumentFrame.intransitive, [1]),
@@ -556,7 +556,7 @@ def dress : Verb := .mkRegular {
 
 /-- "drown" — Levin 42.2 Poison verbs. Manner-of-killing. -/
 def drown : Verb := .mkRegular {
-  form := "drown"
+  morphs := [.root "drown"]
   valency := .ofFrame ArgumentFrame.np
   vendlerClass := some .accomplishment
   levinClasses := {LevinClass.poison, .suffocate} }
@@ -565,7 +565,7 @@ def drown : Verb := .mkRegular {
 
 /-- "glow" — Levin 43.1 Light Emission verbs. -/
 def glow : Verb := .mkRegular {
-  form := "glow"
+  morphs := [.root "glow"]
   valency := .of
     [(ArgumentFrame.intransitive, [0]),
      (ArgumentFrame.np, [1, 0]),
@@ -577,7 +577,7 @@ def glow : Verb := .mkRegular {
 
 /-- "buzz" — Levin 43.2 Sound Emission verbs. -/
 def buzz : Verb := .mkRegular {
-  form := "buzz"
+  morphs := [.root "buzz"]
   valency := .of
     [(ArgumentFrame.intransitive, [0]),
      (ArgumentFrame.np, [1, 0]),
@@ -589,7 +589,7 @@ def buzz : Verb := .mkRegular {
 
 /-- "rumble" — Levin 43.2 Sound Emission verbs. -/
 def rumble : Verb := .mkRegular {
-  form := "rumble"
+  morphs := [.root "rumble"]
   valency := .of
     [(ArgumentFrame.intransitive, [0]),
      (ArgumentFrame.np, [1, 0]),
@@ -601,7 +601,7 @@ def rumble : Verb := .mkRegular {
 
 /-- "bleed" — Levin 43.4 Substance Emission verbs. -/
 def bleed : Verb where
-  form := "bleed"
+  morphs := [.root "bleed"]
   form3sg := "bleeds"
   formPast := "bled"
   formPastPart := "bled"
@@ -618,7 +618,7 @@ def bleed : Verb where
 
 /-- "exist" — Levin 47.1 Exist verbs. Pure state. -/
 def exist : Verb := .mkRegular {
-  form := "exist"
+  morphs := [.root "exist"]
   valency := .ofFrame ArgumentFrame.intransitive
   passivizable := false
   vendlerClass := some .state
@@ -626,7 +626,7 @@ def exist : Verb := .mkRegular {
 
 /-- "appear" — Levin 48.1 Appear verbs. Punctual emergence. -/
 def appear : Verb := .mkRegular {
-  form := "appear"
+  morphs := [.root "appear"]
   valency := .ofFrame ArgumentFrame.intransitive
   passivizable := false
   vendlerClass := some .achievement
@@ -634,7 +634,7 @@ def appear : Verb := .mkRegular {
 
 /-- "fidget" — Levin 49 Body-Internal Motion verbs. -/
 def fidget : Verb := .mkRegular {
-  form := "fidget"
+  morphs := [.root "fidget"]
   valency := .ofFrame ArgumentFrame.intransitive
   passivizable := false
   vendlerClass := some .activity
@@ -643,14 +643,14 @@ def fidget : Verb := .mkRegular {
 /-- "wiggle" — Levin 47.3 Modes of Being Involving Motion and 49 Body-Internal Motion verbs;
     transitive with a body part or small object ("wiggle a tooth"). -/
 def wiggle : Verb := .mkRegular {
-  form := "wiggle"
+  morphs := [.root "wiggle"]
   valency := .of [(ArgumentFrame.intransitive, [0]), (ArgumentFrame.np, [1, 0])]
   vendlerClass := some .activity
   levinClasses := {LevinClass.modeOfBeingInvolvingMotion, .bodyInternalMotion, .crane} }
 
 /-- "wriggle" — Levin 49 Body-Internal Motion verbs. -/
 def wriggle : Verb := .mkRegular {
-  form := "wriggle"
+  morphs := [.root "wriggle"]
   valency := .ofFrame ArgumentFrame.intransitive
   passivizable := false
   vendlerClass := some .activity
@@ -658,7 +658,7 @@ def wriggle : Verb := .mkRegular {
 
 /-- "sit" — Levin 50 Assume Position verbs. Stative. -/
 def sit : Verb where
-  form := "sit"
+  morphs := [.root "sit"]
   form3sg := "sits"
   formPast := "sat"
   formPastPart := "sat"
@@ -670,7 +670,7 @@ def sit : Verb where
 
 /-- "stand" — Levin 50 Assume Position verbs. Stative. -/
 def stand : Verb where
-  form := "stand"
+  morphs := [.root "stand"]
   form3sg := "stands"
   formPast := "stood"
   formPastPart := "stood"
@@ -685,7 +685,7 @@ def stand : Verb where
 
 /-- "walk" — Levin 51.3 Manner of Motion verbs. -/
 def walk : Verb := .mkRegular {
-  form := "walk"
+  morphs := [.root "walk"]
   valency := .of
     [(ArgumentFrame.intransitive, [0]),
      (ArgumentFrame.np, [1, 0]),
@@ -698,7 +698,7 @@ def walk : Verb := .mkRegular {
 
 /-- "swim" — Levin 51.3 Manner of Motion verbs. -/
 def swim : Verb where
-  form := "swim"
+  morphs := [.root "swim"]
   form3sg := "swims"
   formPast := "swam"
   formPastPart := "swum"
@@ -715,7 +715,7 @@ def swim : Verb where
 
 /-- "fly" — Levin 51.4 Vehicle Motion verbs. -/
 def fly : Verb where
-  form := "fly"
+  morphs := [.root "fly"]
   form3sg := "flies"
   formPast := "flew"
   formPastPart := "flown"
@@ -727,7 +727,7 @@ def fly : Verb where
 
 /-- "roll" — Levin 51.3.1 Roll verbs (manner of motion). -/
 def roll : Verb := .mkRegular {
-  form := "roll"
+  morphs := [.root "roll"]
   valency := .of
     [(ArgumentFrame.intransitive, [0]),
      (ArgumentFrame.np, [1, 0]),
@@ -740,7 +740,7 @@ def roll : Verb := .mkRegular {
 
 /-- "float" — Levin 51.3.1 Roll verbs (manner of motion). -/
 def float : Verb := .mkRegular {
-  form := "float"
+  morphs := [.root "float"]
   valency := .of
     [(ArgumentFrame.intransitive, [0]),
      (ArgumentFrame.np, [1, 0])]
@@ -752,14 +752,14 @@ def float : Verb := .mkRegular {
 
 /-- "avoid" — Levin 52 Avoid verbs. Stative. -/
 def avoid : Verb := .mkRegular {
-  form := "avoid"
+  morphs := [.root "avoid"]
   valency := .ofFrame ArgumentFrame.np
   vendlerClass := some .state
   levinClasses := {LevinClass.avoid} }
 
 /-- "linger" — Levin 53.1 Linger verbs. -/
 def linger : Verb := .mkRegular {
-  form := "linger"
+  morphs := [.root "linger"]
   valency := .ofFrame ArgumentFrame.intransitive
   passivizable := false
   vendlerClass := some .activity
@@ -767,7 +767,7 @@ def linger : Verb := .mkRegular {
 
 /-- "rush" — Levin 53.2 Rush verbs. -/
 def rush : Verb := .mkRegular {
-  form := "rush"
+  morphs := [.root "rush"]
   valency := .of
     [(ArgumentFrame.intransitive, [0]),
      (ArgumentFrame.np, [1, 0])]
@@ -779,7 +779,7 @@ def rush : Verb := .mkRegular {
 
 /-- "rain" — Levin 57 Weather verbs. Expletive subject. -/
 def rain : Verb := .mkRegular {
-  form := "rain"
+  morphs := [.root "rain"]
   valency := .ofFrame ArgumentFrame.intransitive
   passivizable := false
   vendlerClass := some .activity

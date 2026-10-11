@@ -42,7 +42,7 @@ structure Verb extends _root_.Verb where
 
 /-- 楽しみ *tanoshimi* 'look forward to', a positive preference relative to relevance. -/
 def tanoshimi : Verb where
-  form := "tanoshimi"
+  morphs := [.root "tanoshimi"]
   script := "楽しみ"
   valency := .ofFrame ArgumentFrame.finiteClause
   passivizable := false
@@ -51,7 +51,7 @@ def tanoshimi : Verb where
 
 /-- 恐れ *osore* 'fear', a negative preference by comparison of degrees. -/
 def osore : Verb where
-  form := "osore"
+  morphs := [.root "osore"]
   script := "恐れ"
   valency := .ofFrame ArgumentFrame.finiteClause
   passivizable := false
@@ -60,7 +60,7 @@ def osore : Verb where
 
 /-- 期待 *kitai* 'expect, hope', a positive preference by comparison of degrees. -/
 def kitai : Verb where
-  form := "kitai"
+  morphs := [.root "kitai"]
   script := "期待"
   valency := .ofFrame ArgumentFrame.finiteClause
   passivizable := false
@@ -69,7 +69,7 @@ def kitai : Verb where
 
 /-- 望む *nozomu* 'hope', a positive preference by comparison of degrees. -/
 def nozomu : Verb where
-  form := "nozomu"
+  morphs := [.root "nozomu"]
   script := "望む"
   valency := .ofFrame ArgumentFrame.finiteClause
   passivizable := false
@@ -78,7 +78,7 @@ def nozomu : Verb where
 
 /-- 心配 *shinpai* 'worry', a preference relative to uncertainty. -/
 def shinpai : Verb where
-  form := "shinpai"
+  morphs := [.root "shinpai"]
   script := "心配"
   valency := .ofFrame ArgumentFrame.finiteClause
   passivizable := false
@@ -89,14 +89,14 @@ def shinpai : Verb where
 
 /-- 行かせる *ik-ase-ru* 'make go', the causative of *iku* with an accusative causee. -/
 def ik_ase : Verb where
-  form := "ik-ase-ru"
+  morphs := [.root "ik", .suff "ase", .suff "ru"]
   script := "行かせる"
   valency := .ofFrame ArgumentFrame.smallClause
   readings := [{ frame := ArgumentFrame.smallClause, control := some .objectControl }]
 
 /-- 食べさせる *tabe-sase-ru* 'make eat', the causative of *taberu* with an accusative causee. -/
 def tabe_sase : Verb where
-  form := "tabe-sase-ru"
+  morphs := [.root "tabe", .suff "sase", .suff "ru"]
   script := "食べさせる"
   valency := .ofFrame ArgumentFrame.smallClause
   readings := [{ frame := ArgumentFrame.smallClause, control := some .objectControl }]
@@ -106,7 +106,7 @@ def tabe_sase : Verb where
 /-- 離れる *hanareru* 'leave' takes the leaver as its theme and the source in the accusative or
 ablative, with no thematic Voice. -/
 def hanareru : Verb where
-  form := "hanareru"
+  morphs := [.root "hanareru"]
   script := "離れる"
   valency := .ofFrame ArgumentFrame.np
   voiceType := some .nonThematic
@@ -115,7 +115,7 @@ def hanareru : Verb where
 /-- 出る *deru* 'exit' takes the leaver as its theme and the source in the accusative or ablative,
 with no thematic Voice. -/
 def deru : Verb where
-  form := "deru"
+  morphs := [.root "deru"]
   script := "出る"
   valency := .ofFrame ArgumentFrame.np
   voiceType := some .nonThematic

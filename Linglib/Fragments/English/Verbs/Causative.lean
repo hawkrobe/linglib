@@ -29,7 +29,7 @@ open English.Inflection
 
 /-- *cause* takes an object and an infinitive, *cause the vase to fall*. -/
 def cause : Verb := .mkRegular {
-  form := "cause"
+  morphs := [.root "cause"]
   valency := .ofFrame ArgumentFrame.infinitival
   readings := [{ frame := ArgumentFrame.infinitival, control := some .objectControl }]
   vendlerClass := some .accomplishment
@@ -39,7 +39,7 @@ def cause : Verb := .mkRegular {
 /-- *make* takes an object and a bare infinitive, *make him leave*. Levin does not class it (the
 *make* of 26.1 is the verb of creation and that of 29.3 the dub verb). -/
 def make : Verb where
-  form := "make"
+  morphs := [.root "make"]
   form3sg := "makes"
   formPast := "made"
   formPastPart := "made"
@@ -52,7 +52,7 @@ def make : Verb where
 
 /-- *let* is the permissive causative, *let him leave*. -/
 def let_ : Verb where
-  form := "let"
+  morphs := [.root "let"]
   form3sg := "lets"
   formPast := "let"
   formPastPart := "let"
@@ -63,7 +63,7 @@ def let_ : Verb where
 
 /-- *have* in its causative use takes an object and a bare infinitive, *have him leave*. -/
 def have_caus : Verb where
-  form := "have"
+  morphs := [.root "have"]
   form3sg := "has"
   formPast := "had"
   formPastPart := "had"
@@ -77,7 +77,7 @@ def have_caus : Verb where
 /-- *get* in its causative use takes an object and an infinitive, *get him to leave*. Levin does
 not class it (the *get* of 13.5.1 is the verb of obtaining). -/
 def get_caus : Verb where
-  form := "get"
+  morphs := [.root "get"]
   form3sg := "gets"
   formPast := "got"
   formPastPart := "gotten"
@@ -90,7 +90,7 @@ def get_caus : Verb where
 
 /-- *force* takes an object and an infinitive, *force him to leave*. -/
 def force : Verb := .mkRegular {
-  form := "force"
+  morphs := [.root "force"]
   valency := .ofFrame ArgumentFrame.infinitival
   readings := [{ frame := ArgumentFrame.infinitival, control := some .objectControl }]
   vendlerClass := some .accomplishment
@@ -98,7 +98,7 @@ def force : Verb := .mkRegular {
 
 /-- *prevent* takes an object and a *from*-gerund, *prevent him from leaving*. -/
 def prevent : Verb := .mkRegular {
-  form := "prevent"
+  morphs := [.root "prevent"]
   valency := .ofFrame ArgumentFrame.gerund
   readings := [{ frame := ArgumentFrame.gerund, control := some .objectControl }]
   vendlerClass := some .accomplishment
@@ -108,7 +108,7 @@ def prevent : Verb := .mkRegular {
 
 /-- "kill" — Levin 42.1 murder verbs. -/
 def kill : Verb := .mkRegular {
-  form := "kill"
+  morphs := [.root "kill"]
   valency := .ofFrame ArgumentFrame.np
   vendlerClass := some .accomplishment
   root := { content := {
@@ -120,7 +120,7 @@ def kill : Verb := .mkRegular {
 /-- "break" — Levin 45.1 break verbs, a change in "material integrity" with no specification
     of how the change comes about ([levin-1993]:241). -/
 def break_ : Verb where
-  form := "break"
+  morphs := [.root "break"]
   form3sg := "breaks"
   formPast := "broke"
   formPastPart := "broken"
@@ -150,7 +150,7 @@ def break_ : Verb where
     In [majid-boster-bowerman-2008] ten of twenty-eight languages have a verb used only for
     tearing cloth by hand, and English speakers extend *tear* to pulling yarn apart. -/
 def tear_ : Verb where
-  form := "tear"
+  morphs := [.root "tear"]
   form3sg := "tears"
   formPast := "tore"
   formPastPart := "torn"

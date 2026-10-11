@@ -114,7 +114,7 @@ end Verb
 /-- *jual* 'sell', as in *Mobil itu berjual dengan mudah* 'The car sells easily'. Its middle
 incorporates a noun, as in *berjual baju* and *berjual diri*. -/
 def jual : Verb where
-  form := "jual"
+  morphs := [.root "jual"]
   rootSegments := [j, u, a, l]
   valency := .ofFrame ArgumentFrame.np
   ber := true
@@ -122,7 +122,7 @@ def jual : Verb where
 
 /-- *masak* 'cook'. -/
 def masak : Verb where
-  form := "masak"
+  morphs := [.root "masak"]
   rootSegments := [m, a, s, a, k]
   valency := .ofFrame ArgumentFrame.np
   ber := true
@@ -130,7 +130,7 @@ def masak : Verb where
 /-- *cuci* 'wash', whose middle incorporates body-part nouns and others, as in *bercuci mata*
 'wash one's eyes'. -/
 def cuci : Verb where
-  form := "cuci"
+  morphs := [.root "cuci"]
   rootSegments := [c, u, c, i]
   valency := .ofFrame ArgumentFrame.np
   ber := true
@@ -138,28 +138,28 @@ def cuci : Verb where
 
 /-- *tambat* 'tie, moor', as in *Kapal itu bertambat dengan mudah* 'The boat moors easily'. -/
 def tambat : Verb where
-  form := "tambat"
+  morphs := [.root "tambat"]
   rootSegments := [t, a, m, b, a, t]
   valency := .ofFrame ArgumentFrame.np
   ber := true
 
 /-- *dandan* 'dress', as in *Ali berdandan* 'Ali dressed'. -/
 def dandan : Verb where
-  form := "dandan"
+  morphs := [.root "dandan"]
   rootSegments := [d, a, n, d, a, n]
   valency := .ofFrame ArgumentFrame.np
   ber := true
 
 /-- *cukur* 'shave'. -/
 def cukur : Verb where
-  form := "cukur"
+  morphs := [.root "cukur"]
   rootSegments := [c, u, k, u, r]
   valency := .ofFrame ArgumentFrame.np
   ber := true
 
 /-- *jemur* 'dry in the sun', whose middle *berjemur (diri)* is 'sunbathe'. -/
 def jemur : Verb where
-  form := "jemur"
+  morphs := [.root "jemur"]
   rootSegments := [j, e, m, u, r]
   valency := .ofFrame ArgumentFrame.np
   ber := true
@@ -167,7 +167,7 @@ def jemur : Verb where
 
 /-- *sisir* 'comb'. -/
 def sisir : Verb where
-  form := "sisir"
+  morphs := [.root "sisir"]
   rootSegments := [s, i, s, i, r]
   valency := .ofFrame ArgumentFrame.np
   ber := true
@@ -176,14 +176,14 @@ def sisir : Verb where
 
 /-- *buka* 'open', as in *Pintu itu terbuka* 'The door opened'. -/
 def buka : Verb where
-  form := "buka"
+  morphs := [.root "buka"]
   rootSegments := [b, u, k, a]
   valency := .ofFrame ArgumentFrame.np
   terClass := some .stative
 
 /-- *pecah* 'break', as in *Jendela itu terpecah* 'The window broke'. -/
 def pecah : Verb where
-  form := "pecah"
+  morphs := [.root "pecah"]
   rootSegments := [p, e, c, a, h]
   valency := .ofFrame ArgumentFrame.np
   terClass := some .stative
@@ -191,7 +191,7 @@ def pecah : Verb where
 /-- *tulis* 'write', whose stative is *Surat itu tertulis dalam bahasa Inggris* 'That letter is
 written in English', beside the passive *ditulis* 'was written'. -/
 def tulis : Verb where
-  form := "tulis"
+  morphs := [.root "tulis"]
   rootSegments := [t, u, l, i, s]
   valency := .ofFrame ArgumentFrame.np
   terClass := some .stative
@@ -199,7 +199,7 @@ def tulis : Verb where
 /-- *bawa* 'carry, take', whose accidental is *Koran saudara terbawa oleh saya* 'I took your
 newspaper by mistake'. -/
 def bawa : Verb where
-  form := "bawa"
+  morphs := [.root "bawa"]
   rootSegments := [b, a, w, a]
   valency := .ofFrame ArgumentFrame.np
   terClass := some .accidental
@@ -207,7 +207,7 @@ def bawa : Verb where
 /-- *dengar* 'hear', whose abilitative is *tidak terdengar dari sini* 'cannot be heard from
 here'. -/
 def dengar : Verb where
-  form := "dengar"
+  morphs := [.root "dengar"]
   rootSegments := [d, e, ng, a, r]
   valency := .ofFrame ArgumentFrame.np
   terClass := some .abilitative

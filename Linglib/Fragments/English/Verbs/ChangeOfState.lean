@@ -34,7 +34,7 @@ open English.Inflection
     *badly*. The verb is NOT a standard degree achievement: its variable telicity
     does not reduce to scale boundedness alone. -/
 def crack : Verb := .mkRegular {
-  form := "crack"
+  morphs := [.root "crack"]
   valency := .of
     [(ArgumentFrame.np, [0, 1]),
      (ArgumentFrame.intransitive, [1]),
@@ -47,7 +47,7 @@ def crack : Verb := .mkRegular {
     [tham-2025]: closed scale, compatible with *more dented*, *completely
     dented*, *badly dented*. -/
 def dent : Verb := .mkRegular {
-  form := "dent"
+  morphs := [.root "dent"]
   valency := .of
     [(ArgumentFrame.np, [0, 1]),
      (ArgumentFrame.np_pp (some Adpositions.with_), [0, 1, 2]),
@@ -61,7 +61,7 @@ def dent : Verb := .mkRegular {
     scratched*, *badly scratched*. Levin also lists it among the wipe verbs
     (§10.4.1) and the swat verbs (§18.2) on its manner readings. -/
 def scratch : Verb := .mkRegular {
-  form := "scratch"
+  morphs := [.root "scratch"]
   valency := .of
     [(ArgumentFrame.np, [0, 1]),
      (ArgumentFrame.pp (some Adpositions.at_), [0, 1]),
@@ -75,7 +75,7 @@ def scratch : Verb := .mkRegular {
     Punctual, non-gradable: *shatter in two minutes* (after, not duration),
     #*shatter for two minutes*, ??*more shattered* ([tham-2025] (12)). -/
 def shatter : Verb := .mkRegular {
-  form := "shatter"
+  morphs := [.root "shatter"]
   valency := .of
     [(ArgumentFrame.np, [0, 1]),
      (ArgumentFrame.intransitive, [1]),
@@ -87,7 +87,7 @@ def shatter : Verb := .mkRegular {
 /-- "burn" — destruction or transformation by fire or heat; Levin 45.4 other change-of-state
     verbs. -/
 def burn : Verb := .mkRegular {
-  form := "burn"
+  morphs := [.root "burn"]
   valency := .of
     [(ArgumentFrame.np, [0, 1]),
      (ArgumentFrame.intransitive, [1]),
@@ -105,7 +105,7 @@ def burn : Verb := .mkRegular {
 
 /-- "destroy" — Levin 44 destroy verbs. -/
 def destroy : Verb := .mkRegular {
-  form := "destroy"
+  morphs := [.root "destroy"]
   valency := .of
     [(ArgumentFrame.np, [0, 1]),
      (ArgumentFrame.np_pp (some Adpositions.with_), [0, 1, 2]),
@@ -121,7 +121,7 @@ def destroy : Verb := .mkRegular {
     transitive that takes a double-object benefactive ("melt me some ice cream") and an
     indefinite implicit object ("the ice cream melted" / "we're melting"). -/
 def melt : Verb := .mkRegular {
-  form := "melt"
+  morphs := [.root "melt"]
   valency := .of
     [(ArgumentFrame.np, [0, 1]),
      (ArgumentFrame.objectDrop (some .indef), [0, 1]),
@@ -144,21 +144,21 @@ file. -/
 
 /-- "activate" — sets a device or process in operation; not listed by Levin. -/
 def activate : Verb := .mkRegular {
-  form := "activate"
+  morphs := [.root "activate"]
   valency := .of [(ArgumentFrame.np, [0, 1]), (ArgumentFrame.intransitive, [1])]
   vendlerClass := some .accomplishment
  }
 
 /-- "affect" — Levin 31.1 amuse verbs. -/
 def affect : Verb := .mkRegular {
-  form := "affect"
+  morphs := [.root "affect"]
   valency := .ofFrame ArgumentFrame.np
   vendlerClass := some .activity
   levinClasses := {LevinClass.amuse} }
 
 /-- "change" — transformation; Levin 26.6 turn verbs. -/
 def change : Verb := .mkRegular {
-  form := "change"
+  morphs := [.root "change"]
   valency := .of
     [(ArgumentFrame.np, [0, 1]),
      (ArgumentFrame.intransitive, [1]),
@@ -170,21 +170,21 @@ def change : Verb := .mkRegular {
 
 /-- "damage" — partial destruction; not listed by Levin. -/
 def damage : Verb := .mkRegular {
-  form := "damage"
+  morphs := [.root "damage"]
   valency := .ofFrame ArgumentFrame.np
   vendlerClass := some .accomplishment
  }
 
 /-- "eliminate" — removal; Levin 42.1 murder verbs. -/
 def eliminate : Verb := .mkRegular {
-  form := "eliminate"
+  morphs := [.root "eliminate"]
   valency := .ofFrame ArgumentFrame.np
   vendlerClass := some .accomplishment
   levinClasses := {LevinClass.murder, .remove} }
 
 /-- "hurt" — Levin 40.8.3 hurt verbs. -/
 def hurt : Verb where
-  form := "hurt"
+  morphs := [.root "hurt"]
   form3sg := "hurts"
   formPast := "hurt"
   formPastPart := "hurt"
@@ -195,41 +195,41 @@ def hurt : Verb where
 
 /-- "restore" — Levin 13.2 contribute verbs. -/
 def restore : Verb := .mkRegular {
-  form := "restore"
+  morphs := [.root "restore"]
   valency := .ofFrame ArgumentFrame.np
   vendlerClass := some .accomplishment
   levinClasses := {LevinClass.contribute} }
 
 /-- "trigger" — sets a process off; not listed by Levin. -/
 def trigger : Verb := .mkRegular {
-  form := "trigger"
+  morphs := [.root "trigger"]
   valency := .ofFrame ArgumentFrame.np
   vendlerClass := some .achievement }
 
 /-- "bury" — covering with earth. Levin's concealment class (§16) does not list *bury*. -/
 def bury : Verb := .mkRegular {
-  form := "bury"
+  morphs := [.root "bury"]
   valency := .ofFrame ArgumentFrame.np
   vendlerClass := some .accomplishment
  }
 
 /-- "drop" — Levin 45.6 calibratable change-of-state verbs. -/
 def drop : Verb := .mkRegular {
-  form := "drop"
+  morphs := [.root "drop"]
   valency := .of [(ArgumentFrame.np, [0, 1]), (ArgumentFrame.intransitive, [1])]
   vendlerClass := some .accomplishment
   levinClasses := {LevinClass.calibratableChangeOfState, .meander, .putDirection, .roll} }
 
 /-- "lift" — Levin 9.4 verbs of putting with a specified direction. -/
 def lift : Verb := .mkRegular {
-  form := "lift"
+  morphs := [.root "lift"]
   valency := .ofFrame ArgumentFrame.np
   vendlerClass := some .accomplishment
   levinClasses := {LevinClass.putDirection, .steal} }
 
 /-- "lock" — securing with a lock; Levin lists *lock* only among the tape verbs (§22.4). -/
 def lock : Verb := .mkRegular {
-  form := "lock"
+  morphs := [.root "lock"]
   valency := .of [(ArgumentFrame.np, [0, 1]), (ArgumentFrame.intransitive, [1])]
   vendlerClass := some .accomplishment
   levinClasses := {LevinClass.tape} }
@@ -237,7 +237,7 @@ def lock : Verb := .mkRegular {
 
 /-- "shut" — Levin 45.4 other change-of-state verbs, zero-related to the adjective. -/
 def shut : Verb where
-  form := "shut"
+  morphs := [.root "shut"]
   form3sg := "shuts"
   formPast := "shut"
   formPastPart := "shut"
@@ -252,7 +252,7 @@ def shut : Verb where
 
 /-- "spread" — Levin 9.7 spray/load verbs. -/
 def spread : Verb where
-  form := "spread"
+  morphs := [.root "spread"]
   form3sg := "spreads"
   formPast := "spread"
   formPastPart := "spread"
@@ -268,7 +268,7 @@ def spread : Verb where
 
 /-- "stretch" — Levin 45.4 other change-of-state verbs. -/
 def stretch : Verb := .mkRegular {
-  form := "stretch"
+  morphs := [.root "stretch"]
   valency := .of
     [(ArgumentFrame.np, [0, 1]),
      (ArgumentFrame.intransitive, [1]),
@@ -278,7 +278,7 @@ def stretch : Verb := .mkRegular {
 
 /-- "switch" — Levin's change-of-state lists do not include *switch*. -/
 def switch : Verb := .mkRegular {
-  form := "switch"
+  morphs := [.root "switch"]
   valency := .of [(ArgumentFrame.np, [0, 1]), (ArgumentFrame.intransitive, [1])]
   vendlerClass := some .accomplishment
  }
@@ -286,14 +286,14 @@ def switch : Verb := .mkRegular {
 /-- "close" — Levin 45.4 other change-of-state verbs, zero-related to the adjective, and
     40.3.2 crane verbs (*close one's eyes*). -/
 def close : Verb := .mkRegular {
-  form := "close"
+  morphs := [.root "close"]
   valency := .of [(ArgumentFrame.np, [0, 1]), (ArgumentFrame.intransitive, [1])]
   vendlerClass := some .accomplishment
   levinClasses := {LevinClass.crane, .otherChangeOfState} }
 
 /-- "dry" — Levin 45.4 other change-of-state verbs, zero-related to the adjective. -/
 def dry : Verb := .mkRegular {
-  form := "dry"
+  morphs := [.root "dry"]
   valency := .of [(ArgumentFrame.np, [0, 1]), (ArgumentFrame.intransitive, [1])]
   vendlerClass := some .accomplishment
   scaleDimension := some .wetness
@@ -302,28 +302,28 @@ def dry : Verb := .mkRegular {
 
 /-- "enhance" — improvement in quality; not listed by Levin. -/
 def enhance : Verb := .mkRegular {
-  form := "enhance"
+  morphs := [.root "enhance"]
   valency := .ofFrame ArgumentFrame.np
   vendlerClass := some .accomplishment }
 
 /-- "extend" — Levin 47.1 exist verbs, 13.2 contribute verbs and 13.3 verbs of future
     having. -/
 def extend : Verb := .mkRegular {
-  form := "extend"
+  morphs := [.root "extend"]
   valency := .of [(ArgumentFrame.np, [0, 1]), (ArgumentFrame.intransitive, [1])]
   vendlerClass := some .accomplishment
   levinClasses := {LevinClass.contribute, .exist, .futureHaving} }
 
 /-- "lower" — Levin 9.4 verbs of putting with a specified direction. -/
 def lower : Verb := .mkRegular {
-  form := "lower"
+  morphs := [.root "lower"]
   valency := .of [(ArgumentFrame.np, [0, 1]), (ArgumentFrame.intransitive, [1])]
   vendlerClass := some .accomplishment
   levinClasses := {LevinClass.putDirection} }
 
 /-- "slow" — Levin 45.4 other change-of-state verbs, zero-related to the adjective. -/
 def slow : Verb := .mkRegular {
-  form := "slow"
+  morphs := [.root "slow"]
   valency := .of [(ArgumentFrame.np, [0, 1]), (ArgumentFrame.intransitive, [1])]
   vendlerClass := some .activity
   scaleDimension := some .speed
@@ -331,7 +331,7 @@ def slow : Verb := .mkRegular {
 
 /-- "turn" — Levin 26.6 turn verbs (*turn the prince into a frog*). -/
 def turn : Verb := .mkRegular {
-  form := "turn"
+  morphs := [.root "turn"]
   valency := .of
     [(ArgumentFrame.np, [0, 1]),
      (ArgumentFrame.intransitive, [1]),
@@ -342,7 +342,7 @@ def turn : Verb := .mkRegular {
 
 /-- "wake up" — the particle verb of awakening; Levin lists *waken* but not *wake*. -/
 def wakeUp : Verb where
-  form := "wake up"
+  morphs := [.root "wake", .free "up"]
   form3sg := "wakes up"
   formPast := "woke up"
   formPastPart := "woken up"
@@ -354,7 +354,7 @@ def wakeUp : Verb where
 
 /-- "freeze" — Levin 45.4 Other Change of State verbs. Causative/inchoative alternation. -/
 def freeze : Verb where
-  form := "freeze"
+  morphs := [.root "freeze"]
   form3sg := "freezes"
   formPast := "froze"
   formPastPart := "frozen"
@@ -368,7 +368,7 @@ def freeze : Verb where
 
 /-- "heat" — Levin 45.4 Other Change of State verbs. Causative/inchoative alternation. -/
 def heat : Verb := .mkRegular {
-  form := "heat"
+  morphs := [.root "heat"]
   valency := .of
     [(ArgumentFrame.np, [0, 1]),
      (ArgumentFrame.intransitive, [1]),
@@ -380,7 +380,7 @@ def heat : Verb := .mkRegular {
 /-- "bend" — Levin 45.2 Bend verbs. Causative/inchoative alternation.
     Degree achievement: closed scale (straight → bent, has maximal endpoint). -/
 def bend : Verb where
-  form := "bend"
+  morphs := [.root "bend"]
   form3sg := "bends"
   formPast := "bent"
   formPastPart := "bent"
@@ -396,7 +396,7 @@ def bend : Verb where
 /-- "boil" — Levin 45.3 Cooking verbs. Causative/inchoative alternation.
     Degree achievement: closed scale (reaches boiling point). -/
 def boil : Verb := .mkRegular {
-  form := "boil"
+  morphs := [.root "boil"]
   valency := .of
     [(ArgumentFrame.np, [0, 1]),
      (ArgumentFrame.intransitive, [1]),
@@ -409,7 +409,7 @@ def boil : Verb := .mkRegular {
 /-- "rust" — Levin 45.5 Entity-Specific CoS verbs. Inchoative only.
     Degree achievement: open scale (no maximum rustedness). -/
 def rust : Verb := .mkRegular {
-  form := "rust"
+  morphs := [.root "rust"]
   valency := .ofFrame ArgumentFrame.intransitive
   passivizable := false
   vendlerClass := some .activity
@@ -419,7 +419,7 @@ def rust : Verb := .mkRegular {
 /-- "increase" — Levin 45.6 Calibratable CoS verbs (degree achievements).
     Degree achievement: open scale (no maximum quantity). -/
 def increase : Verb := .mkRegular {
-  form := "increase"
+  morphs := [.root "increase"]
   valency := .of [(ArgumentFrame.np, [0, 1]), (ArgumentFrame.intransitive, [1])]
   vendlerClass := some .activity
   scaleDimension := some .quantity
@@ -430,7 +430,7 @@ def increase : Verb := .mkRegular {
 /-- "straighten" — Closed-scale degree achievement (base adj: straight).
     Accomplishment: "straightened the wire in 10 seconds." -/
 def straighten : Verb := .mkRegular {
-  form := "straighten"
+  morphs := [.root "straighten"]
   valency := .of
     [(ArgumentFrame.np, [0, 1]),
      (ArgumentFrame.intransitive, [1]),
@@ -443,7 +443,7 @@ def straighten : Verb := .mkRegular {
 /-- "flatten" — Closed-scale degree achievement (base adj: flat).
     Accomplishment: "flattened the dough in 2 minutes." -/
 def flatten : Verb := .mkRegular {
-  form := "flatten"
+  morphs := [.root "flatten"]
   valency := .of
     [(ArgumentFrame.np, [0, 1]),
      (ArgumentFrame.intransitive, [1]),
@@ -456,7 +456,7 @@ def flatten : Verb := .mkRegular {
 /-- "open" — Closed-scale degree achievement (base adj: open, closed scale).
     Accomplishment: "opened the door in 3 seconds." -/
 def open_ : Verb := .mkRegular {
-  form := "open"
+  morphs := [.root "open"]
   valency := .of
     [(ArgumentFrame.np, [0, 1]),
      (ArgumentFrame.intransitive, [1]),
@@ -468,7 +468,7 @@ def open_ : Verb := .mkRegular {
 /-- "lengthen" — Open-scale degree achievement (base adj: long, open scale).
     Activity: "lengthened the rope for hours." -/
 def lengthen : Verb := .mkRegular {
-  form := "lengthen"
+  morphs := [.root "lengthen"]
   valency := .of
     [(ArgumentFrame.np, [0, 1]),
      (ArgumentFrame.intransitive, [1]),
@@ -481,7 +481,7 @@ def lengthen : Verb := .mkRegular {
 /-- "widen" — Open-scale degree achievement (base adj: wide, open scale).
     Activity: "widened the road for months." -/
 def widen : Verb := .mkRegular {
-  form := "widen"
+  morphs := [.root "widen"]
   valency := .of
     [(ArgumentFrame.np, [0, 1]),
      (ArgumentFrame.intransitive, [1]),
@@ -494,7 +494,7 @@ def widen : Verb := .mkRegular {
 /-- "cool" — Open-scale degree achievement (base adj: cool, open scale).
     Activity: "cooled for an hour." -/
 def cool : Verb := .mkRegular {
-  form := "cool"
+  morphs := [.root "cool"]
   valency := .of
     [(ArgumentFrame.np, [0, 1]),
      (ArgumentFrame.intransitive, [1]),
@@ -507,7 +507,7 @@ def cool : Verb := .mkRegular {
 /-- "warm" — Open-scale degree achievement (base adj: warm, open scale).
     Activity: "warmed for an hour." -/
 def warm : Verb := .mkRegular {
-  form := "warm"
+  morphs := [.root "warm"]
   valency := .of
     [(ArgumentFrame.np, [0, 1]),
      (ArgumentFrame.intransitive, [1]),
