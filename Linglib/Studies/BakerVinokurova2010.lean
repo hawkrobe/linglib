@@ -370,7 +370,7 @@ theorem rows_case :
     participial clause, a passive whose verb agrees with nothing though its theme is
     nominative. -/
 theorem pure_marantz_overgenerates :
-    ∃ r ∈ Examples.all, r.judgment = .unacceptable ∧ Derivable pureMarantz false r := by
+    ∃ r ∈ Examples.all, r.judgment ≠ .acceptable ∧ Derivable pureMarantz false r := by
   decide
 
 end BakerVinokurova2010

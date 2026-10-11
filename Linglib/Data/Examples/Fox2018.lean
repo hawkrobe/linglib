@@ -30,8 +30,8 @@ def ex16a : Datum :=
 
 def ex16b : Datum :=
   { id := "fox2018_ex16b"
-    source := ⟨"fox-hackl-2006", "negative islands"⟩
-    reportedIn := some ⟨"fox-2018", "(16b)"⟩
+    source := ⟨"fox-2018", "(16b)"⟩
+    reportedIn := none
     language := "stan1293"
     primaryText := "Tell me how fast you didn't drive."
     glossedTokens := []
@@ -90,7 +90,7 @@ def ex27 : Datum :=
     context := ""
     judgment := .acceptable
     alternatives := []
-    readings := [("not > or", .acceptable), ("or > not", .acceptable)]
+    readings := [("not > or", .marginal), ("or > not", .acceptable)]
     paperFeatures := [("family", "higherOrder"), ("negation", "yes"), ("modal", "yes"), ("number", "neutral"), ("blocked", "no")] }
 
 def ex47a : Datum :=

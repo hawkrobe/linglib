@@ -78,7 +78,7 @@ def ex_3_18 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("marking", "independent"), ("1", "ã̄"), ("2", "ī"), ("3", "ē"), ("1+2", "kū"), ("1+2+3", "kàà"), ("1+3", "kū"), ("2+3", "kā"), ("3+3", "ō"), ("ubiquity", "rare"), ("chapter", "3"), ("section", "3.6.6"), ("fpc", "Pg")] }
+    paperFeatures := [("marking", "independent"), ("1", "ã̄"), ("2", "ī"), ("3", "ē"), ("1+2", "kʊ̄"), ("1+2+3", "kàà"), ("1+3", "kʊ̄"), ("2+3", "kā"), ("3+3", "ō"), ("ubiquity", "rare"), ("chapter", "3"), ("section", "3.6.6"), ("fpc", "Pg")] }
 
 def ex_3_19 : Datum :=
   { id := "cysouw2003_3_19"
@@ -104,7 +104,7 @@ def ex_3_20 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("marking", "inflectional"), ("1", "ŋə-"), ("2", "ṉə-"), ("3", "a-"), ("1+2", "mu-"), ("1+2+3", "ŋa-"), ("1+3", "ŋə-"), ("2+3", "ṉə-"), ("3+3", "wu-"), ("ubiquity", "rare"), ("chapter", "3"), ("section", "3.6.6"), ("fpc", "Ph")] }
+    paperFeatures := [("marking", "inflectional"), ("1", "ŋə-"), ("2", "n̪ə-"), ("3", "a-"), ("1+2", "mu-"), ("1+2+3", "ŋa-"), ("1+3", "ŋə-"), ("2+3", "n̪ə-"), ("3+3", "wu-"), ("ubiquity", "rare"), ("chapter", "3"), ("section", "3.6.6"), ("fpc", "Ph")] }
 
 def ex_3_21 : Datum :=
   { id := "cysouw2003_3_21"
@@ -1027,7 +1027,7 @@ def ex_4_74 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("marking", "independent"), ("1", "ji"), ("2", "bĩ"), ("3", "(demonstratives)"), ("1+2", "bãdi"), ("1+2+3", "bãdi"), ("1+3", "gia"), ("2+3", "bĩa"), ("3+3", "(demonstratives)"), ("kind", "Tupí-Guaraní"), ("ubiquity", "common"), ("chapter", "4"), ("section", "4.5.4")] }
+    paperFeatures := [("marking", "independent"), ("1", "jɨ"), ("2", "bĩ"), ("3", "(demonstratives)"), ("1+2", "bãdi"), ("1+2+3", "bãdi"), ("1+3", "gɨa"), ("2+3", "bĩa"), ("3+3", "(demonstratives)"), ("kind", "Tupí-Guaraní"), ("ubiquity", "common"), ("chapter", "4"), ("section", "4.5.4")] }
 
 def ex_4_75 : Datum :=
   { id := "cysouw2003_4_75"
@@ -1261,7 +1261,7 @@ def ex_4_93 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("marking", "inflectional"), ("1", "məni-"), ("2", "məṉi-"), ("3", "ø-"), ("1+2", "mani-"), ("1+2+3", "mani-"), ("1+3", "məwəni-"), ("2+3", "mani-"), ("3+3", "wəni-"), ("ubiquity", "rare"), ("chapter", "4"), ("section", "4.6.2")] }
+    paperFeatures := [("marking", "inflectional"), ("1", "məni-"), ("2", "mən̪i-"), ("3", "ø-"), ("1+2", "mani-"), ("1+2+3", "mani-"), ("1+3", "məwəni-"), ("2+3", "mani-"), ("3+3", "wəni-"), ("ubiquity", "rare"), ("chapter", "4"), ("section", "4.6.2")] }
 
 def ex_4_94 : Datum :=
   { id := "cysouw2003_4_94"
@@ -1339,7 +1339,7 @@ def ex_4_100 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("marking", "inflectional"), ("1", "ŋə-"), ("2", "ṉə-pə-"), ("3", "a(pə)-"), ("1+2", "mu-"), ("1+2+3", "ŋa-"), ("1+3", "ŋə-pə-"), ("2+3", "ŋə-pə-"), ("3+3", "wu-"), ("ubiquity", "rare"), ("chapter", "4"), ("section", "4.6.4")] }
+    paperFeatures := [("marking", "inflectional"), ("1", "ŋə-"), ("2", "n̪ə-pə-"), ("3", "a(pə)-"), ("1+2", "mu-"), ("1+2+3", "ŋa-"), ("1+3", "ŋə-pə-"), ("2+3", "ŋə-pə-"), ("3+3", "wu-"), ("ubiquity", "rare"), ("chapter", "4"), ("section", "4.6.4")] }
 
 def ex_4_101 : Datum :=
   { id := "cysouw2003_4_101"
@@ -1352,7 +1352,7 @@ def ex_4_101 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("marking", "inflectional"), ("1", "-wn"), ("2", "-əx̊"), ("3", "-əs"), ("1+2", "-ət"), ("1+2+3", "-ət"), ("1+3", "-əs"), ("2+3", "-əp"), ("3+3", "-əs"), ("ubiquity", "rare"), ("chapter", "4"), ("section", "4.6.5")] }
+    paperFeatures := [("marking", "inflectional"), ("1", "-wn"), ("2", "-əx°"), ("3", "-əs"), ("1+2", "-ət"), ("1+2+3", "-ət"), ("1+3", "-əs"), ("2+3", "-əp"), ("3+3", "-əs"), ("ubiquity", "rare"), ("chapter", "4"), ("section", "4.6.5")] }
 
 def ex_4_102 : Datum :=
   { id := "cysouw2003_4_102"

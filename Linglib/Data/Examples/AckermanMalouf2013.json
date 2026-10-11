@@ -4,7 +4,7 @@
     "source": {"bibkey": "ackerman-malouf-2013", "paperLabel": "(1)"},
     "reportedIn": null,
     "language": "kala1399",
-    "primaryText": "ajunngitsuliurviginnittuartuunngilaq",
+    "primaryText": "aju-nngit-su-liur-vigi-nnit-tuar-tu-u-nngil-aq",
     "discourseSegments": [],
     "glossedTokens": [
       ["aju-", "be.good"], ["nngit-", "NEG"], ["su-", "PART"], ["liur-", "make"],
@@ -20,6 +20,7 @@
       ["phenomenon", "polysynthesis"],
       ["complexity", "enumerative"]
     ],
-    "comment": "West Greenlandic, cited from Fortescue as a word packaging what English expresses phrasally."
+    "comment": "West Greenlandic, cited from Fortescue as a word packaging what English expresses phrasally.",
+    "verified": "page-image"
   }
 ]

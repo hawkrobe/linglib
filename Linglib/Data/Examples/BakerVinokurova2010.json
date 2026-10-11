@@ -19,7 +19,8 @@
       ["verbAgreement", "yes"],
       ["subjectCase", "NOM"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bakervinokurova2010_3b",
@@ -46,7 +47,8 @@
       ["objectCase", "ACC"],
       ["objectSpecific", "yes"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bakervinokurova2010_3c",
@@ -71,7 +73,8 @@
       ["goalCase", "DAT"],
       ["objectCase", "ACC"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bakervinokurova2010_7b",
@@ -95,7 +98,8 @@
       ["objectCase", "ACC"],
       ["objectSpecific", "yes"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bakervinokurova2010_7c",
@@ -120,11 +124,12 @@
       ["goalCase", "DAT"],
       ["objectCase", "ACC"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bakervinokurova2010_8a",
-    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(8a)"},
+    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(10a)"},
     "reportedIn": null,
     "language": "yaku1245",
     "primaryText": "Erel kinige atyylasta.",
@@ -145,11 +150,12 @@
       ["objectSpecific", "no"],
       ["objectAdjacent", "yes"]
     ],
-    "comment": "From Vinokurova 2005."
+    "comment": "From Vinokurova 2005.",
+    "verified": "page-image"
   },
   {
     "id": "bakervinokurova2010_10a",
-    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(10a)"},
+    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(12a)"},
     "reportedIn": null,
     "language": "yaku1245",
     "primaryText": "Masha salamaaty türgennik siete.",
@@ -170,11 +176,12 @@
       ["objectCase", "ACC"],
       ["objectAdjacent", "no"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bakervinokurova2010_10a_bare",
-    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(10a)"},
+    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(12a)"},
     "reportedIn": null,
     "language": "yaku1245",
     "primaryText": "Masha salamaat türgennik siete.",
@@ -185,7 +192,7 @@
     ],
     "translation": "Masha ate porridge quickly.",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -195,11 +202,12 @@
       ["objectCase", "bare"],
       ["objectAdjacent", "no"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bakervinokurova2010_10b",
-    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(10b)"},
+    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(12b)"},
     "reportedIn": null,
     "language": "yaku1245",
     "primaryText": "Masha türgennik salamaat siete.",
@@ -220,11 +228,12 @@
       ["objectCase", "bare"],
       ["objectAdjacent", "yes"]
     ],
-    "comment": "Accusative on the post-adverbial object only under contrastive focus."
+    "comment": "Accusative on the post-adverbial object only under contrastive focus.",
+    "verified": "page-image"
   },
   {
     "id": "bakervinokurova2010_11a",
-    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(11a)"},
+    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(13a)"},
     "reportedIn": null,
     "language": "yaku1245",
     "primaryText": "Min Mashaqa kinige bierdim.",
@@ -247,11 +256,12 @@
       ["objectSpecific", "no"],
       ["objectAdjacent", "yes"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bakervinokurova2010_11b",
-    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(11b)"},
+    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(13b)"},
     "reportedIn": null,
     "language": "yaku1245",
     "primaryText": "Min kinigeni Mashaqa bierdim.",
@@ -273,11 +283,12 @@
       ["objectCase", "ACC"],
       ["objectSpecific", "yes"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bakervinokurova2010_11b_bare",
-    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(11b)"},
+    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(13b)"},
     "reportedIn": null,
     "language": "yaku1245",
     "primaryText": "Min kinige Mashaqa bierdim.",
@@ -288,7 +299,7 @@
     ],
     "translation": "I gave the book to Masha.",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -299,11 +310,12 @@
       ["objectCase", "bare"],
       ["objectAdjacent", "no"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bakervinokurova2010_13",
-    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(13)"},
+    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(15)"},
     "reportedIn": null,
     "language": "yaku1245",
     "primaryText": "Min Mashaqa sorujan kinige bierdim.",
@@ -326,11 +338,12 @@
       ["objectSpecific", "no"],
       ["objectAdjacent", "yes"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bakervinokurova2010_13_acc",
-    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(13)"},
+    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(15)"},
     "reportedIn": null,
     "language": "yaku1245",
     "primaryText": "Min Mashany sorujan kinige bierdim.",
@@ -341,7 +354,7 @@
     ],
     "translation": "I gave Masha books/a book intentionally.",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -353,11 +366,12 @@
       ["objectSpecific", "no"],
       ["objectAdjacent", "yes"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bakervinokurova2010_14",
-    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(14)"},
+    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(16)"},
     "reportedIn": null,
     "language": "yaku1245",
     "primaryText": "Deriebineni orospuonnjuktar xalaabyttar.",
@@ -378,11 +392,12 @@
       ["objectCase", "ACC"],
       ["objectSpecific", "yes"]
     ],
-    "comment": "The object is scrambled over the subject."
+    "comment": "The object is scrambled over the subject.",
+    "verified": "page-image"
   },
   {
     "id": "bakervinokurova2010_16",
-    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(16)"},
+    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(18)"},
     "reportedIn": null,
     "language": "yaku1245",
     "primaryText": "Masha accyktaayyr.",
@@ -400,11 +415,12 @@
       ["verbAgreement", "yes"],
       ["subjectCase", "NOM"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bakervinokurova2010_16_dat",
-    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(16)"},
+    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(18)"},
     "reportedIn": null,
     "language": "yaku1245",
     "primaryText": "Mashaqa accyktaayyr.",
@@ -414,7 +430,7 @@
     ],
     "translation": "Masha hungers.",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -422,11 +438,12 @@
       ["verbAgreement", "yes"],
       ["subjectCase", "DAT"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bakervinokurova2010_16_acc",
-    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(16)"},
+    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(18)"},
     "reportedIn": null,
     "language": "yaku1245",
     "primaryText": "Mashany accyktaayyr.",
@@ -436,7 +453,7 @@
     ],
     "translation": "Masha hungers.",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -444,11 +461,12 @@
       ["verbAgreement", "yes"],
       ["subjectCase", "ACC"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bakervinokurova2010_17",
-    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(17)"},
+    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(19)"},
     "reportedIn": null,
     "language": "yaku1245",
     "primaryText": "Ejiexe massyyna tiijbet.",
@@ -469,11 +487,12 @@
       ["objectCase", "bare"],
       ["objectAdjacent", "yes"]
     ],
-    "comment": "The dative asymmetrically c-commands the nominative in the base structure, by the anaphor-binding contrast in (19)."
+    "comment": "The dative asymmetrically c-commands the nominative in the base structure, by the anaphor-binding contrast in (21).",
+    "verified": "page-image"
   },
   {
     "id": "bakervinokurova2010_21a",
-    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(21a)"},
+    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(23a)"},
     "reportedIn": null,
     "language": "yaku1245",
     "primaryText": "Sardaana Aiseny ytaatta.",
@@ -493,21 +512,22 @@
       ["causeeCase", "ACC"],
       ["causeeSpecific", "yes"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bakervinokurova2010_21a_dat",
-    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(21a)"},
+    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(23a)"},
     "reportedIn": null,
     "language": "yaku1245",
-    "primaryText": "Sardaana Aiseŋŋe ytaatta.",
+    "primaryText": "Sardaana Aiseŋŋa ytaatta.",
     "discourseSegments": [],
     "glossedTokens": [
-      ["Sardaana", "Sardaana"], ["Aiseŋ-ŋe", "Aisen-DAT"], ["yta(a)-t-ta", "cry-CAUS-PST.3SG.SBJ"]
+      ["Sardaana", "Sardaana"], ["Aiseŋ-ŋa", "Aisen-DAT"], ["yta(a)-t-ta", "cry-CAUS-PST.3SG.SBJ"]
     ],
     "translation": "Sardaana made Aisen cry.",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -517,11 +537,12 @@
       ["causeeCase", "DAT"],
       ["causeeSpecific", "yes"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bakervinokurova2010_21b",
-    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(21b)"},
+    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(23b)"},
     "reportedIn": null,
     "language": "yaku1245",
     "primaryText": "Misha Mashaqa miini siette.",
@@ -542,11 +563,12 @@
       ["causeeCase", "DAT"],
       ["objectCase", "ACC"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bakervinokurova2010_21b_bare",
-    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(21b)"},
+    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(23b)"},
     "reportedIn": null,
     "language": "yaku1245",
     "primaryText": "Misha Mashaqa miin siette.",
@@ -568,11 +590,12 @@
       ["objectCase", "bare"],
       ["objectAdjacent", "yes"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bakervinokurova2010_23a",
-    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(23a)"},
+    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(25a)"},
     "reportedIn": null,
     "language": "yaku1245",
     "primaryText": "Min oloppohu aldjattym.",
@@ -592,11 +615,12 @@
       ["objectCase", "ACC"],
       ["objectSpecific", "yes"]
     ],
-    "comment": "From Vinokurova 2005."
+    "comment": "From Vinokurova 2005.",
+    "verified": "page-image"
   },
   {
     "id": "bakervinokurova2010_23b",
-    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(23b)"},
+    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(25b)"},
     "reportedIn": null,
     "language": "yaku1245",
     "primaryText": "Caakky aldjanna.",
@@ -616,11 +640,12 @@
       ["subjectCase", "NOM"],
       ["subjectAdjacent", "yes"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bakervinokurova2010_23b_acc",
-    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(23b)"},
+    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(25b)"},
     "reportedIn": null,
     "language": "yaku1245",
     "primaryText": "Caakkyny aldjanna.",
@@ -630,7 +655,7 @@
     ],
     "translation": "The cup broke.",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -639,11 +664,12 @@
       ["unaccusative", "yes"],
       ["subjectCase", "ACC"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bakervinokurova2010_24a",
-    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(24a)"},
+    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(26a)"},
     "reportedIn": null,
     "language": "yaku1245",
     "primaryText": "Caakkyny aldjatylynna.",
@@ -662,11 +688,12 @@
       ["objectCase", "ACC"],
       ["objectSpecific", "yes"]
     ],
-    "comment": "From Vinokurova 2005."
+    "comment": "From Vinokurova 2005.",
+    "verified": "page-image"
   },
   {
     "id": "bakervinokurova2010_24a_nom",
-    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(24a)"},
+    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(26a)"},
     "reportedIn": null,
     "language": "yaku1245",
     "primaryText": "Caakky aldjatylynna.",
@@ -685,11 +712,12 @@
       ["objectCase", "NOM"],
       ["objectSpecific", "yes"]
     ],
-    "comment": "From Vinokurova 2005."
+    "comment": "From Vinokurova 2005.",
+    "verified": "page-image"
   },
   {
     "id": "bakervinokurova2010_24b",
-    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(24b)"},
+    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(26b)"},
     "reportedIn": null,
     "language": "yaku1245",
     "primaryText": "Kinigeni aaqylynna.",
@@ -708,11 +736,12 @@
       ["objectCase", "ACC"],
       ["objectSpecific", "yes"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bakervinokurova2010_25a",
-    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(25a)"},
+    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(27a)"},
     "reportedIn": null,
     "language": "yaku1245",
     "primaryText": "Caakky sorujan ötüjenen aldjatylynna.",
@@ -723,7 +752,7 @@
     ],
     "translation": "The cup was intentionally broken with a hammer.",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -734,11 +763,12 @@
       ["objectSpecific", "yes"],
       ["objectAdjacent", "no"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bakervinokurova2010_25b",
-    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(25b)"},
+    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(27b)"},
     "reportedIn": null,
     "language": "yaku1245",
     "primaryText": "Caakkyny sorujan ötüjenen aldjatylynna.",
@@ -760,11 +790,12 @@
       ["objectSpecific", "yes"],
       ["objectAdjacent", "no"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bakervinokurova2010_27",
-    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(27)"},
+    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(29)"},
     "reportedIn": null,
     "language": "yaku1245",
     "primaryText": "Surugu Mashaqa yytylynna.",
@@ -785,11 +816,12 @@
       ["objectCase", "ACC"],
       ["objectSpecific", "yes"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bakervinokurova2010_27_nom",
-    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(27)"},
+    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(29)"},
     "reportedIn": null,
     "language": "yaku1245",
     "primaryText": "Suruk Mashaqa yytylynna.",
@@ -809,7 +841,8 @@
       ["objectCase", "NOM"],
       ["objectSpecific", "yes"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bakervinokurova2010_27_goalnom",
@@ -838,7 +871,7 @@
   },
   {
     "id": "bakervinokurova2010_29a",
-    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(29a)"},
+    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(31a)"},
     "reportedIn": null,
     "language": "yaku1245",
     "primaryText": "Masha ynaqy körööccünü najmylasta.",
@@ -858,11 +891,12 @@
       ["objectCase", "ACC"],
       ["objectSpecific", "yes"]
     ],
-    "comment": "Features describe the bracketed agentive nominalization, not the matrix clause."
+    "comment": "Features describe the bracketed agentive nominalization, not the matrix clause.",
+    "verified": "page-image"
   },
   {
     "id": "bakervinokurova2010_29b",
-    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(29b)"},
+    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(31b)"},
     "reportedIn": null,
     "language": "yaku1245",
     "primaryText": "Terilteni salajaaccy kelle.",
@@ -882,22 +916,23 @@
       ["objectCase", "ACC"],
       ["objectSpecific", "yes"]
     ],
-    "comment": "Features describe the bracketed agentive nominalization, not the matrix clause."
+    "comment": "Features describe the bracketed agentive nominalization, not the matrix clause.",
+    "verified": "page-image"
   },
   {
     "id": "bakervinokurova2010_33a_acc",
-    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(33a)"},
+    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(35a)"},
     "reportedIn": null,
     "language": "yaku1245",
-    "primaryText": "Ynaqy ölüü miigin sohuppat.",
+    "primaryText": "Ynaxy ölüüte miigin sohuppat.",
     "discourseSegments": [],
     "glossedTokens": [
-      ["Ynaq-y", "cow-ACC"], ["öl-üü", "die-EV.NMLZ"], ["miigin", "me.ACC"],
+      ["Ynax-y", "cow-ACC"], ["öl-üü-te", "die-EV.NMLZ-3SG.POSS"], ["miigin", "me.ACC"],
       ["sohup-pat", "surprise-NEG.AOR.3SG.SBJ"]
     ],
     "translation": "The death of the cow does not surprise me.",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -906,11 +941,12 @@
       ["unaccusative", "yes"],
       ["subjectCase", "ACC"]
     ],
-    "comment": "Features describe the event nominalization, not the matrix clause; the optional possessive suffix of the acceptable form is omitted."
+    "comment": "Features describe the event nominalization, not the matrix clause.",
+    "verified": "page-image"
   },
   {
     "id": "bakervinokurova2010_34",
-    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(34)"},
+    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(36)"},
     "reportedIn": null,
     "language": "yaku1245",
     "primaryText": "Masha ynax körööccünü najmylasta.",
@@ -931,11 +967,12 @@
       ["objectSpecific", "no"],
       ["objectAdjacent", "yes"]
     ],
-    "comment": "Features describe the bracketed agentive nominalization, not the matrix clause."
+    "comment": "Features describe the bracketed agentive nominalization, not the matrix clause.",
+    "verified": "page-image"
   },
   {
     "id": "bakervinokurova2010_35",
-    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(35)"},
+    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(37)"},
     "reportedIn": null,
     "language": "yaku1245",
     "primaryText": "Oqolorgo emp biereecci ol turar.",
@@ -957,20 +994,21 @@
       ["objectSpecific", "no"],
       ["objectAdjacent", "yes"]
     ],
-    "comment": "Features describe the agentive nominalization, not the matrix clause."
+    "comment": "Features describe the agentive nominalization, not the matrix clause.",
+    "verified": "page-image"
   },
   {
     "id": "bakervinokurova2010_37a",
-    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(37a)"},
+    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(39a)"},
     "reportedIn": null,
     "language": "yaku1245",
     "primaryText": "Min ehigini bügün kyajyaxxyt dien eremmitim.",
     "discourseSegments": [],
     "glossedTokens": [
-      ["Min", "I"], ["ehigi-ni", "you.PL-ACC"], ["bügün", "today"],
-      ["kyaj-yax-xyt", "win-FUT-2PL.SBJ"], ["dien", "that"], ["erem-mit-im", "hope-PST-1SG.SBJ"]
+      ["Min", "I"], ["ehigi-ni", "you-ACC"], ["bügün", "today"],
+      ["kyaj-yax-xyt", "win-FUT-2PL.SBJ"], ["dien", "that"], ["erem-mit-im", "hope-PTCP-1SG.SBJ"]
     ],
-    "translation": "I hoped you would win today.",
+    "translation": "I hoped that you would win today.",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -981,20 +1019,21 @@
       ["subjectCase", "NOM"],
       ["raisedCase", "ACC"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bakervinokurova2010_37b",
-    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(37b)"},
+    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(39b)"},
     "reportedIn": null,
     "language": "yaku1245",
     "primaryText": "Min ehigini bügün kyajbykkytyn ihittiim.",
     "discourseSegments": [],
     "glossedTokens": [
-      ["Min", "I"], ["ehigi-ni", "you.PL-ACC"], ["bügün", "today"],
+      ["Min", "I"], ["ehigi-ni", "you-ACC"], ["bügün", "today"],
       ["kyaj-byk-kyt-yn", "win-PTCP-2PL.POSS-ACC"], ["ihit-ti-im", "hear-PST-1SG.SBJ"]
     ],
-    "translation": "I heard that you won today.",
+    "translation": "I heard you won today.",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -1005,11 +1044,12 @@
       ["subjectCase", "NOM"],
       ["raisedCase", "ACC"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bakervinokurova2010_39a",
-    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(39a)"},
+    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(44a)"},
     "reportedIn": null,
     "language": "yaku1245",
     "primaryText": "Keskil Aiseny kelbet dien xomojdo.",
@@ -1029,11 +1069,12 @@
       ["subjectCase", "NOM"],
       ["raisedCase", "ACC"]
     ],
-    "comment": "Unaccusative matrix verb. From Vinokurova 2005."
+    "comment": "Unaccusative matrix verb. From Vinokurova 2005.",
+    "verified": "page-image"
   },
   {
     "id": "bakervinokurova2010_39b",
-    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(39b)"},
+    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(44b)"},
     "reportedIn": null,
     "language": "yaku1245",
     "primaryText": "Masha Mishany yaldjya dien tönünne.",
@@ -1053,11 +1094,12 @@
       ["subjectCase", "NOM"],
       ["raisedCase", "ACC"]
     ],
-    "comment": "Unaccusative matrix verb."
+    "comment": "Unaccusative matrix verb.",
+    "verified": "page-image"
   },
   {
     "id": "bakervinokurova2010_40",
-    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(40)"},
+    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(45)"},
     "reportedIn": null,
     "language": "yaku1245",
     "primaryText": "Sargy kimi daqany tönnümüö dien erennerilinne.",
@@ -1078,11 +1120,12 @@
       ["subjectCase", "NOM"],
       ["raisedCase", "ACC"]
     ],
-    "comment": "Passive matrix verb with no syntactically present agent."
+    "comment": "Passive matrix verb with no syntactically present agent.",
+    "verified": "page-image"
   },
   {
     "id": "bakervinokurova2010_42a",
-    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(42a)"},
+    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(47a)"},
     "reportedIn": null,
     "language": "yaku1245",
     "primaryText": "Bügün munnjaxxa Masha ehiil Moskvaqa barya dien cuolkajdanna.",
@@ -1102,11 +1145,12 @@
       ["verbAgreement", "yes"],
       ["raisedCase", "NOM"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bakervinokurova2010_42a_acc",
-    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(42a)"},
+    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(47a)"},
     "reportedIn": null,
     "language": "yaku1245",
     "primaryText": "Bügün munnjaxxa Mashany ehiil Moskvaqa barya dien cuolkajdanna.",
@@ -1118,7 +1162,7 @@
     ],
     "translation": "It became clear today at the meeting that Masha will go to Moscow next year.",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -1126,11 +1170,12 @@
       ["verbAgreement", "yes"],
       ["raisedCase", "ACC"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bakervinokurova2010_42b",
-    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(42b)"},
+    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(47b)"},
     "reportedIn": null,
     "language": "yaku1245",
     "primaryText": "Aisen massyyna atyylahara naada buolla.",
@@ -1149,11 +1194,12 @@
       ["verbAgreement", "yes"],
       ["raisedCase", "NOM"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bakervinokurova2010_42b_acc",
-    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(42b)"},
+    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(47b)"},
     "reportedIn": null,
     "language": "yaku1245",
     "primaryText": "Aiseny massyyna atyylahara naada buolla.",
@@ -1164,7 +1210,7 @@
     ],
     "translation": "It became necessary for Aisen to buy a car.",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -1172,19 +1218,19 @@
       ["verbAgreement", "yes"],
       ["raisedCase", "ACC"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bakervinokurova2010_43",
-    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(43)"},
+    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(48)"},
     "reportedIn": null,
     "language": "yaku1245",
     "primaryText": "Sargy Keskili kim daqany kelimie dien erennerde.",
     "discourseSegments": [],
     "glossedTokens": [
       ["Sargy", "Sargy"], ["Keskil-i", "Keskil-ACC"], ["kim", "who"], ["daqany", "PRT"],
-      ["kel-im-ie", "come-NEG-FUT.3SG.SBJ"], ["dien", "that"],
-      ["erenner-de", "promise-PST.3SG.SBJ"]
+      ["kel-im-ie", "come-NEG-FUT"], ["dien", "that"], ["erenner-de", "promise-PST.3SG.SBJ"]
     ],
     "translation": "Sargy promised Keskil that nobody will come.",
     "context": "",
@@ -1197,19 +1243,19 @@
       ["subjectCase", "NOM"],
       ["goalCase", "ACC"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bakervinokurova2010_44",
-    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(44)"},
+    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(49)"},
     "reportedIn": null,
     "language": "yaku1245",
     "primaryText": "Sargy Keskilge kimi daqany kelimie dien erennerde.",
     "discourseSegments": [],
     "glossedTokens": [
       ["Sargy", "Sargy"], ["Keskil-ge", "Keskil-DAT"], ["kim-i", "who-ACC"], ["daqany", "PRT"],
-      ["kel-im-ie", "come-NEG-FUT.3SG.SBJ"], ["dien", "that"],
-      ["erenner-de", "promise-PST.3SG.SBJ"]
+      ["kel-im-ie", "come-NEG-FUT"], ["dien", "that"], ["erenner-de", "promise-PST"]
     ],
     "translation": "Sargy promised Keskil that nobody will come.",
     "context": "",
@@ -1223,23 +1269,23 @@
       ["goalCase", "DAT"],
       ["raisedCase", "ACC"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bakervinokurova2010_44_acc",
-    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(44)"},
+    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(49)"},
     "reportedIn": null,
     "language": "yaku1245",
     "primaryText": "Sargy Keskili kimi daqany kelimie dien erennerde.",
     "discourseSegments": [],
     "glossedTokens": [
       ["Sargy", "Sargy"], ["Keskil-i", "Keskil-ACC"], ["kim-i", "who-ACC"], ["daqany", "PRT"],
-      ["kel-im-ie", "come-NEG-FUT.3SG.SBJ"], ["dien", "that"],
-      ["erenner-de", "promise-PST.3SG.SBJ"]
+      ["kel-im-ie", "come-NEG-FUT"], ["dien", "that"], ["erenner-de", "promise-PST"]
     ],
     "translation": "Sargy promised Keskil that nobody will come.",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -1249,7 +1295,8 @@
       ["goalCase", "ACC"],
       ["raisedCase", "ACC"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bakervinokurova2010_50b",
@@ -1277,7 +1324,7 @@
   },
   {
     "id": "bakervinokurova2010_51a_acc",
-    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(51a)"},
+    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(56a)"},
     "reportedIn": null,
     "language": "yaku1245",
     "primaryText": "Ambaary tula itii.",
@@ -1287,7 +1334,7 @@
     ],
     "translation": "It is hot around the barn.",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -1295,18 +1342,19 @@
       ["verbAgreement", "no"],
       ["pObjectCase", "ACC"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bakervinokurova2010_54b",
-    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(54b)"},
+    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(61b)"},
     "reportedIn": null,
     "language": "yaku1245",
     "primaryText": "Bu oqoloru djolloox oŋorbuta.",
     "discourseSegments": [],
     "glossedTokens": [
       ["Bu", "this"], ["oqo-lor-u", "child-PL-ACC"], ["djolloox", "happy"],
-      ["oŋor-but-a", "make-PST-3SG.SBJ"]
+      ["oŋor-but-a", "make-PTCP-3SG.SBJ"]
     ],
     "translation": "This made the children happy.",
     "context": "",
@@ -1321,11 +1369,12 @@
       ["objectSpecific", "yes"],
       ["objectAdjacent", "no"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bakervinokurova2010_56a",
-    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(56a)"},
+    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(64a)"},
     "reportedIn": null,
     "language": "yaku1245",
     "primaryText": "Misha serenen kumaaqy xoruopkaqa ukta.",
@@ -1336,7 +1385,7 @@
     ],
     "translation": "Misha put papers in the case carefully.",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -1347,21 +1396,22 @@
       ["objectSpecific", "no"],
       ["objectAdjacent", "no"]
     ],
-    "comment": "The dative on the goal is lexical; the goal phrase is not a case competitor."
+    "comment": "The dative on the goal is lexical; the goal phrase is not a case competitor.",
+    "verified": "page-image"
   },
   {
     "id": "bakervinokurova2010_56b",
-    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(56b)"},
+    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(64b)"},
     "reportedIn": null,
     "language": "yaku1245",
-    "primaryText": "Bu oqo djolloox oŋoror.",
+    "primaryText": "Bu oqo djolloox ongoror.",
     "discourseSegments": [],
     "glossedTokens": [
-      ["Bu", "this"], ["oqo", "child"], ["djolloox", "happy"], ["oŋor-or", "make-AOR.3SG.SBJ"]
+      ["Bu", "this"], ["oqo", "child"], ["djolloox", "happy"], ["ongor-or", "make-AOR.3SG.SBJ"]
     ],
     "translation": "This makes a child happy.",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -1372,11 +1422,12 @@
       ["objectSpecific", "no"],
       ["objectAdjacent", "no"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bakervinokurova2010_57",
-    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(57)"},
+    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(65)"},
     "reportedIn": null,
     "language": "yaku1245",
     "primaryText": "Misha serenen xoruopkaqa kumaaqy ukta.",
@@ -1398,11 +1449,12 @@
       ["objectSpecific", "no"],
       ["objectAdjacent", "yes"]
     ],
-    "comment": "The dative on the goal is lexical; the goal phrase is not a case competitor."
+    "comment": "The dative on the goal is lexical; the goal phrase is not a case competitor.",
+    "verified": "page-image"
   },
   {
     "id": "bakervinokurova2010_61a",
-    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(61a)"},
+    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(70a)"},
     "reportedIn": null,
     "language": "yaku1245",
     "primaryText": "sibekki tyllar kem",
@@ -1424,11 +1476,12 @@
       ["subjectSpecific", "no"],
       ["subjectAdjacent", "yes"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bakervinokurova2010_62a",
-    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(62a)"},
+    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(71a)"},
     "reportedIn": null,
     "language": "yaku1245",
     "primaryText": "Masha cej iher caakky",
@@ -1438,7 +1491,7 @@
     ],
     "translation": "a cup that Masha drinks tea from",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -1450,7 +1503,8 @@
       ["objectSpecific", "no"],
       ["objectAdjacent", "yes"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bakervinokurova2010_62c",
@@ -1479,7 +1533,7 @@
   },
   {
     "id": "bakervinokurova2010_62d",
-    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(62d)"},
+    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(71d)"},
     "reportedIn": null,
     "language": "yaku1245",
     "primaryText": "sibekkiler emiske tyllar kem",
@@ -1490,7 +1544,7 @@
     ],
     "translation": "a time when the flowers suddenly bloom",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -1502,11 +1556,12 @@
       ["subjectSpecific", "yes"],
       ["subjectAdjacent", "no"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bakervinokurova2010_63a",
-    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(63a)"},
+    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(72a)"},
     "reportedIn": null,
     "language": "yaku1245",
     "primaryText": "Masha cej iher caakkyta.",
@@ -1528,7 +1583,8 @@
       ["objectSpecific", "no"],
       ["objectAdjacent", "yes"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bakervinokurova2010_63c",
@@ -1555,13 +1611,13 @@
   },
   {
     "id": "bakervinokurova2010_63d",
-    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(63d)"},
+    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(72d)"},
     "reportedIn": null,
     "language": "yaku1245",
-    "primaryText": "Sibekkiler emiske tyllar kemnere",
+    "primaryText": "sibekkiler emiske tyllar kemnere",
     "discourseSegments": [],
     "glossedTokens": [
-      ["Sibekki-ler", "flower-PL"], ["emiske", "suddenly"], ["tyll-ar", "bloom-AOR"],
+      ["sibekki-ler", "flower-PL"], ["emiske", "suddenly"], ["tyll-ar", "bloom-AOR"],
       ["kem-nere", "time-3PL.POSS"]
     ],
     "translation": "a time when the flowers suddenly bloom",
@@ -1578,17 +1634,18 @@
       ["subjectSpecific", "yes"],
       ["subjectAdjacent", "no"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bakervinokurova2010_64",
-    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(64)"},
+    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(59)"},
     "reportedIn": null,
     "language": "yaku1245",
     "primaryText": "Masha aqatyn atyylaspyt ata",
     "discourseSegments": [],
     "glossedTokens": [
-      ["Masha", "Masha.GEN"], ["aqa-ty-n", "father-3SG.POSS-GEN"], ["atyylas-pyt", "buy-PTCP"],
+      ["Masha", "Masha"], ["aqa-ty-n", "father-3SG.POSS-GEN"], ["atyylas-pyt", "buy-PTCP"],
       ["at-a", "horse-3SG.POSS"]
     ],
     "translation": "the horse that Masha's father bought",
@@ -1604,11 +1661,12 @@
       ["possessorCase", "GEN"],
       ["possesseeAgreement", "yes"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bakervinokurova2010_65",
-    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(65)"},
+    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(73)"},
     "reportedIn": null,
     "language": "yaku1245",
     "primaryText": "Oqolorgo attary berilinne.",
@@ -1629,11 +1687,12 @@
       ["objectCase", "ACC"],
       ["agreesWith", "none"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bakervinokurova2010_65_pl",
-    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(65)"},
+    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(73)"},
     "reportedIn": null,
     "language": "yaku1245",
     "primaryText": "Oqolorgo attary berilinniler.",
@@ -1644,7 +1703,7 @@
     ],
     "translation": "The children were given horses.",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -1654,11 +1713,12 @@
       ["objectCase", "ACC"],
       ["agreesWith", "object"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bakervinokurova2010_66",
-    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(66)"},
+    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(74)"},
     "reportedIn": null,
     "language": "yaku1245",
     "primaryText": "Mashaqa attar berilinniler.",
@@ -1680,11 +1740,12 @@
       ["objectSpecific", "yes"],
       ["agreesWith", "object"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bakervinokurova2010_66_sg",
-    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(66)"},
+    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(74)"},
     "reportedIn": null,
     "language": "yaku1245",
     "primaryText": "Mashaqa attar berilinne.",
@@ -1694,7 +1755,7 @@
     ],
     "translation": "The horses were given to Masha.",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -1705,11 +1766,12 @@
       ["objectSpecific", "yes"],
       ["agreesWith", "none"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bakervinokurova2010_68a",
-    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(68a)"},
+    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(77a)"},
     "reportedIn": null,
     "language": "yaku1245",
     "primaryText": "Misha kelieqe dien surax",
@@ -1728,17 +1790,18 @@
       ["headNounAgreement", "no"],
       ["subjectCase", "NOM"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bakervinokurova2010_68b",
-    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(68b)"},
+    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(77b)"},
     "reportedIn": null,
     "language": "yaku1245",
-    "primaryText": "En kelbitiŋ suraqa",
+    "primaryText": "en kelbitiŋ suraqa",
     "discourseSegments": [],
     "glossedTokens": [
-      ["En", "you"], ["kel-bit-iŋ", "come-PTCP-2SG.POSS"], ["suraq-a", "rumor-3SG.POSS"]
+      ["en", "you"], ["kel-bit-iŋ", "come-PTCP-2SG.POSS"], ["suraq-a", "rumor-3SG.POSS"]
     ],
     "translation": "a rumor that you came",
     "context": "",
@@ -1751,17 +1814,18 @@
       ["headNounAgreement", "no"],
       ["subjectCase", "NOM"]
     ],
-    "comment": "The head noun's third-person suffix agrees with the clause, not with its subject."
+    "comment": "The head noun's third-person suffix agrees with the clause, not with its subject.",
+    "verified": "page-image"
   },
   {
     "id": "bakervinokurova2010_68c",
-    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(68c)"},
+    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(77c)"},
     "reportedIn": null,
     "language": "yaku1245",
-    "primaryText": "En kelbit suraqyŋ",
+    "primaryText": "en kelbit suraqyŋ",
     "discourseSegments": [],
     "glossedTokens": [
-      ["En", "you"], ["kel-bit", "come-PTCP"], ["suraq-yŋ", "rumor-2SG.POSS"]
+      ["en", "you"], ["kel-bit", "come-PTCP"], ["suraq-yŋ", "rumor-2SG.POSS"]
     ],
     "translation": "a rumor that you came",
     "context": "",
@@ -1774,21 +1838,22 @@
       ["headNounAgreement", "yes"],
       ["subjectCase", "GEN"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bakervinokurova2010_70",
-    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(70)"},
+    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(79)"},
     "reportedIn": null,
     "language": "yaku1245",
-    "primaryText": "En kelbit surax",
+    "primaryText": "en kelbit surax",
     "discourseSegments": [],
     "glossedTokens": [
-      ["En", "you"], ["kel-bit", "come-PTCP"], ["surax", "rumor"]
+      ["en", "you"], ["kel-bit", "come-PTCP"], ["surax", "rumor"]
     ],
     "translation": "a rumor that you came",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -1797,11 +1862,12 @@
       ["headNounAgreement", "no"],
       ["subjectCase", "bare"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bakervinokurova2010_71b",
-    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(71b)"},
+    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(75b)"},
     "reportedIn": null,
     "language": "yaku1245",
     "primaryText": "Aisen aqa",
@@ -1811,7 +1877,7 @@
     ],
     "translation": "Aisen's father",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -1819,11 +1885,12 @@
       ["possessorCase", "GEN"],
       ["possesseeAgreement", "no"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bakervinokurova2010_71c",
-    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(71c)"},
+    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(75c)"},
     "reportedIn": null,
     "language": "yaku1245",
     "primaryText": "Aisen aqata",
@@ -1841,11 +1908,12 @@
       ["possessorCase", "GEN"],
       ["possesseeAgreement", "yes"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bakervinokurova2010_72a",
-    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(72a)"},
+    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(76a)"},
     "reportedIn": null,
     "language": "yaku1245",
     "primaryText": "terilteni salajyy",
@@ -1865,11 +1933,12 @@
       ["objectCase", "ACC"],
       ["objectSpecific", "yes"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bakervinokurova2010_72b",
-    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(72b)"},
+    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(76b)"},
     "reportedIn": null,
     "language": "yaku1245",
     "primaryText": "Masha terilteni salajyy",
@@ -1879,7 +1948,7 @@
     ],
     "translation": "Masha's managing the company",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -1890,11 +1959,12 @@
       ["objectCase", "ACC"],
       ["objectSpecific", "yes"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bakervinokurova2010_72c",
-    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(72c)"},
+    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(76c)"},
     "reportedIn": null,
     "language": "yaku1245",
     "primaryText": "Masha terilteni salajyyta",
@@ -1916,11 +1986,12 @@
       ["objectCase", "ACC"],
       ["objectSpecific", "yes"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bakervinokurova2010_75a",
-    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(75a)"},
+    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(82a)"},
     "reportedIn": null,
     "language": "yaku1245",
     "primaryText": "Oqolorgo üüt naada.",
@@ -1942,11 +2013,12 @@
       ["objectAdjacent", "yes"],
       ["agreesWith", "object"]
     ],
-    "comment": "Third-person singular agreement is unmarked on the predicate."
+    "comment": "Third-person singular agreement is unmarked on the predicate.",
+    "verified": "page-image"
   },
   {
     "id": "bakervinokurova2010_75a_pl",
-    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(75a)"},
+    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(82a)"},
     "reportedIn": null,
     "language": "yaku1245",
     "primaryText": "Oqolorgo üüt naadalar.",
@@ -1956,7 +2028,7 @@
     ],
     "translation": "The children need milk.",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -1968,11 +2040,12 @@
       ["objectAdjacent", "yes"],
       ["agreesWith", "subject"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bakervinokurova2010_75b",
-    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(75b)"},
+    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(82b)"},
     "reportedIn": null,
     "language": "yaku1245",
     "primaryText": "Oloppostoru aldjatylynna.",
@@ -1991,11 +2064,12 @@
       ["objectCase", "ACC"],
       ["agreesWith", "none"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bakervinokurova2010_75b_pl",
-    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(75b)"},
+    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(82b)"},
     "reportedIn": null,
     "language": "yaku1245",
     "primaryText": "Oloppostoru aldjatylynnylar.",
@@ -2005,7 +2079,7 @@
     ],
     "translation": "Chairs were broken.",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -2014,6 +2088,7 @@
       ["objectCase", "ACC"],
       ["agreesWith", "object"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   }
 ]

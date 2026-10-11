@@ -36,7 +36,8 @@
         "high"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "jk2021_3",
@@ -45,10 +46,10 @@
       "paperLabel": "(3)"
     },
     "language": "stan1290",
-    "primaryText": "*Je souhaite qu'il ne pleuve demain.",
+    "primaryText": "Je souhaite qu'il ne pleuve demain.",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "Intended: I wish that it will rain tomorrow.",
+    "translation": "Intended: I wish it that it will rain tomorrow.",
     "context": "",
     "judgment": "ungrammatical",
     "alternatives": [],
@@ -59,7 +60,8 @@
         "2"
       ]
     ],
-    "comment": "wish is not a trigger: the negator is licensed by the meaning of fear."
+    "comment": "wish is not a trigger: the negator is licensed by the meaning of fear.",
+    "verified": "page-image"
   },
   {
     "id": "jk2021_4",
@@ -68,10 +70,10 @@
       "paperLabel": "(4)"
     },
     "language": "mand1415",
-    "primaryText": "míng wǎngyǒu mángzhe quànshuō, què wàng-le méi bàojǐng.",
+    "primaryText": "9 míng wǎngyǒu mángzhe quànshuō, què wàng-le méi bàojǐng.",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "netizens were busy persuading, but forgot to call the police.",
+    "translation": "9 netizens were busy persuading (her not to commit suicide) but they forgot to call the police.",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -94,7 +96,8 @@
         "standard"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "jk2021_14",
@@ -129,7 +132,8 @@
         "imperative"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "jk2021_15",
@@ -164,7 +168,8 @@
         "standard"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "jk2021_16",
@@ -203,7 +208,8 @@
         "low"
       ]
     ],
-    "comment": "Previously reported not to trigger EN; the negator modifies the deontic falloir."
+    "comment": "Previously reported not to trigger EN; the negator modifies the deontic falloir.",
+    "verified": "page-image"
   },
   {
     "id": "jk2021_17",
@@ -238,7 +244,8 @@
         "deontic"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "jk2021_18",
@@ -273,7 +280,8 @@
         "deontic"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "jk2021_19",
@@ -347,7 +355,8 @@
         "copular"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "jk2021_21",
@@ -386,7 +395,8 @@
         "low"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "jk2021_22",
@@ -421,7 +431,8 @@
         "standard"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "jk2021_23",
@@ -430,7 +441,7 @@
       "paperLabel": "(23)"
     },
     "language": "gulf1241",
-    "primaryText": "ta-kallam-na maʕaa-h tʕawaal il-lail, wallah b-il-guwah maa waafag.",
+    "primaryText": "ta-kallam-na maʕaa-h tˤawaal il-lail, wallah b-il-guwah maa waafag.",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "We talked to him all night, and he really barely agreed.",
@@ -456,7 +467,8 @@
         "standard"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "jk2021_24",
@@ -491,7 +503,8 @@
         "standard"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "jk2021_25",
@@ -526,7 +539,8 @@
         "standard"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "jk2021_26",
@@ -561,7 +575,8 @@
         "standard"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "jk2021_27",
@@ -596,7 +611,8 @@
         "dedicated"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "jk2021_28",
@@ -635,7 +651,8 @@
         "high"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "jk2021_29",
@@ -644,7 +661,7 @@
       "paperLabel": "(29)"
     },
     "language": "stan1293",
-    "primaryText": "I was sad that I was too full to not be able to eat more!",
+    "primaryText": "I consumed all I could at my friends' wedding recently. The food was simply delicious! I was sad that I was too full to not be able to eat more!",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
@@ -670,6 +687,7 @@
         "standard"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   }
 ]

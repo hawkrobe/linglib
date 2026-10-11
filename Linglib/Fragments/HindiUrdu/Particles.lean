@@ -13,7 +13,7 @@ questions are marked by rising intonation plus the optional particle
 questions and occupies a projection above CP (Bhatt and Dayal's ForceP,
 Dayal's later PerspP); it embeds only in quasi-subordination. Since
 nothing clause-types a bare embedded polar clause, subordinated polar
-questions require the overt alternative *ya: nahii:* "or not". This file
+questions require the overt alternative *ya: nahĩ:* "or not". This file
 provides the three particles as `Particle` values with recorded
 licensing distributions.
 
@@ -60,10 +60,10 @@ def kya : Particle where
     | .constituent, _ => some .excluded
     | _, _ => none
 
-/-- *ya: nahii:* "or not" is the overt disjunct forming a polar
+/-- *ya: nahĩ:* "or not" is the overt disjunct forming a polar
 alternative question. -/
 def ya_nahi : Particle where
-  form := "ya: nahii:"
+  form := "ya: nahĩ:"
   position := some .clauseFinal
   distribution := fun c e => match c, e with
     | .polar, .matrix => some .optional

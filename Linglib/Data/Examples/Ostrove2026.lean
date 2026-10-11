@@ -402,7 +402,7 @@ def ex_18a : Datum :=
     context := ""
     judgment := .acceptable
     alternatives := []
-    readings := [("controlled", .acceptable), ("free", .unacceptable)]
+    readings := [("controlled", .acceptable), ("free", .ungrammatical)]
     paperFeatures := [("verb", "kòni"), ("clauseType", "tensedSubjunctive"), ("diagnostic", "subject")] }
 
 def ex_18b : Datum :=
@@ -415,7 +415,7 @@ def ex_18b : Datum :=
     context := ""
     judgment := .acceptable
     alternatives := []
-    readings := [("controlled", .unacceptable), ("free", .acceptable)]
+    readings := [("controlled", .ungrammatical), ("free", .acceptable)]
     paperFeatures := [("verb", "kòni"), ("clauseType", "tensedSubjunctive"), ("diagnostic", "subject")] }
 
 def ex_18c : Datum :=
@@ -753,7 +753,7 @@ def ex_33a : Datum :=
     context := "Laura cannot swim, but she knows that Ana can."
     judgment := .acceptable
     alternatives := []
-    readings := [("sloppy", .acceptable), ("strict", .unacceptable)]
+    readings := [("sloppy", .acceptable), ("strict", .ungrammatical)]
     paperFeatures := [("verb", "kònì"), ("clauseType", "untensedSubjunctive"), ("diagnostic", "ellipsis")] }
 
 def ex_33b : Datum :=
@@ -766,7 +766,7 @@ def ex_33b : Datum :=
     context := "Juan did not go to the store, but he remembers Maria did."
     judgment := .acceptable
     alternatives := []
-    readings := [("sloppy", .acceptable), ("strict", .unacceptable)]
+    readings := [("sloppy", .acceptable), ("strict", .ungrammatical)]
     paperFeatures := [("verb", "nakú'ún ini"), ("clauseType", "untensedSubjunctive"), ("diagnostic", "ellipsis")] }
 
 def ex_37a : Datum :=
@@ -930,8 +930,8 @@ def ex_67c : Datum :=
     source := ⟨"ostrove-2026", "(67c)"⟩
     reportedIn := none
     language := "sanm1291"
-    primaryText := "Kìxǎ mí leso taxá'á rí kani"
-    glossedTokens := [("Kìxǎ", "start:COMP"), ("mí", "the"), ("leso", "rabbit"), ("taxá'á", "dance:IRR"), ("rí", "it.AML"), ("kani", "there")]
+    primaryText := "Kìxǎ mí leso taxá'á rí kan"
+    glossedTokens := [("Kìxǎ", "start:COMP"), ("mí", "the"), ("leso", "rabbit"), ("taxá'á", "dance:IRR"), ("rí", "it.AML"), ("kan", "there")]
     context := ""
     judgment := .ungrammatical
     alternatives := []
@@ -982,8 +982,8 @@ def ex_75b : Datum :=
     source := ⟨"ostrove-2026", "(75b)"⟩
     reportedIn := none
     language := "sanm1291"
-    primaryText := "Ni'iin =ná bálí nǐ- xini táta mí =ná"
-    glossedTokens := [("Ni'iin", "no"), ("=ná", "=they.FEM"), ("bálí", "little.PL"), ("nǐ-", "COMP.NEG"), ("xini", "see"), ("táta", "father"), ("mí", "the"), ("=ná", "=their.FEM")]
+    primaryText := "Ni'iin =ná báli nǐ- xini táta mí =ná"
+    glossedTokens := [("Ni'iin", "no"), ("=ná", "=they.FEM"), ("báli", "little.PL"), ("nǐ-", "COMP.NEG"), ("xini", "see"), ("táta", "father"), ("mí", "the"), ("=ná", "=their.FEM")]
     context := ""
     judgment := .ungrammatical
     alternatives := []

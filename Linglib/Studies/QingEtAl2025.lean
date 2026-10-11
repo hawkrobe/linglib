@@ -225,9 +225,8 @@ theorem responsive_rows :
       ∀ c ∈ class? r, c ≠ .distributivePositive := by
   decide +kernel
 
-/-- Under canonical composition a class 3 predicate takes no question. The attested *hope
-whether* and its Mandarin counterpart are marginal, and the Spanish, Japanese, and Turkish
-counterparts are unacceptable. -/
+/-- Under canonical composition a class 3 predicate takes no question: the paper marks every
+such example, *hope whether* and its counterparts in the four other languages. -/
 theorem anti_rogative_rows :
     ∀ r ∈ Examples.all, Argument r → class? r = some .distributivePositive →
       r.judgment ≠ .acceptable := by
@@ -281,7 +280,7 @@ theorem turkish_forms :
     ∀ r ∈ Examples.all, r.language = "nucl1301" →
       ∃ v ∈ (r.feature? "predicate").bind turkishVerb?, ∃ sfx ∈ turkishInflections,
         Turkish.Verb.Licensed (v.suffixes sfx) ∧
-          ∃ t ∈ r.glossedTokens, Turkish.Phonology.ofString? t.1 = some (v.inflect sfx) := by
+          ∃ t ∈ r.glossedTokens, Turkish.Phonology.ofSegmented? t.1 = some (v.inflect sfx) := by
   decide +kernel
 
 /-- The verb of (73) is intransitive, so its *diye* clause is no argument. -/

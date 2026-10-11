@@ -19,7 +19,8 @@
       ["determiner", "algún"],
       ["inference", "ignorance of identity"]
     ],
-    "comment": "Conveys that the speaker does not know which student. Repeated as (19) and (55a)."
+    "comment": "Conveys that the speaker does not know which student. Repeated as (19) and (55a).",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovallemenendezbenito2010_2",
@@ -42,7 +43,8 @@
       ["determiner", "algún"],
       ["continuation", "namely"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovallemenendezbenito2010_3",
@@ -65,7 +67,8 @@
       ["determiner", "un"],
       ["continuation", "namely"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovallemenendezbenito2010_4",
@@ -86,7 +89,8 @@
       ["determiner", "algún"],
       ["embedding", "attitude verb"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovallemenendezbenito2010_5",
@@ -106,7 +110,8 @@
       ["determiner", "algún"],
       ["inference", "ignorance of number"]
     ],
-    "comment": "Strongly suggests that the speaker does not know how many dents her car has. Repeated as (74a)."
+    "comment": "Strongly suggests that the speaker does not know how many dents her car has. Repeated as (74a).",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovallemenendezbenito2010_6",
@@ -127,7 +132,8 @@
       ["determiner", "irgendein"],
       ["inference", "free choice"]
     ],
-    "comment": "Kratzer 2005, p. 129; repeated as (12). Any doctor in the domain was a permitted option."
+    "comment": "Kratzer 2005, p. 129; repeated as (12). Any doctor in the domain was a permitted option.",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovallemenendezbenito2010_7",
@@ -149,7 +155,8 @@
       ["modal", "must"],
       ["scenario", "hideAndSeek15"]
     ],
-    "comment": "Felicitous only if Juan is not in the same room in all of the speaker's epistemic alternatives; Pedro can utter it in the hide-and-seek scenario although not all rooms are possibilities. Repeated as (14) and (56a)."
+    "comment": "Felicitous only if Juan is not in the same room in all of the speaker's epistemic alternatives; Pedro can utter it in the hide-and-seek scenario although not all rooms are possibilities. Repeated as (14) and (56a).",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovallemenendezbenito2010_8",
@@ -168,7 +175,8 @@
       ["modal", "must"],
       ["continuation", "which-question"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovallemenendezbenito2010_9",
@@ -191,7 +199,8 @@
       ["modal", "must"],
       ["continuation", "namely"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovallemenendezbenito2010_10",
@@ -210,7 +219,8 @@
       ["modal", "must"],
       ["continuation", "which-question"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovallemenendezbenito2010_11",
@@ -229,16 +239,17 @@
       ["modal", "must"],
       ["continuation", "namely"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovallemenendezbenito2010_17",
     "source": {"bibkey": "alonso-ovalle-menendez-benito-2010", "paperLabel": "(17)"},
     "reportedIn": null,
     "language": "stan1288",
-    "primaryText": "A: Mr. X tiene que estar en alguna parada de la línea azul. B: ¡No! Mr. X tiene que estar en alguna parada de la línea verde.",
+    "primaryText": "A: Mr. X tiene que estar en alguna parada de la línea azul. B: ¡No! Mr. X. tiene que estar en alguna parada de la línea verde.",
     "glossedTokens": [],
-    "translation": "A: Mr. X has to be in a blue line stop. B: No! Mr. X has to be in a green line stop.",
+    "translation": "A: Mr. X has to be in a blue line stop. B: No! Mr. X. has to be in a green line stop.",
     "context": "Board game: find in which stop of the Boston subway system (blue, red, green, orange lines) Mr. X is hiding. Player B knows that Mr. X is not in the blue, red, or orange lines, but player A thinks he is in a station of the blue line.",
     "judgment": "acceptable",
     "alternatives": [],
@@ -248,7 +259,8 @@
       ["modal", "must"],
       ["scenario", "subway16"]
     ],
-    "comment": "B's remark is appropriate and true although B knows that some green line stops (the transfer stations) are excluded: no Free Choice component."
+    "comment": "B's remark is appropriate and true although B knows that some green line stops (the transfer stations) are excluded: no Free Choice component.",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovallemenendezbenito2010_22",
@@ -266,7 +278,8 @@
       ["determiner", "algún"],
       ["modal base", "common ground"]
     ],
-    "comment": "Adapted from Condoravdi 2005. Each speaker knows where Juan is; the Modal Variation component targets the common ground."
+    "comment": "Adapted from Condoravdi 2005. Each speaker knows where Juan is; the Modal Variation component targets the common ground.",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovallemenendezbenito2010_24",
@@ -288,7 +301,8 @@
       ["modal", "may"],
       ["scenario", "oneRoom23"]
     ],
-    "comment": "Deviant when there is only one room where Juan might be. Repeated as (60a) without the scenario."
+    "comment": "Deviant when there is only one room where Juan might be. Repeated as (60a) without the scenario.",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovallemenendezbenito2010_25",
@@ -310,7 +324,8 @@
       ["modal", "may"],
       ["scenario", "oneRoom23"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovallemenendezbenito2010_26",
@@ -332,7 +347,8 @@
       ["modal", "may"],
       ["inference", "free choice"]
     ],
-    "comment": "True only if the addressee is allowed to take any card."
+    "comment": "True only if the addressee is allowed to take any card.",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovallemenendezbenito2010_28a",
@@ -356,7 +372,8 @@
       ["scenario", "barn27"],
       ["verdict", "false"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovallemenendezbenito2010_28b",
@@ -379,7 +396,8 @@
       ["scenario", "barn27"],
       ["verdict", "true"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovallemenendezbenito2010_30a",
@@ -399,7 +417,8 @@
       ["scenario", "hiring29"],
       ["verdict", "false"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovallemenendezbenito2010_30b",
@@ -419,7 +438,8 @@
       ["scenario", "hiring29"],
       ["verdict", "true"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovallemenendezbenito2010_31a",
@@ -428,8 +448,8 @@
     "language": "hind1269",
     "primaryText": "jo bhii laRkii mehnat kar rahii hai vo safal hogii",
     "glossedTokens": [
-      ["jo", "wh"], ["bhii", "ever"], ["laRkii", "girl"], ["mehnat", "effort"],
-      ["kar rahii hai", "is making"], ["vo", "she"], ["safal", "successful"], ["hogii", "will be"]
+      ["jo", "wh"], ["bhii", "ever"], ["laRkii", "girl"], ["mehnat", "effort"], ["kar", "is"],
+      ["rahii hai", "making"], ["vo", "she"], ["safal", "successful"], ["hogii", "will be"]
     ],
     "translation": "The girl who is making an effort will be successful.",
     "context": "",
@@ -440,7 +460,8 @@
       ["construction", "-bhii correlative"],
       ["inference", "ignorance of identity"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovallemenendezbenito2010_31b",
@@ -462,7 +483,7 @@
   },
   {
     "id": "alonsoovallemenendezbenito2010_33",
-    "source": {"bibkey": "von-fintel-2000-whatever", "paperLabel": "unless"},
+    "source": {"bibkey": "von-fintel-2000-whatever", "paperLabel": ""},
     "reportedIn": {"bibkey": "alonso-ovalle-menendez-benito-2010", "paperLabel": "(33)"},
     "language": "stan1293",
     "primaryText": "Unless there's a lot of garlic in whatever Arlo is cooking, I will eat out tonight.",
@@ -479,7 +500,8 @@
       ["environment", "unless"],
       ["projection", "global"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovallemenendezbenito2010_34",
@@ -500,7 +522,8 @@
       ["environment", "negation"],
       ["projection", "global"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovallemenendezbenito2010_36",
@@ -510,7 +533,7 @@
     "primaryText": "No es verdad que Juan salga con alguna chica del departamento de lingüística.",
     "glossedTokens": [
       ["No", "not"], ["es", "is"], ["verdad", "true"], ["que", "that"], ["Juan", "Juan"],
-      ["salga", "goes.out.SUBJ"], ["con", "with"], ["alguna", "ALGUNA"], ["chica", "girl"],
+      ["salga", "goes-out"], ["con", "with"], ["alguna", "ALGUNA"], ["chica", "girl"],
       ["del", "from.the"], ["departamento", "department"], ["de", "of"],
       ["lingüística", "linguistics"]
     ],
@@ -527,7 +550,8 @@
       ["environment", "negation"],
       ["projection", "none"]
     ],
-    "comment": "No contradiction arises, so the modal component does not project; local accommodation would wrongly allow the speaker to know which girl. Repeated as (43)."
+    "comment": "No contradiction arises, so the modal component does not project; local accommodation would wrongly allow the speaker to know which girl. Repeated as (43).",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovallemenendezbenito2010_37",
@@ -544,7 +568,8 @@
     "paperFeatures": [
       ["projection", "local accommodation"]
     ],
-    "comment": "A version of an example in von Fintel 2003."
+    "comment": "A version of an example in von Fintel 2003.",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovallemenendezbenito2010_38a",
@@ -600,7 +625,8 @@
       ["embedding", "attitude verb"],
       ["property", "not speaker-oriented"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovallemenendezbenito2010_40",
@@ -619,7 +645,8 @@
       ["embedding", "attitude verb"],
       ["property", "not speaker-oriented"]
     ],
-    "comment": ""
+    "comment": "The paper prints averigüar.",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovallemenendezbenito2010_41a",
@@ -664,8 +691,8 @@
     "language": "stan1288",
     "primaryText": "María se casó con algún estudiante de lingüística. De hecho, sé exactamente con quién.",
     "glossedTokens": [
-      ["María", "María"], ["se", "SE"], ["casó", "married"], ["con", "with"], ["algún", "ALGÚN"],
-      ["estudiante", "student"], ["de", "of"], ["lingüística", "linguistics"],
+      ["María", "María"], ["se", "SE"], ["casó", "marry:3sPast"], ["con", "with"],
+      ["algún", "ALGÚN"], ["estudiante", "student"], ["de", "of"], ["lingüística", "linguistics"],
       ["De hecho", "in fact"], ["sé", "I.know"], ["exactamente", "exactly"], ["con", "with"],
       ["quién", "whom"]
     ],
@@ -678,7 +705,8 @@
       ["determiner", "algún"],
       ["property", "cancellable"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovallemenendezbenito2010_44",
@@ -688,7 +716,7 @@
     "primaryText": "Pedro duda que Juan salga con alguna chica del departamento de lingüística.",
     "glossedTokens": [
       ["Pedro", "Pedro"], ["duda", "doubts"], ["que", "that"], ["Juan", "Juan"],
-      ["salga", "goes.out.SUBJ"], ["con", "with"], ["alguna", "ALGUNA"], ["chica", "girl"],
+      ["salga", "date:SUBJ3S"], ["con", "with"], ["alguna", "ALGUNA"], ["chica", "girl"],
       ["del", "from.the"], ["departamento", "department"], ["de", "of"],
       ["lingüística", "linguistics"]
     ],
@@ -702,7 +730,8 @@
       ["environment", "downward entailing"],
       ["projection", "none"]
     ],
-    "comment": ""
+    "comment": "The paper prints departmento.",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovallemenendezbenito2010_45a",
@@ -720,7 +749,8 @@
       ["status", "conventional implicature"],
       ["property", "reinforcement redundant"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovallemenendezbenito2010_45b",
@@ -738,7 +768,8 @@
       ["status", "presupposition"],
       ["property", "reinforcement redundant"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovallemenendezbenito2010_45c",
@@ -756,7 +787,8 @@
       ["status", "entailment"],
       ["property", "reinforcement redundant"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovallemenendezbenito2010_45d",
@@ -779,7 +811,8 @@
       ["determiner", "algún"],
       ["property", "reinforceable"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovallemenendezbenito2010_46",
@@ -790,7 +823,7 @@
     "glossedTokens": [
       ["Juan", "Juan"], ["compró", "bought"], ["un", "UN"], ["libro", "book"], ["que", "that"],
       ["resultó", "happened"], ["ser", "to.be"], ["el", "the"], ["más", "most"],
-      ["caro", "expensive"], ["de", "of"], ["la", "the"], ["librería", "bookstore"]
+      ["caro", "expensive.one"], ["de", "of"], ["la", "the"], ["librería", "bookstore"]
     ],
     "translation": "Juan bought a book that happened to be the most expensive one in the bookstore.",
     "context": "",
@@ -801,7 +834,8 @@
       ["determiner", "un"],
       ["restrictor", "singleton"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovallemenendezbenito2010_47",
@@ -812,7 +846,7 @@
     "glossedTokens": [
       ["Juan", "Juan"], ["compró", "bought"], ["algún", "ALGÚN"], ["libro", "book"],
       ["que", "that"], ["resultó", "happened"], ["ser", "to.be"], ["el", "the"], ["más", "most"],
-      ["caro", "expensive"], ["de", "of"], ["la", "the"], ["librería", "bookstore"]
+      ["caro", "expensive"], ["de", "in"], ["la", "the"], ["librería", "bookstore"]
     ],
     "translation": "Juan bought a book that happened to be the most expensive one in the store.",
     "context": "",
@@ -823,7 +857,8 @@
       ["determiner", "algún"],
       ["restrictor", "singleton"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovallemenendezbenito2010_48",
@@ -841,7 +876,8 @@
       ["determiner", "un"],
       ["restrictor", "singleton"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovallemenendezbenito2010_49",
@@ -850,7 +886,7 @@
     "language": "stan1288",
     "primaryText": "Pedro contrató a algún candidato que era el más incompetente de los que se presentaron.",
     "glossedTokens": [],
-    "translation": "Pedro hired a candidate that was the most incompetent of the ones that applied.",
+    "translation": "Pedro hired a candidate that was be the most incompetent of the ones that applied.",
     "context": "",
     "judgment": "unacceptable",
     "alternatives": [],
@@ -859,7 +895,8 @@
       ["determiner", "algún"],
       ["restrictor", "singleton"]
     ],
-    "comment": ""
+    "comment": "The translation is as printed, with 'was be'.",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovallemenendezbenito2010_62",
@@ -880,7 +917,8 @@
     "paperFeatures": [
       ["inference", "exhaustivity"]
     ],
-    "comment": "B's answer is understood as an exhaustive enumeration (Zimmermann 2001); the inferences are (63a–c)."
+    "comment": "B's answer is understood as an exhaustive enumeration (Zimmermann 2001); the inferences are (63a–c).",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovallemenendezbenito2010_64",
@@ -898,7 +936,8 @@
       ["determiner", "algún"],
       ["inference", "exhaustivity"]
     ],
-    "comment": "Algún with an explicit two-room domain; A concludes that Juan can only be in those two rooms."
+    "comment": "Algún with an explicit two-room domain; A concludes that Juan can only be in those two rooms.",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovallemenendezbenito2010_73",
@@ -920,7 +959,8 @@
       ["uniqueness", "not assumed"],
       ["inference", "ignorance of number"]
     ],
-    "comment": "At least one fly in the soup, but the speaker is not sure how many."
+    "comment": "At least one fly in the soup, but the speaker is not sure how many.",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovallemenendezbenito2010_74b",
@@ -942,7 +982,8 @@
       ["uniqueness", "not assumed"],
       ["inference", "ignorance of number"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovallemenendezbenito2010_75a",
@@ -951,8 +992,8 @@
     "language": "stan1288",
     "primaryText": "No es verdad que haya alguna mosca en la sopa.",
     "glossedTokens": [
-      ["No", "not"], ["es", "is"], ["verdad", "true"], ["que", "that"], ["haya", "there.is.SUBJ"],
-      ["alguna", "ALGUNA"], ["mosca", "fly"], ["en", "in"], ["la", "the"], ["sopa", "soup"]
+      ["No", "not"], ["es", "is"], ["verdad", "true"], ["que", "that"], ["haya", "there.is"],
+      ["alguna", "ALGUNA"], ["mosca", "mosca"], ["en", "in"], ["la", "the"], ["sopa", "soup"]
     ],
     "translation": "",
     "context": "",
@@ -964,7 +1005,8 @@
       ["environment", "negation"],
       ["inference", "none"]
     ],
-    "comment": "Just means that the soup is fly-less."
+    "comment": "Just means that the soup is fly-less.",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovallemenendezbenito2010_75b",
@@ -985,7 +1027,8 @@
       ["determiner", "algún"],
       ["property", "cancellable"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovallemenendezbenito2010_75c",
@@ -994,8 +1037,8 @@
     "language": "stan1288",
     "primaryText": "Hay alguna mosca en la sopa, pero no sé cuántas.",
     "glossedTokens": [
-      ["Hay", "there.is"], ["alguna", "ALGUNA"], ["mosca", "fly"], ["en", "in"], ["la", "the"],
-      ["sopa", "soup"], ["pero", "but"], ["no", "not"], ["sé", "I.know"], ["cuántas", "how.many"]
+      ["Hay", "there.is"], ["alguna", "ALGUNA"], ["mosca", "mosca"], ["en", "in"], ["la", "the"],
+      ["sopa", "soup"], ["pero", "but"], ["no", "not"], ["sé", "know:1s"], ["cuántas", "how.many"]
     ],
     "translation": "",
     "context": "",
@@ -1006,7 +1049,8 @@
       ["determiner", "algún"],
       ["property", "reinforceable"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovallemenendezbenito2010_77",
@@ -1025,7 +1069,8 @@
     "paperFeatures": [
       ["competitor", "plural"]
     ],
-    "comment": "The competitor that rules out a belief in more than one fly."
+    "comment": "The competitor that rules out a belief in more than one fly.",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovallemenendezbenito2010_78",
@@ -1045,7 +1090,8 @@
     "paperFeatures": [
       ["competitor", "numeral"]
     ],
-    "comment": "The competitor that rules out knowledge of the exact number."
+    "comment": "The competitor that rules out knowledge of the exact number.",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovallemenendezbenito2010_79",
@@ -1067,7 +1113,8 @@
     "paperFeatures": [
       ["determiner", "algún"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovallemenendezbenito2010_80a",
@@ -1081,14 +1128,15 @@
     ],
     "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
       ["determiner", "irgendein"],
       ["uniqueness", "required"]
     ],
-    "comment": "Can only mean that there is exactly one fly, which the speaker cannot identify; hence odd."
+    "comment": "Can only mean that there is exactly one fly, which the speaker cannot identify; hence odd.",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovallemenendezbenito2010_80b",
@@ -1099,14 +1147,15 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
       ["determiner", "some"],
       ["uniqueness", "required"]
     ],
-    "comment": "Strawson 1974, pp. 110–111: the suggestion of a possible identification of the wasp seems absurd."
+    "comment": "Strawson 1974, pp. 110–111: the suggestion of a possible identification of the wasp seems absurd.",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovallemenendezbenito2010_81a",
@@ -1117,7 +1166,7 @@
     "glossedTokens": [
       ["Juan", "Juan"], ["wohnt", "lives"], ["mit", "with"], ["irgendwelchen", "IRGENDWELCHEN"],
       ["Studenten", "students"], ["aus", "in"], ["dem", "the"], ["Institut", "department"],
-      ["zusammen", "together"]
+      ["zusammen", ""]
     ],
     "translation": "Juan lives with some students from the department.",
     "context": "",
@@ -1129,7 +1178,8 @@
       ["number", "plural"],
       ["inference", "anti-uniqueness"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovallemenendezbenito2010_81b",
@@ -1151,7 +1201,8 @@
       ["number", "plural"],
       ["inference", "anti-uniqueness"]
     ],
-    "comment": ""
+    "comment": "The paper prints departmento.",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovallemenendezbenito2010_82a",
@@ -1170,7 +1221,8 @@
       ["number", "plural"],
       ["continuation", "namely"]
     ],
-    "comment": "Irgendwelche conveys ignorance about the group, as expected."
+    "comment": "Irgendwelche conveys ignorance about the group, as expected.",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovallemenendezbenito2010_82b",
@@ -1189,7 +1241,8 @@
       ["number", "plural"],
       ["continuation", "namely"]
     ],
-    "comment": "Algunos does not convey ignorance about the group, unexpectedly."
+    "comment": "Algunos does not convey ignorance about the group, unexpectedly. The paper prints departmento.",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovallemenendezbenito2010_fn17ia",
@@ -1207,7 +1260,8 @@
       ["determiner", "un"],
       ["restrictor", "singleton by superlative"]
     ],
-    "comment": "Heim 1991; Sauerland 2003; Percus 2006."
+    "comment": "Heim 1991; Sauerland 2003a, b; Percus 2006.",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovallemenendezbenito2010_fn17ib",
@@ -1225,7 +1279,8 @@
       ["determiner", "un"],
       ["restrictor", "singleton by relative clause"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovallemenendezbenito2010_fn20ii",
@@ -1235,7 +1290,7 @@
     "primaryText": "Hay un país que podría desaparecer si no se le presta ayuda para combatir la enfermedad.",
     "glossedTokens": [],
     "translation": "There is a (sub-Saharan) country that could disappear if it is not offered help to fight the disease.",
-    "context": "Question asked by a reader in an on-line interview: In which areas of the world is the AIDS problem the worst? Answer by a doctor: In sub-Saharan Africa, undoubtedly.",
+    "context": "Question asked by reader in on-line interview: In which areas of the world is the AIDS problem the worst? Answer by doctor: In sub-Saharan Africa, undoubtlessly ...",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
@@ -1243,7 +1298,8 @@
       ["determiner", "un"],
       ["restrictor", "contextual"]
     ],
-    "comment": "Adapted from Martí 2009: un can range over a domain made salient by the context."
+    "comment": "Adapted from Martí 2009: un can range over a domain made salient by the context.",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovallemenendezbenito2010_fn27i",
@@ -1260,7 +1316,8 @@
     "paperFeatures": [
       ["inference", "exhaustivity optional"]
     ],
-    "comment": "Need not trigger an exhaustivity inference, though it may with certain intonations."
+    "comment": "Need not trigger an exhaustivity inference, though it may with certain intonations.",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovallemenendezbenito2010_fn27ii",
@@ -1282,7 +1339,8 @@
       ["modal", "may"],
       ["inference", "exhaustivity optional"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovallemenendezbenito2010_fn32i",
@@ -1300,7 +1358,8 @@
       ["determiner", "irgendein"],
       ["uniqueness", "not required"]
     ],
-    "comment": "Due to an anonymous reviewer: no commitment to exactly one spice."
+    "comment": "Due to an anonymous reviewer: no commitment to exactly one spice.",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovallemenendezbenito2010_fn32ii",
@@ -1318,6 +1377,7 @@
       ["determiner", "un"],
       ["uniqueness", "not required"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   }
 ]

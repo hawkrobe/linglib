@@ -18,7 +18,8 @@
       ["position", "changeOfLocation"],
       ["aux", "be"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "sorace2000_ex1b",
@@ -27,7 +28,7 @@
     "primaryText": "Marie est arrivée en retard",
     "discourseSegments": [],
     "glossedTokens": [
-      ["Marie", "Marie"], ["est", "is"], ["arrivée", "arrived"], ["en", "in"], ["retard", "delay"]
+      ["Marie", "Marie"], ["est", "is"], ["arrivée", "arrived"], ["en retard", "late"]
     ],
     "translation": "Marie arrived late.",
     "context": "",
@@ -39,7 +40,8 @@
       ["position", "changeOfLocation"],
       ["aux", "be"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "sorace2000_ex1c",
@@ -61,7 +63,8 @@
       ["position", "changeOfLocation"],
       ["aux", "be"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "sorace2000_ex1d",
@@ -82,7 +85,8 @@
       ["position", "changeOfLocation"],
       ["aux", "be"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "sorace2000_ex4",
@@ -105,7 +109,8 @@
       ["aux", "be"],
       ["predicate", "detelicized"]
     ],
-    "comment": "The auxiliary stays essere although the predicate is atelic."
+    "comment": "The auxiliary stays essere although the predicate is atelic.",
+    "verified": "page-image"
   },
   {
     "id": "sorace2000_ex5a",
@@ -128,7 +133,8 @@
       ["aux", "be"],
       ["subject", "agentive"]
     ],
-    "comment": "The paper labels the example agentive; agentivity does not affect auxiliary choice with these verbs (§3.1)."
+    "comment": "The paper labels the example agentive; agentivity does not affect auxiliary choice with these verbs (§3.1).",
+    "verified": "page-image"
   },
   {
     "id": "sorace2000_ex5b",
@@ -150,7 +156,8 @@
       ["position", "changeOfLocation"],
       ["aux", "be"]
     ],
-    "comment": "The paper labels the example nonagentive."
+    "comment": "The paper labels the example nonagentive.",
+    "verified": "page-image"
   },
   {
     "id": "sorace2000_ex30a",
@@ -171,7 +178,8 @@
       ["position", "changeOfLocation"],
       ["aux", "have"]
     ],
-    "comment": "From §3.5, where it is contrasted with the anticausative (30b); the paper prints no translation."
+    "comment": "From §3.5, where it is contrasted with the anticausative (30b); the paper prints no translation.",
+    "verified": "page-image"
   },
   {
     "id": "sorace2000_ex7a",
@@ -195,7 +203,8 @@
       ["position", "changeOfState"],
       ["aux", "be"]
     ],
-    "comment": "Printed ?*ha."
+    "comment": "Printed ?*ha.",
+    "verified": "page-image"
   },
   {
     "id": "sorace2000_ex7b",
@@ -219,7 +228,8 @@
       ["position", "changeOfState"],
       ["aux", "be"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "sorace2000_ex8a",
@@ -228,8 +238,8 @@
     "primaryText": "La pianta è fiorita due volte quest'anno",
     "discourseSegments": [],
     "glossedTokens": [
-      ["La", "the"], ["pianta", "plant"], ["è", "is"], ["fiorita", "blossomed"], ["due", "two"],
-      ["volte", "times"], ["quest'anno", "this.year"]
+      ["La", "the"], ["pianta", "plant"], ["è", "is"], ["fiorita", "blossomed"],
+      ["due volte", "twice"], ["quest'anno", "this.year"]
     ],
     "translation": "The plant blossomed twice this year.",
     "context": "",
@@ -243,7 +253,8 @@
       ["position", "changeOfState"],
       ["aux", "be"]
     ],
-    "comment": "Printed with one participle for both auxiliaries, La pianta è / ha fiorito; the participle with essere agrees with the subject."
+    "comment": "Printed with one participle for both auxiliaries, La pianta è / ha fiorito; the participle with essere agrees with the subject.",
+    "verified": "page-image"
   },
   {
     "id": "sorace2000_ex9a",
@@ -253,7 +264,7 @@
     "discourseSegments": [],
     "glossedTokens": [
       ["Ma", "my"], ["fille", "daughter"], ["est", "is"], ["née", "born"], ["à", "at"],
-      ["cinq", "five"], ["heures", "hours"], ["du", "of.the"], ["matin", "morning"]
+      ["cinq", "five"], ["heures", "hours"], ["du", "of"], ["matin", "morning"]
     ],
     "translation": "My daughter was born at five o'clock in the morning.",
     "context": "",
@@ -265,7 +276,8 @@
       ["position", "changeOfState"],
       ["aux", "be"]
     ],
-    "comment": "The paper prints the preposition as a without the grave accent."
+    "comment": "The paper prints the preposition as a without the grave accent.",
+    "verified": "page-image"
   },
   {
     "id": "sorace2000_ex9b",
@@ -287,7 +299,8 @@
       ["position", "changeOfState"],
       ["aux", "be"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "sorace2000_ex9c",
@@ -309,7 +322,8 @@
       ["position", "changeOfState"],
       ["aux", "be"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "sorace2000_ex10a",
@@ -333,7 +347,8 @@
       ["position", "changeOfState"],
       ["aux", "be"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "sorace2000_ex10b",
@@ -355,7 +370,8 @@
       ["position", "changeOfState"],
       ["aux", "be"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "sorace2000_ex11",
@@ -381,7 +397,8 @@
       ["aux", "be"],
       ["predicate", "detelicized"]
     ],
-    "comment": "A durative adverbial makes the predicate atelic (§3.2). Sorace takes the example from van Hout (1993: 7)."
+    "comment": "A durative adverbial makes the predicate atelic (§3.2). Sorace takes the example from van Hout (1993: 7).",
+    "verified": "page-image"
   },
   {
     "id": "sorace2000_ex12",
@@ -404,7 +421,8 @@
       ["position", "changeOfState"],
       ["aux", "be"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "sorace2000_ex13",
@@ -425,7 +443,8 @@
       ["position", "changeOfState"],
       ["aux", "have"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "sorace2000_ex14a",
@@ -449,7 +468,8 @@
       ["position", "changeOfState"],
       ["aux", "be"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "sorace2000_ex14c",
@@ -471,7 +491,8 @@
       ["position", "changeOfState"],
       ["aux", "be"]
     ],
-    "comment": "Échapper takes être in its change-of-state sense, something said or done inadvertently. The paper's text refers to this example as (14b) and to the avoir example as (14c), the reverse of the printed examples."
+    "comment": "Échapper takes être in its change-of-state sense, something said or done inadvertently. The paper's text refers to this example as (14b) and to the avoir example as (14c), the reverse of the printed examples.",
+    "verified": "page-image"
   },
   {
     "id": "sorace2000_ex15a",
@@ -495,7 +516,8 @@
       ["position", "continuationOfState"],
       ["aux", "be"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "sorace2000_ex15b",
@@ -519,7 +541,8 @@
       ["position", "continuationOfState"],
       ["aux", "be"]
     ],
-    "comment": "Printed with one participle for both auxiliaries, La guerra è / ?ha durato; the participle with essere agrees with the subject."
+    "comment": "Printed with one participle for both auxiliaries, La guerra è / ?ha durato; the participle with essere agrees with the subject.",
+    "verified": "page-image"
   },
   {
     "id": "sorace2000_ex15c",
@@ -544,7 +567,8 @@
       ["aux", "be"],
       ["subject", "agentive"]
     ],
-    "comment": "An agentive subject makes avere more acceptable."
+    "comment": "An agentive subject makes avere more acceptable.",
+    "verified": "page-image"
   },
   {
     "id": "sorace2000_ex16",
@@ -554,7 +578,7 @@
     "discourseSegments": [],
     "glossedTokens": [
       ["Mes", "my"], ["parents", "parents"], ["ont", "have"], ["survécu", "survived"],
-      ["au", "to.the"], ["tremblement", "trembling"], ["de", "of"], ["terre", "earth"]
+      ["au", "to.the"], ["tremblement de terre", "earthquake"]
     ],
     "translation": "My parents survived the earthquake.",
     "context": "",
@@ -568,7 +592,8 @@
       ["position", "continuationOfState"],
       ["aux", "have"]
     ],
-    "comment": "The paper prints the participle with être without its accent, survecus."
+    "comment": "The paper prints the participle with être without its accent, survecus.",
+    "verified": "page-image"
   },
   {
     "id": "sorace2000_ex17a",
@@ -592,7 +617,8 @@
       ["position", "continuationOfState"],
       ["aux", "have"]
     ],
-    "comment": "Printed haben / *?sein, with the citation form of the auxiliary."
+    "comment": "Printed haben / *?sein, with the citation form of the auxiliary.",
+    "verified": "page-image"
   },
   {
     "id": "sorace2000_ex17b",
@@ -616,7 +642,8 @@
       ["position", "continuationOfState"],
       ["aux", "have"]
     ],
-    "comment": "The paper prints no translation."
+    "comment": "The paper prints no translation.",
+    "verified": "page-image"
   },
   {
     "id": "sorace2000_ex18a",
@@ -638,7 +665,8 @@
       ["position", "continuationOfState"],
       ["aux", "be"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "sorace2000_ex18b",
@@ -662,7 +690,8 @@
       ["position", "continuationOfState"],
       ["aux", "have"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "sorace2000_ex19a",
@@ -686,7 +715,8 @@
       ["position", "continuationOfState"],
       ["aux", "be"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "sorace2000_ex19b",
@@ -710,7 +740,8 @@
       ["position", "continuationOfState"],
       ["aux", "be"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "sorace2000_ex19c",
@@ -734,7 +765,8 @@
       ["position", "continuationOfState"],
       ["aux", "be"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "sorace2000_ex20a",
@@ -758,7 +790,8 @@
       ["position", "existenceOfState"],
       ["aux", "be"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "sorace2000_ex20b",
@@ -782,7 +815,8 @@
       ["position", "existenceOfState"],
       ["aux", "be"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "sorace2000_ex20c",
@@ -806,7 +840,8 @@
       ["position", "existenceOfState"],
       ["aux", "be"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "sorace2000_ex21a",
@@ -829,7 +864,8 @@
       ["position", "existenceOfState"],
       ["aux", "have"]
     ],
-    "comment": "An attested alternation: avere with a verb that otherwise prefers essere, cf. (20b)."
+    "comment": "An attested alternation: avere with a verb that otherwise prefers essere, cf. (20b).",
+    "verified": "page-image"
   },
   {
     "id": "sorace2000_ex21b",
@@ -851,7 +887,8 @@
       ["position", "existenceOfState"],
       ["aux", "have"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "sorace2000_ex21c",
@@ -860,7 +897,7 @@
     "primaryText": "Il cibo è scarseggiato tra i terremotati.",
     "discourseSegments": [],
     "glossedTokens": [
-      ["Il", "the"], ["cibo", "food"], ["è", "is"], ["scarseggiato", "run.short"],
+      ["Il", "the"], ["cibo", "food"], ["è", "is"], ["scarseggiato", "run.short.supply"],
       ["tra", "among"], ["i", "the"], ["terremotati", "earthquake.victims"]
     ],
     "translation": "The food ran short supply among the earthquake victims.",
@@ -875,7 +912,8 @@
       ["position", "existenceOfState"],
       ["aux", "be"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "sorace2000_ex22",
@@ -885,8 +923,7 @@
     "discourseSegments": [],
     "glossedTokens": [
       ["Les", "the"], ["dinosaures", "dinosaurs"], ["ont", "have"], ["existé", "existed"],
-      ["il", "it"], ["y", "there"], ["a", "has"], ["65", "65"], ["millions", "million"],
-      ["d'ans", "of.years"]
+      ["il y a", "there.is"], ["65", "65"], ["millions", "million"], ["d'ans", "of.years"]
     ],
     "translation": "The dinosaurs existed 65 million years ago.",
     "context": "",
@@ -900,7 +937,8 @@
       ["position", "existenceOfState"],
       ["aux", "have"]
     ],
-    "comment": "The paper prints the determiner as Le, and the variant as /*?sont existé."
+    "comment": "The paper prints the determiner as Le, and the variant as /*?sont existé.",
+    "verified": "page-image"
   },
   {
     "id": "sorace2000_ex23a",
@@ -921,7 +959,8 @@
       ["position", "existenceOfState"],
       ["aux", "have"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "sorace2000_ex23b",
@@ -942,7 +981,8 @@
       ["position", "existenceOfState"],
       ["aux", "have"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "sorace2000_ex23c",
@@ -966,7 +1006,8 @@
       ["position", "existenceOfState"],
       ["aux", "be"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "sorace2000_ex23d",
@@ -989,7 +1030,8 @@
       ["position", "existenceOfState"],
       ["aux", "be"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "sorace2000_ex24a",
@@ -1011,7 +1053,8 @@
       ["position", "existenceOfState"],
       ["aux", "have"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "sorace2000_ex24b",
@@ -1033,7 +1076,8 @@
       ["position", "existenceOfState"],
       ["aux", "have"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "sorace2000_ex24c",
@@ -1055,7 +1099,8 @@
       ["position", "existenceOfState"],
       ["aux", "be"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "sorace2000_ex25a",
@@ -1077,7 +1122,8 @@
       ["position", "existenceOfState"],
       ["aux", "be"]
     ],
-    "comment": "The paper prints in Ausland, glossed in abroad. BE itself is the exception the paper notes for Dutch and German."
+    "comment": "The paper prints in Ausland, glossed in abroad. BE itself is the exception the paper notes for Dutch and German.",
+    "verified": "page-image"
   },
   {
     "id": "sorace2000_ex25b",
@@ -1099,7 +1145,8 @@
       ["position", "existenceOfState"],
       ["aux", "be"]
     ],
-    "comment": "BE itself is the exception the paper notes for Dutch and German."
+    "comment": "BE itself is the exception the paper notes for Dutch and German.",
+    "verified": "page-image"
   },
   {
     "id": "sorace2000_ex33a",
@@ -1121,7 +1168,8 @@
       ["position", "nonmotionalProcess"],
       ["aux", "have"]
     ],
-    "comment": "The paper prints chiaccherato."
+    "comment": "The paper prints chiaccherato.",
+    "verified": "page-image"
   },
   {
     "id": "sorace2000_ex33b",
@@ -1143,7 +1191,8 @@
       ["position", "nonmotionalProcess"],
       ["aux", "have"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "sorace2000_ex33c",
@@ -1165,7 +1214,8 @@
       ["position", "nonmotionalProcess"],
       ["aux", "have"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "sorace2000_ex33d",
@@ -1187,7 +1237,8 @@
       ["position", "nonmotionalProcess"],
       ["aux", "have"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "sorace2000_ex34",
@@ -1213,7 +1264,8 @@
       ["aux", "have"],
       ["subject", "nonagentive"]
     ],
-    "comment": "Some speakers find essere not completely unacceptable with a nonagentive subject."
+    "comment": "Some speakers find essere not completely unacceptable with a nonagentive subject.",
+    "verified": "page-image"
   },
   {
     "id": "sorace2000_ex35",
@@ -1236,7 +1288,8 @@
       ["aux", "have"],
       ["predicate", "telicized"]
     ],
-    "comment": "A temporally bounding adverbial leaves the auxiliary avere."
+    "comment": "A temporally bounding adverbial leaves the auxiliary avere.",
+    "verified": "page-image"
   },
   {
     "id": "sorace2000_ex36a",
@@ -1245,8 +1298,8 @@
     "primaryText": "Maria ha ceduto alle tue insistenze",
     "discourseSegments": [],
     "glossedTokens": [
-      ["Maria", "Maria"], ["ha", "has"], ["ceduto", "yielded"], ["alle", "to.the"],
-      ["tue", "your"], ["insistenze", "pressure"]
+      ["Maria", "Maria"], ["ha", "has"], ["ceduto", "yielded"], ["alle", "to"], ["tue", "your"],
+      ["insistenze", "pressure"]
     ],
     "translation": "Maria yielded to your pressure.",
     "context": "",
@@ -1260,7 +1313,8 @@
       ["position", "nonmotionalProcess"],
       ["aux", "have"]
     ],
-    "comment": "From §4.2, the controlled affecting processes, a subclass of the controlled processes that selects HAVE less categorically than the unaffecting ones. Printed ha / *è ceduta; the participle with avere takes the default form."
+    "comment": "From §4.2, the controlled affecting processes, a subclass of the controlled processes that selects HAVE less categorically than the unaffecting ones. Printed ha / *è ceduta; the participle with avere takes the default form.",
+    "verified": "page-image"
   },
   {
     "id": "sorace2000_ex36b",
@@ -1285,7 +1339,8 @@
       ["aux", "have"],
       ["subject", "nonagentive"]
     ],
-    "comment": "From §4.2; with a nonhuman subject these verbs tend to accept BE as well."
+    "comment": "From §4.2; with a nonhuman subject these verbs tend to accept BE as well.",
+    "verified": "page-image"
   },
   {
     "id": "sorace2000_ex37a",
@@ -1309,7 +1364,8 @@
       ["position", "motionalProcess"],
       ["aux", "have"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "sorace2000_ex37b",
@@ -1333,7 +1389,8 @@
       ["position", "motionalProcess"],
       ["aux", "have"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "sorace2000_ex37c",
@@ -1357,7 +1414,8 @@
       ["position", "motionalProcess"],
       ["aux", "have"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "sorace2000_ex38_rennen",
@@ -1381,7 +1439,8 @@
       ["position", "motionalProcess"],
       ["aux", "be"]
     ],
-    "comment": "Printed with three participles, gerannt / gelaufen / geschwommen; the paper's translation says the whole afternoon."
+    "comment": "Printed with three participles, gerannt / gelaufen / geschwommen; the paper's translation says the whole afternoon.",
+    "verified": "page-image"
   },
   {
     "id": "sorace2000_ex38_laufen",
@@ -1405,7 +1464,8 @@
       ["position", "motionalProcess"],
       ["aux", "be"]
     ],
-    "comment": "Printed with three participles, gerannt / gelaufen / geschwommen; the paper's translation says the whole afternoon."
+    "comment": "Printed with three participles, gerannt / gelaufen / geschwommen; the paper's translation says the whole afternoon.",
+    "verified": "page-image"
   },
   {
     "id": "sorace2000_ex38_schwimmen",
@@ -1429,7 +1489,8 @@
       ["position", "motionalProcess"],
       ["aux", "be"]
     ],
-    "comment": "Printed with three participles, gerannt / gelaufen / geschwommen; the paper's translation says the whole afternoon."
+    "comment": "Printed with three participles, gerannt / gelaufen / geschwommen; the paper's translation says the whole afternoon.",
+    "verified": "page-image"
   },
   {
     "id": "sorace2000_ex39a",
@@ -1452,7 +1513,8 @@
       ["position", "motionalProcess"],
       ["aux", "have"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "sorace2000_ex39b",
@@ -1477,7 +1539,8 @@
       ["aux", "be"],
       ["predicate", "telicized"]
     ],
-    "comment": "A directional phrase (§4.3)."
+    "comment": "A directional phrase (§4.3).",
+    "verified": "page-image"
   },
   {
     "id": "sorace2000_ex40a",
@@ -1501,7 +1564,8 @@
       ["position", "motionalProcess"],
       ["aux", "have"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "sorace2000_ex40b",
@@ -1526,7 +1590,8 @@
       ["aux", "be"],
       ["predicate", "telicized"]
     ],
-    "comment": "A directional phrase (§4.3)."
+    "comment": "A directional phrase (§4.3).",
+    "verified": "page-image"
   },
   {
     "id": "sorace2000_ex41a",
@@ -1549,7 +1614,8 @@
       ["position", "motionalProcess"],
       ["aux", "have"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "sorace2000_ex41b",
@@ -1574,7 +1640,8 @@
       ["aux", "be"],
       ["predicate", "telicized"]
     ],
-    "comment": "A directional phrase (§4.3)."
+    "comment": "A directional phrase (§4.3).",
+    "verified": "page-image"
   },
   {
     "id": "sorace2000_ex41c",
@@ -1598,7 +1665,8 @@
       ["position", "motionalProcess"],
       ["aux", "have"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "sorace2000_ex41d",
@@ -1622,7 +1690,8 @@
       ["aux", "have"],
       ["predicate", "telicized"]
     ],
-    "comment": "A directional phrase; nuotare, unlike correre (41b), keeps avere (§4.3)."
+    "comment": "A directional phrase; nuotare, unlike correre (41b), keeps avere (§4.3).",
+    "verified": "page-image"
   },
   {
     "id": "sorace2000_ex42a",
@@ -1645,7 +1714,8 @@
       ["position", "motionalProcess"],
       ["aux", "have"]
     ],
-    "comment": "The paper prints tres without its accent."
+    "comment": "The paper prints tres without its accent.",
+    "verified": "page-image"
   },
   {
     "id": "sorace2000_ex42b",
@@ -1670,7 +1740,8 @@
       ["aux", "have"],
       ["predicate", "telicized"]
     ],
-    "comment": "A directional phrase; in French the event-type shift leaves avoir (§4.3)."
+    "comment": "A directional phrase; in French the event-type shift leaves avoir (§4.3).",
+    "verified": "page-image"
   },
   {
     "id": "sorace2000_ex43a",
@@ -1695,7 +1766,8 @@
       ["aux", "be"],
       ["subject", "nonagentive"]
     ],
-    "comment": "An idiomatic, nonagentive use."
+    "comment": "An idiomatic, nonagentive use.",
+    "verified": "page-image"
   },
   {
     "id": "sorace2000_ex43b",
@@ -1720,7 +1792,8 @@
       ["aux", "be"],
       ["subject", "nonagentive"]
     ],
-    "comment": "A sentential subject."
+    "comment": "A sentential subject.",
+    "verified": "page-image"
   },
   {
     "id": "sorace2000_ex44a",
@@ -1744,7 +1817,8 @@
       ["position", "motionalProcess"],
       ["aux", "have"]
     ],
-    "comment": "A volitional subject."
+    "comment": "A volitional subject.",
+    "verified": "page-image"
   },
   {
     "id": "sorace2000_ex44b",
@@ -1769,7 +1843,8 @@
       ["aux", "be"],
       ["subject", "nonagentive"]
     ],
-    "comment": "A nonvolitional subject, against the pilot of (44a)."
+    "comment": "A nonvolitional subject, against the pilot of (44a).",
+    "verified": "page-image"
   },
   {
     "id": "sorace2000_ex45a",
@@ -1779,8 +1854,7 @@
     "discourseSegments": [],
     "glossedTokens": [
       ["La", "the"], ["fede", "faith"], ["religiosa", "religious"], ["ha", "has"],
-      ["tentennato", "wavered"], ["anche", "even"], ["nei", "in.the"], ["più", "most"],
-      ["forti", "strong"]
+      ["tentennato", "wavered"], ["anche", "even"], ["nei", "in.the"], ["più forti", "strongest"]
     ],
     "translation": "The religious faith wavered even in the strongest people.",
     "context": "",
@@ -1794,7 +1868,8 @@
       ["position", "uncontrolledProcess"],
       ["aux", "have"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "sorace2000_ex45b",
@@ -1819,7 +1894,8 @@
       ["aux", "have"],
       ["subject", "agentive"]
     ],
-    "comment": "An agentive subject; these verbs prefer HAVE with agentive subjects (§4.4)."
+    "comment": "An agentive subject; these verbs prefer HAVE with agentive subjects (§4.4).",
+    "verified": "page-image"
   },
   {
     "id": "sorace2000_ex46a",
@@ -1842,7 +1918,8 @@
       ["position", "uncontrolledProcess"],
       ["aux", "have"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "sorace2000_ex46b",
@@ -1865,7 +1942,8 @@
       ["aux", "have"],
       ["subject", "agentive"]
     ],
-    "comment": "The phrase on purpose construes the bodily function as volitional (§4.4)."
+    "comment": "The phrase on purpose construes the bodily function as volitional (§4.4).",
+    "verified": "page-image"
   },
   {
     "id": "sorace2000_ex47a",
@@ -1888,7 +1966,8 @@
       ["position", "uncontrolledProcess"],
       ["aux", "have"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "sorace2000_ex47b",
@@ -1912,7 +1991,8 @@
       ["position", "uncontrolledProcess"],
       ["aux", "have"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "sorace2000_ex47c",
@@ -1935,7 +2015,8 @@
       ["position", "uncontrolledProcess"],
       ["aux", "have"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "sorace2000_ex47d",
@@ -1958,7 +2039,8 @@
       ["position", "uncontrolledProcess"],
       ["aux", "have"]
     ],
-    "comment": "Printed with one participle for both auxiliaries, ha/?è rintoccata; the participle with avere takes the default form."
+    "comment": "Printed with one participle for both auxiliaries, ha/?è rintoccata; the participle with avere takes the default form.",
+    "verified": "page-image"
   },
   {
     "id": "sorace2000_ex48_piovere",
@@ -1982,7 +2064,8 @@
       ["position", "uncontrolledProcess"],
       ["aux", "have"]
     ],
-    "comment": "Printed with three participles, piovuto / nevicato / gradinato."
+    "comment": "Printed with three participles, piovuto / nevicato / gradinato.",
+    "verified": "page-image"
   },
   {
     "id": "sorace2000_ex48_nevicare",
@@ -2006,7 +2089,8 @@
       ["position", "uncontrolledProcess"],
       ["aux", "have"]
     ],
-    "comment": "Printed with three participles, piovuto / nevicato / gradinato."
+    "comment": "Printed with three participles, piovuto / nevicato / gradinato.",
+    "verified": "page-image"
   },
   {
     "id": "sorace2000_ex48_grandinare",
@@ -2030,7 +2114,8 @@
       ["position", "uncontrolledProcess"],
       ["aux", "have"]
     ],
-    "comment": "Printed with three participles, piovuto / nevicato / gradinato; the last is a misprint for grandinato."
+    "comment": "Printed with three participles, piovuto / nevicato / gradinato; the last is a misprint for grandinato.",
+    "verified": "page-image"
   },
   {
     "id": "sorace2000_ex49",
@@ -2054,7 +2139,8 @@
       ["aux", "be"],
       ["predicate", "telicized"]
     ],
-    "comment": "A directional phrase expresses the endpoint."
+    "comment": "A directional phrase expresses the endpoint. The paper prints the auxiliary as e'.",
+    "verified": "page-image"
   },
   {
     "id": "sorace2000_ex50a",
@@ -2078,7 +2164,8 @@
       ["position", "uncontrolledProcess"],
       ["aux", "have"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "sorace2000_ex50b",
@@ -2101,7 +2188,8 @@
       ["position", "uncontrolledProcess"],
       ["aux", "have"]
     ],
-    "comment": ""
+    "comment": "The paper's translation prints lighting.",
+    "verified": "page-image"
   },
   {
     "id": "sorace2000_ex51_tuonare",
@@ -2123,7 +2211,8 @@
       ["aux", "be"],
       ["predicate", "telicized"]
     ],
-    "comment": "Printed with two participles, tuonato / lampeggiato, under a directional reading."
+    "comment": "Printed with two participles, tuonato / lampeggiato, under a directional reading.",
+    "verified": "page-image"
   },
   {
     "id": "sorace2000_ex51_lampeggiare",
@@ -2134,7 +2223,7 @@
     "glossedTokens": [
       ["Ci", "to-us"], ["è", "is"], ["lampeggiato", "flashed.lightning"], ["sopra", "over"]
     ],
-    "translation": "It flashed lightning over us.",
+    "translation": "It flashed over us.",
     "context": "",
     "judgment": "marginal",
     "alternatives": [],
@@ -2145,6 +2234,7 @@
       ["aux", "be"],
       ["predicate", "telicized"]
     ],
-    "comment": "Printed with two participles, tuonato / lampeggiato, under a directional reading."
+    "comment": "Printed with two participles, tuonato / lampeggiato, under a directional reading.",
+    "verified": "page-image"
   }
 ]

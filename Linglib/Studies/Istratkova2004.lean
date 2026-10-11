@@ -269,7 +269,8 @@ def attested : List Analysis :=
 
 /-! ### The starred stacks -/
 
-/-- (25b) *pre-do-pro-dam*: repetitive *pre-* above terminative *do-*. -/
+/-- The starred (25b) *pre-do-prodam*, segmented *pre-do-pro-dam*, has repetitive *pre-* above
+terminative *do-*. -/
 def s25b : Analysis :=
   ⟨Examples.ex_25b, dam,
     [(pre, .superlexical .repetitive), (do_, .superlexical .terminative), (pro, .lexical)]⟩

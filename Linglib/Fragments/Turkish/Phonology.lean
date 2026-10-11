@@ -50,7 +50,8 @@ writing one segment.
 * `raising`: the raising of a stem-final `a` or `e` before -(I)yor, as a
   `Subregular.LocalRewrite.Rule`.
 * `surface`: the surface form of an underlying word.
-* `ofChar`, `ofString?`: the segments that a spelled word writes.
+* `ofChar`, `ofString?`, `ofSegmented?`: the segments that a spelled word writes, with or
+  without its morpheme boundaries.
 
 ## Main results
 
@@ -293,5 +294,10 @@ def ofChar : Char → Option Segment
 /-- `ofString? s` is the string of segments that the spelled word `s` writes, if every letter
 writes one. -/
 def ofString? (s : String) : Option (List Segment) := s.toList.mapM ofChar
+
+/-- `ofSegmented? s` reads a word written with its morpheme boundaries marked `-`, as glossed
+examples print it, dropping the boundaries. -/
+def ofSegmented? (s : String) : Option (List Segment) :=
+  (s.toList.filter (· ≠ '-')).mapM ofChar
 
 end Turkish.Phonology
