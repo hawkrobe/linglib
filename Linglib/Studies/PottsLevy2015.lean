@@ -183,10 +183,11 @@ variable (α β c : ℝ)
 /-- A disjunction costs `c` and any other message nothing (9). -/
 def cost (m : Msg) : ℝ := if m.IsDisjunction then c else 0
 
-/-- The literal listener (10) at a flat prior is uniform on the message's extension. -/
-noncomputable def L0 (l : Lex) : Kernel Msg World := uniformListener (sem l)
+/-- The literal listener (10) conditions a flat prior on the message's extension. -/
+noncomputable def L0 (l : Lex) : Kernel Msg World :=
+  listener (uniformOn Set.univ) (truthful fun m ↦ (sem l m : Set World))
 
-instance (l : Lex) : IsFiniteKernel (L0 l) := inferInstanceAs (IsFiniteKernel (uniformListener _))
+instance (l : Lex) : IsFiniteKernel (L0 l) := inferInstanceAs (IsFiniteKernel (listener _ _))
 
 /-- The speaker (11) is the substrate's speaker, with the cost divided by the rationality
 since the paper subtracts it outside. -/
@@ -274,7 +275,7 @@ include hα
 
 /-- The speaker produces a message at a state exactly when it is true there. -/
 theorem S1_ne_zero_iff (l : Lex) (w : World) (m : Msg) : S1 α c l w {m} ≠ 0 ↔ w ∈ sem l m :=
-  speaker_uniformListener_dirac_apply_singleton_ne_zero_iff (sem l) hα _ w m
+  speaker_uniformOn_dirac_apply_singleton_ne_zero_iff (sem l) hα _ w m
 
 /-- The fixed-lexicon listener assigns mass to a state exactly when the message is true
 there. -/
@@ -306,7 +307,7 @@ noncomputable def l0r (l : Lex) (m : Msg) (w : World) : ℝ :=
 
 theorem L0_rpow_toReal {α : ℝ} (hα : 0 < α) (l : Lex) (m : Msg) (w : World) :
     (L0 l m {w} ^ α).toReal = l0r l m w ^ α := by
-  rw [L0, uniformListener_apply_singleton, l0r]
+  rw [L0, listener_uniformOn_truthful_apply_singleton, l0r]
   split_ifs
   · rw [← ENNReal.toReal_rpow, ENNReal.toReal_inv, ENNReal.toReal_natCast]
   · rw [ENNReal.zero_rpow_of_pos hα, ENNReal.toReal_zero, Real.zero_rpow hα.ne']

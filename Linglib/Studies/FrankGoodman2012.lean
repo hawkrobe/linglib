@@ -96,60 +96,67 @@ variable [DecidableEq E]
 
 /-- The words true of an object are the one that names its colour and the one that names its
 shape. -/
-theorem trueChoices_eq (r : E) :
-    RSA.trueChoices (fun w : Word C S ↦ ⟦w⟧ᴹ) r =
+theorem filter_mem_denote (r : E) :
+    (Finset.univ.filter fun w : Word C S ↦ r ∈ ⟦w⟧ᴹ) =
       {⟨.colour, M r .colour⟩, ⟨.shape, M r .shape⟩} := by
   ext ⟨a, v⟩
   cases a <;> simp [eq_comm]
 
 theorem profile_eq (r : E) :
-    RSA.profile (fun w : Word C S ↦ ⟦w⟧ᴹ) r =
+    RSA.profile (fun w : Word C S ↦ ⟦w⟧ᴹ) Finset.univ r =
       {⟦(⟨.colour, M r .colour⟩ : Word C S)⟧ᴹ.card, ⟦(⟨.shape, M r .shape⟩ : Word C S)⟧ᴹ.card} := by
-  rw [RSA.profile, trueChoices_eq, Finset.insert_val_of_notMem (by simp), Finset.singleton_val]
+  rw [RSA.profile, filter_mem_denote, Finset.insert_val_of_notMem (by simp), Finset.singleton_val]
   rfl
 
 end Profile
 
 variable [MeasurableSpace E] [DiscreteMeasurableSpace E]
 
-/-- On hearing a word, the literal listener is uniform over its extension. -/
-noncomputable def literal : Kernel (Word C S) E := RSA.uniformListener fun w : Word C S ↦ ⟦w⟧ᴹ
+/-- On hearing a word, the literal listener conditions the uniform prior on its extension. -/
+noncomputable def literal : Kernel (Word C S) E :=
+  RSA.listener (uniformOn Set.univ) (RSA.truthful fun w : Word C S ↦ (⟦w⟧ᴹ : Set E))
 
 /-- The speaker at rationality `α` is `S(w | r) ∝ L₀(r | w) ^ α`, the paper's second equation at
 `α = 1`. -/
 noncomputable def speaker (α : ℝ) : Kernel E (Word C S) :=
-  RSA.uniformSpeaker (fun w : Word C S ↦ ⟦w⟧ᴹ) α
+  RSA.speaker α 0 (literal M) Measure.dirac
 
 /-- The listener of the paper's first equation inverts the speaker against a prior, the salience
 of the objects. -/
 noncomputable def listener (P : Measure E) (α : ℝ) : Kernel (Word C S) E :=
   RSA.listener P (speaker M α)
 
+instance : IsFiniteKernel (literal M) := inferInstanceAs (IsFiniteKernel (RSA.listener _ _))
+
 instance (α : ℝ) : IsFiniteKernel (speaker M α) :=
   inferInstanceAs (IsFiniteKernel (RSA.speaker _ _ _ _))
 
-variable [DecidableEq E] {α : ℝ} {w w₁ w₂ : Word C S} {r r' : E}
+variable {α : ℝ} {w w₁ w₂ : Word C S} {r r' : E}
+
+/-- The speaker never uses a word for an object it is false of. -/
+theorem speaker_real_singleton_eq_zero (hα : 0 < α) (h : r ∉ ⟦w⟧ᴹ) :
+    (speaker M α r).real {w} = 0 :=
+  RSA.speaker_listener_truthful_dirac_real_singleton_eq_zero hα _ _ _ h
+
+/-- The speaker uses every word true of an object with positive probability. -/
+theorem speaker_real_singleton_pos (hα : 0 ≤ α) (h : r ∈ ⟦w⟧ᴹ) : 0 < (speaker M α r).real {w} :=
+  ENNReal.toReal_pos (RSA.speaker_dirac_apply_singleton_ne_zero hα
+    ((RSA.listener_truthful_apply_singleton_ne_zero_iff _ _ _ _).2
+      ⟨h, uniformOn_univ_singleton_ne_zero _⟩)) (measure_ne_top _ _)
+
+variable [DecidableEq E]
 
 /-- The literal listener gives an object in the extension of a word the reciprocal of the size
 of the extension, the paper's `|w|`. -/
 theorem literal_apply_singleton (w : Word C S) (r : E) :
     literal M w {r} = if r ∈ ⟦w⟧ᴹ then (⟦w⟧ᴹ.card : ℝ≥0∞)⁻¹ else 0 :=
-  RSA.uniformListener_apply_singleton _ w r
-
-/-- The speaker never uses a word for an object it is false of. -/
-theorem speaker_real_singleton_eq_zero (hα : 0 < α) (h : r ∉ ⟦w⟧ᴹ) :
-    (speaker M α r).real {w} = 0 :=
-  RSA.uniformSpeaker_real_singleton_eq_zero _ hα h
-
-/-- The speaker uses every word true of an object with positive probability. -/
-theorem speaker_real_singleton_pos (hα : 0 ≤ α) (h : r ∈ ⟦w⟧ᴹ) : 0 < (speaker M α r).real {w} :=
-  ENNReal.toReal_pos (RSA.uniformSpeaker_apply_singleton_ne_zero _ hα h) (measure_ne_top _ _)
+  RSA.listener_uniformOn_truthful_apply_singleton _ w r
 
 /-- By the size principle, of two words true of an object the speaker prefers the one with the
 smaller extension. -/
 theorem size_principle (hα : 0 < α) (h₁ : r ∈ ⟦w₁⟧ᴹ) (h₂ : r ∈ ⟦w₂⟧ᴹ)
     (h : ⟦w₂⟧ᴹ.card < ⟦w₁⟧ᴹ.card) : (speaker M α r).real {w₁} < (speaker M α r).real {w₂} :=
-  RSA.uniformSpeaker_real_singleton_lt_of_card_lt _ hα h₁ h₂ h
+  RSA.speaker_uniformOn_dirac_real_singleton_lt_of_card_lt _ hα h₁ h₂ h
 
 /-- Of two objects a word is true of, the speaker uses the word more for the one whose other
 feature more objects share, the object whose alternative word is the less informative. -/
@@ -166,7 +173,7 @@ theorem speaker_real_singleton_lt_iff (hα : 0 < α) (h : r ∈ ⟦w⟧ᴹ) (h' 
     ENNReal.rpow_ne_top_of_nonneg hα.le
       (ENNReal.inv_ne_top.2 (Nat.cast_ne_zero.2 hn.ne'))
   have hw : 0 < ⟦w⟧ᴹ.card := Finset.card_pos.2 ⟨r, h⟩
-  rw [speaker, RSA.uniformSpeaker_real_singleton_lt_iff_invPowSum
+  rw [speaker, literal, RSA.speaker_uniformOn_dirac_real_singleton_lt_iff_invPowSum
     (fun w : Word C S ↦ ⟦w⟧ᴹ) hα h h', profile_eq, profile_eq]
   obtain ⟨a, v⟩ := w
   rw [mem_denote] at h h'
@@ -284,10 +291,12 @@ theorem unique_circle (hα : 0 < α) :
 theorem fully_rational_picks_circle :
     Filter.Tendsto (fun α ↦ (speaker M α .blueCircle).real {.circle}) Filter.atTop (𝓝 1) := by
   refine RSA.tendsto_speaker_dirac_real_singleton_atTop ?_ fun u hu ↦ ?_
-  · exact RSA.uniformListener_apply_singleton_ne_zero _ (by decide)
+  · exact (RSA.listener_truthful_apply_singleton_ne_zero_iff _ _ _ _).2
+      ⟨by decide, uniformOn_univ_singleton_ne_zero _⟩
   · simp only [Pi.zero_apply, neg_zero, Real.exp_zero, mul_one]
-    rw [← measureReal_def, ← measureReal_def, RSA.uniformListener_real_singleton,
-      RSA.uniformListener_real_singleton]
+    rw [← measureReal_def, ← measureReal_def, literal,
+      RSA.listener_uniformOn_truthful_real_singleton,
+      RSA.listener_uniformOn_truthful_real_singleton]
     have h1 : ⟦Word.circle⟧ᴹ.card = 1 := by decide
     have h2 : ⟦Word.blue⟧ᴹ.card = 2 := by decide
     obtain ⟨a, v⟩ := u

@@ -4,32 +4,26 @@ public import Linglib.Pragmatics.RSA.Uniform
 public import Linglib.Discourse.CommonGround.Measure
 
 /-!
-# Anderson 2021: conversation update for the Rational Speech Acts framework
+# Anderson (2021): Tell Me Everything You Know
 
 A single RSA turn leaves no trace. Anderson makes the common ground a distribution over
 worlds, substitutes it for the world prior of every agent in the chain (the literal
 listener conditions the common ground on the utterance, the pragmatic listener inverts the
 speaker against it), and after each turn increments it with the pragmatic listener's
-posterior, discounted by a learning rate. Worlds can then regain probability — the update is
-a mixture, not an intersection, and intersection is the learning-rate-one limit — and a
-speaker whose literal listener reads the common ground prefers what is new to what is
-already established. Observations are sampled from the speaker's private beliefs: by weight,
+posterior, discounted by a learning rate. Worlds can then regain probability, since the update
+is a mixture and not an intersection, which is its limit at learning rate one, and a speaker
+whose literal listener reads the common ground prefers what is new to what is already
+established. Observations are sampled from the speaker's private beliefs: by weight,
 above a confidence threshold (a speaker with nothing to say passes with the null utterance),
 or by their positive difference from the common ground. On the MutualFriends worlds,
 *they like being outdoors* leaves Nancy and Katie tied at the first turn and
 favours Nancy once *they study a humanity* is in the common ground.
 
-## Main definitions
-
-* `updateCG`: the learning-rate mixture of the common ground with a posterior.
-* `L0`, `S1`, `L1`: the Figure-4 agents at a common ground; `step` a Figure-2 turn.
-* `cg₂`: the MutualFriends common ground after *they study a humanity*.
-
 ## References
 
 * [anderson-2021]
-* [frank-goodman-2012] — the RSA chain
-* [stalnaker-2002] — the common ground and its context set
+* [frank-goodman-2012]
+* [stalnaker-2002]
 -/
 
 @[expose] public section
@@ -254,18 +248,16 @@ theorem s1_turn1_informativity :
     (S1 cg₁ .nancy).real {.studyScience} = 0 ∧
     (S1 cg₁ .nancy).real {.null} < (S1 cg₁ .nancy).real {.studyHumanity} ∧
     (S1 cg₁ .nancy).real {.studyHumanity} = (S1 cg₁ .nancy).real {.likeOutdoors} := by
-  refine ⟨uniformSpeaker_real_singleton_eq_zero sem one_pos (by decide),
-    uniformSpeaker_real_singleton_lt_of_card_lt sem one_pos (by decide) (by decide) (by decide),
-    ?_⟩
-  show (uniformSpeaker sem 1 .nancy).real {.studyHumanity} =
-    (uniformSpeaker sem 1 .nancy).real {.likeOutdoors}
-  rw [uniformSpeaker_real_singleton sem one_pos, uniformSpeaker_real_singleton sem one_pos,
-    ite_eq_left (by decide), ite_eq_left (by decide),
-    show (sem .studyHumanity).card = (sem .likeOutdoors).card by decide]
+  refine ⟨speaker_listener_truthful_dirac_real_singleton_eq_zero one_pos _ _ _ (by decide),
+    speaker_uniformOn_dirac_real_singleton_lt_of_card_lt sem one_pos (by decide) (by decide)
+      (by decide), ?_⟩
+  rw [speaker_uniformOn_dirac_real_singleton sem one_pos,
+    speaker_uniformOn_dirac_real_singleton sem one_pos, ite_eq_left (by decide),
+    ite_eq_left (by decide), show (sem .studyHumanity).card = (sem .likeOutdoors).card by decide]
 
 /-- At the first turn every world has the same profile, two true specific utterances of
 extension size two and the null utterance. -/
-theorem profile_eq (w w' : World) : profile sem w = profile sem w' := by
+theorem profile_eq (w w' : World) : profile sem Finset.univ w = profile sem Finset.univ w' := by
   cases w <;> cases w' <;> decide
 
 /-- For the first listener, *they study a humanity* rules out Ina and keeps Nancy, and *they
@@ -276,14 +268,14 @@ theorem l1_turn1_inferences :
   ⟨L1_apply_singleton_eq_zero (by decide),
     L1_apply_singleton_ne_zero (by decide) (uniformOn_univ_singleton_ne_zero _),
     listener_apply_singleton_congr _ _
-      (uniformSpeaker_apply_singleton_of_profile_eq sem one_pos (profile_eq _ _)
-        (c := .likeOutdoors) (by decide) (by decide))
+      (speaker_uniformOn_dirac_apply_singleton_of_profile_eq sem one_pos (profile_eq _ _)
+        (u := .likeOutdoors) (by decide) (by decide))
       (uniformOn_univ_singleton_eq _ _)⟩
 
 /-- The null utterance conveys nothing, and the listener stays uniform. -/
 theorem l1_null_uniform (w w' : World) : L1 cg₁ .null {w} = L1 cg₁ .null {w'} :=
   listener_apply_singleton_congr _ _
-    (uniformSpeaker_apply_singleton_of_profile_eq sem one_pos (profile_eq _ _) (c := .null)
+    (speaker_uniformOn_dirac_apply_singleton_of_profile_eq sem one_pos (profile_eq _ _) (u := .null)
       (by cases w <;> decide) (by cases w' <;> decide))
     (uniformOn_univ_singleton_eq _ _)
 
@@ -301,8 +293,8 @@ theorem cg₂_ina_eq_katie : cg₂ {.ina} = cg₂ {.katie} := by
 theorem cg₂_nancy_eq_sally : cg₂ {.nancy} = cg₂ {.sally} := by
   have h : L1 cg₁ .studyHumanity {.nancy} = L1 cg₁ .studyHumanity {.sally} :=
     listener_apply_singleton_congr _ _
-      (uniformSpeaker_apply_singleton_of_profile_eq sem one_pos (profile_eq _ _)
-        (c := .studyHumanity) (by decide) (by decide))
+      (speaker_uniformOn_dirac_apply_singleton_of_profile_eq sem one_pos (profile_eq _ _)
+        (u := .studyHumanity) (by decide) (by decide))
       (uniformOn_univ_singleton_eq _ _)
   rw [cg₂, updateCG_apply, updateCG_apply, uniformOn_univ_singleton_eq World.nancy .sally, h]
 

@@ -1,9 +1,10 @@
 module
 
-public import Linglib.Pragmatics.RSA.Uniform
+public import Linglib.Core.Probability.UniformOn
+public import Linglib.Pragmatics.RSA.Basic
 
 /-!
-# Cohn-Gordon, Goodman and Potts 2019: incremental Rational Speech Acts
+# Cohn-Gordon, Goodman and Potts (2019): An Incremental Iterated Response Model of Pragmatics
 
 Iterated response models compute pragmatic reasoning over complete utterances; the paper
 moves the reasoning inside the utterance. Utterances are word sequences from a closed set,
@@ -15,18 +16,18 @@ continuations when no continuation is true), and the chain rule multiplies the w
 choices into an utterance-level speaker (eq. 7). On the Figure 1 reference game the
 architectures come apart: the global speaker prefers the fully informative *red dress*
 for the red dress while the incremental product prefers bare *dress* (Figures 1b, 1e),
-and upon hearing *red* the incremental listener already favours the red hat at 0.64 —
+and upon hearing *red* the incremental listener already favours the red hat at 0.64,
 the anticipatory implicature (Figure 1d). The abstract two-letter game of Figure 3
 separates the architectures even at equal global informativity. Any complete utterance
-true of its referent is weakly informative — the literal listener assigns the referent
-at least chance probability — which is the paper's certificate for greedy word-by-word
+true of its referent is weakly informative, in that the literal listener assigns the referent
+at least chance probability, which is the paper's certificate for greedy word-by-word
 unrolling (§2.4).
 
 With a cost of one per word and none for the STOP token (§3.1), the global speaker
 prefers the bare noun in English and Spanish alike, but the incremental speaker is
 indifferent between *dress* and *red dress* while preferring *vestido* to *vestido
 rojo*: after *red* the English speaker is committed to the over-modified continuation,
-after *vestido* the Spanish speaker may stop — Rubio-Fernández's over-modification
+after *vestido* the Spanish speaker may stop, which is Rubio-Fernández's over-modification
 asymmetry between adjective–noun and noun–adjective languages. Hearing *tall* in
 Sedivy's display, the incremental pragmatic listener favours the tall cup over the tall
 pitcher at 0.6, since a speaker referring to the pitcher had no use for the modifier
@@ -46,7 +47,7 @@ referent but the pitcher.
   §3.1 comparisons are real arithmetic in the content-word cost factor `exp (-c)`, the
   paper's cost of one generalized to any positive cost.
 * Kernels are noncomputable, so the greedy unroller is a per-referent table, certified
-  to land in the utterance set and to be true of its target — all that §2.4's bound
+  to land in the utterance set and to be true of its target, which is all that §2.4's bound
   uses.
 
 ## TODO

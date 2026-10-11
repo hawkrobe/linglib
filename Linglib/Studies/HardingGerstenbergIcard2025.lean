@@ -11,12 +11,11 @@ public import Mathlib.Analysis.SpecialFunctions.Sigmoid
 /-!
 # Harding, Gerstenberg, and Icard (2025): A Communication-First Account of Explanation
 
-This file formalizes the model of [harding-gerstenberg-icard-2025], on which an answer to "why
-FACT?" is a message in a Rational Speech Act game ([frank-goodman-2012]) whose literal meaning
-is actual causation and whose speaker is useful rather than informative, after
-[sumers-etal-2024]. The literal listener conditions a prior over causal situations on the
-message (2), the substrate's `RSA.uniformListener`; the listener acts in a decision problem by
-the softmax of expected reward (3), the substrate's `RSA.policy`; the speaker maximizes the
+On the model of Harding, Gerstenberg and Icard an answer to "why FACT?" is a message in a
+Rational Speech Act game, after Frank and Goodman, whose literal meaning is actual causation and
+whose speaker is useful rather than informative, after Sumers and colleagues. The literal
+listener conditions a prior over causal situations on the message (2); the listener acts in a
+decision problem by the softmax of expected reward (3), `RSA.policy`; the speaker maximizes the
 reward of the listener's action, `RSA.actionUtility` (4), less the message's cost (6),
 `speaker`; the
 pragmatic listener is the posterior of the speaker at the prior (7); and the goodness of an
@@ -220,27 +219,24 @@ def sem : Msg → Finset World := ![{0, 1}, {1}]
 /-- In Table 3, apologizing for what is the cause earns 1, and otherwise −1. -/
 def reward : Act → World → ℝ := fun a w => if a = w then 1 else -1
 
-/-- The literal listener at the uniform prior (2). -/
-noncomputable abbrev L0 : Kernel Msg World := uniformListener sem
-
-/-- The prior as a listener who has heard nothing. -/
-noncomputable abbrev prior : Kernel Msg World := uniformListener fun _ ↦ Finset.univ
-
 /-- The uniform prior over the worlds. -/
 noncomputable abbrev μ : Measure World := uniformOn Set.univ
 
-theorem prior_apply (m : Msg) : prior m = μ := by
-  rw [uniformListener_apply, Finset.coe_univ]
+/-- The literal listener (2) conditions the uniform prior on the interpretation set. -/
+noncomputable abbrev L0 : Kernel Msg World :=
+  RSA.listener μ (truthful fun m ↦ (sem m : Set World))
+
+/-- The prior as a listener who has heard nothing. -/
+noncomputable abbrev prior : Kernel Msg World := Kernel.const Msg μ
 
 theorem expectedReward_L0 (a : Act) :
     expectedReward L0 reward 0 a = 0 ∧
       expectedReward L0 reward 1 a = if a = 1 then 1 else -1 := by
-  fin_cases a <;> simp [expectedReward, Fin.sum_univ_two, uniformListener_apply_singleton,
-    measureReal_def, sem, reward]
+  fin_cases a <;> simp [expectedReward, Fin.sum_univ_two,
+    listener_uniformOn_truthful_apply_singleton, measureReal_def, sem, reward]
 
 theorem expectedReward_prior (m : Msg) (a : Act) : expectedReward prior reward m a = 0 := by
-  fin_cases a <;> simp [expectedReward, Fin.sum_univ_two, uniformListener_apply_singleton,
-    measureReal_def, reward]
+  fin_cases a <;> simp [expectedReward, Fin.sum_univ_two, uniformOn_univ_real_singleton, reward]
 
 variable {βL βS : ℝ}
 
@@ -299,10 +295,8 @@ theorem speaker_cites_B_iff (hβL : 0 < βL) (hβS : 0 < βS) (c : ℝ) :
       h01, h11]
     nlinarith
 
-theorem μ_singleton (w : World) : μ {w} ≠ 0 ∧ μ.real {w} = 1 / 2 := by
-  rw [← prior_apply 0, uniformListener_apply_singleton, measureReal_def,
-    uniformListener_apply_singleton]
-  simp
+theorem μ_singleton (w : World) : μ {w} ≠ 0 ∧ μ.real {w} = 1 / 2 :=
+  ⟨uniformOn_univ_singleton_ne_zero w, by rw [uniformOn_univ_real_singleton]; simp⟩
 
 /-- The speaker of Example 3 at equal costs `c`. -/
 noncomputable def S (βL βS c : ℝ) : Kernel World Msg :=
@@ -405,19 +399,20 @@ def sem : Msg → Finset World := ![{0, 2, 3}, {1, 2, 3}]
 world and −1 elsewhere. -/
 def reward : Act → World → ℝ := fun a w => if a = 0 then 0 else if w = 1 then 1 else -1
 
-noncomputable abbrev L0 : Kernel Msg World := uniformListener sem
+noncomputable abbrev L0 : Kernel Msg World :=
+  RSA.listener (uniformOn Set.univ) (truthful fun m ↦ (sem m : Set World))
 
 /-- The two messages are equally informative, in that the conjunctive world is as likely after
 either. -/
 theorem L0_conj_eq : (L0 0).real {2} = (L0 1).real {2} := by
-  simp [uniformListener_apply_singleton, measureReal_def, sem]
+  simp [listener_uniformOn_truthful_apply_singleton, measureReal_def, sem]
 
 theorem expectedReward_L0 :
     expectedReward L0 reward 0 0 = 0 ∧ expectedReward L0 reward 0 1 = -1 ∧
       expectedReward L0 reward 1 0 = 0 ∧ expectedReward L0 reward 1 1 = -1 / 3 := by
   refine ⟨?_, ?_, ?_, ?_⟩ <;>
-    simp [expectedReward, Fin.sum_univ_four, uniformListener_apply_singleton, measureReal_def, sem,
-      reward] <;> norm_num
+    simp [expectedReward, Fin.sum_univ_four, listener_uniformOn_truthful_apply_singleton,
+      measureReal_def, sem, reward] <;> norm_num
 
 /-- The two messages are not equally useful, since at any rationality the listener replaces the
 roof more readily after "because R" than after "because D". -/
@@ -452,19 +447,20 @@ def sem : Msg → Finset World := ![{0, 2}, {1, 2}, {2}]
 def reward : Act → World → ℝ :=
   ![![1, -1, 0], ![-1, 1, 0], ![0, 0, 1]]
 
-noncomputable abbrev L0 : Kernel Msg World := uniformListener sem
+noncomputable abbrev L0 : Kernel Msg World :=
+  RSA.listener (uniformOn Set.univ) (truthful fun m ↦ (sem m : Set World))
 
 theorem expectedReward_L0_conj (a : Act) :
     expectedReward L0 reward 2 a = if a = 2 then 1 else 0 := by
-  fin_cases a <;> simp [expectedReward, Fin.sum_univ_three, uniformListener_apply_singleton,
-    measureReal_def, sem, reward]
+  fin_cases a <;> simp [expectedReward, Fin.sum_univ_three,
+    listener_uniformOn_truthful_apply_singleton, measureReal_def, sem, reward]
 
 theorem expectedReward_L0_C :
     expectedReward L0 reward 0 0 = 1 / 2 ∧ expectedReward L0 reward 0 1 = -1 / 2 ∧
       expectedReward L0 reward 0 2 = 1 / 2 := by
   refine ⟨?_, ?_, ?_⟩ <;>
-    simp [expectedReward, Fin.sum_univ_three, uniformListener_apply_singleton, measureReal_def,
-      sem, reward]
+    simp [expectedReward, Fin.sum_univ_three, listener_uniformOn_truthful_apply_singleton,
+      measureReal_def, sem, reward]
   norm_num
 
 /-- After "because C and D" confronting both is the strictly preferred action; after

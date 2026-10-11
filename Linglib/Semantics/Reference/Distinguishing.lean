@@ -14,7 +14,7 @@ preorder. At truth values this is the distinguishing description of Dale and Rei
 the referent and of no distractor, and the Russellian uniqueness of `Reference.iota` over the domain
 the contrast set restricts. Under a graded semantics it says the referent is the literal listener's
 best guess, since a strictly monotone rescaling of compatibility such as the listener's
-normalization does not change it (`RSA.distinguishes_ofDensity_uniformOn_iff`). A graded
+normalization does not change it (`Reference.distinguishes_comp_iff`). A graded
 description distinguishes exactly when some level set of its compatibility does, so the truth-valued
 notion is the general one at a threshold.
 

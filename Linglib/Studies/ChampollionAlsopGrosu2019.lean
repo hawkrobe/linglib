@@ -3,10 +3,10 @@ module
 public import Linglib.Pragmatics.RSA.Uniform
 
 /-!
-# Champollion, Alsop & Grosu (2019): free choice disjunction as a rational speech act
+# Champollion, Alsop and Grosu (2019): Free Choice Disjunction as a Rational Speech Act
 
-Free choice — *You may take an apple or a pear* conveys that each fruit may be taken by
-itself — does not follow from modal logic, and a speaker who prefers informative utterances
+Free choice, by which *You may take an apple or a pear* conveys that each fruit may be taken by
+itself, does not follow from modal logic, and a speaker who prefers informative utterances
 never has reason to choose the disjunction over a disjunct. The paper adds semantic
 uncertainty: two interpretation functions, the classical (6) and the exhaustified (7), over
 which the pragmatic listener reasons jointly with states and utterances (8). Under the
@@ -17,30 +17,22 @@ avoidance: hearing *or*, each free-choice state outweighs each other state at th
 α = 100 (`fci_derived`, Table 5), and the free-choice states already carry the majority at
 α = 2 (`fci_majority_low_alpha`).
 
-Exclusivity — not both — tracks the prior instead: under a prior favouring Any Number the
-listener hearing *or* ranks Any Number above every other state, at every rationality
-(`anyNumber_of_prior`, Table 6) — the paper's account of why exclusivity, unlike free
+Exclusivity, that not both may be taken, tracks the prior instead. Under a prior favouring Any
+Number the listener hearing *or* ranks Any Number above every other state, at every rationality
+(`anyNumber_of_prior`, Table 6), which is the paper's account of why exclusivity, unlike free
 choice, is cancelable. Under negation the negated disjunction is unambiguous and maximally
 strong, so the listener assigns no mass to the states at which free choice would survive
 (`no_fci_under_negation`, Table 9). The variants without the conjunctive alternative
 (Tables 7–8) are not formalized.
 
-## Main definitions
-
-* `FCState`, `Utterance`, `Interp`, `interpMeaning` — the state space, the four utterances, and
-  the classical and exhaustified interpretation functions
-* `speaker`, `listener` — the model of (8) at a uniform prior
-* `priorB`, `listenerB` — the same with a prior favouring Any Number
-* `NegState`, `NegUtterance`, `negListener` — the negation model of §4
-
 ## Main results
 
-* `speaker_or_onlyOne_exh`, `speaker_prefers_a_at_onlyA_exh` — under exhaustification the
-  disjunction is the safe choice at the free-choice states and a disjunct is not
-* `fci_derived`, `fci_majority_low_alpha` — the listener's inversion, at the paper's α and at a
-  low one
-* `anyNumber_of_prior` — exclusivity tracks the prior at every rationality
-* `no_fci_under_negation` — the negated disjunction leaves no mass where free choice would arise
+* `speaker_or_onlyOne_exh`, `speaker_prefers_a_at_onlyA_exh`: under exhaustification the
+  disjunction is the safe choice at the free-choice states and a disjunct is not.
+* `fci_derived`, `fci_majority_low_alpha`: hearing *or*, the listener favours the free-choice
+  states, at the paper's α and at a low one.
+* `anyNumber_of_prior`: exclusivity tracks the prior at every rationality.
+* `no_fci_under_negation`: the negated disjunction leaves no mass where free choice would arise.
 
 ## References
 
@@ -140,9 +132,6 @@ def sem (i : Interp) (u : Utterance) : Finset FCState := Finset.univ.filter (int
 @[simp] theorem mem_sem {i : Interp} {u : Utterance} {w : FCState} :
     w ∈ sem i u ↔ interpMeaning i u w := by simp [sem]
 
-/-- Every state is truthfully describable under every interpretation function. -/
-theorem expressible : ∀ i w, ∃ u, w ∈ sem i u := by decide
-
 /-- Exhaustification only strengthens. -/
 theorem I2_refines_I1 : ∀ u w, I2 u w → I1 u w := by decide
 
@@ -155,39 +144,51 @@ theorem I2_or_excludes_onlyBoth : ∀ w, I2 .or_ w ↔ w ≠ .onlyBoth := by dec
 /-- The exhaustified disjunct singles out exactly Only A — the risk the speaker avoids. -/
 theorem I2_a_singleton : ∀ w, I2 .a w ↔ w = .onlyA := by decide
 
-/-! ### The model (8) at a uniform prior -/
+/-! ### The model (8) -/
 
-/-- The speaker under a fixed interpretation function (8b). -/
-noncomputable abbrev speaker (i : Interp) (α : ℝ) : Kernel FCState Utterance :=
-  uniformSpeaker (sem i) α
+/-- The literal listener under an interpretation function (8a) conditions the state prior on the
+meaning of the utterance. -/
+noncomputable abbrev literal (μ : Measure FCState) (i : Interp) : Kernel Utterance FCState :=
+  RSA.listener μ (truthful fun u ↦ (sem i u : Set FCState))
 
-/-- The pragmatic listener (8c) inverts the interpretation-indexed speaker against a uniform
-prior over states and interpretation functions, and `.fst` marginalizes over the
-interpretation. -/
+/-- The speaker under an interpretation function (8b) knows the state and addresses that
+function's literal listener. -/
+noncomputable abbrev speaker (μ : Measure FCState) (i : Interp) (α : ℝ) :
+    Kernel FCState Utterance :=
+  RSA.speaker α 0 (literal μ i) Measure.dirac
+
+/-- The uniform prior over the states. -/
+local notation "υ" => uniformOn (Set.univ : Set FCState)
+
+/-- The pragmatic listener (8c) at a uniform prior over states and interpretation functions
+inverts the speaker of each function, and her first marginal is her belief about the state. -/
 noncomputable abbrev listener (α : ℝ) : Kernel Utterance (FCState × Interp) :=
-  RSA.listener (uniformOn Set.univ) fun p : FCState × Interp ↦ speaker p.2 α p.1
+  RSA.listener (uniformOn Set.univ) fun p : FCState × Interp ↦ speaker υ p.2 α p.1
 
 /-- Under the exhaustified function at Only One, *or* is the only true utterance, so the
 speaker produces it with certainty at every rationality (§3.3). -/
 theorem speaker_or_onlyOne_exh {α : ℝ} (hα : 0 < α) :
-    speaker .exhaustified α .onlyOne {.or_} = 1 :=
-  uniformSpeaker_apply_singleton_eq_one _ hα (by decide) (by decide)
+    speaker υ .exhaustified α .onlyOne {.or_} = 1 :=
+  speaker_listener_truthful_dirac_eq_one hα _ _ _ (uniformOn_univ_singleton_ne_zero _) (by decide)
+    (by decide)
 
 /-- Under the exhaustified function at Any Number, *or* is the only true utterance. -/
 theorem speaker_or_anyNumber_exh {α : ℝ} (hα : 0 < α) :
-    speaker .exhaustified α .anyNumber {.or_} = 1 :=
-  uniformSpeaker_apply_singleton_eq_one _ hα (by decide) (by decide)
+    speaker υ .exhaustified α .anyNumber {.or_} = 1 :=
+  speaker_listener_truthful_dirac_eq_one hα _ _ _ (uniformOn_univ_singleton_ne_zero _) (by decide)
+    (by decide)
 
 /-- Under the exhaustified function at Only Both, *or* is false. -/
 theorem speaker_or_onlyBoth_exh {α : ℝ} (hα : 0 < α) :
-    speaker .exhaustified α .onlyBoth {.or_} = 0 :=
-  uniformSpeaker_apply_singleton_eq_zero _ hα (by decide)
+    speaker υ .exhaustified α .onlyBoth {.or_} = 0 :=
+  speaker_listener_truthful_dirac_apply_singleton_eq_zero hα _ _ _ (by decide)
 
 /-- Under the exhaustified function at Only A the speaker prefers the bare disjunct to the
 disjunction at every rationality, the avoidance mechanism. -/
 theorem speaker_prefers_a_at_onlyA_exh {α : ℝ} (hα : 0 < α) :
-    (speaker .exhaustified α .onlyA).real {.or_} < (speaker .exhaustified α .onlyA).real {.a} :=
-  uniformSpeaker_real_singleton_lt_of_card_lt _ hα (by decide) (by decide) (by decide)
+    (speaker υ .exhaustified α .onlyA).real {.or_} <
+      (speaker υ .exhaustified α .onlyA).real {.a} :=
+  speaker_uniformOn_dirac_real_singleton_lt_of_card_lt _ hα (by decide) (by decide) (by decide)
 
 /-- Hearing *or* at the paper's α = 100, the listener ranks each free-choice state, Only One
 and Any Number (the paper's 0.5 each), above each of Only A, Only B, and Only Both (each ≈ 0).
@@ -199,8 +200,8 @@ theorem fci_derived :
   intro w hw w' hw'
   rw [Measure.fst_real_singleton, Measure.fst_real_singleton]
   fin_cases hw <;> fin_cases hw' <;>
-    exact listener_uniformOn_family_real_lt_of_divPowSum sem expressible
-      (k := 100) (D := 20) (by decide +kernel) (by decide +kernel)
+    exact listener_uniformOn_family_real_lt_of_divPowSum sem (k := 100) (D := 20)
+      (by decide +kernel) (by decide +kernel)
 
 /-- The free-choice pairs of the joint listener. -/
 def fciPairs : Finset (FCState × Interp) := Finset.univ.filter fun p => HasFCI p.1
@@ -212,8 +213,8 @@ def nonFciPairs : Finset (FCState × Interp) := Finset.univ.filter fun p => ¬ H
 (the paper's "only 70%"). -/
 theorem fci_majority_low_alpha :
     (listener 2 .or_).real ↑nonFciPairs < (listener 2 .or_).real ↑fciPairs :=
-  listener_uniformOn_family_real_lt_of_divPowSum sem expressible (k := 2) (D := 20)
-    (by decide +kernel) (by decide +kernel)
+  listener_uniformOn_family_real_lt_of_divPowSum sem (k := 2) (D := 20) (by decide +kernel)
+    (by decide +kernel)
 
 /-! ### Prior sensitivity (Table 6)
 
@@ -251,19 +252,9 @@ instance : IsFiniteMeasure jointPriorB :=
       rw [Measure.smul_apply, smul_eq_mul, Measure.dirac_apply_of_mem (Set.mem_univ _), mul_one]
       exact ENNReal.natCast_lt_top _⟩
 
-/-- The extensions as sets. -/
-def semSet (i : Interp) (u : Utterance) : Set FCState := {w | interpMeaning i u w}
-
-theorem mem_semSet {i : Interp} {u : Utterance} {w : FCState} :
-    w ∈ semSet i u ↔ interpMeaning i u w := Iff.rfl
-
-/-- The literal listeners at the biased prior (8a). -/
-noncomputable def famB (i : Interp) : Kernel Utterance FCState :=
-  RSA.listener priorB (truthful fun u ↦ semSet i u)
-
 /-- The pragmatic listener at the biased prior. -/
 noncomputable def listenerB (α : ℝ) : Kernel Utterance (FCState × Interp) :=
-  RSA.listener jointPriorB fun p ↦ RSA.speaker α 0 (famB p.2) Measure.dirac p.1
+  RSA.listener jointPriorB fun p ↦ speaker priorB p.2 α p.1
 
 theorem jointPriorB_real_singleton (p : FCState × Interp) :
     jointPriorB.real {p} = biasedWeight p.1 := by
@@ -275,12 +266,9 @@ exhaustified function *or* is produced there with certainty and no other state h
 prior. -/
 theorem anyNumber_of_prior {α : ℝ} (hα : 0 < α) {w : FCState} (hw : w ≠ .anyNumber) :
     (listenerB α .or_).fst.real {w} < (listenerB α .or_).fst.real {.anyNumber} := by
-  have hother : ∀ u' ≠ Utterance.or_, FCState.anyNumber ∉ semSet .exhaustified u' := by
-    simp only [ne_eq, mem_semSet]; decide
   have hμ : priorB {.anyNumber} ≠ 0 := by rw [priorB_singleton]; simp [biasedWeight]
-  have hone := speaker_listener_truthful_dirac_eq_one (u := Utterance.or_)
-    (w := FCState.anyNumber) hα 0 priorB (semSet .exhaustified) hμ
-    ((mem_semSet (i := .exhaustified) (u := .or_) (w := .anyNumber)).mpr trivial) hother
+  have hone : speaker priorB .exhaustified α .anyNumber {.or_} = 1 :=
+    speaker_listener_truthful_dirac_eq_one hα _ _ _ hμ (by decide) (by decide)
   have hlt : (∑ p ∈ ({w} ×ˢ Finset.univ : Finset (FCState × Interp)), jointPriorB.real {p})
       < jointPriorB.real {(.anyNumber, .exhaustified)} := by
     rw [Finset.sum_product, Finset.sum_singleton]
@@ -289,7 +277,8 @@ theorem anyNumber_of_prior {α : ℝ} (hα : 0 < α) {w : FCState} (hw : w ≠ .
     cases w <;> first | exact absurd rfl hw | norm_num [biasedWeight]
   rw [Measure.fst_real_singleton, Measure.fst_real_singleton, listenerB]
   exact listener_real_lt_of_certain _ _ (w₀ := ((.anyNumber, .exhaustified) : FCState × Interp))
-    (by simp) (fun p ↦ speaker_real_singleton_le_one α 0 (famB p.2) Measure.dirac p.1 _) hone hlt
+    (by simp) (fun p ↦ speaker_real_singleton_le_one α 0 (literal priorB p.2) Measure.dirac p.1 _)
+    hone hlt
 
 /-! ### No free choice under negation (§4, Table 9) -/
 
@@ -359,14 +348,16 @@ theorem negSem_notOr : ∀ i, negSem i .notOr = {.neither} := by decide
 
 /-- The listener of the negation model. -/
 noncomputable abbrev negListener (α : ℝ) : Kernel NegUtterance (NegState × Interp) :=
-  RSA.listener (uniformOn Set.univ) fun p : NegState × Interp ↦ uniformSpeaker (negSem p.2) α p.1
+  RSA.listener (uniformOn Set.univ) fun p : NegState × Interp ↦ RSA.speaker α 0
+    (RSA.listener (uniformOn Set.univ) (truthful fun u ↦ (negSem p.2 u : Set NegState)))
+    Measure.dirac p.1
 
 /-- Hearing *you may not take an apple or a pear*, the listener assigns no mass to any state
 other than Neither, in particular none to Only A and Only B, where a free-choice reading of the
 negated disjunction would be true. There is no free choice under negation (Table 9). -/
 theorem no_fci_under_negation {α : ℝ} (hα : 0 < α) {p : NegState × Interp}
     (hp : p.1 ≠ .neither) : negListener α .notOr {p} = 0 :=
-  listener_uniformOn_family_apply_singleton_eq_zero negSem hα
-    (by rw [negSem_notOr, Finset.mem_singleton]; exact hp)
+  listener_apply_singleton_eq_zero (speaker_listener_truthful_dirac_apply_singleton_eq_zero hα _ _
+    _ (by rw [negSem_notOr]; simpa using hp))
 
 end ChampollionAlsopGrosu2019

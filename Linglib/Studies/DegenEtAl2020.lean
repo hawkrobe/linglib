@@ -1,6 +1,7 @@
 module
 
-public import Linglib.Pragmatics.RSA.Uniform
+public import Linglib.Pragmatics.RSA.Basic
+public import Linglib.Core.Probability.UniformOn
 public import Linglib.Semantics.Reference.Distinguishing
 public import Mathlib.Algebra.Order.Field.Basic
 
@@ -234,6 +235,19 @@ theorem size_overmodification_iff (hs0 : 0 < xs) (hs1 : xs ≤ 1) (hc0 : 0 < xc)
   rw [div_lt_div_iff₀ hsum' hsum]
   have hk : 0 < xc * (1 - xc) := mul_pos hc0 (by linarith)
   constructor <;> intro h <;> nlinarith [hk]
+
+/-- At a uniform prior the listener of a graded meaning gives each state the meaning's value
+rescaled by the row sum, so a description distinguishes its referent under the listener exactly
+when it does under the meaning. -/
+theorem distinguishes_ofDensity_uniformOn_iff {T U : Type*} [Fintype T] [Nonempty T]
+    [MeasurableSpace T] [MeasurableSingletonClass T] [MeasurableSpace U] [Countable U]
+    [MeasurableSingletonClass U] {m : U → T → ℝ≥0∞} {C : Finset T} {r : T} {u : U}
+    (h0 : ∑ t, m u t ≠ 0) (htop : ∑ t, m u t ≠ ∞) :
+    Reference.Distinguishes (fun u t ↦ Kernel.ofDensity (uniformOn Set.univ) m u {t}) C r u ↔
+      Reference.Distinguishes m C r u := by
+  simp_rw [Kernel.ofDensity_uniformOn_apply_singleton]
+  exact Reference.distinguishes_comp_iff (φ := fun u x ↦ x / ∑ t', m u t')
+    fun _ _ h ↦ ENNReal.div_lt_div_right h0 htop h
 
 /-- A description distinguishes a pin under the continuous meaning exactly when it does under
 the literal listener, so that the pin is the listener's best guess. -/

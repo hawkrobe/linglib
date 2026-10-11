@@ -78,8 +78,7 @@ noncomputable def baselineListener (P : Measure E) : Kernel (Word C S) E :=
 theorem baselineSpeaker_real_singleton (r : E) (w : Word C S) :
     (baselineSpeaker M r).real {w} = (if r ∈ ⟦w⟧ᴹ then 1 else 0) / 2 := by
   have hsum : (∑ w' : Word C S, if r ∈ ⟦w'⟧ᴹ then (1 : ℝ≥0∞) else 0) = 2 := by
-    rw [Finset.sum_boole, ← RSA.trueChoices, FrankGoodman2012.trueChoices_eq,
-      Finset.card_pair (by simp)]
+    rw [Finset.sum_boole, FrankGoodman2012.filter_mem_denote, Finset.card_pair (by simp)]
     rfl
   rw [measureReal_def, baselineSpeaker, Kernel.ofWeights_apply_singleton, hsum,
     ENNReal.toReal_div]
@@ -89,9 +88,9 @@ theorem baselineSpeaker_real_singleton (r : E) (w : Word C S) :
 theorem tendsto_speaker_baselineSpeaker (r : E) (w : Word C S) :
     Tendsto (fun α : ℝ ↦ (speaker M α r).real {w}) (𝓝[>] 0)
       (𝓝 ((baselineSpeaker M r).real {w})) := by
-  have h := RSA.tendsto_uniformSpeaker_real_singleton_nhdsGT_zero
+  have h := RSA.tendsto_speaker_uniformOn_dirac_real_singleton_nhdsGT_zero
     (fun w : Word C S ↦ ⟦w⟧ᴹ) r w
-  rwa [FrankGoodman2012.trueChoices_eq, Finset.card_pair (by simp), Nat.cast_ofNat,
+  rwa [FrankGoodman2012.filter_mem_denote, Finset.card_pair (by simp), Nat.cast_ofNat,
     ← baselineSpeaker_real_singleton] at h
 
 /-- Among the objects a word is true of, the baseline listener follows the prior. -/

@@ -9,15 +9,14 @@ public import Mathlib.Analysis.SpecialFunctions.Log.Basic
 /-!
 # Sumers, Ho, Griffiths, and Hawkins (2024): Reconciling Truthfulness and Relevance as Epistemic and Decision-Theoretic Utility
 
-This file formalizes [sumers-etal-2024]'s speaker model, on which the Gricean maxims of quality
-and relation ([grice-1975]) are two independent objectives a speaker trades off. Truthfulness
-is an epistemic utility, `1` for a true utterance and `-1` for a false one (5),
-`truthfulness`; relevance is a decision-theoretic utility, the reward the listener earns by
-acting on the utterance in a decision problem ([van-rooy-2003], [benz-2006]) (6)–(8), the
-substrate's `RSA.actionUtility` of `RSA.policy`; and the speaker of a Rational Speech Act
-model ([frank-goodman-2012]) soft-maximizes their convex combination at a weight `λ` plus a
-cost term (9), `combinedUtility`, `speaker`. The endpoints are the purely truthful speaker, who
-is insensitive to the decision problem and uniform over the true utterances,
+On the speaker model of Sumers, Ho, Griffiths and Hawkins, Grice's maxims of quality and
+relation are two independent objectives a speaker trades off. Truthfulness is an epistemic
+utility, `1` for a true utterance and `-1` for a false one (5), `truthfulness`; relevance is a
+decision-theoretic utility after van Rooy and Benz, the reward the listener earns by acting on
+the utterance in a decision problem (6)–(8), `RSA.actionUtility` of `RSA.policy`; and the speaker
+of a Rational Speech Act model, after Frank and Goodman, soft-maximizes their convex combination
+at a weight `λ` plus a cost term (9), `combinedUtility`, `speaker`. The endpoints are the purely
+truthful speaker, who is insensitive to the decision problem and uniform over the true utterances,
 `speaker_zero_eq_of_mem`, and the purely relevant speaker, who exaggerates whenever
 exaggeration earns the listener more, `speaker_one_real_lt_iff`.
 
@@ -27,7 +26,7 @@ action carries a set of features, and its reward is the sum of their values (10)
 decision context, `sem`; the listener conditions a uniform prior on the utterance and acts on
 the expected rewards of the actions in the context. Under the uniform prior the posterior
 mean of the named feature is the named value and every other feature keeps its prior mean,
-`expectedReward_uniformListener_filter`, which is how the paper reads Figure 6C: in the
+`expectedReward_listener_filter`, which is how the paper reads Figure 6C: in the
 context of a red spotted, a red solid, and a blue striped mushroom, naming the value of green
 or the zero value of red is true but leaves the listener's policy where the prior had it,
 `green_two_true_irrelevant`, `red_zero_true_irrelevant`; naming a positive value of spots is
@@ -39,7 +38,7 @@ a context of three spotted mushrooms naming the value of spots is irrelevant and
 value of green is relevant (footnote 12), `spots_irrelevant_allSpotted`,
 `green_relevant_allSpotted`.
 
-Appendix A relates decision problems to questions under discussion ([roberts-2012]). For the
+Appendix A relates decision problems to Roberts's questions under discussion. For the
 two-action decision problem in which one action earns `r` in a cell of the partition
 containing the true world and `s` outside it, and the other the reverse, relevance is a
 logistic function of the listener's posterior mass on the cell, `actionUtility_cellReward`,
@@ -54,7 +53,7 @@ uninstructed participants strictly between the endpoints; in the endorsement exp
 separation widened and the uninstructed participants still balanced the two; and the combined
 model was favored over either objective alone. The worked examples, on which a pragmatic
 listener embedding the combined speaker infers that a mentioned garage is open, loosens a
-stated start time, and rounds the time when asked casually ([van-der-henst-etal-2002]), are
+stated start time, and rounds the time when asked casually, after Van der Henst and colleagues, are
 simulations at chosen parameters and are not formalized.
 
 ## Implementation notes
@@ -95,11 +94,11 @@ section Objectives
 
 variable {W U A : Type*} [DecidableEq W] [MeasurableSpace U] [Fintype A] [MeasurableSpace A]
 
-/-- Truthfulness as epistemic utility (5): `1` for a true utterance and `-1` for a false one. -/
+/-- Truthfulness as epistemic utility (5) is `1` for a true utterance and `-1` for a false one. -/
 def truthfulness (sem : U → Finset W) (u : U) (w : W) : ℝ := if w ∈ sem u then 1 else -1
 
-/-- The combined utility (9): relevance and truthfulness at weight `lam` on relevance, plus the
-cost term. -/
+/-- The combined utility (9) mixes relevance and truthfulness at weight `lam` on relevance and
+adds the cost term. -/
 noncomputable def combinedUtility (lam : ℝ) (cost : U → ℝ) (sem : U → Finset W)
     (π : Kernel U A) (R : A → W → ℝ) (u : U) (w : W) : ℝ :=
   lam * actionUtility π R u w + (1 - lam) * truthfulness sem u w + cost u
@@ -123,7 +122,7 @@ variable {W U A : Type*} [Fintype W] [DecidableEq W] [MeasurableSpace W]
   [DiscreteMeasurableSpace W] [Fintype U] [MeasurableSpace U] [DiscreteMeasurableSpace U]
   [Fintype A] [MeasurableSpace A]
 
-/-- The speaker (1): the softmax of combined utility at rationality `βS`. -/
+/-- The speaker (1) is the softmax of combined utility at rationality `βS`. -/
 noncomputable def speaker (βS lam : ℝ) (cost : U → ℝ) (sem : U → Finset W)
     (π : Kernel U A) (R : A → W → ℝ) : Kernel W U :=
   Kernel.softmax fun w u => ((βS * combinedUtility lam cost sem π R u w : ℝ) : EReal)
@@ -146,8 +145,8 @@ theorem speaker_real_lt_iff (hβ : 0 < βS) :
     ⟨u, EReal.coe_ne_bot _⟩, EReal.coe_lt_coe_iff]
   exact mul_lt_mul_iff_right₀ hβ
 
-/-- The purely truthful speaker is insensitive to the decision problem: at equal costs it puts
-the same mass on any two true utterances. -/
+/-- The purely truthful speaker is insensitive to the decision problem, since at equal costs it
+puts the same mass on any two true utterances. -/
 theorem speaker_zero_eq_of_mem (c : ℝ) (hu : w ∈ sem u) (hu' : w ∈ sem u') :
     speaker βS 0 (fun _ => c) sem π R w {u} = speaker βS 0 (fun _ => c) sem π R w {u'} := by
   simp only [speaker, Kernel.softmax_apply_singleton, combinedUtility_zero, truthfulness, hu, hu',
@@ -171,8 +170,8 @@ section Cell
 variable {W U : Type*} [Fintype W] [DecidableEq W] [MeasurableSpace W]
   [DiscreteMeasurableSpace W] [MeasurableSpace U]
 
-/-- The decision problem of a cell: the first action earns `r` in the cell and `s` outside it,
-the second the reverse. -/
+/-- In the decision problem of a cell the first action earns `r` in the cell and `s` outside it,
+and the second the reverse. -/
 def cellReward (r s : ℝ) (c : Finset W) : Fin 2 → W → ℝ :=
   fun a w => if (w ∈ c ↔ a = 0) then r else s
 
@@ -180,7 +179,7 @@ def cellReward (r s : ℝ) (c : Finset W) : Fin 2 → W → ℝ :=
 noncomputable def cellMass (L : Kernel U W) (c : Finset W) (u : U) : ℝ :=
   ∑ w ∈ c, (L u).real {w}
 
-/-- The epistemic utility of an utterance relative to a question (A2): the log of the
+/-- The epistemic utility of an utterance relative to a question (A2) is the log of the
 posterior mass on the cell of the true world. -/
 noncomputable def qudUtility (L : Kernel U W) (c : Finset W) (u : U) : ℝ :=
   Real.log (cellMass L c u)
@@ -204,7 +203,7 @@ theorem expectedReward_cellReward (u : U) :
 variable [Fintype U] [DiscreteMeasurableSpace U]
 
 /-- Relevance under the cell decision problem is a logistic function of the posterior mass on
-the cell: the calculation of Appendix A. -/
+the cell, the calculation of Appendix A. -/
 theorem actionUtility_cellReward (hw : w ∈ c) :
     actionUtility (policy β L (cellReward r s c)) (cellReward r s c) u w =
       s + (r - s) * Real.sigmoid (β * (r - s) * (2 * cellMass L c u - 1)) := by
@@ -217,8 +216,8 @@ theorem actionUtility_cellReward (hw : w ∈ c) :
     not_true_eq_false, ite_true, ite_false]
   ring_nf
 
-/-- Theorem 2: the cell decision problem ranks utterances as the question's epistemic utility
-does, whenever the cell of the true world is favored, `s < r`. -/
+/-- The cell decision problem ranks utterances as the question's epistemic utility does,
+whenever the cell of the true world is favored, `s < r` (Theorem 2). -/
 theorem actionUtility_lt_iff_qudUtility_lt (hw : w ∈ c) (hrs : s < r) (hβ : 0 < β)
     (hu : 0 < cellMass L c u) (hu' : 0 < cellMass L c u') :
     actionUtility (policy β L (cellReward r s c)) (cellReward r s c) u w <
@@ -230,8 +229,8 @@ theorem actionUtility_lt_iff_qudUtility_lt (hw : w ∈ c) (hrs : s < r) (hβ : 0
     mul_lt_mul_iff_right₀ (mul_pos hβ (sub_pos.2 hrs))]
   constructor <;> intro h <;> linarith
 
-/-- Theorem 1: the identity decision problem, the cell of the true world alone, ranks
-utterances as the log of the listener's posterior probability of the true world does. -/
+/-- The identity decision problem, the cell of the true world alone, ranks utterances as the log
+of the listener's posterior probability of the true world does (Theorem 1). -/
 theorem actionUtility_lt_iff_log_lt (hrs : s < r) (hβ : 0 < β) (hu : 0 < (L u).real {w})
     (hu' : 0 < (L u').real {w}) :
     actionUtility (policy β L (cellReward r s {w})) (cellReward r s {w}) u w <
@@ -249,15 +248,14 @@ section Bandit
 
 variable {K V A U : Type*} [Fintype K] [DecidableEq K] [Fintype V]
 
-/-- The reward of an action carrying the features `feat a` at a world: the sum of their values
-(10)–(11). -/
+/-- The reward of an action carrying the features `feat a` at a world is the sum of their
+values (10)–(11). -/
 def reward (val : V → ℝ) (feat : A → Finset K) (a : A) (w : K → V) : ℝ :=
   ∑ k ∈ feat a, val (w k)
 
-/-- Under the uniform prior over worlds, the ratio of the sum of a function of one feature's
-value over the worlds satisfying a condition on another feature's value to the number of such
-worlds: the conditioned feature has the conditional mean, every other feature the prior
-mean. -/
+/-- Among the worlds satisfying a condition on one feature's value, the mean of a function of
+a feature's value is the conditional mean for the conditioned feature and the prior mean for
+every other feature. -/
 theorem sum_ite_div_sum_ite (p : V → Prop) [DecidablePred p] (hp : ∃ x, p x) (f k : K)
     (g : V → ℝ) :
     (∑ w : K → V, if p (w f) then g (w k) else 0) /
@@ -298,26 +296,28 @@ theorem sum_ite_div_sum_ite (p : V → Prop) [DecidablePred p] (hp : ∃ x, p x)
 
 variable [DecidableEq V]
 
-/-- The meaning of the utterance naming a feature and a value: the worlds where the feature
-has that value. -/
+/-- The utterance naming a feature and a value is true at the worlds where the feature has that
+value. -/
 def sem (u : K × V) : Finset (K → V) := univ.filter fun w => w u.1 = u.2
 
-/-- Truth does not depend on the decision context: the meaning mentions no actions. -/
+/-- Truth does not depend on the decision context, since the meaning mentions no actions. -/
 theorem mem_sem_iff (u : K × V) (w : K → V) : w ∈ sem u ↔ w u.1 = u.2 := by simp [sem]
 
 variable [MeasurableSpace (K → V)] [DiscreteMeasurableSpace (K → V)] [Fintype U]
   [MeasurableSpace U] [DiscreteMeasurableSpace U]
 
-/-- The listener's expected reward under the uniform prior after an utterance whose meaning
-is a condition on one feature's value: the named feature contributes its conditional mean and
-every other feature its prior mean. -/
-theorem expectedReward_uniformListener_filter {S : U → Finset (K → V)} {u : U} (p : V → Prop)
+/-- After an utterance whose meaning is a condition on one feature's value, the listener at the
+uniform prior expects from an action the conditional mean of the named feature and the prior
+mean of every other feature it carries. -/
+theorem expectedReward_listener_filter {S : U → Finset (K → V)} {u : U} (p : V → Prop)
     [DecidablePred p] (hp : ∃ x, p x) (f : K) (hS : S u = univ.filter fun w => p (w f))
     (val : V → ℝ) (feat : A → Finset K) (a : A) :
-    expectedReward (uniformListener S) (reward val feat) u a =
+    expectedReward (RSA.listener (uniformOn Set.univ) (truthful fun u ↦ (S u : Set (K → V))))
+        (reward val feat) u a =
       ∑ k ∈ feat a, if k = f then (∑ x with p x, val x) / (univ.filter p).card
         else (∑ x, val x) / Fintype.card V := by
-  simp only [expectedReward, uniformListener_real_singleton, hS, mem_filter, mem_univ, true_and,
+  simp only [expectedReward, listener_uniformOn_truthful_real_singleton, hS, mem_filter, mem_univ,
+    true_and,
     reward, mul_sum]
   rw [sum_comm]
   refine sum_congr rfl fun k _ => ?_
@@ -333,7 +333,7 @@ end Bandit
 
 section Mushrooms
 
-/-- The features: three colors and three textures. -/
+/-- The features are three colors and three textures. -/
 inductive Feature
   | green | red | blue | spots | solid | stripes
   deriving DecidableEq, Fintype, Repr
@@ -349,40 +349,41 @@ def val (v : Value) : ℝ := (v : ℝ) - 2
 theorem sum_val : ∑ x : Value, val x = 0 := by
   simp [Fin.sum_univ_five, val]; norm_num
 
-/-- The world of Figure 6A: green `+2`, red `0`, blue `-2`, spots `+1`, solid `0`, stripes
+/-- The world of Figure 6A has green `+2`, red `0`, blue `-2`, spots `+1`, solid `0` and stripes
 `-1`. -/
 def world : Feature → Value
   | .green => 4 | .red => 2 | .blue => 0 | .spots => 3 | .solid => 2 | .stripes => 1
 
-/-- The context of Figure 6B: a red spotted, a red solid, and a blue striped mushroom. -/
+/-- The context of Figure 6B has a red spotted, a red solid, and a blue striped mushroom. -/
 def feat : Fin 3 → Finset Feature
   | 0 => {.red, .spots}
   | 1 => {.red, .solid}
   | 2 => {.blue, .stripes}
 
-/-- The context of footnote 12: a green, a red, and a blue spotted mushroom. -/
+/-- The context of footnote 12 has a green, a red, and a blue spotted mushroom. -/
 def featSpotted : Fin 3 → Finset Feature
   | 0 => {.green, .spots}
   | 1 => {.red, .spots}
   | 2 => {.blue, .spots}
 
 /-- The literal listener (3) at the uniform prior over worlds. -/
-noncomputable abbrev listener : Kernel (Feature × Value) (Feature → Value) := uniformListener sem
+noncomputable abbrev listener : Kernel (Feature × Value) (Feature → Value) :=
+  RSA.listener (uniformOn Set.univ) (truthful fun u ↦ (sem u : Set (Feature → Value)))
 
 /-- The prior as a listener who has heard nothing. -/
 noncomputable abbrev prior : Kernel (Feature × Value) (Feature → Value) :=
-  uniformListener fun _ => univ
+  RSA.listener (uniformOn Set.univ) (truthful fun _ ↦ ((univ : Finset (Feature → Value)) : Set _))
 
 variable (fs : Fin 3 → Finset Feature) (u : Feature × Value) (a : Fin 3) {β βS : ℝ}
 
 theorem expectedReward_listener :
     expectedReward listener (reward val fs) u a = ∑ k ∈ fs a, if k = u.1 then val u.2 else 0 := by
-  rw [expectedReward_uniformListener_filter (S := sem) (u := u) (· = u.2) ⟨u.2, rfl⟩ u.1 rfl,
+  rw [expectedReward_listener_filter (S := sem) (u := u) (· = u.2) ⟨u.2, rfl⟩ u.1 rfl,
     sum_val]
   simp [filter_eq']
 
 theorem expectedReward_prior : expectedReward prior (reward val fs) u a = 0 := by
-  rw [expectedReward_uniformListener_filter (S := fun _ => univ) (u := u) (fun _ => True)
+  rw [expectedReward_listener_filter (S := fun _ => univ) (u := u) (fun _ => True)
     ⟨u.2, trivial⟩ u.1 (filter_true_of_mem fun _ _ => trivial).symm, sum_val]
   simp
   exact fun _ => sum_val
@@ -396,7 +397,7 @@ theorem actionUtility_eq_prior_of_expectedReward {c : ℝ}
   actionUtility_policy_eq_of_expectedReward_eq_add listener (reward val fs) fun a => by
     rw [h a, expectedReward_prior, zero_add]
 
-/-- The rewards of the three mushrooms of Figure 6B at the world: `1`, `0`, `-3`. -/
+/-- The three mushrooms of Figure 6B earn `1`, `0` and `-3` at the world. -/
 theorem reward_world :
     reward val feat 0 world = 1 ∧ reward val feat 1 world = 0 ∧ reward val feat 2 world = -3 := by
   simp [reward, feat, world, val]; norm_num
@@ -419,7 +420,7 @@ theorem green_two_true_irrelevant :
   ⟨by simp [sem, world], actionUtility_eq_prior_of_expectedReward feat _ (c := 0) fun a => by
     fin_cases a <;> simp [expectedReward_listener, feat]⟩
 
-/-- Naming the zero value of red, present in the context, is true and irrelevant: a zero
+/-- Naming the zero value of red, present in the context, is true and irrelevant, since a zero
 value is the prior mean. -/
 theorem red_zero_true_irrelevant :
     world ∈ sem (.red, 2) ∧
@@ -434,8 +435,8 @@ theorem expectedReward_spots (v : Value) :
     expectedReward listener (reward val feat) (.spots, v) a = if a = 0 then val v else 0 := by
   fin_cases a <;> simp [expectedReward_listener, feat]
 
-/-- The utility of naming a value of spots: the listener's softmax share of the spotted mushroom
-earns `1`, the rest is spent on the blue striped one. -/
+/-- When a value of spots is named, the listener's softmax share of the spotted mushroom earns
+`1` and the rest is spent on the blue striped one. -/
 theorem actionUtility_spots (v : Value) :
     actionUtility (policy β listener (reward val feat)) (reward val feat) (.spots, v) world =
       (Real.exp (β * val v) - 3) / (Real.exp (β * val v) + 2) := by
@@ -448,7 +449,7 @@ theorem actionUtility_spots (v : Value) :
   field_simp
   ring
 
-/-- Naming a value of spots is relevant exactly when the value is positive: it then raises the
+/-- Naming a value of spots is relevant exactly when the value is positive, when it raises the
 listener's expected earnings above acting on the prior. -/
 theorem spots_relevant_iff (hβ : 0 < β) (v : Value) :
     actionUtility (policy β prior (reward val feat)) (reward val feat) (.spots, v) world <
@@ -496,7 +497,7 @@ theorem prefers_truth_iff (hβS : 0 < βS) (lam c : ℝ) :
     Fin.reduceEq, ite_true, ite_false]
   constructor <;> intro h <;> linarith
 
-/-- In the context of three spotted mushrooms naming any value of spots is irrelevant: it
+/-- In the context of three spotted mushrooms naming any value of spots is irrelevant, since it
 shifts every action's expected reward alike. -/
 theorem spots_irrelevant_allSpotted (v : Value) :
     actionUtility (policy β listener (reward val featSpotted)) (reward val featSpotted)
@@ -506,7 +507,7 @@ theorem spots_irrelevant_allSpotted (v : Value) :
   actionUtility_eq_prior_of_expectedReward featSpotted _ (c := val v) fun a => by
     fin_cases a <;> simp [expectedReward_listener, featSpotted]
 
-/-- In the same context naming the value of green is relevant: green is now the deciding
+/-- In the same context naming the value of green is relevant, since green is now the deciding
 feature. -/
 theorem green_relevant_allSpotted (hβ : 0 < β) :
     actionUtility (policy β prior (reward val featSpotted)) (reward val featSpotted)
