@@ -3,7 +3,6 @@ module
 public import Linglib.Data.Examples.Guerrini2026
 public import Linglib.Logic.Modal.Defs
 public import Linglib.Semantics.Genericity.NominalMappingParameter
-public import Linglib.Semantics.Plurality.Basic
 public import Linglib.Core.Data.Set.Functor
 
 /-!
@@ -54,44 +53,44 @@ formalized, since they need a trivalent `Gen` and a mood licensing substrate.
 
 namespace Guerrini2026
 
-open ModalLogic Plurality Genericity
+open ModalLogic Genericity
 open SetRel
 
 variable {Atom W : Type*} (R : SetRel W W) (k : W → Finset Atom) (P : Atom → W → Prop) {w : W}
 
 /-! ### The two parses of a generalization, section 3.2 -/
 
-/-- (29): the Bona Fide Generic parse. The kind restricts `Gen`, a universal over the worlds `R`
+/-- In the Bona Fide Generic parse (29) the kind restricts `Gen`, a universal over the worlds `R`
 accesses and the members of the kind there, so the kind's world variable stays bound. -/
 def bonaFideGeneric (w : W) : Prop := □[R] (fun v ↦ ∀ a ∈ k v, P a v) w
 
-/-- (30): Distributive Kind Predication. The kind is interpreted at the evaluation world and the
+/-- In Distributive Kind Predication (30) the kind is interpreted at the evaluation world and the
 predicate distributes over its members. -/
-abbrev distributiveKindPred [∀ a w, Decidable (P a w)] (w : W) : Prop := distMaximal P (k w) w
+abbrev distributiveKindPred (w : W) : Prop := ∀ a ∈ k w, P a w
 
-/-- (28): the generic parse is Distributive Kind Predication at every accessible world. -/
-theorem bonaFideGeneric_iff [∀ a w, Decidable (P a w)] :
+/-- The generic parse is Distributive Kind Predication at every accessible world (28). -/
+theorem bonaFideGeneric_iff :
     bonaFideGeneric R k P w ↔ ∀ v, w ~[R] v → distributiveKindPred k P v :=
   Iff.rfl
 
 /-- A law-like generalization holds of the actual members: under a reflexive accessibility the
 generic parse entails Distributive Kind Predication. -/
-theorem distributiveKindPred_of_bonaFideGeneric [∀ a w, Decidable (P a w)] [R.IsRefl]
+theorem distributiveKindPred_of_bonaFideGeneric [R.IsRefl]
     (h : bonaFideGeneric R k P w) : distributiveKindPred k P w :=
   h w (R.refl w)
 
-/-- (53): the accidental case. Distribution over the actual members says nothing about other
+/-- In the accidental case (53), distribution over the actual members says nothing about other
 worlds, so it survives an exception at an accessible world, which falsifies the generic parse. -/
 theorem not_bonaFideGeneric_of_exception {v : W} (hv : w ~[R] v) {a : Atom} (ha : a ∈ k v)
     (hp : ¬ P a v) : ¬ bonaFideGeneric R k P w :=
   fun h ↦ hp (h v hv a ha)
 
-/-- (19) and (31): the singular indefinite generic, `Gen` over the noun's property. -/
+/-- The singular indefinite generic, (19) and (31), is `Gen` over the noun's property. -/
 def singularIndefiniteGeneric (N : Atom → W → Prop) (w : W) : Prop :=
   □[R] (fun v ↦ ∀ a, N a v → P a v) w
 
-/-- (28a): the generic parse of a kind-denoting plural is the singular indefinite generic over
-membership in the kind, which is why the two have very similar meanings. -/
+/-- The generic parse of a kind-denoting plural is the singular indefinite generic over
+membership in the kind (28a), which is why the two have very similar meanings. -/
 theorem bonaFideGeneric_iff_singularIndefiniteGeneric :
     bonaFideGeneric R k P w ↔ singularIndefiniteGeneric R P (fun a v ↦ a ∈ k v) w :=
   Iff.rfl
@@ -100,17 +99,17 @@ theorem bonaFideGeneric_iff_singularIndefiniteGeneric :
 
 variable {Loc : Type*} (S : Atom → Loc → Prop) (locs : Finset Loc)
 
-/-- (74b): Cumulative Kind Predication, [beck-sauerland-2000]'s cumulative operator relating
-the kind's sum at the evaluation world to the locations. -/
+/-- Cumulative Kind Predication (74b) relates the kind's sum at the evaluation world to the
+locations by [beck-sauerland-2000]'s cumulative operator. -/
 abbrev cumulativeKindPred (w : W) : Prop := Set.LiftRel S ↑(k w) ↑locs
 
-/-- (74c): the cumulative operator below `Gen`, which then ranges over the sub-pluralities of the
-kind: every nonempty sample of the kind at every accessible world relates cumulatively to the
+/-- With the cumulative operator below `Gen` (74c), `Gen` ranges over the sub-pluralities of the
+kind, so every nonempty sample of the kind at every accessible world relates cumulatively to the
 locations. -/
 def cumulativeBelowGen (w : W) : Prop :=
   □[R] (fun v ↦ ∀ X ⊆ k v, X.Nonempty → Set.LiftRel S ↑X ↑locs) w
 
-/-- (74c) is the strong reading: taken at a singleton sample, it makes every member of the kind
+/-- (74c) is the strong reading. Taken at a singleton sample, it makes every member of the kind
 relate to every location, so it is false of elephants and Africa and Asia. -/
 theorem forall_of_cumulativeBelowGen [R.IsRefl] (h : cumulativeBelowGen R k S locs w)
     {a : Atom} (ha : a ∈ k w) {l : Loc} (hl : l ∈ locs) : S a l := by
@@ -125,13 +124,13 @@ theorem cumulativeKindPred_of_cumulativeBelowGen [R.IsRefl] (hne : (k w).Nonempt
 
 /-! ### Derived Property Predication, section 5.3 -/
 
-/-- (105b): Derived Property Predication, the low-scoped existential over a property. -/
+/-- Derived Property Predication (105b) is the low-scoped existential over a property. -/
 def dpp (N : Atom → W → Prop) (w : W) : Prop := ∃ a, N a w ∧ P a w
 
-/-- (105): the near-universal reading of an episodic bare plural is Distributive Kind
-Predication and the existential one Derived Property Predication over the same noun; the first
-entails the second once the kind has members. -/
-theorem dpp_of_distributiveKindPred [∀ a w, Decidable (P a w)] (hne : (k w).Nonempty)
+/-- The near-universal reading of an episodic bare plural is Distributive Kind Predication and
+the existential one Derived Property Predication over the same noun (105); the first entails the
+second once the kind has members. -/
+theorem dpp_of_distributiveKindPred (hne : (k w).Nonempty)
     (h : distributiveKindPred k P w) : dpp P (fun a v ↦ a ∈ k v) w :=
   let ⟨a, ha⟩ := hne
   ⟨a, ha, h a ha⟩
@@ -148,13 +147,14 @@ inductive Nominal
 
 namespace Nominal
 
-/-- (146): [chierchia-1998]'s Nominal Mapping Parameter. English nouns can be kinds or
-properties, Italian nouns are properties. -/
+/-- Under [chierchia-1998]'s Nominal Mapping Parameter (146), English nouns can be kinds or
+properties and Italian nouns are properties. -/
 def mapping : Nominal → NominalMapping
   | .italianDefinitePlural | .italianBarePlural => .predOnly
   | _ => .argAndPred
 
-/-- (13): whether the definite article, Italian's kind-forming operator, is present. -/
+/-- A nominal is definite when it carries the definite article, Italian's kind-forming operator
+(13). -/
 def definite : Nominal → Bool
   | .italianDefinitePlural => true
   | _ => false
@@ -164,13 +164,13 @@ def number : Nominal → Number
   | .singularIndefinite => .singular
   | _ => .plural
 
-/-- (10a) and (16): the expression denotes a kind when the parameter or the article makes kind
-formation available and the noun is plural. -/
+/-- The expression denotes a kind when the parameter or the article makes kind formation
+available and the noun is plural, (10a) and (16). -/
 def CanDenoteKind (n : Nominal) : Prop :=
   n.mapping.CanDenoteKind (n.definite = true) ∧ n.number = .plural
 
-/-- (145): the expression denotes a property when the parameter allows it and no article has
-formed a kind. -/
+/-- The expression denotes a property when the parameter allows it and no article has formed a
+kind (145). -/
 def CanDenoteProperty (n : Nominal) : Prop :=
   n.mapping.CanDenoteProperty ∧ n.definite = false
 
@@ -187,8 +187,8 @@ inductive Parse
   | dpp
   deriving DecidableEq
 
-/-- (10): `DIST` and the cumulative operator apply to a sum, so need a kind; the existential of
-Derived Property Predication needs a property; `Gen` takes either. -/
+/-- `DIST` and the cumulative operator apply to a sum and so need a kind, the existential of
+Derived Property Predication needs a property, and `Gen` takes either (10). -/
 def Parse.Available (n : Nominal) : Parse → Prop
   | .gen => n.CanDenoteKind ∨ n.CanDenoteProperty
   | .dist | .cumul => n.CanDenoteKind
@@ -197,7 +197,7 @@ def Parse.Available (n : Nominal) : Parse → Prop
 instance (n : Nominal) : DecidablePred (Parse.Available n) := fun p ↦ by
   cases p <;> unfold Parse.Available <;> infer_instance
 
-/-- (145), Table 1, and Table 2: the English bare plural has all four parses, the Italian
+/-- By (145) and Tables 1 and 2, the English bare plural has all four parses, the Italian
 definite plural the three kind parses, and the Italian bare plural and the singular indefinite,
 which cannot denote a kind, only `Gen` and the existential, so no accidental or cumulative
 generalization. -/
