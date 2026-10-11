@@ -224,6 +224,22 @@ theorem comp_real_mul_listener_real (u : U) (w : W) :
     rw [h, ENNReal.toReal_zero, zero_mul, ← ENNReal.toReal_mul, h0, ENNReal.toReal_zero]
   · rw [← ENNReal.toReal_mul, ENNReal.mul_div_cancel h (measure_ne_top _ _), ENNReal.toReal_mul]
 
+/-- The listener prefers the state with the greater prior mass times production probability, at
+every utterance, heard or not. -/
+theorem listener_real_singleton_lt_iff (u : U) (w₁ w₂ : W) :
+    (listener μ κ u).real {w₁} < (listener μ κ u).real {w₂} ↔
+      μ.real {w₁} * (κ w₁).real {u} < μ.real {w₂} * (κ w₂).real {u} := by
+  rw [← comp_real_mul_listener_real μ κ u w₁, ← comp_real_mul_listener_real μ κ u w₂]
+  rcases (measureReal_nonneg (μ := κ ∘ₘ μ) (s := {u})).eq_or_lt with h | h
+  · have h0 (w : W) : (listener μ κ u).real {w} = 0 := by
+      have hu : (κ ∘ₘ μ) {u} = 0 := (measureReal_eq_zero_iff (measure_ne_top _ _)).1 h.symm
+      rw [Measure.comp_apply_singleton] at hu
+      rw [measureReal_def, listener_apply_singleton_eq_div,
+        Finset.sum_eq_zero_iff.1 hu w (Finset.mem_univ w), ENNReal.zero_div,
+        ENNReal.toReal_zero]
+    rw [h0, h0, ← h, zero_mul]
+  · exact (mul_lt_mul_iff_right₀ h).symm
+
 /-- At a heard utterance the listener is the posterior, by Bayes' rule. -/
 theorem listener_apply_eq_posterior [StandardBorelSpace W] [Nonempty W] {u : U}
     (hu : (κ ∘ₘ μ) {u} ≠ 0) : listener μ κ u = (κ†μ) u :=
