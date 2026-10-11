@@ -2,6 +2,7 @@ module
 
 public import Linglib.Semantics.Exhaustification.InnocentInclusion
 public import Mathlib.Data.Finset.Card
+public import Mathlib.Order.SupClosed
 
 /-!
 # Exhaustifying a disjunction whose alternatives are its sub-disjunctions
@@ -15,7 +16,8 @@ conjunction of the disjuncts; with only the disjunctions over subsets of size `m
 at least `|I| + 1 - m` disjuncts hold. This is the generalization behind free choice without
 a conjunctive alternative and behind the implicature account of homogeneity, where the
 disjuncts are the atoms of a plurality and pruning to the size-`m` alternatives gives the
-non-maximal readings.
+non-maximal readings. The sub-disjunctions are the `supClosure` of the disjuncts, and all of
+them are innocently includable.
 
 ## References
 
@@ -71,6 +73,21 @@ theorem subDisjsOfCard_subset_subDisjs (hI : I.Nonempty) {m : ℕ} (hm : 0 < m) 
   · exact ⟨I, le_rfl, hI, rfl⟩
   · exact ⟨S, hS, Finset.card_pos.1 (hcard ▸ hm), rfl⟩
 
+theorem supClosed_subDisjs : SupClosed (subDisjs I p) := by
+  classical
+  rintro _ ⟨S, hS, hSne, rfl⟩ _ ⟨T, hT, -, rfl⟩
+  exact ⟨S ∪ T, Finset.union_subset hS hT, hSne.mono Finset.subset_union_left, by
+    ext; simp [subDisj, or_and_right, exists_or]⟩
+
+/-- The sub-disjunctions are the joins of nonempty sets of disjuncts. -/
+theorem subDisjs_eq_supClosure : subDisjs I p = supClosure (p '' I) := by
+  refine Set.Subset.antisymm ?_ (supClosure_min ?_ supClosed_subDisjs)
+  · rintro _ ⟨S, hS, hne, rfl⟩
+    rw [subDisj, ← Finset.sup_set_eq_biUnion, ← Finset.sup'_eq_sup hne]
+    exact finsetSup'_mem_supClosure hne fun i hi ↦ Set.mem_image_of_mem _ (hS hi)
+  · rintro _ ⟨i, hi, rfl⟩
+    exact ⟨{i}, by simpa, by simp, by simp⟩
+
 section Family
 
 variable {A : Set (Set World)}
@@ -122,6 +139,13 @@ theorem cell_nonempty_of_subDisjs (hI : I.Nonempty) (hall : ∃ w, ∀ i ∈ I, 
     fun r ⟨hr, _⟩ ↦ ?_⟩
   obtain ⟨S, hS, ⟨j, hj⟩, rfl⟩ := hA hr
   exact mem_subDisj.2 ⟨j, hj, hw j (hS hj)⟩
+
+/-- Every alternative is innocently includable. -/
+theorem II_eq_self_of_subDisjs (hI : I.Nonempty) (hall : ∃ w, ∀ i ∈ I, w ∈ p i) :
+    II A (disj I p) = A := by
+  rw [II_eq_nonExcludable_of_cell_nonempty _ _ (cell_nonempty_of_subDisjs hA hsplit hsep hI hall)]
+  ext q
+  exact and_iff_left (not_isInnocentlyExcludable_of_subDisjs hA hsplit hsep q)
 
 /-- Exhaustification asserts the disjunction and every alternative. -/
 theorem exhIEII_eq_sInter_of_subDisjs (hI : I.Nonempty) (hall : ∃ w, ∀ i ∈ I, w ∈ p i) :
