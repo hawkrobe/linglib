@@ -370,21 +370,6 @@ theorem speaker_uniformListener_apply_eq_uniformSpeaker (hα : 0 < α)
 
 end Belief
 
-section Observation
-
-variable [MeasurableSpace O] [MeasurableSingletonClass O] (obs : C → O)
-
-/-- A state truly described by an `o`-shaped choice witnesses a positive observation
-marginal. -/
-theorem map_comp_uniformSpeaker_ne_zero {α : ℝ} (hα : 0 ≤ α) {t : T} {c : C} {o : O}
-    (hc : obs c = o) (hmem : t ∈ sem c) :
-    ((uniformSpeaker sem α ∘ₘ uniformOn Set.univ).map obs) {o} ≠ 0 :=
-  map_comp_speaker_ne_zero α 0 (uniformListener sem) _ obs
-    (by rw [uniformOn_univ, Measure.count_singleton]; simp) hc
-    (uniformSpeaker_apply_singleton_ne_zero sem hα hmem)
-
-end Observation
-
 variable [DecidableEq O] (obs : C → O)
 
 theorem sum_rpow_uniformListener {α : ℝ} (hα : 0 < α) (t : T) :
@@ -587,12 +572,12 @@ variable [MeasurableSpace O] [MeasurableSingletonClass O]
 
 section Joint
 
-variable [Nonempty C] [Nonempty T]
+variable [Countable O]
 
-/-- The joint listener at a uniform prior (eqs. 18b and 21b) is the pragmatic listener of
-`uniformSpeaker`, hearing the form of the speaker's choice. -/
+/-- The joint listener at a uniform prior (eqs. 18b and 21b) hears the form of the choice of
+`uniformSpeaker` and infers the state and the choice, her prior their joint. -/
 noncomputable abbrev uniformJointListener (α : ℝ) : Kernel O (T × C) :=
-  jointListener α 0 (uniformListener sem) (uniformOn Set.univ) obs
+  listener (uniformOn Set.univ ⊗ₘ uniformSpeaker sem α) fun p ↦ Measure.dirac (obs p.2)
 
 private theorem sum_div_lt_sum_div_iff {ι : Type*} [Fintype ι] [DecidableEq ι] {a b z : ι → ℝ}
     (hz : ∀ i, 0 < z i) :
@@ -620,11 +605,8 @@ theorem uniformJointListener_snd_real_lt_of_divPowSum (hsem : ∀ t, ∃ c, t �
       < (uniformJointListener sem obs k o).snd.real {c₂} := by
   rw [pooledDivPowSum_eq_sum, pooledDivPowSum_eq_sum] at hlt
   have hα : (0 : ℝ) < k := Nat.cast_pos.mpr (Nat.pos_of_ne_zero (NeZero.ne k))
-  obtain ⟨t₀, -, ht₀⟩ := Finset.exists_ne_zero_of_sum_ne_zero
+  obtain ⟨t₀, -, -⟩ := Finset.exists_ne_zero_of_sum_ne_zero
     (Nat.pos_iff_ne_zero.mp (lt_of_le_of_lt (Nat.zero_le _) hlt))
-  have hmem₀ : t₀ ∈ sem c₂ := by
-    by_contra h
-    exact ht₀ (ite_eq_right h)
   have hprior : ∀ c : C,
       (∑ t : T, (uniformOn (Set.univ : Set T)).real {t} * (uniformSpeaker sem k t).real {c})
       = (uniformOn (Set.univ : Set T)).real {t₀} * ∑ t : T,
@@ -635,8 +617,7 @@ theorem uniformJointListener_snd_real_lt_of_divPowSum (hsem : ∀ t, ∃ c, t �
     refine Finset.sum_congr rfl fun t _ => ?_
     rw [uniformOn_univ_real_singleton_eq t t₀,
       uniformSpeaker_real_singleton_divPowSum sem (hdvd t)]
-  rw [uniformJointListener, jointListener_snd_real_lt_iff _ _ _ _ _
-      (map_comp_uniformSpeaker_ne_zero sem obs hα.le h₂ hmem₀) h₁ h₂, hprior, hprior,
+  rw [uniformJointListener, listener_compProd_dirac_snd_real_lt_iff _ _ _ h₁ h₂, hprior, hprior,
     mul_lt_mul_iff_right₀ (show (0 : ℝ) < (uniformOn (Set.univ : Set T)).real {t₀} from
       ENNReal.toReal_pos (by rw [uniformOn_univ, Measure.count_singleton]; simp)
         (measure_ne_top _ _)),
@@ -648,13 +629,12 @@ theorem uniformJointListener_snd_real_lt_of_divPowSum (hsem : ∀ t, ∃ c, t �
 /-- On reals, listener preference reduces to the cross-multiplied profile comparison, since
 the observation marginal and the shared prior cancel. Both registers' closers enter here. -/
 theorem uniformJointListener_fst_real_lt_iff_invPowSum (hsem : ∀ t, ∃ c, t ∈ sem c) {α : ℝ}
-    (hα : 0 < α) {o : O} {t₁ t₂ : T} (h₂ : ∃ c, obs c = o ∧ t₂ ∈ sem c) :
+    (hα : 0 < α) {o : O} {t₁ t₂ : T} :
     ((uniformJointListener sem obs α o).fst.real {t₁}
         < (uniformJointListener sem obs α o).fst.real {t₂})
       ↔ ((fiberProfile sem obs o t₁).invPowSum α).toReal * ((profile sem t₂).invPowSum α).toReal
         < ((fiberProfile sem obs o t₂).invPowSum α).toReal
             * ((profile sem t₁).invPowSum α).toReal := by
-  obtain ⟨c₂, hc₂, hmem⟩ := h₂
   have hWne : ∀ t, (fiberProfile sem obs o t).invPowSum α ≠ ∞ := fun t =>
     Multiset.invPowSum_ne_top hα.le (zero_notMem_fiberProfile sem obs o t)
   have hZ0 : ∀ t, (profile sem t).invPowSum α ≠ 0 := fun t =>
@@ -676,9 +656,7 @@ theorem uniformJointListener_fst_real_lt_iff_invPowSum (hsem : ∀ t, ∃ c, t �
             ENNReal.toReal_sum fun c _ => measure_ne_top _ _]
           simp_rw [measureReal_def],
         ENNReal.toReal_mul]
-  rw [uniformJointListener, jointListener_fst_real_lt_iff _ _ _ _ _
-      (map_comp_uniformSpeaker_ne_zero sem obs hα.le hc₂ hmem),
-    key, key, show (uniformOn (Set.univ : Set T)) {t₁} = uniformOn Set.univ {t₂} from by
+  rw [uniformJointListener, listener_compProd_dirac_fst_real_lt_iff, key, key, show (uniformOn (Set.univ : Set T)) {t₁} = uniformOn Set.univ {t₂} from by
       rw [uniformOn_univ, uniformOn_univ, Measure.count_singleton, Measure.count_singleton],
     ENNReal.toReal_lt_toReal
       (ENNReal.mul_ne_top (measure_ne_top _ _) (ENNReal.div_ne_top (hWne t₁) (hZ0 t₁)))
@@ -701,9 +679,7 @@ theorem uniformJointListener_fst_real_lt_of_prodMul_strictDominates
       ((fiberProfile sem obs o t₁).prodMul (restProfile sem obs o t₂))) :
     (uniformJointListener sem obs α o).fst.real {t₁}
       < (uniformJointListener sem obs α o).fst.real {t₂} :=
-  (uniformJointListener_fst_real_lt_iff_invPowSum sem obs hsem hα
-      (exists_of_fiberProfile_ne_zero sem obs fun h =>
-        hcert.ne_zero (Multiset.prodMul_eq_zero_iff.mpr (Or.inl h)))).mpr
+  (uniformJointListener_fst_real_lt_iff_invPowSum sem obs hsem hα).mpr
     (invPowSum_odds_lt_of_prodMul_strictDominates sem obs hα hcert)
 
 /-- At a natural rationality, with all profile entries dividing `D`, listener preference is
@@ -719,11 +695,7 @@ theorem uniformJointListener_fst_real_lt_of_divPowSum (hsem : ∀ t, ∃ c, t �
   have hα : (0 : ℝ) < k := Nat.cast_pos.mpr (Nat.pos_of_ne_zero (NeZero.ne k))
   have hfsub : ∀ t, ∀ n ∈ fiberProfile sem obs o t, n ∈ profile sem t := fun t n hn =>
     profile_eq_fiberProfile_add_restProfile sem obs o t ▸ Multiset.mem_add.mpr (Or.inl hn)
-  have h₂ : fiberProfile sem obs o t₂ ≠ 0 :=
-    Multiset.ne_zero_of_divPowSum_ne_zero
-      (Nat.mul_ne_zero_iff.mp (Nat.pos_iff_ne_zero.mp (lt_of_le_of_lt (Nat.zero_le _) hlt))).1
-  rw [uniformJointListener_fst_real_lt_iff_invPowSum sem obs hsem hα
-    (exists_of_fiberProfile_ne_zero sem obs h₂)]
+  rw [uniformJointListener_fst_real_lt_iff_invPowSum sem obs hsem hα]
   have key : ∀ (m₁ m₂ : Multiset ℕ), (∀ n ∈ m₁, n ∣ D) → (∀ n ∈ m₂, n ∣ D) →
       (m₁.invPowSum k).toReal * (m₂.invPowSum k).toReal
         = (m₁.divPowSum D k * m₂.divPowSum D k : ℕ) / ((D : ℝ) ^ k) ^ 2 := by
