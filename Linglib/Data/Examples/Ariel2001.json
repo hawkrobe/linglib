@@ -136,7 +136,8 @@
       ["marker", "fullName"],
       ["marker", "zero"]
     ],
-    "comment": "Haaretz, 14 July 1998, headline; the paper prints its English rendering. Markers in order: Arafat, Kadafi, Jerusalem, zero (the paper prints 0)."
+    "comment": "Haaretz, 14 July 1998, headline; the paper prints its English rendering. Markers in order: Arafat, Kadafi, Jerusalem, zero (the paper prints 0).",
+    "verified": "page-image"
   },
   {
     "id": "ariel2001_8b",
