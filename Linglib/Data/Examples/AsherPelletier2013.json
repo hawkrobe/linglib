@@ -15,7 +15,8 @@
     "paperFeatures": [
       ["type", "characterizing"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "asherpelletier2013_4a",
@@ -34,7 +35,8 @@
       ["type", "characterizing"],
       ["problem", "restricted subkind"]
     ],
-    "comment": "Repeated as (32a)."
+    "comment": "Repeated as (32a).",
+    "verified": "page-image"
   },
   {
     "id": "asherpelletier2013_4b",
@@ -53,7 +55,8 @@
       ["type", "characterizing"],
       ["problem", "restricted subkind"]
     ],
-    "comment": "Repeated as (32b)."
+    "comment": "Repeated as (32b).",
+    "verified": "page-image"
   },
   {
     "id": "asherpelletier2013_5",
@@ -72,7 +75,8 @@
       ["type", "characterizing"],
       ["problem", "weak existential"]
     ],
-    "comment": "Repeated as (43b)."
+    "comment": "Repeated as (43b).",
+    "verified": "page-image"
   },
   {
     "id": "asherpelletier2013_6a",
@@ -90,7 +94,8 @@
     "paperFeatures": [
       ["type", "characterizing"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "asherpelletier2013_6b",
@@ -109,7 +114,8 @@
       ["type", "characterizing"],
       ["problem", "no actual instances"]
     ],
-    "comment": "Repeated as (13a)."
+    "comment": "Repeated as (13a).",
+    "verified": "page-image"
   },
   {
     "id": "asherpelletier2013_7",
@@ -127,7 +133,8 @@
     "paperFeatures": [
       ["type", "characterizing"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "asherpelletier2013_8",
@@ -145,7 +152,8 @@
     "paperFeatures": [
       ["type", "characterizing"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "asherpelletier2013_9",
@@ -166,7 +174,8 @@
     "paperFeatures": [
       ["type", "characterizing"]
     ],
-    "comment": "True under the teleological construal of normality, false under the statistical one."
+    "comment": "True under the teleological construal of normality, false under the statistical one.",
+    "verified": "page-image"
   },
   {
     "id": "asherpelletier2013_10",
@@ -184,7 +193,8 @@
     "paperFeatures": [
       ["type", "generic comparison"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "asherpelletier2013_13b",
@@ -203,7 +213,8 @@
       ["type", "characterizing"],
       ["problem", "no actual instances"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "asherpelletier2013_14a",
@@ -222,7 +233,8 @@
       ["type", "embedded generic"],
       ["embedding", "antecedent"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "asherpelletier2013_14b",
@@ -241,7 +253,8 @@
       ["type", "embedded generic"],
       ["embedding", "consequent"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "asherpelletier2013_15a",
@@ -259,7 +272,8 @@
     "paperFeatures": [
       ["type", "kind predication"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "asherpelletier2013_15b",
@@ -277,7 +291,8 @@
     "paperFeatures": [
       ["type", "kind predication"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "asherpelletier2013_16",
@@ -296,7 +311,8 @@
       ["type", "copredication"],
       ["aspects", "individual, kind"]
     ],
-    "comment": "Repeated as (39a)."
+    "comment": "Repeated as (39a).",
+    "verified": "page-image"
   },
   {
     "id": "asherpelletier2013_17a",
@@ -317,7 +333,8 @@
     "paperFeatures": [
       ["type", "characterizing"]
     ],
-    "comment": "The existential reading is prominent with prosodic stress on typhoons; the logical forms are (18b) and (19b)."
+    "comment": "The existential reading is prominent with prosodic stress on typhoons; the logical forms are (18b) and (19b).",
+    "verified": "page-image"
   },
   {
     "id": "asherpelletier2013_17b",
@@ -338,7 +355,8 @@
       ["type", "existential"],
       ["restrictor", "tautologous"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "asherpelletier2013_20a",
@@ -357,7 +375,8 @@
       ["type", "characterizing"],
       ["focus", "beer"]
     ],
-    "comment": "Logical form (20b): if John drinks something, it is normally beer."
+    "comment": "Logical form (20b): if John drinks something, it is normally beer.",
+    "verified": "page-image"
   },
   {
     "id": "asherpelletier2013_20c",
@@ -376,7 +395,8 @@
       ["type", "characterizing"],
       ["focus", "drinks"]
     ],
-    "comment": "Logical form (20d): if John does something with beer, it is normally drinking it."
+    "comment": "Logical form (20d): if John does something with beer, it is normally drinking it.",
+    "verified": "page-image"
   },
   {
     "id": "asherpelletier2013_20e",
@@ -395,7 +415,8 @@
       ["type", "characterizing"],
       ["focus", "drinks beer"]
     ],
-    "comment": "Logical form (20f): if John has a relevant alternative property, it is normally drinking beer."
+    "comment": "Logical form (20f): if John has a relevant alternative property, it is normally drinking beer.",
+    "verified": "page-image"
   },
   {
     "id": "asherpelletier2013_23",
@@ -413,7 +434,8 @@
     "paperFeatures": [
       ["type", "adverb of quantification"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "asherpelletier2013_24",
@@ -434,7 +456,8 @@
     "paperFeatures": [
       ["type", "adverb of quantification"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "asherpelletier2013_25a",
@@ -456,7 +479,8 @@
       ["type", "characterizing"],
       ["focus", "poisonous"]
     ],
-    "comment": "Logical form (26a)."
+    "comment": "Logical form (26a).",
+    "verified": "page-image"
   },
   {
     "id": "asherpelletier2013_25b",
@@ -478,7 +502,8 @@
       ["type", "characterizing"],
       ["focus", "Australian, South American"]
     ],
-    "comment": "Logical form (26b)."
+    "comment": "Logical form (26b).",
+    "verified": "page-image"
   },
   {
     "id": "asherpelletier2013_28",
@@ -498,7 +523,8 @@
       ["focus", "Australian, Asian"],
       ["discourse", "parallelism"]
     ],
-    "comment": "Logical form (29)."
+    "comment": "Logical form (29).",
+    "verified": "page-image"
   },
   {
     "id": "asherpelletier2013_30a",
@@ -517,7 +543,8 @@
       ["type", "characterizing"],
       ["focus", "Frenchmen"]
     ],
-    "comment": "Logical form (30b): a horsemeat eater is normally French."
+    "comment": "Logical form (30b): a horsemeat eater is normally French.",
+    "verified": "page-image"
   },
   {
     "id": "asherpelletier2013_31",
@@ -539,7 +566,8 @@
       ["type", "characterizing"],
       ["focus", "French, horsemeat"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "asherpelletier2013_33a",
@@ -558,7 +586,8 @@
       ["type", "characterizing"],
       ["accommodated", "restrictor"]
     ],
-    "comment": "Repeated as (37)."
+    "comment": "Repeated as (37).",
+    "verified": "page-image"
   },
   {
     "id": "asherpelletier2013_33b",
@@ -577,7 +606,8 @@
       ["type", "characterizing"],
       ["accommodated", "restrictor"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "asherpelletier2013_34",
@@ -596,7 +626,8 @@
       ["type", "characterizing"],
       ["verdict", "false"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "asherpelletier2013_36",
@@ -619,7 +650,8 @@
       ["type", "characterizing"],
       ["discourse", "Elaboration"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "asherpelletier2013_38",
@@ -641,7 +673,8 @@
       ["type", "characterizing"],
       ["discourse", "Correction"]
     ],
-    "comment": "B's male and female carry the contrastive-topic contour."
+    "comment": "B's male and female carry the contrastive-topic contour.",
+    "verified": "page-image"
   },
   {
     "id": "asherpelletier2013_39b",
@@ -660,7 +693,8 @@
       ["type", "copredication"],
       ["aspects", "kind, individual"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "asherpelletier2013_40a",
@@ -679,7 +713,8 @@
       ["type", "copredication"],
       ["aspects", "disjoint subkinds"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "asherpelletier2013_40b",
@@ -698,7 +733,8 @@
       ["type", "copredication"],
       ["aspects", "disjoint subkinds"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "asherpelletier2013_40c",
@@ -717,7 +753,8 @@
       ["type", "copredication"],
       ["aspects", "disjoint subkinds"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "asherpelletier2013_40d",
@@ -736,7 +773,8 @@
       ["type", "copredication"],
       ["aspects", "disjoint subkinds"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "asherpelletier2013_40e",
@@ -758,7 +796,8 @@
       ["type", "copredication"],
       ["aspects", "disjoint subkinds"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "asherpelletier2013_41",
@@ -780,7 +819,8 @@
       ["type", "characterizing"],
       ["problem", "weak existential"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "asherpelletier2013_42a",
@@ -800,7 +840,8 @@
       ["verdict", "false"],
       ["relativeAccount", "true"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "asherpelletier2013_42b",
@@ -811,7 +852,7 @@
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
-    "context": "There are only 50 governors and one is a bodybuilder, a much larger percentage than planet-wide.",
+    "context": "There are only 50 governors and Schwarzenegger is a body builder; this is a much larger percentage of bodybuilders than the percentage of bodybuilders planet-wide.",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
@@ -820,7 +861,8 @@
       ["verdict", "false"],
       ["relativeAccount", "true"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "asherpelletier2013_42c",
@@ -831,7 +873,7 @@
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
-    "context": "There are 1000 philosophers, one or two of whom do sport, while the vast majority of the planet's inhabitants do none.",
+    "context": "Supposing that there are 1000 philosophers and 1 or 2 manage to leave their armchairs to go do sport, whereas the vast majority of the 6 billion inhabitants of the planet are just couch potatoes or too poor to be able to afford to do sports.",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
@@ -840,7 +882,8 @@
       ["verdict", "false"],
       ["relativeAccount", "true"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "asherpelletier2013_43a",
@@ -859,7 +902,8 @@
       ["type", "characterizing"],
       ["genericity", "events"]
     ],
-    "comment": "Logical form (44a)."
+    "comment": "Logical form (44a).",
+    "verified": "page-image"
   },
   {
     "id": "asherpelletier2013_43c",
@@ -878,7 +922,8 @@
       ["type", "characterizing"],
       ["genericity", "individuals, events"]
     ],
-    "comment": "Logical form (44c)."
+    "comment": "Logical form (44c).",
+    "verified": "page-image"
   },
   {
     "id": "asherpelletier2013_45",
@@ -897,7 +942,8 @@
       ["type", "characterizing"],
       ["genericity", "individuals, circumstances"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "asherpelletier2013_46a",
@@ -917,7 +963,8 @@
     "paperFeatures": [
       ["type", "focus-sensitive adverb"]
     ],
-    "comment": "From Sterken 2009; the authors hear an existential quantification over kinds."
+    "comment": "From Sterken 2009; the authors hear an existential quantification over kinds.",
+    "verified": "page-image"
   },
   {
     "id": "asherpelletier2013_46b",
@@ -936,7 +983,8 @@
       ["type", "focus-sensitive adverb"],
       ["verdict", "false"]
     ],
-    "comment": "From Sterken 2009; false unless discourse restricts the alternatives."
+    "comment": "From Sterken 2009; false unless discourse restricts the alternatives.",
+    "verified": "page-image"
   },
   {
     "id": "asherpelletier2013_46c",
@@ -957,6 +1005,7 @@
     "paperFeatures": [
       ["type", "focus-sensitive adverb"]
     ],
-    "comment": "From Sterken 2009; the alternatives are (48a) and (48b)."
+    "comment": "From Sterken 2009; the alternatives are (48a) and (48b). The paper marks no example; its prose judgment: \"(46c) on the other hand strikes us as pretty bad, although it is much improved with a modal such as can inserted, or in a past tense.\"",
+    "verified": "page-image"
   }
 ]

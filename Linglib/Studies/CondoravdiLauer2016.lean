@@ -8,15 +8,15 @@ public import Mathlib.Tactic.FinCases
 /-!
 # Condoravdi and Lauer 2016: anankastic conditionals are just conditionals
 
-[condoravdi-lauer-2016] argue that *If you want to go to Harlem, you have to take the A train* is
-a regular hypothetical indicative conditional: the problem [saebo-2001] found, that the antecedent
-goal must enter the ordering of the modal, and the one [von-fintel-iatridou-2005] and
-[vonstechow-krasikova-penka-2006] added, that conflicting actual goals must not, are both resolved
+Condoravdi and Lauer argue that *If you want to go to Harlem, you have to take the A train* is
+a regular hypothetical indicative conditional: the problem Sæbø found, that the antecedent
+goal must enter the ordering of the modal, and the one von Fintel and Iatridou and
+von Stechow, Krasikova and Penka added, that conflicting actual goals must not, are both resolved
 by the lexical meanings involved once *want* reports an action-relevant preference. On that
 reading *want* says its complement is a maximal element of the agent's effective preference
 structure, a strict partial order on propositions that is consistent with the agent's beliefs, so
 hypothesizing a preference for Harlem hypothesizes the absence of every preference the agent knows
-to be incompatible with it. The conditional has the double-modal structure of [frank-1996], a
+to be incompatible with it. The conditional has the double-modal structure of Frank, a
 covert necessity over the speaker's beliefs, ordered by stereotypicality and restricted by the
 antecedent, with the priority modal over the historical alternatives in its scope, whose ordering
 source at each world is the agent's maximal effective preferences there. The same setting covers
@@ -28,7 +28,7 @@ cases.
 ## Implementation notes
 
 The priority modal is evaluated with `PreferenceStructure.best`, the optimal worlds under the
-preorder the maximal preferences induce, [kratzer-1981]'s ordering-source construction over a
+preorder the maximal preferences induce, Kratzer's ordering-source construction over a
 set of propositions rather than a list; the covert modal is
 `Conditional.Restrictor.conditionalNecessity`. The sufficient condition for (88) quantifies
 over every antecedent world of the speaker's beliefs rather than the typical ones and assumes
@@ -459,7 +459,7 @@ structure are jointly compatible with the agent's beliefs,
 `PreferenceStructure.Consistent.inter_inter_nonempty_of_mem_maxElts`. -/
 theorem incompatible_rows : ∀ row ∈ Examples.all,
     row.feature? "construction" = some "incompatibleWants" →
-    ∃ r ∈ WantReading.ofRow row, (row.judgment = .acceptable ↔ r = .mere) := by
+    ∃ r ∈ WantReading.ofRow row, (row.JudgedFelicitous ↔ r = .mere) := by
   decide
 
 /-- The mood of a conditional whose antecedent the speaker has just excluded. -/

@@ -18,7 +18,8 @@
       ["class", "adjective"],
       ["bounded", "yes"]
     ],
-    "comment": "The scale ⟨cheap, free⟩; the stronger term denotes the end point of the dimension."
+    "comment": "The scale ⟨cheap, free⟩; the stronger term denotes the end point of the dimension.",
+    "verified": "page-image"
   },
   {
     "id": "vantieletal2016_sometimes_always",
@@ -39,7 +40,8 @@
       ["class", "adverb"],
       ["bounded", "yes"]
     ],
-    "comment": "The scale ⟨sometimes, always⟩; the stronger term denotes the end point of the dimension."
+    "comment": "The scale ⟨sometimes, always⟩; the stronger term denotes the end point of the dimension.",
+    "verified": "page-image"
   },
   {
     "id": "vantieletal2016_some_all",
@@ -60,7 +62,8 @@
       ["class", "quantifier"],
       ["bounded", "yes"]
     ],
-    "comment": "The scale ⟨some, all⟩; the stronger term denotes the end point of the dimension."
+    "comment": "The scale ⟨some, all⟩; the stronger term denotes the end point of the dimension.",
+    "verified": "page-image"
   },
   {
     "id": "vantieletal2016_possible_certain",
@@ -81,7 +84,8 @@
       ["class", "adjective"],
       ["bounded", "yes"]
     ],
-    "comment": "The scale ⟨possible, certain⟩; the stronger term denotes the end point of the dimension."
+    "comment": "The scale ⟨possible, certain⟩; the stronger term denotes the end point of the dimension.",
+    "verified": "page-image"
   },
   {
     "id": "vantieletal2016_may_will",
@@ -102,7 +106,8 @@
       ["class", "auxiliary verb"],
       ["bounded", "yes"]
     ],
-    "comment": "The scale ⟨may, will⟩; the stronger term denotes the end point of the dimension."
+    "comment": "The scale ⟨may, will⟩; the stronger term denotes the end point of the dimension.",
+    "verified": "page-image"
   },
   {
     "id": "vantieletal2016_difficult_impossible",
@@ -123,7 +128,8 @@
       ["class", "adjective"],
       ["bounded", "yes"]
     ],
-    "comment": "The scale ⟨difficult, impossible⟩; the stronger term denotes the end point of the dimension."
+    "comment": "The scale ⟨difficult, impossible⟩; the stronger term denotes the end point of the dimension.",
+    "verified": "page-image"
   },
   {
     "id": "vantieletal2016_rare_extinct",
@@ -144,7 +150,8 @@
       ["class", "adjective"],
       ["bounded", "yes"]
     ],
-    "comment": "The scale ⟨rare, extinct⟩; the stronger term denotes the end point of the dimension."
+    "comment": "The scale ⟨rare, extinct⟩; the stronger term denotes the end point of the dimension.",
+    "verified": "page-image"
   },
   {
     "id": "vantieletal2016_may_haveto",
@@ -165,7 +172,8 @@
       ["class", "auxiliary verb"],
       ["bounded", "yes"]
     ],
-    "comment": "The scale ⟨may, have to⟩; the stronger term denotes the end point of the dimension."
+    "comment": "The scale ⟨may, have to⟩; the stronger term denotes the end point of the dimension.",
+    "verified": "page-image"
   },
   {
     "id": "vantieletal2016_warm_hot",
@@ -186,7 +194,8 @@
       ["class", "adjective"],
       ["bounded", "no"]
     ],
-    "comment": "The scale ⟨warm, hot⟩; the stronger term does not denote an end point."
+    "comment": "The scale ⟨warm, hot⟩; the stronger term does not denote an end point.",
+    "verified": "page-image"
   },
   {
     "id": "vantieletal2016_few_none",
@@ -207,7 +216,8 @@
       ["class", "quantifier"],
       ["bounded", "yes"]
     ],
-    "comment": "The scale ⟨few, none⟩; the stronger term denotes the end point of the dimension."
+    "comment": "The scale ⟨few, none⟩; the stronger term denotes the end point of the dimension.",
+    "verified": "page-image"
   },
   {
     "id": "vantieletal2016_low_depleted",
@@ -228,7 +238,8 @@
       ["class", "adjective"],
       ["bounded", "yes"]
     ],
-    "comment": "The scale ⟨low, depleted⟩; the stronger term denotes the end point of the dimension."
+    "comment": "The scale ⟨low, depleted⟩; the stronger term denotes the end point of the dimension.",
+    "verified": "page-image"
   },
   {
     "id": "vantieletal2016_hard_unsolvable",
@@ -249,7 +260,8 @@
       ["class", "adjective"],
       ["bounded", "yes"]
     ],
-    "comment": "The scale ⟨hard, unsolvable⟩; the stronger term denotes the end point of the dimension."
+    "comment": "The scale ⟨hard, unsolvable⟩; the stronger term denotes the end point of the dimension.",
+    "verified": "page-image"
   },
   {
     "id": "vantieletal2016_allowed_obligatory",
@@ -270,7 +282,8 @@
       ["class", "adjective"],
       ["bounded", "yes"]
     ],
-    "comment": "The scale ⟨allowed, obligatory⟩; the stronger term denotes the end point of the dimension."
+    "comment": "The scale ⟨allowed, obligatory⟩; the stronger term denotes the end point of the dimension.",
+    "verified": "page-image"
   },
   {
     "id": "vantieletal2016_scarce_unavailable",
@@ -291,7 +304,8 @@
       ["class", "adjective"],
       ["bounded", "yes"]
     ],
-    "comment": "The scale ⟨scarce, unavailable⟩; the stronger term denotes the end point of the dimension."
+    "comment": "The scale ⟨scarce, unavailable⟩; the stronger term denotes the end point of the dimension.",
+    "verified": "page-image"
   },
   {
     "id": "vantieletal2016_try_succeed",
@@ -312,7 +326,8 @@
       ["class", "main verb"],
       ["bounded", "yes"]
     ],
-    "comment": "The scale ⟨try, succeed⟩; the stronger term denotes the end point of the dimension."
+    "comment": "The scale ⟨try, succeed⟩; the stronger term denotes the end point of the dimension.",
+    "verified": "page-image"
   },
   {
     "id": "vantieletal2016_palatable_delicious",
@@ -333,7 +348,8 @@
       ["class", "adjective"],
       ["bounded", "no"]
     ],
-    "comment": "The scale ⟨palatable, delicious⟩; the stronger term does not denote an end point."
+    "comment": "The scale ⟨palatable, delicious⟩; the stronger term does not denote an end point.",
+    "verified": "page-image"
   },
   {
     "id": "vantieletal2016_memorable_unforgettable",
@@ -354,7 +370,8 @@
       ["class", "adjective"],
       ["bounded", "yes"]
     ],
-    "comment": "The scale ⟨memorable, unforgettable⟩; the stronger term denotes the end point of the dimension."
+    "comment": "The scale ⟨memorable, unforgettable⟩; the stronger term denotes the end point of the dimension.",
+    "verified": "page-image"
   },
   {
     "id": "vantieletal2016_like_love",
@@ -375,7 +392,8 @@
       ["class", "main verb"],
       ["bounded", "no"]
     ],
-    "comment": "The scale ⟨like, love⟩; the stronger term does not denote an end point."
+    "comment": "The scale ⟨like, love⟩; the stronger term does not denote an end point.",
+    "verified": "page-image"
   },
   {
     "id": "vantieletal2016_good_perfect",
@@ -396,7 +414,8 @@
       ["class", "adjective"],
       ["bounded", "yes"]
     ],
-    "comment": "The scale ⟨good, perfect⟩; the stronger term denotes the end point of the dimension."
+    "comment": "The scale ⟨good, perfect⟩; the stronger term denotes the end point of the dimension.",
+    "verified": "page-image"
   },
   {
     "id": "vantieletal2016_good_excellent",
@@ -417,7 +436,8 @@
       ["class", "adjective"],
       ["bounded", "no"]
     ],
-    "comment": "The scale ⟨good, excellent⟩; the stronger term does not denote an end point."
+    "comment": "The scale ⟨good, excellent⟩; the stronger term does not denote an end point.",
+    "verified": "page-image"
   },
   {
     "id": "vantieletal2016_cool_cold",
@@ -438,7 +458,8 @@
       ["class", "adjective"],
       ["bounded", "no"]
     ],
-    "comment": "The scale ⟨cool, cold⟩; the stronger term does not denote an end point."
+    "comment": "The scale ⟨cool, cold⟩; the stronger term does not denote an end point.",
+    "verified": "page-image"
   },
   {
     "id": "vantieletal2016_hungry_starving",
@@ -459,7 +480,8 @@
       ["class", "adjective"],
       ["bounded", "no"]
     ],
-    "comment": "The scale ⟨hungry, starving⟩; the stronger term does not denote an end point."
+    "comment": "The scale ⟨hungry, starving⟩; the stronger term does not denote an end point.",
+    "verified": "page-image"
   },
   {
     "id": "vantieletal2016_adequate_good",
@@ -480,7 +502,8 @@
       ["class", "adjective"],
       ["bounded", "no"]
     ],
-    "comment": "The scale ⟨adequate, good⟩; the stronger term does not denote an end point."
+    "comment": "The scale ⟨adequate, good⟩; the stronger term does not denote an end point.",
+    "verified": "page-image"
   },
   {
     "id": "vantieletal2016_unsettling_horrific",
@@ -501,7 +524,8 @@
       ["class", "adjective"],
       ["bounded", "no"]
     ],
-    "comment": "The scale ⟨unsettling, horrific⟩; the stronger term does not denote an end point."
+    "comment": "The scale ⟨unsettling, horrific⟩; the stronger term does not denote an end point.",
+    "verified": "page-image"
   },
   {
     "id": "vantieletal2016_dislike_loathe",
@@ -522,7 +546,8 @@
       ["class", "main verb"],
       ["bounded", "no"]
     ],
-    "comment": "The scale ⟨dislike, loathe⟩; the stronger term does not denote an end point."
+    "comment": "The scale ⟨dislike, loathe⟩; the stronger term does not denote an end point.",
+    "verified": "page-image"
   },
   {
     "id": "vantieletal2016_believe_know",
@@ -543,7 +568,8 @@
       ["class", "main verb"],
       ["bounded", "yes"]
     ],
-    "comment": "The scale ⟨believe, know⟩; the stronger term denotes the end point of the dimension."
+    "comment": "The scale ⟨believe, know⟩; the stronger term denotes the end point of the dimension.",
+    "verified": "page-image"
   },
   {
     "id": "vantieletal2016_start_finish",
@@ -564,7 +590,8 @@
       ["class", "main verb"],
       ["bounded", "yes"]
     ],
-    "comment": "The scale ⟨start, finish⟩; the stronger term denotes the end point of the dimension."
+    "comment": "The scale ⟨start, finish⟩; the stronger term denotes the end point of the dimension.",
+    "verified": "page-image"
   },
   {
     "id": "vantieletal2016_participate_win",
@@ -585,7 +612,8 @@
       ["class", "main verb"],
       ["bounded", "yes"]
     ],
-    "comment": "The scale ⟨participate, win⟩; the stronger term denotes the end point of the dimension."
+    "comment": "The scale ⟨participate, win⟩; the stronger term denotes the end point of the dimension.",
+    "verified": "page-image"
   },
   {
     "id": "vantieletal2016_wary_scared",
@@ -606,7 +634,8 @@
       ["class", "adjective"],
       ["bounded", "no"]
     ],
-    "comment": "The scale ⟨wary, scared⟩; the stronger term does not denote an end point."
+    "comment": "The scale ⟨wary, scared⟩; the stronger term does not denote an end point.",
+    "verified": "page-image"
   },
   {
     "id": "vantieletal2016_old_ancient",
@@ -627,7 +656,8 @@
       ["class", "adjective"],
       ["bounded", "no"]
     ],
-    "comment": "The scale ⟨old, ancient⟩; the stronger term does not denote an end point."
+    "comment": "The scale ⟨old, ancient⟩; the stronger term does not denote an end point.",
+    "verified": "page-image"
   },
   {
     "id": "vantieletal2016_big_enormous",
@@ -648,7 +678,8 @@
       ["class", "adjective"],
       ["bounded", "no"]
     ],
-    "comment": "The scale ⟨big, enormous⟩; the stronger term does not denote an end point."
+    "comment": "The scale ⟨big, enormous⟩; the stronger term does not denote an end point.",
+    "verified": "page-image"
   },
   {
     "id": "vantieletal2016_snug_tight",
@@ -669,7 +700,8 @@
       ["class", "adjective"],
       ["bounded", "no"]
     ],
-    "comment": "The scale ⟨snug, tight⟩; the stronger term does not denote an end point."
+    "comment": "The scale ⟨snug, tight⟩; the stronger term does not denote an end point.",
+    "verified": "page-image"
   },
   {
     "id": "vantieletal2016_attractive_stunning",
@@ -690,7 +722,8 @@
       ["class", "adjective"],
       ["bounded", "no"]
     ],
-    "comment": "The scale ⟨attractive, stunning⟩; the stronger term does not denote an end point."
+    "comment": "The scale ⟨attractive, stunning⟩; the stronger term does not denote an end point.",
+    "verified": "page-image"
   },
   {
     "id": "vantieletal2016_special_unique",
@@ -711,7 +744,8 @@
       ["class", "adjective"],
       ["bounded", "yes"]
     ],
-    "comment": "The scale ⟨special, unique⟩; the stronger term denotes the end point of the dimension."
+    "comment": "The scale ⟨special, unique⟩; the stronger term denotes the end point of the dimension.",
+    "verified": "page-image"
   },
   {
     "id": "vantieletal2016_pretty_beautiful",
@@ -732,7 +766,8 @@
       ["class", "adjective"],
       ["bounded", "no"]
     ],
-    "comment": "The scale ⟨pretty, beautiful⟩; the stronger term does not denote an end point."
+    "comment": "The scale ⟨pretty, beautiful⟩; the stronger term does not denote an end point.",
+    "verified": "page-image"
   },
   {
     "id": "vantieletal2016_intelligent_brilliant",
@@ -753,7 +788,8 @@
       ["class", "adjective"],
       ["bounded", "no"]
     ],
-    "comment": "The scale ⟨intelligent, brilliant⟩; the stronger term does not denote an end point."
+    "comment": "The scale ⟨intelligent, brilliant⟩; the stronger term does not denote an end point.",
+    "verified": "page-image"
   },
   {
     "id": "vantieletal2016_funny_hilarious",
@@ -774,7 +810,8 @@
       ["class", "adjective"],
       ["bounded", "no"]
     ],
-    "comment": "The scale ⟨funny, hilarious⟩; the stronger term does not denote an end point."
+    "comment": "The scale ⟨funny, hilarious⟩; the stronger term does not denote an end point.",
+    "verified": "page-image"
   },
   {
     "id": "vantieletal2016_dark_black",
@@ -795,7 +832,8 @@
       ["class", "adjective"],
       ["bounded", "yes"]
     ],
-    "comment": "The scale ⟨dark, black⟩; the stronger term denotes the end point of the dimension."
+    "comment": "The scale ⟨dark, black⟩; the stronger term denotes the end point of the dimension.",
+    "verified": "page-image"
   },
   {
     "id": "vantieletal2016_small_tiny",
@@ -816,7 +854,8 @@
       ["class", "adjective"],
       ["bounded", "no"]
     ],
-    "comment": "The scale ⟨small, tiny⟩; the stronger term does not denote an end point."
+    "comment": "The scale ⟨small, tiny⟩; the stronger term does not denote an end point.",
+    "verified": "page-image"
   },
   {
     "id": "vantieletal2016_ugly_hideous",
@@ -837,7 +876,8 @@
       ["class", "adjective"],
       ["bounded", "no"]
     ],
-    "comment": "The scale ⟨ugly, hideous⟩; the stronger term does not denote an end point."
+    "comment": "The scale ⟨ugly, hideous⟩; the stronger term does not denote an end point.",
+    "verified": "page-image"
   },
   {
     "id": "vantieletal2016_silly_ridiculous",
@@ -858,7 +898,8 @@
       ["class", "adjective"],
       ["bounded", "no"]
     ],
-    "comment": "The scale ⟨silly, ridiculous⟩; the stronger term does not denote an end point."
+    "comment": "The scale ⟨silly, ridiculous⟩; the stronger term does not denote an end point.",
+    "verified": "page-image"
   },
   {
     "id": "vantieletal2016_tired_exhausted",
@@ -879,7 +920,8 @@
       ["class", "adjective"],
       ["bounded", "no"]
     ],
-    "comment": "The scale ⟨tired, exhausted⟩; the stronger term does not denote an end point."
+    "comment": "The scale ⟨tired, exhausted⟩; the stronger term does not denote an end point.",
+    "verified": "page-image"
   },
   {
     "id": "vantieletal2016_content_happy",
@@ -900,6 +942,7 @@
       ["class", "adjective"],
       ["bounded", "no"]
     ],
-    "comment": "The scale ⟨content, happy⟩; the stronger term does not denote an end point."
+    "comment": "The scale ⟨content, happy⟩; the stronger term does not denote an end point.",
+    "verified": "page-image"
   }
 ]

@@ -3,7 +3,7 @@
     "id": "tham2025_4a",
     "source": {"bibkey": "tham-2025", "paperLabel": "(4a)"},
     "language": "stan1293",
-    "primaryText": "*There is a damage in X.",
+    "primaryText": "There is a damage in X.",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
@@ -12,13 +12,14 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [],
-    "comment": "The root of *damaged* has only a mass noun: *damage to X*."
+    "comment": "The root of *damaged* has only a mass noun: *damage to X*.",
+    "verified": "page-image"
   },
   {
     "id": "tham2025_5a",
     "source": {"bibkey": "tham-2025", "paperLabel": "(5a)"},
     "language": "stan1293",
-    "primaryText": "*There is a shatter in X.",
+    "primaryText": "There is a shatter in X.",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
@@ -27,7 +28,8 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [],
-    "comment": "The root of *shattered* has no nominal form, so *shatter* is not a physical disturbance predicate."
+    "comment": "The root of *shattered* has no nominal form, so *shatter* is not a physical disturbance predicate.",
+    "verified": "page-image"
   },
   {
     "id": "tham2025_9",
@@ -45,7 +47,8 @@
       {"name": "the cracking lasts five minutes", "judgment": "unacceptable"}
     ],
     "paperFeatures": [],
-    "comment": "The *in* adverbial receives only the after reading, so *crack* can be punctual."
+    "comment": "The *in* adverbial receives only the after reading, so *crack* can be punctual.",
+    "verified": "page-image"
   },
   {
     "id": "tham2025_10a",
@@ -60,13 +63,14 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [],
-    "comment": "Constructed; two of six consultants found it fully acceptable and the others acceptable if not fully natural, read as the ice increasing in extent of cracking."
+    "comment": "Author-constructed; analogous examples were checked with six native speakers, two of whom found the pattern fully acceptable and the others acceptable if not fully natural. Intended reading: the ice increasing in extent of cracking.",
+    "verified": "page-image"
   },
   {
     "id": "tham2025_10c",
     "source": {"bibkey": "tham-2025", "paperLabel": "(10c)"},
     "language": "stan1293",
-    "primaryText": "Rock near the heater borehole sampled in the north heater drift was found to be more cracked than rock near the borehole sampled in the south heater drift.",
+    "primaryText": "However, rock near the heater borehole sampled in the north heater drift was found to be more cracked than rock near the borehole sampled in the south heater drift.",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
@@ -75,7 +79,8 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [],
-    "comment": "Attested comparative of the deverbal adjective."
+    "comment": "Attested comparative of the deverbal adjective.",
+    "verified": "page-image"
   },
   {
     "id": "tham2025_11a",
@@ -90,7 +95,8 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [],
-    "comment": "Attested comparative."
+    "comment": "Attested comparative.",
+    "verified": "page-image"
   },
   {
     "id": "tham2025_11b",
@@ -105,7 +111,8 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [],
-    "comment": "Attested comparative."
+    "comment": "Attested comparative.",
+    "verified": "page-image"
   },
   {
     "id": "tham2025_12a",
@@ -123,7 +130,8 @@
       {"name": "the shattering lasts two minutes", "judgment": "unacceptable"}
     ],
     "paperFeatures": [],
-    "comment": "*shatter* is punctual like *crack* and *die*."
+    "comment": "*shatter* is punctual like *crack* and *die*.",
+    "verified": "page-image"
   },
   {
     "id": "tham2025_12b",
@@ -138,7 +146,8 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [],
-    "comment": "Unlike *crack*, *shatter* has no durative use."
+    "comment": "Unlike *crack*, *shatter* has no durative use.",
+    "verified": "page-image"
   },
   {
     "id": "tham2025_12c",
@@ -153,7 +162,8 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [],
-    "comment": "Unlike *cracked*, *shattered* is not gradable, although it describes a physical object."
+    "comment": "Unlike *cracked*, *shattered* is not gradable, although it describes a physical object.",
+    "verified": "page-image"
   },
   {
     "id": "tham2025_13b",
@@ -168,7 +178,8 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [],
-    "comment": "The atelic use of the degree achievement *cool* does not entail that the soup became cool; after Kennedy and Levin."
+    "comment": "The atelic use of the degree achievement *cool* does not entail that the soup became cool; after Kennedy and Levin.",
+    "verified": "page-image"
   },
   {
     "id": "tham2025_14a",
@@ -183,13 +194,14 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [],
-    "comment": "Telic use; the pan is entailed to be cracked."
+    "comment": "Telic use; the pan is entailed to be cracked.",
+    "verified": "page-image"
   },
   {
     "id": "tham2025_14b",
     "source": {"bibkey": "tham-2025", "paperLabel": "(14b)"},
     "language": "stan1293",
-    "primaryText": "It like had cracked for a while until the crack propagated to the point where the whole thing failed.",
+    "primaryText": "As far as the original cause of the break, who knows; though it like had cracked for a while until the crack propagated to the point where the whole thing failed.",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
@@ -198,7 +210,8 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [],
-    "comment": "Atelic use; the object is still entailed to be cracked."
+    "comment": "Atelic use; the object is still entailed to be cracked.",
+    "verified": "page-image"
   },
   {
     "id": "tham2025_15a",
@@ -213,7 +226,8 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [],
-    "comment": "Compatible with *completely*, an upper bound."
+    "comment": "Compatible with *completely*, an upper bound.",
+    "verified": "page-image"
   },
   {
     "id": "tham2025_15b",
@@ -228,13 +242,14 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [],
-    "comment": "Compatible with *partially*, a lower bound."
+    "comment": "Compatible with *partially*, a lower bound.",
+    "verified": "page-image"
   },
   {
     "id": "tham2025_16",
     "source": {"bibkey": "tham-2025", "paperLabel": "(16)"},
     "language": "stan1293",
-    "primaryText": "I recently dropped my iPhone 7, it cracked slightly.",
+    "primaryText": "Hiya I recently dropped my iPhone 7, it cracked slightly …",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
@@ -243,13 +258,14 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [],
-    "comment": "Compatible with *slightly*, which indicates a lower bound; *fill* is not."
+    "comment": "Compatible with *slightly*, which indicates a lower bound; *fill* is not.",
+    "verified": "page-image"
   },
   {
     "id": "tham2025_17a",
     "source": {"bibkey": "tham-2025", "paperLabel": "(17a)"},
     "language": "stan1293",
-    "primaryText": "My screen cracked completely/slightly. |= My screen is cracked.",
+    "primaryText": "My screen cracked completely/slightly ⊨ My screen is cracked.",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
@@ -258,13 +274,14 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [],
-    "comment": "Both the maximal and the minimal degree of change entail the adjectival state."
+    "comment": "Both the maximal and the minimal degree of change entail the adjectival state.",
+    "verified": "page-image"
   },
   {
     "id": "tham2025_17b",
     "source": {"bibkey": "tham-2025", "paperLabel": "(17b)"},
     "language": "stan1293",
-    "primaryText": "The basin filled completely/#slightly. |= The basin is filled.",
+    "primaryText": "The basin filled completely/#slightly ⊨ The basin is filled.",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
@@ -273,7 +290,8 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [],
-    "comment": "Adjectival *filled* is entailed by *fill completely* alone."
+    "comment": "Adjectival *filled* is entailed by *fill completely* alone.",
+    "verified": "page-image"
   },
   {
     "id": "tham2025_18c",
@@ -288,7 +306,8 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [],
-    "comment": "Degree modification by *badly*, available to gradable totally closed-scale adjectives."
+    "comment": "Degree modification by *badly*, available to gradable totally closed-scale adjectives.",
+    "verified": "page-image"
   },
   {
     "id": "tham2025_19a",
@@ -305,7 +324,8 @@
       {"name": "many branching cracks: the quantity dimension", "judgment": "acceptable"}
     ],
     "paperFeatures": [],
-    "comment": "*well* as a high-degree modifier synonymous with *badly*."
+    "comment": "*well* as a high-degree modifier synonymous with *badly*.",
+    "verified": "page-image"
   },
   {
     "id": "tham2025_20a",
@@ -320,13 +340,14 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [],
-    "comment": "The endpoint-oriented modifier *completely*: the scale is closed above."
+    "comment": "The endpoint-oriented modifier *completely*: the scale is closed above.",
+    "verified": "page-image"
   },
   {
     "id": "tham2025_21a",
     "source": {"bibkey": "tham-2025", "paperLabel": "(21a)"},
     "language": "stan1293",
-    "primaryText": "The concrete characteristic length controls the failure load of a partially cracked concrete slab.",
+    "primaryText": "The concrete characteristic length, determined from the fracture energy represented by the first part of the stress–crack width relationship, controls the failure load of a partially cracked concrete slab.",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
@@ -335,7 +356,8 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [],
-    "comment": "The endpoint-oriented modifier *partially*: the scale is closed below."
+    "comment": "The endpoint-oriented modifier *partially*: the scale is closed below.",
+    "verified": "page-image"
   },
   {
     "id": "tham2025_22b",
@@ -353,7 +375,8 @@
       {"name": "one serious dent: the quality dimension", "judgment": "acceptable"}
     ],
     "paperFeatures": [],
-    "comment": "Two non-contradictory interpretations of *badly*."
+    "comment": "Two non-contradictory interpretations of *badly*.",
+    "verified": "page-image"
   },
   {
     "id": "tham2025_23b",
@@ -370,7 +393,8 @@
       {"name": "a deep crack: the quality dimension", "judgment": "acceptable"}
     ],
     "paperFeatures": [],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "tham2025_26",
@@ -385,7 +409,8 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [],
-    "comment": "Unmodified predication is objective: one of the two speakers must be mistaken."
+    "comment": "Unmodified predication is objective: one of the two speakers must be mistaken.",
+    "verified": "page-image"
   },
   {
     "id": "tham2025_27",
@@ -400,7 +425,8 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [],
-    "comment": "Degree-modified predication admits faultless disagreement, here between the length and depth dimensions."
+    "comment": "Degree-modified predication admits faultless disagreement, here between the length and depth dimensions.",
+    "verified": "page-image"
   },
   {
     "id": "tham2025_28a",
@@ -415,7 +441,8 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [],
-    "comment": "Respect phrases individuate the quality and quantity dimensions of the adjective."
+    "comment": "Respect phrases individuate the quality and quantity dimensions of the adjective.",
+    "verified": "page-image"
   },
   {
     "id": "tham2025_28c",
@@ -430,7 +457,8 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [],
-    "comment": "Quantification over the dimensions of the adjective."
+    "comment": "Quantification over the dimensions of the adjective.",
+    "verified": "page-image"
   },
   {
     "id": "tham2025_29",
@@ -445,13 +473,14 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [],
-    "comment": "Positioning, functional impact and array are further dimensions named by survey respondents."
+    "comment": "Positioning, functional impact and array are further dimensions named by survey respondents.",
+    "verified": "page-image"
   },
   {
     "id": "tham2025_30a",
     "source": {"bibkey": "tham-2025", "paperLabel": "(30a)"},
     "language": "stan1293",
-    "primaryText": "There is a much cracked dish of the Doghouse Club which was founded in 1962.",
+    "primaryText": "There is a much cracked dish of the \"Doghouse Club\" which was founded in 1962 by a group of driver's wives and girlfriends – including Betty Brabham – to provide some much needed paddock social activities and facilities.",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
@@ -463,7 +492,8 @@
       {"name": "one deep crack: the quality dimension", "judgment": "unacceptable"}
     ],
     "paperFeatures": [],
-    "comment": "*much* evokes the quantity dimension alone."
+    "comment": "*much* evokes the quantity dimension alone.",
+    "verified": "page-image"
   },
   {
     "id": "tham2025_32",
@@ -478,7 +508,8 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [],
-    "comment": "For *dirty*, *completely* applies to the spatial dimension only and the scale stays open above."
+    "comment": "For *dirty*, *completely* applies to the spatial dimension only and the scale stays open above.",
+    "verified": "page-image"
   },
   {
     "id": "tham2025_33",
@@ -493,7 +524,8 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [],
-    "comment": "The upper bound is the host's structural integrity: beyond it the host no longer exists to bear the disturbance."
+    "comment": "The upper bound is the host's structural integrity: beyond it the host no longer exists to bear the disturbance.",
+    "verified": "page-image"
   },
   {
     "id": "tham2025_36b",
@@ -508,7 +540,8 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [],
-    "comment": "The verb takes *completely* like its adjective."
+    "comment": "The verb takes *completely* like its adjective.",
+    "verified": "page-image"
   },
   {
     "id": "tham2025_37a",
@@ -523,7 +556,8 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [],
-    "comment": "The verb takes *badly* like its adjective."
+    "comment": "The verb takes *badly* like its adjective.",
+    "verified": "page-image"
   },
   {
     "id": "tham2025_40a",
@@ -538,7 +572,8 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [],
-    "comment": "Six of seven consultants found the adjective with a respect phrase acceptable."
+    "comment": "Six of seven consultants found the adjective with a respect phrase acceptable.",
+    "verified": "page-image"
   },
   {
     "id": "tham2025_40b",
@@ -553,7 +588,8 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [],
-    "comment": "One of seven consultants accepted the intransitive verb with a respect phrase; three found it degraded and three unacceptable."
+    "comment": "One of seven consultants accepted the intransitive verb with a respect phrase; three found it degraded and three unacceptable.",
+    "verified": "page-image"
   },
   {
     "id": "tham2025_41a",
@@ -568,7 +604,8 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [],
-    "comment": "Four of seven consultants found it fully acceptable."
+    "comment": "Four of seven consultants found it fully acceptable.",
+    "verified": "page-image"
   },
   {
     "id": "tham2025_41b",
@@ -583,7 +620,8 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [],
-    "comment": "No consultant found the verb with quantification over respects fully acceptable."
+    "comment": "No consultant found the verb with quantification over respects fully acceptable.",
+    "verified": "page-image"
   },
   {
     "id": "tham2025_42a",
@@ -598,7 +636,8 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [],
-    "comment": "All consultants accepted the comparative adjective with respect phrases."
+    "comment": "All consultants accepted the comparative adjective with respect phrases.",
+    "verified": "page-image"
   },
   {
     "id": "tham2025_42b",
@@ -613,7 +652,8 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [],
-    "comment": "Two of seven consultants accepted the comparative verb with respect phrases."
+    "comment": "Two of seven consultants accepted the comparative verb with respect phrases.",
+    "verified": "page-image"
   },
   {
     "id": "tham2025_43a",
@@ -628,7 +668,8 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [],
-    "comment": "Causative uses of the verb accept respect phrases; one consultant found them degraded."
+    "comment": "Causative uses of the verb accept respect phrases; one consultant found them degraded.",
+    "verified": "page-image"
   },
   {
     "id": "tham2025_44a",
@@ -643,13 +684,14 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [],
-    "comment": "A multidimensional stative verb with a respect phrase."
+    "comment": "A multidimensional stative verb with a respect phrase.",
+    "verified": "page-image"
   },
   {
     "id": "tham2025_45a",
     "source": {"bibkey": "tham-2025", "paperLabel": "(45a)"},
     "language": "stan1293",
-    "primaryText": "Most of the white pumpkins I grew were smooth, but this one had a completely cracked surface.",
+    "primaryText": "Most of the white pumpkins I grew were smooth, but this one had a completely cracked surface - which I thought was so cool.",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
@@ -658,7 +700,8 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [],
-    "comment": "The pumpkin skin is textured; no cracking event preceded the state."
+    "comment": "The pumpkin skin is textured; no cracking event preceded the state.",
+    "verified": "page-image"
   },
   {
     "id": "tham2025_45b",
@@ -673,7 +716,8 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [],
-    "comment": "A computer-modelled surface that has not undergone denting."
+    "comment": "A computer-modelled surface that has not undergone denting.",
+    "verified": "page-image"
   },
   {
     "id": "tham2025_45c",
@@ -688,6 +732,7 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [],
-    "comment": "A printed pattern of scratch-like lines; no scratching event."
+    "comment": "A printed pattern of scratch-like lines; no scratching event.",
+    "verified": "page-image"
   }
 ]

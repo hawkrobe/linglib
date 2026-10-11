@@ -19,7 +19,8 @@
       ["modal", "none"],
       ["property", "upward"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "foxhackl2006_2",
@@ -41,7 +42,8 @@
       ["modal", "none"],
       ["property", "upward"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "foxhackl2006_4",
@@ -64,7 +66,8 @@
       ["modal", "none"],
       ["property", "upward"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "foxhackl2006_5",
@@ -79,7 +82,7 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -87,7 +90,8 @@
       ["modal", "none"],
       ["property", "upward"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "foxhackl2006_7a",
@@ -109,7 +113,8 @@
       ["modal", "none"],
       ["property", "upward"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "foxhackl2006_7b",
@@ -131,7 +136,8 @@
       ["modal", "none"],
       ["property", "upward"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "foxhackl2006_7c",
@@ -143,7 +149,7 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -151,7 +157,8 @@
       ["modal", "none"],
       ["property", "upward"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "foxhackl2006_13a",
@@ -173,7 +180,8 @@
       ["modal", "universal"],
       ["property", "upward"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "foxhackl2006_13b",
@@ -193,7 +201,8 @@
       ["modal", "universal"],
       ["property", "upward"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "foxhackl2006_14a",
@@ -208,14 +217,18 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [
-      {"name": "implicature: there is no degree d greater than 30 such that you are allowed to smoke more than d cigarettes", "judgment": "unacceptable"}
+      {
+        "name": "implicature: there is no degree d greater than 30 such that you are allowed to smoke more than d cigarettes",
+        "judgment": "ungrammatical"
+      }
     ],
     "paperFeatures": [
       ["operator", "exh"],
       ["modal", "existential"],
       ["property", "upward"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "foxhackl2006_14b",
@@ -227,7 +240,7 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -235,7 +248,8 @@
       ["modal", "existential"],
       ["property", "upward"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "foxhackl2006_16",
@@ -247,7 +261,7 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -255,7 +269,8 @@
       ["modal", "none"],
       ["property", "downward"]
     ],
-    "comment": "Paired in the paper with the statement 'John doesn't weigh 190 pounds.'"
+    "comment": "Paired in the paper with the statement 'John doesn't weigh 190 pounds.'",
+    "verified": "page-image"
   },
   {
     "id": "foxhackl2006_19a",
@@ -267,7 +282,7 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [
       {"form": "I have the amount of water that you do.", "judgment": "acceptable"}
     ],
@@ -277,7 +292,8 @@
       ["modal", "none"],
       ["property", "downward"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "foxhackl2006_19b",
@@ -297,7 +313,8 @@
       ["modal", "none"],
       ["property", "downward"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "foxhackl2006_21",
@@ -317,7 +334,8 @@
       ["modal", "none"],
       ["property", "downward"]
     ],
-    "comment": "Acceptable although no maximal sufficient amount exists: the most informative true answer is the minimal one."
+    "comment": "Acceptable although no maximal sufficient amount exists: the most informative true answer is the minimal one.",
+    "verified": "page-image"
   },
   {
     "id": "foxhackl2006_23",
@@ -337,7 +355,8 @@
       ["modal", "none"],
       ["property", "downward"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "foxhackl2006_27a",
@@ -357,7 +376,8 @@
       ["modal", "universal"],
       ["property", "downward"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "foxhackl2006_27b",
@@ -377,7 +397,8 @@
       ["modal", "universal"],
       ["property", "downward"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "foxhackl2006_27c",
@@ -397,7 +418,8 @@
       ["modal", "universal"],
       ["property", "downward"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "foxhackl2006_28a",
@@ -417,7 +439,8 @@
       ["modal", "universal"],
       ["property", "downward"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "foxhackl2006_28b",
@@ -429,7 +452,7 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -437,7 +460,8 @@
       ["modal", "existential"],
       ["property", "downward"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "foxhackl2006_29a",
@@ -457,7 +481,8 @@
       ["modal", "universal"],
       ["property", "downward"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "foxhackl2006_29b",
@@ -469,7 +494,7 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -477,7 +502,8 @@
       ["modal", "existential"],
       ["property", "downward"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "foxhackl2006_30b",
@@ -489,7 +515,7 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -497,7 +523,8 @@
       ["modal", "existential"],
       ["property", "downward"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "foxhackl2006_32",
@@ -509,7 +536,7 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -517,7 +544,8 @@
       ["modal", "none"],
       ["property", "downward"]
     ],
-    "comment": "Time rather than degree; the paper's [-NI,+MV] case."
+    "comment": "Time rather than degree; the paper's [-NI,+MV] case.",
+    "verified": "page-image"
   },
   {
     "id": "foxhackl2006_33",
@@ -537,7 +565,8 @@
       ["modal", "universal"],
       ["property", "downward"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "foxhackl2006_34",
@@ -557,7 +586,8 @@
       ["modal", "existential"],
       ["property", "downward"]
     ],
-    "comment": "Acceptable through the free-choice reading of the answer 'You are allowed to arrive before 10 pm'."
+    "comment": "Acceptable through the free-choice reading of the answer 'You are allowed to arrive before 10 pm'.",
+    "verified": "page-image"
   },
   {
     "id": "foxhackl2006_50a",
@@ -572,14 +602,18 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [
-      {"name": "implicature: John smoked 29 cigarettes", "judgment": "unacceptable"}
+      {
+        "name": "implicature: John smoked 29 cigarettes",
+        "judgment": "ungrammatical"
+      }
     ],
     "paperFeatures": [
       ["operator", "exh"],
       ["modal", "none"],
       ["property", "downward"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "foxhackl2006_50b",
@@ -594,14 +628,18 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [
-      {"name": "implicature: John read 29 books", "judgment": "unacceptable"}
+      {
+        "name": "implicature: John read 29 books",
+        "judgment": "ungrammatical"
+      }
     ],
     "paperFeatures": [
       ["operator", "exh"],
       ["modal", "none"],
       ["property", "downward"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "foxhackl2006_52",
@@ -623,7 +661,8 @@
       ["modal", "universal"],
       ["property", "downward"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "foxhackl2006_53",
@@ -645,7 +684,8 @@
       ["modal", "universal"],
       ["property", "downward"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "foxhackl2006_54",
@@ -660,14 +700,18 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [
-      {"name": "implicature: John is required to read 29 books", "judgment": "unacceptable"}
+      {
+        "name": "implicature: John is required to read 29 books",
+        "judgment": "ungrammatical"
+      }
     ],
     "paperFeatures": [
       ["operator", "exh"],
       ["modal", "existential"],
       ["property", "downward"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "foxhackl2006_55",
@@ -682,14 +726,18 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [
-      {"name": "implicature: John is required to read 29 books", "judgment": "unacceptable"}
+      {
+        "name": "implicature: John is required to read 29 books",
+        "judgment": "ungrammatical"
+      }
     ],
     "paperFeatures": [
       ["operator", "exh"],
       ["modal", "existential"],
       ["property", "downward"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "foxhackl2006_57a",
@@ -701,7 +749,7 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -709,7 +757,8 @@
       ["modal", "none"],
       ["property", "downward"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "foxhackl2006_57c",
@@ -721,7 +770,7 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -729,7 +778,8 @@
       ["modal", "none"],
       ["property", "downward"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "foxhackl2006_58a",
@@ -749,7 +799,8 @@
       ["modal", "universal"],
       ["property", "downward"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "foxhackl2006_60",
@@ -761,7 +812,7 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -769,7 +820,8 @@
       ["modal", "existential"],
       ["property", "downward"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "foxhackl2006_61",
@@ -781,7 +833,7 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -789,7 +841,8 @@
       ["modal", "existential"],
       ["property", "downward"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "foxhackl2006_62a",
@@ -801,7 +854,7 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -809,7 +862,8 @@
       ["modal", "none"],
       ["property", "upward"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "foxhackl2006_62b",
@@ -829,7 +883,8 @@
       ["modal", "universal"],
       ["property", "upward"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "foxhackl2006_62c",
@@ -847,9 +902,11 @@
     "paperFeatures": [
       ["operator", "question"],
       ["modal", "existential"],
-      ["property", "upward"]
+      ["property", "upward"],
+      ["alsoJudged", "ungrammatical"]
     ],
-    "comment": "Marked ??/* in the paper."
+    "comment": "Marked ??/* in the paper. The paper labels this line a second (62b).",
+    "verified": "page-image"
   },
   {
     "id": "foxhackl2006_63a",
@@ -861,7 +918,7 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -869,7 +926,8 @@
       ["modal", "none"],
       ["property", "upward"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "foxhackl2006_63b",
@@ -889,7 +947,8 @@
       ["modal", "universal"],
       ["property", "upward"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "foxhackl2006_64a",
@@ -901,7 +960,7 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -909,7 +968,8 @@
       ["modal", "none"],
       ["property", "upward"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "foxhackl2006_64b",
@@ -929,7 +989,8 @@
       ["modal", "universal"],
       ["property", "upward"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "foxhackl2006_64c",
@@ -941,7 +1002,7 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -949,7 +1010,8 @@
       ["modal", "existential"],
       ["property", "upward"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "foxhackl2006_100a",
@@ -961,7 +1023,7 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -969,7 +1031,8 @@
       ["modal", "none"],
       ["property", "downward"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "foxhackl2006_100b",
@@ -989,6 +1052,7 @@
       ["modal", "none"],
       ["property", "downward"]
     ],
-    "comment": "A discrete set of alternatives is specified; the paper's syntactic contextual restriction."
+    "comment": "A discrete set of alternatives is specified; the paper's syntactic contextual restriction.",
+    "verified": "page-image"
   }
 ]

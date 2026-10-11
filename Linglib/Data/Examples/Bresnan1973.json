@@ -18,7 +18,8 @@
       ["position", "noun"],
       ["surface", "analytic"]
     ],
-    "comment": "-er much over a mass noun."
+    "comment": "-er much over a mass noun.",
+    "verified": "page-image"
   },
   {
     "id": "bresnan1973_ex1b",
@@ -39,7 +40,8 @@
       ["position", "adjective"],
       ["surface", "synthetic"]
     ],
-    "comment": "-er much over an adjective, the simple comparative from the compound."
+    "comment": "-er much over an adjective, the simple comparative from the compound.",
+    "verified": "page-image"
   },
   {
     "id": "bresnan1973_ex3a",
@@ -60,18 +62,19 @@
       ["position", "noun"],
       ["surface", "analytic"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bresnan1973_ex3b",
     "source": {"bibkey": "bresnan-1973", "paperLabel": "(3b)"},
     "language": "stan1293",
-    "primaryText": "*They think she is too much happy.",
+    "primaryText": "They think she is too much happy.",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "They think she is too much happy.",
+    "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -81,11 +84,12 @@
       ["position", "adjective"],
       ["surface", "analytic"]
     ],
-    "comment": "The stage of the derivation Much Deletion removes."
+    "comment": "The stage of the derivation Much Deletion removes.",
+    "verified": "page-image"
   },
   {
     "id": "bresnan1973_ex12a",
-    "source": {"bibkey": "bresnan-1973", "paperLabel": "(12a)"},
+    "source": {"bibkey": "bresnan-1973", "paperLabel": "(12)"},
     "language": "stan1293",
     "primaryText": "I drank as much milk.",
     "discourseSegments": [],
@@ -102,18 +106,19 @@
       ["position", "noun"],
       ["surface", "analytic"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bresnan1973_ex12b",
-    "source": {"bibkey": "bresnan-1973", "paperLabel": "(12b)"},
+    "source": {"bibkey": "bresnan-1973", "paperLabel": "(12)"},
     "language": "stan1293",
-    "primaryText": "*I drank as milk.",
+    "primaryText": "I drank as milk.",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "I drank as milk.",
+    "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -123,11 +128,12 @@
       ["position", "noun"],
       ["surface", "deleted"]
     ],
-    "comment": "Much Deletion applies only before an adjective or adverb."
+    "comment": "Much Deletion applies only before an adjective or adverb.",
+    "verified": "page-image"
   },
   {
     "id": "bresnan1973_ex13a",
-    "source": {"bibkey": "bresnan-1973", "paperLabel": "(13a)"},
+    "source": {"bibkey": "bresnan-1973", "paperLabel": "(13)"},
     "language": "stan1293",
     "primaryText": "I ate as much.",
     "discourseSegments": [],
@@ -144,18 +150,19 @@
       ["position", "phrase"],
       ["surface", "analytic"]
     ],
-    "comment": "Substantive much."
+    "comment": "Substantive much.",
+    "verified": "page-image"
   },
   {
     "id": "bresnan1973_ex13b",
-    "source": {"bibkey": "bresnan-1973", "paperLabel": "(13b)"},
+    "source": {"bibkey": "bresnan-1973", "paperLabel": "(13)"},
     "language": "stan1293",
-    "primaryText": "*I ate as.",
+    "primaryText": "I ate as.",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "I ate as.",
+    "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -165,18 +172,19 @@
       ["position", "phrase"],
       ["surface", "deleted"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bresnan1973_ex14a",
-    "source": {"bibkey": "bresnan-1973", "paperLabel": "(14a)"},
+    "source": {"bibkey": "bresnan-1973", "paperLabel": "(14)"},
     "language": "stan1293",
-    "primaryText": "*as much intelligent",
+    "primaryText": "as much intelligent",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "as much intelligent",
+    "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -186,11 +194,12 @@
       ["position", "adjective"],
       ["surface", "analytic"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bresnan1973_ex14b",
-    "source": {"bibkey": "bresnan-1973", "paperLabel": "(14b)"},
+    "source": {"bibkey": "bresnan-1973", "paperLabel": "(14)"},
     "language": "stan1293",
     "primaryText": "as intelligent",
     "discourseSegments": [],
@@ -207,11 +216,12 @@
       ["position", "adjective"],
       ["surface", "deleted"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bresnan1973_ex15a",
-    "source": {"bibkey": "bresnan-1973", "paperLabel": "(15a)"},
+    "source": {"bibkey": "bresnan-1973", "paperLabel": "(15)"},
     "language": "stan1293",
     "primaryText": "as much more intelligent",
     "discourseSegments": [],
@@ -228,18 +238,19 @@
       ["position", "quantifier"],
       ["surface", "analytic"]
     ],
-    "comment": "much remains before a compared adjective: the QP -er much intervenes."
+    "comment": "much remains before a compared adjective: the QP -er much intervenes.",
+    "verified": "page-image"
   },
   {
     "id": "bresnan1973_ex15b",
-    "source": {"bibkey": "bresnan-1973", "paperLabel": "(15b)"},
+    "source": {"bibkey": "bresnan-1973", "paperLabel": "(15)"},
     "language": "stan1293",
-    "primaryText": "*as more intelligent",
+    "primaryText": "as more intelligent",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "as more intelligent",
+    "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -249,18 +260,19 @@
       ["position", "quantifier"],
       ["surface", "deleted"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bresnan1973_ex16a",
-    "source": {"bibkey": "bresnan-1973", "paperLabel": "(16a)"},
+    "source": {"bibkey": "bresnan-1973", "paperLabel": "(16)"},
     "language": "stan1293",
-    "primaryText": "*as much clearly",
+    "primaryText": "as much clearly",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "as much clearly",
+    "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -270,11 +282,12 @@
       ["position", "adjective"],
       ["surface", "analytic"]
     ],
-    "comment": "Adverbs are adjectives dominated by AP or VP (1.4)."
+    "comment": "Adverbs are adjectives dominated by AP or VP (1.4).",
+    "verified": "page-image"
   },
   {
     "id": "bresnan1973_ex16b",
-    "source": {"bibkey": "bresnan-1973", "paperLabel": "(16b)"},
+    "source": {"bibkey": "bresnan-1973", "paperLabel": "(16)"},
     "language": "stan1293",
     "primaryText": "as clearly",
     "discourseSegments": [],
@@ -291,11 +304,12 @@
       ["position", "adjective"],
       ["surface", "deleted"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bresnan1973_ex17a",
-    "source": {"bibkey": "bresnan-1973", "paperLabel": "(17a)"},
+    "source": {"bibkey": "bresnan-1973", "paperLabel": "(17)"},
     "language": "stan1293",
     "primaryText": "as much more clearly",
     "discourseSegments": [],
@@ -312,18 +326,19 @@
       ["position", "quantifier"],
       ["surface", "analytic"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bresnan1973_ex17b",
-    "source": {"bibkey": "bresnan-1973", "paperLabel": "(17b)"},
+    "source": {"bibkey": "bresnan-1973", "paperLabel": "(17)"},
     "language": "stan1293",
-    "primaryText": "*as more clearly",
+    "primaryText": "as more clearly",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "as more clearly",
+    "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -333,18 +348,19 @@
       ["position", "quantifier"],
       ["surface", "deleted"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bresnan1973_ex18a",
-    "source": {"bibkey": "bresnan-1973", "paperLabel": "(18a)"},
+    "source": {"bibkey": "bresnan-1973", "paperLabel": "(18)"},
     "language": "stan1293",
-    "primaryText": "*as much tall",
+    "primaryText": "as much tall",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "as much tall",
+    "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -354,11 +370,12 @@
       ["position", "adjective"],
       ["surface", "analytic"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bresnan1973_ex18b",
-    "source": {"bibkey": "bresnan-1973", "paperLabel": "(18b)"},
+    "source": {"bibkey": "bresnan-1973", "paperLabel": "(18)"},
     "language": "stan1293",
     "primaryText": "as tall",
     "discourseSegments": [],
@@ -375,11 +392,12 @@
       ["position", "adjective"],
       ["surface", "deleted"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bresnan1973_ex19a",
-    "source": {"bibkey": "bresnan-1973", "paperLabel": "(19a)"},
+    "source": {"bibkey": "bresnan-1973", "paperLabel": "(19)"},
     "language": "stan1293",
     "primaryText": "as much taller",
     "discourseSegments": [],
@@ -396,18 +414,19 @@
       ["position", "quantifier"],
       ["surface", "analytic"]
     ],
-    "comment": "taller < more tall: the outer as much modifies the QP."
+    "comment": "taller < more tall: the outer as much modifies the QP.",
+    "verified": "page-image"
   },
   {
     "id": "bresnan1973_ex19b",
-    "source": {"bibkey": "bresnan-1973", "paperLabel": "(19b)"},
+    "source": {"bibkey": "bresnan-1973", "paperLabel": "(19)"},
     "language": "stan1293",
-    "primaryText": "*as taller",
+    "primaryText": "as taller",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "as taller",
+    "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -417,18 +436,19 @@
       ["position", "quantifier"],
       ["surface", "deleted"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bresnan1973_ex84a",
-    "source": {"bibkey": "bresnan-1973", "paperLabel": "(84a)"},
+    "source": {"bibkey": "bresnan-1973", "paperLabel": "(84)"},
     "language": "stan1293",
-    "primaryText": "*He looks so much formidable.",
+    "primaryText": "He looks so much formidable.",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "He looks so much formidable.",
+    "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -438,11 +458,12 @@
       ["position", "adjective"],
       ["surface", "analytic"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bresnan1973_ex84b",
-    "source": {"bibkey": "bresnan-1973", "paperLabel": "(84b)"},
+    "source": {"bibkey": "bresnan-1973", "paperLabel": "(84)"},
     "language": "stan1293",
     "primaryText": "He looks so formidable.",
     "discourseSegments": [],
@@ -459,18 +480,19 @@
       ["position", "adjective"],
       ["surface", "deleted"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bresnan1973_ex85a",
-    "source": {"bibkey": "bresnan-1973", "paperLabel": "(85a)"},
+    "source": {"bibkey": "bresnan-1973", "paperLabel": "(85)"},
     "language": "stan1293",
-    "primaryText": "*She speaks too much clearly.",
+    "primaryText": "She speaks too much clearly.",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "She speaks too much clearly.",
+    "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -480,11 +502,12 @@
       ["position", "adjective"],
       ["surface", "analytic"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bresnan1973_ex85b",
-    "source": {"bibkey": "bresnan-1973", "paperLabel": "(85b)"},
+    "source": {"bibkey": "bresnan-1973", "paperLabel": "(85)"},
     "language": "stan1293",
     "primaryText": "She speaks too clearly.",
     "discourseSegments": [],
@@ -501,11 +524,12 @@
       ["position", "adjective"],
       ["surface", "deleted"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bresnan1973_ex225b",
-    "source": {"bibkey": "bresnan-1973", "paperLabel": "(225b)"},
+    "source": {"bibkey": "bresnan-1973", "paperLabel": "(225)"},
     "language": "stan1293",
     "primaryText": "most friendly",
     "discourseSegments": [],
@@ -522,7 +546,8 @@
       ["position", "adjective"],
       ["surface", "analytic"]
     ],
-    "comment": "The indefinite superlative -est encliticizes like -er and protects much."
+    "comment": "The indefinite superlative -est encliticizes like -er and protects much.",
+    "verified": "page-image"
   },
   {
     "id": "bresnan1973_ex275b",
@@ -543,18 +568,19 @@
       ["position", "phrase"],
       ["surface", "analytic"]
     ],
-    "comment": "The prepredicate more: [more]_QP [sad]_AP, a sentence modifier (272)."
+    "comment": "The prepredicate more: [more]_QP [sad]_AP, a sentence modifier (272).",
+    "verified": "page-image"
   },
   {
     "id": "bresnan1973_ex277",
     "source": {"bibkey": "bresnan-1973", "paperLabel": "(277)"},
     "language": "stan1293",
-    "primaryText": "*I'm sadder than angry.",
+    "primaryText": "I'm sadder than angry.",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "I'm sadder than angry.",
+    "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -564,7 +590,8 @@
       ["position", "phrase"],
       ["surface", "synthetic"]
     ],
-    "comment": "Simple comparative formation needs the QP as the left branch of the AP."
+    "comment": "Simple comparative formation needs the QP as the left branch of the AP.",
+    "verified": "page-image"
   },
   {
     "id": "bresnan1973_ex278c",
@@ -585,18 +612,19 @@
       ["position", "phrase"],
       ["surface", "analytic"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bresnan1973_ex278d",
     "source": {"bibkey": "bresnan-1973", "paperLabel": "(278d)"},
     "language": "stan1293",
-    "primaryText": "*I'm as sad as angry.",
+    "primaryText": "I'm as sad as angry.",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "I'm as sad as angry.",
+    "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -606,7 +634,8 @@
       ["position", "phrase"],
       ["surface", "deleted"]
     ],
-    "comment": "Much Deletion can only apply within an AP."
+    "comment": "Much Deletion can only apply within an AP.",
+    "verified": "page-image"
   },
   {
     "id": "bresnan1973_ex279a",
@@ -627,7 +656,8 @@
       ["position", "adjective"],
       ["surface", "analytic"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bresnan1973_ex279b",
@@ -648,7 +678,8 @@
       ["position", "adjective"],
       ["surface", "synthetic"]
     ],
-    "comment": ""
+    "comment": "The paper prints 'today that I was yesterday' here (a misprint); (C ii) of the Introduction prints than.",
+    "verified": "page-image"
   },
   {
     "id": "bresnan1973_ex279c",
@@ -669,18 +700,19 @@
       ["position", "phrase"],
       ["surface", "analytic"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bresnan1973_ex279d",
     "source": {"bibkey": "bresnan-1973", "paperLabel": "(279d)"},
     "language": "stan1293",
-    "primaryText": "*I am angrier than sad.",
+    "primaryText": "I am angrier than sad.",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "I am angrier than sad.",
+    "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -690,7 +722,8 @@
       ["position", "phrase"],
       ["surface", "synthetic"]
     ],
-    "comment": "Problem (C): the comparison across adjectives leaves the QP outside the AP."
+    "comment": "Problem (C): the comparison across adjectives leaves the QP outside the AP.",
+    "verified": "page-image"
   },
   {
     "id": "bresnan1973_ex111a",
@@ -710,18 +743,19 @@
       ["q", "much"],
       ["order", "prearticle"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bresnan1973_ex111b",
     "source": {"bibkey": "bresnan-1973", "paperLabel": "(111b)"},
     "language": "stan1293",
-    "primaryText": "*He's a that reliable man.",
+    "primaryText": "He's a that reliable man.",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "He's a that reliable man.",
+    "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -730,7 +764,8 @@
       ["q", "much"],
       ["order", "postarticle"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bresnan1973_ex112a",
@@ -750,18 +785,19 @@
       ["q", "much"],
       ["order", "prearticle"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bresnan1973_ex112b",
     "source": {"bibkey": "bresnan-1973", "paperLabel": "(112b)"},
     "language": "stan1293",
-    "primaryText": "*He's a too reliable man.",
+    "primaryText": "He's a too reliable man.",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "He's a too reliable man.",
+    "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -770,7 +806,8 @@
       ["q", "much"],
       ["order", "postarticle"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bresnan1973_ex113a",
@@ -790,18 +827,19 @@
       ["q", "much"],
       ["order", "prearticle"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bresnan1973_ex113b",
     "source": {"bibkey": "bresnan-1973", "paperLabel": "(113b)"},
     "language": "stan1293",
-    "primaryText": "*He's an as reliable man.",
+    "primaryText": "He's an as reliable man.",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "He's an as reliable man.",
+    "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -810,7 +848,8 @@
       ["q", "much"],
       ["order", "postarticle"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bresnan1973_ex114a",
@@ -830,18 +869,19 @@
       ["q", "much"],
       ["order", "prearticle"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bresnan1973_ex114b",
     "source": {"bibkey": "bresnan-1973", "paperLabel": "(114b)"},
     "language": "stan1293",
-    "primaryText": "*He's a so reliable man.",
+    "primaryText": "He's a so reliable man.",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "He's a so reliable man.",
+    "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -850,16 +890,17 @@
       ["q", "much"],
       ["order", "postarticle"]
     ],
-    "comment": "so before the shifted AP surfaces as such: such a reliable man (1.5)."
+    "comment": "so before the shifted AP surfaces as such: such a reliable man (1.5).",
+    "verified": "page-image"
   },
   {
     "id": "bresnan1973_ex115a",
     "source": {"bibkey": "bresnan-1973", "paperLabel": "(115a)"},
     "language": "stan1293",
-    "primaryText": "?He's more reliable a man.",
+    "primaryText": "He's more reliable a man.",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "He's more reliable a man.",
+    "translation": "",
     "context": "",
     "judgment": "marginal",
     "alternatives": [],
@@ -870,7 +911,8 @@
       ["q", "much"],
       ["order", "prearticle"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bresnan1973_ex115b",
@@ -890,16 +932,17 @@
       ["q", "much"],
       ["order", "postarticle"]
     ],
-    "comment": "The empty Det after -er Encliticizing lets QP Raising feed AP Shift."
+    "comment": "The empty Det after -er Encliticizing lets QP Raising feed AP Shift.",
+    "verified": "page-image"
   },
   {
     "id": "bresnan1973_ex116a",
     "source": {"bibkey": "bresnan-1973", "paperLabel": "(116a)"},
     "language": "stan1293",
-    "primaryText": "?He's reliable enough a man.",
+    "primaryText": "He's reliable enough a man.",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "He's reliable enough a man.",
+    "translation": "",
     "context": "",
     "judgment": "marginal",
     "alternatives": [],
@@ -909,7 +952,8 @@
       ["q", "enough"],
       ["order", "prearticle"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bresnan1973_ex116b",
@@ -928,16 +972,17 @@
       ["q", "enough"],
       ["order", "postarticle"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bresnan1973_ex125a",
     "source": {"bibkey": "bresnan-1973", "paperLabel": "(125a)"},
     "language": "stan1293",
-    "primaryText": "?John is not more reliable a fellow than Bill.",
+    "primaryText": "John is not more reliable a fellow than Bill.",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "John is not more reliable a fellow than Bill.",
+    "translation": "",
     "context": "",
     "judgment": "marginal",
     "alternatives": [],
@@ -948,7 +993,8 @@
       ["q", "much"],
       ["order", "prearticle"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bresnan1973_ex125b",
@@ -968,7 +1014,8 @@
       ["q", "much"],
       ["order", "postarticle"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bresnan1973_ex126a",
@@ -989,18 +1036,19 @@
       ["q", "much"],
       ["order", "prearticle"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bresnan1973_ex126b",
     "source": {"bibkey": "bresnan-1973", "paperLabel": "(126b)"},
     "language": "stan1293",
-    "primaryText": "*John isn't an any more reliable fellow than Bill.",
+    "primaryText": "John isn't an any more reliable fellow than Bill.",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "John isn't an any more reliable fellow than Bill.",
+    "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -1010,7 +1058,8 @@
       ["q", "much"],
       ["order", "postarticle"]
     ],
-    "comment": "any fills the Det beside -er and blocks QP Raising."
+    "comment": "any fills the Det beside -er and blocks QP Raising.",
+    "verified": "page-image"
   },
   {
     "id": "bresnan1973_ex127a",
@@ -1031,18 +1080,19 @@
       ["q", "much"],
       ["order", "prearticle"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bresnan1973_ex127b",
     "source": {"bibkey": "bresnan-1973", "paperLabel": "(127b)"},
     "language": "stan1293",
-    "primaryText": "*John is a no more reliable fellow than Bill.",
+    "primaryText": "John is a no more reliable fellow than Bill.",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "John is a no more reliable fellow than Bill.",
+    "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -1052,7 +1102,8 @@
       ["q", "much"],
       ["order", "postarticle"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bresnan1973_ex217a",
@@ -1072,18 +1123,19 @@
       ["q", "much"],
       ["order", "postarticle"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bresnan1973_ex217b",
     "source": {"bibkey": "bresnan-1973", "paperLabel": "(217b)"},
     "language": "stan1293",
-    "primaryText": "*a decidedly too tall man",
+    "primaryText": "a decidedly too tall man",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "a decidedly too tall man",
+    "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -1092,7 +1144,8 @@
       ["q", "much"],
       ["order", "postarticle"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bresnan1973_ex218a",
@@ -1112,18 +1165,19 @@
       ["q", "much"],
       ["order", "postarticle"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bresnan1973_ex218b",
     "source": {"bibkey": "bresnan-1973", "paperLabel": "(218b)"},
     "language": "stan1293",
-    "primaryText": "*an obviously so good solution",
+    "primaryText": "an obviously so good solution",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "an obviously so good solution",
+    "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -1132,11 +1186,12 @@
       ["q", "much"],
       ["order", "postarticle"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bresnan1973_ex4a",
-    "source": {"bibkey": "bresnan-1973", "paperLabel": "(4a)"},
+    "source": {"bibkey": "bresnan-1973", "paperLabel": "(4)"},
     "language": "stan1293",
     "primaryText": "as much bread",
     "discourseSegments": [],
@@ -1151,11 +1206,12 @@
       ["particle", "as"],
       ["q", "much"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bresnan1973_ex4b",
-    "source": {"bibkey": "bresnan-1973", "paperLabel": "(4b)"},
+    "source": {"bibkey": "bresnan-1973", "paperLabel": "(4)"},
     "language": "stan1293",
     "primaryText": "less bread",
     "discourseSegments": [],
@@ -1170,11 +1226,12 @@
       ["clitic", "er"],
       ["q", "little"]
     ],
-    "comment": "-er little, suppletive."
+    "comment": "-er little, suppletive.",
+    "verified": "page-image"
   },
   {
     "id": "bresnan1973_ex5a",
-    "source": {"bibkey": "bresnan-1973", "paperLabel": "(5a)"},
+    "source": {"bibkey": "bresnan-1973", "paperLabel": "(5)"},
     "language": "stan1293",
     "primaryText": "as few people",
     "discourseSegments": [],
@@ -1189,11 +1246,12 @@
       ["particle", "as"],
       ["q", "few"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bresnan1973_ex5b",
-    "source": {"bibkey": "bresnan-1973", "paperLabel": "(5b)"},
+    "source": {"bibkey": "bresnan-1973", "paperLabel": "(5)"},
     "language": "stan1293",
     "primaryText": "fewer people",
     "discourseSegments": [],
@@ -1208,7 +1266,8 @@
       ["clitic", "er"],
       ["q", "few"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bresnan1973_ex45",
@@ -1226,7 +1285,8 @@
       ["set", "det"],
       ["q", "enough"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bresnan1973_ex83",
@@ -1244,18 +1304,19 @@
       ["set", "det"],
       ["q", "much"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bresnan1973_ex107a",
-    "source": {"bibkey": "bresnan-1973", "paperLabel": "(107a)"},
+    "source": {"bibkey": "bresnan-1973", "paperLabel": "(107)"},
     "language": "stan1293",
-    "primaryText": "*so enough",
+    "primaryText": "so enough",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "so enough",
+    "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -1263,18 +1324,19 @@
       ["particle", "so"],
       ["q", "enough"]
     ],
-    "comment": "enough is subcategorized for a null Det."
+    "comment": "enough is subcategorized for a null Det.",
+    "verified": "page-image"
   },
   {
     "id": "bresnan1973_ex107b",
-    "source": {"bibkey": "bresnan-1973", "paperLabel": "(107b)"},
+    "source": {"bibkey": "bresnan-1973", "paperLabel": "(107)"},
     "language": "stan1293",
-    "primaryText": "*as enough",
+    "primaryText": "as enough",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "as enough",
+    "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -1282,18 +1344,19 @@
       ["particle", "as"],
       ["q", "enough"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bresnan1973_ex107c",
-    "source": {"bibkey": "bresnan-1973", "paperLabel": "(107c)"},
+    "source": {"bibkey": "bresnan-1973", "paperLabel": "(107)"},
     "language": "stan1293",
-    "primaryText": "*too enough",
+    "primaryText": "too enough",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "too enough",
+    "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -1301,18 +1364,19 @@
       ["particle", "too"],
       ["q", "enough"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bresnan1973_ex107d",
-    "source": {"bibkey": "bresnan-1973", "paperLabel": "(107d)"},
+    "source": {"bibkey": "bresnan-1973", "paperLabel": "(107)"},
     "language": "stan1293",
-    "primaryText": "*that enough",
+    "primaryText": "that enough",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "that enough",
+    "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -1320,18 +1384,19 @@
       ["particle", "that"],
       ["q", "enough"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bresnan1973_ex107e",
-    "source": {"bibkey": "bresnan-1973", "paperLabel": "(107e)"},
+    "source": {"bibkey": "bresnan-1973", "paperLabel": "(107)"},
     "language": "stan1293",
-    "primaryText": "*enougher",
+    "primaryText": "enougher",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "enougher",
+    "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -1339,7 +1404,8 @@
       ["clitic", "er"],
       ["q", "enough"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bresnan1973_ex117",
@@ -1358,7 +1424,8 @@
       ["clitic", "er"],
       ["q", "much"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bresnan1973_ex118",
@@ -1378,7 +1445,8 @@
       ["clitic", "er"],
       ["q", "much"]
     ],
-    "comment": "any cooccupies the Det with -er."
+    "comment": "any cooccupies the Det with -er.",
+    "verified": "page-image"
   },
   {
     "id": "bresnan1973_ex119",
@@ -1398,18 +1466,19 @@
       ["clitic", "er"],
       ["q", "much"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bresnan1973_ex224a",
-    "source": {"bibkey": "bresnan-1973", "paperLabel": "(224a)"},
+    "source": {"bibkey": "bresnan-1973", "paperLabel": "(224)"},
     "language": "stan1293",
-    "primaryText": "*as more",
+    "primaryText": "as more",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "as more",
+    "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -1418,18 +1487,19 @@
       ["clitic", "er"],
       ["q", "much"]
     ],
-    "comment": "more already fills its Det with -er."
+    "comment": "more already fills its Det with -er.",
+    "verified": "page-image"
   },
   {
     "id": "bresnan1973_ex224b",
-    "source": {"bibkey": "bresnan-1973", "paperLabel": "(224b)"},
+    "source": {"bibkey": "bresnan-1973", "paperLabel": "(224)"},
     "language": "stan1293",
-    "primaryText": "*too more",
+    "primaryText": "too more",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "too more",
+    "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -1438,18 +1508,19 @@
       ["clitic", "er"],
       ["q", "much"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bresnan1973_ex224c",
-    "source": {"bibkey": "bresnan-1973", "paperLabel": "(224c)"},
+    "source": {"bibkey": "bresnan-1973", "paperLabel": "(224)"},
     "language": "stan1293",
-    "primaryText": "*that most",
+    "primaryText": "that most",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "that most",
+    "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -1458,18 +1529,19 @@
       ["clitic", "est"],
       ["q", "much"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bresnan1973_ex224d",
-    "source": {"bibkey": "bresnan-1973", "paperLabel": "(224d)"},
+    "source": {"bibkey": "bresnan-1973", "paperLabel": "(224)"},
     "language": "stan1293",
-    "primaryText": "*so most",
+    "primaryText": "so most",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "so most",
+    "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -1478,7 +1550,8 @@
       ["clitic", "est"],
       ["q", "much"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bresnan1973_ex242a",
@@ -1503,7 +1576,8 @@
       ["noun", "man"],
       ["anomalous", "no"]
     ],
-    "comment": "Reduced relative: the head is the AP -er much tall (251)."
+    "comment": "Reduced relative: the head is the AP -er much tall (251).",
+    "verified": "page-image"
   },
   {
     "id": "bresnan1973_ex242b",
@@ -1528,7 +1602,8 @@
       ["noun", "man"],
       ["anomalous", "no"]
     ],
-    "comment": "The head is the predicative NP -er much tall a man (243); the clause predicates a man of the standard."
+    "comment": "The head is the predicative NP -er much tall a man (243); the clause predicates a man of the standard.",
+    "verified": "page-image"
   },
   {
     "id": "bresnan1973_ex242c",
@@ -1553,7 +1628,8 @@
       ["noun", "man"],
       ["anomalous", "no"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bresnan1973_ex242d",
@@ -1578,7 +1654,8 @@
       ["noun", "man"],
       ["anomalous", "yes"]
     ],
-    "comment": "Problem (A): what is compared is how tall a man my mother is."
+    "comment": "Problem (A): what is compared is how tall a man my mother is.",
+    "verified": "page-image"
   },
   {
     "id": "bresnan1973_ex252",
@@ -1599,18 +1676,19 @@
       ["clause", "np"],
       ["clause_site", "adjective"]
     ],
-    "comment": "The matching NP that good a solution is the object of did."
+    "comment": "The matching NP that good a solution is the object of did.",
+    "verified": "page-image"
   },
   {
     "id": "bresnan1973_ex253",
     "source": {"bibkey": "bresnan-1973", "paperLabel": "(253)"},
     "language": "stan1293",
-    "primaryText": "*John wants to come up with a solution as good as Christine did.",
+    "primaryText": "John wants to come up with a solution as good as Christine did.",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "John wants to come up with a solution as good as Christine did.",
+    "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -1620,11 +1698,12 @@
       ["clause", "np"],
       ["clause_site", "adjective"]
     ],
-    "comment": "The matching AP cannot function as a direct object."
+    "comment": "The matching AP cannot function as a direct object.",
+    "verified": "page-image"
   },
   {
     "id": "bresnan1973_ex254a",
-    "source": {"bibkey": "bresnan-1973", "paperLabel": "(254a)"},
+    "source": {"bibkey": "bresnan-1973", "paperLabel": "(254)"},
     "language": "stan1293",
     "primaryText": "John wants to find a better solution than Christine's.",
     "discourseSegments": [],
@@ -1641,11 +1720,12 @@
       ["clause", "np"],
       ["clause_site", "adjective"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bresnan1973_ex254b",
-    "source": {"bibkey": "bresnan-1973", "paperLabel": "(254b)"},
+    "source": {"bibkey": "bresnan-1973", "paperLabel": "(254)"},
     "language": "stan1293",
     "primaryText": "John wants to find a better solution than Christine did.",
     "discourseSegments": [],
@@ -1662,11 +1742,12 @@
       ["clause", "np"],
       ["clause_site", "adjective"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bresnan1973_ex255a",
-    "source": {"bibkey": "bresnan-1973", "paperLabel": "(255a)"},
+    "source": {"bibkey": "bresnan-1973", "paperLabel": "(255)"},
     "language": "stan1293",
     "primaryText": "John wants to find a solution better than Christine's.",
     "discourseSegments": [],
@@ -1683,18 +1764,19 @@
       ["clause", "ap"],
       ["clause_site", "adjective"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bresnan1973_ex255b",
-    "source": {"bibkey": "bresnan-1973", "paperLabel": "(255b)"},
+    "source": {"bibkey": "bresnan-1973", "paperLabel": "(255)"},
     "language": "stan1293",
-    "primaryText": "*John wants to find a solution better than Christine did.",
+    "primaryText": "John wants to find a solution better than Christine did.",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "John wants to find a solution better than Christine did.",
+    "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -1704,7 +1786,8 @@
       ["clause", "np"],
       ["clause_site", "adjective"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bresnan1973_ex256a",
@@ -1725,7 +1808,8 @@
       ["clause", "qp"],
       ["clause_site", "phrase"]
     ],
-    "comment": "Adverbial more modifies the VP; the clause supplies an adverbial QP (257)."
+    "comment": "Adverbial more modifies the VP; the clause supplies an adverbial QP (257).",
+    "verified": "page-image"
   },
   {
     "id": "bresnan1973_ex256b",
@@ -1746,7 +1830,8 @@
       ["clause", "np"],
       ["clause_site", "noun"]
     ],
-    "comment": "Partitive more in the object NP; the clause supplies a matching partitive (260)."
+    "comment": "Partitive more in the object NP; the clause supplies a matching partitive (260).",
+    "verified": "page-image"
   },
   {
     "id": "bresnan1973_ex256c",
@@ -1767,18 +1852,19 @@
       ["clause", "qp"],
       ["clause_site", "phrase"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bresnan1973_ex256d",
     "source": {"bibkey": "bresnan-1973", "paperLabel": "(256d)"},
     "language": "stan1293",
-    "primaryText": "*Jack eats more caviar than he sleeps.",
+    "primaryText": "Jack eats more caviar than he sleeps.",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "Jack eats more caviar than he sleeps.",
+    "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -1788,7 +1874,8 @@
       ["clause", "qp"],
       ["clause_site", "phrase"]
     ],
-    "comment": "Problem (B): sleep takes no object, so no partitive is available; the adverbial QP is featurally distinct."
+    "comment": "Problem (B): sleep takes no object, so no partitive is available; the adverbial QP is featurally distinct.",
+    "verified": "page-image"
   },
   {
     "id": "bresnan1973_ex262",
@@ -1810,18 +1897,19 @@
       ["clause", "ap"],
       ["clause_site", "adjective"]
     ],
-    "comment": "Subdeletion: the QP modifier of wide is deleted."
+    "comment": "Subdeletion: the QP modifier of wide is deleted.",
+    "verified": "page-image"
   },
   {
     "id": "bresnan1973_ex266",
     "source": {"bibkey": "bresnan-1973", "paperLabel": "(266)"},
     "language": "stan1293",
-    "primaryText": "*The table is longer than the door's wide.",
+    "primaryText": "The table is longer than the door's wide.",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "The table is longer than the door's wide.",
+    "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -1833,18 +1921,19 @@
       ["clause_site", "adjective"],
       ["contraction", "yes"]
     ],
-    "comment": "Contraction is inhibited directly before the deletion site."
+    "comment": "Contraction is inhibited directly before the deletion site.",
+    "verified": "page-image"
   },
   {
     "id": "bresnan1973_ex270",
     "source": {"bibkey": "bresnan-1973", "paperLabel": "(270)"},
     "language": "stan1293",
-    "primaryText": "*I was happier there than I'm here.",
+    "primaryText": "I was happier there than I'm here.",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "I was happier there than I'm here.",
+    "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -1855,7 +1944,8 @@
       ["clause_site", "adjective"],
       ["contraction", "yes"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bresnan1973_ex271",
@@ -1877,18 +1967,19 @@
       ["clause_site", "phrase"],
       ["contraction", "yes"]
     ],
-    "comment": "The deleted sentence-modifier QP does not intervene between am and angry (272)."
+    "comment": "The deleted sentence-modifier QP does not intervene between am and angry (272).",
+    "verified": "page-image"
   },
   {
     "id": "bresnan1973_ex273",
     "source": {"bibkey": "bresnan-1973", "paperLabel": "(273)"},
     "language": "stan1293",
-    "primaryText": "*I'm sadder than I'm angry.",
+    "primaryText": "I'm sadder than I'm angry.",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "I'm sadder than I'm angry.",
+    "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -1899,7 +1990,8 @@
       ["clause_site", "adjective"],
       ["contraction", "yes"]
     ],
-    "comment": "The deleted QP intervenes between am and angry (274)."
+    "comment": "The deleted QP intervenes between am and angry (274).",
+    "verified": "page-image"
   },
   {
     "id": "bresnan1973_ex280a",
@@ -1921,18 +2013,19 @@
       ["clause", "qp"],
       ["clause_site", "measure"]
     ],
-    "comment": "Head QP; clause six feet = x much (293)."
+    "comment": "Head QP; clause six feet = x much (293).",
+    "verified": "page-image"
   },
   {
     "id": "bresnan1973_ex280b",
     "source": {"bibkey": "bresnan-1973", "paperLabel": "(280b)"},
     "language": "stan1293",
-    "primaryText": "*John is more than Bill tall.",
+    "primaryText": "John is more than Bill tall.",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "John is more than Bill tall.",
+    "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -1943,7 +2036,8 @@
       ["clause", "np"],
       ["clause_site", "term"]
     ],
-    "comment": "The clause *Bill = that much equates an NP with a QP (286b)."
+    "comment": "The clause *Bill = that much equates an NP with a QP (286b).",
+    "verified": "page-image"
   },
   {
     "id": "bresnan1973_ex280c",
@@ -1965,7 +2059,8 @@
       ["clause", "ap"],
       ["clause_site", "measure"]
     ],
-    "comment": "Head AP; clause six feet = x much tall (295)."
+    "comment": "Head AP; clause six feet = x much tall (295).",
+    "verified": "page-image"
   },
   {
     "id": "bresnan1973_ex280d",
@@ -1987,7 +2082,8 @@
       ["clause", "ap"],
       ["clause_site", "adjective"]
     ],
-    "comment": "Head AP; clause Bill is x much tall (294)."
+    "comment": "Head AP; clause Bill is x much tall (294).",
+    "verified": "page-image"
   },
   {
     "id": "bresnan1973_ex281a",
@@ -2008,18 +2104,19 @@
       ["clause", "qp"],
       ["clause_site", "measure"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bresnan1973_ex281b",
     "source": {"bibkey": "bresnan-1973", "paperLabel": "(281b)"},
     "language": "stan1293",
-    "primaryText": "*Mary has more than just Bill and Pete friends.",
+    "primaryText": "Mary has more than just Bill and Pete friends.",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "Mary has more than just Bill and Pete friends.",
+    "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -2029,7 +2126,8 @@
       ["clause", "np"],
       ["clause_site", "term"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bresnan1973_ex281c",
@@ -2050,7 +2148,8 @@
       ["clause", "np"],
       ["clause_site", "term"]
     ],
-    "comment": "two friends = that many friends (287c)."
+    "comment": "two friends = that many friends (287c).",
+    "verified": "page-image"
   },
   {
     "id": "bresnan1973_ex281d",
@@ -2071,7 +2170,8 @@
       ["clause", "np"],
       ["clause_site", "term"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bresnan1973_ex282a",
@@ -2093,18 +2193,19 @@
       ["clause", "qp"],
       ["clause_site", "measure"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bresnan1973_ex282b",
     "source": {"bibkey": "bresnan-1973", "paperLabel": "(282b)"},
     "language": "stan1293",
-    "primaryText": "*They may grow as much as bamboo high.",
+    "primaryText": "They may grow as much as bamboo high.",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "They may grow as much as bamboo high.",
+    "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -2115,7 +2216,8 @@
       ["clause", "np"],
       ["clause_site", "term"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bresnan1973_ex282c",
@@ -2137,7 +2239,8 @@
       ["clause", "ap"],
       ["clause_site", "measure"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bresnan1973_ex282d",
@@ -2159,7 +2262,8 @@
       ["clause", "ap"],
       ["clause_site", "adjective"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bresnan1973_ex283a",
@@ -2180,18 +2284,19 @@
       ["clause", "qp"],
       ["clause_site", "measure"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bresnan1973_ex283b",
     "source": {"bibkey": "bresnan-1973", "paperLabel": "(283b)"},
     "language": "stan1293",
-    "primaryText": "*Some of them made as many as Joan errors.",
+    "primaryText": "Some of them made as many as Joan errors.",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "Some of them made as many as Joan errors.",
+    "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -2201,7 +2306,8 @@
       ["clause", "np"],
       ["clause_site", "term"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bresnan1973_ex283c",
@@ -2222,7 +2328,8 @@
       ["clause", "np"],
       ["clause_site", "term"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bresnan1973_ex283d",
@@ -2243,18 +2350,19 @@
       ["clause", "np"],
       ["clause_site", "term"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bresnan1973_ex296a",
     "source": {"bibkey": "bresnan-1973", "paperLabel": "(296a)"},
     "language": "stan1293",
-    "primaryText": "*John is more than five feet short.",
+    "primaryText": "John is more than five feet short.",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "John is more than five feet short.",
+    "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -2265,7 +2373,8 @@
       ["clause", "qp"],
       ["clause_site", "measure"]
     ],
-    "comment": "Problem (D): the Q modifying short cannot be a definite measurement, yet is equated with one (297)."
+    "comment": "Problem (D): the Q modifying short cannot be a definite measurement, yet is equated with one (297).",
+    "verified": "page-image"
   },
   {
     "id": "bresnan1973_ex296b",
@@ -2287,7 +2396,8 @@
       ["clause", "ap"],
       ["clause_site", "measure"]
     ],
-    "comment": "Head AP: the identity holds of the AP, not of its Q."
+    "comment": "Head AP: the identity holds of the AP, not of its Q.",
+    "verified": "page-image"
   },
   {
     "id": "bresnan1973_ex298",
@@ -2308,18 +2418,19 @@
       ["clause", "np"],
       ["clause_site", "noun"]
     ],
-    "comment": "Formation on the NP cycle deletes the recoverable subpart x many (302)."
+    "comment": "Formation on the NP cycle deletes the recoverable subpart x many (302).",
+    "verified": "page-image"
   },
   {
     "id": "bresnan1973_ex300",
     "source": {"bibkey": "bresnan-1973", "paperLabel": "(300)"},
     "language": "stan1293",
-    "primaryText": "*Mary has more than Bill has friends enemies.",
+    "primaryText": "Mary has more than Bill has friends enemies.",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "Mary has more than Bill has friends enemies.",
+    "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -2329,6 +2440,7 @@
       ["clause", "qp"],
       ["clause_site", "noun"]
     ],
-    "comment": "Formation on the QP cycle would factor out a left branch (301)."
+    "comment": "Formation on the QP cycle would factor out a left branch (301).",
+    "verified": "page-image"
   }
 ]

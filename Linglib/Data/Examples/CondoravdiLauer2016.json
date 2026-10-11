@@ -3,7 +3,7 @@
     "id": "cl2016_ex1",
     "source": {"bibkey": "condoravdi-lauer-2016", "paperLabel": "(1)"},
     "language": "stan1293",
-    "primaryText": "If you want to go to Harlem, you have to / should take the A train.",
+    "primaryText": "If you want to go to Harlem, you should / have to take the A train.",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
@@ -18,7 +18,8 @@
       ["interpretation", "anankastic"],
       ["implication", "means"]
     ],
-    "comment": "The Harlem sentence, after Sæbø; conveys that taking the A train is necessary for going to Harlem. True in the Hoboken scenario, `HobokenScenario.anankastic_harlem`."
+    "comment": "The Harlem sentence, after Sæbø; conveys that taking the A train is necessary for going to Harlem. True in the Hoboken scenario, `HobokenScenario.anankastic_harlem`.",
+    "verified": "page-image"
   },
   {
     "id": "cl2016_ex2",
@@ -39,7 +40,8 @@
       ["interpretation", "anankastic"],
       ["implication", "means"]
     ],
-    "comment": "Intention predicates give the same interpretation; intending entails effectively preferring."
+    "comment": "Intention predicates give the same interpretation; intending entails effectively preferring.",
+    "verified": "page-image"
   },
   {
     "id": "cl2016_ex3",
@@ -60,7 +62,8 @@
       ["interpretation", "anankastic"],
       ["implication", "means"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "cl2016_ex4",
@@ -81,7 +84,8 @@
       ["interpretation", "anankastic"],
       ["implication", "means"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "cl2016_ex5",
@@ -102,7 +106,8 @@
       ["interpretation", "nonAnankastic"],
       ["implication", "none"]
     ],
-    "comment": "Advice on how to avoid eating chocolate: want reports a mere desire and the modal is teleological, (105)."
+    "comment": "Advice on how to avoid eating chocolate: want reports a mere desire and the modal is teleological, (105).",
+    "verified": "page-image"
   },
   {
     "id": "cl2016_ex14",
@@ -120,7 +125,8 @@
       ["construction", "hoboken"],
       ["truth", "false"]
     ],
-    "comment": "Intuitively false in the Hoboken scenario; Sæbø's augmented ordering source predicts it true, `HobokenScenario.saebo_path`."
+    "comment": "Intuitively false in the Hoboken scenario; Sæbø's augmented ordering source predicts it true, `HobokenScenario.saebo_path`.",
+    "verified": "page-image"
   },
   {
     "id": "cl2016_ex15",
@@ -141,7 +147,8 @@
       ["interpretation", "anankastic"],
       ["implication", "means"]
     ],
-    "comment": "True together with the Harlem sentence in the Hoboken scenario, `HobokenScenario.anankastic_hoboken`."
+    "comment": "True together with the Harlem sentence in the Hoboken scenario, `HobokenScenario.anankastic_hoboken`.",
+    "verified": "page-image"
   },
   {
     "id": "cl2016_ex19a",
@@ -159,7 +166,8 @@
       ["construction", "conflict"],
       ["form", "unconditional"]
     ],
-    "comment": "Conflicting extrinsic preferences make one or both unconditional necessities false."
+    "comment": "Conflicting extrinsic preferences make one or both unconditional necessities false.",
+    "verified": "page-image"
   },
   {
     "id": "cl2016_ex19b",
@@ -177,7 +185,8 @@
       ["construction", "conflict"],
       ["form", "unconditional"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "cl2016_ex20a",
@@ -195,7 +204,8 @@
       ["construction", "conflict"],
       ["form", "conditional"]
     ],
-    "comment": "The conditional necessities are true in the same context, after Huitink."
+    "comment": "The conditional necessities are true in the same context, after Huitink.",
+    "verified": "page-image"
   },
   {
     "id": "cl2016_ex20b",
@@ -213,7 +223,8 @@
       ["construction", "conflict"],
       ["form", "conditional"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "cl2016_ex21",
@@ -230,7 +241,8 @@
     "paperFeatures": [
       ["construction", "strong"]
     ],
-    "comment": "Huitink's strong interpretation of the antecedent, too strong for near-anankastics."
+    "comment": "Huitink's strong interpretation of the antecedent, too strong for near-anankastics.",
+    "verified": "page-image"
   },
   {
     "id": "cl2016_ex28",
@@ -251,7 +263,8 @@
       ["interpretation", "anankastic"],
       ["implication", "precondition"]
     ],
-    "comment": "A necessary precondition rather than a means."
+    "comment": "A necessary precondition rather than a means.",
+    "verified": "page-image"
   },
   {
     "id": "cl2016_ex29a",
@@ -272,7 +285,8 @@
       ["interpretation", "nearAnankastic"],
       ["implication", "strengthenedGoal"]
     ],
-    "comment": "A strengthened goal: the internal antecedent joins the overt purpose clause; a near-anankastic with the anankastic parameter setting."
+    "comment": "A strengthened goal: the internal antecedent joins the overt purpose clause; a near-anankastic with the anankastic parameter setting.",
+    "verified": "page-image"
   },
   {
     "id": "cl2016_ex29b",
@@ -293,7 +307,8 @@
       ["interpretation", "nearAnankastic"],
       ["implication", "strengthenedGoal"]
     ],
-    "comment": "An implicit strengthened goal; the vaccine need not be a precondition for travelling."
+    "comment": "An implicit strengthened goal; the vaccine need not be a precondition for travelling.",
+    "verified": "page-image"
   },
   {
     "id": "cl2016_ex30",
@@ -311,7 +326,8 @@
       ["construction", "purpose"],
       ["implication", "means"]
     ],
-    "comment": "The purpose construction the purpose-clause analyses reduce (29) to."
+    "comment": "The purpose construction the purpose-clause analyses reduce (29) to.",
+    "verified": "page-image"
   },
   {
     "id": "cl2016_ex31",
@@ -332,7 +348,8 @@
       ["implication", "consequence"],
       ["interpretation", "nearAnankastic"]
     ],
-    "comment": "A near-anankastic about a teleological consequence of achieving the goal, with the same parameter setting as the Harlem sentence."
+    "comment": "A near-anankastic about a teleological consequence of achieving the goal, with the same parameter setting as the Harlem sentence.",
+    "verified": "page-image"
   },
   {
     "id": "cl2016_ex35a",
@@ -350,7 +367,8 @@
       ["construction", "purpose"],
       ["implication", "consequence"]
     ],
-    "comment": "The same sentence as (99)."
+    "comment": "The same sentence as (99).",
+    "verified": "page-image"
   },
   {
     "id": "cl2016_ex37",
@@ -368,7 +386,8 @@
       ["construction", "counterfactual"],
       ["truth", "false"]
     ],
-    "comment": "Von Stechow et al.'s similarity modal gives (31) and (37) the same truth conditions, but (31) can be true when (37) is false."
+    "comment": "Von Stechow et al.'s similarity modal gives (31) and (37) the same truth conditions, but (31) can be true when (37) is false.",
+    "verified": "page-image"
   },
   {
     "id": "cl2016_ex38",
@@ -389,7 +408,8 @@
       ["interpretation", "nearAnankastic"],
       ["implication", "consequence"]
     ],
-    "comment": "A deontic near-anankastic: conveys that it is illegal to take the exemption now and not pay more taxes next year."
+    "comment": "A deontic near-anankastic: conveys that it is illegal to take the exemption now and not pay more taxes next year.",
+    "verified": "page-image"
   },
   {
     "id": "cl2016_ex39a",
@@ -410,7 +430,8 @@
       ["implication", "specialization"],
       ["interpretation", "nearAnankastic"]
     ],
-    "comment": "A what-kind-of near-anankastic: the prejacent specializes the goal."
+    "comment": "A what-kind-of near-anankastic: the prejacent specializes the goal.",
+    "verified": "page-image"
   },
   {
     "id": "cl2016_ex39b",
@@ -428,7 +449,8 @@
       ["construction", "purpose"],
       ["implication", "specialization"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "cl2016_ex40a",
@@ -449,7 +471,8 @@
       ["implication", "specialization"],
       ["interpretation", "nearAnankastic"]
     ],
-    "comment": "A what-kind-of near-anankastic: advice about what kind of fancy dress to buy."
+    "comment": "A what-kind-of near-anankastic: advice about what kind of fancy dress to buy.",
+    "verified": "page-image"
   },
   {
     "id": "cl2016_ex40b",
@@ -467,7 +490,8 @@
       ["construction", "purpose"],
       ["implication", "specialization"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "cl2016_ex42",
@@ -484,7 +508,8 @@
     "paperFeatures": [
       ["construction", "counterfactual"]
     ],
-    "comment": "(40a) can be true when (42) is not, if the addressee lacks the funds for a well-made dress."
+    "comment": "(40a) can be true when (42) is not, if the addressee lacks the funds for a well-made dress.",
+    "verified": "page-image"
   },
   {
     "id": "cl2016_ex43",
@@ -501,7 +526,8 @@
     "paperFeatures": [
       ["construction", "vacuity"]
     ],
-    "comment": "Intuitively equivalent to (38), which suggests, misleadingly, that want is vacuous."
+    "comment": "Intuitively equivalent to (38), which suggests, misleadingly, that want is vacuous.",
+    "verified": "page-image"
   },
   {
     "id": "cl2016_ex44",
@@ -518,7 +544,8 @@
     "paperFeatures": [
       ["construction", "vacuity"]
     ],
-    "comment": "Intuitively equivalent to (40a)."
+    "comment": "Intuitively equivalent to (40a).",
+    "verified": "page-image"
   },
   {
     "id": "cl2016_ex46",
@@ -535,7 +562,8 @@
     "paperFeatures": [
       ["construction", "negation"]
     ],
-    "comment": "Due to Doris Penka; negation applies to want, so the conditional conditionalizes on indifference, which a vacuous want could not express."
+    "comment": "Due to Doris Penka; negation applies to want, so the conditional conditionalizes on indifference, which a vacuous want could not express.",
+    "verified": "page-image"
   },
   {
     "id": "cl2016_ex47",
@@ -553,7 +581,8 @@
       ["construction", "readings"],
       ["construal", "effective"]
     ],
-    "comment": "Hare's waiter case: want does not report a desire the agent has as a matter of psychological fact."
+    "comment": "Hare's waiter case: want does not report a desire the agent has as a matter of psychological fact.",
+    "verified": "page-image"
   },
   {
     "id": "cl2016_ex48",
@@ -571,7 +600,8 @@
       ["construction", "readings"],
       ["construal", "mere"]
     ],
-    "comment": "Hare's diabetes case: want reports a desire the agent has as a matter of psychological fact."
+    "comment": "Hare's diabetes case: want reports a desire the agent has as a matter of psychological fact.",
+    "verified": "page-image"
   },
   {
     "id": "cl2016_ex49a",
@@ -589,7 +619,8 @@
       ["construction", "readings"],
       ["construal", "mere"]
     ],
-    "comment": "Levinson's observation, after Davis: the two replies are not contradictory."
+    "comment": "Levinson's observation, after Davis: the two replies are not contradictory.",
+    "verified": "page-image"
   },
   {
     "id": "cl2016_ex49b",
@@ -607,7 +638,8 @@
       ["construction", "readings"],
       ["construal", "effective"]
     ],
-    "comment": "The no denies an effective preference."
+    "comment": "The no denies an effective preference.",
+    "verified": "page-image"
   },
   {
     "id": "cl2016_ex52",
@@ -625,7 +657,8 @@
       ["construction", "incompatibleWants"],
       ["construal", "mere"]
     ],
-    "comment": "Two known-incompatible wants asserted together; consistent on the mere-desire reading, since non-effective structures need not be consistent."
+    "comment": "Two known-incompatible wants asserted together; consistent on the mere-desire reading, since non-effective structures need not be consistent.",
+    "verified": "page-image"
   },
   {
     "id": "cl2016_ex53",
@@ -643,7 +676,8 @@
       ["construction", "incompatibleWants"],
       ["construal", "mere"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "cl2016_ex54",
@@ -661,7 +695,8 @@
       ["construction", "incompatibleWants"],
       ["construal", "mere"]
     ],
-    "comment": "Coherent: attributes indecision."
+    "comment": "Coherent: attributes indecision.",
+    "verified": "page-image"
   },
   {
     "id": "cl2016_ex55",
@@ -672,14 +707,16 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "questionable",
+    "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "incompatibleWants"],
-      ["construal", "effective"]
+      ["construal", "effective"],
+      ["felicity", "infelicitous"]
     ],
-    "comment": "Sounds contradictory or attributes irrationality: two effective preferences the agent believes incompatible cannot both be maximal, `PreferenceStructure.Consistent.inter_inter_nonempty_of_mem_maxElts`."
+    "comment": "Printed unmarked; the prose says it sounds contradictory or attributes irrationality to John: two effective preferences the agent believes incompatible cannot both be maximal, `PreferenceStructure.Consistent.inter_inter_nonempty_of_mem_maxElts`.",
+    "verified": "page-image"
   },
   {
     "id": "cl2016_ex56a",
@@ -696,7 +733,8 @@
     "paperFeatures": [
       ["construction", "levinson"]
     ],
-    "comment": "Levinson's Paris and Rome case: (56a) and (56b) can be true without (58) if John disprefers the expense of both; on the effective reading that third preference excludes the first two being effective, `no_third_effective`."
+    "comment": "Levinson's Paris and Rome case: (56a) and (56b) can be true without (58) if John disprefers the expense of both; on the effective reading that third preference excludes the first two being effective, `no_third_effective`.",
+    "verified": "page-image"
   },
   {
     "id": "cl2016_ex56b",
@@ -713,7 +751,8 @@
     "paperFeatures": [
       ["construction", "levinson"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "cl2016_ex58",
@@ -730,7 +769,8 @@
     "paperFeatures": [
       ["construction", "levinson"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "cl2016_ex61",
@@ -748,7 +788,8 @@
       ["construction", "readings"],
       ["construal", "mere"]
     ],
-    "comment": "A mere-desire reading; on the effective reading the half of the Heim and von Fintel presupposition that the agent does not believe the negation follows from realism, footnote 30."
+    "comment": "A mere-desire reading; on the effective reading the half of the Heim and von Fintel presupposition that the agent does not believe the negation follows from realism, footnote 30.",
+    "verified": "page-image"
   },
   {
     "id": "cl2016_ex62a",
@@ -765,7 +806,8 @@
     "paperFeatures": [
       ["construction", "upwardEntailment"]
     ],
-    "comment": "Asher's example, discussed by Levinson: paying for the trip would ruin Nicholas."
+    "comment": "Asher's example, discussed by Levinson: paying for the trip would ruin Nicholas.",
+    "verified": "page-image"
   },
   {
     "id": "cl2016_ex62b",
@@ -782,7 +824,8 @@
     "paperFeatures": [
       ["construction", "upwardEntailment"]
     ],
-    "comment": "Levinson judges it false; the paper takes the judgment to rest on a success-oriented reading it rejects."
+    "comment": "Levinson judges it false; the paper takes the judgment to rest on a success-oriented reading it rejects.",
+    "verified": "page-image"
   },
   {
     "id": "cl2016_ex63",
@@ -799,7 +842,8 @@
     "paperFeatures": [
       ["construction", "upwardEntailment"]
     ],
-    "comment": "Impeccable reasoning: want appears upward entailing, through a wide-scope sub-concept indefinite on the exact-match analysis."
+    "comment": "Impeccable reasoning: want appears upward entailing, through a wide-scope sub-concept indefinite on the exact-match analysis.",
+    "verified": "page-image"
   },
   {
     "id": "cl2016_ex64",
@@ -810,13 +854,14 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "questionable",
+    "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "upwardEntailment"]
     ],
-    "comment": "Not valid on any construal: want is not downward entailing."
+    "comment": "Printed unmarked; the prose says it is not valid reasoning on any construal: want is not downward entailing.",
+    "verified": "page-image"
   },
   {
     "id": "cl2016_ex74",
@@ -833,7 +878,8 @@
     "paperFeatures": [
       ["construction", "normsAntecedent"]
     ],
-    "comment": "After von Fintel and Iatridou: the antecedent is about the ordering source of the modal, so a restrictor analysis makes the conditional false when jaywalking is legal; Frank's double-modal structure (76b)."
+    "comment": "After von Fintel and Iatridou: the antecedent is about the ordering source of the modal, so a restrictor analysis makes the conditional false when jaywalking is legal; Frank's double-modal structure (76b).",
+    "verified": "page-image"
   },
   {
     "id": "cl2016_ex81a",
@@ -851,7 +897,8 @@
       ["construction", "sobel"],
       ["member", "first"]
     ],
-    "comment": "Kaufmann and Schwager's conditional imperatives: consistent with (81b), against strengthening of the antecedent under a single imperative modal, `single_modal_strengthening`."
+    "comment": "Kaufmann and Schwager's conditional imperatives: consistent with (81b), against strengthening of the antecedent under a single imperative modal, `single_modal_strengthening`.",
+    "verified": "page-image"
   },
   {
     "id": "cl2016_ex81b",
@@ -869,7 +916,8 @@
       ["construction", "sobel"],
       ["member", "second"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "cl2016_ex82a",
@@ -887,7 +935,8 @@
       ["construction", "sobel"],
       ["member", "first"]
     ],
-    "comment": "Defeasible obligation: dog owners pay a dog tax, service dogs for the blind are exempt, and John's eyesight is perfect."
+    "comment": "Defeasible obligation: dog owners pay a dog tax, service dogs for the blind are exempt, and John's eyesight is perfect.",
+    "verified": "page-image"
   },
   {
     "id": "cl2016_ex82b",
@@ -905,7 +954,8 @@
       ["construction", "sobel"],
       ["member", "second"]
     ],
-    "comment": "Both true; a single-modal analysis would make losing one's eyesight against the law."
+    "comment": "Both true; a single-modal analysis would make losing one's eyesight against the law.",
+    "verified": "page-image"
   },
   {
     "id": "cl2016_ex83a",
@@ -923,7 +973,8 @@
       ["construction", "sobel"],
       ["member", "first"]
     ],
-    "comment": "An anankastic Sobel sequence; both true if the speaker is unwilling to drive when the trains run on time."
+    "comment": "An anankastic Sobel sequence; both true if the speaker is unwilling to drive when the trains run on time.",
+    "verified": "page-image"
   },
   {
     "id": "cl2016_ex83b",
@@ -941,7 +992,8 @@
       ["construction", "sobel"],
       ["member", "second"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "cl2016_ex84",
@@ -959,7 +1011,8 @@
       ["construction", "sobel"],
       ["member", "sequence"]
     ],
-    "comment": "A counterfactual Sobel sequence."
+    "comment": "A counterfactual Sobel sequence.",
+    "verified": "page-image"
   },
   {
     "id": "cl2016_ex85",
@@ -977,7 +1030,8 @@
       ["construction", "sobel"],
       ["member", "reverse"]
     ],
-    "comment": "A reverse Sobel sequence, infelicitous; von Fintel and Gillies take it to favour a dynamic strict analysis."
+    "comment": "A reverse Sobel sequence, infelicitous; von Fintel and Gillies take it to favour a dynamic strict analysis.",
+    "verified": "page-image"
   },
   {
     "id": "cl2016_ex86",
@@ -995,14 +1049,15 @@
       ["construction", "sobel"],
       ["member", "reverse"]
     ],
-    "comment": "A reverse anankastic Sobel sequence made felicitous by material about likelihood in between, which argues for a typicality ordering on the outer modal."
+    "comment": "A reverse anankastic Sobel sequence made felicitous by material about likelihood in between, which argues for a typicality ordering on the outer modal.",
+    "verified": "page-image"
   },
   {
     "id": "cl2016_ex91a",
     "source": {"bibkey": "condoravdi-lauer-2016", "paperLabel": "(91a)"},
     "language": "stan1293",
-    "primaryText": "I know John wants to go to Hoboken today, not to Harlem. But if he wants to go Harlem today, he has to take the A train.",
-    "discourseSegments": ["I know John wants to go to Hoboken today, not to Harlem.", "But if he wants to go Harlem today, he has to take the A train."],
+    "primaryText": "I know John wants to go to Hoboken today, not to Harlem. But if he wants to go to Harlem today, he has to take the A train.",
+    "discourseSegments": ["I know John wants to go to Hoboken today, not to Harlem.", "But if he wants to go to Harlem today, he has to take the A train."],
     "glossedTokens": [],
     "translation": "",
     "context": "",
@@ -1013,7 +1068,8 @@
       ["construction", "mood"],
       ["mood", "indicative"]
     ],
-    "comment": "An indicative anankastic is out when the speaker knows of an incompatible effective preference: the antecedent is epistemically impossible, `anankastic_of_not_want`."
+    "comment": "An indicative anankastic is out when the speaker knows of an incompatible effective preference: the antecedent is epistemically impossible, `anankastic_of_not_want`. The paper prints \"go Harlem\".",
+    "verified": "page-image"
   },
   {
     "id": "cl2016_ex91b",
@@ -1031,7 +1087,8 @@
       ["construction", "mood"],
       ["mood", "subjunctive"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "cl2016_ex92",
@@ -1053,7 +1110,8 @@
       ["interpretation", "anankastic"],
       ["implication", "means"]
     ],
-    "comment": "Von Stechow et al.'s case of a compatible salient preference: comfort stays in the ordering, so the conditional is true; judged false if cost outranks comfort."
+    "comment": "Von Stechow et al.'s case of a compatible salient preference: comfort stays in the ordering, so the conditional is true; judged false if cost outranks comfort.",
+    "verified": "page-image"
   },
   {
     "id": "cl2016_ex96",
@@ -1072,7 +1130,8 @@
       ["modal", "strong"],
       ["truth", "false"]
     ],
-    "comment": "Huitink's van Nistelrooij case: false with a strong modal even if the addressee effectively prefers meeting him; the strong/weak contrast is left open."
+    "comment": "Huitink's van Nistelrooij case: false with a strong modal even if the addressee effectively prefers meeting him; the strong/weak contrast is left open.",
+    "verified": "page-image"
   },
   {
     "id": "cl2016_ex97",
@@ -1090,7 +1149,8 @@
       ["construction", "strength"],
       ["modal", "weak"]
     ],
-    "comment": "True when the preference for meeting van Nistelrooij is salient, though not advice on how to get to Harlem."
+    "comment": "True when the preference for meeting van Nistelrooij is salient, though not advice on how to get to Harlem.",
+    "verified": "page-image"
   },
   {
     "id": "cl2016_ex98a",
@@ -1108,7 +1168,8 @@
       ["construction", "mood"],
       ["mood", "indicative"]
     ],
-    "comment": "Purpose constructions behave like conditionals: the indicative is out when the preference is known absent."
+    "comment": "Purpose constructions behave like conditionals: the indicative is out when the preference is known absent.",
+    "verified": "page-image"
   },
   {
     "id": "cl2016_ex98b",
@@ -1126,7 +1187,8 @@
       ["construction", "mood"],
       ["mood", "subjunctive"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "cl2016_ex99",
@@ -1144,7 +1206,8 @@
       ["construction", "purpose"],
       ["implication", "consequence"]
     ],
-    "comment": "Purpose constructions exclude teleological-consequence readings, since the prejacent cannot be subsequent to the goal; the same sentence as (35a)."
+    "comment": "Purpose constructions exclude teleological-consequence readings, since the prejacent cannot be subsequent to the goal; the same sentence as (35a).",
+    "verified": "page-image"
   },
   {
     "id": "cl2016_ex100a",
@@ -1162,7 +1225,8 @@
       ["construction", "purpose"],
       ["implication", "precondition"]
     ],
-    "comment": "Purpose constructions are compatible with mere necessary preconditions."
+    "comment": "Purpose constructions are compatible with mere necessary preconditions.",
+    "verified": "page-image"
   },
   {
     "id": "cl2016_ex100b",
@@ -1180,7 +1244,8 @@
       ["construction", "purpose"],
       ["implication", "precondition"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "cl2016_ex101",
@@ -1191,13 +1256,14 @@
     "glossedTokens": [],
     "translation": "",
     "context": "The speaker knows that a deadly virus has just been set free in Harlem, and that anyone who goes there is likely to be infected. As far as the speaker knows, the addressee is unaware of this.",
-    "judgment": "questionable",
+    "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "asymmetry"]
     ],
-    "comment": "A variant of the virus scenario of Lauer and Condoravdi 2014: the addressee is unaware of a conflict with staying alive, and the sentence is not true on the anankastic reading."
+    "comment": "Printed unmarked; intuitions are not clear-cut, but the paper argues the sentence is not true on the anankastic reading. A variant of the virus scenario of Lauer and Condoravdi 2014: the addressee is unaware of a conflict with staying alive.",
+    "verified": "page-image"
   },
   {
     "id": "cl2016_ex103",
@@ -1214,7 +1280,8 @@
     "paperFeatures": [
       ["construction", "asymmetry"]
     ],
-    "comment": "Felicitous on a subjective construal of the outer modal that takes only the facts known to the hero into account, after Egan, Hawthorne and Weatherson."
+    "comment": "Felicitous on a subjective construal of the outer modal that takes only the facts known to the hero into account, after Egan, Hawthorne and Weatherson.",
+    "verified": "page-image"
   },
   {
     "id": "cl2016_ex106a",
@@ -1235,7 +1302,8 @@
       ["interpretation", "anankastic"],
       ["implication", "means"]
     ],
-    "comment": "The continuation brings out the anankastic reading."
+    "comment": "The continuation brings out the anankastic reading.",
+    "verified": "page-image"
   },
   {
     "id": "cl2016_ex106b",
@@ -1256,7 +1324,8 @@
       ["interpretation", "nonAnankastic"],
       ["implication", "none"]
     ],
-    "comment": "Want gets the mere-desire reading, as if the antecedent were if you are unhappy in school; the modal is hearer- or speaker-teleological."
+    "comment": "Want gets the mere-desire reading, as if the antecedent were if you are unhappy in school; the modal is hearer- or speaker-teleological.",
+    "verified": "page-image"
   },
   {
     "id": "cl2016_ex106c",
@@ -1277,7 +1346,8 @@
       ["interpretation", "nonAnankastic"],
       ["implication", "none"]
     ],
-    "comment": "Want gets the effective reading but the modal is speaker-teleological."
+    "comment": "Want gets the effective reading but the modal is speaker-teleological.",
+    "verified": "page-image"
   },
   {
     "id": "cl2016_ex107",
@@ -1295,7 +1365,8 @@
       ["construction", "purpose"],
       ["implication", "consequence"]
     ],
-    "comment": "(38) has no purpose-clause paraphrase."
+    "comment": "(38) has no purpose-clause paraphrase.",
+    "verified": "page-image"
   },
   {
     "id": "cl2016_ex108",
@@ -1312,7 +1383,8 @@
     "paperFeatures": [
       ["construction", "vacuity"]
     ],
-    "comment": "The contextual assumption behind deontic near-anankastics, that an effective preference for the content is actualized, fails, so want is not vacuous and the sentence can only be true if merely wanting to win raised one's taxes."
+    "comment": "The contextual assumption behind deontic near-anankastics, that an effective preference for the content is actualized, fails, so want is not vacuous and the sentence can only be true if merely wanting to win raised one's taxes.",
+    "verified": "page-image"
   },
   {
     "id": "cl2016_ex109",
@@ -1333,7 +1405,8 @@
       ["interpretation", "anankastic"],
       ["implication", "means"]
     ],
-    "comment": "A proper anankastic needs no assumption that the preference will be realized."
+    "comment": "A proper anankastic needs no assumption that the preference will be realized.",
+    "verified": "page-image"
   },
   {
     "id": "cl2016_ex110a",
@@ -1344,7 +1417,7 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "marginal",
+    "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -1352,9 +1425,11 @@
       ["want", "effective"],
       ["modal", "teleological"],
       ["interpretation", "anankastic"],
-      ["implication", "precondition"]
+      ["implication", "precondition"],
+      ["felicity", "infelicitous"]
     ],
-    "comment": "True but odd, with von Fintel and Iatridou: the consequent holds unconditionally, so the conditional is hard to justify."
+    "comment": "Printed unmarked; the prose says (110) sounds odd though true, with von Fintel and Iatridou: the consequent holds unconditionally, so the conditional is hard to justify.",
+    "verified": "page-image"
   },
   {
     "id": "cl2016_ex110b",
@@ -1365,7 +1440,7 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "marginal",
+    "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -1373,9 +1448,11 @@
       ["want", "effective"],
       ["modal", "teleological"],
       ["interpretation", "anankastic"],
-      ["implication", "precondition"]
+      ["implication", "precondition"],
+      ["felicity", "infelicitous"]
     ],
-    "comment": ""
+    "comment": "Printed unmarked; sounds odd though true, like (110a).",
+    "verified": "page-image"
   },
   {
     "id": "cl2016_ex111",
@@ -1396,7 +1473,8 @@
       ["interpretation", "anankastic"],
       ["implication", "precondition"]
     ],
-    "comment": "A partial precondition informative enough to warrant assertion."
+    "comment": "A partial precondition informative enough to warrant assertion.",
+    "verified": "page-image"
   },
   {
     "id": "cl2016_ex112a",
@@ -1418,7 +1496,8 @@
       ["implication", "none"],
       ["truth", "false"]
     ],
-    "comment": "Weatherson's weak antecedents, via von Fintel and Iatridou 2006: the desire predicate cannot target effective preferences, so no anankastic construal arises and the sentence is false unless the context treats any such desire as acted upon."
+    "comment": "Weatherson's weak antecedents, via von Fintel and Iatridou 2006: the desire predicate cannot target effective preferences, so no anankastic construal arises and the sentence is false unless the context treats any such desire as acted upon.",
+    "verified": "page-image"
   },
   {
     "id": "cl2016_ex112b",
@@ -1440,7 +1519,8 @@
       ["implication", "none"],
       ["truth", "false"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "cl2016_ex112c",
@@ -1462,7 +1542,8 @@
       ["implication", "none"],
       ["truth", "false"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "cl2016_ex112d",
@@ -1484,7 +1565,8 @@
       ["implication", "none"],
       ["truth", "false"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "cl2016_ex112e",
@@ -1506,6 +1588,7 @@
       ["implication", "none"],
       ["truth", "false"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   }
 ]

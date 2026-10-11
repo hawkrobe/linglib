@@ -5,8 +5,8 @@
     "language": "stan1293",
     "primaryText": "The defendant was actually at home watching 'The Simpsons' at the time of the crime. But after hearing the testimony of the first eye-witness, the jurors clearly believed that he was in the laboratory building.",
     "discourseSegments": [
-      "The defendant was actually watching the Simpsons at the time of the crime.",
-      "According to the testimony of the first eye-witness, the jurors clearly believed that he was in the laboratory building."
+      "The defendant was actually at home watching 'The Simpsons' at the time of the crime.",
+      "But after hearing the testimony of the first eye-witness, the jurors clearly believed that he was in the laboratory building."
     ],
     "glossedTokens": [],
     "translation": "",
@@ -246,8 +246,8 @@
     "language": "stan1293",
     "primaryText": "Leo will go to Rome on the day of Lea's dissertation. Lia believes that she will go to Rome with him then.",
     "discourseSegments": [
-      "Leo will go to Rome on the day of Lea's dissertation defence.",
-      "Lia believes that she will go with him then."
+      "Leo will go to Rome on the day of Lea's dissertation.",
+      "Lia believes that she will go to Rome with him then."
     ],
     "glossedTokens": [],
     "translation": "",

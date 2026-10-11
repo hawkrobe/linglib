@@ -24,7 +24,8 @@
         "nominalAppositive"
       ]
     ],
-    "comment": "Treebank corpus."
+    "comment": "Treebank corpus.",
+    "verified": "page-image"
   },
   {
     "id": "harrispotts2009_ex2b",
@@ -51,7 +52,8 @@
         "appositiveRelative"
       ]
     ],
-    "comment": "Switchboard corpus."
+    "comment": "Switchboard corpus.",
+    "verified": "page-image"
   },
   {
     "id": "harrispotts2009_ex2c",
@@ -78,7 +80,8 @@
         "epithet"
       ]
     ],
-    "comment": "20 newsgroups corpus."
+    "comment": "20 newsgroups corpus.",
+    "verified": "page-image"
   },
   {
     "id": "harrispotts2009_ex3a",
@@ -105,7 +108,8 @@
         "appositiveRelative"
       ]
     ],
-    "comment": "Switchboard corpus: the appositive scopes out of the conditional antecedent."
+    "comment": "Switchboard corpus: the appositive scopes out of the conditional antecedent.",
+    "verified": "page-image"
   },
   {
     "id": "harrispotts2009_ex4",
@@ -140,7 +144,8 @@
         "speaker"
       ]
     ],
-    "comment": "Aloni's passage: speakers choose the situation in which only the names are reversed, so the appositives are not interpreted inside Ralph's belief."
+    "comment": "Aloni's passage: speakers choose the situation in which only the names are reversed, so the appositives are not interpreted inside Ralph's belief.",
+    "verified": "page-image"
   },
   {
     "id": "harrispotts2009_ex5",
@@ -175,7 +180,8 @@
         "subject"
       ]
     ],
-    "comment": "The control: with conjunction in place of the appositives, everything is reversed."
+    "comment": "The control: with conjunction in place of the appositives, everything is reversed.",
+    "verified": "page-image"
   },
   {
     "id": "harrispotts2009_ex6",
@@ -210,7 +216,8 @@
         "speaker"
       ]
     ],
-    "comment": "Weblog post: the epithet is the author's dismissive opinion of the plaintiff, not part of what the complaint says."
+    "comment": "Weblog post: the epithet is the author's dismissive opinion of the plaintiff, not part of what the complaint says.",
+    "verified": "page-image"
   },
   {
     "id": "harrispotts2009_ex7",
@@ -245,7 +252,8 @@
         "subject"
       ]
     ],
-    "comment": "20 newsgroups corpus: the appositive is intended inside the complement of ‘claim’."
+    "comment": "20 newsgroups corpus: the appositive is intended inside the complement of ‘claim’.",
+    "verified": "page-image"
   },
   {
     "id": "harrispotts2009_ex8",
@@ -284,7 +292,8 @@
     "reportedIn": {
       "bibkey": "harris-potts-2009",
       "paperLabel": "(8)"
-    }
+    },
+    "verified": "page-image"
   },
   {
     "id": "harrispotts2009_ex9",
@@ -323,7 +332,8 @@
     "reportedIn": {
       "bibkey": "harris-potts-2009",
       "paperLabel": "(9)"
-    }
+    },
+    "verified": "page-image"
   },
   {
     "id": "harrispotts2009_ex11",
@@ -358,7 +368,8 @@
         "subject"
       ]
     ],
-    "comment": "Lewis Lapham, Harper's Magazine, July 1995: the adjective conveys the senators' view, and it is not embedded at all."
+    "comment": "Lewis Lapham, Harper's Magazine, July 1995: the adjective conveys the senators' view, and it is not embedded at all.",
+    "verified": "page-image"
   },
   {
     "id": "harrispotts2009_ex12",
@@ -393,7 +404,8 @@
         "subject"
       ]
     ],
-    "comment": "Digital Trends: the whole sentence, epistemic modal included, is evaluated from the customer's perspective; unembedded."
+    "comment": "Digital Trends: the whole sentence, epistemic modal included, is evaluated from the customer's perspective; unembedded.",
+    "verified": "page-image"
   },
   {
     "id": "harrispotts2009_exA1-embedded",
@@ -432,7 +444,8 @@
         "1"
       ]
     ],
-    "comment": "Experiment 1, item 1, embedded condition: whose view is the appositive content?"
+    "comment": "Experiment 1, item 1, embedded condition: whose view is the appositive content?",
+    "verified": "page-image"
   },
   {
     "id": "harrispotts2009_exA1-unembedded",
@@ -471,7 +484,8 @@
         "1"
       ]
     ],
-    "comment": "Experiment 1, item 1, unembedded condition: whose view is the appositive content?"
+    "comment": "Experiment 1, item 1, unembedded condition: whose view is the appositive content?",
+    "verified": "page-image"
   },
   {
     "id": "harrispotts2009_exA2-embedded",
@@ -510,7 +524,8 @@
         "2"
       ]
     ],
-    "comment": "Experiment 1, item 2, embedded condition: whose view is the appositive content?"
+    "comment": "Experiment 1, item 2, embedded condition: whose view is the appositive content?",
+    "verified": "page-image"
   },
   {
     "id": "harrispotts2009_exA2-unembedded",
@@ -549,7 +564,8 @@
         "2"
       ]
     ],
-    "comment": "Experiment 1, item 2, unembedded condition: whose view is the appositive content?"
+    "comment": "Experiment 1, item 2, unembedded condition: whose view is the appositive content?",
+    "verified": "page-image"
   },
   {
     "id": "harrispotts2009_exA3-embedded",
@@ -588,7 +604,8 @@
         "3"
       ]
     ],
-    "comment": "Experiment 1, item 3, embedded condition: whose view is the appositive content?"
+    "comment": "Experiment 1, item 3, embedded condition: whose view is the appositive content?",
+    "verified": "page-image"
   },
   {
     "id": "harrispotts2009_exA3-unembedded",
@@ -627,7 +644,8 @@
         "3"
       ]
     ],
-    "comment": "Experiment 1, item 3, unembedded condition: whose view is the appositive content?"
+    "comment": "Experiment 1, item 3, unembedded condition: whose view is the appositive content?",
+    "verified": "page-image"
   },
   {
     "id": "harrispotts2009_exA4-embedded",
@@ -666,7 +684,8 @@
         "4"
       ]
     ],
-    "comment": "Experiment 1, item 4, embedded condition: whose view is the appositive content?"
+    "comment": "Experiment 1, item 4, embedded condition: whose view is the appositive content?",
+    "verified": "page-image"
   },
   {
     "id": "harrispotts2009_exA4-unembedded",
@@ -705,7 +724,8 @@
         "4"
       ]
     ],
-    "comment": "Experiment 1, item 4, unembedded condition: whose view is the appositive content?"
+    "comment": "Experiment 1, item 4, unembedded condition: whose view is the appositive content?",
+    "verified": "page-image"
   },
   {
     "id": "harrispotts2009_exA5-embedded",
@@ -744,7 +764,8 @@
         "5"
       ]
     ],
-    "comment": "Experiment 1, item 5, embedded condition: whose view is the appositive content?"
+    "comment": "Experiment 1, item 5, embedded condition: whose view is the appositive content?",
+    "verified": "page-image"
   },
   {
     "id": "harrispotts2009_exA5-unembedded",
@@ -783,7 +804,8 @@
         "5"
       ]
     ],
-    "comment": "Experiment 1, item 5, unembedded condition: whose view is the appositive content?"
+    "comment": "Experiment 1, item 5, unembedded condition: whose view is the appositive content?",
+    "verified": "page-image"
   },
   {
     "id": "harrispotts2009_exA6-embedded",
@@ -822,7 +844,8 @@
         "6"
       ]
     ],
-    "comment": "Experiment 1, item 6, embedded condition: whose view is the appositive content?"
+    "comment": "Experiment 1, item 6, embedded condition: whose view is the appositive content?",
+    "verified": "page-image"
   },
   {
     "id": "harrispotts2009_exA6-unembedded",
@@ -861,7 +884,8 @@
         "6"
       ]
     ],
-    "comment": "Experiment 1, item 6, unembedded condition: whose view is the appositive content?"
+    "comment": "Experiment 1, item 6, unembedded condition: whose view is the appositive content?",
+    "verified": "page-image"
   },
   {
     "id": "harrispotts2009_exA7-embedded",
@@ -900,7 +924,8 @@
         "7"
       ]
     ],
-    "comment": "Experiment 1, item 7, embedded condition: whose view is the appositive content?"
+    "comment": "Experiment 1, item 7, embedded condition: whose view is the appositive content?",
+    "verified": "page-image"
   },
   {
     "id": "harrispotts2009_exA7-unembedded",
@@ -939,7 +964,8 @@
         "7"
       ]
     ],
-    "comment": "Experiment 1, item 7, unembedded condition: whose view is the appositive content?"
+    "comment": "Experiment 1, item 7, unembedded condition: whose view is the appositive content?",
+    "verified": "page-image"
   },
   {
     "id": "harrispotts2009_exA8-embedded",
@@ -978,7 +1004,8 @@
         "8"
       ]
     ],
-    "comment": "Experiment 1, item 8, embedded condition: whose view is the appositive content?"
+    "comment": "Experiment 1, item 8, embedded condition: whose view is the appositive content?",
+    "verified": "page-image"
   },
   {
     "id": "harrispotts2009_exA8-unembedded",
@@ -1017,7 +1044,8 @@
         "8"
       ]
     ],
-    "comment": "Experiment 1, item 8, unembedded condition: whose view is the appositive content?"
+    "comment": "Experiment 1, item 8, unembedded condition: whose view is the appositive content?",
+    "verified": "page-image"
   },
   {
     "id": "harrispotts2009_exB1-positive",
@@ -1064,7 +1092,8 @@
         "the jerk"
       ]
     ],
-    "comment": "Experiment 2, item 1, positive context (the intensifier in parentheses is the other manipulation): whose view is it that the referent is jerk?"
+    "comment": "Experiment 2, item 1, positive context (the intensifier in parentheses is the other manipulation): whose view is it that the referent is jerk?",
+    "verified": "page-image"
   },
   {
     "id": "harrispotts2009_exB1-negative",
@@ -1111,7 +1140,8 @@
         "the jerk"
       ]
     ],
-    "comment": "Experiment 2, item 1, negative context (the intensifier in parentheses is the other manipulation): whose view is it that the referent is jerk?"
+    "comment": "Experiment 2, item 1, negative context (the intensifier in parentheses is the other manipulation): whose view is it that the referent is jerk?",
+    "verified": "page-image"
   },
   {
     "id": "harrispotts2009_exB2-positive",
@@ -1158,7 +1188,8 @@
         "the idiot"
       ]
     ],
-    "comment": "Experiment 2, item 2, positive context (the intensifier in parentheses is the other manipulation): whose view is it that the referent is idiot?"
+    "comment": "Experiment 2, item 2, positive context (the intensifier in parentheses is the other manipulation): whose view is it that the referent is idiot?",
+    "verified": "page-image"
   },
   {
     "id": "harrispotts2009_exB2-negative",
@@ -1205,7 +1236,8 @@
         "the idiot"
       ]
     ],
-    "comment": "Experiment 2, item 2, negative context (the intensifier in parentheses is the other manipulation): whose view is it that the referent is idiot?"
+    "comment": "Experiment 2, item 2, negative context (the intensifier in parentheses is the other manipulation): whose view is it that the referent is idiot?",
+    "verified": "page-image"
   },
   {
     "id": "harrispotts2009_exB3-positive",
@@ -1252,7 +1284,8 @@
         "the stooge"
       ]
     ],
-    "comment": "Experiment 2, item 3, positive context (the intensifier in parentheses is the other manipulation): whose view is it that the referent is stooge?"
+    "comment": "Experiment 2, item 3, positive context (the intensifier in parentheses is the other manipulation): whose view is it that the referent is stooge?",
+    "verified": "page-image"
   },
   {
     "id": "harrispotts2009_exB3-negative",
@@ -1299,7 +1332,8 @@
         "the stooge"
       ]
     ],
-    "comment": "Experiment 2, item 3, negative context (the intensifier in parentheses is the other manipulation): whose view is it that the referent is stooge?"
+    "comment": "Experiment 2, item 3, negative context (the intensifier in parentheses is the other manipulation): whose view is it that the referent is stooge?",
+    "verified": "page-image"
   },
   {
     "id": "harrispotts2009_exB4-positive",
@@ -1346,7 +1380,8 @@
         "the idiot"
       ]
     ],
-    "comment": "Experiment 2, item 4, positive context (the intensifier in parentheses is the other manipulation): whose view is it that the referent is idiot?"
+    "comment": "Experiment 2, item 4, positive context (the intensifier in parentheses is the other manipulation): whose view is it that the referent is idiot?",
+    "verified": "page-image"
   },
   {
     "id": "harrispotts2009_exB4-negative",
@@ -1393,7 +1428,8 @@
         "the idiot"
       ]
     ],
-    "comment": "Experiment 2, item 4, negative context (the intensifier in parentheses is the other manipulation): whose view is it that the referent is idiot?"
+    "comment": "Experiment 2, item 4, negative context (the intensifier in parentheses is the other manipulation): whose view is it that the referent is idiot?",
+    "verified": "page-image"
   },
   {
     "id": "harrispotts2009_exB5-positive",
@@ -1440,7 +1476,8 @@
         "the twerp"
       ]
     ],
-    "comment": "Experiment 2, item 5, positive context (the intensifier in parentheses is the other manipulation): whose view is it that the referent is twerp?"
+    "comment": "Experiment 2, item 5, positive context (the intensifier in parentheses is the other manipulation): whose view is it that the referent is twerp?",
+    "verified": "page-image"
   },
   {
     "id": "harrispotts2009_exB5-negative",
@@ -1487,7 +1524,8 @@
         "the twerp"
       ]
     ],
-    "comment": "Experiment 2, item 5, negative context (the intensifier in parentheses is the other manipulation): whose view is it that the referent is twerp?"
+    "comment": "Experiment 2, item 5, negative context (the intensifier in parentheses is the other manipulation): whose view is it that the referent is twerp?",
+    "verified": "page-image"
   },
   {
     "id": "harrispotts2009_exB6-positive",
@@ -1534,7 +1572,8 @@
         "the skinflint"
       ]
     ],
-    "comment": "Experiment 2, item 6, positive context (the intensifier in parentheses is the other manipulation): whose view is it that the referent is skinflint?"
+    "comment": "Experiment 2, item 6, positive context (the intensifier in parentheses is the other manipulation): whose view is it that the referent is skinflint?",
+    "verified": "page-image"
   },
   {
     "id": "harrispotts2009_exB6-negative",
@@ -1581,7 +1620,8 @@
         "the skinflint"
       ]
     ],
-    "comment": "Experiment 2, item 6, negative context (the intensifier in parentheses is the other manipulation): whose view is it that the referent is skinflint?"
+    "comment": "Experiment 2, item 6, negative context (the intensifier in parentheses is the other manipulation): whose view is it that the referent is skinflint?",
+    "verified": "page-image"
   },
   {
     "id": "harrispotts2009_exB7-positive",
@@ -1628,7 +1668,8 @@
         "the jerk"
       ]
     ],
-    "comment": "Experiment 2, item 7, positive context (the intensifier in parentheses is the other manipulation): whose view is it that the referent is jerk?"
+    "comment": "Experiment 2, item 7, positive context (the intensifier in parentheses is the other manipulation): whose view is it that the referent is jerk?",
+    "verified": "page-image"
   },
   {
     "id": "harrispotts2009_exB7-negative",
@@ -1675,7 +1716,8 @@
         "the jerk"
       ]
     ],
-    "comment": "Experiment 2, item 7, negative context (the intensifier in parentheses is the other manipulation): whose view is it that the referent is jerk?"
+    "comment": "Experiment 2, item 7, negative context (the intensifier in parentheses is the other manipulation): whose view is it that the referent is jerk?",
+    "verified": "page-image"
   },
   {
     "id": "harrispotts2009_exB8-positive",
@@ -1722,7 +1764,8 @@
         "the cretin"
       ]
     ],
-    "comment": "Experiment 2, item 8, positive context (the intensifier in parentheses is the other manipulation): whose view is it that the referent is cretin?"
+    "comment": "Experiment 2, item 8, positive context (the intensifier in parentheses is the other manipulation): whose view is it that the referent is cretin?",
+    "verified": "page-image"
   },
   {
     "id": "harrispotts2009_exB8-negative",
@@ -1769,7 +1812,8 @@
         "the cretin"
       ]
     ],
-    "comment": "Experiment 2, item 8, negative context (the intensifier in parentheses is the other manipulation): whose view is it that the referent is cretin?"
+    "comment": "Experiment 2, item 8, negative context (the intensifier in parentheses is the other manipulation): whose view is it that the referent is cretin?",
+    "verified": "page-image"
   },
   {
     "id": "harrispotts2009_exB9-positive",
@@ -1816,7 +1860,8 @@
         "the creep"
       ]
     ],
-    "comment": "Experiment 2, item 9, positive context (the intensifier in parentheses is the other manipulation): whose view is it that the referent is creep?"
+    "comment": "Experiment 2, item 9, positive context (the intensifier in parentheses is the other manipulation): whose view is it that the referent is creep?",
+    "verified": "page-image"
   },
   {
     "id": "harrispotts2009_exB9-negative",
@@ -1863,7 +1908,8 @@
         "the creep"
       ]
     ],
-    "comment": "Experiment 2, item 9, negative context (the intensifier in parentheses is the other manipulation): whose view is it that the referent is creep?"
+    "comment": "Experiment 2, item 9, negative context (the intensifier in parentheses is the other manipulation): whose view is it that the referent is creep?",
+    "verified": "page-image"
   },
   {
     "id": "harrispotts2009_ex17",
@@ -1894,7 +1940,8 @@
         "yes"
       ]
     ],
-    "comment": "The target configuration of the corpus study: an appositive relative in the complement of a speech predicate."
+    "comment": "The target configuration of the corpus study: an appositive relative in the complement of a speech predicate.",
+    "verified": "page-image"
   },
   {
     "id": "harrispotts2009_ex22a",
@@ -1929,7 +1976,8 @@
         "speaker"
       ]
     ],
-    "comment": "Text-level (speaker-oriented) by textual evidence: a later sentence elaborates on Fay's punishment."
+    "comment": "Text-level (speaker-oriented) by textual evidence: a later sentence elaborates on Fay's punishment.",
+    "verified": "page-image"
   },
   {
     "id": "harrispotts2009_ex23a",
@@ -1964,7 +2012,8 @@
         "subject"
       ]
     ],
-    "comment": "Embedded (non-speaker-oriented) by textual evidence: ‘then’ and the epistemic modal are anchored to Israel; one of two such cases among the 34 with three-way agreement."
+    "comment": "Embedded (non-speaker-oriented) by textual evidence: ‘then’ and the epistemic modal are anchored to Israel; one of two such cases among the 34 with three-way agreement.",
+    "verified": "page-image"
   },
   {
     "id": "harrispotts2009_ex25a",
@@ -1995,7 +2044,8 @@
         "yes"
       ]
     ],
-    "comment": "No textual evidence, though intended as text-level."
+    "comment": "No textual evidence, though intended as text-level.",
+    "verified": "page-image"
   },
   {
     "id": "harrispotts2009_ex25b",
@@ -2026,6 +2076,7 @@
         "yes"
       ]
     ],
-    "comment": "No textual evidence, though intended as text-level."
+    "comment": "No textual evidence, though intended as text-level.",
+    "verified": "page-image"
   }
 ]

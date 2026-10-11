@@ -8,7 +8,7 @@ public import Linglib.Data.Examples.CondoravdiLauer2012
 /-!
 # Condoravdi and Lauer 2012: imperatives as preferential commitments
 
-[condoravdi-lauer-2012] give declaratives and imperatives one kind of conventional effect, a
+Condoravdi and Lauer give declaratives and imperatives one kind of conventional effect, a
 public commitment of the speaker, differing in the attitude committed to: a declarative commits
 the speaker to act as though believing its content, an imperative to act as though the content
 were a maximal element of the speaker's effective preference structure, the consistent ranking
@@ -28,8 +28,8 @@ The information state of a preference structure is its world type, so the paper'
 is `PreferenceStructure.Consistent Set.univ`; the theorems take an information state `B`, since
 the paper's incompatibility is relative to what the speaker believes. A public effective
 preference is a commitment of force `.preferential`; the doxastic reduction of a commitment to
-one's own preferential commitment, which the paper takes over from [condoravdi-lauer-2011], is a
-hypothesis on the world-indexed commitment state. Disinterested advice identifies the content
+one's own preferential commitment, which the paper takes over from the authors' earlier work, is
+a hypothesis on the world-indexed commitment state. Disinterested advice identifies the content
 with the adopted goal, which the paper reaches through a means-end inference, and quantifies
 over the effective structure alone where cooperation by default ranges over all of the
 adviser's structures.
@@ -304,7 +304,7 @@ def Sequence.ofRow (row : Datum) : Option Sequence := do
 which need not be consistent. -/
 theorem sequence_rows : ∀ row ∈ Examples.all, row.feature? "construction" = some "sequence" →
     ∃ s ∈ Sequence.ofRow row,
-      (row.judgment = .acceptable ↔ s.second = .assertion ∨ s.continuation = .revising) := by
+      (row.JudgedFelicitous ↔ s.second = .assertion ∨ s.continuation = .revising) := by
   decide
 
 /-- A follow-up row: the utterance and the denial. -/

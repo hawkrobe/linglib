@@ -283,10 +283,10 @@ def ex15 : Datum :=
     primaryText := "Please, rain tomorrow so the picnic gets cancelled! Please, don't rain tomorrow so I can go hiking!"
     glossedTokens := []
     context := ""
-    judgment := .unacceptable
+    judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("construction", "sequence"), ("second", "imperative"), ("continuation", "conflicting")] }
+    paperFeatures := [("construction", "sequence"), ("second", "imperative"), ("continuation", "conflicting"), ("felicity", "infelicitous")] }
 
 def ex16 : Datum :=
   { id := "condoravdilauer2012_ex16"
@@ -478,10 +478,10 @@ def ex27 : Datum :=
     primaryText := "Be in the conference room in three minutes!"
     glossedTokens := []
     context := "Uttered in order to get the addressee to sit still so that the speaker can carry them to the conference room."
-    judgment := .unacceptable
+    judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("construction", "involvement"), ("speaker", "fulfilling")] }
+    paperFeatures := [("construction", "involvement"), ("speaker", "fulfilling"), ("felicity", "infelicitous")] }
 
 def ex37 : Datum :=
   { id := "condoravdilauer2012_ex37"

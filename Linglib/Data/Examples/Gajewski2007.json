@@ -11,7 +11,7 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -24,7 +24,8 @@
         "until"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "gajewski2007_12b",
@@ -51,7 +52,8 @@
         "until"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "gajewski2007_13a",
@@ -65,7 +67,7 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -78,7 +80,8 @@
         "in years"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "gajewski2007_13b",
@@ -105,7 +108,8 @@
         "in years"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "gajewski2007_14a",
@@ -119,7 +123,7 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -132,7 +136,8 @@
         "until"
       ]
     ],
-    "comment": "Claim is not neg-raising."
+    "comment": "Claim is not neg-raising.",
+    "verified": "page-image"
   },
   {
     "id": "gajewski2007_14b",
@@ -146,7 +151,7 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -159,7 +164,8 @@
         "in years"
       ]
     ],
-    "comment": "Claim is not neg-raising."
+    "comment": "Claim is not neg-raising.",
+    "verified": "page-image"
   },
   {
     "id": "gajewski2007_15a",
@@ -186,7 +192,8 @@
         "until"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "gajewski2007_15b",
@@ -213,7 +220,8 @@
         "in years"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "gajewski2007_54a",
@@ -240,7 +248,8 @@
         "in years"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "gajewski2007_54b",
@@ -254,7 +263,7 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -267,7 +276,8 @@
         "in years"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "gajewski2007_57",
@@ -294,7 +304,8 @@
         "until"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "gajewski2007_58a",
@@ -321,7 +332,8 @@
         "in years"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "gajewski2007_58b",
@@ -335,7 +347,7 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -348,7 +360,8 @@
         "in years"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "gajewski2007_68a",
@@ -362,7 +375,7 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -375,7 +388,8 @@
         "until"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "gajewski2007_68b",
@@ -402,7 +416,8 @@
         "until"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "gajewski2007_69a",
@@ -416,7 +431,7 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -429,7 +444,8 @@
         "in years"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "gajewski2007_69b",
@@ -456,7 +472,8 @@
         "in years"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "gajewski2007_71a",
@@ -487,7 +504,8 @@
         "nonfinite"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "gajewski2007_71b",
@@ -518,7 +536,8 @@
         "nonfinite"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "gajewski2007_72a",
@@ -532,7 +551,7 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -549,7 +568,8 @@
         "nonfinite"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "gajewski2007_72b",
@@ -563,7 +583,7 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -580,7 +600,8 @@
         "nonfinite"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "gajewski2007_73",
@@ -594,7 +615,7 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -611,7 +632,8 @@
         "finite"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "gajewski2007_74",
@@ -642,7 +664,8 @@
         "finite"
       ]
     ],
-    "comment": "The paper marks it ?? and takes the finite clause boundary to degrade it."
+    "comment": "The paper marks it ?? and takes the finite clause boundary to degrade it.",
+    "verified": "page-image"
   },
   {
     "id": "gajewski2007_83",
@@ -669,7 +692,8 @@
         "until"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "gajewski2007_97a",
@@ -696,7 +720,8 @@
         "until"
       ]
     ],
-    "comment": "Based on Horn (1971)."
+    "comment": "Based on Horn (1971).",
+    "verified": "page-image"
   },
   {
     "id": "gajewski2007_97b",
@@ -710,7 +735,7 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -723,7 +748,8 @@
         "until"
       ]
     ],
-    "comment": "Based on Horn (1971)."
+    "comment": "Based on Horn (1971).",
+    "verified": "page-image"
   },
   {
     "id": "gajewski2007_98a",
@@ -750,7 +776,8 @@
         "until"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "gajewski2007_98b",
@@ -764,7 +791,7 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -777,7 +804,8 @@
         "until"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "gajewski2007_99a",
@@ -804,7 +832,8 @@
         "until"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "gajewski2007_99b",
@@ -818,7 +847,7 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -831,7 +860,8 @@
         "until"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "gajewski2007_123a",
@@ -845,7 +875,7 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -858,7 +888,8 @@
         "until"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "gajewski2007_123b",
@@ -867,12 +898,12 @@
       "paperLabel": "(123b)"
     },
     "language": "stan1293",
-    "primaryText": "Only John has visited Marry in years.",
+    "primaryText": "Only John has visited Mary in years.",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -885,7 +916,8 @@
         "in years"
       ]
     ],
-    "comment": "The paper prints Marry."
+    "comment": "The paper prints Marry.",
+    "verified": "page-image"
   },
   {
     "id": "gajewski2007_123c",
@@ -899,7 +931,7 @@
     "glossedTokens": [],
     "translation": "",
     "context": "Only John likes pancakes.",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -912,7 +944,8 @@
         "either"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "gajewski2007_126a",
@@ -926,7 +959,7 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -939,7 +972,8 @@
         "until"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "gajewski2007_126b",
@@ -953,7 +987,7 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -966,7 +1000,8 @@
         "in years"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "gajewski2007_127a",
@@ -980,7 +1015,7 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -993,7 +1028,8 @@
         "until"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "gajewski2007_127b",
@@ -1007,7 +1043,7 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -1020,7 +1056,8 @@
         "in years"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "gajewski2007_132a",
@@ -1047,7 +1084,8 @@
         "in years"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "gajewski2007_132b",
@@ -1074,7 +1112,8 @@
         "until"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "gajewski2007_fn7ii",
@@ -1088,7 +1127,7 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -1101,6 +1140,7 @@
         "in years"
       ]
     ],
-    "comment": "Capitals mark stress on the negation, the reading without neg-raising."
+    "comment": "Capitals mark stress on the negation, the reading without neg-raising.",
+    "verified": "page-image"
   }
 ]

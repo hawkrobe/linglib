@@ -16,7 +16,8 @@
       ["group", "directive"],
       ["use", "command"]
     ],
-    "comment": "Group I: speaker desire and addressee inducement both present. Described afterwards as: He ordered me to stand at attention."
+    "comment": "Group I: speaker desire and addressee inducement both present. Described afterwards as: He ordered me to stand at attention.",
+    "verified": "page-image"
   },
   {
     "id": "condoravdilauer2012_ex6b",
@@ -35,7 +36,8 @@
       ["group", "directive"],
       ["use", "warning"]
     ],
-    "comment": "Described afterwards as: He warned me not to touch the hot plate."
+    "comment": "Described afterwards as: He warned me not to touch the hot plate.",
+    "verified": "page-image"
   },
   {
     "id": "condoravdilauer2012_ex6c",
@@ -54,7 +56,8 @@
       ["group", "directive"],
       ["use", "request"]
     ],
-    "comment": "Described afterwards as: He requested to be passed the salt."
+    "comment": "Described afterwards as: He requested to be passed the salt.",
+    "verified": "page-image"
   },
   {
     "id": "condoravdilauer2012_ex6d",
@@ -73,7 +76,8 @@
       ["group", "directive"],
       ["use", "advice"]
     ],
-    "comment": "Advice with a salient shared goal falls in Group I. Described afterwards as: He advised me to take the pills for a week."
+    "comment": "Advice with a salient shared goal falls in Group I. Described afterwards as: He advised me to take the pills for a week.",
+    "verified": "page-image"
   },
   {
     "id": "condoravdilauer2012_ex6e",
@@ -92,7 +96,8 @@
       ["group", "directive"],
       ["use", "plea"]
     ],
-    "comment": "Described afterwards as: He pleaded with me to lend him the money."
+    "comment": "Described afterwards as: He pleaded with me to lend him the money.",
+    "verified": "page-image"
   },
   {
     "id": "condoravdilauer2012_ex7a",
@@ -111,7 +116,8 @@
       ["group", "wish"],
       ["use", "well-wish"]
     ],
-    "comment": "Group II: the addressee is taken to have no control over the content; no inducement to act. Described afterwards as: He wished me to get well soon."
+    "comment": "Group II: the addressee is taken to have no control over the content; no inducement to act. Described afterwards as: He wished me to get well soon.",
+    "verified": "page-image"
   },
   {
     "id": "condoravdilauer2012_ex7b",
@@ -130,7 +136,8 @@
       ["group", "wish"],
       ["use", "curse"]
     ],
-    "comment": "Described afterwards as: He cursed me to drop dead."
+    "comment": "Described afterwards as: He cursed me to drop dead.",
+    "verified": "page-image"
   },
   {
     "id": "condoravdilauer2012_ex7c",
@@ -149,7 +156,8 @@
       ["group", "wish"],
       ["use", "addressee-less wish"]
     ],
-    "comment": "Described afterwards as: He expressed the wish that it not rain."
+    "comment": "Described afterwards as: He expressed the wish that it not rain. The paper prints the use label as 'addresee-less wish'.",
+    "verified": "page-image"
   },
   {
     "id": "condoravdilauer2012_ex7d",
@@ -168,7 +176,8 @@
       ["group", "wish"],
       ["use", "absent wish"]
     ],
-    "comment": "Described afterwards as: He wished for his date to be blond."
+    "comment": "Described afterwards as: He wished for his date to be blond.",
+    "verified": "page-image"
   },
   {
     "id": "condoravdilauer2012_ex8a",
@@ -187,7 +196,8 @@
       ["group", "permission"],
       ["use", "permission/concession"]
     ],
-    "comment": "Group III: neither speaker desire nor inducement; any enticement to act comes from a pre-existing addressee desire. Described afterwards as: He allowed me to go out and play."
+    "comment": "Group III: neither speaker desire nor inducement; any enticement to act comes from a pre-existing addressee desire. Described afterwards as: He allowed me to go out and play.",
+    "verified": "page-image"
   },
   {
     "id": "condoravdilauer2012_ex8b",
@@ -206,7 +216,8 @@
       ["group", "permission"],
       ["use", "offer"]
     ],
-    "comment": "The paper brackets the conditional clause; offers without it are treated as implicitly conditionalized preferences. Described afterwards as: He offered me a cookie."
+    "comment": "The paper brackets the conditional clause; offers without it are treated as implicitly conditionalized preferences. Described afterwards as: He offered me a cookie.",
+    "verified": "page-image"
   },
   {
     "id": "condoravdilauer2012_ex8c",
@@ -225,7 +236,8 @@
       ["group", "permission"],
       ["use", "invitation"]
     ],
-    "comment": "Described afterwards as: He invited me to go to dinner that night."
+    "comment": "The paper prints 'Come to dinner tonight(, if you like).'; this row is the variant with the conditional clause. Described afterwards as: He invited me to go to dinner that night.",
+    "verified": "page-image"
   },
   {
     "id": "condoravdilauer2012_ex9",
@@ -244,7 +256,8 @@
       ["group", "advice"],
       ["use", "disinterested advice"]
     ],
-    "comment": "Group IV: the speaker has no interest in the fulfilment of the imperative; the addressee's motivation derives from a prior goal."
+    "comment": "Group IV: the speaker has no interest in the fulfilment of the imperative; the addressee's motivation derives from a prior goal.",
+    "verified": "page-image"
   },
   {
     "id": "condoravdilauer2012_ex10a",
@@ -262,7 +275,8 @@
       ["construction", "exclusion"],
       ["description", "promise"]
     ],
-    "comment": "The imperative can never be described with the paired declarative, a promise: He promised me that I will be at the airport at noon."
+    "comment": "The imperative can never be described with the paired declarative, a promise: He promised me that I will/would be at the airport at noon.",
+    "verified": "page-image"
   },
   {
     "id": "condoravdilauer2012_ex10b",
@@ -280,7 +294,8 @@
       ["construction", "exclusion"],
       ["description", "claim"]
     ],
-    "comment": "The imperative can never be described with the paired declarative, a claim: He claimed that I will stay out of trouble."
+    "comment": "The imperative can never be described with the paired declarative, a claim: He claimed that I (would/will) stay out of trouble.",
+    "verified": "page-image"
   },
   {
     "id": "condoravdilauer2012_ex10c",
@@ -298,7 +313,8 @@
       ["construction", "exclusion"],
       ["description", "claim"]
     ],
-    "comment": "The imperative can never be described with the paired declarative, a claim: He claimed that I will take the Northbound train to go to San Francisco."
+    "comment": "The paper prints 'Take the Northbound train (to go to San Francisco)!'; this row is the variant with the purpose clause. The imperative can never be described with the paired declarative, a claim: He claimed that I will take the Northbound train (to go to San Francisco).",
+    "verified": "page-image"
   },
   {
     "id": "condoravdilauer2012_ex11",
@@ -318,7 +334,8 @@
       ["second", "imperative"],
       ["continuation", "conflicting"]
     ],
-    "comment": "Portner's observation that conflicting imperatives are odd even across subtypes, an order and a suggestion, unless the speaker has changed their mind."
+    "comment": "Portner's observation that conflicting imperatives are odd even across subtypes, an order and a suggestion, unless the speaker has changed their mind.",
+    "verified": "page-image"
   },
   {
     "id": "condoravdilauer2012_ex12",
@@ -337,7 +354,8 @@
       ["second", "imperative"],
       ["continuation", "revising"]
     ],
-    "comment": "A command followed by a permission that limits its scope: the command no longer applies to the afternoon."
+    "comment": "A command followed by a permission that limits its scope: the command no longer applies to the afternoon.",
+    "verified": "page-image"
   },
   {
     "id": "condoravdilauer2012_ex13",
@@ -356,7 +374,8 @@
       ["second", "imperative"],
       ["continuation", "revising"]
     ],
-    "comment": "A permission followed by a request that limits it: the permission is not operative right after the utterance."
+    "comment": "A permission followed by a request that limits it: the permission is not operative right after the utterance.",
+    "verified": "page-image"
   },
   {
     "id": "condoravdilauer2012_ex14",
@@ -375,7 +394,8 @@
       ["second", "imperative"],
       ["continuation", "revising"]
     ],
-    "comment": "A permission followed by a command that limits it."
+    "comment": "A permission followed by a command that limits it.",
+    "verified": "page-image"
   },
   {
     "id": "condoravdilauer2012_ex15",
@@ -386,15 +406,17 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "sequence"],
       ["second", "imperative"],
-      ["continuation", "conflicting"]
+      ["continuation", "conflicting"],
+      ["felicity", "infelicitous"]
     ],
-    "comment": "Two wishes with incompatible contents, incoherent even though they induce no action: it sounds as if the speaker were vacillating. The judgment is the paper's prose verdict, not a mark."
+    "comment": "Two wishes with incompatible contents, incoherent even though they induce no action: it sounds as if the speaker were vacillating. Printed unmarked; the prose says 'contradicting imperatives expressing wishes are incoherent'.",
+    "verified": "page-image"
   },
   {
     "id": "condoravdilauer2012_ex16",
@@ -413,7 +435,8 @@
       ["second", "assertion"],
       ["continuation", "conflicting"]
     ],
-    "comment": "A desiderative assertion of two incompatible desires; underlying desires need not be consistent, only effective preferences must."
+    "comment": "A desiderative assertion of two incompatible desires; underlying desires need not be consistent, only effective preferences must.",
+    "verified": "page-image"
   },
   {
     "id": "condoravdilauer2012_ex17",
@@ -432,7 +455,8 @@
       ["use", "directive"],
       ["denial", "want"]
     ],
-    "comment": "A directive followed by a denial of the speaker's desire; the paper credits the observation to Schwager and Kaufmann."
+    "comment": "A directive followed by a denial of the speaker's desire; the paper credits the observation to Schwager and Kaufmann.",
+    "verified": "page-image"
   },
   {
     "id": "condoravdilauer2012_ex18a",
@@ -451,7 +475,8 @@
       ["use", "advice"],
       ["denial", "deontic"]
     ],
-    "comment": "Disinterested advice with a statement that acting on it is not permitted: a deontic statement is no preference of the speaker against the content."
+    "comment": "Disinterested advice with a statement that acting on it is not permitted: a deontic statement is no preference of the speaker against the content.",
+    "verified": "page-image"
   },
   {
     "id": "condoravdilauer2012_ex18b",
@@ -470,7 +495,8 @@
       ["use", "advice"],
       ["denial", "want"]
     ],
-    "comment": "Disinterested advice followed by a denial of the speaker's desire."
+    "comment": "Disinterested advice followed by a denial of the speaker's desire.",
+    "verified": "page-image"
   },
   {
     "id": "condoravdilauer2012_ex18c",
@@ -491,7 +517,8 @@
       ["use", "assertion"],
       ["denial", "want"]
     ],
-    "comment": "The information is given by a declarative, so no preferential commitment is incurred and the denial conflicts with nothing."
+    "comment": "The information is given by a declarative, so no preferential commitment is incurred and the denial conflicts with nothing.",
+    "verified": "page-image"
   },
   {
     "id": "condoravdilauer2012_ex21a",
@@ -510,7 +537,8 @@
       ["use", "concession"],
       ["denial", "want"]
     ],
-    "comment": "A concession followed by a present-tense denial of the speaker's desire."
+    "comment": "A concession followed by a present-tense denial of the speaker's desire.",
+    "verified": "page-image"
   },
   {
     "id": "condoravdilauer2012_ex21b",
@@ -529,7 +557,8 @@
       ["use", "concession"],
       ["denial", "pastWant"]
     ],
-    "comment": "A concession followed by a past-tense report of the speaker's earlier desire, which the concession has overridden."
+    "comment": "A concession followed by a past-tense report of the speaker's earlier desire, which the concession has overridden.",
+    "verified": "page-image"
   },
   {
     "id": "condoravdilauer2012_ex22",
@@ -548,7 +577,8 @@
       ["use", "concession"],
       ["denial", "wish"]
     ],
-    "comment": "A concession followed by a wish against the content: wish, unlike want, can express a desire the agent takes to be unrealizable, a preference that is not effective."
+    "comment": "A concession followed by a wish against the content: wish, unlike want, can express a desire the agent takes to be unrealizable, a preference that is not effective.",
+    "verified": "page-image"
   },
   {
     "id": "condoravdilauer2012_ex23a",
@@ -567,7 +597,8 @@
       ["construction", "challenge"],
       ["form", "assertion"]
     ],
-    "comment": "An assertion of a desire challenged as a lie; the paper credits Schwager, who attributes the example to Manfred Bierwisch."
+    "comment": "An assertion of a desire challenged as a lie; the paper credits Schwager, who attributes the example to Manfred Bierwisch.",
+    "verified": "page-image"
   },
   {
     "id": "condoravdilauer2012_ex23b",
@@ -586,7 +617,8 @@
       ["construction", "challenge"],
       ["form", "imperative"]
     ],
-    "comment": "An imperative challenged as a lie."
+    "comment": "An imperative challenged as a lie.",
+    "verified": "page-image"
   },
   {
     "id": "condoravdilauer2012_ex24a",
@@ -604,7 +636,8 @@
       ["construction", "challenge"],
       ["form", "assertion"]
     ],
-    "comment": "An assertion of a desire met with disbelief."
+    "comment": "An assertion of a desire met with disbelief.",
+    "verified": "page-image"
   },
   {
     "id": "condoravdilauer2012_ex24b",
@@ -622,7 +655,8 @@
       ["construction", "challenge"],
       ["form", "imperative"]
     ],
-    "comment": "An imperative met with disbelief."
+    "comment": "An imperative met with disbelief.",
+    "verified": "page-image"
   },
   {
     "id": "condoravdilauer2012_ex25",
@@ -642,7 +676,8 @@
       ["construction", "challenge"],
       ["form", "performative"]
     ],
-    "comment": "An explicit performative met with disbelief or challenged as a lie; explicit performatives are self-verifying like imperatives."
+    "comment": "An explicit performative met with disbelief or challenged as a lie; explicit performatives are self-verifying like imperatives.",
+    "verified": "page-image"
   },
   {
     "id": "condoravdilauer2012_ex26",
@@ -660,7 +695,8 @@
       ["construction", "involvement"],
       ["speaker", "enabling"]
     ],
-    "comment": "The speaker offers a supporting action that enables the addressee: speaker involvement is limited, not excluded."
+    "comment": "The speaker offers a supporting action that enables the addressee: speaker involvement is limited, not excluded.",
+    "verified": "page-image"
   },
   {
     "id": "condoravdilauer2012_ex27",
@@ -671,14 +707,16 @@
     "glossedTokens": [],
     "translation": "",
     "context": "Uttered in order to get the addressee to sit still so that the speaker can carry them to the conference room.",
-    "judgment": "unacceptable",
+    "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "involvement"],
-      ["speaker", "fulfilling"]
+      ["speaker", "fulfilling"],
+      ["felicity", "infelicitous"]
     ],
-    "comment": "An imperative cannot merely tell the addressee not to interfere with the speaker's own plan to bring the content about. The judgment is the paper's prose verdict, not a mark."
+    "comment": "An imperative cannot merely tell the addressee not to interfere with the speaker's own plan to bring the content about. Printed unmarked; the prose gives it as the 'extreme example' of a use imperatives do not have.",
+    "verified": "page-image"
   },
   {
     "id": "condoravdilauer2012_ex37",
@@ -697,7 +735,8 @@
       ["group", "wish"],
       ["use", "well-wish and exhortation"]
     ],
-    "comment": "The first conjunct is a well-wish; the second cannot be read as a mere wish, since the addressee controls its content, and rings as an exhortation: the prediction of the two conditions on wish uses."
+    "comment": "The first conjunct is a well-wish; the second cannot be read as a mere wish, since the addressee controls its content, and rings as an exhortation: the prediction of the two conditions on wish uses.",
+    "verified": "page-image"
   },
   {
     "id": "condoravdilauer2012_ex38a",
@@ -716,7 +755,8 @@
       ["group", "magical"],
       ["use", "magical imperative"]
     ],
-    "comment": "The limiting case in which the utterance suffices to realize the preference it expresses."
+    "comment": "The limiting case in which the utterance suffices to realize the preference it expresses.",
+    "verified": "page-image"
   },
   {
     "id": "condoravdilauer2012_ex38b",
@@ -735,7 +775,8 @@
       ["group", "magical"],
       ["use", "magical imperative"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "condoravdilauer2012_ex41",
@@ -754,7 +795,8 @@
       ["group", "permission"],
       ["use", "offer"]
     ],
-    "comment": "Treated as a reduced conditional expressing a conditional preference: if you want to take a cookie, I want you to take one."
+    "comment": "The paper prints 'Take a cookie, if you like (to take a cookie).'; this row omits the parenthesized spell-out of the elided complement. Treated as a reduced conditional expressing a conditional preference: if you want to take a cookie, I want you to take one.",
+    "verified": "page-image"
   },
   {
     "id": "condoravdilauer2012_ex40_want",
@@ -773,7 +815,8 @@
       ["use", "advice"],
       ["denial", "want"]
     ],
-    "comment": "Disinterested advice followed by a denial of the speaker's desire; the paper gives the want and wish continuations as one example with a slash."
+    "comment": "Disinterested advice followed by a denial of the speaker's desire; the paper gives the want and wish continuations as one example with a slash.",
+    "verified": "page-image"
   },
   {
     "id": "condoravdilauer2012_ex40_wish",
@@ -792,6 +835,7 @@
       ["use", "advice"],
       ["denial", "wish"]
     ],
-    "comment": "Disinterested advice followed by a wish against the content; unlike the concession in (22), advice tolerates no preference of any kind against its content."
+    "comment": "Disinterested advice followed by a wish against the content; unlike the concession in (22), advice tolerates no preference of any kind against its content.",
+    "verified": "page-image"
   }
 ]

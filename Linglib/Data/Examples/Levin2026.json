@@ -37,7 +37,8 @@
     "projectile"
    ]
   ],
-  "comment": "attested"
+  "comment": "attested",
+  "verified": "page-image"
  },
  {
   "id": "levin2026_10a",
@@ -65,7 +66,8 @@
     "transitive"
    ]
   ],
-  "comment": ""
+  "comment": "",
+  "verified": "page-image"
  },
  {
   "id": "levin2026_10b",
@@ -93,7 +95,8 @@
     "intransitive"
    ]
   ],
-  "comment": ""
+  "comment": "",
+  "verified": "page-image"
  },
  {
   "id": "levin2026_11a",
@@ -133,7 +136,8 @@
     "projectile"
    ]
   ],
-  "comment": "attested"
+  "comment": "attested",
+  "verified": "page-image"
  },
  {
   "id": "levin2026_11b_tr",
@@ -161,7 +165,8 @@
     "transitive"
    ]
   ],
-  "comment": ""
+  "comment": "",
+  "verified": "page-image"
  },
  {
   "id": "levin2026_11b_intr",
@@ -189,7 +194,8 @@
     "intransitive"
    ]
   ],
-  "comment": ""
+  "comment": "",
+  "verified": "page-image"
  },
  {
   "id": "levin2026_12a",
@@ -229,7 +235,8 @@
     "projectile"
    ]
   ],
-  "comment": "attested"
+  "comment": "attested",
+  "verified": "page-image"
  },
  {
   "id": "levin2026_12b_tr",
@@ -265,7 +272,8 @@
     "transitive"
    ]
   ],
-  "comment": ""
+  "comment": "",
+  "verified": "page-image"
  },
  {
   "id": "levin2026_12b_intr",
@@ -293,7 +301,8 @@
     "intransitive"
    ]
   ],
-  "comment": ""
+  "comment": "",
+  "verified": "page-image"
  },
  {
   "id": "levin2026_13a",
@@ -333,7 +342,8 @@
     "projectile"
    ]
   ],
-  "comment": "attested"
+  "comment": "attested",
+  "verified": "page-image"
  },
  {
   "id": "levin2026_13b_tr",
@@ -361,7 +371,8 @@
     "transitive"
    ]
   ],
-  "comment": ""
+  "comment": "",
+  "verified": "page-image"
  },
  {
   "id": "levin2026_13b_intr",
@@ -389,7 +400,8 @@
     "intransitive"
    ]
   ],
-  "comment": ""
+  "comment": "",
+  "verified": "page-image"
  },
  {
   "id": "levin2026_14a",
@@ -417,7 +429,8 @@
     "transitive"
    ]
   ],
-  "comment": ""
+  "comment": "",
+  "verified": "page-image"
  },
  {
   "id": "levin2026_14b",
@@ -445,7 +458,8 @@
     "intransitive"
    ]
   ],
-  "comment": ""
+  "comment": "",
+  "verified": "page-image"
  },
  {
   "id": "levin2026_15a",
@@ -481,7 +495,8 @@
     "transitive"
    ]
   ],
-  "comment": ""
+  "comment": "",
+  "verified": "page-image"
  },
  {
   "id": "levin2026_15b",
@@ -517,7 +532,8 @@
     "intransitive"
    ]
   ],
-  "comment": ""
+  "comment": "",
+  "verified": "page-image"
  },
  {
   "id": "levin2026_16a",
@@ -545,7 +561,8 @@
     "transitive"
    ]
   ],
-  "comment": ""
+  "comment": "",
+  "verified": "page-image"
  },
  {
   "id": "levin2026_16b",
@@ -573,7 +590,8 @@
     "intransitive"
    ]
   ],
-  "comment": ""
+  "comment": "",
+  "verified": "page-image"
  },
  {
   "id": "levin2026_16c",
@@ -609,7 +627,8 @@
     "transitive"
    ]
   ],
-  "comment": ""
+  "comment": "",
+  "verified": "page-image"
  },
  {
   "id": "levin2026_16d",
@@ -645,7 +664,8 @@
     "intransitive"
    ]
   ],
-  "comment": ""
+  "comment": "",
+  "verified": "page-image"
  },
  {
   "id": "levin2026_19",
@@ -681,7 +701,8 @@
     "transitive"
    ]
   ],
-  "comment": "attested"
+  "comment": "attested",
+  "verified": "page-image"
  },
  {
   "id": "levin2026_21",
@@ -717,7 +738,8 @@
     "transitive"
    ]
   ],
-  "comment": "attested"
+  "comment": "attested",
+  "verified": "page-image"
  },
  {
   "id": "levin2026_23",
@@ -757,7 +779,8 @@
     "projectile"
    ]
   ],
-  "comment": "attested"
+  "comment": "attested",
+  "verified": "page-image"
  },
  {
   "id": "levin2026_24",
@@ -793,7 +816,8 @@
     "transitive"
    ]
   ],
-  "comment": "attested"
+  "comment": "attested",
+  "verified": "page-image"
  },
  {
   "id": "levin2026_33",
@@ -833,7 +857,8 @@
     "projectile"
    ]
   ],
-  "comment": "attested"
+  "comment": "attested",
+  "verified": "page-image"
  },
  {
   "id": "levin2026_34",
@@ -843,7 +868,7 @@
   },
   "reportedIn": null,
   "language": "stan1293",
-  "primaryText": "The front door yanked open wider.",
+  "primaryText": "The front door yanked open wider. 'Hello,' said a round-faced boy …",
   "discourseSegments": [],
   "glossedTokens": [],
   "translation": "",
@@ -873,7 +898,8 @@
     "projectile"
    ]
   ],
-  "comment": "attested"
+  "comment": "attested",
+  "verified": "page-image"
  },
  {
   "id": "levin2026_35",
@@ -913,7 +939,8 @@
     "projectile"
    ]
   ],
-  "comment": "attested"
+  "comment": "attested",
+  "verified": "page-image"
  },
  {
   "id": "levin2026_36a",
@@ -949,7 +976,8 @@
     "transitive"
    ]
   ],
-  "comment": "attested"
+  "comment": "attested",
+  "verified": "page-image"
  },
  {
   "id": "levin2026_36b",
@@ -985,7 +1013,8 @@
     "intransitive"
    ]
   ],
-  "comment": ""
+  "comment": "",
+  "verified": "page-image"
  },
  {
   "id": "levin2026_37b",
@@ -1021,7 +1050,8 @@
     "intransitive"
    ]
   ],
-  "comment": ""
+  "comment": "",
+  "verified": "page-image"
  },
  {
   "id": "levin2026_38",
@@ -1061,7 +1091,8 @@
     "projectile"
    ]
   ],
-  "comment": "attested"
+  "comment": "attested",
+  "verified": "page-image"
  },
  {
   "id": "levin2026_39",
@@ -1101,7 +1132,8 @@
     "projectile"
    ]
   ],
-  "comment": "attested"
+  "comment": "attested",
+  "verified": "page-image"
  },
  {
   "id": "levin2026_41",
@@ -1141,7 +1173,8 @@
     "projectile"
    ]
   ],
-  "comment": "attested"
+  "comment": "attested",
+  "verified": "page-image"
  },
  {
   "id": "levin2026_42",
@@ -1181,7 +1214,8 @@
     "animate"
    ]
   ],
-  "comment": "attested"
+  "comment": "attested",
+  "verified": "page-image"
  },
  {
   "id": "levin2026_43",
@@ -1221,7 +1255,8 @@
     "animate"
    ]
   ],
-  "comment": "attested"
+  "comment": "attested",
+  "verified": "page-image"
  },
  {
   "id": "levin2026_44a",
@@ -1257,7 +1292,8 @@
     "transitive"
    ]
   ],
-  "comment": "attested"
+  "comment": "attested",
+  "verified": "page-image"
  },
  {
   "id": "levin2026_44b",
@@ -1293,7 +1329,8 @@
     "intransitive"
    ]
   ],
-  "comment": ""
+  "comment": "",
+  "verified": "page-image"
  },
  {
   "id": "levin2026_45a",
@@ -1329,7 +1366,8 @@
     "transitive"
    ]
   ],
-  "comment": "attested"
+  "comment": "attested",
+  "verified": "page-image"
  },
  {
   "id": "levin2026_45b",
@@ -1365,7 +1403,8 @@
     "intransitive"
    ]
   ],
-  "comment": ""
+  "comment": "",
+  "verified": "page-image"
  },
  {
   "id": "levin2026_46",
@@ -1405,7 +1444,8 @@
     "projectile"
    ]
   ],
-  "comment": "attested"
+  "comment": "attested",
+  "verified": "page-image"
  },
  {
   "id": "levin2026_47",
@@ -1445,7 +1485,8 @@
     "animate"
    ]
   ],
-  "comment": "attested"
+  "comment": "attested",
+  "verified": "page-image"
  },
  {
   "id": "levin2026_48",
@@ -1485,7 +1526,8 @@
     "projectile"
    ]
   ],
-  "comment": "attested"
+  "comment": "attested",
+  "verified": "page-image"
  },
  {
   "id": "levin2026_50a",
@@ -1521,7 +1563,8 @@
     "transitive"
    ]
   ],
-  "comment": "attested"
+  "comment": "attested",
+  "verified": "page-image"
  },
  {
   "id": "levin2026_50b",
@@ -1557,7 +1600,8 @@
     "intransitive"
    ]
   ],
-  "comment": ""
+  "comment": "",
+  "verified": "page-image"
  },
  {
   "id": "levin2026_51a",
@@ -1593,7 +1637,8 @@
     "transitive"
    ]
   ],
-  "comment": "attested; passive of the transitive resultative"
+  "comment": "attested; passive of the transitive resultative",
+  "verified": "page-image"
  },
  {
   "id": "levin2026_51b",
@@ -1629,7 +1674,8 @@
     "intransitive"
    ]
   ],
-  "comment": ""
+  "comment": "",
+  "verified": "page-image"
  },
  {
   "id": "levin2026_52b",
@@ -1665,7 +1711,8 @@
     "intransitive"
    ]
   ],
-  "comment": ""
+  "comment": "",
+  "verified": "page-image"
  },
  {
   "id": "levin2026_53a",
@@ -1701,7 +1748,8 @@
     "transitive"
    ]
   ],
-  "comment": "attested"
+  "comment": "attested",
+  "verified": "page-image"
  },
  {
   "id": "levin2026_53b",
@@ -1737,7 +1785,8 @@
     "intransitive"
    ]
   ],
-  "comment": ""
+  "comment": "",
+  "verified": "page-image"
  },
  {
   "id": "levin2026_54b",
@@ -1773,7 +1822,8 @@
     "intransitive"
    ]
   ],
-  "comment": ""
+  "comment": "",
+  "verified": "page-image"
  },
  {
   "id": "levin2026_55b",
@@ -1809,7 +1859,8 @@
     "intransitive"
    ]
   ],
-  "comment": ""
+  "comment": "",
+  "verified": "page-image"
  },
  {
   "id": "levin2026_56b",
@@ -1845,7 +1896,8 @@
     "intransitive"
    ]
   ],
-  "comment": ""
+  "comment": "",
+  "verified": "page-image"
  },
  {
   "id": "levin2026_57b",
@@ -1881,7 +1933,8 @@
     "intransitive"
    ]
   ],
-  "comment": ""
+  "comment": "",
+  "verified": "page-image"
  },
  {
   "id": "levin2026_58b",
@@ -1917,7 +1970,8 @@
     "intransitive"
    ]
   ],
-  "comment": ""
+  "comment": "",
+  "verified": "page-image"
  },
  {
   "id": "levin2026_59b",
@@ -1953,7 +2007,8 @@
     "intransitive"
    ]
   ],
-  "comment": ""
+  "comment": "",
+  "verified": "page-image"
  },
  {
   "id": "levin2026_60b",
@@ -1989,7 +2044,8 @@
     "intransitive"
    ]
   ],
-  "comment": ""
+  "comment": "",
+  "verified": "page-image"
  },
  {
   "id": "levin2026_70",
@@ -2029,7 +2085,8 @@
     "projectile"
    ]
   ],
-  "comment": "attested"
+  "comment": "attested",
+  "verified": "page-image"
  },
  {
   "id": "levin2026_74",
@@ -2065,7 +2122,8 @@
     "transitive"
    ]
   ],
-  "comment": "attested"
+  "comment": "attested",
+  "verified": "page-image"
  },
  {
   "id": "levin2026_75",
@@ -2105,7 +2163,8 @@
     "manipulated"
    ]
   ],
-  "comment": ""
+  "comment": "",
+  "verified": "page-image"
  },
  {
   "id": "levin2026_77",
@@ -2145,7 +2204,8 @@
     "manipulated"
    ]
   ],
-  "comment": ""
+  "comment": "",
+  "verified": "page-image"
  },
  {
   "id": "levin2026_78",
@@ -2185,7 +2245,8 @@
     "animate"
    ]
   ],
-  "comment": "attested"
+  "comment": "attested",
+  "verified": "page-image"
  },
  {
   "id": "levin2026_79",
@@ -2225,7 +2286,8 @@
     "machine"
    ]
   ],
-  "comment": "attested"
+  "comment": "attested",
+  "verified": "page-image"
  },
  {
   "id": "levin2026_84a",
@@ -2257,7 +2319,8 @@
     "projectile"
    ]
   ],
-  "comment": ""
+  "comment": "",
+  "verified": "page-image"
  },
  {
   "id": "levin2026_84b",
@@ -2289,7 +2352,8 @@
     "projectile"
    ]
   ],
-  "comment": ""
+  "comment": "",
+  "verified": "page-image"
  },
  {
   "id": "levin2026_85a",
@@ -2321,7 +2385,8 @@
     "animate"
    ]
   ],
-  "comment": ""
+  "comment": "",
+  "verified": "page-image"
  },
  {
   "id": "levin2026_85b",
@@ -2353,7 +2418,8 @@
     "natural force"
    ]
   ],
-  "comment": ""
+  "comment": "",
+  "verified": "page-image"
  },
  {
   "id": "levin2026_85c",
@@ -2385,6 +2451,7 @@
     "machine"
    ]
   ],
-  "comment": ""
+  "comment": "",
+  "verified": "page-image"
  }
 ]

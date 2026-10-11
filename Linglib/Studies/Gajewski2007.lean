@@ -45,14 +45,14 @@ into the complement of *think*, the asymmetry of stacked neg-raising predicates 
 * The excluded middle of `nrp` is stated with the complement's full meaning, `p(u) ≠ 1` rather
   than `p(u) = 0`, as in Appendix 2, so that a complement's own presupposition is cancelled inside
   it and projects only through the heritage base.
-* The stressed reading without neg-raising cancels the presupposition with [beaver-krahmer-2001]'s
+* The stressed reading without neg-raising cancels the presupposition with Beaver and Krahmer's
   assertion operator, which makes it the substrate's external negation `PartialProp.negExt`.
 
 ## TODO
 
 * The appendix to §2 explains why *it's not true that* fails to license: *true* cancels the
   complement's presupposition, and disjunction projects presuppositions as in
-  [karttunen-peters-1979]. Formalizing it needs complements with presuppositions, and the paper
+  Karttunen and Peters. Formalizing it needs complements with presuppositions, and the paper
   calls the explanation technical and incomplete.
 * The Romance n-words of A.3 are not formalized.
 
@@ -477,7 +477,7 @@ def rows : List Row := Examples.all.filterMap Row.ofDatum
 superlatives aside (55). -/
 theorem rows_licensed : ∀ r ∈ rows, r.env ≠ .superlative →
     (r.judgment = .acceptable → r.env.AntiAdditive) ∧
-      (r.judgment = .unacceptable → ¬ r.env.AntiAdditive) := by
+      (r.judgment = .ungrammatical → ¬ r.env.AntiAdditive) := by
   decide
 
 /-- Strict NPIs are acceptable in superlative relative clauses, which are Strawson anti-additive

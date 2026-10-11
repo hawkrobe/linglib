@@ -590,9 +590,9 @@
     "primaryText": "INFORM-2 WORLD WILL MESS. IX-arc-neutral(thumb) GOVERNMENT HAVE SPECIALf BOAT READY. UNDERSTAND IX-arc-neutral PICK-neutral(alternating-repetition) LIMIT PEOPLE WHObent FILE-ON ON BOAT IX-left. UNDERSTAND IX-arc-right-neutral RESPONSIBILITY WHATpu-rq. POSS-neutral-right DRESS BAG EAT INVOLVE BRING FILE-ON-left. UNDERSTAND GOVERNMENT PROVIDE BOAT FINISH.",
     "discourseSegments": [
       "INFORM-2 WORLD WILL MESS.",
-      "IX-arc-neutral(thumb) GOVERNMENT HAVE SPECIAL BOAT READY.",
-      "UNDERSTAND IX-arc-neutral PICK-neutral(alternating-repetition) LIMIT PEOPLE WHO CAN FILE-ON ON BOAT IX-left.",
-      "UNDERSTAND IX-arc-right-neutral RESPONSIBILITY WHAT.",
+      "IX-arc-neutral(thumb) GOVERNMENT HAVE SPECIALf BOAT READY.",
+      "UNDERSTAND IX-arc-neutral PICK-neutral(alternating-repetition) LIMIT PEOPLE WHObent FILE-ON ON BOAT IX-left.",
+      "UNDERSTAND IX-arc-right-neutral RESPONSIBILITY WHATpu-rq.",
       "POSS-neutral-right DRESS BAG EAT INVOLVE BRING FILE-ON-left.",
       "UNDERSTAND GOVERNMENT PROVIDE BOAT FINISH."
     ],
@@ -620,12 +620,12 @@
     "language": "amer1248",
     "primaryText": "WORLD HAPPEN MESS PU. INFORM GOVERNMENT HAVE SPECIAL BOAT READY FOR. UNDERSTAND IX-right-high PICK-high(alternating repetition) PEOPLE WHObent CAN FILE-ON-left. UNDERSTAND IX-arc-right-high RESPONSIBILITY WHATpu-rq. POSS-right-mid BAG DRESS EAT INCLUDE. GOVERNMENT PROVIDE WHATpu-rq BOAT FINISH.",
     "discourseSegments": [
-      "WORLD HAPPEN MESS.",
+      "WORLD HAPPEN MESS PU.",
       "INFORM GOVERNMENT HAVE SPECIAL BOAT READY FOR.",
-      "UNDERSTAND IX-right-high PICK-high(alternating repetition) PEOPLE WHO CAN FILE-ON-left.",
-      "UNDERSTAND IX-arc-right-high RESPONSIBILITY WHAT.",
+      "UNDERSTAND IX-right-high PICK-high(alternating repetition) PEOPLE WHObent CAN FILE-ON-left.",
+      "UNDERSTAND IX-arc-right-high RESPONSIBILITY WHATpu-rq.",
       "POSS-right-mid BAG DRESS EAT INCLUDE.",
-      "GOVERNMENT PROVIDE WHAT BOAT FINISH."
+      "GOVERNMENT PROVIDE WHATpu-rq BOAT FINISH."
     ],
     "glossedTokens": [],
     "translation": "The world is getting destroyed! (But) FYI, the government has a special boat — they're ready for it — and they are choosing people (randomly, from everyone) who can go on it. The people who are chosen (a subset of everyone) are responsible for bringing their own supplies. The government just provides the boat.",

@@ -248,13 +248,6 @@ def Scheduled (e : Datum) : Prop := e.feature? "scheduled" = some "true"
 
 instance : DecidablePred Scheduled := fun _ ↦ inferInstanceAs (Decidable (_ = _))
 
-/-- The paper judges the example felicitous: it prints no mark of infelicity and its prose does
-not call the example infelicitous. -/
-def JudgedFelicitous (e : Datum) : Prop :=
-  e.judgment = .acceptable ∧ e.feature? "felicity" ≠ some "infelicitous"
-
-instance : DecidablePred JudgedFelicitous := fun _ ↦ inferInstanceAs (Decidable (_ ∧ _))
-
 /-- Every example names a cell and a scenario. -/
 theorem cell?_frame?_isSome : ∀ e ∈ Examples.all, (cell? e).isSome ∧ (frame? e).isSome := by
   decide
@@ -262,7 +255,7 @@ theorem cell?_frame?_isSome : ∀ e ∈ Examples.all, (cell? e).isSome ∧ (fram
 /-- An assertion is felicitous exactly when its cell holds on the scenario's frame, planned
 or scheduled events exempt (§6). -/
 theorem judgment_iff : ∀ e ∈ Examples.all, ∀ c ∈ cell? e, ∀ f ∈ frame? e,
-    (JudgedFelicitous e ↔ Scheduled e ∨ c.Holds f) := by
+    (e.JudgedFelicitous ↔ Scheduled e ∨ c.Holds f) := by
   decide
 
 end Cumming2026
