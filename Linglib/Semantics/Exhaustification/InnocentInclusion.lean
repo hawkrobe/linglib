@@ -19,7 +19,8 @@ Inclusion adds nothing to Innocent Exclusion.
 * `IsConsistentInclusion`, `II`, `IsInnocentlyIncludable`: the innocently includable
   alternatives.
 * `exhIEII`: exhaustification with Innocent Exclusion and Innocent Inclusion.
-* `cell`, `exhIEII_eq_cell_of_cell_nonempty`: cell identification.
+* `cell`, `exhIEII_eq_cell_of_cell_nonempty`, `mem_cell_iff`: cell identification, the cell being
+  the prejacent worlds verifying exactly the alternatives of the minimal verified sets.
 * `IsMinimalCover.exhIEII_eq`, `IsMinimalCover.II_eq`: exhaustification read off representative
   minimal worlds.
 
@@ -272,5 +273,44 @@ theorem exhIEII_singleton (hsat : φ.Nonempty) : exhIEII {φ} φ = φ :=
   exhIEII_eq_self_of_forall_subset (by simp) hsat
 
 end MinimalCover
+
+/-! ### Verified alternatives -/
+
+section Verified
+
+variable {ALT φ} {w : World}
+
+/-- The cell of the prejacent consists of the prejacent worlds verifying exactly the alternatives
+of the minimal verified sets. -/
+theorem mem_cell_iff : w ∈ cell ALT φ ↔ w ∈ φ ∧ Preorder.satisfied (· ∈ ·) ALT w =
+    ⋃₀ {P | Minimal (· ∈ Preorder.satisfied (· ∈ ·) ALT '' φ) P} := by
+  change (w ∈ φ ∧ (∀ q, IsInnocentlyExcludable ALT φ q → w ∉ q) ∧
+    (∀ r ∈ nonExcludable ALT φ, w ∈ r)) ↔ _
+  refine and_congr_right fun _ ↦ ⟨fun ⟨hIE, hnon⟩ ↦ ?_, fun h ↦ ⟨fun q hq hwq ↦ ?_, fun r hr ↦ ?_⟩⟩
+  · ext a
+    refine ⟨fun ⟨ha, hwa⟩ ↦ by_contra fun hn ↦ hIE a ((isInnocentlyExcludable_iff_forall_minimal
+      ha).2 fun P hP haP ↦ hn ⟨P, hP, haP⟩) hwa, fun ⟨P, hP, haP⟩ ↦ ?_⟩
+    have hP' := hP
+    obtain ⟨⟨u, hu, rfl⟩, -⟩ := hP'
+    exact ⟨haP.1, hnon a ⟨haP.1, fun hIEa ↦
+      (isInnocentlyExcludable_iff_forall_minimal haP.1).1 hIEa _ hP haP⟩⟩
+  · obtain ⟨P, hP, hqP⟩ := (h ▸ (⟨hq.1, hwq⟩ : q ∈ Preorder.satisfied (· ∈ ·) ALT w) :
+      q ∈ ⋃₀ {P | Minimal (· ∈ Preorder.satisfied (· ∈ ·) ALT '' φ) P})
+    exact (isInnocentlyExcludable_iff_forall_minimal hq.1).1 hq P hP hqP
+  · have : r ∈ ⋃₀ {P | Minimal (· ∈ Preorder.satisfied (· ∈ ·) ALT '' φ) P} := by
+      by_contra hn
+      exact hr.2 ((isInnocentlyExcludable_iff_forall_minimal hr.1).2 fun P hP hrP ↦
+        hn ⟨P, hP, hrP⟩)
+    exact (h ▸ this : r ∈ Preorder.satisfied (· ∈ ·) ALT w).2
+
+/-- The cell is consistent iff some prejacent world verifies exactly the alternatives of the
+minimal verified sets. -/
+theorem cell_nonempty_iff : (cell ALT φ).Nonempty ↔
+    ⋃₀ {P | Minimal (· ∈ Preorder.satisfied (· ∈ ·) ALT '' φ) P} ∈
+      Preorder.satisfied (· ∈ ·) ALT '' φ :=
+  ⟨fun ⟨w, hw⟩ ↦ ⟨w, (mem_cell_iff.1 hw).1, (mem_cell_iff.1 hw).2⟩,
+    fun ⟨w, hw, h⟩ ↦ ⟨w, mem_cell_iff.2 ⟨hw, h⟩⟩⟩
+
+end Verified
 
 end Exhaustification
