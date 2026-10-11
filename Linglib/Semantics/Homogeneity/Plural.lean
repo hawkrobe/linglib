@@ -1,7 +1,6 @@
 module
 
 public import Linglib.Semantics.Homogeneity.Usable
-public import Linglib.Semantics.Supervaluation
 public import Mathlib.Order.UpperLower.Principal
 
 /-!
@@ -44,7 +43,6 @@ predicate at the empty plurality yields no reading.
 * [kriz-2016]
 * [haslinger-etal-2025]
 * [bar-lev-2021]
-* [fine-1975]
 -/
 
 @[expose] public section
@@ -173,14 +171,6 @@ theorem allPlural_blocked_by_wide_issue (q : Setoid W)
 theorem allPlural_exceptions_unmentionable (q : Setoid W) (w : W) (a : Atom)
     (ha : a ∈ x) (h : usable q (allPlural P x) w) : P a w :=
   allPlural_prevents_nonmax P x q w h a ha
-
-/-- The bare plural at `w` equals `superTrue` with atoms as specification
-    points and `P(·, w)` as the evaluation function — plural predication is
-    supervaluation over atoms ([fine-1975]). -/
-theorem barePlural_eq_superTrue (hne : x.Nonempty) (w : W) :
-    barePlural P x w =
-    Semantics.Supervaluation.superTrue (fun a ↦ P a w) ⟨x, hne⟩ :=
-  rfl
 
 /-- An *all*-sentence is never indefinite. -/
 theorem allPlural_ne_indet (w : W) : allPlural P x w ≠ .indet := by

@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Semantics.Supervaluation
+public import Linglib.Logic.Trivalent.Basic
 
 /-!
 # Delineation semantics
@@ -57,8 +57,6 @@ structure Delineation (E : Type*) where
 
 namespace Delineation
 
-open Semantics.Supervaluation (SpecSpace superTrue superTrue_true_iff)
-
 variable {E : Type*}
 
 instance : CoeFun (Delineation E) fun _ ↦ Set E → Set E := ⟨toFun⟩
@@ -89,23 +87,24 @@ Fine's supervaluation. -/
 
 section Supervaluation
 
-variable [∀ C (x : E), Decidable (x ∈ d C)] {a b : E} (S : SpecSpace (Set E))
+variable [∀ C (x : E), Decidable (x ∈ d C)] {a b : E} (S : Finset (Set E))
 
 variable {d} in
 /-- Under a delineation monotone on the admissible classes, if some admissible class ranks `a`
 above `b` and `b` is in the extension of every admissible class, then so is `a`. -/
-theorem IsMonotoneOn.superTrue_of_comparative (hmono : d.IsMonotoneOn ↑S.admissible)
-    (hdisc : ∃ C ∈ S.admissible, a ∈ d C ∧ b ∉ d C)
-    (hb : superTrue (b ∈ d ·) S = .true) : superTrue (a ∈ d ·) S = .true := by
-  rw [superTrue_true_iff] at hb ⊢
+theorem IsMonotoneOn.supervaluation_eq_true_of_comparative (hmono : d.IsMonotoneOn ↑S)
+    (hdisc : ∃ C ∈ S, a ∈ d C ∧ b ∉ d C)
+    (hb : Trivalent.supervaluation S (b ∈ d ·) = .true) :
+    Trivalent.supervaluation S (a ∈ d ·) = .true := by
+  rw [Trivalent.supervaluation_eq_true_iff] at hb ⊢
   obtain ⟨C₀, hC₀, haC₀, hnotbC₀⟩ := hdisc
   exact fun C hC ↦ hmono C₀ hC₀ C hC a b haC₀ hnotbC₀ (hb C hC)
 
 /-- A discriminating class in the space falsifies `b`'s super-truth. -/
-theorem superTrue_ne_true_of_comparative (hdisc : ∃ C ∈ S.admissible, a ∈ d C ∧ b ∉ d C) :
-    superTrue (b ∈ d ·) S ≠ .true := fun h ↦
+theorem supervaluation_ne_true_of_comparative (hdisc : ∃ C ∈ S, a ∈ d C ∧ b ∉ d C) :
+    Trivalent.supervaluation S (b ∈ d ·) ≠ .true := fun h ↦
   let ⟨C₀, hC₀, _, hnotb⟩ := hdisc
-  hnotb ((superTrue_true_iff _ S).mp h C₀ hC₀)
+  hnotb ((Trivalent.supervaluation_eq_true_iff ..).mp h C₀ hC₀)
 
 end Supervaluation
 

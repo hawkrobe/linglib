@@ -5,28 +5,28 @@ public import Linglib.Semantics.Homogeneity.Plural
 /-!
 # Križ (2016): Homogeneity, Non-Maximality, and All
 
-This file formalizes [kriz-2016]'s account of non-maximal readings of definite plurals. *The
-professors smiled* is neither true nor false when some but not all of them smiled, and the
-sentence is nonetheless usable there whenever the current issue does not distinguish that
-situation from one in which all smiled; *all* removes the gap and with it the non-maximal
-reading. A five-world model of three professors runs the account end to end on the library's
-homogeneity substrate (`barePlural`, `allPlural`, both originating with this paper): the
-non-maximal use under a coarse issue and its absence under a fine one, the unusability of the
-*all*-sentence at any gap world, the unmentionability of exceptions
-(`smith_exception_unaddressable`), and the paper's prediction that what an exception does
-instead matters, since a visibly angry
-Smith falls into a different cell of the coarse issue than a neutral one
-(`bare_usable_neutral_not_angry`). Conjunctions of names, modelled as plurals over their
+Križ accounts for the non-maximal readings of definite plurals. *The professors smiled* is neither
+true nor false when some but not all of them smiled, and the sentence is nonetheless usable there
+whenever the current issue does not distinguish that situation from one in which all smiled; *all*
+removes the gap and with it the non-maximal reading. A five-world model of three professors runs the
+account end to end on the library's homogeneity substrate (`barePlural`, `allPlural`, both
+originating with this paper): the non-maximal use under a coarse issue and its absence under a fine
+one, the unusability of the *all*-sentence at any gap world, the unmentionability of exceptions
+(`smith_exception_unaddressable`), and the paper's prediction that what an exception does instead
+matters, since a visibly angry Smith falls into a different cell of the coarse issue than a neutral
+one (`bare_usable_neutral_not_angry`). Conjunctions of names, modelled as plurals over their
 conjuncts, are predicted to allow non-maximal readings they rarely have
 (`conj_modeled_as_plural_predicts_nonmax`), which the paper answers with an accommodated finer
-issue.
+issue. For collective predicates §5.1 generalises the gap by overlap: a predicate is undefined of a
+plurality that fails it but overlaps one that satisfies it, which on a distributive predicate is
+supervaluation over the atoms (`generalisedTruthValue_distributive`).
 
 ## Implementation notes
 
-* `Setoid W` is the substrate partition type, not the question stack of [roberts-1996]: the
+* `Setoid W` is the substrate partition type, not Roberts's question stack: the
   paper's §4.5 argues that the current issue is an overarching property of the discourse that
   is not directly manipulable, so `coarseQ` and `fineQ` are constructions for the model.
-* Following §4.4, the gap is trivalent but not presuppositional (contra [gajewski-2005]).
+* Following §4.4, the gap is trivalent but not presuppositional, contra Gajewski.
 * The §4.5 puzzle of numerals (*the ten professors smiled* resists non-maximality) is left open,
   as in the paper, and so is the accommodation step of §6.2.
 
@@ -36,6 +36,8 @@ issue.
 * [kriz-2015] — the dissertation the account develops
 * [lasersohn-1999], [kroch-1974] — pragmatic halos and the unmentionability of exceptions
 * [szabolcsi-haddican-2004], [magri-2014] — the homogeneity of conjunctions
+* [roberts-1996]
+* [gajewski-2005]
 -/
 
 @[expose] public section
@@ -184,7 +186,7 @@ gap-world, and the exception-mentioning continuation straddles it. -/
 
 /-- "Smith didn't smile", the exception-mentioning continuation. -/
 def smithDidntSmile : (ProfWorld → Trivalent) :=
-  λ w => if smiled .smith w then .false else .true
+  fun w ↦ if smiled .smith w then .false else .true
 
 /-- Under the coarse issue licensing the non-maximal use at `smithNeutral`,
     "…but Smith didn't" cannot address the issue (§4.1). -/
@@ -280,5 +282,39 @@ theorem conj_modeled_as_plural_predicts_nonmax :
   decide
 
 end ConjunctionOvergeneration
+
+/-! ### Generalised homogeneity (§5.1) -/
+
+section Generalised
+
+variable {Atom : Type*} [DecidableEq Atom]
+
+/-- The generalised truth value of §5.1 is true where `P` holds of `a`, undefined where `a`
+fails `P` but overlaps a plurality of `domain` that satisfies it, and false otherwise. -/
+def generalisedTruthValue (P : Finset Atom → Prop) [DecidablePred P]
+    (domain : Finset (Finset Atom)) (a : Finset Atom) : Trivalent :=
+  if P a then .true else if ∃ b ∈ domain, ¬ Disjoint a b ∧ P b then .indet else .false
+
+/-- On a distributive predicate the generalised value is supervaluation over the atoms, given a
+domain that contains every atom. -/
+theorem generalisedTruthValue_distributive (pred : Atom → Prop) [DecidablePred pred]
+    {a : Finset Atom} (hne : a.Nonempty) {domain : Finset (Finset Atom)}
+    (hdomain : ∀ x ∈ a, {x} ∈ domain) :
+    generalisedTruthValue (fun s ↦ ∀ x ∈ s, pred x) domain a =
+      Trivalent.supervaluation a pred := by
+  rcases h : Trivalent.supervaluation a pred with _ | _ | _
+  · exact ite_eq_left ((Trivalent.supervaluation_eq_true_iff ..).1 h)
+  · have hnone := ((Trivalent.supervaluation_eq_false_iff ..).1 h).2
+    obtain ⟨x, hx⟩ := hne
+    rw [generalisedTruthValue, ite_eq_right fun hall ↦ hnone x hx (hall x hx), ite_eq_right]
+    rintro ⟨b, -, hov, hPb⟩
+    obtain ⟨y, hya, hyb⟩ := Finset.not_disjoint_iff.1 hov
+    exact hnone y hya (hPb y hyb)
+  · obtain ⟨⟨x, hxa, hpx⟩, y, hya, hpy⟩ := (Trivalent.supervaluation_eq_indet_iff ..).1 h
+    rw [generalisedTruthValue, ite_eq_right fun hall ↦ hpy (hall y hya), ite_eq_left]
+    exact ⟨{x}, hdomain x hxa, Finset.not_disjoint_iff.2 ⟨x, hxa, Finset.mem_singleton_self x⟩,
+      fun z hz ↦ Finset.mem_singleton.1 hz ▸ hpx⟩
+
+end Generalised
 
 end Kriz2016

@@ -6,17 +6,17 @@ public import Mathlib.Order.SetNotation
 /-!
 # Homogeneity
 
-A trivalent proposition `W → Trivalent` is homogeneous, in Križ's sense, when its extension
-gap is nonempty: true when the predicate holds throughout its specification points, false when it
-fails throughout, and undefined in between. Instantiations differ in the specification points:
-atoms of a plurality (`Homogeneity.Plural`), closest antecedent worlds
-(`Conditional.selectionalCounterfactual`), overlapping pluralities (`Homogeneity.Collective`),
-best modal worlds (`Studies/AghaJeretic2022`). Homogeneity removers such as *all*, *necessarily*
-and *completely* denote the Beaver–Krahmer assertion operator `Trivalent.metaAssert`, applied
-pointwise, which collapses
-the gap into the negative extension. A family of propositions is `Homogeneous` at a world when
-its members are all true there or all false there, which is where the supervaluation over them is
-defined; presuppositional exhaustification presupposes this of its includable alternatives.
+A trivalent proposition `W → Trivalent` is homogeneous, in Križ's sense, when its extension gap is
+nonempty: true when the predicate holds throughout its specification points, false when it fails
+throughout, and undefined in between. Instantiations differ in the specification points: the parts
+of a plurality (`Homogeneity.readings`), closest antecedent worlds
+(`Conditional.selectionalCounterfactual`), overlapping pluralities
+(`Kriz2016.generalisedTruthValue`), best modal worlds (`Studies/AghaJeretic2022`). Homogeneity
+removers such as *all*, *necessarily* and *completely* denote the Beaver–Krahmer assertion operator
+`Trivalent.metaAssert`, applied pointwise, which collapses the gap into the negative extension. A
+family of propositions is `Homogeneous` at a world when its members are all true there or all false
+there, which is where the supervaluation over them is defined; presuppositional exhaustification
+presupposes this of its includable alternatives.
 
 ## Main declarations
 

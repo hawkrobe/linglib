@@ -931,7 +931,6 @@ import Linglib.Semantics.Focus.Particles
 import Linglib.Semantics.Focus.Unalternatives
 import Linglib.Semantics.Genericity.MeaningPreservation
 import Linglib.Semantics.Genericity.NominalMappingParameter
-import Linglib.Semantics.Homogeneity.Collective
 import Linglib.Semantics.Homogeneity.Defs
 import Linglib.Semantics.Homogeneity.Plural
 import Linglib.Semantics.Homogeneity.Usable
@@ -999,7 +998,6 @@ import Linglib.Semantics.Reference.Context.Shifts
 import Linglib.Semantics.Reference.Context.Tower
 import Linglib.Semantics.Reference.Nominal
 import Linglib.Semantics.Reference.Rigidity
-import Linglib.Semantics.Supervaluation
 import Linglib.Semantics.Tense.Compositional
 import Linglib.Semantics.Tense.Defs
 import Linglib.Semantics.Tense.Embedding

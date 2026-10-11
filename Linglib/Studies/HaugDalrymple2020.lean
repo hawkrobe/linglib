@@ -6,12 +6,12 @@ public import Mathlib.Tactic.DeriveFintype
 public import Linglib.Semantics.Dynamic.PPCDRT
 public import Linglib.Semantics.Plurality.Cumulativity
 public import Linglib.Semantics.Plurality.Reciprocal
-public import Linglib.Semantics.Supervaluation
+public import Linglib.Logic.Trivalent.Basic
 
 /-!
 # Haug and Dalrymple (2020): Reciprocity: Anaphora, scope, and quantification
 
-This file formalizes the relational analysis of reciprocity of [haug-dalrymple-2020] in
+Haug and Dalrymple give a relational analysis of reciprocity in
 Partial Plural Compositional DRT. The reciprocal contributes group identity with its
 antecedent and pointwise distinctness ((41), `PPCDRT.reciprocityCond`); the scope
 ambiguity of a reciprocal in a complement clause is the ambiguity of any plural anaphor
@@ -28,7 +28,7 @@ leaves no plurality for a reciprocal inside the distribution.
 
 The paper's relation to cumulation is stated in general. Pointwise conditions on plural
 states give cumulative readings (§2.1, `cumulative_iff_exists_relCond`), with the truth
-conditions of [sternefeld-1998]'s cumulation operator (§4.1, `cumulation_iff_exists_relCond`).
+conditions of Sternefeld's cumulation operator (§4.1, `cumulation_iff_exists_relCond`).
 A simple reciprocal sentence is true exactly when its antecedent is weakly reciprocal under the
 verb (§2.4, `weakReciprocity_iff_exists_reciprocalDRS`), which is Sternefeld's reading (76)
 (`cumulation_iff_exists_reciprocalDRS`). Without distribution, and whatever the verb, the
@@ -203,8 +203,8 @@ theorem atomsCond_ofRows {rows : List (PartialAssign ℕ Ind)} {Δ : Set ℕ} {�
   simp only [atomsCond, key]
   exact Iff.rfl
 
-/-- A lexical relation as a condition ((7), (27)): the state is nonempty and every state gives
-`u` and `v` values that `P` relates. Distribution does not reach individual discourse
+/-- A lexical relation as a condition ((7), (27)) holds when the state is nonempty and every
+state gives `u` and `v` values that `P` relates. Distribution does not reach individual discourse
 referents, so `Δ` is idle. -/
 def relCond {E : Type*} (P : E → E → Prop) (u v : ℕ) : PPDRSCond E := fun S _ ↦
   S.Nonempty ∧ ∀ s ∈ S, ∃ a b : E, s u = ↑a ∧ s v = ↑b ∧ P a b
@@ -230,14 +230,13 @@ theorem distributedGroupIdentityCond_ofRows {rows : List (PartialAssign ℕ Ind)
 
 /-! ### Anaphora under distribution (§2.3) -/
 
-/-- (24c): the lawyers hired secretaries they each liked, `u₃` bound to `u₁`. -/
+/-- The lawyers hired secretaries they each liked, `u₃` bound to `u₁` (24c). -/
 def lawyersBound : List (PartialAssign ℕ Ind) :=
   [row [(u₁, .lawyer1), (u₂, .secretary1), (u₃, .lawyer1)],
    row [(u₁, .lawyer2), (u₂, .secretary2), (u₃, .lawyer2)],
    row [(u₁, .lawyer3), (u₂, .secretary3), (u₃, .lawyer3)]]
 
-/-- (31c): the lawyers hired secretaries all of them liked, `∪u₃ → ∪u₁` under
-`δ_{u₁}`. -/
+/-- The lawyers hired secretaries all of them liked, `∪u₃ → ∪u₁` under `δ_{u₁}` (31c). -/
 def lawyersGroup : List (PartialAssign ℕ Ind) :=
   [row [(u₁, .lawyer1), (u₂, .secretary1), (u₃, .lawyer1)],
    row [(u₁, .lawyer1), (u₂, .secretary1), (u₃, .lawyer2)],
@@ -253,7 +252,7 @@ private theorem mem_u₁ : ∀ v, v ∈ ({u₁} : Set ℕ) ↔ v ∈ [u₁] := b
 
 private theorem mem_empty : ∀ v, v ∈ (∅ : Set ℕ) ↔ v ∈ ([] : List ℕ) := by simp
 
-/-- (23a) as (24): `they` bound by `the lawyers`, one secretary per lawyer under
+/-- Read as (24), (23a) has `they` bound by `the lawyers`, one secretary per lawyer under
 `δ_{u₁}`, and no group identity under the distribution. -/
 theorem lawyers_bound :
     bindingCond u₃ u₁ (ofRows lawyersBound) {u₁} ∧
@@ -262,9 +261,9 @@ theorem lawyers_bound :
   rw [bindingCond_ofRows, atomsCond_ofRows mem_u₁, groupIdentityCond_ofRows mem_u₁]
   decide
 
-/-- (23b) as (31): `∪u₃ → ∪u₁` escapes `δ_{u₁}`, one secretary per lawyer, no binding;
-the same state fails group identity read inside the distribution operator of (14), which
-is why (23b) needs the distribution of §2.3. -/
+/-- Read as (31), (23b) has `∪u₃ → ∪u₁` escape `δ_{u₁}`, with one secretary per lawyer and
+no binding. The same state fails group identity read inside the distribution operator of
+(14), which is why (23b) needs the distribution of §2.3. -/
 theorem lawyers_group :
     groupIdentityCond u₃ u₁ (ofRows lawyersGroup) {u₁} ∧
       atomsCond 1 u₂ (ofRows lawyersGroup) {u₁} ∧
@@ -333,7 +332,7 @@ theorem value_ofDep_right (h : u ≠ v) (D : SetRel E E) : value v (ofDep u v D)
   show row _ u ≠ ⊥
   simp [row_pair_left]
 
-/-- §2.1, (12): cumulative readings are the default. A state satisfying `P(u, v)` relates the
+/-- By §2.1, (12), cumulative readings are the default. A state satisfying `P(u, v)` relates the
 values of `u` to the values of `v` cumulatively in the sense of [beck-sauerland-2000], and any
 two pluralities so related are the values of such a state. -/
 theorem cumulative_iff_exists_relCond (h : u ≠ v) {x y : Set E} :
@@ -350,16 +349,16 @@ theorem cumulative_iff_exists_relCond (h : u ≠ v) {x y : Set E} :
     obtain ⟨a, -, ha, -⟩ := hS.2 s hs
     exact ⟨⟨a, s, hs, ha⟩, dep u v S, hP, hdom, hcod⟩
 
-/-- §4.1, (75): the cumulation operator `**` that [sternefeld-1998] applies to the predicate and
+/-- By §4.1, (75), the cumulation operator `**` that [sternefeld-1998] applies to the predicate and
 the pointwise conditions of Plural CDRT give the same truth conditions. -/
 theorem cumulation_iff_exists_relCond [DecidableEq E] (h : u ≠ v) {x y : Finset E} :
     Cumulation (Relation.Map P ({·}) ({·})) x y ↔
       ∃ S : PluralAssign ℕ E, value u S = ↑x ∧ value v S = ↑y ∧ relCond P u v S ∅ := by
   rw [cumulation_map_singleton, ← Finset.coe_nonempty, cumulative_iff_exists_relCond h]
 
-/-- The DRS of a reciprocal sentence whose antecedent denotes `X`, as in (40b) and (125b): the
-antecedent `u'` sums to `X`, `P` relates `u'` to the reciprocal `u` in every state, and `u` is
-reciprocal to `u'` ((42)). -/
+/-- In the DRS of a reciprocal sentence whose antecedent denotes `X`, as in (40b) and (125b),
+the antecedent `u'` sums to `X`, `P` relates `u'` to the reciprocal `u` in every state, and `u`
+is reciprocal to `u'` ((42)). -/
 def ReciprocalDRS (P : E → E → Prop) (X : Set E) (u u' : ℕ) (S : PluralAssign ℕ E) : Prop :=
   value u' S = X ∧ relCond P u' u S ∅ ∧ reciprocityCond u u' S ∅
 
@@ -384,9 +383,9 @@ theorem reciprocalDRS_iff {X : Set E} {u' : ℕ} :
       rw [hb', Flat.coe_inj] at hb
       exact ha ▸ hb ▸ hne'.symm
 
-/-- §2.4: "This proposal, like Dotlačil's, makes Weak Reciprocity the basic reading." Some state
-verifies the DRS of *the Xs `P` each other* exactly when `X` is weakly reciprocal under `P`
-([langendoen-1978]): the reciprocal is cumulative predication of `P` with non-identity
+/-- As §2.4 puts it, "This proposal, like Dotlačil's, makes Weak Reciprocity the basic reading."
+Some state verifies the DRS of *the Xs `P` each other* exactly when `X` is weakly reciprocal
+under `P` ([langendoen-1978]): the reciprocal is cumulative predication of `P` with non-identity
 conjoined, which is Langendoen's comparison of *the women pointed at each other* with *the women
 released the prisoners* (§1). -/
 theorem weakReciprocity_iff_exists_reciprocalDRS {u' : ℕ} (h : u ≠ u') {X : Finset E} :
@@ -395,7 +394,7 @@ theorem weakReciprocity_iff_exists_reciprocalDRS {u' : ℕ} (h : u ≠ u') {X : 
     cumulative_iff_exists_relCond h.symm]
   simp only [reciprocalDRS_iff]
 
-/-- §4.1, (76): [sternefeld-1998]'s weak reciprocal, `**` of `P` with non-identity conjoined
+/-- By §4.1, (76), [sternefeld-1998]'s weak reciprocal, `**` of `P` with non-identity conjoined
 served the same plurality twice, and the PPCDRT reciprocal (42) agree on simple reciprocal
 sentences; they differ in architecture, not in these truth conditions. -/
 theorem cumulation_iff_exists_reciprocalDRS [DecidableEq E] {u' : ℕ} (h : u ≠ u')
@@ -411,7 +410,7 @@ open SetRel
 
 variable {u' : ℕ} {O : PluralAssign ℕ E}
 
-/-- (6), (20): introducing `u'` and then `u` at the empty state `{⊥}` reaches exactly the
+/-- Introducing `u'` and then `u` at the empty state `{⊥}`, (6) and (20), reaches exactly the
 nonempty states whose rows value `u'` and `u` and nothing else. -/
 theorem introPartial_comp_iff (h : u ≠ u') :
     ({⊥} : PluralAssign ℕ E) ~[introPartial u' ○ introPartial u] O ↔
@@ -455,10 +454,9 @@ theorem introPartial_comp_iff (h : u ≠ u') :
       exact ⟨o, ho, hko o ho⟩
     · exact fun o ho ↦ ⟨k o, ⟨o, ho, rfl⟩, hko o ho⟩
 
-/-- Truth from the empty state: the DRS of *the Xs `P` each other*, entered by introducing `u'`
-and `u` at `{⊥}` ((6), (20)), has an output verifying it exactly when `X` is weakly reciprocal
-under `P`. A verifying state restricted to its `u'` and `u` columns is reachable and still
-verifies the DRS. -/
+/-- Entered by introducing `u'` and `u` at `{⊥}` ((6), (20)), the DRS of *the Xs `P` each other* has
+an output verifying it exactly when `X` is weakly reciprocal under `P`. A verifying state
+restricted to its `u'` and `u` columns is reachable and still verifies the DRS. -/
 theorem weakReciprocity_iff_exists_introPartial (h : u ≠ u') {X : Finset E} :
     X.Nonempty ∧ WeakReciprocity P X ↔
       ∃ O, ({⊥} : PluralAssign ℕ E) ~[introPartial u' ○ introPartial u] O ∧
@@ -493,7 +491,7 @@ theorem weakReciprocity_iff_exists_introPartial (h : u ≠ u') {X : Finset E} :
 
 end Truth
 
-/-- §2.4, §4.5: whatever the verb, the dependency between the antecedent and a reciprocal
+/-- By §2.4, §4.5, whatever the verb, the dependency between the antecedent and a reciprocal
 without distribution is weakly reciprocal on the antecedent's plurality. The forks of (92),
 whose verb takes `∪u₂` collectively, are "a special case of weak reciprocity" in this sense. -/
 theorem weakReciprocity_dep_of_reciprocityCond {u' : ℕ} {X : Finset E}
@@ -516,19 +514,19 @@ private theorem mem_u₁w : ∀ v, v ∈ ({u₁, w} : Set ℕ) ↔ v ∈ [u₁, 
 
 private theorem mem_w : ∀ v, v ∈ ({w} : Set ℕ) ↔ v ∈ [w] := by simp
 
-/-- (49): each girl thought "we will win", `∪u₂ → ∪u₁` under `δ_w`. -/
+/-- Each girl thought "we will win", `∪u₂ → ∪u₁` under `δ_w` (49). -/
 def girlsNarrow : List (PartialAssign ℕ Ind) :=
   [row [(u₁, .girl1), (w, .world1), (u₂, .girl1)],
    row [(u₁, .girl1), (w, .world1), (u₂, .girl2)],
    row [(u₁, .girl2), (w, .world2), (u₂, .girl1)],
    row [(u₁, .girl2), (w, .world2), (u₂, .girl2)]]
 
-/-- (51): each girl thought "I will win", `u₂ → u₁`. -/
+/-- Each girl thought "I will win", `u₂ → u₁` (51). -/
 def girlsWide : List (PartialAssign ℕ Ind) :=
   [row [(u₁, .girl1), (w, .world1), (u₂, .girl1)],
    row [(u₁, .girl2), (w, .world2), (u₂, .girl2)]]
 
-/-- §3.1: the two readings of (44) come apart under the distribution the attitude verb
+/-- By §3.1, the two readings of (44) come apart under the distribution the attitude verb
 induces: (49) is group identity without binding, (51) binding without group identity. -/
 theorem win_readings :
     (groupIdentityCond u₂ u₁ (ofRows girlsNarrow) {u₁, w} ∧
@@ -539,26 +537,26 @@ theorem win_readings :
     groupIdentityCond_ofRows mem_u₁w]
   decide
 
-/-- (53): each girl thought "we saw each other", the reciprocal inside the belief. -/
+/-- Each girl thought "we saw each other", the reciprocal inside the belief (53). -/
 def sawNarrow : List (PartialAssign ℕ Ind) :=
   [row [(u₁, .girl1), (w, .world1), (u₂, .girl1), (u₃, .girl2)],
    row [(u₁, .girl1), (w, .world1), (u₂, .girl2), (u₃, .girl1)],
    row [(u₁, .girl2), (w, .world2), (u₂, .girl1), (u₃, .girl2)],
    row [(u₁, .girl2), (w, .world2), (u₂, .girl2), (u₃, .girl1)]]
 
-/-- (55): each girl thought "I saw her", the reciprocal and its antecedent lifted to the
-matrix DRS. -/
+/-- Each girl thought "I saw her", the reciprocal and its antecedent lifted to the matrix DRS
+(55). -/
 def sawWide : List (PartialAssign ℕ Ind) :=
   [row [(u₁, .girl1), (u₂, .girl1), (u₃, .girl2), (w, .world1)],
    row [(u₁, .girl2), (u₂, .girl2), (u₃, .girl1), (w, .world2)]]
 
-/-- The crossed reading of (56): girl1 thought girl2 saw girl1 and girl2 thought girl1
+/-- In the crossed reading of (56), girl1 thought girl2 saw girl1 and girl2 thought girl1
 saw girl2. -/
 def sawCrossed : List (PartialAssign ℕ Ind) :=
   [row [(u₁, .girl1), (u₂, .girl2), (u₃, .girl1), (w, .world1)],
    row [(u₁, .girl2), (u₂, .girl1), (u₃, .girl2), (w, .world2)]]
 
-/-- §3.2: (53) satisfies (52), group identity of the pronoun and reciprocity of the
+/-- By §3.2, (53) satisfies (52), group identity of the pronoun and reciprocity of the
 reciprocal under the distribution. -/
 theorem saw_narrow :
     groupIdentityCond u₂ u₁ (ofRows sawNarrow) {u₁, w} ∧
@@ -566,14 +564,14 @@ theorem saw_narrow :
   rw [groupIdentityCond_ofRows mem_u₁w, reciprocityCond_ofRows mem_u₁w]
   decide
 
-/-- §3.2: (55) satisfies (54), binding of the pronoun and reciprocity in the matrix. -/
+/-- By §3.2, (55) satisfies (54), binding of the pronoun and reciprocity in the matrix. -/
 theorem saw_wide :
     bindingCond u₂ u₁ (ofRows sawWide) ∅ ∧
       reciprocityCond u₃ u₂ (ofRows sawWide) ∅ := by
   rw [bindingCond_ofRows, reciprocityCond_ofRows mem_empty]
   decide
 
-/-- §3.3: the crossed state satisfies (56), group identity of the pronoun with reciprocity
+/-- By §3.3, the crossed state satisfies (56), group identity of the pronoun with reciprocity
 in the matrix, but not the binding of (54). -/
 theorem saw_crossed :
     groupIdentityCond u₂ u₁ (ofRows sawCrossed) ∅ ∧
@@ -582,7 +580,7 @@ theorem saw_crossed :
   rw [groupIdentityCond_ofRows mem_empty, reciprocityCond_ofRows mem_empty, bindingCond_ofRows]
   decide
 
-/-- §3.3: a bound antecedent cannot cooccur with a low reciprocal. If `u₂` is bound by
+/-- By §3.3, a bound antecedent cannot cooccur with a low reciprocal. If `u₂` is bound by
 `u₁`, the distribution runs over `u₁`, and the reciprocal `u₃` is reciprocal to `u₂` under
 that distribution, no state can assign `u₂` a value: the value must be covered by `u₃`
 within the class, where distinctness excludes it. -/
@@ -603,7 +601,7 @@ def beatModal : List (PartialAssign ℕ Ind) :=
    row [(u₁, .tracy), (u₂, .chris), (w, .world2)],
    row [(u₁, .chris), (u₂, .tracy), (w, .world2)]]
 
-/-- §3.4: with the reciprocal above the modal, every accessible world contains both
+/-- By §3.4, with the reciprocal above the modal, every accessible world contains both
 directions of `beat`, the contradiction that makes (64) strange. -/
 theorem beat_modal :
     reciprocityCond u₂ u₁ (ofRows beatModal) ∅ ∧
@@ -616,14 +614,14 @@ theorem beat_modal :
 
 /-! ### Underspecification, multiple reciprocals, subgroups, collectives (§4) -/
 
-/-- (78c): the mixed construal of the Cheyenne affix, one child scratching herself and two
+/-- The mixed construal of the Cheyenne affix (78c) has one child scratching herself and two
 scratching each other. -/
 def scratchMixed : List (PartialAssign ℕ Ind) :=
   [row [(u₁, .child1), (u₂, .child1)],
    row [(u₁, .child2), (u₂, .child3)],
    row [(u₁, .child3), (u₂, .child2)]]
 
-/-- §4.2: the mixed construal satisfies the underspecified meaning (79b) but neither
+/-- By §4.2, the mixed construal satisfies the underspecified meaning (79b) but neither
 reciprocity nor reflexive binding. -/
 theorem scratch_mixed :
     underspecifiedCond u₂ u₁ (ofRows scratchMixed) ∅ ∧
@@ -633,19 +631,19 @@ theorem scratch_mixed :
     bindingCond_ofRows]
   decide
 
-/-- (85c): each girl gave the other a picture of herself, the second reciprocal anteceded
-by the first. -/
+/-- Each girl gave the other a picture of herself, the second reciprocal anteceded by the
+first (85c). -/
 def picturesSecond : List (PartialAssign ℕ Ind) :=
   [row [(u₁, .girl1), (u₂, .girl2), (u₃, .picture1), (u₄, .girl1)],
    row [(u₁, .girl2), (u₂, .girl1), (u₃, .picture2), (u₄, .girl2)]]
 
-/-- (86c): each girl gave the other a picture of the other, both reciprocals anteceded by
-the subject. -/
+/-- Each girl gave the other a picture of the other, both reciprocals anteceded by the
+subject (86c). -/
 def picturesSubject : List (PartialAssign ℕ Ind) :=
   [row [(u₁, .girl1), (u₂, .girl2), (u₃, .picture1), (u₄, .girl2)],
    row [(u₁, .girl2), (u₂, .girl1), (u₃, .picture2), (u₄, .girl1)]]
 
-/-- §4.4: the two readings of (84) are the two antecedents of the second reciprocal; each
+/-- By §4.4, the two readings of (84) are the two antecedents of the second reciprocal; each
 state satisfies its own DRS and fails the other's distinctness condition. -/
 theorem pictures_readings :
     (reciprocityCond u₂ u₁ (ofRows picturesSecond) ∅ ∧
@@ -659,7 +657,7 @@ theorem pictures_readings :
     reciprocityCond_ofRows mem_empty, reciprocityCond_ofRows mem_empty]
   exact ⟨⟨by decide, by decide, by decide⟩, by decide, by decide, by decide⟩
 
-/-- (93): the forks propped against each other, each on one other. -/
+/-- The forks propped against each other, each on one other (93). -/
 def forks : List (PartialAssign ℕ Ind) :=
   [row [(u₁, .fork1), (u₂, .fork2)],
    row [(u₁, .fork2), (u₂, .fork3)],
@@ -668,7 +666,7 @@ def forks : List (PartialAssign ℕ Ind) :=
 /-- The three forks. -/
 def threeForks : Finset Ind := {.fork1, .fork2, .fork3}
 
-/-- §4.5: the forks reading is a special case of weak reciprocity. The minimal state (93) is
+/-- By §4.5, the forks reading is a special case of weak reciprocity. The minimal state (93) is
 reciprocal, and its dependency is weakly but not strongly reciprocal on the three forks: each
 fork is propped against another, not against every other. -/
 theorem forks_weak :
@@ -682,13 +680,13 @@ theorem forks_weak :
   simp only [StrongReciprocity, mem_dep_ofRows]
   decide
 
-/-- (96c): the sailors worked together on each other's ships. -/
+/-- The sailors worked together on each other's ships (96c). -/
 def sailors : List (PartialAssign ℕ Ind) :=
   [row [(u₁, .sailor1), (u₂, .ship1), (u₃, .sailor2)],
    row [(u₁, .sailor2), (u₂, .ship2), (u₃, .sailor3)],
    row [(u₁, .sailor3), (u₂, .ship3), (u₃, .sailor1)]]
 
-/-- §4.6: the collective antecedent `∪u₁` of `work.together` is the group of all three
+/-- By §4.6, the collective antecedent `∪u₁` of `work.together` is the group of all three
 sailors while the reciprocal holds pointwise; the distinctness does no work. -/
 theorem sailors_collective :
     reciprocityCond u₃ u₁ (ofRows sailors) ∅ ∧ atomsCond 3 u₁ (ofRows sailors) ∅ := by
@@ -701,25 +699,25 @@ section Quantified
 
 variable {D : Type*} [DecidableEq D]
 
-/-- A reference set (101): a subset of the restrictor `A` over which `R` is strongly
+/-- A reference set (101) is a subset of the restrictor `A` over which `R` is strongly
 reciprocal (fn. 24), of the largest cardinality any such subset has, as the operator of (97)
 maximizes. Maxima need not be unique (fn. 18). -/
 def IsRefSet (R : D → D → Prop) (A Y : Finset D) : Prop :=
   Y ∈ A.powerset ∧ StrongReciprocity R Y ∧
     ∀ Z ∈ A.powerset, StrongReciprocity R Z → Z.card ≤ Y.card
 
-/-- The reference-set reading (101), (110a): the determiner holds of the restrictor and a
-reference set. -/
+/-- In the reference-set reading, (101) and (110a), the determiner holds of the restrictor and
+a reference set. -/
 def RefSetReading (Q : Finset D → Finset D → Prop) (R : D → D → Prop) (A : Finset D) :
     Prop :=
   ∃ Y ∈ A.powerset, IsRefSet R A Y ∧ Q A Y
 
-/-- The participants (105): the members of `A` bearing `R` to some other member. -/
+/-- The participants (105) are the members of `A` bearing `R` to some other member. -/
 def participants (R : D → D → Prop) [DecidableRel R] (A : Finset D) : Finset D :=
   A.filter fun a ↦ ∃ b ∈ A, b ≠ a ∧ R a b
 
-/-- The maximal-set reading (104), (110b): the reciprocal ranges over the whole restrictor
-and the determiner holds of the restrictor and the participants. -/
+/-- In the maximal-set reading, (104) and (110b), the reciprocal ranges over the whole
+restrictor and the determiner holds of the restrictor and the participants. -/
 def MaxSetReading (Q : Finset D → Finset D → Prop) (R : D → D → Prop) [DecidableRel R]
     (A : Finset D) : Prop :=
   Q A (participants R A)
@@ -747,7 +745,7 @@ theorem refSet_subset_participants {Y : Finset D} (h : IsRefSet R A Y) (h2 : 2 �
     ⟨Finset.mem_powerset.1 h.1 ha, b, Finset.mem_powerset.1 h.1 hb, hab,
       h.2.1 a ha b hb hab⟩
 
-/-- §5.2: for a determiner upward monotone in its scope, the reciprocal relation holds over
+/-- By §5.2, for a determiner upward monotone in its scope, the reciprocal relation holds over
 the maximal set if it holds over a reference set of at least two members, so the
 reference-set reading determines truth and the maximal-set reading falsity. -/
 theorem maxSetReading_of_refSetReading (hQ : Monotone (Q A))
@@ -761,19 +759,18 @@ variable [DecidableRel Q]
 instance : DecidablePred (reading Q R A) := fun r ↦ by
   cases r <;> unfold reading RefSetReading IsRefSet MaxSetReading <;> infer_instance
 
-/-- (109): a quantified reciprocal sentence is true iff true at both ranges, false iff false
-at both, and neither otherwise: the supervaluation over the two precisifications. -/
+/-- A quantified reciprocal sentence is true iff true at both ranges, false iff false at both,
+and neither otherwise, the supervaluation over the two precisifications (109). -/
 def truthValue : Trivalent :=
-  Semantics.Supervaluation.superTrue (reading Q R A)
-    ⟨{.referenceSet, .maximalSet}, ⟨.referenceSet, by simp⟩⟩
+  Trivalent.supervaluation {.referenceSet, .maximalSet} (reading Q R A)
 
 theorem truthValue_true_iff :
     truthValue Q R A = .true ↔ RefSetReading Q R A ∧ MaxSetReading Q R A := by
-  unfold truthValue; rw [Semantics.Supervaluation.superTrue_true_iff]; simp [reading]
+  unfold truthValue; rw [Trivalent.supervaluation_eq_true_iff]; simp [reading]
 
 theorem truthValue_false_iff :
     truthValue Q R A = .false ↔ ¬ RefSetReading Q R A ∧ ¬ MaxSetReading Q R A := by
-  unfold truthValue; rw [Semantics.Supervaluation.superTrue_false_iff]; simp [reading]
+  unfold truthValue; rw [Trivalent.supervaluation_eq_false_iff]; simp [reading]
 
 theorem truthValue_true_iff_of_monotone (hQ : Monotone (Q A))
     (h2 : ∀ Y, IsRefSet R A Y → 2 ≤ Y.card) :
@@ -792,13 +789,13 @@ end Quantified
 /-- The five inhabitants of the street of (100) and (102). -/
 abbrev Person := Fin 5
 
-/-- Proportional `most`: the scope has more than half of the restrictor. -/
+/-- Proportional `most` holds when the scope has more than half of the restrictor. -/
 def most (A B : Finset Person) : Prop := A.card < 2 * B.card
 
-/-- Proportional `few`: the scope has less than half of the restrictor. -/
+/-- Proportional `few` holds when the scope has less than half of the restrictor. -/
 def few (A B : Finset Person) : Prop := 2 * B.card < A.card
 
-/-- (102): the first three inhabitants know each other and the other two know nobody. -/
+/-- The first three inhabitants know each other and the other two know nobody (102). -/
 def clique (a b : Person) : Prop := a ≠ b ∧ a.val < 3 ∧ b.val < 3
 
 /-- The intermediate scenario of §5.2: two pairs know each other and one person knows
@@ -811,8 +808,8 @@ instance : DecidableRel pairs := fun _ _ ↦ inferInstanceAs (Decidable (_ ∧ _
 instance : DecidableRel most := fun _ _ ↦ inferInstanceAs (Decidable (_ < _))
 instance : DecidableRel few := fun _ _ ↦ inferInstanceAs (Decidable (_ < _))
 
-/-- (110), (111): "most people know each other" is true and "few know each other" false in
-the clique scenario of (102), and both are neither in the scenario of two pairs, which
+/-- By (110) and (111), "most people know each other" is true and "few know each other" false
+in the clique scenario of (102), and both are neither in the scenario of two pairs, which
 Kamp and Reyle judged arguably true. -/
 theorem street_scenarios :
     truthValue most clique Finset.univ = .true ∧ truthValue few clique Finset.univ = .false ∧
@@ -821,8 +818,8 @@ theorem street_scenarios :
 
 /-! ### Maximize Anaphora (§6) -/
 
-/-- (128) Maximize Anaphora: among the states a DRS `K` admits, one whose set `R_u` of pairs
-(127), the dependency between antecedent and anaphor, is not properly included in another
+/-- A state maximizes anaphora (128) when, among the states a DRS `K` admits, its set `R_u` of
+pairs (127), the dependency between antecedent and anaphor, is not properly included in another
 admitted state's. -/
 def MaximizesAnaphora {E : Type*} (K : PluralAssign ℕ E → Prop) (uAnaph uAnt : ℕ)
     (S : PluralAssign ℕ E) : Prop :=
@@ -839,7 +836,7 @@ theorem dep_subset_of_reciprocalDRS {X : Set E} (hS : ReciprocalDRS P X u u' S) 
   obtain ⟨hP, hdom, hcod⟩ := dep_of_relCond hrel
   exact fun p hp ↦ ⟨(hdom.trans hX).subset ⟨p.2, hp⟩, (hcod.trans hX').subset ⟨p.1, hp⟩, hP hp⟩
 
-/-- §6, (128): Maximize Anaphora selects exactly the states of a reciprocal DRS whose dependency
+/-- Maximize Anaphora (§6, (128)) selects exactly the states of a reciprocal DRS whose dependency
 is every pair of distinct members of `X` that `P` relates. -/
 theorem maximizesAnaphora_iff (h : u ≠ u') {X : Set E} :
     MaximizesAnaphora (ReciprocalDRS P X u u') u u' S ↔ ReciprocalDRS P X u u' S ∧
@@ -863,7 +860,7 @@ theorem maximizesAnaphora_iff (h : u ≠ u') {X : Set E} :
   by_contra hneq
   exact hmax _ hF (by rw [dep_ofDep h.symm]; exact hsub.ssubset_of_ne hneq)
 
-/-- §6: full maximization yields Strong Reciprocity. Under Maximize Anaphora the dependency
+/-- By §6, full maximization yields Strong Reciprocity. Under Maximize Anaphora the dependency
 makes `X` strongly reciprocal exactly when `P` relates any two distinct members of `X`. -/
 theorem strongReciprocity_dep_iff (h : u ≠ u') {X : Finset E}
     (hS : MaximizesAnaphora (ReciprocalDRS P ↑X u u') u u' S) :
@@ -877,17 +874,17 @@ end Maximize
 /-- The three boys of (125). -/
 def boys : Finset Ind := {.boy1, .boy2, .boy3}
 
-/-- (125b) for the three boys: `u₂` reciprocal to `u₁`, whose values are the boys, with nothing
-known against any two of them knowing each other. -/
+/-- For the three boys, (125b) makes `u₂` reciprocal to `u₁`, whose values are the boys, with
+nothing known against any two of them knowing each other. -/
 abbrev boysKnow : PluralAssign ℕ Ind → Prop := ReciprocalDRS (fun _ _ ↦ True) ↑boys u₂ u₁
 
-/-- (126a): a minimal state for (125). -/
+/-- A minimal state for (125), (126a). -/
 def boysMinimal : List (PartialAssign ℕ Ind) :=
   [row [(u₁, .boy1), (u₂, .boy2)],
    row [(u₁, .boy2), (u₂, .boy3)],
    row [(u₁, .boy3), (u₂, .boy1)]]
 
-/-- (126b): the strong reciprocal reading. -/
+/-- The strong reciprocal reading (126b). -/
 def boysStrong : List (PartialAssign ℕ Ind) :=
   [row [(u₁, .boy1), (u₂, .boy2)],
    row [(u₁, .boy2), (u₂, .boy3)],
@@ -896,7 +893,7 @@ def boysStrong : List (PartialAssign ℕ Ind) :=
    row [(u₁, .boy2), (u₂, .boy1)],
    row [(u₁, .boy3), (u₂, .boy2)]]
 
-/-- §6: the minimal state (126a) verifies (125), but Maximize Anaphora rejects it and selects
+/-- By §6, the minimal state (126a) verifies (125), but Maximize Anaphora rejects it and selects
 (126b), whose dependency is the strong reciprocal reading. -/
 theorem maximize_strong :
     boysKnow (ofRows boysMinimal) ∧ ¬ MaximizesAnaphora boysKnow u₂ u₁ (ofRows boysMinimal) ∧
@@ -923,7 +920,7 @@ theorem maximize_strong :
   revert hmem
   decide
 
-/-- §6.2: the classmates gave each other pictures of each other, each maximizing pairwise:
+/-- By §6.2, the classmates gave each other pictures of each other, each maximizing pairwise:
 each gave a picture of herself to each of the others. -/
 def classmates : List (PartialAssign ℕ Ind) :=
   [row [(u₁, .tracy), (u₂, .chris), (u₃, .picture1), (u₄, .tracy)],
@@ -936,7 +933,7 @@ def classmates : List (PartialAssign ℕ Ind) :=
 /-- The three classmates. -/
 def trio : Finset Ind := {.tracy, .chris, .matty}
 
-/-- §6.2: both reciprocal relations of (134) are maximal, every ordered pair of distinct
+/-- By §6.2, both reciprocal relations of (134) are maximal, every ordered pair of distinct
 classmates, without any all-triples row, in which a classmate gives a picture of a third
 classmate. -/
 theorem classmates_pairwise :
@@ -947,8 +944,8 @@ theorem classmates_pairwise :
   simp only [mem_dep_ofRows]
   decide
 
-/-- (136): the wide construal of (135), each of Tracy, Matty and Chris believing that she
-praised the two others. -/
+/-- In the wide construal of (135), each of Tracy, Matty and Chris believes that she praised the
+two others (136). -/
 def praisedWide : List (PartialAssign ℕ Ind) :=
   [row [(u₁, .chris), (u₂, .chris), (u₃, .tracy), (w, .world1)],
    row [(u₁, .chris), (u₂, .chris), (u₃, .matty), (w, .world1)],
@@ -957,7 +954,7 @@ def praisedWide : List (PartialAssign ℕ Ind) :=
    row [(u₁, .matty), (u₂, .matty), (u₃, .chris), (w, .world3)],
    row [(u₁, .matty), (u₂, .matty), (u₃, .tracy), (w, .world3)]]
 
-/-- §6.3: (136) is the wide reading, binding of the pronoun with reciprocity in the matrix,
+/-- By §6.3, (136) is the wide reading, binding of the pronoun with reciprocity in the matrix,
 and within each girl's world the reciprocal covers exactly the two others. -/
 theorem praised_wide :
     bindingCond u₂ u₁ (ofRows praisedWide) ∅ ∧
