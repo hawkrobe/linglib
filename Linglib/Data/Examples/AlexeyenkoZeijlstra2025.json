@@ -555,24 +555,25 @@
     "id": "az2025_23b",
     "source": {"bibkey": "alexeyenko-zeijlstra-2025", "paperLabel": "(23b)"},
     "language": "mode1248",
-    "primaryText": "I filikes pros tin Turkia xores apariθmunte os eksis",
+    "primaryText": "I filikes pros tin Turkia χores apariθmunte os eksis",
     "discourseSegments": [],
     "glossedTokens": [
-      ["I", "the"], ["filikes", "friendly"], ["pros", "toward"], ["tin", "the"],
-      ["Turkia", "Turkey"], ["xores", "countries"], ["apariθmunte", "are.listed"], ["os", "as"],
+      ["I", "the"], ["filikes", "friendly"], ["pros", "towards"], ["tin", "the"],
+      ["Turkia", "Turkey"], ["χores", "countries"], ["apariθmunte", "are.listed"], ["os", "as"],
       ["eksis", "following"]
     ],
-    "translation": "The countries (that are) friendly toward Turkey are listed as follows.",
+    "translation": "The countries (that are) friendly towards Turkey are listed as follows.",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
       ["head", "filikes"],
-      ["noun", "xores"],
+      ["noun", "χores"],
       ["dependent", "pros"]
     ],
-    "comment": "Corpus of Modern Greek."
+    "comment": "Corpus of Modern Greek.",
+    "verified": "page-image"
   },
   {
     "id": "az2025_24c",

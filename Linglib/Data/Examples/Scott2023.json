@@ -467,7 +467,8 @@
       ["morphemes", "=i"],
       ["optionalReduction", "yes"]
     ],
-    "comment": "The optionally reduced second-person plural transitive subject, a Set A context."
+    "comment": "The optionally reduced second-person plural transitive subject, a Set A context.",
+    "verified": "page-image"
   },
   {
     "id": "scott2023_91a",

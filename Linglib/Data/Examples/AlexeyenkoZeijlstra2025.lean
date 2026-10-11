@@ -371,13 +371,13 @@ def az2025_23b : Datum :=
     source := ⟨"alexeyenko-zeijlstra-2025", "(23b)"⟩
     reportedIn := none
     language := "mode1248"
-    primaryText := "I filikes pros tin Turkia xores apariθmunte os eksis"
-    glossedTokens := [("I", "the"), ("filikes", "friendly"), ("pros", "toward"), ("tin", "the"), ("Turkia", "Turkey"), ("xores", "countries"), ("apariθmunte", "are.listed"), ("os", "as"), ("eksis", "following")]
+    primaryText := "I filikes pros tin Turkia χores apariθmunte os eksis"
+    glossedTokens := [("I", "the"), ("filikes", "friendly"), ("pros", "towards"), ("tin", "the"), ("Turkia", "Turkey"), ("χores", "countries"), ("apariθmunte", "are.listed"), ("os", "as"), ("eksis", "following")]
     context := ""
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("head", "filikes"), ("noun", "xores"), ("dependent", "pros")] }
+    paperFeatures := [("head", "filikes"), ("noun", "χores"), ("dependent", "pros")] }
 
 def az2025_24c : Datum :=
   { id := "az2025_24c"

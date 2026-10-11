@@ -243,11 +243,11 @@
     "source": {"bibkey": "zimmermann-2008", "paperLabel": "(74a)"},
     "reportedIn": null,
     "language": "haus1257",
-    "primaryText": "bàa koo-waa kèe sô-n wannàn jàriidàa ba",
+    "primaryText": "bàa koo-waa kèe sô-n wannàn jàr̃iidàa ba",
     "discourseSegments": [],
     "glossedTokens": [
       ["bàa", "NEG"], ["koo-waa", "DISJ-who"], ["kèe", "PROG.REL"], ["sô-n", "like-LINK"],
-      ["wannàn", "this"], ["jàriidàa", "newspaper"], ["ba", "NEG"]
+      ["wannàn", "this"], ["jàr̃iidàa", "newspaper"], ["ba", "NEG"]
     ],
     "translation": "Not everyone likes this newspaper.",
     "context": "",
@@ -259,20 +259,21 @@
       ["negation", "sentential"],
       ["scope", "negative universal only"]
     ],
-    "comment": "Cited from Newman (2000)."
+    "comment": "Cited from Newman (2000).",
+    "verified": "page-image"
   },
   {
     "id": "zimmermann2008_75",
     "source": {"bibkey": "zimmermann-2008", "paperLabel": "(75)"},
     "reportedIn": null,
     "language": "haus1257",
-    "primaryText": "koo-waa bà-i ci jarràbâawaa ba",
+    "primaryText": "koo-waa bà-i ci jar̃r̃àbâawaa ba",
     "discourseSegments": [],
     "glossedTokens": [
-      ["koo-waa", "DISJ-who"], ["bà-i", "NEG-3SG.SUBJ"], ["ci", "eat"], ["jarràbâawaa", "exam"],
+      ["koo-waa", "DISJ-who"], ["bà-i", "NEG-3SG.SUBJ"], ["ci", "eat"], ["jar̃r̃àbâawaa", "exam"],
       ["ba", "NEG"]
     ],
-    "translation": "Everybody did not pass the test.",
+    "translation": "Intended: Everybody did not pass the test.",
     "context": "",
     "judgment": "ungrammatical",
     "alternatives": [],
@@ -281,20 +282,21 @@
       ["quantifier", "koo+wh"],
       ["position", "subject"]
     ],
-    "comment": "A subject koo+wh cannot take syntactic scope over VP-negation; cited from Newman (2000)."
+    "comment": "A subject koo+wh cannot take syntactic scope over VP-negation. The paper gives koo-wànè ɗàalìbii 'every student' as an alternative subject.",
+    "verified": "page-image"
   },
   {
     "id": "zimmermann2008_78",
     "source": {"bibkey": "zimmermann-2008", "paperLabel": "(78)"},
     "reportedIn": null,
     "language": "haus1257",
-    "primaryText": "koo-wànè ɗàalìbii nèe bà-i ci jarràbâawaa ba",
+    "primaryText": "koo-wànè ɗàalìbii nèe bà-i ci jar̃r̃àbâawaa ba",
     "discourseSegments": [],
     "glossedTokens": [
       ["koo-wànè", "DISJ-which"], ["ɗàalìbii", "student"], ["nèe", "PRT"], ["bà-i", "NEG-3SG"],
-      ["ci", "eat"], ["jarràbâawaa", "exam"], ["ba", "NEG"]
+      ["ci", "eat"], ["jar̃r̃àbâawaa", "exam"], ["ba", "NEG"]
     ],
-    "translation": "EACH student didn't pass the exam.",
+    "translation": "EACH/EVERY student didn't pass the exam.",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -304,7 +306,8 @@
       ["position", "subject"],
       ["focus", "yes"]
     ],
-    "comment": "Focusing rescues the subject universal over negation."
+    "comment": "Focusing rescues the subject universal over negation.",
+    "verified": "page-image"
   },
   {
     "id": "zimmermann2008_85a",
@@ -353,11 +356,11 @@
     "source": {"bibkey": "zimmermann-2008", "paperLabel": "(89a)"},
     "reportedIn": null,
     "language": "haus1257",
-    "primaryText": "koo-wànè ɗàalìbii yáa tàaru à gàba-n makarantaa",
+    "primaryText": "koo-wànè ɗàalìbii yáa tàaru à gàba-n makar̃antaa",
     "discourseSegments": [],
     "glossedTokens": [
       ["koo-wànè", "DISJ-which"], ["ɗàalìbii", "student"], ["yáa", "3SG.PERF"],
-      ["tàaru", "gather"], ["à", "at"], ["gàba-n", "front-LINK"], ["makarantaa", "school"]
+      ["tàaru", "gather"], ["à", "at"], ["gàba-n", "front-LINK"], ["makar̃antaa", "school"]
     ],
     "translation": "Each student gathered in front of the school.",
     "context": "",
@@ -368,18 +371,19 @@
       ["quantifier", "koo+wh"],
       ["predicate", "collective"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "zimmermann2008_90a",
     "source": {"bibkey": "zimmermann-2008", "paperLabel": "(90a)"},
     "reportedIn": null,
     "language": "haus1257",
-    "primaryText": "duk ɗàalìbâ-n sun tàaru à gàba-n makarantaa",
+    "primaryText": "duk ɗàalìbâ-n sun tàaru à gàba-n makar̃antaa",
     "discourseSegments": [],
     "glossedTokens": [
       ["duk", "all"], ["ɗàalìbâ-n", "students-DEF"], ["sun", "3PL.PERF"], ["tàaru", "gather"],
-      ["à", "at"], ["gàba-n", "front-LINK"], ["makarantaa", "school"]
+      ["à", "at"], ["gàba-n", "front-LINK"], ["makar̃antaa", "school"]
     ],
     "translation": "All the students gathered in front of the school.",
     "context": "",
@@ -390,17 +394,18 @@
       ["quantifier", "duk"],
       ["predicate", "collective"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "zimmermann2008_91a",
     "source": {"bibkey": "zimmermann-2008", "paperLabel": "(91a)"},
     "reportedIn": null,
     "language": "haus1257",
-    "primaryText": "bà-n karàntà duk lìttàttàafâ-n ba",
+    "primaryText": "bà-n kar̃àntà duk lìttàttàafâ-n ba",
     "discourseSegments": [],
     "glossedTokens": [
-      ["bà-n", "NEG-1SG"], ["karàntà", "read"], ["duk", "all"], ["lìttàttàafâ-n", "books-DEF"],
+      ["bà-n", "NEG-1SG"], ["kar̃àntà", "read"], ["duk", "all"], ["lìttàttàafâ-n", "books-DEF"],
       ["ba", "NEG"]
     ],
     "translation": "I didn't read all the books.",
@@ -413,7 +418,8 @@
       ["negation", "VP"],
       ["scope", "negative universal"]
     ],
-    "comment": "Cited from Jaggar (2001)."
+    "comment": "Cited from Jaggar (2001).",
+    "verified": "page-image"
   },
   {
     "id": "zimmermann2008_91b",

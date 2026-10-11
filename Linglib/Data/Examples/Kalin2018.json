@@ -6,7 +6,7 @@
       "paperLabel": "(8a)"
     },
     "language": "sena1268",
-    "primaryText": "Xa ksuta lapl-a.",
+    "primaryText": "Xa ksūta lapl-ā.",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "A book is falling (e.g., but I don't know which).",
@@ -36,7 +36,8 @@
         "none"
       ]
     ],
-    "comment": "The subject is nonagentive, nonspecific, indefinite, inanimate."
+    "comment": "The subject is nonagentive, nonspecific, indefinite, inanimate.",
+    "verified": "page-image"
   },
   {
     "id": "kalin2018_9a",
@@ -45,7 +46,7 @@
       "paperLabel": "(9a)"
     },
     "language": "sena1268",
-    "primaryText": "Xa ksuta mpel-a.",
+    "primaryText": "Xa ksūta mpel-ā.",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "A book fell (e.g., but I don't know which).",
@@ -75,7 +76,8 @@
         "none"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "kalin2018_9b",
@@ -84,7 +86,7 @@
       "paperLabel": "(9b)"
     },
     "language": "sena1268",
-    "primaryText": "Ayet ksu-wa-lox.",
+    "primaryText": "Āyet ksū-wā-lox.",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "You wrote (a long time ago).",
@@ -114,7 +116,8 @@
         "none"
       ]
     ],
-    "comment": "The subject is agentive, specific, definite, animate."
+    "comment": "The subject is agentive, specific, definite, animate.",
+    "verified": "page-image"
   },
   {
     "id": "kalin2018_10a",
@@ -123,7 +126,7 @@
       "paperLabel": "(10a)"
     },
     "language": "sena1268",
-    "primaryText": "Ana (xa) ksuta xazy-an-a.",
+    "primaryText": "Āna (xa) ksūta xazy-an-ā.",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "I see a (specific) book (e.g., on the table).",
@@ -153,7 +156,8 @@
         "L"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "kalin2018_10b",
@@ -162,7 +166,7 @@
       "paperLabel": "(10b)"
     },
     "language": "sena1268",
-    "primaryText": "Ana o ksuta kasw-an-a.",
+    "primaryText": "Āna ō ksūta kasw-an-ā.",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "I (will) write that book.",
@@ -192,7 +196,8 @@
         "L"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "kalin2018_10c",
@@ -201,7 +206,7 @@
       "paperLabel": "(10c)"
     },
     "language": "sena1268",
-    "primaryText": "Poles kod yoma baxt-e nasheq-∅-la.",
+    "primaryText": "Pōles kod yōma baxt-ē nāsheq-∅-lā.",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "Paul kisses his wife every day.",
@@ -231,7 +236,8 @@
         "L"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "kalin2018_11a",
@@ -240,7 +246,7 @@
       "paperLabel": "(11a)"
     },
     "language": "sena1268",
-    "primaryText": "Ana (xa) ksuta kasw-an.",
+    "primaryText": "Āna (xa) ksūta kasw-an.",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "I will write a book (e.g., someday, about something, I don't know what).",
@@ -270,7 +276,8 @@
         "none"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "kalin2018_11b",
@@ -279,7 +286,7 @@
       "paperLabel": "(11b)"
     },
     "language": "sena1268",
-    "primaryText": "Ana kod yoma yale xazy-an.",
+    "primaryText": "Āna kod yōma yāle xazy-an.",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "I see some children every day (e.g., but it is not the same children every day).",
@@ -309,7 +316,8 @@
         "none"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "kalin2018_12a",
@@ -318,7 +326,7 @@
       "paperLabel": "(12a)"
     },
     "language": "sena1268",
-    "primaryText": "*Axnı o ksuta ksu-lan.",
+    "primaryText": "Axnī ō ksūta ksū-lan.",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "Intended: We wrote that book.",
@@ -348,7 +356,8 @@
         "none"
       ]
     ],
-    "comment": "A specific object is banned with the perfective base; (12b) shows no placement of object agreement rescues it."
+    "comment": "A specific object is banned with the perfective base; (12b) shows no placement of object agreement rescues it.",
+    "verified": "page-image"
   },
   {
     "id": "kalin2018_12c",
@@ -357,7 +366,7 @@
       "paperLabel": "(12c)"
     },
     "language": "sena1268",
-    "primaryText": "Axnı xa ksuta ksu-lan.",
+    "primaryText": "Axnī xa ksūta ksū-lan.",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "We wrote a book (e.g., we have written many; not referring to a specific one).",
@@ -387,7 +396,8 @@
         "none"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "kalin2018_38",
@@ -396,7 +406,7 @@
       "paperLabel": "(38)"
     },
     "language": "sena1268",
-    "primaryText": "Axnı o ksuta kasw-ox-la.",
+    "primaryText": "Axnī ō ksūta kasw-ox-lā.",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "We (will) write that book.",
@@ -407,7 +417,7 @@
     "paperFeatures": [
       [
         "section",
-        "2.1"
+        "4.1"
       ],
       [
         "aspect",
@@ -426,6 +436,7 @@
         "L"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   }
 ]

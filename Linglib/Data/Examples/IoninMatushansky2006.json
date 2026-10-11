@@ -402,7 +402,7 @@
       "paperLabel": "(26a)"
     },
     "language": "stan1293",
-    "primaryText": "two dozen(s) books",
+    "primaryText": "two dozen(*s) books",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
@@ -420,7 +420,8 @@
         "plural marking on a multiple"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "ioninmatushansky2006_s26b",
@@ -429,7 +430,7 @@
       "paperLabel": "(26b)"
     },
     "language": "stan1293",
-    "primaryText": "three hundred(s) people",
+    "primaryText": "three hundred(*s) people",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
@@ -447,7 +448,8 @@
         "plural marking on a multiple"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "ioninmatushansky2006_s26c",
@@ -456,7 +458,7 @@
       "paperLabel": "(26c)"
     },
     "language": "stan1293",
-    "primaryText": "four score(s) and seven years ago",
+    "primaryText": "four score(*s) and seven years ago",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
@@ -474,7 +476,8 @@
         "plural marking on a multiple"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "ioninmatushansky2006_s27a",
