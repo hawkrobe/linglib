@@ -164,7 +164,7 @@ def ces : Inventory :=
       allophones := some ["au"],
       marginal := some true,
       segmentClass := .vowel,
-      features := Bundle.ofList [
+      features := .ofList [
         (.syllabic, true), (.short, false), (.long, false), (.consonantal, false),
         (.sonorant, true), (.continuant, true), (.approximant, true), (.tap, false),
         (.trill, false), (.nasal, false), (.lateral, false), (.round, true),
@@ -192,7 +192,7 @@ def ces : Inventory :=
       allophones := some ["ou"],
       marginal := some false,
       segmentClass := .vowel,
-      features := Bundle.ofList [
+      features := .ofList [
         (.syllabic, true), (.short, false), (.long, false), (.consonantal, false),
         (.sonorant, true), (.continuant, true), (.approximant, true), (.tap, false),
         (.trill, false), (.nasal, false), (.lateral, false), (.labial, true), (.round, true),
@@ -225,7 +225,7 @@ def ces : Inventory :=
       allophones := some ["ɛu"],
       marginal := some true,
       segmentClass := .vowel,
-      features := Bundle.ofList [
+      features := .ofList [
         (.syllabic, true), (.short, false), (.long, false), (.consonantal, false),
         (.sonorant, true), (.continuant, true), (.approximant, true), (.tap, false),
         (.trill, false), (.nasal, false), (.lateral, false), (.round, true),

@@ -57,7 +57,7 @@ namespace Hausa
 open Agreement
 
 /-- The impersonal 4p is plural with no person, and patterns with the plurals. -/
-def impersonal : Bundle := _root_.Bundle.single .number .plural
+def impersonal : Bundle := .set .number .plural ⊥
 
 /-- The nine cells of a PAC paradigm in [newman-2000]'s order: 1s, 2m, 2f, 3m, 3f, 1p, 2p, 3p
 and the impersonal 4p. -/

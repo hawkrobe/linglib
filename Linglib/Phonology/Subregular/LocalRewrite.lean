@@ -131,7 +131,7 @@ leaving the target unchanged at a word edge. -/
 def Effect.apply (e : Effect) (w : List Segment) (s : Segment) (d : List Segment) :
     Option Segment :=
   match e with
-  | .changeFeatures change => some (Bundle.merge change s)
+  | .changeFeatures change => some fun f ↦ (change f).or (s f)
   | .delete => none
   | .replace t => some t
   | .copyRight C => some (d.head?.elim s fun t ↦ C.piecewise t s)

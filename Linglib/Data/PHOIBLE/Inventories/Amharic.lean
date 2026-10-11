@@ -79,7 +79,7 @@ def amh : Inventory :=
       allophones := some ["hʷ"],
       marginal := none,
       segmentClass := .consonant,
-      features := Bundle.ofList [
+      features := .ofList [
         (.syllabic, false), (.short, false), (.long, false), (.consonantal, false),
         (.sonorant, false), (.continuant, true), (.delayedRelease, true), (.approximant, false),
         (.tap, false), (.trill, false), (.nasal, false), (.lateral, false), (.round, true),
@@ -103,7 +103,7 @@ def amh : Inventory :=
       allophones := some ["kʷ"],
       marginal := none,
       segmentClass := .consonant,
-      features := Bundle.ofList [
+      features := .ofList [
         (.syllabic, false), (.short, false), (.long, false), (.consonantal, true),
         (.sonorant, false), (.continuant, false), (.delayedRelease, false),
         (.approximant, false), (.tap, false), (.trill, false), (.nasal, false),
@@ -118,7 +118,7 @@ def amh : Inventory :=
       allophones := some ["kʷʼ"],
       marginal := none,
       segmentClass := .consonant,
-      features := Bundle.ofList [
+      features := .ofList [
         (.syllabic, false), (.short, false), (.long, false), (.consonantal, true),
         (.sonorant, false), (.continuant, false), (.delayedRelease, false),
         (.approximant, false), (.tap, false), (.trill, false), (.nasal, false),
@@ -273,7 +273,7 @@ def amh : Inventory :=
       allophones := some ["ɡʷ"],
       marginal := none,
       segmentClass := .consonant,
-      features := Bundle.ofList [
+      features := .ofList [
         (.syllabic, false), (.short, false), (.long, false), (.consonantal, true),
         (.sonorant, false), (.continuant, false), (.delayedRelease, false),
         (.approximant, false), (.tap, false), (.trill, false), (.nasal, false),

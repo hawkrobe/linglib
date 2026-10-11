@@ -10,11 +10,10 @@ public import Linglib.Morphology.Word.Features
 This file defines the dimensions in which agreement targets covary and the analytical
 feature bundle over them, a value or nothing in each dimension.
 
-An agreement bundle is the generic feature bundle of `Core/Order/Bundle.lean` over the
-dimensions, so its partial order, its bottom, the wholly unspecified bundle, and its
-unification are the pointwise ones, and `single`, `set` and `comap` build and read it. Each
-dimension is a token feature with that feature's values, and a token's bundle is its features
-read along that inclusion, `Agreement.Bundle.ofFeatures`.
+An agreement bundle gives each dimension a slot of the flat order of `Core/Order/Flat.lean`, so
+its partial order, its bottom, the wholly unspecified bundle, and its unification are the
+pointwise ones. Each dimension is a token feature with that feature's values, and a token's
+bundle is its features read along that inclusion, `Agreement.Bundle.ofFeatures`.
 
 ## Main definitions
 
@@ -22,13 +21,9 @@ read along that inclusion, `Agreement.Bundle.ofFeatures`.
 * `Agreement.Dimension.toFeature`, `Agreement.Dimension.Value` — the token feature a dimension
   is, and its values
 * `Agreement.Bundle` — a value or `⊥` in each dimension
-* `Agreement.Bundle.personNumber` — the bundle valued in person and number alone
+* `Agreement.Bundle.set`, `Agreement.Bundle.personNumber` — a bundle with one dimension set,
+  and the bundle valued in person and number alone
 * `Agreement.Bundle.ofFeatures` — the restriction of a token's features
-
-## Implementation notes
-
-Inside `namespace Agreement`, `Bundle` names the agreement bundle; the generic operations are
-reached by dot notation or as `_root_.Bundle.single` and its siblings.
 
 ## References
 
@@ -61,13 +56,16 @@ abbrev Dimension.Value (d : Dimension) : Type := d.toFeature.Value
 instance (d : Dimension) : DecidableEq d.Value := by cases d <;> exact inferInstance
 
 /-- A feature bundle assigns each dimension a value or `⊥`. -/
-abbrev Bundle := _root_.Bundle Dimension Dimension.Value
+abbrev Bundle := (d : Dimension) → Flat d.Value
 
 namespace Bundle
 
+/-- The bundle with the dimension `d` set to the value `v`. -/
+def set (d : Dimension) (v : d.Value) (b : Bundle) : Bundle := Function.update b d (some v)
+
 /-- The bundle valued in person and number alone. -/
 def personNumber (p : Person) (n : Number) : Bundle :=
-  _root_.Bundle.set .number n (_root_.Bundle.single .person p)
+  set .number n (set .person p ⊥)
 
 @[simp] theorem personNumber_person (p : Person) (n : Number) : personNumber p n .person = p :=
   rfl
@@ -86,7 +84,7 @@ def personNumber (p : Person) (n : Number) : Bundle :=
 
 /-- The restriction of a token's features to the agreement dimensions reads them along
 `Dimension.toFeature`. -/
-def ofFeatures (f : Morphology.Features) : Bundle := _root_.Bundle.comap Dimension.toFeature f
+def ofFeatures (f : Morphology.Features) : Bundle := fun d ↦ f d.toFeature
 
 @[simp] theorem ofFeatures_apply (f : Morphology.Features) (d : Dimension) :
     ofFeatures f d = f d.toFeature :=

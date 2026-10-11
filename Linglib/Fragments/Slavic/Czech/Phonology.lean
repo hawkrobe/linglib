@@ -320,13 +320,13 @@ theorem secondPalatalization_g :
 
 /-- No one feature change, merging the same values into each segment, takes both *k* and *g* to
 their reflexes, since the two agree in [continuant] and their reflexes do not. -/
-theorem not_exists_merge_eq : ¬ ∃ d : Segment, Bundle.merge d k = secondPalatalization k ∧
-    Bundle.merge d g = secondPalatalization g := by
+theorem not_exists_merge_eq :
+    ¬ ∃ d : Segment, (fun f ↦ (d f).or (k f)) = secondPalatalization k ∧
+      (fun f ↦ (d f).or (g f)) = secondPalatalization g := by
   rintro ⟨d, hk, hg⟩
   have h₁ := congrFun hk .continuant
   have h₂ := congrFun hg .continuant
   revert h₁ h₂
-  unfold Bundle.merge
   cases d .continuant with
   | bot => decide
   | coe v => cases v <;> decide

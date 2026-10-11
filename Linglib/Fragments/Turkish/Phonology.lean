@@ -210,7 +210,7 @@ def D : Segment := t ⊓ d
 
 /-- `K` is the final consonant of -(y)AcAK, which is `k`, or `ğ` before a vowel (Chapter 2). It
 is `k` without a value for [continuant]. -/
-def K : Segment := Bundle.restrict {.continuant}ᶜ k
+def K : Segment := Segment.restrict {.continuant}ᶜ k
 
 /-- A consonant lacks a value for [back] unless it is the palatal lateral, which is what
 fronting's tier test reads. -/

@@ -439,7 +439,7 @@ def hin : Inventory :=
       allophones := some ["æe̤̯", "æe̯", "æː", "ɜe̯"],
       marginal := none,
       segmentClass := .vowel,
-      features := Bundle.ofList [
+      features := .ofList [
         (.short, false), (.long, false), (.consonantal, false), (.sonorant, true),
         (.continuant, true), (.approximant, true), (.tap, false), (.trill, false),
         (.nasal, false), (.lateral, false), (.labial, false), (.coronal, false),
@@ -452,7 +452,7 @@ def hin : Inventory :=
       allophones := some ["æẽ̯"],
       marginal := none,
       segmentClass := .vowel,
-      features := Bundle.ofList [
+      features := .ofList [
         (.short, false), (.long, false), (.consonantal, false), (.sonorant, true),
         (.continuant, true), (.approximant, true), (.tap, false), (.trill, false),
         (.lateral, false), (.labial, false), (.coronal, false), (.dorsal, true), (.high, false),
@@ -469,7 +469,7 @@ def hin : Inventory :=
       allophones := some ["ɔo̯", "ɔː", "ɜo̯", "ɔo̤̯"],
       marginal := none,
       segmentClass := .vowel,
-      features := Bundle.ofList [
+      features := .ofList [
         (.short, false), (.long, false), (.consonantal, false), (.sonorant, true),
         (.continuant, true), (.approximant, true), (.tap, false), (.trill, false),
         (.nasal, false), (.lateral, false), (.labial, true), (.round, true),
@@ -482,7 +482,7 @@ def hin : Inventory :=
       allophones := some ["ɔõ̯"],
       marginal := none,
       segmentClass := .vowel,
-      features := Bundle.ofList [
+      features := .ofList [
         (.short, false), (.long, false), (.consonantal, false), (.sonorant, true),
         (.continuant, true), (.approximant, true), (.tap, false), (.trill, false),
         (.lateral, false), (.labial, true), (.round, true), (.labiodental, false),

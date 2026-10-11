@@ -1,6 +1,5 @@
 module
 
-public import Linglib.Core.Order.Bundle
 public import Linglib.Semantics.Plurality.NumberFeatures
 public import Linglib.Semantics.Reference.Prominence
 public import Linglib.Syntax.Agreement.Bundle
@@ -129,12 +128,6 @@ Agree-layer structure decoupled from the `SyntacticObject` carrier. -/
 abbrev FeatureBundle := (t : FeatureType) → Minimalist.FeatureSlot t.ValueOf
 
 namespace FeatureBundle
-
-instance : BundleLike FeatureBundle FeatureType (fun t ↦ Minimalist.FeatureSlot t.ValueOf) :=
-  ⟨fun b ↦ b⟩
-
-instance : LawfulBundleLike FeatureBundle :=
-  ⟨fun _ _ h ↦ h⟩
 
 /-- The bundle has a valued feature of the given dimension. -/
 def hasValuedFeature (a : FeatureBundle) (t : FeatureType) : Bool :=

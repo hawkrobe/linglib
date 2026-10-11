@@ -84,7 +84,7 @@ def feature_value(s: str):
     return None
 
 def format_features(pairs, indent="        "):
-    """Emit `Bundle.ofList [...]` over the specified (feature, value) pairs."""
+    """Emit `.ofList [...]` over the specified (feature, value) pairs."""
     items = [f"(.{f}, {v})" for f, v in pairs]
     lines = []; cur = indent
     for it in items:
@@ -94,7 +94,7 @@ def format_features(pairs, indent="        "):
         else:
             cur += piece if cur.strip() else it
     lines.append(cur)
-    return "Bundle.ofList [" + chr(10) + chr(10).join(lines) + "]"
+    return ".ofList [" + chr(10) + chr(10).join(lines) + "]"
 
 def segment_class(s: str) -> str:
     s = s.strip().strip('"')

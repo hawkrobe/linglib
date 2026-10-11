@@ -111,8 +111,8 @@ theorem isDistinctive_compl_delayedRelease :
 nasal on every feature but [delayed release]; *paŋ* is unchanged there, and so is *pak*
 alone. -/
 theorem pak_paŋ_neutralized :
-    (derive [stopNasalization] [p, a, k, n]).map (Bundle.restrict exceptDelayedRelease) =
-        [p, a, ŋ, n].map (Bundle.restrict exceptDelayedRelease) ∧
+    (derive [stopNasalization] [p, a, k, n]).map (Segment.restrict exceptDelayedRelease) =
+        [p, a, ŋ, n].map (Segment.restrict exceptDelayedRelease) ∧
       derive [stopNasalization] [p, a, ŋ, n] = [p, a, ŋ, n] ∧
       derive [stopNasalization] [p, a, k] = [p, a, k] := by
   decide

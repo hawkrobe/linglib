@@ -1,6 +1,7 @@
 module
 
-public import Linglib.Core.Order.Bundle
+public import Linglib.Core.Order.Flat
+public import Linglib.Core.Order.PartialUnify
 public import Linglib.Data.UD.Features
 public import Linglib.Syntax.Case.Basic
 public import Linglib.Syntax.Gender.Basic
@@ -14,10 +15,10 @@ The morphosyntactic features a word token carries: the agreement dimensions, val
 analytical inventories `Person`, `Number`, `Gender` and `Case`, and the nominal and verbal
 features of the Universal Dependencies annotation, definiteness, degree, pronoun type,
 reflexivity, verb form, tense, aspect, mood, voice and polarity, valued in the tag inventories
-until an analytical one exists. A token's features are a `Bundle` over these, a value or `⊥`
-in each, so subsumption, unification and generalization are the pointwise order, partial
-join and meet of `Core/Order/Bundle.lean`; the Universal Dependencies annotation of a token is
-the matter of `Morphology/Word/UD.lean`.
+until an analytical one exists. A token's features give each feature a value or `⊥`, a slot of
+the flat order, so subsumption, unification and generalization are the pointwise order, partial
+join and meet; the Universal Dependencies annotation of a token is the matter of
+`Morphology/Word/UD.lean`.
 
 ## Main declarations
 
@@ -65,7 +66,7 @@ instance (t : Feature) : DecidableEq t.Value := by cases t <;> exact inferInstan
 instance (t : Feature) : Repr t.Value := by cases t <;> exact inferInstance
 
 /-- A token's features: a value or `⊥` in each feature. -/
-abbrev Features := Bundle Feature Feature.Value
+abbrev Features := (f : Feature) → Flat f.Value
 
 namespace Features
 

@@ -49,7 +49,7 @@ def agr (person : Option Person := none) (number : Option Number := none)
 /-- The contracted negative of an auxiliary is the same entry with the contracted form and
 negative polarity. -/
 def contract (a : Auxiliary) (form : String) : Auxiliary :=
-  { a with form := form, features := Bundle.set .polarity .Neg a.features }
+  { a with form := form, features := Function.update a.features .polarity (some .Neg) }
 
 /-! ### Modals -/
 

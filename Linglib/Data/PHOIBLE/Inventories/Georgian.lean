@@ -59,7 +59,7 @@ def kat : Inventory :=
       allophones := some ["lˠ", "lˠ", "l", "l̥ˠ"],
       marginal := none,
       segmentClass := .consonant,
-      features := Bundle.ofList [
+      features := .ofList [
         (.syllabic, false), (.short, false), (.long, false), (.consonantal, true),
         (.sonorant, true), (.continuant, true), (.approximant, true), (.tap, false),
         (.trill, false), (.nasal, false), (.lateral, true), (.labial, false), (.coronal, true),
