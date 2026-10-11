@@ -80,25 +80,16 @@ theorem IsStarFree.union {M : Language α} (hL : L.IsStarFree) (hM : M.IsStarFre
 theorem IsStarFree.of_recognizes {M : Type*} [Monoid M] [Finite M]
     (hM : Monoid.IsAperiodic M) (η : FreeMonoid α →* M) (P : Set M)
     (hL : ∀ w : List α, w ∈ L ↔ η (FreeMonoid.ofList w) ∈ P) : L.IsStarFree := by
-  have hle : Con.ker η ≤ L.syntacticCon := ker_le_syntacticCon_of_recognizes ⟨P, Set.ext hL⟩
-  have hker : Monoid.IsAperiodic (Con.ker η).Quotient :=
-    (hM.of_injective (MonoidHom.mrange η).subtype_injective).of_mulEquiv
-      (Con.quotientKerEquivRange η).symm
-  have hfin : Finite (Con.ker η).Quotient :=
-    Finite.of_equiv _ (Con.quotientKerEquivRange η).symm.toEquiv
-  have hsurj : Function.Surjective (Con.map (Con.ker η) L.syntacticCon hle) :=
-    Con.lift_surjective_of_surjective _ Con.mk'_surjective
-  exact ⟨Finite.of_surjective _ hsurj, hker.of_surjective hsurj⟩
+  obtain ⟨N, f, hf⟩ := Recognizes.syntacticMonoid_isSubquotient (φ := η) ⟨P, Set.ext hL⟩
+  exact ⟨.of_surjective f hf, (hM.of_injective N.subtype_injective).of_surjective hf⟩
 
 /-- Star-free languages are closed under inverse homomorphisms of free monoids. -/
 theorem IsStarFree.comap {α β : Type*} {L : Language β} (h : L.IsStarFree)
     (φ : FreeMonoid α →* FreeMonoid β) :
     Language.IsStarFree {w : List α | φ (FreeMonoid.ofList w) ∈ L} := by
   have := h.1
-  refine IsStarFree.of_recognizes (M := L.SyntacticMonoid) h.2 (L.toSyntacticMonoid.comp φ)
-    {m | ∃ u : FreeMonoid β, L.toSyntacticMonoid u = m ∧ u ∈ L} fun w => ?_
-  refine ⟨fun hw => ⟨φ (FreeMonoid.ofList w), rfl, hw⟩, fun ⟨u, hu, hmem⟩ => ?_⟩
-  exact (SyntacticEquiv.mem_iff ((toSyntacticMonoid_eq_iff (L := L)).mp hu)).mp hmem
+  obtain ⟨S, hS⟩ := L.recognizes_toSyntacticMonoid.comap φ
+  exact .of_recognizes h.2 _ S (Set.ext_iff.mp hS)
 
 /-- Star-free languages are closed under preimage by erasure, the instance of `IsStarFree.comap`
 for the homomorphism `List.filter p` that erases the letters failing `p`. -/

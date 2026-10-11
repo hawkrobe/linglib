@@ -33,9 +33,9 @@ zero, and similarly for the other two classes.
 
 ## Implementation notes
 
-The bound `|S|` and the route through long products follow Chapter XIV of [pin-mfa]. The window
-conditions range over words of length at least `k` rather than over the whole syntactic monoid,
-because the pseudovarieties are varieties of semigroups and do not see the empty word.
+The bound `|S|` and the route through long products follow Chapter XIV of Pin's lecture notes. The
+window conditions range over words of length at least `k` rather than over the whole syntactic
+monoid, because the pseudovarieties are varieties of semigroups and do not see the empty word.
 
 ## References
 
@@ -47,8 +47,6 @@ because the pseudovarieties are varieties of semigroups and do not see the empty
 @[expose] public section
 
 namespace Language
-
-open FreeSemigroup
 
 variable {α : Type*} {L : Language α} {k : ℕ}
 
@@ -247,10 +245,6 @@ theorem IsGeneralizedDefinite.isRegular [Finite α] (h : L.IsGeneralizedDefinite
       (congrArg Prod.snd huv)
 
 /-! ### The syntactic semigroup -/
-
-theorem syntacticSemigroupToMonoid_mk (a : α) (l : List α) :
-    L.syntacticSemigroupToMonoid (L.toSyntacticSemigroup ⟨a, l⟩) = L.syntacticClass (a :: l) := by
-  rw [syntacticSemigroupToMonoid_apply, toFreeMonoid_mk_eq_cons]; rfl
 
 /-- An element of the syntactic monoid is a right zero once it absorbs the image of the syntactic
 semigroup, since everything else is the identity. -/

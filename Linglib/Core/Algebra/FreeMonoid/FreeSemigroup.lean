@@ -24,12 +24,11 @@ monoid (`FreeMonoid.mapWithOne`), with the empty word sent to `1`.
 variable {α : Type*} (u : FreeSemigroup α)
 
 theorem FreeMonoid.equivWithOneFreeSemigroup_toFreeMonoid :
-    equivWithOneFreeSemigroup u.toFreeMonoid = ↑u := by
-  rw [show (u.toFreeMonoid : FreeMonoid α) =
-    equivWithOneFreeSemigroup.symm ↑u from rfl, MulEquiv.apply_symm_apply]
+    equivWithOneFreeSemigroup u.toFreeMonoid = ↑u :=
+  equivWithOneFreeSemigroup.eq_symm_apply.mp rfl
 
 @[simp] theorem FreeSemigroup.toList_toFreeMonoid_ne_nil :
-    u.toFreeMonoid.toList ≠ [] := fun h =>
+    u.toFreeMonoid.toList ≠ [] := fun h ↦
   toFreeMonoid_ne_one u (FreeMonoid.toList.injective h)
 
 variable {T : Type*} [Mul T] (η : FreeSemigroup α →ₙ* T)
