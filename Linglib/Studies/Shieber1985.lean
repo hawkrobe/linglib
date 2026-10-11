@@ -238,10 +238,10 @@ theorem not_claims_top : ¬ Claims id (⊤ : Language Letter) := fun h ↦ by
 open German.Zurich.Verbs
 
 /-- `npCase? np` is the case the article of the noun phrase `np` marks: a word article followed
-by its noun, or the clitic *d'* attached to it. -/
+by its noun, or a clitic article, written with a final apostrophe, attached to it. -/
 def npCase? (np : String) : Option German.Zurich.Case :=
-  (German.Zurich.articleCase.find? fun a ↦
-    a.1.toList ++ [' '] <+: np.toList ∨ (a.1 = "d'" ∧ a.1.toList <+: np.toList)).map (·.2)
+  let start (art : List Char) := if art.getLast? = some '\'' then art else art ++ [' ']
+  (German.Zurich.articleCase.find? fun a ↦ start a.1.toList <+: np.toList).map (·.2)
 
 /-- `objectCases e` lists the cases the articles of the clause `e` mark on its noun phrases. -/
 def objectCases (e : Datum) : List German.Zurich.Case :=
