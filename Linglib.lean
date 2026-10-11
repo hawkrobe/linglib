@@ -932,7 +932,6 @@ import Linglib.Semantics.Focus.Particles
 import Linglib.Semantics.Focus.Unalternatives
 import Linglib.Semantics.Genericity.MeaningPreservation
 import Linglib.Semantics.Genericity.NominalMappingParameter
-import Linglib.Semantics.Homogeneity.Collective
 import Linglib.Semantics.Homogeneity.Defs
 import Linglib.Semantics.Homogeneity.Plural
 import Linglib.Semantics.Homogeneity.Usable

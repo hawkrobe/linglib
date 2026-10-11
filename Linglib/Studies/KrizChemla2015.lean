@@ -2,6 +2,7 @@ module
 
 public import Linglib.Data.Examples.KrizChemla2015
 public import Linglib.Data.Experiments.KrizChemla2015
+public import Linglib.Logic.Trivalent.Flat
 public import Linglib.Semantics.Homogeneity.Plural
 public import Linglib.Semantics.Quantification.NumberTree
 public import Linglib.Studies.Magri2014
@@ -258,6 +259,24 @@ end GapValue
 
 /-! ### The approaches of §6 -/
 
+section GlobalExh
+
+variable (q : NumberTree) (d : Display)
+
+/-- The globally double-exhaustified meaning, (30) and (39), is the conjunction of the some- and
+all-substituted readings, [magri-2014]'s double strengthening
+(`globalExh_iff_mem_strengthened`). In a downward-entailing scope exhaustification is vacuous,
+and the conjunction is then the literal meaning (`globalExh_iff_of_scopeAntitone`). -/
+def globalExh : Prop := someReading q d ∧ allReading q d
+
+variable {q d} in
+/-- Under a downward-entailing quantifier global exhaustification is vacuous. -/
+theorem globalExh_iff_of_scopeAntitone (hq : q.ScopeAntitone) :
+    globalExh q d ↔ someReading q d :=
+  ⟨And.left, fun h ↦ ⟨h, someReading_imp_allReading hq h⟩⟩
+
+end GlobalExh
+
 section Approaches
 
 variable (q : NumberTree) [DecidableRel q] (d : Display)
@@ -266,12 +285,6 @@ variable (q : NumberTree) [DecidableRel q] (d : Display)
 the definite is resolved, existentially or universally, and false when it is false however it is
 resolved. -/
 def supervaluation : Trivalent := Trivalent.supervaluation Finset.univ (reading q d)
-
-/-- The globally double-exhaustified meaning, (30) and (39), is the conjunction of the some- and
-all-substituted readings, [magri-2014]'s double strengthening
-(`globalExh_iff_mem_strengthened`). In a downward-entailing scope exhaustification is vacuous,
-and the conjunction is then the literal meaning (`globalExh_iff_of_scopeAntitone`). -/
-def globalExh : Prop := someReading q d ∧ allReading q d
 
 instance : Decidable (globalExh q d) := inferInstanceAs (Decidable (_ ∧ _))
 
@@ -337,12 +350,6 @@ theorem supervaluation_map_neg :
 theorem supervaluation_compl : supervaluation qᶜ d = (supervaluation q d).neg := by
   rw [supervaluation, supervaluation, ← Trivalent.supervaluation_not _ Finset.univ_nonempty]
   rfl
-
-omit [DecidableRel q] in
-/-- Under a downward-entailing quantifier global exhaustification is vacuous. -/
-theorem globalExh_iff_of_scopeAntitone (hq : q.ScopeAntitone) :
-    globalExh q d ↔ someReading q d :=
-  ⟨And.left, fun h ↦ ⟨h, someReading_imp_allReading hq h⟩⟩
 
 /-- The global construal gaps where the literal meaning holds and the all-substituted one fails. -/
 theorem globalConstrual_eq_indet_iff :

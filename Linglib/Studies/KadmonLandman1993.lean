@@ -3,7 +3,7 @@ module
 public import Linglib.Logic.Natural.Basic
 public import Linglib.Semantics.Polarity.Licensing
 public import Linglib.Semantics.Polarity.Item
-public import Linglib.Semantics.Supervaluation
+public import Linglib.Logic.Trivalent.Basic
 public import Linglib.Semantics.Genericity.Normality
 public import Linglib.Studies.Ladusaw1979
 public import Linglib.Data.Examples.KadmonLandman1993
@@ -44,8 +44,8 @@ of GEN.
   one exists and otherwise the local entailment signature; the settle-for-less and metalinguistic
   readings are the paper's own annotations, so `rows_agree` checks the paper's classification
   against its judgments rather than deriving those two readings.
-* The vague-restriction apparatus is `Set`-based; the supervaluation substrate is `Finset`-based
-  for computability, and `VagueRestriction.toSpecSpace` is the finite-case bridge.
+* The vague-restriction apparatus is `Set`-based; on a finite enumeration of the
+  precisifications, supervaluation is `Trivalent.supervaluation` over it.
 
 ## References
 
@@ -59,7 +59,7 @@ of GEN.
 
 namespace KadmonLandman1993
 
-open NaturalLogic PolarityItem Ladusaw1979 Semantics.Supervaluation
+open NaturalLogic PolarityItem Ladusaw1979
 
 /-! ### The strengthening condition
 
@@ -173,8 +173,8 @@ def conditionalWithRestriction {Case : Type*}
     (restriction antecedent consequent : Case → Prop) : Prop :=
   ∀ c, restriction c → antecedent c → consequent c
 
-/-- **Widening always satisfies strengthening in conditional antecedents**
-(K&L §3.5.3). Natural-language conditionals are not classically DE — their
+/-- Widening always satisfies strengthening in conditional antecedents (K&L §3.5.3).
+Natural-language conditionals are not classically DE — their
 (140) does not entail (141) — because the implicit restriction can shift. But
 the restriction cannot undo the effect of widening, so the wide restriction
 is never stronger than the narrow one, and then the wide conditional entails
@@ -239,9 +239,8 @@ domain — while generic *an owl* is **domain vague**: the normalcy restriction
 is inherently underspecified, and different precisifications yield different
 domains. This is what lets generics tolerate exceptions ("a poodle gives live
 birth" survives male poodles). The `Set`-based notions are stated locally
-because the supervaluation substrate (`Semantics/Supervaluation`,
-[fine-1975]) is `Finset`-based for computability; the finite-case bridge is
-`VagueRestriction.toSpecSpace` below. -/
+because the supervaluation substrate (`Trivalent.supervaluation`) is
+`Finset`-based for computability; the finite case is below. -/
 
 /-- A vague restriction ⟨v₀, V⟩ (K&L §4.1) is a precise part, the properties known to hold,
 together with its consistent completions, each extending the precise part, which is itself a
@@ -433,26 +432,6 @@ specification space, and the exception-tolerance zone — sub-true but not
 super-true — is exactly Fine's borderline (`indet`) status. "A poodle gives
 live birth" is Fine-indefinite and K&L-assertable. -/
 
-/-- The specification space induced by a vague restriction whose
-precisifications are enumerated by a finset. Nonemptiness is K&L's axiom
-that the precise part is itself a precisification. -/
-def VagueRestriction.toSpecSpace {Property : Type*} (X : VagueRestriction Property)
-    (V : Finset (Set Property)) (hV : ↑V = X.precisifications) :
-    SpecSpace (Set Property) where
-  admissible := V
-  nonempty := ⟨X.precise, by rw [← Finset.mem_coe, hV]; exact X.precise_mem⟩
-
-theorem VagueRestriction.mem_toSpecSpace {Property : Type*}
-    {X : VagueRestriction Property} {V : Finset (Set Property)}
-    {hV : ↑V = X.precisifications} {v : Set Property} :
-    v ∈ (X.toSpecSpace V hV).admissible ↔ v ∈ X.precisifications := by
-  constructor
-  · intro h; rw [← hV]; exact Finset.mem_coe.mpr h
-  · intro h
-    show v ∈ V
-    rw [← Finset.mem_coe, hV]
-    exact h
-
 /-- On a finite precisification space, K&L's supervaluationist truth is
 [fine-1975]'s super-truth. -/
 theorem genericSuperTrue_iff_superTrue {Property Entity : Type*}
@@ -460,32 +439,21 @@ theorem genericSuperTrue_iff_superTrue {Property Entity : Type*}
     (R : Set Entity) (scope : Entity → Prop) [DecidablePred (genericTrue apply R scope)]
     (V : Finset (Set Property)) (hV : ↑V = X.precisifications) :
     genericSuperTrue X apply R scope ↔
-      superTrue (genericTrue apply R scope) (X.toSpecSpace V hV) = Trivalent.true := by
-  rw [superTrue_true_iff]
-  exact ⟨fun h v hv ↦ h v (VagueRestriction.mem_toSpecSpace.mp hv),
-         fun h v hv ↦ h v (VagueRestriction.mem_toSpecSpace.mpr hv)⟩
+      Trivalent.supervaluation V (genericTrue apply R scope) = Trivalent.true := by
+  rw [Trivalent.supervaluation_eq_true_iff]
+  simp only [genericSuperTrue, ← hV, Finset.mem_coe]
 
-/-- **K&L's exception-tolerance zone is Fine's borderline zone.** A generic
-that is subvaluationistically but not supervaluationistically true is
-exactly one whose supervaluation status is indefinite, assertable for K&L and
-borderline for [fine-1975]. -/
+/-- K&L's exception-tolerance zone is Fine's borderline zone: a generic that is
+subvaluationistically but not supervaluationistically true is exactly one whose supervaluation
+status is indefinite, assertable for K&L and borderline for [fine-1975]. -/
 theorem genericSubTrue_not_superTrue_iff_indet {Property Entity : Type*}
     (X : VagueRestriction Property) (apply : Property → Set Entity)
     (R : Set Entity) (scope : Entity → Prop) [DecidablePred (genericTrue apply R scope)]
     (V : Finset (Set Property)) (hV : ↑V = X.precisifications) :
     genericSubTrue X apply R scope ∧ ¬genericSuperTrue X apply R scope ↔
-      superTrue (genericTrue apply R scope) (X.toSpecSpace V hV) = Trivalent.indet := by
-  rw [superTrue_indet_iff]
-  constructor
-  · rintro ⟨⟨v, hv, hvt⟩, hns⟩
-    refine ⟨⟨v, VagueRestriction.mem_toSpecSpace.mpr hv, hvt⟩, ?_⟩
-    by_contra hno
-    exact hns (fun w hw ↦ by
-      by_contra hwf
-      exact hno ⟨w, VagueRestriction.mem_toSpecSpace.mpr hw, hwf⟩)
-  · rintro ⟨⟨v, hv, hvt⟩, ⟨w, hw, hwf⟩⟩
-    exact ⟨⟨v, VagueRestriction.mem_toSpecSpace.mp hv, hvt⟩,
-           fun hall ↦ hwf (hall w (VagueRestriction.mem_toSpecSpace.mp hw))⟩
+      Trivalent.supervaluation V (genericTrue apply R scope) = Trivalent.indet := by
+  rw [Trivalent.supervaluation_eq_indet_iff]
+  simp only [genericSubTrue, genericSuperTrue, ← hV, Finset.mem_coe, not_forall, exists_prop]
 
 /-! ### The *almost* test
 

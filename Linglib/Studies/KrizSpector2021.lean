@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Semantics.Homogeneity.Plural
-public import Linglib.Semantics.Homogeneity.Collective
+public import Linglib.Studies.Kriz2016
 public import Mathlib.Data.Finset.Interval
 public import Mathlib.Data.Fintype.Powerset
 public import Mathlib.Order.UpperLower.Closure
@@ -900,11 +900,11 @@ theorem Cand_subset_CandUp (x : Finset Atom) : Cand x ⊆ CandUp x := by
   · rw [Finset.union_comm, ← Finset.insert_eq]
 
 /-- Every member of an appendix candidate overlaps `x`. -/
-theorem overlaps_of_mem_CandUp {x : Finset Atom} (hx : x.Nonempty) {D : Finset (Finset Atom)}
-    (hD : D ∈ CandUp x) {z : Finset Atom} (hz : z ∈ D) : overlaps x z := by
+theorem not_disjoint_of_mem_CandUp {x : Finset Atom} (hx : x.Nonempty) {D : Finset (Finset Atom)}
+    (hD : D ∈ CandUp x) {z : Finset Atom} (hz : z ∈ D) : ¬ Disjoint x z := by
   obtain ⟨⟨A, hA, B, hB, rfl⟩, -⟩ := mem_CandUp.1 hD
   obtain ⟨a, ha, -, -, haz, -⟩ := mem_conv.1 hz
-  rw [overlaps, Finset.not_disjoint_iff]
+  rw [Finset.not_disjoint_iff]
   rcases Finset.mem_union.1 ha with ha | ha
   · obtain ⟨b, hb⟩ := (mem_parts.1 (hA ha)).1
     exact ⟨b, (mem_parts.1 (hA ha)).2 hb, haz hb⟩
@@ -912,11 +912,11 @@ theorem overlaps_of_mem_CandUp {x : Finset Atom} (hx : x.Nonempty) {D : Finset (
     exact ⟨b, hb, haz ((Finset.mem_Icc.1 (hB ha)).1 hb)⟩
 
 /-- The weakest appendix candidate admits every plurality overlapping `x`. -/
-theorem filter_overlaps_mem_CandUp {x : Finset Atom} (hx : x.Nonempty) :
-    Finset.univ.filter (overlaps x) ∈ CandUp x := by
+theorem filter_not_disjoint_mem_CandUp {x : Finset Atom} (hx : x.Nonempty) :
+    Finset.univ.filter (fun z ↦ ¬ Disjoint x z) ∈ CandUp x := by
   refine mem_CandUp.2 ⟨⟨parts x, Finset.Subset.refl _, sups x, Finset.Subset.refl _, ?_⟩, ?_⟩
   · ext z
-    rw [mem_conv, Finset.mem_filter, overlaps, Finset.not_disjoint_iff]
+    rw [mem_conv, Finset.mem_filter, Finset.not_disjoint_iff]
     constructor
     · rintro ⟨a, ha, -, -, haz, -⟩
       refine ⟨Finset.mem_univ _, ?_⟩
@@ -944,11 +944,11 @@ theorem trueOnAllUp_iff (x : Finset Atom) (P : Finset Atom → W → Prop) (w : 
 /-- Falsity on all appendix readings is the upward-homogeneity condition, the paper's
 (114b): no plurality overlapping `x` satisfies the predicate. -/
 theorem falseOnAllUp_iff {x : Finset Atom} (hx : x.Nonempty) (P : Finset Atom → W → Prop)
-    (w : W) : (∀ D ∈ CandUp x, ¬ reading D P w) ↔ ∀ z, overlaps x z → ¬ P z w := by
+    (w : W) : (∀ D ∈ CandUp x, ¬ reading D P w) ↔ ∀ z, ¬ Disjoint x z → ¬ P z w := by
   constructor
-  · exact fun h z hz hP ↦ h _ (filter_overlaps_mem_CandUp hx)
+  · exact fun h z hz hP ↦ h _ (filter_not_disjoint_mem_CandUp hx)
       ⟨z, Finset.mem_filter.2 ⟨Finset.mem_univ _, hz⟩, hP⟩
-  · exact fun h D hD ⟨z, hz, hP⟩ ↦ h z (overlaps_of_mem_CandUp hx hD hz) hP
+  · exact fun h D hD ⟨z, hz, hP⟩ ↦ h z (not_disjoint_of_mem_CandUp hx hD hz) hP
 
 /-- The trivalent value on the appendix's candidates. -/
 def valueUp (x : Finset Atom) (P : Finset Atom → W → Prop) [∀ z w, Decidable (P z w)]
@@ -960,12 +960,12 @@ def valueUp (x : Finset Atom) (P : Finset Atom → W → Prop) [∀ z w, Decidab
 pluralities. -/
 theorem valueUp_eq_generalisedTruthValue {x : Finset Atom} (hx : x.Nonempty)
     (P : Finset Atom → W → Prop) [∀ z w, Decidable (P z w)] (w : W) :
-    valueUp x P w = generalisedTruthValue (P · w) Finset.univ x := by
-  unfold valueUp generalisedTruthValue
+    valueUp x P w = Kriz2016.generalisedTruthValue (P · w) Finset.univ x := by
+  unfold valueUp Kriz2016.generalisedTruthValue
   by_cases hP : P x w
   · rw [ite_eq_left ((trueOnAllUp_iff x P w).2 hP), ite_eq_left hP]
   · rw [ite_eq_right (fun h ↦ hP ((trueOnAllUp_iff x P w).1 h)), ite_eq_right hP]
-    by_cases hn : ∀ z, overlaps x z → ¬ P z w
+    by_cases hn : ∀ z, ¬ Disjoint x z → ¬ P z w
     · rw [ite_eq_left ((falseOnAllUp_iff hx P w).2 hn), ite_eq_right]
       rintro ⟨b, -, hb, hPb⟩
       exact hn b hb hPb
