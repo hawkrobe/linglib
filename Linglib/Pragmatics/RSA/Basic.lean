@@ -694,13 +694,19 @@ variable {α : ℝ} {C : U → ℝ} {L : U → Measure W} {b : O → Measure W} 
 
 variable [∀ u, IsFiniteMeasure (L u)]
 
+/-- The speaker's row is a probability measure at an observation where some utterance's listener
+rules out no state she entertains. -/
+theorem isProbabilityMeasure_speaker (hα : 0 ≤ α)
+    (h0 : ∃ u, ∀ w, b o {w} ≠ 0 → L u {w} ≠ 0) : IsProbabilityMeasure (speaker α C L b o) :=
+  Kernel.isProbabilityMeasure_ofWeights
+    (h0.imp fun _ hu ↦ weight_ne_zero hα (Measure.geomMean_ne_zero hu) _)
+    fun _ ↦ geomMean_weight_ne_top hα _
+
 /-- The speaker is a probability kernel when at every observation some utterance's listener
 rules out no state she entertains. -/
 theorem isMarkovKernel_speaker (hα : 0 ≤ α)
     (h0 : ∀ o, ∃ u, ∀ w, b o {w} ≠ 0 → L u {w} ≠ 0) : IsMarkovKernel (speaker α C L b) :=
-  Kernel.isMarkovKernel_ofWeights
-    (fun o ↦ (h0 o).imp fun _ hu ↦ weight_ne_zero hα (Measure.geomMean_ne_zero hu) _)
-    fun _ _ ↦ geomMean_weight_ne_top hα _
+  ⟨fun o ↦ isProbabilityMeasure_speaker hα (h0 o)⟩
 
 variable [MeasurableSingletonClass U]
 
@@ -823,11 +829,18 @@ theorem speaker_dirac_eq_softmax (α : ℝ) (C : U → ℝ) (L : U → Measure W
   rw [sub_eq_add_neg, ← EReal.coe_neg, EReal.exp_add, ← ENNReal.log_rpow, ENNReal.exp_log,
     EReal.exp_coe]
 
+/-- The speaker who knows the state is a probability measure there when some utterance's
+listener gives it mass. -/
+theorem isProbabilityMeasure_speaker_dirac (hα : 0 ≤ α) (C : U → ℝ) (L : Kernel U W)
+    [IsFiniteKernel L] (h0 : ∃ u, L u {w} ≠ 0) :
+    IsProbabilityMeasure (speaker α C L Measure.dirac w) :=
+  isProbabilityMeasure_speaker hα (h0.imp fun _ hu _ hw' ↦
+    eq_of_dirac_apply_singleton_ne_zero hw' ▸ hu)
+
 /-- The speaker is a probability kernel whenever every state has a true utterance. -/
 theorem isMarkovKernel_speaker_dirac (hα : 0 ≤ α) (C : U → ℝ) (L : Kernel U W) [IsFiniteKernel L]
     (h0 : ∀ w, ∃ u, L u {w} ≠ 0) : IsMarkovKernel (speaker α C L Measure.dirac) :=
-  isMarkovKernel_speaker hα fun w ↦ (h0 w).imp fun _ hu _ hw' ↦
-    eq_of_dirac_apply_singleton_ne_zero hw' ▸ hu
+  ⟨fun w ↦ isProbabilityMeasure_speaker_dirac hα C L (h0 w)⟩
 
 variable [MeasurableSingletonClass U]
 

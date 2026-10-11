@@ -1,26 +1,37 @@
 module
 
+public import Linglib.Core.Probability.Kernel.Basic
 public import Linglib.Pragmatics.RSA.Basic
 
 /-!
-# QUD-projected listeners
+# Speakers who address a question
 
-A communicative goal projects the meaning space onto the topic under discussion, and a speaker
-with that goal is informative about the listener's mass on the cell of the intended meaning
-rather than on the meaning itself. Kao and colleagues use this projected literal listener for
-metaphor, hyperbole and irony. `RSA.projListener` is that listener as a kernel, so that with
-the goal as a coordinate of the state the goal-indexed speaker is `RSA.speaker` against the goal's
-projected listener, and the listener who marginalizes the goal is the state marginal of
-`RSA.listener` over pairs of a meaning and a goal.
+A question under discussion is a function `q : W → X` from states to answers. Kao and colleagues
+let the speaker be informative about the answer alone: the listener's belief about the answer is
+the pushforward `L.map q` of his belief about the state, and the speaker, who knows the answer
+`q w` at her state, is `RSA.speaker α C (L.map q) Measure.dirac (q w)`. With the question as a
+coordinate of the state, the listener who does not know which question she addresses is
+`RSA.listener` over pairs of a state and a question.
 
-A literally false utterance projects positive mass onto a meaning exactly when the meaning's
-cell contains a literally true one (`RSA.projListener_apply_singleton_ne_zero_iff`), the
-mechanism of nonliteral interpretation; a goal that projects injectively leaves the literal
-listener unchanged (`RSA.projListener_apply_singleton_of_injective`).
+An utterance that is false at a state can then be produced there, when it is true at a state with
+the same answer, which is how the model derives hyperbole, metaphor and irony.
+
+## Main results
+
+* `RSA.listener_truthful_map_apply_singleton`: a literal listener's probability of an answer is
+  the prior mass of the states with that answer where the utterance is true, over the prior mass
+  of the states where it is true.
+* `RSA.speaker_map_dirac_apply_singleton_ne_zero_iff`: the speaker produces an utterance exactly
+  when its listener gives mass to a state with the same answer as hers.
+* `RSA.listener_prod_speaker_map_dirac_fst_apply_singleton_ne_zero_iff`: the listener takes a
+  state to be possible exactly when it has positive prior and, under some question of positive
+  prior, shares its answer with a state the literal listener gives mass.
 
 ## References
 
-* [kao-etal-2014-metaphor], [kao-etal-2014-hyperbole], [kao-goodman-2015]
+* [kao-etal-2014-hyperbole]
+* [kao-etal-2014-metaphor]
+* [kao-goodman-2015]
 -/
 
 @[expose] public section
@@ -30,72 +41,40 @@ open scoped ENNReal
 
 namespace RSA
 
-section ProjListener
+variable {W U X G : Type*} [MeasurableSpace W] [MeasurableSpace U] [MeasurableSingletonClass U]
+  [MeasurableSpace X] [MeasurableSingletonClass X]
 
-variable {W U G X : Type*} [MeasurableSpace W] [MeasurableSpace U] [Countable U]
-  [MeasurableSingletonClass U] [Fintype W] [MeasurableSingletonClass W]
+/-- A literal listener's probability of an answer is the prior mass of the states with that
+answer where the utterance is true, over the prior mass of the states where it is true. -/
+theorem listener_truthful_map_apply_singleton [Countable W] [DiscreteMeasurableSpace W]
+    [Countable U] (μ : Measure W) (sem : U → Set W) (q : W → X) (u : U) (x : X) :
+    (listener μ (truthful sem)).map q u {x} = μ (sem u ∩ q ⁻¹' {x}) / μ (sem u) := by
+  rw [Kernel.map_apply_singleton, listener_truthful_apply, cond_apply .of_discrete,
+    ENNReal.div_eq_inv_mul]
 
-/-- The QUD-projected listener puts at each meaning the listener's mass on the meaning's cell
-under the goal's projection. It is not normalized, since the speaker's best response reads only
-its weights. -/
-noncomputable def projListener (project : G → W → X) (L : Kernel U W) (g : G) : Kernel U W :=
-  Kernel.ofFunOfCountable fun u => ∑ w, L u (project g ⁻¹' {project g w}) • Measure.dirac w
+variable [Fintype W] [MeasurableSingletonClass W] [Fintype U] [Fintype X] {α : ℝ}
 
-variable (project : G → W → X) (L : Kernel U W) (g : G) (u : U) (w : W)
+/-- The speaker who addresses a question produces an utterance exactly when its listener gives
+mass to a state with the same answer as hers. -/
+theorem speaker_map_dirac_apply_singleton_ne_zero_iff (hα : 0 < α) (C : U → ℝ) (L : Kernel U W)
+    [IsFiniteKernel L] (q : W → X) (w : W) (u : U) :
+    speaker α C (L.map q) Measure.dirac (q w) {u} ≠ 0 ↔ ∃ w', q w' = q w ∧ L u {w'} ≠ 0 := by
+  rw [speaker_dirac_apply_singleton_ne_zero_iff hα, Kernel.map_apply_singleton_ne_zero_iff]
 
-@[simp] theorem projListener_apply_singleton :
-    projListener project L g u {w} = L u (project g ⁻¹' {project g w}) := by
-  rw [projListener, Kernel.ofFunOfCountable_apply]
-  exact Measure.sum_smul_dirac_apply_singleton (fun w' => L u (project g ⁻¹' {project g w'})) w
+variable [Fintype G] [MeasurableSpace G] [MeasurableSingletonClass G]
 
-/-- The projected listener of a finite kernel is finite, since each row puts at most the
-listener's bound on each of the finitely many meanings. -/
-instance [IsFiniteKernel L] : IsFiniteKernel (projListener project L g) :=
-  ⟨⟨Fintype.card W * L.bound,
-    ENNReal.mul_lt_top (ENNReal.natCast_lt_top _) L.bound_lt_top, fun u ↦ by
-      rw [← Finset.coe_univ, ← sum_measure_singleton, ← nsmul_eq_mul, ← Finset.card_univ]
-      exact Finset.sum_le_card_nsmul _ _ _ fun w _ ↦ by
-        rw [projListener_apply_singleton]; exact L.measure_le_bound u _⟩⟩
-
-/-- The cell's mass is the sum of the listener's masses over the cell. -/
-theorem projListener_apply_singleton_eq_sum [DecidableEq X] :
-    projListener project L g u {w}
-      = ∑ w' ∈ Finset.univ.filter (fun w' => project g w' = project g w), L u {w'} := by
-  rw [projListener_apply_singleton, sum_measure_singleton]
-  congr 1
-  ext w'
-  simp
-
-/-- A meaning receives positive projected mass exactly when its cell contains a meaning of
-positive literal mass. -/
-theorem projListener_apply_singleton_ne_zero_iff [DecidableEq X] :
-    projListener project L g u {w} ≠ 0 ↔ ∃ w', project g w' = project g w ∧ L u {w'} ≠ 0 := by
-  rw [projListener_apply_singleton_eq_sum, ne_eq, Finset.sum_eq_zero_iff]
-  simp
-
-/-- A goal that projects injectively leaves the literal listener unchanged. -/
-theorem projListener_apply_singleton_of_injective (h : Function.Injective (project g)) :
-    projListener project L g u {w} = L u {w} := by
-  rw [projListener_apply_singleton, ← Set.image_singleton, h.preimage_image]
-
-/-- Within a context set, the projected literal listener of a Boolean meaning on a weight measure
-is the weight of the context-set worlds that make the utterance true and share the meaning's
-cell, over the weight of those that make it true. -/
-theorem projListener_listener_truthful_restrict_apply_singleton [DiscreteMeasurableSpace W]
-    [DecidableEq X] (P : W → ℕ) (C : Finset W) (sem : U → Set W)
-    [∀ u, DecidablePred (· ∈ sem u)] :
-    projListener project
-        (listener ((Measure.ofWeights (P ·)).restrict ↑C) (truthful sem)) g u {w}
-      = (∑ v ∈ (C.filter (· ∈ sem u)).filter (fun v => project g v = project g w), (P v : ℝ≥0∞))
-          / ∑ v ∈ C.filter (· ∈ sem u), (P v : ℝ≥0∞) := by
-  have e1 : sem u ∩ ↑C = ↑(C.filter (· ∈ sem u)) := by ext; simp [and_comm]
-  have e2 : sem u ∩ project g ⁻¹' {project g w} ∩ ↑C
-      = ↑((C.filter (· ∈ sem u)).filter fun v => project g v = project g w) := by
-    ext; simp; tauto
-  rw [projListener_apply_singleton, listener_truthful_apply, cond_apply .of_discrete,
-    Measure.restrict_apply .of_discrete, Measure.restrict_apply .of_discrete, e1, e2,
-    Measure.ofWeights_apply_finset, Measure.ofWeights_apply_finset, ENNReal.div_eq_inv_mul]
-
-end ProjListener
+/-- The listener who does not know which question the speaker addresses takes a state to be
+possible exactly when it has positive prior and, under some question of positive prior, shares
+its answer with a state the literal listener gives mass. -/
+theorem listener_prod_speaker_map_dirac_fst_apply_singleton_ne_zero_iff (hα : 0 < α)
+    (C : U → ℝ) (L : Kernel U W) [IsFiniteKernel L] (q : G → W → X) (μ : Measure W)
+    [IsFiniteMeasure μ] (ν : Measure G) [IsFiniteMeasure ν] (u : U) (w : W) :
+    (listener (μ.prod ν) (fun p ↦ speaker α C (L.map (q p.2)) Measure.dirac (q p.2 p.1))
+        u).fst {w} ≠ 0 ↔
+      μ {w} ≠ 0 ∧ ∃ g, ν {g} ≠ 0 ∧ ∃ w', q g w' = q g w ∧ L u {w'} ≠ 0 := by
+  rw [listener_fst_apply_singleton_ne_zero_iff]
+  simp only [speaker_map_dirac_apply_singleton_ne_zero_iff hα, ← Set.singleton_prod_singleton,
+    Measure.prod_prod, mul_ne_zero_iff]
+  exact ⟨fun ⟨g, ⟨hw, hg⟩, h⟩ ↦ ⟨hw, g, hg, h⟩, fun ⟨hw, g, hg, h⟩ ↦ ⟨g, ⟨hw, hg⟩, h⟩⟩
 
 end RSA

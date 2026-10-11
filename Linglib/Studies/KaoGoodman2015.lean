@@ -1,33 +1,34 @@
 module
 
+public import Linglib.Core.MeasureTheory.MeasurableSpace.Sum
 public import Linglib.Pragmatics.RSA.QUD
 
 /-!
 # Kao and Goodman (2015): Let's Talk (Ironically) About the Weather
 
-This file formalizes the irony model of Kao and Goodman on the RSA kernel pipeline. The model is the
-question-under-discussion RSA of Kao and colleagues' hyperbole model over a meaning space of a
-weather state and the speaker's affect toward it, the question being the state or a dimension of
-affect (eq. 1); the paper's contribution is the affect space. With valence alone, "The weather is
-terrible" can be hyperbolic, merely bad weather, but not ironic, since a negative utterance carries
-no true information about positive affect; with the arousal dimension the paper finds in its
-elicited emotion ratings alongside valence, the utterance can convey high arousal, which terrible
-and amazing weather share, and the listener can read it as amazing weather.
+Kao and Goodman model irony on the RSA kernel pipeline. The model is that of Kao and colleagues
+for hyperbole, over meanings that pair a weather state with the speaker's affect toward it, the
+question being the state or a dimension of affect (eq. 1). The paper's contribution is the affect
+space, valence together with the arousal dimension it finds in its elicited emotion ratings.
 
-Both claims are support theorems. Under the arousal question, "terrible" can mean amazing
-weather with positive valence and high arousal whenever the prior admits high arousal at
-terrible weather (`irony`); under questions of state and valence only, a positive-valence
-reading of "terrible" needs positive valence to be possible at terrible weather itself
-(`valence_flip_needs_arousal`). The hyperbolic reading is available under the valence question
-(`hyperbole`).
+## Main results
+
+* `KaoGoodman2015.irony`: under the arousal question, *the weather is terrible* can mean amazing
+  weather with positive valence and high arousal, whenever the prior admits high arousal at
+  terrible weather.
+* `KaoGoodman2015.valence_flip_needs_arousal`: under the questions of state and valence alone, a
+  positive-valence reading of *terrible* needs positive valence to be possible at terrible
+  weather itself.
+* `KaoGoodman2015.hyperbole`: the reading as merely bad weather is available under the valence
+  question.
 
 ## Implementation notes
 
-Priors are arguments: the state prior of a weather context and the affect prior of
-Experiment 1, the probabilities of positive valence and high arousal at each state read off the
-first two principal components of the emotion ratings, enter as one probability measure on
-meanings, and the question prior as a probability measure on questions. The model's fits to
-Experiment 2 are not stated.
+* Priors are arguments. The state prior of a weather context and the affect prior of
+  Experiment 1, the probabilities of positive valence and high arousal at each state, enter as
+  one probability measure on meanings, and the question prior as a probability measure on
+  questions.
+* The model's fits to Experiment 2 are not stated.
 
 ## References
 
@@ -48,7 +49,7 @@ inductive Weather
   deriving DecidableEq, Repr, Fintype
 
 instance : MeasurableSpace Weather := ⊤
-instance : DiscreteMeasurableSpace Weather := ⟨fun _ => trivial⟩
+instance : DiscreteMeasurableSpace Weather := ⟨fun _ ↦ trivial⟩
 instance : Nonempty Weather := ⟨.neutral⟩
 
 /-- The speaker's affect records positive valence and high arousal. -/
@@ -63,7 +64,7 @@ inductive QUD
   deriving DecidableEq, Repr, Fintype
 
 instance : MeasurableSpace QUD := ⊤
-instance : DiscreteMeasurableSpace QUD := ⟨fun _ => trivial⟩
+instance : DiscreteMeasurableSpace QUD := ⟨fun _ ↦ trivial⟩
 instance : Nonempty QUD := ⟨.state⟩
 
 /-- The projection of a question (eq. 1) reads off the state, the valence, or the arousal. -/
@@ -82,19 +83,10 @@ noncomputable def L0 (μ : Measure Meaning) : Kernel Weather Meaning :=
 instance (μ : Measure Meaning) : IsFiniteKernel (L0 μ) :=
   inferInstanceAs (IsFiniteKernel (listener _ (truthful _)))
 
-theorem L0_apply_singleton_ne_zero_iff (μ : Measure Meaning) [IsFiniteMeasure μ] (u : Weather)
-    (m : Meaning) : L0 μ u {m} ≠ 0 ↔ m.1 = u ∧ μ {m} ≠ 0 := by
-  by_cases h : m ∈ sem u
-  · rw [L0, listener_truthful_apply_singleton μ sem h]
-    exact ⟨fun h' => ⟨h, (mul_ne_zero_iff.mp h').2⟩,
-      fun h' => mul_ne_zero (ENNReal.inv_ne_zero.mpr (measure_ne_top _ _)) h'.2⟩
-  · rw [L0, listener_truthful_apply_singleton_of_notMem μ sem h]
-    exact iff_of_false (fun h' => h' rfl) (fun h' => h h'.1)
-
-/-- The question-indexed speaker is the best response to the projected literal listener of the
-question at rationality `α`, with no utterance cost. -/
+/-- The question-indexed speaker knows the answer to her question and is informative about the
+literal listener's belief about it (eq. 1), at rationality `α` and no utterance cost. -/
 noncomputable def S1 (μ : Measure Meaning) (α : ℝ) (p : Meaning × QUD) : Measure Weather :=
-  speaker α 0 (projListener project (L0 μ) p.2) Measure.dirac p.1
+  speaker α 0 ((L0 μ).map (project p.2)) Measure.dirac (project p.2 p.1)
 
 instance (μ : Measure Meaning) (α : ℝ) (p : Meaning × QUD) : IsFiniteMeasure (S1 μ α p) :=
   inferInstanceAs (IsFiniteMeasure (speaker _ _ _ _ _))
@@ -108,33 +100,17 @@ noncomputable def L1 (μ : Measure Meaning) [IsProbabilityMeasure μ] (ν : Meas
 variable (μ : Measure Meaning) [IsProbabilityMeasure μ] (ν : Measure QUD)
   [IsProbabilityMeasure ν] (α : ℝ)
 
-/-- A question's speaker produces an utterance at a meaning exactly when the meaning's cell
-holds a meaning of positive prior at which the utterance is literally true. -/
-theorem S1_apply_singleton_ne_zero_iff (hα : 0 < α) (q : QUD) (m : Meaning) (u : Weather) :
-    S1 μ α (m, q) {u} ≠ 0 ↔ ∃ m', project q m' = project q m ∧ m'.1 = u ∧ μ {m'} ≠ 0 := by
-  rw [S1]
-  constructor
-  · intro h
-    have hL : projListener project (L0 μ) q u {m} ≠ 0 := fun h' =>
-      h (speaker_dirac_apply_singleton_eq_zero hα h')
-    rw [projListener_apply_singleton_ne_zero_iff] at hL
-    obtain ⟨m', hm', h0⟩ := hL
-    exact ⟨m', hm', (L0_apply_singleton_ne_zero_iff μ u m').mp h0⟩
-  · rintro ⟨m', hm', hu, hμ⟩
-    exact speaker_dirac_apply_singleton_ne_zero hα.le
-      ((projListener_apply_singleton_ne_zero_iff _ _ _ _ _).mpr
-        ⟨m', hm', (L0_apply_singleton_ne_zero_iff μ u m').mpr ⟨hu, hμ⟩⟩)
-
 /-- A meaning is a possible interpretation of an utterance exactly when it has positive prior
-and some question of positive prior projects it into the cell of a meaning of positive prior at
-which the utterance is literally true. -/
+and, under some question of positive prior, shares its answer with a meaning of positive prior
+at which the utterance is literally true. -/
 theorem listener_ne_zero_iff (hα : 0 < α) (u : Weather) (m : Meaning) :
     (L1 μ ν α u).fst {m} ≠ 0 ↔ μ {m} ≠ 0 ∧
       ∃ q, ν {q} ≠ 0 ∧ ∃ m', project q m' = project q m ∧ m'.1 = u ∧ μ {m'} ≠ 0 := by
-  rw [L1, listener_fst_apply_singleton_ne_zero_iff]
-  simp only [← S1_apply_singleton_ne_zero_iff μ α hα, ← Set.singleton_prod_singleton,
-    Measure.prod_prod, mul_ne_zero_iff]
-  exact ⟨fun ⟨q, ⟨hm, hq⟩, hs⟩ => ⟨hm, q, hq, hs⟩, fun ⟨hm, q, hq, hs⟩ => ⟨q, ⟨hm, hq⟩, hs⟩⟩
+  rw [L1]
+  refine (listener_prod_speaker_map_dirac_fst_apply_singleton_ne_zero_iff hα 0 (L0 μ) project μ ν
+    u m).trans ?_
+  simp only [L0, listener_truthful_apply_singleton_ne_zero_iff]
+  rfl
 
 /-- Under the valence question, "terrible" can hyperbolically mean bad weather with negative
 valence, through the negative valence of terrible weather. -/
