@@ -75,10 +75,8 @@ theorem langs_of_recognizes {N : Type u} [Monoid N] (hN : V.mem N) {η : FreeMon
     (h : Recognizes η L) : V.langs L :=
   V.mem_quotient_of_le (ker_le_syntacticCon_of_recognizes h) (V.mem_quotient_ker η hN)
 
-theorem langs_compl (h : V.langs L) : V.langs Lᶜ := by
-  show V.mem (syntacticCon Lᶜ).Quotient
-  rw [syntacticCon_compl]
-  exact h
+theorem langs_compl (h : V.langs L) : V.langs Lᶜ :=
+  langs_of_syntacticCon_le h syntacticCon_compl.ge
 
 theorem langs_inf (hL : V.langs L) (hM : V.langs M) : V.langs (L ⊓ M) :=
   V.mem_quotient_of_le inf_syntacticCon_le_syntacticCon_inf (V.mem_quotient_inf hL hM)
@@ -96,10 +94,8 @@ theorem langs_bot : V.langs (⊥ : Language α) := by
 /-- The languages of `V` are closed under inverse homomorphisms of free monoids. -/
 theorem langs_comap {β : Type u} {Lb : Language β} (h : V.langs Lb)
     (φ : FreeMonoid α →* FreeMonoid β) :
-    V.langs {w : List α | φ (FreeMonoid.ofList w) ∈ Lb} := by
-  obtain ⟨S, hS⟩ := Lb.recognizes_toSyntacticMonoid
-  exact V.langs_of_recognizes h (η := Lb.toSyntacticMonoid.comp φ)
-    ⟨S, Set.ext fun w ↦ Set.ext_iff.mp hS (φ (FreeMonoid.ofList w))⟩
+    V.langs {w : List α | φ (FreeMonoid.ofList w) ∈ Lb} :=
+  V.langs_of_recognizes h (Lb.recognizes_toSyntacticMonoid.comap φ)
 
 variable {V}
 
@@ -124,7 +120,7 @@ end Monoid.Pseudovariety
 
 namespace Semigroup.Pseudovariety
 
-open Language FreeSemigroup
+open Language
 
 variable (V : Pseudovariety.{u}) {α : Type u} {L M : Language α}
 
@@ -148,10 +144,8 @@ theorem langs_of_recognizes {T : Type u} [Semigroup T] (hT : V.mem T)
     {η : FreeSemigroup α →ₙ* T} (h : L.RecognizesSemigroup η) : V.langs L :=
   V.mem_quotient_of_le (ker_le_syntacticSemigroupCon_of_recognizes h) (V.mem_quotient_ker η hT)
 
-theorem langs_compl (h : V.langs L) : V.langs Lᶜ := by
-  show V.mem (syntacticSemigroupCon Lᶜ).Quotient
-  rw [syntacticSemigroupCon_compl]
-  exact h
+theorem langs_compl (h : V.langs L) : V.langs Lᶜ :=
+  langs_of_syntacticSemigroupCon_le h syntacticSemigroupCon_compl.ge
 
 theorem langs_inf (hL : V.langs L) (hM : V.langs M) : V.langs (L ⊓ M) :=
   V.mem_quotient_of_le inf_syntacticSemigroupCon_le_syntacticSemigroupCon_inf
@@ -173,15 +167,8 @@ semigroup has no erasing homomorphisms, which is the difference from the monoid 
 theorem langs_comap {β : Type u} {Lb : Language β} (h : V.langs Lb)
     (φ : FreeSemigroup α →ₙ* FreeSemigroup β) :
     V.langs {w : List α | ∃ u : FreeSemigroup α,
-      u.toFreeMonoid.toList = w ∧ (φ u).toFreeMonoid.toList ∈ Lb} := by
-  refine V.langs_of_recognizes h (η := Lb.toSyntacticSemigroup.comp φ)
-    (recognizesSemigroup_iff.mpr ⟨{m | ∃ u : FreeSemigroup β,
-      Lb.toSyntacticSemigroup u = m ∧ u.toFreeMonoid.toList ∈ Lb}, fun w ↦ ⟨?_, ?_⟩⟩)
-  · rintro ⟨u, hu, hmem⟩
-    obtain rfl : u = w := toFreeMonoid_injective (FreeMonoid.toList.injective hu)
-    exact ⟨φ u, rfl, hmem⟩
-  · rintro ⟨v, hv, hmem⟩
-    exact ⟨w, rfl, (SyntacticEquiv.mem_iff (toSyntacticSemigroup_eq_iff.mp hv)).mp hmem⟩
+      u.toFreeMonoid.toList = w ∧ (φ u).toFreeMonoid.toList ∈ Lb} :=
+  V.langs_of_recognizes h (Lb.recognizesSemigroup_toSyntacticSemigroup.comap φ)
 
 variable {V}
 

@@ -12,7 +12,6 @@ import Linglib.Core.Algebra.Group.Idempotent
 import Linglib.Core.Algebra.Group.Pseudovariety
 import Linglib.Core.Algebra.Group.Submonoid.Operations
 import Linglib.Core.Algebra.Group.Subquotient
-import Linglib.Core.Algebra.Group.WithOne
 import Linglib.Core.Algebra.Opposites
 import Linglib.Core.Algebra.Order.Interval.Set.Instances
 import Linglib.Core.Algebra.RootedTree.BMinus
