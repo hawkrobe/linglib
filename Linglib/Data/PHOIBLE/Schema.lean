@@ -1,7 +1,7 @@
 module
 
 public import Mathlib.Tactic.DeriveFintype
-public import Linglib.Core.Order.Bundle
+public import Linglib.Core.Order.Flat
 
 /-!
 # PHOIBLE 2.0
@@ -84,7 +84,11 @@ inductive Feature where
 
 /-- A feature matrix gives some features the value `+` (`true`) or `−` (`false`) and leaves the
 others unspecified, as PHOIBLE's value `0`, not applicable, does. -/
-abbrev FeatureMatrix := Bundle Feature fun _ ↦ Bool
+abbrev FeatureMatrix := Feature → Flat Bool
+
+/-- The feature matrix that gives each listed feature its value, the first where a feature is
+listed twice, and leaves the others unspecified. -/
+def FeatureMatrix.ofList (l : List (Feature × Bool)) : FeatureMatrix := fun f ↦ l.lookup f
 
 /-- A phoneme of an inventory is a glyph with its feature matrix and what the inventory's source
 records about it. -/

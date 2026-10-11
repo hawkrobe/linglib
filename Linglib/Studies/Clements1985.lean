@@ -67,7 +67,7 @@ flags as possibly superfluous, is dropped by the later geometries formalized her
 root's natural class is the paper's inventory rather than all of Hayes's; `[labial]`
 counts as primary by table (22). Spreading is `Finset.piecewise` on a node's natural class,
 so the trigger's unspecified features under the node replace the target's, as the delinking
-convention of (13) requires; single-feature spreading is `Bundle.assimilate`
+convention of (13) requires; single-feature spreading is `Function.update`
 (`Spreading.apply_feature`). The English segments are the Fragment's; its /r/ is
 [+anterior] where table (10) has [−anterior, −distributed], so the retroflex row of (11)
 (*tree*, *dream*, *enrol*) is not derived. The SPE rule (14) is `Effect.copyRight` on the
@@ -205,9 +205,9 @@ def apply : Segment := σ.features.piecewise src tgt
 theorem apply_eqOn : Set.EqOn (σ.apply src tgt) src ↑σ.features :=
   fun _ hf ↦ Finset.piecewise_eq_of_mem _ _ _ hf
 
-/-- Single-feature spreading is the bundle primitive `Bundle.assimilate`. -/
+/-- Single-feature spreading overwrites the target's value at the feature with the source's. -/
 theorem apply_feature (f : Feature) :
-    (feature f).apply src tgt = Bundle.assimilate f src tgt :=
+    (feature f).apply src tgt = Function.update tgt f (src f) :=
   Finset.piecewise_singleton _ _ _
 
 end Spreading

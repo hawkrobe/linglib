@@ -169,25 +169,25 @@ def cmn : Inventory :=
       allophones := some ["˧", "˨", "˩", "˦", "˥"],
       marginal := none,
       segmentClass := .tone,
-      features := Bundle.ofList [
+      features := .ofList [
         (.tone, true)] },
     { glyph := "˥˦",
       allophones := some ["˥˦"],
       marginal := none,
       segmentClass := .tone,
-      features := Bundle.ofList [
+      features := .ofList [
         (.tone, true)] },
     { glyph := "˧˥",
       allophones := some ["˧˥"],
       marginal := none,
       segmentClass := .tone,
-      features := Bundle.ofList [
+      features := .ofList [
         (.tone, true)] },
     { glyph := "˧˨˥",
       allophones := some ["˧˨", "˧˨˥"],
       marginal := none,
       segmentClass := .tone,
-      features := Bundle.ofList [
+      features := .ofList [
         (.tone, true)] },
     { glyph := "a",
       allophones := some ["ɐ", "ɜ", "æ", "a̟", "ɑ", "a"],

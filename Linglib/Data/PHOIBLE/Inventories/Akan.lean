@@ -64,7 +64,7 @@ def aka : Inventory :=
       allophones := some ["kʷ"],
       marginal := some false,
       segmentClass := .consonant,
-      features := Bundle.ofList [
+      features := .ofList [
         (.syllabic, false), (.short, false), (.long, false), (.consonantal, true),
         (.sonorant, false), (.continuant, false), (.delayedRelease, false),
         (.approximant, false), (.tap, false), (.trill, false), (.nasal, false),
@@ -94,7 +94,7 @@ def aka : Inventory :=
       allophones := some ["nʷ"],
       marginal := some false,
       segmentClass := .consonant,
-      features := Bundle.ofList [
+      features := .ofList [
         (.syllabic, false), (.short, false), (.long, false), (.consonantal, true),
         (.sonorant, true), (.continuant, false), (.approximant, false), (.tap, false),
         (.trill, false), (.nasal, true), (.lateral, false), (.round, true),
@@ -143,25 +143,25 @@ def aka : Inventory :=
       allophones := some ["˦"],
       marginal := some false,
       segmentClass := .tone,
-      features := Bundle.ofList [
+      features := .ofList [
         (.tone, true)] },
     { glyph := "˦˨",
       allophones := some ["˦˨"],
       marginal := some false,
       segmentClass := .tone,
-      features := Bundle.ofList [
+      features := .ofList [
         (.tone, true)] },
     { glyph := "˧",
       allophones := some ["˧"],
       marginal := some false,
       segmentClass := .tone,
-      features := Bundle.ofList [
+      features := .ofList [
         (.tone, true)] },
     { glyph := "˨",
       allophones := some ["˨"],
       marginal := some false,
       segmentClass := .tone,
-      features := Bundle.ofList [
+      features := .ofList [
         (.tone, true)] },
     { glyph := "a",
       allophones := some ["a"],

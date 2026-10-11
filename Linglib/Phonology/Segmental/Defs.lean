@@ -7,7 +7,8 @@ module
 
 public import Mathlib.Tactic.DeriveFintype
 public import Mathlib.Order.Nat
-public import Linglib.Core.Order.Bundle
+public import Mathlib.Data.Finset.Piecewise
+public import Linglib.Core.Order.Flat
 
 /-!
 # Segmental representation: definitions
@@ -117,7 +118,7 @@ end Feature
     one refines another when it agrees on every feature the other commits to, and
     possibly more. The fully unspecified segment is least; the most specific class
     common to two segments is their meet. -/
-abbrev Segment := Bundle Feature fun _ ↦ Bool
+abbrev Segment := Feature → Flat Bool
 
 namespace Segment
 
@@ -138,10 +139,10 @@ instance (f : Feature) : Decidable (s.Unspecified f) := inferInstanceAs (Decidab
 
 /-! ### Construction -/
 
-/-- The segment read off a list of (feature, value) pairs, the `Bundle.ofList` of Hayes's
-    inventory. Unmentioned features are unspecified, giving natural-class semantics:
+/-- The segment read off a list of (feature, value) pairs. Unmentioned features are
+    unspecified, giving natural-class semantics:
     `ofSpecs [(continuant, false)]` lies below every [−cont] segment. -/
-def ofSpecs (specs : List (Feature × Bool)) : Segment := Bundle.ofList specs
+def ofSpecs (specs : List (Feature × Bool)) : Segment := fun f ↦ specs.lookup f
 
 /-- Vowel height — the (±high, ±low) tongue-body axis, with the contradictory
 [+high, +low] combination unrepresentable. -/
@@ -212,17 +213,15 @@ instance : Decidable s.IsGlide := by unfold IsGlide; infer_instance
 
 /-! ### Feature changes
 
-The segment-level operations are thin lifts of the shared `Bundle`
-algebra. Three-valued (`+ / − / ∅`) specification is standard in [keating-1988],
+Three-valued (`+ / − / ∅`) specification is standard in [keating-1988],
 [inkelas-orgun-1995], and [steriade-1995]; `fillFromContext` is default-fill,
 preserving existing values per [kiparsky-1982] [archangeli-1988], while
 `setFeature` overrides. The Latin coda /l/ analysis in [sen-2015] is a worked
 example. -/
 
-/-- Set feature `f` to value `v`, overriding any existing specification (the
-    `Bundle.set` slot operation). For default-fill semantics that only
-    assign when `f` is currently unspecified, use `fillFromContext`. -/
-def setFeature (f : Feature) (v : Bool) : Segment := Bundle.set f v s
+/-- Set feature `f` to value `v`, overriding any existing specification. For default-fill
+    semantics that only assign when `f` is currently unspecified, use `fillFromContext`. -/
+def setFeature (f : Feature) (v : Bool) : Segment := Function.update s f (some v)
 
 /-- Categorical feature spreading from context: the target `s`, when unspecified
     for `f`, takes the `f`-value of `ctx`; already-specified targets and features
@@ -236,7 +235,10 @@ def setFeature (f : Feature) (v : Bool) : Segment := Bundle.set f v s
     phonetics builds a continuous trajectory through it; gradient phonetic
     interpolation is out of scope at this categorical-featural substrate. -/
 def fillFromContext (f : Feature) (ctx : Segment) : Segment :=
-  Bundle.merge s (Function.update (⊥ : Segment) f (ctx f))
+  fun g ↦ (s g).or (Function.update (⊥ : Segment) f (ctx f) g)
+
+/-- The segment kept on the features in `C` and unspecified on the rest. -/
+def restrict (C : Finset Feature) (s : Segment) : Segment := C.piecewise s ⊥
 
 end Segment
 

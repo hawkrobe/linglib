@@ -32,7 +32,7 @@ The placement is `Option`-valued so that a geometry may leave features of the in
 unplaced. A study orders its tree by the parent map, `a ≤ b` when `a` lies on the walk from `b`
 up to the root, the root as `⊥` and the parent as `Order.pred`, every axiom decided. Spreading
 any set of terminals, Halle, Vaux and Wolfe's partial spreading, is `Finset.piecewise` on that
-set, and single-feature spreading is `Bundle.assimilate`.
+set, and single-feature spreading is `Function.update`.
 
 ## References
 

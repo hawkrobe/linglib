@@ -6,7 +6,6 @@ Authors: Robert Hawkins
 module
 
 public import Mathlib.Logic.Equiv.Defs
-public import Linglib.Core.Order.Bundle
 
 /-!
 # Tonal root nodes and subtonal features
@@ -20,8 +19,7 @@ shifts; the terracing reading of `[raised]` is `Tone.Register`.
 ## Main definitions
 
 * `Subtonal`, `TRN` — the two feature dimensions and the root node; `TRN.bundleEquiv`
-  identifies a root node with its feature bundle `Subtonal → Option Bool`
-  (`Bundle`).
+  identifies a root node with its feature bundle `Subtonal → Option Bool`.
 * `TRN.H`, `TRN.M`, `TRN.L`, `TRN.superHigh` — the four full specifications;
   `TRN.empty`, `TRN.downstep`, `TRN.upstep` — the register-only nodes.
 * `TRN.assimilate`, `TRN.merge`, `TRN.dock` — the feature operations, through the bundle.
@@ -101,21 +99,21 @@ def bundleEquiv : TRN ≃ (Subtonal → Option Bool) where
 its other feature untouched. Laal M-lowering ([lionnet-2022] §5.2) is `assimilate .raised`:
 a `[-raised]` value spreads onto M, `[-upper, +raised]`, giving L. -/
 def assimilate (f : Subtonal) (src tgt : TRN) : TRN :=
-  ofBundle (Bundle.assimilate f src.toBundle tgt.toBundle)
+  ofBundle (Function.update tgt.toBundle f (src.toBundle f))
 
 /-- **Merger** of two nodes ([lionnet-2022] ex. 53–54): each feature from the left node
-where it is specified, else from the right (`Bundle.merge`) — the fusion of two
+where it is specified, else from the right — the fusion of two
 associated tones ([goldsmith-1976]); the tier-level merger of a run of identical tones is
 `OCP.collapse`. -/
-def merge (t₁ t₂ : TRN) : TRN := ofBundle (Bundle.merge t₁.toBundle t₂.toBundle)
+def merge (t₁ t₂ : TRN) : TRN := ofBundle fun f ↦ (t₁.toBundle f).or (t₂.toBundle f)
 
 @[simp] theorem merge_self (t : TRN) : merge t t = t := by
-  simp only [merge, Bundle.merge_self, ofBundle_toBundle]
+  cases t with | mk u r => cases u <;> cases r <;> rfl
 
 /-- **Docking** of a floating feature ([lionnet-2022] §5.3): a free `[±f]` lands on a node,
 overwriting its value at `f`. -/
 def dock (f : Subtonal) (v : Bool) (t : TRN) : TRN :=
-  ofBundle (Bundle.set f v t.toBundle)
+  ofBundle (Function.update t.toBundle f (some v))
 
 end TRN
 

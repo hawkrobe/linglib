@@ -39,7 +39,7 @@ def rus : Inventory :=
       allophones := some ["bʲ"],
       marginal := none,
       segmentClass := .consonant,
-      features := Bundle.ofList [
+      features := .ofList [
         (.syllabic, false), (.short, false), (.long, false), (.consonantal, true),
         (.sonorant, false), (.continuant, false), (.delayedRelease, false),
         (.approximant, false), (.tap, false), (.trill, false), (.nasal, false),
@@ -59,7 +59,7 @@ def rus : Inventory :=
       allophones := some ["d̻ⁿʲ", "d̻ˡʲ", "d̻ʲ"],
       marginal := none,
       segmentClass := .consonant,
-      features := Bundle.ofList [
+      features := .ofList [
         (.syllabic, false), (.short, false), (.long, false), (.consonantal, true),
         (.sonorant, false), (.continuant, false), (.delayedRelease, false),
         (.approximant, false), (.tap, false), (.trill, false), (.nasal, false),
@@ -79,7 +79,7 @@ def rus : Inventory :=
       allophones := some ["fʲ"],
       marginal := none,
       segmentClass := .consonant,
-      features := Bundle.ofList [
+      features := .ofList [
         (.syllabic, false), (.short, false), (.long, false), (.consonantal, true),
         (.sonorant, false), (.continuant, true), (.delayedRelease, true), (.approximant, false),
         (.tap, false), (.trill, false), (.nasal, false), (.lateral, false), (.labial, true),
@@ -103,7 +103,7 @@ def rus : Inventory :=
       allophones := some ["kʲ"],
       marginal := none,
       segmentClass := .consonant,
-      features := Bundle.ofList [
+      features := .ofList [
         (.syllabic, false), (.short, false), (.long, false), (.consonantal, true),
         (.sonorant, false), (.continuant, false), (.delayedRelease, false),
         (.approximant, false), (.tap, false), (.trill, false), (.nasal, false),
@@ -117,7 +117,7 @@ def rus : Inventory :=
       allophones := some ["l̥ʲ", "lʲ"],
       marginal := none,
       segmentClass := .consonant,
-      features := Bundle.ofList [
+      features := .ofList [
         (.syllabic, false), (.short, false), (.long, false), (.consonantal, true),
         (.sonorant, true), (.continuant, true), (.approximant, true), (.tap, false),
         (.trill, false), (.nasal, false), (.lateral, true), (.labial, false), (.coronal, true),
@@ -131,7 +131,7 @@ def rus : Inventory :=
       allophones := some ["l̥ˠ", "lˠ"],
       marginal := none,
       segmentClass := .consonant,
-      features := Bundle.ofList [
+      features := .ofList [
         (.syllabic, false), (.short, false), (.long, false), (.consonantal, true),
         (.sonorant, true), (.continuant, true), (.approximant, true), (.tap, false),
         (.trill, false), (.nasal, false), (.lateral, true), (.labial, false), (.coronal, true),
@@ -150,7 +150,7 @@ def rus : Inventory :=
       allophones := some ["mʲ"],
       marginal := none,
       segmentClass := .consonant,
-      features := Bundle.ofList [
+      features := .ofList [
         (.syllabic, false), (.short, false), (.long, false), (.consonantal, true),
         (.sonorant, true), (.continuant, false), (.approximant, false), (.tap, false),
         (.trill, false), (.nasal, true), (.lateral, false), (.labial, true), (.round, false),
@@ -169,7 +169,7 @@ def rus : Inventory :=
       allophones := some ["n̻ʲ", "n̻̥ʲ"],
       marginal := none,
       segmentClass := .consonant,
-      features := Bundle.ofList [
+      features := .ofList [
         (.syllabic, false), (.short, false), (.long, false), (.consonantal, true),
         (.sonorant, true), (.continuant, false), (.approximant, false), (.tap, false),
         (.trill, false), (.nasal, true), (.lateral, false), (.labial, false), (.coronal, true),
@@ -188,7 +188,7 @@ def rus : Inventory :=
       allophones := some ["pʲ"],
       marginal := none,
       segmentClass := .consonant,
-      features := Bundle.ofList [
+      features := .ofList [
         (.syllabic, false), (.short, false), (.long, false), (.consonantal, true),
         (.sonorant, false), (.continuant, false), (.delayedRelease, false),
         (.approximant, false), (.tap, false), (.trill, false), (.nasal, false),
@@ -208,7 +208,7 @@ def rus : Inventory :=
       allophones := some ["r̥ʲ", "ɾʲ", "rʲ"],
       marginal := none,
       segmentClass := .consonant,
-      features := Bundle.ofList [
+      features := .ofList [
         (.syllabic, false), (.short, false), (.long, false), (.consonantal, true),
         (.sonorant, true), (.continuant, true), (.approximant, true), (.tap, false),
         (.trill, true), (.nasal, false), (.lateral, false), (.labial, false), (.coronal, true),
@@ -227,7 +227,7 @@ def rus : Inventory :=
       allophones := some ["sʲ"],
       marginal := none,
       segmentClass := .consonant,
-      features := Bundle.ofList [
+      features := .ofList [
         (.syllabic, false), (.short, false), (.long, false), (.consonantal, true),
         (.sonorant, false), (.continuant, true), (.delayedRelease, true), (.approximant, false),
         (.tap, false), (.trill, false), (.nasal, false), (.lateral, false), (.labial, false),
@@ -252,7 +252,7 @@ def rus : Inventory :=
       allophones := some ["t̠ʃʲ", "d̠ʒʲ"],
       marginal := none,
       segmentClass := .consonant,
-      features := Bundle.ofList [
+      features := .ofList [
         (.syllabic, false), (.short, false), (.long, false), (.consonantal, true),
         (.sonorant, false), (.continuant, false), (.delayedRelease, true),
         (.approximant, false), (.tap, false), (.trill, false), (.nasal, false),
@@ -267,7 +267,7 @@ def rus : Inventory :=
       allophones := some ["t̚ʲ", "t̻ʲ", "t̻ˡʲ", "t̻ⁿʲ"],
       marginal := none,
       segmentClass := .consonant,
-      features := Bundle.ofList [
+      features := .ofList [
         (.syllabic, false), (.short, false), (.long, false), (.consonantal, true),
         (.sonorant, false), (.continuant, false), (.delayedRelease, false),
         (.approximant, false), (.tap, false), (.trill, false), (.nasal, false),
@@ -287,7 +287,7 @@ def rus : Inventory :=
       allophones := some ["vʲ"],
       marginal := none,
       segmentClass := .consonant,
-      features := Bundle.ofList [
+      features := .ofList [
         (.syllabic, false), (.short, false), (.long, false), (.consonantal, true),
         (.sonorant, false), (.continuant, true), (.delayedRelease, true), (.approximant, false),
         (.tap, false), (.trill, false), (.nasal, false), (.lateral, false), (.labial, true),
@@ -311,7 +311,7 @@ def rus : Inventory :=
       allophones := some ["zʲ"],
       marginal := none,
       segmentClass := .consonant,
-      features := Bundle.ofList [
+      features := .ofList [
         (.syllabic, false), (.short, false), (.long, false), (.consonantal, true),
         (.sonorant, false), (.continuant, true), (.delayedRelease, true), (.approximant, false),
         (.tap, false), (.trill, false), (.nasal, false), (.lateral, false), (.labial, false),
@@ -331,7 +331,7 @@ def rus : Inventory :=
       allophones := some ["ʃʲ", "ʃˠ"],
       marginal := none,
       segmentClass := .consonant,
-      features := Bundle.ofList [
+      features := .ofList [
         (.syllabic, false), (.short, false), (.long, false), (.consonantal, true),
         (.sonorant, false), (.continuant, true), (.delayedRelease, true), (.approximant, false),
         (.tap, false), (.trill, false), (.nasal, false), (.lateral, false), (.labial, false),
@@ -346,7 +346,7 @@ def rus : Inventory :=
       allophones := some ["ʒˠ"],
       marginal := none,
       segmentClass := .consonant,
-      features := Bundle.ofList [
+      features := .ofList [
         (.syllabic, false), (.short, false), (.long, false), (.consonantal, true),
         (.sonorant, false), (.continuant, true), (.delayedRelease, true), (.approximant, false),
         (.tap, false), (.trill, false), (.nasal, false), (.lateral, false), (.labial, false),

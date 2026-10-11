@@ -79,7 +79,7 @@ def arb : Inventory :=
       allophones := some ["lˤ"],
       marginal := some false,
       segmentClass := .consonant,
-      features := Bundle.ofList [
+      features := .ofList [
         (.syllabic, false), (.short, false), (.long, false), (.consonantal, true),
         (.sonorant, true), (.continuant, true), (.approximant, true), (.tap, false),
         (.trill, false), (.nasal, false), (.lateral, true), (.labial, false), (.coronal, true),
@@ -137,7 +137,7 @@ def arb : Inventory :=
       allophones := some ["xʀ̥"],
       marginal := some false,
       segmentClass := .consonant,
-      features := Bundle.ofList [
+      features := .ofList [
         (.syllabic, false), (.short, false), (.long, false), (.consonantal, true),
         (.continuant, true), (.delayedRelease, true), (.tap, false), (.nasal, false),
         (.lateral, false), (.labial, false), (.coronal, false), (.dorsal, true), (.low, false),
@@ -200,7 +200,7 @@ def arb : Inventory :=
       allophones := some ["ai"],
       marginal := some false,
       segmentClass := .vowel,
-      features := Bundle.ofList [
+      features := .ofList [
         (.syllabic, true), (.short, false), (.long, false), (.consonantal, false),
         (.sonorant, true), (.continuant, true), (.approximant, true), (.tap, false),
         (.trill, false), (.nasal, false), (.lateral, false), (.labial, false),
@@ -213,7 +213,7 @@ def arb : Inventory :=
       allophones := some ["au"],
       marginal := some false,
       segmentClass := .vowel,
-      features := Bundle.ofList [
+      features := .ofList [
         (.syllabic, true), (.short, false), (.long, false), (.consonantal, false),
         (.sonorant, true), (.continuant, true), (.approximant, true), (.tap, false),
         (.trill, false), (.nasal, false), (.lateral, false), (.round, true),
@@ -236,7 +236,7 @@ def arb : Inventory :=
       allophones := some ["ɨ", "ii̯"],
       marginal := some false,
       segmentClass := .vowel,
-      features := Bundle.ofList [
+      features := .ofList [
         (.short, false), (.long, false), (.consonantal, false), (.sonorant, true),
         (.continuant, true), (.approximant, true), (.tap, false), (.trill, false),
         (.nasal, false), (.lateral, false), (.labial, false), (.coronal, false),
@@ -254,7 +254,7 @@ def arb : Inventory :=
       allophones := some ["ɣ", "uu̯"],
       marginal := some false,
       segmentClass := .vowel,
-      features := Bundle.ofList [
+      features := .ofList [
         (.short, false), (.long, false), (.consonantal, false), (.sonorant, true),
         (.continuant, true), (.approximant, true), (.tap, false), (.trill, false),
         (.nasal, false), (.lateral, false), (.labial, true), (.round, true),

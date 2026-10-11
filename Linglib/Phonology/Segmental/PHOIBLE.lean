@@ -97,18 +97,19 @@ open Phonology
 /-- The segment of a feature matrix has the matrix's value for each of Hayes's features, and
 [−round] where PHOIBLE marks [round] not applicable. -/
 def toSegment (m : FeatureMatrix) : Segment :=
-  Bundle.merge (Bundle.comap Feature.toPHOIBLE m) (Segment.ofSpecs [(.round, false)])
+  fun f ↦ (m f.toPHOIBLE).or (Segment.ofSpecs [(.round, false)] f)
 
 theorem toSegment_apply_of_ne_round (m : FeatureMatrix) {f : Phonology.Feature}
-    (h : f ≠ .round) : m.toSegment f = m f.toPHOIBLE :=
-  Bundle.merge_apply_of_right_eq_none _ (by cases f <;> first | rfl | exact absurd rfl h)
+    (h : f ≠ .round) : m.toSegment f = m f.toPHOIBLE := by
+  show (m f.toPHOIBLE).or (Segment.ofSpecs [(.round, false)] f) = m f.toPHOIBLE
+  rw [show Segment.ofSpecs [(.round, false)] f = ⊥ by
+    cases f <;> first | rfl | exact absurd rfl h]
+  exact Flat.or_bot _
 
 /-- Every segment of a matrix is specified for [round]. -/
 theorem toSegment_round_ne_bot (m : FeatureMatrix) : m.toSegment .round ≠ ⊥ := by
-  unfold toSegment Bundle.merge
-  split
-  · exact Option.some_ne_none _
-  · exact Option.some_ne_none false
+  show (m (Phonology.Feature.toPHOIBLE .round)).or (some false) ≠ ⊥
+  cases m (Phonology.Feature.toPHOIBLE .round) <;> exact Option.some_ne_none _
 
 /-! ### Witnesses from the chart -/
 
@@ -134,11 +135,12 @@ open Data.PHOIBLE
 those of `m` elsewhere, kept on the features in `contrastive`. -/
 def ofChart (m : FeatureMatrix) (departure : Segment := ⊥)
     (contrastive : Finset Feature := Finset.univ) : Segment :=
-  Bundle.restrict contrastive (Bundle.merge departure m.toSegment)
+  Segment.restrict contrastive fun f ↦ (departure f).or (m.toSegment f)
 
 theorem ofChart_apply {m : FeatureMatrix} {departure : Segment} {contrastive : Finset Feature}
     {f : Feature} (hf : f ∈ contrastive) (hd : departure f = none) :
     ofChart m departure contrastive f = m.toSegment f := by
-  rw [ofChart, Bundle.restrict_apply_of_mem _ hf, Bundle.merge_apply_of_eq_none hd]
+  rw [ofChart, Segment.restrict, Finset.piecewise_eq_of_mem _ _ _ hf, hd]
+  rfl
 
 end Phonology.Segment

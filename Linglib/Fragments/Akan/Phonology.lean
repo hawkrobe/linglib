@@ -127,8 +127,8 @@ def tcCurl : Segment := .ofChart .«k» palatalized
 
 /-- The affricate has the stop's values off the features palatalization writes. -/
 theorem restrict_tcCurl_eq_k :
-    Bundle.restrict ({.coronal, .anterior, .distributed, .delayedRelease}ᶜ) tcCurl =
-      Bundle.restrict ({.coronal, .anterior, .distributed, .delayedRelease}ᶜ) k := by
+    Segment.restrict ({.coronal, .anterior, .distributed, .delayedRelease}ᶜ) tcCurl =
+      Segment.restrict ({.coronal, .anterior, .distributed, .delayedRelease}ᶜ) k := by
   decide
 
 /-- Palatalization changes the value of [coronal]. -/
