@@ -20,7 +20,8 @@
         "predicative"
       ]
     ],
-    "comment": "The predicative use of the number word."
+    "comment": "The predicative use of the number word.",
+    "verified": "page-image"
   },
   {
     "id": "snyder2026_1b",
@@ -43,7 +44,8 @@
         "attributive"
       ]
     ],
-    "comment": "The attributive use."
+    "comment": "The attributive use.",
+    "verified": "page-image"
   },
   {
     "id": "snyder2026_1c",
@@ -66,7 +68,8 @@
         "quantificational"
       ]
     ],
-    "comment": "The quantificational use."
+    "comment": "The quantificational use.",
+    "verified": "page-image"
   },
   {
     "id": "snyder2026_1d",
@@ -89,7 +92,8 @@
         "specificational"
       ]
     ],
-    "comment": "The specificational use."
+    "comment": "The specificational use.",
+    "verified": "page-image"
   },
   {
     "id": "snyder2026_1e",
@@ -112,7 +116,8 @@
         "numeral"
       ]
     ],
-    "comment": "The numeral use, a name."
+    "comment": "The numeral use, a name.",
+    "verified": "page-image"
   },
   {
     "id": "snyder2026_1f",
@@ -135,7 +140,8 @@
         "closeAppositive"
       ]
     ],
-    "comment": "The close appositive, a singular term coreferential with the numeral."
+    "comment": "The close appositive, a singular term coreferential with the numeral.",
+    "verified": "page-image"
   },
   {
     "id": "snyder2026_4a",
@@ -158,7 +164,8 @@
         "taxonomic"
       ]
     ],
-    "comment": "A taxonomic use: the number word predicates a property of subkinds of TWO; repeated as (76j)."
+    "comment": "A taxonomic use: the number word predicates a property of subkinds of TWO; repeated as (76j).",
+    "verified": "page-image"
   },
   {
     "id": "snyder2026_4b",
@@ -181,7 +188,8 @@
         "kindRef"
       ]
     ],
-    "comment": "Reference to the superordinate kind TWO; repeated as (76i)."
+    "comment": "Reference to the superordinate kind TWO; repeated as (76i).",
+    "verified": "page-image"
   },
   {
     "id": "snyder2026_20a",
@@ -204,7 +212,8 @@
         "closeAppositive"
       ]
     ],
-    "comment": "True: the close appositive refers to the von Neumann ordinal {∅, {∅}}, a subkind of TWO."
+    "comment": "True: the close appositive refers to the von Neumann ordinal {∅, {∅}}, a subkind of TWO.",
+    "verified": "page-image"
   },
   {
     "id": "snyder2026_20b",
@@ -227,7 +236,8 @@
         "closeAppositive"
       ]
     ],
-    "comment": "True: the close appositive refers to the Zermelo ordinal {{∅}}, a distinct subkind of TWO; on extant analyses the two close appositives are wrongly coreferential."
+    "comment": "True: the close appositive refers to the Zermelo ordinal {{∅}}, a distinct subkind of TWO; on extant analyses the two close appositives are wrongly coreferential.",
+    "verified": "page-image"
   },
   {
     "id": "snyder2026_76g",
@@ -250,7 +260,8 @@
         "tokenRef"
       ]
     ],
-    "comment": "Reference to a numeral token by the numeral."
+    "comment": "Reference to a numeral token by the numeral.",
+    "verified": "page-image"
   },
   {
     "id": "snyder2026_76h",
@@ -273,7 +284,8 @@
         "tokenPredicate"
       ]
     ],
-    "comment": "The lexical predicate applied to a numeral token."
+    "comment": "The lexical predicate applied to a numeral token.",
+    "verified": "page-image"
   },
   {
     "id": "snyder2026_83",
@@ -296,7 +308,8 @@
         "numeral"
       ]
     ],
-    "comment": "Both utterances are true: the numeral refers to different subkinds of TWO in the two contexts, Benacerraf's Identification Problem dissolved."
+    "comment": "Both utterances are true: the numeral refers to different subkinds of TWO in the two contexts, Benacerraf's Identification Problem dissolved.",
+    "verified": "page-image"
   },
   {
     "id": "snyder2026_94a",
@@ -319,7 +332,8 @@
         "taxonomic"
       ]
     ],
-    "comment": "A colour word as a predicate of subkinds of RED."
+    "comment": "A colour word as a predicate of subkinds of RED.",
+    "verified": "page-image"
   },
   {
     "id": "snyder2026_94b",
@@ -342,7 +356,8 @@
         "kindRef"
       ]
     ],
-    "comment": "Reference to the kind RED, of which crimson and maroon are subkinds."
+    "comment": "Reference to the kind RED, of which crimson and maroon are subkinds.",
+    "verified": "page-image"
   },
   {
     "id": "snyder2026_98",
@@ -365,6 +380,7 @@
         "tokenRef"
       ]
     ],
-    "comment": "Reference to a concrete colour token by the colour name or its close appositive."
+    "comment": "Reference to a concrete colour token by the colour name or its close appositive.",
+    "verified": "page-image"
   }
 ]

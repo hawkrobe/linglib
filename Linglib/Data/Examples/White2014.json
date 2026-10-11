@@ -16,7 +16,8 @@
       ["complement", "finite"],
       ["inference", "presupposes (2)"]
     ],
-    "comment": "Factive with a finite complement: (2) survives negation, questioning and conditional antecedents (3)."
+    "comment": "Factive with a finite complement: (2) survives negation, questioning and conditional antecedents (3).",
+    "verified": "page-image"
   },
   {
     "id": "white2014_2",
@@ -35,7 +36,8 @@
       ["complement", "infinitive"],
       ["inference", "entails (2)"]
     ],
-    "comment": "Implicative with a control infinitive: (2) is entailed but not presupposed (4)."
+    "comment": "Implicative with a control infinitive: (2) is entailed but not presupposed (4).",
+    "verified": "page-image"
   },
   {
     "id": "white2014_3",
@@ -53,7 +55,8 @@
     "paperFeatures": [
       ["role", "the embedded content"]
     ],
-    "comment": "Implied by both sentences of (1), as a presupposition of (1a) and an entailment of (1b)."
+    "comment": "Implied by both sentences of (1), as a presupposition of (1a) and an entailment of (1b).",
+    "verified": "page-image"
   },
   {
     "id": "white2014_4",
@@ -73,7 +76,8 @@
       ["test", "negation"],
       ["inference", "still implies (2)"]
     ],
-    "comment": "The embedded content of the finite complement is inert under negation."
+    "comment": "The embedded content of the finite complement is inert under negation.",
+    "verified": "page-image"
   },
   {
     "id": "white2014_5",
@@ -93,7 +97,8 @@
       ["test", "negation"],
       ["inference", "implies the negation of (2)"]
     ],
-    "comment": "Negation interacts with the embedded content: the negative implicative entailment."
+    "comment": "Negation interacts with the embedded content: the negative implicative entailment.",
+    "verified": "page-image"
   },
   {
     "id": "white2014_6",
@@ -112,7 +117,8 @@
       ["verb", "hope"],
       ["complement", "infinitive"]
     ],
-    "comment": "A nonfactive verb with a control infinitive: factivity and implicativity are distributionally independent of finiteness."
+    "comment": "A nonfactive verb with a control infinitive: factivity and implicativity are distributionally independent of finiteness.",
+    "verified": "page-image"
   },
   {
     "id": "white2014_7",
@@ -131,7 +137,8 @@
       ["verb", "turn out"],
       ["complement", "finite"]
     ],
-    "comment": "An implicative verb with a finite complement."
+    "comment": "An implicative verb with a finite complement.",
+    "verified": "page-image"
   },
   {
     "id": "white2014_8",
@@ -150,7 +157,8 @@
       ["complement", "finite with overt modal"],
       ["inference", "presupposes (7b)"]
     ],
-    "comment": "Presupposes that Bo had to take the trash out, as (1b) does: the presuppositional modality of the infinitive is that of an overt modal."
+    "comment": "Presupposes that Bo had to take the trash out, as (1b) does: the presuppositional modality of the infinitive is that of an overt modal.",
+    "verified": "page-image"
   },
   {
     "id": "white2014_9",
@@ -169,7 +177,8 @@
       ["complement", "infinitive"],
       ["test", "denial of obligation"]
     ],
-    "comment": "The presuppositional modality cannot be denied with the infinitive."
+    "comment": "The presuppositional modality cannot be denied with the infinitive. The # is printed before the even-though clause.",
+    "verified": "page-image"
   },
   {
     "id": "white2014_10",
@@ -188,7 +197,8 @@
       ["complement", "finite"],
       ["test", "denial of obligation"]
     ],
-    "comment": "No presuppositional modality with the finite complement, so it is not encoded in the verb."
+    "comment": "No presuppositional modality with the finite complement, so it is not encoded in the verb.",
+    "verified": "page-image"
   },
   {
     "id": "white2014_11",
@@ -206,7 +216,8 @@
     "paperFeatures": [
       ["test", "coordination"]
     ],
-    "comment": "Remember distributes over a control complement and a that-clause, against an ambiguity between two verbs."
+    "comment": "Remember distributes over a control complement and a that-clause, against an ambiguity between two verbs.",
+    "verified": "page-image"
   },
   {
     "id": "white2014_12",
@@ -224,7 +235,8 @@
     "paperFeatures": [
       ["test", "gapping"]
     ],
-    "comment": "Gapping across the two complement types."
+    "comment": "Gapping across the two complement types.",
+    "verified": "page-image"
   },
   {
     "id": "white2014_13",
@@ -235,14 +247,15 @@
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
-    "context": "In the context of (9a).",
+    "context": "In the same context as (9a).",
     "judgment": "unacceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
       ["test", "detachability"]
     ],
-    "comment": "The modalized presupposition is not detachable from the first conjunct of (9a)."
+    "comment": "The modalized presupposition is not detachable from the first conjunct of (9a).",
+    "verified": "page-image"
   },
   {
     "id": "white2014_14",
@@ -261,7 +274,8 @@
       ["complement", "infinitive"],
       ["test", "again"]
     ],
-    "comment": "The sentence whose restructuring the again test probes."
+    "comment": "The sentence whose restructuring the again test probes.",
+    "verified": "page-image"
   },
   {
     "id": "white2014_15",
@@ -281,7 +295,8 @@
       ["test", "again"],
       ["previous", "remembering only"]
     ],
-    "comment": "Matrix again is felicitous without a previous filling: it modifies only the remembering."
+    "comment": "Matrix again is felicitous without a previous filling: it modifies only the remembering.",
+    "verified": "page-image"
   },
   {
     "id": "white2014_16",
@@ -301,7 +316,8 @@
       ["test", "again"],
       ["previous", "filling only"]
     ],
-    "comment": "Infelicitous without a previous remembering."
+    "comment": "Infelicitous without a previous remembering.",
+    "verified": "page-image"
   },
   {
     "id": "white2014_17",
@@ -321,7 +337,8 @@
       ["test", "again"],
       ["previous", "remembering only"]
     ],
-    "comment": "Infelicitous without a previous filling: the embedded event is accessible from the matrix."
+    "comment": "Infelicitous without a previous filling: the embedded event is accessible from the matrix.",
+    "verified": "page-image"
   },
   {
     "id": "white2014_18",
@@ -341,7 +358,8 @@
       ["test", "again"],
       ["previous", "filling only"]
     ],
-    "comment": "Infelicitous without a previous remembering too: again modifies the compound event."
+    "comment": "Infelicitous without a previous remembering too: again modifies the compound event.",
+    "verified": "page-image"
   },
   {
     "id": "white2014_19",
@@ -361,7 +379,8 @@
       ["test", "again"],
       ["previous", "hoping only"]
     ],
-    "comment": "Hope to patterns with remember that: no semantic restructuring."
+    "comment": "Hope to patterns with remember that: no semantic restructuring.",
+    "verified": "page-image"
   },
   {
     "id": "white2014_20",
@@ -380,7 +399,8 @@
       ["complement", "finite with overt modal"],
       ["inference", "no actuality entailment"]
     ],
-    "comment": "A modalized presupposition alone does not yield an actuality entailment."
+    "comment": "A modalized presupposition alone does not yield an actuality entailment.",
+    "verified": "page-image"
   },
   {
     "id": "white2014_21",
@@ -399,6 +419,7 @@
       ["verb", "hope"],
       ["test", "coordination"]
     ],
-    "comment": "Hope also coordinates a control complement with a that-clause."
+    "comment": "Hope also coordinates a control complement with a that-clause. (33) prints hoped/expected; this row records hoped.",
+    "verified": "page-image"
   }
 ]

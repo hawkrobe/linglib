@@ -16,7 +16,8 @@
     ],
     "paperFeatures": [
       ["np", "cn"]
-    ]
+    ],
+    "verified": "page-image"
   },
   {
     "id": "purverginzburg2004_ex26",
@@ -35,7 +36,8 @@
     ],
     "paperFeatures": [
       ["np", "cn"]
-    ]
+    ],
+    "verified": "page-image"
   },
   {
     "id": "purverginzburg2004_ex27",
@@ -54,7 +56,8 @@
     ],
     "paperFeatures": [
       ["np", "cn"]
-    ]
+    ],
+    "verified": "page-image"
   },
   {
     "id": "purverginzburg2004_ex31",
@@ -64,7 +67,7 @@
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
-    "context": "because Donna is high in admiration in fact",
+    "context": "because Donna is high in admir- admiration in fact I",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [
@@ -72,7 +75,8 @@
     ],
     "paperFeatures": [
       ["np", "bareSingular"]
-    ]
+    ],
+    "verified": "page-image"
   },
   {
     "id": "purverginzburg2004_ex32",
@@ -91,7 +95,8 @@
     ],
     "paperFeatures": [
       ["np", "bareSingular"]
-    ]
+    ],
+    "verified": "page-image"
   },
   {
     "id": "purverginzburg2004_ex34",
@@ -110,7 +115,8 @@
     ],
     "paperFeatures": [
       ["np", "cn"]
-    ]
+    ],
+    "verified": "page-image"
   },
   {
     "id": "purverginzburg2004_ex35",
@@ -129,7 +135,8 @@
     ],
     "paperFeatures": [
       ["np", "specificIndefinite"]
-    ]
+    ],
+    "verified": "page-image"
   },
   {
     "id": "purverginzburg2004_ex36",
@@ -147,7 +154,8 @@
     ],
     "paperFeatures": [
       ["np", "indefinite"]
-    ]
+    ],
+    "verified": "page-image"
   },
   {
     "id": "purverginzburg2004_ex37",
@@ -165,7 +173,8 @@
     ],
     "paperFeatures": [
       ["np", "demonstrative"]
-    ]
+    ],
+    "verified": "page-image"
   },
   {
     "id": "purverginzburg2004_ex38",
@@ -183,7 +192,8 @@
     ],
     "paperFeatures": [
       ["np", "demonstrative"]
-    ]
+    ],
+    "verified": "page-image"
   },
   {
     "id": "purverginzburg2004_ex39",
@@ -201,7 +211,8 @@
     ],
     "paperFeatures": [
       ["np", "demonstrative"]
-    ]
+    ],
+    "verified": "page-image"
   },
   {
     "id": "purverginzburg2004_ex40",
@@ -219,7 +230,8 @@
     ],
     "paperFeatures": [
       ["np", "pronoun"]
-    ]
+    ],
+    "verified": "page-image"
   },
   {
     "id": "purverginzburg2004_ex41",
@@ -237,7 +249,8 @@
     ],
     "paperFeatures": [
       ["np", "definite"]
-    ]
+    ],
+    "verified": "page-image"
   },
   {
     "id": "purverginzburg2004_ex42",
@@ -255,7 +268,8 @@
     ],
     "paperFeatures": [
       ["np", "definite"]
-    ]
+    ],
+    "verified": "page-image"
   },
   {
     "id": "purverginzburg2004_ex43",
@@ -273,7 +287,8 @@
     ],
     "paperFeatures": [
       ["np", "definite"]
-    ]
+    ],
+    "verified": "page-image"
   },
   {
     "id": "purverginzburg2004_ex44",
@@ -291,7 +306,8 @@
     ],
     "paperFeatures": [
       ["np", "definite"]
-    ]
+    ],
+    "verified": "page-image"
   },
   {
     "id": "purverginzburg2004_ex46",
@@ -310,7 +326,8 @@
     ],
     "paperFeatures": [
       ["np", "attributiveDefinite"]
-    ]
+    ],
+    "verified": "page-image"
   },
   {
     "id": "purverginzburg2004_ex47",
@@ -330,7 +347,8 @@
     ],
     "paperFeatures": [
       ["np", "attributiveDefinite"]
-    ]
+    ],
+    "verified": "page-image"
   },
   {
     "id": "purverginzburg2004_ex49",
@@ -349,7 +367,8 @@
     ],
     "paperFeatures": [
       ["np", "definite"]
-    ]
+    ],
+    "verified": "page-image"
   },
   {
     "id": "purverginzburg2004_ex50",
@@ -367,7 +386,8 @@
     ],
     "paperFeatures": [
       ["np", "definite"]
-    ]
+    ],
+    "verified": "page-image"
   },
   {
     "id": "purverginzburg2004_ex53",
@@ -386,7 +406,8 @@
     ],
     "paperFeatures": [
       ["np", "indefinite"]
-    ]
+    ],
+    "verified": "page-image"
   },
   {
     "id": "purverginzburg2004_ex54",
@@ -405,7 +426,8 @@
     ],
     "paperFeatures": [
       ["np", "indefinite"]
-    ]
+    ],
+    "verified": "page-image"
   },
   {
     "id": "purverginzburg2004_ex55",
@@ -425,7 +447,8 @@
     ],
     "paperFeatures": [
       ["np", "indefinite"]
-    ]
+    ],
+    "verified": "page-image"
   },
   {
     "id": "purverginzburg2004_ex56",
@@ -444,7 +467,8 @@
     ],
     "paperFeatures": [
       ["np", "indefinite"]
-    ]
+    ],
+    "verified": "page-image"
   },
   {
     "id": "purverginzburg2004_ex57",
@@ -463,7 +487,8 @@
     ],
     "paperFeatures": [
       ["np", "indefinite"]
-    ]
+    ],
+    "verified": "page-image"
   },
   {
     "id": "purverginzburg2004_ex58",
@@ -481,7 +506,8 @@
     ],
     "paperFeatures": [
       ["np", "specificIndefinite"]
-    ]
+    ],
+    "verified": "page-image"
   },
   {
     "id": "purverginzburg2004_ex59",
@@ -491,7 +517,7 @@
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
-    "context": "waiting for a man they mention tonight and that man is a well known killer of British soldiers",
+    "context": "waiting for a a man they mention tonight and that man is a well known killer of British soldiers",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [
@@ -499,7 +525,8 @@
     ],
     "paperFeatures": [
       ["np", "specificIndefinite"]
-    ]
+    ],
+    "verified": "page-image"
   },
   {
     "id": "purverginzburg2004_ex62",
@@ -519,7 +546,8 @@
     ],
     "paperFeatures": [
       ["np", "universal"]
-    ]
+    ],
+    "verified": "page-image"
   },
   {
     "id": "purverginzburg2004_ex63",
@@ -538,7 +566,8 @@
     ],
     "paperFeatures": [
       ["np", "negative"]
-    ]
+    ],
+    "verified": "page-image"
   },
   {
     "id": "purverginzburg2004_ex64",
@@ -556,7 +585,8 @@
     ],
     "paperFeatures": [
       ["np", "universal"]
-    ]
+    ],
+    "verified": "page-image"
   },
   {
     "id": "purverginzburg2004_ex65",
@@ -574,7 +604,8 @@
     ],
     "paperFeatures": [
       ["np", "universal"]
-    ]
+    ],
+    "verified": "page-image"
   },
   {
     "id": "purverginzburg2004_ex77",
@@ -592,7 +623,8 @@
     ],
     "paperFeatures": [
       ["np", "determiner"]
-    ]
+    ],
+    "verified": "page-image"
   },
   {
     "id": "purverginzburg2004_ex79",
@@ -612,7 +644,8 @@
     ],
     "paperFeatures": [
       ["np", "wh"]
-    ]
+    ],
+    "verified": "page-image"
   },
   {
     "id": "purverginzburg2004_ex80",
@@ -631,7 +664,8 @@
     ],
     "paperFeatures": [
       ["np", "wh"]
-    ]
+    ],
+    "verified": "page-image"
   },
   {
     "id": "purverginzburg2004_ex87",
@@ -650,7 +684,8 @@
     ],
     "paperFeatures": [
       ["np", "monotoneDecreasing"]
-    ]
+    ],
+    "verified": "page-image"
   },
   {
     "id": "purverginzburg2004_ex88",
@@ -669,7 +704,8 @@
     ],
     "paperFeatures": [
       ["np", "monotoneDecreasingReferential"]
-    ]
+    ],
+    "verified": "page-image"
   },
   {
     "id": "purverginzburg2004_ex90",
@@ -687,6 +723,7 @@
     ],
     "paperFeatures": [
       ["np", "monotoneDecreasingReferential"]
-    ]
+    ],
+    "verified": "page-image"
   }
 ]

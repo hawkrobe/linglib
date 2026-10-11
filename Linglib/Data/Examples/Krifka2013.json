@@ -16,7 +16,8 @@
       ["subject", "barePlural"],
       ["reading", "definitional"]
     ],
-    "comment": "The paper credits the contrast to Lawler (1973)."
+    "comment": "The paper credits the contrast to Lawler (1973).",
+    "verified": "page-image"
   },
   {
     "id": "krifka2013_ex1b",
@@ -35,7 +36,8 @@
       ["subject", "indefiniteSingular"],
       ["reading", "definitional"]
     ],
-    "comment": "Also (9), the linguistic rule among Cohen's rule types."
+    "comment": "Also (9), the linguistic rule among Cohen's rule types.",
+    "verified": "page-image"
   },
   {
     "id": "krifka2013_ex2a",
@@ -54,7 +56,8 @@
       ["subject", "barePlural"],
       ["reading", "descriptive"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "krifka2013_ex2b",
@@ -73,7 +76,8 @@
       ["subject", "indefiniteSingular"],
       ["reading", "descriptive"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "krifka2013_ex3a",
@@ -92,7 +96,8 @@
       ["subject", "indefiniteSingular"],
       ["reading", "definitional"]
     ],
-    "comment": "The paper credits the example to Burton-Roberts (1976)."
+    "comment": "The paper credits the example to Burton-Roberts (1976).",
+    "verified": "page-image"
   },
   {
     "id": "krifka2013_ex4a",
@@ -111,7 +116,8 @@
       ["subject", "indefiniteSingular"],
       ["reading", "descriptive"]
     ],
-    "comment": "The paper suggests the contrast is between universal and existential generics rather than descriptive and definitional ones."
+    "comment": "The paper suggests the contrast is between universal and existential generics rather than descriptive and definitional ones.",
+    "verified": "page-image"
   },
   {
     "id": "krifka2013_ex5",
@@ -131,7 +137,8 @@
       ["reading", "definitional"],
       ["rule", "physical"]
     ],
-    "comment": "Cohen's rule types, (5) to (9)."
+    "comment": "Cohen's rule types, (5) to (9).",
+    "verified": "page-image"
   },
   {
     "id": "krifka2013_ex6",
@@ -151,7 +158,8 @@
       ["reading", "definitional"],
       ["rule", "moral"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "krifka2013_ex7",
@@ -171,7 +179,8 @@
       ["reading", "definitional"],
       ["rule", "legal"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "krifka2013_ex8",
@@ -191,7 +200,8 @@
       ["reading", "definitional"],
       ["rule", "legal"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "krifka2013_ex13",
@@ -212,7 +222,8 @@
     "paperFeatures": [
       ["subject", "barePlural"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "krifka2013_ex29",
@@ -231,7 +242,8 @@
       ["subject", "indefiniteSingular"],
       ["reading", "definitional"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "krifka2013_ex37",
@@ -250,7 +262,8 @@
       ["subject", "indefiniteSingular"],
       ["reading", "definitional"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "krifka2013_ex38",
@@ -269,7 +282,8 @@
       ["subject", "indefiniteSingular"],
       ["reading", "definitional"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "krifka2013_ex39",
@@ -281,13 +295,14 @@
     "glossedTokens": [],
     "translation": "",
     "context": "A minority but striking property.",
-    "judgment": "marginal",
+    "judgment": "unacceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
       ["subject", "indefiniteSingular"]
     ],
-    "comment": "Marked (#) in parentheses in the paper."
+    "comment": "The paper prints the mark in parentheses: (#).",
+    "verified": "page-image"
   },
   {
     "id": "krifka2013_ex42a",
@@ -306,7 +321,8 @@
       ["subject", "indefiniteSingular"],
       ["reading", "descriptive"]
     ],
-    "comment": "The paper credits the contrast to Cohen (2001)."
+    "comment": "The paper credits the contrast to Cohen (2001).",
+    "verified": "page-image"
   },
   {
     "id": "krifka2013_ex42b",
@@ -325,7 +341,8 @@
       ["subject", "indefiniteSingular"],
       ["reading", "definitional"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "krifka2013_ex43",
@@ -344,7 +361,8 @@
       ["subject", "indefiniteSingular"],
       ["reading", "descriptive"]
     ],
-    "comment": "The paper credits the example to Carlson (2009)."
+    "comment": "The paper credits the example to Carlson (2009).",
+    "verified": "page-image"
   },
   {
     "id": "krifka2013_ex44a",
@@ -363,7 +381,8 @@
       ["subject", "indefiniteSingular"],
       ["reading", "descriptive"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "krifka2013_ex44b",
@@ -382,7 +401,8 @@
       ["subject", "indefiniteSingular"],
       ["reading", "descriptive"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "krifka2013_ex45a",
@@ -401,7 +421,8 @@
       ["subject", "barePlural"],
       ["reading", "descriptive"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "krifka2013_ex45b",
@@ -420,6 +441,7 @@
       ["subject", "indefiniteSingular"],
       ["reading", "descriptive"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   }
 ]

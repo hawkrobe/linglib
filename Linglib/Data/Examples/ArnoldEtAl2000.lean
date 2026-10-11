@@ -76,7 +76,7 @@ def ex_6 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("The Informativeness account shares the claim that a subjectless sentence is not a grammatical option for the child, and that the omission is due to some aspect of performance with the processing account", .questionable)]
+    alternatives := [("The Informativeness account shares the claim that a subjectless sentence is not a grammatical option for the child, and that the omission is due to some aspect of performance with the processing account", .acceptable)]
     readings := []
     paperFeatures := [("construction", "HNPS"), ("first", "with the processing account"), ("second", "the claim that a subjectless sentence is not a grammatical option for the child, and that the omission is due to some aspect of performance")] }
 
@@ -176,7 +176,7 @@ def ex_12 : Datum :=
     source := ⟨"arnold-wasow-losongco-ginstrom-2000", "(12)"⟩
     reportedIn := none
     language := "stan1293"
-    primaryText := "A: What about the yellow duck? B: Give it the small green crayon."
+    primaryText := "A: What about the yellow duck? B: Give it the small green crayon. A: What about the. . . ."
     glossedTokens := []
     context := ""
     judgment := .acceptable

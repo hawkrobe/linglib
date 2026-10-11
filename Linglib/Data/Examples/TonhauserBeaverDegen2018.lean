@@ -17,7 +17,7 @@ namespace TonhauserBeaverDegen2018.Examples
 
 def tbd2018_1a_nrrc : Datum :=
   { id := "tbd2018_1a_nrrc"
-    source := ⟨"tonhauser-beaver-degen-2018", "Exp 1a materials, target expression / projective content pairs"⟩
+    source := ⟨"tonhauser-beaver-degen-2018", "(12), Exp 1a materials, target expression / projective content pairs"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "These muffins, which have blueberries in them, are gluten-free and low-fat."
@@ -30,12 +30,12 @@ def tbd2018_1a_nrrc : Datum :=
 
 def tbd2018_1a_nominalAppositive : Datum :=
   { id := "tbd2018_1a_nominalAppositive"
-    source := ⟨"tonhauser-beaver-degen-2018", "Exp 1a materials, target expression / projective content pairs"⟩
+    source := ⟨"tonhauser-beaver-degen-2018", "(12), Exp 1a materials, target expression / projective content pairs"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "Martha's new car, a BMW, was expensive."
     glossedTokens := []
-    context := "Projective content: 'Martha'"
+    context := "Projective content: 'Martha's new car is a BMW'"
     judgment := .acceptable
     alternatives := []
     readings := []
@@ -43,12 +43,12 @@ def tbd2018_1a_nominalAppositive : Datum :=
 
 def tbd2018_1a_possessiveNP : Datum :=
   { id := "tbd2018_1a_possessiveNP"
-    source := ⟨"tonhauser-beaver-degen-2018", "Exp 1a materials, target expression / projective content pairs"⟩
+    source := ⟨"tonhauser-beaver-degen-2018", "(12), Exp 1a materials, target expression / projective content pairs"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "Martha's new BMW was expensive."
     glossedTokens := []
-    context := "Projective content: 'Martha has a new BMW.'"
+    context := "Projective content: 'Martha's new car is a BMW'"
     judgment := .acceptable
     alternatives := []
     readings := []
@@ -56,7 +56,7 @@ def tbd2018_1a_possessiveNP : Datum :=
 
 def tbd2018_1a_annoyed : Datum :=
   { id := "tbd2018_1a_annoyed"
-    source := ⟨"tonhauser-beaver-degen-2018", "Exp 1a materials, target expression / projective content pairs"⟩
+    source := ⟨"tonhauser-beaver-degen-2018", "(12), Exp 1a materials, target expression / projective content pairs"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "Martha's neighbor is annoyed that Martha has a new BMW."
@@ -69,12 +69,12 @@ def tbd2018_1a_annoyed : Datum :=
 
 def tbd2018_1a_discover : Datum :=
   { id := "tbd2018_1a_discover"
-    source := ⟨"tonhauser-beaver-degen-2018", "Exp 1a materials, target expression / projective content pairs"⟩
+    source := ⟨"tonhauser-beaver-degen-2018", "(12), Exp 1a materials, target expression / projective content pairs"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "Mary discovered that her daughter has been biting her nails."
     glossedTokens := []
-    context := "Projective content: 'Mary'"
+    context := "Projective content: 'Mary's daughter has been biting her nails'"
     judgment := .acceptable
     alternatives := []
     readings := []
@@ -82,7 +82,7 @@ def tbd2018_1a_discover : Datum :=
 
 def tbd2018_1a_know : Datum :=
   { id := "tbd2018_1a_know"
-    source := ⟨"tonhauser-beaver-degen-2018", "Exp 1a materials, target expression / projective content pairs"⟩
+    source := ⟨"tonhauser-beaver-degen-2018", "(12), Exp 1a materials, target expression / projective content pairs"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "Billy knows that Martha has a new BMW."
@@ -95,7 +95,7 @@ def tbd2018_1a_know : Datum :=
 
 def tbd2018_1a_only : Datum :=
   { id := "tbd2018_1a_only"
-    source := ⟨"tonhauser-beaver-degen-2018", "Exp 1a materials, target expression / projective content pairs"⟩
+    source := ⟨"tonhauser-beaver-degen-2018", "(12), Exp 1a materials, target expression / projective content pairs"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "These muffins only have blueberries in them."
@@ -108,12 +108,12 @@ def tbd2018_1a_only : Datum :=
 
 def tbd2018_1a_stop : Datum :=
   { id := "tbd2018_1a_stop"
-    source := ⟨"tonhauser-beaver-degen-2018", "Exp 1a materials, target expression / projective content pairs"⟩
+    source := ⟨"tonhauser-beaver-degen-2018", "(12), Exp 1a materials, target expression / projective content pairs"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "Mary's daughter stopped biting her nails."
     glossedTokens := []
-    context := "Projective content: 'Mary'"
+    context := "Projective content: 'Mary's daughter has been biting her nails'"
     judgment := .acceptable
     alternatives := []
     readings := []
@@ -121,12 +121,12 @@ def tbd2018_1a_stop : Datum :=
 
 def tbd2018_1a_stupid : Datum :=
   { id := "tbd2018_1a_stupid"
-    source := ⟨"tonhauser-beaver-degen-2018", "Exp 1a materials, target expression / projective content pairs"⟩
+    source := ⟨"tonhauser-beaver-degen-2018", "(12), Exp 1a materials, target expression / projective content pairs"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "Mary's daughter is stupid to be biting her nails."
     glossedTokens := []
-    context := "Projective content: 'Mary'"
+    context := "Projective content: 'Mary's daughter has been biting her nails'"
     judgment := .acceptable
     alternatives := []
     readings := []
@@ -134,7 +134,7 @@ def tbd2018_1a_stupid : Datum :=
 
 def tbd2018_1a_sampleTarget_nominalAppositive : Datum :=
   { id := "tbd2018_1a_sampleTarget_nominalAppositive"
-    source := ⟨"tonhauser-beaver-degen-2018", "Exp 1a materials, sample target stimulus"⟩
+    source := ⟨"tonhauser-beaver-degen-2018", "(14a), Exp 1a materials, sample target stimulus"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "Ronald asks: Did Richie, a stuntman, break his leg?"
@@ -147,7 +147,7 @@ def tbd2018_1a_sampleTarget_nominalAppositive : Datum :=
 
 def tbd2018_1a_sampleTarget_beStupidTo : Datum :=
   { id := "tbd2018_1a_sampleTarget_beStupidTo"
-    source := ⟨"tonhauser-beaver-degen-2018", "Exp 1a materials, sample target stimulus"⟩
+    source := ⟨"tonhauser-beaver-degen-2018", "(14b), Exp 1a materials, sample target stimulus"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "Linda asks: Is Richie stupid to be a stuntman?"
@@ -160,7 +160,7 @@ def tbd2018_1a_sampleTarget_beStupidTo : Datum :=
 
 def tbd2018_1a_control : Datum :=
   { id := "tbd2018_1a_control"
-    source := ⟨"tonhauser-beaver-degen-2018", "Exp 1a materials, sample control stimulus"⟩
+    source := ⟨"tonhauser-beaver-degen-2018", "(15), Exp 1a materials, sample control stimulus"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "Susan asks: Is Richie a stuntman?"
@@ -173,7 +173,7 @@ def tbd2018_1a_control : Datum :=
 
 def tbd2018_1b_sample_aware : Datum :=
   { id := "tbd2018_1b_sample_aware"
-    source := ⟨"tonhauser-beaver-degen-2018", "Exp 1b materials, sample target stimuli"⟩
+    source := ⟨"tonhauser-beaver-degen-2018", "(16a), Exp 1b materials, sample target stimuli"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "Emily asks: Is Shirley aware that Raul was drinking chamomile tea?"
@@ -186,7 +186,7 @@ def tbd2018_1b_sample_aware : Datum :=
 
 def tbd2018_1b_sample_discover : Datum :=
   { id := "tbd2018_1b_sample_discover"
-    source := ⟨"tonhauser-beaver-degen-2018", "Exp 1b materials, sample target stimuli"⟩
+    source := ⟨"tonhauser-beaver-degen-2018", "(16b), Exp 1b materials, sample target stimuli"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "Gary asks: Did Samuel discover that Raul was drinking chamomile tea?"

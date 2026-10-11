@@ -12,9 +12,10 @@
       ["verb", "cause"],
       ["dimension", "interchangeability"],
       ["pair", "fables_cat"],
-      ["attested", "true"]
+      ["attested", "false"]
     ],
-    "comment": "Attested (Aesop's Fables, Project Gutenberg), modified; [] marks insertion/deletion/replacement."
+    "comment": "Modified from the attested (3b) (Fables, Project Gutenberg); [] marks insertion/deletion/replacement.",
+    "verified": "page-image"
   },
   {
     "id": "cwl2025_ex3b",
@@ -31,7 +32,8 @@
       ["pair", "fables_cat"],
       ["attested", "true"]
     ],
-    "comment": "The attested variant of the (3) triplet."
+    "comment": "The attested variant of the (3) triplet.",
+    "verified": "page-image"
   },
   {
     "id": "cwl2025_ex3c",
@@ -46,9 +48,10 @@
       ["verb", "force"],
       ["dimension", "interchangeability"],
       ["pair", "fables_cat"],
-      ["attested", "true"]
+      ["attested", "false"]
     ],
-    "comment": "Attested-modified; all three verbs acceptable in this frame."
+    "comment": "Modified from the attested (3b); all three verbs acceptable in this frame.",
+    "verified": "page-image"
   },
   {
     "id": "cwl2025_ex4a",
@@ -65,7 +68,8 @@
       ["pair", "cancer"],
       ["attested", "true"]
     ],
-    "comment": "Attested (COCA SPOK: THE FIVE 5:00 PM EST; 2013)."
+    "comment": "Attested (COCA SPOK: THE FIVE 5:00 PM EST; 2013).",
+    "verified": "page-image"
   },
   {
     "id": "cwl2025_ex4b",
@@ -75,13 +79,14 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "paperFeatures": [
       ["verb", "make"],
       ["dimension", "interchangeability"],
       ["pair", "cancer"]
     ],
-    "comment": "Starred: make does not substitute for cause in this frame."
+    "comment": "Starred: make does not substitute for cause in this frame.",
+    "verified": "page-image"
   },
   {
     "id": "cwl2025_ex4c",
@@ -91,13 +96,14 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "paperFeatures": [
       ["verb", "force"],
       ["dimension", "interchangeability"],
       ["pair", "cancer"]
     ],
-    "comment": "Starred: force does not substitute for cause in this frame."
+    "comment": "Starred: force does not substitute for cause in this frame.",
+    "verified": "page-image"
   },
   {
     "id": "cwl2025_ex5a",
@@ -113,7 +119,8 @@
       ["dimension", "gradability"],
       ["pair", "gym_mention"]
     ],
-    "comment": "Mild causing event: only cause is acceptable."
+    "comment": "Mild causing event: only cause is acceptable.",
+    "verified": "page-image"
   },
   {
     "id": "cwl2025_ex5b",
@@ -123,13 +130,14 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "paperFeatures": [
       ["verb", "make"],
       ["dimension", "gradability"],
       ["pair", "gym_mention"]
     ],
-    "comment": "Starred."
+    "comment": "Starred.",
+    "verified": "page-image"
   },
   {
     "id": "cwl2025_ex5c",
@@ -139,13 +147,14 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "paperFeatures": [
       ["verb", "force"],
       ["dimension", "gradability"],
       ["pair", "gym_mention"]
     ],
-    "comment": "Starred."
+    "comment": "Starred.",
+    "verified": "page-image"
   },
   {
     "id": "cwl2025_ex6a",
@@ -161,7 +170,8 @@
       ["dimension", "gradability"],
       ["pair", "gym_criticize"]
     ],
-    "comment": "Intermediate causing event: cause fine, make questionable, force out."
+    "comment": "Intermediate causing event: cause fine, make marked ?, force starred.",
+    "verified": "page-image"
   },
   {
     "id": "cwl2025_ex6b",
@@ -171,13 +181,14 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "questionable",
+    "judgment": "marginal",
     "paperFeatures": [
       ["verb", "make"],
       ["dimension", "gradability"],
       ["pair", "gym_criticize"]
     ],
-    "comment": "Single-? diacritic in the paper."
+    "comment": "Single-? diacritic in the paper.",
+    "verified": "page-image"
   },
   {
     "id": "cwl2025_ex6c",
@@ -187,13 +198,14 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "paperFeatures": [
       ["verb", "force"],
       ["dimension", "gradability"],
       ["pair", "gym_criticize"]
     ],
-    "comment": "Starred."
+    "comment": "Starred.",
+    "verified": "page-image"
   },
   {
     "id": "cwl2025_ex7a",
@@ -209,7 +221,8 @@
       ["dimension", "gradability"],
       ["pair", "gym_hostage"]
     ],
-    "comment": "Drastic causing event (removes safe alternatives): all three verbs acceptable."
+    "comment": "Drastic causing event (removes safe alternatives): all three verbs acceptable.",
+    "verified": "page-image"
   },
   {
     "id": "cwl2025_ex7b",
@@ -225,7 +238,8 @@
       ["dimension", "gradability"],
       ["pair", "gym_hostage"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "cwl2025_ex7c",
@@ -241,7 +255,8 @@
       ["dimension", "gradability"],
       ["pair", "gym_hostage"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "cwl2025_ex8a",
@@ -257,7 +272,8 @@
       ["dimension", "alternatives"],
       ["pair", "car"]
     ],
-    "comment": "Halpern & Kleiman-Weiner: an action taken when the agent could not do otherwise is never intentional; make tolerates the could-have-done-otherwise continuation."
+    "comment": "Halpern & Kleiman-Weiner: an action taken when the agent could not do otherwise is never intentional; make tolerates the could-have-done-otherwise continuation.",
+    "verified": "page-image"
   },
   {
     "id": "cwl2025_ex8b",
@@ -267,13 +283,14 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "questionable",
+    "judgment": "marginal",
     "paperFeatures": [
       ["verb", "force"],
       ["dimension", "alternatives"],
       ["pair", "car"]
     ],
-    "comment": "Single-? diacritic: force resists the continuation asserting available alternatives."
+    "comment": "Single-? diacritic: force resists the continuation asserting available alternatives.",
+    "verified": "page-image"
   },
   {
     "id": "cwl2025_ex9a",
@@ -289,7 +306,8 @@
       ["dimension", "intention"],
       ["pair", "dance_intent"]
     ],
-    "comment": "Paper's prose: easiest to imagine a situation where (9a) is true; no diacritics given on (9) — the judgment scale here transcribes the easiest/more difficult/most difficult ordering."
+    "comment": "Printed unmarked, as are (9b) and (9c); the prose says it is easiest to imagine a situation where (9a) is true.",
+    "verified": "page-image"
   },
   {
     "id": "cwl2025_ex9b",
@@ -299,13 +317,14 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "marginal",
+    "judgment": "acceptable",
     "paperFeatures": [
       ["verb", "make"],
       ["dimension", "intention"],
       ["pair", "dance_intent"]
     ],
-    "comment": "Paper's prose: 'perhaps a bit more difficult to imagine'; diacritic assigned from prose ordering."
+    "comment": "Printed unmarked; the prose says it is perhaps a bit more difficult to imagine a situation where (9b) is true than (9a), a comparison rather than a mark.",
+    "verified": "page-image"
   },
   {
     "id": "cwl2025_ex9c",
@@ -315,13 +334,14 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "questionable",
+    "judgment": "acceptable",
     "paperFeatures": [
       ["verb", "force"],
       ["dimension", "intention"],
       ["pair", "dance_intent"]
     ],
-    "comment": "Paper's prose: 'most difficult to imagine'; diacritic assigned from prose ordering."
+    "comment": "Printed unmarked; the prose says it is most difficult to imagine a situation where (9c) is true, a comparison rather than a mark.",
+    "verified": "page-image"
   },
   {
     "id": "cwl2025_ex10a",
@@ -337,7 +357,8 @@
       ["dimension", "intention"],
       ["pair", "dance_accident"]
     ],
-    "comment": "Hedging with accidentally improves the no-intent continuation for all three verbs."
+    "comment": "Hedging with accidentally improves the no-intent continuation for all three verbs.",
+    "verified": "page-image"
   },
   {
     "id": "cwl2025_ex10b",
@@ -353,7 +374,8 @@
       ["dimension", "intention"],
       ["pair", "dance_accident"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "cwl2025_ex10c",
@@ -369,7 +391,8 @@
       ["dimension", "intention"],
       ["pair", "dance_accident"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "cwl2025_ex11a",
@@ -385,7 +408,8 @@
       ["dimension", "sufficiency"],
       ["pair", "plank"]
     ],
-    "comment": "We can say with certainty that the prisoner walks down the plank — make conveys sufficiency of the causing action."
+    "comment": "We can say with certainty that the prisoner walks down the plank — make conveys sufficiency of the causing action.",
+    "verified": "page-image"
   },
   {
     "id": "cwl2025_ex11b",
@@ -401,6 +425,7 @@
       ["dimension", "sufficiency"],
       ["pair", "plank"]
     ],
-    "comment": "The result is not guaranteed under let — the contrast motivating SUF as a graded measure."
+    "comment": "The result is not guaranteed under let — the contrast motivating SUF as a graded measure.",
+    "verified": "page-image"
   }
 ]

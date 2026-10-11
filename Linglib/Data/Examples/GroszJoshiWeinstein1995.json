@@ -21,7 +21,8 @@
       ["phenomenon", "coherence"],
       ["coherence", "more"]
     ],
-    "comment": "Intuitively more coherent than (2)."
+    "comment": "Intuitively more coherent than (2).",
+    "verified": "page-image"
   },
   {
     "id": "groszjoshiweinstein1995_2",
@@ -45,7 +46,8 @@
       ["phenomenon", "coherence"],
       ["coherence", "less"]
     ],
-    "comment": "Less coherent than (1): the discourse flips back and forth among several entities."
+    "comment": "Printed unmarked; the paper uses no judgment marks, so the prose is the mark: Discourse (1) is 'intuitively more coherent than Discourse (2)', which 'seems to flip back and forth among several different entities'.",
+    "verified": "page-image"
   },
   {
     "id": "groszjoshiweinstein1995_3",
@@ -69,7 +71,8 @@
       ["section", "2"],
       ["phenomenon", "pronounMisdirection"]
     ],
-    "comment": "The pronoun in (e) misleads: Terry has been the center of attention, and only 'sick' forces Tony."
+    "comment": "Printed unmarked; the paper uses no judgment marks, so the prose is the mark: using a pronoun for Tony in (e) 'the speaker may confuse the hearer'; Terry has been the center of attention, and only 'sick' forces Tony.",
+    "verified": "page-image"
   },
   {
     "id": "groszjoshiweinstein1995_4",
@@ -95,7 +98,8 @@
       ["section", "2"],
       ["phenomenon", "pronounMisdirection"]
     ],
-    "comment": "(f) and (g) exhibit the same misdirection as (3d) and (3e): the focus has shifted to Tony."
+    "comment": "Printed unmarked; the paper uses no judgment marks, so the prose is the mark: (f) and (g) exhibit the same misdirection as (3d) and (3e); the focus has shifted to Tony 'so that use of \"he\" in (g) is confusing'.",
+    "verified": "page-image"
   },
   {
     "id": "groszjoshiweinstein1995_5",
@@ -121,7 +125,8 @@
       ["section", "2"],
       ["phenomenon", "pronounMisdirection"]
     ],
-    "comment": "The confusion of (4g) is avoided by the name."
+    "comment": "The confusion of (4g) is avoided by the name.",
+    "verified": "page-image"
   },
   {
     "id": "groszjoshiweinstein1995_6",
@@ -142,7 +147,8 @@
       ["section", "5"],
       ["phenomenon", "uniqueCb"]
     ],
-    "comment": "A priori either Susan or Betsy might be the Cb of (b)."
+    "comment": "A priori either Susan or Betsy might be the Cb of (b).",
+    "verified": "page-image"
   },
   {
     "id": "groszjoshiweinstein1995_7",
@@ -165,7 +171,8 @@
       ["phenomenon", "rule1"],
       ["rule1", "satisfied"]
     ],
-    "comment": "Susan continued as Cb."
+    "comment": "Susan continued as Cb.",
+    "verified": "page-image"
   },
   {
     "id": "groszjoshiweinstein1995_8",
@@ -188,7 +195,8 @@
       ["phenomenon", "rule1"],
       ["rule1", "satisfied"]
     ],
-    "comment": "Susan merely retained as Cb; better than (9) although it changes grammatical position."
+    "comment": "Susan merely retained as Cb; better than (9) although it changes grammatical position.",
+    "verified": "page-image"
   },
   {
     "id": "groszjoshiweinstein1995_9",
@@ -211,7 +219,8 @@
       ["phenomenon", "rule1"],
       ["rule1", "violated"]
     ],
-    "comment": "Marked decrease in acceptability from (7) to (10)."
+    "comment": "Printed unmarked; the paper uses no judgment marks, so the prose is the mark: variants (9) and (10) 'can be shown to be worse than (7) and (8)'; there is 'a marked decrease in acceptability from version (7) to version (10)'.",
+    "verified": "page-image"
   },
   {
     "id": "groszjoshiweinstein1995_10",
@@ -234,7 +243,8 @@
       ["phenomenon", "rule1"],
       ["rule1", "violated"]
     ],
-    "comment": "For many people completely unacceptable."
+    "comment": "Printed unmarked; the paper uses no judgment marks, so the prose is the mark: 'for many people version (10) is completely unacceptable'.",
+    "verified": "page-image"
   },
   {
     "id": "groszjoshiweinstein1995_11",
@@ -261,7 +271,8 @@
       ["section", "5"],
       ["phenomenon", "cfRanking"]
     ],
-    "comment": "Strong preference for Susan, realized in subject position in (d)."
+    "comment": "Strong preference for Susan, realized in subject position in (d).",
+    "verified": "page-image"
   },
   {
     "id": "groszjoshiweinstein1995_12",
@@ -288,7 +299,8 @@
       ["section", "5"],
       ["phenomenon", "cfRanking"]
     ],
-    "comment": "The preference for Susan holds regardless of syntactic position in (e), so it is not parallelism."
+    "comment": "The preference for Susan holds regardless of syntactic position in (e), so it is not parallelism.",
+    "verified": "page-image"
   },
   {
     "id": "groszjoshiweinstein1995_13",
@@ -312,7 +324,8 @@
       ["phenomenon", "cfRanking"],
       ["coherence", "more"]
     ],
-    "comment": "'The silly thing' is the boat, the most likely Cb."
+    "comment": "'The silly thing' is the boat, the most likely Cb.",
+    "verified": "page-image"
   },
   {
     "id": "groszjoshiweinstein1995_14",
@@ -336,7 +349,8 @@
       ["phenomenon", "cfRanking"],
       ["coherence", "less"]
     ],
-    "comment": "Pragmatics prefers the bear as 'the silly thing', in conflict with the boat's being the most likely Cb."
+    "comment": "Printed unmarked; the paper uses no judgment marks, so the prose is the mark: '(13) is a more coherent discourse than (14)'; pragmatics prefers the bear as 'the silly thing', in conflict with the boat's being the most likely Cb.",
+    "verified": "page-image"
   },
   {
     "id": "groszjoshiweinstein1995_15",
@@ -359,7 +373,8 @@
       ["phenomenon", "rule1"],
       ["rule1", "violated"]
     ],
-    "comment": "Presumed within a segment centered on John; the only interpretation takes 'John' in (c) as a second John, and even then the sequence is very odd."
+    "comment": "Printed unmarked; the paper uses no judgment marks, so the prose is the mark: the violation of Rule 1 'leads to the incoherence of the sequence'; the only interpretation takes 'John' in (c) as a second John, and 'even under this interpretation the sequence is very odd'. Presumed within a segment centered on John.",
+    "verified": "page-image"
   },
   {
     "id": "groszjoshiweinstein1995_16",
@@ -383,7 +398,8 @@
       ["phenomenon", "rule1"],
       ["rule1", "satisfied"]
     ],
-    "comment": "The intervening (c) shifts the center from John to Mike; per Gordon, Grosz, and Gilliom (1993), (16d) without (c) is not as bad as (15c)."
+    "comment": "The intervening (c) shifts the center from John to Mike; per Gordon, Grosz, and Gilliom (1993), (16d) without (c) is not as bad as (15c).",
+    "verified": "page-image"
   },
   {
     "id": "groszjoshiweinstein1995_17",
@@ -405,7 +421,8 @@
       ["section", "7"],
       ["phenomenon", "fullNounPhraseCb"]
     ],
-    "comment": "Adapted from Sidner (1979); the Cb is realized by a definite description that conveys more than reference."
+    "comment": "Adapted from Sidner (1979); the Cb is realized by a definite description that conveys more than reference.",
+    "verified": "page-image"
   },
   {
     "id": "groszjoshiweinstein1995_18",
@@ -426,7 +443,8 @@
       ["section", "7"],
       ["phenomenon", "fullNounPhraseCb"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "groszjoshiweinstein1995_19",
@@ -448,7 +466,8 @@
       ["section", "7"],
       ["phenomenon", "functionalDependence"]
     ],
-    "comment": "The house is realized but not directly realized in (b); the door ranks above it in Cf(b)."
+    "comment": "The house is realized but not directly realized in (b); the door ranks above it in Cf(b).",
+    "verified": "page-image"
   },
   {
     "id": "groszjoshiweinstein1995_20",
@@ -473,7 +492,8 @@
       ["phenomenon", "transitions"],
       ["rule1", "satisfied"]
     ],
-    "comment": "Annotated CONTINUE, RETAIN, SHIFT at (c), (d), (e)."
+    "comment": "Annotated CONTINUE, RETAIN, SHIFT at (c), (d), (e).",
+    "verified": "page-image"
   },
   {
     "id": "groszjoshiweinstein1995_25",
@@ -495,7 +515,8 @@
       ["section", "8"],
       ["phenomenon", "valueFreeLoaded"]
     ],
-    "comment": "Value-free interpretation of the description."
+    "comment": "Value-free interpretation of the description.",
+    "verified": "page-image"
   },
   {
     "id": "groszjoshiweinstein1995_26",
@@ -517,7 +538,8 @@
       ["section", "8"],
       ["phenomenon", "valueFreeLoaded"]
     ],
-    "comment": "Value-loaded interpretation of the description."
+    "comment": "Value-loaded interpretation of the description.",
+    "verified": "page-image"
   },
   {
     "id": "groszjoshiweinstein1995_27",
@@ -539,7 +561,8 @@
       ["section", "8"],
       ["phenomenon", "valueFreeLoaded"]
     ],
-    "comment": "(b) prefers the value-free interpretation but allows the value-loaded one (c) needs."
+    "comment": "(b) prefers the value-free interpretation but allows the value-loaded one (c) needs.",
+    "verified": "page-image"
   },
   {
     "id": "groszjoshiweinstein1995_28",
@@ -561,7 +584,8 @@
       ["section", "8"],
       ["phenomenon", "valueFreeLoaded"]
     ],
-    "comment": "Christine Nakatani's example: (b) prefers value-loaded, (c) requires value-free."
+    "comment": "Christine Nakatani's example: (b) prefers value-loaded, (c) requires value-free.",
+    "verified": "page-image"
   },
   {
     "id": "groszjoshiweinstein1995_32",
@@ -582,7 +606,8 @@
       ["section", "8"],
       ["phenomenon", "referentialUse"]
     ],
-    "comment": "Kripke (1977): the Cb of (b) is the husband."
+    "comment": "Kripke (1977): the Cb of (b) is the husband.",
+    "verified": "page-image"
   },
   {
     "id": "groszjoshiweinstein1995_33",
@@ -603,11 +628,12 @@
       ["section", "8"],
       ["phenomenon", "referentialUse"]
     ],
-    "comment": "Kripke (1977): the Cb of (b) is the lover."
+    "comment": "Kripke (1977): the Cb of (b) is the lover.",
+    "verified": "page-image"
   },
   {
     "id": "groszjoshiweinstein1995_34",
-    "source": {"bibkey": "sidner-1979", "paperLabel": "(34)"},
+    "source": {"bibkey": "sidner-1979", "paperLabel": "ch. 4, D9"},
     "reportedIn": {"bibkey": "grosz-joshi-weinstein-1995", "paperLabel": "(34)"},
     "language": "stan1293",
     "primaryText": "I haven't seen Jeff for several days. Carl thinks he's studying for his exams, but I think he went to the Cape with Linda.",
@@ -628,6 +654,7 @@
       ["section", "9"],
       ["phenomenon", "sidnerComparison"]
     ],
-    "comment": "Section 9 says Sidner's actor focus makes Carl the leading candidate for 'he' in (c); Sidner's own analysis of this discourse (her D9) has every 'he' co-specify Jeff, the discourse focus established before the actor focus. On the centering account Jeff is the Cb at (b)."
+    "comment": "Sidner's D9 (ch. 4, p. 173) has a third sentence, 'Oscar says he is sick,', which the paper's (34) omits; the row records the paper's version. Section 9 says Sidner's actor focus makes Carl the leading candidate for 'he' in (c); Sidner's own analysis of D9 has every 'he' co-specify Jeff, the discourse focus established before the actor focus. On the centering account Jeff is the Cb at (b).",
+    "verified": "page-image"
   }
 ]

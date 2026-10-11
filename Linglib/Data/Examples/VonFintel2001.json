@@ -1,7 +1,7 @@
 [
   {
     "id": "vonfintel2001_1",
-    "source": {"bibkey": "geis-zwicky-1971", "paperLabel": ""},
+    "source": {"bibkey": "geis-zwicky-1971", "paperLabel": "(4)"},
     "reportedIn": {"bibkey": "von-fintel-2001", "paperLabel": "(1)"},
     "language": "stan1293",
     "primaryText": "If you mow the lawn, I'll give you five dollars.",
@@ -19,11 +19,12 @@
       ["inference", "conditional perfection"],
       ["flavor", "bouletic"]
     ],
-    "comment": "Geis and Zwicky's invited inference; Lilje's addressee may still ask whether cleaning the garage would earn the money."
+    "comment": "Geis and Zwicky's invited inference; Lilje's addressee may still ask whether cleaning the garage would earn the money.",
+    "verified": "page-image"
   },
   {
     "id": "vonfintel2001_2",
-    "source": {"bibkey": "geis-zwicky-1971", "paperLabel": ""},
+    "source": {"bibkey": "geis-zwicky-1971", "paperLabel": "(1)"},
     "reportedIn": {"bibkey": "von-fintel-2001", "paperLabel": "(2)"},
     "language": "stan1293",
     "primaryText": "If John leans out of that window any further, he'll fall.",
@@ -37,11 +38,12 @@
     "paperFeatures": [
       ["inference", "conditional perfection"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "vonfintel2001_3",
-    "source": {"bibkey": "geis-zwicky-1971", "paperLabel": ""},
+    "source": {"bibkey": "geis-zwicky-1971", "paperLabel": "(8)"},
     "reportedIn": {"bibkey": "von-fintel-2001", "paperLabel": "(3)"},
     "language": "stan1293",
     "primaryText": "If you disturb me tonight, I won't let you go to the movies tomorrow.",
@@ -55,11 +57,12 @@
     "paperFeatures": [
       ["inference", "conditional perfection"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "vonfintel2001_4",
-    "source": {"bibkey": "geis-zwicky-1971", "paperLabel": ""},
+    "source": {"bibkey": "geis-zwicky-1971", "paperLabel": "(9)"},
     "reportedIn": {"bibkey": "von-fintel-2001", "paperLabel": "(4)"},
     "language": "stan1293",
     "primaryText": "If you heat iron in a fire, it turns red.",
@@ -73,7 +76,8 @@
     "paperFeatures": [
       ["inference", "conditional perfection"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "vonfintel2001_6",
@@ -94,7 +98,8 @@
     "paperFeatures": [
       ["inference", "no perfection"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "vonfintel2001_7",
@@ -116,7 +121,8 @@
       ["inference", "no perfection"],
       ["question", "information-seeking"]
     ],
-    "comment": "A speaker who has just learned the antecedent may utter it to show how the conclusion was reached."
+    "comment": "A speaker who has just learned the antecedent may utter it to show how the conclusion was reached.",
+    "verified": "page-image"
   },
   {
     "id": "vonfintel2001_8",
@@ -136,7 +142,8 @@
     "paperFeatures": [
       ["inference", "no perfection"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "vonfintel2001_9",
@@ -156,7 +163,8 @@
     "paperFeatures": [
       ["inference", "no perfection"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "vonfintel2001_10",
@@ -177,7 +185,8 @@
     "paperFeatures": [
       ["inference", "no perfection"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "vonfintel2001_11",
@@ -198,7 +207,8 @@
     "paperFeatures": [
       ["inference", "no perfection"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "vonfintel2001_17a",
@@ -220,7 +230,8 @@
       ["test", "not only α but β"],
       ["scale", "same monotonicity"]
     ],
-    "comment": "Evidence for Matsumoto's monotonicity condition on Horn scales."
+    "comment": "Evidence for Matsumoto's monotonicity condition on Horn scales.",
+    "verified": "page-image"
   },
   {
     "id": "vonfintel2001_17b",
@@ -242,12 +253,13 @@
       ["test", "not only α but β"],
       ["scale", "mixed monotonicity"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "vonfintel2001_seat",
     "source": {"bibkey": "cornulier-1983", "paperLabel": ""},
-    "reportedIn": {"bibkey": "von-fintel-2001", "paperLabel": "p. 9"},
+    "reportedIn": {"bibkey": "von-fintel-2001", "paperLabel": "p. 10"},
     "language": "stan1293",
     "primaryText": "One is allowed to sit in this seat if one is disabled or one is older than 70.",
     "discourseSegments": [],
@@ -263,12 +275,13 @@
       ["inference", "conditional perfection"],
       ["presumption", "exhaustivity"]
     ],
-    "comment": "The utterance situation suggests that other sufficient conditions would have been mentioned."
+    "comment": "The utterance situation suggests that other sufficient conditions would have been mentioned. Von Fintel notes (fn. 6) that he changed Cornulier's quote.",
+    "verified": "page-image"
   },
   {
     "id": "vonfintel2001_p14_2",
-    "source": {"bibkey": "groenendijk-stokhof-1984", "paperLabel": ""},
-    "reportedIn": {"bibkey": "von-fintel-2001", "paperLabel": "(2) p. 14"},
+    "source": {"bibkey": "von-fintel-2001", "paperLabel": "(2) p. 15"},
+    "reportedIn": null,
     "language": "stan1293",
     "primaryText": "Q: Who left the party early? A: Robin and Hilary left the party early.",
     "discourseSegments": [
@@ -286,12 +299,13 @@
     "paperFeatures": [
       ["answer", "exhaustive"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "vonfintel2001_p15_3",
-    "source": {"bibkey": "groenendijk-stokhof-1984", "paperLabel": ""},
-    "reportedIn": {"bibkey": "von-fintel-2001", "paperLabel": "(3) p. 15"},
+    "source": {"bibkey": "von-fintel-2001", "paperLabel": "(3) p. 16"},
+    "reportedIn": null,
     "language": "stan1293",
     "primaryText": "Q: Will Robin come to the party? A: If there is vegetarian food Robin will come to the party.",
     "discourseSegments": [
@@ -310,11 +324,12 @@
       ["answer", "exhaustive"],
       ["inference", "conditional perfection"]
     ],
-    "comment": "A conditional answer to a yes/no question, read as the answer to under which conditions Robin comes."
+    "comment": "A conditional answer to a yes/no question, read as the answer to under which conditions Robin comes. Von Fintel's version of the exchange Groenendijk and Stokhof (1984: 324) print as 'Does John walk? If Mary walks.'",
+    "verified": "page-image"
   },
   {
     "id": "vonfintel2001_p17_4a",
-    "source": {"bibkey": "von-fintel-2001", "paperLabel": "(4) p. 17"},
+    "source": {"bibkey": "von-fintel-2001", "paperLabel": "(4) p. 18"},
     "reportedIn": null,
     "language": "stan1293",
     "primaryText": "Q: Will you give me $5 if I mow the lawn for you? A: Sure, I will give you $5 if you mow the lawn.",
@@ -336,11 +351,12 @@
       ["question", "yes/no conditional"],
       ["inference", "no perfection"]
     ],
-    "comment": "Exhaustivity applies vacuously to a yes-answer."
+    "comment": "Exhaustivity applies vacuously to a yes-answer. The paper prints the answers as 'Sure. (I will give you $5 if you mow the lawn).' and 'Yes. (The TV will work if it is humid).'; the row records them with the parenthesized conditional.",
+    "verified": "page-image"
   },
   {
     "id": "vonfintel2001_p17_5",
-    "source": {"bibkey": "von-fintel-2001", "paperLabel": "(5) p. 17"},
+    "source": {"bibkey": "von-fintel-2001", "paperLabel": "(5) p. 18"},
     "reportedIn": null,
     "language": "stan1293",
     "primaryText": "A: John is in Amherst today. B: If he is in Amherst, he'll be home late tonight.",
@@ -360,11 +376,12 @@
       ["question", "consequences of an antecedent"],
       ["inference", "no perfection"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "vonfintel2001_p17_6",
-    "source": {"bibkey": "von-fintel-2001", "paperLabel": "(6) p. 17"},
+    "source": {"bibkey": "von-fintel-2001", "paperLabel": "(6) p. 18"},
     "reportedIn": null,
     "language": "stan1293",
     "primaryText": "Q: Where around here can I buy Italian newspapers? A: You can get them at Out of Town News in Harvard Square.",
@@ -383,7 +400,8 @@
     "paperFeatures": [
       ["question", "mention-some"]
     ],
-    "comment": "One convenient place is enough; a teenager asking how to earn five dollars is answered likewise without perfection."
+    "comment": "One convenient place is enough; a teenager asking how to earn five dollars is answered likewise without perfection.",
+    "verified": "page-image"
   },
   {
     "id": "vonfintel2001_18",
@@ -408,6 +426,7 @@
       ["inference", "relativized perfection"],
       ["question", "antecedents from a narrow set"]
     ],
-    "comment": "An insult during a call before midnight is not excluded; modeled after an example of Irene Heim's."
+    "comment": "An insult during a call before midnight is not excluded; modeled after an example of Irene Heim's.",
+    "verified": "page-image"
   }
 ]

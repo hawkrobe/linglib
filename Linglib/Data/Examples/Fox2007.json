@@ -20,7 +20,8 @@
       }
     ],
     "paperFeatures": [],
-    "comment": "Kamp (1973) is credited with the free choice inference (17)."
+    "comment": "Kamp (1973) is credited with the free choice inference (17).",
+    "verified": "page-image"
   },
   {
     "id": "fox2007_ex21",
@@ -43,7 +44,8 @@
       }
     ],
     "paperFeatures": [],
-    "comment": "The negation of the standard meaning, not of free choice: no trace of free choice under a downward-entailing operator. The paper gives no derivation in the exhaustification system."
+    "comment": "The negation of the standard meaning, not of free choice: no trace of free choice under a downward-entailing operator. The paper gives no derivation in the exhaustification system.",
+    "verified": "page-image"
   },
   {
     "id": "fox2007_ex25",
@@ -66,7 +68,8 @@
       }
     ],
     "paperFeatures": [],
-    "comment": "Inference (26): not required to clear the table and not required to do the dishes; also inference (35a): required to clear the table or do the dishes."
+    "comment": "Inference (26): not required to clear the table and not required to do the dishes; also inference (35a): required to clear the table or do the dishes.",
+    "verified": "page-image"
   },
   {
     "id": "fox2007_ex28a",
@@ -89,7 +92,8 @@
       }
     ],
     "paperFeatures": [],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "fox2007_ex28b",
@@ -98,7 +102,7 @@
       "paperLabel": "(28b)"
     },
     "language": "stan1293",
-    "primaryText": "He is a very talented man. He can climb Mt. Everest or ski the Matterhorn.",
+    "primaryText": "He is a very talented man. He can climb Mount Everest or ski the Matterhorn.",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
@@ -112,7 +116,8 @@
       }
     ],
     "paperFeatures": [],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "fox2007_ex29a",
@@ -140,7 +145,8 @@
         "mass"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "fox2007_ex29b",
@@ -168,7 +174,8 @@
         "plural"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "fox2007_ex29c",
@@ -196,7 +203,8 @@
         "plural"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "fox2007_ex30a",
@@ -224,13 +232,14 @@
         "singular"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "fox2007_ex30c",
     "source": {
       "bibkey": "fox-2007",
-      "paperLabel": "(30c)"
+      "paperLabel": "(30b)"
     },
     "language": "stan1293",
     "primaryText": "Someone took the highway or the scenic route.",
@@ -252,13 +261,14 @@
         "singular"
       ]
     ],
-    "comment": "The manuscript numbers the items of (30) a, c, d."
+    "comment": "The published chapter prints this as (30b); the id keeps the manuscript's lettering.",
+    "verified": "page-image"
   },
   {
     "id": "fox2007_ex30d",
     "source": {
       "bibkey": "fox-2007",
-      "paperLabel": "(30d)"
+      "paperLabel": "(30c)"
     },
     "language": "stan1293",
     "primaryText": "This course is very difficult. In the past, some student waited 3 semesters to complete it or never finished it at all.",
@@ -280,7 +290,8 @@
         "singular"
       ]
     ],
-    "comment": "The manuscript numbers the items of (30) a, c, d."
+    "comment": "The published chapter prints this as (30c); the id keeps the manuscript's lettering.",
+    "verified": "page-image"
   },
   {
     "id": "fox2007_ex32",
@@ -303,7 +314,8 @@
       }
     ],
     "paperFeatures": [],
-    "comment": "Inference (35b): we gave every student of ours a stipend or a tuition waiver."
+    "comment": "Inference (35b): we gave every student of ours a stipend or a tuition waiver.",
+    "verified": "page-image"
   },
   {
     "id": "fox2007_ex34a",
@@ -326,7 +338,8 @@
       }
     ],
     "paperFeatures": [],
-    "comment": "Conjunction does not outscope negation without an intervening universal."
+    "comment": "Conjunction does not outscope negation without an intervening universal.",
+    "verified": "page-image"
   },
   {
     "id": "fox2007_ex34b",
@@ -349,7 +362,8 @@
       }
     ],
     "paperFeatures": [],
-    "comment": "Surface scope of the conjunction above the universal."
+    "comment": "Surface scope of the conjunction above the universal.",
+    "verified": "page-image"
   },
   {
     "id": "fox2007_ex48",
@@ -376,7 +390,8 @@
       }
     ],
     "paperFeatures": [],
-    "comment": "Repeated as (65)."
+    "comment": "Repeated as (65).",
+    "verified": "page-image"
   },
   {
     "id": "fox2007_ex49",
@@ -403,7 +418,8 @@
       }
     ],
     "paperFeatures": [],
-    "comment": "Repeated as (66)."
+    "comment": "Repeated as (66).",
+    "verified": "page-image"
   },
   {
     "id": "fox2007_ex59",
@@ -429,7 +445,8 @@
       }
     ],
     "paperFeatures": [],
-    "comment": "Fox credits the question-answer pair to Groenendijk and Stokhof (1984); (63) computes the answer as 'Fred talked to exactly one girl'."
+    "comment": "Fox credits the question-answer pair to Groenendijk and Stokhof (1984); (63) computes the answer as 'Fred talked to exactly one girl'.",
+    "verified": "page-image"
   },
   {
     "id": "fox2007_ex69",
@@ -452,7 +469,8 @@
       }
     ],
     "paperFeatures": [],
-    "comment": "Exhaustification yields the exclusive reading (70), and further layers do not change it."
+    "comment": "Exhaustification yields the exclusive reading (70), and further layers do not change it.",
+    "verified": "page-image"
   },
   {
     "id": "fox2007_ex82a",
@@ -480,7 +498,8 @@
         "singular"
       ]
     ],
-    "comment": "Implicature: there aren't two bottles of beer in the fridge."
+    "comment": "Implicature: there aren't two bottles of beer in the fridge.",
+    "verified": "page-image"
   },
   {
     "id": "fox2007_ex82b",
@@ -508,7 +527,8 @@
         "singular"
       ]
     ],
-    "comment": "Implicature: it's not true that two students talked to Mary."
+    "comment": "Implicature: it's not true that two students talked to Mary.",
+    "verified": "page-image"
   },
   {
     "id": "fox2007_ex89",
@@ -535,7 +555,8 @@
     "reportedIn": {
       "bibkey": "fox-2007",
       "paperLabel": "(89)"
-    }
+    },
+    "verified": "page-image"
   },
   {
     "id": "fox2007_ex91a",
@@ -563,7 +584,8 @@
         "narrow"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "fox2007_ex91b",
@@ -591,7 +613,8 @@
         "wide"
       ]
     ],
-    "comment": "Either marks wide scope of the disjunction."
+    "comment": "Either marks wide scope of the disjunction.",
+    "verified": "page-image"
   },
   {
     "id": "fox2007_ex92",
@@ -623,7 +646,8 @@
     "reportedIn": {
       "bibkey": "fox-2007",
       "paperLabel": "(92)"
-    }
+    },
+    "verified": "page-image"
   },
   {
     "id": "fox2007_ex93a",
@@ -632,7 +656,7 @@
       "paperLabel": "(93a)"
     },
     "language": "stan1293",
-    "primaryText": "Some students waited 3 semester to complete this course or never finished it at all.",
+    "primaryText": "Some students waited 3 semesters to complete this course or never finished it at all.",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
@@ -655,7 +679,8 @@
         "narrow"
       ]
     ],
-    "comment": ""
+    "comment": "The paper prints '3 semester' here; it prints '3 semesters' in (29c), (30c), (80c) and (81b).",
+    "verified": "page-image"
   },
   {
     "id": "fox2007_ex93b",
@@ -664,7 +689,7 @@
       "paperLabel": "(93b)"
     },
     "language": "stan1293",
-    "primaryText": "Some students either waited 3 semester to complete this course or never finished it at all.",
+    "primaryText": "Some students either waited 3 semesters to complete this course or never finished it at all.",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
@@ -687,7 +712,8 @@
         "narrow"
       ]
     ],
-    "comment": ""
+    "comment": "The paper prints '3 semester' here; it prints '3 semesters' in (29c), (30c), (80c) and (81b).",
+    "verified": "page-image"
   },
   {
     "id": "fox2007_ex93c",
@@ -696,7 +722,7 @@
       "paperLabel": "(93c)"
     },
     "language": "stan1293",
-    "primaryText": "(Either) Some students waited 3 semester to complete this course or some students never finished it at all.",
+    "primaryText": "(Either) Some students waited 3 semesters to complete this course or some students never finished it at all.",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
@@ -719,6 +745,7 @@
         "wide"
       ]
     ],
-    "comment": ""
+    "comment": "The paper prints '3 semester' here; it prints '3 semesters' in (29c), (30c), (80c) and (81b).",
+    "verified": "page-image"
   }
 ]

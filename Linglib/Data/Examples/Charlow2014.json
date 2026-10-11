@@ -13,7 +13,8 @@
     "readings": [
       {"name": "∃ > if", "judgment": "acceptable"}
     ],
-    "comment": "Exceptional scope of an indefinite out of a conditional antecedent, a scope island."
+    "comment": "Exceptional scope of an indefinite out of a conditional antecedent, a scope island.",
+    "verified": "page-image"
   },
   {
     "id": "charlow2014_ex4_1b",
@@ -29,7 +30,8 @@
     "readings": [
       {"name": "∀ > if", "judgment": "unacceptable"}
     ],
-    "comment": "A universal cannot scope out of the antecedent; contrast with (4.1a)."
+    "comment": "A universal cannot scope out of the antecedent; contrast with (4.1a).",
+    "verified": "page-image"
   },
   {
     "id": "charlow2014_ex4_1c",
@@ -45,7 +47,8 @@
     "readings": [
       {"name": "¬∃ > if", "judgment": "unacceptable"}
     ],
-    "comment": "A negative quantifier cannot scope out of the antecedent."
+    "comment": "A negative quantifier cannot scope out of the antecedent.",
+    "verified": "page-image"
   },
   {
     "id": "charlow2014_ex4_2a",
@@ -61,7 +64,8 @@
     "readings": [
       {"name": "no > ∃ > every (intermediate)", "judgment": "acceptable"}
     ],
-    "comment": "Intermediate exceptional scope out of a tensed relative clause, with the indefinite bound into by the subject."
+    "comment": "Intermediate exceptional scope out of a tensed relative clause, with the indefinite bound into by the subject.",
+    "verified": "page-image"
   },
   {
     "id": "charlow2014_ex4_4",
@@ -78,7 +82,8 @@
     "readings": [
       {"name": "∃ > no (pronoun bound)", "judgment": "unacceptable"}
     ],
-    "comment": "The Binder Roof Constraint: an indefinite cannot take existential scope over an operator that binds into its restrictor."
+    "comment": "The Binder Roof Constraint: an indefinite cannot take existential scope over an operator that binds into its restrictor.",
+    "verified": "page-image"
   },
   {
     "id": "charlow2014_ex4_6",
@@ -94,7 +99,8 @@
     "readings": [
       {"name": "a book > not > a famous linguist", "judgment": "unacceptable"}
     ],
-    "comment": "A container indefinite cannot outscope negation while the embedded indefinite scopes below it."
+    "comment": "A container indefinite cannot outscope negation while the embedded indefinite scopes below it.",
+    "verified": "page-image"
   },
   {
     "id": "charlow2014_ex4_18b",
@@ -110,7 +116,8 @@
     "readings": [
       {"name": "a relative > if > a lawyer", "judgment": "acceptable"}
     ],
-    "comment": "Selective exceptional scope: two indefinites on one island scope differently outside it."
+    "comment": "Selective exceptional scope: two indefinites on one island scope differently outside it.",
+    "verified": "page-image"
   },
   {
     "id": "charlow2014_ex4_23a",
@@ -127,7 +134,8 @@
     "readings": [
       {"name": "or > hopes, indefinites de dicto", "judgment": "acceptable"}
     ],
-    "comment": "Disjunction takes exceptional scope while its disjuncts stay below the attitude verb: disjunction does not respect the Binder Roof Constraint."
+    "comment": "Disjunction takes exceptional scope while its disjuncts stay below the attitude verb: disjunction does not respect the Binder Roof Constraint.",
+    "verified": "page-image"
   },
   {
     "id": "charlow2014_ex4_23b",
@@ -144,13 +152,14 @@
     "readings": [
       {"name": "and > hopes", "judgment": "unacceptable"}
     ],
-    "comment": "Unstressed conjunction does not scope out of the island."
+    "comment": "Unstressed conjunction does not scope out of the island.",
+    "verified": "page-image"
   },
   {
     "id": "charlow2014_ex4_24b",
     "source": {"bibkey": "charlow-2014", "paperLabel": "(4.24b)"},
     "language": "stan1293",
-    "primaryText": "Either everyone ate a steak or a hamburger.",
+    "primaryText": "Either everyone ate a steak or a hamburger. (I've forgotten which.)",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
@@ -160,7 +169,8 @@
     "readings": [
       {"name": "either everyone ate a steak, or everyone ate a hamburger (or > every > a)", "judgment": "acceptable"}
     ],
-    "comment": "Disjunction scopes over the universal while each disjoined indefinite stays within it."
+    "comment": "Disjunction scopes over the universal while each disjoined indefinite stays within it.",
+    "verified": "page-image"
   },
   {
     "id": "charlow2014_ex4_25b",
@@ -176,16 +186,17 @@
     "readings": [
       {"name": "every farmer beats every donkey or horse he owns", "judgment": "acceptable"}
     ],
-    "comment": "Disjunctions license donkey anaphora like indefinites."
+    "comment": "Disjunctions license donkey anaphora like indefinites.",
+    "verified": "page-image"
   },
   {
     "id": "charlow2014_ex5_7a",
     "source": {"bibkey": "charlow-2014", "paperLabel": "(5.7a)"},
     "language": "stan1293",
-    "primaryText": "If everyone thinks John will come, we'll have to invite him. If everyone thinks BILL will, we WON'T have to invite him.",
+    "primaryText": "If everyone thinks John will come, we'll have to invite him. If everyone thinks BILL will come, we WON'T have to invite him.",
     "discourseSegments": [
       "If everyone thinks John will come, we'll have to invite him.",
-      "If everyone thinks BILL will, we WON'T have to invite him."
+      "If everyone thinks BILL will come, we WON'T have to invite him."
     ],
     "glossedTokens": [],
     "translation": "",
@@ -195,7 +206,8 @@
     "readings": [
       {"name": "sloppy (him = Bill)", "judgment": "acceptable"}
     ],
-    "comment": "Surprising sloppy reading: Bill's dref must scope out of a tensed clause and over the dynamically closed 'everyone' to bind the sloppy pro-form."
+    "comment": "Surprising sloppy reading: Bill's dref must scope out of a tensed clause and over the dynamically closed 'everyone' to bind the sloppy pro-form.",
+    "verified": "page-image"
   },
   {
     "id": "charlow2014_ex5_22",
@@ -214,7 +226,8 @@
     "readings": [
       {"name": "they = maximal refset", "judgment": "acceptable"}
     ],
-    "comment": "A maximal refset dref created inside a scope island, under dynamically closed operators, is available for cross-sentential anaphora."
+    "comment": "A maximal refset dref created inside a scope island, under dynamically closed operators, is available for cross-sentential anaphora.",
+    "verified": "page-image"
   },
   {
     "id": "charlow2014_ex5_23",
@@ -233,7 +246,8 @@
     "readings": [
       {"name": "they = maximal refset", "judgment": "acceptable"}
     ],
-    "comment": "The refset dref of 'no senators' survives the negation scoping over its island."
+    "comment": "The refset dref of 'no senators' survives the negation scoping over its island.",
+    "verified": "page-image"
   },
   {
     "id": "charlow2014_ex5_27b",
@@ -249,6 +263,7 @@
     "readings": [
       {"name": "also > SUE > only > BILL", "judgment": "acceptable"}
     ],
-    "comment": "Selective association with focus: only associates with BILL, also with SUE."
+    "comment": "Selective association with focus: only associates with BILL, also with SUE.",
+    "verified": "page-image"
   }
 ]

@@ -29,7 +29,8 @@
         "John"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "ahn2015_2",
@@ -61,7 +62,8 @@
         "John"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "ahn2015_3",
@@ -76,7 +78,7 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -89,13 +91,14 @@
         "positive"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "ahn2015_5_too",
     "source": {
       "bibkey": "rullmann-2003",
-      "paperLabel": "(5)"
+      "paperLabel": ""
     },
     "reportedIn": {
       "bibkey": "ahn-2015",
@@ -124,13 +127,14 @@
         "positive"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "ahn2015_5_either",
     "source": {
       "bibkey": "rullmann-2003",
-      "paperLabel": "(5)"
+      "paperLabel": ""
     },
     "reportedIn": {
       "bibkey": "ahn-2015",
@@ -142,7 +146,7 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -159,7 +163,8 @@
         "positive"
       ]
     ],
-    "comment": "A negative host with a positive antecedent: the anaphor's antecedent must be false."
+    "comment": "A negative host with a positive antecedent: the anaphor's antecedent must be false.",
+    "verified": "page-image"
   },
   {
     "id": "ahn2015_9",
@@ -187,7 +192,8 @@
         "negative"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "ahn2015_10",
@@ -202,7 +208,7 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -215,7 +221,8 @@
         "positive"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "ahn2015_11",
@@ -230,7 +237,7 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -247,25 +254,23 @@
         "almost"
       ]
     ],
-    "comment": "Rullmann's licensing condition wrongly predicts almost, which implies the host is false, to license either."
+    "comment": "Rullmann's licensing condition wrongly predicts almost, which implies the host is false, to license either.",
+    "verified": "page-image"
   },
   {
     "id": "ahn2015_12",
     "source": {
-      "bibkey": "kripke-2009",
-      "paperLabel": "(12)"
-    },
-    "reportedIn": {
       "bibkey": "ahn-2015",
       "paperLabel": "(12)"
     },
+    "reportedIn": null,
     "language": "stan1293",
     "primaryText": "John is having dinner in New York tonight too.",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
     "context": "Uttered out of the blue; it is common knowledge that many people dine in New York every night.",
-    "judgment": "unacceptable",
+    "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -280,20 +285,22 @@
       [
         "focus",
         "John"
+      ],
+      [
+        "felicity",
+        "infelicitous"
       ]
     ],
-    "comment": "An existential presupposition would be satisfied, yet too is infelicitous without a salient antecedent."
+    "comment": "Printed unmarked; the prose says that even if many people dine in New York every night, this 'would not make the use of too felicitous' when (12) is uttered out of the blue. Ahn's (12) is called Kripke's (2009) example; Kripke prints it as (14) 'Sam is having dinner in New York tonight, too.' (p. 373).",
+    "verified": "page-image"
   },
   {
     "id": "ahn2015_15",
     "source": {
-      "bibkey": "kripke-2009",
-      "paperLabel": "(15)"
-    },
-    "reportedIn": {
       "bibkey": "ahn-2015",
       "paperLabel": "(15)"
     },
+    "reportedIn": null,
     "language": "stan1293",
     "primaryText": "If John is coming to the party, the boss will come too.",
     "discourseSegments": [],
@@ -317,7 +324,8 @@
         "John and the boss must be distinct"
       ]
     ],
-    "comment": ""
+    "comment": "Ahn says Kripke (2009) 'uses an example like (15)'; Kripke's (11) is 'If Herb comes to the party, the boss will come, too.' (p. 371).",
+    "verified": "page-image"
   },
   {
     "id": "ahn2015_23",
@@ -349,7 +357,8 @@
         "negation below too"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "ahn2015_24",
@@ -381,7 +390,8 @@
         "negation above too"
       ]
     ],
-    "comment": "Asserts ¬(q ∧ p); with q true from the discourse, ¬p follows."
+    "comment": "Asserts ¬(q ∧ p); with q true from the discourse, ¬p follows.",
+    "verified": "page-image"
   },
   {
     "id": "ahn2015_26a",
@@ -409,7 +419,8 @@
         "Abrusán entailment"
       ]
     ],
-    "comment": "From Abrusán 2014."
+    "comment": "Abrusán (2014) is cited as discussing examples like (26).",
+    "verified": "page-image"
   },
   {
     "id": "ahn2015_26b",
@@ -437,7 +448,8 @@
         "Abrusán entailment"
       ]
     ],
-    "comment": "From Abrusán 2014."
+    "comment": "Abrusán (2014) is cited as discussing examples like (26).",
+    "verified": "page-image"
   },
   {
     "id": "ahn2015_29",
@@ -469,7 +481,8 @@
         "not presupposed"
       ]
     ],
-    "comment": "The additive meaning is not presupposed: the question at hand is the conjunction."
+    "comment": "The additive meaning is not presupposed: the question at hand is the conjunction.",
+    "verified": "page-image"
   },
   {
     "id": "ahn2015_32",
@@ -501,7 +514,8 @@
         "John"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "ahn2015_41",
@@ -516,7 +530,7 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -529,7 +543,8 @@
         "positive"
       ]
     ],
-    "comment": "O over the alternatives of the disjunction yields a contradiction."
+    "comment": "O over the alternatives of the disjunction yields a contradiction.",
+    "verified": "page-image"
   },
   {
     "id": "ahn2015_43",
@@ -557,7 +572,8 @@
         "negative"
       ]
     ],
-    "comment": "Under negation the disjunction entails every alternative; exhaustification is vacuous."
+    "comment": "Under negation the disjunction entails every alternative; exhaustification is vacuous.",
+    "verified": "page-image"
   },
   {
     "id": "ahn2015_45",
@@ -572,7 +588,7 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -589,6 +605,7 @@
         "almost"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   }
 ]

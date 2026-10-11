@@ -18,7 +18,8 @@
       ["per_unit", "milliliter"],
       ["interpretation", "math speak"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bs2026_3",
@@ -37,7 +38,8 @@
       ["unit", "kilometers"],
       ["interpretation", "math speak"]
     ],
-    "comment": "The numeral verbalizes '4 × 10^13'."
+    "comment": "The numeral verbalizes '4 × 10^13'.",
+    "verified": "page-image"
   },
   {
     "id": "bs2026_4",
@@ -58,7 +60,8 @@
       ["per_unit", "milliliter"],
       ["interpretation", "compositional"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bs2026_6a",
@@ -79,7 +82,8 @@
       ["per_unit", "milliliter"],
       ["interpretation", "math speak"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bs2026_6b",
@@ -100,7 +104,8 @@
       ["per_unit", "hour"],
       ["interpretation", "math speak"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bs2026_7a",
@@ -119,7 +124,8 @@
       ["numeral", "thirteen"],
       ["unit", "grams"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bs2026_7b",
@@ -138,7 +144,8 @@
       ["numeral", "thirty"],
       ["unit", "miles"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bs2026_8a",
@@ -160,7 +167,8 @@
       ["interpretation", "compositional"],
       ["pro_antecedent", "this sample of liquid"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bs2026_8b",
@@ -182,7 +190,8 @@
       ["interpretation", "compositional"],
       ["pro_antecedent", "its six-hour trip"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bs2026_22",
@@ -203,7 +212,8 @@
       ["per_unit", "square inch"],
       ["interpretation", "idiom"]
     ],
-    "comment": "Known to many speakers only through the initialism psi."
+    "comment": "Known to many speakers only through the initialism psi.",
+    "verified": "page-image"
   },
   {
     "id": "bs2026_23",
@@ -222,7 +232,8 @@
       ["numeral", "33"],
       ["unit", "psi"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bs2026_24",
@@ -240,7 +251,8 @@
       ["base", "(3)"],
       ["interpretation", "math speak"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bs2026_25a",
@@ -260,7 +272,8 @@
       ["base", "(6a)"],
       ["verbalizes", "13 g/mL"]
     ],
-    "comment": "A paraphrase of (6a)."
+    "comment": "A paraphrase of (6a).",
+    "verified": "page-image"
   },
   {
     "id": "bs2026_25b",
@@ -280,7 +293,8 @@
       ["base", "(6b)"],
       ["verbalizes", "30 mph"]
     ],
-    "comment": "A paraphrase of (6b)."
+    "comment": "A paraphrase of (6b).",
+    "verified": "page-image"
   },
   {
     "id": "bs2026_26a",
@@ -300,7 +314,8 @@
       ["base", "(8a)"],
       ["verbalizes", "13 g/mL"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bs2026_26b",
@@ -320,7 +335,8 @@
       ["base", "(8b)"],
       ["verbalizes", "30 mph"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bs2026_27a",
@@ -342,7 +358,8 @@
       ["unit", "grams"],
       ["per_unit", "milliliter"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bs2026_27b",
@@ -364,7 +381,8 @@
       ["unit", "grams"],
       ["per_unit", "milliliter"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bs2026_27c",
@@ -386,7 +404,8 @@
       ["unit", "grams"],
       ["per_unit", "milliliter"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bs2026_28a",
@@ -408,7 +427,8 @@
       ["unit", "miles"],
       ["per_unit", "hour"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bs2026_28b",
@@ -430,7 +450,8 @@
       ["unit", "miles"],
       ["per_unit", "hour"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bs2026_28c",
@@ -452,7 +473,8 @@
       ["unit", "miles"],
       ["per_unit", "hour"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bs2026_29a",
@@ -474,7 +496,8 @@
       ["unit", "grams"],
       ["per_unit", "milliliter"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bs2026_29b",
@@ -496,7 +519,8 @@
       ["unit", "grams"],
       ["per_unit", "milliliter"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bs2026_29c",
@@ -518,7 +542,8 @@
       ["unit", "grams"],
       ["per_unit", "milliliter"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bs2026_30a",
@@ -540,7 +565,8 @@
       ["unit", "miles"],
       ["per_unit", "hour"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bs2026_30b",
@@ -562,7 +588,8 @@
       ["unit", "miles"],
       ["per_unit", "hour"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bs2026_30c",
@@ -584,6 +611,7 @@
       ["unit", "miles"],
       ["per_unit", "hour"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   }
 ]

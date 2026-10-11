@@ -18,7 +18,8 @@
       ["coordinator", "or"],
       ["narrowReading", "free choice"]
     ],
-    "comment": "Free choice: you may do A and you may do B. Ignorance: the speaker is unsure which of A and B is allowed."
+    "comment": "Free choice: you may do A and you may do B. Ignorance: the speaker is unsure which of A and B is allowed.",
+    "verified": "page-image"
   },
   {
     "id": "ciardelliguerrini2026_ex5",
@@ -39,7 +40,8 @@
       ["coordinator", "or"],
       ["narrowReading", "disjunctive obligation"]
     ],
-    "comment": "Disjunctive obligation: to get credit one is required to do either of two things, dominant when Bob is knowledgeable. Ignorance: Bob is uncertain whether one gets credit by essay or by presentation and could follow up with 'I'm not sure which'."
+    "comment": "Disjunctive obligation: to get credit one is required to do either of two things, dominant when Bob is knowledgeable. Ignorance: Bob is uncertain whether one gets credit by essay or by presentation and could follow up with 'I'm not sure which'.",
+    "verified": "page-image"
   },
   {
     "id": "ciardelliguerrini2026_ex7",
@@ -60,7 +62,8 @@
       ["coordinator", "and"],
       ["narrowReading", "conjunctive permission"]
     ],
-    "comment": "Conjunctive permission: Alice is permitted to go to both parties, the natural reading. Conjunction of permissions: each party is individually permitted, brought out by the continuation 'but you can't go to both'."
+    "comment": "Conjunctive permission: Alice is permitted to go to both parties, the natural reading. Conjunction of permissions: each party is individually permitted, brought out by the continuation 'but you can't go to both'.",
+    "verified": "page-image"
   },
   {
     "id": "ciardelliguerrini2026_ex9b",
@@ -70,7 +73,7 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "questionable",
+    "judgment": "marginal",
     "readings": [
       {"name": "conjunctive permission", "judgment": "acceptable"}
     ],
@@ -80,7 +83,8 @@
       ["coordinator", "and"],
       ["narrowReading", "conjunctive permission"]
     ],
-    "comment": "Has one striking reading on which it is absurd, since it implies the possibility of both going and staying; (9a) with 'or' is perfectly natural."
+    "comment": "Has one striking reading on which it is absurd, since it implies the possibility of both going and staying; (9a) with 'or' is perfectly natural.",
+    "verified": "page-image"
   },
   {
     "id": "ciardelliguerrini2026_ex19a",
@@ -99,7 +103,8 @@
       ["modal2", "it's ok"],
       ["coordinator", "or"]
     ],
-    "comment": "No free-choice reading, the contrast of Meyer and Sauerland (2017)."
+    "comment": "No free-choice reading, the contrast of Meyer and Sauerland (2017).",
+    "verified": "page-image"
   },
   {
     "id": "ciardelliguerrini2026_ex19b_allowed",
@@ -118,7 +123,8 @@
       ["modal2", "be allowed"],
       ["coordinator", "or"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "ciardelliguerrini2026_ex19b_required",
@@ -137,7 +143,8 @@
       ["modal2", "be required"],
       ["coordinator", "or"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "ciardelliguerrini2026_ex22a",
@@ -157,7 +164,8 @@
       ["coordinator", "or"],
       ["narrowReading", "free choice"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "ciardelliguerrini2026_ex22b",
@@ -177,7 +185,8 @@
       ["coordinator", "or"],
       ["narrowReading", "free choice"]
     ],
-    "comment": "Free choice survives a high 'either', above which across-the-board movement is impossible, (21)."
+    "comment": "Free choice survives a high 'either', below which across-the-board movement cannot land, (21).",
+    "verified": "page-image"
   },
   {
     "id": "ciardelliguerrini2026_exfn4i",
@@ -197,7 +206,8 @@
       ["coordinator", "or"],
       ["narrowReading", "free choice"]
     ],
-    "comment": "Alonso-Ovalle's (2006) mixed-form case."
+    "comment": "Alonso-Ovalle's (2006) mixed-form case.",
+    "verified": "page-image"
   },
   {
     "id": "ciardelliguerrini2026_ex28",
@@ -219,7 +229,8 @@
       ["narrowReading", "permission to do neither"],
       ["negated", "true"]
     ],
-    "comment": "Conveys that I am permitted to neither cook nor clean, not that I am required to do neither."
+    "comment": "Conveys that I am permitted to neither cook nor clean, not that I am required to do neither.",
+    "verified": "page-image"
   },
   {
     "id": "ciardelliguerrini2026_ex11a",
@@ -237,7 +248,8 @@
       ["checker", "allow"],
       ["checked", "may"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "ciardelliguerrini2026_ex11b",
@@ -255,7 +267,8 @@
       ["checker", "demand"],
       ["checked", "must"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "ciardelliguerrini2026_ex20a",
@@ -273,7 +286,8 @@
       ["checker", "allow"],
       ["checked", "be permitted"]
     ],
-    "comment": "Unambiguously conveys that the boss is ok with the fact that Alice has permission to leave."
+    "comment": "Unambiguously conveys that the boss is ok with the fact that Alice has permission to leave.",
+    "verified": "page-image"
   },
   {
     "id": "ciardelliguerrini2026_ex20b",
@@ -291,7 +305,8 @@
       ["checker", "demand"],
       ["checked", "be required"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "ciardelliguerrini2026_ex24",
@@ -310,7 +325,8 @@
       ["checked", "need"],
       ["negated", "true"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "ciardelliguerrini2026_ex25",
@@ -329,7 +345,8 @@
       ["checked", "may"],
       ["negated", "true"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "ciardelliguerrini2026_ex26",
@@ -339,7 +356,7 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "readings": [
       {"name": "modal concord", "judgment": "unacceptable"}
     ],
@@ -348,7 +365,8 @@
       ["checked", "need"],
       ["negated", "true"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "ciardelliguerrini2026_ex27",
@@ -358,7 +376,7 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "readings": [
       {"name": "modal concord", "judgment": "unacceptable"}
     ],
@@ -367,6 +385,7 @@
       ["checked", "may"],
       ["negated", "true"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   }
 ]

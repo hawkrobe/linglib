@@ -19,7 +19,8 @@
       ["environment", "positive"],
       ["direction", "subsetToSuperset"]
     ],
-    "comment": "An upward-entailing environment supports the subset-to-superset inference."
+    "comment": "An upward-entailing environment supports the subset-to-superset inference.",
+    "verified": "page-image"
   },
   {
     "id": "denicetal2021_2",
@@ -41,7 +42,8 @@
       ["environment", "negative"],
       ["direction", "supersetToSubset"]
     ],
-    "comment": "A downward-entailing environment supports the superset-to-subset inference."
+    "comment": "A downward-entailing environment supports the superset-to-subset inference.",
+    "verified": "page-image"
   },
   {
     "id": "denicetal2021_3",
@@ -60,14 +62,15 @@
       ["environment", "negative"],
       ["pi", "npi"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "denicetal2021_4",
     "source": {"bibkey": "denic-homer-rothschild-chemla-2021", "paperLabel": "(4)"},
     "reportedIn": null,
     "language": "stan1293",
-    "primaryText": "*This animal is a cat at all.",
+    "primaryText": "This animal is a cat at all.",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
@@ -79,7 +82,8 @@
       ["environment", "positive"],
       ["pi", "npi"]
     ],
-    "comment": ""
+    "comment": "The page prints '(4) animal is a cat at all.' with neither a mark nor the initial 'This' of (1)-(3), a typesetting loss; the judgment is from the prose, which calls (4) 'not acceptable in an UE environment'.",
+    "verified": "page-image"
   },
   {
     "id": "denicetal2021_5",
@@ -98,7 +102,8 @@
       ["environment", "positive"],
       ["pi", "ppi"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "denicetal2021_6",
@@ -120,7 +125,8 @@
       ["environment", "negative"],
       ["pi", "ppi"]
     ],
-    "comment": "The positive polarity item has no reading equivalent to I didn't drink any coffee."
+    "comment": "The positive polarity item has no reading equivalent to I didn't drink any coffee.",
+    "verified": "page-image"
   },
   {
     "id": "denicetal2021_7",
@@ -141,7 +147,8 @@
     "paperFeatures": [
       ["environment", "exactly12"]
     ],
-    "comment": "Neither sentence entails the other: a non-monotone environment."
+    "comment": "Neither sentence entails the other: a non-monotone environment.",
+    "verified": "page-image"
   },
   {
     "id": "denicetal2021_8",
@@ -163,7 +170,8 @@
       ["environment", "exactly12"],
       ["pi", "both"]
     ],
-    "comment": "Both polarity items are acceptable to some extent in non-monotone environments, with individual variation for the negative one."
+    "comment": "Both polarity items are acceptable to some extent in non-monotone environments, with individual variation for the negative one.",
+    "verified": "page-image"
   },
   {
     "id": "denicetal2021_9",
@@ -184,7 +192,8 @@
       ["environment", "exactly12"],
       ["pi", "ppi"]
     ],
-    "comment": "The positive polarity item can take exceptional wide scope, under which it sits in an upward-entailing environment."
+    "comment": "The positive polarity item can take exceptional wide scope, under which it sits in an upward-entailing environment.",
+    "verified": "page-image"
   },
   {
     "id": "denicetal2021_11",
@@ -206,7 +215,8 @@
       ["item", "training"],
       ["expected", "follows"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "denicetal2021_12",
@@ -228,7 +238,8 @@
       ["item", "training"],
       ["expected", "doesNotFollow"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "denicetal2021_13",
@@ -250,7 +261,8 @@
       ["item", "training"],
       ["expected", "intermediate"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "denicetal2021_14",
@@ -273,7 +285,8 @@
       ["direction", "supersetToSubset"],
       ["pi", "ppi"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "denicetal2021_15",
@@ -296,7 +309,8 @@
       ["direction", "supersetToSubset"],
       ["pi", "ppi"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "denicetal2021_16",
@@ -319,7 +333,8 @@
       ["direction", "supersetToSubset"],
       ["pi", "ppi"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "denicetal2021_17",
@@ -342,7 +357,8 @@
       ["direction", "supersetToSubset"],
       ["pi", "npi"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "denicetal2021_18",
@@ -365,7 +381,8 @@
       ["direction", "supersetToSubset"],
       ["pi", "npi"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "denicetal2021_19",
@@ -388,7 +405,8 @@
       ["direction", "supersetToSubset"],
       ["pi", "npi"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "denicetal2021_20",
@@ -411,7 +429,8 @@
       ["direction", "supersetToSubset"],
       ["pi", "both"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "denicetal2021_21",
@@ -434,7 +453,8 @@
       ["direction", "supersetToSubset"],
       ["pi", "both"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "denicetal2021_22",
@@ -456,7 +476,8 @@
       ["environment", "everyNot"],
       ["pi", "both"]
     ],
-    "comment": "Both items are licit in a doubly negative environment; the positive one can take narrow scope under both operators, and the negative one sits in a globally upward-entailing environment, licensed by the local one."
+    "comment": "Both items are licit in a doubly negative environment; the positive one can take narrow scope under both operators, and the negative one sits in a globally upward-entailing environment, licensed by the local one.",
+    "verified": "page-image"
   },
   {
     "id": "denicetal2021_23",
@@ -479,7 +500,8 @@
       ["direction", "subsetToSuperset"],
       ["pi", "both"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "denicetal2021_24",
@@ -502,7 +524,8 @@
       ["direction", "subsetToSuperset"],
       ["pi", "both"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "denicetal2021_25",
@@ -525,7 +548,8 @@
       ["direction", "subsetToSuperset"],
       ["pi", "ppi"]
     ],
-    "comment": "Experiment 2's item with the positive polarity item in both premise and conclusion; the null result suggests the item does not take wide scope in non-monotone environments, §9."
+    "comment": "Experiment 2's item with the positive polarity item in both premise and conclusion; the null result suggests the item does not take wide scope in non-monotone environments, §9.",
+    "verified": "page-image"
   },
   {
     "id": "denicetal2021_26",
@@ -550,7 +574,8 @@
       ["direction", "subsetToSuperset"],
       ["pi", "ppi"]
     ],
-    "comment": "Under the wide-scope reading (27) the inference still follows, a confound for the positive polarity item's effect in doubly negative environments."
+    "comment": "Under the wide-scope reading (27) the inference still follows, a confound for the positive polarity item's effect in doubly negative environments.",
+    "verified": "page-image"
   },
   {
     "id": "denicetal2021_28",
@@ -573,7 +598,8 @@
       ["direction", "supersetToSubset"],
       ["pi", "noPI"]
     ],
-    "comment": "The working example of §10.2, with (29) its version with any and (31) the conclusion."
+    "comment": "The working example of §10.2, with (29) its version with any and (31) the conclusion.",
+    "verified": "page-image"
   },
   {
     "id": "denicetal2021_29",
@@ -596,6 +622,7 @@
       ["direction", "supersetToSubset"],
       ["pi", "npi"]
     ],
-    "comment": "Under domain widening, (30), the premise with any is stronger, so downward inferences from it follow a fortiori."
+    "comment": "Under domain widening, (30), the premise with any is stronger, so downward inferences from it follow a fortiori.",
+    "verified": "page-image"
   }
 ]

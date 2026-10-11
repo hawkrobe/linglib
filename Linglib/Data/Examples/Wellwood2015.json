@@ -15,7 +15,8 @@
     "paperFeatures": [
       ["category", "massNoun"]
     ],
-    "comment": "Mass-noun nominal comparative; VOLUME or WEIGHT dimension available."
+    "comment": "Mass-noun nominal comparative; VOLUME or WEIGHT dimension available.",
+    "verified": "page-image"
   },
   {
     "id": "wellwood2015_felicity_count",
@@ -27,13 +28,14 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "questionable",
+    "judgment": "marginal",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
       ["category", "countNoun"]
     ],
-    "comment": "Singular count noun anomalous under much-comparison."
+    "comment": "Singular count noun anomalous under much-comparison.",
+    "verified": "page-image"
   },
   {
     "id": "wellwood2015_felicity_atelic",
@@ -51,7 +53,8 @@
     "paperFeatures": [
       ["category", "atelicVP"]
     ],
-    "comment": "Atelic VP verbal comparative; DURATION or DISTANCE dimension available."
+    "comment": "Atelic VP verbal comparative; DURATION or DISTANCE dimension available.",
+    "verified": "page-image"
   },
   {
     "id": "wellwood2015_felicity_telic",
@@ -63,13 +66,14 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "questionable",
+    "judgment": "marginal",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
       ["category", "telicVP"]
     ],
-    "comment": "Telic VP anomalous under much-comparison."
+    "comment": "Telic VP anomalous under much-comparison.",
+    "verified": "page-image"
   },
   {
     "id": "wellwood2015_felicity_ga",
@@ -79,7 +83,7 @@
     "primaryText": "Al's coffee is hotter than Bill's is.",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "Al's coffee is hotter than Bill's.",
+    "translation": "",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -87,7 +91,8 @@
     "paperFeatures": [
       ["category", "gradableAdj"]
     ],
-    "comment": "Gradable adjective comparative; TEMPERATURE dimension."
+    "comment": "Gradable adjective comparative; TEMPERATURE dimension.",
+    "verified": "page-image"
   },
   {
     "id": "wellwood2015_felicity_nonga",
@@ -97,22 +102,23 @@
     "primaryText": "This piece of wood is more wooden than that one is.",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "This piece of wood is more wooden than that one.",
+    "translation": "",
     "context": "",
-    "judgment": "questionable",
+    "judgment": "marginal",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
       ["category", "nonGradableAdj"]
     ],
-    "comment": "Non-gradable adjective anomalous under comparison."
+    "comment": "Non-gradable adjective anomalous under comparison.",
+    "verified": "page-image"
   },
   {
     "id": "wellwood2015_dim_82a_hotter",
     "source": {"bibkey": "wellwood-2015", "paperLabel": "ex. (82a)"},
     "reportedIn": null,
     "language": "stan1293",
-    "primaryText": "hotter",
+    "primaryText": "This coffee is hotter than that coffee is.",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
@@ -126,14 +132,15 @@
       ["dimension", "temperature"],
       ["intensive", "true"]
     ],
-    "comment": "GA measuring states: intensive dimension."
+    "comment": "GA measuring states: intensive dimension.",
+    "verified": "page-image"
   },
   {
     "id": "wellwood2015_dim_82b_harder",
     "source": {"bibkey": "wellwood-2015", "paperLabel": "ex. (82b)"},
     "reportedIn": null,
     "language": "stan1293",
-    "primaryText": "harder",
+    "primaryText": "This plastic is harder than that plastic is.",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
@@ -147,14 +154,15 @@
       ["dimension", "hardness"],
       ["intensive", "true"]
     ],
-    "comment": "GA measuring states: intensive dimension."
+    "comment": "GA measuring states: intensive dimension.",
+    "verified": "page-image"
   },
   {
     "id": "wellwood2015_dim_83a_more_coffee",
     "source": {"bibkey": "wellwood-2015", "paperLabel": "ex. (83a)"},
     "reportedIn": null,
     "language": "stan1293",
-    "primaryText": "more coffee",
+    "primaryText": "Al has more coffee than Bill does.",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
@@ -168,14 +176,15 @@
       ["dimension", "volume"],
       ["intensive", "false"]
     ],
-    "comment": "Mass noun measuring entities: extensive dimension."
+    "comment": "Mass noun measuring entities: extensive dimension.",
+    "verified": "page-image"
   },
   {
     "id": "wellwood2015_dim_83b_more_plastic",
     "source": {"bibkey": "wellwood-2015", "paperLabel": "ex. (83b)"},
     "reportedIn": null,
     "language": "stan1293",
-    "primaryText": "more plastic",
+    "primaryText": "Al has more plastic than Bill does.",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
@@ -189,14 +198,15 @@
       ["dimension", "weight"],
       ["intensive", "false"]
     ],
-    "comment": "Mass noun measuring entities: extensive dimension."
+    "comment": "Mass noun measuring entities: extensive dimension.",
+    "verified": "page-image"
   },
   {
     "id": "wellwood2015_dim_84a_fuller",
     "source": {"bibkey": "wellwood-2015", "paperLabel": "ex. (84a)"},
     "reportedIn": null,
     "language": "stan1293",
-    "primaryText": "fuller",
+    "primaryText": "This glass is fuller than that glass is.",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
@@ -210,14 +220,15 @@
       ["dimension", "volume"],
       ["intensive", "false"]
     ],
-    "comment": "Reversal: GA but extensive, because the measured domain is entities."
+    "comment": "Reversal: GA but extensive, because the measured domain is entities.",
+    "verified": "page-image"
   },
   {
     "id": "wellwood2015_dim_84b_heavier",
     "source": {"bibkey": "wellwood-2015", "paperLabel": "ex. (84b)"},
     "reportedIn": null,
     "language": "stan1293",
-    "primaryText": "heavier",
+    "primaryText": "This plastic is heavier than that plastic is.",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
@@ -231,14 +242,15 @@
       ["dimension", "weight"],
       ["intensive", "false"]
     ],
-    "comment": "Reversal: GA but extensive, because the measured domain is entities."
+    "comment": "Reversal: GA but extensive, because the measured domain is entities.",
+    "verified": "page-image"
   },
   {
     "id": "wellwood2015_dim_85a_more_heat",
     "source": {"bibkey": "wellwood-2015", "paperLabel": "ex. (85a)"},
     "reportedIn": null,
     "language": "stan1293",
-    "primaryText": "more heat",
+    "primaryText": "This rock has more heat than that one does.",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
@@ -252,14 +264,15 @@
       ["dimension", "temperature"],
       ["intensive", "true"]
     ],
-    "comment": "Reversal: noun but intensive, because the measured domain is states."
+    "comment": "Reversal: noun but intensive, because the measured domain is states.",
+    "verified": "page-image"
   },
   {
     "id": "wellwood2015_dim_85b_more_firmness",
     "source": {"bibkey": "wellwood-2015", "paperLabel": "ex. (85b)"},
     "reportedIn": null,
     "language": "stan1293",
-    "primaryText": "more firmness",
+    "primaryText": "This mattress has more firmness than that one does.",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
@@ -273,14 +286,15 @@
       ["dimension", "hardness"],
       ["intensive", "true"]
     ],
-    "comment": "Reversal: noun but intensive, because the measured domain is states."
+    "comment": "Reversal: noun but intensive, because the measured domain is states.",
+    "verified": "page-image"
   },
   {
     "id": "wellwood2015_dim_89a_sped_up",
     "source": {"bibkey": "wellwood-2015", "paperLabel": "ex. (89a)"},
     "reportedIn": null,
     "language": "stan1293",
-    "primaryText": "sped up more",
+    "primaryText": "Al sped up more than Peter did.",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
@@ -294,14 +308,15 @@
       ["dimension", "speed"],
       ["intensive", "true"]
     ],
-    "comment": "Reversal: verb but intensive, because the measured domain is states."
+    "comment": "Reversal: verb but intensive, because the measured domain is states.",
+    "verified": "page-image"
   },
   {
     "id": "wellwood2015_dim_87a_drove",
     "source": {"bibkey": "wellwood-2015", "paperLabel": "ex. (87a)"},
     "reportedIn": null,
     "language": "stan1293",
-    "primaryText": "drove more",
+    "primaryText": "Al drove more than Peter did.",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
@@ -315,7 +330,8 @@
       ["dimension", "distance"],
       ["intensive", "false"]
     ],
-    "comment": "Atelic VP measuring events: extensive dimension."
+    "comment": "Atelic VP measuring events: extensive dimension.",
+    "verified": "page-image"
   },
   {
     "id": "wellwood2015_very_ga",
@@ -325,7 +341,7 @@
     "primaryText": "Al wasn't very intelligent.",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "very hot",
+    "translation": "",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [
@@ -336,7 +352,8 @@
       ["category", "gradableAdj"],
       ["requiresOvertMuch", "false"]
     ],
-    "comment": "GAs host covert much, so very combines directly."
+    "comment": "GAs host covert much, so very combines directly. Expands (118) 'Al wasn't very (*much) intelligent.'",
+    "verified": "page-image"
   },
   {
     "id": "wellwood2015_very_noun",
@@ -346,7 +363,7 @@
     "primaryText": "Al didn't eat very much soup.",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "very much coffee",
+    "translation": "",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [
@@ -357,7 +374,8 @@
       ["category", "massNoun"],
       ["requiresOvertMuch", "true"]
     ],
-    "comment": "Nouns need overt much for very."
+    "comment": "Nouns need overt much for very. Expands (117a) 'Al didn't eat very *(much) soup.'",
+    "verified": "page-image"
   },
   {
     "id": "wellwood2015_very_verb",
@@ -378,7 +396,8 @@
       ["category", "atelicVP"],
       ["requiresOvertMuch", "true"]
     ],
-    "comment": "Verbs need overt much for very; much follows the verb."
+    "comment": "Verbs need overt much for very; much follows the verb. Expands (117b) 'Al didn't run very *(much).'",
+    "verified": "page-image"
   },
   {
     "id": "wellwood2015_shift_104_rock",
@@ -398,7 +417,8 @@
     "paperFeatures": [
       ["shift", "numberMorphology"]
     ],
-    "comment": "Mass 'more rock': WEIGHT/VOLUME, *NUMBER. Plural 'more rocks': *WEIGHT/*VOLUME, NUMBER. The plural shifts mass to count, restricting measurement to NUMBER."
+    "comment": "Mass 'more rock': WEIGHT/VOLUME, *NUMBER. Plural 'more rocks': *WEIGHT/*VOLUME, NUMBER. The plural shifts mass to count, restricting measurement to NUMBER.",
+    "verified": "page-image"
   },
   {
     "id": "wellwood2015_shift_105_run",
@@ -418,6 +438,7 @@
     "paperFeatures": [
       ["shift", "telicization"]
     ],
-    "comment": "Atelic 'ran in the park more': DISTANCE/DURATION/NUMBER. Telic 'ran to the park more': *DISTANCE/*DURATION, NUMBER. The directional PP telicizes, restricting measurement to NUMBER."
+    "comment": "Atelic 'ran in the park more': DISTANCE/DURATION/NUMBER. Telic 'ran to the park more': *DISTANCE/*DURATION, NUMBER. The directional PP telicizes, restricting measurement to NUMBER.",
+    "verified": "page-image"
   }
 ]

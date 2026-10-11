@@ -355,7 +355,7 @@ def ex_33 : Datum :=
 
 def ex_34 : Datum :=
   { id := "groszjoshiweinstein1995_34"
-    source := ⟨"sidner-1979", "(34)"⟩
+    source := ⟨"sidner-1979", "ch. 4, D9"⟩
     reportedIn := some ⟨"grosz-joshi-weinstein-1995", "(34)"⟩
     language := "stan1293"
     primaryText := "I haven't seen Jeff for several days. Carl thinks he's studying for his exams, but I think he went to the Cape with Linda."

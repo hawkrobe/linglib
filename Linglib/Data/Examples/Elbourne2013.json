@@ -19,12 +19,13 @@
       ["chapter", "3"],
       ["structure", "[[[the cat] s1] grins] or [ς1 [[[the cat] s1] grins]]"]
     ],
-    "comment": "Two analyses: a referential situation pronoun discharges the uniqueness condition at its referent, a bound one carries it to the topic situation by λ-Conversion II."
+    "comment": "Two analyses: a referential situation pronoun discharges the uniqueness condition at its referent, a bound one carries it to the topic situation by λ-Conversion II.",
+    "verified": "page-image"
   },
   {
     "id": "elbourne2013_ch5_2",
-    "source": {"bibkey": "donnellan-1966", "paperLabel": "pp. 285–286"},
-    "reportedIn": {"bibkey": "elbourne-2013", "paperLabel": "ch. 5, (2)"},
+    "source": {"bibkey": "elbourne-2013", "paperLabel": "ch. 5, (2)"},
+    "reportedIn": null,
     "language": "stan1293",
     "primaryText": "The murderer is insane.",
     "discourseSegments": [],
@@ -42,7 +43,8 @@
       ["referential", "free situation pronoun"],
       ["attributive", "bound situation pronoun"]
     ],
-    "comment": "The referential use has a situation pronoun referring to the courtroom; the attributive use has it bound, so the description is evaluated at the topic situation."
+    "comment": "The referential use has a situation pronoun referring to the courtroom; the attributive use has it bound, so the description is evaluated at the topic situation. Elbourne's (2) alters Donnellan's 'Smith's murderer is insane' (ch. 5, (1)), dropping the Saxon genitive.",
+    "verified": "page-image"
   },
   {
     "id": "elbourne2013_ch5_13",
@@ -61,7 +63,8 @@
       ["chapter", "5"],
       ["misdescription", "yes"]
     ],
-    "comment": "Misdescription: a question about a particular person is asked, and the Fregean account locates what went wrong in a false presupposition of existence."
+    "comment": "Misdescription: a question about a particular person is asked, and the Fregean account locates what went wrong in a false presupposition of existence.",
+    "verified": "page-image"
   },
   {
     "id": "elbourne2013_ch5_16",
@@ -82,7 +85,8 @@
       ["chapter", "5"],
       ["use", "predicative"]
     ],
-    "comment": "Predicative use is attributive use: the bound description gives a proposition false at situations where someone else authored Waverley, unlike the identity statement."
+    "comment": "Predicative use is attributive use: the bound description gives a proposition false at situations where someone else authored Waverley, unlike the identity statement.",
+    "verified": "page-image"
   },
   {
     "id": "elbourne2013_ch6_3",
@@ -103,7 +107,8 @@
       ["chapter", "6"],
       ["anaphora", "donkey-anaphoric definite description"]
     ],
-    "comment": "The description's situation pronoun is bound by σ to the minimal situations of the restrictor, each of which contains exactly one donkey."
+    "comment": "The description's situation pronoun is bound by σ to the minimal situations of the restrictor, each of which contains exactly one donkey.",
+    "verified": "page-image"
   },
   {
     "id": "elbourne2013_ch6_15",
@@ -124,7 +129,8 @@
       ["chapter", "6"],
       ["anaphora", "donkey-anaphoric definite description under a quantificational adverb"]
     ],
-    "comment": "The quantificational adverb quantifies over minimal situations in which a man beats a donkey; both descriptions are bound to those situations."
+    "comment": "The quantificational adverb quantifies over minimal situations in which a man beats a donkey; both descriptions are bound to those situations.",
+    "verified": "page-image"
   },
   {
     "id": "elbourne2013_ch6_21",
@@ -145,7 +151,8 @@
       ["chapter", "6"],
       ["anaphora", "c-commanded bound definite description"]
     ],
-    "comment": "The covarying description in the scope of the quantifier is bound by the same mechanism as a donkey description."
+    "comment": "The covarying description in the scope of the quantifier is bound by the same mechanism as a donkey description.",
+    "verified": "page-image"
   },
   {
     "id": "elbourne2013_ch7_7",
@@ -168,12 +175,13 @@
       ["de dicto", "situation pronoun bound below believes"],
       ["de re", "situation pronoun referring to the actual world"]
     ],
-    "comment": "De dicto: every doxastic alternative contains exactly one man upstairs. De re: the man upstairs in the actual world need not live upstairs in Mary's alternatives."
+    "comment": "De dicto: every doxastic alternative contains exactly one man upstairs. De re: the man upstairs in the actual world need not live upstairs in Mary's alternatives.",
+    "verified": "page-image"
   },
   {
     "id": "elbourne2013_ch7_16",
-    "source": {"bibkey": "kripke-1977", "paperLabel": "p. 9"},
-    "reportedIn": {"bibkey": "elbourne-2013", "paperLabel": "ch. 7, (16)"},
+    "source": {"bibkey": "elbourne-2013", "paperLabel": "ch. 7, (16)"},
+    "reportedIn": null,
     "language": "stan1293",
     "primaryText": "The number of the planets is necessarily odd.",
     "discourseSegments": [],
@@ -189,7 +197,8 @@
       ["chapter", "7"],
       ["structure", "[ς2 [[[the [number [of [[the planets] s2]]]] s2] [is [necessarily odd]]]]"]
     ],
-    "comment": "Attributive yet de re: the description is bound by a binder above the modal, so the number is fixed in the topic situation and oddness is claimed in every accessible world."
+    "comment": "Attributive yet de re: the description is bound by a binder above the modal, so the number is fixed in the topic situation and oddness is claimed in every accessible world. Elbourne's (16) simplifies Kripke's 'The number of planets (whatever it may be) is necessarily odd' (ch. 7, (15)), dropping the parenthetical and adding 'the'.",
+    "verified": "page-image"
   },
   {
     "id": "elbourne2013_ch8_3",
@@ -203,14 +212,18 @@
     "context": "",
     "judgment": "acceptable",
     "alternatives": [
-      {"form": "Hans wants there to be exactly one ghost in his attic and for it to be quiet tonight.", "judgment": "unacceptable"}
+      {
+        "form": "Hans wants there to be exactly one ghost in his attic and for it to be quiet tonight.",
+        "judgment": "acceptable"
+      }
     ],
     "readings": [],
     "paperFeatures": [
       ["chapter", "8"],
       ["presupposition", "Hans believes there is exactly one ghost in his attic"]
     ],
-    "comment": "The Russellian paraphrase attributes to Hans the desire to have a ghost; the Fregean analysis presupposes that Hans believes there is exactly one."
+    "comment": "The Russellian paraphrase (7), printed unmarked, attributes to Hans the desire to have a ghost, a reading (3) lacks; the Fregean analysis presupposes that Hans believes there is exactly one.",
+    "verified": "page-image"
   },
   {
     "id": "elbourne2013_ch8_5",
@@ -229,7 +242,8 @@
       ["chapter", "8"],
       ["presupposition", "there is exactly one ghost in Hans's attic"]
     ],
-    "comment": "The antecedent of a conditional is a hole: the existence presupposition projects to the whole sentence."
+    "comment": "The antecedent of a conditional is a hole: the existence presupposition projects to the whole sentence.",
+    "verified": "page-image"
   },
   {
     "id": "elbourne2013_ch8_22",
@@ -244,16 +258,18 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "acceptable",
     "alternatives": [
       {"form": "I do not know whether there are any ghosts in Hans's attic. But if there is exactly one ghost in his attic and it is quiet tonight, he will hold a party.", "judgment": "acceptable"}
     ],
     "readings": [],
     "paperFeatures": [
       ["chapter", "8"],
-      ["contrast", "definite description against its Russellian paraphrase"]
+      ["contrast", "definite description against its Russellian paraphrase"],
+      ["felicity", "infelicitous"]
     ],
-    "comment": "The speaker sounds self-contradictory with the description but not with the Russellian paraphrase, so the paraphrase cannot be accurate."
+    "comment": "Printed unmarked; native speakers judge that the speaker of (22) sounds self-contradictory but the speaker of the Russellian paraphrase (23) does not, so the paraphrase cannot be accurate.",
+    "verified": "page-image"
   },
   {
     "id": "elbourne2013_ch8_33",
@@ -268,16 +284,18 @@
     "glossedTokens": [],
     "translation": "",
     "context": "Hans sincerely says both.",
-    "judgment": "unacceptable",
+    "judgment": "acceptable",
     "alternatives": [
       {"form": "I am unsure whether there is a ghost in my attic. I would like there to be an entity such that it is a ghost in my attic and nothing else is a ghost in my attic and it is quiet tonight.", "judgment": "acceptable"}
     ],
     "readings": [],
     "paperFeatures": [
       ["chapter", "8"],
-      ["contrast", "definite description against its Russellian paraphrase under an attitude verb"]
+      ["contrast", "definite description against its Russellian paraphrase under an attitude verb"],
+      ["felicity", "infelicitous"]
     ],
-    "comment": "Hans's attitudes are inconsistent with the description and consistent with the Russellian paraphrase: the description presupposes that he believes there is exactly one ghost."
+    "comment": "Printed unmarked; native speakers judge Hans's attitudes inconsistent if (31) is followed by (33b) and consistent if followed by the Russellian paraphrase (33a): the description presupposes that he believes there is exactly one ghost.",
+    "verified": "page-image"
   },
   {
     "id": "elbourne2013_ch8_36",
@@ -298,7 +316,8 @@
       ["chapter", "8"],
       ["presupposition", "Ponce de León believes there is exactly one fountain of youth"]
     ],
-    "comment": "The description under the attitude verb commits the subject, not the speaker, to the existence of a fountain of youth."
+    "comment": "The description under the attitude verb commits the subject, not the speaker, to the existence of a fountain of youth.",
+    "verified": "page-image"
   },
   {
     "id": "elbourne2013_ch9_4",
@@ -317,7 +336,8 @@
       ["chapter", "9"],
       ["incompleteness", "situation pronoun referring to the room"]
     ],
-    "comment": "An incomplete description: the uniqueness condition is relativized to the restrictor situation contributed by the situation pronoun."
+    "comment": "An incomplete description: the uniqueness condition is relativized to the restrictor situation contributed by the situation pronoun.",
+    "verified": "page-image"
   },
   {
     "id": "elbourne2013_ch9_17a",
@@ -332,14 +352,21 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [
-      {"name": "strict", "judgment": "acceptable"},
-      {"name": "sloppy", "judgment": "unacceptable"}
+      {
+        "name": "strict",
+        "judgment": "acceptable"
+      },
+      {
+        "name": "sloppy",
+        "judgment": "ungrammatical"
+      }
     ],
     "paperFeatures": [
       ["chapter", "9"],
       ["description", "the donkey"]
     ],
-    "comment": "No sloppy reading: the priest is not said to beat his own donkey. A situation pronoun in the final description cannot covary with the priest."
+    "comment": "No sloppy reading: the priest is not said to beat his own donkey. A situation pronoun in the final description cannot covary with the priest.",
+    "verified": "page-image"
   },
   {
     "id": "elbourne2013_ch9_17b",
@@ -361,7 +388,8 @@
       ["chapter", "9"],
       ["description", "the donkey he owns"]
     ],
-    "comment": "With an overt bound pronoun in the description the sloppy reading is available, as relation-variable theories predict for (17a) too, wrongly."
+    "comment": "With an overt bound pronoun in the description the sloppy reading is available, as relation-variable theories predict for (17a) too, wrongly.",
+    "verified": "page-image"
   },
   {
     "id": "elbourne2013_ch10_10a",
@@ -382,7 +410,8 @@
       ["chapter", "10"],
       ["structure", "[σ3 [Q [beats [[it donkey] s3]]]]"]
     ],
-    "comment": "The donkey pronoun is the definite article with a deleted NP; its LF and meaning are those of the description in ch. 6, (3)."
+    "comment": "The donkey pronoun is the definite article with a deleted NP; its LF and meaning are those of the description in ch. 6, (3).",
+    "verified": "page-image"
   },
   {
     "id": "elbourne2013_ch10_21",
@@ -404,7 +433,8 @@
       ["chapter", "10"],
       ["structure", "[[he [Junior Dean]] s1]"]
     ],
-    "comment": "A referential pronoun with a deleted NP recovered from its linguistic antecedent."
+    "comment": "A referential pronoun with a deleted NP recovered from its linguistic antecedent.",
+    "verified": "page-image"
   },
   {
     "id": "elbourne2013_ch10_34",
@@ -418,7 +448,10 @@
     "context": "Said while pointing at Benedict XVI.",
     "judgment": "acceptable",
     "alternatives": [
-      {"form": "Benedict XVI is usually an Italian.", "judgment": "unacceptable"}
+      {
+        "form": "Benedict XVI is usually an Italian.",
+        "judgment": "acceptable"
+      }
     ],
     "readings": [
       {"name": "descriptive indexical", "judgment": "acceptable"}
@@ -427,7 +460,8 @@
       ["chapter", "10"],
       ["structure", "[[he Pope] s3]"]
     ],
-    "comment": "A descriptive indexical: the pronoun is the article with the NP Pope, and usually quantifies over papal reigns."
+    "comment": "A descriptive indexical: the pronoun is the article with the NP Pope, and usually quantifies over papal reigns. (35), printed unmarked, cannot have the meaning of (34).",
+    "verified": "page-image"
   },
   {
     "id": "elbourne2013_ch10_47",
@@ -450,6 +484,7 @@
       ["chapter", "10"],
       ["structure", "[[he [person [who ...]]] si]"]
     ],
-    "comment": "A Voldemort phrase: the pronoun combines with a restrictive relative clause on a silent NP person, so pronouns form definite descriptions in the open."
+    "comment": "A Voldemort phrase: the pronoun combines with a restrictive relative clause on a silent NP person, so pronouns form definite descriptions in the open.",
+    "verified": "page-image"
   }
 ]

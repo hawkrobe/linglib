@@ -14,7 +14,8 @@
     "paperFeatures": [
       ["puzzle", "harlemBase"]
     ],
-    "comment": "The canonical Harlem Sentence; the paper's central example."
+    "comment": "The canonical Harlem Sentence; the paper's central example.",
+    "verified": "page-image"
   },
   {
     "id": "vFI2005_2_sugarWaiter",
@@ -33,7 +34,8 @@
       ["puzzle", "hareMinimalPair"],
       ["reading", "anankastic"]
     ],
-    "comment": "Anankastic reading: asking the waiter is a means to having sugar. Same surface form as (3) but different reading — surface form does not determine anankasticity."
+    "comment": "Anankastic reading: asking the waiter is a means to having sugar. Same surface form as (3) but different reading — surface form does not determine anankasticity.",
+    "verified": "page-image"
   },
   {
     "id": "vFI2005_3_sugarDiabetes",
@@ -52,7 +54,8 @@
       ["puzzle", "hareMinimalPair"],
       ["reading", "non-anankastic"]
     ],
-    "comment": "NON-anankastic reading: getting tested is not a means to having sugar. Pair with (2) to show that surface form does not determine anankasticity."
+    "comment": "NON-anankastic reading: getting tested is not a means to having sugar. Pair with (2) to show that surface form does not determine anankasticity.",
+    "verified": "page-image"
   },
   {
     "id": "vFI2005_4_harlemPurpose",
@@ -70,11 +73,12 @@
       ["puzzle", "harlemBase"],
       ["clauseType", "purpose"]
     ],
-    "comment": "Purpose-clause near-equivalent of (1); vF&I treat the purpose variant as the primary form for their designated-goal analysis."
+    "comment": "Purpose-clause near-equivalent of (1); vF&I treat the purpose variant as the primary form for their designated-goal analysis.",
+    "verified": "page-image"
   },
   {
     "id": "vFI2005_11_hoboken",
-    "source": {"bibkey": "von-fintel-iatridou-2005", "paperLabel": "(11)"},
+    "source": {"bibkey": "von-fintel-iatridou-2005", "paperLabel": "(1), §3"},
     "language": "stan1293",
     "primaryText": "If you want to go to Harlem, you have to take the A train.",
     "discourseSegments": [],
@@ -87,7 +91,8 @@
     "paperFeatures": [
       ["puzzle", "hoboken"]
     ],
-    "comment": "The Hoboken Problem. Defeats the obvious analysis: if the if-clause merely added 'you want Harlem' to the modal base, the best goal-achievement at the actual world would be PATH (since the actual goal is Hoboken)."
+    "comment": "The Hoboken Problem. Defeats the obvious analysis: if the if-clause merely added 'you want Harlem' to the modal base, the best goal-achievement at the actual world would be PATH (since the actual goal is Hoboken).",
+    "verified": "page-image"
   },
   {
     "id": "vFI2005_13_hobokenSaebo",
@@ -97,14 +102,15 @@
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
-    "context": "You want Hoboken (PATH); I am uncertain whether you want Hoboken or Harlem. Sæbø's analysis adds 'go to Harlem' to your existing goals, making the new best worlds include both Hoboken and Harlem destinations.",
+    "context": "In the actual world you want to go to Hoboken; I do not know that and am uncertain whether you want to go to Hoboken or to Harlem. The best way to Hoboken is the PATH train, the best way to Harlem is the A train; there is not enough time to go to both places.",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
       ["puzzle", "conflictingGoals"]
     ],
-    "comment": "Sæbø 2001's analysis predicts this false (best worlds equally split between PATH and A train); intuition says true. Defeats the if-clause-modifies-ordering-source analysis."
+    "comment": "Sæbø's analysis adds the goal of going to Harlem to your actual goals; with Hoboken and Harlem inconsistent, in the best worlds you go either to Hoboken or to Harlem, not all of them have you take the A train, and (13) is predicted false, contrary to fact. Defeats the if-clause-modifies-ordering-source analysis.",
+    "verified": "page-image"
   },
   {
     "id": "vFI2005_22_mayorPub",
@@ -122,25 +128,28 @@
     "paperFeatures": [
       ["puzzle", "conflictingGoals"]
     ],
-    "comment": "Conflicting jointly-satisfiable goals. The if-clause's goal must override the actual conflicting goal, not merely augment the ordering source."
+    "comment": "Conflicting jointly-satisfiable goals. The if-clause's goal must override the actual conflicting goal, not merely augment the ordering source.",
+    "verified": "page-image"
   },
   {
     "id": "vFI2005_p12_vanNistelrooy",
-    "source": {"bibkey": "huitink-2008", "paperLabel": "van Nistelrooy scenario"},
-    "reportedIn": {"bibkey": "von-fintel-iatridou-2005", "paperLabel": "§5"},
+    "source": {"bibkey": "von-fintel-iatridou-2005", "paperLabel": "(1), §5 (scenario by Huitink)"},
+    "reportedIn": null,
     "language": "stan1293",
     "primaryText": "If you want to go to Harlem, you have to take the A train.",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
     "context": "Either A train or C train goes to Harlem. You are an incorrigible fan of Ruud van Nistelrooy and most want to meet him. Van Nistelrooy regularly rides the A train.",
-    "judgment": "unacceptable",
+    "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["puzzle", "correlatedIrrelevant"]
+      ["puzzle", "correlatedIrrelevant"],
+      ["holds", "no"]
     ],
-    "comment": "Both routes achieve Harlem; van Nistelrooy preference makes A optimal under naive lifting, but speakers report reluctance to judge the have-to sentence true on this scenario."
+    "comment": "Huitink's scenario: both routes reach Harlem, but the van Nistelrooy preference makes the A train optimal under naive lifting. The Harlem Sentence is printed unmarked; the paper reports Huitink's observation that 'we are reluctant to judge the Harlem Sentence as true in this scenario' (recorded as holds = no), adding 'We actually think that this is a little too fast.'",
+    "verified": "page-image"
   },
   {
     "id": "vFI2005_36_pedroMartinez",
@@ -151,14 +160,15 @@
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
-    "context": "Both A train and C train go to Harlem. Pedro Martinez is on both. You want to kiss Pedro Martinez.",
-    "judgment": "ungrammatical",
+    "context": "Both the A train and the C train go to Harlem. The C train will have Pedro Martinez on it. You want to kiss Pedro Martinez.",
+    "judgment": "unacceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
       ["puzzle", "nonCausalCoincidence"]
     ],
-    "comment": "Kissing Pedro is not an essential part of any way of achieving Harlem; sentence is absurd despite the correlation. Motivates vF&I's 'essential part of a way of achieving' refinement (their (42))."
+    "comment": "Kissing Pedro is not an essential part of any way of achieving Harlem; sentence is absurd despite the correlation. Motivates vF&I's 'essential part of a way of achieving' refinement (their (42)).",
+    "verified": "page-image"
   },
   {
     "id": "vFI2005_34c_harlemBreathe",
@@ -177,7 +187,8 @@
       ["puzzle", "triviallyTrue"],
       ["modal", "have-to"]
     ],
-    "comment": "vF&I accept as true though unhelpful. Chung & Mascarenhas 2024 §5 needs a plausibility-requirement patch to rule out analogous epistemic cases (#He must be dead)."
+    "comment": "vF&I accept as true though unhelpful. Chung & Mascarenhas 2024 §5 needs a plausibility-requirement patch to rule out analogous epistemic cases (#He must be dead).",
+    "verified": "page-image"
   },
   {
     "id": "vFI2005_35_harlemBreatheOught",
@@ -188,19 +199,21 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "questionable",
+    "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
       ["puzzle", "triviallyTrue"],
-      ["modal", "ought-to"]
+      ["modal", "ought-to"],
+      ["felicity", "infelicitous"]
     ],
-    "comment": "Less acceptable than the have-to variant. vF&I derive this from have-to entailing ought-to, so ought-to signals there are alternatives — false for breathing."
+    "comment": "Printed unmarked; the paper: 'An ought to-variant does sound quite perplexing.' vF&I derive this from have-to asymmetrically entailing ought-to, so choosing ought-to signals there are other options, which is not so for breathing.",
+    "verified": "page-image"
   },
   {
     "id": "vFI2005_23_slomanOughtNot",
-    "source": {"bibkey": "sloman-1970", "paperLabel": "ought vs better"},
-    "reportedIn": {"bibkey": "von-fintel-iatridou-2005", "paperLabel": "(23)"},
+    "source": {"bibkey": "von-fintel-iatridou-2005", "paperLabel": "(23)"},
+    "reportedIn": null,
     "language": "stan1293",
     "primaryText": "You ought to take the train, but you don't have to.",
     "discourseSegments": [],
@@ -213,7 +226,8 @@
     "paperFeatures": [
       ["puzzle", "oughtVsHaveTo"]
     ],
-    "comment": "Felicitous because ought says what is best while have-to picks out the only candidate."
+    "comment": "vF&I's initial evidence for a strength difference between have to and ought to; Sloman's proposal (ought says what is best, must picks out the only candidate) then explains it.",
+    "verified": "page-image"
   },
   {
     "id": "vFI2005_p13_londonByNoon",
@@ -224,16 +238,20 @@
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
-    "context": "Train is the best option but not the only one.",
+    "context": "",
     "judgment": "acceptable",
     "alternatives": [
-      {"form": "If you want to get to London by noon, then you have to go by train.", "judgment": "unacceptable"}
+      {
+        "form": "If you want to get to London by noon then you have to go by train.",
+        "judgment": "acceptable"
+      }
     ],
     "readings": [],
     "paperFeatures": [
       ["puzzle", "oughtVsHaveTo"]
     ],
-    "comment": "Sloman: 'picks out the best means without excluding the possibility of others.' Contrast with the have-to variant implying no other means exists."
+    "comment": "Sloman: the ought-sentence 'picks out the best means without excluding the possibility of others', whereas the have-to sentence (printed 'you have to (must, will be obliged to etc.) go by train') 'implies that no other means exists'. Both printed unmarked.",
+    "verified": "page-image"
   },
   {
     "id": "vFI2005_29_vladivostokHave",
@@ -245,7 +263,7 @@
     "glossedTokens": [],
     "translation": "",
     "context": "Two trains cross Siberia to Vladivostok: Russian and Chinese. The Chinese train is significantly more comfortable.",
-    "judgment": "marginal",
+    "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -253,7 +271,8 @@
       ["modal", "have-to"],
       ["speakerVariation", "Klein-vs-Percus"]
     ],
-    "comment": "Klein-type speakers accept (comfort is implicitly part of the designated goal); Percus-type speakers reject. Documents real speaker variation."
+    "comment": "Printed unmarked. The paper reports that Wolfgang Klein accepts the have to-variant, while Orin Percus only accepts the ought to-variant: Klein-type speakers make comfort part of the designated goal; Percus-type speakers reject.",
+    "verified": "page-image"
   },
   {
     "id": "vFI2005_30_vladivostokOught",
@@ -271,7 +290,8 @@
       ["puzzle", "vladivostokOughtHave"],
       ["modal", "ought-to"]
     ],
-    "comment": "Ought-to accepts without controversy because comfort considerations rank the Chinese train above the Russian."
+    "comment": "Ought-to accepts without controversy because comfort considerations rank the Chinese train above the Russian.",
+    "verified": "page-image"
   },
   {
     "id": "vFI2005_28_burdicks",
@@ -283,7 +303,7 @@
       "You have to have some hot chocolate at Burdick's."
     ],
     "glossedTokens": [],
-    "translation": "Same.",
+    "translation": "",
     "context": "A announces an itinerary; no to-clause or if-clause overtly supplies a goal.",
     "judgment": "acceptable",
     "alternatives": [
@@ -293,7 +313,8 @@
     "paperFeatures": [
       ["puzzle", "contextualDesignation"]
     ],
-    "comment": "Designated goal supplied by context (something like 'have a good Harvard Square experience'), not by overt syntax. Motivates vF&I §6.4."
+    "comment": "Designated goal supplied by context (something like 'have a good Harvard Square experience'), not by overt syntax. Motivates vF&I §6.4.",
+    "verified": "page-image"
   },
   {
     "id": "vFI2005_20_weinerJoe",
@@ -313,6 +334,7 @@
     "paperFeatures": [
       ["puzzle", "weinerJoe"]
     ],
-    "comment": "On the anankastic reading: true in all cases. On Weiner's intended epistemic reading: true only if Joe hasn't bought the car. vF&I admit the epistemic reading is sometimes available; tests the must-can-be-epistemic-in-anankastic-shell hypothesis."
+    "comment": "Weiner: (20) seems true only if Joe has not yet bought the car, but with a covert epistemic higher modal it comes out true in all circumstances. vF&I: 'We can sometimes hear Weiner's sentence as true, which suggests that maybe the epistemic reading is not completely unavailable. But we're uncertain at this time.'",
+    "verified": "page-image"
   }
 ]

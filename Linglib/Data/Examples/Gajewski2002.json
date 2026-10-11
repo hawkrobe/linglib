@@ -32,7 +32,8 @@
         "no"
       ]
     ],
-    "comment": "Milsark's definiteness restriction with the definite article. Barwise and Cooper's strength definition is partial on the definite, so the row is data only."
+    "comment": "Milsark's definiteness restriction with the definite article. Barwise and Cooper's strength definition is partial on the definite, so the row is data only.",
+    "verified": "page-image"
   },
   {
     "id": "gajewski2002_ex4b",
@@ -67,7 +68,8 @@
         "no"
       ]
     ],
-    "comment": "A conjunction of proper names, strong in Milsark's sense; not a determiner row, so it is data only."
+    "comment": "A conjunction of proper names, strong in Milsark's sense; not a determiner row, so it is data only.",
+    "verified": "page-image"
   },
   {
     "id": "gajewski2002_ex4c",
@@ -102,7 +104,8 @@
         "no"
       ]
     ],
-    "comment": "A strong quantifier in a there-sentence, the Definiteness Restriction of Milsark and Barwise and Cooper; its logical skeleton receives 1 under every assignment."
+    "comment": "A strong quantifier in a there-sentence, the Definiteness Restriction of Milsark and Barwise and Cooper; its logical skeleton receives 1 under every assignment.",
+    "verified": "page-image"
   },
   {
     "id": "gajewski2002_ex5a",
@@ -137,7 +140,8 @@
         "yes"
       ]
     ],
-    "comment": "A weak quantifier in a there-sentence; the indefinite article is read as the existential determiner."
+    "comment": "A weak quantifier in a there-sentence; the indefinite article is read as the existential determiner.",
+    "verified": "page-image"
   },
   {
     "id": "gajewski2002_ex5b",
@@ -172,7 +176,8 @@
         "yes"
       ]
     ],
-    "comment": "A weak numeral in a there-sentence; the paper reads the numerals as at-least and left upward monotone."
+    "comment": "A weak numeral in a there-sentence; the paper reads the numerals as at-least and left upward monotone.",
+    "verified": "page-image"
   },
   {
     "id": "gajewski2002_ex5c",
@@ -207,7 +212,8 @@
         "yes"
       ]
     ],
-    "comment": "The skeleton [there [are [some n1]]] is false when the variable is assigned the empty set and true otherwise, so it is not L-analytic."
+    "comment": "The skeleton [there [are [some n1]]] is false when the variable is assigned the empty set and true otherwise, so it is not L-analytic.",
+    "verified": "page-image"
   },
   {
     "id": "gajewski2002_ex11a_every",
@@ -238,7 +244,8 @@
         "yes"
       ]
     ],
-    "comment": "A but-exceptive on a positive universal; its skeleton is contingent."
+    "comment": "A but-exceptive on a positive universal; its skeleton is contingent.",
+    "verified": "page-image"
   },
   {
     "id": "gajewski2002_ex11a_no",
@@ -269,7 +276,8 @@
         "yes"
       ]
     ],
-    "comment": "A but-exceptive on a negative universal; its skeleton is contingent."
+    "comment": "A but-exceptive on a negative universal; its skeleton is contingent.",
+    "verified": "page-image"
   },
   {
     "id": "gajewski2002_ex11b_some",
@@ -300,7 +308,8 @@
         "no"
       ]
     ],
-    "comment": "A but-exceptive on a left-upward-monotone determiner: the least-exception schema is a contradiction under every assignment with a nonempty exception set."
+    "comment": "A but-exceptive on a left-upward-monotone determiner: the least-exception schema is a contradiction under every assignment with a nonempty exception set.",
+    "verified": "page-image"
   },
   {
     "id": "gajewski2002_ex11b_three",
@@ -331,7 +340,8 @@
         "no"
       ]
     ],
-    "comment": "A left-upward-monotone numeral in a but-exceptive, read as at-least per the paper's monotonicity examples; the skeleton is an L-contradiction."
+    "comment": "A left-upward-monotone numeral in a but-exceptive, read as at-least per the paper's monotonicity examples; the skeleton is an L-contradiction.",
+    "verified": "page-image"
   },
   {
     "id": "gajewski2002_ex11b_many",
@@ -362,7 +372,8 @@
         "no"
       ]
     ],
-    "comment": "Barwise and Cooper leave the standard of many to context, so the fragment gives it no reading and the row is data only."
+    "comment": "Barwise and Cooper leave the standard of many to context, so the fragment gives it no reading and the row is data only.",
+    "verified": "page-image"
   },
   {
     "id": "gajewski2002_ex11c_most",
@@ -393,7 +404,8 @@
         "no"
       ]
     ],
-    "comment": "The gap footnote 7 concedes: most is not left upward monotone and has a least exception in von Fintel's limiting case, so the principle does not derive the star."
+    "comment": "The gap footnote 7 concedes: most is not left upward monotone and has a least exception in von Fintel's limiting case, so the principle does not derive the star.",
+    "verified": "page-image"
   },
   {
     "id": "gajewski2002_ex11c_exactly_two",
@@ -424,7 +436,8 @@
         "no"
       ]
     ],
-    "comment": "Footnote 7 cites Moltmann and Lappin for the further problems; the paper derives no verdict, so the row is data only."
+    "comment": "Footnote 7 cites Moltmann and Lappin for the further problems; the paper derives no verdict, so the row is data only.",
+    "verified": "page-image"
   },
   {
     "id": "gajewski2002_ex11c_fewer_than_three",
@@ -455,7 +468,8 @@
         "no"
       ]
     ],
-    "comment": "Footnote 7 cites Moltmann and Lappin for the further problems; the paper derives no verdict, so the row is data only."
+    "comment": "Footnote 7 cites Moltmann and Lappin for the further problems; the paper derives no verdict, so the row is data only.",
+    "verified": "page-image"
   },
   {
     "id": "gajewski2002_ex30a",
@@ -486,7 +500,8 @@
         "no"
       ]
     ],
-    "comment": "The logical skeleton [there [are [every n1]]] is an L-tautology: every element of the domain of properties is a subset of the domain of individuals."
+    "comment": "The logical skeleton [there [are [every n1]]] is an L-tautology: every element of the domain of properties is a subset of the domain of individuals.",
+    "verified": "page-image"
   },
   {
     "id": "gajewski2002_ex34a",
@@ -517,7 +532,8 @@
         "yes"
       ]
     ],
-    "comment": "A garden-variety tautology whose skeleton replaces the two occurrences of woman by distinct variables, so it is not L-analytic."
+    "comment": "A garden-variety tautology whose skeleton replaces the two occurrences of woman by distinct variables, so it is not L-analytic.",
+    "verified": "page-image"
   },
   {
     "id": "gajewski2002_ex34b",
@@ -548,6 +564,7 @@
         "yes"
       ]
     ],
-    "comment": "A garden-variety contradiction whose skeleton has two distinct propositional variables, so it is not L-analytic."
+    "comment": "A garden-variety contradiction whose skeleton has two distinct propositional variables, so it is not L-analytic.",
+    "verified": "page-image"
   }
 ]

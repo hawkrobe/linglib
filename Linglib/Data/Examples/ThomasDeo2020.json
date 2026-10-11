@@ -1,7 +1,7 @@
 [
   {
     "id": "thomasdeo2020_4",
-    "source": {"bibkey": "thomas-deo-2020", "paperLabel": "(4), (15a)"},
+    "source": {"bibkey": "thomas-deo-2020", "paperLabel": "(4)"},
     "language": "stan1293",
     "primaryText": "Miniature amaryllis are apt to be just as tall as hybrid amaryllis.",
     "discourseSegments": [],
@@ -14,7 +14,8 @@
     "paperFeatures": [
       ["construction", "equative"]
     ],
-    "comment": "Approximative *just* with an equative: as tall at the highest level of precision; COCA."
+    "comment": "Approximative *just* with an equative: as tall at the highest level of precision; COCA. (4) condenses the COCA passage printed in full as (15a).",
+    "verified": "page-image"
   },
   {
     "id": "thomasdeo2020_5",
@@ -31,13 +32,14 @@
     "paperFeatures": [
       ["construction", "comparative"]
     ],
-    "comment": "Approximative *just* with a comparative: slightly older; COCA."
+    "comment": "Approximative *just* with a comparative: slightly older; COCA.",
+    "verified": "page-image"
   },
   {
     "id": "thomasdeo2020_14a",
     "source": {"bibkey": "thomas-deo-2020", "paperLabel": "(14a)"},
     "language": "stan1293",
-    "primaryText": "Relatively simple changes in lifestyle can have a big impact on your blood pressure, in many cases just as big as popping a pill.",
+    "primaryText": "More and more evidence shows that relatively simple changes in lifestyle can have a big impact on your blood pressure—in many cases, just as big as popping a pill.",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
@@ -48,13 +50,14 @@
     "paperFeatures": [
       ["construction", "equative"]
     ],
-    "comment": "The prejacent is stronger than what the context leads one to expect, which *just* tolerates."
+    "comment": "The prejacent is stronger than what the context leads one to expect, which *just* tolerates.",
+    "verified": "page-image"
   },
   {
     "id": "thomasdeo2020_14b",
     "source": {"bibkey": "thomas-deo-2020", "paperLabel": "(14b)"},
     "language": "stan1293",
-    "primaryText": "Relatively simple changes in lifestyle can have a big impact on your blood pressure, in many cases only as big as popping a pill.",
+    "primaryText": "More and more evidence shows that relatively simple changes in lifestyle can have a big impact on your blood pressure—in many cases, only as big as popping a pill.",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
@@ -65,13 +68,14 @@
     "paperFeatures": [
       ["construction", "equative"]
     ],
-    "comment": "*only* lowers a contextual expectation that the context makes strong."
+    "comment": "*only* lowers a contextual expectation that the context makes strong. The paper prints the continuation '#... in many cases, only as big as popping a pill.' after (14a).",
+    "verified": "page-image"
   },
   {
     "id": "thomasdeo2020_15b",
     "source": {"bibkey": "thomas-deo-2020", "paperLabel": "(15b)"},
     "language": "stan1293",
-    "primaryText": "The stalks of miniature amaryllis are apt to be only as tall as those of hybrid amaryllis.",
+    "primaryText": "The blossoms are smaller and have longer, more trumpet-shaped blooms than the flat, flared faces of hybrid bulbs, but the stalks are apt to be only as tall.",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
@@ -82,7 +86,8 @@
     "paperFeatures": [
       ["construction", "equative"]
     ],
-    "comment": "*only* conveys that the expectation is stronger than the facts, contrary to the context."
+    "comment": "*only* conveys that the expectation is stronger than the facts, contrary to the context. The paper prints the continuation '#... but the stalks are apt to be only as tall.' after the (15a) passage.",
+    "verified": "page-image"
   },
   {
     "id": "thomasdeo2020_16b",
@@ -99,7 +104,8 @@
     "paperFeatures": [
       ["construction", "equative"]
     ],
-    "comment": "Approximative *just* with an equative enforces no upper bound: a taller continuation is consistent."
+    "comment": "Approximative *just* with an equative enforces no upper bound: a taller continuation is consistent.",
+    "verified": "page-image"
   },
   {
     "id": "thomasdeo2020_17b",
@@ -116,7 +122,8 @@
     "paperFeatures": [
       ["construction", "equative"]
     ],
-    "comment": "Focus inside the scope of *just* gives the exclusive reading, which enforces an upper bound."
+    "comment": "Focus inside the scope of *just* gives the exclusive reading, which enforces an upper bound. Expands (17b) '... as hybrid amaryllis (# if not taller)' into its marked variant.",
+    "verified": "page-image"
   },
   {
     "id": "thomasdeo2020_19",
@@ -133,13 +140,14 @@
     "paperFeatures": [
       ["construction", "equative"]
     ],
-    "comment": "A bare equative tolerates later precisification: the two utterances are interpreted at different grains."
+    "comment": "A bare equative tolerates later precisification: the two utterances are interpreted at different grains.",
+    "verified": "page-image"
   },
   {
     "id": "thomasdeo2020_20",
     "source": {"bibkey": "thomas-deo-2020", "paperLabel": "(20)"},
     "language": "stan1293",
-    "primaryText": "Miniature amaryllis are just as tall as hybrid amaryllis. #More precisely, miniature amaryllis are on average half a centimeter shorter than hybrid amaryllis.",
+    "primaryText": "Miniature amaryllis are just as tall as hybrid amaryllis. More precisely, miniature amaryllis are on average half a centimeter shorter than hybrid amaryllis.",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
@@ -150,7 +158,8 @@
     "paperFeatures": [
       ["construction", "equative"]
     ],
-    "comment": "*just* already interprets the equative at the finest permissible grain, so precisification contradicts it."
+    "comment": "*just* already interprets the equative at the finest permissible grain, so precisification contradicts it. The # is printed on (20b).",
+    "verified": "page-image"
   },
   {
     "id": "thomasdeo2020_22",
@@ -167,7 +176,8 @@
     "paperFeatures": [
       ["construction", "comparative"]
     ],
-    "comment": "Slightly bigger; COCA."
+    "comment": "Slightly bigger; COCA.",
+    "verified": "page-image"
   },
   {
     "id": "thomasdeo2020_23",
@@ -184,7 +194,8 @@
     "paperFeatures": [
       ["construction", "comparative"]
     ],
-    "comment": "Slightly over; COCA."
+    "comment": "Slightly over; COCA.",
+    "verified": "page-image"
   },
   {
     "id": "thomasdeo2020_24a",
@@ -201,7 +212,8 @@
     "paperFeatures": [
       ["construction", "comparative"]
     ],
-    "comment": "The upper bound of approximative *just* with a comparative cannot be cancelled."
+    "comment": "The upper bound of approximative *just* with a comparative cannot be cancelled.",
+    "verified": "page-image"
   },
   {
     "id": "thomasdeo2020_25",
@@ -218,13 +230,14 @@
     "paperFeatures": [
       ["construction", "comparative"]
     ],
-    "comment": "Focus on the standard gives the exclusive reading: older than Siri but than no other salient person."
+    "comment": "Focus on the standard gives the exclusive reading: older than Siri but than no other salient person.",
+    "verified": "page-image"
   },
   {
     "id": "thomasdeo2020_28",
     "source": {"bibkey": "thomas-deo-2020", "paperLabel": "(28)"},
     "language": "stan1293",
-    "primaryText": "Fafen is older than Siri. #More precisely, she's one day younger than Siri.",
+    "primaryText": "Fafen is older than Siri. More precisely, she's one day younger than Siri.",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
@@ -235,7 +248,8 @@
     "paperFeatures": [
       ["construction", "comparative"]
     ],
-    "comment": "Comparatives cannot be used loosely: the bare comparative excludes Fafen being younger by any amount."
+    "comment": "Comparatives cannot be used loosely: the bare comparative excludes Fafen being younger by any amount. The # is printed on (28b).",
+    "verified": "page-image"
   },
   {
     "id": "thomasdeo2020_29b",
@@ -252,7 +266,8 @@
     "paperFeatures": [
       ["construction", "comparative"]
     ],
-    "comment": "A comparative cannot be introduced by *roughly speaking*."
+    "comment": "A comparative cannot be introduced by *roughly speaking*.",
+    "verified": "page-image"
   },
   {
     "id": "thomasdeo2020_30",
@@ -263,13 +278,15 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["construction", "comparative"]
+      ["construction", "comparative"],
+      ["felicity", "infelicitous"]
     ],
-    "comment": "At one level of precision the comparative and the reversed equative cannot both be true: a difference below the grain makes the comparative false."
+    "comment": "Printed unmarked; the prose calls (30a) and (30b) contradictory: 'there is surely no context in which one could assert both (30a) and (30b) at the same level of precision', so a difference below the grain makes the comparative false.",
+    "verified": "page-image"
   },
   {
     "id": "thomasdeo2020_31a",
@@ -289,7 +306,8 @@
     "paperFeatures": [
       ["construction", "comparative"]
     ],
-    "comment": "Negation targets either component: the comparative fails at the finest grain, or it holds at some coarser grain, so Fafen is significantly older."
+    "comment": "Negation targets either component: the comparative fails at the finest grain, or it holds at some coarser grain, so Fafen is significantly older.",
+    "verified": "page-image"
   },
   {
     "id": "thomasdeo2020_33b",
@@ -306,7 +324,8 @@
     "paperFeatures": [
       ["construction", "comparative"]
     ],
-    "comment": "The reason clause targets the negative component: her age is close to eleven."
+    "comment": "The reason clause targets the negative component: her age is close to eleven.",
+    "verified": "page-image"
   },
   {
     "id": "thomasdeo2020_35",
@@ -323,7 +342,8 @@
     "paperFeatures": [
       ["construction", "comparative"]
     ],
-    "comment": "An interlocutor can contradict the negative component without backtracking, so it is at issue."
+    "comment": "An interlocutor can contradict the negative component without backtracking, so it is at issue.",
+    "verified": "page-image"
   },
   {
     "id": "thomasdeo2020_37",
@@ -340,7 +360,8 @@
     "paperFeatures": [
       ["construction", "comparative"]
     ],
-    "comment": "No inference about contextual expectations: neither that Fafen was expected to be much older nor younger."
+    "comment": "No inference about contextual expectations: neither that Fafen was expected to be much older nor younger.",
+    "verified": "page-image"
   },
   {
     "id": "thomasdeo2020_38",
@@ -357,6 +378,7 @@
     "paperFeatures": [
       ["construction", "equative"]
     ],
-    "comment": "Suggests that miniature amaryllis were expected to be shorter: *just* with an equative raises an expectation."
+    "comment": "Suggests that miniature amaryllis were expected to be shorter: *just* with an equative raises an expectation.",
+    "verified": "page-image"
   }
 ]

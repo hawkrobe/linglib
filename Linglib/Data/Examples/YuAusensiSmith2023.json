@@ -16,7 +16,8 @@
       ["diagnostic", "again"],
       ["root class", "property concept"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "yuausensismith2023_24a",
@@ -34,7 +35,8 @@
       ["diagnostic", "again"],
       ["root class", "property concept"]
     ],
-    "comment": "One sharpening suffices. The paper attributes the example to Beavers and Koontz-Garboden 2020."
+    "comment": "One sharpening suffices. The paper attributes the example to Beavers and Koontz-Garboden 2020.",
+    "verified": "page-image"
   },
   {
     "id": "yuausensismith2023_25a",
@@ -43,7 +45,7 @@
     "primaryText": "John broke the plate again.",
     "glossedTokens": [],
     "translation": "",
-    "context": "Mary requested a potter to make a plate in separate pieces so she can practice her pottery-mending skills. She took a day to put the pieces together. John snatched the mended plate and broke it.",
+    "context": "Mary requested a potter to make a plate in separate pieces so she can practice her pottery-mending skills. She took a day to put the pieces together. John, who was secretly angry with Mary for previously breaking his favorite bowl, snatched the mended plate from Mary and broke it.",
     "judgment": "unacceptable",
     "readings": [
       {"name": "restitutive", "judgment": "unacceptable"},
@@ -53,7 +55,8 @@
       ["diagnostic", "again"],
       ["root class", "change of state"]
     ],
-    "comment": "Necessarily two breakings."
+    "comment": "Necessarily two breakings. The paper prints 'snatched the mended plate from and Mary broke it.'",
+    "verified": "page-image"
   },
   {
     "id": "yuausensismith2023_25b",
@@ -72,7 +75,8 @@
       ["diagnostic", "again"],
       ["root class", "change of state"]
     ],
-    "comment": "Necessarily two defrostings."
+    "comment": "Necessarily two defrostings.",
+    "verified": "page-image"
   },
   {
     "id": "yuausensismith2023_25c",
@@ -91,7 +95,8 @@
       ["diagnostic", "again"],
       ["root class", "change of state"]
     ],
-    "comment": "Necessarily two meltings."
+    "comment": "Necessarily two meltings.",
+    "verified": "page-image"
   },
   {
     "id": "yuausensismith2023_26",
@@ -110,7 +115,8 @@
       ["diagnostic", "for-phrase"],
       ["root class", "property concept"]
     ],
-    "comment": "Internal reading: the door remained open for two hours."
+    "comment": "Internal reading: the door remained open for two hours.",
+    "verified": "page-image"
   },
   {
     "id": "yuausensismith2023_27",
@@ -129,7 +135,8 @@
       ["diagnostic", "for-phrase"],
       ["root class", "change of state"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "yuausensismith2023_28",
@@ -148,7 +155,8 @@
       ["diagnostic", "for-phrase"],
       ["root class", "change of state"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "yuausensismith2023_29",
@@ -167,7 +175,8 @@
       ["diagnostic", "for-phrase"],
       ["root class", "change of state"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "yuausensismith2023_30",
@@ -183,7 +192,8 @@
       ["diagnostic", "resultative modifier"],
       ["root class", "property concept"]
     ],
-    "comment": "Intended: Kim caused the door to go into the garden by opening."
+    "comment": "Intended: Kim caused the door to go into the garden by opening.",
+    "verified": "page-image"
   },
   {
     "id": "yuausensismith2023_31a",
@@ -199,7 +209,8 @@
       ["diagnostic", "resultative modifier"],
       ["root class", "property concept"]
     ],
-    "comment": "Cannot mean that the citizens caused the city to become invisible by darkening."
+    "comment": "Cannot mean that the citizens caused the city to become invisible by darkening.",
+    "verified": "page-image"
   },
   {
     "id": "yuausensismith2023_31b",
@@ -215,7 +226,8 @@
       ["diagnostic", "resultative modifier"],
       ["root class", "property concept"]
     ],
-    "comment": "Cannot mean that the dentist caused the teeth to become clean by whitening."
+    "comment": "Cannot mean that the dentist caused the teeth to become clean by whitening.",
+    "verified": "page-image"
   },
   {
     "id": "yuausensismith2023_35b",
@@ -231,7 +243,8 @@
       ["diagnostic", "resultative modifier"],
       ["root class", "change of state"]
     ],
-    "comment": "Corpus example with an unselected object: it is the deck, not the corpse, that breaks."
+    "comment": "Corpus example with an unselected object: it is the deck, not the corpse, that breaks.",
+    "verified": "page-image"
   },
   {
     "id": "yuausensismith2023_35c",
@@ -247,6 +260,7 @@
       ["diagnostic", "resultative modifier"],
       ["root class", "change of state"]
     ],
-    "comment": "Web example with an unselected object."
+    "comment": "Web example with an unselected object.",
+    "verified": "page-image"
   }
 ]

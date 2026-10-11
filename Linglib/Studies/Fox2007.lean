@@ -50,8 +50,8 @@ at every layer.
 
 ## Implementation notes
 
-Propositions are sets of worlds, so the theorems hold over any model. Example and note numbers
-follow the 2006 manuscript. `exhIter C 0` is the prejacent itself, so the paper's first layer is
+Propositions are sets of worlds, so the theorems hold over any model. Example numbers follow the
+published chapter. `exhIter C 0` is the prejacent itself, so the paper's first layer is
 `exhIter C 1`. The sentence before (85) names the plural conjunctive alternative as excludable,
 but (85) needs the plural disjunctive one, which `exhIE_singular` shows is excludable too. The
 examples the paper leaves to scope or to an economy condition on exhaustification ((21), (34),

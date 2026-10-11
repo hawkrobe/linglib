@@ -150,7 +150,7 @@ def huang2013_exp2_giveN_some : Datum :=
     source := ⟨"huang-spelke-snedeker-2013", "Exp. 2, pretest"⟩
     reportedIn := none
     language := "stan1293"
-    primaryText := "Put some of the fish into the pond."
+    primaryText := "Put some of the fish."
     glossedTokens := []
     context := ""
     judgment := .acceptable
@@ -163,7 +163,7 @@ def huang2013_exp2_giveN_all : Datum :=
     source := ⟨"huang-spelke-snedeker-2013", "Exp. 2, pretest"⟩
     reportedIn := none
     language := "stan1293"
-    primaryText := "Put all of the fish into the pond."
+    primaryText := "Put all of the fish."
     glossedTokens := []
     context := ""
     judgment := .acceptable
@@ -196,19 +196,6 @@ def huang2013_exp4_two : Datum :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "5.1.2"), ("term", "two"), ("task", "covered box"), ("trials", "two(1,3)")] }
-
-def huang2013_exp4_fn2 : Datum :=
-  { id := "huang2013_exp4_fn2"
-    source := ⟨"huang-spelke-snedeker-2013", "fn. 2"⟩
-    reportedIn := none
-    language := "stan1293"
-    primaryText := "Give me the box where Cookie Monster has two of the cookies."
-    glossedTokens := []
-    context := "The displays of the some trials, with Cookie Monster holding 0 of 4 or 4 of 4 cookies."
-    judgment := .acceptable
-    alternatives := []
-    readings := []
-    paperFeatures := [("section", "5.2"), ("term", "two"), ("task", "covered box"), ("displays", "of the some(NONE,ALL) trials")] }
 
 def huang2013_s62_some : Datum :=
   { id := "huang2013_s62_some"
@@ -249,6 +236,6 @@ def huang2013_s62_two : Datum :=
     readings := []
     paperFeatures := [("section", "6.2"), ("term", "two"), ("task", "visual world"), ("role", "upper-bound probe")] }
 
-def all : List Datum := [huang2013_ex1, huang2013_ex2, huang2013_ex3, huang2013_ex4, huang2013_ex5, huang2013_ex6, huang2013_ex7, huang2013_ex8, huang2013_exp1_some, huang2013_exp1_two, huang2013_exp2_giveN_some, huang2013_exp2_giveN_all, huang2013_exp3_all, huang2013_exp4_two, huang2013_exp4_fn2, huang2013_s62_some, huang2013_s62_three, huang2013_s62_two]
+def all : List Datum := [huang2013_ex1, huang2013_ex2, huang2013_ex3, huang2013_ex4, huang2013_ex5, huang2013_ex6, huang2013_ex7, huang2013_ex8, huang2013_exp1_some, huang2013_exp1_two, huang2013_exp2_giveN_some, huang2013_exp2_giveN_all, huang2013_exp3_all, huang2013_exp4_two, huang2013_s62_some, huang2013_s62_three, huang2013_s62_two]
 
 end HuangSpelkeSnedeker2013.Examples

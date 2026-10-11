@@ -12,7 +12,8 @@
       ["rule", "question"],
       ["constraint", "CNPC"]
     ],
-    "comment": "Questioning out of a relative clause on a lexically headed NP."
+    "comment": "Questioning out of a relative clause on a lexically headed NP.",
+    "verified": "page-image"
   },
   {
     "id": "ross1967_ex4_18a",
@@ -27,7 +28,8 @@
       ["rule", "relativization"],
       ["constraint", "CNPC"]
     ],
-    "comment": "Relativization out of a noun complement clause under the lexical head noun claim."
+    "comment": "Relativization out of a noun complement clause under the lexical head noun claim.",
+    "verified": "page-image"
   },
   {
     "id": "ross1967_ex4_18b",
@@ -41,7 +43,8 @@
     "paperFeatures": [
       ["rule", "relativization"]
     ],
-    "comment": "The minimal pair of (4.18a): the complement clause is not dominated by a lexically headed NP."
+    "comment": "The minimal pair of (4.18a): the complement clause is not dominated by a lexically headed NP.",
+    "verified": "page-image"
   },
   {
     "id": "ross1967_ex2_18",
@@ -56,7 +59,8 @@
       ["rule", "question"],
       ["constraint", "CSC"]
     ],
-    "comment": "Questioning a conjunct."
+    "comment": "Questioning a conjunct.",
+    "verified": "page-image"
   },
   {
     "id": "ross1967_ex4_82a",
@@ -71,7 +75,8 @@
       ["rule", "relativization"],
       ["constraint", "CSC"]
     ],
-    "comment": "Relativization out of a conjoined VP."
+    "comment": "Relativization out of a conjoined VP.",
+    "verified": "page-image"
   },
   {
     "id": "ross1967_ex4_82d",
@@ -86,7 +91,8 @@
       ["rule", "question"],
       ["constraint", "CSC"]
     ],
-    "comment": "Questioning out of a conjoined S."
+    "comment": "Questioning out of a conjoined S.",
+    "verified": "page-image"
   },
   {
     "id": "ross1967_ex4_184a",
@@ -100,7 +106,8 @@
     "paperFeatures": [
       ["rule", "relativization"]
     ],
-    "comment": "Relativization of the largest NP, the pied-piping output the Left Branch Condition leaves."
+    "comment": "Relativization of the largest NP, the pied-piping output the Left Branch Condition leaves.",
+    "verified": "page-image"
   },
   {
     "id": "ross1967_ex4_184b",
@@ -115,7 +122,8 @@
       ["rule", "relativization"],
       ["constraint", "LBC"]
     ],
-    "comment": "Relativization of the possessor NP on the left branch of the object NP."
+    "comment": "Relativization of the possessor NP on the left branch of the object NP.",
+    "verified": "page-image"
   },
   {
     "id": "ross1967_ex4_184c",
@@ -130,7 +138,8 @@
       ["rule", "relativization"],
       ["constraint", "LBC"]
     ],
-    "comment": "Relativization of the lowest possessor NP, on the left branch of the possessor NP."
+    "comment": "Relativization of the lowest possessor NP, on the left branch of the possessor NP.",
+    "verified": "page-image"
   },
   {
     "id": "ross1967_ex4_251a",
@@ -144,7 +153,8 @@
     "paperFeatures": [
       ["rule", "relativization"]
     ],
-    "comment": "Relativization out of an object that-clause."
+    "comment": "Relativization out of an object that-clause.",
+    "verified": "page-image"
   },
   {
     "id": "ross1967_ex4_251b",
@@ -159,7 +169,8 @@
       ["rule", "relativization"],
       ["constraint", "SSC"]
     ],
-    "comment": "Relativization out of the that-clause in subject position, the passive of (4.250a); no lexical head noun is involved."
+    "comment": "Relativization out of the that-clause in subject position, the passive of (4.250a); no lexical head noun is involved.",
+    "verified": "page-image"
   },
   {
     "id": "ross1967_ex4_251c",
@@ -173,7 +184,8 @@
     "paperFeatures": [
       ["rule", "relativization"]
     ],
-    "comment": "Relativization out of the extraposed that-clause."
+    "comment": "Relativization out of the extraposed that-clause.",
+    "verified": "page-image"
   },
   {
     "id": "ross1967_ex4_252",
@@ -187,7 +199,8 @@
     "paperFeatures": [
       ["rule", "question"]
     ],
-    "comment": "Questioning a subconstituent of a phrasal, not sentential, subject."
+    "comment": "Questioning a subconstituent of a phrasal, not sentential, subject.",
+    "verified": "page-image"
   },
   {
     "id": "ross1967_ex6_128b",
@@ -202,7 +215,8 @@
       ["rule", "leftDislocation"],
       ["constraint", "CNPC"]
     ],
-    "comment": "Left Dislocation out of a relative clause on a lexically headed NP, leaving a pronoun."
+    "comment": "Left Dislocation out of a relative clause on a lexically headed NP, leaving a pronoun. The paper prints the sentence ending \"tell the police that ...\", the ellipsis standing for the rest of (6.127); the text spells it out.",
+    "verified": "page-image"
   },
   {
     "id": "ross1967_ex6_135b",
@@ -217,7 +231,8 @@
       ["rule", "leftDislocation"],
       ["constraint", "CSC"]
     ],
-    "comment": "Left Dislocation out of a conjunct."
+    "comment": "Left Dislocation out of a conjunct.",
+    "verified": "page-image"
   },
   {
     "id": "ross1967_ex6_136",
@@ -232,7 +247,8 @@
       ["rule", "leftDislocation"],
       ["constraint", "SSC"]
     ],
-    "comment": "Left Dislocation out of a sentential subject."
+    "comment": "Left Dislocation out of a sentential subject.",
+    "verified": "page-image"
   },
   {
     "id": "ross1967_ex6_137",
@@ -247,6 +263,7 @@
       ["rule", "leftDislocation"],
       ["constraint", "LBC"]
     ],
-    "comment": "Left Dislocation of a possessor on the left branch of an NP."
+    "comment": "Left Dislocation of a possessor on the left branch of an NP.",
+    "verified": "page-image"
   }
 ]

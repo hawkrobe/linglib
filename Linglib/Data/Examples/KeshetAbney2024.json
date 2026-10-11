@@ -21,7 +21,8 @@
       ["operator", "every"],
       ["pronoun", "summation"]
     ],
-    "comment": "A summation pronoun referring to the totality of cheeseburgers being eaten; singular or plural by the cardinality of its antecedent description."
+    "comment": "A summation pronoun referring to the totality of cheeseburgers being eaten; singular or plural by the cardinality of its antecedent description.",
+    "verified": "page-image"
   },
   {
     "id": "keshetabney2024_3a",
@@ -47,7 +48,8 @@
       ["operator", "might"],
       ["pronoun", "summation"]
     ],
-    "comment": "Stone's intensional-antecedent contrast with (2)."
+    "comment": "Stone's intensional-antecedent contrast with (2).",
+    "verified": "page-image"
   },
   {
     "id": "keshetabney2024_4",
@@ -71,7 +73,8 @@
       ["operator", "might"],
       ["pronoun", "summation"]
     ],
-    "comment": "Summation pronouns never operate over multiple worlds at once."
+    "comment": "Summation pronouns never operate over multiple worlds at once.",
+    "verified": "page-image"
   },
   {
     "id": "keshetabney2024_5a",
@@ -98,7 +101,8 @@
       ["pronoun", "summation"],
       ["referents_exist", "true"]
     ],
-    "comment": "The candidates exist in every world of the context set, so existence of the referents does not license the pronoun; the antecedent description 'winner' is empty in some context-set worlds."
+    "comment": "The candidates exist in every world of the context set, so existence of the referents does not license the pronoun; the antecedent description 'winner' is empty in some context-set worlds.",
+    "verified": "page-image"
   },
   {
     "id": "keshetabney2024_6",
@@ -124,7 +128,8 @@
       ["pronoun", "summation"],
       ["referents_exist", "true"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "keshetabney2024_10",
@@ -146,7 +151,8 @@
       ["operator", "must"],
       ["pronoun", "summation"]
     ],
-    "comment": "Epistemic 'must' is realistic: the antecedent description has a unique extension in every world of the context set, the actual one included."
+    "comment": "Epistemic 'must' is realistic: the antecedent description has a unique extension in every world of the context set, the actual one included.",
+    "verified": "page-image"
   },
   {
     "id": "keshetabney2024_11",
@@ -168,7 +174,8 @@
       ["operator", "must"],
       ["pronoun", "summation"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "keshetabney2024_16a",
@@ -191,7 +198,8 @@
       ["operator", "might"],
       ["pronoun", "kind"]
     ],
-    "comment": "Kind reference is scopeless and is set aside from the intensional cases."
+    "comment": "Kind reference is scopeless and is set aside from the intensional cases.",
+    "verified": "page-image"
   },
   {
     "id": "keshetabney2024_22a",
@@ -213,7 +221,8 @@
       ["operator", "none"],
       ["pronoun", "simple"]
     ],
-    "comment": "The indefinite is a local variable, the pronoun the same variable, and the discourse the closure of their conjunction."
+    "comment": "The indefinite is a local variable, the pronoun the same variable, and the discourse the closure of their conjunction.",
+    "verified": "page-image"
   },
   {
     "id": "keshetabney2024_52",
@@ -235,7 +244,8 @@
       ["operator", "none"],
       ["pronoun", "simple"]
     ],
-    "comment": "In some worlds the antecedent denotes a non-singleton plurality, so the first sentence does not entail the singular pronoun's presupposition."
+    "comment": "In some worlds the antecedent denotes a non-singleton plurality, so the first sentence does not entail the singular pronoun's presupposition.",
+    "verified": "page-image"
   },
   {
     "id": "keshetabney2024_53",
@@ -254,7 +264,8 @@
       ["operator", "every"],
       ["pronoun", "simple"]
     ],
-    "comment": "The nuclear scope is subordinate to the restriction, whose bracketed donkey variable licenses the pronoun."
+    "comment": "The nuclear scope is subordinate to the restriction, whose bracketed donkey variable licenses the pronoun.",
+    "verified": "page-image"
   },
   {
     "id": "keshetabney2024_57a",
@@ -279,7 +290,8 @@
       ["pronoun", "simple"],
       ["subordination", "quantificational"]
     ],
-    "comment": "Quantificational subordination: the implicit restriction of 'most' is the nuclear scope of the previous quantifier."
+    "comment": "Quantificational subordination: the implicit restriction of 'most' is the nuclear scope of the previous quantifier.",
+    "verified": "page-image"
   },
   {
     "id": "keshetabney2024_58a",
@@ -299,7 +311,8 @@
       ["pronoun", "simple"],
       ["subordination", "modal"]
     ],
-    "comment": "A conditional donkey sentence: the nuclear scope of the modal is subordinate to its if-clause restriction."
+    "comment": "A conditional donkey sentence: the nuclear scope of the modal is subordinate to its if-clause restriction.",
+    "verified": "page-image"
   },
   {
     "id": "keshetabney2024_59",
@@ -322,7 +335,8 @@
       ["pronoun", "simple"],
       ["subordination", "modal"]
     ],
-    "comment": "Roberts's modal subordination: the null restriction of 'would' is anaphoric to the nuclear scope of 'might'."
+    "comment": "Roberts's modal subordination: the null restriction of 'would' is anaphoric to the nuclear scope of 'might'.",
+    "verified": "page-image"
   },
   {
     "id": "keshetabney2024_61",
@@ -344,7 +358,8 @@
       ["operator", "none"],
       ["pronoun", "simple"]
     ],
-    "comment": "A simple pronoun need not exhaust its antecedent description."
+    "comment": "A simple pronoun need not exhaust its antecedent description.",
+    "verified": "page-image"
   },
   {
     "id": "keshetabney2024_62",
@@ -366,7 +381,8 @@
       ["operator", "most"],
       ["pronoun", "summation"]
     ],
-    "comment": "A summation pronoun denotes the complete set satisfying the nuclear scope, leaving nothing for 'other girls'."
+    "comment": "A summation pronoun denotes the complete set satisfying the nuclear scope, leaving nothing for 'other girls'.",
+    "verified": "page-image"
   },
   {
     "id": "keshetabney2024_66",
@@ -390,7 +406,8 @@
       ["operator", "few"],
       ["pronoun", "paycheck"]
     ],
-    "comment": "A paycheck pronoun: the antecedent description contains a free variable bound by a different operator at the pronoun."
+    "comment": "A paycheck pronoun: the antecedent description contains a free variable bound by a different operator at the pronoun.",
+    "verified": "page-image"
   },
   {
     "id": "keshetabney2024_74",
@@ -412,7 +429,8 @@
       ["operator", "none"],
       ["pronoun", "simple"]
     ],
-    "comment": "The first sentence asserts the singularity the pronoun presupposes."
+    "comment": "The first sentence asserts the singularity the pronoun presupposes.",
+    "verified": "page-image"
   },
   {
     "id": "keshetabney2024_79",
@@ -434,7 +452,8 @@
       ["operator", "might"],
       ["pronoun", "summation"]
     ],
-    "comment": "Among the worlds where Andrea might be eating a cheeseburger are ones where she is fasting; there the summation is empty and the singular presupposition fails."
+    "comment": "Among the worlds where Andrea might be eating a cheeseburger are ones where she is fasting; there the summation is empty and the singular presupposition fails.",
+    "verified": "page-image"
   },
   {
     "id": "keshetabney2024_85",
@@ -459,11 +478,12 @@
       ["pronoun", "summation"],
       ["referents_exist", "true"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "keshetabney2024_91",
-    "source": {"bibkey": "geach-1967", "paperLabel": "(91)"},
+    "source": {"bibkey": "geach-1967", "paperLabel": ""},
     "reportedIn": {"bibkey": "keshet-abney-2024", "paperLabel": "(91)"},
     "language": "stan1293",
     "primaryText": "Hob thinks a witch has blighted Bob's mare, and Nob wonders whether she (the same witch) killed Cob's sow.",
@@ -478,7 +498,8 @@
       ["operator", "think"],
       ["pronoun", "summation"]
     ],
-    "comment": "Descriptivist analysis: the pronoun is felicitous where every world Nob considers has one witch who blighted the mare."
+    "comment": "Descriptivist analysis: the pronoun is felicitous where every world Nob considers has one witch who blighted the mare.",
+    "verified": "page-image"
   },
   {
     "id": "keshetabney2024_92b",
@@ -499,6 +520,7 @@
       ["operator", "negation"],
       ["pronoun", "summation"]
     ],
-    "comment": "Attributed to Barbara Partee in Roberts 1987; felicity reduces to 'if there is a bathroom there is exactly one', the scalar implicature of singular 'no bathroom'."
+    "comment": "Attributed to Barbara Partee in Roberts 1987; felicity reduces to 'if there is a bathroom there is exactly one', the scalar implicature of singular 'no bathroom'.",
+    "verified": "page-image"
   }
 ]

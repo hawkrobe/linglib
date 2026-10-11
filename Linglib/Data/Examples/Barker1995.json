@@ -12,7 +12,8 @@
     "paperFeatures": [
       ["phenomenon", "uniqueness"]
     ],
-    "comment": "Patterns with the definite (39b): refers to a uniquely determined entity."
+    "comment": "Patterns with the definite (39b): refers to a uniquely determined entity.",
+    "verified": "page-image"
   },
   {
     "id": "barker1995_ch2_44b",
@@ -27,7 +28,8 @@
     "paperFeatures": [
       ["phenomenon", "maximality"]
     ],
-    "comment": "The plural possessive describes only the maximal set of John's children."
+    "comment": "The plural possessive describes only the maximal set of John's children.",
+    "verified": "page-image"
   },
   {
     "id": "barker1995_ch2_46",
@@ -42,7 +44,8 @@
     "paperFeatures": [
       ["phenomenon", "uniqueness relative to cases"]
     ],
-    "comment": "Uniqueness without a specific referent: unique relative to each occasion, not absolutely."
+    "comment": "Uniqueness without a specific referent: unique relative to each occasion, not absolutely.",
+    "verified": "page-image"
   },
   {
     "id": "barker1995_ch2_47b",
@@ -57,7 +60,8 @@
     "paperFeatures": [
       ["phenomenon", "uniqueness relative to cases"]
     ],
-    "comment": "No particular pair of shoes: unique and maximal per situation, varying across cases."
+    "comment": "No particular pair of shoes: unique and maximal per situation, varying across cases.",
+    "verified": "page-image"
   },
   {
     "id": "barker1995_ch2_50a",
@@ -73,7 +77,8 @@
       ["phenomenon", "novel reference"],
       ["possession", "lexical"]
     ],
-    "comment": "A lexical possessive introduces a novel referent: the kinship relation is familiar."
+    "comment": "A lexical possessive introduces a novel referent: the kinship relation is familiar.",
+    "verified": "page-image"
   },
   {
     "id": "barker1995_ch2_50b",
@@ -83,13 +88,14 @@
     "glossedTokens": [],
     "translation": "",
     "context": "Neutral context; the person has not been mentioned.",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "readings": [],
     "paperFeatures": [
       ["phenomenon", "novel reference"],
       ["possession", "extrinsic"]
     ],
-    "comment": "An extrinsic possessive cannot introduce a novel referent: the relation is too vague."
+    "comment": "An extrinsic possessive cannot introduce a novel referent: the relation is too vague.",
+    "verified": "page-image"
   },
   {
     "id": "barker1995_ch2_53a",
@@ -105,7 +111,8 @@
       ["phenomenon", "novel reference"],
       ["possession", "conventional"]
     ],
-    "comment": "Cars are conventionally owned, so the relation counts as familiar — only on the ownership reading."
+    "comment": "Cars are conventionally owned, so the relation counts as familiar — only on the ownership reading.",
+    "verified": "page-image"
   },
   {
     "id": "barker1995_ch2_53b",
@@ -115,13 +122,14 @@
     "glossedTokens": [],
     "translation": "",
     "context": "Neutral context.",
-    "judgment": "marginal",
+    "judgment": "unacceptable",
     "readings": [],
     "paperFeatures": [
       ["phenomenon", "novel reference"],
       ["possession", "extrinsic"]
     ],
-    "comment": "Busses are not conventionally possessed; the extrinsic relation is not resolvable."
+    "comment": "Busses are not conventionally possessed; the extrinsic relation is not resolvable.",
+    "verified": "page-image"
   },
   {
     "id": "barker1995_ch4_1",
@@ -136,7 +144,8 @@
     "paperFeatures": [
       ["phenomenon", "proportion"]
     ],
-    "comment": "The Tony-and-Simona scenario: what counts as a counterexample tracks how instances group into cases."
+    "comment": "The Tony-and-Simona scenario: what counts as a counterexample tracks how instances group into cases.",
+    "verified": "page-image"
   },
   {
     "id": "barker1995_ch4_6",
@@ -151,7 +160,8 @@
     "paperFeatures": [
       ["phenomenon", "asymmetric quantification"]
     ],
-    "comment": "Requires three students, not three dogs: the possessor description dominates."
+    "comment": "Requires three students, not three dogs: the possessor description dominates.",
+    "verified": "page-image"
   },
   {
     "id": "barker1995_ch4_7",
@@ -166,7 +176,8 @@
     "paperFeatures": [
       ["phenomenon", "asymmetric quantification"]
     ],
-    "comment": "True in the model (8): counts people, never colors — no possessee-dominant reading."
+    "comment": "True in the model (8): counts people, never colors — no possessee-dominant reading.",
+    "verified": "page-image"
   },
   {
     "id": "barker1995_ch4_10",
@@ -176,12 +187,13 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "readings": [],
     "paperFeatures": [
       ["phenomenon", "proportion"]
     ],
-    "comment": "A single jointly-possessed apartment yields at most one case, clashing with the three-case presupposition."
+    "comment": "A single jointly-possessed apartment yields at most one case, clashing with the three-case presupposition.",
+    "verified": "page-image"
   },
   {
     "id": "barker1995_ch4_11",
@@ -190,13 +202,14 @@
     "primaryText": "Most planets' rings are made of ice.",
     "glossedTokens": [],
     "translation": "",
-    "context": "Nine planets; only Saturn, Neptune and Uranus have rings; Saturn's and Neptune's are icy.",
+    "context": "Nine planets; only three (say, Saturn, Neptune and Uranus) have rings; at least two of the three have rings made of ice.",
     "judgment": "acceptable",
     "readings": [],
     "paperFeatures": [
       ["phenomenon", "narrowing"]
     ],
-    "comment": "True and felicitous: quantification ranges only over the ringed planets — the domain narrowing problem."
+    "comment": "True and felicitous: quantification ranges only over the ringed planets — the domain narrowing problem.",
+    "verified": "page-image"
   },
   {
     "id": "barker1995_ch4_12c",
@@ -211,7 +224,8 @@
     "paperFeatures": [
       ["phenomenon", "narrowing"]
     ],
-    "comment": "Quantifies only over women who have a dream: narrowing with every."
+    "comment": "Quantifies only over women who have a dream: narrowing with every.",
+    "verified": "page-image"
   },
   {
     "id": "barker1995_ch4_62",
@@ -226,7 +240,8 @@
     "paperFeatures": [
       ["phenomenon", "perspective paradox"]
     ],
-    "comment": "Feels like a generalization about students or about teachers, with no truth-conditional difference."
+    "comment": "Feels like a generalization about students or about teachers, with no truth-conditional difference.",
+    "verified": "page-image"
   },
   {
     "id": "barker1995_ch4_63",
@@ -241,7 +256,8 @@
     "paperFeatures": [
       ["phenomenon", "lexical vs extrinsic"]
     ],
-    "comment": "Kinship reading (their own children) or extrinsic reading (their students); the relation holds constant across the quantification."
+    "comment": "Kinship reading (their own children) or extrinsic reading (their students); the relation holds constant across the quantification.",
+    "verified": "page-image"
   },
   {
     "id": "barker1995_ch4_72",
@@ -256,6 +272,7 @@
     "paperFeatures": [
       ["phenomenon", "perspective paradox"]
     ],
-    "comment": "Uniqueness forces maximal paper-sums, so pair-cases and student-cases coincide: one instance per case."
+    "comment": "Uniqueness forces maximal paper-sums, so pair-cases and student-cases coincide: one instance per case.",
+    "verified": "page-image"
   }
 ]
