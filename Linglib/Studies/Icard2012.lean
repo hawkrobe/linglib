@@ -6,20 +6,19 @@ public import Linglib.Semantics.Polarity.Strength
 /-!
 # Icard (2012): Inclusion and Exclusion in Natural Language
 
-This file formalizes the projectivity calculus of [icard-2012], which extends the
-Monotonicity Calculus from inclusion to the exclusion relations of [maccartney-manning-2009].
-The relations, their join and projection tables and the composition of signatures are the
-library's `NaturalLogic` substrate, whose implementations this file checks against the
-printed cells; on top of them it builds the typed language of Section 2, with the
-projectivity markings of a lexicon's constants, the projectivity of a context (Definition
-2.9, `Ctx.pro`), and the soundness of projectivity marking (Proposition 2.10,
-`Model.soundFor_ctxFun`). The calculus 𝒞 of Section 3 is `Derives`, with the Substitution
-rule over contexts, and Theorem 3.1 is `Derives.sound`. The worked example of Section 3.2,
-that *Every job that involves a giant squid is dangerous* entails *Not every job that involves
-a giant squid is safe*, is derived from the paper's assumption set by three substitutions and
-two compositions (`derives_squid`), and Section 4's correspondence between the signatures and
-Zwarts's three classes of negative polarity items is `Licenses`, read off the substrate's
-strength map `Signature.toDEStrength`.
+This file formalizes Icard's projectivity calculus, which extends the Monotonicity Calculus from
+inclusion to the exclusion relations of MacCartney and Manning. The relations, their join and
+projection tables and the composition of signatures are the library's `NaturalLogic` substrate,
+whose implementations this file checks against the printed cells; on top of them it builds the typed
+language of Section 2, with the projectivity markings of a lexicon's constants, the projectivity of
+a context (Definition 2.9, `Ctx.pro`), and the soundness of projectivity marking (Proposition 2.10,
+`Model.soundFor_ctxFun`). The calculus 𝒞 of Section 3 is `Derives`, with the Substitution rule over
+contexts, and Theorem 3.1 is `Derives.sound`. The worked example of Section 3.2, that *Every job
+that involves a giant squid is dangerous* entails *Not every job that involves a cephalopod is
+safe*, is derived from the paper's assumption set by three substitutions and two compositions
+(`derives_squid`), and Section 4's correspondence between the signatures and Zwarts's three classes
+of negative polarity items is `Licenses`, read off the substrate's strength map
+`Signature.toDEStrength`.
 
 ## Implementation notes
 
@@ -347,10 +346,11 @@ example : adjectiveCtx.pro = .mult := rfl
 example : nounCtx.pro = .antiAdd := rfl
 example : determinerCtx.pro = .addMult := rfl
 
-/-- The main example: *Every job that involves a giant squid is dangerous* ⊑ *Not every job
-that involves a giant squid is safe*. Substituting *safe* for *dangerous* under `⊞` keeps
-`|`, *cephalopod* for *giant squid* under `◇` turns `⊑` into `⊒`, and *not every* for *every*
-under `⊕⊞` keeps `^`; Composition then gives `| ⋈ ⊒ = |` and `| ⋈ ^ = ⊑`. -/
+/-- The main example: *Every job that involves a giant squid is dangerous* ⊑ *Not every job that
+involves a cephalopod is safe* (the paper misprints *giant squid* in the conclusion). Substituting
+*safe* for *dangerous* under `⊞` keeps `|`, *cephalopod* for *giant squid* under `◇` turns `⊑` into
+`⊒`, and *not every* for *every* under `⊕⊞` keeps `^`; Composition then gives `| ⋈ ⊒ = |` and `| ⋈ ^
+= ⊑`. -/
 theorem derives_squid : Derives Assumption t₀ .forward t₀' :=
   have h₁ : Derives Assumption t₀ .alternation u₀ :=
     .subst adjectiveCtx (.symm_alternation (.ax Assumption.safeAltDangerous))

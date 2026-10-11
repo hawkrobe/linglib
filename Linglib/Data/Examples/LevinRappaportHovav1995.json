@@ -28,7 +28,8 @@
         "48.1.1"
       ]
     ],
-    "comment": "A corpus locative inversion, from Bromfield, The Farm, with a verb of appearance."
+    "comment": "A corpus locative inversion, from Bromfield, The Farm, with a verb of appearance.",
+    "verified": "page-image"
   },
   {
     "id": "levinrappaporthovav1995_ex6_4a",
@@ -59,7 +60,8 @@
         "48.1.1"
       ]
     ],
-    "comment": "The there-insertion counterpart of (1)."
+    "comment": "The there-insertion counterpart of (1).",
+    "verified": "page-image"
   },
   {
     "id": "levinrappaporthovav1995_ex4_31a",
@@ -94,7 +96,8 @@
         "yes"
       ]
     ],
-    "comment": "A verb of inherently directed motion rejects a cognate object, consistent with an unaccusative classification."
+    "comment": "A verb of inherently directed motion rejects a cognate object, consistent with an unaccusative classification.",
+    "verified": "page-image"
   },
   {
     "id": "levinrappaporthovav1995_ex4_32c",
@@ -129,7 +132,8 @@
         "yes"
       ]
     ],
-    "comment": "A verb of inherently directed motion rejects the X's way construction."
+    "comment": "A verb of inherently directed motion rejects the X's way construction.",
+    "verified": "page-image"
   },
   {
     "id": "levinrappaporthovav1995_ex4_50a",
@@ -164,7 +168,8 @@
         "yes"
       ]
     ],
-    "comment": "A run verb in the unergative resultative pattern, the result phrase predicated of a nonsubcategorized object."
+    "comment": "A run verb in the unergative resultative pattern, the result phrase predicated of a nonsubcategorized object.",
+    "verified": "page-image"
   },
   {
     "id": "levinrappaporthovav1995_ex4_51a",
@@ -199,7 +204,8 @@
         "yes"
       ]
     ],
-    "comment": "A run verb rejects the unaccusative resultative pattern."
+    "comment": "A run verb rejects the unaccusative resultative pattern.",
+    "verified": "page-image"
   },
   {
     "id": "levinrappaporthovav1995_ex4_52a",
@@ -234,7 +240,8 @@
         "no"
       ]
     ],
-    "comment": "A roll verb in the unaccusative resultative pattern, the result phrase predicated of the subject."
+    "comment": "A roll verb in the unaccusative resultative pattern, the result phrase predicated of the subject.",
+    "verified": "page-image"
   },
   {
     "id": "levinrappaporthovav1995_ex4_53a",
@@ -269,7 +276,8 @@
         "no"
       ]
     ],
-    "comment": "A roll verb rejects the unergative resultative pattern with a fake reflexive."
+    "comment": "A roll verb rejects the unergative resultative pattern with a fake reflexive.",
+    "verified": "page-image"
   },
   {
     "id": "levinrappaporthovav1995_ex4_54a",
@@ -304,7 +312,8 @@
         "yes"
       ]
     ],
-    "comment": "A run verb in the X's way construction."
+    "comment": "A run verb in the X's way construction.",
+    "verified": "page-image"
   },
   {
     "id": "levinrappaporthovav1995_ex4_55a",
@@ -339,6 +348,7 @@
         "no"
       ]
     ],
-    "comment": "A roll verb rejects the X's way construction."
+    "comment": "A roll verb rejects the X's way construction.",
+    "verified": "page-image"
   }
 ]

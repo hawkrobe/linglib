@@ -11,7 +11,7 @@ public import Linglib.Data.Experiments.AbramskySadrzadeh2014
 /-!
 # Abramsky and Sadrzadeh (2014): Semantic Unification: A Sheaf Theoretic Approach to Natural Language
 
-[abramsky-sadrzadeh-2014] model basic discourse representation structures as a presheaf on
+Abramsky and Sadrzadeh model basic discourse representation structures as a presheaf on
 contexts, finite vocabularies of relation symbols with finite sets of variables
 (`DRT.presheaf`), and read anaphora resolution as gluing: the local theories of a discourse's
 parts glue along a cover, a choice of which referents to identify, when some global theory
@@ -202,7 +202,8 @@ def greySections : ∀ i, Theory (greyParts i)
   | 1 => ⟨{lit .donkey (fun _ => .y), lit .man (fun _ => .y) false}, by decide +kernel⟩
   | 2 => ⟨{lit .grey (fun _ => .z)}, by decide +kernel⟩
 
-/-- The cover `x ↦ a`, `y ↦ a`, `z ↦ b` merges *it* with *John*. -/
+/-- The cover `x ↦ a`, `y ↦ a`, `z ↦ b` merges John's variable with the donkey's, the cover the
+paper rules out as inconsistent. -/
 def mergedCover : Cover greyCtx (Fin 3) where
   part := greyParts
   map

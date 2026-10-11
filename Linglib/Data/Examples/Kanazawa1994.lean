@@ -17,8 +17,8 @@ namespace Kanazawa1994.Examples
 
 def strong_dominant : Datum :=
   { id := "kanazawa1994_strong_dominant"
-    source := ⟨"geach-1962", "UNVERIFIED the donkey sentence"⟩
-    reportedIn := some ⟨"kanazawa-1994", "UNVERIFIED strong reading dominant out of the blue"⟩
+    source := ⟨"kanazawa-1994", "(1)"⟩
+    reportedIn := none
     language := "stan1293"
     primaryText := "Every farmer who owns a donkey beats it."
     glossedTokens := []
@@ -26,7 +26,7 @@ def strong_dominant : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := [("strong/universal", .acceptable), ("weak/existential", .acceptable)]
-    paperFeatures := [("preferred_reading", "strong"), ("quantifier_monotonicity", "upward")] }
+    paperFeatures := [("preferred_reading", "strong"), ("quantifier_monotonicity", "left downward")] }
 
 def all : List Datum := [strong_dominant]
 

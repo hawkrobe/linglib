@@ -18,7 +18,8 @@
       ["parameter", "realization"],
       ["section", "2.4.2"]
     ],
-    "comment": "The house is realized in the second utterance only indirectly, by the associative reference the door."
+    "comment": "The house is realized in the second utterance only indirectly, by the associative reference the door.",
+    "verified": "page-image"
   },
   {
     "id": "poesioetal2004_ex7",
@@ -41,7 +42,8 @@
       ["parameter", "previousUtterance"],
       ["section", "2.4.2"]
     ],
-    "comment": "Neither the second nor the third utterance has a CB unless the second-person pronoun introduces a CF; treating the if-clause as embedded makes the first utterance the previous utterance of the third."
+    "comment": "Neither the second nor the third utterance has a CB unless the second-person pronoun introduces a CF; treating the if-clause as embedded makes the first utterance the previous utterance of the third. The paper prints \"pregnant of breast-feeding\" in (7) on p. 318 and \"pregnant or breast-feeding\" where it repeats (7) on p. 337.",
+    "verified": "page-image"
   },
   {
     "id": "poesioetal2004_ex9",
@@ -66,7 +68,8 @@
       ["parameter", "realization"],
       ["section", "4.1.1"]
     ],
-    "comment": "With finite clauses as utterances only the last clause refers to the egg vases; identifying utterances with sentences or allowing indirect realization removes the Strong Constraint 1 violations."
+    "comment": "With finite clauses as utterances only the last clause refers to the egg vases; identifying utterances with sentences or allowing indirect realization removes the Strong Constraint 1 violations.",
+    "verified": "page-image"
   },
   {
     "id": "poesioetal2004_ex10",
@@ -87,7 +90,8 @@
       ["parameter", "rank"],
       ["section", "4.1.1"]
     ],
-    "comment": "The corner cupboard (np-compl) and Branicki (gen) tie under grammatical-function ranking and are both realized in the next utterance, so both are its CB."
+    "comment": "The corner cupboard (np-compl) and Branicki (gen) tie under grammatical-function ranking and are both realized in the next utterance, so both are its CB.",
+    "verified": "page-image"
   },
   {
     "id": "poesioetal2004_ex14",
@@ -109,7 +113,8 @@
       ["parameter", "previousUtterance"],
       ["section", "4.2.5"]
     ],
-    "comment": "Kameyama-style the previous utterance of the third clause is the when-clause; Suri and McCoy-style it is the first clause."
+    "comment": "Kameyama-style the previous utterance of the third clause is the when-clause; Suri and McCoy-style it is the first clause.",
+    "verified": "page-image"
   },
   {
     "id": "poesioetal2004_ex16",
@@ -131,7 +136,8 @@
       ["parameter", "previousUtterance"],
       ["section", "4.2.5"]
     ],
-    "comment": "The adjunct clause introduces the patch, so treating it as embedded loses the CB of the third clause."
+    "comment": "The adjunct clause introduces the patch, so treating it as embedded loses the CB of the third clause.",
+    "verified": "page-image"
   },
   {
     "id": "poesioetal2004_ex23",
@@ -152,6 +158,7 @@
     "paperFeatures": [
       ["section", "5.2.2"]
     ],
-    "comment": "Successive utterances mention no common entity; the connection is made by the connectives."
+    "comment": "Successive utterances mention no common entity; the connection is made by the connectives.",
+    "verified": "page-image"
   }
 ]

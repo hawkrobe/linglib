@@ -3,7 +3,7 @@
     "id": "hawkinsgweongoodman2021_item1",
     "source": {
       "bibkey": "keysar-etal-2003",
-      "paperLabel": "Table 1, item 1"
+      "paperLabel": ""
     },
     "reportedIn": {
       "bibkey": "hawkins-gweon-goodman-2021",
@@ -36,13 +36,14 @@
         "scripted"
       ]
     ],
-    "comment": "A critical instruction of Keysar et al. (2003): the hidden distractor fits the instruction at least as well as the target."
+    "comment": "A critical instruction of Keysar et al. (2003): the hidden distractor fits the instruction at least as well as the target.",
+    "verified": "page-image"
   },
   {
     "id": "hawkinsgweongoodman2021_item2",
     "source": {
       "bibkey": "keysar-etal-2003",
-      "paperLabel": "Table 1, item 2"
+      "paperLabel": ""
     },
     "reportedIn": {
       "bibkey": "hawkins-gweon-goodman-2021",
@@ -75,13 +76,14 @@
         "scripted"
       ]
     ],
-    "comment": "A critical instruction of Keysar et al. (2003): the hidden distractor fits the instruction at least as well as the target."
+    "comment": "A critical instruction of Keysar et al. (2003): the hidden distractor fits the instruction at least as well as the target.",
+    "verified": "page-image"
   },
   {
     "id": "hawkinsgweongoodman2021_item3",
     "source": {
       "bibkey": "keysar-etal-2003",
-      "paperLabel": "Table 1, item 3"
+      "paperLabel": ""
     },
     "reportedIn": {
       "bibkey": "hawkins-gweon-goodman-2021",
@@ -114,13 +116,14 @@
         "scripted"
       ]
     ],
-    "comment": "A critical instruction of Keysar et al. (2003): the hidden distractor fits the instruction at least as well as the target."
+    "comment": "A critical instruction of Keysar et al. (2003): the hidden distractor fits the instruction at least as well as the target.",
+    "verified": "page-image"
   },
   {
     "id": "hawkinsgweongoodman2021_item4",
     "source": {
       "bibkey": "keysar-etal-2003",
-      "paperLabel": "Table 1, item 4"
+      "paperLabel": ""
     },
     "reportedIn": {
       "bibkey": "hawkins-gweon-goodman-2021",
@@ -153,13 +156,14 @@
         "scripted"
       ]
     ],
-    "comment": "A critical instruction of Keysar et al. (2003): the hidden distractor fits the instruction at least as well as the target."
+    "comment": "A critical instruction of Keysar et al. (2003): the hidden distractor fits the instruction at least as well as the target.",
+    "verified": "page-image"
   },
   {
     "id": "hawkinsgweongoodman2021_item5",
     "source": {
       "bibkey": "keysar-etal-2003",
-      "paperLabel": "Table 1, item 5"
+      "paperLabel": ""
     },
     "reportedIn": {
       "bibkey": "hawkins-gweon-goodman-2021",
@@ -192,13 +196,14 @@
         "scripted"
       ]
     ],
-    "comment": "A critical instruction of Keysar et al. (2003): the hidden distractor fits the instruction at least as well as the target."
+    "comment": "A critical instruction of Keysar et al. (2003): the hidden distractor fits the instruction at least as well as the target.",
+    "verified": "page-image"
   },
   {
     "id": "hawkinsgweongoodman2021_item6",
     "source": {
       "bibkey": "keysar-etal-2003",
-      "paperLabel": "Table 1, item 6"
+      "paperLabel": ""
     },
     "reportedIn": {
       "bibkey": "hawkins-gweon-goodman-2021",
@@ -231,13 +236,14 @@
         "scripted"
       ]
     ],
-    "comment": "A critical instruction of Keysar et al. (2003): the hidden distractor fits the instruction at least as well as the target."
+    "comment": "A critical instruction of Keysar et al. (2003): the hidden distractor fits the instruction at least as well as the target.",
+    "verified": "page-image"
   },
   {
     "id": "hawkinsgweongoodman2021_item7",
     "source": {
       "bibkey": "keysar-etal-2003",
-      "paperLabel": "Table 1, item 7"
+      "paperLabel": ""
     },
     "reportedIn": {
       "bibkey": "hawkins-gweon-goodman-2021",
@@ -270,13 +276,14 @@
         "scripted"
       ]
     ],
-    "comment": "A critical instruction of Keysar et al. (2003): the hidden distractor fits the instruction at least as well as the target."
+    "comment": "A critical instruction of Keysar et al. (2003): the hidden distractor fits the instruction at least as well as the target.",
+    "verified": "page-image"
   },
   {
     "id": "hawkinsgweongoodman2021_item8",
     "source": {
       "bibkey": "keysar-etal-2003",
-      "paperLabel": "Table 1, item 8"
+      "paperLabel": ""
     },
     "reportedIn": {
       "bibkey": "hawkins-gweon-goodman-2021",
@@ -309,7 +316,8 @@
         "scripted"
       ]
     ],
-    "comment": "A critical instruction of Keysar et al. (2003): the hidden distractor fits the instruction at least as well as the target."
+    "comment": "A critical instruction of Keysar et al. (2003): the hidden distractor fits the instruction at least as well as the target.",
+    "verified": "page-image"
   },
   {
     "id": "hawkinsgweongoodman2021_shape",
@@ -340,7 +348,8 @@
         "egocentric"
       ]
     ],
-    "comment": "Sufficient in the speaker's own view: shape alone identifies the target among the visible objects."
+    "comment": "Sufficient in the speaker's own view: shape alone identifies the target among the visible objects.",
+    "verified": "page-image"
   },
   {
     "id": "hawkinsgweongoodman2021_shapeColor",
@@ -367,7 +376,8 @@
         "shape, color"
       ]
     ],
-    "comment": "The utterance the mixture speaker switches to at wS = 0.36 in Fig. 2."
+    "comment": "The utterance the mixture speaker switches to at wS = 0.36 in Fig. 2.",
+    "verified": "page-image"
   },
   {
     "id": "hawkinsgweongoodman2021_full",
@@ -394,6 +404,7 @@
         "shape, color, texture"
       ]
     ],
-    "comment": "The utterance the mixture speaker switches to at wS = 0.72 in Fig. 2."
+    "comment": "The utterance the mixture speaker switches to at wS = 0.72 in Fig. 2.",
+    "verified": "page-image"
   }
 ]

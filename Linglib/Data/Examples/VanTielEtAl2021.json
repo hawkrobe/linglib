@@ -16,7 +16,8 @@
       ["task", "production"],
       ["words", "17 quantity words, 87% of the data"]
     ],
-    "comment": "The production frame of Experiments 1a and 1b, whose production probabilities show gradience and focality."
+    "comment": "The production frame of Experiments 1a and 1b, whose production probabilities show gradience and focality.",
+    "verified": "page-image"
   },
   {
     "id": "vantieletal2021_all_inference",
@@ -38,7 +39,8 @@
       ["monotonicity", "increasing"],
       ["inference", "sets to supersets"]
     ],
-    "comment": "A monotone-increasing quantity word licenses the inference from a set to its supersets; Experiment 2 classified the 17 words by such arguments."
+    "comment": "A monotone-increasing quantity word licenses the inference from a set to its supersets; Experiment 2 classified the 17 words by such arguments.",
+    "verified": "page-image"
   },
   {
     "id": "vantieletal2021_no_inference",
@@ -60,7 +62,8 @@
       ["monotonicity", "decreasing"],
       ["inference", "sets to subsets"]
     ],
-    "comment": "A monotone-decreasing quantity word licenses the inference from a set to its subsets; few, hardly any, less than half, none and very few were so classified."
+    "comment": "A monotone-decreasing quantity word licenses the inference from a set to its subsets; few, hardly any, less than half, none and very few were so classified.",
+    "verified": "page-image"
   },
   {
     "id": "vantieletal2021_some_good",
@@ -79,7 +82,8 @@
       ["word", "some"],
       ["argumentative direction", "positive"]
     ],
-    "comment": "Some and few differ in argumentative direction, a consideration the models abstract away from."
+    "comment": "Some and few differ in argumentative direction, a consideration the models abstract away from.",
+    "verified": "page-image"
   },
   {
     "id": "vantieletal2021_some_bad",
@@ -91,14 +95,15 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
       ["word", "some"],
       ["argumentative direction", "positive"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "vantieletal2021_few_bad",
@@ -117,7 +122,8 @@
       ["word", "few"],
       ["argumentative direction", "negative"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "vantieletal2021_few_good",
@@ -129,13 +135,14 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
       ["word", "few"],
       ["argumentative direction", "negative"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   }
 ]

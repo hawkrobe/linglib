@@ -17,7 +17,8 @@
       ["inference", "(2) Mo left."],
       ["projects", "true"]
     ],
-    "comment": "The inference that Mo left projects through the entailment-canceling operator."
+    "comment": "The inference that Mo left projects through the entailment-canceling operator.",
+    "verified": "page-image"
   },
   {
     "id": "grovewhite2025_1b",
@@ -37,7 +38,8 @@
       ["inference", "(2) Mo left."],
       ["projects", "true"]
     ],
-    "comment": "The inference that Mo left projects through the entailment-canceling operator."
+    "comment": "The inference that Mo left projects through the entailment-canceling operator.",
+    "verified": "page-image"
   },
   {
     "id": "grovewhite2025_1c",
@@ -57,7 +59,8 @@
       ["inference", "(2) Mo left."],
       ["projects", "true"]
     ],
-    "comment": "The inference that Mo left projects through the entailment-canceling operator."
+    "comment": "The inference that Mo left projects through the entailment-canceling operator.",
+    "verified": "page-image"
   },
   {
     "id": "grovewhite2025_1d",
@@ -77,7 +80,8 @@
       ["inference", "(2) Mo left."],
       ["projects", "true"]
     ],
-    "comment": "The inference that Mo left projects through the entailment-canceling operator."
+    "comment": "The inference that Mo left projects through the entailment-canceling operator.",
+    "verified": "page-image"
   },
   {
     "id": "grovewhite2025_1e",
@@ -97,7 +101,8 @@
       ["inference", "(2) Mo left."],
       ["projects", "true"]
     ],
-    "comment": "The inference that Mo left projects through the entailment-canceling operator."
+    "comment": "The inference that Mo left projects through the entailment-canceling operator.",
+    "verified": "page-image"
   },
   {
     "id": "grovewhite2025_17_belief",
@@ -117,7 +122,8 @@
       ["inference", "(18a) Jo believed that Mo left."],
       ["projects", "true"]
     ],
-    "comment": "Emotive predicates tend to give rise to belief inferences as well as projective ones."
+    "comment": "Emotive predicates tend to give rise to belief inferences as well as projective ones.",
+    "verified": "page-image"
   },
   {
     "id": "grovewhite2025_17_truth",
@@ -137,7 +143,8 @@
       ["inference", "(18b) Mo left."],
       ["projects", "true"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "grovewhite2025_19",
@@ -160,6 +167,7 @@
       ["inference", "Harry is having a graduation party."],
       ["projects", "false"]
     ],
-    "comment": "Simons et al. (2017), their (10): with focus on the embedded subject the complement does not project."
+    "comment": "Simons et al. (2017), their (10): with focus on the embedded subject the complement does not project.",
+    "verified": "page-image"
   }
 ]

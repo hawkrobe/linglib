@@ -39,7 +39,7 @@ def ex_6 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := [("inference: not [John passed some and failed some], so John passed all", .unacceptable)]
-    paperFeatures := [("case", "symmetry preserving"), ("prejacent", "pass some"), ("contextual alternative", "pass some and fail some")] }
+    paperFeatures := [("case", "symmetry preserving"), ("prejacent", "pass some"), ("contextual alternative", "pass some and fail some"), ("felicity", "infelicitous")] }
 
 def ex_9 : Datum :=
   { id := "trinhhaida2015_9"

@@ -1,7 +1,7 @@
 [
   {
     "id": "tg2022_tall_basketball",
-    "source": {"bibkey": "tessler-goodman-2022", "paperLabel": "UNVERIFIED §3.2.1, Fig. 3"},
+    "source": {"bibkey": "tessler-goodman-2022", "paperLabel": "§3.2.1, Fig. 3"},
     "language": "stan1293",
     "primaryText": "tall basketball player",
     "glossedTokens": [],
@@ -15,11 +15,12 @@
       ["prior_expectation", "high"],
       ["inferred_class", "superordinate"]
     ],
-    "comment": "Positive adjective + high prior expectation: inferred comparison class is superordinate (tall even compared to people in general)."
+    "comment": "Positive adjective + high prior expectation: inferred comparison class is superordinate (tall even compared to people in general).",
+    "verified": "page-image"
   },
   {
     "id": "tg2022_short_basketball",
-    "source": {"bibkey": "tessler-goodman-2022", "paperLabel": "UNVERIFIED §3.2.1, Fig. 3"},
+    "source": {"bibkey": "tessler-goodman-2022", "paperLabel": "§3.2.1, Fig. 3"},
     "language": "stan1293",
     "primaryText": "short basketball player",
     "glossedTokens": [],
@@ -33,11 +34,12 @@
       ["prior_expectation", "high"],
       ["inferred_class", "subordinate"]
     ],
-    "comment": "Negative adjective + high prior expectation: inferred comparison class is subordinate (short for a basketball player)."
+    "comment": "Negative adjective + high prior expectation: inferred comparison class is subordinate (short for a basketball player).",
+    "verified": "page-image"
   },
   {
     "id": "tg2022_tall_jockey",
-    "source": {"bibkey": "tessler-goodman-2022", "paperLabel": "UNVERIFIED §3.2.1, Fig. 3"},
+    "source": {"bibkey": "tessler-goodman-2022", "paperLabel": "§3.2.1, Fig. 3"},
     "language": "stan1293",
     "primaryText": "tall jockey",
     "glossedTokens": [],
@@ -51,11 +53,12 @@
       ["prior_expectation", "low"],
       ["inferred_class", "subordinate"]
     ],
-    "comment": "Positive adjective + low prior expectation: inferred comparison class is subordinate (tall for a jockey)."
+    "comment": "Positive adjective + low prior expectation: inferred comparison class is subordinate (tall for a jockey).",
+    "verified": "page-image"
   },
   {
     "id": "tg2022_short_jockey",
-    "source": {"bibkey": "tessler-goodman-2022", "paperLabel": "UNVERIFIED §3.2.1, Fig. 3"},
+    "source": {"bibkey": "tessler-goodman-2022", "paperLabel": "§3.2.1, Fig. 3"},
     "language": "stan1293",
     "primaryText": "short jockey",
     "glossedTokens": [],
@@ -69,6 +72,7 @@
       ["prior_expectation", "low"],
       ["inferred_class", "superordinate"]
     ],
-    "comment": "Negative adjective + low prior expectation: inferred comparison class is superordinate (short even compared to people in general)."
+    "comment": "Negative adjective + low prior expectation: inferred comparison class is superordinate (short even compared to people in general).",
+    "verified": "page-image"
   }
 ]

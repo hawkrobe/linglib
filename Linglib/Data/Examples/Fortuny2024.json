@@ -36,7 +36,8 @@
         "and"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "fortuny2024_ex3b",
@@ -75,7 +76,8 @@
         "and"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "fortuny2024_ex3c",
@@ -114,7 +116,8 @@
         "or"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "fortuny2024_ex3d",
@@ -153,7 +156,8 @@
         "or"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "fortuny2024_ex3e",
@@ -192,7 +196,8 @@
         "but"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "fortuny2024_ex3f",
@@ -231,7 +236,8 @@
         "but"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "fortuny2024_ex7",
@@ -270,7 +276,8 @@
         "and"
       ]
     ],
-    "comment": "Across-the-board extraction from inside both coordinands; the Element Constraint is set aside."
+    "comment": "Across-the-board extraction from inside both coordinands; the Element Constraint is set aside.",
+    "verified": "page-image"
   },
   {
     "id": "fortuny2024_ex25a",
@@ -309,7 +316,8 @@
         "and"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "fortuny2024_ex26a",
@@ -348,7 +356,8 @@
         "and"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "fortuny2024_ex26c",
@@ -387,7 +396,8 @@
         "and"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "fortuny2024_ex27a",
@@ -426,7 +436,8 @@
         "but"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "fortuny2024_ex28a",
@@ -465,7 +476,8 @@
         "but"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "fortuny2024_ex29a",
@@ -504,7 +516,8 @@
         "but"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "fortuny2024_ex30",
@@ -543,7 +556,8 @@
         "and"
       ]
     ],
-    "comment": "Identity is not required of elements inside the coordinands."
+    "comment": "Identity is not required of elements inside the coordinands.",
+    "verified": "page-image"
   },
   {
     "id": "fortuny2024_ex31a",
@@ -582,7 +596,8 @@
         "and"
       ]
     ],
-    "comment": "The wh-feature percolates to the pied-piped coordinand (32)."
+    "comment": "The wh-feature percolates to the pied-piped coordinand (32).",
+    "verified": "page-image"
   },
   {
     "id": "fortuny2024_ex34a",
@@ -621,7 +636,8 @@
         "and"
       ]
     ],
-    "comment": "With mandatory percolation the second coordinand is a [+wh] phrase (36)."
+    "comment": "With mandatory percolation the second coordinand is a [+wh] phrase (36). (34a) is printed unmarked; the star is on its bracketed representation (34b), and the prose calls (34a) ungrammatical.",
+    "verified": "page-image"
   },
   {
     "id": "fortuny2024_ex41a",
@@ -660,7 +676,8 @@
         "and"
       ]
     ],
-    "comment": "No coordinand moves; the coordination itself is ill-formed."
+    "comment": "No coordinand moves; the coordination itself is ill-formed.",
+    "verified": "page-image"
   },
   {
     "id": "fortuny2024_ex42a",
@@ -699,7 +716,8 @@
         "and"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "fortuny2024_ex46a",
@@ -738,7 +756,8 @@
         "and"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "fortuny2024_ex46b",
@@ -777,7 +796,8 @@
         "and"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "fortuny2024_ex47",
@@ -816,7 +836,8 @@
         "and"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "fortuny2024_ex51b",
@@ -859,7 +880,8 @@
     "reportedIn": {
       "bibkey": "fortuny-2024",
       "paperLabel": "(51b)"
-    }
+    },
+    "verified": "page-image"
   },
   {
     "id": "fortuny2024_ex52",
@@ -898,7 +920,8 @@
         "and"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "fortuny2024_ex59a",
@@ -937,7 +960,8 @@
         "and"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "fortuny2024_ex59b",
@@ -976,7 +1000,8 @@
         "and"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "fortuny2024_ex61a",
@@ -985,7 +1010,7 @@
       "paperLabel": "(61a)"
     },
     "language": "stan1293",
-    "primaryText": "Mia and/or Mary often go out for dinner.",
+    "primaryText": "Mia and Mary often go out for dinner.",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
@@ -1015,7 +1040,8 @@
         "and"
       ]
     ],
-    "comment": "The coordination raises as a whole and nominative percolates to each coordinand."
+    "comment": "The coordination raises as a whole and nominative percolates to each coordinand. The overt copy is printed with and, the struck base-generated copy with and/or.",
+    "verified": "page-image"
   },
   {
     "id": "fortuny2024_ex63a",
@@ -1024,7 +1050,7 @@
       "paperLabel": "(63a)"
     },
     "language": "stan1293",
-    "primaryText": "Which nurse and which hostess did they date, respectively?",
+    "primaryText": "Which nurse and which hostess did they date and, respectively?",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
@@ -1054,7 +1080,8 @@
         "and"
       ]
     ],
-    "comment": "Sideward movement of the coordinands into a higher CoordP, stranding the coordinator."
+    "comment": "Sideward movement of the coordinands into a higher CoordP, stranding the coordinator.",
+    "verified": "page-image"
   },
   {
     "id": "fortuny2024_ex63b",
@@ -1063,7 +1090,7 @@
       "paperLabel": "(63b)"
     },
     "language": "stan1293",
-    "primaryText": "Greek and economy, they teach, respectively.",
+    "primaryText": "Greek and economy they teach and, respectively.",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
@@ -1093,7 +1120,8 @@
         "and"
       ]
     ],
-    "comment": ""
+    "comment": "The coordinator of the lower CoordP is printed unstruck, stranded by sideward movement of the coordinands.",
+    "verified": "page-image"
   },
   {
     "id": "fortuny2024_ex64a",
@@ -1132,7 +1160,8 @@
         "and"
       ]
     ],
-    "comment": "The base-generated CoordP fronts as a whole."
+    "comment": "The base-generated CoordP fronts as a whole.",
+    "verified": "page-image"
   },
   {
     "id": "fortuny2024_ex64b",
@@ -1141,7 +1170,7 @@
       "paperLabel": "(64b)"
     },
     "language": "stan1293",
-    "primaryText": "Greek and economy, they teach, respectively.",
+    "primaryText": "Greek and economy they teach, respectively.",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
@@ -1171,7 +1200,8 @@
         "and"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "fortuny2024_ex67",
@@ -1210,7 +1240,8 @@
         "and"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "fortuny2024_ex68a",
@@ -1249,7 +1280,8 @@
         "and"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "fortuny2024_ex68b",
@@ -1288,7 +1320,8 @@
         "and"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "fortuny2024_ex69",
@@ -1327,7 +1360,8 @@
         "and"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "fortuny2024_ex70a",
@@ -1366,7 +1400,8 @@
         "and"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "fortuny2024_ex70b",
@@ -1405,7 +1440,8 @@
         "and"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "fortuny2024_ex70c",
@@ -1444,7 +1480,8 @@
         "and"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "fortuny2024_ex72a",
@@ -1483,7 +1520,8 @@
         "or"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "fortuny2024_ex72b",
@@ -1522,7 +1560,8 @@
         "or"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "fortuny2024_ex72c",
@@ -1561,7 +1600,8 @@
         "or"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "fortuny2024_ex73a_same",
@@ -1600,7 +1640,8 @@
         "but"
       ]
     ],
-    "comment": ""
+    "comment": "Expands the starred variant of (73a) I didn't meet [the student but {*the student / the professor}].",
+    "verified": "page-image"
   },
   {
     "id": "fortuny2024_ex73a",
@@ -1679,7 +1720,8 @@
         "but"
       ]
     ],
-    "comment": ""
+    "comment": "Expands the starred variant of (74) He was [excited but {*excited / tired}].",
+    "verified": "page-image"
   },
   {
     "id": "fortuny2024_ex74",
@@ -1718,7 +1760,8 @@
         "but"
       ]
     ],
-    "comment": ""
+    "comment": "Expands the unstarred variant of (74) He was [excited but {*excited / tired}].",
+    "verified": "page-image"
   },
   {
     "id": "fortuny2024_ex75a",
@@ -1757,7 +1800,8 @@
         "and"
       ]
     ],
-    "comment": "Two different constituents, not two occurrences of one."
+    "comment": "Two different constituents, not two occurrences of one.",
+    "verified": "page-image"
   },
   {
     "id": "fortuny2024_ex75b",
@@ -1796,7 +1840,8 @@
         "and"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "fortuny2024_ex76",
@@ -1835,6 +1880,7 @@
         "and"
       ]
     ],
-    "comment": "Different constituents with the same extension."
+    "comment": "Different constituents with the same extension. Records the unstarred variant of the printed are/*is.",
+    "verified": "page-image"
   }
 ]

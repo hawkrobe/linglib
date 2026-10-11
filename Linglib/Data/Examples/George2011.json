@@ -24,7 +24,8 @@
         "yes"
       ]
     ],
-    "comment": "True on the strongly exhaustive reading: Maggie knows the admitted list is complete."
+    "comment": "True on the strongly exhaustive reading: Maggie knows the admitted list is complete.",
+    "verified": "page-image"
   },
   {
     "id": "george2011_ex13",
@@ -51,7 +52,8 @@
         "no"
       ]
     ],
-    "comment": "Judged false (p. 84): nothing Maggie knows excludes Robin not having applied, or further applicants (16)."
+    "comment": "Judged false (p. 84): nothing Maggie knows excludes Robin not having applied, or further applicants (16).",
+    "verified": "page-image"
   },
   {
     "id": "george2011_ex4",
@@ -78,7 +80,8 @@
         "yes"
       ]
     ],
-    "comment": "Adapted from example 32 of Sharvit (2002). Judged non-contradictory by some speakers, George among them (p. 80), and true here on strongly exhaustive readings of both questions (p. 86)."
+    "comment": "Adapted from example 32 of Sharvit (2002). Judged non-contradictory by some speakers, George among them (p. 80), and true here on strongly exhaustive readings of both questions (p. 86).",
+    "verified": "page-image"
   },
   {
     "id": "george2011_ex17",
@@ -105,7 +108,8 @@
         "yes"
       ]
     ],
-    "comment": "Adapted from Guerzoni and Sharvit (2007). Judgments differ: weirder than (4) to George, perfectly consistent to others (p. 87); true on strongly exhaustive readings when 'weren't admitted' is understood as 'were rejected' (pp. 88-89)."
+    "comment": "Adapted from Guerzoni and Sharvit (2007). Judgments differ: weirder than (4) to George, perfectly consistent to others (p. 87); true on strongly exhaustive readings when 'weren't admitted' is understood as 'were rejected' (pp. 88-89).",
+    "verified": "page-image"
   },
   {
     "id": "george2011_ex33",
@@ -132,7 +136,8 @@
         "yes"
       ]
     ],
-    "comment": "True on the mention-some reading."
+    "comment": "True on the mention-some reading.",
+    "verified": "page-image"
   },
   {
     "id": "george2011_ex34",
@@ -159,6 +164,7 @@
         "no"
       ]
     ],
-    "comment": "Judged untrue (p. 134), leaving open whether it is false or suffers presupposition failure (fn. 7): Red's beliefs about where newspapers are available are at odds with the facts."
+    "comment": "Judged untrue (p. 134), leaving open whether it is false or suffers presupposition failure (fn. 7): Red's beliefs about where newspapers are available are at odds with the facts.",
+    "verified": "page-image"
   }
 ]

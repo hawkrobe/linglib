@@ -19,7 +19,8 @@
       ["prejacent", "run"],
       ["contextual alternative", "run and not smoke"]
     ],
-    "comment": "What is true of Bill is inferred not to be true of John."
+    "comment": "What is true of Bill is inferred not to be true of John.",
+    "verified": "page-image"
   },
   {
     "id": "trinhhaida2015_6",
@@ -39,9 +40,11 @@
     "paperFeatures": [
       ["case", "symmetry preserving"],
       ["prejacent", "pass some"],
-      ["contextual alternative", "pass some and fail some"]
+      ["contextual alternative", "pass some and fail some"],
+      ["felicity", "infelicitous"]
     ],
-    "comment": "The sequence is odd precisely because it cannot mean that what is true of Bill is not true of John (footnote 4)."
+    "comment": "The sequence is odd precisely because it cannot mean that what is true of Bill is not true of John (footnote 4).",
+    "verified": "page-image"
   },
   {
     "id": "trinhhaida2015_9",
@@ -62,7 +65,8 @@
       ["case", "symmetry problem"],
       ["symmetric alternatives", "four; exactly three"]
     ],
-    "comment": "The symmetry problem: *four* and *exactly three* are of the same type, so relevance keeps both or neither, yet the inference negates only *four*."
+    "comment": "The symmetry problem: *four* and *exactly three* are of the same type, so relevance keeps both or neither, yet the inference negates only *four*.",
+    "verified": "page-image"
   },
   {
     "id": "trinhhaida2015_10",
@@ -83,7 +87,8 @@
       ["case", "symmetry problem"],
       ["symmetric alternatives", "all; some but not all"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "trinhhaida2015_20b",
@@ -105,7 +110,8 @@
       ["prejacent", "work hard"],
       ["contextual alternative", "work hard and not watch TV"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "trinhhaida2015_20c",
@@ -127,7 +133,8 @@
       ["prejacent", "tall"],
       ["contextual alternative", "tall and not bald"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "trinhhaida2015_21a",
@@ -150,7 +157,8 @@
       ["contextual alternative", "exactly three"],
       ["lexical alternative", "four"]
     ],
-    "comment": "Atomicity is vacuous: *four* is derived by lexical replacement and, being *three* without *exactly three*, lies in the Boolean closure of {three, exactly three}."
+    "comment": "Atomicity is vacuous: *four* is derived by lexical replacement and, being *three* without *exactly three*, lies in the Boolean closure of {three, exactly three}.",
+    "verified": "page-image"
   },
   {
     "id": "trinhhaida2015_21b",
@@ -173,7 +181,8 @@
       ["contextual alternative", "children and no twins"],
       ["lexical alternative", "twins"]
     ],
-    "comment": "*Twins* is *children* without *children and no twins*, so it is in the Boolean closure of the restricted domain."
+    "comment": "*Twins* is *children* without *children and no twins*, so it is in the Boolean closure of the restricted domain.",
+    "verified": "page-image"
   },
   {
     "id": "trinhhaida2015_21c",
@@ -196,7 +205,8 @@
       ["contextual alternative", "pass some and fail some"],
       ["lexical alternative", "pass all"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "trinhhaida2015_50",
@@ -218,7 +228,8 @@
       ["case", "apparent problem"],
       ["prejacent", "concluded book"]
     ],
-    "comment": "Under Atomicity the alternative *book and the jewelry* is underivable; the second inference comes from the derivable *concluded that they stole the jewelry*, since attitude verbs distribute over conjunction."
+    "comment": "Under Atomicity the alternative *book and the jewelry* is underivable; the second inference comes from the derivable *concluded that they stole the jewelry*, since attitude verbs distribute over conjunction.",
+    "verified": "page-image"
   },
   {
     "id": "trinhhaida2015_54",
@@ -239,7 +250,8 @@
       ["case", "indirect implicature"],
       ["prejacent", "not all"]
     ],
-    "comment": "Atomicity rules out the symmetric *passed some*: the VP substituted for NegP is atomic, so *all* inside it cannot then be replaced."
+    "comment": "Atomicity rules out the symmetric *passed some*: the VP substituted for NegP is atomic, so *all* inside it cannot then be replaced.",
+    "verified": "page-image"
   },
   {
     "id": "trinhhaida2015_56",
@@ -260,7 +272,8 @@
       ["case", "switching problem"],
       ["prejacent", "some all"]
     ],
-    "comment": "The switching problem: *some* and *all* switch places only under negation, (58); the constraints (60b) and (60c) on the order and monotonicity of replacements block the derivation here."
+    "comment": "The switching problem: *some* and *all* switch places only under negation, (58); the constraints (60b) and (60c) on the order and monotonicity of replacements block the derivation here.",
+    "verified": "page-image"
   },
   {
     "id": "trinhhaida2015_58",
@@ -281,6 +294,7 @@
       ["case", "switching problem"],
       ["prejacent", "not some all"]
     ],
-    "comment": "A weak inference; under negation the bottom-up, non-weakening replacements of (60) derive the alternative."
+    "comment": "A weak inference; under negation the bottom-up, non-weakening replacements of (60) derive the alternative.",
+    "verified": "page-image"
   }
 ]

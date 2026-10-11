@@ -46,26 +46,13 @@ def kb2026_possessive_s : Datum :=
     source := ⟨"kalin-bjorkman-etal-2026", "Table 3"⟩
     reportedIn := none
     language := "stan1293"
-    primaryText := "'s (possessive)"
+    primaryText := "-s (possessive)"
     glossedTokens := []
     context := ""
     judgment := .acceptable
     alternatives := []
     readings := []
     paperFeatures := [("section", "3.2.3"), ("ms", "free"), ("p", "bound"), ("cell", "simpleClitic")] }
-
-def kb2026_dutch_prefix : Datum :=
-  { id := "kb2026_dutch_prefix"
-    source := ⟨"kalin-bjorkman-etal-2026", "Table 3"⟩
-    reportedIn := none
-    language := "dutc1256"
-    primaryText := "Dutch prefixes"
-    glossedTokens := []
-    context := ""
-    judgment := .acceptable
-    alternatives := []
-    readings := []
-    paperFeatures := [("section", "3.2.3"), ("ms", "bound"), ("p", "free"), ("cell", "nonCoheringAffix")] }
 
 def kb2026_cat_form : Datum :=
   { id := "kb2026_cat_form"
@@ -80,26 +67,13 @@ def kb2026_cat_form : Datum :=
     readings := []
     paperFeatures := [("section", "4"), ("mapping", "oneToOne")] }
 
-def kb2026_plural_allomorphy : Datum :=
-  { id := "kb2026_plural_allomorphy"
-    source := ⟨"kalin-bjorkman-etal-2026", "4"⟩
-    reportedIn := none
-    language := "stan1293"
-    primaryText := "dog-z, ox-ən, sheep-∅"
-    glossedTokens := []
-    context := ""
-    judgment := .acceptable
-    alternatives := []
-    readings := []
-    paperFeatures := [("section", "4"), ("mapping", "allomorphy")] }
-
 def kb2026_amharic_plural : Datum :=
   { id := "kb2026_amharic_plural"
     source := ⟨"kalin-bjorkman-etal-2026", "4"⟩
     reportedIn := none
     language := "amha1245"
     primaryText := "k'al-at-otʃtʃ"
-    glossedTokens := []
+    glossedTokens := [("k'al-at-otʃtʃ", "word-PL-PL")]
     context := ""
     judgment := .acceptable
     alternatives := []
@@ -145,19 +119,6 @@ def kb2026_stride : Datum :=
     readings := []
     paperFeatures := [("section", "4"), ("mapping", "morphologicalGap")] }
 
-def kb2026_theme_vowel : Datum :=
-  { id := "kb2026_theme_vowel"
-    source := ⟨"kalin-bjorkman-etal-2026", "4"⟩
-    reportedIn := none
-    language := "roma1334"
-    primaryText := "Romance theme vowel"
-    glossedTokens := []
-    context := ""
-    judgment := .acceptable
-    alternatives := []
-    readings := []
-    paperFeatures := [("section", "4"), ("mapping", "emptyMorph")] }
-
-def all : List Datum := [kb2026_cat, kb2026_plural_s, kb2026_possessive_s, kb2026_dutch_prefix, kb2026_cat_form, kb2026_plural_allomorphy, kb2026_amharic_plural, kb2026_ed, kb2026_am, kb2026_stride, kb2026_theme_vowel]
+def all : List Datum := [kb2026_cat, kb2026_plural_s, kb2026_possessive_s, kb2026_cat_form, kb2026_amharic_plural, kb2026_ed, kb2026_am, kb2026_stride]
 
 end KalinBjorkmanEtAl2026.Examples

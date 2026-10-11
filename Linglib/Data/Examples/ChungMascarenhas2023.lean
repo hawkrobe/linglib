@@ -43,7 +43,7 @@ def cm2024_4_linda_original : Datum :=
 
 def cm2024_15a_minersBlockNeither : Datum :=
   { id := "cm2024_15a_minersBlockNeither"
-    source := ⟨"kolodny-macfarlane-2010", "Miners (15a)"⟩
+    source := ⟨"kolodny-macfarlane-2010", "Miners puzzle"⟩
     reportedIn := some ⟨"chung-mascarenhas-2023", "(15a)"⟩
     language := "stan1293"
     primaryText := "We ought to block neither shaft."
@@ -56,7 +56,7 @@ def cm2024_15a_minersBlockNeither : Datum :=
 
 def cm2024_15b_minersBlockA : Datum :=
   { id := "cm2024_15b_minersBlockA"
-    source := ⟨"kolodny-macfarlane-2010", "Miners (15b)"⟩
+    source := ⟨"kolodny-macfarlane-2010", "Miners puzzle"⟩
     reportedIn := some ⟨"chung-mascarenhas-2023", "(15b)"⟩
     language := "stan1293"
     primaryText := "If the miners are in shaft A, we ought to block shaft A."

@@ -30,7 +30,8 @@
         "stimulus"
       ]
     ],
-    "comment": "Implicit causality: the stimulus, the chauffeur, is the expected continuation."
+    "comment": "Implicit causality: the stimulus, the chauffeur, is the expected continuation.",
+    "verified": "page-image"
   },
   {
     "id": "rosaarnold2017_1b",
@@ -63,7 +64,8 @@
         "stimulus"
       ]
     ],
-    "comment": "Implicit causality: the stimulus, the butler, is the expected continuation."
+    "comment": "Implicit causality: the stimulus, the butler, is the expected continuation.",
+    "verified": "page-image"
   },
   {
     "id": "rosaarnold2017_2a",
@@ -96,7 +98,8 @@
         "goal"
       ]
     ],
-    "comment": "Transfer of possession: the goal, the chauffeur, is the expected continuation."
+    "comment": "Transfer of possession: the goal, the chauffeur, is the expected continuation.",
+    "verified": "page-image"
   },
   {
     "id": "rosaarnold2017_2b",
@@ -129,7 +132,8 @@
         "goal"
       ]
     ],
-    "comment": "Transfer of possession with the goal as subject: the butler is the expected continuation."
+    "comment": "Transfer of possession with the goal as subject: the butler is the expected continuation.",
+    "verified": "page-image"
   },
   {
     "id": "rosaarnold2017_3a",
@@ -157,7 +161,8 @@
         "subject"
       ]
     ],
-    "comment": "Goal continuation, subject position: the continued character is the goal and the subject. The underlined character is the one the next picture continues."
+    "comment": "Goal continuation, subject position: the continued character is the goal and the subject. The underlined character is the one the next picture continues.",
+    "verified": "page-image"
   },
   {
     "id": "rosaarnold2017_3b",
@@ -185,7 +190,8 @@
         "nonsubject"
       ]
     ],
-    "comment": "Goal continuation, nonsubject position. The underlined character is the one the next picture continues."
+    "comment": "Goal continuation, nonsubject position. The underlined character is the one the next picture continues.",
+    "verified": "page-image"
   },
   {
     "id": "rosaarnold2017_4a",
@@ -213,7 +219,8 @@
         "subject"
       ]
     ],
-    "comment": "Source continuation, subject position. The underlined character is the one the next picture continues."
+    "comment": "Source continuation, subject position. The underlined character is the one the next picture continues.",
+    "verified": "page-image"
   },
   {
     "id": "rosaarnold2017_4b",
@@ -241,6 +248,7 @@
         "nonsubject"
       ]
     ],
-    "comment": "Source continuation, nonsubject position. The underlined character is the one the next picture continues."
+    "comment": "Source continuation, nonsubject position. The underlined character is the one the next picture continues.",
+    "verified": "page-image"
   }
 ]

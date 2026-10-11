@@ -24,7 +24,8 @@
         "restrictive"
       ]
     ],
-    "comment": "Defined if exactly one house is empty, however many houses there are."
+    "comment": "Defined if exactly one house is empty, however many houses there are.",
+    "verified": "page-image"
   },
   {
     "id": "heimkratzer1998_ch5_2",
@@ -51,7 +52,8 @@
         "nonrestrictive"
       ]
     ],
-    "comment": "Presupposes exactly one house: the article applies to the noun alone."
+    "comment": "Presupposes exactly one house: the article applies to the noun alone.",
+    "verified": "page-image"
   },
   {
     "id": "heimkratzer1998_ch7_1a",
@@ -78,7 +80,8 @@
         "subject"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "heimkratzer1998_ch7_1b",
@@ -105,7 +108,8 @@
         "object"
       ]
     ],
-    "comment": "The type mismatch in object position that Quantifier Raising repairs (§7.3)."
+    "comment": "The type mismatch in object position that Quantifier Raising repairs (§7.3).",
+    "verified": "page-image"
   },
   {
     "id": "heimkratzer1998_ch7_2",
@@ -132,6 +136,7 @@
         "some > every; every > some"
       ]
     ],
-    "comment": "Scope ambiguity: two Quantifier Raising derivations."
+    "comment": "Scope ambiguity: two Quantifier Raising derivations.",
+    "verified": "page-image"
   }
 ]

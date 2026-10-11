@@ -15,7 +15,8 @@
       ["form", "A"],
       ["assertive iff", "there are crows"]
     ],
-    "comment": "Asserts nothing about crowhood: the content is the conjunction of 't is black' for the crows t."
+    "comment": "Asserts nothing about crowhood: the content is the conjunction of 't is black' for the crows t.",
+    "verified": "page-image"
   },
   {
     "id": "belnap1970_12",
@@ -33,7 +34,8 @@
       ["form", "I"],
       ["assertive iff", "there are crows"]
     ],
-    "comment": "The freshman rendering ∃x(if Cx then Bx) comes out right under conditional assertion."
+    "comment": "The freshman rendering ∃x(if Cx then Bx) comes out right under conditional assertion.",
+    "verified": "page-image"
   },
   {
     "id": "belnap1970_unicorns_a",
@@ -49,7 +51,8 @@
       ["status", "nonassertive"],
       ["diagnostic", "I-conversion"]
     ],
-    "comment": "Nonassertive: no unicorns. Its converse is plain false — conversion preserves truth, not assertiveness."
+    "comment": "Nonassertive: no unicorns. Its converse is plain false — conversion preserves truth, not assertiveness.",
+    "verified": "page-image"
   },
   {
     "id": "belnap1970_unicorns_b",
@@ -65,7 +68,8 @@
       ["status", "false"],
       ["diagnostic", "I-conversion"]
     ],
-    "comment": "Assertive (there are animals) and false."
+    "comment": "Assertive (there are animals) and false.",
+    "verified": "page-image"
   },
   {
     "id": "belnap1970_johns_children",
@@ -81,7 +85,8 @@
       ["status", "nonassertive"],
       ["diagnostic", "I-conversion"]
     ],
-    "comment": "Nonassertive in this context, while 'Some sleepers are children of John's' is false."
+    "comment": "Nonassertive in this context, while 'Some sleepers are children of John's' is false.",
+    "verified": "page-image"
   },
   {
     "id": "belnap1970_barbara",
@@ -97,7 +102,8 @@
       ["form", "Barbara conclusion"],
       ["asymmetry", "the major alone implies the conclusion"]
     ],
-    "comment": "When the minor is true, major and conclusion are both assertive, and the major's content implies the conclusion's."
+    "comment": "When the minor is true, major and conclusion are both assertive, and the major's content implies the conclusion's.",
+    "verified": "page-image"
   },
   {
     "id": "belnap1970_biscuits",
@@ -112,7 +118,8 @@
     "paperFeatures": [
       ["status", "plain false, not nonassertive"]
     ],
-    "comment": "Not a conditional assertion: falsity survives a false antecedent — the biscuit conditional is something else."
+    "comment": "Not a conditional assertion: falsity survives a false antecedent — the biscuit conditional is something else.",
+    "verified": "page-image"
   },
   {
     "id": "belnap1970_frank_james",
@@ -127,7 +134,8 @@
     "paperFeatures": [
       ["use", "conditional denial of a conditional question's presupposition"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "belnap1970_wages",
@@ -142,6 +150,7 @@
     "paperFeatures": [
       ["use", "summarizing an empirical regularity without explanatory force"]
     ],
-    "comment": "Quantified conditional assertion limits a law's scope without asserting a connection between antecedent and consequent."
+    "comment": "Quantified conditional assertion limits a law's scope without asserting a connection between antecedent and consequent.",
+    "verified": "page-image"
   }
 ]

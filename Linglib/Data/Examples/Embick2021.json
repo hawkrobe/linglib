@@ -19,7 +19,8 @@
       ["h1", "n"],
       ["h1exp", "-tion"]
     ],
-    "comment": "Agentive reading of the possessor available."
+    "comment": "Agentive reading of the possessor available.",
+    "verified": "page-image"
   },
   {
     "id": "embick2021_6d",
@@ -45,7 +46,8 @@
       ["h3", "n"],
       ["h3exp", "-ing"]
     ],
-    "comment": "Agentive reading of the possessor available."
+    "comment": "Agentive reading of the possessor available.",
+    "verified": "page-image"
   },
   {
     "id": "embick2021_7c",
@@ -57,7 +59,7 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -67,7 +69,8 @@
       ["h1", "n"],
       ["h1exp", "-th"]
     ],
-    "comment": "No agentive reading of the possessor: a derived nominal of a non-agentive root."
+    "comment": "No agentive reading of the possessor: a derived nominal of a non-agentive root.",
+    "verified": "page-image"
   },
   {
     "id": "embick2021_7d",
@@ -93,14 +96,15 @@
       ["h3", "n"],
       ["h3exp", "-ing"]
     ],
-    "comment": "Agentive reading of the possessor available."
+    "comment": "Agentive reading of the possessor available.",
+    "verified": "page-image"
   },
   {
     "id": "embick2021_bent",
     "source": {"bibkey": "embick-2021", "paperLabel": "§5, structure (15)"},
     "reportedIn": null,
     "language": "stan1293",
-    "primaryText": "bent",
+    "primaryText": "ben-t",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
@@ -116,14 +120,15 @@
       ["h2", "T"],
       ["h2exp", "-t"]
     ],
-    "comment": "Root-determined allomorphy of a noncyclic head outside the categorizer, structure (15): the exponent of tense or aspect realized next to the root."
+    "comment": "Root-determined allomorphy of a noncyclic head outside the categorizer, structure (15): the exponent of tense or aspect realized next to the root.",
+    "verified": "page-image"
   },
   {
     "id": "embick2021_broken",
     "source": {"bibkey": "embick-2021", "paperLabel": "§5, structure (15)"},
     "reportedIn": null,
     "language": "stan1293",
-    "primaryText": "broken",
+    "primaryText": "brok-en",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
@@ -139,6 +144,7 @@
       ["h2", "aspect"],
       ["h2exp", "-en"]
     ],
-    "comment": "Root-determined allomorphy of a noncyclic head outside the categorizer, structure (15): the exponent of tense or aspect realized next to the root."
+    "comment": "Root-determined allomorphy of a noncyclic head outside the categorizer, structure (15): the exponent of tense or aspect realized next to the root.",
+    "verified": "page-image"
   }
 ]

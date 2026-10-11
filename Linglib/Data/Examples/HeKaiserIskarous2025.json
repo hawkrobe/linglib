@@ -28,7 +28,8 @@
         "low"
       ]
     ],
-    "comment": "A negative sentence about a low-prior state: houses usually have bathrooms."
+    "comment": "A negative sentence about a low-prior state: houses usually have bathrooms.",
+    "verified": "page-image"
   },
   {
     "id": "hekaiseriskarous2025_house_ballroom",
@@ -59,7 +60,8 @@
         "low"
       ]
     ],
-    "comment": "A positive sentence about a low-prior state, similarly informative to the negative one but cheaper under the standard model."
+    "comment": "A positive sentence about a low-prior state, similarly informative to the negative one but cheaper under the standard model.",
+    "verified": "page-image"
   },
   {
     "id": "hekaiseriskarous2025_house_no_ballroom",
@@ -90,7 +92,8 @@
         "high"
       ]
     ],
-    "comment": "Presupposes the possibility of a ballroom, which the listener must accommodate before the update."
+    "comment": "Presupposes the possibility of a ballroom, which the listener must accommodate before the update.",
+    "verified": "page-image"
   },
   {
     "id": "hekaiseriskarous2025_exp1_pos",
@@ -121,7 +124,8 @@
         "1"
       ]
     ],
-    "comment": "Experiment 1 item: participants rated how likely Emma would be to mention the fact."
+    "comment": "Experiment 1 item: participants rated how likely Emma would be to mention the fact.",
+    "verified": "page-image"
   },
   {
     "id": "hekaiseriskarous2025_exp1_neg",
@@ -152,7 +156,8 @@
         "1"
       ]
     ],
-    "comment": "Experiment 1 item, the negative counterpart of the same part-whole relation."
+    "comment": "Experiment 1 item, the negative counterpart of the same part-whole relation.",
+    "verified": "page-image"
   },
   {
     "id": "hekaiseriskarous2025_classroom_no_board",
@@ -183,7 +188,8 @@
         "low"
       ]
     ],
-    "comment": "A low-prior negative-polarity situation, rated more likely to be communicated than a positive one of similar prior."
+    "comment": "A low-prior negative-polarity situation, rated more likely to be communicated than a positive one of similar prior.",
+    "verified": "page-image"
   },
   {
     "id": "hekaiseriskarous2025_classroom_stove",
@@ -214,7 +220,8 @@
         "low"
       ]
     ],
-    "comment": "A low-prior positive-polarity situation, rated less likely to be communicated than the negative one above."
+    "comment": "A low-prior positive-polarity situation, rated less likely to be communicated than the negative one above.",
+    "verified": "page-image"
   },
   {
     "id": "hekaiseriskarous2025_exp2",
@@ -245,6 +252,7 @@
         "2"
       ]
     ],
-    "comment": "Experiment 2 item: the fact statement in direct speech; participants rated how typical a house the house is."
+    "comment": "Experiment 2 item: the fact statement in direct speech; participants rated how typical a house the house is.",
+    "verified": "page-image"
   }
 ]

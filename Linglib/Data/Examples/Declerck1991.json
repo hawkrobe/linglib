@@ -11,7 +11,8 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "comment": "Declerck 1991 ch. 3, example (1a). Cornerstone illustration of temporal subordination (no domain shift) — three simultaneous situations under one past domain anchor."
+    "comment": "Declerck 1991 ch. 3, example (1a). Cornerstone illustration of temporal subordination (no domain shift) — three simultaneous situations under one past domain anchor. Labels follow the author's preliminary version (the only PDF); the published book's page and section numbers may differ.",
+    "verified": "page-image"
   },
   {
     "id": "declerck1991_domainShift1b",
@@ -28,7 +29,8 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "comment": "Declerck 1991 ch. 3, example (1b). The minimal pair with (1a): same time-sphere, but no temporal subordination — each clause shifts into a new domain. Iconic ordering from clause order is the pragmatic default."
+    "comment": "Declerck 1991 ch. 3, example (1b). The minimal pair with (1a): same time-sphere, but no temporal subordination — each clause shifts into a new domain. Iconic ordering from clause order is the pragmatic default. Labels follow the author's preliminary version (the only PDF); the published book's page and section numbers may differ.",
+    "verified": "page-image"
   },
   {
     "id": "declerck1991_domainShift3a",
@@ -45,11 +47,12 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "comment": "Declerck 1991 ch. 3 ex (3a). Compared to (3b) `He would die shortly afterwards`, which uses a relative tense (conditional) within the same temporal domain anchored by `got wounded`."
+    "comment": "Declerck 1991 ch. 3 ex (3a). Compared to (3b) `He would die shortly afterwards`, which uses a relative tense (conditional) within the same temporal domain anchored by `got wounded`. Labels follow the author's preliminary version (the only PDF); the published book's page and section numbers may differ.",
+    "verified": "page-image"
   },
   {
     "id": "declerck1991_modalPastWish",
-    "source": {"bibkey": "declerck-1991-grammar", "paperLabel": "ch. 2 §3"},
+    "source": {"bibkey": "declerck-1991-grammar", "paperLabel": "ch. 1 §1.9"},
     "language": "stan1293",
     "primaryText": "I wish I didn't know his number.",
     "discourseSegments": [],
@@ -59,11 +62,12 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "comment": "Declerck 1991 ch. 2 §3. Cornerstone example of modal past tense — past morphology, non-past interpretation. The 'false tense' phenomenon."
+    "comment": "Declerck 1991 ch. 1 §1.9 (Tense, c). Cornerstone example of modal past tense — past morphology, non-past interpretation. The 'false tense' phenomenon. Labels follow the author's preliminary version (the only PDF); the published book's page and section numbers may differ.",
+    "verified": "page-image"
   },
   {
     "id": "declerck1991_modalPastIfWas",
-    "source": {"bibkey": "declerck-1991-grammar", "paperLabel": "ch. 2 §3"},
+    "source": {"bibkey": "declerck-1991-grammar", "paperLabel": "ch. 1 §1.9"},
     "language": "stan1293",
     "primaryText": "If I was a rich man, I would travel a lot.",
     "discourseSegments": [],
@@ -73,11 +77,12 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "comment": "Declerck 1991 ch. 2 §3. Modal past in conditional protasis — the reference is non-past despite past morphology."
+    "comment": "Declerck 1991 ch. 1 §1.9 (Tense, c). Modal past in conditional protasis — the reference is non-past despite past morphology. Labels follow the author's preliminary version (the only PDF); the published book's page and section numbers may differ.",
+    "verified": "page-image"
   },
   {
     "id": "declerck1991_futurePerfect",
-    "source": {"bibkey": "declerck-1991-grammar", "paperLabel": "ch. 2 §2"},
+    "source": {"bibkey": "declerck-1991-grammar", "paperLabel": "ch. 1 §1.9"},
     "language": "stan1293",
     "primaryText": "I will have left by then.",
     "discourseSegments": [],
@@ -87,11 +92,12 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "comment": "Declerck 1991 ch. 2 §2. Future perfect listed alongside present perfect, past perfect, conditional, conditional perfect in the tense inventory."
+    "comment": "Declerck 1991 ch. 1 §1.9 (Tense, a). Future perfect listed alongside present perfect, past perfect, conditional, conditional perfect in the tense inventory. Labels follow the author's preliminary version (the only PDF); the published book's page and section numbers may differ.",
+    "verified": "page-image"
   },
   {
     "id": "declerck1991_whenPresent",
-    "source": {"bibkey": "declerck-1991-grammar", "paperLabel": "ch. 2 §1"},
+    "source": {"bibkey": "declerck-1991-grammar", "paperLabel": "ch. 1 §1.6"},
     "language": "stan1293",
     "primaryText": "You will have to tell him (the news) when he comes home.",
     "discourseSegments": [],
@@ -101,13 +107,14 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "comment": "Declerck 1991 ch. 2 §1. Compare `He didn't tell me when he will come home` where `when` introduces a noun clause and `will` is allowed."
+    "comment": "Declerck 1991 ch. 1 §1.6. Compare `He didn't tell me when he will come home` where `when` introduces a noun clause and `will` is allowed. Labels follow the author's preliminary version (the only PDF); the published book's page and section numbers may differ.",
+    "verified": "page-image"
   },
   {
     "id": "declerck1991_perfectHaveCome",
-    "source": {"bibkey": "declerck-1991-grammar", "paperLabel": "ch. 2 §2"},
+    "source": {"bibkey": "declerck-1991-grammar", "paperLabel": "ch. 1 §1.9"},
     "language": "stan1293",
-    "primaryText": "I have come here.",
+    "primaryText": "I've come here.",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
@@ -115,7 +122,8 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "comment": "Declerck 1991 ch. 2 §2. Present perfect listed alongside present, past, future, conditional, past perfect, future perfect, conditional perfect in the tense inventory."
+    "comment": "Declerck 1991 ch. 1 §1.9 (Tense, a). Present perfect listed alongside present, past, future, conditional, past perfect, future perfect, conditional perfect in the tense inventory. Labels follow the author's preliminary version (the only PDF); the published book's page and section numbers may differ.",
+    "verified": "page-image"
   },
   {
     "id": "declerck1991_perfectOverslept",
@@ -125,12 +133,13 @@
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
-    "context": "Declerck's example showing the present-perfect time-sphere effect: `I have overslept this morning` REQUIRES that the morning is not yet over (present time-sphere). Its preterit counterpart `I overslept this morning` does NOT require that — the speaker treats the situation as detached from now.",
+    "context": "Declerck's example showing the present-perfect time-sphere effect: `I have overslept this morning` REQUIRES that the morning is not yet over (present time-sphere). Its preterit counterpart `I overslept this morning` does not require that the morning is over: it can be used in the morning if the speaker is concerned not with the structure of the world at TU but with the situation itself, which is completely over.",
     "judgment": "acceptable",
     "alternatives": [
       {"form": "I overslept this morning.", "judgment": "acceptable"}
     ],
     "readings": [],
-    "comment": "Declerck 1991 ch. 3 fn 49. Cornerstone perfect-vs-preterit minimal pair demonstrating the time-sphere distinction. Both can refer to the same objective event; the difference is conceptualization."
+    "comment": "Declerck 1991 ch. 3 fn 49. Cornerstone perfect-vs-preterit minimal pair demonstrating the time-sphere distinction. Both can refer to the same objective event; the difference is conceptualization. Labels follow the author's preliminary version (the only PDF); the published book's page and section numbers may differ.",
+    "verified": "page-image"
   }
 ]

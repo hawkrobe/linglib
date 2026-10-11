@@ -1,8 +1,8 @@
 [
   {
     "id": "kanazawa1994_strong_dominant",
-    "source": {"bibkey": "geach-1962", "paperLabel": "UNVERIFIED the donkey sentence"},
-    "reportedIn": {"bibkey": "kanazawa-1994", "paperLabel": "UNVERIFIED strong reading dominant out of the blue"},
+    "source": {"bibkey": "kanazawa-1994", "paperLabel": "(1)"},
+    "reportedIn": null,
     "language": "stan1293",
     "primaryText": "Every farmer who owns a donkey beats it.",
     "discourseSegments": [],
@@ -17,8 +17,9 @@
     ],
     "paperFeatures": [
       ["preferred_reading", "strong"],
-      ["quantifier_monotonicity", "upward"]
+      ["quantifier_monotonicity", "left downward"]
     ],
-    "comment": "Migrated from Phenomena/Anaphora/DonkeyAnaphora.lean strongDominant. Kanazawa 1994's monotonicity generalization: with upward-entailing 'every' out of the blue, both readings are available but the strong reading dominates."
+    "comment": "Migrated from Phenomena/Anaphora/DonkeyAnaphora.lean strongDominant. Kanazawa's (1), p. 109, repeated in §2.1 (p. 115): '(1) seems to have the strong reading'; 'although the strong reading is the one standardly ascribed to (1), people's intuitions about (1) seem to be a bit shaky', and Chierchia (1990, 1992) 'claims that (1) can have the weak reading as well in appropriate contexts' (fn. 11: informants gave mixed judgments). Geach's (1962) original example was 'Any man who owns a donkey beats it' (fn. 19).",
+    "verified": "page-image"
   }
 ]

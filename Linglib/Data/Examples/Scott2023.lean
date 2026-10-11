@@ -17,11 +17,11 @@ namespace Scott2023.Examples
 
 def ex_78a : Datum :=
   { id := "scott2023_78a"
-    source := ⟨"scott-2023", "(78a)"⟩
+    source := ⟨"scott-2023", "ch. 4, (78a)"⟩
     reportedIn := none
     language := "mamm1241"
-    primaryText := "Ma qo b'et *qo'=y."
-    glossedTokens := [("Ma", "PROX"), ("qo", "B1PL"), ("b'et", "walk"), ("qo'=y", "1PL=DISAGR")]
+    primaryText := "Ma qo b'et *qo=y."
+    glossedTokens := [("Ma", "PROX"), ("qo", "B1PL"), ("b'et", "walk"), ("qo=y", "1PL=DISAGR")]
     context := ""
     judgment := .ungrammatical
     alternatives := []
@@ -30,11 +30,11 @@ def ex_78a : Datum :=
 
 def ex_78b : Datum :=
   { id := "scott2023_78b"
-    source := ⟨"scott-2023", "(78b)"⟩
+    source := ⟨"scott-2023", "ch. 4, (78b)"⟩
     reportedIn := none
     language := "mamm1241"
-    primaryText := "Ma ∅ kub' q-tz'ib'-an *qo'=y."
-    glossedTokens := [("Ma", "PROX"), ("∅", "B2/3SG"), ("kub'", "DIR:down"), ("q-tz'ib'-an", "A1PL-write-DS"), ("qo'=y", "1PL=DISAGR")]
+    primaryText := "Ma ∅ kub' q-tz'ib'-an *qo=y."
+    glossedTokens := [("Ma", "PROX"), ("∅", "B2/3SG"), ("kub'", "DIR:down"), ("q-tz'ib'-an", "A1PL-write-DS"), ("qo=y", "1PL=DISAGR")]
     context := ""
     judgment := .ungrammatical
     alternatives := []
@@ -43,11 +43,11 @@ def ex_78b : Datum :=
 
 def ex_78c : Datum :=
   { id := "scott2023_78c"
-    source := ⟨"scott-2023", "(78c)"⟩
+    source := ⟨"scott-2023", "ch. 4, (78c)"⟩
     reportedIn := none
     language := "mamm1241"
-    primaryText := "q-lan *qo'=y"
-    glossedTokens := [("q-lan", "A1PL-wool.thread"), ("qo'=y", "1PL=DISAGR")]
+    primaryText := "q-lan *qo=y"
+    glossedTokens := [("q-lan", "A1PL-wool.thread"), ("qo=y", "1PL=DISAGR")]
     context := ""
     judgment := .ungrammatical
     alternatives := []
@@ -56,7 +56,7 @@ def ex_78c : Datum :=
 
 def ex_79 : Datum :=
   { id := "scott2023_79"
-    source := ⟨"scott-2023", "(79)"⟩
+    source := ⟨"scott-2023", "ch. 4, (79)"⟩
     reportedIn := none
     language := "mamm1241"
     primaryText := "B'et qo'=y."
@@ -69,7 +69,7 @@ def ex_79 : Datum :=
 
 def ex_68b : Datum :=
   { id := "scott2023_68b"
-    source := ⟨"scott-2023", "(68b)"⟩
+    source := ⟨"scott-2023", "ch. 4, (68b)"⟩
     reportedIn := none
     language := "mamm1241"
     primaryText := "O qo tan=i."
@@ -82,7 +82,7 @@ def ex_68b : Datum :=
 
 def ex_85a : Datum :=
   { id := "scott2023_85a"
-    source := ⟨"scott-2023", "(85a)"⟩
+    source := ⟨"scott-2023", "ch. 4, (85a)"⟩
     reportedIn := none
     language := "mamm1241"
     primaryText := "Ma chin b'et *qin=i."
@@ -95,7 +95,7 @@ def ex_85a : Datum :=
 
 def ex_85b : Datum :=
   { id := "scott2023_85b"
-    source := ⟨"scott-2023", "(85b)"⟩
+    source := ⟨"scott-2023", "ch. 4, (85b)"⟩
     reportedIn := none
     language := "mamm1241"
     primaryText := "Ma ∅ kub' n-tz'ib'-an *qin=i."
@@ -108,7 +108,7 @@ def ex_85b : Datum :=
 
 def ex_85c : Datum :=
   { id := "scott2023_85c"
-    source := ⟨"scott-2023", "(85c)"⟩
+    source := ⟨"scott-2023", "ch. 4, (85c)"⟩
     reportedIn := none
     language := "mamm1241"
     primaryText := "n-lan *qin=i"
@@ -121,7 +121,7 @@ def ex_85c : Datum :=
 
 def ex_62 : Datum :=
   { id := "scott2023_62"
-    source := ⟨"scott-2023", "(62)"⟩
+    source := ⟨"scott-2023", "ch. 3, (62)"⟩
     reportedIn := none
     language := "mamm1241"
     primaryText := "Ma chin b'et=i."
@@ -134,7 +134,7 @@ def ex_62 : Datum :=
 
 def ex_86a : Datum :=
   { id := "scott2023_86a"
-    source := ⟨"scott-2023", "(86a)"⟩
+    source := ⟨"scott-2023", "ch. 4, (86a)"⟩
     reportedIn := none
     language := "mamm1241"
     primaryText := "Ma chi b'et q=i."
@@ -147,7 +147,7 @@ def ex_86a : Datum :=
 
 def ex_86b : Datum :=
   { id := "scott2023_86b"
-    source := ⟨"scott-2023", "(86b)"⟩
+    source := ⟨"scott-2023", "ch. 4, (86b)"⟩
     reportedIn := none
     language := "mamm1241"
     primaryText := "Ma ∅ kub' ky-tz'ib'-an q=i."
@@ -160,7 +160,7 @@ def ex_86b : Datum :=
 
 def ex_86c : Datum :=
   { id := "scott2023_86c"
-    source := ⟨"scott-2023", "(86c)"⟩
+    source := ⟨"scott-2023", "ch. 4, (86c)"⟩
     reportedIn := none
     language := "mamm1241"
     primaryText := "ky-lan q=i"
@@ -173,7 +173,7 @@ def ex_86c : Datum :=
 
 def ex_87a : Datum :=
   { id := "scott2023_87a"
-    source := ⟨"scott-2023", "(87a)"⟩
+    source := ⟨"scott-2023", "ch. 4, (87a)"⟩
     reportedIn := none
     language := "mamm1241"
     primaryText := "Ma chi b'et qa."
@@ -186,7 +186,7 @@ def ex_87a : Datum :=
 
 def ex_87b : Datum :=
   { id := "scott2023_87b"
-    source := ⟨"scott-2023", "(87b)"⟩
+    source := ⟨"scott-2023", "ch. 4, (87b)"⟩
     reportedIn := none
     language := "mamm1241"
     primaryText := "Ma ∅ kub' ky-tz'ib'-an qa."
@@ -199,7 +199,7 @@ def ex_87b : Datum :=
 
 def ex_87c : Datum :=
   { id := "scott2023_87c"
-    source := ⟨"scott-2023", "(87c)"⟩
+    source := ⟨"scott-2023", "ch. 4, (87c)"⟩
     reportedIn := none
     language := "mamm1241"
     primaryText := "ky-lan qa"
@@ -212,7 +212,7 @@ def ex_87c : Datum :=
 
 def ex_88b : Datum :=
   { id := "scott2023_88b"
-    source := ⟨"scott-2023", "(88b)"⟩
+    source := ⟨"scott-2023", "ch. 4, (88b)"⟩
     reportedIn := none
     language := "mamm1241"
     primaryText := "B'et qin=i."
@@ -225,7 +225,7 @@ def ex_88b : Datum :=
 
 def ex_88c : Datum :=
   { id := "scott2023_88c"
-    source := ⟨"scott-2023", "(88c)"⟩
+    source := ⟨"scott-2023", "ch. 4, (88c)"⟩
     reportedIn := none
     language := "mamm1241"
     primaryText := "B'et q=i."
@@ -238,7 +238,7 @@ def ex_88c : Datum :=
 
 def ex_88d : Datum :=
   { id := "scott2023_88d"
-    source := ⟨"scott-2023", "(88d)"⟩
+    source := ⟨"scott-2023", "ch. 4, (88d)"⟩
     reportedIn := none
     language := "mamm1241"
     primaryText := "B'et qa."
@@ -251,7 +251,7 @@ def ex_88d : Datum :=
 
 def ex_69a : Datum :=
   { id := "scott2023_69a"
-    source := ⟨"scott-2023", "(69a)"⟩
+    source := ⟨"scott-2023", "ch. 4, (69a)"⟩
     reportedIn := none
     language := "mamm1241"
     primaryText := "Ma tz'=ok ky-ke'y-an qa qin=i."
@@ -264,7 +264,7 @@ def ex_69a : Datum :=
 
 def ex_89a : Datum :=
   { id := "scott2023_89a"
-    source := ⟨"scott-2023", "(89a)"⟩
+    source := ⟨"scott-2023", "ch. 4, (89a)"⟩
     reportedIn := none
     language := "mamm1241"
     primaryText := "ky-ja q=i"
@@ -277,7 +277,7 @@ def ex_89a : Datum :=
 
 def ex_89b : Datum :=
   { id := "scott2023_89b"
-    source := ⟨"scott-2023", "(89b)"⟩
+    source := ⟨"scott-2023", "ch. 4, (89b)"⟩
     reportedIn := none
     language := "mamm1241"
     primaryText := "ky-ja=y"
@@ -290,7 +290,7 @@ def ex_89b : Datum :=
 
 def ex_90b : Datum :=
   { id := "scott2023_90b"
-    source := ⟨"scott-2023", "(90b)"⟩
+    source := ⟨"scott-2023", "ch. 4, (90b)"⟩
     reportedIn := none
     language := "mamm1241"
     primaryText := "Ma ∅ tzaj ky-q'ama-'n=i w-i=y."
@@ -303,7 +303,7 @@ def ex_90b : Datum :=
 
 def ex_91a : Datum :=
   { id := "scott2023_91a"
-    source := ⟨"scott-2023", "(91a)"⟩
+    source := ⟨"scott-2023", "ch. 4, (91a)"⟩
     reportedIn := none
     language := "mamm1241"
     primaryText := "Ma chi b'ix-an q=i."
@@ -316,10 +316,10 @@ def ex_91a : Datum :=
 
 def ex_91b : Datum :=
   { id := "scott2023_91b"
-    source := ⟨"scott-2023", "(91b)"⟩
+    source := ⟨"scott-2023", "ch. 4, (91b)"⟩
     reportedIn := none
     language := "mamm1241"
-    primaryText := "#Ma chi b'ix-n=i."
+    primaryText := "Ma chi b'ix-n=i."
     glossedTokens := [("Ma", "PROX"), ("chi", "B2/3PL"), ("b'ix-n", "dance-DS"), ("=i", "=DISAGR")]
     context := ""
     judgment := .unacceptable
@@ -329,7 +329,7 @@ def ex_91b : Datum :=
 
 def ex_57 : Datum :=
   { id := "scott2023_57"
-    source := ⟨"scott-2023", "(57)"⟩
+    source := ⟨"scott-2023", "ch. 3, (57)"⟩
     reportedIn := none
     language := "mamm1241"
     primaryText := "Ma chn=ok t-ke'y-an Mintz."
@@ -342,7 +342,7 @@ def ex_57 : Datum :=
 
 def ex_59 : Datum :=
   { id := "scott2023_59"
-    source := ⟨"scott-2023", "(59)"⟩
+    source := ⟨"scott-2023", "ch. 3, (59)"⟩
     reportedIn := none
     language := "mamm1241"
     primaryText := "Ma tz'=ok t-ke'y-an Mintz qin=i."
@@ -355,7 +355,7 @@ def ex_59 : Datum :=
 
 def ex_73 : Datum :=
   { id := "scott2023_73"
-    source := ⟨"scott-2023", "(73)"⟩
+    source := ⟨"scott-2023", "ch. 3, (73)"⟩
     reportedIn := none
     language := "mamm1241"
     primaryText := "Taj w-ul=i …"
@@ -364,11 +364,11 @@ def ex_73 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("construction", "superExtendedErgative"), ("position", "S"), ("cell", "1sg"), ("setA", "w")] }
+    paperFeatures := [("construction", "extendedErgative"), ("position", "S"), ("cell", "1sg"), ("setA", "w")] }
 
 def ex_77a : Datum :=
   { id := "scott2023_77a"
-    source := ⟨"scott-2023", "(77a)"⟩
+    source := ⟨"scott-2023", "ch. 3, (77a)"⟩
     reportedIn := none
     language := "mamm1241"
     primaryText := "Taj t-ok t-ke'y-an=i qin=i …"
@@ -381,10 +381,10 @@ def ex_77a : Datum :=
 
 def ex_77b : Datum :=
   { id := "scott2023_77b"
-    source := ⟨"scott-2023", "(77b)"⟩
+    source := ⟨"scott-2023", "ch. 3, (77b)"⟩
     reportedIn := none
     language := "mamm1241"
-    primaryText := "*Taj w-ok t-ke'y-an=i …"
+    primaryText := "Taj w-ok t-ke'y-an=i …"
     glossedTokens := [("Taj", "when"), ("w-ok", "A1SG-DIR:in"), ("t-ke'y-an", "A2/3SG-see-DS"), ("=i", "=DISAGR")]
     context := ""
     judgment := .ungrammatical

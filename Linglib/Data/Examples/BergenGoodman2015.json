@@ -1,7 +1,7 @@
 [
   {
     "id": "bergengoodman2015_stressed_subject",
-    "source": {"bibkey": "bergen-goodman-2015", "paperLabel": "UNVERIFIED (2)"},
+    "source": {"bibkey": "bergen-goodman-2015", "paperLabel": "(2)"},
     "language": "stan1293",
     "primaryText": "BOB went to the movies.",
     "discourseSegments": [],
@@ -15,11 +15,12 @@
       ["stress", "subject"],
       ["reading", "exhaustive"]
     ],
-    "comment": "Migrated from Phenomena/Focus/ProsodicExhaustivity.lean stressedSubject. Stress on the subject signals exhaustive knowledge: only Bob went. Modeled by the noisy-channel Prosody model in Studies/BergenGoodman2015.lean (stress halves the rate at which the subject is misheard)."
+    "comment": "Migrated from Phenomena/Focus/ProsodicExhaustivity.lean stressedSubject. Stress on the subject signals exhaustive knowledge: only Bob went. Modeled by the noisy-channel Prosody model in Studies/BergenGoodman2015.lean (stress halves the rate at which the subject is misheard).",
+    "verified": "page-image"
   },
   {
     "id": "bergengoodman2015_unstressed_subject",
-    "source": {"bibkey": "bergen-goodman-2015", "paperLabel": "UNVERIFIED section 4"},
+    "source": {"bibkey": "bergen-goodman-2015", "paperLabel": "(2), unstressed"},
     "language": "stan1293",
     "primaryText": "Bob went to the movies.",
     "discourseSegments": [],
@@ -33,6 +34,7 @@
       ["stress", "none"],
       ["reading", "nonExhaustive"]
     ],
-    "comment": "Migrated from Phenomena/Focus/ProsodicExhaustivity.lean unstressedSubject. Without stress the answer is compatible with others having gone too."
+    "comment": "Migrated from Phenomena/Focus/ProsodicExhaustivity.lean unstressedSubject. (2) without its stress, printed inline (e.g. §4.2, p. 346: the listener hears \"Bob went to the movies\"); p. 338: \"Without stress, this utterance is compatible with other people having gone to the movies in addition to Bob.\"",
+    "verified": "page-image"
   }
 ]

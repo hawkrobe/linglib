@@ -28,7 +28,8 @@
         "HAVE"
       ]
     ],
-    "comment": "The swimmer is he, so he depends as subject on swum as well as on has."
+    "comment": "The swimmer is he, so he depends as subject on swum as well as on has.",
+    "verified": "page-image"
   },
   {
     "id": "hudson2010_ch7_12",
@@ -59,7 +60,8 @@
         "BE"
       ]
     ],
-    "comment": "Meaningless there is licensed only by the valency of BE."
+    "comment": "Meaningless there is licensed only by the valency of BE.",
+    "verified": "page-image"
   },
   {
     "id": "hudson2010_ch7_13",
@@ -90,7 +92,8 @@
         "inversion test for subjecthood"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "hudson2010_ch7_14",
@@ -121,7 +124,8 @@
         "HAVE"
       ]
     ],
-    "comment": "Syntactic evidence for the triangle: there must be the subject of a form of BE."
+    "comment": "Syntactic evidence for the triangle: there must be the subject of a form of BE.",
+    "verified": "page-image"
   },
   {
     "id": "hudson2010_ch7_8",
@@ -152,7 +156,8 @@
         "keeps"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "hudson2010_ch7_9",
@@ -166,7 +171,7 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -183,7 +188,8 @@
         "a verb's subject stands just before it"
       ]
     ],
-    "comment": "The subject's landmark is the higher verb keeps, not talking."
+    "comment": "The subject's landmark is the higher verb keeps, not talking.",
+    "verified": "page-image"
   },
   {
     "id": "hudson2010_ch7_10",
@@ -210,7 +216,8 @@
         "never between the subject and its landmark verb"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "hudson2010_ch7_11b",
@@ -224,7 +231,7 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -237,7 +244,8 @@
         "never between the subject and the lower verb"
       ]
     ],
-    "comment": "Section 7.4.4's second (11), the adverb test for the landmark."
+    "comment": "Section 7.4.4's second (11), the adverb test for the landmark.",
+    "verified": "page-image"
   },
   {
     "id": "hudson2010_fig7_12",
@@ -257,7 +265,7 @@
     "paperFeatures": [
       [
         "section",
-        "7.4.4"
+        "7.4.5"
       ],
       [
         "triangle",
@@ -268,6 +276,7 @@
         "triangles multiplied freely"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   }
 ]

@@ -290,7 +290,7 @@
       "paperLabel": "(19)"
     },
     "language": "stan1290",
-    "primaryText": "Niez-vous qu'il ne soit un grand artiste?",
+    "primaryText": "Niez-vous qu'il... ne soit un grand artiste?",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "Do you deny that he is a great artist?",
@@ -320,7 +320,8 @@
         "high"
       ]
     ],
-    "comment": "French DENY-class predicates must be questioned or negated for EN."
+    "comment": "French DENY-class predicates must be questioned or negated for EN.",
+    "verified": "page-image"
   },
   {
     "id": "jk2021_20",

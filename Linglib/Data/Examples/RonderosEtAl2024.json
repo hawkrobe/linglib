@@ -25,7 +25,8 @@
         "contrast"
       ]
     ],
-    "comment": "Contrast condition: a same-kind object of the opposite size is present."
+    "comment": "Contrast condition: a same-kind object of the opposite size is present.",
+    "verified": "page-image"
   },
   {
     "id": "ronderos2024_1b",
@@ -35,11 +36,11 @@
     },
     "reportedIn": null,
     "language": "stan1293",
-    "primaryText": "the short pencil",
+    "primaryText": "the short candle",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
-    "context": "Display: the target (short pencil), short scissors, and two distractors of other kinds.",
+    "context": "Display: the target (short candle) and three objects of other kinds (a pot, a glass, a chair).",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
@@ -53,7 +54,8 @@
         "noContrast"
       ]
     ],
-    "comment": "No-contrast condition: the same-kind object is replaced by a distractor."
+    "comment": "No-contrast condition: the same-kind object is replaced by a distractor.",
+    "verified": "page-image"
   },
   {
     "id": "ronderos2024_2a",
@@ -67,7 +69,7 @@
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
-    "context": "Display: the target (black lamp), a yellow lamp, a black object of another kind, and a distractor; three-second preview, then the description.",
+    "context": "Display: the target (black lamp), a blue lamp, a black object of another kind, and a distractor; three-second preview, then the description.",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
@@ -81,7 +83,8 @@
         "contrast"
       ]
     ],
-    "comment": "Contrast condition: a same-kind object of another colour is present."
+    "comment": "Contrast condition: a same-kind object of another colour is present.",
+    "verified": "page-image"
   },
   {
     "id": "ronderos2024_2b",
@@ -91,11 +94,11 @@
     },
     "reportedIn": null,
     "language": "stan1293",
-    "primaryText": "the black lamp",
+    "primaryText": "the black drum",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
-    "context": "Display: the target (black lamp), a black object of another kind, and two distractors of other kinds.",
+    "context": "Display: the target (black drum), a black object of another kind (a suitcase), and two distractors of other kinds.",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
@@ -109,7 +112,8 @@
         "noContrast"
       ]
     ],
-    "comment": "No-contrast condition."
+    "comment": "No-contrast condition.",
+    "verified": "page-image"
   },
   {
     "id": "ronderos2024_3a",
@@ -137,7 +141,8 @@
         "contrast"
       ]
     ],
-    "comment": "Contrast condition: a same-kind object of another material is present."
+    "comment": "Contrast condition: a same-kind object of another material is present.",
+    "verified": "page-image"
   },
   {
     "id": "ronderos2024_3b",
@@ -147,11 +152,11 @@
     },
     "reportedIn": null,
     "language": "stan1293",
-    "primaryText": "the leather shoes",
+    "primaryText": "the leather bag",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
-    "context": "Display: the target (leather shoes), a leather object of another kind, and two distractors of other kinds.",
+    "context": "Display: the target (leather bag), a leather object of another kind (boots), and two distractors of other kinds.",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
@@ -165,6 +170,7 @@
         "noContrast"
       ]
     ],
-    "comment": "No-contrast condition."
+    "comment": "No-contrast condition.",
+    "verified": "page-image"
   }
 ]

@@ -33,7 +33,8 @@
         "acceptance",
         "80-85%"
       ]
-    ]
+    ],
+    "verified": "page-image"
   },
   {
     "id": "bpcm2022_3_indefinite",
@@ -69,7 +70,8 @@
         "acceptance",
         "35% (Mascarenhas & Koralus 2017)"
       ]
-    ]
+    ],
+    "verified": "page-image"
   },
   {
     "id": "bpcm2022_6_might_london",
@@ -98,13 +100,14 @@
         "analysis",
         "attentive content, Ciardelli, Groenendijk & Roelofsen 2009"
       ]
-    ]
+    ],
+    "verified": "page-image"
   },
   {
     "id": "bpcm2022_10_miranda",
     "source": {
       "bibkey": "mascarenhas-picat-2019",
-      "paperLabel": "target items"
+      "paperLabel": "(7)"
     },
     "reportedIn": {
       "bibkey": "bade-picat-chung-mascarenhas-2022",
@@ -134,7 +137,8 @@
         "structure",
         "canonical"
       ]
-    ]
+    ],
+    "verified": "page-image"
   },
   {
     "id": "bpcm2022_13a_epistemic",
@@ -170,7 +174,8 @@
         "modal",
         "epistemic"
       ]
-    ]
+    ],
+    "verified": "page-image"
   },
   {
     "id": "bpcm2022_13a_deontic",
@@ -206,7 +211,8 @@
         "modal",
         "deontic"
       ]
-    ]
+    ],
+    "verified": "page-image"
   },
   {
     "id": "bpcm2022_13b_epistemic",
@@ -241,7 +247,8 @@
         "modal",
         "epistemic"
       ]
-    ]
+    ],
+    "verified": "page-image"
   },
   {
     "id": "bpcm2022_13b_deontic",
@@ -276,7 +283,8 @@
         "modal",
         "deontic"
       ]
-    ]
+    ],
+    "verified": "page-image"
   },
   {
     "id": "bpcm2022_13c_epistemic",
@@ -312,7 +320,8 @@
         "modal",
         "epistemic"
       ]
-    ]
+    ],
+    "verified": "page-image"
   },
   {
     "id": "bpcm2022_13c_deontic",
@@ -348,7 +357,8 @@
         "modal",
         "deontic"
       ]
-    ]
+    ],
+    "verified": "page-image"
   },
   {
     "id": "bpcm2022_16_package_deal",
@@ -378,7 +388,8 @@
         "reading",
         "biconditional permission (van Rooy 2000)"
       ]
-    ]
+    ],
+    "verified": "page-image"
   },
   {
     "id": "bpcm2022_app_daniel_deontic",
@@ -410,6 +421,7 @@
         "modal",
         "deontic"
       ]
-    ]
+    ],
+    "verified": "page-image"
   }
 ]

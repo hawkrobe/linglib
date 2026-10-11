@@ -21,7 +21,8 @@
       ["negation", "negated"],
       ["relation", "implicates"]
     ],
-    "comment": "Negative strengthening: the negated positive weak relative adjective implicates its antonym."
+    "comment": "Negative strengthening: the negated positive weak relative adjective implicates its antonym.",
+    "verified": "page-image"
   },
   {
     "id": "ag2024b_2",
@@ -45,7 +46,8 @@
       ["negation", "negated"],
       ["relation", "does_not_implicate"]
     ],
-    "comment": "The double negative does not give rise to negative strengthening; its implicated meaning would be evaluatively positive."
+    "comment": "The double negative does not give rise to negative strengthening; its implicated meaning would be evaluatively positive.",
+    "verified": "page-image"
   },
   {
     "id": "ag2024b_5a",
@@ -69,7 +71,8 @@
       ["negation", "negated"],
       ["relation", "entails"]
     ],
-    "comment": "Same sentence as (3); a negated maximum-standard absolute adjective entails its antonym."
+    "comment": "Same sentence as (3); a negated maximum-standard absolute adjective entails its antonym.",
+    "verified": "page-image"
   },
   {
     "id": "ag2024b_5b",
@@ -93,7 +96,8 @@
       ["negation", "negated"],
       ["relation", "entails"]
     ],
-    "comment": "Same sentence as (4); a negated minimum-standard absolute adjective entails its antonym."
+    "comment": "Same sentence as (4); a negated minimum-standard absolute adjective entails its antonym.",
+    "verified": "page-image"
   },
   {
     "id": "ag2024b_6a",
@@ -117,7 +121,8 @@
       ["negation", "negated"],
       ["relation", "does_not_entail"]
     ],
-    "comment": "Relative antonyms leave a semantic extension gap, so the negated form does not entail the antonym."
+    "comment": "Relative antonyms leave a semantic extension gap, so the negated form does not entail the antonym.",
+    "verified": "page-image"
   },
   {
     "id": "ag2024b_6b",
@@ -141,7 +146,8 @@
       ["negation", "negated"],
       ["relation", "does_not_entail"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "ag2024b_7a",
@@ -166,7 +172,8 @@
       ["negation", "negated"],
       ["relation", "does_not_entail"]
     ],
-    "comment": "The entailment to the antonym fails for modified absolute adjectives."
+    "comment": "The entailment to the antonym fails for modified absolute adjectives.",
+    "verified": "page-image"
   },
   {
     "id": "ag2024b_7b",
@@ -191,7 +198,8 @@
       ["negation", "negated"],
       ["relation", "does_not_entail"]
     ],
-    "comment": "The entailment to the antonym fails for stronger scale-mates: the sentence is compatible with the apartment being clean, dirty or filthy."
+    "comment": "The entailment to the antonym fails for stronger scale-mates: the sentence is compatible with the apartment being clean, dirty or filthy.",
+    "verified": "page-image"
   },
   {
     "id": "ag2024b_9",
@@ -215,7 +223,8 @@
       ["negation", "nonNegated"],
       ["relation", "implicates"]
     ],
-    "comment": "Q-based upper-bounding implicature: gigantic asymmetrically entails large."
+    "comment": "Q-based upper-bounding implicature: gigantic asymmetrically entails large.",
+    "verified": "page-image"
   },
   {
     "id": "ag2024b_10",
@@ -240,7 +249,8 @@
       ["relation", "implicates"],
       ["inference", "negative_strengthening"]
     ],
-    "comment": "Horn's R-based implicature: the speaker conceals the stronger negative meaning of the simple antonym."
+    "comment": "Horn's R-based implicature: the speaker conceals the stronger negative meaning of the simple antonym.",
+    "verified": "page-image"
   },
   {
     "id": "ag2024b_11",
@@ -265,6 +275,7 @@
       ["relation", "implicates"],
       ["inference", "middling"]
     ],
-    "comment": "Horn's Q/R-based middling interpretation: the prolix double negative conveys the extension gap."
+    "comment": "Horn's Q/R-based middling interpretation: the prolix double negative conveys the extension gap.",
+    "verified": "page-image"
   }
 ]

@@ -41,7 +41,8 @@
         "w2"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "jaeger2014_1b",
@@ -77,7 +78,8 @@
         "Exactly three boys came in."
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "jaeger2014_2a",
@@ -109,7 +111,8 @@
         "I"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "jaeger2014_2b",
@@ -141,7 +144,8 @@
         "I"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "jaeger2014_2c",
@@ -173,7 +177,8 @@
         "I"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "jaeger2014_3a",
@@ -217,7 +222,8 @@
         "w1"
       ]
     ],
-    "comment": "The cheap synonym of Example 6, read as the frequent world."
+    "comment": "The cheap synonym of Example 6, read as the frequent world.",
+    "verified": "page-image"
   },
   {
     "id": "jaeger2014_3b",
@@ -261,7 +267,8 @@
         "w2"
       ]
     ],
-    "comment": "The costly synonym of Example 6, read as the rare world."
+    "comment": "The costly synonym of Example 6, read as the rare world.",
+    "verified": "page-image"
   },
   {
     "id": "jaeger2014_4",
@@ -293,7 +300,8 @@
         "M"
       ]
     ],
-    "comment": "A third, still more complex form; pragmatic rationalizability predicts no further specialization between (3b) and (4), unlike bidirectional OT."
+    "comment": "A third, still more complex form; pragmatic rationalizability predicts no further specialization between (3b) and (4), unlike bidirectional OT.",
+    "verified": "page-image"
   },
   {
     "id": "jaeger2014_5a",
@@ -333,7 +341,8 @@
         "low"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "jaeger2014_5b",
@@ -369,7 +378,8 @@
         "high"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "jaeger2014_6",
@@ -405,6 +415,7 @@
         "high"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   }
 ]

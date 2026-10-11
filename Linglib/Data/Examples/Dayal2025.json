@@ -69,7 +69,7 @@
   },
   {
     "id": "dayal2025_ex8a",
-    "source": {"bibkey": "mccloskey-2006", "paperLabel": "(8a)"},
+    "source": {"bibkey": "mccloskey-2006", "paperLabel": ""},
     "reportedIn": {"bibkey": "dayal-2025", "paperLabel": "(8a)"},
     "language": "stan1293",
     "primaryText": "I wondered [was he illiterate↑].",
@@ -85,11 +85,12 @@
       ["verb", "wonder"],
       ["embedding", "quasi"]
     ],
-    "comment": "Embedded inversion with matrix intonation under a rogative predicate."
+    "comment": "Embedded inversion with matrix intonation under a rogative predicate.",
+    "verified": "page-image"
   },
   {
     "id": "dayal2025_ex8b",
-    "source": {"bibkey": "mccloskey-2006", "paperLabel": "(8b)"},
+    "source": {"bibkey": "mccloskey-2006", "paperLabel": ""},
     "reportedIn": {"bibkey": "dayal-2025", "paperLabel": "(8b)"},
     "language": "stan1293",
     "primaryText": "I asked him [from what source could the reprisals come↑].",
@@ -105,11 +106,12 @@
       ["verb", "ask"],
       ["embedding", "quasi"]
     ],
-    "comment": "Embedded inversion under a rogative predicate."
+    "comment": "Embedded inversion under a rogative predicate.",
+    "verified": "page-image"
   },
   {
     "id": "dayal2025_ex9a",
-    "source": {"bibkey": "mccloskey-2006", "paperLabel": "(9a)"},
+    "source": {"bibkey": "mccloskey-2006", "paperLabel": ""},
     "reportedIn": {"bibkey": "dayal-2025", "paperLabel": "(9a)"},
     "language": "stan1293",
     "primaryText": "I knew [was he illiterate↑].",
@@ -125,7 +127,8 @@
       ["verb", "know"],
       ["embedding", "quasi"]
     ],
-    "comment": "A responsive predicate rejects embedded inversion: its assertion of knowledge contradicts the center's possible ignorance (26d)."
+    "comment": "A responsive predicate rejects embedded inversion: its assertion of knowledge contradicts the center's possible ignorance (26d).",
+    "verified": "page-image"
   },
   {
     "id": "dayal2025_ex11a",
@@ -455,7 +458,7 @@
   },
   {
     "id": "dayal2025_ex18b",
-    "source": {"bibkey": "sauerland-yatsushiro-2017", "paperLabel": "(18b)"},
+    "source": {"bibkey": "sauerland-yatsushiro-2017", "paperLabel": ""},
     "reportedIn": {"bibkey": "dayal-2025", "paperLabel": "(18b)"},
     "language": "nucl1643",
     "primaryText": "Namae-wa nan da-kke (ka)?",
@@ -473,7 +476,8 @@
       ["particle", "kke"],
       ["embedding", "matrix"]
     ],
-    "comment": "*kke* carries a remind-me presupposition and modifies the act of asking."
+    "comment": "*kke* carries a remind-me presupposition and modifies the act of asking.",
+    "verified": "page-image"
   },
   {
     "id": "dayal2025_ex19c",

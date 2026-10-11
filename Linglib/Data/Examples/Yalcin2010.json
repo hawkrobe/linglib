@@ -16,7 +16,8 @@
       ["pattern", "E1"],
       ["probability", "8/12"]
     ],
-    "comment": "First premise of the Conjunctivitis counterexample: eight of the twelve faces."
+    "comment": "First premise of the Conjunctivitis counterexample: eight of the twelve faces.",
+    "verified": "page-image"
   },
   {
     "id": "yalcin2010_die_p2",
@@ -35,7 +36,8 @@
       ["pattern", "E1"],
       ["probability", "8/12"]
     ],
-    "comment": "Second premise, by parity with (P1); the paper notes a tendency to read it as modally subordinate to (P1)."
+    "comment": "Second premise, by parity with (P1); the paper notes a tendency to read it as modally subordinate to (P1).",
+    "verified": "page-image"
   },
   {
     "id": "yalcin2010_die_c",
@@ -46,7 +48,7 @@
     "glossedTokens": [],
     "translation": "",
     "context": "A fair twelve-sided die, with the sides numbered one to twelve, has been rolled.",
-    "judgment": "questionable",
+    "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -54,7 +56,8 @@
       ["pattern", "E1"],
       ["probability", "4/12"]
     ],
-    "comment": "The conclusion speakers are not tempted to accept: four of the twelve faces, refuting Conjunctivitis under the probability-space semantics."
+    "comment": "The conclusion speakers are not tempted to accept: four of the twelve faces, refuting Conjunctivitis under the probability-space semantics.",
+    "verified": "page-image"
   },
   {
     "id": "yalcin2010_ex8",
@@ -65,14 +68,16 @@
     "glossedTokens": [],
     "translation": "",
     "context": "A fair coin has been biased with a thin piece of tape, so that it is just slightly more likely to land heads than tails, and flipped.",
-    "judgment": "questionable",
+    "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
       ["section", "6"],
-      ["reading", "appreciably more likely than not"]
+      ["reading", "appreciably more likely than not"],
+      ["felicity", "infelicitous"]
     ],
-    "comment": "Suggests that heads is appreciably more likely than not; the probability-space semantics with the threshold one half does not predict the judgment, motivating a relative-adjective threshold."
+    "comment": "Suggests that heads is appreciably more likely than not; the probability-space semantics with the threshold one half does not predict the judgment, motivating a relative-adjective threshold.",
+    "verified": "page-image"
   },
   {
     "id": "yalcin2010_ex9",
@@ -93,7 +98,8 @@
       ["section", "7"],
       ["principle", "epistemic containment"]
     ],
-    "comment": "Only the wide-scope reading of probably is available, although the narrow-scope one would be the more plausible claim."
+    "comment": "The most natural, perhaps only, reading has probably scoping over everyone, although the narrow-scope one would make for more plausible truth conditions.",
+    "verified": "page-image"
   },
   {
     "id": "yalcin2010_ex17",
@@ -111,7 +117,8 @@
       ["section", "8"],
       ["embedding", "imagine"]
     ],
-    "comment": "Imagining a Moore-paradoxical proposition is odd but the sentence is not defective."
+    "comment": "Imagining a Moore-paradoxical proposition is odd but the sentence is not defective.",
+    "verified": "page-image"
   },
   {
     "id": "yalcin2010_ex18",
@@ -129,7 +136,8 @@
       ["section", "8"],
       ["embedding", "imagine"]
     ],
-    "comment": "Marked, unlike (17): the probability operator does not behave like a knowledge ascription under verbs of imagination."
+    "comment": "Marked, unlike (17): the probability operator does not behave like a knowledge ascription under verbs of imagination.",
+    "verified": "page-image"
   },
   {
     "id": "yalcin2010_ex19",
@@ -147,6 +155,7 @@
       ["section", "8"],
       ["phenomenon", "modal concord"]
     ],
-    "comment": "Iterated probability operators are odd, and when not odd often vacuous."
+    "comment": "Iterated probability operators are odd, and when not odd often vacuous.",
+    "verified": "page-image"
   }
 ]

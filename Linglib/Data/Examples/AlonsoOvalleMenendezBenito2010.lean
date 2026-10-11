@@ -290,7 +290,7 @@ def ex_31a : Datum :=
 
 def ex_31b : Datum :=
   { id := "alonsoovallemenendezbenito2010_31b"
-    source := ⟨"von-fintel-2000-whatever", "(1)"⟩
+    source := ⟨"von-fintel-2000-whatever", ""⟩
     reportedIn := some ⟨"alonso-ovalle-menendez-benito-2010", "(31b)"⟩
     language := "stan1293"
     primaryText := "There's a lot of garlic in whatever (it is that) Arlo is cooking."
@@ -355,8 +355,8 @@ def ex_37 : Datum :=
 
 def ex_38a : Datum :=
   { id := "alonsoovallemenendezbenito2010_38a"
-    source := ⟨"potts-2007b", "(38a)"⟩
-    reportedIn := some ⟨"alonso-ovalle-menendez-benito-2010", "(38a)"⟩
+    source := ⟨"alonso-ovalle-menendez-benito-2010", "(38a)"⟩
+    reportedIn := none
     language := "stan1293"
     primaryText := "Sheila says that Chuck, a confirmed psychopath, is fit to watch the kids."
     glossedTokens := []
@@ -368,8 +368,8 @@ def ex_38a : Datum :=
 
 def ex_38b : Datum :=
   { id := "alonsoovallemenendezbenito2010_38b"
-    source := ⟨"potts-2007b", "(38b)"⟩
-    reportedIn := some ⟨"alonso-ovalle-menendez-benito-2010", "(38b)"⟩
+    source := ⟨"alonso-ovalle-menendez-benito-2010", "(38b)"⟩
+    reportedIn := none
     language := "stan1293"
     primaryText := "Sheila believes that Chuck, a psychopath, should be locked up. But Chuck is not a psychopath."
     glossedTokens := []
@@ -407,8 +407,8 @@ def ex_40 : Datum :=
 
 def ex_41a : Datum :=
   { id := "alonsoovallemenendezbenito2010_41a"
-    source := ⟨"potts-2007b", "(41a)"⟩
-    reportedIn := some ⟨"alonso-ovalle-menendez-benito-2010", "(41a)"⟩
+    source := ⟨"alonso-ovalle-menendez-benito-2010", "(41a)"⟩
+    reportedIn := none
     language := "stan1293"
     primaryText := "Edna, a fearless leader, started the descent."
     glossedTokens := []
@@ -420,8 +420,8 @@ def ex_41a : Datum :=
 
 def ex_41b : Datum :=
   { id := "alonsoovallemenendezbenito2010_41b"
-    source := ⟨"potts-2007b", "(41b)"⟩
-    reportedIn := some ⟨"alonso-ovalle-menendez-benito-2010", "(41b)"⟩
+    source := ⟨"alonso-ovalle-menendez-benito-2010", "(41b)"⟩
+    reportedIn := none
     language := "stan1293"
     primaryText := "Edna, a fearless leader, started the descent. In fact, Edna is not a fearless leader."
     glossedTokens := []

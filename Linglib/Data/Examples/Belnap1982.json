@@ -9,14 +9,24 @@
     "context": "",
     "judgment": "acceptable",
     "readings": [
-      {"name": "answers: John / It was John / The person who kicked Sam was John", "judgment": "acceptable"},
-      {"name": "non-answers: *He / *Sam kicked John / *China is populous", "judgment": "unacceptable"},
-      {"name": "responses but not answers: I don't know / Ask Sam", "judgment": "acceptable"}
+      {
+        "name": "answers: John / It was John / The person who kicked Sam was John",
+        "judgment": "acceptable"
+      },
+      {
+        "name": "non-answers: *He / *Sam kicked John / *China is populous",
+        "judgment": "ungrammatical"
+      },
+      {
+        "name": "responses but not answers: I don't know / Ask Sam",
+        "judgment": "marginal"
+      }
     ],
     "paperFeatures": [
       ["claim", "answerhood is as entrenched as sentencehood"]
     ],
-    "comment": "The battery grounding Q1: linguistic theory should describe the question-answer relationship."
+    "comment": "The battery grounding Q1: linguistic theory should describe the question-answer relationship.",
+    "verified": "page-image"
   },
   {
     "id": "belnap1982_gas",
@@ -32,7 +42,8 @@
       ["diagnostic", "Unique Answer Fallacy"],
       ["answers", "multiple, each full and complete and true"]
     ],
-    "comment": "A mention-some question: any open station is a complete true answer."
+    "comment": "A mention-some question: any open station is a complete true answer.",
+    "verified": "page-image"
   },
   {
     "id": "belnap1982_prime",
@@ -48,7 +59,8 @@
       ["diagnostic", "Unique Answer Fallacy"],
       ["target", "Karttunen-style unique denotations"]
     ],
-    "comment": "A foundation on which every question has one answer cannot even state a language that asks for examples."
+    "comment": "A foundation on which every question has one answer cannot even state a language that asks for examples.",
+    "verified": "page-image"
   },
   {
     "id": "belnap1982_unicorns",
@@ -67,7 +79,8 @@
     "paperFeatures": [
       ["phenomenon", "quantifying into questions"]
     ],
-    "comment": "The third reading needs the quantifier scoped inside wonder but over where."
+    "comment": "The third reading needs the quantifier scoped inside wonder but over where.",
+    "verified": "page-image"
   },
   {
     "id": "belnap1982_grades",
@@ -83,7 +96,8 @@
       ["phenomenon", "quantifying into questions"],
       ["embedding", "depend"]
     ],
-    "comment": "Each cannot scope over the whole declarative nor inside the wh: the quantified indirect question is a closed unit."
+    "comment": "Each cannot scope over the whole declarative nor inside the wh: the quantified indirect question is a closed unit. The page prints \"depends (only) on\"; the row records the variant with only.",
+    "verified": "page-image"
   },
   {
     "id": "belnap1982_king",
@@ -99,7 +113,8 @@
       ["phenomenon", "quantifying into a whether"],
       ["status", "no true answers"]
     ],
-    "comment": "With the quantifier scoped in, an answer must answer for the present king of France; there being none, the question has no true answers."
+    "comment": "With the quantifier scoped in, an answer must answer for the present king of France; there being none, the question has no true answers.",
+    "verified": "page-image"
   },
   {
     "id": "belnap1982_china",
@@ -115,7 +130,8 @@
       ["diagnostic", "Distributivity Test"],
       ["verdict", "consistent, so not an answer"]
     ],
-    "comment": "Consistency of the know-P-but-not-IQ report rules P out as an answer."
+    "comment": "Consistency of the know-P-but-not-IQ report rules P out as an answer.",
+    "verified": "page-image"
   },
   {
     "id": "belnap1982_john",
@@ -125,12 +141,13 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "acceptable",
+    "judgment": "unacceptable",
     "readings": [],
     "paperFeatures": [
       ["diagnostic", "Distributivity Test"],
       ["verdict", "inconsistent — likely an answer, not guaranteed"]
     ],
-    "comment": "The test is a necessary condition only: passing it does not certify answerhood."
+    "comment": "The test is a necessary condition only: passing it does not certify answerhood. Judgment from the prose, which prints the sentence inline: \"This is inconsistent\".",
+    "verified": "page-image"
   }
 ]

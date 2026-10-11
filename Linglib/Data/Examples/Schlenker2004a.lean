@@ -35,10 +35,10 @@ def ex2 : Datum :=
     language := "stan1293"
     primaryText := "Fifty eight years ago to this day, on January 22, 1944, just as the Americans are about to invade Europe, the Germans attack Vercors."
     glossedTokens := []
-    context := "Historical Present. Adverbial `fifty eight years ago` is evaluated against the speaker's CU; the present tense `attack` / `are about to invade` is evaluated against a CT shifted 58 years back. Without the CT/CU split, the sentence would be contradictory; with the split, it produces the impression that the speaker directly witnesses the past event."
+    context := "Historical Present. The present tense `attack` / `are about to invade` is evaluated against the Context of Utterance (CU), whose time is set exactly fifty eight years before that of the Context of Thought (CT); the adverbial `fifty eight years ago` is evaluated against the CT, which is the actual context. Evaluated against the same context the sentence would be contradictory; with the split, it yields the impression that the speaker is directly witnessing the scene."
     judgment := .acceptable
     alternatives := []
-    readings := [("HP (CT/CU split, CT shifted back 58y)", .acceptable), ("literal-contradiction", .ungrammatical)]
+    readings := [("HP (CT/CU split, CU shifted back 58y)", .acceptable), ("literal-contradiction", .ungrammatical)]
     paperFeatures := [] }
 
 def all : List Datum := [ex1, ex2]

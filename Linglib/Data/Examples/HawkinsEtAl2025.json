@@ -28,7 +28,8 @@
         "safe"
       ]
     ],
-    "comment": "Knowing that Visa is taken settles the disjunctive question."
+    "comment": "Knowing that Visa is taken settles the disjunctive question.",
+    "verified": "page-image"
   },
   {
     "id": "hawkinsetal2025_ex2",
@@ -59,7 +60,8 @@
         "unsafe"
       ]
     ],
-    "comment": "Knowing about American Express leaves the question open."
+    "comment": "Knowing about American Express leaves the question open.",
+    "verified": "page-image"
   },
   {
     "id": "hawkinsetal2025_ex3",
@@ -97,7 +99,8 @@
         "exhaustive"
       ]
     ],
-    "comment": "The least likely site of an exhaustive list: (4) ≥ (5) > (3)."
+    "comment": "The least likely site of an exhaustive list: (4) ≥ (5) > (3).",
+    "verified": "page-image"
   },
   {
     "id": "hawkinsetal2025_ex4",
@@ -135,7 +138,8 @@
         "exhaustive"
       ]
     ],
-    "comment": "Model rate of exhaustive lists 0.75."
+    "comment": "Model rate of exhaustive lists 0.75.",
+    "verified": "page-image"
   },
   {
     "id": "hawkinsetal2025_ex5",
@@ -169,7 +173,8 @@
         "exhaustive"
       ]
     ],
-    "comment": "Model rate of exhaustive lists 0.66."
+    "comment": "Model rate of exhaustive lists 0.66.",
+    "verified": "page-image"
   },
   {
     "id": "hawkinsetal2025_ex6",
@@ -207,7 +212,8 @@
         "Chardonnay"
       ]
     ],
-    "comment": "Predicted ordering of responses: competitor > taciturn ≥ same category > exhaustive."
+    "comment": "Predicted ordering of responses: competitor > taciturn ≥ same category > exhaustive.",
+    "verified": "page-image"
   },
   {
     "id": "hawkinsetal2025_ex7",
@@ -245,7 +251,8 @@
         "carpet"
       ]
     ],
-    "comment": "The contextually relevant competitor is mentioned more than the most similar option."
+    "comment": "The contextually relevant competitor is mentioned more than the most similar option.",
+    "verified": "page-image"
   },
   {
     "id": "hawkinsetal2025_ex8",
@@ -283,7 +290,8 @@
         "carpet"
       ]
     ],
-    "comment": "The same question and options as (7) with the other competitor relevant."
+    "comment": "The same question and options as (7) with the other competitor relevant.",
+    "verified": "page-image"
   },
   {
     "id": "hawkinsetal2025_icedtea",
@@ -292,10 +300,10 @@
       "paperLabel": "§1"
     },
     "language": "stan1293",
-    "primaryText": "Customer: Do you have iced tea? Barista: No, but we have iced coffee.",
+    "primaryText": "Customer: Do you have iced tea? Barista: No, I'm afraid we're out of iced tea but we do have iced coffee.",
     "discourseSegments": [
       "Customer: Do you have iced tea?",
-      "Barista: No, but we have iced coffee."
+      "Barista: No, I'm afraid we're out of iced tea but we do have iced coffee."
     ],
     "glossedTokens": [],
     "translation": "",
@@ -313,7 +321,8 @@
         "competitor"
       ]
     ],
-    "comment": "The question signals a goal: something cold and caffeinated."
+    "comment": "The question signals a goal: something cold and caffeinated.",
+    "verified": "page-image"
   },
   {
     "id": "hawkinsetal2025_bbq",
@@ -343,6 +352,7 @@
         "relevant, non-resolving"
       ]
     ],
-    "comment": "Relevance that shifts the likelihood of a world state without resolving the question."
+    "comment": "Relevance that shifts the likelihood of a world state without resolving the question.",
+    "verified": "page-image"
   }
 ]

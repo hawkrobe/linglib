@@ -17,8 +17,8 @@ namespace AbramskySadrzadeh2014.Examples
 
 def donkey : Datum :=
   { id := "abramskysadrzadeh2014_donkey"
-    source := ⟨"geach-1962", "donkey sentence"⟩
-    reportedIn := some ⟨"abramsky-sadrzadeh-2014", "§1"⟩
+    source := ⟨"abramsky-sadrzadeh-2014", "§1"⟩
+    reportedIn := none
     language := "stan1293"
     primaryText := "If a farmer owns a donkey, he beats it."
     glossedTokens := []

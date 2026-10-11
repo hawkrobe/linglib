@@ -78,7 +78,7 @@ def bas2026_2b : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := [("Sam opened a window and a gust blew the door open", .acceptable)]
-    paperFeatures := [("construction", "periphrastic causative"), ("entails", "(2a)")] }
+    paperFeatures := [("construction", "periphrastic causative")] }
 
 def bas2026_i : Datum :=
   { id := "bas2026_i"

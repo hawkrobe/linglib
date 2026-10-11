@@ -20,7 +20,8 @@
       ["trigger", "his wetsuit"],
       ["filter", "conditional"]
     ],
-    "comment": "What one tends to accommodate is the unconditional presupposition; the satisfaction account predicts the conditional one."
+    "comment": "What one tends to accommodate is the unconditional presupposition; the satisfaction account predicts the conditional one.",
+    "verified": "page-image"
   },
   {
     "id": "grove2022_2",
@@ -42,11 +43,12 @@
       ["trigger", "his wetsuit"],
       ["filter", "conditional"]
     ],
-    "comment": "The conditional presupposition is relatively clear here."
+    "comment": "The conditional presupposition is relatively clear here.",
+    "verified": "page-image"
   },
   {
     "id": "grove2022_6",
-    "source": {"bibkey": "heim-1992", "paperLabel": "(6)"},
+    "source": {"bibkey": "heim-1992", "paperLabel": "(71)"},
     "reportedIn": {"bibkey": "grove-2022", "paperLabel": "(6)"},
     "language": "stan1293",
     "primaryText": "John: I am already in bed. Mary: My parents think I am also in bed.",
@@ -69,7 +71,8 @@
       ["trigger", "also"],
       ["filter", "think"]
     ],
-    "comment": "Heim's (1992) example: the utterance is consistent with the parents' ignorance of John's claim."
+    "comment": "Heim's (1992) example: the utterance is consistent with the parents' ignorance of John's claim.",
+    "verified": "page-image"
   },
   {
     "id": "grove2022_7",
@@ -93,7 +96,8 @@
       ["trigger", "stop"],
       ["filter", "conditional"]
     ],
-    "comment": "Mandelkern's judgment: odd because the unconditional presupposition that John runs cross-country conflicts with the assertion of ignorance."
+    "comment": "Mandelkern's judgment: odd because the unconditional presupposition that John runs cross-country conflicts with the assertion of ignorance.",
+    "verified": "page-image"
   },
   {
     "id": "grove2022_8",
@@ -117,7 +121,8 @@
       ["trigger", "stop"],
       ["filter", "conditional"]
     ],
-    "comment": "Felicitous and does not imply that John runs cross-country: the conditional presupposition is available in context."
+    "comment": "Felicitous and does not imply that John runs cross-country: the conditional presupposition is available in context.",
+    "verified": "page-image"
   },
   {
     "id": "grove2022_9",
@@ -141,7 +146,8 @@
       ["trigger", "his wetsuit"],
       ["filter", "conditional"]
     ],
-    "comment": "A context in which (1) is understood with the conditional inference."
+    "comment": "A context in which (1) is understood with the conditional inference.",
+    "verified": "page-image"
   },
   {
     "id": "grove2022_22",
@@ -164,7 +170,8 @@
       ["trigger", "his wetsuit"],
       ["filter", "believe"]
     ],
-    "comment": "The global presupposition coincides with the de re reading and the local one with the de dicto reading."
+    "comment": "The global presupposition coincides with the de re reading and the local one with the de dicto reading.",
+    "verified": "page-image"
   },
   {
     "id": "grove2022_23",
@@ -184,7 +191,8 @@
       ["trigger", "his wetsuit"],
       ["filter", "believe"]
     ],
-    "comment": "Most easily understood as presupposition-free: the local presupposition is satisfied."
+    "comment": "Most easily understood as presupposition-free: the local presupposition is satisfied.",
+    "verified": "page-image"
   },
   {
     "id": "grove2022_24",
@@ -207,7 +215,8 @@
       ["trigger", "his wetsuit"],
       ["filter", "hope"]
     ],
-    "comment": "The second sentence's presupposition of belief is satisfied by the first."
+    "comment": "The second sentence's presupposition of belief is satisfied by the first.",
+    "verified": "page-image"
   },
   {
     "id": "grove2022_25",
@@ -227,7 +236,8 @@
       ["trigger", "his wetsuit"],
       ["filter", "believe"]
     ],
-    "comment": "The presupposition of (22) is satisfied by a context in which Theo has a wetsuit."
+    "comment": "The presupposition of (22) is satisfied by a context in which Theo has a wetsuit.",
+    "verified": "page-image"
   },
   {
     "id": "grove2022_26",
@@ -250,6 +260,7 @@
       ["trigger", "his wetsuit"],
       ["filter", "hope"]
     ],
-    "comment": "The presupposition of the second sentence of (24) is satisfied by a context in which Theo has a wetsuit."
+    "comment": "The presupposition of the second sentence of (24) is satisfied by a context in which Theo has a wetsuit.",
+    "verified": "page-image"
   }
 ]

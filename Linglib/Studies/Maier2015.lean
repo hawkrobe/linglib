@@ -7,21 +7,20 @@ public import Mathlib.Data.Fin.VecNotation
 /-!
 # Maier (2015): Parasitic Attitudes
 
-This file formalizes the solution in [maier-2015] to the attitude-projection puzzle of
-[karttunen-1973], *Bill believed Fred had been beating his wife and he hoped Fred would
-stop*, which does not presuppose for the speaker that Fred was beating his wife. An agent's
-mental state is one discourse representation, a belief layer with labelled non-doxastic
-compartments embedded in it (`MentalState`, `MentalState.flatten`), so a referent introduced
-in the belief layer is accessible from every compartment while a compartment's referents are
-visible nowhere else (`accessible_belief_of_compartment`, `not_accessible_of_belief`):
-the non-doxastic attitudes are parasitic on belief. A sequence of ascriptions to one agent
-merges into one description (`MentalState.merge`), after which a presupposition triggered in
-a desire compartment binds, in the manner of [van-der-sandt-1992], to the believed event
-rather than projecting (`MentalState.bind`, `presup_binds_after_merge`,
-`presup_resolved_after_binding`), whereas one triggered in the belief layer after a desire
-finds no antecedent there and projects. That asymmetry is the paper's data: in the sequences
-of `Data/Examples/Maier2015` the presupposition is filtered exactly when the doxastic
-ascription comes first (`filtering_iff_doxastic_first`).
+This file formalizes Maier's solution to Karttunen's attitude-projection puzzle, *Bill believed Fred
+had been beating his wife and he hoped Fred would stop*, which does not presuppose for the speaker
+that Fred was beating his wife. An agent's mental state is one discourse representation, a belief
+layer with labelled non-doxastic compartments embedded in it (`MentalState`, `MentalState.flatten`),
+so a referent introduced in the belief layer is accessible from every compartment while a
+compartment's referents are visible nowhere else (`accessible_belief_of_compartment`,
+`not_accessible_of_belief`): the non-doxastic attitudes are parasitic on belief. A sequence of
+ascriptions to one agent merges into one description (`MentalState.merge`), after which a
+presupposition triggered in a desire compartment binds, in the manner of van der Sandt, to the
+believed event rather than projecting (`MentalState.bind`, `presup_binds_after_merge`,
+`presup_resolved_after_binding`), whereas one triggered in the belief layer after a desire finds no
+antecedent there and projects. That asymmetry is the paper's data: in the sequences of
+`Data/Examples/Maier2015` the presupposition is filtered exactly when the doxastic ascription comes
+first (`filtering_iff_doxastic_first`).
 
 ## Implementation notes
 
@@ -30,11 +29,6 @@ standard accessibility of the DRS core in `Semantics/Dynamic/DRS`, a compartment
 subordinate box; the core's negation is the subordination device, its truth conditions
 playing no role. The general accessibility lemmas assume the belief layer and the
 compartments hold atomic conditions, as every description in the paper does.
-
-## TODO
-
-The paper is not on file; the example and definition numbers are transcribed from an
-earlier version of this file and are UNVERIFIED.
 
 ## References
 

@@ -17,10 +17,10 @@ namespace TesslerFranke2019.Examples
 
 def happy : Datum :=
   { id := "tesslerfranke2019_happy"
-    source := ⟨"tessler-franke-2019", "UNVERIFIED quadruplet, bare positive"⟩
+    source := ⟨"tessler-franke-2019", "Figure 3"⟩
     reportedIn := none
     language := "stan1293"
-    primaryText := "She is happy."
+    primaryText := "Jones is happy."
     glossedTokens := []
     context := "Bare positive of the happy/unhappy quadruplet. Baseline against which the three negated forms are compared."
     judgment := .acceptable
@@ -30,42 +30,42 @@ def happy : Datum :=
 
 def unhappy : Datum :=
   { id := "tesslerfranke2019_unhappy"
-    source := ⟨"tessler-franke-2019", "UNVERIFIED Experiment 1, morphological negation"⟩
+    source := ⟨"tessler-franke-2019", "Figure 3"⟩
     reportedIn := none
     language := "stan1293"
-    primaryText := "She is unhappy."
+    primaryText := "Jones is unhappy."
     glossedTokens := []
-    context := "Morphological negation prefers the contrary (polar-opposite) interpretation: 'unhappy' means positively unhappy (below a low threshold), not merely 'not happy'."
+    context := "Figure 3: 'unhappy' could signal either contradictory negation ¬H ([un- [happy]], x ≤ θ1) or contrary negation H̃ ([unhappy], x ≤ θ2). In isolation (Experiment 1) morphological antonyms and negated positives (unhappy, not happy) receive the same ratings."
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("form", "negative"), ("inner_neg", "morphological"), ("interpretation", "contrary"), ("cost", "2"), ("equivalent_to_positive", "false")] }
+    paperFeatures := [("form", "negative"), ("inner_neg", "morphological"), ("cost", "2"), ("equivalent_to_positive", "false")] }
 
 def not_happy : Datum :=
   { id := "tesslerfranke2019_not_happy"
-    source := ⟨"tessler-franke-2019", "UNVERIFIED Experiment 1, syntactic negation"⟩
+    source := ⟨"tessler-franke-2019", "Figure 3"⟩
     reportedIn := none
     language := "stan1293"
-    primaryText := "She is not happy."
+    primaryText := "Jones is not happy."
     glossedTokens := []
-    context := "Syntactic negation is flexible between contradictory and contrary readings; the costlier two-word form licenses the marked contradictory reading more readily than 'unhappy' (Horn's division of pragmatic labor)."
+    context := "Figure 3: 'not happy' could signal either contradictory negation ¬H ([not [happy]], x ≤ θ1) or contrary negation H̃ ([not happy], x ≤ θ2). In isolation (Experiment 1) negated positives and morphological antonyms (not happy, unhappy) receive the same ratings."
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("form", "notPositive"), ("inner_neg", "syntactic"), ("interpretation", "contradictory"), ("cost", "3"), ("equivalent_to_positive", "false")] }
+    paperFeatures := [("form", "notPositive"), ("inner_neg", "syntactic"), ("cost", "3"), ("equivalent_to_positive", "false")] }
 
 def not_unhappy : Datum :=
   { id := "tesslerfranke2019_not_unhappy"
-    source := ⟨"tessler-franke-2019", "UNVERIFIED §1, double negation"⟩
+    source := ⟨"tessler-franke-2019", "Figure 3"⟩
     reportedIn := none
     language := "stan1293"
-    primaryText := "She is not unhappy."
+    primaryText := "Jones is not unhappy."
     glossedTokens := []
     context := "The paper's central observation: 'not unhappy' does NOT reduce to 'happy'. The inner morphological negation is contrary, so 'not unhappy' covers the gap region between the negative and positive thresholds, where 'happy' is false."
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("form", "notNegative"), ("inner_neg", "morphological"), ("interpretation", "contrary"), ("cost", "5"), ("equivalent_to_positive", "false")] }
+    paperFeatures := [("form", "notNegative"), ("inner_neg", "morphological"), ("cost", "5"), ("equivalent_to_positive", "false")] }
 
 def all : List Datum := [happy, unhappy, not_happy, not_unhappy]
 

@@ -15,7 +15,8 @@
     "paperFeatures": [
       ["section", "2.1"]
     ],
-    "comment": "A numeral expression composes with a collective predicate, as the predicative theory of numerals predicts."
+    "comment": "A numeral expression composes with a collective predicate, as the predicative theory of numerals predicts.",
+    "verified": "page-image"
   },
   {
     "id": "elliott2025_7",
@@ -35,7 +36,8 @@
     "paperFeatures": [
       ["section", "2.1"]
     ],
-    "comment": "True in the context: the covert distributivity operator quantifies over the atomic parts."
+    "comment": "True in the context: the covert distributivity operator quantifies over the atomic parts.",
+    "verified": "page-image"
   },
   {
     "id": "elliott2025_10",
@@ -55,7 +57,8 @@
     "paperFeatures": [
       ["section", "2.2.1"]
     ],
-    "comment": "The classical predicative entry wrongly predicts truth, since a two-boy part of the sneezers sneezed: van Benthem's problem."
+    "comment": "The classical predicative entry wrongly predicts truth, since a two-boy part of the sneezers sneezed: van Benthem's problem.",
+    "verified": "page-image"
   },
   {
     "id": "elliott2025_12",
@@ -75,7 +78,8 @@
     "paperFeatures": [
       ["section", "2.2.2"]
     ],
-    "comment": "Intuitively true, but the classical predicative entry requires a sneezing plurality of boys: the existential entailment problem."
+    "comment": "Intuitively true, but the classical predicative entry requires a sneezing plurality of boys: the existential entailment problem.",
+    "verified": "page-image"
   },
   {
     "id": "elliott2025_47",
@@ -96,7 +100,8 @@
     "paperFeatures": [
       ["section", "5"]
     ],
-    "comment": "The existential component of the numeral takes exceptional scope out of the antecedent; the distributive component stays inside."
+    "comment": "The existential component of the numeral takes exceptional scope out of the antecedent; the distributive component stays inside.",
+    "verified": "page-image"
   },
   {
     "id": "elliott2025_48a",
@@ -116,7 +121,8 @@
     "paperFeatures": [
       ["section", "5"]
     ],
-    "comment": "No exceptional scope: all relatives of mine denotes a singleton, so existential raising over it is scopeless and universal force stays inside the antecedent."
+    "comment": "No exceptional scope: all relatives of mine denotes a singleton, so existential raising over it is scopeless and universal force stays inside the antecedent.",
+    "verified": "page-image"
   },
   {
     "id": "elliott2025_48b",
@@ -136,7 +142,8 @@
     "paperFeatures": [
       ["section", "5"]
     ],
-    "comment": "No exceptional scope: no relatives of mine denotes the wholly negative group."
+    "comment": "No exceptional scope: no relatives of mine denotes the wholly negative group.",
+    "verified": "page-image"
   },
   {
     "id": "elliott2025_50",
@@ -156,7 +163,8 @@
     "paperFeatures": [
       ["section", "5"]
     ],
-    "comment": "Contrary to the received view on modified numerals, the exceptional existential scope reading the theory predicts is available; the judgment was checked with about ten speakers."
+    "comment": "Contrary to the received view on modified numerals, the exceptional existential scope reading the theory predicts is available; the judgment was checked with about ten speakers.",
+    "verified": "page-image"
   },
   {
     "id": "elliott2025_51a",
@@ -174,7 +182,8 @@
     "paperFeatures": [
       ["section", "6.1"]
     ],
-    "comment": "A collective predicate needs a semantically plural DP, which the singular predicative theory does not yet distinguish."
+    "comment": "A collective predicate needs a semantically plural DP, which the singular predicative theory does not yet distinguish.",
+    "verified": "page-image"
   },
   {
     "id": "elliott2025_51b",
@@ -192,6 +201,7 @@
     "paperFeatures": [
       ["section", "6.1"]
     ],
-    "comment": "The plural DP composes with the collective predicate."
+    "comment": "The plural DP composes with the collective predicate.",
+    "verified": "page-image"
   }
 ]

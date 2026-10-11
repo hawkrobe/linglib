@@ -6,25 +6,24 @@ public import Linglib.Studies.ZwickyPullum1983
 /-!
 # Kalin et al. (2026): The Morphology/Syntax Interface
 
-This file formalizes [kalin-bjorkman-etal-2026], the Element's map of the morphology/syntax
-interface. Section 2 sets out the dimensions along which theories vary: whether the morphology
-is a component separate from the syntax, lexicalism; the timing of the two computations, an
-architecture that is parallel or pre-syntactic exactly in the lexicalist theories and syntactic
-or post-syntactic in the non-lexicalist ones, (4); whether complex forms arise from pieces or
-from processes, which implicates lexicalism; and whether exponents are independent of the
-features they realize, realizational, or built up with them, incremental. Table 2 places seven
-theories in the space of lexicalism, mapping and exponence, and its two empty cells are exactly
-the non-lexicalist process-based ones (`unattested_iff`), the four representative theories'
-architectures agreeing with their lexicalism (`architecture_lexicalism`). Section 3 separates
-the morphosyntactic word, diagnosed by cohesiveness, fixed order, selectivity and domainhood,
-from the phonological word, and crosses the two kinds of boundness into Table 3's cells
-(`WordhoodProfile.classify`, `rows_cells`); [zwicky-pullum-1983]'s diagnostics place the English
-plural affix in the canonical-affix cell and the auxiliary clitic in the simple-clitic cell
-(`plural_s_canonicalAffix`). Section 4 distinguishes seven form-meaning mappings and Table 4
-records how each representative theory treats each; the theories that treat some non-one-to-one
-mapping as genuine are exactly the realizational ones (`handlesNatively_iff_realizational`), the
-purely syntactic Morphology as Syntax reanalyses every one (`mas_reanalyses`), and no theory
-treats morphological gaps natively (`no_theory_handles_gaps`).
+This file formalizes Kalin, Bjorkman et al.'s map of the morphology/syntax interface. Section 2 sets
+out the dimensions along which theories vary: whether the morphology is a component separate from
+the syntax, lexicalism; the timing of the two computations, an architecture that is parallel or
+pre-syntactic exactly in the lexicalist theories and syntactic or post-syntactic in the
+non-lexicalist ones, (4); whether complex forms arise from pieces or from processes, which
+implicates lexicalism; and whether exponents are independent of the features they realize,
+realizational, or built up with them, incremental. Table 2 places seven theories in the space of
+lexicalism, mapping and exponence, and its two empty cells are exactly the non-lexicalist
+process-based ones (`unattested_iff`), the four representative theories' architectures agreeing with
+their lexicalism (`architecture_lexicalism`). Section 3 separates the morphosyntactic word,
+diagnosed by cohesiveness, fixed order, selectivity and domainhood, from the phonological word, and
+crosses the two kinds of boundness into Table 3's cells (`WordhoodProfile.classify`, `rows_cells`);
+Zwicky and Pullum's diagnostics place the English plural affix in the canonical-affix cell and the
+auxiliary clitic in the simple-clitic cell (`plural_s_canonicalAffix`). Section 4 distinguishes
+seven form-meaning mappings and Table 4 records how each representative theory treats each; the
+theories that treat some non-one-to-one mapping as genuine are exactly the realizational ones
+(`handlesNatively_iff_realizational`), the purely syntactic Morphology as Syntax reanalyses every
+one (`mas_reanalyses`), and no theory treats morphological gaps natively (`no_theory_handles_gaps`).
 
 ## Implementation notes
 
@@ -33,7 +32,7 @@ treats morphological gaps natively (`no_theory_handles_gaps`).
   Table 2.
 * The p-boundness of an element is not derived; the wordhood rows carry both boundnesses and
   the cell, and only the morphosyntactic side of the English affix and clitic is read off
-  [zwicky-pullum-1983]'s profiles.
+  Zwicky and Pullum's profiles.
 
 ## References
 
@@ -247,8 +246,8 @@ def WordhoodRow.ofDatum (e : Datum) : Option WordhoodRow := do
   let c ← (e.feature? "cell").bind cellOf
   some ⟨⟨ms, p⟩, c⟩
 
-/-- The Element's examples of the four cells: *cat*, plural *-s*, possessive *'s* and the Dutch
-prefixes. -/
+/-- The Element's printed examples of three of the four cells: *cat*, plural *-s* and possessive
+*-s*; the fourth, the non-cohering affixes, it describes in prose only. -/
 def wordhoodRows : List WordhoodRow := Examples.all.filterMap WordhoodRow.ofDatum
 
 /-- Each example sits in the cell its boundnesses give. -/

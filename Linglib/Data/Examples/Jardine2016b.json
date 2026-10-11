@@ -17,7 +17,7 @@
     "paperFeatures": [
       [
         "section",
-        "7.2"
+        "7.1"
       ],
       [
         "input",
@@ -32,7 +32,8 @@
         "yes"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "jardine2016b_7_5_aaa",
@@ -52,7 +53,7 @@
     "paperFeatures": [
       [
         "section",
-        "7.2"
+        "7.1"
       ],
       [
         "input",
@@ -67,7 +68,8 @@
         "yes"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "jardine2016b_7_5_apa",
@@ -87,7 +89,7 @@
     "paperFeatures": [
       [
         "section",
-        "7.2"
+        "7.1"
       ],
       [
         "input",
@@ -102,7 +104,8 @@
         "yes"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "jardine2016b_7_5_aba",
@@ -122,7 +125,7 @@
     "paperFeatures": [
       [
         "section",
-        "7.2"
+        "7.1"
       ],
       [
         "input",
@@ -137,7 +140,8 @@
         "yes"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "jardine2016b_7_5_appa",
@@ -157,7 +161,7 @@
     "paperFeatures": [
       [
         "section",
-        "7.2"
+        "7.1"
       ],
       [
         "input",
@@ -172,7 +176,8 @@
         "yes"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "jardine2016b_7_5_aapaaapa",
@@ -192,7 +197,7 @@
     "paperFeatures": [
       [
         "section",
-        "7.2"
+        "7.1"
       ],
       [
         "input",
@@ -207,7 +212,8 @@
         "yes"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "jardine2016b_7_17_pa_ba",
@@ -221,7 +227,7 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -242,7 +248,8 @@
         "no"
       ]
     ],
-    "comment": "A non-intervocalic p voiced, (7.20a): excluded by φ⋊pb."
+    "comment": "A non-intervocalic p voiced, (7.20a): excluded by φ⋊pb. Unmarked as a member of (7.17); its graph is starred in (7.20a).",
+    "verified": "page-image"
   },
   {
     "id": "jardine2016b_7_17_apa_apa",
@@ -256,7 +263,7 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -277,7 +284,8 @@
         "no"
       ]
     ],
-    "comment": "An intervocalic p unvoiced, (7.18b): excluded by φapa."
+    "comment": "An intervocalic p unvoiced, (7.18b): excluded by φapa. Unmarked as a member of (7.17); its graph is starred in (7.18b).",
+    "verified": "page-image"
   },
   {
     "id": "jardine2016b_7_17_appa_abpa",
@@ -291,7 +299,7 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -312,6 +320,7 @@
         "no"
       ]
     ],
-    "comment": "A p voiced before a p, (7.20b): excluded by φpbp."
+    "comment": "A p voiced before a p, (7.20b): excluded by φpbp. Unmarked as a member of (7.17); its graph is starred in (7.20b).",
+    "verified": "page-image"
   }
 ]

@@ -17,7 +17,7 @@ namespace TesslerGoodman2022.Examples
 
 def tg2022_tall_basketball : Datum :=
   { id := "tg2022_tall_basketball"
-    source := ⟨"tessler-goodman-2022", "UNVERIFIED §3.2.1, Fig. 3"⟩
+    source := ⟨"tessler-goodman-2022", "§3.2.1, Fig. 3"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "tall basketball player"
@@ -30,7 +30,7 @@ def tg2022_tall_basketball : Datum :=
 
 def tg2022_short_basketball : Datum :=
   { id := "tg2022_short_basketball"
-    source := ⟨"tessler-goodman-2022", "UNVERIFIED §3.2.1, Fig. 3"⟩
+    source := ⟨"tessler-goodman-2022", "§3.2.1, Fig. 3"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "short basketball player"
@@ -43,7 +43,7 @@ def tg2022_short_basketball : Datum :=
 
 def tg2022_tall_jockey : Datum :=
   { id := "tg2022_tall_jockey"
-    source := ⟨"tessler-goodman-2022", "UNVERIFIED §3.2.1, Fig. 3"⟩
+    source := ⟨"tessler-goodman-2022", "§3.2.1, Fig. 3"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "tall jockey"
@@ -56,7 +56,7 @@ def tg2022_tall_jockey : Datum :=
 
 def tg2022_short_jockey : Datum :=
   { id := "tg2022_short_jockey"
-    source := ⟨"tessler-goodman-2022", "UNVERIFIED §3.2.1, Fig. 3"⟩
+    source := ⟨"tessler-goodman-2022", "§3.2.1, Fig. 3"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "short jockey"

@@ -88,7 +88,7 @@ def ch7_9 : Datum :=
     primaryText := "Keeps he talking."
     glossedTokens := []
     context := ""
-    judgment := .unacceptable
+    judgment := .ungrammatical
     alternatives := []
     readings := []
     paperFeatures := [("section", "7.4.4"), ("landmark", "talking"), ("rule", "a verb's subject stands just before it")] }
@@ -114,7 +114,7 @@ def ch7_11b : Datum :=
     primaryText := "He keeps never talking."
     glossedTokens := []
     context := ""
-    judgment := .unacceptable
+    judgment := .ungrammatical
     alternatives := []
     readings := []
     paperFeatures := [("section", "7.4.4"), ("adverb", "never between the subject and the lower verb")] }
@@ -130,7 +130,7 @@ def fig7_12 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("section", "7.4.4"), ("triangle", "he is the subject of every verb in the valent chain"), ("recursion", "triangles multiplied freely")] }
+    paperFeatures := [("section", "7.4.5"), ("triangle", "he is the subject of every verb in the valent chain"), ("recursion", "triangles multiplied freely")] }
 
 def all : List Datum := [ch7_11, ch7_12, ch7_13, ch7_14, ch7_8, ch7_9, ch7_10, ch7_11b, fig7_12]
 

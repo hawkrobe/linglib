@@ -24,7 +24,8 @@
         "there is a king"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "heim1983_ex2",
@@ -51,7 +52,8 @@
         "the king has a son"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "heim1983_ex3",
@@ -82,7 +84,8 @@
         "the king has a son"
       ]
     ],
-    "comment": "Inherits the presupposition both constituents carry, not the one the consequent adds."
+    "comment": "Inherits the presupposition both constituents carry, not the one the consequent adds.",
+    "verified": "page-image"
   },
   {
     "id": "heim1983_ex5",
@@ -117,7 +120,8 @@
         "as reported"
       ]
     ],
-    "comment": "Slightly strange out of context; Karttunen and Peters predict this, Gazdar the opposite."
+    "comment": "The paper prints no judgment marks; its prose: \"(5), by contrast, is slightly strange, at least out of context.\" Karttunen and Peters predict this, Gazdar the opposite.",
+    "verified": "page-image"
   },
   {
     "id": "heim1983_ex6",
@@ -152,7 +156,8 @@
         "nothing"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "heim1983_ex7",
@@ -183,7 +188,8 @@
         "every nation has a king"
       ]
     ],
-    "comment": "Derived from (21) and (22) in §3.2."
+    "comment": "Derived from (21) and (22) in §3.2.",
+    "verified": "page-image"
   },
   {
     "id": "heim1983_ex16",
@@ -214,7 +220,8 @@
         "either France has no king or he didn't come"
       ]
     ],
-    "comment": "Global accommodation is preferred; the local option is taken when the speaker continues with 'because France doesn't have a king'."
+    "comment": "Global accommodation is preferred; the local option is taken when the speaker continues with 'because France doesn't have a king'.",
+    "verified": "page-image"
   },
   {
     "id": "heim1983_ex23",
@@ -245,7 +252,8 @@
         "nothing"
       ]
     ],
-    "comment": "A presupposition in the restrictor; Heim's prediction differs from Karttunen and Peters's."
+    "comment": "A presupposition in the restrictor; Heim's prediction differs from Karttunen and Peters's.",
+    "verified": "page-image"
   },
   {
     "id": "heim1983_ex24",
@@ -276,7 +284,8 @@
         "some nation has a king"
       ]
     ],
-    "comment": "The paper sides with Cooper, barring local accommodation; the CCP of 'no' is not given."
+    "comment": "The paper sides with Cooper, barring local accommodation; the CCP of 'no' is not given.",
+    "verified": "page-image"
   },
   {
     "id": "heim1983_ex25",
@@ -307,6 +316,7 @@
         "every fat man had a bicycle, unless accommodated"
       ]
     ],
-    "comment": "The universal presupposition is avoided by accommodating that the fat man in question had a bicycle in the course of the update."
+    "comment": "The universal presupposition is avoided by accommodating that the fat man in question had a bicycle in the course of the update.",
+    "verified": "page-image"
   }
 ]

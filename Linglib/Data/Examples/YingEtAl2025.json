@@ -15,7 +15,8 @@
     "paperFeatures": [
       ["factor", "Possibility"]
     ],
-    "comment": "A human-written epistemic sentence from the dataset."
+    "comment": "A human-written epistemic sentence from the dataset.",
+    "verified": "page-image"
   },
   {
     "id": "yingetal2025_2",
@@ -33,7 +34,8 @@
     "paperFeatures": [
       ["factor", "Possibility"]
     ],
-    "comment": "A human-written epistemic sentence from the dataset."
+    "comment": "A human-written epistemic sentence from the dataset.",
+    "verified": "page-image"
   },
   {
     "id": "yingetal2025_3",
@@ -51,7 +53,8 @@
     "paperFeatures": [
       ["factor", "Probability"]
     ],
-    "comment": "A human-written epistemic sentence from the dataset."
+    "comment": "A human-written epistemic sentence from the dataset.",
+    "verified": "page-image"
   },
   {
     "id": "yingetal2025_4",
@@ -69,7 +72,8 @@
     "paperFeatures": [
       ["factor", "Probability"]
     ],
-    "comment": "A human-written epistemic sentence from the dataset."
+    "comment": "A human-written epistemic sentence from the dataset.",
+    "verified": "page-image"
   },
   {
     "id": "yingetal2025_5",
@@ -87,7 +91,8 @@
     "paperFeatures": [
       ["factor", "Compositionality"]
     ],
-    "comment": "A human-written epistemic sentence from the dataset."
+    "comment": "A human-written epistemic sentence from the dataset.",
+    "verified": "page-image"
   },
   {
     "id": "yingetal2025_6",
@@ -105,7 +110,8 @@
     "paperFeatures": [
       ["factor", "Compositionality"]
     ],
-    "comment": "A human-written epistemic sentence from the dataset."
+    "comment": "A human-written epistemic sentence from the dataset.",
+    "verified": "page-image"
   },
   {
     "id": "yingetal2025_7",
@@ -123,7 +129,8 @@
     "paperFeatures": [
       ["factor", "Knowledge"]
     ],
-    "comment": "A human-written epistemic sentence from the dataset."
+    "comment": "A human-written epistemic sentence from the dataset.",
+    "verified": "page-image"
   },
   {
     "id": "yingetal2025_8",
@@ -141,6 +148,7 @@
     "paperFeatures": [
       ["factor", "Knowledge"]
     ],
-    "comment": "A human-written epistemic sentence from the dataset."
+    "comment": "A human-written epistemic sentence from the dataset.",
+    "verified": "page-image"
   }
 ]

@@ -56,7 +56,7 @@ def ex5b : Datum :=
 
 def ex8a : Datum :=
   { id := "dayal2025_ex8a"
-    source := ⟨"mccloskey-2006", "(8a)"⟩
+    source := ⟨"mccloskey-2006", ""⟩
     reportedIn := some ⟨"dayal-2025", "(8a)"⟩
     language := "stan1293"
     primaryText := "I wondered [was he illiterate↑]."
@@ -69,7 +69,7 @@ def ex8a : Datum :=
 
 def ex8b : Datum :=
   { id := "dayal2025_ex8b"
-    source := ⟨"mccloskey-2006", "(8b)"⟩
+    source := ⟨"mccloskey-2006", ""⟩
     reportedIn := some ⟨"dayal-2025", "(8b)"⟩
     language := "stan1293"
     primaryText := "I asked him [from what source could the reprisals come↑]."
@@ -82,7 +82,7 @@ def ex8b : Datum :=
 
 def ex9a : Datum :=
   { id := "dayal2025_ex9a"
-    source := ⟨"mccloskey-2006", "(9a)"⟩
+    source := ⟨"mccloskey-2006", ""⟩
     reportedIn := some ⟨"dayal-2025", "(9a)"⟩
     language := "stan1293"
     primaryText := "I knew [was he illiterate↑]."
@@ -290,7 +290,7 @@ def ex19a : Datum :=
 
 def ex18b : Datum :=
   { id := "dayal2025_ex18b"
-    source := ⟨"sauerland-yatsushiro-2017", "(18b)"⟩
+    source := ⟨"sauerland-yatsushiro-2017", ""⟩
     reportedIn := some ⟨"dayal-2025", "(18b)"⟩
     language := "nucl1643"
     primaryText := "Namae-wa nan da-kke (ka)?"

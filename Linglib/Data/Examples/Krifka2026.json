@@ -16,7 +16,8 @@
       ["antecedent", "count"],
       ["anaphor", "they"]
     ],
-    "comment": "The paper credits the observation to Krifka et al. (1995)."
+    "comment": "The paper credits the observation to Krifka et al. (1995).",
+    "verified": "page-image"
   },
   {
     "id": "krifka2026_ex3b",
@@ -35,7 +36,8 @@
       ["antecedent", "mass"],
       ["anaphor", "it"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "krifka2026_ex5a",
@@ -59,7 +61,8 @@
       ["island", "negation"],
       ["anaphor", "they"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "krifka2026_ex5b",
@@ -83,7 +86,8 @@
       ["island", "negation"],
       ["anaphor", "it"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "krifka2026_ex5c",
@@ -98,7 +102,7 @@
     "glossedTokens": [],
     "translation": "",
     "context": "An entity pronoun cannot reach a referent introduced under negation.",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -106,7 +110,8 @@
       ["island", "negation"],
       ["anaphor", "entityPronoun"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "krifka2026_ex7a",
@@ -123,14 +128,18 @@
     "context": "A count antecedent, singular or plural, requires the plural kind anaphor.",
     "judgment": "acceptable",
     "alternatives": [
-      {"form": "He has a phobia against it.", "judgment": "unacceptable"}
+      {
+        "form": "He has a phobia against it.",
+        "judgment": "ungrammatical"
+      }
     ],
     "readings": [],
     "paperFeatures": [
       ["antecedent", "count"],
       ["anaphor", "they"]
     ],
-    "comment": "The antecedent may also be *spiders* or *two spiders*."
+    "comment": "The antecedent may also be *spiders* or *two spiders*.",
+    "verified": "page-image"
   },
   {
     "id": "krifka2026_ex7b",
@@ -147,14 +156,18 @@
     "context": "A mass antecedent requires the singular kind anaphor.",
     "judgment": "acceptable",
     "alternatives": [
-      {"form": "He is allergic against them.", "judgment": "unacceptable"}
+      {
+        "form": "He is allergic against them.",
+        "judgment": "ungrammatical"
+      }
     ],
     "readings": [],
     "paperFeatures": [
       ["antecedent", "mass"],
       ["anaphor", "it"]
     ],
-    "comment": "The antecedent may also be *a spot of mold* or *two spots of mold*."
+    "comment": "The antecedent may also be *a spot of mold* or *two spots of mold*.",
+    "verified": "page-image"
   },
   {
     "id": "krifka2026_ex8a",
@@ -171,14 +184,18 @@
     "context": "The same individuals under a mass noun take the singular kind anaphor.",
     "judgment": "acceptable",
     "alternatives": [
-      {"form": "I am allergic against them.", "judgment": "unacceptable"}
+      {
+        "form": "I am allergic against them.",
+        "judgment": "ungrammatical"
+      }
     ],
     "readings": [],
     "paperFeatures": [
       ["antecedent", "mass"],
       ["anaphor", "it"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "krifka2026_ex8b",
@@ -202,7 +219,8 @@
       ["antecedent", "count"],
       ["anaphor", "they"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "krifka2026_ex19a",
@@ -227,7 +245,8 @@
       ["island", "negation"],
       ["anaphor", "they"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "krifka2026_ex19b",
@@ -252,6 +271,7 @@
       ["island", "negation"],
       ["anaphor", "one"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   }
 ]

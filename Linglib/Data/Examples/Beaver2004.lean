@@ -36,10 +36,10 @@ def ex_2 : Datum :=
     primaryText := "Mary likes tennis. She plays Jim quite often. He used to play doubles with Mary."
     glossedTokens := []
     context := ""
-    judgment := .marginal
+    judgment := .acceptable
     alternatives := []
     readings := [("He = Jim and the two Marys corefer", .marginal)]
-    paperFeatures := [("phenomenon", "rule 1 violation")] }
+    paperFeatures := [("phenomenon", "rule 1 violation"), ("felicity", "infelicitous")] }
 
 def ex_5 : Datum :=
   { id := "beaver2004_5"
@@ -153,10 +153,10 @@ def ex_25 : Datum :=
     primaryText := "John went to his favorite music store to buy a piano. It was a store John had frequented for many years. He was excited to be going to the store to actually buy a piano. It was the biggest music store in the area. He knew that it had just the kind of piano that he wanted. It was closing just as John arrived."
     glossedTokens := []
     context := ""
-    judgment := .marginal
+    judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("phenomenon", "text coherence")] }
+    paperFeatures := [("phenomenon", "text coherence"), ("felicity", "infelicitous")] }
 
 def ex_28 : Datum :=
   { id := "beaver2004_28"

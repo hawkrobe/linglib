@@ -19,7 +19,8 @@
       ["indefinite", "bare"],
       ["scope", "NEG > ∃"]
     ],
-    "comment": "No reading on which a certain cap escapes the negation."
+    "comment": "No reading on which a certain cap escapes the negation.",
+    "verified": "page-image"
   },
   {
     "id": "zimmermann2008_12a",
@@ -40,7 +41,8 @@
       ["indefinite", "bare"],
       ["scope", "NEG > ∃"]
     ],
-    "comment": "Equivalent to no farmer came, although the subject precedes the negation marker."
+    "comment": "Equivalent to no farmer came, although the subject precedes the negation marker.",
+    "verified": "page-image"
   },
   {
     "id": "zimmermann2008_13a",
@@ -62,7 +64,8 @@
       ["indefinite", "bare"],
       ["scope", "NEG > ∃"]
     ],
-    "comment": "Cannot describe a situation where some people went and others did not."
+    "comment": "Cannot describe a situation where some people went and others did not.",
+    "verified": "page-image"
   },
   {
     "id": "zimmermann2008_63a",
@@ -83,7 +86,8 @@
       ["indefinite", "wani"],
       ["function", "discourse-introducing"]
     ],
-    "comment": "From the Sauna Jac narrative."
+    "comment": "From the Sauna Jac narrative.",
+    "verified": "page-image"
   },
   {
     "id": "zimmermann2008_64",
@@ -105,7 +109,8 @@
       ["indefinite", "wasu"],
       ["reading", "partitive"]
     ],
-    "comment": "Cited from Cowan and Schuh (1976)."
+    "comment": "Cited from Cowan and Schuh (1976).",
+    "verified": "page-image"
   },
   {
     "id": "zimmermann2008_65a",
@@ -126,7 +131,8 @@
       ["indefinite", "wani"],
       ["clause", "polar question"]
     ],
-    "comment": "Ambiguous between an existential and a free-choice reading; cited from Cowan and Schuh (1976)."
+    "comment": "Ambiguous between an existential and a free-choice reading; cited from Cowan and Schuh (1976).",
+    "verified": "page-image"
   },
   {
     "id": "zimmermann2008_69a",
@@ -138,7 +144,7 @@
     "glossedTokens": [
       ["bà-n", "NEG-1SG.SUBJ"], ["ga", "see"], ["wani", "someone"], ["ba", "NEG"]
     ],
-    "translation": "I didn't see anyone. / There is someone I didn't see.",
+    "translation": "I didn't see anyone. / There is someone I didn't see (but I saw others).",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -148,7 +154,8 @@
       ["position", "object"],
       ["scope", "ambiguous"]
     ],
-    "comment": "The negative existential reading is preferred; cited from Bargery."
+    "comment": "The negative existential reading is preferred; cited from Bargery.",
+    "verified": "page-image"
   },
   {
     "id": "zimmermann2008_69b",
@@ -161,7 +168,7 @@
       ["Muusaa", "Musa"], ["bà-i", "NEG-3SG.SUBJ"], ["kiraa", "invite"], ["wani", "some"],
       ["àbookii", "friend"], ["lìyaafaa", "ceremony"], ["ba", "NEG"]
     ],
-    "translation": "Musa did not invite any friends. / There is some friend Musa didn't invite.",
+    "translation": "Musa did not invite any friends. / There is some friend that Musa didn't invite (but he invited others).",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -171,7 +178,8 @@
       ["position", "object"],
       ["scope", "ambiguous"]
     ],
-    "comment": "Here the some-not reading is preferred."
+    "comment": "Here the some-not reading is preferred.",
+    "verified": "page-image"
   },
   {
     "id": "zimmermann2008_70",
@@ -193,7 +201,8 @@
       ["position", "subject"],
       ["scope", "∃ > NEG only"]
     ],
-    "comment": "No negative existential reading: the opposite of bare subject indefinites."
+    "comment": "No negative existential reading: the opposite of bare subject indefinites.",
+    "verified": "page-image"
   },
   {
     "id": "zimmermann2008_71",
@@ -214,7 +223,8 @@
     "paperFeatures": [
       ["construction", "negative existential relative"]
     ],
-    "comment": ""
+    "comment": "The paper prints baabù / bâa; this row records baabù.",
+    "verified": "page-image"
   },
   {
     "id": "zimmermann2008_73",
@@ -224,7 +234,7 @@
     "primaryText": "bà-n ga koo-waa ba",
     "discourseSegments": [],
     "glossedTokens": [
-      ["bà-n", "NEG-1SG.SUBJ"], ["ga", "see"], ["koo-waa", "DISJ-who"], ["ba", "NEG"]
+      ["bà-n", "NEG-1SG.SUBJ"], ["ga", "see"], ["koo-waa", "DISJ-wh"], ["ba", "NEG"]
     ],
     "translation": "I didn't see anyone.",
     "context": "",
@@ -236,7 +246,8 @@
       ["negation", "VP"],
       ["scope", "negative existential only"]
     ],
-    "comment": "The not-everyone reading is unavailable."
+    "comment": "The not-everyone reading is unavailable.",
+    "verified": "page-image"
   },
   {
     "id": "zimmermann2008_74a",
@@ -328,7 +339,8 @@
       ["quantifier", "duk"],
       ["order", "prenominal"]
     ],
-    "comment": "Alternates with postnominal faasinjojî-n dukà; cited from Newman (2000)."
+    "comment": "Alternates with postnominal faasinjoojî-n dukà; cited from Newman (2000).",
+    "verified": "page-image"
   },
   {
     "id": "zimmermann2008_86",
@@ -349,7 +361,8 @@
       ["quantifier", "duk"],
       ["restrictor", "singular"]
     ],
-    "comment": "Duk requires a plural or mass noun phrase."
+    "comment": "Duk requires a plural or mass noun phrase.",
+    "verified": "page-image"
   },
   {
     "id": "zimmermann2008_89a",
@@ -442,6 +455,7 @@
       ["negation", "sentential"],
       ["scope", "negative universal"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   }
 ]

@@ -75,7 +75,7 @@ def ex5c : Datum :=
     primaryText := "John doesn't own a dog. It is friendly."
     glossedTokens := []
     context := "An entity pronoun cannot reach a referent introduced under negation."
-    judgment := .unacceptable
+    judgment := .ungrammatical
     alternatives := []
     readings := []
     paperFeatures := [("antecedent", "count"), ("island", "negation"), ("anaphor", "entityPronoun")] }
@@ -89,7 +89,7 @@ def ex7a : Datum :=
     glossedTokens := []
     context := "A count antecedent, singular or plural, requires the plural kind anaphor."
     judgment := .acceptable
-    alternatives := [("He has a phobia against it.", .unacceptable)]
+    alternatives := [("He has a phobia against it.", .ungrammatical)]
     readings := []
     paperFeatures := [("antecedent", "count"), ("anaphor", "they")] }
 
@@ -102,7 +102,7 @@ def ex7b : Datum :=
     glossedTokens := []
     context := "A mass antecedent requires the singular kind anaphor."
     judgment := .acceptable
-    alternatives := [("He is allergic against them.", .unacceptable)]
+    alternatives := [("He is allergic against them.", .ungrammatical)]
     readings := []
     paperFeatures := [("antecedent", "mass"), ("anaphor", "it")] }
 
@@ -115,7 +115,7 @@ def ex8a : Datum :=
     glossedTokens := []
     context := "The same individuals under a mass noun take the singular kind anaphor."
     judgment := .acceptable
-    alternatives := [("I am allergic against them.", .unacceptable)]
+    alternatives := [("I am allergic against them.", .ungrammatical)]
     readings := []
     paperFeatures := [("antecedent", "mass"), ("anaphor", "it")] }
 

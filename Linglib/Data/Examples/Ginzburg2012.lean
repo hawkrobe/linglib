@@ -17,7 +17,7 @@ namespace Ginzburg2012.Examples
 
 def ex_22a : Datum :=
   { id := "ginzburg2012_22a"
-    source := ⟨"ginzburg-2012", "(22a)"⟩
+    source := ⟨"ginzburg-2012", "Ch. 2 (22a)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "A: Who does Bo admire? B: Bo?"
@@ -30,7 +30,7 @@ def ex_22a : Datum :=
 
 def ex_22b : Datum :=
   { id := "ginzburg2012_22b"
-    source := ⟨"ginzburg-2012", "(22b)"⟩
+    source := ⟨"ginzburg-2012", "Ch. 2 (22b)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "A: Who does Bo admire? Bo?"
@@ -43,7 +43,7 @@ def ex_22b : Datum :=
 
 def ex_23a : Datum :=
   { id := "ginzburg2012_23a"
-    source := ⟨"ginzburg-2012", "(23a)"⟩
+    source := ⟨"ginzburg-2012", "Ch. 2 (23a)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "A: Which members of this audience own a parakeet? Why?"
@@ -56,7 +56,7 @@ def ex_23a : Datum :=
 
 def ex_23b : Datum :=
   { id := "ginzburg2012_23b"
-    source := ⟨"ginzburg-2012", "(23b)"⟩
+    source := ⟨"ginzburg-2012", "Ch. 2 (23b)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "A: Which members of this audience own a parakeet? B: Why?"
@@ -69,7 +69,7 @@ def ex_23b : Datum :=
 
 def ex_23c : Datum :=
   { id := "ginzburg2012_23c"
-    source := ⟨"ginzburg-2012", "(23c)"⟩
+    source := ⟨"ginzburg-2012", "Ch. 2 (23c)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "A: Which members of this audience own a parakeet? Why am I asking this question?"
@@ -82,7 +82,7 @@ def ex_23c : Datum :=
 
 def ex_54 : Datum :=
   { id := "ginzburg2012_54"
-    source := ⟨"ginzburg-2012", "(54)"⟩
+    source := ⟨"ginzburg-2012", "Ch. 4 (54)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "A: Hi. B: Hi. A: Who's coming tomorrow? B: Several colleagues of mine (are coming). A: I see. B: Mike (is coming) too."
@@ -95,7 +95,7 @@ def ex_54 : Datum :=
 
 def ex_65 : Datum :=
   { id := "ginzburg2012_65"
-    source := ⟨"ginzburg-2012", "(65)"⟩
+    source := ⟨"ginzburg-2012", "Ch. 4 (65)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "A: Who should we invite for tomorrow? B: Who will agree to come? A: Helen and Jelle and Fran and maybe Sunil. B: (a) I see. (b) So, Jelle I think. A: OK."
@@ -108,7 +108,7 @@ def ex_65 : Datum :=
 
 def ex_67 : Datum :=
   { id := "ginzburg2012_67"
-    source := ⟨"ginzburg-2012", "(67)"⟩
+    source := ⟨"ginzburg-2012", "Ch. 4 (67)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "A: (a) Bo is now in Essen, (b) is he? B: Yes."
@@ -121,7 +121,7 @@ def ex_67 : Datum :=
 
 def ex_78 : Datum :=
   { id := "ginzburg2012_78"
-    source := ⟨"ginzburg-2012", "(78)"⟩
+    source := ⟨"ginzburg-2012", "Ch. 4 (78)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "A: (1a) Who will Max be inviting? (1b) When will these guests be arriving? B: Mary and Bill. A: Aha. B: Tomorrow or the day after most likely."
@@ -134,7 +134,7 @@ def ex_78 : Datum :=
 
 def ex_95 : Datum :=
   { id := "ginzburg2012_95"
-    source := ⟨"ginzburg-2012", "(95)"⟩
+    source := ⟨"ginzburg-2012", "Ch. 4 (95)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "A: Hi. B: I'm off. A: OK. B: Bye."
@@ -160,7 +160,7 @@ def ch6_90 : Datum :=
 
 def ex_24a : Datum :=
   { id := "ginzburg2012_24a"
-    source := ⟨"ginzburg-2012", "(24a)"⟩
+    source := ⟨"ginzburg-2012", "Ch. 8 (24a)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "A: Did Bo leave? B: Bo? A: Your cousin."
@@ -173,7 +173,7 @@ def ex_24a : Datum :=
 
 def ex_24b : Datum :=
   { id := "ginzburg2012_24b"
-    source := ⟨"ginzburg-2012", "(24b)"⟩
+    source := ⟨"ginzburg-2012", "Ch. 8 (24b)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "A: [Did Bo + {I mean} my cousin] leave?"

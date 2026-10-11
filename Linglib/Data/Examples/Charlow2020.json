@@ -20,7 +20,8 @@
         "judgment": "acceptable"
       }
     ],
-    "comment": "Exceptional scope of an indefinite out of the antecedent of a conditional."
+    "comment": "Exceptional scope of an indefinite out of the antecedent of a conditional.",
+    "verified": "page-image"
   },
   {
     "id": "charlow2020_ex2",
@@ -43,7 +44,8 @@
         "judgment": "unacceptable"
       }
     ],
-    "comment": "A universal cannot scope out of the antecedent of a conditional."
+    "comment": "A universal cannot scope out of the antecedent of a conditional.",
+    "verified": "page-image"
   },
   {
     "id": "charlow2020_ex3",
@@ -66,7 +68,8 @@
         "judgment": "acceptable"
       }
     ],
-    "comment": "Intermediate exceptional scope out of a tensed clause."
+    "comment": "Intermediate exceptional scope out of a tensed clause.",
+    "verified": "page-image"
   },
   {
     "id": "charlow2020_ex39",
@@ -93,7 +96,8 @@
         "judgment": "unacceptable"
       }
     ],
-    "comment": "A plural indefinite's existential scope escapes the island while its distributive scope stays inside."
+    "comment": "A plural indefinite's existential scope escapes the island while its distributive scope stays inside.",
+    "verified": "page-image"
   },
   {
     "id": "charlow2020_ex43",
@@ -124,7 +128,8 @@
         "judgment": "acceptable"
       }
     ],
-    "comment": "Selective exceptional scope: two indefinites on one island scope differently outside it."
+    "comment": "Selective exceptional scope: two indefinites on one island scope differently outside it.",
+    "verified": "page-image"
   },
   {
     "id": "charlow2020_ex46",
@@ -147,7 +152,8 @@
         "judgment": "acceptable"
       }
     ],
-    "comment": "Both island-bound indefinites take exceptional scope, at different heights."
+    "comment": "Both island-bound indefinites take exceptional scope, at different heights.",
+    "verified": "page-image"
   },
   {
     "id": "charlow2020_ex47",
@@ -170,7 +176,8 @@
         "judgment": "acceptable"
       }
     ],
-    "comment": "Both island-bound indefinites take exceptional scope, at different heights."
+    "comment": "Both island-bound indefinites take exceptional scope, at different heights.",
+    "verified": "page-image"
   },
   {
     "id": "charlow2020_ex51",
@@ -193,7 +200,8 @@
         "judgment": "acceptable"
       }
     ],
-    "comment": "Exceptional scope of an indefinite is compatible with binding of a pronoun on the same island."
+    "comment": "Exceptional scope of an indefinite is compatible with binding of a pronoun on the same island.",
+    "verified": "page-image"
   },
   {
     "id": "charlow2020_ex52",
@@ -219,7 +227,8 @@
         "judgment": "unacceptable"
       }
     ],
-    "comment": "The Binder Roof Constraint."
+    "comment": "The Binder Roof Constraint.",
+    "verified": "page-image"
   },
   {
     "id": "charlow2020_ex53",
@@ -242,6 +251,7 @@
         "judgment": "unacceptable"
       }
     ],
-    "comment": "The Binder Roof Constraint; the paper credits the example to a 2001 manuscript by Schwarz."
+    "comment": "The Binder Roof Constraint; the paper credits the example to a 2001 manuscript by Schwarz.",
+    "verified": "page-image"
   }
 ]

@@ -61,7 +61,7 @@ def ex2 : Datum :=
     language := "stan1293"
     primaryText := "Liem is definitely likely to be wearing green."
     glossedTokens := []
-    context := "Eric has seen Liem wear green on 5 of 8 days spread over the year."
+    context := "Eric has seen Liem wear green on 500 of 800 consecutive days."
     judgment := .acceptable
     alternatives := []
     readings := []
@@ -117,7 +117,7 @@ def ex11 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("section", "3"), ("expression", "frame")] }
+    paperFeatures := [("section", "4"), ("expression", "frame")] }
 
 def all : List Datum := [ex1a, ex1b, ex1c, ex2, ex3, ex5a, ex6a, ex11]
 
