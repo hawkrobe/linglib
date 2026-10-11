@@ -1,0 +1,272 @@
+[
+  {
+    "id": "guerriniwehbe2025_9a",
+    "source": {
+      "bibkey": "guerrini-wehbe-2025",
+      "paperLabel": "(9a)"
+    },
+    "language": "stan1293",
+    "primaryText": "I knew that all of John's kids are adopted but today I discovered something amazing. All 10 of John's kids are adopted!",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "readings": [],
+    "paperFeatures": [
+      [
+        "presupposition",
+        "John has 10 kids"
+      ]
+    ],
+    "verified": "page-image",
+    "discourseSegments": [
+      "I knew that all of John's kids are adopted but today I discovered something amazing.",
+      "All 10 of John's kids are adopted!"
+    ]
+  },
+  {
+    "id": "guerriniwehbe2025_9b",
+    "source": {
+      "bibkey": "guerrini-wehbe-2025",
+      "paperLabel": "(9b)"
+    },
+    "language": "stan1293",
+    "primaryText": "I knew that all of John's kids are adopted but today I discovered something amazing. John has 10 adopted kids!",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [],
+    "verified": "page-image",
+    "discourseSegments": [
+      "I knew that all of John's kids are adopted but today I discovered something amazing.",
+      "John has 10 adopted kids!"
+    ]
+  },
+  {
+    "id": "guerriniwehbe2025_10a",
+    "source": {
+      "bibkey": "guerrini-wehbe-2025",
+      "paperLabel": "(10a)"
+    },
+    "language": "stan1293",
+    "primaryText": "I knew that Mary read at least some of the books, but today I learned something interesting. She read the books.",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "readings": [],
+    "paperFeatures": [
+      [
+        "polarity",
+        "positive"
+      ]
+    ],
+    "verified": "page-image",
+    "discourseSegments": [
+      "I knew that Mary read at least some of the books, but today I learned something interesting.",
+      "She read the books."
+    ]
+  },
+  {
+    "id": "guerriniwehbe2025_10b",
+    "source": {
+      "bibkey": "guerrini-wehbe-2025",
+      "paperLabel": "(10b)"
+    },
+    "language": "stan1293",
+    "primaryText": "I knew that Mary didn't read all of the books, but today I learned something interesting. She didn't read the books.",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "readings": [],
+    "paperFeatures": [
+      [
+        "polarity",
+        "negative"
+      ]
+    ],
+    "verified": "page-image",
+    "discourseSegments": [
+      "I knew that Mary didn't read all of the books, but today I learned something interesting.",
+      "She didn't read the books."
+    ]
+  },
+  {
+    "id": "guerriniwehbe2025_12a",
+    "source": {
+      "bibkey": "guerrini-wehbe-2025",
+      "paperLabel": "(12a)"
+    },
+    "language": "stan1293",
+    "primaryText": "John isn't married to any of his teammates.",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [
+      [
+        "polarity",
+        "negative"
+      ],
+      [
+        "nominal",
+        "quantifier"
+      ]
+    ],
+    "verified": "page-image"
+  },
+  {
+    "id": "guerriniwehbe2025_12b",
+    "source": {
+      "bibkey": "guerrini-wehbe-2025",
+      "paperLabel": "(12b)"
+    },
+    "language": "stan1293",
+    "primaryText": "John isn't married to his teammates.",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "readings": [],
+    "paperFeatures": [
+      [
+        "polarity",
+        "negative"
+      ],
+      [
+        "nominal",
+        "definite plural"
+      ]
+    ],
+    "verified": "page-image"
+  },
+  {
+    "id": "guerriniwehbe2025_13a",
+    "source": {
+      "bibkey": "guerrini-wehbe-2025",
+      "paperLabel": "(13a)"
+    },
+    "language": "stan1293",
+    "primaryText": "None of the candidates won.",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "The rules for this year's election are that the person with the most votes wins, but if there is a tie for most votes, all of the candidates lose. This year..",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [
+      [
+        "polarity",
+        "negative"
+      ],
+      [
+        "nominal",
+        "quantifier"
+      ]
+    ],
+    "verified": "page-image"
+  },
+  {
+    "id": "guerriniwehbe2025_13b",
+    "source": {
+      "bibkey": "guerrini-wehbe-2025",
+      "paperLabel": "(13b)"
+    },
+    "language": "stan1293",
+    "primaryText": "All of the candidates lost.",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "The rules for this year's election are that the person with the most votes wins, but if there is a tie for most votes, all of the candidates lose. This year..",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [
+      [
+        "polarity",
+        "positive"
+      ],
+      [
+        "nominal",
+        "quantifier"
+      ]
+    ],
+    "verified": "page-image"
+  },
+  {
+    "id": "guerriniwehbe2025_13c",
+    "source": {
+      "bibkey": "guerrini-wehbe-2025",
+      "paperLabel": "(13c)"
+    },
+    "language": "stan1293",
+    "primaryText": "The candidates didn't win.",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "The rules for this year's election are that the person with the most votes wins, but if there is a tie for most votes, all of the candidates lose. This year..",
+    "judgment": "unacceptable",
+    "readings": [],
+    "paperFeatures": [
+      [
+        "polarity",
+        "negative"
+      ],
+      [
+        "nominal",
+        "definite plural"
+      ]
+    ],
+    "verified": "page-image"
+  },
+  {
+    "id": "guerriniwehbe2025_13d",
+    "source": {
+      "bibkey": "guerrini-wehbe-2025",
+      "paperLabel": "(13d)"
+    },
+    "language": "stan1293",
+    "primaryText": "The candidates lost.",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "The rules for this year's election are that the person with the most votes wins, but if there is a tie for most votes, all of the candidates lose. This year..",
+    "judgment": "unacceptable",
+    "readings": [],
+    "paperFeatures": [
+      [
+        "polarity",
+        "positive"
+      ],
+      [
+        "nominal",
+        "definite plural"
+      ]
+    ],
+    "verified": "page-image"
+  },
+  {
+    "id": "guerriniwehbe2025_23",
+    "source": {
+      "bibkey": "guerrini-wehbe-2025",
+      "paperLabel": "(23)"
+    },
+    "language": "stan1293",
+    "primaryText": "I knew that not all of the students smiled, but today I learned something interesting. The students didn't smile.",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "readings": [],
+    "paperFeatures": [
+      [
+        "polarity",
+        "negative"
+      ]
+    ],
+    "verified": "page-image",
+    "discourseSegments": [
+      "I knew that not all of the students smiled, but today I learned something interesting.",
+      "The students didn't smile."
+    ]
+  }
+]
