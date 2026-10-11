@@ -80,16 +80,23 @@ variable (n : Nominal G)
 /-- The visible gender, the outer layer's or the core's. -/
 def visible : G := n.outer.getD n.core
 
-/-- The genders of the nominal's n's, the highest first. -/
-def genders : List G := n.outer.toList ++ [n.core]
+/-- The genders of the nominal's n's, innermost first. -/
+def genders : List G := n.core :: n.outer.toList
 
-/-- The visible gender is the gender a gender probe agrees in on either explanation of the
-Highest Gender Hypothesis, since every n of a nominal bears a gender. -/
-theorem visible_eq_agreeingGender (d : G) :
-    n.visible = DistributedMorphology.agreeingGender some d n.genders ∧
-      n.visible = DistributedMorphology.agreeingGender some d (n.genders.take 1) := by
-  cases h : n.outer <;>
-    simp [visible, genders, DistributedMorphology.agreeingGender_cons_of_eq_some, h]
+open DistributedMorphology in
+/-- The visible gender is the agreeing gender of the Highest Gender Hypothesis, the gender a probe
+finds in the last cycle of the nominal; since every n bears a gender, a probe searching every n
+finds it too. -/
+theorem visible_eq_agreeingGender (r : Root) (d : G) :
+    n.visible = agreeingGender some d ((⟨r, n.genders⟩ : Spine G).lastCycle fun _ ↦ True) ∧
+      n.visible = agreeingGender some d n.genders.reverse := by
+  rcases h : n.outer with _ | o
+  · have := agreeingGender_lastCycle (gender := some) (default := d) (r := r) (hs := [])
+      (above := []) (h := n.core) (cyclic := fun _ ↦ True) trivial (by simp)
+    simp_all [visible, genders, agreeingGender_cons_of_eq_some]
+  · have := agreeingGender_lastCycle (gender := some) (default := d) (r := r) (hs := [n.core])
+      (above := []) (h := o) (cyclic := fun _ ↦ True) trivial (by simp)
+    simp_all [visible, genders, agreeingGender_cons_of_eq_some]
 
 /-- The visible gender's feature as percolation sees it, annotated with the interpretability of
 the gender's n. -/

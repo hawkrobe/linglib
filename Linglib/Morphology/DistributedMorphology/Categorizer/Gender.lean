@@ -1,6 +1,7 @@
 module
 
 public import Linglib.Morphology.DistributedMorphology.Categorizer.Basic
+public import Linglib.Morphology.DistributedMorphology.Locality
 public import Linglib.Syntax.Minimalist.Features
 public import Linglib.Syntax.Minimalist.Probe.Basic
 
@@ -12,12 +13,13 @@ gender feature is a binary dimension such as [±FEM] with a sign, and it is inte
 natural gender and uninterpretable for arbitrary gender. A categorizing head may also bear the
 selectional feature {D}, which licenses an inalienable possessor.
 
-Agreement in gender is a probe relativized to gender, searching the n's of a nominal from the
+Agreement in gender is a probe relativized to gender, searching the heads of a nominal from the
 top; when it finds none, Agree fails and the default gender is spelled out. When several n's are
 stacked, Kramer's Highest Gender Hypothesis makes the gender of the highest n the agreeing
-gender. On her hierarchical explanation the probe searches every n; on her cyclic explanation
-the highest n has sent the lower ones to spell-out, so the probe sees the highest n alone. The
-two differ exactly when a plain n tops a gendered one.
+gender. Kramer derives it from cyclicity: each n is a cyclic head that sends the nPs below it to
+spell-out, so the probe searches the last cycle of the word alone. A plain highest n then leaves
+the default gender, where a probe searching every n would find the gender of a lower one, and a
+diminutive that is not an n, bearing no gender, leaves the gender of the n below it.
 
 ## Main definitions
 
@@ -28,9 +30,10 @@ two differ exactly when a plain n tops a gendered one.
 
 ## Main results
 
-* `agreeingGender_take_one`: the cyclic and hierarchical explanations agree when the highest n
-  bears a gender.
-* `agreeingGender_plain_cons`: they differ on a plain n over a gendered one.
+* `agreeingGender_lastCycle`: the Highest Gender Hypothesis, the agreeing gender of a word being
+  that of its highest cyclic head.
+* `agreeingGender_lastCycle_plain`: a plain highest n gives the default, where a search of every
+  n would not.
 
 ## References
 
@@ -145,18 +148,42 @@ theorem agreeingGender_cons_of_eq_none (hh : gender h = none) :
     agreeingGender gender default (h :: hs) = agreeingGender gender default hs := by
   simp [agreeingGender, genderProbe, Probe.search, hh]
 
-/-- The cyclic explanation, on which the probe sees the highest n alone, agrees with the
-hierarchical one when that n bears a gender. -/
-theorem agreeingGender_take_one (hg : gender h = some g) :
-    agreeingGender gender default ((h :: hs).take 1) = agreeingGender gender default (h :: hs) := by
-  simp [agreeingGender_cons_of_eq_some hg]
+theorem agreeingGender_singleton : agreeingGender gender default [h] = (gender h).getD default := by
+  cases hg : gender h <;> simp [agreeingGender, genderProbe, Probe.search, hg]
 
-/-- On a plain n over an n of gender `g`, the cyclic explanation gives the default and the
-hierarchical one gives `g`. -/
-theorem agreeingGender_plain_cons (hh : gender h = none) (hg : gender h' = some g) :
-    agreeingGender gender default ((h :: h' :: hs).take 1) = default ∧
-      agreeingGender gender default (h :: h' :: hs) = g := by
-  simp [agreeingGender_cons_of_eq_none hh, agreeingGender_cons_of_eq_some hg]
+/-- Heads bearing no gender are invisible to the probe. -/
+theorem agreeingGender_append_of_forall_eq_none {l l' : List H}
+    (hl : ∀ a ∈ l, gender a = none) :
+    agreeingGender gender default (l ++ l') = agreeingGender gender default l' := by
+  induction l with
+  | nil => rfl
+  | cons a l ih =>
+    rw [List.cons_append, agreeingGender_cons_of_eq_none (hl a (by simp))]
+    exact ih fun b hb ↦ hl b (by simp [hb])
+
+variable {cyclic : H → Prop} [DecidablePred cyclic]
+
+/-- The Highest Gender Hypothesis. A probe above a word whose highest cyclic head is `h`, with only
+noncyclic heads bearing no gender over it, agrees in the gender `h` gives alone. -/
+theorem agreeingGender_lastCycle {r : Root} {above : List H} (hc : cyclic h)
+    (ha : ∀ a ∈ above, ¬ cyclic a ∧ gender a = none) :
+    agreeingGender gender default ((⟨r, hs ++ h :: above⟩ : Spine H).lastCycle cyclic) =
+      (gender h).getD default := by
+  rw [Spine.lastCycle_mk_append hc fun a ha' ↦ (ha a ha').1,
+    agreeingGender_append_of_forall_eq_none fun a ha' ↦ (ha a (by simpa using ha')).2,
+    agreeingGender_singleton]
+
+/-- A plain highest n over an n of gender `g` gives the default, where a probe searching every
+head would find `g`. -/
+theorem agreeingGender_lastCycle_plain {r : Root} (hc : cyclic h) (hh : gender h = none)
+    (hg : gender h' = some g) :
+    agreeingGender gender default ((⟨r, hs ++ [h', h]⟩ : Spine H).lastCycle cyclic) = default ∧
+      agreeingGender gender default (hs ++ [h', h]).reverse = g := by
+  constructor
+  · rw [show hs ++ [h', h] = (hs ++ [h']) ++ h :: [] by simp,
+      agreeingGender_lastCycle (above := []) hc (by simp), hh]
+    rfl
+  · simp [agreeingGender_cons_of_eq_none hh, agreeingGender_cons_of_eq_some hg]
 
 end HighestGender
 
