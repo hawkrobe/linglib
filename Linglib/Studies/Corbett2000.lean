@@ -516,12 +516,12 @@ theorem noun_conflates_verb_not :
 
 end Kiowa
 
-/-- The Teop articles of Table 5.15 invert in the fragment's two classes, singular *a* against
-plural *o* and singular *o* against plural *a*, an inverse system which in the
-fragment's two classes has the shape of the Somali article's polarity, Table 5.16. -/
+/-- In Table 5.15 the Teop articles of the a- and o-classes are polar, like the Somali article of
+Table 5.16. The e-class breaks the polarity, and the three classes take different articles. -/
 theorem teop_inverse :
-    Gender.Polar (fun (g : Teop.Gender) (pl : Bool) ↦ Teop.articleForm ⟨g, pl, false⟩) := by
-  decide
+    Gender.Polar (fun (c : {c : Teop.NounClass // c ≠ .e}) pl ↦ Teop.headArticle c pl) ∧
+      ¬ Gender.Polar Teop.headArticle ∧ Gender.Faithful Teop.headArticle :=
+  ⟨by decide, fun h ↦ absurd h.card_le_two (by decide), by decide⟩
 
 namespace Rembarrnga
 

@@ -49,19 +49,19 @@ open DistributedMorphology
 
 /-! ### The semantic core (§1.2) -/
 
-/-- The minimal properties of (3): animacy, humanness, and social gender or
+/-- The minimal properties of (3) are animacy, humanness, and social gender or
 biological sex. -/
 def IsCore : Corbett1991.Criterion → Prop
   | .animacy | .humanness | .sex => True
   | _ => False
 
-instance : DecidablePred IsCore := λ b => by cases b <;> unfold IsCore <;> infer_instance
+instance : DecidablePred IsCore := fun b ↦ by cases b <;> unfold IsCore <;> infer_instance
 
-/-- The semantic core generalization (2): a language with gender assigns it
+/-- By the semantic core generalization (2), a language with gender assigns it
 to some nouns by a property of (3). -/
 def SatisfiesSemanticCore (e : Corbett1991.SurveyEntry) : Prop := ∃ b ∈ e.criteria, IsCore b
 
-instance : DecidablePred SatisfiesSemanticCore := λ _ => by
+instance : DecidablePred SatisfiesSemanticCore := fun _ ↦ by
   unfold SatisfiesSemanticCore; infer_instance
 
 theorem semantic_core_holds : ∀ e ∈ Corbett1991.survey, SatisfiesSemanticCore e := by decide
@@ -100,8 +100,8 @@ instance [DecidableEq G] : Decidable r.Novel :=
 
 instance [DecidableEq G] : Decidable r.Mixed := inferInstanceAs (Decidable (_ ∧ _))
 
-/-- The cell of Table 2 marked not applicable: a single remainder gender is
-recycled or novel. -/
+/-- The cell of Table 2 marked not applicable is empty, since a single remainder gender is
+recycled or novel but not both. -/
 theorem not_mixed_of_allSame (h : r.AllSame) : ¬ r.Mixed := by
   obtain ⟨g, hg⟩ := Finset.card_eq_one.mp h
   rintro ⟨hr, hn⟩
@@ -116,70 +116,69 @@ def ofNouns {N : Type*} (nouns : List N) (natural : N → Bool) (gender : N → 
   core := ((nouns.filter natural).map gender).toFinset
   remainder := ((nouns.filter (!natural ·)).map gender).toFinset
 
-/-- Dieri: female humans feminine, male humans masculine, every other noun
+/-- Dieri makes female humans feminine and male humans and every other noun
 masculine. -/
 def dieri : Remainder Gender := ⟨{.masculine, .feminine}, {.masculine}⟩
 
-/-- Tamil: Dieri's core, with the remainder in a novel neuter. -/
+/-- Tamil has Dieri's core and puts the remainder in a novel neuter. -/
 def tamil : Remainder Gender := ⟨{.masculine, .feminine}, {.neuter}⟩
 
-/-- Spanish: the remainder split arbitrarily over both core genders
-(Table 1), read off the Fragment. -/
+/-- Spanish splits the remainder arbitrarily over both core genders (Table 1), as the
+Fragment records. -/
 def spanish : Remainder Gender :=
   ofNouns Spanish.Gender.allNouns (decide <| ·.IsNaturalGender Spanish.Gender.Value.toLabel)
     (·.gender.toLabel)
 
-/-- Blackfoot: animates animate; inanimates in a novel inanimate gender or
+/-- Blackfoot makes animates animate and puts inanimates in a novel inanimate gender or
 the recycled animate one. -/
 def blackfoot : Remainder Gender := ⟨{.animate}, {.animate, .inanimate}⟩
 
-/-- Table 2: same gender recycled (Dieri) or novel (Tamil), different
-genders recycled (Spanish) or both (Blackfoot). -/
+/-- Table 2 has one remainder gender recycled (Dieri) or novel (Tamil), and different
+remainder genders recycled (Spanish) or both (Blackfoot). -/
 theorem table2 :
     dieri.AllSame ∧ dieri.Recycled ∧ tamil.AllSame ∧ tamil.Novel ∧
       ¬ spanish.AllSame ∧ spanish.Recycled ∧ ¬ blackfoot.AllSame ∧ blackfoot.Mixed := by
   decide
 
-/-- Akɔɔse's cell: with the human gender as the core and at least seven
-other remainder genders, the remainder takes different, novel genders. -/
+/-- Akɔɔse has the human gender as its core and at least seven other remainder genders, so
+its remainder takes different, novel genders. -/
 theorem akoose_cell (r : Remainder ℕ) (hcore : r.core = {1}) (hcard : 7 ≤ r.remainder.card)
     (h : 1 ∉ r.remainder) : ¬ r.AllSame ∧ r.Novel :=
-  ⟨λ h₁ => by unfold AllSame at h₁; omega,
+  ⟨fun h₁ ↦ by unfold AllSame at h₁; omega,
     by rw [Novel, hcore]; exact Finset.disjoint_singleton_right.mpr h⟩
 
 end Remainder
 
 /-! ### Declension class in Russian (§2.3.2) -/
 
-/-- [corbett-1991]'s assignment for the Russian remainder (18): Class I
-masculine, Class II or III feminine, all others neuter. -/
+/-- [corbett-1991]'s assignment for the Russian remainder (18) makes Class I
+masculine, Class II or III feminine, and all others neuter. -/
 def declensionGender : Russian.Gender.DeclClass → Gender
   | .I => .masculine
   | .II | .III => .feminine
   | .IV => .neuter
 
-/-- (18) misassigns exactly the Class III nouns of (19): neuter *znamja*
+/-- (18) misassigns exactly the Class III nouns of (19), neuter *znamja*
 and masculine *put'*. -/
 theorem declension_exceptions :
     Russian.Gender.remainderNouns.filter
-        (λ n => n.declClass.map declensionGender ≠ some n.gender.toLabel) =
+        (fun n ↦ n.declClass.map declensionGender ≠ some n.gender.toLabel) =
       [Russian.Gender.znamja, Russian.Gender.put'] := by
   decide
 
 /-! ### The final vowel in Hausa (§2.3.2, §3.3.1) -/
 
-/-- The disputed rule (26): a noun in *-ā* is feminine, any other
+/-- The disputed rule (26) makes a noun in *-ā* feminine and any other
 masculine. -/
 def phonologicalRule (n : Hausa.Noun) : Gender :=
   if n.EndsInAa then .feminine else .masculine
 
-/-- (22e): *kadā̀* 'crocodile' ends in *-ā* and is masculine, so (26) is
+/-- In (22e) *kadā̀* 'crocodile' ends in *-ā* and is masculine, so (26) is
 false. -/
 theorem phonologicalRule_kada : phonologicalRule Hausa.kada ≠ Hausa.kada.gender := by
   decide
 
-/-- The correlation in its valid direction, feminine gender realized as
-*-ā*: every feminine noun outside the semantic core ends in *-ā*. -/
+/-- In its valid direction, every feminine noun outside the semantic core ends in *-ā*. -/
 theorem feminine_remainder_aa :
     ∀ n ∈ Hausa.allNouns,
       ¬ n.IsNaturalGender id → n.gender = .feminine → n.EndsInAa := by
@@ -187,7 +186,7 @@ theorem feminine_remainder_aa :
 
 /-! ### Lexical gender assignment (§3.2) -/
 
-/-- A lexical entry in [harris-1991]'s system: the semantic features
+/-- A lexical entry in [harris-1991]'s system bears the semantic features
 [human] and [female] and the gender feature [f]. -/
 structure LexicalEntry where
   human : Bool
@@ -197,21 +196,21 @@ structure LexicalEntry where
 
 namespace LexicalEntry
 
-/-- Human Cloning (Figure 1): a [human] entry doubles into a [male] and a
+/-- Human Cloning (Figure 1) doubles a [human] entry into a [male] and a
 [female] entry. -/
 def humanCloning (e : LexicalEntry) : List LexicalEntry :=
   if e.human then [{ e with female := false }, { e with female := true }] else [e]
 
-/-- The Human Gender rule (23): [female] → [f] / __ [human]. -/
+/-- The Human Gender rule (23) is [female] → [f] / __ [human]. -/
 def humanGender (e : LexicalEntry) : LexicalEntry :=
   { e with f := e.f || (e.human && e.female) }
 
-/-- Agreement: feminine with [f], masculine by default. -/
+/-- Agreement is feminine with [f] and masculine by default. -/
 def gender (e : LexicalEntry) : Gender := if e.f then .feminine else .masculine
 
 end LexicalEntry
 
-/-- The lexical entry of a Fragment noun: [human] for the natural-gender
+/-- A Fragment noun's lexical entry has [human] for the natural-gender
 nouns (higher animals honoris causa), [female] for the female-denoting
 ones, and a listed [f] for the arbitrarily feminine remainder. -/
 def lexicalEntry (n : Spanish.Gender.Noun) : LexicalEntry :=
@@ -234,9 +233,9 @@ theorem persona_cloned_feminine :
 /-- The four n's of (24). -/
 def spanishHeads : List Categorizer.Head := [.n_iFem, .n_iMasc, .n_plain, .n_uFem]
 
-/-- The n of a Fragment noun: interpretable gender for the natural-gender
-nouns, u[+fem] for the arbitrarily feminine remainder — *persona* among
-them — and plain n otherwise. -/
+/-- A Fragment noun's n bears interpretable gender for the natural-gender
+nouns and u[+fem] for the arbitrarily feminine remainder, *persona* among
+them, and is plain otherwise. -/
 def nHead (n : Spanish.Gender.Noun) : Categorizer.Head :=
   match n.gender, n.naturalGender with
   | .fem, some .feminine => .n_iFem
@@ -248,7 +247,7 @@ theorem nHead_mem_spanishHeads (n : Spanish.Gender.Noun) : nHead n ∈ spanishHe
   obtain ⟨_, g, b⟩ := n; cases g <;> rcases b with _ | l <;> (try cases l) <;>
     simp [nHead, spanishHeads]
 
-/-- The features of a definite determiner: [d], [def], and the gender it
+/-- A definite determiner bears [d], [def], and the gender it
 acquires by agreement. -/
 inductive DetFeature where
   | d
@@ -258,9 +257,9 @@ inductive DetFeature where
 
 /-- What the determiner carries after agreeing with a head. -/
 def determinerFeatures (ch : Categorizer.Head) : List DetFeature :=
-  [.d, .definite] ++ (ch.phi.gender.map λ gf => .gender gf.val).toList
+  [.d, .definite] ++ (ch.gender.map fun gf ↦ .gender gf.val).toList
 
-/-- The Spanish definite determiners (25): *la* with [+fem], *el*
+/-- Of the Spanish definite determiners (25), *la* carries [+fem] and *el* is
 underspecified. -/
 def determiners : List (VocabularyItem DetFeature String) :=
   [[.d, .definite, .gender ⟨.fem, .pos⟩] ⟷ "la", [.d, .definite] ⟷ "el"]
@@ -274,7 +273,7 @@ def determiner (ch : Categorizer.Head) : Option String :=
 theorem determiner_iMasc_eq_plain :
     determiner .n_iMasc = some "el" ∧ determiner .n_plain = some "el" := by decide
 
-/-- Natural and arbitrary feminine share *la*: one feature, [+fem]. -/
+/-- Natural and arbitrary feminine share *la*, since both bear [+fem]. -/
 theorem determiner_iFem_eq_uFem :
     determiner .n_iFem = some "la" ∧ determiner .n_uFem = some "la" := by decide
 
@@ -298,8 +297,8 @@ theorem lexical_eq_structural (n : Spanish.Gender.Noun) :
 
 /-! ### Hybrid nouns (§3.3.2) -/
 
-/-- (27): the agreement targets of *vrač* 'doctor' — the Fragment's
-morphologically masculine Class I noun — and their genders in one phrase. -/
+/-- In (27) the agreement targets of *vrač* 'doctor', the Fragment's
+morphologically masculine Class I noun, take both genders in one phrase. -/
 def hybridTargets : List (String × Gender) := [("xoroš-aja", .feminine), ("glavn-yj", .masculine)]
 
 /-- No lexical entry fits agreement targets of both genders, since an entry has one gender;
@@ -319,29 +318,29 @@ theorem lexical_no_hybrid : ¬ ∃ e : LexicalEntry, ∀ t ∈ hybridTargets, t.
 
 /-! ### Radical interpretability and the semantic core (§3.3.3) -/
 
-/-- The thesis of radical interpretability (29) as a condition on a
-language's gender features: an uninterpretable instantiation of a
-dimension implies an interpretable one. -/
+/-- The thesis of radical interpretability (29) requires of a language's gender features that
+an uninterpretable instantiation of a dimension imply an interpretable one. -/
 def RadicallyInterpretable (fs : List GenderFeature) : Prop :=
-  ∀ gf ∈ fs, gf.interp = .u → ∃ gf' ∈ fs, gf'.interp = .i ∧ gf'.val.dim = gf.val.dim
+  ∀ gf ∈ fs, gf.interp = .uninterpretable →
+    ∃ gf' ∈ fs, gf'.interp = .interpretable ∧ gf'.val.dim = gf.val.dim
 
 instance (fs : List GenderFeature) : Decidable (RadicallyInterpretable fs) := by
   unfold RadicallyInterpretable; infer_instance
 
 theorem spanish_radicallyInterpretable :
-    RadicallyInterpretable (spanishHeads.filterMap (·.phi.gender)) := by decide
+    RadicallyInterpretable (spanishHeads.filterMap (·.gender)) := by decide
 
 /-- Under radical interpretability a language with gender features has an
 interpretable one, so some nouns are gendered semantically: the semantic
 core, from the structural account. -/
 theorem exists_interpretable {fs : List GenderFeature} (h : RadicallyInterpretable fs)
-    (hne : fs ≠ []) : ∃ gf ∈ fs, gf.interp = .i := by
+    (hne : fs ≠ []) : ∃ gf ∈ fs, gf.interp = .interpretable := by
   obtain ⟨gf, hgf⟩ := List.exists_mem_of_ne_nil fs hne
   cases hi : gf.interp with
-  | i => exact ⟨gf, hgf, hi⟩
-  | u => obtain ⟨gf', h₁, h₂, -⟩ := h gf hgf hi; exact ⟨gf', h₁, h₂⟩
+  | interpretable => exact ⟨gf, hgf, hi⟩
+  | uninterpretable => obtain ⟨gf', h₁, h₂, -⟩ := h gf hgf hi; exact ⟨gf', h₁, h₂⟩
 
-/-- The lexical account excludes nothing: a lexicon whose two agreement
+/-- The lexical account excludes nothing, since a lexicon whose two agreement
 classes track no semantic feature is well formed, though no such language
 is attested. -/
 theorem lexical_allows_arbitrary_only :
