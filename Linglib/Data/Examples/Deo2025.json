@@ -19,7 +19,8 @@
       ["clauseType", "declarative"],
       ["act", "warning"]
     ],
-    "comment": "Bilal warns Anu to take the road conditions into account before driving."
+    "comment": "Bilal warns Anu to take the road conditions into account before driving.",
+    "verified": "page-image"
   },
   {
     "id": "deo2025_2",
@@ -41,7 +42,8 @@
       ["clauseType", "imperative"],
       ["act", "command"]
     ],
-    "comment": "The particle intensifies the directive force of the imperative."
+    "comment": "The particle intensifies the directive force of the imperative.",
+    "verified": "page-image"
   },
   {
     "id": "deo2025_3",
@@ -63,7 +65,8 @@
       ["clauseType", "constituent"],
       ["act", "question"]
     ],
-    "comment": "The wh-interrogative use, which the paper leaves outside its analysis of declaratives and imperatives."
+    "comment": "The wh-interrogative use, which the paper leaves outside its analysis of declaratives and imperatives.",
+    "verified": "page-image"
   },
   {
     "id": "deo2025_4",
@@ -85,7 +88,8 @@
       ["clauseType", "declarative"],
       ["act", "informing"]
     ],
-    "comment": "New information relevant to the addressee's actions, with the expectation that he take it on as a commitment; the goal that the plumber be let in is a joint preference."
+    "comment": "New information relevant to the addressee's actions, with the expectation that he take it on as a commitment; the goal that the plumber be let in is a joint preference.",
+    "verified": "page-image"
   },
   {
     "id": "deo2025_5a",
@@ -107,7 +111,8 @@
       ["clauseType", "declarative"],
       ["act", "warning"]
     ],
-    "comment": "Bilal wants Anu to alter her plan and not travel today, offering no alternative plan: her commitment to the content is a precondition for staying safe."
+    "comment": "Bilal wants Anu to alter her plan and not travel today, offering no alternative plan: her commitment to the content is a precondition for staying safe.",
+    "verified": "page-image"
   },
   {
     "id": "deo2025_5b",
@@ -130,7 +135,8 @@
       ["act", "warning"],
       ["infelicity", "precondition"]
     ],
-    "comment": "The content points towards one alternative plan among many, so committing to it is not a precondition for the goal. All three consulted speakers rule it out, fn. 3."
+    "comment": "The content points towards one alternative plan among many, so committing to it is not a precondition for the goal. All three consulted speakers rule it out, fn. 3.",
+    "verified": "page-image"
   },
   {
     "id": "deo2025_6",
@@ -152,17 +158,18 @@
       ["clauseType", "declarative"],
       ["act", "advice"]
     ],
-    "comment": "The doctor's expertise gives the authority to express a preference for dependent commitment; the addressee has no action choices aligned with the goal yet."
+    "comment": "The doctor's expertise gives the authority to express a preference for dependent commitment; the addressee has no action choices aligned with the goal yet.",
+    "verified": "page-image"
   },
   {
     "id": "deo2025_7ctx1",
     "source": {"bibkey": "deo-2025-bara", "paperLabel": "(7), context 1"},
     "reportedIn": null,
     "language": "mara1378",
-    "primaryText": "niʃa tiʧ-ya bəhiɳi=la aɳ-te ahe bərə",
+    "primaryText": "Niśa tiʧ-ya bəhiɳi=la aɳ-te ahe bərə",
     "discourseSegments": [],
     "glossedTokens": [
-      ["niʃa", "Niśa.NOM"], ["tiʧ-ya", "her.GEN-OBL"], ["bəhiɳi=la", "sister.OBL=ACC"],
+      ["Niśa", "Niśa.NOM"], ["tiʧ-ya", "her.GEN-OBL"], ["bəhiɳi=la", "sister.OBL=ACC"],
       ["aɳ-te", "bring-IMPF.F.SG"], ["ahe", "PRES.3.SG"], ["bərə", "BARA"]
     ],
     "translation": "Niśa is bringing her sister with her.",
@@ -175,17 +182,18 @@
       ["act", "reminder"],
       ["infelicity", "alignment"]
     ],
-    "comment": "Anu may reasonably assume that Bilal is aware of the content, so nothing shows his action choices misaligned with it."
+    "comment": "Anu may reasonably assume that Bilal is aware of the content, so nothing shows his action choices misaligned with it.",
+    "verified": "page-image"
   },
   {
     "id": "deo2025_7ctx2",
     "source": {"bibkey": "deo-2025-bara", "paperLabel": "(7), context 2"},
     "reportedIn": null,
     "language": "mara1378",
-    "primaryText": "niʃa tiʧ-ya bəhiɳi=la aɳ-te ahe bərə",
+    "primaryText": "Niśa tiʧ-ya bəhiɳi=la aɳ-te ahe bərə",
     "discourseSegments": [],
     "glossedTokens": [
-      ["niʃa", "Niśa.NOM"], ["tiʧ-ya", "her.GEN-OBL"], ["bəhiɳi=la", "sister.OBL=ACC"],
+      ["Niśa", "Niśa.NOM"], ["tiʧ-ya", "her.GEN-OBL"], ["bəhiɳi=la", "sister.OBL=ACC"],
       ["aɳ-te", "bring-IMPF.F.SG"], ["ahe", "PRES.3.SG"], ["bərə", "BARA"]
     ],
     "translation": "Niśa is bringing her sister with her.",
@@ -197,7 +205,8 @@
       ["clauseType", "declarative"],
       ["act", "reminder"]
     ],
-    "comment": "The table setting is evidence that Bilal's action choices do not reflect commitment to the content."
+    "comment": "The table setting is evidence that Bilal's action choices do not reflect commitment to the content.",
+    "verified": "page-image"
   },
   {
     "id": "deo2025_8",
@@ -219,7 +228,8 @@
       ["clauseType", "declarative"],
       ["act", "warning"]
     ],
-    "comment": "Shared content uttered to warn of adverse consequences if it is left out of the decision: a warning and a reminder at once."
+    "comment": "Shared content uttered to warn of adverse consequences if it is left out of the decision: a warning and a reminder at once.",
+    "verified": "page-image"
   },
   {
     "id": "deo2025_9",
@@ -242,7 +252,8 @@
       ["act", "commissive"],
       ["infelicity", "source"]
     ],
-    "comment": "A declarative used commissively aligns with a manifest addressee preference: Bilal, who asked, is already a source for the content."
+    "comment": "A declarative used commissively aligns with a manifest addressee preference: Bilal, who asked, is already a source for the content.",
+    "verified": "page-image"
   },
   {
     "id": "deo2025_10a",
@@ -265,7 +276,8 @@
       ["act", "request"],
       ["infelicity", "benefit"]
     ],
-    "comment": "A request: realizing the content benefits the speaker and does not interfere with the addressee's existing preferences."
+    "comment": "A request: realizing the content benefits the speaker and does not interfere with the addressee's existing preferences.",
+    "verified": "page-image"
   },
   {
     "id": "deo2025_10b",
@@ -288,7 +300,8 @@
       ["act", "plea"],
       ["infelicity", "benefit"]
     ],
-    "comment": "A plea: realizing the content benefits the speaker and is presumed inconsistent with the addressee's existing preferences."
+    "comment": "A plea: realizing the content benefits the speaker and is presumed inconsistent with the addressee's existing preferences. The paper prints koṇi=tari, with a dotted ṇ, where it writes the retroflex nasal ɳ elsewhere.",
+    "verified": "page-image"
   },
   {
     "id": "deo2025_11a",
@@ -311,7 +324,8 @@
       ["act", "offer"],
       ["infelicity", "deference"]
     ],
-    "comment": "With the particle the utterance is understood as a mock command or a veiled threat rather than an offer, fn. 4."
+    "comment": "With the particle the utterance is understood as a mock command or a veiled threat rather than an offer, fn. 4.",
+    "verified": "page-image"
   },
   {
     "id": "deo2025_11b",
@@ -334,7 +348,8 @@
       ["act", "permission"],
       ["infelicity", "source"]
     ],
-    "comment": "A permission with a well-wish: Deepa has asked, so she is a source for the content."
+    "comment": "A permission with a well-wish: Deepa has asked, so she is a source for the content.",
+    "verified": "page-image"
   },
   {
     "id": "deo2025_11c",
@@ -356,7 +371,8 @@
       ["act", "concession"],
       ["infelicity", "source"]
     ],
-    "comment": "A concession: Deepa has revealed her preference for the content and is a source for it."
+    "comment": "A concession: Deepa has revealed her preference for the content and is a source for it.",
+    "verified": "page-image"
   },
   {
     "id": "deo2025_11d",
@@ -380,7 +396,8 @@
       ["act", "curse"],
       ["infelicity", "benefit"]
     ],
-    "comment": "A curse, detrimental to the addressee; the variant with məsəɳa=t 'burial.ground.OBL=LOC' is the same curse."
+    "comment": "A curse, detrimental to the addressee; the variant with məsəɳa=t 'burial.ground.OBL=LOC' is the same curse.",
+    "verified": "page-image"
   },
   {
     "id": "deo2025_12",
@@ -402,7 +419,8 @@
       ["clauseType", "imperative"],
       ["act", "command"]
     ],
-    "comment": "Anu's authority is made salient; Deepa does not share the goal that she be rested, and her action choices are not aligned with it, fn. 12."
+    "comment": "Anu's authority is made salient; Deepa does not share the goal that she be rested, and her action choices are not aligned with it, fn. 12.",
+    "verified": "page-image"
   },
   {
     "id": "deo2025_13",
@@ -424,7 +442,8 @@
       ["clauseType", "imperative"],
       ["act", "warning"]
     ],
-    "comment": "Deepa is expected to comply in order to ensure her own safety, a goal she most likely shares, fn. 12."
+    "comment": "Deepa is expected to comply in order to ensure her own safety, a goal she most likely shares, fn. 12.",
+    "verified": "page-image"
   },
   {
     "id": "deo2025_14",
@@ -446,7 +465,8 @@
       ["clauseType", "imperative"],
       ["act", "recommendation"]
     ],
-    "comment": "A strong recommendation towards a goal, learning to express gratitude, that the addressee does not share, fn. 12."
+    "comment": "A strong recommendation towards a goal, learning to express gratitude, that the addressee does not share, fn. 12.",
+    "verified": "page-image"
   },
   {
     "id": "deo2025_15ctx1",
@@ -468,7 +488,8 @@
       ["clauseType", "imperative"],
       ["act", "recommendation"]
     ],
-    "comment": "Bilal's preference for taking the car is latent, so Anu's proposal sounds like a solicitous command that he will comply with; it cannot be conditionalized with 'if you like', fn. 7."
+    "comment": "Bilal's preference for taking the car is latent, so Anu's proposal sounds like a solicitous command that he will comply with; it cannot be conditionalized with 'if you like', fn. 7.",
+    "verified": "page-image"
   },
   {
     "id": "deo2025_15ctx2",
@@ -491,7 +512,8 @@
       ["act", "recommendation"],
       ["infelicity", "source"]
     ],
-    "comment": "Bilal has revealed his preference, so he is a source for the content."
+    "comment": "Bilal has revealed his preference, so he is a source for the content.",
+    "verified": "page-image"
   },
   {
     "id": "deo2025_16",
@@ -514,7 +536,8 @@
       ["act", "agreement"],
       ["infelicity", "source"]
     ],
-    "comment": "An imperative agreeing with an actional commitment the addressee has undertaken: Anu is a source for the content."
+    "comment": "An imperative agreeing with an actional commitment the addressee has undertaken: Anu is a source for the content.",
+    "verified": "page-image"
   },
   {
     "id": "deo2025_19a",
@@ -538,7 +561,8 @@
     "paperFeatures": [
       ["construction", "responseParticle"]
     ],
-    "comment": "Ok takes on Anu's preferential commitment as a dependent, yes commits to the preference independently; only ok admits the continuation 'I had been planning to circulate the minutes', fn. 10."
+    "comment": "Ok takes on Anu's preferential commitment as a dependent, yes commits to the preference independently; only ok admits the continuation 'I had been planning to circulate the minutes to the full team', fn. 10.",
+    "verified": "page-image"
   },
   {
     "id": "deo2025_19b",
@@ -563,6 +587,7 @@
     "paperFeatures": [
       ["construction", "responseParticle"]
     ],
-    "comment": "Nina has expressed an intention incompatible with the preference, so she can no longer commit to it independently with yes."
+    "comment": "Nina has expressed an intention incompatible with the preference, so she can no longer commit to it independently with yes.",
+    "verified": "page-image"
   }
 ]

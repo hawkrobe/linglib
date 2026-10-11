@@ -20,7 +20,8 @@
       ["matrixTense", "past"],
       ["embeddedTense", "past"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "arreguikusumoto1998_3",
@@ -45,7 +46,8 @@
       ["matrixTense", "past"],
       ["embeddedTense", "past"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "arreguikusumoto1998_4",
@@ -70,7 +72,8 @@
       ["matrixTense", "past"],
       ["embeddedTense", "present"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "arreguikusumoto1998_5a",
@@ -94,7 +97,8 @@
       ["matrixTense", "past"],
       ["embeddedTense", "past"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "arreguikusumoto1998_5b",
@@ -118,7 +122,8 @@
       ["matrixTense", "past"],
       ["embeddedTense", "present"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "arreguikusumoto1998_6a",
@@ -142,7 +147,8 @@
       ["matrixTense", "past"],
       ["embeddedTense", "past"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "arreguikusumoto1998_6b",
@@ -166,7 +172,8 @@
       ["matrixTense", "past"],
       ["embeddedTense", "present"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "arreguikusumoto1998_7a",
@@ -187,7 +194,8 @@
       ["matrixTense", "past"],
       ["embeddedTense", "past"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "arreguikusumoto1998_7b",
@@ -208,7 +216,8 @@
       ["matrixTense", "past"],
       ["embeddedTense", "past"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "arreguikusumoto1998_8",
@@ -234,7 +243,8 @@
       ["matrixTense", "past"],
       ["embeddedTense", "past"]
     ],
-    "comment": "Repeated as (31a) and (33a)."
+    "comment": "Repeated as (31a) and (33a).",
+    "verified": "page-image"
   },
   {
     "id": "arreguikusumoto1998_9",
@@ -260,7 +270,8 @@
       ["matrixTense", "past"],
       ["embeddedTense", "present"]
     ],
-    "comment": "Repeated as (31b) and (34a)."
+    "comment": "Repeated as (31b) and (34a). (9) prints the translation 'Junko was in her room when Satoshi came' (quantificational/habitual); 'whenever' is the translation printed at (31b) and (34a).",
+    "verified": "page-image"
   },
   {
     "id": "arreguikusumoto1998_10a",
@@ -285,7 +296,8 @@
       ["matrixTense", "past"],
       ["embeddedTense", "present"]
     ],
-    "comment": ""
+    "comment": "The paper prints ze for że.",
+    "verified": "page-image"
   },
   {
     "id": "arreguikusumoto1998_10b",
@@ -310,7 +322,8 @@
       ["matrixTense", "past"],
       ["embeddedTense", "past"]
     ],
-    "comment": ""
+    "comment": "The paper prints ze for że.",
+    "verified": "page-image"
   },
   {
     "id": "arreguikusumoto1998_10c",
@@ -335,7 +348,8 @@
       ["matrixTense", "past"],
       ["embeddedTense", "future"]
     ],
-    "comment": ""
+    "comment": "The paper prints ze for że.",
+    "verified": "page-image"
   },
   {
     "id": "arreguikusumoto1998_11a",
@@ -359,7 +373,8 @@
       ["matrixTense", "past"],
       ["embeddedTense", "past"]
     ],
-    "comment": "The paper's translation has 'left' where the gloss has 'come'."
+    "comment": "The paper's translation has 'left' where the gloss has 'come'. The paper prints przysedł for przyszedł.",
+    "verified": "page-image"
   },
   {
     "id": "arreguikusumoto1998_11b",
@@ -383,7 +398,8 @@
       ["matrixTense", "past"],
       ["embeddedTense", "present"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "arreguikusumoto1998_11c",
@@ -407,7 +423,8 @@
       ["matrixTense", "past"],
       ["embeddedTense", "future"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "arreguikusumoto1998_12a",
@@ -426,7 +443,8 @@
       ["clause", "root"],
       ["tense", "present"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "arreguikusumoto1998_13a",
@@ -445,7 +463,8 @@
       ["clause", "root"],
       ["tense", "past"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "arreguikusumoto1998_14",
@@ -470,7 +489,8 @@
       ["embeddedTense", "past"],
       ["embeddedClauses", "2"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "arreguikusumoto1998_18a",
@@ -494,7 +514,8 @@
       ["matrixTense", "past"],
       ["embeddedTense", "past"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "arreguikusumoto1998_18b",
@@ -517,7 +538,8 @@
       ["matrixTense", "past"],
       ["embeddedTense", "past"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "arreguikusumoto1998_20a",
@@ -542,7 +564,8 @@
       ["embeddedTense", "past"],
       ["embeddedClauses", "2"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "arreguikusumoto1998_20b",
@@ -567,7 +590,8 @@
       ["embeddedTense", "past"],
       ["embeddedClauses", "2"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "arreguikusumoto1998_22a",
@@ -596,7 +620,8 @@
       ["embeddedTense", "past"],
       ["embeddedClauses", "2"]
     ],
-    "comment": ""
+    "comment": "The paper prints ze for że.",
+    "verified": "page-image"
   },
   {
     "id": "arreguikusumoto1998_22b",
@@ -625,7 +650,8 @@
       ["embeddedTense", "past"],
       ["embeddedClauses", "2"]
     ],
-    "comment": ""
+    "comment": "The paper prints ze for że.",
+    "verified": "page-image"
   },
   {
     "id": "arreguikusumoto1998_24a",
@@ -646,7 +672,8 @@
       ["matrixTense", "past"],
       ["embeddedTense", "past"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "arreguikusumoto1998_25a",
@@ -667,7 +694,8 @@
       ["matrixTense", "past"],
       ["embeddedTense", "past"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "arreguikusumoto1998_26a",
@@ -695,7 +723,8 @@
       ["embeddedTense", "past"],
       ["embeddedClauses", "2"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "arreguikusumoto1998_26b",
@@ -724,7 +753,8 @@
       ["embeddedTense", "present"],
       ["embeddedClauses", "2"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "arreguikusumoto1998_32",
@@ -753,7 +783,8 @@
       ["embeddedTense", "past"],
       ["embeddedClauses", "2"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "arreguikusumoto1998_35a",
@@ -779,7 +810,8 @@
       ["matrixTense", "past"],
       ["embeddedTense", "present"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "arreguikusumoto1998_35b",
@@ -805,7 +837,8 @@
       ["matrixTense", "past"],
       ["embeddedTense", "past"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "arreguikusumoto1998_36a",
@@ -830,7 +863,8 @@
       ["matrixTense", "past"],
       ["embeddedTense", "present"]
     ],
-    "comment": "The paper attributes (36) to Kuno 1973."
+    "comment": "The paper attributes (36) to Kuno 1973.",
+    "verified": "page-image"
   },
   {
     "id": "arreguikusumoto1998_36b",
@@ -855,7 +889,8 @@
       ["matrixTense", "past"],
       ["embeddedTense", "past"]
     ],
-    "comment": "The paper attributes (36) to Kuno 1973."
+    "comment": "The paper attributes (36) to Kuno 1973.",
+    "verified": "page-image"
   },
   {
     "id": "arreguikusumoto1998_fn1_i",
@@ -879,7 +914,8 @@
       ["clause", "root"],
       ["tense", "present"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "arreguikusumoto1998_fn3_ia",
@@ -903,7 +939,8 @@
       ["matrixTense", "past"],
       ["embeddedTense", "past"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "arreguikusumoto1998_fn3_ib",
@@ -927,6 +964,7 @@
       ["matrixTense", "past"],
       ["embeddedTense", "present"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   }
 ]

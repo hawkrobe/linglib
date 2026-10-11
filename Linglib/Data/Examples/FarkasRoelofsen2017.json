@@ -836,69 +836,6 @@
     "verified": "page-image"
   },
   {
-    "id": "farkasroelofsen2017_68_b",
-    "source": {"bibkey": "farkas-roelofsen-2017", "paperLabel": "(68)"},
-    "language": "stan1293",
-    "primaryText": "Are you going to play soccer?",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "Mother sees child putting on cleats.",
-    "judgment": "acceptable",
-    "alternatives": [],
-    "readings": [],
-    "paperFeatures": [
-      ["form", "fallingInterrogative"],
-      ["evidence", "yes"],
-      ["addressee", "informed"],
-      ["credenceMin", "zero"],
-      ["credenceMax", "zero"]
-    ],
-    "comment": "A polar interrogative would also be appropriate."
-  },
-  {
-    "id": "farkasroelofsen2017_68_d",
-    "source": {"bibkey": "farkas-roelofsen-2017", "paperLabel": "(68)"},
-    "language": "stan1293",
-    "primaryText": "You are going to play soccer, aren't you↑?",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "Mother sees child putting on cleats.",
-    "judgment": "unacceptable",
-    "alternatives": [],
-    "readings": [],
-    "paperFeatures": [
-      ["form", "risingTag"],
-      ["evidence", "yes"],
-      ["addressee", "informed"],
-      ["credenceMin", "zero"],
-      ["credenceMax", "zero"]
-    ],
-    "comment": "A tag interrogative, whether rising or falling, would not be appropriate."
-  },
-  {
-    "id": "farkasroelofsen2017_68_e",
-    "source": {"bibkey": "farkas-roelofsen-2017", "paperLabel": "(68)"},
-    "language": "stan1293",
-    "primaryText": "You are going to play soccer, aren't you↓?",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "Mother sees child putting on cleats.",
-    "judgment": "unacceptable",
-    "alternatives": [],
-    "readings": [],
-    "paperFeatures": [
-      ["form", "fallingTag"],
-      ["evidence", "yes"],
-      ["addressee", "informed"],
-      ["credenceMin", "zero"],
-      ["credenceMax", "zero"]
-    ],
-    "comment": ""
-  },
-  {
     "id": "farkasroelofsen2017_69",
     "source": {"bibkey": "farkas-roelofsen-2017", "paperLabel": "(69)"},
     "language": "stan1293",

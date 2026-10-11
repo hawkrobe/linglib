@@ -18,7 +18,8 @@
       ["roleShift", "broad"],
       ["verb", "DRIVE"]
     ],
-    "comment": "The pole classifier moves past the signer's head on the right; no body rotation. score is the mean acceptability over three sessions on a 7-point scale, in tenths."
+    "comment": "The pole classifier moves past the signer's head on the right; no body rotation. score is the mean acceptability over the paper's three judgments on a 7-point scale, in tenths.",
+    "verified": "page-image"
   },
   {
     "id": "schlenkeretal2026_ex7b",
@@ -39,7 +40,8 @@
       ["roleShift", "broad"],
       ["verb", "DRIVE"]
     ],
-    "comment": "The pole classifier moves past the signer's head on the left; no body rotation. score is the mean acceptability over three sessions on a 7-point scale, in tenths."
+    "comment": "The pole classifier moves past the signer's head on the left; no body rotation. score is the mean acceptability over the paper's three judgments on a 7-point scale, in tenths.",
+    "verified": "page-image"
   },
   {
     "id": "schlenkeretal2026_ex10a",
@@ -60,7 +62,8 @@
       ["roleShift", "broad"],
       ["verb", "DRIVE"]
     ],
-    "comment": "score is the mean acceptability over three sessions on a 7-point scale, in tenths."
+    "comment": "score is the mean acceptability over the paper's three judgments on a 7-point scale, in tenths.",
+    "verified": "page-image"
   },
   {
     "id": "schlenkeretal2026_ex10b",
@@ -81,7 +84,8 @@
       ["roleShift", "broad"],
       ["verb", "DRIVE"]
     ],
-    "comment": "score is the mean acceptability over three sessions on a 7-point scale, in tenths."
+    "comment": "score is the mean acceptability over the paper's three judgments on a 7-point scale, in tenths.",
+    "verified": "page-image"
   },
   {
     "id": "schlenkeretal2026_ex10c",
@@ -102,7 +106,8 @@
       ["roleShift", "broad"],
       ["verb", "DRIVE"]
     ],
-    "comment": "score is the mean acceptability over three sessions on a 7-point scale, in tenths."
+    "comment": "score is the mean acceptability over the paper's three judgments on a 7-point scale, in tenths.",
+    "verified": "page-image"
   },
   {
     "id": "schlenkeretal2026_ex10d",
@@ -123,7 +128,8 @@
       ["roleShift", "broad"],
       ["verb", "DRIVE"]
     ],
-    "comment": "score is the mean acceptability over three sessions on a 7-point scale, in tenths."
+    "comment": "score is the mean acceptability over the paper's three judgments on a 7-point scale, in tenths.",
+    "verified": "page-image"
   },
   {
     "id": "schlenkeretal2026_ex10e",
@@ -144,7 +150,8 @@
       ["roleShift", "broad"],
       ["verb", "DRIVE"]
     ],
-    "comment": "score is the mean acceptability over three sessions on a 7-point scale, in tenths."
+    "comment": "score is the mean acceptability over the paper's three judgments on a 7-point scale, in tenths.",
+    "verified": "page-image"
   },
   {
     "id": "schlenkeretal2026_ex10f",
@@ -165,7 +172,8 @@
       ["roleShift", "broad"],
       ["verb", "DRIVE"]
     ],
-    "comment": "score is the mean acceptability over three sessions on a 7-point scale, in tenths."
+    "comment": "score is the mean acceptability over the paper's three judgments on a 7-point scale, in tenths.",
+    "verified": "page-image"
   },
   {
     "id": "schlenkeretal2026_ex13a",
@@ -187,7 +195,8 @@
       ["verb", "JOG"],
       ["pathDisplayed", "none"]
     ],
-    "comment": "score is the mean acceptability over three sessions on a 7-point scale, in tenths."
+    "comment": "score is the mean acceptability over the paper's three judgments on a 7-point scale, in tenths.",
+    "verified": "page-image"
   },
   {
     "id": "schlenkeretal2026_ex13b",
@@ -209,7 +218,8 @@
       ["verb", "RUN-agreeing"],
       ["pathDisplayed", "forward"]
     ],
-    "comment": "score is the mean acceptability over three sessions on a 7-point scale, in tenths."
+    "comment": "score is the mean acceptability over the paper's three judgments on a 7-point scale, in tenths.",
+    "verified": "page-image"
   },
   {
     "id": "schlenkeretal2026_ex13c",
@@ -220,7 +230,7 @@
     "glossedTokens": [],
     "translation": "Yesterday, I saw a tree. Ann was standing farther away. She hurried toward the tree, passing it on her left.",
     "context": "YESTERDAY IX-1 SEE TREE TREE-cl-b. ANN PERSON-cl-a, IX-a",
-    "judgment": "marginal",
+    "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -231,7 +241,8 @@
       ["verb", "PERSON-cl-agreeing"],
       ["pathDisplayed", "forward"]
     ],
-    "comment": "score is the mean acceptability over three sessions on a 7-point scale, in tenths."
+    "comment": "score is the mean acceptability over the paper's three judgments on a 7-point scale, in tenths. The paper prints scores, not marks, so the judgment is unmarked.",
+    "verified": "page-image"
   },
   {
     "id": "schlenkeretal2026_ex13d",
@@ -253,7 +264,8 @@
       ["verb", "JOG"],
       ["pathDisplayed", "none"]
     ],
-    "comment": "The second consultant found it less acceptable than (13e,f). score is the mean acceptability over three sessions on a 7-point scale, in tenths."
+    "comment": "The second consultant found it less acceptable than (13e,f). score is the mean acceptability over the paper's three judgments on a 7-point scale, in tenths.",
+    "verified": "page-image"
   },
   {
     "id": "schlenkeretal2026_ex13e",
@@ -264,7 +276,7 @@
     "glossedTokens": [],
     "translation": "Yesterday, I saw a tree. Ann was standing farther away. She ran toward the tree, passing it on her right.",
     "context": "YESTERDAY IX-1 SEE TREE TREE-cl-b. ANN PERSON-cl-a, IX-a",
-    "judgment": "marginal",
+    "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -275,7 +287,8 @@
       ["verb", "RUN-agreeing"],
       ["pathDisplayed", "forward"]
     ],
-    "comment": "Individual judgments 5, 7, 4. score is the mean acceptability over three sessions on a 7-point scale, in tenths."
+    "comment": "Individual judgments 5, 7, 4. score is the mean acceptability over the paper's three judgments on a 7-point scale, in tenths. The paper prints scores, not marks, so the judgment is unmarked.",
+    "verified": "page-image"
   },
   {
     "id": "schlenkeretal2026_ex13f",
@@ -286,7 +299,7 @@
     "glossedTokens": [],
     "translation": "Yesterday, I saw a tree. Ann was standing farther away. She hurried toward the tree, passing it on her right.",
     "context": "YESTERDAY IX-1 SEE TREE TREE-cl-b. ANN PERSON-cl-a, IX-a",
-    "judgment": "marginal",
+    "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -297,7 +310,8 @@
       ["verb", "PERSON-cl-agreeing"],
       ["pathDisplayed", "forward"]
     ],
-    "comment": "score is the mean acceptability over three sessions on a 7-point scale, in tenths."
+    "comment": "score is the mean acceptability over the paper's three judgments on a 7-point scale, in tenths. The paper prints scores, not marks, so the judgment is unmarked.",
+    "verified": "page-image"
   },
   {
     "id": "schlenkeretal2026_ex16a",
@@ -318,7 +332,8 @@
       ["roleShift", "broad"],
       ["verb", "JOG"]
     ],
-    "comment": "score is the mean acceptability over three sessions on a 7-point scale, in tenths."
+    "comment": "score is the mean acceptability over the paper's three judgments on a 7-point scale, in tenths.",
+    "verified": "page-image"
   },
   {
     "id": "schlenkeretal2026_ex16b",
@@ -329,7 +344,7 @@
     "glossedTokens": [],
     "translation": "Yesterday, I saw a tree I had planted myself. Ann was drunk. She ran toward the tree and hit her head against it.",
     "context": "YESTERDAY IX-1 SEE TREE TREE-cl-a SELF PLANT TREE GROW. ANN PERSON-cl-b SELF-b DRUNK. IX-b",
-    "judgment": "marginal",
+    "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -339,7 +354,8 @@
       ["roleShift", "broad"],
       ["verb", "RUN-agreeing"]
     ],
-    "comment": "score is the mean acceptability over three sessions on a 7-point scale, in tenths."
+    "comment": "score is the mean acceptability over the paper's three judgments on a 7-point scale, in tenths. The paper prints scores, not marks, so the judgment is unmarked.",
+    "verified": "page-image"
   },
   {
     "id": "schlenkeretal2026_ex16c",
@@ -361,18 +377,19 @@
       ["verb", "RUN-neutral"],
       ["signerMoves", "yes"]
     ],
-    "comment": "score is the mean acceptability over three sessions on a 7-point scale, in tenths."
+    "comment": "score is the mean acceptability over the paper's three judgments on a 7-point scale, in tenths.",
+    "verified": "page-image"
   },
   {
     "id": "schlenkeretal2026_ex16d",
     "source": {"bibkey": "schlenker-lamberton-lamberton-2026", "paperLabel": "(16d)"},
     "language": "amer1248",
-    "primaryText": "1-RUN-front[signer does not move forward] TREE TREE-cl-1[moves and hits the signer's forehead]",
+    "primaryText": "1-RUN-front[signer doesn't move forward] TREE TREE-cl-1[moves and hits the signer's forehead]",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "Yesterday, I saw a tree I had planted myself. Ann was drunk. She ran toward the tree and hit her head against it.",
     "context": "YESTERDAY IX-1 SEE TREE TREE-cl-a SELF PLANT TREE GROW. ANN PERSON-cl-b SELF-b DRUNK. IX-b",
-    "judgment": "marginal",
+    "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -383,7 +400,8 @@
       ["verb", "RUN-neutral"],
       ["signerMoves", "no"]
     ],
-    "comment": "Individual judgments 7, 4, 5. score is the mean acceptability over three sessions on a 7-point scale, in tenths."
+    "comment": "Individual judgments 7, 4, 5. score is the mean acceptability over the paper's three judgments on a 7-point scale, in tenths. The paper prints scores, not marks, so the judgment is unmarked.",
+    "verified": "page-image"
   },
   {
     "id": "schlenkeretal2026_ex16e",
@@ -394,7 +412,7 @@
     "glossedTokens": [],
     "translation": "Yesterday, I saw a tree I had planted myself. Ann was drunk. She hurried toward the tree and hit her head against it.",
     "context": "YESTERDAY IX-1 SEE TREE TREE-cl-a SELF PLANT TREE GROW. ANN PERSON-cl-b SELF-b DRUNK. IX-b",
-    "judgment": "marginal",
+    "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -404,7 +422,8 @@
       ["roleShift", "broad"],
       ["verb", "PERSON-cl-agreeing"]
     ],
-    "comment": "score is the mean acceptability over three sessions on a 7-point scale, in tenths."
+    "comment": "score is the mean acceptability over the paper's three judgments on a 7-point scale, in tenths. The paper prints scores, not marks, so the judgment is unmarked.",
+    "verified": "page-image"
   },
   {
     "id": "schlenkeretal2026_ex16f",
@@ -426,18 +445,19 @@
       ["verb", "PERSON-cl-neutral"],
       ["signerMoves", "yes"]
     ],
-    "comment": "score is the mean acceptability over three sessions on a 7-point scale, in tenths."
+    "comment": "score is the mean acceptability over the paper's three judgments on a 7-point scale, in tenths.",
+    "verified": "page-image"
   },
   {
     "id": "schlenkeretal2026_ex16g",
     "source": {"bibkey": "schlenker-lamberton-lamberton-2026", "paperLabel": "(16g)"},
     "language": "amer1248",
-    "primaryText": "1-PERSON-cl-front[signer does not move forward] TREE TREE-cl-1[moves and hits the signer's forehead]",
+    "primaryText": "1-PERSON-cl-front[signer doesn't move forward] TREE TREE-cl-1[moves and hits the signer's forehead]",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "Yesterday, I saw a tree I had planted myself. Ann was drunk. She hurried toward the tree and hit her head against it.",
     "context": "YESTERDAY IX-1 SEE TREE TREE-cl-a SELF PLANT TREE GROW. ANN PERSON-cl-b SELF-b DRUNK. IX-b",
-    "judgment": "marginal",
+    "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -448,7 +468,8 @@
       ["verb", "PERSON-cl-neutral"],
       ["signerMoves", "no"]
     ],
-    "comment": "Individual judgments 7, 4, 5. score is the mean acceptability over three sessions on a 7-point scale, in tenths."
+    "comment": "Individual judgments 7, 4, 5. score is the mean acceptability over the paper's three judgments on a 7-point scale, in tenths. The paper prints scores, not marks, so the judgment is unmarked.",
+    "verified": "page-image"
   },
   {
     "id": "schlenkeretal2026_ex19a",
@@ -469,7 +490,8 @@
       ["roleShift", "strict"],
       ["verb", "DRIVE"]
     ],
-    "comment": "Role Shift in the strict sense, with body rotation; the role-shifted counterpart of (7). score is the mean acceptability over three sessions on a 7-point scale, in tenths."
+    "comment": "Role Shift in the strict sense, with body rotation; the role-shifted counterpart of (7). score is the mean acceptability over the paper's three judgments on a 7-point scale, in tenths.",
+    "verified": "page-image"
   },
   {
     "id": "schlenkeretal2026_ex19b",
@@ -490,7 +512,8 @@
       ["roleShift", "strict"],
       ["verb", "DRIVE"]
     ],
-    "comment": "Role Shift in the strict sense, with body rotation; the role-shifted counterpart of (7). score is the mean acceptability over three sessions on a 7-point scale, in tenths."
+    "comment": "Role Shift in the strict sense, with body rotation; the role-shifted counterpart of (7). score is the mean acceptability over the paper's three judgments on a 7-point scale, in tenths.",
+    "verified": "page-image"
   },
   {
     "id": "schlenkeretal2026_ex21a",
@@ -500,7 +523,7 @@
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "Yesterday, I saw a tree I had planted myself. Ann was drunk. She jogged toward the tree and hit her head against it.",
-    "context": "YESTERDAY IX-1 SEE TREE TREE-cl-a SELF PLANT TREE GROW. ANN PERSON-cl-b SELF-b DRUNK. IX-b",
+    "context": "YESTERDAY IX-1 SEE TREE TREE-cl-a, SELF PLANT TREE GROW. ANN PERSON-cl-b SELF-b DRUNK. IX-b",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
@@ -511,7 +534,8 @@
       ["roleShift", "strict"],
       ["verb", "JOG"]
     ],
-    "comment": "Role Shift in the strict sense; the role-shifted counterpart of (16). score is the mean acceptability over three sessions on a 7-point scale, in tenths."
+    "comment": "Role Shift in the strict sense; the role-shifted counterpart of (16). score is the mean acceptability over the paper's three judgments on a 7-point scale, in tenths.",
+    "verified": "page-image"
   },
   {
     "id": "schlenkeretal2026_ex21b",
@@ -521,8 +545,8 @@
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "Yesterday, I saw a tree I had planted myself. Ann was drunk. She ran toward the tree and hit her head against it.",
-    "context": "YESTERDAY IX-1 SEE TREE TREE-cl-a SELF PLANT TREE GROW. ANN PERSON-cl-b SELF-b DRUNK. IX-b",
-    "judgment": "marginal",
+    "context": "YESTERDAY IX-1 SEE TREE TREE-cl-a, SELF PLANT TREE GROW. ANN PERSON-cl-b SELF-b DRUNK. IX-b",
+    "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -532,7 +556,8 @@
       ["roleShift", "strict"],
       ["verb", "RUN-agreeing"]
     ],
-    "comment": "The second consultant found it suboptimal because of misalignment with the Role Shift. Role Shift in the strict sense; the role-shifted counterpart of (16). score is the mean acceptability over three sessions on a 7-point scale, in tenths."
+    "comment": "The second consultant found it suboptimal because of misalignment with the Role Shift. Role Shift in the strict sense; the role-shifted counterpart of (16). score is the mean acceptability over the paper's three judgments on a 7-point scale, in tenths. The paper prints scores, not marks, so the judgment is unmarked.",
+    "verified": "page-image"
   },
   {
     "id": "schlenkeretal2026_ex21c",
@@ -542,7 +567,7 @@
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "Yesterday, I saw a tree I had planted myself. Ann was drunk. She ran toward the tree and hit her head against it.",
-    "context": "YESTERDAY IX-1 SEE TREE TREE-cl-a SELF PLANT TREE GROW. ANN PERSON-cl-b SELF-b DRUNK. IX-b",
+    "context": "YESTERDAY IX-1 SEE TREE TREE-cl-a, SELF PLANT TREE GROW. ANN PERSON-cl-b SELF-b DRUNK. IX-b",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
@@ -554,17 +579,18 @@
       ["verb", "RUN-neutral"],
       ["signerMoves", "yes"]
     ],
-    "comment": "Role Shift in the strict sense; the role-shifted counterpart of (16). score is the mean acceptability over three sessions on a 7-point scale, in tenths."
+    "comment": "Role Shift in the strict sense; the role-shifted counterpart of (16). score is the mean acceptability over the paper's three judgments on a 7-point scale, in tenths.",
+    "verified": "page-image"
   },
   {
     "id": "schlenkeretal2026_ex21d",
     "source": {"bibkey": "schlenker-lamberton-lamberton-2026", "paperLabel": "(21d)"},
     "language": "amer1248",
-    "primaryText": "RS-a hurry 1-RUN-front[signer does not move forward] TREE TREE-cl-1[moves and hits the signer's forehead]",
+    "primaryText": "RS-a hurry 1-RUN-front[signer doesn't move forward] TREE TREE-cl-1[moves and hits the signer's forehead]",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "Yesterday, I saw a tree I had planted myself. Ann was drunk. She ran toward the tree and hit her head against it.",
-    "context": "YESTERDAY IX-1 SEE TREE TREE-cl-a SELF PLANT TREE GROW. ANN PERSON-cl-b SELF-b DRUNK. IX-b",
+    "context": "YESTERDAY IX-1 SEE TREE TREE-cl-a, SELF PLANT TREE GROW. ANN PERSON-cl-b SELF-b DRUNK. IX-b",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
@@ -576,7 +602,8 @@
       ["verb", "RUN-neutral"],
       ["signerMoves", "no"]
     ],
-    "comment": "Role Shift in the strict sense; the role-shifted counterpart of (16). score is the mean acceptability over three sessions on a 7-point scale, in tenths."
+    "comment": "Role Shift in the strict sense; the role-shifted counterpart of (16). score is the mean acceptability over the paper's three judgments on a 7-point scale, in tenths.",
+    "verified": "page-image"
   },
   {
     "id": "schlenkeretal2026_ex21e",
@@ -586,8 +613,8 @@
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "Yesterday, I saw a tree I had planted myself. Ann was drunk. She hurried toward the tree and hit her head against it.",
-    "context": "YESTERDAY IX-1 SEE TREE TREE-cl-a SELF PLANT TREE GROW. ANN PERSON-cl-b SELF-b DRUNK. IX-b",
-    "judgment": "marginal",
+    "context": "YESTERDAY IX-1 SEE TREE TREE-cl-a, SELF PLANT TREE GROW. ANN PERSON-cl-b SELF-b DRUNK. IX-b",
+    "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -597,7 +624,8 @@
       ["roleShift", "strict"],
       ["verb", "PERSON-cl-agreeing"]
     ],
-    "comment": "Role Shift in the strict sense; the role-shifted counterpart of (16). score is the mean acceptability over three sessions on a 7-point scale, in tenths."
+    "comment": "Role Shift in the strict sense; the role-shifted counterpart of (16). score is the mean acceptability over the paper's three judgments on a 7-point scale, in tenths. The paper prints scores, not marks, so the judgment is unmarked.",
+    "verified": "page-image"
   },
   {
     "id": "schlenkeretal2026_ex21f",
@@ -607,7 +635,7 @@
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "Yesterday, I saw a tree I had planted myself. Ann was drunk. She hurried toward the tree and hit her head against it.",
-    "context": "YESTERDAY IX-1 SEE TREE TREE-cl-a SELF PLANT TREE GROW. ANN PERSON-cl-b SELF-b DRUNK. IX-b",
+    "context": "YESTERDAY IX-1 SEE TREE TREE-cl-a, SELF PLANT TREE GROW. ANN PERSON-cl-b SELF-b DRUNK. IX-b",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
@@ -619,17 +647,18 @@
       ["verb", "PERSON-cl-neutral"],
       ["signerMoves", "yes"]
     ],
-    "comment": "Role Shift in the strict sense; the role-shifted counterpart of (16). score is the mean acceptability over three sessions on a 7-point scale, in tenths."
+    "comment": "Role Shift in the strict sense; the role-shifted counterpart of (16). score is the mean acceptability over the paper's three judgments on a 7-point scale, in tenths.",
+    "verified": "page-image"
   },
   {
     "id": "schlenkeretal2026_ex21g",
     "source": {"bibkey": "schlenker-lamberton-lamberton-2026", "paperLabel": "(21g)"},
     "language": "amer1248",
-    "primaryText": "RS-a hurry 1-PERSON-cl-front[signer does not move forward] TREE TREE-cl-1[moves and hits the signer's forehead]",
+    "primaryText": "RS-a hurry 1-PERSON-cl-front[signer doesn't move forward] TREE TREE-cl-1[moves and hits the signer's forehead]",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "Yesterday, I saw a tree I had planted myself. Ann was drunk. She hurried toward the tree and hit her head against it.",
-    "context": "YESTERDAY IX-1 SEE TREE TREE-cl-a SELF PLANT TREE GROW. ANN PERSON-cl-b SELF-b DRUNK. IX-b",
+    "context": "YESTERDAY IX-1 SEE TREE TREE-cl-a, SELF PLANT TREE GROW. ANN PERSON-cl-b SELF-b DRUNK. IX-b",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
@@ -641,13 +670,14 @@
       ["verb", "PERSON-cl-neutral"],
       ["signerMoves", "no"]
     ],
-    "comment": "Role Shift in the strict sense; the role-shifted counterpart of (16). score is the mean acceptability over three sessions on a 7-point scale, in tenths."
+    "comment": "Role Shift in the strict sense; the role-shifted counterpart of (16). score is the mean acceptability over the paper's three judgments on a 7-point scale, in tenths.",
+    "verified": "page-image"
   },
   {
     "id": "schlenkeretal2026_ex23a",
     "source": {"bibkey": "schlenker-lamberton-lamberton-2026", "paperLabel": "(23a)"},
     "language": "amer1248",
-    "primaryText": "RS-b effort PERSON-cl[run] ^ TREE-cl[passing-rep]",
+    "primaryText": "RS-b effort PERSON-cl[run] ^ TREE-cl[passing]-rep",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "Yesterday, I saw Ann; she had to run away from the police. She passed several trees.",
@@ -662,13 +692,14 @@
       ["roleShift", "strict"],
       ["figure", "PERSON-cl"]
     ],
-    "comment": "Two classifiers: a person classifier runs in place while the tree classifier passes repeatedly. score is the mean acceptability over three sessions on a 7-point scale, in tenths."
+    "comment": "Two classifiers: a person classifier runs in place while the tree classifier passes repeatedly. score is the mean acceptability over the paper's three judgments on a 7-point scale, in tenths.",
+    "verified": "page-image"
   },
   {
     "id": "schlenkeretal2026_ex23b",
     "source": {"bibkey": "schlenker-lamberton-lamberton-2026", "paperLabel": "(23b)"},
     "language": "amer1248",
-    "primaryText": "effort PERSON-cl[run] ^ TREE-cl[passing-rep]",
+    "primaryText": "effort PERSON-cl[run] ^ TREE-cl[passing]-rep",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "Yesterday, I saw Ann; she had to run away from the police. She passed several trees.",
@@ -683,13 +714,14 @@
       ["roleShift", "broad"],
       ["figure", "PERSON-cl"]
     ],
-    "comment": "As (23a) without body rotation. score is the mean acceptability over three sessions on a 7-point scale, in tenths."
+    "comment": "As (23a) without body rotation. score is the mean acceptability over the paper's three judgments on a 7-point scale, in tenths.",
+    "verified": "page-image"
   },
   {
     "id": "schlenkeretal2026_ex24a",
     "source": {"bibkey": "schlenker-lamberton-lamberton-2026", "paperLabel": "(24a)"},
     "language": "amer1248",
-    "primaryText": "RS-b effort VEHICLE-cl ^ POLE-cl[passing-rep]",
+    "primaryText": "RS-b effort VEHICLE-cl ^ POLE-cl[passing]-rep",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "Yesterday, Ann took part in a car race. She had to drive past telephone poles. She passed several poles.",
@@ -704,13 +736,14 @@
       ["roleShift", "strict"],
       ["figure", "VEHICLE-cl"]
     ],
-    "comment": "Two classifiers: the ground classifier moves relative to the vehicle classifier. score is the mean acceptability over three sessions on a 7-point scale, in tenths."
+    "comment": "Two classifiers: the ground classifier moves relative to the vehicle classifier. score is the mean acceptability over the paper's three judgments on a 7-point scale, in tenths.",
+    "verified": "page-image"
   },
   {
     "id": "schlenkeretal2026_ex24b",
     "source": {"bibkey": "schlenker-lamberton-lamberton-2026", "paperLabel": "(24b)"},
     "language": "amer1248",
-    "primaryText": "effort VEHICLE-cl ^ POLE-cl[passing-rep]",
+    "primaryText": "effort VEHICLE-cl ^ POLE-cl[passing]-rep",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "Yesterday, Ann took part in a car race. She had to drive past telephone poles. She passed several poles.",
@@ -725,6 +758,7 @@
       ["roleShift", "broad"],
       ["figure", "VEHICLE-cl"]
     ],
-    "comment": "As (24a) without body rotation. score is the mean acceptability over three sessions on a 7-point scale, in tenths."
+    "comment": "As (24a) without body rotation. score is the mean acceptability over the paper's three judgments on a 7-point scale, in tenths.",
+    "verified": "page-image"
   }
 ]

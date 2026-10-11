@@ -1510,19 +1510,6 @@ def ex_6_42a : Datum :=
     readings := []
     paperFeatures := [("verbFirst", "yes"), ("conjunctAgreement", "nearest")] }
 
-def ex_6_42b : Datum :=
-  { id := "corbett2000_6_42b"
-    source := ⟨"corbett-2000", "ch. 6 (42)"⟩
-    reportedIn := none
-    language := "moro1292"
-    primaryText := "Mšaw ʕumar w ʕali"
-    glossedTokens := [("Mšaw", "left.PL"), ("ʕumar", "Omar"), ("w", "and"), ("ʕali", "Ali")]
-    context := ""
-    judgment := .acceptable
-    alternatives := []
-    readings := []
-    paperFeatures := [("verbFirst", "yes"), ("conjunctAgreement", "all")] }
-
 def ex_6_43a : Datum :=
   { id := "corbett2000_6_43a"
     source := ⟨"corbett-2000", "ch. 6 (43)"⟩
@@ -1666,6 +1653,6 @@ def ex_6_53 : Datum :=
     readings := []
     paperFeatures := [] }
 
-def all : List Datum := [ex_2_1, ex_2_2, ex_2_3, ex_2_4, ex_2_8, ex_2_9, ex_2_10, ex_2_13, ex_2_14, ex_2_15, ex_2_16, ex_2_32, ex_2_33, ex_2_34, ex_2_35, ex_2_23, ex_3_2, ex_3_3, ex_3_4, ex_3_5, ex_3_6, ex_3_7, ex_3_8, ex_3_9, ex_3_10, ex_3_11, ex_3_12, ex_3_13, ex_3_14, ex_3_15, ex_3_17, ex_3_18, ex_3_19, ex_3_20, ex_3_21, ex_3_22, ex_3_23, ex_3_24, ex_3_25, ex_3_26, ex_3_27, ex_3_28, ex_4_1, ex_4_2, ex_4_3, ex_4_4, ex_4_5, ex_4_6, ex_4_12, ex_4_13, ex_4_14, ex_4_15, ex_4_27, ex_4_28, ex_4_29, ex_4_30, ex_5_21, ex_5_22, ex_5_23, ex_5_40, ex_5_41, ex_5_42, ex_5_43, ex_5_44, ex_5_45, ex_5_46, ex_5_47, ex_5_48, ex_5_49, ex_6_1, ex_6_2, ex_6_4, ex_6_5, ex_6_6, ex_6_7, ex_6_8, ex_6_9, ex_6_10, ex_6_11, ex_6_12, ex_6_14, ex_6_15, ex_6_16, ex_6_17, ex_6_19a, ex_6_19b, ex_6_20a, ex_6_20b, ex_6_21a, ex_6_21b, ex_6_22a, ex_6_22b, ex_6_23, ex_6_24, ex_6_25, ex_6_26, ex_6_28, ex_6_28v, ex_6_29, ex_6_29v, ex_6_30, ex_6_31, ex_6_32, ex_6_33, ex_6_34, ex_6_35, ex_6_36, ex_6_37, ex_6_38, ex_6_39, ex_6_40a, ex_6_40b, ex_6_41a, ex_6_41b, ex_6_42a, ex_6_42b, ex_6_43a, ex_6_43b, ex_6_44a, ex_6_44b, ex_6_45, ex_6_46, ex_6_49, ex_6_50, ex_6_51, ex_6_52, ex_6_53]
+def all : List Datum := [ex_2_1, ex_2_2, ex_2_3, ex_2_4, ex_2_8, ex_2_9, ex_2_10, ex_2_13, ex_2_14, ex_2_15, ex_2_16, ex_2_32, ex_2_33, ex_2_34, ex_2_35, ex_2_23, ex_3_2, ex_3_3, ex_3_4, ex_3_5, ex_3_6, ex_3_7, ex_3_8, ex_3_9, ex_3_10, ex_3_11, ex_3_12, ex_3_13, ex_3_14, ex_3_15, ex_3_17, ex_3_18, ex_3_19, ex_3_20, ex_3_21, ex_3_22, ex_3_23, ex_3_24, ex_3_25, ex_3_26, ex_3_27, ex_3_28, ex_4_1, ex_4_2, ex_4_3, ex_4_4, ex_4_5, ex_4_6, ex_4_12, ex_4_13, ex_4_14, ex_4_15, ex_4_27, ex_4_28, ex_4_29, ex_4_30, ex_5_21, ex_5_22, ex_5_23, ex_5_40, ex_5_41, ex_5_42, ex_5_43, ex_5_44, ex_5_45, ex_5_46, ex_5_47, ex_5_48, ex_5_49, ex_6_1, ex_6_2, ex_6_4, ex_6_5, ex_6_6, ex_6_7, ex_6_8, ex_6_9, ex_6_10, ex_6_11, ex_6_12, ex_6_14, ex_6_15, ex_6_16, ex_6_17, ex_6_19a, ex_6_19b, ex_6_20a, ex_6_20b, ex_6_21a, ex_6_21b, ex_6_22a, ex_6_22b, ex_6_23, ex_6_24, ex_6_25, ex_6_26, ex_6_28, ex_6_28v, ex_6_29, ex_6_29v, ex_6_30, ex_6_31, ex_6_32, ex_6_33, ex_6_34, ex_6_35, ex_6_36, ex_6_37, ex_6_38, ex_6_39, ex_6_40a, ex_6_40b, ex_6_41a, ex_6_41b, ex_6_42a, ex_6_43a, ex_6_43b, ex_6_44a, ex_6_44b, ex_6_45, ex_6_46, ex_6_49, ex_6_50, ex_6_51, ex_6_52, ex_6_53]
 
 end Corbett2000.Examples

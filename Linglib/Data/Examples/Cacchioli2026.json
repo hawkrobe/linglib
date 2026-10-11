@@ -1,13 +1,13 @@
 [
   {
     "id": "cacchioli2026_5b",
-    "source": {"bibkey": "cacchioli-2026", "paperLabel": "ex. (5b)"},
+    "source": {"bibkey": "cacchioli-2026", "paperLabel": "ch. 5, ex. (5b)"},
     "reportedIn": null,
     "language": "tigr1271",
-    "primaryText": "mɨs dɨm-ay ʔaj-ts'awɛti-n",
+    "primaryText": "mɨs dɨm-ay ʔaj-ts'awɛtɨ-n",
     "discourseSegments": [],
     "glossedTokens": [
-      ["mɨs", "with"], ["dɨm-ay", "cat-POSS.1S"], ["ʔaj-Ø-ts'awɛti-n", "NEG-SM.1S-play.IPFV-NEG"]
+      ["mɨs", "with"], ["dɨm-ay", "cat-POSS.1S"], ["ʔaj-Ø-ts'awɛtɨ-n", "NEG-SM.1S-play.IPFV-NEG"]
     ],
     "translation": "I do not play with my cat.",
     "context": "",
@@ -18,11 +18,12 @@
       ["clause", "root"],
       ["neg_suffix", "present"]
     ],
-    "comment": "Negative counterpart of (5a) mɨs dɨm-ay ji-ts'awɛt 'I play with my cat'."
+    "comment": "Negative counterpart of (5a) mɨs dɨm-ay jɨ-ts'awɛt 'I play with my cat'.",
+    "verified": "page-image"
   },
   {
     "id": "cacchioli2026_12a",
-    "source": {"bibkey": "cacchioli-2026", "paperLabel": "ex. (12a)"},
+    "source": {"bibkey": "cacchioli-2026", "paperLabel": "ch. 5, ex. (12a)"},
     "reportedIn": null,
     "language": "tigr1271",
     "primaryText": "ʔɨt-om ʔanɛ z-ɛj-nbɨb-om mɛts'ħafti ʔab-t-i ʔarmadyo ʔall-ɛwo",
@@ -44,18 +45,19 @@
       ["clause", "relative"],
       ["neg_suffix", "absent"]
     ],
-    "comment": "(12b) suffix alone and (12c) prefix plus suffix are both ungrammatical in a relative clause; ʔaj- surfaces as ɛj- after zɨ-."
+    "comment": "(12b) suffix alone and (12c) prefix plus suffix are both ungrammatical in a relative clause; ʔaj- surfaces as ɛj- after zɨ-.",
+    "verified": "page-image"
   },
   {
     "id": "cacchioli2026_14",
-    "source": {"bibkey": "cacchioli-2026", "paperLabel": "ex. (14)"},
+    "source": {"bibkey": "cacchioli-2026", "paperLabel": "ch. 5, ex. (14)"},
     "reportedIn": null,
     "language": "tigr1271",
-    "primaryText": "Kidanɛ mɛts'ħafti z-ɛj-nbib ji-mɛsɨl",
+    "primaryText": "Kidanɛ mɛts'ħafti z-ɛj-nbib jɨ-mɛsɨl",
     "discourseSegments": [],
     "glossedTokens": [
       ["Kidanɛ", "Kidane"], ["mɛts'ħafti", "book.MP"], ["z-ɛj-Ø-nbib", "REL-NEG-SM.3MS-read.IPFV"],
-      ["ji-mɛsɨl", "SM.3MS-seem.IPFV"]
+      ["jɨ-mɛsɨl", "SM.3MS-seem.IPFV"]
     ],
     "translation": "Kidane seems to not read books.",
     "context": "",
@@ -66,11 +68,12 @@
       ["clause", "seem"],
       ["neg_suffix", "absent"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "cacchioli2026_15",
-    "source": {"bibkey": "cacchioli-2026", "paperLabel": "ex. (15)"},
+    "source": {"bibkey": "cacchioli-2026", "paperLabel": "ch. 5, ex. (15)"},
     "reportedIn": null,
     "language": "tigr1271",
     "primaryText": "nɨssu ʔɨntɛ z-ɛj-xɛjɨd k-ɨ-bɛli ʔijj-ɛ",
@@ -88,11 +91,12 @@
       ["clause", "conditional"],
       ["neg_suffix", "absent"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "cacchioli2026_16",
-    "source": {"bibkey": "cacchioli-2026", "paperLabel": "ex. (16)"},
+    "source": {"bibkey": "cacchioli-2026", "paperLabel": "ch. 5, ex. (16)"},
     "reportedIn": null,
     "language": "tigr1271",
     "primaryText": "ʔaman ʔɨntay kɛm-z-ɛj-fɛttu ħatit-u-ni",
@@ -113,11 +117,12 @@
       ["typer", "kemzi"],
       ["matrix_verb", "ask"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "cacchioli2026_20",
-    "source": {"bibkey": "cacchioli-2026", "paperLabel": "ex. (20)"},
+    "source": {"bibkey": "cacchioli-2026", "paperLabel": "ch. 5, ex. (20)"},
     "reportedIn": null,
     "language": "tigr1271",
     "primaryText": "k-ɛj-bɛki fɛttin-ɛ",
@@ -137,11 +142,12 @@
       ["typer", "ki"],
       ["matrix_verb", "try"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "cacchioli2026_21",
-    "source": {"bibkey": "cacchioli-2026", "paperLabel": "ex. (21)"},
+    "source": {"bibkey": "cacchioli-2026", "paperLabel": "ch. 5, ex. (21)"},
     "reportedIn": null,
     "language": "tigr1271",
     "primaryText": "dɛrho k-ɛj-nɛfɨr ʔaziz-u",
@@ -162,17 +168,18 @@
       ["typer", "ki"],
       ["matrix_verb", "order"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "cacchioli2026_22",
-    "source": {"bibkey": "cacchioli-2026", "paperLabel": "ex. (22)"},
+    "source": {"bibkey": "cacchioli-2026", "paperLabel": "ch. 5, ex. (22)"},
     "reportedIn": null,
     "language": "tigr1271",
-    "primaryText": "ʔɨt-a sɛbɛjti k-ɛj-tɨ-xɛjjɨd dɛli-na",
+    "primaryText": "ʔɨt-a sɛbɛjɨti k-ɛj-tɨ-xɛjjɨd dɛli-na",
     "discourseSegments": [],
     "glossedTokens": [
-      ["ʔɨt-a", "DIST-FS"], ["sɛbɛjti", "woman"], ["k-ɛj-tɨ-xɛjjɨd", "SBJ-NEG-SM.3FS-go.IPFV"],
+      ["ʔɨt-a", "DIST-FS"], ["sɛbɛjɨti", "woman"], ["k-ɛj-tɨ-xɛjjɨd", "SBJ-NEG-SM.3FS-go.IPFV"],
       ["dɛli-na", "want.GER-SM.1P"]
     ],
     "translation": "We wanted the woman not to leave.",
@@ -187,18 +194,19 @@
       ["typer", "ki"],
       ["matrix_verb", "want"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "cacchioli2026_23",
-    "source": {"bibkey": "cacchioli-2026", "paperLabel": "ex. (23)"},
+    "source": {"bibkey": "cacchioli-2026", "paperLabel": "ch. 5, ex. (23)"},
     "reportedIn": null,
     "language": "tigr1271",
-    "primaryText": "n-ɨt-i ʔanbɛsa k-ɛj-bɛrbɛr qɛs tɛzawir-ɛ",
+    "primaryText": "n-ɨt-i ʔanbɛsa k-ɛj-bɛrbɛr ʁɛs tɛzawir-ɛ",
     "discourseSegments": [],
     "glossedTokens": [
       ["n-ɨt-i", "DOM-DIST-MS"], ["ʔanbɛsa", "lion"],
-      ["k-ɛj-Ø-bɛrbɛr", "SBJ-NEG-SM.3MS-wake up.IPFV"], ["qɛs", "slowly"],
+      ["k-ɛj-Ø-bɛrbɛr", "SBJ-NEG-SM.3MS-wake_up.IPFV"], ["ʁɛs", "slowly"],
       ["tɛzawir-ɛ", "walk.GER-SM.1S"]
     ],
     "translation": "I walked slowly to not wake up the lion.",
@@ -210,11 +218,12 @@
       ["clause", "purpose"],
       ["neg_suffix", "absent"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "cacchioli2026_24",
-    "source": {"bibkey": "cacchioli-2026", "paperLabel": "ex. (24)"},
+    "source": {"bibkey": "cacchioli-2026", "paperLabel": "ch. 5, ex. (24)"},
     "reportedIn": null,
     "language": "tigr1271",
     "primaryText": "Tɛwɛldɛ ʔɨħmɨlti ʔaj-k-ɨ-bɛlʔɨ-n ʔijj-u",
@@ -232,24 +241,28 @@
       ["clause", "future"],
       ["neg_suffix", "present"]
     ],
-    "comment": "The negative future: ʔaj- precedes kɨ- and the suffix is present."
+    "comment": "The negative future: ʔaj- precedes kɨ- and the suffix is present.",
+    "verified": "page-image"
   },
   {
     "id": "cacchioli2026_25",
-    "source": {"bibkey": "cacchioli-2026", "paperLabel": "ex. (25)"},
+    "source": {"bibkey": "cacchioli-2026", "paperLabel": "ch. 5, ex. (25)"},
     "reportedIn": null,
     "language": "tigr1271",
-    "primaryText": "dɛrho ʔaj-nɨfɨri-n ʔɨl-ɛ gɛlits'-ɛ",
+    "primaryText": "dɛrho ʔaj-nɨfɨrɨ-n ʔɨl-ɛ gɛlits'-ɛ",
     "discourseSegments": [],
     "glossedTokens": [
-      ["dɛrho", "chicken"], ["ʔaj-Ø-nɨfɨri-n", "NEG-SM.3MS-fly.IPFV-NEG"], ["ʔɨl-ɛ", "COMP-SM.1S"],
+      ["dɛrho", "chicken"], ["ʔaj-Ø-nɨfɨrɨ-n", "NEG-SM.3MS-fly.IPFV-NEG"], ["ʔɨl-ɛ", "COMP-SM.1S"],
       ["gɛlits'-ɛ", "explain.GER-SM.1S"]
     ],
     "translation": "I explained that a chicken does not fly.",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [
-      {"form": "dɛrho ʔaj-nɨfɨri ʔɨl-ɛ gɛlits'-ɛ", "judgment": "ungrammatical"}
+      {
+        "form": "dɛrho ʔaj-nɨfɨrɨ ʔɨl-ɛ gɛlits'-ɛ",
+        "judgment": "ungrammatical"
+      }
     ],
     "readings": [],
     "paperFeatures": [
@@ -259,18 +272,19 @@
       ["typer", "ilu"],
       ["matrix_verb", "explain"]
     ],
-    "comment": "Printed as ʔaj-Ø-nɨfɨri-*(n): the suffix is obligatory."
+    "comment": "Printed as ʔaj-Ø-nɨfɨrɨ-*(n): the suffix is obligatory.",
+    "verified": "page-image"
   },
   {
     "id": "cacchioli2026_29",
-    "source": {"bibkey": "cacchioli-2026", "paperLabel": "ex. (29)"},
+    "source": {"bibkey": "cacchioli-2026", "paperLabel": "ch. 3, ex. (29)"},
     "reportedIn": null,
     "language": "tigr1271",
-    "primaryText": "bzuħ gɨziɛ nɨsu sinɛma kɛm-z-ɨ-xɛjjɨd ji-fɛllɨt'",
+    "primaryText": "bzuħ gɨzie nɨsu sinɛma kɛm-z-ɨ-xɛjjɨd jɨ-fɛllɨt'",
     "discourseSegments": [],
     "glossedTokens": [
-      ["bzuħ gɨziɛ", "often"], ["nɨsu", "he"], ["sinɛma", "cinema"],
-      ["kɛm-z-ɨ-xɛjjɨd", "COMP-REL-SM.3MS-go.IPFV"], ["ji-fɛllɨt'", "SM.1S-know.IPFV"]
+      ["bzuħ gɨzie", "often"], ["nɨsu", "he"], ["sinɛma", "cinema"],
+      ["kɛm-z-ɨ-xɛjjɨd", "COMP-REL-SM.3MS-go.IPFV"], ["jɨ-fɛllɨt'", "SM.1S-know.IPFV"]
     ],
     "translation": "I know that he often goes to the cinema.",
     "context": "",
@@ -282,17 +296,18 @@
       ["typer", "kemzi"],
       ["matrix_verb", "know"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "cacchioli2026_30",
-    "source": {"bibkey": "cacchioli-2026", "paperLabel": "ex. (30)"},
+    "source": {"bibkey": "cacchioli-2026", "paperLabel": "ch. 3, ex. (30)"},
     "reportedIn": null,
     "language": "tigr1271",
-    "primaryText": "fadus gɨziɛ kɛm-z-ɨ-mɛts'ɨʔ rɛsiʕ-ɛ",
+    "primaryText": "fadus gɨzɨɛ kɛm-z-ɨ-mɛts'ɨʔ rɛsiʕ-ɛ",
     "discourseSegments": [],
     "glossedTokens": [
-      ["fadus", "noon"], ["gɨziɛ", "time"], ["kɛm-z-ɨ-mɛts'ɨʔ", "COMP-REL-SM.3MS-come.IPFV"],
+      ["fadus", "noon"], ["gɨzɨɛ", "time"], ["kɛm-z-ɨ-mɛts'ɨʔ", "COMP-REL-SM.3MS-come.IPFV"],
       ["rɛsiʕ-ɛ", "forget.GER-SM.1S"]
     ],
     "translation": "I forgot that he comes at noon.",
@@ -305,17 +320,18 @@
       ["typer", "kemzi"],
       ["matrix_verb", "forget"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "cacchioli2026_31",
-    "source": {"bibkey": "cacchioli-2026", "paperLabel": "ex. (31)"},
+    "source": {"bibkey": "cacchioli-2026", "paperLabel": "ch. 3, ex. (31)"},
     "reportedIn": null,
     "language": "tigr1271",
-    "primaryText": "kɛm-z-ɨ-fɛt-wa ji-ʔɛmɨn",
+    "primaryText": "kɛm-z-ɨ-fɛt-wa jɨ-ʔɛmɨn",
     "discourseSegments": [],
     "glossedTokens": [
-      ["kɛm-z-ɨ-fɛt-wa", "COMP-REL-SM.3MS-like.IPFV-OM.3FS"], ["ji-ʔɛmɨn", "SM.3MS-admit.IPFV"]
+      ["kɛm-z-ɨ-fɛt-wa", "COMP-REL-SM.3MS-like.IPFV-OM.3FS"], ["jɨ-ʔɛmɨn", "SM.3MS-admit.IPFV"]
     ],
     "translation": "He admits that he likes her.",
     "context": "",
@@ -327,18 +343,19 @@
       ["typer", "kemzi"],
       ["matrix_verb", "admit"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "cacchioli2026_32",
-    "source": {"bibkey": "cacchioli-2026", "paperLabel": "ex. (32)"},
+    "source": {"bibkey": "cacchioli-2026", "paperLabel": "ch. 3, ex. (32)"},
     "reportedIn": null,
     "language": "tigr1271",
-    "primaryText": "ħaʃɛrɛ-tat kɛm-z-ɨ-fɛttu ji-qɛbɨl",
+    "primaryText": "ħaʃɛrɛ-tat kɛm-z-ɨ-fɛttu jɨ-qɛbɨl",
     "discourseSegments": [],
     "glossedTokens": [
-      ["ħaʃɛrɛ-tat", "spider-P"], ["kɛm-z-ɨ-fɛttu", "COMP-REL-SM.1S-like.IPFV"],
-      ["ji-qɛbɨl", "SM.1S-accept.IPFV"]
+      ["ħaʃɛrɛ-tat", "spider.P"], ["kɛm-z-ɨ-fɛttu", "COMP-REL-SM.1S-like.IPFV"],
+      ["jɨ-qɛbɨl", "SM.1S-accept.IPFV"]
     ],
     "translation": "I accept that he likes spiders.",
     "context": "",
@@ -350,18 +367,19 @@
       ["typer", "kemzi"],
       ["matrix_verb", "accept"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "cacchioli2026_33",
-    "source": {"bibkey": "cacchioli-2026", "paperLabel": "ex. (33)"},
+    "source": {"bibkey": "cacchioli-2026", "paperLabel": "ch. 3, ex. (33)"},
     "reportedIn": null,
     "language": "tigr1271",
-    "primaryText": "ʔaman Tɛsfay mɛts'ħafti kɛm-z-ɨ-ʃɛjɨt ji-ħasɨb",
+    "primaryText": "ʔaman Tɛsfay mɛts'ħafti kɛm-z-ɨ-ʃɛjɨt jɨ-ħasɨb",
     "discourseSegments": [],
     "glossedTokens": [
       ["ʔaman", "Aman"], ["Tɛsfay", "Tesfay"], ["mɛts'ħafti", "book.FP"],
-      ["kɛm-z-ɨ-ʃɛjɨt", "COMP-REL-SM.3MS-sell.IPFV"], ["ji-ħasɨb", "SM.3MS-think.IPFV"]
+      ["kɛm-z-ɨ-ʃɛjɨt", "COMP-REL-SM.3MS-sell.IPFV"], ["jɨ-ħasɨb", "SM.3MS-think.IPFV"]
     ],
     "translation": "Aman thinks that Tesfay sells books.",
     "context": "",
@@ -373,18 +391,19 @@
       ["typer", "kemzi"],
       ["matrix_verb", "think"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "cacchioli2026_34",
-    "source": {"bibkey": "cacchioli-2026", "paperLabel": "ex. (34)"},
+    "source": {"bibkey": "cacchioli-2026", "paperLabel": "ch. 3, ex. (34)"},
     "reportedIn": null,
     "language": "tigr1271",
-    "primaryText": "ʔaman Tɛsfay mɛts'ħafti kɛm-z-ɨ-ʃɛjɨt ji-ʔamɨn",
+    "primaryText": "ʔaman Tɛsfay mɛts'ħafti kɛm-z-ɨ-ʃɛjɨt jɨ-ʔamɨn",
     "discourseSegments": [],
     "glossedTokens": [
       ["ʔaman", "Aman"], ["Tɛsfay", "Tesfay"], ["mɛts'ħafti", "book.FP"],
-      ["kɛm-z-ɨ-ʃɛjɨt", "COMP-REL-SM.3MS-sell.IPFV"], ["ji-ʔamɨn", "SM.3MS-believe.IPFV"]
+      ["kɛm-z-ɨ-ʃɛjɨt", "COMP-REL-SM.3MS-sell.IPFV"], ["jɨ-ʔamɨn", "SM.3MS-believe.IPFV"]
     ],
     "translation": "Aman believes that Tesfay sells books.",
     "context": "",
@@ -396,18 +415,19 @@
       ["typer", "kemzi"],
       ["matrix_verb", "believe"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "cacchioli2026_35",
-    "source": {"bibkey": "cacchioli-2026", "paperLabel": "ex. (35)"},
+    "source": {"bibkey": "cacchioli-2026", "paperLabel": "ch. 3, ex. (35)"},
     "reportedIn": null,
     "language": "tigr1271",
-    "primaryText": "nsu gɛnzɛb kɛm-z-ɨ-sɛrrix ji-t'irɨt'r-o",
+    "primaryText": "nsu gɛnzɛb kɛm-z-ɨ-sɛrrɨx jɨ-t'ɨrɨt'r-o",
     "discourseSegments": [],
     "glossedTokens": [
-      ["nsu", "he"], ["gɛnzɛb", "money"], ["kɛm-z-ɨ-sɛrrix", "COMP-REL-SM.3MS-steal.IPFV"],
-      ["ji-t'irɨt'r-o", "SM.3MS-suspect.IPFV-OM.3MS"]
+      ["nsu", "he"], ["gɛnzɛb", "money"], ["kɛm-z-ɨ-sɛrrɨx", "COMP-REL-SM.3MS-steal.IPFV"],
+      ["jɨ-t'ɨrɨt'r-o", "SM.3MS-suspect.IPFV-OM.3MS"]
     ],
     "translation": "I suspect that he steals money.",
     "context": "",
@@ -419,11 +439,12 @@
       ["typer", "kemzi"],
       ["matrix_verb", "suspect"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "cacchioli2026_51",
-    "source": {"bibkey": "cacchioli-2026", "paperLabel": "ex. (51)"},
+    "source": {"bibkey": "cacchioli-2026", "paperLabel": "ch. 3, ex. (51)"},
     "reportedIn": null,
     "language": "tigr1271",
     "primaryText": "qɛbaʔi kɛm-zɨ-kon-ɨt sɛmiʕ-ɛ",
@@ -442,24 +463,28 @@
       ["typer", "kemzi"],
       ["matrix_verb", "hear"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "cacchioli2026_52a",
-    "source": {"bibkey": "cacchioli-2026", "paperLabel": "ex. (52a)"},
+    "source": {"bibkey": "cacchioli-2026", "paperLabel": "ch. 3, ex. (52a)"},
     "reportedIn": null,
     "language": "tigr1271",
-    "primaryText": "nɨsatom kɛm-zɨ-tɛmɛrʕa-wu riʔɛy-ɛ",
+    "primaryText": "nɨsatom kɛm-zɨ-tɛmɛrʕa-wu rɨʔɛy-ɛ",
     "discourseSegments": [],
     "glossedTokens": [
       ["nɨsatom", "they"], ["kɛm-zɨ-Ø-tɛmɛrʕa-wu", "COMP-REL-SM.3MP-marry.IPFV-SM.3MP"],
-      ["riʔɛy-ɛ", "see.GER-SM.1S"]
+      ["rɨʔɛy-ɛ", "see.GER-SM.1S"]
     ],
     "translation": "I saw that they got married.",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [
-      {"form": "nɨsatom kɛm-zɨ-tɛmɛrʕa-wu ʔɨl-ɛ riʔɛy-ɛ", "judgment": "ungrammatical"}
+      {
+        "form": "nɨsatom kɛm-zɨ-tɛmɛrʕa-wu ʔɨl-ɛ rɨʔɛy-ɛ",
+        "judgment": "ungrammatical"
+      }
     ],
     "readings": [],
     "paperFeatures": [
@@ -467,18 +492,19 @@
       ["typer", "kemzi"],
       ["matrix_verb", "see"]
     ],
-    "comment": "ʔɨlu is excluded with perception verbs."
+    "comment": "ʔɨlu is excluded with perception verbs.",
+    "verified": "page-image"
   },
   {
     "id": "cacchioli2026_53",
-    "source": {"bibkey": "cacchioli-2026", "paperLabel": "ex. (53)"},
+    "source": {"bibkey": "cacchioli-2026", "paperLabel": "ch. 3, ex. (53)"},
     "reportedIn": null,
     "language": "tigr1271",
-    "primaryText": "nsu gɛnzɛb ji-sɛrrix ʔɨl-ɛ ji-t'irɨt'r-o",
+    "primaryText": "nsu gɛnzɛb jɨ-sɛrrɨx ʔɨl-ɛ jɨ-t'ɨrɨt'r-o",
     "discourseSegments": [],
     "glossedTokens": [
-      ["nsu", "he"], ["gɛnzɛb", "money"], ["ji-sɛrrix", "SM.3MS-steal.IPFV"],
-      ["ʔɨl-ɛ", "COMP-SM.1S"], ["ji-t'irɨt'r-o", "SM.1S-suspect.IPFV-OM.3MS"]
+      ["nsu", "he"], ["gɛnzɛb", "money"], ["jɨ-sɛrrɨx", "SM.3MS-steal.IPFV"],
+      ["ʔɨl-ɛ", "COMP-SM.1S"], ["jɨ-t'ɨrɨt'r-o", "SM.1S-suspect.IPFV-OM.3MS"]
     ],
     "translation": "I suspect that he steals money.",
     "context": "",
@@ -490,11 +516,12 @@
       ["typer", "ilu"],
       ["matrix_verb", "suspect"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "cacchioli2026_54",
-    "source": {"bibkey": "cacchioli-2026", "paperLabel": "ex. (54)"},
+    "source": {"bibkey": "cacchioli-2026", "paperLabel": "ch. 3, ex. (54)"},
     "reportedIn": null,
     "language": "tigr1271",
     "primaryText": "Tɛsfay ʔaman kɛlbi gɛziʔ-u ʔɨl-u ħalim-u",
@@ -513,17 +540,18 @@
       ["typer", "ilu"],
       ["matrix_verb", "dream"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "cacchioli2026_55",
-    "source": {"bibkey": "cacchioli-2026", "paperLabel": "ex. (55)"},
+    "source": {"bibkey": "cacchioli-2026", "paperLabel": "ch. 3, ex. (55)"},
     "reportedIn": null,
     "language": "tigr1271",
-    "primaryText": "dɛmamu ʔanats'u ji-bɛlɨʕ-u ʔɨl-ɛ ʔanbib-ɛ",
+    "primaryText": "dɛmamu ʔanats'u jɨ-bɛlɨʕ-u ʔɨl-ɛ ʔanbib-ɛ",
     "discourseSegments": [],
     "glossedTokens": [
-      ["dɛmamu", "cat.MP"], ["ʔanats'u", "mouse.MP"], ["ji-bɛlɨʕ-u", "SM.3MP-eat.IPFV-SM.3MP"],
+      ["dɛmamu", "cat.MP"], ["ʔanats'u", "mouse.MP"], ["jɨ-bɛlɨʕ-u", "SM.3MP-eat.IPFV-SM.3MP"],
       ["ʔɨl-ɛ", "COMP-SM.1S"], ["ʔanbib-ɛ", "read.GER-SM.1S"]
     ],
     "translation": "I read that cats eat mice.",
@@ -536,6 +564,7 @@
       ["typer", "ilu"],
       ["matrix_verb", "read"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   }
 ]

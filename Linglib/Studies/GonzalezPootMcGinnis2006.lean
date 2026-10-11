@@ -13,7 +13,7 @@ Fission. The verbal agreement suffixes come from one node, Agr3, which agrees wi
 ergative subject and the nominative object and is realized by strict scansion of the Vocabulary
 (27) with local Fission ([halle-1997]): an item discharges its features from one of the node's
 two matrices and the residue stays available to the items below (`suffixes`). The second- and
-third-person plural suffixes *-éːʃ* and *-oʔob* are unspecified for case, so their order is fixed
+third-person plural suffixes *-éːš* and *-oʔob* are unspecified for case, so their order is fixed
 by specificity whatever the grammatical roles, (19) to (22), and one scansion never inserts
 *-oʔob* twice, (23) and (24) (`suffixes_rows`), whereas the object–subject template (18) predicts
 exactly the starred forms (`template_rows`). Long-distance Fission is rejected: the split of
@@ -84,8 +84,8 @@ def matrix : Person → Bool → Case → List FeatureVal
 /-- The Agr3 Vocabulary Items (27), in scansion order. -/
 def agr3 : List (VocabularyItem FeatureVal String) :=
   [[⟨.participant, true⟩, ⟨.author, true⟩, ⟨.case, .nom⟩] ⟷ "oʔon",
-    [⟨.participant, true⟩, number false, ⟨.case, .nom⟩] ⟷ "etʃ",
-    [⟨.author, true⟩, ⟨.case, .nom⟩] ⟷ "en", [⟨.participant, true⟩, number true] ⟷ "éːʃ",
+    [⟨.participant, true⟩, number false, ⟨.case, .nom⟩] ⟷ "etš",
+    [⟨.author, true⟩, ⟨.case, .nom⟩] ⟷ "en", [⟨.participant, true⟩, number true] ⟷ "éːš",
     [number true] ⟷ "oʔob", [] ⟷ "Ø"]
 
 /-- The Agr1 Vocabulary Items (43) realize the ergative auxiliary suffix. -/
@@ -151,13 +151,13 @@ theorem row_ofDatum_isSome : ∀ ex ∈ Examples.all, (Row.ofDatum ex).isSome :=
 def rows : List Row := Examples.all.filterMap Row.ofDatum
 
 /-- Under Local Fission, (19) to (24), a row is grammatical iff its overt verbal suffixes are what
-strict scansion of (27) inserts, *-éːʃ* before *-oʔob* in both (20) and (22) and *-oʔob* once in
+strict scansion of (27) inserts, *-éːš* before *-oʔob* in both (20) and (22) and *-oʔob* once in
 (24). -/
 theorem suffixes_rows :
     ∀ r ∈ rows, r.judgment = .acceptable ↔ suffixes r.subj r.obj = r.suffixes := by
   decide
 
-/-- The template (18) predicts every starred form, *-oʔob-éːʃ* for (21) and *-oʔob-oʔob* for
+/-- The template (18) predicts every starred form, *-oʔob-éːš* for (21) and *-oʔob-oʔob* for
 (23), and fails the grammatical (22) and (24), whose orders it reverses or doubles. -/
 theorem template_rows :
     (∀ r ∈ rows, ∀ o ∈ r.obj,
@@ -220,7 +220,7 @@ def agr2' : List (VocabularyItem Privative String) :=
 
 /-- The Agr3 Vocabulary Items (A4). -/
 def agr3' : List (VocabularyItem Privative String) :=
-  [[.addressee, .group] ⟷ "éːʃ", [.addressee, .nom] ⟷ "etʃ", [.speaker, .nom] ⟷ "oʔon",
+  [[.addressee, .group] ⟷ "éːš", [.addressee, .nom] ⟷ "etš", [.speaker, .nom] ⟷ "oʔon",
     [.participant, .nom] ⟷ "en", [.group] ⟷ "oʔob", [] ⟷ "Ø"]
 
 /-- The overt verbal suffixes under (A4). -/
@@ -237,9 +237,9 @@ theorem privative_aux_prefix :
   decide
 
 /-- The privative Agr3 list (A4) fails a grammatical row: in (20) the object's residue after
-*-éːʃ* is [Participant, NOM], which *-en* matches, where the binary [−Auth] of (27) blocks it. -/
+*-éːš* is [Participant, NOM], which *-en* matches, where the binary [−Auth] of (27) blocks it. -/
 theorem privative_suffixes :
-    suffixes' (.third, true) (some (.second, true)) = ["éːʃ", "en", "oʔob"] ∧
+    suffixes' (.third, true) (some (.second, true)) = ["éːš", "en", "oʔob"] ∧
       ∃ r ∈ rows, r.judgment = .acceptable ∧ suffixes' r.subj r.obj ≠ r.suffixes := by
   decide
 

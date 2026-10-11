@@ -5031,51 +5031,6 @@
     "verified": "page-image"
   },
   {
-    "id": "corbett2000_6_42b",
-    "source": {
-      "bibkey": "corbett-2000",
-      "paperLabel": "ch. 6 (42)"
-    },
-    "reportedIn": null,
-    "language": "moro1292",
-    "primaryText": "Mšaw ʕumar w ʕali",
-    "discourseSegments": [],
-    "glossedTokens": [
-      [
-        "Mšaw",
-        "left.PL"
-      ],
-      [
-        "ʕumar",
-        "Omar"
-      ],
-      [
-        "w",
-        "and"
-      ],
-      [
-        "ʕali",
-        "Ali"
-      ]
-    ],
-    "translation": "Omar and Ali left",
-    "context": "",
-    "judgment": "acceptable",
-    "alternatives": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "verbFirst",
-        "yes"
-      ],
-      [
-        "conjunctAgreement",
-        "all"
-      ]
-    ],
-    "comment": ""
-  },
-  {
     "id": "corbett2000_6_43a",
     "source": {
       "bibkey": "corbett-2000",

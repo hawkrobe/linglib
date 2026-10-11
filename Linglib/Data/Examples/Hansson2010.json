@@ -6,7 +6,7 @@
       "paperLabel": ""
     },
     "language": "nava1243",
-    "primaryText": "ʃiłį́ːʔ",
+    "primaryText": "ʃilĩ́ːʔ",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "my horse",
@@ -25,7 +25,7 @@
       ],
       [
         "underlying",
-        "ʃi-łį́ːʔ"
+        "ʃi-lĩ́ːʔ"
       ],
       [
         "directionality",
@@ -36,7 +36,8 @@
     "reportedIn": {
       "bibkey": "hansson-2010",
       "paperLabel": "(3a)"
-    }
+    },
+    "verified": "page-image"
   },
   {
     "id": "hansson2010_ex3a-ii",
@@ -75,7 +76,8 @@
     "reportedIn": {
       "bibkey": "hansson-2010",
       "paperLabel": "(3a)"
-    }
+    },
+    "verified": "page-image"
   },
   {
     "id": "hansson2010_ex3b",
@@ -84,7 +86,7 @@
       "paperLabel": ""
     },
     "language": "nava1243",
-    "primaryText": "ʃítʃį́ːh",
+    "primaryText": "ʃítʃĩ́ːh",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "my nose",
@@ -103,7 +105,7 @@
       ],
       [
         "underlying",
-        "ʃí-tʃį́ːh"
+        "ʃí-tʃĩ́ːh"
       ],
       [
         "directionality",
@@ -114,7 +116,8 @@
     "reportedIn": {
       "bibkey": "hansson-2010",
       "paperLabel": "(3b)"
-    }
+    },
+    "verified": "page-image"
   },
   {
     "id": "hansson2010_ex3c-i",
@@ -153,7 +156,8 @@
     "reportedIn": {
       "bibkey": "hansson-2010",
       "paperLabel": "(3c)"
-    }
+    },
+    "verified": "page-image"
   },
   {
     "id": "hansson2010_ex3c-ii",
@@ -192,7 +196,8 @@
     "reportedIn": {
       "bibkey": "hansson-2010",
       "paperLabel": "(3c)"
-    }
+    },
+    "verified": "page-image"
   },
   {
     "id": "hansson2010_ex4a",
@@ -227,7 +232,8 @@
         "anticipatory"
       ]
     ],
-    "comment": "No sibilant follows: the fourth-person prefix surfaces as postalveolar /dʒi-/."
+    "comment": "No sibilant follows: the fourth-person prefix surfaces as postalveolar /dʒi-/.",
+    "verified": "page-image"
   },
   {
     "id": "hansson2010_ex4b",
@@ -236,7 +242,7 @@
       "paperLabel": "(4b)"
     },
     "language": "nava1243",
-    "primaryText": "dziztʼį́",
+    "primaryText": "dziztĩ́",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "he (4th person) is lying",
@@ -255,14 +261,15 @@
       ],
       [
         "underlying",
-        "dʒi-s-tʼį́"
+        "dʒi-s-tĩ́"
       ],
       [
         "directionality",
         "anticipatory"
       ]
     ],
-    "comment": "The perfective /s-/, voiced to [z] here, makes the preceding prefix alveolar."
+    "comment": "The perfective /s-/, voiced to [z] here, makes the preceding prefix alveolar.",
+    "verified": "page-image"
   },
   {
     "id": "hansson2010_ex4c",
@@ -297,7 +304,8 @@
         "anticipatory"
       ]
     ],
-    "comment": "The stem sibilant determines both prefix sibilants; the intervening [ɣ] is transparent."
+    "comment": "The stem sibilant determines both prefix sibilants; the intervening [ɣ] is transparent.",
+    "verified": "page-image"
   },
   {
     "id": "hansson2010_ex6a-i",
@@ -336,7 +344,8 @@
     "reportedIn": {
       "bibkey": "hansson-2010",
       "paperLabel": "(6a)"
-    }
+    },
+    "verified": "page-image"
   },
   {
     "id": "hansson2010_ex6a-ii",
@@ -375,7 +384,8 @@
     "reportedIn": {
       "bibkey": "hansson-2010",
       "paperLabel": "(6a)"
-    }
+    },
+    "verified": "page-image"
   },
   {
     "id": "hansson2010_ex6b-i",
@@ -414,7 +424,8 @@
     "reportedIn": {
       "bibkey": "hansson-2010",
       "paperLabel": "(6b)"
-    }
+    },
+    "verified": "page-image"
   },
   {
     "id": "hansson2010_ex6b-ii",
@@ -453,7 +464,8 @@
     "reportedIn": {
       "bibkey": "hansson-2010",
       "paperLabel": "(6b)"
-    }
+    },
+    "verified": "page-image"
   },
   {
     "id": "hansson2010_ex6c",
@@ -492,7 +504,8 @@
     "reportedIn": {
       "bibkey": "hansson-2010",
       "paperLabel": "(6c)"
-    }
+    },
+    "verified": "page-image"
   },
   {
     "id": "hansson2010_ex11a-i",
@@ -531,7 +544,8 @@
     "reportedIn": {
       "bibkey": "hansson-2010",
       "paperLabel": "(11a)"
-    }
+    },
+    "verified": "page-image"
   },
   {
     "id": "hansson2010_ex11a-ii",
@@ -559,7 +573,7 @@
       ],
       [
         "underlying",
-        "dz-iʃ-ł-haːl"
+        "dz-iʃ-ɬ-haːl"
       ],
       [
         "directionality",
@@ -570,7 +584,8 @@
     "reportedIn": {
       "bibkey": "hansson-2010",
       "paperLabel": "(11a)"
-    }
+    },
+    "verified": "page-image"
   },
   {
     "id": "hansson2010_ex11b",
@@ -598,7 +613,7 @@
       ],
       [
         "underlying",
-        "dz-iʃ-ł-tsʼin"
+        "dz-iʃ-ɬ-tsʼin"
       ],
       [
         "directionality",
@@ -609,7 +624,8 @@
     "reportedIn": {
       "bibkey": "hansson-2010",
       "paperLabel": "(11b)"
-    }
+    },
+    "verified": "page-image"
   },
   {
     "id": "hansson2010_ex12",
@@ -627,7 +643,7 @@
     "alternatives": [
       {
         "form": "ʃiʃ-",
-        "judgment": "unacceptable"
+        "judgment": "ungrammatical"
       }
     ],
     "readings": [],
@@ -653,7 +669,8 @@
     "reportedIn": {
       "bibkey": "hansson-2010",
       "paperLabel": "(12)"
-    }
+    },
+    "verified": "page-image"
   },
   {
     "id": "hansson2010_ex13",
@@ -692,7 +709,8 @@
     "reportedIn": {
       "bibkey": "hansson-2010",
       "paperLabel": "(13)"
-    }
+    },
+    "verified": "page-image"
   },
   {
     "id": "hansson2010_ex14-i",
@@ -720,7 +738,7 @@
       ],
       [
         "underlying",
-        "s-iʃ-ł-jé"
+        "s-iʃ-ɬ-jé"
       ],
       [
         "directionality",
@@ -731,7 +749,8 @@
     "reportedIn": {
       "bibkey": "hansson-2010",
       "paperLabel": "(14)"
-    }
+    },
+    "verified": "page-image"
   },
   {
     "id": "hansson2010_ex14-ii",
@@ -770,7 +789,8 @@
     "reportedIn": {
       "bibkey": "hansson-2010",
       "paperLabel": "(14)"
-    }
+    },
+    "verified": "page-image"
   },
   {
     "id": "hansson2010_ex15",
@@ -809,6 +829,7 @@
     "reportedIn": {
       "bibkey": "hansson-2010",
       "paperLabel": "(15)"
-    }
+    },
+    "verified": "page-image"
   }
 ]

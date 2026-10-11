@@ -17,17 +17,18 @@
       ["ideophone", "gɨ̀rgɨ̀r"],
       ["wordClass", "noun"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "akinbofwangwar2026_6b",
     "source": {"bibkey": "akinbo-fwangwar-2026", "paperLabel": "(6b)"},
     "language": "mwag1236",
-    "primaryText": "gɨ̀rgɨ̀r pwās ràndɔ̄ŋ kí m̀mɛ̂ː nī",
+    "primaryText": "gɨ̀rgɨ̀r pwās ràndɔ̄ŋ kí m̀mêː nī",
     "discourseSegments": [],
     "glossedTokens": [
       ["gɨ̀rgɨ̀r", "IDEO"], ["pwās", "hit.PL"], ["ràndɔ̄ŋ", "cow"], ["kí", "CONJ"],
-      ["m̀mɛ̂ː", "IDEO"], ["nī", "DET"]
+      ["m̀mêː", "IDEO"], ["nī", "DET"]
     ],
     "translation": "a heavy-duty vehicle hit the cow and the goat",
     "context": "",
@@ -38,17 +39,18 @@
       ["ideophone", "gɨ̀rgɨ̀r"],
       ["wordClass", "noun"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "akinbofwangwar2026_6c",
     "source": {"bibkey": "akinbo-fwangwar-2026", "paperLabel": "(6c)"},
     "language": "mwag1236",
-    "primaryText": "gɨ̀rgɨ̀r pwās m̀múː kí m̀mɛ̂ː nī",
+    "primaryText": "gɨ̀rgɨ̀r pwās m̀múː kí m̀mêː nī",
     "discourseSegments": [],
     "glossedTokens": [
       ["gɨ̀rgɨ̀r", "IDEO"], ["pwās", "hit.PL"], ["m̀múː", "IDEO"], ["kí", "CONJ"],
-      ["m̀mɛ̂ː", "IDEO"], ["nī", "DET"]
+      ["m̀mêː", "IDEO"], ["nī", "DET"]
     ],
     "translation": "a heavy-duty vehicle hit the cow and the goat",
     "context": "",
@@ -59,7 +61,8 @@
       ["ideophone", "gɨ̀rgɨ̀r"],
       ["wordClass", "noun"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "akinbofwangwar2026_6d",
@@ -80,7 +83,8 @@
       ["ideophone", "gɨ̀rgɨ̀r"],
       ["wordClass", "adjective"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "akinbofwangwar2026_6e",
@@ -101,7 +105,8 @@
       ["ideophone", "gɨ̀rgɨ̀r"],
       ["wordClass", "adverb"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "akinbofwangwar2026_6f",
@@ -121,7 +126,8 @@
       ["ideophone", "múl"],
       ["wordClass", "verb"]
     ],
-    "comment": "The ideophonic verb carries a negative affective meaning: the oil was rubbed wastefully or imprecisely."
+    "comment": "The ideophonic verb carries a negative affective meaning: the oil was rubbed wastefully or imprecisely.",
+    "verified": "page-image"
   },
   {
     "id": "akinbofwangwar2026_6g",
@@ -142,7 +148,8 @@
       ["wordClass", "verb"],
       ["construction", "future"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "akinbofwangwar2026_11a",
@@ -163,7 +170,8 @@
       ["lexeme", "mwàːn"],
       ["construction", "presentPast"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "akinbofwangwar2026_11b",
@@ -184,7 +192,8 @@
       ["lexeme", "mwàːn"],
       ["construction", "future"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "akinbofwangwar2026_11c",
@@ -205,7 +214,8 @@
       ["lexeme", "mwàːn"],
       ["construction", "focus"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "akinbofwangwar2026_11d",
@@ -226,7 +236,8 @@
       ["lexeme", "mwàːn"],
       ["construction", "serialVerb"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "akinbofwangwar2026_11e",
@@ -248,7 +259,8 @@
       ["lexeme", "mwàːn"],
       ["construction", "negation"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "akinbofwangwar2026_12a",
@@ -269,7 +281,8 @@
       ["lexeme", "kɔ̄rjɔ́ŋ"],
       ["construction", "presentPast"]
     ],
-    "comment": "Derived from the ideophone kɔ̀rjɔ̀ŋ 'crooked' by the M-H verbaliser."
+    "comment": "Derived from the ideophone kɔ̀rjɔ̀ŋ 'crooked' by the M-H verbaliser.",
+    "verified": "page-image"
   },
   {
     "id": "akinbofwangwar2026_12b",
@@ -290,7 +303,8 @@
       ["lexeme", "kɔ̄rjɔ́ŋ"],
       ["construction", "future"]
     ],
-    "comment": "Derived from the ideophone kɔ̀rjɔ̀ŋ 'crooked' by the M-H verbaliser."
+    "comment": "Derived from the ideophone kɔ̀rjɔ̀ŋ 'crooked' by the M-H verbaliser.",
+    "verified": "page-image"
   },
   {
     "id": "akinbofwangwar2026_12c",
@@ -311,7 +325,8 @@
       ["lexeme", "kɔ̄rjɔ́ŋ"],
       ["construction", "focus"]
     ],
-    "comment": "Derived from the ideophone kɔ̀rjɔ̀ŋ 'crooked' by the M-H verbaliser."
+    "comment": "Derived from the ideophone kɔ̀rjɔ̀ŋ 'crooked' by the M-H verbaliser.",
+    "verified": "page-image"
   },
   {
     "id": "akinbofwangwar2026_12d",
@@ -333,7 +348,8 @@
       ["lexeme", "kɔ̄rjɔ́ŋ"],
       ["construction", "serialVerb"]
     ],
-    "comment": "Derived from the ideophone kɔ̀rjɔ̀ŋ 'crooked' by the M-H verbaliser."
+    "comment": "Derived from the ideophone kɔ̀rjɔ̀ŋ 'crooked' by the M-H verbaliser.",
+    "verified": "page-image"
   },
   {
     "id": "akinbofwangwar2026_12e",
@@ -354,7 +370,8 @@
       ["lexeme", "kɔ̄rjɔ́ŋ"],
       ["construction", "serialVerb"]
     ],
-    "comment": "Derived from the ideophone kɔ̀rjɔ̀ŋ 'crooked' by the M-H verbaliser."
+    "comment": "Derived from the ideophone kɔ̀rjɔ̀ŋ 'crooked' by the M-H verbaliser.",
+    "verified": "page-image"
   },
   {
     "id": "akinbofwangwar2026_12f",
@@ -376,7 +393,8 @@
       ["lexeme", "kɔ̄rjɔ́ŋ"],
       ["construction", "negation"]
     ],
-    "comment": "Derived from the ideophone kɔ̀rjɔ̀ŋ 'crooked' by the M-H verbaliser."
+    "comment": "Derived from the ideophone kɔ̀rjɔ̀ŋ 'crooked' by the M-H verbaliser.",
+    "verified": "page-image"
   },
   {
     "id": "akinbofwangwar2026_21_1",
@@ -397,7 +415,8 @@
       ["verbTones", "M"],
       ["gerundiveTones", "M"]
     ],
-    "comment": "The gerundive overwrites the verb's lexical tones with M, the melody the M verbaliser also yields."
+    "comment": "The gerundive overwrites the verb's lexical tones with M, the melody the M verbaliser also yields.",
+    "verified": "page-image"
   },
   {
     "id": "akinbofwangwar2026_21_2",
@@ -418,7 +437,8 @@
       ["verbTones", "M"],
       ["gerundiveTones", "M"]
     ],
-    "comment": "The gerundive overwrites the verb's lexical tones with M, the melody the M verbaliser also yields."
+    "comment": "The gerundive overwrites the verb's lexical tones with M, the melody the M verbaliser also yields.",
+    "verified": "page-image"
   },
   {
     "id": "akinbofwangwar2026_21_3",
@@ -439,7 +459,8 @@
       ["verbTones", "L"],
       ["gerundiveTones", "M"]
     ],
-    "comment": "The gerundive overwrites the verb's lexical tones with M, the melody the M verbaliser also yields."
+    "comment": "The gerundive overwrites the verb's lexical tones with M, the melody the M verbaliser also yields.",
+    "verified": "page-image"
   },
   {
     "id": "akinbofwangwar2026_21_4",
@@ -460,7 +481,8 @@
       ["verbTones", "L"],
       ["gerundiveTones", "M"]
     ],
-    "comment": "The gerundive overwrites the verb's lexical tones with M, the melody the M verbaliser also yields."
+    "comment": "The gerundive overwrites the verb's lexical tones with M, the melody the M verbaliser also yields.",
+    "verified": "page-image"
   },
   {
     "id": "akinbofwangwar2026_27_1",
@@ -471,7 +493,7 @@
     "glossedTokens": [
       ["lɛ̀k wát", ""]
     ],
-    "translation": "the water of a thief",
+    "translation": "water of a thief",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -482,7 +504,8 @@
       ["possessedTones", "L"],
       ["outputTones", "L"]
     ],
-    "comment": "N1 of an associative construction surfaces with L on every TBU; some H-tone nouns, and every H-tone ideophonic noun, surface with M instead."
+    "comment": "N1 of an associative construction surfaces with L on every TBU; some H-tone nouns, and every H-tone ideophonic noun, surface with M instead.",
+    "verified": "page-image"
   },
   {
     "id": "akinbofwangwar2026_27_2",
@@ -493,7 +516,7 @@
     "glossedTokens": [
       ["wàn wát", ""]
     ],
-    "translation": "the clay of a thief",
+    "translation": "clay of a thief",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -504,7 +527,8 @@
       ["possessedTones", "M"],
       ["outputTones", "L"]
     ],
-    "comment": "N1 of an associative construction surfaces with L on every TBU; some H-tone nouns, and every H-tone ideophonic noun, surface with M instead."
+    "comment": "N1 of an associative construction surfaces with L on every TBU; some H-tone nouns, and every H-tone ideophonic noun, surface with M instead.",
+    "verified": "page-image"
   },
   {
     "id": "akinbofwangwar2026_27_3",
@@ -515,7 +539,7 @@
     "glossedTokens": [
       ["ɓwɔ̀ːn wát", ""]
     ],
-    "translation": "the pelvis of a thief",
+    "translation": "pelvis of a thief",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -526,7 +550,8 @@
       ["possessedTones", "H"],
       ["outputTones", "L"]
     ],
-    "comment": "N1 of an associative construction surfaces with L on every TBU; some H-tone nouns, and every H-tone ideophonic noun, surface with M instead."
+    "comment": "N1 of an associative construction surfaces with L on every TBU; some H-tone nouns, and every H-tone ideophonic noun, surface with M instead.",
+    "verified": "page-image"
   },
   {
     "id": "akinbofwangwar2026_27_4",
@@ -537,7 +562,7 @@
     "glossedTokens": [
       ["ɓwɔ̄ːn wát", ""]
     ],
-    "translation": "the surroundings of a thief",
+    "translation": "surroundings of a thief",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -548,7 +573,8 @@
       ["possessedTones", "H"],
       ["outputTones", "M"]
     ],
-    "comment": "N1 of an associative construction surfaces with L on every TBU; some H-tone nouns, and every H-tone ideophonic noun, surface with M instead."
+    "comment": "N1 of an associative construction surfaces with L on every TBU; some H-tone nouns, and every H-tone ideophonic noun, surface with M instead.",
+    "verified": "page-image"
   },
   {
     "id": "akinbofwangwar2026_27_5",
@@ -559,7 +585,7 @@
     "glossedTokens": [
       ["gɨ̀r-gɨ̀r wát", ""]
     ],
-    "translation": "the heavy duty vehicle of a thief",
+    "translation": "heavy duty vehicle of a thief",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -570,7 +596,8 @@
       ["possessedTones", "L"],
       ["outputTones", "L"]
     ],
-    "comment": "N1 of an associative construction surfaces with L on every TBU; some H-tone nouns, and every H-tone ideophonic noun, surface with M instead."
+    "comment": "N1 of an associative construction surfaces with L on every TBU; some H-tone nouns, and every H-tone ideophonic noun, surface with M instead.",
+    "verified": "page-image"
   },
   {
     "id": "akinbofwangwar2026_27_6",
@@ -581,7 +608,7 @@
     "glossedTokens": [
       ["ràm-ràm wát", ""]
     ],
-    "translation": "the excitement of a thief",
+    "translation": "excitement of a thief",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -592,7 +619,8 @@
       ["possessedTones", "M"],
       ["outputTones", "L"]
     ],
-    "comment": "N1 of an associative construction surfaces with L on every TBU; some H-tone nouns, and every H-tone ideophonic noun, surface with M instead."
+    "comment": "N1 of an associative construction surfaces with L on every TBU; some H-tone nouns, and every H-tone ideophonic noun, surface with M instead.",
+    "verified": "page-image"
   },
   {
     "id": "akinbofwangwar2026_27_7",
@@ -603,7 +631,7 @@
     "glossedTokens": [
       ["kūrāʃ wát", ""]
     ],
-    "translation": "the pot scrapping sound of a thief",
+    "translation": "pot scrapping sound of a thief",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -614,6 +642,7 @@
       ["possessedTones", "H"],
       ["outputTones", "M"]
     ],
-    "comment": "N1 of an associative construction surfaces with L on every TBU; some H-tone nouns, and every H-tone ideophonic noun, surface with M instead."
+    "comment": "N1 of an associative construction surfaces with L on every TBU; some H-tone nouns, and every H-tone ideophonic noun, surface with M instead.",
+    "verified": "page-image"
   }
 ]

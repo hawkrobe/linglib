@@ -17,7 +17,8 @@
       ["sort", "eventive"],
       ["adverb", "future"]
     ],
-    "comment": "A modal for the present with an eventive predicate and a future frame adverbial. The paper lists must, ought to, should, may and might alike; might stands for all."
+    "comment": "A modal for the present with an eventive predicate and a future frame adverbial. The paper lists must, ought to, should, may and might alike; might stands for all.",
+    "verified": "page-image"
   },
   {
     "id": "condoravdi2002_ex1a_now",
@@ -37,7 +38,8 @@
       ["sort", "eventive"],
       ["adverb", "present"]
     ],
-    "comment": "A modal for the present with an eventive predicate and a present frame adverbial. Marked ?? in the paper: the event must fall within the present, which the semantics does not exclude."
+    "comment": "A modal for the present with an eventive predicate and a present frame adverbial. Marked ?? in the paper: the event must fall within the present, which the semantics does not exclude.",
+    "verified": "page-image"
   },
   {
     "id": "condoravdi2002_ex1a_yesterday",
@@ -57,7 +59,8 @@
       ["sort", "eventive"],
       ["adverb", "past"]
     ],
-    "comment": "A modal for the present with an eventive predicate and a past frame adverbial."
+    "comment": "A modal for the present with an eventive predicate and a past frame adverbial.",
+    "verified": "page-image"
   },
   {
     "id": "condoravdi2002_ex1b_now",
@@ -77,7 +80,8 @@
       ["sort", "stative"],
       ["adverb", "present"]
     ],
-    "comment": "A modal for the present with a progressive, hence stative, predicate and a present frame adverbial."
+    "comment": "A modal for the present with a progressive, hence stative, predicate and a present frame adverbial.",
+    "verified": "page-image"
   },
   {
     "id": "condoravdi2002_ex1b_yesterday",
@@ -97,7 +101,8 @@
       ["sort", "stative"],
       ["adverb", "past"]
     ],
-    "comment": "A modal for the present with a progressive predicate and a past frame adverbial."
+    "comment": "A modal for the present with a progressive predicate and a past frame adverbial.",
+    "verified": "page-image"
   },
   {
     "id": "condoravdi2002_ex1c_now",
@@ -117,7 +122,8 @@
       ["sort", "stative"],
       ["adverb", "present"]
     ],
-    "comment": "A modal for the present with a stative predicate and a present frame adverbial. Against Enç's shifting modals: the same modal is non-shifting here and shifting with tomorrow."
+    "comment": "A modal for the present with a stative predicate and a present frame adverbial. Against Enç's shifting modals: the same modal is non-shifting here and shifting with tomorrow.",
+    "verified": "page-image"
   },
   {
     "id": "condoravdi2002_ex1c_tomorrow",
@@ -137,7 +143,8 @@
       ["sort", "stative"],
       ["adverb", "future"]
     ],
-    "comment": "A modal for the present with a stative predicate and a future frame adverbial."
+    "comment": "A modal for the present with a stative predicate and a future frame adverbial.",
+    "verified": "page-image"
   },
   {
     "id": "condoravdi2002_ex1c_yesterday",
@@ -157,7 +164,8 @@
       ["sort", "stative"],
       ["adverb", "past"]
     ],
-    "comment": "A modal for the present with a stative predicate and a past frame adverbial."
+    "comment": "A modal for the present with a stative predicate and a past frame adverbial.",
+    "verified": "page-image"
   },
   {
     "id": "condoravdi2002_ex2a_yesterday",
@@ -177,7 +185,8 @@
       ["sort", "eventive"],
       ["adverb", "past"]
     ],
-    "comment": "A modal for the past, the modal over the perfect, with an eventive predicate and a past frame adverbial. The paper lists must, ought to, should, may and might alike; must stands for all, since only the subjunctive-form modals also scope under the perfect, [34]."
+    "comment": "A modal for the past, the modal over the perfect, with an eventive predicate and a past frame adverbial. The paper lists must, ought to, should, may and might alike; must stands for all, since only the subjunctive-form modals also scope under the perfect, [34].",
+    "verified": "page-image"
   },
   {
     "id": "condoravdi2002_ex2a_tomorrow",
@@ -197,7 +206,8 @@
       ["sort", "eventive"],
       ["adverb", "future"]
     ],
-    "comment": "A modal for the past with an eventive predicate and a future frame adverbial. The paper sets aside the future perfect reading, as in 'he may have arrived by next week'. With might the perfect-over-modal scoping of [34] would rescue the sentence."
+    "comment": "A modal for the past with an eventive predicate and a future frame adverbial. The paper sets aside the future perfect reading, as in 'he may have arrived by next week'. With might the perfect-over-modal scoping of [34] would rescue the sentence.",
+    "verified": "page-image"
   },
   {
     "id": "condoravdi2002_ex2b_yesterday",
@@ -217,7 +227,8 @@
       ["sort", "stative"],
       ["adverb", "past"]
     ],
-    "comment": "A modal for the past with a stative predicate and a past frame adverbial."
+    "comment": "A modal for the past with a stative predicate and a past frame adverbial.",
+    "verified": "page-image"
   },
   {
     "id": "condoravdi2002_ex2b_tomorrow",
@@ -237,7 +248,8 @@
       ["sort", "stative"],
       ["adverb", "future"]
     ],
-    "comment": "A modal for the past with a stative predicate and a future frame adverbial."
+    "comment": "A modal for the past with a stative predicate and a future frame adverbial.",
+    "verified": "page-image"
   },
   {
     "id": "condoravdi2002_ex29a",
@@ -257,7 +269,8 @@
       ["sort", "eventive"],
       ["adverb", "past"]
     ],
-    "comment": "PRES(MAY(PERF(YESTERDAY(he win)))): the winning lies within an interval preceding the forward interval of the present and within yesterday. Derived in the paper's [30]-[31]."
+    "comment": "PRES(MAY(PERF(YESTERDAY(he win)))): the winning lies within an interval preceding the forward interval of the present and within yesterday. Derived in the paper's [30]-[31].",
+    "verified": "page-image"
   },
   {
     "id": "condoravdi2002_ex29b",
@@ -277,7 +290,8 @@
       ["sort", "eventive"],
       ["adverb", "past"]
     ],
-    "comment": "PRES(MAY(YESTERDAY(he win))): the winning must lie within the intersection of the forward interval of the present with yesterday, the null interval. Derived in the paper's [32]: never true, hence deviant."
+    "comment": "PRES(MAY(YESTERDAY(he win))): the winning must lie within the intersection of the forward interval of the present with yesterday, the null interval. Derived in the paper's [32]: never true, hence deviant.",
+    "verified": "page-image"
   },
   {
     "id": "condoravdi2002_ex34a_yesterday",
@@ -297,7 +311,8 @@
       ["sort", "stative"],
       ["adverb", "past"]
     ],
-    "comment": "A modal that can scope under the perfect, on the counterfactual scoping, with a past frame adverbial."
+    "comment": "A modal that can scope under the perfect, on the counterfactual scoping, with a past frame adverbial.",
+    "verified": "page-image"
   },
   {
     "id": "condoravdi2002_ex34a_nextMonth",
@@ -317,7 +332,8 @@
       ["sort", "stative"],
       ["adverb", "future"]
     ],
-    "comment": "The perfect over the modal: the reference interval starts at a past time and extends to the end of time, admitting a future frame adverbial."
+    "comment": "The perfect over the modal: the reference interval starts at a past time and extends to the end of time, admitting a future frame adverbial.",
+    "verified": "page-image"
   },
   {
     "id": "condoravdi2002_ex34b_yesterday",
@@ -337,7 +353,8 @@
       ["sort", "stative"],
       ["adverb", "past"]
     ],
-    "comment": "The perfect over the modal with a past frame adverbial."
+    "comment": "The perfect over the modal with a past frame adverbial.",
+    "verified": "page-image"
   },
   {
     "id": "condoravdi2002_ex34b_now",
@@ -357,7 +374,8 @@
       ["sort", "stative"],
       ["adverb", "present"]
     ],
-    "comment": "The perfect over the modal with a present frame adverbial."
+    "comment": "The perfect over the modal with a present frame adverbial.",
+    "verified": "page-image"
   },
   {
     "id": "condoravdi2002_ex35a_yesterday",
@@ -377,7 +395,8 @@
       ["sort", "stative"],
       ["adverb", "past"]
     ],
-    "comment": "Must only scopes over the perfect; a past frame adverbial."
+    "comment": "Must only scopes over the perfect; a past frame adverbial.",
+    "verified": "page-image"
   },
   {
     "id": "condoravdi2002_ex35a_nextMonth",
@@ -397,7 +416,8 @@
       ["sort", "stative"],
       ["adverb", "future"]
     ],
-    "comment": "Must only scopes over the perfect, whose reference interval precedes the present; a future frame adverbial. Only modals in the subjunctive form, might, would, should, ought to, scope under the perfect."
+    "comment": "Must only scopes over the perfect, whose reference interval precedes the present; a future frame adverbial. Only modals in the subjunctive form, might, would, should, ought to, scope under the perfect.",
+    "verified": "page-image"
   },
   {
     "id": "condoravdi2002_ex35b_yesterday",
@@ -417,7 +437,8 @@
       ["sort", "stative"],
       ["adverb", "past"]
     ],
-    "comment": "Must over the perfect with a past frame adverbial."
+    "comment": "Must over the perfect with a past frame adverbial.",
+    "verified": "page-image"
   },
   {
     "id": "condoravdi2002_ex35b_now",
@@ -437,13 +458,14 @@
       ["sort", "stative"],
       ["adverb", "present"]
     ],
-    "comment": "Must over the perfect with a present frame adverbial."
+    "comment": "Must over the perfect with a present frame adverbial.",
+    "verified": "page-image"
   },
   {
     "id": "condoravdi2002_ex6a",
     "source": {"bibkey": "condoravdi-2002", "paperLabel": "[6a]"},
     "language": "stan1293",
-    "primaryText": "He may win the game.",
+    "primaryText": "He may/might win the game.",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
@@ -459,13 +481,14 @@
       ["context", "none"],
       ["metaphysical", "available"]
     ],
-    "comment": "A modal for the present: the possibility is from the perspective of the present about the future, and the modality can be epistemic or metaphysical."
+    "comment": "A modal for the present: the possibility is from the perspective of the present about the future, and the modality can be epistemic or metaphysical.",
+    "verified": "page-image"
   },
   {
     "id": "condoravdi2002_ex7a",
     "source": {"bibkey": "condoravdi-2002", "paperLabel": "[7a]"},
     "language": "stan1293",
-    "primaryText": "He may have (already) won the game (# but he didn't).",
+    "primaryText": "He may/might have (already) won the game (# but he didn't).",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
@@ -481,7 +504,8 @@
       ["context", "none"],
       ["metaphysical", "unavailable"]
     ],
-    "comment": "The epistemic reading of a modal for the past: the modal over the perfect, perspective the present, orientation past; the issue is settled and the speaker does not know which way. The continuation 'but he didn't' is infelicitous on this reading."
+    "comment": "The epistemic reading of a modal for the past: the modal over the perfect, perspective the present, orientation past; the issue is settled and the speaker does not know which way. The continuation 'but he didn't' is infelicitous on this reading.",
+    "verified": "page-image"
   },
   {
     "id": "condoravdi2002_ex7b",
@@ -503,7 +527,8 @@
       ["context", "none"],
       ["metaphysical", "available"]
     ],
-    "comment": "The counterfactual reading of a modal for the past: the perfect over the modal, perspective a past time, orientation that time's future; the modality is metaphysical. Mondadori's future in the past."
+    "comment": "The counterfactual reading of a modal for the past: the perfect over the modal, perspective a past time, orientation that time's future; the modality is metaphysical. Mondadori's future in the past.",
+    "verified": "page-image"
   },
   {
     "id": "condoravdi2002_ex41a",
@@ -525,7 +550,8 @@
       ["context", "none"],
       ["metaphysical", "unavailable"]
     ],
-    "comment": "A modal for the present with a stative predicate on the reading where reference is to the present: only epistemic, since whether he has the flu now is settled by the course of events."
+    "comment": "A modal for the present with a stative predicate on the reading where reference is to the present: only epistemic, since whether he has the flu now is settled by the course of events.",
+    "verified": "page-image"
   },
   {
     "id": "condoravdi2002_ex41b",
@@ -547,7 +573,8 @@
       ["context", "none"],
       ["metaphysical", "available"]
     ],
-    "comment": "A modal for the present with an eventive predicate: reference to the future, and a metaphysical as well as an epistemic reading."
+    "comment": "A modal for the present with an eventive predicate: reference to the future, and a metaphysical as well as an epistemic reading.",
+    "verified": "page-image"
   },
   {
     "id": "condoravdi2002_ex42b",
@@ -569,7 +596,8 @@
       ["context", "open"],
       ["metaphysical", "available"]
     ],
-    "comment": "The issue is asserted not to be settled, and the modals get a metaphysical interpretation."
+    "comment": "The issue is asserted not to be settled, and the modals get a metaphysical interpretation.",
+    "verified": "page-image"
   },
   {
     "id": "condoravdi2002_ex42c",
@@ -591,7 +619,8 @@
       ["context", "settled"],
       ["metaphysical", "unavailable"]
     ],
-    "comment": "The issue is asserted to have been settled, so after the first sentence settledness is presupposed and the modals have an epistemic reading. Future instantiation is settled only when the context contains information to that effect."
+    "comment": "The issue is asserted to have been settled, so after the first sentence settledness is presupposed and the modals have an epistemic reading. Future instantiation is settled only when the context contains information to that effect.",
+    "verified": "page-image"
   },
   {
     "id": "condoravdi2002_ex14a",
@@ -602,7 +631,7 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -610,7 +639,8 @@
       ["adverb", "already"],
       ["complement", "eventive"]
     ],
-    "comment": "Already directly on an eventive predicate. Marked ?* in the paper, between questionable and starred."
+    "comment": "Already directly on an eventive predicate. Marked ?* in the paper, between questionable and starred.",
+    "verified": "page-image"
   },
   {
     "id": "condoravdi2002_ex14b",
@@ -621,7 +651,7 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -629,7 +659,8 @@
       ["adverb", "yet"],
       ["complement", "eventive"]
     ],
-    "comment": "Yet directly on an eventive predicate. Marked ?* in the paper, between questionable and starred."
+    "comment": "Yet directly on an eventive predicate. Marked ?* in the paper, between questionable and starred.",
+    "verified": "page-image"
   },
   {
     "id": "condoravdi2002_ex14c",
@@ -648,7 +679,8 @@
       ["adverb", "already"],
       ["complement", "perfect"]
     ],
-    "comment": "Already on the perfect of an eventive predicate, a property of times."
+    "comment": "Already on the perfect of an eventive predicate, a property of times.",
+    "verified": "page-image"
   },
   {
     "id": "condoravdi2002_ex14d",
@@ -667,7 +699,8 @@
       ["adverb", "yet"],
       ["complement", "perfect"]
     ],
-    "comment": "Yet on the perfect of an eventive predicate."
+    "comment": "Yet on the perfect of an eventive predicate.",
+    "verified": "page-image"
   },
   {
     "id": "condoravdi2002_ex15a",
@@ -686,7 +719,8 @@
       ["adverb", "already"],
       ["complement", "perfect"]
     ],
-    "comment": "A modal for the past with already: MODAL(ALREADY(PERF(he return))), the adverb scoping between the modal and the perfect. The paper lists must, should, might and may alike. The evidence that the auxiliary have is a perfect, not a past tense."
+    "comment": "A modal for the past with already: MODAL(ALREADY(PERF(he return))), the adverb scoping between the modal and the perfect. The paper lists must, should, might and may alike. The evidence that the auxiliary have is a perfect, not a past tense.",
+    "verified": "page-image"
   },
   {
     "id": "condoravdi2002_ex15b",
@@ -705,7 +739,8 @@
       ["adverb", "yet"],
       ["complement", "perfect"]
     ],
-    "comment": "A modal for the past with yet between the modal and the perfect."
+    "comment": "A modal for the past with yet between the modal and the perfect.",
+    "verified": "page-image"
   },
   {
     "id": "condoravdi2002_ex15c",
@@ -724,7 +759,8 @@
       ["adverb", "already"],
       ["complement", "eventive"]
     ],
-    "comment": "A modal for the present with already on an eventive predicate: no perfect to satisfy the sortal restriction."
+    "comment": "A modal for the present with already on an eventive predicate: no perfect to satisfy the sortal restriction.",
+    "verified": "page-image"
   },
   {
     "id": "condoravdi2002_ex15d",
@@ -743,7 +779,8 @@
       ["adverb", "yet"],
       ["complement", "eventive"]
     ],
-    "comment": "A modal for the present with yet on an eventive predicate. On a deontic construal of the modal yet is acceptable; the paper sets root modals aside."
+    "comment": "A modal for the present with yet on an eventive predicate. On a deontic construal of the modal yet is acceptable; the paper sets root modals aside.",
+    "verified": "page-image"
   },
   {
     "id": "condoravdi2002_ex36a",
@@ -762,7 +799,8 @@
       ["adverb", "still"],
       ["scope", "modal"]
     ],
-    "comment": "PRES(STILL(MIGHT(he win))): still scopes over the possibility modal, presupposing that the possibility of his winning was a live option before. The temporal, not the concessive, reading of still."
+    "comment": "PRES(STILL(MIGHT(he win))): still scopes over the possibility modal, presupposing that the possibility of his winning was a live option before. The temporal, not the concessive, reading of still.",
+    "verified": "page-image"
   },
   {
     "id": "condoravdi2002_ex37a",
@@ -781,7 +819,8 @@
       ["adverb", "still"],
       ["scope", "perfModal"]
     ],
-    "comment": "PRES(PERF(STILL(MIGHT(he win)))): still scopes over the modal and under the perfect on the counterfactual reading."
+    "comment": "PRES(PERF(STILL(MIGHT(he win)))): still scopes over the modal and under the perfect on the counterfactual reading.",
+    "verified": "page-image"
   },
   {
     "id": "condoravdi2002_ex40a",
@@ -800,7 +839,8 @@
       ["adverb", "still"],
       ["scope", "modal"]
     ],
-    "comment": "STILL over MAY: presupposes the possibility was live and asserts it persists, consistent with possibilities decreasing over time."
+    "comment": "STILL over MAY: presupposes the possibility was live and asserts it persists, consistent with possibilities decreasing over time.",
+    "verified": "page-image"
   },
   {
     "id": "condoravdi2002_ex40b",
@@ -819,7 +859,8 @@
       ["adverb", "already"],
       ["scope", "modal"]
     ],
-    "comment": "ALREADY over MAY: presupposes the possibility was not live and asserts it has become so, inconsistent with possibilities decreasing over time; already cannot scope under the modal, since its complement is eventive."
+    "comment": "ALREADY over MAY: presupposes the possibility was not live and asserts it has become so, inconsistent with possibilities decreasing over time; already cannot scope under the modal, since its complement is eventive.",
+    "verified": "page-image"
   },
   {
     "id": "condoravdi2002_ex38a",
@@ -838,7 +879,8 @@
       ["order", "modalHave"],
       ["adverb", "schon"]
     ],
-    "comment": "German mirrors semantic scope in the linear order of the modal and the perfect auxiliary: the modal over the perfect, the epistemic reading only. Schon requires MODAL > ALREADY > PERF, which this order allows."
+    "comment": "German mirrors semantic scope in the linear order of the modal and the perfect auxiliary: the modal over the perfect, the epistemic reading only. Schon requires MODAL > ALREADY > PERF, which this order allows.",
+    "verified": "page-image"
   },
   {
     "id": "condoravdi2002_ex38b",
@@ -857,7 +899,8 @@
       ["order", "hadModal"],
       ["adverb", "schon"]
     ],
-    "comment": "The perfect over the modal with schon."
+    "comment": "The perfect over the modal with schon.",
+    "verified": "page-image"
   },
   {
     "id": "condoravdi2002_ex38c",
@@ -876,7 +919,8 @@
       ["order", "hadModal"],
       ["adverb", "noch"]
     ],
-    "comment": "The perfect over the modal, the counterfactual reading only. Noch requires PERF > STILL > MODAL, which this order allows."
+    "comment": "The perfect over the modal, the counterfactual reading only. Noch requires PERF > STILL > MODAL, which this order allows.",
+    "verified": "page-image"
   },
   {
     "id": "condoravdi2002_ex38d",
@@ -895,6 +939,7 @@
       ["order", "modalHave"],
       ["adverb", "noch"]
     ],
-    "comment": "The modal over the perfect with noch."
+    "comment": "The modal over the perfect with noch.",
+    "verified": "page-image"
   }
 ]

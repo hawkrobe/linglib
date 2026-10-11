@@ -29,7 +29,8 @@
         "intransitive"
       ]
     ],
-    "comment": "An ordinary intransitive verb: subject agreement and mood only."
+    "comment": "An ordinary intransitive verb: subject agreement and mood only.",
+    "verified": "page-image"
   },
   {
     "id": "haninkkoontzgarboden2025_ex20b",
@@ -61,7 +62,8 @@
         "intransitive"
       ]
     ],
-    "comment": "Washo Archive. An ordinary intransitive verb."
+    "comment": "Washo Archive. An ordinary intransitive verb.",
+    "verified": "page-image"
   },
   {
     "id": "haninkkoontzgarboden2025_ex20c",
@@ -97,7 +99,8 @@
         "intransitive"
       ]
     ],
-    "comment": "An ordinary intransitive verb with a third-person subject."
+    "comment": "An ordinary intransitive verb with a third-person subject.",
+    "verified": "page-image"
   },
   {
     "id": "haninkkoontzgarboden2025_ex21a",
@@ -133,7 +136,8 @@
         "yasaŋ"
       ]
     ],
-    "comment": "A Class 1 property concept: the bare root inflects like an intransitive verb."
+    "comment": "A Class 1 property concept: the bare root inflects like an intransitive verb.",
+    "verified": "page-image"
   },
   {
     "id": "haninkkoontzgarboden2025_ex21b",
@@ -169,7 +173,8 @@
         "bišapuʔ"
       ]
     ],
-    "comment": "Washo Archive. A Class 1 property concept."
+    "comment": "Washo Archive. A Class 1 property concept.",
+    "verified": "page-image"
   },
   {
     "id": "haninkkoontzgarboden2025_ex21c",
@@ -209,7 +214,8 @@
         "ihuk’"
       ]
     ],
-    "comment": "Washo Archive. A Class 1 property concept."
+    "comment": "Washo Archive. A Class 1 property concept.",
+    "verified": "page-image"
   },
   {
     "id": "haninkkoontzgarboden2025_ex22a",
@@ -245,7 +251,8 @@
         "tamugayʔl"
       ]
     ],
-    "comment": "Washo Archive. A Class 2 property concept: bound root plus -iʔ."
+    "comment": "Washo Archive. A Class 2 property concept: bound root plus -iʔ.",
+    "verified": "page-image"
   },
   {
     "id": "haninkkoontzgarboden2025_ex22b",
@@ -285,7 +292,8 @@
         "i:yel"
       ]
     ],
-    "comment": "Washo Archive. A Class 2 property concept."
+    "comment": "Washo Archive. A Class 2 property concept.",
+    "verified": "page-image"
   },
   {
     "id": "haninkkoontzgarboden2025_ex22c",
@@ -325,7 +333,8 @@
         "ʔnu:š"
       ]
     ],
-    "comment": "A Class 2 property concept."
+    "comment": "A Class 2 property concept.",
+    "verified": "page-image"
   },
   {
     "id": "haninkkoontzgarboden2025_ex23",
@@ -348,7 +357,7 @@
     ],
     "translation": "The mountain is big.",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -365,7 +374,8 @@
         "i:yel"
       ]
     ],
-    "comment": "A Class 2 root without -iʔ is ill-formed."
+    "comment": "A Class 2 root without -iʔ is ill-formed.",
+    "verified": "page-image"
   },
   {
     "id": "haninkkoontzgarboden2025_ex24a",
@@ -405,7 +415,8 @@
         "witwit"
       ]
     ],
-    "comment": "Washo Archive. A Class 3 property concept: ʔil-, reduplication, -iʔ."
+    "comment": "Washo Archive. A Class 3 property concept: ʔil-, reduplication, -iʔ.",
+    "verified": "page-image"
   },
   {
     "id": "haninkkoontzgarboden2025_ex24b",
@@ -445,7 +456,8 @@
         "k’awk’aw"
       ]
     ],
-    "comment": "Washo Archive. A Class 3 property concept."
+    "comment": "Washo Archive. A Class 3 property concept.",
+    "verified": "page-image"
   },
   {
     "id": "haninkkoontzgarboden2025_ex24c",
@@ -485,7 +497,8 @@
         "kaykay"
       ]
     ],
-    "comment": "Washo Archive. A Class 3 property concept."
+    "comment": "Washo Archive. A Class 3 property concept.",
+    "verified": "page-image"
   },
   {
     "id": "haninkkoontzgarboden2025_ex25a",
@@ -508,7 +521,7 @@
     ],
     "translation": "The man is tall.",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -525,7 +538,8 @@
         "kaykay"
       ]
     ],
-    "comment": "A Class 3 root with -iʔ but without ʔil- is ill-formed."
+    "comment": "A Class 3 root with -iʔ but without ʔil- is ill-formed.",
+    "verified": "page-image"
   },
   {
     "id": "haninkkoontzgarboden2025_ex25b",
@@ -548,7 +562,7 @@
     ],
     "translation": "The man is tall.",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -565,7 +579,8 @@
         "kaykay"
       ]
     ],
-    "comment": "A Class 3 root with ʔil- but without -iʔ is ill-formed."
+    "comment": "A Class 3 root with ʔil- but without -iʔ is ill-formed.",
+    "verified": "page-image"
   },
   {
     "id": "haninkkoontzgarboden2025_ex31",
@@ -597,7 +612,8 @@
         "possession"
       ]
     ],
-    "comment": "The attributive-agentive suffix -iʔ on a noun expresses possession."
+    "comment": "The attributive-agentive suffix -iʔ on a noun expresses possession.",
+    "verified": "page-image"
   },
   {
     "id": "haninkkoontzgarboden2025_ex32",
@@ -629,7 +645,8 @@
         "possession"
       ]
     ],
-    "comment": "The suffix -iʔ on a noun expresses possession."
+    "comment": "The suffix -iʔ on a noun expresses possession.",
+    "verified": "page-image"
   },
   {
     "id": "haninkkoontzgarboden2025_ex38",
@@ -665,7 +682,8 @@
         "ši:šip"
       ]
     ],
-    "comment": "A Class 3 root as the final of a resultative bipartite verb, bare and unreduplicated."
+    "comment": "A Class 3 root as the final of a resultative bipartite verb, bare and unreduplicated.",
+    "verified": "page-image"
   },
   {
     "id": "haninkkoontzgarboden2025_ex39",
@@ -697,7 +715,8 @@
         "bipartite"
       ]
     ],
-    "comment": "Washo Archive. A property-concept final with a manner initial."
+    "comment": "Washo Archive. A property-concept final with a manner initial.",
+    "verified": "page-image"
   },
   {
     "id": "haninkkoontzgarboden2025_ex41",
@@ -710,7 +729,7 @@
     "discourseSegments": [],
     "glossedTokens": [
       [
-        "díʔyu-a",
+        "diʔyu-a",
         "fire-OBL"
       ],
       [
@@ -737,7 +756,8 @@
         "bipartite"
       ]
     ],
-    "comment": "Washo Archive. An intransitive change-of-state bipartite verb: causation comes from the construction."
+    "comment": "Washo Archive. An intransitive change-of-state bipartite verb: causation comes from the construction.",
+    "verified": "page-image"
   },
   {
     "id": "haninkkoontzgarboden2025_ex47",
@@ -746,11 +766,11 @@
       "paperLabel": "(47)"
     },
     "language": "wash1253",
-    "primaryText": "ỹᵘ-i:yel-i",
+    "primaryText": "yᵘ-i:yel-i",
     "discourseSegments": [],
     "glossedTokens": [
       [
-        "ỹᵘ-i:yel-i",
+        "yᵘ-i:yel-i",
         "3.pull-big-IND"
       ]
     ],
@@ -773,7 +793,8 @@
         "i:yel"
       ]
     ],
-    "comment": "Hypothetical and unattested: a Class 2 root as a bipartite final, a type mismatch with v_become."
+    "comment": "Hypothetical and unattested: a Class 2 root as a bipartite final, a type mismatch with v_become. The paper marks the form with ˜, its sign for unattested forms, not with a star.",
+    "verified": "page-image"
   },
   {
     "id": "haninkkoontzgarboden2025_ex50a",
@@ -813,7 +834,8 @@
     "reportedIn": {
       "bibkey": "hanink-koontz-garboden-2025",
       "paperLabel": "(50a)"
-    }
+    },
+    "verified": "page-image"
   },
   {
     "id": "haninkkoontzgarboden2025_ex50b",
@@ -853,7 +875,8 @@
     "reportedIn": {
       "bibkey": "hanink-koontz-garboden-2025",
       "paperLabel": "(50b)"
-    }
+    },
+    "verified": "page-image"
   },
   {
     "id": "haninkkoontzgarboden2025_ex51a",
@@ -893,7 +916,8 @@
         "ši:šip"
       ]
     ],
-    "comment": "Washo Archive. The Class 3 root reduplicated under ʔil-."
+    "comment": "Washo Archive. The Class 3 root reduplicated under ʔil-.",
+    "verified": "page-image"
   },
   {
     "id": "haninkkoontzgarboden2025_ex52a",
@@ -933,7 +957,8 @@
         "k’unk’un"
       ]
     ],
-    "comment": "Washo Archive. The Class 3 root reduplicated under ʔil-."
+    "comment": "Washo Archive. The Class 3 root reduplicated under ʔil-.",
+    "verified": "page-image"
   },
   {
     "id": "haninkkoontzgarboden2025_ex52b",
@@ -969,7 +994,8 @@
         "k’unk’un"
       ]
     ],
-    "comment": "Washo Archive. The same root bare as a bipartite final."
+    "comment": "Washo Archive. The same root bare as a bipartite final.",
+    "verified": "page-image"
   },
   {
     "id": "haninkkoontzgarboden2025_ex61a",
@@ -1001,7 +1027,8 @@
         "possession"
       ]
     ],
-    "comment": "Washo Archive. Ordinary possession with -iʔ."
+    "comment": "Washo Archive. Ordinary possession with -iʔ.",
+    "verified": "page-image"
   },
   {
     "id": "haninkkoontzgarboden2025_ex61c",
@@ -1037,7 +1064,8 @@
         "possession"
       ]
     ],
-    "comment": "Inalienable possession with -iʔ."
+    "comment": "Inalienable possession with -iʔ.",
+    "verified": "page-image"
   },
   {
     "id": "haninkkoontzgarboden2025_ex64",
@@ -1060,7 +1088,7 @@
     ],
     "translation": "I have a pet/pets.",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -1073,7 +1101,8 @@
         "possession"
       ]
     ],
-    "comment": "The suffix -iʔ cannot stand as a verb on its own: a light verb requiring incorporation."
+    "comment": "The suffix -iʔ cannot stand as a verb on its own: a light verb requiring incorporation.",
+    "verified": "page-image"
   },
   {
     "id": "haninkkoontzgarboden2025_ex65a",
@@ -1109,7 +1138,8 @@
         "concord"
       ]
     ],
-    "comment": "Washo Archive. No plural concord on an inanimate noun's numeral."
+    "comment": "Washo Archive. No plural concord on an inanimate noun's numeral.",
+    "verified": "page-image"
   },
   {
     "id": "haninkkoontzgarboden2025_ex65b",
@@ -1149,7 +1179,8 @@
     "reportedIn": {
       "bibkey": "hanink-koontz-garboden-2025",
       "paperLabel": "(65b)"
-    }
+    },
+    "verified": "page-image"
   },
   {
     "id": "haninkkoontzgarboden2025_ex65c",
@@ -1185,7 +1216,8 @@
         "possession"
       ]
     ],
-    "comment": "A stranded numeral with animate concord: the noun incorporates into v_have."
+    "comment": "A stranded numeral with animate concord: the noun incorporates into v_have.",
+    "verified": "page-image"
   },
   {
     "id": "haninkkoontzgarboden2025_ex70",
@@ -1221,7 +1253,8 @@
         "possession"
       ]
     ],
-    "comment": "The suffix -iʔ sits inside aspectual morphology."
+    "comment": "The suffix -iʔ sits inside aspectual morphology.",
+    "verified": "page-image"
   },
   {
     "id": "haninkkoontzgarboden2025_ex71",
@@ -1257,7 +1290,8 @@
         "class3"
       ]
     ],
-    "comment": "Washo Archive. The suffix -iʔ sits inside the inchoative."
+    "comment": "Washo Archive. The suffix -iʔ sits inside the inchoative.",
+    "verified": "page-image"
   },
   {
     "id": "haninkkoontzgarboden2025_ex72",
@@ -1293,6 +1327,7 @@
         "ši:šip"
       ]
     ],
-    "comment": "Washo Archive. Stacked light verbs: v_have, v_become, v_cause."
+    "comment": "Washo Archive. Stacked light verbs: v_have, v_become, v_cause.",
+    "verified": "page-image"
   }
 ]

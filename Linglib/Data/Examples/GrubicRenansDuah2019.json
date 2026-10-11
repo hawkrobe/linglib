@@ -3,10 +3,10 @@
     "id": "grubicrenansduah2019_36a",
     "source": {"bibkey": "grubic-renans-duah-2019", "paperLabel": "(36a)"},
     "language": "ngam1282",
-    "primaryText": "Njèlù èshà=i Sàmá bù nzònò, ke èshá Hàwwâ.",
+    "primaryText": "Njèlù èshà=ì Sàmá bù nzònò, ke èshá Hàwwâ.",
     "discourseSegments": [],
     "glossedTokens": [
-      ["Njèlù", "Njelu"], ["èshà=i", "call.PFV=BM"], ["Sàmá", "Sama"], ["bù", "NEG"],
+      ["Njèlù", "Njelu"], ["èshà=ì", "call.PFV=BM"], ["Sàmá", "Sama"], ["bù", "NEG"],
       ["nzònò,", "yesterday"], ["ke", "also"], ["èshá", "call.PFV"], ["Hàwwâ.", "Hawwa"]
     ],
     "translation": "Njelu didn't phone Sama yesterday. He also phoned Hawwa.",
@@ -18,16 +18,17 @@
       ["construction", "marked"],
       ["diagnostic", "negationAlso"]
     ],
-    "comment": "Negation targets the prejacent, so the additive particle lacks its antecedent."
+    "comment": "Negation targets the prejacent, so the additive particle lacks its antecedent.",
+    "verified": "page-image"
   },
   {
     "id": "grubicrenansduah2019_36b",
     "source": {"bibkey": "grubic-renans-duah-2019", "paperLabel": "(36b)"},
     "language": "ngam1282",
-    "primaryText": "Njèlù èshà=i Sàmá yàk'i bù nzònò, ke èshá Hàwwâ.",
+    "primaryText": "Njèlù èshà=ì Sàmá yàk'i bù nzònò, ke èshá Hàwwâ.",
     "discourseSegments": [],
     "glossedTokens": [
-      ["Njèlù", "Njelu"], ["èshà=i", "call.PFV=BM"], ["Sàmá", "Sama"], ["yàk'i", "only"],
+      ["Njèlù", "Njelu"], ["èshà=ì", "call.PFV=BM"], ["Sàmá", "Sama"], ["yàk'i", "only"],
       ["bù", "NEG"], ["nzònò,", "yesterday"], ["ke", "also"], ["èshá", "call.PFV"],
       ["Hàwwâ.", "Hawwa"]
     ],
@@ -40,16 +41,17 @@
       ["construction", "only"],
       ["diagnostic", "negationAlso"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "grubicrenansduah2019_37a",
     "source": {"bibkey": "grubic-renans-duah-2019", "paperLabel": "(37a)"},
     "language": "gaaa1244",
-    "primaryText": "Jèèè Fred nì è-fɔ̀ nìnè è-tsɛ́. È-tsɛ́ Gord hú.",
+    "primaryText": "Jééé Fred nì è-fɔ̀ nìnè è-tsɛ́. È-tsɛ́ Gord hú.",
     "discourseSegments": [],
     "glossedTokens": [
-      ["Jèèè", "NEG"], ["Fred", "Fred"], ["nì", "PRT"], ["è-fɔ̀", "3SG-throw"], ["nìnè", "hand"],
+      ["Jééé", "NEG"], ["Fred", "Fred"], ["nì", "PRT"], ["è-fɔ̀", "3SG-throw"], ["nìnè", "hand"],
       ["è-tsɛ́.", "3SG-call"], ["È-tsɛ́", "3SG-call"], ["Gord", "Gord"], ["hú.", "also"]
     ],
     "translation": "It wasn't Fred she invited. She also invited Gord.",
@@ -61,16 +63,17 @@
       ["construction", "marked"],
       ["diagnostic", "negationAlso"]
     ],
-    "comment": ""
+    "comment": "Jééé as printed here; (54b) and (61b) print Jèèè.",
+    "verified": "page-image"
   },
   {
     "id": "grubicrenansduah2019_37b",
     "source": {"bibkey": "grubic-renans-duah-2019", "paperLabel": "(37b)"},
     "language": "gaaa1244",
-    "primaryText": "Jèèè Fred pɛ́ è-fɔ̀ nìnè è-tsɛ́. È-tsɛ́ Gord hú.",
+    "primaryText": "Jééé Fred pɛ́ è-fɔ̀ nìnè è-tsɛ́. È-tsɛ́ Gord hú.",
     "discourseSegments": [],
     "glossedTokens": [
-      ["Jèèè", "NEG"], ["Fred", "Fred"], ["pɛ́", "only"], ["è-fɔ̀", "3SG-throw"], ["nìnè", "hand"],
+      ["Jééé", "NEG"], ["Fred", "Fred"], ["pɛ́", "only"], ["è-fɔ̀", "3SG-throw"], ["nìnè", "hand"],
       ["è-tsɛ́.", "3SG-call"], ["È-tsɛ́", "3SG-call"], ["Gord", "Gord"], ["hú.", "also"]
     ],
     "translation": "She didn't only invite Fred. She also invited Gord.",
@@ -82,7 +85,8 @@
       ["construction", "only"],
       ["diagnostic", "negationAlso"]
     ],
-    "comment": ""
+    "comment": "Jééé as printed here; (54b) and (61b) print Jèèè.",
+    "verified": "page-image"
   },
   {
     "id": "grubicrenansduah2019_38a",
@@ -104,17 +108,18 @@
       ["construction", "marked"],
       ["diagnostic", "negationAlso"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "grubicrenansduah2019_38b",
     "source": {"bibkey": "grubic-renans-duah-2019", "paperLabel": "(38b)"},
     "language": "akan1250",
-    "primaryText": "Arko á-ǹ-tɔ́ àsòmàdéɛ́ ńkóáá ɔ̀-tɔ̀-ɔ̀ àhwènéɛ́ ńsó.",
+    "primaryText": "Arko á-ǹ-tɔ́ àsòmàdéɛ́ ńkóáá ɔ̀-tɔ̀-ɔ̀. àhwènéɛ́ ńsó",
     "discourseSegments": [],
     "glossedTokens": [
       ["Arko", "Arko"], ["á-ǹ-tɔ́", "COMPL-NEG-buy"], ["àsòmàdéɛ́", "earrings"], ["ńkóáá", "only"],
-      ["ɔ̀-tɔ̀-ɔ̀", "3SG-buy-COMPL"], ["àhwènéɛ́", "beads"], ["ńsó.", "too"]
+      ["ɔ̀-tɔ̀-ɔ̀.", "3SG-buy-COMPL"], ["àhwènéɛ́", "beads"], ["ńsó", "too"]
     ],
     "translation": "Arko did not buy only earrings, she bought beads too.",
     "context": "",
@@ -125,16 +130,17 @@
       ["construction", "only"],
       ["diagnostic", "negationAlso"]
     ],
-    "comment": "Duah (2015: 18)."
+    "comment": "Duah (2015: 18).",
+    "verified": "page-image"
   },
   {
     "id": "grubicrenansduah2019_39a",
     "source": {"bibkey": "grubic-renans-duah-2019", "paperLabel": "(39a)"},
     "language": "ngam1282",
-    "primaryText": "kìkà tùkò=ì Kúlè yàk'î",
+    "primaryText": "kìkà tùkò=ì Kúlè yàk'î.",
     "discourseSegments": [],
     "glossedTokens": [
-      ["kìkà", "because"], ["tùkò=ì", "eat.PFV=BM"], ["Kúlè", "Kule"], ["yàk'î", "only"]
+      ["kìkà", "because"], ["tùkò=ì", "eat.PFV=BM"], ["Kúlè", "Kule"], ["yàk'î.", "only"]
     ],
     "translation": "because only Kule passed.",
     "context": "The teacher had to repeat the exam,",
@@ -145,16 +151,17 @@
       ["construction", "only"],
       ["diagnostic", "reasonClause"]
     ],
-    "comment": "Consultant: he doesn't want the other students to fail."
+    "comment": "Consultant: he doesn't want the other students to fail.",
+    "verified": "page-image"
   },
   {
     "id": "grubicrenansduah2019_39b",
     "source": {"bibkey": "grubic-renans-duah-2019", "paperLabel": "(39b)"},
     "language": "ngam1282",
-    "primaryText": "kìkà tùkò=ì Kúlè",
+    "primaryText": "kìkà tùkò=ì Kúlè.",
     "discourseSegments": [],
     "glossedTokens": [
-      ["kìkà", "because"], ["tùkò=ì", "eat.PFV=BM"], ["Kúlè", "Kule"]
+      ["kìkà", "because"], ["tùkò=ì", "eat.PFV=BM"], ["Kúlè.", "Kule"]
     ],
     "translation": "because Kule passed",
     "context": "The teacher had to repeat the exam,",
@@ -165,16 +172,17 @@
       ["construction", "marked"],
       ["diagnostic", "reasonClause"]
     ],
-    "comment": "Consultant: he doesn't want Kule to pass. The exhaustive inference is not the reason."
+    "comment": "Consultant: he doesn't want Kule to pass. The exhaustive inference is not the reason.",
+    "verified": "page-image"
   },
   {
     "id": "grubicrenansduah2019_40a",
     "source": {"bibkey": "grubic-renans-duah-2019", "paperLabel": "(40a)"},
     "language": "gaaa1244",
-    "primaryText": "éjàáké Kòfí pɛ́ páásí",
+    "primaryText": "éjàákɛ́ Kòfí pɛ́ páásí.",
     "discourseSegments": [],
     "glossedTokens": [
-      ["éjàáké", "because"], ["Kòfí", "Kofi"], ["pɛ́", "only"], ["páásí", "pass"]
+      ["éjàákɛ́", "because"], ["Kòfí", "Kofi"], ["pɛ́", "only"], ["páásí.", "pass"]
     ],
     "translation": "because only Kofi passed",
     "context": "The teacher will repeat the exam,",
@@ -185,16 +193,17 @@
       ["construction", "only"],
       ["diagnostic", "reasonClause"]
     ],
-    "comment": "Consultant: the teacher wants everybody to pass, so he will repeat the exam."
+    "comment": "Consultant: the teacher wants everybody to pass, so he will repeat the exam.",
+    "verified": "page-image"
   },
   {
     "id": "grubicrenansduah2019_40b",
     "source": {"bibkey": "grubic-renans-duah-2019", "paperLabel": "(40b)"},
     "language": "gaaa1244",
-    "primaryText": "éjàáké Kòfí nì páásí",
+    "primaryText": "éjàákɛ́ Kòfí nì páásí.",
     "discourseSegments": [],
     "glossedTokens": [
-      ["éjàáké", "because"], ["Kòfí", "Kofi"], ["nì", "PRT"], ["páásí", "pass"]
+      ["éjàákɛ́", "because"], ["Kòfí", "Kofi"], ["nì", "PRT"], ["páásí.", "pass"]
     ],
     "translation": "because it was Kofi who passed",
     "context": "The teacher will repeat the exam,",
@@ -205,16 +214,17 @@
       ["construction", "marked"],
       ["diagnostic", "reasonClause"]
     ],
-    "comment": "Consultant: the teacher didn't want Kofi to pass, so he will repeat the exam."
+    "comment": "Consultant: the teacher didn't want Kofi to pass, so he will repeat the exam.",
+    "verified": "page-image"
   },
   {
     "id": "grubicrenansduah2019_41a",
     "source": {"bibkey": "grubic-renans-duah-2019", "paperLabel": "(41a)"},
     "language": "akan1250",
-    "primaryText": "èfisɛ́ Yaw ǹkóáá nà ɔ̀-twá-à ǹsɔ́hwɛ́ nó.",
+    "primaryText": "èfìsɛ́ Yaw ǹkóáá nà ɔ̀-twá-à ǹsɔ́hwɛ́ nó.",
     "discourseSegments": [],
     "glossedTokens": [
-      ["èfisɛ́", "because"], ["Yaw", "Yaw"], ["ǹkóáá", "only"], ["nà", "PRT"],
+      ["èfìsɛ́", "because"], ["Yaw", "Yaw"], ["ǹkóáá", "only"], ["nà", "PRT"],
       ["ɔ̀-twá-à", "3SG.SBJ-pass-COMPL"], ["ǹsɔ́hwɛ́", "exam"], ["nó.", "DET"]
     ],
     "translation": "because only Yaw passed the exam",
@@ -226,17 +236,18 @@
       ["construction", "only"],
       ["diagnostic", "reasonClause"]
     ],
-    "comment": "Consultant: the teacher wants everybody to pass, and since Yaw is the only one who passed, the teacher will repeat the exam."
+    "comment": "Consultant: the teacher wants everybody to pass, and since Yaw is the only one who passed, the teacher will repeat the exam.",
+    "verified": "page-image"
   },
   {
     "id": "grubicrenansduah2019_41b",
     "source": {"bibkey": "grubic-renans-duah-2019", "paperLabel": "(41b)"},
     "language": "akan1250",
-    "primaryText": "èfisɛ́ Yaw nà ɔ̀-twá-à ǹsɔ́hwɛ́ nó",
+    "primaryText": "èfìsɛ́ Yaw nà ɔ̀-twá-à ǹsɔ́hwɛ́ nó.",
     "discourseSegments": [],
     "glossedTokens": [
-      ["èfisɛ́", "because"], ["Yaw", "Yaw"], ["nà", "PRT"], ["ɔ̀-twá-à", "3SG.SBJ-pass"],
-      ["ǹsɔ́hwɛ́", "exam"], ["nó", "DET"]
+      ["èfìsɛ́", "because"], ["Yaw", "Yaw"], ["nà", "PRT"], ["ɔ̀-twá-à", "3SG.SBJ-pass"],
+      ["ǹsɔ́hwɛ́", "exam"], ["nó.", "DET"]
     ],
     "translation": "because it was Yaw who passed the exam",
     "context": "The teacher will repeat the exam,",
@@ -247,16 +258,17 @@
       ["construction", "marked"],
       ["diagnostic", "reasonClause"]
     ],
-    "comment": "Consultant: the teacher doesn't want Yaw to pass the exam, so he will repeat the exam."
+    "comment": "Consultant: the teacher doesn't want Yaw to pass the exam, so he will repeat the exam.",
+    "verified": "page-image"
   },
   {
     "id": "grubicrenansduah2019_42",
     "source": {"bibkey": "grubic-renans-duah-2019", "paperLabel": "(42)"},
     "language": "ngam1282",
-    "primaryText": "Kàjà=i fárì kì gárgù, kè kàjà àyàbà.",
+    "primaryText": "Kàjà=ì fárì kì gárgù, kè kàjà àyàbà.",
     "discourseSegments": [],
     "glossedTokens": [
-      ["Kàjà=i", "buy.PFV=BM"], ["fárì", "watermelon"], ["kì", "at"], ["gárgù,", "village"],
+      ["Kàjà=ì", "buy.PFV=BM"], ["fárì", "watermelon"], ["kì", "at"], ["gárgù,", "village"],
       ["kè", "also"], ["kàjà", "buy.PFV"], ["àyàbà.", "banana"]
     ],
     "translation": "She bought a watermelon in the village, and she also bought a banana.",
@@ -268,7 +280,8 @@
       ["construction", "marked"],
       ["diagnostic", "cancellation"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "grubicrenansduah2019_43a1",
@@ -290,7 +303,8 @@
       ["construction", "marked"],
       ["diagnostic", "cancellation"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "grubicrenansduah2019_43a2",
@@ -312,7 +326,8 @@
       ["construction", "unmarked"],
       ["diagnostic", "cancellation"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "grubicrenansduah2019_44a1",
@@ -333,17 +348,18 @@
       ["construction", "marked"],
       ["diagnostic", "cancellation"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "grubicrenansduah2019_44a2",
     "source": {"bibkey": "grubic-renans-duah-2019", "paperLabel": "(44A2)"},
     "language": "akan1250",
-    "primaryText": "Mè-tɔ̀-ɔ̀ àtààdéɛ́ ɛ́nà mè-tɔ̀-ɔ̀ m̀pàbòá ńsó",
+    "primaryText": "Mè-tɔ̀-ɔ̀ àtààdéɛ́ ɛ́nà mè-tɔ̀-ɔ̀ m̀pàbòá ńsó.",
     "discourseSegments": [],
     "glossedTokens": [
       ["Mè-tɔ̀-ɔ̀", "1SG-buy-COMPL"], ["àtààdéɛ́", "shirt"], ["ɛ́nà", "and"],
-      ["mè-tɔ̀-ɔ̀", "1SG-buy-COMPL"], ["m̀pàbòá", "shoes"], ["ńsó", "also"]
+      ["mè-tɔ̀-ɔ̀", "1SG-buy-COMPL"], ["m̀pàbòá", "shoes"], ["ńsó.", "also"]
     ],
     "translation": "I bought a shirt and I bought shoes also.",
     "context": "What did you buy?",
@@ -354,16 +370,17 @@
       ["construction", "unmarked"],
       ["diagnostic", "cancellation"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "grubicrenansduah2019_45",
     "source": {"bibkey": "grubic-renans-duah-2019", "paperLabel": "(45)"},
     "language": "ngam1282",
-    "primaryText": "Sàlko bànò=ì Dímzà, Umàr kè sàlkó bànò.",
+    "primaryText": "Sàlkó bànò=ì Dímzà, Umàr kè sàlkó bànò.",
     "discourseSegments": [],
     "glossedTokens": [
-      ["Sàlko", "build.PFV"], ["bànò=ì", "house=BM"], ["Dímzà,", "Dimza"], ["Umàr", "Umar"],
+      ["Sàlkó", "build.PFV"], ["bànò=ì", "house=BM"], ["Dímzà,", "Dimza"], ["Umàr", "Umar"],
       ["kè", "also"], ["sàlkó", "build.PFV"], ["bànò.", "house"]
     ],
     "translation": "Dimza built a house, and Umar built a house, too.",
@@ -375,7 +392,8 @@
       ["construction", "marked"],
       ["diagnostic", "cancellation"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "grubicrenansduah2019_46",
@@ -397,7 +415,8 @@
       ["construction", "marked"],
       ["diagnostic", "cancellation"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "grubicrenansduah2019_47",
@@ -419,7 +438,8 @@
       ["construction", "marked"],
       ["diagnostic", "cancellation"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "grubicrenansduah2019_48",
@@ -432,7 +452,7 @@
       ["wòmmí'ì.", "DEM"]
     ],
     "translation": "That man sells newspapers.",
-    "context": "The person asking wants to know the closest place to buy a newspaper. Who sells newspapers?",
+    "context": "The person asking the question wants to know the closest place to buy a newspaper. Who sells newspapers?",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
@@ -440,7 +460,8 @@
       ["construction", "marked"],
       ["diagnostic", "mentionSome"]
     ],
-    "comment": "Okay in a context where you just want to know the closest place to buy a newspaper."
+    "comment": "Okay in a context where you just want to know the closest place to buy a newspaper.",
+    "verified": "page-image"
   },
   {
     "id": "grubicrenansduah2019_49",
@@ -460,7 +481,8 @@
       ["construction", "marked"],
       ["diagnostic", "mentionSome"]
     ],
-    "comment": "Consultant: it sounds like it's only Kofi who sells newspapers at Makola."
+    "comment": "Consultant: it sounds like it's only Kofi who sells newspapers at Makola.",
+    "verified": "page-image"
   },
   {
     "id": "grubicrenansduah2019_50a",
@@ -472,7 +494,7 @@
       ["Ama", "Ama"], ["tɔ̀nè", "sell"], ["bì.", "some"]
     ],
     "translation": "Ama sells some (mangoes).",
-    "context": "The person asking wants to know the closest place to buy mangoes. Who sells mangoes?",
+    "context": "The person asking the question wants to know the closest place to buy mangoes. Who sells mangoes?",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
@@ -480,19 +502,20 @@
       ["construction", "unmarked"],
       ["diagnostic", "mentionSome"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "grubicrenansduah2019_50a1",
     "source": {"bibkey": "grubic-renans-duah-2019", "paperLabel": "(50A1)"},
     "language": "akan1250",
-    "primaryText": "Ama nà ɔ̀-tɔ́nè bì",
+    "primaryText": "Ama nà ɔ̀-tɔ́nè bì.",
     "discourseSegments": [],
     "glossedTokens": [
-      ["Ama", "Ama"], ["nà", "PRT"], ["ɔ̀-tɔ́nè", "3SG.SBJ-sell"], ["bì", "some"]
+      ["Ama", "Ama"], ["nà", "PRT"], ["ɔ̀-tɔ́nè", "3SG.SBJ-sell"], ["bì.", "some"]
     ],
     "translation": "It is Ama who sells some (mangoes).",
-    "context": "The person asking wants to know the closest place to buy mangoes. Who sells mangoes?",
+    "context": "The person asking the question wants to know the closest place to buy mangoes. Who sells mangoes?",
     "judgment": "unacceptable",
     "alternatives": [],
     "readings": [],
@@ -500,7 +523,8 @@
       ["construction", "marked"],
       ["diagnostic", "mentionSome"]
     ],
-    "comment": "Consultant: the addressee will think that only Ama sells mangoes."
+    "comment": "Consultant: the addressee will think that only Ama sells mangoes.",
+    "verified": "page-image"
   },
   {
     "id": "grubicrenansduah2019_54a",
@@ -522,7 +546,8 @@
       ["diagnostic", "projection"],
       ["inference", "if she invited Fred, then she didn't invite anybody else"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "grubicrenansduah2019_54b",
@@ -544,7 +569,8 @@
       ["diagnostic", "projection"],
       ["inference", "if she invited Fred, then she didn't invite anybody else"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "grubicrenansduah2019_55a",
@@ -555,7 +581,7 @@
     "glossedTokens": [
       ["Amo", "Amo"], ["nà", "PRT"], ["ɔ̀-frɛ́-ɛ̀", "3SG.SBJ-call-COMPL"], ["nó.", "3SG.OBJ"]
     ],
-    "translation": "It was Amo that he called/invited.",
+    "translation": "It was Amo that he invited.",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -565,7 +591,8 @@
       ["diagnostic", "projection"],
       ["inference", "if he invited Amo, then he didn't invite anybody else"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "grubicrenansduah2019_55b",
@@ -587,16 +614,17 @@
       ["diagnostic", "projection"],
       ["inference", "if he invited Amo, then he didn't invite anybody else"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "grubicrenansduah2019_59a",
     "source": {"bibkey": "grubic-renans-duah-2019", "paperLabel": "(59a)"},
     "language": "ngam1282",
-    "primaryText": "Èshà=i ngô bù nzònò.",
+    "primaryText": "Èshà=ì ngô bù nzònò.",
     "discourseSegments": [],
     "glossedTokens": [
-      ["Èshà=i", "call.PFV=BM"], ["ngô", "person"], ["bù", "NEG"], ["nzònò.", "yesterday"]
+      ["Èshà=ì", "call.PFV=BM"], ["ngô", "person"], ["bù", "NEG"], ["nzònò.", "yesterday"]
     ],
     "translation": "He called nobody yesterday.",
     "context": "Who did Njelu call yesterday?",
@@ -607,7 +635,8 @@
       ["construction", "marked"],
       ["diagnostic", "negativeQuantifier"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "grubicrenansduah2019_59b",
@@ -627,7 +656,8 @@
       ["construction", "marked"],
       ["diagnostic", "negativeQuantifier"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "grubicrenansduah2019_59c",
@@ -648,7 +678,8 @@
       ["construction", "pseudocleft"],
       ["diagnostic", "negativeQuantifier"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "grubicrenansduah2019_60a",
@@ -668,17 +699,18 @@
       ["construction", "unmarked"],
       ["diagnostic", "negativeQuantifier"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "grubicrenansduah2019_60b",
     "source": {"bibkey": "grubic-renans-duah-2019", "paperLabel": "(60b)"},
     "language": "akan1250",
-    "primaryText": "Ɛ̀-ǹ-yɛ́ òbíárá nà ɔ̀-frɛ́-èɛ́",
+    "primaryText": "Ɛ̀-ǹ-yɛ́ òbíárá nà ɔ̀-frɛ́-èɛ́.",
     "discourseSegments": [],
     "glossedTokens": [
       ["Ɛ̀-ǹ-yɛ́", "3SG.INA.SBJ-NEG-be"], ["òbíárá", "everybody/anyone"], ["nà", "PRT"],
-      ["ɔ̀-frɛ́-èɛ́", "3SG.SBJ-invite-COMPL"]
+      ["ɔ̀-frɛ́-èɛ́.", "3SG.SBJ-invite-COMPL"]
     ],
     "translation": "It was nobody that he invited.",
     "context": "Who did Kofi invite to the party?",
@@ -689,7 +721,8 @@
       ["construction", "marked"],
       ["diagnostic", "negativeQuantifier"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "grubicrenansduah2019_61a",
@@ -709,7 +742,8 @@
       ["construction", "unmarked"],
       ["diagnostic", "negativeQuantifier"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "grubicrenansduah2019_61b",
@@ -730,7 +764,8 @@
       ["construction", "marked"],
       ["diagnostic", "negativeQuantifier"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "grubicrenansduah2019_64a",
@@ -751,7 +786,8 @@
       ["construction", "unmarked"],
       ["diagnostic", "uncommittedContext"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "grubicrenansduah2019_64b",
@@ -772,7 +808,8 @@
       ["construction", "marked"],
       ["diagnostic", "uncommittedContext"]
     ],
-    "comment": "The existence inference here arises from the negation's association with focus under a positive QUD, not from the marker."
+    "comment": "The existence inference here arises from the negation's association with focus under a positive QUD, not from the marker.",
+    "verified": "page-image"
   },
   {
     "id": "grubicrenansduah2019_75",
@@ -795,7 +832,8 @@
       ["inference", "if Kofi swam, then nobody else swam"],
       ["inference", "somebody swam"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "grubicrenansduah2019_76",
@@ -818,7 +856,8 @@
       ["inference", "if Ama slept, then nobody else slept"],
       ["inference", "somebody slept"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "grubicrenansduah2019_77",
@@ -838,7 +877,8 @@
       ["construction", "marked"],
       ["diagnostic", "analysis"]
     ],
-    "comment": "Banku was not the maximal thing Kofi ate, so the conditional presupposition fails."
+    "comment": "Banku was not the maximal thing Kofi ate, so the conditional presupposition fails.",
+    "verified": "page-image"
   },
   {
     "id": "grubicrenansduah2019_78",
@@ -861,6 +901,7 @@
       ["inference", "Mammadi gave a watch to Dimza"],
       ["inference", "that Mammadi gave or might have given something to Dimza is salient"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   }
 ]

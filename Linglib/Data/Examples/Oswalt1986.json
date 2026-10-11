@@ -12,7 +12,8 @@
   "alternatives": [],
   "readings": [],
   "paperFeatures": [["mode", "spontaneous"], ["aspect", "imperfective"], ["evidential", "performative"]],
-  "comment": "The root is indifferent to aspect, so the performative imperfective -ŵela carries the aspect."
+  "comment": "The root is indifferent to aspect, so the performative imperfective -ŵela carries the aspect.",
+  "verified": "page-image"
  },
  {
   "id": "oswalt1986_s2",
@@ -27,7 +28,8 @@
   "alternatives": [],
   "readings": [],
   "paperFeatures": [["mode", "spontaneous"], ["aspect", "perfective"], ["evidential", "performative"]],
-  "comment": "The same root with the performative perfective -mela."
+  "comment": "The same root with the performative perfective -mela.",
+  "verified": "page-image"
  },
  {
   "id": "oswalt1986_s4",
@@ -42,7 +44,8 @@
   "alternatives": [{"form": "cohtocéla", "judgment": "ungrammatical"}],
   "readings": [],
   "paperFeatures": [["mode", "spontaneous"], ["aspect", "perfective"], ["evidential", "performative"]],
-  "comment": "A perfective statement made during the act; cohtoc- is innately perfective, so the imperfective -ŵela cannot be suffixed to it, only to the durative stem of S5."
+  "comment": "A perfective statement made during the act; cohtoc- is innately perfective, so the imperfective -ŵela cannot be suffixed to it, only to the durative stem of S5.",
+  "verified": "page-image"
  },
  {
   "id": "oswalt1986_s6",
@@ -57,7 +60,8 @@
   "alternatives": [],
   "readings": [],
   "paperFeatures": [["mode", "spontaneous"], ["aspect", "perfective"], ["evidential", "performative"]],
-  "comment": "Kashaya Texts 7:7.4; the act itself need not have just happened."
+  "comment": "Kashaya Texts 7:7.4; the act itself need not have just happened.",
+  "verified": "page-image"
  },
  {
   "id": "oswalt1986_s7",
@@ -65,14 +69,15 @@
   "language": "kash1280",
   "primaryText": "hú·ʔ men s̓í-ya-m ṭa ʔa",
   "discourseSegments": [],
-  "glossedTokens": [["hú·ʔ", "yes"], ["men", "thus"], ["s̓í-ya-m", "do-VISUAL-RESP"], ["ṭa", ""], ["ʔa", "I"]],
+  "glossedTokens": [["hú·ʔ", "Yes"], ["men", "thus"], ["s̓í-ya-m", "do-VISUAL-RESP"], ["ṭa", ""], ["ʔa", "I"]],
   "translation": "Yes, I have done that",
   "context": "A response to a remark by someone else.",
   "judgment": "acceptable",
   "alternatives": [{"form": "men s̓ímela", "judgment": "acceptable"}, {"form": "men s̓ímelam", "judgment": "ungrammatical"}],
   "readings": [],
   "paperFeatures": [["mode", "responsive"], ["aspect", "perfective"], ["evidential", "factualVisual"]],
-  "comment": "The visual takes over for the performative in the responsive mode: the isolated remark men s̓ímela is normal, but the performative with the responsive suffix does not occur. Oswalt leaves the particle ṭa unglossed and marks the rising intonation of the response at the end of the sentence."
+  "comment": "The visual takes over for the performative in the responsive mode: the isolated remark men s̓ímela is normal, but the performative with the responsive suffix does not occur. Oswalt leaves the particle ṭa unglossed and marks the rising intonation of the response at the end of the sentence.",
+  "verified": "page-image"
  },
  {
   "id": "oswalt1986_s8",
@@ -87,7 +92,8 @@
   "alternatives": [],
   "readings": [],
   "paperFeatures": [["mode", "spontaneous"], ["aspect", "imperfective"], ["evidential", "factualVisual"]],
-  "comment": "No surface segment is the factual: its presence shows in the length of the final vowel and the aspiration of the stem-final consonant."
+  "comment": "No surface segment is the factual: its presence shows in the length of the final vowel and the aspiration of the stem-final consonant.",
+  "verified": "page-image"
  },
  {
   "id": "oswalt1986_s9",
@@ -102,7 +108,8 @@
   "alternatives": [],
   "readings": [],
   "paperFeatures": [["mode", "spontaneous"], ["aspect", "perfective"], ["evidential", "factualVisual"]],
-  "comment": "The same root with the visual perfective -yă."
+  "comment": "The same root with the visual perfective -yă.",
+  "verified": "page-image"
  },
  {
   "id": "oswalt1986_s13",
@@ -117,7 +124,8 @@
   "alternatives": [],
   "readings": [{"name": "general truth", "judgment": "acceptable"}, {"name": "witnessed", "judgment": "acceptable"}],
   "paperFeatures": [["mode", "spontaneous"], ["aspect", "imperfective"], ["evidential", "factualVisual"]],
-  "comment": "The general-truth use of the factual beside the witnessed reading '(I see/saw) birds are/were singing'; with a vowel-final stem the form is also the absolutive, so the sentence can further be read as an evidence-less past."
+  "comment": "The general-truth use of the factual beside the witnessed reading '(I see/saw) birds are/were singing'; with a vowel-final stem the form is also the absolutive, so the sentence can further be read as an evidence-less past.",
+  "verified": "page-image"
  },
  {
   "id": "oswalt1986_s14",
@@ -132,7 +140,8 @@
   "alternatives": [],
   "readings": [],
   "paperFeatures": [["mode", "spontaneous"], ["aspect", "imperfective"], ["evidential", "auditory"]],
-  "comment": "The auditory is indifferent to aspect; the stem is imperfective."
+  "comment": "The auditory is indifferent to aspect; the stem is imperfective.",
+  "verified": "page-image"
  },
  {
   "id": "oswalt1986_s15",
@@ -147,7 +156,8 @@
   "alternatives": [],
   "readings": [],
   "paperFeatures": [["mode", "spontaneous"], ["aspect", "perfective"], ["evidential", "auditory"]],
-  "comment": "The auditory on the perfective stem of S11."
+  "comment": "The auditory on the perfective stem of S11.",
+  "verified": "page-image"
  },
  {
   "id": "oswalt1986_s16",
@@ -162,7 +172,8 @@
   "alternatives": [],
   "readings": [],
   "paperFeatures": [["mode", "spontaneous"], ["evidential", "auditory"]],
-  "comment": "Kashaya Texts 76:6.1, a spontaneous remark recorded in a natural conversation."
+  "comment": "Kashaya Texts 76:6.1, a spontaneous remark recorded in a natural conversation.",
+  "verified": "page-image"
  },
  {
   "id": "oswalt1986_s17",
@@ -177,7 +188,8 @@
   "alternatives": [],
   "readings": [],
   "paperFeatures": [["mode", "responsive"], ["evidential", "auditory"]],
-  "comment": "Kashaya Texts 76:6.4; the response carries the suffix -m and ends in the rising intonation of the response."
+  "comment": "Kashaya Texts 76:6.4; the response carries the suffix -m and ends in the rising intonation of the response.",
+  "verified": "page-image"
  },
  {
   "id": "oswalt1986_s19",
@@ -192,7 +204,8 @@
   "alternatives": [],
   "readings": [],
   "paperFeatures": [["mode", "spontaneous"], ["evidential", "inferential"]],
-  "comment": "Inferential I implies no lack of certainty, only the lack of higher-ranking evidence."
+  "comment": "Inferential I implies no lack of certainty, only the lack of higher-ranking evidence.",
+  "verified": "page-image"
  },
  {
   "id": "oswalt1986_s19_visual",
@@ -207,7 +220,8 @@
   "alternatives": [],
   "readings": [],
   "paperFeatures": [["mode", "spontaneous"], ["aspect", "perfective"], ["evidential", "factualVisual"]],
-  "comment": "The visual counterpart Oswalt gives for S19."
+  "comment": "The visual counterpart Oswalt gives for S19.",
+  "verified": "page-image"
  },
  {
   "id": "oswalt1986_s19_auditory",
@@ -222,7 +236,8 @@
   "alternatives": [],
   "readings": [],
   "paperFeatures": [["mode", "spontaneous"], ["aspect", "perfective"], ["evidential", "auditory"]],
-  "comment": "The auditory counterpart Oswalt gives for S19."
+  "comment": "The auditory counterpart Oswalt gives for S19.",
+  "verified": "page-image"
  },
  {
   "id": "oswalt1986_s22",
@@ -237,7 +252,8 @@
   "alternatives": [],
   "readings": [],
   "paperFeatures": [["mode", "spontaneous"], ["evidential", "inferential"]],
-  "comment": "Inferential I where English would not use 'must have'."
+  "comment": "Inferential I where English would not use 'must have'.",
+  "verified": "page-image"
  },
  {
   "id": "oswalt1986_s25",
@@ -252,7 +268,8 @@
   "alternatives": [],
   "readings": [],
   "paperFeatures": [["mode", "narrative"], ["evidential", "personalExperience"]],
-  "comment": "The narrative construction: the personal experience suffix on the assertive enclitic after the first word, the main verb in the absolutive."
+  "comment": "The narrative construction: the personal experience suffix on the assertive enclitic after the first word, the main verb in the absolutive.",
+  "verified": "page-image"
  },
  {
   "id": "oswalt1986_s26",
@@ -267,7 +284,8 @@
   "alternatives": [],
   "readings": [],
   "paperFeatures": [["mode", "remote"], ["evidential", "remotePast"]],
-  "comment": "The archaic remote past, on the main verb rather than displaced in the narrative construction."
+  "comment": "The archaic remote past, on the main verb rather than displaced in the narrative construction.",
+  "verified": "page-image"
  },
  {
   "id": "oswalt1986_s27",
@@ -282,7 +300,8 @@
   "alternatives": [],
   "readings": [],
   "paperFeatures": [["mode", "narrative"], ["evidential", "quotative"]],
-  "comment": "The quotative in the narrative construction, its most common use."
+  "comment": "The quotative in the narrative construction, its most common use.",
+  "verified": "page-image"
  },
  {
   "id": "oswalt1986_s28",
@@ -297,7 +316,8 @@
   "alternatives": [],
   "readings": [],
   "paperFeatures": [["mode", "responsive"], ["evidential", "quotative"]],
-  "comment": "Kashaya Texts 76:19, a rare quotative referring to the present; the sentence ends in the rising intonation of the response."
+  "comment": "Kashaya Texts 76:19, a rare quotative referring to the present; the sentence ends in the rising intonation of the response.",
+  "verified": "page-image"
  },
  {
   "id": "oswalt1986_s29",
@@ -312,7 +332,8 @@
   "alternatives": [],
   "readings": [],
   "paperFeatures": [["mode", "responsive"], ["evidential", "quotative"]],
-  "comment": "Kashaya Texts 76:38: the quotative rides on the assertive enclitic into a clause with a future tense. Oswalt leaves the particle ṭa unglossed and marks the rising intonation of the response at the end of the sentence."
+  "comment": "Kashaya Texts 76:38: the quotative rides on the assertive enclitic into a clause with a future tense. Oswalt leaves the particle ṭa unglossed and marks the rising intonation of the response at the end of the sentence.",
+  "verified": "page-image"
  },
  {
   "id": "oswalt1986_s32",
@@ -320,13 +341,14 @@
   "language": "kash1280",
   "primaryText": "kʰe híʔbaya=ʔ-bi-w",
   "discourseSegments": [],
-  "glossedTokens": [["kʰe", "my"], ["híʔbaya=ʔ-bi-w", "man=ASS-II-ABS"]],
+  "glossedTokens": [["kʰe", "My"], ["híʔbaya=ʔ-bi-w", "man=ASS-II-ABS"]],
   "translation": "It turned out to be my husband",
   "context": "A woman saw a man approaching but could not recognize him until he arrived.",
   "judgment": "acceptable",
   "alternatives": [],
   "readings": [],
   "paperFeatures": [["evidential", "inferentialII"]],
-  "comment": "Inferential II with the absolutive, -biw: evidence found after the event makes a partial perception interpretable."
+  "comment": "Inferential II with the absolutive, -biw: evidence found after the event makes a partial perception interpretable.",
+  "verified": "page-image"
  }
 ]

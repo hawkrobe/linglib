@@ -28,7 +28,8 @@
       ["distractor", "possessor in subject"],
       ["distractorNumber", "plural"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bakayetal2026_5a_mismatch",
@@ -59,7 +60,8 @@
       ["distractor", "possessor in subject"],
       ["distractorNumber", "singular"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bakayetal2026_5b_match",
@@ -90,7 +92,8 @@
       ["distractor", "possessor in adjunct"],
       ["distractorNumber", "plural"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bakayetal2026_5b_mismatch",
@@ -121,7 +124,8 @@
       ["distractor", "possessor in adjunct"],
       ["distractorNumber", "singular"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bakayetal2026_8a_match",
@@ -152,7 +156,8 @@
       ["second", "indirect object"],
       ["secondNumber", "plural"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bakayetal2026_8a_mismatch",
@@ -182,7 +187,8 @@
       ["second", "indirect object"],
       ["secondNumber", "singular"]
     ],
-    "comment": "The paper coindexes singular indirect objects as available, since they occasionally bind the reciprocal despite the number mismatch."
+    "comment": "The paper coindexes singular indirect objects as available, since they occasionally bind the reciprocal despite the number mismatch.",
+    "verified": "page-image"
   },
   {
     "id": "bakayetal2026_8b_match",
@@ -213,7 +219,8 @@
       ["distractor", "postpositional adjunct"],
       ["distractorNumber", "plural"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bakayetal2026_8b_mismatch",
@@ -243,7 +250,8 @@
       ["distractor", "postpositional adjunct"],
       ["distractorNumber", "singular"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bakayetal2026_8c",
@@ -274,7 +282,8 @@
       ["second", "indirect object"],
       ["secondNumber", "plural"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bakayetal2026_10a",
@@ -304,7 +313,8 @@
       ["second", "indirect object"],
       ["secondNumber", "plural"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bakayetal2026_10b",
@@ -334,7 +344,8 @@
       ["distractor", "postpositional adjunct"],
       ["distractorNumber", "plural"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bakayetal2026_10c",
@@ -365,6 +376,7 @@
       ["distractor", "possessor in adjunct"],
       ["distractorNumber", "plural"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   }
 ]

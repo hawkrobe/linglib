@@ -18,6 +18,7 @@ This file defines `Judgment`, the mark a paper puts before an example, the CLDF 
 
 * `Judgment`: the five marks.
 * `Judgment.rank`: the position of a mark on the scale, and the `LinearOrder` lifted along it.
+* `Judgment.ofName?`: the judgment a data file names.
 
 ## Implementation notes
 
@@ -28,7 +29,7 @@ This file defines `Judgment`, the mark a paper puts before an example, the CLDF 
   difference in kind.
 * A split mark a paper prints, such as `*/??` for speakers who differ, is several marks for one
   sentence. An example records the first as its `judgment` and each further mark as an
-  `alsoJudged` paper feature, and a study reading them all reads a `List Judgment`. Gradient
+  `alsoJudged` paper feature, and a study reading them all reads `Datum.judgments`. Gradient
   ratings are results, recorded in `Data/Experiments/`.
 
 ## References
@@ -61,3 +62,12 @@ def Judgment.rank : Judgment → Fin 5
   | .acceptable => 4
 
 instance : LinearOrder Judgment := LinearOrder.lift' Judgment.rank (by decide)
+
+/-- `Judgment.ofName? s` is the judgment the data files write as `s`. -/
+def Judgment.ofName? : String → Option Judgment
+  | "acceptable" => some .acceptable
+  | "marginal" => some .marginal
+  | "questionable" => some .questionable
+  | "unacceptable" => some .unacceptable
+  | "ungrammatical" => some .ungrammatical
+  | _ => none

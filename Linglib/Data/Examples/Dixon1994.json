@@ -4,10 +4,10 @@
     "source": {"bibkey": "dixon-1994", "paperLabel": "§1.2 (5)"},
     "reportedIn": null,
     "language": "dyir1250",
-    "primaryText": "ŋuma banaga-nyu",
+    "primaryText": "ŋuma banaga-nʸu",
     "discourseSegments": [],
     "glossedTokens": [
-      ["ŋuma", "father.ABS"], ["banaga-nyu", "return-NONFUT"]
+      ["ŋuma", "father.ABS"], ["banaga-nʸu", "return-NONFUT"]
     ],
     "translation": "Father returned.",
     "context": "",
@@ -18,7 +18,8 @@
       ["construction", "simple"],
       ["function", "S"]
     ],
-    "comment": "A noun in S function bears absolutive case, with zero realisation; noun markers are omitted throughout, fn. 8."
+    "comment": "A noun in S function bears absolutive case, with zero realisation; noun markers are omitted throughout, fn. 8.",
+    "verified": "page-image"
   },
   {
     "id": "dixon1994_1_2_7",
@@ -39,17 +40,18 @@
       ["construction", "simple"],
       ["function", "AO"]
     ],
-    "comment": "A noun in O function is absolutive like S; A takes ergative -ŋgu; the verb cross-references none of S, A and O."
+    "comment": "A noun in O function is absolutive like S; A takes ergative -ŋgu; the verb cross-references none of S, A and O.",
+    "verified": "page-image"
   },
   {
     "id": "dixon1994_1_2_12",
     "source": {"bibkey": "dixon-1994", "paperLabel": "§1.2 (12)"},
     "reportedIn": null,
     "language": "dyir1250",
-    "primaryText": "ŋuma bural-ŋa-nyu yabu-gu",
+    "primaryText": "ŋuma bural-ŋa-nʸu yabu-gu",
     "discourseSegments": [],
     "glossedTokens": [
-      ["ŋuma", "father.ABS"], ["bural-ŋa-nyu", "see-ANTIPASS-NONFUT"], ["yabu-gu", "mother-DAT"]
+      ["ŋuma", "father.ABS"], ["bural-ŋa-nʸu", "see-ANTIPASS-NONFUT"], ["yabu-gu", "mother-DAT"]
     ],
     "translation": "Father saw mother.",
     "context": "",
@@ -60,17 +62,18 @@
       ["construction", "antipassive"],
       ["function", "S"]
     ],
-    "comment": "The antipassive of §1.2 (8): underlying A becomes S, underlying O goes into dative case, and the verb bears -ŋa-y between root and inflection, (11)."
+    "comment": "The antipassive of §1.2 (8): underlying A becomes S, underlying O goes into dative case, and the verb bears -ŋa-y between root and inflection, (11).",
+    "verified": "page-image"
   },
   {
     "id": "dixon1994_15",
     "source": {"bibkey": "dixon-1994", "paperLabel": "§6.2.2 (15)"},
     "reportedIn": null,
     "language": "dyir1250",
-    "primaryText": "nyurra ŋana-na bura-n",
+    "primaryText": "nʸurra ŋana-na bura-n",
     "discourseSegments": [],
     "glossedTokens": [
-      ["nyurra", "you.all.NOM"], ["ŋana-na", "we.all-ACC"], ["bura-n", "see-NONFUT"]
+      ["nʸurra", "you.all.NOM"], ["ŋana-na", "we.all-ACC"], ["bura-n", "see-NONFUT"]
     ],
     "translation": "You all saw us.",
     "context": "",
@@ -81,18 +84,17 @@
       ["construction", "simple"],
       ["function", "AO"]
     ],
-    "comment": "First and second person pronouns inflect on a nominative-accusative pattern, Table 6.1: the split of Table 4.1."
+    "comment": "First and second person pronouns inflect on a nominative-accusative pattern, Table 6.1: the split of Table 4.1.",
+    "verified": "page-image"
   },
   {
     "id": "dixon1994_17",
     "source": {"bibkey": "dixon-1994", "paperLabel": "§6.2.2 (17)"},
     "reportedIn": null,
     "language": "dyir1250",
-    "primaryText": "ŋuma banaga-nyu miyanda-nyu",
+    "primaryText": "ŋuma banaga-nʸu miyanda-nʸu",
     "discourseSegments": [],
-    "glossedTokens": [
-      ["ŋuma", "father.ABS"], ["banaga-nyu", "return-NONFUT"], ["miyanda-nyu", "laugh-NONFUT"]
-    ],
+    "glossedTokens": [],
     "translation": "Father returned and laughed.",
     "context": "",
     "judgment": "acceptable",
@@ -104,19 +106,17 @@
       ["second", "S"],
       ["derivation", "none"]
     ],
-    "comment": "Possibility (a): the common NP is in pivot function S in both clauses and its second occurrence is omitted; there is no overt coordinator."
+    "comment": "Possibility (a): the common NP is in pivot function S in both clauses and its second occurrence is omitted; there is no overt coordinator.",
+    "verified": "page-image"
   },
   {
     "id": "dixon1994_19",
     "source": {"bibkey": "dixon-1994", "paperLabel": "§6.2.2 (19)"},
     "reportedIn": null,
     "language": "dyir1250",
-    "primaryText": "ŋuma banaga-nyu yabu-ŋgu bura-n",
+    "primaryText": "ŋuma banaga-nʸu yabu-ŋgu bura-n",
     "discourseSegments": [],
-    "glossedTokens": [
-      ["ŋuma", "father.ABS"], ["banaga-nyu", "return-NONFUT"], ["yabu-ŋgu", "mother-ERG"],
-      ["bura-n", "see-NONFUT"]
-    ],
+    "glossedTokens": [],
     "translation": "Father returned and mother saw him.",
     "context": "",
     "judgment": "acceptable",
@@ -128,19 +128,17 @@
       ["second", "O"],
       ["derivation", "none"]
     ],
-    "comment": "Possibility (b), S₁ = O₂: both are pivot functions under the S/O pivot."
+    "comment": "Possibility (b), S₁ = O₂: both are pivot functions under the S/O pivot.",
+    "verified": "page-image"
   },
   {
     "id": "dixon1994_20",
     "source": {"bibkey": "dixon-1994", "paperLabel": "§6.2.2 (20)"},
     "reportedIn": null,
     "language": "dyir1250",
-    "primaryText": "ŋana banaga-nyu nyurra bura-n",
+    "primaryText": "ŋana banaga-nʸu nʸurra bura-n",
     "discourseSegments": [],
-    "glossedTokens": [
-      ["ŋana", "we.all.NOM"], ["banaga-nyu", "return-NONFUT"], ["nyurra", "you.all.NOM"],
-      ["bura-n", "see-NONFUT"]
-    ],
+    "glossedTokens": [],
     "translation": "We returned and you all saw us.",
     "context": "",
     "judgment": "acceptable",
@@ -152,19 +150,17 @@
       ["second", "O"],
       ["derivation", "none"]
     ],
-    "comment": "The pivot is S/O for pronouns too, although their morphology is accusative: ŋana is retained and ŋana-na omitted."
+    "comment": "The pivot is S/O for pronouns too, although their morphology is accusative: ŋana is retained and ŋana-na omitted.",
+    "verified": "page-image"
   },
   {
     "id": "dixon1994_21",
     "source": {"bibkey": "dixon-1994", "paperLabel": "§6.2.2 (21)"},
     "reportedIn": null,
     "language": "dyir1250",
-    "primaryText": "ŋuma yabu-ŋgu bura-n banaga-nyu",
+    "primaryText": "ŋuma yabu-ŋgu bura-n banaga-nʸu",
     "discourseSegments": [],
-    "glossedTokens": [
-      ["ŋuma", "father.ABS"], ["yabu-ŋgu", "mother-ERG"], ["bura-n", "see-NONFUT"],
-      ["banaga-nyu", "return-NONFUT"]
-    ],
+    "glossedTokens": [],
     "translation": "Mother saw father and he returned.",
     "context": "",
     "judgment": "acceptable",
@@ -176,7 +172,8 @@
       ["second", "S"],
       ["derivation", "none"]
     ],
-    "comment": "Possibility (d), O₁ = S₂."
+    "comment": "Possibility (d), O₁ = S₂.",
+    "verified": "page-image"
   },
   {
     "id": "dixon1994_24",
@@ -185,10 +182,7 @@
     "language": "dyir1250",
     "primaryText": "ŋuma yabu-ŋgu bura-n jaja-ŋgu ŋamba-n",
     "discourseSegments": [],
-    "glossedTokens": [
-      ["ŋuma", "father.ABS"], ["yabu-ŋgu", "mother-ERG"], ["bura-n", "see-NONFUT"],
-      ["jaja-ŋgu", "child-ERG"], ["ŋamba-n", "hear-NONFUT"]
-    ],
+    "glossedTokens": [],
     "translation": "Mother saw father and the child heard him.",
     "context": "",
     "judgment": "acceptable",
@@ -200,7 +194,8 @@
       ["second", "O"],
       ["derivation", "none"]
     ],
-    "comment": "Possibility (f), O₁ = O₂."
+    "comment": "Possibility (f), O₁ = O₂.",
+    "verified": "page-image"
   },
   {
     "id": "dixon1994_28",
@@ -209,10 +204,7 @@
     "language": "dyir1250",
     "primaryText": "ŋuma yabu-ŋgu bura-n (yabu-ŋgu) ŋamba-n",
     "discourseSegments": [],
-    "glossedTokens": [
-      ["ŋuma", "father.ABS"], ["yabu-ŋgu", "mother-ERG"], ["bura-n", "see-NONFUT"],
-      ["(yabu-ŋgu)", "mother-ERG"], ["ŋamba-n", "hear-NONFUT"]
-    ],
+    "glossedTokens": [],
     "translation": "Mother saw and heard father.",
     "context": "",
     "judgment": "acceptable",
@@ -224,17 +216,18 @@
       ["second", "O"],
       ["derivation", "none"]
     ],
-    "comment": "Possibility (j), O₁ = O₂ and A₁ = A₂: the pivot NP is the O; the A NP, always omittable, is understood as identical if unstated."
+    "comment": "Possibility (j), O₁ = O₂ and A₁ = A₂: the pivot NP is the O; the A NP, always omittable, is understood as identical if unstated.",
+    "verified": "page-image"
   },
   {
     "id": "dixon1994_32",
     "source": {"bibkey": "dixon-1994", "paperLabel": "§6.2.2 (32)"},
     "reportedIn": null,
     "language": "dyir1250",
-    "primaryText": "ŋuma bural-ŋa-nyu yabu-gu",
+    "primaryText": "ŋuma bural-ŋa-nʸu yabu-gu",
     "discourseSegments": [],
     "glossedTokens": [
-      ["ŋuma", "father.ABS"], ["bural-ŋa-nyu", "see-ANTIPASS-NONFUT"], ["yabu-gu", "mother-DAT"]
+      ["ŋuma", "father.ABS"], ["bural-ŋa-nʸu", "see-ANTIPASS-NONFUT"], ["yabu-gu", "mother-DAT"]
     ],
     "translation": "Father saw mother.",
     "context": "",
@@ -245,18 +238,19 @@
       ["construction", "antipassive"],
       ["function", "S"]
     ],
-    "comment": "The antipassive version of (11) 'father saw mother', (31): underlying A into derived S, underlying O into dative."
+    "comment": "The antipassive version of (11) 'father saw mother', (31): underlying A into derived S, underlying O into dative.",
+    "verified": "page-image"
   },
   {
     "id": "dixon1994_33",
     "source": {"bibkey": "dixon-1994", "paperLabel": "§6.2.2 (33)"},
     "reportedIn": null,
     "language": "dyir1250",
-    "primaryText": "ŋana bural-ŋa-nyu nyurra-ŋgu",
+    "primaryText": "ŋana bural-ŋa-nʸu nʸurra-ngu",
     "discourseSegments": [],
     "glossedTokens": [
-      ["ŋana", "we.all.NOM"], ["bural-ŋa-nyu", "see-ANTIPASS-NONFUT"],
-      ["nyurra-ŋgu", "you.all-DAT"]
+      ["ŋana", "we.all.NOM"], ["bural-ŋa-nʸu", "see-ANTIPASS-NONFUT"],
+      ["nʸurra-ngu", "you.all-DAT"]
     ],
     "translation": "We saw you all.",
     "context": "",
@@ -267,19 +261,17 @@
       ["construction", "antipassive"],
       ["function", "S"]
     ],
-    "comment": "The antipassive version of (16); dative is -ŋgu with pronouns."
+    "comment": "The antipassive version of (16); dative is -ngu with pronouns. The book glosses bural-ŋa-nʸu here as see-ANTIPASS; (32) prints see-ANTIPASS-NONFUT.",
+    "verified": "page-image"
   },
   {
     "id": "dixon1994_34",
     "source": {"bibkey": "dixon-1994", "paperLabel": "§6.2.2 (34)"},
     "reportedIn": null,
     "language": "dyir1250",
-    "primaryText": "ŋuma banaga-nyu bural-ŋa-nyu yabu-gu",
+    "primaryText": "ŋuma banaga-nʸu bural-ŋa-nʸu yabu-gu",
     "discourseSegments": [],
-    "glossedTokens": [
-      ["ŋuma", "father.ABS"], ["banaga-nyu", "return-NONFUT"],
-      ["bural-ŋa-nyu", "see-ANTIPASS-NONFUT"], ["yabu-gu", "mother-DAT"]
-    ],
+    "glossedTokens": [],
     "translation": "Father returned and saw mother.",
     "context": "",
     "judgment": "acceptable",
@@ -291,19 +283,17 @@
       ["second", "A"],
       ["derivation", "antipassive"]
     ],
-    "comment": "Possibility (c), S₁ = A₂: the second clause is antipassivized to bring the underlying A into derived S and satisfy the S/O pivot."
+    "comment": "Possibility (c), S₁ = A₂: the second clause is antipassivized to bring the underlying A into derived S and satisfy the S/O pivot.",
+    "verified": "page-image"
   },
   {
     "id": "dixon1994_36",
     "source": {"bibkey": "dixon-1994", "paperLabel": "§6.2.2 (36)"},
     "reportedIn": null,
     "language": "dyir1250",
-    "primaryText": "ŋuma jaja-ŋgu ŋamba-n bural-ŋa-nyu yabu-gu",
+    "primaryText": "ŋuma jaja-ŋgu ŋamba-n bural-ŋa-nʸu yabu-gu",
     "discourseSegments": [],
-    "glossedTokens": [
-      ["ŋuma", "father.ABS"], ["jaja-ŋgu", "child-ERG"], ["ŋamba-n", "hear-NONFUT"],
-      ["bural-ŋa-nyu", "see-ANTIPASS-NONFUT"], ["yabu-gu", "mother-DAT"]
-    ],
+    "glossedTokens": [],
     "translation": "The child heard father and he (father) saw mother.",
     "context": "",
     "judgment": "acceptable",
@@ -315,19 +305,17 @@
       ["second", "A"],
       ["derivation", "antipassive"]
     ],
-    "comment": "Possibility (h), O₁ = A₂, with the second clause antipassivized."
+    "comment": "Possibility (h), O₁ = A₂, with the second clause antipassivized.",
+    "verified": "page-image"
   },
   {
     "id": "dixon1994_39",
     "source": {"bibkey": "dixon-1994", "paperLabel": "§6.2.2 (39)"},
     "reportedIn": null,
     "language": "dyir1250",
-    "primaryText": "ŋuma yabu-ŋgu ŋamba-n bural-ŋa-nyu yabu-gu",
+    "primaryText": "ŋuma yabu-ŋgu ŋamba-n bural-ŋa-nʸu yabu-gu",
     "discourseSegments": [],
-    "glossedTokens": [
-      ["ŋuma", "father.ABS"], ["yabu-ŋgu", "mother-ERG"], ["ŋamba-n", "hear-NONFUT"],
-      ["bural-ŋa-nyu", "see-ANTIPASS-NONFUT"], ["yabu-gu", "mother-DAT"]
-    ],
+    "glossedTokens": [],
     "translation": "Mother heard father and he saw her.",
     "context": "",
     "judgment": "acceptable",
@@ -339,19 +327,17 @@
       ["second", "A"],
       ["derivation", "antipassive"]
     ],
-    "comment": "Possibility (k), O₁ = A₂ and A₁ = O₂: the O₁ = A₂ NP is the pivot; the final dative NP cannot be omitted."
+    "comment": "Possibility (k), O₁ = A₂ and A₁ = O₂: the O₁ = A₂ NP is the pivot; the final dative NP cannot be omitted.",
+    "verified": "page-image"
   },
   {
     "id": "dixon1994_42",
     "source": {"bibkey": "dixon-1994", "paperLabel": "§6.2.2 (42)"},
     "reportedIn": null,
     "language": "dyir1250",
-    "primaryText": "ŋuma bural-ŋa-nyu yabu-gu banaga-nyu",
+    "primaryText": "ŋuma bural-ŋa-nʸu yabu-gu banaga-nʸu",
     "discourseSegments": [],
-    "glossedTokens": [
-      ["ŋuma", "father.ABS"], ["bural-ŋa-nyu", "see-ANTIPASS-NONFUT"], ["yabu-gu", "mother-DAT"],
-      ["banaga-nyu", "return-NONFUT"]
-    ],
+    "glossedTokens": [],
     "translation": "Father saw mother and returned.",
     "context": "",
     "judgment": "acceptable",
@@ -363,19 +349,17 @@
       ["second", "S"],
       ["derivation", "antipassive"]
     ],
-    "comment": "Possibility (e), A₁ = S₂, with the first clause antipassivized, which requires planning ahead; the -ŋurra construction of (46) is the alternative."
+    "comment": "Possibility (e), A₁ = S₂, with the first clause antipassivized, which requires planning ahead; the -ŋurra construction of (46) is the alternative.",
+    "verified": "page-image"
   },
   {
     "id": "dixon1994_44",
     "source": {"bibkey": "dixon-1994", "paperLabel": "§6.2.2 (44)"},
     "reportedIn": null,
     "language": "dyir1250",
-    "primaryText": "ŋuma bural-ŋa-nyu yabu-gu jaja-ŋgu ŋamba-n",
+    "primaryText": "ŋuma bural-ŋa-nʸu yabu-gu jaja-ŋgu ŋamba-n",
     "discourseSegments": [],
-    "glossedTokens": [
-      ["ŋuma", "father.ABS"], ["bural-ŋa-nyu", "see-ANTIPASS-NONFUT"], ["yabu-gu", "mother-DAT"],
-      ["jaja-ŋgu", "child-ERG"], ["ŋamba-n", "hear-NONFUT"]
-    ],
+    "glossedTokens": [],
     "translation": "Father saw mother and the child heard him.",
     "context": "",
     "judgment": "acceptable",
@@ -387,7 +371,8 @@
       ["second", "O"],
       ["derivation", "antipassive"]
     ],
-    "comment": "Possibility (i), A₁ = O₂, with the first clause antipassivized."
+    "comment": "Possibility (i), A₁ = O₂, with the first clause antipassivized.",
+    "verified": "page-image"
   },
   {
     "id": "dixon1994_46",
@@ -411,19 +396,17 @@
       ["second", "S"],
       ["derivation", "ngurra"]
     ],
-    "comment": "The verbal inflection -ŋurra marks that the S or O of its clause is identical to the A of the preceding clause and that the event follows immediately; the common NP may be included or omitted."
+    "comment": "The verbal inflection -ŋurra marks that the S or O of its clause is identical to the A of the preceding clause and that the event follows immediately; the common NP may be included or omitted.",
+    "verified": "page-image"
   },
   {
     "id": "dixon1994_52",
     "source": {"bibkey": "dixon-1994", "paperLabel": "§6.2.2 (52)"},
     "reportedIn": null,
     "language": "dyir1250",
-    "primaryText": "ŋuma bural-ŋa-nyu yabu-gu ŋambal-ŋa-nyu jaja-gu",
+    "primaryText": "ŋuma bural-ŋa-nʸu yabu-gu ŋambal-ŋa-nʸu jaja-gu",
     "discourseSegments": [],
-    "glossedTokens": [
-      ["ŋuma", "father.ABS"], ["bural-ŋa-nyu", "see-ANTIPASS-NONFUT"], ["yabu-gu", "mother-DAT"],
-      ["ŋambal-ŋa-nyu", "hear-ANTIPASS-NONFUT"], ["jaja-gu", "child-DAT"]
-    ],
+    "glossedTokens": [],
     "translation": "Father saw mother and he heard the child.",
     "context": "",
     "judgment": "acceptable",
@@ -435,17 +418,18 @@
       ["second", "A"],
       ["derivation", "antipassive"]
     ],
-    "comment": "Possibility (g), A₁ = A₂: both clauses are antipassivized; alternatively only the second is, with the -ŋurra construction, (54)."
+    "comment": "Possibility (g), A₁ = A₂: both clauses are antipassivized; alternatively only the second is, with the -ŋurra construction, (54). The book prints bural-ŋa-ŋʸu.",
+    "verified": "page-image"
   },
   {
     "id": "dixon1994_56",
     "source": {"bibkey": "dixon-1994", "paperLabel": "§6.2.2 (56)"},
     "reportedIn": null,
     "language": "dyir1250",
-    "primaryText": "ŋuma banaga-nyu yabu-ŋgu bura-li",
+    "primaryText": "ŋuma banaga-nʸu yabu-ŋgu bura-li",
     "discourseSegments": [],
     "glossedTokens": [
-      ["ŋuma", "father.ABS"], ["banaga-nyu", "return-NONFUT"], ["yabu-ŋgu", "mother-ERG"],
+      ["ŋuma", "father.ABS"], ["banaga-nʸu", "return-NONFUT"], ["yabu-ŋgu", "mother-ERG"],
       ["bura-li", "see-PURP"]
     ],
     "translation": "Father returned in order for mother to see him; or father returned and as a result mother saw him.",
@@ -459,17 +443,18 @@
       ["second", "O"],
       ["derivation", "none"]
     ],
-    "comment": "Purposive coordination obeys the same S/O pivot: main and purposive clause must share an NP in S or O function in each, contrary to the expectation of §4.4 that purposive clauses group S with A."
+    "comment": "Purposive coordination obeys the same S/O pivot: main and purposive clause must share an NP in S or O function in each, contrary to the expectation of §4.4 that purposive clauses group S with A.",
+    "verified": "page-image"
   },
   {
     "id": "dixon1994_57",
     "source": {"bibkey": "dixon-1994", "paperLabel": "§6.2.2 (57)"},
     "reportedIn": null,
     "language": "dyir1250",
-    "primaryText": "ŋuma banaga-nyu bural-ŋa-ygu yabu-gu",
+    "primaryText": "ŋuma banaga-nʸu bural-ŋa-ygu yabu-gu",
     "discourseSegments": [],
     "glossedTokens": [
-      ["ŋuma", "father.ABS"], ["banaga-nyu", "return-NONFUT"],
+      ["ŋuma", "father.ABS"], ["banaga-nʸu", "return-NONFUT"],
       ["bural-ŋa-ygu", "see-ANTIPASS-PURP"], ["yabu-gu", "mother-DAT"]
     ],
     "translation": "Father returned in order to see mother; or father returned and as a result saw mother.",
@@ -483,7 +468,8 @@
       ["second", "A"],
       ["derivation", "antipassive"]
     ],
-    "comment": "The purposive clause is antipassivized to bring its A into derived S."
+    "comment": "The purposive clause is antipassivized to bring its A into derived S.",
+    "verified": "page-image"
   },
   {
     "id": "dixon1994_59",
@@ -507,7 +493,8 @@
       ["second", "O"],
       ["derivation", "none"]
     ],
-    "comment": "O₁ = O₂ with the verb 'tell to do'; the author corrects an earlier statement that the O of giga-l must be coreferential with the A or S of its purposive clause, fn. 19."
+    "comment": "O₁ = O₂ with the verb 'tell to do'; the author corrects an earlier statement that the O of giga-l must be coreferential with the A or S of its purposive clause, fn. 19.",
+    "verified": "page-image"
   },
   {
     "id": "dixon1994_60",
@@ -531,7 +518,8 @@
       ["second", "A"],
       ["derivation", "antipassive"]
     ],
-    "comment": "O₁ = A₂: the purposive clause must be antipassivized."
+    "comment": "O₁ = A₂: the purposive clause must be antipassivized.",
+    "verified": "page-image"
   },
   {
     "id": "dixon1994_61",
@@ -555,7 +543,8 @@
       ["second", "S"],
       ["derivation", "none"]
     ],
-    "comment": "The common NP must be in S or O function within the relative clause; the relative verb bears -ŋu and a case inflection agreeing with the common NP in the main clause."
+    "comment": "The common NP must be in S or O function within the relative clause; the relative verb bears -ŋu and a case inflection agreeing with the common NP in the main clause.",
+    "verified": "page-image"
   },
   {
     "id": "dixon1994_62",
@@ -579,18 +568,19 @@
       ["second", "S"],
       ["derivation", "none"]
     ],
-    "comment": "The common NP may be in any core function in the main clause, here A, and the relative clause agrees in ergative case."
+    "comment": "The common NP may be in any core function in the main clause, here A, and the relative clause agrees in ergative case.",
+    "verified": "page-image"
   },
   {
     "id": "dixon1994_63",
     "source": {"bibkey": "dixon-1994", "paperLabel": "§6.2.2 (63)"},
     "reportedIn": null,
     "language": "dyir1250",
-    "primaryText": "yabu bural-ŋa-ŋu ŋuma-gu banaga-nyu",
+    "primaryText": "yabu bural-ŋa-ŋu ŋuma-gu banaga-nʸu",
     "discourseSegments": [],
     "glossedTokens": [
       ["yabu", "mother.ABS"], ["bural-ŋa-ŋu", "see-ANTIPASS-REL.ABS"], ["ŋuma-gu", "father-DAT"],
-      ["banaga-nyu", "return-NONFUT"]
+      ["banaga-nʸu", "return-NONFUT"]
     ],
     "translation": "Mother, who saw father, was returning.",
     "context": "",
@@ -603,7 +593,8 @@
       ["second", "A"],
       ["derivation", "antipassive"]
     ],
-    "comment": "The common NP is in A function in the relative clause, so antipassive applies before relativisation."
+    "comment": "The common NP is in A function in the relative clause, so antipassive applies before relativisation.",
+    "verified": "page-image"
   },
   {
     "id": "dixon1994_66",
@@ -613,7 +604,7 @@
     "primaryText": "yugu ŋuma-ŋgu balgal-ma-n yabu-gu",
     "discourseSegments": [],
     "glossedTokens": [
-      ["yugu", "stick.ABS"], ["ŋuma-ŋgu", "father-ERG"], ["balgal-ma-n", "hit-INSTV-NONFUT"],
+      ["yugu", "stick"], ["ŋuma-ŋgu", "father-ERG"], ["balgal-ma-n", "hit-INSTV-NONFUT"],
       ["yabu-gu", "mother-DAT"]
     ],
     "translation": "Father used a stick to hit mother.",
@@ -625,7 +616,8 @@
       ["construction", "instrumentive"],
       ["function", "O"]
     ],
-    "comment": "The instrumentive derivation places an underlying instrumental NP into derived O function, demoting the underlying O to dative, with -ma-l on the verb; it feeds the S/O pivot, (67) and (68)."
+    "comment": "The instrumentive derivation places an underlying instrumental NP into derived O function, demoting the underlying O to dative, with -ma-l on the verb; it feeds the S/O pivot, (67) and (68).",
+    "verified": "page-image"
   },
   {
     "id": "dixon1994_68",
@@ -649,7 +641,8 @@
       ["second", "O"],
       ["derivation", "instrumentive"]
     ],
-    "comment": "The relative clause is first recast by the instrumentive derivation so that the common NP is in O function within it."
+    "comment": "The relative clause is first recast by the instrumentive derivation so that the common NP is in O function within it.",
+    "verified": "page-image"
   },
   {
     "id": "dixon1994_en_a",
@@ -670,7 +663,8 @@
       ["second", "S"],
       ["derivation", "none"]
     ],
-    "comment": "English's S/A pivot constrains omission of the second occurrence of a common NP, not clause linking itself: a weak pivot."
+    "comment": "English's S/A pivot constrains omission of the second occurrence of a common NP, not clause linking itself: a weak pivot.",
+    "verified": "page-image"
   },
   {
     "id": "dixon1994_en_b",
@@ -691,7 +685,8 @@
       ["second", "O"],
       ["derivation", "passive"]
     ],
-    "comment": "S₁ = O₂: the second clause is passivized so that the common NP is in derived S."
+    "comment": "S₁ = O₂: the second clause is passivized so that the common NP is in derived S.",
+    "verified": "page-image"
   },
   {
     "id": "dixon1994_en_c",
@@ -712,7 +707,8 @@
       ["second", "A"],
       ["derivation", "none"]
     ],
-    "comment": "S₁ = A₂."
+    "comment": "S₁ = A₂.",
+    "verified": "page-image"
   },
   {
     "id": "dixon1994_en_d",
@@ -733,7 +729,8 @@
       ["second", "S"],
       ["derivation", "passive"]
     ],
-    "comment": "O₁ = S₂: the first clause is passivized."
+    "comment": "O₁ = S₂: the first clause is passivized.",
+    "verified": "page-image"
   },
   {
     "id": "dixon1994_en_e",
@@ -754,7 +751,8 @@
       ["second", "S"],
       ["derivation", "none"]
     ],
-    "comment": "A₁ = S₂."
+    "comment": "A₁ = S₂.",
+    "verified": "page-image"
   },
   {
     "id": "dixon1994_en_f",
@@ -777,7 +775,8 @@
       ["second", "O"],
       ["derivation", "passive"]
     ],
-    "comment": "O₁ = O₂: both clauses are passivized; the alternative combines A-plus-verb from two clauses with the same O, which not all speakers accept."
+    "comment": "O₁ = O₂: both clauses are passivized; the alternative combines A-plus-verb from two clauses with the same O, which not all speakers accept.",
+    "verified": "page-image"
   },
   {
     "id": "dixon1994_en_g",
@@ -798,7 +797,8 @@
       ["second", "A"],
       ["derivation", "none"]
     ],
-    "comment": "A₁ = A₂."
+    "comment": "A₁ = A₂.",
+    "verified": "page-image"
   },
   {
     "id": "dixon1994_en_h",
@@ -819,7 +819,8 @@
       ["second", "A"],
       ["derivation", "passive"]
     ],
-    "comment": "O₁ = A₂: the first clause is passivized."
+    "comment": "O₁ = A₂: the first clause is passivized.",
+    "verified": "page-image"
   },
   {
     "id": "dixon1994_en_i",
@@ -840,7 +841,8 @@
       ["second", "O"],
       ["derivation", "passive"]
     ],
-    "comment": "A₁ = O₂: the second clause is passivized."
+    "comment": "A₁ = O₂: the second clause is passivized.",
+    "verified": "page-image"
   },
   {
     "id": "dixon1994_en_j",
@@ -863,7 +865,8 @@
       ["second", "A"],
       ["derivation", "none"]
     ],
-    "comment": "O₁ = O₂ and A₁ = A₂: the verbs are coordinated so that each NP is stated once."
+    "comment": "O₁ = O₂ and A₁ = A₂: the verbs are coordinated so that each NP is stated once.",
+    "verified": "page-image"
   },
   {
     "id": "dixon1994_en_k",
@@ -886,6 +889,7 @@
       ["second", "O"],
       ["derivation", "passive"]
     ],
-    "comment": "O₁ = A₂ and A₁ = O₂: the A₁ = O₂ NP is the pivot and the second clause is passivized; not all speakers accept the alternative."
+    "comment": "O₁ = A₂ and A₁ = O₂: the A₁ = O₂ NP is the pivot and the second clause is passivized; not all speakers accept the alternative.",
+    "verified": "page-image"
   }
 ]

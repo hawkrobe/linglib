@@ -20,7 +20,8 @@
       ["definite", "no"],
       ["reading", "general"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "balekhanjian2014_4a",
@@ -42,7 +43,8 @@
       ["subject", "atom"],
       ["number", "SG"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "balekhanjian2014_4b",
@@ -65,7 +67,8 @@
       ["subject", "group"],
       ["number", "SG"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "balekhanjian2014_5a",
@@ -89,18 +92,19 @@
       ["number", "PL"],
       ["numeral", "two"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "balekhanjian2014_5b",
     "source": {"bibkey": "bale-khanjian-2014", "paperLabel": "(5b)"},
     "reportedIn": null,
     "language": "homs1234",
-    "primaryText": "Johnə yev Bradə meg dəgha en.",
+    "primaryText": "Johnə yev Bradə meg dəgha en/e.",
     "discourseSegments": [],
     "glossedTokens": [
       ["John-ə", "John-DEF"], ["yev", "and"], ["Brad-ə", "Brad-DEF"], ["meg", "one"],
-      ["dəgha", "boy(SG)"], ["en", "are"]
+      ["dəgha", "boy"], ["en/e", "are/is"]
     ],
     "translation": "John and Brad are one boy.",
     "context": "",
@@ -113,7 +117,8 @@
       ["number", "SG"],
       ["numeral", "one"]
     ],
-    "comment": "No distributive reading, as a distributive operator on the predicate would give."
+    "comment": "No distributive reading, as a distributive operator on the predicate would give.",
+    "verified": "page-image"
   },
   {
     "id": "balekhanjian2014_5c",
@@ -136,7 +141,8 @@
       ["subject", "group"],
       ["number", "SG"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "balekhanjian2014_6a",
@@ -159,7 +165,8 @@
       ["subject", "group"],
       ["number", "PL"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "balekhanjian2014_6b",
@@ -173,7 +180,7 @@
     ],
     "translation": "John is boys.",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -181,7 +188,8 @@
       ["subject", "atom"],
       ["number", "PL"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "balekhanjian2014_7",
@@ -204,7 +212,8 @@
       ["definite", "no"],
       ["reading", "strictPlural"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "balekhanjian2014_8a",
@@ -219,7 +228,7 @@
     ],
     "translation": "Everyone that had two or more children stood up.",
     "context": "",
-    "judgment": "questionable",
+    "judgment": "marginal",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -227,7 +236,8 @@
       ["number", "PL"],
       ["reading", "strictPlural"]
     ],
-    "comment": "Speakers prefer the singular in restrictors; when forced, the plural keeps its strict reading."
+    "comment": "Speakers prefer the singular in restrictors; when forced, the plural keeps its strict reading.",
+    "verified": "page-image"
   },
   {
     "id": "balekhanjian2014_8b",
@@ -250,7 +260,8 @@
       ["number", "SG"],
       ["reading", "general"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "balekhanjian2014_10a",
@@ -273,7 +284,8 @@
       ["numeral", "two"],
       ["definite", "no"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "balekhanjian2014_10b",
@@ -296,7 +308,8 @@
       ["numeral", "two"],
       ["definite", "no"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "balekhanjian2014_11b",
@@ -319,7 +332,8 @@
       ["definite", "yes"],
       ["reading", "strictSingular"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "balekhanjian2014_13a",
@@ -343,7 +357,8 @@
       ["definite", "yes"],
       ["reading", "strictPlural"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "balekhanjian2014_13b",
@@ -367,7 +382,8 @@
       ["definite", "yes"],
       ["reading", "strictSingular"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "balekhanjian2014_14a",
@@ -381,7 +397,7 @@
     ],
     "translation": "The two boys ran.",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -390,7 +406,8 @@
       ["numeral", "two"],
       ["definite", "yes"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "balekhanjian2014_14b",
@@ -413,7 +430,8 @@
       ["numeral", "two"],
       ["definite", "yes"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "balekhanjian2014_24a",
@@ -436,7 +454,8 @@
       ["definite", "no"],
       ["scopeAmbiguous", "no"]
     ],
-    "comment": "Only the reading with negation over the existential."
+    "comment": "Only the reading with negation over the existential.",
+    "verified": "page-image"
   },
   {
     "id": "balekhanjian2014_25a",
@@ -448,7 +467,7 @@
     "glossedTokens": [
       ["Dəgha-ner", "boy-PL"], ["chi", "not"], ["vaze-ts-in", "run-PST-3PL"]
     ],
-    "translation": "No boys ran. / Some boys did not run.",
+    "translation": "No boys ran/Some boys didn't run.",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -459,7 +478,8 @@
       ["definite", "no"],
       ["scopeAmbiguous", "yes"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "balekhanjian2014_26a",
@@ -471,7 +491,7 @@
     "glossedTokens": [
       ["Yergu", "two"], ["dəgha", "boy(SG)"], ["chi", "not"], ["vaze-ts", "run-PST"]
     ],
-    "translation": "Two boys did not run.",
+    "translation": "Two boys didn't run.",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -483,7 +503,8 @@
       ["definite", "no"],
       ["scopeAmbiguous", "yes"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "balekhanjian2014_27a",
@@ -495,7 +516,7 @@
     "glossedTokens": [
       ["Yergu", "two"], ["dəgha-ner", "boy-PL"], ["chi", "not"], ["vaze-ts-in", "run-PST-3PL"]
     ],
-    "translation": "Two boys did not run.",
+    "translation": "Two boys didn't run.",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -507,6 +528,7 @@
       ["definite", "no"],
       ["scopeAmbiguous", "yes"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   }
 ]

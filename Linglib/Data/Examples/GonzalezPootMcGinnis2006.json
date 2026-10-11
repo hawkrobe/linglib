@@ -6,7 +6,7 @@
       "paperLabel": "(19)"
     },
     "language": "yuca1254",
-    "primaryText": "k -a w- áːnt -ik -oʔon -éːʃ",
+    "primaryText": "k -a w- áːnt -ik -oʔon -éːš",
     "discourseSegments": [],
     "glossedTokens": [
       [
@@ -34,7 +34,7 @@
         "1NOMpl"
       ],
       [
-        "-éːʃ",
+        "-éːš",
         "2ERGpl"
       ]
     ],
@@ -78,10 +78,11 @@
       ],
       [
         "suffix2",
-        "éːʃ"
+        "éːš"
       ]
     ],
-    "comment": "Object-before-subject order, as the template (18) predicts."
+    "comment": "Object-before-subject order, as the template (18) predicts.",
+    "verified": "page-image"
   },
   {
     "id": "gpm2006_20",
@@ -90,7 +91,7 @@
       "paperLabel": "(20)"
     },
     "language": "yuca1254",
-    "primaryText": "k -u j- áːnt -ik -éːʃ -oʔob",
+    "primaryText": "k -u j- áːnt -ik -éːš -oʔob",
     "discourseSegments": [],
     "glossedTokens": [
       [
@@ -114,7 +115,7 @@
         "INCOMPL"
       ],
       [
-        "-éːʃ",
+        "-éːš",
         "2NOMpl"
       ],
       [
@@ -158,14 +159,15 @@
       ],
       [
         "suffix1",
-        "éːʃ"
+        "éːš"
       ],
       [
         "suffix2",
         "oʔob"
       ]
     ],
-    "comment": "Also (2) and (28a)."
+    "comment": "Also (2) and (28a).",
+    "verified": "page-image"
   },
   {
     "id": "gpm2006_21",
@@ -174,7 +176,7 @@
       "paperLabel": "(21)"
     },
     "language": "yuca1254",
-    "primaryText": "k -a w- áːnt -ik -oʔob -éːʃ",
+    "primaryText": "k -a w- áːnt -ik -oʔob -éːš",
     "discourseSegments": [],
     "glossedTokens": [
       [
@@ -202,7 +204,7 @@
         "3NOMpl"
       ],
       [
-        "-éːʃ",
+        "-éːš",
         "2ERGpl"
       ]
     ],
@@ -246,10 +248,11 @@
       ],
       [
         "suffix2",
-        "éːʃ"
+        "éːš"
       ]
     ],
-    "comment": "The object–subject order the template (18) imposes is ungrammatical here."
+    "comment": "The object–subject order the template (18) imposes is ungrammatical here.",
+    "verified": "page-image"
   },
   {
     "id": "gpm2006_22",
@@ -258,7 +261,7 @@
       "paperLabel": "(22)"
     },
     "language": "yuca1254",
-    "primaryText": "k -a w- áːnt -ik -éːʃ -oʔob",
+    "primaryText": "k -a w- áːnt -ik -éːš -oʔob",
     "discourseSegments": [],
     "glossedTokens": [
       [
@@ -282,7 +285,7 @@
         "INCOMPL"
       ],
       [
-        "-éːʃ",
+        "-éːš",
         "2ERGpl"
       ],
       [
@@ -326,14 +329,15 @@
       ],
       [
         "suffix1",
-        "éːʃ"
+        "éːš"
       ],
       [
         "suffix2",
         "oʔob"
       ]
     ],
-    "comment": "Subject agreement precedes object agreement; also (29a)."
+    "comment": "Subject agreement precedes object agreement; also (29a).",
+    "verified": "page-image"
   },
   {
     "id": "gpm2006_23",
@@ -417,7 +421,8 @@
         "oʔob"
       ]
     ],
-    "comment": "Overt agreement for both arguments is impossible."
+    "comment": "Overt agreement for both arguments is impossible. The paper glosses -u j- as 2ERG PSE.ERG here; (1), (20) and the table (17) give third person, recorded here.",
+    "verified": "page-image"
   },
   {
     "id": "gpm2006_24",
@@ -501,7 +506,8 @@
         ""
       ]
     ],
-    "comment": "One overt suffix; also (1) and (30a)."
+    "comment": "One overt suffix; also (1) and (30a). The paper glosses -u j- as 2ERG PSE.ERG here; (1), (20) and the table (17) give third person, recorded here.",
+    "verified": "page-image"
   },
   {
     "id": "gpm2006_16ex",
@@ -581,7 +587,8 @@
         ""
       ]
     ],
-    "comment": "The example under the nominative marker table (16)."
+    "comment": "The example under the nominative marker table (16).",
+    "verified": "page-image"
   },
   {
     "id": "gpm2006_3",
@@ -649,7 +656,8 @@
         ""
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "gpm2006_4",
@@ -713,7 +721,8 @@
         ""
       ]
     ],
-    "comment": "First-person plural: person and number both on the auxiliary, no prefix, no verbal suffix."
+    "comment": "First-person plural: person and number both on the auxiliary, no prefix, no verbal suffix.",
+    "verified": "page-image"
   },
   {
     "id": "gpm2006_5",
@@ -781,7 +790,8 @@
         ""
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "gpm2006_6",
@@ -790,7 +800,7 @@
       "paperLabel": "(6)"
     },
     "language": "yuca1254",
-    "primaryText": "k -a w- ok -ol -éːʃ",
+    "primaryText": "k -a w- ok -ol -éːš",
     "discourseSegments": [],
     "glossedTokens": [
       [
@@ -814,7 +824,7 @@
         "INCOMPL"
       ],
       [
-        "-éːʃ",
+        "-éːš",
         "2ERGpl"
       ]
     ],
@@ -846,14 +856,15 @@
       ],
       [
         "suffix1",
-        "éːʃ"
+        "éːš"
       ],
       [
         "suffix2",
         ""
       ]
     ],
-    "comment": "Second person: person on the auxiliary, number on the verb."
+    "comment": "Second person: person on the auxiliary, number on the verb.",
+    "verified": "page-image"
   },
   {
     "id": "gpm2006_7",
@@ -921,7 +932,8 @@
         ""
       ]
     ],
-    "comment": "The prefix surfaces as y- before a vowel; the item is j-."
+    "comment": "The paper prints the prefix as y- in (7) and (8) and as j- elsewhere (e.g. (16), (17), (20)); paperFeatures records j.",
+    "verified": "page-image"
   },
   {
     "id": "gpm2006_8",
@@ -993,6 +1005,7 @@
         ""
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   }
 ]

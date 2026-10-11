@@ -180,7 +180,7 @@ def ex_10_most_of : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := [("Mary of my friends but Chris", .ungrammatical), ("three of my friends but Chris", .ungrammatical), ("some of my friends but Chris", .ungrammatical)]
+    alternatives := [("many of my friends but Chris", .ungrammatical), ("three of my friends but Chris", .ungrammatical), ("some of my friends but Chris", .ungrammatical)]
     readings := []
     paperFeatures := [("exceptive", "but"), ("determiner", "most")] }
 

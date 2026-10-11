@@ -13,7 +13,8 @@
       ["do", "3"],
       ["pattern", "strong"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "deal2024_ex16a_2",
@@ -29,7 +30,8 @@
       ["do", "3"],
       ["pattern", "strong"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "deal2024_ex16b_1",
@@ -45,7 +47,8 @@
       ["do", "3"],
       ["pattern", "strong"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "deal2024_ex16b_2",
@@ -61,7 +64,8 @@
       ["do", "1"],
       ["pattern", "strong"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "deal2024_ex16b_3",
@@ -77,7 +81,8 @@
       ["do", "2"],
       ["pattern", "strong"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "deal2024_ex16c_1",
@@ -93,7 +98,8 @@
       ["do", "2"],
       ["pattern", "strong"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "deal2024_ex16c_2",
@@ -109,13 +115,14 @@
       ["do", "1"],
       ["pattern", "strong"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "deal2024_ex32a_1",
     "source": {"bibkey": "deal-2024", "paperLabel": "(32a)"},
     "language": "bulg1262",
-    "primaryText": "Preporăčaha mu te entusiaziarano.",
+    "primaryText": "Preporâčaha mu te entusiaziarano.",
     "glossedTokens": [],
     "translation": "They recommended you to him enthusiastically.",
     "context": "",
@@ -125,13 +132,14 @@
       ["do", "2"],
       ["pattern", "meFirst"]
     ],
-    "comment": "Reported from Pancheva and Zubizarreta (2018)."
+    "comment": "Reported from Pancheva and Zubizarreta (2018).",
+    "verified": "page-image"
   },
   {
     "id": "deal2024_ex32a_2",
     "source": {"bibkey": "deal-2024", "paperLabel": "(32a)"},
     "language": "bulg1262",
-    "primaryText": "Preporăčaha mi te entusiaziarano.",
+    "primaryText": "Preporâčaha mi te entusiaziarano.",
     "glossedTokens": [],
     "translation": "They recommended you to me enthusiastically.",
     "context": "",
@@ -141,13 +149,14 @@
       ["do", "2"],
       ["pattern", "meFirst"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "deal2024_ex32b_1",
     "source": {"bibkey": "deal-2024", "paperLabel": "(32b)"},
     "language": "bulg1262",
-    "primaryText": "Preporăčaha mu me entusiaziarano.",
+    "primaryText": "Preporâčaha mu me entusiaziarano.",
     "glossedTokens": [],
     "translation": "They recommended me to him enthusiastically.",
     "context": "",
@@ -157,13 +166,14 @@
       ["do", "1"],
       ["pattern", "meFirst"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "deal2024_ex32b_2",
     "source": {"bibkey": "deal-2024", "paperLabel": "(32b)"},
     "language": "bulg1262",
-    "primaryText": "Preporăčaha ti me entusiaziarano.",
+    "primaryText": "Preporâčaha ti me entusiaziarano.",
     "glossedTokens": [],
     "translation": "They recommended me to you enthusiastically.",
     "context": "",
@@ -173,7 +183,8 @@
       ["do", "1"],
       ["pattern", "meFirst"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "deal2024_ex39a_1",
@@ -189,7 +200,8 @@
       ["do", "1"],
       ["pattern", "weak"]
     ],
-    "comment": "Accepted by the weak-PCC variety of Italian; ambiguous between the two readings, so clitic order is templatic."
+    "comment": "Accepted by the weak-PCC variety of Italian; ambiguous between the two readings, so clitic order is templatic. The paper marks the example % (speaker variation).",
+    "verified": "page-image"
   },
   {
     "id": "deal2024_ex39a_2",
@@ -205,7 +217,8 @@
       ["do", "2"],
       ["pattern", "weak"]
     ],
-    "comment": "The other reading of the same string."
+    "comment": "The other reading of the same string.",
+    "verified": "page-image"
   },
   {
     "id": "deal2024_ex39b",
@@ -221,7 +234,8 @@
       ["do", "3"],
       ["pattern", "weak"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "deal2024_ex39c",
@@ -237,7 +251,8 @@
       ["do", "1"],
       ["pattern", "weak"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "deal2024_ex51a_1",
@@ -253,7 +268,8 @@
       ["do", "3"],
       ["pattern", "strictlyDescending"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "deal2024_ex51a_2",
@@ -269,7 +285,8 @@
       ["do", "3"],
       ["pattern", "strictlyDescending"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "deal2024_ex51a_3",
@@ -285,7 +302,8 @@
       ["do", "3"],
       ["pattern", "strictlyDescending"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "deal2024_ex51b_1",
@@ -301,7 +319,8 @@
       ["do", "2"],
       ["pattern", "strictlyDescending"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "deal2024_ex51b_2",
@@ -317,7 +336,8 @@
       ["do", "1"],
       ["pattern", "strictlyDescending"]
     ],
-    "comment": "The string cannot mean this."
+    "comment": "The string cannot mean this.",
+    "verified": "page-image"
   },
   {
     "id": "deal2024_ex51c_1",
@@ -333,7 +353,8 @@
       ["do", "1"],
       ["pattern", "strictlyDescending"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "deal2024_ex51c_2",
@@ -349,7 +370,8 @@
       ["do", "2"],
       ["pattern", "strictlyDescending"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "deal2024_ex60a",
@@ -366,7 +388,8 @@
       ["pattern", "strictlyDescending"],
       ["preference", "io"]
     ],
-    "comment": "Shapsug variety; the probe meets the indirect object first, the reverse PCC."
+    "comment": "Shapsug variety; the probe meets the indirect object first, the reverse PCC.",
+    "verified": "page-image"
   },
   {
     "id": "deal2024_ex60b",
@@ -383,7 +406,8 @@
       ["pattern", "strictlyDescending"],
       ["preference", "io"]
     ],
-    "comment": "Shapsug variety; the probe meets the indirect object first, the reverse PCC."
+    "comment": "Shapsug variety; the probe meets the indirect object first, the reverse PCC.",
+    "verified": "page-image"
   },
   {
     "id": "deal2024_ex60c",
@@ -400,7 +424,8 @@
       ["pattern", "strictlyDescending"],
       ["preference", "io"]
     ],
-    "comment": "Shapsug variety; the probe meets the indirect object first, the reverse PCC."
+    "comment": "Shapsug variety; the probe meets the indirect object first, the reverse PCC.",
+    "verified": "page-image"
   },
   {
     "id": "deal2024_ex61a",
@@ -417,7 +442,8 @@
       ["pattern", "strictlyDescending"],
       ["preference", "io"]
     ],
-    "comment": "Shapsug variety; the probe meets the indirect object first, the reverse PCC."
+    "comment": "Shapsug variety; the probe meets the indirect object first, the reverse PCC.",
+    "verified": "page-image"
   },
   {
     "id": "deal2024_ex61b",
@@ -434,7 +460,8 @@
       ["pattern", "strictlyDescending"],
       ["preference", "io"]
     ],
-    "comment": "Shapsug variety; the probe meets the indirect object first, the reverse PCC."
+    "comment": "Shapsug variety; the probe meets the indirect object first, the reverse PCC.",
+    "verified": "page-image"
   },
   {
     "id": "deal2024_ex61c",
@@ -451,7 +478,8 @@
       ["pattern", "strictlyDescending"],
       ["preference", "io"]
     ],
-    "comment": "Shapsug variety; the probe meets the indirect object first, the reverse PCC."
+    "comment": "Shapsug variety; the probe meets the indirect object first, the reverse PCC.",
+    "verified": "page-image"
   },
   {
     "id": "deal2024_ex62a_1",
@@ -467,7 +495,8 @@
       ["do", "3"],
       ["pattern", "strongOrWeak"]
     ],
-    "comment": "Slovenian speakers have a strong or a weak PCC; both orders of the object clitics occur, and the person of the second clitic is restricted."
+    "comment": "Slovenian speakers have a strong or a weak PCC; both orders of the object clitics occur, and the person of the second clitic is restricted.",
+    "verified": "page-image"
   },
   {
     "id": "deal2024_ex62a_2",
@@ -483,7 +512,8 @@
       ["do", "3"],
       ["pattern", "strongOrWeak"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "deal2024_ex62a_3",
@@ -499,7 +529,8 @@
       ["do", "3"],
       ["pattern", "strongOrWeak"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "deal2024_ex62b_1",
@@ -515,7 +546,8 @@
       ["do", "1"],
       ["pattern", "strongOrWeak"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "deal2024_ex62b_2",
@@ -531,7 +563,8 @@
       ["do", "2"],
       ["pattern", "strongOrWeak"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "deal2024_ex63a_1",
@@ -548,7 +581,8 @@
       ["pattern", "strongOrWeak"],
       ["preference", "io"]
     ],
-    "comment": "Direct object clitic first: the indirect object's person is restricted."
+    "comment": "Direct object clitic first: the indirect object's person is restricted.",
+    "verified": "page-image"
   },
   {
     "id": "deal2024_ex63a_2",
@@ -565,7 +599,8 @@
       ["pattern", "strongOrWeak"],
       ["preference", "io"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "deal2024_ex63a_3",
@@ -582,7 +617,8 @@
       ["pattern", "strongOrWeak"],
       ["preference", "io"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "deal2024_ex63b_1",
@@ -599,7 +635,8 @@
       ["pattern", "strongOrWeak"],
       ["preference", "io"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "deal2024_ex63b_2",
@@ -616,6 +653,7 @@
       ["pattern", "strongOrWeak"],
       ["preference", "io"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   }
 ]

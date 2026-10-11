@@ -509,45 +509,6 @@ def ex_68_c : Datum :=
     readings := []
     paperFeatures := [("form", "risingDeclarative"), ("evidence", "yes"), ("addressee", "informed"), ("credenceMin", "zero"), ("credenceMax", "zero")] }
 
-def ex_68_b : Datum :=
-  { id := "farkasroelofsen2017_68_b"
-    source := ⟨"farkas-roelofsen-2017", "(68)"⟩
-    reportedIn := none
-    language := "stan1293"
-    primaryText := "Are you going to play soccer?"
-    glossedTokens := []
-    context := "Mother sees child putting on cleats."
-    judgment := .acceptable
-    alternatives := []
-    readings := []
-    paperFeatures := [("form", "fallingInterrogative"), ("evidence", "yes"), ("addressee", "informed"), ("credenceMin", "zero"), ("credenceMax", "zero")] }
-
-def ex_68_d : Datum :=
-  { id := "farkasroelofsen2017_68_d"
-    source := ⟨"farkas-roelofsen-2017", "(68)"⟩
-    reportedIn := none
-    language := "stan1293"
-    primaryText := "You are going to play soccer, aren't you↑?"
-    glossedTokens := []
-    context := "Mother sees child putting on cleats."
-    judgment := .unacceptable
-    alternatives := []
-    readings := []
-    paperFeatures := [("form", "risingTag"), ("evidence", "yes"), ("addressee", "informed"), ("credenceMin", "zero"), ("credenceMax", "zero")] }
-
-def ex_68_e : Datum :=
-  { id := "farkasroelofsen2017_68_e"
-    source := ⟨"farkas-roelofsen-2017", "(68)"⟩
-    reportedIn := none
-    language := "stan1293"
-    primaryText := "You are going to play soccer, aren't you↓?"
-    glossedTokens := []
-    context := "Mother sees child putting on cleats."
-    judgment := .unacceptable
-    alternatives := []
-    readings := []
-    paperFeatures := [("form", "fallingTag"), ("evidence", "yes"), ("addressee", "informed"), ("credenceMin", "zero"), ("credenceMax", "zero")] }
-
 def ex_69 : Datum :=
   { id := "farkasroelofsen2017_69"
     source := ⟨"farkas-roelofsen-2017", "(69)"⟩
@@ -860,6 +821,6 @@ def ex_77b_rising : Datum :=
     readings := []
     paperFeatures := [("form", "risingDeclarative"), ("evidence", "yes"), ("addressee", "informed"), ("credenceMin", "zero"), ("credenceMax", "zero")] }
 
-def all : List Datum := [ex_61a, ex_61b, ex_61c, ex_61d, ex_61e, ex_62a, ex_62b, ex_62c, ex_62d, ex_62e, ex_63a, ex_63b, ex_63c, ex_63d, ex_63e, ex_64a, ex_64b, ex_64c, ex_64d, ex_64e, ex_65a, ex_65b, ex_65c, ex_65d, ex_65e, ex_66a, ex_66b, ex_66c, ex_66d, ex_66e, ex_67a, ex_67b, ex_67c, ex_67d, ex_67e, ex_53, ex_54, ex_68_c, ex_68_b, ex_68_d, ex_68_e, ex_69, ex_70, ex_71a, ex_71b_rising, ex_71b_falling, ex_72a, ex_72b_rising, ex_72b_falling, ex_73a, ex_73b_rising, ex_73b_falling, ex_74a, ex_74b_rising, ex_74b_falling, ex_75a, ex_75b_rising, ex_75b_falling, ex_76, ex_77a_rising_tag, ex_77a_falling_tag, ex_77a_rising, ex_77b_rising_tag, ex_77b_falling_tag, ex_77b_rising]
+def all : List Datum := [ex_61a, ex_61b, ex_61c, ex_61d, ex_61e, ex_62a, ex_62b, ex_62c, ex_62d, ex_62e, ex_63a, ex_63b, ex_63c, ex_63d, ex_63e, ex_64a, ex_64b, ex_64c, ex_64d, ex_64e, ex_65a, ex_65b, ex_65c, ex_65d, ex_65e, ex_66a, ex_66b, ex_66c, ex_66d, ex_66e, ex_67a, ex_67b, ex_67c, ex_67d, ex_67e, ex_53, ex_54, ex_68_c, ex_69, ex_70, ex_71a, ex_71b_rising, ex_71b_falling, ex_72a, ex_72b_rising, ex_72b_falling, ex_73a, ex_73b_rising, ex_73b_falling, ex_74a, ex_74b_rising, ex_74b_falling, ex_75a, ex_75b_rising, ex_75b_falling, ex_76, ex_77a_rising_tag, ex_77a_falling_tag, ex_77a_rising, ex_77b_rising_tag, ex_77b_falling_tag, ex_77b_rising]
 
 end FarkasRoelofsen2017.Examples

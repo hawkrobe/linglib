@@ -16,7 +16,7 @@
       ["section", "1"]
     ],
     "comment": "",
-    "verified": "text-layer"
+    "verified": "page-image"
   },
   {
     "id": "elliott2020_2",
@@ -35,7 +35,7 @@
       ["section", "1"]
     ],
     "comment": "",
-    "verified": "text-layer"
+    "verified": "page-image"
   },
   {
     "id": "elliott2020_3a",
@@ -54,7 +54,7 @@
       ["section", "1.1"]
     ],
     "comment": "",
-    "verified": "text-layer"
+    "verified": "page-image"
   },
   {
     "id": "elliott2020_3b",
@@ -73,7 +73,7 @@
       ["section", "1.1"]
     ],
     "comment": "",
-    "verified": "text-layer"
+    "verified": "page-image"
   },
   {
     "id": "elliott2020_4",
@@ -95,7 +95,7 @@
       ["section", "1.1"]
     ],
     "comment": "",
-    "verified": "text-layer"
+    "verified": "page-image"
   },
   {
     "id": "elliott2020_5",
@@ -117,7 +117,7 @@
       ["section", "1.1"]
     ],
     "comment": "",
-    "verified": "text-layer"
+    "verified": "page-image"
   },
   {
     "id": "elliott2020_6",
@@ -139,7 +139,7 @@
       ["section", "1.1"]
     ],
     "comment": "The paper prints NO in small caps, the emphasis of fn. 4.",
-    "verified": "text-layer"
+    "verified": "page-image"
   },
   {
     "id": "elliott2020_7",
@@ -161,7 +161,7 @@
       ["section", "1.1"]
     ],
     "comment": "Printed in fn. 5.",
-    "verified": "text-layer"
+    "verified": "page-image"
   },
   {
     "id": "elliott2020_8a",
@@ -180,7 +180,7 @@
       ["section", "1.1"]
     ],
     "comment": "",
-    "verified": "text-layer"
+    "verified": "page-image"
   },
   {
     "id": "elliott2020_8b",
@@ -199,7 +199,7 @@
       ["section", "1.1"]
     ],
     "comment": "",
-    "verified": "text-layer"
+    "verified": "page-image"
   },
   {
     "id": "elliott2020_9",
@@ -218,7 +218,7 @@
       ["section", "1.1"]
     ],
     "comment": "",
-    "verified": "text-layer"
+    "verified": "page-image"
   },
   {
     "id": "elliott2020_10a",
@@ -237,7 +237,7 @@
       ["section", "1.2"]
     ],
     "comment": "",
-    "verified": "text-layer"
+    "verified": "page-image"
   },
   {
     "id": "elliott2020_10b",
@@ -256,7 +256,7 @@
       ["section", "1.2"]
     ],
     "comment": "",
-    "verified": "text-layer"
+    "verified": "page-image"
   },
   {
     "id": "elliott2020_21",
@@ -275,7 +275,7 @@
       ["section", "2.4.4"]
     ],
     "comment": "",
-    "verified": "text-layer"
+    "verified": "page-image"
   },
   {
     "id": "elliott2020_31",
@@ -294,7 +294,7 @@
       ["section", "2.7"]
     ],
     "comment": "",
-    "verified": "text-layer"
+    "verified": "page-image"
   },
   {
     "id": "elliott2020_37",
@@ -315,7 +315,7 @@
       ["section", "2.9"]
     ],
     "comment": "",
-    "verified": "text-layer"
+    "verified": "page-image"
   },
   {
     "id": "elliott2020_44",
@@ -334,7 +334,7 @@
       ["section", "3.1"]
     ],
     "comment": "",
-    "verified": "text-layer"
+    "verified": "page-image"
   },
   {
     "id": "elliott2020_45",
@@ -356,7 +356,7 @@
       ["section", "3.1"]
     ],
     "comment": "",
-    "verified": "text-layer"
+    "verified": "page-image"
   },
   {
     "id": "elliott2020_46",
@@ -378,7 +378,7 @@
       ["section", "3.1"]
     ],
     "comment": "",
-    "verified": "text-layer"
+    "verified": "page-image"
   },
   {
     "id": "elliott2020_47",
@@ -400,7 +400,7 @@
       ["section", "3.2"]
     ],
     "comment": "A Stone disjunction (Stone 1992); the paper prints '(Either way)' as optional.",
-    "verified": "text-layer"
+    "verified": "page-image"
   },
   {
     "id": "elliott2020_48",
@@ -423,7 +423,7 @@
       ["section", "3.3"]
     ],
     "comment": "Rothschild's observation (Rothschild 2017); speakers A, B, A.",
-    "verified": "text-layer"
+    "verified": "page-image"
   },
   {
     "id": "elliott2020_49",
@@ -446,7 +446,7 @@
       ["section", "3.3"]
     ],
     "comment": "Speakers A, B, A.",
-    "verified": "text-layer"
+    "verified": "page-image"
   },
   {
     "id": "elliott2020_51",
@@ -465,7 +465,7 @@
       ["section", "3.6"]
     ],
     "comment": "",
-    "verified": "text-layer"
+    "verified": "page-image"
   },
   {
     "id": "elliott2020_52a",
@@ -484,7 +484,7 @@
       ["section", "3.6"]
     ],
     "comment": "",
-    "verified": "text-layer"
+    "verified": "page-image"
   },
   {
     "id": "elliott2020_55",
@@ -506,7 +506,7 @@
       ["section", "3.6"]
     ],
     "comment": "",
-    "verified": "text-layer"
+    "verified": "page-image"
   },
   {
     "id": "elliott2020_56",
@@ -529,7 +529,7 @@
       ["section", "3.6"]
     ],
     "comment": "The paper prints '(Actually)' as optional.",
-    "verified": "text-layer"
+    "verified": "page-image"
   },
   {
     "id": "elliott2020_58",
@@ -548,7 +548,7 @@
       ["section", "3.7"]
     ],
     "comment": "",
-    "verified": "text-layer"
+    "verified": "page-image"
   },
   {
     "id": "elliott2020_61",
@@ -567,7 +567,7 @@
       ["section", "3.7"]
     ],
     "comment": "Footnote 26; with co-indexed indefinites.",
-    "verified": "text-layer"
+    "verified": "page-image"
   },
   {
     "id": "elliott2020_65",
@@ -586,7 +586,7 @@
       ["section", "3.8"]
     ],
     "comment": "",
-    "verified": "text-layer"
+    "verified": "page-image"
   },
   {
     "id": "elliott2020_67",
@@ -605,7 +605,7 @@
       ["section", "3.8"]
     ],
     "comment": "",
-    "verified": "text-layer"
+    "verified": "page-image"
   },
   {
     "id": "elliott2020_68",
@@ -624,7 +624,7 @@
       ["section", "3.8"]
     ],
     "comment": "",
-    "verified": "text-layer"
+    "verified": "page-image"
   },
   {
     "id": "elliott2020_71a",
@@ -643,7 +643,7 @@
       ["section", "3.9"]
     ],
     "comment": "",
-    "verified": "text-layer"
+    "verified": "page-image"
   },
   {
     "id": "elliott2020_78",
@@ -662,7 +662,7 @@
       ["section", "3.9"]
     ],
     "comment": "",
-    "verified": "text-layer"
+    "verified": "page-image"
   },
   {
     "id": "elliott2020_79",
@@ -681,7 +681,7 @@
       ["section", "3.9"]
     ],
     "comment": "",
-    "verified": "text-layer"
+    "verified": "page-image"
   },
   {
     "id": "elliott2020_80",
@@ -704,7 +704,7 @@
       ["section", "3.9"]
     ],
     "comment": "Speakers A, B; the paper prints '(both)' as optional.",
-    "verified": "text-layer"
+    "verified": "page-image"
   },
   {
     "id": "elliott2020_81",
@@ -725,7 +725,7 @@
       ["section", "4.1"]
     ],
     "comment": "",
-    "verified": "text-layer"
+    "verified": "page-image"
   },
   {
     "id": "elliott2020_82",
@@ -747,7 +747,7 @@
       ["section", "4.1"]
     ],
     "comment": "Credited to Simon Charlow (p.c.): maximal plural anaphora under double negation.",
-    "verified": "text-layer"
+    "verified": "page-image"
   },
   {
     "id": "elliott2020_92",
@@ -768,7 +768,7 @@
       ["section", "B"]
     ],
     "comment": "",
-    "verified": "text-layer"
+    "verified": "page-image"
   },
   {
     "id": "elliott2020_93",
@@ -787,7 +787,7 @@
       ["section", "B"]
     ],
     "comment": "",
-    "verified": "text-layer"
+    "verified": "page-image"
   },
   {
     "id": "elliott2020_94a",
@@ -809,7 +809,7 @@
       ["section", "B"]
     ],
     "comment": "",
-    "verified": "text-layer"
+    "verified": "page-image"
   },
   {
     "id": "elliott2020_94b",
@@ -831,7 +831,7 @@
       ["section", "B"]
     ],
     "comment": "",
-    "verified": "text-layer"
+    "verified": "page-image"
   },
   {
     "id": "elliott2020_98",
@@ -850,7 +850,7 @@
       ["section", "B"]
     ],
     "comment": "",
-    "verified": "text-layer"
+    "verified": "page-image"
   },
   {
     "id": "elliott2020_100",
@@ -869,7 +869,7 @@
       ["section", "B"]
     ],
     "comment": "",
-    "verified": "text-layer"
+    "verified": "page-image"
   },
   {
     "id": "elliott2020_101",
@@ -888,6 +888,6 @@
       ["section", "B"]
     ],
     "comment": "",
-    "verified": "text-layer"
+    "verified": "page-image"
   }
 ]

@@ -8,7 +8,7 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -16,7 +16,8 @@
       ["verb", "lexical"],
       ["diagnostic", "negation"],
       ["verbPrecedes", "true"]
-    ]
+    ],
+    "verified": "page-image"
   },
   {
     "id": "pollock1989_ex2b",
@@ -35,7 +36,8 @@
       ["verb", "lexical"],
       ["diagnostic", "negation"],
       ["verbPrecedes", "true"]
-    ]
+    ],
+    "verified": "page-image"
   },
   {
     "id": "pollock1989_ex3a",
@@ -46,7 +48,7 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -54,7 +56,8 @@
       ["verb", "lexical"],
       ["diagnostic", "inversion"],
       ["verbPrecedes", "true"]
-    ]
+    ],
+    "verified": "page-image"
   },
   {
     "id": "pollock1989_ex3b",
@@ -73,7 +76,8 @@
       ["verb", "lexical"],
       ["diagnostic", "inversion"],
       ["verbPrecedes", "true"]
-    ]
+    ],
+    "verified": "page-image"
   },
   {
     "id": "pollock1989_ex4a",
@@ -84,7 +88,7 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -92,7 +96,8 @@
       ["verb", "lexical"],
       ["diagnostic", "adverb"],
       ["verbPrecedes", "true"]
-    ]
+    ],
+    "verified": "page-image"
   },
   {
     "id": "pollock1989_ex4b",
@@ -111,7 +116,8 @@
       ["verb", "lexical"],
       ["diagnostic", "adverb"],
       ["verbPrecedes", "true"]
-    ]
+    ],
+    "verified": "page-image"
   },
   {
     "id": "pollock1989_ex4c",
@@ -130,7 +136,8 @@
       ["verb", "lexical"],
       ["diagnostic", "adverb"],
       ["verbPrecedes", "false"]
-    ]
+    ],
+    "verified": "page-image"
   },
   {
     "id": "pollock1989_ex4d",
@@ -141,7 +148,7 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -149,7 +156,8 @@
       ["verb", "lexical"],
       ["diagnostic", "adverb"],
       ["verbPrecedes", "false"]
-    ]
+    ],
+    "verified": "page-image"
   },
   {
     "id": "pollock1989_ex5a",
@@ -160,7 +168,7 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -168,7 +176,8 @@
       ["verb", "lexical"],
       ["diagnostic", "floatingQ"],
       ["verbPrecedes", "true"]
-    ]
+    ],
+    "verified": "page-image"
   },
   {
     "id": "pollock1989_ex5b",
@@ -187,7 +196,8 @@
       ["verb", "lexical"],
       ["diagnostic", "floatingQ"],
       ["verbPrecedes", "true"]
-    ]
+    ],
+    "verified": "page-image"
   },
   {
     "id": "pollock1989_ex5c",
@@ -206,7 +216,8 @@
       ["verb", "lexical"],
       ["diagnostic", "floatingQ"],
       ["verbPrecedes", "false"]
-    ]
+    ],
+    "verified": "page-image"
   },
   {
     "id": "pollock1989_ex5d",
@@ -217,7 +228,7 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -225,7 +236,8 @@
       ["verb", "lexical"],
       ["diagnostic", "floatingQ"],
       ["verbPrecedes", "false"]
-    ]
+    ],
+    "verified": "page-image"
   },
   {
     "id": "pollock1989_ex7a",
@@ -244,7 +256,8 @@
       ["verb", "auxiliary"],
       ["diagnostic", "negation"],
       ["verbPrecedes", "true"]
-    ]
+    ],
+    "verified": "page-image"
   },
   {
     "id": "pollock1989_ex7b",
@@ -255,7 +268,7 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -264,7 +277,8 @@
       ["diagnostic", "negation"],
       ["verbPrecedes", "false"]
     ],
-    "comment": "Do-support with an auxiliary that must raise."
+    "comment": "Do-support with an auxiliary that must raise.",
+    "verified": "page-image"
   },
   {
     "id": "pollock1989_ex11a_neg",
@@ -283,7 +297,8 @@
       ["verb", "auxiliary"],
       ["diagnostic", "negation"],
       ["verbPrecedes", "true"]
-    ]
+    ],
+    "verified": "page-image"
   },
   {
     "id": "pollock1989_ex11a_inv",
@@ -302,7 +317,8 @@
       ["verb", "auxiliary"],
       ["diagnostic", "inversion"],
       ["verbPrecedes", "true"]
-    ]
+    ],
+    "verified": "page-image"
   },
   {
     "id": "pollock1989_ex11b_neg",
@@ -321,7 +337,8 @@
       ["verb", "auxiliary"],
       ["diagnostic", "negation"],
       ["verbPrecedes", "true"]
-    ]
+    ],
+    "verified": "page-image"
   },
   {
     "id": "pollock1989_ex11b_inv",
@@ -340,7 +357,8 @@
       ["verb", "auxiliary"],
       ["diagnostic", "inversion"],
       ["verbPrecedes", "true"]
-    ]
+    ],
+    "verified": "page-image"
   },
   {
     "id": "pollock1989_ex11c_adv",
@@ -359,7 +377,8 @@
       ["verb", "auxiliary"],
       ["diagnostic", "adverb"],
       ["verbPrecedes", "true"]
-    ]
+    ],
+    "verified": "page-image"
   },
   {
     "id": "pollock1989_ex11c_fq",
@@ -378,7 +397,8 @@
       ["verb", "auxiliary"],
       ["diagnostic", "floatingQ"],
       ["verbPrecedes", "true"]
-    ]
+    ],
+    "verified": "page-image"
   },
   {
     "id": "pollock1989_ex11d_adv",
@@ -397,7 +417,8 @@
       ["verb", "auxiliary"],
       ["diagnostic", "adverb"],
       ["verbPrecedes", "true"]
-    ]
+    ],
+    "verified": "page-image"
   },
   {
     "id": "pollock1989_ex11d_fq",
@@ -416,7 +437,8 @@
       ["verb", "auxiliary"],
       ["diagnostic", "floatingQ"],
       ["verbPrecedes", "true"]
-    ]
+    ],
+    "verified": "page-image"
   },
   {
     "id": "pollock1989_ex12a",
@@ -427,7 +449,7 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -436,7 +458,8 @@
       ["diagnostic", "negation"],
       ["verbPrecedes", "false"]
     ],
-    "comment": "Failure to raise have yields do-support."
+    "comment": "Failure to raise have yields do-support.",
+    "verified": "page-image"
   },
   {
     "id": "pollock1989_ex15a",
@@ -455,7 +478,8 @@
       ["verb", "auxiliary"],
       ["diagnostic", "negation"],
       ["verbPrecedes", "false"]
-    ]
+    ],
+    "verified": "page-image"
   },
   {
     "id": "pollock1989_ex15b",
@@ -475,7 +499,8 @@
       ["diagnostic", "negation"],
       ["verbPrecedes", "true"]
     ],
-    "comment": "Somewhat literary but perfectly fine."
+    "comment": "Somewhat literary but perfectly fine.",
+    "verified": "page-image"
   },
   {
     "id": "pollock1989_ex16a",
@@ -494,7 +519,8 @@
       ["verb", "lexical"],
       ["diagnostic", "negation"],
       ["verbPrecedes", "false"]
-    ]
+    ],
+    "verified": "page-image"
   },
   {
     "id": "pollock1989_ex16b",
@@ -505,7 +531,7 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -513,7 +539,8 @@
       ["verb", "lexical"],
       ["diagnostic", "negation"],
       ["verbPrecedes", "true"]
-    ]
+    ],
+    "verified": "page-image"
   },
   {
     "id": "pollock1989_ex21a",
@@ -532,7 +559,8 @@
       ["verb", "auxiliary"],
       ["diagnostic", "negation"],
       ["verbPrecedes", "false"]
-    ]
+    ],
+    "verified": "page-image"
   },
   {
     "id": "pollock1989_ex21b",
@@ -552,7 +580,8 @@
       ["diagnostic", "negation"],
       ["verbPrecedes", "true"]
     ],
-    "comment": "Marginally acceptable, with much variation in judgments."
+    "comment": "Marginally acceptable, with much variation in judgments.",
+    "verified": "page-image"
   },
   {
     "id": "pollock1989_ex22a",
@@ -571,7 +600,8 @@
       ["verb", "lexical"],
       ["diagnostic", "negation"],
       ["verbPrecedes", "false"]
-    ]
+    ],
+    "verified": "page-image"
   },
   {
     "id": "pollock1989_ex22b",
@@ -582,7 +612,7 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -590,7 +620,8 @@
       ["verb", "lexical"],
       ["diagnostic", "negation"],
       ["verbPrecedes", "true"]
-    ]
+    ],
+    "verified": "page-image"
   },
   {
     "id": "pollock1989_ex24b",
@@ -609,7 +640,8 @@
       ["verb", "lexical"],
       ["diagnostic", "adverb"],
       ["verbPrecedes", "false"]
-    ]
+    ],
+    "verified": "page-image"
   },
   {
     "id": "pollock1989_ex27b",
@@ -629,7 +661,8 @@
       ["diagnostic", "adverb"],
       ["verbPrecedes", "true"]
     ],
-    "comment": "Short verb movement, to a position below pas."
+    "comment": "Short verb movement, to a position below pas.",
+    "verified": "page-image"
   },
   {
     "id": "pollock1989_ex28a",
@@ -648,7 +681,8 @@
       ["verb", "lexical"],
       ["diagnostic", "floatingQ"],
       ["verbPrecedes", "true"]
-    ]
+    ],
+    "verified": "page-image"
   },
   {
     "id": "pollock1989_ex29c",
@@ -659,7 +693,7 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -667,7 +701,8 @@
       ["verb", "lexical"],
       ["diagnostic", "negation"],
       ["verbPrecedes", "true"]
-    ]
+    ],
+    "verified": "page-image"
   },
   {
     "id": "pollock1989_ex37b",
@@ -686,7 +721,8 @@
       ["verb", "lexical"],
       ["diagnostic", "adverb"],
       ["verbPrecedes", "false"]
-    ]
+    ],
+    "verified": "page-image"
   },
   {
     "id": "pollock1989_ex38b",
@@ -697,7 +733,7 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -705,7 +741,8 @@
       ["verb", "lexical"],
       ["diagnostic", "adverb"],
       ["verbPrecedes", "true"]
-    ]
+    ],
+    "verified": "page-image"
   },
   {
     "id": "pollock1989_ex39a",
@@ -724,7 +761,8 @@
       ["verb", "auxiliary"],
       ["diagnostic", "adverb"],
       ["verbPrecedes", "false"]
-    ]
+    ],
+    "verified": "page-image"
   },
   {
     "id": "pollock1989_ex39c",
@@ -743,7 +781,8 @@
       ["verb", "auxiliary"],
       ["diagnostic", "adverb"],
       ["verbPrecedes", "true"]
-    ]
+    ],
+    "verified": "page-image"
   },
   {
     "id": "pollock1989_ex39d",
@@ -754,7 +793,7 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -762,6 +801,7 @@
       ["verb", "lexical"],
       ["diagnostic", "adverb"],
       ["verbPrecedes", "true"]
-    ]
+    ],
+    "verified": "page-image"
   }
 ]

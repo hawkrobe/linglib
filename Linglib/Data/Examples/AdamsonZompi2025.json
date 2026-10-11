@@ -1244,6 +1244,10 @@
       [
         "cell",
         "3>SIE"
+      ],
+      [
+        "alsoJudged",
+        "ungrammatical"
       ]
     ],
     "comment": "Marked ??/*; the authors flag the need for experimental confirmation.",

@@ -290,7 +290,7 @@ def ex_31 : Datum :=
 
 def ii_a : Datum :=
   { id := "rett2026_ii_a"
-    source := ⟨"rett-2026", "(ii a)"⟩
+    source := ⟨"rett-2026", "fn. 11 (ia)"⟩
     reportedIn := none
     language := "stan1290"
     primaryText := "C'est une recherche qui est aussi importante que ne l'est le séro-diagnostic."
@@ -303,7 +303,7 @@ def ii_a : Datum :=
 
 def ii_it : Datum :=
   { id := "rett2026_ii_it"
-    source := ⟨"rett-2026", "(ii)"⟩
+    source := ⟨"rett-2026", "fn. 11 (ii)"⟩
     reportedIn := none
     language := "ital1282"
     primaryText := "Maria è tanto intelligente quanto non sia Carlo."
@@ -397,7 +397,7 @@ def ex_78 : Datum :=
     source := ⟨"rett-2026", "(78)"⟩
     reportedIn := none
     language := "ital1282"
-    primaryText := "Rimarrai qui finché non avrai alzato un dito per aiutarmi."
+    primaryText := "Rimarrai qui finché non avrai alzato un dito per aiutar-mi."
     glossedTokens := []
     context := ""
     judgment := .acceptable

@@ -12,7 +12,7 @@
     "glossedTokens": [
       [
         "yugw=imaa/ima'=hl",
-        "IPFV=EPIS=CN"
+        "IMPF=EPIS=CN"
       ],
       [
         "wis",
@@ -27,7 +27,7 @@
     "paperFeatures": [
       [
         "section",
-        "3.3"
+        "3.1"
       ],
       [
         "modal",
@@ -50,7 +50,8 @@
         "4"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "matthewson2013_ex29",
@@ -65,7 +66,7 @@
     "glossedTokens": [
       [
         "yugw=imaa=hl",
-        "IPFV=EPIS=CN"
+        "IMPF=EPIS=CN"
       ],
       [
         "siipxw-t",
@@ -80,7 +81,7 @@
     "paperFeatures": [
       [
         "section",
-        "3.3"
+        "3.1"
       ],
       [
         "modal",
@@ -111,7 +112,8 @@
         "epistemic"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "matthewson2013_ex30",
@@ -126,7 +128,7 @@
     "glossedTokens": [
       [
         "yugw=imaa=hl",
-        "IPFV=EPIS=CN"
+        "IMPF=EPIS=CN"
       ],
       [
         "da'awhl",
@@ -177,7 +179,8 @@
         "true"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "matthewson2013_ex37",
@@ -192,7 +195,7 @@
     "glossedTokens": [
       [
         "yugw=imaa=hl",
-        "IPFV=EPIS=CN"
+        "IMPF=EPIS=CN"
       ],
       [
         "x̱sdaa-diit",
@@ -230,7 +233,8 @@
         "4"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "matthewson2013_ex38a",
@@ -245,7 +249,7 @@
     "glossedTokens": [
       [
         "yugw=imaa=hl",
-        "IPFV=EPIS=CN"
+        "IMPF=EPIS=CN"
       ],
       [
         "x̱sdaa-diit",
@@ -279,7 +283,8 @@
         "false"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "matthewson2013_ex38b",
@@ -294,7 +299,7 @@
     "glossedTokens": [
       [
         "yugw=imaa[=hl]",
-        "IPFV=EPIS[=CN]"
+        "IMPF=EPIS[=CN]"
       ],
       [
         "dim",
@@ -332,7 +337,8 @@
         "true"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "matthewson2013_ex39a",
@@ -347,7 +353,7 @@
     "glossedTokens": [
       [
         "yugw=imaa/ima'=hl",
-        "IPFV=EPIS=CN"
+        "IMPF=EPIS=CN"
       ],
       [
         "wis",
@@ -381,7 +387,8 @@
         "false"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "matthewson2013_ex40a",
@@ -396,7 +403,7 @@
     "glossedTokens": [
       [
         "yugw=imaa/ima'=hl",
-        "IPFV=EPIS=CN"
+        "IMPF=EPIS=CN"
       ],
       [
         "dim",
@@ -434,7 +441,8 @@
         "true"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "matthewson2013_ex41a",
@@ -449,7 +457,7 @@
     "glossedTokens": [
       [
         "yugw=imaa/ima'=hl",
-        "IPFV=EPIS=CN"
+        "IMPF=EPIS=CN"
       ],
       [
         "siipxw-t",
@@ -483,7 +491,8 @@
         "false"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "matthewson2013_ex42a",
@@ -498,7 +507,7 @@
     "glossedTokens": [
       [
         "yugw=imaa/ima'=hl",
-        "IPFV=EPIS=CN"
+        "IMPF=EPIS=CN"
       ],
       [
         "dim",
@@ -536,7 +545,8 @@
         "true"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "matthewson2013_ex39b",
@@ -551,7 +561,7 @@
     "glossedTokens": [
       [
         "yugw=imaa/ima'=hl",
-        "IPFV=EPIS=CN"
+        "IMPF=EPIS=CN"
       ],
       [
         "wis",
@@ -585,7 +595,8 @@
         "false"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "matthewson2013_ex40b",
@@ -600,7 +611,7 @@
     "glossedTokens": [
       [
         "yugw=imaa/ima'=hl",
-        "IPFV=EPIS=CN"
+        "IMPF=EPIS=CN"
       ],
       [
         "dim",
@@ -638,7 +649,8 @@
         "true"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "matthewson2013_ex41b",
@@ -653,7 +665,7 @@
     "glossedTokens": [
       [
         "yugw=imaa/ima'=hl",
-        "IPFV=EPIS=CN"
+        "IMPF=EPIS=CN"
       ],
       [
         "siipxw-t",
@@ -687,7 +699,8 @@
         "false"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "matthewson2013_ex42b",
@@ -702,7 +715,7 @@
     "glossedTokens": [
       [
         "yugw=imaa/ima'=hl",
-        "IPFV=EPIS=CN"
+        "IMPF=EPIS=CN"
       ],
       [
         "dim",
@@ -740,7 +753,8 @@
         "true"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "matthewson2013_ex39c",
@@ -755,7 +769,7 @@
     "glossedTokens": [
       [
         "yugw=imaa/ima'=hl",
-        "IPFV=EPIS=CN"
+        "IMPF=EPIS=CN"
       ],
       [
         "wis",
@@ -789,7 +803,8 @@
         "false"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "matthewson2013_ex40c",
@@ -804,7 +819,7 @@
     "glossedTokens": [
       [
         "yugw=imaa/ima'=hl",
-        "IPFV=EPIS=CN"
+        "IMPF=EPIS=CN"
       ],
       [
         "dim",
@@ -842,7 +857,8 @@
         "true"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "matthewson2013_ex41c",
@@ -857,7 +873,7 @@
     "glossedTokens": [
       [
         "yugw=imaa/ima'=hl",
-        "IPFV=EPIS=CN"
+        "IMPF=EPIS=CN"
       ],
       [
         "siipxw-t",
@@ -891,7 +907,8 @@
         "false"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "matthewson2013_ex42c",
@@ -906,7 +923,7 @@
     "glossedTokens": [
       [
         "yugw=imaa/ima'=hl",
-        "IPFV=EPIS=CN"
+        "IMPF=EPIS=CN"
       ],
       [
         "dim",
@@ -944,7 +961,8 @@
         "true"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "matthewson2013_ex43a",
@@ -959,7 +977,7 @@
     "glossedTokens": [
       [
         "yugw=imaa=hl",
-        "IPFV=EPIS=CN"
+        "IMPF=EPIS=CN"
       ],
       [
         "wis",
@@ -1001,7 +1019,8 @@
         "4"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "matthewson2013_ex43a_prime",
@@ -1016,7 +1035,7 @@
     "glossedTokens": [
       [
         "yugw=imaa=hl",
-        "IPFV=EPIS=CN"
+        "IMPF=EPIS=CN"
       ],
       [
         "dim",
@@ -1058,7 +1077,8 @@
         "true"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "matthewson2013_ex44",
@@ -1073,7 +1093,7 @@
     "glossedTokens": [
       [
         "yugw=imaa=hl",
-        "IPFV=EPIS=CN"
+        "IMPF=EPIS=CN"
       ],
       [
         "dim",
@@ -1115,7 +1135,8 @@
         "4"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "matthewson2013_ex44_prime",
@@ -1130,7 +1151,7 @@
     "glossedTokens": [
       [
         "yugw=imaa=hl",
-        "IPFV=EPIS=CN"
+        "IMPF=EPIS=CN"
       ],
       [
         "wis",
@@ -1164,7 +1185,8 @@
         "false"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "matthewson2013_ex47a",
@@ -1217,7 +1239,8 @@
         "4"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "matthewson2013_ex48a",
@@ -1270,7 +1293,8 @@
         "true"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "matthewson2013_ex47b",
@@ -1323,7 +1347,8 @@
         "4"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "matthewson2013_ex48b",
@@ -1376,7 +1401,8 @@
         "true"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "matthewson2013_ex47c",
@@ -1425,7 +1451,8 @@
         "false"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "matthewson2013_ex48c",
@@ -1482,7 +1509,8 @@
         "4"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "matthewson2013_ex53",
@@ -1563,7 +1591,8 @@
         "true"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "matthewson2013_ex53_prime",
@@ -1640,7 +1669,8 @@
         "false"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "matthewson2013_ex56",
@@ -1697,7 +1727,8 @@
         "true"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "matthewson2013_ex56_prime",
@@ -1750,7 +1781,8 @@
         "false"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "matthewson2013_ex62",
@@ -1827,7 +1859,8 @@
         "false"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "matthewson2013_ex63a",
@@ -1888,7 +1921,8 @@
         "bouletic"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "matthewson2013_ex64",
@@ -1957,7 +1991,8 @@
         "teleological"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "matthewson2013_ex65",
@@ -2014,7 +2049,8 @@
         "deontic"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "matthewson2013_ex66",
@@ -2067,7 +2103,8 @@
         "circumstantial"
       ]
     ],
-    "comment": "Attempted translation; rejected in context by one consultant, who reads the modal as 'able'."
+    "comment": "Attempted translation; rejected in context by one consultant, who reads the modal as 'able'.",
+    "verified": "page-image"
   },
   {
     "id": "matthewson2013_ex73",
@@ -2128,7 +2165,8 @@
         "true"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "matthewson2013_ex73_prime",
@@ -2185,7 +2223,8 @@
         "false"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "matthewson2013_ex79",
@@ -2238,7 +2277,8 @@
         "pure circumstantial"
       ]
     ],
-    "comment": "Marginally accepted by one consultant: \"Yeah, you let them grow, I guess.\""
+    "comment": "Marginally accepted by one consultant: \"Yeah, you let them grow, I guess.\"",
+    "verified": "page-image"
   },
   {
     "id": "matthewson2013_ex80",
@@ -2295,7 +2335,8 @@
         "deontic"
       ]
     ],
-    "comment": "Cannot mean 'I have to work tonight'."
+    "comment": "Cannot mean 'I have to work tonight'.",
+    "verified": "page-image"
   },
   {
     "id": "matthewson2013_ex83",
@@ -2360,7 +2401,8 @@
         "deontic"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "matthewson2013_ex83_prime",
@@ -2421,7 +2463,8 @@
         "deontic"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "matthewson2013_ex86a",
@@ -2474,7 +2517,8 @@
         "circumstantial"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "matthewson2013_ex89",
@@ -2563,7 +2607,8 @@
         "teleological"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "matthewson2013_ex90",
@@ -2648,7 +2693,8 @@
         "teleological"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "matthewson2013_ex91",
@@ -2701,7 +2747,8 @@
         "bouletic"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "matthewson2013_ex92",
@@ -2766,7 +2813,8 @@
         "bouletic"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "matthewson2013_ex95a",
@@ -2807,7 +2855,8 @@
         "dim"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "matthewson2013_ex96",
@@ -2860,7 +2909,8 @@
         "pure circumstantial"
       ]
     ],
-    "comment": "Rejected in context by one consultant, marginally accepted by the other."
+    "comment": "Rejected in context by one consultant, marginally accepted by the other.",
+    "verified": "page-image"
   },
   {
     "id": "matthewson2013_ex100a",
@@ -2917,7 +2967,8 @@
         "pure circumstantial"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "matthewson2013_ex100b",
@@ -2978,6 +3029,7 @@
         "pure circumstantial"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   }
 ]
