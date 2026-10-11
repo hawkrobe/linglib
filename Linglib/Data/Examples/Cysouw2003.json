@@ -27,7 +27,8 @@
       ["chapter", "3"],
       ["section", "3.6.5"]
     ],
-    "comment": "Fig. 3.6, the singular/group display of Thomas (1955)'s Ilocano pronouns; Ilocano is named a Maranao-type case in §4.5.2."
+    "comment": "Fig. 3.6, the singular/group display of Thomas (1955)'s Ilocano pronouns; Ilocano is named a Maranao-type case in §4.5.2.",
+    "verified": "page-image"
   },
   {
     "id": "cysouw2003_3_15",
@@ -57,7 +58,8 @@
       ["section", "3.6.6"],
       ["fpc", "Pf"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "cysouw2003_3_16",
@@ -87,7 +89,8 @@
       ["section", "3.6.6"],
       ["fpc", "Pf"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "cysouw2003_3_17",
@@ -117,7 +120,8 @@
       ["section", "3.6.6"],
       ["fpc", "Pf"]
     ],
-    "comment": "Lee (1987)'s paradigm; Osborne (1974) records a separate augmented inclusive ngagha."
+    "comment": "Lee (1987)'s paradigm; Osborne (1974) records a separate augmented inclusive ngagha.",
+    "verified": "page-image"
   },
   {
     "id": "cysouw2003_3_18",
@@ -137,9 +141,9 @@
       ["1", "ã̄"],
       ["2", "ī"],
       ["3", "ē"],
-      ["1+2", "kū"],
+      ["1+2", "kʊ̄"],
       ["1+2+3", "kàà"],
-      ["1+3", "kū"],
+      ["1+3", "kʊ̄"],
       ["2+3", "kā"],
       ["3+3", "ō"],
       ["ubiquity", "rare"],
@@ -147,7 +151,8 @@
       ["section", "3.6.6"],
       ["fpc", "Pg"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "cysouw2003_3_19",
@@ -177,7 +182,8 @@
       ["section", "3.6.6"],
       ["fpc", "Pg"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "cysouw2003_3_20",
@@ -195,19 +201,20 @@
     "paperFeatures": [
       ["marking", "inflectional"],
       ["1", "ŋə-"],
-      ["2", "ṉə-"],
+      ["2", "n̪ə-"],
       ["3", "a-"],
       ["1+2", "mu-"],
       ["1+2+3", "ŋa-"],
       ["1+3", "ŋə-"],
-      ["2+3", "ṉə-"],
+      ["2+3", "n̪ə-"],
       ["3+3", "wu-"],
       ["ubiquity", "rare"],
       ["chapter", "3"],
       ["section", "3.6.6"],
       ["fpc", "Ph"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "cysouw2003_3_21",
@@ -237,7 +244,8 @@
       ["section", "3.6.6"],
       ["fpc", "Pi"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "cysouw2003_3_22",
@@ -267,7 +275,8 @@
       ["section", "3.6.6"],
       ["fpc", "Pj"]
     ],
-    "comment": "The book's one exception to addressee inclusion implication I (3.23)."
+    "comment": "The book's one exception to addressee inclusion implication I (3.23).",
+    "verified": "page-image"
   },
   {
     "id": "cysouw2003_4_1",
@@ -297,7 +306,8 @@
       ["chapter", "4"],
       ["section", "4.3.2"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "cysouw2003_4_2",
@@ -327,7 +337,8 @@
       ["chapter", "4"],
       ["section", "4.3.3"]
     ],
-    "comment": "Third person reference by demonstratives, drawn as one block."
+    "comment": "Third person reference by demonstratives, drawn as one block.",
+    "verified": "page-image"
   },
   {
     "id": "cysouw2003_4_3",
@@ -357,7 +368,8 @@
       ["chapter", "4"],
       ["section", "4.3.3"]
     ],
-    "comment": "Rottland (1982)'s reconstruction."
+    "comment": "Rottland (1982)'s reconstruction.",
+    "verified": "page-image"
   },
   {
     "id": "cysouw2003_4_4",
@@ -387,7 +399,8 @@
       ["chapter", "4"],
       ["section", "4.3.3"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "cysouw2003_4_5",
@@ -417,7 +430,8 @@
       ["chapter", "4"],
       ["section", "4.3.3"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "cysouw2003_4_6",
@@ -447,7 +461,8 @@
       ["chapter", "4"],
       ["section", "4.3.3"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "cysouw2003_4_7",
@@ -477,7 +492,8 @@
       ["chapter", "4"],
       ["section", "4.3.4"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "cysouw2003_4_8",
@@ -507,7 +523,8 @@
       ["chapter", "4"],
       ["section", "4.3.4"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "cysouw2003_4_9",
@@ -537,7 +554,8 @@
       ["chapter", "4"],
       ["section", "4.3.4"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "cysouw2003_4_12",
@@ -567,7 +585,8 @@
       ["chapter", "4"],
       ["section", "4.3.4"]
     ],
-    "comment": "Footnote 11 doubts the classification: Wiesemann (1986b) records number in the second and third person."
+    "comment": "Footnote 11 doubts the classification: Wiesemann (1986b) records number in the second and third person.",
+    "verified": "page-image"
   },
   {
     "id": "cysouw2003_4_13",
@@ -597,7 +616,8 @@
       ["chapter", "4"],
       ["section", "4.3.4"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "cysouw2003_4_15",
@@ -627,7 +647,8 @@
       ["chapter", "4"],
       ["section", "4.3.5"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "cysouw2003_4_17",
@@ -657,7 +678,8 @@
       ["chapter", "4"],
       ["section", "4.3.5"]
     ],
-    "comment": "The inclusive cells are printed with a query mark: no inclusive use of na is attested in the grammar. 'Probably identical to the Maricopa structure'."
+    "comment": "The inclusive cells are printed with a query mark: no inclusive use of na is attested in the grammar. 'Probably identical to the Maricopa structure'.",
+    "verified": "page-image"
   },
   {
     "id": "cysouw2003_4_19",
@@ -686,7 +708,8 @@
       ["chapter", "4"],
       ["section", "4.3.6"]
     ],
-    "comment": "Horizontal homophony in the second person only."
+    "comment": "Horizontal homophony in the second person only.",
+    "verified": "page-image"
   },
   {
     "id": "cysouw2003_4_20",
@@ -715,7 +738,8 @@
       ["chapter", "4"],
       ["section", "4.3.6"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "cysouw2003_4_21",
@@ -744,7 +768,8 @@
       ["chapter", "4"],
       ["section", "4.3.6"]
     ],
-    "comment": "Singular distinguished from non-singular in the second person only."
+    "comment": "Singular distinguished from non-singular in the second person only.",
+    "verified": "page-image"
   },
   {
     "id": "cysouw2003_4_22",
@@ -773,7 +798,8 @@
       ["chapter", "4"],
       ["section", "4.3.6"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "cysouw2003_4_23",
@@ -802,7 +828,8 @@
       ["chapter", "4"],
       ["section", "4.3.6"]
     ],
-    "comment": "Gubden is a dialectal variant of Dargi."
+    "comment": "Gubden is a dialectal variant of Dargi.",
+    "verified": "page-image"
   },
   {
     "id": "cysouw2003_4_24",
@@ -831,7 +858,8 @@
       ["chapter", "4"],
       ["section", "4.3.6"]
     ],
-    "comment": "Horizontal homophony in the first and second person, not the third."
+    "comment": "Horizontal homophony in the first and second person, not the third.",
+    "verified": "page-image"
   },
   {
     "id": "cysouw2003_4_25",
@@ -860,7 +888,8 @@
       ["chapter", "4"],
       ["section", "4.3.6"]
     ],
-    "comment": "Horizontal homophony in the first person only."
+    "comment": "Horizontal homophony in the first person only.",
+    "verified": "page-image"
   },
   {
     "id": "cysouw2003_4_26",
@@ -889,7 +918,8 @@
       ["chapter", "4"],
       ["section", "4.3.6"]
     ],
-    "comment": "Diagonal homophony: first singular with second non-singular."
+    "comment": "Diagonal homophony: first singular with second non-singular.",
+    "verified": "page-image"
   },
   {
     "id": "cysouw2003_4_27",
@@ -918,7 +948,8 @@
       ["chapter", "4"],
       ["section", "4.3.6"]
     ],
-    "comment": "Diagonal homophony: second singular with first non-singular."
+    "comment": "Diagonal homophony: second singular with first non-singular.",
+    "verified": "page-image"
   },
   {
     "id": "cysouw2003_4_28",
@@ -947,7 +978,8 @@
       ["chapter", "4"],
       ["section", "4.3.6"]
     ],
-    "comment": "Diagonal homophony as in Suki plus third-person horizontal homophony."
+    "comment": "Diagonal homophony as in Suki plus third-person horizontal homophony.",
+    "verified": "page-image"
   },
   {
     "id": "cysouw2003_4_29",
@@ -976,7 +1008,8 @@
       ["chapter", "4"],
       ["section", "4.3.6"]
     ],
-    "comment": "Spanish-type singular homophony with a split non-singular."
+    "comment": "Spanish-type singular homophony with a split non-singular.",
+    "verified": "page-image"
   },
   {
     "id": "cysouw2003_4_30",
@@ -1005,7 +1038,8 @@
       ["chapter", "4"],
       ["section", "4.3.6"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "cysouw2003_4_31",
@@ -1034,7 +1068,8 @@
       ["chapter", "4"],
       ["section", "4.3.6"]
     ],
-    "comment": "San Fratello dialect; singular homophony combined with horizontal homophony."
+    "comment": "San Fratello dialect; singular homophony combined with horizontal homophony.",
+    "verified": "page-image"
   },
   {
     "id": "cysouw2003_4_32",
@@ -1063,7 +1098,8 @@
       ["chapter", "4"],
       ["section", "4.3.6"]
     ],
-    "comment": "The 3+3 cell is printed -am (the ending is -ano); the structure is unaffected."
+    "comment": "The 3+3 cell is printed -am (the ending is -ano); the structure is unaffected.",
+    "verified": "page-image"
   },
   {
     "id": "cysouw2003_4_33",
@@ -1093,7 +1129,8 @@
       ["chapter", "4"],
       ["section", "4.4.2"]
     ],
-    "comment": "Slavey variant."
+    "comment": "Slavey variant.",
+    "verified": "page-image"
   },
   {
     "id": "cysouw2003_4_34",
@@ -1123,7 +1160,8 @@
       ["chapter", "4"],
       ["section", "4.4.2"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "cysouw2003_4_35",
@@ -1153,7 +1191,8 @@
       ["chapter", "4"],
       ["section", "4.4.2"]
     ],
-    "comment": "Fehan dialect of Tetun."
+    "comment": "Fehan dialect of Tetun.",
+    "verified": "page-image"
   },
   {
     "id": "cysouw2003_4_36",
@@ -1183,7 +1222,8 @@
       ["chapter", "4"],
       ["section", "4.4.2"]
     ],
-    "comment": "Tommo-so variant."
+    "comment": "Tommo-so variant.",
+    "verified": "page-image"
   },
   {
     "id": "cysouw2003_4_37",
@@ -1213,7 +1253,8 @@
       ["chapter", "4"],
       ["section", "4.4.2"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "cysouw2003_4_38",
@@ -1242,7 +1283,8 @@
       ["chapter", "4"],
       ["section", "4.4.2"]
     ],
-    "comment": "Singular homophony mirroring the non-singular homophony."
+    "comment": "Singular homophony mirroring the non-singular homophony.",
+    "verified": "page-image"
   },
   {
     "id": "cysouw2003_4_39",
@@ -1271,7 +1313,8 @@
       ["chapter", "4"],
       ["section", "4.4.2"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "cysouw2003_4_40",
@@ -1300,7 +1343,8 @@
       ["chapter", "4"],
       ["section", "4.4.2"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "cysouw2003_4_41",
@@ -1329,7 +1373,8 @@
       ["chapter", "4"],
       ["section", "4.4.2"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "cysouw2003_4_42",
@@ -1358,7 +1403,8 @@
       ["chapter", "4"],
       ["section", "4.4.2"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "cysouw2003_4_43",
@@ -1387,7 +1433,8 @@
       ["chapter", "4"],
       ["section", "4.4.2"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "cysouw2003_4_44",
@@ -1416,7 +1463,8 @@
       ["chapter", "4"],
       ["section", "4.4.2"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "cysouw2003_4_45",
@@ -1445,7 +1493,8 @@
       ["chapter", "4"],
       ["section", "4.4.2"]
     ],
-    "comment": "Literary Dargi; an optional suffix -ya can disambiguate the second person plural."
+    "comment": "Literary Dargi; an optional suffix -ya can disambiguate the second person plural.",
+    "verified": "page-image"
   },
   {
     "id": "cysouw2003_4_46",
@@ -1475,7 +1524,8 @@
       ["chapter", "4"],
       ["section", "4.4.3"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "cysouw2003_4_47",
@@ -1505,7 +1555,8 @@
       ["chapter", "4"],
       ["section", "4.4.3"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "cysouw2003_4_48",
@@ -1535,7 +1586,8 @@
       ["chapter", "4"],
       ["section", "4.4.3"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "cysouw2003_4_49",
@@ -1565,7 +1617,8 @@
       ["chapter", "4"],
       ["section", "4.4.3"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "cysouw2003_4_50",
@@ -1595,7 +1648,8 @@
       ["chapter", "4"],
       ["section", "4.4.3"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "cysouw2003_4_51",
@@ -1625,7 +1679,8 @@
       ["chapter", "4"],
       ["section", "4.4.3"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "cysouw2003_4_52",
@@ -1655,7 +1710,8 @@
       ["chapter", "4"],
       ["section", "4.4.3"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "cysouw2003_4_53",
@@ -1685,7 +1741,8 @@
       ["chapter", "4"],
       ["section", "4.4.3"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "cysouw2003_4_54",
@@ -1715,7 +1772,8 @@
       ["chapter", "4"],
       ["section", "4.4.3"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "cysouw2003_4_55",
@@ -1744,7 +1802,8 @@
       ["chapter", "4"],
       ["section", "4.4.3"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "cysouw2003_4_56",
@@ -1773,7 +1832,8 @@
       ["chapter", "4"],
       ["section", "4.4.3"]
     ],
-    "comment": "Megeb is a Dargwa variety (Helmbrecht 1996); the structure recurs in Kiwai, Awa-Pit and the independent pronouns of Qawesqar."
+    "comment": "Megeb is a Dargwa variety (Helmbrecht 1996); the structure recurs in Kiwai, Awa-Pit and the independent pronouns of Qawesqar.",
+    "verified": "page-image"
   },
   {
     "id": "cysouw2003_4_57",
@@ -1802,7 +1862,8 @@
       ["chapter", "4"],
       ["section", "4.4.3"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "cysouw2003_4_58",
@@ -1831,7 +1892,8 @@
       ["chapter", "4"],
       ["section", "4.4.3"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "cysouw2003_4_59",
@@ -1861,7 +1923,8 @@
       ["chapter", "4"],
       ["section", "4.4.4"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "cysouw2003_4_60",
@@ -1891,7 +1954,8 @@
       ["chapter", "4"],
       ["section", "4.4.4"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "cysouw2003_4_61",
@@ -1921,7 +1985,8 @@
       ["chapter", "4"],
       ["section", "4.4.4"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "cysouw2003_4_62",
@@ -1950,7 +2015,8 @@
       ["chapter", "4"],
       ["section", "4.4.4"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "cysouw2003_4_63",
@@ -1979,7 +2045,8 @@
       ["chapter", "4"],
       ["section", "4.4.4"]
     ],
-    "comment": "Diagonal homophony between third singular and second plural."
+    "comment": "Diagonal homophony between third singular and second plural.",
+    "verified": "page-image"
   },
   {
     "id": "cysouw2003_4_64",
@@ -2008,7 +2075,8 @@
       ["chapter", "4"],
       ["section", "4.4.5"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "cysouw2003_4_65",
@@ -2037,7 +2105,8 @@
       ["chapter", "4"],
       ["section", "4.4.5"]
     ],
-    "comment": "Standard Dutch without inversion."
+    "comment": "Standard Dutch without inversion.",
+    "verified": "page-image"
   },
   {
     "id": "cysouw2003_4_66",
@@ -2066,7 +2135,8 @@
       ["chapter", "4"],
       ["section", "4.4.5"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "cysouw2003_4_67",
@@ -2095,7 +2165,8 @@
       ["chapter", "4"],
       ["section", "4.4.5"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "cysouw2003_4_68",
@@ -2124,7 +2195,8 @@
       ["chapter", "4"],
       ["section", "4.4.5"]
     ],
-    "comment": "The no-we paradigm that refutes the strong universal 'we' (3.7)."
+    "comment": "The no-we paradigm that refutes the strong universal 'we' (3.7).",
+    "verified": "page-image"
   },
   {
     "id": "cysouw2003_4_69",
@@ -2153,7 +2225,8 @@
       ["chapter", "4"],
       ["section", "4.4.5"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "cysouw2003_4_70",
@@ -2183,7 +2256,8 @@
       ["chapter", "4"],
       ["section", "4.5.2"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "cysouw2003_4_71",
@@ -2213,7 +2287,8 @@
       ["chapter", "4"],
       ["section", "4.5.3"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "cysouw2003_4_72",
@@ -2243,7 +2318,8 @@
       ["chapter", "4"],
       ["section", "4.5.4"]
     ],
-    "comment": "Jensen (1990)'s reconstruction."
+    "comment": "Jensen (1990)'s reconstruction.",
+    "verified": "page-image"
   },
   {
     "id": "cysouw2003_4_73",
@@ -2273,7 +2349,8 @@
       ["chapter", "4"],
       ["section", "4.5.4"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "cysouw2003_4_74",
@@ -2290,12 +2367,12 @@
     "readings": [],
     "paperFeatures": [
       ["marking", "independent"],
-      ["1", "ji"],
+      ["1", "jɨ"],
       ["2", "bĩ"],
       ["3", "(demonstratives)"],
       ["1+2", "bãdi"],
       ["1+2+3", "bãdi"],
-      ["1+3", "gia"],
+      ["1+3", "gɨa"],
       ["2+3", "bĩa"],
       ["3+3", "(demonstratives)"],
       ["kind", "Tupí-Guaraní"],
@@ -2303,7 +2380,8 @@
       ["chapter", "4"],
       ["section", "4.5.4"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "cysouw2003_4_75",
@@ -2333,7 +2411,8 @@
       ["chapter", "4"],
       ["section", "4.5.4"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "cysouw2003_4_76",
@@ -2363,7 +2442,8 @@
       ["chapter", "4"],
       ["section", "4.5.4"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "cysouw2003_4_77",
@@ -2393,7 +2473,8 @@
       ["chapter", "4"],
       ["section", "4.5.5"]
     ],
-    "comment": "The exclusive suffix's superscripts are approximated."
+    "comment": "The exclusive suffix's superscripts are approximated.",
+    "verified": "page-image"
   },
   {
     "id": "cysouw2003_4_78",
@@ -2423,7 +2504,8 @@
       ["chapter", "4"],
       ["section", "4.5.5"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "cysouw2003_4_79",
@@ -2453,7 +2535,8 @@
       ["chapter", "4"],
       ["section", "4.5.5"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "cysouw2003_4_80",
@@ -2483,7 +2566,8 @@
       ["chapter", "4"],
       ["section", "4.5.5"]
     ],
-    "comment": "Familiar forms."
+    "comment": "Familiar forms.",
+    "verified": "page-image"
   },
   {
     "id": "cysouw2003_4_81",
@@ -2513,7 +2597,8 @@
       ["chapter", "4"],
       ["section", "4.5.5"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "cysouw2003_4_82",
@@ -2543,7 +2628,8 @@
       ["chapter", "4"],
       ["section", "4.5.6"]
     ],
-    "comment": "Number is marked by a separate suffix -táʔm, not part of the paradigm (footnote 43)."
+    "comment": "Number is marked by a separate suffix -táʔm, not part of the paradigm (footnote 43).",
+    "verified": "page-image"
   },
   {
     "id": "cysouw2003_4_85",
@@ -2573,7 +2659,8 @@
       ["chapter", "4"],
       ["section", "4.5.6"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "cysouw2003_4_86",
@@ -2603,7 +2690,8 @@
       ["chapter", "4"],
       ["section", "4.5.6"]
     ],
-    "comment": "One of several allophonic variants."
+    "comment": "One of several allophonic variants.",
+    "verified": "page-image"
   },
   {
     "id": "cysouw2003_4_87",
@@ -2632,7 +2720,8 @@
       ["chapter", "4"],
       ["section", "4.5.6"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "cysouw2003_4_88",
@@ -2662,7 +2751,8 @@
       ["chapter", "4"],
       ["section", "4.5.6"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "cysouw2003_4_89",
@@ -2692,7 +2782,8 @@
       ["chapter", "4"],
       ["section", "4.5.6"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "cysouw2003_4_90",
@@ -2722,7 +2813,8 @@
       ["chapter", "4"],
       ["section", "4.5.6"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "cysouw2003_4_91a",
@@ -2751,7 +2843,8 @@
       ["chapter", "4"],
       ["section", "4.5.7"]
     ],
-    "comment": "Horizontal homophony in the first person only."
+    "comment": "Horizontal homophony in the first person only.",
+    "verified": "page-image"
   },
   {
     "id": "cysouw2003_4_91b",
@@ -2780,7 +2873,8 @@
       ["chapter", "4"],
       ["section", "4.5.7"]
     ],
-    "comment": "Horizontal homophony in the first and second person, not the third."
+    "comment": "Horizontal homophony in the first and second person, not the third.",
+    "verified": "page-image"
   },
   {
     "id": "cysouw2003_4_92",
@@ -2809,7 +2903,8 @@
       ["chapter", "4"],
       ["section", "4.6.2"]
     ],
-    "comment": "The prefixes alone (4.92a); obligatory number suffixes disambiguate seven categories (4.92b)."
+    "comment": "The prefixes alone (4.92a); obligatory number suffixes disambiguate seven categories (4.92b).",
+    "verified": "page-image"
   },
   {
     "id": "cysouw2003_4_93",
@@ -2827,7 +2922,7 @@
     "paperFeatures": [
       ["marking", "inflectional"],
       ["1", "məni-"],
-      ["2", "məṉi-"],
+      ["2", "mən̪i-"],
       ["3", "ø-"],
       ["1+2", "mani-"],
       ["1+2+3", "mani-"],
@@ -2838,7 +2933,8 @@
       ["chapter", "4"],
       ["section", "4.6.2"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "cysouw2003_4_94",
@@ -2867,7 +2963,8 @@
       ["chapter", "4"],
       ["section", "4.6.2"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "cysouw2003_4_96",
@@ -2896,7 +2993,8 @@
       ["chapter", "4"],
       ["section", "4.6.3"]
     ],
-    "comment": "The prefixes alone (4.96a); number suffixes distinguish all eight categories (4.96b)."
+    "comment": "The prefixes alone (4.96a); number suffixes distinguish all eight categories (4.96b).",
+    "verified": "page-image"
   },
   {
     "id": "cysouw2003_4_97",
@@ -2925,7 +3023,8 @@
       ["chapter", "4"],
       ["section", "4.6.3"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "cysouw2003_4_98",
@@ -2954,7 +3053,8 @@
       ["chapter", "4"],
       ["section", "4.6.4"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "cysouw2003_4_99",
@@ -2983,7 +3083,8 @@
       ["chapter", "4"],
       ["section", "4.6.4"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "cysouw2003_4_100",
@@ -3001,7 +3102,7 @@
     "paperFeatures": [
       ["marking", "inflectional"],
       ["1", "ŋə-"],
-      ["2", "ṉə-pə-"],
+      ["2", "n̪ə-pə-"],
       ["3", "a(pə)-"],
       ["1+2", "mu-"],
       ["1+2+3", "ŋa-"],
@@ -3012,7 +3113,8 @@
       ["chapter", "4"],
       ["section", "4.6.4"]
     ],
-    "comment": "Minimal and augmented inclusive distinguished."
+    "comment": "Minimal and augmented inclusive distinguished.",
+    "verified": "page-image"
   },
   {
     "id": "cysouw2003_4_101",
@@ -3030,7 +3132,7 @@
     "paperFeatures": [
       ["marking", "inflectional"],
       ["1", "-wn"],
-      ["2", "-əx̊"],
+      ["2", "-əx°"],
       ["3", "-əs"],
       ["1+2", "-ət"],
       ["1+2+3", "-ət"],
@@ -3041,7 +3143,8 @@
       ["chapter", "4"],
       ["section", "4.6.5"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "cysouw2003_4_102",
@@ -3070,7 +3173,8 @@
       ["chapter", "4"],
       ["section", "4.6.5"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "cysouw2003_4_104",
@@ -3099,7 +3203,8 @@
       ["chapter", "4"],
       ["section", "4.6.6"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "cysouw2003_4_105",
@@ -3128,6 +3233,7 @@
       ["chapter", "4"],
       ["section", "4.6.6"]
     ],
-    "comment": "1sg i and 2sg ɨ are printed in separate cells: no singular homophony."
+    "comment": "1sg i and 2sg ɨ are printed in separate cells: no singular homophony.",
+    "verified": "page-image"
   }
 ]

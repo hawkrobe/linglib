@@ -1,7 +1,7 @@
 [
   {
     "id": "qingetal2025_en_13a",
-    "source": {"bibkey": "white-2021", "paperLabel": ""},
+    "source": {"bibkey": "white-2021", "paperLabel": "(22)"},
     "reportedIn": {"bibkey": "qing-uegaki-2025", "paperLabel": "(13a)"},
     "language": "stan1293",
     "primaryText": "This Trump/Carson boom really has people like Bush, Walker, Rubio, and others wondering and hoping whether history will repeat itself and whether Republicans will return back to focusing on the establishment choices but it's all about outsider candidates right now.",
@@ -17,14 +17,15 @@
       ["clause", "polar"],
       ["embedding", "argument"]
     ],
-    "comment": "attested; marginal or variable acceptability across speakers, (58a)"
+    "comment": "attested; marginal or variable acceptability across speakers, (58a)",
+    "verified": "page-image"
   },
   {
     "id": "qingetal2025_en_13b",
-    "source": {"bibkey": "white-2021", "paperLabel": ""},
+    "source": {"bibkey": "white-2021", "paperLabel": "(23a)"},
     "reportedIn": {"bibkey": "qing-uegaki-2025", "paperLabel": "(13b)"},
     "language": "stan1293",
-    "primaryText": "I was hoping whether you are able to guide me.",
+    "primaryText": "I was hoping whether you are able to guide me [...]",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
@@ -40,14 +41,15 @@
       ["clause", "polar"],
       ["embedding", "argument"]
     ],
-    "comment": "attested; the paraphrases are (59)"
+    "comment": "attested; the paraphrases are (59)",
+    "verified": "page-image"
   },
   {
     "id": "qingetal2025_en_13c",
-    "source": {"bibkey": "white-2021", "paperLabel": ""},
+    "source": {"bibkey": "white-2021", "paperLabel": "(23b)"},
     "reportedIn": {"bibkey": "qing-uegaki-2025", "paperLabel": "(13c)"},
     "language": "stan1293",
-    "primaryText": "I have done a quite a bit of research on using a Limited Co but was hoping whether someone with more experience could confirm my understanding of a few points.",
+    "primaryText": "I have done a quite a bit of research on using a Limited Co but was hoping whether someone with more experience could confirm my understanding of a few points [...]",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
@@ -60,11 +62,12 @@
       ["clause", "polar"],
       ["embedding", "argument"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "qingetal2025_en_14a",
-    "source": {"bibkey": "white-2021", "paperLabel": ""},
+    "source": {"bibkey": "white-2021", "paperLabel": "(25a)"},
     "reportedIn": {"bibkey": "qing-uegaki-2025", "paperLabel": "(14a)"},
     "language": "stan1293",
     "primaryText": "Interstellar space is so vast that there is no need to fear whether stars in the Andromeda galaxy will accidentally slam into the Sun.",
@@ -80,11 +83,12 @@
       ["clause", "polar"],
       ["embedding", "argument"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "qingetal2025_en_14b",
-    "source": {"bibkey": "white-2021", "paperLabel": ""},
+    "source": {"bibkey": "white-2021", "paperLabel": "(25b)"},
     "reportedIn": {"bibkey": "qing-uegaki-2025", "paperLabel": "(14b)"},
     "language": "stan1293",
     "primaryText": "I fear whether this test would run safely on the oxygen sensor as it has a lot of drawback when compared with the others.",
@@ -100,14 +104,15 @@
       ["clause", "polar"],
       ["embedding", "argument"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "qingetal2025_en_14c",
-    "source": {"bibkey": "white-2021", "paperLabel": ""},
+    "source": {"bibkey": "white-2021", "paperLabel": "(25c)"},
     "reportedIn": {"bibkey": "qing-uegaki-2025", "paperLabel": "(14c)"},
     "language": "stan1293",
-    "primaryText": "I fear whether I'll have use of my arms/hands by age 55 or 60.",
+    "primaryText": "[...] I fear whether I'll have use of my arms/hands by age 55 or 60.",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
@@ -120,11 +125,12 @@
       ["clause", "polar"],
       ["embedding", "argument"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "qingetal2025_en_14d",
-    "source": {"bibkey": "white-2021", "paperLabel": ""},
+    "source": {"bibkey": "white-2021", "paperLabel": "(25d)"},
     "reportedIn": {"bibkey": "qing-uegaki-2025", "paperLabel": "(14d)"},
     "language": "stan1293",
     "primaryText": "I know parents who seriously fear whether their children will ever hold a meaningful job.",
@@ -140,7 +146,8 @@
       ["clause", "polar"],
       ["embedding", "argument"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "qingetal2025_en_22",
@@ -160,7 +167,8 @@
       ["clause", "declarative"],
       ["embedding", "argument"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "qingetal2025_en_24",
@@ -181,7 +189,8 @@
       ["embedding", "argument"],
       ["truth", "true"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "qingetal2025_en_25",
@@ -202,7 +211,8 @@
       ["embedding", "argument"],
       ["truth", "false"]
     ],
-    "comment": "false for every choice of Y"
+    "comment": "false for every choice of Y",
+    "verified": "page-image"
   },
   {
     "id": "qingetal2025_en_26a",
@@ -222,7 +232,8 @@
       ["clause", "constituent"],
       ["embedding", "argument"]
     ],
-    "comment": "attested"
+    "comment": "attested",
+    "verified": "page-image"
   },
   {
     "id": "qingetal2025_en_26b",
@@ -242,7 +253,8 @@
       ["clause", "constituent"],
       ["embedding", "argument"]
     ],
-    "comment": "attested"
+    "comment": "attested",
+    "verified": "page-image"
   },
   {
     "id": "qingetal2025_en_26c",
@@ -262,7 +274,8 @@
       ["clause", "constituent"],
       ["embedding", "argument"]
     ],
-    "comment": "attested"
+    "comment": "attested",
+    "verified": "page-image"
   },
   {
     "id": "qingetal2025_en_26d",
@@ -282,7 +295,8 @@
       ["clause", "constituent"],
       ["embedding", "argument"]
     ],
-    "comment": "attested"
+    "comment": "attested",
+    "verified": "page-image"
   },
   {
     "id": "qingetal2025_en_32a",
@@ -293,7 +307,7 @@
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
-    "context": "Sam is invited to an event. Not knowing much about it, they do not know what type of clothes would be appropriate: casual, business casual, formal? They possess all relevant types of clothes and are happy to wear anything as long as it is appropriate for the occasion.",
+    "context": "Sam is invited to an event. Not knowing much about it, they do not know what type of clothes would be appropriate: Casual, business casual, formal? They possess all relevant types of clothes and are happy to wear anything as long as it is appropriate for the occasion.",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
@@ -303,7 +317,8 @@
       ["embedding", "argument"],
       ["truth", "true"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "qingetal2025_en_32b",
@@ -314,7 +329,7 @@
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
-    "context": "Sam is invited to an event. Not knowing much about it, they do not know what type of clothes would be appropriate: casual, business casual, formal? They possess all relevant types of clothes and are happy to wear anything as long as it is appropriate for the occasion.",
+    "context": "Sam is invited to an event. Not knowing much about it, they do not know what type of clothes would be appropriate: Casual, business casual, formal? They possess all relevant types of clothes and are happy to wear anything as long as it is appropriate for the occasion.",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
@@ -324,7 +339,8 @@
       ["embedding", "argument"],
       ["truth", "false"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "qingetal2025_en_38a",
@@ -335,7 +351,7 @@
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
-    "context": "It is common knowledge that John knows which student will sing. Al knows that there is no particular student John wants to sing. Bo asks Al: “How does John feel about which student will sing?”",
+    "context": "It is common knowledge that John knows which student will sing. Al knows that there is no particular student John wants to sing (i.e., John is indifferent about which student will sing). Bo asks Al: “How does John feel about which student will sing?”",
     "judgment": "unacceptable",
     "alternatives": [],
     "readings": [],
@@ -344,7 +360,8 @@
       ["valence", "positive"],
       ["polarity", "negated"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "qingetal2025_en_38b",
@@ -355,7 +372,7 @@
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
-    "context": "It is common knowledge that John knows which student will sing. Al knows that there is no particular student John wants to sing. Bo asks Al: “How does John feel about which student will sing?”",
+    "context": "It is common knowledge that John knows which student will sing. Al knows that there is no particular student John wants to sing (i.e., John is indifferent about which student will sing). Bo asks Al: “How does John feel about which student will sing?”",
     "judgment": "unacceptable",
     "alternatives": [],
     "readings": [],
@@ -364,7 +381,8 @@
       ["valence", "positive"],
       ["polarity", "negated"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "qingetal2025_en_40a",
@@ -384,7 +402,8 @@
       ["valence", "negative"],
       ["polarity", "negated"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "qingetal2025_en_40b",
@@ -404,14 +423,15 @@
       ["valence", "negative"],
       ["polarity", "negated"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "qingetal2025_en_43a",
     "source": {"bibkey": "qing-uegaki-2025", "paperLabel": "(43a)"},
     "reportedIn": null,
     "language": "stan1293",
-    "primaryText": "Both women initially worried about taking the bus, fearing who else might be riding the bus.",
+    "primaryText": "Both women initially worried about taking the bus, fearing who else might be riding the bus. Both have been pleasantly surprised. Express bus seats recline, and have individual reading lights and air-conditioning vents.",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
@@ -424,7 +444,8 @@
       ["clause", "constituent"],
       ["embedding", "argument"]
     ],
-    "comment": "attested"
+    "comment": "attested",
+    "verified": "page-image"
   },
   {
     "id": "qingetal2025_en_43b",
@@ -444,7 +465,8 @@
       ["clause", "constituent"],
       ["embedding", "argument"]
     ],
-    "comment": "Martha Wells, The Edge of Worlds"
+    "comment": "Martha Wells, The Edge of Worlds",
+    "verified": "page-image"
   },
   {
     "id": "qingetal2025_en_44",
@@ -465,7 +487,8 @@
       ["embedding", "argument"],
       ["polarity", "negated"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "qingetal2025_en_62a_goodfriend",
@@ -487,7 +510,8 @@
       ["target", "radical"],
       ["truth", "true"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "qingetal2025_en_62a_noisehater",
@@ -509,7 +533,8 @@
       ["target", "negation"],
       ["truth", "false"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "qingetal2025_en_63a",
@@ -530,7 +555,8 @@
       ["embedding", "argument"],
       ["target", "radical"]
     ],
-    "comment": "unmarked in the paper; recorded as marginal by (58a)"
+    "comment": "unmarked in the paper; recorded as marginal by (58a)",
+    "verified": "page-image"
   },
   {
     "id": "qingetal2025_en_63b",
@@ -551,7 +577,8 @@
       ["embedding", "argument"],
       ["target", "negation"]
     ],
-    "comment": "intended: I was hoping that we didn't have to stay"
+    "comment": "intended: I was hoping that we didn't have to stay",
+    "verified": "page-image"
   },
   {
     "id": "qingetal2025_en_78a",
@@ -575,7 +602,8 @@
       ["target", "negation"],
       ["truth", "false"]
     ],
-    "comment": "implies that Des hopes that John is alive"
+    "comment": "implies that Des hopes that John is alive",
+    "verified": "page-image"
   },
   {
     "id": "qingetal2025_en_78b",
@@ -599,7 +627,8 @@
       ["target", "radical"],
       ["truth", "true"]
     ],
-    "comment": "implies that Des hopes that John is dead"
+    "comment": "implies that Des hopes that John is dead",
+    "verified": "page-image"
   },
   {
     "id": "qingetal2025_en_78c",
@@ -623,7 +652,8 @@
       ["target", "radical"],
       ["truth", "true"]
     ],
-    "comment": "implies that Ali hopes that John is alive"
+    "comment": "implies that Ali hopes that John is alive",
+    "verified": "page-image"
   },
   {
     "id": "qingetal2025_en_78d",
@@ -647,7 +677,8 @@
       ["target", "negation"],
       ["truth", "false"]
     ],
-    "comment": "implies that Ali hopes that John is dead"
+    "comment": "implies that Ali hopes that John is dead",
+    "verified": "page-image"
   },
   {
     "id": "qingetal2025_en_79a",
@@ -671,7 +702,8 @@
       ["target", "radical"],
       ["truth", "true"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "qingetal2025_en_79b",
@@ -683,7 +715,7 @@
     "glossedTokens": [],
     "translation": "",
     "context": "Des, an assassin, sabotages the brakes of the vehicle transporting John, the star witness in a criminal case, and watches it careen off a cliff. Shortly after, Ali, the prosecutor in the case, arrives with a rescue team. Des hadn't expected Ali to arrive so quickly. While it's clear that John is seriously injured, Des isn't sure whether he's dead. If John survives and is saved by the rescue team, Des knows he will face severe consequences for failing the assassination attempt.",
-    "judgment": "questionable",
+    "judgment": "marginal",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -695,7 +727,8 @@
       ["target", "negation"],
       ["truth", "true"]
     ],
-    "comment": "(?) for some consultants, ultimately judged true and felicitous"
+    "comment": "(?) for some consultants, ultimately judged true and felicitous",
+    "verified": "page-image"
   },
   {
     "id": "qingetal2025_en_79c",
@@ -707,7 +740,7 @@
     "glossedTokens": [],
     "translation": "",
     "context": "Des, an assassin, sabotages the brakes of the vehicle transporting John, the star witness in a criminal case, and watches it careen off a cliff. Shortly after, Ali, the prosecutor in the case, arrives with a rescue team. Des hadn't expected Ali to arrive so quickly. While it's clear that John is seriously injured, Des isn't sure whether he's dead. If John survives and is saved by the rescue team, Des knows he will face severe consequences for failing the assassination attempt.",
-    "judgment": "questionable",
+    "judgment": "marginal",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -719,7 +752,8 @@
       ["target", "negation"],
       ["truth", "true"]
     ],
-    "comment": "(?) for some consultants, ultimately judged true and felicitous"
+    "comment": "(?) for some consultants, ultimately judged true and felicitous",
+    "verified": "page-image"
   },
   {
     "id": "qingetal2025_en_79d",
@@ -743,7 +777,8 @@
       ["target", "radical"],
       ["truth", "true"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "qingetal2025_zh_18",
@@ -766,7 +801,8 @@
       ["clause", "constituent"],
       ["embedding", "argument"]
     ],
-    "comment": "attested"
+    "comment": "attested",
+    "verified": "page-image"
   },
   {
     "id": "qingetal2025_zh_19",
@@ -790,7 +826,8 @@
       ["clause", "declarative"],
       ["embedding", "argument"]
     ],
-    "comment": "attested; non-veridical: does not entail that the actor will"
+    "comment": "attested; non-veridical: does not entail that the actor will",
+    "verified": "page-image"
   },
   {
     "id": "qingetal2025_zh_27a",
@@ -815,7 +852,8 @@
       ["embedding", "argument"],
       ["truth", "true"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "qingetal2025_zh_27b",
@@ -840,7 +878,8 @@
       ["embedding", "argument"],
       ["truth", "false"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "qingetal2025_zh_33",
@@ -854,7 +893,7 @@
       ["chuan", "wear"], ["shenme", "what"]
     ],
     "translation": "John worries (very much) what he should wear.",
-    "context": "Sam is invited to an event. Not knowing much about it, they do not know what type of clothes would be appropriate: casual, business casual, formal? They possess all relevant types of clothes and are happy to wear anything as long as it is appropriate for the occasion.",
+    "context": "Sam is invited to an event. Not knowing much about it, they do not know what type of clothes would be appropriate: Casual, business casual, formal? They possess all relevant types of clothes and are happy to wear anything as long as it is appropriate for the occasion.",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
@@ -864,7 +903,8 @@
       ["embedding", "argument"],
       ["truth", "true"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "qingetal2025_zh_55",
@@ -887,7 +927,8 @@
       ["clause", "polar"],
       ["embedding", "argument"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "qingetal2025_zh_56",
@@ -913,7 +954,8 @@
       ["clause", "constituent"],
       ["embedding", "argument"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "qingetal2025_zh_fn8",
@@ -928,7 +970,7 @@
     ],
     "translation": "Intended: John fears which kinds of beverage they serve.",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -936,7 +978,8 @@
       ["clause", "constituent"],
       ["embedding", "argument"]
     ],
-    "comment": "no wh-indefinite reading either"
+    "comment": "no wh-indefinite reading either",
+    "verified": "page-image"
   },
   {
     "id": "qingetal2025_zh_64a",
@@ -951,7 +994,7 @@
     ],
     "translation": "Intended: John hopes whether his neighbor will be at home then.",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -959,7 +1002,8 @@
       ["clause", "polar"],
       ["embedding", "argument"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "qingetal2025_zh_64b",
@@ -985,7 +1029,8 @@
       ["clause", "polar"],
       ["embedding", "argument"]
     ],
-    "comment": "% across speakers, fn. 14"
+    "comment": "% across speakers, fn. 14",
+    "verified": "page-image"
   },
   {
     "id": "qingetal2025_ja_20a",
@@ -996,7 +1041,7 @@
     "discourseSegments": [],
     "glossedTokens": [
       ["Kotosi-wa", "this.year-TOP"], ["dare-ga", "who-NOM"], ["MVP-o", "MVP-ACC"],
-      ["toru-no-ka", "win-NMZ-Q"], ["tanosimi-desu-wa", "fun-COP.POL-PRT"]
+      ["toru-no-ka", "win-NMZ-Q"], ["tanosimi-desu-wa", "fun-COP.POL-PARTICLE"]
     ],
     "translation": "I look forward to who will win the MVP this year.",
     "context": "",
@@ -1008,7 +1053,8 @@
       ["clause", "constituent"],
       ["embedding", "argument"]
     ],
-    "comment": "attested; does not entail (20b) for any winner X"
+    "comment": "attested; does not entail (20b) for any winner X",
+    "verified": "page-image"
   },
   {
     "id": "qingetal2025_ja_21a",
@@ -1031,7 +1077,8 @@
       ["clause", "constituent"],
       ["embedding", "argument"]
     ],
-    "comment": "attested"
+    "comment": "attested",
+    "verified": "page-image"
   },
   {
     "id": "qingetal2025_ja_28a",
@@ -1055,7 +1102,8 @@
       ["embedding", "argument"],
       ["truth", "true"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "qingetal2025_ja_28b",
@@ -1079,7 +1127,8 @@
       ["embedding", "argument"],
       ["truth", "false"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "qingetal2025_ja_34",
@@ -1093,7 +1142,7 @@
       ["sinpai-siteiru", "worry-ASP"]
     ],
     "translation": "John worries what he should wear.",
-    "context": "Sam is invited to an event. Not knowing much about it, they do not know what type of clothes would be appropriate: casual, business casual, formal? They possess all relevant types of clothes and are happy to wear anything as long as it is appropriate for the occasion.",
+    "context": "Sam is invited to an event. Not knowing much about it, they do not know what type of clothes would be appropriate: Casual, business casual, formal? They possess all relevant types of clothes and are happy to wear anything as long as it is appropriate for the occasion.",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
@@ -1103,7 +1152,8 @@
       ["embedding", "argument"],
       ["truth", "true"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "qingetal2025_ja_50_goodfriend",
@@ -1117,7 +1167,7 @@
       ["ie-ni", "home-LOC"], ["iru", "be"], ["ka-o", "Q-ACC"], ["osore-teiru", "fear-ASP"]
     ],
     "translation": "John fears whether his neighbor will be home.",
-    "context": "GoodFriend: John likes to invite his friends over to party. He and his neighbor are good friends. His neighbor is away on a business trip, which may be long or short. John wants to throw a party this weekend.",
+    "context": "GoodFriend: John and his neighbor are good friends. His neighbor is away on a business trip, which may be long or short. John wants to throw a party this weekend.",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
@@ -1128,7 +1178,8 @@
       ["target", "negation"],
       ["truth", "true"]
     ],
-    "comment": ""
+    "comment": "The paper's gloss prints neightbor-NOM.",
+    "verified": "page-image"
   },
   {
     "id": "qingetal2025_ja_50_noisehater",
@@ -1153,7 +1204,8 @@
       ["target", "radical"],
       ["truth", "true"]
     ],
-    "comment": ""
+    "comment": "The paper's gloss prints neightbor-NOM.",
+    "verified": "page-image"
   },
   {
     "id": "qingetal2025_ja_51",
@@ -1176,7 +1228,8 @@
       ["clause", "constituent"],
       ["embedding", "argument"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "qingetal2025_ja_52",
@@ -1200,7 +1253,8 @@
       ["embedding", "argument"],
       ["polarity", "negated"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "qingetal2025_ja_67a",
@@ -1215,7 +1269,7 @@
     ],
     "translation": "Intended: Taro hopes whether his friend will be at home then.",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -1223,7 +1277,8 @@
       ["clause", "polar"],
       ["embedding", "argument"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "qingetal2025_ja_67b",
@@ -1238,7 +1293,7 @@
     ],
     "translation": "Intended: Taro hopes whether his friend can solve the problem.",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -1246,7 +1301,8 @@
       ["clause", "polar"],
       ["embedding", "argument"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "qingetal2025_es_29a",
@@ -1257,10 +1313,10 @@
     "discourseSegments": [],
     "glossedTokens": [
       ["A", "to"], ["mi", "my"], ["padre", "father"], ["le", "CL"], ["preocupa", "worries"],
-      ["dónde", "where"], ["puede", "can.IND"], ["atracar", "dock"], ["Antonio", "Antonio"],
+      ["dónde", "where"], ["puede", "could.IND"], ["atracar", "dock"], ["Antonio", "Antonio"],
       ["el", "the"], ["barco", "boat"]
     ],
-    "translation": "My father worries about where Antonio can dock the boat.",
+    "translation": "My father worries about where Antonio can dock his boat.",
     "context": "Al's father recently bought a new boat and is planning to visit Amsterdam with it. He is sure that there must be a place in Amsterdam where he can dock his boat, and he would be happy to dock his boat anywhere. However, for any specific place, he does not know whether it still has spots available, and he is anxiously trying to find out where exactly he can dock his boat.",
     "judgment": "acceptable",
     "alternatives": [],
@@ -1271,7 +1327,8 @@
       ["embedding", "argument"],
       ["truth", "true"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "qingetal2025_es_29b",
@@ -1282,7 +1339,7 @@
     "discourseSegments": [],
     "glossedTokens": [
       ["A", "to"], ["mi", "my"], ["padre", "father"], ["le", "CL"], ["preocupa", "worries"],
-      ["que", "that"], ["Antonio", "Antonio"], ["pueda", "can.SBJV"], ["atracar", "dock"],
+      ["que", "that"], ["Antonio", "Antonio"], ["pueda", "can.SUBJ"], ["atracar", "dock"],
       ["el", "the"], ["barco", "boat"], ["en", "at"], ["Y", "Y"]
     ],
     "translation": "My father worries that Antonio can dock the boat at Y.",
@@ -1296,7 +1353,8 @@
       ["embedding", "argument"],
       ["truth", "false"]
     ],
-    "comment": "the subjunctive clause allows a non-veridical interpretation, fn. 6"
+    "comment": "the subjunctive clause allows a non-veridical interpretation, fn. 6",
+    "verified": "page-image"
   },
   {
     "id": "qingetal2025_es_35",
@@ -1310,7 +1368,7 @@
       ["debería", "should.3SG"], ["ponerse", "wear"]
     ],
     "translation": "It worries John what he should wear.",
-    "context": "Sam is invited to an event. Not knowing much about it, they do not know what type of clothes would be appropriate: casual, business casual, formal? They possess all relevant types of clothes and are happy to wear anything as long as it is appropriate for the occasion.",
+    "context": "Sam is invited to an event. Not knowing much about it, they do not know what type of clothes would be appropriate: Casual, business casual, formal? They possess all relevant types of clothes and are happy to wear anything as long as it is appropriate for the occasion.",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
@@ -1320,7 +1378,8 @@
       ["embedding", "argument"],
       ["truth", "true"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "qingetal2025_es_53",
@@ -1344,7 +1403,8 @@
       ["clause", "constituent"],
       ["embedding", "argument"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "qingetal2025_es_54",
@@ -1367,7 +1427,8 @@
       ["clause", "polar"],
       ["embedding", "argument"]
     ],
-    "comment": "??? in the paper; set aside as beyond the analysis"
+    "comment": "??? in the paper; set aside as beyond the analysis",
+    "verified": "page-image"
   },
   {
     "id": "qingetal2025_es_66a",
@@ -1382,7 +1443,7 @@
     ],
     "translation": "Intended: I hope / was hoping whether the neighbor can help me.",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -1390,7 +1451,8 @@
       ["clause", "polar"],
       ["embedding", "argument"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "qingetal2025_es_66b",
@@ -1405,7 +1467,7 @@
     ],
     "translation": "Intended: I hope / was hoping whether the neighbor can help me.",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -1413,18 +1475,19 @@
       ["clause", "polar"],
       ["embedding", "argument"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "qingetal2025_tr_30a",
     "source": {"bibkey": "qing-uegaki-2025", "paperLabel": "(30a)"},
     "reportedIn": null,
     "language": "nucl1301",
-    "primaryText": "Babam gemisini nereye park edeceğinden endişeleniyor.",
+    "primaryText": "Babam gemisini nereye park ed-eceğ-in-den endişeleniyor.",
     "discourseSegments": [],
     "glossedTokens": [
       ["Babam", "my.dad"], ["gemisini", "his.boat"], ["nereye", "where"], ["park", "park"],
-      ["edeceğinden", "do-NMZ.FUT-3S.POSS-ABL"], ["endişeleniyor", "worry"]
+      ["ed-eceğ-in-den", "do-NMZ.FUT-3S.POSS-ABL"], ["endişeleniyor", "worry"]
     ],
     "translation": "My dad is worried where he'll park his boat.",
     "context": "Al's father recently bought a new boat and is planning to visit Amsterdam with it. He is sure that there must be a place in Amsterdam where he can dock his boat, and he would be happy to dock his boat anywhere. However, for any specific place, he does not know whether it still has spots available, and he is anxiously trying to find out where exactly he can dock his boat.",
@@ -1437,18 +1500,19 @@
       ["embedding", "argument"],
       ["truth", "true"]
     ],
-    "comment": "future in place of the possibility modal, fn. 7"
+    "comment": "future in place of the possibility modal, fn. 7",
+    "verified": "page-image"
   },
   {
     "id": "qingetal2025_tr_30b",
     "source": {"bibkey": "qing-uegaki-2025", "paperLabel": "(30b)"},
     "reportedIn": null,
     "language": "nucl1301",
-    "primaryText": "Babam gemisini Y-ye park edeceğinden endişeleniyor.",
+    "primaryText": "Babam gemisini Y-ye park ed-eceğ-in-den endişeleniyor.",
     "discourseSegments": [],
     "glossedTokens": [
       ["Babam", "my.dad"], ["gemisini", "his.boat"], ["Y-ye", "Y-LOC"], ["park", "park"],
-      ["edeceğinden", "do-NMZ.FUT-3S.POSS-ABL"], ["endişeleniyor", "worry"]
+      ["ed-eceğ-in-den", "do-NMZ.FUT-3S.POSS-ABL"], ["endişeleniyor", "worry"]
     ],
     "translation": "My dad is worried that he'll park his boat in Y.",
     "context": "Al's father recently bought a new boat and is planning to visit Amsterdam with it. He is sure that there must be a place in Amsterdam where he can dock his boat, and he would be happy to dock his boat anywhere. However, for any specific place, he does not know whether it still has spots available, and he is anxiously trying to find out where exactly he can dock his boat.",
@@ -1461,21 +1525,22 @@
       ["embedding", "argument"],
       ["truth", "false"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "qingetal2025_tr_36",
     "source": {"bibkey": "qing-uegaki-2025", "paperLabel": "(36)"},
     "reportedIn": null,
     "language": "nucl1301",
-    "primaryText": "John ne giymesi gerektiğinden endişeleniyor.",
+    "primaryText": "John ne giy-me-si gerek-tiğ-in-den endişeleniyor.",
     "discourseSegments": [],
     "glossedTokens": [
-      ["John", "John"], ["ne", "what"], ["giymesi", "wear-NMZ-3S.POSS"],
-      ["gerektiğinden", "MOD-COP.NMZ-3S.POSS-ABL"], ["endişeleniyor", "worries"]
+      ["John", "John"], ["ne", "what"], ["giy-me-si", "wear-NMZ-3S.POSS"],
+      ["gerek-tiğ-in-den", "MOD-COP.NMZ-3S.POSS-ABL"], ["endişeleniyor", "worries"]
     ],
     "translation": "John is worried what he should wear.",
-    "context": "Sam is invited to an event. Not knowing much about it, they do not know what type of clothes would be appropriate: casual, business casual, formal? They possess all relevant types of clothes and are happy to wear anything as long as it is appropriate for the occasion.",
+    "context": "Sam is invited to an event. Not knowing much about it, they do not know what type of clothes would be appropriate: Casual, business casual, formal? They possess all relevant types of clothes and are happy to wear anything as long as it is appropriate for the occasion.",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
@@ -1485,22 +1550,23 @@
       ["embedding", "argument"],
       ["truth", "true"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "qingetal2025_tr_45_goodfriend",
     "source": {"bibkey": "qing-uegaki-2025", "paperLabel": "(45)"},
     "reportedIn": null,
     "language": "nucl1301",
-    "primaryText": "John komşusunun haftasonu evde olup olmayacağından korkuyor.",
+    "primaryText": "John komşusunun haftasonu evde ol-up ol-ma-yacağ-ın-dan korkuyor.",
     "discourseSegments": [],
     "glossedTokens": [
       ["John", "John"], ["komşusunun", "his.neighbor"], ["haftasonu", "weekend"],
-      ["evde", "at.home"], ["olup", "be-CONJ"], ["olmayacağından", "be-NEG-NMZ.FUT-3S.POSS-ABL"],
-      ["korkuyor", "fear"]
+      ["evde", "at.home"], ["ol-up", "be-CONJ"],
+      ["ol-ma-yacağ-ın-dan", "be-NEG-NMZ.FUT-3S.POSS-ABL"], ["korkuyor", "fear"]
     ],
     "translation": "John fears whether his neighbor will be home over the weekend.",
-    "context": "GoodFriend: John likes to invite his friends over to party. He and his neighbor are good friends. His neighbor is away on a business trip, which may be long or short. John wants to throw a party this weekend.",
+    "context": "GoodFriend: John and his neighbor are good friends. His neighbor is away on a business trip, which may be long or short. John wants to throw a party this weekend.",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
@@ -1511,19 +1577,20 @@
       ["target", "negation"],
       ["truth", "true"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "qingetal2025_tr_45_noisehater",
     "source": {"bibkey": "qing-uegaki-2025", "paperLabel": "(45)"},
     "reportedIn": null,
     "language": "nucl1301",
-    "primaryText": "John komşusunun haftasonu evde olup olmayacağından korkuyor.",
+    "primaryText": "John komşusunun haftasonu evde ol-up ol-ma-yacağ-ın-dan korkuyor.",
     "discourseSegments": [],
     "glossedTokens": [
       ["John", "John"], ["komşusunun", "his.neighbor"], ["haftasonu", "weekend"],
-      ["evde", "at.home"], ["olup", "be-CONJ"], ["olmayacağından", "be-NEG-NMZ.FUT-3S.POSS-ABL"],
-      ["korkuyor", "fear"]
+      ["evde", "at.home"], ["ol-up", "be-CONJ"],
+      ["ol-ma-yacağ-ın-dan", "be-NEG-NMZ.FUT-3S.POSS-ABL"], ["korkuyor", "fear"]
     ],
     "translation": "John fears whether his neighbor will be home over the weekend.",
     "context": "NoiseHater: John likes to invite his friends over to party, but his neighbor hates noise and they have had several heated quarrels. His neighbor is away on a business trip, which may be long or short. John wants to throw a party this weekend.",
@@ -1537,18 +1604,19 @@
       ["target", "radical"],
       ["truth", "true"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "qingetal2025_tr_48",
     "source": {"bibkey": "qing-uegaki-2025", "paperLabel": "(48)"},
     "reportedIn": null,
     "language": "nucl1301",
-    "primaryText": "John maçı hangi oyuncunun kazanacağından korkuyor.",
+    "primaryText": "John maçı hangi oyuncunun kazan-acağ-ın-dan korkuyor.",
     "discourseSegments": [],
     "glossedTokens": [
       ["John", "John"], ["maçı", "match"], ["hangi", "which"], ["oyuncunun", "player"],
-      ["kazanacağından", "win-NMZ.FUT-3S.POSS-ABL"], ["korkuyor", "fear"]
+      ["kazan-acağ-ın-dan", "win-NMZ.FUT-3S.POSS-ABL"], ["korkuyor", "fear"]
     ],
     "translation": "John fears which player will win the match.",
     "context": "",
@@ -1560,18 +1628,19 @@
       ["clause", "constituent"],
       ["embedding", "argument"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "qingetal2025_tr_49",
     "source": {"bibkey": "qing-uegaki-2025", "paperLabel": "(49)"},
     "reportedIn": null,
     "language": "nucl1301",
-    "primaryText": "John maçı hangi oyuncunun kazanacağından korkmuyor.",
+    "primaryText": "John maçı hangi oyuncunun kazan-acağ-ın-dan korkmuyor.",
     "discourseSegments": [],
     "glossedTokens": [
       ["John", "John"], ["maçı", "match"], ["hangi", "which"], ["oyuncunun", "player"],
-      ["kazanacağından", "win-NMZ.FUT-3S.POSS-ABL"], ["korkmuyor", "fear.NEG"]
+      ["kazan-acağ-ın-dan", "win-NMZ.FUT-3S.POSS-ABL"], ["korkmuyor", "fear.NEG"]
     ],
     "translation": "John does not fear which player will win the match.",
     "context": "No player in particular is such that John fears that they will win the match.",
@@ -1584,22 +1653,23 @@
       ["embedding", "argument"],
       ["polarity", "negated"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "qingetal2025_tr_68a",
     "source": {"bibkey": "qing-uegaki-2025", "paperLabel": "(68a)"},
     "reportedIn": null,
     "language": "nucl1301",
-    "primaryText": "Bana yardımcı olup olamayacağınızı umuyordum.",
+    "primaryText": "Bana yardımcı ol-up ol-ama-yacağ-ınız-ı um-uyor-du-m.",
     "discourseSegments": [],
     "glossedTokens": [
-      ["Bana", "1S.DAT"], ["yardımcı", "helper"], ["olup", "be-COORD"],
-      ["olamayacağınızı", "be-NEG.ABIL-FUT-2P-ACC"], ["umuyordum", "hope-IPFV-PST-1S"]
+      ["Bana", "1S.DAT"], ["yardımcı", "helper"], ["ol-up", "be-COORD"],
+      ["ol-ama-yacağ-ınız-ı", "be-NEG.ABIL-FUT-2P-ACC"], ["um-uyor-du-m", "hope-IPFV-PST-1S"]
     ],
     "translation": "Intended: I was hoping whether you could help me.",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -1607,23 +1677,24 @@
       ["clause", "polar"],
       ["embedding", "argument"]
     ],
-    "comment": "nominalized interrogative"
+    "comment": "nominalized interrogative",
+    "verified": "page-image"
   },
   {
     "id": "qingetal2025_tr_68b",
     "source": {"bibkey": "qing-uegaki-2025", "paperLabel": "(68b)"},
     "reportedIn": null,
     "language": "nucl1301",
-    "primaryText": "Birisinin yazdıklarımı teyit edip etmeyeceğini umuyordum.",
+    "primaryText": "Birisi-nin yazdıklarımı teyit ed-ip et-me-yeceğ-in-i um-uyor-du-m.",
     "discourseSegments": [],
     "glossedTokens": [
-      ["Birisinin", "someone-GEN"], ["yazdıklarımı", "what.I.wrote"], ["teyit", "confirmation"],
-      ["edip", "do-COORD"], ["etmeyeceğini", "do-NEG-FUT-3S-ACC"],
-      ["umuyordum", "hope-IPFV-PST-1S"]
+      ["Birisi-nin", "someone-GEN"], ["yazdıklarımı", "what.I.wrote"], ["teyit", "confirmation"],
+      ["ed-ip", "do-COORD"], ["et-me-yeceğ-in-i", "do-NEG-FUT-3S-ACC"],
+      ["um-uyor-du-m", "hope-IPFV-PST-1S"]
     ],
     "translation": "Intended: I was hoping whether someone could confirm what I wrote.",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -1631,18 +1702,19 @@
       ["clause", "polar"],
       ["embedding", "argument"]
     ],
-    "comment": "nominalized interrogative"
+    "comment": "nominalized interrogative",
+    "verified": "page-image"
   },
   {
     "id": "qingetal2025_tr_71a",
     "source": {"bibkey": "qing-uegaki-2025", "paperLabel": "(71a)"},
     "reportedIn": null,
     "language": "nucl1301",
-    "primaryText": "John komşusu evde olacak mı diye umuyor.",
+    "primaryText": "John komşu-su ev-de ol-acak mı diye um-uyor.",
     "discourseSegments": [],
     "glossedTokens": [
-      ["John", "John"], ["komşusu", "neighbor-3S.POSS"], ["evde", "house-LOC"],
-      ["olacak", "be-FUT.3S"], ["mı", "Q"], ["diye", "diye"], ["umuyor", "hope-IPFV.PRS.3S"]
+      ["John", "John"], ["komşu-su", "neighbor-3S.POSS"], ["ev-de", "house-LOC"],
+      ["ol-acak", "be-FUT.3S"], ["mı", "Q"], ["diye", "diye"], ["um-uyor", "hope-IPFV.PRES.3S"]
     ],
     "translation": "John hopes whether his neighbor will be home.",
     "context": "",
@@ -1654,19 +1726,20 @@
       ["clause", "polar"],
       ["embedding", "diye"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "qingetal2025_tr_71b",
     "source": {"bibkey": "qing-uegaki-2025", "paperLabel": "(71b)"},
     "reportedIn": null,
     "language": "nucl1301",
-    "primaryText": "Bana birileri yardımcı olabilir mi diye umuyordum.",
+    "primaryText": "Bana birileri yardımcı ol-abil-ir mi diye um-uyor-du-m.",
     "discourseSegments": [],
     "glossedTokens": [
       ["Bana", "1S.DAT"], ["birileri", "someone"], ["yardımcı", "helpful"],
-      ["olabilir", "be-MOD-AOR.3S"], ["mi", "Q"], ["diye", "diye"],
-      ["umuyordum", "hope-IPFV-PST-1S"]
+      ["ol-abil-ir", "be-MOD-AOR.3S"], ["mi", "POLQ"], ["diye", "diye"],
+      ["um-uyor-du-m", "hope-IPFV-PST-1S"]
     ],
     "translation": "I was hoping whether someone could help me.",
     "context": "",
@@ -1678,21 +1751,22 @@
       ["clause", "polar"],
       ["embedding", "diye"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "qingetal2025_tr_71c",
     "source": {"bibkey": "qing-uegaki-2025", "paperLabel": "(71c)"},
     "reportedIn": null,
     "language": "nucl1301",
-    "primaryText": "O sebeple Hitman'de de olur mu diye umdum ama hayal kırıklığı yaşadım.",
+    "primaryText": "O sebeple Hitman'de de ol-ur mu diye um-du-m ama hayal kırıklığı yaşa-dı-m.",
     "discourseSegments": [],
     "glossedTokens": [
-      ["O sebeple", "that's.why"], ["Hitman'de", "Hitman.LOC"], ["de", "too"], ["olur", "be-AOR"],
-      ["mu", "Q"], ["diye", "diye"], ["umdum", "hope-PFV.PST-1S"], ["ama", "but"],
-      ["hayal kırıklığı", "disappointment"], ["yaşadım", "live-PFV.PST-1S"]
+      ["O sebeple", "that's.why"], ["Hitman'de", "Hitman.LOC"], ["de", "too"], ["ol-ur", "be-AOR"],
+      ["mu", "POLQ"], ["diye", "diye"], ["um-du-m", "hope-PFV.PST-1S"], ["ama", "but"],
+      ["hayal kırıklığı", "disappointment"], ["yaşa-dı-m", "live-PFV.PST-1S"]
     ],
-    "translation": "That's why I hoped whether it would be available in Hitman too, but I was disappointed.",
+    "translation": "That's why I hoped whether it [=a Turkish translation] would be available in Hitman too, but I was disappointed.",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -1702,23 +1776,24 @@
       ["clause", "polar"],
       ["embedding", "diye"]
     ],
-    "comment": "attested"
+    "comment": "attested",
+    "verified": "page-image"
   },
   {
     "id": "qingetal2025_tr_72a",
     "source": {"bibkey": "qing-uegaki-2025", "paperLabel": "(72a)"},
     "reportedIn": null,
     "language": "nucl1301",
-    "primaryText": "Bana birilerinin yardımcı olup olamayacağını umuyordum.",
+    "primaryText": "Bana birileri-nin yardımcı ol-up ol-ama-yacağ-ın-ı um-uyor-du-m.",
     "discourseSegments": [],
     "glossedTokens": [
-      ["Bana", "1S.DAT"], ["birilerinin", "someone-GEN"], ["yardımcı", "helpful"],
-      ["olup", "be-COORD"], ["olamayacağını", "be-NEG.MOD-NMZ.FUT-3S-ACC"],
-      ["umuyordum", "hope-IPFV-PST-1S"]
+      ["Bana", "1S.DAT"], ["birileri-nin", "someone-GEN"], ["yardımcı", "helpful"],
+      ["ol-up", "be-COORD"], ["ol-ama-yacağ-ın-ı", "be-NEG.MOD-NMZ.FUT-3S-ACC"],
+      ["um-uyor-du-m", "hope-IPFV-PST-1S"]
     ],
     "translation": "Intended: I was hoping whether someone could help me.",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -1726,23 +1801,24 @@
       ["clause", "polar"],
       ["embedding", "argument"]
     ],
-    "comment": "nominalized interrogative"
+    "comment": "nominalized interrogative",
+    "verified": "page-image"
   },
   {
     "id": "qingetal2025_tr_72b",
     "source": {"bibkey": "qing-uegaki-2025", "paperLabel": "(72b)"},
     "reportedIn": null,
     "language": "nucl1301",
-    "primaryText": "O sebeple Hitman'de de olup olmayacağını umdum.",
+    "primaryText": "O sebeple Hitman'de de ol-up ol-ma-yacağ-ın-ı um-du-m.",
     "discourseSegments": [],
     "glossedTokens": [
       ["O sebeple", "that's.why"], ["Hitman'de", "Hitman.LOC"], ["de", "too"],
-      ["olup", "be-COORD"], ["olmayacağını", "be-NEG-NMZ.FUT-3S-ACC"],
-      ["umdum", "hope-PFV.PST-1S"]
+      ["ol-up", "be-COORD"], ["ol-ma-yacağ-ın-ı", "be-NEG-NMZ.FUT-3S-ACC"],
+      ["um-du-m", "hope-PFV.PST-1S"]
     ],
     "translation": "Intended: That's why I hoped whether it would be available in Hitman too.",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -1750,19 +1826,20 @@
       ["clause", "polar"],
       ["embedding", "argument"]
     ],
-    "comment": "nominalized interrogative"
+    "comment": "nominalized interrogative",
+    "verified": "page-image"
   },
   {
     "id": "qingetal2025_tr_73a",
     "source": {"bibkey": "qing-uegaki-2025", "paperLabel": "(73a)"},
     "reportedIn": null,
     "language": "nucl1301",
-    "primaryText": "Bana birileri yardımcı olabilir mi diye dolandım.",
+    "primaryText": "Bana birileri yardımcı ol-abil-ir mi diye dolan-dı-m.",
     "discourseSegments": [],
     "glossedTokens": [
       ["Bana", "1S.DAT"], ["birileri", "someone"], ["yardımcı", "helpful"],
-      ["olabilir", "be-MOD-AOR.3S"], ["mi", "Q"], ["diye", "diye"],
-      ["dolandım", "walk.around-PFV.PST-1S"]
+      ["ol-abil-ir", "be-MOD-AOR.3S"], ["mi", "POLQ"], ["diye", "diye"],
+      ["dolan-dı-m", "walk.around-PFV.PST-1S"]
     ],
     "translation": "I walked around wondering whether someone could help me.",
     "context": "",
@@ -1774,23 +1851,24 @@
       ["clause", "polar"],
       ["embedding", "diye"]
     ],
-    "comment": "the wondering is contributed by diye, not by a lexical predicate"
+    "comment": "the wondering is contributed by diye, not by a lexical predicate",
+    "verified": "page-image"
   },
   {
     "id": "qingetal2025_tr_73b",
     "source": {"bibkey": "qing-uegaki-2025", "paperLabel": "(73b)"},
     "reportedIn": null,
     "language": "nucl1301",
-    "primaryText": "Bana birilerinin yardımcı olup olamayacağını dolandım.",
+    "primaryText": "Bana birileri-nin yardımcı ol-up ol-ama-yacağ-ın-ı dolan-dı-m.",
     "discourseSegments": [],
     "glossedTokens": [
-      ["Bana", "1S.DAT"], ["birilerinin", "someone-GEN"], ["yardımcı", "helpful"],
-      ["olup", "be-COORD"], ["olamayacağını", "be-NEG.MOD-NMZ.FUT-3S-ACC"],
-      ["dolandım", "walk.around-IPFV-PST-1S"]
+      ["Bana", "1S.DAT"], ["birileri-nin", "someone-GEN"], ["yardımcı", "helpful"],
+      ["ol-up", "be-COORD"], ["ol-ama-yacağ-ın-ı", "be-NEG.MOD-NMZ.FUT-3S-ACC"],
+      ["dolan-dı-m", "walk.around-IPFV-PST-1S"]
     ],
     "translation": "Intended: I walked around wondering whether someone could help me.",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -1798,18 +1876,19 @@
       ["clause", "polar"],
       ["embedding", "argument"]
     ],
-    "comment": "a nominalized clause is an argument, and walk around takes none"
+    "comment": "a nominalized clause is an argument, and walk around takes none",
+    "verified": "page-image"
   },
   {
     "id": "qingetal2025_tr_75_goodfriend",
     "source": {"bibkey": "qing-uegaki-2025", "paperLabel": "(75)"},
     "reportedIn": null,
     "language": "nucl1301",
-    "primaryText": "John komşusu evde olacak mı diye umuyor.",
+    "primaryText": "John komşusu ev-de ol-acak mı diye um-uyor.",
     "discourseSegments": [],
     "glossedTokens": [
-      ["John", "John"], ["komşusu", "neighbor-3S.POSS"], ["evde", "house-LOC"],
-      ["olacak", "be-FUT.3S"], ["mı", "Q"], ["diye", "diye"], ["umuyor", "hope-IPFV.PRS.3S"]
+      ["John", "John"], ["komşusu", "his.neighbor"], ["ev-de", "house-LOC"],
+      ["ol-acak", "be-FUT.3S"], ["mı", "Q"], ["diye", "diye"], ["um-uyor", "hope-IPFV.PRES.3S"]
     ],
     "translation": "John hopes whether his neighbor will be home.",
     "context": "GoodFriend: John likes to invite his friends over to party. He and his neighbor are good friends. His neighbor is away on a business trip, which may be long or short. John wants to throw a party this weekend.",
@@ -1823,18 +1902,19 @@
       ["target", "radical"],
       ["truth", "true"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "qingetal2025_tr_75_noisehater",
     "source": {"bibkey": "qing-uegaki-2025", "paperLabel": "(75)"},
     "reportedIn": null,
     "language": "nucl1301",
-    "primaryText": "John komşusu evde olacak mı diye umuyor.",
+    "primaryText": "John komşusu ev-de ol-acak mı diye um-uyor.",
     "discourseSegments": [],
     "glossedTokens": [
-      ["John", "John"], ["komşusu", "neighbor-3S.POSS"], ["evde", "house-LOC"],
-      ["olacak", "be-FUT.3S"], ["mı", "Q"], ["diye", "diye"], ["umuyor", "hope-IPFV.PRS.3S"]
+      ["John", "John"], ["komşusu", "his.neighbor"], ["ev-de", "house-LOC"],
+      ["ol-acak", "be-FUT.3S"], ["mı", "Q"], ["diye", "diye"], ["um-uyor", "hope-IPFV.PRES.3S"]
     ],
     "translation": "John hopes whether his neighbor will be home.",
     "context": "NoiseHater: John likes to invite his friends over to party, but his neighbor hates noise and they have had several heated quarrels. His neighbor is away on a business trip, which may be long or short. John wants to throw a party this weekend.",
@@ -1848,7 +1928,8 @@
       ["target", "negation"],
       ["truth", "false"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "qingetal2025_tr_76_goodfriend",
@@ -1873,7 +1954,8 @@
       ["target", "negation"],
       ["truth", "true"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "qingetal2025_tr_76_noisehater",
@@ -1898,6 +1980,7 @@
       ["target", "radical"],
       ["truth", "true"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   }
 ]

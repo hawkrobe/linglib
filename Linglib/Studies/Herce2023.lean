@@ -26,8 +26,6 @@ systematicity the definition asks for.
   tables segment them: *venir* has the diphthongized stem in the second and third singular
   and third plural of the indicative, the optional final *-i* of the Darma second person
   plural non-past is dropped, and the transitive allomorph *-de* is prose.
-* The definition also returns the past-tense class of *-ju*, the elsewhere form, the
-  limitation the substrate records.
 
 ## References
 
@@ -166,13 +164,14 @@ instance (i : DFeature) : DecidableRel (dFeatures i) := by
   cases i <;> exact Setoid.ker.decidableRel _
 
 /-- The agreement suffixes of *ra* 'come' in Table 4.32: non-past *-hi*, *-he-n* and *-ni*,
-past *-ju* and *-n-su*. -/
+past *-ju*, *-n-su* and *-ɟu*. -/
 inductive Suffix where
   | hi
   | hen
   | ni
   | ju
   | nsu
+  | «ɟu»
   deriving DecidableEq, Fintype
 
 /-- The non-past suffix of each agreement cell. -/
@@ -184,9 +183,10 @@ def nonpast : DCell → Suffix
 
 /-- The past suffix of each agreement cell. -/
 def past : DCell → Suffix
+  | (.first, .sg) => .ju
   | (.first, .pl) => .nsu
   | (.second, _) => .nsu
-  | _ => .ju
+  | (.third, _) => .«ɟu»
 
 /-- The syncretic cells: the first person plural and the second person. -/
 def Dset : Finset DCell := {(.first, .pl), (.second, .sg), (.second, .pl)}

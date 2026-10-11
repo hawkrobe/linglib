@@ -71,7 +71,8 @@
         "detoSelection"
       ]
     ],
-    "comment": "deto alternates freely with če, apart from style and register; colloquial speech."
+    "comment": "deto alternates freely with če, apart from style and register; colloquial speech.",
+    "verified": "page-image"
   },
   {
     "id": "krapova2010_56b",
@@ -145,7 +146,8 @@
         "detoSelection"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "krapova2010_57a",
@@ -231,7 +233,8 @@
         "1"
       ]
     ],
-    "comment": "Presupposes that the meeting has failed, although the speaker does not regret that."
+    "comment": "Presupposes that the meeting has failed, although the speaker does not regret that.",
+    "verified": "page-image"
   },
   {
     "id": "krapova2010_57b",
@@ -262,7 +265,7 @@
       ],
       [
         "gostite",
-        "guests-the"
+        "the guests"
       ],
       [
         "pristignaxa",
@@ -309,7 +312,8 @@
         "1"
       ]
     ],
-    "comment": "Presupposes that the visitors arrived late."
+    "comment": "Presupposes that the visitors arrived late.",
+    "verified": "page-image"
   },
   {
     "id": "krapova2010_57c",
@@ -361,7 +365,7 @@
       },
       {
         "form": "Săžaljavam, deto ne moža da ostaneš poveče, no vsăšnost ti ostana poveče.",
-        "judgment": "unacceptable"
+        "judgment": "ungrammatical"
       }
     ],
     "readings": [],
@@ -383,7 +387,8 @@
         "1"
       ]
     ],
-    "comment": "Adding 'but in fact you stayed longer' cancels the presupposition and is a contradiction."
+    "comment": "Adding 'but in fact you stayed longer' cancels the presupposition and is a contradiction.",
+    "verified": "page-image"
   },
   {
     "id": "krapova2010_58a",
@@ -457,7 +462,8 @@
         "detoSelection"
       ]
     ],
-    "comment": "An emotive factive without a za phrase takes če only."
+    "comment": "An emotive factive without a za phrase takes če only.",
+    "verified": "page-image"
   },
   {
     "id": "krapova2010_58b",
@@ -523,7 +529,8 @@
         "detoSelection"
       ]
     ],
-    "comment": "A semi-factive takes če only."
+    "comment": "A semi-factive takes če only.",
+    "verified": "page-image"
   },
   {
     "id": "krapova2010_59a",
@@ -581,7 +588,8 @@
         "zaPhrase"
       ]
     ],
-    "comment": "Other prepositions and preposition-less noun phrases are excluded; the nominal paraphrase of (57a)."
+    "comment": "Other prepositions and preposition-less noun phrases are excluded; the nominal paraphrase of (57a).",
+    "verified": "page-image"
   },
   {
     "id": "krapova2010_59b",
@@ -647,7 +655,8 @@
         "zaPhrase"
       ]
     ],
-    "comment": "The nominal paraphrase of (57b)."
+    "comment": "The nominal paraphrase of (57b).",
+    "verified": "page-image"
   },
   {
     "id": "krapova2010_fn46i",
@@ -703,7 +712,7 @@
     "alternatives": [
       {
         "form": "Văzmutix se če ne sa mogli da provedat sreštata, no vsăšnost te provedoxa sreštata.",
-        "judgment": "unacceptable"
+        "judgment": "ungrammatical"
       }
     ],
     "readings": [],
@@ -725,6 +734,7 @@
         "1"
       ]
     ],
-    "comment": "The če complement is factive too: factivity is the context's, not the complementizer's."
+    "comment": "The če complement is factive too: factivity is the context's, not the complementizer's.",
+    "verified": "page-image"
   }
 ]

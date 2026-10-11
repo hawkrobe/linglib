@@ -29,7 +29,8 @@
         "2>3"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "adamsonzompi2025_2b",
@@ -61,7 +62,8 @@
         "3>3"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "adamsonzompi2025_3a",
@@ -93,7 +95,8 @@
         "3>2"
       ]
     ],
-    "comment": "Ungrammatical in either clitic order and with either allomorph (gli/le, ti/te)."
+    "comment": "Ungrammatical in either clitic order and with either allomorph (gli/le, ti/te).",
+    "verified": "page-image"
   },
   {
     "id": "adamsonzompi2025_4a",
@@ -103,7 +106,7 @@
     },
     "reportedIn": null,
     "language": "ital1282",
-    "primaryText": "Intendo affidargliela.",
+    "primaryText": "Intendo affidar glie la.",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "I intend to entrust her to her/him.",
@@ -129,7 +132,8 @@
         "infinitive enclisis"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "adamsonzompi2025_4b",
@@ -139,7 +143,7 @@
     },
     "reportedIn": null,
     "language": "ital1282",
-    "primaryText": "Intendo affidarglieti.",
+    "primaryText": "Intendo affidar gli ti.",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "Intended: I intend to entrust you to him.",
@@ -165,7 +169,8 @@
         "infinitive enclisis"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "adamsonzompi2025_5a",
@@ -197,7 +202,8 @@
         "stressed pronoun"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "adamsonzompi2025_5b",
@@ -229,7 +235,8 @@
         "prepositional dative"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "adamsonzompi2025_6",
@@ -261,7 +268,8 @@
         "1>2 / 2>1"
       ]
     ],
-    "comment": "Marked %: accepted by Weak PCC speakers, rejected by Strong PCC speakers."
+    "comment": "Marked %: accepted by Weak PCC speakers, rejected by Strong PCC speakers.",
+    "verified": "page-image"
   },
   {
     "id": "adamsonzompi2025_8a",
@@ -294,7 +302,8 @@
         "3SG"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "adamsonzompi2025_10",
@@ -307,7 +316,7 @@
     "primaryText": "(Lei) si vede.",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "You (polite) see yourself.",
+    "translation": "You see yourself.",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [
@@ -327,7 +336,8 @@
         "3 si"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "adamsonzompi2025_11c",
@@ -360,7 +370,8 @@
         "LOC > LEI"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "adamsonzompi2025_14",
@@ -370,7 +381,7 @@
     },
     "reportedIn": null,
     "language": "ital1282",
-    "primaryText": "La ho vista ieri in TV.",
+    "primaryText": "La ho vist-a ieri in TV.",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "Doctor Biagi, I saw you on TV yesterday.",
@@ -378,7 +389,7 @@
     "judgment": "acceptable",
     "alternatives": [
       {
-        "form": "La ho visto ieri in TV.",
+        "form": "La ho vist-o ieri in TV.",
         "judgment": "ungrammatical"
       }
     ],
@@ -393,7 +404,8 @@
         "F.SG obligatory"
       ]
     ],
-    "comment": "Adapted from Maiden and Robustelli 2013; participle agreement matches the formal feminine of LEI, not the referent's gender."
+    "comment": "Adapted from Maiden and Robustelli 2013; participle agreement matches the formal feminine of LEI, not the referent's gender.",
+    "verified": "page-image"
   },
   {
     "id": "adamsonzompi2025_16",
@@ -425,7 +437,8 @@
         "LEI>3"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "adamsonzompi2025_17",
@@ -457,7 +470,8 @@
         "3>LEI"
       ]
     ],
-    "comment": "String-identical to (16) apart from capitalization."
+    "comment": "String-identical to (16) apart from capitalization.",
+    "verified": "page-image"
   },
   {
     "id": "adamsonzompi2025_18",
@@ -467,10 +481,10 @@
     },
     "reportedIn": null,
     "language": "ital1282",
-    "primaryText": "Io glie La avevo affidata sperando che La curasse perbene.",
+    "primaryText": "Io glie La avevo affidata sperando che La curasse perbene (e invece ...)",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "Intended: I entrusted you to him hoping that he would take proper care of you.",
+    "translation": "Intended: I entrusted you to him hoping that he would take proper care of you (and instead ...)",
     "context": "Oh avvocato, come sta? Non sa quanto mi è dispiaciuto che il mio medico L'abbia trattata male. Quello lì è proprio un cretino, sa?",
     "judgment": "ungrammatical",
     "alternatives": [],
@@ -489,7 +503,8 @@
         "3>LEI"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "adamsonzompi2025_19a",
@@ -521,7 +536,8 @@
         "LEI>3"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "adamsonzompi2025_19b",
@@ -553,7 +569,8 @@
         "3>LEI"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "adamsonzompi2025_20a",
@@ -563,7 +580,7 @@
     },
     "reportedIn": null,
     "language": "ital1282",
-    "primaryText": "Intendo affidarGliela.",
+    "primaryText": "Intendo affidar Glie la.",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "I intend to entrust her to her/him/you (polite).",
@@ -585,7 +602,8 @@
         "infinitive enclisis"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "adamsonzompi2025_20b",
@@ -595,7 +613,7 @@
     },
     "reportedIn": null,
     "language": "ital1282",
-    "primaryText": "Intendo affidarglieLa.",
+    "primaryText": "Intendo affidar glie La.",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "Intended: I intend to entrust you (polite) to her/him.",
@@ -617,7 +635,8 @@
         "infinitive enclisis"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "adamsonzompi2025_21a",
@@ -649,7 +668,8 @@
         "stressed pronoun"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "adamsonzompi2025_21b",
@@ -681,7 +701,8 @@
         "prepositional dative"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "adamsonzompi2025_24",
@@ -718,7 +739,8 @@
         "3"
       ]
     ],
-    "comment": "Adapted from D'Alessandro and Pescarini 2016; the Fancy Constraint."
+    "comment": "Adapted from D'Alessandro and Pescarini 2016; the Fancy Constraint.",
+    "verified": "page-image"
   },
   {
     "id": "adamsonzompi2025_25",
@@ -750,7 +772,8 @@
         "LEI"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "adamsonzompi2025_26",
@@ -782,7 +805,8 @@
         "LEI stressed"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "adamsonzompi2025_27",
@@ -814,7 +838,8 @@
         "3>imposter"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "adamsonzompi2025_29a",
@@ -846,7 +871,8 @@
         "3>imposter"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "adamsonzompi2025_30",
@@ -879,7 +905,8 @@
         "2PL"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "adamsonzompi2025_31",
@@ -912,7 +939,8 @@
         "3PL"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "adamsonzompi2025_32",
@@ -945,7 +973,8 @@
         "3PL"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "adamsonzompi2025_42",
@@ -973,13 +1002,14 @@
         "3SG la"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "adamsonzompi2025_43",
     "source": {
       "bibkey": "rezac-2011",
-      "paperLabel": "(43)"
+      "paperLabel": "(36b)"
     },
     "reportedIn": {
       "bibkey": "adamson-zompi-2025",
@@ -989,7 +1019,7 @@
     "primaryText": "Se la presentaré (a los estudiantes).",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "I will introduce her / you (polite) to the students.",
+    "translation": "I will introduce her/*you (polite) to the students.",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -1013,7 +1043,8 @@
         "3 or USTED"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "adamsonzompi2025_44a",
@@ -1045,7 +1076,8 @@
         "USTED>3"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "adamsonzompi2025_44b",
@@ -1058,7 +1090,7 @@
     "primaryText": "Yo se lo encomendé (con la esperanza de que lo cuidara bien).",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "Intended: I entrusted you (polite) to her/him.",
+    "translation": "Intended: I entrusted you (polite) to her/him (in the hope that she/he would take good care of you).",
     "context": "",
     "judgment": "unacceptable",
     "alternatives": [],
@@ -1077,7 +1109,8 @@
         "3>USTED"
       ]
     ],
-    "comment": "String-identical to (44a); the reading with accusative USTED is unavailable."
+    "comment": "String-identical to (44a); the reading with accusative USTED is unavailable.",
+    "verified": "page-image"
   },
   {
     "id": "adamsonzompi2025_45b",
@@ -1090,7 +1123,7 @@
     "primaryText": "Sie sind nett.",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "You (polite, SG or PL) are nice.",
+    "translation": "You (SG/PL polite) are nice.",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [
@@ -1110,7 +1143,8 @@
         "3PL"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "adamsonzompi2025_46b",
@@ -1146,7 +1180,8 @@
         "Wackernagel cluster before subject"
       ]
     ],
-    "comment": "Reported from Anagnostopoulou 2008; the effect is restricted and judgments unstable."
+    "comment": "Reported from Anagnostopoulou 2008; the effect is restricted and judgments unstable.",
+    "verified": "page-image"
   },
   {
     "id": "adamsonzompi2025_47",
@@ -1178,7 +1213,8 @@
         "3>3"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "adamsonzompi2025_48",
@@ -1210,13 +1246,14 @@
         "3>SIE"
       ]
     ],
-    "comment": "Marked ??/*; the authors flag the need for experimental confirmation."
+    "comment": "Marked ??/*; the authors flag the need for experimental confirmation.",
+    "verified": "page-image"
   },
   {
     "id": "adamsonzompi2025_49a",
     "source": {
       "bibkey": "coon-keine-2021",
-      "paperLabel": "(49a)"
+      "paperLabel": "(51a)"
     },
     "reportedIn": {
       "bibkey": "adamson-zompi-2025",
@@ -1245,13 +1282,14 @@
         "3SG"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "adamsonzompi2025_49b",
     "source": {
       "bibkey": "coon-keine-2021",
-      "paperLabel": "(49b)"
+      "paperLabel": "(51b)"
     },
     "reportedIn": {
       "bibkey": "adamson-zompi-2025",
@@ -1280,13 +1318,14 @@
         "2SG"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "adamsonzompi2025_50a",
     "source": {
       "bibkey": "coon-keine-2021",
-      "paperLabel": "(50a)"
+      "paperLabel": "(52a)"
     },
     "reportedIn": {
       "bibkey": "adamson-zompi-2025",
@@ -1315,13 +1354,14 @@
         "3SG"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "adamsonzompi2025_50b",
     "source": {
       "bibkey": "coon-keine-2021",
-      "paperLabel": "(50b)"
+      "paperLabel": "(52b)"
     },
     "reportedIn": {
       "bibkey": "adamson-zompi-2025",
@@ -1350,7 +1390,8 @@
         "3PL"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "adamsonzompi2025_52",
@@ -1387,7 +1428,8 @@
         "3PL"
       ]
     ],
-    "comment": "DP2 sie marked (?)."
+    "comment": "DP2 sie marked (?).",
+    "verified": "page-image"
   },
   {
     "id": "adamsonzompi2025_53",
@@ -1400,7 +1442,7 @@
     "primaryText": "Die Zwillinge sind Sie.",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "The twins are you (SG or PL).",
+    "translation": "The twins are you (SG/PL).",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -1419,7 +1461,8 @@
         "SIE"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "adamsonzompi2025_fn27i",
@@ -1432,7 +1475,7 @@
     "primaryText": "Maria ist Sie.",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "Intended: Maria is you (SG or PL).",
+    "translation": "Intended: Maria is you (SG/PL).",
     "context": "",
     "judgment": "ungrammatical",
     "alternatives": [],
@@ -1451,7 +1494,8 @@
         "SIE"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "adamsonzompi2025_55b",
@@ -1483,7 +1527,8 @@
         "1>3"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "adamsonzompi2025_56",
@@ -1515,6 +1560,7 @@
         "1>LEI"
       ]
     ],
-    "comment": "Marked %: rejected by some speakers who accept (55a); no correlation with (55a) judgments was found."
+    "comment": "Marked %: rejected by some speakers who accept (55a); no correlation with (55a) judgments was found.",
+    "verified": "page-image"
   }
 ]

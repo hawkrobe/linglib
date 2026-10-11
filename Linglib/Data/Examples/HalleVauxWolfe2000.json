@@ -24,7 +24,8 @@
         "dorsalAssimilation"
       ]
     ],
-    "comment": "The palatalised coronal nasal before assimilation."
+    "comment": "The palatalised coronal nasal before assimilation.",
+    "verified": "page-image"
   },
   {
     "id": "hallevauxwolfe2000_ex44a-ii",
@@ -51,7 +52,8 @@
         "dorsalAssimilation"
       ]
     ],
-    "comment": "The nasal assimilates the dorsal primary articulation of the following g but keeps its own palatalisation."
+    "comment": "The nasal assimilates the dorsal primary articulation of the following g but keeps its own palatalisation.",
+    "verified": "page-image"
   },
   {
     "id": "hallevauxwolfe2000_ex44b",
@@ -78,7 +80,8 @@
         "dorsalAssimilation"
       ]
     ],
-    "comment": "The plain coronal nasal before assimilation."
+    "comment": "The plain coronal nasal before assimilation.",
+    "verified": "page-image"
   },
   {
     "id": "hallevauxwolfe2000_ex44b-ii",
@@ -105,6 +108,7 @@
         "dorsalAssimilation"
       ]
     ],
-    "comment": "The plain nasal assimilates the dorsal articulation of the following palatalised gʲ but not its palatalisation."
+    "comment": "The plain nasal assimilates the dorsal articulation of the following palatalised gʲ but not its palatalisation.",
+    "verified": "page-image"
   }
 ]

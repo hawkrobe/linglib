@@ -24,7 +24,8 @@
         "pst3msg"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "faust2026_3a_actionNoun",
@@ -51,7 +52,8 @@
         "actionNoun"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "faust2026_3a_passPrtc",
@@ -78,7 +80,8 @@
         "passPrtc"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "faust2026_3b_pst3msg",
@@ -105,7 +108,8 @@
         "pst3msg"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "faust2026_3b_actionNoun",
@@ -132,7 +136,8 @@
         "actionNoun"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "faust2026_3b_passPrtc",
@@ -159,7 +164,8 @@
         "passPrtc"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "faust2026_3c_pst3msg",
@@ -186,7 +192,8 @@
         "pst3msg"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "faust2026_3c_actionNoun",
@@ -213,7 +220,8 @@
         "actionNoun"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "faust2026_3c_passPrtc",
@@ -240,7 +248,8 @@
         "passPrtc"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "faust2026_5a_pfv",
@@ -267,7 +276,8 @@
         "pfv"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "faust2026_5a_ipfv",
@@ -276,7 +286,7 @@
       "paperLabel": "(5a)"
     },
     "language": "amha1245",
-    "primaryText": "jisäbr-all",
+    "primaryText": "jɨsäbr-all",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "IPFV-AUX.3MSG of 'break'",
@@ -294,7 +304,8 @@
         "ipfv"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "faust2026_5a_juss",
@@ -303,7 +314,7 @@
       "paperLabel": "(5a)"
     },
     "language": "amha1245",
-    "primaryText": "jisbär",
+    "primaryText": "jɨsbär",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "JUSS.3MSG of 'break'",
@@ -321,7 +332,8 @@
         "juss"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "faust2026_5a_grnd",
@@ -348,7 +360,8 @@
         "grnd"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "faust2026_5a_inf",
@@ -375,7 +388,8 @@
         "inf"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "faust2026_5b_pfv",
@@ -402,7 +416,8 @@
         "pfv"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "faust2026_5b_ipfv",
@@ -411,7 +426,7 @@
       "paperLabel": "(5b)"
     },
     "language": "amha1245",
-    "primaryText": "jiwädd-all",
+    "primaryText": "jɨwädd-all",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "IPFV-AUX.3MSG of 'like'",
@@ -429,7 +444,8 @@
         "ipfv"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "faust2026_5b_juss",
@@ -438,7 +454,7 @@
       "paperLabel": "(5b)"
     },
     "language": "amha1245",
-    "primaryText": "jiwdäd",
+    "primaryText": "jɨwdäd",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "JUSS.3MSG of 'like'",
@@ -456,7 +472,8 @@
         "juss"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "faust2026_5b_grnd",
@@ -483,7 +500,8 @@
         "grnd"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "faust2026_5b_inf",
@@ -510,7 +528,8 @@
         "inf"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "faust2026_5c_pfv",
@@ -537,7 +556,8 @@
         "pfv"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "faust2026_5c_ipfv",
@@ -546,7 +566,7 @@
       "paperLabel": "(5c)"
     },
     "language": "amha1245",
-    "primaryText": "jifäʤ-all",
+    "primaryText": "jɨfäʤ-all",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "IPFV-AUX.3MSG of 'scorch'",
@@ -564,7 +584,8 @@
         "ipfv"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "faust2026_5c_juss",
@@ -573,7 +594,7 @@
       "paperLabel": "(5c)"
     },
     "language": "amha1245",
-    "primaryText": "jifiʤ",
+    "primaryText": "jɨfɨʤ",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "JUSS.3MSG of 'scorch'",
@@ -591,7 +612,8 @@
         "juss"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "faust2026_5c_grnd",
@@ -618,7 +640,8 @@
         "grnd"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "faust2026_5c_inf",
@@ -645,7 +668,8 @@
         "inf"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "faust2026_12c_pfv",
@@ -672,7 +696,8 @@
         "pfv"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "faust2026_12c_ipfv",
@@ -681,7 +706,7 @@
       "paperLabel": "(12c)"
     },
     "language": "amha1245",
-    "primaryText": "jisäm-all",
+    "primaryText": "jɨsäm-all",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "IPFV-AUX.3MSG of 'hear'",
@@ -699,7 +724,8 @@
         "ipfv"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "faust2026_12c_juss",
@@ -708,7 +734,7 @@
       "paperLabel": "(12c)"
     },
     "language": "amha1245",
-    "primaryText": "jisma",
+    "primaryText": "jɨsma",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "JUSS.3MSG of 'hear'",
@@ -726,7 +752,8 @@
         "juss"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "faust2026_12c_grnd",
@@ -753,7 +780,8 @@
         "grnd"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "faust2026_12c_inf",
@@ -780,7 +808,8 @@
         "inf"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "faust2026_12d_pfv",
@@ -807,7 +836,8 @@
         "pfv"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "faust2026_12d_ipfv",
@@ -816,7 +846,7 @@
       "paperLabel": "(12d)"
     },
     "language": "amha1245",
-    "primaryText": "jisim-all",
+    "primaryText": "jɨsɨm-all",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "IPFV-AUX.3MSG of 'kiss'",
@@ -834,7 +864,8 @@
         "ipfv"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "faust2026_12d_juss",
@@ -843,7 +874,7 @@
       "paperLabel": "(12d)"
     },
     "language": "amha1245",
-    "primaryText": "jisam",
+    "primaryText": "jɨsam",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "JUSS.3MSG of 'kiss'",
@@ -861,7 +892,8 @@
         "juss"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "faust2026_12d_grnd",
@@ -888,7 +920,8 @@
         "grnd"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "faust2026_12d_inf",
@@ -915,7 +948,8 @@
         "inf"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "faust2026_12e_pfv",
@@ -942,7 +976,8 @@
         "pfv"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "faust2026_12e_ipfv",
@@ -951,7 +986,7 @@
       "paperLabel": "(12e)"
     },
     "language": "amha1245",
-    "primaryText": "jihed-all",
+    "primaryText": "jɨhed-all",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "IPFV-AUX.3MSG of 'go'",
@@ -969,7 +1004,8 @@
         "ipfv"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "faust2026_12e_juss",
@@ -978,7 +1014,7 @@
       "paperLabel": "(12e)"
     },
     "language": "amha1245",
-    "primaryText": "jihid",
+    "primaryText": "jɨhid",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "JUSS.3MSG of 'go'",
@@ -996,7 +1032,8 @@
         "juss"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "faust2026_12e_grnd",
@@ -1023,7 +1060,8 @@
         "grnd"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "faust2026_12e_inf",
@@ -1050,7 +1088,8 @@
         "inf"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "faust2026_9a_tavshil",
@@ -1073,7 +1112,8 @@
         "masculine"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "faust2026_9a_tadrix",
@@ -1096,7 +1136,8 @@
         "masculine"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "faust2026_9a_tadpis",
@@ -1119,7 +1160,8 @@
         "masculine"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "faust2026_9a_taxbiv",
@@ -1142,7 +1184,8 @@
         "masculine"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "faust2026_9a_tazkir",
@@ -1165,7 +1208,8 @@
         "masculine"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "faust2026_9a_tazkik",
@@ -1188,7 +1232,8 @@
         "masculine"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "faust2026_9a_tazrim",
@@ -1211,7 +1256,8 @@
         "masculine"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "faust2026_9a_taxkir",
@@ -1234,7 +1280,8 @@
         "masculine"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "faust2026_9a_taskit",
@@ -1261,7 +1308,8 @@
         "skt"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "faust2026_9b_tavnit",
@@ -1284,7 +1332,8 @@
         "feminine"
       ]
     ],
-    "comment": "Related to [banuj] 'built' (QaTuL); the root's b spirantizes."
+    "comment": "Related to [banuj] 'built' (QaTuL); the root's b spirantizes.",
+    "verified": "page-image"
   },
   {
     "id": "faust2026_9b_taglit",
@@ -1311,7 +1360,8 @@
         "glj"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "faust2026_9b_tadmit",
@@ -1338,7 +1388,8 @@
         "dmj"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "faust2026_9b_tarmit",
@@ -1365,7 +1416,8 @@
         "rmj"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "faust2026_9b_taxlit",
@@ -1388,7 +1440,8 @@
         "feminine"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "faust2026_9b_tamtsit",
@@ -1411,7 +1464,8 @@
         "feminine"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "faust2026_9b_taanit",
@@ -1434,7 +1488,8 @@
         "feminine"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "faust2026_9b_tafnit",
@@ -1457,7 +1512,8 @@
         "feminine"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "faust2026_9b_tatspit",
@@ -1480,6 +1536,7 @@
         "feminine"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   }
 ]

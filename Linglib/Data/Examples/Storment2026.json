@@ -20,7 +20,8 @@
         "qi"
       ]
     ],
-    "comment": "Quotative inversion: the quote precedes the verb and the agent follows it."
+    "comment": "Quotative inversion: the quote precedes the verb and the agent follows it.",
+    "verified": "page-image"
   },
   {
     "id": "storment2026_ex4",
@@ -60,7 +61,8 @@
         "qi"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "storment2026_ex7",
@@ -83,7 +85,8 @@
         "preposedQuote"
       ]
     ],
-    "comment": "A preposed quote without inversion: the agent stays preverbal."
+    "comment": "A preposed quote without inversion: the agent stays preverbal.",
+    "verified": "page-image"
   },
   {
     "id": "storment2026_ex10",
@@ -114,7 +117,8 @@
         "afterAgent"
       ]
     ],
-    "comment": "An agent-oriented depictive follows the agent."
+    "comment": "An agent-oriented depictive follows the agent.",
+    "verified": "page-image"
   },
   {
     "id": "storment2026_ex12",
@@ -145,7 +149,8 @@
         "beforeAgent"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "storment2026_ex14",
@@ -176,7 +181,8 @@
         "yes"
       ]
     ],
-    "comment": "Heavy NP shift of the agent lets the depictive precede it."
+    "comment": "Heavy NP shift of the agent lets the depictive precede it.",
+    "verified": "page-image"
   },
   {
     "id": "storment2026_ex15",
@@ -207,7 +213,8 @@
         "afterAgent"
       ]
     ],
-    "comment": "A purpose clause follows the agent."
+    "comment": "A purpose clause follows the agent.",
+    "verified": "page-image"
   },
   {
     "id": "storment2026_ex16",
@@ -238,7 +245,8 @@
         "beforeAgent"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "storment2026_ex19",
@@ -269,7 +277,8 @@
         "afterAgent"
       ]
     ],
-    "comment": "A manner adverb follows the agent."
+    "comment": "A manner adverb follows the agent.",
+    "verified": "page-image"
   },
   {
     "id": "storment2026_ex20",
@@ -300,7 +309,8 @@
         "beforeAgent"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "storment2026_ex25a",
@@ -331,7 +341,8 @@
         "afterAgent"
       ]
     ],
-    "comment": "An adverbial participial clause follows the agent."
+    "comment": "An adverbial participial clause follows the agent.",
+    "verified": "page-image"
   },
   {
     "id": "storment2026_ex25b",
@@ -362,7 +373,8 @@
         "beforeAgent"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "storment2026_ex26a",
@@ -393,7 +405,8 @@
         "beforeAgent"
       ]
     ],
-    "comment": "A control complement precedes the agent."
+    "comment": "A control complement precedes the agent.",
+    "verified": "page-image"
   },
   {
     "id": "storment2026_ex26b",
@@ -424,7 +437,8 @@
         "afterAgent"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "storment2026_ex29a",
@@ -455,7 +469,8 @@
         "beforeAgent"
       ]
     ],
-    "comment": "A particle precedes the agent; the paper takes (29)–(31) from Collins (2003:4)."
+    "comment": "A particle precedes the agent; the paper takes (29)–(31) from Collins (2003:4).",
+    "verified": "page-image"
   },
   {
     "id": "storment2026_ex29b",
@@ -486,7 +501,8 @@
         "afterAgent"
       ]
     ],
-    "comment": "The paper takes (29)–(31) from Collins (2003:4)."
+    "comment": "The paper takes (29)–(31) from Collins (2003:4).",
+    "verified": "page-image"
   },
   {
     "id": "storment2026_ex11",
@@ -542,7 +558,8 @@
         "afterAgent"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "storment2026_ex13",
@@ -598,7 +615,8 @@
         "beforeAgent"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "storment2026_ex17",
@@ -658,7 +676,8 @@
         "afterAgent"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "storment2026_ex18",
@@ -718,7 +737,8 @@
         "beforeAgent"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "storment2026_ex21",
@@ -778,7 +798,8 @@
         "afterAgent"
       ]
     ],
-    "comment": "The paper takes (21)–(22) from Collins (1997:2)."
+    "comment": "The paper takes (21)–(22) from Collins (1997:2).",
+    "verified": "page-image"
   },
   {
     "id": "storment2026_ex22",
@@ -838,7 +859,8 @@
         "beforeAgent"
       ]
     ],
-    "comment": "The paper takes (21)–(22) from Collins (1997:2)."
+    "comment": "The paper takes (21)–(22) from Collins (1997:2).",
+    "verified": "page-image"
   },
   {
     "id": "storment2026_ex27",
@@ -906,7 +928,8 @@
         "beforeAgent"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "storment2026_ex28",
@@ -974,7 +997,8 @@
         "afterAgent"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "storment2026_ex36",
@@ -1022,7 +1046,8 @@
         "SM17"
       ]
     ],
-    "comment": "The subject marker is the default class 17, not class 10 of the agent."
+    "comment": "The subject marker is the default class 17, not class 10 of the agent.",
+    "verified": "page-image"
   },
   {
     "id": "storment2026_ex36_sm10",
@@ -1070,7 +1095,8 @@
         "SM10"
       ]
     ],
-    "comment": "The starred alternative of (36): the agent’s class 10 marker."
+    "comment": "The starred alternative of (36): the agent’s class 10 marker.",
+    "verified": "page-image"
   },
   {
     "id": "storment2026_ex38",
@@ -1118,7 +1144,8 @@
         "SM17"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "storment2026_ex38_ke",
@@ -1166,7 +1193,8 @@
         "SM.1SG"
       ]
     ],
-    "comment": "The starred alternative of (38): first person agreement with the agent."
+    "comment": "The starred alternative of (38): first person agreement with the agent.",
+    "verified": "page-image"
   },
   {
     "id": "storment2026_ex40",
@@ -1197,7 +1225,8 @@
         "plural"
       ]
     ],
-    "comment": "English agreement tracks the postverbal agent; the paper takes the judgments from Collins and Branigan (1997)."
+    "comment": "English agreement tracks the postverbal agent; the paper takes the judgments from Collins and Branigan (1997).",
+    "verified": "page-image"
   },
   {
     "id": "storment2026_ex40_sg",
@@ -1228,7 +1257,8 @@
         "singular"
       ]
     ],
-    "comment": "The starred alternative of (40)."
+    "comment": "The starred alternative of (40).",
+    "verified": "page-image"
   },
   {
     "id": "storment2026_ex62a",
@@ -1255,7 +1285,8 @@
         "parasiticGap"
       ]
     ],
-    "comment": "The A-moved quotative theme licenses no parasitic gap; the paper takes (62a) from Murphy (2022:4)."
+    "comment": "The A-moved quotative theme licenses no parasitic gap; the paper takes (62a) from Murphy (2022:4).",
+    "verified": "page-image"
   },
   {
     "id": "storment2026_ex62b",
@@ -1282,7 +1313,8 @@
         "parasiticGap"
       ]
     ],
-    "comment": "The Ā-moved preposed quote of a noninverted clause licenses the gap."
+    "comment": "The Ā-moved preposed quote of a noninverted clause licenses the gap.",
+    "verified": "page-image"
   },
   {
     "id": "storment2026_ex64",
@@ -1313,7 +1345,8 @@
         "plural"
       ]
     ],
-    "comment": "Without inversion, agreement must track the agent."
+    "comment": "Without inversion, agreement must track the agent.",
+    "verified": "page-image"
   },
   {
     "id": "storment2026_ex64_sg",
@@ -1344,7 +1377,8 @@
         "singular"
       ]
     ],
-    "comment": "The starred alternative of (64)."
+    "comment": "The starred alternative of (64).",
+    "verified": "page-image"
   },
   {
     "id": "storment2026_ex65",
@@ -1392,7 +1426,8 @@
         "SM.3SG.PST"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "storment2026_ex65_ga",
@@ -1440,7 +1475,8 @@
         "SM17.PST"
       ]
     ],
-    "comment": "The starred alternative of (65): default agreement without inversion."
+    "comment": "The starred alternative of (65): default agreement without inversion.",
+    "verified": "page-image"
   },
   {
     "id": "storment2026_ex67a",
@@ -1467,7 +1503,8 @@
         "raising"
       ]
     ],
-    "comment": "Subject-to-subject raising of the quotative theme; a corpus example (Flickr) the paper cites from Storment (2025:138)."
+    "comment": "Subject-to-subject raising of the quotative theme; a corpus example (Flickr) the paper cites from Storment (2025:138).",
+    "verified": "page-image"
   },
   {
     "id": "storment2026_ex69a",
@@ -1494,7 +1531,8 @@
         "raising"
       ]
     ],
-    "comment": "Raising is incompatible with the Ā-moved preposed quote."
+    "comment": "Raising is incompatible with the Ā-moved preposed quote.",
+    "verified": "page-image"
   },
   {
     "id": "storment2026_ex77",
@@ -1550,7 +1588,8 @@
         "SM17"
       ]
     ],
-    "comment": "Aspectual auxiliary raising: both subject markers are the default class 17."
+    "comment": "Aspectual auxiliary raising: both subject markers are the default class 17.",
+    "verified": "page-image"
   },
   {
     "id": "storment2026_ex87",
@@ -1598,7 +1637,8 @@
         "conjoint"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "storment2026_ex87_disj",
@@ -1650,7 +1690,8 @@
         "disjoint"
       ]
     ],
-    "comment": "The disjoint morpheme is excluded: the agent stays inside the vP."
+    "comment": "The disjoint morpheme is excluded: the agent stays inside the vP.",
+    "verified": "page-image"
   },
   {
     "id": "storment2026_ex88",
@@ -1677,7 +1718,8 @@
         "quoteCategory"
       ]
     ],
-    "comment": "The quote itself need not be preverbal: the verb–agent order survives."
+    "comment": "The quote itself need not be preverbal: the verb–agent order survives.",
+    "verified": "page-image"
   },
   {
     "id": "storment2026_ex89",
@@ -1703,7 +1745,7 @@
       ],
       [
         "Le kae?",
-        "and where?"
+        "and where"
       ]
     ],
     "translation": "Asked Seabelo, ‘How are you?’",
@@ -1721,7 +1763,8 @@
         "quoteCategory"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "storment2026_ex90",
@@ -1748,7 +1791,8 @@
         "quoteCategory"
       ]
     ],
-    "comment": "The quote may split around the verb and the agent."
+    "comment": "The quote may split around the verb and the agent.",
+    "verified": "page-image"
   },
   {
     "id": "storment2026_ex92",
@@ -1775,7 +1819,8 @@
         "quoteCategory"
       ]
     ],
-    "comment": "The split need not fall at a constituent boundary of the quote."
+    "comment": "The split need not fall at a constituent boundary of the quote.",
+    "verified": "page-image"
   },
   {
     "id": "storment2026_ex93a",
@@ -1802,7 +1847,8 @@
         "quoteCategory"
       ]
     ],
-    "comment": "Locative inversion, unlike QI, requires the fronted phrase preverbally."
+    "comment": "Locative inversion, unlike QI, requires the fronted phrase preverbally.",
+    "verified": "page-image"
   },
   {
     "id": "storment2026_ex96a",
@@ -1829,7 +1875,8 @@
         "quoteCategory"
       ]
     ],
-    "comment": "A quote need not have internal grammatical structure."
+    "comment": "A quote need not have internal grammatical structure.",
+    "verified": "page-image"
   },
   {
     "id": "storment2026_ex97a",
@@ -1856,7 +1903,8 @@
         "quoteCategory"
       ]
     ],
-    "comment": "A quote need not be grammatical."
+    "comment": "A quote need not be grammatical.",
+    "verified": "page-image"
   },
   {
     "id": "storment2026_ex123",
@@ -1879,7 +1927,8 @@
         "canonical"
       ]
     ],
-    "comment": "The noninverted clause with a goal DP."
+    "comment": "The noninverted clause with a goal DP.",
+    "verified": "page-image"
   },
   {
     "id": "storment2026_ex125",
@@ -1906,7 +1955,8 @@
         "2"
       ]
     ],
-    "comment": "A goal DP and the quotative theme cannot both be smuggled."
+    "comment": "A goal DP and the quotative theme cannot both be smuggled.",
+    "verified": "page-image"
   },
   {
     "id": "storment2026_ex127",
@@ -1933,7 +1983,8 @@
         "2"
       ]
     ],
-    "comment": "Reversing agent and goal does not help."
+    "comment": "Reversing agent and goal does not help.",
+    "verified": "page-image"
   },
   {
     "id": "storment2026_ex129",
@@ -1960,7 +2011,8 @@
         "1"
       ]
     ],
-    "comment": "A PP goal is licensed inside the PP."
+    "comment": "A PP goal is licensed inside the PP.",
+    "verified": "page-image"
   },
   {
     "id": "storment2026_ex126",
@@ -2008,7 +2060,8 @@
         "2"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "storment2026_ex130",
@@ -2064,7 +2117,8 @@
         "1"
       ]
     ],
-    "comment": "The goal is expressed in an adjunct clause."
+    "comment": "The goal is expressed in an adjunct clause.",
+    "verified": "page-image"
   },
   {
     "id": "storment2026_ex134a",
@@ -2091,7 +2145,8 @@
         "2"
       ]
     ],
-    "comment": "The transitivity constraint holds of locative inversion too."
+    "comment": "The transitivity constraint holds of locative inversion too.",
+    "verified": "page-image"
   },
   {
     "id": "storment2026_ex135",
@@ -2135,7 +2190,8 @@
         "2"
       ]
     ],
-    "comment": "The paper takes (135) from Demuth and Mmusi (1997:14)."
+    "comment": "The paper takes (135) from Demuth and Mmusi (1997:14).",
+    "verified": "page-image"
   },
   {
     "id": "storment2026_ex55",
@@ -2187,7 +2243,8 @@
         "li"
       ]
     ],
-    "comment": "Setswana locative inversion with a class 17 locative subject marker."
+    "comment": "Setswana locative inversion with a class 17 locative subject marker.",
+    "verified": "page-image"
   },
   {
     "id": "storment2026_ex136a",
@@ -2210,7 +2267,8 @@
         "li"
       ]
     ],
-    "comment": "English locative inversion, the paper’s parallel to quotative inversion."
+    "comment": "English locative inversion, the paper’s parallel to quotative inversion.",
+    "verified": "page-image"
   },
   {
     "id": "storment2026_ex138",
@@ -2219,7 +2277,7 @@
       "paperLabel": "(138)"
     },
     "language": "tswa1253",
-    "primaryText": "Mo kamoreng go setse go tsene Seabelo.",
+    "primaryText": "Mo kamore-ng go setse go tsene Seabelo.",
     "discourseSegments": [],
     "glossedTokens": [
       [
@@ -2227,7 +2285,7 @@
         "18LOC"
       ],
       [
-        "kamoreng",
+        "kamore-ng",
         "room-LOC"
       ],
       [
@@ -2270,6 +2328,7 @@
         "SM17"
       ]
     ],
-    "comment": "Aspectual auxiliary raising in locative inversion, as in QI."
+    "comment": "Aspectual auxiliary raising in locative inversion, as in QI.",
+    "verified": "page-image"
   }
 ]

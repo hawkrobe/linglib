@@ -20,7 +20,8 @@
       ["diagnostic", "aspect"],
       ["aspect", "completive"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "ostrove2026_9a_continuous",
@@ -43,7 +44,8 @@
       ["diagnostic", "aspect"],
       ["aspect", "continuous"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "ostrove2026_9a_irrealis",
@@ -66,7 +68,8 @@
       ["diagnostic", "aspect"],
       ["aspect", "irrealis"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "ostrove2026_9b_completive",
@@ -89,7 +92,8 @@
       ["diagnostic", "aspect"],
       ["aspect", "completive"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "ostrove2026_9b_continuous",
@@ -112,7 +116,8 @@
       ["diagnostic", "aspect"],
       ["aspect", "continuous"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "ostrove2026_9b_irrealis",
@@ -135,7 +140,8 @@
       ["diagnostic", "aspect"],
       ["aspect", "irrealis"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "ostrove2026_9c_completive",
@@ -158,7 +164,8 @@
       ["diagnostic", "aspect"],
       ["aspect", "completive"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "ostrove2026_9c_continuous",
@@ -181,7 +188,8 @@
       ["diagnostic", "aspect"],
       ["aspect", "continuous"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "ostrove2026_9c_irrealis",
@@ -204,7 +212,8 @@
       ["diagnostic", "aspect"],
       ["aspect", "irrealis"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "ostrove2026_13a_completive",
@@ -227,7 +236,8 @@
       ["diagnostic", "aspect"],
       ["aspect", "completive"]
     ],
-    "comment": "The source prints the embedded subject as rà, without the clitic boundary."
+    "comment": "The source prints the embedded subject as rà, without the clitic boundary.",
+    "verified": "page-image"
   },
   {
     "id": "ostrove2026_13a_continuous",
@@ -250,7 +260,8 @@
       ["diagnostic", "aspect"],
       ["aspect", "continuous"]
     ],
-    "comment": "The source prints the embedded subject as rà, without the clitic boundary."
+    "comment": "The source prints the embedded subject as rà, without the clitic boundary.",
+    "verified": "page-image"
   },
   {
     "id": "ostrove2026_13a_irrealis",
@@ -273,7 +284,8 @@
       ["diagnostic", "aspect"],
       ["aspect", "irrealis"]
     ],
-    "comment": "The source prints the embedded subject as rà, without the clitic boundary."
+    "comment": "The source prints the embedded subject as rà, without the clitic boundary.",
+    "verified": "page-image"
   },
   {
     "id": "ostrove2026_13b_completive",
@@ -296,7 +308,8 @@
       ["diagnostic", "aspect"],
       ["aspect", "completive"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "ostrove2026_13b_continuous",
@@ -319,7 +332,8 @@
       ["diagnostic", "aspect"],
       ["aspect", "continuous"]
     ],
-    "comment": "As printed; (13a) has xóná for open:CONT."
+    "comment": "As printed; (13a) has xóná for open:CONT.",
+    "verified": "page-image"
   },
   {
     "id": "ostrove2026_13b_irrealis",
@@ -342,7 +356,8 @@
       ["diagnostic", "aspect"],
       ["aspect", "irrealis"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "ostrove2026_13c_completive",
@@ -365,7 +380,8 @@
       ["diagnostic", "aspect"],
       ["aspect", "completive"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "ostrove2026_13c_continuous",
@@ -388,7 +404,8 @@
       ["diagnostic", "aspect"],
       ["aspect", "continuous"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "ostrove2026_13c_irrealis",
@@ -411,7 +428,8 @@
       ["diagnostic", "aspect"],
       ["aspect", "irrealis"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "ostrove2026_13d_completive",
@@ -434,7 +452,8 @@
       ["diagnostic", "aspect"],
       ["aspect", "completive"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "ostrove2026_13d_continuous",
@@ -457,7 +476,8 @@
       ["diagnostic", "aspect"],
       ["aspect", "continuous"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "ostrove2026_13d_irrealis",
@@ -480,7 +500,8 @@
       ["diagnostic", "aspect"],
       ["aspect", "irrealis"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "ostrove2026_10a",
@@ -502,7 +523,8 @@
       ["clauseType", "finite"],
       ["diagnostic", "tense"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "ostrove2026_10b",
@@ -524,7 +546,8 @@
       ["clauseType", "finite"],
       ["diagnostic", "tense"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "ostrove2026_16a",
@@ -546,7 +569,8 @@
       ["clauseType", "tensedSubjunctive"],
       ["diagnostic", "tense"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "ostrove2026_16b",
@@ -568,7 +592,8 @@
       ["clauseType", "tensedSubjunctive"],
       ["diagnostic", "tense"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "ostrove2026_17a",
@@ -590,7 +615,8 @@
       ["clauseType", "untensedSubjunctive"],
       ["diagnostic", "tense"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "ostrove2026_17b",
@@ -612,7 +638,8 @@
       ["clauseType", "untensedSubjunctive"],
       ["diagnostic", "tense"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "ostrove2026_12a",
@@ -638,7 +665,8 @@
       ["clauseType", "finite"],
       ["diagnostic", "subject"]
     ],
-    "comment": "The embedded =rà may refer to Raul, to Pablo, or to another man."
+    "comment": "The embedded =rà may refer to Raul, to Pablo, or to another man.",
+    "verified": "page-image"
   },
   {
     "id": "ostrove2026_12b",
@@ -663,7 +691,8 @@
       ["clauseType", "finite"],
       ["diagnostic", "subject"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "ostrove2026_18a",
@@ -680,14 +709,15 @@
     "alternatives": [],
     "readings": [
       {"name": "controlled", "judgment": "acceptable"},
-      {"name": "free", "judgment": "unacceptable"}
+      {"name": "free", "judgment": "ungrammatical"}
     ],
     "paperFeatures": [
       ["verb", "kòni"],
       ["clauseType", "tensedSubjunctive"],
       ["diagnostic", "subject"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "ostrove2026_18b",
@@ -704,7 +734,7 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [
-      {"name": "controlled", "judgment": "unacceptable"},
+      {"name": "controlled", "judgment": "ungrammatical"},
       {"name": "free", "judgment": "acceptable"}
     ],
     "paperFeatures": [
@@ -712,7 +742,8 @@
       ["clauseType", "tensedSubjunctive"],
       ["diagnostic", "subject"]
     ],
-    "comment": "Ná forces disjoint reference. Repeated as (39a)."
+    "comment": "Ná forces disjoint reference. Repeated as (39a).",
+    "verified": "page-image"
   },
   {
     "id": "ostrove2026_18c",
@@ -737,7 +768,8 @@
       ["clauseType", "tensedSubjunctive"],
       ["diagnostic", "subject"]
     ],
-    "comment": "Ná is optional when the embedded subject does not match the matrix subject in φ-features. Repeated as (39b)."
+    "comment": "Ná is optional when the embedded subject does not match the matrix subject in φ-features. Repeated as (39b).",
+    "verified": "page-image"
   },
   {
     "id": "ostrove2026_18d",
@@ -764,7 +796,8 @@
       ["diagnostic", "subject"],
       ["embeddedSubject", "lexical"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "ostrove2026_19a",
@@ -791,7 +824,8 @@
       ["clauseType", "untensedSubjunctive"],
       ["diagnostic", "subject"]
     ],
-    "comment": "The source prints optional ná and the alternation {=ñá, =rà}; the intended disjoint subject is out in every variant."
+    "comment": "The source prints optional ná and the alternation {=ñá, =rà}; the intended disjoint subject is out in every variant.",
+    "verified": "page-image"
   },
   {
     "id": "ostrove2026_19b",
@@ -818,7 +852,8 @@
       ["clauseType", "untensedSubjunctive"],
       ["diagnostic", "subject"]
     ],
-    "comment": "The source prints optional ná and the alternation {=ñá, =rà}; the intended disjoint subject is out in every variant."
+    "comment": "The source prints optional ná and the alternation {=ñá, =rà}; the intended disjoint subject is out in every variant.",
+    "verified": "page-image"
   },
   {
     "id": "ostrove2026_40a",
@@ -845,7 +880,8 @@
       ["clauseType", "untensedSubjunctive"],
       ["diagnostic", "subject"]
     ],
-    "comment": "The source prints optional ná and the alternation {=ñá, =rà}; the intended disjoint subject is out in every variant."
+    "comment": "The source prints optional ná and the alternation {=ñá, =rà}; the intended disjoint subject is out in every variant.",
+    "verified": "page-image"
   },
   {
     "id": "ostrove2026_40b",
@@ -872,7 +908,8 @@
       ["clauseType", "untensedSubjunctive"],
       ["diagnostic", "subject"]
     ],
-    "comment": "The source prints optional ná and the alternation {=ñá, =rà}; the intended disjoint subject is out in every variant."
+    "comment": "The source prints optional ná and the alternation {=ñá, =rà}; the intended disjoint subject is out in every variant.",
+    "verified": "page-image"
   },
   {
     "id": "ostrove2026_41a",
@@ -897,7 +934,8 @@
       ["diagnostic", "subject"],
       ["embeddedSubject", "lexical"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "ostrove2026_41b",
@@ -922,7 +960,8 @@
       ["diagnostic", "subject"],
       ["embeddedSubject", "lexical"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "ostrove2026_20a",
@@ -945,7 +984,8 @@
       ["diagnostic", "fronting"],
       ["fronting", "out"]
     ],
-    "comment": "The source prints ndàtǔ'un 'talk'; (27a) lists the verb as ntatǔ'un 'chat'."
+    "comment": "The source prints ndàtǔ'un 'talk'; (27a) lists the verb as ntatǔ'un 'chat'.",
+    "verified": "page-image"
   },
   {
     "id": "ostrove2026_20b",
@@ -968,7 +1008,8 @@
       ["diagnostic", "fronting"],
       ["fronting", "out"]
     ],
-    "comment": "The source prints ká'á; (9a) has ká'án 'think:CONT'."
+    "comment": "The source prints ká'á; (9a) has ká'án 'think:CONT'.",
+    "verified": "page-image"
   },
   {
     "id": "ostrove2026_21a",
@@ -991,7 +1032,8 @@
       ["diagnostic", "fronting"],
       ["fronting", "within"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "ostrove2026_21b",
@@ -1014,7 +1056,8 @@
       ["diagnostic", "fronting"],
       ["fronting", "within"]
     ],
-    "comment": "Glossed 'believe' here; (27a) lists kuntàà ini as 'wonder'."
+    "comment": "Glossed 'believe' here; (27a) lists kuntàà ini as 'wonder'.",
+    "verified": "page-image"
   },
   {
     "id": "ostrove2026_22a",
@@ -1037,7 +1080,8 @@
       ["diagnostic", "fronting"],
       ["fronting", "out"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "ostrove2026_22b",
@@ -1060,7 +1104,8 @@
       ["diagnostic", "fronting"],
       ["fronting", "out"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "ostrove2026_23a",
@@ -1083,7 +1128,8 @@
       ["diagnostic", "fronting"],
       ["fronting", "within"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "ostrove2026_23b",
@@ -1106,7 +1152,8 @@
       ["diagnostic", "fronting"],
       ["fronting", "within"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "ostrove2026_24a",
@@ -1129,7 +1176,8 @@
       ["diagnostic", "fronting"],
       ["fronting", "out"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "ostrove2026_24b",
@@ -1152,7 +1200,8 @@
       ["diagnostic", "fronting"],
       ["fronting", "out"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "ostrove2026_25a",
@@ -1175,7 +1224,8 @@
       ["diagnostic", "fronting"],
       ["fronting", "within"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "ostrove2026_25b",
@@ -1198,7 +1248,8 @@
       ["diagnostic", "fronting"],
       ["fronting", "within"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "ostrove2026_109",
@@ -1221,7 +1272,8 @@
       ["diagnostic", "fronting"],
       ["fronting", "out"]
     ],
-    "comment": "Footnote 8: kòni 'want' is the one exception to the ban on fronting out of a tensed subjunctive."
+    "comment": "Footnote 8: kòni 'want' is the one exception to the ban on fronting out of a tensed subjunctive.",
+    "verified": "page-image"
   },
   {
     "id": "ostrove2026_30a",
@@ -1247,7 +1299,8 @@
       ["clauseType", "finite"],
       ["diagnostic", "ellipsis"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "ostrove2026_30b",
@@ -1272,7 +1325,8 @@
       ["clauseType", "finite"],
       ["diagnostic", "ellipsis"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "ostrove2026_32a",
@@ -1297,7 +1351,8 @@
       ["clauseType", "tensedSubjunctive"],
       ["diagnostic", "ellipsis"]
     ],
-    "comment": "The context is the one given for the strict reading."
+    "comment": "The context is the one given for the strict reading.",
+    "verified": "page-image"
   },
   {
     "id": "ostrove2026_32b",
@@ -1323,7 +1378,8 @@
       ["clauseType", "tensedSubjunctive"],
       ["diagnostic", "ellipsis"]
     ],
-    "comment": "The context is the one given for the strict reading."
+    "comment": "The context is the one given for the strict reading.",
+    "verified": "page-image"
   },
   {
     "id": "ostrove2026_33a",
@@ -1341,14 +1397,15 @@
     "alternatives": [],
     "readings": [
       {"name": "sloppy", "judgment": "acceptable"},
-      {"name": "strict", "judgment": "unacceptable"}
+      {"name": "strict", "judgment": "ungrammatical"}
     ],
     "paperFeatures": [
       ["verb", "kònì"],
       ["clauseType", "untensedSubjunctive"],
       ["diagnostic", "ellipsis"]
     ],
-    "comment": "The context is the one given for the strict reading. Xînì is the continuous stem of kònì 'know (how to)'."
+    "comment": "The context is the one given for the strict reading. Xînì is the continuous stem of kònì 'know (how to)'.",
+    "verified": "page-image"
   },
   {
     "id": "ostrove2026_33b",
@@ -1367,14 +1424,15 @@
     "alternatives": [],
     "readings": [
       {"name": "sloppy", "judgment": "acceptable"},
-      {"name": "strict", "judgment": "unacceptable"}
+      {"name": "strict", "judgment": "ungrammatical"}
     ],
     "paperFeatures": [
       ["verb", "nakú'ún ini"],
       ["clauseType", "untensedSubjunctive"],
       ["diagnostic", "ellipsis"]
     ],
-    "comment": "The context is the one given for the strict reading."
+    "comment": "The context is the one given for the strict reading.",
+    "verified": "page-image"
   },
   {
     "id": "ostrove2026_37a",
@@ -1396,7 +1454,8 @@
       ["clauseType", "untensedSubjunctive"],
       ["diagnostic", "partialControl"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "ostrove2026_37b",
@@ -1418,7 +1477,8 @@
       ["clauseType", "untensedSubjunctive"],
       ["diagnostic", "partialControl"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "ostrove2026_43a",
@@ -1441,7 +1501,8 @@
       ["diagnostic", "cCommand"],
       ["antecedent", "nonCCommanding"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "ostrove2026_43b",
@@ -1464,7 +1525,8 @@
       ["diagnostic", "cCommand"],
       ["antecedent", "nonCCommanding"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "ostrove2026_44a",
@@ -1487,7 +1549,8 @@
       ["diagnostic", "cCommand"],
       ["antecedent", "nonCCommanding"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "ostrove2026_44b",
@@ -1510,7 +1573,8 @@
       ["diagnostic", "cCommand"],
       ["antecedent", "nonCCommanding"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "ostrove2026_45a",
@@ -1533,7 +1597,8 @@
       ["diagnostic", "cCommand"],
       ["antecedent", "nonCCommanding"]
     ],
-    "comment": "The antecedent is a possessor inside an adjunct."
+    "comment": "The antecedent is a possessor inside an adjunct.",
+    "verified": "page-image"
   },
   {
     "id": "ostrove2026_45b",
@@ -1556,7 +1621,8 @@
       ["diagnostic", "cCommand"],
       ["antecedent", "nonCCommanding"]
     ],
-    "comment": "The antecedent is a possessor inside an adjunct."
+    "comment": "The antecedent is a possessor inside an adjunct.",
+    "verified": "page-image"
   },
   {
     "id": "ostrove2026_46a",
@@ -1579,7 +1645,8 @@
       ["diagnostic", "cCommand"],
       ["antecedent", "nonCCommanding"]
     ],
-    "comment": "The antecedent is a possessor inside an adjunct."
+    "comment": "The antecedent is a possessor inside an adjunct.",
+    "verified": "page-image"
   },
   {
     "id": "ostrove2026_46b",
@@ -1602,7 +1669,8 @@
       ["diagnostic", "cCommand"],
       ["antecedent", "nonCCommanding"]
     ],
-    "comment": "The antecedent is a possessor inside an adjunct."
+    "comment": "The antecedent is a possessor inside an adjunct.",
+    "verified": "page-image"
   },
   {
     "id": "ostrove2026_67a",
@@ -1625,7 +1693,8 @@
       ["diagnostic", "clitic"],
       ["embeddedSubject", "nonclitic"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "ostrove2026_67b",
@@ -1648,17 +1717,18 @@
       ["diagnostic", "clitic"],
       ["embeddedSubject", "nonclitic"]
     ],
-    "comment": "The subject is a clitic strengthened by the definite article."
+    "comment": "The subject is a clitic strengthened by the definite article.",
+    "verified": "page-image"
   },
   {
     "id": "ostrove2026_67c",
     "source": {"bibkey": "ostrove-2026", "paperLabel": "(67c)"},
     "language": "sanm1291",
-    "primaryText": "Kìxǎ mí leso taxá'á rí kani",
+    "primaryText": "Kìxǎ mí leso taxá'á rí kan",
     "discourseSegments": [],
     "glossedTokens": [
       ["Kìxǎ", "start:COMP"], ["mí", "the"], ["leso", "rabbit"], ["taxá'á", "dance:IRR"],
-      ["rí", "it.AML"], ["kani", "there"]
+      ["rí", "it.AML"], ["kan", "there"]
     ],
     "translation": "The rabbit started to dance.",
     "context": "",
@@ -1671,7 +1741,8 @@
       ["diagnostic", "clitic"],
       ["embeddedSubject", "nonclitic"]
     ],
-    "comment": "The subject is a pronoun strengthened by a demonstrative."
+    "comment": "The subject is a pronoun strengthened by a demonstrative.",
+    "verified": "page-image"
   },
   {
     "id": "ostrove2026_68a",
@@ -1694,7 +1765,8 @@
       ["diagnostic", "clitic"],
       ["embeddedSubject", "nonclitic"]
     ],
-    "comment": "The subject is a clitic strengthened by the definite article."
+    "comment": "The subject is a clitic strengthened by the definite article.",
+    "verified": "page-image"
   },
   {
     "id": "ostrove2026_68b",
@@ -1717,7 +1789,8 @@
       ["diagnostic", "clitic"],
       ["embeddedSubject", "nonclitic"]
     ],
-    "comment": "The subject is a clitic strengthened by the definite article."
+    "comment": "The subject is a clitic strengthened by the definite article.",
+    "verified": "page-image"
   },
   {
     "id": "ostrove2026_75a",
@@ -1738,16 +1811,17 @@
       ["diagnostic", "exemptAnaphor"],
       ["antecedent", "quantified"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "ostrove2026_75b",
     "source": {"bibkey": "ostrove-2026", "paperLabel": "(75b)"},
     "language": "sanm1291",
-    "primaryText": "Ni'iin =ná bálí nǐ- xini táta mí =ná",
+    "primaryText": "Ni'iin =ná báli nǐ- xini táta mí =ná",
     "discourseSegments": [],
     "glossedTokens": [
-      ["Ni'iin", "no"], ["=ná", "=they.FEM"], ["bálí", "little.PL"], ["nǐ-", "COMP.NEG"],
+      ["Ni'iin", "no"], ["=ná", "=they.FEM"], ["báli", "little.PL"], ["nǐ-", "COMP.NEG"],
       ["xini", "see"], ["táta", "father"], ["mí", "the"], ["=ná", "=their.FEM"]
     ],
     "translation": "No girl saw her own father.",
@@ -1759,7 +1833,8 @@
       ["diagnostic", "exemptAnaphor"],
       ["antecedent", "quantified"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "ostrove2026_86a",
@@ -1782,7 +1857,8 @@
       ["diagnostic", "exemptAnaphor"],
       ["antecedent", "quantified"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "ostrove2026_86b",
@@ -1806,7 +1882,8 @@
       ["diagnostic", "exemptAnaphor"],
       ["antecedent", "quantified"]
     ],
-    "comment": "The source glosses 'see' as IRRR."
+    "comment": "The source glosses 'see' as IRRR.",
+    "verified": "page-image"
   },
   {
     "id": "ostrove2026_87a",
@@ -1829,7 +1906,8 @@
       ["diagnostic", "exemptAnaphor"],
       ["antecedent", "quantified"]
     ],
-    "comment": "The source translates 'started to bit'."
+    "comment": "The source translates 'started to bit'.",
+    "verified": "page-image"
   },
   {
     "id": "ostrove2026_87b",
@@ -1853,6 +1931,7 @@
       ["diagnostic", "exemptAnaphor"],
       ["antecedent", "quantified"]
     ],
-    "comment": "The source glosses 'see' as IRRR."
+    "comment": "The source glosses 'see' as IRRR.",
+    "verified": "page-image"
   }
 ]

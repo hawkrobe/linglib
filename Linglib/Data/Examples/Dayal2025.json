@@ -3,10 +3,10 @@
     "id": "dayal2025_ex3b",
     "source": {"bibkey": "dayal-2025", "paperLabel": "(3b)"},
     "language": "hind1269",
-    "primaryText": "ravi ja:nta: hai (ki) anu ja:egi: ya: nahĩ:.",
+    "primaryText": "ravi ja:nta: hai (ki) anu ja:egi: *(ya: nahĩ:).",
     "discourseSegments": [],
     "glossedTokens": [
-      ["ravi", "Ravi"], ["ja:nta:", "know"], ["hai", "be.PRS"], ["ki", "SUB"], ["anu", "Anu"],
+      ["ravi", "Ravi"], ["ja:nta:", "knows"], ["hai", ""], ["ki", "SUB"], ["anu", "Anu"],
       ["ja:egi:", "will.go"], ["ya:", "or"], ["nahĩ:", "not"]
     ],
     "translation": "Ravi knows whether Anu will go or not.",
@@ -19,7 +19,8 @@
       ["particle", "ya: nahĩ:"],
       ["embedding", "subordination"]
     ],
-    "comment": "The subordinated polar question requires the overt alternative; without it the clause is ungrammatical (71)."
+    "comment": "The subordinated polar question requires the overt alternative; without it the clause is ungrammatical (71).",
+    "verified": "page-image"
   },
   {
     "id": "dayal2025_ex5a",
@@ -40,7 +41,8 @@
       ["particle", "ka"],
       ["embedding", "matrix"]
     ],
-    "comment": "The Q-particle can be dropped only in matrix clauses."
+    "comment": "The Q-particle can be dropped only in matrix clauses.",
+    "verified": "page-image"
   },
   {
     "id": "dayal2025_ex5b",
@@ -62,7 +64,8 @@
       ["particle", "ka"],
       ["embedding", "subordination"]
     ],
-    "comment": "The Q-particle is obligatory in subordinated interrogatives: it clause-types the CP (15)."
+    "comment": "The Q-particle is obligatory in subordinated interrogatives: it clause-types the CP (15).",
+    "verified": "page-image"
   },
   {
     "id": "dayal2025_ex8a",
@@ -140,7 +143,8 @@
       ["section", "1.2"],
       ["embedding", "subordination"]
     ],
-    "comment": "*The question is* takes subordinated and quasi-subordinated interrogatives but not declarative questions: a PerspP-selecting rogative."
+    "comment": "*The question is* takes subordinated and quasi-subordinated interrogatives but not declarative questions: a PerspP-selecting rogative.",
+    "verified": "page-image"
   },
   {
     "id": "dayal2025_ex11b",
@@ -158,7 +162,8 @@
       ["section", "1.2"],
       ["embedding", "quasi"]
     ],
-    "comment": "Quasi-subordination under *the question is*."
+    "comment": "Quasi-subordination under *the question is*.",
+    "verified": "page-image"
   },
   {
     "id": "dayal2025_ex11c",
@@ -177,7 +182,8 @@
       ["verb", "depend on"],
       ["embedding", "subordination"]
     ],
-    "comment": "*Depend on*, *be up to*, *investigate*, *look into* take interrogatives with subordinate profile only."
+    "comment": "*Depend on*, *be up to*, *investigate*, *look into* take interrogatives with subordinate profile only.",
+    "verified": "page-image"
   },
   {
     "id": "dayal2025_ex11d",
@@ -196,7 +202,8 @@
       ["verb", "depend on"],
       ["embedding", "quasi"]
     ],
-    "comment": "A CP-selecting rogative rejects embedded inversion; it also shows no shiftiness (fn. 21)."
+    "comment": "A CP-selecting rogative rejects embedded inversion; it also shows no shiftiness (fn. 21).",
+    "verified": "page-image"
   },
   {
     "id": "dayal2025_ex13a",
@@ -217,7 +224,8 @@
       ["embedding", "quasi"],
       ["syntax", "interrogative"]
     ],
-    "comment": "Declarative questions do not quasi-subordinate even under predicates that allow embedded inversion (Gunlogson 2004, McCloskey 2006); (67) derives this from the absence of SAP."
+    "comment": "Declarative questions do not quasi-subordinate even under predicates that allow embedded inversion (Gunlogson 2004, McCloskey 2006); (67) derives this from the absence of SAP.",
+    "verified": "page-image"
   },
   {
     "id": "dayal2025_ex14a",
@@ -236,7 +244,8 @@
       ["verb", "ask"],
       ["embedding", "quotation"]
     ],
-    "comment": "A quoted interrogative question under *ask*, which selects interrogative quotations."
+    "comment": "A quoted interrogative question under *ask*, which selects interrogative quotations.",
+    "verified": "page-image"
   },
   {
     "id": "dayal2025_ex14b",
@@ -257,7 +266,8 @@
       ["verb", "ask"],
       ["complement", "declarativeAssertion"]
     ],
-    "comment": "A quoted declarative assertion is not an interrogative quotation, so *ask* rejects it while *say* takes it."
+    "comment": "A quoted declarative assertion is not an interrogative quotation, so *ask* rejects it while *say* takes it.",
+    "verified": "page-image"
   },
   {
     "id": "dayal2025_ex14c",
@@ -277,13 +287,14 @@
       ["embedding", "quotation"],
       ["syntax", "declarative"]
     ],
-    "comment": "A quoted declarative question satisfies *ask*'s rogative requirement: declarative questions are genuine questions and embed only as quotations."
+    "comment": "A quoted declarative question satisfies *ask*'s rogative requirement: declarative questions are genuine questions and embed only as quotations.",
+    "verified": "page-image"
   },
   {
     "id": "dayal2025_ex15b",
     "source": {"bibkey": "dayal-2025", "paperLabel": "(15b)"},
     "language": "nucl1643",
-    "primaryText": "Tanaka-kun-wa [Mary-ga nani-o kat-ta ka] sit-tei-mas-u.",
+    "primaryText": "Tanaka-kun-wa [Mary-ga nani-o kat-ta *(ka)] sit-tei-mas-u.",
     "discourseSegments": [],
     "glossedTokens": [
       ["Tanaka-kun-wa", "Tanaka-HON-TOP"], ["Mary-ga", "Mary-NOM"], ["nani-o", "what-ACC"],
@@ -299,17 +310,18 @@
       ["particle", "ka"],
       ["embedding", "subordination"]
     ],
-    "comment": "*ka* is obligatory here; with *koto* in place of *ka* the complement is declarative (15a)."
+    "comment": "*ka* is obligatory here; with *koto* in place of *ka* the complement is declarative (15a).",
+    "verified": "page-image"
   },
   {
     "id": "dayal2025_ex16b",
-    "source": {"bibkey": "bhatt-dayal-2020", "paperLabel": "(16b)"},
-    "reportedIn": {"bibkey": "dayal-2025", "paperLabel": "(16b)"},
+    "source": {"bibkey": "dayal-2025", "paperLabel": "(16b)"},
+    "reportedIn": null,
     "language": "hind1269",
     "primaryText": "ravi ja:nta: hai ki kya: anu ja:egi:.",
     "discourseSegments": [],
     "glossedTokens": [
-      ["ravi", "Ravi"], ["ja:nta:", "know"], ["hai", "be.PRS"], ["ki", "SUB"], ["kya:", "PQP"],
+      ["ravi", "Ravi"], ["ja:nta:", "knows"], ["hai", ""], ["ki", "SUB"], ["kya:", "PQP"],
       ["anu", "Anu"], ["ja:egi:", "will.go"]
     ],
     "translation": "Intended: Ravi knows whether Anu will go.",
@@ -324,11 +336,12 @@
       ["particle", "kya:"],
       ["embedding", "subordination"]
     ],
-    "comment": "*kya:* is not a clause-typing particle: it is excluded from the subordinated complement of a responsive predicate, where a clause-typer would be needed most."
+    "comment": "*kya:* is not a clause-typing particle: it is excluded from the subordinated complement of a responsive predicate, where a clause-typer would be needed most.",
+    "verified": "page-image"
   },
   {
     "id": "dayal2025_ex17a",
-    "source": {"bibkey": "bhatt-dayal-2020", "paperLabel": "(17a)"},
+    "source": {"bibkey": "bhatt-dayal-2020", "paperLabel": "(9a)"},
     "reportedIn": {"bibkey": "dayal-2025", "paperLabel": "(17a)"},
     "language": "hind1269",
     "primaryText": "Ti:char-ne anu-se pu:cha: ki kya: vo ca:i piyegi:.",
@@ -347,11 +360,12 @@
       ["particle", "kya:"],
       ["embedding", "quasi"]
     ],
-    "comment": "*kya:* tracks English embedded inversion: acceptable under *ask*."
+    "comment": "*kya:* tracks English embedded inversion: acceptable under *ask*.",
+    "verified": "page-image"
   },
   {
     "id": "dayal2025_ex17b",
-    "source": {"bibkey": "bhatt-dayal-2020", "paperLabel": "(17b)"},
+    "source": {"bibkey": "bhatt-dayal-2020", "paperLabel": "(14a)"},
     "reportedIn": {"bibkey": "dayal-2025", "paperLabel": "(17b)"},
     "language": "hind1269",
     "primaryText": "sava:l yeh hai ki kya: nayi: vyavastha: ka:gar sa:bit hogi:.",
@@ -371,11 +385,12 @@
       ["particle", "kya:"],
       ["embedding", "quasi"]
     ],
-    "comment": "Acceptable under *the question is*."
+    "comment": "Acceptable under *the question is*.",
+    "verified": "page-image"
   },
   {
     "id": "dayal2025_ex17c",
-    "source": {"bibkey": "bhatt-dayal-2020", "paperLabel": "(17c)"},
+    "source": {"bibkey": "bhatt-dayal-2020", "paperLabel": "(15b)"},
     "reportedIn": {"bibkey": "dayal-2025", "paperLabel": "(17c)"},
     "language": "hind1269",
     "primaryText": "kya: vo ja:egi: ya: nahĩ: uske mu:D par nirbhar karta: hai.",
@@ -383,9 +398,9 @@
     "glossedTokens": [
       ["kya:", "PQP"], ["vo", "she"], ["ja:egi:", "will.go"], ["ya:", "or"], ["nahĩ:", "not"],
       ["uske", "her"], ["mu:D", "mood"], ["par", "on"], ["nirbhar", "depend"], ["karta:", "does"],
-      ["hai", "be.PRS"]
+      ["hai", ""]
     ],
-    "translation": "Intended: Whether she will go or not depends on her mood.",
+    "translation": "Whether she will go or not depends on her mood.",
     "context": "",
     "judgment": "ungrammatical",
     "alternatives": [],
@@ -395,7 +410,8 @@
       ["particle", "kya:"],
       ["embedding", "subordination"]
     ],
-    "comment": "Excluded under *depend on*, as English embedded inversion is (11d)."
+    "comment": "Excluded under *depend on*, as English embedded inversion is (11d). The paper prints nahī: here and nahĩ: elsewhere.",
+    "verified": "page-image"
   },
   {
     "id": "dayal2025_ex18a",
@@ -414,7 +430,8 @@
       ["particle", "quick"],
       ["embedding", "matrix"]
     ],
-    "comment": "A meta question particle: signals that the addressee should answer without delay, a modifier of the speech act (29)."
+    "comment": "A meta question particle: signals that the addressee should answer without delay, a modifier of the speech act (29).",
+    "verified": "page-image"
   },
   {
     "id": "dayal2025_ex19a",
@@ -433,7 +450,8 @@
       ["particle", "quick"],
       ["embedding", "subordination"]
     ],
-    "comment": "*Quick* is ungrammatical in embedded position; *quickly* there can only modify the manner of asking."
+    "comment": "*Quick* is ungrammatical in embedded position; *quickly* there can only modify the manner of asking.",
+    "verified": "page-image"
   },
   {
     "id": "dayal2025_ex18b",
@@ -467,7 +485,7 @@
       ["Boku-wa", "I-TOP"], ["kimi-no", "you-GEN"], ["namae-ga", "name-NOM"],
       ["nan-da-kke", "what-COP-KKE"], ["ka", "Q"], ["siri-tai", "know-want"]
     ],
-    "translation": "Intended: I want to know your name, please remind me.",
+    "translation": "Intended: [I used to know but now I've forgotten, so] I want to know your name, please remind me.",
     "context": "",
     "judgment": "ungrammatical",
     "alternatives": [],
@@ -477,7 +495,8 @@
       ["particle", "kke"],
       ["embedding", "subordination"]
     ],
-    "comment": "A meta question particle cannot embed, since SAP does not embed except as a quotation."
+    "comment": "A meta question particle cannot embed, since SAP does not embed except as a quotation.",
+    "verified": "page-image"
   },
   {
     "id": "dayal2025_ex24a_wonder",
@@ -496,7 +515,8 @@
       ["verb", "wonder"],
       ["embedding", "subordination"]
     ],
-    "comment": "Clause-typing at C explains embeddability: predicates select C_+WH or C_-WH or are underspecified."
+    "comment": "Clause-typing at C explains embeddability: predicates select C_+WH or C_-WH or are underspecified.",
+    "verified": "page-image"
   },
   {
     "id": "dayal2025_ex24a_know",
@@ -515,7 +535,8 @@
       ["verb", "know"],
       ["embedding", "subordination"]
     ],
-    "comment": "A responsive predicate takes the subordinated interrogative."
+    "comment": "A responsive predicate takes the subordinated interrogative.",
+    "verified": "page-image"
   },
   {
     "id": "dayal2025_ex24a_believe",
@@ -534,7 +555,8 @@
       ["verb", "believe"],
       ["embedding", "subordination"]
     ],
-    "comment": "An uninterrogative predicate takes no set-of-propositions complement (30)."
+    "comment": "An uninterrogative predicate takes no set-of-propositions complement (30).",
+    "verified": "page-image"
   },
   {
     "id": "dayal2025_ex38b",
@@ -555,7 +577,8 @@
       ["verb", "know"],
       ["embedding", "quasi"]
     ],
-    "comment": "The rogative *want to know* takes the quasi-subordinated question (38a), the responsive *know* does not."
+    "comment": "The rogative *want to know* takes the quasi-subordinated question (38a), the responsive *know* does not.",
+    "verified": "page-image"
   },
   {
     "id": "dayal2025_ex39a",
@@ -564,8 +587,8 @@
     "primaryText": "anu ja:nna: ca:hti: hai [ki (kya:) tum cai piyoge↑].",
     "discourseSegments": [],
     "glossedTokens": [
-      ["anu", "Anu"], ["ja:nna:", "to.know"], ["ca:hti:", "wants"], ["hai", "be.PRS"],
-      ["ki", "SUB"], ["kya:", "PQP"], ["tum", "you"], ["cai", "tea"], ["piyoge", "will.drink"]
+      ["anu", "Anu"], ["ja:nna:", "to.know"], ["ca:hti:", "wants"], ["hai", ""], ["ki", "SUB"],
+      ["kya:", "PQP"], ["tum", "you"], ["cai", "tea"], ["piyoge", "will.drink"]
     ],
     "translation": "Anu wants to know whether you'll drink tea.",
     "context": "",
@@ -577,7 +600,8 @@
       ["embedding", "quasi"],
       ["verbClass", "rogativePerspP"]
     ],
-    "comment": "The Hindi-Urdu counterpart of (38a): a rogative predicate takes the quasi-subordinated question with *kya:*."
+    "comment": "The Hindi-Urdu counterpart of (38a): a rogative predicate takes the quasi-subordinated question with *kya:*.",
+    "verified": "page-image"
   },
   {
     "id": "dayal2025_ex39b",
@@ -586,7 +610,7 @@
     "primaryText": "anu ja:nti: hai [ki (kya:) tum cai piyoge(↑)].",
     "discourseSegments": [],
     "glossedTokens": [
-      ["anu", "Anu"], ["ja:nti:", "knows"], ["hai", "be.PRS"], ["ki", "SUB"], ["kya:", "PQP"],
+      ["anu", "Anu"], ["ja:nti:", "knows"], ["hai", ""], ["ki", "SUB"], ["kya:", "PQP"],
       ["tum", "you"], ["cai", "tea"], ["piyoge", "will.drink"]
     ],
     "translation": "Intended: Anu knows whether you'll drink tea.",
@@ -599,11 +623,12 @@
       ["embedding", "quasi"],
       ["verbClass", "responsive"]
     ],
-    "comment": "The Hindi-Urdu counterpart of (38b): a bare responsive rejects the quasi-subordinated question."
+    "comment": "The Hindi-Urdu counterpart of (38b): a bare responsive rejects the quasi-subordinated question.",
+    "verified": "page-image"
   },
   {
     "id": "dayal2025_ex40a",
-    "source": {"bibkey": "mccloskey-2006", "paperLabel": "(40a)"},
+    "source": {"bibkey": "mccloskey-2006", "paperLabel": "p. 112"},
     "reportedIn": {"bibkey": "dayal-2025", "paperLabel": "(40a)"},
     "language": "stan1293",
     "primaryText": "I remember [was Henry a communist↑].",
@@ -619,11 +644,12 @@
       ["verb", "remember"],
       ["embedding", "quasi"]
     ],
-    "comment": "*Remember* aligns with *know* on knowledge at the evaluation time and rejects embedded inversion (42a)."
+    "comment": "*Remember* aligns with *know* on knowledge at the evaluation time and rejects embedded inversion (42a).",
+    "verified": "page-image"
   },
   {
     "id": "dayal2025_ex40b",
-    "source": {"bibkey": "mccloskey-2006", "paperLabel": "(40b)"},
+    "source": {"bibkey": "mccloskey-2006", "paperLabel": "p. 112"},
     "reportedIn": {"bibkey": "dayal-2025", "paperLabel": "(40b)"},
     "language": "stan1293",
     "primaryText": "I don't remember [was Henry a communist↑].",
@@ -640,11 +666,12 @@
       ["embedding", "quasi"],
       ["negated", "true"]
     ],
-    "comment": "McCloskey's shiftiness: negation of the responsive predicate removes the contradiction with the center's possible ignorance (42b)."
+    "comment": "McCloskey's shiftiness: negation of the responsive predicate removes the contradiction with the center's possible ignorance (42b).",
+    "verified": "page-image"
   },
   {
     "id": "dayal2025_ex40c",
-    "source": {"bibkey": "mccloskey-2006", "paperLabel": "(40c)"},
+    "source": {"bibkey": "mccloskey-2006", "paperLabel": "p. 112"},
     "reportedIn": {"bibkey": "dayal-2025", "paperLabel": "(40c)"},
     "language": "stan1293",
     "primaryText": "Do you remember↑ [was Henry a communist↑]",
@@ -661,18 +688,19 @@
       ["embedding", "quasi"],
       ["questioned", "true"]
     ],
-    "comment": "Questioning the responsive predicate leaves both options open, one of them compatible with possible ignorance (42c)."
+    "comment": "Questioning the responsive predicate leaves both options open, one of them compatible with possible ignorance (42c).",
+    "verified": "page-image"
   },
   {
     "id": "dayal2025_ex41a",
-    "source": {"bibkey": "bhatt-dayal-2020", "paperLabel": "(41a)"},
+    "source": {"bibkey": "bhatt-dayal-2020", "paperLabel": "(10b)"},
     "reportedIn": {"bibkey": "dayal-2025", "paperLabel": "(41a)"},
     "language": "hind1269",
     "primaryText": "koi: nahĩ: ja:nta: [ki kya: TiTo sTa:lin-se mile the↑].",
     "discourseSegments": [],
     "glossedTokens": [
       ["koi:", "someone"], ["nahĩ:", "not"], ["ja:nta:", "knows"], ["ki", "SUB"], ["kya:", "PQP"],
-      ["TiTo", "Tito"], ["sTa:lin-se", "Stalin-with"], ["mile", "met"], ["the", "be.PST"]
+      ["TiTo", "Tito"], ["sTa:lin-se", "Stalin-with"], ["mile", "met"], ["the", ""]
     ],
     "translation": "Nobody knows, did Tito meet with Stalin?",
     "context": "",
@@ -685,7 +713,8 @@
       ["verbClass", "responsive"],
       ["negated", "true"]
     ],
-    "comment": "Shiftiness in Hindi-Urdu: a negated responsive takes *kya:* (corpus COSH, intonation added by Bhatt and Dayal 2020)."
+    "comment": "Shiftiness in Hindi-Urdu: a negated responsive takes *kya:* (corpus COSH, intonation added by Bhatt and Dayal 2020).",
+    "verified": "page-image"
   },
   {
     "id": "dayal2025_ex41b",
@@ -694,9 +723,9 @@
     "primaryText": "kisi:-ko bhi: ma:lum hai↑ [ki (kya:) TiTo sTa:lin-se mile the↑]",
     "discourseSegments": [],
     "glossedTokens": [
-      ["kisi:-ko", "someone-ACC"], ["bhi:", "at.all"], ["ma:lum", "know"], ["hai", "be.PRS"],
+      ["kisi:-ko", "someone-ACC"], ["bhi:", "at.all"], ["ma:lum", "know"], ["hai", ""],
       ["ki", "SUB"], ["kya:", "PQP"], ["TiTo", "Tito"], ["sTa:lin-se", "Stalin-with"],
-      ["mile", "met"], ["the", "be.PST"]
+      ["mile", "met"], ["the", ""]
     ],
     "translation": "Does anyone know, did Tito meet with Stalin?",
     "context": "",
@@ -709,7 +738,8 @@
       ["verbClass", "responsive"],
       ["questioned", "true"]
     ],
-    "comment": "Shiftiness in Hindi-Urdu: a questioned responsive takes *kya:*."
+    "comment": "Shiftiness in Hindi-Urdu: a questioned responsive takes *kya:*.",
+    "verified": "page-image"
   },
   {
     "id": "dayal2025_ex43a",
@@ -728,7 +758,8 @@
       ["verb", "forget"],
       ["embedding", "quasi"]
     ],
-    "comment": "A naturally occurring case: *forget* entails ignorance of the answer at the evaluation time, consistent with Persp_CQ, unlike *remember* (43b)."
+    "comment": "A naturally occurring case: *forget* entails ignorance of the answer at the evaluation time, consistent with Persp_CQ, unlike *remember* (43b).",
+    "verified": "page-image"
   },
   {
     "id": "dayal2025_ex45a",
@@ -749,7 +780,8 @@
       ["verb", "know"],
       ["embedding", "quasi"]
     ],
-    "comment": "The minimal pair with *want to know*, explained by the center's ignorance of and interest in the answer."
+    "comment": "The minimal pair with *want to know*, explained by the center's ignorance of and interest in the answer.",
+    "verified": "page-image"
   },
   {
     "id": "dayal2025_ex45b_forget",
@@ -768,7 +800,8 @@
       ["verb", "forget"],
       ["embedding", "quasi"]
     ],
-    "comment": "The minimal pair *forget* vs. *remember* with a first-person subject."
+    "comment": "The minimal pair *forget* vs. *remember* with a first-person subject.",
+    "verified": "page-image"
   },
   {
     "id": "dayal2025_ex45b_remember",
@@ -787,7 +820,8 @@
       ["verb", "remember"],
       ["embedding", "quasi"]
     ],
-    "comment": "The minimal pair *forget* vs. *remember* with a first-person subject."
+    "comment": "The minimal pair *forget* vs. *remember* with a first-person subject.",
+    "verified": "page-image"
   },
   {
     "id": "dayal2025_ex46a",
@@ -807,7 +841,8 @@
       ["embedding", "quasi"],
       ["questioned", "true"]
     ],
-    "comment": "A positive answer to the matrix question can resolve the embedded question the speaker is interested in."
+    "comment": "A positive answer to the matrix question can resolve the embedded question the speaker is interested in.",
+    "verified": "page-image"
   },
   {
     "id": "dayal2025_ex46b",
@@ -828,7 +863,8 @@
       ["questioned", "true"],
       ["invested", "speaker"]
     ],
-    "comment": "Unacceptable although the possible-ignorance requirement is satisfiable: a positive answer to the matrix question cannot resolve the embedded question, and it is the speaker, not the addressee, who is invested in it (§3.3.2)."
+    "comment": "Unacceptable although the possible-ignorance requirement is satisfiable: a positive answer to the matrix question cannot resolve the embedded question, and it is the speaker, not the addressee, who is invested in it (§3.3.2).",
+    "verified": "page-image"
   },
   {
     "id": "dayal2025_ex49a_you",
@@ -850,7 +886,8 @@
       ["embedding", "quasi"],
       ["invested", "speaker"]
     ],
-    "comment": "If the addressee has forgotten the answer they cannot help resolve the question the speaker is invested in."
+    "comment": "If the addressee has forgotten the answer they cannot help resolve the question the speaker is invested in.",
+    "verified": "page-image"
   },
   {
     "id": "dayal2025_ex62a",
@@ -872,7 +909,8 @@
       ["syntax", "interrogative"],
       ["embedding", "matrix"]
     ],
-    "comment": "Interrogative syntax is felicitous in either context."
+    "comment": "Interrogative syntax is felicitous in either context.",
+    "verified": "page-image"
   },
   {
     "id": "dayal2025_ex62b",
@@ -894,7 +932,8 @@
       ["syntax", "declarative"],
       ["embedding", "matrix"]
     ],
-    "comment": "A rising declarative is only a biased question in English: C is typed -WH, so Persp must be CP, which only the combined act ASSERT•ASK licenses (64)–(65)."
+    "comment": "A rising declarative is only a biased question in English: C is typed -WH, so Persp must be CP, which only the combined act ASSERT•ASK licenses (64)–(65).",
+    "verified": "page-image"
   },
   {
     "id": "dayal2025_ex63a",
@@ -903,7 +942,7 @@
     "primaryText": "a:p shara:b pi:te haĩ?",
     "discourseSegments": [],
     "glossedTokens": [
-      ["a:p", "you"], ["shara:b", "wine"], ["pi:te", "drink"], ["haĩ", "be.PRS"]
+      ["a:p", "you"], ["shara:b", "wine"], ["pi:te", "drink"], ["haĩ", ""]
     ],
     "translation": "Do you drink wine? / You drink wine?",
     "context": "",
@@ -918,7 +957,8 @@
       ["syntax", "declarative"],
       ["embedding", "matrix"]
     ],
-    "comment": "Hindi-Urdu makes no syntactic distinction between declaratives and polar questions: C may stay untyped, so a rising declarative can be a neutral question (66)."
+    "comment": "Hindi-Urdu makes no syntactic distinction between declaratives and polar questions: C may stay untyped, so a rising declarative can be a neutral question (66).",
+    "verified": "page-image"
   },
   {
     "id": "dayal2025_ex63b",
@@ -942,7 +982,8 @@
       ["syntax", "declarative"],
       ["embedding", "matrix"]
     ],
-    "comment": "Italian patterns with Hindi-Urdu: clause-typing can be delayed."
+    "comment": "Italian patterns with Hindi-Urdu: clause-typing can be delayed.",
+    "verified": "page-image"
   },
   {
     "id": "dayal2025_ex69a_en",
@@ -961,7 +1002,8 @@
       ["simplex", "true"],
       ["embedding", "matrix"]
     ],
-    "comment": "A simplex polar question as a matrix clause."
+    "comment": "A simplex polar question as a matrix clause.",
+    "verified": "page-image"
   },
   {
     "id": "dayal2025_ex69b_en",
@@ -980,7 +1022,8 @@
       ["simplex", "true"],
       ["embedding", "quasi"]
     ],
-    "comment": "A simplex polar question quasi-subordinated."
+    "comment": "A simplex polar question quasi-subordinated.",
+    "verified": "page-image"
   },
   {
     "id": "dayal2025_ex69c_en",
@@ -999,7 +1042,8 @@
       ["simplex", "true"],
       ["embedding", "subordination"]
     ],
-    "comment": "*Whether* types the subordinated simplex polar clause."
+    "comment": "*Whether* types the subordinated simplex polar clause.",
+    "verified": "page-image"
   },
   {
     "id": "dayal2025_ex69a_it",
@@ -1086,7 +1130,8 @@
       ["simplex", "true"],
       ["embedding", "matrix"]
     ],
-    "comment": "A simplex polar question is typed by Persp_CQ with its rising boundary tone (72b)."
+    "comment": "A simplex polar question is typed by Persp_CQ with its rising boundary tone (72b).",
+    "verified": "page-image"
   },
   {
     "id": "dayal2025_ex70b",
@@ -1095,9 +1140,8 @@
     "primaryText": "ravi ja:nna: ca:hta: hai [ki (kya:) anu ja:egi: (ya: nahĩ:)↑]",
     "discourseSegments": [],
     "glossedTokens": [
-      ["ravi", "Ravi"], ["ja:nna:", "to.know"], ["ca:hta:", "wants"], ["hai", "be.PRS"],
-      ["ki", "SUB"], ["kya:", "PQP"], ["anu", "Anu"], ["ja:egi:", "will.go"], ["ya:", "or"],
-      ["nahĩ:", "not"]
+      ["ravi", "Ravi"], ["ja:nna:", "to.know"], ["ca:hta:", "wants"], ["hai", ""], ["ki", "SUB"],
+      ["kya:", "PQP"], ["anu", "Anu"], ["ja:egi:", "will.go"], ["ya:", "or"], ["nahĩ:", "not"]
     ],
     "translation": "Ravi wants to know, will Anu go (or not)?",
     "context": "",
@@ -1109,7 +1153,8 @@
       ["simplex", "true"],
       ["embedding", "quasi"]
     ],
-    "comment": "Quasi-subordination, marked by a slight pause and rising intonation, types the simplex clause."
+    "comment": "Quasi-subordination, marked by a slight pause and rising intonation, types the simplex clause.",
+    "verified": "page-image"
   },
   {
     "id": "dayal2025_ex71",
@@ -1118,7 +1163,7 @@
     "primaryText": "ravi ja:nta: hai [ki anu ja:egi:]",
     "discourseSegments": [],
     "glossedTokens": [
-      ["ravi", "Ravi"], ["ja:nta:", "know"], ["hai", "be.PRS"], ["ki", "SUB"], ["anu", "Anu"],
+      ["ravi", "Ravi"], ["ja:nta:", "knows"], ["hai", ""], ["ki", "SUB"], ["anu", "Anu"],
       ["ja:egi:", "will.go"]
     ],
     "translation": "Intended: Ravi knows whether Anu will go.",
@@ -1133,7 +1178,8 @@
       ["simplex", "true"],
       ["embedding", "subordination"]
     ],
-    "comment": "Without a polar complementizer nothing types the subordinated simplex clause; the alternative must be overt, whatever the embedding verb."
+    "comment": "Without a polar complementizer nothing types the subordinated simplex clause; the alternative must be overt, whatever the embedding verb.",
+    "verified": "page-image"
   },
   {
     "id": "dayal2025_ex84a",
@@ -1152,7 +1198,8 @@
       ["verb", "investigate"],
       ["embedding", "subordination"]
     ],
-    "comment": "*Investigate* and *want to know* both take the subordinated interrogative."
+    "comment": "*Investigate* and *want to know* both take the subordinated interrogative.",
+    "verified": "page-image"
   },
   {
     "id": "dayal2025_ex84b",
@@ -1173,6 +1220,7 @@
       ["verb", "investigate"],
       ["embedding", "quasi"]
     ],
-    "comment": "C-selection: *want to know* selects CP and PerspP, *investigate* only CP."
+    "comment": "C-selection: *want to know* selects CP and PerspP, *investigate* only CP.",
+    "verified": "page-image"
   }
 ]

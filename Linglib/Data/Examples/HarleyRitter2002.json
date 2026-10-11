@@ -15,7 +15,8 @@
       ["person", "1"],
       ["number", "sg"]
     ],
-    "comment": "Murane 1974:34, emphatic pronouns."
+    "comment": "Murane 1974:34, emphatic pronouns.",
+    "verified": "page-image"
   },
   {
     "id": "hr2002_daga_1pl",
@@ -33,7 +34,8 @@
       ["person", "1"],
       ["number", "pl"]
     ],
-    "comment": "Murane 1974:34, emphatic pronouns."
+    "comment": "Murane 1974:34, emphatic pronouns.",
+    "verified": "page-image"
   },
   {
     "id": "hr2002_daga_2sg",
@@ -51,7 +53,8 @@
       ["person", "2"],
       ["number", "sg"]
     ],
-    "comment": "Murane 1974:34, emphatic pronouns."
+    "comment": "Murane 1974:34, emphatic pronouns.",
+    "verified": "page-image"
   },
   {
     "id": "hr2002_daga_2pl",
@@ -69,7 +72,8 @@
       ["person", "2"],
       ["number", "pl"]
     ],
-    "comment": "Murane 1974:34, emphatic pronouns."
+    "comment": "Murane 1974:34, emphatic pronouns.",
+    "verified": "page-image"
   },
   {
     "id": "hr2002_daga_3sg",
@@ -87,7 +91,8 @@
       ["person", "3"],
       ["number", "sg"]
     ],
-    "comment": "Murane 1974:34, emphatic pronouns."
+    "comment": "Murane 1974:34, emphatic pronouns.",
+    "verified": "page-image"
   },
   {
     "id": "hr2002_daga_3pl",
@@ -105,7 +110,8 @@
       ["person", "3"],
       ["number", "pl"]
     ],
-    "comment": "Murane 1974:34, emphatic pronouns."
+    "comment": "Murane 1974:34, emphatic pronouns.",
+    "verified": "page-image"
   },
   {
     "id": "hr2002_gali_1exsg",
@@ -123,7 +129,8 @@
       ["person", "1ex"],
       ["number", "sg"]
     ],
-    "comment": "Hoff 1968:277, emphatic pronouns."
+    "comment": "Hoff 1968:277, emphatic pronouns.",
+    "verified": "page-image"
   },
   {
     "id": "hr2002_gali_1expl",
@@ -141,7 +148,8 @@
       ["person", "1ex"],
       ["number", "pl"]
     ],
-    "comment": "Hoff 1968:277, emphatic pronouns."
+    "comment": "Hoff 1968:277, emphatic pronouns.",
+    "verified": "page-image"
   },
   {
     "id": "hr2002_gali_1insg",
@@ -159,7 +167,8 @@
       ["person", "1in"],
       ["number", "sg"]
     ],
-    "comment": "Hoff 1968:277, emphatic pronouns."
+    "comment": "Hoff 1968:277, emphatic pronouns.",
+    "verified": "page-image"
   },
   {
     "id": "hr2002_gali_1inpl",
@@ -177,7 +186,8 @@
       ["person", "1in"],
       ["number", "pl"]
     ],
-    "comment": "Hoff 1968:277, emphatic pronouns."
+    "comment": "Hoff 1968:277, emphatic pronouns.",
+    "verified": "page-image"
   },
   {
     "id": "hr2002_gali_2sg",
@@ -195,7 +205,8 @@
       ["person", "2"],
       ["number", "sg"]
     ],
-    "comment": "Hoff 1968:277, emphatic pronouns."
+    "comment": "Hoff 1968:277, emphatic pronouns.",
+    "verified": "page-image"
   },
   {
     "id": "hr2002_gali_2pl",
@@ -213,7 +224,8 @@
       ["person", "2"],
       ["number", "pl"]
     ],
-    "comment": "Hoff 1968:277, emphatic pronouns."
+    "comment": "Hoff 1968:277, emphatic pronouns.",
+    "verified": "page-image"
   },
   {
     "id": "hr2002_gali_3sg",
@@ -231,7 +243,8 @@
       ["person", "3"],
       ["number", "sg"]
     ],
-    "comment": "Hoff 1968:277, emphatic pronouns."
+    "comment": "Hoff 1968:277, emphatic pronouns.",
+    "verified": "page-image"
   },
   {
     "id": "hr2002_gali_3pl",
@@ -249,7 +262,8 @@
       ["person", "3"],
       ["number", "pl"]
     ],
-    "comment": "Hoff 1968:277, emphatic pronouns."
+    "comment": "Hoff 1968:277, emphatic pronouns.",
+    "verified": "page-image"
   },
   {
     "id": "hr2002_tonk_1sg",
@@ -267,7 +281,8 @@
       ["person", "1"],
       ["number", "sg"]
     ],
-    "comment": "Hoijer 1933:122, nominative pronouns."
+    "comment": "Hoijer 1933:122, nominative pronouns.",
+    "verified": "page-image"
   },
   {
     "id": "hr2002_tonk_1du",
@@ -285,7 +300,8 @@
       ["person", "1"],
       ["number", "du"]
     ],
-    "comment": "Hoijer 1933:122, nominative pronouns."
+    "comment": "Hoijer 1933:122, nominative pronouns.",
+    "verified": "page-image"
   },
   {
     "id": "hr2002_tonk_1pl",
@@ -303,7 +319,8 @@
       ["person", "1"],
       ["number", "pl"]
     ],
-    "comment": "Hoijer 1933:122, nominative pronouns."
+    "comment": "Hoijer 1933:122, nominative pronouns.",
+    "verified": "page-image"
   },
   {
     "id": "hr2002_tonk_2sg",
@@ -321,7 +338,8 @@
       ["person", "2"],
       ["number", "sg"]
     ],
-    "comment": "Hoijer 1933:122, nominative pronouns."
+    "comment": "Hoijer 1933:122, nominative pronouns.",
+    "verified": "page-image"
   },
   {
     "id": "hr2002_tonk_2du",
@@ -339,7 +357,8 @@
       ["person", "2"],
       ["number", "du"]
     ],
-    "comment": "Hoijer 1933:122, nominative pronouns."
+    "comment": "Hoijer 1933:122, nominative pronouns.",
+    "verified": "page-image"
   },
   {
     "id": "hr2002_tonk_2pl",
@@ -357,13 +376,14 @@
       ["person", "2"],
       ["number", "pl"]
     ],
-    "comment": "Hoijer 1933:122, nominative pronouns."
+    "comment": "Hoijer 1933:122, nominative pronouns.",
+    "verified": "page-image"
   },
   {
     "id": "hr2002_tonk_3sg",
     "source": {"bibkey": "harley-ritter-2002", "paperLabel": "Table 5"},
     "language": "tonk1249",
-    "primaryText": "ʔayeˑla",
+    "primaryText": "'ayeˑla",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "he/she/it",
@@ -375,13 +395,14 @@
       ["person", "3"],
       ["number", "sg"]
     ],
-    "comment": "Hoijer 1933:122, nominative pronouns."
+    "comment": "Hoijer 1933:122, nominative pronouns.",
+    "verified": "page-image"
   },
   {
     "id": "hr2002_tonk_3du",
     "source": {"bibkey": "harley-ritter-2002", "paperLabel": "Table 5"},
     "language": "tonk1249",
-    "primaryText": "ʔaweˑla",
+    "primaryText": "'aweˑla",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "they two",
@@ -393,13 +414,14 @@
       ["person", "3"],
       ["number", "du"]
     ],
-    "comment": "Hoijer 1933:122, nominative pronouns."
+    "comment": "Hoijer 1933:122, nominative pronouns.",
+    "verified": "page-image"
   },
   {
     "id": "hr2002_tonk_3pl",
     "source": {"bibkey": "harley-ritter-2002", "paperLabel": "Table 5"},
     "language": "tonk1249",
-    "primaryText": "ʔaweˑga",
+    "primaryText": "'aweˑga",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "they",
@@ -411,7 +433,8 @@
       ["person", "3"],
       ["number", "pl"]
     ],
-    "comment": "Hoijer 1933:122, nominative pronouns."
+    "comment": "Hoijer 1933:122, nominative pronouns.",
+    "verified": "page-image"
   },
   {
     "id": "hr2002_chin_1exsg",
@@ -429,7 +452,8 @@
       ["person", "1ex"],
       ["number", "sg"]
     ],
-    "comment": "Boas 1911b:626."
+    "comment": "Boas 1911b:626.",
+    "verified": "page-image"
   },
   {
     "id": "hr2002_chin_1exdu",
@@ -447,7 +471,8 @@
       ["person", "1ex"],
       ["number", "du"]
     ],
-    "comment": "Boas 1911b:626."
+    "comment": "Boas 1911b:626.",
+    "verified": "page-image"
   },
   {
     "id": "hr2002_chin_1expl",
@@ -465,7 +490,8 @@
       ["person", "1ex"],
       ["number", "pl"]
     ],
-    "comment": "Boas 1911b:626."
+    "comment": "Boas 1911b:626.",
+    "verified": "page-image"
   },
   {
     "id": "hr2002_chin_1indu",
@@ -483,7 +509,8 @@
       ["person", "1in"],
       ["number", "du"]
     ],
-    "comment": "Boas 1911b:626."
+    "comment": "Boas 1911b:626.",
+    "verified": "page-image"
   },
   {
     "id": "hr2002_chin_1inpl",
@@ -501,7 +528,8 @@
       ["person", "1in"],
       ["number", "pl"]
     ],
-    "comment": "Boas 1911b:626."
+    "comment": "Boas 1911b:626.",
+    "verified": "page-image"
   },
   {
     "id": "hr2002_chin_2sg",
@@ -519,7 +547,8 @@
       ["person", "2"],
       ["number", "sg"]
     ],
-    "comment": "Boas 1911b:626."
+    "comment": "Boas 1911b:626.",
+    "verified": "page-image"
   },
   {
     "id": "hr2002_chin_2du",
@@ -537,7 +566,8 @@
       ["person", "2"],
       ["number", "du"]
     ],
-    "comment": "Boas 1911b:626."
+    "comment": "Boas 1911b:626.",
+    "verified": "page-image"
   },
   {
     "id": "hr2002_chin_2pl",
@@ -555,7 +585,8 @@
       ["person", "2"],
       ["number", "pl"]
     ],
-    "comment": "Boas 1911b:626."
+    "comment": "Boas 1911b:626.",
+    "verified": "page-image"
   },
   {
     "id": "hr2002_chin_3sg",
@@ -573,7 +604,8 @@
       ["person", "3"],
       ["number", "sg"]
     ],
-    "comment": "Boas 1911b:626; the feminine form, gender being set aside."
+    "comment": "Boas 1911b:626; the feminine form, gender being set aside.",
+    "verified": "page-image"
   },
   {
     "id": "hr2002_chin_3du",
@@ -591,7 +623,8 @@
       ["person", "3"],
       ["number", "du"]
     ],
-    "comment": "Boas 1911b:626."
+    "comment": "Boas 1911b:626.",
+    "verified": "page-image"
   },
   {
     "id": "hr2002_chin_3pl",
@@ -609,7 +642,8 @@
       ["person", "3"],
       ["number", "pl"]
     ],
-    "comment": "Boas 1911b:626."
+    "comment": "Boas 1911b:626.",
+    "verified": "page-image"
   },
   {
     "id": "hr2002_yima_1sg",
@@ -627,7 +661,8 @@
       ["person", "1"],
       ["number", "sg"]
     ],
-    "comment": "Foley 1991:111, 126."
+    "comment": "Foley 1991:111, 126.",
+    "verified": "page-image"
   },
   {
     "id": "hr2002_yima_1du",
@@ -645,7 +680,8 @@
       ["person", "1"],
       ["number", "du"]
     ],
-    "comment": "Foley 1991:111, 126."
+    "comment": "Foley 1991:111, 126.",
+    "verified": "page-image"
   },
   {
     "id": "hr2002_yima_1pc",
@@ -663,7 +699,8 @@
       ["person", "1"],
       ["number", "pc"]
     ],
-    "comment": "Foley 1991:111, 126; syncretic with the second-person paucal."
+    "comment": "Foley 1991:111, 126; syncretic with the second-person paucal.",
+    "verified": "page-image"
   },
   {
     "id": "hr2002_yima_1pl",
@@ -681,7 +718,8 @@
       ["person", "1"],
       ["number", "pl"]
     ],
-    "comment": "Foley 1991:111, 126."
+    "comment": "Foley 1991:111, 126.",
+    "verified": "page-image"
   },
   {
     "id": "hr2002_yima_2sg",
@@ -699,7 +737,8 @@
       ["person", "2"],
       ["number", "sg"]
     ],
-    "comment": "Foley 1991:111, 126."
+    "comment": "Foley 1991:111, 126.",
+    "verified": "page-image"
   },
   {
     "id": "hr2002_yima_2du",
@@ -717,7 +756,8 @@
       ["person", "2"],
       ["number", "du"]
     ],
-    "comment": "Foley 1991:111, 126."
+    "comment": "Foley 1991:111, 126.",
+    "verified": "page-image"
   },
   {
     "id": "hr2002_yima_2pc",
@@ -735,7 +775,8 @@
       ["person", "2"],
       ["number", "pc"]
     ],
-    "comment": "Foley 1991:111, 126; syncretic with the first-person paucal."
+    "comment": "Foley 1991:111, 126; syncretic with the first-person paucal.",
+    "verified": "page-image"
   },
   {
     "id": "hr2002_yima_2pl",
@@ -753,7 +794,8 @@
       ["person", "2"],
       ["number", "pl"]
     ],
-    "comment": "Foley 1991:111, 126."
+    "comment": "Foley 1991:111, 126.",
+    "verified": "page-image"
   },
   {
     "id": "hr2002_yima_3sg",
@@ -771,7 +813,8 @@
       ["person", "3"],
       ["number", "sg"]
     ],
-    "comment": "Foley 1991:111, 126; a masculine proximal demonstrative, no personal pronoun."
+    "comment": "Foley 1991:111, 126; a masculine proximal demonstrative, no personal pronoun.",
+    "verified": "page-image"
   },
   {
     "id": "hr2002_yima_3du",
@@ -789,7 +832,8 @@
       ["person", "3"],
       ["number", "du"]
     ],
-    "comment": "Foley 1991:111, 126."
+    "comment": "Foley 1991:111, 126.",
+    "verified": "page-image"
   },
   {
     "id": "hr2002_yima_3pl",
@@ -807,7 +851,8 @@
       ["person", "3"],
       ["number", "pl"]
     ],
-    "comment": "Foley 1991:111, 126."
+    "comment": "Foley 1991:111, 126.",
+    "verified": "page-image"
   },
   {
     "id": "hr2002_fiji_1exsg",
@@ -825,7 +870,8 @@
       ["person", "1ex"],
       ["number", "sg"]
     ],
-    "comment": "Dixon 1988:54–55, cardinal pronouns."
+    "comment": "Dixon 1988:54–55, cardinal pronouns.",
+    "verified": "page-image"
   },
   {
     "id": "hr2002_fiji_1expl",
@@ -843,7 +889,8 @@
       ["person", "1ex"],
       ["number", "pl"]
     ],
-    "comment": "Dixon 1988:54–55, cardinal pronouns."
+    "comment": "Dixon 1988:54–55, cardinal pronouns.",
+    "verified": "page-image"
   },
   {
     "id": "hr2002_fiji_1exdu",
@@ -861,7 +908,8 @@
       ["person", "1ex"],
       ["number", "du"]
     ],
-    "comment": "Dixon 1988:54–55, cardinal pronouns."
+    "comment": "Dixon 1988:54–55, cardinal pronouns.",
+    "verified": "page-image"
   },
   {
     "id": "hr2002_fiji_1expc",
@@ -879,7 +927,8 @@
       ["person", "1ex"],
       ["number", "pc"]
     ],
-    "comment": "Dixon 1988:54–55, cardinal pronouns."
+    "comment": "Dixon 1988:54–55, cardinal pronouns.",
+    "verified": "page-image"
   },
   {
     "id": "hr2002_fiji_1inpl",
@@ -897,7 +946,8 @@
       ["person", "1in"],
       ["number", "pl"]
     ],
-    "comment": "Dixon 1988:54–55, cardinal pronouns."
+    "comment": "Dixon 1988:54–55, cardinal pronouns.",
+    "verified": "page-image"
   },
   {
     "id": "hr2002_fiji_1indu",
@@ -915,7 +965,8 @@
       ["person", "1in"],
       ["number", "du"]
     ],
-    "comment": "Dixon 1988:54–55; the inclusive has no singular cell."
+    "comment": "Dixon 1988:54–55; the inclusive has no singular cell.",
+    "verified": "page-image"
   },
   {
     "id": "hr2002_fiji_1inpc",
@@ -933,7 +984,8 @@
       ["person", "1in"],
       ["number", "pc"]
     ],
-    "comment": "Dixon 1988:54–55, cardinal pronouns."
+    "comment": "Dixon 1988:54–55, cardinal pronouns.",
+    "verified": "page-image"
   },
   {
     "id": "hr2002_fiji_2sg",
@@ -951,7 +1003,8 @@
       ["person", "2"],
       ["number", "sg"]
     ],
-    "comment": "Dixon 1988:54–55, cardinal pronouns."
+    "comment": "Dixon 1988:54–55, cardinal pronouns.",
+    "verified": "page-image"
   },
   {
     "id": "hr2002_fiji_2pl",
@@ -969,7 +1022,8 @@
       ["person", "2"],
       ["number", "pl"]
     ],
-    "comment": "Dixon 1988:54–55, cardinal pronouns."
+    "comment": "Dixon 1988:54–55, cardinal pronouns.",
+    "verified": "page-image"
   },
   {
     "id": "hr2002_fiji_2du",
@@ -987,7 +1041,8 @@
       ["person", "2"],
       ["number", "du"]
     ],
-    "comment": "Dixon 1988:54–55, cardinal pronouns."
+    "comment": "Dixon 1988:54–55, cardinal pronouns.",
+    "verified": "page-image"
   },
   {
     "id": "hr2002_fiji_2pc",
@@ -1005,7 +1060,8 @@
       ["person", "2"],
       ["number", "pc"]
     ],
-    "comment": "Dixon 1988:54–55, cardinal pronouns."
+    "comment": "Dixon 1988:54–55, cardinal pronouns.",
+    "verified": "page-image"
   },
   {
     "id": "hr2002_fiji_3sg",
@@ -1023,7 +1079,8 @@
       ["person", "3"],
       ["number", "sg"]
     ],
-    "comment": "Dixon 1988:54–55, cardinal pronouns."
+    "comment": "Dixon 1988:54–55, cardinal pronouns.",
+    "verified": "page-image"
   },
   {
     "id": "hr2002_fiji_3pl",
@@ -1041,7 +1098,8 @@
       ["person", "3"],
       ["number", "pl"]
     ],
-    "comment": "Dixon 1988:54–55, cardinal pronouns."
+    "comment": "Dixon 1988:54–55, cardinal pronouns.",
+    "verified": "page-image"
   },
   {
     "id": "hr2002_fiji_3du",
@@ -1059,7 +1117,8 @@
       ["person", "3"],
       ["number", "du"]
     ],
-    "comment": "Dixon 1988:54–55, cardinal pronouns."
+    "comment": "Dixon 1988:54–55, cardinal pronouns.",
+    "verified": "page-image"
   },
   {
     "id": "hr2002_fiji_3pc",
@@ -1077,7 +1136,8 @@
       ["person", "3"],
       ["number", "pc"]
     ],
-    "comment": "Dixon 1988:54–55, cardinal pronouns."
+    "comment": "Dixon 1988:54–55, cardinal pronouns.",
+    "verified": "page-image"
   },
   {
     "id": "hr2002_pira_1",
@@ -1095,7 +1155,8 @@
       ["person", "1"],
       ["number", "none"]
     ],
-    "comment": "Thomason & Everett 2002."
+    "comment": "Thomason & Everett 2002.",
+    "verified": "page-image"
   },
   {
     "id": "hr2002_pira_2",
@@ -1113,7 +1174,8 @@
       ["person", "2"],
       ["number", "none"]
     ],
-    "comment": "Thomason & Everett 2002."
+    "comment": "Thomason & Everett 2002.",
+    "verified": "page-image"
   },
   {
     "id": "hr2002_pira_3",
@@ -1131,7 +1193,8 @@
       ["person", "3"],
       ["number", "none"]
     ],
-    "comment": "Thomason & Everett 2002."
+    "comment": "Thomason & Everett 2002.",
+    "verified": "page-image"
   },
   {
     "id": "hr2002_maxa_1sg",
@@ -1149,7 +1212,8 @@
       ["person", "1"],
       ["number", "sg"]
     ],
-    "comment": "Popovich 1986:352; the table lists it as first exclusive singular, (27) as first singular, the bare Participant geometry."
+    "comment": "Popovich 1986:352; the table lists it as first exclusive singular, (27) as first singular, the bare Participant geometry.",
+    "verified": "page-image"
   },
   {
     "id": "hr2002_maxa_1expl",
@@ -1167,7 +1231,8 @@
       ["person", "1ex"],
       ["number", "pl"]
     ],
-    "comment": "Popovich 1986:352, absolutive pronouns."
+    "comment": "Popovich 1986:352, absolutive pronouns.",
+    "verified": "page-image"
   },
   {
     "id": "hr2002_maxa_1in",
@@ -1185,7 +1250,8 @@
       ["person", "1in"],
       ["number", "none"]
     ],
-    "comment": "Popovich 1986:352, absolutive pronouns."
+    "comment": "Popovich 1986:352, absolutive pronouns.",
+    "verified": "page-image"
   },
   {
     "id": "hr2002_maxa_2",
@@ -1203,7 +1269,8 @@
       ["person", "2"],
       ["number", "none"]
     ],
-    "comment": "Popovich 1986:352, absolutive pronouns."
+    "comment": "Popovich 1986:352, absolutive pronouns.",
+    "verified": "page-image"
   },
   {
     "id": "hr2002_maxa_3",
@@ -1221,7 +1288,8 @@
       ["person", "3"],
       ["number", "none"]
     ],
-    "comment": "Popovich 1986:352, absolutive pronouns."
+    "comment": "Popovich 1986:352, absolutive pronouns.",
+    "verified": "page-image"
   },
   {
     "id": "hr2002_kwak_1sg",
@@ -1239,13 +1307,14 @@
       ["person", "1"],
       ["number", "sg"]
     ],
-    "comment": "Boas 1911a:529; the table lists it as first exclusive singular, (27) as first singular, the bare Participant geometry."
+    "comment": "Boas 1911a:529; the table lists it as first exclusive singular, (27) as first singular, the bare Participant geometry.",
+    "verified": "page-image"
   },
   {
     "id": "hr2002_kwak_1expl",
     "source": {"bibkey": "harley-ritter-2002", "paperLabel": "Table 15"},
     "language": "kwak1269",
-    "primaryText": "-Enuᵉx̣ᵘ",
+    "primaryText": "-Enuᵋx̣ᵘ",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "we (exclusive)",
@@ -1257,7 +1326,8 @@
       ["person", "1ex"],
       ["number", "pl"]
     ],
-    "comment": "Boas 1911a:529, nominative pronouns."
+    "comment": "Boas 1911a:529, nominative pronouns.",
+    "verified": "page-image"
   },
   {
     "id": "hr2002_kwak_1in",
@@ -1275,7 +1345,8 @@
       ["person", "1in"],
       ["number", "none"]
     ],
-    "comment": "Boas 1911a:529, nominative pronouns."
+    "comment": "Boas 1911a:529, nominative pronouns.",
+    "verified": "page-image"
   },
   {
     "id": "hr2002_kwak_2",
@@ -1293,7 +1364,8 @@
       ["person", "2"],
       ["number", "none"]
     ],
-    "comment": "Boas 1911a:529, nominative pronouns."
+    "comment": "Boas 1911a:529, nominative pronouns.",
+    "verified": "page-image"
   },
   {
     "id": "hr2002_kwak_3",
@@ -1311,6 +1383,7 @@
       ["person", "3"],
       ["number", "none"]
     ],
-    "comment": "Boas 1911a:529; no overt form."
+    "comment": "Boas 1911a:529; no overt form.",
+    "verified": "page-image"
   }
 ]

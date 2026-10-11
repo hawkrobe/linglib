@@ -29,7 +29,8 @@
         "acceptance",
         "85%"
       ]
-    ]
+    ],
+    "verified": "page-image"
   },
   {
     "id": "sm2022_2_indirect",
@@ -61,7 +62,8 @@
         "link",
         "the brake was depressed causes the car slowed down"
       ]
-    ]
+    ],
+    "verified": "page-image"
   },
   {
     "id": "sm2022_3_walsh_johnson_laird",
@@ -74,7 +76,7 @@
       "paperLabel": "(3)"
     },
     "language": "stan1293",
-    "primaryText": "Jane is looking at the TV.",
+    "primaryText": "She is looking at the TV.",
     "discourseSegments": [
       "Either Jane is kneeling by the fire and she is looking at the TV, or otherwise Mark is standing at the window and he is peering into the garden.",
       "Jane is kneeling by the fire."
@@ -97,7 +99,8 @@
         "acceptance",
         "85%"
       ]
-    ]
+    ],
+    "verified": "page-image"
   },
   {
     "id": "sm2022_11_conclusion_step",
@@ -125,7 +128,8 @@
         "kind",
         "indirect, conclusion step"
       ]
-    ]
+    ],
+    "verified": "page-image"
   },
   {
     "id": "sm2022_13_two_conclusions",
@@ -145,7 +149,7 @@
     "alternatives": [
       {
         "form": "Bill speaks German. (Ccl. 2)",
-        "judgment": "marginal"
+        "judgment": "acceptable"
       }
     ],
     "readings": [],
@@ -158,7 +162,8 @@
         "conclusion2",
         "Bill speaks German: either not at all a compelling fallacy, or a very weak illusion; original mental model theory predicts not-c"
       ]
-    ]
+    ],
+    "verified": "page-image"
   },
   {
     "id": "sm2022_17_linda",
@@ -198,7 +203,8 @@
         "parallel",
         "the options are the disjunctive premise (f and b) or b; the description is the hint pointing to f (18)"
       ]
-    ]
+    ],
+    "verified": "page-image"
   },
   {
     "id": "sm2022_9_0_fertilizer",
@@ -231,7 +237,8 @@
         "removed",
         "excluded from the inference tasks: the d-to-b control block showed an effect driven by this item"
       ]
-    ]
+    ],
+    "verified": "page-image"
   },
   {
     "id": "sm2022_9_1_brake",
@@ -260,7 +267,8 @@
         "item",
         "1"
       ]
-    ]
+    ],
+    "verified": "page-image"
   },
   {
     "id": "sm2022_9_2_pool",
@@ -289,7 +297,8 @@
         "item",
         "2"
       ]
-    ]
+    ],
+    "verified": "page-image"
   },
   {
     "id": "sm2022_9_3_trigger",
@@ -318,7 +327,8 @@
         "item",
         "3"
       ]
-    ]
+    ],
+    "verified": "page-image"
   },
   {
     "id": "sm2022_9_4_fingerprints",
@@ -347,7 +357,8 @@
         "item",
         "4"
       ]
-    ]
+    ],
+    "verified": "page-image"
   },
   {
     "id": "sm2022_9_5_gong",
@@ -376,7 +387,8 @@
         "item",
         "5"
       ]
-    ]
+    ],
+    "verified": "page-image"
   },
   {
     "id": "sm2022_9_6_studied",
@@ -405,7 +417,8 @@
         "item",
         "6"
       ]
-    ]
+    ],
+    "verified": "page-image"
   },
   {
     "id": "sm2022_9_7_apples",
@@ -434,7 +447,8 @@
         "item",
         "7"
       ]
-    ]
+    ],
+    "verified": "page-image"
   },
   {
     "id": "sm2022_7_instructions",
@@ -450,7 +464,7 @@
     ],
     "glossedTokens": [],
     "context": "The instructions' example of an invalid but inductively attractive conclusion; the paper's printed correct answer is no.",
-    "judgment": "unacceptable",
+    "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -462,7 +476,8 @@
         "validity",
         "invalid"
       ]
-    ]
+    ],
+    "verified": "page-image"
   },
   {
     "id": "sm2022_8i_trigger_gun",
@@ -483,7 +498,8 @@
         "block",
         "(i) d to a"
       ]
-    ]
+    ],
+    "verified": "page-image"
   },
   {
     "id": "sm2022_8ii_gun_guitar",
@@ -504,7 +520,8 @@
         "block",
         "(ii) a to b"
       ]
-    ]
+    ],
+    "verified": "page-image"
   },
   {
     "id": "sm2022_8iii_trigger_guitar",
@@ -525,6 +542,7 @@
         "block",
         "(iii) d to b"
       ]
-    ]
+    ],
+    "verified": "page-image"
   }
 ]

@@ -19,7 +19,7 @@
         "watched.1.SG"
       ]
     ],
-    "translation": "I watched lion (one or more)",
+    "translation": "I watched lion (it could be one, or more than that)",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -38,7 +38,8 @@
         "lúban"
       ]
     ],
-    "comment": "The general form is outside the number system."
+    "comment": "The general form is outside the number system.",
+    "verified": "page-image"
   },
   {
     "id": "corbett2000_2_2",
@@ -79,7 +80,8 @@
         "lubántiti"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "corbett2000_2_3",
@@ -120,7 +122,8 @@
         "lubanjaa"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "corbett2000_2_4",
@@ -161,7 +164,8 @@
         "lubanjool"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "corbett2000_2_8",
@@ -210,7 +214,8 @@
         "general"
       ]
     ],
-    "comment": "The suffixless form of a Fouta Jalon noun expresses general meaning."
+    "comment": "The suffixless form of a Fouta Jalon noun expresses general meaning.",
+    "verified": "page-image"
   },
   {
     "id": "corbett2000_2_9",
@@ -277,7 +282,8 @@
         "singular"
       ]
     ],
-    "comment": "The unsuffixed form would be one syllable, so the singular expresses the general meaning."
+    "comment": "The unsuffixed form would be one syllable, so the singular expresses the general meaning.",
+    "verified": "page-image"
   },
   {
     "id": "corbett2000_2_13",
@@ -330,7 +336,8 @@
         "general"
       ]
     ],
-    "comment": "Without marking the noun does not specify number; inu-tati makes the plural clear."
+    "comment": "Without marking the noun does not specify number; inu-tati makes the plural clear.",
+    "verified": "page-image"
   },
   {
     "id": "corbett2000_2_14",
@@ -340,7 +347,7 @@
     },
     "reportedIn": null,
     "language": "even1260",
-    "primaryText": "zawod-la bəj gurgə̄wci-n",
+    "primaryText": "zawod-la bəj ɡurɡə̄wci-n",
     "discourseSegments": [],
     "glossedTokens": [
       [
@@ -352,7 +359,7 @@
         "man"
       ],
       [
-        "gurgə̄wci-n",
+        "ɡurɡə̄wci-n",
         "work-3.SG"
       ]
     ],
@@ -367,7 +374,8 @@
         "general"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "corbett2000_2_15",
@@ -377,7 +385,7 @@
     },
     "reportedIn": null,
     "language": "even1260",
-    "primaryText": "tala asi gurgə̄wci-n",
+    "primaryText": "tala asi ɡurɡə̄wci-n",
     "discourseSegments": [],
     "glossedTokens": [
       [
@@ -389,7 +397,7 @@
         "woman"
       ],
       [
-        "gurgə̄wci-n",
+        "ɡurɡə̄wci-n",
         "work-3.SG"
       ]
     ],
@@ -404,7 +412,8 @@
         "general"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "corbett2000_2_16",
@@ -437,7 +446,8 @@
         "plural"
       ]
     ],
-    "comment": "The clitic indicates plurality; its absence leaves singular or general meaning."
+    "comment": "The clitic indicates plurality; its absence leaves singular or general meaning.",
+    "verified": "page-image"
   },
   {
     "id": "corbett2000_2_32",
@@ -478,7 +488,8 @@
         "2"
       ]
     ],
-    "comment": "Two feet, and the dual is not required: the Slovene dual is facultative for nouns."
+    "comment": "Two feet, and the dual is not required: the Slovene dual is facultative for nouns.",
+    "verified": "page-image"
   },
   {
     "id": "corbett2000_2_33",
@@ -558,7 +569,8 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [],
-    "comment": "The plural subject pronoun ara stands for the dual once the number is established."
+    "comment": "The plural subject pronoun ara stands for the dual once the number is established.",
+    "verified": "page-image"
   },
   {
     "id": "corbett2000_2_34",
@@ -590,7 +602,8 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [],
-    "comment": "The third person pronoun has no plural form: Pirahã has no number category."
+    "comment": "The third person pronoun has no plural form: Pirahã has no number category.",
+    "verified": "page-image"
   },
   {
     "id": "corbett2000_2_35",
@@ -626,7 +639,8 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [],
-    "comment": "Plurality is expressed by conjoining pronouns."
+    "comment": "Plurality is expressed by conjoining pronouns.",
+    "verified": "page-image"
   },
   {
     "id": "corbett2000_2_23",
@@ -654,7 +668,8 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [],
-    "comment": "The form labelled quadral is used of four and more, and with dyad terms: a greater paucal."
+    "comment": "The form labelled quadral is used of four and more, and with dyad terms: a greater paucal.",
+    "verified": "page-image"
   },
   {
     "id": "corbett2000_3_2",
@@ -691,7 +706,8 @@
         "optional"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "corbett2000_3_3",
@@ -728,7 +744,8 @@
         "optional"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "corbett2000_3_4",
@@ -765,7 +782,8 @@
         "optional"
       ]
     ],
-    "comment": "Dogs are treated as honorary humans."
+    "comment": "Dogs are treated as honorary humans.",
+    "verified": "page-image"
   },
   {
     "id": "corbett2000_3_5",
@@ -802,7 +820,8 @@
         "obligatory"
       ]
     ],
-    "comment": "The human object's number is coded on the verb, not on the noun."
+    "comment": "The human object's number is coded on the verb, not on the noun.",
+    "verified": "page-image"
   },
   {
     "id": "corbett2000_3_6",
@@ -851,7 +870,8 @@
         "excluded"
       ]
     ],
-    "comment": "The verb keeps the minimal form for a non-human object however many dogs."
+    "comment": "The verb keeps the minimal form for a non-human object however many dogs.",
+    "verified": "page-image"
   },
   {
     "id": "corbett2000_3_7",
@@ -896,7 +916,8 @@
         "I"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "corbett2000_3_8",
@@ -941,7 +962,8 @@
         "II"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "corbett2000_3_9",
@@ -986,7 +1008,8 @@
         "I"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "corbett2000_3_10",
@@ -1031,7 +1054,8 @@
         "II"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "corbett2000_3_11",
@@ -1076,7 +1100,8 @@
         "III"
       ]
     ],
-    "comment": "Genders III and IV, the inanimates, have no distinct plural."
+    "comment": "Genders III and IV, the inanimates, have no distinct plural.",
+    "verified": "page-image"
   },
   {
     "id": "corbett2000_3_12",
@@ -1086,7 +1111,7 @@
     },
     "reportedIn": null,
     "language": "nucl1622",
-    "primaryText": "i-pe behau i-pe akik ka",
+    "primaryText": "i-pe behaᵘ i-pe akik ka",
     "discourseSegments": [],
     "glossedTokens": [
       [
@@ -1094,7 +1119,7 @@
         "IV-DEF"
       ],
       [
-        "behau",
+        "behaᵘ",
         "pole"
       ],
       [
@@ -1121,7 +1146,8 @@
         "IV"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "corbett2000_3_13",
@@ -1174,7 +1200,8 @@
         "yes"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "corbett2000_3_14",
@@ -1227,7 +1254,8 @@
         "yes"
       ]
     ],
-    "comment": "The noun does not mark number; its agreements are regular."
+    "comment": "The noun does not mark number; its agreements are regular.",
+    "verified": "page-image"
   },
   {
     "id": "corbett2000_3_15",
@@ -1272,7 +1300,8 @@
     ],
     "readings": [],
     "paperFeatures": [],
-    "comment": "The grammatical reversal of sheep, regular in marking and irregular in agreement, is claimed impossible."
+    "comment": "The grammatical reversal of sheep, regular in marking and irregular in agreement, is claimed impossible.",
+    "verified": "page-image"
   },
   {
     "id": "corbett2000_3_17",
@@ -1333,7 +1362,8 @@
         "no"
       ]
     ],
-    "comment": "Hunted animals take a zero plural in some circumstances."
+    "comment": "Hunted animals take a zero plural in some circumstances.",
+    "verified": "page-image"
   },
   {
     "id": "corbett2000_3_18",
@@ -1386,7 +1416,8 @@
         "yes"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "corbett2000_3_19",
@@ -1435,7 +1466,8 @@
         "singular"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "corbett2000_3_20",
@@ -1484,7 +1516,8 @@
         "plural"
       ]
     ],
-    "comment": "The reflexive shows that you distinguishes singular and plural by agreement."
+    "comment": "The reflexive shows that you distinguishes singular and plural by agreement.",
+    "verified": "page-image"
   },
   {
     "id": "corbett2000_3_21",
@@ -1521,7 +1554,8 @@
         "obligatory"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "corbett2000_3_22",
@@ -1558,7 +1592,8 @@
         "excluded"
       ]
     ],
-    "comment": "An inanimate noun with a plural marker takes singular agreement."
+    "comment": "An inanimate noun with a plural marker takes singular agreement.",
+    "verified": "page-image"
   },
   {
     "id": "corbett2000_3_23",
@@ -1581,7 +1616,7 @@
       ],
       [
         "no-rato-mo/do-rato-mo",
-        "3.SG.REALIS-arrive-PERFV/3.PL.REALIS-arrive-PERFV"
+        "3.SG.REALIS-arrive-PF/3.PL.REALIS-arrive-PERFV"
       ]
     ],
     "translation": "the animals have arrived",
@@ -1599,7 +1634,8 @@
         "optional"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "corbett2000_3_24",
@@ -1626,7 +1662,7 @@
     "judgment": "acceptable",
     "alternatives": [
       {
-        "form": "ám tsər",
+        "form": "'ám tsər",
         "judgment": "ungrammatical"
       }
     ],
@@ -1641,7 +1677,8 @@
         "obligatory"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "corbett2000_3_25",
@@ -1683,7 +1720,8 @@
         "optional"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "corbett2000_3_26",
@@ -1720,7 +1758,8 @@
         "obligatory"
       ]
     ],
-    "comment": "The higher group takes plural agreement, sheep included: níykin təmakwìy."
+    "comment": "The higher group takes plural agreement, sheep included: níykin təmakwìy.",
+    "verified": "page-image"
   },
   {
     "id": "corbett2000_3_27",
@@ -1757,7 +1796,8 @@
         "excluded"
       ]
     ],
-    "comment": "A plural-marked inanimate takes agreement in gender, not number."
+    "comment": "A plural-marked inanimate takes agreement in gender, not number.",
+    "verified": "page-image"
   },
   {
     "id": "corbett2000_3_28",
@@ -1794,7 +1834,8 @@
         "excluded"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "corbett2000_4_1",
@@ -1835,7 +1876,8 @@
         "singular"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "corbett2000_4_2",
@@ -1876,7 +1918,8 @@
         "plural"
       ]
     ],
-    "comment": "The minor dual takes plural agreement: dual and plural pattern together."
+    "comment": "The minor dual takes plural agreement: dual and plural pattern together.",
+    "verified": "page-image"
   },
   {
     "id": "corbett2000_4_3",
@@ -1917,7 +1960,8 @@
         "plural"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "corbett2000_4_4",
@@ -1946,7 +1990,8 @@
         "singular"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "corbett2000_4_5",
@@ -1975,7 +2020,8 @@
         "plural"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "corbett2000_4_6",
@@ -1993,7 +2039,7 @@
         "John-ASSOC.PL"
       ]
     ],
-    "translation": "John and associates, John and his group",
+    "translation": "John and associates, John and his group, John 'n' them",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -2004,7 +2050,8 @@
         "yes"
       ]
     ],
-    "comment": "The associative is a category distinct from number."
+    "comment": "The associative is a category distinct from number.",
+    "verified": "page-image"
   },
   {
     "id": "corbett2000_4_12",
@@ -2033,7 +2080,8 @@
         "singular"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "corbett2000_4_13",
@@ -2070,7 +2118,8 @@
         "yes"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "corbett2000_4_14",
@@ -2107,7 +2156,8 @@
         "yes"
       ]
     ],
-    "comment": "The associative combines with the dual as with the plural, its morpheme -nku- separate from the number morphemes -k and -t."
+    "comment": "The associative combines with the dual as with the plural, its morpheme -nku- separate from the number morphemes -k and -t.",
+    "verified": "page-image"
   },
   {
     "id": "corbett2000_4_15",
@@ -2194,7 +2244,8 @@
         "mass"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "corbett2000_4_28",
@@ -2239,7 +2290,8 @@
         "gender"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "corbett2000_4_29",
@@ -2280,7 +2332,8 @@
         "mass"
       ]
     ],
-    "comment": "The article agrees in gender, the postnominal adjective in mass."
+    "comment": "The article agrees in gender, the postnominal adjective in mass.",
+    "verified": "page-image"
   },
   {
     "id": "corbett2000_4_30",
@@ -2321,7 +2374,8 @@
         "mass"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "corbett2000_5_21",
@@ -2362,7 +2416,8 @@
         "no"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "corbett2000_5_22",
@@ -2403,7 +2458,8 @@
         "no"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "corbett2000_5_23",
@@ -2444,7 +2500,8 @@
         "yes"
       ]
     ],
-    "comment": "The verb's object marking distinguishes singular, dual and inverse."
+    "comment": "The verb's object marking distinguishes singular, dual and inverse.",
+    "verified": "page-image"
   },
   {
     "id": "corbett2000_5_40",
@@ -2485,7 +2542,8 @@
         "singular"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "corbett2000_5_41",
@@ -2526,7 +2584,8 @@
         "plural"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "corbett2000_5_42",
@@ -2567,7 +2626,8 @@
         "dual"
       ]
     ],
-    "comment": "Plural pronoun and singular verb construct the dual."
+    "comment": "Plural pronoun and singular verb construct the dual.",
+    "verified": "page-image"
   },
   {
     "id": "corbett2000_5_43",
@@ -2672,7 +2732,8 @@
         "dual"
       ]
     ],
-    "comment": "The dual marker dropped: plural pronoun and unmarked verb construct the dual."
+    "comment": "The dual marker dropped: plural pronoun and unmarked verb construct the dual.",
+    "verified": "page-image"
   },
   {
     "id": "corbett2000_5_46",
@@ -2700,7 +2761,8 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [],
-    "comment": "Singular pronoun with plural verb is ungrammatical in any interpretation."
+    "comment": "Singular pronoun with plural verb is ungrammatical in any interpretation.",
+    "verified": "page-image"
   },
   {
     "id": "corbett2000_5_47",
@@ -2733,7 +2795,8 @@
         "plural"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "corbett2000_5_48",
@@ -2766,7 +2829,8 @@
         "dual"
       ]
     ],
-    "comment": "Constructed number with nouns too."
+    "comment": "Constructed number with nouns too.",
+    "verified": "page-image"
   },
   {
     "id": "corbett2000_5_49",
@@ -2844,7 +2908,8 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [],
-    "comment": "Number on the noun, by agreement in the noun phrase, and on the verb: type B."
+    "comment": "Number on the noun, by agreement in the noun phrase, and on the verb: type B.",
+    "verified": "page-image"
   },
   {
     "id": "corbett2000_6_2",
@@ -2876,7 +2941,8 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [],
-    "comment": "Number must be indicated on the verb and may be on the noun: type C."
+    "comment": "Number must be indicated on the verb and may be on the noun: type C.",
+    "verified": "page-image"
   },
   {
     "id": "corbett2000_6_4",
@@ -2917,7 +2983,8 @@
         "masc"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "corbett2000_6_5",
@@ -2958,7 +3025,8 @@
         "masc"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "corbett2000_6_6",
@@ -2999,7 +3067,8 @@
         "plural"
       ]
     ],
-    "comment": "Paucal nouns take the form the plural pronoun takes."
+    "comment": "Paucal nouns take the form the plural pronoun takes.",
+    "verified": "page-image"
   },
   {
     "id": "corbett2000_6_7",
@@ -3040,7 +3109,8 @@
         "masc"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "corbett2000_6_8",
@@ -3081,7 +3151,8 @@
         "fem"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "corbett2000_6_9",
@@ -3122,7 +3193,8 @@
         "fem"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "corbett2000_6_10",
@@ -3163,7 +3235,8 @@
         "plural"
       ]
     ],
-    "comment": "Paucal nouns take the form the plural pronoun takes."
+    "comment": "Paucal nouns take the form the plural pronoun takes.",
+    "verified": "page-image"
   },
   {
     "id": "corbett2000_6_11",
@@ -3204,7 +3277,8 @@
         "masc"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "corbett2000_6_12",
@@ -3281,7 +3355,8 @@
         "stan1293"
       ]
     ],
-    "comment": "A clause as controller has no number; the verb takes the default singular."
+    "comment": "A clause as controller has no number; the verb takes the default singular.",
+    "verified": "page-image"
   },
   {
     "id": "corbett2000_6_14",
@@ -3291,11 +3366,11 @@
     },
     "reportedIn": null,
     "language": "kiow1266",
-    "primaryText": "khí·dêl gyà-sál",
+    "primaryText": "kʰí·dêl gyà-sál",
     "discourseSegments": [],
     "glossedTokens": [
       [
-        "khí·dêl",
+        "kʰí·dêl",
         "yesterday"
       ],
       [
@@ -3318,7 +3393,8 @@
         "kiow1266"
       ]
     ],
-    "comment": "Kiowa uses the plural as the default number."
+    "comment": "Kiowa uses the plural as the default number.",
+    "verified": "page-image"
   },
   {
     "id": "corbett2000_6_15",
@@ -3350,7 +3426,8 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [],
-    "comment": "Singular default agreement with a plural noun read generically."
+    "comment": "Singular default agreement with a plural noun read generically.",
+    "verified": "page-image"
   },
   {
     "id": "corbett2000_6_16",
@@ -3382,7 +3459,8 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "corbett2000_6_17",
@@ -3427,7 +3505,8 @@
         "semantic"
       ]
     ],
-    "comment": "British English; singular in form, plural in agreement."
+    "comment": "British English; singular in form, plural in agreement.",
+    "verified": "page-image"
   },
   {
     "id": "corbett2000_6_19a",
@@ -3464,7 +3543,8 @@
         "syntactic"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "corbett2000_6_19b",
@@ -3501,7 +3581,8 @@
         "semantic"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "corbett2000_6_20a",
@@ -3546,7 +3627,8 @@
         "syntactic"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "corbett2000_6_20b",
@@ -3591,7 +3673,8 @@
         "semantic"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "corbett2000_6_21a",
@@ -3640,7 +3723,8 @@
         "syntactic"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "corbett2000_6_21b",
@@ -3689,7 +3773,8 @@
         "semantic"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "corbett2000_6_22a",
@@ -3730,7 +3815,8 @@
         "syntactic"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "corbett2000_6_22b",
@@ -3771,7 +3857,8 @@
         "semantic"
       ]
     ],
-    "comment": "Speakers of American English admit the plural here too."
+    "comment": "Speakers of American English admit the plural here too.",
+    "verified": "page-image"
   },
   {
     "id": "corbett2000_6_23",
@@ -3811,7 +3898,8 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [],
-    "comment": "The article is singular, the verb plural."
+    "comment": "The article is singular, the verb plural.",
+    "verified": "page-image"
   },
   {
     "id": "corbett2000_6_24",
@@ -3847,7 +3935,8 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "corbett2000_6_25",
@@ -3875,7 +3964,8 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [],
-    "comment": "Talitsk dialect: associative meaning by plural agreement alone."
+    "comment": "Talitsk dialect: associative meaning by plural agreement alone.",
+    "verified": "page-image"
   },
   {
     "id": "corbett2000_6_26",
@@ -3915,7 +4005,8 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [],
-    "comment": "Syntactic agreement of the attributive modifier, semantic in the predicate."
+    "comment": "Syntactic agreement of the attributive modifier, semantic in the predicate.",
+    "verified": "page-image"
   },
   {
     "id": "corbett2000_6_28",
@@ -3960,7 +4051,8 @@
         "singular"
       ]
     ],
-    "comment": "Honorific vie: the finite verb and participle plural, the adjective singular."
+    "comment": "Honorific vie: the finite verb and participle plural, the adjective singular.",
+    "verified": "page-image"
   },
   {
     "id": "corbett2000_6_28v",
@@ -4005,7 +4097,8 @@
         "plural"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "corbett2000_6_29",
@@ -4050,7 +4143,8 @@
         "singular"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "corbett2000_6_29v",
@@ -4095,7 +4189,8 @@
         "plural"
       ]
     ],
-    "comment": "The plural adjective is the less preferred variant."
+    "comment": "The plural adjective is the less preferred variant.",
+    "verified": "page-image"
   },
   {
     "id": "corbett2000_6_30",
@@ -4140,7 +4235,8 @@
         "singular"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "corbett2000_6_31",
@@ -4171,7 +4267,7 @@
       ],
       [
         "sinij",
-        "blue"
+        "(dark) blue"
       ],
       [
         "kostjum",
@@ -4205,7 +4301,8 @@
         "nearest"
       ]
     ],
-    "comment": "Agreement with the nearest conjunct, which is also the first."
+    "comment": "Agreement with the nearest conjunct, which is also the first.",
+    "verified": "page-image"
   },
   {
     "id": "corbett2000_6_32",
@@ -4254,7 +4351,8 @@
         "nearest"
       ]
     ],
-    "comment": "With the controller preceding, the nearest conjunct is the last."
+    "comment": "With the controller preceding, the nearest conjunct is the last.",
+    "verified": "page-image"
   },
   {
     "id": "corbett2000_6_33",
@@ -4303,7 +4401,8 @@
         "first"
       ]
     ],
-    "comment": "Agreement with the first, most distant conjunct; resolution would give the masculine plural."
+    "comment": "Agreement with the first, most distant conjunct; resolution would give the masculine plural.",
+    "verified": "page-image"
   },
   {
     "id": "corbett2000_6_34",
@@ -4356,7 +4455,8 @@
         "dual"
       ]
     ],
-    "comment": "The dual cannot agree with one conjunct: agreement with all."
+    "comment": "The dual cannot agree with one conjunct: agreement with all.",
+    "verified": "page-image"
   },
   {
     "id": "corbett2000_6_35",
@@ -4417,7 +4517,8 @@
         "dual"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "corbett2000_6_36",
@@ -4482,7 +4583,8 @@
         "plural"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "corbett2000_6_37",
@@ -4539,7 +4641,8 @@
         "plural"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "corbett2000_6_38",
@@ -4620,7 +4723,8 @@
         "all"
       ]
     ],
-    "comment": "Resolution in attributive position, the less favoured option in Russian."
+    "comment": "Resolution in attributive position, the less favoured option in Russian.",
+    "verified": "page-image"
   },
   {
     "id": "corbett2000_6_39",
@@ -4677,7 +4781,8 @@
         "nearest"
       ]
     ],
-    "comment": "Singular attributive agreement with plural predicate agreement."
+    "comment": "Singular attributive agreement with plural predicate agreement.",
+    "verified": "page-image"
   },
   {
     "id": "corbett2000_6_40a",
@@ -4722,7 +4827,8 @@
         "plural"
       ]
     ],
-    "comment": "The plural is preferred."
+    "comment": "The plural is preferred.",
+    "verified": "page-image"
   },
   {
     "id": "corbett2000_6_40b",
@@ -4767,7 +4873,8 @@
         "singular"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "corbett2000_6_41a",
@@ -4820,7 +4927,8 @@
         "singular"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "corbett2000_6_41b",
@@ -4873,7 +4981,8 @@
         "plural"
       ]
     ],
-    "comment": "Without animate conjuncts resolution is not possible."
+    "comment": "Without animate conjuncts resolution is not possible.",
+    "verified": "page-image"
   },
   {
     "id": "corbett2000_6_42a",
@@ -4918,7 +5027,8 @@
         "nearest"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "corbett2000_6_42b",
@@ -5008,7 +5118,8 @@
         "all"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "corbett2000_6_43b",
@@ -5053,7 +5164,8 @@
         "nearest"
       ]
     ],
-    "comment": "With the controller preceding, only agreement with all conjuncts is possible."
+    "comment": "With the controller preceding, only agreement with all conjuncts is possible.",
+    "verified": "page-image"
   },
   {
     "id": "corbett2000_6_44a",
@@ -5098,7 +5210,8 @@
         "all"
       ]
     ],
-    "comment": "Inanimate conjuncts too: resolution is required by precedence alone."
+    "comment": "Inanimate conjuncts too: resolution is required by precedence alone.",
+    "verified": "page-image"
   },
   {
     "id": "corbett2000_6_44b",
@@ -5143,7 +5256,8 @@
         "nearest"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "corbett2000_6_45",
@@ -5175,7 +5289,8 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [],
-    "comment": "The feminine singular is the default, the nearest conjunct being absolutive; the plural is resolution."
+    "comment": "The feminine singular is the default, the nearest conjunct being absolutive; the plural is resolution.",
+    "verified": "page-image"
   },
   {
     "id": "corbett2000_6_46",
@@ -5207,7 +5322,8 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "corbett2000_6_49",
@@ -5252,7 +5368,8 @@
         "human"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "corbett2000_6_50",
@@ -5289,7 +5406,8 @@
         "animal"
       ]
     ],
-    "comment": "Resolution is less certain with non-human animates."
+    "comment": "Resolution is less certain with non-human animates.",
+    "verified": "page-image"
   },
   {
     "id": "corbett2000_6_51",
@@ -5331,7 +5449,8 @@
         "inanimate"
       ]
     ],
-    "comment": "With inanimates the default is the norm."
+    "comment": "With inanimates the default is the norm.",
+    "verified": "page-image"
   },
   {
     "id": "corbett2000_6_52",
@@ -5371,7 +5490,8 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [],
-    "comment": "Comitative: agreement with the head alone."
+    "comment": "Comitative: agreement with the head alone.",
+    "verified": "page-image"
   },
   {
     "id": "corbett2000_6_53",
@@ -5415,6 +5535,7 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [],
-    "comment": "Comitative: plural agreement for the pair."
+    "comment": "Comitative: plural agreement for the pair.",
+    "verified": "page-image"
   }
 ]

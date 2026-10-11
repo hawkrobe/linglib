@@ -18,7 +18,8 @@
       ["credenceMin", "high"],
       ["credenceMax", "high"]
     ],
-    "comment": "The speaker is authoritative and the addressee neutral, so only the falling declarative is appropriate."
+    "comment": "The speaker is authoritative and the addressee neutral, so only the falling declarative is appropriate.",
+    "verified": "page-image"
   },
   {
     "id": "farkasroelofsen2017_61b",
@@ -39,7 +40,8 @@
       ["credenceMin", "high"],
       ["credenceMax", "high"]
     ],
-    "comment": "The speaker is authoritative and the addressee neutral, so only the falling declarative is appropriate."
+    "comment": "The speaker is authoritative and the addressee neutral, so only the falling declarative is appropriate.",
+    "verified": "page-image"
   },
   {
     "id": "farkasroelofsen2017_61c",
@@ -60,7 +62,8 @@
       ["credenceMin", "high"],
       ["credenceMax", "high"]
     ],
-    "comment": "The speaker is authoritative and the addressee neutral, so only the falling declarative is appropriate."
+    "comment": "The speaker is authoritative and the addressee neutral, so only the falling declarative is appropriate.",
+    "verified": "page-image"
   },
   {
     "id": "farkasroelofsen2017_61d",
@@ -81,7 +84,8 @@
       ["credenceMin", "high"],
       ["credenceMax", "high"]
     ],
-    "comment": "The speaker is authoritative and the addressee neutral, so only the falling declarative is appropriate."
+    "comment": "The speaker is authoritative and the addressee neutral, so only the falling declarative is appropriate.",
+    "verified": "page-image"
   },
   {
     "id": "farkasroelofsen2017_61e",
@@ -102,7 +106,8 @@
       ["credenceMin", "high"],
       ["credenceMax", "high"]
     ],
-    "comment": "The speaker is authoritative and the addressee neutral, so only the falling declarative is appropriate."
+    "comment": "The speaker is authoritative and the addressee neutral, so only the falling declarative is appropriate.",
+    "verified": "page-image"
   },
   {
     "id": "farkasroelofsen2017_62a",
@@ -123,7 +128,8 @@
       ["credenceMin", "zero"],
       ["credenceMax", "zero"]
     ],
-    "comment": "Gunlogson (2008)'s example 9: the speaker has no evidence whatsoever for the highlighted alternative; (62e) is printed as a falling form with a question mark and is read as the falling tag of the paradigm."
+    "comment": "Gunlogson (2008)'s example 9: the speaker has no evidence whatsoever for the highlighted alternative; (62e) is printed as a falling form with a question mark and is read as the falling tag of the paradigm.",
+    "verified": "page-image"
   },
   {
     "id": "farkasroelofsen2017_62b",
@@ -144,7 +150,8 @@
       ["credenceMin", "zero"],
       ["credenceMax", "zero"]
     ],
-    "comment": "Gunlogson (2008)'s example 9: the speaker has no evidence whatsoever for the highlighted alternative; (62e) is printed as a falling form with a question mark and is read as the falling tag of the paradigm."
+    "comment": "Gunlogson (2008)'s example 9: the speaker has no evidence whatsoever for the highlighted alternative; (62e) is printed as a falling form with a question mark and is read as the falling tag of the paradigm.",
+    "verified": "page-image"
   },
   {
     "id": "farkasroelofsen2017_62c",
@@ -165,7 +172,8 @@
       ["credenceMin", "zero"],
       ["credenceMax", "zero"]
     ],
-    "comment": "Gunlogson (2008)'s example 9: the speaker has no evidence whatsoever for the highlighted alternative; (62e) is printed as a falling form with a question mark and is read as the falling tag of the paradigm."
+    "comment": "Gunlogson (2008)'s example 9: the speaker has no evidence whatsoever for the highlighted alternative; (62e) is printed as a falling form with a question mark and is read as the falling tag of the paradigm.",
+    "verified": "page-image"
   },
   {
     "id": "farkasroelofsen2017_62d",
@@ -186,7 +194,8 @@
       ["credenceMin", "zero"],
       ["credenceMax", "zero"]
     ],
-    "comment": "Gunlogson (2008)'s example 9: the speaker has no evidence whatsoever for the highlighted alternative; (62e) is printed as a falling form with a question mark and is read as the falling tag of the paradigm."
+    "comment": "Gunlogson (2008)'s example 9: the speaker has no evidence whatsoever for the highlighted alternative; (62e) is printed as a falling form with a question mark and is read as the falling tag of the paradigm.",
+    "verified": "page-image"
   },
   {
     "id": "farkasroelofsen2017_62e",
@@ -207,7 +216,8 @@
       ["credenceMin", "zero"],
       ["credenceMax", "zero"]
     ],
-    "comment": "Gunlogson (2008)'s example 9: the speaker has no evidence whatsoever for the highlighted alternative; (62e) is printed as a falling form with a question mark and is read as the falling tag of the paradigm."
+    "comment": "Gunlogson (2008)'s example 9: the speaker has no evidence whatsoever for the highlighted alternative; (62e) is printed as a falling form with a question mark and is read as the falling tag of the paradigm.",
+    "verified": "page-image"
   },
   {
     "id": "farkasroelofsen2017_63a",
@@ -228,7 +238,8 @@
       ["credenceMin", "high"],
       ["credenceMax", "high"]
     ],
-    "comment": "The context rules out a quiz reading of the interrogative and low credence in the highlighted alternative."
+    "comment": "The context rules out a quiz reading of the interrogative and low credence in the highlighted alternative.",
+    "verified": "page-image"
   },
   {
     "id": "farkasroelofsen2017_63b",
@@ -249,7 +260,8 @@
       ["credenceMin", "high"],
       ["credenceMax", "high"]
     ],
-    "comment": "The context rules out a quiz reading of the interrogative and low credence in the highlighted alternative."
+    "comment": "The context rules out a quiz reading of the interrogative and low credence in the highlighted alternative.",
+    "verified": "page-image"
   },
   {
     "id": "farkasroelofsen2017_63c",
@@ -270,7 +282,8 @@
       ["credenceMin", "high"],
       ["credenceMax", "high"]
     ],
-    "comment": "The context rules out a quiz reading of the interrogative and low credence in the highlighted alternative."
+    "comment": "The context rules out a quiz reading of the interrogative and low credence in the highlighted alternative.",
+    "verified": "page-image"
   },
   {
     "id": "farkasroelofsen2017_63d",
@@ -291,7 +304,8 @@
       ["credenceMin", "high"],
       ["credenceMax", "high"]
     ],
-    "comment": "The context rules out a quiz reading of the interrogative and low credence in the highlighted alternative."
+    "comment": "The context rules out a quiz reading of the interrogative and low credence in the highlighted alternative.",
+    "verified": "page-image"
   },
   {
     "id": "farkasroelofsen2017_63e",
@@ -312,7 +326,8 @@
       ["credenceMin", "high"],
       ["credenceMax", "high"]
     ],
-    "comment": "The context rules out a quiz reading of the interrogative and low credence in the highlighted alternative."
+    "comment": "The context rules out a quiz reading of the interrogative and low credence in the highlighted alternative.",
+    "verified": "page-image"
   },
   {
     "id": "farkasroelofsen2017_64a",
@@ -333,7 +348,8 @@
       ["credenceMin", "high"],
       ["credenceMax", "high"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "farkasroelofsen2017_64b",
@@ -354,7 +370,8 @@
       ["credenceMin", "high"],
       ["credenceMax", "high"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "farkasroelofsen2017_64c",
@@ -375,7 +392,8 @@
       ["credenceMin", "high"],
       ["credenceMax", "high"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "farkasroelofsen2017_64d",
@@ -396,7 +414,8 @@
       ["credenceMin", "high"],
       ["credenceMax", "high"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "farkasroelofsen2017_64e",
@@ -417,7 +436,8 @@
       ["credenceMin", "high"],
       ["credenceMax", "high"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "farkasroelofsen2017_65a",
@@ -438,7 +458,8 @@
       ["credenceMin", "low"],
       ["credenceMax", "high"]
     ],
-    "comment": "The context is consistent with any credence from low (unsure of the applicability of the adjective) to high."
+    "comment": "The context is consistent with any credence from low (unsure of the applicability of the adjective) to high.",
+    "verified": "page-image"
   },
   {
     "id": "farkasroelofsen2017_65b",
@@ -459,7 +480,8 @@
       ["credenceMin", "low"],
       ["credenceMax", "high"]
     ],
-    "comment": "The context is consistent with any credence from low (unsure of the applicability of the adjective) to high."
+    "comment": "The context is consistent with any credence from low (unsure of the applicability of the adjective) to high.",
+    "verified": "page-image"
   },
   {
     "id": "farkasroelofsen2017_65c",
@@ -480,7 +502,8 @@
       ["credenceMin", "low"],
       ["credenceMax", "high"]
     ],
-    "comment": "The context is consistent with any credence from low (unsure of the applicability of the adjective) to high."
+    "comment": "The context is consistent with any credence from low (unsure of the applicability of the adjective) to high.",
+    "verified": "page-image"
   },
   {
     "id": "farkasroelofsen2017_65d",
@@ -501,7 +524,8 @@
       ["credenceMin", "low"],
       ["credenceMax", "high"]
     ],
-    "comment": "The context is consistent with any credence from low (unsure of the applicability of the adjective) to high."
+    "comment": "The context is consistent with any credence from low (unsure of the applicability of the adjective) to high.",
+    "verified": "page-image"
   },
   {
     "id": "farkasroelofsen2017_65e",
@@ -522,7 +546,8 @@
       ["credenceMin", "low"],
       ["credenceMax", "high"]
     ],
-    "comment": "The context is consistent with any credence from low (unsure of the applicability of the adjective) to high."
+    "comment": "The context is consistent with any credence from low (unsure of the applicability of the adjective) to high.",
+    "verified": "page-image"
   },
   {
     "id": "farkasroelofsen2017_66a",
@@ -543,7 +568,8 @@
       ["credenceMin", "low"],
       ["credenceMax", "low"]
     ],
-    "comment": "Belinda's handing over the application is Chris's evidence, and his credence is low; also (13) and (24)."
+    "comment": "Belinda's handing over the application is Chris's evidence, and his credence is low; also (13) and (24).",
+    "verified": "page-image"
   },
   {
     "id": "farkasroelofsen2017_66b",
@@ -564,7 +590,8 @@
       ["credenceMin", "low"],
       ["credenceMax", "low"]
     ],
-    "comment": "Belinda's handing over the application is Chris's evidence, and his credence is low; also (13) and (24)."
+    "comment": "Belinda's handing over the application is Chris's evidence, and his credence is low; also (13) and (24).",
+    "verified": "page-image"
   },
   {
     "id": "farkasroelofsen2017_66c",
@@ -585,7 +612,8 @@
       ["credenceMin", "low"],
       ["credenceMax", "low"]
     ],
-    "comment": "Belinda's handing over the application is Chris's evidence, and his credence is low; also (13) and (24)."
+    "comment": "Belinda's handing over the application is Chris's evidence, and his credence is low; also (13) and (24).",
+    "verified": "page-image"
   },
   {
     "id": "farkasroelofsen2017_66d",
@@ -606,7 +634,8 @@
       ["credenceMin", "low"],
       ["credenceMax", "low"]
     ],
-    "comment": "Belinda's handing over the application is Chris's evidence, and his credence is low; also (13) and (24)."
+    "comment": "Belinda's handing over the application is Chris's evidence, and his credence is low; also (13) and (24).",
+    "verified": "page-image"
   },
   {
     "id": "farkasroelofsen2017_66e",
@@ -627,7 +656,8 @@
       ["credenceMin", "low"],
       ["credenceMax", "low"]
     ],
-    "comment": "Belinda's handing over the application is Chris's evidence, and his credence is low; also (13) and (24)."
+    "comment": "Belinda's handing over the application is Chris's evidence, and his credence is low; also (13) and (24).",
+    "verified": "page-image"
   },
   {
     "id": "farkasroelofsen2017_67a",
@@ -648,7 +678,8 @@
       ["credenceMin", "zero"],
       ["credenceMax", "zero"]
     ],
-    "comment": "The student's prior commitment is the teacher's evidence; her credence is zero; also (55)."
+    "comment": "The student's prior commitment is the teacher's evidence; her credence is zero; also (55).",
+    "verified": "page-image"
   },
   {
     "id": "farkasroelofsen2017_67b",
@@ -669,7 +700,8 @@
       ["credenceMin", "zero"],
       ["credenceMax", "zero"]
     ],
-    "comment": "The student's prior commitment is the teacher's evidence; her credence is zero; also (55)."
+    "comment": "The student's prior commitment is the teacher's evidence; her credence is zero; also (55).",
+    "verified": "page-image"
   },
   {
     "id": "farkasroelofsen2017_67c",
@@ -690,7 +722,8 @@
       ["credenceMin", "zero"],
       ["credenceMax", "zero"]
     ],
-    "comment": "The student's prior commitment is the teacher's evidence; her credence is zero; also (55)."
+    "comment": "The student's prior commitment is the teacher's evidence; her credence is zero; also (55).",
+    "verified": "page-image"
   },
   {
     "id": "farkasroelofsen2017_67d",
@@ -711,7 +744,8 @@
       ["credenceMin", "zero"],
       ["credenceMax", "zero"]
     ],
-    "comment": "The student's prior commitment is the teacher's evidence; her credence is zero; also (55)."
+    "comment": "The student's prior commitment is the teacher's evidence; her credence is zero; also (55).",
+    "verified": "page-image"
   },
   {
     "id": "farkasroelofsen2017_67e",
@@ -732,7 +766,8 @@
       ["credenceMin", "zero"],
       ["credenceMax", "zero"]
     ],
-    "comment": "The student's prior commitment is the teacher's evidence; her credence is zero; also (55)."
+    "comment": "The student's prior commitment is the teacher's evidence; her credence is zero; also (55).",
+    "verified": "page-image"
   },
   {
     "id": "farkasroelofsen2017_53",
@@ -753,7 +788,8 @@
       ["credenceMin", "low"],
       ["credenceMax", "low"]
     ],
-    "comment": "Bert's credence is above zero but not beyond low."
+    "comment": "Bert's credence is above zero but not beyond low.",
+    "verified": "page-image"
   },
   {
     "id": "farkasroelofsen2017_54",
@@ -774,7 +810,8 @@
       ["credenceMin", "high"],
       ["credenceMax", "high"]
     ],
-    "comment": "Bert knows whether he had a haircut."
+    "comment": "Bert knows whether he had a haircut.",
+    "verified": "page-image"
   },
   {
     "id": "farkasroelofsen2017_68_c",
@@ -795,7 +832,8 @@
       ["credenceMin", "zero"],
       ["credenceMax", "zero"]
     ],
-    "comment": "Deontic authority: the mother signals zero credence."
+    "comment": "Deontic authority: the mother signals zero credence.",
+    "verified": "page-image"
   },
   {
     "id": "farkasroelofsen2017_68_b",
@@ -879,7 +917,8 @@
       ["credenceMin", "zero"],
       ["credenceMax", "zero"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "farkasroelofsen2017_70",
@@ -900,7 +939,8 @@
       ["credenceMin", "zero"],
       ["credenceMax", "low"]
     ],
-    "comment": "Surprise: evidence the speaker trusted against the alternative, now confronted with evidence for it."
+    "comment": "Surprise: evidence the speaker trusted against the alternative, now confronted with evidence for it.",
+    "verified": "page-image"
   },
   {
     "id": "farkasroelofsen2017_71a",
@@ -921,7 +961,8 @@
       ["credenceMin", "zero"],
       ["credenceMax", "low"]
     ],
-    "comment": "Chris's epistemic base led him to expect the opposite: surprise."
+    "comment": "Chris's epistemic base led him to expect the opposite: surprise.",
+    "verified": "page-image"
   },
   {
     "id": "farkasroelofsen2017_71b_rising",
@@ -942,7 +983,8 @@
       ["credenceMin", "zero"],
       ["credenceMax", "low"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "farkasroelofsen2017_71b_falling",
@@ -963,7 +1005,8 @@
       ["credenceMin", "zero"],
       ["credenceMax", "low"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "farkasroelofsen2017_72a",
@@ -984,7 +1027,8 @@
       ["credenceMin", "zero"],
       ["credenceMax", "low"]
     ],
-    "comment": "Chris's epistemic base led him to expect the opposite: surprise."
+    "comment": "Chris's epistemic base led him to expect the opposite: surprise.",
+    "verified": "page-image"
   },
   {
     "id": "farkasroelofsen2017_72b_rising",
@@ -1005,7 +1049,8 @@
       ["credenceMin", "zero"],
       ["credenceMax", "low"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "farkasroelofsen2017_72b_falling",
@@ -1026,7 +1071,8 @@
       ["credenceMin", "zero"],
       ["credenceMax", "low"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "farkasroelofsen2017_73a",
@@ -1047,7 +1093,8 @@
       ["credenceMin", "high"],
       ["credenceMax", "high"]
     ],
-    "comment": "Chris's credence in what he presupposed or relied on must be high."
+    "comment": "Chris's credence in what he presupposed or relied on must be high.",
+    "verified": "page-image"
   },
   {
     "id": "farkasroelofsen2017_73b_rising",
@@ -1068,7 +1115,8 @@
       ["credenceMin", "high"],
       ["credenceMax", "high"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "farkasroelofsen2017_73b_falling",
@@ -1089,7 +1137,8 @@
       ["credenceMin", "high"],
       ["credenceMax", "high"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "farkasroelofsen2017_74a",
@@ -1110,7 +1159,8 @@
       ["credenceMin", "high"],
       ["credenceMax", "high"]
     ],
-    "comment": "Chris's credence in what he presupposed or relied on must be high."
+    "comment": "Chris's credence in what he presupposed or relied on must be high.",
+    "verified": "page-image"
   },
   {
     "id": "farkasroelofsen2017_74b_rising",
@@ -1131,7 +1181,8 @@
       ["credenceMin", "high"],
       ["credenceMax", "high"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "farkasroelofsen2017_74b_falling",
@@ -1152,7 +1203,8 @@
       ["credenceMin", "high"],
       ["credenceMax", "high"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "farkasroelofsen2017_75a",
@@ -1173,7 +1225,8 @@
       ["credenceMin", "high"],
       ["credenceMax", "high"]
     ],
-    "comment": "Chris's credence in what he presupposed or relied on must be high."
+    "comment": "Chris's credence in what he presupposed or relied on must be high.",
+    "verified": "page-image"
   },
   {
     "id": "farkasroelofsen2017_75b_rising",
@@ -1194,7 +1247,8 @@
       ["credenceMin", "high"],
       ["credenceMax", "high"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "farkasroelofsen2017_75b_falling",
@@ -1215,7 +1269,8 @@
       ["credenceMin", "high"],
       ["credenceMax", "high"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "farkasroelofsen2017_76",
@@ -1236,7 +1291,8 @@
       ["credenceMin", "zero"],
       ["credenceMax", "low"]
     ],
-    "comment": "Beun (2000): the evidence is the caller's recollection of previous flights, not the context."
+    "comment": "Beun (2000): the evidence is the caller's recollection of previous flights, not the context.",
+    "verified": "page-image"
   },
   {
     "id": "farkasroelofsen2017_77a_rising_tag",
@@ -1257,7 +1313,8 @@
       ["credenceMin", "high"],
       ["credenceMax", "high"]
     ],
-    "comment": "Rhetorical: that Bill is Sam's father is common ground."
+    "comment": "Rhetorical: that Bill is Sam's father is common ground.",
+    "verified": "page-image"
   },
   {
     "id": "farkasroelofsen2017_77a_falling_tag",
@@ -1278,7 +1335,8 @@
       ["credenceMin", "high"],
       ["credenceMax", "high"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "farkasroelofsen2017_77a_rising",
@@ -1299,7 +1357,8 @@
       ["credenceMin", "high"],
       ["credenceMax", "high"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "farkasroelofsen2017_77b_rising_tag",
@@ -1320,7 +1379,8 @@
       ["credenceMin", "zero"],
       ["credenceMax", "zero"]
     ],
-    "comment": "The highlighted alternative is the negative radical, in which the therapist has zero credence."
+    "comment": "The highlighted alternative is the negative radical, in which the therapist has zero credence.",
+    "verified": "page-image"
   },
   {
     "id": "farkasroelofsen2017_77b_falling_tag",
@@ -1341,7 +1401,8 @@
       ["credenceMin", "zero"],
       ["credenceMax", "zero"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "farkasroelofsen2017_77b_rising",
@@ -1362,6 +1423,7 @@
       ["credenceMin", "zero"],
       ["credenceMax", "zero"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   }
 ]

@@ -15,7 +15,8 @@
       ["head", "proud"],
       ["dependent", "of"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "az2025_1b",
@@ -26,7 +27,7 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -34,17 +35,18 @@
       ["noun", "mother"],
       ["dependent", "of"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "az2025_2a",
     "source": {"bibkey": "alexeyenko-zeijlstra-2025", "paperLabel": "(2a)"},
     "language": "mode1248",
-    "primaryText": "Ine perifanos gia to gio tu.",
+    "primaryText": "Ine perifanos ɣia to ɣio tu.",
     "discourseSegments": [],
     "glossedTokens": [
-      ["Ine", "is"], ["perifanos", "proud.M.SG"], ["gia", "for"], ["to", "the"],
-      ["gio", "son.ACC"], ["tu", "his"]
+      ["Ine", "is"], ["perifanos", "proud.M.SG"], ["ɣia", "for"], ["to", "the"],
+      ["ɣio", "son.ACC"], ["tu", "his"]
     ],
     "translation": "He is proud of his son.",
     "context": "",
@@ -53,18 +55,19 @@
     "readings": [],
     "paperFeatures": [
       ["head", "perifanos"],
-      ["dependent", "gia"]
+      ["dependent", "ɣia"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "az2025_2b",
     "source": {"bibkey": "alexeyenko-zeijlstra-2025", "paperLabel": "(2b)"},
     "language": "mode1248",
-    "primaryText": "o perifanos gia to gio tu pateras",
+    "primaryText": "o perifanos ɣia to ɣio tu pateras",
     "discourseSegments": [],
     "glossedTokens": [
-      ["o", "the"], ["perifanos", "proud.M.SG"], ["gia", "for"], ["to", "the"], ["gio", "son.ACC"],
+      ["o", "the"], ["perifanos", "proud.M.SG"], ["ɣia", "for"], ["to", "the"], ["ɣio", "son.ACC"],
       ["tu", "his"], ["pateras", "father"]
     ],
     "translation": "the father proud of his son",
@@ -75,9 +78,10 @@
     "paperFeatures": [
       ["head", "perifanos"],
       ["noun", "pateras"],
-      ["dependent", "gia"]
+      ["dependent", "ɣia"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "az2025_3a",
@@ -97,7 +101,8 @@
       ["head", "harro-a"],
       ["dependent", "Bere"]
     ],
-    "comment": "Hualde and Ortiz de Urbina (2003:138); repeated as (28a)."
+    "comment": "Hualde and Ortiz de Urbina (2003:138); repeated as (28a).",
+    "verified": "page-image"
   },
   {
     "id": "az2025_3b",
@@ -110,7 +115,7 @@
     ],
     "translation": "a woman proud of her work",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -118,7 +123,8 @@
       ["noun", "emakume"],
       ["dependent", "bere"]
     ],
-    "comment": "Repeated as (28c)."
+    "comment": "Repeated as (28c).",
+    "verified": "page-image"
   },
   {
     "id": "az2025_4a",
@@ -139,7 +145,8 @@
       ["head", "moftaxar-∅-and"],
       ["dependent", "be"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "az2025_4b",
@@ -162,7 +169,8 @@
       ["noun", "madar-an=e"],
       ["dependent", "be"]
     ],
-    "comment": "Repeated as (33); the ezafe linker cliticizes to the noun."
+    "comment": "Repeated as (33); the ezafe linker cliticizes to the noun.",
+    "verified": "page-image"
   },
   {
     "id": "az2025_7a",
@@ -181,7 +189,8 @@
       ["noun", "meeting"],
       ["dependent", "smoothly"]
     ],
-    "comment": "From Sheehan (2017a:136)."
+    "comment": "From Sheehan (2017a:136).",
+    "verified": "page-image"
   },
   {
     "id": "az2025_7b",
@@ -192,7 +201,7 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -200,7 +209,8 @@
       ["noun", "meeting"],
       ["dependent", "smoothly"]
     ],
-    "comment": "From Sheehan (2017a:136)."
+    "comment": "From Sheehan (2017a:136).",
+    "verified": "page-image"
   },
   {
     "id": "az2025_8",
@@ -211,7 +221,7 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -219,7 +229,8 @@
       ["noun", "man"],
       ["dependent", "of"]
     ],
-    "comment": "Williams (1982:160); the PP is a complement of proud."
+    "comment": "Williams (1982:160); the PP is a complement of proud.",
+    "verified": "page-image"
   },
   {
     "id": "az2025_9a",
@@ -230,7 +241,7 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -238,7 +249,8 @@
       ["noun", "woman"],
       ["dependent", "that"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "az2025_9b",
@@ -249,7 +261,7 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -257,7 +269,8 @@
       ["noun", "person"],
       ["dependent", "a"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "az2025_10a",
@@ -268,7 +281,7 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -276,7 +289,8 @@
       ["noun", "letter"],
       ["dependent", "Bill"]
     ],
-    "comment": "Williams (1982:160); prenominal PP."
+    "comment": "Williams (1982:160); prenominal PP.",
+    "verified": "page-image"
   },
   {
     "id": "az2025_10b",
@@ -287,7 +301,7 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -295,7 +309,8 @@
       ["noun", "book"],
       ["dependent", "I"]
     ],
-    "comment": "Escribano (2004:2); prenominal relative clause."
+    "comment": "Escribano (2004:2); prenominal relative clause.",
+    "verified": "page-image"
   },
   {
     "id": "az2025_15",
@@ -315,7 +330,8 @@
       ["noun", "guy"],
       ["degree", "enough"]
     ],
-    "comment": "Sheehan (2017a:125); enough follows the adjective and immediately precedes the noun."
+    "comment": "Sheehan (2017a:125); enough follows the adjective and immediately precedes the noun.",
+    "verified": "page-image"
   },
   {
     "id": "az2025_16",
@@ -326,7 +342,7 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -335,7 +351,8 @@
       ["dependent", "to"],
       ["degree", "enough"]
     ],
-    "comment": "Sheehan (2017a:125)."
+    "comment": "Sheehan (2017a:125).",
+    "verified": "page-image"
   },
   {
     "id": "az2025_17a",
@@ -356,7 +373,8 @@
       ["head", "damok'ideb-ul-i"],
       ["dependent", "tavis"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "az2025_17b",
@@ -370,7 +388,7 @@
     ],
     "translation": "a boy (who is) dependent on his mother",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -378,7 +396,8 @@
       ["noun", "bič'-i"],
       ["dependent", "tavis"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "az2025_18a",
@@ -399,7 +418,8 @@
       ["head", "független"],
       ["dependent", "a"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "az2025_18b",
@@ -413,7 +433,7 @@
     ],
     "translation": "a boy (who is) independent of his parents",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -421,7 +441,8 @@
       ["noun", "fiú"],
       ["dependent", "a"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "az2025_19a",
@@ -442,7 +463,8 @@
       ["head", "stolt-ur"],
       ["dependent", "af"]
     ],
-    "comment": "Repeated as (40a)."
+    "comment": "Repeated as (40a).",
+    "verified": "page-image"
   },
   {
     "id": "az2025_19b",
@@ -456,7 +478,7 @@
     ],
     "translation": "a father (who is) proud of his son",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -464,16 +486,17 @@
       ["noun", "faðir"],
       ["dependent", "af"]
     ],
-    "comment": "Repeated as (41a)."
+    "comment": "Repeated as (41a).",
+    "verified": "page-image"
   },
   {
     "id": "az2025_20a",
     "source": {"bibkey": "alexeyenko-zeijlstra-2025", "paperLabel": "(20a)"},
     "language": "nucl1235",
-    "primaryText": "Na hpart ē ir tłay-ov.",
+    "primaryText": "(Na) hpart ē ir tłay-ov.",
     "discourseSegments": [],
     "glossedTokens": [
-      ["Na", "3SG"], ["hpart", "proud"], ["ē", "COP.3SG"], ["ir", "REFL.3SG.GEN"],
+      ["(Na)", "3SG"], ["hpart", "proud"], ["ē", "COP.3SG"], ["ir", "REFL.3SG.GEN"],
       ["tłay-ov", "boy-INS"]
     ],
     "translation": "She/He is proud of her/his son.",
@@ -485,7 +508,8 @@
       ["head", "hpart"],
       ["dependent", "ir"]
     ],
-    "comment": "The subject pronoun is optional."
+    "comment": "The subject pronoun is optional.",
+    "verified": "page-image"
   },
   {
     "id": "az2025_20b",
@@ -498,7 +522,7 @@
     ],
     "translation": "a father (who is) proud of his son",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -506,7 +530,8 @@
       ["noun", "hayr"],
       ["dependent", "ir"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "az2025_21a",
@@ -527,7 +552,8 @@
       ["head", "ponosan"],
       ["dependent", "na"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "az2025_21b",
@@ -541,7 +567,7 @@
     ],
     "translation": "a father (who is) proud of his son",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -549,7 +575,8 @@
       ["noun", "otac"],
       ["dependent", "na"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "az2025_23b",
@@ -596,7 +623,8 @@
       ["noun", "glaza"],
       ["dependent", "ot"]
     ],
-    "comment": "Russian National Corpus."
+    "comment": "Russian National Corpus.",
+    "verified": "page-image"
   },
   {
     "id": "az2025_26",
@@ -619,17 +647,18 @@
       ["noun", "qīngshàonián"],
       ["dependent", "yú"]
     ],
-    "comment": "The attributivizer de cliticizes to the AP."
+    "comment": "The attributivizer de cliticizes to the AP.",
+    "verified": "page-image"
   },
   {
     "id": "az2025_27",
     "source": {"bibkey": "alexeyenko-zeijlstra-2025", "paperLabel": "(27)"},
     "language": "taga1270",
-    "primaryText": "Naghahanap ako ng bagay para sa bata=ng damit.",
+    "primaryText": "Naghahanap ako ng bagay (para) sa bata=ng damit.",
     "discourseSegments": [],
     "glossedTokens": [
       ["Naghahanap", "AV.PROG.search"], ["ako", "1SG.NOM"], ["ng", "GEN"], ["bagay", "suitable"],
-      ["para", "for"], ["sa", "DAT"], ["bata=ng", "child=LNK"], ["damit", "dress"]
+      ["(para)", "for"], ["sa", "DAT"], ["bata=ng", "child=LNK"], ["damit", "dress"]
     ],
     "translation": "I am looking for a dress (that is) suitable for the child.",
     "context": "",
@@ -640,9 +669,10 @@
       ["head", "bagay"],
       ["attributivizer", "clitic"],
       ["noun", "damit"],
-      ["dependent", "para"]
+      ["dependent", "(para)"]
     ],
-    "comment": "Schachter and Otanes (1972:246), gloss the authors'; para is optional."
+    "comment": "Schachter and Otanes (1972:246), gloss the authors'; para is optional.",
+    "verified": "page-image"
   },
   {
     "id": "az2025_28b",
@@ -662,7 +692,8 @@
       ["head", "harro-a"],
       ["noun", "emakume"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "az2025_28d",
@@ -685,7 +716,8 @@
       ["dependent", "bere"],
       ["construction", "relative"]
     ],
-    "comment": "Prenominal relative clause containing the complex predicative AP."
+    "comment": "Prenominal relative clause containing the complex predicative AP.",
+    "verified": "page-image"
   },
   {
     "id": "az2025_29a",
@@ -708,23 +740,27 @@
       ["head", "yói"],
       ["dependent", "karetera"]
     ],
-    "comment": "The XP-A order is the less neutral option."
+    "comment": "The XP-A order is the less neutral option.",
+    "verified": "page-image"
   },
   {
     "id": "az2025_29b",
     "source": {"bibkey": "alexeyenko-zeijlstra-2025", "paperLabel": "(29b)"},
     "language": "chac1251",
-    "primaryText": "motó yói karetera ka=tí kopi=ki paí.",
+    "primaryText": "motó yói karetera ka=tí kopi=ki paɨ.",
     "discourseSegments": [],
     "glossedTokens": [
       ["motó", "motorcycle"], ["yói", "bad"], ["karetera", "highway"], ["ka=tí", "go=NMLZ:PURP"],
-      ["kopi=ki", "buy=DECL.NPST"], ["paí", "Paë"]
+      ["kopi=ki", "buy=DECL.NPST"], ["paɨ", "Paë"]
     ],
     "translation": "Paë buys/will buy a motorcycle (which is) bad for driving on the highway.",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [
-      {"form": "motó karetera ka=tí yói kopi=ki paí.", "judgment": "unacceptable"}
+      {
+        "form": "motó karetera ka=tí yói kopi=ki paɨ.",
+        "judgment": "ungrammatical"
+      }
     ],
     "readings": [],
     "paperFeatures": [
@@ -732,17 +768,18 @@
       ["noun", "motó"],
       ["dependent", "karetera"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "az2025_29c",
     "source": {"bibkey": "alexeyenko-zeijlstra-2025", "paperLabel": "(29c)"},
     "language": "chac1251",
-    "primaryText": "motó karetera ka=tí yói=ka kopi=ki paí.",
+    "primaryText": "motó karetera ka=tí yói=ka kopi=ki paɨ.",
     "discourseSegments": [],
     "glossedTokens": [
       ["motó", "motorcycle"], ["karetera", "highway"], ["ka=tí", "go=NMLZ:PURP"],
-      ["yói=ka", "bad=REL"], ["kopi=ki", "buy=DECL.NPST"], ["paí", "Paë"]
+      ["yói=ka", "bad=REL"], ["kopi=ki", "buy=DECL.NPST"], ["paɨ", "Paë"]
     ],
     "translation": "Paë buys/will buy a motorcycle which is bad for driving on the highway.",
     "context": "",
@@ -755,7 +792,8 @@
       ["dependent", "karetera"],
       ["construction", "relative"]
     ],
-    "comment": "With the linker =ka(to), analyzed as a relative clause marker."
+    "comment": "With the linker =ka(to), analyzed as a relative clause marker.",
+    "verified": "page-image"
   },
   {
     "id": "az2025_30a",
@@ -776,7 +814,8 @@
       ["head", "boon-aa-ɗa"],
       ["dependent", "dureys-umma=tti"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "az2025_30b",
@@ -796,7 +835,8 @@
       ["head", "boon-aa-ɗa"],
       ["noun", "nama"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "az2025_30c",
@@ -810,7 +850,7 @@
     ],
     "translation": "Muussa is a person (who is) proud of being rich.",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -818,7 +858,8 @@
       ["noun", "nama"],
       ["dependent", "dureys-umma=tti"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "az2025_30d",
@@ -841,7 +882,8 @@
       ["dependent", "dureys-umma=tti"],
       ["construction", "relative"]
     ],
-    "comment": "Relativization with the dependent clause marker."
+    "comment": "Relativization with the dependent clause marker.",
+    "verified": "page-image"
   },
   {
     "id": "az2025_31",
@@ -863,7 +905,8 @@
       ["noun", "nukappiaqqa-p"],
       ["dependent", "qimmi-mut"]
     ],
-    "comment": "Fortescue (1984:52); the participle carries the same case/number affix as the noun."
+    "comment": "Fortescue (1984:52); the participle carries the same case/number affix as the noun.",
+    "verified": "page-image"
   },
   {
     "id": "az2025_32",
@@ -886,7 +929,8 @@
       ["noun", "gore"],
       ["dependent", "jal=na"]
     ],
-    "comment": "Van Breugel (2010:518)."
+    "comment": "Van Breugel (2010:518).",
+    "verified": "page-image"
   },
   {
     "id": "az2025_35",
@@ -908,7 +952,8 @@
       ["noun", "viris"],
       ["dependent", "re"]
     ],
-    "comment": "Cic. Fam. 1.9."
+    "comment": "Cic. Fam. 1.9.",
+    "verified": "page-image"
   },
   {
     "id": "az2025_36a",
@@ -922,7 +967,7 @@
     ],
     "translation": "in the students (who are) good at math",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -930,7 +975,8 @@
       ["noun", "studenti"],
       ["dependent", "in"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "az2025_36b",
@@ -952,7 +998,8 @@
       ["noun", "studenti"],
       ["dependent", "in"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "az2025_36c",
@@ -970,7 +1017,8 @@
       ["head", "bravi"],
       ["noun", "studenti"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "az2025_36d",
@@ -981,36 +1029,41 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
       ["head", "bravi"],
       ["noun", "studenti"]
     ],
-    "comment": "bravi belongs to the restricted prenominal class."
+    "comment": "bravi belongs to the restricted prenominal class.",
+    "verified": "page-image"
   },
   {
     "id": "az2025_37a",
     "source": {"bibkey": "alexeyenko-zeijlstra-2025", "paperLabel": "(37a)"},
     "language": "mode1248",
-    "primaryText": "Aftos ine perifan-os.",
+    "primaryText": "(Aftos) ine perifan-os.",
     "discourseSegments": [],
     "glossedTokens": [
-      ["Aftos", "he"], ["ine", "is"], ["perifan-os", "proud-M.SG.NOM"]
+      ["(Aftos)", "he"], ["ine", "is"], ["perifan-os", "proud-M.SG.NOM"]
     ],
     "translation": "He is proud.",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [
-      {"form": "Aftos ine perifan.", "judgment": "unacceptable"}
+      {
+        "form": "(Aftos) ine perifan.",
+        "judgment": "ungrammatical"
+      }
     ],
     "readings": [],
     "paperFeatures": [
       ["head", "perifan-os"],
       ["marker", "agreement"]
     ],
-    "comment": "The subject pronoun is optional."
+    "comment": "The subject pronoun is optional.",
+    "verified": "page-image"
   },
   {
     "id": "az2025_37b",
@@ -1025,7 +1078,10 @@
     "context": "",
     "judgment": "acceptable",
     "alternatives": [
-      {"form": "o perifan pateras", "judgment": "unacceptable"}
+      {
+        "form": "o perifan pateras",
+        "judgment": "ungrammatical"
+      }
     ],
     "readings": [],
     "paperFeatures": [
@@ -1033,7 +1089,8 @@
       ["marker", "agreement"],
       ["noun", "pateras"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "az2025_38a",
@@ -1048,14 +1105,18 @@
     "context": "",
     "judgment": "acceptable",
     "alternatives": [
-      {"form": "Er ist stolz-er.", "judgment": "unacceptable"}
+      {
+        "form": "Er ist stolz-er.",
+        "judgment": "ungrammatical"
+      }
     ],
     "readings": [],
     "paperFeatures": [
       ["head", "stolz"],
       ["marker", "bare"]
     ],
-    "comment": "Repeated as (60a)."
+    "comment": "Repeated as (60a).",
+    "verified": "page-image"
   },
   {
     "id": "az2025_38b",
@@ -1070,7 +1131,10 @@
     "context": "",
     "judgment": "acceptable",
     "alternatives": [
-      {"form": "stolz Vater", "judgment": "unacceptable"}
+      {
+        "form": "stolz Vater",
+        "judgment": "ungrammatical"
+      }
     ],
     "readings": [],
     "paperFeatures": [
@@ -1078,7 +1142,8 @@
       ["marker", "agreement"],
       ["noun", "Vater"]
     ],
-    "comment": "Repeated as (60b)."
+    "comment": "Repeated as (60b).",
+    "verified": "page-image"
   },
   {
     "id": "az2025_39a",
@@ -1100,7 +1165,8 @@
       ["head", "umn-aja"],
       ["form", "long"]
     ],
-    "comment": "Short form umn-a: SHORT.F.SG, no case."
+    "comment": "Short form umn-a: SHORT.F.SG, no case.",
+    "verified": "page-image"
   },
   {
     "id": "az2025_39b",
@@ -1115,7 +1181,10 @@
     "context": "",
     "judgment": "acceptable",
     "alternatives": [
-      {"form": "umn-a d'evočka", "judgment": "unacceptable"}
+      {
+        "form": "umn-a d'evočka",
+        "judgment": "ungrammatical"
+      }
     ],
     "readings": [],
     "paperFeatures": [
@@ -1123,7 +1192,8 @@
       ["form", "long"],
       ["noun", "d'evočka"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "az2025_40b",
@@ -1144,7 +1214,8 @@
       ["head", "stolt-ur"],
       ["dependent", "af"]
     ],
-    "comment": "The more marked option."
+    "comment": "The more marked option.",
+    "verified": "page-image"
   },
   {
     "id": "az2025_41b",
@@ -1166,7 +1237,8 @@
       ["noun", "faðir"],
       ["dependent", "af"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "az2025_42a",
@@ -1181,14 +1253,18 @@
     "context": "",
     "judgment": "acceptable",
     "alternatives": [
-      {"form": "Jón er stolt-i.", "judgment": "unacceptable"}
+      {
+        "form": "Jón er stolt-i.",
+        "judgment": "ungrammatical"
+      }
     ],
     "readings": [],
     "paperFeatures": [
       ["head", "stolt-ur"],
       ["form", "strong"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "az2025_42b",
@@ -1203,7 +1279,10 @@
     "context": "",
     "judgment": "acceptable",
     "alternatives": [
-      {"form": "stolt-i faðir", "judgment": "unacceptable"}
+      {
+        "form": "stolt-i faðir",
+        "judgment": "ungrammatical"
+      }
     ],
     "readings": [],
     "paperFeatures": [
@@ -1212,7 +1291,8 @@
       ["definiteness", "indefinite"],
       ["noun", "faðir"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "az2025_42c",
@@ -1234,7 +1314,8 @@
       ["definiteness", "definite"],
       ["noun", "faðir-inn"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "az2025_42d",
@@ -1257,7 +1338,8 @@
       ["reading", "nonrestrictive"],
       ["noun", "faðir-inn"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "az2025_43a",
@@ -1272,14 +1354,18 @@
     "context": "",
     "judgment": "acceptable",
     "alternatives": [
-      {"form": "Goran je lijepi.", "judgment": "unacceptable"}
+      {
+        "form": "Goran je lijepi.",
+        "judgment": "ungrammatical"
+      }
     ],
     "readings": [],
     "paperFeatures": [
       ["head", "lijep"],
       ["form", "short"]
     ],
-    "comment": "Aljović (2002:28)."
+    "comment": "Aljović (2002:28).",
+    "verified": "page-image"
   },
   {
     "id": "az2025_43b",
@@ -1301,7 +1387,8 @@
       ["definiteness", "indefinite"],
       ["noun", "momak"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "az2025_43c",
@@ -1323,7 +1410,8 @@
       ["definiteness", "definite"],
       ["noun", "momak"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "az2025_62",
@@ -1346,7 +1434,8 @@
       ["head", "stolz"],
       ["dependent", "auf"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "az2025_63a",
@@ -1360,7 +1449,7 @@
     ],
     "translation": "the mother (who is) proud of her daughter",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -1369,7 +1458,8 @@
       ["noun", "Mutter"],
       ["dependent", "auf"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "az2025_63b",
@@ -1392,7 +1482,8 @@
       ["noun", "Mutter"],
       ["dependent", "auf"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "az2025_66a",
@@ -1415,7 +1506,8 @@
       ["noun", "vrouw"],
       ["dependent", "op"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "az2025_66b",
@@ -1429,7 +1521,7 @@
     ],
     "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -1438,7 +1530,8 @@
       ["noun", "vrouw"],
       ["dependent", "op"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "az2025_66c",
@@ -1452,7 +1545,7 @@
     ],
     "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -1461,7 +1554,8 @@
       ["noun", "vrouw"],
       ["dependent", "op"]
     ],
-    "comment": "The affix is adjacent to the adjective but not to the noun."
+    "comment": "The affix is adjacent to the adjective but not to the noun.",
+    "verified": "page-image"
   },
   {
     "id": "az2025_67a",
@@ -1484,7 +1578,8 @@
       ["noun", "kind"],
       ["dependent", "op"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "az2025_67b",
@@ -1498,7 +1593,7 @@
     ],
     "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -1507,7 +1602,8 @@
       ["noun", "kind"],
       ["dependent", "op"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "az2025_67c",
@@ -1521,7 +1617,7 @@
     ],
     "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -1530,7 +1626,8 @@
       ["noun", "kind"],
       ["dependent", "op"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "az2025_68a",
@@ -1552,7 +1649,8 @@
       ["noun", "kind"],
       ["degree", "genoeg-∅"]
     ],
-    "comment": "Van Riemsdijk (1998); some speaker variation is reported."
+    "comment": "Van Riemsdijk (1998); some speaker variation is reported.",
+    "verified": "page-image"
   },
   {
     "id": "az2025_68b",
@@ -1565,7 +1663,7 @@
     ],
     "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -1574,7 +1672,8 @@
       ["noun", "vrouw"],
       ["degree", "genoeg-e"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "az2025_68c",
@@ -1587,7 +1686,7 @@
     ],
     "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -1595,7 +1694,8 @@
       ["noun", "vrouw"],
       ["degree", "genoeg"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "az2025_68d",
@@ -1608,7 +1708,7 @@
     ],
     "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -1616,13 +1716,14 @@
       ["noun", "vrouw"],
       ["degree", "genoeg"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "az2025_71a",
     "source": {"bibkey": "alexeyenko-zeijlstra-2025", "paperLabel": "(71a)"},
     "language": "stan1293",
-    "primaryText": "a proud child",
+    "primaryText": "a proud-∅ child",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
@@ -1631,22 +1732,23 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["head", "proud"],
+      ["head", "proud-∅"],
       ["attributivizer", "null"],
       ["noun", "child"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "az2025_71b",
     "source": {"bibkey": "alexeyenko-zeijlstra-2025", "paperLabel": "(71b)"},
     "language": "stan1293",
-    "primaryText": "a proud of his mother child",
+    "primaryText": "a proud of his mother-∅ child",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -1655,13 +1757,14 @@
       ["noun", "child"],
       ["dependent", "of"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "az2025_71c",
     "source": {"bibkey": "alexeyenko-zeijlstra-2025", "paperLabel": "(71c)"},
     "language": "stan1293",
-    "primaryText": "a proud enough child",
+    "primaryText": "a proud enough-∅ child",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
@@ -1673,8 +1776,9 @@
       ["head", "proud"],
       ["attributivizer", "null"],
       ["noun", "child"],
-      ["degree", "enough"]
+      ["degree", "enough-∅"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   }
 ]

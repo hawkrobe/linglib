@@ -36,13 +36,14 @@
         "no"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "fox2018_ex16b",
     "source": {
-      "bibkey": "fox-hackl-2006",
-      "paperLabel": "negative islands"
+      "bibkey": "fox-2018",
+      "paperLabel": "(16b)"
     },
     "language": "stan1293",
     "primaryText": "Tell me how fast you didn't drive.",
@@ -76,10 +77,8 @@
       ]
     ],
     "comment": "No smallest degree above the actual speed: no maximally informative true member.",
-    "reportedIn": {
-      "bibkey": "fox-2018",
-      "paperLabel": "(16b)"
-    }
+    "reportedIn": null,
+    "verified": "page-image"
   },
   {
     "id": "fox2018_ex16c",
@@ -118,7 +117,8 @@
         "no"
       ]
     ],
-    "comment": "The modal base can entail a least bound, so maximality can be met."
+    "comment": "The modal base can entail a least bound, so maximality can be met.",
+    "verified": "page-image"
   },
   {
     "id": "fox2018_ex24",
@@ -166,7 +166,8 @@
         "no"
       ]
     ],
-    "comment": "Both scopes: the trace may range over individuals or over generalized quantifiers."
+    "comment": "Both scopes: the trace may range over individuals or over generalized quantifiers.",
+    "verified": "page-image"
   },
   {
     "id": "fox2018_ex26",
@@ -214,7 +215,8 @@
         "yes"
       ]
     ],
-    "comment": "The higher-order denotation always contains the weak negated conjunction (28), which identifies no cell: Non-Vacuity fails."
+    "comment": "The higher-order denotation always contains the weak negated conjunction (28), which identifies no cell: Non-Vacuity fails.",
+    "verified": "page-image"
   },
   {
     "id": "fox2018_ex27",
@@ -233,7 +235,7 @@
     "readings": [
       {
         "name": "not > or",
-        "judgment": "acceptable"
+        "judgment": "marginal"
       },
       {
         "name": "or > not",
@@ -262,7 +264,8 @@
         "no"
       ]
     ],
-    "comment": "Marked ? for the narrow-scope reading; the necessity modal lets (29) be the strongest true member."
+    "comment": "Marked ? for the narrow-scope reading; the necessity modal lets (29) be the strongest true member.",
+    "verified": "page-image"
   },
   {
     "id": "fox2018_ex47a",
@@ -310,7 +313,8 @@
         "no"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "fox2018_ex47b",
@@ -358,7 +362,8 @@
         "no"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "fox2018_ex48",
@@ -406,6 +411,7 @@
         "yes"
       ]
     ],
-    "comment": "Singular wh-phrases cannot quantify over higher-type traces."
+    "comment": "Singular wh-phrases cannot quantify over higher-type traces.",
+    "verified": "page-image"
   }
 ]
