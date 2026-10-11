@@ -1,6 +1,7 @@
 module
 
 public import Linglib.Pragmatics.RSA.Basic
+public import Linglib.Semantics.Denotation
 
 /-!
 # Frank and Goodman (2012): Predicting Pragmatic Reasoning in Language Games
@@ -27,8 +28,8 @@ to the model's predictions.
 
 * The paper's speaker has rationality one and costless words; the findings are stated at every
   positive rationality.
-* The literal listener conditions the counting measure on the extension, the uniform prior over
-  the objects.
+* A word denotes the set of objects it describes (`Semantics.Denotes`), and the literal listener
+  conditions the counting measure, the uniform prior over the objects, on that denotation.
 * The listener of the paper's first equation is the posterior `S†μ` against a salience prior;
   its predictions at the stimulus are not instantiated here.
 
@@ -45,7 +46,7 @@ to the model's predictions.
 
 @[expose] public section
 
-open MeasureTheory ProbabilityTheory
+open MeasureTheory ProbabilityTheory Semantics
 open scoped ENNReal Topology
 
 namespace FrankGoodman2012
@@ -76,12 +77,16 @@ def Feature.AppliesTo : Feature → Object → Prop
 instance : DecidableRel Feature.AppliesTo := fun w o ↦ by
   cases w <;> cases o <;> unfold Feature.AppliesTo <;> infer_instance
 
-/-- The extension of a word, the objects it applies to; its size is the paper's `|w|`. -/
+/-- A word denotes the set of objects it describes. -/
+instance : Denotes Feature (Set Object) where
+  denote w := {r | w.AppliesTo r}
+
+/-- The extension of a word as a finite set, whose size is the paper's `|w|`. -/
 def Feature.extension (w : Feature) : Finset Object := Finset.univ.filter w.AppliesTo
 
-/-- On hearing a word, the literal listener is uniform over its extension. -/
+/-- On hearing a word, the literal listener is uniform over its denotation. -/
 noncomputable def literal : Kernel Feature Object :=
-  RSA.listener Measure.count (RSA.truthful fun w ↦ (↑w.extension : Set Object))
+  RSA.listener Measure.count (RSA.truthful (⟦·⟧))
 
 instance : IsFiniteKernel literal :=
   inferInstanceAs (IsFiniteKernel (RSA.listener _ (RSA.truthful _)))
@@ -90,19 +95,19 @@ instance : IsFiniteKernel literal :=
 second equation at `α = 1`. -/
 noncomputable def speaker (α : ℝ) : Kernel Object Feature := RSA.speaker α 0 literal Measure.dirac
 
-theorem mem_extension {w : Feature} {r : Object} :
-    r ∈ (↑w.extension : Set Object) ↔ w.AppliesTo r := by
-  simp [Feature.extension]
+theorem count_denote (w : Feature) : Measure.count ⟦w⟧ = w.extension.card := by
+  rw [← Measure.count_apply_finset]
+  congr 1
+  ext r
+  simp [Feature.extension, Denotes.denote]
 
 /-- The literal listener gives an object the reciprocal of the size of the word's extension. -/
 theorem literal_apply_singleton (w : Feature) (r : Object) :
     literal w {r} = if w.AppliesTo r then (w.extension.card : ℝ≥0∞)⁻¹ else 0 := by
   split_ifs with h
-  · rw [literal, RSA.listener_truthful_apply_singleton Measure.count
-      (fun w : Feature ↦ (↑w.extension : Set Object)) (mem_extension.2 h),
-      Measure.count_apply_finset, Measure.count_singleton, mul_one]
-  · exact RSA.listener_truthful_apply_singleton_of_notMem Measure.count
-      (fun w : Feature ↦ (↑w.extension : Set Object)) (mt mem_extension.1 h)
+  · rw [literal, RSA.listener_truthful_apply_singleton Measure.count (⟦·⟧) h, count_denote,
+      Measure.count_singleton, mul_one]
+  · exact RSA.listener_truthful_apply_singleton_of_notMem Measure.count (⟦·⟧) h
 
 /-! ### Predictions -/
 
@@ -111,10 +116,9 @@ the smaller extension. -/
 theorem size_principle {α : ℝ} (hα : 0 < α) {r : Object} {w₁ w₂ : Feature} (h₁ : w₁.AppliesTo r)
     (h₂ : w₂.AppliesTo r) :
     (speaker α r).real {w₁} < (speaker α r).real {w₂} ↔ w₂.extension.card < w₁.extension.card := by
-  refine (RSA.speaker_listener_truthful_dirac_real_singleton_lt_iff hα 0 Measure.count
-    (fun w : Feature ↦ (↑w.extension : Set Object)) (by simp) (mem_extension.2 h₁)
-    (mem_extension.2 h₂)).trans ?_
-  rw [Measure.count_apply_finset, Measure.count_apply_finset, Nat.cast_lt]
+  refine (RSA.speaker_listener_truthful_dirac_real_singleton_lt_iff hα 0 Measure.count (⟦·⟧)
+    (by simp) h₁ h₂).trans ?_
+  simp only [count_denote, Nat.cast_lt]
 
 /-- For the blue circle the speaker prefers *circle*, which identifies it, to the ambiguous
 *blue*. -/
