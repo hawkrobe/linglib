@@ -68,7 +68,7 @@ leaves open which other button fails, while participants answered *No* about a s
 
 namespace EvcenBaleBarner2026
 
-open EvcenBaleBarner2026.Examples
+open EvcenBaleBarner2026.Examples Exhaustification
 
 /-- The three buttons of Experiments 1 and 3. -/
 inductive Button
@@ -93,6 +93,9 @@ def cond (b : Button) (s : Sound) : Set World := {w | w b = s}
 
 instance (b : Button) (s : Sound) : DecidablePred (· ∈ cond b s) :=
   fun w ↦ inferInstanceAs (Decidable (w b = s))
+
+instance (i : Button × Sound) : DecidablePred (· ∈ Function.uncurry cond i) :=
+  inferInstanceAs (DecidablePred (· ∈ cond i.1 i.2))
 
 instance (S T : Set World) [DecidablePred (· ∈ S)] [DecidablePred (· ∈ T)] :
     Decidable (S ⊆ T) :=
@@ -136,23 +139,15 @@ def alternatives (q : QUD) (tested : Finset Button) : Set (Button × Sound) :=
 instance (q : QUD) (tested : Finset Button) : DecidablePred (· ∈ alternatives q tested) :=
   fun i ↦ inferInstanceAs (Decidable (i ∈ answers q ∧ i.1 ∈ tested))
 
-/-- The paper's exhaustification asserts the prejacent with every non-weaker alternative
-negated. -/
-def exh (A : Set (Button × Sound)) (p : Set World) : Set World :=
-  {w | w ∈ p ∧ ∀ i ∈ A, ¬ p ⊆ cond i.1 i.2 → w ∉ cond i.1 i.2}
-
-instance (A : Set (Button × Sound)) [DecidablePred (· ∈ A)] (p : Set World)
-    [DecidablePred (· ∈ p)] : DecidablePred (· ∈ exh A p) :=
-  fun w ↦ inferInstanceAs
-    (Decidable (w ∈ p ∧ ∀ i ∈ A, ¬ p ⊆ cond i.1 i.2 → w ∉ cond i.1 i.2))
-
 /-- Strengthening is blocked when it is inconsistent with the context, so that no world survives
 (§2.3). -/
-def Blocked (A : Set (Button × Sound)) (p : Set World) : Prop := exh A p = ∅
+def Blocked (A : Set (Button × Sound)) (p : Set World) : Prop :=
+  exh (Function.uncurry cond '' A) p = ∅
 
 instance (A : Set (Button × Sound)) [DecidablePred (· ∈ A)] (p : Set World)
     [DecidablePred (· ∈ p)] : Decidable (Blocked A p) :=
-  decidable_of_iff (∀ w, w ∉ exh A p) Set.eq_empty_iff_forall_notMem.symm
+  decidable_of_iff (∀ w, w ∉ exh (Function.uncurry cond '' A) p)
+    Set.eq_empty_iff_forall_notMem.symm
 
 /-- The participant's response about the orange button. -/
 inductive Response
@@ -163,7 +158,8 @@ inductive Response
 /-- The predicted response is *No* when the strengthened answer, if not blocked, excludes the
 orange button's playing the dog sound, *Can't tell* otherwise. -/
 def response (A : Set (Button × Sound)) [DecidablePred (· ∈ A)] : Response :=
-  if ¬ Blocked A answer ∧ exh A answer ⊆ (cond .orange .dog)ᶜ then .no else .cantTell
+  if ¬ Blocked A answer ∧ exh (Function.uncurry cond '' A) answer ⊆ (cond .orange .dog)ᶜ then .no
+  else .cantTell
 
 /-! ### Experiments 1 and 3 -/
 
@@ -209,13 +205,15 @@ button,
 which the answer already excludes, so the orange button is left open. -/
 theorem consequent_open :
     ¬ Blocked (alternatives .consequentFocused Finset.univ) answer ∧
-      ¬ exh (alternatives .consequentFocused Finset.univ) answer ⊆ (cond .orange .dog)ᶜ := by
+      ¬ exh (Function.uncurry cond '' alternatives .consequentFocused Finset.univ) answer ⊆
+        (cond .orange .dog)ᶜ := by
   decide +kernel
 
 /-- In Experiment 3, with the orange button untested its conditional is no alternative, and the
 answer is not perfected about it. -/
 theorem partial_knowledge_open :
-    ¬ exh (alternatives .antecedentFocused {.red, .blue}) answer ⊆ (cond .orange .dog)ᶜ := by
+    ¬ exh (Function.uncurry cond '' alternatives .antecedentFocused {.red, .blue}) answer ⊆
+      (cond .orange .dog)ᶜ := by
   decide +kernel
 
 /-! ### Von Fintel's exhaustive answer -/
@@ -224,28 +222,29 @@ theorem partial_knowledge_open :
 the paper's operator is [von-fintel-2001]'s exhaustive answer with the other buttons'
 conditionals innocently excluded. -/
 theorem exh_eq_exhaustifiedAnswer :
-    exh (alternatives .antecedentFocused Finset.univ) answer =
+    exh (Function.uncurry cond '' alternatives .antecedentFocused Finset.univ) answer =
       VonFintel2001.exhaustifiedAnswer causesDog Set.univ .blue := by
   have hwit : ∀ b, b ≠ Button.blue →
       (fun x ↦ if x = Button.blue then Sound.dog else .cat) ∉ causesDog b := by
     intro b hb h
     simp [causesDog, cond, hb] at h
   ext w
+  rw [mem_exh_image_iff]
   constructor
   · rintro ⟨hw, hexcl⟩
-    refine ⟨hw, fun a ha ↦ ?_⟩
+    refine ⟨hw, fun a ha hwa ↦ ?_⟩
     obtain ⟨b, -, hb, rfl⟩ := VonFintel2001.mem_answerAlternatives.mp ha.1
-    exact hexcl (b, .dog) ⟨rfl, by simp [known]⟩
-        (fun h ↦ hwit b hb (h (show (fun x ↦ if x = Button.blue then Sound.dog else .cat) ∈ answer
-          by simp [answer, causesDog, cond])))
+    exact hwit b hb (hexcl (b, .dog) ⟨rfl, by simp [known]⟩ hwa
+      (show (fun x ↦ if x = Button.blue then Sound.dog else .cat) ∈ answer
+        by simp [answer, causesDog, cond]))
   · intro hw
     refine ⟨hw.1, ?_⟩
-    rintro ⟨b, s⟩ ⟨hs, -⟩ hns
+    rintro ⟨b, s⟩ ⟨hs, -⟩ hwbs
     have hs : s = .dog := hs
     subst hs
     by_cases hb : b = .blue
-    · exact absurd (hb ▸ subset_rfl) hns
-    · exact hw.2 _ (Exhaustification.IsInnocentlyExcludable.of_full_exclusion_consistent
+    · exact hb ▸ subset_rfl
+    · exact absurd hwbs (hw.2 _ (IsInnocentlyExcludable.of_full_exclusion_consistent
         (ALT := VonFintel2001.answerAlternatives causesDog Set.univ .blue)
         (φ := causesDog .blue)
         (VonFintel2001.mem_answerAlternatives.mpr ⟨b, Set.mem_univ _, hb, rfl⟩)
@@ -254,7 +253,7 @@ theorem exh_eq_exhaustifiedAnswer :
             simp [causesDog, cond],
           fun a ha ↦ by
             obtain ⟨b', -, hb', rfl⟩ := VonFintel2001.mem_answerAlternatives.mp ha
-            exact hwit b' hb'⟩)
+            exact hwit b' hb'⟩))
 
 /-! ### Horn's unconditional alternative -/
 
@@ -310,20 +309,6 @@ def shapePlays (s : Shape) : Set World2 := {w | ∃ b, b.shape = s ∧ w b = tru
 instance (s : Shape) : DecidablePred (· ∈ shapePlays s) :=
   fun w ↦ inferInstanceAs (Decidable (∃ b, Button2.shape b = s ∧ w b = true))
 
-/-- Exhaustification against the cell-level answers. -/
-def exhCell (p : Set World2) : Set World2 :=
-  {w | w ∈ p ∧ ∀ s, ¬ p ⊆ shapePlays s → w ∉ shapePlays s}
-
-/-- Exhaustification against every button's answer. -/
-def exhButton (p : Set World2) : Set World2 :=
-  {w | w ∈ p ∧ ∀ b, ¬ p ⊆ plays b → w ∉ plays b}
-
-instance (p : Set World2) [DecidablePred (· ∈ p)] : DecidablePred (· ∈ exhCell p) :=
-  fun w ↦ inferInstanceAs (Decidable (w ∈ p ∧ ∀ s, ¬ p ⊆ shapePlays s → w ∉ shapePlays s))
-
-instance (p : Set World2) [DecidablePred (· ∈ p)] : DecidablePred (· ∈ exhButton p) :=
-  fun w ↦ inferInstanceAs (Decidable (w ∈ p ∧ ∀ b, ¬ p ⊆ plays b → w ∉ plays b))
-
 /-- The optimally informative answer, *If you press the triangles, it plays the sound of a dog
 barking*, is asked about the squares; the overly informative one, *If you press the blue
 square, it plays the sound of a dog barking*, about the red square. -/
@@ -368,7 +353,8 @@ def rows2 : List Row2 := Examples.all.filterMap Row2.ofDatum
 response in both conditions. -/
 theorem rows2_response :
     ∀ r ∈ rows2,
-      (if exhButton r.answerType.form ⊆ r.answerType.queryᶜ then Response.no else .cantTell) =
+      (if exh (Set.range plays) r.answerType.form ⊆ r.answerType.queryᶜ then Response.no
+        else .cantTell) =
         r.response := by
   decide +kernel
 
@@ -376,7 +362,8 @@ theorem rows2_response :
 open, so the observed perfection needs the finer alternatives, whether as relevant overly
 informative answers or through an accommodated question. -/
 theorem cell_level_leaves_red_open :
-    ¬ exhCell AnswerType.overlyInformative.form ⊆ AnswerType.overlyInformative.queryᶜ := by
+    ¬ exh (Set.range shapePlays) AnswerType.overlyInformative.form ⊆
+      AnswerType.overlyInformative.queryᶜ := by
   decide +kernel
 
 end EvcenBaleBarner2026

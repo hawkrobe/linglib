@@ -2,6 +2,7 @@ module
 
 public import Mathlib.Data.Set.Lattice.Bounded
 public import Linglib.Data.Examples.Ahn2015
+public import Linglib.Semantics.Exhaustification.Excluder
 
 /-!
 # The semantics of additive *either*
@@ -17,7 +18,8 @@ is consistent where denying an existential is not (`abrusan_contrast`).
 
 The distribution of *either* follows from the disjunction under the exhaustification account of
 polarity items: the alternatives of a disjunction are the disjuncts and their conjunction, and
-the naive exhaustifier `exhO` negates every alternative the prejacent fails to entail. In a
+the naive exhaustifier, Chierchia's `O` (`Exhaustification.exh`), negates every alternative the
+prejacent fails to entail. In a
 positive context that leaves the disjunction without either disjunct, a contradiction
 (`either_positive_contradiction`); under negation the negated disjunction entails every
 alternative, so exhaustification is vacuous (`either_negative_vacuous`), and likewise in any
@@ -43,19 +45,20 @@ negative host whose antecedent is not positive, and *too* fails only for want of
 
 namespace Ahn2015
 
+open Exhaustification
 
 variable {World : Type*} (q p : Set World)
 
 /-! ### Too and either -/
 
-/-- The presupposition shared by *too* and *either*: the anaphor is a focus alternative of the
+/-- *Too* and *either* share the presupposition that the anaphor is a focus alternative of the
 host distinct from it. -/
 def Antecedent (C : Set (Set World)) : Prop := q ∈ C ∧ q ≠ p
 
-/-- `too q p = q ⊓ p`: the additive meaning is asserted as a conjunction with the anaphor. -/
+/-- *Too* asserts its additive meaning as the conjunction `q ⊓ p` with the anaphor. -/
 abbrev too : Set World := q ⊓ p
 
-/-- `either q p = q ⊔ p`: the disjunctive counterpart. -/
+/-- *Either* asserts the disjunctive counterpart, `q ⊔ p`. -/
 abbrev either : Set World := q ⊔ p
 
 /-- Negation above *too* denies the conjunction. -/
@@ -78,26 +81,12 @@ theorem abrusan_contrast {e : Set World} (he : p ≤ e) :
 
 /-! ### Exhaustification -/
 
-/-- The naive exhaustifier: the prejacent with every alternative it does not entail negated. -/
-def exhO (alts : Set (Set World)) (φ : Set World) : Set World :=
-  φ ⊓ ⨅ a ∈ {a ∈ alts | ¬ φ ≤ a}, aᶜ
-
-theorem exhO_le_compl {alts : Set (Set World)} {φ a : Set World} (ha : a ∈ alts)
-    (hna : ¬ φ ≤ a) : exhO alts φ ≤ aᶜ :=
-  inf_le_right.trans (iInf₂_le a ⟨ha, hna⟩)
-
-/-- When the prejacent entails every alternative, exhaustification is vacuous. -/
-theorem exhO_eq_self {alts : Set (Set World)} {φ : Set World} (h : ∀ a ∈ alts, φ ≤ a) :
-    exhO alts φ = φ := by
-  have : {a ∈ alts | ¬ φ ≤ a} = ∅ := Set.eq_empty_of_forall_notMem fun a ⟨ha, hna⟩ => hna (h a ha)
-  simp [exhO, this]
-
-/-- The alternatives of a disjunction: the disjuncts and their conjunction. -/
+/-- The alternatives of a disjunction are the disjuncts and their conjunction. -/
 def disjAlts : Set (Set World) := {q ⊔ p, q, p, q ⊓ p}
 
 /-- *Too* entails every alternative of the conjunction, so exhaustification is vacuous. -/
-theorem too_entails_alts : exhO {q ⊓ p, q, p, q ⊔ p} (too q p) = too q p :=
-  exhO_eq_self fun a ha => by
+theorem too_entails_alts : exh {q ⊓ p, q, p, q ⊔ p} (too q p) = too q p :=
+  exh_eq_self fun a ha => by
     simp only [Set.mem_insert_iff, Set.mem_singleton_iff] at ha
     rcases ha with rfl | rfl | rfl | rfl
     exacts [le_rfl, inf_le_left, inf_le_right, inf_le_left.trans le_sup_left]
@@ -105,18 +94,18 @@ theorem too_entails_alts : exhO {q ⊓ p, q, p, q ⊔ p} (too q p) = too q p :=
 /-- In a positive context *either* is exhaustified to a contradiction, provided neither disjunct
 is entailed by the disjunction. -/
 theorem either_positive_contradiction (hq : ¬ either q p ≤ q) (hp : ¬ either q p ≤ p) :
-    exhO (disjAlts q p) (either q p) = ⊥ := by
+    exh (disjAlts q p) (either q p) = ⊥ := by
   refine le_bot_iff.1 ?_
-  calc exhO (disjAlts q p) (either q p) ≤ either q p ⊓ qᶜ ⊓ pᶜ :=
-        le_inf (le_inf inf_le_left (exhO_le_compl (by simp [disjAlts]) hq))
-          (exhO_le_compl (by simp [disjAlts]) hp)
+  calc exh (disjAlts q p) (either q p) ≤ either q p ⊓ qᶜ ⊓ pᶜ :=
+        le_inf (le_inf inf_le_left (exh_subset_compl (by simp [disjAlts]) hq))
+          (exh_subset_compl (by simp [disjAlts]) hp)
     _ = ⊥ := by rw [inf_assoc, ← compl_sup, inf_compl_eq_bot]
 
 /-- Under negation the negated disjunction entails every negated alternative, so
 exhaustification is vacuous. -/
 theorem either_negative_vacuous :
-    exhO ((disjAlts q p).image compl) (either q p)ᶜ = (either q p)ᶜ :=
-  exhO_eq_self fun a ⟨b, hb, hba⟩ => by
+    exh ((disjAlts q p).image compl) (either q p)ᶜ = (either q p)ᶜ :=
+  exh_eq_self fun a ⟨b, hb, hba⟩ => by
     subst hba
     simp only [disjAlts, Set.mem_insert_iff, Set.mem_singleton_iff] at hb
     rcases hb with rfl | rfl | rfl | rfl

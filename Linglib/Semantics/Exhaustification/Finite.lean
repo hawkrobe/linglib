@@ -14,8 +14,10 @@ world and the minimal worlds form a `Finset` (`minimalWorlds`). `innocent` packa
 exclusion as an `Excluder`, and the structural theorems compute `innocent.exh` and
 `tolerant.exh` for alternative sets of a given shape. Under the coercion to sets an excluder
 is `exh` over the alternatives it selects (`Excluder.coe_exh`), and the innocent excluder is
-`exhIE` (`coe_innocent_exh`). `preFilter_can_create_implicature` witnesses that removing a
-symmetric alternative before exclusion strengthens the result.
+`exhIE` (`coe_innocent_exh`). The maximal consistent exclusions of a finite family are decided
+over its subfamilies (`IsMaximalExclusion`, `isMaximalExclusion_iff`).
+`preFilter_can_create_implicature` witnesses that removing a symmetric alternative before
+exclusion strengthens the result.
 
 ## References
 
@@ -43,6 +45,73 @@ def asSetOfSets (E : Finset (Finset W)) : Set (Set W) :=
 
 theorem finite_asSetOfSets (E : Finset (Finset W)) : (asSetOfSets E).Finite :=
   (Finset.finite_toSet E).image _
+
+/-- Every subfamily of a finite family is the coercion of a finite subfamily. -/
+theorem exists_asSetOfSets_eq {ALT : Finset (Finset W)} {X : Set (Set W)}
+    (h : X ⊆ asSetOfSets ALT) : ∃ M ⊆ ALT, asSetOfSets M = X := by
+  classical
+  refine ⟨ALT.filter fun a : Finset W ↦ (a : Set W) ∈ X, Finset.filter_subset _ _, ?_⟩
+  ext s
+  refine ⟨fun hs ↦ ?_, fun hs ↦ ?_⟩
+  · obtain ⟨a, ha, rfl⟩ := mem_asSetOfSets.1 hs
+    exact (Finset.mem_filter.1 ha).2
+  · obtain ⟨a, ha, rfl⟩ := mem_asSetOfSets.1 (h hs)
+    exact mem_asSetOfSets.2 ⟨a, Finset.mem_filter.2 ⟨ha, hs⟩, rfl⟩
+
+theorem asSetOfSets_subset_iff {M N : Finset (Finset W)} :
+    asSetOfSets M ⊆ asSetOfSets N ↔ M ⊆ N :=
+  ⟨fun h a ha ↦ by
+    obtain ⟨b, hb, hba⟩ := mem_asSetOfSets.1 (h (mem_asSetOfSets.2 ⟨a, ha, rfl⟩))
+    exact Finset.coe_inj.1 hba ▸ hb,
+   fun h s hs ↦ let ⟨a, ha, has⟩ := mem_asSetOfSets.1 hs; mem_asSetOfSets.2 ⟨a, h ha, has⟩⟩
+
+section MaximalExclusion
+
+variable [DecidableEq W]
+
+theorem isConsistentExclusion_asSetOfSets_iff {ALT M : Finset (Finset W)} {φ : Finset W} :
+    IsConsistentExclusion (asSetOfSets ALT) ↑φ (asSetOfSets M) ↔
+      M ⊆ ALT ∧ (φ.filter fun w ↦ ∀ q ∈ M, w ∉ q).Nonempty := by
+  refine and_congr asSetOfSets_subset_iff ⟨?_, ?_⟩
+  · rintro ⟨w, hwφ, hw⟩
+    exact ⟨w, Finset.mem_filter.2 ⟨hwφ, fun q hq hwq ↦
+      hw ⟨_, mem_asSetOfSets.2 ⟨q, hq, rfl⟩, hwq⟩⟩⟩
+  · rintro ⟨w, hw⟩
+    obtain ⟨hwφ, hwM⟩ := Finset.mem_filter.1 hw
+    refine ⟨w, hwφ, fun ⟨s, hs, hws⟩ ↦ ?_⟩
+    obtain ⟨q, hq, rfl⟩ := mem_asSetOfSets.1 hs
+    exact hwM q hq hws
+
+/-- A subfamily `M` of `ALT` is a maximal consistent exclusion when denying its members is
+consistent with `φ` and denying any larger subfamily is not. -/
+def IsMaximalExclusion (ALT : Finset (Finset W)) (φ : Finset W) (M : Finset (Finset W)) : Prop :=
+  M ⊆ ALT ∧ (φ.filter fun w ↦ ∀ q ∈ M, w ∉ q).Nonempty ∧
+    ∀ M' ∈ ALT.powerset, M ⊂ M' → ¬ (φ.filter fun w ↦ ∀ q ∈ M', w ∉ q).Nonempty
+
+instance (ALT : Finset (Finset W)) (φ : Finset W) (M : Finset (Finset W)) :
+    Decidable (IsMaximalExclusion ALT φ M) :=
+  inferInstanceAs (Decidable (_ ∧ _ ∧ ∀ M' ∈ ALT.powerset, _))
+
+/-- The finite maximal exclusions are the maximal consistent exclusions. -/
+theorem isMaximalExclusion_iff {ALT M : Finset (Finset W)} {φ : Finset W} :
+    IsMaximalExclusion ALT φ M ↔
+      Maximal (IsConsistentExclusion (asSetOfSets ALT) ↑φ) (asSetOfSets M) := by
+  constructor
+  · rintro ⟨hsub, hne, hmax⟩
+    refine ⟨isConsistentExclusion_asSetOfSets_iff.2 ⟨hsub, hne⟩, fun Y hY hMY ↦ ?_⟩
+    obtain ⟨M', hM', rfl⟩ := exists_asSetOfSets_eq hY.1
+    rw [asSetOfSets_subset_iff] at hMY ⊢
+    by_contra hnot
+    exact hmax M' (Finset.mem_powerset.2 hM') (Finset.ssubset_iff_subset_ne.2
+      ⟨hMY, fun h ↦ hnot (h ▸ subset_rfl)⟩) (isConsistentExclusion_asSetOfSets_iff.1 hY).2
+  · rintro ⟨hc, hmax⟩
+    obtain ⟨hsub, hne⟩ := isConsistentExclusion_asSetOfSets_iff.1 hc
+    refine ⟨hsub, hne, fun M' hM' hss hne' ↦ hss.2 ?_⟩
+    exact asSetOfSets_subset_iff.1 (hmax
+      (isConsistentExclusion_asSetOfSets_iff.2 ⟨Finset.mem_powerset.1 hM', hne'⟩)
+      (asSetOfSets_subset_iff.2 hss.1))
+
+end MaximalExclusion
 
 variable [Fintype W] [DecidableEq W]
 

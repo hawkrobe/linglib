@@ -31,7 +31,7 @@ alternative set selected by innocent excludability.
 * `maximal_falsifiedAt_iff`, `Maximal.exists_eq_falsifiedAt`: the maximal consistent exclusions
   are the sets of alternatives false at a minimal world.
 * `isInnocentlyExcludable_iff_exhMW_subset_compl`
-* `exhIE_eq_exh`, `exhIE_eq_exh_of_nonempty`
+* `exhIE_eq_exh`, `exhIE_eq_exh_of_nonempty`, `exhIE_eq_sdiff_of_maximal_unique`
 * `exhMW_eq_exhIE_of_infClosed`, `exhIE_sUnion_image_powerset`
 
 ## References
@@ -253,6 +253,16 @@ theorem exh_subset_exhMW : exh ALT φ ⊆ exhMW ALT φ :=
 exclusion. -/
 theorem exh_subset_exhIE : exh ALT φ ⊆ exhIE ALT φ :=
   (exh_subset_exhMW ALT φ).trans (exhMW_subset_exhIE ALT φ)
+
+/-- With a unique maximal consistent exclusion, innocent exclusion denies exactly its members. -/
+theorem exhIE_eq_sdiff_of_maximal_unique {X₀ : Set (Set World)}
+    (h₀ : Maximal (IsConsistentExclusion ALT φ) X₀)
+    (huniq : ∀ X, Maximal (IsConsistentExclusion ALT φ) X → X = X₀) :
+    exhIE ALT φ = φ \ ⋃₀ X₀ := by
+  ext u
+  simp only [mem_exhIE_iff, Set.mem_sdiff, Set.mem_sUnion, not_exists, not_and]
+  exact and_congr_right fun _ ↦ ⟨fun h a ha ↦ h a ⟨h₀.prop.1 ha, fun X hX ↦ huniq X hX ▸ ha⟩,
+    fun h a ha ↦ h a (ha.2 X₀ h₀)⟩
 
 /-- When the prejacent is consistent with the denial of every alternative it does not entail,
 innocent exclusion denies them all ([fox-2007]). -/
