@@ -19,7 +19,8 @@
       ["object", "indefinite"],
       ["creation", "yes"]
     ],
-    "comment": "Subextraction from an indefinite object under a verb of creation, the baseline of the verb-of-creation effect."
+    "comment": "Subextraction from an indefinite object under a verb of creation, the baseline of the verb-of-creation effect.",
+    "verified": "page-image"
   },
   {
     "id": "shenhuang2026_ex3b",
@@ -41,7 +42,8 @@
       ["object", "definite"],
       ["creation", "yes"]
     ],
-    "comment": "Davies and Dubinsky observe no contrast with (3a); Experiment 1 finds a smaller but nonzero definite island under verbs of creation."
+    "comment": "Davies and Dubinsky observe no contrast with (3a); Experiment 1 finds a smaller but nonzero definite island under verbs of creation.",
+    "verified": "page-image"
   },
   {
     "id": "shenhuang2026_ex28_indefinite",
@@ -76,7 +78,8 @@
       ["object", "indefinite"],
       ["creation", "no"]
     ],
-    "comment": "The wh-indefinite reading, the wh-phrase bound by existential closure, adapted by the paper from Li's example without the demonstrative."
+    "comment": "The wh-indefinite reading, the wh-phrase bound by existential closure, adapted by the paper from Li's example without the demonstrative.",
+    "verified": "page-image"
   },
   {
     "id": "shenhuang2026_ex28_definite",
@@ -112,6 +115,7 @@
       ["object", "definite"],
       ["creation", "no"]
     ],
-    "comment": "The demonstrative blocks the wh-indefinite reading, the contrast Experiment 3 confirms."
+    "comment": "The demonstrative blocks the wh-indefinite reading, the contrast Experiment 3 confirms.",
+    "verified": "page-image"
   }
 ]

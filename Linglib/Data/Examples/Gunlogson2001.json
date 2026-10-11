@@ -37,7 +37,8 @@
         "interrogative;risingDeclarative;fallingDeclarative"
       ]
     ],
-    "comment": "Declaratives cannot elicit information in an unbiased way."
+    "comment": "Declaratives cannot elicit information in an unbiased way.",
+    "verified": "page-image"
   },
   {
     "id": "gunlogson2001_14",
@@ -77,7 +78,8 @@
         "interrogative;risingDeclarative;fallingDeclarative"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "gunlogson2001_16",
@@ -117,7 +119,8 @@
         "interrogative;risingDeclarative;fallingDeclarative"
       ]
     ],
-    "comment": "The issue raised by a declarative question cannot be regarded as open."
+    "comment": "The issue raised by a declarative question cannot be regarded as open.",
+    "verified": "page-image"
   },
   {
     "id": "gunlogson2001_27",
@@ -157,7 +160,8 @@
         "interrogative;risingDeclarative;fallingDeclarative"
       ]
     ],
-    "comment": "Polite requests for action are a function of interrogatives that declaratives lack."
+    "comment": "Polite requests for action are a function of interrogatives that declaratives lack.",
+    "verified": "page-image"
   },
   {
     "id": "gunlogson2001_31",
@@ -197,7 +201,8 @@
         "interrogative;risingDeclarative;fallingDeclarative"
       ]
     ],
-    "comment": "A rising declarative can offer new information; adapted by the paper from Hirschberg and Ward 1995. Rising interrogatives lack this function."
+    "comment": "A rising declarative can offer new information; adapted by the paper from Hirschberg and Ward 1995. Rising interrogatives lack this function.",
+    "verified": "page-image"
   },
   {
     "id": "gunlogson2001_33",
@@ -237,7 +242,8 @@
         "interrogative;risingDeclarative;fallingDeclarative"
       ]
     ],
-    "comment": "Bias markers such as 'of course' are incompatible with interrogatives, an observation the paper credits to Huddleston 1994."
+    "comment": "Bias markers such as 'of course' are incompatible with interrogatives, an observation the paper credits to Huddleston 1994.",
+    "verified": "page-image"
   },
   {
     "id": "gunlogson2001_44",
@@ -277,7 +283,8 @@
         "interrogative;risingDeclarative;fallingDeclarative"
       ]
     ],
-    "comment": "Only the falling declarative is inconsistent with the skeptical follow-up."
+    "comment": "Only the falling declarative is inconsistent with the skeptical follow-up.",
+    "verified": "page-image"
   },
   {
     "id": "gunlogson2001_45",
@@ -317,7 +324,8 @@
         "interrogative;risingDeclarative;fallingDeclarative"
       ]
     ],
-    "comment": "All three are compatible with the speaker's routine acceptance; a reiterative question."
+    "comment": "All three are compatible with the speaker's routine acceptance; a reiterative question.",
+    "verified": "page-image"
   },
   {
     "id": "gunlogson2001_46",
@@ -357,7 +365,8 @@
         "interrogative;risingDeclarative;fallingDeclarative"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "gunlogson2001_47",
@@ -397,7 +406,8 @@
         "interrogative;risingDeclarative;fallingDeclarative"
       ]
     ],
-    "comment": "The question concerns a presupposition of A's utterance rather than its main content."
+    "comment": "The question concerns a presupposition of A's utterance rather than its main content.",
+    "verified": "page-image"
   },
   {
     "id": "gunlogson2001_48",
@@ -437,7 +447,8 @@
         "interrogative;risingDeclarative;fallingDeclarative"
       ]
     ],
-    "comment": "The falling declarative portrays the speaker as the source of the information."
+    "comment": "The falling declarative portrays the speaker as the source of the information.",
+    "verified": "page-image"
   },
   {
     "id": "gunlogson2001_100",
@@ -468,7 +479,8 @@
         "entailedButInformative"
       ]
     ],
-    "comment": "A's second falling declarative is entailed by the context, since A is already committed, but still informative with respect to B's commitment set."
+    "comment": "A's second falling declarative is entailed by the context, since A is already committed, but still informative with respect to B's commitment set.",
+    "verified": "page-image"
   },
   {
     "id": "gunlogson2001_102",
@@ -508,7 +520,8 @@
         "interrogative;risingDeclarative;fallingDeclarative"
       ]
     ],
-    "comment": "Not vacuous: A's entailment that there is no beer is not yet a joint commitment, though the rising declarative and the interrogative are uninformative and entailed."
+    "comment": "Not vacuous: A's entailment that there is no beer is not yet a joint commitment, though the rising declarative and the interrogative are uninformative and entailed.",
+    "verified": "page-image"
   },
   {
     "id": "gunlogson2001_103",
@@ -548,7 +561,8 @@
         "interrogative;risingDeclarative;fallingDeclarative"
       ]
     ],
-    "comment": "Vacuous in every form: A and B agree about the barren state of the refrigerator."
+    "comment": "Vacuous in every form: A and B agree about the barren state of the refrigerator.",
+    "verified": "page-image"
   },
   {
     "id": "gunlogson2001_118",
@@ -588,7 +602,8 @@
         "interrogative;risingDeclarative;fallingDeclarative"
       ]
     ],
-    "comment": "The falling declarative fails as a question although A's statement presupposes its content."
+    "comment": "The falling declarative fails as a question although A's statement presupposes its content.",
+    "verified": "page-image"
   },
   {
     "id": "gunlogson2001_128",
@@ -601,7 +616,7 @@
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
-    "context": "Robin is sitting in a windowless computer room when another person enters, wearing a wet raincoat and boots. Robin says:",
+    "context": "Robin is sitting, as before, in a windowless computer room when another person enters. The newcomer is wearing a wet raincoat and boots. Robin says:",
     "judgment": "acceptable",
     "alternatives": [
       {
@@ -628,6 +643,7 @@
         "interrogative;risingDeclarative;fallingDeclarative"
       ]
     ],
-    "comment": "A resolving question; the falling declarative works much better with the parenthesized inferential marker, which shows the speaker's commitment to be contingent on the addressee's."
+    "comment": "A resolving question; the falling declarative works much better with the parenthesized inferential marker, which shows the speaker's commitment to be contingent on the addressee's.",
+    "verified": "page-image"
   }
 ]

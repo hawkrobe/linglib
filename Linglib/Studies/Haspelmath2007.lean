@@ -24,7 +24,7 @@ public import Linglib.Fragments.Yoruba.Coordination
 /-!
 # Haspelmath (2007): Coordination
 
-This file formalizes the typology of coordinators in [haspelmath-2007]: the patterns of
+This file formalizes the typology of coordinators in Haspelmath's chapter: the patterns of
 coordinator placement in binary coordination, (17), and the two derivations built on them. The
 first is diachronic, §1.2: a conjunctive coordinator descends from a comitative modifier 'A with
 B' or from an additive focus particle 'A, also B', `DiachronicSource.pattern` gives the pattern
@@ -50,8 +50,8 @@ number of marked coordinands, and `marking_agrees_with_side` checks the patterns
 attachment side the Fragments record for each coordinator. Whether a construction is emphatic is
 recorded only where the chapter says so, and a diachronic source only where the chapter states one,
 so Classical Tibetan *-daŋ* and Turkish *-le*, which the chapter says "come from a former
-case-marker" without naming the case, have none; the Fragments record, after [beyer-1992] and
-[goksel-kerslake-2005], that both are still comitative markers
+case-marker" without naming the case, have none; the Fragments record, after Beyer and after Göksel
+and Kerslake, that both are still comitative markers
 (`former_case_marker_isAlsoComitative`). The word-order half of the comitative derivation,
 adposition order following modifier order, is taken as the `CoordinatorPosition` argument of
 `DiachronicSource.pattern`. The comitative-sourced attestations include Tauya *-sou*, doubled on
@@ -203,7 +203,7 @@ def attestations : List Attestation :=
       second := some (co (.free "kaì")), pattern := (.post, .pre) },
     { language := "Latin", coordinator := Latin.Coordination.et,
       second := some Latin.Coordination.que, pattern := (.pre, .post), emphatic := some true },
-    { language := "Nivkh", coordinator := co (.suff "γo"),
+    { language := "Nivkh", coordinator := co (.suff "ɣo"),
       pattern := (.post, .post), emphatic := some false },
     { language := "Polish", coordinator := co (.free "i"), pattern := (.bare, .pre),
       emphatic := some false },

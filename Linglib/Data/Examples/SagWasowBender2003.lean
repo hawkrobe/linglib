@@ -17,7 +17,7 @@ namespace SagWasowBender2003.Examples
 
 def ex2a : Datum :=
   { id := "sagwasowbender2003_ex2a"
-    source := ⟨"sag-wasow-bender-2003", "(2a)"⟩
+    source := ⟨"sag-wasow-bender-2003", "ch. 7, (2a)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "Susan likes herself."
@@ -30,7 +30,7 @@ def ex2a : Datum :=
 
 def ex2b : Datum :=
   { id := "sagwasowbender2003_ex2b"
-    source := ⟨"sag-wasow-bender-2003", "(2b)"⟩
+    source := ⟨"sag-wasow-bender-2003", "ch. 7, (2b)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "Susan likes her."
@@ -43,7 +43,7 @@ def ex2b : Datum :=
 
 def ex3a : Datum :=
   { id := "sagwasowbender2003_ex3a"
-    source := ⟨"sag-wasow-bender-2003", "(3a)"⟩
+    source := ⟨"sag-wasow-bender-2003", "ch. 7, (3a)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "Susan told herself a story."
@@ -56,7 +56,7 @@ def ex3a : Datum :=
 
 def ex3b : Datum :=
   { id := "sagwasowbender2003_ex3b"
-    source := ⟨"sag-wasow-bender-2003", "(3b)"⟩
+    source := ⟨"sag-wasow-bender-2003", "ch. 7, (3b)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "Susan told her a story."
@@ -69,7 +69,7 @@ def ex3b : Datum :=
 
 def ex4a : Datum :=
   { id := "sagwasowbender2003_ex4a"
-    source := ⟨"sag-wasow-bender-2003", "(4a)"⟩
+    source := ⟨"sag-wasow-bender-2003", "ch. 7, (4a)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "Susan told a story to herself."
@@ -82,7 +82,7 @@ def ex4a : Datum :=
 
 def ex4b : Datum :=
   { id := "sagwasowbender2003_ex4b"
-    source := ⟨"sag-wasow-bender-2003", "(4b)"⟩
+    source := ⟨"sag-wasow-bender-2003", "ch. 7, (4b)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "Susan told a story to her."
@@ -95,7 +95,7 @@ def ex4b : Datum :=
 
 def ex5a : Datum :=
   { id := "sagwasowbender2003_ex5a"
-    source := ⟨"sag-wasow-bender-2003", "(5a)"⟩
+    source := ⟨"sag-wasow-bender-2003", "ch. 7, (5a)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "Susan devoted herself to linguistics."
@@ -108,7 +108,7 @@ def ex5a : Datum :=
 
 def ex5b : Datum :=
   { id := "sagwasowbender2003_ex5b"
-    source := ⟨"sag-wasow-bender-2003", "(5b)"⟩
+    source := ⟨"sag-wasow-bender-2003", "ch. 7, (5b)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "Susan devoted her to linguistics."
@@ -121,7 +121,7 @@ def ex5b : Datum :=
 
 def ex6a : Datum :=
   { id := "sagwasowbender2003_ex6a"
-    source := ⟨"sag-wasow-bender-2003", "(6a)"⟩
+    source := ⟨"sag-wasow-bender-2003", "ch. 7, (6a)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "Nobody told Susan about herself."
@@ -134,7 +134,7 @@ def ex6a : Datum :=
 
 def ex6b : Datum :=
   { id := "sagwasowbender2003_ex6b"
-    source := ⟨"sag-wasow-bender-2003", "(6b)"⟩
+    source := ⟨"sag-wasow-bender-2003", "ch. 7, (6b)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "Nobody told Susan about her."
@@ -147,7 +147,7 @@ def ex6b : Datum :=
 
 def ex7a : Datum :=
   { id := "sagwasowbender2003_ex7a"
-    source := ⟨"sag-wasow-bender-2003", "(7a)"⟩
+    source := ⟨"sag-wasow-bender-2003", "ch. 7, (7a)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "Susan thinks that nobody likes herself."
@@ -160,7 +160,7 @@ def ex7a : Datum :=
 
 def ex7b : Datum :=
   { id := "sagwasowbender2003_ex7b"
-    source := ⟨"sag-wasow-bender-2003", "(7b)"⟩
+    source := ⟨"sag-wasow-bender-2003", "ch. 7, (7b)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "Susan thinks that nobody likes her."
@@ -173,7 +173,7 @@ def ex7b : Datum :=
 
 def ex8a : Datum :=
   { id := "sagwasowbender2003_ex8a"
-    source := ⟨"sag-wasow-bender-2003", "(8a)"⟩
+    source := ⟨"sag-wasow-bender-2003", "ch. 7, (8a)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "Susan's friends like herself."
@@ -186,7 +186,7 @@ def ex8a : Datum :=
 
 def ex8b : Datum :=
   { id := "sagwasowbender2003_ex8b"
-    source := ⟨"sag-wasow-bender-2003", "(8b)"⟩
+    source := ⟨"sag-wasow-bender-2003", "ch. 7, (8b)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "Susan's friends like her."
@@ -199,7 +199,7 @@ def ex8b : Datum :=
 
 def ex9a : Datum :=
   { id := "sagwasowbender2003_ex9a"
-    source := ⟨"sag-wasow-bender-2003", "(9a)"⟩
+    source := ⟨"sag-wasow-bender-2003", "ch. 7, (9a)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "That picture of Susan offended herself."
@@ -212,7 +212,7 @@ def ex9a : Datum :=
 
 def ex9b : Datum :=
   { id := "sagwasowbender2003_ex9b"
-    source := ⟨"sag-wasow-bender-2003", "(9b)"⟩
+    source := ⟨"sag-wasow-bender-2003", "ch. 7, (9b)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "That picture of Susan offended her."
@@ -225,7 +225,7 @@ def ex9b : Datum :=
 
 def ex37a : Datum :=
   { id := "sagwasowbender2003_ex37a"
-    source := ⟨"sag-wasow-bender-2003", "(37a)"⟩
+    source := ⟨"sag-wasow-bender-2003", "ch. 15, (37a)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "Here is the student that the principal suspended and Sandy defended him."
@@ -238,7 +238,7 @@ def ex37a : Datum :=
 
 def ex37b : Datum :=
   { id := "sagwasowbender2003_ex37b"
-    source := ⟨"sag-wasow-bender-2003", "(37b)"⟩
+    source := ⟨"sag-wasow-bender-2003", "ch. 15, (37b)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "Here is the student that the student council passed new rules and the principal suspended."
@@ -251,7 +251,7 @@ def ex37b : Datum :=
 
 def ex38a : Datum :=
   { id := "sagwasowbender2003_ex38a"
-    source := ⟨"sag-wasow-bender-2003", "(38a)"⟩
+    source := ⟨"sag-wasow-bender-2003", "ch. 15, (38a)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "Apple bagels, I can assure you that Leslie likes and Sandy hates cream cheese."
@@ -264,7 +264,7 @@ def ex38a : Datum :=
 
 def ex38b : Datum :=
   { id := "sagwasowbender2003_ex38b"
-    source := ⟨"sag-wasow-bender-2003", "(38b)"⟩
+    source := ⟨"sag-wasow-bender-2003", "ch. 15, (38b)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "Apple bagels, I can assure you that Leslie likes cream cheese and Sandy hates."
@@ -277,7 +277,7 @@ def ex38b : Datum :=
 
 def ex40a : Datum :=
   { id := "sagwasowbender2003_ex40a"
-    source := ⟨"sag-wasow-bender-2003", "(40a)"⟩
+    source := ⟨"sag-wasow-bender-2003", "ch. 15, (40a)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "This is the dancer that we bought a portrait of and two photos of."
@@ -290,7 +290,7 @@ def ex40a : Datum :=
 
 def ex40b : Datum :=
   { id := "sagwasowbender2003_ex40b"
-    source := ⟨"sag-wasow-bender-2003", "(40b)"⟩
+    source := ⟨"sag-wasow-bender-2003", "ch. 15, (40b)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "Here is the student that the principal suspended and the teacher defended."
@@ -303,7 +303,7 @@ def ex40b : Datum :=
 
 def ex40c : Datum :=
   { id := "sagwasowbender2003_ex40c"
-    source := ⟨"sag-wasow-bender-2003", "(40c)"⟩
+    source := ⟨"sag-wasow-bender-2003", "ch. 15, (40c)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "Apple bagels, I can assure you that Leslie likes and Sandy hates."
@@ -316,7 +316,7 @@ def ex40c : Datum :=
 
 def ex36a : Datum :=
   { id := "sagwasowbender2003_ex36a"
-    source := ⟨"sag-wasow-bender-2003", "(36a)"⟩
+    source := ⟨"sag-wasow-bender-2003", "ch. 15, (36a)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "Here is the student that the principal suspended and Sandy."
@@ -329,7 +329,7 @@ def ex36a : Datum :=
 
 def ex36b : Datum :=
   { id := "sagwasowbender2003_ex36b"
-    source := ⟨"sag-wasow-bender-2003", "(36b)"⟩
+    source := ⟨"sag-wasow-bender-2003", "ch. 15, (36b)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "Here is the student that the principal suspended Sandy and."
@@ -342,7 +342,7 @@ def ex36b : Datum :=
 
 def ex44 : Datum :=
   { id := "sagwasowbender2003_ex44"
-    source := ⟨"sag-wasow-bender-2003", "(44)"⟩
+    source := ⟨"sag-wasow-bender-2003", "ch. 15, (44)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "Which rock legend would it be ridiculous to compare and?"

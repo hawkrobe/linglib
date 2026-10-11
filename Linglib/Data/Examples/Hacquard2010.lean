@@ -260,7 +260,7 @@ def ex50 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := [("rain is compatible with what John believes", .acceptable)]
-    paperFeatures := [("section", "6.1"), ("phenomenon", "embeddedEpistemic")] }
+    paperFeatures := [("section", "6.1.1"), ("phenomenon", "embeddedEpistemic")] }
 
 def ex55 : Datum :=
   { id := "hacquard2010_ex55"
@@ -277,7 +277,7 @@ def ex55 : Datum :=
 
 def ex58a : Datum :=
   { id := "hacquard2010_ex58a"
-    source := ⟨"yalcin-2007", "(58a)"⟩
+    source := ⟨"yalcin-2007", "(7)"⟩
     reportedIn := some ⟨"hacquard-2010", "(58a)"⟩
     language := "stan1293"
     primaryText := "Suppose that it is raining and that it might not be raining."
@@ -332,7 +332,7 @@ def ex62 : Datum :=
     source := ⟨"hacquard-2010", "(62)"⟩
     reportedIn := none
     language := "stan1293"
-    primaryText := "Last night Mary had to take the train to go to Paris."
+    primaryText := "(Last night) Mary had to take the train (to go to Paris)."
     glossedTokens := []
     context := ""
     judgment := .acceptable

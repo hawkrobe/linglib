@@ -1,7 +1,7 @@
 [
   {
     "id": "steedman2000_96",
-    "source": {"bibkey": "steedman-2000", "paperLabel": "(96)"},
+    "source": {"bibkey": "steedman-2000", "paperLabel": "ch. 6 (96)"},
     "language": "stan1295",
     "primaryText": "(Weil) irgendjemand auf jeden gespannt ist.",
     "discourseSegments": [],
@@ -20,11 +20,12 @@
     "paperFeatures": [
       ["wordOrder", "verbRaising"]
     ],
-    "comment": "Marked (Ambiguous) in the book. Steedman credits the German contrast to Kayne (1998), following Bayer (1990, 1996). The verb-raising classification follows Steedman's compositional story: 'gespannt ist' can form by composition and 'auf jeden' then combines with the whole thing to take scope over the tensed verb."
+    "comment": "Marked (Ambiguous) in the book. Steedman credits the German contrast to Kayne (1998), following Bayer (1990, 1996). The verb-raising classification follows Steedman's compositional story: 'gespannt ist' can form by composition and 'auf jeden' then combines with the whole thing to take scope over the tensed verb.",
+    "verified": "page-image"
   },
   {
     "id": "steedman2000_97",
-    "source": {"bibkey": "steedman-2000", "paperLabel": "(97)"},
+    "source": {"bibkey": "steedman-2000", "paperLabel": "ch. 6 (97)"},
     "language": "stan1295",
     "primaryText": "(Weil) jemand versucht hat jeden reinzulegen.",
     "discourseSegments": [],
@@ -43,11 +44,12 @@
     "paperFeatures": [
       ["wordOrder", "verbProjectionRaising"]
     ],
-    "comment": "Marked (Unambiguous) in the book. Although 'versucht hat' can compose, it cannot combine with 'reinzulegen' until 'jeden' has combined with it, so 'jeden' cannot take scope over tense or inverse scope over 'jemand'."
+    "comment": "Marked (Unambiguous) in the book. Although 'versucht hat' can compose, it cannot combine with 'reinzulegen' until 'jeden' has combined with it, so 'jeden' cannot take scope over tense or inverse scope over 'jemand'.",
+    "verified": "page-image"
   },
   {
     "id": "steedman2000_98a",
-    "source": {"bibkey": "steedman-2000", "paperLabel": "(98a)"},
+    "source": {"bibkey": "steedman-2000", "paperLabel": "ch. 6 (98a)"},
     "language": "vlaa1240",
     "primaryText": "(da) Jan vee boeken hee willen lezen",
     "discourseSegments": [],
@@ -66,11 +68,12 @@
     "paperFeatures": [
       ["wordOrder", "verbRaising"]
     ],
-    "comment": "Marked (Ambiguous) in the book: 'many books' can take wider scope than 'wanted'. Steedman cites Haegeman and van Riemsdijk (1986, 444-445) and Haegeman (1992, 202) for verb-projection-raising effects on scope in West Flemish and Zurich German."
+    "comment": "Marked (Ambiguous) in the book: 'many books' can take wider scope than 'wanted'. Steedman cites Haegeman and van Riemsdijk (1986, 444-445) and Haegeman (1992, 202) for verb-projection-raising effects on scope in West Flemish and Zurich German.",
+    "verified": "page-image"
   },
   {
     "id": "steedman2000_98b",
-    "source": {"bibkey": "steedman-2000", "paperLabel": "(98b)"},
+    "source": {"bibkey": "steedman-2000", "paperLabel": "ch. 6 (98b)"},
     "language": "vlaa1240",
     "primaryText": "(da) Jan hee willen vee boeken lezen",
     "discourseSegments": [],
@@ -89,11 +92,12 @@
     "paperFeatures": [
       ["wordOrder", "verbProjectionRaising"]
     ],
-    "comment": "Marked (Unambiguous) in the book; minimal pair with (98a)."
+    "comment": "Marked (Unambiguous) in the book; minimal pair with (98a).",
+    "verified": "page-image"
   },
   {
     "id": "steedman2000_99a",
-    "source": {"bibkey": "steedman-2000", "paperLabel": "(99a)"},
+    "source": {"bibkey": "steedman-2000", "paperLabel": "ch. 6 (99a)"},
     "language": "dutc1256",
     "primaryText": "(omdat) Jan veel liederen probeert te zingen",
     "discourseSegments": [],
@@ -112,11 +116,12 @@
     "paperFeatures": [
       ["wordOrder", "verbRaising"]
     ],
-    "comment": "Marked (Ambiguous) in the book; Steedman's own extension of the pattern to Dutch equi verbs."
+    "comment": "Marked (Ambiguous) in the book; Steedman's own extension of the pattern to Dutch equi verbs.",
+    "verified": "page-image"
   },
   {
     "id": "steedman2000_99b",
-    "source": {"bibkey": "steedman-2000", "paperLabel": "(99b)"},
+    "source": {"bibkey": "steedman-2000", "paperLabel": "ch. 6 (99b)"},
     "language": "dutc1256",
     "primaryText": "(omdat) Jan probeert veel liederen te zingen",
     "discourseSegments": [],
@@ -135,11 +140,12 @@
     "paperFeatures": [
       ["wordOrder", "verbProjectionRaising"]
     ],
-    "comment": "Marked (Unambiguous) in the book; minimal pair with (99a)."
+    "comment": "Marked (Unambiguous) in the book; minimal pair with (99a).",
+    "verified": "page-image"
   },
   {
     "id": "steedman2000_100a",
-    "source": {"bibkey": "steedman-2000", "paperLabel": "(100a)"},
+    "source": {"bibkey": "steedman-2000", "paperLabel": "ch. 6 (100a)"},
     "language": "dutc1256",
     "primaryText": "(omdat) iemand alle liederen probeert te zingen",
     "discourseSegments": [],
@@ -158,11 +164,12 @@
     "paperFeatures": [
       ["wordOrder", "verbRaising"]
     ],
-    "comment": "Marked (Ambiguous) in the book."
+    "comment": "Marked (Ambiguous) in the book.",
+    "verified": "page-image"
   },
   {
     "id": "steedman2000_100b",
-    "source": {"bibkey": "steedman-2000", "paperLabel": "(100b)"},
+    "source": {"bibkey": "steedman-2000", "paperLabel": "ch. 6 (100b)"},
     "language": "dutc1256",
     "primaryText": "(omdat) iemand probeert alle liederen te zingen",
     "discourseSegments": [],
@@ -181,7 +188,8 @@
     "paperFeatures": [
       ["wordOrder", "verbProjectionRaising"]
     ],
-    "comment": "Marked (Unambiguous) in the book: these verbs under this word order 'limit scope inversion similarly to Bayer's (97)'."
+    "comment": "Marked (Unambiguous) in the book: these verbs under this word order 'limit scope inversion similarly to Bayer's (97)'.",
+    "verified": "page-image"
   },
   {
     "id": "steedman2000_ch7_4",
@@ -203,7 +211,8 @@
       ["wordOrder", "SOV"],
       ["gappingDirection", "backward"]
     ],
-    "comment": "Migrated from Phenomena/Ellipsis/Gapping.lean japanese_backward; example number verified against scratch/steedman2000.pdf ch. 7. The book glosses the verb visit-PAST.CONCL (conclusive form)."
+    "comment": "Migrated from Phenomena/Ellipsis/Gapping.lean japanese_backward; example number verified against scratch/steedman2000.pdf ch. 7. The book glosses the verb visit-PAST.CONCL (conclusive form).",
+    "verified": "page-image"
   },
   {
     "id": "steedman2000_ch7_5",
@@ -225,20 +234,21 @@
       ["wordOrder", "SOV"],
       ["gappingDirection", "forward"]
     ],
-    "comment": "Migrated from Phenomena/Ellipsis/Gapping.lean japanese_forward_bad; example number verified against scratch/steedman2000.pdf ch. 7. The book glosses tazunete as visit-PAST.ADV (adverbial -te form). Minimal pair with ch. 7 (4): SOV languages allow only backward gapping (Ross's generalization)."
+    "comment": "Migrated from Phenomena/Ellipsis/Gapping.lean japanese_forward_bad; example number verified against scratch/steedman2000.pdf ch. 7. The book glosses tazunete as visit-PAST.ADV (adverbial -te form). Minimal pair with ch. 7 (4): SOV languages allow only backward gapping (Ross's generalization).",
+    "verified": "page-image"
   },
   {
     "id": "steedman2000_ch7_11",
     "source": {"bibkey": "steedman-2000", "paperLabel": "ch. 7 (11)"},
     "language": "dutc1256",
-    "primaryText": "...dat [Jan Syntactic Structures en Piet Aspects] gelezen heeft",
+    "primaryText": "Ik geloof dat Jan Syntactic Structures en Piet Aspects gelezen heeft.",
     "discourseSegments": [],
     "glossedTokens": [
-      ["dat", "that"], ["Jan", "Jan"], ["Syntactic Structures", "Syntactic Structures"],
-      ["en", "and"], ["Piet", "Piet"], ["Aspects", "Aspects"], ["gelezen", "read.PTCP"],
-      ["heeft", "has"]
+      ["Ik", "I"], ["geloof", "believe"], ["dat", "that"], ["Jan", "Jan"],
+      ["Syntactic Structures", "Syntactic Structures"], ["en", "and"], ["Piet", "Piet"],
+      ["Aspects", "Aspects"], ["gelezen", "read"], ["heeft", "has"]
     ],
-    "translation": "that Jan read Syntactic Structures and Piet Aspects",
+    "translation": "I believe that Jan has read Syntactic Structures and Piet Aspects.",
     "context": "Dutch subordinate clause (SOV): backward gapping — conjoined subject-object clusters precede the shared verb cluster.",
     "judgment": "acceptable",
     "alternatives": [],
@@ -248,19 +258,20 @@
       ["wordOrder", "SOV"],
       ["gappingDirection", "backward"]
     ],
-    "comment": "Migrated from Phenomena/Ellipsis/Gapping.lean dutch_sub_backward; example number verified against scratch/steedman2000.pdf ch. 7, where the full sentence is 'Ik geloof dat Jan Syntactic Structures en Piet Aspects gelezen heeft.' The book credits the example to van Oirsouw (1982, 555, example (8b)), apart from the verbs being in the 'German' order, as is common in standard Dutch with the auxiliary hebben."
+    "comment": "Migrated from Phenomena/Ellipsis/Gapping.lean dutch_sub_backward. The book credits the example to van Oirsouw (1982, 555, example (8b)), apart from the verbs being in the 'German' order, as is common in standard Dutch with the auxiliary hebben.",
+    "verified": "page-image"
   },
   {
     "id": "steedman2000_ch7_19",
     "source": {"bibkey": "steedman-2000", "paperLabel": "ch. 7 (19)"},
     "language": "iris1253",
-    "primaryText": "Chonaic [Eoghan Siobhán] agus [Eoghnai Ciaran]",
+    "primaryText": "Chonaic [Eoghan Siobhán] agus [Eoghnaí Ciarán]",
     "discourseSegments": [],
     "glossedTokens": [
       ["Chonaic", "saw"], ["Eoghan", "Eoghan"], ["Siobhán", "Siobhán"], ["agus", "and"],
-      ["Eoghnai", "Eoghnai"], ["Ciaran", "Ciaran"]
+      ["Eoghnaí", "Eoghnaí"], ["Ciarán", "Ciarán"]
     ],
-    "translation": "Eoghan saw Siobhán, and Eoghnai, Ciaran",
+    "translation": "Eoghan saw Siobhán, and Eoghnaí, Ciarán",
     "context": "Irish (pure VSO): forward gapping — the initial verb is shared by conjoined subject-object argument clusters.",
     "judgment": "acceptable",
     "alternatives": [],
@@ -270,19 +281,20 @@
       ["wordOrder", "VSO"],
       ["gappingDirection", "forward"]
     ],
-    "comment": "Migrated from Phenomena/Ellipsis/Gapping.lean irish_forward; example number verified against scratch/steedman2000.pdf ch. 7. Steedman credits the VSO observation to Dowty (1988)."
+    "comment": "Migrated from Phenomena/Ellipsis/Gapping.lean irish_forward; example number verified against scratch/steedman2000.pdf ch. 7. Steedman credits the VSO observation to Dowty (1988).",
+    "verified": "page-image"
   },
   {
     "id": "steedman2000_ch7_20",
     "source": {"bibkey": "steedman-2000", "paperLabel": "ch. 7 (20)"},
     "language": "iris1253",
-    "primaryText": "[Eoghan Siobhán] agus chonaic [Eoghnai Ciaran]",
+    "primaryText": "[Eoghan Siobhán] agus chonaic [Eoghnaí Ciarán]",
     "discourseSegments": [],
     "glossedTokens": [
       ["Eoghan", "Eoghan"], ["Siobhán", "Siobhán"], ["agus", "and"], ["chonaic", "saw"],
-      ["Eoghnai", "Eoghnai"], ["Ciaran", "Ciaran"]
+      ["Eoghnaí", "Eoghnaí"], ["Ciarán", "Ciarán"]
     ],
-    "translation": "Eoghan saw Siobhán, and Eoghnai, Ciaran",
+    "translation": "Eoghan saw Siobhán, and Eoghnaí, Ciarán",
     "context": "Irish (pure VSO): backward gapping — verbless first conjunct with the verb in the second conjunct — is excluded.",
     "judgment": "ungrammatical",
     "alternatives": [],
@@ -292,7 +304,8 @@
       ["wordOrder", "VSO"],
       ["gappingDirection", "backward"]
     ],
-    "comment": "Migrated from Phenomena/Ellipsis/Gapping.lean irish_backward_bad; example number verified against scratch/steedman2000.pdf ch. 7. Minimal pair with ch. 7 (19): the construction Ross (1970) held to be generally disallowed in strictly verb-initial languages."
+    "comment": "Migrated from Phenomena/Ellipsis/Gapping.lean irish_backward_bad; example number verified against scratch/steedman2000.pdf ch. 7. Minimal pair with ch. 7 (19): the construction Ross (1970) held to be generally disallowed in strictly verb-initial languages.",
+    "verified": "page-image"
   },
   {
     "id": "steedman2000_ch7_21",
@@ -314,16 +327,17 @@
       ["wordOrder", "VSO"],
       ["gappingDirection", "forward"]
     ],
-    "comment": "Migrated from Phenomena/Ellipsis/Gapping.lean dutch_main_forward; example number verified against scratch/steedman2000.pdf ch. 7, where Steedman credits van Oirsouw (1987, 58). The prior Lean file encoded Dutch main clauses as SVO ('Main is V2 ≈ VSO'); the book analyzes Dutch main-clause coordination as conforming to the VSO pattern, so wordOrder is recorded as VSO here."
+    "comment": "Migrated from Phenomena/Ellipsis/Gapping.lean dutch_main_forward; example number verified against scratch/steedman2000.pdf ch. 7, where Steedman credits van Oirsouw (1987, 58). The prior Lean file encoded Dutch main clauses as SVO ('Main is V2 ≈ VSO'); the book analyzes Dutch main-clause coordination as conforming to the VSO pattern, so wordOrder is recorded as VSO here.",
+    "verified": "page-image"
   },
   {
     "id": "steedman2000_ch7_41",
-    "source": {"bibkey": "steedman-2000", "paperLabel": "ch. 7 (41)/(62)"},
+    "source": {"bibkey": "steedman-2000", "paperLabel": "ch. 7 (62)"},
     "language": "stan1293",
-    "primaryText": "Dexter ate bread, and Warren, potatoes",
+    "primaryText": "Dexter eats bread, and Warren, potatoes",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "Dexter ate bread, and Warren ate potatoes",
+    "translation": "Dexter eats bread, and Warren eats potatoes",
     "context": "English (SVO): forward gapping — the verb in the first conjunct is shared by the verbless right conjunct.",
     "judgment": "acceptable",
     "alternatives": [],
@@ -333,7 +347,8 @@
       ["wordOrder", "SVO"],
       ["gappingDirection", "forward"]
     ],
-    "comment": "Migrated from Phenomena/Ellipsis/Gapping.lean english_forward; example numbers verified against scratch/steedman2000.pdf ch. 7. The Lean primaryText 'Dexter ate bread, and Warren, potatoes' matches the chapter-opening running text; the numbered examples vary the verb form and object: (41) 'Dexter eats beans, and Warren, potatoes', (62) 'Dexter eats bread, and Warren, potatoes'."
+    "comment": "Migrated from Phenomena/Ellipsis/Gapping.lean english_forward, whose text 'Dexter ate bread, and Warren, potatoes' adapted the chapter-opening running text ('Dexter ate bread and Warren, potatoes'). Recorded as the numbered example (62), whose derivation yields and'(eats' potatoes' warren')(eats' bread' dexter'); (41) is the variant 'Dexter eats beans, and Warren, potatoes'.",
+    "verified": "page-image"
   },
   {
     "id": "steedman2000_ch7_63",
@@ -352,6 +367,7 @@
       ["wordOrder", "SVO"],
       ["gappingDirection", "backward"]
     ],
-    "comment": "Migrated from Phenomena/Ellipsis/Gapping.lean english_backward_bad with the verb corrected against scratch/steedman2000.pdf ch. 7 (63): the book's sentence is '*Warren, potatoes and Dexter bought bread' (the Lean file had laundered it to 'ate bread' and added a comma before 'and')."
+    "comment": "Migrated from Phenomena/Ellipsis/Gapping.lean english_backward_bad with the verb corrected against scratch/steedman2000.pdf ch. 7 (63): the book's sentence is '*Warren, potatoes and Dexter bought bread' (the Lean file had laundered it to 'ate bread' and added a comma before 'and').",
+    "verified": "page-image"
   }
 ]

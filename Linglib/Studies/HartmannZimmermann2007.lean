@@ -11,16 +11,16 @@ public import Linglib.Data.Examples.HartmannZimmermann2007
 /-!
 # Hartmann and Zimmermann (2007): In place — out of place? Focus strategies in Hausa
 
-[hartmann-zimmermann-2007]'s argument that Hausa is a counterexample to two universalist claims:
+Hartmann and Zimmermann's argument that Hausa is a counterexample to two universalist claims:
 that focus is always marked, and that the position of a focus determines its pragmatic
 interpretation. Focus is realized in situ or ex situ, and the paper's §3.2 matrix crosses the two
 strategies with four pragmatic uses, new-information, corrective, contrastive and selective,
 every cell of which is licensed (`hzMatrix`); `strategy_does_not_determine_pragType` refutes the
-Meaning-Structure Mapping Hypothesis of (21), the label following [vallduvi-vilkuna-1998], stated
+Meaning-Structure Mapping Hypothesis of (21), the label following Vallduví and Vilkuna, stated
 as a failure of `Function.FactorsThroughOn`, so that the Hungarian and Hausa verdicts differ on
 one set-theoretic predicate. In-situ new-information focus carries no morphosyntactic reflex, and
 the §5 pilot finds no prosodic one either, so `hausa_falsifies_UniversalBFR` refutes the Basic
-Focus Rule of [selkirk-1995]; focused subjects, by contrast, always front (§2.2.2). Exhaustivity
+Focus Rule of Selkirk; focused subjects, by contrast, always front (§2.2.2). Exhaustivity
 is not structural: the particle *kawài* 'only' exhaustifies over the resolved contrast set in
 either position.
 
@@ -32,7 +32,7 @@ context rather than tagged. Subject foci in TAMs lacking a Relative form (future
 subjunctive) are syntactically and morphologically unmarked, which the paper analyses as
 string-vacuous fronting, so the licensing predicate bans in-situ subjects unconditionally and the
 future subject focus of (8) is licensed yet reflex-free. The paper counts the subjunctive with the
-future and the habitual, but [newman-2000] excludes it from Rel environments, and the fragment's
+future and the habitual, but Newman excludes it from Rel environments, and the fragment's
 licensing, which is his, rejects a fronted subjunctive (`not_licensed_exSitu_subjunctive`). Which
 TAMs show Relative morphology is not stipulated: a licensed fronted focus changes the TAM exactly
 when the TAM does not occur in Rel environments (`Hausa.FocusConfig.pacTAM_ne_iff`), the
@@ -428,7 +428,7 @@ theorem tam_matches_rows :
 /-- The row the paper stars is the cell the licensing predicate
 rejects. -/
 theorem starred_row_is_the_unlicensed_cell :
-    Examples.ex17a2.judgment = .unacceptable ∧
+    Examples.ex17a2.judgment = .ungrammatical ∧
     ¬ starred_inSitu_subject.IsHausaLicensed := ⟨rfl, by decide⟩
 
 end HartmannZimmermann2007

@@ -18,7 +18,8 @@
       ["transitive", "no"],
       ["subjectCase", "NOM"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "baker2015_1b",
@@ -40,7 +41,8 @@
       ["subjectCase", "NOM"],
       ["objectCase", "ACC"]
     ],
-    "comment": "From Vinokurova 2005."
+    "comment": "From Vinokurova 2005.",
+    "verified": "page-image"
   },
   {
     "id": "baker2015_1c",
@@ -62,7 +64,8 @@
       ["subjectCase", "NOM"],
       ["objectCase", "ACC"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "baker2015_12a",
@@ -84,7 +87,8 @@
       ["subjectCase", "ERG"],
       ["objectCase", "unmarked"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "baker2015_12b",
@@ -105,7 +109,8 @@
       ["transitive", "no"],
       ["subjectCase", "unmarked"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "baker2015_28a",
@@ -128,7 +133,8 @@
       ["objectCase", "unmarked"],
       ["genitiveForm", "Jose-kan"]
     ],
-    "comment": "The ergative suffix is also the genitive of the possessor in Jose-kan ochiti 'José's dog'; only the singular first and third person pronouns have distinct genitive forms."
+    "comment": "The ergative suffix is also the genitive of the possessor in Jose-kan ochiti 'José's dog'; only the singular first and third person pronouns have distinct genitive forms.",
+    "verified": "page-image"
   },
   {
     "id": "baker2015_28b",
@@ -151,7 +157,8 @@
       ["objectCase", "unmarked"],
       ["genitiveForm", "nokon"]
     ],
-    "comment": "The first-person possessor has the distinct genitive form nokon in nokon ochiti 'my dog'."
+    "comment": "The first-person possessor has the distinct genitive form nokon in nokon ochiti 'my dog'.",
+    "verified": "page-image"
   },
   {
     "id": "baker2015_30a",
@@ -172,7 +179,8 @@
       ["transitive", "no"],
       ["subjectCase", "NOM"]
     ],
-    "comment": "From Rude 1986."
+    "comment": "From Rude 1986.",
+    "verified": "page-image"
   },
   {
     "id": "baker2015_30b",
@@ -185,7 +193,7 @@
       ["Háama-nm", "man-ERG"], ["hi-néec-'wi-ye", "3SG.SBJ-PL.OBJ-shoot-ASP"],
       ["wewúkiye-ne", "elk-ACC"]
     ],
-    "translation": "The man shot the elk(s).",
+    "translation": "The man shot the elk(PL).",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -195,7 +203,8 @@
       ["subjectCase", "ERG"],
       ["objectCase", "ACC"]
     ],
-    "comment": "From Rude 1986."
+    "comment": "From Rude 1986.",
+    "verified": "page-image"
   },
   {
     "id": "baker2015_21a",
@@ -216,7 +225,8 @@
       ["transitive", "no"],
       ["subjectCase", "ABS"]
     ],
-    "comment": "From Haspelmath 1993."
+    "comment": "From Haspelmath 1993.",
+    "verified": "page-image"
   },
   {
     "id": "baker2015_21b",
@@ -238,7 +248,8 @@
       ["subjectCase", "ERG"],
       ["objectCase", "ABS"]
     ],
-    "comment": "From Haspelmath 1993."
+    "comment": "From Haspelmath 1993.",
+    "verified": "page-image"
   },
   {
     "id": "baker2015_22a",
@@ -260,7 +271,8 @@
       ["subjectCase", "unmarked"],
       ["subjectAgreement", "yes"]
     ],
-    "comment": "From Franklin 1971; Kewa has subject agreement with ergative and absolutive subjects alike and no object agreement."
+    "comment": "From Franklin 1971; Kewa has subject agreement with ergative and absolutive subjects alike and no object agreement.",
+    "verified": "page-image"
   },
   {
     "id": "baker2015_22b",
@@ -283,7 +295,8 @@
       ["objectCase", "unmarked"],
       ["subjectAgreement", "yes"]
     ],
-    "comment": "From Franklin 1971."
+    "comment": "From Franklin 1971.",
+    "verified": "page-image"
   },
   {
     "id": "baker2015_23a",
@@ -306,7 +319,8 @@
       ["subjectCase", "ABS"],
       ["subjectAgreement", "yes"]
     ],
-    "comment": "From Willson 1996."
+    "comment": "From Willson 1996.",
+    "verified": "page-image"
   },
   {
     "id": "baker2015_23b",
@@ -331,7 +345,8 @@
       ["subjectAgreement", "yes"],
       ["objectAgreement", "yes"]
     ],
-    "comment": "From Willson 1996; the tense suffix agrees with ergative and absolutive subjects alike, the prefix with the absolutive object."
+    "comment": "From Willson 1996; the tense suffix agrees with ergative and absolutive subjects alike, the prefix with the absolutive object.",
+    "verified": "page-image"
   },
   {
     "id": "baker2015_25a",
@@ -353,7 +368,8 @@
       ["subjectCase", "NOM"],
       ["subjectAgreement", "yes"]
     ],
-    "comment": "From Butt and King 2003."
+    "comment": "From Butt and King 2003.",
+    "verified": "page-image"
   },
   {
     "id": "baker2015_25b",
@@ -378,6 +394,7 @@
       ["subjectAgreement", "no"],
       ["objectAgreement", "yes"]
     ],
-    "comment": "From Butt and King 2003; the finite verb agrees with a nominative subject but not with an ergative one."
+    "comment": "From Butt and King 2003; the finite verb agrees with a nominative subject but not with an ergative one.",
+    "verified": "page-image"
   }
 ]

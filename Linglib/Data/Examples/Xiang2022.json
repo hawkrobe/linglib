@@ -15,7 +15,8 @@
     "paperFeatures": [
       ["answer", "complete"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "xiang2022_2",
@@ -34,7 +35,8 @@
       ["answer", "partial"],
       ["contour", "rise-fall-rise"]
     ],
-    "comment": "A marked partial answer."
+    "comment": "A marked partial answer.",
+    "verified": "page-image"
   },
   {
     "id": "xiang2022_3",
@@ -53,7 +55,8 @@
       ["answer", "partial"],
       ["contour", "falling"]
     ],
-    "comment": "An unmarked partial answer yields a misleading exclusivity inference."
+    "comment": "An unmarked partial answer yields a misleading exclusivity inference.",
+    "verified": "page-image"
   },
   {
     "id": "xiang2022_4",
@@ -80,7 +83,8 @@
       ["modal", "can"],
       ["flavor", "teleological"]
     ],
-    "comment": "The mention-some answer carries no exclusivity inference."
+    "comment": "The mention-some answer carries no exclusivity inference.",
+    "verified": "page-image"
   },
   {
     "id": "xiang2022_5",
@@ -94,15 +98,22 @@
     "context": "A believes there are two coffee places nearby, Starbucks and Peet's, and that John frequents both.",
     "judgment": "acceptable",
     "alternatives": [
-      {"form": "Starbucks.", "judgment": "questionable"},
-      {"form": "Starbucks or Peet's.", "judgment": "acceptable"}
+      {
+        "form": "Starbucks.",
+        "judgment": "marginal"
+      },
+      {
+        "form": "Starbucks or Peet's.",
+        "judgment": "acceptable"
+      }
     ],
     "readings": [],
     "paperFeatures": [
       ["modal", "could"],
       ["flavor", "epistemic"]
     ],
-    "comment": "An epistemic modal does not license mention-some without contextual support."
+    "comment": "An epistemic modal does not license mention-some without contextual support.",
+    "verified": "page-image"
   },
   {
     "id": "xiang2022_6",
@@ -116,15 +127,22 @@
     "context": "A believes there are two coffee places nearby, Starbucks and Peet's.",
     "judgment": "acceptable",
     "alternatives": [
-      {"form": "Starbucks.", "judgment": "questionable"},
-      {"form": "Starbucks or Peet's. Either is good.", "judgment": "acceptable"}
+      {
+        "form": "Starbucks.",
+        "judgment": "marginal"
+      },
+      {
+        "form": "Starbucks or Peet's. (Either is good.)",
+        "judgment": "acceptable"
+      }
     ],
     "readings": [],
     "paperFeatures": [
       ["modal", "should"],
       ["force", "universal"]
     ],
-    "comment": "A universal modal does not license mention-some."
+    "comment": "A universal modal does not license mention-some.",
+    "verified": "page-image"
   },
   {
     "id": "xiang2022_7",
@@ -145,7 +163,8 @@
       ["modal", "can"],
       ["goal", "exhaustive"]
     ],
-    "comment": "An exhaustive conversational goal blocks mention-some."
+    "comment": "An exhaustive conversational goal blocks mention-some.",
+    "verified": "page-image"
   },
   {
     "id": "xiang2022_8",
@@ -166,7 +185,8 @@
       ["wh", "singular"],
       ["inference", "uniqueness"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "xiang2022_9",
@@ -184,7 +204,8 @@
     "paperFeatures": [
       ["wh", "plural"]
     ],
-    "comment": "The sum-based answer is exhaustive."
+    "comment": "The sum-based answer is exhaustive.",
+    "verified": "page-image"
   },
   {
     "id": "xiang2022_10",
@@ -202,14 +223,15 @@
     "paperFeatures": [
       ["wh", "singular"]
     ],
-    "comment": "No exhaustive true answer: Dayal's presupposition fails."
+    "comment": "No exhaustive true answer: Dayal's presupposition fails.",
+    "verified": "page-image"
   },
   {
     "id": "xiang2022_11",
     "source": {"bibkey": "xiang-2022", "paperLabel": "(61)"},
     "reportedIn": null,
     "language": "stan1293",
-    "primaryText": "Which textbook should I use for this class? Heim & Kratzer or Meaning & Grammar. The choice is up to you.",
+    "primaryText": "Which textbook should I use for this class? Heim & Kratzer or Meaning & Grammar. (The choice is up to you.)",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
@@ -223,7 +245,8 @@
       ["wh", "singular"],
       ["answer", "higher-order disjunction"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "xiang2022_12",
@@ -245,14 +268,15 @@
       ["wh", "singular"],
       ["asymmetry", "disjunction-conjunction"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "xiang2022_13",
     "source": {"bibkey": "xiang-2022", "paperLabel": "(68a)"},
     "reportedIn": null,
     "language": "stan1293",
-    "primaryText": "Which letter could we add to fo_m to form a word? A or r.",
+    "primaryText": "Which letter could we add to fo_m (to form a word)? A or r.",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
@@ -266,14 +290,15 @@
       ["modal", "could"],
       ["inference", "local uniqueness"]
     ],
-    "comment": "The unique letter that we add could be a and could be r."
+    "comment": "The unique letter that we add could be a and could be r.",
+    "verified": "page-image"
   },
   {
     "id": "xiang2022_14",
     "source": {"bibkey": "xiang-2022", "paperLabel": "(69)"},
     "reportedIn": null,
     "language": "stan1293",
-    "primaryText": "Which chapter do we have to assign to the students? Chap. 1 or Chap. 2, either is good.",
+    "primaryText": "Which chapter do we have to assign (to the students)?",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
@@ -287,14 +312,15 @@
       ["modal", "have to"],
       ["inference", "local uniqueness"]
     ],
-    "comment": "Local uniqueness is independent of modal force."
+    "comment": "Local uniqueness is independent of modal force. (103) repeats the question with the answer 'Chap. 1 or Chap. 2, either is good.'",
+    "verified": "page-image"
   },
   {
     "id": "xiang2022_15",
     "source": {"bibkey": "xiang-2022", "paperLabel": "(83)"},
     "reportedIn": null,
     "language": "stan1293",
-    "primaryText": "I know which chapter we can assign to the students next week ..., Chap. 3.",
+    "primaryText": "I know which chapter we can assign (to the students next week) ..., Chap. 3.",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
@@ -306,7 +332,8 @@
       ["modal", "can"],
       ["inference", "local uniqueness"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "xiang2022_16",
@@ -325,7 +352,8 @@
       ["modal", "can"],
       ["exhaustification", "local"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "xiang2022_17",
@@ -344,7 +372,8 @@
       ["modal", "could"],
       ["inference", "local uniqueness"]
     ],
-    "comment": "Nine of eleven speakers found the question unnatural: it suggests at most one paper."
+    "comment": "Nine of eleven speakers found the question unnatural: it suggests at most one paper.",
+    "verified": "page-image"
   },
   {
     "id": "xiang2022_18",
@@ -362,7 +391,8 @@
     "paperFeatures": [
       ["modal", "could"]
     ],
-    "comment": "A sub-question of the instructor's request."
+    "comment": "A sub-question of the instructor's request.",
+    "verified": "page-image"
   },
   {
     "id": "xiang2022_19",
@@ -383,7 +413,8 @@
       ["modal", "have to"],
       ["interpretation", "first-order"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "xiang2022_20",
@@ -404,7 +435,8 @@
       ["modal", "have to"],
       ["interpretation", "narrow-scope higher-order"]
     ],
-    "comment": "In the scenario where some accessible world assigns both chapters, only Relativized Exhaustivity is violated."
+    "comment": "In the scenario where some accessible world assigns both chapters, only Relativized Exhaustivity is violated.",
+    "verified": "page-image"
   },
   {
     "id": "xiang2022_21",
@@ -425,7 +457,8 @@
       ["modal", "can"],
       ["interpretation", "mention-some"]
     ],
-    "comment": "We can assign exactly one chapter, but not more."
+    "comment": "We can assign exactly one chapter, but not more.",
+    "verified": "page-image"
   },
   {
     "id": "xiang2022_22",
@@ -446,7 +479,8 @@
       ["modal", "can"],
       ["exhaustification", "local"]
     ],
-    "comment": "Only the accessible worlds where exactly one chapter is assigned matter."
+    "comment": "Only the accessible worlds where exactly one chapter is assigned matter.",
+    "verified": "page-image"
   },
   {
     "id": "xiang2022_23",
@@ -470,6 +504,7 @@
       ["modal", "can"],
       ["wh", "singular"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   }
 ]

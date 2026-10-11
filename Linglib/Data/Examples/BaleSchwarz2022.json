@@ -13,7 +13,8 @@
       ["numeral", "0.9"],
       ["unit", "grams"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bs2022_6",
@@ -31,7 +32,8 @@
       ["per_unit", "milliliter"],
       ["unit_sensitivity", "the sample's volume is at least 1 milliliter"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bs2022_10",
@@ -49,7 +51,8 @@
     "paperFeatures": [
       ["construction", "free relative"]
     ],
-    "comment": "Judged false in the context, so the density reading is unavailable."
+    "comment": "Judged false in the context, so the density reading is unavailable.",
+    "verified": "page-image"
   },
   {
     "id": "bs2022_14a",
@@ -67,7 +70,8 @@
     "paperFeatures": [
       ["construction", "comparative"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bs2022_14b",
@@ -85,7 +89,8 @@
     "paperFeatures": [
       ["construction", "wh-interrogative"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bs2022_23a",
@@ -102,7 +107,8 @@
       ["unit", "grams"],
       ["measure_function", "weight"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bs2022_23b",
@@ -119,7 +125,8 @@
       ["unit", "milliliters"],
       ["measure_function", "volume"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bs2022_27",
@@ -140,7 +147,8 @@
       ["per_unit", "milliliter"],
       ["unit_sensitivity", "the mixture's volume is at least 1 milliliter"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bs2022_33",
@@ -159,7 +167,8 @@
       ["construction", "wh-interrogative"],
       ["measure_function", "underspecified"]
     ],
-    "comment": "The concentration reading is brought out by appending 'proportionally speaking'."
+    "comment": "The concentration reading is brought out by appending 'proportionally speaking'.",
+    "verified": "page-image"
   },
   {
     "id": "bs2022_34",
@@ -178,7 +187,8 @@
       ["construction", "embedded question"],
       ["measure_function", "underspecified"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bs2022_36a",
@@ -196,7 +206,8 @@
       ["per_unit", "liter"],
       ["unit_sensitivity", "the mixture's volume is at least 1 liter"]
     ],
-    "comment": "Not equivalent to (27), despite 0.1 kg/L = 0.1 g/mL."
+    "comment": "Not equivalent to (27), despite 0.1 kg/L = 0.1 g/mL.",
+    "verified": "page-image"
   },
   {
     "id": "bs2022_37",
@@ -216,7 +227,8 @@
       ["per_unit", "milliliter"],
       ["unit_sensitivity", "5 mL ≥ mL"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bs2022_38a",
@@ -236,7 +248,8 @@
       ["per_unit", "liter"],
       ["unit_sensitivity", "5 mL ≥ L"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bs2022_38b",
@@ -256,7 +269,8 @@
       ["per_unit", "milliliter"],
       ["unit_sensitivity", "0.1 mL ≥ mL"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bs2022_39a",
@@ -272,7 +286,8 @@
       ["per_unit", "page"],
       ["unit_sensitivity", "a monograph has at least one page"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bs2022_39b",
@@ -288,7 +303,8 @@
       ["per_unit", "line"],
       ["unit_sensitivity", "a paragraph has at least one line"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bs2022_40",
@@ -304,7 +320,8 @@
       ["per_unit", "page"],
       ["unit_sensitivity", "a paragraph comprises less than a whole page"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bs2022_44",
@@ -324,7 +341,8 @@
       ["per_unit", "milliliter"],
       ["unit_sensitivity", "5 mL ≥ mL"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bs2022_45a",
@@ -344,7 +362,8 @@
       ["per_unit", "liter"],
       ["unit_sensitivity", "5 mL ≥ L"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bs2022_45b",
@@ -364,7 +383,8 @@
       ["per_unit", "milliliter"],
       ["unit_sensitivity", "0.1 mL ≥ mL"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bs2022_46",
@@ -381,7 +401,8 @@
       ["unit", "grams"],
       ["per_unit", "milliliter"]
     ],
-    "comment": "Reports on the sample's density."
+    "comment": "Reports on the sample's density.",
+    "verified": "page-image"
   },
   {
     "id": "bs2022_47",
@@ -397,7 +418,8 @@
       ["numeral", "0.9"],
       ["unit", "grams"]
     ],
-    "comment": "A weight quantity portrayed as a density: mismatching dimensions."
+    "comment": "A weight quantity portrayed as a density: mismatching dimensions.",
+    "verified": "page-image"
   },
   {
     "id": "bs2022_48",
@@ -414,7 +436,8 @@
       ["unit", "grams"],
       ["quantifier", "for every"]
     ],
-    "comment": "Expresses density without vocabulary associated with quantity division."
+    "comment": "Expresses density without vocabulary associated with quantity division.",
+    "verified": "page-image"
   },
   {
     "id": "bs2022_49",
@@ -431,6 +454,7 @@
       ["unit", "people"],
       ["quantifier", "for every"]
     ],
-    "comment": "Naturally occurring example (blackburnnews.com)."
+    "comment": "Naturally occurring example (blackburnnews.com).",
+    "verified": "page-image"
   }
 ]

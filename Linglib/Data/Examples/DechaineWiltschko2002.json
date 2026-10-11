@@ -14,7 +14,8 @@
       ["pronoun", "we"],
       ["dialect", "A"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "dechainewiltschko2002_ex32a_2",
@@ -31,7 +32,8 @@
       ["pronoun", "us"],
       ["dialect", "A"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "dechainewiltschko2002_ex32b",
@@ -48,7 +50,8 @@
       ["pronoun", "you"],
       ["dialect", "A"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "dechainewiltschko2002_ex32c_1",
@@ -65,7 +68,8 @@
       ["pronoun", "they"],
       ["dialect", "A"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "dechainewiltschko2002_ex32c_2",
@@ -82,7 +86,8 @@
       ["pronoun", "them"],
       ["dialect", "A"]
     ],
-    "comment": "Standard American English, dialect A."
+    "comment": "Standard American English, dialect A.",
+    "verified": "page-image"
   },
   {
     "id": "dechainewiltschko2002_ex34c_1",
@@ -99,7 +104,8 @@
       ["pronoun", "they"],
       ["dialect", "B"]
     ],
-    "comment": "Dialect B, which has no reduced *'ey*."
+    "comment": "Dialect B, which has no reduced *'ey*.",
+    "verified": "page-image"
   },
   {
     "id": "dechainewiltschko2002_ex34c_2",
@@ -116,7 +122,8 @@
       ["pronoun", "them"],
       ["dialect", "B"]
     ],
-    "comment": "Dialect B, where *them* is the D-morpheme *th-* over the clitic *'em*, (37c)."
+    "comment": "Dialect B, where *them* is the D-morpheme *th-* over the clitic *'em*, (37c).",
+    "verified": "page-image"
   },
   {
     "id": "dechainewiltschko2002_ex38",
@@ -132,7 +139,8 @@
       ["test", "boundVariable"],
       ["pronoun", "he"]
     ],
-    "comment": "Bound-variable construal: for every candidate x, x thinks that x will win."
+    "comment": "Bound-variable construal: for every candidate x, x thinks that x will win.",
+    "verified": "page-image"
   },
   {
     "id": "dechainewiltschko2002_ex40",
@@ -142,7 +150,7 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "acceptable",
     "readings": [
       {"name": "strict", "judgment": "acceptable"},
       {"name": "sloppy", "judgment": "unacceptable"}
@@ -151,7 +159,8 @@
       ["test", "boundVariable"],
       ["pronoun", "me"]
     ],
-    "comment": "The sloppy reading, on which Mary knows that John saw her, is unavailable: *me* is not construed as a bound variable."
+    "comment": "The sloppy reading, on which Mary knows that John saw her, is unavailable: *me* is not construed as a bound variable.",
+    "verified": "page-image"
   },
   {
     "id": "dechainewiltschko2002_ex30a",
@@ -167,7 +176,8 @@
       ["test", "boundVariable"],
       ["pronoun", "one"]
     ],
-    "comment": "Intended: for every x, x thinks that x is a genius."
+    "comment": "Intended: for every x, x thinks that x is a genius.",
+    "verified": "page-image"
   },
   {
     "id": "dechainewiltschko2002_ex30b",
@@ -183,7 +193,8 @@
       ["test", "boundVariable"],
       ["pronoun", "one"]
     ],
-    "comment": "Intended: for every x, x loves x's mother."
+    "comment": "Intended: for every x, x loves x's mother.",
+    "verified": "page-image"
   },
   {
     "id": "dechainewiltschko2002_ex22a",
@@ -199,6 +210,7 @@
       ["test", "boundVariable"],
       ["pronoun", "kare"]
     ],
-    "comment": "Intended: for every x, x loves x's mother; reported from Noguchi (1997)."
+    "comment": "Intended: for every x, x loves x's mother; reported from Noguchi (1997).",
+    "verified": "page-image"
   }
 ]

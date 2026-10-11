@@ -20,8 +20,8 @@ def ex11a : Datum :=
     source := ⟨"sande-clem-dabkowski-2026", "(11a)"⟩
     reportedIn := none
     language := "gabo1234"
-    primaryText := "e ji ɟaci joku-ni"
-    glossedTokens := [("e", "1SG.NOM"), ("ji", "FUT"), ("ɟaci", "Djatchi"), ("joku-ni", "PART-see")]
+    primaryText := "e⁴ ji³ ɟaci²³.¹ joku-ni².³.⁴"
+    glossedTokens := [("e⁴", "1SG.NOM"), ("ji³", "FUT"), ("ɟaci²³.¹", "Djatchi"), ("joku-ni².³.⁴", "PART-see")]
     context := ""
     judgment := .acceptable
     alternatives := []
@@ -33,8 +33,8 @@ def ex11b : Datum :=
     source := ⟨"sande-clem-dabkowski-2026", "(11b)"⟩
     reportedIn := none
     language := "gabo1234"
-    primaryText := "e ni ɟaci jɔkʊ"
-    glossedTokens := [("e", "1SG.NOM"), ("ni", "see.PFV"), ("ɟaci", "Djatchi"), ("jɔkʊ", "PART")]
+    primaryText := "e⁴ ni⁴ ɟaci²³.¹ jɔkʊ².³"
+    glossedTokens := [("e⁴", "1SG.NOM"), ("ni⁴", "see.PFV"), ("ɟaci²³.¹", "Djatchi"), ("jɔkʊ².³", "PART")]
     context := ""
     judgment := .acceptable
     alternatives := []
@@ -46,8 +46,8 @@ def ex11c : Datum :=
     source := ⟨"sande-clem-dabkowski-2026", "(11c)"⟩
     reportedIn := none
     language := "gabo1234"
-    primaryText := "e joku-ni ɟaci"
-    glossedTokens := [("e", "1SG.NOM"), ("joku-ni", "PART-see.PFV"), ("ɟaci", "Djatchi")]
+    primaryText := "e⁴ joku-ni².³.⁴ ɟaci²³.¹"
+    glossedTokens := [("e⁴", "1SG.NOM"), ("joku-ni².³.⁴", "PART-see.PFV"), ("ɟaci²³.¹", "Djatchi")]
     context := ""
     judgment := .ungrammatical
     alternatives := []
@@ -59,8 +59,8 @@ def ex12b : Datum :=
     source := ⟨"sande-clem-dabkowski-2026", "(12b)"⟩
     reportedIn := none
     language := "gabo1234"
-    primaryText := "ɟaci ji ɔnɛ ɡbɔɡɔ jɔkʊ-ŋwɔsa"
-    glossedTokens := [("ɟaci", "Djatchi"), ("ji", "FUT"), ("ɔnɛ", "3SG.POSS"), ("ɡbɔɡɔ", "leg"), ("jɔkʊ-ŋwɔsa", "PART-scrape")]
+    primaryText := "ɟaci²³.¹ ji³ ɔnɛ³.³ ɡbɔɡɔ².² jɔkʊ-ŋʷɔsa².³.³.¹"
+    glossedTokens := [("ɟaci²³.¹", "Djatchi"), ("ji³", "FUT"), ("ɔnɛ³.³", "3SG.POSS"), ("ɡbɔɡɔ².²", "leg"), ("jɔkʊ-ŋʷɔsa².³.³.¹", "PART-scrape")]
     context := ""
     judgment := .acceptable
     alternatives := []
@@ -72,8 +72,8 @@ def ex13b : Datum :=
     source := ⟨"sande-clem-dabkowski-2026", "(13b)"⟩
     reportedIn := none
     language := "gabo1234"
-    primaryText := "ɟaci ŋwɔsa ɔnɛ ɡbɔɡɔ jɔkʊ"
-    glossedTokens := [("ɟaci", "Djatchi"), ("ŋwɔsa", "scrape.PFV"), ("ɔnɛ", "3SG.POSS"), ("ɡbɔɡɔ", "leg"), ("jɔkʊ", "PART")]
+    primaryText := "ɟaci²³.¹ ŋʷɔsa³.¹ ɔnɛ³.³ ɡbɔɡɔ².² jɔkʊ².³"
+    glossedTokens := [("ɟaci²³.¹", "Djatchi"), ("ŋʷɔsa³.¹", "scrape.PFV"), ("ɔnɛ³.³", "3SG.POSS"), ("ɡbɔɡɔ².²", "leg"), ("jɔkʊ².³", "PART")]
     context := ""
     judgment := .acceptable
     alternatives := []
@@ -85,8 +85,8 @@ def ex21a : Datum :=
     source := ⟨"sande-clem-dabkowski-2026", "(21a)"⟩
     reportedIn := none
     language := "gabo1234"
-    primaryText := "jɔkʊ ɔ ni=ɔ"
-    glossedTokens := [("jɔkʊ", "PART"), ("ɔ", "3SG.NOM"), ("ni=ɔ", "see.PFV=3SG.ACC")]
+    primaryText := "jɔkʊ².³ ɔ³ ni=ɔ⁴.²"
+    glossedTokens := [("jɔkʊ².³", "PART"), ("ɔ³", "3SG.NOM"), ("ni=ɔ⁴.²", "see.PFV=3SG.ACC")]
     context := ""
     judgment := .acceptable
     alternatives := []
@@ -98,8 +98,8 @@ def ex21b : Datum :=
     source := ⟨"sande-clem-dabkowski-2026", "(21b)"⟩
     reportedIn := none
     language := "gabo1234"
-    primaryText := "joku-ni ɔ ni=ɔ"
-    glossedTokens := [("joku-ni", "PART-see"), ("ɔ", "3SG.NOM"), ("ni=ɔ", "see.PFV=3SG.ACC")]
+    primaryText := "joku-ni².³.⁴ ɔ³ ni=ɔ⁴.² (jɔkʊ².³)"
+    glossedTokens := [("joku-ni².³.⁴", "PART-see"), ("ɔ³", "3SG.NOM"), ("ni=ɔ⁴.²", "see.PFV=3SG.ACC"), ("(jɔkʊ².³)", "PART")]
     context := ""
     judgment := .ungrammatical
     alternatives := []
@@ -111,8 +111,8 @@ def ex21c : Datum :=
     source := ⟨"sande-clem-dabkowski-2026", "(21c)"⟩
     reportedIn := none
     language := "gabo1234"
-    primaryText := "ni ɔ ni=ɔ jɔkʊ"
-    glossedTokens := [("ni", "see"), ("ɔ", "3SG.NOM"), ("ni=ɔ", "see.PFV=3SG.ACC"), ("jɔkʊ", "PART")]
+    primaryText := "ni⁴ ɔ³ ni=ɔ⁴.² jɔkʊ².³"
+    glossedTokens := [("ni⁴", "see"), ("ɔ³", "3SG.NOM"), ("ni=ɔ⁴.²", "see.PFV=3SG.ACC"), ("jɔkʊ².³", "PART")]
     context := ""
     judgment := .ungrammatical
     alternatives := []
@@ -124,8 +124,8 @@ def ex21d : Datum :=
     source := ⟨"sande-clem-dabkowski-2026", "(21d)"⟩
     reportedIn := none
     language := "gabo1234"
-    primaryText := "ni ɔ =ɔ jɔkʊ"
-    glossedTokens := [("ni", "see"), ("ɔ", "3SG.NOM"), ("=ɔ", "3SG.ACC"), ("jɔkʊ", "PART")]
+    primaryText := "ni⁴ ɔ³ =ɔ² jɔkʊ².³"
+    glossedTokens := [("ni⁴", "see"), ("ɔ³", "3SG.NOM"), ("=ɔ²", "3SG.ACC"), ("jɔkʊ².³", "PART")]
     context := ""
     judgment := .ungrammatical
     alternatives := []
@@ -137,8 +137,8 @@ def ex21e : Datum :=
     source := ⟨"sande-clem-dabkowski-2026", "(21e)"⟩
     reportedIn := none
     language := "gabo1234"
-    primaryText := "joku ɔ ni=ɔ jɔkʊ"
-    glossedTokens := [("joku", "PART"), ("ɔ", "3SG.NOM"), ("ni=ɔ", "see.PFV=3SG.ACC"), ("jɔkʊ", "PART")]
+    primaryText := "joku².³ ɔ³ ni=ɔ⁴.² jɔkʊ².³"
+    glossedTokens := [("joku².³", "PART"), ("ɔ³", "3SG.NOM"), ("ni=ɔ⁴.²", "see.PFV=3SG.ACC"), ("jɔkʊ².³", "PART")]
     context := ""
     judgment := .ungrammatical
     alternatives := []
@@ -150,8 +150,8 @@ def ex22 : Datum :=
     source := ⟨"sande-clem-dabkowski-2026", "(22)"⟩
     reportedIn := none
     language := "gabo1234"
-    primaryText := "joku ɔ ji ɟaci ni"
-    glossedTokens := [("joku", "PART"), ("ɔ", "3SG.NOM"), ("ji", "FUT"), ("ɟaci", "Djatchi"), ("ni", "see")]
+    primaryText := "joku².³ ɔ³ ji³ ɟaci²³.¹ ni⁴"
+    glossedTokens := [("joku².³", "PART"), ("ɔ³", "3SG.NOM"), ("ji³", "FUT"), ("ɟaci²³.¹", "Djatchi"), ("ni⁴", "see")]
     context := ""
     judgment := .acceptable
     alternatives := []
@@ -163,11 +163,11 @@ def ex24b : Datum :=
     source := ⟨"sande-clem-dabkowski-2026", "(24b)"⟩
     reportedIn := none
     language := "gabo1234"
-    primaryText := "joku ɔ ji ɟaci ni"
-    glossedTokens := [("joku", "PART"), ("ɔ", "3SG.NOM"), ("ji", "FUT"), ("ɟaci", "Djatchi"), ("ni", "see")]
+    primaryText := "joku².³ ɔ³ ji³ ɟaci²³.¹ ni⁴"
+    glossedTokens := [("joku².³", "PART"), ("ɔ³", "3SG.NOM"), ("ji³", "FUT"), ("ɟaci²³.¹", "Djatchi"), ("ni⁴", "see")]
     context := ""
     judgment := .acceptable
-    alternatives := [("jɔkʊ ɔ ji ɟaci ni", .ungrammatical)]
+    alternatives := [("jɔkʊ².³ ɔ³ ji³ ɟaci²³.¹ ni⁴", .ungrammatical)]
     readings := []
     paperFeatures := [("pattern", "Part S Aux O V"), ("verb", "ni"), ("particleATR", "plus")] }
 
@@ -176,8 +176,8 @@ def ex41 : Datum :=
     source := ⟨"sande-clem-dabkowski-2026", "(41)"⟩
     reportedIn := none
     language := "gabo1234"
-    primaryText := "joku ɔ ka ɟɔkʷɪ-a ni"
-    glossedTokens := [("joku", "PART"), ("ɔ", "3SG.NOM"), ("ka", "PROSP"), ("ɟɔkʷɪ-a", "bird-PL"), ("ni", "see")]
+    primaryText := "joku².³ ɔ³ ka³ ɟɔkʷɪ-a².³.² ni⁴"
+    glossedTokens := [("joku².³", "PART"), ("ɔ³", "3SG.NOM"), ("ka³", "PROSP"), ("ɟɔkʷɪ-a².³.²", "bird-PL"), ("ni⁴", "see")]
     context := ""
     judgment := .acceptable
     alternatives := []

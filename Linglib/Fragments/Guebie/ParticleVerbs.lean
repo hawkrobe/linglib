@@ -11,7 +11,7 @@ public import Linglib.Fragments.Guebie.Phonology
 # Guébie particle verbs
 
 A Guébie particle verb is a phrasal idiom of a prefixing particle and a verb, with a meaning that
-is not compositional. This file lists the particle verbs of [sande-clem-dabkowski-2026] over the
+is not compositional. This file lists the particle verbs of Sande, Clem and Dabkowski over the
 vowels of `Fragments/Guebie/Phonology.lean`; the vowels of a morpheme agree in [ATR].
 
 ## Main definitions
@@ -78,7 +78,7 @@ def ny : Morpheme := ⟨"ɲ", [], none⟩
 def ggO : Morpheme := ⟨"ggɔ", [.O], none⟩
 def wa : Morpheme := ⟨"wa", [.a], none⟩
 def ni : Morpheme := ⟨"ni", [.i], some "see"⟩
-def ngwOsa : Morpheme := ⟨"ŋwɔsa", [.O, .a], some "scrape"⟩
+def ngwOsa : Morpheme := ⟨"ŋʷɔsa", [.O, .a], some "scrape"⟩
 
 /-! ### Particle verbs -/
 
@@ -90,7 +90,7 @@ structure ParticleVerb where
   gloss    : String
   deriving DecidableEq, Repr
 
-/-- The (10) inventory, plus the (11)–(12) /jɔkʊ/+/ni/ and /jɔkʊ/+/ŋwɔsa/ pairs. -/
+/-- The (10) inventory, plus the (11)–(12) /jɔkʊ/+/ni/ and /jɔkʊ/+/ŋʷɔsa/ pairs. -/
 def particleVerbs : List ParticleVerb :=
   [⟨mE, tE, "be strong"⟩, ⟨mE, trO, "be long"⟩, ⟨mE, para, "enter"⟩,
    ⟨mE, salI, "tell"⟩, ⟨mE, nu, "understand"⟩,

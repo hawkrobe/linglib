@@ -28,7 +28,8 @@
         "alternation"
       ]
     ],
-    "comment": "Taro-NOM village-ACC leave-PAST"
+    "comment": "Taro-NOM village-ACC leave-PAST",
+    "verified": "page-image"
   },
   {
     "id": "ozaki2026_ex1_abl",
@@ -59,7 +60,8 @@
         "alternation"
       ]
     ],
-    "comment": "Taro-NOM village-from leave-PAST"
+    "comment": "Taro-NOM village-from leave-PAST",
+    "verified": "page-image"
   },
   {
     "id": "ozaki2026_ex9_acc",
@@ -90,7 +92,8 @@
         "ellipsis"
       ]
     ],
-    "comment": "Taro-TOP quickly station-ACC exited but Hanako-TOP quickly didn't.exit"
+    "comment": "Taro-TOP quickly station-ACC exited but Hanako-TOP quickly didn't.exit",
+    "verified": "page-image"
   },
   {
     "id": "ozaki2026_ex9_abl",
@@ -121,7 +124,8 @@
         "ellipsis"
       ]
     ],
-    "comment": "Taro-TOP quickly station-from exited but Hanako-TOP quickly didn't.exit"
+    "comment": "Taro-TOP quickly station-from exited but Hanako-TOP quickly didn't.exit",
+    "verified": "page-image"
   },
   {
     "id": "ozaki2026_ex13_acc",
@@ -152,7 +156,8 @@
         "scrambling"
       ]
     ],
-    "comment": "village-ACC Taro-TOP Hanako-NOM left COMP said"
+    "comment": "village-ACC Taro-TOP Hanako-NOM left COMP said",
+    "verified": "page-image"
   },
   {
     "id": "ozaki2026_ex13_abl",
@@ -183,7 +188,8 @@
         "scrambling"
       ]
     ],
-    "comment": "village-from Taro-TOP Hanako-NOM left COMP said"
+    "comment": "village-from Taro-TOP Hanako-NOM left COMP said",
+    "verified": "page-image"
   },
   {
     "id": "ozaki2026_ex14",
@@ -214,7 +220,8 @@
         "indirect_passive"
       ]
     ],
-    "comment": "that village-NOM Taro-DAT leave-PASS-PAST"
+    "comment": "that village-NOM Taro-DAT leave-PASS-PAST",
+    "verified": "page-image"
   },
   {
     "id": "ozaki2026_ex20",
@@ -228,7 +235,7 @@
     "glossedTokens": [],
     "translation": "That village was left by Taro.",
     "context": "The direct passive, diagnosed by niyotte in place of the dative marker (Jo and Seo 2023), which only a verb with thematic Voice can undergo.",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -245,7 +252,8 @@
         "direct_passive"
       ]
     ],
-    "comment": "that village-NOM Taro-NIYOTTE leave-PASS-PAST"
+    "comment": "that village-NOM Taro-NIYOTTE leave-PASS-PAST",
+    "verified": "page-image"
   },
   {
     "id": "ozaki2026_ex26_acc",
@@ -259,7 +267,7 @@
     "glossedTokens": [],
     "translation": "Why is Taro leaving the village?",
     "context": "The accusative wh-adjunct nani-o 'what-ACC' in its 'why' reading (Kurafuji 1997), available with unergatives and transitives but not with unaccusatives.",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -276,7 +284,8 @@
         "nani_o"
       ]
     ],
-    "comment": "what-ACC Taro-TOP village-ACC leave-PROG-PRES Q"
+    "comment": "what-ACC Taro-TOP village-ACC leave-PROG-PRES Q",
+    "verified": "page-image"
   },
   {
     "id": "ozaki2026_ex26_abl",
@@ -290,7 +299,7 @@
     "glossedTokens": [],
     "translation": "Why is Taro leaving the village?",
     "context": "The accusative wh-adjunct in its 'why' reading with the ablative source: unavailable as with unaccusatives.",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -307,6 +316,7 @@
         "nani_o"
       ]
     ],
-    "comment": "what-ACC Taro-TOP village-from leave-PROG-PRES Q"
+    "comment": "what-ACC Taro-TOP village-from leave-PROG-PRES Q",
+    "verified": "page-image"
   }
 ]

@@ -28,7 +28,8 @@
         "cooking potatoes to any potatoes"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "kl1993_2",
@@ -37,12 +38,12 @@
       "paperLabel": "(2)"
     },
     "language": "stan1293",
-    "primaryText": "*I have any potatoes.",
+    "primaryText": "I have any potatoes.",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -55,7 +56,8 @@
         "mono"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "kl1993_10",
@@ -86,7 +88,8 @@
         "healthy owls to any owl"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "kl1993_27b",
@@ -117,7 +120,8 @@
         "dry matches to any matches"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "kl1993_55",
@@ -126,12 +130,12 @@
       "paperLabel": "(55)"
     },
     "language": "stan1293",
-    "primaryText": "*Every boy has any potatoes.",
+    "primaryText": "Every boy has any potatoes.",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -144,7 +148,8 @@
         "mult"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "kl1993_56",
@@ -153,12 +158,12 @@
       "paperLabel": "(56)"
     },
     "language": "stan1293",
-    "primaryText": "*It's not the case that every boy has any potatoes.",
+    "primaryText": "It's not the case that every boy has any potatoes.",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -171,7 +176,8 @@
         "mult"
       ]
     ],
-    "comment": "Locality: the sentence-level context under negation is DE, the local scope of every is not."
+    "comment": "Locality: the sentence-level context under negation is DE, the local scope of every is not.",
+    "verified": "page-image"
   },
   {
     "id": "kl1993_72",
@@ -198,7 +204,8 @@
         "adversative"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "kl1993_73",
@@ -207,12 +214,12 @@
       "paperLabel": "(73)"
     },
     "language": "stan1293",
-    "primaryText": "*I'm sure that I ever met him.",
+    "primaryText": "I'm sure that I ever met him.",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -225,7 +232,8 @@
         "mono"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "kl1993_76B",
@@ -256,7 +264,8 @@
         "yes"
       ]
     ],
-    "comment": "Settle for less: the narrow wish, better tickets, is preferred but unsatisfiable."
+    "comment": "Settle for less: the narrow wish, better tickets, is preferred but unsatisfiable.",
+    "verified": "page-image"
   },
   {
     "id": "kl1993_82",
@@ -287,7 +296,8 @@
         "phonologists who hate me to linguists who hate me"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "kl1993_88",
@@ -318,7 +328,8 @@
         "yes"
       ]
     ],
-    "comment": "Settle for less: the narrow wish, that a phonologist likes me, is preferred but unsatisfiable."
+    "comment": "Settle for less: the narrow wish, that a phonologist likes me, is preferred but unsatisfiable.",
+    "verified": "page-image"
   },
   {
     "id": "kl1993_95",
@@ -327,12 +338,12 @@
       "paperLabel": "(95)"
     },
     "language": "stan1293",
-    "primaryText": "*I'm sure we got ANY tickets!",
+    "primaryText": "I'm sure we got ANY tickets!",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -345,7 +356,8 @@
         "mono"
       ]
     ],
-    "comment": "sure has no settle-for-less interpretation, (96) to (98)."
+    "comment": "sure has no settle-for-less interpretation, (96) to (98).",
+    "verified": "page-image"
   },
   {
     "id": "kl1993_105",
@@ -376,7 +388,8 @@
         "yes"
       ]
     ],
-    "comment": "The negation denies the factive presupposition of because; any strengthens the denial."
+    "comment": "The negation denies the factive presupposition of because; any strengthens the denial.",
+    "verified": "page-image"
   },
   {
     "id": "kl1993_106",
@@ -385,7 +398,7 @@
       "paperLabel": "(106)"
     },
     "language": "stan1293",
-    "primaryText": "#I didn't help him because I have any sympathy for urban guerillas, although I do sympathize with urban guerillas.",
+    "primaryText": "I didn't help him because I have any sympathy for urban guerillas, although I do sympathize with urban guerillas.",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
@@ -403,7 +416,8 @@
         "all"
       ]
     ],
-    "comment": "The continuation cancels the negative implication, so there is no denial."
+    "comment": "The continuation cancels the negative implication, so there is no denial.",
+    "verified": "page-image"
   },
   {
     "id": "kl1993_109",
@@ -412,7 +426,7 @@
       "paperLabel": "(109)"
     },
     "language": "stan1293",
-    "primaryText": "#Yet, in the present case, it wasn't because he had any such sympathy that he had decided to take on the case.",
+    "primaryText": "When he accepted the case, Sir Winfred was already convinced that the accused was not guilty. His deep sympathy for defendants that he believed to be innocent was well known, and the present case was no exception. Yet, in the present case, it wasn't because he had any such sympathy that he had decided to take on the case. It was his professional curiosity that led him this time: he was thoroughly puzzled by the case and when he heard who the prosecutor was, the prospect of renewing their previous animosity in the courtroom was irresistible.",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
@@ -430,7 +444,8 @@
         "all"
       ]
     ],
-    "comment": "The surrounding text cancels the negative implication."
+    "comment": "The surrounding text cancels the negative implication.",
+    "verified": "page-image"
   },
   {
     "id": "kl1993_122",
@@ -439,7 +454,7 @@
       "paperLabel": "(122)"
     },
     "language": "stan1293",
-    "primaryText": "It isn't because of anything she said that I'm angry.",
+    "primaryText": "It isn't because of anything she said that I'm angry – although she did say all sorts of annoying things – it's because of the faces she was making.",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
@@ -457,7 +472,8 @@
         "anti"
       ]
     ],
-    "comment": "because of NP under negation is downward entailing: any is licensed without a negative implication."
+    "comment": "because of NP under negation is downward entailing: any is licensed without a negative implication.",
+    "verified": "page-image"
   },
   {
     "id": "kl1993_123",
@@ -466,7 +482,7 @@
       "paperLabel": "(123)"
     },
     "language": "stan1293",
-    "primaryText": "Yet, in the present case, it wasn't because of any such sympathy that he had decided to take on the case.",
+    "primaryText": "When he accepted the case, Sir Winfred was already convinced that the accused was not guilty. His deep sympathy for defendants that he believed to be innocent was well known, and the present case was no exception. Yet, in the present case, it wasn't because of any such sympathy that he had decided to take on the case. It was his professional curiosity that led him this time: he was thoroughly puzzled by the case and when he heard who the prosecutor was, the prospect of renewing their previous animosity in the courtroom was irresistible.",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
@@ -484,7 +500,8 @@
         "anti"
       ]
     ],
-    "comment": "The minimal pair with (109): the NP complement restores DE licensing."
+    "comment": "The minimal pair with (109): the NP complement restores DE licensing.",
+    "verified": "page-image"
   },
   {
     "id": "kl1993_125",
@@ -515,7 +532,8 @@
         "yes"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "kl1993_132",
@@ -524,12 +542,12 @@
       "paperLabel": "(132)"
     },
     "language": "stan1293",
-    "primaryText": "*If it's because anybody read her paper that she is happy, I'll eat my hat.",
+    "primaryText": "If it's because anybody read her paper that she is happy, I'll eat my hat.",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -542,7 +560,8 @@
         "all"
       ]
     ],
-    "comment": "Implies the denial of the presupposition but cannot metalinguistically deny it."
+    "comment": "Implies the denial of the presupposition but cannot metalinguistically deny it.",
+    "verified": "page-image"
   },
   {
     "id": "kl1993_143",
@@ -573,13 +592,14 @@
         "important newspapers to any newspaper"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "kl1993_almost_every",
     "source": {
       "bibkey": "kadmon-landman-1993",
-      "paperLabel": "4.3"
+      "paperLabel": "4.1.1"
     },
     "language": "stan1293",
     "primaryText": "almost every owl",
@@ -593,7 +613,7 @@
     "paperFeatures": [
       [
         "section",
-        "4.3"
+        "4.1.1"
       ],
       [
         "np",
@@ -612,13 +632,14 @@
         "no"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "kl1993_almost_no",
     "source": {
       "bibkey": "kadmon-landman-1993",
-      "paperLabel": "4.3"
+      "paperLabel": "4.1.1"
     },
     "language": "stan1293",
     "primaryText": "almost no owl",
@@ -632,7 +653,7 @@
     "paperFeatures": [
       [
         "section",
-        "4.3"
+        "4.1.1"
       ],
       [
         "np",
@@ -651,13 +672,14 @@
         "no"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "kl1993_almost_some",
     "source": {
       "bibkey": "kadmon-landman-1993",
-      "paperLabel": "4.3"
+      "paperLabel": "4.1.1"
     },
     "language": "stan1293",
     "primaryText": "almost some owl",
@@ -665,13 +687,13 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
       [
         "section",
-        "4.3"
+        "4.1.1"
       ],
       [
         "np",
@@ -690,27 +712,28 @@
         "no"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "kl1993_almost_an",
     "source": {
       "bibkey": "kadmon-landman-1993",
-      "paperLabel": "4.3"
+      "paperLabel": "4.1.1"
     },
     "language": "stan1293",
-    "primaryText": "almost an owl",
+    "primaryText": "almost an owl hunts mice",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
       [
         "section",
-        "4.3"
+        "4.1.1"
       ],
       [
         "np",
@@ -729,7 +752,8 @@
         "no"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "kl1993_almost_any",
@@ -768,6 +792,7 @@
         "yes"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   }
 ]

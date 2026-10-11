@@ -20,7 +20,8 @@
         "prenominal modifier"
       ]
     ],
-    "comment": "COCA."
+    "comment": "COCA.",
+    "verified": "page-image"
   },
   {
     "id": "gs2025_1b",
@@ -43,7 +44,8 @@
         "prenominal modifier"
       ]
     ],
-    "comment": "COCA."
+    "comment": "COCA.",
+    "verified": "page-image"
   },
   {
     "id": "gs2025_1c",
@@ -66,7 +68,8 @@
         "prenominal modifier"
       ]
     ],
-    "comment": "COCA."
+    "comment": "COCA.",
+    "verified": "page-image"
   },
   {
     "id": "gs2025_t2_simple",
@@ -89,7 +92,8 @@
         "head noun"
       ]
     ],
-    "comment": "COCA."
+    "comment": "COCA.",
+    "verified": "page-image"
   },
   {
     "id": "gs2025_t2_old",
@@ -112,7 +116,8 @@
         "head noun"
       ]
     ],
-    "comment": "COCA."
+    "comment": "COCA.",
+    "verified": "page-image"
   },
   {
     "id": "gs2025_t2_mustsee",
@@ -135,7 +140,8 @@
         "head noun"
       ]
     ],
-    "comment": "COCA."
+    "comment": "COCA.",
+    "verified": "page-image"
   },
   {
     "id": "gs2025_t2_romney",
@@ -158,7 +164,8 @@
         "predicative adjective"
       ]
     ],
-    "comment": "COCA."
+    "comment": "COCA.",
+    "verified": "page-image"
   },
   {
     "id": "gs2025_t2_honey",
@@ -185,7 +192,8 @@
         "gerund"
       ]
     ],
-    "comment": "Brit Bennett, The vanishing half; progressive -ing on a PAL in a verb slot."
+    "comment": "Brit Bennett, The vanishing half; progressive -ing on a PAL in a verb slot.",
+    "verified": "page-image"
   },
   {
     "id": "gs2025_t2_welcome",
@@ -208,7 +216,8 @@
         "verb"
       ]
     ],
-    "comment": "COCA; the PAL quotes the immediately preceding turn in an interdiction."
+    "comment": "COCA; the PAL quotes the immediately preceding turn in an interdiction.",
+    "verified": "page-image"
   },
   {
     "id": "gs2025_t3_jespersen",
@@ -235,7 +244,8 @@
         "plural"
       ]
     ],
-    "comment": "Quoted from Jespersen (1924:96); plural -s on a PAL in a noun slot."
+    "comment": "Quoted from Jespersen (1924:96); plural -s on a PAL in a noun slot.",
+    "verified": "page-image"
   },
   {
     "id": "gs2025_t3_diy",
@@ -262,7 +272,8 @@
         "agentive -er + plural"
       ]
     ],
-    "comment": "ABC News; agentive -er and plural -s on a PAL in a noun slot."
+    "comment": "ABC News; agentive -er and plural -s on a PAL in a noun slot.",
+    "verified": "page-image"
   },
   {
     "id": "gs2025_t3_nyt",
@@ -289,7 +300,8 @@
         "gerund"
       ]
     ],
-    "comment": "New York Times, 19 June 2015; gerund -ing on PALs in verb slots."
+    "comment": "New York Times, 19 June 2015; gerund -ing on PALs in verb slots.",
+    "verified": "page-image"
   },
   {
     "id": "gs2025_8a",
@@ -321,7 +333,8 @@
         "compound"
       ]
     ],
-    "comment": "German phrasal compound, orthographically presented; the paper's glosses."
+    "comment": "German phrasal compound, orthographically presented; the paper's glosses.",
+    "verified": "page-image"
   },
   {
     "id": "gs2025_15a",
@@ -369,7 +382,8 @@
         "compound"
       ]
     ],
-    "comment": "Dutch phrasal compound, orthographically presented; the paper's glosses."
+    "comment": "Dutch phrasal compound, orthographically presented; the paper's glosses.",
+    "verified": "page-image"
   },
   {
     "id": "gs2025_15b",
@@ -413,7 +427,8 @@
         "compound"
       ]
     ],
-    "comment": "Afrikaans phrasal compound, orthographically presented as in the source; the paper's glosses."
+    "comment": "Afrikaans phrasal compound, orthographically presented as in the source; the paper's glosses.",
+    "verified": "page-image"
   },
   {
     "id": "gs2025_15c",
@@ -457,7 +472,8 @@
         "compound"
       ]
     ],
-    "comment": "Turkish; the compound marker on the head noun signals the compound-like frame. Source's parsing, glosses, and translation."
+    "comment": "Turkish; the compound marker on the head noun signals the compound-like frame. Source's parsing, glosses, and translation.",
+    "verified": "page-image"
   },
   {
     "id": "gs2025_16b",
@@ -501,7 +517,8 @@
         "preposition complement"
       ]
     ],
-    "comment": "Modern Hebrew, Twitter; the PAL is the complement of the preposition ʃel."
+    "comment": "Modern Hebrew, Twitter; the PAL is the complement of the preposition ʃel.",
+    "verified": "page-image"
   },
   {
     "id": "gs2025_17b",
@@ -561,7 +578,8 @@
         "preposition complement"
       ]
     ],
-    "comment": "Modern Hebrew; the PAL is the complement of the preposition ʃel."
+    "comment": "Modern Hebrew; the PAL is the complement of the preposition ʃel.",
+    "verified": "page-image"
   },
   {
     "id": "gs2025_18b",
@@ -570,7 +588,7 @@
       "paperLabel": "(18b)"
     },
     "language": "braz1246",
-    "primaryText": "o clima ameno de 'eu te ajudo, você me ajuda e está tudo bem'",
+    "primaryText": "o clima ameno de 'eu te ajudo você me ajuda e está tudo bem'",
     "discourseSegments": [],
     "glossedTokens": [
       [
@@ -641,6 +659,7 @@
         "preposition complement"
       ]
     ],
-    "comment": "Brazilian Portuguese, NOW corpus; the PAL is the complement of the preposition de."
+    "comment": "Brazilian Portuguese, NOW corpus; the PAL is the complement of the preposition de. The paper prints \"voce\" without the circumflex.",
+    "verified": "page-image"
   }
 ]

@@ -17,7 +17,8 @@
       ["use", "negative"],
       ["mood", "indicative"]
     ],
-    "comment": "NEG1 rains at.the Lisbon: the indicative negator as standard negation, (7)."
+    "comment": "NEG1 rains at.the Lisbon: the indicative negator as standard negation, (7).",
+    "verified": "page-image"
   },
   {
     "id": "tsiakmakis2025_8",
@@ -37,7 +38,8 @@
       ["use", "negative"],
       ["host", "imperative"]
     ],
-    "comment": "NEG2 you.go at.the Lisbon: negative *min* under the directive operator expresses a preference for worlds where the addressee does not go, (13)."
+    "comment": "NEG2 you.go at.the Lisbon: negative *min* under the directive operator expresses a preference for worlds where the addressee does not go, (13).",
+    "verified": "page-image"
   },
   {
     "id": "tsiakmakis2025_14",
@@ -58,7 +60,8 @@
       ["host", "negative exclamative"],
       ["class", "apparent"]
     ],
-    "comment": "how.many men NEG1 cheated in.the youth his; from Espinal (1997). The paper treats negative exclamatives as rhetorical questions uttered with surprise, since they reject the exclamative complementizer *pu*, (23), and receive a quantity rather than a degree reading, (24)."
+    "comment": "how.many men NEG1 cheated in.the youth his; from Espinal (1997). The paper treats negative exclamatives as rhetorical questions uttered with surprise, since they reject the exclamative complementizer *pu*, (23), and receive a quantity rather than a degree reading, (24).",
+    "verified": "page-image"
   },
   {
     "id": "tsiakmakis2025_15",
@@ -79,7 +82,8 @@
       ["host", "preposed negation question"],
       ["class", "apparent"]
     ],
-    "comment": "NEG1 drank the Yanis coffee; from [romero-han-2004]. The paper collapses preposed and non-preposed negation questions, since pro-drop makes them string-identical, (32), the form appears in alternative questions, (33), and *dhen* licenses *akoma* 'yet' and *again*-modification, (34)–(35)."
+    "comment": "NEG1 drank the Yanis coffee; from [romero-han-2004]. The paper collapses preposed and non-preposed negation questions, since pro-drop makes them string-identical, (32), the form appears in alternative questions, (33), and *dhen* licenses *akoma* 'yet' and *again*-modification, (34)–(35).",
+    "verified": "page-image"
   },
   {
     "id": "tsiakmakis2025_16",
@@ -100,7 +104,8 @@
       ["host", "rhetorical question"],
       ["class", "apparent"]
     ],
-    "comment": "at.the down down NEG1 is useful and the rain: under the rhetorical reading the speaker asserts that rain is useful."
+    "comment": "at.the down down NEG1 is useful and the rain: under the rhetorical reading the speaker asserts that rain is useful.",
+    "verified": "page-image"
   },
   {
     "id": "tsiakmakis2025_28",
@@ -120,7 +125,8 @@
       ["use", "negative"],
       ["host", "rhetorical question"]
     ],
-    "comment": "A rhetorical question in which *dhen* is interpreted canonically: rhetoricity does not always reverse polarity, and positive rhetorical questions reverse it without any negator, (29), so the non-negative reading is an epiphenomenon of rhetoricity, (30)."
+    "comment": "A rhetorical question in which *dhen* is interpreted canonically: rhetoricity does not always reverse polarity, and positive rhetorical questions reverse it without any negator, (29), so the non-negative reading is an epiphenomenon of rhetoricity, (30).",
+    "verified": "page-image"
   },
   {
     "id": "tsiakmakis2025_38",
@@ -141,7 +147,8 @@
       ["host", "fear-predicate complement"],
       ["class", "proper"]
     ],
-    "comment": "I.fear NEG2 ate the meatball.soup the dad: expletive *min* is a biased epistemic modal, (43), incompatible with *isos* 'maybe', (42), and merged in the left periphery, since an unmarked subject cannot precede it, (44)."
+    "comment": "I.fear NEG2 ate the meatball.soup the dad: expletive *min* is a biased epistemic modal, (43), incompatible with *isos* 'maybe', (42), and merged in the left periphery, since an unmarked subject cannot precede it, (44).",
+    "verified": "page-image"
   },
   {
     "id": "tsiakmakis2025_39",
@@ -162,7 +169,8 @@
       ["host", "fear-predicate complement"],
       ["class", "proper"]
     ],
-    "comment": "Expletive *min* co-occurs with canonical *dhen*, and the fear is about the negative alternative."
+    "comment": "Expletive *min* co-occurs with canonical *dhen*, and the fear is about the negative alternative.",
+    "verified": "page-image"
   },
   {
     "id": "tsiakmakis2025_40",
@@ -183,7 +191,8 @@
       ["host", "fear-predicate complement"],
       ["diagnostic", "NCI licensing"]
     ],
-    "comment": "Expletive *min* cannot license the negative concord item *tipota*; adding *dhen* licenses it, (41)."
+    "comment": "Expletive *min* cannot license the negative concord item *tipota*; adding *dhen* licenses it, (41).",
+    "verified": "page-image"
   },
   {
     "id": "tsiakmakis2025_44a",
@@ -204,7 +213,8 @@
       ["host", "fear-predicate complement"],
       ["diagnostic", "left-periphery merge"]
     ],
-    "comment": "An informationally unmarked subject cannot precede expletive *min*, which is merged outside the TP."
+    "comment": "An informationally unmarked subject cannot precede expletive *min*, which is merged outside the TP.",
+    "verified": "page-image"
   },
   {
     "id": "tsiakmakis2025_45",
@@ -225,7 +235,8 @@
       ["host", "conditional"],
       ["class", "proper"]
     ],
-    "comment": "NEG2 I.forget something immediately SUBJ you.mock: conditional *min* fails to license *tipota*, (46), co-occurs with *dhen*, (47), and is felicitous only for what has happened before, (49), a bias for p-worlds, (50)."
+    "comment": "NEG2 I.forget something immediately SUBJ you.mock: conditional *min* fails to license *tipota*, (46), co-occurs with *dhen*, (47), and is felicitous only for what has happened before, (49), a bias for p-worlds, (50).",
+    "verified": "page-image"
   },
   {
     "id": "tsiakmakis2025_49b",
@@ -244,7 +255,8 @@
       ["host", "conditional"],
       ["conjunction", "an"]
     ],
-    "comment": "The *min*-free conditional is unmarked, whereas the variant with *min*, (49a), describes something repetitive, a habit or a norm."
+    "comment": "The *min*-free conditional is unmarked, whereas the variant with *min*, (49a), describes something repetitive, a habit or a norm.",
+    "verified": "page-image"
   },
   {
     "id": "tsiakmakis2025_51a",
@@ -265,7 +277,8 @@
       ["host", "polar question"],
       ["class", "proper"]
     ],
-    "comment": "Question *min* encodes positive speaker bias, (56), where the *min*-free question, (55b), is attributed to an ignorant speaker; unlike English preposed negation questions, *min*-questions embed, (51b) against (57b)."
+    "comment": "Question *min* encodes positive speaker bias, (56), where the *min*-free question, (55b), is attributed to an ignorant speaker; unlike English preposed negation questions, *min*-questions embed, (51b) against (57b).",
+    "verified": "page-image"
   },
   {
     "id": "tsiakmakis2025_53a",
@@ -286,7 +299,8 @@
       ["host", "polar question"],
       ["class", "proper"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "tsiakmakis2025_59",
@@ -307,7 +321,8 @@
       ["host", "fear-predicate complement"],
       ["class", "proper"]
     ],
-    "comment": "From [tahar-2021]: fear-predicate *ne* expresses dispreference, a deontic modal ranking p-worlds, (60)."
+    "comment": "From [tahar-2021]: fear-predicate *ne* expresses dispreference, a deontic modal ranking p-worlds, (60).",
+    "verified": "page-image"
   },
   {
     "id": "tsiakmakis2025_61",
@@ -328,7 +343,8 @@
       ["host", "fear-predicate complement"],
       ["class", "proper"]
     ],
-    "comment": "I.feared that-NEG NEG remain nothing: the expletive marker attaches to the complementizer, above the canonical *lo*."
+    "comment": "I.feared that-NEG NEG remain nothing: the expletive marker attaches to the complementizer, above the canonical *lo*. From Francez (to appear: 23, ex. (41)).",
+    "verified": "page-image"
   },
   {
     "id": "tsiakmakis2025_62",
@@ -349,7 +365,8 @@
       ["host", "negative predicate"],
       ["class", "proper"]
     ],
-    "comment": "Under *defent* 'forbid' the subject stops the humiliation: negative predicates share the doxastic component of emotive doxastics, (63)."
+    "comment": "Under *defent* 'forbid' the subject stops the humiliation: negative predicates share the doxastic component of emotive doxastics, (63). Adapted from Tahar (2022: 45, ex. (34)). The paper prints the title as Le voyage de Saint Bredan.",
+    "verified": "page-image"
   },
   {
     "id": "tsiakmakis2025_65",
@@ -370,7 +387,8 @@
       ["host", "dubitative predicate"],
       ["class", "proper"]
     ],
-    "comment": "From Espinal (2000): *no* under *dudar* 'doubt' is non-negative; dubitatives involve a doxastic component, (66)."
+    "comment": "From Espinal (2000): *no* under *dudar* 'doubt' is non-negative; dubitatives involve a doxastic component, (66).",
+    "verified": "page-image"
   },
   {
     "id": "tsiakmakis2025_67",
@@ -391,7 +409,8 @@
       ["host", "dubitative predicate"],
       ["class", "proper"]
     ],
-    "comment": "you.doubt NEG2 NEG1 knowledge is.SUBJ the virtue: expletive *me:*, the ancestor of *min*, above canonical *ou(k)*."
+    "comment": "you.doubt NEG2 NEG1 knowledge is.SUBJ the virtue: expletive *me:*, the ancestor of *min*, above canonical *ou(k)*.",
+    "verified": "page-image"
   },
   {
     "id": "tsiakmakis2025_69a",
@@ -412,7 +431,8 @@
       ["host", "temporal expression"],
       ["class", "apparent"]
     ],
-    "comment": "From [tovena-1996]: with the activity *parlare* the negation is visible, my staying ending when your not-speaking ends, while (69b) without *non* means 'while you talk'; with an achievement, (68), the two coincide and *non* looks expletive."
+    "comment": "From [tovena-1996]: with the activity *parlare* the negation is visible, my staying ending when your not-speaking ends, while (69b) without *non* means 'while you talk'; with an achievement, (68), the two coincide and *non* looks expletive.",
+    "verified": "page-image"
   },
   {
     "id": "tsiakmakis2025_71",
@@ -433,7 +453,8 @@
       ["host", "negative adverbial"],
       ["class", "apparent"]
     ],
-    "comment": "Proposed to be NEG1 in a negative concord relation with *sans*, (73), since Jamaican *widoutn*, (72), carries no dispreference and *without*-words have no modal component."
+    "comment": "Proposed to be NEG1 in a negative concord relation with *sans*, (73), since Jamaican *widoutn*, (72), carries no dispreference and *without*-words have no modal component. From Makri (2013: 17, ex. (26)).",
+    "verified": "page-image"
   },
   {
     "id": "tsiakmakis2025_75",
@@ -454,7 +475,8 @@
       ["host", "unless-conditional"],
       ["class", "apparent"]
     ],
-    "comment": "From [greco-2020]'s data: with *se* 'if' in place of *a meno che*, *non* is standard negation, (76), so the licensor is the negative component of UNLESS, a negative adverbial."
+    "comment": "From Greco (2019: 5, ex. (6)): with *se* 'if' in place of *a meno che*, *non* is standard negation, (76), so the licensor is the negative component of UNLESS, a negative adverbial.",
+    "verified": "page-image"
   },
   {
     "id": "tsiakmakis2025_77",
@@ -475,7 +497,8 @@
       ["host", "comparative"],
       ["class", "apparent"]
     ],
-    "comment": "Equivalent to the *non*-free (77′); *non* is the optional spell-out of the negation in the comparative operator, (78), and the epistemic effect comes from the subjunctive."
+    "comment": "Equivalent to the *non*-free (77′); *non* is the optional spell-out of the negation in the comparative operator, (78), and the epistemic effect comes from the subjunctive.",
+    "verified": "page-image"
   },
   {
     "id": "tsiakmakis2025_84",
@@ -496,7 +519,8 @@
       ["host", "polar question"],
       ["class", "proper"]
     ],
-    "comment": "NEG1 NEG2 you.observe: the interrogative particle *-ne* co-occurs with canonical *non*, like Greek *min dhen*."
+    "comment": "NEG1 NEG2 you.observe: the interrogative particle *-ne* co-occurs with canonical *non*, like Greek *min dhen*.",
+    "verified": "page-image"
   },
   {
     "id": "tsiakmakis2025_87",
@@ -515,7 +539,8 @@
       ["host", "rhetorical question"],
       ["polarity", "positive"]
     ],
-    "comment": "A positive rhetorical question conveying the negative assertion: polarity reversal without any negator, so rhetorical questions host NEG1 masked by rhetoricity, (88)."
+    "comment": "A positive rhetorical question conveying the negative assertion: polarity reversal without any negator, so rhetorical questions host NEG1 masked by rhetoricity, (88).",
+    "verified": "page-image"
   },
   {
     "id": "tsiakmakis2025_90",
@@ -536,7 +561,8 @@
       ["host", "negative exclamative"],
       ["class", "apparent"]
     ],
-    "comment": "A quantity reading, as in Greek, (24b), and Hebrew, (89)."
+    "comment": "A quantity reading, as in Greek, (24b), and Hebrew, (89). From Delfitto and Fiorin (2014: 284, ex. (1)).",
+    "verified": "page-image"
   },
   {
     "id": "tsiakmakis2025_92b",
@@ -557,6 +583,7 @@
       ["host", "free relative"],
       ["class", "proper, tentative"]
     ],
-    "comment": "what that-Dani NEG wrote was.published in.the.newspaper: *lo* contributes ignorance or indifference like *-ever*; the alternatives differ in the value of the wh-word and are unranked, so free relatives are not a canonical host."
+    "comment": "what that-Dani NEG wrote was.published in.the.newspaper: *lo* contributes ignorance or indifference like *-ever*; the alternatives differ in the value of the wh-word and are unranked, so free relatives are not a canonical host. From Eilam (2007: 1, ex. (1)).",
+    "verified": "page-image"
   }
 ]

@@ -18,7 +18,8 @@
       ["address", "familiar"],
       ["number", "singular"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "wang2023_2",
@@ -42,7 +43,8 @@
       ["number", "plural"],
       ["mismatch", "referentially singular"]
     ],
-    "comment": "Honorific vous triggers plural agreement for a singular addressee."
+    "comment": "Honorific vous triggers plural agreement for a singular addressee.",
+    "verified": "page-image"
   },
   {
     "id": "wang2023_3a",
@@ -65,7 +67,8 @@
       ["address", "familiar"],
       ["person", "second"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "wang2023_3b",
@@ -89,7 +92,8 @@
       ["person", "third"],
       ["mismatch", "second-person addressee"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "wang2023_4a",
@@ -111,7 +115,8 @@
       ["address", "familiar"],
       ["definiteness", "definite pronoun"]
     ],
-    "comment": "Refsing 1986: 94, 222, adapted."
+    "comment": "Refsing 1986: 94, 222, adapted.",
+    "verified": "page-image"
   },
   {
     "id": "wang2023_4b",
@@ -133,7 +138,8 @@
       ["definiteness", "indefinite pronoun"],
       ["mismatch", "definite addressee"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "wang2023_29",
@@ -151,7 +157,8 @@
     "paperFeatures": [
       ["unattested", "honorific singular"]
     ],
-    "comment": "A hypothetical French recruiting the singular for honorification is unattested, (28a)."
+    "comment": "A hypothetical French recruiting the singular for honorification is unattested, (28a).",
+    "verified": "page-image"
   },
   {
     "id": "wang2023_30a",
@@ -169,7 +176,8 @@
     "paperFeatures": [
       ["unattested", "honorific first person"]
     ],
-    "comment": "(28b)."
+    "comment": "(28b).",
+    "verified": "page-image"
   },
   {
     "id": "wang2023_30b",
@@ -187,7 +195,8 @@
     "paperFeatures": [
       ["unattested", "honorific second person"]
     ],
-    "comment": "(28b)."
+    "comment": "(28b).",
+    "verified": "page-image"
   },
   {
     "id": "wang2023_31",
@@ -205,7 +214,8 @@
     "paperFeatures": [
       ["unattested", "honorific definite"]
     ],
-    "comment": "(28c)."
+    "comment": "(28c).",
+    "verified": "page-image"
   },
   {
     "id": "wang2023_48a",
@@ -224,7 +234,8 @@
       ["diagnostic", "semantic markedness"],
       ["number", "plural inclusive"]
     ],
-    "comment": "A singular answer to a plural question: the plural is number-neutral."
+    "comment": "A singular answer to a plural question: the plural is number-neutral.",
+    "verified": "page-image"
   },
   {
     "id": "wang2023_49",
@@ -246,7 +257,8 @@
       ["diagnostic", "quantification"],
       ["number", "plural inclusive"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "wang2023_50",
@@ -268,7 +280,8 @@
       ["diagnostic", "quantification"],
       ["person", "third unmarked"]
     ],
-    "comment": "Sauerland 2008b: 72, adapted; a mixed-person group binds only a third-person pronoun."
+    "comment": "Sauerland 2008b: 72, adapted; a mixed-person group binds only a third-person pronoun.",
+    "verified": "page-image"
   },
   {
     "id": "wang2023_53a",
@@ -287,7 +300,8 @@
       ["definiteness", "definite"],
       ["presupposition", "familiarity"]
     ],
-    "comment": "Felicitous only with a salient or previously mentioned hamster."
+    "comment": "Felicitous only with a salient or previously mentioned hamster.",
+    "verified": "page-image"
   },
   {
     "id": "wang2023_53b",
@@ -305,7 +319,8 @@
     "paperFeatures": [
       ["definiteness", "indefinite"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "wang2023_60",
@@ -325,7 +340,8 @@
       ["number", "plural"],
       ["case", "ceiling"]
     ],
-    "comment": "No mismatch with a plural addressee, yet the honorific inference remains."
+    "comment": "No mismatch with a plural addressee, yet the honorific inference remains.",
+    "verified": "page-image"
   },
   {
     "id": "wang2023_72",
@@ -348,18 +364,19 @@
       ["number", "dual"],
       ["system", "honorific dual only"]
     ],
-    "comment": "François 2005: 121."
+    "comment": "François 2005: 121.",
+    "verified": "page-image"
   },
   {
     "id": "wang2023_74b",
     "source": {"bibkey": "wang-r-2023", "paperLabel": "(74b)"},
     "reportedIn": null,
     "language": "khar1287",
-    "primaryText": "iñ-aʔ tay konon tin bhaya-ñ-kiyar ayiʔj-kiyar.",
+    "primaryText": "iɲ-aʔ tay konon tin bhaya-ɲ-kiyar ayiˁj-kiyar.",
     "discourseSegments": [],
     "glossedTokens": [
-      ["iñ-aʔ", "1SG-GEN"], ["tay", "ABL"], ["konon", "small"], ["tin", "three"],
-      ["bhaya-ñ-kiyar", "brother-1.POSS-3DU"], ["ayiʔj-kiyar", "COP.PRES-3DU"]
+      ["iɲ-aʔ", "1SG-GEN"], ["tay", "ABL"], ["konon", "small"], ["tin", "three"],
+      ["bhaya-ɲ-kiyar", "brother-1.POSS-3DU"], ["ayiˁj-kiyar", "COP.PRES-3DU"]
     ],
     "translation": "I have three younger brothers (HON).",
     "context": "",
@@ -371,18 +388,19 @@
       ["number", "dual for three referents"],
       ["system", "honorific dual only"]
     ],
-    "comment": "Peterson 2011: 169–170, adapted; the weak taboo outranking MP! lets the dual honorify three."
+    "comment": "Peterson 2011: 169–170, adapted; the weak taboo outranking MP! lets the dual honorify three.",
+    "verified": "page-image"
   },
   {
     "id": "wang2023_75a",
     "source": {"bibkey": "wang-r-2023", "paperLabel": "(75a)"},
     "reportedIn": null,
     "language": "slov1268",
-    "primaryText": "Ali se boste Vi usedli?",
+    "primaryText": "Ali se boste Vi used-l-i?",
     "discourseSegments": [],
     "glossedTokens": [
       ["Ali", "Q"], ["se", "REFLX"], ["boste", "AUX.FUT.2PL"], ["Vi", "2PL"],
-      ["usedli", "sit-PART-PL.MASC"]
+      ["used-l-i", "sit-PART-PL.MASC"]
     ],
     "translation": "Would you (HON) like to sit down?",
     "context": "",
@@ -394,18 +412,19 @@
       ["number", "plural"],
       ["system", "honorific plural only"]
     ],
-    "comment": "Corbett 2000: 226."
+    "comment": "Corbett 2000: 226.",
+    "verified": "page-image"
   },
   {
     "id": "wang2023_75b",
     "source": {"bibkey": "wang-r-2023", "paperLabel": "(75b)"},
     "reportedIn": null,
     "language": "slov1268",
-    "primaryText": "Ali se bosta Vidva usedla?",
+    "primaryText": "Ali se bosta Vidva used-l-a?",
     "discourseSegments": [],
     "glossedTokens": [
       ["Ali", "Q"], ["se", "REFLX"], ["bosta", "AUX.FUT.2DU"], ["Vidva", "2DU"],
-      ["usedla", "sit-PART-DU.MASC"]
+      ["used-l-a", "sit-PART-DU.MASC"]
     ],
     "translation": "Would you like to sit down?",
     "context": "",
@@ -416,7 +435,8 @@
       ["address", "plain dual"],
       ["number", "dual"]
     ],
-    "comment": "The dual has no honorific effect."
+    "comment": "The dual has no honorific effect.",
+    "verified": "page-image"
   },
   {
     "id": "wang2023_78a",
@@ -438,18 +458,19 @@
       ["number", "dual or plural"],
       ["system", "non-escalating"]
     ],
-    "comment": "Own fieldwork; dual and plural indicate equal respect."
+    "comment": "Own fieldwork; dual and plural indicate equal respect.",
+    "verified": "page-image"
   },
   {
     "id": "wang2023_81",
     "source": {"bibkey": "wang-r-2023", "paperLabel": "(81)"},
     "reportedIn": null,
     "language": "slov1268",
-    "primaryText": "Vsak študent je prinesel s seboj svoji knjigi.",
+    "primaryText": "Vsak študent je prinesel s seboj svoj-i knjig-i.",
     "discourseSegments": [],
     "glossedTokens": [
       ["Vsak", "every"], ["študent", "student"], ["je", "be.SG"], ["prinesel", "brought.MASC"],
-      ["s", "with"], ["seboj", "self"], ["svoji", "his-DU"], ["knjigi", "book-DU"]
+      ["s", "with"], ["seboj", "self"], ["svoj-i", "his-DU"], ["knjig-i", "book-DU"]
     ],
     "translation": "Every student brought his books.",
     "context": "",
@@ -460,6 +481,7 @@
       ["diagnostic", "quantification"],
       ["number", "dual intermediate"]
     ],
-    "comment": "Sauerland 2008b: compatible with some students having one book and others exactly two."
+    "comment": "Sauerland 2008b: compatible with some students having one book and others exactly two.",
+    "verified": "page-image"
   }
 ]

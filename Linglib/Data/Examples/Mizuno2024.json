@@ -7,7 +7,7 @@
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
-    "context": "Jones is in the ER with poisoning symptoms; the team is figuring out which chemical. The boss says he must have taken arsenic. A member responds with (1a), and the follow-up (1b) 'So, it looks like he did take arsenic' is felicitous — an Anderson conditional arguing FOR the truth of its antecedent.",
+    "context": "Jones is in the ER with poisoning symptoms; the investigation team is figuring out which chemical was used. One shrewd member suggests that, given the symptoms, he must have taken arsenic. The boss then says (1a) and the follow-up (1b) 'So, it looks like he did take arsenic' in a row: an Anderson conditional arguing FOR the truth of its antecedent.",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
@@ -15,7 +15,8 @@
       ["construction", "anderson"],
       ["strategy", "x-marking"]
     ],
-    "comment": "Mizuno's adaptation of Anderson's (1951) original ('If Jones had taken arsenic, he would have shown just exactly those symptoms which he does in fact show.'). English X-marks: past-perfect antecedent, 'would' consequent describing the observed fact."
+    "comment": "English X-marks: past-perfect antecedent, 'would' consequent describing the observed fact.",
+    "verified": "page-image"
   },
   {
     "id": "mizuno2024_en2",
@@ -33,7 +34,8 @@
       ["construction", "anderson"],
       ["strategy", "o-marking"]
     ],
-    "comment": "Infelicitous: the non-expanded domain D makes the consequent (an observed fact) hold everywhere, so the conditional is trivially true (Stalnaker 1975, von Fintel 1999)."
+    "comment": "Infelicitous: the non-expanded domain D makes the consequent (an observed fact) hold everywhere, so the conditional is trivially true (Stalnaker 1975, von Fintel 1999).",
+    "verified": "page-image"
   },
   {
     "id": "mizuno2024_ja3",
@@ -55,7 +57,8 @@
       ["construction", "fake-past"],
       ["x_exponent", "-ta"]
     ],
-    "comment": "Fake Past: Past -katta in the consequent with non-past reference (ima 'now'), so X-marking rather than real Past (Ogihara 2014, Mizuno & Kaufmann 2019). Establishes that Japanese possesses X-marking, setting up the puzzle of its unavailability in Anderson conditionals."
+    "comment": "Fake Past: Past -katta in the consequent with non-past reference (ima 'now'), so X-marking rather than real Past (Ogihara 2014, Mizuno & Kaufmann 2019). Establishes that Japanese possesses X-marking, setting up the puzzle of its unavailability in Anderson conditionals.",
+    "verified": "page-image"
   },
   {
     "id": "mizuno2024_ja4a",
@@ -81,28 +84,32 @@
       ["construction", "anderson"],
       ["strategy", "o-marking"]
     ],
-    "comment": "Japanese O-marks: Non-Past -ru triggers a Historical-Present shift expanding the domain. The X-marked alternative (Past -ta) forces a counterfactual reading, contradicting the Anderson follow-up (4b), so it is infelicitous."
+    "comment": "Japanese O-marks: Non-Past -ru triggers a Historical-Present shift expanding the domain. The X-marked alternative (Past -ta) forces a counterfactual reading, contradicting the Anderson follow-up (4b), so it is infelicitous.",
+    "verified": "page-image"
   },
   {
     "id": "mizuno2024_ja7a",
     "source": {"bibkey": "mizuno-2024", "paperLabel": "(7a)"},
     "language": "nucl1643",
-    "primaryText": "Tasikani, Jones-ga ototoi Manila-o syuppatusu-reba, kare-no zissai-no nyuukoku geeto-to mattaku onazi geeto-o, kinoo-no tuuka zikoku-to mattaku onazi zikoku-ni tuukas-uru hazuda.",
+    "primaryText": "Tasikani, Jones-ga ototoi Manila-o syuppatusu-reba, kare-no zissai-no nyuukoku geeto-to mattaku onazi geeto-o, kinoo-no tuuka zikoku-to mattaku onazi zikoku-ni tuukas-uru (hazuda).",
     "discourseSegments": [],
     "glossedTokens": [
       ["Tasikani", "you're.right"], ["Jones-ga", "Jones-NOM"], ["ototoi", "two.days.ago"],
       ["Manila-o", "Manila-ACC"], ["syuppatusu-reba", "leave-COND"], ["kare-no", "he-GEN"],
-      ["zissai-no", "actual-GEN"], ["nyuukoku.geeto-to", "immigration.gate-as"],
+      ["zissai-no", "actual-GEN"], ["nyuukoku", "immigration"], ["geeto-to", "gate-as"],
       ["mattaku", "exactly"], ["onazi", "same"], ["geeto-o", "gate-ACC"],
-      ["kinoo-no", "yesterday-GEN"], ["tuuka.zikoku-to", "passage.time-as"],
+      ["kinoo-no", "yesterday-GEN"], ["tuuka", "passage"], ["zikoku-to", "time-as"],
       ["mattaku", "exactly"], ["onazi", "same"], ["zikoku-ni", "time-at"],
-      ["tuukas-uru", "pass-NPST"], ["hazuda", "MOD"]
+      ["tuukas-uru", "pass-NPST"], ["(hazuda)", "MOD"]
     ],
-    "translation": "If Jones had left Manila two days ago, he would have passed exactly the same immigration gate that he actually passed yesterday, exactly at the same time as he actually did it.",
+    "translation": "You're right. If Jones had left Manila two days ago, he would have passed exactly the same immigration gate that he actually passed yesterday, exactly at the same time as he actually did it.",
     "context": "Jones is a fugitive who reportedly entered Korea via Incheon yesterday; the team infers the country he flew from. The consequent event lies overtly in the past (adverbial kinoo 'yesterday'), yet Non-Past is still required.",
     "judgment": "acceptable",
     "alternatives": [
-      {"form": "Tasikani, Jones-ga ototoi Manila-o syuppatusu-reba, ... kinoo-no tuuka zikoku-to mattaku onazi zikoku-ni tuukas-ita hazuda.", "judgment": "unacceptable"}
+      {
+        "form": "Tasikani, Jones-ga ototoi Manila-o syuppatusu-reba, kare-no zissai-no nyuukoku geeto-to mattaku onazi geeto-o, kinoo-no tuuka zikoku-to mattaku onazi zikoku-ni tuukas-ita (hazuda).",
+        "judgment": "unacceptable"
+      }
     ],
     "readings": [],
     "paperFeatures": [
@@ -110,7 +117,8 @@
       ["strategy", "o-marking"],
       ["hp_type", "radical"]
     ],
-    "comment": "Radical-HP case: consequent event overtly past, yet Non-Past required. Temporal indexicals ototoi and kinoo evaluate against the utterance time (theta = origin), paralleling Schlenker 2004's Historical Present."
+    "comment": "Radical-HP case: consequent event overtly past, yet Non-Past required. Temporal indexicals ototoi and kinoo evaluate against the utterance time (theta = origin), paralleling Schlenker 2004's Historical Present.",
+    "verified": "page-image"
   },
   {
     "id": "mizuno2024_ma13a",
@@ -124,7 +132,7 @@
       ["chuxian", "show"], ["ta", "he"], ["xianzai", "now"], ["shiji", "actually"],
       ["chuxian", "show"], ["de", "REL"], ["zheyangde", "such"], ["zhengzhuang", "symptoms"]
     ],
-    "translation": "If Jones drank arsenic yesterday, he would show exactly such symptoms as he actually shows now.",
+    "translation": "If Jones drank arsenic yesterday, he would show such symptoms as he actually shows now.",
     "context": "Uttered in the context in (1) — the Anderson scenario.",
     "judgment": "acceptable",
     "alternatives": [
@@ -135,7 +143,8 @@
       ["construction", "anderson"],
       ["strategy", "o-marking"]
     ],
-    "comment": "Mandarin O-marks (no consequent-final le); the conditional marker is ruguo. The X-marked alternative (consequent-final perfective le) induces strong counterfactuality, like Japanese Past -ta, so it is infelicitous for the Anderson reading."
+    "comment": "Mandarin O-marks (no consequent-final le); the conditional marker is ruguo. The X-marked alternative (consequent-final perfective le) induces strong counterfactuality, like Japanese Past -ta, so it is infelicitous for the Anderson reading.",
+    "verified": "page-image"
   },
   {
     "id": "mizuno2024_en8",
@@ -157,13 +166,14 @@
       ["strategy", "x-marking"],
       ["flv_xmarking", "available"]
     ],
-    "comment": "English X-marking is available for FLV: the X-marked conditional (8a) takes an unlikeliness follow-up (8b)."
+    "comment": "English X-marking is available for FLV: the X-marked conditional (8a) takes an unlikeliness follow-up (8b).",
+    "verified": "page-image"
   },
   {
     "id": "mizuno2024_ja9",
     "source": {"bibkey": "mizuno-2024", "paperLabel": "(9)"},
     "language": "nucl1643",
-    "primaryText": "John-ga asita kur-eba, paatii-wa totemo moriagar-u daroo, kedo tabun kare-wa asita ko-na-i to omou.",
+    "primaryText": "John-ga asita kur-eba, paatii-wa totemo moriagar-u daroo, kedo, tabun kare-wa asita ko-na-i to omou.",
     "discourseSegments": [],
     "glossedTokens": [
       ["John-ga", "John-NOM"], ["asita", "tomorrow"], ["kur-eba", "come-COND"],
@@ -175,7 +185,10 @@
     "context": "Future Less Vivid conditional with an unlikeliness follow-up.",
     "judgment": "acceptable",
     "alternatives": [
-      {"form": "John-ga asita kur-eba, paatii-wa totemo moriagat-ta daroo, #kedo tabun kare-wa asita ko-na-i to omou.", "judgment": "unacceptable"}
+      {
+        "form": "John-ga asita kur-eba, paatii-wa totemo moriagat-ta daroo, kedo, tabun kare-wa asita ko-na-i to omou.",
+        "judgment": "unacceptable"
+      }
     ],
     "readings": [],
     "paperFeatures": [
@@ -183,7 +196,8 @@
       ["strategy", "o-marking"],
       ["flv_xmarking", "unavailable"]
     ],
-    "comment": "Japanese FLV must O-mark (Non-Past -u, ex 9). The X-marked variant (Past -ta, ex 10) induces strong counterfactuality, making the unlikeliness follow-up contradictory."
+    "comment": "Japanese FLV must O-mark (Non-Past -u, ex 9). The X-marked variant (Past -ta, ex 10) induces strong counterfactuality, making the unlikeliness follow-up contradictory.",
+    "verified": "page-image"
   },
   {
     "id": "mizuno2024_ma11",
@@ -202,7 +216,10 @@
     "context": "Future Less Vivid conditional with an unlikeliness follow-up.",
     "judgment": "acceptable",
     "alternatives": [
-      {"form": "Ruguo mingtian John lai, paidui de qifen jiu neng huoyue qilai le, #danshi wo juede ta mingtian bu hui lai.", "judgment": "unacceptable"}
+      {
+        "form": "Ruguo mingtian John lai, paidui de qifen jiu neng huoyue qilai le, danshi wo juede ta mingtian bu hui lai.",
+        "judgment": "unacceptable"
+      }
     ],
     "readings": [],
     "paperFeatures": [
@@ -210,6 +227,7 @@
       ["strategy", "o-marking"],
       ["flv_xmarking", "unavailable"]
     ],
-    "comment": "Mandarin FLV must O-mark (no le, ex 11). The X-marked variant (perfective le, ex 12) induces strong counterfactuality, making the unlikeliness follow-up contradictory."
+    "comment": "Mandarin FLV must O-mark (no le, ex 11). The X-marked variant (perfective le, ex 12) induces strong counterfactuality, making the unlikeliness follow-up contradictory.",
+    "verified": "page-image"
   }
 ]

@@ -20,17 +20,18 @@
     "paperFeatures": [
       ["marking", "a before subject"]
     ],
-    "comment": "Cited from Hartmann and Zimmermann 2009: p. 1342."
+    "comment": "Cited from Hartmann and Zimmermann 2009: p. 1342.",
+    "verified": "page-image"
   },
   {
     "id": "assmannetal2023_2",
     "source": {"bibkey": "assmann-etal-2023", "paperLabel": "(2)"},
     "reportedIn": null,
     "language": "guru1271",
-    "primaryText": "Tí bà ròmb-á gwéí.",
+    "primaryText": "Tí bà ròmb-á gʷéì.",
     "discourseSegments": [],
     "glossedTokens": [
-      ["Tí", "3SG"], ["bà", "PROG"], ["ròmb-á", "gather-FOC"], ["gwéí", "seeds"]
+      ["Tí", "3SG"], ["bà", "PROG"], ["ròmb-á", "gather-FOC"], ["gʷéì", "seeds"]
     ],
     "translation": "He is gathering the seeds.",
     "context": "",
@@ -44,17 +45,18 @@
     "paperFeatures": [
       ["marking", "a between verb and object"]
     ],
-    "comment": "Cited from Hartmann and Zimmermann 2009: p. 1347."
+    "comment": "Cited from Hartmann and Zimmermann 2009: p. 1347.",
+    "verified": "page-image"
   },
   {
     "id": "assmannetal2023_3",
     "source": {"bibkey": "assmann-etal-2023", "paperLabel": "(3)"},
     "reportedIn": null,
     "language": "guru1271",
-    "primaryText": "Kóo vùr mó kãa Mài Dáwà sái tí shí gànyáhú-à.",
+    "primaryText": "Kóo vùr mɘ́ kãa Mài Dáwà sái tí shí gànyáhú-à.",
     "discourseSegments": [],
     "glossedTokens": [
-      ["Kóo", "every"], ["vùr", "when"], ["mó", ""], ["kãa", ""], ["Mài Dáwà", "Mai Dawa"],
+      ["Kóo", "every"], ["vùr", "when"], ["mɘ́", ""], ["kãa", ""], ["Mài Dáwà", "Mai Dawa"],
       ["sái", "then"], ["tí", "3SG"], ["shí", "eat"], ["gànyáhú-à", "rice-FOC"]
     ],
     "translation": "Always, Mai Dawa used to eat rice.",
@@ -67,7 +69,8 @@
     "paperFeatures": [
       ["marking", "a clause-final"]
     ],
-    "comment": "Cited from Hartmann and Zimmermann 2009: p. 1356."
+    "comment": "Cited from Hartmann and Zimmermann 2009: p. 1356. The paper prints mɘ́ with a reversed e (ɘ).",
+    "verified": "page-image"
   },
   {
     "id": "assmannetal2023_5",
@@ -89,7 +92,8 @@
     "paperFeatures": [
       ["marking", "a clause-final"]
     ],
-    "comment": "Cited from Hartmann and Zimmermann 2009: p. 1359."
+    "comment": "Cited from Hartmann and Zimmermann 2009: p. 1359.",
+    "verified": "page-image"
   },
   {
     "id": "assmannetal2023_fn4_i",
@@ -112,7 +116,8 @@
     "paperFeatures": [
       ["marking", "a before phrase within VP"]
     ],
-    "comment": "Cited from Hartmann and Zimmermann 2009: p. 1343."
+    "comment": "Cited from Hartmann and Zimmermann 2009: p. 1343.",
+    "verified": "page-image"
   },
   {
     "id": "assmannetal2023_6a",
@@ -134,18 +139,19 @@
     "paperFeatures": [
       ["marking", "le after subject"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "assmannetal2023_6b",
     "source": {"bibkey": "assmann-etal-2023", "paperLabel": "(6b)"},
     "reportedIn": null,
     "language": "buli1254",
-    "primaryText": "(ká) Àtìm alè dè n mángó.",
+    "primaryText": "(ká) Àtìm alè dè n mangó.",
     "discourseSegments": [],
     "glossedTokens": [
       ["(ká)", "FOC"], ["Àtìm", "Atim"], ["alè", "FOC"], ["dè", "ate"], ["n", "1SG.POSS"],
-      ["mángó", "mango"]
+      ["mangó", "mango"]
     ],
     "translation": "Atim ate my mango.",
     "context": "Why are you angry?",
@@ -157,7 +163,8 @@
     "paperFeatures": [
       ["marking", "le after subject"]
     ],
-    "comment": ""
+    "comment": "The paper prints mangó here, without the first tone mark of mángó in (6a) and (7).",
+    "verified": "page-image"
   },
   {
     "id": "assmannetal2023_7",
@@ -180,7 +187,8 @@
     "paperFeatures": [
       ["marking", "ka before object"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "assmannetal2023_8",
@@ -203,7 +211,8 @@
     "paperFeatures": [
       ["marking", "kama after VP"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "assmannetal2023_10",
@@ -225,7 +234,8 @@
     "paperFeatures": [
       ["marking", "relative form"]
     ],
-    "comment": "Cited from Hartmann and Zimmermann 2007c: p. 367."
+    "comment": "Cited from Hartmann and Zimmermann 2007c: p. 367.",
+    "verified": "page-image"
   },
   {
     "id": "assmannetal2023_11",
@@ -250,7 +260,8 @@
     "paperFeatures": [
       ["marking", "absolute form"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "assmannetal2023_12",
@@ -274,7 +285,8 @@
       ["marking", "relative form"],
       ["particle", "cee after subject"]
     ],
-    "comment": "Cited from Hartmann and Zimmermann 2007c: p. 367."
+    "comment": "Cited from Hartmann and Zimmermann 2007c: p. 367.",
+    "verified": "page-image"
   },
   {
     "id": "assmannetal2023_13",
@@ -301,7 +313,8 @@
       ["marking", "absolute form"],
       ["particle", "nee clause-final"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "assmannetal2023_14",
@@ -328,7 +341,8 @@
       ["particle", "nee clause-final"],
       ["agreement", "masculine despite feminine object"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "assmannetal2023_15",
@@ -353,7 +367,8 @@
       ["marking", "relative form"],
       ["particle", "nee after subject"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "assmannetal2023_17",
@@ -377,7 +392,8 @@
       ["marking", "absolute form"],
       ["particle", "nee after object"]
     ],
-    "comment": "Cited from Hartmann and Zimmermann 2007a: p. 247."
+    "comment": "Cited from Hartmann and Zimmermann 2007a: p. 247.",
+    "verified": "page-image"
   },
   {
     "id": "assmannetal2023_18a",
@@ -399,7 +415,8 @@
     "paperFeatures": [
       ["marking", "a"]
     ],
-    "comment": "Cited from McLaughlin 2004: p. 247."
+    "comment": "Cited from McLaughlin 2004: p. 247.",
+    "verified": "page-image"
   },
   {
     "id": "assmannetal2023_18b",
@@ -422,7 +439,8 @@
       ["marking", "la"],
       ["movement", "object fronted"]
     ],
-    "comment": "Cited from McLaughlin 2004: p. 247."
+    "comment": "Cited from McLaughlin 2004: p. 247.",
+    "verified": "page-image"
   },
   {
     "id": "assmannetal2023_18c",
@@ -445,7 +463,8 @@
     "paperFeatures": [
       ["marking", "dafa"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "assmannetal2023_19",
@@ -468,7 +487,8 @@
       ["marking", "ngi"],
       ["aspect", "imperfective"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "assmannetal2023_20",
@@ -491,7 +511,8 @@
       ["marking", "na"],
       ["aspect", "perfective"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "assmannetal2023_37",
@@ -514,7 +535,8 @@
     "paperFeatures": [
       ["marking", "wa on verb"]
     ],
-    "comment": "Cited from Hardman et al. 1988: p. 281."
+    "comment": "Cited from Hardman et al. 1988: p. 281.",
+    "verified": "page-image"
   },
   {
     "id": "assmannetal2023_38",
@@ -536,7 +558,8 @@
     "paperFeatures": [
       ["marking", "wa on verb"]
     ],
-    "comment": "Cited from Klose 2015: p. 70."
+    "comment": "Cited from Klose 2015: p. 70.",
+    "verified": "page-image"
   },
   {
     "id": "assmannetal2023_39",
@@ -560,17 +583,18 @@
     "paperFeatures": [
       ["marking", "wa on verb"]
     ],
-    "comment": "Cited from Klose 2015: p. 70. Analysed by Klose 2015 as VP or clausal focus."
+    "comment": "Cited from Klose 2015: p. 70. Analysed by Klose 2015 as VP or clausal focus.",
+    "verified": "page-image"
   },
   {
     "id": "assmannetal2023_41",
     "source": {"bibkey": "assmann-etal-2023", "paperLabel": "(41)"},
     "reportedIn": null,
     "language": "awin1248",
-    "primaryText": "Alombah a-pe'-náŋnə ŋgəsáŋè.",
+    "primaryText": "Alombah a-pe'-náŋnə ŋgəsáŋə̀.",
     "discourseSegments": [],
     "glossedTokens": [
-      ["Alombah", "A."], ["a-pe'-náŋnə", "SM-PST-cook"], ["ŋgəsáŋè", "maize"]
+      ["Alombah", "A."], ["a-pe'-náŋnə", "SM-PST-cook"], ["ŋgəsáŋə̀", "maize"]
     ],
     "translation": "Alombah cooked maize.",
     "context": "What did Alombah cook? / What did Alombah do with the maize? / What did Alombah do? / Who cooked the maize? / What happened?",
@@ -586,7 +610,8 @@
     "paperFeatures": [
       ["marking", "none"]
     ],
-    "comment": "Cited from Fominyam and Šimík 2017: p. 1038."
+    "comment": "Cited from Fominyam and Šimík 2017: p. 1038.",
+    "verified": "page-image"
   },
   {
     "id": "assmannetal2023_53",
@@ -611,6 +636,7 @@
     "paperFeatures": [
       ["marking", "nuclear stress on verb"]
     ],
-    "comment": "The contexts are (53a–f): Kim made the yogurt and then; Kim ate the pickles, and then; Kim went to the fridge and then; The lights went out and; Sam ate the yogurt before; Whenever we made yogurt."
+    "comment": "The contexts are (53a–f): Kim made the yogurt and then; Kim ate the pickles, and then; Kim went to the fridge and then; The lights went out and; Sam ate the yogurt before; Whenever we made yogurt.",
+    "verified": "page-image"
   }
 ]

@@ -4,11 +4,8 @@
     "source": {"bibkey": "beckman-pierrehumbert-1986", "paperLabel": "Fig. 3"},
     "language": "nucl1643",
     "primaryText": "Kore-wa toriya-no mawari-no oma'warisan-no hanasi desu.",
-    "glossedTokens": [
-      ["Kore-wa", "this-TOP"], ["toriya-no", "bird.shop-GEN"], ["mawari-no", "vicinity-GEN"],
-      ["oma'warisan-no", "policeman-GEN"], ["hanasi", "story"], ["desu", "COP"]
-    ],
-    "translation": "This is a story about the policeman near the bird shop.",
+    "glossedTokens": [],
+    "translation": "",
     "context": "",
     "judgment": "acceptable",
     "readings": [],
@@ -16,18 +13,16 @@
       ["accentual phrase", "unaccented"],
       ["tonal pattern", "phrasal H ... boundary L"]
     ],
-    "comment": "The long unaccented AP shows smooth interpolation from phrasal H to boundary L — no H-tone spreading."
+    "comment": "The long unaccented AP shows smooth interpolation from phrasal H to boundary L — no H-tone spreading.",
+    "verified": "page-image"
   },
   {
     "id": "bp1986_fig5",
     "source": {"bibkey": "beckman-pierrehumbert-1986", "paperLabel": "Fig. 5"},
     "language": "nucl1643",
     "primaryText": "Kore-wa mo'riya-no mawari-no oma'warisan-no hanasi desu.",
-    "glossedTokens": [
-      ["Kore-wa", "this-TOP"], ["mo'riya-no", "Moriya-GEN"], ["mawari-no", "vicinity-GEN"],
-      ["oma'warisan-no", "policeman-GEN"], ["hanasi", "story"], ["desu", "COP"]
-    ],
-    "translation": "This is a story about the policeman near Moriya.",
+    "glossedTokens": [],
+    "translation": "",
     "context": "",
     "judgment": "acceptable",
     "readings": [],
@@ -35,17 +30,16 @@
       ["accentual phrase", "accented"],
       ["process", "catathesis"]
     ],
-    "comment": "The boundary L after the accented phrase is realized much lower: catathesis triggered by the accent."
+    "comment": "The boundary L after the accented phrase is realized much lower: catathesis triggered by the accent.",
+    "verified": "page-image"
   },
   {
     "id": "bp1986_fig6a",
     "source": {"bibkey": "beckman-pierrehumbert-1986", "paperLabel": "Fig. 6a"},
     "language": "nucl1643",
     "primaryText": "Uma'i mame'-wa arimasen.",
-    "glossedTokens": [
-      ["Uma'i", "delicious"], ["mame'-wa", "bean-TOP"], ["arimasen", "exist.NEG.POL"]
-    ],
-    "translation": "There are no delicious beans.",
+    "glossedTokens": [],
+    "translation": "",
     "context": "Adjective and noun grouped in one accentual phrase.",
     "judgment": "acceptable",
     "readings": [],
@@ -53,17 +47,16 @@
       ["process", "accent deletion"],
       ["constraint", "one accent per AP"]
     ],
-    "comment": "Grouping two accented words into one AP deletes the second accent; the contour equals Fig. 6b's."
+    "comment": "Grouping two accented words into one AP deletes the second accent; the contour equals Fig. 6b's.",
+    "verified": "page-image"
   },
   {
     "id": "bp1986_fig6b",
     "source": {"bibkey": "beckman-pierrehumbert-1986", "paperLabel": "Fig. 6b"},
     "language": "nucl1643",
     "primaryText": "Uma'i ame-wa arimasen.",
-    "glossedTokens": [
-      ["Uma'i", "delicious"], ["ame-wa", "candy-TOP"], ["arimasen", "exist.NEG.POL"]
-    ],
-    "translation": "There is no delicious candy.",
+    "glossedTokens": [],
+    "translation": "",
     "context": "",
     "judgment": "acceptable",
     "readings": [],
@@ -71,17 +64,16 @@
       ["accentual phrase", "one accent"],
       ["noun", "unaccented"]
     ],
-    "comment": "Identical tonal contour to Fig. 6a — deletion neutralizes the mame'/ame accent contrast under grouping."
+    "comment": "Identical tonal contour to Fig. 6a — deletion neutralizes the mame'/ame accent contrast under grouping.",
+    "verified": "page-image"
   },
   {
     "id": "bp1986_fig8",
     "source": {"bibkey": "beckman-pierrehumbert-1986", "paperLabel": "Fig. 8"},
     "language": "nucl1643",
     "primaryText": "Amai mame'-wa arimasen.",
-    "glossedTokens": [
-      ["Amai", "sweet"], ["mame'-wa", "bean-TOP"], ["arimasen", "exist.NEG.POL"]
-    ],
-    "translation": "There are no sweet beans.",
+    "glossedTokens": [],
+    "translation": "",
     "context": "Contrastive emphasis on amai.",
     "judgment": "acceptable",
     "readings": [],
@@ -89,7 +81,8 @@
       ["focus", "initial"],
       ["process", "subordination or dephrasing"]
     ],
-    "comment": "Focus on the unaccented adjective flattens the following accented noun's rise — extreme subordination is phonetically like dephrasing."
+    "comment": "Focus on the unaccented adjective flattens the following accented noun's rise — extreme subordination is phonetically like dephrasing.",
+    "verified": "page-image"
   },
   {
     "id": "bp1986_ex2",
@@ -97,8 +90,8 @@
     "language": "nucl1643",
     "primaryText": "Kono arai ayaori-no obizi ga.",
     "glossedTokens": [
-      ["Kono", "this"], ["arai", "rough"], ["ayaori-no", "twill-GEN"], ["obizi", "obi.cloth"],
-      ["ga", "NOM"]
+      ["Kono", "this"], ["arai", "rough"], ["ayaori-no", "twill"], ["obizi", "obi.cloth"],
+      ["ga", ""]
     ],
     "translation": "This rough twill obi-cloth.",
     "context": "",
@@ -107,7 +100,8 @@
     "paperFeatures": [
       ["intermediate phrase", "break after first modifier"]
     ],
-    "comment": "Most subjects split this into two intermediate phrases — smaller than an English intonation phrase."
+    "comment": "Most subjects split this into two intermediate phrases — smaller than an English intonation phrase.",
+    "verified": "page-image"
   },
   {
     "id": "bp1986_ex3",
@@ -125,18 +119,16 @@
     "paperFeatures": [
       ["intermediate phrase", "break inside compound"]
     ],
-    "comment": "Catathesis blocked after neage: an ip boundary can fall inside a compound in Japanese."
+    "comment": "Catathesis blocked after neage: an ip boundary can fall inside a compound in Japanese.",
+    "verified": "page-image"
   },
   {
     "id": "bp1986_fig36",
     "source": {"bibkey": "beckman-pierrehumbert-1986", "paperLabel": "Fig. 36"},
     "language": "nucl1643",
-    "primaryText": "Moo tyotto migigawa-ga sagerare'ru.",
-    "glossedTokens": [
-      ["Moo", "more"], ["tyotto", "a.little"], ["migigawa-ga", "right.side-NOM"],
-      ["sagerare'ru", "can.be.lowered"]
-    ],
-    "translation": "The right side can be lowered a little more.",
+    "primaryText": "Moo tyo'tto migigawa-ga sagerare'ru.",
+    "glossedTokens": [],
+    "translation": "",
     "context": "Declarative vs yes/no question renditions.",
     "judgment": "acceptable",
     "readings": [],
@@ -144,7 +136,8 @@
       ["process", "final lowering"],
       ["domain", "declaratives only"]
     ],
-    "comment": "Declarative and interrogative F0 match early and diverge at the end: final lowering in declaratives."
+    "comment": "Declarative and interrogative F0 match early and diverge at the end: final lowering in declaratives. The caption prints tyo'to; the figure's measurement labels print tyot to.",
+    "verified": "page-image"
   },
   {
     "id": "bp1986_fig1",
@@ -163,7 +156,8 @@
     "paperFeatures": [
       ["accent inventory", "postlexical shape choice"]
     ],
-    "comment": "Accent shape contrasts intonational meanings, never lexical items."
+    "comment": "Accent shape contrasts intonational meanings, never lexical items.",
+    "verified": "page-image"
   },
   {
     "id": "bp1986_fig2",
@@ -182,13 +176,14 @@
       ["diagnostic", "peak alignment"],
       ["claim", "bitonal accents are units"]
     ],
-    "comment": "The unstarred H of H+L* lands mid-word in Marianna — implausible as any phrasal tone."
+    "comment": "The unstarred H of H+L* lands mid-word in Marianna — implausible as any phrasal tone.",
+    "verified": "page-image"
   },
   {
     "id": "bp1986_fig11",
     "source": {"bibkey": "beckman-pierrehumbert-1986", "paperLabel": "Fig. 11"},
     "language": "stan1293",
-    "primaryText": "blueberries, boysberries, raspberries, mulberries and brambleberries",
+    "primaryText": "blueberries, bayberries, raspberries, mulberries and brambleberries",
     "glossedTokens": [],
     "translation": "",
     "context": "",
@@ -198,7 +193,8 @@
       ["process", "catathesis chain"],
       ["contour", "descending staircase"]
     ],
-    "comment": "Iterated catathesis: up to six or seven step levels, ruling out a fixed mid tone."
+    "comment": "Iterated catathesis: up to six or seven step levels, ruling out a fixed mid tone.",
+    "verified": "page-image"
   },
   {
     "id": "bp1986_ex4",
@@ -213,7 +209,8 @@
     "paperFeatures": [
       ["intermediate phrase", "medial L phrase accent"]
     ],
-    "comment": "The definiendum is set off as its own intermediate phrase; a full intonation break would be too strong."
+    "comment": "The definiendum is set off as its own intermediate phrase; a full intonation break would be too strong.",
+    "verified": "page-image"
   },
   {
     "id": "bp1986_ex7",
@@ -229,7 +226,8 @@
       ["intermediate phrase", "H phrase accent per list item"],
       ["boundary tone", "one final H%"]
     ],
-    "comment": "Three H-phrase-accent ips under one intonation phrase whose single H% closes the list."
+    "comment": "Three H-phrase-accent ips under one intonation phrase whose single H% closes the list.",
+    "verified": "page-image"
   },
   {
     "id": "bp1986_ex9",
@@ -247,7 +245,8 @@
     "paperFeatures": [
       ["intermediate phrase", "scope disambiguation"]
     ],
-    "comment": "Intermediate phrasing disambiguates the scope of the modifier over the conjunction."
+    "comment": "Intermediate phrasing disambiguates the scope of the modifier over the conjunction.",
+    "verified": "page-image"
   },
   {
     "id": "bp1986_fig34",
@@ -263,6 +262,7 @@
       ["process", "catathesis blocked at focus"],
       ["intermediate phrase", "break before focus"]
     ],
-    "comment": "Downstepping accents on the first three numbers; the focused item is set off by an ip boundary that resets the range."
+    "comment": "Downstepping accents on the first three numbers; the focused item is set off by an ip boundary that resets the range.",
+    "verified": "page-image"
   }
 ]

@@ -24,7 +24,8 @@
         "anteriority"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "iai2001_ex2a",
@@ -59,7 +60,8 @@
         "stative"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "iai2001_ex3a",
@@ -86,7 +88,8 @@
         "experiential"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "iai2001_ex4",
@@ -113,7 +116,8 @@
         "perfect of result"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "iai2001_ex5",
@@ -140,7 +144,8 @@
         "perfect of recent past"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "iai2001_ex6a",
@@ -171,7 +176,8 @@
         "RB included by assertion"
       ]
     ],
-    "comment": "A contradiction: the universal perfect asserts the eventuality at the right boundary."
+    "comment": "A contradiction: the universal perfect asserts the eventuality at the right boundary.",
+    "verified": "page-image"
   },
   {
     "id": "iai2001_ex6b",
@@ -202,7 +208,8 @@
         "RB included by assertion"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "iai2001_ex7",
@@ -237,7 +244,8 @@
         "RB set by tense"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "iai2001_ex8",
@@ -273,7 +281,8 @@
         "required"
       ]
     ],
-    "comment": "An individual-level stative in the perfect needs an adverbial."
+    "comment": "An individual-level stative in the perfect needs an adverbial.",
+    "verified": "page-image"
   },
   {
     "id": "iai2001_ex9",
@@ -304,7 +313,8 @@
         "not universal"
       ]
     ],
-    "comment": "Silent about the utterance time: a perfect of recent past with a covert lately."
+    "comment": "Silent about the utterance time: a perfect of recent past with a covert lately.",
+    "verified": "page-image"
   },
   {
     "id": "iai2001_ex11",
@@ -331,7 +341,8 @@
         "perfect of recent past"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "iai2001_ex13B",
@@ -375,7 +386,8 @@
         "no perfect of recent past"
       ]
     ],
-    "comment": "Bulgarian has a universal perfect but no perfect of recent past."
+    "comment": "Bulgarian has a universal perfect but no perfect of recent past.",
+    "verified": "page-image"
   },
   {
     "id": "iai2001_ex14a",
@@ -407,7 +419,8 @@
         "lately takes the present perfect"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "iai2001_ex14d",
@@ -416,7 +429,7 @@
       "paperLabel": "(14d)"
     },
     "language": "bulg1262",
-    "primaryText": "Tja beshe bolna naposleduk.",
+    "primaryText": "Tja beše bolna naposleduk.",
     "discourseSegments": [],
     "glossedTokens": [
       [
@@ -424,7 +437,7 @@
         "she"
       ],
       [
-        "beshe",
+        "beše",
         "was"
       ],
       [
@@ -456,7 +469,8 @@
         "lately takes the past in Bulgarian"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "iai2001_ex15",
@@ -487,7 +501,8 @@
         "not universal"
       ]
     ],
-    "comment": "Can be continued by but I'm done now."
+    "comment": "Can be continued by but I'm done now.",
+    "verified": "page-image"
   },
   {
     "id": "iai2001_ex17a",
@@ -523,7 +538,8 @@
         "since is perfect-level"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "iai2001_ex18a",
@@ -554,7 +570,8 @@
         "universal and existential"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "iai2001_ex19a",
@@ -585,7 +602,8 @@
         "existential only"
       ]
     ],
-    "comment": "The eventuality is not homogeneous, so durative since finds no universal reading."
+    "comment": "The eventuality is not homogeneous, so durative since finds no universal reading.",
+    "verified": "page-image"
   },
   {
     "id": "iai2001_ex20a",
@@ -616,7 +634,8 @@
         "universal and existential"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "iai2001_ex20b",
@@ -647,7 +666,8 @@
         "universal only"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "iai2001_ex21a",
@@ -678,7 +698,8 @@
         "existential"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "iai2001_ex22a",
@@ -709,7 +730,8 @@
         "universal if perfect-level, existential if eventuality-level"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "iai2001_ex23a",
@@ -740,7 +762,8 @@
         "ambiguous"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "iai2001_ex23b",
@@ -771,7 +794,8 @@
         "universal only"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "iai2001_ex24",
@@ -802,7 +826,8 @@
         "existential"
       ]
     ],
-    "comment": "A sentence-initial adverbial can yield an existential perfect."
+    "comment": "A sentence-initial adverbial can yield an existential perfect.",
+    "verified": "page-image"
   },
   {
     "id": "iai2001_ex25a",
@@ -842,7 +867,8 @@
         "individual-level"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "iai2001_ex26",
@@ -873,7 +899,8 @@
         "individual-level"
       ]
     ],
-    "comment": "Perfect-level always leaves no room for another perfect-level adverbial."
+    "comment": "Perfect-level always leaves no room for another perfect-level adverbial.",
+    "verified": "page-image"
   },
   {
     "id": "iai2001_ex27c",
@@ -904,7 +931,8 @@
         "stage-level"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "iai2001_ex28",
@@ -939,7 +967,8 @@
         "fall 1993"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "iai2001_ex30",
@@ -948,11 +977,11 @@
       "paperLabel": "(30)"
     },
     "language": "mode1248",
-    "primaryText": "Exo panta zisi stin Athina.",
+    "primaryText": "Eχo panta zisi stin Athina.",
     "discourseSegments": [],
     "glossedTokens": [
       [
-        "Exo",
+        "Eχo",
         "have.1SG"
       ],
       [
@@ -991,7 +1020,8 @@
         "perfective"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "iai2001_ex31",
@@ -1000,11 +1030,11 @@
       "paperLabel": "(31)"
     },
     "language": "mode1248",
-    "primaryText": "Extisa ena spiti mesa se ena xrono.",
+    "primaryText": "Eχtisa ena spiti mesa se ena χrono.",
     "discourseSegments": [],
     "glossedTokens": [
       [
-        "Extisa",
+        "Eχtisa",
         "build.PST.PFV.1SG"
       ],
       [
@@ -1021,14 +1051,14 @@
       ],
       [
         "se",
-        "in"
+        ""
       ],
       [
         "ena",
         "one"
       ],
       [
-        "xrono",
+        "χrono",
         "year"
       ]
     ],
@@ -1037,7 +1067,7 @@
     "judgment": "acceptable",
     "alternatives": [
       {
-        "form": "Extisa ena spiti ya ena xrono.",
+        "form": "Eχtisa ena spiti γιa ena χrono.",
         "judgment": "ungrammatical"
       }
     ],
@@ -1052,7 +1082,8 @@
         "perfective, bounded"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "iai2001_ex32",
@@ -1061,11 +1092,11 @@
       "paperLabel": "(32)"
     },
     "language": "mode1248",
-    "primaryText": "Extiza to spiti ya ena xrono.",
+    "primaryText": "Eχtiza to spiti γιa ena χrono.",
     "discourseSegments": [],
     "glossedTokens": [
       [
-        "Extiza",
+        "Eχtiza",
         "build.PST.IPFV.1SG"
       ],
       [
@@ -1077,7 +1108,7 @@
         "house"
       ],
       [
-        "ya",
+        "γιa",
         "for"
       ],
       [
@@ -1085,7 +1116,7 @@
         "one"
       ],
       [
-        "xrono",
+        "χrono",
         "year"
       ]
     ],
@@ -1094,7 +1125,7 @@
     "judgment": "acceptable",
     "alternatives": [
       {
-        "form": "Extiza to spiti mesa se ena xrono.",
+        "form": "Eχtiza to spiti mesa se ena χrono.",
         "judgment": "ungrammatical"
       }
     ],
@@ -1109,7 +1140,8 @@
         "imperfective, unbounded"
       ]
     ],
-    "comment": ""
+    "comment": "The paper's Greek line stars both adverbials, *mesa se ena χrono and *γιa ena χrono; its gloss line, translation and prose mark only the in-adverbial as bad, so the for-adverbial is recorded as acceptable.",
+    "verified": "page-image"
   },
   {
     "id": "iai2001_ex33",
@@ -1118,7 +1150,7 @@
       "paperLabel": "(33)"
     },
     "language": "mode1248",
-    "primaryText": "O Yiannis ayapise tin Maria to 1981.",
+    "primaryText": "O γιannis aγapise tin Maria to 1981.",
     "discourseSegments": [],
     "glossedTokens": [
       [
@@ -1126,11 +1158,11 @@
         "the"
       ],
       [
-        "Yiannis",
-        "Yiannis"
+        "γιannis",
+        "Jannis"
       ],
       [
-        "ayapise",
+        "aγapise",
         "love.PST.PFV.3SG"
       ],
       [
@@ -1139,7 +1171,7 @@
       ],
       [
         "Maria",
-        "Maria"
+        "Mary"
       ],
       [
         "to",
@@ -1165,7 +1197,8 @@
         "perfective on a stative is inchoative"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "iai2001_ex34",
@@ -1174,7 +1207,7 @@
       "paperLabel": "(34)"
     },
     "language": "mode1248",
-    "primaryText": "O Yiannis exi ayapisi tin Maria.",
+    "primaryText": "O γιannis eχi aγapisi tin Maria.",
     "discourseSegments": [],
     "glossedTokens": [
       [
@@ -1182,15 +1215,15 @@
         "the"
       ],
       [
-        "Yiannis",
-        "Yiannis"
+        "γιannis",
+        "Jannis"
       ],
       [
-        "exi",
+        "eχi",
         "has.3SG"
       ],
       [
-        "ayapisi",
+        "aγapisi",
         "loved"
       ],
       [
@@ -1199,7 +1232,7 @@
       ],
       [
         "Maria",
-        "Maria"
+        "Mary"
       ]
     ],
     "translation": "John has fallen in love with Mary.",
@@ -1221,7 +1254,8 @@
         "perfective"
       ]
     ],
-    "comment": ""
+    "comment": "The paper prints γιanni; the nominative subject is γιannis, as in (33).",
+    "verified": "page-image"
   },
   {
     "id": "iai2001_ex35",
@@ -1278,7 +1312,8 @@
         "perfective"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "iai2001_ex36",
@@ -1287,7 +1322,7 @@
       "paperLabel": "(36)"
     },
     "language": "bulg1262",
-    "primaryText": "Marija vinagi e obicala Ivan.",
+    "primaryText": "Marija vinagi e običala Ivan.",
     "discourseSegments": [],
     "glossedTokens": [
       [
@@ -1303,7 +1338,7 @@
         "is"
       ],
       [
-        "obicala",
+        "običala",
         "love.IPFV.PTCP"
       ],
       [
@@ -1330,7 +1365,8 @@
         "imperfective"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "iai2001_ex39",
@@ -1390,7 +1426,8 @@
         "neutral"
       ]
     ],
-    "comment": ""
+    "comment": "The paper prints šum; Bulgarian съм 'am' is sum in the paper's transliteration (ъ as u, cf. naposleduk).",
+    "verified": "page-image"
   },
   {
     "id": "iai2001_ex40",
@@ -1417,7 +1454,8 @@
         "the English perfect of a telic is bounded"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "iai2001_ex41a",
@@ -1448,7 +1486,8 @@
         "universal unavailable"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "iai2001_ex41b",
@@ -1479,7 +1518,8 @@
         "universal unavailable"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "iai2001_ex45",
@@ -1488,11 +1528,11 @@
       "paperLabel": "(45)"
     },
     "language": "mode1248",
-    "primaryText": "Exi kivernisi apo to 1990 mexri tora.",
+    "primaryText": "Eχi kivernisi apo to 1990 meχri tora.",
     "discourseSegments": [],
     "glossedTokens": [
       [
-        "Exi",
+        "Eχi",
         "has.3SG"
       ],
       [
@@ -1512,7 +1552,7 @@
         "1990"
       ],
       [
-        "mexri",
+        "meχri",
         "until"
       ],
       [
@@ -1520,7 +1560,7 @@
         "now"
       ]
     ],
-    "translation": "She has governed from 1990 to now.",
+    "translation": "S/he has governed from 1990 to now.",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -1535,7 +1575,8 @@
         "throughout with a bounded activity ending at RB"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "iai2001_ex47",
@@ -1566,7 +1607,8 @@
         "unbounded"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "iai2001_ex48",
@@ -1597,7 +1639,8 @@
         "unbounded"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "iai2001_ex49a",
@@ -1647,7 +1690,7 @@
     "judgment": "ungrammatical",
     "alternatives": [
       {
-        "form": "Ivan pisheshe pismoto kogato Maria vleze v stajata.",
+        "form": "Ivan pišeše pismoto kogato Maria vleze v stajata.",
         "judgment": "acceptable"
       }
     ],
@@ -1666,6 +1709,7 @@
         "unbounded"
       ]
     ],
-    "comment": ""
+    "comment": "In the alternative (49b) the paper prints pišeče; the Bulgarian imperfect is pišeše (cf. pieše in (37b)).",
+    "verified": "page-image"
   }
 ]

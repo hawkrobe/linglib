@@ -28,7 +28,8 @@
         "cancelable"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "iz2021_s10b",
@@ -59,7 +60,8 @@
         "cancelable"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "iz2021_s11b",
@@ -86,7 +88,8 @@
         "canceled"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "iz2021_s12",
@@ -113,7 +116,8 @@
         "canceled"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "iz2021_s22a",
@@ -144,7 +148,8 @@
         "not cancelable"
       ]
     ],
-    "comment": "Constant's observation."
+    "comment": "Constant's observation.",
+    "verified": "page-image"
   },
   {
     "id": "iz2021_s22b",
@@ -175,7 +180,8 @@
         "not cancelable"
       ]
     ],
-    "comment": "Constant's observation."
+    "comment": "Constant's observation.",
+    "verified": "page-image"
   },
   {
     "id": "iz2021_s23",
@@ -202,7 +208,8 @@
         "the last seizure need not be at the LB"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "iz2021_s24a",
@@ -229,7 +236,8 @@
         "true"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "iz2021_s24c",
@@ -260,7 +268,8 @@
         "at the LB: conveys that Fred drove around the ladder accident"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "iz2021_s25",
@@ -287,7 +296,8 @@
         "exceeds the subject's lifetime"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "iz2021_s26",
@@ -318,7 +328,8 @@
         "not cancelable"
       ]
     ],
-    "comment": "Printed unmarked: grammatical, but not truthfully utterable of someone who never drove."
+    "comment": "Printed unmarked: grammatical, but not truthfully utterable of someone who never drove.",
+    "verified": "page-image"
   },
   {
     "id": "iz2021_s27a",
@@ -345,7 +356,8 @@
         "modal subordination, (29a)"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "iz2021_s31a",
@@ -372,7 +384,8 @@
         "PTS longer than expected"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "iz2021_s31b",
@@ -399,7 +412,8 @@
         "PTS shorter than expected"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "iz2021_s32b",
@@ -426,7 +440,8 @@
         "violated"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "iz2021_s32c",
@@ -453,7 +468,8 @@
         "satisfied"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "iz2021_s33b",
@@ -480,7 +496,8 @@
         "violated"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "iz2021_s36b",
@@ -507,7 +524,8 @@
         "before the utterance time, past perfect"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "iz2021_s37",
@@ -534,7 +552,8 @@
         "in years is only a PTS adverbial"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "iz2021_s40b",
@@ -561,7 +580,8 @@
         "unlicensed"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "iz2021_s40c",
@@ -588,7 +608,8 @@
         "antiadditive licensor"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "iz2021_s41a",
@@ -615,7 +636,8 @@
         "strong: not licensed by few"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "iz2021_s42",
@@ -642,7 +664,8 @@
         "not an NPI"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "iz2021_s52",
@@ -669,7 +692,8 @@
         "imperfective predicate, throughout the UTS"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "iz2021_s54",
@@ -678,7 +702,7 @@
       "paperLabel": "(54)"
     },
     "language": "stan1293",
-    "primaryText": "He was asleep until 5 p.m. and possibly well beyond that. I'm not sure.",
+    "primaryText": "He was asleep / composing a sonnet until 5 p.m. and possibly well beyond that. I'm not sure.",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
@@ -696,7 +720,8 @@
         "cancelable"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "iz2021_s56",
@@ -723,7 +748,8 @@
         "throughout-not; not-throughout"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "iz2021_s58",
@@ -750,7 +776,8 @@
         "perfective predicate without negation"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "iz2021_s59",
@@ -777,7 +804,8 @@
         "not cancelable"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "iz2021_s60b",
@@ -786,7 +814,7 @@
       "paperLabel": "(60b)"
     },
     "language": "stan1293",
-    "primaryText": "She didn't leave until 5 p.m. ... in fact, she didn't leave at all.",
+    "primaryText": "She didn't leave until 5 p.m. / I left. ... in fact, she didn't leave at all.",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
@@ -804,7 +832,8 @@
         "not cancelable"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "iz2021_s61b",
@@ -831,7 +860,8 @@
         "none"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "iz2021_s62",
@@ -853,19 +883,19 @@
       ],
       [
         "dhen",
-        "NEG"
+        "not"
       ],
       [
         "kimithike",
-        "slept.PRF.3SG"
+        "slept.PRF.3S"
       ],
       [
         "para",
-        "PARA"
+        "but"
       ],
       [
         "monon",
-        "MONO"
+        "only"
       ],
       [
         "ta",
@@ -876,7 +906,7 @@
         "midnight"
       ]
     ],
-    "translation": "The princess didn't fall asleep except at midnight.",
+    "translation": "The princess didn't sleep until midnight.",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -895,7 +925,8 @@
         "exceptive para mono, not until-p"
       ]
     ],
-    "comment": ""
+    "comment": "Giannakidou's glosses and translation, as the paper reproduces them; the paper adds '= It was only at midnight that the princess fell asleep.' The paper reanalyzes the sentence as the exceptive (68).",
+    "verified": "page-image"
   },
   {
     "id": "iz2021_s64",
@@ -947,7 +978,8 @@
         "exceptive on an argument"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "iz2021_s70",
@@ -1003,7 +1035,8 @@
         "exceptive with an imperfective predicate"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "iz2021_s74",
@@ -1079,7 +1112,8 @@
         "exceptive with three temporal arguments; no English counterpart with until"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "iz2021_s75a",
@@ -1155,7 +1189,8 @@
         "mexri with a perfective predicate, unlike until-d"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "iz2021_s77",
@@ -1187,7 +1222,7 @@
     "translation": "He was asleep until I left.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "alternatives": [{"form": "Spal až do jsem neodešla.", "judgment": "ungrammatical"}],
     "readings": [],
     "paperFeatures": [
       [
@@ -1199,7 +1234,8 @@
         "dokud, clausal complement, affirmative imperfective"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "iz2021_s78",
@@ -1216,11 +1252,7 @@
         "slept.IMP.3.M.SG"
       ],
       [
-        "až",
-        "until"
-      ],
-      [
-        "do",
+        "až do",
         "until"
       ],
       [
@@ -1231,7 +1263,7 @@
     "translation": "He was asleep until 5.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "alternatives": [{"form": "Spal dokud pěti.", "judgment": "ungrammatical"}],
     "readings": [],
     "paperFeatures": [
       [
@@ -1243,7 +1275,8 @@
         "až do, NP complement, affirmative imperfective"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "iz2021_s79",
@@ -1295,7 +1328,8 @@
         "dokud with an affirmative perfective"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "iz2021_s81",
@@ -1343,7 +1377,8 @@
         "not cancelable"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "iz2021_s82",
@@ -1360,11 +1395,7 @@
         "NEG.left.PFV.3.M.SG"
       ],
       [
-        "až",
-        "until"
-      ],
-      [
-        "do",
+        "až do",
         "until"
       ],
       [
@@ -1391,7 +1422,8 @@
         "cancelable"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "iz2021_s83",
@@ -1418,7 +1450,8 @@
         "not cancelable"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "iz2021_s85",
@@ -1445,7 +1478,8 @@
         "cancelable"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "iz2021_s89",
@@ -1472,7 +1506,8 @@
         "negation yields the subinterval property"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "iz2021_s91",
@@ -1499,7 +1534,8 @@
         "not cancelable, a real-world impossibility"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "iz2021_s92",
@@ -1526,7 +1562,8 @@
         "none"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "iz2021_s98b",
@@ -1557,7 +1594,8 @@
         "how long"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "iz2021_s102",
@@ -1584,7 +1622,8 @@
         "how long fails with negated statives too"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "iz2021_s110",
@@ -1611,7 +1650,8 @@
         "for how long, above negation"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "iz2021_s114a",
@@ -1638,7 +1678,8 @@
         "strong: not licensed by few"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "iz2021_s119a",
@@ -1665,7 +1706,8 @@
         "later than expected"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "iz2021_s119b",
@@ -1692,7 +1734,8 @@
         "earlier than expected"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "iz2021_s121b",
@@ -1719,7 +1762,8 @@
         "the RB must be later than the contextual alternative"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "iz2021_s123",
@@ -1728,7 +1772,7 @@
       "paperLabel": "(123)"
     },
     "language": "stan1293",
-    "primaryText": "She didn't leave until 6 p.m. #In fact, she left at 7 p.m.",
+    "primaryText": "She didn't leave until 6 p.m. In fact, she left at 7 p.m.",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
@@ -1746,7 +1790,8 @@
         "at the RB"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "iz2021_s124",
@@ -1773,7 +1818,8 @@
         "the inferred event need not set the RB"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "iz2021_s128",
@@ -1800,7 +1846,8 @@
         "contradiction, (129)–(132)"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "iz2021_s133a",
@@ -1827,7 +1874,8 @@
         "(148a) EXH > UNTIL, vacuous"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "iz2021_s133b",
@@ -1854,7 +1902,8 @@
         "(148c1) throughout-not; (148c2) not-throughout"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "iz2021_s134",
@@ -1881,7 +1930,8 @@
         "contradiction with a perfective predicate"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "iz2021_s147b",
@@ -1908,7 +1958,8 @@
         "(148b) EXH > NEG > UNTIL, until-p, domain widener"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "iz2021_s149",
@@ -1935,7 +1986,8 @@
         "(148b), noncancelable AI"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "iz2021_s152b",
@@ -1962,7 +2014,8 @@
         "E-perfect contradictory under exhaustification; U-perfect unavailable, (153)"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "iz2021_s153",
@@ -1989,7 +2042,8 @@
         "E-perfect only"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "iz2021_s156",
@@ -2016,7 +2070,8 @@
         "cancelable: conditional, or future branch"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "iz2021_s160",
@@ -2043,7 +2098,8 @@
         "satisfied on a future branch"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "iz2021_s161",
@@ -2090,6 +2146,26 @@
       [
         "jazyky",
         "languages"
+      ],
+      [
+        "takže",
+        "so"
+      ],
+      [
+        "se",
+        "REFL"
+      ],
+      [
+        "asi",
+        "probably"
+      ],
+      [
+        "nevdá",
+        "NEG.get.married.PFV.3SG"
+      ],
+      [
+        "nikdy",
+        "never"
       ]
     ],
     "translation": "She will not get married until she meets a man who speaks 23 languages. ... so she'll probably never get married.",
@@ -2107,7 +2183,8 @@
         "satisfied on a future branch"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "iz2021_s162",
@@ -2134,7 +2211,8 @@
         "no future branch satisfies it"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "iz2021_s165",
@@ -2161,7 +2239,8 @@
         "the argument of until shifts with the matrix"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "iz2021_s170",
@@ -2188,7 +2267,8 @@
         "the completion of the reading, the maximally informative interval"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "iz2021_s172",
@@ -2215,7 +2295,8 @@
         "the beginning of the working"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "iz2021_s176",
@@ -2242,7 +2323,8 @@
         "the completion of Anna Karenina; War and Peace read upon it"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "iz2021_s178b",
@@ -2269,7 +2351,8 @@
         "not many, without an existential inference"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "iz2021_s180",
@@ -2300,7 +2383,8 @@
         "strong: the presupposition is exhaustified"
       ]
     ],
-    "comment": "Printed unmarked; the text calls it odd, after Chierchia, since its presupposition exhaustified is contradictory."
+    "comment": "Printed unmarked; the text calls it odd, after Chierchia, since its presupposition exhaustified is contradictory.",
+    "verified": "page-image"
   },
   {
     "id": "iz2021_s182a",
@@ -2327,7 +2411,8 @@
         "there is a PTS [t, UT]"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "iz2021_s186a",
@@ -2354,6 +2439,7 @@
         "there is a UTS [t, 2010]"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   }
 ]

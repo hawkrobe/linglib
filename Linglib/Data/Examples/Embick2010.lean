@@ -46,7 +46,7 @@ def amaveram : Datum :=
     source := ⟨"embick-2010", "ch. 3, (3), (10b)"⟩
     reportedIn := none
     language := "lati1261"
-    primaryText := "amā-ve-rā-m"
+    primaryText := "amā-ve-ra-m"
     glossedTokens := []
     context := ""
     judgment := .acceptable
@@ -59,7 +59,7 @@ def amaverim : Datum :=
     source := ⟨"embick-2010", "ch. 3, (3)"⟩
     reportedIn := none
     language := "lati1261"
-    primaryText := "amā-ve-rī-m"
+    primaryText := "amā-ve-ri-m"
     glossedTokens := []
     context := ""
     judgment := .acceptable
@@ -158,19 +158,6 @@ def bent : Datum :=
     readings := []
     paperFeatures := [("root", "BEND"), ("h1", "v"), ("h1exp", ""), ("h2", "tense"), ("h2exp", "-t"), ("target", "2"), ("conditioner", "root"), ("claim", "attested")] }
 
-def oxen : Datum :=
-  { id := "embick2010_oxen"
-    source := ⟨"embick-2010", "ch. 2, (24)"⟩
-    reportedIn := none
-    language := "stan1293"
-    primaryText := "ox-en"
-    glossedTokens := []
-    context := ""
-    judgment := .acceptable
-    alternatives := []
-    readings := []
-    paperFeatures := [("root", "OX"), ("h1", "n"), ("h1exp", ""), ("h2", "number"), ("h2exp", "-en"), ("target", "2"), ("conditioner", "root"), ("claim", "attested")] }
-
 def breakability : Datum :=
   { id := "embick2010_breakability"
     source := ⟨"embick-2010", "ch. 2, (36)–(37)"⟩
@@ -236,6 +223,6 @@ def bachvaanaa : Datum :=
     readings := []
     paperFeatures := [("root", "BACH"), ("h1", "v"), ("h1exp", ""), ("h2", "voicePassive"), ("h2exp", "-v"), ("h3", "v"), ("h3exp", ""), ("h4", "voice"), ("h4exp", "-aa"), ("target", "4"), ("conditioner", "root"), ("claim", "blocked")] }
 
-def all : List Datum := [amavi, amavisti, amaveram, amaverim, amavero, capimus, capessimus_root, capessimus_v, marriage, marrying, bent, oxen, breakability, colorization_v, colorization_root, bachaanaa, bachvaanaa]
+def all : List Datum := [amavi, amavisti, amaveram, amaverim, amavero, capimus, capessimus_root, capessimus_v, marriage, marrying, bent, breakability, colorization_v, colorization_root, bachaanaa, bachvaanaa]
 
 end Embick2010.Examples

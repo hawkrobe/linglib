@@ -24,7 +24,8 @@
       ["suffix1", "a"],
       ["suffix2", "t"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "mcginnis2013_17b",
@@ -50,7 +51,8 @@
       ["prefix", "g"],
       ["suffix1", "es"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "mcginnis2013_3a_pl",
@@ -76,7 +78,8 @@
       ["prefix", "g"],
       ["suffix1", "es"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "mcginnis2013_3b",
@@ -103,7 +106,8 @@
       ["suffix1", "es"],
       ["suffix2", "t"]
     ],
-    "comment": "Double plural marking: the subject's Group is discharged by -es, and the object contributes no second Group."
+    "comment": "Double plural marking: the subject's Group is discharged by -es, and the object contributes no second Group.",
+    "verified": "page-image"
   },
   {
     "id": "mcginnis2013_5c",
@@ -129,7 +133,8 @@
       ["prefix", "g"],
       ["suffix1", "a"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "mcginnis2013_6a",
@@ -155,7 +160,8 @@
       ["prefix", "v"],
       ["suffix1", "es"]
     ],
-    "comment": "A third-person object is not a clitic and is out of T's reach."
+    "comment": "A third-person object is not a clitic and is out of T's reach.",
+    "verified": "page-image"
   },
   {
     "id": "mcginnis2013_6b_we",
@@ -182,7 +188,8 @@
       ["suffix1", "e"],
       ["suffix2", "t"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "mcginnis2013_6b_i",
@@ -209,7 +216,8 @@
       ["suffix1", "e"],
       ["suffix2", "t"]
     ],
-    "comment": "The reading on which -t registers the third-person plural object."
+    "comment": "The reading on which -t registers the third-person plural object.",
+    "verified": "page-image"
   },
   {
     "id": "mcginnis2013_6c",
@@ -235,7 +243,8 @@
       ["prefix", "v"],
       ["suffix1", "e"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "mcginnis2013_18a",
@@ -262,7 +271,8 @@
       ["suffix1", "o"],
       ["suffix2", "s"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "mcginnis2013_18b",
@@ -289,7 +299,8 @@
       ["suffix1", "o"],
       ["suffix2", "t"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "mcginnis2013_18b_st",
@@ -317,7 +328,8 @@
       ["suffix2", "s"],
       ["suffix3", "t"]
     ],
-    "comment": "-t discharges [#], so -s cannot."
+    "comment": "-t discharges [#], so -s cannot.",
+    "verified": "page-image"
   },
   {
     "id": "mcginnis2013_18b_ts",
@@ -345,7 +357,8 @@
       ["suffix2", "t"],
       ["suffix3", "s"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "mcginnis2013_21",
@@ -372,7 +385,8 @@
       ["suffix1", "e"],
       ["suffix2", "t"]
     ],
-    "comment": "The dative first-person plural bears Multispeaker, its Group impoverished; the plural subject supplies the one Group."
+    "comment": "The dative first-person plural bears Multispeaker, its Group impoverished; the plural subject supplies the one Group.",
+    "verified": "page-image"
   },
   {
     "id": "mcginnis2013_23a",
@@ -398,7 +412,8 @@
       ["prefix", "m"],
       ["suffix1", "a"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "mcginnis2013_23b",
@@ -424,7 +439,8 @@
       ["prefix", "gv"],
       ["suffix1", "a"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "mcginnis2013_23b_t",
@@ -451,7 +467,8 @@
       ["suffix1", "a"],
       ["suffix2", "t"]
     ],
-    "comment": "No Group survives Impoverishment on the dative first-person plural."
+    "comment": "No Group survives Impoverishment on the dative first-person plural.",
+    "verified": "page-image"
   },
   {
     "id": "mcginnis2013_26",
@@ -477,6 +494,7 @@
       ["prefix", "gv"],
       ["suffix1", "es"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   }
 ]

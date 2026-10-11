@@ -261,9 +261,11 @@ theorem oromo_long :
 /-! ### The judgments -/
 
 /-- A stative survives the denial of change in the examples exactly when its root is a
-property-concept root. -/
+property-concept root, setting aside (13), acceptable only to the speakers for whom *broken* has
+drifted to a 'not functioning' sense. -/
 theorem changeDenial_acceptable_iff :
     ∀ e ∈ Examples.all, e.feature? "diagnostic" = some "change denial" →
+      e.feature? "judgedBy" ≠ some "some speakers" →
       (e.judgment = .acceptable ↔ e.feature? "root class" = some "property concept") := by
   decide
 

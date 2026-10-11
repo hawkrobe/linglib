@@ -25,7 +25,8 @@
       ["directPerception", "yes"],
       ["clauseRole", "object"]
     ],
-    "comment": "Direct perception: the past-under-past clause has the simultaneous reading; the backshifted reading is excluded pragmatically, since one cannot directly perceive a past event."
+    "comment": "Direct perception: the past-under-past clause has the simultaneous reading; the backshifted reading is excluded pragmatically, since one cannot directly perceive a past event.",
+    "verified": "page-image"
   },
   {
     "id": "egressy2026_5",
@@ -53,7 +54,8 @@
       ["directPerception", "yes"],
       ["clauseRole", "object"]
     ],
-    "comment": "Direct perception with a verb of hearing; the same verb embeds a speech-reporting clause in (13)."
+    "comment": "Direct perception with a verb of hearing; the same verb embeds a speech-reporting clause in (13).",
+    "verified": "page-image"
   },
   {
     "id": "egressy2026_6",
@@ -80,7 +82,8 @@
       ["directPerception", "yes"],
       ["clauseRole", "object"]
     ],
-    "comment": "Dreaming as perception in a dream."
+    "comment": "Dreaming as perception in a dream.",
+    "verified": "page-image"
   },
   {
     "id": "egressy2026_7",
@@ -109,7 +112,8 @@
       ["directPerception", "no"],
       ["clauseRole", "object"]
     ],
-    "comment": "Thought and belief: no direct perception, so both readings are available."
+    "comment": "Thought and belief: no direct perception, so both readings are available.",
+    "verified": "page-image"
   },
   {
     "id": "egressy2026_8",
@@ -136,7 +140,8 @@
       ["directPerception", "no"],
       ["clauseRole", "subject"]
     ],
-    "comment": "A subject clause with the nominative expletive az."
+    "comment": "A subject clause with the nominative expletive az.",
+    "verified": "page-image"
   },
   {
     "id": "egressy2026_9",
@@ -165,7 +170,8 @@
       ["directPerception", "no"],
       ["clauseRole", "adjunct"]
     ],
-    "comment": "A non-argument clause giving the reason for growling; the same verb takes a speech-reporting argument clause in (11)."
+    "comment": "A non-argument clause giving the reason for growling; the same verb takes a speech-reporting argument clause in (11).",
+    "verified": "page-image"
   },
   {
     "id": "egressy2026_10",
@@ -198,7 +204,8 @@
       ["intermediateDirectPerception", "yes"],
       ["deepestDirectPerception", "yes"]
     ],
-    "comment": "Multiple embedding of non-speech-reporting clauses: simultaneous at both levels; direct perception at both levels excludes backshifting."
+    "comment": "Multiple embedding of non-speech-reporting clauses: simultaneous at both levels; direct perception at both levels excludes backshifting.",
+    "verified": "page-image"
   },
   {
     "id": "egressy2026_11a",
@@ -225,7 +232,8 @@
       ["directPerception", "no"],
       ["clauseRole", "object"]
     ],
-    "comment": "The content of what was said, with the evaluative adverb sajnos in the embedded left periphery: backshifted only."
+    "comment": "The content of what was said, with the evaluative adverb sajnos in the embedded left periphery: backshifted only.",
+    "verified": "page-image"
   },
   {
     "id": "egressy2026_11b",
@@ -252,7 +260,8 @@
       ["directPerception", "no"],
       ["clauseRole", "object"]
     ],
-    "comment": "The content of what was shouted: backshifted only."
+    "comment": "The content of what was shouted: backshifted only.",
+    "verified": "page-image"
   },
   {
     "id": "egressy2026_11c",
@@ -279,21 +288,22 @@
       ["directPerception", "no"],
       ["clauseRole", "object"]
     ],
-    "comment": "The content of what was growled, an argument clause; contrast the reason adjunct of (9)."
+    "comment": "The content of what was growled, an argument clause; contrast the reason adjunct of (9).",
+    "verified": "page-image"
   },
   {
     "id": "egressy2026_12",
     "source": {"bibkey": "egressy-2026", "paperLabel": "(12)"},
     "reportedIn": null,
     "language": "hung1274",
-    "primaryText": "Telefonál-t-ál hoz-zám (az-zal, hogy (sajnos) Mari szomorú vol-t).",
+    "primaryText": "Telefonál-t-ál (az-zal, hogy (sajnos) Mari szomorú vol-t).",
     "discourseSegments": [],
     "glossedTokens": [
-      ["Telefonál-t-ál", "be.on.the.phone-PST-2SG.INDF"], ["hoz-zám", "AD-1SG.P"],
-      ["(az-zal,", "it-INS"], ["hogy", "that"], ["(sajnos)", "unfortunately"], ["Mari", "Mari"],
-      ["szomorú", "sad"], ["vol-t)", "be-PST.3SG"]
+      ["Telefonál-t-ál", "be.on.the.phone-PST-2SG.INDF"], ["(az-zal,", "it-INS"], ["hogy", "that"],
+      ["(sajnos)", "unfortunately"], ["Mari", "Mari"], ["szomorú", "sad"],
+      ["vol-t)", "be-PST.3SG"]
     ],
-    "translation": "You called me (with the words: “(Unfortunately,) Mari was/#is sad”).",
+    "translation": "You called (with the words: “(Unfortunately,) Mari was/#is sad”).",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [
@@ -309,7 +319,8 @@
       ["directPerception", "no"],
       ["clauseRole", "adjunct"]
     ],
-    "comment": "A speech-reporting non-argument clause, with the instrumental expletive: backshifted only."
+    "comment": "A speech-reporting non-argument clause, with the instrumental expletive: backshifted only. The paper prints the alternatives as {Telefonál-t-ál/ Oda jö-tt-él hoz-zám} and 'You {called/approached me}': hoz-zám 'to me' goes with oda jön only.",
+    "verified": "page-image"
   },
   {
     "id": "egressy2026_13",
@@ -340,7 +351,8 @@
       ["directPerception", "no"],
       ["clauseRole", "object"]
     ],
-    "comment": "The same verb as in (5), now embedding Peti's verbal report; with sajnos the complements of gondol and hisz get an inner-speech interpretation and are backshifted only."
+    "comment": "The same verb as in (5), now embedding Peti's verbal report; with sajnos the complements of gondol and hisz get an inner-speech interpretation and are backshifted only.",
+    "verified": "page-image"
   },
   {
     "id": "egressy2026_14",
@@ -371,7 +383,8 @@
       ["directPerception", "no"],
       ["clauseRole", "object"]
     ],
-    "comment": "Indirect perception through signs that are not verbal: the clause describes the content of a sign and behaves as speech-reporting."
+    "comment": "Indirect perception through signs that are not verbal: the clause describes the content of a sign and behaves as speech-reporting.",
+    "verified": "page-image"
   },
   {
     "id": "egressy2026_15",
@@ -403,7 +416,8 @@
       ["intermediateDirectPerception", "no"],
       ["deepestDirectPerception", "no"]
     ],
-    "comment": "Multiple embedding of speech-reporting clauses: backshifting at both levels."
+    "comment": "Multiple embedding of speech-reporting clauses: backshifting at both levels.",
+    "verified": "page-image"
   },
   {
     "id": "egressy2026_16",
@@ -436,7 +450,8 @@
       ["intermediateDirectPerception", "no"],
       ["deepestDirectPerception", "yes"]
     ],
-    "comment": "A non-speech-reporting clause inside a speech-reporting one: the intermediate clause is backshifted, the deepest simultaneous with it; the intermediate perception verb excludes backshifting of the deepest clause."
+    "comment": "A non-speech-reporting clause inside a speech-reporting one: the intermediate clause is backshifted, the deepest simultaneous with it; the intermediate perception verb excludes backshifting of the deepest clause.",
+    "verified": "page-image"
   },
   {
     "id": "egressy2026_17",
@@ -469,7 +484,8 @@
       ["intermediateDirectPerception", "yes"],
       ["deepestDirectPerception", "no"]
     ],
-    "comment": "A speech-reporting clause inside a non-speech-reporting one: the intermediate clause is simultaneous with the matrix, the deepest backshifted; only structurally adjacent clauses interact."
+    "comment": "A speech-reporting clause inside a non-speech-reporting one: the intermediate clause is simultaneous with the matrix, the deepest backshifted; only structurally adjacent clauses interact.",
+    "verified": "page-image"
   },
   {
     "id": "egressy2026_18",
@@ -491,7 +507,8 @@
       ["intermediateTense", "future"],
       ["deepestTense", "past"]
     ],
-    "comment": "Past under will under past: Mary's words cannot be “I am sick”, since the next lowest tense above the deepest past is the future will, not a past."
+    "comment": "Past under will under past: Mary's words cannot be “I am sick”, since the next lowest tense above the deepest past is the future will, not a past.",
+    "verified": "page-image"
   },
   {
     "id": "egressy2026_19",
@@ -512,7 +529,8 @@
       ["clauseSize", "cP"],
       ["directPerception", "no"]
     ],
-    "comment": "English past under past has the simultaneous reading, Mary's words being “I am sick”; the backshifted reading is set aside."
+    "comment": "English past under past has the simultaneous reading, Mary's words being “I am sick”; the backshifted reading is set aside.",
+    "verified": "page-image"
   },
   {
     "id": "egressy2026_23",
@@ -539,7 +557,8 @@
       ["diagnostic", "evaluativeAdverb"],
       ["matrixVerb", "mond"]
     ],
-    "comment": "The evaluative adverb sajnos is hosted in the Say layer above foci: the speech-reporting complements of mond, hall and gondol host it, the TP complement of álmodik cannot."
+    "comment": "The evaluative adverb sajnos is hosted in the Say layer above foci: the speech-reporting complements of mond, hall and gondol host it, the TP complement of álmodik cannot.",
+    "verified": "page-image"
   },
   {
     "id": "egressy2026_24",
@@ -566,7 +585,8 @@
       ["matrixVerb", "hall"],
       ["embeddedAdverb", "no"]
     ],
-    "comment": "Focus movement to the matrix Spec,FocP escapes the TP complement of hall but not the clause whose left periphery hosts an evaluative adverb, a SayP."
+    "comment": "Focus movement to the matrix Spec,FocP escapes the TP complement of hall but not the clause whose left periphery hosts an evaluative adverb, a SayP.",
+    "verified": "page-image"
   },
   {
     "id": "egressy2026_25",
@@ -590,7 +610,8 @@
       ["diagnostic", "whMovement"],
       ["matrixVerb", "lát"]
     ],
-    "comment": "Wh-movement to the matrix Spec,FocP escapes the TP complement of lát but not the SayP complement of morog."
+    "comment": "Wh-movement to the matrix Spec,FocP escapes the TP complement of lát but not the SayP complement of morog.",
+    "verified": "page-image"
   },
   {
     "id": "egressy2026_27",
@@ -609,7 +630,8 @@
       ["diagnostic", "raising"],
       ["crossed", "tP"]
     ],
-    "comment": "Raising to Spec,TP across a TP."
+    "comment": "Raising to Spec,TP across a TP.",
+    "verified": "page-image"
   },
   {
     "id": "egressy2026_28",
@@ -628,6 +650,7 @@
       ["diagnostic", "raising"],
       ["crossed", "cP"]
     ],
-    "comment": "The ban on hyperraising: raising to Spec,TP cannot cross a CP, since C is above T in the functional sequence."
+    "comment": "The ban on hyperraising: raising to Spec,TP cannot cross a CP, since C is above T in the functional sequence.",
+    "verified": "page-image"
   }
 ]

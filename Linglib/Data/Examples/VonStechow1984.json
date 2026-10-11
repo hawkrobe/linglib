@@ -16,7 +16,8 @@
     "paperFeatures": [
       ["phenomenon", "RA"]
     ],
-    "comment": "Russell's ambiguity: the pair of readings von Stechow derives from presence vs absence of the ACTUALLY operator rather than scope."
+    "comment": "Russell's ambiguity: the pair of readings von Stechow derives from presence vs absence of the ACTUALLY operator rather than scope.",
+    "verified": "page-image"
   },
   {
     "id": "vonstechow1984_ex26",
@@ -34,7 +35,8 @@
     "paperFeatures": [
       ["phenomenon", "AC"]
     ],
-    "comment": "Ambiguous counterfactual: only the ACTUALLY-anchored reading is informative."
+    "comment": "Ambiguous counterfactual: only the ACTUALLY-anchored reading is informative.",
+    "verified": "page-image"
   },
   {
     "id": "vonstechow1984_exIII",
@@ -50,7 +52,8 @@
       ["polarityItem", "anyone"],
       ["polarity", "negative"]
     ],
-    "comment": "NPI licensed in the than-clause."
+    "comment": "NPI licensed in the than-clause.",
+    "verified": "page-image"
   },
   {
     "id": "vonstechow1984_exIV",
@@ -66,7 +69,8 @@
       ["polarityItem", "ever"],
       ["polarity", "negative"]
     ],
-    "comment": "NPI licensed in the as-phrase."
+    "comment": "NPI licensed in the as-phrase.",
+    "verified": "page-image"
   },
   {
     "id": "vonstechow1984_ex70",
@@ -82,7 +86,8 @@
       ["polarityItem", "any, ever"],
       ["polarity", "negative"]
     ],
-    "comment": "NPIs in the matrix clause, outside the downward-entailing than-clause: unlicensed."
+    "comment": "NPIs in the matrix clause, outside the downward-entailing than-clause: unlicensed.",
+    "verified": "page-image"
   },
   {
     "id": "vonstechow1984_ex71",
@@ -98,7 +103,8 @@
       ["polarityItem", "any, ever"],
       ["polarity", "negative"]
     ],
-    "comment": "Same NPIs inside the than-clause: licensed."
+    "comment": "Same NPIs inside the than-clause: licensed.",
+    "verified": "page-image"
   },
   {
     "id": "vonstechow1984_ex72a",
@@ -114,7 +120,8 @@
       ["polarityItem", "already"],
       ["polarity", "positive"]
     ],
-    "comment": "The PPI already sits in the matrix clause, outside the downward-entailing than-clause: fine."
+    "comment": "The PPI already sits in the matrix clause, outside the downward-entailing than-clause: fine.",
+    "verified": "page-image"
   },
   {
     "id": "vonstechow1984_ex72b",
@@ -130,7 +137,8 @@
       ["polarityItem", "already"],
       ["polarity", "positive"]
     ],
-    "comment": "The PPI already inside the downward-entailing than-clause: excluded."
+    "comment": "The PPI already inside the downward-entailing than-clause: excluded.",
+    "verified": "page-image"
   },
   {
     "id": "vonstechow1984_exV",
@@ -145,7 +153,8 @@
       ["phenomenon", "Q&C"],
       ["entails", "Konstanz is nicer than Düsseldorf and Stuttgart"]
     ],
-    "comment": "Disjunction in the than-clause entails the conjunctive variant."
+    "comment": "Disjunction in the than-clause entails the conjunctive variant.",
+    "verified": "page-image"
   },
   {
     "id": "vonstechow1984_exVI",
@@ -160,7 +169,8 @@
       ["phenomenon", "Q&C"],
       ["entails", "Ede is fatter than everyone of us"]
     ],
-    "comment": "Existential in the than-clause entails the universal variant."
+    "comment": "Existential in the than-clause entails the universal variant.",
+    "verified": "page-image"
   },
   {
     "id": "vonstechow1984_exVII",
@@ -175,7 +185,8 @@
       ["phenomenon", "UI"],
       ["doesNotEntail", "Ede is fatter than everyone"]
     ],
-    "comment": "The unwarranted inference an adequate theory must block."
+    "comment": "The unwarranted inference an adequate theory must block.",
+    "verified": "page-image"
   },
   {
     "id": "vonstechow1984_ex99a",
@@ -185,11 +196,12 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "acceptable",
     "paperFeatures": [
       ["phenomenon", "NQ"]
     ],
-    "comment": "Negative quantifier in the than-clause; oddness is semantic, not syntactic. Russell: the description fails to denote; Cresswell: a logical falsehood."
+    "comment": "Negative quantifier in the than-clause; oddness is semantic, not syntactic. Russell: the description fails to denote; Cresswell: a logical falsehood. Printed unmarked; the prose calls (99a) and (99b) 'extremely odd'.",
+    "verified": "page-image"
   },
   {
     "id": "vonstechow1984_ex99b",
@@ -199,11 +211,12 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "acceptable",
     "paperFeatures": [
       ["phenomenon", "NQ"]
     ],
-    "comment": "Negative quantifier in the than-clause; same diagnosis as (99a)."
+    "comment": "Negative quantifier in the than-clause; same diagnosis as (99a). Printed unmarked (also as (104)); the prose calls it 'extremely odd'.",
+    "verified": "page-image"
   },
   {
     "id": "vonstechow1984_exX",
@@ -217,7 +230,8 @@
     "paperFeatures": [
       ["phenomenon", "modal"]
     ],
-    "comment": "Modal comparative: max possible polar-bear size exceeds max possible grizzly size."
+    "comment": "Modal comparative: max possible polar-bear size exceeds max possible grizzly size.",
+    "verified": "page-image"
   },
   {
     "id": "vonstechow1984_exXI",
@@ -231,7 +245,8 @@
     "paperFeatures": [
       ["phenomenon", "multihead"]
     ],
-    "comment": "Multihead comparative; attributed to Chomsky in the paper."
+    "comment": "Multihead comparative; attributed to Chomsky in the paper.",
+    "verified": "page-image"
   },
   {
     "id": "vonstechow1984_ex171a",
@@ -245,7 +260,8 @@
     "paperFeatures": [
       ["phenomenon", "DR"]
     ],
-    "comment": "Differential reading: inexpressible without degrees, against Klein's degree-free semantics."
+    "comment": "Differential reading: inexpressible without degrees, against Klein's degree-free semantics.",
+    "verified": "page-image"
   },
   {
     "id": "vonstechow1984_ex171b",
@@ -259,7 +275,8 @@
     "paperFeatures": [
       ["phenomenon", "DR"]
     ],
-    "comment": "Factor equative: requires ratio structure on degrees."
+    "comment": "Factor equative: requires ratio structure on degrees.",
+    "verified": "page-image"
   },
   {
     "id": "vonstechow1984_ex171c",
@@ -273,7 +290,8 @@
     "paperFeatures": [
       ["phenomenon", "DR"]
     ],
-    "comment": "Cross-dimensional comparison: comparison classes for the two adjectives are incommensurable in Klein's system."
+    "comment": "Cross-dimensional comparison: comparison classes for the two adjectives are incommensurable in Klein's system.",
+    "verified": "page-image"
   },
   {
     "id": "vonstechow1984_ex217",
@@ -289,7 +307,8 @@
       ["category", "plural noun"],
       ["measure", "cardinality"]
     ],
-    "comment": "Comparative determiner over plural nouns; set cardinality serves as the degree."
+    "comment": "Comparative determiner over plural nouns; set cardinality serves as the degree.",
+    "verified": "page-image"
   },
   {
     "id": "vonstechow1984_ex218",
@@ -305,7 +324,8 @@
       ["category", "mass noun"],
       ["measure", "amount of the totality"]
     ],
-    "comment": "Comparative over mass nouns; the amount of the totality serves as the degree."
+    "comment": "Comparative over mass nouns; the amount of the totality serves as the degree.",
+    "verified": "page-image"
   },
   {
     "id": "vonstechow1984_ex224c",
@@ -321,7 +341,8 @@
       ["category", "adverb"],
       ["measure", "loudness"]
     ],
-    "comment": "Factor equative over adverbs; the analysis carries over with an event measure."
+    "comment": "Factor equative over adverbs; the analysis carries over with an event measure.",
+    "verified": "page-image"
   },
   {
     "id": "vonstechow1984_ex227",
@@ -336,7 +357,8 @@
       ["phenomenon", "too"],
       ["paraphrase", "If one could lift this pack, then it would be at least 50 kg less heavy than it actually is"]
     ],
-    "comment": "R13: too as a counterfactual comparative morpheme; the paraphrase is the paper's (229)."
+    "comment": "R13: too as a counterfactual comparative morpheme; the paraphrase is the paper's (229).",
+    "verified": "page-image"
   },
   {
     "id": "vonstechow1984_ex230",
@@ -350,6 +372,7 @@
     "paperFeatures": [
       ["phenomenon", "too"]
     ],
-    "comment": "The infinitival complement of too denotes a proposition, not a property of the subject."
+    "comment": "The infinitival complement of too denotes a proposition, not a property of the subject.",
+    "verified": "page-image"
   }
 ]

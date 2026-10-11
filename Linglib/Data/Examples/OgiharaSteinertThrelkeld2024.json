@@ -1,86 +1,10 @@
 [
   {
-    "id": "ost2024_after_veridical",
-    "source": {"bibkey": "ogihara-steinert-threlkeld-2024", "paperLabel": "veridicality"},
-    "language": "stan1293",
-    "primaryText": "He left after she arrived.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "*After* is veridical: the sentence entails that she arrived.",
-    "judgment": "acceptable",
-    "alternatives": [],
-    "readings": [],
-    "paperFeatures": [
-      ["construction", "veridicality"],
-      ["connective", "after"],
-      ["complement_entailed", "true"]
-    ],
-    "comment": "after(leave, arrive) |= arrive"
-  },
-  {
-    "id": "ost2024_before_nonveridical",
-    "source": {"bibkey": "ogihara-steinert-threlkeld-2024", "paperLabel": "veridicality"},
-    "language": "stan1293",
-    "primaryText": "He left before she arrived.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "*Before* is non-veridical: compatible with her arriving (veridical), not arriving (counterfactual), or indeterminate (non-committal).",
-    "judgment": "acceptable",
-    "alternatives": [],
-    "readings": [],
-    "paperFeatures": [
-      ["construction", "veridicality"],
-      ["connective", "before"],
-      ["complement_entailed", "false"]
-    ],
-    "comment": "before(leave, arrive) |/= arrive"
-  },
-  {
-    "id": "ost2024_before_counterfactual",
-    "source": {"bibkey": "ogihara-steinert-threlkeld-2024", "paperLabel": "veridicality"},
-    "language": "stan1293",
-    "primaryText": "The bomb exploded before anyone defused it.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "Counterfactual reading of *before*: the defusing did not occur ([beaver-condoravdi-2003], the \"barely prevented\" reading).",
-    "judgment": "acceptable",
-    "alternatives": [],
-    "readings": [],
-    "paperFeatures": [
-      ["construction", "veridicality"],
-      ["connective", "before"],
-      ["complement_entailed", "false"]
-    ],
-    "comment": "before(explode, defuse) and not defuse"
-  },
-  {
-    "id": "ost2024_after_veridical_2",
-    "source": {"bibkey": "ogihara-steinert-threlkeld-2024", "paperLabel": "veridicality"},
-    "language": "stan1293",
-    "primaryText": "She finished her coffee after he left.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "*After* is veridical: the sentence entails that he left.",
-    "judgment": "acceptable",
-    "alternatives": [],
-    "readings": [],
-    "paperFeatures": [
-      ["construction", "veridicality"],
-      ["connective", "after"],
-      ["complement_entailed", "true"]
-    ],
-    "comment": "after(finish, leave) |= leave"
-  },
-  {
     "id": "ost2024_before_noncommittal",
     "source": {"bibkey": "beaver-condoravdi-2003", "paperLabel": "(43)"},
-    "reportedIn": {"bibkey": "ogihara-steinert-threlkeld-2024", "paperLabel": "veridicality"},
+    "reportedIn": null,
     "language": "stan1293",
-    "primaryText": "I left the party before there was any trouble.",
+    "primaryText": "I left the party before there was (any) trouble.",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
@@ -93,12 +17,13 @@
       ["connective", "before"],
       ["complement_entailed", "false"]
     ],
-    "comment": "before(leave, trouble) |/= trouble (non-committal)"
+    "comment": "before(leave, trouble) |/= trouble (non-committal)",
+    "verified": "page-image"
   },
   {
     "id": "ost2024_before_counterfactual_mozart",
-    "source": {"bibkey": "beaver-condoravdi-2003", "paperLabel": "(24)"},
-    "reportedIn": {"bibkey": "ogihara-steinert-threlkeld-2024", "paperLabel": "veridicality"},
+    "source": {"bibkey": "beaver-condoravdi-2003", "paperLabel": "(40)"},
+    "reportedIn": {"bibkey": "ogihara-steinert-threlkeld-2024", "paperLabel": "(6a)"},
     "language": "stan1293",
     "primaryText": "Mozart died before he finished the Requiem.",
     "discourseSegments": [],
@@ -113,7 +38,8 @@
       ["connective", "before"],
       ["complement_entailed", "false"]
     ],
-    "comment": "before(die, finish) and not finish (counterfactual)"
+    "comment": "before(die, finish) and not finish (counterfactual)",
+    "verified": "page-image"
   },
   {
     "id": "ost2024_ohtani",
@@ -131,7 +57,8 @@
       ["construction", "bc_counterexample"],
       ["reading", "counterfactual"]
     ],
-    "comment": "O&ST (20a). Complement temporally bounded before the A-time."
+    "comment": "O&ST (20a). Complement temporally bounded before the A-time.",
+    "verified": "page-image"
   },
   {
     "id": "ost2024_snow",
@@ -149,7 +76,8 @@
       ["construction", "bc_counterexample"],
       ["reading", "nonCommittal"]
     ],
-    "comment": "O&ST (20b). Complement bounded to the end of 2020."
+    "comment": "O&ST (20b). Complement bounded to the end of 2020.",
+    "verified": "page-image"
   },
   {
     "id": "ost2024_nostradamus",
@@ -167,7 +95,8 @@
       ["construction", "bc_counterexample"],
       ["reading", "counterfactual"]
     ],
-    "comment": "O&ST (20c). Complement bounded to July 1999."
+    "comment": "O&ST (20c). Complement bounded to July 1999.",
+    "verified": "page-image"
   },
   {
     "id": "ost2024_noncommittal_available",
@@ -177,7 +106,7 @@
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
-    "context": "Non-committal reading available: Bill's getting drunk is a normal continuation of being at a party.",
+    "context": "Non-committal reading available: felicitous and true if Mary thinks that Bill might get drunk at the party, which she does not wish to see, and will leave the party early.",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
@@ -185,7 +114,8 @@
       ["construction", "noncommittal"],
       ["noncommittal_available", "true"]
     ],
-    "comment": "getting drunk is a normal continuation of being at a party"
+    "comment": "Mary leaves because she is worried that Bill will get drunk.",
+    "verified": "page-image"
   },
   {
     "id": "ost2024_noncommittal_unavailable",
@@ -195,7 +125,7 @@
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
-    "context": "Non-committal reading unavailable (odd): Quebec's independence is not a contextually normal continuation of the party.",
+    "context": "Non-committal reading unavailable (#): in the same situation as (22a), Mary's leaving the party has nothing to do with the possibility of Quebec's becoming an independent country.",
     "judgment": "unacceptable",
     "alternatives": [],
     "readings": [],
@@ -203,6 +133,7 @@
       ["construction", "noncommittal"],
       ["noncommittal_available", "false"]
     ],
-    "comment": "Quebec independence is not a contextually normal continuation"
+    "comment": "The paper suggests the Event Continuation Condition (18b) may not suffice: alternative worlds may have to be selected by the subject's reason for the matrix eventuality.",
+    "verified": "page-image"
   }
 ]

@@ -24,7 +24,8 @@
     "fused"
    ]
   ],
-  "comment": "The lexical causative: kill and the basic verb die of (1.a) share no form; the COMPACT type at maximal fusion (pp. 3, 9)."
+  "comment": "The lexical causative: kill and the basic verb die of (1.a) share no form; the COMPACT type at maximal fusion (pp. 3, 9).",
+  "verified": "page-image"
  },
  {
   "id": "song1996_6",
@@ -38,7 +39,7 @@
   "glossedTokens": [],
   "translation": "",
   "context": "",
-  "judgment": "unacceptable",
+  "judgment": "ungrammatical",
   "alternatives": [],
   "readings": [],
   "paperFeatures": [
@@ -55,7 +56,8 @@
     "negated"
    ]
   ],
-  "comment": "Song's diagnostic of implicativity: kill entails the death of the terrorist, so its denial is contradictory (p. 12, citing Karttunen 1971a)."
+  "comment": "Song's diagnostic of implicativity: kill entails the death of the terrorist, so its denial is starred, 'completely ungrammatical' (p. 12, citing Karttunen 1971a).",
+  "verified": "page-image"
  },
  {
   "id": "song1996_2b",
@@ -95,7 +97,8 @@
     "bound"
    ]
   ],
-  "comment": "The morphological causative: the suffix -dür attached to the basic verb öl- 'die' of (2.a) (p. 3)."
+  "comment": "The morphological causative: the suffix -dür attached to the basic verb öl- 'die' of (2.a) (p. 3).",
+  "verified": "page-image"
  },
  {
   "id": "song1996_3b",
@@ -143,7 +146,8 @@
     "effect-cause"
    ]
   ],
-  "comment": "Glossed COMP here after the traditional analysis of -ke as a complementizer; Song identifies it as purposive and glosses it PURP from (7) on (pp. 10, 12)."
+  "comment": "Glossed COMP here after the traditional analysis of -ke as a complementizer; Song identifies it as purposive and glosses it PURP from (7) on (pp. 10, 12).",
+  "verified": "page-image"
  },
  {
   "id": "song1996_4a",
@@ -191,7 +195,8 @@
     "bound"
    ]
   ],
-  "comment": "The morphological causative in -ase, the causee in the accusative; the dative version (4.b) is 'Hanako got Ziroo to go' (pp. 5, 9)."
+  "comment": "The morphological causative in -ase, the causee in the accusative; the dative version (4.b) is 'Hanako got Ziroo to go' (pp. 5, 9).",
+  "verified": "page-image"
  },
  {
   "id": "song1996_5",
@@ -243,7 +248,8 @@
     "cause-effect"
    ]
   ],
-  "comment": "The AND type: the clause of cause and the clause of effect coordinated by le, in that order; Song's source is Koopman (1984: 24-25) (pp. 10, 36). The glottocode is WALS's for Koopman's Vata."
+  "comment": "The AND type: the clause of cause and the clause of effect coordinated by le, in that order; Song's source is Koopman (1984: 24-25) (pp. 10, 36). The glottocode is WALS's for Koopman's Vata.",
+  "verified": "page-image"
  },
  {
   "id": "song1996_7",
@@ -303,7 +309,8 @@
     "negated"
    ]
   ],
-  "comment": "The PURP causative of (3.b) with its effect denied: fully grammatical, so the prototypical PURP type is nonimplicative (pp. 12-13)."
+  "comment": "The PURP causative of (3.b) with its effect denied: fully grammatical, so the prototypical PURP type is nonimplicative (pp. 12-13).",
+  "verified": "page-image"
  },
  {
   "id": "song1996_24",
@@ -359,7 +366,8 @@
     "free"
    ]
   ],
-  "comment": "The COMPACT type with [Vcause] a free morpheme: faire and the verb of effect adjacent (§2.3.2). Song glosses à Nicole jointly as 'Nicole (DAT)'."
+  "comment": "The COMPACT type with [Vcause] a free morpheme: faire and the verb of effect adjacent (§2.3.2). Song glosses à Nicole jointly as 'Nicole (DAT)'.",
+  "verified": "page-image"
  },
  {
   "id": "song1996_104",
@@ -415,6 +423,7 @@
     "negated"
    ]
   ],
-  "comment": "A COMPACT causative in p- that is fully nonimplicative; Song's source is Svantesson (1983: 106), and the translation's 'tried' is added because the literal one is ungrammatical in English (p. 68, note 21; repeated as (35.a), p. 103)."
+  "comment": "A COMPACT causative in p- that is fully nonimplicative; Song's source is Svantesson (1983: 106), and the translation's 'tried' is added because the literal one is ungrammatical in English (p. 68, note 21; repeated as (35.a), p. 103).",
+  "verified": "page-image"
  }
 ]

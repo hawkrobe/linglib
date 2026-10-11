@@ -520,7 +520,7 @@ def AlmostRow.ofDatum (e : Datum) : Option AlmostRow := do
   let d ← e.feature? "dimensionally_universal"
   some ⟨p, u == "yes", d == "yes", e.judgment = .acceptable⟩
 
-/-- The *almost* data of Section 4.3. -/
+/-- The *almost* data of Sections 4.1.1 and 4.3. -/
 def almostRows : List AlmostRow := Examples.all.filterMap AlmostRow.ofDatum
 
 /-- *Almost* modifies a domain-precise true universal or a dimensionally universal noun phrase,
