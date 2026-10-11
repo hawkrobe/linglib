@@ -1,6 +1,7 @@
 module
 
 public import Mathlib.Tactic.TypeStar
+public import Mathlib.Util.Superscript
 
 /-!
 # Denotation
@@ -29,6 +30,7 @@ mathlib's `Term.realize`) and gains an instance once its type is indexed by that
 ## Main definitions
 
 * `Semantics.Denotes α D`: every object of `α` denotes in `D`; `⟦x⟧` is `Denotes.denote x`.
+* `⟦x⟧ᴹ`, in the scope `Semantics.Superscript`: the denotation of `x` at the parameter `M`.
 
 ## References
 
@@ -48,5 +50,16 @@ class Denotes (α : Type*) (D : outParam Type*) where
 
 /-- `⟦x⟧` is the denotation of `x`. -/
 scoped notation:max (priority := high) "⟦" x "⟧" => Denotes.denote x
+
+namespace Superscript
+
+/-- `⟦x⟧ᴹ` is the denotation of `x` at the parameter `M`, the first Reader argument written
+as a superscript. The parameter is a name in superscript letters. The notation has its own
+scope because it would otherwise capture a superscript operator applied to a denotation, such
+as the complement `⟦x⟧ᶜ`. -/
+scoped macro:max "⟦" x:term "⟧" noWs m:superscript(term) : term =>
+  `(⟦$x⟧ $(⟨m.raw[0]⟩))
+
+end Superscript
 
 end Semantics
