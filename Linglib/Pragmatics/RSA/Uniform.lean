@@ -437,6 +437,55 @@ theorem uniformSpeaker_real_singleton_eq_zero {α : ℝ} (hα : 0 < α) {t : T} 
     (h : t ∉ sem c) : (uniformSpeaker sem α t).real {c} = 0 := by
   rw [measureReal_def, uniformSpeaker_apply_singleton_eq_zero sem hα h, ENNReal.toReal_zero]
 
+/-- Of two states a choice is true of, the speaker uses the choice more at the state whose true
+choices are jointly less informative. -/
+theorem uniformSpeaker_real_singleton_lt_iff_invPowSum {α : ℝ} (hα : 0 < α) {t t' : T} {c : C}
+    (h : t ∈ sem c) (h' : t' ∈ sem c) :
+    (uniformSpeaker sem α t').real {c} < (uniformSpeaker sem α t).real {c} ↔
+      (profile sem t).invPowSum α < (profile sem t').invPowSum α := by
+  have hne (s : T) (hs : s ∈ sem c) : profile sem s ≠ 0 := fun h0 ↦ by
+    rw [profile, Multiset.map_eq_zero, Finset.val_eq_zero] at h0
+    exact Finset.notMem_empty c (h0 ▸ (mem_trueChoices sem).2 hs)
+  have htop (s : T) : (profile sem s).invPowSum α ≠ ∞ :=
+    Multiset.invPowSum_ne_top hα.le (zero_notMem_profile sem s)
+  have hpos (s : T) (hs : s ∈ sem c) : 0 < ((profile sem s).invPowSum α).toReal :=
+    ENNReal.toReal_pos (Multiset.invPowSum_pos hα.le (hne s hs)).ne' (htop s)
+  rw [uniformSpeaker_real_singleton sem hα, uniformSpeaker_real_singleton sem hα,
+    ite_eq_left h, ite_eq_left h', ← ENNReal.toReal_lt_toReal (htop t) (htop t')]
+  exact div_lt_div_iff_of_pos_left
+    (Real.rpow_pos_of_pos (inv_pos.2 (Nat.cast_pos.2 (Finset.card_pos.2 ⟨t, h⟩))) α)
+    (hpos t' h') (hpos t h)
+
+/-- As the rationality goes to zero the speaker chooses uniformly among the choices true at the
+state. -/
+theorem tendsto_uniformSpeaker_real_singleton_nhdsGT_zero (t : T) (c : C) :
+    Filter.Tendsto (fun α : ℝ ↦ (uniformSpeaker sem α t).real {c}) (nhdsWithin 0 (Set.Ioi 0))
+      (nhds ((if t ∈ sem c then 1 else 0) / ((trueChoices sem t).card : ℝ))) := by
+  have hlim (c' : C) :
+      Filter.Tendsto (fun α : ℝ ↦ if t ∈ sem c' then ((sem c').card : ℝ)⁻¹ ^ α else 0)
+        (nhdsWithin 0 (Set.Ioi 0)) (nhds (if t ∈ sem c' then 1 else 0)) := by
+    split_ifs with h
+    · have hpos : (0 : ℝ) < ((sem c').card : ℝ)⁻¹ :=
+        inv_pos.2 (Nat.cast_pos.2 (Finset.card_pos.2 ⟨t, h⟩))
+      have := (Real.continuous_const_rpow hpos.ne').tendsto 0
+      rw [Real.rpow_zero] at this
+      exact this.mono_left nhdsWithin_le_nhds
+    · exact tendsto_const_nhds
+  have hsum : Filter.Tendsto
+      (fun α : ℝ ↦ ∑ c', if t ∈ sem c' then ((sem c').card : ℝ)⁻¹ ^ α else 0)
+      (nhdsWithin 0 (Set.Ioi 0)) (nhds ((trueChoices sem t).card : ℝ)) := by
+    simpa [trueChoices, Finset.sum_boole] using tendsto_finsetSum Finset.univ fun c' _ ↦ hlim c'
+  by_cases h0 : (trueChoices sem t).card = 0
+  · have hc : t ∉ sem c := fun h ↦ Finset.card_ne_zero_of_mem ((mem_trueChoices sem).2 h) h0
+    rw [ite_eq_right hc, zero_div]
+    refine tendsto_const_nhds.congr' ?_
+    filter_upwards [self_mem_nhdsWithin] with α hα
+    rw [uniformSpeaker_real_singleton sem hα, ite_eq_right hc, zero_div]
+  · refine Filter.Tendsto.congr' ?_ ((hlim c).div hsum (by exact_mod_cast h0))
+    filter_upwards [self_mem_nhdsWithin] with α hα
+    rw [uniformSpeaker_real_singleton sem hα, profile_invPowSum_toReal sem hα.le]
+    rfl
+
 /-- Any other true choice caps a share strictly below one. -/
 theorem uniformSpeaker_real_singleton_lt_one [DecidableEq C] {α : ℝ} (hα : 0 ≤ α) {t : T}
     {c c' : C} (hne : c' ≠ c) (hmem' : t ∈ sem c') : (uniformSpeaker sem α t).real {c} < 1 := by
