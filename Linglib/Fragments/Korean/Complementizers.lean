@@ -57,14 +57,14 @@ def kes : Morphology.Word := { form := "kes", cat := .NOUN }
 
 /-- *yukamsulewehay-ta* 'regret', a stative negative preference. -/
 def yukamsulewehayta : Verb where
-  form := "yukamsulewehay-ta"
+  morphs := [.root "yukamsulewehay", .suff "ta"]
   valency := .ofFrame ArgumentFrame.finiteClause
   attitude := some (.preferential .negative true)
   vendlerClass := some .state
 
 /-- *mit-ta* 'believe', a stative non-veridical doxastic. -/
 def mitta : Verb where
-  form := "mit-ta"
+  morphs := [.root "mit", .suff "ta"]
   valency := .ofFrame ArgumentFrame.finiteClause
   attitude := some (.doxastic .nonVeridical)
   vendlerClass := some .state
@@ -72,7 +72,7 @@ def mitta : Verb where
 
 /-- *sayngkakha-ta* 'think', a non-veridical doxastic activity. -/
 def sayngkakhata : Verb where
-  form := "sayngkakha-ta"
+  morphs := [.root "sayngkakha", .suff "ta"]
   valency := .ofFrame ArgumentFrame.finiteClause
   attitude := some (.doxastic .nonVeridical)
   vendlerClass := some .activity
@@ -80,14 +80,14 @@ def sayngkakhata : Verb where
 
 /-- *haysekha-ta* 'interpret'. -/
 def haysekhata : Verb where
-  form := "haysekha-ta"
+  morphs := [.root "haysekha", .suff "ta"]
   valency := .ofFrame ArgumentFrame.finiteClause
   vendlerClass := some .activity
   opaqueContext := true
 
 /-- *selmyengha-ta* 'explain', which takes its clause as a theme argument. -/
 def selmyenghata : Verb where
-  form := "selmyengha-ta"
+  morphs := [.root "selmyengha", .suff "ta"]
   valency := .ofFrame ArgumentFrame.finiteClause
   vendlerClass := some .accomplishment
 

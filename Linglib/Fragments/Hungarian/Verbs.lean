@@ -33,34 +33,39 @@ namespace Hungarian.Verbs
 open ArgumentStructure
 
 /-- *lát* 'see', a perception verb. -/
-def lat : Verb := { form := "lát", valency := .ofFrame ArgumentFrame.finiteClause }
+def lat : Verb := { morphs := [.root "lát"], valency := .ofFrame ArgumentFrame.finiteClause }
 
 /-- *hall* 'hear', a perception verb that embeds a perceived event or a heard report alike. -/
-def hall : Verb := { form := "hall", valency := .ofFrame ArgumentFrame.finiteClause }
+def hall : Verb := { morphs := [.root "hall"], valency := .ofFrame ArgumentFrame.finiteClause }
 
 /-- *álmodik* 'dream'. -/
-def almodik : Verb := { form := "álmodik", valency := .ofFrame ArgumentFrame.finiteClause }
+def almodik : Verb :=
+  { morphs := [.root "álmodik"], valency := .ofFrame ArgumentFrame.finiteClause }
 
 /-- *gondol* 'think'. -/
-def gondol : Verb := { form := "gondol", valency := .ofFrame ArgumentFrame.finiteClause }
+def gondol : Verb := { morphs := [.root "gondol"], valency := .ofFrame ArgumentFrame.finiteClause }
 
 /-- *hisz* 'believe'. -/
-def hisz : Verb := { form := "hisz", valency := .ofFrame ArgumentFrame.finiteClause }
+def hisz : Verb := { morphs := [.root "hisz"], valency := .ofFrame ArgumentFrame.finiteClause }
 
 /-- *aggaszt* 'worry', a psychological verb whose clause is its subject. -/
-def aggaszt : Verb := { form := "aggaszt", valency := .ofFrame ArgumentFrame.finiteClause }
+def aggaszt : Verb :=
+  { morphs := [.root "aggaszt"], valency := .ofFrame ArgumentFrame.finiteClause }
 
 /-- *mond* 'say'. -/
 def mond : Verb :=
-  { form := "mond", valency := .ofFrame ArgumentFrame.finiteClause, speechActVerb := true }
+  { morphs := [.root "mond"], valency := .ofFrame ArgumentFrame.finiteClause,
+    speechActVerb := true }
 
 /-- *rikolt* 'shout', a manner-of-speaking verb. -/
 def rikolt : Verb :=
-  { form := "rikolt", valency := .ofFrame ArgumentFrame.finiteClause, speechActVerb := true }
+  { morphs := [.root "rikolt"], valency := .ofFrame ArgumentFrame.finiteClause,
+    speechActVerb := true }
 
 /-- *morog* 'growl', a manner-of-speaking verb that also takes a reason adjunct. -/
 def morog : Verb :=
-  { form := "morog", valency := .ofFrame ArgumentFrame.finiteClause, speechActVerb := true }
+  { morphs := [.root "morog"], valency := .ofFrame ArgumentFrame.finiteClause,
+    speechActVerb := true }
 
 /-- The entries. -/
 def verbs : List Verb := [lat, hall, almodik, gondol, hisz, aggaszt, mond, rikolt, morog]

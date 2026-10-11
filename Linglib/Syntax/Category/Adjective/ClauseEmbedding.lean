@@ -37,7 +37,7 @@ namespace ClauseEmbeddingAdjective
 adjective's clausal-selection facets carried over. -/
 def toVerb (a : ClauseEmbeddingAdjective) (copula : String) : Verb :=
   { a.toPresupposition, a.toAttitude with
-    form := copula ++ " " ++ a.form
+    morphs := [.free copula, .root a.form]
     valency := .of (a.frames.map fun fr ↦ (fr, List.range fr.slots.length)) }
 
 end ClauseEmbeddingAdjective

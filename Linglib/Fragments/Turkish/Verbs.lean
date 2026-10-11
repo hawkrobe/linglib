@@ -71,7 +71,7 @@ def nominalizedQuestion : ArgumentFrame :=
 
 /-- *kork-* 'fear', a negative preference by comparison of degrees. -/
 def kork : Verb where
-  form := "kork"
+  morphs := [.root "kork"]
   rootSegments := [k, o, r, k]
   valency := .of [(ArgumentFrame.gerund, [0, 1]), (nominalizedQuestion, [0, 1])]
   passivizable := false
@@ -80,7 +80,7 @@ def kork : Verb where
 
 /-- *um-* 'hope', a positive preference by comparison of degrees. -/
 def um : Verb where
-  form := "um"
+  morphs := [.root "um"]
   rootSegments := [u, m]
   valency := .ofFrame ArgumentFrame.gerund
   passivizable := false
@@ -89,7 +89,7 @@ def um : Verb where
 
 /-- *endişelen-* 'worry', a preference relative to uncertainty. -/
 def endişelen : Verb where
-  form := "endişelen"
+  morphs := [.root "endişelen"]
   rootSegments := [e, n, d, i, ş, e, l, e, n]
   valency := .of [(ArgumentFrame.gerund, [0, 1]), (nominalizedQuestion, [0, 1])]
   passivizable := false
@@ -100,7 +100,7 @@ def endişelen : Verb where
 
 /-- *dolan-* 'walk around', intransitive. -/
 def dolan : Verb where
-  form := "dolan"
+  morphs := [.root "dolan"]
   rootSegments := [d, o, l, a, n]
   valency := .ofFrame ArgumentFrame.intransitive
   passivizable := false
@@ -109,14 +109,14 @@ def dolan : Verb where
 
 /-- *öldür-* 'kill', the causative of *öl-* 'die'. -/
 def öldür : Verb where
-  form := "öldür"
+  morphs := [.root "öldür"]
   rootSegments := [ö, l]
   voice := [.causative]
   valency := .ofFrame ArgumentFrame.np
 
 /-- *yaptır-* 'have done, make do', the causative of *yap-* 'do, make'. -/
 def yaptır : Verb where
-  form := "yaptır"
+  morphs := [.root "yaptır"]
   rootSegments := [y, a, p]
   voice := [.causative]
   valency := .ofFrame ArgumentFrame.smallClause

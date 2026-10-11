@@ -41,13 +41,13 @@ namespace Verbs
 
 /-- *hälfe* 'help', finite *hälfed*, takes a dative object. -/
 def haelfe : Verb :=
-  { form := "hälfe", inflected := ["hälfed"], objects := [.dat] }
+  { morphs := [.root "hälfe"], inflected := ["hälfed"], objects := [.dat] }
 
 /-- *laa* 'let', finite *lönd*, takes an accusative object. -/
-def laa : Verb := { form := "laa", inflected := ["lönd"], objects := [.acc] }
+def laa : Verb := { morphs := [.root "laa"], inflected := ["lönd"], objects := [.acc] }
 
 /-- *aastriiche* 'paint' takes an accusative object. -/
-def aastriiche : Verb := { form := "aastriiche", objects := [.acc] }
+def aastriiche : Verb := { morphs := [.root "aastriiche"], objects := [.acc] }
 
 /-- `verbs` lists the entries. -/
 def verbs : List Verb := [haelfe, laa, aastriiche]

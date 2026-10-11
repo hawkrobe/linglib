@@ -18,6 +18,7 @@ public import Linglib.Semantics.Degree.Scale
 public import Linglib.Semantics.Degree.Antonymy
 public import Linglib.Semantics.ArgumentStructure.RoleList
 public import Linglib.Semantics.Root.Defs
+public import Linglib.Morphology.Morph
 
 /-!
 # Verb entries
@@ -34,6 +35,8 @@ implicative, trigger and so on, are read off these fields in `Syntax/Category/Ve
 
 * `Verb` composes its facets by `extends`, so a field is reached flat, as `v.valency`, and a
   language fragment extends `Verb` with its inflectional paradigm.
+* The citation form is the list `morphs`, and `Verb.form` is its surface string, so a fragment
+  builds a derived form, a converb or a causative, by attaching morphs to `v.morphs`.
 * The facets share their names with the theory namespaces whose values they hold, so a
   facet field names its type with `_root_`.
 
@@ -57,6 +60,7 @@ implicative, trigger and so on, are read off these fields in `Syntax/Category/Ve
 
 open Aspect ArgumentStructure Presupposition
 open NaturalLogic (Signature)
+open Morphology (Morph)
 
 /-! ### Selectional and inflectional enums -/
 
@@ -215,7 +219,7 @@ end Verb
 The cross-linguistic verb core holds the semantic fields shared across languages.
 
 Composes the `Verb.*` facets (argument structure, aspect, presupposition,
-attitude, root) plus the citation form, speech-act status, and a
+attitude, root) plus the morphs of the citation form, speech-act status, and a
 polysemy disambiguator. Language-specific fragments extend this with
 morphological fields appropriate to their inflectional system.
 -/
@@ -231,8 +235,9 @@ structure Verb extends Verb.ArgStructure, Verb.Aspect, Verb.Presupposition, Verb
       read rather than from its Levin classes. The default `{}` is the
       unannotated root. -/
   root : Semantics.Root := {}
-  /-- Citation form (cross-linguistic) -/
-  form : String
+  /-- The morphs of the citation form, in surface order, are the stem with the affixes and
+      particles it is cited with. A citation form the entry does not analyse is a single root. -/
+  morphs : List Morph
   /-- Does the verb denote the performance of an illocutionary act?
       True for speech-act verbs (say, tell, claim, ask). This is a genuine
       semantic primitive that cannot be derived from other fields. -/
@@ -241,6 +246,9 @@ structure Verb extends Verb.ArgStructure, Verb.Aspect, Verb.Presupposition, Verb
       Most verbs use `.default`; polysemous entries use descriptive tags. -/
   senseTag : SenseTag := .default
   deriving BEq
+
+/-- The citation form of a verb is the surface form of its morphs, in boundary notation. -/
+def Verb.form (v : Verb) : String := Morph.surface v.morphs
 
 /-- The scale along which a degree achievement measures change is its dimension's, dualized
 when the change is towards the negative pole, as the scale of a negative adjective is. -/

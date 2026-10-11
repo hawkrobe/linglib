@@ -31,28 +31,28 @@ def objectControlledFrame : ArgumentFrame := { complements := [.nominal, control
 
 /-- *ingin* 'want' takes a controlled complement, *Mereka ingin datang besok*. -/
 def ingin : Verb :=
-  { form := "ingin", valency := .ofFrame controlledFrame,
+  { morphs := [.root "ingin"], valency := .ofFrame controlledFrame,
     readings := [{ frame := controlledFrame, control := some .subjectControl }] }
 
 /-- *belajar* 'learn, study' takes a controlled complement, *Saya belajar menembak*. -/
 def belajar : Verb :=
-  { form := "belajar", valency := .ofFrame controlledFrame,
+  { morphs := [.root "belajar"], valency := .ofFrame controlledFrame,
     readings := [{ frame := controlledFrame, control := some .subjectControl }] }
 
 /-- *menyuruh* 'order, ask' takes an object and a complement it controls, *Saya menyuruh dia
 makan*. -/
 def menyuruh : Verb :=
-  { form := "menyuruh", valency := .ofFrame objectControlledFrame,
+  { morphs := [.root "menyuruh"], valency := .ofFrame objectControlledFrame,
     readings := [{ frame := objectControlledFrame, control := some .objectControl }] }
 
 /-- *mendorong* 'push' takes an object and a resultative complement it controls, *Orang itu
 mendorong saya jatuh*. -/
 def mendorong : Verb :=
-  { form := "mendorong", valency := .ofFrame objectControlledFrame,
+  { morphs := [.root "mendorong"], valency := .ofFrame objectControlledFrame,
     readings := [{ frame := objectControlledFrame, control := some .objectControl }] }
 
 /-- *tahu* 'know' takes a finite *bahwa* clause, *Saya tahu bahwa mereka akan datang*. -/
-def tahu : Verb := { form := "tahu", valency := .ofFrame ArgumentFrame.finiteClause }
+def tahu : Verb := { morphs := [.root "tahu"], valency := .ofFrame ArgumentFrame.finiteClause }
 
 /-- *bahwa* 'that' is the declarative complementizer of a full clause. -/
 def bahwa : Complementizer where

@@ -31,35 +31,35 @@ open English.Inflection
 
 /-- "enjoy" — AgExp verb (experiencer-subject) -/
 def enjoy : Verb := .mkRegular {
-  form := "enjoy"
+  morphs := [.root "enjoy"]
   valency := .ofFrame ArgumentFrame.np
   vendlerClass := some .state
   levinClasses := {LevinClass.admire} }
 
 /-- "like" — AgExp verb (experiencer-subject) -/
 def like : Verb := .mkRegular {
-  form := "like"
+  morphs := [.root "like"]
   valency := .ofFrame ArgumentFrame.np
   vendlerClass := some .state
   levinClasses := {LevinClass.admire} }
 
 /-- "love" — AgExp verb (experiencer-subject) -/
 def love : Verb := .mkRegular {
-  form := "love"
+  morphs := [.root "love"]
   valency := .ofFrame ArgumentFrame.np
   vendlerClass := some .state
   levinClasses := {LevinClass.admire} }
 
 /-- "hate" — AgExp verb (experiencer-subject) -/
 def hate : Verb := .mkRegular {
-  form := "hate"
+  morphs := [.root "hate"]
   valency := .ofFrame ArgumentFrame.np
   vendlerClass := some .state
   levinClasses := {LevinClass.admire} }
 
 /-- "admire" — AgExp verb (experiencer-subject) -/
 def admire : Verb := .mkRegular {
-  form := "admire"
+  morphs := [.root "admire"]
   valency := .ofFrame ArgumentFrame.np
   vendlerClass := some .state
   levinClasses := {LevinClass.admire} }
@@ -68,7 +68,7 @@ def admire : Verb := .mkRegular {
     DOC-only ditransitive ("He envies me the car"). Implicit goal is
     definite (familiar). Implicit second obj is indefinite. -/
 def envy : Verb := .mkRegular {
-  form := "envy"
+  morphs := [.root "envy"]
   valency := .of
     [(ArgumentFrame.np, [0, 1]),
      (ArgumentFrame.np_np, [0, 1, 2]),
@@ -79,14 +79,14 @@ def envy : Verb := .mkRegular {
 
 /-- "respect" — AgExp verb (experiencer-subject) -/
 def respect : Verb := .mkRegular {
-  form := "respect"
+  morphs := [.root "respect"]
   valency := .ofFrame ArgumentFrame.np
   vendlerClass := some .state
   levinClasses := {LevinClass.admire} }
 
 /-- "value" — AgExp verb (experiencer-subject) -/
 def value : Verb := .mkRegular {
-  form := "value"
+  morphs := [.root "value"]
   valency := .ofFrame ArgumentFrame.np
   vendlerClass := some .state
   levinClasses := {LevinClass.admire, .characterize, .price} }
@@ -95,7 +95,7 @@ def value : Verb := .mkRegular {
     "John fears snakes." Experiencer subject, stimulus object.
     Note: `fear` (attitude verb, clausal complement) is defined separately. -/
 def fear_np : Verb := .mkRegular {
-  form := "fear"
+  morphs := [.root "fear"]
   valency := .ofFrame ArgumentFrame.np
   vendlerClass := some .state
   levinClasses := {LevinClass.admire, .marvel} }
@@ -103,7 +103,7 @@ def fear_np : Verb := .mkRegular {
 /-- "dread" (NP complement) — Class I psych verb.
     "John dreads exams." Note: `dread` (attitude, clausal) defined separately. -/
 def dread_np : Verb := .mkRegular {
-  form := "dread"
+  morphs := [.root "dread"]
   valency := .ofFrame ArgumentFrame.np
   vendlerClass := some .state
   levinClasses := {LevinClass.admire} }
@@ -115,133 +115,133 @@ def dread_np : Verb := .mkRegular {
 
 /-- "frighten" — StimExp verb (stimulus subject). -/
 def frighten : Verb := .mkRegular {
-  form := "frighten"
+  morphs := [.root "frighten"]
   valency := .ofFrame ArgumentFrame.np
   vendlerClass := some .accomplishment
   levinClasses := {LevinClass.amuse} }
 
 /-- "amuse" — StimExp verb (stimulus subject). -/
 def amuse : Verb := .mkRegular {
-  form := "amuse"
+  morphs := [.root "amuse"]
   valency := .ofFrame ArgumentFrame.np
   vendlerClass := some .accomplishment
   levinClasses := {LevinClass.amuse} }
 
 /-- "fascinate" — StimExp verb (stimulus subject). -/
 def fascinate : Verb := .mkRegular {
-  form := "fascinate"
+  morphs := [.root "fascinate"]
   valency := .ofFrame ArgumentFrame.np
   vendlerClass := some .accomplishment
   levinClasses := {LevinClass.amuse} }
 
 /-- "irritate" — StimExp verb (stimulus subject). -/
 def irritate : Verb := .mkRegular {
-  form := "irritate"
+  morphs := [.root "irritate"]
   valency := .ofFrame ArgumentFrame.np
   vendlerClass := some .accomplishment
   levinClasses := {LevinClass.amuse} }
 
 /-- "annoy" — StimExp verb (stimulus subject). -/
 def annoy : Verb := .mkRegular {
-  form := "annoy"
+  morphs := [.root "annoy"]
   valency := .ofFrame ArgumentFrame.np
   vendlerClass := some .accomplishment
   levinClasses := {LevinClass.amuse} }
 
 /-- "bore" — StimExp verb (stimulus subject). -/
 def bore : Verb := .mkRegular {
-  form := "bore"
+  morphs := [.root "bore"]
   valency := .ofFrame ArgumentFrame.np
   vendlerClass := some .accomplishment
   levinClasses := {LevinClass.amuse, .carve, .rummage} }
 
 /-- "charm" — StimExp verb (stimulus subject). -/
 def charm : Verb := .mkRegular {
-  form := "charm"
+  morphs := [.root "charm"]
   valency := .ofFrame ArgumentFrame.np
   vendlerClass := some .accomplishment
   levinClasses := {LevinClass.amuse} }
 
 /-- "impress" — StimExp verb (stimulus subject). -/
 def impress : Verb := .mkRegular {
-  form := "impress"
+  morphs := [.root "impress"]
   valency := .ofFrame ArgumentFrame.np
   vendlerClass := some .accomplishment
   levinClasses := {LevinClass.amuse} }
 
 /-- "concern" — stative Class II psych verb. -/
 def concern : Verb := .mkRegular {
-  form := "concern"
+  morphs := [.root "concern"]
   valency := .ofFrame ArgumentFrame.np
   vendlerClass := some .state
   levinClasses := {LevinClass.amuse} }
 
 /-- "interest" — stative Class II psych verb. -/
 def interest : Verb := .mkRegular {
-  form := "interest"
+  morphs := [.root "interest"]
   valency := .ofFrame ArgumentFrame.np
   vendlerClass := some .state
   levinClasses := {LevinClass.amuse} }
 
 /-- "surprise" — eventive Class II (Levin 31.1). "The news surprised John." -/
 def surprise : Verb := .mkRegular {
-  form := "surprise"
+  morphs := [.root "surprise"]
   valency := .ofFrame ArgumentFrame.np
   vendlerClass := some .accomplishment
   levinClasses := {LevinClass.amuse} }
 
 /-- "scare" — eventive Class II (Levin 31.1). "The noise scared John." -/
 def scare : Verb := .mkRegular {
-  form := "scare"
+  morphs := [.root "scare"]
   valency := .ofFrame ArgumentFrame.np
   vendlerClass := some .accomplishment
   levinClasses := {LevinClass.amuse} }
 
 /-- "delight" — eventive Class II (Levin 31.1). "The gift delighted Mary." -/
 def delight : Verb := .mkRegular {
-  form := "delight"
+  morphs := [.root "delight"]
   valency := .ofFrame ArgumentFrame.np
   vendlerClass := some .accomplishment
   levinClasses := {LevinClass.amuse, .marvel} }
 
 /-- "embarrass" — eventive Class II (Levin 31.1). "The remark embarrassed John." -/
 def embarrass : Verb := .mkRegular {
-  form := "embarrass"
+  morphs := [.root "embarrass"]
   valency := .ofFrame ArgumentFrame.np
   vendlerClass := some .accomplishment
   levinClasses := {LevinClass.amuse} }
 
 /-- "upset" — eventive Class II (Levin 31.1). "The news upset Mary." -/
 def upset_psych : Verb := .mkRegular {
-  form := "upset"
+  morphs := [.root "upset"]
   valency := .ofFrame ArgumentFrame.np
   vendlerClass := some .accomplishment
   levinClasses := {LevinClass.amuse} }
 
 /-- "disgust" — eventive Class II (Levin 31.1). "The smell disgusted John." -/
 def disgust : Verb := .mkRegular {
-  form := "disgust"
+  morphs := [.root "disgust"]
   valency := .ofFrame ArgumentFrame.np
   vendlerClass := some .accomplishment
   levinClasses := {LevinClass.amuse} }
 
 /-- "shock" — eventive Class II (Levin 31.1). "The revelation shocked everyone." -/
 def shock : Verb := .mkRegular {
-  form := "shock"
+  morphs := [.root "shock"]
   valency := .ofFrame ArgumentFrame.np
   vendlerClass := some .accomplishment
   levinClasses := {LevinClass.amuse} }
 
 /-- "confuse" — eventive Class II (Levin 31.1). "The instructions confused John." -/
 def confuse : Verb := .mkRegular {
-  form := "confuse"
+  morphs := [.root "confuse"]
   valency := .ofFrame ArgumentFrame.np
   vendlerClass := some .accomplishment
   levinClasses := {LevinClass.amalgamate, .amuse} }
 
 /-- "disappoint" — eventive Class II (Levin 31.1). "The result disappointed Mary." -/
 def disappoint : Verb := .mkRegular {
-  form := "disappoint"
+  morphs := [.root "disappoint"]
   valency := .ofFrame ArgumentFrame.np
   vendlerClass := some .accomplishment
   levinClasses := {LevinClass.amuse} }
@@ -249,7 +249,7 @@ def disappoint : Verb := .mkRegular {
 /-- "worry" (eventive) — Class II. "The noise worried John."
     Note: `worry` (attitude, clausal) defined separately. -/
 def worry_eventive : Verb := .mkRegular {
-  form := "worry"
+  morphs := [.root "worry"]
   valency := .ofFrame ArgumentFrame.np
   vendlerClass := some .accomplishment
   levinClasses := {LevinClass.amuse}
@@ -257,7 +257,7 @@ def worry_eventive : Verb := .mkRegular {
 
 /-- "worry" (stative) — Class II. "The situation worries John." -/
 def worry_stative : Verb := .mkRegular {
-  form := "worry"
+  morphs := [.root "worry"]
   valency := .ofFrame ArgumentFrame.np
   vendlerClass := some .state
   levinClasses := {LevinClass.amuse}
@@ -266,21 +266,21 @@ def worry_stative : Verb := .mkRegular {
 /-- "please" — stative Class II. "The idea pleases John." Related to B&R Class III It.
     *piacere*. -/
 def please_psych : Verb := .mkRegular {
-  form := "please"
+  morphs := [.root "please"]
   valency := .ofFrame ArgumentFrame.np
   vendlerClass := some .state
   levinClasses := {LevinClass.amuse} }
 
 /-- "trouble" — stative Class II. "The thought troubles John." -/
 def trouble : Verb := .mkRegular {
-  form := "trouble"
+  morphs := [.root "trouble"]
   valency := .ofFrame ArgumentFrame.np
   vendlerClass := some .state
   levinClasses := {LevinClass.amuse} }
 
 /-- "puzzle" — stative Class II. "The problem puzzles John." -/
 def puzzle : Verb := .mkRegular {
-  form := "puzzle"
+  morphs := [.root "puzzle"]
   valency := .ofFrame ArgumentFrame.np
   vendlerClass := some .state
   levinClasses := {LevinClass.amuse, .marvel} }
@@ -292,7 +292,7 @@ def puzzle : Verb := .mkRegular {
 
 /-- "chase" — AgPat verb (Levin 51.6) -/
 def chase : Verb := .mkRegular {
-  form := "chase"
+  morphs := [.root "chase"]
   valency := .ofFrame ArgumentFrame.np
   vendlerClass := some .activity
   incrementality := some .cumulative
@@ -300,7 +300,7 @@ def chase : Verb := .mkRegular {
 
 /-- "hit" — AgPat verb (Levin 18.1) -/
 def hit : Verb where
-  form := "hit"
+  morphs := [.root "hit"]
   form3sg := "hits"
   formPast := "hit"
   formPastPart := "hit"
@@ -315,7 +315,7 @@ def hit : Verb where
 
 /-- "push" — AgPat verb (Levin 12) -/
 def push : Verb := .mkRegular {
-  form := "push"
+  morphs := [.root "push"]
   valency := .of [(ArgumentFrame.np, [0, 1]), (ArgumentFrame.pp (some Adpositions.at_), [0, 1])]
   vendlerClass := some .activity
   incrementality := some .cumulative
@@ -323,7 +323,7 @@ def push : Verb := .mkRegular {
 
 /-- "pull" — AgPat verb (Levin 12) -/
 def pull : Verb := .mkRegular {
-  form := "pull"
+  morphs := [.root "pull"]
   valency := .of [(ArgumentFrame.np, [0, 1]), (ArgumentFrame.pp (some Adpositions.at_), [0, 1])]
   vendlerClass := some .activity
   incrementality := some .cumulative
@@ -331,14 +331,14 @@ def pull : Verb := .mkRegular {
 
 /-- "shove" — verb of exerting force (Levin 12, [levin-2026] (31)) -/
 def shove : Verb := .mkRegular {
-  form := "shove"
+  morphs := [.root "shove"]
   valency := .of [(ArgumentFrame.np, [0, 1]), (ArgumentFrame.pp (some Adpositions.at_), [0, 1])]
   vendlerClass := some .activity
   levinClasses := {LevinClass.carry, .pushPull, .split, .throw} }
 
 /-- "tug" — verb of exerting force (Levin 12, [levin-2026] (31)) -/
 def tug : Verb where
-  form := "tug"
+  morphs := [.root "tug"]
   form3sg := "tugs"
   formPast := "tugged"
   formPastPart := "tugged"
@@ -349,14 +349,14 @@ def tug : Verb where
 
 /-- "yank" — verb of exerting force (Levin 12, [levin-2026] (31)) -/
 def yank : Verb := .mkRegular {
-  form := "yank"
+  morphs := [.root "yank"]
   valency := .of [(ArgumentFrame.np, [0, 1]), (ArgumentFrame.pp (some Adpositions.at_), [0, 1])]
   vendlerClass := some .activity
   levinClasses := {LevinClass.pushPull, .split} }
 
 /-- "jerk" — verb of exerting force (Levin 12, [levin-2026] (31)) -/
 def jerk : Verb := .mkRegular {
-  form := "jerk"
+  morphs := [.root "jerk"]
   valency := .of [(ArgumentFrame.np, [0, 1]), (ArgumentFrame.pp (some Adpositions.at_), [0, 1])]
   vendlerClass := some .activity
   levinClasses := {LevinClass.pushPull} }
@@ -364,7 +364,7 @@ def jerk : Verb := .mkRegular {
 /-- "wrench" — verb of exerting force for [levin-2026] (31); not among the
     members of Levin's §12. -/
 def wrench : Verb := .mkRegular {
-  form := "wrench"
+  morphs := [.root "wrench"]
   valency := .ofFrame ArgumentFrame.np
   vendlerClass := some .activity
   levinClasses := {LevinClass.remove} }
@@ -373,7 +373,7 @@ def wrench : Verb := .mkRegular {
 /-- "fling" — Levin 17.1 Throw verbs; a verb of exerting force for
     [levin-2026] (31). Irregular past. -/
 def fling : Verb where
-  form := "fling"
+  morphs := [.root "fling"]
   form3sg := "flings"
   formPast := "flung"
   formPastPart := "flung"
@@ -388,7 +388,7 @@ def fling : Verb where
 /-- "slam" — Levin 17.1 Throw verbs; a hitting verb for [levin-2026] (32a).
     Irregular doubling. -/
 def slam : Verb where
-  form := "slam"
+  morphs := [.root "slam"]
   form3sg := "slams"
   formPast := "slammed"
   formPastPart := "slammed"
@@ -402,7 +402,7 @@ def slam : Verb where
 
 /-- "punch" — Levin 18.2 Swat verbs; a hitting verb for [levin-2026] (32a). -/
 def punch : Verb := .mkRegular {
-  form := "punch"
+  morphs := [.root "punch"]
   valency := .of
     [(ArgumentFrame.np, [0, 1]),
      (ArgumentFrame.pp (some Adpositions.at_), [0, 1]),
@@ -413,7 +413,7 @@ def punch : Verb := .mkRegular {
 /-- "smack" — verb of surface contact, hitting (Levin 18.1,
     [levin-2026] (32a)) -/
 def smack : Verb := .mkRegular {
-  form := "smack"
+  morphs := [.root "smack"]
   valency := .of
     [(ArgumentFrame.np, [0, 1]),
      (ArgumentFrame.pp (some Adpositions.at_), [0, 1]),
@@ -426,7 +426,7 @@ def smack : Verb := .mkRegular {
 /-- "thump" — verb of surface contact, hitting (Levin 18.1,
     [levin-2026] (32a)) -/
 def thump : Verb := .mkRegular {
-  form := "thump"
+  morphs := [.root "thump"]
   valency := .of
     [(ArgumentFrame.np, [0, 1]),
      (ArgumentFrame.pp (some Adpositions.at_), [0, 1]),
@@ -438,7 +438,7 @@ def thump : Verb := .mkRegular {
 /-- "bang" — verb of surface contact, hitting (Levin 18.1,
     [levin-2026] (32a)) -/
 def bang : Verb := .mkRegular {
-  form := "bang"
+  morphs := [.root "bang"]
   valency := .of
     [(ArgumentFrame.np, [0, 1]),
      (ArgumentFrame.pp (some Adpositions.at_), [0, 1]),
@@ -449,7 +449,7 @@ def bang : Verb := .mkRegular {
 
 /-- "thrash" — Levin 18.3 Spank verbs; a hitting verb for [levin-2026] (32a). -/
 def thrash : Verb := .mkRegular {
-  form := "thrash"
+  morphs := [.root "thrash"]
   valency := .of
     [(ArgumentFrame.np, [0, 1]),
      (ArgumentFrame.np_pp (some Adpositions.on), [0, 1, 2])]
@@ -458,7 +458,7 @@ def thrash : Verb := .mkRegular {
 
 /-- "hammer" — Levin 18.1 Hit verbs. -/
 def hammer : Verb := .mkRegular {
-  form := "hammer"
+  morphs := [.root "hammer"]
   valency := .of
     [(ArgumentFrame.np, [0, 1]),
      (ArgumentFrame.pp (some Adpositions.at_), [0, 1]),
@@ -471,7 +471,7 @@ def hammer : Verb := .mkRegular {
     [levin-2026] (32b)). In intr-push-open, enters through
     surface-contact sense, not removing sense. -/
 def scrape : Verb := .mkRegular {
-  form := "scrape"
+  morphs := [.root "scrape"]
   valency := .of
     [(ArgumentFrame.np, [0, 1]),
      (ArgumentFrame.pp (some Adpositions.at_), [0, 1]),
@@ -483,7 +483,7 @@ def scrape : Verb := .mkRegular {
 
 /-- "wipe" — Levin 10.4 Wipe verbs, manner subclass. -/
 def wipe : Verb := .mkRegular {
-  form := "wipe"
+  morphs := [.root "wipe"]
   valency := .of
     [(ArgumentFrame.np, [0, 1]),
      (ArgumentFrame.pp (some Adpositions.at_), [0, 1]),
@@ -495,7 +495,7 @@ def wipe : Verb := .mkRegular {
 
 /-- "carry" — AgPat verb (Levin 11.4) -/
 def carry : Verb where
-  form := "carry"
+  morphs := [.root "carry"]
   form3sg := "carries"
   formPast := "carried"
   formPastPart := "carried"
@@ -510,7 +510,7 @@ def carry : Verb where
 
 /-- "drag" — AgPat verb (Levin 11.4/12) -/
 def drag : Verb where
-  form := "drag"
+  morphs := [.root "drag"]
   form3sg := "drags"
   formPast := "dragged"
   formPastPart := "dragged"
@@ -525,7 +525,7 @@ def drag : Verb where
 
 /-- "call" — AgPat verb (communication + agent-patient frame) -/
 def call : Verb := .mkRegular {
-  form := "call"
+  morphs := [.root "call"]
   valency := .ofFrame ArgumentFrame.np
   vendlerClass := some .activity
   levinClasses := {LevinClass.animalSound, .dub, .get, .mannerOfSpeaking} }

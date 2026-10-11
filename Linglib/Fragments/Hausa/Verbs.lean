@@ -135,46 +135,46 @@ structure Verb extends _root_.Verb where
   grade : Grade
 
 /-- *ci* 'eat'. -/
-def ci : Verb := { form := "ci", valency := .ofFrame .np, grade := .gr0 }
+def ci : Verb := { morphs := [.root "ci"], valency := .ofFrame .np, grade := .gr0 }
 
 /-- *jā* 'pull'. -/
-def ja : Verb := { form := "jā", valency := .ofFrame .np, grade := .gr0 }
+def ja : Verb := { morphs := [.root "jā"], valency := .ofFrame .np, grade := .gr0 }
 
 /-- *dafā̀* 'cook'. -/
-def dafa : Verb := { form := "dafā̀", valency := .ofFrame .np, grade := .gr1 }
+def dafa : Verb := { morphs := [.root "dafā̀"], valency := .ofFrame .np, grade := .gr1 }
 
 /-- *zā̀gā* 'insult'. -/
-def zaga : Verb := { form := "zā̀gā", valency := .ofFrame .np, grade := .gr2 }
+def zaga : Verb := { morphs := [.root "zā̀gā"], valency := .ofFrame .np, grade := .gr2 }
 
 /-- *sàyā* 'buy', C-form *sàyi*. -/
-def saya : Verb := { form := "sàyā", valency := .ofFrame .np, grade := .gr2 }
+def saya : Verb := { morphs := [.root "sàyā"], valency := .ofFrame .np, grade := .gr2 }
 
 /-- *fita* 'go out'. -/
-def fita : Verb := { form := "fita", valency := .ofFrame .intransitive, grade := .gr3 }
+def fita : Verb := { morphs := [.root "fita"], valency := .ofFrame .intransitive, grade := .gr3 }
 
 /-- *ƙaura* 'migrate'. -/
-def kaura : Verb := { form := "ƙaura", valency := .ofFrame .intransitive, grade := .gr3a }
+def kaura : Verb := { morphs := [.root "ƙaura"], valency := .ofFrame .intransitive, grade := .gr3a }
 
 /-- *guɗù* 'run away'. -/
-def gudu : Verb := { form := "guɗù", valency := .ofFrame .intransitive, grade := .gr3b }
+def gudu : Verb := { morphs := [.root "guɗù"], valency := .ofFrame .intransitive, grade := .gr3b }
 
 /-- *sayḕ* 'buy up'. -/
-def saye : Verb := { form := "sayḕ", valency := .ofFrame .np, grade := .gr4 }
+def saye : Verb := { morphs := [.root "sayḕ"], valency := .ofFrame .np, grade := .gr4 }
 
 /-- *sayar̃* 'sell'. -/
-def sayar : Verb := { form := "sayar̃", valency := .ofFrame .np, grade := .gr5 }
+def sayar : Verb := { morphs := [.root "sayar̃"], valency := .ofFrame .np, grade := .gr5 }
 
 /-- *sayō* 'buy and bring'. -/
-def sayo : Verb := { form := "sayō", valency := .ofFrame .np, grade := .gr6 }
+def sayo : Verb := { morphs := [.root "sayō"], valency := .ofFrame .np, grade := .gr6 }
 
 /-- *kōmō* 'return here'. -/
-def komo : Verb := { form := "kōmō", valency := .ofFrame .intransitive, grade := .gr6 }
+def komo : Verb := { morphs := [.root "kōmō"], valency := .ofFrame .intransitive, grade := .gr6 }
 
 /-- *sàyu* 'be well bought'. -/
-def sayu : Verb := { form := "sàyu", valency := .ofFrame .intransitive, grade := .gr7 }
+def sayu : Verb := { morphs := [.root "sàyu"], valency := .ofFrame .intransitive, grade := .gr7 }
 
 /-- *gyā̀ru* 'be well repaired'. -/
-def gyaru : Verb := { form := "gyā̀ru", valency := .ofFrame .intransitive, grade := .gr7 }
+def gyaru : Verb := { morphs := [.root "gyā̀ru"], valency := .ofFrame .intransitive, grade := .gr7 }
 
 /-- The verbs. -/
 def verbs : List Verb :=

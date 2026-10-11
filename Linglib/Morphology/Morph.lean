@@ -41,6 +41,7 @@ side of Haspelmath's form–content pairing, never zero and never discontinuous.
   one word.
 * `Morph.countP_le_one_of_mem_wordsAt`: every word has at most one morph that is
   not bound.
+* `Morph.surface_singleton`: a single morph surfaces as itself.
 
 ## Implementation notes
 
@@ -52,7 +53,9 @@ keep a clitic apart, as Haspelmath's definition of the word does, and the words 
 `.clitic` are the units separated by spaces. In a sequence an infix follows its
 host, as in `Word.Tree.toList`, and two adjacent roots are two words, a compound
 being a `Word.Tree.compound`. A discontinuous exponent, such as a circumfix, is a
-list of such sequences, which its owner joins with `…`.
+list of such sequences, which its owner joins with `…`. `Morph.surface` folds with
+`++` rather than calling `String.join` and `String.intercalate`, whose bodies a
+module cannot unfold, so that `decide` evaluates a surface form.
 
 ## References
 
@@ -283,6 +286,10 @@ def wordsAt (l : Attachment) (ms : List Morph) : List (List Morph) :=
     (wordsAt l ms).flatten = ms :=
   List.flatten_splitBy ..
 
+@[simp] theorem wordsAt_nil (l : Attachment) : wordsAt l [] = [] := rfl
+
+@[simp] theorem wordsAt_singleton (l : Attachment) (m : Morph) : wordsAt l [m] = [[m]] := rfl
+
 /-- Words at a tighter attachment nest in the words at a looser one. -/
 theorem flatMap_wordsAt (h : l ≤ l') (ms : List Morph) :
     (wordsAt l' ms).flatMap (wordsAt l) = wordsAt l ms :=
@@ -356,7 +363,14 @@ instance : ToString Morph :=
 /-- The surface form of a sequence of morphs writes each word in boundary notation and separates
 the words by spaces. -/
 def surface (ms : List Morph) : String :=
-  " ".intercalate ((wordsAt .clitic ms).map fun w ↦ String.join (w.map toString))
+  match (wordsAt .clitic ms).map fun w ↦ w.foldl (· ++ toString ·) "" with
+  | [] => ""
+  | w :: ws => ws.foldl (· ++ " " ++ ·) w
+
+@[simp] theorem surface_nil : surface [] = "" := rfl
+
+/-- A single morph surfaces as itself, so an unanalysed form is the surface form of its root. -/
+@[simp] theorem surface_singleton (m : Morph) : surface [m] = toString m := by simp [surface]
 
 end Morph
 

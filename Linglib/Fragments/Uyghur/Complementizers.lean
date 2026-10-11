@@ -53,66 +53,66 @@ def participialFrame : ArgumentFrame := .typedBy lik (some (.overt (some .gen)))
 /-- *de-* 'say', which reports an act of speaking or only the source of some content; its
 complement is obligatory. -/
 def de : Verb where
-  form := "de"
+  morphs := [.root "de"]
   valency := .of [(ArgumentFrame.finiteClause, [0, 1]), (ArgumentFrame.np, [0, 1]),
     (participialFrame, [0, 1])]
   speechActVerb := true
 
 /-- *oyla-* 'think'. -/
 def oyla : Verb where
-  form := "oyla"
+  morphs := [.root "oyla"]
   valency := .of [(ArgumentFrame.np, [0, 1]), (participialFrame, [0, 1])]
   attitude := some (.doxastic .nonVeridical)
 
 /-- *bil-* 'know'. -/
 def bil : Verb where
-  form := "bil"
+  morphs := [.root "bil"]
   valency := .of [(ArgumentFrame.np, [0, 1]), (participialFrame, [0, 1])]
   attitude := some (.doxastic .veridical)
   factivity := some .semi
 
 /-- *unut-* 'forget'. -/
 def unut : Verb where
-  form := "unut"
+  morphs := [.root "unut"]
   valency := .of [(ArgumentFrame.np, [0, 1]), (participialFrame, [0, 1])]
   factivity := some .full
 
 /-- *éyt-* 'tell'. -/
 def eyt : Verb where
-  form := "éyt"
+  morphs := [.root "éyt"]
   valency := .of [(ArgumentFrame.np, [0, 1]), (participialFrame, [0, 1])]
   voiceType := some .agentive
   speechActVerb := true
 
 /-- *warqira-* 'scream', unergative. -/
 def warqira : Verb where
-  form := "warqira"
+  morphs := [.root "warqira"]
   valency := .ofFrame ArgumentFrame.intransitive
   voiceType := some .agentive
 
 /-- *ket-* 'leave', unaccusative. -/
 def ket : Verb where
-  form := "ket"
+  morphs := [.root "ket"]
   valency := .ofFrame ArgumentFrame.intransitive
   voiceType := some .nonThematic
 
 /-- *ye-* 'eat'. -/
 def ye : Verb where
-  form := "ye"
+  morphs := [.root "ye"]
   valency := .ofFrame ArgumentFrame.np
   voiceType := some .agentive
 
 /-- The light verb *qil-* 'do, make', transitive: *söz qil-* 'speak', *éniq qil-* 'make
 clear'. -/
 def qil : Verb where
-  form := "qil"
+  morphs := [.root "qil"]
   valency := .ofFrame ArgumentFrame.np
   voiceType := some .agentive
 
 /-- The light verb *bol-* 'become', unaccusative: *söz bol-* 'there be speaking', *éniq bol-*
 'become clear'. -/
 def bol : Verb where
-  form := "bol"
+  morphs := [.root "bol"]
   valency := .ofFrame ArgumentFrame.intransitive
   voiceType := some .nonThematic
 
@@ -120,6 +120,6 @@ def bol : Verb where
 def verbs : List Verb := [de, oyla, bil, unut, eyt, warqira, ket, ye, qil, bol]
 
 /-- The converb of a verb is its stem under *-(I)p*, as *de-p* 'saying' and *oyla-p* 'thinking'. -/
-def converb (v : Verb) : List Morph := .root v.form :: ip.morphs
+def converb (v : Verb) : List Morph := v.morphs ++ ip.morphs
 
 end Uyghur

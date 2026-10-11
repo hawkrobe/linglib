@@ -48,7 +48,7 @@ structure Verb extends _root_.Verb where
 
 /-- *lilooy* 'be happy' ((27a), (28a), (33)). -/
 def liloy : Verb where
-  form := "lilooy"
+  morphs := [.root "lilooy"]
   valency := .ofFrame ArgumentFrame.finiteClause
   predicateClass := .commentative
   attitude := some (.preferential .positive true)
@@ -56,7 +56,7 @@ def liloy : Verb where
 
 /-- *’etqew* 'be sad' (27b). -/
 def etqew : Verb where
-  form := "’etqew"
+  morphs := [.root "’etqew"]
   valency := .ofFrame ArgumentFrame.finiteClause
   predicateClass := .commentative
   attitude := some (.preferential .negative true)
@@ -64,14 +64,14 @@ def etqew : Verb where
 
 /-- *cicwaay* 'be surprised' ((27c), (28b)). -/
 def cicwaay : Verb where
-  form := "cicwaay"
+  morphs := [.root "cicwaay"]
   valency := .ofFrame ArgumentFrame.finiteClause
   predicateClass := .commentative
   factivity := some .full
 
 /-- *’eey’s* 'be joyful', which takes no noun-phrase object ((27e), (41)). -/
 def eeys : Verb where
-  form := "’eey’s"
+  morphs := [.root "’eey’s"]
   valency := .ofFrame ArgumentFrame.finiteClause
   predicateClass := .commentative
   attitude := some (.preferential .positive true)
@@ -79,7 +79,7 @@ def eeys : Verb where
 
 /-- *q’eese’* 'be bothered, unhappy' (27e). -/
 def qeese : Verb where
-  form := "q’eese’"
+  morphs := [.root "q’eese’"]
   valency := .ofFrame ArgumentFrame.finiteClause
   predicateClass := .commentative
   attitude := some (.preferential .negative true)
@@ -87,7 +87,7 @@ def qeese : Verb where
 
 /-- *tim’neeneki* 'be worried', whose complement projects under negation ((27e), (34)). -/
 def timneneki : Verb where
-  form := "tim’neeneki"
+  morphs := [.root "tim’neeneki"]
   valency := .ofFrame ArgumentFrame.finiteClause
   predicateClass := .commentative
   attitude := some (.preferential .negative false)
@@ -95,7 +95,7 @@ def timneneki : Verb where
 
 /-- *timiipni* 'remember', a cognitive factive with the relative edge (27d). -/
 def timiipni : Verb where
-  form := "timiipni"
+  morphs := [.root "timiipni"]
   valency := .ofFrame ArgumentFrame.finiteClause
   predicateClass := .knowledge
   attitude := some (.doxastic .veridical)
@@ -103,14 +103,14 @@ def timiipni : Verb where
 
 /-- *neki* 'think', whose complement does not project ((35), (36), (48)). -/
 def neki : Verb where
-  form := "neki"
+  morphs := [.root "neki"]
   valency := .ofFrame ArgumentFrame.finiteClause
   predicateClass := .propAttitude
   attitude := some (.doxastic .nonVeridical)
 
 /-- *hi* 'say, tell', with an accusative addressee before the clause ((47), (65b)). -/
 def hi : Verb where
-  form := "hi"
+  morphs := [.root "hi"]
   valency := .ofFrame
     { complements :=
         [.nominal, .clausal (coding := some .indicative) (types := .only .declarative)] }
@@ -119,7 +119,7 @@ def hi : Verb where
 
 /-- *cuukwe* 'know', whose complement projects from a conditional antecedent ((66), (68)). -/
 def cuukwe : Verb where
-  form := "cuukwe"
+  morphs := [.root "cuukwe"]
   valency := .ofFrame ArgumentFrame.finiteClause
   predicateClass := .knowledge
   attitude := some (.doxastic .veridical)

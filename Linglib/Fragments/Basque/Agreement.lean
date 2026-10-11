@@ -4,7 +4,6 @@ public import Linglib.Fragments.Basque.Pronouns
 public import Linglib.Morphology.Morph
 public import Linglib.Syntax.Agreement.Paradigm
 public import Linglib.Syntax.Category.Verb.Tense
-import all Init.Data.String.Defs  -- for unfolding `String.append`
 
 /-!
 # Basque verbal agreement

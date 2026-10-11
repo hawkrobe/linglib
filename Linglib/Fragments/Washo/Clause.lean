@@ -1,6 +1,5 @@
 module
 
-public import Linglib.Morphology.Word.Tree
 public import Linglib.Syntax.Category.Verb.Basic
 public import Linglib.Syntax.Category.Complementizer.Basic
 
@@ -35,7 +34,7 @@ against modification is `Studies/BochnakHanink2021.lean`.
 
 namespace Washo
 
-open Morphology (Morph Word)
+open Morphology (Morph)
 
 /-! ### Clause-typers -/
 
@@ -71,23 +70,19 @@ def es : Morph := .suff "e:s"
 /-- The reflexive prefix *gum-*. -/
 def gum : Morph := .pref "gum"
 
-/-- The citation form of a root with an affix attached on a side, read off the word tree. -/
-def affixed (root : String) (side : Morph.Side) (afx : Morph) : String :=
-  Morph.surface ((Word.Tree.root (Morph.root root)).attach side afx).toList
-
 /-- *hamup'ay* 'forget' (1). -/
 def hamupay : Verb where
-  form := "hamup'ay"
+  morphs := [.root "hamup'ay"]
   valency := .ofFrame ArgumentFrame.finiteClause
   predicateClass := some .knowledge
   typer := ge
 
 /-- *hamup'ay-e:s* 'remember', negated 'forget' (8). -/
-def hamupayEs : Verb := { hamupay with form := affixed hamupay.form .after es }
+def hamupayEs : Verb := { hamupay with morphs := hamupay.morphs ++ [es] }
 
 /-- *ašaš-e:s* 'know', negated 'not know'; it also takes a plain DP ((6), (79)). -/
 def ashashEs : Verb where
-  form := affixed "ašaš" .after es
+  morphs := [.root "ašaš", es]
   valency := .of [(ArgumentFrame.finiteClause, [0, 1]), (ArgumentFrame.np, [0, 1])]
   predicateClass := some .knowledge
   typer := ge
@@ -95,7 +90,7 @@ def ashashEs : Verb where
 /-- *i:gi* 'see'; it also takes an internally headed relative and a plain DP ((10), (20),
 (89)). -/
 def iigi : Verb where
-  form := "i:gi"
+  morphs := [.root "i:gi"]
   valency := .of [(ArgumentFrame.finiteClause, [0, 1]), (ArgumentFrame.np, [0, 1])]
   predicateClass := some .perception
   typer := ge
@@ -103,21 +98,21 @@ def iigi : Verb where
 /-- *damal* 'hear', attested only with event nominalizations, the perception reading that needs
 no FPROP shift ((11), (84)). -/
 def damal : Verb where
-  form := "damal"
+  morphs := [.root "damal"]
   valency := .ofFrame ArgumentFrame.finiteClause
   predicateClass := some .perception
   typer := ge
 
 /-- *hamu* 'think', intransitive, questioned with *how* rather than *what* ((2), (49)). -/
 def hamu : Verb where
-  form := "hamu"
+  morphs := [.root "hamu"]
   valency := .ofFrame ArgumentFrame.intransitive
   predicateClass := some .propAttitude
   typer := aq
 
 /-- *i:d* 'say', intransitive ((14), (50)). -/
 def iid : Verb where
-  form := "i:d"
+  morphs := [.root "i:d"]
   valency := .ofFrame ArgumentFrame.intransitive
   predicateClass := some .utterance
   typer := aq
@@ -125,7 +120,7 @@ def iid : Verb where
 
 /-- *mɨtgi:bɨl-e:s* 'believe', negated 'disbelieve' (16). -/
 def metgiibilEs : Verb where
-  form := affixed "mɨtgi:bɨl" .after es
+  morphs := [.root "mɨtgi:bɨl", es]
   valency := .ofFrame ArgumentFrame.intransitive
   predicateClass := some .propAttitude
   typer := aq
@@ -133,7 +128,7 @@ def metgiibilEs : Verb where
 /-- *suʔuʔuš* 'dream' without the reflexive, transitive; its nominalized clause is an internally
 headed relative ((53), (55)). -/
 def suus : Verb where
-  form := "suʔuʔuš"
+  morphs := [.root "suʔuʔuš"]
   valency := .of [(ArgumentFrame.np, [0, 1]), (ArgumentFrame.finiteClause, [0, 1])]
   predicateClass := none
   typer := ge
@@ -142,7 +137,7 @@ def suus : Verb where
 *that*-clause ((15), (52), (54)). -/
 def gumsuus : Verb :=
   { suus with
-    form := affixed suus.form .before gum
+    morphs := gum :: suus.morphs
     voiceType := some .reflexive
     valency := .ofFrame ArgumentFrame.intransitive
     typer := aq }

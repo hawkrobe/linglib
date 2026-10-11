@@ -18,12 +18,12 @@ namespace Chichewa.Verbs
 
 /-- *mang-* 'tie'. -/
 def mang : Verb where
-  form := "mang"
+  morphs := [.root "mang"]
   valency := .ofFrame ArgumentFrame.np
 
 /-- *uk-* 'wake up'. -/
 def uk : Verb where
-  form := "uk"
+  morphs := [.root "uk"]
   valency := .ofFrame ArgumentFrame.intransitive
 
 end Chichewa.Verbs

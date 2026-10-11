@@ -60,13 +60,13 @@ open ArgumentStructure
 /-- *faire* 'make', the causative that forms one predicate with its infinitive, as in *faire
 lire* 'make read'. -/
 def faire : Verb where
-  form := "faire"
+  morphs := [.root "faire"]
   valency := .ofFrame ArgumentFrame.smallClause
   readings := [{ frame := ArgumentFrame.smallClause, control := some .objectControl }]
 
 /-- *laisser* 'let', the permissive causative. -/
 def laisser : Verb where
-  form := "laisser"
+  morphs := [.root "laisser"]
   valency := .ofFrame ArgumentFrame.smallClause
   readings := [{ frame := ArgumentFrame.smallClause, control := some .objectControl }]
 
@@ -89,7 +89,7 @@ def movingUndergoer : EntailmentProfile := { undergoer with movement := true }
 /-- The entry of an anticausative with an optional *se* has the intransitive, its patient the
 subject, as its basic diathesis and the transitive of the alternation after it. -/
 def anticausative (form : String) (arg : EntailmentProfile := undergoer) : Verb :=
-  { form,
+  { morphs := [.root form],
     valency := .of [(ArgumentFrame.intransitive, [0]), (ArgumentFrame.np, [1, 0])] [some arg,
                     none] }
 
@@ -150,7 +150,7 @@ def neglectSubject : EntailmentProfile :=
 class and sense. -/
 def transitive (form : String) (subj obj : EntailmentProfile) (cls : Aspect.VendlerClass)
     (tag : SenseTag := .default) : Verb :=
-  { form, valency := .ofFrame ArgumentFrame.np [some subj, some obj],
+  { morphs := [.root form], valency := .ofFrame ArgumentFrame.np [some subj, some obj],
     vendlerClass := some cls, senseTag := tag }
 
 /-- *laver* 'wash' ([staps-rooryck-2024] Table 1). -/
@@ -228,7 +228,7 @@ examples. -/
 
 /-- *aller* 'go', a verb of motion to a goal. -/
 def aller : Verb where
-  form := "aller"
+  morphs := [.root "aller"]
   valency := .ofFrame ArgumentFrame.intransitive
   perfectAuxiliaries := {.be}
   vendlerClass := some .achievement
@@ -236,7 +236,7 @@ def aller : Verb where
 
 /-- *arriver* 'arrive', a verb of motion to a goal. -/
 def arriver : Verb where
-  form := "arriver"
+  morphs := [.root "arriver"]
   valency := .ofFrame ArgumentFrame.intransitive
   perfectAuxiliaries := {.be}
   vendlerClass := some .achievement
@@ -244,7 +244,7 @@ def arriver : Verb where
 
 /-- *entrer* 'enter', a verb of motion to a goal. -/
 def entrer : Verb where
-  form := "entrer"
+  morphs := [.root "entrer"]
   valency := .ofFrame ArgumentFrame.intransitive
   perfectAuxiliaries := {.be}
   vendlerClass := some .achievement
@@ -252,7 +252,7 @@ def entrer : Verb where
 
 /-- *retourner* 'go back', a verb of motion to a goal. -/
 def retourner : Verb where
-  form := "retourner"
+  morphs := [.root "retourner"]
   valency := .ofFrame ArgumentFrame.intransitive
   perfectAuxiliaries := {.be}
   vendlerClass := some .achievement
@@ -260,7 +260,7 @@ def retourner : Verb where
 
 /-- *tomber* 'fall', a verb of motion in a direction. -/
 def tomber : Verb where
-  form := "tomber"
+  morphs := [.root "tomber"]
   valency := .ofFrame ArgumentFrame.intransitive
   perfectAuxiliaries := {.be}
   vendlerClass := some .achievement
@@ -268,7 +268,7 @@ def tomber : Verb where
 
 /-- *venir* 'come', a verb of motion to a goal. -/
 def venir : Verb where
-  form := "venir"
+  morphs := [.root "venir"]
   valency := .ofFrame ArgumentFrame.intransitive
   perfectAuxiliaries := {.be}
   vendlerClass := some .achievement
@@ -276,7 +276,7 @@ def venir : Verb where
 
 /-- *partir* 'leave', a verb of motion from a source. -/
 def partir : Verb where
-  form := "partir"
+  morphs := [.root "partir"]
   valency := .ofFrame ArgumentFrame.intransitive
   perfectAuxiliaries := {.be}
   vendlerClass := some .achievement
@@ -284,7 +284,7 @@ def partir : Verb where
 
 /-- *sortir* 'go out', a verb of motion from a source. -/
 def sortir : Verb where
-  form := "sortir"
+  morphs := [.root "sortir"]
   valency := .ofFrame ArgumentFrame.intransitive
   perfectAuxiliaries := {.be}
   vendlerClass := some .achievement
@@ -292,35 +292,35 @@ def sortir : Verb where
 
 /-- *décéder* 'die', a change of state. -/
 def deceder : Verb where
-  form := "décéder"
+  morphs := [.root "décéder"]
   valency := .ofFrame ArgumentFrame.intransitive
   perfectAuxiliaries := {.be}
   vendlerClass := some .achievement
 
 /-- *devenir* 'become', a change of state. -/
 def devenir : Verb where
-  form := "devenir"
+  morphs := [.root "devenir"]
   valency := .ofFrame ArgumentFrame.intransitive
   perfectAuxiliaries := {.be}
   vendlerClass := some .achievement
 
 /-- *mourir* 'die', a change of state. -/
 def mourir : Verb where
-  form := "mourir"
+  morphs := [.root "mourir"]
   valency := .ofFrame ArgumentFrame.intransitive
   perfectAuxiliaries := {.be}
   vendlerClass := some .achievement
 
 /-- *naître* 'be born', a change of state. -/
 def naitre : Verb where
-  form := "naître"
+  morphs := [.root "naître"]
   valency := .ofFrame ArgumentFrame.intransitive
   perfectAuxiliaries := {.be}
   vendlerClass := some .achievement
 
 /-- *rester* 'stay', the continuation of a state. -/
 def rester : Verb where
-  form := "rester"
+  morphs := [.root "rester"]
   valency := .ofFrame ArgumentFrame.intransitive
   perfectAuxiliaries := {.be}
   vendlerClass := some .state
@@ -328,14 +328,14 @@ def rester : Verb where
 
 /-- *aboutir* 'succeed, end up', telic. -/
 def aboutir : Verb where
-  form := "aboutir"
+  morphs := [.root "aboutir"]
   valency := .ofFrame ArgumentFrame.intransitive
   perfectAuxiliaries := {.be, .have}
   vendlerClass := some .achievement
 
 /-- *atterrir* 'land', telic. -/
 def atterrir : Verb where
-  form := "atterrir"
+  morphs := [.root "atterrir"]
   valency := .ofFrame ArgumentFrame.intransitive
   perfectAuxiliaries := {.be, .have}
   vendlerClass := some .achievement
@@ -343,21 +343,21 @@ def atterrir : Verb where
 /-- *disparaître* 'disappear', with *avoir* for the event, *Elle a disparu prématurément*, and, now
 rarely, *être* for the state, *Il est aujourd'hui disparu*. -/
 def disparaitre : Verb where
-  form := "disparaître"
+  morphs := [.root "disparaître"]
   valency := .ofFrame ArgumentFrame.intransitive
   perfectAuxiliaries := {.be, .have}
   vendlerClass := some .achievement
 
 /-- *paraître* 'appear, come out'. -/
 def paraitre : Verb where
-  form := "paraître"
+  morphs := [.root "paraître"]
   valency := .ofFrame ArgumentFrame.intransitive
   perfectAuxiliaries := {.be, .have}
   vendlerClass := some .achievement
 
 /-- *grandir* 'grow', a change along a scale of size. -/
 def grandir : Verb where
-  form := "grandir"
+  morphs := [.root "grandir"]
   valency := .ofFrame ArgumentFrame.intransitive
   perfectAuxiliaries := {.be, .have}
   vendlerClass := some .accomplishment
@@ -365,28 +365,28 @@ def grandir : Verb where
 
 /-- *survivre* 'survive', stative. -/
 def survivre : Verb where
-  form := "survivre"
+  morphs := [.root "survivre"]
   valency := .ofFrame ArgumentFrame.intransitive
   perfectAuxiliaries := {.have}
   vendlerClass := some .state
 
 /-- *exister* 'exist', stative. -/
 def exister : Verb where
-  form := "exister"
+  morphs := [.root "exister"]
   valency := .ofFrame ArgumentFrame.intransitive
   perfectAuxiliaries := {.have}
   vendlerClass := some .state
 
 /-- *travailler* 'work', an activity whose subject controls it. -/
 def travailler : Verb where
-  form := "travailler"
+  morphs := [.root "travailler"]
   valency := .ofFrame ArgumentFrame.intransitive [some activitySubjectProfile]
   perfectAuxiliaries := {.have}
   vendlerClass := some .activity
 
 /-- *courir* 'run', a verb of manner of motion, which selects no directional phrase. -/
 def courir : Verb where
-  form := "courir"
+  morphs := [.root "courir"]
   valency := .ofFrame ArgumentFrame.intransitive
   perfectAuxiliaries := {.have}
   vendlerClass := some .activity
@@ -394,7 +394,7 @@ def courir : Verb where
 
 /-- *nager* 'swim', a verb of manner of motion, which selects no directional phrase. -/
 def nager : Verb where
-  form := "nager"
+  morphs := [.root "nager"]
   valency := .ofFrame ArgumentFrame.intransitive
   perfectAuxiliaries := {.have}
   vendlerClass := some .activity

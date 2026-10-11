@@ -114,18 +114,20 @@ end Verb
 /-- `simplex inf pp` is the simplex transitive verb with the infinitive `inf` and the past
 participle `pp`, given with its *ge-*. -/
 def simplex (inf pp : String) : Verb :=
-  { form := inf, valency := .ofFrame ArgumentFrame.np, base := inf,
+  { morphs := [.root inf], valency := .ofFrame ArgumentFrame.np, base := inf,
     participle := match pp.toList with
       | 'g' :: 'e' :: r => String.ofList r
       | _ => pp }
 
 /-- `particleVerb p v` is the verb formed on `v` with the separable particle `p`. -/
 def particleVerb (p : String) (v : Verb) : Verb :=
-  { v with form := p ++ v.form, formation := .particle p }
+  let w : Verb := { v with formation := .particle p }
+  { w with morphs := [.root w.infinitive] }
 
 /-- `prefixVerb p v` is the verb formed on `v` with the inseparable prefix `p`. -/
 def prefixVerb (p : String) (v : Verb) : Verb :=
-  { v with form := p ++ v.form, formation := .prefix p }
+  let w : Verb := { v with formation := .prefix p }
+  { w with morphs := [.root w.infinitive] }
 
 /-- A particle precedes the *ge-* of the past participle. -/
 theorem pastParticiple_particle (p : String) (v : Verb) :

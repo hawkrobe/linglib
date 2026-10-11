@@ -74,7 +74,7 @@ def effectorSubject : EntailmentProfile := { causation := true, independentExist
 /-- *abrir* 'open', with a marked intransitive *abrirse*. Its causer may be an agent, an
 instrument or a natural force ([koontz-garboden-2009]). -/
 def abrir : SpanishVerbEntry :=
-  { form := "abrir",
+  { morphs := [.root "abrir"],
     valency := .of
       [(ArgumentFrame.np, [0, 1]),
        (ArgumentFrame.intransitive, [1])]
@@ -84,7 +84,7 @@ def abrir : SpanishVerbEntry :=
 /-- *romper* 'break', with a marked intransitive *romperse*. Its causer may be an agent, an
 instrument, a natural force or an event ([koontz-garboden-2009]). -/
 def romper : SpanishVerbEntry :=
-  { form := "romper",
+  { morphs := [.root "romper"],
     valency := .of
       [(ArgumentFrame.np, [0, 1]),
        (ArgumentFrame.intransitive, [1])]
@@ -94,7 +94,7 @@ def romper : SpanishVerbEntry :=
 /-- *hundir* 'sink', with a marked intransitive *hundirse*. Its causer is unrestricted
 ([koontz-garboden-2009]). -/
 def hundir : SpanishVerbEntry :=
-  { form := "hundir",
+  { morphs := [.root "hundir"],
     valency := .of
       [(ArgumentFrame.np, [0, 1]),
        (ArgumentFrame.intransitive, [1])]
@@ -104,52 +104,52 @@ def hundir : SpanishVerbEntry :=
 /-- *caer* 'fall', an unaccusative that occurs with and without the clitic, *cayó* and *se cayó*
 ([munoz-perez-2026]). -/
 def caer : SpanishVerbEntry :=
-  { form := "caer", valency := .ofFrame ArgumentFrame.intransitive,
+  { morphs := [.root "caer"], valency := .ofFrame ArgumentFrame.intransitive,
     voiceType := some .nonThematic, anticausativeMarking := some .optional }
 
 /-- *morir* 'die', an unaccusative that occurs with and without the clitic, *murió* and
 *se murió* ([munoz-perez-2026]). -/
 def morir : SpanishVerbEntry :=
-  { form := "morir", valency := .ofFrame ArgumentFrame.intransitive,
+  { morphs := [.root "morir"], valency := .ofFrame ArgumentFrame.intransitive,
     voiceType := some .nonThematic, anticausativeMarking := some .optional }
 
 /-- *cerrar* 'close', with a marked intransitive *cerrarse*. -/
 def cerrar : SpanishVerbEntry :=
-  { form := "cerrar",
+  { morphs := [.root "cerrar"],
     valency := .of [(ArgumentFrame.np, [0, 1]), (ArgumentFrame.intransitive, [1])],
     anticausativeMarking := some .marked }
 
 /-- *quebrar* 'crack', with a marked intransitive, *el florero se quebró* and never
 *el florero quebró* ([munoz-perez-2026]). -/
 def quebrar : SpanishVerbEntry :=
-  { form := "quebrar",
+  { morphs := [.root "quebrar"],
     valency := .of [(ArgumentFrame.np, [0, 1]), (ArgumentFrame.intransitive, [1])],
     anticausativeMarking := some .marked }
 
 /-- *hervir* 'boil', whose intransitive is usually bare, *el agua hirvió*, and marginally takes
 the clitic ([munoz-perez-2026]). -/
 def hervir : SpanishVerbEntry :=
-  { form := "hervir",
+  { morphs := [.root "hervir"],
     valency := .of [(ArgumentFrame.np, [0, 1]), (ArgumentFrame.intransitive, [1])],
     anticausativeMarking := some .optional }
 
 /-- *olvidar* 'forget', whose intransitive *olvidarse* takes a dative experiencer,
 *se me olvidó*. -/
 def olvidar : SpanishVerbEntry :=
-  { form := "olvidar",
+  { morphs := [.root "olvidar"],
     valency := .of [(ArgumentFrame.np, [0, 1]), (ArgumentFrame.intransitive, [1])],
     anticausativeMarking := some .marked }
 
 /-- *ocurrir* 'occur', whose marked form *ocurrirse* takes a dative experiencer,
 *se me ocurrió una idea*. -/
 def ocurrir : SpanishVerbEntry :=
-  { form := "ocurrir", valency := .ofFrame ArgumentFrame.intransitive,
+  { morphs := [.root "ocurrir"], valency := .ofFrame ArgumentFrame.intransitive,
     anticausativeMarking := some .marked }
 
 /-- *mejorar* 'improve', with a bare intransitive, *los sueldos mejoraron* and never
 *los sueldos se mejoraron* ([munoz-perez-2026]). -/
 def mejorar : SpanishVerbEntry :=
-  { form := "mejorar",
+  { morphs := [.root "mejorar"],
     valency := .of [(ArgumentFrame.np, [0, 1]), (ArgumentFrame.intransitive, [1])],
     anticausativeMarking := some .unmarked }
 
@@ -157,7 +157,7 @@ def mejorar : SpanishVerbEntry :=
 insubstantial patient and a unidirectional, gash-like separation, and it is incompatible with
 careful, controlled action ([spalek-mcnally-2026] §3.2). -/
 def rasgar : SpanishVerbEntry :=
-  { form := "rasgar",
+  { morphs := [.root "rasgar"],
     valency := .of [(ArgumentFrame.np, [0, 1]), (ArgumentFrame.intransitive, [1])],
     anticausativeMarking := some .marked,
     root := { content := {
@@ -172,7 +172,7 @@ def rasgar : SpanishVerbEntry :=
 the clitic it is only reflexive, *el senador se asesinó* 'the senator killed himself'
 ([koontz-garboden-2009] exx. 24–29). -/
 def asesinar : SpanishVerbEntry :=
-  { form := "asesinar",
+  { morphs := [.root "asesinar"],
     valency := .ofFrame ArgumentFrame.np [some accomplishmentSubjectProfile, none],
     anticausativeMarking := none }
 
@@ -181,14 +181,14 @@ def asesinar : SpanishVerbEntry :=
 *se me cortó la correa* 'the strap snapped on me' ([munoz-perez-2026]), which the marking
 records; the frames are those of 'cut'. -/
 def cortar : SpanishVerbEntry :=
-  { form := "cortar",
+  { morphs := [.root "cortar"],
     valency := .ofFrame ArgumentFrame.np [some accomplishmentSubjectProfile, none],
     anticausativeMarking := some .marked }
 
 /-- *ahogar* 'drown', with an EFFECTOR causer and typically an animate theme; *ahogarse* is its
 derived inchoative ([koontz-garboden-2009] exx. 50–52). -/
 def ahogar : SpanishVerbEntry :=
-  { form := "ahogar",
+  { morphs := [.root "ahogar"],
     valency := .of
       [(ArgumentFrame.np, [0, 1]),
        (ArgumentFrame.intransitive, [1])]
@@ -198,20 +198,20 @@ def ahogar : SpanishVerbEntry :=
 /-- *empeorar* 'worsen', an internally caused change of state with a bare intransitive, which
 rejects *por sí solo* 'by itself' ([koontz-garboden-2009] ex. 65a). -/
 def empeorar : SpanishVerbEntry :=
-  { form := "empeorar",
+  { morphs := [.root "empeorar"],
     valency := .of [(ArgumentFrame.np, [0, 1]), (ArgumentFrame.intransitive, [1])],
     anticausativeMarking := some .unmarked }
 
 /-- *quemar* 'burn', with a marked intransitive *quemarse*. -/
 def quemar : SpanishVerbEntry :=
-  { form := "quemar",
+  { morphs := [.root "quemar"],
     valency := .of [(ArgumentFrame.np, [0, 1]), (ArgumentFrame.intransitive, [1])],
     anticausativeMarking := some .marked }
 
 /-- *crecer* 'grow', an internally caused change of state, which rejects *por sí solo* 'by
 itself' ([koontz-garboden-2009] ex. 65c). -/
 def crecer : SpanishVerbEntry :=
-  { form := "crecer", valency := .ofFrame ArgumentFrame.intransitive,
+  { morphs := [.root "crecer"], valency := .ofFrame ArgumentFrame.intransitive,
     anticausativeMarking := some .unmarked }
 
 /-- The verbs of the fragment. -/
@@ -227,67 +227,67 @@ psych verb and two unergatives, one of which also takes an object. -/
 
 /-- *mandar* 'send' — transitive, directional towards a recipient. -/
 def mandar : Verb where
-  form := "mandar"
+  morphs := [.root "mandar"]
   valency := .of [(ArgumentFrame.np, [0, 1]), (ArgumentFrame.np_pp, [0, 1, 2])]
 
 /-- *preparar* 'fix, prepare' — transitive verb of creation. -/
 def preparar : Verb where
-  form := "preparar"
+  morphs := [.root "preparar"]
   valency := .ofFrame ArgumentFrame.np
 
 /-- *sacar* 'take away' — transitive, directional away from a source. -/
 def sacar : Verb where
-  form := "sacar"
+  morphs := [.root "sacar"]
   valency := .of [(ArgumentFrame.np, [0, 1]), (ArgumentFrame.np_pp, [0, 1, 2])]
 
 /-- *lavar* 'wash' — transitive activity, non-directional. -/
 def lavar : Verb where
-  form := "lavar"
+  morphs := [.root "lavar"]
   valency := .ofFrame ArgumentFrame.np
 
 /-- *admirar* 'admire' — transitive stative. -/
 def admirar : Verb where
-  form := "admirar"
+  morphs := [.root "admirar"]
   valency := .ofFrame ArgumentFrame.np
 
 /-- *llegar* 'arrive' — unaccusative verb of movement. -/
 def llegar : Verb where
-  form := "llegar"
+  morphs := [.root "llegar"]
   valency := .ofFrame ArgumentFrame.intransitive
   voiceType := some .nonThematic
 
 /-- *salir* 'come out' — unaccusative verb of movement. -/
 def salir : Verb where
-  form := "salir"
+  morphs := [.root "salir"]
   valency := .ofFrame ArgumentFrame.intransitive
   voiceType := some .nonThematic
 
 /-- *suceder* 'happen' — unaccusative verb of happening. -/
 def suceder : Verb where
-  form := "suceder"
+  morphs := [.root "suceder"]
   valency := .ofFrame ArgumentFrame.intransitive
   voiceType := some .nonThematic
 
 /-- *sobrar* 'be left over, be extra' — unaccusative existential. -/
 def sobrar : Verb where
-  form := "sobrar"
+  morphs := [.root "sobrar"]
   valency := .ofFrame ArgumentFrame.intransitive
   voiceType := some .nonThematic
 
 /-- *gustar* 'appeal to, be liked by' — unaccusative psych verb whose experiencer is dative. -/
 def gustar : Verb where
-  form := "gustar"
+  morphs := [.root "gustar"]
   valency := .ofFrame ArgumentFrame.intransitive
   voiceType := some .nonThematic
 
 /-- *caminar* 'walk' — unergative. -/
 def caminar : Verb where
-  form := "caminar"
+  morphs := [.root "caminar"]
   valency := .ofFrame ArgumentFrame.intransitive
 
 /-- *correr* 'run' — unergative, also transitive with an object naming the race run. -/
 def correr : Verb where
-  form := "correr"
+  morphs := [.root "correr"]
   valency := .of [(ArgumentFrame.intransitive, [0]), (ArgumentFrame.np, [0, 1])]
 
 /-! ### Verbs with a lexical reciprocal entry -/
@@ -295,49 +295,49 @@ def correr : Verb where
 /-- *abrazar* 'hug' — transitive, with a lexical reciprocal entry
     ([palmieri-2024], Appendix A). -/
 def abrazar : Verb where
-  form := "abrazar"
+  morphs := [.root "abrazar"]
   valency := .ofFrame ArgumentFrame.np
 
 /-- *acurrucar* 'cuddle' — transitive, with a lexical reciprocal entry
     ([palmieri-2024], Appendix A). -/
 def acurrucar : Verb where
-  form := "acurrucar"
+  morphs := [.root "acurrucar"]
   valency := .ofFrame ArgumentFrame.np
 
 /-- *besar* 'kiss' — transitive, with a lexical reciprocal entry
     ([palmieri-2024], Appendix A). -/
 def besar : Verb where
-  form := "besar"
+  morphs := [.root "besar"]
   valency := .ofFrame ArgumentFrame.np
 
 /-- *casar* 'marry' — transitive, with a lexical reciprocal entry
     ([palmieri-2024], Appendix A). -/
 def casar : Verb where
-  form := "casar"
+  morphs := [.root "casar"]
   valency := .ofFrame ArgumentFrame.np
 
 /-- *consultar* 'consult/confer' — transitive, with a lexical reciprocal entry
     ([palmieri-2024], Appendix A). -/
 def consultar : Verb where
-  form := "consultar"
+  morphs := [.root "consultar"]
   valency := .ofFrame ArgumentFrame.np
 
 /-- *cruzar* 'run into, meet accidentally' — transitive, with a lexical reciprocal entry
     ([palmieri-2024], Appendix A). -/
 def cruzar : Verb where
-  form := "cruzar"
+  morphs := [.root "cruzar"]
   valency := .ofFrame ArgumentFrame.np
 
 /-- *dejar* 'leave/break up' — transitive, with a lexical reciprocal entry
     ([palmieri-2024], Appendix A). -/
 def dejar : Verb where
-  form := "dejar"
+  morphs := [.root "dejar"]
   valency := .ofFrame ArgumentFrame.np
 
 /-- *encontrar* 'find/meet' — transitive, with a lexical reciprocal entry
     ([palmieri-2024], Appendix A). -/
 def encontrar : Verb where
-  form := "encontrar"
+  morphs := [.root "encontrar"]
   valency := .ofFrame ArgumentFrame.np
 
 /-! ### Attitude and causative verbs -/
@@ -345,7 +345,7 @@ def encontrar : Verb where
 /-- *querer* 'want' takes a *que* clause in the subjunctive, with disjoint reference, and an
 infinitive under subject control. -/
 def querer : Verb where
-  form := "querer"
+  morphs := [.root "querer"]
   valency := .of [(ArgumentFrame.subjunctiveClause, [0, 1]), (ArgumentFrame.infinitival, [0, 1])]
   readings := [{ frame := ArgumentFrame.infinitival, control := some .subjectControl }]
   passivizable := false
@@ -356,7 +356,7 @@ def querer : Verb where
 control. With an indicative clause about the future the verb means 'expect', a sense this entry
 does not cover. -/
 def esperar : Verb where
-  form := "esperar"
+  morphs := [.root "esperar"]
   valency := .of [(ArgumentFrame.subjunctiveClause, [0, 1]), (ArgumentFrame.infinitival, [0, 1])]
   readings := [{ frame := ArgumentFrame.infinitival, control := some .subjectControl }]
   passivizable := false
@@ -366,14 +366,14 @@ def esperar : Verb where
 /-- The causative *hacer* 'make' takes an infinitive under object control and a *que* clause in
 the subjunctive. -/
 def hacer : Verb where
-  form := "hacer"
+  morphs := [.root "hacer"]
   valency := .of [(ArgumentFrame.infinitival, [0, 1]), (ArgumentFrame.subjunctiveClause, [0, 1])]
   readings := [{ frame := ArgumentFrame.infinitival, control := some .objectControl }]
 
 /-- *convencer* 'convince' takes an object and a *de que* clause, which reports an intention in
 the subjunctive and a belief in the indicative. -/
 def convencer : Verb where
-  form := "convencer"
+  morphs := [.root "convencer"]
   valency := .of
     [(⟨some .nominal, [.nominal, .clausal (some .subjunctive) (.only .declarative)]⟩, [0, 1, 2]),
      (⟨some .nominal, [.nominal, .clausal (some .indicative) (.only .declarative)]⟩, [0, 1, 2])]

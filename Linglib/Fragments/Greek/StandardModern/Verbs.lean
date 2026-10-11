@@ -38,7 +38,7 @@ Verbs of saying / belief / knowledge / understanding
 /-- *léo* (λέω) 'say' — past tense *ípe* in [angelopoulos-2026]
     ex. 1a. Speech-act verb, eventive (activity). -/
 def leo : Verb where
-  form := "léo"
+  morphs := [.root "léo"]
   valency := .ofFrame ArgumentFrame.finiteClause
   speechActVerb := true
   vendlerClass := some .activity
@@ -46,7 +46,7 @@ def leo : Verb where
 /-- *pistévo* (πιστεύω) 'believe' — doxastic, stative; the impersonal
     passive *pistévetai oti* is standard. -/
 def pistevo : Verb where
-  form := "pistévo"
+  morphs := [.root "pistévo"]
   valency := .ofFrame ArgumentFrame.finiteClause
   attitude := some (.doxastic .nonVeridical)
   vendlerClass := some .state
@@ -55,7 +55,7 @@ def pistevo : Verb where
 /-- *kséro* (ξέρω) 'know' (alongside *gnorízo*) — factive doxastic,
     stative. Rejects manner adverbs ([angelopoulos-2026] ex. 21a). -/
 def ksero : Verb where
-  form := "kséro"
+  morphs := [.root "kséro"]
   valency := .ofFrame ArgumentFrame.finiteClause
   attitude := some (.doxastic .veridical)
   factivity := some .semi
@@ -65,7 +65,7 @@ def ksero : Verb where
     manner adverbs in [angelopoulos-2026] ex. 21b),
     factive doxastic. -/
 def katalaveno : Verb where
-  form := "katalavéno"
+  morphs := [.root "katalavéno"]
   valency := .ofFrame ArgumentFrame.finiteClause
   attitude := some (.doxastic .veridical)
   factivity := some .semi
@@ -74,7 +74,7 @@ def katalaveno : Verb where
 /-- *sinidhitopió* (συνειδητοποιώ) 'realize' — eventive (achievement),
     factive doxastic ([angelopoulos-2026] ex. 21b). -/
 def sinidhitopio : Verb where
-  form := "sinidhitopió"
+  morphs := [.root "sinidhitopió"]
   valency := .ofFrame ArgumentFrame.finiteClause
   attitude := some (.doxastic .veridical)
   factivity := some .semi
@@ -83,7 +83,7 @@ def sinidhitopio : Verb where
 /-- *eksigó* (εξηγώ) 'explain' — accomplishment, takes *oti*
     yielding *explanans* reading ([angelopoulos-2026] ex. 4a). -/
 def eksigo : Verb where
-  form := "eksigó"
+  morphs := [.root "eksigó"]
   valency := .ofFrame ArgumentFrame.finiteClause
   vendlerClass := some .accomplishment
 
@@ -95,7 +95,7 @@ stativity restriction. -/
 /-- *metanióno* (μετανιώνω) 'regret' — preferential (negative
     valence), stative. [angelopoulos-2026] ex. 1b, 20. -/
 def metaniono : Verb where
-  form := "metanióno"
+  morphs := [.root "metanióno"]
   valency := .ofFrame ArgumentFrame.finiteClause
   attitude := some (.preferential .negative true)
   vendlerClass := some .state
@@ -103,7 +103,7 @@ def metaniono : Verb where
 /-- *aréso* (αρέσω) 'appeal to / be liked by' — Class III experiencer,
     stative ([angelopoulos-2026] ex. 13, 14; [landau-2010]). -/
 def areso : Verb where
-  form := "aréso"
+  morphs := [.root "aréso"]
   valency := .ofFrame ({ ArgumentFrame.finiteClause with external := none })
   attitude := some (.preferential .positive true)
   vendlerClass := some .state
@@ -111,7 +111,7 @@ def areso : Verb where
 /-- *xérome* (χαίρομαι) 'be happy/glad' — preferential positive,
     stative. -/
 def xerome : Verb where
-  form := "xérome"
+  morphs := [.root "xérome"]
   valency := .ofFrame ArgumentFrame.finiteClause
   attitude := some (.preferential .positive true)
   vendlerClass := some .state
@@ -128,7 +128,7 @@ polysemy rides on sense-tagged entry pairs (`SenseTag.stative`, the
     ex. 22, fn. 16); the stative direct-perception recollection sense
     is `thimameStat`. -/
 def thimame : Verb where
-  form := "thimáme"
+  morphs := [.root "thimáme"]
   valency := .ofFrame ArgumentFrame.finiteClause
   attitude := some (.doxastic .veridical)
   factivity := some .semi
@@ -139,7 +139,7 @@ def thimame : Verb where
     ([angelopoulos-2026] fn. 16; [roussou-2010] ex. 17's strong
     presupposition). -/
 def thimameStat : Verb where
-  form := "thimáme"
+  morphs := [.root "thimáme"]
   valency := .ofFrame ArgumentFrame.finiteClause
   senseTag := .stative
   attitude := some (.doxastic .veridical)
@@ -150,7 +150,7 @@ def thimameStat : Verb where
     one available with *oti*; the stative sense is `thimonoStat`
     ([angelopoulos-2026] ex. 19, 23). -/
 def thimono : Verb where
-  form := "thimóno"
+  morphs := [.root "thimóno"]
   valency := .ofFrame ArgumentFrame.finiteClause
   attitude := some (.preferential .negative true)
   vendlerClass := some .achievement
@@ -158,7 +158,7 @@ def thimono : Verb where
 /-- *thimóno* — stative 'be angry' sense, the one available with *pu*
     ([angelopoulos-2026] ex. 19, 23). -/
 def thimonoStat : Verb where
-  form := "thimóno"
+  morphs := [.root "thimóno"]
   valency := .ofFrame ArgumentFrame.finiteClause
   senseTag := .stative
   attitude := some (.preferential .negative true)
@@ -167,7 +167,7 @@ def thimonoStat : Verb where
 /-- *nomízo* (νομίζω) 'think' — doxastic, non-veridical, stative; takes *oti*, and *na*
     under matrix negation or question ([roussou-2010]). -/
 def nomizo : Verb where
-  form := "nomízo"
+  morphs := [.root "nomízo"]
   valency := .ofFrame ArgumentFrame.finiteClause
   attitude := some (.doxastic .nonVeridical)
   vendlerClass := some .state
@@ -176,7 +176,7 @@ def nomizo : Verb where
 /-- *paradhéxome* (παραδέχομαι) 'admit' — factive speech-act verb; takes *oti* and not
     *pu* ([roussou-2010]). -/
 def paradhexome : Verb where
-  form := "paradhéxome"
+  morphs := [.root "paradhéxome"]
   valency := .ofFrame ArgumentFrame.finiteClause
   speechActVerb := true
   attitude := some (.doxastic .veridical)
@@ -185,7 +185,7 @@ def paradhexome : Verb where
 /-- *antilamvánome* (αντιλαμβάνομαι) 'realize' — factive doxastic, eventive; takes *oti*
     and not *pu* ([roussou-2010]). -/
 def antilamvanome : Verb where
-  form := "antilamvánome"
+  morphs := [.root "antilamvánome"]
   valency := .ofFrame ArgumentFrame.finiteClause
   attitude := some (.doxastic .veridical)
   factivity := some .semi
@@ -194,7 +194,7 @@ def antilamvanome : Verb where
 /-- *anisixó* (ανησυχώ) 'worry' — preferential (negative valence) experiencer verb,
     stative; takes *pu* on the factive reading and *oti* otherwise ([roussou-2010]). -/
 def anisixo : Verb where
-  form := "anisixó"
+  morphs := [.root "anisixó"]
   valency := .ofFrame ArgumentFrame.finiteClause
   attitude := some (.preferential .negative true)
   vendlerClass := some .state
@@ -204,14 +204,14 @@ def anisixo : Verb where
 /-- *anarotjéme* (αναρωτιέμαι) 'wonder' — rogative, selecting the interrogative
     complementizer *an* ([roussou-2010]). -/
 def anarotjeme : Verb where
-  form := "anarotjéme"
+  morphs := [.root "anarotjéme"]
   valency := .ofFrame ArgumentFrame.question
   vendlerClass := some .state
   senseTag := .rogative
 
 /-- *thélo* (θέλω) 'want' — volitional, taking only a *na*-clause ([roussou-2010]). -/
 def thelo : Verb where
-  form := "thélo"
+  morphs := [.root "thélo"]
   valency := .ofFrame ({ complements := [.clausal (coding := some .subjunctive)] })
   attitude := some (.preferential .positive true)
   vendlerClass := some .state
@@ -219,7 +219,7 @@ def thelo : Verb where
 /-- *elpízo* (ελπίζω) 'hope' — takes a *na*-clause or an *oti*-clause ([grano-2024],
     from [giannakidou-mari-2021]). -/
 def elpizo : Verb where
-  form := "elpízo"
+  morphs := [.root "elpízo"]
   valency := .of
     [({ complements := [.clausal (coding := some .subjunctive)] }, [0, 1]),
      (ArgumentFrame.finiteClause, [0, 1])]
@@ -231,7 +231,7 @@ def elpizo : Verb where
 /-- *protítheme* (προτίθεμαι) 'intend' — takes only a *na*-clause ([grano-2024], from
     [giannakidou-mari-2021], in the third singular *protíthete*). -/
 def protitheme : Verb where
-  form := "protítheme"
+  morphs := [.root "protítheme"]
   valency := .ofFrame ({ complements := [.clausal (coding := some .subjunctive)] })
   passivizable := false
   opaqueContext := true
@@ -241,7 +241,7 @@ def protitheme : Verb where
 /-- *vázo* (βάζω) 'put', causative 'make' — takes an object and a *na*-clause
     ([grano-2024]). -/
 def vazo : Verb where
-  form := "vázo"
+  morphs := [.root "vázo"]
   valency := .ofFrame ({ complements := [.nominal, .clausal (coding := some .subjunctive)] })
 
 /-! ### Occurrence verbs -/
@@ -251,7 +251,7 @@ def vazo : Verb where
     *pu*-complements and takes subjunctive *na*-clauses
     ([angelopoulos-2026] fn. 14). -/
 def simveni : Verb where
-  form := "simvéni"
+  morphs := [.root "simvéni"]
   valency := .ofFrame
     { external := none, complements := [.clausal (coding := some .subjunctive)] }
   vendlerClass := some .achievement

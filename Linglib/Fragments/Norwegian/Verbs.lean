@@ -127,11 +127,11 @@ theorem participle_of_simplex (h : v.formation = .simplex) (c : ParticipleContex
 
 /-- `transitive s` is the transitive entry with the stem `s`. -/
 def transitive (s : Stem) : Verb :=
-  { form := s.infinitive, valency := .ofFrame ArgumentFrame.np, stem := s }
+  { morphs := [.root s.infinitive], valency := .ofFrame ArgumentFrame.np, stem := s }
 
 /-- `v.withParticle p` is the verb phrase formed on `v` with the verbal particle `p`. -/
 def withParticle (v : Verb) (p : String) : Verb :=
-  { v with form := v.form ++ " " ++ p, formation := .particle p }
+  { v with morphs := v.morphs ++ [.free p], formation := .particle p }
 
 /-- The compound participle puts the particle before the participle of the simplex verb. -/
 theorem compoundParticiple_withParticle (v : Verb) (p : String) :

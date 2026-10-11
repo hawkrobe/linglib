@@ -38,74 +38,74 @@ open ArgumentStructure
 
 /-- 打 *dǎ* 'hit'. -/
 def da : Verb :=
-  { form := "dǎ", hanzi := "打", valency := .ofFrame ArgumentFrame.np,
+  { morphs := [.root "dǎ"], hanzi := "打", valency := .ofFrame ArgumentFrame.np,
     vendlerClass := some .activity }
 
 /-- 哭 *kū* 'cry'. -/
 def ku : Verb :=
-  { form := "kū", hanzi := "哭", valency := .ofFrame ArgumentFrame.intransitive,
+  { morphs := [.root "kū"], hanzi := "哭", valency := .ofFrame ArgumentFrame.intransitive,
     vendlerClass := some .activity }
 
 /-- 吃 *chī* 'eat'. -/
 def chi : Verb :=
-  { form := "chī", hanzi := "吃",
+  { morphs := [.root "chī"], hanzi := "吃",
     valency := .of [(ArgumentFrame.np, [0, 1]), (ArgumentFrame.intransitive, [0])],
     vendlerClass := some .activity }
 
 /-- 喝 *hē* 'drink'. -/
 def he : Verb :=
-  { form := "hē", hanzi := "喝",
+  { morphs := [.root "hē"], hanzi := "喝",
     valency := .of [(ArgumentFrame.np, [0, 1]), (ArgumentFrame.intransitive, [0])],
     vendlerClass := some .activity }
 
 /-- 推 *tuī* 'push'. -/
 def tui : Verb :=
-  { form := "tuī", hanzi := "推", valency := .ofFrame ArgumentFrame.np,
+  { morphs := [.root "tuī"], hanzi := "推", valency := .ofFrame ArgumentFrame.np,
     vendlerClass := some .activity }
 
 /-- 追 *zhuī* 'chase'. -/
 def zhui : Verb :=
-  { form := "zhuī", hanzi := "追", valency := .ofFrame ArgumentFrame.np,
+  { morphs := [.root "zhuī"], hanzi := "追", valency := .ofFrame ArgumentFrame.np,
     vendlerClass := some .activity }
 
 /-- 射 *shè* 'shoot'. -/
 def she : Verb :=
-  { form := "shè", hanzi := "射", valency := .ofFrame ArgumentFrame.np,
+  { morphs := [.root "shè"], hanzi := "射", valency := .ofFrame ArgumentFrame.np,
     vendlerClass := some .activity }
 
 /-- 破 *pò* 'break', intransitive. -/
 def po : Verb :=
-  { form := "pò", hanzi := "破", valency := .ofFrame ArgumentFrame.intransitive,
+  { morphs := [.root "pò"], hanzi := "破", valency := .ofFrame ArgumentFrame.intransitive,
     vendlerClass := some .achievement }
 
 /-- 死 *sǐ* 'die'. -/
 def si : Verb :=
-  { form := "sǐ", hanzi := "死", valency := .ofFrame ArgumentFrame.intransitive,
+  { morphs := [.root "sǐ"], hanzi := "死", valency := .ofFrame ArgumentFrame.intransitive,
     vendlerClass := some .achievement }
 
 /-- 开 *kāi* 'open', intransitive. -/
 def kai : Verb :=
-  { form := "kāi", hanzi := "开", valency := .ofFrame ArgumentFrame.intransitive,
+  { morphs := [.root "kāi"], hanzi := "开", valency := .ofFrame ArgumentFrame.intransitive,
     vendlerClass := some .achievement }
 
 /-- 累 *lèi* 'tired'. -/
 def lei : Verb :=
-  { form := "lèi", hanzi := "累", valency := .ofFrame ArgumentFrame.intransitive,
+  { morphs := [.root "lèi"], hanzi := "累", valency := .ofFrame ArgumentFrame.intransitive,
     vendlerClass := some .state }
 
 /-- 饱 *bǎo* 'full'. -/
 def bao : Verb :=
-  { form := "bǎo", hanzi := "饱", valency := .ofFrame ArgumentFrame.intransitive,
+  { morphs := [.root "bǎo"], hanzi := "饱", valency := .ofFrame ArgumentFrame.intransitive,
     vendlerClass := some .state }
 
 /-- 湿 *shī* 'wet'. -/
 def shi : Verb :=
-  { form := "shī", hanzi := "湿", valency := .ofFrame ArgumentFrame.intransitive,
+  { morphs := [.root "shī"], hanzi := "湿", valency := .ofFrame ArgumentFrame.intransitive,
     vendlerClass := some .state }
 
 /-- 醉 *zuì* 'drunk'. -/
 def zui : Verb :=
-  { form := "zuì", hanzi := "醉", valency := .ofFrame ArgumentFrame.intransitive,
+  { morphs := [.root "zuì"], hanzi := "醉", valency := .ofFrame ArgumentFrame.intransitive,
     vendlerClass := some .state }
 
 /-! ### Compounds -/

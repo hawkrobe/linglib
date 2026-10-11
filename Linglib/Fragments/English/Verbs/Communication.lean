@@ -25,7 +25,7 @@ open English.Inflection
 
 /-- "say" — communication verb, not factive -/
 def say : Verb where
-  form := "say"
+  morphs := [.root "say"]
   form3sg := "says"
   formPast := "said"
   formPastPart := "said"
@@ -39,7 +39,7 @@ def say : Verb where
     Also ditransitive ("tell me a story"). Implicit second obj is definite
     ([bruening-2021]: recoverable). Implicit goal (PP) is indefinite. -/
 def tell : Verb where
-  form := "tell"
+  morphs := [.root "tell"]
   form3sg := "tells"
   formPast := "told"
   formPastPart := "told"
@@ -56,7 +56,7 @@ def tell : Verb where
 
 /-- "claim" — communication verb, speaker doesn't endorse -/
 def claim : Verb := .mkRegular {
-  form := "claim"
+  morphs := [.root "claim"]
   speechActVerb := true
   valency := .ofFrame ArgumentFrame.finiteClause
   vendlerClass := some .achievement
@@ -72,7 +72,7 @@ def claim : Verb := .mkRegular {
 
 /-- "whisper" — Levin 37.3 Manner of Speaking verbs. -/
 def whisper : Verb := .mkRegular {
-  form := "whisper"
+  morphs := [.root "whisper"]
   speechActVerb := true
   valency := .ofFrame ArgumentFrame.finiteClause
   vendlerClass := some .activity
@@ -80,7 +80,7 @@ def whisper : Verb := .mkRegular {
 
 /-- "murmur" — Levin 37.3 Manner of Speaking verbs. -/
 def murmur : Verb := .mkRegular {
-  form := "murmur"
+  morphs := [.root "murmur"]
   speechActVerb := true
   valency := .ofFrame ArgumentFrame.finiteClause
   vendlerClass := some .activity
@@ -88,7 +88,7 @@ def murmur : Verb := .mkRegular {
 
 /-- "shout" — Levin 37.3 Manner of Speaking verbs. -/
 def shout : Verb := .mkRegular {
-  form := "shout"
+  morphs := [.root "shout"]
   speechActVerb := true
   valency := .ofFrame ArgumentFrame.finiteClause
   vendlerClass := some .activity
@@ -96,7 +96,7 @@ def shout : Verb := .mkRegular {
 
 /-- "cry" — Levin 37.3 Manner of Speaking verbs. -/
 def cry : Verb := .mkRegular {
-  form := "cry"
+  morphs := [.root "cry"]
   speechActVerb := true
   valency := .ofFrame ArgumentFrame.finiteClause
   vendlerClass := some .activity
@@ -105,7 +105,7 @@ def cry : Verb := .mkRegular {
 
 /-- "scream" — Levin 37.3 Manner of Speaking verbs. -/
 def scream : Verb := .mkRegular {
-  form := "scream"
+  morphs := [.root "scream"]
   speechActVerb := true
   valency := .ofFrame ArgumentFrame.finiteClause
   vendlerClass := some .activity
@@ -113,7 +113,7 @@ def scream : Verb := .mkRegular {
 
 /-- "mumble" — Levin 37.3 Manner of Speaking verbs. -/
 def mumble : Verb := .mkRegular {
-  form := "mumble"
+  morphs := [.root "mumble"]
   speechActVerb := true
   valency := .ofFrame ArgumentFrame.finiteClause
   vendlerClass := some .activity
@@ -121,7 +121,7 @@ def mumble : Verb := .mkRegular {
 
 /-- "mutter" — Levin 37.3 Manner of Speaking verbs. -/
 def mutter : Verb := .mkRegular {
-  form := "mutter"
+  morphs := [.root "mutter"]
   speechActVerb := true
   valency := .ofFrame ArgumentFrame.finiteClause
   vendlerClass := some .activity
@@ -129,7 +129,7 @@ def mutter : Verb := .mkRegular {
 
 /-- "shriek" — Levin 37.3 Manner of Speaking verbs. -/
 def shriek : Verb := .mkRegular {
-  form := "shriek"
+  morphs := [.root "shriek"]
   speechActVerb := true
   valency := .ofFrame ArgumentFrame.finiteClause
   vendlerClass := some .activity
@@ -137,7 +137,7 @@ def shriek : Verb := .mkRegular {
 
 /-- "yell" — Levin 37.3 Manner of Speaking verbs. -/
 def yell : Verb := .mkRegular {
-  form := "yell"
+  morphs := [.root "yell"]
   speechActVerb := true
   valency := .ofFrame ArgumentFrame.finiteClause
   vendlerClass := some .activity
@@ -145,7 +145,7 @@ def yell : Verb := .mkRegular {
 
 /-- "groan" — Levin 37.3 Manner of Speaking verbs. -/
 def groan : Verb := .mkRegular {
-  form := "groan"
+  morphs := [.root "groan"]
   speechActVerb := true
   valency := .ofFrame ArgumentFrame.finiteClause
   vendlerClass := some .activity
@@ -153,7 +153,7 @@ def groan : Verb := .mkRegular {
 
 /-- "grumble" — Levin 37.3 Manner of Speaking verbs. -/
 def grumble : Verb := .mkRegular {
-  form := "grumble"
+  morphs := [.root "grumble"]
   speechActVerb := true
   valency := .ofFrame ArgumentFrame.finiteClause
   vendlerClass := some .activity
@@ -161,7 +161,7 @@ def grumble : Verb := .mkRegular {
 
 /-- "hiss" — Levin 37.3 Manner of Speaking verbs. -/
 def hiss : Verb := .mkRegular {
-  form := "hiss"
+  morphs := [.root "hiss"]
   speechActVerb := true
   valency := .ofFrame ArgumentFrame.finiteClause
   vendlerClass := some .activity
@@ -169,7 +169,7 @@ def hiss : Verb := .mkRegular {
 
 /-- "sigh" — Levin 40.2 Nonverbal Expression verbs. -/
 def sigh : Verb := .mkRegular {
-  form := "sigh"
+  morphs := [.root "sigh"]
   speechActVerb := true
   valency := .ofFrame ArgumentFrame.finiteClause
   vendlerClass := some .activity
@@ -177,7 +177,7 @@ def sigh : Verb := .mkRegular {
 
 /-- "whimper" — Levin 37.3 Manner of Speaking verbs. -/
 def whimper : Verb := .mkRegular {
-  form := "whimper"
+  morphs := [.root "whimper"]
   speechActVerb := true
   valency := .ofFrame ArgumentFrame.finiteClause
   vendlerClass := some .activity
@@ -185,7 +185,7 @@ def whimper : Verb := .mkRegular {
 
 /-- "snap" — Levin 37.3 Manner of Speaking verbs. -/
 def snap : Verb := .mkRegular {
-  form := "snap"
+  morphs := [.root "snap"]
   speechActVerb := true
   valency := .ofFrame ArgumentFrame.finiteClause
   vendlerClass := some .activity
@@ -194,7 +194,7 @@ def snap : Verb := .mkRegular {
 /-- "speak" — agentive communication verb, blocks quotative inversion (unergative)
     Levin 37.5 Talk verbs. -/
 def speak : Verb where
-  form := "speak"
+  morphs := [.root "speak"]
   form3sg := "speaks"
   formPast := "spoke"
   formPastPart := "spoken"
@@ -208,7 +208,7 @@ def speak : Verb where
 /-- "talk" — agentive communication verb, blocks quotative inversion (unergative)
     Levin 37.5 Talk verbs. -/
 def talk : Verb := .mkRegular {
-  form := "talk"
+  morphs := [.root "talk"]
   speechActVerb := true
   valency := .ofFrame ArgumentFrame.intransitive
   vendlerClass := some .activity
