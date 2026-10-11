@@ -3,7 +3,7 @@ module
 public import Mathlib.Order.Max
 public import Mathlib.Order.Interval.Finset.Nat
 public import Mathlib.Data.Fintype.Basic
-public import Linglib.Semantics.Supervaluation
+public import Linglib.Logic.Trivalent.Flat
 public import Linglib.Logic.Trivalent.Propositional
 public import Linglib.Logic.Trivalent.Flat
 
@@ -24,8 +24,8 @@ points partially ordered by extension, complete points to which every point exte
 (Completability), and super-truth at a point as truth at all its complete extensions (`SuperTrue`),
 which satisfies Fidelity and Stability (`superTrue_iff_of_isMax`, `SuperTrue.mono`); the partial
 points are recovered from the complete ones as the sets of their completions, extension becoming
-inclusion (`completions`, `completions_mono`), which is the reduced form of
-`Semantics.Supervaluation` (`superTrue_completions`). §3 argues that the theory is forced: an
+inclusion (`completions`, `completions_mono`), and super-truth at a point is
+`Trivalent.supervaluation` over its completions (`superTrue_completions`). §3 argues that the theory is forced: an
 account satisfying Fidelity, Stability and Resolution is the super-truth account
 (`Account.eq_superTruth_of_resolves`), and the A-clauses — Resolution for atoms, the classical
 clauses for negation, and for conjunction the truth clause with the falsity clause that redeems its
@@ -55,8 +55,8 @@ to Kamp and to Lewis.
   points are specifications (the extensional account of §2), and Fidelity needs it, since
   super-truth at a complete point with a further complete extension would not be classical;
   under Completability the maximal points are then exactly the complete ones.
-  `Semantics.Supervaluation.SpecSpace` is the §2 reduction to nonempty sets of complete points;
-  `completions` is the reduction map.
+  The §2 reduction takes a point to the finite set of its completions (`completions`); a reduced
+  space is a `Finset` of complete specifications, more precise spaces being smaller sets.
 * Partial specifications are `Atom → Flat Bool` with the pointwise knowledge order, so that
   extension is the order of `Flat`; they instantiate the class (`isMax_iff`). Connectives are
   evaluated on `Trivalent`, whose strong Kleene tables are the maximizing account and
@@ -84,7 +84,7 @@ to Kamp and to Lewis.
 
 namespace Fine1975
 
-open Trivalent Semantics.Supervaluation
+open Trivalent
 
 /-! ### The truth-value approach (§1) -/
 
@@ -148,7 +148,7 @@ theorem conj_eq_inf_or_meetWeak (f : Trivalent → Trivalent → Trivalent) (hF 
 is admissible, the blob has hue 5, and *pink* is above the boundary, *red* at or below it. -/
 
 /-- The admissible colour boundaries. -/
-def colour : SpecSpace ℕ := ⟨Finset.Icc 3 7, ⟨3, by simp⟩⟩
+def colour : Finset ℕ := Finset.Icc 3 7
 
 /-- *x is pink*: its hue is above the boundary. -/
 abbrev pink (hue θ : ℕ) : Prop := θ < hue
@@ -272,6 +272,32 @@ theorem superTrue_and_iff :
   ⟨fun h ↦ ⟨fun u htu hu ↦ (h u htu hu).1, fun u htu hu ↦ (h u htu hu).2⟩,
     fun h u htu hu ↦ ⟨h.1 u htu hu, h.2 u htu hu⟩⟩
 
+section Completions
+
+variable [Fintype Point] [DecidableLE Point] [DecidablePred (IsMax (α := Point))]
+
+/-- The completions of a point are its complete extensions, Fine's reduced specification space. -/
+def completions (t : Point) : Finset Point := Finset.univ.filter fun u ↦ t ≤ u ∧ IsMax u
+
+theorem completions_nonempty [SpecificationSpace Point] (t : Point) :
+    (completions t).Nonempty := by
+  obtain ⟨u, htu, hu⟩ := completable t
+  exact ⟨u, by simp [completions, htu, hu]⟩
+
+/-- Super-truth at a point is super-truth over its completions. -/
+theorem superTrue_completions [DecidablePred A] :
+    supervaluation (completions t) A = .true ↔ SuperTrue A t := by
+  rw [supervaluation_eq_true_iff]
+  simp [completions, SuperTrue]
+
+/-- Extension of points is reverse inclusion of completions. -/
+theorem completions_mono (htu : t ≤ u) : completions u ⊆ completions t := by
+  intro v hv
+  simp only [completions, Finset.mem_filter, Finset.mem_univ, true_and] at hv ⊢
+  exact ⟨htu.trans hv.1, hv.2⟩
+
+end Completions
+
 variable [SpecificationSpace Point]
 
 /-- A conjunction is super-false iff every extension has a further extension at which a
@@ -288,28 +314,6 @@ theorem superFalse_and_iff :
     obtain ⟨v, hwv, hv⟩ := h w htw
     have hvw := hw hwv
     exact not_and_or.2 (hv.imp (fun hf ↦ hf w hvw hw) (fun hf ↦ hf w hvw hw))
-
-variable [Fintype Point] [DecidableLE Point] [DecidablePred (IsMax (α := Point))]
-
-/-- The completions of a point are its complete extensions, a specification space in the reduced
-sense of `Semantics.Supervaluation`. -/
-def completions (t : Point) : SpecSpace Point :=
-  ⟨Finset.univ.filter fun u ↦ t ≤ u ∧ IsMax u, by
-    obtain ⟨u, htu, hu⟩ := completable t
-    exact ⟨u, by simp [htu, hu]⟩⟩
-
-/-- Super-truth at a point is super-truth over its completions. -/
-theorem superTrue_completions [DecidablePred A] :
-    supervaluation (completions t) A = .true ↔ SuperTrue A t := by
-  rw [supervaluation_eq_true_iff]
-  simp [completions, SuperTrue]
-
-/-- Extension of points is inclusion of completions, the ordering of `SpecSpace`. -/
-theorem completions_mono (htu : t ≤ u) : completions t ≤ completions u := by
-  rw [SpecSpace.le_def]
-  intro v hv
-  simp only [completions, Finset.mem_filter, Finset.mem_univ, true_and] at hv ⊢
-  exact ⟨htu.trans hv.1, hv.2⟩
 
 end Space
 
@@ -484,22 +488,22 @@ section Logic
 variable {Spec : Type*} (A B : Spec → Prop) [DecidablePred A] [DecidablePred B]
 
 /-- A sentence is valid when it is super-true in every specification space. -/
-def SuperValid : Prop := ∀ S : SpecSpace Spec, supervaluation S A = .true
+def SuperValid : Prop := ∀ S : Finset Spec, supervaluation S A = .true
 
 /-- `B` is a consequence of `A` when it is super-true in every specification space in which `A`
 is. -/
 def SuperConsequence : Prop :=
-  ∀ S : SpecSpace Spec, supervaluation S A = .true → supervaluation S B = .true
+  ∀ S : Finset Spec, supervaluation S A = .true → supervaluation S B = .true
 
 /-- Validity is classical, since a classically valid sentence is true at every complete
 specification of every space, and a classical model is a degenerate space. -/
 theorem superValid_iff_classical : SuperValid A ↔ ∀ s, A s :=
-  ⟨fun h s ↦ by simpa using h (.singleton s),
+  ⟨fun h s ↦ by simpa using h {s},
     fun h S ↦ (supervaluation_eq_true_iff ..).2 fun s _ ↦ h s⟩
 
 /-- Consequence is classical, by the same argument. -/
 theorem superConsequence_iff_classical : SuperConsequence A B ↔ ∀ s, A s → B s := by
-  refine ⟨fun h s hA ↦ by simpa using h (.singleton s) (by simp [hA]), fun h S hA ↦ ?_⟩
+  refine ⟨fun h s hA ↦ by simpa using h {s} (by simp [hA]), fun h S hA ↦ ?_⟩
   rw [supervaluation_eq_true_iff] at hA ⊢
   exact fun s hs ↦ h s (hA s hs)
 
@@ -509,7 +513,7 @@ end Logic
 
 /-- The admissible thresholds for *bald* make a man bald with fewer than `θ` hairs, the borderline
 cases being those with 40 to 60 hairs (§5). -/
-def baldness : SpecSpace ℕ := ⟨Finset.Icc 40 60, ⟨40, by simp⟩⟩
+def baldness : Finset ℕ := Finset.Icc 40 60
 
 /-- *A man with `n` hairs is bald* at threshold `θ`. -/
 abbrev bald (n θ : ℕ) : Prop := n < θ
@@ -537,9 +541,9 @@ theorem bald_superConsequence {m n : ℕ} (h : m ≤ n) : SuperConsequence (bald
 complete and admissible specification. -/
 theorem tolerance_superFalse :
     supervaluation baldness (fun θ ↦ ∀ n, bald n θ → bald (n + 1) θ) = .false :=
-  (SpecSpace.supervaluation_eq_false_iff ..).2 fun θ hθ h ↦ by
+  (supervaluation_eq_false_iff ..).2 ⟨⟨40, by simp [baldness]⟩, fun θ hθ h ↦ by
     have := Finset.mem_Icc.1 hθ
-    exact absurd (h (θ - 1) (by unfold bald; omega)) (by unfold bald; omega)
+    exact absurd (h (θ - 1) (by unfold bald; omega)) (by unfold bald; omega)⟩
 
 /-- In the sorites, the first premise is true, the tolerance premise false, and the conclusion
 false. -/
@@ -559,15 +563,15 @@ theorem metaAssert_not_stable :
 
 section Definitely
 
-variable {Spec : Type*} (A : Spec → Prop) (S : SpecSpace Spec)
+variable {Spec : Type*} (A : Spec → Prop) (S : Finset Spec)
 
 /-- Fine's `D` says that `A` holds at every admissible specification. -/
-def definitely : Prop := ∀ s ∈ S.admissible, A s
+def definitely : Prop := ∀ s ∈ S, A s
 
 /-- `DA` and `DDA` coincide (Axiom 4). -/
 theorem definitely_definitely_iff :
     definitely (fun _ ↦ definitely A S) S ↔ definitely A S :=
-  ⟨fun h ↦ let ⟨s, hs⟩ := S.nonempty; h s hs, fun h _ _ ↦ h⟩
+  ⟨fun h s hs ↦ h s hs s hs, fun h _ _ ↦ h⟩
 
 /-- What is not definite is definitely not definite (Axiom 5). -/
 theorem not_definitely_definitely (h : ¬ definitely A S) :
@@ -595,7 +599,8 @@ theorem superTrue_imp_definitely_of_indet (h : supervaluation S A = .indet) :
     supervaluation S (fun s ↦ ¬ A s ∨ definitely A S) = .indet := by
   have hD : ¬ definitely A S := fun hD ↦ by simp [(supervaluation_eq_true_iff ..).2 hD] at h
   simp only [hD, or_false]
-  rw [SpecSpace.supervaluation_not, h]
+  obtain ⟨⟨s, hs, -⟩, -⟩ := (supervaluation_eq_indet_iff ..).1 h
+  rw [supervaluation_not _ ⟨s, hs⟩, h]
   rfl
 
 /-- So *if Herbert is bald, he is definitely bald* is not true, and the Deduction Theorem
@@ -609,7 +614,7 @@ theorem herbert_not_imp_definitely :
 once the Deduction Theorem fails. -/
 theorem superConsequence_iff_definitely_imp {B : Spec → Prop} [DecidablePred B] :
     SuperConsequence A B ↔
-      ∀ S : SpecSpace Spec, supervaluation S (fun s ↦ ¬ definitely A S ∨ B s) = .true := by
+      ∀ S : Finset Spec, supervaluation S (fun s ↦ ¬ definitely A S ∨ B s) = .true := by
   simp only [SuperConsequence, supervaluation_eq_true_iff]
   refine ⟨fun h S s hs ↦ ?_, fun h S hA s hs ↦ (h S s hs).resolve_left (not_not.2 hA)⟩
   by_cases hA : definitely A S
@@ -621,9 +626,8 @@ end Definitely
 /-- External Stability fails for `D`, as *definitely Herbert is bald* is false over the admissible
 thresholds but true once the threshold is fixed at 60, a more precise space. -/
 theorem not_definitely_antitone :
-    baldness ≤ .singleton 60 ∧ ¬ definitely (bald 50) baldness ∧
-      definitely (bald 50) (.singleton 60) :=
-  ⟨by simp [SpecSpace.le_def, baldness], by decide, by decide⟩
+    {60} ⊆ baldness ∧ ¬ definitely (bald 50) baldness ∧ definitely (bald 50) {60} :=
+  ⟨by simp [baldness], by decide, by decide⟩
 
 /-- A zero-order space is a complete specification, and an `(n + 1)`-order space is a set of
 `n`-order spaces. -/
@@ -647,7 +651,7 @@ def R (b c : Boundary Spec) : Prop := ∀ i, c.s i ∈ b.s (i + 1)
 /-- Accessibility is reflexive. -/
 theorem R_refl (b : Boundary Spec) : b.R b := b.mem
 
-/-- `D φ` at a boundary: `φ` at every admissible boundary. -/
+/-- `D φ` holds at a boundary when `φ` holds at every admissible boundary. -/
 def Definitely (φ : Boundary Spec → Prop) (b : Boundary Spec) : Prop := ∀ c, b.R c → φ c
 
 /-- What is definitely the case is the case (Axiom T). -/

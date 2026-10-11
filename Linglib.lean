@@ -999,7 +999,6 @@ import Linglib.Semantics.Reference.Context.Shifts
 import Linglib.Semantics.Reference.Context.Tower
 import Linglib.Semantics.Reference.Nominal
 import Linglib.Semantics.Reference.Rigidity
-import Linglib.Semantics.Supervaluation
 import Linglib.Semantics.Tense.Compositional
 import Linglib.Semantics.Tense.Defs
 import Linglib.Semantics.Tense.Embedding
