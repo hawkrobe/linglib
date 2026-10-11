@@ -15,7 +15,7 @@ A Lean 4 library for formal linguistics across semantics, syntax, pragmatics, mo
 
 Linglib aims to provide for linguistic theory what mathlib provides for mathematics: a machine-verified library where theories can be formalized against shared definitions and tested against a shared body of data. 
 
-- - **Make theories fully explicit.** In practice, theoretical proposals involve some amount of hand-waving, leaving gaps between what is claimed and what actually follows from the definitions. Lean checks predictions as theorems and if the consequences don't follow, the code doesn't compile. 
+- **Make theories fully explicit.** In practice, theoretical proposals involve some amount of hand-waving, leaving gaps between what is claimed and what actually follows from the definitions. Lean checks predictions as theorems and if the consequences don't follow, the code doesn't compile. 
 
 - **Detect breakage.** Because every study imports a shared library, tweaking your semantics for (say) attitude verbs tells you exactly which downstream results about conditionals, questions, or implicature still go through, and which were silently sensitive to this choices. This is like a "regression test" for theory. 
 
@@ -34,7 +34,7 @@ Linglib pins a specific toolchain (currently **Lean v4.34.0 / mathlib v4.34.0**)
 
 ```lean
 require linglib from git
-  "https://github.com/hawkrobe/linglib" @ "v4.33.1"
+  "https://github.com/hawkrobe/linglib" @ "v4.34.0"
 ```
 
 (Use `@ "main"` to track the latest development instead of the pinned release.)
