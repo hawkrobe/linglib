@@ -647,12 +647,8 @@ private theorem listener_eq (q : QUD) (π : Finset World → ℕ) {α : ℝ} (w�
 /-- The standard listener is the pragmatic listener over the universe with a uniform world
 prior, the first column of Table 2. -/
 noncomputable def standard (α : ℝ) : Kernel Utterance World :=
-  ((RSA.speaker α (cost α) (L0 Finset.univ .max) Measure.dirac)†(uniformOn Set.univ))
-
-private theorem speaker_univ_ne_zero {α : ℝ} (hα : 0 < α) :
-    RSA.speaker α (cost α) (L0 Finset.univ .max) Measure.dirac .TT {notStopped} ≠ 0 :=
-  speaker_dirac_apply_singleton_ne_zero hα.le
-    (by rw [L0_apply, l0_I]; dsimp only [tblI]; simp)
+  RSA.listener (uniformOn Set.univ)
+    (RSA.speaker α (cost α) (L0 Finset.univ .max) Measure.dirac)
 
 /-- The standard model puts the three worlds compatible with *did not stop smoking* on a par at
 every rationality, since the utterance is equally under-informative at each, so nothing
@@ -660,16 +656,14 @@ projects. -/
 theorem standard_uniform {α : ℝ} (hα : 0 < α) :
     standard α notStopped {.TT} = standard α notStopped {.FT} ∧
       standard α notStopped {.FT} = standard α notStopped {.FF} := by
-  have hu := comp_apply_singleton_ne_zero _ _ (uniformOn_univ_singleton_ne_zero World.TT)
-    (speaker_univ_ne_zero hα)
   obtain ⟨h₁, h₂⟩ := share_IJK hα
   refine ⟨?_, ?_⟩
   · rw [standard]
-    exact posterior_apply_singleton_congr _ _ hu
+    exact RSA.listener_apply_singleton_congr _ _
       ((ENNReal.toReal_eq_toReal_iff' (measure_ne_top _ _) (measure_ne_top _ _)).1 h₁)
       (uniformOn_univ_singleton_eq _ _)
   · rw [standard]
-    exact posterior_apply_singleton_congr _ _ hu
+    exact RSA.listener_apply_singleton_congr _ _
       ((ENNReal.toReal_eq_toReal_iff' (measure_ne_top _ _) (measure_ne_top _ _)).1 h₂)
       (uniformOn_univ_singleton_eq _ _)
 

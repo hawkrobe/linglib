@@ -337,16 +337,18 @@ theorem S_real_lt (hβL : 0 < βL) (hβS : 0 < βS) (c : ℝ) :
   exact Real.sigmoid_lt (by nlinarith)
 
 /-- The pragmatic listener (7). -/
-noncomputable def PL (βL βS c : ℝ) : Kernel Msg World := (S βL βS c)†μ
+noncomputable def PL (βL βS c : ℝ) : Kernel Msg World := RSA.listener μ (S βL βS c)
 
 instance (βL βS c : ℝ) : IsMarkovKernel (PL βL βS c) :=
-  inferInstanceAs (IsMarkovKernel ((S βL βS c)†μ))
+  ⟨fun m ↦ RSA.isProbabilityMeasure_listener_of_ne_zero _ _ (μ_singleton 0).1
+    (S_apply_ne_zero βL βS c 0 m)⟩
 
 /-- The pragmatic listener hearing "because T" raises the tardiness-only world above its prior:
 the speaker would have cited the birthday in the conjunctive world. -/
 theorem pragmatic_T (hβL : 0 < βL) (hβS : 0 < βS) (c : ℝ) :
     μ.real {0} < (PL βL βS c 0).real {0} := by
-  rw [PL, real_lt_posterior_real_singleton_iff_of_pair (S βL βS c) μ (ω := 0) (ω' := 1)
+  rw [PL, RSA.listener_apply_eq_posterior _ _ (comp_S_ne_zero βL βS c),
+    real_lt_posterior_real_singleton_iff_of_pair (S βL βS c) μ (ω := 0) (ω' := 1)
     (by decide) (fun w _ => by fin_cases w <;> simp) (comp_S_ne_zero βL βS c) (μ_singleton 0).1
     (μ_singleton 1).1]
   exact S_real_lt hβL hβS c

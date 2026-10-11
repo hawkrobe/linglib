@@ -151,6 +151,15 @@ theorem listener_apply_singleton (u : U) (w : W) :
     listener μ S u {w} = S w {u} * μ {w} / ∑ w', S w' {u} * μ {w'} :=
   Kernel.ofDensity_apply_singleton μ _ u w
 
+/-- A relabelling of the states that carries one prior and channel to another carries the listener
+along. -/
+theorem listener_apply_singleton_of_equiv {W' U' : Type*} [MeasurableSpace W'] [MeasurableSpace U']
+    [Countable U'] [MeasurableSingletonClass U'] [Fintype W'] [MeasurableSingletonClass W']
+    (e : W ≃ W') {μ' : Measure W'} {S' : W' → Measure U'} {u : U} {u' : U'}
+    (hμ : ∀ w, μ' {e w} = μ {w}) (hS : ∀ w, S' (e w) {u'} = S w {u}) (w : W) :
+    listener μ' S' u' {e w} = listener μ S u {w} :=
+  Kernel.ofDensity_apply_singleton_of_equiv e hμ hS w
+
 variable {μ S} {u : U} {w : W}
 
 /-- A state whose measure gives the utterance no mass gets none from the listener. -/
@@ -270,7 +279,57 @@ theorem listener_real_lt_of_certain {u : U} {E₁ E₂ : Finset W} {w₀ : W} (h
         Finset.single_le_sum (f := fun w ↦ μ.real {w} * (S w).real {u})
           (fun w _ ↦ mul_nonneg measureReal_nonneg measureReal_nonneg) hw₀
 
+/-- At a prior giving every state the same positive mass, the listener ranks two states as they
+produce the utterance. -/
+theorem listener_real_singleton_lt_iff_of_forall_eq (hμeq : ∀ w w', μ {w} = μ {w'})
+    (hμ0 : ∀ w, μ {w} ≠ 0) (u : U) (w₁ w₂ : W) :
+    (listener μ S u).real {w₁} < (listener μ S u).real {w₂} ↔
+      (S w₁).real {u} < (S w₂).real {u} := by
+  rw [listener_real_singleton_lt_iff,
+    show μ.real {w₂} = μ.real {w₁} by rw [measureReal_def, measureReal_def, hμeq],
+    mul_lt_mul_iff_right₀
+      (show (0 : ℝ) < μ.real _ from ENNReal.toReal_pos (hμ0 _) (measure_ne_top _ _))]
+
 end Event
+
+/-! ##### The uniform prior
+
+Against the uniform prior the prior cancels, and the listener's mass on a state is its share of
+the production probability of the utterance. -/
+
+section Uniform
+
+variable [Fintype W] [MeasurableSingletonClass W] (S : W → Measure U)
+
+theorem listener_uniformOn_univ_apply_singleton [Nonempty W] (u : U) (w : W) :
+    listener (uniformOn Set.univ) S u {w} = S w {u} / ∑ w', S w' {u} :=
+  Kernel.ofDensity_uniformOn_apply_singleton _ u w
+
+variable [∀ w, IsFiniteMeasure (S w)]
+
+theorem listener_uniformOn_univ_real_finset [Nonempty W] (u : U) (E : Finset W) :
+    (listener (uniformOn Set.univ) S u).real ↑E =
+      (∑ w ∈ E, (S w).real {u}) / ∑ w, (S w).real {u} := by
+  rw [measureReal_def, ← sum_measure_singleton]
+  simp_rw [listener_uniformOn_univ_apply_singleton, ENNReal.div_eq_inv_mul]
+  rw [← Finset.mul_sum, ENNReal.toReal_mul, ENNReal.toReal_inv,
+    ENNReal.toReal_sum fun _ _ ↦ measure_ne_top _ _,
+    ENNReal.toReal_sum fun _ _ ↦ measure_ne_top _ _, inv_mul_eq_div]
+  simp only [measureReal_def]
+
+/-- Against the uniform prior the listener ranks two states as they produce the utterance. -/
+theorem listener_uniformOn_real_lt_iff (u : U) (w₁ w₂ : W) :
+    (listener (uniformOn Set.univ) S u).real {w₁} < (listener (uniformOn Set.univ) S u).real {w₂} ↔
+      (S w₁).real {u} < (S w₂).real {u} :=
+  listener_real_singleton_lt_iff_of_forall_eq _ S uniformOn_univ_singleton_eq
+    uniformOn_univ_singleton_ne_zero u w₁ w₂
+
+theorem listener_uniformOn_real_le_iff (u : U) (w₁ w₂ : W) :
+    (listener (uniformOn Set.univ) S u).real {w₁} ≤ (listener (uniformOn Set.univ) S u).real {w₂} ↔
+      (S w₁).real {u} ≤ (S w₂).real {u} :=
+  not_lt.symm.trans ((not_congr (listener_uniformOn_real_lt_iff S u w₂ w₁)).trans not_lt)
+
+end Uniform
 
 /-! ##### Marginals of a listener over a product
 
@@ -439,6 +498,13 @@ theorem listener_apply_eq_posterior [StandardBorelSpace W] [Nonempty W] {u : U}
   Kernel.ofDensity_apply_eq_posterior κ μ hu
 
 end Kernel
+
+/-- A listener who hears a function of the state conditions the prior on its fibre. -/
+theorem listener_dirac_apply (μ : Measure W) {f : W → U} (hf : Measurable f) (u : U) :
+    listener μ (fun w ↦ Measure.dirac (f w)) u = μ[|f ⁻¹' {u}] := by
+  rw [← Kernel.ofDensity_indicator_one_apply μ (fun u ↦ f ⁻¹' {u}) u (hf (.singleton u))]
+  exact congrArg (Kernel.ofDensity μ · u) (funext fun u ↦ funext fun w ↦
+    Measure.dirac_apply' _ (.singleton u))
 
 /-! ##### The listener of a truthful speaker -/
 
@@ -1008,29 +1074,18 @@ end Form
 
 /-! #### Pragmatic listeners
 
-The pragmatic listener (eq. 3) is the Bayesian inverse `S†μ` of a speaker against the prior,
-mathlib's posterior kernel. -/
+The pragmatic listener (eq. 3) is the listener of a speaker. -/
 
 section Listener
 
-variable [MeasurableSingletonClass W] [MeasurableSingletonClass U] [StandardBorelSpace W]
-  [Nonempty W]
+variable [Fintype W] [DiscreteMeasurableSpace W] [Fintype U] [MeasurableSingletonClass U]
 
-variable [Fintype W] [Fintype U]
-
-/-- With Boolean meanings, hearing an utterance rules out every state it does not fit, once some
-state it fits has prior mass. -/
-theorem posterior_speaker_listener_truthful_apply_singleton_of_notMem
-    [DiscreteMeasurableSpace W] (α : ℝ) (C : U → ℝ) (μ : Measure W) [IsFiniteMeasure μ] (hα : 0 < α)
-    (sem : U → Set W) {u : U} {w w' : W} (hw : w ∉ sem u) (hw' : w' ∈ sem u) (hμ : μ {w'} ≠ 0) :
-    ((speaker α C (listener μ (truthful sem)) Measure.dirac)†μ) u {w} = 0 := by
-  have hS : speaker α C (listener μ (truthful sem)) Measure.dirac w' {u} ≠ 0 :=
-    speaker_dirac_apply_singleton_ne_zero hα.le (by
-      rw [listener_truthful_apply_singleton μ sem hw']
-      exact mul_ne_zero (ENNReal.inv_ne_zero.mpr (measure_ne_top _ _)) hμ)
-  exact posterior_apply_singleton_eq_zero _ _ (comp_apply_singleton_ne_zero _ _ hμ hS)
-    (speaker_dirac_apply_singleton_eq_zero hα
-      (listener_truthful_apply_singleton_of_notMem μ sem hw))
+/-- With Boolean meanings, hearing an utterance rules out every state it does not fit. -/
+theorem listener_speaker_listener_truthful_apply_singleton_of_notMem {α : ℝ} (hα : 0 < α)
+    (C : U → ℝ) (μ : Measure W) (sem : U → Set W) {u : U} {w : W} (hw : w ∉ sem u) :
+    listener μ (speaker α C (listener μ (truthful sem)) Measure.dirac) u {w} = 0 :=
+  listener_apply_singleton_eq_zero (speaker_dirac_apply_singleton_eq_zero hα
+    (listener_truthful_apply_singleton_of_notMem μ sem hw))
 
 end Listener
 

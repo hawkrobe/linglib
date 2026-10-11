@@ -119,7 +119,7 @@ noncomputable def incSem (pfx : List U) (r : W) : ℝ≥0∞ :=
 /-! ### The word-level pipeline (eqs. 4–6) -/
 
 variable [Fintype U] [MeasurableSpace U] [DiscreteMeasurableSpace U]
-  [Fintype W] [Nonempty W] [MeasurableSpace W] [DiscreteMeasurableSpace W]
+  [Fintype W] [MeasurableSpace W] [DiscreteMeasurableSpace W]
 
 /-- The incremental literal listener at context `ctx` (eq. 4) reweights the uniform prior by
 `⟦ctx ++ [u]⟧`. -/
@@ -134,6 +134,7 @@ cell is the referent's share of the true-extension counts. -/
 theorem l0_apply (hw : ∀ r : W, r ∈ g.worlds) (ctx : List U) (u : U) (r : W) :
     g.l0 ctx u {r}
       = (g.trueExts (ctx ++ [u]) r : ℝ≥0∞) / (∑ r', (g.trueExts (ctx ++ [u]) r' : ℕ) : ℕ) := by
+  have : Nonempty W := ⟨r⟩
   rw [l0, Kernel.ofDensity_uniformOn_apply_singleton]
   push_cast
   rcases Nat.eq_zero_or_pos (g.viableExts (ctx ++ [u])) with hv | hv
@@ -161,12 +162,10 @@ noncomputable def s1 (cost : U → ℝ) (ctx : List U) : Kernel W U :=
       uniformOn ↑(Finset.univ.filter fun u : U => 0 < g.viableExts (ctx ++ [u]))
     else speaker 1 cost (g.l0 ctx) Measure.dirac r
 
-omit [Nonempty W] in
 theorem s1_apply {ctx : List U} {r : W} (hnd : ¬ g.DeadEnd ctx r) (cost : U → ℝ) :
     g.s1 cost ctx r = speaker 1 cost (g.l0 ctx) Measure.dirac r := by
   rw [s1, Kernel.ofFunOfCountable_apply, ite_eq_right hnd]
 
-omit [Nonempty W] in
 theorem s1_apply_deadEnd {ctx : List U} {r : W} (hd : g.DeadEnd ctx r) (cost : U → ℝ) :
     g.s1 cost ctx r
       = uniformOn ↑(Finset.univ.filter fun u : U => 0 < g.viableExts (ctx ++ [u])) := by
@@ -179,14 +178,13 @@ instance (cost : U → ℝ) (ctx : List U) : IsFiniteKernel (g.s1 cost ctx) :=
     · exact prob_le_one
     · exact Kernel.ofWeights_apply_univ_le_one _ r⟩⟩
 
-/-- The incremental pragmatic listener at context `ctx` (eq. 6) is the posterior of the
-word-level speaker against the uniform prior. -/
-noncomputable def l1 [StandardBorelSpace W] (cost : U → ℝ) (ctx : List U) : Kernel U W :=
-  (g.s1 cost ctx)†(uniformOn (Set.univ : Set W))
+/-- The incremental pragmatic listener at context `ctx` (eq. 6) inverts the word-level speaker
+against the uniform prior. -/
+noncomputable def l1 (cost : U → ℝ) (ctx : List U) : Kernel U W :=
+  RSA.listener (uniformOn Set.univ) (g.s1 cost ctx)
 
-instance [StandardBorelSpace W] (cost : U → ℝ) (ctx : List U) :
-    IsMarkovKernel (g.l1 cost ctx) :=
-  inferInstanceAs (IsMarkovKernel ((g.s1 cost ctx)†(uniformOn (Set.univ : Set W))))
+instance (cost : U → ℝ) (ctx : List U) : IsFiniteKernel (g.l1 cost ctx) :=
+  inferInstanceAs (IsFiniteKernel (RSA.listener _ _))
 
 /-- `s1Chain` multiplies the word-level speaker's remaining choices from context `ctx` on. -/
 noncomputable def s1Chain (cost : U → ℝ) (r : W) : List U → List U → ℝ
@@ -198,7 +196,6 @@ word-level speaker's choices along the utterance. -/
 noncomputable def s1Utt (cost : U → ℝ) (r : W) (u : List U) : ℝ :=
   g.s1Chain cost r [] u
 
-omit [Nonempty W] in
 /-- On reals, the speaker's share is the weighted listener value over the row sum. -/
 theorem s1_real_singleton {ctx : List U} {r : W} (hnd : ¬ g.DeadEnd ctx r) {cost : U → ℝ}
     (u : U) :
@@ -239,6 +236,7 @@ theorem globalL0_apply (u : g.Complete) (r : W) :
     g.globalL0 u {r}
       = (if g.sem u.val r then 1 else 0)
         / ((Finset.univ.filter fun r' => g.sem u.val r').card : ℝ≥0∞) := by
+  have : Nonempty W := ⟨r⟩
   rw [globalL0, Kernel.ofDensity_uniformOn_apply_singleton]
   congr 1
   rw [Finset.sum_boole]
@@ -272,7 +270,6 @@ theorem l0_real (hw : ∀ r : W, r ∈ g.worlds) (ctx : List U) (u : U) (r : W) 
       = (g.trueExts (ctx ++ [u]) r : ℝ) / (∑ r', g.trueExts (ctx ++ [u]) r' : ℕ) := by
   rw [l0_apply g hw, ENNReal.toReal_div, ENNReal.toReal_natCast, ENNReal.toReal_natCast]
 
-omit [Nonempty W] in
 /-- Row preference of the incremental speaker compares weighted listener cells. -/
 theorem s1_real_lt_iff {ctx : List U} {r : W} (hnd : ¬ g.DeadEnd ctx r) {cost : U → ℝ}
     {u₀ : U} (h0 : g.l0 ctx u₀ {r} ≠ 0) {u u' : U} :
@@ -306,24 +303,17 @@ theorem s1_apply_eq_one (hw : ∀ r : W, r ∈ g.worlds) {ctx : List U} {r : W} 
 
 /-- Listener preference upon a word compares the speaker's masses, since the uniform prior
 cancels. -/
-theorem l1_real_lt_iff [StandardBorelSpace W] {cost : U → ℝ} {ctx : List U} {u : U}
-    (hx : (g.s1 cost ctx ∘ₘ uniformOn (Set.univ : Set W)) {u} ≠ 0) {r r' : W} :
+theorem l1_real_lt_iff {cost : U → ℝ} {ctx : List U} {u : U} {r r' : W} :
     (g.l1 cost ctx u).real {r} < (g.l1 cost ctx u).real {r'} ↔
-      (g.s1 cost ctx r).real {u} < (g.s1 cost ctx r').real {u} := by
-  rw [l1, ← Finset.coe_singleton, ← Finset.coe_singleton r',
-    posterior_real_finset_lt_iff _ _ hx, Finset.sum_singleton, Finset.sum_singleton,
-    uniformOn_univ_real_singleton, uniformOn_univ_real_singleton,
-    mul_comm ((Fintype.card W : ℝ))⁻¹, mul_comm ((Fintype.card W : ℝ))⁻¹,
-    mul_lt_mul_iff_left₀ (inv_pos.mpr (by exact_mod_cast Fintype.card_pos))]
+      (g.s1 cost ctx r).real {u} < (g.s1 cost ctx r').real {u} :=
+  RSA.listener_uniformOn_real_lt_iff _ u r r'
 
 /-- Exact Bayes for the incremental listener. -/
-theorem l1_real_singleton [StandardBorelSpace W] {cost : U → ℝ} {ctx : List U} {u : U}
-    (hx : (g.s1 cost ctx ∘ₘ uniformOn (Set.univ : Set W)) {u} ≠ 0) (r : W) :
+theorem l1_real_singleton {cost : U → ℝ} {ctx : List U} {u : U} (r : W) :
     (g.l1 cost ctx u).real {r}
       = (g.s1 cost ctx r).real {u} / ∑ r', (g.s1 cost ctx r').real {u} := by
-  rw [l1, posterior_real_singleton _ _ hx, Measure.comp_real_singleton]
-  simp_rw [uniformOn_univ_real_singleton, ← Finset.mul_sum]
-  rw [mul_div_mul_left _ _ (inv_ne_zero (by exact_mod_cast Fintype.card_ne_zero))]
+  have : Nonempty W := ⟨r⟩
+  simpa [l1] using RSA.listener_uniformOn_univ_real_finset (g.s1 cost ctx) u {r}
 
 /-- At no cost, the speaker's share is a double ratio of extension counts. -/
 theorem s1_real_counts (hw : ∀ r : W, r ∈ g.worlds) {ctx : List U} {r : W}
@@ -456,19 +446,13 @@ theorem s1_figureOne_values :
       show figureOne.trueExts [Word.red, Word.red] .redDress = 0 from rfl]
   · rw [measureReal_def, adj_only_for_r3, ENNReal.toReal_one]
 
-private theorem red_marginal_ne_zero :
-    (figureOne.s1 0 [] ∘ₘ uniformOn (Set.univ : Set Referent)) {Word.red} ≠ 0 :=
-  comp_apply_singleton_ne_zero _ _ (w := Referent.redHat)
-    (uniformOn_univ_singleton_ne_zero _)
-    (by rw [adj_only_for_r3]; exact one_ne_zero)
-
 /-- Upon hearing *red*, the incremental listener favours the red hat over the red dress,
 since *red* is the hat's only opening while the dress's speaker had alternatives. This is the
 anticipatory implicature of Figure 1d. -/
 theorem listener_anticipation :
     (figureOne.l1 0 [] .red).real {Referent.redDress}
       < (figureOne.l1 0 [] .red).real {Referent.redHat} := by
-  rw [figureOne.l1_real_lt_iff red_marginal_ne_zero]
+  rw [figureOne.l1_real_lt_iff]
   rw [s1_figureOne_values.1, measureReal_def, adj_only_for_r3, ENNReal.toReal_one]
   norm_num
 
@@ -480,7 +464,7 @@ private theorem r2_never_opens_red : (figureOne.s1 0 [] .blueDress).real {Word.r
 (Figure 1d). -/
 theorem listener_anticipation_value :
     (figureOne.l1 0 [] .red).real {Referent.redHat} = 7 / 11 := by
-  rw [figureOne.l1_real_singleton red_marginal_ne_zero,
+  rw [figureOne.l1_real_singleton,
     show (Finset.univ : Finset Referent) = {.redDress, .blueDress, .redHat} from by decide,
     Finset.sum_insert (by decide), Finset.sum_insert (by decide), Finset.sum_singleton,
     s1_figureOne_values.1, r2_never_opens_red, measureReal_def, adj_only_for_r3,
@@ -928,18 +912,12 @@ theorem s1_tall_values :
         show game.trueExts [Word.key] .tallCup = 0 from by decide,
         show game.trueExts [Word.key] .tallPitcher = 0 from by decide]
 
-private theorem tall_marginal_ne_zero :
-    (game.s1 0 [] ∘ₘ uniformOn (Set.univ : Set Referent)) {Word.tall} ≠ 0 :=
-  comp_apply_singleton_ne_zero _ _ (w := Referent.tallCup)
-    (uniformOn_univ_singleton_ne_zero _)
-    (game.s1_apply_ne_zero hw (by decide) (by decide))
-
 /-- Upon hearing *tall*, the incremental listener favours the tall cup over the tall pitcher,
 the anticipatory contrastive inference of §3.2. -/
 theorem listener_prefers_tall_cup :
     (game.l1 0 [] .tall).real {Referent.tallPitcher}
       < (game.l1 0 [] .tall).real {Referent.tallCup} := by
-  rw [game.l1_real_lt_iff tall_marginal_ne_zero, s1_tall_values.1, s1_tall_values.2.1]
+  rw [game.l1_real_lt_iff, s1_tall_values.1, s1_tall_values.2.1]
   norm_num
 
 /-- Exactly, the listener puts 3/5 on the tall cup and 2/5 on the pitcher, the paper's 0.6 and
@@ -955,14 +933,14 @@ theorem listener_tall_values :
     rw [Finset.sum_singleton, h1, h2, h3, h4]
     norm_num
   constructor <;>
-    · rw [game.l1_real_singleton tall_marginal_ne_zero, hsum]
+    · rw [game.l1_real_singleton, hsum]
       first | rw [h1] | rw [h2]
       norm_num
 
 /-- The listener who has heard *tall* and then hears *pitcher* takes the posterior of the
 word-level speaker at context *tall* against the updated prior. -/
 noncomputable def afterTallPitcher : Measure Referent :=
-  ((game.s1 0 [.tall])†(game.l1 0 [] .tall)) .pitcher
+  RSA.listener (game.l1 0 [] .tall) (game.s1 0 [.tall]) .pitcher
 
 /-- The implicature cancels, since after *tall pitcher* every referent but the pitcher is
 excluded. The tall cup's speaker never continues *tall* with *pitcher*, and the other two
@@ -974,16 +952,12 @@ theorem afterTallPitcher_eq_one : afterTallPitcher {Referent.tallPitcher} = 1 :=
     game.s1_apply_eq_one hw (by decide) (by decide) (by decide)
   have hprior : ∀ r, r = Referent.shortCup ∨ r = .key → game.l1 0 [] .tall {r} = 0 := by
     rintro r (rfl | rfl) <;>
-      · rw [ReferenceGame.l1, posterior_apply_singleton _ _ tall_marginal_ne_zero,
-          game.s1_apply_eq_zero hw (by decide) 0 (by decide), mul_zero, ENNReal.zero_div]
-  have hpos : game.l1 0 [] .tall {Referent.tallPitcher} ≠ 0 := by
-    rw [ReferenceGame.l1, posterior_apply_singleton _ _ tall_marginal_ne_zero, ne_eq,
-      ENNReal.div_eq_zero_iff, not_or]
-    exact ⟨mul_ne_zero (uniformOn_univ_singleton_ne_zero _)
-      (game.s1_apply_ne_zero hw (by decide) (by decide)), measure_ne_top _ _⟩
-  have hx : (game.s1 0 [.tall] ∘ₘ game.l1 0 [] .tall) {Word.pitcher} ≠ 0 :=
-    comp_apply_singleton_ne_zero _ _ hpos (hpit ▸ one_ne_zero)
-  rw [afterTallPitcher, posterior_apply_singleton _ _ hx, Measure.comp_apply_singleton,
+      exact RSA.listener_apply_singleton_eq_zero
+        (game.s1_apply_eq_zero hw (by decide) 0 (by decide))
+  have hpos : game.l1 0 [] .tall {Referent.tallPitcher} ≠ 0 :=
+    RSA.listener_apply_singleton_ne_zero (uniformOn_univ_singleton_ne_zero _)
+      (game.s1_apply_ne_zero hw (by decide) (by decide))
+  rw [afterTallPitcher, RSA.listener_apply_singleton_eq_div, Measure.comp_apply_singleton,
     show (Finset.univ : Finset Referent) = {.tallCup, .shortCup, .tallPitcher, .key}
       from by decide]
   repeat rw [Finset.sum_insert (by decide)]

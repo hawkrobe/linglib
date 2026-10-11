@@ -223,14 +223,13 @@ end Speaker
 section Listener
 
 variable [MeasurableSingletonClass U] [Fintype W] [MeasurableSingletonClass W]
-  [StandardBorelSpace W] [Nonempty W]
 
 /-- Without noise the pragmatic listener over the channel is the noiseless one. -/
-theorem posterior_id_comp_noisySpeaker (α : ℝ) (C : U → ℝ) (L : Kernel U W)
-    [IsFiniteKernel L] (μ : Measure W) [IsFiniteMeasure μ] :
-    ((Kernel.id ∘ₖ noisySpeaker Kernel.id α C L)†μ) =
-      ((speaker α C L Measure.dirac)†μ) := by
-  simp only [noisySpeaker_id, Kernel.id_comp]
+theorem listener_id_comp_noisySpeaker (α : ℝ) (C : U → ℝ) (L : Kernel U W)
+    [IsFiniteKernel L] (μ : Measure W) :
+    listener μ (Kernel.id ∘ₖ noisySpeaker Kernel.id α C L) =
+      listener μ (speaker α C L Measure.dirac) := by
+  rw [Kernel.id_comp, noisySpeaker_id]
 
 end Listener
 
@@ -300,7 +299,7 @@ noncomputable abbrev S1 (δ : ℝ) : Kernel Meaning Meaning := noisySpeaker (N �
 
 /-- The pragmatic listener (eq. 8). -/
 noncomputable abbrev L1 (δ : ℝ) : Kernel Utterance Meaning :=
-  ((N δ ∘ₖ noisySpeaker (N δ) 1 0 (L0 δ))†μ)
+  listener μ (N δ ∘ₖ S1 δ)
 
 variable {δ : ℝ} (m : Meaning)
 
@@ -396,11 +395,8 @@ theorem L1_subject : L1 δ (.subject m) = Measure.dirac m := by
   have hmarg : ((N δ ∘ₖ S1 δ) ∘ₘ μ) {.subject m} = ENNReal.ofReal δ := by
     rw [Measure.comp_apply_singleton]
     simp [comp_apply_subject m hδ₀ hδ₁]
-  have hx : ((N δ ∘ₖ S1 δ) ∘ₘ μ) {.subject m} ≠ 0 := by
-    rw [hmarg]; exact (ENNReal.ofReal_pos.mpr hδ₀).ne'
   refine Measure.ext_of_singleton fun w => ?_
-  change ((N δ ∘ₖ S1 δ)†μ) (.subject m) {w} = _
-  rw [posterior_apply_singleton _ _ hx, hmarg, comp_apply_subject m hδ₀ hδ₁]
+  rw [listener_apply_singleton_eq_div, hmarg, comp_apply_subject m hδ₀ hδ₁]
   simp only [Measure.dirac_apply' _ (.singleton w), Set.indicator_apply, Set.mem_singleton_iff,
     Pi.one_apply]
   by_cases h : w = m

@@ -112,9 +112,9 @@ noncomputable def speaker : Kernel (Fin (N + 1)) U :=
 instance : IsFiniteKernel (speaker sem α n) :=
   inferInstanceAs (IsFiniteKernel (RSA.speaker _ _ _ _ ∘ₖ hypergeometric N n))
 
-/-- The listener (equation 1) is the speaker's Bayesian inverse under a uniform prior. -/
+/-- The listener (equation 1) inverts the speaker against a uniform prior. -/
 noncomputable def listener : Kernel U (Fin (N + 1)) :=
-  ((speaker sem α n)†(uniformOn Set.univ))
+  RSA.listener (uniformOn Set.univ) (speaker sem α n)
 
 variable {sem α n} {u : U}
 
@@ -184,9 +184,7 @@ one at which fewer alternatives are true, since the speaker's choice is spread o
 theorem listener_full_lt (hα : 0 < α) {s s' : Fin (N + 1)} (hu : s ∈ sem u)
     (h : RSA.trueChoices sem s ⊂ RSA.trueChoices sem s') :
     (listener sem α N u).real {s'} < (listener sem α N u).real {s} := by
-  rw [listener, posterior_uniformOn_real_lt_iff (w₀ := s)
-    (by rw [speaker_full]; exact RSA.uniformSpeaker_apply_singleton_ne_zero sem hα.le hu),
-    speaker_full]
+  rw [listener, RSA.listener_uniformOn_real_lt_iff, speaker_full]
   exact RSA.uniformSpeaker_real_singleton_lt_of_trueChoices_ssubset sem hα hu h
 
 end Model
@@ -272,7 +270,7 @@ theorem some_partial {n : ℕ} (hn : n = 1 ∨ n = 2) :
       exact RSA.uniformSpeaker_apply_singleton_eq_one _ hα (by decide) (by decide)
     · rw [speaker_last hα (by norm_num) (s := 2) (by decide)]
       exact RSA.uniformSpeaker_apply_singleton_eq_one _ hα (by decide) (by decide)
-  rw [listener, posterior_uniformOn_real_le_iff (w₀ := 3) (h3 ▸ one_ne_zero),
+  rw [listener, RSA.listener_uniformOn_real_le_iff,
     measureReal_def (speaker QUtt.extension α n 3), h3, ENNReal.toReal_one]
   exact speaker_real_singleton_le_one _ _
 
@@ -296,15 +294,6 @@ private theorem numeral_speaker_real {n : ℕ} (hn : n ≤ 3) (s : Fin 4) (u : N
     (speaker NumUtt.extension α n s).real {u} = ∑ k, (hypergeometric 3 n s).real {k} *
       (RSA.uniformSpeaker NumUtt.extension α k).real {u} := by
   rw [speaker_of_isUpperSet hα NumUtt.isUpperSet_extension hn, Kernel.comp_real_singleton]
-
-/-- When all three objects have the property, the speaker may use any numeral up to the number
-she looks at. -/
-private theorem numeral_speaker_three_ne_zero {n : ℕ} (hn : n ≤ 3) {u : NumUtt}
-    (hu : u.value ≤ n) : speaker NumUtt.extension α n 3 {u} ≠ 0 := by
-  rw [speaker_of_isUpperSet hα NumUtt.isUpperSet_extension hn, Kernel.comp_apply,
-    show (3 : Fin 4) = Fin.last 3 from rfl, hypergeometric_last hn,
-    Measure.dirac_bind (Kernel.measurable _)]
-  exact RSA.uniformSpeaker_apply_singleton_ne_zero _ hα.le (NumUtt.mem_extension.2 hu)
 
 /-- The fully informed speaker at no objects has no numeral to use. -/
 private theorem informed_zero (u : NumUtt) :
@@ -335,8 +324,7 @@ theorem one_minimal {s s' : Fin 4} (h : s ≤ s') :
   have key (s : Fin 4) : (speaker NumUtt.extension α 1 s).real {.one} = ((s : ℕ) : ℝ) / 3 := by
     simp [numeral_speaker_real hα, Fin.sum_univ_four, hypergeometric_real_singleton,
       hypergeometricCount, informed_zero hα, informed_one_one hα]
-  rw [listener, posterior_uniformOn_real_le_iff
-    (numeral_speaker_three_ne_zero hα (by norm_num) (by decide)), key, key]
+  rw [listener, RSA.listener_uniformOn_real_le_iff, key, key]
   gcongr
   exact_mod_cast h
 
@@ -346,8 +334,7 @@ looks at have the property. -/
 theorem two_partial :
     (listener NumUtt.extension α 2 .two).real {2} ≤
       (listener NumUtt.extension α 2 .two).real {3} := by
-  rw [listener, posterior_uniformOn_real_le_iff
-    (numeral_speaker_three_ne_zero hα (by norm_num) (by decide))]
+  rw [listener, RSA.listener_uniformOn_real_le_iff]
   simp [numeral_speaker_real hα, Fin.sum_univ_four, hypergeometric_real_singleton,
     hypergeometricCount, informed_zero hα, informed_one_two hα]
   linarith [measureReal_nonneg (μ := RSA.uniformSpeaker NumUtt.extension α 2) (s := {.two})]
@@ -358,8 +345,7 @@ would rather have said *two*. -/
 theorem one_partial_three :
     (listener NumUtt.extension α 2 .one).real {3} <
       (listener NumUtt.extension α 2 .one).real {1} := by
-  rw [listener, posterior_uniformOn_real_lt_iff
-    (numeral_speaker_three_ne_zero hα (by norm_num) (by decide))]
+  rw [listener, RSA.listener_uniformOn_real_lt_iff]
   simp [numeral_speaker_real hα, Fin.sum_univ_four, hypergeometric_real_singleton,
     hypergeometricCount, informed_zero hα, informed_one_one hα]
   linarith [informed_two_lt hα, informed_two_add_le (α := α)]
@@ -370,8 +356,7 @@ property. -/
 theorem one_partial_two :
     (listener NumUtt.extension α 2 .one).real {1} ≤
       (listener NumUtt.extension α 2 .one).real {2} := by
-  rw [listener, posterior_uniformOn_real_le_iff
-    (numeral_speaker_three_ne_zero hα (by norm_num) (by decide))]
+  rw [listener, RSA.listener_uniformOn_real_le_iff]
   simp [numeral_speaker_real hα, Fin.sum_univ_four, hypergeometric_real_singleton,
     hypergeometricCount, informed_zero hα, informed_one_one hα]
 

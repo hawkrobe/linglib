@@ -346,65 +346,49 @@ theorem S1_s3_C : (S1 .s3).real {.C} = 0 := by
 
 /-! ### The pragmatic listener, Table 2(e) -/
 
-/-- The pragmatic listener of Table 2(e) is the posterior of `S1` against the uniform prior. -/
-noncomputable def L1 : Kernel Utt State := ((speaker 1 0 L0 Measure.dirac)†prior)
+/-- The pragmatic listener of Table 2(e) inverts `S1` against the uniform prior. -/
+noncomputable def L1 : Kernel Utt State := listener prior S1
 
-private theorem S1_ne_zero {s : State} {u : Utt} (h : (S1 s).real {u} ≠ 0) : S1 s {u} ≠ 0 :=
-  fun h0 => h (by rw [measureReal_def, h0, ENNReal.toReal_zero])
-
-theorem comp_conditional_ne_zero : (S1 ∘ₘ prior) {Utt.conditional} ≠ 0 :=
-  comp_apply_singleton_ne_zero S1 prior (w := .s2) (by rw [prior_singleton]; norm_num)
-    (S1_ne_zero (by rw [S1_s2_conditional]; norm_num))
-
-theorem comp_C_ne_zero : (S1 ∘ₘ prior) {Utt.C} ≠ 0 :=
-  comp_apply_singleton_ne_zero S1 prior (w := .s1) (by rw [prior_singleton]; norm_num)
-    (S1_ne_zero (by rw [S1_s1_C]; norm_num))
-
-theorem comp_likelyC_ne_zero : (S1 ∘ₘ prior) {Utt.likelyC} ≠ 0 :=
-  comp_apply_singleton_ne_zero S1 prior (w := .s1) (by rw [prior_singleton]; norm_num)
-    (S1_ne_zero (by rw [S1_s1_likelyC]; norm_num))
-
-theorem L1_real (u : Utt) (hu : (S1 ∘ₘ prior) {u} ≠ 0) (s : State) :
+theorem L1_real (u : Utt) (s : State) :
     (L1 u).real {s} = (S1 s).real {u} / ∑ s', (S1 s').real {u} := by
-  show ((S1†prior) u).real {s} = _
-  rw [posterior_real_singleton _ _ hu, Measure.comp_real_singleton, prior_real_singleton]
+  rw [L1, listener_real_singleton, prior_real_singleton]
   simp_rw [prior_real_singleton, ← Finset.mul_sum]
   rw [mul_div_mul_left _ _ (by norm_num)]
 
 /-- Hearing the conditional, the listener puts `11/16` on `s2`, `5/16` on `s1` and nothing on
 `s3` (Table 2(e)). -/
 theorem L1_conditional_s2 : (L1 .conditional).real {.s2} = 11 / 16 := by
-  rw [L1_real _ comp_conditional_ne_zero, sum_State, S1_s1_conditional, S1_s2_conditional,
+  rw [L1_real, sum_State, S1_s1_conditional, S1_s2_conditional,
     S1_s3_conditional]
   norm_num
 
 theorem L1_conditional_s1 : (L1 .conditional).real {.s1} = 5 / 16 := by
-  rw [L1_real _ comp_conditional_ne_zero, sum_State, S1_s1_conditional, S1_s2_conditional,
+  rw [L1_real, sum_State, S1_s1_conditional, S1_s2_conditional,
     S1_s3_conditional]
   norm_num
 
 theorem L1_conditional_s3 : (L1 .conditional).real {.s3} = 0 := by
-  rw [L1_real _ comp_conditional_ne_zero, sum_State, S1_s1_conditional, S1_s2_conditional,
+  rw [L1_real, sum_State, S1_s1_conditional, S1_s2_conditional,
     S1_s3_conditional]
   norm_num
 
 /-- Hearing `C`, the listener identifies `s1` (Table 2(e)). -/
 theorem L1_C_s1 : (L1 .C).real {.s1} = 1 := by
-  rw [L1_real _ comp_C_ne_zero, sum_State, S1_s1_C, S1_s2_C, S1_s3_C]
+  rw [L1_real, sum_State, S1_s1_C, S1_s2_C, S1_s3_C]
   norm_num
 
 /-- Hearing *likely C*, the listener puts `55/87` on `s3`, `22/87` on `s2` and `10/87` on `s1`
 (Table 2(e)). -/
 theorem L1_likelyC_s3 : (L1 .likelyC).real {.s3} = 55 / 87 := by
-  rw [L1_real _ comp_likelyC_ne_zero, sum_State, S1_s1_likelyC, S1_s2_likelyC, S1_s3_likelyC]
+  rw [L1_real, sum_State, S1_s1_likelyC, S1_s2_likelyC, S1_s3_likelyC]
   norm_num
 
 theorem L1_likelyC_s2 : (L1 .likelyC).real {.s2} = 22 / 87 := by
-  rw [L1_real _ comp_likelyC_ne_zero, sum_State, S1_s1_likelyC, S1_s2_likelyC, S1_s3_likelyC]
+  rw [L1_real, sum_State, S1_s1_likelyC, S1_s2_likelyC, S1_s3_likelyC]
   norm_num
 
 theorem L1_likelyC_s1 : (L1 .likelyC).real {.s1} = 10 / 87 := by
-  rw [L1_real _ comp_likelyC_ne_zero, sum_State, S1_s1_likelyC, S1_s2_likelyC, S1_s3_likelyC]
+  rw [L1_real, sum_State, S1_s1_likelyC, S1_s2_likelyC, S1_s3_likelyC]
   norm_num
 
 /-- Hearing *if A then C*, the listener prefers `s2` to `s1`. The speaker in `s1` would have

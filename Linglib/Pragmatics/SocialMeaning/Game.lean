@@ -29,7 +29,7 @@ this family of models as the current formalization of social meaning as reasonin
   produces the one whose Eckert–Montague field carries less prior mass more often.
 * `GroundedField.speaker_indexation_eq_one_of_exclusive`: a persona only one message meets
   produces it with certainty.
-* `GroundedField.posterior_indexation_apply_singleton_of_not_meets`: hearing a message
+* `GroundedField.listener_indexation_apply_singleton_of_not_meets`: hearing a message
   rules out the personae it does not meet.
 
 ## References
@@ -70,6 +70,20 @@ theorem GroundedField.listener_truthful_indexation_apply_singleton_of_not_mem
     (h : π ∉ F.personae m) : listener prior (truthful F.indexation) m {π} = 0 :=
   listener_truthful_apply_singleton_of_notMem prior F.indexation (Finset.mem_coe.not.2 h)
 
+section
+
+variable [Fintype M] {α c : ℝ}
+
+/-- Hearing a message rules out the personae it does not meet. -/
+theorem GroundedField.listener_indexation_apply_singleton_of_not_meets (hα : 0 < α)
+    (h : π ∉ F.personae m) :
+    listener prior (speaker α (fun _ ↦ c) (listener prior (truthful F.indexation)) Measure.dirac)
+      m {π} = 0 :=
+  listener_speaker_listener_truthful_apply_singleton_of_notMem hα (fun _ ↦ c) prior F.indexation
+    (Finset.mem_coe.not.2 h)
+
+end
+
 variable [IsFiniteMeasure prior]
 
 theorem GroundedField.listener_truthful_indexation_apply_singleton_ne_zero (h : π ∈ F.personae m)
@@ -97,15 +111,5 @@ theorem GroundedField.speaker_indexation_eq_one_of_exclusive (hα : 0 < α)
     speaker α (fun _ => c) (listener prior (truthful F.indexation)) Measure.dirac π {m} = 1 :=
   speaker_listener_truthful_dirac_eq_one hα _ prior F.indexation h0
     (Finset.mem_coe.2 h) fun m' hm' => Finset.mem_coe.not.2 (hother m' hm')
-
-/-- Hearing a message rules out the personae it does not meet, once some persona it meets has
-prior mass. -/
-theorem GroundedField.posterior_indexation_apply_singleton_of_not_meets
-    [Nonempty (Persona G)] (hα : 0 < α) {π' : Persona G}
-    (h : π ∉ F.personae m) (h' : π' ∈ F.personae m) (h0 : prior {π'} ≠ 0) :
-    ((speaker α (fun _ ↦ c) (listener prior (truthful F.indexation)) Measure.dirac)†prior)
-      m {π} = 0 :=
-  posterior_speaker_listener_truthful_apply_singleton_of_notMem α (fun _ => c) prior hα F.indexation
-    (Finset.mem_coe.not.2 h) (Finset.mem_coe.2 h') h0
 
 end SocialMeaning

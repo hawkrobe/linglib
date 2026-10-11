@@ -332,7 +332,7 @@ theorem comp_speaker_ne_zero (α c : ℝ) (u : Utterance) : (speaker α c ∘ₘ
 /-- The pragmatic listener, (4): the posterior over `(s, φ)` given the utterance. Its first
 marginal is `P_L1(s | w)` and its second `P_L1(φ | w)`, the probability inside (3). -/
 noncomputable def listener (α c : ℝ) : Kernel Utterance (HeartState × Phi) :=
-  (speaker α c)†prior
+  RSA.listener prior (speaker α c)
 
 /-! ### The second-order polite speaker, (1)–(3) -/
 

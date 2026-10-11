@@ -129,9 +129,8 @@ noncomputable abbrev S1 (prior : Measure Persona) : Kernel Persona INGVariant :=
   speaker 6 (fun _ => 0) (L0 prior) Measure.dirac
 
 /-- The pragmatic listener inverts the speaker against the prior. -/
-noncomputable abbrev L1 (prior : Measure Persona) [IsFiniteMeasure prior] :
-    Kernel INGVariant Persona :=
-  ((speaker 6 (fun _ => 0) (L0 prior) Measure.dirac)†prior)
+noncomputable abbrev L1 (prior : Measure Persona) : Kernel INGVariant Persona :=
+  listener prior (S1 prior)
 
 /-! ### The extensions differ in one persona each
 
@@ -312,15 +311,11 @@ theorem sternLeader_certain {w : Persona → ℕ} (hw : ∀ p, w p ≠ 0) :
 /-- A variant gives no posterior mass to a persona it cannot convey, so hearing *-ing* rules
 out the doofus and hearing *-in'* rules out the stern leader, whatever the listener believed
 beforehand. -/
-theorem L1_eq_zero_of_excluded {w : Persona → ℕ} (hw : ∀ p, w p ≠ 0) (v : INGVariant) :
-    L1 (Measure.ofWeights (w ·)) v {excluded v} = 0 := by
-  cases v
-  · exact ingField.posterior_indexation_apply_singleton_of_not_meets _ (by norm_num)
-      (π' := coolGuy) (by decide +kernel) (by decide +kernel)
-      (Measure.ofWeights_apply_singleton_ne_zero (Nat.cast_ne_zero.2 (hw _)))
-  · exact ingField.posterior_indexation_apply_singleton_of_not_meets _ (by norm_num)
-      (π' := coolGuy) (by decide +kernel) (by decide +kernel)
-      (Measure.ofWeights_apply_singleton_ne_zero (Nat.cast_ne_zero.2 (hw _)))
+theorem L1_eq_zero_of_excluded (prior : Measure Persona) (v : INGVariant) :
+    L1 prior v {excluded v} = 0 := by
+  cases v <;>
+    exact ingField.listener_indexation_apply_singleton_of_not_meets _ (by norm_num)
+      (by decide +kernel)
 
 /-- With no prior beliefs the literal listener spreads its mass evenly over the three personae
 the variant can convey, the game-theoretic literal listener of Definition 4.1. -/

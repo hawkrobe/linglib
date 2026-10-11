@@ -343,13 +343,15 @@ theorem isMarkovKernel_S1 (hα : 0 ≤ α) : IsMarkovKernel (S1 D n α) := by
         ⟨w, Finset.mem_coe.mpr (Finset.mem_univ w), Finset.mem_coe.mpr (mem_cell_self l.2 w)⟩⟩)
   exact IsMarkovKernel.isProbabilityMeasure w
 
-variable (μ : Measure (World n)) [IsFiniteMeasure μ] (ν : Measure (Scope × QUD)) [IsFiniteMeasure ν]
+variable (μ : Measure (World n)) (ν : Measure (Scope × QUD))
 
-/-- The pragmatic listener of §3.1 is the Bayesian inverse of the speaker over worlds,
-interpretations and questions, against the product of the world prior and a prior on
-interpretations and questions (the paper's `P(i) P(q)`). -/
+/-- The pragmatic listener of §3.1 inverts the speaker over worlds, interpretations and
+questions, against the product of the world prior and a prior on interpretations and questions
+(the paper's `P(i) P(q)`). -/
 noncomputable def L1 : Kernel Utt (World n × (Scope × QUD)) :=
-  ((S1 D n α)†(μ.prod ν))
+  listener (μ.prod ν) (S1 D n α)
+
+instance : IsFiniteKernel (L1 D n α μ ν) := inferInstanceAs (IsFiniteKernel (listener _ _))
 
 /-- The endorsing speaker of §3.1 is, at the observed world, the best response at unit rationality
 to the world marginal of the pragmatic listener. -/
@@ -511,8 +513,6 @@ theorem production_nonneg (w : World n) : 0 ≤ production D n α ν w :=
 
 variable [IsProbabilityMeasure μ] [IsProbabilityMeasure ν]
 
-instance : IsMarkovKernel (L1 D n α μ ν) := inferInstanceAs (IsMarkovKernel ((_†_)))
-
 theorem expectedProduction_eq_sum :
     expectedProduction D n α μ ν = ∑ w, μ.real {w} * production D n α ν w := by
   rw [expectedProduction, Measure.comp_real_singleton, Fintype.sum_prod_type]
@@ -617,21 +617,16 @@ theorem S2_real_amb (hα : 0 < α) {w : World n} (hμ : μ {w} ≠ 0)
     rw [← Finset.coe_univ, ← sum_measureReal_singleton, sum_utt] at h
     have : (S1 D n α ∘ₘ μ.prod ν).real {.amb} = z := rfl
     linarith
-  have hZamb : (S1 D n α ∘ₘ μ.prod ν) {.amb} ≠ 0 :=
-    (measureReal_ne_zero_iff (measure_ne_top _ _)).mp hz0.ne'
-  have hZnull : (S1 D n α ∘ₘ μ.prod ν) {.null} ≠ 0 := by
-    rw [← measureReal_ne_zero_iff (measure_ne_top _ _), hZ]
-    linarith
   have hnull : ∑ l, ν.real {l} * (S1 D n α (w, l)).real {.null} = 1 - m := by
     simp only [S1_real_null D n α hα.le, mul_sub, mul_one, Finset.sum_sub_distrib,
       sum_measureReal_singleton_eq_one ν]
     rfl
-  have hFamb : (Kernel.fst (L1 D n α μ ν) .amb).real {w} = a * m / z :=
-    posterior_prod_fst_real_singleton _ μ ν hZamb w
-  have hFnull : (Kernel.fst (L1 D n α μ ν) .null).real {w}
-      = a * (∑ l, ν.real {l} * (S1 D n α (w, l)).real {.null})
-        / (S1 D n α ∘ₘ μ.prod ν).real {.null} :=
-    posterior_prod_fst_real_singleton _ μ ν hZnull w
+  have hF (u : Utt) : (Kernel.fst (L1 D n α μ ν) u).real {w}
+      = a * (∑ l, ν.real {l} * (S1 D n α (w, l)).real {u}) / (S1 D n α ∘ₘ μ.prod ν).real {u} := by
+    rw [Measure.comp_real_singleton]
+    exact listener_prod_fst_real_singleton μ ν _ u w
+  have hFamb : (Kernel.fst (L1 D n α μ ν) .amb).real {w} = a * m / z := hF .amb
+  have hFnull := hF .null
   rw [hnull, hZ] at hFnull
   rw [S2, speaker_dirac_zero_real_singleton zero_le_one]
   simp only [ENNReal.rpow_one, ← measureReal_def]

@@ -174,10 +174,6 @@ theorem refinement_facts :
     stmtSem .weak oneSome = {.NNS, .NNA} ∧ stmtSem .strong oneSome = {.NNS, .NSA, .SAA} := by
   decide
 
-/-- Every message is true at some state under the base lexicon. -/
-theorem sem_weak_nonempty (m : Msg) : ∃ w, w ∈ sem .weak m := by
-  revert m; decide
-
 /-! ### The model (13), (18), (19) -/
 
 section Tower
@@ -205,7 +201,7 @@ noncomputable def L1 : Kernel Msg (World × Lex) :=
 /-- The fixed-lexicon pragmatic listener (19b) inverts the base lexicon's speaker at a flat
 prior. -/
 noncomputable def L1fixed : Kernel Msg World :=
-  ((S1 α k .weak)†(uniformOn Set.univ))
+  listener (uniformOn Set.univ) (S1 α k .weak)
 
 end Tower
 
@@ -215,6 +211,12 @@ theorem L1_fst_real_lt_iff {α k : ℝ} (m : Msg) (w₁ w₂ : World) :
       ∑ l, (S1 α k l w₁).real {m} < ∑ l, (S1 α k l w₂).real {m} := by
   rw [L1, listener_fst_real_lt_iff_of_forall_eq _ _ uniformOn_univ_singleton_eq
     uniformOn_univ_singleton_ne_zero]
+
+/-- State preference of the fixed-lexicon listener is the base-lexicon speaker's preference. -/
+theorem L1fixed_real_lt_iff {α k : ℝ} (m : Msg) (w₁ w₂ : World) :
+    (L1fixed α k m).real {w₁} < (L1fixed α k m).real {w₂} ↔
+      (S1 α k .weak w₁).real {m} < (S1 α k .weak w₂).real {m} :=
+  listener_uniformOn_real_lt_iff _ m w₁ w₂
 
 section Model
 
@@ -233,12 +235,9 @@ theorem L1_fst_ne_zero_iff (m : Msg) (w : World) :
 message true there. -/
 theorem L1fixed_ne_zero_iff (m : Msg) (w : World) :
     L1fixed α k m {w} ≠ 0 ↔ w ∈ sem .weak m := by
-  obtain ⟨w₀, h₀⟩ := sem_weak_nonempty m
-  have hs := speaker_uniformListener_dirac_apply_singleton_ne_zero_iff (sem .weak) hα (cost k)
-  rw [L1fixed, posterior_apply_singleton_ne_zero_iff _ _ (comp_apply_singleton_ne_zero
-    (S1 α k .weak) _ (uniformOn_univ_singleton_ne_zero w₀) ((hs w₀ m).2 h₀)),
+  rw [L1fixed, listener_apply_singleton_ne_zero_iff,
     and_iff_right (uniformOn_univ_singleton_ne_zero w)]
-  exact hs w m
+  exact speaker_uniformListener_dirac_apply_singleton_ne_zero_iff (sem .weak) hα (cost k) w m
 
 /-- Hearing *exactly one player hit some of his shots*, the uncertainty listener gives mass to
 the locally enriched states NSA and SAA, false on the literal construal, and the fixed-lexicon
@@ -262,15 +261,6 @@ theorem no_some_local :
   rcases hw with rfl | rfl | rfl <;> decide
 
 /-! ### Preference orderings (§6.2, §6.3) -/
-
-/-- State preference of the fixed-lexicon listener is the base-lexicon speaker's preference. -/
-theorem L1fixed_real_lt_iff (m : Msg) (w₁ w₂ : World) :
-    (L1fixed α k m).real {w₁} < (L1fixed α k m).real {w₂} ↔
-      (S1 α k .weak w₁).real {m} < (S1 α k .weak w₂).real {m} :=
-  let ⟨w₀, h₀⟩ := sem_weak_nonempty m
-  posterior_real_singleton_lt_iff_of_forall_eq _ _
-    uniformOn_univ_singleton_eq uniformOn_univ_singleton_ne_zero
-    ((speaker_uniformListener_dirac_apply_singleton_ne_zero_iff (sem .weak) hα _ w₀ m).2 h₀)
 
 /-- The speaker's share of a statement is its informativity weight over the weights of the
 statements true at the state plus the null message's weight. -/
@@ -388,7 +378,7 @@ theorem every_some_fixed :
     (L1fixed α k (some everySome)).real {.SSS} < (L1fixed α k (some everySome)).real {.SAA} := by
   obtain ⟨ha, -, -, -, -⟩ := weights hα (k := k)
   obtain ⟨-, -, -, -, c5, -, -, -, -, -, -, -, c13, -, c15, -, -, -⟩ := cards
-  simp +decide only [L1fixed_real_lt_iff hα, S1_real hα, Fintype.sum_prod_type,
+  simp +decide only [L1fixed_real_lt_iff, S1_real hα, Fintype.sum_prod_type,
     PlayerQ.sum_univ, ShotQ.sum_univ, c5, c13, c15, Nat.cast_ofNat, ↓reduceIte, add_zero,
     zero_add]
   exact div_lt_div_of_pos_left ha (by positivity) (by linarith)

@@ -188,8 +188,8 @@ noncomputable abbrev S1 (cg : Measure World) : Kernel World Utterance :=
   speaker 1 0 (L0 cg) Measure.dirac
 
 /-- The pragmatic listener inverts the speaker against the common ground. -/
-noncomputable abbrev L1 (cg : Measure World) [IsFiniteMeasure cg] : Kernel Utterance World :=
-  ((speaker 1 0 (L0 cg) Measure.dirac)†cg)
+noncomputable abbrev L1 (cg : Measure World) : Kernel Utterance World :=
+  listener cg (S1 cg)
 
 /-- In one Figure-2 turn the listener's posterior is mixed into the common ground unless the
 speaker passed (§7.1.1). -/
@@ -199,9 +199,26 @@ noncomputable def step (cg : Measure World) [IsFiniteMeasure cg] (u : Utterance)
 
 section Agents
 
-variable (cg : Measure World) [IsFiniteMeasure cg]
+variable {cg : Measure World}
 
-variable {cg}
+/-- A world the utterance rules out gets no listener mass. -/
+theorem L1_apply_singleton_eq_zero {u : Utterance} {w : World} (hw : w ∉ sem u) :
+    L1 cg u {w} = 0 :=
+  listener_apply_singleton_eq_zero (speaker_dirac_apply_singleton_eq_zero one_pos
+    (listener_truthful_apply_singleton_of_notMem cg semSet (Finset.mem_coe.not.mpr hw)))
+
+/-- The speaker's real share of an utterance, as a ratio of literal-listener values. -/
+theorem S1_real_singleton (w : World) (u : Utterance) :
+    (S1 cg w).real {u} = (L0 cg u {w}).toReal / ∑ u', (L0 cg u' {w}).toReal := by
+  rw [S1, speaker_dirac_zero_real_singleton zero_le_one]
+  simp only [ENNReal.rpow_one]
+
+theorem L0_toReal_of_notMem {u : Utterance} {w : World} (hw : w ∉ sem u) :
+    (L0 cg u {w}).toReal = 0 := by
+  rw [listener_truthful_apply_singleton_of_notMem cg semSet (Finset.mem_coe.not.mpr hw),
+    ENNReal.toReal_zero]
+
+variable [IsFiniteMeasure cg]
 
 theorem L0_apply_singleton_ne_zero {u : Utterance} {w : World} (hw : w ∈ sem u)
     (hcg : cg {w} ≠ 0) : L0 cg u {w} ≠ 0 := by
@@ -212,32 +229,10 @@ theorem S1_apply_singleton_ne_zero {u : Utterance} {w : World} (hw : w ∈ sem u
     (hcg : cg {w} ≠ 0) : S1 cg w {u} ≠ 0 :=
   speaker_dirac_apply_singleton_ne_zero zero_le_one (L0_apply_singleton_ne_zero hw hcg)
 
-theorem comp_S1_ne_zero {u : Utterance} {w : World} (hw : w ∈ sem u) (hcg : cg {w} ≠ 0) :
-    (S1 cg ∘ₘ cg) {u} ≠ 0 :=
-  comp_apply_singleton_ne_zero _ _ hcg (S1_apply_singleton_ne_zero hw hcg)
-
-/-- A world the utterance rules out gets no listener mass. -/
-theorem L1_apply_singleton_eq_zero {u : Utterance} {w : World} (hw : w ∉ sem u)
-    (hx : (S1 cg ∘ₘ cg) {u} ≠ 0) : L1 cg u {w} = 0 := by
-  show ((S1 cg)†cg) u {w} = 0
-  rw [posterior_apply_singleton _ _ hx, speaker_dirac_apply_singleton_eq_zero one_pos
-    (listener_truthful_apply_singleton_of_notMem cg semSet (Finset.mem_coe.not.mpr hw))]
-  simp
-
 /-- A world the utterance allows, with positive prior mass, keeps positive listener mass. -/
 theorem L1_apply_singleton_ne_zero {u : Utterance} {w : World} (hw : w ∈ sem u)
-    (hcg : cg {w} ≠ 0) : L1 cg u {w} ≠ 0 := by
-  show ((S1 cg)†cg) u {w} ≠ 0
-  rw [posterior_apply_singleton _ _ (comp_S1_ne_zero hw hcg)]
-  exact fun h => (ENNReal.div_eq_zero_iff.mp h).elim
-    (mul_ne_zero hcg (S1_apply_singleton_ne_zero hw hcg)) (measure_ne_top _ _)
-
-omit [IsFiniteMeasure cg] in
-/-- The speaker's real share of an utterance, as a ratio of literal-listener values. -/
-theorem S1_real_singleton (w : World) (u : Utterance) :
-    (S1 cg w).real {u} = (L0 cg u {w}).toReal / ∑ u', (L0 cg u' {w}).toReal := by
-  rw [S1, speaker_dirac_zero_real_singleton zero_le_one]
-  simp only [ENNReal.rpow_one]
+    (hcg : cg {w} ≠ 0) : L1 cg u {w} ≠ 0 :=
+  listener_apply_singleton_ne_zero hcg (S1_apply_singleton_ne_zero hw hcg)
 
 theorem L0_toReal {u : Utterance} {w : World} (hw : w ∈ sem u) :
     (L0 cg u {w}).toReal = cg.real {w} / ∑ x ∈ sem u, cg.real {x} := by
@@ -245,12 +240,6 @@ theorem L0_toReal {u : Utterance} {w : World} (hw : w ∈ sem u) :
     ENNReal.toReal_mul,
     ENNReal.toReal_inv, sum_measureReal_singleton, measureReal_def, measureReal_def,
     inv_mul_eq_div]
-
-omit [IsFiniteMeasure cg] in
-theorem L0_toReal_of_notMem {u : Utterance} {w : World} (hw : w ∉ sem u) :
-    (L0 cg u {w}).toReal = 0 := by
-  rw [listener_truthful_apply_singleton_of_notMem cg semSet (Finset.mem_coe.not.mpr hw),
-    ENNReal.toReal_zero]
 
 end Agents
 
@@ -284,21 +273,16 @@ like being outdoors* leaves Katie and Nancy tied. -/
 theorem l1_turn1_inferences :
     L1 cg₁ .studyHumanity {.ina} = 0 ∧ L1 cg₁ .studyHumanity {.nancy} ≠ 0 ∧
     L1 cg₁ .likeOutdoors {.katie} = L1 cg₁ .likeOutdoors {.nancy} :=
-  ⟨L1_apply_singleton_eq_zero (by decide)
-      (comp_S1_ne_zero (w := .nancy) (by decide) (uniformOn_univ_singleton_ne_zero _)),
+  ⟨L1_apply_singleton_eq_zero (by decide),
     L1_apply_singleton_ne_zero (by decide) (uniformOn_univ_singleton_ne_zero _),
-    posterior_apply_singleton_congr _ _
-      (comp_S1_ne_zero (u := .likeOutdoors) (w := .nancy) (by decide)
-        (uniformOn_univ_singleton_ne_zero _))
+    listener_apply_singleton_congr _ _
       (uniformSpeaker_apply_singleton_of_profile_eq sem one_pos (profile_eq _ _)
         (c := .likeOutdoors) (by decide) (by decide))
       (uniformOn_univ_singleton_eq _ _)⟩
 
 /-- The null utterance conveys nothing, and the listener stays uniform. -/
 theorem l1_null_uniform (w w' : World) : L1 cg₁ .null {w} = L1 cg₁ .null {w'} :=
-  posterior_apply_singleton_congr _ _
-    (comp_S1_ne_zero (u := .null) (w := w) (by cases w <;> decide)
-      (uniformOn_univ_singleton_ne_zero _))
+  listener_apply_singleton_congr _ _
     (uniformSpeaker_apply_singleton_of_profile_eq sem one_pos (profile_eq _ _) (c := .null)
       (by cases w <;> decide) (by cases w' <;> decide))
     (uniformOn_univ_singleton_eq _ _)
@@ -311,16 +295,12 @@ noncomputable def cg₂ : Measure World := updateCG cg₁ (L1 cg₁ .studyHumani
 instance : IsFiniteMeasure cg₂ := inferInstanceAs (IsFiniteMeasure (updateCG _ _ _))
 
 theorem cg₂_ina_eq_katie : cg₂ {.ina} = cg₂ {.katie} := by
-  have hx := comp_S1_ne_zero (cg := cg₁) (u := .studyHumanity) (w := .nancy) (by decide)
-    (uniformOn_univ_singleton_ne_zero _)
   rw [cg₂, updateCG_apply, updateCG_apply, uniformOn_univ_singleton_eq World.ina .katie,
-    L1_apply_singleton_eq_zero (by decide) hx, L1_apply_singleton_eq_zero (by decide) hx]
+    L1_apply_singleton_eq_zero (by decide), L1_apply_singleton_eq_zero (by decide)]
 
 theorem cg₂_nancy_eq_sally : cg₂ {.nancy} = cg₂ {.sally} := by
   have h : L1 cg₁ .studyHumanity {.nancy} = L1 cg₁ .studyHumanity {.sally} :=
-    posterior_apply_singleton_congr _ _
-      (comp_S1_ne_zero (u := .studyHumanity) (w := .nancy) (by decide)
-        (uniformOn_univ_singleton_ne_zero _))
+    listener_apply_singleton_congr _ _
       (uniformSpeaker_apply_singleton_of_profile_eq sem one_pos (profile_eq _ _)
         (c := .studyHumanity) (by decide) (by decide))
       (uniformOn_univ_singleton_eq _ _)
@@ -333,10 +313,8 @@ theorem cg₂_ina_ne_zero : cg₂ {.ina} ≠ 0 := by
     (ENNReal.coe_ne_zero.mpr (tsub_pos_of_lt (by norm_num)).ne'))
 
 theorem cg₂_ina_lt_nancy : cg₂ {.ina} < cg₂ {.nancy} := by
-  have hx := comp_S1_ne_zero (cg := cg₁) (u := .studyHumanity) (w := .nancy) (by decide)
-    (uniformOn_univ_singleton_ne_zero _)
   rw [cg₂, updateCG_apply, updateCG_apply, uniformOn_univ_singleton_eq World.ina .nancy,
-    L1_apply_singleton_eq_zero (by decide) hx, mul_zero]
+    L1_apply_singleton_eq_zero (by decide), mul_zero]
   refine ENNReal.add_lt_add_left (ENNReal.mul_ne_top ENNReal.coe_ne_top (measure_ne_top _ _)) ?_
   exact ENNReal.mul_pos (ENNReal.coe_ne_zero.mpr (by norm_num))
     (L1_apply_singleton_ne_zero (by decide) (uniformOn_univ_singleton_ne_zero _))
@@ -346,8 +324,27 @@ as `cg₂` does. -/
 
 section Shaped
 
-variable (μ : Measure World) [IsFiniteMeasure μ] (hik : μ {.ina} = μ {.katie})
-  (hns : μ {.nancy} = μ {.sally}) (hlt : μ {.ina} < μ {.nancy}) (hi : μ {.ina} ≠ 0)
+variable (μ : Measure World) [IsFiniteMeasure μ]
+
+theorem sum_L0_toReal (w : World) :
+    ∑ u, (L0 μ u {w}).toReal =
+      ∑ u ∈ Finset.univ.filter (w ∈ sem ·), μ.real {w} / ∑ x ∈ sem u, μ.real {x} := by
+  rw [Finset.sum_filter]
+  refine Finset.sum_congr rfl fun u _ => ?_
+  split_ifs with h
+  · exact L0_toReal h
+  · exact L0_toReal_of_notMem h
+
+theorem real_univ : μ.real Set.univ =
+    μ.real {.ina} + μ.real {.katie} + μ.real {.nancy} + μ.real {.sally} := by
+  rw [← Finset.coe_univ, ← sum_measureReal_singleton,
+    show (Finset.univ : Finset World) = {.ina, .katie, .nancy, .sally} from rfl,
+    Finset.sum_insert (by decide : World.ina ∉ ({.katie, .nancy, .sally} : Finset World)),
+    Finset.sum_insert (by decide : World.katie ∉ ({.nancy, .sally} : Finset World)),
+    Finset.sum_pair (by decide : World.nancy ≠ .sally), add_assoc, add_assoc]
+
+variable (hik : μ {.ina} = μ {.katie}) (hns : μ {.nancy} = μ {.sally})
+  (hlt : μ {.ina} < μ {.nancy}) (hi : μ {.ina} ≠ 0)
 
 include hik hns hlt hi
 
@@ -387,35 +384,12 @@ theorem s1_prefers_new :
       Finset.sum_pair (by decide), ← hik, ← hns]
     exact ENNReal.add_lt_add_left (measure_ne_top μ _) hlt
 
-omit hik hns hlt hi in
-theorem sum_L0_toReal (w : World) :
-    ∑ u, (L0 μ u {w}).toReal =
-      ∑ u ∈ Finset.univ.filter (w ∈ sem ·), μ.real {w} / ∑ x ∈ sem u, μ.real {x} := by
-  rw [Finset.sum_filter]
-  refine Finset.sum_congr rfl fun u _ => ?_
-  split_ifs with h
-  · exact L0_toReal h
-  · exact L0_toReal_of_notMem h
-
-omit hik hns hlt hi in
-theorem real_univ : μ.real Set.univ =
-    μ.real {.ina} + μ.real {.katie} + μ.real {.nancy} + μ.real {.sally} := by
-  rw [← Finset.coe_univ, ← sum_measureReal_singleton,
-    show (Finset.univ : Finset World) = {.ina, .katie, .nancy, .sally} from rfl,
-    Finset.sum_insert (by decide : World.ina ∉ ({.katie, .nancy, .sally} : Finset World)),
-    Finset.sum_insert (by decide : World.katie ∉ ({.nancy, .sally} : Finset World)),
-    Finset.sum_pair (by decide : World.nancy ≠ .sally), add_assoc, add_assoc]
-
 /-- *They like being outdoors* now favours Nancy over Katie. Nancy's world carries more of the
 common ground, and Nancy's speaker also produces the utterance more readily, since her other
 true utterance discriminates less than Katie's. -/
 theorem l1_katie_lt_nancy :
     (L1 μ .likeOutdoors).real {.katie} < (L1 μ .likeOutdoors).real {.nancy} := by
-  have hn : μ {.nancy} ≠ 0 := (zero_le.trans_lt hlt).ne'
-  have hx := comp_S1_ne_zero (cg := μ) (u := .likeOutdoors) (w := .nancy) (by decide) hn
-  show (((S1 μ)†μ) .likeOutdoors).real {.katie} < (((S1 μ)†μ) .likeOutdoors).real {.nancy}
-  rw [← Finset.coe_singleton, ← Finset.coe_singleton, posterior_real_finset_lt_iff _ _ hx,
-    Finset.sum_singleton, Finset.sum_singleton, S1_real_singleton, S1_real_singleton,
+  rw [listener_real_singleton_lt_iff, S1_real_singleton, S1_real_singleton,
     sum_L0_toReal, sum_L0_toReal, L0_toReal (by decide), L0_toReal (by decide),
     show Finset.univ.filter (World.katie ∈ sem ·) = {.studyScience, .likeOutdoors, .null} by
       decide,

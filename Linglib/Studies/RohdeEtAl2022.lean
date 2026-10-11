@@ -69,9 +69,10 @@ reported exceeds its prior exactly when the atypical situation is the likelier t
 The think condition asks for the prior, the announce condition for the posterior. -/
 theorem prior_lt_posterior_iff (report : Kernel Value Bool) [IsFiniteKernel report]
     (hx : (report ∘ₘ μ) {true} ≠ 0) (ht : μ {.typical} ≠ 0) (ha : μ {.atypical} ≠ 0) :
-    μ.real {.atypical} < ((report†μ) true).real {.atypical} ↔
-      (report .typical).real {true} < (report .atypical).real {true} :=
-  real_lt_posterior_real_singleton_iff_of_pair report μ (by decide) (pair_support μ) hx ha ht
+    μ.real {.atypical} < (listener μ report true).real {.atypical} ↔
+      (report .typical).real {true} < (report .atypical).real {true} := by
+  rw [listener_apply_eq_posterior _ _ hx]
+  exact real_lt_posterior_real_singleton_iff_of_pair report μ (by decide) (pair_support μ) hx ha ht
 
 /-- The likelihood is separable from the prior and manipulable. Between two contexts, the
 posterior on the atypical value given a report is larger in the context where the atypical
@@ -79,7 +80,7 @@ situation is relatively likelier to be reported. -/
 theorem posterior_lt_posterior_iff (report₁ report₂ : Kernel Value Bool)
     [IsFiniteKernel report₁] [IsFiniteKernel report₂] (hx₁ : (report₁ ∘ₘ μ) {true} ≠ 0)
     (hx₂ : (report₂ ∘ₘ μ) {true} ≠ 0) (ht : μ {.typical} ≠ 0) (ha : μ {.atypical} ≠ 0) :
-    ((report₁†μ) true).real {.atypical} < ((report₂†μ) true).real {.atypical} ↔
+    (listener μ report₁ true).real {.atypical} < (listener μ report₂ true).real {.atypical} ↔
       (report₁ .atypical).real {true} * (report₂ .typical).real {true} <
         (report₂ .atypical).real {true} * (report₁ .typical).real {true} := by
   have hm₁ : 0 < (report₁ ∘ₘ μ).real {true} :=
@@ -88,8 +89,8 @@ theorem posterior_lt_posterior_iff (report₁ report₂ : Kernel Value Bool)
     ENNReal.toReal_pos hx₂ (measure_ne_top _ _)
   have hp : 0 < μ.real {Value.atypical} := ENNReal.toReal_pos ha (measure_ne_top _ _)
   have hq : 0 < μ.real {Value.typical} := ENNReal.toReal_pos ht (measure_ne_top _ _)
-  rw [posterior_real_singleton _ _ hx₁, posterior_real_singleton _ _ hx₂,
-    div_lt_div_iff₀ hm₁ hm₂,
+  rw [listener_apply_eq_posterior _ _ hx₁, listener_apply_eq_posterior _ _ hx₂,
+    posterior_real_singleton _ _ hx₁, posterior_real_singleton _ _ hx₂, div_lt_div_iff₀ hm₁ hm₂,
     Measure.comp_real_singleton_of_pair _ _ (by decide) (pair_support μ),
     Measure.comp_real_singleton_of_pair _ _ (by decide) (pair_support μ), ← sub_pos]
   rw [show μ.real {Value.atypical} * (report₂ Value.atypical).real {true} *
@@ -225,7 +226,7 @@ theorem spoke_apply_true_ne_zero (hα : 0 < α) {v : Value} (hv : μ {v} ≠ 0) 
 posterior on the atypical value exceeds the prior that the think condition returns. -/
 theorem prior_lt_posterior (hα : 0 < α) (ht : μ {.typical} ≠ 0) (ha : μ {.atypical} ≠ 0)
     (h : μ {.atypical} < μ {.typical}) :
-    μ.real {.atypical} < (((spoke μ α cs cn)†μ) true).real {.atypical} := by
+    μ.real {.atypical} < (listener μ (spoke μ α cs cn) true).real {.atypical} := by
   rw [prior_lt_posterior_iff μ _
     (comp_apply_singleton_ne_zero _ _ ht (spoke_apply_true_ne_zero μ α cs cn hα ht)) ht ha]
   simpa only [measureReal_def, spoke_apply_true μ α cs cn hα] using
@@ -236,7 +237,7 @@ and a report carries no information about typicality. The posterior is the prior
 when-asked and think conditions align. -/
 theorem posterior_eq_prior_of_asked (hα : 0 < α) (ht : μ {.typical} ≠ 0)
     (ha : μ {.atypical} ≠ 0) :
-    ((((askedS μ α cs).map fun _ => true)†μ) true).real {.atypical} = μ.real {.atypical} := by
+    (listener μ ((askedS μ α cs).map fun _ => true) true).real {.atypical} = μ.real {.atypical} := by
   have h1 : ∀ v, μ {v} ≠ 0 → ((askedS μ α cs).map (fun _ ↦ true) v).real {true} = 1 :=
       fun v hv ↦ by
     have hv1 : askedS μ α cs v {v} = 1 :=
@@ -248,7 +249,7 @@ theorem posterior_eq_prior_of_asked (hα : 0 < α) (ht : μ {.typical} ≠ 0)
       ENNReal.toReal_one]
   have hx : (((askedS μ α cs).map fun _ => true) ∘ₘ μ) {true} ≠ 0 :=
     comp_apply_singleton_ne_zero _ _ ht fun h => by simpa [measureReal_def, h] using h1 _ ht
-  rw [posterior_real_singleton _ _ hx,
+  rw [listener_apply_eq_posterior _ _ hx, posterior_real_singleton _ _ hx,
     Measure.comp_real_singleton_of_pair _ _ (by decide) (pair_support μ), h1 _ ha, h1 _ ht,
     mul_one, mul_one, measureReal_singleton_add_singleton_of_pair μ (by decide) (pair_support μ),
     div_one]
@@ -258,8 +259,8 @@ guess toward the atypical value, as the out-of-the-blue and large-audience condi
 the emphasis on information exchange. -/
 theorem posterior_lt_of_silence_lt (hα : 0 < α) {cn₁ cn₂ : ℝ} (hlt : cn₂ < cn₁)
     (ht : μ {.typical} ≠ 0) (ha : μ {.atypical} ≠ 0) (h : μ {.atypical} < μ {.typical}) :
-    (((spoke μ α cs cn₁)†μ) true).real {.atypical} <
-      (((spoke μ α cs cn₂)†μ) true).real {.atypical} := by
+    (listener μ (spoke μ α cs cn₁) true).real {.atypical} <
+      (listener μ (spoke μ α cs cn₂) true).real {.atypical} := by
   rw [posterior_lt_posterior_iff μ _ _
     (comp_apply_singleton_ne_zero _ _ ht (spoke_apply_true_ne_zero μ α cs cn₁ hα ht))
     (comp_apply_singleton_ne_zero _ _ ht (spoke_apply_true_ne_zero μ α cs cn₂ hα ht)) ht ha]
