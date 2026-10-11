@@ -846,7 +846,7 @@
   },
   {
     "id": "bakervinokurova2010_27_goalnom",
-    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(27)"},
+    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(29)"},
     "reportedIn": null,
     "language": "yaku1245",
     "primaryText": "Masha suruk yytylynna.",
@@ -856,7 +856,7 @@
     ],
     "translation": "Masha was sent a letter.",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -867,7 +867,8 @@
       ["objectSpecific", "no"],
       ["objectAdjacent", "yes"]
     ],
-    "comment": "Marked ?* in the text; generally rejected, marginally accepted by some permissive speakers depending on the verb (fn. 11)."
+    "comment": "Marked ?* in the text; generally rejected, marginally accepted by some permissive speakers depending on the verb (fn. 13).",
+    "verified": "page-image"
   },
   {
     "id": "bakervinokurova2010_29a",
@@ -1299,30 +1300,6 @@
     "verified": "page-image"
   },
   {
-    "id": "bakervinokurova2010_50b",
-    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(50b)"},
-    "reportedIn": null,
-    "language": "yaku1245",
-    "primaryText": "Masha djieni tula türgennik süürde.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["Masha", "Masha"], ["djie-ni", "house-ACC"], ["tula", "around"], ["türgennik", "quickly"],
-      ["süür-de", "run-PST.3SG.SBJ"]
-    ],
-    "translation": "Masha ran quickly around the house.",
-    "context": "",
-    "judgment": "acceptable",
-    "alternatives": [],
-    "readings": [],
-    "paperFeatures": [
-      ["construction", "pp"],
-      ["verbAgreement", "yes"],
-      ["subjectCase", "NOM"],
-      ["pObjectCase", "ACC"]
-    ],
-    "comment": "Accusative on the object of the postposition is optional."
-  },
-  {
     "id": "bakervinokurova2010_51a_acc",
     "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(56a)"},
     "reportedIn": null,
@@ -1507,31 +1484,6 @@
     "verified": "page-image"
   },
   {
-    "id": "bakervinokurova2010_62c",
-    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(62c)"},
-    "reportedIn": null,
-    "language": "yaku1245",
-    "primaryText": "yt urer sir",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["yt", "dog"], ["ur-er", "bark-AOR"], ["sir", "place"]
-    ],
-    "translation": "a place where dogs bark",
-    "context": "",
-    "judgment": "unacceptable",
-    "alternatives": [],
-    "readings": [],
-    "paperFeatures": [
-      ["construction", "relative"],
-      ["verbAgreement", "no"],
-      ["headNounAgreement", "no"],
-      ["subjectCase", "bare"],
-      ["subjectSpecific", "no"],
-      ["subjectAdjacent", "yes"]
-    ],
-    "comment": ""
-  },
-  {
     "id": "bakervinokurova2010_62d",
     "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(71d)"},
     "reportedIn": null,
@@ -1585,29 +1537,6 @@
     ],
     "comment": "",
     "verified": "page-image"
-  },
-  {
-    "id": "bakervinokurova2010_63c",
-    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "(63c)"},
-    "reportedIn": null,
-    "language": "yaku1245",
-    "primaryText": "Yt urer sire",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["Yt", "dog"], ["ur-er", "bark-AOR"], ["sir-e", "place-3SG.POSS"]
-    ],
-    "translation": "a place where dogs bark",
-    "context": "",
-    "judgment": "acceptable",
-    "alternatives": [],
-    "readings": [],
-    "paperFeatures": [
-      ["construction", "relative"],
-      ["verbAgreement", "no"],
-      ["headNounAgreement", "yes"],
-      ["subjectCase", "GEN"]
-    ],
-    "comment": ""
   },
   {
     "id": "bakervinokurova2010_63d",

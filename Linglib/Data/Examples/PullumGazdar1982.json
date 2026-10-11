@@ -1,58 +1,64 @@
 [
   {
     "id": "pullumgazdar1982_ex18a",
-    "source": {"bibkey": "gazdar-pullum-1982", "paperLabel": "(18a)"},
+    "source": {"bibkey": "pullum-gazdar-1982", "paperLabel": "(18a)"},
     "language": "stan1293",
     "primaryText": "The woman and the men smokes and drinks respectively.",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
       ["subjects", "sg pl"],
       ["verbs", "sg sg"]
-    ]
+    ],
+    "comment": "Printed unmarked (p. 482: \"which we do not mark with our own judgements\"); the authors' judgment: \"All of (18 a-c) we find ungrammatical\" (p. 483).",
+    "verified": "page-image"
   },
   {
     "id": "pullumgazdar1982_ex18b",
-    "source": {"bibkey": "gazdar-pullum-1982", "paperLabel": "(18b)"},
+    "source": {"bibkey": "pullum-gazdar-1982", "paperLabel": "(18b)"},
     "language": "stan1293",
     "primaryText": "The woman and the men smokes and drink respectively.",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
       ["subjects", "sg pl"],
       ["verbs", "sg pl"]
-    ]
+    ],
+    "comment": "Printed unmarked (p. 482: \"which we do not mark with our own judgements\"); the authors' judgment: \"All of (18 a-c) we find ungrammatical\" (p. 483).",
+    "verified": "page-image"
   },
   {
     "id": "pullumgazdar1982_ex18c",
-    "source": {"bibkey": "gazdar-pullum-1982", "paperLabel": "(18c)"},
+    "source": {"bibkey": "pullum-gazdar-1982", "paperLabel": "(18c)"},
     "language": "stan1293",
     "primaryText": "The woman and the men smoke and drinks respectively.",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
       ["subjects", "sg pl"],
       ["verbs", "pl sg"]
-    ]
+    ],
+    "comment": "Printed unmarked (p. 482: \"which we do not mark with our own judgements\"); the authors' judgment: \"All of (18 a-c) we find ungrammatical\" (p. 483).",
+    "verified": "page-image"
   },
   {
     "id": "pullumgazdar1982_ex18d",
-    "source": {"bibkey": "gazdar-pullum-1982", "paperLabel": "(18d)"},
+    "source": {"bibkey": "pullum-gazdar-1982", "paperLabel": "(18d)"},
     "language": "stan1293",
     "primaryText": "The woman and the men smoke and drink respectively.",
     "discourseSegments": [],
@@ -65,28 +71,32 @@
     "paperFeatures": [
       ["subjects", "sg pl"],
       ["verbs", "pl pl"]
-    ]
+    ],
+    "comment": "Printed unmarked (p. 482: \"which we do not mark with our own judgements\"); the authors' judgment: \"(18d) is of uncertain status, it is the only one we could conceivably accept\" (p. 483).",
+    "verified": "page-image"
   },
   {
     "id": "pullumgazdar1982_ex19a",
-    "source": {"bibkey": "gazdar-pullum-1982", "paperLabel": "(19a)"},
+    "source": {"bibkey": "pullum-gazdar-1982", "paperLabel": "(19a)"},
     "language": "stan1293",
     "primaryText": "The man and the woman smokes and drinks respectively.",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
       ["subjects", "sg sg"],
       ["verbs", "sg sg"]
-    ]
+    ],
+    "comment": "Printed unmarked (p. 482: \"which we do not mark with our own judgements\"); the authors' judgment: \"we reject (19a) completely\" (p. 483).",
+    "verified": "page-image"
   },
   {
     "id": "pullumgazdar1982_ex19b",
-    "source": {"bibkey": "gazdar-pullum-1982", "paperLabel": "(19b)"},
+    "source": {"bibkey": "pullum-gazdar-1982", "paperLabel": "(19b)"},
     "language": "stan1293",
     "primaryText": "The man and the woman smoke and drink respectively.",
     "discourseSegments": [],
@@ -99,11 +109,13 @@
     "paperFeatures": [
       ["subjects", "sg sg"],
       ["verbs", "pl pl"]
-    ]
+    ],
+    "comment": "Printed unmarked (p. 482: \"which we do not mark with our own judgements\"); the authors' judgment: \"We find we can tolerate (19b)\" (p. 483).",
+    "verified": "page-image"
   },
   {
     "id": "pullumgazdar1982_ex25",
-    "source": {"bibkey": "gazdar-pullum-1982", "paperLabel": "(25)"},
+    "source": {"bibkey": "pullum-gazdar-1982", "paperLabel": "(25)"},
     "language": "dutc1256",
     "primaryText": "dat Jan Marie Pieter Arabisch laat zien schrijven",
     "discourseSegments": [],
@@ -115,43 +127,46 @@
     "readings": [],
     "paperFeatures": [
       ["categories", "BBBHFD"]
-    ]
+    ],
+    "verified": "page-image"
   },
   {
     "id": "pullumgazdar1982_ex26",
-    "source": {"bibkey": "gazdar-pullum-1982", "paperLabel": "(26)"},
+    "source": {"bibkey": "pullum-gazdar-1982", "paperLabel": "(26)"},
     "language": "dutc1256",
     "primaryText": "dat Jan Marie Pieter Arabisch laat zien liegen",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "that Jan let Marie see Pieter lie Arabic",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
       ["categories", "BBBHFE"]
-    ]
+    ],
+    "verified": "page-image"
   },
   {
     "id": "pullumgazdar1982_ex27",
-    "source": {"bibkey": "gazdar-pullum-1982", "paperLabel": "(27)"},
+    "source": {"bibkey": "pullum-gazdar-1982", "paperLabel": "(27)"},
     "language": "dutc1256",
     "primaryText": "dat Jan Marie Pieter Arabisch Hans laat zien schrijven",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "that Jan let Marie see Pieter write Arabic Hans",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
       ["categories", "BBBBHFD"]
-    ]
+    ],
+    "verified": "page-image"
   },
   {
     "id": "pullumgazdar1982_ex28",
-    "source": {"bibkey": "gazdar-pullum-1982", "paperLabel": "(28)"},
+    "source": {"bibkey": "pullum-gazdar-1982", "paperLabel": "(28)"},
     "language": "dutc1256",
     "primaryText": "dat Jan Marie Pieter Arabisch wil laten zien schrijven",
     "discourseSegments": [],
@@ -163,27 +178,29 @@
     "readings": [],
     "paperFeatures": [
       ["categories", "BBBIFFD"]
-    ]
+    ],
+    "verified": "page-image"
   },
   {
     "id": "pullumgazdar1982_ex31",
-    "source": {"bibkey": "gazdar-pullum-1982", "paperLabel": "(31)"},
+    "source": {"bibkey": "pullum-gazdar-1982", "paperLabel": "(31)"},
     "language": "dutc1256",
-    "primaryText": "dat Jan Marie Arabisch Pieter wil laten zien schrijven",
+    "primaryText": "(dat Jan) Marie Arabisch Pieter wil laten zien schrijven",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "that Jan will let Marie see Arabic write Pieter",
+    "translation": "(that Jan) will let Marie see Arabic write Pieter",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
       ["categories", "BBBIFFD"]
-    ]
+    ],
+    "verified": "page-image"
   },
   {
     "id": "pullumgazdar1982_ex38",
-    "source": {"bibkey": "gazdar-pullum-1982", "paperLabel": "(38)"},
+    "source": {"bibkey": "pullum-gazdar-1982", "paperLabel": "(38)"},
     "language": "moha1258",
     "primaryText": "iʔi knuhsnuhweʔs thikʌ kanuhsa",
     "discourseSegments": [],
@@ -196,13 +213,14 @@
     "paperFeatures": [
       ["incorporated", "nuhs"],
       ["external", "nuhs"]
-    ]
+    ],
+    "verified": "page-image"
   },
   {
     "id": "pullumgazdar1982_ex39",
-    "source": {"bibkey": "gazdar-pullum-1982", "paperLabel": "(39)"},
+    "source": {"bibkey": "pullum-gazdar-1982", "paperLabel": "(39)"},
     "language": "moha1258",
-    "primaryText": "waʔkhnekahninuʔ ne otsiʔtsaʔ",
+    "primaryText": "waʔkhnekahnínuʔ ne otsìʔtsaʔ",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "I bought the wine.",
@@ -213,13 +231,14 @@
     "paperFeatures": [
       ["incorporated", "hnek"],
       ["external", "tsiʔts"]
-    ]
+    ],
+    "verified": "page-image"
   },
   {
     "id": "pullumgazdar1982_ex40",
-    "source": {"bibkey": "gazdar-pullum-1982", "paperLabel": "(40)"},
+    "source": {"bibkey": "pullum-gazdar-1982", "paperLabel": "(40)"},
     "language": "moha1258",
-    "primaryText": "wakeselehtahni:nuʔseʔ neʔ bike",
+    "primaryText": "wakeselehtahni:nuʔseʔ neʔ 'bike'",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "I bought her a bike.",
@@ -230,11 +249,12 @@
     "paperFeatures": [
       ["incorporated", "seleht"],
       ["external", "bike"]
-    ]
+    ],
+    "verified": "page-image"
   },
   {
     "id": "pullumgazdar1982_ex41a",
-    "source": {"bibkey": "gazdar-pullum-1982", "paperLabel": "(41a)"},
+    "source": {"bibkey": "pullum-gazdar-1982", "paperLabel": "(41a)"},
     "language": "moha1258",
     "primaryText": "kanuhsrakʌ thikʌ kanuhsa",
     "discourseSegments": [],
@@ -247,11 +267,12 @@
     "paperFeatures": [
       ["incorporated", "nuhs"],
       ["external", "nuhs"]
-    ]
+    ],
+    "verified": "page-image"
   },
   {
     "id": "pullumgazdar1982_ex41b",
-    "source": {"bibkey": "gazdar-pullum-1982", "paperLabel": "(41b)"},
+    "source": {"bibkey": "pullum-gazdar-1982", "paperLabel": "(41b)"},
     "language": "moha1258",
     "primaryText": "kanuhsrakʌ thikʌ",
     "discourseSegments": [],
@@ -264,13 +285,14 @@
     "paperFeatures": [
       ["incorporated", "nuhs"],
       ["external", "none"]
-    ]
+    ],
+    "verified": "page-image"
   },
   {
     "id": "pullumgazdar1982_ex42",
-    "source": {"bibkey": "gazdar-pullum-1982", "paperLabel": "(42)"},
+    "source": {"bibkey": "pullum-gazdar-1982", "paperLabel": "(42)"},
     "language": "moha1258",
-    "primaryText": "keliʔwanó:weʔs kiʔ",
+    "primaryText": "keliʔwanú:weʔs kiʔ",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "I agree to this.",
@@ -281,11 +303,12 @@
     "paperFeatures": [
       ["incorporated", "liʔw"],
       ["external", "none"]
-    ]
+    ],
+    "verified": "page-image"
   },
   {
     "id": "pullumgazdar1982_ex43a",
-    "source": {"bibkey": "gazdar-pullum-1982", "paperLabel": "(43a)"},
+    "source": {"bibkey": "pullum-gazdar-1982", "paperLabel": "(43a)"},
     "language": "moha1258",
     "primaryText": "iʔi k-nuhweʔs ne ka-nuhs-aʔ",
     "discourseSegments": [],
@@ -298,11 +321,12 @@
     "paperFeatures": [
       ["incorporated", "none"],
       ["external", "nuhs"]
-    ]
+    ],
+    "verified": "page-image"
   },
   {
     "id": "pullumgazdar1982_ex43b",
-    "source": {"bibkey": "gazdar-pullum-1982", "paperLabel": "(43b)"},
+    "source": {"bibkey": "pullum-gazdar-1982", "paperLabel": "(43b)"},
     "language": "moha1258",
     "primaryText": "iʔi k-nuhweʔs ne sawatis hra-o-nuhs-aʔ",
     "discourseSegments": [],
@@ -315,11 +339,12 @@
     "paperFeatures": [
       ["incorporated", "none"],
       ["external", "nuhs"]
-    ]
+    ],
+    "verified": "page-image"
   },
   {
     "id": "pullumgazdar1982_ex43c",
-    "source": {"bibkey": "gazdar-pullum-1982", "paperLabel": "(43c)"},
+    "source": {"bibkey": "pullum-gazdar-1982", "paperLabel": "(43c)"},
     "language": "moha1258",
     "primaryText": "iʔi k-nuhs-nuhweʔs ne sawatis hrao-nuhs-aʔ",
     "discourseSegments": [],
@@ -332,11 +357,12 @@
     "paperFeatures": [
       ["incorporated", "nuhs"],
       ["external", "nuhs"]
-    ]
+    ],
+    "verified": "page-image"
   },
   {
     "id": "pullumgazdar1982_ex43d",
-    "source": {"bibkey": "gazdar-pullum-1982", "paperLabel": "(43d)"},
+    "source": {"bibkey": "pullum-gazdar-1982", "paperLabel": "(43d)"},
     "language": "moha1258",
     "primaryText": "iʔi hrai-nuhs-nuhweʔs ne sawatis",
     "discourseSegments": [],
@@ -349,23 +375,25 @@
     "paperFeatures": [
       ["incorporated", "nuhs"],
       ["external", "sawatis"]
-    ]
+    ],
+    "verified": "page-image"
   },
   {
     "id": "pullumgazdar1982_ex43e",
-    "source": {"bibkey": "gazdar-pullum-1982", "paperLabel": "(43e)"},
+    "source": {"bibkey": "pullum-gazdar-1982", "paperLabel": "(43e)"},
     "language": "moha1258",
     "primaryText": "iʔi hrai-nuhweʔs ne sawatis hrao-nuhs-aʔ",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "I like John's house.",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
       ["incorporated", "none"],
       ["external", "nuhs"]
-    ]
+    ],
+    "verified": "page-image"
   }
 ]

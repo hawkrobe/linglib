@@ -280,11 +280,11 @@ def ex_35c : Datum :=
     source := ⟨"elkins-torrence-brown-2026", "(35c)"⟩
     reportedIn := none
     language := "mamm1241"
-    primaryText := "Iku' tzaj tlq'ona'."
+    primaryText := "Iku' tzaj tlq'ona'"
     glossedTokens := [("iku'", "yes"), ("∅-∅-tzaj", "COM-B2/3S-DIR"), ("t-lq'o-'n=a'", "A2/3-buy-DS=MVMT")]
     context := "Answering: Did Juan buy the jocotes in the market?"
     judgment := .ungrammatical
-    alternatives := [("Iku', atzu tzaj tlq'o'na'.", .acceptable)]
+    alternatives := [("Iku', atzu tzaj tlq'o'na'", .acceptable)]
     readings := []
     paperFeatures := [("section", "3.5"), ("mover", "none"), ("reflex", "blocked")] }
 
@@ -345,11 +345,11 @@ def ex_51 : Datum :=
     source := ⟨"mendes-ranero-2021", "(2)"⟩
     reportedIn := some ⟨"elkins-torrence-brown-2026", "(51)"⟩
     language := "kich1262"
-    primaryText := "Jawii xatb'ee wi iwiir?"
-    glossedTokens := [("Jawii", "where"), ("x-at-b'ee", "COMPL-B2SG-go"), ("*(wi)", "FP"), ("iwiir", "yesterday")]
+    primaryText := "Jawi xatb'ee wi iwiir?"
+    glossedTokens := [("Jawi", "where"), ("x-at-b'ee", "COMPL-B2SG-go"), ("*(wi)", "FP"), ("iwiir", "yesterday")]
     context := ""
     judgment := .acceptable
-    alternatives := [("Jawii xatb'ee iwiir?", .ungrammatical)]
+    alternatives := [("Jawi xatb'ee iwiir?", .ungrammatical)]
     readings := []
     paperFeatures := [("section", "5.1"), ("mover", "locative"), ("reflex", "licensed")] }
 

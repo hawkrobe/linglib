@@ -20,8 +20,8 @@ def ex_36a : Datum :=
     source := ⟨"grubic-renans-duah-2019", "(36a)"⟩
     reportedIn := none
     language := "ngam1282"
-    primaryText := "Njèlù èshà=i Sàmá bù nzònò, ke èshá Hàwwâ."
-    glossedTokens := [("Njèlù", "Njelu"), ("èshà=i", "call.PFV=BM"), ("Sàmá", "Sama"), ("bù", "NEG"), ("nzònò,", "yesterday"), ("ke", "also"), ("èshá", "call.PFV"), ("Hàwwâ.", "Hawwa")]
+    primaryText := "Njèlù èshà=ì Sàmá bù nzònò, ke èshá Hàwwâ."
+    glossedTokens := [("Njèlù", "Njelu"), ("èshà=ì", "call.PFV=BM"), ("Sàmá", "Sama"), ("bù", "NEG"), ("nzònò,", "yesterday"), ("ke", "also"), ("èshá", "call.PFV"), ("Hàwwâ.", "Hawwa")]
     context := ""
     judgment := .unacceptable
     alternatives := []
@@ -33,8 +33,8 @@ def ex_36b : Datum :=
     source := ⟨"grubic-renans-duah-2019", "(36b)"⟩
     reportedIn := none
     language := "ngam1282"
-    primaryText := "Njèlù èshà=i Sàmá yàk'i bù nzònò, ke èshá Hàwwâ."
-    glossedTokens := [("Njèlù", "Njelu"), ("èshà=i", "call.PFV=BM"), ("Sàmá", "Sama"), ("yàk'i", "only"), ("bù", "NEG"), ("nzònò,", "yesterday"), ("ke", "also"), ("èshá", "call.PFV"), ("Hàwwâ.", "Hawwa")]
+    primaryText := "Njèlù èshà=ì Sàmá yàk'i bù nzònò, ke èshá Hàwwâ."
+    glossedTokens := [("Njèlù", "Njelu"), ("èshà=ì", "call.PFV=BM"), ("Sàmá", "Sama"), ("yàk'i", "only"), ("bù", "NEG"), ("nzònò,", "yesterday"), ("ke", "also"), ("èshá", "call.PFV"), ("Hàwwâ.", "Hawwa")]
     context := ""
     judgment := .acceptable
     alternatives := []
@@ -46,8 +46,8 @@ def ex_37a : Datum :=
     source := ⟨"grubic-renans-duah-2019", "(37a)"⟩
     reportedIn := none
     language := "gaaa1244"
-    primaryText := "Jèèè Fred nì è-fɔ̀ nìnè è-tsɛ́. È-tsɛ́ Gord hú."
-    glossedTokens := [("Jèèè", "NEG"), ("Fred", "Fred"), ("nì", "PRT"), ("è-fɔ̀", "3SG-throw"), ("nìnè", "hand"), ("è-tsɛ́.", "3SG-call"), ("È-tsɛ́", "3SG-call"), ("Gord", "Gord"), ("hú.", "also")]
+    primaryText := "Jééé Fred nì è-fɔ̀ nìnè è-tsɛ́. È-tsɛ́ Gord hú."
+    glossedTokens := [("Jééé", "NEG"), ("Fred", "Fred"), ("nì", "PRT"), ("è-fɔ̀", "3SG-throw"), ("nìnè", "hand"), ("è-tsɛ́.", "3SG-call"), ("È-tsɛ́", "3SG-call"), ("Gord", "Gord"), ("hú.", "also")]
     context := ""
     judgment := .unacceptable
     alternatives := []
@@ -59,8 +59,8 @@ def ex_37b : Datum :=
     source := ⟨"grubic-renans-duah-2019", "(37b)"⟩
     reportedIn := none
     language := "gaaa1244"
-    primaryText := "Jèèè Fred pɛ́ è-fɔ̀ nìnè è-tsɛ́. È-tsɛ́ Gord hú."
-    glossedTokens := [("Jèèè", "NEG"), ("Fred", "Fred"), ("pɛ́", "only"), ("è-fɔ̀", "3SG-throw"), ("nìnè", "hand"), ("è-tsɛ́.", "3SG-call"), ("È-tsɛ́", "3SG-call"), ("Gord", "Gord"), ("hú.", "also")]
+    primaryText := "Jééé Fred pɛ́ è-fɔ̀ nìnè è-tsɛ́. È-tsɛ́ Gord hú."
+    glossedTokens := [("Jééé", "NEG"), ("Fred", "Fred"), ("pɛ́", "only"), ("è-fɔ̀", "3SG-throw"), ("nìnè", "hand"), ("è-tsɛ́.", "3SG-call"), ("È-tsɛ́", "3SG-call"), ("Gord", "Gord"), ("hú.", "also")]
     context := ""
     judgment := .acceptable
     alternatives := []
@@ -85,8 +85,8 @@ def ex_38b : Datum :=
     source := ⟨"grubic-renans-duah-2019", "(38b)"⟩
     reportedIn := none
     language := "akan1250"
-    primaryText := "Arko á-ǹ-tɔ́ àsòmàdéɛ́ ńkóáá ɔ̀-tɔ̀-ɔ̀ àhwènéɛ́ ńsó."
-    glossedTokens := [("Arko", "Arko"), ("á-ǹ-tɔ́", "COMPL-NEG-buy"), ("àsòmàdéɛ́", "earrings"), ("ńkóáá", "only"), ("ɔ̀-tɔ̀-ɔ̀", "3SG-buy-COMPL"), ("àhwènéɛ́", "beads"), ("ńsó.", "too")]
+    primaryText := "Arko á-ǹ-tɔ́ àsòmàdéɛ́ ńkóáá ɔ̀-tɔ̀-ɔ̀. àhwènéɛ́ ńsó"
+    glossedTokens := [("Arko", "Arko"), ("á-ǹ-tɔ́", "COMPL-NEG-buy"), ("àsòmàdéɛ́", "earrings"), ("ńkóáá", "only"), ("ɔ̀-tɔ̀-ɔ̀.", "3SG-buy-COMPL"), ("àhwènéɛ́", "beads"), ("ńsó", "too")]
     context := ""
     judgment := .acceptable
     alternatives := []
@@ -98,8 +98,8 @@ def ex_39a : Datum :=
     source := ⟨"grubic-renans-duah-2019", "(39a)"⟩
     reportedIn := none
     language := "ngam1282"
-    primaryText := "kìkà tùkò=ì Kúlè yàk'î"
-    glossedTokens := [("kìkà", "because"), ("tùkò=ì", "eat.PFV=BM"), ("Kúlè", "Kule"), ("yàk'î", "only")]
+    primaryText := "kìkà tùkò=ì Kúlè yàk'î."
+    glossedTokens := [("kìkà", "because"), ("tùkò=ì", "eat.PFV=BM"), ("Kúlè", "Kule"), ("yàk'î.", "only")]
     context := "The teacher had to repeat the exam,"
     judgment := .acceptable
     alternatives := []
@@ -111,8 +111,8 @@ def ex_39b : Datum :=
     source := ⟨"grubic-renans-duah-2019", "(39b)"⟩
     reportedIn := none
     language := "ngam1282"
-    primaryText := "kìkà tùkò=ì Kúlè"
-    glossedTokens := [("kìkà", "because"), ("tùkò=ì", "eat.PFV=BM"), ("Kúlè", "Kule")]
+    primaryText := "kìkà tùkò=ì Kúlè."
+    glossedTokens := [("kìkà", "because"), ("tùkò=ì", "eat.PFV=BM"), ("Kúlè.", "Kule")]
     context := "The teacher had to repeat the exam,"
     judgment := .acceptable
     alternatives := []
@@ -124,8 +124,8 @@ def ex_40a : Datum :=
     source := ⟨"grubic-renans-duah-2019", "(40a)"⟩
     reportedIn := none
     language := "gaaa1244"
-    primaryText := "éjàáké Kòfí pɛ́ páásí"
-    glossedTokens := [("éjàáké", "because"), ("Kòfí", "Kofi"), ("pɛ́", "only"), ("páásí", "pass")]
+    primaryText := "éjàákɛ́ Kòfí pɛ́ páásí."
+    glossedTokens := [("éjàákɛ́", "because"), ("Kòfí", "Kofi"), ("pɛ́", "only"), ("páásí.", "pass")]
     context := "The teacher will repeat the exam,"
     judgment := .acceptable
     alternatives := []
@@ -137,8 +137,8 @@ def ex_40b : Datum :=
     source := ⟨"grubic-renans-duah-2019", "(40b)"⟩
     reportedIn := none
     language := "gaaa1244"
-    primaryText := "éjàáké Kòfí nì páásí"
-    glossedTokens := [("éjàáké", "because"), ("Kòfí", "Kofi"), ("nì", "PRT"), ("páásí", "pass")]
+    primaryText := "éjàákɛ́ Kòfí nì páásí."
+    glossedTokens := [("éjàákɛ́", "because"), ("Kòfí", "Kofi"), ("nì", "PRT"), ("páásí.", "pass")]
     context := "The teacher will repeat the exam,"
     judgment := .acceptable
     alternatives := []
@@ -150,8 +150,8 @@ def ex_41a : Datum :=
     source := ⟨"grubic-renans-duah-2019", "(41a)"⟩
     reportedIn := none
     language := "akan1250"
-    primaryText := "èfisɛ́ Yaw ǹkóáá nà ɔ̀-twá-à ǹsɔ́hwɛ́ nó."
-    glossedTokens := [("èfisɛ́", "because"), ("Yaw", "Yaw"), ("ǹkóáá", "only"), ("nà", "PRT"), ("ɔ̀-twá-à", "3SG.SBJ-pass-COMPL"), ("ǹsɔ́hwɛ́", "exam"), ("nó.", "DET")]
+    primaryText := "èfìsɛ́ Yaw ǹkóáá nà ɔ̀-twá-à ǹsɔ́hwɛ́ nó."
+    glossedTokens := [("èfìsɛ́", "because"), ("Yaw", "Yaw"), ("ǹkóáá", "only"), ("nà", "PRT"), ("ɔ̀-twá-à", "3SG.SBJ-pass-COMPL"), ("ǹsɔ́hwɛ́", "exam"), ("nó.", "DET")]
     context := "The teacher will repeat the exam,"
     judgment := .acceptable
     alternatives := []
@@ -163,8 +163,8 @@ def ex_41b : Datum :=
     source := ⟨"grubic-renans-duah-2019", "(41b)"⟩
     reportedIn := none
     language := "akan1250"
-    primaryText := "èfisɛ́ Yaw nà ɔ̀-twá-à ǹsɔ́hwɛ́ nó"
-    glossedTokens := [("èfisɛ́", "because"), ("Yaw", "Yaw"), ("nà", "PRT"), ("ɔ̀-twá-à", "3SG.SBJ-pass"), ("ǹsɔ́hwɛ́", "exam"), ("nó", "DET")]
+    primaryText := "èfìsɛ́ Yaw nà ɔ̀-twá-à ǹsɔ́hwɛ́ nó."
+    glossedTokens := [("èfìsɛ́", "because"), ("Yaw", "Yaw"), ("nà", "PRT"), ("ɔ̀-twá-à", "3SG.SBJ-pass"), ("ǹsɔ́hwɛ́", "exam"), ("nó.", "DET")]
     context := "The teacher will repeat the exam,"
     judgment := .acceptable
     alternatives := []
@@ -176,8 +176,8 @@ def ex_42 : Datum :=
     source := ⟨"grubic-renans-duah-2019", "(42)"⟩
     reportedIn := none
     language := "ngam1282"
-    primaryText := "Kàjà=i fárì kì gárgù, kè kàjà àyàbà."
-    glossedTokens := [("Kàjà=i", "buy.PFV=BM"), ("fárì", "watermelon"), ("kì", "at"), ("gárgù,", "village"), ("kè", "also"), ("kàjà", "buy.PFV"), ("àyàbà.", "banana")]
+    primaryText := "Kàjà=ì fárì kì gárgù, kè kàjà àyàbà."
+    glossedTokens := [("Kàjà=ì", "buy.PFV=BM"), ("fárì", "watermelon"), ("kì", "at"), ("gárgù,", "village"), ("kè", "also"), ("kàjà", "buy.PFV"), ("àyàbà.", "banana")]
     context := "What did Burba buy in the village?"
     judgment := .acceptable
     alternatives := []
@@ -228,8 +228,8 @@ def ex_44a2 : Datum :=
     source := ⟨"grubic-renans-duah-2019", "(44A2)"⟩
     reportedIn := none
     language := "akan1250"
-    primaryText := "Mè-tɔ̀-ɔ̀ àtààdéɛ́ ɛ́nà mè-tɔ̀-ɔ̀ m̀pàbòá ńsó"
-    glossedTokens := [("Mè-tɔ̀-ɔ̀", "1SG-buy-COMPL"), ("àtààdéɛ́", "shirt"), ("ɛ́nà", "and"), ("mè-tɔ̀-ɔ̀", "1SG-buy-COMPL"), ("m̀pàbòá", "shoes"), ("ńsó", "also")]
+    primaryText := "Mè-tɔ̀-ɔ̀ àtààdéɛ́ ɛ́nà mè-tɔ̀-ɔ̀ m̀pàbòá ńsó."
+    glossedTokens := [("Mè-tɔ̀-ɔ̀", "1SG-buy-COMPL"), ("àtààdéɛ́", "shirt"), ("ɛ́nà", "and"), ("mè-tɔ̀-ɔ̀", "1SG-buy-COMPL"), ("m̀pàbòá", "shoes"), ("ńsó.", "also")]
     context := "What did you buy?"
     judgment := .acceptable
     alternatives := []
@@ -241,8 +241,8 @@ def ex_45 : Datum :=
     source := ⟨"grubic-renans-duah-2019", "(45)"⟩
     reportedIn := none
     language := "ngam1282"
-    primaryText := "Sàlko bànò=ì Dímzà, Umàr kè sàlkó bànò."
-    glossedTokens := [("Sàlko", "build.PFV"), ("bànò=ì", "house=BM"), ("Dímzà,", "Dimza"), ("Umàr", "Umar"), ("kè", "also"), ("sàlkó", "build.PFV"), ("bànò.", "house")]
+    primaryText := "Sàlkó bànò=ì Dímzà, Umàr kè sàlkó bànò."
+    glossedTokens := [("Sàlkó", "build.PFV"), ("bànò=ì", "house=BM"), ("Dímzà,", "Dimza"), ("Umàr", "Umar"), ("kè", "also"), ("sàlkó", "build.PFV"), ("bànò.", "house")]
     context := "Who built a house?"
     judgment := .acceptable
     alternatives := []
@@ -282,7 +282,7 @@ def ex_48 : Datum :=
     language := "ngam1282"
     primaryText := "À bò'ytà járídà=ì ngô wòmmí'ì."
     glossedTokens := [("À", "3SG.HAB"), ("bò'ytà", "sell.HAB"), ("járídà=ì", "newspaper=BM"), ("ngô", "man"), ("wòmmí'ì.", "DEM")]
-    context := "The person asking wants to know the closest place to buy a newspaper. Who sells newspapers?"
+    context := "The person asking the question wants to know the closest place to buy a newspaper. Who sells newspapers?"
     judgment := .acceptable
     alternatives := []
     readings := []
@@ -308,7 +308,7 @@ def ex_50a : Datum :=
     language := "akan1250"
     primaryText := "Ama tɔ̀nè bì."
     glossedTokens := [("Ama", "Ama"), ("tɔ̀nè", "sell"), ("bì.", "some")]
-    context := "The person asking wants to know the closest place to buy mangoes. Who sells mangoes?"
+    context := "The person asking the question wants to know the closest place to buy mangoes. Who sells mangoes?"
     judgment := .acceptable
     alternatives := []
     readings := []
@@ -319,9 +319,9 @@ def ex_50a1 : Datum :=
     source := ⟨"grubic-renans-duah-2019", "(50A1)"⟩
     reportedIn := none
     language := "akan1250"
-    primaryText := "Ama nà ɔ̀-tɔ́nè bì"
-    glossedTokens := [("Ama", "Ama"), ("nà", "PRT"), ("ɔ̀-tɔ́nè", "3SG.SBJ-sell"), ("bì", "some")]
-    context := "The person asking wants to know the closest place to buy mangoes. Who sells mangoes?"
+    primaryText := "Ama nà ɔ̀-tɔ́nè bì."
+    glossedTokens := [("Ama", "Ama"), ("nà", "PRT"), ("ɔ̀-tɔ́nè", "3SG.SBJ-sell"), ("bì.", "some")]
+    context := "The person asking the question wants to know the closest place to buy mangoes. Who sells mangoes?"
     judgment := .unacceptable
     alternatives := []
     readings := []
@@ -384,8 +384,8 @@ def ex_59a : Datum :=
     source := ⟨"grubic-renans-duah-2019", "(59a)"⟩
     reportedIn := none
     language := "ngam1282"
-    primaryText := "Èshà=i ngô bù nzònò."
-    glossedTokens := [("Èshà=i", "call.PFV=BM"), ("ngô", "person"), ("bù", "NEG"), ("nzònò.", "yesterday")]
+    primaryText := "Èshà=ì ngô bù nzònò."
+    glossedTokens := [("Èshà=ì", "call.PFV=BM"), ("ngô", "person"), ("bù", "NEG"), ("nzònò.", "yesterday")]
     context := "Who did Njelu call yesterday?"
     judgment := .acceptable
     alternatives := []
@@ -436,8 +436,8 @@ def ex_60b : Datum :=
     source := ⟨"grubic-renans-duah-2019", "(60b)"⟩
     reportedIn := none
     language := "akan1250"
-    primaryText := "Ɛ̀-ǹ-yɛ́ òbíárá nà ɔ̀-frɛ́-èɛ́"
-    glossedTokens := [("Ɛ̀-ǹ-yɛ́", "3SG.INA.SBJ-NEG-be"), ("òbíárá", "everybody/anyone"), ("nà", "PRT"), ("ɔ̀-frɛ́-èɛ́", "3SG.SBJ-invite-COMPL")]
+    primaryText := "Ɛ̀-ǹ-yɛ́ òbíárá nà ɔ̀-frɛ́-èɛ́."
+    glossedTokens := [("Ɛ̀-ǹ-yɛ́", "3SG.INA.SBJ-NEG-be"), ("òbíárá", "everybody/anyone"), ("nà", "PRT"), ("ɔ̀-frɛ́-èɛ́.", "3SG.SBJ-invite-COMPL")]
     context := "Who did Kofi invite to the party?"
     judgment := .unacceptable
     alternatives := []

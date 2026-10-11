@@ -34,7 +34,8 @@
         "unembedded"
       ]
     ],
-    "comment": "The global scalar implicature: the literal (1a) and the upper-bounded (1b) interpretations."
+    "comment": "The global scalar implicature: the literal (1a) and the upper-bounded (1b) interpretations.",
+    "verified": "page-image"
   },
   {
     "id": "ronai2024_2",
@@ -71,7 +72,8 @@
         "every"
       ]
     ],
-    "comment": "The weak inference (2a) is the global implicature; the strong inference (2b) is the embedded one, which no alternative of an unmodified neo-Gricean account generates."
+    "comment": "The weak inference (2a) is the global implicature; the strong inference (2b) is the embedded one, which no alternative of an unmodified neo-Gricean account generates.",
+    "verified": "page-image"
   },
   {
     "id": "ronai2024_5",
@@ -99,7 +101,8 @@
         "alternative"
       ]
     ],
-    "comment": "The alternative to (2) obtained by replacing both scalar terms (Sauerland 2004); it does not entail (2), and its negation is the strong inference (2b)."
+    "comment": "The alternative to (2) obtained by replacing both scalar terms (Sauerland 2004); it does not entail (2), and its negation is the strong inference (2b).",
+    "verified": "page-image"
   },
   {
     "id": "ronai2024_7",
@@ -132,7 +135,8 @@
         "unembedded"
       ]
     ],
-    "comment": "A scale whose global implicature arises at a lower rate than some/all (van Tiel et al. 2016)."
+    "comment": "A scale whose global implicature arises at a lower rate than some/all (van Tiel et al. 2016).",
+    "verified": "page-image"
   },
   {
     "id": "ronai2024_11a",
@@ -168,7 +172,8 @@
         "42"
       ]
     ],
-    "comment": "Experiment 1: mean sliding-scale response (0-100) to whether the first sentence suggests the second, over the 42 scales in the weak condition, 118 participants; computed from the raw data at https://osf.io/kx42p/."
+    "comment": "Experiment 1: mean sliding-scale response (0-100) to whether the first sentence suggests the second, over the 42 scales in the weak condition, 118 participants; computed from the raw data at https://osf.io/kx42p/.",
+    "verified": "page-image"
   },
   {
     "id": "ronai2024_11b",
@@ -204,7 +209,8 @@
         "30"
       ]
     ],
-    "comment": "Experiment 1: mean sliding-scale response (0-100) to whether the first sentence suggests the second, over the 42 scales in the strong condition, 118 participants; computed from the raw data at https://osf.io/kx42p/."
+    "comment": "Experiment 1: mean sliding-scale response (0-100) to whether the first sentence suggests the second, over the 42 scales in the strong condition, 118 participants; computed from the raw data at https://osf.io/kx42p/.",
+    "verified": "page-image"
   },
   {
     "id": "ronai2024_11c",
@@ -237,10 +243,11 @@
       ],
       [
         "mean",
-        "86"
+        "85"
       ]
     ],
-    "comment": "Experiment 1: mean sliding-scale response (0-100) to whether the first sentence suggests the second, over the 42 scales in the true condition, 118 participants; computed from the raw data at https://osf.io/kx42p/."
+    "comment": "Experiment 1: mean sliding-scale response (0-100) to whether the first sentence suggests the second, over the 42 scales in the true condition, 118 participants. The paper prints 85% (p. 122); the earlier value 86 was computed from the raw data at https://osf.io/kx42p/.",
+    "verified": "page-image"
   },
   {
     "id": "ronai2024_11d",
@@ -276,7 +283,8 @@
         "4"
       ]
     ],
-    "comment": "Experiment 1: mean sliding-scale response (0-100) to whether the first sentence suggests the second, over the 42 scales in the false condition, 118 participants; computed from the raw data at https://osf.io/kx42p/."
+    "comment": "Experiment 1: mean sliding-scale response (0-100) to whether the first sentence suggests the second, over the 42 scales in the false condition, 118 participants; computed from the raw data at https://osf.io/kx42p/.",
+    "verified": "page-image"
   },
   {
     "id": "ronai2024_12",
@@ -308,7 +316,8 @@
         "No soup was hot."
       ]
     ],
-    "comment": "Experiment 2: the inference task; participants answer Yes or No to whether they would conclude the inference from Mary's utterance."
+    "comment": "Experiment 2: the inference task; participants answer Yes or No to whether they would conclude the inference from Mary's utterance.",
+    "verified": "page-image"
   },
   {
     "id": "ronai2024_item1",
@@ -352,7 +361,8 @@
         "7"
       ]
     ],
-    "comment": "Strong-inference item: exp1 is the mean sliding-scale response (0-100) in Experiment 1, exp2 the percentage of Yes answers in Experiment 2; both computed from the raw data at https://osf.io/kx42p/."
+    "comment": "Strong-inference item: exp1 is the mean sliding-scale response (0-100) in Experiment 1, exp2 the percentage of Yes answers in Experiment 2; both computed from the raw data at https://osf.io/kx42p/.",
+    "verified": "supplement"
   },
   {
     "id": "ronai2024_item2",
@@ -389,14 +399,15 @@
       ],
       [
         "exp1",
-        "55"
+        "54"
       ],
       [
         "exp2",
         "49"
       ]
     ],
-    "comment": "Strong-inference item: exp1 is the mean sliding-scale response (0-100) in Experiment 1, exp2 the percentage of Yes answers in Experiment 2; both computed from the raw data at https://osf.io/kx42p/."
+    "comment": "Strong-inference item: exp1 is the mean sliding-scale response (0-100) in Experiment 1, exp2 the percentage of Yes answers in Experiment 2; both computed from the raw data at https://osf.io/kx42p/.",
+    "verified": "supplement"
   },
   {
     "id": "ronai2024_item3",
@@ -440,7 +451,8 @@
         "0"
       ]
     ],
-    "comment": "Strong-inference item: exp1 is the mean sliding-scale response (0-100) in Experiment 1, exp2 the percentage of Yes answers in Experiment 2; both computed from the raw data at https://osf.io/kx42p/."
+    "comment": "Strong-inference item: exp1 is the mean sliding-scale response (0-100) in Experiment 1, exp2 the percentage of Yes answers in Experiment 2; both computed from the raw data at https://osf.io/kx42p/.",
+    "verified": "supplement"
   },
   {
     "id": "ronai2024_item4",
@@ -484,7 +496,8 @@
         "9"
       ]
     ],
-    "comment": "Strong-inference item: exp1 is the mean sliding-scale response (0-100) in Experiment 1, exp2 the percentage of Yes answers in Experiment 2; both computed from the raw data at https://osf.io/kx42p/."
+    "comment": "Strong-inference item: exp1 is the mean sliding-scale response (0-100) in Experiment 1, exp2 the percentage of Yes answers in Experiment 2; both computed from the raw data at https://osf.io/kx42p/.",
+    "verified": "supplement"
   },
   {
     "id": "ronai2024_item5",
@@ -528,7 +541,8 @@
         "2"
       ]
     ],
-    "comment": "Strong-inference item: exp1 is the mean sliding-scale response (0-100) in Experiment 1, exp2 the percentage of Yes answers in Experiment 2; both computed from the raw data at https://osf.io/kx42p/."
+    "comment": "Strong-inference item: exp1 is the mean sliding-scale response (0-100) in Experiment 1, exp2 the percentage of Yes answers in Experiment 2; both computed from the raw data at https://osf.io/kx42p/.",
+    "verified": "supplement"
   },
   {
     "id": "ronai2024_item6",
@@ -572,7 +586,8 @@
         "49"
       ]
     ],
-    "comment": "Strong-inference item: exp1 is the mean sliding-scale response (0-100) in Experiment 1, exp2 the percentage of Yes answers in Experiment 2; both computed from the raw data at https://osf.io/kx42p/."
+    "comment": "Strong-inference item: exp1 is the mean sliding-scale response (0-100) in Experiment 1, exp2 the percentage of Yes answers in Experiment 2; both computed from the raw data at https://osf.io/kx42p/.",
+    "verified": "supplement"
   },
   {
     "id": "ronai2024_item7",
@@ -616,7 +631,8 @@
         "4"
       ]
     ],
-    "comment": "Strong-inference item: exp1 is the mean sliding-scale response (0-100) in Experiment 1, exp2 the percentage of Yes answers in Experiment 2; both computed from the raw data at https://osf.io/kx42p/."
+    "comment": "Strong-inference item: exp1 is the mean sliding-scale response (0-100) in Experiment 1, exp2 the percentage of Yes answers in Experiment 2; both computed from the raw data at https://osf.io/kx42p/.",
+    "verified": "supplement"
   },
   {
     "id": "ronai2024_item8",
@@ -660,7 +676,8 @@
         "9"
       ]
     ],
-    "comment": "Strong-inference item: exp1 is the mean sliding-scale response (0-100) in Experiment 1, exp2 the percentage of Yes answers in Experiment 2; both computed from the raw data at https://osf.io/kx42p/."
+    "comment": "Strong-inference item: exp1 is the mean sliding-scale response (0-100) in Experiment 1, exp2 the percentage of Yes answers in Experiment 2; both computed from the raw data at https://osf.io/kx42p/.",
+    "verified": "supplement"
   },
   {
     "id": "ronai2024_item9",
@@ -704,7 +721,8 @@
         "0"
       ]
     ],
-    "comment": "Strong-inference item: exp1 is the mean sliding-scale response (0-100) in Experiment 1, exp2 the percentage of Yes answers in Experiment 2; both computed from the raw data at https://osf.io/kx42p/."
+    "comment": "Strong-inference item: exp1 is the mean sliding-scale response (0-100) in Experiment 1, exp2 the percentage of Yes answers in Experiment 2; both computed from the raw data at https://osf.io/kx42p/.",
+    "verified": "supplement"
   },
   {
     "id": "ronai2024_item10",
@@ -748,7 +766,8 @@
         "31"
       ]
     ],
-    "comment": "Strong-inference item: exp1 is the mean sliding-scale response (0-100) in Experiment 1, exp2 the percentage of Yes answers in Experiment 2; both computed from the raw data at https://osf.io/kx42p/."
+    "comment": "Strong-inference item: exp1 is the mean sliding-scale response (0-100) in Experiment 1, exp2 the percentage of Yes answers in Experiment 2; both computed from the raw data at https://osf.io/kx42p/.",
+    "verified": "supplement"
   },
   {
     "id": "ronai2024_item11",
@@ -792,7 +811,8 @@
         "13"
       ]
     ],
-    "comment": "Strong-inference item: exp1 is the mean sliding-scale response (0-100) in Experiment 1, exp2 the percentage of Yes answers in Experiment 2; both computed from the raw data at https://osf.io/kx42p/."
+    "comment": "Strong-inference item: exp1 is the mean sliding-scale response (0-100) in Experiment 1, exp2 the percentage of Yes answers in Experiment 2; both computed from the raw data at https://osf.io/kx42p/.",
+    "verified": "supplement"
   },
   {
     "id": "ronai2024_item12",
@@ -802,7 +822,7 @@
     },
     "reportedIn": null,
     "language": "stan1293",
-    "primaryText": "Every movie was funny. ",
+    "primaryText": "Every movie was funny.",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
@@ -836,7 +856,8 @@
         "4"
       ]
     ],
-    "comment": "Strong-inference item: exp1 is the mean sliding-scale response (0-100) in Experiment 1, exp2 the percentage of Yes answers in Experiment 2; both computed from the raw data at https://osf.io/kx42p/."
+    "comment": "Strong-inference item: exp1 is the mean sliding-scale response (0-100) in Experiment 1, exp2 the percentage of Yes answers in Experiment 2; both computed from the raw data at https://osf.io/kx42p/.",
+    "verified": "supplement"
   },
   {
     "id": "ronai2024_item13",
@@ -880,7 +901,8 @@
         "18"
       ]
     ],
-    "comment": "Strong-inference item: exp1 is the mean sliding-scale response (0-100) in Experiment 1, exp2 the percentage of Yes answers in Experiment 2; both computed from the raw data at https://osf.io/kx42p/."
+    "comment": "Strong-inference item: exp1 is the mean sliding-scale response (0-100) in Experiment 1, exp2 the percentage of Yes answers in Experiment 2; both computed from the raw data at https://osf.io/kx42p/.",
+    "verified": "supplement"
   },
   {
     "id": "ronai2024_item14",
@@ -924,7 +946,8 @@
         "13"
       ]
     ],
-    "comment": "Strong-inference item: exp1 is the mean sliding-scale response (0-100) in Experiment 1, exp2 the percentage of Yes answers in Experiment 2; both computed from the raw data at https://osf.io/kx42p/."
+    "comment": "Strong-inference item: exp1 is the mean sliding-scale response (0-100) in Experiment 1, exp2 the percentage of Yes answers in Experiment 2; both computed from the raw data at https://osf.io/kx42p/.",
+    "verified": "supplement"
   },
   {
     "id": "ronai2024_item15",
@@ -968,7 +991,8 @@
         "22"
       ]
     ],
-    "comment": "Strong-inference item: exp1 is the mean sliding-scale response (0-100) in Experiment 1, exp2 the percentage of Yes answers in Experiment 2; both computed from the raw data at https://osf.io/kx42p/."
+    "comment": "Strong-inference item: exp1 is the mean sliding-scale response (0-100) in Experiment 1, exp2 the percentage of Yes answers in Experiment 2; both computed from the raw data at https://osf.io/kx42p/.",
+    "verified": "supplement"
   },
   {
     "id": "ronai2024_item16",
@@ -1012,7 +1036,8 @@
         "4"
       ]
     ],
-    "comment": "Strong-inference item: exp1 is the mean sliding-scale response (0-100) in Experiment 1, exp2 the percentage of Yes answers in Experiment 2; both computed from the raw data at https://osf.io/kx42p/."
+    "comment": "Strong-inference item: exp1 is the mean sliding-scale response (0-100) in Experiment 1, exp2 the percentage of Yes answers in Experiment 2; both computed from the raw data at https://osf.io/kx42p/.",
+    "verified": "supplement"
   },
   {
     "id": "ronai2024_item17",
@@ -1056,7 +1081,8 @@
         "7"
       ]
     ],
-    "comment": "Strong-inference item: exp1 is the mean sliding-scale response (0-100) in Experiment 1, exp2 the percentage of Yes answers in Experiment 2; both computed from the raw data at https://osf.io/kx42p/."
+    "comment": "Strong-inference item: exp1 is the mean sliding-scale response (0-100) in Experiment 1, exp2 the percentage of Yes answers in Experiment 2; both computed from the raw data at https://osf.io/kx42p/.",
+    "verified": "supplement"
   },
   {
     "id": "ronai2024_item18",
@@ -1093,14 +1119,15 @@
       ],
       [
         "exp1",
-        "13"
+        "14"
       ],
       [
         "exp2",
         "9"
       ]
     ],
-    "comment": "Strong-inference item: exp1 is the mean sliding-scale response (0-100) in Experiment 1, exp2 the percentage of Yes answers in Experiment 2; both computed from the raw data at https://osf.io/kx42p/."
+    "comment": "Strong-inference item: exp1 is the mean sliding-scale response (0-100) in Experiment 1, exp2 the percentage of Yes answers in Experiment 2; both computed from the raw data at https://osf.io/kx42p/.",
+    "verified": "supplement"
   },
   {
     "id": "ronai2024_item19",
@@ -1144,7 +1171,8 @@
         "29"
       ]
     ],
-    "comment": "Strong-inference item: exp1 is the mean sliding-scale response (0-100) in Experiment 1, exp2 the percentage of Yes answers in Experiment 2; both computed from the raw data at https://osf.io/kx42p/."
+    "comment": "Strong-inference item: exp1 is the mean sliding-scale response (0-100) in Experiment 1, exp2 the percentage of Yes answers in Experiment 2; both computed from the raw data at https://osf.io/kx42p/.",
+    "verified": "supplement"
   },
   {
     "id": "ronai2024_item20",
@@ -1188,7 +1216,8 @@
         "4"
       ]
     ],
-    "comment": "Strong-inference item: exp1 is the mean sliding-scale response (0-100) in Experiment 1, exp2 the percentage of Yes answers in Experiment 2; both computed from the raw data at https://osf.io/kx42p/."
+    "comment": "Strong-inference item: exp1 is the mean sliding-scale response (0-100) in Experiment 1, exp2 the percentage of Yes answers in Experiment 2; both computed from the raw data at https://osf.io/kx42p/.",
+    "verified": "supplement"
   },
   {
     "id": "ronai2024_item21",
@@ -1232,7 +1261,8 @@
         "53"
       ]
     ],
-    "comment": "Strong-inference item: exp1 is the mean sliding-scale response (0-100) in Experiment 1, exp2 the percentage of Yes answers in Experiment 2; both computed from the raw data at https://osf.io/kx42p/."
+    "comment": "Strong-inference item: exp1 is the mean sliding-scale response (0-100) in Experiment 1, exp2 the percentage of Yes answers in Experiment 2; both computed from the raw data at https://osf.io/kx42p/.",
+    "verified": "supplement"
   },
   {
     "id": "ronai2024_item22",
@@ -1269,14 +1299,15 @@
       ],
       [
         "exp1",
-        "43"
+        "41"
       ],
       [
         "exp2",
         "44"
       ]
     ],
-    "comment": "Strong-inference item: exp1 is the mean sliding-scale response (0-100) in Experiment 1, exp2 the percentage of Yes answers in Experiment 2; both computed from the raw data at https://osf.io/kx42p/."
+    "comment": "Strong-inference item: exp1 is the mean sliding-scale response (0-100) in Experiment 1, exp2 the percentage of Yes answers in Experiment 2; both computed from the raw data at https://osf.io/kx42p/.",
+    "verified": "supplement"
   },
   {
     "id": "ronai2024_item23",
@@ -1320,7 +1351,8 @@
         "7"
       ]
     ],
-    "comment": "Strong-inference item: exp1 is the mean sliding-scale response (0-100) in Experiment 1, exp2 the percentage of Yes answers in Experiment 2; both computed from the raw data at https://osf.io/kx42p/."
+    "comment": "Strong-inference item: exp1 is the mean sliding-scale response (0-100) in Experiment 1, exp2 the percentage of Yes answers in Experiment 2; both computed from the raw data at https://osf.io/kx42p/.",
+    "verified": "supplement"
   },
   {
     "id": "ronai2024_item24",
@@ -1364,7 +1396,8 @@
         "18"
       ]
     ],
-    "comment": "Strong-inference item: exp1 is the mean sliding-scale response (0-100) in Experiment 1, exp2 the percentage of Yes answers in Experiment 2; both computed from the raw data at https://osf.io/kx42p/."
+    "comment": "Strong-inference item: exp1 is the mean sliding-scale response (0-100) in Experiment 1, exp2 the percentage of Yes answers in Experiment 2; both computed from the raw data at https://osf.io/kx42p/.",
+    "verified": "supplement"
   },
   {
     "id": "ronai2024_item25",
@@ -1408,7 +1441,8 @@
         "0"
       ]
     ],
-    "comment": "Strong-inference item: exp1 is the mean sliding-scale response (0-100) in Experiment 1, exp2 the percentage of Yes answers in Experiment 2; both computed from the raw data at https://osf.io/kx42p/."
+    "comment": "Strong-inference item: exp1 is the mean sliding-scale response (0-100) in Experiment 1, exp2 the percentage of Yes answers in Experiment 2; both computed from the raw data at https://osf.io/kx42p/.",
+    "verified": "supplement"
   },
   {
     "id": "ronai2024_item26",
@@ -1445,14 +1479,15 @@
       ],
       [
         "exp1",
-        "66"
+        "67"
       ],
       [
         "exp2",
         "62"
       ]
     ],
-    "comment": "Strong-inference item: exp1 is the mean sliding-scale response (0-100) in Experiment 1, exp2 the percentage of Yes answers in Experiment 2; both computed from the raw data at https://osf.io/kx42p/."
+    "comment": "Strong-inference item: exp1 is the mean sliding-scale response (0-100) in Experiment 1, exp2 the percentage of Yes answers in Experiment 2; both computed from the raw data at https://osf.io/kx42p/.",
+    "verified": "supplement"
   },
   {
     "id": "ronai2024_item27",
@@ -1496,7 +1531,8 @@
         "7"
       ]
     ],
-    "comment": "Strong-inference item: exp1 is the mean sliding-scale response (0-100) in Experiment 1, exp2 the percentage of Yes answers in Experiment 2; both computed from the raw data at https://osf.io/kx42p/."
+    "comment": "Strong-inference item: exp1 is the mean sliding-scale response (0-100) in Experiment 1, exp2 the percentage of Yes answers in Experiment 2; both computed from the raw data at https://osf.io/kx42p/.",
+    "verified": "supplement"
   },
   {
     "id": "ronai2024_item28",
@@ -1540,7 +1576,8 @@
         "33"
       ]
     ],
-    "comment": "Strong-inference item: exp1 is the mean sliding-scale response (0-100) in Experiment 1, exp2 the percentage of Yes answers in Experiment 2; both computed from the raw data at https://osf.io/kx42p/."
+    "comment": "Strong-inference item: exp1 is the mean sliding-scale response (0-100) in Experiment 1, exp2 the percentage of Yes answers in Experiment 2; both computed from the raw data at https://osf.io/kx42p/.",
+    "verified": "supplement"
   },
   {
     "id": "ronai2024_item29",
@@ -1584,7 +1621,8 @@
         "20"
       ]
     ],
-    "comment": "Strong-inference item: exp1 is the mean sliding-scale response (0-100) in Experiment 1, exp2 the percentage of Yes answers in Experiment 2; both computed from the raw data at https://osf.io/kx42p/."
+    "comment": "Strong-inference item: exp1 is the mean sliding-scale response (0-100) in Experiment 1, exp2 the percentage of Yes answers in Experiment 2; both computed from the raw data at https://osf.io/kx42p/.",
+    "verified": "supplement"
   },
   {
     "id": "ronai2024_item30",
@@ -1621,14 +1659,15 @@
       ],
       [
         "exp1",
-        "18"
+        "19"
       ],
       [
         "exp2",
         "7"
       ]
     ],
-    "comment": "Strong-inference item: exp1 is the mean sliding-scale response (0-100) in Experiment 1, exp2 the percentage of Yes answers in Experiment 2; both computed from the raw data at https://osf.io/kx42p/."
+    "comment": "Strong-inference item: exp1 is the mean sliding-scale response (0-100) in Experiment 1, exp2 the percentage of Yes answers in Experiment 2; both computed from the raw data at https://osf.io/kx42p/.",
+    "verified": "supplement"
   },
   {
     "id": "ronai2024_item31",
@@ -1672,7 +1711,8 @@
         "7"
       ]
     ],
-    "comment": "Strong-inference item: exp1 is the mean sliding-scale response (0-100) in Experiment 1, exp2 the percentage of Yes answers in Experiment 2; both computed from the raw data at https://osf.io/kx42p/."
+    "comment": "Strong-inference item: exp1 is the mean sliding-scale response (0-100) in Experiment 1, exp2 the percentage of Yes answers in Experiment 2; both computed from the raw data at https://osf.io/kx42p/.",
+    "verified": "supplement"
   },
   {
     "id": "ronai2024_item32",
@@ -1716,7 +1756,8 @@
         "7"
       ]
     ],
-    "comment": "Strong-inference item: exp1 is the mean sliding-scale response (0-100) in Experiment 1, exp2 the percentage of Yes answers in Experiment 2; both computed from the raw data at https://osf.io/kx42p/."
+    "comment": "Strong-inference item: exp1 is the mean sliding-scale response (0-100) in Experiment 1, exp2 the percentage of Yes answers in Experiment 2; both computed from the raw data at https://osf.io/kx42p/.",
+    "verified": "supplement"
   },
   {
     "id": "ronai2024_item33",
@@ -1760,7 +1801,8 @@
         "40"
       ]
     ],
-    "comment": "Strong-inference item: exp1 is the mean sliding-scale response (0-100) in Experiment 1, exp2 the percentage of Yes answers in Experiment 2; both computed from the raw data at https://osf.io/kx42p/."
+    "comment": "Strong-inference item: exp1 is the mean sliding-scale response (0-100) in Experiment 1, exp2 the percentage of Yes answers in Experiment 2; both computed from the raw data at https://osf.io/kx42p/.",
+    "verified": "supplement"
   },
   {
     "id": "ronai2024_item34",
@@ -1797,14 +1839,15 @@
       ],
       [
         "exp1",
-        "39"
+        "40"
       ],
       [
         "exp2",
         "33"
       ]
     ],
-    "comment": "Strong-inference item: exp1 is the mean sliding-scale response (0-100) in Experiment 1, exp2 the percentage of Yes answers in Experiment 2; both computed from the raw data at https://osf.io/kx42p/."
+    "comment": "Strong-inference item: exp1 is the mean sliding-scale response (0-100) in Experiment 1, exp2 the percentage of Yes answers in Experiment 2; both computed from the raw data at https://osf.io/kx42p/.",
+    "verified": "supplement"
   },
   {
     "id": "ronai2024_item35",
@@ -1848,7 +1891,8 @@
         "2"
       ]
     ],
-    "comment": "Strong-inference item: exp1 is the mean sliding-scale response (0-100) in Experiment 1, exp2 the percentage of Yes answers in Experiment 2; both computed from the raw data at https://osf.io/kx42p/."
+    "comment": "Strong-inference item: exp1 is the mean sliding-scale response (0-100) in Experiment 1, exp2 the percentage of Yes answers in Experiment 2; both computed from the raw data at https://osf.io/kx42p/.",
+    "verified": "supplement"
   },
   {
     "id": "ronai2024_item36",
@@ -1892,7 +1936,8 @@
         "7"
       ]
     ],
-    "comment": "Strong-inference item: exp1 is the mean sliding-scale response (0-100) in Experiment 1, exp2 the percentage of Yes answers in Experiment 2; both computed from the raw data at https://osf.io/kx42p/."
+    "comment": "Strong-inference item: exp1 is the mean sliding-scale response (0-100) in Experiment 1, exp2 the percentage of Yes answers in Experiment 2; both computed from the raw data at https://osf.io/kx42p/.",
+    "verified": "supplement"
   },
   {
     "id": "ronai2024_item37",
@@ -1936,7 +1981,8 @@
         "7"
       ]
     ],
-    "comment": "Strong-inference item: exp1 is the mean sliding-scale response (0-100) in Experiment 1, exp2 the percentage of Yes answers in Experiment 2; both computed from the raw data at https://osf.io/kx42p/."
+    "comment": "Strong-inference item: exp1 is the mean sliding-scale response (0-100) in Experiment 1, exp2 the percentage of Yes answers in Experiment 2; both computed from the raw data at https://osf.io/kx42p/.",
+    "verified": "supplement"
   },
   {
     "id": "ronai2024_item38",
@@ -1973,14 +2019,15 @@
       ],
       [
         "exp1",
-        "33"
+        "34"
       ],
       [
         "exp2",
         "13"
       ]
     ],
-    "comment": "Strong-inference item: exp1 is the mean sliding-scale response (0-100) in Experiment 1, exp2 the percentage of Yes answers in Experiment 2; both computed from the raw data at https://osf.io/kx42p/."
+    "comment": "Strong-inference item: exp1 is the mean sliding-scale response (0-100) in Experiment 1, exp2 the percentage of Yes answers in Experiment 2; both computed from the raw data at https://osf.io/kx42p/.",
+    "verified": "supplement"
   },
   {
     "id": "ronai2024_item39",
@@ -2024,7 +2071,8 @@
         "7"
       ]
     ],
-    "comment": "Strong-inference item: exp1 is the mean sliding-scale response (0-100) in Experiment 1, exp2 the percentage of Yes answers in Experiment 2; both computed from the raw data at https://osf.io/kx42p/."
+    "comment": "Strong-inference item: exp1 is the mean sliding-scale response (0-100) in Experiment 1, exp2 the percentage of Yes answers in Experiment 2; both computed from the raw data at https://osf.io/kx42p/.",
+    "verified": "supplement"
   },
   {
     "id": "ronai2024_item40",
@@ -2068,7 +2116,8 @@
         "4"
       ]
     ],
-    "comment": "Strong-inference item: exp1 is the mean sliding-scale response (0-100) in Experiment 1, exp2 the percentage of Yes answers in Experiment 2; both computed from the raw data at https://osf.io/kx42p/."
+    "comment": "Strong-inference item: exp1 is the mean sliding-scale response (0-100) in Experiment 1, exp2 the percentage of Yes answers in Experiment 2; both computed from the raw data at https://osf.io/kx42p/.",
+    "verified": "supplement"
   },
   {
     "id": "ronai2024_item41",
@@ -2112,7 +2161,8 @@
         "31"
       ]
     ],
-    "comment": "Strong-inference item: exp1 is the mean sliding-scale response (0-100) in Experiment 1, exp2 the percentage of Yes answers in Experiment 2; both computed from the raw data at https://osf.io/kx42p/."
+    "comment": "Strong-inference item: exp1 is the mean sliding-scale response (0-100) in Experiment 1, exp2 the percentage of Yes answers in Experiment 2; both computed from the raw data at https://osf.io/kx42p/.",
+    "verified": "supplement"
   },
   {
     "id": "ronai2024_item42",
@@ -2156,6 +2206,7 @@
         "4"
       ]
     ],
-    "comment": "Strong-inference item: exp1 is the mean sliding-scale response (0-100) in Experiment 1, exp2 the percentage of Yes answers in Experiment 2; both computed from the raw data at https://osf.io/kx42p/."
+    "comment": "Strong-inference item: exp1 is the mean sliding-scale response (0-100) in Experiment 1, exp2 the percentage of Yes answers in Experiment 2; both computed from the raw data at https://osf.io/kx42p/.",
+    "verified": "supplement"
   }
 ]

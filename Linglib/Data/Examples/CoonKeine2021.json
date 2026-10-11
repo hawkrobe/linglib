@@ -69,7 +69,8 @@
         "clitic"
       ]
     ],
-    "comment": "3DAT > 3ABS. Judgment from Jon Ander Mendia (their fn. 3)."
+    "comment": "3DAT > 3ABS. Judgment from Jon Ander Mendia (their fn. 3).",
+    "verified": "page-image"
   },
   {
     "id": "coonkeine2021_3b",
@@ -145,7 +146,8 @@
         "clitic"
       ]
     ],
-    "comment": "1DAT > 3ABS."
+    "comment": "1DAT > 3ABS.",
+    "verified": "page-image"
   },
   {
     "id": "coonkeine2021_3c",
@@ -221,7 +223,8 @@
         "clitic"
       ]
     ],
-    "comment": "*3DAT > 1ABS; repeated as (10a)."
+    "comment": "*3DAT > 1ABS; repeated as (10a).",
+    "verified": "page-image"
   },
   {
     "id": "coonkeine2021_3d",
@@ -293,7 +296,8 @@
         "clitic"
       ]
     ],
-    "comment": "*1DAT > 2ABS; repeated as (35). Judgment from Jon Ander Mendia (their fn. 3)."
+    "comment": "*1DAT > 2ABS; repeated as (35). Judgment from Jon Ander Mendia (their fn. 3).",
+    "verified": "page-image"
   },
   {
     "id": "coonkeine2021_10b",
@@ -302,7 +306,7 @@
       "paperLabel": "(10b)"
     },
     "language": "basq1248",
-    "primaryText": "Gaizki iruditzen -zai-t zu-k harakina-ri ni sal-tze-a.",
+    "primaryText": "Gaizki iruditzen ∅-zai-t zu-k harakina-ri ni sal-tze-a.",
     "discourseSegments": [],
     "glossedTokens": [
       [
@@ -314,7 +318,7 @@
         "look.IPFV"
       ],
       [
-        "-zai-t",
+        "∅-zai-t",
         "3ABS-AUX-1DAT"
       ],
       [
@@ -373,7 +377,8 @@
         "clitic"
       ]
     ],
-    "comment": "3DAT > 1ABS inside a case-marked nominalized clause; neither object is agreed with or clitic-doubled."
+    "comment": "3DAT > 1ABS inside a case-marked nominalized clause; neither object is agreed with or clitic-doubled.",
+    "verified": "page-image"
   },
   {
     "id": "coonkeine2021_10c",
@@ -449,7 +454,8 @@
         "clitic"
       ]
     ],
-    "comment": "3DAT > 1ABS inside an adpositional clause."
+    "comment": "3DAT > 1ABS inside an adpositional clause.",
+    "verified": "page-image"
   },
   {
     "id": "coonkeine2021_37a",
@@ -517,7 +523,8 @@
         "clitic"
       ]
     ],
-    "comment": "*3DAT > 1ABS: the dative experiencer c-commands the absolutive."
+    "comment": "*3DAT > 1ABS: the dative experiencer c-commands the absolutive.",
+    "verified": "page-image"
   },
   {
     "id": "coonkeine2021_37b",
@@ -526,7 +533,7 @@
       "paperLabel": "(37b)"
     },
     "language": "basq1248",
-    "primaryText": "Itxaso ni-ri etortzen -zai-t.",
+    "primaryText": "Itxaso ni-ri etortzen ∅-zai-t.",
     "discourseSegments": [],
     "glossedTokens": [
       [
@@ -542,7 +549,7 @@
         "come.IPFV"
       ],
       [
-        "-zai-t",
+        "∅-zai-t",
         "3ABS-AUX-1DAT"
       ]
     ],
@@ -585,7 +592,8 @@
         "clitic"
       ]
     ],
-    "comment": "3ABS > 1DAT: with a motion-plus-location verb the absolutive c-commands the dative."
+    "comment": "3ABS > 1DAT: with a motion-plus-location verb the absolutive c-commands the dative.",
+    "verified": "page-image"
   },
   {
     "id": "coonkeine2021_41",
@@ -657,7 +665,8 @@
         "clitic"
       ]
     ],
-    "comment": "3SG.DAT > 3PL.ABS: the direct object is more specified for number, with no hierarchy effect."
+    "comment": "3SG.DAT > 3PL.ABS: the direct object is more specified for number, with no hierarchy effect.",
+    "verified": "page-image"
   },
   {
     "id": "coonkeine2021_50",
@@ -695,7 +704,7 @@
     "judgment": "acceptable",
     "alternatives": [
       {
-        "form": "*zu (you.ABS)",
+        "form": "Itxaso-ri zu gustatzen d-i-o-zu.",
         "judgment": "ungrammatical"
       }
     ],
@@ -738,7 +747,8 @@
         "clitic"
       ]
     ],
-    "comment": "The absolutive internal argument advances to ergative, moving around the person probe; the unadvanced absolutive *zu* would be a 3DAT > 2ABS configuration as in (37a)."
+    "comment": "The absolutive internal argument advances to ergative, moving around the person probe; the unadvanced absolutive *zu* would be a 3DAT > 2ABS configuration as in (37a).",
+    "verified": "page-image"
   },
   {
     "id": "coonkeine2021_24",
@@ -751,7 +761,7 @@
       "paperLabel": "(24)"
     },
     "language": "stan1289",
-    "primaryText": "En Josep, te 'l va recomenar la Mireia.",
+    "primaryText": "En Josep, te 'l va recomanar la Mireia.",
     "discourseSegments": [],
     "glossedTokens": [
       [
@@ -771,7 +781,7 @@
         "3ACC.CL"
       ],
       [
-        "va recomenar",
+        "va recomanar",
         "recommended"
       ],
       [
@@ -818,7 +828,8 @@
         "clitic"
       ]
     ],
-    "comment": "2 > 3."
+    "comment": "2 > 3. The paper prints recomenar; (28) and (31) print recomanar.",
+    "verified": "page-image"
   },
   {
     "id": "coonkeine2021_28",
@@ -902,7 +913,8 @@
         "clitic"
       ]
     ],
-    "comment": "*3 > 2."
+    "comment": "*3 > 2.",
+    "verified": "page-image"
   },
   {
     "id": "coonkeine2021_31_2_1",
@@ -983,7 +995,8 @@
         "clitic"
       ]
     ],
-    "comment": "The 2 > 1 reading of the cluster."
+    "comment": "The 2 > 1 reading of the cluster.",
+    "verified": "page-image"
   },
   {
     "id": "coonkeine2021_31_1_2",
@@ -1064,7 +1077,8 @@
         "clitic"
       ]
     ],
-    "comment": "The 1 > 2 reading of the cluster."
+    "comment": "The 1 > 2 reading of the cluster.",
+    "verified": "page-image"
   },
   {
     "id": "coonkeine2021_44a",
@@ -1136,7 +1150,8 @@
         "clitic"
       ]
     ],
-    "comment": "3DAT > 3ACC. The dative and accusative clitics reorder freely; the person restriction targets whichever is structurally lower. The branching probe over transparent datives is the analysis of fn. 26 for the Strong PCC variety Stegovec reports."
+    "comment": "3DAT > 3ACC. The dative and accusative clitics reorder freely; the person restriction targets whichever is structurally lower. The branching probe over transparent datives is the analysis of fn. 26 for the Strong PCC variety Stegovec reports.",
+    "verified": "page-image"
   },
   {
     "id": "coonkeine2021_44a_me",
@@ -1208,7 +1223,8 @@
         "clitic"
       ]
     ],
-    "comment": "*3DAT > 1ACC."
+    "comment": "*3DAT > 1ACC.",
+    "verified": "page-image"
   },
   {
     "id": "coonkeine2021_44a_te",
@@ -1280,7 +1296,8 @@
         "clitic"
       ]
     ],
-    "comment": "*3DAT > 2ACC."
+    "comment": "*3DAT > 2ACC.",
+    "verified": "page-image"
   },
   {
     "id": "coonkeine2021_44b",
@@ -1352,7 +1369,8 @@
         "clitic"
       ]
     ],
-    "comment": "3ACC > 3DAT: the direct object has moved above the indirect object."
+    "comment": "3ACC > 3DAT: the direct object has moved above the indirect object.",
+    "verified": "page-image"
   },
   {
     "id": "coonkeine2021_44b_mi",
@@ -1424,7 +1442,8 @@
         "clitic"
       ]
     ],
-    "comment": "*3ACC > 1DAT."
+    "comment": "*3ACC > 1DAT.",
+    "verified": "page-image"
   },
   {
     "id": "coonkeine2021_44b_ti",
@@ -1496,7 +1515,8 @@
         "clitic"
       ]
     ],
-    "comment": "*3ACC > 2DAT."
+    "comment": "*3ACC > 2DAT.",
+    "verified": "page-image"
   },
   {
     "id": "coonkeine2021_46a",
@@ -1568,7 +1588,8 @@
         "clitic"
       ]
     ],
-    "comment": "*3DAT > 1ACC; French is a Strong PCC language (table 1)."
+    "comment": "*3DAT > 1ACC.",
+    "verified": "page-image"
   },
   {
     "id": "coonkeine2021_46b",
@@ -1648,7 +1669,8 @@
         "clitic"
       ]
     ],
-    "comment": "The indirect object is realized as a full PP, inaccessible to the probe."
+    "comment": "The indirect object is realized as a full PP, inaccessible to the probe.",
+    "verified": "page-image"
   },
   {
     "id": "coonkeine2021_48a",
@@ -1720,7 +1742,8 @@
         "clitic"
       ]
     ],
-    "comment": "*3DAT > 2ACC; Greek is a Strong PCC language (table 1)."
+    "comment": "*3DAT > 2ACC; Greek is a Strong PCC language (table 1).",
+    "verified": "page-image"
   },
   {
     "id": "coonkeine2021_48b",
@@ -1796,7 +1819,8 @@
         "clitic"
       ]
     ],
-    "comment": "The direct object is a strong pronoun, which does not cliticize."
+    "comment": "The direct object is a strong pronoun, which does not cliticize.",
+    "verified": "page-image"
   },
   {
     "id": "coonkeine2021_51a",
@@ -1860,7 +1884,8 @@
         "germanPresent"
       ]
     ],
-    "comment": "2 > 3. Assumed identity: one DP is assigned the role of the other, as in a play or a game of charades."
+    "comment": "2 > 3. Assumed identity: one DP is assigned the role of the other, as in a play or a game of charades.",
+    "verified": "page-image"
   },
   {
     "id": "coonkeine2021_51b",
@@ -1887,7 +1912,7 @@
     ],
     "translation": "Martin is you.",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -1924,7 +1949,8 @@
         "germanPresent"
       ]
     ],
-    "comment": "*3 > 2, marked *? by the authors; repeated as (56). Assumed identity: one DP is assigned the role of the other, as in a play or a game of charades."
+    "comment": "*3 > 2, marked *? by the authors; repeated as (56). Assumed identity: one DP is assigned the role of the other, as in a play or a game of charades.",
+    "verified": "page-image"
   },
   {
     "id": "coonkeine2021_52a",
@@ -1996,7 +2022,8 @@
         "germanPresent"
       ]
     ],
-    "comment": "PL > SG. Assumed identity: one DP is assigned the role of the other, as in a play or a game of charades."
+    "comment": "PL > SG. Assumed identity: one DP is assigned the role of the other, as in a play or a game of charades.",
+    "verified": "page-image"
   },
   {
     "id": "coonkeine2021_52b",
@@ -2027,7 +2054,7 @@
     ],
     "translation": "Maria is the trees.",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -2064,7 +2091,8 @@
         "germanPresent"
       ]
     ],
-    "comment": "*SG > PL, marked *? by the authors; repeated as (63). Assumed identity: one DP is assigned the role of the other, as in a play or a game of charades."
+    "comment": "*SG > PL, marked *? by the authors; repeated as (63). Assumed identity: one DP is assigned the role of the other, as in a play or a game of charades.",
+    "verified": "page-image"
   },
   {
     "id": "coonkeine2021_54a",
@@ -2136,7 +2164,8 @@
         "germanPresent"
       ]
     ],
-    "comment": "3 > 2 inside a nonfinite clause, which has no agreeing T; the paper gives no derivation. Assumed identity: one DP is assigned the role of the other, as in a play or a game of charades."
+    "comment": "3 > 2 inside a nonfinite clause, which has no agreeing T; the paper gives no derivation. Assumed identity: one DP is assigned the role of the other, as in a play or a game of charades.",
+    "verified": "page-image"
   },
   {
     "id": "coonkeine2021_54b",
@@ -2212,7 +2241,8 @@
         "germanPresent"
       ]
     ],
-    "comment": "SG > PL inside a nonfinite clause, which has no agreeing T; the paper gives no derivation. Assumed identity: one DP is assigned the role of the other, as in a play or a game of charades."
+    "comment": "SG > PL inside a nonfinite clause, which has no agreeing T; the paper gives no derivation. Assumed identity: one DP is assigned the role of the other, as in a play or a game of charades.",
+    "verified": "page-image"
   },
   {
     "id": "coonkeine2021_fn32_ia",
@@ -2276,7 +2306,8 @@
         "germanPast"
       ]
     ],
-    "comment": "3 > 1 in the past tense, where the verb is syncretic between 1SG and 3SG. Assumed identity: one DP is assigned the role of the other, as in a play or a game of charades."
+    "comment": "3 > 1 in the past tense, where the verb is syncretic between 1SG and 3SG. Assumed identity: one DP is assigned the role of the other, as in a play or a game of charades.",
+    "verified": "page-image"
   },
   {
     "id": "coonkeine2021_68a",
@@ -2348,7 +2379,8 @@
         "hindiPresent"
       ]
     ],
-    "comment": "1 > 3: the speaker takes on the role of a third person."
+    "comment": "1 > 3: the speaker takes on the role of a third person.",
+    "verified": "page-image"
   },
   {
     "id": "coonkeine2021_68b",
@@ -2425,7 +2457,8 @@
         "hindiPresent"
       ]
     ],
-    "comment": "*3 > 1 with either agreement form."
+    "comment": "*3 > 1 with either agreement form.",
+    "verified": "page-image"
   },
   {
     "id": "coonkeine2021_69a",
@@ -2501,7 +2534,8 @@
         "hindiPresent"
       ]
     ],
-    "comment": "PL > SG. Judgment from Rajesh Bhatt (p.c.)."
+    "comment": "PL > SG. Judgment from Rajesh Bhatt (p.c.).",
+    "verified": "page-image"
   },
   {
     "id": "coonkeine2021_69b",
@@ -2577,7 +2611,8 @@
         "hindiPresent"
       ]
     ],
-    "comment": "SG > PL, marked ?? by the authors. Judgment from Rajesh Bhatt (p.c.)."
+    "comment": "SG > PL, marked ?? by the authors. Judgment from Rajesh Bhatt (p.c.).",
+    "verified": "page-image"
   },
   {
     "id": "coonkeine2021_fn34_i",
@@ -2669,7 +2704,8 @@
         "hindiPast"
       ]
     ],
-    "comment": "The second conjunct is 3 > 1; the past auxiliary expresses no person distinctions."
+    "comment": "The second conjunct is 3 > 1; the past auxiliary expresses no person distinctions.",
+    "verified": "page-image"
   },
   {
     "id": "coonkeine2021_70a",
@@ -2733,7 +2769,8 @@
         "portuguesePresent"
       ]
     ],
-    "comment": "1 > 3. Judgment from Filipe Hisao Kobayashi (p.c.)."
+    "comment": "1 > 3. Judgment from Filipe Hisao Kobayashi (p.c.).",
+    "verified": "page-image"
   },
   {
     "id": "coonkeine2021_70b",
@@ -2797,7 +2834,8 @@
         "portuguesePresent"
       ]
     ],
-    "comment": "*3 > 1. Judgment from Filipe Hisao Kobayashi (p.c.)."
+    "comment": "*3 > 1. Judgment from Filipe Hisao Kobayashi (p.c.).",
+    "verified": "page-image"
   },
   {
     "id": "coonkeine2021_71",
@@ -2824,7 +2862,7 @@
     ],
     "translation": "He is you.",
     "context": "",
-    "judgment": "marginal",
+    "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -2841,7 +2879,8 @@
         "2"
       ]
     ],
-    "comment": "3 > 2, marked but possible according to a reviewer; the authors offer no account."
+    "comment": "3 > 2, marked but possible according to a reviewer; the authors offer no account.",
+    "verified": "page-image"
   },
   {
     "id": "coonkeine2021_72",
@@ -2868,7 +2907,7 @@
     ],
     "translation": "He is the trees.",
     "context": "",
-    "judgment": "marginal",
+    "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -2889,7 +2928,8 @@
         "pl"
       ]
     ],
-    "comment": "SG > PL, marked but possible according to a reviewer; the authors offer no account."
+    "comment": "SG > PL, marked but possible according to a reviewer; the authors offer no account.",
+    "verified": "page-image"
   },
   {
     "id": "coonkeine2021_73",
@@ -2945,7 +2985,8 @@
         "pl"
       ]
     ],
-    "comment": "Default 3SG agreement with a plural nominative object, available in many varieties."
+    "comment": "Default 3SG agreement with a plural nominative object, available in many varieties.",
+    "verified": "page-image"
   },
   {
     "id": "coonkeine2021_74",
@@ -3017,7 +3058,8 @@
         "icelandicMediopassivePast"
       ]
     ],
-    "comment": "3 > 3PL: the verb agrees with the nominative object."
+    "comment": "3 > 3PL: the verb agrees with the nominative object.",
+    "verified": "page-image"
   },
   {
     "id": "coonkeine2021_76a",
@@ -3089,7 +3131,8 @@
         "icelandicMediopassivePast"
       ]
     ],
-    "comment": "*3 > 1PL."
+    "comment": "*3 > 1PL.",
+    "verified": "page-image"
   },
   {
     "id": "coonkeine2021_76b",
@@ -3161,7 +3204,8 @@
         "icelandicLikaPast"
       ]
     ],
-    "comment": "*3 > 2SG; the verb form is the past 2SG beside 3SG líkaði of (73)."
+    "comment": "*3 > 2SG; the verb form is the past 2SG beside 3SG líkaði of (73).",
+    "verified": "page-image"
   },
   {
     "id": "coonkeine2021_77",
@@ -3257,7 +3301,8 @@
         "icelandicMediopassivePast"
       ]
     ],
-    "comment": "A dative PRO with a 1PL nominative object in a control clause, also with þið 'you' and þeir 'they'; judged quite acceptable, the ? reflecting other factors."
+    "comment": "A dative PRO with a 1PL nominative object in a control clause, also with þið 'you' and þeir 'they'; judged quite acceptable, the ? reflecting other factors.",
+    "verified": "page-image"
   },
   {
     "id": "coonkeine2021_78a",
@@ -3341,7 +3386,8 @@
         "icelandicThykjaPresent"
       ]
     ],
-    "comment": "The matrix verb agrees with the nominative DP of the embedded small clause."
+    "comment": "The matrix verb agrees with the nominative DP of the embedded small clause.",
+    "verified": "page-image"
   },
   {
     "id": "coonkeine2021_78b_agree",
@@ -3425,7 +3471,8 @@
         "icelandicThykjaPresent"
       ]
     ],
-    "comment": "The agreeing form is ruled out: agreement with the 1SG nominative."
+    "comment": "The agreeing form is ruled out: agreement with the 1SG nominative.",
+    "verified": "page-image"
   },
   {
     "id": "coonkeine2021_78b",
@@ -3513,7 +3560,8 @@
         "icelandicThykjaPresent"
       ]
     ],
-    "comment": "The verb agrees with the embedded clause as a whole instead of the nominative DP."
+    "comment": "The verb agrees with the embedded clause as a whole instead of the nominative DP.",
+    "verified": "page-image"
   },
   {
     "id": "coonkeine2021_84a",
@@ -3593,7 +3641,8 @@
         "icelandicMediopassivePast"
       ]
     ],
-    "comment": "3 > 2PL: the 2PL form is syncretic with the 3PL form."
+    "comment": "3 > 2PL: the 2PL form is syncretic with the 3PL form.",
+    "verified": "page-image"
   },
   {
     "id": "coonkeine2021_84b",
@@ -3673,7 +3722,8 @@
         "icelandicMediopassivePast"
       ]
     ],
-    "comment": "*3 > 1PL: the 1PL form is not syncretic with 3rd person agreement."
+    "comment": "*3 > 1PL: the 1PL form is not syncretic with 3rd person agreement.",
+    "verified": "page-image"
   },
   {
     "id": "coonkeine2021_86",
@@ -3745,7 +3795,8 @@
         "pl"
       ]
     ],
-    "comment": "Several probes agree with one DP: no probe agrees with more than one DP."
+    "comment": "Several probes agree with one DP: no probe agrees with more than one DP.",
+    "verified": "page-image"
   },
   {
     "id": "coonkeine2021_fn37_i",
@@ -3797,6 +3848,7 @@
         "pl"
       ]
     ],
-    "comment": "Reverse Predicate Agreement: the expletive lacks φ-features, so the probe agrees only with the 1PL nominative."
+    "comment": "Reverse Predicate Agreement: the expletive lacks φ-features, so the probe agrees only with the 1PL nominative.",
+    "verified": "page-image"
   }
 ]

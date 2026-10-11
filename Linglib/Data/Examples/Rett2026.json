@@ -15,7 +15,8 @@
     "paperFeatures": [
       ["construction", "before"]
     ],
-    "comment": "from Cépeda (2018)"
+    "comment": "from Cépeda (2018)",
+    "verified": "page-image"
   },
   {
     "id": "rett2026_9",
@@ -33,7 +34,8 @@
     "paperFeatures": [
       ["construction", "before"]
     ],
-    "comment": "from Lin (2016)"
+    "comment": "from Lin (2016). The paper prints Zhangsen in the translation.",
+    "verified": "page-image"
   },
   {
     "id": "rett2026_10",
@@ -51,7 +53,8 @@
     "paperFeatures": [
       ["construction", "before"]
     ],
-    "comment": "from Cépeda (2018)"
+    "comment": "from Cépeda (2018)",
+    "verified": "page-image"
   },
   {
     "id": "rett2026_11",
@@ -69,7 +72,8 @@
     "paperFeatures": [
       ["construction", "before"]
     ],
-    "comment": "from Ramat (2022)"
+    "comment": "from Ramat (2022)",
+    "verified": "page-image"
   },
   {
     "id": "rett2026_12",
@@ -87,7 +91,8 @@
     "paperFeatures": [
       ["construction", "before"]
     ],
-    "comment": "Januubi, from Jin and Koenig (2021)"
+    "comment": "Januubi, from Jin and Koenig (2021)",
+    "verified": "page-image"
   },
   {
     "id": "rett2026_13",
@@ -105,7 +110,8 @@
     "paperFeatures": [
       ["construction", "until"]
     ],
-    "comment": "from Espinal (2000)"
+    "comment": "from Espinal (2000)",
+    "verified": "page-image"
   },
   {
     "id": "rett2026_14",
@@ -123,7 +129,8 @@
     "paperFeatures": [
       ["construction", "until"]
     ],
-    "comment": "from Espinal (2000)"
+    "comment": "from Espinal (2000)",
+    "verified": "page-image"
   },
   {
     "id": "rett2026_15",
@@ -141,7 +148,8 @@
     "paperFeatures": [
       ["construction", "since"]
     ],
-    "comment": "from Cépeda (2018)"
+    "comment": "from Cépeda (2018)",
+    "verified": "page-image"
   },
   {
     "id": "rett2026_16",
@@ -159,7 +167,8 @@
     "paperFeatures": [
       ["construction", "since"]
     ],
-    "comment": "from Espinal (2000)"
+    "comment": "from Espinal (2000)",
+    "verified": "page-image"
   },
   {
     "id": "rett2026_17",
@@ -177,7 +186,8 @@
     "paperFeatures": [
       ["construction", "comparative"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "rett2026_18",
@@ -195,7 +205,8 @@
     "paperFeatures": [
       ["construction", "comparative"]
     ],
-    "comment": "from Cépeda (2018)"
+    "comment": "from Cépeda (2018)",
+    "verified": "page-image"
   },
   {
     "id": "rett2026_19",
@@ -213,7 +224,8 @@
     "paperFeatures": [
       ["construction", "preference"]
     ],
-    "comment": "from Espinal (2000)"
+    "comment": "from Espinal (2000)",
+    "verified": "page-image"
   },
   {
     "id": "rett2026_20",
@@ -231,7 +243,8 @@
     "paperFeatures": [
       ["construction", "negativeVerb"]
     ],
-    "comment": "forget; from Jin and Koenig (2021)"
+    "comment": "forget; from Jin and Koenig (2021)",
+    "verified": "page-image"
   },
   {
     "id": "rett2026_21",
@@ -249,7 +262,8 @@
     "paperFeatures": [
       ["construction", "negativeVerb"]
     ],
-    "comment": "doubt; from Espinal (2000)"
+    "comment": "doubt; from Espinal (2000)",
+    "verified": "page-image"
   },
   {
     "id": "rett2026_22",
@@ -267,7 +281,8 @@
     "paperFeatures": [
       ["construction", "negativeVerb"]
     ],
-    "comment": "delay; Zarma-Sonrai, from Jin and Koenig (2021)"
+    "comment": "delay; Zarma-Sonrai, from Jin and Koenig (2021)",
+    "verified": "page-image"
   },
   {
     "id": "rett2026_23",
@@ -285,7 +300,8 @@
     "paperFeatures": [
       ["construction", "negativeVerb"]
     ],
-    "comment": "fear; from Espinal (2000)"
+    "comment": "fear; from Espinal (2000)",
+    "verified": "page-image"
   },
   {
     "id": "rett2026_24",
@@ -303,7 +319,8 @@
     "paperFeatures": [
       ["construction", "negativeVerb"]
     ],
-    "comment": "fear; from Jin and Koenig (2021)"
+    "comment": "fear; from Jin and Koenig (2021)",
+    "verified": "page-image"
   },
   {
     "id": "rett2026_25b",
@@ -321,7 +338,8 @@
     "paperFeatures": [
       ["construction", "exclamative"]
     ],
-    "comment": "from Jespersen (1965); high expletive negation"
+    "comment": "from Jespersen (1965); high expletive negation",
+    "verified": "page-image"
   },
   {
     "id": "rett2026_26",
@@ -339,7 +357,8 @@
     "paperFeatures": [
       ["construction", "exclamative"]
     ],
-    "comment": "from Villalba (2004); high"
+    "comment": "from Villalba (2004); high",
+    "verified": "page-image"
   },
   {
     "id": "rett2026_27",
@@ -357,7 +376,8 @@
     "paperFeatures": [
       ["construction", "exclamative"]
     ],
-    "comment": "wh-exclamative, low expletive negation; from Halm and Huszár (2021)"
+    "comment": "wh-exclamative, low expletive negation; from Halm and Huszár (2021)",
+    "verified": "page-image"
   },
   {
     "id": "rett2026_31",
@@ -375,11 +395,12 @@
     "paperFeatures": [
       ["construction", "surpriseNegation"]
     ],
-    "comment": "sentence exclamation, obligatory high negation; from Halm and Huszár (2021)"
+    "comment": "sentence exclamation, obligatory high negation; from Halm and Huszár (2021). The paper prints Hat.",
+    "verified": "page-image"
   },
   {
     "id": "rett2026_ii_a",
-    "source": {"bibkey": "rett-2026", "paperLabel": "(ii a)"},
+    "source": {"bibkey": "rett-2026", "paperLabel": "fn. 11 (ia)"},
     "reportedIn": null,
     "language": "stan1290",
     "primaryText": "C'est une recherche qui est aussi importante que ne l'est le séro-diagnostic.",
@@ -393,11 +414,12 @@
     "paperFeatures": [
       ["construction", "equative"]
     ],
-    "comment": "from Cépeda (2018), citing Larrivée (1994)"
+    "comment": "from Cépeda (2018), citing Larrivée (1994)",
+    "verified": "page-image"
   },
   {
     "id": "rett2026_ii_it",
-    "source": {"bibkey": "rett-2026", "paperLabel": "(ii)"},
+    "source": {"bibkey": "rett-2026", "paperLabel": "fn. 11 (ii)"},
     "reportedIn": null,
     "language": "ital1282",
     "primaryText": "Maria è tanto intelligente quanto non sia Carlo.",
@@ -411,7 +433,8 @@
     "paperFeatures": [
       ["construction", "equative"]
     ],
-    "comment": "from Napoli and Nespor (1976); a language-specific gap"
+    "comment": "from Napoli and Nespor (1976); a language-specific gap",
+    "verified": "page-image"
   },
   {
     "id": "rett2026_55",
@@ -429,7 +452,8 @@
     "paperFeatures": [
       ["construction", "differentialComparative"]
     ],
-    "comment": "from Napoli and Nespor (1976); not predicted"
+    "comment": "from Napoli and Nespor (1976); not predicted",
+    "verified": "page-image"
   },
   {
     "id": "rett2026_56a",
@@ -447,7 +471,8 @@
     "paperFeatures": [
       ["construction", "comparative"]
     ],
-    "comment": "relative adjective, open scale"
+    "comment": "relative adjective, open scale",
+    "verified": "page-image"
   },
   {
     "id": "rett2026_56b",
@@ -465,7 +490,8 @@
     "paperFeatures": [
       ["construction", "closedScaleComparative"]
     ],
-    "comment": "absolute adjective, closed scale"
+    "comment": "absolute adjective, closed scale",
+    "verified": "page-image"
   },
   {
     "id": "rett2026_68",
@@ -483,7 +509,8 @@
     "paperFeatures": [
       ["construction", "before"]
     ],
-    "comment": "starting-point reading only"
+    "comment": "starting-point reading only",
+    "verified": "page-image"
   },
   {
     "id": "rett2026_69",
@@ -501,7 +528,8 @@
     "paperFeatures": [
       ["construction", "before"]
     ],
-    "comment": "starting-point reading only"
+    "comment": "starting-point reading only",
+    "verified": "page-image"
   },
   {
     "id": "rett2026_74b",
@@ -519,14 +547,15 @@
     "paperFeatures": [
       ["construction", "until"]
     ],
-    "comment": "amíg with negation reads only as until, not while; János Egressy, p.c."
+    "comment": "amíg with negation reads only as until, not while; János Egressy, p.c. The paper prints gyereke, glossed 'the children' with a plural verb; possibly a misprint for gyerekek.",
+    "verified": "page-image"
   },
   {
     "id": "rett2026_78",
     "source": {"bibkey": "rett-2026", "paperLabel": "(78)"},
     "reportedIn": null,
     "language": "ital1282",
-    "primaryText": "Rimarrai qui finché non avrai alzato un dito per aiutarmi.",
+    "primaryText": "Rimarrai qui finché non avrai alzato un dito per aiutar-mi.",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "You will stay here until you have lifted a finger to help me.",
@@ -537,7 +566,8 @@
     "paperFeatures": [
       ["construction", "until"]
     ],
-    "comment": "licenses the weak NPI; from Greco (2018)"
+    "comment": "licenses the weak NPI; from Greco (2018). The paper prints Rimarri.",
+    "verified": "page-image"
   },
   {
     "id": "rett2026_90b",
@@ -555,6 +585,7 @@
     "paperFeatures": [
       ["construction", "notSure"]
     ],
-    "comment": "from Napoli and Nespor (1976)"
+    "comment": "from Napoli and Nespor (1976)",
+    "verified": "page-image"
   }
 ]

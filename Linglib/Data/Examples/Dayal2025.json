@@ -1051,9 +1051,7 @@
     "language": "ital1282",
     "primaryText": "Bevi il vino (o no)?",
     "discourseSegments": [],
-    "glossedTokens": [
-      ["Bevi", "drink"], ["il", "the"], ["vino", "wine"], ["o", "or"], ["no", "not"]
-    ],
+    "glossedTokens": [],
     "translation": "Do you drink wine (or not)?",
     "context": "",
     "judgment": "acceptable",
@@ -1064,7 +1062,8 @@
       ["simplex", "true"],
       ["embedding", "matrix"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "dayal2025_ex69b_it",
@@ -1072,10 +1071,7 @@
     "language": "ital1282",
     "primaryText": "La domanda è [se berrai il vino (o no)]?",
     "discourseSegments": [],
-    "glossedTokens": [
-      ["La", "the"], ["domanda", "question"], ["è", "is"], ["se", "whether"],
-      ["berrai", "will.drink.2SG"], ["il", "the"], ["vino", "wine"], ["o", "or"], ["no", "not"]
-    ],
+    "glossedTokens": [],
     "translation": "The question is, [do you drink wine (or not)]?",
     "context": "",
     "judgment": "acceptable",
@@ -1086,7 +1082,8 @@
       ["simplex", "true"],
       ["embedding", "quasi"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "dayal2025_ex69c_it",
@@ -1094,11 +1091,7 @@
     "language": "ital1282",
     "primaryText": "[Se berrà il vino (o no)] dipenderà dal fatto che lavorerà domani.",
     "discourseSegments": [],
-    "glossedTokens": [
-      ["Se", "whether"], ["berrà", "will.drink.3SG"], ["il", "the"], ["vino", "wine"], ["o", "or"],
-      ["no", "not"], ["dipenderà", "will.depend"], ["dal", "on.the"], ["fatto", "fact"],
-      ["che", "that"], ["lavorerà", "will.work.3SG"], ["domani", "tomorrow"]
-    ],
+    "glossedTokens": [],
     "translation": "[Whether she will drink wine (or not)] depends on whether she has to work tomorrow.",
     "context": "",
     "judgment": "acceptable",
@@ -1109,7 +1102,8 @@
       ["simplex", "true"],
       ["embedding", "subordination"]
     ],
-    "comment": "*se* types the subordinated simplex polar clause."
+    "comment": "*se* types the subordinated simplex polar clause.",
+    "verified": "page-image"
   },
   {
     "id": "dayal2025_ex70a",

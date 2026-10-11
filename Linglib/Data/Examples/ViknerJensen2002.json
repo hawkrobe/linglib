@@ -18,7 +18,8 @@
       ["headNoun", "relational"],
       ["relationType", "inherent"]
     ],
-    "comment": "A kinship relation supplied by the relational head noun."
+    "comment": "A kinship relation supplied by the relational head noun.",
+    "verified": "page-image"
   },
   {
     "id": "viknerjensen2002_1b",
@@ -40,7 +41,8 @@
       ["relationType", "partWhole"],
       ["quale", "constitutive"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "viknerjensen2002_1c",
@@ -61,7 +63,8 @@
       ["headNoun", "sortal"],
       ["relationType", "control"]
     ],
-    "comment": "Control, not ownership: the girl may own, borrow, hire, drive or sit in the car."
+    "comment": "Control, not ownership: the girl may own, borrow, hire, drive or sit in the car.",
+    "verified": "page-image"
   },
   {
     "id": "viknerjensen2002_2a",
@@ -76,14 +79,21 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [
-      {"name": "the person who is the teacher of the girl", "judgment": "acceptable"},
-      {"name": "the teacher she has married, is interviewing, is blackmailing, is dreaming of", "judgment": "acceptable"}
+      {
+        "name": "the person who is the teacher of the girl",
+        "judgment": "acceptable"
+      },
+      {
+        "name": "the teacher she has married, is going to interview, is blackmailing, is dreaming of",
+        "judgment": "acceptable"
+      }
     ],
     "paperFeatures": [
       ["headNoun", "relational"],
       ["interpretation", "lexical and pragmatic"]
     ],
-    "comment": "The relation varies with no change of lexical material; only the first reading is lexical."
+    "comment": "The relation varies with no change of lexical material; only the first reading is lexical.",
+    "verified": "page-image"
   },
   {
     "id": "viknerjensen2002_2b",
@@ -98,14 +108,21 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [
-      {"name": "the poem the girl has written", "judgment": "acceptable"},
-      {"name": "the poem she holds, has discovered, is analysing, is always talking about", "judgment": "acceptable"}
+      {
+        "name": "the poem that the girl has written",
+        "judgment": "acceptable"
+      },
+      {
+        "name": "the poem she holds in her hand, has discovered, is going to analyze, is always talking about",
+        "judgment": "acceptable"
+      }
     ],
     "paperFeatures": [
       ["headNoun", "sortal"],
       ["interpretation", "lexical and pragmatic"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "viknerjensen2002_4",
@@ -120,13 +137,17 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [
-      {"name": "a poem the girl has written", "judgment": "acceptable"}
+      {
+        "name": "a poem that the girl has written",
+        "judgment": "acceptable"
+      }
     ],
     "paperFeatures": [
       ["interpretation", "lexical"],
       ["relationType", "agentive"]
     ],
-    "comment": "The default interpretation available to any speaker without a supporting context."
+    "comment": "The default interpretation available to any speaker without a supporting context.",
+    "verified": "page-image"
   },
   {
     "id": "viknerjensen2002_5a",
@@ -147,7 +168,8 @@
       ["interpretation", "lexical"],
       ["relationType", "inherent"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "viknerjensen2002_5b",
@@ -168,7 +190,8 @@
       ["interpretation", "lexical"],
       ["relationType", "partWhole"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "viknerjensen2002_5c",
@@ -189,7 +212,8 @@
       ["interpretation", "lexical"],
       ["relationType", "agentive"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "viknerjensen2002_5d",
@@ -210,7 +234,8 @@
       ["interpretation", "lexical"],
       ["relationType", "control"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "viknerjensen2002_6a",
@@ -231,7 +256,8 @@
     "paperFeatures": [
       ["interpretation", "pragmatic"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "viknerjensen2002_6d",
@@ -252,7 +278,8 @@
     "paperFeatures": [
       ["interpretation", "pragmatic"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "viknerjensen2002_7a",
@@ -273,7 +300,8 @@
     "paperFeatures": [
       ["interpretation", "no lexical interpretation"]
     ],
-    "comment": "The relatum of teacher must be a person; a pragmatic interpretation can always be imagined."
+    "comment": "The relatum of teacher must be a person; a pragmatic interpretation can always be imagined.",
+    "verified": "page-image"
   },
   {
     "id": "viknerjensen2002_7b",
@@ -294,7 +322,8 @@
     "paperFeatures": [
       ["interpretation", "no lexical interpretation"]
     ],
-    "comment": "A company is not of the sort body that the constitutive quale of nose requires of the whole."
+    "comment": "A company is not of the sort body that the constitutive quale of nose requires of the whole.",
+    "verified": "page-image"
   },
   {
     "id": "viknerjensen2002_7d",
@@ -315,7 +344,8 @@
     "paperFeatures": [
       ["interpretation", "no lexical interpretation"]
     ],
-    "comment": "The controller must be animate and the agent of a cake must be able to bake; the oddity is lexical, unlike that of the horse's car, which is world knowledge."
+    "comment": "The controller must be animate and the agent of a cake must be able to bake; the oddity is lexical, unlike that of the horse's car, which is world knowledge.",
+    "verified": "page-image"
   },
   {
     "id": "viknerjensen2002_11a",
@@ -336,7 +366,8 @@
       ["construction", "quantified possessor"],
       ["definite", "narrow scope"]
     ],
-    "comment": "The implicit definite of the head scopes under the possessor's existential quantifier."
+    "comment": "The implicit definite of the head scopes under the possessor's existential quantifier.",
+    "verified": "page-image"
   },
   {
     "id": "viknerjensen2002_11b",
@@ -357,7 +388,8 @@
       ["construction", "quantified possessor"],
       ["definite", "narrow scope"]
     ],
-    "comment": "Each girl has only one teacher; a wide-scope definite would wrongly require one teacher shared by all girls."
+    "comment": "Each girl has only one teacher; a wide-scope definite would wrongly require one teacher shared by all girls.",
+    "verified": "page-image"
   },
   {
     "id": "viknerjensen2002_28a",
@@ -376,7 +408,8 @@
       ["headNoun", "relational"],
       ["test", "isolation"]
     ],
-    "comment": "Relational nouns are odd in isolation."
+    "comment": "Relational nouns are odd in isolation.",
+    "verified": "page-image"
   },
   {
     "id": "viknerjensen2002_28b",
@@ -395,7 +428,8 @@
       ["headNoun", "dependent part"],
       ["test", "isolation"]
     ],
-    "comment": "Dependent-part nouns pattern with relational nouns, so they are relational in the lexicon."
+    "comment": "Dependent-part nouns pattern with relational nouns, so they are relational in the lexicon.",
+    "verified": "page-image"
   },
   {
     "id": "viknerjensen2002_29a",
@@ -414,7 +448,8 @@
       ["headNoun", "sortal"],
       ["test", "isolation"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "viknerjensen2002_29b",
@@ -433,7 +468,8 @@
       ["headNoun", "autonomous part"],
       ["test", "isolation"]
     ],
-    "comment": "Autonomous-part nouns pattern with sortal nouns and reach the part-whole reading by the constitutive quale."
+    "comment": "Autonomous-part nouns pattern with sortal nouns and reach the part-whole reading by the constitutive quale.",
+    "verified": "page-image"
   },
   {
     "id": "viknerjensen2002_38",
@@ -455,7 +491,8 @@
       ["use", "referent-introducing"],
       ["relationType", "inherent"]
     ],
-    "comment": "A genitive introducing a novel referent."
+    "comment": "A genitive introducing a novel referent.",
+    "verified": "page-image"
   },
   {
     "id": "viknerjensen2002_39a",
@@ -474,7 +511,8 @@
       ["use", "referent-introducing"],
       ["relationType", "control"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "viknerjensen2002_39b",
@@ -486,14 +524,15 @@
     "glossedTokens": [],
     "translation": "",
     "context": "The bus is a novel referent.",
-    "judgment": "acceptable",
+    "judgment": "unacceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
       ["use", "referent-introducing"],
       ["relationType", "control"]
     ],
-    "comment": "Barker marks it infelicitous on the referent-introducing reading and appeals to conventionalized expectation; the paper's informants accept it, as the control analysis predicts."
+    "comment": "Barker marks it infelicitous on the referent-introducing reading and appeals to conventionalized expectation; the paper's informants accept it, as the control analysis predicts.",
+    "verified": "page-image"
   },
   {
     "id": "viknerjensen2002_40b",
@@ -505,14 +544,15 @@
     "glossedTokens": [],
     "translation": "",
     "context": "The stick is a novel referent.",
-    "judgment": "acceptable",
+    "judgment": "unacceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
       ["use", "referent-introducing"],
       ["relationType", "control"]
     ],
-    "comment": "Barker's #; accepted by the paper's informants."
+    "comment": "Barker's #; accepted by the paper's informants.",
+    "verified": "page-image"
   },
   {
     "id": "viknerjensen2002_41b",
@@ -532,7 +572,8 @@
       ["relationType", "control"],
       ["source", "fiction"]
     ],
-    "comment": "An attested referent-introducing genitive with the control relation."
+    "comment": "An attested referent-introducing genitive with the control relation.",
+    "verified": "page-image"
   },
   {
     "id": "viknerjensen2002_42c",
@@ -554,7 +595,8 @@
       ["use", "referent-introducing"],
       ["relationType", "agentive"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "viknerjensen2002_s4_favourite_sister",
@@ -575,7 +617,8 @@
       ["construction", "favourite"],
       ["headNoun", "relational"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "viknerjensen2002_s4_favourite_chair",
@@ -597,7 +640,8 @@
       ["headNoun", "sortal"],
       ["quale", "telic"]
     ],
-    "comment": "The telic quale of chair supplies the relation; a dialogue What is your favourite cigarette? I don't smoke is coherent."
+    "comment": "The telic quale of chair supplies the relation; a dialogue What is your favourite cigarette? I don't smoke is coherent.",
+    "verified": "page-image"
   },
   {
     "id": "viknerjensen2002_s4_favourite_movie",
@@ -619,7 +663,8 @@
       ["headNoun", "sortal"],
       ["quale", "telic"]
     ],
-    "comment": "One lexical interpretation, where Mary's movie has two: the movie Mary controls and the movie Mary has made."
+    "comment": "One lexical interpretation, where Mary's movie has two: the movie Mary controls and the movie Mary has made.",
+    "verified": "page-image"
   },
   {
     "id": "viknerjensen2002_s4_favourite_sky",
@@ -634,16 +679,26 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [
-      {"name": "lexical", "judgment": "unacceptable"},
-      {"name": "sky when it looks a certain way that Anne especially likes", "judgment": "acceptable"},
-      {"name": "sky-representation the way Anne prefers to paint it", "judgment": "acceptable"}
+      {
+        "name": "lexical",
+        "judgment": "unacceptable"
+      },
+      {
+        "name": "sky when it looks a certain way that Anne especially likes",
+        "judgment": "acceptable"
+      },
+      {
+        "name": "sky-representation the way Anne prefers to paint it in her landscapes",
+        "judgment": "acceptable"
+      }
     ],
     "paperFeatures": [
       ["construction", "favourite"],
       ["headNoun", "sortal"],
       ["quale", "none"]
     ],
-    "comment": "Sky has no telic quale, so favourite sky has only pragmatic interpretations."
+    "comment": "Sky has no telic quale, so favourite sky has only pragmatic interpretations.",
+    "verified": "page-image"
   },
   {
     "id": "viknerjensen2002_50",
@@ -667,7 +722,8 @@
       ["headNoun", "sortal"],
       ["quale", "none"]
     ],
-    "comment": "Animal designations have no telic quale."
+    "comment": "Animal designations have no telic quale.",
+    "verified": "page-image"
   },
   {
     "id": "viknerjensen2002_51",
@@ -682,15 +738,25 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [
-      {"name": "lexical", "judgment": "unacceptable"},
-      {"name": "blue is the colour Anne prefers to look at", "judgment": "acceptable"},
-      {"name": "blue is the colour Anne prefers to wear", "judgment": "acceptable"}
+      {
+        "name": "lexical",
+        "judgment": "unacceptable"
+      },
+      {
+        "name": "blue is the colour which Anne prefers to look at",
+        "judgment": "acceptable"
+      },
+      {
+        "name": "blue is the colour which Anne prefers to wear",
+        "judgment": "acceptable"
+      }
     ],
     "paperFeatures": [
       ["construction", "favourite"],
       ["headNoun", "sortal"],
       ["quale", "none"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   }
 ]

@@ -270,7 +270,6 @@ import Linglib.Data.Examples.Holmberg2016
 import Linglib.Data.Examples.Iatridou2000
 import Linglib.Data.Examples.IppolitoKissWilliams2025
 import Linglib.Data.Examples.Kanazawa1994
-import Linglib.Data.Examples.Karttunen1974
 import Linglib.Data.Examples.Kennedy1999
 import Linglib.Data.Examples.Klecha2016
 import Linglib.Data.Examples.Kratzer1998

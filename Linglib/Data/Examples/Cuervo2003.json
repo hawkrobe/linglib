@@ -18,7 +18,8 @@
       ["dative", "dp"],
       ["meaning", "recipient"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "cuervo2003_30",
@@ -26,7 +27,7 @@
     "language": "stan1288",
     "primaryText": "Pablo nos preparó sandwichitos de miga a todos.",
     "glossedTokens": [
-      ["Pablo", "Pablo"], ["nos", "CL.1PL.DAT"], ["preparó", "fixed"],
+      ["Pablo", "Pablo"], ["nos", "CL.1.PL.DAT"], ["preparó", "fixed"],
       ["sandwichitos", "sandwiches"], ["de", "of"], ["miga", "crumb"], ["a", "DAT"],
       ["todos", "all"]
     ],
@@ -40,7 +41,8 @@
       ["dative", "dp"],
       ["meaning", "recipient"]
     ],
-    "comment": "Headed 'Creation verbs ⇒ Benefactive'; table (40) files creation verbs under the recipient reading of the low applicative TO."
+    "comment": "Headed 'Creation verbs ⇒ Benefactive'; table (40) files creation verbs under the recipient reading of the low applicative TO.",
+    "verified": "page-image"
   },
   {
     "id": "cuervo2003_31",
@@ -61,7 +63,8 @@
       ["dative", "dp"],
       ["meaning", "source"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "cuervo2003_32",
@@ -82,7 +85,8 @@
       ["dative", "dp"],
       ["meaning", "possessor"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "cuervo2003_33",
@@ -103,7 +107,8 @@
       ["dative", "dp"],
       ["meaning", "possessor"]
     ],
-    "comment": "The alternative object 'la campera' 'the jacket' is left out."
+    "comment": "The alternative object 'la campera' 'the jacket' is left out.",
+    "verified": "page-image"
   },
   {
     "id": "cuervo2003_34",
@@ -124,7 +129,8 @@
       ["dative", "dp"],
       ["meaning", "recipient"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "cuervo2003_35",
@@ -145,7 +151,8 @@
       ["dative", "dp"],
       ["meaning", "affected"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "cuervo2003_36",
@@ -166,7 +173,8 @@
       ["dative", "dp"],
       ["meaning", "affected"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "cuervo2003_37",
@@ -187,7 +195,8 @@
       ["dative", "dp"],
       ["meaning", "experiencer"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "cuervo2003_38",
@@ -208,7 +217,8 @@
       ["dative", "dp"],
       ["meaning", "possessor"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "cuervo2003_39a",
@@ -228,7 +238,8 @@
       ["dative", "clitic"],
       ["meaning", "ethical"]
     ],
-    "comment": "The full dative DP 'a Vicki' is starred in the source; see (78)."
+    "comment": "The full dative DP 'a Vicki' is starred in the source; see (78).",
+    "verified": "page-image"
   },
   {
     "id": "cuervo2003_49",
@@ -237,7 +248,7 @@
     "primaryText": "A Daniela le sucedió algo buenísimo.",
     "glossedTokens": [
       ["A", "DAT"], ["Daniela", "Daniela"], ["le", "CL.DAT"], ["sucedió", "happened"],
-      ["algo", "something"], ["buenísimo", "very.good"]
+      ["algo", "something.NOM"], ["buenísimo", "very.good"]
     ],
     "translation": "Something great happened to Daniela.",
     "context": "",
@@ -249,16 +260,17 @@
       ["dative", "dp"],
       ["meaning", "experiencer"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "cuervo2003_54a",
     "source": {"bibkey": "cuervo-2003", "paperLabel": "(54a)"},
     "language": "stan1288",
-    "primaryText": "A la plantas les salieron flores.",
+    "primaryText": "A las plantas les salieron flores.",
     "glossedTokens": [
-      ["A", "DAT"], ["la", "the"], ["plantas", "plants"], ["les", "CL.DAT.PL"],
-      ["salieron", "came.out"], ["flores", "flowers"]
+      ["A", "DAT"], ["las", "the"], ["plantas", "plants"], ["les", "CL.DAT.PL"],
+      ["salieron", "came.out"], ["flores", "flowers.NOM"]
     ],
     "translation": "The plants got flowers.",
     "context": "",
@@ -270,7 +282,8 @@
       ["dative", "dp"],
       ["meaning", "possessor"]
     ],
-    "comment": "Printed as 'A la plantas'; the dative is the inalienable location of the flowers, a low applicative."
+    "comment": "The paper prints 'A la plantas'; the dative is the inalienable location of the flowers, a low applicative.",
+    "verified": "page-image"
   },
   {
     "id": "cuervo2003_55",
@@ -282,7 +295,7 @@
       ["quemaron", "burnt.PL"], ["los", "the"], ["pantalones", "trousers"], ["de", "of"],
       ["Carolina", "Carolina"]
     ],
-    "translation": "Carolina's trousers got burnt on the dry-cleaner; or, the dry-cleaner accidentally burnt Carolina's trousers.",
+    "translation": "Carolina's trousers got burnt on the dry-cleaners; or, the dry-cleaner (accidentally) burnt Carolina's trousers.",
     "context": "",
     "judgment": "acceptable",
     "readings": [
@@ -295,7 +308,8 @@
       ["dative", "dp"],
       ["meaning", "affected"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "cuervo2003_60",
@@ -310,8 +324,14 @@
     "context": "",
     "judgment": "acceptable",
     "readings": [
-      {"name": "affected", "judgment": "acceptable"},
-      {"name": "unintentional responsibility", "judgment": "unacceptable"}
+      {
+        "name": "affected",
+        "judgment": "acceptable"
+      },
+      {
+        "name": "unintentional responsibility",
+        "judgment": "ungrammatical"
+      }
     ],
     "paperFeatures": [
       ["predicate", "romperInchoative"],
@@ -319,7 +339,8 @@
       ["dative", "dp"],
       ["meaning", "affected"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "cuervo2003_66",
@@ -331,14 +352,15 @@
     ],
     "translation": "Intended: Hugo ran for Vicki.",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "readings": [],
     "paperFeatures": [
       ["predicate", "correr"],
       ["animate", "yes"],
       ["dative", "dp"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "cuervo2003_67a",
@@ -358,7 +380,8 @@
       ["animate", "yes"],
       ["dative", "dp"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "cuervo2003_78",
@@ -371,14 +394,15 @@
     ],
     "translation": "Intended: Juanita can already walk on him.",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "readings": [],
     "paperFeatures": [
       ["predicate", "caminar"],
       ["animate", "yes"],
       ["dative", "dp"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "cuervo2003_90a",
@@ -399,7 +423,8 @@
       ["dative", "dp"],
       ["meaning", "affected"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "cuervo2003_90b",
@@ -420,7 +445,8 @@
       ["dative", "dp"],
       ["meaning", "affected"]
     ],
-    "comment": "The source glosses the verb 'opened.PL'."
+    "comment": "The source glosses the verb 'opened.PL'.",
+    "verified": "page-image"
   },
   {
     "id": "cuervo2003_85ap",
@@ -438,7 +464,8 @@
       ["dative", "dp"],
       ["meaning", "recipient"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "cuervo2003_88",
@@ -446,16 +473,17 @@
     "language": "stan1293",
     "primaryText": "Daniel opened Stephanie the door.",
     "glossedTokens": [],
-    "translation": "Intended: Daniel opened the door on Stephanie.",
+    "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "readings": [],
     "paperFeatures": [
       ["predicate", "openCausative"],
       ["animate", "yes"],
       ["dative", "dp"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "cuervo2003_89a",
@@ -465,14 +493,15 @@
     "glossedTokens": [],
     "translation": "Intended: the door opened on Stephanie.",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "readings": [],
     "paperFeatures": [
       ["predicate", "openInchoative"],
       ["animate", "yes"],
       ["dative", "dp"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "cuervo2003_92b",
@@ -482,13 +511,14 @@
     "glossedTokens": [],
     "translation": "Intended: two letters arrived for Daniel.",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "readings": [],
     "paperFeatures": [
       ["predicate", "arrive"],
       ["animate", "yes"],
       ["dative", "dp"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   }
 ]

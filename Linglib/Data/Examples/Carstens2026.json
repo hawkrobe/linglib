@@ -19,7 +19,8 @@
       ["conjunct2", "umongameli"],
       ["agreement", "2"]
     ],
-    "comment": "[1&1=2]."
+    "comment": "[1&1=2].",
+    "verified": "page-image"
   },
   {
     "id": "carstens2026_ex6b",
@@ -31,7 +32,7 @@
       ["U-L", "1a-L"], ["no-M", "and.1a-M"], ["ba-phezu", "2SM-are.on"],
       ["kwetafile", "LOC.table"]
     ],
-    "translation": "The letters L and M are on the table.",
+    "translation": "The (letters) L and M are on the table.",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -41,7 +42,8 @@
       ["conjunct2", "uM"],
       ["agreement", "2"]
     ],
-    "comment": "[1&1=2]: arbitrary members of gender A."
+    "comment": "[1&1=2]: arbitrary members of gender A.",
+    "verified": "page-image"
   },
   {
     "id": "carstens2026_ex7b",
@@ -63,7 +65,8 @@
       ["conjunct2", "isazi"],
       ["agreement", "8"]
     ],
-    "comment": "[7&7=8] with human conjuncts of class 7."
+    "comment": "[7&7=8] with human conjuncts of class 7.",
+    "verified": "page-image"
   },
   {
     "id": "carstens2026_ex8b",
@@ -85,7 +88,8 @@
       ["agreement", "8"],
       ["rejected", "6"]
     ],
-    "comment": "[5+5=8; ≠6]: the class 6 marker of the plural (8d) is ruled out."
+    "comment": "[5+5=8; ≠6]: the class 6 marker of the plural (8d) is ruled out.",
+    "verified": "page-image"
   },
   {
     "id": "carstens2026_ex9a",
@@ -106,7 +110,8 @@
       ["conjunct2", "intombi"],
       ["agreement", "2"]
     ],
-    "comment": "Mismatched humans, repeated as (87a)."
+    "comment": "Mismatched humans, repeated as (87a).",
+    "verified": "page-image"
   },
   {
     "id": "carstens2026_ex9b",
@@ -127,7 +132,8 @@
       ["conjunct2", "incwadi"],
       ["agreement", "8"]
     ],
-    "comment": "Mismatched inanimates, repeated as (87b)."
+    "comment": "Mismatched inanimates, repeated as (87b).",
+    "verified": "page-image"
   },
   {
     "id": "carstens2026_ex37a",
@@ -153,7 +159,8 @@
       ["default", "15"],
       ["judgments", "15"]
     ],
-    "comment": "[3&3=2; ≠4], from Taraldsen et al. 2018. Table 13 [3&3] human: 15 speakers."
+    "comment": "[3&3=2; ≠4], from Taraldsen et al. 2018. Table 13 [3&3] human: 15 speakers.",
+    "verified": "page-image"
   },
   {
     "id": "carstens2026_ex38a",
@@ -179,7 +186,8 @@
       ["default", "33"],
       ["judgments", "45"]
     ],
-    "comment": "[3+3=8; ≠4]. Table 13 [3&3] non-human: 45 judgments over (38a-c), one gender-matching i-."
+    "comment": "[3+3=8; ≠4]. Table 13 [3&3] non-human: 45 judgments over (38a-c), one gender-matching i-.",
+    "verified": "page-image"
   },
   {
     "id": "carstens2026_ex38b",
@@ -188,10 +196,10 @@
     "primaryText": "Um-hlonyane nom-nquma zi-ya-khula.",
     "discourseSegments": [],
     "glossedTokens": [
-      ["Um-hlonyane", "3-wormwood.tree"], ["nom-nquma", "and.3-wild.olive"],
+      ["Um-hlonyane", "3-Wormwood.tree"], ["nom-nquma", "and.3-wild.olive"],
       ["zi-ya-khula", "8SM-DISJ-grow"]
     ],
-    "translation": "The wormwood tree and the wild olive tree are growing.",
+    "translation": "The Wormwood tree and the wild olive tree are growing.",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -202,7 +210,8 @@
       ["agreement", "8"],
       ["rejected", "4"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "carstens2026_ex38c",
@@ -211,7 +220,7 @@
     "primaryText": "Um-khonto nom-bhobho zi-nomhlwa.",
     "discourseSegments": [],
     "glossedTokens": [
-      ["Um-khonto", "3-spear"], ["nom-bhobho", "and.3-pipe"], ["zi-nomhlwa", "8SM-have.rust"]
+      ["Um-khonto", "3-spear"], ["nom-bhobho", "and.3-pipe"], ["zi-nomhlwa", "8SM-have.3rust"]
     ],
     "translation": "The spear and the pipe are rusty.",
     "context": "",
@@ -224,7 +233,8 @@
       ["agreement", "8"],
       ["rejected", "4"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "carstens2026_ex40a",
@@ -249,7 +259,8 @@
       ["default", "19"],
       ["judgments", "30"]
     ],
-    "comment": "[5+5=2; ≠6]. Table 13 [5&5] human: 30 judgments over (40a,b)."
+    "comment": "[5+5=2; ≠6]. Table 13 [5&5] human: 30 judgments over (40a,b).",
+    "verified": "page-image"
   },
   {
     "id": "carstens2026_ex40b",
@@ -271,7 +282,8 @@
       ["agreement", "2"],
       ["rejected", "6"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "carstens2026_ex41a",
@@ -296,7 +308,8 @@
       ["default", "22"],
       ["judgments", "30"]
     ],
-    "comment": "[5&5=8; ≠6]. Table 13 [5&5] non-human: 30 judgments over (41a,b)."
+    "comment": "[5&5=8; ≠6]. Table 13 [5&5] non-human: 30 judgments over (41a,b).",
+    "verified": "page-image"
   },
   {
     "id": "carstens2026_ex41b",
@@ -318,7 +331,8 @@
       ["agreement", "8"],
       ["rejected", "6"]
     ],
-    "comment": ""
+    "comment": "The paper's gloss line prints and.5earring.",
+    "verified": "page-image"
   },
   {
     "id": "carstens2026_ex44",
@@ -342,7 +356,8 @@
       ["default", "30"],
       ["judgments", "30"]
     ],
-    "comment": "[1&1=2]. Table 13 [1&1] human: ba- is matching and default alike, the two merged."
+    "comment": "[1&1=2]. Table 13 [1&1] human: ba- is matching and default alike, the two merged.",
+    "verified": "page-image"
   },
   {
     "id": "carstens2026_ex45a",
@@ -366,7 +381,8 @@
       ["default", "7"],
       ["judgments", "30"]
     ],
-    "comment": "[1&1=2], from Taraldsen et al. 2018. Table 13 [1&1] non-human: 30 judgments over (45a,b), default zi- in the rest."
+    "comment": "[1&1=2], from Taraldsen et al. 2018. Table 13 [1&1] non-human: 30 judgments over (45a,b): ba- in 22, default zi- in 7, single-conjunct u- in 1.",
+    "verified": "page-image"
   },
   {
     "id": "carstens2026_ex45b",
@@ -388,7 +404,8 @@
       ["conjunct2", "umatshini"],
       ["agreement", "2"]
     ],
-    "comment": "[1&1=2]."
+    "comment": "[1&1=2].",
+    "verified": "page-image"
   },
   {
     "id": "carstens2026_ex46a",
@@ -412,7 +429,8 @@
       ["default", "30"],
       ["judgments", "30"]
     ],
-    "comment": "[7&7=8], also (7a). Table 13 [7&7] non-human: zi- matching and default alike."
+    "comment": "[7&7=8], also (7a). Table 13 [7&7] non-human: zi- matching and default alike.",
+    "verified": "page-image"
   },
   {
     "id": "carstens2026_ex46b",
@@ -434,7 +452,8 @@
       ["conjunct2", "isiZulu"],
       ["agreement", "8"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "carstens2026_ex47a",
@@ -460,7 +479,8 @@
       ["default", "9"],
       ["judgments", "30"]
     ],
-    "comment": "[7&7] human, from Taraldsen et al. 2018: Table 13 zi- 60%, ba- 30%, either 10% over (47a,b)."
+    "comment": "[7&7] human, from Taraldsen et al. 2018: Table 13 zi- 60%, ba- 30%, either 10% over (47a,b).",
+    "verified": "page-image"
   },
   {
     "id": "carstens2026_ex47b",
@@ -482,13 +502,14 @@
       ["agreement", "8"],
       ["agreement", "2"]
     ],
-    "comment": "ba- for the same conjunction is (81b)."
+    "comment": "ba- for the same conjunction is (81b).",
+    "verified": "page-image"
   },
   {
     "id": "carstens2026_ex48a",
     "source": {"bibkey": "carstens-2026", "paperLabel": "(48a)"},
     "language": "xhos1239",
-    "primaryText": "In-tombi nem-bongi zi-ya-cula.",
+    "primaryText": "In-tombi nem-bongi zi-/ba-ya-cula.",
     "discourseSegments": [],
     "glossedTokens": [
       ["In-tombi", "9-girl"], ["nem-bongi", "and.9-poet"], ["zi-/ba-ya-cula", "10/2SM-DISJ-sing"]
@@ -507,13 +528,14 @@
       ["default", "12"],
       ["judgments", "30"]
     ],
-    "comment": "[9&9=10 or 2]. Table 13 [9&9] human: zi- 50%, ba- 40%, either 10% over (48a,b)."
+    "comment": "[9&9=10 or 2]. Table 13 [9&9] human: zi- 50%, ba- 40%, either 10% over (48a,b).",
+    "verified": "page-image"
   },
   {
     "id": "carstens2026_ex48b",
     "source": {"bibkey": "carstens-2026", "paperLabel": "(48b)"},
     "language": "xhos1239",
-    "primaryText": "In-gcaphephe nen-gcali a-zi-vumel-an-i.",
+    "primaryText": "In-gcaphephe nen-gcali a-zi-/ba-vumel-an-i.",
     "discourseSegments": [],
     "glossedTokens": [
       ["In-gcaphephe", "9-expert"], ["nen-gcali", "and.9-specialist"],
@@ -530,7 +552,8 @@
       ["agreement", "10"],
       ["agreement", "2"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "carstens2026_ex49a",
@@ -556,16 +579,17 @@
       ["default", "30"],
       ["judgments", "30"]
     ],
-    "comment": "[9&9=10]: zi- is ambiguous between matching class 10 and default class 8. Table 13 [9&9] non-human: zi- throughout."
+    "comment": "[9&9=10]: zi- is ambiguous between matching class 10 and default class 8. Table 13 [9&9] non-human: zi- throughout.",
+    "verified": "page-image"
   },
   {
     "id": "carstens2026_ex49b",
     "source": {"bibkey": "carstens-2026", "paperLabel": "(49b)"},
     "language": "xhos1239",
-    "primaryText": "In-dlovu kunye nen-gwe zi-ya-lwa.",
+    "primaryText": "In-dlovu (kunye) nen-gwe zi-ya-lwa.",
     "discourseSegments": [],
     "glossedTokens": [
-      ["In-dlovu", "9-elephant"], ["kunye", "and"], ["nen-gwe", "and.9-leopard"],
+      ["In-dlovu", "9-elephant"], ["(kunye)", "and"], ["nen-gwe", "and.9-leopard"],
       ["zi-ya-lwa", "10SM-DISJ-fight"]
     ],
     "translation": "The elephant and the leopard are fighting.",
@@ -578,7 +602,8 @@
       ["conjunct2", "ingwe"],
       ["agreement", "10"]
     ],
-    "comment": "Conjoined animals of class 9: zi- taken as class 10, the [animal] default."
+    "comment": "Conjoined animals of class 9: zi- taken as class 10, the [animal] default.",
+    "verified": "page-image"
   },
   {
     "id": "carstens2026_ex55a",
@@ -600,7 +625,8 @@
       ["agreement", "10"],
       ["rejected", "4"]
     ],
-    "comment": "[3&3=10; ≠4]: animals of class 3 take the [animal] default."
+    "comment": "[3&3=10; ≠4]: animals of class 3 take the [animal] default.",
+    "verified": "page-image"
   },
   {
     "id": "carstens2026_ex55b",
@@ -621,7 +647,8 @@
       ["conjunct2", "ihobe"],
       ["agreement", "10"]
     ],
-    "comment": "[7&5=10]: mismatched visible genders, shared [animal] core."
+    "comment": "[7&5=10]: mismatched visible genders, shared [animal] core. The paper's label prints [7&7=10].",
+    "verified": "page-image"
   },
   {
     "id": "carstens2026_ex81a",
@@ -642,7 +669,8 @@
       ["conjunct2", "uM"],
       ["agreement", "8"]
     ],
-    "comment": "The Best-Semantic-Match choice for (45a): the shared [inanimate] core."
+    "comment": "The Best-Semantic-Match choice for (45a): the shared [inanimate] core.",
+    "verified": "page-image"
   },
   {
     "id": "carstens2026_ex81b",
@@ -663,13 +691,14 @@
       ["conjunct2", "isazi"],
       ["agreement", "2"]
     ],
-    "comment": "The Best-Semantic-Match choice for (47b): the shared [human] core."
+    "comment": "The Best-Semantic-Match choice for (47b): the shared [human] core. The paper's gloss line prints 8SM- DISJ-study for ba-.",
+    "verified": "page-image"
   },
   {
     "id": "carstens2026_ex83",
     "source": {"bibkey": "carstens-2026", "paperLabel": "(83)"},
     "language": "xhos1239",
-    "primaryText": "U-nonkala no-krebe ba-ya-lwa.",
+    "primaryText": "U-nonkala no-krebe ba-/zi-ya-lwa.",
     "discourseSegments": [],
     "glossedTokens": [
       ["U-nonkala", "1a-crab"], ["no-krebe", "and.1a-shark"],
@@ -686,7 +715,8 @@
       ["agreement", "2"],
       ["agreement", "10"]
     ],
-    "comment": "Five of six speakers chose ba- (Highest Wins), one zi- (Best Semantic Match)."
+    "comment": "Five of six speakers chose ba- (Highest Wins), one zi- (Best Semantic Match).",
+    "verified": "page-image"
   },
   {
     "id": "carstens2026_ex85a",
@@ -708,7 +738,8 @@
       ["conjunct2", "ipolisa"],
       ["agreement", "2"]
     ],
-    "comment": "Mismatched u-genders above shared [human] cores (86a)."
+    "comment": "Mismatched u-genders above shared [human] cores (86a).",
+    "verified": "page-image"
   },
   {
     "id": "carstens2026_ex85b",
@@ -730,16 +761,17 @@
       ["conjunct2", "iqanda"],
       ["agreement", "8"]
     ],
-    "comment": "Mismatched u-genders above shared [inanimate] cores (86b); from Mitchley 2015."
+    "comment": "Mismatched u-genders above shared [inanimate] cores (86b); from Mitchley 2015.",
+    "verified": "page-image"
   },
   {
     "id": "carstens2026_ex89",
     "source": {"bibkey": "carstens-2026", "paperLabel": "(89)"},
     "language": "xhos1239",
-    "primaryText": "Um-twana no-lolilwe ba-ya-hamba.",
+    "primaryText": "Um-ntwana no-loliwe ba-ya-hamba.",
     "discourseSegments": [],
     "glossedTokens": [
-      ["Um-twana", "1-child"], ["no-lolilwe", "and.1a-train"], ["ba-ya-hamba", "2SM-DISJ-move"]
+      ["Um-ntwana", "1-child"], ["no-loliwe", "and.1a-train"], ["ba-ya-hamba", "2SM-DISJ-move"]
     ],
     "translation": "The child and the train are moving.",
     "context": "",
@@ -751,20 +783,21 @@
       ["conjunct2", "uloliwe"],
       ["agreement", "2"]
     ],
-    "comment": "(90): the [human] flavor of class 1 and the [entity] flavor of class 1a share the formal gender feature."
+    "comment": "(90): the [human] flavor of class 1 and the [entity] flavor of class 1a share the formal gender feature. The paper prints Um-twana and no-lolilwe here; it prints Um-ntwana in (44) and U-loliwe in (45b).",
+    "verified": "page-image"
   },
   {
     "id": "carstens2026_ex91",
     "source": {"bibkey": "carstens-2026", "paperLabel": "(91)"},
     "language": "xhos1239",
-    "primaryText": "*In-tombi no-lolilwe zi-/ba-gilana.",
+    "primaryText": "In-tombi no-loliwe zi/ba-gilana.",
     "discourseSegments": [],
     "glossedTokens": [
-      ["In-tombi", "9-girl"], ["no-lolilwe", "and.1a-train"], ["zi-/ba-gilana", "8SM/2SM-collide"]
+      ["In-tombi", "9-girl"], ["no-loliwe", "and.1a-train"], ["zi/ba-gilana", "8SM-/2SM-collide"]
     ],
     "translation": "Intended: The girl and the train collided.",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -773,21 +806,22 @@
       ["rejected", "8"],
       ["rejected", "2"]
     ],
-    "comment": "(92): neither the visible genders 9 and 1a nor the cores 1 and 7 match; ineffable."
+    "comment": "(92): neither the visible genders 9 and 1a nor the cores 1 and 7 match; ineffable. The paper prints no-lolilwe; it prints U-loliwe in (45b).",
+    "verified": "page-image"
   },
   {
     "id": "carstens2026_ex111",
     "source": {"bibkey": "carstens-2026", "paperLabel": "(111)"},
     "language": "xhos1239",
-    "primaryText": "*Um-ntwana nen-dlovu ba-/zi-ya-dlala.",
+    "primaryText": "Um-ntwana nen-dlovu ba/*zi-ya-dlala.",
     "discourseSegments": [],
     "glossedTokens": [
       ["Um-ntwana", "1-child"], ["nen-dlovu", "and.9-elephant"],
-      ["ba-/zi-ya-dlala", "2SM/10SM-DISJ-play"]
+      ["ba/*zi-ya-dlala", "2SM-/*10SM-DISJ-play"]
     ],
     "translation": "The child and the elephant are playing.",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -796,7 +830,8 @@
       ["rejected", "2"],
       ["rejected", "10"]
     ],
-    "comment": "(112): a human and an animal share no formal gender feature, whatever animacy feature they share."
+    "comment": "(112): a human and an animal share no formal gender feature, whatever animacy feature they share.",
+    "verified": "page-image"
   },
   {
     "id": "carstens2026_ex58",
@@ -818,7 +853,8 @@
       ["conjunct2", "mukadzi"],
       ["agreement", "2"]
     ],
-    "comment": "[1&1=2]."
+    "comment": "[1&1=2].",
+    "verified": "page-image"
   },
   {
     "id": "carstens2026_ex59",
@@ -841,7 +877,8 @@
       ["agreement", "8"],
       ["rejected", "4"]
     ],
-    "comment": "[3&3=8; ≠4]. The paper's gloss line pairs the two nouns in the order of the translation."
+    "comment": "[3&3=8; ≠4]. The paper's gloss line pairs the two nouns in the order of the translation.",
+    "verified": "page-image"
   },
   {
     "id": "carstens2026_ex60",
@@ -863,7 +900,8 @@
       ["agreement", "8"],
       ["rejected", "6"]
     ],
-    "comment": "[5&5=8; ≠6]."
+    "comment": "[5&5=8; ≠6].",
+    "verified": "page-image"
   },
   {
     "id": "carstens2026_ex61",
@@ -886,7 +924,8 @@
       ["agreement", "2"],
       ["rejected", "6"]
     ],
-    "comment": "[5&5=2; ≠6]."
+    "comment": "[5&5=2; ≠6].",
+    "verified": "page-image"
   },
   {
     "id": "carstens2026_ex62",
@@ -908,13 +947,14 @@
       ["conjunct2", "chibage"],
       ["agreement", "8"]
     ],
-    "comment": "[7&7=8], inanimate."
+    "comment": "[7&7=8], inanimate.",
+    "verified": "page-image"
   },
   {
     "id": "carstens2026_ex63",
     "source": {"bibkey": "carstens-2026", "paperLabel": "(63)"},
     "language": "shon1251",
-    "primaryText": "Chi-dhakwa ne-chi-komana va-ri ku-netsana.",
+    "primaryText": "Chi-dhakwa ne-chi-komana va-ri/?zvi- ku-netsana.",
     "discourseSegments": [],
     "glossedTokens": [
       ["Chi-dhakwa", "7-drunkard"], ["ne-chi-komana", "and-7-small.boy"],
@@ -931,7 +971,8 @@
       ["agreement", "2"],
       ["agreement", "8"]
     ],
-    "comment": "[7&7=2 or 8], human: class 2 volunteered, class 8 judged acceptable though less good (fn. 27)."
+    "comment": "[7&7=2 or 8], human: class 2 volunteered, class 8 judged acceptable though less good (fn. 27).",
+    "verified": "page-image"
   },
   {
     "id": "carstens2026_ex64b",
@@ -954,7 +995,8 @@
       ["agreement", "2"],
       ["rejected", "10"]
     ],
-    "comment": "[9&9=2; *10]."
+    "comment": "[9&9=2; *10].",
+    "verified": "page-image"
   },
   {
     "id": "carstens2026_ex64c",
@@ -977,7 +1019,8 @@
       ["agreement", "8"],
       ["rejected", "10"]
     ],
-    "comment": "[9&9=8; *10]: the [animal] association has bleached from Shona 9/10."
+    "comment": "[9&9=8; *10]: the [animal] association has bleached from Shona 9/10.",
+    "verified": "page-image"
   },
   {
     "id": "carstens2026_ex64d",
@@ -1000,7 +1043,8 @@
       ["agreement", "8"],
       ["rejected", "10"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "carstens2026_ex64e",
@@ -1023,7 +1067,8 @@
       ["agreement", "8"],
       ["rejected", "10"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "carstens2026_ex64f",
@@ -1046,7 +1091,8 @@
       ["agreement", "8"],
       ["rejected", "10"]
     ],
-    "comment": "The paper's gloss line pairs the two nouns in the order of the translation."
+    "comment": "The paper's gloss line pairs the two nouns in the order of the translation, and glosses the verb 8SM-/*10SM-afflict without PST for -aka-.",
+    "verified": "page-image"
   },
   {
     "id": "carstens2026_ex65a",
@@ -1069,7 +1115,8 @@
       ["agreement", "8"],
       ["rejected", "10"]
     ],
-    "comment": "[11&11=8; *10]: the class 10 dzi- of the plural (65b) is ruled out."
+    "comment": "[11&11=8; *10]: the class 10 dzi- of the plural (65b) is ruled out.",
+    "verified": "page-image"
   },
   {
     "id": "carstens2026_ex66a",
@@ -1092,7 +1139,8 @@
       ["agreement", "8"],
       ["rejected", "6"]
     ],
-    "comment": "[14&14=8; *6]: the class 6 a- of the plural (66b) is ruled out."
+    "comment": "[14&14=8; *6]: the class 6 a- of the plural (66b) is ruled out.",
+    "verified": "page-image"
   },
   {
     "id": "carstens2026_ex68a",
@@ -1101,7 +1149,7 @@
     "primaryText": "Ka-sikana ne-ka-kómaná v-a-nyangadika.",
     "discourseSegments": [],
     "glossedTokens": [
-      ["Ka-sikana", "12-girl"], ["ne-ka-kómaná", "and-12-boy"],
+      ["Ka-sikana", "12-girl"], ["ne-ka-kómáná", "&-12-boy"],
       ["v-a-nyangadika", "2SM-ASP-disappear"]
     ],
     "translation": "The tiny girl and the tiny boy disappeared.",
@@ -1115,7 +1163,8 @@
       ["agreement", "2"],
       ["rejected", "13"]
     ],
-    "comment": "[12&12=2; *13]: conjoined diminutives take class 2, not the class 13 tu- of their plurals (67b)."
+    "comment": "[12&12=2; *13]: conjoined diminutives take class 2, not the class 13 tu- of their plurals (67b).",
+    "verified": "page-image"
   },
   {
     "id": "carstens2026_ex68b",
@@ -1124,7 +1173,7 @@
     "primaryText": "Ka-mba ne-ka-motokari zv-a-nyangadika.",
     "discourseSegments": [],
     "glossedTokens": [
-      ["Ka-mba", "12-house"], ["ne-ka-motokari", "and-12-car"],
+      ["Ka-mba", "12-house"], ["ne-ka-motokari", "&-12-car"],
       ["zv-a-nyangadika", "8SM-ASP-disappear"]
     ],
     "translation": "The tiny house and the tiny car disappeared.",
@@ -1138,6 +1187,7 @@
       ["agreement", "8"],
       ["rejected", "13"]
     ],
-    "comment": "[12&12=8; *13]."
+    "comment": "[12&12=8; *13].",
+    "verified": "page-image"
   }
 ]

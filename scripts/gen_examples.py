@@ -44,7 +44,7 @@ Behavior:
 - Errors out (exit 1) if the JSON file doesn't exist.
 - Validates but does not emit the record-only keys: the CLDF export carries
   them, and no theorem reads them, so the Lean rows that `decide` reduces stay
-  small. `verified` (`"page-image"` or `"text-layer"`) is how the row was last
+  small. `verified` (`"page-image"`, `"text-layer"` or `"supplement"`) is how the row was last
   checked against its source.
 - Errors out on schema violations (a key that is not a field, an id outside
   the CLDF identifier characters `[A-Za-z0-9_-]`, a language that is neither
@@ -385,6 +385,7 @@ KEY_ORDER = [
 VERIFIED = {
     "page-image": "every field checked against the page images of the source",
     "text-layer": "checked against the text layer of the source's PDF only",
+    "supplement": "checked against the source's published supplementary materials (stimuli, data)",
 }
 
 MAX_WIDTH = 98

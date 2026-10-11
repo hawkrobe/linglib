@@ -219,7 +219,7 @@ def ex_71 : Datum :=
     glossedTokens := [("José", "José"), ("y", "and"), ("yo", "I"), ("hablamos", "speak.1PL")]
     context := ""
     judgment := .acceptable
-    alternatives := [("José y yo habláis.", .unacceptable), ("José y yo hablan.", .unacceptable)]
+    alternatives := [("José y yo habláis.", .ungrammatical), ("José y yo hablan.", .ungrammatical)]
     readings := []
     paperFeatures := [("section", "5"), ("conjuncts", "3SG and 1SG"), ("agreement", "1PL")] }
 
@@ -323,7 +323,7 @@ def ex_95 : Datum :=
     glossedTokens := [("José", "José"), ("y", "and"), ("tú", "you"), ("habláis", "speak.2PL")]
     context := ""
     judgment := .acceptable
-    alternatives := [("José y tú hablamos.", .unacceptable)]
+    alternatives := []
     readings := []
     paperFeatures := [("section", "6.4"), ("conjuncts", "3SG and 2SG"), ("agreement", "2PL")] }
 

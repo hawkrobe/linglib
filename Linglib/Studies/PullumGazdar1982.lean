@@ -6,7 +6,7 @@ public import Linglib.Data.Examples.PullumGazdar1982
 /-!
 # Pullum and Gazdar (1982): Natural Languages and Context-Free Languages
 
-This file formalizes [gazdar-pullum-1982]'s examination of the published arguments that some
+This file formalizes [pullum-gazdar-1982]'s examination of the published arguments that some
 natural language is not a context-free stringset, each of which the paper finds formally or
 empirically invalid. The formal exhibits are grammars. The finite state grammar of §1 generates
 unbounded long-distance number concord (`concordGrammar`, `concord_unbounded`). Grammar (9)
@@ -35,7 +35,7 @@ Langendoen's finite state language are not formalized.
 
 ## References
 
-* [gazdar-pullum-1982]
+* [pullum-gazdar-1982]
 * [huybregts-1976]
 * [bar-hillel-shamir-1960]
 -/
@@ -554,12 +554,12 @@ instance (r : Datum) : Decidable (Langendoen r) := by unfold Langendoen; infer_i
 
 /-- The judgments in (19) are the exact converse of the characterization. -/
 theorem respectively_converse :
-    (Langendoen ex19a ∧ ex19a.judgment = .unacceptable) ∧
+    (Langendoen ex19a ∧ ex19a.judgment = .ungrammatical) ∧
       (¬ Langendoen ex19b ∧ ex19b.judgment = .acceptable) := by
   decide
 
 /-- (18b), the one string of (18) the characterization admits, is rejected. -/
-theorem respectively_18b : Langendoen ex18b ∧ ex18b.judgment = .unacceptable := by decide
+theorem respectively_18b : Langendoen ex18b ∧ ex18b.judgment = .ungrammatical := by decide
 
 /-! ### §5: Dutch verb raising and grammar (29) -/
 

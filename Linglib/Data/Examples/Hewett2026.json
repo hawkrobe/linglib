@@ -32,7 +32,8 @@
         "for"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "hewett2026_ex1b",
@@ -67,7 +68,8 @@
         "for"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "hewett2026_ex1c",
@@ -102,7 +104,8 @@
         "for"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "hewett2026_ex2a",
@@ -111,7 +114,7 @@
       "paperLabel": "(2a)"
     },
     "language": "nort3139",
-    "primaryText": "bftaxir b-/*ʕala/*min zakaʔ-i.",
+    "primaryText": "bftaxir b-/*ʕala/*min zakaːʔ-i.",
     "discourseSegments": [],
     "glossedTokens": [
       [
@@ -123,7 +126,7 @@
         "in-/*over/*from"
       ],
       [
-        "zakaʔ-i",
+        "zakaːʔ-i",
         "intelligence-my"
       ]
     ],
@@ -150,7 +153,8 @@
         "b-"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "hewett2026_ex2b",
@@ -159,7 +163,7 @@
       "paperLabel": "(2b)"
     },
     "language": "nort3139",
-    "primaryText": "ʕand-i faxr b-/*ʕala/*min zakaʔ-i.",
+    "primaryText": "ʕand-i faxr b-/*ʕala/*min zakaːʔ-i.",
     "discourseSegments": [],
     "glossedTokens": [
       [
@@ -175,7 +179,7 @@
         "in-/*over/*from"
       ],
       [
-        "zakaʔ-i",
+        "zakaːʔ-i",
         "intelligence-my"
       ]
     ],
@@ -202,7 +206,8 @@
         "b-"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "hewett2026_ex2c",
@@ -211,7 +216,7 @@
       "paperLabel": "(2c)"
     },
     "language": "nort3139",
-    "primaryText": "ʔana faxur b-/*ʕala/*min zakaʔ-i.",
+    "primaryText": "ʔana faxuːre b-/*ʕala/*min zakaːʔ-i.",
     "discourseSegments": [],
     "glossedTokens": [
       [
@@ -219,7 +224,7 @@
         "I"
       ],
       [
-        "faxur",
+        "faxuːre",
         "proud"
       ],
       [
@@ -227,7 +232,7 @@
         "in-/*over/*from"
       ],
       [
-        "zakaʔ-i",
+        "zakaːʔ-i",
         "intelligence-my"
       ]
     ],
@@ -254,7 +259,8 @@
         "b-"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "hewett2026_ex5a",
@@ -289,7 +295,8 @@
         "on"
       ]
     ],
-    "comment": "From Merchant (2019)."
+    "comment": "From Merchant (2019).",
+    "verified": "page-image"
   },
   {
     "id": "hewett2026_ex5b",
@@ -324,7 +331,8 @@
         "in"
       ]
     ],
-    "comment": "From Merchant (2019)."
+    "comment": "From Merchant (2019).",
+    "verified": "page-image"
   },
   {
     "id": "hewett2026_ex5c",
@@ -359,7 +367,8 @@
         "of"
       ]
     ],
-    "comment": "From Merchant (2019)."
+    "comment": "From Merchant (2019).",
+    "verified": "page-image"
   },
   {
     "id": "hewett2026_ex6a",
@@ -368,11 +377,11 @@
       "paperLabel": "(6a)"
     },
     "language": "nort3139",
-    "primaryText": "barako-ni b-/*ʕa(la) l-walad.",
+    "primaryText": "baːraku-ni b-/*ʕa(la) l-walad.",
     "discourseSegments": [],
     "glossedTokens": [
       [
-        "barako-ni",
+        "baːraku-ni",
         "congratulated.3.PL-me"
       ],
       [
@@ -407,7 +416,8 @@
         "b-"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "hewett2026_ex6b",
@@ -416,7 +426,7 @@
       "paperLabel": "(6b)"
     },
     "language": "nort3139",
-    "primaryText": "baʕtu-li mbarake ʕa(la)/*b- l-walad.",
+    "primaryText": "baʕtu-li mbaːrake ʕa(la)/*b- l-walad.",
     "discourseSegments": [],
     "glossedTokens": [
       [
@@ -424,7 +434,7 @@
         "sent.3.PL-to.me"
       ],
       [
-        "mbarake",
+        "mbaːrake",
         "congratulations"
       ],
       [
@@ -459,7 +469,8 @@
         "ʕala"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "hewett2026_ex11a",
@@ -468,11 +479,11 @@
       "paperLabel": "(11a)"
     },
     "language": "tuni1259",
-    "primaryText": "xaf min l-ʔasad.",
+    "primaryText": "xaːf min l-ʔasad.",
     "discourseSegments": [],
     "glossedTokens": [
       [
-        "xaf",
+        "xaːf",
         "feared.3.M.SG"
       ],
       [
@@ -507,7 +518,8 @@
         "min"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "hewett2026_ex11b",
@@ -555,7 +567,8 @@
         "min"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "hewett2026_ex13ai",
@@ -603,7 +616,8 @@
         "none"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "hewett2026_ex13aii",
@@ -651,7 +665,8 @@
         "fi"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "hewett2026_ex13bi",
@@ -699,7 +714,8 @@
         "bi-"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "hewett2026_ex13bii",
@@ -747,7 +763,8 @@
         "ʕla"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "hewett2026_ex14a",
@@ -795,7 +812,8 @@
         "ʕala"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "hewett2026_ex14b",
@@ -843,7 +861,8 @@
         "none"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "hewett2026_ex15a_active",
@@ -878,7 +897,8 @@
         "b-"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "hewett2026_ex15a_nonactive",
@@ -913,7 +933,8 @@
         "b-"
       ]
     ],
-    "comment": "An impersonal passive keeping the preposition."
+    "comment": "An impersonal passive keeping the preposition.",
+    "verified": "page-image"
   },
   {
     "id": "hewett2026_ex15b_active",
@@ -948,7 +969,8 @@
         "la-/ʕala"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "hewett2026_ex15b_nonactive",
@@ -983,7 +1005,8 @@
         "la-"
       ]
     ],
-    "comment": "The passivizing alternation changes the preposition."
+    "comment": "The passivizing alternation changes the preposition.",
+    "verified": "page-image"
   },
   {
     "id": "hewett2026_ex15c_active",
@@ -1018,7 +1041,8 @@
         "la-"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "hewett2026_ex15c_nonactive",
@@ -1053,7 +1077,8 @@
         "ʕala"
       ]
     ],
-    "comment": "A semantically opaque alternation changing the preposition."
+    "comment": "A semantically opaque alternation changing the preposition.",
+    "verified": "page-image"
   },
   {
     "id": "hewett2026_ex16a_active",
@@ -1088,7 +1113,8 @@
         "ʕala"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "hewett2026_ex16a_nonactive",
@@ -1123,7 +1149,8 @@
         "ʕala"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "hewett2026_ex16b_active",
@@ -1158,7 +1185,8 @@
         "ʕala"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "hewett2026_ex16b_nonactive",
@@ -1193,7 +1221,8 @@
         "ʕala/la-"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "hewett2026_ex16c_active",
@@ -1228,7 +1257,8 @@
         "none"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "hewett2026_ex16c_nonactive",
@@ -1263,7 +1293,8 @@
         "b-"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "hewett2026_ex17a",
@@ -1272,11 +1303,11 @@
       "paperLabel": "(17a)"
     },
     "language": "hebr1245",
-    "primaryText": "tipel be- NP1",
+    "primaryText": "ṭipel be- NP1",
     "discourseSegments": [],
     "glossedTokens": [
       [
-        "tipel",
+        "ṭipel",
         "treated"
       ],
       [
@@ -1300,7 +1331,7 @@
       ],
       [
         "root",
-        "tpl"
+        "ṭpl"
       ],
       [
         "template",
@@ -1311,7 +1342,8 @@
         "be-"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "hewett2026_ex17b",
@@ -1320,7 +1352,7 @@
       "paperLabel": "(17b)"
     },
     "language": "hebr1245",
-    "primaryText": "NP1 tupal (al jedej NP2)",
+    "primaryText": "NP1 ṭupal (al jedej NP2)",
     "discourseSegments": [],
     "glossedTokens": [
       [
@@ -1328,7 +1360,7 @@
         "NP1"
       ],
       [
-        "tupal",
+        "ṭupal",
         "was.treated"
       ],
       [
@@ -1348,7 +1380,7 @@
       ],
       [
         "root",
-        "tpl"
+        "ṭpl"
       ],
       [
         "template",
@@ -1359,7 +1391,8 @@
         "none"
       ]
     ],
-    "comment": "The passive template suppresses the l-selected preposition and licenses a by-phrase."
+    "comment": "The passive template suppresses the l-selected preposition and licenses a by-phrase.",
+    "verified": "page-image"
   },
   {
     "id": "hewett2026_ex18a",
@@ -1368,11 +1401,11 @@
       "paperLabel": "(18a)"
     },
     "language": "hebr1245",
-    "primaryText": "hiʃpia al NP1",
+    "primaryText": "hišpia al NP1",
     "discourseSegments": [],
     "glossedTokens": [
       [
-        "hiʃpia",
+        "hišpia",
         "influenced"
       ],
       [
@@ -1396,7 +1429,7 @@
       ],
       [
         "root",
-        "ʃpʕ"
+        "špʕ"
       ],
       [
         "template",
@@ -1407,7 +1440,8 @@
         "al"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "hewett2026_ex18b",
@@ -1416,7 +1450,7 @@
       "paperLabel": "(18b)"
     },
     "language": "hebr1245",
-    "primaryText": "NP1 huʃpa (al jedej NP2)",
+    "primaryText": "NP1 hušpa (al jedej NP2)",
     "discourseSegments": [],
     "glossedTokens": [
       [
@@ -1424,7 +1458,7 @@
         "NP1"
       ],
       [
-        "huʃpa",
+        "hušpa",
         "was.influenced"
       ],
       [
@@ -1444,7 +1478,7 @@
       ],
       [
         "root",
-        "ʃpʕ"
+        "špʕ"
       ],
       [
         "template",
@@ -1455,7 +1489,8 @@
         "none"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "hewett2026_ex19a",
@@ -1503,7 +1538,8 @@
         "le-"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "hewett2026_ex19b",
@@ -1512,12 +1548,12 @@
       "paperLabel": "(19b)"
     },
     "language": "hebr1245",
-    "primaryText": "*NP1 surav (al jedej NP2)",
+    "primaryText": "NP1 surav (al jedej NP2)",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [["NP1", "NP1"], ["surav", "was.rejected"], ["(al jedej NP2)", "(by NP2)"]],
     "translation": "NP1 was rejected (by NP2)",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -1534,7 +1570,8 @@
         "XuYaZ"
       ]
     ],
-    "comment": "Whether a root undergoes preposition-suppressing passivization is lexically specified."
+    "comment": "Whether a root undergoes preposition-suppressing passivization is lexically specified.",
+    "verified": "page-image"
   },
   {
     "id": "hewett2026_ex20a",
@@ -1582,7 +1619,8 @@
         "le-"
       ]
     ],
-    "comment": "Adapted from Berman (1978)."
+    "comment": "Adapted from Berman (1978).",
+    "verified": "page-image"
   },
   {
     "id": "hewett2026_ex20b",
@@ -1591,12 +1629,12 @@
       "paperLabel": "(20b)"
     },
     "language": "hebr1245",
-    "primaryText": "*NP1 hurbac (al jedej NP2)",
+    "primaryText": "NP1 hurbac (al jedej NP2)",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [["NP1", "NP1"], ["hurbac", "was.hit"], ["(al jedej NP2)", "(by NP2)"]],
     "translation": "NP1 was hit (by NP2)",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -1613,7 +1651,8 @@
         "huXYaZ"
       ]
     ],
-    "comment": "Adapted from Berman (1978)."
+    "comment": "Adapted from Berman (1978).",
+    "verified": "page-image"
   },
   {
     "id": "hewett2026_ex21a",
@@ -1644,7 +1683,8 @@
         "pseudopassive"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "hewett2026_ex21b",
@@ -1675,7 +1715,8 @@
         "-able"
       ]
     ],
-    "comment": "Adjectivalizing -able suppresses the l-selected preposition and rejects a by-phrase."
+    "comment": "Adjectivalizing -able suppresses the l-selected preposition and rejects a by-phrase.",
+    "verified": "page-image"
   },
   {
     "id": "hewett2026_ex21c",
@@ -1684,12 +1725,12 @@
       "paperLabel": "(21c)"
     },
     "language": "stan1293",
-    "primaryText": "*That kind of tumor operates on easily/quickly (by experienced doctors).",
+    "primaryText": "That kind of tumor operates on easily/quickly (by experienced doctors).",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -1706,7 +1747,8 @@
         "middle"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "hewett2026_ex22a",
@@ -1737,7 +1779,8 @@
         "passive"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "hewett2026_ex22b",
@@ -1768,7 +1811,8 @@
         "-able"
       ]
     ],
-    "comment": "A root that does not l-select permits the by-phrase under -able."
+    "comment": "A root that does not l-select permits the by-phrase under -able.",
+    "verified": "page-image"
   },
   {
     "id": "hewett2026_ex22c",
@@ -1777,7 +1821,7 @@
       "paperLabel": "(22c)"
     },
     "language": "stan1293",
-    "primaryText": "(?)That kind of tumor treats easily/quickly (*by experienced doctors).",
+    "primaryText": "That kind of tumor treats easily/quickly (*by experienced doctors).",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
@@ -1799,6 +1843,7 @@
         "middle"
       ]
     ],
-    "comment": ""
+    "comment": "The page prints the mark in parentheses, (?).",
+    "verified": "page-image"
   }
 ]

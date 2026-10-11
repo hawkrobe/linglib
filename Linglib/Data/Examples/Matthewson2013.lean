@@ -21,12 +21,12 @@ def ex22 : Datum :=
     reportedIn := none
     language := "gitx1241"
     primaryText := "yugw=imaa/ima'=hl wis"
-    glossedTokens := [("yugw=imaa/ima'=hl", "IPFV=EPIS=CN"), ("wis", "rain")]
+    glossedTokens := [("yugw=imaa/ima'=hl", "IMPF=EPIS=CN"), ("wis", "rain")]
     context := "You hear pattering, and you're not entirely sure what it is."
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("section", "3.3"), ("modal", "ima('a)"), ("perspective", "present"), ("orientation", "present"), ("prospective", "false"), ("figure", "4")] }
+    paperFeatures := [("section", "3.1"), ("modal", "ima('a)"), ("perspective", "present"), ("orientation", "present"), ("prospective", "false"), ("figure", "4")] }
 
 def ex29 : Datum :=
   { id := "matthewson2013_ex29"
@@ -34,12 +34,12 @@ def ex29 : Datum :=
     reportedIn := none
     language := "gitx1241"
     primaryText := "yugw=imaa=hl siipxw-t"
-    glossedTokens := [("yugw=imaa=hl", "IPFV=EPIS=CN"), ("siipxw-t", "sick-3SG.II")]
+    glossedTokens := [("yugw=imaa=hl", "IMPF=EPIS=CN"), ("siipxw-t", "sick-3SG.II")]
     context := "Joe left the meeting looking really green in the face and sweaty. Someone asks you why he left."
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("section", "3.3"), ("modal", "ima('a)"), ("perspective", "present"), ("orientation", "past"), ("prospective", "false"), ("figure", "4"), ("force", "necessity"), ("flavor", "epistemic")] }
+    paperFeatures := [("section", "3.1"), ("modal", "ima('a)"), ("perspective", "present"), ("orientation", "past"), ("prospective", "false"), ("figure", "4"), ("force", "necessity"), ("flavor", "epistemic")] }
 
 def ex30 : Datum :=
   { id := "matthewson2013_ex30"
@@ -47,7 +47,7 @@ def ex30 : Datum :=
     reportedIn := none
     language := "gitx1241"
     primaryText := "yugw=imaa=hl da'awhl ixwt oo ligi nee=yimaa=dii ixwt"
-    glossedTokens := [("yugw=imaa=hl", "IPFV=EPIS=CN"), ("da'awhl", "then"), ("ixwt", "fish"), ("oo", "or"), ("ligi", "INDEF"), ("nee=yimaa=dii", "NEG=EPIS=CNTR"), ("ixwt", "fish")]
+    glossedTokens := [("yugw=imaa=hl", "IMPF=EPIS=CN"), ("da'awhl", "then"), ("ixwt", "fish"), ("oo", "or"), ("ligi", "INDEF"), ("nee=yimaa=dii", "NEG=EPIS=CNTR"), ("ixwt", "fish")]
     context := "You thought your friend was fishing. But you see his rod and tackle box are still at his house. You really don't know if he's fishing or not."
     judgment := .acceptable
     alternatives := []
@@ -60,7 +60,7 @@ def ex37 : Datum :=
     reportedIn := none
     language := "gitx1241"
     primaryText := "yugw=imaa=hl x̱sdaa-diit"
-    glossedTokens := [("yugw=imaa=hl", "IPFV=EPIS=CN"), ("x̱sdaa-diit", "win-3PL.II")]
+    glossedTokens := [("yugw=imaa=hl", "IMPF=EPIS=CN"), ("x̱sdaa-diit", "win-3PL.II")]
     context := "The Canucks were playing last night. You weren't watching the game but you heard your son sounding excited and happy from the living room where he was watching the game, so you thought they were winning. You found out after the game that the Canucks lost 20–0, and your son was happy about something else that his friend had told him on his cellphone."
     judgment := .acceptable
     alternatives := []
@@ -73,7 +73,7 @@ def ex38a : Datum :=
     reportedIn := none
     language := "gitx1241"
     primaryText := "yugw=imaa=hl x̱sdaa-diit"
-    glossedTokens := [("yugw=imaa=hl", "IPFV=EPIS=CN"), ("x̱sdaa-diit", "win-3PL.II")]
+    glossedTokens := [("yugw=imaa=hl", "IMPF=EPIS=CN"), ("x̱sdaa-diit", "win-3PL.II")]
     context := "You can hear people hollering, so the Canucks might be winning."
     judgment := .acceptable
     alternatives := []
@@ -86,7 +86,7 @@ def ex38b : Datum :=
     reportedIn := none
     language := "gitx1241"
     primaryText := "yugw=imaa[=hl] dim x̱sdaa-diit"
-    glossedTokens := [("yugw=imaa[=hl]", "IPFV=EPIS[=CN]"), ("dim", "FUT"), ("x̱sdaa-diit", "win-3PL.II")]
+    glossedTokens := [("yugw=imaa[=hl]", "IMPF=EPIS[=CN]"), ("dim", "FUT"), ("x̱sdaa-diit", "win-3PL.II")]
     context := "You are watching the Canucks. They might win."
     judgment := .acceptable
     alternatives := []
@@ -99,7 +99,7 @@ def ex39a : Datum :=
     reportedIn := none
     language := "gitx1241"
     primaryText := "yugw=imaa/ima'=hl wis"
-    glossedTokens := [("yugw=imaa/ima'=hl", "IPFV=EPIS=CN"), ("wis", "rain")]
+    glossedTokens := [("yugw=imaa/ima'=hl", "IMPF=EPIS=CN"), ("wis", "rain")]
     context := "You see puddles, and the flowers looking fresh and damp."
     judgment := .acceptable
     alternatives := []
@@ -112,7 +112,7 @@ def ex40a : Datum :=
     reportedIn := none
     language := "gitx1241"
     primaryText := "yugw=imaa/ima'=hl dim wis"
-    glossedTokens := [("yugw=imaa/ima'=hl", "IPFV=EPIS=CN"), ("dim", "FUT"), ("wis", "rain")]
+    glossedTokens := [("yugw=imaa/ima'=hl", "IMPF=EPIS=CN"), ("dim", "FUT"), ("wis", "rain")]
     context := "You see puddles, and the flowers looking fresh and damp."
     judgment := .unacceptable
     alternatives := []
@@ -125,7 +125,7 @@ def ex41a : Datum :=
     reportedIn := none
     language := "gitx1241"
     primaryText := "yugw=imaa/ima'=hl siipxw-t"
-    glossedTokens := [("yugw=imaa/ima'=hl", "IPFV=EPIS=CN"), ("siipxw-t", "sick-3SG.II")]
+    glossedTokens := [("yugw=imaa/ima'=hl", "IMPF=EPIS=CN"), ("siipxw-t", "sick-3SG.II")]
     context := "Why wasn't Joe at the meeting yesterday?"
     judgment := .acceptable
     alternatives := []
@@ -138,7 +138,7 @@ def ex42a : Datum :=
     reportedIn := none
     language := "gitx1241"
     primaryText := "yugw=imaa/ima'=hl dim siipxw-t"
-    glossedTokens := [("yugw=imaa/ima'=hl", "IPFV=EPIS=CN"), ("dim", "FUT"), ("siipxw-t", "sick-3SG.II")]
+    glossedTokens := [("yugw=imaa/ima'=hl", "IMPF=EPIS=CN"), ("dim", "FUT"), ("siipxw-t", "sick-3SG.II")]
     context := "Why wasn't Joe at the meeting yesterday?"
     judgment := .unacceptable
     alternatives := []
@@ -151,7 +151,7 @@ def ex39b : Datum :=
     reportedIn := none
     language := "gitx1241"
     primaryText := "yugw=imaa/ima'=hl wis"
-    glossedTokens := [("yugw=imaa/ima'=hl", "IPFV=EPIS=CN"), ("wis", "rain")]
+    glossedTokens := [("yugw=imaa/ima'=hl", "IMPF=EPIS=CN"), ("wis", "rain")]
     context := "You hear pattering on the roof."
     judgment := .acceptable
     alternatives := []
@@ -164,7 +164,7 @@ def ex40b : Datum :=
     reportedIn := none
     language := "gitx1241"
     primaryText := "yugw=imaa/ima'=hl dim wis"
-    glossedTokens := [("yugw=imaa/ima'=hl", "IPFV=EPIS=CN"), ("dim", "FUT"), ("wis", "rain")]
+    glossedTokens := [("yugw=imaa/ima'=hl", "IMPF=EPIS=CN"), ("dim", "FUT"), ("wis", "rain")]
     context := "You hear pattering on the roof."
     judgment := .unacceptable
     alternatives := []
@@ -177,7 +177,7 @@ def ex41b : Datum :=
     reportedIn := none
     language := "gitx1241"
     primaryText := "yugw=imaa/ima'=hl siipxw-t"
-    glossedTokens := [("yugw=imaa/ima'=hl", "IPFV=EPIS=CN"), ("siipxw-t", "sick-3SG.II")]
+    glossedTokens := [("yugw=imaa/ima'=hl", "IMPF=EPIS=CN"), ("siipxw-t", "sick-3SG.II")]
     context := "Why isn't Joe here?"
     judgment := .acceptable
     alternatives := []
@@ -190,7 +190,7 @@ def ex42b : Datum :=
     reportedIn := none
     language := "gitx1241"
     primaryText := "yugw=imaa/ima'=hl dim siipxw-t"
-    glossedTokens := [("yugw=imaa/ima'=hl", "IPFV=EPIS=CN"), ("dim", "FUT"), ("siipxw-t", "sick-3SG.II")]
+    glossedTokens := [("yugw=imaa/ima'=hl", "IMPF=EPIS=CN"), ("dim", "FUT"), ("siipxw-t", "sick-3SG.II")]
     context := "Why isn't Joe here?"
     judgment := .unacceptable
     alternatives := []
@@ -203,7 +203,7 @@ def ex39c : Datum :=
     reportedIn := none
     language := "gitx1241"
     primaryText := "yugw=imaa/ima'=hl wis"
-    glossedTokens := [("yugw=imaa/ima'=hl", "IPFV=EPIS=CN"), ("wis", "rain")]
+    glossedTokens := [("yugw=imaa/ima'=hl", "IMPF=EPIS=CN"), ("wis", "rain")]
     context := "You hear thunder, so you think it might rain soon."
     judgment := .unacceptable
     alternatives := []
@@ -216,7 +216,7 @@ def ex40c : Datum :=
     reportedIn := none
     language := "gitx1241"
     primaryText := "yugw=imaa/ima'=hl dim wis"
-    glossedTokens := [("yugw=imaa/ima'=hl", "IPFV=EPIS=CN"), ("dim", "FUT"), ("wis", "rain")]
+    glossedTokens := [("yugw=imaa/ima'=hl", "IMPF=EPIS=CN"), ("dim", "FUT"), ("wis", "rain")]
     context := "You hear thunder, so you think it might rain soon."
     judgment := .acceptable
     alternatives := []
@@ -229,7 +229,7 @@ def ex41c : Datum :=
     reportedIn := none
     language := "gitx1241"
     primaryText := "yugw=imaa/ima'=hl siipxw-t"
-    glossedTokens := [("yugw=imaa/ima'=hl", "IPFV=EPIS=CN"), ("siipxw-t", "sick-3SG.II")]
+    glossedTokens := [("yugw=imaa/ima'=hl", "IMPF=EPIS=CN"), ("siipxw-t", "sick-3SG.II")]
     context := "He's wearing no coat in the rain, he might get sick."
     judgment := .unacceptable
     alternatives := []
@@ -242,7 +242,7 @@ def ex42c : Datum :=
     reportedIn := none
     language := "gitx1241"
     primaryText := "yugw=imaa/ima'=hl dim siipxw-t"
-    glossedTokens := [("yugw=imaa/ima'=hl", "IPFV=EPIS=CN"), ("dim", "FUT"), ("siipxw-t", "sick-3SG.II")]
+    glossedTokens := [("yugw=imaa/ima'=hl", "IMPF=EPIS=CN"), ("dim", "FUT"), ("siipxw-t", "sick-3SG.II")]
     context := "He's wearing no coat in the rain, he might get sick."
     judgment := .acceptable
     alternatives := []
@@ -255,7 +255,7 @@ def ex43a : Datum :=
     reportedIn := none
     language := "gitx1241"
     primaryText := "yugw=imaa=hl wis da'awhl"
-    glossedTokens := [("yugw=imaa=hl", "IPFV=EPIS=CN"), ("wis", "rain"), ("da'awhl", "then")]
+    glossedTokens := [("yugw=imaa=hl", "IMPF=EPIS=CN"), ("wis", "rain"), ("da'awhl", "then")]
     context := "When you looked out your window earlier today, the ground was wet, so it looked like it might have rained. But you found out later that the sprinklers had been watering the ground."
     judgment := .acceptable
     alternatives := []
@@ -268,7 +268,7 @@ def ex43a_prime : Datum :=
     reportedIn := none
     language := "gitx1241"
     primaryText := "yugw=imaa=hl dim wis da'awhl"
-    glossedTokens := [("yugw=imaa=hl", "IPFV=EPIS=CN"), ("dim", "FUT"), ("wis", "rain"), ("da'awhl", "then")]
+    glossedTokens := [("yugw=imaa=hl", "IMPF=EPIS=CN"), ("dim", "FUT"), ("wis", "rain"), ("da'awhl", "then")]
     context := "When you looked out your window earlier today, the ground was wet, so it looked like it might have rained. But you found out later that the sprinklers had been watering the ground."
     judgment := .unacceptable
     alternatives := []
@@ -281,7 +281,7 @@ def ex44 : Datum :=
     reportedIn := none
     language := "gitx1241"
     primaryText := "yugw=imaa=hl dim wis"
-    glossedTokens := [("yugw=imaa=hl", "IPFV=EPIS=CN"), ("dim", "FUT"), ("wis", "rain")]
+    glossedTokens := [("yugw=imaa=hl", "IMPF=EPIS=CN"), ("dim", "FUT"), ("wis", "rain")]
     context := "This morning you looked out your window and judging by the clouds, it looked like it might have been going to rain, so you took your raincoat. Later you're explaining to me why you did that."
     judgment := .acceptable
     alternatives := []
@@ -294,7 +294,7 @@ def ex44_prime : Datum :=
     reportedIn := none
     language := "gitx1241"
     primaryText := "yugw=imaa=hl wis"
-    glossedTokens := [("yugw=imaa=hl", "IPFV=EPIS=CN"), ("wis", "rain")]
+    glossedTokens := [("yugw=imaa=hl", "IMPF=EPIS=CN"), ("wis", "rain")]
     context := "This morning you looked out your window and judging by the clouds, it looked like it might have been going to rain, so you took your raincoat. Later you're explaining to me why you did that."
     judgment := .unacceptable
     alternatives := []

@@ -73,7 +73,8 @@
         "false"
       ]
     ],
-    "comment": "Compatible with Jane not taking the train."
+    "comment": "Compatible with Jane not taking the train.",
+    "verified": "page-image"
   },
   {
     "id": "hacquard2006_ex1b",
@@ -106,11 +107,7 @@
         "Jane"
       ],
       [
-        "a",
-        "has"
-      ],
-      [
-        "pu",
+        "a pu",
         "can-PST-PFV"
       ],
       [
@@ -153,13 +150,14 @@
         "true"
       ]
     ],
-    "comment": "True only if Jane took the train; a continuation denying it is a contradiction."
+    "comment": "True only if Jane took the train; a continuation denying it is a contradiction.",
+    "verified": "page-image"
   },
   {
     "id": "hacquard2006_ex2a",
     "source": {
       "bibkey": "bhatt-1999",
-      "paperLabel": "(2a)"
+      "paperLabel": ""
     },
     "language": "stan1293",
     "primaryText": "Yesterday, firemen were able to eat 50 apples.",
@@ -196,7 +194,8 @@
     "reportedIn": {
       "bibkey": "hacquard-2006",
       "paperLabel": "(2a)"
-    }
+    },
+    "verified": "page-image"
   },
   {
     "id": "hacquard2006_ex2b",
@@ -235,7 +234,8 @@
         "false"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "hacquard2006_ex22a",
@@ -255,7 +255,7 @@
     "paperFeatures": [
       [
         "section",
-        "1.1.2"
+        "1.0"
       ],
       [
         "phenomenon",
@@ -274,7 +274,8 @@
         "true"
       ]
     ],
-    "comment": "The continuation is a contradiction."
+    "comment": "The continuation is a contradiction.",
+    "verified": "page-image"
   },
   {
     "id": "hacquard2006_ex22b",
@@ -286,7 +287,7 @@
     "primaryText": "Jane ha potuto sollevare questo tavolo, ma non lo ha fatto.",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "Jane could-PFV lift this table, but she didn't do it.",
+    "translation": "Jane could-PFV lift this table, but she didn't lift it.",
     "context": "",
     "judgment": "unacceptable",
     "alternatives": [],
@@ -294,7 +295,7 @@
     "paperFeatures": [
       [
         "section",
-        "1.1.2"
+        "1.0"
       ],
       [
         "phenomenon",
@@ -313,7 +314,8 @@
         "true"
       ]
     ],
-    "comment": ""
+    "comment": "The paper prints solevare questo tablo.",
+    "verified": "page-image"
   },
   {
     "id": "hacquard2006_ex23a",
@@ -333,7 +335,7 @@
     "paperFeatures": [
       [
         "section",
-        "1.1.2"
+        "1.0"
       ],
       [
         "phenomenon",
@@ -352,7 +354,8 @@
         "false"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "hacquard2006_ex23b",
@@ -364,7 +367,7 @@
     "primaryText": "Jane poteva sollevare questo tavolo, ma non lo ha fatto.",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "Jane could-IMPF lift this table, but she didn't do it.",
+    "translation": "Jane could-IMPF lift this table, but she didn't lift it.",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -372,7 +375,7 @@
     "paperFeatures": [
       [
         "section",
-        "1.1.2"
+        "1.0"
       ],
       [
         "phenomenon",
@@ -391,7 +394,8 @@
         "false"
       ]
     ],
-    "comment": ""
+    "comment": "The paper prints solevare questo tablo.",
+    "verified": "page-image"
   },
   {
     "id": "hacquard2006_ex81a",
@@ -430,7 +434,8 @@
         "true"
       ]
     ],
-    "comment": "A circumstantial modal base does not factor in the subject's beliefs: only the actual description of the event can be reported."
+    "comment": "A circumstantial modal base does not factor in the subject's beliefs: only the actual description of the event can be reported.",
+    "verified": "page-image"
   },
   {
     "id": "hacquard2006_ex81b",
@@ -469,7 +474,8 @@
         "true"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "hacquard2006_ex86",
@@ -508,7 +514,8 @@
         "true"
       ]
     ],
-    "comment": "There is an actual past event which, in some circumstantially accessible world where Jane goes to Paris, is a taking-the-train event by Jane."
+    "comment": "There is an actual past event which, in some circumstantially accessible world where Jane goes to Paris, is a taking-the-train event by Jane.",
+    "verified": "page-image"
   },
   {
     "id": "hacquard2006_ex87",
@@ -547,7 +554,8 @@
         "true"
       ]
     ],
-    "comment": "In all accessible worlds where Jane goes to Paris that event is a taking-the-train event; false if Jane had other options."
+    "comment": "In all accessible worlds where Jane goes to Paris that event is a taking-the-train event; false if Jane had other options.",
+    "verified": "page-image"
   },
   {
     "id": "hacquard2006_ex88",
@@ -586,7 +594,8 @@
         "true"
       ]
     ],
-    "comment": "The taking of the plane is entailed; the goal that restricts the modal need not hold in the actual world. Italian speakers split."
+    "comment": "The taking of the plane is entailed; the goal that restricts the modal need not hold in the actual world. Italian speakers split.",
+    "verified": "page-image"
   },
   {
     "id": "hacquard2006_ex89a",
@@ -603,12 +612,8 @@
         "Jane"
       ],
       [
-        "a",
-        "has"
-      ],
-      [
-        "pris",
-        "taken"
+        "a pris",
+        "took-PFV"
       ],
       [
         "le",
@@ -654,7 +659,8 @@
         "perfective"
       ]
     ],
-    "comment": "The unmodalized sentence: no desirability inference."
+    "comment": "The unmodalized sentence: no desirability inference.",
+    "verified": "page-image"
   },
   {
     "id": "hacquard2006_ex89b",
@@ -693,7 +699,8 @@
         "true"
       ]
     ],
-    "comment": "Carries the cancellable inference that taking the train was Jane's preferred means, a scalar implicature from not asserting the necessity."
+    "comment": "Carries the cancellable inference that taking the train was Jane's preferred means, a scalar implicature from not asserting the necessity.",
+    "verified": "page-image"
   },
   {
     "id": "hacquard2006_ex89c",
@@ -732,7 +739,8 @@
         "true"
       ]
     ],
-    "comment": "No desirability inference: Jane had no choice."
+    "comment": "No desirability inference: Jane had no choice.",
+    "verified": "page-image"
   },
   {
     "id": "hacquard2006_ex100a",
@@ -771,7 +779,8 @@
         "false"
       ]
     ],
-    "comment": "A long-term ability under GEN, which requires no verifying instance."
+    "comment": "A long-term ability under GEN, which requires no verifying instance.",
+    "verified": "page-image"
   },
   {
     "id": "hacquard2006_ex100b",
@@ -810,7 +819,8 @@
         "false"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "hacquard2006_ex101a",
@@ -849,7 +859,8 @@
         "false"
       ]
     ],
-    "comment": "The ability held over an interval surrounding the trip without being instantiated at the zoo."
+    "comment": "The ability held over an interval surrounding the trip without being instantiated at the zoo.",
+    "verified": "page-image"
   },
   {
     "id": "hacquard2006_ex101b",
@@ -888,7 +899,8 @@
         "true"
       ]
     ],
-    "comment": "Perfective forces an actual event of talking to the monkeys at the zoo."
+    "comment": "Perfective forces an actual event of talking to the monkeys at the zoo.",
+    "verified": "page-image"
   },
   {
     "id": "hacquard2006_ex103",
@@ -897,10 +909,10 @@
       "paperLabel": "(103)"
     },
     "language": "stan1290",
-    "primaryText": "Jane pouvait prendre le train pour aller à Londres, mais elle...",
+    "primaryText": "Jane pouvait prendre le train pour aller à Londres, ?(mais elle...)",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "Jane could-IMPF take the train to go to London, but she...",
+    "translation": "Jane could-IMPF take the train to go to London, ?(but she...)",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -927,7 +939,8 @@
         "false"
       ]
     ],
-    "comment": "The preferred reading is counterfactual: a continuation that Jane did not take the train is expected."
+    "comment": "The preferred reading is counterfactual: a continuation that Jane did not take the train is expected.",
+    "verified": "page-image"
   },
   {
     "id": "hacquard2006_ex201",
@@ -944,11 +957,7 @@
         "Jane"
       ],
       [
-        "a",
-        "has"
-      ],
-      [
-        "dû",
+        "a dû",
         "must-PST-PFV"
       ],
       [
@@ -988,7 +997,8 @@
         "eventBinding"
       ]
     ],
-    "comment": "Bound by the speech event the modality is relativized to the speaker at the utterance time; bound by aspect, to Jane at the past time."
+    "comment": "Bound by the speech event the modality is relativized to the speaker at the utterance time; bound by aspect, to Jane at the past time.",
+    "verified": "page-image"
   },
   {
     "id": "hacquard2006_ex242a",
@@ -1023,7 +1033,8 @@
         "epistemic"
       ]
     ],
-    "comment": "With a progressive complement the modal is bound by the speech event and read epistemically."
+    "comment": "With a progressive complement the modal is bound by the speech event and read epistemically.",
+    "verified": "page-image"
   },
   {
     "id": "hacquard2006_ex242b",
@@ -1058,7 +1069,8 @@
         "epistemic"
       ]
     ],
-    "comment": ""
+    "comment": "The paper prints Jean in the French line; its gloss and translation have Jane.",
+    "verified": "page-image"
   },
   {
     "id": "hacquard2006_ex244a",
@@ -1089,7 +1101,8 @@
         "ability"
       ]
     ],
-    "comment": "The stative complement is coerced into an inchoative: Jane can get sick."
+    "comment": "The stative complement is coerced into an inchoative: Jane can get sick.",
+    "verified": "page-image"
   },
   {
     "id": "hacquard2006_ex244b",
@@ -1103,7 +1116,7 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -1120,7 +1133,8 @@
         "ability"
       ]
     ],
-    "comment": "Hackl's ban on non-change-denoting complements of ability modals; English can has no epistemic reading to fall back on."
+    "comment": "Hackl's ban on non-change-denoting complements of ability modals; English can has no epistemic reading to fall back on.",
+    "verified": "page-image"
   },
   {
     "id": "hacquard2006_ex245a",
@@ -1137,12 +1151,8 @@
         "Jane"
       ],
       [
-        "a",
-        "has"
-      ],
-      [
-        "pu",
-        "can-PST-PFV"
+        "a pu",
+        "could-PST-PFV"
       ],
       [
         "être",
@@ -1180,7 +1190,8 @@
         "false"
       ]
     ],
-    "comment": "A speech-event-bound epistemic: the stative complement disprefers a circumstantial relation and aspect's event has no content."
+    "comment": "A speech-event-bound epistemic: the stative complement disprefers a circumstantial relation and aspect's event has no content.",
+    "verified": "page-image"
   },
   {
     "id": "hacquard2006_ex246",
@@ -1211,7 +1222,8 @@
         "ability"
       ]
     ],
-    "comment": "The event provided by aspect has no content, so an epistemic accessibility relation is unavailable for the aspect-bound modal."
+    "comment": "The event provided by aspect has no content, so an epistemic accessibility relation is unavailable for the aspect-bound modal.",
+    "verified": "page-image"
   },
   {
     "id": "hacquard2006_ex247b",
@@ -1251,7 +1263,8 @@
         "perfective"
       ]
     ],
-    "comment": "The thinking event has content, so aspect can bind the modal's event and yield an epistemic relation for the subject; the speech-bound reading is more salient."
+    "comment": "The thinking event has content, so aspect can bind the modal's event and yield an epistemic relation for the subject; the speech-bound reading is more salient.",
+    "verified": "page-image"
   },
   {
     "id": "hacquard2006_ex249b",
@@ -1286,6 +1299,7 @@
         "true"
       ]
     ],
-    "comment": "With an eventive attitude the subject-bound reading is available and implicative: Jane did notice."
+    "comment": "With an eventive attitude the subject-bound reading is available and implicative: Jane did notice.",
+    "verified": "page-image"
   }
 ]

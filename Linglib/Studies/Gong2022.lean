@@ -233,7 +233,8 @@ instance (b : Binder) : Decidable b.IsSubject := by
 
 /-! ### The pool -/
 
-/-- A scrambled order: its construction, the base-order binder, the mover, and the judgment. -/
+/-- A scrambled order: its construction, the base-order binder, the mover, and the worst mark
+the paper prints on it (`??/*` counts as `*`). -/
 structure Row where
   construction : Construction
   binder : Binder
@@ -256,7 +257,7 @@ def Row.ofDatum (ex : Datum) : Option Row := do
     [("IO", Binder.io), ("subject", .subject), ("matrix DAT", .matrixDat),
       ("matrix subject", .matrixSubject), ("embedded subject", .embeddedSubject)]
   let mover ← ex.parse? "mover" [("DP", Mover.dp), ("DP-lexical", .lexicalDP), ("PP", .pp)]
-  pure ⟨construction, binder, mover, ex.judgment⟩
+  pure ⟨construction, binder, mover, ex.judgments.foldl min ex.judgment⟩
 
 /-- The scrambled orders (18b) to (21b), (32b), (33), (40), (41), (58), (61), (79), (85b), (86),
 (93b), and (94b). -/

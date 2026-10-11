@@ -494,7 +494,7 @@ def ex_48 : Datum :=
     judgment := .questionable
     alternatives := []
     readings := []
-    paperFeatures := [("dative", "3"), ("accusative", "SIE"), ("cell", "3>SIE")] }
+    paperFeatures := [("dative", "3"), ("accusative", "SIE"), ("cell", "3>SIE"), ("alsoJudged", "ungrammatical")] }
 
 def ex_49a : Datum :=
   { id := "adamsonzompi2025_49a"

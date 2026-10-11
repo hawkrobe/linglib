@@ -19,7 +19,8 @@
       ["mover", "absolutive"],
       ["reflex", "blocked"]
     ],
-    "comment": "Absolutive extraction is unmarked: no =(y)a' with an intransitive subject."
+    "comment": "Absolutive extraction is unmarked: no =(y)a' with an intransitive subject.",
+    "verified": "page-image"
   },
   {
     "id": "elkinstorrencebrown2026_11b",
@@ -41,7 +42,8 @@
       ["mover", "absolutive"],
       ["reflex", "blocked"]
     ],
-    "comment": "Absolutive extraction is unmarked: no =(y)a' with a direct object."
+    "comment": "Absolutive extraction is unmarked: no =(y)a' with a direct object.",
+    "verified": "page-image"
   },
   {
     "id": "elkinstorrencebrown2026_12b",
@@ -64,7 +66,8 @@
       ["mover", "ergative"],
       ["reflex", "blocked"]
     ],
-    "comment": "The Ergative Extraction Constraint: the agent is extracted through an antipassive, which demotes the theme to a relational-noun phrase; no =(y)a'."
+    "comment": "The Ergative Extraction Constraint: the agent is extracted through an antipassive, which demotes the theme to a relational-noun phrase; no =(y)a'.",
+    "verified": "page-image"
   },
   {
     "id": "elkinstorrencebrown2026_13a",
@@ -89,7 +92,8 @@
       ["mover", "none"],
       ["reflex", "blocked"]
     ],
-    "comment": "With the instrument in situ the enclitic is impossible: =(y)a' is associated with extraction, not with the presence of the adjunct."
+    "comment": "With the instrument in situ the enclitic is impossible: =(y)a' is associated with extraction, not with the presence of the adjunct.",
+    "verified": "page-image"
   },
   {
     "id": "elkinstorrencebrown2026_13b",
@@ -115,7 +119,8 @@
       ["mover", "instrument"],
       ["reflex", "licensed"]
     ],
-    "comment": "Instrument extraction optionally triggers =(y)a'; the relational noun inverts around the wh-word (pied-piping with inversion)."
+    "comment": "Instrument extraction optionally triggers =(y)a'; the relational noun inverts around the wh-word (pied-piping with inversion).",
+    "verified": "page-image"
   },
   {
     "id": "elkinstorrencebrown2026_14b",
@@ -138,7 +143,8 @@
       ["mover", "benefactive"],
       ["reflex", "licensed"]
     ],
-    "comment": "Benefactive extraction optionally triggers =(y)a'."
+    "comment": "Benefactive extraction optionally triggers =(y)a'.",
+    "verified": "page-image"
   },
   {
     "id": "elkinstorrencebrown2026_15b",
@@ -161,7 +167,8 @@
       ["mover", "dative"],
       ["reflex", "licensed"]
     ],
-    "comment": "Dative extraction optionally triggers =(y)a'."
+    "comment": "Dative extraction optionally triggers =(y)a'.",
+    "verified": "page-image"
   },
   {
     "id": "elkinstorrencebrown2026_16b",
@@ -184,7 +191,8 @@
       ["mover", "locative"],
       ["reflex", "licensed"]
     ],
-    "comment": "Locative extraction optionally triggers =(y)a'."
+    "comment": "Locative extraction optionally triggers =(y)a'. The paper glosses chiyo-n(=a') as bark-ANTIP-MVMT.",
+    "verified": "page-image"
   },
   {
     "id": "elkinstorrencebrown2026_17b",
@@ -208,7 +216,8 @@
       ["mover", "reason"],
       ["reflex", "licensed"]
     ],
-    "comment": "Reason extraction optionally triggers =(y)a'; the wh-expression is the wh-word plus the relational noun u'n."
+    "comment": "Reason extraction optionally triggers =(y)a'; the wh-expression is the wh-word plus the relational noun u'n.",
+    "verified": "page-image"
   },
   {
     "id": "elkinstorrencebrown2026_18b",
@@ -231,7 +240,8 @@
       ["mover", "purpose"],
       ["reflex", "licensed"]
     ],
-    "comment": "Purpose extraction optionally triggers =(y)a'."
+    "comment": "Purpose extraction optionally triggers =(y)a'.",
+    "verified": "page-image"
   },
   {
     "id": "elkinstorrencebrown2026_19b",
@@ -254,7 +264,8 @@
       ["mover", "manner"],
       ["reflex", "licensed"]
     ],
-    "comment": "Manner extraction optionally triggers =(y)a'."
+    "comment": "Manner extraction optionally triggers =(y)a'.",
+    "verified": "page-image"
   },
   {
     "id": "elkinstorrencebrown2026_20b",
@@ -279,7 +290,8 @@
       ["mover", "temporal"],
       ["reflex", "blocked"]
     ],
-    "comment": "Temporal extraction does not license =(y)a'."
+    "comment": "Temporal extraction does not license =(y)a'.",
+    "verified": "page-image"
   },
   {
     "id": "elkinstorrencebrown2026_21b",
@@ -304,7 +316,8 @@
       ["mover", "temporal"],
       ["reflex", "blocked"]
     ],
-    "comment": "Temporal extraction does not license =(y)a'."
+    "comment": "Temporal extraction does not license =(y)a'.",
+    "verified": "page-image"
   },
   {
     "id": "elkinstorrencebrown2026_22",
@@ -328,7 +341,8 @@
       ["directionals", "1"],
       ["hosts", "2"]
     ],
-    "comment": "Multiple exponence: the enclitic may appear on the predicate and on the directional, each optionally and independently, so four combinations are equivalent."
+    "comment": "Multiple exponence: the enclitic may appear on the predicate and on the directional, each optionally and independently, so four combinations are equivalent.",
+    "verified": "page-image"
   },
   {
     "id": "elkinstorrencebrown2026_24",
@@ -355,7 +369,8 @@
       ["matrixReflex", "licensed"],
       ["embeddedReflex", "licensed"]
     ],
-    "comment": "Long-distance extraction from a kye complement: =(y)a' on both the matrix and the embedded predicate, each optional."
+    "comment": "Long-distance extraction from a kye complement: =(y)a' on both the matrix and the embedded predicate, each optional.",
+    "verified": "page-image"
   },
   {
     "id": "elkinstorrencebrown2026_26",
@@ -382,7 +397,8 @@
       ["matrixReflex", "blocked"],
       ["embeddedReflex", "licensed"]
     ],
-    "comment": "Embedded question: the wh-expression moves within the embedded clause only, and =(y)a' is unavailable on the matrix predicate."
+    "comment": "Embedded question: the wh-expression moves within the embedded clause only, and =(y)a' is unavailable on the matrix predicate.",
+    "verified": "page-image"
   },
   {
     "id": "elkinstorrencebrown2026_28",
@@ -409,7 +425,8 @@
       ["section", "3.2"],
       ["mover", "locative"]
     ],
-    "comment": "The relative clause is an island: the enclitic appears only on the matrix predicate and the question has only the matrix reading."
+    "comment": "The relative clause is an island: the enclitic appears only on the matrix predicate and the question has only the matrix reading.",
+    "verified": "page-image"
   },
   {
     "id": "elkinstorrencebrown2026_29a",
@@ -433,7 +450,8 @@
       ["section", "3.2"],
       ["mover", "locative"]
     ],
-    "comment": "=(y)a' inside the relative-clause island is rejected, and does not ameliorate extraction from the island."
+    "comment": "=(y)a' inside the relative-clause island is rejected, and does not ameliorate extraction from the island.",
+    "verified": "page-image"
   },
   {
     "id": "elkinstorrencebrown2026_31",
@@ -459,7 +477,8 @@
       ["matrixReflex", "licensed"],
       ["embeddedReflex", "licensed"]
     ],
-    "comment": "Extraction from a VoiceP-sized aspectless clause: =(y)a' on both predicates although the embedded clause has no CP layer, so the locus of the enclitic is below C."
+    "comment": "Extraction from a VoiceP-sized aspectless clause: =(y)a' on both predicates although the embedded clause has no CP layer, so the locus of the enclitic is below C.",
+    "verified": "page-image"
   },
   {
     "id": "elkinstorrencebrown2026_34",
@@ -486,14 +505,15 @@
       ["matrixReflex", "licensed"],
       ["embeddedReflex", "blocked"]
     ],
-    "comment": "Extraction from a VP-sized nonfinite clause: =(y)a' on the matrix predicate only, so the locus of the enclitic is above VP. The primary text follows the glossed line; the paper's unglossed line differs."
+    "comment": "Extraction from a VP-sized nonfinite clause: =(y)a' on the matrix predicate only, so the locus of the enclitic is above VP. The primary text follows the glossed line; the paper's unglossed line differs.",
+    "verified": "page-image"
   },
   {
     "id": "elkinstorrencebrown2026_35c",
     "source": {"bibkey": "elkins-torrence-brown-2026", "paperLabel": "(35c)"},
     "reportedIn": null,
     "language": "mamm1241",
-    "primaryText": "Iku' tzaj tlq'ona'.",
+    "primaryText": "Iku' tzaj tlq'ona'",
     "discourseSegments": [],
     "glossedTokens": [
       ["iku'", "yes"], ["∅-∅-tzaj", "COM-B2/3S-DIR"], ["t-lq'o-'n=a'", "A2/3-buy-DS=MVMT"]
@@ -502,7 +522,10 @@
     "context": "Answering: Did Juan buy the jocotes in the market?",
     "judgment": "ungrammatical",
     "alternatives": [
-      {"form": "Iku', atzu tzaj tlq'o'na'.", "judgment": "acceptable"}
+      {
+        "form": "Iku', atzu tzaj tlq'o'na'",
+        "judgment": "acceptable"
+      }
     ],
     "readings": [],
     "paperFeatures": [
@@ -510,7 +533,8 @@
       ["mover", "none"],
       ["reflex", "blocked"]
     ],
-    "comment": "=(y)a' cannot refer anaphorically to a previously established locative without an extracted adjunct; with the fronted atzu 'there' it is fine. So the enclitic is not a resumptive pronoun."
+    "comment": "=(y)a' cannot refer anaphorically to a previously established locative without an extracted adjunct; with the fronted atzu 'there' it is fine. So the enclitic is not a resumptive pronoun.",
+    "verified": "page-image"
   },
   {
     "id": "elkinstorrencebrown2026_37",
@@ -534,7 +558,8 @@
       ["reflex", "licensed"],
       ["voice", "passive"]
     ],
-    "comment": "=(y)a' co-occurs with the passive suffix, unlike an Agent Focus morpheme, which is in complementary distribution with valency morphology."
+    "comment": "=(y)a' co-occurs with the passive suffix, unlike an Agent Focus morpheme, which is in complementary distribution with valency morphology.",
+    "verified": "page-image"
   },
   {
     "id": "elkinstorrencebrown2026_38",
@@ -558,7 +583,8 @@
       ["mover", "ergative"],
       ["antipassive", "embedded only"]
     ],
-    "comment": "Long-distance ergative extraction: only the clause in which the agent originates is antipassivized, whereas =(y)a' is licensed in each clause along an adjunct's path."
+    "comment": "Long-distance ergative extraction: only the clause in which the agent originates is antipassivized, whereas =(y)a' is licensed in each clause along an adjunct's path.",
+    "verified": "page-image"
   },
   {
     "id": "elkinstorrencebrown2026_63",
@@ -582,7 +608,8 @@
       ["directionals", "2"],
       ["hosts", "3"]
     ],
-    "comment": "An intransitive predicate with its sole argument, two directionals and three instances of =(y)a': more reflexes than intervening DPs."
+    "comment": "An intransitive predicate with its sole argument, two directionals and three instances of =(y)a': more reflexes than intervening DPs.",
+    "verified": "page-image"
   },
   {
     "id": "elkinstorrencebrown2026_65",
@@ -595,7 +622,7 @@
       ["jni'", "how.many"], ["hor", "hour"], ["∅-∅-kub'", "COMPL-B2/3S-DIR"],
       ["k-jon(*=a)=e'", "A2/3PL-cut-DS=MVMT=2PL"], ["chib'j", "meat"]
     ],
-    "translation": "At what time did y'all cut the meat?",
+    "translation": "At what time (lit. what hour of the clock) did y'all cut the meat?",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [
@@ -607,23 +634,27 @@
       ["mover", "temporal"],
       ["reflex", "blocked"]
     ],
-    "comment": "Even a nominal-looking temporal phrase fails to trigger the enclitic; the featural characterization of the triggers is left open."
+    "comment": "Even a nominal-looking temporal phrase fails to trigger the enclitic; the featural characterization of the triggers is left open.",
+    "verified": "page-image"
   },
   {
     "id": "elkinstorrencebrown2026_51",
     "source": {"bibkey": "mendes-ranero-2021", "paperLabel": "(2)"},
     "reportedIn": {"bibkey": "elkins-torrence-brown-2026", "paperLabel": "(51)"},
     "language": "kich1262",
-    "primaryText": "Jawii xatb'ee wi iwiir?",
+    "primaryText": "Jawi xatb'ee wi iwiir?",
     "discourseSegments": [],
     "glossedTokens": [
-      ["Jawii", "where"], ["x-at-b'ee", "COMPL-B2SG-go"], ["*(wi)", "FP"], ["iwiir", "yesterday"]
+      ["Jawi", "where"], ["x-at-b'ee", "COMPL-B2SG-go"], ["*(wi)", "FP"], ["iwiir", "yesterday"]
     ],
     "translation": "Where did you go yesterday?",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [
-      {"form": "Jawii xatb'ee iwiir?", "judgment": "ungrammatical"}
+      {
+        "form": "Jawi xatb'ee iwiir?",
+        "judgment": "ungrammatical"
+      }
     ],
     "readings": [],
     "paperFeatures": [
@@ -631,7 +662,8 @@
       ["mover", "locative"],
       ["reflex", "licensed"]
     ],
-    "comment": "The K'iche' fronting particle wi is obligatory under low-adjunct extraction."
+    "comment": "The K'iche' fronting particle wi is obligatory under low-adjunct extraction.",
+    "verified": "page-image"
   },
   {
     "id": "elkinstorrencebrown2026_52",
@@ -657,7 +689,8 @@
       ["matrixReflex", "licensed"],
       ["embeddedReflex", "licensed"]
     ],
-    "comment": "With an overt complementizer, wi appears in every clause along the path."
+    "comment": "With an overt complementizer, wi appears in every clause along the path.",
+    "verified": "page-image"
   },
   {
     "id": "elkinstorrencebrown2026_53",
@@ -684,7 +717,8 @@
       ["matrixReflex", "blocked"],
       ["embeddedReflex", "licensed"]
     ],
-    "comment": "From a reduced AspP complement without a complementizer, wi appears in the embedded clause only: the Fronting Particle Generalization."
+    "comment": "From a reduced AspP complement without a complementizer, wi appears in the embedded clause only: the Fronting Particle Generalization.",
+    "verified": "page-image"
   },
   {
     "id": "elkinstorrencebrown2026_64",
@@ -709,6 +743,7 @@
       ["mover", "reason"],
       ["reflex", "blocked"]
     ],
-    "comment": "A reason adjunct, high in K'ichean, does not trigger wi, whereas Mam tiqu'n 'why' licenses =(y)a'."
+    "comment": "A reason adjunct, high in K'ichean, does not trigger wi, whereas Mam tiqu'n 'why' licenses =(y)a'. Elkins et al. label (64) K'iche'; Mendes and Ranero's (14a) is Patzún Kaqchikel.",
+    "verified": "page-image"
   }
 ]

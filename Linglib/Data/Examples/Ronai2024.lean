@@ -104,7 +104,7 @@ def ex_11c : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("example", "11"), ("condition", "true"), ("inference", "At least one soup was warm."), ("mean", "86")] }
+    paperFeatures := [("example", "11"), ("condition", "true"), ("inference", "At least one soup was warm."), ("mean", "85")] }
 
 def ex_11d : Datum :=
   { id := "ronai2024_11d"
@@ -156,7 +156,7 @@ def item2 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("item", "2"), ("scale", "allowed/obligatory"), ("condition", "strong"), ("inference", "No move was obligatory."), ("exp1", "55"), ("exp2", "49")] }
+    paperFeatures := [("item", "2"), ("scale", "allowed/obligatory"), ("condition", "strong"), ("inference", "No move was obligatory."), ("exp1", "54"), ("exp2", "49")] }
 
 def item3 : Datum :=
   { id := "ronai2024_item3"
@@ -280,7 +280,7 @@ def item12 : Datum :=
     source := ⟨"ronai-2024", "Figures 2-7"⟩
     reportedIn := none
     language := "stan1293"
-    primaryText := "Every movie was funny. "
+    primaryText := "Every movie was funny."
     glossedTokens := []
     context := ""
     judgment := .acceptable
@@ -364,7 +364,7 @@ def item18 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("item", "18"), ("scale", "like/love"), ("condition", "strong"), ("inference", "No princess loved dancing."), ("exp1", "13"), ("exp2", "9")] }
+    paperFeatures := [("item", "18"), ("scale", "like/love"), ("condition", "strong"), ("inference", "No princess loved dancing."), ("exp1", "14"), ("exp2", "9")] }
 
 def item19 : Datum :=
   { id := "ronai2024_item19"
@@ -416,7 +416,7 @@ def item22 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("item", "22"), ("scale", "memorable/unforgettable"), ("condition", "strong"), ("inference", "No party was unforgettable."), ("exp1", "43"), ("exp2", "44")] }
+    paperFeatures := [("item", "22"), ("scale", "memorable/unforgettable"), ("condition", "strong"), ("inference", "No party was unforgettable."), ("exp1", "41"), ("exp2", "44")] }
 
 def item23 : Datum :=
   { id := "ronai2024_item23"
@@ -468,7 +468,7 @@ def item26 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("item", "26"), ("scale", "possible/certain"), ("condition", "strong"), ("inference", "No outcome was certain."), ("exp1", "66"), ("exp2", "62")] }
+    paperFeatures := [("item", "26"), ("scale", "possible/certain"), ("condition", "strong"), ("inference", "No outcome was certain."), ("exp1", "67"), ("exp2", "62")] }
 
 def item27 : Datum :=
   { id := "ronai2024_item27"
@@ -520,7 +520,7 @@ def item30 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("item", "30"), ("scale", "silly/ridiculous"), ("condition", "strong"), ("inference", "No song was ridiculous."), ("exp1", "18"), ("exp2", "7")] }
+    paperFeatures := [("item", "30"), ("scale", "silly/ridiculous"), ("condition", "strong"), ("inference", "No song was ridiculous."), ("exp1", "19"), ("exp2", "7")] }
 
 def item31 : Datum :=
   { id := "ronai2024_item31"
@@ -572,7 +572,7 @@ def item34 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("item", "34"), ("scale", "sometimes/always"), ("condition", "strong"), ("inference", "No doctor was always irritable."), ("exp1", "39"), ("exp2", "33")] }
+    paperFeatures := [("item", "34"), ("scale", "sometimes/always"), ("condition", "strong"), ("inference", "No doctor was always irritable."), ("exp1", "40"), ("exp2", "33")] }
 
 def item35 : Datum :=
   { id := "ronai2024_item35"
@@ -624,7 +624,7 @@ def item38 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("item", "38"), ("scale", "try/succeed"), ("condition", "strong"), ("inference", "No athlete succeeded."), ("exp1", "33"), ("exp2", "13")] }
+    paperFeatures := [("item", "38"), ("scale", "try/succeed"), ("condition", "strong"), ("inference", "No athlete succeeded."), ("exp1", "34"), ("exp2", "13")] }
 
 def item39 : Datum :=
   { id := "ronai2024_item39"

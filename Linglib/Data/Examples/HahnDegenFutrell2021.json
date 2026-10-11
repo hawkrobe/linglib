@@ -24,7 +24,8 @@
         "heavyNPShift"
       ]
     ],
-    "comment": "NP objects ordinarily precede PPs; the paper takes the example from Staub et al. (2006)."
+    "comment": "NP objects ordinarily precede PPs; the paper takes the example from Staub et al. (2006).",
+    "verified": "page-image"
   },
   {
     "id": "hahndegenfutrell2021_ex2b",
@@ -38,7 +39,7 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "questionable",
+    "judgment": "marginal",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -51,7 +52,8 @@
         "heavyNPShift"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "hahndegenfutrell2021_ex2c",
@@ -78,7 +80,8 @@
         "heavyNPShift"
       ]
     ],
-    "comment": "Less preferred with a long NP: the verb and the PP are far apart."
+    "comment": "Less preferred with a long NP: the verb and the PP are far apart.",
+    "verified": "page-image"
   },
   {
     "id": "hahndegenfutrell2021_ex2d",
@@ -105,7 +108,8 @@
         "heavyNPShift"
       ]
     ],
-    "comment": "Heavy NP shift: shortens the verb-to-PP dependency while only modestly lengthening the verb-to-object one."
+    "comment": "Heavy NP shift: shortens the verb-to-PP dependency while only modestly lengthening the verb-to-object one.",
+    "verified": "page-image"
   },
   {
     "id": "hahndegenfutrell2021_si1",
@@ -145,7 +149,8 @@
         "morphemeOrder"
       ]
     ],
-    "comment": "The supplement's table of relative orderings of the Japanese verb suffixes, segmented as there; the supplement takes the form from Vaccari and Vaccari's grammar (1938)."
+    "comment": "The supplement's table of relative orderings of the Japanese verb suffixes, segmented as there; the supplement takes the form from Vaccari and Vaccari's grammar (1938).",
+    "verified": "page-image"
   },
   {
     "id": "hahndegenfutrell2021_si2",
@@ -170,7 +175,7 @@
         "NEG"
       ]
     ],
-    "translation": "I do not wish to see",
+    "translation": "do not wish to see",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -185,7 +190,8 @@
         "morphemeOrder"
       ]
     ],
-    "comment": "The supplement's table of relative orderings of the Japanese verb suffixes, segmented as there; the supplement takes the form from Vaccari and Vaccari's grammar (1938)."
+    "comment": "The supplement's table of relative orderings of the Japanese verb suffixes, segmented as there; the supplement takes the form from Vaccari and Vaccari's grammar (1938).",
+    "verified": "page-image"
   },
   {
     "id": "hahndegenfutrell2021_si3",
@@ -214,7 +220,7 @@
         "PST"
       ]
     ],
-    "translation": "I did not wish to see",
+    "translation": "did not wish to see",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -229,7 +235,8 @@
         "morphemeOrder"
       ]
     ],
-    "comment": "The supplement's table of relative orderings of the Japanese verb suffixes, segmented as there; the supplement takes the form from Vaccari and Vaccari's grammar (1938)."
+    "comment": "The supplement's table of relative orderings of the Japanese verb suffixes, segmented as there; the supplement takes the form from Vaccari and Vaccari's grammar (1938).",
+    "verified": "page-image"
   },
   {
     "id": "hahndegenfutrell2021_si4",
@@ -273,7 +280,8 @@
         "morphemeOrder"
       ]
     ],
-    "comment": "The supplement's table of relative orderings of the Japanese verb suffixes, segmented as there; the supplement takes the form from Kaiser et al. (2013)."
+    "comment": "The supplement's table of relative orderings of the Japanese verb suffixes, segmented as there; the supplement takes the form from Kaiser et al. (2013).",
+    "verified": "page-image"
   },
   {
     "id": "hahndegenfutrell2021_si5",
@@ -313,7 +321,8 @@
         "morphemeOrder"
       ]
     ],
-    "comment": "The supplement's table of relative orderings of the Japanese verb suffixes, segmented as there; the supplement takes the form from Kaiser et al. (2013)."
+    "comment": "The supplement's table of relative orderings of the Japanese verb suffixes, segmented as there; the supplement takes the form from Kaiser et al. (2013).",
+    "verified": "page-image"
   },
   {
     "id": "hahndegenfutrell2021_si6",
@@ -357,7 +366,8 @@
         "morphemeOrder"
       ]
     ],
-    "comment": "The supplement's table of relative orderings of the Japanese verb suffixes, segmented as there; the supplement takes the form from Vaccari and Vaccari's grammar (1938)."
+    "comment": "The supplement's table of relative orderings of the Japanese verb suffixes, segmented as there; the supplement takes the form from Vaccari and Vaccari's grammar (1938).",
+    "verified": "page-image"
   },
   {
     "id": "hahndegenfutrell2021_si7",
@@ -401,7 +411,8 @@
         "morphemeOrder"
       ]
     ],
-    "comment": "The supplement's table of relative orderings of the Japanese verb suffixes, segmented as there; the supplement takes the form from Vaccari and Vaccari's grammar (1938)."
+    "comment": "The supplement's table of relative orderings of the Japanese verb suffixes, segmented as there; the supplement takes the form from Vaccari and Vaccari's grammar (1938).",
+    "verified": "page-image"
   },
   {
     "id": "hahndegenfutrell2021_si8",
@@ -441,7 +452,8 @@
         "morphemeOrder"
       ]
     ],
-    "comment": "The supplement's table of relative orderings of the Japanese verb suffixes, segmented as there; the supplement takes the form from Vaccari and Vaccari's grammar (1938)."
+    "comment": "The supplement's table of relative orderings of the Japanese verb suffixes, segmented as there; the supplement takes the form from Vaccari and Vaccari's grammar (1938).",
+    "verified": "page-image"
   },
   {
     "id": "hahndegenfutrell2021_si9",
@@ -485,7 +497,8 @@
         "morphemeOrder"
       ]
     ],
-    "comment": "The supplement's table of relative orderings of the Japanese verb suffixes, segmented as there; the supplement takes the form from Vaccari and Vaccari's grammar (1938)."
+    "comment": "The supplement's table of relative orderings of the Japanese verb suffixes, segmented as there; the supplement takes the form from Vaccari and Vaccari's grammar (1938).",
+    "verified": "page-image"
   },
   {
     "id": "hahndegenfutrell2021_so1",
@@ -929,7 +942,8 @@
         "morphemeOrder"
       ]
     ],
-    "comment": "The supplement's example from the Demuth corpus for the completive before the passive; it glosses u- as a present-tense marker fused with the second-singular object marker."
+    "comment": "The supplement's example from the Demuth corpus for the completive before the passive; it glosses u- as a present-tense marker fused with the second-singular object marker.",
+    "verified": "page-image"
   },
   {
     "id": "hahndegenfutrell2021_so10",
@@ -977,6 +991,7 @@
         "morphemeOrder"
       ]
     ],
-    "comment": "The supplement's example from the Demuth corpus for a reciprocal after an applicative; it glosses ba- as the class 2 subject marker with a fused present-tense marker."
+    "comment": "The supplement's example from the Demuth corpus for a reciprocal after an applicative; it glosses ba- as the class 2 subject marker and arol- as the verb stem fused with a present-tense marker.",
+    "verified": "page-image"
   }
 ]

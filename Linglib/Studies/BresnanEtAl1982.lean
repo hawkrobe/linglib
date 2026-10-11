@@ -40,7 +40,7 @@ association itself.
 * [kaplan-bresnan-1982]
 * [huybregts-1976]
 * [evers-1975]
-* [gazdar-pullum-1982]
+* [pullum-gazdar-1982]
 -/
 
 @[expose] public section

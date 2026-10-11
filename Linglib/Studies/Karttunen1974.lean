@@ -2,7 +2,6 @@ module
 
 public import Linglib.Studies.Heinamaki1974
 public import Linglib.Semantics.Aspect.Defs
-public import Linglib.Data.Examples.Karttunen1974
 
 /-!
 # Karttunen (1974): Until
@@ -92,22 +91,5 @@ instance : DecidablePred SatisfiesDurativeRestriction := fun _ ↦
 theorem satisfiesDurativeRestriction_iff (c : VendlerClass) :
     SatisfiesDurativeRestriction c ↔ c = .state ∨ c = .activity := by
   cases c <;> decide
-
-/-- The Vendler class a row records. -/
-def vendlerOf (row : Datum) : Option VendlerClass :=
-  match row.feature? "vendler_class" with
-  | some "state" => some .state
-  | some "activity" => some .activity
-  | some "achievement" => some .achievement
-  | some "accomplishment" => some .accomplishment
-  | some "semelfactive" => some .semelfactive
-  | _ => none
-
-/-- Each *until* row is acceptable exactly when its main clause satisfies the durative
-restriction. -/
-theorem until_acceptable_iff_durative :
-    ∀ row ∈ Examples.all, ∀ c ∈ vendlerOf row,
-      (row.judgment = .acceptable ↔ SatisfiesDurativeRestriction c) := by
-  decide +kernel
 
 end Karttunen1974

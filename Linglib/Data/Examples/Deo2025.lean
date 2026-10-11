@@ -111,8 +111,8 @@ def ex_7ctx1 : Datum :=
     source := ⟨"deo-2025-bara", "(7), context 1"⟩
     reportedIn := none
     language := "mara1378"
-    primaryText := "niʃa tiʧ-ya bəhiɳi=la aɳ-te ahe bərə"
-    glossedTokens := [("niʃa", "Niśa.NOM"), ("tiʧ-ya", "her.GEN-OBL"), ("bəhiɳi=la", "sister.OBL=ACC"), ("aɳ-te", "bring-IMPF.F.SG"), ("ahe", "PRES.3.SG"), ("bərə", "BARA")]
+    primaryText := "Niśa tiʧ-ya bəhiɳi=la aɳ-te ahe bərə"
+    glossedTokens := [("Niśa", "Niśa.NOM"), ("tiʧ-ya", "her.GEN-OBL"), ("bəhiɳi=la", "sister.OBL=ACC"), ("aɳ-te", "bring-IMPF.F.SG"), ("ahe", "PRES.3.SG"), ("bərə", "BARA")]
     context := "Anu and Bilal are hosting three friends for dinner and they both have been told that one of them will also bring her sister along. Bilal is setting the table. Bilal: Let's see, how many place settings do we need?"
     judgment := .unacceptable
     alternatives := []
@@ -124,8 +124,8 @@ def ex_7ctx2 : Datum :=
     source := ⟨"deo-2025-bara", "(7), context 2"⟩
     reportedIn := none
     language := "mara1378"
-    primaryText := "niʃa tiʧ-ya bəhiɳi=la aɳ-te ahe bərə"
-    glossedTokens := [("niʃa", "Niśa.NOM"), ("tiʧ-ya", "her.GEN-OBL"), ("bəhiɳi=la", "sister.OBL=ACC"), ("aɳ-te", "bring-IMPF.F.SG"), ("ahe", "PRES.3.SG"), ("bərə", "BARA")]
+    primaryText := "Niśa tiʧ-ya bəhiɳi=la aɳ-te ahe bərə"
+    glossedTokens := [("Niśa", "Niśa.NOM"), ("tiʧ-ya", "her.GEN-OBL"), ("bəhiɳi=la", "sister.OBL=ACC"), ("aɳ-te", "bring-IMPF.F.SG"), ("ahe", "PRES.3.SG"), ("bərə", "BARA")]
     context := "Anu and Bilal are hosting three friends for dinner and they both have been told that one of them will also bring her sister along. It's almost time for the guests and Bilal has laid the table with settings for only five people. Anu: We need six place settings..."
     judgment := .acceptable
     alternatives := []

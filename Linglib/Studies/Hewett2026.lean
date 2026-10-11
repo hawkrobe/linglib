@@ -70,8 +70,8 @@ inductive Template where
   deriving DecidableEq, Fintype
 
 /-- The roots of the examples: English √apologi (1) and √prd (5); Syrian Arabic √fxr (2),
-√brk (6) and √ħkm (14); Tunisian Arabic √xwf (11), √krh and √dwr (13); Hebrew √tpl (17)
-and √ʃpʕ (18). -/
+√brk (6) and √ħkm (14); Tunisian Arabic √xwf (11), √krh and √dwr (13); Hebrew √ṭpl (17)
+and √špʕ (18). -/
 inductive Root where
   | apologi
   | prd

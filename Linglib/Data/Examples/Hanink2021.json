@@ -11,7 +11,7 @@
     "glossedTokens": [
       [
         "gí:",
-        "3.NOM"
+        "GI"
       ],
       [
         "pélew",
@@ -45,7 +45,8 @@
         "nominative"
       ]
     ],
-    "comment": "The independent third-person pronoun, nominative gí:."
+    "comment": "The independent third-person pronoun, nominative gí:.",
+    "verified": "page-image"
   },
   {
     "id": "hanink2021_ex2",
@@ -59,7 +60,7 @@
     "glossedTokens": [
       [
         "hádi-gi",
-        "DIST-IDX.NOM"
+        "DIST-GI"
       ],
       [
         "pélew",
@@ -89,7 +90,8 @@
         "gi"
       ]
     ],
-    "comment": "The distal demonstrative decomposes as hádi plus gi."
+    "comment": "The distal demonstrative decomposes as hádi plus gi.",
+    "verified": "page-image"
   },
   {
     "id": "hanink2021_ex3",
@@ -115,7 +117,7 @@
       ],
       [
         "ʔ-í:gi-yi-š-gi",
-        "3-see-IND-DS-IDX.NOM"
+        "3-see-IND-DS-GI"
       ],
       [
         "ʔwáʔ",
@@ -149,7 +151,8 @@
         "nominative"
       ]
     ],
-    "comment": "The nominalized relative clause, subject of the matrix verb, ends in nominative -gi."
+    "comment": "The nominalized relative clause, subject of the matrix verb, ends in nominative -gi.",
+    "verified": "page-image"
   },
   {
     "id": "hanink2021_ex19",
@@ -189,7 +192,8 @@
         "indefinite"
       ]
     ],
-    "comment": "Bear and Deer Story. A bare noun introducing a novel referent: the indefinite reading."
+    "comment": "Bear and Deer Story. A bare noun introducing a novel referent: the indefinite reading.",
+    "verified": "page-image"
   },
   {
     "id": "hanink2021_ex20",
@@ -229,7 +233,8 @@
         "unique"
       ]
     ],
-    "comment": "A bare noun with a unique definite reading."
+    "comment": "A bare noun with a unique definite reading.",
+    "verified": "page-image"
   },
   {
     "id": "hanink2021_ex21",
@@ -289,7 +294,8 @@
         "null"
       ]
     ],
-    "comment": "A bare noun anaphoric to an indefinite antecedent: idx present but unpronounced before an overt NP."
+    "comment": "A bare noun anaphoric to an indefinite antecedent: idx present but unpronounced before an overt NP.",
+    "verified": "page-image"
   },
   {
     "id": "hanink2021_ex22",
@@ -357,7 +363,8 @@
         "accusative"
       ]
     ],
-    "comment": "An anaphoric bare noun in object position: idx stays null under dependent case."
+    "comment": "An anaphoric bare noun in object position: idx stays null under dependent case.",
+    "verified": "page-image"
   },
   {
     "id": "hanink2021_ex23",
@@ -401,7 +408,8 @@
         "demonstrative"
       ]
     ],
-    "comment": "Washo Archive. The distal demonstrative with a gesture."
+    "comment": "Washo Archive. The distal demonstrative with a gesture.",
+    "verified": "page-image"
   },
   {
     "id": "hanink2021_ex25a",
@@ -445,7 +453,8 @@
         "distal"
       ]
     ],
-    "comment": "Distal hádi with the suffix gi."
+    "comment": "Distal hádi with the suffix gi.",
+    "verified": "page-image"
   },
   {
     "id": "hanink2021_ex25b",
@@ -489,7 +498,8 @@
         "proximal"
       ]
     ],
-    "comment": "Proximal wídi with the suffix gi."
+    "comment": "Proximal wídi with the suffix gi.",
+    "verified": "page-image"
   },
   {
     "id": "hanink2021_ex27",
@@ -553,7 +563,8 @@
         "accusative"
       ]
     ],
-    "comment": "The accusative independent pronoun gé:."
+    "comment": "The accusative independent pronoun gé:.",
+    "verified": "page-image"
   },
   {
     "id": "hanink2021_ex41",
@@ -605,7 +616,8 @@
         "accusative"
       ]
     ],
-    "comment": "The embedded clause carries tense, independent mood, and switch reference: a full CP."
+    "comment": "The embedded clause carries tense, independent mood, and switch reference: a full CP.",
+    "verified": "page-image"
   },
   {
     "id": "hanink2021_ex45",
@@ -627,7 +639,7 @@
       ],
       [
         "ʔ-í:gi-yi-š-ge",
-        "3/3-see-IND-DS-IDX.ACC"
+        "3-see-IND-DS-IDX.ACC"
       ],
       [
         "lé:-saʔ",
@@ -661,7 +673,8 @@
         "accusative"
       ]
     ],
-    "comment": "Reported from Hanink (2016). The relative is the object of the matrix verb and takes accusative -ge."
+    "comment": "Reported from Hanink (2016). The relative is the object of the matrix verb and takes accusative -ge.",
+    "verified": "page-image"
   },
   {
     "id": "hanink2021_ex46",
@@ -697,7 +710,8 @@
         "postposition"
       ]
     ],
-    "comment": "Washo Archive. The instrumental postposition -lu on a DP."
+    "comment": "Washo Archive. The instrumental postposition -lu on a DP.",
+    "verified": "page-image"
   },
   {
     "id": "hanink2021_ex47",
@@ -741,7 +755,8 @@
         "ge"
       ]
     ],
-    "comment": "The same postposition selects an internally headed relative: the relative is a DP."
+    "comment": "The same postposition selects an internally headed relative: the relative is a DP.",
+    "verified": "page-image"
   },
   {
     "id": "hanink2021_ex50",
@@ -789,7 +804,8 @@
         "islandInsensitivity"
       ]
     ],
-    "comment": "The higher semantic head 'food' sits inside the lower relative clause: no island effect."
+    "comment": "The higher semantic head 'food' sits inside the lower relative clause: no island effect.",
+    "verified": "page-image"
   },
   {
     "id": "hanink2021_ex51",
@@ -841,7 +857,8 @@
         "islandInsensitivity"
       ]
     ],
-    "comment": "The higher semantic head 'coffee' sits inside the lower relative clause: no island effect."
+    "comment": "The higher semantic head 'coffee' sits inside the lower relative clause: no island effect.",
+    "verified": "page-image"
   },
   {
     "id": "hanink2021_ex53",
@@ -889,7 +906,8 @@
         "existential"
       ]
     ],
-    "comment": "Bear and Deer Story. An internally headed relative with an existential interpretation."
+    "comment": "Bear and Deer Story. An internally headed relative with an existential interpretation.",
+    "verified": "page-image"
   },
   {
     "id": "hanink2021_ex54",
@@ -941,7 +959,8 @@
         "restrictiveness"
       ]
     ],
-    "comment": "Two relative clauses stacked on one semantic head."
+    "comment": "Two relative clauses stacked on one semantic head.",
+    "verified": "page-image"
   },
   {
     "id": "hanink2021_ex56",
@@ -985,7 +1004,8 @@
         "internallyHeadedRelative"
       ]
     ],
-    "comment": "An internally headed relative uttered out of the blue: idx contributes no familiarity."
+    "comment": "An internally headed relative uttered out of the blue: idx contributes no familiarity.",
+    "verified": "page-image"
   },
   {
     "id": "hanink2021_ex91",
@@ -1016,7 +1036,7 @@
     "alternatives": [
       {
         "form": "daʔmoʔmóʔmoʔ p'á:š-ug-i-š-ge-w di-sú:dɨm-i",
-        "judgment": "unacceptable"
+        "judgment": "ungrammatical"
       }
     ],
     "readings": [],
@@ -1030,7 +1050,8 @@
         "noFeatureTransmission"
       ]
     ],
-    "comment": "A plural semantic head leaves idx invariant: no number suffix on -ge, so no agreement with the head."
+    "comment": "A plural semantic head leaves idx invariant: no number suffix on -ge, so no agreement with the head.",
+    "verified": "page-image"
   },
   {
     "id": "hanink2021_ex96",
@@ -1086,7 +1107,8 @@
         "indefinitenessRestriction"
       ]
     ],
-    "comment": "A demonstrative semantic head: Washo does not obey the indefiniteness restriction."
+    "comment": "A demonstrative semantic head: Washo does not obey the indefiniteness restriction.",
+    "verified": "page-image"
   },
   {
     "id": "hanink2021_ex98",
@@ -1138,7 +1160,8 @@
         "quantifiedHead"
       ]
     ],
-    "comment": "A quantified semantic head; the quantifier scopes inside the relative: 'all the horses such that the cowboy brought all the horses outside'."
+    "comment": "A quantified semantic head; the quantifier scopes inside the relative: 'all the horses such that the cowboy brought all the horses outside'.",
+    "verified": "page-image"
   },
   {
     "id": "hanink2021_ex102",
@@ -1186,7 +1209,8 @@
         "quantifiedHead"
       ]
     ],
-    "comment": "Infelicitous as a follow-up to (98): the relative already says all the horses were brought out."
+    "comment": "Infelicitous as a follow-up to (98): the relative already says all the horses were brought out.",
+    "verified": "page-image"
   },
   {
     "id": "hanink2021_ex103",
@@ -1238,7 +1262,8 @@
         "quantifiedHead"
       ]
     ],
-    "comment": "The quantifier outside the relative takes the whole nominalization as its restriction."
+    "comment": "The quantifier outside the relative takes the whole nominalization as its restriction.",
+    "verified": "page-image"
   },
   {
     "id": "hanink2021_ex104",
@@ -1274,7 +1299,8 @@
         "perceptionReading"
       ]
     ],
-    "comment": "A clausal nominalization under a perception verb refers to an event, with idx as a variable."
+    "comment": "A clausal nominalization under a perception verb refers to an event, with idx as a variable.",
+    "verified": "page-image"
   },
   {
     "id": "hanink2021_ex105",
@@ -1310,7 +1336,8 @@
         "perceptionReading"
       ]
     ],
-    "comment": "A clausal nominalization under a perception verb refers to an event, with idx as a variable."
+    "comment": "A clausal nominalization under a perception verb refers to an event, with idx as a variable.",
+    "verified": "page-image"
   },
   {
     "id": "hanink2021_ex120a",
@@ -1350,7 +1377,8 @@
         "dual"
       ]
     ],
-    "comment": "The dual suffix -ši on the independent pronoun."
+    "comment": "The dual suffix -ši on the independent pronoun.",
+    "verified": "page-image"
   },
   {
     "id": "hanink2021_ex120b",
@@ -1390,7 +1418,8 @@
         "plural"
       ]
     ],
-    "comment": "The plural suffix -w on the independent pronoun."
+    "comment": "The plural suffix -w on the independent pronoun.",
+    "verified": "page-image"
   },
   {
     "id": "hanink2021_ex121a",
@@ -1430,7 +1459,8 @@
         "dual"
       ]
     ],
-    "comment": "Dual concord on a modifier of an animate noun, plural by reduplication."
+    "comment": "Dual concord on a modifier of an animate noun, plural by reduplication.",
+    "verified": "page-image"
   },
   {
     "id": "hanink2021_ex121b",
@@ -1470,7 +1500,8 @@
         "dual"
       ]
     ],
-    "comment": "Dual concord on a numeral."
+    "comment": "Dual concord on a numeral.",
+    "verified": "page-image"
   },
   {
     "id": "hanink2021_ex122a",
@@ -1510,7 +1541,8 @@
         "plural"
       ]
     ],
-    "comment": "Plural concord on a modifier; the noun itself is unmarked."
+    "comment": "Plural concord on a modifier; the noun itself is unmarked.",
+    "verified": "page-image"
   },
   {
     "id": "hanink2021_ex122b",
@@ -1550,6 +1582,7 @@
         "plural"
       ]
     ],
-    "comment": "Plural concord on a numeral."
+    "comment": "Plural concord on a numeral.",
+    "verified": "page-image"
   }
 ]

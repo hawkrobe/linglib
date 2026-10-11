@@ -255,9 +255,18 @@
     "context": "",
     "judgment": "ungrammatical",
     "alternatives": [
-      {"form": "Mary of my friends but Chris", "judgment": "ungrammatical"},
-      {"form": "three of my friends but Chris", "judgment": "ungrammatical"},
-      {"form": "some of my friends but Chris", "judgment": "ungrammatical"}
+      {
+        "form": "many of my friends but Chris",
+        "judgment": "ungrammatical"
+      },
+      {
+        "form": "three of my friends but Chris",
+        "judgment": "ungrammatical"
+      },
+      {
+        "form": "some of my friends but Chris",
+        "judgment": "ungrammatical"
+      }
     ],
     "readings": [],
     "paperFeatures": [

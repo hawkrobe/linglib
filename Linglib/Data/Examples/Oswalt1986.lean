@@ -73,7 +73,7 @@ def s7 : Datum :=
     reportedIn := none
     language := "kash1280"
     primaryText := "hú·ʔ men s̓í-ya-m ṭa ʔa"
-    glossedTokens := [("hú·ʔ", "yes"), ("men", "thus"), ("s̓í-ya-m", "do-VISUAL-RESP"), ("ṭa", ""), ("ʔa", "I")]
+    glossedTokens := [("hú·ʔ", "Yes"), ("men", "thus"), ("s̓í-ya-m", "do-VISUAL-RESP"), ("ṭa", ""), ("ʔa", "I")]
     context := "A response to a remark by someone else."
     judgment := .acceptable
     alternatives := [("men s̓ímela", .acceptable), ("men s̓ímelam", .ungrammatical)]
@@ -294,7 +294,7 @@ def s32 : Datum :=
     reportedIn := none
     language := "kash1280"
     primaryText := "kʰe híʔbaya=ʔ-bi-w"
-    glossedTokens := [("kʰe", "my"), ("híʔbaya=ʔ-bi-w", "man=ASS-II-ABS")]
+    glossedTokens := [("kʰe", "My"), ("híʔbaya=ʔ-bi-w", "man=ASS-II-ABS")]
     context := "A woman saw a man approaching but could not recognize him until he arrived."
     judgment := .acceptable
     alternatives := []

@@ -173,6 +173,10 @@ def decimal? : Option Rat :=
     | (i, []) => (digits? i).map fun n ↦ (n : Rat)
     | (i, _ :: f) => do pure ((← digits? i) + (← digits? f) / 10 ^ f.length)
 
+/-- `e.judgments` is every mark the paper prints on `e`: its judgment, then the further marks
+of a split mark such as `??/*`, recorded as `alsoJudged`. -/
+def judgments : List Judgment := e.judgment :: (e.features "alsoJudged").filterMap Judgment.ofName?
+
 variable {e key} {v : String}
 
 @[simp]

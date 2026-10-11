@@ -446,13 +446,13 @@ def ex_27_nom : Datum :=
 
 def ex_27_goalnom : Datum :=
   { id := "bakervinokurova2010_27_goalnom"
-    source := ⟨"baker-vinokurova-2010", "(27)"⟩
+    source := ⟨"baker-vinokurova-2010", "(29)"⟩
     reportedIn := none
     language := "yaku1245"
     primaryText := "Masha suruk yytylynna."
     glossedTokens := [("Masha", "Masha"), ("suruk", "letter"), ("yyt-ylyn-na", "send-PASS-PST.3SG.SBJ")]
     context := ""
-    judgment := .unacceptable
+    judgment := .ungrammatical
     alternatives := []
     readings := []
     paperFeatures := [("construction", "passive"), ("verbAgreement", "yes"), ("goalCase", "NOM"), ("objectCase", "bare"), ("objectSpecific", "no"), ("objectAdjacent", "yes")] }
@@ -678,19 +678,6 @@ def ex_44_acc : Datum :=
     readings := []
     paperFeatures := [("construction", "clause"), ("verbAgreement", "yes"), ("subjectCase", "NOM"), ("goalCase", "ACC"), ("raisedCase", "ACC")] }
 
-def ex_50b : Datum :=
-  { id := "bakervinokurova2010_50b"
-    source := ⟨"baker-vinokurova-2010", "(50b)"⟩
-    reportedIn := none
-    language := "yaku1245"
-    primaryText := "Masha djieni tula türgennik süürde."
-    glossedTokens := [("Masha", "Masha"), ("djie-ni", "house-ACC"), ("tula", "around"), ("türgennik", "quickly"), ("süür-de", "run-PST.3SG.SBJ")]
-    context := ""
-    judgment := .acceptable
-    alternatives := []
-    readings := []
-    paperFeatures := [("construction", "pp"), ("verbAgreement", "yes"), ("subjectCase", "NOM"), ("pObjectCase", "ACC")] }
-
 def ex_51a_acc : Datum :=
   { id := "bakervinokurova2010_51a_acc"
     source := ⟨"baker-vinokurova-2010", "(56a)"⟩
@@ -782,19 +769,6 @@ def ex_62a : Datum :=
     readings := []
     paperFeatures := [("construction", "relative"), ("verbAgreement", "no"), ("headNounAgreement", "no"), ("subjectCase", "bare"), ("objectCase", "bare"), ("objectSpecific", "no"), ("objectAdjacent", "yes")] }
 
-def ex_62c : Datum :=
-  { id := "bakervinokurova2010_62c"
-    source := ⟨"baker-vinokurova-2010", "(62c)"⟩
-    reportedIn := none
-    language := "yaku1245"
-    primaryText := "yt urer sir"
-    glossedTokens := [("yt", "dog"), ("ur-er", "bark-AOR"), ("sir", "place")]
-    context := ""
-    judgment := .unacceptable
-    alternatives := []
-    readings := []
-    paperFeatures := [("construction", "relative"), ("verbAgreement", "no"), ("headNounAgreement", "no"), ("subjectCase", "bare"), ("subjectSpecific", "no"), ("subjectAdjacent", "yes")] }
-
 def ex_62d : Datum :=
   { id := "bakervinokurova2010_62d"
     source := ⟨"baker-vinokurova-2010", "(71d)"⟩
@@ -820,19 +794,6 @@ def ex_63a : Datum :=
     alternatives := []
     readings := []
     paperFeatures := [("construction", "relative"), ("verbAgreement", "no"), ("headNounAgreement", "yes"), ("subjectCase", "GEN"), ("objectCase", "bare"), ("objectSpecific", "no"), ("objectAdjacent", "yes")] }
-
-def ex_63c : Datum :=
-  { id := "bakervinokurova2010_63c"
-    source := ⟨"baker-vinokurova-2010", "(63c)"⟩
-    reportedIn := none
-    language := "yaku1245"
-    primaryText := "Yt urer sire"
-    glossedTokens := [("Yt", "dog"), ("ur-er", "bark-AOR"), ("sir-e", "place-3SG.POSS")]
-    context := ""
-    judgment := .acceptable
-    alternatives := []
-    readings := []
-    paperFeatures := [("construction", "relative"), ("verbAgreement", "no"), ("headNounAgreement", "yes"), ("subjectCase", "GEN")] }
 
 def ex_63d : Datum :=
   { id := "bakervinokurova2010_63d"
@@ -1081,6 +1042,6 @@ def ex_75b_pl : Datum :=
     readings := []
     paperFeatures := [("construction", "passive"), ("verbAgreement", "yes"), ("objectCase", "ACC"), ("agreesWith", "object")] }
 
-def all : List Datum := [ex_3a, ex_3b, ex_3c, ex_7b, ex_7c, ex_8a, ex_10a, ex_10a_bare, ex_10b, ex_11a, ex_11b, ex_11b_bare, ex_13, ex_13_acc, ex_14, ex_16, ex_16_dat, ex_16_acc, ex_17, ex_21a, ex_21a_dat, ex_21b, ex_21b_bare, ex_23a, ex_23b, ex_23b_acc, ex_24a, ex_24a_nom, ex_24b, ex_25a, ex_25b, ex_27, ex_27_nom, ex_27_goalnom, ex_29a, ex_29b, ex_33a_acc, ex_34, ex_35, ex_37a, ex_37b, ex_39a, ex_39b, ex_40, ex_42a, ex_42a_acc, ex_42b, ex_42b_acc, ex_43, ex_44, ex_44_acc, ex_50b, ex_51a_acc, ex_54b, ex_56a, ex_56b, ex_57, ex_61a, ex_62a, ex_62c, ex_62d, ex_63a, ex_63c, ex_63d, ex_64, ex_65, ex_65_pl, ex_66, ex_66_sg, ex_68a, ex_68b, ex_68c, ex_70, ex_71b, ex_71c, ex_72a, ex_72b, ex_72c, ex_75a, ex_75a_pl, ex_75b, ex_75b_pl]
+def all : List Datum := [ex_3a, ex_3b, ex_3c, ex_7b, ex_7c, ex_8a, ex_10a, ex_10a_bare, ex_10b, ex_11a, ex_11b, ex_11b_bare, ex_13, ex_13_acc, ex_14, ex_16, ex_16_dat, ex_16_acc, ex_17, ex_21a, ex_21a_dat, ex_21b, ex_21b_bare, ex_23a, ex_23b, ex_23b_acc, ex_24a, ex_24a_nom, ex_24b, ex_25a, ex_25b, ex_27, ex_27_nom, ex_27_goalnom, ex_29a, ex_29b, ex_33a_acc, ex_34, ex_35, ex_37a, ex_37b, ex_39a, ex_39b, ex_40, ex_42a, ex_42a_acc, ex_42b, ex_42b_acc, ex_43, ex_44, ex_44_acc, ex_51a_acc, ex_54b, ex_56a, ex_56b, ex_57, ex_61a, ex_62a, ex_62d, ex_63a, ex_63d, ex_64, ex_65, ex_65_pl, ex_66, ex_66_sg, ex_68a, ex_68b, ex_68c, ex_70, ex_71b, ex_71c, ex_72a, ex_72b, ex_72c, ex_75a, ex_75a_pl, ex_75b, ex_75b_pl]
 
 end BakerVinokurova2010.Examples
