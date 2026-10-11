@@ -3,6 +3,7 @@ module
 public import Mathlib.Data.Finset.Powerset
 public import Mathlib.Data.Fintype.Basic
 public import Linglib.Logic.Modal.Basic
+public import Linglib.Semantics.Exhaustification.Pointwise
 
 /-!
 # Domain alternatives of a modalized existential
@@ -24,7 +25,8 @@ Variation and negating all proper ones yields Free Choice.
 * `FreeChoice`, `ModalVariation`, `Uniqueness` — the modal
   components.
 * `subdomainAlternatives` — the singleton or proper subdomain alternatives.
-* `AntiExhaustivity` — the negated pre-exhaustified alternative.
+* `AntiExhaustivity` — the negated pre-exhaustified alternative, for a singleton the negated
+  exhaustification against the other members (`antiExhaustivity_singleton_iff`).
 
 ## References
 
@@ -41,10 +43,10 @@ open ModalLogic SetRel
 
 variable {W E : Type*} (R : SetRel W W) (w : W) (D : Finset E) (Q : W → E → Prop)
 
-/-- The existential claim over the subdomain `S`: some member of `S` is a witness. -/
+/-- The existential claim over the subdomain `S` says that some member of `S` is a witness. -/
 def claim (S : Finset E) (v : W) : Prop := ∃ x ∈ S, Q v x
 
-/-- Free Choice: every member of the domain is a witness in some accessible world. -/
+/-- Free Choice holds when every member of the domain is a witness in some accessible world. -/
 def FreeChoice : Prop := ∀ x ∈ D, ◇[R] (Q · x) w
 
 section Witnesses
@@ -54,11 +56,11 @@ variable [∀ v, DecidablePred (Q v)]
 /-- The witnesses of the existential claim at `v`. -/
 def witnesses (v : W) : Finset E := D.filter (Q v ·)
 
-/-- Modal Variation: the witnesses vary across the accessible worlds. -/
+/-- Modal Variation holds when the witnesses vary across the accessible worlds. -/
 def ModalVariation : Prop :=
   ∃ v, w ~[R] v ∧ ∃ v', w ~[R] v' ∧ witnesses D Q v ≠ witnesses D Q v'
 
-/-- Uniqueness: at most one witness in each accessible world. -/
+/-- Uniqueness holds when each accessible world has at most one witness. -/
 def Uniqueness : Prop := □[R] (fun v => (witnesses D Q v).card ≤ 1) w
 
 theorem claim_iff_witnesses_nonempty (v : W) :
@@ -117,6 +119,15 @@ theorem subdomainAlternatives_singletons_subset (hD : 1 < D.card) :
 of the domain. -/
 def AntiExhaustivity (S : Finset E) : Prop :=
   ◇[R] (claim Q S) w → ◇[R] (claim Q (D \ S)) w
+
+/-- For a singleton, anti-exhaustivity negates the possibility of its member exhaustified against
+the possibility of each other member of the domain. -/
+theorem antiExhaustivity_singleton_iff {a : E} (ha : a ∈ D) :
+    AntiExhaustivity R w D Q {a} ↔ ¬ exhAgainst (· ≠ ·) (fun x : D ↦ ◇[R] (Q · x) w) ⟨a, ha⟩ := by
+  simp only [AntiExhaustivity, exhAgainst, claim, Diamond, Finset.mem_singleton, exists_eq_left,
+    Finset.mem_sdiff, not_and, not_forall, not_not, Subtype.forall, ne_eq, Subtype.mk.injEq]
+  exact ⟨fun h hv ↦ let ⟨v, hv', x, ⟨hx, hxa⟩, hq⟩ := h hv; ⟨x, hx, fun h ↦ hxa h.symm, v, hv', hq⟩,
+    fun h hv ↦ let ⟨x, hx, hxa, v, hv', hq⟩ := h hv; ⟨v, hv', x, ⟨hx, fun h ↦ hxa h.symm⟩, hq⟩⟩
 
 /-- Under a possibility modal the claim entails one of its singleton alternatives. -/
 theorem exists_singleton_of_diamond (h : ◇[R] (claim Q D) w) :

@@ -7,7 +7,7 @@ module
 
 public import Linglib.Semantics.Degree.Comparison
 public import Linglib.Semantics.Denotation
-public import Linglib.Semantics.Exhaustification.Chain
+public import Linglib.Semantics.Exhaustification.Pointwise
 
 /-!
 # Numeral meanings
@@ -36,7 +36,7 @@ the degrees above, takes it to the lower-bounded one.
 ## Main results
 
 * `Numerals.exhNumeral_eq`: the exhaustified lower-bounded meaning is the two-sided one.
-* `Numerals.mem_exhNumeral_iff_exhChain`: exhaustifying against the next numeral is
+* `Numerals.mem_exhNumeral_iff_exhAgainst`: exhaustifying against the next numeral is
   exhaustifying against the whole scale.
 
 ## References
@@ -156,13 +156,12 @@ instance : DecidablePred (· ∈ exhNumeral m) := fun n ↦
   decidable_of_iff (n = m) (by rw [exhNumeral_eq]; rfl)
 
 /-- Exhaustifying against the next numeral is exhaustifying against the whole scale of higher
-numerals, which is an entailment chain (`Exhaustification.exhChain_iff_succ`). -/
-theorem mem_exhNumeral_iff_exhChain :
+numerals, which is an entailment chain (`Exhaustification.exhAgainst_lt_iff_succ`). -/
+theorem mem_exhNumeral_iff_exhAgainst :
     n ∈ exhNumeral m ↔
-      Exhaustification.exhChain (fun k ↦ (· ∈ Comparison.ge.interval (m + k))) 0 n := by
-  rw [Exhaustification.exhChain_iff_succ (φ := fun k ↦ (· ∈ Comparison.ge.interval (m + k)))
-      (fun j k hjk d (hd : m + k ≤ d) ↦ show m + j ≤ d by omega)
-      Nat.zero_lt_one fun j hj ↦ hj]
+      Exhaustification.exhAgainst (· < ·) (fun k ↦ n ∈ Comparison.ge.interval (m + k)) 0 := by
+  rw [Exhaustification.exhAgainst_lt_iff_succ (A := fun k ↦ n ∈ Comparison.ge.interval (m + k))
+    (fun j k hjk (h : m + k ≤ n) ↦ show m + j ≤ n by omega) Nat.zero_lt_one fun _ h ↦ h]
   rfl
 
 end Numerals

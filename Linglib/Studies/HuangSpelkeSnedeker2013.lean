@@ -199,10 +199,10 @@ theorem all_some_none : choice allLiteral ⟨.IO, .E⟩ = some .covered := by de
 /-- A child at knower level `k` has the numerals up to `k` as a count list; the numeral `i` of
 that list exhaustified against its known stronger alternatives. -/
 def exhKnown (k : ℕ) (i : Fin (k + 1)) (n : ℕ) : Prop :=
-  Exhaustification.exhChain (fun j : Fin (k + 1) ↦ (· ∈ Comparison.ge.interval (j : ℕ))) i n
+  Exhaustification.exhAgainst (· < ·) (fun j : Fin (k + 1) ↦ n ∈ Comparison.ge.interval (j : ℕ)) i
 
 instance (k : ℕ) (i : Fin (k + 1)) : DecidablePred (exhKnown k i) := fun _ ↦
-  inferInstanceAs (Decidable (Exhaustification.exhChain _ _ _))
+  inferInstanceAs (Decidable (Exhaustification.exhAgainst _ _ _))
 
 /-- The top of the count list has no stronger known alternative, so exhaustification leaves its
 lower-bounded meaning as it is. -/
@@ -214,9 +214,9 @@ theorem exhKnown_last (k n : ℕ) :
 theorem exhKnown_of_lt {k : ℕ} {i : Fin (k + 1)} (hi : i < Fin.last k) (n : ℕ) :
     exhKnown k i n ↔ n ∈ Comparison.eq.interval (i : ℕ) := by
   have hs : (i : ℕ) + 1 < k + 1 := by have := Fin.lt_def.1 hi; simp at this; omega
-  rw [exhKnown, Exhaustification.exhChain_iff_succ (s := (⟨i + 1, hs⟩ : Fin (k + 1)))
-    (φ := fun j : Fin (k + 1) ↦ (· ∈ Comparison.ge.interval (j : ℕ)))
-    (fun j k hjk n (hk : (k : ℕ) ≤ n) ↦ show (j : ℕ) ≤ n from le_trans hjk hk)
+  rw [exhKnown, Exhaustification.exhAgainst_lt_iff_succ (s := (⟨i + 1, hs⟩ : Fin (k + 1)))
+    (A := fun j : Fin (k + 1) ↦ n ∈ Comparison.ge.interval (j : ℕ))
+    (fun j k hjk (hk : (k : ℕ) ≤ n) ↦ show (j : ℕ) ≤ n from le_trans hjk hk)
     (Fin.lt_def.2 (Nat.lt_succ_self _))
     (fun j hj ↦ Fin.le_def.2 (Nat.succ_le_of_lt (Fin.lt_def.1 hj)))]
   simp only [Comparison.interval_ge, Comparison.interval_eq, Set.mem_Ici, Set.mem_singleton_iff]

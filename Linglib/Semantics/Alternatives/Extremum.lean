@@ -3,7 +3,7 @@ module
 public import Mathlib.Order.Bounds.Image
 public import Mathlib.Order.Interval.Set.Monotone
 public import Linglib.Semantics.Degree.Comparison
-public import Linglib.Semantics.Exhaustification.Chain
+public import Linglib.Semantics.Exhaustification.Pointwise
 
 /-!
 # Maximally informative alternatives
@@ -20,7 +20,7 @@ by `Antitone.map_isGreatest`.
 * `IsMaxInf`, `HasMaxInf`: the maximally informative alternative and its existence.
 * `hasMaxInf_iff_isGreatest`, `hasMaxInf_iff_isLeast`: on a strictly antitone (monotone)
   family, the maximally informative degree is the greatest (least) true one.
-* `exhChain_iff_isMaxInf`: exhaustifying a strictly antitone family against its stronger
+* `exhAgainst_lt_iff_isMaxInf`: exhaustifying a strictly antitone family against its stronger
   members is asserting the prejacent maximally informative.
 * `hasMaxInf_ge_over`, `isMaxInf_ge_over_iff`: "at least `d`" always has a maximally
   informative degree, the true measure; `hasMaxInf_le_over`, `isMaxInf_le_over_iff` are
@@ -81,8 +81,8 @@ theorem hasMaxInf_iff_isLeast (hφ : StrictMono φ) :
 
 /-- Exhaustifying a strictly antitone family against all stronger members asserts that the
 prejacent is maximally informative. -/
-theorem exhChain_iff_isMaxInf (hφ : StrictAnti φ) {i : α} :
-    Exhaustification.exhChain φ i w ↔ IsMaxInf φ i w := by
+theorem exhAgainst_lt_iff_isMaxInf (hφ : StrictAnti φ) {i : α} :
+    Exhaustification.exhAgainst (· < ·) (w ∈ φ ·) i ↔ IsMaxInf φ i w := by
   rw [isMaxInf_iff]
   refine and_congr_right fun _ => ⟨fun h y hy => ?_, fun h j hij hj => (hφ hij).2 (h j hj)⟩
   exact hφ.antitone (not_lt.1 fun hiy => h y hiy hy)
