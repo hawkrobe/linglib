@@ -42,7 +42,8 @@
         "bare nominal"
       ]
     ],
-    "comment": "Both readings available without articles: the shifts iota and ex do the work."
+    "comment": "Both readings available without articles: the shifts iota and ex do the work.",
+    "verified": "page-image"
   },
   {
     "id": "coppockbeaver2015_4a",
@@ -65,7 +66,8 @@
         "predicative definite"
       ]
     ],
-    "comment": "A definite coordinates with predicative adjectives."
+    "comment": "A definite coordinates with predicative adjectives.",
+    "verified": "page-image"
   },
   {
     "id": "coppockbeaver2015_4b",
@@ -88,7 +90,8 @@
         "predicative definite"
       ]
     ],
-    "comment": "A proper name does not."
+    "comment": "A proper name does not.",
+    "verified": "page-image"
   },
   {
     "id": "coppockbeaver2015_5",
@@ -136,13 +139,14 @@
         "predicative definite"
       ]
     ],
-    "comment": "Printed as (5a) with the acceptable fillers braced and (5b) with the starred ones: consider selects predicates, which definite, indefinite and possessive descriptions and adjectives supply, and names, some-indefinites and pronouns do not."
+    "comment": "Printed as (5a) with the acceptable fillers braced and (5b) with the starred ones: consider selects predicates, which definite, indefinite and possessive descriptions and adjectives supply, and names, some-indefinites and pronouns do not.",
+    "verified": "page-image"
   },
   {
     "id": "coppockbeaver2015_7a",
     "source": {
       "bibkey": "winter-2001b",
-      "paperLabel": "p. 177ff."
+      "paperLabel": "ch. 4, (137a)"
     },
     "reportedIn": {
       "bibkey": "coppock-beaver-2015",
@@ -163,13 +167,14 @@
         "appositional conjunction"
       ]
     ],
-    "comment": "Singular agreement: the conjunction describes one individual."
+    "comment": "Singular agreement: the conjunction describes one individual. Winter credits the examples to Hoeksema (1988: 36).",
+    "verified": "page-image"
   },
   {
     "id": "coppockbeaver2015_7b",
     "source": {
       "bibkey": "winter-2001b",
-      "paperLabel": "p. 177ff."
+      "paperLabel": "ch. 4, (137b)"
     },
     "reportedIn": {
       "bibkey": "coppock-beaver-2015",
@@ -190,13 +195,14 @@
         "appositional conjunction"
       ]
     ],
-    "comment": ""
+    "comment": "Winter credits the examples to Hoeksema (1988: 36).",
+    "verified": "page-image"
   },
   {
     "id": "coppockbeaver2015_7c",
     "source": {
       "bibkey": "winter-2001b",
-      "paperLabel": "p. 177ff."
+      "paperLabel": "ch. 4, (137c)"
     },
     "reportedIn": {
       "bibkey": "coppock-beaver-2015",
@@ -217,7 +223,8 @@
         "appositional conjunction"
       ]
     ],
-    "comment": ""
+    "comment": "Winter credits the examples to Hoeksema (1988: 36).",
+    "verified": "page-image"
   },
   {
     "id": "coppockbeaver2015_8a",
@@ -245,7 +252,8 @@
         "appositional conjunction"
       ]
     ],
-    "comment": "Printed as have/*has: proper names do not participate in appositional conjunction even when co-referential."
+    "comment": "Printed as have/*has: proper names do not participate in appositional conjunction even when co-referential.",
+    "verified": "page-image"
   },
   {
     "id": "coppockbeaver2015_8b",
@@ -273,7 +281,8 @@
         "appositional conjunction"
       ]
     ],
-    "comment": "Printed as have/*has: some-indefinites do not participate either."
+    "comment": "Printed as have/*has: some-indefinites do not participate either.",
+    "verified": "page-image"
   },
   {
     "id": "coppockbeaver2015_10",
@@ -296,7 +305,8 @@
         "multiple"
       ]
     ],
-    "comment": "Infelicitous without heavy stress on the: uniqueness is not targetable by ordinary negation, against the Russellian entry (52a)."
+    "comment": "Infelicitous without heavy stress on the: uniqueness is not targetable by ordinary negation, against the Russellian entry (52a).",
+    "verified": "page-image"
   },
   {
     "id": "coppockbeaver2015_11",
@@ -319,7 +329,8 @@
         "multiple"
       ]
     ],
-    "comment": "Infelicitous without heavy stress on the."
+    "comment": "Infelicitous without heavy stress on the.",
+    "verified": "page-image"
   },
   {
     "id": "coppockbeaver2015_12a",
@@ -345,7 +356,8 @@
         "multiple"
       ]
     ],
-    "comment": "The is not interchangeable with the only, against the Russellian entry, on which the two coincide."
+    "comment": "The is not interchangeable with the only, against the Russellian entry, on which the two coincide.",
+    "verified": "page-image"
   },
   {
     "id": "coppockbeaver2015_12b",
@@ -371,7 +383,8 @@
         "only"
       ]
     ],
-    "comment": "The only P satisfies weak uniqueness trivially, so the presupposition of the is met."
+    "comment": "The only P satisfies weak uniqueness trivially, so the presupposition of the is met.",
+    "verified": "page-image"
   },
   {
     "id": "coppockbeaver2015_13",
@@ -394,7 +407,8 @@
         "predicative definite"
       ]
     ],
-    "comment": "Predicted simply false on the predicative reading: predicative definites presuppose no existence."
+    "comment": "Predicted simply false on the predicative reading: predicative definites presuppose no existence.",
+    "verified": "page-image"
   },
   {
     "id": "coppockbeaver2015_14",
@@ -417,7 +431,8 @@
         "argumental definite"
       ]
     ],
-    "comment": "Predicted to lack a truth value: the argumental definite is determinate and presupposes existence; the paper finds the contrast with (13) subtle."
+    "comment": "Predicted to lack a truth value: the argumental definite is determinate and presupposes existence; the paper finds the contrast with (13) subtle.",
+    "verified": "page-image"
   },
   {
     "id": "coppockbeaver2015_15a",
@@ -445,7 +460,8 @@
         "anti-uniqueness"
       ]
     ],
-    "comment": "Implies that there is one author of Waverley."
+    "comment": "Implies that there is one author of Waverley.",
+    "verified": "page-image"
   },
   {
     "id": "coppockbeaver2015_15b",
@@ -473,7 +489,8 @@
         "anti-uniqueness"
       ]
     ],
-    "comment": "The anti-uniqueness effect: the most prominent interpretation has more than one author, so no existence presupposition for the only author, (64)."
+    "comment": "The anti-uniqueness effect: the most prominent interpretation has more than one author, so no existence presupposition for the only author, (64).",
+    "verified": "page-image"
   },
   {
     "id": "coppockbeaver2015_15c",
@@ -501,7 +518,8 @@
         "anti-uniqueness"
       ]
     ],
-    "comment": "There may be multiple authors."
+    "comment": "There may be multiple authors.",
+    "verified": "page-image"
   },
   {
     "id": "coppockbeaver2015_15d",
@@ -529,7 +547,8 @@
         "anti-uniqueness"
       ]
     ],
-    "comment": "There may be multiple authors."
+    "comment": "There may be multiple authors.",
+    "verified": "page-image"
   },
   {
     "id": "coppockbeaver2015_16",
@@ -552,7 +571,8 @@
         "no existence implication"
       ]
     ],
-    "comment": "No commitment to a queen of the world."
+    "comment": "No commitment to a queen of the world.",
+    "verified": "page-image"
   },
   {
     "id": "coppockbeaver2015_17",
@@ -575,7 +595,8 @@
         "no existence implication"
       ]
     ],
-    "comment": "No commitment to a largest prime number; superlatives lack only's inference pattern."
+    "comment": "No commitment to a largest prime number; superlatives lack only's inference pattern.",
+    "verified": "page-image"
   },
   {
     "id": "coppockbeaver2015_18",
@@ -598,7 +619,8 @@
         "anti-uniqueness"
       ]
     ],
-    "comment": "Naturally occurring; sole patterns with only."
+    "comment": "Naturally occurring; sole patterns with only.",
+    "verified": "page-image"
   },
   {
     "id": "coppockbeaver2015_19",
@@ -621,7 +643,8 @@
         "anti-uniqueness"
       ]
     ],
-    "comment": "Naturally occurring; single patterns with only."
+    "comment": "Naturally occurring; single patterns with only.",
+    "verified": "page-image"
   },
   {
     "id": "coppockbeaver2015_20",
@@ -644,7 +667,8 @@
         "anti-uniqueness"
       ]
     ],
-    "comment": "Naturally occurring; one patterns with only."
+    "comment": "Naturally occurring; one patterns with only.",
+    "verified": "page-image"
   },
   {
     "id": "coppockbeaver2015_21",
@@ -667,7 +691,8 @@
         "anti-uniqueness"
       ]
     ],
-    "comment": "Naturally occurring: Dean Hall has the right and so do others, so the exclusive right does not exist."
+    "comment": "Naturally occurring: Dean Hall has the right and so do others, so the exclusive right does not exist.",
+    "verified": "page-image"
   },
   {
     "id": "coppockbeaver2015_24",
@@ -690,7 +715,8 @@
         "narrow existence"
       ]
     ],
-    "comment": "Felt to be true: no narrow existence presupposition."
+    "comment": "Felt to be true: no narrow existence presupposition.",
+    "verified": "page-image"
   },
   {
     "id": "coppockbeaver2015_25",
@@ -713,7 +739,8 @@
         "narrow existence"
       ]
     ],
-    "comment": "Adapted by the paper from Cooper (1978): the description picks out no actual object."
+    "comment": "Adapted by the paper from Cooper (1978): the description picks out no actual object.",
+    "verified": "page-image"
   },
   {
     "id": "coppockbeaver2015_26",
@@ -736,7 +763,8 @@
         "narrow existence"
       ]
     ],
-    "comment": "Due to Robin Cooper, p.c."
+    "comment": "Due to Robin Cooper, p.c.",
+    "verified": "page-image"
   },
   {
     "id": "coppockbeaver2015_27",
@@ -759,7 +787,8 @@
         "narrow existence"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "coppockbeaver2015_28",
@@ -782,7 +811,8 @@
         "narrow existence"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "coppockbeaver2015_29",
@@ -808,7 +838,8 @@
         "broad existence"
       ]
     ],
-    "comment": "The only goal is no antecedent for it: broad existence fails under anti-uniqueness."
+    "comment": "The only goal is no antecedent for it: broad existence fails under anti-uniqueness.",
+    "verified": "page-image"
   },
   {
     "id": "coppockbeaver2015_30",
@@ -834,7 +865,8 @@
         "broad existence"
       ]
     ],
-    "comment": "The train set antecedes it though it lacks narrow existence."
+    "comment": "The train set antecedes it though it lacks narrow existence.",
+    "verified": "page-image"
   },
   {
     "id": "coppockbeaver2015_31",
@@ -860,7 +892,8 @@
         "broad existence"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "coppockbeaver2015_32",
@@ -886,7 +919,8 @@
         "broad existence"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "coppockbeaver2015_33",
@@ -913,7 +947,8 @@
         "broad existence"
       ]
     ],
-    "comment": "Cooper's dialogue, coherent with no particular train set promised: the which question diagnoses broad existence."
+    "comment": "Cooper's dialogue, coherent with no particular train set promised: the which question diagnoses broad existence.",
+    "verified": "page-image"
   },
   {
     "id": "coppockbeaver2015_34",
@@ -939,7 +974,8 @@
         "broad existence"
       ]
     ],
-    "comment": "The only goal has no broad existence presupposition."
+    "comment": "The only goal has no broad existence presupposition.",
+    "verified": "page-image"
   },
   {
     "id": "coppockbeaver2015_38",
@@ -971,7 +1007,8 @@
         "anti-uniqueness"
       ]
     ],
-    "comment": "Under consider, which selects a predicate, no equative-like reading with a presupposed unique author is available."
+    "comment": "Under consider, which selects a predicate, no equative-like reading with a presupposed unique author is available.",
+    "verified": "page-image"
   },
   {
     "id": "coppockbeaver2015_40a",
@@ -994,7 +1031,8 @@
         "anti-uniqueness"
       ]
     ],
-    "comment": "No reading presupposing exactly one man the addressee will meet."
+    "comment": "No reading presupposing exactly one man the addressee will meet.",
+    "verified": "page-image"
   },
   {
     "id": "coppockbeaver2015_40b",
@@ -1017,7 +1055,8 @@
         "anti-uniqueness"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "coppockbeaver2015_41a",
@@ -1040,7 +1079,8 @@
         "anti-uniqueness"
       ]
     ],
-    "comment": "Naturally occurring: no implication that exactly one person is in the universe, with no global inconsistency to force local accommodation."
+    "comment": "Naturally occurring: no implication that exactly one person is in the universe, with no global inconsistency to force local accommodation.",
+    "verified": "page-image"
   },
   {
     "id": "coppockbeaver2015_41c",
@@ -1063,7 +1103,8 @@
         "anti-uniqueness"
       ]
     ],
-    "comment": "Naturally occurring."
+    "comment": "Naturally occurring.",
+    "verified": "page-image"
   },
   {
     "id": "coppockbeaver2015_42",
@@ -1091,7 +1132,8 @@
         "uniqueness at issue"
       ]
     ],
-    "comment": "Printed as {THE/#The}: stress makes uniqueness at issue."
+    "comment": "Printed as {THE/#The}: stress makes uniqueness at issue.",
+    "verified": "page-image"
   },
   {
     "id": "coppockbeaver2015_43",
@@ -1119,7 +1161,8 @@
         "uniqueness at issue"
       ]
     ],
-    "comment": "Printed as {THE/#The}."
+    "comment": "Printed as {THE/#The}.",
+    "verified": "page-image"
   },
   {
     "id": "coppockbeaver2015_44a",
@@ -1142,7 +1185,8 @@
         "uniqueIfAny"
       ]
     ],
-    "comment": "Felicitous under the assumption that iguanas have only one heart if any."
+    "comment": "Felicitous under the assumption that iguanas have only one heart if any.",
+    "verified": "page-image"
   },
   {
     "id": "coppockbeaver2015_44b",
@@ -1165,7 +1209,8 @@
         "multiple"
       ]
     ],
-    "comment": "Infelicitous under the assumption that iguanas have multiple bones if any."
+    "comment": "Infelicitous under the assumption that iguanas have multiple bones if any.",
+    "verified": "page-image"
   },
   {
     "id": "coppockbeaver2015_45a",
@@ -1191,7 +1236,8 @@
         "uniqueIfAny"
       ]
     ],
-    "comment": "Uniqueness without existence under negation."
+    "comment": "Uniqueness without existence under negation.",
+    "verified": "page-image"
   },
   {
     "id": "coppockbeaver2015_45b",
@@ -1217,7 +1263,8 @@
         "multiple"
       ]
     ],
-    "comment": "The mass reading of bone that can rescue (46b) is less accessible here, where the plural bones also occurs (fn. 17)."
+    "comment": "The mass reading of bone that can rescue (46b) is less accessible here, where the plural bones also occurs (fn. 17).",
+    "verified": "page-image"
   },
   {
     "id": "coppockbeaver2015_46a",
@@ -1240,7 +1287,8 @@
         "uniqueIfAny"
       ]
     ],
-    "comment": "The uniqueness presupposition projects from the antecedent of a conditional."
+    "comment": "The uniqueness presupposition projects from the antecedent of a conditional.",
+    "verified": "page-image"
   },
   {
     "id": "coppockbeaver2015_46b",
@@ -1263,7 +1311,8 @@
         "multiple"
       ]
     ],
-    "comment": "May become felicitous with bone understood as a mass term (fn. 17)."
+    "comment": "May become felicitous with bone understood as a mass term (fn. 17).",
+    "verified": "page-image"
   },
   {
     "id": "coppockbeaver2015_47a",
@@ -1286,7 +1335,8 @@
         "weak definite"
       ]
     ],
-    "comment": "Barker's possessive weak definite, accompanied by a picture of the surgeon with all ten fingers; the paper defers to an alternative mode of composition."
+    "comment": "Barker's possessive weak definite, accompanied by a picture of the surgeon with all ten fingers; the paper defers to an alternative mode of composition.",
+    "verified": "page-image"
   },
   {
     "id": "coppockbeaver2015_47b",
@@ -1309,7 +1359,8 @@
         "weak definite"
       ]
     ],
-    "comment": "The double genitive variant is unacceptable."
+    "comment": "The double genitive variant is unacceptable.",
+    "verified": "page-image"
   },
   {
     "id": "coppockbeaver2015_48",
@@ -1332,13 +1383,14 @@
         "weak definite"
       ]
     ],
-    "comment": "Intersections have four corners."
+    "comment": "Intersections have four corners.",
+    "verified": "page-image"
   },
   {
     "id": "coppockbeaver2015_54",
     "source": {
       "bibkey": "winter-2001b",
-      "paperLabel": "(24)"
+      "paperLabel": "ch. 4, (24)"
     },
     "reportedIn": {
       "bibkey": "coppock-beaver-2015",
@@ -1359,7 +1411,8 @@
         "be shift"
       ]
     ],
-    "comment": "Winter's example: the be shift would give it a coherent reading, so the predicative case is taken as basic instead."
+    "comment": "Winter's example: the be shift would give it a coherent reading, so the predicative case is taken as basic instead. Winter (p. 144) marks it *; the paper reprints it with #.",
+    "verified": "page-image"
   },
   {
     "id": "coppockbeaver2015_66",
@@ -1387,7 +1440,8 @@
         "blocking"
       ]
     ],
-    "comment": "Printed as {the/*an}: the indefinite is blocked by Maximize Presupposition, since the only P satisfies weak uniqueness."
+    "comment": "Printed as {the/*an}: the indefinite is blocked by Maximize Presupposition, since the only P satisfies weak uniqueness.",
+    "verified": "page-image"
   },
   {
     "id": "coppockbeaver2015_67",
@@ -1410,7 +1464,8 @@
         "blocking"
       ]
     ],
-    "comment": "An only child is licensed because only child, read relationally, lacks weak uniqueness."
+    "comment": "An only child is licensed because only child, read relationally, lacks weak uniqueness.",
+    "verified": "page-image"
   },
   {
     "id": "coppockbeaver2015_68",
@@ -1433,7 +1488,8 @@
         "blocking"
       ]
     ],
-    "comment": "Naturally occurring, after an archetype pointed out by Roger Levy: the crash scopes inside the description (69), which then holds of as many individuals as there are crashes with a single survivor, so the is not licensed on that derivation."
+    "comment": "Naturally occurring, after an archetype pointed out by Roger Levy: the crash scopes inside the description (69), which then holds of as many individuals as there are crashes with a single survivor, so the is not licensed on that derivation.",
+    "verified": "page-image"
   },
   {
     "id": "coppockbeaver2015_73a",
@@ -1468,7 +1524,8 @@
         "open"
       ]
     ],
-    "comment": "Printed as (a/#the): the context leaves uniqueness open, so the definite's update is undefined and the indefinite is not blocked."
+    "comment": "Printed as (a/#the): the context leaves uniqueness open, so the definite's update is undefined and the indefinite is not blocked.",
+    "verified": "page-image"
   },
   {
     "id": "coppockbeaver2015_73b",
@@ -1503,7 +1560,8 @@
         "given"
       ]
     ],
-    "comment": "Printed as (#a/the): after the first sentence every world of the context has exactly one book, both updates coincide, and the definite blocks the indefinite."
+    "comment": "Printed as (#a/the): after the first sentence every world of the context has exactly one book, both updates coincide, and the definite blocks the indefinite.",
+    "verified": "page-image"
   },
   {
     "id": "coppockbeaver2015_76a",
@@ -1526,7 +1584,8 @@
         "determinate definite"
       ]
     ],
-    "comment": "Elbourne's objection to the Russellian analysis: commits the speaker to a ghost, unlike (76b), so the two are not equivalent."
+    "comment": "Elbourne's objection to the Russellian analysis: commits the speaker to a ghost, unlike (76b), so the two are not equivalent.",
+    "verified": "page-image"
   },
   {
     "id": "coppockbeaver2015_76b",
@@ -1549,7 +1608,8 @@
         "determinate definite"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "coppockbeaver2015_77a",
@@ -1572,7 +1632,8 @@
         "argumental definite"
       ]
     ],
-    "comment": "Implies exactly one invited talk."
+    "comment": "Implies exactly one invited talk.",
+    "verified": "page-image"
   },
   {
     "id": "coppockbeaver2015_77b",
@@ -1595,7 +1656,8 @@
         "argumental definite"
       ]
     ],
-    "comment": "Still implies exactly one invited talk: existence and uniqueness presupposed."
+    "comment": "Still implies exactly one invited talk: existence and uniqueness presupposed.",
+    "verified": "page-image"
   },
   {
     "id": "coppockbeaver2015_78a",
@@ -1618,7 +1680,8 @@
         "predicative definite"
       ]
     ],
-    "comment": "Affirms that there was a single invited talk."
+    "comment": "Affirms that there was a single invited talk.",
+    "verified": "page-image"
   },
   {
     "id": "coppockbeaver2015_78b",
@@ -1641,7 +1704,8 @@
         "predicative definite"
       ]
     ],
-    "comment": "Does not imply a single invited talk."
+    "comment": "Does not imply a single invited talk.",
+    "verified": "page-image"
   },
   {
     "id": "coppockbeaver2015_79a",
@@ -1664,7 +1728,8 @@
         "indefinite"
       ]
     ],
-    "comment": "Implies at least one invited talk."
+    "comment": "Implies at least one invited talk.",
+    "verified": "page-image"
   },
   {
     "id": "coppockbeaver2015_79b",
@@ -1687,7 +1752,8 @@
         "indefinite"
       ]
     ],
-    "comment": "No entailment that there were any invited talks."
+    "comment": "No entailment that there were any invited talks.",
+    "verified": "page-image"
   },
   {
     "id": "coppockbeaver2015_80a",
@@ -1723,7 +1789,8 @@
         "entityIntroducing"
       ]
     ],
-    "comment": "Anti-uniqueness reading: more than one invited talk, one of which Anna gave; determinate reading: exactly one, which Anna did not give. With nuclear stress on only, only the former, (99)."
+    "comment": "Anti-uniqueness reading: more than one invited talk, one of which Anna gave; determinate reading: exactly one, which Anna did not give. With nuclear stress on only, only the former, (99).",
+    "verified": "page-image"
   },
   {
     "id": "coppockbeaver2015_80b",
@@ -1759,7 +1826,8 @@
         "other"
       ]
     ],
-    "comment": "Implies exactly one invited talk; the anti-uniqueness reading becomes at most marginally available with stress on only, (99)."
+    "comment": "Implies exactly one invited talk; the anti-uniqueness reading becomes at least marginally available with nuclear stress on only, (99).",
+    "verified": "page-image"
   },
   {
     "id": "coppockbeaver2015_81a",
@@ -1795,7 +1863,8 @@
         "entityIntroducing"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "coppockbeaver2015_81b",
@@ -1827,7 +1896,8 @@
         "other"
       ]
     ],
-    "comment": "Implies exactly one goal."
+    "comment": "Implies exactly one goal.",
+    "verified": "page-image"
   },
   {
     "id": "coppockbeaver2015_82a",
@@ -1863,7 +1933,8 @@
         "entityIntroducing"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "coppockbeaver2015_82b",
@@ -1895,7 +1966,8 @@
         "other"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "coppockbeaver2015_83a",
@@ -1931,7 +2003,8 @@
         "entityIntroducing"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "coppockbeaver2015_83b",
@@ -1963,7 +2036,8 @@
         "other"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "coppockbeaver2015_95",
@@ -1995,7 +2069,8 @@
         "no determinate indefinite"
       ]
     ],
-    "comment": "The indefinite under every has only the indeterminate reading: had uniqueness held in the context, the would have been used."
+    "comment": "The indefinite under every has only the indeterminate reading: had uniqueness held in the context, the would have been used.",
+    "verified": "page-image"
   },
   {
     "id": "coppockbeaver2015_97a",
@@ -2018,7 +2093,8 @@
         "determinate definite"
       ]
     ],
-    "comment": "Suggests the speaker takes there to be a grandfather clock in the attic: the iota reading is preferred by Type Simplicity."
+    "comment": "Suggests the speaker takes there to be a grandfather clock in the attic: the iota reading is preferred by Type Simplicity.",
+    "verified": "page-image"
   },
   {
     "id": "coppockbeaver2015_97b",
@@ -2041,7 +2117,8 @@
         "determinate definite"
       ]
     ],
-    "comment": "Does not."
+    "comment": "Does not.",
+    "verified": "page-image"
   },
   {
     "id": "coppockbeaver2015_101a",
@@ -2073,7 +2150,8 @@
         "entityIntroducing"
       ]
     ],
-    "comment": "A verb of creation: implies multiple decent papers."
+    "comment": "A verb of creation: implies multiple decent papers.",
+    "verified": "page-image"
   },
   {
     "id": "coppockbeaver2015_101b",
@@ -2105,7 +2183,8 @@
         "other"
       ]
     ],
-    "comment": "Not a verb of creation: no anti-uniqueness reading absent supporting context."
+    "comment": "Not a verb of creation: no anti-uniqueness reading absent supporting context.",
+    "verified": "page-image"
   },
   {
     "id": "coppockbeaver2015_102a",
@@ -2135,7 +2214,8 @@
         "entityIntroducing"
       ]
     ],
-    "comment": "The arithmetic inference is felicitous: the verb introduces entities."
+    "comment": "The arithmetic inference is felicitous: the verb introduces entities.",
+    "verified": "page-image"
   },
   {
     "id": "coppockbeaver2015_102b",
@@ -2165,7 +2245,8 @@
         "other"
       ]
     ],
-    "comment": "The arithmetic inference is infelicitous: the verb does not introduce entities."
+    "comment": "The arithmetic inference is infelicitous: the verb does not introduce entities.",
+    "verified": "page-image"
   },
   {
     "id": "coppockbeaver2015_103a",
@@ -2195,7 +2276,8 @@
         "entityIntroducing"
       ]
     ],
-    "comment": "The arithmetic inference is felicitous: the verb introduces entities."
+    "comment": "The arithmetic inference is felicitous: the verb introduces entities.",
+    "verified": "page-image"
   },
   {
     "id": "coppockbeaver2015_103b",
@@ -2225,7 +2307,8 @@
         "other"
       ]
     ],
-    "comment": "The arithmetic inference is infelicitous: the verb does not introduce entities."
+    "comment": "The arithmetic inference is infelicitous: the verb does not introduce entities.",
+    "verified": "page-image"
   },
   {
     "id": "coppockbeaver2015_104a",
@@ -2255,7 +2338,8 @@
         "entityIntroducing"
       ]
     ],
-    "comment": "The arithmetic inference is felicitous: the verb introduces entities."
+    "comment": "The arithmetic inference is felicitous: the verb introduces entities.",
+    "verified": "page-image"
   },
   {
     "id": "coppockbeaver2015_104b",
@@ -2285,7 +2369,8 @@
         "other"
       ]
     ],
-    "comment": "The arithmetic inference is infelicitous: the verb does not introduce entities."
+    "comment": "The arithmetic inference is infelicitous: the verb does not introduce entities.",
+    "verified": "page-image"
   },
   {
     "id": "coppockbeaver2015_105a",
@@ -2315,7 +2400,8 @@
         "entityIntroducing"
       ]
     ],
-    "comment": "The arithmetic inference is felicitous: the verb introduces entities."
+    "comment": "The arithmetic inference is felicitous: the verb introduces entities.",
+    "verified": "page-image"
   },
   {
     "id": "coppockbeaver2015_105b",
@@ -2345,7 +2431,8 @@
         "other"
       ]
     ],
-    "comment": "The arithmetic inference is infelicitous: the verb does not introduce entities."
+    "comment": "The arithmetic inference is infelicitous: the verb does not introduce entities.",
+    "verified": "page-image"
   },
   {
     "id": "coppockbeaver2015_106a",
@@ -2375,7 +2462,8 @@
         "entityIntroducing"
       ]
     ],
-    "comment": "Under negation an entity-introducing verb leaves no existence implication for its indefinite object, so the anaphor fails."
+    "comment": "Under negation an entity-introducing verb leaves no existence implication for its indefinite object, so the anaphor fails.",
+    "verified": "page-image"
   },
   {
     "id": "coppockbeaver2015_106b",
@@ -2405,7 +2493,8 @@
         "other"
       ]
     ],
-    "comment": "For other verbs the existence implication survives negation."
+    "comment": "For other verbs the existence implication survives negation.",
+    "verified": "page-image"
   },
   {
     "id": "coppockbeaver2015_107a",
@@ -2435,7 +2524,8 @@
         "entityIntroducing"
       ]
     ],
-    "comment": "Under negation an entity-introducing verb leaves no existence implication for its indefinite object, so the anaphor fails."
+    "comment": "Under negation an entity-introducing verb leaves no existence implication for its indefinite object, so the anaphor fails.",
+    "verified": "page-image"
   },
   {
     "id": "coppockbeaver2015_107b",
@@ -2465,7 +2555,8 @@
         "other"
       ]
     ],
-    "comment": "For other verbs the existence implication survives negation."
+    "comment": "For other verbs the existence implication survives negation.",
+    "verified": "page-image"
   },
   {
     "id": "coppockbeaver2015_108a",
@@ -2495,7 +2586,8 @@
         "entityIntroducing"
       ]
     ],
-    "comment": "Under negation an entity-introducing verb leaves no existence implication for its indefinite object, so the anaphor fails."
+    "comment": "Under negation an entity-introducing verb leaves no existence implication for its indefinite object, so the anaphor fails.",
+    "verified": "page-image"
   },
   {
     "id": "coppockbeaver2015_108b",
@@ -2525,7 +2617,8 @@
         "other"
       ]
     ],
-    "comment": "For other verbs the existence implication survives negation."
+    "comment": "For other verbs the existence implication survives negation.",
+    "verified": "page-image"
   },
   {
     "id": "coppockbeaver2015_109a",
@@ -2555,7 +2648,8 @@
         "entityIntroducing"
       ]
     ],
-    "comment": "Under negation an entity-introducing verb leaves no existence implication for its indefinite object, so the anaphor fails."
+    "comment": "Under negation an entity-introducing verb leaves no existence implication for its indefinite object, so the anaphor fails.",
+    "verified": "page-image"
   },
   {
     "id": "coppockbeaver2015_109b",
@@ -2585,7 +2679,8 @@
         "other"
       ]
     ],
-    "comment": "For other verbs the existence implication survives negation."
+    "comment": "For other verbs the existence implication survives negation.",
+    "verified": "page-image"
   },
   {
     "id": "coppockbeaver2015_110",
@@ -2612,7 +2707,8 @@
         "entityIntroducing"
       ]
     ],
-    "comment": "See is entity-introducing in this frame."
+    "comment": "See is entity-introducing in this frame.",
+    "verified": "page-image"
   },
   {
     "id": "coppockbeaver2015_111",
@@ -2647,7 +2743,8 @@
         "entityIntroducing"
       ]
     ],
-    "comment": "Due to a reviewer: anti-uniqueness with see in its entity-introducing sense."
+    "comment": "Due to a reviewer: anti-uniqueness with see in its entity-introducing sense.",
+    "verified": "page-image"
   },
   {
     "id": "coppockbeaver2015_112a",
@@ -2678,7 +2775,8 @@
         "contradictory"
       ]
     ],
-    "comment": "Löbner's negation test: an argumental possessive with a definite possessor behaves as a term."
+    "comment": "Löbner's negation test: an argumental possessive with a definite possessor behaves as a term.",
+    "verified": "page-image"
   },
   {
     "id": "coppockbeaver2015_112b",
@@ -2709,7 +2807,8 @@
         "notContradictory"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "coppockbeaver2015_113a",
@@ -2740,7 +2839,8 @@
         "equivalent"
       ]
     ],
-    "comment": "Equivalent to: Mary's pet rabbit is a secret agent from South Africa."
+    "comment": "Equivalent to: Mary's pet rabbit is a secret agent from South Africa.",
+    "verified": "page-image"
   },
   {
     "id": "coppockbeaver2015_113b",
@@ -2771,7 +2871,8 @@
         "notEquivalent"
       ]
     ],
-    "comment": "Not equivalent to: Some rabbit is a secret agent from South Africa."
+    "comment": "Not equivalent to: Some rabbit is a secret agent from South Africa.",
+    "verified": "page-image"
   },
   {
     "id": "coppockbeaver2015_114a",
@@ -2802,7 +2903,8 @@
         "notContradictory"
       ]
     ],
-    "comment": "Predicative possessives pattern with predicative indefinites, not definites: no uniqueness requirement."
+    "comment": "Predicative possessives pattern with predicative indefinites, not definites: no uniqueness requirement.",
+    "verified": "page-image"
   },
   {
     "id": "coppockbeaver2015_114b",
@@ -2833,7 +2935,8 @@
         "notContradictory"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "coppockbeaver2015_114c",
@@ -2864,7 +2967,8 @@
         "contradictory"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "coppockbeaver2015_115a",
@@ -2895,7 +2999,8 @@
         "notEquivalent"
       ]
     ],
-    "comment": "Not equivalent to: Mary has a South African pet rabbit which is also an Indonesian cat."
+    "comment": "Not equivalent to: Mary has a South African pet rabbit which is also an Indonesian cat.",
+    "verified": "page-image"
   },
   {
     "id": "coppockbeaver2015_115b",
@@ -2926,7 +3031,8 @@
         "notEquivalent"
       ]
     ],
-    "comment": "Not equivalent to: Mary has a South African pet rabbit which is also an Indonesian cat."
+    "comment": "Not equivalent to: Mary has a South African pet rabbit which is also an Indonesian cat.",
+    "verified": "page-image"
   },
   {
     "id": "coppockbeaver2015_115c",
@@ -2957,7 +3063,8 @@
         "equivalent"
       ]
     ],
-    "comment": "Equivalent to: Mary has a South African pet rabbit which is also an Indonesian cat."
+    "comment": "Equivalent to: Mary has a South African pet rabbit which is also an Indonesian cat.",
+    "verified": "page-image"
   },
   {
     "id": "coppockbeaver2015_116a",
@@ -2980,7 +3087,8 @@
         "possessive"
       ]
     ],
-    "comment": "Does not presuppose that the hearer has only one bicycle: (117) is a felicitous reply."
+    "comment": "Does not presuppose that the hearer has only one bicycle: (117) is a felicitous reply.",
+    "verified": "page-image"
   },
   {
     "id": "coppockbeaver2015_116b",
@@ -3003,7 +3111,8 @@
         "possessive"
       ]
     ],
-    "comment": "(117) would not be a felicitous reply."
+    "comment": "(117) would not be a felicitous reply.",
+    "verified": "page-image"
   },
   {
     "id": "coppockbeaver2015_117",
@@ -3026,7 +3135,8 @@
         "possessive"
       ]
     ],
-    "comment": "A reply to (116a) but not to (116b)."
+    "comment": "A reply to (116a) but not to (116b).",
+    "verified": "page-image"
   },
   {
     "id": "coppockbeaver2015_118a",
@@ -3049,7 +3159,8 @@
         "possessive"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "coppockbeaver2015_118b",
@@ -3072,7 +3183,8 @@
         "possessive"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "coppockbeaver2015_119a",
@@ -3095,7 +3207,8 @@
         "possessive"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "coppockbeaver2015_119b",
@@ -3118,7 +3231,8 @@
         "possessive"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "coppockbeaver2015_120",
@@ -3146,7 +3260,8 @@
         "possessive"
       ]
     ],
-    "comment": "Printed as {the king's horse/#Superman}: the modifier excludes the equative reading, and the king may have several horses."
+    "comment": "Printed as {the king's horse/#Superman}: the modifier excludes the equative reading, and the king may have several horses.",
+    "verified": "page-image"
   },
   {
     "id": "coppockbeaver2015_121",
@@ -3174,7 +3289,8 @@
         "possessive"
       ]
     ],
-    "comment": "Printed as {the king's horse/#Superman}."
+    "comment": "Printed as {the king's horse/#Superman}.",
+    "verified": "page-image"
   },
   {
     "id": "coppockbeaver2015_122",
@@ -3197,7 +3313,8 @@
         "possessive"
       ]
     ],
-    "comment": "The speaker may have several cousins."
+    "comment": "The speaker may have several cousins.",
+    "verified": "page-image"
   },
   {
     "id": "coppockbeaver2015_123a",
@@ -3220,7 +3337,8 @@
         "possessive"
       ]
     ],
-    "comment": "Does not convey that the addressee has only one problem."
+    "comment": "Does not convey that the addressee has only one problem.",
+    "verified": "page-image"
   },
   {
     "id": "coppockbeaver2015_123b",
@@ -3243,7 +3361,8 @@
         "possessive"
       ]
     ],
-    "comment": "Conveys that the addressee has only one problem."
+    "comment": "Conveys that the addressee has only one problem.",
+    "verified": "page-image"
   },
   {
     "id": "coppockbeaver2015_124",
@@ -3271,7 +3390,8 @@
         "possessive anti-uniqueness"
       ]
     ],
-    "comment": "Predicative possessives show anti-uniqueness, so they presuppose no existence."
+    "comment": "Predicative possessives show anti-uniqueness, so they presuppose no existence.",
+    "verified": "page-image"
   },
   {
     "id": "coppockbeaver2015_125",
@@ -3294,7 +3414,8 @@
         "possessive"
       ]
     ],
-    "comment": "Does not imply that anything was Mary's fault."
+    "comment": "Does not imply that anything was Mary's fault.",
+    "verified": "page-image"
   },
   {
     "id": "coppockbeaver2015_126",
@@ -3320,7 +3441,8 @@
         "possessive"
       ]
     ],
-    "comment": "Does not imply that speaker B owns an eighteen-wheeler."
+    "comment": "Does not imply that speaker B owns an eighteen-wheeler.",
+    "verified": "page-image"
   },
   {
     "id": "coppockbeaver2015_131",
@@ -3352,7 +3474,8 @@
         "entityIntroducing"
       ]
     ],
-    "comment": "Attested: an argumental possessive with an indeterminate reading, (134)."
+    "comment": "Attested: an argumental possessive with an indeterminate reading; the paper analyses the parallel (132) in (133)–(134).",
+    "verified": "page-image"
   },
   {
     "id": "coppockbeaver2015_132",
@@ -3387,7 +3510,8 @@
         "entityIntroducing"
       ]
     ],
-    "comment": "Attested: analysed as (133)–(134) with ex over the possessive."
+    "comment": "Attested: analysed as (133)–(134) with ex over the possessive.",
+    "verified": "page-image"
   },
   {
     "id": "coppockbeaver2015_135",
@@ -3415,6 +3539,7 @@
         "bare nominal"
       ]
     ],
-    "comment": "Croatian, for which the paper thanks Rajka Smiljanic: a bare nominal with the indeterminate reading that the only speaker has in English."
+    "comment": "Croatian, for which the paper thanks Rajka Smiljanic: a bare nominal with the indeterminate reading that the only speaker has in English.",
+    "verified": "page-image"
   }
 ]

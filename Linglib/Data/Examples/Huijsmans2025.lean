@@ -22,7 +22,7 @@ def ex37 : Datum :=
     language := "stan1293"
     primaryText := "She seems to be very sick."
     glossedTokens := []
-    context := "P visits M in the hospital and sees through the window that the doctors look worried."
+    context := "P visits M in the hospital. P sees through the window of the hospital room that the doctors look worried. P says:"
     judgment := .acceptable
     alternatives := [("She should be very sick.", .unacceptable)]
     readings := []
@@ -35,7 +35,7 @@ def ex38 : Datum :=
     language := "stan1293"
     primaryText := "She should be very sick."
     glossedTokens := []
-    context := "P poisons M's food and leaves."
+    context := "P poisons M's food and leaves. Later P says:"
     judgment := .acceptable
     alternatives := [("She seems to be very sick.", .unacceptable)]
     readings := []
@@ -48,7 +48,7 @@ def ex40 : Datum :=
     language := "como1259"
     primaryText := "səmkʷi č̓ɛχ."
     glossedTokens := [("səm=kʷi", "FUT=CL.DEM"), ("č̓əx̌", "get.cooked")]
-    context := "We are outside, but I have a fish cooking in the oven. I check my watch and realize that it should be cooked."
+    context := "We're outside, but I have a fish cooking in the oven. I check my watch and realize that it should be cooked. I say to you:"
     judgment := .acceptable
     alternatives := [("č̓ɛkʷi č̓ɛχ.", .unacceptable)]
     readings := []
@@ -125,8 +125,8 @@ def ex46 : Datum :=
     reportedIn := none
     language := "como1259"
     primaryText := "χʷɛt səmkʷa ƛəm̓mot Felipe. saymot kʷ č̓ɩɬ ʔi xʷukʷt č̓ɩɬukʷts."
-    glossedTokens := [("xʷit", "really"), ("səm=kʷa", "FUT=CL.DEM"), ("ƛəm̓-mut", "get.wet-INT"), ("Felipe", "Felipe"), ("saymut", "intense"), ("kʷ=čəɬ", "DET=rain"), ("ʔiy", "CONJ"), ("xʷukʷt", "not.exist"), ("čəɬ-ukʷt-s", "rain-jacket-3POSS")]
-    context := "Felipe always bikes home at 5. I haven't been paying attention to the weather, but at 6 I look out the window and see that it is pouring and has been for some time. Then I notice that Felipe left his coat in my bag."
+    glossedTokens := [("x̌ʷit", "really"), ("səm=kʷa", "FUT=CL.DEM"), ("ƛ̓əm̓-mut", "get.wet-INT"), ("Felipe", "Felipe"), ("saymut", "intense"), ("kʷ=č̓əɬ", "DET=rain"), ("ʔiy", "CONJ"), ("xʷukʷt", "not.exist"), ("č̓əɬ-ukʷt-s", "rain-jacket-3POSS")]
+    context := "Felipe always bikes home at 5. I haven't been paying attention to the weather, but at 6 I look out the window and see that it is pouring and has been for some time—the ground is really soaked. Then I notice that Felipe left his coat in my bag, which is with me on campus. I figure Felipe will be just home by now, but must have been soaked on his way. I say:"
     judgment := .acceptable
     alternatives := [("χʷɛt č̓ɛkʷa ƛəm̓mot Felipe.", .unacceptable)]
     readings := []
@@ -178,7 +178,7 @@ def ex50 : Datum :=
     language := "como1259"
     primaryText := "č̓ɛkʷi č̓ɛχ."
     glossedTokens := [("č̓a=kʷi", "INFER=CL.DEM"), ("č̓əx̌", "get.cooked")]
-    context := "I'm cooking a fish, and I'm guessing by the smell that it is cooked."
+    context := "I'm cooking a fish, and I'm guessing by the smell that it is cooked. I remark to you:"
     judgment := .acceptable
     alternatives := [("səmkʷi č̓ɛχ.", .unacceptable)]
     readings := []
@@ -255,8 +255,8 @@ def ex56 : Datum :=
     reportedIn := none
     language := "como1259"
     primaryText := "qʷol č̓ɛ səmt χəpi. xʷaʔčxʷ χaχƛɛmaxʷ."
-    glossedTokens := [("qʷəl̓=ča=səm=ʔut", "come=INFER=FUT=EXCL"), ("χəpəy", "return"), ("xʷaʔ=čxʷ", "NEG=2SG.SBJ"), ("χaχƛim=axʷ", "worry=2SG.SBJV")]
-    context := "Tim is Bailey's cat that's gone missing. Even though she doesn't have any knowledge of what is going on with him, Gloria is trying to reassure Bailey."
+    glossedTokens := [("qʷəl̓=č̓a=səm=ʔut", "come=INFER=FUT=EXCL"), ("χəpəy", "return"), ("xʷaʔ=čxʷ", "NEG=2SG.SBJ"), ("χaχƛim=axʷ", "worry=2SG.SBJV")]
+    context := "Tim is Bailey's cat that's gone missing. He hasn't been seen for a while now. Even though she doesn't have any knowledge of what is going on with him, Gloria is trying to reassure Bailey:"
     judgment := .unacceptable
     alternatives := []
     readings := []
@@ -269,7 +269,7 @@ def ex57 : Datum :=
     language := "como1259"
     primaryText := "č̓ɛkʷi nɛʔ ʔamot."
     glossedTokens := [("č̓a=kʷi", "INFER=CL.DEM"), ("niʔ", "be.there"), ("ʔamut", "be.home")]
-    context := "It's after 6, the time when my brother would usually be home from work. I drive past his place and see that his car is in the driveway and his lights are on."
+    context := "It's after 6, so it's the time when my brother would usually be home from work. I drive past his place and see that his car is in the driveway and his lights are on. I think to myself."
     judgment := .acceptable
     alternatives := [("səmkʷi nɛʔ ʔamot.", .unacceptable)]
     readings := []
@@ -319,9 +319,9 @@ def ex68 : Datum :=
     source := ⟨"huijsmans-2025", "(68)"⟩
     reportedIn := none
     language := "como1259"
-    primaryText := "hoθotoɬ Freddie sqʷols səm ʔəkʷ meeting, ʔi kʷa xʷaʔ qʷol̓əs."
-    glossedTokens := [("huθut-uɬ", "say-PST"), ("Freddie", "Freddie"), ("s=qʷəl=s=səm", "NMLZ=come=3POSS=FUT"), ("ʔə=kʷ=meeting", "OBL=DET=meeting"), ("ʔiy", "CONJ"), ("kʷa=xʷaʔ", "CL.DEM=NEG"), ("qʷəl̓=as", "come=3SBJV")]
-    context := "We had a meeting this morning, and Freddie had told me he would come, but never showed up."
+    primaryText := "hoθotoɬ Freddie sqʷols səm ʔəkʷ meeting, ʔi kʷa xʷaʔ qʷol̓əs. kʷʊnas čɛməm? χaχyɛmot hɛhɛw."
+    glossedTokens := [("huθut-uɬ", "say-PST"), ("Freddie", "Freddie"), ("s=qʷəl̓=s=səm", "NMLZ=come=3POSS=FUT"), ("ʔə=kʷ=meeting", "OBL=DET=meeting"), ("ʔiy", "CONJ"), ("kʷa=xʷaʔ", "CL.DEM=NEG"), ("qʷəl̓=as", "come=3SBJV"), ("kʷən=as", "COMP=3SBJV"), ("čəm̓-əm", "what.is.with-MD"), ("x̌ax̌ya-mut", "strange-INT"), ("hihiw", "really")]
+    context := "We had a meeting this morning, and Freddie had told me he would come, but never showed up. Later I tell you, 'Freddie was going to come but he never came.'"
     judgment := .acceptable
     alternatives := []
     readings := []
@@ -347,7 +347,7 @@ def ex70 : Datum :=
     language := "como1259"
     primaryText := "ƛ̓ič̓t səm maʔnas"
     glossedTokens := [("ƛ̓<i>č̓t=səm", "fall.asleep<STAT>=FUT"), ("maʔna-s", "child-3POSS")]
-    context := "I know my friend's baby's naptime. I take a look at the clock and decide not to call because the baby will be asleep."
+    context := "I know my friend's baby's naptime. I take a look at the clock and decide not to call because the baby will be asleep, and she'll wake up if her mum tries to talk on the phone."
     judgment := .acceptable
     alternatives := []
     readings := []
@@ -360,7 +360,7 @@ def ex71 : Datum :=
     language := "como1259"
     primaryText := "ƛ̓ič̓t səm maʔnas"
     glossedTokens := [("ƛ̓<i>č̓t=səm", "fall.asleep<STAT>=FUT"), ("maʔna-s", "child-3POSS")]
-    context := "Over breakfast on a Saturday Felipe suggests going to drop in on our cousin in the afternoon, but I know the time he's thinking is when her baby will be napping."
+    context := "Over breakfast on a Saturday Felipe suggests going to drop in on our cousin in the afternoon, but I know the time he's thinking after lunch is when her baby will be napping."
     judgment := .acceptable
     alternatives := []
     readings := []
@@ -386,7 +386,7 @@ def ex76 : Datum :=
     language := "stan1293"
     primaryText := "Her baby will be asleep."
     glossedTokens := []
-    context := "I know my friend's baby's naptime. I take a look at the clock and decide not to call because the baby will be asleep."
+    context := "I know my friend's baby's naptime. I take a look at the clock and decide not to call because the baby will be asleep, and she'll wake up if her mum tries to talk on the phone."
     judgment := .acceptable
     alternatives := []
     readings := []
@@ -399,7 +399,7 @@ def ex77 : Datum :=
     language := "stan1293"
     primaryText := "Her baby will be asleep."
     glossedTokens := []
-    context := "Over breakfast on a Saturday Felipe suggests going to drop in on our cousin in the afternoon, but I know the time he's thinking is when her baby will be napping."
+    context := "Over breakfast on a Saturday Felipe suggests going to drop in on our cousin in the afternoon, but I know the time he's thinking after lunch is when her baby will be napping."
     judgment := .acceptable
     alternatives := []
     readings := []
@@ -411,7 +411,7 @@ def ex91 : Datum :=
     reportedIn := none
     language := "como1259"
     primaryText := "ʔamot č̓ɛ Freddie. χʷaʔwɩ́t tə nɩkʷayus."
-    glossedTokens := [("ʔamut=č̓a", "be.home=INFER"), ("Freddie", "Freddie"), ("xʷəw̓-ít", "get.lit-STAT"), ("tə=nikʷayu-s", "DET=light-3POSS")]
+    glossedTokens := [("ʔamut=č̓a", "be.home=INFER"), ("Freddie", "Freddie"), ("x̌ʷəw̓-ít", "get.lit-STAT"), ("tə=nikʷayu-s", "DET=light-3POSS")]
     context := "We go past Freddie's home, and I say that he must be home because his lights are on."
     judgment := .acceptable
     alternatives := []
@@ -424,8 +424,8 @@ def ex92 : Datum :=
     reportedIn := none
     language := "como1259"
     primaryText := "ʔɛʔɛχaǰɛʔoɬ č̓ɛ Betty. niš kʷikʷʔɛ́t tə k̓ʷimɛns."
-    glossedTokens := [("ʔi~ʔix̌aǰa-uɬ=ča", "PROG~clean.roots-PST=INFER"), ("Betty", "Betty"), ("niš", "be.here"), ("kʷi<kʷ>ʔ-ít", "laid.out<PL>-STAT"), ("tə=k̓ʷimin-s", "DET=waste-3POSS")]
-    context := "I go over to Betty's house for dinner, and as I'm approaching her front door, I see fresh shavings of cedar roots scattered on the grass."
+    glossedTokens := [("ʔi~ʔix̌aǰa-uɬ=č̓a", "PROG~clean.roots-PST=INFER"), ("Betty", "Betty"), ("niš", "be.here"), ("kʷi<kʷ>ʔ-ít", "laid.out<PL>-STAT"), ("tə=k̓ʷimin-s", "DET=waste-3POSS")]
+    context := "I go over to Betty's house for dinner, and as I'm approaching her front door, I see fresh shavings of cedar roots scattered on the grass. I say to Gloria, who's with me:"
     judgment := .acceptable
     alternatives := []
     readings := []
@@ -437,7 +437,7 @@ def ex93 : Datum :=
     reportedIn := none
     language := "como1259"
     primaryText := "č̓ɩɬ č̓ɛ səm. ti qʷol nɛʔayɩtanəm."
-    glossedTokens := [("č̓əɬ=ča=səm", "rain=INFER=FUT"), ("ti", "CL.DEM"), ("qʷəl̓", "come"), ("niʔayitanəm", "cloudy")]
+    glossedTokens := [("č̓əɬ=č̓a=səm", "rain=INFER=FUT"), ("ti", "CL.DEM"), ("qʷəl̓", "come"), ("niʔayitanəm", "cloudy")]
     context := "You feel a change in the weather and see storm clouds gathering."
     judgment := .acceptable
     alternatives := []
@@ -451,7 +451,7 @@ def ex97 : Datum :=
     language := "stan1293"
     primaryText := "Her baby will be asleep."
     glossedTokens := []
-    context := "I know my friend's baby's naptime. I take a look at the clock and decide not to call because the baby will be asleep."
+    context := "I know my friend's baby's naptime. I take a look at the clock and decide not to call because the baby will be asleep, and she'll wake up if her mum tries to talk on the phone."
     judgment := .acceptable
     alternatives := [("Her baby must be asleep.", .unacceptable)]
     readings := []

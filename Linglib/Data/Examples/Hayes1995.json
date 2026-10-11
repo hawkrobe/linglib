@@ -36,7 +36,8 @@
         "Harrell 1957, 15"
       ]
     ],
-    "comment": "Superheavy final, heavy after Consonant Extrametricality."
+    "comment": "Superheavy final, heavy after Consonant Extrametricality.",
+    "verified": "page-image"
   },
   {
     "id": "hayes1995_hajjaan",
@@ -45,7 +46,7 @@
       "paperLabel": "(12a)"
     },
     "language": "egyp1253",
-    "primaryText": "hajjá:n",
+    "primaryText": "haǰǰá:n",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "pilgrimages",
@@ -75,7 +76,8 @@
         "Mitchell 1975, 77"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "hayes1995_gatoo",
@@ -99,7 +101,7 @@
       ],
       [
         "weights",
-        "L S"
+        "L H"
       ],
       [
         "stress",
@@ -114,7 +116,8 @@
         "Mitchell 1975, 81"
       ]
     ],
-    "comment": "Final CV: counts as heavy in colloquial forms."
+    "comment": "Final CV: counts as heavy in colloquial forms.",
+    "verified": "page-image"
   },
   {
     "id": "hayes1995_beetak",
@@ -153,7 +156,8 @@
         "Harrell 1957, 15"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "hayes1995_katabta",
@@ -192,7 +196,8 @@
         "Mitchell 1975, 78"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "hayes1995_mudarris",
@@ -231,7 +236,8 @@
         "McCarthy 1979a, 446"
       ]
     ],
-    "comment": "Final CVC demoted to light; (15b), (16b)."
+    "comment": "Final CVC demoted to light; (15b), (16b).",
+    "verified": "page-image"
   },
   {
     "id": "hayes1995_haadaani",
@@ -270,7 +276,8 @@
         "Mitchell 1975, 77"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "hayes1995_qattaala",
@@ -313,7 +320,8 @@
         "even from the preceding heavy"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "hayes1995_mudarrisit",
@@ -356,7 +364,8 @@
         "even from the preceding heavy"
       ]
     ],
-    "comment": "(15c), (16c)."
+    "comment": "(15c), (16c).",
+    "verified": "page-image"
   },
   {
     "id": "hayes1995_Padwiyatuhu",
@@ -399,7 +408,8 @@
         "even from the preceding heavy"
       ]
     ],
-    "comment": "(15c), (16c)."
+    "comment": "(15c), (16c).",
+    "verified": "page-image"
   },
   {
     "id": "hayes1995_fihim",
@@ -442,7 +452,8 @@
         "even from the word beginning"
       ]
     ],
-    "comment": "(15c), (16c)."
+    "comment": "(15c), (16c).",
+    "verified": "page-image"
   },
   {
     "id": "hayes1995_sajaratun",
@@ -451,7 +462,7 @@
       "paperLabel": "(12c.i.B)"
     },
     "language": "egyp1253",
-    "primaryText": "šajarátun",
+    "primaryText": "šaǰarátun",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "tree (nom.)",
@@ -485,7 +496,8 @@
         "even from the word beginning"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "hayes1995_katabitu",
@@ -528,7 +540,8 @@
         "even from the word beginning"
       ]
     ],
-    "comment": "(15c), (16c)."
+    "comment": "(15c), (16c).",
+    "verified": "page-image"
   },
   {
     "id": "hayes1995_sajaratuhuma",
@@ -537,7 +550,7 @@
       "paperLabel": "(12c.i.B)"
     },
     "language": "egyp1253",
-    "primaryText": "šajaratuhúma:",
+    "primaryText": "šaǰaratuhúma:",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "their (dual) tree (nom.)",
@@ -571,7 +584,8 @@
         "even from the word beginning"
       ]
     ],
-    "comment": "Final CV: light by Mora Extrametricality; (15c), (16c)."
+    "comment": "Final CV: light by Mora Extrametricality; (15c), (16c).",
+    "verified": "page-image"
   },
   {
     "id": "hayes1995_Pinkasara",
@@ -614,7 +628,8 @@
         "odd from the preceding heavy"
       ]
     ],
-    "comment": "(15d), (16d)."
+    "comment": "(15d), (16d).",
+    "verified": "page-image"
   },
   {
     "id": "hayes1995_Padwiyatuhuma",
@@ -657,7 +672,8 @@
         "odd from the preceding heavy"
       ]
     ],
-    "comment": "(15d), (16d)."
+    "comment": "(15d), (16d).",
+    "verified": "page-image"
   },
   {
     "id": "hayes1995_kataba",
@@ -700,7 +716,8 @@
         "odd from the word beginning"
       ]
     ],
-    "comment": "(15d), (16d), (17): the stray final light cannot be promoted."
+    "comment": "(15d), (16d), (17): the stray final light cannot be promoted.",
+    "verified": "page-image"
   },
   {
     "id": "hayes1995_sajaratuhu",
@@ -709,7 +726,7 @@
       "paperLabel": "(12c.ii.B)"
     },
     "language": "egyp1253",
-    "primaryText": "šajarátuhu",
+    "primaryText": "šaǰarátuhu",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "his tree (nom.)",
@@ -743,6 +760,7 @@
         "odd from the word beginning"
       ]
     ],
-    "comment": "(15d), (16d)."
+    "comment": "(15d), (16d).",
+    "verified": "page-image"
   }
 ]

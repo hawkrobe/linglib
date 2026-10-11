@@ -24,7 +24,8 @@
         "max{d : tall(j, d)} > 4 feet"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "heim2001_8",
@@ -64,7 +65,8 @@
         "the two LFs (9) are equivalent, (10)"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "heim2001_11",
@@ -104,7 +106,8 @@
         "the two LFs are equivalent, (12)"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "heim2001_13a",
@@ -144,7 +147,8 @@
         "the equivalence extends to equatives"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "heim2001_13b",
@@ -180,7 +184,8 @@
         "existential"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "heim2001_14a",
@@ -216,7 +221,8 @@
         "monotone increasing"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "heim2001_14b",
@@ -252,7 +258,8 @@
         "monotone increasing"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "heim2001_15a",
@@ -292,7 +299,8 @@
         "the two LFs (16) are equivalent"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "heim2001_15b",
@@ -328,7 +336,8 @@
         "possibility"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "heim2001_17a",
@@ -368,7 +377,8 @@
         "the high-DegP LF (17c) refers to an undefined maximum"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "heim2001_18a",
@@ -404,7 +414,8 @@
         "monotone decreasing"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "heim2001_19a",
@@ -440,7 +451,8 @@
         "implicitly negative"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "heim2001_20a",
@@ -480,7 +492,8 @@
         "the high-DegP LF (20c) has a defined maximum and means at least two girls are taller"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "heim2001_21a",
@@ -520,7 +533,8 @@
         "exactly"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "heim2001_22a",
@@ -564,7 +578,8 @@
         "(22c) is true and the sentence false when the shortest girl is exactly 4'1'' and others are taller"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "heim2001_24a",
@@ -608,7 +623,8 @@
         "(24c) says the shortest girl is less than 4' tall, not an available reading"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "heim2001_25",
@@ -648,7 +664,8 @@
         "exactly"
       ]
     ],
-    "comment": ""
+    "comment": "The paper prints \"3 and half feet deep\".",
+    "verified": "page-image"
   },
   {
     "id": "heim2001_26",
@@ -657,12 +674,12 @@
       "paperLabel": "(26)"
     },
     "language": "stan1293",
-    "primaryText": "?Mary was less impressed with every candidate than that.",
+    "primaryText": "Mary was less impressed with every candidate than that.",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
     "context": "John gave every candidate an A.",
-    "judgment": "acceptable",
+    "judgment": "marginal",
     "alternatives": [],
     "readings": [
       {
@@ -688,7 +705,8 @@
         "less"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "heim2001_28a",
@@ -732,7 +750,8 @@
         "yes"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "heim2001_29a",
@@ -776,7 +795,8 @@
         "yes"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "heim2001_30a",
@@ -820,7 +840,8 @@
         "yes"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "heim2001_31a",
@@ -864,7 +885,8 @@
         "yes"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "heim2001_32a",
@@ -908,7 +930,8 @@
         "yes"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "heim2001_32b",
@@ -952,7 +975,8 @@
         "yes"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "heim2001_33",
@@ -975,7 +999,7 @@
       },
       {
         "name": "high DegP",
-        "judgment": "unacceptable"
+        "judgment": "ungrammatical"
       }
     ],
     "paperFeatures": [
@@ -996,7 +1020,8 @@
         "no"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "heim2001_34a",
@@ -1019,7 +1044,7 @@
       },
       {
         "name": "high DegP",
-        "judgment": "unacceptable"
+        "judgment": "ungrammatical"
       }
     ],
     "paperFeatures": [
@@ -1040,7 +1065,8 @@
         "no"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "heim2001_34b",
@@ -1063,7 +1089,7 @@
       },
       {
         "name": "high DegP",
-        "judgment": "unacceptable"
+        "judgment": "ungrammatical"
       }
     ],
     "paperFeatures": [
@@ -1084,7 +1110,8 @@
         "no"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "heim2001_34c",
@@ -1107,7 +1134,7 @@
       },
       {
         "name": "high DegP",
-        "judgment": "unacceptable"
+        "judgment": "ungrammatical"
       }
     ],
     "paperFeatures": [
@@ -1128,38 +1155,8 @@
         "no"
       ]
     ],
-    "comment": ""
-  },
-  {
-    "id": "heim2001_36",
-    "source": {
-      "bibkey": "heim-2001",
-      "paperLabel": "(36)"
-    },
-    "language": "stan1293",
-    "primaryText": "I want the paper to be less long than 10pp.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "alternatives": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "section",
-        "2.3"
-      ],
-      [
-        "verb",
-        "want"
-      ],
-      [
-        "claim",
-        "with the maximum of (35) the high-DegP LF (36b) is equivalent to (36a)"
-      ]
-    ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "heim2001_37",
@@ -1195,7 +1192,8 @@
         "the Russell ambiguity is de re versus de dicto, not DegP scope, (40)"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "heim2001_38",
@@ -1222,7 +1220,8 @@
         "a high-DegP LF would misrepresent the truth conditions"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "heim2001_41",
@@ -1249,7 +1248,8 @@
         "three readings: low DegP de dicto, low DegP de re, high DegP de re"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "heim2001_42",
@@ -1276,7 +1276,8 @@
         "adds a de dicto reading (41) lacks"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "heim2001_58",
@@ -1303,7 +1304,8 @@
         "the complement of -est is used twice, (59)"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "heim2001_60a",
@@ -1339,7 +1341,8 @@
         "two readings by the size of the ellipsis antecedent"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "heim2001_60b",
@@ -1375,7 +1378,8 @@
         "the same two readings by scoping -est, (61)"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "heim2001_63",
@@ -1411,6 +1415,7 @@
         "two readings by scoping too, (62)"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   }
 ]

@@ -7,7 +7,7 @@
     },
     "reportedIn": null,
     "language": "nort2795",
-    "primaryText": "Ngicabanga ukuthi usukile.",
+    "primaryText": "Ngicabanga u-kuthi usukile.",
     "discourseSegments": [],
     "glossedTokens": [
       [
@@ -15,8 +15,8 @@
         "1SG.thought"
       ],
       [
-        "ukuthi",
-        "AUG.COMP"
+        "u-kuthi",
+        "AUG-COMP"
       ],
       [
         "usukile",
@@ -42,7 +42,8 @@
         "indicative"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "pietraszko2019_7a",
@@ -88,7 +89,8 @@
         "objectMarking"
       ]
     ],
-    "comment": "Object marking requires the disjoint form ya-."
+    "comment": "Object marking requires the disjoint form ya-.",
+    "verified": "page-image"
   },
   {
     "id": "pietraszko2019_7b",
@@ -146,7 +148,8 @@
         "objectMarking"
       ]
     ],
-    "comment": "A clausal complement is object-marked like a nominal one."
+    "comment": "A clausal complement is object-marked like a nominal one.",
+    "verified": "page-image"
   },
   {
     "id": "pietraszko2019_14",
@@ -172,7 +175,7 @@
         "2SG.SBJ-left"
       ]
     ],
-    "translation": "I was worried by the fact that you left.",
+    "translation": "I was worried by *(the fact) that you left.",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -187,7 +190,8 @@
         "obliquePassiveSubject"
       ]
     ],
-    "comment": "The oblique prefix yi- replaces the augment."
+    "comment": "The oblique prefix yi- replaces the augment.",
+    "verified": "page-image"
   },
   {
     "id": "pietraszko2019_20b",
@@ -221,7 +225,7 @@
         "be.united"
       ]
     ],
-    "translation": "We are talking about the fact that people are united.",
+    "translation": "We are talking about *(the fact) that people are united.",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -236,7 +240,8 @@
         "prepositionObject"
       ]
     ],
-    "comment": "Coalesces to ngokuthi."
+    "comment": "Coalesces to ngokuthi.",
+    "verified": "page-image"
   },
   {
     "id": "pietraszko2019_22",
@@ -285,6 +290,7 @@
         "subject"
       ]
     ],
-    "comment": "The clausal subject controls class-15 agreement."
+    "comment": "The clausal subject controls class-15 agreement.",
+    "verified": "page-image"
   }
 ]

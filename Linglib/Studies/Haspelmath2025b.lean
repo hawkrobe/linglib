@@ -11,7 +11,7 @@ public import Linglib.Morphology.Word.Comparative
 /-!
 # Haspelmath (2025): Roots and root classes in comparative grammar
 
-This file formalizes the definition of the root as a comparative concept in [haspelmath-2025b].
+This file formalizes the definition of the root as a comparative concept in Haspelmath's chapter.
 Its definition (1), a contentful form (`Form`, a morph with its meaning class) that occurs in a
 free form with no other contentful form, is the root of `Morphology.Comparative`, read over a
 fragment's free-form inventory. The qualifying clause separates roots from contentful affixes
@@ -38,6 +38,8 @@ description over shared variables read through two subscriptings,
   not by the forms.
 * `IsStemIn` is the stem definition of fn. 6, with the Latin `laud-ab-` case; its affixes are
   those of `Morphology.Comparative.IsAffixIn` over the roots of definition (1).
+* The chapter names the combining forms *geo-* and *socio-* in prose only; the English word
+  *geology*, with its *-logy*, is this file's illustration of *geo-*.
 
 ## References
 
@@ -139,7 +141,7 @@ def s : Form := ⟨.suff "s", none⟩
 /-- The English past suffix. -/
 def ed : Form := ⟨.suff "ed", none⟩
 
-/-- The English free forms are `geology`, `hello`, and the *hammer* forms. -/
+/-- The English free forms: `geology` (an illustration), `hello`, and the *hammer* forms. -/
 def english : List (List Form) :=
   [[geo, logy], [hello], [hammerN], [hammerN, s], [hammerV], [hammerV, ed]]
 

@@ -69,7 +69,7 @@ def ex_5 : Datum :=
 
 def ex_7a : Datum :=
   { id := "coppockbeaver2015_7a"
-    source := ⟨"winter-2001b", "p. 177ff."⟩
+    source := ⟨"winter-2001b", "ch. 4, (137a)"⟩
     reportedIn := some ⟨"coppock-beaver-2015", "(7a)"⟩
     language := "stan1293"
     primaryText := "A great man and a good father has passed away."
@@ -82,7 +82,7 @@ def ex_7a : Datum :=
 
 def ex_7b : Datum :=
   { id := "coppockbeaver2015_7b"
-    source := ⟨"winter-2001b", "p. 177ff."⟩
+    source := ⟨"winter-2001b", "ch. 4, (137b)"⟩
     reportedIn := some ⟨"coppock-beaver-2015", "(7b)"⟩
     language := "stan1293"
     primaryText := "My great opponent and the hero of my youth has passed away."
@@ -95,7 +95,7 @@ def ex_7b : Datum :=
 
 def ex_7c : Datum :=
   { id := "coppockbeaver2015_7c"
-    source := ⟨"winter-2001b", "p. 177ff."⟩
+    source := ⟨"winter-2001b", "ch. 4, (137c)"⟩
     reportedIn := some ⟨"coppock-beaver-2015", "(7c)"⟩
     language := "stan1293"
     primaryText := "A great man and the best magician in New Jersey has passed away."
@@ -693,7 +693,7 @@ def ex_48 : Datum :=
 
 def ex_54 : Datum :=
   { id := "coppockbeaver2015_54"
-    source := ⟨"winter-2001b", "(24)"⟩
+    source := ⟨"winter-2001b", "ch. 4, (24)"⟩
     reportedIn := some ⟨"coppock-beaver-2015", "(54)"⟩
     language := "stan1293"
     primaryText := "John and Mary are exactly zero friends of mine."

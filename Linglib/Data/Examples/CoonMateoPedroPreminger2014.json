@@ -49,7 +49,8 @@
         "A"
       ]
     ],
-    "comment": "Agent Focus: the suffix -on with the intransitive status suffix under 3rd person subject extraction."
+    "comment": "Agent Focus: the suffix -on with the intransitive status suffix under 3rd person subject extraction.",
+    "verified": "page-image"
   },
   {
     "id": "coonmateopedropreminger2014_2",
@@ -101,7 +102,8 @@
         "dp"
       ]
     ],
-    "comment": "The Crazy Antipassive: the same suffix -on in a non-finite embedded transitive."
+    "comment": "The Crazy Antipassive: the same suffix -on in a non-finite embedded transitive.",
+    "verified": "page-image"
   },
   {
     "id": "coonmateopedropreminger2014_12a",
@@ -145,7 +147,8 @@
         "dp"
       ]
     ],
-    "comment": "Ergative prefix on the transitive subject, absolutive on the object."
+    "comment": "Ergative prefix on the transitive subject, absolutive on the object.",
+    "verified": "page-image"
   },
   {
     "id": "coonmateopedropreminger2014_12b",
@@ -189,7 +192,8 @@
         "abs"
       ]
     ],
-    "comment": "The intransitive subject takes the same absolutive marker as the transitive object."
+    "comment": "The intransitive subject takes the same absolutive marker as the transitive object.",
+    "verified": "page-image"
   },
   {
     "id": "coonmateopedropreminger2014_15a",
@@ -233,7 +237,8 @@
         "abs"
       ]
     ],
-    "comment": "Null 3rd person absolutive; the status suffix surfaces phrase-finally."
+    "comment": "Null 3rd person absolutive; the status suffix surfaces phrase-finally.",
+    "verified": "page-image"
   },
   {
     "id": "coonmateopedropreminger2014_18a",
@@ -277,7 +282,8 @@
         "dp"
       ]
     ],
-    "comment": "Low-abs: the absolutive follows the verb stem."
+    "comment": "Low-abs: the absolutive follows the verb stem.",
+    "verified": "page-image"
   },
   {
     "id": "coonmateopedropreminger2014_18b",
@@ -321,7 +327,8 @@
         "abs"
       ]
     ],
-    "comment": "Low-abs intransitive."
+    "comment": "Low-abs intransitive.",
+    "verified": "page-image"
   },
   {
     "id": "coonmateopedropreminger2014_20a",
@@ -373,7 +380,8 @@
         "abs"
       ]
     ],
-    "comment": "Baseline intransitive with an overt 3rd person subject."
+    "comment": "Baseline intransitive with an overt 3rd person subject.",
+    "verified": "page-image"
   },
   {
     "id": "coonmateopedropreminger2014_20b",
@@ -425,7 +433,8 @@
         "S"
       ]
     ],
-    "comment": "The intransitive subject extracts freely."
+    "comment": "The intransitive subject extracts freely.",
+    "verified": "page-image"
   },
   {
     "id": "coonmateopedropreminger2014_21a",
@@ -485,7 +494,8 @@
         "dp"
       ]
     ],
-    "comment": "Baseline transitive, VSO."
+    "comment": "Baseline transitive, VSO.",
+    "verified": "page-image"
   },
   {
     "id": "coonmateopedropreminger2014_21b",
@@ -545,7 +555,8 @@
         "P"
       ]
     ],
-    "comment": "The transitive object extracts freely."
+    "comment": "The transitive object extracts freely.",
+    "verified": "page-image"
   },
   {
     "id": "coonmateopedropreminger2014_21c",
@@ -614,7 +625,8 @@
         "A"
       ]
     ],
-    "comment": "No agent-extraction reading of a regular transitive; grammatical only as 'Who did the woman see?'."
+    "comment": "No agent-extraction reading of a regular transitive; grammatical only as 'Who did the woman see?'.",
+    "verified": "page-image"
   },
   {
     "id": "coonmateopedropreminger2014_22a",
@@ -670,7 +682,8 @@
         "dp"
       ]
     ],
-    "comment": "Chol transitive, VOS."
+    "comment": "Chol transitive, VOS.",
+    "verified": "page-image"
   },
   {
     "id": "coonmateopedropreminger2014_22b",
@@ -703,7 +716,7 @@
         "man"
       ]
     ],
-    "translation": "Who saw the man?",
+    "translation": "Who saw the man?/Who did the man see?",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -739,7 +752,8 @@
         "A"
       ]
     ],
-    "comment": "Either argument extracts from a regular transitive; with two 3rd person arguments the question is ambiguous."
+    "comment": "Either argument extracts from a regular transitive; with two 3rd person arguments the question is ambiguous.",
+    "verified": "page-image"
   },
   {
     "id": "coonmateopedropreminger2014_23",
@@ -791,7 +805,8 @@
         "A"
       ]
     ],
-    "comment": "Agent extraction from a regular transitive, disambiguated by the 2nd person absolutive; cannot mean 'Who did you see?'."
+    "comment": "Agent extraction from a regular transitive, disambiguated by the 2nd person absolutive; cannot mean 'Who did you see?'.",
+    "verified": "page-image"
   },
   {
     "id": "coonmateopedropreminger2014_28a",
@@ -843,7 +858,8 @@
         "dp"
       ]
     ],
-    "comment": "Matrix transitive with a 1st person absolutive object clitic on the aspect marker."
+    "comment": "Matrix transitive with a 1st person absolutive object clitic on the aspect marker.",
+    "verified": "page-image"
   },
   {
     "id": "coonmateopedropreminger2014_28b",
@@ -887,7 +903,8 @@
         "dp"
       ]
     ],
-    "comment": "Matrix transitive with a 2nd person absolutive object."
+    "comment": "Matrix transitive with a 2nd person absolutive object.",
+    "verified": "page-image"
   },
   {
     "id": "coonmateopedropreminger2014_29a",
@@ -947,7 +964,8 @@
         "dp"
       ]
     ],
-    "comment": "An aspectless embedded transitive with an absolutive object is impossible."
+    "comment": "An aspectless embedded transitive with an absolutive object is impossible.",
+    "verified": "page-image"
   },
   {
     "id": "coonmateopedropreminger2014_29b",
@@ -995,7 +1013,8 @@
         "dp"
       ]
     ],
-    "comment": "The progressive embeds an aspectless clause; the absolutive object is impossible."
+    "comment": "The progressive embeds an aspectless clause; the absolutive object is impossible.",
+    "verified": "page-image"
   },
   {
     "id": "coonmateopedropreminger2014_30a",
@@ -1047,7 +1066,8 @@
         "dp"
       ]
     ],
-    "comment": "A full 3rd person object, which bears no absolutive morpheme."
+    "comment": "A full 3rd person object, which bears no absolutive morpheme.",
+    "verified": "page-image"
   },
   {
     "id": "coonmateopedropreminger2014_30b",
@@ -1099,7 +1119,8 @@
         "dp"
       ]
     ],
-    "comment": "Impossible even with a full 3rd person object, so the problem is syntactic, not the morphological host of the absolutive."
+    "comment": "Impossible even with a full 3rd person object, so the problem is syntactic, not the morphological host of the absolutive.",
+    "verified": "page-image"
   },
   {
     "id": "coonmateopedropreminger2014_31a",
@@ -1143,7 +1164,8 @@
         "abs"
       ]
     ],
-    "comment": "Matrix intransitive with an absolutive subject clitic."
+    "comment": "Matrix intransitive with an absolutive subject clitic.",
+    "verified": "page-image"
   },
   {
     "id": "coonmateopedropreminger2014_32a",
@@ -1191,7 +1213,8 @@
         "erg"
       ]
     ],
-    "comment": "The sole argument of an aspectless intransitive is marked with the ergative/possessive prefix."
+    "comment": "The sole argument of an aspectless intransitive is marked with the ergative/possessive prefix.",
+    "verified": "page-image"
   },
   {
     "id": "coonmateopedropreminger2014_32b",
@@ -1235,7 +1258,8 @@
         "erg"
       ]
     ],
-    "comment": "Ergative/possessive marking of the aspectless intransitive subject."
+    "comment": "Ergative/possessive marking of the aspectless intransitive subject.",
+    "verified": "page-image"
   },
   {
     "id": "coonmateopedropreminger2014_33a",
@@ -1287,7 +1311,8 @@
         "abs"
       ]
     ],
-    "comment": "An absolutive subject is impossible in the aspectless intransitive."
+    "comment": "An absolutive subject is impossible in the aspectless intransitive.",
+    "verified": "page-image"
   },
   {
     "id": "coonmateopedropreminger2014_33b",
@@ -1335,7 +1360,8 @@
         "abs"
       ]
     ],
-    "comment": "An absolutive subject is impossible in the aspectless intransitive; the paper's translation, kept here, does not match the verb b'ey 'walk'."
+    "comment": "An absolutive subject is impossible in the aspectless intransitive; the paper's translation, kept here, does not match the verb b'ey 'walk'.",
+    "verified": "page-image"
   },
   {
     "id": "coonmateopedropreminger2014_34a",
@@ -1399,7 +1425,8 @@
         "dp"
       ]
     ],
-    "comment": "A finite embedded clause with aspect marking admits the absolutive object."
+    "comment": "A finite embedded clause with aspect marking admits the absolutive object.",
+    "verified": "page-image"
   },
   {
     "id": "coonmateopedropreminger2014_34b",
@@ -1455,7 +1482,8 @@
         "abs"
       ]
     ],
-    "comment": "A finite embedded intransitive admits the absolutive subject."
+    "comment": "A finite embedded intransitive admits the absolutive subject.",
+    "verified": "page-image"
   },
   {
     "id": "coonmateopedropreminger2014_35a",
@@ -1495,7 +1523,8 @@
         "dp"
       ]
     ],
-    "comment": "Kaqchikel matrix transitive."
+    "comment": "Kaqchikel matrix transitive.",
+    "verified": "page-image"
   },
   {
     "id": "coonmateopedropreminger2014_35b",
@@ -1539,7 +1568,8 @@
         "dp"
       ]
     ],
-    "comment": "A finite embedded transitive keeps the absolutive object."
+    "comment": "A finite embedded transitive keeps the absolutive object.",
+    "verified": "page-image"
   },
   {
     "id": "coonmateopedropreminger2014_35c",
@@ -1587,7 +1617,8 @@
         "high"
       ]
     ],
-    "comment": "An aspectless complement is passivized and nominalized; its single argument bears the ergative/possessive prefix."
+    "comment": "An aspectless complement is passivized and nominalized; its single argument bears the ergative/possessive prefix.",
+    "verified": "page-image"
   },
   {
     "id": "coonmateopedropreminger2014_35d",
@@ -1639,7 +1670,8 @@
         "caseless"
       ]
     ],
-    "comment": "The incorporating antipassive in an aspectless clause: the object must be a bare noun."
+    "comment": "The incorporating antipassive in an aspectless clause: the object must be a bare noun.",
+    "verified": "page-image"
   },
   {
     "id": "coonmateopedropreminger2014_36a",
@@ -1679,7 +1711,8 @@
         "abs"
       ]
     ],
-    "comment": "Kaqchikel matrix intransitive."
+    "comment": "Kaqchikel matrix intransitive.",
+    "verified": "page-image"
   },
   {
     "id": "coonmateopedropreminger2014_36b",
@@ -1723,7 +1756,8 @@
         "abs"
       ]
     ],
-    "comment": "A finite embedded intransitive keeps the absolutive subject."
+    "comment": "A finite embedded intransitive keeps the absolutive subject.",
+    "verified": "page-image"
   },
   {
     "id": "coonmateopedropreminger2014_36c",
@@ -1767,7 +1801,8 @@
         "erg"
       ]
     ],
-    "comment": "Literally 'our growing began': the aspectless intransitive subject is a possessor."
+    "comment": "Literally 'our growing began': the aspectless intransitive subject is a possessor.",
+    "verified": "page-image"
   },
   {
     "id": "coonmateopedropreminger2014_37a",
@@ -1811,7 +1846,8 @@
         "dp"
       ]
     ],
-    "comment": "Q'eqchi' matrix transitive, high-abs."
+    "comment": "Q'eqchi' matrix transitive, high-abs.",
+    "verified": "page-image"
   },
   {
     "id": "coonmateopedropreminger2014_37b",
@@ -1855,7 +1891,8 @@
         "abs"
       ]
     ],
-    "comment": "Q'eqchi' matrix intransitive."
+    "comment": "Q'eqchi' matrix intransitive.",
+    "verified": "page-image"
   },
   {
     "id": "coonmateopedropreminger2014_38a",
@@ -1891,7 +1928,8 @@
         "high"
       ]
     ],
-    "comment": "Literally 'I want your seeing': the object of the nominal stem is a possessor."
+    "comment": "Literally 'I want your seeing': the object of the nominal stem is a possessor.",
+    "verified": "page-image"
   },
   {
     "id": "coonmateopedropreminger2014_38b",
@@ -1947,7 +1985,8 @@
         "caseless"
       ]
     ],
-    "comment": "An antipassivized aspectless transitive with a bare, non-referential object."
+    "comment": "An antipassivized aspectless transitive with a bare, non-referential object.",
+    "verified": "page-image"
   },
   {
     "id": "coonmateopedropreminger2014_39a",
@@ -2007,7 +2046,8 @@
         "oblique"
       ]
     ],
-    "comment": "Mam infinitive in -l: the object is introduced obliquely through a relational noun. Reported from England's work on reduced-inflection clauses in Mam."
+    "comment": "Mam infinitive in -l: the object is introduced obliquely through a relational noun. Reported from England's work on reduced-inflection clauses in Mam.",
+    "verified": "page-image"
   },
   {
     "id": "coonmateopedropreminger2014_39b",
@@ -2063,7 +2103,8 @@
         "caseless"
       ]
     ],
-    "comment": "The object of the infinitive is bare and so incorporated. Reported from England's work on reduced-inflection clauses in Mam."
+    "comment": "The object of the infinitive is bare and so incorporated. Reported from England's work on reduced-inflection clauses in Mam.",
+    "verified": "page-image"
   },
   {
     "id": "coonmateopedropreminger2014_41",
@@ -2111,7 +2152,8 @@
         "erg"
       ]
     ],
-    "comment": "The subject of a non-finite intransitive bears ergative marking. Reported from England's work on reduced-inflection clauses in Mam."
+    "comment": "The subject of a non-finite intransitive bears ergative marking. Reported from England's work on reduced-inflection clauses in Mam.",
+    "verified": "page-image"
   },
   {
     "id": "coonmateopedropreminger2014_42a",
@@ -2155,7 +2197,8 @@
         "dp"
       ]
     ],
-    "comment": "An absolutive object is fine in a Chol aspectless embedded clause."
+    "comment": "An absolutive object is fine in a Chol aspectless embedded clause.",
+    "verified": "page-image"
   },
   {
     "id": "coonmateopedropreminger2014_42b",
@@ -2199,7 +2242,8 @@
         "dp"
       ]
     ],
-    "comment": "An absolutive object under the progressive."
+    "comment": "An absolutive object under the progressive.",
+    "verified": "page-image"
   },
   {
     "id": "coonmateopedropreminger2014_43a",
@@ -2243,7 +2287,8 @@
         "abs"
       ]
     ],
-    "comment": "Chol matrix intransitive."
+    "comment": "Chol matrix intransitive.",
+    "verified": "page-image"
   },
   {
     "id": "coonmateopedropreminger2014_43b",
@@ -2287,7 +2332,8 @@
         "erg"
       ]
     ],
-    "comment": "The embedded intransitive subject takes the ergative series."
+    "comment": "The embedded intransitive subject takes the ergative series.",
+    "verified": "page-image"
   },
   {
     "id": "coonmateopedropreminger2014_43c",
@@ -2331,7 +2377,8 @@
         "abs"
       ]
     ],
-    "comment": "An absolutive subject is impossible in the aspectless intransitive, in low-abs Chol too."
+    "comment": "An absolutive subject is impossible in the aspectless intransitive, in low-abs Chol too.",
+    "verified": "page-image"
   },
   {
     "id": "coonmateopedropreminger2014_44",
@@ -2379,7 +2426,8 @@
         "dp"
       ]
     ],
-    "comment": "Yucatec: an absolutive object in a non-finite clause."
+    "comment": "Yucatec: an absolutive object in a non-finite clause.",
+    "verified": "page-image"
   },
   {
     "id": "coonmateopedropreminger2014_45",
@@ -2431,7 +2479,8 @@
         "dp"
       ]
     ],
-    "comment": "Itzaj: a transitive object in a non-finite clause."
+    "comment": "Itzaj: a transitive object in a non-finite clause.",
+    "verified": "page-image"
   },
   {
     "id": "coonmateopedropreminger2014_46a",
@@ -2475,7 +2524,8 @@
         "abs"
       ]
     ],
-    "comment": "Yucatec matrix intransitive."
+    "comment": "Yucatec matrix intransitive.",
+    "verified": "page-image"
   },
   {
     "id": "coonmateopedropreminger2014_46b",
@@ -2523,7 +2573,8 @@
         "erg"
       ]
     ],
-    "comment": "The non-finite intransitive subject takes the ergative series."
+    "comment": "The non-finite intransitive subject takes the ergative series.",
+    "verified": "page-image"
   },
   {
     "id": "coonmateopedropreminger2014_48a",
@@ -2579,7 +2630,8 @@
         "dp"
       ]
     ],
-    "comment": "Tojol-ab'al, low-abs: an absolutive object in an aspectless embedded clause."
+    "comment": "Tojol-ab'al, low-abs: an absolutive object in an aspectless embedded clause.",
+    "verified": "page-image"
   },
   {
     "id": "coonmateopedropreminger2014_48b",
@@ -2627,7 +2679,8 @@
         "dp"
       ]
     ],
-    "comment": "The null 3rd person absolutive gloss is the source's."
+    "comment": "The null 3rd person absolutive gloss is the source's.",
+    "verified": "page-image"
   },
   {
     "id": "coonmateopedropreminger2014_49a",
@@ -2683,7 +2736,8 @@
         "S"
       ]
     ],
-    "comment": "An ergative-marked intransitive subject extracts freely, so the ban is syntactic."
+    "comment": "An ergative-marked intransitive subject extracts freely, so the ban is syntactic.",
+    "verified": "page-image"
   },
   {
     "id": "coonmateopedropreminger2014_49b",
@@ -2735,7 +2789,8 @@
         "S"
       ]
     ],
-    "comment": "An ergative-marked intransitive subject extracts freely."
+    "comment": "An ergative-marked intransitive subject extracts freely.",
+    "verified": "page-image"
   },
   {
     "id": "coonmateopedropreminger2014_57a",
@@ -2779,7 +2834,8 @@
         "dp"
       ]
     ],
-    "comment": "A 1st person absolutive object on the aspect marker."
+    "comment": "A 1st person absolutive object on the aspect marker.",
+    "verified": "page-image"
   },
   {
     "id": "coonmateopedropreminger2014_57b",
@@ -2831,7 +2887,8 @@
         "dp"
       ]
     ],
-    "comment": "A full 3rd person object stays low; the account takes it to head a chain whose lower copy is pronounced."
+    "comment": "A full 3rd person object stays low; the account takes it to head a chain whose lower copy is pronounced.",
+    "verified": "page-image"
   },
   {
     "id": "coonmateopedropreminger2014_58a",
@@ -2883,7 +2940,8 @@
         "A"
       ]
     ],
-    "comment": "Agent Focus under wh-interrogation."
+    "comment": "Agent Focus under wh-interrogation.",
+    "verified": "page-image"
   },
   {
     "id": "coonmateopedropreminger2014_58b",
@@ -2943,7 +3001,8 @@
         "A"
       ]
     ],
-    "comment": "Agent Focus under focalization."
+    "comment": "Agent Focus under focalization.",
+    "verified": "page-image"
   },
   {
     "id": "coonmateopedropreminger2014_58c",
@@ -2999,7 +3058,8 @@
         "A"
       ]
     ],
-    "comment": "Agent Focus under relativization."
+    "comment": "Agent Focus under relativization.",
+    "verified": "page-image"
   },
   {
     "id": "coonmateopedropreminger2014_59",
@@ -3063,7 +3123,8 @@
         "oblique"
       ]
     ],
-    "comment": "A true antipassive: the patient is omitted or oblique, and the subject controls the null 3rd person absolutive."
+    "comment": "A true antipassive: the patient is omitted or oblique, and the subject controls the null 3rd person absolutive.",
+    "verified": "page-image"
   },
   {
     "id": "coonmateopedropreminger2014_60",
@@ -3127,7 +3188,8 @@
         "A"
       ]
     ],
-    "comment": "The antipassive subject extracts: the oblique object never raises to the phase edge."
+    "comment": "The antipassive subject extracts: the oblique object never raises to the phase edge.",
+    "verified": "page-image"
   },
   {
     "id": "coonmateopedropreminger2014_61a",
@@ -3183,7 +3245,8 @@
         "A"
       ]
     ],
-    "comment": "In the antipassive the absolutive co-indexes the subject; in Agent Focus (61b) it co-indexes the object."
+    "comment": "In the antipassive the absolutive co-indexes the subject; in Agent Focus (61b) it co-indexes the object.",
+    "verified": "page-image"
   },
   {
     "id": "coonmateopedropreminger2014_69a",
@@ -3243,7 +3306,8 @@
         "dp"
       ]
     ],
-    "comment": "The Crazy Antipassive licenses the object of an aspectless embedded transitive."
+    "comment": "The Crazy Antipassive licenses the object of an aspectless embedded transitive.",
+    "verified": "page-image"
   },
   {
     "id": "coonmateopedropreminger2014_69b",
@@ -3291,7 +3355,8 @@
         "dp"
       ]
     ],
-    "comment": "The Crazy Antipassive under the progressive; compare the ungrammatical (29b)."
+    "comment": "The Crazy Antipassive under the progressive; compare the ungrammatical (29b).",
+    "verified": "page-image"
   },
   {
     "id": "coonmateopedropreminger2014_71a",
@@ -3335,7 +3400,8 @@
         "dp"
       ]
     ],
-    "comment": "Matrix transitive with the transitive status suffix."
+    "comment": "Matrix transitive with the transitive status suffix.",
+    "verified": "page-image"
   },
   {
     "id": "coonmateopedropreminger2014_71c",
@@ -3387,7 +3453,8 @@
         "A"
       ]
     ],
-    "comment": "Agent Focus with a 1st person object; the intransitive status suffix as in the Crazy Antipassive."
+    "comment": "Agent Focus with a 1st person object; the intransitive status suffix as in the Crazy Antipassive.",
+    "verified": "page-image"
   },
   {
     "id": "coonmateopedropreminger2014_72a",
@@ -3451,7 +3518,8 @@
         "A"
       ]
     ],
-    "comment": "A focused 3rd person agent requires Agent Focus."
+    "comment": "A focused 3rd person agent requires Agent Focus.",
+    "verified": "page-image"
   },
   {
     "id": "coonmateopedropreminger2014_72b",
@@ -3507,7 +3575,8 @@
         "dp"
       ]
     ],
-    "comment": "A focused 1st person agent takes the regular transitive: the account has it base-generated in the periphery, so nothing extracts."
+    "comment": "A focused 1st person agent takes the regular transitive: the account has it base-generated in the periphery, so nothing extracts.",
+    "verified": "page-image"
   },
   {
     "id": "coonmateopedropreminger2014_73a",
@@ -3555,7 +3624,8 @@
         "high"
       ]
     ],
-    "comment": "Kaqchikel Agent Focus, which the account leaves to a different mechanism."
+    "comment": "Kaqchikel Agent Focus, which the account leaves to a different mechanism.",
+    "verified": "page-image"
   },
   {
     "id": "coonmateopedropreminger2014_73b",
@@ -3599,7 +3669,8 @@
         "high"
       ]
     ],
-    "comment": "Kaqchikel requires Agent Focus of a 1st person agent too, unlike Q'anjob'al."
+    "comment": "Kaqchikel requires Agent Focus of a 1st person agent too, unlike Q'anjob'al.",
+    "verified": "page-image"
   },
   {
     "id": "coonmateopedropreminger2014_74",
@@ -3651,7 +3722,8 @@
         "dp"
       ]
     ],
-    "comment": "The Crazy Antipassive has no person restriction: the trigger is the absent Infl, not extraction."
+    "comment": "The Crazy Antipassive has no person restriction: the trigger is the absent Infl, not extraction.",
+    "verified": "page-image"
   },
   {
     "id": "coonmateopedropreminger2014_75a",
@@ -3707,7 +3779,8 @@
         "A"
       ]
     ],
-    "comment": "The agent extracts from a regular transitive when the object is a reflexive."
+    "comment": "The agent extracts from a regular transitive when the object is a reflexive.",
+    "verified": "page-image"
   },
   {
     "id": "coonmateopedropreminger2014_75b",
@@ -3763,7 +3836,8 @@
         "A"
       ]
     ],
-    "comment": "Agent Focus is impossible with a reflexive object."
+    "comment": "Agent Focus is impossible with a reflexive object.",
+    "verified": "page-image"
   },
   {
     "id": "coonmateopedropreminger2014_75c",
@@ -3823,7 +3897,8 @@
         "A"
       ]
     ],
-    "comment": "Agent Focus with a full DP object."
+    "comment": "Agent Focus with a full DP object.",
+    "verified": "page-image"
   },
   {
     "id": "coonmateopedropreminger2014_76a",
@@ -3852,7 +3927,7 @@
         "3ERG-house"
       ]
     ],
-    "translation": "Who painted his own house?",
+    "translation": "Who painted his (own) house?",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -3879,7 +3954,8 @@
         "A"
       ]
     ],
-    "comment": "The extended reflexive: the possessor of the object is bound by the subject, and the agent extracts from a regular transitive."
+    "comment": "The extended reflexive: the possessor of the object is bound by the subject, and the agent extracts from a regular transitive.",
+    "verified": "page-image"
   },
   {
     "id": "coonmateopedropreminger2014_76b",
@@ -3935,7 +4011,8 @@
         "A"
       ]
     ],
-    "comment": "Under Agent Focus the possessor is disjoint from the subject: the object is a full DP."
+    "comment": "Under Agent Focus the possessor is disjoint from the subject: the object is a full DP.",
+    "verified": "page-image"
   },
   {
     "id": "coonmateopedropreminger2014_77b",
@@ -3991,7 +4068,8 @@
         "caseless"
       ]
     ],
-    "comment": "Word order is VOS with a reflexive object, against the usual VSO of (77a)."
+    "comment": "Word order is VOS with a reflexive object, against the usual VSO of (77a).",
+    "verified": "page-image"
   },
   {
     "id": "coonmateopedropreminger2014_78a",
@@ -4020,7 +4098,7 @@
         "3ERG-house"
       ]
     ],
-    "translation": "Who painted his own house?",
+    "translation": "Who painted his (own) house?",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [
@@ -4052,7 +4130,8 @@
         "A"
       ]
     ],
-    "comment": "No classifier on the extended-reflexive object."
+    "comment": "No classifier on the extended-reflexive object.",
+    "verified": "page-image"
   },
   {
     "id": "coonmateopedropreminger2014_78a_clf",
@@ -4085,7 +4164,7 @@
         "3ERG-house"
       ]
     ],
-    "translation": "Who painted his own house?",
+    "translation": "Who painted his (own) house?",
     "context": "",
     "judgment": "ungrammatical",
     "alternatives": [],
@@ -4112,7 +4191,8 @@
         "A"
       ]
     ],
-    "comment": "With the classifier the object is a full DP, and the agent cannot extract from the regular transitive."
+    "comment": "With the classifier the object is a full DP, and the agent cannot extract from the regular transitive.",
+    "verified": "page-image"
   },
   {
     "id": "coonmateopedropreminger2014_78b",
@@ -4177,7 +4257,8 @@
         "A"
       ]
     ],
-    "comment": "Under Agent Focus the classifier is obligatory: the object is a full DP."
+    "comment": "Under Agent Focus the classifier is obligatory: the object is a full DP.",
+    "verified": "page-image"
   },
   {
     "id": "coonmateopedropreminger2014_78b_bare",
@@ -4233,7 +4314,8 @@
         "A"
       ]
     ],
-    "comment": "Agent Focus with a classifierless, hence caseless, object is impossible."
+    "comment": "Agent Focus with a classifierless, hence caseless, object is impossible.",
+    "verified": "page-image"
   },
   {
     "id": "coonmateopedropreminger2014_79a",
@@ -4289,7 +4371,8 @@
         "A"
       ]
     ],
-    "comment": "K'ichee': with a bare NP object the agent extracts from a regular transitive and Agent Focus is absent."
+    "comment": "K'ichee': with a bare NP object the agent extracts from a regular transitive and Agent Focus is absent.",
+    "verified": "page-image"
   },
   {
     "id": "coonmateopedropreminger2014_79b",
@@ -4349,7 +4432,8 @@
         "A"
       ]
     ],
-    "comment": "With a full DP object Agent Focus is required."
+    "comment": "With a full DP object Agent Focus is required.",
+    "verified": "page-image"
   },
   {
     "id": "coonmateopedropreminger2014_81a",
@@ -4410,7 +4494,8 @@
         "A"
       ]
     ],
-    "comment": "Chuj: Agent Focus is optional with a reflexive object; the regular transitive pseudo-incorporates it. The paper gives one translation, 'Who hit himself yesterday?', for the example with and without the starred adverb."
+    "comment": "Chuj: Agent Focus is optional with a reflexive object; the regular transitive pseudo-incorporates it. The paper gives one translation, 'Who hit himself yesterday?', for the example with and without the starred adverb.",
+    "verified": "page-image"
   },
   {
     "id": "coonmateopedropreminger2014_81a_adv",
@@ -4474,7 +4559,8 @@
         "yes"
       ]
     ],
-    "comment": "An adverb cannot separate the verb from a pseudo-incorporated reflexive."
+    "comment": "An adverb cannot separate the verb from a pseudo-incorporated reflexive.",
+    "verified": "page-image"
   },
   {
     "id": "coonmateopedropreminger2014_81b",
@@ -4534,7 +4620,8 @@
         "A"
       ]
     ],
-    "comment": "Under Agent Focus the reflexive is a full, Case-requiring DP, and an adverb may intervene."
+    "comment": "Under Agent Focus the reflexive is a full, Case-requiring DP, and an adverb may intervene.",
+    "verified": "page-image"
   },
   {
     "id": "coonmateopedropreminger2014_82a",
@@ -4570,7 +4657,8 @@
         "low"
       ]
     ],
-    "comment": "Low-abs Chol has an applicative double-object construction; high-abs languages have none."
+    "comment": "Low-abs Chol has an applicative double-object construction; high-abs languages have none.",
+    "verified": "page-image"
   },
   {
     "id": "coonmateopedropreminger2014_82b",
@@ -4626,7 +4714,8 @@
         "high"
       ]
     ],
-    "comment": "A Q'anjob'al benefactive is a prepositional adjunct."
+    "comment": "A Q'anjob'al benefactive is a prepositional adjunct.",
+    "verified": "page-image"
   },
   {
     "id": "coonmateopedropreminger2014_82c",
@@ -4670,7 +4759,8 @@
         "high"
       ]
     ],
-    "comment": "A Kaqchikel benefactive requires a relational noun."
+    "comment": "A Kaqchikel benefactive requires a relational noun.",
+    "verified": "page-image"
   },
   {
     "id": "coonmateopedropreminger2014_86a",
@@ -4714,7 +4804,8 @@
         "erg"
       ]
     ],
-    "comment": "A pre-verbal manner adverb serves as the matrix predicate over a nominalized clause."
+    "comment": "A pre-verbal manner adverb serves as the matrix predicate over a nominalized clause.",
+    "verified": "page-image"
   },
   {
     "id": "coonmateopedropreminger2014_86b",
@@ -4766,6 +4857,7 @@
         "dp"
       ]
     ],
-    "comment": "The embedded transitive under a manner adverb takes the Crazy Antipassive form."
+    "comment": "The embedded transitive under a manner adverb takes the Crazy Antipassive form.",
+    "verified": "page-image"
   }
 ]

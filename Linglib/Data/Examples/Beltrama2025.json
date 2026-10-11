@@ -15,7 +15,8 @@
       ["class", "MPA"],
       ["inference", "middling"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "beltrama2025_3c",
@@ -31,7 +32,8 @@
       ["diagnostic", "cancelability"],
       ["verdict", "middling inference is an implicature"]
     ],
-    "comment": "Contrast lukewarm (3b): elaborating with the stronger term contradicts lexicalized upper bounds."
+    "comment": "Contrast lukewarm (3b): elaborating with the stronger term contradicts lexicalized upper bounds.",
+    "verified": "page-image"
   },
   {
     "id": "beltrama2025_4c",
@@ -46,7 +48,8 @@
     "paperFeatures": [
       ["diagnostic", "reinforceability"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "beltrama2025_5c",
@@ -55,14 +58,15 @@
     "primaryText": "Every customer who thinks their pizza was decent will get a refund.",
     "glossedTokens": [],
     "translation": "",
-    "context": "The refund is meant for unhappy customers.",
+    "context": "",
     "judgment": "unacceptable",
     "readings": [],
     "paperFeatures": [
       ["diagnostic", "DE suspension"],
       ["verdict", "no upper-bounded reading in the restrictor"]
     ],
-    "comment": "The contradictory flavor shows the middling inference is suspended in downward-entailing contexts."
+    "comment": "The contradictory flavor shows the middling inference is suspended in downward-entailing contexts.",
+    "verified": "page-image"
   },
   {
     "id": "beltrama2025_8a",
@@ -78,7 +82,8 @@
       ["diagnostic", "for-phrase"],
       ["property", "context-sensitivity"]
     ],
-    "comment": "MPAs are comparison-class sensitive, unlike absolute adjectives."
+    "comment": "MPAs are comparison-class sensitive, unlike absolute adjectives.",
+    "verified": "page-image"
   },
   {
     "id": "beltrama2025_11a",
@@ -92,9 +97,11 @@
     "readings": [],
     "paperFeatures": [
       ["diagnostic", "strong intensifiers"],
-      ["property", "restricted gradability"]
+      ["property", "restricted gradability"],
+      ["alsoJudged", "questionable"]
     ],
-    "comment": "Moderate modifiers (quite, pretty, somewhat) are fine; high and extreme ones degrade."
+    "comment": "Moderate modifiers (quite, pretty, somewhat) are fine; high and extreme ones degrade. The page marks ?very/??incredibly/??super.",
+    "verified": "page-image"
   },
   {
     "id": "beltrama2025_12a",
@@ -110,7 +117,8 @@
       ["diagnostic", "comparative"],
       ["property", "mildness retained in comparatives"]
     ],
-    "comment": "Better is fine in the same context: the MPA comparative keeps the middling flavor."
+    "comment": "Better is fine in the same context: the MPA comparative keeps the middling flavor.",
+    "verified": "page-image"
   },
   {
     "id": "beltrama2025_15a",
@@ -120,17 +128,18 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "marginal",
+    "judgment": "unacceptable",
     "readings": [],
     "paperFeatures": [
       ["diagnostic", "zone of indifference"],
       ["verdict", "near-contradiction"]
     ],
-    "comment": "Good/bad leave a neutral gap (14a); MPAs do not — existential vs universal force clash."
+    "comment": "Good/bad leave a neutral gap (14a); MPAs do not — existential vs universal force clash. The page marks the example #? (the prose and footnote 6 call the mark ?#) for a near-contradictory effect.",
+    "verified": "page-image"
   },
   {
     "id": "beltrama2025_21",
-    "source": {"bibkey": "beltrama-2025", "paperLabel": "(21)"},
+    "source": {"bibkey": "beltrama-2025", "paperLabel": "(21a)"},
     "language": "stan1293",
     "primaryText": "This pizza is barely decent.",
     "glossedTokens": [],
@@ -142,7 +151,8 @@
       ["diagnostic", "barely"],
       ["property", "crisp boundary"]
     ],
-    "comment": "#barely good needs a special high-standard context; the necessity standard gives MPAs a crisp edge."
+    "comment": "#barely good needs a special high-standard context; the necessity standard gives MPAs a crisp edge.",
+    "verified": "page-image"
   },
   {
     "id": "beltrama2025_22a",
@@ -157,7 +167,8 @@
     "paperFeatures": [
       ["diagnostic", "crisp judgment"]
     ],
-    "comment": "The same continuation with good is infelicitous — vague standards resist crisp cutoffs."
+    "comment": "The same continuation with good is infelicitous — vague standards resist crisp cutoffs.",
+    "verified": "page-image"
   },
   {
     "id": "beltrama2025_24a",
@@ -173,7 +184,8 @@
       ["diagnostic", "emphasis in DE"],
       ["parallel", "minimizers"]
     ],
-    "comment": "With good or fantastic in place of decent the emphasis collapses."
+    "comment": "With good or fantastic in place of decent the emphasis collapses.",
+    "verified": "page-image"
   },
   {
     "id": "beltrama2025_26a",
@@ -188,7 +200,8 @@
     "paperFeatures": [
       ["diagnostic", "minimal sufficiency exclusive"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "beltrama2025_39",
@@ -204,7 +217,8 @@
       ["diagnostic", "slightly"],
       ["verdict", "against the MinSAA analysis"]
     ],
-    "comment": "MinSAAs (slightly wet, slightly profitable) accept the modifier; MPAs reject it out of the blue."
+    "comment": "MinSAAs (slightly wet, slightly profitable) accept the modifier; MPAs reject it out of the blue.",
+    "verified": "page-image"
   },
   {
     "id": "beltrama2025_51b",
@@ -220,7 +234,8 @@
       ["diagnostic", "comparative entailment"],
       ["verdict", "positive form not entailed"]
     ],
-    "comment": "For MinSAAs the parallel construction contradicts — the MPA standard is more than nonzero value."
+    "comment": "For MinSAAs the parallel construction contradicts — the MPA standard is more than nonzero value.",
+    "verified": "page-image"
   },
   {
     "id": "beltrama2025_70",
@@ -236,6 +251,7 @@
       ["diagnostic", "strong intensifier rescued"],
       ["condition", "significance excluded from the QUD"]
     ],
-    "comment": "When only the necessity standard is at issue, the intensifier clash with the middling flavor disappears."
+    "comment": "When only the necessity standard is at issue, the intensifier clash with the middling flavor disappears.",
+    "verified": "page-image"
   }
 ]

@@ -20,7 +20,8 @@
         "1"
       ]
     ],
-    "comment": "Distribution vs. polyadic quantification."
+    "comment": "Distribution vs. polyadic quantification.",
+    "verified": "page-image"
   },
   {
     "id": "haugdalrymple2020_ex2",
@@ -52,7 +53,8 @@
         "1"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "haugdalrymple2020_ex4",
@@ -84,7 +86,8 @@
         "1"
       ]
     ],
-    "comment": "Williams's ambiguity, the same as (2)'s on the relational analysis."
+    "comment": "Williams's ambiguity, the same as (2)'s on the relational analysis.",
+    "verified": "page-image"
   },
   {
     "id": "haugdalrymple2020_ex8",
@@ -107,7 +110,8 @@
         "2.1"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "haugdalrymple2020_ex10",
@@ -130,7 +134,8 @@
         "2.1"
       ]
     ],
-    "comment": "Plurality by summing across assignments."
+    "comment": "Plurality by summing across assignments.",
+    "verified": "page-image"
   },
   {
     "id": "haugdalrymple2020_ex11",
@@ -153,7 +158,8 @@
         "2.1"
       ]
     ],
-    "comment": "Collective predicate on the sum."
+    "comment": "Collective predicate on the sum.",
+    "verified": "page-image"
   },
   {
     "id": "haugdalrymple2020_ex12",
@@ -185,7 +191,8 @@
         "2.1"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "haugdalrymple2020_ex17",
@@ -208,7 +215,8 @@
         "2.2"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "haugdalrymple2020_ex22",
@@ -231,7 +239,8 @@
         "2.3"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "haugdalrymple2020_ex23",
@@ -263,7 +272,8 @@
         "2.3"
       ]
     ],
-    "comment": "The second reading needs the antecedent to escape distribution."
+    "comment": "The second reading needs the antecedent to escape distribution.",
+    "verified": "page-image"
   },
   {
     "id": "haugdalrymple2020_ex40",
@@ -286,7 +296,8 @@
         "2.4"
       ]
     ],
-    "comment": "Dotlačil's reciprocal (39) and the PPCDRT (41)."
+    "comment": "Dotlačil's reciprocal (39) and the PPCDRT (41).",
+    "verified": "page-image"
   },
   {
     "id": "haugdalrymple2020_ex45",
@@ -309,7 +320,8 @@
         "3.1"
       ]
     ],
-    "comment": "Quantificational dependencies carry over to each doxastic alternative."
+    "comment": "Quantificational dependencies carry over to each doxastic alternative.",
+    "verified": "page-image"
   },
   {
     "id": "haugdalrymple2020_ex47",
@@ -337,7 +349,8 @@
         "3.1"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "haugdalrymple2020_ex50",
@@ -365,7 +378,8 @@
         "3.1"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "haugdalrymple2020_ex52",
@@ -393,7 +407,8 @@
         "3.2"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "haugdalrymple2020_ex54",
@@ -421,7 +436,8 @@
         "3.2"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "haugdalrymple2020_ex57",
@@ -449,7 +465,8 @@
         "3.3"
       ]
     ],
-    "comment": "Attested crossed reading."
+    "comment": "Attested crossed reading.",
+    "verified": "page-image"
   },
   {
     "id": "haugdalrymple2020_ex58",
@@ -477,7 +494,8 @@
         "3.3"
       ]
     ],
-    "comment": "Attested crossed reading, Wikipedia."
+    "comment": "Attested crossed reading, Wikipedia.",
+    "verified": "page-image"
   },
   {
     "id": "haugdalrymple2020_ex59",
@@ -505,7 +523,8 @@
         "3.3"
       ]
     ],
-    "comment": "Crossed readings are hard without a reciprocal."
+    "comment": "Crossed readings are hard without a reciprocal.",
+    "verified": "page-image"
   },
   {
     "id": "haugdalrymple2020_ex60",
@@ -533,7 +552,8 @@
         "3.3"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "haugdalrymple2020_ex61",
@@ -561,7 +581,8 @@
         "3.3"
       ]
     ],
-    "comment": "The one attested crossed reading found without a reciprocal."
+    "comment": "The one attested crossed reading found without a reciprocal.",
+    "verified": "page-image"
   },
   {
     "id": "haugdalrymple2020_ex62",
@@ -593,7 +614,8 @@
         "3.4"
       ]
     ],
-    "comment": "The reciprocal never scopes above the highest binder of its antecedent."
+    "comment": "The reciprocal never scopes above the highest binder of its antecedent.",
+    "verified": "page-image"
   },
   {
     "id": "haugdalrymple2020_ex63",
@@ -625,7 +647,8 @@
         "3.4"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "haugdalrymple2020_ex64",
@@ -634,12 +657,12 @@
       "paperLabel": "(64)"
     },
     "language": "stan1293",
-    "primaryText": "#Tracy and Chris may beat each other to the finish line.",
+    "primaryText": "Tracy and Chris may beat each other to the finish line.",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "marginal",
+    "judgment": "unacceptable",
     "alternatives": [],
     "readings": [
       {
@@ -648,7 +671,7 @@
       },
       {
         "name": "may > each other",
-        "judgment": "marginal"
+        "judgment": "unacceptable"
       }
     ],
     "paperFeatures": [
@@ -657,7 +680,8 @@
         "3.4"
       ]
     ],
-    "comment": "Each accessible world contains both directions of beat."
+    "comment": "Each accessible world contains both directions of beat.",
+    "verified": "page-image"
   },
   {
     "id": "haugdalrymple2020_ex65",
@@ -680,7 +704,8 @@
         "3.4"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "haugdalrymple2020_ex71",
@@ -712,7 +737,8 @@
         "3.4"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "haugdalrymple2020_ex72",
@@ -740,7 +766,8 @@
         "3.4"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "haugdalrymple2020_ex73a",
@@ -768,7 +795,8 @@
         "3.4"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "haugdalrymple2020_ex73b",
@@ -796,7 +824,8 @@
         "3.4"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "haugdalrymple2020_ex74a",
@@ -824,7 +853,8 @@
         "3.4"
       ]
     ],
-    "comment": "NOW corpus; a long-distance reading across an adjunct clause."
+    "comment": "NOW corpus; a long-distance reading across an adjunct clause.",
+    "verified": "page-image"
   },
   {
     "id": "haugdalrymple2020_ex74b",
@@ -852,7 +882,8 @@
         "3.4"
       ]
     ],
-    "comment": "NOW corpus."
+    "comment": "NOW corpus.",
+    "verified": "page-image"
   },
   {
     "id": "haugdalrymple2020_ex78",
@@ -863,7 +894,7 @@
     "language": "chey1247",
     "primaryText": "Ka'ėškóne-ho é-axeen-ȧhtse-o'o",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [["Ka'ėškóne-ho", "child-PL.AN"], ["é-axeen-ȧhtse-o'o", "3-scratch.AN-ahte-3PL.AN"]],
     "translation": "Some children scratched themselves/each other.",
     "context": "",
     "judgment": "acceptable",
@@ -888,7 +919,8 @@
         "4.2"
       ]
     ],
-    "comment": "Cheyenne, Murray 2008: the underspecified affix."
+    "comment": "Cheyenne, Murray 2008: the underspecified affix.",
+    "verified": "page-image"
   },
   {
     "id": "haugdalrymple2020_ex80a",
@@ -911,7 +943,8 @@
         "4.3"
       ]
     ],
-    "comment": "#new noses."
+    "comment": "#new noses.",
+    "verified": "page-image"
   },
   {
     "id": "haugdalrymple2020_ex80b",
@@ -934,7 +967,8 @@
         "4.3"
       ]
     ],
-    "comment": "#a new nose."
+    "comment": "#a new nose.",
+    "verified": "page-image"
   },
   {
     "id": "haugdalrymple2020_ex80c",
@@ -957,7 +991,8 @@
         "4.3"
       ]
     ],
-    "comment": "#a new nose: reciprocals pattern with plurals."
+    "comment": "#a new nose: reciprocals pattern with plurals.",
+    "verified": "page-image"
   },
   {
     "id": "haugdalrymple2020_ex81a",
@@ -985,7 +1020,8 @@
         "4.3"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "haugdalrymple2020_ex81b",
@@ -1013,7 +1049,8 @@
         "4.3"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "haugdalrymple2020_ex81c",
@@ -1041,7 +1078,8 @@
         "4.3"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "haugdalrymple2020_ex84",
@@ -1073,7 +1111,8 @@
         "4.4"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "haugdalrymple2020_ex88a",
@@ -1096,7 +1135,8 @@
         "4.5"
       ]
     ],
-    "comment": "Each field against the combined remainder."
+    "comment": "Each field against the combined remainder.",
+    "verified": "page-image"
   },
   {
     "id": "haugdalrymple2020_ex88b",
@@ -1119,7 +1159,8 @@
         "4.5"
       ]
     ],
-    "comment": "Each fork against a group of others."
+    "comment": "Each fork against a group of others.",
+    "verified": "page-image"
   },
   {
     "id": "haugdalrymple2020_ex91",
@@ -1142,7 +1183,8 @@
         "4.5"
       ]
     ],
-    "comment": "Each surrounded by some, not necessarily all, of the others."
+    "comment": "Each surrounded by some, not necessarily all, of the others.",
+    "verified": "page-image"
   },
   {
     "id": "haugdalrymple2020_ex94",
@@ -1165,7 +1207,8 @@
         "4.6"
       ]
     ],
-    "comment": "Collective antecedent; no discernible reciprocity."
+    "comment": "Collective antecedent; no discernible reciprocity.",
+    "verified": "page-image"
   },
   {
     "id": "haugdalrymple2020_ex95a",
@@ -1188,7 +1231,8 @@
         "4.6"
       ]
     ],
-    "comment": "NOW corpus."
+    "comment": "NOW corpus.",
+    "verified": "page-image"
   },
   {
     "id": "haugdalrymple2020_ex95b",
@@ -1211,7 +1255,8 @@
         "4.6"
       ]
     ],
-    "comment": "NOW corpus."
+    "comment": "NOW corpus.",
+    "verified": "page-image"
   },
   {
     "id": "haugdalrymple2020_ex100",
@@ -1239,7 +1284,8 @@
         "5.1"
       ]
     ],
-    "comment": "NOW corpus; the reciprocal ranges over the reference set."
+    "comment": "NOW corpus; the reciprocal ranges over the reference set.",
+    "verified": "page-image"
   },
   {
     "id": "haugdalrymple2020_ex103",
@@ -1267,7 +1313,8 @@
         "5.1"
       ]
     ],
-    "comment": "Dalrymple et al. 1998; the reciprocal ranges over the maximal set."
+    "comment": "Dalrymple et al. 1998; the reciprocal ranges over the maximal set.",
+    "verified": "page-image"
   },
   {
     "id": "haugdalrymple2020_ex106",
@@ -1299,7 +1346,8 @@
         "5.2"
       ]
     ],
-    "comment": "Kamp and Reyle's unclear truth conditions."
+    "comment": "Kamp and Reyle's unclear truth conditions.",
+    "verified": "page-image"
   },
   {
     "id": "haugdalrymple2020_ex107a",
@@ -1322,7 +1370,8 @@
         "5.2"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "haugdalrymple2020_ex107b",
@@ -1345,7 +1394,8 @@
         "5.2"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "haugdalrymple2020_ex107c",
@@ -1359,7 +1409,7 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "questionable",
+    "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -1368,7 +1418,8 @@
         "5.2"
       ]
     ],
-    "comment": ""
+    "comment": "Printed unmarked; the paper says it is \"much less clear what (107c) means\".",
+    "verified": "page-image"
   },
   {
     "id": "haugdalrymple2020_ex112",
@@ -1391,7 +1442,8 @@
         "5.2"
       ]
     ],
-    "comment": "NOW corpus; judged true in an intermediate scenario."
+    "comment": "NOW corpus; judged true in an intermediate scenario.",
+    "verified": "page-image"
   },
   {
     "id": "haugdalrymple2020_ex113",
@@ -1414,7 +1466,8 @@
         "5.2"
       ]
     ],
-    "comment": "NOW corpus; judged true in an intermediate scenario."
+    "comment": "NOW corpus; judged true in an intermediate scenario.",
+    "verified": "page-image"
   },
   {
     "id": "haugdalrymple2020_ex114",
@@ -1437,7 +1490,8 @@
         "5.2"
       ]
     ],
-    "comment": "NOW corpus; a weak reading with all."
+    "comment": "NOW corpus; a weak reading with all.",
+    "verified": "page-image"
   },
   {
     "id": "haugdalrymple2020_ex118",
@@ -1460,7 +1514,8 @@
         "5.3"
       ]
     ],
-    "comment": "Szymanik 2016."
+    "comment": "Szymanik 2016.",
+    "verified": "page-image"
   },
   {
     "id": "haugdalrymple2020_ex119",
@@ -1488,7 +1543,8 @@
         "6"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "haugdalrymple2020_ex120",
@@ -1516,7 +1572,8 @@
         "6"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "haugdalrymple2020_ex121",
@@ -1544,7 +1601,8 @@
         "6"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "haugdalrymple2020_ex122",
@@ -1567,7 +1625,8 @@
         "6"
       ]
     ],
-    "comment": "Dalrymple et al.'s one-way weak reciprocity; weak reciprocity under a cover for Beck."
+    "comment": "Dalrymple et al.'s one-way weak reciprocity; weak reciprocity under a cover for Beck.",
+    "verified": "page-image"
   },
   {
     "id": "haugdalrymple2020_ex123",
@@ -1590,7 +1649,8 @@
         "6"
       ]
     ],
-    "comment": "Inclusive alternative ordering."
+    "comment": "Inclusive alternative ordering.",
+    "verified": "page-image"
   },
   {
     "id": "haugdalrymple2020_ex125",
@@ -1618,7 +1678,8 @@
         "6"
       ]
     ],
-    "comment": "Maximize Anaphora selects (126b) over the minimal (126a)."
+    "comment": "Maximize Anaphora selects (126b) over the minimal (126a).",
+    "verified": "page-image"
   },
   {
     "id": "haugdalrymple2020_ex129",
@@ -1641,7 +1702,8 @@
         "6"
       ]
     ],
-    "comment": "Anaphora is exhaustive."
+    "comment": "Anaphora is exhaustive.",
+    "verified": "page-image"
   },
   {
     "id": "haugdalrymple2020_ex130",
@@ -1664,7 +1726,8 @@
         "6.1"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "haugdalrymple2020_ex131",
@@ -1687,7 +1750,8 @@
         "6.1"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "haugdalrymple2020_ex132",
@@ -1710,7 +1774,8 @@
         "6.1"
       ]
     ],
-    "comment": "Sauerland 2012: the Strongest Meaning Hypothesis at the matrix level gives the wrong reading."
+    "comment": "Sauerland 2012: the Strongest Meaning Hypothesis at the matrix level gives the wrong reading.",
+    "verified": "page-image"
   },
   {
     "id": "haugdalrymple2020_ex133",
@@ -1733,7 +1798,8 @@
         "6.1"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "haugdalrymple2020_ex134",
@@ -1765,7 +1831,8 @@
         "6.2"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "haugdalrymple2020_ex135",
@@ -1797,7 +1864,8 @@
         "6.3"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "haugdalrymple2020_ex137",
@@ -1820,6 +1888,7 @@
         "6.3"
       ]
     ],
-    "comment": "Maximization at the local relation gives the weaker reading."
+    "comment": "Maximization at the local relation gives the weaker reading.",
+    "verified": "page-image"
   }
 ]
