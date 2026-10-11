@@ -163,8 +163,8 @@ theorem L1_indicator_apply_singleton_of_notMem (hα : 0 < α) (sem : U → Set M
     (hr : f r = fun u => (sem u).indicator 1)
     {u : U} {m : M} (hm : m ∉ sem u) {m' : M} (hm' : m' ∈ sem u) (hμ : μ {m'} ≠ 0) :
     L1 μ f α κ r u {m} = 0 := by
-  simp only [L1, S1, L0, hr, ← literalListener_eq_ofDensity]
-  exact posterior_speaker_literalListener_apply_singleton_of_notMem α κ μ hα sem hm hm' hμ
+  simp only [L1, S1, L0, hr, ← listener_truthful_eq_ofDensity]
+  exact posterior_speaker_listener_truthful_apply_singleton_of_notMem α κ μ hα sem hm hm' hμ
 
 variable [Fintype R] [MeasurableSpace R] [DiscreteMeasurableSpace R]
 

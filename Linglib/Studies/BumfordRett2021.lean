@@ -251,10 +251,10 @@ theorem prior_prod_count_singleton (q : World × Finset.Icc (-4 : ℤ) 4) :
 utterance. -/
 noncomputable def literal (c : Option Comparison) (σ : Finset.Icc (-4 : ℤ) 4) :
     Kernel Utterance World :=
-  RSA.literalListener prior fun u ↦ {w | Holds c u σ w}
+  RSA.listener prior (RSA.truthful fun u ↦ {w | Holds c u σ w})
 
 instance (c : Option Comparison) (σ : Finset.Icc (-4 : ℤ) 4) : IsFiniteKernel (literal c σ) :=
-  inferInstanceAs (IsFiniteKernel (RSA.literalListener _ _))
+  inferInstanceAs (IsFiniteKernel (RSA.listener _ (RSA.truthful _)))
 
 /-- The pragmatic listener at rationality `α`, with the speaker's costs `cost`, is the
 Bayesian inverse of the speakers indexed by the threshold offsets, against the prior on worlds and
@@ -278,11 +278,11 @@ section Pipeline
 variable {α : ℝ} {cost : Utterance → ℝ}
 
 private theorem literal_ne_zero {c σ u w} (h : Holds c u σ w) : literal c σ u {w} ≠ 0 :=
-  (RSA.literalListener_apply_singleton_ne_zero_iff prior
+  (RSA.listener_truthful_apply_singleton_ne_zero_iff prior
     (fun u ↦ {w | Holds c u σ w}) u w).mpr ⟨h, prior_singleton_ne_zero w⟩
 
 private theorem literal_eq_zero {c σ u w} (h : ¬ Holds c u σ w) : literal c σ u {w} = 0 :=
-  RSA.literalListener_apply_singleton_of_notMem prior (fun u ↦ {w | Holds c u σ w}) h
+  RSA.listener_truthful_apply_singleton_of_notMem prior (fun u ↦ {w | Holds c u σ w}) h
 
 /-- Every utterance of every construction has positive probability of being produced. -/
 theorem comp_familySpeaker_ne_zero (hα : 0 ≤ α) (c : Option Comparison) (u : Utterance) :
@@ -312,7 +312,7 @@ private theorem speaker_real_le (hα : 0 < α) {c σ u} {w₁ w₂ : World}
       (RSA.speaker α cost (literal c σ) Measure.dirac w₂).real {u} := by
   refine ENNReal.toReal_mono (measure_ne_top _ _) ?_
   by_cases h₁ : Holds c u σ w₁
-  · exact RSA.speaker_literalListener_dirac_le_of_subset hα cost prior _
+  · exact RSA.speaker_listener_truthful_dirac_le_of_subset hα cost prior _
       (prior_singleton_ne_zero w₂) (halt h₁) (hu h₁)
   · rw [RSA.speaker_dirac_apply_singleton_eq_zero hα (literal_eq_zero h₁)]; exact zero_le
 
@@ -380,7 +380,7 @@ variable {α : ℝ} {cost : Utterance → ℝ}
 
 theorem literal_antonym (c : Option Comparison) (σ : Finset.Icc (-4 : ℤ) 4) (u : Utterance)
     (w : World) : literal c (negate σ) u.antonym {w.reflect} = literal c σ u {w} :=
-  RSA.literalListener_apply_singleton_of_equiv World.reflect_involutive.toPerm prior_reflect
+  RSA.listener_truthful_apply_singleton_of_equiv World.reflect_involutive.toPerm prior_reflect
     (fun w ↦ by simp only [Function.Involutive.coe_toPerm, Set.mem_ofPred_eq, holds_reflect]) w
 
 /-- Reversing the height scale carries the listener after an antonym to the listener after the
@@ -537,7 +537,7 @@ private theorem listener_positive_recentre (hα : 0 < α) (m m' : Finset.Icc (5 
     posterior_apply_singleton _ _ hu, prior_prod_count_singleton,
     prior_prod_count_singleton, prior_singleton_congr (w' := w) (by simp [World.recentre])]
   congr 2
-  exact congrFun (congrArg _ (RSA.speaker_literalListener_dirac_congr hα cost prior
+  exact congrFun (congrArg _ (RSA.speaker_listener_truthful_dirac_congr hα cost prior
     (fun u ↦ {w | Holds none u σ w}) (prior_singleton_ne_zero w) (prior_singleton_ne_zero _)
     fun u ↦ (holds_none_recentre m m' u σ w).symm)) _
 

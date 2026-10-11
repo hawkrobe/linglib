@@ -124,13 +124,13 @@ literal truth, putting no mass at a world where the utterance is false. -/
 noncomputable def L0 (P : W → ℕ) (cell : Q → W → Finset W) (sem : U → Set W)
     (C : Finset W) (q : Q) : Kernel U W :=
   Kernel.ofFunOfCountable fun u =>
-    (projListener cell (literalListener ((Measure.ofWeights (P ·)).restrict ↑C) sem) q u).restrict
-      (sem u)
+    (projListener cell (RSA.listener ((Measure.ofWeights (P ·)).restrict ↑C) (truthful sem)) q
+      u).restrict (sem u)
 
 instance (P : W → ℕ) (cell : Q → W → Finset W) (sem : U → Set W) (C : Finset W) (q : Q) :
     IsFiniteKernel (L0 P cell sem C q) :=
   ⟨⟨_, Kernel.bound_lt_top (projListener cell
-      (literalListener ((Measure.ofWeights (P ·)).restrict ↑C) sem) q), fun u => by
+      (RSA.listener ((Measure.ofWeights (P ·)).restrict ↑C) (truthful sem)) q), fun u => by
     rw [L0, Kernel.ofFunOfCountable_apply]
     exact (Measure.restrict_apply_le _ _).trans (Kernel.measure_le_bound _ _ _)⟩⟩
 
@@ -143,7 +143,7 @@ theorem L0_apply [DiscreteMeasurableSpace W] :
   rw [L0, Kernel.ofFunOfCountable_apply, Measure.restrict_apply (measurableSet_singleton w)]
   by_cases h : w ∈ sem u
   · rw [Set.inter_eq_self_of_subset_left (Set.singleton_subset_iff.mpr h),
-      projListener_literalListener_restrict_apply_singleton]
+      projListener_listener_truthful_restrict_apply_singleton]
     simp only [l0, ite_eq_left h, Nat.cast_sum]
   · rw [Set.singleton_inter_eq_empty.mpr h, measure_empty]
     simp [l0, ite_eq_right h]

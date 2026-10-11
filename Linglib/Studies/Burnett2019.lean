@@ -122,7 +122,7 @@ inverts the speaker against the same prior. -/
 
 /-- The literal listener conditions the prior on the variant's Eckert–Montague field. -/
 noncomputable abbrev L0 (prior : Measure Persona) : Kernel INGVariant Persona :=
-  literalListener prior ingField.indexation
+  listener prior (truthful ingField.indexation)
 
 /-- The speaker, the softmax of the literal listener at rationality 6 (p. 435), without costs. -/
 noncomputable abbrev S1 (prior : Measure Persona) : Kernel Persona INGVariant :=
@@ -327,7 +327,7 @@ the variant can convey, the game-theoretic literal listener of Definition 4.1. -
 theorem L0_uniform_apply {v : INGVariant} {p : Persona} (hp : p ∈ ingField.personae v) :
     L0 (Measure.ofWeights (riceWeight ·)) v {p} = 3⁻¹ := by
   have hcard : (ingField.personae v).card = 3 := by cases v <;> decide +kernel
-  rw [ingField.literalListener_indexation_apply_singleton _ hp, Measure.ofWeights_apply_singleton,
+  rw [ingField.listener_truthful_indexation_apply_singleton _ hp, Measure.ofWeights_apply_singleton,
     ← sum_measure_singleton]
   simp only [Measure.ofWeights_apply_singleton, riceWeight, Nat.cast_one, Finset.sum_const,
     nsmul_eq_mul, mul_one, hcard]

@@ -329,15 +329,15 @@ private theorem L0_of_noisyMeaning {c : ℝ} (hc : 0 < c) {u : Utterance}
       ENNReal.ofReal c * ({m} : Set Meaning).indicator 1 w) :
     L0 δ u = Measure.dirac m := by
   rw [L0, Kernel.ofDensity_apply_eq_of_eq_mul μ (f := fun _ ↦ ({m} : Set Meaning).indicator 1)
-    (ENNReal.ofReal_pos.mpr hc).ne' ENNReal.ofReal_ne_top h, ← literalListener_eq_ofDensity]
+    (ENNReal.ofReal_pos.mpr hc).ne' ENNReal.ofReal_ne_top h, ← listener_truthful_eq_ofDensity]
   refine Measure.ext_of_singleton fun w => ?_
   simp only [Measure.dirac_apply' _ (.singleton w), Set.indicator_apply, Set.mem_singleton_iff,
     Pi.one_apply]
   by_cases hw : m = w
   · subst hw
-    rw [literalListener_apply_singleton_of_eq_singleton μ (fun _ => {m}) rfl (by simp)]
+    rw [listener_truthful_apply_singleton_of_eq_singleton μ (fun _ => {m}) rfl (by simp)]
     simp
-  · rw [literalListener_apply_singleton_of_notMem μ (fun _ => {m})
+  · rw [listener_truthful_apply_singleton_of_notMem μ (fun _ => {m})
       (by simpa using Ne.symm hw)]
     simp [hw]
 
