@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Semantics.Aspect.Defs
+public import Linglib.Semantics.Aspect.Marker
 
 /-!
 # Cantonese aspect markers
@@ -26,19 +26,19 @@ namespace Cantonese.Aspect
 
 /-- The perfective *-zo* 咗. -/
 def zo : Aspect.Marker :=
-  { form := "zo2", script := some "咗", gloss := "PFV", viewpoint := .perfective }
+  { morphs := [.suff "zo2"], script := some "咗", gloss := "PFV", viewpoint := .perfective }
 
 /-- The experiential *-gwo* 過, an experiential perfect. -/
 def gwo : Aspect.Marker :=
-  { form := "gwo3", script := some "過", gloss := "EXP", viewpoint := .perfect }
+  { morphs := [.suff "gwo3"], script := some "過", gloss := "EXP", viewpoint := .perfect }
 
 /-- The progressive *-gan* 緊, an imperfective of ongoing activity. -/
 def gan : Aspect.Marker :=
-  { form := "gan2", script := some "緊", gloss := "PROG", viewpoint := .imperfective }
+  { morphs := [.suff "gan2"], script := some "緊", gloss := "PROG", viewpoint := .imperfective }
 
 /-- The continuous *-zyu* 住, an imperfective of a maintained state or posture. -/
 def zyu : Aspect.Marker :=
-  { form := "zyu6", script := some "住", gloss := "CONT", viewpoint := .imperfective }
+  { morphs := [.suff "zyu6"], script := some "住", gloss := "CONT", viewpoint := .imperfective }
 
 /-- The aspect suffixes. -/
 def markers : List Aspect.Marker := [zo, gwo, gan, zyu]

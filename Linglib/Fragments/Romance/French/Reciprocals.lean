@@ -31,13 +31,13 @@ open Reciprocal
 
 /-- se — reflexive/reciprocal clitic ([nordlinger-2023] ex. 28, 47). -/
 def se : Marker :=
-  { form := "se", strategy := .recipClitic
+  { morphs := [.free "se"], strategy := .recipClitic
   , readings := {.reciprocal, .reflexive} }
 
 /-- *l'un l'autre*, the bipartite reciprocal; with a direct object it accompanies *se* rather than
     replacing it ([maslova-2008]). -/
 def lunLautre : Marker :=
-  { form := "l'un l'autre", strategy := .bipartiteNP }
+  { morphs := [.free "l'un", .free "l'autre"], strategy := .bipartiteNP }
 
 /-- Marker inventory. -/
 def markers : Finset Marker := {se, lunLautre}

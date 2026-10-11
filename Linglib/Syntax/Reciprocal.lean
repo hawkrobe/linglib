@@ -102,8 +102,8 @@ inductive Strategy where
   | compoundVerb
   deriving DecidableEq, Repr
 
-/-- Where a strategy codes reciprocity: an argument position or the predicate, the argument- and
-predicate-marking strategies of a single clause in [evans-2008] (§3.1, §3.2), or a fused
+/-- A strategy codes reciprocity in an argument position or on the predicate, the argument- and
+predicate-marking strategies of a single clause in [evans-2008] (§3.1, §3.2), or in a fused
 multipredicate structure (§4.3). -/
 inductive CodingSite where
   /-- A nonsubject argument position, as an NP or a bound pronominal. -/
@@ -137,9 +137,9 @@ inductive Valency where
   deriving DecidableEq, Fintype, Repr
 
 open Voice in
-/-- The voice a strategy realizes: every strategy marking the predicate or a
-multipredicate structure applies the denucleativizing `Voice.reciprocal`; argument
-strategies leave the frame intact. -/
+/-- Every strategy marking the predicate or a multipredicate structure realizes the
+denucleativizing `Voice.reciprocal`; argument strategies leave the frame intact and realize no
+voice. -/
 def Strategy.voice (s : Strategy) : Option Voice :=
   if s.IsNominal then none else some reciprocal
 
@@ -176,9 +176,8 @@ inductive Indicator where
   | incorporation
   deriving DecidableEq, Fintype, Repr
 
-/-- Formation locus of reciprocal verbs: lexical θ-role bundling vs syntactic
-derivation ([siloni-2008], [siloni-2012]; [reinhart-siloni-2005]'s lex-syn
-parameter). -/
+/-- Reciprocal verbs are formed in the lexicon, by θ-role bundling, or in the syntax
+([siloni-2008], [siloni-2012]; [reinhart-siloni-2005]'s lex-syn parameter). -/
 inductive Formation where
   | lexical
   | syntactic
@@ -196,11 +195,11 @@ inductive Reading where
   | iterative
   deriving DecidableEq, Repr
 
-/-- A reciprocal exponent: form, strategy, and the readings it covers. -/
+/-- A reciprocal marker is an exponent with its strategy and the readings it covers. -/
 structure Marker where
-  /-- Surface form (romanization or orthographic). -/
-  form : String
-  /-- Native-script form, when `form` is a romanization. -/
+  /-- The exponent, in surface order, a romanization where the language has a native script. -/
+  morphs : List Morphology.Morph
+  /-- The spelling in the native script. -/
   script : Option String := none
   /-- Morphosyntactic strategy of the exponent. -/
   strategy : Strategy
@@ -210,7 +209,7 @@ structure Marker where
 
 /-! ### Constructions -/
 
-/-- A reciprocal construction: its exponent, and what each valency indicator a
+/-- A reciprocal construction is its exponent together with what each valency indicator a
 description reports says of the clause, `none` where nothing is reported. -/
 structure Construction where
   /-- The exponent of reciprocity. -/
@@ -231,7 +230,7 @@ def Reads (v : Valency) : Prop := ∃ i, c.valency i = some v
 /-- Every reporting indicator agrees on `v`. -/
 def Unanimous (v : Valency) : Prop := ∀ w, c.Reads w → w = v
 
-/-- The indicators disagree: [evans-et-al-2007]'s mixed transitivity effect. -/
+/-- The indicators disagree, the mixed transitivity effect of [evans-et-al-2007]. -/
 def Mixed : Prop := c.Reads .bivalent ∧ c.Reads .monovalent
 
 instance (v : Valency) : Decidable (c.Reads v) := Fintype.decidableExistsFintype

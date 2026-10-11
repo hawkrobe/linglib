@@ -26,8 +26,9 @@ namespace Bulgarian.Evidentiality
 
 open Evidential
 
-/-- The non-firsthand *l*-form; the aorist is its unmarked counterpart. -/
+/-- The non-firsthand *l*-form, cited by its suffix; the aorist is its unmarked counterpart. -/
 def evidentials : List Evidential :=
-  [ { form := "l-form", exponent := .tamFusion, covers := {.inference, .assumption, .hearsay} } ]
+  [ { morphs := [.suff "l"], exponent := .tamFusion,
+      covers := {.inference, .assumption, .hearsay} } ]
 
 end Bulgarian.Evidentiality

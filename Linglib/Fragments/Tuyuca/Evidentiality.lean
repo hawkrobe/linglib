@@ -26,10 +26,10 @@ open Evidential
 
 /-- Visual *-wi*, non-visual *-ti*, apparent *-yi*, secondhand *-yigi* and assumed *-hiyi*. -/
 def evidentials : List Evidential :=
-  [ { form := "-wi", exponent := .verbalAffix, covers := {.visual} },
-    { form := "-ti", exponent := .verbalAffix, covers := {.sensory} },
-    { form := "-yi", exponent := .verbalAffix, covers := {.inference} },
-    { form := "-yigi", exponent := .verbalAffix, covers := {.hearsay} },
-    { form := "-hiyi", exponent := .verbalAffix, covers := {.assumption} } ]
+  [ { morphs := [.suff "wi"], exponent := .verbalAffix, covers := {.visual} },
+    { morphs := [.suff "ti"], exponent := .verbalAffix, covers := {.sensory} },
+    { morphs := [.suff "yi"], exponent := .verbalAffix, covers := {.inference} },
+    { morphs := [.suff "yigi"], exponent := .verbalAffix, covers := {.hearsay} },
+    { morphs := [.suff "hiyi"], exponent := .verbalAffix, covers := {.assumption} } ]
 
 end Tuyuca.Evidentiality

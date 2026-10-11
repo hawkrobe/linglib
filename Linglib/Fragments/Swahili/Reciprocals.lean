@@ -40,7 +40,7 @@ open Reciprocal
 
 /-- The reciprocal suffix *-an-*. -/
 def anSuffix : Marker :=
-  { form := "-an-", strategy := .verbalAffix }
+  { morphs := [.suff "an"], strategy := .verbalAffix }
 
 /-- The marker inventory. -/
 def markers : Finset Marker := {anSuffix}

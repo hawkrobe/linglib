@@ -83,18 +83,18 @@ inductive Language where
 /-- Warlpiri *-nyanu*: the reflexive–reciprocal bound pronoun in the object slot of the
 pronominal complex ([nordlinger-2023] ex. 18b, 48). -/
 def warlpiriNyanu : Marker :=
-  { form := "-nyanu", strategy := .boundPronoun, readings := {.reciprocal, .reflexive} }
+  { morphs := [.suff "nyanu"], strategy := .boundPronoun, readings := {.reciprocal, .reflexive} }
 
 /-- Kuuk Thaayorre *-rr*: the reciprocal verbal suffix ([nordlinger-2023] ex. 25). -/
-def kuukThaayorreRr : Marker := { form := "-rr", strategy := .verbalAffix }
+def kuukThaayorreRr : Marker := { morphs := [.suff "rr"], strategy := .verbalAffix }
 
 /-- Dalabon *-rr*: the reflexive–reciprocal verbal suffix ([nordlinger-2023] ex. 26b). -/
 def dalabonRr : Marker :=
-  { form := "-rr", strategy := .verbalAffix, readings := {.reciprocal, .reflexive} }
+  { morphs := [.suff "rr"], strategy := .verbalAffix, readings := {.reciprocal, .reflexive} }
 
 /-- Tonga *-an*: the reciprocal verbal suffix ([nordlinger-2023] ex. 21, from
 [maslova-2008]). -/
-def tongaAn : Marker := { form := "-an", strategy := .verbalAffix }
+def tongaAn : Marker := { morphs := [.suff "an"], strategy := .verbalAffix }
 
 /-- A construction whose only reported indicator is the object slot. -/
 def objectSlot (v : Valency) : Indicator → Option Valency
@@ -279,14 +279,14 @@ of languages outside `Language`. -/
     each other' or 'kill somebody together' ([nordlinger-2023] ex. 49,
     citing [nedjalkov-2007b]). -/
 def yakutUs : Marker :=
-  { form := "-üs", strategy := .verbalAffix
+  { morphs := [.suff "üs"], strategy := .verbalAffix
   , readings := {.reciprocal, .collective, .sociative} }
 
 /-- East Futunan *fe-...-ʼaki*: reciprocal + iterative — *fe-tapa-ʼaki*
     'sparkle again and again' ([nordlinger-2023] ex. 50, citing
     [nedjalkov-2007b]). -/
 def eastFutunanFeAki : Marker :=
-  { form := "fe-...-ʼaki", strategy := .verbalAffix
+  { morphs := [.pref "fe", .suff "ʼaki"], strategy := .verbalAffix
   , readings := {.reciprocal, .iterative} }
 
 end Nordlinger2023

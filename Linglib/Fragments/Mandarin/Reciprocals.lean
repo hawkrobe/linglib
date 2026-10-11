@@ -25,9 +25,10 @@ namespace Mandarin.Reciprocals
 
 open Reciprocal
 
-/-- *dǎ-lái-dǎ-qù* 打来打去 'beat each other', the V-*lái*-V-*qù* compound. -/
+/-- The V-*lái*-V-*qù* compound, as *dǎ-lái-dǎ-qù* 打来打去 'beat each other': *lái* 'come' and
+*qù* 'go' follow the two copies of the verb. -/
 def compound : Marker :=
-  { form := "dǎ-lái-dǎ-qù", script := some "打来打去", strategy := .compoundVerb }
+  { morphs := [.suff "lái", .suff "qù"], script := some "打来打去", strategy := .compoundVerb }
 
 /-- The reciprocal markers. -/
 def markers : Finset Marker := {compound}

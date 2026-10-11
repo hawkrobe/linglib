@@ -3,11 +3,12 @@ module
 public import Mathlib.Data.Finset.Lattice.Fold
 public import Mathlib.Data.Fintype.Defs
 public import Mathlib.Tactic.DeriveFintype
+public import Linglib.Morphology.Morph
 
 /-!
 # Evidentials
 
-This file defines the evidential as a lexical object: a form, its realization, and the
+This file defines the evidential as a lexical object: an exponent, its realization, and the
 information sources it covers. Following [aikhenvald-2004], information source is carved into
 six recurrent semantic parameters — visual, non-visual sensory, inference, assumption, hearsay
 and quotative — and an evidential covers a set of them: a firsthand term covers visual and
@@ -77,14 +78,14 @@ inductive EvidenceType where
   | inferring
   deriving DecidableEq, Repr
 
-/-- The type of evidence a parameter falls under: Willett's types group the six parameters in
-pairs. -/
+/-- Each parameter falls under a type of evidence, Willett's types grouping the six parameters
+in pairs. -/
 def Parameter.evidenceType : Parameter → EvidenceType
   | .visual | .sensory => .attested
   | .inference | .assumption => .inferring
   | .hearsay | .quotative => .reported
 
-/-- The block of a type of evidence: the parameters falling under it. -/
+/-- The block of a type of evidence is the set of parameters falling under it. -/
 def EvidenceType.block (t : EvidenceType) : Finset Parameter :=
   Finset.univ.filter (·.evidenceType = t)
 
@@ -104,10 +105,10 @@ inductive Exponent where
 
 end Evidential
 
-/-- An evidential is a form with its realization and the information sources it covers. -/
+/-- An evidential is an exponent with its realization and the information sources it covers. -/
 structure Evidential where
-  /-- A representative morpheme or construction label. -/
-  form : String
+  /-- The exponent, in surface order. -/
+  morphs : List Morphology.Morph
   /-- The realization strategy. -/
   exponent : Evidential.Exponent
   /-- The semantic parameters the term covers; a term for a source outside the six covers

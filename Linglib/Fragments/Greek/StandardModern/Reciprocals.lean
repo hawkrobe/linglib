@@ -25,13 +25,13 @@ namespace Greek.StandardModern.Reciprocals
 open Reciprocal
 
 def nonactive : Marker :=
-  { form := "-ome", strategy := .verbalAffix
+  { morphs := [.suff "ome"], strategy := .verbalAffix
   , readings := {.reciprocal, .reflexive} }
 
 /-- *o enas ton allon* 'the one the other', the periphrastic reciprocal, which does not carry the
     reflexive reading. -/
 def oEnasTonAllon : Marker :=
-  { form := "o enas ton allon", strategy := .bipartiteNP }
+  { morphs := [.free "o", .free "enas", .free "ton", .free "allon"], strategy := .bipartiteNP }
 
 /-- Marker inventory. -/
 def markers : Finset Marker := {nonactive, oEnasTonAllon}
