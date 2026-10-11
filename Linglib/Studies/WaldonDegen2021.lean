@@ -65,9 +65,7 @@ counterpart of the scene with the two semantic values exchanged.
 
 namespace WaldonDegen2021
 
-open MeasureTheory ProbabilityTheory RSA
-open DegenEtAl2020 (Size Color noisy noisy_nonneg S1 S1_real_of_pair S1_real_eq_one
-  S1_apply_singleton_of_equiv gain gain_pos gain_one_left gain_swap_lt_iff div_div_eq_gain_one)
+open MeasureTheory ProbabilityTheory RSA DegenEtAl2020
 
 /-! ### Words and their meanings -/
 

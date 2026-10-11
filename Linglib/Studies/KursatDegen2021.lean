@@ -46,9 +46,7 @@ paper's findings off its printed statistics.
 
 namespace KursatDegen2021
 
-open Data.Experiments
-open DegenEtAl2020 (noisy noisy_nonneg S1 S1_real_of_pair gain gain_pos gain_one_left
-  gain_lt_gain_iff gain_swap_lt_iff)
+open Data.Experiments DegenEtAl2020
 
 /-! ### The critical display of the production experiment -/
 
