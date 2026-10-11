@@ -633,6 +633,13 @@ private theorem weight_ne_zero {x : ℝ≥0∞} {α : ℝ} (hα : 0 ≤ α) (hx 
     x ^ α * ENNReal.ofReal (Real.exp c) ≠ 0 :=
   mul_ne_zero (rpow_ne_zero_of_ne_zero hα hx) (ofReal_exp_ne_zero c)
 
+private theorem weight_toReal {x : ℝ≥0∞} (hx0 : x ≠ 0) (hx : x ≠ ∞) (α c : ℝ) :
+    (x ^ α * ENNReal.ofReal (Real.exp (-(α * c)))).toReal =
+      Real.exp (α * (Real.log x.toReal - c)) := by
+  rw [ENNReal.toReal_mul, ← ENNReal.toReal_rpow, Real.rpow_def_of_pos (ENNReal.toReal_pos hx0 hx),
+    ENNReal.toReal_ofReal (Real.exp_pos _).le, ← Real.exp_add]
+  congr 1; ring
+
 private theorem geomMean_weight_ne_top [Fintype W] {β ν : Measure W} [IsFiniteMeasure ν] {α : ℝ}
     (hα : 0 ≤ α) (c : ℝ) : β.geomMean (fun w ↦ ν {w}) ^ α * ENNReal.ofReal (Real.exp c) ≠ ∞ :=
   weight_ne_top hα (Measure.geomMean_ne_top fun _ _ ↦ measure_ne_top _ _) c
@@ -937,26 +944,30 @@ theorem speaker_dirac_real_singleton_div [IsFiniteKernel L] (hα : 0 ≤ α) (h 
     Real.exp_neg, Real.exp_neg]
   field_simp
 
-/-- With two utterances the share of one is the logistic function of its advantage over the
-other, the difference in log listener mass at the state less the difference in cost, scaled by
-the rationality. -/
-theorem speaker_dirac_real_singleton_of_pair [IsFiniteKernel L] (hα : 0 ≤ α) {u' : U}
-    (huu' : u ≠ u') (hall : ∀ v, v = u ∨ v = u') (hu : L u {w} ≠ 0) (hu' : L u' {w} ≠ 0) :
-    (speaker α C L Measure.dirac w).real {u'} =
-      Real.sigmoid (α * (Real.log ((L u' {w}).toReal / (L u {w}).toReal) - (C u' - C u))) := by
-  have hR : 0 < (L u' {w}).toReal / (L u {w}).toReal :=
-    div_pos (ENNReal.toReal_pos hu' (measure_ne_top _ _))
-      (ENNReal.toReal_pos hu (measure_ne_top _ _))
-  have := isProbabilityMeasure_speaker_dirac hα C L ⟨u, hu⟩
-  have hsum := measureReal_singleton_add_singleton_of_pair (speaker α C L Measure.dirac w) huu'
-    fun v _ ↦ hall v
-  have hp : 0 < (speaker α C L Measure.dirac w).real {u} :=
-    ENNReal.toReal_pos (speaker_dirac_apply_singleton_ne_zero hα hu) (measure_ne_top _ _)
-  have hodds := speaker_dirac_real_singleton_div (C := C) hα hu u'
-  rw [Real.rpow_def_of_pos hR, ← Real.exp_add, div_eq_iff hp.ne'] at hodds
-  rw [← sub_zero (α * _), ← Real.exp_div_add_exp_eq_sigmoid, Real.exp_zero,
-    eq_div_iff (by positivity), mul_sub, sub_eq_add_neg, mul_comm α (Real.log _)]
-  linear_combination hodds + Real.exp _ * hsum
+/-- Of two utterances with listener mass at the state, the speaker prefers the one of greater
+utility, the log of the listener's mass less the cost. -/
+theorem speaker_dirac_real_singleton_lt_iff_log [IsFiniteKernel L] (hα : 0 < α) {u' : U}
+    (hu : L u {w} ≠ 0) (hu' : L u' {w} ≠ 0) :
+    (speaker α C L Measure.dirac w).real {u} < (speaker α C L Measure.dirac w).real {u'} ↔
+      Real.log (L u {w}).toReal - C u < Real.log (L u' {w}).toReal - C u' := by
+  rw [speaker_dirac_real_singleton_lt_iff hα.le ⟨u, hu⟩,
+    ← ENNReal.toReal_lt_toReal (weight_ne_top hα.le (measure_ne_top _ _) _)
+      (weight_ne_top hα.le (measure_ne_top _ _) _),
+    weight_toReal hu (measure_ne_top _ _), weight_toReal hu' (measure_ne_top _ _),
+    Real.exp_lt_exp, mul_lt_mul_iff_of_pos_left hα]
+
+/-- When exactly two utterances have listener mass at the state, the share of one is the logistic
+function of its advantage in utility over the other, scaled by the rationality. -/
+theorem speaker_dirac_real_singleton_of_pair [IsFiniteKernel L] (hα : 0 < α) {u' : U}
+    (huu' : u ≠ u') (hu : L u {w} ≠ 0) (hu' : L u' {w} ≠ 0)
+    (hsupp : ∀ v, L v {w} ≠ 0 → v = u ∨ v = u') :
+    (speaker α C L Measure.dirac w).real {u} = Real.sigmoid
+      (α * ((Real.log (L u {w}).toReal - C u) - (Real.log (L u' {w}).toReal - C u'))) := by
+  rw [speaker_dirac_eq_ofWeights, Kernel.ofWeights_real_singleton_of_pair w huu'
+      (fun v ↦ weight_ne_top hα.le (measure_ne_top _ _) _)
+      (fun v hv ↦ hsupp v fun h ↦ hv (by rw [h, ENNReal.zero_rpow_of_pos hα, zero_mul])),
+    weight_toReal hu (measure_ne_top _ _), weight_toReal hu' (measure_ne_top _ _),
+    Real.exp_div_add_exp_eq_sigmoid, ← mul_sub]
 
 /-- With Boolean meanings, a state whose only true utterance is `u` produces `u` with
 certainty at any prior giving the state positive mass. -/
