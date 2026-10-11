@@ -1,35 +1,40 @@
 module
 
 public import Linglib.Studies.DegenEtAl2020
+public import Linglib.Data.Experiments.KursatDegen2021
 
 /-!
-# Kursat and Degen (2021): Perceptual Difficulty and Redundant Modification
+# Kursat and Degen (2021): Perceptual difficulty differences predict asymmetry in redundant modification with color and material adjectives
 
-This file formalizes the Perceptual Difficulty Hypothesis of Kursat and Degen: the noise attached to
-an adjective in the continuous-semantics model of Degen and colleagues reflects how hard it is to
-verify that an object has the property, so that harder properties are mentioned redundantly less
-often. The critical display of Experiment 2 is modelled as the paper describes it, a target, a
-competitor sharing the redundant property, and two distractors sharing the sufficient property with
-the competitor, with one noise channel per property. The speaker of Degen and colleagues prefers the
-redundant expression exactly when the redundant property's channel exceeds one half, whatever the
-sufficient property's channel (`redundant_preferred_iff`), so a material channel at or below one
-half and a colour channel above it yield redundant colour where material suffices and no redundant
-material where colour suffices (`perceptual_difficulty_asymmetry`).
+Kursat and Degen's Perceptual Difficulty Hypothesis. In the continuous-semantics model of Degen
+and colleagues an adjective is noisy to a degree, and the hypothesis is that the noise reflects
+how hard it is to see whether an object has the property, so the semantic value of an adjective
+falls as its property gets harder to verify. The model then predicts that a harder property is
+mentioned redundantly less often. This file derives the prediction for the critical display of the
+paper's production experiment, which shows a target, a competitor sharing the redundant property
+with it, and two distractors sharing the sufficient property with the competitor, and reads the
+paper's findings off its printed statistics.
 
-The reported effects of the three experiments are recorded as `Effect`s: material adjectives
-are verified less accurately and more slowly than colour adjectives, in isolation and in the
-production displays (`material_harder`); colour is mentioned redundantly more often than
-material (`color_more_redundant`); and perceptual difficulty within a property type does not
-predict redundancy, so only the weak version of the hypothesis is supported
-(`strong_version_unsupported`).
+## Main statements
+
+* `redundant_eq_sigmoid`: the probability of the redundant expression is a logistic function of
+  the informativeness the redundant adjective adds, less its extra cost.
+* `harder_property_less_redundant`: under the hypothesis, of two properties that trade the
+  sufficient and the redundant role the harder is mentioned redundantly less, at every positive
+  rationality and every cost. Material was found harder to verify than colour (`material_harder`)
+  and was mentioned redundantly less (`color_more_redundant`).
+* `harder_item_less_redundant`: under the hypothesis the same holds of two redundant properties
+  beside one sufficient property, the strong version of the hypothesis, for which the paper
+  found no evidence (`no_within_property_effect`).
 
 ## Implementation notes
 
-The model reuses the noise channel of Degen and colleagues. The scene is abstracted to the roles of
-its two properties, so a colour-redundant trial and a material-redundant trial are the same model
-with the channels swapped. Coefficients are the paper's, as printed; the response-time coefficient
-of Experiment 1 is printed with a standard error inconsistent with its t-statistic. Where the paper
-reports a p-value only as a bound, `Effect.p` records the bound.
+* The display is reduced to the roles of its two properties, so a colour-redundant trial and a
+  material-redundant trial are one model with the semantic values swapped, and the cost of an
+  expression depends only on how many adjectives it has.
+* The hypothesis is rendered as a strictly decreasing map from difficulty to semantic value. The
+  paper says only that the noise reflects the difficulty.
+* An effect counts as found when its printed p-value is below .05.
 
 ## References
 
@@ -41,181 +46,188 @@ reports a p-value only as a bound, `Effect.p` records the bound.
 
 namespace KursatDegen2021
 
-open MeasureTheory ProbabilityTheory RSA
-open DegenEtAl2020 (channel channel_nonneg)
-open scoped ENNReal
+open Data.Experiments
+open DegenEtAl2020 (noisy noisy_nonneg S1 S1_real_of_pair)
 
-/-! ### The critical display of Experiment 2 -/
+/-! ### The critical display of the production experiment -/
 
-/-- A critical trial shows four objects, the target, the competitor sharing the redundant
-property with it, and two distractors sharing the sufficient property with the competitor. -/
-inductive World where
+/-- A critical trial shows four objects of one kind, the target, a competitor that shares the
+redundant property with it, and two distractors that share the sufficient property with the
+competitor. -/
+inductive Object where
   | target
   | competitor
   | distractor₁
   | distractor₂
   deriving DecidableEq, Repr, Inhabited, Fintype
 
-instance : MeasurableSpace World := ⊤
-instance : DiscreteMeasurableSpace World := ⟨fun _ => trivial⟩
+instance : MeasurableSpace Object := ⊤
+instance : DiscreteMeasurableSpace Object := ⟨fun _ ↦ trivial⟩
 
-/-- Whether an object has the target's sufficient property. -/
-def World.hasSufficient : World → Bool
-  | .target => true
-  | .competitor | .distractor₁ | .distractor₂ => false
-
-/-- Whether an object has the target's redundant property. -/
-def World.hasRedundant : World → Bool
-  | .target | .competitor => true
-  | .distractor₁ | .distractor₂ => false
-
-/-- A referring expression uses the sufficient adjective alone or both adjectives. -/
+/-- A referring expression has the sufficient adjective alone or both adjectives. -/
 inductive Utterance where
   | sufficient
   | redundant
   deriving DecidableEq, Repr, Inhabited, Fintype
 
 instance : MeasurableSpace Utterance := ⊤
-instance : DiscreteMeasurableSpace Utterance := ⟨fun _ => trivial⟩
+instance : DiscreteMeasurableSpace Utterance := ⟨fun _ ↦ trivial⟩
 
-/-- In the continuous meaning with channel `xs` for the sufficient property and `xr` for the
-redundant one, each mentioned adjective holds of an object to degree `x` when it matches and
-`1 − x` when it does not. -/
-def meaning (xs xr : ℝ) : Utterance → World → ℝ
-  | .sufficient, w => channel xs (some true) w.hasSufficient
-  | .redundant, w => channel xs (some true) w.hasSufficient * channel xr (some true) w.hasRedundant
+/-- The continuous meaning gives the sufficient adjective the semantic value `xs` and the
+redundant one `xr`. The Boolean extension of the sufficient adjective is the target alone, and
+that of the redundant adjective is the target and the competitor. -/
+def meaning (xs xr : ℝ) : Utterance → Object → ℝ
+  | .sufficient, o => noisy xs (o = .target)
+  | .redundant, o => noisy xs (o = .target) * noisy xr (o = .target ∨ o = .competitor)
 
 section Model
 
-variable {xs xr : ℝ}
+variable {xs xr xr' α : ℝ} {C : Utterance → ℝ}
 
 theorem meaning_nonneg (hs0 : 0 ≤ xs) (hs1 : xs ≤ 1) (hr0 : 0 ≤ xr) (hr1 : xr ≤ 1)
-    (u : Utterance) (w : World) : 0 ≤ meaning xs xr u w := by
-  cases u <;> simp only [meaning]
-  · exact channel_nonneg hs0 hs1 _ _
-  · exact mul_nonneg (channel_nonneg hs0 hs1 _ _) (channel_nonneg hr0 hr1 _ _)
+    (u : Utterance) (o : Object) : 0 ≤ meaning xs xr u o := by
+  cases u
+  · exact noisy_nonneg hs0 hs1 _
+  · exact mul_nonneg (noisy_nonneg hs0 hs1 _) (noisy_nonneg hr0 hr1 _)
 
-/-- The literal listener normalizes the meaning over the display at a uniform prior. -/
-noncomputable def L0 (xs xr : ℝ) : Kernel Utterance World :=
-  Kernel.ofDensity (uniformOn Set.univ) fun u w => ENNReal.ofReal (meaning xs xr u w)
-
-instance (xs xr : ℝ) : IsFiniteKernel (L0 xs xr) :=
-  inferInstanceAs (IsFiniteKernel (Kernel.ofDensity _ _))
-
-/-- The speaker with unit informativeness weight and no cost. -/
-noncomputable def S1 (xs xr : ℝ) : Kernel World Utterance := speaker 1 0 (L0 xs xr) Measure.dirac
-
-private theorem sum_world (f : World → ℝ) :
-    ∑ w, f w = f .target + f .competitor + f .distractor₁ + f .distractor₂ := by
-  rw [show (Finset.univ : Finset World) =
+private theorem sum_object (f : Object → ℝ) :
+    ∑ o, f o = f .target + f .competitor + f .distractor₁ + f .distractor₂ := by
+  rw [show (Finset.univ : Finset Object) =
       {.target, .competitor, .distractor₁, .distractor₂} from rfl,
     Finset.sum_insert (by decide), Finset.sum_insert (by decide), Finset.sum_insert (by decide),
     Finset.sum_singleton]
   ring
 
-private theorem row_sufficient : ∑ w, meaning xs xr .sufficient w = 3 - 2 * xs := by
-  rw [sum_world]
-  simp [meaning, channel, World.hasSufficient]
+/-- The speaker's probability of the redundant expression for the target is a logistic function
+of the log of the informativeness the redundant adjective adds, the ratio of the listener's
+probabilities of the target under the two expressions, less the extra cost. -/
+theorem redundant_eq_sigmoid (hα : 0 ≤ α) (hs0 : 0 < xs) (hs1 : xs ≤ 1) (hr0 : 0 < xr)
+    (hr1 : xr ≤ 1) :
+    (S1 α C (meaning xs xr) .target).real {.redundant} = Real.sigmoid (α * (Real.log
+      (xr * (3 - 2 * xs) / (xr + 2 * (1 - xs) * (1 - xr))) -
+        (C .redundant - C .sufficient))) := by
+  have hden : 0 < xr + 2 * (1 - xs) * (1 - xr) := by nlinarith
+  rw [S1_real_of_pair hα (u := .sufficient) (by decide) (fun v ↦ by cases v <;> simp)
+    (meaning_nonneg hs0.le hs1 hr0.le hr1) (by simp [meaning, noisy, hs0])
+    (by simp [meaning, noisy]; positivity), sum_object, sum_object]
+  simp only [meaning, noisy, reduceCtorEq, ↓reduceIte, or_false, or_true, or_self]
+  congr 4
+  field_simp
   ring
 
-private theorem row_redundant :
-    ∑ w, meaning xs xr .redundant w = xr + 2 * (1 - xs) * (1 - xr) := by
-  rw [sum_world]
-  simp [meaning, channel, World.hasSufficient, World.hasRedundant]
+private theorem gain_pos (hs0 : 0 < xs) (hs1 : xs ≤ 1) (hr0 : 0 < xr) (hr1 : xr ≤ 1) :
+    0 < xr * (3 - 2 * xs) / (xr + 2 * (1 - xs) * (1 - xr)) :=
+  div_pos (by nlinarith) (by nlinarith)
+
+/-- Beside a Boolean sufficient adjective the redundant one adds no information, and the
+probability of the redundant expression does not depend on its noise. -/
+theorem redundant_of_boolean_sufficient (hα : 0 ≤ α) (hr0 : 0 < xr) (hr1 : xr ≤ 1) :
+    (S1 α C (meaning 1 xr) .target).real {.redundant} =
+      Real.sigmoid (-(α * (C .redundant - C .sufficient))) := by
+  rw [redundant_eq_sigmoid hα one_pos le_rfl hr0 hr1]
+  norm_num [hr0.ne']
   ring
 
-/-- The redundant expression is preferred for the target exactly when the redundant property's
-channel exceeds one half, whatever the sufficient property's channel short of Boolean. -/
-theorem redundant_preferred_iff (hs0 : 0 < xs) (hs1 : xs < 1) (hr0 : 0 < xr) (hr1 : xr ≤ 1) :
-    (S1 xs xr .target).real {.sufficient} < (S1 xs xr .target).real {.redundant} ↔ 1/2 < xr := by
-  have hnn := meaning_nonneg hs0.le hs1.le hr0.le hr1
-  have hsuf : 0 < 3 - 2 * xs := by linarith
-  have hred : 0 < xr + 2 * (1 - xs) * (1 - xr) := by nlinarith
-  have h1 := Kernel.ofDensity_uniformOn_ofReal_apply_singleton (meaning xs xr) .sufficient
-    World.target (hnn _) (by rw [row_sufficient]; exact hsuf)
-  have h2 := Kernel.ofDensity_uniformOn_ofReal_apply_singleton (meaning xs xr) .redundant
-    World.target (hnn _) (by rw [row_redundant]; exact hred)
-  have hm1 : meaning xs xr .sufficient .target = xs := by
-    simp [meaning, channel, World.hasSufficient]
-  have hm2 : meaning xs xr .redundant .target = xs * xr := by
-    simp [meaning, channel, World.hasSufficient, World.hasRedundant]
-  rw [S1]
-  refine (speaker_dirac_real_singleton_lt_iff (L := L0 xs xr) (w := World.target) zero_le_one
-    ⟨.redundant, ?_⟩).trans ?_
-  · rw [L0, h2, row_redundant, hm2]
-    exact (ENNReal.ofReal_pos.mpr (div_pos (mul_pos hs0 hr0) hred)).ne'
-  · simp only [ENNReal.rpow_one, Pi.zero_apply, mul_zero, neg_zero, Real.exp_zero,
-      ENNReal.ofReal_one, mul_one, L0]
-    rw [h1, h2, row_sufficient, row_redundant, hm1, hm2,
-      ENNReal.ofReal_lt_ofReal_iff (div_pos (mul_pos hs0 hr0) hred), div_lt_div_iff₀ hsuf hred]
-    have hk : 0 < xs * (1 - xs) := mul_pos hs0 (by linarith)
-    constructor <;> intro h <;> nlinarith [hk]
+private theorem redundant_lt_redundant_iff {xs' : ℝ} (hα : 0 < α) (hs0 : 0 < xs) (hs1 : xs ≤ 1)
+    (hr0 : 0 < xr) (hr1 : xr ≤ 1) (hs0' : 0 < xs') (hs1' : xs' ≤ 1) (hr0' : 0 < xr')
+    (hr1' : xr' ≤ 1) :
+    (S1 α C (meaning xs xr) .target).real {.redundant} <
+        (S1 α C (meaning xs' xr') .target).real {.redundant} ↔
+      0 < xr' * (3 - 2 * xs') * (xr + 2 * (1 - xs) * (1 - xr)) -
+        xr * (3 - 2 * xs) * (xr' + 2 * (1 - xs') * (1 - xr')) := by
+  rw [redundant_eq_sigmoid hα.le hs0 hs1 hr0 hr1, redundant_eq_sigmoid hα.le hs0' hs1' hr0' hr1',
+    Real.sigmoid_lt_iff, mul_lt_mul_iff_right₀ hα, sub_lt_sub_iff_right,
+    Real.log_lt_log_iff (gain_pos hs0 hs1 hr0 hr1) (gain_pos hs0' hs1' hr0' hr1'),
+    div_lt_div_iff₀ (by nlinarith) (by nlinarith), sub_pos]
+
+/-- Beside one sufficient adjective short of Boolean, the redundant expression is the likelier
+the less noisy the redundant adjective. -/
+theorem redundant_lt_iff (hα : 0 < α) (hs0 : 0 < xs) (hs1 : xs < 1) (hr0 : 0 < xr)
+    (hr1 : xr ≤ 1) (hr0' : 0 < xr') (hr1' : xr' ≤ 1) :
+    (S1 α C (meaning xs xr) .target).real {.redundant} <
+      (S1 α C (meaning xs xr') .target).real {.redundant} ↔ xr < xr' := by
+  rw [redundant_lt_redundant_iff hα hs0 hs1.le hr0 hr1 hs0 hs1.le hr0' hr1',
+    show xr' * (3 - 2 * xs) * (xr + 2 * (1 - xs) * (1 - xr)) -
+        xr * (3 - 2 * xs) * (xr' + 2 * (1 - xs) * (1 - xr')) =
+      (xr' - xr) * ((3 - 2 * xs) * (2 * (1 - xs))) by ring,
+    mul_pos_iff_of_pos_right (mul_pos (by linarith) (by linarith)), sub_pos]
+
+/-- When two adjectives trade the sufficient and the redundant role, the redundant expression is
+the likelier on the trial whose redundant adjective is the less noisy of the two. -/
+theorem redundant_swap_lt_iff {x₁ x₂ : ℝ} (hα : 0 < α) (h₁0 : 0 < x₁) (h₁1 : x₁ ≤ 1)
+    (h₂0 : 0 < x₂) (h₂1 : x₂ ≤ 1) :
+    (S1 α C (meaning x₂ x₁) .target).real {.redundant} <
+      (S1 α C (meaning x₁ x₂) .target).real {.redundant} ↔ x₁ < x₂ := by
+  have hk : 0 < 2 * (x₁ * x₂) + 6 * ((1 - x₁) * (1 - x₂)) := by
+    nlinarith [mul_pos h₁0 h₂0, mul_nonneg (sub_nonneg.2 h₁1) (sub_nonneg.2 h₂1)]
+  rw [redundant_lt_redundant_iff hα h₂0 h₂1 h₁0 h₁1 h₁0 h₁1 h₂0 h₂1,
+    show x₂ * (3 - 2 * x₁) * (x₁ + 2 * (1 - x₂) * (1 - x₁)) -
+        x₁ * (3 - 2 * x₂) * (x₂ + 2 * (1 - x₁) * (1 - x₂)) =
+      (x₂ - x₁) * (2 * (x₁ * x₂) + 6 * ((1 - x₁) * (1 - x₂))) by ring,
+    mul_pos_iff_of_pos_right hk, sub_pos]
 
 end Model
 
-/-- With the material channel at or below one half and the colour channel above it, redundant
-colour is preferred where material suffices and redundant material is dispreferred where colour
-suffices, the Perceptual Difficulty Hypothesis in the model. -/
-theorem perceptual_difficulty_asymmetry {xm xc : ℝ} (hm0 : 0 < xm) (hm : xm ≤ 1/2)
-    (hc : 1/2 < xc) (hc1 : xc < 1) :
-    (S1 xm xc .target).real {.sufficient} < (S1 xm xc .target).real {.redundant} ∧
-      ¬ (S1 xc xm .target).real {.sufficient} < (S1 xc xm .target).real {.redundant} :=
-  ⟨(redundant_preferred_iff hm0 (by linarith) (by linarith) hc1.le).2 hc,
-   fun h ↦ absurd ((redundant_preferred_iff (by linarith) hc1 hm0 (by linarith)).1 h)
-     (not_lt.2 hm)⟩
+/-! ### The hypothesis
 
-/-! ### The reported effects -/
+The semantic value of an adjective is a strictly decreasing function `x` of the difficulty of
+verifying its property, with values strictly between zero and one. -/
 
-/-- A fixed effect records, as the paper reports it, the coefficient, the standard error, and
-the p-value or its reported bound. -/
-structure Effect where
-  /-- The coefficient. -/
-  beta : ℚ
-  /-- The standard error. -/
-  se : ℚ
-  /-- The p-value, or its reported upper bound. -/
-  p : ℚ
+section Hypothesis
 
-/-- The effect of material against colour on the log odds of an error in Experiment 1. -/
-def exp1Error : Effect := ⟨48/100, 12/100, 1/10000⟩
+variable {D : Type*} [LinearOrder D] {x : D → ℝ} {α : ℝ} {C : Utterance → ℝ}
 
-/-- The effect of material against colour on response time in Experiment 1, as printed. -/
-def exp1RT : Effect := ⟨544/100, 474/100, 1/10000⟩
+/-- Of two properties that trade the sufficient and the redundant role, the harder to verify is
+mentioned redundantly less. -/
+theorem harder_property_less_redundant (hx : StrictAnti x) (hx01 : ∀ d, x d ∈ Set.Ioo 0 1)
+    (hα : 0 < α) (d d' : D) :
+    (S1 α C (meaning (x d) (x d')) .target).real {.redundant} <
+      (S1 α C (meaning (x d') (x d)) .target).real {.redundant} ↔ d < d' :=
+  (redundant_swap_lt_iff hα (hx01 d').1 (hx01 d').2.le (hx01 d).1 (hx01 d).2.le).trans
+    hx.lt_iff_gt
 
-/-- The effect of colour against material on the log odds of redundant mention in
-Experiment 2. -/
-def exp2Redundancy : Effect := ⟨232/100, 64/100, 1/10000⟩
+/-- Beside one sufficient property, the harder of two redundant properties is mentioned
+redundantly less. This is the strong version of the hypothesis, on which difficulty predicts
+redundancy within a property type. -/
+theorem harder_item_less_redundant (hx : StrictAnti x) (hx01 : ∀ d, x d ∈ Set.Ioo 0 1)
+    (hα : 0 < α) (s d d' : D) :
+    (S1 α C (meaning (x s) (x d')) .target).real {.redundant} <
+      (S1 α C (meaning (x s) (x d)) .target).real {.redundant} ↔ d < d' :=
+  (redundant_lt_iff hα (hx01 s).1 (hx01 s).2 (hx01 d').1 (hx01 d').2.le (hx01 d).1
+    (hx01 d).2.le).trans hx.lt_iff_gt
 
-/-- The effect of material against colour on the log odds of an error in Experiment 3. -/
-def exp3Error : Effect := ⟨96/100, 9/100, 1/10000⟩
+end Hypothesis
 
-/-- The effect of material against colour on log response time in Experiment 3. -/
-def exp3RT : Effect := ⟨24/100, 18/1000, 1/10000⟩
+/-! ### The findings -/
 
-/-- The effect of residualized perceptual difficulty on redundancy in Experiment 3. -/
-def withinDifficulty : Effect := ⟨-113/10, 1641/100, 49/100⟩
+/-- A printed p-value is below .05 when it is an upper bound of at most .05 or a value under
+it. -/
+def Bound.Significant : Bound → Decimal → Prop
+  | .below, p => p.toRat ≤ 5 / 100
+  | .exact, p => p.toRat < 5 / 100
 
-/-- The interaction of property type with residualized difficulty in Experiment 3. -/
-def withinInteraction : Effect := ⟨1357/100, 3187/100, 67/100⟩
+instance : ∀ b p, Decidable (Bound.Significant b p)
+  | .below, _ => inferInstanceAs (Decidable (_ ≤ _))
+  | .exact, _ => inferInstanceAs (Decidable (_ < _))
 
-/-- The effect of the residualized log ratio of sufficient to redundant response time in
-Experiment 3. -/
-def withinLogRatio : Effect := ⟨531/100, 387/100, 17/100⟩
+/-- Material was harder to verify than colour. In both norming experiments it raised the error
+rate and the response time. -/
+theorem material_harder (e : Norming) (m : DifficultyMeasure) :
+    0 < (verification e m).beta.toRat ∧
+      (verification e m).bound.Significant (verification e m).p := by
+  revert e m; decide +kernel
 
-/-- Material is harder to verify than colour, with more errors and longer response times, in
-isolation and in the production displays. -/
-theorem material_harder :
-    0 < exp1Error.beta ∧ 0 < exp1RT.beta ∧ 0 < exp3Error.beta ∧ 0 < exp3RT.beta := by
-  norm_num [exp1Error, exp1RT, exp3Error, exp3RT]
+/-- Colour was mentioned redundantly more often than material. -/
+theorem color_more_redundant :
+    0 < (redundantUse .redundantProperty).beta.toRat ∧
+      (redundantUse .redundantProperty).bound.Significant (redundantUse .redundantProperty).p := by
+  decide +kernel
 
-/-- Colour is mentioned redundantly more often than material. -/
-theorem color_more_redundant : 0 < exp2Redundancy.beta := by
-  norm_num [exp2Redundancy]
-
-/-- The strong version of the hypothesis, difficulty predicting redundancy within a property
-type, finds no support, since none of the three within-property tests reaches significance. -/
-theorem strong_version_unsupported :
-    1/20 < withinDifficulty.p ∧ 1/20 < withinInteraction.p ∧ 1/20 < withinLogRatio.p := by
-  norm_num [withinDifficulty, withinInteraction, withinLogRatio]
+/-- No measure of difficulty within a property type predicted redundant mention, so the strong
+version of the hypothesis found no support. -/
+theorem no_within_property_effect :
+    ∀ r ∈ [Predictor.difficulty, .interaction, .logRatio],
+      ¬ (redundantUse r).bound.Significant (redundantUse r).p := by
+  decide +kernel
 
 end KursatDegen2021

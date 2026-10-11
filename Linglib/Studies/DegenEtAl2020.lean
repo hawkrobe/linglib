@@ -6,35 +6,42 @@ public import Linglib.Semantics.Reference.Distinguishing
 public import Mathlib.Algebra.Order.Field.Basic
 
 /-!
-# Degen, Hawkins, Graf, Kreiss and Goodman (2020): When Redundancy Is Useful
+# Degen, Hawkins, Graf, Kreiss and Goodman (2020): When Redundancy Is Useful: A Bayesian Approach to "Overinformative" Referring Expressions
 
-This file formalizes the continuous-semantics rational speech act model of Degen and colleagues. A
-referring expression's meaning is a value in the unit interval rather than a truth value: each
-mentioned adjective is a noise channel, a size or colour predicate holding of an object to degree
-x_size or x_colour when it matches and to degree 1 − x when it does not, and a two-adjective
-expression multiplies its channels, (5) and (6). The literal listener of (1) normalizes the meaning
-over the objects at a uniform prior, and the speaker of (3) and (4), here with unit informativeness
-weight and no cost as in Frank and Goodman's model, chooses an expression in proportion to the
-listener's probability of the intended object. A redundant modifier then adds information: for the
-small blue pin among a big blue and a big red one, the speaker prefers the redundant *small blue* to
-the sufficient *small* exactly when the colour channel exceeds one half, and for the big red pin
-prefers *big red* to *red* exactly when the size channel does; with Boolean channels, both values
-one, there is no preference either way. The same mechanism with a typicality meaning gives the
-choice of taxonomic level of Experiment 3: the subordinate term is preferred to the basic-level term
-exactly when it is the more informative of the two about the target, typicality replacing the noise
-channel.
+Degen and colleagues' rational speech act model with a continuous semantics. A referring
+expression holds of an object to a degree in the unit interval. An adjective of semantic value `x`
+holds to degree `x` of the objects in its Boolean extension and to degree `1 − x` of the others,
+and an expression of two adjectives multiplies their degrees. The literal listener normalizes the
+degrees over the objects of the context, and the speaker chooses an expression in proportion to
+the exponential of its utility, the log of the listener's probability of the intended object less
+the cost of the expression. An adjective that the Boolean semantics makes redundant then adds
+information, and adds more the less noisy it is.
+
+## Main statements
+
+* `overmodification_odds_lt_iff`: among the three pins of the paper's first figure the speaker
+  adds a redundant colour to a sufficient size more readily than a redundant size to a sufficient
+  colour exactly when size is the noisier of the two, at every positive rationality and when the
+  two redundant adjectives cost the same.
+* `color_overmodification_iff`, `size_overmodification_iff`: without cost the redundant
+  expression is preferred to the sufficient one exactly when the semantic value of the redundant
+  adjective exceeds one half.
+* `boolean_no_preference`: with Boolean values the redundant adjective adds nothing.
+
+## Implementation notes
+
+* `S1` is `RSA.speaker`, whose rationality `α` scales the whole utility. The paper weights
+  informativeness and cost separately and notes that the two parameterizations are equivalent.
+* The listener and the speaker take any graded meaning, so the typicality semantics of the
+  paper's third experiment is the same model at another meaning, and `S1_real_lt_iff` is its
+  preference for the term of greater utility.
 
 ## TODO
 
 * Tables 2 and 3 do not follow from Equation (1) at the stated values x_size = .8 and
-  x_colour = .99: Equation (1) gives the literal listener 0.67 for *small* and 0.80 for *small
-  blue* at the small blue pin, where the table has .48 and .50, and gives the redundant *big
-  red* a larger value than *red* at the big red pin, where the table has .52 against .57; the
-  table's values match a listener proportional to the exponential of the meaning. The theorems
-  follow the equations, on which the colour–size asymmetry is the regime x_size ≤ 1/2 < x_colour
-  rather than the stated values.
-* The regression coefficients and the fitted noise parameters of the three experiments are not
-  encoded.
+  x_colour = .99. Their values match a listener proportional to the exponential of the meaning.
+  The theorems follow the equations.
+* The regression coefficients and the fitted parameters of the three experiments are not encoded.
 
 ## References
 
@@ -47,30 +54,143 @@ channel.
 namespace DegenEtAl2020
 
 open MeasureTheory ProbabilityTheory RSA
-open scoped ENNReal
 
-/-! ### The scene of Figure 1a -/
+/-! ### Continuous semantics -/
+
+/-- An adjective of semantic value `x` holds to degree `x` of an object in its Boolean extension
+and to degree `1 − x` of any other, (6). -/
+def noisy (x : ℝ) (p : Prop) [Decidable p] : ℝ := if p then x else 1 - x
+
+theorem noisy_nonneg {x : ℝ} (h0 : 0 ≤ x) (h1 : x ≤ 1) (p : Prop) [Decidable p] :
+    0 ≤ noisy x p := by
+  unfold noisy; split_ifs <;> linarith
+
+/-! ### Listener and speaker -/
+
+section Model
+
+variable {E U : Type*} [Fintype E]
+
+private theorem sum_pos_of_pos {m : U → E → ℝ} {u : U} {o : E} (hm : ∀ v o', 0 ≤ m v o')
+    (h : 0 < m u o) : 0 < ∑ o', m u o' :=
+  Finset.sum_pos' (fun o' _ ↦ hm u o') ⟨o, Finset.mem_univ o, h⟩
+
+variable [Nonempty E] [MeasurableSpace E] [MeasurableSingletonClass E] [Fintype U]
+  [MeasurableSpace U] [MeasurableSingletonClass U]
+
+/-- The literal listener (1) normalizes the meaning of an expression over the objects at a
+uniform prior. -/
+noncomputable def L0 (m : U → E → ℝ) : Kernel U E :=
+  Kernel.ofDensity (uniformOn Set.univ) fun u o ↦ ENNReal.ofReal (m u o)
+
+instance (m : U → E → ℝ) : IsFiniteKernel (L0 m) :=
+  inferInstanceAs (IsFiniteKernel (Kernel.ofDensity _ _))
+
+/-- The speaker of (3) and (4) at rationality `α` chooses an expression in proportion to the
+exponential of `α` times its utility, the log of the listener's probability of the object less
+the cost `C`. -/
+noncomputable def S1 (α : ℝ) (C : U → ℝ) (m : U → E → ℝ) : Kernel E U :=
+  speaker α C (L0 m) Measure.dirac
+
+instance (α : ℝ) (C : U → ℝ) (m : U → E → ℝ) : IsFiniteKernel (S1 α C m) :=
+  inferInstanceAs (IsFiniteKernel (speaker _ _ _ _))
+
+variable {m : U → E → ℝ} {α : ℝ} {C : U → ℝ} {u u' : U} {o : E}
+
+/-- The listener's probability of an object is the share of its degree in the row. -/
+theorem L0_apply (hm : ∀ o', 0 ≤ m u o') (hpos : 0 < ∑ o', m u o') (o : E) :
+    L0 m u {o} = ENNReal.ofReal (m u o / ∑ o', m u o') :=
+  Kernel.ofDensity_uniformOn_ofReal_apply_singleton _ u o hm hpos
+
+theorem L0_real_singleton (hm : ∀ o', 0 ≤ m u o') (hpos : 0 < ∑ o', m u o') (o : E) :
+    (L0 m u).real {o} = m u o / ∑ o', m u o' := by
+  rw [measureReal_def, L0_apply hm hpos, ENNReal.toReal_ofReal (div_nonneg (hm o) hpos.le)]
+
+private theorem L0_ne_zero (hm : ∀ v o', 0 ≤ m v o') (h : 0 < m u o) : L0 m u {o} ≠ 0 := by
+  rw [L0_apply (hm u) (sum_pos_of_pos hm h)]
+  exact (ENNReal.ofReal_pos.2 (div_pos h (sum_pos_of_pos hm h))).ne'
+
+/-- The odds of one expression against another for an object are the ratio of the listener's
+probabilities of the object to the power `α`, discounted by the difference in cost. -/
+theorem S1_real_div (hα : 0 ≤ α) (hm : ∀ v o', 0 ≤ m v o') (hu : 0 < m u o) (hu' : 0 < m u' o) :
+    (S1 α C m o).real {u'} / (S1 α C m o).real {u} =
+      ((m u' o / ∑ o', m u' o') / (m u o / ∑ o', m u o')) ^ α *
+        Real.exp (-(α * (C u' - C u))) := by
+  rw [S1, speaker_dirac_real_singleton_div hα (L0_ne_zero hm hu), ← measureReal_def,
+    ← measureReal_def, L0_real_singleton (hm u) (sum_pos_of_pos hm hu),
+    L0_real_singleton (hm u') (sum_pos_of_pos hm hu')]
+
+/-- The speaker prefers the expression of greater utility. -/
+theorem S1_real_lt_iff (hα : 0 < α) (hm : ∀ v o', 0 ≤ m v o') (hu : 0 < m u o)
+    (hu' : 0 < m u' o) :
+    (S1 α C m o).real {u} < (S1 α C m o).real {u'} ↔
+      Real.log (m u o / ∑ o', m u o') - C u < Real.log (m u' o / ∑ o', m u' o') - C u' := by
+  have hr := div_pos hu (sum_pos_of_pos hm hu)
+  have hr' := div_pos hu' (sum_pos_of_pos hm hu')
+  have hp : 0 < (S1 α C m o).real {u} := ENNReal.toReal_pos
+    (speaker_dirac_apply_singleton_ne_zero hα.le (L0_ne_zero hm hu)) (measure_ne_top _ _)
+  rw [← one_lt_div hp, S1_real_div hα.le hm hu hu', Real.rpow_def_of_pos (div_pos hr' hr),
+    ← Real.exp_add, Real.one_lt_exp_iff, Real.log_div hr'.ne' hr.ne']
+  constructor <;> intro h <;> nlinarith
+
+/-- With two expressions the probability of one is the logistic function of its advantage in
+utility over the other, scaled by the rationality. -/
+theorem S1_real_of_pair (hα : 0 ≤ α) (huu' : u ≠ u') (hall : ∀ v, v = u ∨ v = u')
+    (hm : ∀ v o', 0 ≤ m v o') (hu : 0 < m u o) (hu' : 0 < m u' o) :
+    (S1 α C m o).real {u'} = Real.sigmoid (α * (Real.log
+      ((m u' o / ∑ o', m u' o') / (m u o / ∑ o', m u o')) - (C u' - C u))) := by
+  rw [S1, speaker_dirac_real_singleton_of_pair hα huu' hall (L0_ne_zero hm hu)
+      (L0_ne_zero hm hu'), ← measureReal_def, ← measureReal_def,
+    L0_real_singleton (hm u) (sum_pos_of_pos hm hu),
+    L0_real_singleton (hm u') (sum_pos_of_pos hm hu')]
+
+/-- A description distinguishes an object under the literal listener, so that the object is the
+listener's best guess, exactly when it does under the meaning. -/
+theorem distinguishes_L0_iff (hm : ∀ o', 0 ≤ m u o') (hpos : 0 < ∑ o', m u o') (D : Finset E)
+    (r : E) :
+    Reference.Distinguishes (fun u o ↦ L0 m u {o}) D r u ↔ Reference.Distinguishes m D r u :=
+  forall₂_congr fun c _ ↦ by
+    change L0 m u {c} < L0 m u {r} ↔ _
+    rw [L0_apply hm hpos, L0_apply hm hpos,
+      ENNReal.ofReal_lt_ofReal_iff_of_nonneg (div_nonneg (hm c) hpos.le),
+      div_lt_div_iff_of_pos_right hpos]
+
+end Model
+
+/-! ### The pins of the first figure -/
+
+/-- The sizes of the pins. -/
+inductive Size where
+  | big
+  | small
+  deriving DecidableEq, Repr
+
+/-- The colours of the pins. -/
+inductive Color where
+  | blue
+  | red
+  deriving DecidableEq, Repr
 
 /-- The size-sufficient context has three pins, the target small blue pin, a big blue one and
 a big red one. -/
-inductive World where
+inductive Pin where
   | bigBlue
   | bigRed
   | smallBlue
   deriving DecidableEq, Repr, Inhabited, Fintype
 
-instance : MeasurableSpace World := ⊤
-instance : DiscreteMeasurableSpace World := ⟨fun _ => trivial⟩
+instance : MeasurableSpace Pin := ⊤
+instance : DiscreteMeasurableSpace Pin := ⟨fun _ ↦ trivial⟩
 
-/-- Whether a pin is big. -/
-def World.big : World → Bool
-  | .bigBlue | .bigRed => true
-  | .smallBlue => false
+/-- The size of a pin. -/
+def Pin.size : Pin → Size
+  | .bigBlue | .bigRed => .big
+  | .smallBlue => .small
 
-/-- Whether a pin is blue. -/
-def World.blue : World → Bool
-  | .bigBlue | .smallBlue => true
-  | .bigRed => false
+/-- The colour of a pin. -/
+def Pin.color : Pin → Color
+  | .bigBlue | .smallBlue => .blue
+  | .bigRed => .red
 
 /-- The seven referring expressions name a size, a colour, or both, each followed by
 *pin*. -/
@@ -85,280 +205,165 @@ inductive Utterance where
   deriving DecidableEq, Repr, Inhabited, Fintype
 
 instance : MeasurableSpace Utterance := ⊤
-instance : DiscreteMeasurableSpace Utterance := ⟨fun _ => trivial⟩
+instance : DiscreteMeasurableSpace Utterance := ⟨fun _ ↦ trivial⟩
 
-/-- The size an expression mentions, `true` for big. -/
-def Utterance.size : Utterance → Option Bool
-  | .big | .bigBlue | .bigRed => some true
-  | .small | .smallBlue => some false
+/-- The size an expression names, if any. -/
+def Utterance.size : Utterance → Option Size
+  | .big | .bigBlue | .bigRed => some .big
+  | .small | .smallBlue => some .small
   | .blue | .red => none
 
-/-- The colour an expression mentions, `true` for blue. -/
-def Utterance.color : Utterance → Option Bool
-  | .blue | .bigBlue | .smallBlue => some true
-  | .red | .bigRed => some false
+/-- The colour an expression names, if any. -/
+def Utterance.color : Utterance → Option Color
+  | .blue | .bigBlue | .smallBlue => some .blue
+  | .red | .bigRed => some .red
   | .big | .small => none
 
-/-- The demonstration value x_size = .8 of Tables 2 and 3, footnote 14. -/
-def sizeMatch : ℚ := 8/10
-
-/-- The mismatch degree 1 − x_size. -/
-def sizeMismatch : ℚ := 2/10
-
-/-- The demonstration value x_colour = .99. -/
-def colorMatch : ℚ := 99/100
-
-/-- The mismatch degree 1 − x_colour. -/
-def colorMismatch : ℚ := 1/100
-
-/-! ### Continuous semantics -/
-
-/-- Under a noise channel a mentioned feature holds of an object to degree `x` when it matches
-and `1 − x` when it does not, and an unmentioned feature contributes nothing. -/
-def channel (x : ℝ) : Option Bool → Bool → ℝ
-  | none, _ => 1
-  | some b, a => if b = a then x else 1 - x
-
-/-- The continuous meaning of (5) and (6) is the product of the size and colour channels. -/
-def meaning (xs xc : ℝ) (u : Utterance) (w : World) : ℝ :=
-  channel xs u.size w.big * channel xc u.color w.blue
-
-section Model
-
-variable {xs xc : ℝ}
-
-theorem channel_nonneg {x : ℝ} (h0 : 0 ≤ x) (h1 : x ≤ 1) (o : Option Bool) (a : Bool) :
-    0 ≤ channel x o a := by
-  cases o with
-  | none => exact zero_le_one
-  | some b => simp only [channel]; split_ifs <;> linarith
-
-theorem meaning_nonneg (hs0 : 0 ≤ xs) (hs1 : xs ≤ 1) (hc0 : 0 ≤ xc) (hc1 : xc ≤ 1)
-    (u : Utterance) (w : World) : 0 ≤ meaning xs xc u w :=
-  mul_nonneg (channel_nonneg hs0 hs1 _ _) (channel_nonneg hc0 hc1 _ _)
-
-/-- The literal listener (1) normalizes the meaning over the pins at a uniform prior. -/
-noncomputable def L0 (xs xc : ℝ) : Kernel Utterance World :=
-  Kernel.ofDensity (uniformOn Set.univ) fun u w => ENNReal.ofReal (meaning xs xc u w)
-
-instance (xs xc : ℝ) : IsFiniteKernel (L0 xs xc) :=
-  inferInstanceAs (IsFiniteKernel (Kernel.ofDensity _ _))
-
-/-- The speaker, (3) and (4), with unit informativeness weight and no cost. -/
-noncomputable def S1 (xs xc : ℝ) : Kernel World Utterance := speaker 1 0 (L0 xs xc) Measure.dirac
-
-private theorem sum_world (f : World → ℝ) : ∑ w, f w = f .bigBlue + f .bigRed + f .smallBlue := by
-  rw [show (Finset.univ : Finset World) = {.bigBlue, .bigRed, .smallBlue} from rfl,
-    Finset.sum_insert (by decide), Finset.sum_insert (by decide), Finset.sum_singleton, add_assoc]
-
-/-- The listener's value of an expression at a pin is the share of its row. -/
-theorem L0_apply (hs0 : 0 ≤ xs) (hs1 : xs ≤ 1) (hc0 : 0 ≤ xc) (hc1 : xc ≤ 1) (u : Utterance)
-    (w : World) (hpos : 0 < ∑ w', meaning xs xc u w') :
-    L0 xs xc u {w} = ENNReal.ofReal (meaning xs xc u w / ∑ w', meaning xs xc u w') :=
-  Kernel.ofDensity_uniformOn_ofReal_apply_singleton _ u w
-    (fun w' => meaning_nonneg hs0 hs1 hc0 hc1 u w') hpos
-
-/-- The speaker prefers `u'` to `u` for a pin exactly when the listener finds the pin likelier
-under `u'`; the normalization cancels. -/
-theorem S1_real_lt_iff (w : World) (u u' : Utterance) (h : L0 xs xc u' {w} ≠ 0) :
-    (S1 xs xc w).real {u} < (S1 xs xc w).real {u'} ↔ L0 xs xc u {w} < L0 xs xc u' {w} := by
-  rw [S1]
-  refine (speaker_dirac_real_singleton_lt_iff (L := L0 xs xc) (w := w) zero_le_one ⟨u', h⟩).trans ?_
-  simp only [ENNReal.rpow_one, Pi.zero_apply, mul_zero, neg_zero, Real.exp_zero,
-    ENNReal.ofReal_one, mul_one]
-
-end Model
-
-/-! ### Overmodification -/
+/-- The meaning of an expression is the product, over the adjectives it contains, of the degree
+to which each holds of the pin, (5) and (6), with semantic value `xs` for size and `xc` for
+colour. -/
+def meaning (xs xc : ℝ) (u : Utterance) (o : Pin) : ℝ :=
+  (u.size.elim 1 fun s ↦ noisy xs (o.size = s)) * (u.color.elim 1 fun c ↦ noisy xc (o.color = c))
 
 section Overmodification
 
-variable {xs xc : ℝ}
+variable {xs xc α : ℝ} {C : Utterance → ℝ}
 
-private theorem row_small : ∑ w, meaning xs xc .small w = 2 - xs := by
-  rw [sum_world]; simp [meaning, channel, Utterance.size, Utterance.color, World.big, World.blue]
+theorem meaning_nonneg (hs0 : 0 ≤ xs) (hs1 : xs ≤ 1) (hc0 : 0 ≤ xc) (hc1 : xc ≤ 1)
+    (u : Utterance) (o : Pin) : 0 ≤ meaning xs xc u o := by
+  refine mul_nonneg ?_ ?_
+  · cases u.size <;> [exact zero_le_one; exact noisy_nonneg hs0 hs1 _]
+  · cases u.color <;> [exact zero_le_one; exact noisy_nonneg hc0 hc1 _]
+
+private theorem sum_pin (f : Pin → ℝ) : ∑ o, f o = f .bigBlue + f .bigRed + f .smallBlue := by
+  rw [show (Finset.univ : Finset Pin) = {.bigBlue, .bigRed, .smallBlue} from rfl,
+    Finset.sum_insert (by decide), Finset.sum_insert (by decide), Finset.sum_singleton, add_assoc]
+
+private theorem row_small : ∑ o, meaning xs xc .small o = 2 - xs := by
+  rw [sum_pin]; simp [meaning, noisy, Utterance.size, Utterance.color, Pin.size]
   ring
 
-private theorem row_smallBlue : ∑ w, meaning xs xc .smallBlue w = (1 - xs) + xs * xc := by
-  rw [sum_world]; simp [meaning, channel, Utterance.size, Utterance.color, World.big, World.blue]
+private theorem row_smallBlue : ∑ o, meaning xs xc .smallBlue o = (1 - xs) + xs * xc := by
+  rw [sum_pin]; simp [meaning, noisy, Utterance.size, Utterance.color, Pin.size, Pin.color]
   ring
 
-private theorem row_red : ∑ w, meaning xs xc .red w = 2 - xc := by
-  rw [sum_world]; simp [meaning, channel, Utterance.size, Utterance.color, World.big, World.blue]
+private theorem row_red : ∑ o, meaning xs xc .red o = 2 - xc := by
+  rw [sum_pin]; simp [meaning, noisy, Utterance.size, Utterance.color, Pin.color]
   ring
 
-private theorem row_bigRed : ∑ w, meaning xs xc .bigRed w = xs + (1 - xs) * (1 - xc) := by
-  rw [sum_world]; simp [meaning, channel, Utterance.size, Utterance.color, World.big, World.blue]
+private theorem row_bigRed : ∑ o, meaning xs xc .bigRed o = xs + (1 - xs) * (1 - xc) := by
+  rw [sum_pin]; simp [meaning, noisy, Utterance.size, Utterance.color, Pin.size, Pin.color]
   ring
 
-/-- For the small blue pin the redundant *small blue* is preferred to the sufficient *small*
-exactly when the colour channel exceeds one half, whatever the size channel short of
-Boolean. -/
-theorem color_overmodification_iff (hs0 : 0 < xs) (hs1 : xs < 1) (hc0 : 0 < xc) (hc1 : xc ≤ 1) :
-    (S1 xs xc .smallBlue).real {.small} < (S1 xs xc .smallBlue).real {.smallBlue} ↔ 1/2 < xc := by
+private theorem meaning_small : meaning xs xc .small .smallBlue = xs := by
+  simp [meaning, noisy, Utterance.size, Utterance.color, Pin.size]
+
+private theorem meaning_smallBlue : meaning xs xc .smallBlue .smallBlue = xs * xc := by
+  simp [meaning, noisy, Utterance.size, Utterance.color, Pin.size, Pin.color]
+
+private theorem meaning_red : meaning xs xc .red .bigRed = xc := by
+  simp [meaning, noisy, Utterance.size, Utterance.color, Pin.color]
+
+private theorem meaning_bigRed : meaning xs xc .bigRed .bigRed = xs * xc := by
+  simp [meaning, noisy, Utterance.size, Utterance.color, Pin.size, Pin.color]
+
+/-- For the small blue pin and without cost, the redundant *small blue* is preferred to the
+sufficient *small* exactly when the semantic value of colour exceeds one half, whatever that of
+size short of Boolean. -/
+theorem color_overmodification_iff (hα : 0 < α) (hs0 : 0 < xs) (hs1 : xs < 1) (hc0 : 0 < xc)
+    (hc1 : xc ≤ 1) :
+    (S1 α 0 (meaning xs xc) .smallBlue).real {.small} <
+      (S1 α 0 (meaning xs xc) .smallBlue).real {.smallBlue} ↔ 1/2 < xc := by
   have hsum : 0 < (1 - xs) + xs * xc := by nlinarith
-  have hsum' : 0 < 2 - xs := by linarith
-  have h1 := L0_apply hs0.le hs1.le hc0.le hc1 .small World.smallBlue
-    (by rw [row_small]; exact hsum')
-  have h2 := L0_apply hs0.le hs1.le hc0.le hc1 .smallBlue World.smallBlue
-    (by rw [row_smallBlue]; exact hsum)
-  rw [S1_real_lt_iff _ _ _ (by rw [h2]; exact (ENNReal.ofReal_pos.mpr (div_pos (by
-      simp [meaning, channel, Utterance.size, Utterance.color, World.big, World.blue]; positivity)
-      (by rw [row_smallBlue]; exact hsum))).ne'), h1, h2, row_small, row_smallBlue,
-    ENNReal.ofReal_lt_ofReal_iff (div_pos (by
-      simp [meaning, channel, Utterance.size, Utterance.color, World.big, World.blue]; positivity)
-      hsum)]
-  simp only [meaning, channel, Utterance.size, Utterance.color, World.big, World.blue]
-  simp only [↓reduceIte, mul_one]
-  rw [div_lt_div_iff₀ hsum' hsum]
+  rw [S1_real_lt_iff hα (meaning_nonneg hs0.le hs1.le hc0.le hc1) (by rwa [meaning_small])
+      (by rw [meaning_smallBlue]; positivity), row_small, row_smallBlue, meaning_small,
+    meaning_smallBlue, Pi.zero_apply, Pi.zero_apply, sub_zero, sub_zero,
+    Real.log_lt_log_iff (div_pos hs0 (by linarith)) (div_pos (by positivity) hsum),
+    div_lt_div_iff₀ (by linarith) hsum]
   have hk : 0 < xs * (1 - xs) := mul_pos hs0 (by linarith)
-  constructor <;> intro h <;> nlinarith [hk]
+  constructor <;> intro h <;> nlinarith
 
-/-- For the big red pin the redundant *big red* is preferred to the sufficient *red* exactly
-when the size channel exceeds one half, whatever the colour channel short of Boolean. The
-asymmetry of the paper is thus the regime of a size channel at most one half and a colour
-channel above it. -/
-theorem size_overmodification_iff (hs0 : 0 < xs) (hs1 : xs ≤ 1) (hc0 : 0 < xc) (hc1 : xc < 1) :
-    (S1 xs xc .bigRed).real {.red} < (S1 xs xc .bigRed).real {.bigRed} ↔ 1/2 < xs := by
+/-- For the big red pin and without cost, the redundant *big red* is preferred to the sufficient
+*red* exactly when the semantic value of size exceeds one half, whatever that of colour short of
+Boolean. -/
+theorem size_overmodification_iff (hα : 0 < α) (hs0 : 0 < xs) (hs1 : xs ≤ 1) (hc0 : 0 < xc)
+    (hc1 : xc < 1) :
+    (S1 α 0 (meaning xs xc) .bigRed).real {.red} <
+      (S1 α 0 (meaning xs xc) .bigRed).real {.bigRed} ↔ 1/2 < xs := by
   have hsum : 0 < xs + (1 - xs) * (1 - xc) := by nlinarith
-  have hsum' : 0 < 2 - xc := by linarith
-  have h1 := L0_apply hs0.le hs1 hc0.le hc1.le .red World.bigRed (by rw [row_red]; exact hsum')
-  have h2 := L0_apply hs0.le hs1 hc0.le hc1.le .bigRed World.bigRed (by rw [row_bigRed]; exact hsum)
-  rw [S1_real_lt_iff _ _ _ (by rw [h2]; exact (ENNReal.ofReal_pos.mpr (div_pos (by
-      simp [meaning, channel, Utterance.size, Utterance.color, World.big, World.blue]; positivity)
-      (by rw [row_bigRed]; exact hsum))).ne'), h1, h2, row_red, row_bigRed,
-    ENNReal.ofReal_lt_ofReal_iff (div_pos (by
-      simp [meaning, channel, Utterance.size, Utterance.color, World.big, World.blue]; positivity)
-      hsum)]
-  simp only [meaning, channel, Utterance.size, Utterance.color, World.big, World.blue]
-  simp only [↓reduceIte, one_mul]
-  rw [div_lt_div_iff₀ hsum' hsum]
+  rw [S1_real_lt_iff hα (meaning_nonneg hs0.le hs1 hc0.le hc1.le) (by rwa [meaning_red])
+      (by rw [meaning_bigRed]; positivity), row_red, row_bigRed, meaning_red, meaning_bigRed,
+    Pi.zero_apply, Pi.zero_apply, sub_zero, sub_zero,
+    Real.log_lt_log_iff (div_pos hc0 (by linarith)) (div_pos (by positivity) hsum),
+    div_lt_div_iff₀ (by linarith) hsum]
   have hk : 0 < xc * (1 - xc) := mul_pos hc0 (by linarith)
-  constructor <;> intro h <;> nlinarith [hk]
+  constructor <;> intro h <;> nlinarith
 
-/-- At a uniform prior the listener of a graded meaning gives each state the meaning's value
-rescaled by the row sum, so a description distinguishes its referent under the listener exactly
-when it does under the meaning. -/
-theorem distinguishes_ofDensity_uniformOn_iff {T U : Type*} [Fintype T] [Nonempty T]
-    [MeasurableSpace T] [MeasurableSingletonClass T] [MeasurableSpace U] [Countable U]
-    [MeasurableSingletonClass U] {m : U → T → ℝ≥0∞} {C : Finset T} {r : T} {u : U}
-    (h0 : ∑ t, m u t ≠ 0) (htop : ∑ t, m u t ≠ ∞) :
-    Reference.Distinguishes (fun u t ↦ Kernel.ofDensity (uniformOn Set.univ) m u {t}) C r u ↔
-      Reference.Distinguishes m C r u := by
-  simp_rw [Kernel.ofDensity_uniformOn_apply_singleton]
-  exact Reference.distinguishes_comp_iff (φ := fun u x ↦ x / ∑ t', m u t')
-    fun _ _ h ↦ ENNReal.div_lt_div_right h0 htop h
-
-/-- A description distinguishes a pin under the continuous meaning exactly when it does under
-the literal listener, so that the pin is the listener's best guess. -/
-theorem distinguishes_iff_L0 (hs0 : 0 ≤ xs) (hs1 : xs ≤ 1) (hc0 : 0 ≤ xc) (hc1 : xc ≤ 1)
-    {u : Utterance} (hpos : 0 < ∑ w, meaning xs xc u w) (C : Finset World) (r : World) :
-    Reference.Distinguishes (meaning xs xc) C r u ↔
-      Reference.Distinguishes (fun u w => L0 xs xc u {w}) C r u := by
-  rw [L0, distinguishes_ofDensity_uniformOn_iff
-    (by rw [← ENNReal.ofReal_sum_of_nonneg fun w _ => meaning_nonneg hs0 hs1 hc0 hc1 u w]
-        exact (ENNReal.ofReal_pos.2 hpos).ne')
-    (ENNReal.sum_ne_top.2 fun _ _ => ENNReal.ofReal_ne_top)]
-  exact forall₂_congr fun c _ =>
-    (ENNReal.ofReal_lt_ofReal_iff_of_nonneg (meaning_nonneg hs0 hs1 hc0 hc1 u c)).symm
+/-- The odds of the redundant *small blue* against *small* for the small blue pin exceed the odds
+of the redundant *big red* against *red* for the big red pin exactly when size is noisier than
+colour, at every positive rationality and when the two redundant adjectives cost the same. This is
+the paper's asymmetry, more redundant use of colour than of size. -/
+theorem overmodification_odds_lt_iff (hα : 0 < α) (hs0 : 0 < xs) (hs1 : xs ≤ 1) (hc0 : 0 < xc)
+    (hc1 : xc ≤ 1) (hC : C .smallBlue - C .small = C .bigRed - C .red) :
+    (S1 α C (meaning xs xc) .bigRed).real {.bigRed} /
+        (S1 α C (meaning xs xc) .bigRed).real {.red} <
+      (S1 α C (meaning xs xc) .smallBlue).real {.smallBlue} /
+        (S1 α C (meaning xs xc) .smallBlue).real {.small} ↔ xs < xc := by
+  have hnn := meaning_nonneg hs0.le hs1 hc0.le hc1
+  have hsB : 0 < (1 - xs) + xs * xc := by nlinarith
+  have hbR : 0 < xs + (1 - xs) * (1 - xc) := by nlinarith
+  have hs2 : 0 < 2 - xs := by linarith
+  have hc2 : 0 < 2 - xc := by linarith
+  have hsc : 0 < xs * xc := mul_pos hs0 hc0
+  have hk : 0 < xs * xc + 2 * ((1 - xs) * (1 - xc)) := by
+    nlinarith [mul_nonneg (sub_nonneg.2 hs1) (sub_nonneg.2 hc1)]
+  rw [S1_real_div hα.le hnn (by rwa [meaning_red]) (by rwa [meaning_bigRed]),
+    S1_real_div hα.le hnn (by rwa [meaning_small]) (by rwa [meaning_smallBlue]), hC,
+    mul_lt_mul_iff_left₀ (Real.exp_pos _), row_red, row_bigRed, row_small, row_smallBlue,
+    meaning_red, meaning_bigRed, meaning_small, meaning_smallBlue,
+    Real.rpow_lt_rpow_iff (by positivity) (by positivity) hα,
+    div_lt_div_iff₀ (by positivity) (by positivity), div_mul_div_comm, div_mul_div_comm,
+    div_lt_div_iff₀ (by positivity) (by positivity), ← sub_pos,
+    show xs * xc * xc * ((xs + (1 - xs) * (1 - xc)) * (2 - xs)) -
+        xs * xc * xs * ((1 - xs + xs * xc) * (2 - xc)) =
+      (xc - xs) * (xs * xc * (xs * xc + 2 * ((1 - xs) * (1 - xc)))) by ring,
+    mul_pos_iff_of_pos_right (mul_pos hsc hk), sub_pos]
 
 /-- The sufficient *small* distinguishes the small blue pin from the big ones, so that the
-listener's best guess is the target, exactly when the size channel beats chance. -/
+listener's best guess is the target, exactly when the semantic value of size beats chance. -/
 theorem small_distinguishes_iff :
     Reference.Distinguishes (meaning xs xc) {.bigBlue, .bigRed} .smallBlue .small ↔ 1/2 < xs := by
-  simp [Reference.Distinguishes, meaning, channel, Utterance.size, Utterance.color, World.big,
-    World.blue]
+  simp [Reference.Distinguishes, meaning, noisy, Utterance.size, Utterance.color, Pin.size]
   constructor <;> intro h <;> linarith
 
-/-- The redundant *small blue* distinguishes the pin exactly when the size channel beats chance
-and the two channels together exceed one, so a noisy colour channel can cost identification
-that the sufficient description had; with Boolean channels both descriptions distinguish. -/
+/-- The redundant *small blue* distinguishes the pin exactly when the semantic value of size
+beats chance and the two values together exceed one, so a noisy colour can cost the
+identification that the sufficient description had. With Boolean values both descriptions
+distinguish. -/
 theorem smallBlue_distinguishes_iff (hc : 0 < xc) :
     Reference.Distinguishes (meaning xs xc) {.bigBlue, .bigRed} .smallBlue .smallBlue ↔
       1/2 < xs ∧ 1 < xs + xc := by
-  simp [Reference.Distinguishes, meaning, channel, Utterance.size, Utterance.color, World.big,
-    World.blue]
+  simp [Reference.Distinguishes, meaning, noisy, Utterance.size, Utterance.color, Pin.size,
+    Pin.color]
   constructor
   · rintro ⟨h1, h2⟩
     exact ⟨by nlinarith, by nlinarith⟩
   · rintro ⟨h1, h2⟩
     exact ⟨by nlinarith, by nlinarith⟩
 
-/-- With Boolean channels the redundant modifier adds nothing, since *small* and *small blue*
-both identify the small blue pin with certainty and are produced alike. -/
-theorem boolean_no_preference :
-    (S1 1 1 .smallBlue).real {.small} = (S1 1 1 .smallBlue).real {.smallBlue} := by
-  have h1 := L0_apply (xs := 1) (xc := 1) zero_le_one le_rfl zero_le_one le_rfl .small
-    World.smallBlue (by rw [row_small]; norm_num)
-  have h2 := L0_apply (xs := 1) (xc := 1) zero_le_one le_rfl zero_le_one le_rfl .smallBlue
-    World.smallBlue (by rw [row_smallBlue]; norm_num)
-  rw [row_small] at h1
-  rw [row_smallBlue] at h2
-  simp only [meaning, channel, Utterance.size, Utterance.color, World.big, World.blue,
-    ↓reduceIte] at h1 h2
+/-- With Boolean values the redundant modifier adds nothing, since *small* and *small blue* both
+identify the small blue pin with certainty and are produced alike. -/
+theorem boolean_no_preference (α : ℝ) :
+    (S1 α 0 (meaning 1 1) .smallBlue).real {.small} =
+      (S1 α 0 (meaning 1 1) .smallBlue).real {.smallBlue} := by
+  have hnn := meaning_nonneg (xs := 1) (xc := 1) zero_le_one le_rfl zero_le_one le_rfl
+  have h1 := L0_apply (hnn .small) (by rw [row_small]; norm_num) Pin.smallBlue
+  have h2 := L0_apply (hnn .smallBlue) (by rw [row_smallBlue]; norm_num) Pin.smallBlue
+  rw [row_small, meaning_small] at h1
+  rw [row_smallBlue, meaning_smallBlue] at h2
   norm_num at h1 h2
   simp only [S1, measureReal_def, speaker_dirac_zero_apply_singleton, h1, h2]
 
 end Overmodification
-
-/-! ### Taxonomic level, Experiment 3 -/
-
-/-- The target dalmatian among a cat and a bird, where the basic-level *dog* suffices. -/
-inductive NomWorld where
-  | dalmatian
-  | cat
-  | bird
-  deriving DecidableEq, Repr, Inhabited, Fintype
-
-instance : MeasurableSpace NomWorld := ⊤
-instance : DiscreteMeasurableSpace NomWorld := ⟨fun _ => trivial⟩
-
-/-- The nouns *dalmatian*, *dog* and *animal* sit at the three taxonomic levels. -/
-inductive NomUtterance where
-  | sub
-  | basic
-  | super
-  deriving DecidableEq, Repr, Inhabited, Fintype
-
-instance : MeasurableSpace NomUtterance := ⊤
-instance : DiscreteMeasurableSpace NomUtterance := ⟨fun _ => trivial⟩
-
-section Nominal
-
-variable (typ : NomUtterance → NomWorld → ℝ)
-
-/-- The literal listener with the typicality of each object for each noun as its meaning. -/
-noncomputable def nomL0 : Kernel NomUtterance NomWorld :=
-  Kernel.ofDensity (uniformOn Set.univ) fun u w => ENNReal.ofReal (typ u w)
-
-instance : IsFiniteKernel (nomL0 typ) := inferInstanceAs (IsFiniteKernel (Kernel.ofDensity _ _))
-
-/-- The nominal speaker with unit informativeness weight and no cost. -/
-noncomputable def nomS1 : Kernel NomWorld NomUtterance := speaker 1 0 (nomL0 typ) Measure.dirac
-
-/-- The subordinate term is preferred to the basic-level one for the target exactly when it is
-the more informative about it, that is, when its typicality for the target relative to its
-typicality over the scene exceeds the basic term's. -/
-theorem subordinate_preferred_iff (hnn : ∀ u w, 0 ≤ typ u w) (hsub : 0 < typ .sub .dalmatian)
-    (hbasic : 0 < typ .basic .dalmatian) :
-    (nomS1 typ .dalmatian).real {.basic} < (nomS1 typ .dalmatian).real {.sub} ↔
-      typ .basic .dalmatian * ∑ w, typ .sub w < typ .sub .dalmatian * ∑ w, typ .basic w := by
-  have hsum : ∀ u, 0 < typ u .dalmatian → 0 < ∑ w, typ u w := fun u h =>
-    h.trans_le (Finset.single_le_sum (fun w _ => hnn u w) (Finset.mem_univ _))
-  have h1 := Kernel.ofDensity_uniformOn_ofReal_apply_singleton typ .basic NomWorld.dalmatian
-    (hnn .basic) (hsum _ hbasic)
-  have h2 := Kernel.ofDensity_uniformOn_ofReal_apply_singleton typ .sub NomWorld.dalmatian
-    (hnn .sub) (hsum _ hsub)
-  rw [nomS1]
-  refine (speaker_dirac_real_singleton_lt_iff (L := nomL0 typ) (w := NomWorld.dalmatian) zero_le_one
-    ⟨.sub, ?_⟩).trans ?_
-  · rw [nomL0, h2]
-    exact (ENNReal.ofReal_pos.mpr (div_pos hsub (hsum _ hsub))).ne'
-  · simp only [ENNReal.rpow_one, Pi.zero_apply, mul_zero, neg_zero, Real.exp_zero,
-      ENNReal.ofReal_one, mul_one, nomL0]
-    rw [h1, h2, ENNReal.ofReal_lt_ofReal_iff (div_pos hsub (hsum _ hsub)),
-      div_lt_div_iff₀ (hsum _ hbasic) (hsum _ hsub)]
-
-end Nominal
 
 end DegenEtAl2020

@@ -920,6 +920,44 @@ theorem speaker_dirac_real_singleton_lt_iff [IsFiniteKernel L] (hα : 0 ≤ α) 
     (h0.imp fun _ hu _ hw' ↦ eq_of_dirac_apply_singleton_ne_zero hw' ▸ hu)
   simpa only [Measure.geomMean_dirac] using this
 
+/-- The odds of one utterance against another do not depend on the other alternatives. They are
+the ratio of the listener's masses at the state to the power `α`, discounted by the difference in
+cost. -/
+theorem speaker_dirac_real_singleton_div [IsFiniteKernel L] (hα : 0 ≤ α) (h : L u {w} ≠ 0)
+    (u' : U) :
+    (speaker α C L Measure.dirac w).real {u'} / (speaker α C L Measure.dirac w).real {u} =
+      ((L u' {w}).toReal / (L u {w}).toReal) ^ α * Real.exp (-(α * (C u' - C u))) := by
+  have hpos : 0 < (L u {w}).toReal := ENNReal.toReal_pos h (measure_ne_top _ _)
+  have hZ : (0 : ℝ) < ∑ v, (L v {w} ^ α).toReal * Real.exp (-(α * C v)) :=
+    Finset.sum_pos' (fun v _ ↦ by positivity) ⟨u, Finset.mem_univ u, by
+      rw [← ENNReal.toReal_rpow]; positivity⟩
+  rw [speaker_dirac_real_singleton hα, speaker_dirac_real_singleton hα,
+    div_div_div_cancel_right₀ hZ.ne', ← ENNReal.toReal_rpow, ← ENNReal.toReal_rpow,
+    Real.div_rpow ENNReal.toReal_nonneg ENNReal.toReal_nonneg, mul_sub, neg_sub, Real.exp_sub,
+    Real.exp_neg, Real.exp_neg]
+  field_simp
+
+/-- With two utterances the share of one is the logistic function of its advantage over the
+other, the difference in log listener mass at the state less the difference in cost, scaled by
+the rationality. -/
+theorem speaker_dirac_real_singleton_of_pair [IsFiniteKernel L] (hα : 0 ≤ α) {u' : U}
+    (huu' : u ≠ u') (hall : ∀ v, v = u ∨ v = u') (hu : L u {w} ≠ 0) (hu' : L u' {w} ≠ 0) :
+    (speaker α C L Measure.dirac w).real {u'} =
+      Real.sigmoid (α * (Real.log ((L u' {w}).toReal / (L u {w}).toReal) - (C u' - C u))) := by
+  have hR : 0 < (L u' {w}).toReal / (L u {w}).toReal :=
+    div_pos (ENNReal.toReal_pos hu' (measure_ne_top _ _))
+      (ENNReal.toReal_pos hu (measure_ne_top _ _))
+  have := isProbabilityMeasure_speaker_dirac hα C L ⟨u, hu⟩
+  have hsum := measureReal_singleton_add_singleton_of_pair (speaker α C L Measure.dirac w) huu'
+    fun v _ ↦ hall v
+  have hp : 0 < (speaker α C L Measure.dirac w).real {u} :=
+    ENNReal.toReal_pos (speaker_dirac_apply_singleton_ne_zero hα hu) (measure_ne_top _ _)
+  have hodds := speaker_dirac_real_singleton_div (C := C) hα hu u'
+  rw [Real.rpow_def_of_pos hR, ← Real.exp_add, div_eq_iff hp.ne'] at hodds
+  rw [← sub_zero (α * _), ← Real.exp_div_add_exp_eq_sigmoid, Real.exp_zero,
+    eq_div_iff (by positivity), mul_sub, sub_eq_add_neg, mul_comm α (Real.log _)]
+  linear_combination hodds + Real.exp _ * hsum
+
 /-- With Boolean meanings, a state whose only true utterance is `u` produces `u` with
 certainty at any prior giving the state positive mass. -/
 theorem speaker_listener_truthful_dirac_eq_one [DiscreteMeasurableSpace W] (hα : 0 < α)
