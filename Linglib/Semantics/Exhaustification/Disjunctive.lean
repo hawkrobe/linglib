@@ -55,6 +55,9 @@ variable {I p} {S T : Finset ι}
 @[gcongr] theorem subDisj_mono (h : S ⊆ T) : subDisj p S ⊆ subDisj p T :=
   Set.biUnion_subset_biUnion_left (Finset.coe_subset.2 h)
 
+theorem mem_subDisjs_of_mem {i : ι} (hi : i ∈ I) : p i ∈ subDisjs I p :=
+  ⟨{i}, by simpa, by simp, by simp⟩
+
 /-- The sub-disjunctions hold together exactly where every disjunct holds. -/
 theorem sInter_subDisjs : ⋂₀ subDisjs I p = ⋂ i ∈ I, p i := by
   refine Set.Subset.antisymm (Set.subset_iInter₂ fun i hi ↦ ?_) ?_
