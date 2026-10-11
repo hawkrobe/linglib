@@ -11,7 +11,7 @@ existing files in the same area.
 1. Install [Lean 4 via elan](https://leanprover-community.github.io/get_started.html).
 2. Clone the repo and fetch the mathlib cache:
    ```bash
-   git clone https://github.com/hawkrobe/linglib
+   git clone https://github.com/linglib-community/linglib
    cd linglib
    lake exe cache get
    lake build
@@ -66,7 +66,7 @@ Items are tagged by difficulty (A: quick win · B: moderate · C: hard ·
 D: blocked on upstream).
 
 To claim an item before starting,
-[open a tracking issue](https://github.com/hawkrobe/linglib/issues/new)
+[open a tracking issue](https://github.com/linglib-community/linglib/issues/new)
 linking the wishlist line so others know you're working on it. To
 add a new wish, send a PR editing
 [`blog/content/wishlist.md`](blog/content/wishlist.md).
@@ -84,7 +84,7 @@ or critical readings of existing files.
 
 If a definition seems wrong, a theorem trivializes the empirical
 content, or you spot an inconsistency between two theories that
-should agree, [open an issue](https://github.com/hawkrobe/linglib/issues).
+should agree, [open an issue](https://github.com/linglib-community/linglib/issues).
 Critical readings are welcome — formalization makes mistakes visible,
 and we want them caught.
 
