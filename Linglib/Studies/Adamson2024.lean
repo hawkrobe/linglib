@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Morphology.DistributedMorphology.NominalProjection
+public import Mathlib.Order.Basic
 public import Linglib.Morphology.DistributedMorphology.Categorizer.Gender
 public import Linglib.Morphology.DistributedMorphology.VocabularyInsertion.Basic
 public import Linglib.Morphology.DistributedMorphology.Impoverishment
@@ -17,7 +17,7 @@ public import Linglib.Data.Examples.Adamson2024
 # Gender assignment is local
 
 Adamson's gender locality hypothesis says that the gender feature on a nominalizer n is valued
-within nP (`DistributedMorphology.genderLocalityHypothesis`), so an inalienable possessor in
+within nP (`GenderLocal`), so an inalienable possessor in
 Spec,nP can bear on a noun's gender while an alienable possessor in Spec,PossP cannot
 (`possession_asymmetry`). Possession bears on gender in two ways. Under *possessee gender* the
 nominalizer that licenses a possessor carries a gender of its own: Teop body-part roots take a
@@ -25,7 +25,9 @@ gender I nominalizer that introduces the body-part relation with or without the 
 feature licensing a possessor, and the possessor-less variant is renominalized by a gender II
 alienator that closes the possessor slot (`Teop.relationalN`, `Teop.alienatorN`,
 `Teop.freeDenot_iff`), so *a bina-naa* 'my spleen' is gender I and *o bina* 'the spleen' gender
-II (`Teop.switch`, `Teop.rows_outerClass`). Mosel and Spriggs's gender I-E is gender I with a
+II (`Teop.switch`, `Teop.rows_class`). The alienator is a plain n over a gendered one, so the
+default gender II is what the cyclic explanation of Kramer's Highest Gender Hypothesis predicts
+and not the hierarchical one (`Teop.free_cyclic`). Mosel and Spriggs's gender I-E is gender I with a
 proprial feature. The article vocabulary derives the article of every class
 (`Teop.article_eq_headArticle`), and agreeing adjectives and numerals distinguish only gender
 (`Teop.agreementClasses_targetArticle`). Jarawara's possessed nouns are the unmarked
@@ -37,7 +39,7 @@ outer noun agrees with the possessed noun's own feminine (`Jarawara.complex_matc
 `Jarawara.complex_mismatch`).
 
 Under *inherited gender* the nominalizer is unvalued and probes its possessor
-(`DistributedMorphology.inheritedGender`): Yanyuwa *wini* 'name' and Coastal Marind *igih* 'name'
+(`inheritedGender`): Yanyuwa *wini* 'name' and Coastal Marind *igih* 'name'
 and *nanVh* 'face' take the gender of an inalienable possessor on their agreement targets and, for
 *nanVh*, in their own form (`Yanyuwa.name_agreement`, `CoastalMarind.name_demonstrative`,
 `CoastalMarind.face_inherits`), and an alienable possessor leaves them unvalued
@@ -45,10 +47,18 @@ and *nanVh* 'face' take the gender of an inalienable possessor on their agreemen
 *-a* carry number on n and change gender, regular plurals carry number on Num and do not
 (`Italian.gender_change_iff_local`).
 
+## Implementation notes
+
+* An inalienable possessor sits in Spec,nP, following Myler; Alexiadou makes it the complement
+  of the noun. Both places are within nP, which is all the locality hypothesis uses.
+* A Teop nominal's class is the gender a probe finds on its highest n alone, the cyclic
+  explanation of Kramer's Highest Gender Hypothesis.
+
 ## References
 
 * [adamson-2024]
 * [kramer-2015]
+* [alexiadou-2003]
 * [mosel-spriggs-2000]
 * [dixon-2004]
 * [myler-2016]
@@ -63,11 +73,66 @@ open DistributedMorphology.Categorizer (Head)
 
 /-! ### The gender locality hypothesis -/
 
+/-- The layers of the nominal projection, from the root up. -/
+inductive Layer where
+  | root
+  | n
+  | poss
+  | num
+  | d
+  deriving DecidableEq, Repr, Fintype
+
+/-- The height of a layer. -/
+def Layer.height : Layer → ℕ
+  | .root => 0
+  | .n => 1
+  | .poss => 2
+  | .num => 3
+  | .d => 4
+
+instance : LinearOrder Layer := LinearOrder.lift' Layer.height (by decide)
+
+/-- The positions of a possessor or of a number feature. -/
+inductive Position where
+  | nHead
+  | specN
+  | specPoss
+  | num
+  deriving DecidableEq, Repr, Fintype
+
+/-- The layer a position attaches at. -/
+def Position.layer : Position → Layer
+  | .nHead | .specN => .n
+  | .specPoss => .poss
+  | .num => .num
+
+/-- A position is local to gender when it attaches within nP. The gender locality hypothesis says
+that only local positions can value gender on n. -/
+def GenderLocal (p : Position) : Prop := p.layer ≤ .n
+
+instance : DecidablePred GenderLocal := fun _ ↦ inferInstanceAs (Decidable (_ ≤ _))
+
+/-- Inalienable and alienable possession. -/
+inductive PossessionType where
+  | inalienable
+  | alienable
+  deriving DecidableEq, Repr, Fintype
+
+/-- An inalienable possessor sits in Spec,nP and an alienable one in Spec,PossP. -/
+def PossessionType.possessorPosition : PossessionType → Position
+  | .inalienable => .specN
+  | .alienable => .specPoss
+
 /-- An inalienable possessor can bear on gender, an alienable one cannot. -/
 theorem possession_asymmetry :
-    PossessionType.inalienable.canAffectGender = true ∧
-      PossessionType.alienable.canAffectGender = false := by
+    GenderLocal PossessionType.inalienable.possessorPosition ∧
+      ¬ GenderLocal PossessionType.alienable.possessorPosition := by
   decide
+
+/-- The gender an unvalued n acquires from a possessor of gender `g` at `pos`, when the
+possessor is local. -/
+def inheritedGender {G : Type*} (pos : Position) (g : G) : Option G :=
+  if GenderLocal pos then some g else none
 
 /-! ### Teop: possessee gender -/
 
@@ -82,39 +147,47 @@ def relationalN (selectsD : Bool) : Head := { Head.n_uAnim with selectsD }
 /-- The alienator, a gender II n that closes the possessor slot. -/
 def alienatorN : Head := Head.n_plain
 
-/-- A head is animate when it bears [+ANIM], the gender I feature. -/
-def Animate (h : Head) : Prop := h.gender.map (·.val) = some ⟨.anim, .pos⟩
+/-- The class a head gives a nominal, the a-class for the gender I feature [+ANIM] and none
+otherwise. -/
+def headClass (h : Head) : Option NounClass :=
+  if h.gender.map (·.val) = some ⟨.anim, .pos⟩ then some .a else none
 
-instance : DecidablePred Animate := fun _ ↦ inferInstanceAs (Decidable (_ = _))
-
-/-- The class of a nominal, read off its highest n. -/
-def outerClass (stack : List Head) : NounClass :=
-  match stack.getLast? with
-  | some h => if Animate h then .a else .o
-  | none => .o
-
-/-- The possessed body-part noun, a root under the {D} nominalizer. -/
+/-- The n's of a possessed body-part noun, the {D} nominalizer. -/
 def ipossessed : List Head := [relationalN true]
 
-/-- The unpossessed body-part noun, with the {D}-less nominalizer under the alienator. Alienably
-possessed and compounded body-part nouns have the same structure. -/
-def free : List Head := [relationalN false, alienatorN]
+/-- The n's of an unpossessed body-part noun, the alienator over the {D}-less nominalizer, the
+highest first. Alienably possessed and compounded body-part nouns have the same n's. -/
+def free : List Head := [alienatorN, relationalN false]
 
-/-- *a bina-naa* 'my spleen' is a-class and *o bina* 'the spleen' is o-class. -/
-theorem switch : outerClass ipossessed = .a ∧ outerClass free = .o := by decide
+/-- *a bina-naa* 'my spleen' is a-class and *o bina* 'the spleen' is o-class, the o-class being
+gender II, the default. -/
+theorem switch :
+    agreeingGender headClass .o (ipossessed.take 1) = .a ∧
+      agreeingGender headClass .o (free.take 1) = .o := by
+  decide
+
+/-- The plain alienator over the gender I nominalizer gives *o bina* the default o-class, as on
+the cyclic explanation of the Highest Gender Hypothesis, where the probe sees the alienator
+alone; on the hierarchical explanation it would find the lower n and give the a-class. -/
+theorem free_cyclic :
+    agreeingGender headClass .o (free.take 1) = .o ∧ agreeingGender headClass .o free = .a :=
+  agreeingGender_plain_cons (hs := []) (by decide) (by decide)
 
 /-- Every body-part term of the fragment has the class of the unpossessed noun. -/
-theorem bodyPartTerms_free : ∀ n ∈ bodyPartTerms, n.gender = outerClass free := by decide
+theorem bodyPartTerms_free :
+    ∀ n ∈ bodyPartTerms, n.gender = agreeingGender headClass .o (free.take 1) := by
+  decide
 
-/-- The structure of a body-part or kinship noun, by how it is possessed. -/
+/-- The n's of a body-part or kinship noun, by how it is possessed. -/
 def possession : List (String × List Head) :=
   [("inalienable", ipossessed), ("alienable", free), ("none", free)]
 
 /-- The analysis predicts the class of every attested body-part and kinship phrase from how its
 noun is possessed, (39), (40), (44), (45), (48) and (51). -/
-theorem rows_outerClass : ∀ e ∈ Examples.all, e.language = "teop1238" →
+theorem rows_class : ∀ e ∈ Examples.all, e.language = "teop1238" →
     ∀ s ∈ e.parse? "possession" possession,
-      ∀ c ∈ e.parse? "gender" [("I", NounClass.a), ("II", .o)], outerClass s = c := by
+      ∀ c ∈ e.parse? "gender" [("I", NounClass.a), ("II", .o)],
+        agreeingGender headClass .o (s.take 1) = c := by
   decide
 
 /-- The features of the article, copied from DP by concord. -/
@@ -153,8 +226,10 @@ theorem agreementClasses_targetArticle :
 /-- A possessed kinship term takes the proprial article *e*, (50), and one under the alienator
 takes *o*, (51). -/
 theorem kinship :
-    subsetPrinciple articles (.proper :: classFeatures (outerClass ipossessed)) = some .e ∧
-      subsetPrinciple articles (.proper :: classFeatures (outerClass free)) = some .o := by
+    subsetPrinciple articles
+        (.proper :: classFeatures (agreeingGender headClass .o (ipossessed.take 1))) = some .e ∧
+      subsetPrinciple articles
+        (.proper :: classFeatures (agreeingGender headClass .o (free.take 1))) = some .o := by
   decide
 
 section Denotation
@@ -264,20 +339,16 @@ namespace Yanyuwa
 
 open _root_.Yanyuwa
 
-/-- The gender *wini* 'name' acquires from a possessor of class `g` at `pos`. -/
-def nameGender (pos : NominalProjection.Position) (g : _root_.Yanyuwa.Gender) :
-    Option _root_.Yanyuwa.Gender :=
-  inheritedGender pos g
-
-/-- Quantifiers and demonstratives agreeing with *wini* take the possessor's class prefix. -/
+/-- Quantifiers and demonstratives agreeing with *wini* 'name' take the prefix of an
+inalienable possessor's class. -/
 theorem name_agreement (g : _root_.Yanyuwa.Gender) :
-    (nameGender PossessionType.inalienable.possessorPosition g).map agreementPrefix =
+    (inheritedGender PossessionType.inalienable.possessorPosition g).map agreementPrefix =
       some (agreementPrefix g) :=
   rfl
 
 /-- An alienable possessor is out of the probe's reach. -/
 theorem name_alienable (g : _root_.Yanyuwa.Gender) :
-    nameGender PossessionType.alienable.possessorPosition g = none :=
+    inheritedGender PossessionType.alienable.possessorPosition g = none :=
   rfl
 
 end Yanyuwa
@@ -311,16 +382,16 @@ open _root_.Italian.NumberGender
 
 /-- A plural class's number feature sits on n for the *-a* plurals and on Num for regular
 plurals. -/
-def numberPosition : PluralClass → NumberPosition
-  | .aPlural => .onN
-  | .regular => .onNum
+def numberPosition : PluralClass → Position
+  | .aPlural => .nHead
+  | .regular => .num
 
 /-- Gender changes between singular and plural exactly when number sits within the hypothesis's
 reach. -/
 theorem gender_change_iff_local :
     ∀ n ∈ aPlurals ++ regulars,
       n.gender ≠ n.plGender ↔
-        genderLocalityHypothesis (numberPosition n.pluralClass).toPosition = true := by
+        GenderLocal (numberPosition n.pluralClass) := by
   decide
 
 end Italian
