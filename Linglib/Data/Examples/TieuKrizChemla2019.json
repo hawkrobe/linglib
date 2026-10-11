@@ -19,7 +19,8 @@
       ["polarity", "positive"],
       ["context", "gap"]
     ],
-    "comment": "True when all of the trucks are blue; in the gap context of Figure 1 neither true nor false."
+    "comment": "True when all of the trucks are blue; in the gap context of Figure 1 neither true nor false.",
+    "verified": "page-image"
   },
   {
     "id": "tieukrizchemla2019_2",
@@ -41,7 +42,8 @@
       ["polarity", "negative"],
       ["context", "gap"]
     ],
-    "comment": "True only when none of the trucks is blue; in the gap context neither true nor false."
+    "comment": "True only when none of the trucks is blue; in the gap context neither true nor false.",
+    "verified": "page-image"
   },
   {
     "id": "tieukrizchemla2019_3",
@@ -63,7 +65,8 @@
       ["polarity", "positive"],
       ["context", "gap"]
     ],
-    "comment": "The universal description has a complementary negation, (4): no gap."
+    "comment": "The universal description has a complementary negation, (4): no gap.",
+    "verified": "page-image"
   },
   {
     "id": "tieukrizchemla2019_4",
@@ -85,7 +88,8 @@
       ["polarity", "negative"],
       ["context", "gap"]
     ],
-    "comment": "Unlike (2), true in the scenario of Figure 1."
+    "comment": "Unlike (2), true in the scenario of Figure 1.",
+    "verified": "page-image"
   },
   {
     "id": "tieukrizchemla2019_5a",
@@ -108,7 +112,8 @@
       ["determiner", "the"],
       ["polarity", "positive"]
     ],
-    "comment": "The three interpretations a child might assign to the plural definite, Figure 2."
+    "comment": "The three interpretations a child might assign to the plural definite, Figure 2.",
+    "verified": "page-image"
   },
   {
     "id": "tieukrizchemla2019_5b",
@@ -131,7 +136,8 @@
       ["determiner", "the"],
       ["polarity", "negative"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "tieukrizchemla2019_6a",
@@ -150,7 +156,8 @@
       ["determiner", "some"],
       ["polarity", "positive"]
     ],
-    "comment": "The existential paraphrase of (5a)."
+    "comment": "The existential paraphrase of (5a).",
+    "verified": "page-image"
   },
   {
     "id": "tieukrizchemla2019_6b",
@@ -169,7 +176,8 @@
       ["determiner", "some"],
       ["polarity", "negative"]
     ],
-    "comment": "The existential paraphrase of (5b)."
+    "comment": "The existential paraphrase of (5b).",
+    "verified": "page-image"
   },
   {
     "id": "tieukrizchemla2019_7a",
@@ -188,7 +196,8 @@
       ["determiner", "every"],
       ["polarity", "positive"]
     ],
-    "comment": "The universal paraphrase of (5a)."
+    "comment": "The universal paraphrase of (5a).",
+    "verified": "page-image"
   },
   {
     "id": "tieukrizchemla2019_7b",
@@ -207,7 +216,8 @@
       ["determiner", "every"],
       ["polarity", "negative"]
     ],
-    "comment": "The universal paraphrase of (5b)."
+    "comment": "The universal paraphrase of (5b).",
+    "verified": "page-image"
   },
   {
     "id": "tieukrizchemla2019_8a",
@@ -226,7 +236,8 @@
       ["determiner", "some"],
       ["polarity", "positive"]
     ],
-    "comment": "The existential resolution of (1) on the supervaluation approach; (1) is true when both (8a) and (8b) are, false when neither is."
+    "comment": "The existential resolution of (1) on the supervaluation approach; (1) is true when both (8a) and (8b) are, false when neither is.",
+    "verified": "page-image"
   },
   {
     "id": "tieukrizchemla2019_8b",
@@ -245,7 +256,8 @@
       ["determiner", "all"],
       ["polarity", "positive"]
     ],
-    "comment": "The universal resolution of (1) on the supervaluation approach."
+    "comment": "The universal resolution of (1) on the supervaluation approach.",
+    "verified": "page-image"
   },
   {
     "id": "tieukrizchemla2019_9a",
@@ -267,7 +279,8 @@
       ["polarity", "positive"],
       ["inference", "scalar implicature"]
     ],
-    "comment": "The *not all* implicature that (10) derives by exhaustification against *all*."
+    "comment": "The *not all* implicature that (10) derives by exhaustification against *all*.",
+    "verified": "page-image"
   },
   {
     "id": "tieukrizchemla2019_9b",
@@ -287,7 +300,8 @@
       ["polarity", "negative"],
       ["inference", "scalar implicature"]
     ],
-    "comment": "The implicature of (9a)."
+    "comment": "The implicature of (9a).",
+    "verified": "page-image"
   },
   {
     "id": "tieukrizchemla2019_12a",
@@ -308,7 +322,8 @@
       ["context", "gap"],
       ["condition", "homogeneity target"]
     ],
-    "comment": "Experiment 1 homogeneity target; the homogeneous pattern rejects it, the existential pattern accepts it."
+    "comment": "Experiment 1 homogeneity target; the homogeneous pattern rejects it, the existential pattern accepts it.",
+    "verified": "page-image"
   },
   {
     "id": "tieukrizchemla2019_12b",
@@ -329,7 +344,8 @@
       ["context", "gap"],
       ["condition", "homogeneity target"]
     ],
-    "comment": "Experiment 1 homogeneity target; the universal pattern accepts it, the homogeneous and existential patterns reject it."
+    "comment": "Experiment 1 homogeneity target; the universal pattern accepts it, the homogeneous and existential patterns reject it.",
+    "verified": "page-image"
   },
   {
     "id": "tieukrizchemla2019_13a",
@@ -349,7 +365,8 @@
       ["polarity", "positive"],
       ["condition", "definite control"]
     ],
-    "comment": "Definite description control, true in the ALL context and false in the NONE context."
+    "comment": "Definite description control, true in the ALL context and false in the NONE context.",
+    "verified": "page-image"
   },
   {
     "id": "tieukrizchemla2019_13b",
@@ -369,7 +386,8 @@
       ["polarity", "negative"],
       ["condition", "definite control"]
     ],
-    "comment": "Definite description control, false in the ALL context and true in the NONE context."
+    "comment": "Definite description control, false in the ALL context and true in the NONE context.",
+    "verified": "page-image"
   },
   {
     "id": "tieukrizchemla2019_14a",
@@ -390,7 +408,8 @@
       ["context", "gap"],
       ["condition", "universal control"]
     ],
-    "comment": "Universal quantification control in a GAP context."
+    "comment": "Universal quantification control in a GAP context.",
+    "verified": "page-image"
   },
   {
     "id": "tieukrizchemla2019_14b",
@@ -411,7 +430,8 @@
       ["context", "gap"],
       ["condition", "universal control"]
     ],
-    "comment": "Universal quantification control in a GAP context; footnote 12 notes that some speakers find the negation marginal."
+    "comment": "Universal quantification control in a GAP context; footnote 12 notes that some speakers find the negation marginal.",
+    "verified": "page-image"
   },
   {
     "id": "tieukrizchemla2019_si_target",
@@ -435,7 +455,8 @@
       ["context", "all"],
       ["condition", "scalar implicature target"]
     ],
-    "comment": "Scalar implicature target of Experiment 1."
+    "comment": "Scalar implicature target of Experiment 1.",
+    "verified": "page-image"
   },
   {
     "id": "tieukrizchemla2019_26",
@@ -457,7 +478,8 @@
       ["polarity", "positive"],
       ["phenomenon", "non-maximality"]
     ],
-    "comment": "Non-maximality, an example from [lasersohn-1999] the discussion uses to explain the existential stage."
+    "comment": "Non-maximality, an example from [lasersohn-1999] the discussion uses to explain the existential stage.",
+    "verified": "page-image"
   },
   {
     "id": "tieukrizchemla2019_27",
@@ -479,6 +501,7 @@
       ["polarity", "positive"],
       ["phenomenon", "non-maximality"]
     ],
-    "comment": "An example from [malamud-2012] in which a non-maximal reading turns existential."
+    "comment": "An example from [malamud-2012] in which a non-maximal reading turns existential.",
+    "verified": "page-image"
   }
 ]

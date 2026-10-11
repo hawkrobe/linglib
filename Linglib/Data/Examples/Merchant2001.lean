@@ -17,12 +17,12 @@ namespace Merchant2001.Examples
 
 def german_case_match : Datum :=
   { id := "merchant2001_german_case_match"
-    source := ⟨"merchant-2001", "case-matching under sluicing"⟩
+    source := ⟨"merchant-2001", "ch. 2, (13)"⟩
     reportedIn := none
     language := "stan1295"
     primaryText := "Er will jemandem schmeicheln, aber sie wissen nicht, wem."
-    glossedTokens := [("Er", "he.NOM"), ("will", "want.PRS.3SG"), ("jemandem", "someone.DAT"), ("schmeicheln", "flatter.INF"), ("aber", "but"), ("sie", "they"), ("wissen", "know.PRS.3PL"), ("nicht", "NEG"), ("wem", "who.DAT")]
-    context := "Sluicing: the wh-remnant must bear the case its correlate bears in the antecedent. The verb schmeicheln 'flatter' assigns dative."
+    glossedTokens := [("Er", "he"), ("will", "wants"), ("jemandem", "someone.DAT"), ("schmeicheln", "flatter"), ("aber", "but"), ("sie", "they"), ("wissen", "know"), ("nicht", "not"), ("wem", "who.DAT")]
+    context := ""
     judgment := .acceptable
     alternatives := [("Er will jemandem schmeicheln, aber sie wissen nicht, wen.", .ungrammatical)]
     readings := []

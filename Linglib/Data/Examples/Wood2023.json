@@ -17,7 +17,8 @@
     "paperFeatures": [
       ["verb", "þvo"]
     ],
-    "comment": "The verb underlying þvottur."
+    "comment": "The verb underlying þvottur.",
+    "verified": "page-image"
   },
   {
     "id": "wood2023_2",
@@ -40,7 +41,8 @@
     "paperFeatures": [
       ["reading", "CEN"]
     ],
-    "comment": "A complex event reading with the internal argument in a PP."
+    "comment": "A complex event reading with the internal argument in a PP.",
+    "verified": "page-image"
   },
   {
     "id": "wood2023_3",
@@ -62,7 +64,8 @@
     "paperFeatures": [
       ["reading", "SEN"]
     ],
-    "comment": ""
+    "comment": "The page glosses Þvo-ttur-inn as wash-the-NMLZ; the morphemes are in the order NMLZ-the, as the book glosses marg-þvo-ttur-inn many-wash-NMLZ-the in (6.38b).",
+    "verified": "page-image"
   },
   {
     "id": "wood2023_4",
@@ -75,7 +78,7 @@
       ["Þvo-ttur-inn", "wash-NMLZ-the"], ["á", "ought"], ["að", "to"], ["fara", "go"], ["í", "in"],
       ["vélina", "machine.the.ACC"]
     ],
-    "translation": "The washing should go into the washing machine.",
+    "translation": "The washing (=laundry, clothes to be washed) should go into the washing machine.",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -85,7 +88,8 @@
     "paperFeatures": [
       ["reading", "RN"]
     ],
-    "comment": "The laundry reading, an entity with no event."
+    "comment": "The laundry reading, an entity with no event. The page glosses Þvo-ttur-inn as wash-the-NMLZ; the morphemes are in the order NMLZ-the, as in (6.38b).",
+    "verified": "page-image"
   },
   {
     "id": "wood2023_5",
@@ -105,7 +109,8 @@
     "paperFeatures": [
       ["prefix", "marg-"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "wood2023_6",
@@ -129,7 +134,8 @@
       ["prefix", "marg-"],
       ["reading", "CEN"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "wood2023_7",
@@ -152,7 +158,8 @@
       ["prefix", "marg-"],
       ["reading", "CEN"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "wood2023_8",
@@ -176,7 +183,8 @@
       ["prefix", "marg-"],
       ["reading", "SEN"]
     ],
-    "comment": "Iterative marg- is out on the simple event reading."
+    "comment": "Iterative marg- is out on the simple event reading. The translation is printed as INTENDED. The page glosses Marg-þvo-ttur-inn as many-wash-the-NMLZ; the morphemes are in the order NMLZ-the, as in (6.38b).",
+    "verified": "page-image"
   },
   {
     "id": "wood2023_9",
@@ -189,7 +197,7 @@
       ["Marg-þvo-ttur-inn", "many-wash-NMLZ-the"], ["á", "ought"], ["að", "to"], ["fara", "go"],
       ["í", "in"], ["vélina", "machine.the.ACC"]
     ],
-    "translation": "The repeated washing should go into the washing machine.",
+    "translation": "The repeated washing (=laundry, clothes to be repeatedly washed) should go into the washing machine.",
     "context": "",
     "judgment": "ungrammatical",
     "alternatives": [],
@@ -200,7 +208,8 @@
       ["prefix", "marg-"],
       ["reading", "RN"]
     ],
-    "comment": "Iterative marg- is out on the entity reading."
+    "comment": "Iterative marg- is out on the entity reading. The page glosses Marg-þvo-ttur-inn as many-wash-the-NMLZ; the morphemes are in the order NMLZ-the, as in (6.38b).",
+    "verified": "page-image"
   },
   {
     "id": "wood2023_10",
@@ -220,7 +229,8 @@
     "paperFeatures": [
       ["prefix", "endur-"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "wood2023_11",
@@ -244,7 +254,8 @@
       ["prefix", "endur-"],
       ["reading", "CEN"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "wood2023_12",
@@ -268,7 +279,8 @@
       ["prefix", "endur-"],
       ["reading", "SEN"]
     ],
-    "comment": "endur- adjoins to n, where the simple event alloseme supplies the event."
+    "comment": "endur- adjoins to n, where the simple event alloseme supplies the event. The page glosses Endur-þvo-ttur-inn as re-wash-the-NMLZ; the morphemes are in the order NMLZ-the, as in (6.38b).",
+    "verified": "page-image"
   },
   {
     "id": "wood2023_13",
@@ -281,7 +293,7 @@
       ["Endur-þvo-ttur-inn", "re-wash-NMLZ-the"], ["á", "ought"], ["að", "to"], ["fara", "go"],
       ["í", "in"], ["vélina", "machine.the.ACC"]
     ],
-    "translation": "The rewashing should go into the washing machine.",
+    "translation": "The rewashing (=laundry, clothes to be rewashed) should go into the washing machine.",
     "context": "",
     "judgment": "ungrammatical",
     "alternatives": [],
@@ -292,7 +304,8 @@
       ["prefix", "endur-"],
       ["reading", "RN"]
     ],
-    "comment": "No event variable at v or n on the entity reading."
+    "comment": "No event variable at v or n on the entity reading. The page glosses Endur-þvo-ttur-inn as wash-the-NMLZ; the gloss here adds re- (as in (6.46a-c)) and orders the morphemes NMLZ-the, as in (6.38b).",
+    "verified": "page-image"
   },
   {
     "id": "wood2023_14",
@@ -316,7 +329,8 @@
       ["prefix", "endur-"],
       ["reading", "result RN"]
     ],
-    "comment": "A result nominal built on eventive v, to which endur- adjoins."
+    "comment": "A result nominal built on eventive v, to which endur- adjoins.",
+    "verified": "page-image"
   },
   {
     "id": "wood2023_15",
@@ -339,7 +353,8 @@
       ["preposition", "um"],
       ["pattern", "1"]
     ],
-    "comment": "The verb takes an um PP; the prefixed verb um-ræða is out."
+    "comment": "Expands the printed að {*um-}ræða {um} þetta. The verb takes an um PP; the prefixed verb um-ræða is out.",
+    "verified": "page-image"
   },
   {
     "id": "wood2023_16",
@@ -349,7 +364,7 @@
     "primaryText": "um-ræð-a um þetta",
     "discourseSegments": [],
     "glossedTokens": [
-      ["um-ræð-a", "about-discuss-NMLZ"], ["um", "about"], ["þetta", "this"]
+      ["um-ræð-a", "about-discussion-NMLZ"], ["um", "about"], ["þetta", "this"]
     ],
     "translation": "discussion about this",
     "context": "",
@@ -360,7 +375,8 @@
       ["preposition", "um"],
       ["pattern", "1"]
     ],
-    "comment": "Doubling: the preposition is prefixed to the noun and heads a PP."
+    "comment": "Doubling: the preposition is prefixed to the noun and heads a PP.",
+    "verified": "page-image"
   },
   {
     "id": "wood2023_17",
@@ -381,7 +397,8 @@
       ["preposition", "um"],
       ["pattern", "3"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "wood2023_18",
@@ -402,7 +419,8 @@
       ["preposition", "um"],
       ["pattern", "3"]
     ],
-    "comment": "The preposition conditions no special meaning, so it is not prefixed."
+    "comment": "The preposition conditions no special meaning, so it is not prefixed.",
+    "verified": "page-image"
   },
   {
     "id": "wood2023_19",
@@ -427,7 +445,8 @@
       ["pattern", "2"],
       ["reading", "CEN"]
     ],
-    "comment": "The preposition conditions the special meaning 'repair' of gera and is prefixed."
+    "comment": "The preposition conditions the special meaning 'repair' of gera and is prefixed.",
+    "verified": "page-image"
   },
   {
     "id": "wood2023_20",
@@ -448,7 +467,8 @@
     "paperFeatures": [
       ["suffix", "-væða"]
     ],
-    "comment": "The stem carries overt nominalizing and genitive morphology: -væða attaches to a categorized word."
+    "comment": "The stem carries overt nominalizing and genitive morphology: -væða attaches to a categorized word.",
+    "verified": "page-image"
   },
   {
     "id": "wood2023_21",
@@ -468,7 +488,8 @@
     "paperFeatures": [
       ["suffix", "-væðing"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
     },
   {
     "id": "wood2023_22",
@@ -491,7 +512,8 @@
       ["nominal", "að-dá-un"],
       ["reading", "RN"]
     ],
-    "comment": "The book also gives the verb rétti mér 'handed me'. Aðdáun has no concrete entity reading."
+    "comment": "The book also gives the verb rétti mér 'handed me'. Aðdáun has no concrete entity reading.",
+    "verified": "page-image"
   },
   {
     "id": "wood2023_23",
@@ -514,6 +536,7 @@
       ["nominal", "við-vör-un"],
       ["reading", "RN"]
     ],
-    "comment": "Viðvörun, with the same nominalizer as aðdáun, has a concrete entity reading."
+    "comment": "Viðvörun, with the same nominalizer as aðdáun, has a concrete entity reading.",
+    "verified": "page-image"
   }
 ]

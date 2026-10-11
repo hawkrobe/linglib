@@ -59,7 +59,8 @@
         "edge"
       ]
     ],
-    "comment": "The relative pronoun and complementizer are obligatory, *(yox̂ ke)."
+    "comment": "The relative pronoun and complementizer are obligatory, *(yox̂ ke).",
+    "verified": "page-image"
   },
   {
     "id": "deal2026_28b",
@@ -125,7 +126,8 @@
         "edge"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "deal2026_27b",
@@ -182,7 +184,8 @@
         "edge"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "deal2026_27d",
@@ -239,7 +242,8 @@
         "edge"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "deal2026_27e_eeys",
@@ -296,7 +300,8 @@
         "edge"
       ]
     ],
-    "comment": "One of the three predicates (27e) gives with one embedded clause."
+    "comment": "One of the three predicates (27e) gives with one embedded clause.",
+    "verified": "page-image"
   },
   {
     "id": "deal2026_27e_qeese",
@@ -353,7 +358,8 @@
         "edge"
       ]
     ],
-    "comment": "One of the three predicates (27e) gives with one embedded clause."
+    "comment": "One of the three predicates (27e) gives with one embedded clause.",
+    "verified": "page-image"
   },
   {
     "id": "deal2026_27e_timneeneki",
@@ -410,7 +416,8 @@
         "edge"
       ]
     ],
-    "comment": "One of the three predicates (27e) gives with one embedded clause."
+    "comment": "One of the three predicates (27e) gives with one embedded clause.",
+    "verified": "page-image"
   },
   {
     "id": "deal2026_41a",
@@ -451,7 +458,8 @@
         "nominalComplement"
       ]
     ],
-    "comment": "Intended reading; an RE predicate takes no nominal complement."
+    "comment": "Intended reading; ’eey’s takes no nominal complement, whether or not the object triggers transitive case and agreement.",
+    "verified": "page-image"
   },
   {
     "id": "deal2026_41b",
@@ -492,7 +500,8 @@
         "nominalComplement"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "deal2026_42a",
@@ -549,7 +558,8 @@
         "edge"
       ]
     ],
-    "comment": "An unanalyzable particle, not a verb (fn. 16, §4)."
+    "comment": "An unanalyzable particle, not a verb (fn. 16, §4).",
+    "verified": "page-image"
   },
   {
     "id": "deal2026_42b",
@@ -591,7 +601,8 @@
         "nominalComplement"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "deal2026_47a",
@@ -645,7 +656,8 @@
         "edge"
       ]
     ],
-    "comment": "The relative morphology is excluded, (*yox̂ ke); the addressee is accusative."
+    "comment": "The relative morphology is excluded, (*yox̂ ke); the addressee is accusative.",
+    "verified": "page-image"
   },
   {
     "id": "deal2026_47b",
@@ -690,7 +702,8 @@
         "aboutPP"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "deal2026_48a",
@@ -744,7 +757,8 @@
         "edge"
       ]
     ],
-    "comment": "Repeated as (65a)."
+    "comment": "Repeated as (65a).",
+    "verified": "page-image"
   },
   {
     "id": "deal2026_48b",
@@ -754,7 +768,7 @@
     },
     "reportedIn": null,
     "language": "nezp1238",
-    "primaryText": "pro neki-se-∅ kimti tamtaay-ki.",
+    "primaryText": "pro neki-se-∅ kimti tamtaay-ki. Weet’u ta’c pro hii-wes.",
     "discourseSegments": [],
     "glossedTokens": [
       [
@@ -772,9 +786,25 @@
       [
         "tamtaay-ki",
         "news-inst"
+      ],
+      [
+        "Weet’u",
+        "neg"
+      ],
+      [
+        "ta’c",
+        "good"
+      ],
+      [
+        "pro",
+        "3sg"
+      ],
+      [
+        "hii-wes",
+        "3subj-be.pres"
       ]
     ],
-    "translation": "I’m thinking about the latest news.",
+    "translation": "I’m thinking about the latest news. It’s not good.",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -789,7 +819,8 @@
         "aboutPP"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "deal2026_65b",
@@ -843,7 +874,8 @@
         "edge"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "deal2026_66a",
@@ -892,7 +924,8 @@
         "edge"
       ]
     ],
-    "comment": "Simplex embedding under ‘know’ is extremely well documented."
+    "comment": "Simplex embedding under ‘know’ is extremely well documented.",
+    "verified": "page-image"
   },
   {
     "id": "deal2026_66b",
@@ -957,7 +990,8 @@
         "%"
       ]
     ],
-    "comment": "Marked %: consultants did on rare occasions accept an RE with ‘know’, and once produced one."
+    "comment": "Marked %: consultants did on rare occasions accept an RE with ‘know’, and once produced one.",
+    "verified": "page-image"
   },
   {
     "id": "deal2026_33",
@@ -1026,7 +1060,8 @@
         "3"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "deal2026_34",
@@ -1099,7 +1134,8 @@
         "3"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "deal2026_35",
@@ -1160,7 +1196,8 @@
         "3"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "deal2026_36",
@@ -1225,7 +1262,8 @@
         "3"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "deal2026_68",
@@ -1235,7 +1273,7 @@
     },
     "reportedIn": null,
     "language": "nezp1238",
-    "primaryText": "C’alawi sepehiteemenew’eet hi-cuukwe-ce-∅ ’iin k’oomay-ca-∅ weet’u pro hi-cewcew-nuu-yu’-kum pro.",
+    "primaryText": "C’alawi sepehiteemenew’eet hi-cuukwe-ce-∅ ’iin k’oomay-ca-∅, weet’u pro hi-cewcew-nuu-yu’-kum pro.",
     "discourseSegments": [],
     "glossedTokens": [
       [
@@ -1302,6 +1340,7 @@
         "3"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   }
 ]

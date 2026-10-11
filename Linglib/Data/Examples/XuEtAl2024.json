@@ -20,7 +20,8 @@
       ["strategy", "reuse"],
       ["interval", "1940+"]
     ],
-    "comment": "An attested emerging form-sense pair; the alternatives are the near-synonym baselines of Table 2."
+    "comment": "An attested emerging form-sense pair; the alternatives are the near-synonym baselines of Table 2.",
+    "verified": "page-image"
   },
   {
     "id": "xuetal2024_2",
@@ -39,7 +40,8 @@
       ["strategy", "reuse"],
       ["interval", "1940+"]
     ],
-    "comment": "An attested emerging form-sense pair."
+    "comment": "An attested emerging form-sense pair.",
+    "verified": "page-image"
   },
   {
     "id": "xuetal2024_3",
@@ -58,7 +60,8 @@
       ["strategy", "reuse"],
       ["interval", "1940+"]
     ],
-    "comment": "An attested emerging form-sense pair."
+    "comment": "An attested emerging form-sense pair.",
+    "verified": "page-image"
   },
   {
     "id": "xuetal2024_4",
@@ -77,7 +80,8 @@
       ["strategy", "compound"],
       ["interval", "1900+"]
     ],
-    "comment": "An attested emerging form-sense pair."
+    "comment": "An attested emerging form-sense pair.",
+    "verified": "page-image"
   },
   {
     "id": "xuetal2024_5",
@@ -100,7 +104,8 @@
       ["strategy", "compound"],
       ["interval", "1940+"]
     ],
-    "comment": "An attested emerging form-sense pair; the alternatives are the near-synonym baselines of Table 2."
+    "comment": "An attested emerging form-sense pair; the alternatives are the near-synonym baselines of Table 2.",
+    "verified": "page-image"
   },
   {
     "id": "xuetal2024_6",
@@ -119,7 +124,8 @@
       ["strategy", "compound"],
       ["interval", "1980+"]
     ],
-    "comment": "An attested emerging form-sense pair."
+    "comment": "An attested emerging form-sense pair.",
+    "verified": "page-image"
   },
   {
     "id": "xuetal2024_7",
@@ -138,7 +144,8 @@
       ["strategy", "reuse"],
       ["interval", "1900+"]
     ],
-    "comment": "An attested emerging form-sense pair."
+    "comment": "An attested emerging form-sense pair.",
+    "verified": "page-image"
   },
   {
     "id": "xuetal2024_8",
@@ -162,7 +169,8 @@
       ["strategy", "reuse"],
       ["interval", "1920+"]
     ],
-    "comment": "An attested emerging form-sense pair; the alternatives are the near-synonym baselines of Table 2."
+    "comment": "An attested emerging form-sense pair; the alternatives are the near-synonym baselines of Table 2.",
+    "verified": "page-image"
   },
   {
     "id": "xuetal2024_9",
@@ -172,7 +180,7 @@
     "primaryText": "émuler",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "Imitate the function of another system, as by modifying the hardware or the software",
+    "translation": "Imitate the function of (another system), as by modifying the hardware or the software",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -181,7 +189,8 @@
       ["strategy", "reuse"],
       ["interval", "1960+"]
     ],
-    "comment": "An attested emerging form-sense pair."
+    "comment": "An attested emerging form-sense pair.",
+    "verified": "page-image"
   },
   {
     "id": "xuetal2024_10",
@@ -204,7 +213,8 @@
       ["strategy", "compound"],
       ["interval", "1900+"]
     ],
-    "comment": "An attested emerging form-sense pair; the alternatives are the near-synonym baselines of Table 2."
+    "comment": "An attested emerging form-sense pair; the alternatives are the near-synonym baselines of Table 2.",
+    "verified": "page-image"
   },
   {
     "id": "xuetal2024_11",
@@ -223,7 +233,8 @@
       ["strategy", "compound"],
       ["interval", "1900+"]
     ],
-    "comment": "An attested emerging form-sense pair."
+    "comment": "An attested emerging form-sense pair.",
+    "verified": "page-image"
   },
   {
     "id": "xuetal2024_12",
@@ -242,7 +253,8 @@
       ["strategy", "compound"],
       ["interval", "1940+"]
     ],
-    "comment": "An attested emerging form-sense pair."
+    "comment": "An attested emerging form-sense pair.",
+    "verified": "page-image"
   },
   {
     "id": "xuetal2024_13",
@@ -266,7 +278,8 @@
       ["strategy", "reuse"],
       ["interval", "1900+"]
     ],
-    "comment": "An attested emerging form-sense pair; the alternatives are the near-synonym baselines of Table 2."
+    "comment": "An attested emerging form-sense pair; the alternatives are the near-synonym baselines of Table 2.",
+    "verified": "page-image"
   },
   {
     "id": "xuetal2024_14",
@@ -285,7 +298,8 @@
       ["strategy", "reuse"],
       ["interval", "1920+"]
     ],
-    "comment": "An attested emerging form-sense pair."
+    "comment": "An attested emerging form-sense pair.",
+    "verified": "page-image"
   },
   {
     "id": "xuetal2024_15",
@@ -304,7 +318,8 @@
       ["strategy", "reuse"],
       ["interval", "1940+"]
     ],
-    "comment": "An attested emerging form-sense pair."
+    "comment": "An attested emerging form-sense pair.",
+    "verified": "page-image"
   },
   {
     "id": "xuetal2024_16",
@@ -327,7 +342,8 @@
       ["strategy", "compound"],
       ["interval", "1900+"]
     ],
-    "comment": "An attested emerging form-sense pair; the alternatives are the near-synonym baselines of Table 2."
+    "comment": "An attested emerging form-sense pair; the alternatives are the near-synonym baselines of Table 2.",
+    "verified": "page-image"
   },
   {
     "id": "xuetal2024_17",
@@ -346,7 +362,8 @@
       ["strategy", "compound"],
       ["interval", "1900+"]
     ],
-    "comment": "An attested emerging form-sense pair."
+    "comment": "An attested emerging form-sense pair.",
+    "verified": "page-image"
   },
   {
     "id": "xuetal2024_18",
@@ -365,6 +382,7 @@
       ["strategy", "compound"],
       ["interval", "1920+"]
     ],
-    "comment": "An attested emerging form-sense pair."
+    "comment": "An attested emerging form-sense pair.",
+    "verified": "page-image"
   }
 ]

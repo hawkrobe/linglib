@@ -15,7 +15,8 @@
     "paperFeatures": [
       ["measureFunction", "extensive"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "krifka1998_ex11b",
@@ -33,7 +34,8 @@
     "paperFeatures": [
       ["measureFunction", "extensive"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "krifka1998_ex11c",
@@ -45,13 +47,14 @@
     "glossedTokens": [],
     "translation": "",
     "context": "Nominal measure construction with a non-extensive measure function.",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
       ["measureFunction", "nonExtensive"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "krifka1998_ex11d",
@@ -63,13 +66,14 @@
     "glossedTokens": [],
     "translation": "",
     "context": "Nominal measure construction with a non-extensive measure function.",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
       ["measureFunction", "nonExtensive"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "krifka1998_ex12c",
@@ -81,13 +85,14 @@
     "glossedTokens": [],
     "translation": "",
     "context": "A measure phrase applied to a predicate that is already quantized; contrast (12a) hundred grams of wool and (12b) five hundred meters of wool.",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
       ["measureFunction", "extensive"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "krifka1998_ex58",
@@ -105,7 +110,8 @@
     "paperFeatures": [
       ["adverbial", "in"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "krifka1998_ex60a",
@@ -123,7 +129,8 @@
     "paperFeatures": [
       ["adverbial", "in"]
     ],
-    "comment": "The paper credits the observation to White (1994), Mittwoch (1982) and White and Zucchi (1996)."
+    "comment": "The paper credits the observation to White (1994), Mittwoch (1982) and White and Zucchi (1996).",
+    "verified": "page-image"
   },
   {
     "id": "krifka1998_ex60b",
@@ -141,7 +148,8 @@
     "paperFeatures": [
       ["adverbial", "in"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "krifka1998_ex60c",
@@ -159,7 +167,8 @@
     "paperFeatures": [
       ["adverbial", "in"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "krifka1998_ex66a",
@@ -177,7 +186,8 @@
     "paperFeatures": [
       ["clitic", "se"]
     ],
-    "comment": "The paper credits the observation to Nishida (1994)."
+    "comment": "The paper credits the observation to Nishida (1994). Expands the printed Juan (se) tomó una copa de vino ...: the variant with se.",
+    "verified": "page-image"
   },
   {
     "id": "krifka1998_ex66b",
@@ -189,13 +199,14 @@
     "glossedTokens": [],
     "translation": "Juan drank wine last night before going to bed",
     "context": "The reflexive clitic se with an atelic predicate; without se the sentence is fine.",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
       ["clitic", "se"]
     ],
-    "comment": "The paper credits the observation to Nishida (1994)."
+    "comment": "The paper credits the observation to Nishida (1994). Expands the printed Juan (*se) tomó vino ...: the starred variant with se.",
+    "verified": "page-image"
   },
   {
     "id": "krifka1998_ex74",
@@ -213,7 +224,8 @@
     "paperFeatures": [
       ["path", "sourceGoal"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "krifka1998_ex75",
@@ -231,7 +243,8 @@
     "paperFeatures": [
       ["path", "sourceDirection"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "krifka1998_ex75_in",
@@ -243,14 +256,15 @@
     "glossedTokens": [],
     "translation": "",
     "context": "An interval adverbial with a directed but goalless movement.",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
       ["path", "sourceDirection"],
       ["adverbial", "in"]
     ],
-    "comment": ""
+    "comment": "Printed with * in the prose introducing (75).",
+    "verified": "page-image"
   },
   {
     "id": "krifka1998_ex77a_in",
@@ -269,7 +283,8 @@
       ["goal", "specified"],
       ["adverbial", "in"]
     ],
-    "comment": ""
+    "comment": "Expands the printed (77a) ... till half done (in an hour / *for an hour).",
+    "verified": "page-image"
   },
   {
     "id": "krifka1998_ex77a_for",
@@ -281,14 +296,15 @@
     "glossedTokens": [],
     "translation": "",
     "context": "A change on the scale of doneness with an explicitly specified goal.",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
       ["goal", "specified"],
       ["adverbial", "for"]
     ],
-    "comment": ""
+    "comment": "Expands the printed (77a) ... till half done (in an hour / *for an hour).",
+    "verified": "page-image"
   },
   {
     "id": "krifka1998_ex77b_in",
@@ -307,7 +323,8 @@
       ["goal", "specified"],
       ["adverbial", "in"]
     ],
-    "comment": ""
+    "comment": "Expands the printed (77b) ... stiff (in an hour / *for an hour).",
+    "verified": "page-image"
   },
   {
     "id": "krifka1998_ex77b_for",
@@ -319,21 +336,22 @@
     "glossedTokens": [],
     "translation": "",
     "context": "A resultative adjective specifying the goal of the change.",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
       ["goal", "specified"],
       ["adverbial", "for"]
     ],
-    "comment": ""
+    "comment": "Expands the printed (77b) ... stiff (in an hour / *for an hour).",
+    "verified": "page-image"
   },
   {
     "id": "krifka1998_ex77c",
     "source": {"bibkey": "krifka-1998", "paperLabel": "(77c)"},
     "reportedIn": null,
     "language": "stan1293",
-    "primaryText": "Mary baked the lobster in an hour / for an hour.",
+    "primaryText": "Mary baked the lobster (in an hour / for an hour).",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
@@ -347,7 +365,8 @@
     "paperFeatures": [
       ["goal", "implicit"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "krifka1998_ex78",
@@ -365,6 +384,7 @@
     "paperFeatures": [
       ["path", "goal"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   }
 ]

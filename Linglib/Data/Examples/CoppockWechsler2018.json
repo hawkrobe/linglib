@@ -18,7 +18,8 @@
       ["clause", "declarative"],
       ["marking", "ego"]
     ],
-    "comment": "Repeated from the paper's (1a), after Hargreaves 2005."
+    "comment": "Repeated from the paper's (1a), after Hargreaves 2005.",
+    "verified": "page-image"
   },
   {
     "id": "coppockwechsler2018_28",
@@ -31,7 +32,7 @@
     ],
     "translation": "You drank-EGO a lot.",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -39,7 +40,8 @@
       ["clause", "declarative"],
       ["marking", "ego"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "coppockwechsler2018_34a",
@@ -52,7 +54,7 @@
     ],
     "translation": "Did I drink-EGO a lot?",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -60,7 +62,8 @@
       ["clause", "interrogative"],
       ["marking", "ego"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "coppockwechsler2018_34b",
@@ -81,7 +84,8 @@
       ["clause", "interrogative"],
       ["marking", "plain"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "coppockwechsler2018_35a",
@@ -102,7 +106,8 @@
       ["clause", "interrogative"],
       ["marking", "ego"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "coppockwechsler2018_35b",
@@ -115,7 +120,7 @@
     ],
     "translation": "Did you drink a lot?",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -123,6 +128,7 @@
       ["clause", "interrogative"],
       ["marking", "plain"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   }
 ]

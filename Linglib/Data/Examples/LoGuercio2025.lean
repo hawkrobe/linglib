@@ -17,7 +17,7 @@ namespace LoGuercio2025.Examples
 
 def outOfBlue_epithet : Datum :=
   { id := "loguercio2025_outOfBlue_epithet"
-    source := ⟨"lo-guercio-2025", "(epithet OOTB)"⟩
+    source := ⟨"lo-guercio-2025", "(19a)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "John arrived late."
@@ -30,7 +30,7 @@ def outOfBlue_epithet : Datum :=
 
 def priorMention_epithet : Datum :=
   { id := "loguercio2025_priorMention_epithet"
-    source := ⟨"lo-guercio-2025", "(20a)"⟩
+    source := ⟨"lo-guercio-2025", "(21a)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "John arrived first, then that bastard Pedro arrived."
@@ -43,7 +43,7 @@ def priorMention_epithet : Datum :=
 
 def subconstituent_epithet : Datum :=
   { id := "loguercio2025_subconstituent_epithet"
-    source := ⟨"lo-guercio-2025", "(epithet subconstituent)"⟩
+    source := ⟨"lo-guercio-2025", "(22a)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "Yesterday, John met with that bastard Pedro."
@@ -56,11 +56,11 @@ def subconstituent_epithet : Datum :=
 
 def outOfBlue_honorific : Datum :=
   { id := "loguercio2025_outOfBlue_honorific"
-    source := ⟨"lo-guercio-2025", "(Spanish honorific OOTB)"⟩
+    source := ⟨"lo-guercio-2025", "(20a)"⟩
     reportedIn := none
     language := "stan1288"
     primaryText := "Diego entró."
-    glossedTokens := [("Diego", "Diego"), ("entró", "enter.PST.3SG")]
+    glossedTokens := [("Diego", "Diego"), ("entró", "entered")]
     context := "Out-of-the-blue Spanish utterance; no prior contextual relevance of *don/doña*."
     judgment := .acceptable
     alternatives := []
@@ -69,11 +69,11 @@ def outOfBlue_honorific : Datum :=
 
 def contrastive_honorific : Datum :=
   { id := "loguercio2025_contrastive_honorific"
-    source := ⟨"lo-guercio-2025", "(22a)"⟩
+    source := ⟨"lo-guercio-2025", "(23a)"⟩
     reportedIn := none
     language := "stan1288"
     primaryText := "Primero entró Donato. Después entró Don Pedro."
-    glossedTokens := [("Primero", "first"), ("entró", "enter.PST.3SG"), ("Donato", "Donato"), ("Después", "afterwards"), ("entró", "enter.PST.3SG"), ("Don", "HON.M"), ("Pedro", "Pedro")]
+    glossedTokens := [("Primero", "first"), ("entró", "entered"), ("Donato", "Donato"), ("Después", "afterwards"), ("entró", "entered"), ("Don", "HON.M"), ("Pedro", "Pedro")]
     context := "Two-segment discourse; the second segment uses honorific *Don* while the first uses bare name *Donato*."
     judgment := .acceptable
     alternatives := []
@@ -82,7 +82,7 @@ def contrastive_honorific : Datum :=
 
 def outOfBlue_appositive : Datum :=
   { id := "loguercio2025_outOfBlue_appositive"
-    source := ⟨"lo-guercio-2025", "(31a)"⟩
+    source := ⟨"lo-guercio-2025", "(32a)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "Diego recommended an aspirin."
@@ -95,7 +95,7 @@ def outOfBlue_appositive : Datum :=
 
 def priorMention_appositive : Datum :=
   { id := "loguercio2025_priorMention_appositive"
-    source := ⟨"lo-guercio-2025", "(31b)"⟩
+    source := ⟨"lo-guercio-2025", "(33a)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "Diego recommended an aspirin. Laura, a doctor, recommended an antibiotic."
@@ -108,7 +108,7 @@ def priorMention_appositive : Datum :=
 
 def outOfBlue_suppAdverb : Datum :=
   { id := "loguercio2025_outOfBlue_suppAdverb"
-    source := ⟨"lo-guercio-2025", "(33a)"⟩
+    source := ⟨"lo-guercio-2025", "(34a)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "Juan signed up for the tournament."
@@ -121,7 +121,7 @@ def outOfBlue_suppAdverb : Datum :=
 
 def priorMention_suppAdverb : Datum :=
   { id := "loguercio2025_priorMention_suppAdverb"
-    source := ⟨"lo-guercio-2025", "(supp-adv prior mention)"⟩
+    source := ⟨"lo-guercio-2025", "(35a)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "Juan signed up for the tournament and luckily, Pedro signed up for the tournament."
@@ -134,12 +134,12 @@ def priorMention_suppAdverb : Datum :=
 
 def priorMention_emotiveMarker : Datum :=
   { id := "loguercio2025_priorMention_emotiveMarker"
-    source := ⟨"lo-guercio-2025", "(38a)"⟩
+    source := ⟨"lo-guercio-2025", "(39a)"⟩
     reportedIn := none
     language := "stan1293"
-    primaryText := "Juan signed up for the tournament, and Alas, Pedro signed up too."
+    primaryText := "Juan signed up for the tournament, and Alas/Wow!, Pedro signed up for the tournament as well."
     glossedTokens := []
-    context := "Conjoined utterance; second conjunct's emotive marker `Alas,` parallels the first conjunct."
+    context := "Conjoined utterance; second conjunct's emotive marker `Alas/Wow!` parallels the first conjunct."
     judgment := .acceptable
     alternatives := []
     readings := []
@@ -147,7 +147,7 @@ def priorMention_emotiveMarker : Datum :=
 
 def registerBlocking : Datum :=
   { id := "loguercio2025_registerBlocking"
-    source := ⟨"lo-guercio-2025", "(28a)"⟩
+    source := ⟨"lo-guercio-2025", "(29a)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "That bastard John is late."
@@ -160,7 +160,7 @@ def registerBlocking : Datum :=
 
 def disjunction_independent_of_assertion : Datum :=
   { id := "loguercio2025_disjunction_independent_of_assertion"
-    source := ⟨"lo-guercio-2025", "(50)"⟩
+    source := ⟨"lo-guercio-2025", "(53a)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "Juan called María or that bastard Pedro."
@@ -173,7 +173,7 @@ def disjunction_independent_of_assertion : Datum :=
 
 def DE_aci_survives : Datum :=
   { id := "loguercio2025_DE_aci_survives"
-    source := ⟨"lo-guercio-2025", "(DE-embedding)"⟩
+    source := ⟨"lo-guercio-2025", "(64)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "I doubt that Juan or that bastard Pedro passed the exam."
@@ -186,30 +186,17 @@ def DE_aci_survives : Datum :=
 
 def cancellation : Datum :=
   { id := "loguercio2025_cancellation"
-    source := ⟨"lo-guercio-2025", "(ACI cancellation)"⟩
+    source := ⟨"lo-guercio-2025", "(55a)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "Juan arrived first. Then that bastard Pedro arrived. By the way, Juan is also a bastard."
     glossedTokens := []
-    context := "Tests cancellability of the ACI ¬(speaker believes John is a bastard) triggered by the prior-mention configuration."
+    context := "Tests cancellability of the ACI ¬(speaker believes Juan is a bastard) triggered by the prior-mention configuration."
     judgment := .acceptable
     alternatives := []
     readings := []
     paperFeatures := [("aciStatus", "cancelled"), ("aciProperty", "cancellable")] }
 
-def reinforcement : Datum :=
-  { id := "loguercio2025_reinforcement"
-    source := ⟨"lo-guercio-2025", "(ACI reinforcement)"⟩
-    reportedIn := none
-    language := "stan1293"
-    primaryText := "Juan arrived first. That bastard Pedro arrived second. By the way, Juan is not a bastard."
-    glossedTokens := []
-    context := "Tests reinforceability of the ACI ¬(speaker believes Juan is a bastard)."
-    judgment := .acceptable
-    alternatives := []
-    readings := []
-    paperFeatures := [("aciStatus", "arises"), ("aciProperty", "reinforceable")] }
-
-def all : List Datum := [outOfBlue_epithet, priorMention_epithet, subconstituent_epithet, outOfBlue_honorific, contrastive_honorific, outOfBlue_appositive, priorMention_appositive, outOfBlue_suppAdverb, priorMention_suppAdverb, priorMention_emotiveMarker, registerBlocking, disjunction_independent_of_assertion, DE_aci_survives, cancellation, reinforcement]
+def all : List Datum := [outOfBlue_epithet, priorMention_epithet, subconstituent_epithet, outOfBlue_honorific, contrastive_honorific, outOfBlue_appositive, priorMention_appositive, outOfBlue_suppAdverb, priorMention_suppAdverb, priorMention_emotiveMarker, registerBlocking, disjunction_independent_of_assertion, DE_aci_survives, cancellation]
 
 end LoGuercio2025.Examples

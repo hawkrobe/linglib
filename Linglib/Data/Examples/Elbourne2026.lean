@@ -173,7 +173,7 @@ def ex_55 : Datum :=
 
 def ex_64_long : Datum :=
   { id := "elbourne2026_64_long"
-    source := ⟨"morzycki-2015", "p. 30"⟩
+    source := ⟨"morzycki-2015", "ch. 2, (48)"⟩
     reportedIn := some ⟨"elbourne-2026", "(64)"⟩
     language := "russ1263"
     primaryText := "Zimnie noči budut dolgimi."
@@ -186,7 +186,7 @@ def ex_64_long : Datum :=
 
 def ex_64_short : Datum :=
   { id := "elbourne2026_64_short"
-    source := ⟨"morzycki-2015", "p. 30"⟩
+    source := ⟨"morzycki-2015", "ch. 2, (48)"⟩
     reportedIn := some ⟨"elbourne-2026", "(64)"⟩
     language := "russ1263"
     primaryText := "Zimnie noči budut dolgi."
@@ -199,7 +199,7 @@ def ex_64_short : Datum :=
 
 def ex_65a : Datum :=
   { id := "elbourne2026_65a"
-    source := ⟨"morzycki-2015", "p. 30"⟩
+    source := ⟨"morzycki-2015", "ch. 2, (46a)"⟩
     reportedIn := some ⟨"elbourne-2026", "(65a)"⟩
     language := "russ1263"
     primaryText := "xorošaja teorija"
@@ -212,7 +212,7 @@ def ex_65a : Datum :=
 
 def ex_65b : Datum :=
   { id := "elbourne2026_65b"
-    source := ⟨"morzycki-2015", "p. 30"⟩
+    source := ⟨"morzycki-2015", "ch. 2, (46b)"⟩
     reportedIn := some ⟨"elbourne-2026", "(65b)"⟩
     language := "russ1263"
     primaryText := "xoroša teorija"

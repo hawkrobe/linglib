@@ -32,7 +32,8 @@
         "experiencer"
       ]
     ],
-    "comment": "A fear-type verb: the experiencer is the subject, the stimulus the object."
+    "comment": "A fear-type verb: the experiencer is the subject, the stimulus the object.",
+    "verified": "page-image"
   },
   {
     "id": "hartshorneetal2016_frighten",
@@ -67,7 +68,8 @@
         "stimulus"
       ]
     ],
-    "comment": "A frighten-type verb: the stimulus is the subject, the experiencer the object."
+    "comment": "A frighten-type verb: the stimulus is the subject, the experiencer the object.",
+    "verified": "page-image"
   },
   {
     "id": "hartshorneetal2016_episode",
@@ -85,7 +87,7 @@
     "alternatives": [
       {
         "form": "The bats swooped out of the cave and Agnes feared them.",
-        "judgment": "unacceptable"
+        "judgment": "ungrammatical"
       }
     ],
     "readings": [],
@@ -103,7 +105,8 @@
         "frighten"
       ]
     ],
-    "comment": "A frighten-type verb describes a specific instance in which an emotional state occurs."
+    "comment": "A frighten-type verb describes a specific instance in which an emotional state occurs.",
+    "verified": "page-image"
   },
   {
     "id": "hartshorneetal2016_stageLevel",
@@ -121,7 +124,7 @@
     "alternatives": [
       {
         "form": "Agnes feared Bartholomew yesterday in the kitchen.",
-        "judgment": "unacceptable"
+        "judgment": "ungrammatical"
       }
     ],
     "readings": [],
@@ -139,7 +142,8 @@
         "frighten"
       ]
     ],
-    "comment": "The paper's rendering of the observation that frighten-type verbs describe states bound to a time and place, and fear-type verbs do not."
+    "comment": "The paper's rendering of the observation that frighten-type verbs describe states bound to a time and place, and fear-type verbs do not.",
+    "verified": "page-image"
   },
   {
     "id": "hartshorneetal2016_exp1",
@@ -170,7 +174,8 @@
         "1"
       ]
     ],
-    "comment": "Experiment 1 stimulus shape: how long is the mental state likely to have lasted (seconds to years)?"
+    "comment": "Experiment 1 stimulus shape: how long is the mental state likely to have lasted (seconds to years)?",
+    "verified": "page-image"
   },
   {
     "id": "hartshorneetal2016_exp2",
@@ -201,7 +206,8 @@
         "2"
       ]
     ],
-    "comment": "Experiment 2 stimulus shape: in a court case in which causing an emotion is illegal, who if anyone is guilty?"
+    "comment": "Experiment 2 stimulus shape: in a court case in which causing an emotion is illegal, who if anyone is guilty?",
+    "verified": "page-image"
   },
   {
     "id": "hartshorneetal2016_2a",
@@ -245,7 +251,8 @@
         "fear"
       ]
     ],
-    "comment": "Japanese fear-type verb, unaffixed."
+    "comment": "Japanese fear-type verb, unaffixed.",
+    "verified": "page-image"
   },
   {
     "id": "hartshorneetal2016_2b",
@@ -293,7 +300,8 @@
         "sase"
       ]
     ],
-    "comment": "Japanese frighten-type verb: the causative affix -(s)ase- on the fear-type stem."
+    "comment": "Japanese frighten-type verb: the causative affix -(s)ase- on the fear-type stem.",
+    "verified": "page-image"
   },
   {
     "id": "hartshorneetal2016_3a",
@@ -328,7 +336,8 @@
         "fear"
       ]
     ],
-    "comment": "Experiment 5: the novel verb *douyo* 'uneasiness' with fear-type, experiencer-subject syntax."
+    "comment": "Experiment 5: the novel verb *douyo* 'uneasiness' with fear-type, experiencer-subject syntax.",
+    "verified": "page-image"
   },
   {
     "id": "hartshorneetal2016_3b",
@@ -363,7 +372,8 @@
         "frighten"
       ]
     ],
-    "comment": "Experiment 5: the novel verb *douyo* with frighten-type, experiencer-object syntax."
+    "comment": "Experiment 5: the novel verb *douyo* with frighten-type, experiencer-object syntax.",
+    "verified": "page-image"
   },
   {
     "id": "hartshorneetal2016_5",
@@ -372,7 +382,7 @@
       "paperLabel": "(5)"
     },
     "language": "stan1293",
-    "primaryText": "Some people wixter each other. Do you know what wixter is? Wixter is when you want something that somebody else has. Or maybe you think somebody else is so cool you wish you were just like them. That means you feel wixter.",
+    "primaryText": "Some people wixter each other. Do you know what wixter is? Wixter is when you want something that somebody else has. Or maybe you think somebody else is so cool you wish you were just like them. That means you feel wixter. Do you feel wixter for anybody? [Discussion] What is your favorite thing to do? [Discussion] What if you knew a kid who got to do [favorite thing] all the time? You'd probably feel wixter, wouldn't you?",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
@@ -398,7 +408,8 @@
         "attitude"
       ]
     ],
-    "comment": "Experiment 9: the habitual-attitude definition of a novel verb, based on envy."
+    "comment": "Experiment 9: the habitual-attitude definition of a novel verb, based on envy.",
+    "verified": "page-image"
   },
   {
     "id": "hartshorneetal2016_6",
@@ -407,7 +418,7 @@
       "paperLabel": "(6)"
     },
     "language": "stan1293",
-    "primaryText": "Some people gorfin each other. Do you know what gorfin is? You feel gorfin when you see something really, really gross. Or if you had to hold something really slimy, you might feel gorfin.",
+    "primaryText": "Some people gorfin each other. Do you know what gorfin is? You feel gorfin when you see something really, really gross. Or if you had to hold something really slimy, you might feel gorfin. Can you think of any times you felt gorfin? [Discussion] What's the grossest thing you can think of? [Discussion] If you saw that, you might feel gorfin.",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
@@ -433,7 +444,8 @@
         "episode"
       ]
     ],
-    "comment": "Experiment 9: the emotional-episode definition of a novel verb, based on disgust."
+    "comment": "Experiment 9: the emotional-episode definition of a novel verb, based on disgust.",
+    "verified": "page-image"
   },
   {
     "id": "hartshorneetal2016_exp9q",
@@ -464,7 +476,8 @@
         "9"
       ]
     ],
-    "comment": "Experiment 9 test question: a fear-type linking picks the character Bear had the attitude about, a frighten-type linking the character Bear affected."
+    "comment": "Experiment 9 test question: a fear-type linking picks the character Bear had the attitude about, a frighten-type linking the character Bear affected.",
+    "verified": "page-image"
   },
   {
     "id": "hartshorneetal2016_7",
@@ -478,7 +491,7 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -495,6 +508,7 @@
         "frighten"
       ]
     ],
-    "comment": "The unattested target of a caused emotional episode, which the Fig. 11 structures do not exclude."
+    "comment": "The unattested target of a caused emotional episode, which the Fig. 11 structures do not exclude.",
+    "verified": "page-image"
   }
 ]

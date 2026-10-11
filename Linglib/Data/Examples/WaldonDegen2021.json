@@ -13,14 +13,18 @@
     "context": "",
     "judgment": "acceptable",
     "alternatives": [
-      {"form": "La tachuela pequeña azul", "judgment": "unacceptable"}
+      {
+        "form": "La tachuela pequeña azul",
+        "judgment": "ungrammatical"
+      }
     ],
     "readings": [],
     "paperFeatures": [
       ["idiolect", "Spanish-postnominal"],
       ["order", "noun color size"]
     ],
-    "comment": "Fully postnominal modification; the reverse adjective order was offered by none of the four consultants."
+    "comment": "Fully postnominal modification. The reverse adjective order la tachuela pequeña azul is printed only in prose, with no example line to mark; the prose is its judgment: 'We assume that the construction with adjectives in the reverse order ... is wholly unavailable; none of our native speaker consultants offered this construction'.",
+    "verified": "page-image"
   },
   {
     "id": "waldondegen2021_2a",
@@ -44,7 +48,8 @@
       ["idiolect", "Spanish-postnominal-conjunctive"],
       ["order", "suspended under conjunction"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "waldondegen2021_3a",
@@ -67,6 +72,7 @@
       ["idiolect", "Spanish-split"],
       ["order", "size noun color"]
     ],
-    "comment": "Offered by one consultant, for whom the color-first split is out."
+    "comment": "Offered by one consultant, for whom the color-first split is out.",
+    "verified": "page-image"
   }
 ]

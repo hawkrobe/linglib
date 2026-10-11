@@ -12,7 +12,8 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [["intervener", "nicht"], ["feature", "Neg"], ["order", "intervener-first"]],
-    "comment": "Multiple question with the second wh-phrase in situ, the intervener preceding it."
+    "comment": "Multiple question with the second wh-phrase in situ, the intervener preceding it.",
+    "verified": "page-image"
   },
   {
     "id": "kratzershimoyama2002_ex23b",
@@ -27,7 +28,8 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [["intervener", "nie"], ["feature", "exists"], ["order", "intervener-first"]],
-    "comment": "Multiple question with the second wh-phrase in situ, the intervener preceding it."
+    "comment": "Multiple question with the second wh-phrase in situ, the intervener preceding it.",
+    "verified": "page-image"
   },
   {
     "id": "kratzershimoyama2002_ex23c",
@@ -42,7 +44,8 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [["intervener", "niemand"], ["feature", "exists"], ["order", "intervener-first"]],
-    "comment": "Multiple question with the second wh-phrase in situ, the intervener preceding it."
+    "comment": "Multiple question with the second wh-phrase in situ, the intervener preceding it.",
+    "verified": "page-image"
   },
   {
     "id": "kratzershimoyama2002_ex23d",
@@ -57,7 +60,8 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [["intervener", "fast jeder"], ["feature", "exists"], ["order", "intervener-first"]],
-    "comment": "Multiple question with the second wh-phrase in situ, the intervener preceding it."
+    "comment": "Multiple question with the second wh-phrase in situ, the intervener preceding it.",
+    "verified": "page-image"
   },
   {
     "id": "kratzershimoyama2002_ex23e",
@@ -72,7 +76,8 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [["intervener", "(irgend)jemand"], ["feature", "exists"], ["order", "intervener-first"]],
-    "comment": "Multiple question with the second wh-phrase in situ, the intervener preceding it."
+    "comment": "Multiple question with the second wh-phrase in situ, the intervener preceding it.",
+    "verified": "page-image"
   },
   {
     "id": "kratzershimoyama2002_ex23f",
@@ -87,7 +92,8 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [["intervener", "der Hans"], ["feature", "none"], ["order", "intervener-first"]],
-    "comment": "Multiple question with the second wh-phrase in situ, the intervener preceding it."
+    "comment": "Multiple question with the second wh-phrase in situ, the intervener preceding it.",
+    "verified": "page-image"
   },
   {
     "id": "kratzershimoyama2002_ex23g",
@@ -95,14 +101,15 @@
     "language": "stan1295",
     "primaryText": "Was hat sie damals WEM gezeigt?",
     "discourseSegments": [],
-    "glossedTokens": [["Was", "what"], ["hat", "has"], ["sie", "she"], ["damals", "then"], ["WEM", "to.whom"], ["gezeigt", "shown"]],
+    "glossedTokens": [["Was", "what"], ["hat", "has"], ["sie", "she"], ["damals", "then"], ["WEM", "whom"], ["gezeigt", "shown"]],
     "translation": "What did she show whom at the time?",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [["intervener", "damals"], ["feature", "none"], ["order", "intervener-first"]],
-    "comment": "Multiple question with the second wh-phrase in situ, the intervener preceding it."
+    "comment": "Multiple question with the second wh-phrase in situ, the intervener preceding it.",
+    "verified": "page-image"
   },
   {
     "id": "kratzershimoyama2002_ex24a",
@@ -117,7 +124,8 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [["intervener", "nicht"], ["feature", "Neg"], ["order", "wh-first"]],
-    "comment": "The in-situ wh-phrase scrambled over the intervener."
+    "comment": "The in-situ wh-phrase scrambled over the intervener.",
+    "verified": "page-image"
   },
   {
     "id": "kratzershimoyama2002_ex24b",
@@ -132,7 +140,8 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [["intervener", "nie"], ["feature", "exists"], ["order", "wh-first"]],
-    "comment": "The in-situ wh-phrase scrambled over the intervener."
+    "comment": "The in-situ wh-phrase scrambled over the intervener.",
+    "verified": "page-image"
   },
   {
     "id": "kratzershimoyama2002_ex24c",
@@ -147,7 +156,8 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [["intervener", "niemand"], ["feature", "exists"], ["order", "wh-first"]],
-    "comment": "The in-situ wh-phrase scrambled over the intervener."
+    "comment": "The in-situ wh-phrase scrambled over the intervener.",
+    "verified": "page-image"
   },
   {
     "id": "kratzershimoyama2002_ex24d",
@@ -162,7 +172,8 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [["intervener", "fast jeder"], ["feature", "exists"], ["order", "wh-first"]],
-    "comment": "The in-situ wh-phrase scrambled over the intervener."
+    "comment": "The in-situ wh-phrase scrambled over the intervener.",
+    "verified": "page-image"
   },
   {
     "id": "kratzershimoyama2002_ex24e",
@@ -177,7 +188,8 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [["intervener", "(irgend)jemand"], ["feature", "exists"], ["order", "wh-first"]],
-    "comment": "The in-situ wh-phrase scrambled over the intervener."
+    "comment": "The in-situ wh-phrase scrambled over the intervener.",
+    "verified": "page-image"
   },
   {
     "id": "kratzershimoyama2002_ex12",
@@ -192,7 +204,8 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [["context", "nobody"], ["intervener", "niemand"], ["feature", "exists"]],
-    "comment": "Under a negative quantifier the distribution requirement disappears."
+    "comment": "Under a negative quantifier the distribution requirement disappears.",
+    "verified": "page-image"
   },
   {
     "id": "kratzershimoyama2002_ex13",
@@ -207,7 +220,8 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [["context", "doubtVerb"]],
-    "comment": "Under a downward-entailing verb the distribution requirement disappears."
+    "comment": "Under a downward-entailing verb the distribution requirement disappears.",
+    "verified": "page-image"
   },
   {
     "id": "kratzershimoyama2002_ex16",
@@ -221,7 +235,8 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [["context", "modalPossibility"]]
+    "paperFeatures": [["context", "modalPossibility"]],
+    "verified": "page-image"
   },
   {
     "id": "kratzershimoyama2002_ex17",
@@ -235,7 +250,8 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [["context", "modalNecessity"]]
+    "paperFeatures": [["context", "modalNecessity"]],
+    "verified": "page-image"
   },
   {
     "id": "kratzershimoyama2002_ex18",
@@ -249,7 +265,8 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [["context", "nobody"], ["intervener", "auf keinen Fall"], ["feature", "exists"]]
+    "paperFeatures": [["context", "nobody"], ["intervener", "auf keinen Fall"], ["feature", "exists"]],
+    "verified": "page-image"
   },
   {
     "id": "kratzershimoyama2002_ex21",
@@ -264,7 +281,8 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [["context", "negation"], ["intervener", "nicht"], ["feature", "Neg"]],
-    "comment": "With irgend stressed the sentence has the reading 'I didn't read just ANYthing' (footnote 8)."
+    "comment": "With irgend stressed the sentence has the reading 'I didn't read just ANYthing' (footnote 8).",
+    "verified": "page-image"
   },
   {
     "id": "kratzershimoyama2002_ex22",
@@ -279,6 +297,7 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [["context", "question"]],
-    "comment": "In the embedded polar question irgendein has a single reading and no free-choice effect."
+    "comment": "The paper marks as impossible the reading on which the teacher asked whether {Hans read book a, Hans read book b, ...}: irgendein cannot associate with [Q].",
+    "verified": "page-image"
   }
 ]

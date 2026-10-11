@@ -19,7 +19,8 @@
       ["trigger", "ye"],
       ["focus", "Zhangsan"]
     ],
-    "comment": "The antecedent must be salient, a focus alternative of the host, and distinct from it."
+    "comment": "The antecedent must be salient, a focus alternative of the host, and distinct from it.",
+    "verified": "page-image"
   },
   {
     "id": "wang2025_3_39",
@@ -41,7 +42,8 @@
       ["trigger", "fan'er"],
       ["focus", "Lisi"]
     ],
-    "comment": "fan'er presupposes the falsity of a salient alternative, the mirror image of ye."
+    "comment": "fan'er presupposes the falsity of a salient alternative, the mirror image of ye.",
+    "verified": "page-image"
   },
   {
     "id": "wang2025_3_40",
@@ -63,7 +65,8 @@
       ["trigger", "fan'er"],
       ["focus", "xuexiao"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "wang2025_4_35a",
@@ -85,7 +88,8 @@
     "paperFeatures": [
       ["construction", "yaome-yaome"]
     ],
-    "comment": "Infers that Zhangsan did not eat both: the either-or construction enforces exhaustification of each disjunct."
+    "comment": "Infers that Zhangsan did not eat both: the either-or construction enforces exhaustification of each disjunct.",
+    "verified": "page-image"
   },
   {
     "id": "wang2025_4_35b",
@@ -100,14 +104,15 @@
     ],
     "translation": "You either can eat a cookie or can eat a cake.",
     "context": "",
-    "judgment": "marginal",
+    "judgment": "questionable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "yaome-yaome"],
       ["modal", "above disjunction"]
     ],
-    "comment": "Marked ?? in the dissertation: the disjunction is dispreferred above the possibility modal."
+    "comment": "Marked ?? in the dissertation: the disjunction is dispreferred above the possibility modal.",
+    "verified": "page-image"
   },
   {
     "id": "wang2025_4_35c",
@@ -129,7 +134,8 @@
       ["construction", "yaome-yaome"],
       ["modal", "below disjunction"]
     ],
-    "comment": "The disjunction inside the scope of the modal, as the embedded exhaustification requires."
+    "comment": "The disjunction inside the scope of the modal, as the embedded exhaustification requires.",
+    "verified": "page-image"
   },
   {
     "id": "wang2025_4_36",
@@ -151,7 +157,8 @@
       ["context", "positive evidence"],
       ["trigger", "ye omitted"]
     ],
-    "comment": "Exhaustifying the target sentence yields the implicature that Zhangsan did not go, which contradicts the positive evidence; the additive is therefore obligatory, Table 4.4."
+    "comment": "Exhaustifying the target sentence yields the implicature that Zhangsan did not go, which contradicts the positive evidence; the additive is therefore obligatory, Table 4.4.",
+    "verified": "page-image"
   },
   {
     "id": "wang2025_4_42",
@@ -173,7 +180,8 @@
       ["context", "positive evidence"],
       ["focus", "yexu"]
     ],
-    "comment": "With focus on the possibility modal the first sentence carries an ignorance implicature, and exhaustification above the belief operator makes the trigger unnecessary."
+    "comment": "With focus on the possibility modal the first sentence carries an ignorance implicature, and exhaustification above the belief operator makes the trigger unnecessary.",
+    "verified": "page-image"
   },
   {
     "id": "wang2025_4_45",
@@ -197,6 +205,7 @@
       ["context", "positive evidence"],
       ["contrast", "polarity and time"]
     ],
-    "comment": "The double contrast yields two maximal consistent subsets of alternatives, so the cessative trigger is optional, Tables 4.7 and 4.9."
+    "comment": "The double contrast yields two maximal consistent subsets of alternatives, so the cessative trigger is optional, Tables 4.7 and 4.9.",
+    "verified": "page-image"
   }
 ]

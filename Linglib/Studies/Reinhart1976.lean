@@ -241,7 +241,7 @@ def trees : List (String × Tree Cat Unit) :=
 def path (s : String) : TreePath := ⟨s.toList.map fun c ↦ c.toNat - '0'.toNat⟩
 
 /-- An example records its tree, the two noun phrases, the pronouns among them, and the
-judgment. -/
+judgment of coreference: its `coreference` reading's where the prose gives one, else the mark. -/
 structure Row where
   tree : Tree Cat Unit
   np₁ : TreePath
@@ -255,7 +255,7 @@ def Row.ofDatum (e : Datum) : Option Row := do
   let a ← (e.feature? "np1").map path
   let b ← (e.feature? "np2").map path
   let p ← e.parse? "pronouns" [("none", []), ("np1", [a]), ("np2", [b]), ("both", [a, b])]
-  pure ⟨t, a, b, p, e.judgment⟩
+  pure ⟨t, a, b, p, (e.readings.lookup "coreference").getD e.judgment⟩
 
 /-- Every example is read. -/
 theorem isSome_ofDatum : ∀ e ∈ Examples.all, (Row.ofDatum e).isSome := by decide

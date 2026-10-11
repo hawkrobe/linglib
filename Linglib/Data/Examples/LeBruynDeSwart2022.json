@@ -6,7 +6,7 @@
       "paperLabel": "(35)"
     },
     "language": "dutc1256",
-    "primaryText": "Het klopt dat ik boeken niet heb uitgelezen.",
+    "primaryText": "Het klopt dat ik boeken niet heb uitgelezen. Dan begon ik er aan maar kwam ik er achter dat ik het toch niet leuk vond.",
     "discourseSegments": [],
     "glossedTokens": [
       [
@@ -15,7 +15,7 @@
       ],
       [
         "klopt",
-        "is.true"
+        "knocks"
       ],
       [
         "dat",
@@ -39,11 +39,79 @@
       ],
       [
         "uitgelezen",
-        "finished"
+        "UIT.read"
+      ],
+      [
+        "Dan",
+        "then"
+      ],
+      [
+        "begon",
+        "began"
+      ],
+      [
+        "ik",
+        "I"
+      ],
+      [
+        "er",
+        "ER"
+      ],
+      [
+        "aan",
+        "on"
+      ],
+      [
+        "maar",
+        "but"
+      ],
+      [
+        "kwam",
+        "came"
+      ],
+      [
+        "ik",
+        "I"
+      ],
+      [
+        "er",
+        "ER"
+      ],
+      [
+        "achter",
+        "after"
+      ],
+      [
+        "dat",
+        "that"
+      ],
+      [
+        "ik",
+        "I"
+      ],
+      [
+        "het",
+        "it"
+      ],
+      [
+        "toch",
+        "after_all"
+      ],
+      [
+        "niet",
+        "not"
+      ],
+      [
+        "leuk",
+        "fun"
+      ],
+      [
+        "vond",
+        "found"
       ]
     ],
-    "translation": "It's true that there are books I didn't finish.",
-    "context": "Preceded in the source by a discussion of reading habits; followed by 'Then I started on them but found out that I did not like them after all.'",
+    "translation": "It's true that there are books that I didn't finish. I started reading them but then found out that I didn't like them.",
+    "context": "",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [
@@ -62,7 +130,8 @@
         "scrambled"
       ]
     ],
-    "comment": "Naturally occurring scrambled bare plural over negation: obligatory wide scope (there are books I didn't finish), not 'I finished no books'; the follow-up sentence confirms the wide scope reading."
+    "comment": "Naturally occurring, slightly adapted (footnote 6). The scrambled bare plural takes wide scope over negation: the follow-up sentence confirms the wide scope reading, and a narrow scope reading (I finished no books) is incongruous in the larger context.",
+    "verified": "page-image"
   },
   {
     "id": "lebruyndeswart2022_boeken_gehaat",
@@ -115,6 +184,7 @@
         "scrambled"
       ]
     ],
-    "comment": "A scrambled bare plural under a kind-level predicate ('hate') keeps its kind reading: scrambling affects scope, not kind reference."
+    "comment": "A scrambled bare plural under a kind-level predicate ('hate') keeps its kind reading: scrambling affects scope, not kind reference.",
+    "verified": "page-image"
   }
 ]

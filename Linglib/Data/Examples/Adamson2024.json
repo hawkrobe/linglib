@@ -18,7 +18,8 @@
       ["possession", "inalienable"],
       ["gender", "I"]
     ],
-    "comment": "Mosel & Spriggs 2000:345; gender I with an inalienable possessor."
+    "comment": "Mosel & Spriggs 2000:345; gender I with an inalienable possessor.",
+    "verified": "page-image"
   },
   {
     "id": "adamson2024_39b",
@@ -39,7 +40,8 @@
       ["possession", "none"],
       ["gender", "II"]
     ],
-    "comment": "Mosel & Spriggs 2000:345; gender II unpossessed."
+    "comment": "Mosel & Spriggs 2000:345; gender II unpossessed.",
+    "verified": "page-image"
   },
   {
     "id": "adamson2024_40a",
@@ -60,7 +62,8 @@
       ["possession", "inalienable"],
       ["gender", "I"]
     ],
-    "comment": "Mosel & Spriggs 2000:345."
+    "comment": "Mosel & Spriggs 2000:345.",
+    "verified": "page-image"
   },
   {
     "id": "adamson2024_40b",
@@ -81,7 +84,8 @@
       ["possession", "none"],
       ["gender", "II"]
     ],
-    "comment": "Mosel & Spriggs 2000:345."
+    "comment": "Mosel & Spriggs 2000:345.",
+    "verified": "page-image"
   },
   {
     "id": "adamson2024_44a",
@@ -102,7 +106,8 @@
       ["possession", "inalienable"],
       ["gender", "I"]
     ],
-    "comment": "Mosel & Spriggs 2000:346."
+    "comment": "Mosel & Spriggs 2000:346.",
+    "verified": "page-image"
   },
   {
     "id": "adamson2024_44b",
@@ -123,7 +128,8 @@
       ["possession", "alienable"],
       ["gender", "II"]
     ],
-    "comment": "Mosel & Spriggs 2000:346; alienable possession leaves gender II."
+    "comment": "Mosel & Spriggs 2000:346; alienable possession leaves gender II.",
+    "verified": "page-image"
   },
   {
     "id": "adamson2024_45b",
@@ -136,7 +142,7 @@
       ["O", "ART.II.SG"], ["ihu-na", "nose-DEREL"], ["te-naa", "of-1SG"], ["to", "TOP"],
       ["gono", "get"], ["e", "ART.PROP"], ["Leona", "Leona"]
     ],
-    "translation": "Leona inherited my nose.",
+    "translation": "Leona [my daughter] inherited my nose.",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -146,7 +152,8 @@
       ["gender", "II"],
       ["alienator", "-na"]
     ],
-    "comment": "Mosel & Spriggs 2000:346; the alienator suffix -na with alienable possession."
+    "comment": "Mosel & Spriggs 2000:346; the alienator suffix -na with alienable possession.",
+    "verified": "page-image"
   },
   {
     "id": "adamson2024_46",
@@ -167,7 +174,8 @@
       ["construction", "compound"],
       ["gender", "II"]
     ],
-    "comment": "Mosel & Spriggs 2000:345; a body-part compound is gender II."
+    "comment": "Mosel & Spriggs 2000:345; a body-part compound is gender II.",
+    "verified": "page-image"
   },
   {
     "id": "adamson2024_48",
@@ -189,7 +197,8 @@
       ["gender", "I"],
       ["possessorGender", "II"]
     ],
-    "comment": "Mosel & Thiesen 2007; the possessor's own gender II is immaterial."
+    "comment": "Mosel & Thiesen 2007; the possessor's own gender II is immaterial.",
+    "verified": "page-image"
   },
   {
     "id": "adamson2024_50",
@@ -210,7 +219,8 @@
       ["possession", "inalienable"],
       ["article", "proprial"]
     ],
-    "comment": "Mosel 2014:59; a possessed kinship noun takes the proprial article."
+    "comment": "Mosel 2014:59; a possessed kinship noun takes the proprial article.",
+    "verified": "page-image"
   },
   {
     "id": "adamson2024_51",
@@ -232,7 +242,8 @@
       ["gender", "II"],
       ["alienator", "-na"]
     ],
-    "comment": "Mosel 2014:62; the alienator switches a kinship noun to gender II."
+    "comment": "Mosel 2014:62; the alienator switches a kinship noun to gender II.",
+    "verified": "page-image"
   },
   {
     "id": "adamson2024_52",
@@ -255,7 +266,8 @@
       ["possession", "inalienable"],
       ["agreement", "possessor"]
     ],
-    "comment": "Dixon 2004:315; the possessed noun's form covaries with the possessor's gender."
+    "comment": "Dixon 2004:315; the possessed noun's form covaries with the possessor's gender.",
+    "verified": "page-image"
   },
   {
     "id": "adamson2024_53",
@@ -278,7 +290,8 @@
       ["possession", "inalienable"],
       ["agreement", "possessor"]
     ],
-    "comment": "Dixon 2004:315; the alternation tracks person and number too."
+    "comment": "Dixon 2004:315; the alternation tracks person and number too.",
+    "verified": "page-image"
   },
   {
     "id": "adamson2024_64",
@@ -301,7 +314,8 @@
       ["possession", "inalienable"],
       ["marker", "juxtaposition"]
     ],
-    "comment": "Dixon 2004:90; juxtaposition for inalienable possession, kaa for alienable."
+    "comment": "Dixon 2004:90; juxtaposition for inalienable possession, kaa for alienable.",
+    "verified": "page-image"
   },
   {
     "id": "adamson2024_70",
@@ -325,7 +339,8 @@
       ["agreement", "possessor"],
       ["target", "declarative"]
     ],
-    "comment": "Dixon 2004:302; the inalienable possessor controls agreement outside the nominal."
+    "comment": "Dixon 2004:302; the inalienable possessor controls agreement outside the nominal.",
+    "verified": "page-image"
   },
   {
     "id": "adamson2024_71",
@@ -348,7 +363,8 @@
       ["construction", "complex possessor"],
       ["pattern", "match"]
     ],
-    "comment": "Dixon 2004:315; matching in complex possessors."
+    "comment": "Dixon 2004:315; matching in complex possessors.",
+    "verified": "page-image"
   },
   {
     "id": "adamson2024_73",
@@ -371,7 +387,8 @@
       ["construction", "complex possessor"],
       ["pattern", "mismatch"]
     ],
-    "comment": "Dixon 2004:315; the monomoraic prefixes o- and ti- do not percolate, so the outer noun agrees with the feminine possessed noun."
+    "comment": "Dixon 2004:315; the monomoraic prefixes o- and ti- do not percolate, so the outer noun agrees with the feminine possessed noun.",
+    "verified": "page-image"
   },
   {
     "id": "adamson2024_75a",
@@ -394,7 +411,8 @@
       ["agreement", "attributive"],
       ["gender", "feminine"]
     ],
-    "comment": "Dixon 2004:341; the attributive adjective agrees with the feminine possessed noun."
+    "comment": "Dixon 2004:341; the attributive adjective agrees with the feminine possessed noun.",
+    "verified": "page-image"
   },
   {
     "id": "adamson2024_80",
@@ -418,7 +436,8 @@
       ["possession", "inalienable"],
       ["mechanism", "inherited gender"]
     ],
-    "comment": "Kirton 1971b:13; the numeral and demonstrative agree in the possessor's class."
+    "comment": "Kirton 1971b:13; the numeral and demonstrative agree in the possessor's class.",
+    "verified": "page-image"
   },
   {
     "id": "adamson2024_88",
@@ -442,7 +461,8 @@
       ["possession", "inalienable"],
       ["mechanism", "inherited gender"]
     ],
-    "comment": "Bruno Olsson's fieldwork; the demonstrative agrees in the possessor's gender."
+    "comment": "Bruno Olsson's fieldwork; the demonstrative agrees in the possessor's gender.",
+    "verified": "page-image"
   },
   {
     "id": "adamson2024_89",
@@ -465,7 +485,8 @@
       ["possession", "inalienable"],
       ["mechanism", "inherited gender"]
     ],
-    "comment": "Olsson 2017:106 and p.c.; the noun's own form and the similative take the possessor's gender."
+    "comment": "Olsson 2017:106 and p.c.; the noun's own form and the similative take the possessor's gender.",
+    "verified": "page-image"
   },
   {
     "id": "adamson2024_100",
@@ -489,6 +510,7 @@
       ["number", "on n"],
       ["gender", "feminine"]
     ],
-    "comment": "Acquaviva 2008a:155; the -a plural is feminine and collective, the -i plural masculine and individuated."
+    "comment": "Acquaviva 2008a:155; the -a plural is feminine and collective, the -i plural masculine and individuated.",
+    "verified": "page-image"
   }
 ]

@@ -18,7 +18,8 @@
       ["level", "nonSubjective"],
       ["century", "16"]
     ],
-    "comment": "Subjectification of *be going to*: motion with intent to act, before the intentional non-motion (5b) and raising (5c) uses."
+    "comment": "Subjectification of *be going to*: motion with intent to act, before the intentional non-motion (5b) and raising (5c) uses.",
+    "verified": "page-image"
   },
   {
     "id": "traugott2010_5b",
@@ -28,7 +29,7 @@
     "primaryText": "I ha' forgot what I was going to say to you.",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "I have forgotten what I was going to say to you.",
+    "translation": "",
     "context": "1663, Cowley, Cutter of Coleman Street V.ii.",
     "judgment": "acceptable",
     "alternatives": [],
@@ -39,7 +40,8 @@
       ["level", "nonSubjective"],
       ["century", "17"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "traugott2010_5c",
@@ -60,7 +62,8 @@
       ["level", "subjective"],
       ["century", "18"]
     ],
-    "comment": "The raising construction expresses the speaker's assessment of the future: the subjectified polysemy."
+    "comment": "The raising construction expresses the speaker's assessment of the future: the subjectified polysemy.",
+    "verified": "page-image"
   },
   {
     "id": "traugott2010_6",
@@ -84,7 +87,8 @@
       ["stage", "non-honorific > referent honorific > addressee honorific"],
       ["level", "nonSubjective > subjective > intersubjective"]
     ],
-    "comment": "The coded intersubjective addressee honorific arises from the subjectified referent honorific, from Traugott and Dasher (2002)."
+    "comment": "The coded intersubjective addressee honorific arises from the subjectified referent honorific, from Traugott and Dasher (2002).",
+    "verified": "page-image"
   },
   {
     "id": "traugott2010_12a",
@@ -104,7 +108,8 @@
       ["stage", "I Partitive"],
       ["level", "nonSubjective"]
     ],
-    "comment": "Stage I: a partitive with a concrete complement."
+    "comment": "Stage I: a partitive with a concrete complement.",
+    "verified": "page-image"
   },
   {
     "id": "traugott2010_13a",
@@ -114,7 +119,7 @@
     "primaryText": "Dorus, whilom king of Grece ... hadde of infortune a piece",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "Dorus, once king of Greece … had of misfortune a piece",
+    "translation": "Dorus, once king of Greece … had of misfortunate a piece",
     "context": "a1393, Gower, Confessio Amantis V. 1338; note the preposed *of infortune*.",
     "judgment": "acceptable",
     "alternatives": [],
@@ -124,7 +129,8 @@
       ["stage", "II Extended Partitive"],
       ["level", "nonSubjective"]
     ],
-    "comment": "Stage II: the complement generalized to abstract nouns, host-class expansion, with the invited inference of a small amount."
+    "comment": "Stage II: the complement generalized to abstract nouns, host-class expansion, with the invited inference of a small amount. The paper prints misfortunate in the translation of infortune; copied as printed.",
+    "verified": "page-image"
   },
   {
     "id": "traugott2010_14a",
@@ -134,20 +140,27 @@
     "primaryText": "If I had not beene a peece of a Logician before I came to him.",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "If I had not been a piece of a logician before I came to him.",
+    "translation": "",
     "context": "1586, Sidney, Apologie for Poetrie.",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [
-      {"name": "partitive: a small part or exemplar of a logician", "judgment": "acceptable"},
-      {"name": "degree modifier: somewhat of a logician", "judgment": "acceptable"}
+      {
+        "name": "partitive: a small part or exemplar of a logician",
+        "judgment": "acceptable"
+      },
+      {
+        "name": "quantifier: a logician to a certain degree, somewhat of a logician",
+        "judgment": "acceptable"
+      }
     ],
     "paperFeatures": [
       ["item", "a piece of"],
-      ["stage", "III Degree Modifier"],
+      ["stage", "III Quantifier"],
       ["level", "subjective"]
     ],
-    "comment": "Stage III: the bridging context in which a degree modifier reading arose, the only context where it developed robustly for *a piece of*."
+    "comment": "Stage III: indeterminate between the Partitive and the Quantifier reading, the only context in which a Quantifier use of *a piece of* developed robustly; here it borders on a Degree Modifier in meaning.",
+    "verified": "page-image"
   },
   {
     "id": "traugott2010_16a",
@@ -167,7 +180,8 @@
       ["stage", "0 Pre-Partitive"],
       ["level", "nonSubjective"]
     ],
-    "comment": "Stage 0: the nominalized *biting*, before the metonymic transfer to the piece bitten out."
+    "comment": "Stage 0: the nominalized *biting*, before the metonymic transfer to the piece bitten out.",
+    "verified": "page-image"
   },
   {
     "id": "traugott2010_17",
@@ -187,7 +201,8 @@
       ["stage", "I Partitive"],
       ["level", "nonSubjective"]
     ],
-    "comment": "Stage I: morsel, unit bitten out."
+    "comment": "Stage I: morsel, unit bitten out.",
+    "verified": "page-image"
   },
   {
     "id": "traugott2010_18a",
@@ -197,7 +212,7 @@
     "primaryText": "The fragments, scraps, the bits, and greazie reliques of her ore-eaten faith",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "The fragments, scraps, the bits, and greasy relics of her over-eaten faith",
+    "translation": "",
     "context": "1606, Shakespeare, Troilus and Cressida V.ii.159; a metaphorical context.",
     "judgment": "acceptable",
     "alternatives": [],
@@ -207,7 +222,8 @@
       ["stage", "II Extended Partitive"],
       ["level", "nonSubjective"]
     ],
-    "comment": "Stage II: generalized to non-food and abstract complements, host-class expansion, with the implicature that the unit is small or inadequate."
+    "comment": "Stage II: generalized to non-food and abstract complements, host-class expansion, with the implicature that the unit is small or inadequate.",
+    "verified": "page-image"
   },
   {
     "id": "traugott2010_19a",
@@ -224,11 +240,12 @@
     "readings": [],
     "paperFeatures": [
       ["item", "a bit of"],
-      ["stage", "III Degree Modifier"],
+      ["stage", "III Quantifier"],
       ["level", "subjective"],
       ["pragmatic", "intersubjective hedge"]
     ],
-    "comment": "Stage III: the downtoner *somewhat*, the subjectification; with a negatively evaluated head it is used intersubjectively as a hedge, a pragmatic intersubjectification that is not coded."
+    "comment": "Stage III: the downtoner *somewhat*, the subjectification; with a negatively evaluated head it is used intersubjectively as a hedge, a pragmatic intersubjectification that is not coded.",
+    "verified": "page-image"
   },
   {
     "id": "traugott2010_20",
@@ -238,7 +255,7 @@
     "primaryText": "I would not be a bit wiser, a bit richer, a bit taller, a bit shorter, than I am at this Instant",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "I would not be a bit wiser, a bit richer, a bit taller, a bit shorter, than I am at this instant",
+    "translation": "",
     "context": "1723, Steele, The Conscious Lovers III.i.",
     "judgment": "acceptable",
     "alternatives": [],
@@ -248,7 +265,8 @@
       ["stage", "IV Adverb Degree Modifier"],
       ["level", "subjective"]
     ],
-    "comment": "Stage IV: syntactic expansion to pre-adjectival position."
+    "comment": "Stage IV: syntactic expansion to pre-adjectival position.",
+    "verified": "page-image"
   },
   {
     "id": "traugott2010_21b",
@@ -269,7 +287,8 @@
       ["level", "subjective"],
       ["polarity", "negative"]
     ],
-    "comment": "Stage V: a free adjunct in responses, usually in a negative context, where the understating *a bit* is emphatic."
+    "comment": "Stage V: a free adjunct in responses, usually in a negative context, where the understating *a bit* is emphatic.",
+    "verified": "page-image"
   },
   {
     "id": "traugott2010_22",
@@ -281,15 +300,16 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "questionable",
+    "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
       ["item", "a bit of"],
-      ["stage", "III Degree Modifier"],
+      ["stage", "III Quantifier"],
       ["head", "positively evaluated"]
     ],
-    "comment": "As a downtoner, *a bit of* is unlikely with a positively evaluated head except in special circumstances such as irony."
+    "comment": "As a downtoner, *a bit of* is unlikely with a positively evaluated head except in special circumstances such as irony. Printed without a mark; the prose says a bit of \"is not likely to be used, except in special circumstances, such as irony, with positive heads, especially of people\".",
+    "verified": "page-image"
   },
   {
     "id": "traugott2010_23",
@@ -299,7 +319,7 @@
     "primaryText": "With strengthe of his blast / The white [dragon] brent than rede, / That of him nas founden a schrede / Bot dust",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "With the strength of his blast, the white dragon burned the red, so that of him not a shred was found, only dust",
+    "translation": "With the strength of his blast, the white dragon burned the red, so that of him (the red) not a shred was found, only dust",
     "context": "c1300, Arthour and Merlin 1540; note the preposing.",
     "judgment": "acceptable",
     "alternatives": [],
@@ -309,7 +329,8 @@
       ["stage", "I Partitive"],
       ["level", "nonSubjective"]
     ],
-    "comment": "Stage I: a fragment cut or broken off, generalized in Middle English to bodies."
+    "comment": "Stage I: a fragment cut or broken off, generalized in Middle English to bodies.",
+    "verified": "page-image"
   },
   {
     "id": "traugott2010_24b",
@@ -319,7 +340,7 @@
     "primaryText": "A despis'd Shred of mankind",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "A despised shred of mankind",
+    "translation": "",
     "context": "1645, G. Daniel, Poems.",
     "judgment": "acceptable",
     "alternatives": [],
@@ -329,14 +350,15 @@
       ["stage", "II Extended Partitive"],
       ["level", "nonSubjective"]
     ],
-    "comment": "Stage II: generalized to language, mankind and nature, still partitive, with the focus evaluated as small or inadequate."
+    "comment": "Stage II: generalized to language, mankind and nature, still partitive, with the focus evaluated as small or inadequate.",
+    "verified": "page-image"
   },
   {
     "id": "traugott2010_25a",
     "source": {"bibkey": "traugott-2010", "paperLabel": "(25a)"},
     "reportedIn": null,
     "language": "stan1293",
-    "primaryText": "Loto has not a shred of beauty.",
+    "primaryText": "Loto has not a shred of beauty. She is a big, angular, raw-boned Normande, with a rough voice, and a villainous patois",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
@@ -346,10 +368,11 @@
     "readings": [],
     "paperFeatures": [
       ["item", "a shred of"],
-      ["stage", "III Degree Modifier"],
+      ["stage", "III Quantifier"],
       ["level", "subjective"],
       ["polarity", "negative"]
     ],
-    "comment": "Stage III: a quantifier over an abstract, positively evaluated mass noun, by the twentieth century largely restricted to negative polarity syntax; no intersubjectification, since it is not used as a hedge."
+    "comment": "Stage III: a quantifier over an abstract, positively evaluated mass noun, by the twentieth century largely restricted to negative polarity syntax; no intersubjectification, since it is not used as a hedge.",
+    "verified": "page-image"
   }
 ]

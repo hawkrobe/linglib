@@ -14,30 +14,32 @@
     "paperFeatures": [
       ["construction", "amount_comparative"]
     ],
-    "comment": "Amount yori-comparative; judgment from Ishii 1991. Gloss: Taroo-Top [Hanako-Nom bought YORI (mo)] many(-Gen) umbrella-Acc bought."
+    "comment": "Amount yori-comparative; judgment from Ishii 1991. Gloss: Taroo-Top [Hanako-Nom bought YORI (mo)] many(-Gen) umbrella-Acc bought.",
+    "verified": "page-image"
   },
   {
     "id": "beckodasugisaki2004_degree_yori",
     "source": { "bibkey": "beck-oda-sugisaki-2004", "paperLabel": "(4-a), p. 290" },
     "language": "nucl1643",
-    "primaryText": "?*Taroo-wa [Hanako-ga katta yori (mo)] nagai kasa-o katta",
+    "primaryText": "Taroo-wa [Hanako-ga katta yori (mo)] nagai kasa-o katta",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "Taroo bought a longer umbrella than Hanako did",
     "context": "",
-    "judgment": "questionable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "degree_comparative"]
     ],
-    "comment": "Degree yori-comparative; Ishii 1991 reports ?*, the authors' consultants range from ? to ??. Gloss: Taroo-Top [Hanako-Nom bought YORI (mo)] long umbrella-Acc bought."
+    "comment": "Degree yori-comparative; printed with Ishii's (1991) compound mark ?*, recorded as its severe part; the authors' consultants range from ? to ??. Gloss: Taroo-Top [Hanako-Nom bought YORI (mo)] long umbrella-Acc bought.",
+    "verified": "page-image"
   },
   {
     "id": "beckodasugisaki2004_subcomp_ja",
     "source": { "bibkey": "beck-oda-sugisaki-2004", "paperLabel": "(5-a), p. 290" },
     "language": "nucl1643",
-    "primaryText": "*Kono tana-wa [ano doa-ga hiroi yori (mo)] (motto) takai",
+    "primaryText": "Kono tana-wa [ano doa-ga hiroi yori (mo)] (motto) takai",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "This shelf is taller than that door is wide",
@@ -48,7 +50,8 @@
     "paperFeatures": [
       ["construction", "subcomparative"]
     ],
-    "comment": "Japanese lacks subcomparatives (observed by Snyder, Wexler & Das 1995). Gloss: this shelf-Top [that door-Nom wide YORI (mo)] (more) tall."
+    "comment": "Japanese lacks subcomparatives (observed by Snyder, Wexler & Das 1995). Gloss: this shelf-Top [that door-Nom wide YORI (mo)] (more) tall.",
+    "verified": "page-image"
   },
   {
     "id": "beckodasugisaki2004_subcomp_en",
@@ -65,7 +68,8 @@
     "paperFeatures": [
       ["construction", "subcomparative"]
     ],
-    "comment": "English subcomparative control for (5-a)."
+    "comment": "English subcomparative control for (5-a).",
+    "verified": "page-image"
   },
   {
     "id": "beckodasugisaki2004_negisland_ja",
@@ -82,13 +86,14 @@
     "paperFeatures": [
       ["construction", "negative_island"]
     ],
-    "comment": "Well-formed, with the individual-comparing interpretation of the paper's (6'): the yori-clause denotes the (unique) book nobody bought, not a degree set. Gloss: John-Top [anyone buy-Neg-Past NO YORI] expensive book-Acc bought."
+    "comment": "Well-formed, with the individual-comparing interpretation of the paper's (6'): the yori-clause denotes the (unique) book nobody bought, not a degree set. Gloss: John-Top [anyone buy-Neg-Past NO YORI] expensive book-Acc bought.",
+    "verified": "page-image"
   },
   {
     "id": "beckodasugisaki2004_negisland_en",
     "source": { "bibkey": "beck-oda-sugisaki-2004", "paperLabel": "(6-b), p. 290" },
     "language": "stan1293",
-    "primaryText": "*John bought a more expensive book than nobody did",
+    "primaryText": "John bought a more expensive book than nobody did",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
@@ -99,6 +104,7 @@
     "paperFeatures": [
       ["construction", "negative_island"]
     ],
-    "comment": "English negative-island effect: no maximal degree such that nobody bought a that-expensive book (Rullmann 1995 undefinedness)."
+    "comment": "English negative-island effect: no maximal degree such that nobody bought a that-expensive book (Rullmann 1995 undefinedness).",
+    "verified": "page-image"
   }
 ]

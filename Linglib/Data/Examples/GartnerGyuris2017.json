@@ -32,7 +32,8 @@
         "-"
       ]
     ],
-    "comment": "A positive polar question is infelicitous under compelling evidence against p."
+    "comment": "A positive polar question is infelicitous under compelling evidence against p.",
+    "verified": "page-image"
   },
   {
     "id": "gg2017_2a",
@@ -67,7 +68,8 @@
         "%"
       ]
     ],
-    "comment": "A negative polar question conveys the speaker's expectation that p, so it is odd without one."
+    "comment": "A negative polar question conveys the speaker's expectation that p, so it is odd without one.",
+    "verified": "page-image"
   },
   {
     "id": "gg2017_2b",
@@ -102,7 +104,8 @@
         "%"
       ]
     ],
-    "comment": "As (2a)."
+    "comment": "As (2a).",
+    "verified": "page-image"
   },
   {
     "id": "gg2017_8_neg",
@@ -150,7 +153,8 @@
         "-"
       ]
     ],
-    "comment": "The e-interrogative's evidential anti-bias: infelicitous under compelling evidence against p."
+    "comment": "The e-interrogative's evidential anti-bias: infelicitous under compelling evidence against p.",
+    "verified": "page-image"
   },
   {
     "id": "gg2017_8_pos",
@@ -198,7 +202,8 @@
         "+"
       ]
     ],
-    "comment": "The e-interrogative's evidential anti-bias: infelicitous under compelling evidence for p too."
+    "comment": "The e-interrogative's evidential anti-bias: infelicitous under compelling evidence for p too.",
+    "verified": "page-image"
   },
   {
     "id": "gg2017_9a",
@@ -254,7 +259,8 @@
         "-"
       ]
     ],
-    "comment": "The e-interrogative expressing an outside-negation question keeps the anti-bias."
+    "comment": "The e-interrogative expressing an outside-negation question keeps the anti-bias.",
+    "verified": "page-image"
   },
   {
     "id": "gg2017_9b",
@@ -265,24 +271,7 @@
     "language": "hung1274",
     "primaryText": "Nincs-e itt egy étterem?",
     "discourseSegments": [],
-    "glossedTokens": [
-      [
-        "Nincs-e",
-        "not.is-Q"
-      ],
-      [
-        "itt",
-        "here"
-      ],
-      [
-        "egy",
-        "a"
-      ],
-      [
-        "étterem",
-        "restaurant"
-      ]
-    ],
+    "glossedTokens": [],
     "translation": "Isn't there a restaurant here?",
     "context": "The billboard announces the opening of several new restaurants in the village.",
     "judgment": "unacceptable",
@@ -306,6 +295,7 @@
         "+"
       ]
     ],
-    "comment": "As (9a), under compelling evidence for p."
+    "comment": "As (9a), under compelling evidence for p.",
+    "verified": "page-image"
   }
 ]

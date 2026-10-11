@@ -37,7 +37,8 @@
         "initial mora"
       ]
     ],
-    "comment": "Analysed accentually, with a drop after the accented mora, and tonally, with a prelinked H."
+    "comment": "Analysed accentually, with a drop after the accented mora, and tonally, with a prelinked H.",
+    "verified": "page-image"
   },
   {
     "id": "hyman2006_kokoro",
@@ -77,7 +78,8 @@
         "second mora"
       ]
     ],
-    "comment": "Analysed accentually, with a drop after the accented mora, and tonally, with a prelinked H."
+    "comment": "Analysed accentually, with a drop after the accented mora, and tonally, with a prelinked H.",
+    "verified": "page-image"
   },
   {
     "id": "hyman2006_atama",
@@ -117,7 +119,8 @@
         "final mora"
       ]
     ],
-    "comment": "Analysed accentually, with a drop after the accented mora, and tonally, with a prelinked H."
+    "comment": "Analysed accentually, with a drop after the accented mora, and tonally, with a prelinked H.",
+    "verified": "page-image"
   },
   {
     "id": "hyman2006_sakana",
@@ -161,6 +164,7 @@
         "unaccented: no pitch drop"
       ]
     ],
-    "comment": "Analysed accentually, with a drop after the accented mora, and tonally, with a prelinked H."
+    "comment": "Analysed accentually, with a drop after the accented mora, and tonally, with a prelinked H.",
+    "verified": "page-image"
   }
 ]

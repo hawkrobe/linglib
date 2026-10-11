@@ -36,7 +36,8 @@
         "subject"
       ]
     ],
-    "comment": "A suppletive main verb, conditioned by subject number."
+    "comment": "A suppletive main verb, conditioned by subject number.",
+    "verified": "page-image"
   },
   {
     "id": "harley2014_ex3b",
@@ -75,7 +76,8 @@
         "subject"
       ]
     ],
-    "comment": "A suppletive main verb, conditioned by subject number."
+    "comment": "A suppletive main verb, conditioned by subject number.",
+    "verified": "page-image"
   },
   {
     "id": "harley2014_ex3c",
@@ -114,7 +116,8 @@
         "subject"
       ]
     ],
-    "comment": "A suppletive main verb, conditioned by subject number."
+    "comment": "A suppletive main verb, conditioned by subject number.",
+    "verified": "page-image"
   },
   {
     "id": "harley2014_ex3d",
@@ -153,7 +156,8 @@
         "subject"
       ]
     ],
-    "comment": "A suppletive main verb, conditioned by subject number."
+    "comment": "A suppletive main verb, conditioned by subject number.",
+    "verified": "page-image"
   },
   {
     "id": "harley2014_ex3e",
@@ -192,7 +196,8 @@
         "subject"
       ]
     ],
-    "comment": "A suppletive main verb, conditioned by subject number."
+    "comment": "A suppletive main verb, conditioned by subject number.",
+    "verified": "page-image"
   },
   {
     "id": "harley2014_ex3f",
@@ -231,7 +236,8 @@
         "subject"
       ]
     ],
-    "comment": "A suppletive main verb, conditioned by subject number."
+    "comment": "A suppletive main verb, conditioned by subject number.",
+    "verified": "page-image"
   },
   {
     "id": "harley2014_ex3g",
@@ -270,7 +276,8 @@
         "object"
       ]
     ],
-    "comment": "A suppletive main verb, conditioned by object number."
+    "comment": "A suppletive main verb, conditioned by object number.",
+    "verified": "page-image"
   },
   {
     "id": "harley2014_ex6a",
@@ -301,7 +308,7 @@
     "alternatives": [
       {
         "form": "Vempo aman vuite-k.",
-        "judgment": "unacceptable"
+        "judgment": "ungrammatical"
       }
     ],
     "readings": [],
@@ -319,7 +326,8 @@
         "singular"
       ]
     ],
-    "comment": "The singular form with a singular subject; the plural subject is excluded."
+    "comment": "The singular form with a singular subject; the plural subject is excluded.",
+    "verified": "page-image"
   },
   {
     "id": "harley2014_ex6b",
@@ -350,7 +358,7 @@
     "alternatives": [
       {
         "form": "Aapo aman tenne-k.",
-        "judgment": "unacceptable"
+        "judgment": "ungrammatical"
       }
     ],
     "readings": [],
@@ -368,7 +376,8 @@
         "plural"
       ]
     ],
-    "comment": "The plural form with a plural subject; the singular subject is excluded."
+    "comment": "The plural form with a plural subject; the singular subject is excluded.",
+    "verified": "page-image"
   },
   {
     "id": "harley2014_ex26a",
@@ -408,7 +417,8 @@
         "singular"
       ]
     ],
-    "comment": "An intransitive conditioned by subject number."
+    "comment": "An intransitive conditioned by subject number.",
+    "verified": "page-image"
   },
   {
     "id": "harley2014_ex26b",
@@ -448,7 +458,8 @@
         "plural"
       ]
     ],
-    "comment": "An intransitive conditioned by subject number."
+    "comment": "An intransitive conditioned by subject number.",
+    "verified": "page-image"
   },
   {
     "id": "harley2014_ex27a",
@@ -496,7 +507,8 @@
         "singular"
       ]
     ],
-    "comment": "A transitive conditioned by object number, whatever the subject's."
+    "comment": "A transitive conditioned by object number, whatever the subject's.",
+    "verified": "page-image"
   },
   {
     "id": "harley2014_ex27b",
@@ -544,7 +556,8 @@
         "plural"
       ]
     ],
-    "comment": "A transitive conditioned by object number, whatever the subject's."
+    "comment": "A transitive conditioned by object number, whatever the subject's.",
+    "verified": "page-image"
   },
   {
     "id": "harley2014_ex29a",
@@ -584,7 +597,8 @@
         "case"
       ]
     ],
-    "comment": "Accusative on the object of a transitive."
+    "comment": "Accusative on the object of a transitive.",
+    "verified": "page-image"
   },
   {
     "id": "harley2014_ex29b",
@@ -624,7 +638,8 @@
         "case"
       ]
     ],
-    "comment": "The accusative is structural: nominative under passivization."
+    "comment": "The accusative is structural: nominative under passivization.",
+    "verified": "page-image"
   },
   {
     "id": "harley2014_ex30a",
@@ -672,7 +687,8 @@
         "unergative"
       ]
     ],
-    "comment": "The high applicative on an unergative intransitive."
+    "comment": "The high applicative on an unergative intransitive.",
+    "verified": "page-image"
   },
   {
     "id": "harley2014_ex30b",
@@ -720,7 +736,8 @@
         "transitive"
       ]
     ],
-    "comment": "The applicative on a transitive."
+    "comment": "The applicative on a transitive.",
+    "verified": "page-image"
   },
   {
     "id": "harley2014_ex31",
@@ -751,7 +768,7 @@
     ],
     "translation": "The cup broke for/on Maria",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -768,7 +785,8 @@
         "unaccusative"
       ]
     ],
-    "comment": "No applicative on an unaccusative."
+    "comment": "No applicative on an unaccusative.",
+    "verified": "page-image"
   },
   {
     "id": "harley2014_ex32a",
@@ -803,7 +821,7 @@
     ],
     "translation": "Santos is going/walking to San Xavier for Maria",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -820,7 +838,8 @@
         "suppletiveIntransitive"
       ]
     ],
-    "comment": "No applicative on a suppletive intransitive: the suppletive intransitives are unaccusative, as the locality of conditioning predicts."
+    "comment": "No applicative on a suppletive intransitive: the suppletive intransitives are unaccusative, as the locality of conditioning predicts.",
+    "verified": "page-image"
   },
   {
     "id": "harley2014_ex32b",
@@ -876,7 +895,8 @@
         "suppletiveIntransitive"
       ]
     ],
-    "comment": "The periphrastic benefactive instead."
+    "comment": "The periphrastic benefactive instead.",
+    "verified": "page-image"
   },
   {
     "id": "harley2014_exfn33-i",
@@ -924,6 +944,7 @@
         "suppletiveTransitive"
       ]
     ],
-    "comment": "The applicative on a suppletive transitive; suppletion still follows the thematic object, not the applied object."
+    "comment": "The applicative on a suppletive transitive; suppletion still follows the thematic object, not the applied object.",
+    "verified": "page-image"
   }
 ]

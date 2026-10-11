@@ -13,13 +13,14 @@
     ],
     "translation": "Didn't Dana plant there any flowers?",
     "context": "Dana má na zahradě záhon, který vybudovala před rokem. ('Dana has a garden bed, which she built a year ago.' — neutral, implying neither p nor ¬p)",
-    "judgment": "unacceptable",
+    "judgment": "acceptable",
     "paperFeatures": [
       ["verbPosition", "v1"],
       ["indefinite", "nci"],
       ["context", "neutral"]
     ],
-    "comment": "Mean rating ≈ 3 (Figure 2a). V1 forces the outer reading (FALSUM), which cannot license the NCI žádné: main effect of INDEFINITE in V1, z = −15.674, p < .001."
+    "comment": "Mean rating ≈ 3 (Figure 2a). V1 forces the outer reading (FALSUM), which cannot license the NCI žádné: main effect of INDEFINITE in V1, z = −15.674, p < .001. Printed unmarked in (13) as an experimental item; the judgment records the printed mark, the rating is in this comment.",
+    "verified": "page-image"
   },
   {
     "id": "stankovasimik2025_ex13_v1_ppi",
@@ -41,7 +42,8 @@
       ["indefinite", "ppi"],
       ["context", "neutral"]
     ],
-    "comment": "Mean rating ≈ 5, highest in neutral context (Figure 2a; CONTEXT within PPI z = −3.522, p < .001). FALSUM allows the PPI nějaké in its scope."
+    "comment": "Mean rating ≈ 5, highest in neutral context (Figure 2a; CONTEXT within PPI z = −3.522, p < .001). FALSUM allows the PPI nějaké in its scope.",
+    "verified": "page-image"
   },
   {
     "id": "stankovasimik2025_ex13_nonv1_nci",
@@ -63,7 +65,8 @@
       ["indefinite", "nci"],
       ["context", "negative"]
     ],
-    "comment": "Mean rating ≈ 5 in negative context (Figure 2b). The inner default reading licenses the NCI; nonV1 PQs need negative evidential bias (main effect of CONTEXT, z = 8.674, p < 0.01)."
+    "comment": "Mean rating ≈ 5 in negative context (Figure 2b). The inner default reading licenses the NCI; nonV1 PQs need negative evidential bias (main effect of CONTEXT, z = 8.674, p < 0.01).",
+    "verified": "page-image"
   },
   {
     "id": "stankovasimik2025_ex13_nonv1_ppi",
@@ -79,13 +82,14 @@
     ],
     "translation": "Dana didn't plant there some flowers?",
     "context": "Dana má na zahradě záhon, kam zasadila zeleninu. ('Dana has a garden bed, where she planted vegetables.' — negative, implying ¬p)",
-    "judgment": "marginal",
+    "judgment": "acceptable",
     "paperFeatures": [
       ["verbPosition", "nonv1"],
       ["indefinite", "ppi"],
       ["context", "negative"]
     ],
-    "comment": "Mean rating ≈ 4 in negative context (Figure 2b). The PPI needs the outer reading, available in nonV1 but dispreferred: main effect of INDEFINITE, z = 6.208, p < 0.01, NCI over PPI."
+    "comment": "Mean rating ≈ 4 in negative context (Figure 2b). The PPI needs the outer reading, available in nonV1 but dispreferred: main effect of INDEFINITE, z = 6.208, p < 0.01, NCI over PPI. Printed unmarked in (13) as an experimental item; the judgment records the printed mark, the rating is in this comment.",
+    "verified": "page-image"
   },
   {
     "id": "stankovasimik2025_ex14",
@@ -106,7 +110,8 @@
       ["indefinite", "ppi"],
       ["context", "positive"]
     ],
-    "comment": "Median 6, vs 5 for the analogous neutral-context condition (§5.3): Czech FALSUM is compatible even with positive evidential bias, unlike English high negation."
+    "comment": "Median 6, vs 5 for the analogous neutral-context condition (§5.3): Czech FALSUM is compatible even with positive evidential bias, unlike English high negation.",
+    "verified": "page-image"
   },
   {
     "id": "stankovasimik2025_ex17_ppi",
@@ -130,7 +135,8 @@
       ["indefinite", "ppi"],
       ["context", "neutral"]
     ],
-    "comment": "Mean rating ≈ 4.8 in both contexts (Figure 3): náhodou, like its licensor FALSUM, is insensitive to contextual evidence."
+    "comment": "Mean rating ≈ 4.8 in both contexts (Figure 3): náhodou, like its licensor FALSUM, is insensitive to contextual evidence.",
+    "verified": "page-image"
   },
   {
     "id": "stankovasimik2025_ex17_nci",
@@ -147,14 +153,15 @@
     ],
     "translation": "Didn't Mikuláš book a seat?",
     "context": "Mikuláš cestoval vlakem, který jel do Košic. ('Mikuláš was on the train which went to Košice.' — neutral)",
-    "judgment": "unacceptable",
+    "judgment": "acceptable",
     "paperFeatures": [
       ["particle", "nahodou"],
       ["verbPosition", "v1"],
       ["indefinite", "nci"],
       ["context", "neutral"]
     ],
-    "comment": "Mean rating ≈ 2.3 neutral / ≈ 3.0 negative (Figure 3). náhodou requires FALSUM, which cannot license the NCI: main effect of INDEFINITE, z = −12.845, p < .001."
+    "comment": "Mean rating ≈ 2.3 neutral / ≈ 3.0 negative (Figure 3). náhodou requires FALSUM, which cannot license the NCI: main effect of INDEFINITE, z = −12.845, p < .001. Printed unmarked in (17) as an experimental item; the judgment records the printed mark, the rating is in this comment.",
+    "verified": "page-image"
   },
   {
     "id": "stankovasimik2025_ex18",
@@ -174,13 +181,17 @@
     "context": "Hanka si koupila knihu. ('Hanka bought a book.')",
     "judgment": "acceptable",
     "alternatives": [
-      {"form": "A Petr si náhodou nekoupil žádnou knihu?", "judgment": "unacceptable"}
+      {
+        "form": "A Petr si náhodou nekoupil žádnou knihu?",
+        "judgment": "ungrammatical"
+      }
     ],
     "paperFeatures": [
       ["particle", "nahodou"],
       ["verbPosition", "nonv1"],
       ["indefinite", "ppi"]
     ],
-    "comment": "náhodou in a nonV1 PQ: needs a contrastive topic (Petr) and contrastive focus on the negated verb, and the negation must still be FALSUM — witness the infelicitous NCI alternative žádnou."
+    "comment": "náhodou in a nonV1 PQ: needs a contrastive topic (Petr) and contrastive focus on the negated verb, and the negation must still be FALSUM — witness the infelicitous NCI alternative žádnou.",
+    "verified": "page-image"
   }
 ]

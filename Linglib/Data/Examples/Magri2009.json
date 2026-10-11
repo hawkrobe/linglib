@@ -22,7 +22,8 @@
       ["predicate_level", "stage"],
       ["position", "right"]
     ],
-    "comment": "Repeated as (125a), where Magri adds, following Diesing, that the bare plural subject to the right of ja doch has only the existential reading."
+    "comment": "Repeated as (125a), where Magri adds, following Diesing, that the bare plural subject to the right of ja doch has only the existential reading.",
+    "verified": "page-image"
   },
   {
     "id": "magri2009_8b",
@@ -31,11 +32,8 @@
     "language": "stan1295",
     "primaryText": "weil Feuerwehrmänner ja doch verfügbar sind.",
     "discourseSegments": [],
-    "glossedTokens": [
-      ["weil", "since"], ["Feuerwehrmänner", "firemen"], ["ja doch", "PARTS"],
-      ["verfügbar", "available"], ["sind", "are"]
-    ],
-    "translation": "since firemen are available.",
+    "glossedTokens": [],
+    "translation": "",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -44,7 +42,8 @@
       ["predicate_level", "stage"],
       ["position", "left"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "magri2009_8c",
@@ -59,14 +58,15 @@
     ],
     "translation": "since firemen are intelligent.",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
       ["predicate_level", "individual"],
       ["position", "right"]
     ],
-    "comment": "Starred in (8); repeated as (125b), where it is marked # as odd."
+    "comment": "Starred in (8); repeated as (125b), where it is marked # as odd.",
+    "verified": "page-image"
   },
   {
     "id": "magri2009_8d",
@@ -75,11 +75,8 @@
     "language": "stan1295",
     "primaryText": "weil Feuerwehrmänner ja doch intelligent sind.",
     "discourseSegments": [],
-    "glossedTokens": [
-      ["weil", "since"], ["Feuerwehrmänner", "firemen"], ["ja doch", "PARTS"],
-      ["intelligent", "intelligent"], ["sind", "are"]
-    ],
-    "translation": "since firemen are intelligent.",
+    "glossedTokens": [],
+    "translation": "",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -88,6 +85,7 @@
       ["predicate_level", "individual"],
       ["position", "left"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   }
 ]

@@ -635,11 +635,11 @@
       "paperLabel": "p. 182"
     },
     "language": "nyat1246",
-    "primaryText": "N-a-mυ-onaa mwalimu",
+    "primaryText": "N-a-mʊ-onaa mwalimu",
     "discourseSegments": [],
     "glossedTokens": [
       [
-        "N-a-mυ-onaa",
+        "N-a-mʊ-onaa",
         "1SM-PAST1-1OM-see"
       ],
       [
@@ -666,7 +666,7 @@
         "human"
       ]
     ],
-    "comment": "Object doubling with an overt animate object.",
+    "comment": "Object doubling with an overt animate object. The text layer maps the vowel to Greek υ; the language writes ʊ.",
     "reportedIn": {
       "bibkey": "halpert-hammerly-2026",
       "paperLabel": "(14a)"

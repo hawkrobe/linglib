@@ -28,7 +28,8 @@
       ["ruleBased", "6.06"],
       ["analogical", "5.87"]
     ],
-    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions."
+    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions.",
+    "verified": "page-image"
   },
   {
     "id": "albrighthayes2003_a1_1_boze",
@@ -59,7 +60,8 @@
       ["ruleBased", "4.11"],
       ["analogical", "4.04"]
     ],
-    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions."
+    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions.",
+    "verified": "page-image"
   },
   {
     "id": "albrighthayes2003_a1_2_dized",
@@ -91,7 +93,8 @@
       ["analogical", "5.95"],
       ["stemIpa", "daɪz"]
     ],
-    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions."
+    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions.",
+    "verified": "page-image"
   },
   {
     "id": "albrighthayes2003_a1_2_doze",
@@ -124,7 +127,8 @@
       ["stemIpa", "daɪz"],
       ["ipa", "doz"]
     ],
-    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions."
+    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions.",
+    "verified": "page-image"
   },
   {
     "id": "albrighthayes2003_a1_3_driced",
@@ -158,7 +162,8 @@
       ["ruleHits", "352"],
       ["ruleScope", "352"]
     ],
-    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions."
+    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions.",
+    "verified": "page-image"
   },
   {
     "id": "albrighthayes2003_a1_3_droce",
@@ -189,7 +194,8 @@
       ["ruleBased", "5.15"],
       ["analogical", "4.28"]
     ],
-    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions."
+    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions.",
+    "verified": "page-image"
   },
   {
     "id": "albrighthayes2003_a1_4_flidged",
@@ -223,7 +229,8 @@
       ["ruleHits", "110"],
       ["ruleScope", "110"]
     ],
-    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions."
+    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions.",
+    "verified": "page-image"
   },
   {
     "id": "albrighthayes2003_a1_4_fludge",
@@ -254,7 +261,8 @@
       ["ruleBased", "4.22"],
       ["analogical", "4.10"]
     ],
-    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions."
+    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions.",
+    "verified": "page-image"
   },
   {
     "id": "albrighthayes2003_a1_5_froed",
@@ -286,7 +294,8 @@
       ["analogical", "6.16"],
       ["stemIpa", "fro"]
     ],
-    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions."
+    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions.",
+    "verified": "page-image"
   },
   {
     "id": "albrighthayes2003_a1_5_frew",
@@ -319,7 +328,8 @@
       ["stemIpa", "fro"],
       ["ipa", "fru"]
     ],
-    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions."
+    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions.",
+    "verified": "page-image"
   },
   {
     "id": "albrighthayes2003_a1_6_gared",
@@ -350,7 +360,8 @@
       ["ruleBased", "6.02"],
       ["analogical", "6.27"]
     ],
-    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions."
+    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions.",
+    "verified": "page-image"
   },
   {
     "id": "albrighthayes2003_a1_6_gore",
@@ -381,7 +392,8 @@
       ["ruleBased", "4.30"],
       ["analogical", "4.23"]
     ],
-    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions."
+    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions.",
+    "verified": "page-image"
   },
   {
     "id": "albrighthayes2003_a1_7_glipped",
@@ -412,7 +424,8 @@
       ["ruleBased", "6.07"],
       ["analogical", "5.80"]
     ],
-    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions."
+    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions.",
+    "verified": "page-image"
   },
   {
     "id": "albrighthayes2003_a1_7_glup",
@@ -443,7 +456,8 @@
       ["ruleBased", "4.02"],
       ["analogical", "3.97"]
     ],
-    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions."
+    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions.",
+    "verified": "page-image"
   },
   {
     "id": "albrighthayes2003_a1_8_rifed",
@@ -475,7 +489,8 @@
       ["analogical", "5.07"],
       ["stemIpa", "raɪf"]
     ],
-    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions."
+    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions.",
+    "verified": "page-image"
   },
   {
     "id": "albrighthayes2003_a1_8_rofe",
@@ -508,7 +523,8 @@
       ["stemIpa", "raɪf"],
       ["ipa", "rof"]
     ],
-    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions."
+    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions.",
+    "verified": "page-image"
   },
   {
     "id": "albrighthayes2003_a1_8_riff",
@@ -541,7 +557,8 @@
       ["stemIpa", "raɪf"],
       ["ipa", "rɪf"]
     ],
-    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions."
+    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions.",
+    "verified": "page-image"
   },
   {
     "id": "albrighthayes2003_a1_9_stinned",
@@ -572,7 +589,8 @@
       ["ruleBased", "5.83"],
       ["analogical", "6.02"]
     ],
-    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions."
+    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions.",
+    "verified": "page-image"
   },
   {
     "id": "albrighthayes2003_a1_9_stun",
@@ -603,7 +621,8 @@
       ["ruleBased", "4.34"],
       ["analogical", "4.63"]
     ],
-    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions."
+    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions.",
+    "verified": "page-image"
   },
   {
     "id": "albrighthayes2003_a1_9_stan",
@@ -635,7 +654,8 @@
       ["analogical", "4.03"],
       ["ipa", "stæn"]
     ],
-    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions."
+    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions.",
+    "verified": "page-image"
   },
   {
     "id": "albrighthayes2003_a1_10_stipped",
@@ -666,7 +686,8 @@
       ["ruleBased", "6.07"],
       ["analogical", "5.88"]
     ],
-    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions."
+    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions.",
+    "verified": "page-image"
   },
   {
     "id": "albrighthayes2003_a1_10_stup",
@@ -698,7 +719,8 @@
       ["analogical", "4.26"],
       ["ipa", "stʌp"]
     ],
-    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions."
+    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions.",
+    "verified": "page-image"
   },
   {
     "id": "albrighthayes2003_a1_11_blafed",
@@ -732,7 +754,8 @@
       ["ruleHits", "352"],
       ["ruleScope", "352"]
     ],
-    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions."
+    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions.",
+    "verified": "page-image"
   },
   {
     "id": "albrighthayes2003_a1_11_bleft",
@@ -763,7 +786,8 @@
       ["ruleBased", "3.94"],
       ["analogical", "3.85"]
     ],
-    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions."
+    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions.",
+    "verified": "page-image"
   },
   {
     "id": "albrighthayes2003_a1_12_bredged",
@@ -798,7 +822,8 @@
       ["ruleHits", "110"],
       ["ruleScope", "110"]
     ],
-    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions."
+    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions.",
+    "verified": "page-image"
   },
   {
     "id": "albrighthayes2003_a1_12_broge",
@@ -831,7 +856,8 @@
       ["stemIpa", "brɛdʒ"],
       ["ipa", "brodʒ"]
     ],
-    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions."
+    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions.",
+    "verified": "page-image"
   },
   {
     "id": "albrighthayes2003_a1_13_chooled",
@@ -862,7 +888,8 @@
       ["ruleBased", "6.12"],
       ["analogical", "6.38"]
     ],
-    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions."
+    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions.",
+    "verified": "page-image"
   },
   {
     "id": "albrighthayes2003_a1_13_chole",
@@ -893,7 +920,8 @@
       ["ruleBased", "3.94"],
       ["analogical", "4.05"]
     ],
-    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions."
+    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions.",
+    "verified": "page-image"
   },
   {
     "id": "albrighthayes2003_a1_14_daped",
@@ -927,7 +955,8 @@
       ["ruleHits", "83"],
       ["ruleScope", "83"]
     ],
-    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions."
+    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions.",
+    "verified": "page-image"
   },
   {
     "id": "albrighthayes2003_a1_14_dapt",
@@ -958,7 +987,8 @@
       ["ruleBased", "3.94"],
       ["analogical", "3.85"]
     ],
-    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions."
+    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions.",
+    "verified": "page-image"
   },
   {
     "id": "albrighthayes2003_a1_15_gezzed",
@@ -990,7 +1020,8 @@
       ["analogical", "5.89"],
       ["stemIpa", "gɛz"]
     ],
-    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions."
+    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions.",
+    "verified": "page-image"
   },
   {
     "id": "albrighthayes2003_a1_15_gozz",
@@ -1023,7 +1054,8 @@
       ["stemIpa", "gɛz"],
       ["ipa", "gaz"]
     ],
-    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions."
+    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions.",
+    "verified": "page-image"
   },
   {
     "id": "albrighthayes2003_a1_16_naced",
@@ -1058,7 +1090,8 @@
       ["ruleHits", "352"],
       ["ruleScope", "352"]
     ],
-    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions."
+    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions.",
+    "verified": "page-image"
   },
   {
     "id": "albrighthayes2003_a1_16_noce",
@@ -1091,7 +1124,8 @@
       ["stemIpa", "nes"],
       ["ipa", "nos"]
     ],
-    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions."
+    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions.",
+    "verified": "page-image"
   },
   {
     "id": "albrighthayes2003_a1_17_spacked",
@@ -1125,7 +1159,8 @@
       ["ruleHits", "37"],
       ["ruleScope", "37"]
     ],
-    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions."
+    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions.",
+    "verified": "page-image"
   },
   {
     "id": "albrighthayes2003_a1_17_spuck",
@@ -1156,7 +1191,8 @@
       ["ruleBased", "3.94"],
       ["analogical", "3.85"]
     ],
-    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions."
+    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions.",
+    "verified": "page-image"
   },
   {
     "id": "albrighthayes2003_a1_18_stired",
@@ -1187,7 +1223,8 @@
       ["ruleBased", "6.02"],
       ["analogical", "6.29"]
     ],
-    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions."
+    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions.",
+    "verified": "page-image"
   },
   {
     "id": "albrighthayes2003_a1_18_store",
@@ -1218,7 +1255,8 @@
       ["ruleBased", "3.94"],
       ["analogical", "4.03"]
     ],
-    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions."
+    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions.",
+    "verified": "page-image"
   },
   {
     "id": "albrighthayes2003_a1_19_teshed",
@@ -1252,7 +1290,8 @@
       ["ruleHits", "352"],
       ["ruleScope", "352"]
     ],
-    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions."
+    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions.",
+    "verified": "page-image"
   },
   {
     "id": "albrighthayes2003_a1_19_tosh",
@@ -1283,7 +1322,8 @@
       ["ruleBased", "3.94"],
       ["analogical", "3.88"]
     ],
-    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions."
+    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions.",
+    "verified": "page-image"
   },
   {
     "id": "albrighthayes2003_a1_20_wissed",
@@ -1317,7 +1357,8 @@
       ["ruleHits", "352"],
       ["ruleScope", "352"]
     ],
-    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions."
+    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions.",
+    "verified": "page-image"
   },
   {
     "id": "albrighthayes2003_a1_20_wus",
@@ -1349,7 +1390,8 @@
       ["analogical", "3.99"],
       ["ipa", "wʌs"]
     ],
-    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions."
+    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions.",
+    "verified": "page-image"
   },
   {
     "id": "albrighthayes2003_a1_21_bligged",
@@ -1383,7 +1425,8 @@
       ["ruleHits", "41"],
       ["ruleScope", "42"]
     ],
-    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions."
+    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions.",
+    "verified": "page-image"
   },
   {
     "id": "albrighthayes2003_a1_21_blug",
@@ -1414,7 +1457,8 @@
       ["ruleBased", "5.19"],
       ["analogical", "4.08"]
     ],
-    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions."
+    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions.",
+    "verified": "page-image"
   },
   {
     "id": "albrighthayes2003_a1_22_chaked",
@@ -1445,7 +1489,8 @@
       ["ruleBased", "4.77"],
       ["analogical", "5.65"]
     ],
-    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions."
+    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions.",
+    "verified": "page-image"
   },
   {
     "id": "albrighthayes2003_a1_22_chook",
@@ -1477,7 +1522,8 @@
       ["analogical", "4.17"],
       ["ipa", "tʃʊk"]
     ],
-    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions."
+    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions.",
+    "verified": "page-image"
   },
   {
     "id": "albrighthayes2003_a1_23_dritted",
@@ -1508,7 +1554,8 @@
       ["ruleBased", "5.43"],
       ["analogical", "5.29"]
     ],
-    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions."
+    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions.",
+    "verified": "page-image"
   },
   {
     "id": "albrighthayes2003_a1_23_drit",
@@ -1539,7 +1586,8 @@
       ["ruleBased", "4.62"],
       ["analogical", "4.11"]
     ],
-    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions."
+    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions.",
+    "verified": "page-image"
   },
   {
     "id": "albrighthayes2003_a1_23_drat",
@@ -1571,7 +1619,8 @@
       ["analogical", "3.99"],
       ["ipa", "dræt"]
     ],
-    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions."
+    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions.",
+    "verified": "page-image"
   },
   {
     "id": "albrighthayes2003_a1_24_fleeped",
@@ -1603,7 +1652,8 @@
       ["analogical", "5.56"],
       ["stemIpa", "flip"]
     ],
-    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions."
+    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions.",
+    "verified": "page-image"
   },
   {
     "id": "albrighthayes2003_a1_24_flept",
@@ -1636,7 +1686,8 @@
       ["stemIpa", "flip"],
       ["ipa", "flɛpt"]
     ],
-    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions."
+    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions.",
+    "verified": "page-image"
   },
   {
     "id": "albrighthayes2003_a1_25_gleeded",
@@ -1670,7 +1721,8 @@
       ["ruleHits", "1146"],
       ["ruleScope", "1234"]
     ],
-    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions."
+    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions.",
+    "verified": "page-image"
   },
   {
     "id": "albrighthayes2003_a1_25_gled",
@@ -1705,7 +1757,8 @@
       ["ruleHits", "6"],
       ["ruleScope", "7"]
     ],
-    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions."
+    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions.",
+    "verified": "page-image"
   },
   {
     "id": "albrighthayes2003_a1_25_gleed",
@@ -1739,7 +1792,8 @@
       ["ruleHits", "29"],
       ["ruleScope", "1234"]
     ],
-    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions."
+    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions.",
+    "verified": "page-image"
   },
   {
     "id": "albrighthayes2003_a1_26_glitted",
@@ -1770,7 +1824,8 @@
       ["ruleBased", "5.43"],
       ["analogical", "5.37"]
     ],
-    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions."
+    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions.",
+    "verified": "page-image"
   },
   {
     "id": "albrighthayes2003_a1_26_glit",
@@ -1801,7 +1856,8 @@
       ["ruleBased", "4.89"],
       ["analogical", "4.32"]
     ],
-    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions."
+    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions.",
+    "verified": "page-image"
   },
   {
     "id": "albrighthayes2003_a1_26_glat",
@@ -1833,7 +1889,8 @@
       ["analogical", "3.91"],
       ["ipa", "glæt"]
     ],
-    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions."
+    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions.",
+    "verified": "page-image"
   },
   {
     "id": "albrighthayes2003_a1_27_plimmed",
@@ -1864,7 +1921,8 @@
       ["ruleBased", "5.74"],
       ["analogical", "5.96"]
     ],
-    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions."
+    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions.",
+    "verified": "page-image"
   },
   {
     "id": "albrighthayes2003_a1_27_plum",
@@ -1895,7 +1953,8 @@
       ["ruleBased", "4.52"],
       ["analogical", "4.10"]
     ],
-    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions."
+    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions.",
+    "verified": "page-image"
   },
   {
     "id": "albrighthayes2003_a1_27_plam",
@@ -1926,7 +1985,8 @@
       ["ruleBased", "4.21"],
       ["analogical", "3.92"]
     ],
-    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions."
+    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions.",
+    "verified": "page-image"
   },
   {
     "id": "albrighthayes2003_a1_28_queeded",
@@ -1957,7 +2017,8 @@
       ["ruleBased", "4.36"],
       ["analogical", "5.10"]
     ],
-    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions."
+    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions.",
+    "verified": "page-image"
   },
   {
     "id": "albrighthayes2003_a1_28_qued",
@@ -1988,7 +2049,8 @@
       ["ruleBased", "4.43"],
       ["analogical", "4.09"]
     ],
-    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions."
+    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions.",
+    "verified": "page-image"
   },
   {
     "id": "albrighthayes2003_a1_29_scrided",
@@ -2019,7 +2081,8 @@
       ["ruleBased", "4.58"],
       ["analogical", "4.89"]
     ],
-    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions."
+    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions.",
+    "verified": "page-image"
   },
   {
     "id": "albrighthayes2003_a1_29_scrode",
@@ -2050,7 +2113,8 @@
       ["ruleBased", "4.98"],
       ["analogical", "4.73"]
     ],
-    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions."
+    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions.",
+    "verified": "page-image"
   },
   {
     "id": "albrighthayes2003_a1_29_scrid",
@@ -2081,7 +2145,8 @@
       ["ruleBased", "4.12"],
       ["analogical", "3.95"]
     ],
-    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions."
+    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions.",
+    "verified": "page-image"
   },
   {
     "id": "albrighthayes2003_a1_30_splinged",
@@ -2113,7 +2178,8 @@
       ["analogical", "5.35"],
       ["stemIpa", "splɪŋ"]
     ],
-    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions."
+    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions.",
+    "verified": "page-image"
   },
   {
     "id": "albrighthayes2003_a1_30_splung",
@@ -2146,7 +2212,8 @@
       ["stemIpa", "splɪŋ"],
       ["ipa", "splʌŋ"]
     ],
-    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions."
+    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions.",
+    "verified": "page-image"
   },
   {
     "id": "albrighthayes2003_a1_30_splang",
@@ -2179,7 +2246,8 @@
       ["stemIpa", "splɪŋ"],
       ["ipa", "splæŋ"]
     ],
-    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions."
+    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions.",
+    "verified": "page-image"
   },
   {
     "id": "albrighthayes2003_a1_31_guded",
@@ -2211,7 +2279,8 @@
       ["analogical", "5.26"],
       ["stemIpa", "gud"]
     ],
-    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions."
+    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions.",
+    "verified": "page-image"
   },
   {
     "id": "albrighthayes2003_a1_31_gude",
@@ -2244,7 +2313,8 @@
       ["stemIpa", "gud"],
       ["ipa", "gud"]
     ],
-    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions."
+    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions.",
+    "verified": "page-image"
   },
   {
     "id": "albrighthayes2003_a1_32_nolded",
@@ -2275,7 +2345,8 @@
       ["ruleBased", "4.78"],
       ["analogical", "5.54"]
     ],
-    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions."
+    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions.",
+    "verified": "page-image"
   },
   {
     "id": "albrighthayes2003_a1_32_nold",
@@ -2306,7 +2377,8 @@
       ["ruleBased", "3.96"],
       ["analogical", "3.91"]
     ],
-    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions."
+    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions.",
+    "verified": "page-image"
   },
   {
     "id": "albrighthayes2003_a1_32_neld",
@@ -2337,7 +2409,8 @@
       ["ruleBased", "3.94"],
       ["analogical", "4.10"]
     ],
-    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions."
+    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions.",
+    "verified": "page-image"
   },
   {
     "id": "albrighthayes2003_a1_33_nunged",
@@ -2369,7 +2442,8 @@
       ["analogical", "5.97"],
       ["stemIpa", "nʌŋ"]
     ],
-    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions."
+    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions.",
+    "verified": "page-image"
   },
   {
     "id": "albrighthayes2003_a1_33_nang",
@@ -2402,7 +2476,8 @@
       ["stemIpa", "nʌŋ"],
       ["ipa", "næŋ"]
     ],
-    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions."
+    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions.",
+    "verified": "page-image"
   },
   {
     "id": "albrighthayes2003_a1_34_panked",
@@ -2433,7 +2508,8 @@
       ["ruleBased", "5.62"],
       ["analogical", "5.92"]
     ],
-    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions."
+    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions.",
+    "verified": "page-image"
   },
   {
     "id": "albrighthayes2003_a1_34_punk",
@@ -2464,7 +2540,8 @@
       ["ruleBased", "3.94"],
       ["analogical", "3.89"]
     ],
-    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions."
+    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions.",
+    "verified": "page-image"
   },
   {
     "id": "albrighthayes2003_a1_35_preaked",
@@ -2496,7 +2573,8 @@
       ["analogical", "5.80"],
       ["stemIpa", "prik"]
     ],
-    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions."
+    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions.",
+    "verified": "page-image"
   },
   {
     "id": "albrighthayes2003_a1_35_proke",
@@ -2529,7 +2607,8 @@
       ["stemIpa", "prik"],
       ["ipa", "prok"]
     ],
-    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions."
+    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions.",
+    "verified": "page-image"
   },
   {
     "id": "albrighthayes2003_a1_35_preck",
@@ -2562,7 +2641,8 @@
       ["stemIpa", "prik"],
       ["ipa", "prɛk"]
     ],
-    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions."
+    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions.",
+    "verified": "page-image"
   },
   {
     "id": "albrighthayes2003_a1_36_rasked",
@@ -2593,7 +2673,8 @@
       ["ruleBased", "5.97"],
       ["analogical", "6.11"]
     ],
-    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions."
+    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions.",
+    "verified": "page-image"
   },
   {
     "id": "albrighthayes2003_a1_36_rusk",
@@ -2624,7 +2705,8 @@
       ["ruleBased", "3.94"],
       ["analogical", "3.85"]
     ],
-    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions."
+    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions.",
+    "verified": "page-image"
   },
   {
     "id": "albrighthayes2003_a1_37_shilked",
@@ -2658,7 +2740,8 @@
       ["ruleHits", "31"],
       ["ruleScope", "31"]
     ],
-    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions."
+    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions.",
+    "verified": "page-image"
   },
   {
     "id": "albrighthayes2003_a1_37_shalk",
@@ -2690,7 +2773,8 @@
       ["analogical", "4.13"],
       ["ipa", "ʃælk"]
     ],
-    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions."
+    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions.",
+    "verified": "page-image"
   },
   {
     "id": "albrighthayes2003_a1_38_tarked",
@@ -2724,7 +2808,8 @@
       ["ruleHits", "31"],
       ["ruleScope", "31"]
     ],
-    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions."
+    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions.",
+    "verified": "page-image"
   },
   {
     "id": "albrighthayes2003_a1_38_tork",
@@ -2755,7 +2840,8 @@
       ["ruleBased", "3.94"],
       ["analogical", "3.85"]
     ],
-    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions."
+    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions.",
+    "verified": "page-image"
   },
   {
     "id": "albrighthayes2003_a1_39_teeped",
@@ -2786,7 +2872,8 @@
       ["ruleBased", "5.70"],
       ["analogical", "5.61"]
     ],
-    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions."
+    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions.",
+    "verified": "page-image"
   },
   {
     "id": "albrighthayes2003_a1_39_tept",
@@ -2817,7 +2904,8 @@
       ["ruleBased", "4.73"],
       ["analogical", "4.20"]
     ],
-    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions."
+    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions.",
+    "verified": "page-image"
   },
   {
     "id": "albrighthayes2003_a1_40_trisked",
@@ -2848,7 +2936,8 @@
       ["ruleBased", "5.97"],
       ["analogical", "6.05"]
     ],
-    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions."
+    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions.",
+    "verified": "page-image"
   },
   {
     "id": "albrighthayes2003_a1_40_trask",
@@ -2880,7 +2969,8 @@
       ["analogical", "4.01"],
       ["ipa", "træsk"]
     ],
-    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions."
+    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions.",
+    "verified": "page-image"
   },
   {
     "id": "albrighthayes2003_a1_40_trusk",
@@ -2911,7 +3001,8 @@
       ["ruleBased", "3.94"],
       ["analogical", "3.94"]
     ],
-    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions."
+    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions.",
+    "verified": "page-image"
   },
   {
     "id": "albrighthayes2003_a1_41_tunked",
@@ -2942,7 +3033,8 @@
       ["ruleBased", "5.62"],
       ["analogical", "5.80"]
     ],
-    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions."
+    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions.",
+    "verified": "page-image"
   },
   {
     "id": "albrighthayes2003_a1_41_tank",
@@ -2973,7 +3065,8 @@
       ["ruleBased", "3.94"],
       ["analogical", "3.86"]
     ],
-    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions."
+    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions.",
+    "verified": "page-image"
   },
   {
     "id": "albrighthayes2003_a2_1_grelled",
@@ -3005,7 +3098,8 @@
       ["analogical", "6.17"],
       ["stemIpa", "grɛl"]
     ],
-    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions."
+    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions.",
+    "verified": "page-image"
   },
   {
     "id": "albrighthayes2003_a2_1_grelt",
@@ -3039,7 +3133,8 @@
       ["ipa", "grɛlt"],
       ["set", "burnt"]
     ],
-    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions."
+    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions.",
+    "verified": "page-image"
   },
   {
     "id": "albrighthayes2003_a2_2_murned",
@@ -3071,7 +3166,8 @@
       ["analogical", "6.29"],
       ["stemIpa", "mərn"]
     ],
-    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions."
+    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions.",
+    "verified": "page-image"
   },
   {
     "id": "albrighthayes2003_a2_2_murnt",
@@ -3105,7 +3201,8 @@
       ["ipa", "mərnt"],
       ["set", "burnt"]
     ],
-    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions."
+    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions.",
+    "verified": "page-image"
   },
   {
     "id": "albrighthayes2003_a2_3_scoiled",
@@ -3137,7 +3234,8 @@
       ["analogical", "6.51"],
       ["stemIpa", "skɔɪl"]
     ],
-    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions."
+    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions.",
+    "verified": "page-image"
   },
   {
     "id": "albrighthayes2003_a2_3_scoilt",
@@ -3171,7 +3269,8 @@
       ["ipa", "skɔɪlt"],
       ["set", "burnt"]
     ],
-    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions."
+    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions.",
+    "verified": "page-image"
   },
   {
     "id": "albrighthayes2003_a2_4_shurned",
@@ -3203,7 +3302,8 @@
       ["analogical", "6.31"],
       ["stemIpa", "ʃərn"]
     ],
-    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions."
+    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions.",
+    "verified": "page-image"
   },
   {
     "id": "albrighthayes2003_a2_4_shurnt",
@@ -3237,7 +3337,8 @@
       ["ipa", "ʃərnt"],
       ["set", "burnt"]
     ],
-    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions."
+    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions.",
+    "verified": "page-image"
   },
   {
     "id": "albrighthayes2003_a2_5_skelled",
@@ -3269,7 +3370,8 @@
       ["analogical", "6.24"],
       ["stemIpa", "skɛl"]
     ],
-    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions."
+    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions.",
+    "verified": "page-image"
   },
   {
     "id": "albrighthayes2003_a2_5_skelt",
@@ -3303,7 +3405,8 @@
       ["ipa", "skɛlt"],
       ["set", "burnt"]
     ],
-    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions."
+    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions.",
+    "verified": "page-image"
   },
   {
     "id": "albrighthayes2003_a2_6_snelled",
@@ -3335,7 +3438,8 @@
       ["analogical", "6.18"],
       ["stemIpa", "snɛl"]
     ],
-    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions."
+    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions.",
+    "verified": "page-image"
   },
   {
     "id": "albrighthayes2003_a2_6_snelt",
@@ -3369,7 +3473,8 @@
       ["ipa", "snɛlt"],
       ["set", "burnt"]
     ],
-    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions."
+    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions.",
+    "verified": "page-image"
   },
   {
     "id": "albrighthayes2003_a2_6_snold",
@@ -3402,7 +3507,8 @@
       ["stemIpa", "snɛl"],
       ["ipa", "snold"]
     ],
-    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions."
+    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions.",
+    "verified": "page-image"
   },
   {
     "id": "albrighthayes2003_a2_7_squilled",
@@ -3434,7 +3540,8 @@
       ["analogical", "6.30"],
       ["stemIpa", "skwɪl"]
     ],
-    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions."
+    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions.",
+    "verified": "page-image"
   },
   {
     "id": "albrighthayes2003_a2_7_squilt",
@@ -3468,7 +3575,8 @@
       ["ipa", "skwɪlt"],
       ["set", "burnt"]
     ],
-    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions."
+    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions.",
+    "verified": "page-image"
   },
   {
     "id": "albrighthayes2003_a2_8_kived",
@@ -3500,7 +3608,8 @@
       ["analogical", "5.87"],
       ["stemIpa", "kɪv"]
     ],
-    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions."
+    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions.",
+    "verified": "page-image"
   },
   {
     "id": "albrighthayes2003_a2_8_kave",
@@ -3533,7 +3642,8 @@
       ["stemIpa", "kɪv"],
       ["ipa", "kev"]
     ],
-    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions."
+    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions.",
+    "verified": "page-image"
   },
   {
     "id": "albrighthayes2003_a2_9_lummed",
@@ -3565,7 +3675,8 @@
       ["analogical", "6.14"],
       ["stemIpa", "lʌm"]
     ],
-    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions."
+    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions.",
+    "verified": "page-image"
   },
   {
     "id": "albrighthayes2003_a2_9_lame",
@@ -3598,7 +3709,8 @@
       ["stemIpa", "lʌm"],
       ["ipa", "lem"]
     ],
-    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions."
+    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions.",
+    "verified": "page-image"
   },
   {
     "id": "albrighthayes2003_a2_10_pummed",
@@ -3630,7 +3742,8 @@
       ["analogical", "6.06"],
       ["stemIpa", "pʌm"]
     ],
-    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions."
+    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions.",
+    "verified": "page-image"
   },
   {
     "id": "albrighthayes2003_a2_10_pame",
@@ -3663,7 +3776,8 @@
       ["stemIpa", "pʌm"],
       ["ipa", "pem"]
     ],
-    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions."
+    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions.",
+    "verified": "page-image"
   },
   {
     "id": "albrighthayes2003_a2_11_sheed",
@@ -3695,7 +3809,8 @@
       ["analogical", "5.89"],
       ["stemIpa", "ʃi"]
     ],
-    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions."
+    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions.",
+    "verified": "page-image"
   },
   {
     "id": "albrighthayes2003_a2_11_shaw",
@@ -3728,7 +3843,8 @@
       ["stemIpa", "ʃi"],
       ["ipa", "ʃɔ"]
     ],
-    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions."
+    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions.",
+    "verified": "page-image"
   },
   {
     "id": "albrighthayes2003_a2_12_zayed",
@@ -3760,7 +3876,8 @@
       ["analogical", "5.99"],
       ["stemIpa", "ze"]
     ],
-    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions."
+    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions.",
+    "verified": "page-image"
   },
   {
     "id": "albrighthayes2003_a2_12_zed",
@@ -3793,7 +3910,8 @@
       ["stemIpa", "ze"],
       ["ipa", "zɛd"]
     ],
-    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions."
+    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions.",
+    "verified": "page-image"
   },
   {
     "id": "albrighthayes2003_a2_13_chinded",
@@ -3825,7 +3943,8 @@
       ["analogical", "5.41"],
       ["stemIpa", "tʃaɪnd"]
     ],
-    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions."
+    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions.",
+    "verified": "page-image"
   },
   {
     "id": "albrighthayes2003_a2_13_chound",
@@ -3858,7 +3977,8 @@
       ["stemIpa", "tʃaɪnd"],
       ["ipa", "tʃaʊnd"]
     ],
-    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions."
+    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions.",
+    "verified": "page-image"
   },
   {
     "id": "albrighthayes2003_a2_14_fletted",
@@ -3890,7 +4010,8 @@
       ["analogical", "5.39"],
       ["stemIpa", "flɛt"]
     ],
-    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions."
+    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions.",
+    "verified": "page-image"
   },
   {
     "id": "albrighthayes2003_a2_14_flet",
@@ -3922,7 +4043,8 @@
       ["analogical", "4.30"],
       ["stemIpa", "flɛt"]
     ],
-    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions."
+    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions.",
+    "verified": "page-image"
   },
   {
     "id": "albrighthayes2003_a2_15_grynted",
@@ -3954,7 +4076,8 @@
       ["analogical", "5.59"],
       ["stemIpa", "graɪnt"]
     ],
-    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions."
+    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions.",
+    "verified": "page-image"
   },
   {
     "id": "albrighthayes2003_a2_15_groant",
@@ -3987,7 +4110,8 @@
       ["stemIpa", "graɪnt"],
       ["ipa", "gront"]
     ],
-    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions."
+    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions.",
+    "verified": "page-image"
   },
   {
     "id": "albrighthayes2003_a2_15_grount",
@@ -4020,7 +4144,8 @@
       ["stemIpa", "graɪnt"],
       ["ipa", "graʊnt"]
     ],
-    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions."
+    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions.",
+    "verified": "page-image"
   },
   {
     "id": "albrighthayes2003_a2_16_rynted",
@@ -4052,7 +4177,8 @@
       ["analogical", "5.51"],
       ["stemIpa", "raɪnt"]
     ],
-    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions."
+    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions.",
+    "verified": "page-image"
   },
   {
     "id": "albrighthayes2003_a2_16_roant",
@@ -4085,7 +4211,8 @@
       ["stemIpa", "raɪnt"],
       ["ipa", "ront"]
     ],
-    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions."
+    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions.",
+    "verified": "page-image"
   },
   {
     "id": "albrighthayes2003_a2_16_rount",
@@ -4118,7 +4245,8 @@
       ["stemIpa", "raɪnt"],
       ["ipa", "raʊnt"]
     ],
-    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions."
+    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions.",
+    "verified": "page-image"
   },
   {
     "id": "albrighthayes2003_a2_17_shynted",
@@ -4150,7 +4278,8 @@
       ["analogical", "5.49"],
       ["stemIpa", "ʃaɪnt"]
     ],
-    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions."
+    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions.",
+    "verified": "page-image"
   },
   {
     "id": "albrighthayes2003_a2_17_shoant",
@@ -4183,7 +4312,8 @@
       ["stemIpa", "ʃaɪnt"],
       ["ipa", "ʃont"]
     ],
-    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions."
+    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions.",
+    "verified": "page-image"
   },
   {
     "id": "albrighthayes2003_a2_17_shount",
@@ -4216,6 +4346,7 @@
       ["stemIpa", "ʃaɪnt"],
       ["ipa", "ʃaʊnt"]
     ],
-    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions."
+    "comment": "Wug past tense rated 1–7 in Experiment 2 (adjusted for the stem's phonological well-formedness rating); production probabilities from Experiments 1 and 2; the two models' rescaled predictions.",
+    "verified": "page-image"
   }
 ]

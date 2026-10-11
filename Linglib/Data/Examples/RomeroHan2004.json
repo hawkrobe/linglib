@@ -25,7 +25,8 @@
         "positive"
       ]
     ],
-    "comment": "Positive epistemic implicature: the speaker believes or at least expects that John drinks."
+    "comment": "Positive epistemic implicature: the speaker believes or at least expects that John drinks.",
+    "verified": "page-image"
   },
   {
     "id": "romerohan2004_does_john_not_drink",
@@ -53,7 +54,8 @@
         "none"
       ]
     ],
-    "comment": "No epistemic implicature necessary."
+    "comment": "No epistemic implicature necessary.",
+    "verified": "page-image"
   },
   {
     "id": "romerohan2004_does_john_drink",
@@ -81,7 +83,8 @@
         "none"
       ]
     ],
-    "comment": "No epistemic implicature necessary."
+    "comment": "No epistemic implicature necessary.",
+    "verified": "page-image"
   },
   {
     "id": "romerohan2004_does_john_really_drink",
@@ -113,7 +116,8 @@
         "negative"
       ]
     ],
-    "comment": "Negative epistemic implicature: the speaker believed or at least expected that John does not drink."
+    "comment": "Negative epistemic implicature: the speaker believed or at least expected that John does not drink.",
+    "verified": "page-image"
   },
   {
     "id": "romerohan2004_isnt_jane_coming",
@@ -141,7 +145,8 @@
         "positive"
       ]
     ],
-    "comment": "Ambiguous between the p-reading and the ¬p-reading (Ladd 1981)."
+    "comment": "Ambiguous between the p-reading and the ¬p-reading (Ladd 1981).",
+    "verified": "page-image"
   },
   {
     "id": "romerohan2004_isnt_jane_coming_too",
@@ -177,7 +182,8 @@
         "positive"
       ]
     ],
-    "comment": "PI-question: double-checks p; the speaker believed or expected that Jane is coming ((81))."
+    "comment": "PI-question: double-checks p; the speaker believed or expected that Jane is coming ((81)).",
+    "verified": "page-image"
   },
   {
     "id": "romerohan2004_isnt_jane_coming_either",
@@ -213,7 +219,8 @@
         "positive"
       ]
     ],
-    "comment": "NI-question: double-checks the addressee's ¬p; the speaker still believed or expected that Jane is coming ((82))."
+    "comment": "NI-question: double-checks the addressee's ¬p; the speaker still believed or expected that Jane is coming ((82)).",
+    "verified": "page-image"
   },
   {
     "id": "romerohan2004_is_jane_really_coming_too",
@@ -241,7 +248,8 @@
         "too"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "romerohan2004_is_jane_really_coming_either",
@@ -251,10 +259,10 @@
     },
     "reportedIn": null,
     "language": "stan1293",
-    "primaryText": "*Is Jane really coming either?",
+    "primaryText": "Is Jane really coming either?",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "Is Jane really coming either?",
+    "translation": "",
     "context": "A: Pat is not coming. And we don't need to wait for Jane either.",
     "judgment": "ungrammatical",
     "alternatives": [],
@@ -269,7 +277,8 @@
         "either"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "romerohan2004_is_jane_not_coming_too",
@@ -279,10 +288,10 @@
     },
     "reportedIn": null,
     "language": "stan1293",
-    "primaryText": "*Is Jane NOT coming too?",
+    "primaryText": "Is Jane NOT coming too?",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "Is Jane NOT coming too?",
+    "translation": "",
     "context": "A: Pat already came, but we still have to wait for Jane.",
     "judgment": "ungrammatical",
     "alternatives": [],
@@ -297,7 +306,8 @@
         "too"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "romerohan2004_is_jane_not_coming_either",
@@ -325,7 +335,8 @@
         "either"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "romerohan2004_greek_preposed",
@@ -374,7 +385,8 @@
         "positive"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "romerohan2004_greek_nonpreposed",
@@ -423,7 +435,8 @@
         "none"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "romerohan2004_spanish_preposed",
@@ -464,7 +477,8 @@
         "positive"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "romerohan2004_spanish_nonpreposed",
@@ -505,7 +519,8 @@
         "none"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "romerohan2004_bulgarian_preposed",
@@ -528,7 +543,7 @@
       ],
       [
         "li",
-        "Q"
+        "li"
       ],
       [
         "Ivan",
@@ -554,7 +569,8 @@
         "positive"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "romerohan2004_bulgarian_nonpreposed",
@@ -569,7 +585,7 @@
     "glossedTokens": [
       [
         "Dali",
-        "Q"
+        "Dali"
       ],
       [
         "Ivan",
@@ -603,7 +619,8 @@
         "none"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "romerohan2004_german_preposed",
@@ -656,7 +673,8 @@
         "positive"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "romerohan2004_german_nonpreposed",
@@ -705,7 +723,8 @@
         "none"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "romerohan2004_korean_preposed",
@@ -750,7 +769,8 @@
         "positive"
       ]
     ],
-    "comment": "Negation following tense: preposed negation given Korean head-finality."
+    "comment": "Negation following tense: preposed negation given Korean head-finality.",
+    "verified": "page-image"
   },
   {
     "id": "romerohan2004_korean_nonpreposed_short",
@@ -795,7 +815,8 @@
         "none"
       ]
     ],
-    "comment": "Short negation preceding tense."
+    "comment": "Short negation preceding tense.",
+    "verified": "page-image"
   },
   {
     "id": "romerohan2004_korean_nonpreposed_long",
@@ -840,6 +861,7 @@
         "none"
       ]
     ],
-    "comment": "Long negation preceding tense."
+    "comment": "Long negation preceding tense.",
+    "verified": "page-image"
   }
 ]

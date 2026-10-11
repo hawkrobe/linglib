@@ -8,7 +8,7 @@
     "glossedTokens": [
       ["Þeir", "they.NOM"], ["hafa", "have1"], ["stóra", "big"], ["bók", "book.ACC"]
     ],
-    "translation": "They have (own) a big book.",
+    "translation": "They have (i.e. own) a big book.",
     "context": "",
     "judgment": "ungrammatical",
     "alternatives": [],
@@ -18,7 +18,8 @@
       ["construction", "clausal"],
       ["verb", "hafa"]
     ],
-    "comment": "Clausal possession, concrete relation, with hafa."
+    "comment": "Clausal possession, concrete relation, with hafa.",
+    "verified": "page-image"
   },
   {
     "id": "myler2016_concrete_eiga",
@@ -29,7 +30,7 @@
     "glossedTokens": [
       ["Þeir", "they.NOM"], ["eiga", "have2"], ["stóra", "big"], ["bók", "book.ACC"]
     ],
-    "translation": "They have (own) a big book.",
+    "translation": "They have (i.e. own) a big book.",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -39,7 +40,8 @@
       ["construction", "clausal"],
       ["verb", "eiga"]
     ],
-    "comment": "Clausal possession, concrete relation, with eiga."
+    "comment": "Clausal possession, concrete relation, with eiga.",
+    "verified": "page-image"
   },
   {
     "id": "myler2016_kinship_hafa",
@@ -60,7 +62,8 @@
       ["construction", "clausal"],
       ["verb", "hafa"]
     ],
-    "comment": "Clausal possession, kinship relation, with hafa."
+    "comment": "Clausal possession, kinship relation, with hafa.",
+    "verified": "page-image"
   },
   {
     "id": "myler2016_kinship_eiga",
@@ -81,7 +84,8 @@
       ["construction", "clausal"],
       ["verb", "eiga"]
     ],
-    "comment": "Clausal possession, kinship relation, with eiga."
+    "comment": "Clausal possession, kinship relation, with eiga.",
+    "verified": "page-image"
   },
   {
     "id": "myler2016_bodyPart_hafa",
@@ -102,7 +106,8 @@
       ["construction", "clausal"],
       ["verb", "hafa"]
     ],
-    "comment": "Clausal possession, bodyPart relation, with hafa."
+    "comment": "Clausal possession, bodyPart relation, with hafa.",
+    "verified": "page-image"
   },
   {
     "id": "myler2016_bodyPart_eiga",
@@ -123,7 +128,8 @@
       ["construction", "clausal"],
       ["verb", "eiga"]
     ],
-    "comment": "Clausal possession, bodyPart relation, with eiga."
+    "comment": "Clausal possession, bodyPart relation, with eiga.",
+    "verified": "page-image"
   },
   {
     "id": "myler2016_abstract_hafa",
@@ -144,7 +150,8 @@
       ["construction", "clausal"],
       ["verb", "hafa"]
     ],
-    "comment": "Clausal possession, abstract relation, with hafa."
+    "comment": "Clausal possession, abstract relation, with hafa.",
+    "verified": "page-image"
   },
   {
     "id": "myler2016_abstract_eiga",
@@ -165,7 +172,8 @@
       ["construction", "clausal"],
       ["verb", "eiga"]
     ],
-    "comment": "Clausal possession, abstract relation, with eiga."
+    "comment": "Clausal possession, abstract relation, with eiga.",
+    "verified": "page-image"
   },
   {
     "id": "myler2016_concrete_attrA",
@@ -178,14 +186,15 @@
     ],
     "translation": "my book",
     "context": "",
-    "judgment": "questionable",
+    "judgment": "unacceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
       ["relation", "concrete"],
       ["construction", "attributiveA"]
     ],
-    "comment": "Attributive possession, column A of (92) (from Myler, Sigurðsson & Wood 2014); # is recorded as questionable, % as marginal."
+    "comment": "Attributive possession, column A of (92) (from Myler, Sigurðsson & Wood 2014); # is recorded as unacceptable; % marks speaker variation and keeps the row's marginal.",
+    "verified": "page-image"
   },
   {
     "id": "myler2016_concrete_attrB",
@@ -205,7 +214,8 @@
       ["relation", "concrete"],
       ["construction", "attributiveB"]
     ],
-    "comment": "Attributive possession, column B of (92) (from Myler, Sigurðsson & Wood 2014); # is recorded as questionable, % as marginal."
+    "comment": "Attributive possession, column B of (92) (from Myler, Sigurðsson & Wood 2014); # is recorded as unacceptable; % marks speaker variation and keeps the row's marginal.",
+    "verified": "page-image"
   },
   {
     "id": "myler2016_concrete_attrC",
@@ -225,7 +235,8 @@
       ["relation", "concrete"],
       ["construction", "attributiveC"]
     ],
-    "comment": "Attributive possession, column C of (92) (from Myler, Sigurðsson & Wood 2014); # is recorded as questionable, % as marginal."
+    "comment": "Attributive possession, column C of (92) (from Myler, Sigurðsson & Wood 2014); # is recorded as unacceptable; % marks speaker variation and keeps the row's marginal.",
+    "verified": "page-image"
   },
   {
     "id": "myler2016_kinship_attrA",
@@ -245,7 +256,8 @@
       ["relation", "kinship"],
       ["construction", "attributiveA"]
     ],
-    "comment": "Attributive possession, column A of (92) (from Myler, Sigurðsson & Wood 2014); # is recorded as questionable, % as marginal."
+    "comment": "Attributive possession, column A of (92) (from Myler, Sigurðsson & Wood 2014); # is recorded as unacceptable; % marks speaker variation and keeps the row's marginal.",
+    "verified": "page-image"
   },
   {
     "id": "myler2016_kinship_attrB",
@@ -265,7 +277,8 @@
       ["relation", "kinship"],
       ["construction", "attributiveB"]
     ],
-    "comment": "Attributive possession, column B of (92) (from Myler, Sigurðsson & Wood 2014); # is recorded as questionable, % as marginal."
+    "comment": "Attributive possession, column B of (92) (from Myler, Sigurðsson & Wood 2014); # is recorded as unacceptable; % marks speaker variation and keeps the row's marginal.",
+    "verified": "page-image"
   },
   {
     "id": "myler2016_kinship_attrC",
@@ -285,7 +298,8 @@
       ["relation", "kinship"],
       ["construction", "attributiveC"]
     ],
-    "comment": "Attributive possession, column C of (92) (from Myler, Sigurðsson & Wood 2014); # is recorded as questionable, % as marginal."
+    "comment": "Attributive possession, column C of (92) (from Myler, Sigurðsson & Wood 2014); # is recorded as unacceptable; % marks speaker variation and keeps the row's marginal.",
+    "verified": "page-image"
   },
   {
     "id": "myler2016_bodyPart_attrA",
@@ -298,14 +312,15 @@
     ],
     "translation": "my eyes",
     "context": "",
-    "judgment": "questionable",
+    "judgment": "unacceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
       ["relation", "bodyPart"],
       ["construction", "attributiveA"]
     ],
-    "comment": "Attributive possession, column A of (92) (from Myler, Sigurðsson & Wood 2014); # is recorded as questionable, % as marginal."
+    "comment": "Attributive possession, column A of (92) (from Myler, Sigurðsson & Wood 2014); # is recorded as unacceptable; % marks speaker variation and keeps the row's marginal.",
+    "verified": "page-image"
   },
   {
     "id": "myler2016_bodyPart_attrB",
@@ -325,7 +340,8 @@
       ["relation", "bodyPart"],
       ["construction", "attributiveB"]
     ],
-    "comment": "Attributive possession, column B of (92) (from Myler, Sigurðsson & Wood 2014); # is recorded as questionable, % as marginal."
+    "comment": "Attributive possession, column B of (92) (from Myler, Sigurðsson & Wood 2014); # is recorded as unacceptable; % marks speaker variation and keeps the row's marginal.",
+    "verified": "page-image"
   },
   {
     "id": "myler2016_bodyPart_attrC",
@@ -345,7 +361,8 @@
       ["relation", "bodyPart"],
       ["construction", "attributiveC"]
     ],
-    "comment": "Attributive possession, column C of (92) (from Myler, Sigurðsson & Wood 2014); # is recorded as questionable, % as marginal."
+    "comment": "Attributive possession, column C of (92) (from Myler, Sigurðsson & Wood 2014); # is recorded as unacceptable; % marks speaker variation and keeps the row's marginal.",
+    "verified": "page-image"
   },
   {
     "id": "myler2016_abstract_attrA",
@@ -365,7 +382,8 @@
       ["relation", "abstract"],
       ["construction", "attributiveA"]
     ],
-    "comment": "Attributive possession, column A of (92) (from Myler, Sigurðsson & Wood 2014); # is recorded as questionable, % as marginal."
+    "comment": "Attributive possession, column A of (92) (from Myler, Sigurðsson & Wood 2014); # is recorded as unacceptable; % marks speaker variation and keeps the row's marginal.",
+    "verified": "page-image"
   },
   {
     "id": "myler2016_abstract_attrB",
@@ -385,7 +403,8 @@
       ["relation", "abstract"],
       ["construction", "attributiveB"]
     ],
-    "comment": "Attributive possession, column B of (92) (from Myler, Sigurðsson & Wood 2014); # is recorded as questionable, % as marginal."
+    "comment": "Attributive possession, column B of (92) (from Myler, Sigurðsson & Wood 2014); # is recorded as unacceptable; % marks speaker variation and keeps the row's marginal.",
+    "verified": "page-image"
   },
   {
     "id": "myler2016_abstract_attrC",
@@ -405,6 +424,7 @@
       ["relation", "abstract"],
       ["construction", "attributiveC"]
     ],
-    "comment": "Attributive possession, column C of (92) (from Myler, Sigurðsson & Wood 2014); # is recorded as questionable, % as marginal."
+    "comment": "Attributive possession, column C of (92) (from Myler, Sigurðsson & Wood 2014); # is recorded as unacceptable; % marks speaker variation and keeps the row's marginal.",
+    "verified": "page-image"
   }
 ]

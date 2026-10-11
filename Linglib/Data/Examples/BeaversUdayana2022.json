@@ -15,7 +15,8 @@
       ["middle type", "inherent reflexive"],
       ["root class", "naturally reflexive"]
     ],
-    "comment": "Body-care roots default to the coreferent reading of the suppressed variable."
+    "comment": "Body-care roots default to the coreferent reading of the suppressed variable.",
+    "verified": "page-image"
   },
   {
     "id": "bu2022_2b",
@@ -34,7 +35,8 @@
       ["middle type", "dispositional"],
       ["reading", "generic"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bu2022_7",
@@ -52,7 +54,8 @@
       ["middle type", "passive middle"],
       ["reading", "episodic"]
     ],
-    "comment": "Episodic reading, unlike English dispositionals."
+    "comment": "Episodic reading, unlike English dispositionals.",
+    "verified": "page-image"
   },
   {
     "id": "bu2022_9a",
@@ -72,7 +75,8 @@
       ["middle type", "dispositional"],
       ["diagnostic", "agent denial"]
     ],
-    "comment": "The unexpressed agent is entailed to exist, as with di- passives."
+    "comment": "The unexpressed agent is entailed to exist, as with di- passives.",
+    "verified": "page-image"
   },
   {
     "id": "bu2022_10c",
@@ -91,7 +95,8 @@
       ["middle type", "dispositional"],
       ["diagnostic", "dengan sendiri=nya"]
     ],
-    "comment": "'By itself' contradicts the entailed separate causer."
+    "comment": "'By itself' contradicts the entailed separate causer.",
+    "verified": "page-image"
   },
   {
     "id": "bu2022_11",
@@ -110,7 +115,8 @@
       ["voice", "di- passive"],
       ["diagnostic", "oleh phrase"]
     ],
-    "comment": "The ber- variant *ber-jual oleh Tono is ungrammatical: middles reject oleh."
+    "comment": "The ber- variant *ber-jual oleh Tono is ungrammatical: middles reject oleh.",
+    "verified": "page-image"
   },
   {
     "id": "bu2022_13",
@@ -129,7 +135,8 @@
       ["middle type", "dispositional"],
       ["diagnostic", "rationale clause"]
     ],
-    "comment": "The suppressed agent cannot control rationale PRO, unlike di- passives (12b)."
+    "comment": "The suppressed agent cannot control rationale PRO, unlike di- passives (12b).",
+    "verified": "page-image"
   },
   {
     "id": "bu2022_17b",
@@ -148,11 +155,12 @@
       ["middle type", "inherent reflexive"],
       ["diagnostic", "dengan sendiri=nya"]
     ],
-    "comment": "The surface subject is the causer, so 'by itself' is licensed."
+    "comment": "The surface subject is the causer, so 'by itself' is licensed.",
+    "verified": "page-image"
   },
   {
     "id": "bu2022_18a",
-    "source": {"bibkey": "beavers-udayana-2022", "paperLabel": "(18a)"},
+    "source": {"bibkey": "beavers-udayana-2022", "paperLabel": "(24b)"},
     "language": "indo1316",
     "primaryText": "Orang itu ber-cuci=mata.",
     "glossedTokens": [
@@ -169,7 +177,8 @@
       ["middle type", "incorporation"],
       ["object", "incorporated NP"]
     ],
-    "comment": "The agent surfaces as subject; the patient is an incorporated NP."
+    "comment": "The agent surfaces as subject; the patient is an incorporated NP.",
+    "verified": "page-image"
   },
   {
     "id": "bu2022_19b",
@@ -188,7 +197,8 @@
       ["middle type", "incorporation"],
       ["diagnostic", "non-separability"]
     ],
-    "comment": "The incorporated NP cannot be separated from the verb, unlike a meN- object (19a)."
+    "comment": "The incorporated NP cannot be separated from the verb, unlike a meN- object (19a).",
+    "verified": "page-image"
   },
   {
     "id": "bu2022_22",
@@ -207,7 +217,8 @@
       ["middle type", "incorporation"],
       ["diagnostic", "discourse opacity"]
     ],
-    "comment": "The incorporated noun cannot antecede 'that car' — no discourse referent."
+    "comment": "The incorporated noun cannot antecede 'that car' — no discourse referent.",
+    "verified": "page-image"
   },
   {
     "id": "bu2022_26b",
@@ -225,7 +236,8 @@
       ["middle type", "incorporated reflexive"],
       ["object", "diri"]
     ],
-    "comment": "Incorporated diri triggers the coreferent reading."
+    "comment": "Incorporated diri triggers the coreferent reading.",
+    "verified": "page-image"
   },
   {
     "id": "bu2022_28",
@@ -243,7 +255,8 @@
       ["middle type", "incorporation"],
       ["diagnostic", "complementary distribution"]
     ],
-    "comment": "Incorporated diri and an incorporated lexical NP compete for one slot."
+    "comment": "Incorporated diri and an incorporated lexical NP compete for one slot.",
+    "verified": "page-image"
   },
   {
     "id": "bu2022_44a",
@@ -255,13 +268,14 @@
     ],
     "translation": "Tono and Ali dressed/got dressed.",
     "context": "Tono dressed himself and Ali was dressed by his mother.",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "readings": [],
     "paperFeatures": [
       ["diagnostic", "mixed readings"],
       ["analysis", "open variable vs existential"]
     ],
-    "comment": "No mixed reflexive/disjoint reading under conjunction — unlike Greek, favoring the open-variable analysis (43)."
+    "comment": "No mixed reflexive/disjoint reading under conjunction — unlike Greek, favoring the open-variable analysis (43).",
+    "verified": "page-image"
   },
   {
     "id": "bu2022_59",
@@ -271,7 +285,7 @@
     "glossedTokens": [
       ["Tono", "Tono"], ["ber-topi", "MV-hat"]
     ],
-    "translation": "Tono has a hat on.",
+    "translation": "Tono has a hat.",
     "context": "",
     "judgment": "acceptable",
     "readings": [],
@@ -279,7 +293,8 @@
       ["middle type", "conflation"],
       ["root class", "relational noun"]
     ],
-    "comment": "Relational nouns (body parts, kin, clothing) conflate: the possessor surfaces as subject."
+    "comment": "Relational nouns (body parts, kin, clothing) conflate: the possessor surfaces as subject.",
+    "verified": "page-image"
   },
   {
     "id": "bu2022_62",
@@ -298,7 +313,8 @@
       ["middle type", "conflation"],
       ["diagnostic", "change denial"]
     ],
-    "comment": "Conflation middles are purely possessional statives, not change-of-state."
+    "comment": "Conflation middles are purely possessional statives, not change-of-state.",
+    "verified": "page-image"
   },
   {
     "id": "bu2022_67a",
@@ -318,7 +334,8 @@
       ["middle type", "anticausative"],
       ["diagnostic", "causer denial"]
     ],
-    "comment": "ter- anticausatives lack the entailed external causer of dispositional ber- middles; contrast (74)."
+    "comment": "ter- anticausatives lack the entailed external causer of dispositional ber- middles; contrast (74).",
+    "verified": "page-image"
   },
   {
     "id": "bu2022_74",
@@ -338,6 +355,7 @@
       ["middle type", "dispositional"],
       ["diagnostic", "causer denial"]
     ],
-    "comment": "ber- on the same root has only the disjoint (dispositional/passive) reading, so causer denial contradicts."
+    "comment": "ber- on the same root has only the disjoint (dispositional/passive) reading, so causer denial contradicts.",
+    "verified": "page-image"
   }
 ]

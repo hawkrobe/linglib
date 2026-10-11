@@ -273,11 +273,14 @@ def lexicon? (r : Datum) : Option (List (List (GlueTy Label))) :=
   | "stan1293", some "speaker, drink, water" => some english
   | _, _ => none
 
+/-- The number of words of a row's sentence, which are separated by single spaces. -/
+def wordCount (r : Datum) : ℕ := (r.primaryText.toList.filter (· = ' ')).length + 1
+
 /-- Each word of the drinking sentences contributes its constructors, and the two lexicons
     instantiate the premises of the same proof. -/
 theorem rows_lexicon :
     ∀ r ∈ Examples.all, ∀ lex ∈ lexicon? r,
-      r.surfaceTokens.length = lex.length ∧ lex.flatten = english.flatten := by
+      wordCount r = lex.length ∧ lex.flatten = english.flatten := by
   decide
 
 end Asudeh2022

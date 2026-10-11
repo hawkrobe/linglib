@@ -25,7 +25,8 @@
         "every"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "haslingerhienetal2025_71b",
@@ -78,7 +79,8 @@
         "alle"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "haslingerhienetal2025_73a",
@@ -106,7 +108,8 @@
         "every"
       ]
     ],
-    "comment": "Annotated [+dist] in the paper."
+    "comment": "Annotated [+dist] in the paper.",
+    "verified": "page-image"
   },
   {
     "id": "haslingerhienetal2025_73b",
@@ -134,7 +137,8 @@
         "each"
       ]
     ],
-    "comment": "Starred and annotated [+dist] in the paper."
+    "comment": "Starred and annotated [+dist] in the paper.",
+    "verified": "page-image"
   },
   {
     "id": "haslingerhienetal2025_74a",
@@ -146,21 +150,8 @@
     "language": "stan1295",
     "primaryText": "alle zehn Minuten",
     "discourseSegments": [],
-    "glossedTokens": [
-      [
-        "alle",
-        "UQ"
-      ],
-      [
-        "zehn",
-        "ten"
-      ],
-      [
-        "Minuten",
-        "minute.PL"
-      ]
-    ],
-    "translation": "every ten minutes",
+    "glossedTokens": [],
+    "translation": "",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -175,7 +166,8 @@
         "alle"
       ]
     ],
-    "comment": "Annotated [-dist] in the paper."
+    "comment": "Annotated [-dist] in the paper.",
+    "verified": "page-image"
   },
   {
     "id": "haslingerhienetal2025_74b",
@@ -187,21 +179,8 @@
     "language": "stan1295",
     "primaryText": "jede zehn Minuten",
     "discourseSegments": [],
-    "glossedTokens": [
-      [
-        "jede",
-        "UQ"
-      ],
-      [
-        "zehn",
-        "ten"
-      ],
-      [
-        "Minuten",
-        "minute.PL"
-      ]
-    ],
-    "translation": "every ten minutes",
+    "glossedTokens": [],
+    "translation": "",
     "context": "",
     "judgment": "marginal",
     "alternatives": [],
@@ -216,6 +195,7 @@
         "jeder"
       ]
     ],
-    "comment": "Marked % and annotated [+dist] in the paper, which notes that the oddness is subject to variation."
+    "comment": "Marked % and annotated [+dist] in the paper, which notes that the oddness is subject to variation.",
+    "verified": "page-image"
   }
 ]

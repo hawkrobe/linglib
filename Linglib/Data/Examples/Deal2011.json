@@ -22,7 +22,8 @@
       ["modal", "o'qa"],
       ["environment", "unembedded"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "deal2011_ex5",
@@ -45,7 +46,8 @@
       ["environment", "unembedded"],
       ["force", "necessity"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "deal2011_ex6",
@@ -70,7 +72,8 @@
       ["environment", "conditional consequent"],
       ["force", "necessity"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "deal2011_ex10",
@@ -92,7 +95,8 @@
       ["environment", "unembedded"],
       ["force", "necessity"]
     ],
-    "comment": "Uttered in casual conversation and translated with should."
+    "comment": "Uttered in casual conversation and translated with should.",
+    "verified": "page-image"
   },
   {
     "id": "deal2011_ex46",
@@ -116,7 +120,8 @@
       ["environment", "negation"],
       ["force", "possibility"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "deal2011_ex47",
@@ -139,7 +144,8 @@
       ["environment", "negation"],
       ["force", "possibility"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "deal2011_ex48",
@@ -164,7 +170,8 @@
       ["modal", "o'qa"],
       ["environment", "negation"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "deal2011_ex49",
@@ -186,7 +193,8 @@
       ["environment", "negation"],
       ["force", "necessity"]
     ],
-    "comment": "Consultant: the sentence says 'you can't go', a different conversation."
+    "comment": "Consultant: the sentence says 'you can't go', a different conversation.",
+    "verified": "page-image"
   },
   {
     "id": "deal2011_ex50",
@@ -208,7 +216,8 @@
       ["environment", "negation"],
       ["force", "necessity"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "deal2011_ex51",
@@ -233,7 +242,8 @@
       ["modal", "o'qa"],
       ["environment", "existential restriction"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "deal2011_ex52",
@@ -246,7 +256,7 @@
       ["hi-wqíi-cix-∅", "3SUBJ-throw.away-IMPF.PL-PRES"], ["'óykala", "all"], ["hipt", "food"],
       ["ke", "REL"], ["yox̂", "DEM"], ["hi-pá-ap-o'qa", "3SUBJ-S.PL-eat-MOD"]
     ],
-    "translation": "They are throwing away all the food that they could eat.",
+    "translation": "They are throwing away all the food that they could eat. They are throwing away all their food.",
     "context": "I am watching people clean out a cooler and throw away various things.",
     "judgment": "acceptable",
     "alternatives": [],
@@ -258,7 +268,8 @@
       ["modal", "o'qa"],
       ["environment", "universal restriction"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "deal2011_ex53",
@@ -283,7 +294,8 @@
       ["modal", "o'qa"],
       ["environment", "universal restriction"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "deal2011_ex54",
@@ -308,7 +320,8 @@
       ["modal", "o'qa"],
       ["environment", "universal restriction"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "deal2011_ex57",
@@ -332,7 +345,8 @@
       ["environment", "conditional consequent"],
       ["force", "necessity"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "deal2011_ex58",
@@ -358,7 +372,8 @@
       ["modal", "o'qa"],
       ["environment", "conditional antecedent"]
     ],
-    "comment": "The readings concern the modal of the antecedent."
+    "comment": "The readings concern the modal of the antecedent.",
+    "verified": "page-image"
   },
   {
     "id": "deal2011_ex59",
@@ -382,17 +397,18 @@
       ["modal", "o'qa"],
       ["environment", "conditional antecedent"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "deal2011_ex60",
     "source": {"bibkey": "deal-2011", "paperLabel": "(60)"},
     "reportedIn": null,
     "language": "nezp1238",
-    "primaryText": "c'alawi 'a-múu-no'qa saykiptaw'atóo-na, kaa 'e-múu-nu'.",
+    "primaryText": "c'alawí 'a-múu-no'qa saykiptaw'atóo-na, kaa 'e-múu-nu'.",
     "discourseSegments": [],
     "glossedTokens": [
-      ["c'alawi", "if"], ["'a-múu-no'qa", "3OBJ-call-MOD"], ["saykiptaw'atóo-na", "doctor-OBJ"],
+      ["c'alawí", "if"], ["'a-múu-no'qa", "3OBJ-call-MOD"], ["saykiptaw'atóo-na", "doctor-OBJ"],
       ["kaa", "then"], ["'e-múu-nu'", "3OBJ-call-PROSP"]
     ],
     "translation": "If I have to call the doctor, I will.",
@@ -405,6 +421,7 @@
       ["environment", "conditional antecedent"],
       ["force", "necessity"]
     ],
-    "comment": "Consultant: the sentence says that if I could call the doctor, I would."
+    "comment": "Consultant: the sentence says that if I could call the doctor, I would. The paper prints c'alawi here, without the accent it has in (6), (55)-(59) and the prose.",
+    "verified": "page-image"
   }
 ]

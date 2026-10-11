@@ -19,12 +19,13 @@
     "paperFeatures": [
       ["diagnostic", "sluicing antecedent"]
     ],
-    "comment": "Both the bare and the wani-marked indefinite serve as sluicing antecedents."
+    "comment": "Both the bare and the wani-marked indefinite serve as sluicing antecedents.",
+    "verified": "page-image"
   },
   {
     "id": "zimmermann2026_13a",
-    "source": {"bibkey": "zimmermann-2026", "paperLabel": "(13a)"},
-    "reportedIn": {"bibkey": "zimmermann-2014", "paperLabel": ""},
+    "source": {"bibkey": "zimmermann-2014", "paperLabel": ""},
+    "reportedIn": {"bibkey": "zimmermann-2026", "paperLabel": "(13a)"},
     "language": "haus1257",
     "primaryText": "Audù bà-i sàyi wani kiifii ba.",
     "discourseSegments": [],
@@ -32,7 +33,7 @@
       ["Audù", "Audu"], ["bà-i", "NEG-3SG.M"], ["sàyi", "buy"], ["wani", "INDEF"],
       ["kiifii", "fish"], ["ba", "NEG"]
     ],
-    "translation": "Audu didn't buy some fish.",
+    "translation": "Audu didn't buy SOME fish.",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -41,12 +42,13 @@
       ["scope", "wide"],
       ["context", "Audu bought a lot of fish, but"]
     ],
-    "comment": "Wide-scope context: the marker wani is required; the bare NP would force the narrow-scope reading."
+    "comment": "Wide-scope context: the marker wani is required; the bare NP would force the narrow-scope reading. Expands the printed #(wani) kiifii to its variant with wani; the reading 'Audu didn't buy any fish' is marked #. The paper prints Auù for Audù here (Audù in (13b)).",
+    "verified": "page-image"
   },
   {
     "id": "zimmermann2026_13b",
-    "source": {"bibkey": "zimmermann-2026", "paperLabel": "(13b)"},
-    "reportedIn": {"bibkey": "zimmermann-2014", "paperLabel": ""},
+    "source": {"bibkey": "zimmermann-2014", "paperLabel": ""},
+    "reportedIn": {"bibkey": "zimmermann-2026", "paperLabel": "(13b)"},
     "language": "haus1257",
     "primaryText": "Audù bà-i sàyi wani kiifii ba.",
     "discourseSegments": [],
@@ -63,7 +65,8 @@
       ["scope", "narrow"],
       ["context", "the market was closed, so"]
     ],
-    "comment": "Narrow-scope context: wani phrases may also scope below negation, like the bare NP."
+    "comment": "Narrow-scope context: wani phrases may also scope below negation, like the bare NP. Records the wani variant of the printed kiifii / wani kiifii. The paper's translation prints 'Audu didn't eat any fish.' for the verb sàyi 'buy'.",
+    "verified": "page-image"
   },
   {
     "id": "zimmermann2026_14",
@@ -83,7 +86,8 @@
     "paperFeatures": [
       ["inference", "specificity"]
     ],
-    "comment": "The marker bí triggers a specificity inference in non-modal environments; cited from Amfo (2010)."
+    "comment": "The marker bí triggers a specificity inference in non-modal environments; cited from Amfo (2010). Expands the printed optional (bí) to its variant with bí ('a (certain) pair of shoes').",
+    "verified": "page-image"
   },
   {
     "id": "zimmermann2026_15",
@@ -95,7 +99,7 @@
     "glossedTokens": [
       ["Me-n-ni", "1SG-NEG-eat"], ["fish", "fish"], ["bí", "INDEF"]
     ],
-    "translation": "I don't eat a certain kind of fish.",
+    "translation": "I don't eat a certain (kind of) fish.",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -103,18 +107,19 @@
     "paperFeatures": [
       ["scope", "wide only"]
     ],
-    "comment": "The narrow-scope reading, that I don't eat any fish, is unavailable: bí phrases must outscope negation."
+    "comment": "The narrow-scope reading, that I don't eat any fish, is unavailable: bí phrases must outscope negation.",
+    "verified": "page-image"
   },
   {
     "id": "zimmermann2026_17",
     "source": {"bibkey": "zimmermann-2026", "paperLabel": "(17)"},
     "reportedIn": null,
     "language": "gaaa1244",
-    "primaryText": "Nikasel ko kε e-wolo ko ni e-ma lε e-ya-aa.",
+    "primaryText": "Nikasel ko kɛ e-wolo ko ni e-ma lɛ e-ya-aa.",
     "discourseSegments": [],
     "glossedTokens": [
-      ["Nikasel", "student"], ["ko", "INDEF"], ["kε", "take"], ["e-wolo", "3SG.POSS-letter"],
-      ["ko", "INDEF"], ["ni", "REL"], ["e-ma", "3SG-write"], ["lε", "DEF"],
+      ["Nikasel", "student"], ["ko", "INDEF"], ["kɛ", "take"], ["e-wolo", "3SG.POSS-letter"],
+      ["ko", "INDEF"], ["ni", "REL"], ["e-ma", "3SG-write"], ["lɛ", "DEF"],
       ["e-ya-aa", "3SG-send-NEG"]
     ],
     "translation": "No student sent every letter (s)he wrote.",
@@ -126,7 +131,8 @@
       ["marker", "ko"],
       ["reading", "existentially closed choice function"]
     ],
-    "comment": "True in the context; cited from Renans (2018). Unavailable for Akan bí."
+    "comment": "True in the context; cited from Renans (2018). Unavailable for Akan bí.",
+    "verified": "page-image"
   },
   {
     "id": "zimmermann2026_18",
@@ -147,7 +153,8 @@
     "paperFeatures": [
       ["co-occurrence", "INDEF and DEF"]
     ],
-    "comment": "Cited from Bombi et al. (2019)."
+    "comment": "Cited from Bombi et al. (2019).",
+    "verified": "page-image"
   },
   {
     "id": "zimmermann2026_19",
@@ -167,6 +174,7 @@
     "paperFeatures": [
       ["bare NP", "definite or indefinite"]
     ],
-    "comment": "Cited from Newman (2000); a uniqueness-based definite reading of a bare NP in topical subject position."
+    "comment": "Cited from Newman (2000); a uniqueness-based definite reading of a bare NP in topical subject position.",
+    "verified": "page-image"
   }
 ]
