@@ -19,7 +19,8 @@
       ["rating", "120"],
       ["figure", "5"]
     ],
-    "comment": "Mean cursor position in per-mille over the condition's pictures, Experiment 1 target items, 16 participants."
+    "comment": "Mean cursor position in per-mille over the condition's pictures, Experiment 1 target items, 16 participants.",
+    "verified": "page-image"
   },
   {
     "id": "chemlaspector2011_exp1_universal_or_false",
@@ -41,7 +42,8 @@
       ["rating", "110"],
       ["figure", "5"]
     ],
-    "comment": "Mean cursor position in per-mille over the condition's pictures, Experiment 1 target items, 16 participants."
+    "comment": "Mean cursor position in per-mille over the condition's pictures, Experiment 1 target items, 16 participants.",
+    "verified": "page-image"
   },
   {
     "id": "chemlaspector2011_exp1_universal_some_literal",
@@ -63,7 +65,8 @@
       ["rating", "440"],
       ["figure", "5"]
     ],
-    "comment": "Mean cursor position in per-mille over the condition's pictures, Experiment 1 target items, 16 participants."
+    "comment": "Mean cursor position in per-mille over the condition's pictures, Experiment 1 target items, 16 participants.",
+    "verified": "page-image"
   },
   {
     "id": "chemlaspector2011_exp1_universal_or_literal",
@@ -85,7 +88,8 @@
       ["rating", "350"],
       ["figure", "5"]
     ],
-    "comment": "Mean cursor position in per-mille over the condition's pictures, Experiment 1 target items, 16 participants."
+    "comment": "Mean cursor position in per-mille over the condition's pictures, Experiment 1 target items, 16 participants.",
+    "verified": "page-image"
   },
   {
     "id": "chemlaspector2011_exp1_universal_some_weak",
@@ -107,7 +111,8 @@
       ["rating", "680"],
       ["figure", "5"]
     ],
-    "comment": "Mean cursor position in per-mille over the condition's pictures, Experiment 1 target items, 16 participants."
+    "comment": "Mean cursor position in per-mille over the condition's pictures, Experiment 1 target items, 16 participants.",
+    "verified": "page-image"
   },
   {
     "id": "chemlaspector2011_exp1_universal_or_weak",
@@ -129,7 +134,8 @@
       ["rating", "540"],
       ["figure", "5"]
     ],
-    "comment": "Mean cursor position in per-mille over the condition's pictures, Experiment 1 target items, 16 participants."
+    "comment": "Mean cursor position in per-mille over the condition's pictures, Experiment 1 target items, 16 participants.",
+    "verified": "page-image"
   },
   {
     "id": "chemlaspector2011_exp1_universal_some_strong",
@@ -151,7 +157,8 @@
       ["rating", "990"],
       ["figure", "5"]
     ],
-    "comment": "Mean cursor position in per-mille over the condition's pictures, Experiment 1 target items, 16 participants."
+    "comment": "Mean cursor position in per-mille over the condition's pictures, Experiment 1 target items, 16 participants.",
+    "verified": "page-image"
   },
   {
     "id": "chemlaspector2011_exp1_universal_or_strong",
@@ -173,7 +180,8 @@
       ["rating", "860"],
       ["figure", "5"]
     ],
-    "comment": "Mean cursor position in per-mille over the condition's pictures, Experiment 1 target items, 16 participants."
+    "comment": "Mean cursor position in per-mille over the condition's pictures, Experiment 1 target items, 16 participants.",
+    "verified": "page-image"
   },
   {
     "id": "chemlaspector2011_exp1_de_some_false",
@@ -195,7 +203,8 @@
       ["rating", "65"],
       ["figure", "6"]
     ],
-    "comment": "Downward-entailing control at the end of Experiment 1; the qlocal condition makes only the marginal local reading true."
+    "comment": "Downward-entailing control at the end of Experiment 1; the qlocal condition makes only the marginal local reading true.",
+    "verified": "page-image"
   },
   {
     "id": "chemlaspector2011_exp1_de_or_false",
@@ -217,7 +226,8 @@
       ["rating", "90"],
       ["figure", "6"]
     ],
-    "comment": "Downward-entailing control at the end of Experiment 1; the qlocal condition makes only the marginal local reading true."
+    "comment": "Downward-entailing control at the end of Experiment 1; the qlocal condition makes only the marginal local reading true.",
+    "verified": "page-image"
   },
   {
     "id": "chemlaspector2011_exp1_de_some_qlocal",
@@ -239,7 +249,8 @@
       ["rating", "250"],
       ["figure", "6"]
     ],
-    "comment": "Downward-entailing control at the end of Experiment 1; the qlocal condition makes only the marginal local reading true."
+    "comment": "Downward-entailing control at the end of Experiment 1; the qlocal condition makes only the marginal local reading true.",
+    "verified": "page-image"
   },
   {
     "id": "chemlaspector2011_exp1_de_or_qlocal",
@@ -261,7 +272,8 @@
       ["rating", "140"],
       ["figure", "6"]
     ],
-    "comment": "Downward-entailing control at the end of Experiment 1; the qlocal condition makes only the marginal local reading true."
+    "comment": "Downward-entailing control at the end of Experiment 1; the qlocal condition makes only the marginal local reading true.",
+    "verified": "page-image"
   },
   {
     "id": "chemlaspector2011_exp1_de_some_both",
@@ -283,7 +295,8 @@
       ["rating", "920"],
       ["figure", "6"]
     ],
-    "comment": "Downward-entailing control at the end of Experiment 1; the qlocal condition makes only the marginal local reading true."
+    "comment": "Downward-entailing control at the end of Experiment 1; the qlocal condition makes only the marginal local reading true.",
+    "verified": "page-image"
   },
   {
     "id": "chemlaspector2011_exp1_de_or_both",
@@ -305,7 +318,8 @@
       ["rating", "930"],
       ["figure", "6"]
     ],
-    "comment": "Downward-entailing control at the end of Experiment 1; the qlocal condition makes only the marginal local reading true."
+    "comment": "Downward-entailing control at the end of Experiment 1; the qlocal condition makes only the marginal local reading true.",
+    "verified": "page-image"
   },
   {
     "id": "chemlaspector2011_exp2_exactlyOne_some_false",
@@ -327,7 +341,8 @@
       ["rating", "67"],
       ["figure", "12"]
     ],
-    "comment": "Mean cursor position in per-mille, Experiment 2 target items under exactly one, 16 participants; the local condition makes only the local reading true."
+    "comment": "Mean cursor position in per-mille, Experiment 2 target items under exactly one, 16 participants; the local condition makes only the local reading true.",
+    "verified": "page-image"
   },
   {
     "id": "chemlaspector2011_exp2_exactlyOne_or_false",
@@ -349,7 +364,8 @@
       ["rating", "91"],
       ["figure", "12"]
     ],
-    "comment": "Mean cursor position in per-mille, Experiment 2 target items under exactly one, 16 participants; the local condition makes only the local reading true."
+    "comment": "Mean cursor position in per-mille, Experiment 2 target items under exactly one, 16 participants; the local condition makes only the local reading true.",
+    "verified": "page-image"
   },
   {
     "id": "chemlaspector2011_exp2_exactlyOne_some_literal",
@@ -371,7 +387,8 @@
       ["rating", "370"],
       ["figure", "12"]
     ],
-    "comment": "Mean cursor position in per-mille, Experiment 2 target items under exactly one, 16 participants; the local condition makes only the local reading true."
+    "comment": "Mean cursor position in per-mille, Experiment 2 target items under exactly one, 16 participants; the local condition makes only the local reading true.",
+    "verified": "page-image"
   },
   {
     "id": "chemlaspector2011_exp2_exactlyOne_or_literal",
@@ -393,7 +410,8 @@
       ["rating", "370"],
       ["figure", "12"]
     ],
-    "comment": "Mean cursor position in per-mille, Experiment 2 target items under exactly one, 16 participants; the local condition makes only the local reading true."
+    "comment": "Mean cursor position in per-mille, Experiment 2 target items under exactly one, 16 participants; the local condition makes only the local reading true.",
+    "verified": "page-image"
   },
   {
     "id": "chemlaspector2011_exp2_exactlyOne_some_local",
@@ -415,7 +433,8 @@
       ["rating", "730"],
       ["figure", "12"]
     ],
-    "comment": "Mean cursor position in per-mille, Experiment 2 target items under exactly one, 16 participants; the local condition makes only the local reading true."
+    "comment": "Mean cursor position in per-mille, Experiment 2 target items under exactly one, 16 participants; the local condition makes only the local reading true.",
+    "verified": "page-image"
   },
   {
     "id": "chemlaspector2011_exp2_exactlyOne_or_local",
@@ -437,7 +456,8 @@
       ["rating", "580"],
       ["figure", "12"]
     ],
-    "comment": "Mean cursor position in per-mille, Experiment 2 target items under exactly one, 16 participants; the local condition makes only the local reading true."
+    "comment": "Mean cursor position in per-mille, Experiment 2 target items under exactly one, 16 participants; the local condition makes only the local reading true.",
+    "verified": "page-image"
   },
   {
     "id": "chemlaspector2011_exp2_exactlyOne_some_all",
@@ -459,7 +479,8 @@
       ["rating", "980"],
       ["figure", "12"]
     ],
-    "comment": "Mean cursor position in per-mille, Experiment 2 target items under exactly one, 16 participants; the local condition makes only the local reading true."
+    "comment": "Mean cursor position in per-mille, Experiment 2 target items under exactly one, 16 participants; the local condition makes only the local reading true.",
+    "verified": "page-image"
   },
   {
     "id": "chemlaspector2011_exp2_exactlyOne_or_all",
@@ -481,7 +502,8 @@
       ["rating", "900"],
       ["figure", "12"]
     ],
-    "comment": "Mean cursor position in per-mille, Experiment 2 target items under exactly one, 16 participants; the local condition makes only the local reading true."
+    "comment": "Mean cursor position in per-mille, Experiment 2 target items under exactly one, 16 participants; the local condition makes only the local reading true.",
+    "verified": "page-image"
   },
   {
     "id": "chemlaspector2011_exp2_de_some_false",
@@ -503,7 +525,8 @@
       ["rating", "33"],
       ["figure", "13"]
     ],
-    "comment": "Downward-entailing control at the end of Experiment 2, with different participants from Experiment 1."
+    "comment": "Downward-entailing control at the end of Experiment 2, with different participants from Experiment 1.",
+    "verified": "page-image"
   },
   {
     "id": "chemlaspector2011_exp2_de_or_false",
@@ -525,7 +548,8 @@
       ["rating", "45"],
       ["figure", "13"]
     ],
-    "comment": "Downward-entailing control at the end of Experiment 2, with different participants from Experiment 1."
+    "comment": "Downward-entailing control at the end of Experiment 2, with different participants from Experiment 1.",
+    "verified": "page-image"
   },
   {
     "id": "chemlaspector2011_exp2_de_some_qlocal",
@@ -547,7 +571,8 @@
       ["rating", "510"],
       ["figure", "13"]
     ],
-    "comment": "Downward-entailing control at the end of Experiment 2, with different participants from Experiment 1."
+    "comment": "Downward-entailing control at the end of Experiment 2, with different participants from Experiment 1.",
+    "verified": "page-image"
   },
   {
     "id": "chemlaspector2011_exp2_de_or_qlocal",
@@ -569,7 +594,8 @@
       ["rating", "220"],
       ["figure", "13"]
     ],
-    "comment": "Downward-entailing control at the end of Experiment 2, with different participants from Experiment 1."
+    "comment": "Downward-entailing control at the end of Experiment 2, with different participants from Experiment 1.",
+    "verified": "page-image"
   },
   {
     "id": "chemlaspector2011_exp2_de_some_both",
@@ -591,7 +617,8 @@
       ["rating", "970"],
       ["figure", "13"]
     ],
-    "comment": "Downward-entailing control at the end of Experiment 2, with different participants from Experiment 1."
+    "comment": "Downward-entailing control at the end of Experiment 2, with different participants from Experiment 1.",
+    "verified": "page-image"
   },
   {
     "id": "chemlaspector2011_exp2_de_or_both",
@@ -613,6 +640,7 @@
       ["rating", "950"],
       ["figure", "13"]
     ],
-    "comment": "Downward-entailing control at the end of Experiment 2, with different participants from Experiment 1."
+    "comment": "Downward-entailing control at the end of Experiment 2, with different participants from Experiment 1.",
+    "verified": "page-image"
   }
 ]

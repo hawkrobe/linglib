@@ -53,7 +53,8 @@
         "matrix"
       ]
     ],
-    "comment": "Presupposes that the addressee may know the answer."
+    "comment": "Presupposes that the addressee may know the answer.",
+    "verified": "page-image"
   },
   {
     "id": "gutzmann2015_5_35",
@@ -109,7 +110,8 @@
         "insubordinated"
       ]
     ],
-    "comment": "A deliberative question: no assumption that the addressee knows the answer."
+    "comment": "A deliberative question: no assumption that the addressee knows the answer.",
+    "verified": "page-image"
   },
   {
     "id": "gutzmann2015_5_36a",
@@ -144,7 +146,8 @@
         "matrix"
       ]
     ],
-    "comment": "Truckenbrodt's Cuban cigar scenario: Stefan knows that Heiner cannot know, so the hearer knowledge condition fails."
+    "comment": "Truckenbrodt's Cuban cigar scenario: Stefan knows that Heiner cannot know, so the hearer knowledge condition fails.",
+    "verified": "page-image"
   },
   {
     "id": "gutzmann2015_5_36b",
@@ -179,7 +182,8 @@
         "insubordinated"
       ]
     ],
-    "comment": "The vl-interrogative carries no hearer knowledge condition."
+    "comment": "The vl-interrogative carries no hearer knowledge condition.",
+    "verified": "page-image"
   },
   {
     "id": "gutzmann2015_5_44",
@@ -243,7 +247,8 @@
         "insubordinated"
       ]
     ],
-    "comment": "The speaker wants the hearer not to forget the keys again: deontic interpretation only, since dass is semantically empty."
+    "comment": "The speaker wants the hearer not to forget the keys again: deontic interpretation only, since dass is semantically empty.",
+    "verified": "page-image"
   },
   {
     "id": "gutzmann2015_5_46",
@@ -278,7 +283,8 @@
         "matrix"
       ]
     ],
-    "comment": "V-to-C makes [-wh] visible at LF and triggers the epistemic interpretation."
+    "comment": "V-to-C makes [-wh] visible at LF and triggers the epistemic interpretation.",
+    "verified": "page-image"
   },
   {
     "id": "gutzmann2015_5_81",
@@ -338,7 +344,8 @@
         "insubordinated"
       ]
     ],
-    "comment": "True if the hearer does not arrive late; felicitous if the speaker wants the hearer not to be late."
+    "comment": "True if the hearer does not arrive late; felicitous if the speaker wants the hearer not to be late.",
+    "verified": "page-image"
   },
   {
     "id": "gutzmann2015_6_20",
@@ -402,7 +409,8 @@
         "ja"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "gutzmann2015_6_21a",
@@ -433,7 +441,7 @@
     ],
     "translation": "Has Peter ja come?",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -458,7 +466,8 @@
         "ja"
       ]
     ],
-    "comment": "The book credits the example to M. Zimmermann (2012)."
+    "comment": "The book credits the example to M. Zimmermann (2012).",
+    "verified": "page-image"
   },
   {
     "id": "gutzmann2015_6_21b",
@@ -493,7 +502,7 @@
     ],
     "translation": "Who is ja coming to Tübingen?",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -518,7 +527,8 @@
         "ja"
       ]
     ],
-    "comment": "The book credits the example to Meibauer (1994)."
+    "comment": "The book credits the example to Meibauer (1994).",
+    "verified": "page-image"
   },
   {
     "id": "gutzmann2015_6_22a",
@@ -553,7 +563,7 @@
     ],
     "translation": "Do not ja go to the museum ball!",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -578,7 +588,8 @@
         "ja"
       ]
     ],
-    "comment": "The book credits the example to Meibauer (1994)."
+    "comment": "The book credits the example to Meibauer (1994).",
+    "verified": "page-image"
   },
   {
     "id": "gutzmann2015_6_22b",
@@ -625,7 +636,7 @@
     ],
     "translation": "Do not spend all your money!",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -650,7 +661,8 @@
         "ja"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "gutzmann2015_6_26",
@@ -714,7 +726,8 @@
         "ja"
       ]
     ],
-    "comment": "A declarative used as a question keeps ja: the restriction is semantic, tied to sentence mood, not to the speech act."
+    "comment": "A declarative used as a question keeps ja: the restriction is semantic, tied to sentence mood, not to the speech act.",
+    "verified": "page-image"
   },
   {
     "id": "gutzmann2015_6_27",
@@ -757,7 +770,7 @@
     ],
     "translation": "Who does not want ja to win the game?",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -782,7 +795,8 @@
         "ja"
       ]
     ],
-    "comment": "A rhetorical question used as an assertion still excludes ja."
+    "comment": "A rhetorical question used as an assertion still excludes ja.",
+    "verified": "page-image"
   },
   {
     "id": "gutzmann2015_6_28a",
@@ -842,7 +856,8 @@
         "denn"
       ]
     ],
-    "comment": "The book credits the example to Helbig (1988)."
+    "comment": "The book credits the example to Helbig (1988).",
+    "verified": "page-image"
   },
   {
     "id": "gutzmann2015_6_28b",
@@ -898,7 +913,8 @@
         "denn"
       ]
     ],
-    "comment": "The book credits the example to Kwon (2005)."
+    "comment": "The book credits the example to Kwon (2005).",
+    "verified": "page-image"
   },
   {
     "id": "gutzmann2015_6_29",
@@ -933,7 +949,7 @@
     ],
     "translation": "Peter is denn a philosopher.",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -958,7 +974,8 @@
         "denn"
       ]
     ],
-    "comment": "Repeated as (6.143), where the use conditions derived for it have the speaker want the hearer to know the reason for asking whether Peter is a philosopher."
+    "comment": "Repeated as (6.143), where the use conditions derived for it have the speaker want the hearer to know the reason for asking whether Peter is a philosopher.",
+    "verified": "page-image"
   },
   {
     "id": "gutzmann2015_6_30",
@@ -993,7 +1010,7 @@
     ],
     "translation": "Do not denn leave me alone!",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -1018,7 +1035,8 @@
         "denn"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "gutzmann2015_6_31",
@@ -1061,7 +1079,7 @@
     ],
     "translation": "You must denn get home on time!",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -1086,7 +1104,8 @@
         "denn"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "gutzmann2015_6_32",
@@ -1125,7 +1144,7 @@
     ],
     "translation": "You are denn coming tomorrow at ten?",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -1150,7 +1169,8 @@
         "denn"
       ]
     ],
-    "comment": "A check question excludes denn: declarative mood."
+    "comment": "A check question excludes denn: declarative mood.",
+    "verified": "page-image"
   },
   {
     "id": "gutzmann2015_6_33",
@@ -1218,7 +1238,8 @@
         "denn"
       ]
     ],
-    "comment": "A rhetorical question allows denn: interrogative mood."
+    "comment": "A rhetorical question allows denn: interrogative mood.",
+    "verified": "page-image"
   },
   {
     "id": "gutzmann2015_6_35",
@@ -1278,7 +1299,8 @@
         "wohl"
       ]
     ],
-    "comment": "The book credits the example to M. Zimmermann (2004)."
+    "comment": "The book credits the example to M. Zimmermann (2004b).",
+    "verified": "page-image"
   },
   {
     "id": "gutzmann2015_6_36",
@@ -1338,7 +1360,8 @@
         "wohl"
       ]
     ],
-    "comment": "The book credits the example to M. Zimmermann (2004)."
+    "comment": "The book credits the example to M. Zimmermann (2004b).",
+    "verified": "page-image"
   },
   {
     "id": "gutzmann2015_6_37a",
@@ -1373,7 +1396,7 @@
     ],
     "translation": "Come wohl home on time!",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -1398,7 +1421,8 @@
         "wohl"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "gutzmann2015_6_37b",
@@ -1441,7 +1465,7 @@
     ],
     "translation": "You must wohl get home on time!",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -1466,7 +1490,8 @@
         "wohl"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "gutzmann2015_6_38",
@@ -1522,7 +1547,8 @@
         "wohl"
       ]
     ],
-    "comment": "An interrogative used as a request keeps wohl. The book credits the example to M. Zimmermann (2004)."
+    "comment": "An interrogative used as a request keeps wohl. The book credits the example to M. Zimmermann (2004b).",
+    "verified": "page-image"
   },
   {
     "id": "gutzmann2015_6_39",
@@ -1590,7 +1616,8 @@
         "wohl"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "gutzmann2015_6_41",
@@ -1604,7 +1631,7 @@
     "glossedTokens": [],
     "translation": "Show me the journalist who'll take a salary cut in order to pave the way for one of the many hundred applicants to an editorial department.",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -1629,7 +1656,8 @@
         "wohl"
       ]
     ],
-    "comment": "A rhetorical request that makes an assertion, from Meibauer (1986), still excludes wohl."
+    "comment": "A rhetorical request that makes an assertion, from Meibauer (1986), still excludes wohl.",
+    "verified": "page-image"
   },
   {
     "id": "gutzmann2015_6_108",
@@ -1643,7 +1671,7 @@
     "glossedTokens": [],
     "translation": "Go wohl away!",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -1668,7 +1696,8 @@
         "wohl"
       ]
     ],
-    "comment": "No well-formed proof: the imperative has no epistemic operator for wohl to modify."
+    "comment": "No well-formed proof: the imperative has no epistemic operator for wohl to modify.",
+    "verified": "page-image"
   },
   {
     "id": "gutzmann2015_6_117",
@@ -1707,7 +1736,8 @@
         "wohl"
       ]
     ],
-    "comment": "True iff Peter is a philosopher; felicitous iff the speaker wants the hearer to know that the speaker assumes that Peter is a philosopher."
+    "comment": "True iff Peter is a philosopher; felicitous iff the speaker wants the hearer to know that the speaker assumes that Peter is a philosopher.",
+    "verified": "page-image"
   },
   {
     "id": "gutzmann2015_6_124",
@@ -1746,7 +1776,8 @@
         "ja"
       ]
     ],
-    "comment": "Felicitous iff the speaker wants the hearer to know that Georg is a philosopher and believes it common knowledge or verifiable on the spot. The book prints 'is' for 'ist'."
+    "comment": "Felicitous iff the speaker wants the hearer to know that Georg is a philosopher and believes it common knowledge or verifiable on the spot. The book prints 'is' for 'ist'.",
+    "verified": "page-image"
   },
   {
     "id": "gutzmann2015_6_128",
@@ -1781,7 +1812,7 @@
     ],
     "translation": "Is Peter ja a philosopher?",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -1806,7 +1837,8 @@
         "ja"
       ]
     ],
-    "comment": "Its use conditions, wanting to know whether p while believing p common knowledge, cannot be met by a reasonable speaker."
+    "comment": "Its use conditions, wanting to know whether p while believing p common knowledge, cannot be met by a reasonable speaker.",
+    "verified": "page-image"
   },
   {
     "id": "gutzmann2015_6_134",
@@ -1845,7 +1877,8 @@
         "denn"
       ]
     ],
-    "comment": "Felicitous iff the speaker wants to know, the hearer knows, and there is a proposition the hearer knows to be the reason for asking."
+    "comment": "Felicitous iff the speaker wants to know, the hearer knows, and there is a proposition the hearer knows to be the reason for asking.",
+    "verified": "page-image"
   },
   {
     "id": "gutzmann2015_6_138",
@@ -1904,7 +1937,7 @@
     ],
     "translation": "Excuse me, could you denn tell me the way to Klein-Heubach?",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -1929,7 +1962,8 @@
         "denn"
       ]
     ],
-    "comment": "Discourse-initially there is no proposition the hearer knows to be the reason for the question. From Thurmair (1989)."
+    "comment": "Discourse-initially there is no proposition the hearer knows to be the reason for the question. From Thurmair (1989).",
+    "verified": "page-image"
   },
   {
     "id": "gutzmann2015_6_139",
@@ -1962,7 +1996,7 @@
         "there?"
       ]
     ],
-    "translation": "What are you denn writing there?",
+    "translation": "What are you denn writing (there)?",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -1989,7 +2023,8 @@
         "denn"
       ]
     ],
-    "comment": "Felicitous given extralinguistic motivation, such as seeing the addressee write. From Kwon (2005)."
+    "comment": "Felicitous given extralinguistic motivation, such as seeing the addressee write. From Kwon (2005).",
+    "verified": "page-image"
   },
   {
     "id": "gutzmann2015_6_141",
@@ -2003,7 +2038,7 @@
     "glossedTokens": [],
     "translation": "Go denn away!",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -2028,6 +2063,7 @@
         "denn"
       ]
     ],
-    "comment": "denn can only modify the deontic operator here, so the speaker would have to want some proposition to be the reason for asking whether the hearer goes away."
+    "comment": "denn can only modify the deontic operator here, so the speaker would have to want some proposition to be the reason for asking whether the hearer goes away.",
+    "verified": "page-image"
   }
 ]

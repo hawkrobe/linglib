@@ -70,7 +70,8 @@
         "deniability"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "matthewson2016_ex26",
@@ -147,7 +148,8 @@
         "deniability"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "matthewson2016_ex27",
@@ -204,7 +206,8 @@
         "deniability"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "matthewson2016_ex28",
@@ -265,7 +268,8 @@
         "deniability"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "matthewson2016_ex37",
@@ -291,7 +295,7 @@
         "fish.with.line-3"
       ]
     ],
-    "translation": "He might be going fishing. / He must be going fishing. / He's probably going fishing.",
+    "translation": "He might be going fishing. / He must be going fishing. / He's probably going fishing. / He's likely going fishing. / He could be going fishing. / Maybe/perhaps he's going fishing.",
     "context": "You're wondering where your friend is. You notice his rod and tackle box are not in their usual place.",
     "judgment": "acceptable",
     "alternatives": [],
@@ -319,7 +323,8 @@
         "Peterson 2010, p. 161"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "matthewson2016_ex38",
@@ -385,7 +390,8 @@
         "Matthewson 2013a, p. 361"
       ]
     ],
-    "comment": ""
+    "comment": "The handbook prints the gloss as fish-311, a misprint of fish-3II.",
+    "verified": "page-image"
   },
   {
     "id": "matthewson2016_ex39",
@@ -455,7 +461,8 @@
         "Deal 2011, p. 574"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "matthewson2016_ex40",
@@ -493,7 +500,7 @@
         "3SBJ-S.PL-eat-MOD"
       ]
     ],
-    "translation": "They are throwing away all the food that they could eat.",
+    "translation": "They are throwing away all the food that they could eat. They are throwing away all their food.",
     "context": "As in (39).",
     "judgment": "acceptable",
     "alternatives": [],
@@ -525,7 +532,8 @@
         "Deal 2011, p. 574"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "matthewson2016_ex42a",
@@ -574,7 +582,8 @@
         "Menzies 2013, p. 2"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "matthewson2016_ex42b",
@@ -623,7 +632,8 @@
         "Menzies 2013, p. 2"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "matthewson2016_ex43a",
@@ -672,7 +682,8 @@
         "Menzies 2013, p. 2"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "matthewson2016_ex43b",
@@ -721,7 +732,8 @@
         "Menzies 2013, p. 2"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "matthewson2016_ex57",
@@ -778,7 +790,8 @@
         "Louie 2012"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "matthewson2016_ex58",
@@ -788,11 +801,11 @@
     },
     "reportedIn": null,
     "language": "kute1249",
-    "primaryText": "lin hin sa·nilxuʔ-ni",
+    "primaryText": "ⱡin hin sa·niⱡxuʔ-ni",
     "discourseSegments": [],
     "glossedTokens": [
       [
-        "lin",
+        "ⱡin",
         "EPIS"
       ],
       [
@@ -800,7 +813,7 @@
         "2"
       ],
       [
-        "sa·nilxuʔ-ni",
+        "sa·niⱡxuʔ-ni",
         "sick-IND"
       ]
     ],
@@ -827,7 +840,8 @@
         "Laturnus 2012"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "matthewson2016_ex59",
@@ -868,7 +882,8 @@
         "past"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "matthewson2016_ex60",
@@ -925,7 +940,8 @@
         "Matthewson 2013a, p. 366"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "matthewson2016_ex61",
@@ -982,7 +998,8 @@
         "Matthewson 2013a, p. 363"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "matthewson2016_ex62",
@@ -1039,7 +1056,8 @@
         "Matthewson 2013a, p. 366"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "matthewson2016_ex63a",
@@ -1088,7 +1106,8 @@
         "Matthewson 2013a, pp. 364–365"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "matthewson2016_ex63b",
@@ -1137,7 +1156,8 @@
         "Matthewson 2013a, pp. 364–365"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "matthewson2016_ex63c",
@@ -1186,7 +1206,8 @@
         "Matthewson 2013a, pp. 364–365"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "matthewson2016_ex64",
@@ -1243,7 +1264,8 @@
         "Matthewson et al. 2012, p. 224"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "matthewson2016_ex65",
@@ -1324,7 +1346,8 @@
         "Matthewson et al. 2012, p. 228"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "matthewson2016_ex66",
@@ -1405,7 +1428,8 @@
         "Seiter 1980, p. 13"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "matthewson2016_ex67",
@@ -1482,7 +1506,8 @@
         "Seiter 1980, p. 140"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "matthewson2016_ex68",
@@ -1567,6 +1592,7 @@
         "Seiter 1980, p. 133"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   }
 ]

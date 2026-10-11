@@ -219,7 +219,7 @@ def ex_13a : Datum :=
     glossedTokens := [("Orang", "person"), ("itu", "that"), ("mendorong", "AV.push"), ("saya", "1s"), ("jatuh", "fall")]
     context := ""
     judgment := .acceptable
-    alternatives := [("Orang itu medorong saya [ _ akan/sedang/sudah jatuh].", .ungrammatical)]
+    alternatives := [("Orang itu mendorong saya [ _ akan/sedang/sudah jatuh].", .ungrammatical)]
     readings := []
     paperFeatures := [("withAux", "ungrammatical"), ("matrix", "mendorong")] }
 
@@ -232,9 +232,9 @@ def ex_14a : Datum :=
     glossedTokens := [("Dia", "3s"), ("datang", "come"), ("sambil", "while"), ("menangis", "AV.cry")]
     context := ""
     judgment := .acceptable
-    alternatives := [("Dia datang [(sambil) sedang menangis].", .questionable)]
+    alternatives := [("Dia datang [(sambil) sedang menangis].", .ungrammatical)]
     readings := []
-    paperFeatures := [("withAux", "questionable"), ("adjunct", "sambil")] }
+    paperFeatures := [("withAux", "ungrammatical"), ("adjunct", "sambil")] }
 
 def ex_15a : Datum :=
   { id := "arka2013_15a"
@@ -245,9 +245,9 @@ def ex_15a : Datum :=
     glossedTokens := [("Saya", "1s"), ("belajar", "study"), ("menembak", "AV.shoot")]
     context := ""
     judgment := .acceptable
-    alternatives := [("Saya belajar bisa [menembak].", .questionable)]
+    alternatives := [("Saya belajar bisa [menembak].", .ungrammatical)]
     readings := []
-    paperFeatures := [("withAux", "questionable"), ("matrix", "belajar")] }
+    paperFeatures := [("withAux", "ungrammatical"), ("matrix", "belajar")] }
 
 def ex_15c : Datum :=
   { id := "arka2013_15c"
@@ -359,7 +359,7 @@ def ex_36a : Datum :=
     reportedIn := none
     language := "indo1316"
     primaryText := "Kapan lahirnya?"
-    glossedTokens := [("Kapan", "when"), ("lahir=nya", "birth=3s")]
+    glossedTokens := [("Kapan", "when"), ("lahirnya", "birth=3s")]
     context := ""
     judgment := .acceptable
     alternatives := [("Kapan akan lahirnya?", .ungrammatical)]

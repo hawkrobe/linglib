@@ -14,7 +14,8 @@
       ["npi", "koii bhii"],
       ["environment", "positive (UE)"]
     ],
-    "comment": "Clausemate negation paradigm (4.1): NPI unlicensed in a positive episodic sentence."
+    "comment": "Clausemate negation paradigm (4.1): NPI unlicensed in a positive episodic sentence.",
+    "verified": "page-image"
   },
   {
     "id": "lahiri1998_ex6b",
@@ -31,7 +32,8 @@
       ["npi", "koii bhii"],
       ["environment", "negation"]
     ],
-    "comment": "Subject NPI licensed by clausemate negation (4.1)."
+    "comment": "Subject NPI licensed by clausemate negation (4.1).",
+    "verified": "page-image"
   },
   {
     "id": "lahiri1998_ex6c",
@@ -48,7 +50,8 @@
       ["npi", "kisii-ko bhii"],
       ["environment", "positive (UE)"]
     ],
-    "comment": "Object NPI unlicensed in a positive sentence (4.1)."
+    "comment": "Object NPI unlicensed in a positive sentence (4.1).",
+    "verified": "page-image"
   },
   {
     "id": "lahiri1998_ex6d",
@@ -65,7 +68,8 @@
       ["npi", "kisii-ko bhii"],
       ["environment", "negation"]
     ],
-    "comment": "Object NPI licensed by clausemate negation (4.1)."
+    "comment": "Object NPI licensed by clausemate negation (4.1).",
+    "verified": "page-image"
   },
   {
     "id": "lahiri1998_ex7a",
@@ -82,7 +86,8 @@
       ["npi", "ek bhii"],
       ["environment", "positive (UE)"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "lahiri1998_ex7b",
@@ -99,7 +104,8 @@
       ["npi", "ek bhii"],
       ["environment", "negation"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "lahiri1998_ex8a",
@@ -116,7 +122,8 @@
       ["npi", "kuch bhii"],
       ["environment", "positive (UE)"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "lahiri1998_ex8b",
@@ -133,7 +140,8 @@
       ["npi", "kuch bhii"],
       ["environment", "negation"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "lahiri1998_ex9a",
@@ -151,7 +159,8 @@
       ["npi", "zaraa bhii"],
       ["environment", "positive (UE)"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "lahiri1998_ex9b",
@@ -169,7 +178,8 @@
       ["npi", "zaraa bhii"],
       ["environment", "negation"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "lahiri1998_ex10a",
@@ -187,7 +197,8 @@
       ["npi", "kisii-ko bhii"],
       ["environment", "conditional protasis"]
     ],
-    "comment": "NPIs licensed in the protasis of indicative and subjunctive conditionals (4.2)."
+    "comment": "NPIs licensed in the protasis of indicative and subjunctive conditionals (4.2).",
+    "verified": "page-image"
   },
   {
     "id": "lahiri1998_ex10c",
@@ -205,7 +216,8 @@
       ["npi", "kuch bhii"],
       ["environment", "conditional apodosis"]
     ],
-    "comment": "NPI reading unavailable in the apodosis (4.2)."
+    "comment": "NPI reading unavailable in the apodosis (4.2).",
+    "verified": "page-image"
   },
   {
     "id": "lahiri1998_ex11a",
@@ -223,7 +235,8 @@
       ["npi", "ek bhii"],
       ["environment", "universal restrictor"]
     ],
-    "comment": "NPIs allowed in the restriction of universal quantifiers, not the nuclear scope (4.3)."
+    "comment": "NPIs allowed in the restriction of universal quantifiers, not the nuclear scope (4.3).",
+    "verified": "page-image"
   },
   {
     "id": "lahiri1998_ex12a",
@@ -241,7 +254,8 @@
       ["npi", "ek bhii"],
       ["environment", "existential restrictor"]
     ],
-    "comment": "Existential restrictors do not license NPIs (4.3)."
+    "comment": "Existential restrictors do not license NPIs (4.3).",
+    "verified": "page-image"
   },
   {
     "id": "lahiri1998_ex29a",
@@ -260,7 +274,8 @@
       ["npi", "ek bhii"],
       ["environment", "adversative"]
     ],
-    "comment": "Adversative predicate complements license NPIs; ek bhii and zaraa bhii are perfect there (4.5)."
+    "comment": "Adversative predicate complements license NPIs; ek bhii and zaraa bhii are perfect there (4.5).",
+    "verified": "page-image"
   },
   {
     "id": "lahiri1998_ex29b",
@@ -279,7 +294,8 @@
       ["npi", "koii bhii"],
       ["environment", "adversative"]
     ],
-    "comment": "koii bhii and kuch bhii are sometimes slightly degraded under adversatives, but allowed (4.5)."
+    "comment": "koii bhii and kuch bhii are sometimes slightly degraded under adversatives, but allowed (4.5).",
+    "verified": "page-image"
   },
   {
     "id": "lahiri1998_ex29c",
@@ -294,13 +310,17 @@
     "context": "",
     "judgment": "acceptable",
     "alternatives": [
-      {"form": "maiN-ne rameS-ko kisii-se bhii baat-ciit karne-se rokaa", "judgment": "questionable"}
+      {
+        "form": "maiN-ne rameS-ko kisii-se bhii baat-ciit karne-se rokaa",
+        "judgment": "marginal"
+      }
     ],
     "paperFeatures": [
       ["npi", "kisii-se bhii"],
       ["environment", "prohibition verb"]
     ],
-    "comment": "Object NPI in the scope of a prohibition verb (4.5). The rokaa 'prevented' variant carries the paper's (?) diacritic."
+    "comment": "Object NPI in the scope of a prohibition verb (4.5). The rokaa 'prevented' variant carries the paper's (?) diacritic.",
+    "verified": "page-image"
   },
   {
     "id": "lahiri1998_ex29d",
@@ -321,7 +341,8 @@
       ["npi", "kisii-ko bhii"],
       ["environment", "outside prohibition scope"]
     ],
-    "comment": "The matrix object NPI is outside the DE scope of the prohibition verb (4.5); starred with both manaa kiyaa 'prohibited' and rokaa 'prevented'."
+    "comment": "The matrix object NPI is outside the DE scope of the prohibition verb (4.5); starred with both manaa kiyaa 'prohibited' and rokaa 'prevented'. The paper glosses maiN-ne as 'me' here; (29c) and (29e) gloss it 'I'.",
+    "verified": "page-image"
   },
   {
     "id": "lahiri1998_ex31a",
@@ -340,7 +361,8 @@
       ["npi", "koii bhii"],
       ["environment", "non-adversative factive"]
     ],
-    "comment": "glad on the plain 'be happy' reading does not license NPIs (4.5)."
+    "comment": "glad on the plain 'be happy' reading does not license NPIs (4.5).",
+    "verified": "page-image"
   },
   {
     "id": "lahiri1998_ex31b",
@@ -359,7 +381,8 @@
       ["npi", "koii bhii"],
       ["environment", "settle-for-less glad"]
     ],
-    "comment": "The 'settle for less' reading of glad (marked by a different light verb) licenses NPIs (4.5)."
+    "comment": "The 'settle for less' reading of glad (marked by a different light verb) licenses NPIs (4.5).",
+    "verified": "page-image"
   },
   {
     "id": "lahiri1998_ex32a",
@@ -377,7 +400,8 @@
       ["npi", "kisiike bhii"],
       ["environment", "before-clause"]
     ],
-    "comment": "Before-clauses license NPIs; after-clauses do not (4.6)."
+    "comment": "Before-clauses license NPIs; after-clauses do not (4.6).",
+    "verified": "page-image"
   },
   {
     "id": "lahiri1998_ex33a",
@@ -395,7 +419,8 @@
       ["npi", "kisiike bhii"],
       ["environment", "after-clause"]
     ],
-    "comment": "After-clauses, unlike before-clauses, do not license NPIs (4.6)."
+    "comment": "After-clauses, unlike before-clauses, do not license NPIs (4.6).",
+    "verified": "page-image"
   },
   {
     "id": "lahiri1998_ex34a",
@@ -413,7 +438,8 @@
       ["npi", "koii bhii"],
       ["environment", "question"]
     ],
-    "comment": "Yes-no and constituent questions license NPIs (4.7)."
+    "comment": "Yes-no and constituent questions license NPIs (4.7).",
+    "verified": "page-image"
   },
   {
     "id": "lahiri1998_ex41a",
@@ -430,7 +456,8 @@
       ["npi", "koi bhii"],
       ["environment", "negation (subject NPI)"]
     ],
-    "comment": "Hindi licenses subject NPIs under clausemate negation, unlike English (6)."
+    "comment": "Hindi licenses subject NPIs under clausemate negation, unlike English (6).",
+    "verified": "page-image"
   },
   {
     "id": "lahiri1998_ex35a",
@@ -448,7 +475,8 @@
       ["npi", "koii bhii"],
       ["environment", "generic"]
     ],
-    "comment": "Free-choice reading in generic contexts (5.1)."
+    "comment": "Free-choice reading in generic contexts (5.1).",
+    "verified": "page-image"
   },
   {
     "id": "lahiri1998_ex35b",
@@ -466,7 +494,8 @@
       ["npi", "koii bhii"],
       ["environment", "generic"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "lahiri1998_ex35d",
@@ -484,7 +513,8 @@
       ["npi", "ek bhii"],
       ["environment", "generic"]
     ],
-    "comment": "Cardinality item in a generic context (5.1)."
+    "comment": "Cardinality item in a generic context (5.1).",
+    "verified": "page-image"
   },
   {
     "id": "lahiri1998_ex35e",
@@ -502,7 +532,8 @@
       ["npi", "zaraa bhii"],
       ["environment", "generic"]
     ],
-    "comment": "Measure item in a generic context (5.1)."
+    "comment": "Measure item in a generic context (5.1).",
+    "verified": "page-image"
   },
   {
     "id": "lahiri1998_ex36a",
@@ -520,7 +551,8 @@
       ["npi", "ek bhii"],
       ["environment", "possibility modal"]
     ],
-    "comment": "Possibility modals license the FC reading (5.2); repeated as (99a) in the section-8 contrast, where it carries a cardinality implicature."
+    "comment": "Possibility modals license the FC reading (5.2); repeated as (99a) in the section-8 contrast, where it carries a cardinality implicature.",
+    "verified": "page-image"
   },
   {
     "id": "lahiri1998_ex36b",
@@ -538,7 +570,8 @@
       ["npi", "koii bhii"],
       ["environment", "possibility modal"]
     ],
-    "comment": "Repeated as (99b) in the section-8 contrast, with no cardinality implicature."
+    "comment": "Repeated as (99b) in the section-8 contrast, with no cardinality implicature.",
+    "verified": "page-image"
   },
   {
     "id": "lahiri1998_ex36c",
@@ -556,7 +589,8 @@
       ["npi", "kabhii bhii"],
       ["environment", "possibility modal"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "lahiri1998_ex36d",
@@ -573,7 +607,8 @@
       ["npi", "kisii-ko bhii"],
       ["environment", "necessity modal"]
     ],
-    "comment": "Necessity modals do not license the FC reading (5.2)."
+    "comment": "Necessity modals do not license the FC reading (5.2).",
+    "verified": "page-image"
   },
   {
     "id": "lahiri1998_ex36e",
@@ -591,7 +626,8 @@
       ["npi", "ek bhii"],
       ["environment", "necessity modal"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "lahiri1998_ex37a",
@@ -609,7 +645,8 @@
       ["npi", "koii bhii"],
       ["environment", "episodic possibility modal"]
     ],
-    "comment": "Paper's diacritic is ??: an episodic ability modal degrades the NPI, so the licensing factor is genericity rather than the modal (5.2)."
+    "comment": "Paper's diacritic is ??: an episodic ability modal degrades the NPI, so the licensing factor is genericity rather than the modal (5.2).",
+    "verified": "page-image"
   },
   {
     "id": "lahiri1998_ex38a",
@@ -627,7 +664,8 @@
       ["npi", "ek bhii"],
       ["environment", "generic future"]
     ],
-    "comment": "The future licenses NPIs on its generic reading (5.3)."
+    "comment": "The future licenses NPIs on its generic reading (5.3).",
+    "verified": "page-image"
   },
   {
     "id": "lahiri1998_ex38e",
@@ -645,7 +683,8 @@
       ["npi", "koii bhii"],
       ["environment", "episodic future"]
     ],
-    "comment": "Paper's diacritic is ??: an episodic future degrades the NPI (5.3)."
+    "comment": "Paper's diacritic is ??: an episodic future degrades the NPI (5.3).",
+    "verified": "page-image"
   },
   {
     "id": "lahiri1998_ex39a",
@@ -662,7 +701,8 @@
       ["npi", "kuchh bhii"],
       ["environment", "imperative"]
     ],
-    "comment": "Permission imperatives license the FC reading (5.4); the paper spells kuchh here vs kuch in (1)."
+    "comment": "Permission imperatives license the FC reading (5.4); the paper spells kuchh here vs kuch in (1).",
+    "verified": "page-image"
   },
   {
     "id": "lahiri1998_ex39b",
@@ -679,7 +719,8 @@
       ["npi", "koii bhii"],
       ["environment", "imperative"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "lahiri1998_ex40a",
@@ -691,12 +732,13 @@
     ],
     "translation": "Eat even a little.",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "paperFeatures": [
       ["npi", "zaraa bhii"],
       ["environment", "imperative"]
     ],
-    "comment": "Paper's diacritic is *?: measure items seem odd in the imperative (5.4)."
+    "comment": "Paper's diacritic is *?: measure items seem odd in the imperative (5.4).",
+    "verified": "page-image"
   },
   {
     "id": "lahiri1998_ex40b",
@@ -708,12 +750,13 @@
     ],
     "translation": "Pick even one apple.",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "paperFeatures": [
       ["npi", "ek bhii"],
       ["environment", "imperative"]
     ],
-    "comment": "Paper's diacritic is *?; the paper prints uThaa to (sic) (5.4)."
+    "comment": "Paper's diacritic is *?; the paper prints uThaa to (sic) (5.4).",
+    "verified": "page-image"
   },
   {
     "id": "lahiri1998_ex100a",
@@ -731,7 +774,8 @@
       ["npi", "koii bhii"],
       ["environment", "generic, with numeral"]
     ],
-    "comment": "koii bhii combines with numerals in generic contexts (8)."
+    "comment": "koii bhii combines with numerals in generic contexts (8).",
+    "verified": "page-image"
   },
   {
     "id": "lahiri1998_ex100b",
@@ -749,6 +793,7 @@
       ["npi", "ek bhii"],
       ["environment", "generic, with numeral"]
     ],
-    "comment": "ek bhii's cardinality alternatives clash with the explicit numeral (8)."
+    "comment": "ek bhii's cardinality alternatives clash with the explicit numeral (8).",
+    "verified": "page-image"
   }
 ]

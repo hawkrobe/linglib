@@ -28,10 +28,16 @@ forms compete on economy, which covers part-whole bridging (`na_seat_redundant`)
 The Study 4 item runs through both routes: the bare non-relational noun fails
 (`bare_novelist_fails`) while `na_novelist`, `bare_author` and `na_ex_author` each pick the
 author. `index_contradicted_by_bare_relational` states the comparison drawn with Index!, and the
-closing theorems check the Studies' rows: *na* bridges everywhere (`na_bridges`), the bare noun
-bridges relationally exactly with a relational noun (`bare_relational_iff_lexical`), English
-*that* is never fully acceptable in bridging (`that_degraded`), and the *of* and *de*
-diagnostics classify the nouns (`of_iff_relational`, `de_of_relational`).
+closing theorems check the rows: *na* bridges everywhere (`na_bridges`), English *that* is out
+in the paper's own bridging example (`that_degraded`), and the *of* and *de* diagnostics classify
+the nouns (`of_iff_relational`, `de_of_relational`).
+
+## TODO
+
+The Studies' stimuli are printed unmarked, with mean ratings. The rating contrasts, that the bare
+noun bridges relationally better with relational *author* than with sortal *novelist* (Study 4)
+and that English *that* is degraded in bridging (Study 2), are results for `Data/Experiments`;
+the claims over them are not yet stated.
 
 ## References
 
@@ -142,12 +148,6 @@ theorem bare_partWhole :
     ∀ row ∈ Examples.all, row.feature? "definite_form" = some "bare" →
       row.feature? "bridging_type" = some "partWhole" → row.judgment = .acceptable := by decide
 
-/-- A bare noun bridges relationally exactly when the noun is lexically relational. -/
-theorem bare_relational_iff_lexical :
-    ∀ row ∈ Examples.all, row.feature? "definite_form" = some "bare" →
-      row.feature? "bridging_type" = some "relational" →
-      (row.judgment = .acceptable ↔ row.feature? "noun_arity" = some "relational") := by decide
-
 /-- Index! excludes the bare noun from relational bridging, predicting complementary
 distribution; the bare noun is nonetheless acceptable with every relational noun in the
 relational-bridging rows. -/
@@ -156,12 +156,12 @@ theorem index_contradicted_by_bare_relational :
     ∀ row ∈ Examples.all, row.feature? "definite_form" = some "bare" →
       row.feature? "bridging_type" = some "relational" →
       row.feature? "noun_arity" = some "relational" → row.judgment = .acceptable :=
-  ⟨by decide, fun row h h₁ h₂ => (bare_relational_iff_lexical row h h₁ h₂).2⟩
+  ⟨by decide, by decide⟩
 
-/-- English *that* is never fully acceptable in a bridging row, while its deferred deictic use
-is. -/
+/-- English *that* is out in the paper's own bridging example. -/
 theorem that_degraded :
-    ∀ row ∈ Examples.all, row.feature? "definite_form" = some "that" →
+    ∀ row ∈ Examples.all, row.feature? "study" = some "none" →
+      row.feature? "definite_form" = some "that" →
       row.feature? "bridging_type" ≠ some "none" → row.judgment ≠ .acceptable := by decide
 
 theorem the_acceptable :

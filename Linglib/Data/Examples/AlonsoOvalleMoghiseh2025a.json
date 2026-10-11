@@ -18,7 +18,8 @@
       ["item", "irgendein"],
       ["environment", "downward entailing"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovallemoghiseh2025a_3b",
@@ -40,7 +41,8 @@
       ["modal", "deontic necessity"],
       ["inference", "free choice"]
     ],
-    "comment": "Repeated as (22)."
+    "comment": "Repeated as (22).",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovallemoghiseh2025a_4",
@@ -63,7 +65,8 @@
       ["modalInsertion", "no"],
       ["partialExhaustification", "no"]
     ],
-    "comment": "Repeated as (88). Table 2: vreun allows neither rescue."
+    "comment": "Repeated as (88). Table 2: vreun allows neither rescue.",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovallemoghiseh2025a_5",
@@ -85,7 +88,8 @@
       ["environment", "unembedded"],
       ["inference", "speaker ignorance"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovallemoghiseh2025a_6",
@@ -104,7 +108,8 @@
       ["environment", "unembedded"],
       ["continuation", "namely"]
     ],
-    "comment": "Repeated as (39)."
+    "comment": "Repeated as (39).",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovallemoghiseh2025a_7",
@@ -126,7 +131,8 @@
       ["environment", "unembedded"],
       ["inference", "agent indifference"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovallemoghiseh2025a_8",
@@ -146,7 +152,8 @@
       ["item", "yek-i"],
       ["environment", "unembedded"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovallemoghiseh2025a_9",
@@ -168,7 +175,8 @@
       ["environment", "unembedded"],
       ["continuation", "namely"]
     ],
-    "comment": "Alonso-Ovalle & Moghiseh 2019: 8; repeated as (38)."
+    "comment": "Alonso-Ovalle & Moghiseh 2019: 8; repeated as (38).",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovallemoghiseh2025a_10a",
@@ -191,7 +199,8 @@
       ["environment", "unembedded"],
       ["inference", "uniqueness"]
     ],
-    "comment": "Repeated as (46b)."
+    "comment": "Repeated as (46b).",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovallemoghiseh2025a_10b",
@@ -209,7 +218,8 @@
       ["item", "algún"],
       ["environment", "unembedded"]
     ],
-    "comment": "Repeated as (46a)."
+    "comment": "Repeated as (46a).",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovallemoghiseh2025a_11",
@@ -229,7 +239,8 @@
       ["item", "yek"],
       ["environment", "unembedded"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovallemoghiseh2025a_12a",
@@ -249,7 +260,8 @@
       ["item", "numeral -i"],
       ["environment", "unembedded"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovallemoghiseh2025a_12b",
@@ -269,7 +281,8 @@
       ["item", "numeral"],
       ["environment", "unembedded"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovallemoghiseh2025a_13",
@@ -289,7 +302,8 @@
       ["item", "yek-i plural"],
       ["environment", "unembedded"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovallemoghiseh2025a_14",
@@ -309,7 +323,8 @@
       ["item", "bare -i"],
       ["environment", "unembedded"]
     ],
-    "comment": "Modarresi & Simonenko 2007: 181; grammatical in the formal register, speaker variation in the informal one."
+    "comment": "Modarresi & Simonenko 2007: 181; grammatical in the formal register, speaker variation in the informal one.",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovallemoghiseh2025a_15",
@@ -331,7 +346,8 @@
       ["environment", "downward entailing"],
       ["scope", "doubt > ∃"]
     ],
-    "comment": "Alonso-Ovalle & Moghiseh 2019: 5."
+    "comment": "Alonso-Ovalle & Moghiseh 2019: 5.",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovallemoghiseh2025a_16",
@@ -353,7 +369,8 @@
       ["environment", "downward entailing"],
       ["scope", "if > ∃"]
     ],
-    "comment": "Repeated as (77) and (129a)."
+    "comment": "Repeated as (77) and (129a).",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovallemoghiseh2025a_17",
@@ -373,7 +390,8 @@
       ["item", "yek-i"],
       ["environment", "sentential negation"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovallemoghiseh2025a_18",
@@ -391,7 +409,8 @@
       ["item", "algún"],
       ["environment", "sentential negation"]
     ],
-    "comment": "Algún must scope over negation."
+    "comment": "Algún must scope over negation.",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovallemoghiseh2025a_19",
@@ -409,7 +428,8 @@
       ["item", "irgendein"],
       ["environment", "sentential negation"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovallemoghiseh2025a_20a",
@@ -431,7 +451,8 @@
       ["modal", "deontic possibility"],
       ["inference", "free choice"]
     ],
-    "comment": "Repeated as (26), (57), (109)."
+    "comment": "Repeated as (26), (57), (109).",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovallemoghiseh2025a_20b",
@@ -453,7 +474,8 @@
       ["modal", "deontic necessity"],
       ["inference", "free choice"]
     ],
-    "comment": "Alonso-Ovalle & Moghiseh 2019: 5; repeated as (30), (63), (106)."
+    "comment": "Alonso-Ovalle & Moghiseh 2019: 5; repeated as (30), (63), (106).",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovallemoghiseh2025a_21a",
@@ -462,7 +484,7 @@
     "language": "west2369",
     "primaryText": "Forood mitun-e ye ketab-i xaride bash-e.",
     "glossedTokens": [
-      ["Forood", "Forood"], ["mitun-e", "can-3sg"], ["ye", "one"], ["ketab-i", "book-ind"],
+      ["Forood", "Forood"], ["mitun-e", "can-3sg"], ["ye", "ye"], ["ketab-i", "book-ind"],
       ["xaride", "bought"], ["bash-e", "be-3sg"]
     ],
     "translation": "Forood might have bought a book.",
@@ -475,7 +497,8 @@
       ["modal", "epistemic possibility"],
       ["inference", "modal variation"]
     ],
-    "comment": "Repeated as (32), (121)."
+    "comment": "Repeated as (32), (121).",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovallemoghiseh2025a_21b",
@@ -497,7 +520,8 @@
       ["modal", "epistemic necessity"],
       ["inference", "modal variation"]
     ],
-    "comment": "Alonso-Ovalle & Moghiseh 2019: 6; repeated as (35), (127)."
+    "comment": "Alonso-Ovalle & Moghiseh 2019: 6; repeated as (35), (127).",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovallemoghiseh2025a_23",
@@ -516,7 +540,8 @@
       ["modal", "deontic necessity"],
       ["inference", "modal variation"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovallemoghiseh2025a_25",
@@ -539,7 +564,8 @@
       ["scenario", "permitted24"],
       ["verdict", "true"]
     ],
-    "comment": "Alonso-Ovalle & Moghiseh 2019: 6. Felicitous in (24); consistent with the continuation (27)."
+    "comment": "Alonso-Ovalle & Moghiseh 2019: 6. Felicitous in (24); consistent with the continuation (27).",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovallemoghiseh2025a_26",
@@ -562,7 +588,8 @@
       ["scenario", "permitted24"],
       ["verdict", "false"]
     ],
-    "comment": "Cannot describe (24): conveys that Forood may buy any of the five books; inconsistent with (27)."
+    "comment": "Cannot describe (24): conveys that Forood may buy any of the five books; inconsistent with (27).",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovallemoghiseh2025a_27",
@@ -582,7 +609,8 @@
     "paperFeatures": [
       ["role", "continuation incompatible with free choice"]
     ],
-    "comment": "Consistent with (25) and (29), inconsistent with (26) and (30)."
+    "comment": "Consistent with (25) and (29), inconsistent with (26) and (30).",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovallemoghiseh2025a_29",
@@ -605,7 +633,8 @@
       ["scenario", "required28"],
       ["verdict", "true"]
     ],
-    "comment": "Alonso-Ovalle & Moghiseh 2019: 7."
+    "comment": "Alonso-Ovalle & Moghiseh 2019: 7.",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovallemoghiseh2025a_30",
@@ -628,7 +657,8 @@
       ["scenario", "required28"],
       ["verdict", "false"]
     ],
-    "comment": "Not true in (28): conveys that Forood can buy any book."
+    "comment": "Not true in (28): conveys that Forood can buy any book.",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovallemoghiseh2025a_32",
@@ -637,7 +667,7 @@
     "language": "west2369",
     "primaryText": "Forood mitun-e ye ketab-i xaride bash-e.",
     "glossedTokens": [
-      ["Forood", "Forood"], ["mitun-e", "can-3sg"], ["ye", "one"], ["ketab-i", "book-ind"],
+      ["Forood", "Forood"], ["mitun-e", "can-3sg"], ["ye", "ye"], ["ketab-i", "book-ind"],
       ["xaride", "bought"], ["bash-e", "be-3sg"]
     ],
     "translation": "Forood might have bought a book.",
@@ -651,7 +681,8 @@
       ["scenario", "known31"],
       ["verdict", "true"]
     ],
-    "comment": "Felicitous in (31) although not all books are epistemic possibilities; can be followed by (33)."
+    "comment": "Felicitous in (31) although not all books are epistemic possibilities; can be followed by (33). The paper prints mitune-e.",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovallemoghiseh2025a_33",
@@ -671,7 +702,8 @@
     "paperFeatures": [
       ["role", "continuation incompatible with free choice"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovallemoghiseh2025a_35",
@@ -694,7 +726,8 @@
       ["scenario", "known34"],
       ["verdict", "true"]
     ],
-    "comment": "Alonso-Ovalle & Moghiseh 2019: 6."
+    "comment": "Alonso-Ovalle & Moghiseh 2019: 6.",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovallemoghiseh2025a_36",
@@ -717,16 +750,17 @@
       ["modalInsertion", "no"],
       ["partialExhaustification", "yes"]
     ],
-    "comment": "Alonso-Ovalle & Moghiseh 2019: 7. Felicitous in (37), where the choice was not random: no agent-indifference component. Repeated as (90a), (99a), (136a)."
+    "comment": "Alonso-Ovalle & Moghiseh 2019: 7. Felicitous in (37), where the choice was not random: no agent-indifference component. (90a), (99a), (136a) give the same sentence without dirooz 'yesterday'.",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovallemoghiseh2025a_40",
     "source": {"bibkey": "alonso-ovalle-moghiseh-2025a", "paperLabel": "(40)"},
     "reportedIn": null,
     "language": "west2369",
-    "primaryText": "A: Forood dirooz ye ketāb-i xarid. B: Kodum o?",
+    "primaryText": "A: Forood dirooz ye ketab-i xarid. B: Kodum o?",
     "glossedTokens": [
-      ["Forood", "Forood"], ["dirooz", "yesterday"], ["ye", "one"], ["ketāb-i", "book-ind"],
+      ["Forood", "Forood"], ["dirooz", "yesterday"], ["ye", "one"], ["ketab-i", "book-ind"],
       ["xarid", "bought-3sg"], ["Kodum", "which"], ["o", "acc"]
     ],
     "translation": "A: Forood bought a book yesterday. B: Which one?",
@@ -739,7 +773,8 @@
       ["environment", "unembedded"],
       ["continuation", "which-question"]
     ],
-    "comment": "From Alonso-Ovalle & Moghiseh 2019."
+    "comment": "From Alonso-Ovalle & Moghiseh 2019. The paper prints ketāb-i.",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovallemoghiseh2025a_41",
@@ -758,7 +793,8 @@
       ["environment", "unembedded"],
       ["continuation", "which-question"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovallemoghiseh2025a_42",
@@ -780,7 +816,8 @@
       ["environment", "unembedded"],
       ["continuation", "guess who"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovallemoghiseh2025a_43",
@@ -802,7 +839,8 @@
       ["environment", "unembedded"],
       ["continuation", "guess what"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovallemoghiseh2025a_44",
@@ -821,7 +859,8 @@
       ["environment", "unembedded"],
       ["continuation", "previously mentioned witness"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovallemoghiseh2025a_45",
@@ -844,7 +883,8 @@
       ["environment", "unembedded"],
       ["continuation", "previously mentioned witness"]
     ],
-    "comment": "Alonso-Ovalle & Moghiseh 2019: 8."
+    "comment": "Alonso-Ovalle & Moghiseh 2019: 8.",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovallemoghiseh2025a_47",
@@ -867,7 +907,8 @@
       ["continuation", "how-many question"],
       ["inference", "uniqueness"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovallemoghiseh2025a_48",
@@ -886,7 +927,8 @@
       ["environment", "unembedded"],
       ["continuation", "how-many question"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovallemoghiseh2025a_49",
@@ -910,7 +952,8 @@
       ["environment", "downward entailing"],
       ["inference", "uniqueness absent"]
     ],
-    "comment": "Feels contradictory: the uniqueness component disappears under if. Rescued only with focus on ye."
+    "comment": "Feels contradictory: the uniqueness component disappears under if. Rescued only with focus on ye.",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovallemoghiseh2025a_50",
@@ -933,7 +976,8 @@
       ["environment", "downward entailing"],
       ["inference", "free choice absent"]
     ],
-    "comment": "(50) cannot be followed by (51): the free choice component disappears under doubt."
+    "comment": "(50) cannot be followed by (51): the free choice component disappears under doubt. (51) is printed without a mark; the judgment is the prose's 'cannot be followed with'. The paper glosses ketab-i as film-IND.",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovallemoghiseh2025a_62",
@@ -954,7 +998,8 @@
       ["role", "continuation"],
       ["inference", "no anti-plurality under possibility"]
     ],
-    "comment": "Felicitous after (57) = (20a): the scalar component ¬◇(b1∧b2) of single exhaustification is unattested. Repeated as (107)."
+    "comment": "Felicitous after (57) = (20a): the scalar component ¬◇(b1∧b2) of single exhaustification is unattested. Repeated as (107).",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovallemoghiseh2025a_73a",
@@ -976,7 +1021,8 @@
       ["modal", "deontic possibility"],
       ["inference", "modal variation"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovallemoghiseh2025a_81a",
@@ -999,7 +1045,8 @@
       ["modalInsertion", "yes"],
       ["partialExhaustification", "no"]
     ],
-    "comment": "Table 2: irgendein-type EFCIs rescue the root contradiction by covert modal insertion."
+    "comment": "Table 2: irgendein-type EFCIs rescue the root contradiction by covert modal insertion.",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovallemoghiseh2025a_105a",
@@ -1022,7 +1069,8 @@
       ["scenario", "anyNumber104"],
       ["verdict", "true"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovallemoghiseh2025a_105b",
@@ -1045,7 +1093,8 @@
       ["scenario", "anyNumber104"],
       ["verdict", "true"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovallemoghiseh2025a_106",
@@ -1068,7 +1117,8 @@
       ["scenario", "anyNumber104"],
       ["verdict", "false"]
     ],
-    "comment": "False in (104): conveys that in all permitted worlds Forood buys exactly one book. Incompatible with (107)."
+    "comment": "False in (104): conveys that in all permitted worlds Forood buys exactly one book. Incompatible with (107).",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovallemoghiseh2025a_109",
@@ -1091,7 +1141,8 @@
       ["scenario", "twoBooks108"],
       ["verdict", "false"]
     ],
-    "comment": "Infelicitous in (108): no permitted world has exactly one book bought. Compatible with (107) and with (110)."
+    "comment": "Infelicitous in (108): no permitted world has exactly one book bought. Compatible with (107) and with (110).",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovallemoghiseh2025a_110",
@@ -1111,7 +1162,8 @@
     "paperFeatures": [
       ["role", "continuation"]
     ],
-    "comment": "Felicitous after (109)."
+    "comment": "Felicitous after (109).",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovallemoghiseh2025a_111",
@@ -1134,7 +1186,8 @@
       ["environment", "downward entailing"],
       ["inference", "embedded uniqueness absent"]
     ],
-    "comment": "(111) cannot be continued with (112)."
+    "comment": "(111) cannot be continued with (112).",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovallemoghiseh2025a_121",
@@ -1153,7 +1206,8 @@
       ["modal", "epistemic possibility"],
       ["inference", "embedded uniqueness"]
     ],
-    "comment": "(121) followed by (122) is deviant; followed by (123) 'he might have bought one book or two' it is not."
+    "comment": "(121) followed by (122) is deviant; followed by (123) 'he might have bought one book or two' it is not. (122) is printed without a mark; the judgment is the prose's 'deviant'. The paper prints mitune-e.",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovallemoghiseh2025a_125",
@@ -1178,7 +1232,8 @@
       ["modal", "epistemic necessity"],
       ["inference", "embedded uniqueness"]
     ],
-    "comment": "(126): after opening the box Forood can utter (126b) but not (126a)."
+    "comment": "(126): after opening the box Forood can utter (126b) but not (126a).",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovallemoghiseh2025a_128",
@@ -1202,6 +1257,7 @@
       ["modal", "epistemic necessity"],
       ["inference", "apparent counterexample"]
     ],
-    "comment": "Felicitous: bayad and momkene quantify over different sets of possibilities."
+    "comment": "Felicitous: bayad and momkene quantify over different sets of possibilities.",
+    "verified": "page-image"
   }
 ]

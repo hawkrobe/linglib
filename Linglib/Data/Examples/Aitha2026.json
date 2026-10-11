@@ -25,7 +25,8 @@
       ["weight", "none"],
       ["n", "lu"]
     ],
-    "comment": "Strong paradigm of illu 'house' (Krishnamurti & Gwynn 1985)."
+    "comment": "Strong paradigm of illu 'house' (Krishnamurti & Gwynn 1985).",
+    "verified": "page-image"
   },
   {
     "id": "aitha2026_house_acc",
@@ -53,7 +54,8 @@
       ["weight", "light"],
       ["n", "ṭi"]
     ],
-    "comment": "Strong paradigm of illu 'house' (Krishnamurti & Gwynn 1985)."
+    "comment": "Strong paradigm of illu 'house' (Krishnamurti & Gwynn 1985).",
+    "verified": "page-image"
   },
   {
     "id": "aitha2026_house_gen",
@@ -81,7 +83,8 @@
       ["weight", "none"],
       ["n", "ṭi"]
     ],
-    "comment": "Strong paradigm of illu 'house' (Krishnamurti & Gwynn 1985)."
+    "comment": "Strong paradigm of illu 'house' (Krishnamurti & Gwynn 1985).",
+    "verified": "page-image"
   },
   {
     "id": "aitha2026_house_dat",
@@ -109,7 +112,8 @@
       ["weight", "light"],
       ["n", "ṭi"]
     ],
-    "comment": "Strong paradigm of illu 'house' (Krishnamurti & Gwynn 1985)."
+    "comment": "Strong paradigm of illu 'house' (Krishnamurti & Gwynn 1985).",
+    "verified": "page-image"
   },
   {
     "id": "aitha2026_house_p",
@@ -137,7 +141,8 @@
       ["weight", "heavy"],
       ["n", "ṭi"]
     ],
-    "comment": "Strong paradigm of illu 'house' (Krishnamurti & Gwynn 1985)."
+    "comment": "Strong paradigm of illu 'house' (Krishnamurti & Gwynn 1985).",
+    "verified": "page-image"
   },
   {
     "id": "aitha2026_town_nom",
@@ -165,7 +170,8 @@
       ["weight", "none"],
       ["n", "u"]
     ],
-    "comment": "Strong noun, nominative ((2))."
+    "comment": "Strong noun, nominative ((2)).",
+    "verified": "page-image"
   },
   {
     "id": "aitha2026_town_dat",
@@ -193,7 +199,8 @@
       ["weight", "light"],
       ["n", "i"]
     ],
-    "comment": "Strong noun, dative ((2))."
+    "comment": "Strong noun, dative ((2)).",
+    "verified": "page-image"
   },
   {
     "id": "aitha2026_husband_nom",
@@ -221,7 +228,8 @@
       ["weight", "none"],
       ["n", "u"]
     ],
-    "comment": "Strong noun, nominative ((2))."
+    "comment": "Strong noun, nominative ((2)).",
+    "verified": "page-image"
   },
   {
     "id": "aitha2026_husband_dat",
@@ -249,7 +257,8 @@
       ["weight", "light"],
       ["n", "i"]
     ],
-    "comment": "Strong noun, dative ((2))."
+    "comment": "Strong noun, dative ((2)).",
+    "verified": "page-image"
   },
   {
     "id": "aitha2026_bow_nom",
@@ -277,7 +286,8 @@
       ["weight", "none"],
       ["n", "lu"]
     ],
-    "comment": "Strong noun, nominative ((2))."
+    "comment": "Strong noun, nominative ((2)).",
+    "verified": "page-image"
   },
   {
     "id": "aitha2026_bow_dat",
@@ -305,7 +315,8 @@
       ["weight", "light"],
       ["n", "ṭi"]
     ],
-    "comment": "Strong noun, dative ((2))."
+    "comment": "Strong noun, dative ((2)).",
+    "verified": "page-image"
   },
   {
     "id": "aitha2026_eye_nom",
@@ -333,7 +344,8 @@
       ["weight", "none"],
       ["n", "nu"]
     ],
-    "comment": "Strong noun, nominative ((2))."
+    "comment": "Strong noun, nominative ((2)).",
+    "verified": "page-image"
   },
   {
     "id": "aitha2026_eye_dat",
@@ -361,7 +373,8 @@
       ["weight", "light"],
       ["n", "ṭi"]
     ],
-    "comment": "Strong noun, dative ((2))."
+    "comment": "Strong noun, dative ((2)).",
+    "verified": "page-image"
   },
   {
     "id": "aitha2026_tooth_nom",
@@ -389,7 +402,8 @@
       ["weight", "none"],
       ["n", "nu"]
     ],
-    "comment": "Strong noun, nominative ((2))."
+    "comment": "Strong noun, nominative ((2)).",
+    "verified": "page-image"
   },
   {
     "id": "aitha2026_tooth_dat",
@@ -417,7 +431,8 @@
       ["weight", "light"],
       ["n", "ṭi"]
     ],
-    "comment": "Strong noun, dative ((2))."
+    "comment": "Strong noun, dative ((2)).",
+    "verified": "page-image"
   },
   {
     "id": "aitha2026_nest_nom",
@@ -445,7 +460,8 @@
       ["weight", "none"],
       ["n", "ḍu"]
     ],
-    "comment": "Strong noun, nominative ((2))."
+    "comment": "Strong noun, nominative ((2)).",
+    "verified": "page-image"
   },
   {
     "id": "aitha2026_nest_dat",
@@ -473,7 +489,8 @@
       ["weight", "light"],
       ["n", "ṭi"]
     ],
-    "comment": "Strong noun, dative ((2))."
+    "comment": "Strong noun, dative ((2)).",
+    "verified": "page-image"
   },
   {
     "id": "aitha2026_stream_nom",
@@ -501,7 +518,8 @@
       ["weight", "none"],
       ["n", "ru"]
     ],
-    "comment": "Strong noun, nominative ((2))."
+    "comment": "Strong noun, nominative ((2)).",
+    "verified": "page-image"
   },
   {
     "id": "aitha2026_stream_dat",
@@ -529,7 +547,8 @@
       ["weight", "light"],
       ["n", "ṭi"]
     ],
-    "comment": "Strong noun, dative ((2))."
+    "comment": "Strong noun, dative ((2)).",
+    "verified": "page-image"
   },
   {
     "id": "aitha2026_mouth_nom",
@@ -557,7 +576,8 @@
       ["weight", "none"],
       ["n", "ru"]
     ],
-    "comment": "Strong noun, nominative ((2))."
+    "comment": "Strong noun, nominative ((2)).",
+    "verified": "page-image"
   },
   {
     "id": "aitha2026_mouth_dat",
@@ -585,7 +605,8 @@
       ["weight", "light"],
       ["n", "ṭi"]
     ],
-    "comment": "Strong noun, dative ((2))."
+    "comment": "Strong noun, dative ((2)).",
+    "verified": "page-image"
   },
   {
     "id": "aitha2026_plough_nom",
@@ -613,7 +634,8 @@
       ["weight", "none"],
       ["n", "li"]
     ],
-    "comment": "Strong noun, nominative ((2))."
+    "comment": "Strong noun, nominative ((2)).",
+    "verified": "page-image"
   },
   {
     "id": "aitha2026_plough_dat",
@@ -641,7 +663,8 @@
       ["weight", "light"],
       ["n", "ṭi"]
     ],
-    "comment": "Strong noun, dative ((2))."
+    "comment": "Strong noun, dative ((2)).",
+    "verified": "page-image"
   },
   {
     "id": "aitha2026_ghee_nom",
@@ -669,7 +692,8 @@
       ["weight", "none"],
       ["n", "yi"]
     ],
-    "comment": "Strong noun, nominative ((2))."
+    "comment": "Strong noun, nominative ((2)).",
+    "verified": "page-image"
   },
   {
     "id": "aitha2026_ghee_dat",
@@ -697,7 +721,8 @@
       ["weight", "light"],
       ["n", "ti"]
     ],
-    "comment": "Strong noun, dative ((2))."
+    "comment": "Strong noun, dative ((2)).",
+    "verified": "page-image"
   },
   {
     "id": "aitha2026_well_nom",
@@ -725,7 +750,8 @@
       ["weight", "none"],
       ["n", "yi"]
     ],
-    "comment": "Strong noun, nominative ((2))."
+    "comment": "Strong noun, nominative ((2)).",
+    "verified": "page-image"
   },
   {
     "id": "aitha2026_well_dat",
@@ -753,7 +779,8 @@
       ["weight", "light"],
       ["n", "ti"]
     ],
-    "comment": "Strong noun, dative ((2))."
+    "comment": "Strong noun, dative ((2)).",
+    "verified": "page-image"
   },
   {
     "id": "aitha2026_ocean_nom",
@@ -782,7 +809,8 @@
       ["n", "am"],
       ["form", "short"]
     ],
-    "comment": "Weak paradigm of samudram 'ocean' (Krishnamurti & Gwynn 1985)."
+    "comment": "Weak paradigm of samudram 'ocean' (Krishnamurti & Gwynn 1985).",
+    "verified": "page-image"
   },
   {
     "id": "aitha2026_ocean_acc",
@@ -811,7 +839,8 @@
       ["n", "āni"],
       ["form", "long"]
     ],
-    "comment": "Weak paradigm of samudram 'ocean' (Krishnamurti & Gwynn 1985)."
+    "comment": "Weak paradigm of samudram 'ocean' (Krishnamurti & Gwynn 1985).",
+    "verified": "page-image"
   },
   {
     "id": "aitha2026_ocean_gen",
@@ -840,7 +869,8 @@
       ["n", "am"],
       ["form", "short"]
     ],
-    "comment": "Weak paradigm of samudram 'ocean' (Krishnamurti & Gwynn 1985)."
+    "comment": "Weak paradigm of samudram 'ocean' (Krishnamurti & Gwynn 1985).",
+    "verified": "page-image"
   },
   {
     "id": "aitha2026_ocean_dat",
@@ -869,7 +899,8 @@
       ["n", "āni"],
       ["form", "long"]
     ],
-    "comment": "Weak paradigm of samudram 'ocean' (Krishnamurti & Gwynn 1985)."
+    "comment": "Weak paradigm of samudram 'ocean' (Krishnamurti & Gwynn 1985).",
+    "verified": "page-image"
   },
   {
     "id": "aitha2026_ocean_p",
@@ -898,7 +929,8 @@
       ["n", "am"],
       ["form", "short"]
     ],
-    "comment": "Weak paradigm of samudram 'ocean' (Krishnamurti & Gwynn 1985)."
+    "comment": "Weak paradigm of samudram 'ocean' (Krishnamurti & Gwynn 1985).",
+    "verified": "page-image"
   },
   {
     "id": "aitha2026_ocean_1sg",
@@ -927,7 +959,8 @@
       ["n", "āni"],
       ["form", "long"]
     ],
-    "comment": "Predicate nominal with nominal agreement suffix (author's data)."
+    "comment": "Predicate nominal with nominal agreement suffix (author's data).",
+    "verified": "page-image"
   },
   {
     "id": "aitha2026_ocean_2sg",
@@ -956,7 +989,8 @@
       ["n", "āni"],
       ["form", "long"]
     ],
-    "comment": "Predicate nominal with nominal agreement suffix (author's data)."
+    "comment": "Predicate nominal with nominal agreement suffix (author's data).",
+    "verified": "page-image"
   },
   {
     "id": "aitha2026_ocean_3sg",
@@ -985,7 +1019,8 @@
       ["n", "am"],
       ["form", "short"]
     ],
-    "comment": "Predicate nominal with nominal agreement suffix (author's data)."
+    "comment": "Predicate nominal with nominal agreement suffix (author's data).",
+    "verified": "page-image"
   },
   {
     "id": "aitha2026_picture_1sg_apc",
@@ -1014,7 +1049,8 @@
       ["n", "āni"],
       ["form", "long"]
     ],
-    "comment": "Adnominal pronoun construction: nominative subject with the long form."
+    "comment": "Adnominal pronoun construction: nominative subject with the long form.",
+    "verified": "page-image"
   },
   {
     "id": "aitha2026_ocean_whole_acc",
@@ -1043,7 +1079,8 @@
       ["n", "am"],
       ["form", "short"]
     ],
-    "comment": "Postposed quantifier antaṭi 'whole' intervenes between n and ACC."
+    "comment": "Postposed quantifier antaṭi 'whole' intervenes between n and ACC.",
+    "verified": "page-image"
   },
   {
     "id": "aitha2026_ocean_about",
@@ -1072,7 +1109,8 @@
       ["n", "am"],
       ["form", "short"]
     ],
-    "comment": "Postposition with a light initial syllable, outside the prosodic word."
+    "comment": "Postposition with a light initial syllable, outside the prosodic word.",
+    "verified": "page-image"
   },
   {
     "id": "aitha2026_ocean_infront",
@@ -1101,7 +1139,8 @@
       ["n", "am"],
       ["form", "short"]
     ],
-    "comment": "Postposition with a light initial syllable, outside the prosodic word."
+    "comment": "Postposition with a light initial syllable, outside the prosodic word.",
+    "verified": "page-image"
   },
   {
     "id": "aitha2026_house_1sg",
@@ -1129,7 +1168,8 @@
       ["weight", "light"],
       ["n", "lu"]
     ],
-    "comment": "Strong noun with nominal agreement: no oblique."
+    "comment": "Strong noun with nominal agreement: no oblique.",
+    "verified": "page-image"
   },
   {
     "id": "aitha2026_ocean_pl_nom",
@@ -1157,7 +1197,8 @@
       ["weight", "light"],
       ["n", "ā"]
     ],
-    "comment": "Plural weak paradigm: n surfaces as -ā throughout."
+    "comment": "Plural weak paradigm: n surfaces as -ā throughout.",
+    "verified": "page-image"
   },
   {
     "id": "aitha2026_ocean_pl_acc",
@@ -1185,7 +1226,8 @@
       ["weight", "light"],
       ["n", "ā"]
     ],
-    "comment": "Plural weak paradigm: n surfaces as -ā throughout."
+    "comment": "Plural weak paradigm: n surfaces as -ā throughout.",
+    "verified": "page-image"
   },
   {
     "id": "aitha2026_ocean_pl_gen",
@@ -1213,7 +1255,8 @@
       ["weight", "light"],
       ["n", "ā"]
     ],
-    "comment": "Plural weak paradigm: n surfaces as -ā throughout."
+    "comment": "Plural weak paradigm: n surfaces as -ā throughout.",
+    "verified": "page-image"
   },
   {
     "id": "aitha2026_ocean_pl_dat",
@@ -1241,7 +1284,8 @@
       ["weight", "light"],
       ["n", "ā"]
     ],
-    "comment": "Plural weak paradigm: n surfaces as -ā throughout."
+    "comment": "Plural weak paradigm: n surfaces as -ā throughout.",
+    "verified": "page-image"
   },
   {
     "id": "aitha2026_ocean_pl_p",
@@ -1269,7 +1313,8 @@
       ["weight", "light"],
       ["n", "ā"]
     ],
-    "comment": "Plural weak paradigm: n surfaces as -ā throughout."
+    "comment": "Plural weak paradigm: n surfaces as -ā throughout.",
+    "verified": "page-image"
   },
   {
     "id": "aitha2026_bet_nom",
@@ -1298,7 +1343,8 @@
       ["n", "em"],
       ["form", "short"]
     ],
-    "comment": "The -em subclass (Krishnamurti & Gwynn 1985): root-final /y/ fronts the /a/ of -am at the Stem level."
+    "comment": "The -em subclass (Krishnamurti & Gwynn 1985): root-final /y/ fronts the /a/ of -am at the Stem level.",
+    "verified": "page-image"
   },
   {
     "id": "aitha2026_bet_acc",
@@ -1327,7 +1373,8 @@
       ["n", "ǣni"],
       ["form", "long"]
     ],
-    "comment": "The -em subclass (Krishnamurti & Gwynn 1985): root-final /y/ fronts the /a/ of -am at the Stem level."
+    "comment": "The -em subclass (Krishnamurti & Gwynn 1985): root-final /y/ fronts the /a/ of -am at the Stem level.",
+    "verified": "page-image"
   },
   {
     "id": "aitha2026_bet_gen",
@@ -1356,7 +1403,8 @@
       ["n", "em"],
       ["form", "short"]
     ],
-    "comment": "The -em subclass (Krishnamurti & Gwynn 1985): root-final /y/ fronts the /a/ of -am at the Stem level."
+    "comment": "The -em subclass (Krishnamurti & Gwynn 1985): root-final /y/ fronts the /a/ of -am at the Stem level.",
+    "verified": "page-image"
   },
   {
     "id": "aitha2026_bet_dat",
@@ -1385,7 +1433,8 @@
       ["n", "ǣni"],
       ["form", "long"]
     ],
-    "comment": "The -em subclass (Krishnamurti & Gwynn 1985): root-final /y/ fronts the /a/ of -am at the Stem level."
+    "comment": "The -em subclass (Krishnamurti & Gwynn 1985): root-final /y/ fronts the /a/ of -am at the Stem level.",
+    "verified": "page-image"
   },
   {
     "id": "aitha2026_bet_p",
@@ -1414,7 +1463,8 @@
       ["n", "em"],
       ["form", "short"]
     ],
-    "comment": "The -em subclass (Krishnamurti & Gwynn 1985): root-final /y/ fronts the /a/ of -am at the Stem level."
+    "comment": "The -em subclass (Krishnamurti & Gwynn 1985): root-final /y/ fronts the /a/ of -am at the Stem level.",
+    "verified": "page-image"
   },
   {
     "id": "aitha2026_wife_nom",
@@ -1443,7 +1493,8 @@
       ["n", "ām"],
       ["form", "short"]
     ],
-    "comment": "The -ām subclass (Krishnamurti & Gwynn 1985): the root's long /ā/ absorbs the /a/ of -am at the Stem level."
+    "comment": "The -ām subclass (Krishnamurti & Gwynn 1985): the root's long /ā/ absorbs the /a/ of -am at the Stem level.",
+    "verified": "page-image"
   },
   {
     "id": "aitha2026_wife_acc",
@@ -1472,7 +1523,8 @@
       ["n", "āni"],
       ["form", "long"]
     ],
-    "comment": "The -ām subclass (Krishnamurti & Gwynn 1985): the root's long /ā/ absorbs the /a/ of -am at the Stem level."
+    "comment": "The -ām subclass (Krishnamurti & Gwynn 1985): the root's long /ā/ absorbs the /a/ of -am at the Stem level.",
+    "verified": "page-image"
   },
   {
     "id": "aitha2026_wife_gen",
@@ -1501,7 +1553,8 @@
       ["n", "ām"],
       ["form", "short"]
     ],
-    "comment": "The -ām subclass (Krishnamurti & Gwynn 1985): the root's long /ā/ absorbs the /a/ of -am at the Stem level."
+    "comment": "The -ām subclass (Krishnamurti & Gwynn 1985): the root's long /ā/ absorbs the /a/ of -am at the Stem level.",
+    "verified": "page-image"
   },
   {
     "id": "aitha2026_wife_dat",
@@ -1530,7 +1583,8 @@
       ["n", "āni"],
       ["form", "long"]
     ],
-    "comment": "The -ām subclass (Krishnamurti & Gwynn 1985): the root's long /ā/ absorbs the /a/ of -am at the Stem level."
+    "comment": "The -ām subclass (Krishnamurti & Gwynn 1985): the root's long /ā/ absorbs the /a/ of -am at the Stem level.",
+    "verified": "page-image"
   },
   {
     "id": "aitha2026_wife_p",
@@ -1559,7 +1613,8 @@
       ["n", "ām"],
       ["form", "short"]
     ],
-    "comment": "The -ām subclass (Krishnamurti & Gwynn 1985): the root's long /ā/ absorbs the /a/ of -am at the Stem level."
+    "comment": "The -ām subclass (Krishnamurti & Gwynn 1985): the root's long /ā/ absorbs the /a/ of -am at the Stem level.",
+    "verified": "page-image"
   },
   {
     "id": "aitha2026_those_all_acc",
@@ -1568,7 +1623,8 @@
     "primaryText": "nēnu vāṭ-anniṭi-ni cūs-ā-nu",
     "discourseSegments": [],
     "glossedTokens": [
-      ["nēnu vāṭ-anniṭi-ni cūs-ā-nu", "1SG.NOM 3PL.NONHUM.OBL-all-ACC see-PST-1SG"]
+      ["nēnu", "1SG.NOM"], ["vāṭ-anniṭi-ni", "3PL.NONHUM.OBL-all-ACC"],
+      ["cūs-ā-nu", "see-PST-1SG"]
     ],
     "translation": "I saw them all.",
     "context": "",
@@ -1583,7 +1639,8 @@
       ["stem", "obl"],
       ["intervener", "quantifier"]
     ],
-    "comment": "Elicited: the strong oblique is triggered across the intervening quantifier."
+    "comment": "Elicited: the strong oblique is triggered across the intervening quantifier.",
+    "verified": "page-image"
   },
   {
     "id": "aitha2026_ocean_whole_acc_sentence",
@@ -1592,7 +1649,8 @@
     "primaryText": "nēnu samudram-antaṭi-ni cūs-ā-nu",
     "discourseSegments": [],
     "glossedTokens": [
-      ["nēnu samudram-antaṭi-ni cūs-ā-nu", "1SG.NOM ocean.NOM-whole-ACC see-PST-1SG"]
+      ["nēnu", "1SG.NOM"], ["samudram-antaṭi-ni", "ocean.NOM-whole-ACC"],
+      ["cūs-ā-nu", "see-PST-1SG"]
     ],
     "translation": "I saw all of the ocean.",
     "context": "",
@@ -1613,7 +1671,8 @@
       ["form", "short"],
       ["intervener", "quantifier"]
     ],
-    "comment": "Elicited: the weak long form is not triggered across the quantifier; the heavy initial syllable of antaṭi conditions the short form."
+    "comment": "Elicited: the weak long form is not triggered across the quantifier; the heavy initial syllable of antaṭi conditions the short form.",
+    "verified": "page-image"
   },
   {
     "id": "aitha2026_those_all_nom",
@@ -1622,7 +1681,7 @@
     "primaryText": "av-anni bāgun-nā-yi",
     "discourseSegments": [],
     "glossedTokens": [
-      ["av-anni bāgun-nā-yi", "3PL.NONHUM-all.NOM be.good-PST-3PL.NONHUM"]
+      ["av-anni", "3PL.NONHUM-all.NOM"], ["bāgun-nā-yi", "be.good-PST-3PL.NONHUM"]
     ],
     "translation": "All of those are good.",
     "context": "",
@@ -1637,7 +1696,8 @@
       ["stem", "nom"],
       ["intervener", "quantifier"]
     ],
-    "comment": "Elicited."
+    "comment": "Elicited.",
+    "verified": "page-image"
   },
   {
     "id": "aitha2026_those_all_nom_obl",
@@ -1646,7 +1706,7 @@
     "primaryText": "vāṭ-anni bāgun-nā-yi",
     "discourseSegments": [],
     "glossedTokens": [
-      ["vāṭ-anni bāgun-nā-yi", "3PL.NONHUM.OBL-all.NOM be.good-PST-3PL.NONHUM"]
+      ["vāṭ-anni", "3PL.NONHUM.OBL-all.NOM"], ["bāgun-nā-yi", "be.good-PST-3PL.NONHUM"]
     ],
     "translation": "All of those are good.",
     "context": "",
@@ -1661,6 +1721,7 @@
       ["stem", "obl"],
       ["intervener", "quantifier"]
     ],
-    "comment": "Elicited: the oblique is not licensed when the overall case is nominative."
+    "comment": "Elicited: the oblique is not licensed when the overall case is nominative.",
+    "verified": "page-image"
   }
 ]

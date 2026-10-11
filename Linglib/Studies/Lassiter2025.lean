@@ -9,10 +9,10 @@ public import Linglib.Discourse.Commitment.Table
 /-!
 # Lassiter (2025): Sorting Out Left-Nested Conditionals
 
-This file formalizes [lassiter-2025]'s account of left-nested conditionals, conditionals with
-another conditional in their antecedent, such as [gibbard-1981]'s *If Kripke was there if
+This file formalizes Lassiter's account of left-nested conditionals, conditionals with
+another conditional in their antecedent, such as Gibbard's *If Kripke was there if
 Strawson was, then Anscomb was there*. A conditional is construed as hypothetical or as a
-premise conditional ([iatridou-1991]); a left-nested conditional whose embedded conditional
+premise conditional (Iatridou); a left-nested conditional whose embedded conditional
 is bare admits only the premise reading, while an embedded modal, adverb of quantification,
 or generic operator restores the hypothetical one (`readings`). A sentence is acceptable
 when some reading open to it meets what its context and diagnostics demand (`Acceptable`), so
@@ -27,11 +27,11 @@ restricted to hypothetical conditionals, cannot head a bare left-nested conditio
 *nara* and *wenn* can (`heads_bare_iff`). The clauses of the embedded conditional take their
 entailment direction from the main antecedent's (`Position.polarity`), so a bare left-nested
 conditional hosts positive polarity items and rejects negative ones, the minimizer *lift a
-finger* among them ([israel-2001]), in the embedded consequent and hosts them in the embedded
+finger* among them (Israel), in the embedded consequent and hosts them in the embedded
 antecedent (`bare_embedded_consequent`,
 `bare_embedded_antecedent`), the reverse of what a hypothetical reading would give
 (`polarity_diagnostic`). Coordinated antecedents share a reading
-([haegeman-schonenberger-2023]), so a bare left-nested conditional coordinates only with a
+(Haegeman and Schönenberger), so a bare left-nested conditional coordinates only with a
 given antecedent (`coordination_bare`), and initial *only* with inversion, which forces the
 hypothetical reading, excludes it (`bare_not_hypothetical`). `demand` reads each row's
 diagnostics off its features, and `acceptable_rows` checks every row's judgment against the
@@ -39,11 +39,11 @@ model, `interpretation_rows` the reading the paper attributes to it.
 
 ## Implementation notes
 
-Polarity items are sorted by [israel-2001]'s scalar context types rather than by the Zwarts strength
+Polarity items are sorted by Israel's scalar context types rather than by the Zwarts strength
 of `PolarityItem.LicensingContext.Licenses`. That relation reads a conditional antecedent as
 anti-additive only modulo its presupposition and *lift a finger* as needing an anti-additive
 licensor outright, so it would exclude the minimizer from hypothetical antecedents, against
-[iatridou-1991]'s (27a) and the paper's (32); on the scalar account a minimizer needs only a
+Iatridou's (27a) and the paper's (32); on the scalar account a minimizer needs only a
 scale-reversing context.
 The paper's rows carry their features as strings, so `shape`, `markerOf`, `itemOf`, and
 `positionOf` are adapters from `paperFeatures` into the typed model and the fragments' entries;
@@ -328,6 +328,13 @@ def demand (row : Datum) (ct : Reading) : Prop :=
 instance (row : Datum) (ct : Reading) : Decidable (demand row ct) := by
   unfold demand; infer_instance
 
+/-- The paper judges the row felicitous: it prints no mark of infelicity and its prose does
+not call the row infelicitous. -/
+def JudgedFelicitous (row : Datum) : Prop :=
+  row.judgment = .acceptable ∧ row.feature? "felicity" ≠ some "infelicitous"
+
+instance : DecidablePred JudgedFelicitous := fun _ ↦ inferInstanceAs (Decidable (_ ∧ _))
+
 /-- Every marker and item a row names resolves to a fragment entry. -/
 theorem adapters_total :
     ∀ row ∈ Examples.all,
@@ -335,17 +342,17 @@ theorem adapters_total :
         ((row.feature? "item").isSome → (itemOf row).isSome) := by
   decide
 
-/-- Every row is acceptable iff some reading open to its shape meets its demand. Gibbard's (4)
-fails out of the blue and (11)–(14) succeed once the embedded conditional has been asserted;
-*nara* and *wenn* head the bare left-nested conditionals of (18) and (23), *-ra* and *falls*
-of (19) and (24) do not; *rather* survives in the embedded consequent of (29) and *lifted a
-finger* does not, in (30), nor in the consequent of (31), while it is licensed in the embedded
-antecedent of (32b); (34) coordinates two given antecedents and (33) and (35) mix; (36) inverts
-with an open antecedent, (37b) with a given one, (38b) and (39b) in a bare left-nested
-conditional; and (40)–(43) are hypothetical with an open antecedent. -/
+/-- Every row is judged felicitous iff some reading open to its shape meets its demand. Gibbard's
+(4) fails out of the blue and (11)–(14) succeed once the embedded conditional has been asserted;
+*nara* and *wenn* head the bare left-nested conditionals of (18) and (23), *-ra* and *falls* of (19)
+and (24) do not; *rather* survives in the embedded consequent of (29) and *lifted a finger* does
+not, in (30), nor in the consequent of (31), while it is licensed in the embedded antecedent of
+(32b); (34) coordinates two given antecedents and (33) and (35) mix; (36) inverts with an open
+antecedent, (37b) with a given one, (38b) and (39b) in a bare left-nested conditional; and (40)–(43)
+are hypothetical with an open antecedent. -/
 theorem acceptable_rows :
     ∀ row ∈ Examples.all,
-      (row.judgment = .acceptable ↔ Acceptable (shape row) (demand row)) := by
+      (JudgedFelicitous row ↔ Acceptable (shape row) (demand row)) := by
   decide
 
 /-- The paper's label for a reading. -/
@@ -353,10 +360,10 @@ def label : Reading → String
   | .hypothetical => "HC"
   | .premise => "PC"
 
-/-- On every acceptable row, the reading the paper attributes is the one reading open to its
+/-- On every felicitous row, the reading the paper attributes is the one reading open to its
 shape that meets its demand. -/
 theorem interpretation_rows :
-    ∀ row ∈ Examples.all, row.judgment = .acceptable →
+    ∀ row ∈ Examples.all, JudgedFelicitous row →
       ∀ ct, row.feature? "interpretation" = some (label ct) →
         ∀ ct', ct' ∈ readings (shape row) ∧ demand row ct' ↔ ct' = ct := by
   decide

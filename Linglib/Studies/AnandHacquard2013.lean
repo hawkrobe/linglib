@@ -34,7 +34,7 @@ imperfect correlate.
 ## References
 
 * [anand-hacquard-2013]
-* [yalcin-2007] — the information-state parameter and the *imagine* contrast (23)
+* [yalcin-2007] — the information-state parameter, and the *suppose* sentences that (23) adapts
 * [veltman-1996], [hacquard-2006], [hacquard-2010] — anaphoric modal bases
 * [bolinger-1968] — representational attitudes
 * [villalta-2008] — comparative semantics for subjunctive-selecting attitudes
@@ -42,7 +42,6 @@ imperfect correlate.
 * [geurts-2005] — the non-triviality presupposition of modals
 * [scheffler-2008] — the doxastic component of *hope*
 * [falaus-2010] — Romanian *vreun* under *want* and *hope*
-* [kratzer-2009] — the filing-cabinet scenario
 -/
 
 @[expose] public section
@@ -104,7 +103,7 @@ theorem representational_must (dox : W → Set W) (p : Set W) (w : W) :
     (representational dox (must p)).assertion w ↔ dox w ⊆ p :=
   ⟨fun h v hv => h v hv hv, fun h _ _ => h⟩
 
-/-- Yalcin's (23b), *imagine that it is raining but it might not be*, is contradictory whenever
+/-- The paper's (23b), *imagine that it is raining but it might not be*, is contradictory whenever
 the imagination state is nonempty, since the modal quantifies over that very state. -/
 theorem imagine_epistemic_contradiction (dox : W → Set W) (p : Set W) {w : W}
     (h : (dox w).Nonempty) :

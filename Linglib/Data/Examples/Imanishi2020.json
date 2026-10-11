@@ -41,7 +41,8 @@
         "S/A = set B on ajin, O = set A on the nominalized verb"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "imanishi2020_s1b",
@@ -81,7 +82,8 @@
         "S = set B on ajin, no set A on the nominalized verb"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "imanishi2020_s2a",
@@ -121,7 +123,8 @@
         "A = set A, O = set B inside the nominalized clause"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "imanishi2020_s2b",
@@ -161,7 +164,8 @@
         "S = set A"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "imanishi2020_s3a",
@@ -205,7 +209,8 @@
         "A = set A, O = set B, the suffix -on supplying object Case"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "imanishi2020_s3b",
@@ -245,7 +250,8 @@
         "S = set A"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "imanishi2020_s62",
@@ -291,7 +297,7 @@
       ],
       [
         "se",
-        "in"
+        ""
       ],
       [
         "tris",
@@ -321,7 +327,8 @@
         "process nominal without an external argument"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "imanishi2020_s64",
@@ -374,7 +381,7 @@
         "PFV-B3SG-scare-ANTIP"
       ]
     ],
-    "translation": "The burning of the city that Juan did was scary.",
+    "translation": "The burning of the city that Juan did was scary (= Juan's burning of the city was scary).",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -389,7 +396,8 @@
         "the external argument appears in a relative clause"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "imanishi2020_s65",
@@ -440,7 +448,7 @@
     ],
     "translation": "(intended) The burning of the city by Juan was scary.",
     "context": "",
-    "judgment": "marginal",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -453,7 +461,8 @@
         "the by-phrase counterpart is degraded"
       ]
     ],
-    "comment": "Marked ?*."
+    "comment": "Marked ?*.",
+    "verified": "page-image"
   },
   {
     "id": "imanishi2020_s66",
@@ -462,12 +471,12 @@
       "paperLabel": "(66)"
     },
     "language": "kaqc1270",
-    "primaryText": "nu-ki-k'ul-ïk / ki-nu-k'ul-ïk ak'wal-a'",
+    "primaryText": "nu-ki-k'ul-ïk/ki-nu-k'ul-ïk ak'wal-a'",
     "discourseSegments": [],
     "glossedTokens": [
       [
-        "nu-ki-k'ul-ïk",
-        "A1SG-A3PL-meet-NMLZ"
+        "nu-ki-k'ul-ïk/ki-nu-k'ul-ïk",
+        "A1SG-A3PL-meet-NMLZ/A3PL-A1SG-meet-NMLZ"
       ],
       [
         "ak'wal-a'",
@@ -476,7 +485,7 @@
     ],
     "translation": "(intended) my meeting children",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -489,7 +498,8 @@
         "two set A markers impossible in either order"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "imanishi2020_s67",
@@ -522,7 +532,7 @@
         "PFV-B3SG-scare-ANTIP"
       ]
     ],
-    "translation": "Juan's burning was scary. (That Juan was burned; not: that Juan burned something.)",
+    "translation": "Juan's burning was scary. = That Juan was burned was scary. (*That Juan burned something was scary.)",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -537,7 +547,8 @@
         "a sole argument is the internal argument"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "imanishi2020_s68a",
@@ -556,7 +567,7 @@
     ],
     "translation": "(intended) my walking",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -569,7 +580,8 @@
         "unergative nominalization excludes its external argument"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "imanishi2020_s68b",
@@ -600,7 +612,7 @@
     ],
     "translation": "(intended) Maria's jumping",
     "context": "",
-    "judgment": "marginal",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -613,7 +625,8 @@
         "unergative nominalization excludes its external argument"
       ]
     ],
-    "comment": "Marked ?*."
+    "comment": "Marked ?*.",
+    "verified": "page-image"
   },
   {
     "id": "imanishi2020_s69",
@@ -665,7 +678,8 @@
         "unaccusative nominalized in subject position; the internal argument takes genitive"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "imanishi2020_s70",
@@ -709,7 +723,8 @@
         "external and internal argument both inside"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "imanishi2020_s71",
@@ -757,7 +772,8 @@
         "external argument inside the nominalized clause"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "imanishi2020_s76a",
@@ -797,7 +813,8 @@
         "active root transitive"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "imanishi2020_s76b",
@@ -806,11 +823,11 @@
       "paperLabel": "(76b)"
     },
     "language": "kaqc1270",
-    "primaryText": "Oxi' ak'wal-a' x-e-k'ul r-oma ri Ana.",
+    "primaryText": "oxi' ak'wal-a' x-e-k'ul r-oma ri Ana.",
     "discourseSegments": [],
     "glossedTokens": [
       [
-        "Oxi'",
+        "oxi'",
         "three"
       ],
       [
@@ -849,7 +866,8 @@
         "passive root transitive without overt passive morphology"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "imanishi2020_s78a",
@@ -901,7 +919,8 @@
         "active, lax vowel"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "imanishi2020_s78b",
@@ -949,7 +968,8 @@
         "passive, tensed vowel"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "imanishi2020_s80a",
@@ -997,7 +1017,8 @@
         "tensed vowel: the nominalized verb is passivized"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "imanishi2020_s80b",
@@ -1045,7 +1066,8 @@
         "tensed vowel: the nominalized verb is passivized"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "imanishi2020_s82a",
@@ -1089,7 +1111,8 @@
         "active derived transitive"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "imanishi2020_s82b",
@@ -1129,7 +1152,8 @@
         "passive suffix -x replaces -j"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "imanishi2020_s83a",
@@ -1177,7 +1201,8 @@
         "passive morpheme under nominalization"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "imanishi2020_s83b",
@@ -1229,7 +1254,8 @@
         "passive morpheme under nominalization"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "imanishi2020_s85",
@@ -1281,7 +1307,8 @@
         "object genitive from D, subject absolutive from the matrix Infl"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "imanishi2020_s90",
@@ -1325,7 +1352,8 @@
         "ajin assigns an agentive θ-role to its subject"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "imanishi2020_s91",
@@ -1365,7 +1393,8 @@
         "unergative base: no DP inside, no genitive"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "imanishi2020_s92",
@@ -1404,7 +1433,7 @@
     ],
     "translation": "(intended) Juan is falling.",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -1417,7 +1446,8 @@
         "unaccusative base resists nominalization under ajin"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "imanishi2020_s93a",
@@ -1465,7 +1495,8 @@
         "the unaccusative appears as a finite verb under ajin"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "imanishi2020_s93b",
@@ -1509,7 +1540,8 @@
         "simple imperfective"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "imanishi2020_s94",
@@ -1544,7 +1576,7 @@
     ],
     "translation": "(intended) The tortillas are being cooked (by being dried).",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -1557,7 +1589,8 @@
         "passive base resists nominalization under ajin"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "imanishi2020_s95",
@@ -1597,7 +1630,8 @@
         "simple imperfective passive"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "imanishi2020_s96a",
@@ -1628,7 +1662,8 @@
         "engage in resists an unaccusative gerund"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "imanishi2020_s96b",
@@ -1659,7 +1694,8 @@
         "engage in resists a passive gerund"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "imanishi2020_s97",
@@ -1681,7 +1717,7 @@
       ],
       [
         "nimaq'ij",
-        "celebration"
+        "celebration/festival"
       ]
     ],
     "translation": "A festival is taking place.",
@@ -1703,7 +1739,8 @@
         "no preposition when a single DP takes absolutive from Infl"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "imanishi2020_s98a",
@@ -1747,7 +1784,8 @@
         "subject inherent ergative from transitive v, object genitive: both set A"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "imanishi2020_s98b",
@@ -1787,7 +1825,8 @@
         "subject set A on chäp, no genitive inside"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "imanishi2020_s100",
@@ -1796,7 +1835,7 @@
       "paperLabel": "(100)"
     },
     "language": "kaqc1270",
-    "primaryText": "x-ø-u-chäp [q'et-e-n-ik] r-ichin ri ak'wal",
+    "primaryText": "x-ø-u-chäp [q'et-e-n-ik] r-ichin ri ak'wal.",
     "discourseSegments": [],
     "glossedTokens": [
       [
@@ -1839,7 +1878,8 @@
         "antipassive: object oblique under the relational noun"
       ]
     ],
-    "comment": "Not accepted by the paper's consultants; attributed to dialectal difference."
+    "comment": "Not accepted by the paper's consultants; attributed to dialectal difference.",
+    "verified": "page-image"
   },
   {
     "id": "imanishi2020_s102",
@@ -1887,7 +1927,8 @@
         "incorporating -oj nominalization, no set A"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "imanishi2020_s103",
@@ -1904,7 +1945,7 @@
         "PFV-B3SG-A1PL-begin"
       ],
       [
-        "ri",
+        "(ri)",
         "DET"
       ],
       [
@@ -1931,7 +1972,8 @@
         "incorporating -oj nominalization under chäp"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "imanishi2020_s104",
@@ -1956,9 +1998,9 @@
         "tree"
       ]
     ],
-    "translation": "(intended) We began to cut tree(s).",
+    "translation": "We began to cut tree(s).",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -1971,7 +2013,8 @@
         "set A impossible on the -oj nominalization"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "imanishi2020_s107",
@@ -2006,7 +2049,7 @@
     ],
     "translation": "(intended) We began to cut the tree(s).",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -2019,7 +2062,8 @@
         "a determiner-marked object cannot be incorporated"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "imanishi2020_s109",
@@ -2054,7 +2098,7 @@
     ],
     "translation": "(intended) We began to cut three tree(s).",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -2067,7 +2111,8 @@
         "a numeral-marked object cannot be incorporated"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "imanishi2020_s112",
@@ -2098,7 +2143,7 @@
     ],
     "translation": "(intended) We began to cut your tree(s).",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -2111,7 +2156,8 @@
         "a possessed object cannot be incorporated"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "imanishi2020_s113",
@@ -2120,11 +2166,11 @@
       "paperLabel": "(113)"
     },
     "language": "kaqc1270",
-    "primaryText": "Achike x-ø-a-chäp (ri) choy-oj?",
+    "primaryText": "achike x-ø-a-chäp (ri) choy-oj?",
     "discourseSegments": [],
     "glossedTokens": [
       [
-        "Achike",
+        "achike",
         "what"
       ],
       [
@@ -2132,7 +2178,7 @@
         "PFV-B3SG-A2SG-begin"
       ],
       [
-        "ri",
+        "(ri)",
         "DET"
       ],
       [
@@ -2142,7 +2188,7 @@
     ],
     "translation": "(intended) What did you begin to cut?",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -2155,7 +2201,8 @@
         "no wh-extraction of the incorporated object"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "imanishi2020_s114",
@@ -2164,11 +2211,11 @@
       "paperLabel": "(114)"
     },
     "language": "kaqc1270",
-    "primaryText": "Achike x-ø-a-chäp ru-ch'ey-ïk?",
+    "primaryText": "achike x-ø-a-chäp ru-ch'ey-ïk?",
     "discourseSegments": [],
     "glossedTokens": [
       [
-        "Achike",
+        "achike",
         "what"
       ],
       [
@@ -2195,6 +2242,7 @@
         "wh-extraction from the -ïk nominalization"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   }
 ]

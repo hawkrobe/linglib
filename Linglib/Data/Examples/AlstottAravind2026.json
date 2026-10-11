@@ -18,7 +18,8 @@
       ["construction", "after"],
       ["telicity", "atelic"]
     ],
-    "comment": "True in Scenarios B and C."
+    "comment": "True in Scenarios B and C.",
+    "verified": "page-image"
   },
   {
     "id": "alstottaravind2026_1b",
@@ -39,7 +40,8 @@
       ["construction", "before"],
       ["telicity", "atelic"]
     ],
-    "comment": "True only in Scenario A."
+    "comment": "True only in Scenario A.",
+    "verified": "page-image"
   },
   {
     "id": "alstottaravind2026_2a",
@@ -60,7 +62,8 @@
       ["construction", "before"],
       ["telicity", "telic"]
     ],
-    "comment": "True in Scenarios A and B."
+    "comment": "True in Scenarios A and B.",
+    "verified": "page-image"
   },
   {
     "id": "alstottaravind2026_2b",
@@ -81,7 +84,8 @@
       ["construction", "after"],
       ["telicity", "telic"]
     ],
-    "comment": "True only in Scenario C."
+    "comment": "True only in Scenario C.",
+    "verified": "page-image"
   },
   {
     "id": "alstottaravind2026_3a",
@@ -101,7 +105,8 @@
       ["construction", "within"],
       ["telicity", "atelic"]
     ],
-    "comment": "Read as 'within an hour Hector became happy'; Rett attributes the reading to INCHOAT, §8.2 to a scalar implicature over shorter spans."
+    "comment": "Read as 'within an hour Hector became happy'; Rett attributes the reading to INCHOAT, §8.2 to a scalar implicature over shorter spans.",
+    "verified": "page-image"
   },
   {
     "id": "alstottaravind2026_3b",
@@ -121,7 +126,8 @@
       ["construction", "at"],
       ["telicity", "telic"]
     ],
-    "comment": "Read as 'Jackson finished climbing the mountain at 7pm sharp'; Rett attributes the reading to COMPLET."
+    "comment": "Read as 'Jackson finished climbing the mountain at 7pm sharp'; Rett attributes the reading to COMPLET.",
+    "verified": "page-image"
   },
   {
     "id": "alstottaravind2026_exp1a_coercion",
@@ -143,7 +149,8 @@
       ["rtCost", "no"],
       ["naturalness", "null"]
     ],
-    "comment": "No slowdown at verb or verb+1 relative to (b); the replication failure of Brennan & Pylkkänen (2010)."
+    "comment": "No slowdown at verb or verb+1 relative to (b); the replication failure of Brennan & Pylkkänen (2010).",
+    "verified": "page-image"
   },
   {
     "id": "alstottaravind2026_exp1a_control",
@@ -163,7 +170,8 @@
       ["construction", "for"],
       ["telicity", "atelic"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "alstottaravind2026_exp1a_complement",
@@ -185,7 +193,8 @@
       ["region", "noun+1"],
       ["naturalness", "lower"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "alstottaravind2026_exp1a_complementControl",
@@ -204,7 +213,8 @@
       ["trial", "complementControl"],
       ["construction", "complement"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "alstottaravind2026_exp1b_coercion",
@@ -227,7 +237,8 @@
       ["region", "verb+1"],
       ["naturalness", "lower"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "alstottaravind2026_exp1b_control",
@@ -247,7 +258,8 @@
       ["construction", "in"],
       ["telicity", "telic"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "alstottaravind2026_exp1b_complement",
@@ -269,7 +281,8 @@
       ["region", "noun+1"],
       ["naturalness", "lower"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "alstottaravind2026_exp1b_complementControl",
@@ -288,7 +301,8 @@
       ["trial", "complementControl"],
       ["construction", "complement"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "alstottaravind2026_exp2_noCoercion",
@@ -309,7 +323,8 @@
       ["telicity", "telic"],
       ["context", "beforeStart"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "alstottaravind2026_exp2_completive",
@@ -334,7 +349,8 @@
       ["preregistered", "no"],
       ["naturalness", "lower"]
     ],
-    "comment": "Null at the pre-registered verb and verb+1 regions; the slowdown is at verb+2 (exploratory)."
+    "comment": "Null at the pre-registered verb and verb+1 regions; the slowdown is at verb+2 (exploratory).",
+    "verified": "page-image"
   },
   {
     "id": "alstottaravind2026_exp2_complement",
@@ -356,7 +372,8 @@
       ["region", "noun"],
       ["naturalness", "lower"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "alstottaravind2026_exp3_coercion",
@@ -378,7 +395,8 @@
       ["rtCost", "no"],
       ["naturalness", "null"]
     ],
-    "comment": "Subject-experiencer verbs, as in Brennan & Pylkkänen (2010); still no slowdown."
+    "comment": "Subject-experiencer verbs, as in Brennan & Pylkkänen (2010); still no slowdown.",
+    "verified": "page-image"
   },
   {
     "id": "alstottaravind2026_exp3_control",
@@ -398,7 +416,8 @@
       ["construction", "for"],
       ["telicity", "atelic"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "alstottaravind2026_exp3_complement",
@@ -420,7 +439,8 @@
       ["region", "noun+1"],
       ["naturalness", "lower"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "alstottaravind2026_exp4_coercion",
@@ -445,7 +465,8 @@
       ["preregistered", "no"],
       ["naturalness", "lower"]
     ],
-    "comment": "Null at verb and verb+1; slowdown at verb+2 (exploratory)."
+    "comment": "Null at verb and verb+1; slowdown at verb+2 (exploratory).",
+    "verified": "page-image"
   },
   {
     "id": "alstottaravind2026_exp4_control",
@@ -466,7 +487,8 @@
       ["telicity", "atelic"],
       ["context", "afterFinish"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "alstottaravind2026_exp4_complement",
@@ -487,7 +509,8 @@
       ["rtCost", "no"],
       ["naturalness", "lower"]
     ],
-    "comment": "The complement-coercion slowdown was diffuse and not significant at the pre-registered noun and noun+1 regions."
+    "comment": "The complement-coercion slowdown was diffuse and not significant at the pre-registered noun and noun+1 regions.",
+    "verified": "page-image"
   },
   {
     "id": "alstottaravind2026_exp4_complementControl",
@@ -506,7 +529,8 @@
       ["trial", "complementControl"],
       ["construction", "complement"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "alstottaravind2026_32a",
@@ -526,7 +550,8 @@
       ["construction", "within"],
       ["telicity", "atelic"]
     ],
-    "comment": "Asserts that Ben was sick at some point in [6pm, 7pm]; with the negation of (35a) it entails that Ben became sick in that interval."
+    "comment": "Asserts that Ben was sick at some point in [6pm, 7pm]; with the negation of (35a) it entails that Ben became sick in that interval.",
+    "verified": "page-image"
   },
   {
     "id": "alstottaravind2026_35a",
@@ -545,7 +570,8 @@
       ["telicity", "atelic"],
       ["alternativeOf", "(32a)"]
     ],
-    "comment": "The stronger alternative whose negation (32a) implicates."
+    "comment": "The stronger alternative whose negation (32a) implicates.",
+    "verified": "page-image"
   },
   {
     "id": "alstottaravind2026_36a",
@@ -563,17 +589,18 @@
       ["construction", "within"],
       ["telicity", "telic"]
     ],
-    "comment": "Asserts a complete eating event in [6pm, 6:30pm] and implicates none in a shorter span."
+    "comment": "Asserts a complete eating event in [6pm, 6:30pm] and implicates none in a shorter span.",
+    "verified": "page-image"
   },
   {
     "id": "alstottaravind2026_17a",
     "source": {"bibkey": "rett-2020a", "paperLabel": "(12a)"},
     "reportedIn": {"bibkey": "alstott-aravind-2026", "paperLabel": "(17a)"},
     "language": "taga1270",
-    "primaryText": "Um-alis siya bago niya w<in>alisan ang sahig",
+    "primaryText": "Um-alis siya bago niya w<in>alisan ang-sahig",
     "glossedTokens": [
       ["Um-alis", "PFV.NEUT-leave"], ["siya", "3SG"], ["bago", "before"], ["niya", "3SG"],
-      ["w<in>alisan", "<PFV.NEUT>-sweep"], ["ang", "DET"], ["sahig", "floor"]
+      ["w<in>alisan", "<PFV.NEUT>-sweep"], ["ang-sahig", "floor"]
     ],
     "translation": "She left before he swept the floor.",
     "context": "",
@@ -587,17 +614,18 @@
       ["construction", "before"],
       ["aspect", "pfv.neut"]
     ],
-    "comment": ""
+    "comment": "A&A (17a) print the last word as \"angsahig\", glossed \"floor\"; Rett (2020) (12a) prints \"ang-sahig\" (SUBJ-floor). The other glosses follow A&A, who simplify Rett's (their fn. 6).",
+    "verified": "page-image"
   },
   {
     "id": "alstottaravind2026_17b",
     "source": {"bibkey": "rett-2020a", "paperLabel": "(12b)"},
     "reportedIn": {"bibkey": "alstott-aravind-2026", "paperLabel": "(17b)"},
     "language": "taga1270",
-    "primaryText": "Um-alis siya bago niya na-walisan ang sahig",
+    "primaryText": "Um-alis siya bago niya na-walisan ang-sahig",
     "glossedTokens": [
       ["Um-alis", "PFV.NEUT-leave"], ["siya", "3SG"], ["bago", "before"], ["niya", "3SG"],
-      ["na-walisan", "AIA-sweep"], ["ang", "DET"], ["sahig", "floor"]
+      ["na-walisan", "AIA-sweep"], ["ang-sahig", "floor"]
     ],
     "translation": "She left before he swept the floor.",
     "context": "",
@@ -610,6 +638,7 @@
       ["construction", "before"],
       ["aspect", "aia"]
     ],
-    "comment": "The ability-and-involuntary-action perfective marks the before-finish reading overtly."
+    "comment": "The ability-and-involuntary-action perfective marks the before-finish reading overtly. A&A (17b) print the last word as \"angsahig\", glossed \"floor\"; Rett (2020) (12b) prints \"ang-sahig\" (SUBJ-floor). The other glosses follow A&A, who simplify Rett's (their fn. 6).",
+    "verified": "page-image"
   }
 ]

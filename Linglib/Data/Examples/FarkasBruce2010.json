@@ -20,7 +20,8 @@
       ["response", "positive"],
       ["particle", "yes"]
     ],
-    "comment": "[same, +]: confirmation of an assertion, the least marked reaction."
+    "comment": "[same, +]: confirmation of an assertion, the least marked reaction.",
+    "verified": "page-image"
   },
   {
     "id": "farkasbruce2010_36_no",
@@ -43,7 +44,8 @@
       ["response", "negative"],
       ["particle", "no"]
     ],
-    "comment": "[reverse, −]: a total denial, which leaves the conversation in crisis."
+    "comment": "[reverse, −]: a total denial, which leaves the conversation in crisis.",
+    "verified": "page-image"
   },
   {
     "id": "farkasbruce2010_37_yes",
@@ -66,7 +68,8 @@
       ["response", "positive"],
       ["particle", "yes"]
     ],
-    "comment": "[same, +]: polar question confirmation."
+    "comment": "[same, +]: polar question confirmation.",
+    "verified": "page-image"
   },
   {
     "id": "farkasbruce2010_37_no",
@@ -89,7 +92,8 @@
       ["response", "negative"],
       ["particle", "no"]
     ],
-    "comment": "[reverse, −]: a reverse answer, no crisis."
+    "comment": "[reverse, −]: a reverse answer, no crisis.",
+    "verified": "page-image"
   },
   {
     "id": "farkasbruce2010_35_assertion_yes",
@@ -112,7 +116,8 @@
       ["response", "positive"],
       ["particle", "yes"]
     ],
-    "comment": "[reverse, +]."
+    "comment": "[reverse, +].",
+    "verified": "page-image"
   },
   {
     "id": "farkasbruce2010_35_assertion_no",
@@ -135,7 +140,8 @@
       ["response", "negative"],
       ["particle", "no"]
     ],
-    "comment": "[same, −]."
+    "comment": "[same, −].",
+    "verified": "page-image"
   },
   {
     "id": "farkasbruce2010_35_question_yes",
@@ -158,7 +164,8 @@
       ["response", "positive"],
       ["particle", "yes"]
     ],
-    "comment": "[reverse, +]."
+    "comment": "[reverse, +].",
+    "verified": "page-image"
   },
   {
     "id": "farkasbruce2010_35_question_no",
@@ -181,7 +188,8 @@
       ["response", "negative"],
       ["particle", "no"]
     ],
-    "comment": "[same, −]."
+    "comment": "[same, −].",
+    "verified": "page-image"
   },
   {
     "id": "farkasbruce2010_38_yes",
@@ -204,7 +212,8 @@
       ["response", "negative"],
       ["particle", "yes"]
     ],
-    "comment": "[same, −]: yes encodes relative polarity alone."
+    "comment": "[same, −]: yes encodes relative polarity alone.",
+    "verified": "page-image"
   },
   {
     "id": "farkasbruce2010_38_no",
@@ -227,7 +236,8 @@
       ["response", "positive"],
       ["particle", "no"]
     ],
-    "comment": "[reverse, +]: no encodes relative polarity alone."
+    "comment": "[reverse, +]: no encodes relative polarity alone.",
+    "verified": "page-image"
   },
   {
     "id": "farkasbruce2010_50_assertion",
@@ -251,7 +261,8 @@
       ["particle", "yes"],
       ["particle2", "no"]
     ],
-    "comment": "[same, −] with the relative feature marked by yeah and the absolute one by no; Correct and Yup are the other options."
+    "comment": "[same, −] with the relative feature marked by yeah and the absolute one by no; Correct and Yup are the other options.",
+    "verified": "page-image"
   },
   {
     "id": "farkasbruce2010_50_question",
@@ -275,7 +286,8 @@
       ["particle", "yes"],
       ["particle2", "no"]
     ],
-    "comment": "[same, −]."
+    "comment": "[same, −].",
+    "verified": "page-image"
   },
   {
     "id": "farkasbruce2010_4_nu",
@@ -298,7 +310,8 @@
       ["response", "negative"],
       ["particle", "nu"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "farkasbruce2010_4_ba_nu",
@@ -312,7 +325,7 @@
     "glossedTokens": [],
     "translation": "No, he isn't.",
     "context": "Reacting to the polar question 'Horea e acasă?'.",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -322,7 +335,8 @@
       ["particle", "ba"],
       ["particle2", "nu"]
     ],
-    "comment": "ba is impossible in a negative answer to a positive question."
+    "comment": "ba is impossible in a negative answer to a positive question.",
+    "verified": "page-image"
   },
   {
     "id": "farkasbruce2010_5_nu",
@@ -345,7 +359,8 @@
       ["response", "negative"],
       ["particle", "nu"]
     ],
-    "comment": "The introduction accepts a bare nu denial; (42) stars its counterpart."
+    "comment": "The introduction accepts a bare nu denial; (42) stars its counterpart.",
+    "verified": "page-image"
   },
   {
     "id": "farkasbruce2010_5_ba_nu",
@@ -369,7 +384,8 @@
       ["particle", "ba"],
       ["particle2", "nu"]
     ],
-    "comment": "ba is possible when contradicting a positive assertion."
+    "comment": "ba is possible when contradicting a positive assertion.",
+    "verified": "page-image"
   },
   {
     "id": "farkasbruce2010_39_da",
@@ -392,7 +408,8 @@
       ["response", "positive"],
       ["particle", "da"]
     ],
-    "comment": "Also bare Da."
+    "comment": "Also bare Da.",
+    "verified": "page-image"
   },
   {
     "id": "farkasbruce2010_40_nu",
@@ -415,7 +432,8 @@
       ["response", "negative"],
       ["particle", "nu"]
     ],
-    "comment": "nu in a [same, −] reaction."
+    "comment": "nu in a [same, −] reaction.",
+    "verified": "page-image"
   },
   {
     "id": "farkasbruce2010_41_da",
@@ -438,7 +456,8 @@
       ["response", "positive"],
       ["particle", "da"]
     ],
-    "comment": "Also bare Da."
+    "comment": "Also bare Da.",
+    "verified": "page-image"
   },
   {
     "id": "farkasbruce2010_41_nu",
@@ -461,7 +480,8 @@
       ["response", "negative"],
       ["particle", "nu"]
     ],
-    "comment": "Also bare Nu."
+    "comment": "Also bare Nu.",
+    "verified": "page-image"
   },
   {
     "id": "farkasbruce2010_42_ba_nu",
@@ -485,7 +505,8 @@
       ["particle", "ba"],
       ["particle2", "nu"]
     ],
-    "comment": "A denial: [reverse, −] reacting to an assertion."
+    "comment": "A denial: [reverse, −] reacting to an assertion.",
+    "verified": "page-image"
   },
   {
     "id": "farkasbruce2010_42_nu",
@@ -499,7 +520,7 @@
     "glossedTokens": [],
     "translation": "No, she didn't.",
     "context": "Reacting to the assertion 'Ana a plecat.'.",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -508,7 +529,8 @@
       ["response", "negative"],
       ["particle", "nu"]
     ],
-    "comment": "Starred in §5.2, where ba is required in a [reverse, −] denial; (5) accepts the same form."
+    "comment": "Starred in §5.2, where ba is required in a [reverse, −] denial; (5) accepts the same form.",
+    "verified": "page-image"
   },
   {
     "id": "farkasbruce2010_43_nu",
@@ -531,7 +553,8 @@
       ["response", "negative"],
       ["particle", "nu"]
     ],
-    "comment": "A reverse answer; also bare Nu."
+    "comment": "A reverse answer; also bare Nu.",
+    "verified": "page-image"
   },
   {
     "id": "farkasbruce2010_43_ba_nu",
@@ -545,7 +568,7 @@
     "glossedTokens": [],
     "translation": "No, she hasn't.",
     "context": "Reacting to the polar question 'Ana a plecat?'.",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -555,7 +578,8 @@
       ["particle", "ba"],
       ["particle2", "nu"]
     ],
-    "comment": "ba is not possible in a reverse answer with [−]; also *Ba nu."
+    "comment": "ba is not possible in a reverse answer with [−]; also *Ba nu.",
+    "verified": "page-image"
   },
   {
     "id": "farkasbruce2010_44_ba_da",
@@ -579,7 +603,8 @@
       ["particle", "ba"],
       ["particle2", "da"]
     ],
-    "comment": "[reverse, +] denial of a negative assertion; also Ba da and Ba a plecat."
+    "comment": "[reverse, +] denial of a negative assertion; also Ba da and Ba a plecat.",
+    "verified": "page-image"
   },
   {
     "id": "farkasbruce2010_45_ba_da",
@@ -603,7 +628,8 @@
       ["particle", "ba"],
       ["particle2", "da"]
     ],
-    "comment": "[reverse, +] reverse answer to a negative question; also Ba da and Ba a plecat."
+    "comment": "[reverse, +] reverse answer to a negative question; also Ba da and Ba a plecat.",
+    "verified": "page-image"
   },
   {
     "id": "farkasbruce2010_46_si",
@@ -626,7 +652,8 @@
       ["response", "positive"],
       ["particle", "si"]
     ],
-    "comment": "si marks [reverse, +]."
+    "comment": "si marks [reverse, +].",
+    "verified": "page-image"
   },
   {
     "id": "farkasbruce2010_47_si",
@@ -649,7 +676,8 @@
       ["response", "positive"],
       ["particle", "si"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "farkasbruce2010_48_doch",
@@ -672,7 +700,8 @@
       ["response", "positive"],
       ["particle", "doch"]
     ],
-    "comment": "doch marks [reverse, +]."
+    "comment": "doch marks [reverse, +].",
+    "verified": "page-image"
   },
   {
     "id": "farkasbruce2010_49_doch",
@@ -695,6 +724,7 @@
       ["response", "positive"],
       ["particle", "doch"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   }
 ]

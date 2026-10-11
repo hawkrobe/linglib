@@ -17,7 +17,8 @@
       ["modal", "would"],
       ["verdict", "false"]
     ],
-    "comment": "A variation on an example in Nute 1975; repeated as (4), (11), (20), (48), and (78a). Judged false: if the sun had grown cold the pumpkins would have been ruined."
+    "comment": "A variation on an example in Nute 1975; repeated as (4), (11), (20), (48), and (78a). Judged false: if the sun had grown cold the pumpkins would have been ruined.",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovalle2009_15a",
@@ -26,8 +27,8 @@
     "language": "hind1269",
     "primaryText": "jo laRkii khaRii hai vo lambii hai",
     "glossedTokens": [
-      ["jo", "which"], ["laRkii", "girl"], ["khaRii", "standing"], ["hai", "be-PRES"],
-      ["vo", "she"], ["lambii", "tall"], ["hai", "be-PRES"]
+      ["jo", "which"], ["laRkii", "girl"], ["khaRii", "standing"], ["hai", "be-present"],
+      ["vo", "she"], ["lambii", "tall"], ["hai", "be-present"]
     ],
     "translation": "Which girl is standing, that one is tall.",
     "context": "",
@@ -38,7 +39,8 @@
       ["construction", "correlative"],
       ["number", "singular"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovalle2009_15b",
@@ -47,8 +49,8 @@
     "language": "hind1269",
     "primaryText": "jo laRkiyaaN khaRii haiN ve lambii haiN",
     "glossedTokens": [
-      ["jo", "which"], ["laRkiyaaN", "girls"], ["khaRii", "standing"], ["haiN", "be-PRES"],
-      ["ve", "they"], ["lambii", "tall"], ["haiN", "be-PRES"]
+      ["jo", "which"], ["laRkiyaaN", "girls"], ["khaRii", "standing"], ["haiN", "be-present"],
+      ["ve", "they"], ["lambii", "tall"], ["haiN", "be-present"]
     ],
     "translation": "Which girls are standing, they are tall.",
     "context": "",
@@ -59,7 +61,8 @@
       ["construction", "correlative"],
       ["number", "plural"]
     ],
-    "comment": "Repeated as (18) and (28a)."
+    "comment": "Repeated as (18) and (28a). The paper prints (15b)'s translation as 'Which girls standing are, they are tall.'; (18) and (28a) print 'Which girls are standing, they are tall.'",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovalle2009_15c",
@@ -69,7 +72,7 @@
     "primaryText": "jo do laRkiyaaN khaRii haiN ve lambii haiN",
     "glossedTokens": [
       ["jo", "which"], ["do", "two"], ["laRkiyaaN", "girls"], ["khaRii", "standing"],
-      ["haiN", "be-PRES"], ["ve", "they"], ["lambii", "tall"], ["haiN", "be-PRES"]
+      ["haiN", "be-present"], ["ve", "they"], ["lambii", "tall"], ["haiN", "be-present"]
     ],
     "translation": "Which two girls are standing, they are tall.",
     "context": "",
@@ -80,7 +83,8 @@
       ["construction", "correlative"],
       ["number", "plural"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovalle2009_29",
@@ -101,7 +105,8 @@
       ["polarity", "negated"],
       ["verdict", "true"]
     ],
-    "comment": "Under the universal quantifier over propositions, true iff not both (30a) and (30b) are true; the continuation (31) shows one of them can be."
+    "comment": "Under the universal quantifier over propositions, true iff not both (30a) and (30b) are true; the continuation (31) shows one of them can be.",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovalle2009_30a",
@@ -121,7 +126,8 @@
       ["modal", "would"],
       ["verdict", "true"]
     ],
-    "comment": "True per the continuation (31)."
+    "comment": "True per the continuation (31).",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovalle2009_30b",
@@ -141,7 +147,8 @@
       ["modal", "would"],
       ["verdict", "false"]
     ],
-    "comment": "Not true per the continuation (31): he might have objected to Spain joining the U.S."
+    "comment": "Not true per the continuation (31): he might have objected to Spain joining the U.S.",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovalle2009_31",
@@ -158,7 +165,8 @@
     "paperFeatures": [
       ["role", "continuation"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovalle2009_32",
@@ -178,7 +186,8 @@
     "paperFeatures": [
       ["phenomenon", "homogeneity"]
     ],
-    "comment": "Plural definites under negation convey that none was seen, not merely that not all were."
+    "comment": "Plural definites under negation convey that none was seen, not merely that not all were.",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovalle2009_34",
@@ -198,7 +207,8 @@
       ["phenomenon", "homogeneity"],
       ["polarity", "wide-scope negation"]
     ],
-    "comment": "Does not seem to convey that Sandy saw none of the cats."
+    "comment": "Does not seem to convey that Sandy saw none of the cats.",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovalle2009_36",
@@ -216,7 +226,8 @@
       ["inference", "strengthening the antecedent"],
       ["role", "premise"]
     ],
-    "comment": "Repeated as (41a) and (46a)."
+    "comment": "Repeated as (41a) and (46a).",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovalle2009_41b",
@@ -234,7 +245,8 @@
       ["inference", "strengthening the antecedent"],
       ["role", "conclusion"]
     ],
-    "comment": "Does not follow from (41a); repeated as (46b)."
+    "comment": "Does not follow from (41a); repeated as (46b).",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovalle2009_40a",
@@ -251,7 +263,8 @@
     "paperFeatures": [
       ["npi", "any"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovalle2009_40b",
@@ -268,7 +281,8 @@
     "paperFeatures": [
       ["npi", "ever"]
     ],
-    "comment": "Attested (brainyquote.com)."
+    "comment": "Attested (brainyquote.com).",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovalle2009_42a",
@@ -286,7 +300,8 @@
       ["inference", "hypothetical syllogism"],
       ["role", "premise"]
     ],
-    "comment": "Attributed to Stalnaker 1968."
+    "comment": "Attributed to Stalnaker 1968.",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovalle2009_42b",
@@ -304,7 +319,8 @@
       ["inference", "hypothetical syllogism"],
       ["role", "premise"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovalle2009_42c",
@@ -322,7 +338,8 @@
       ["inference", "hypothetical syllogism"],
       ["role", "conclusion"]
     ],
-    "comment": "Does not follow from (42a) and (42b)."
+    "comment": "Does not follow from (42a) and (42b).",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovalle2009_43a",
@@ -340,7 +357,8 @@
       ["inference", "contraposition"],
       ["role", "premise"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovalle2009_43b",
@@ -358,7 +376,8 @@
       ["inference", "contraposition"],
       ["role", "conclusion"]
     ],
-    "comment": "Does not follow from (43a)."
+    "comment": "Does not follow from (43a).",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovalle2009_49a",
@@ -378,7 +397,8 @@
       ["modal", "would"],
       ["verdict", "true"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovalle2009_49b",
@@ -398,7 +418,8 @@
       ["modal", "would"],
       ["verdict", "false"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovalle2009_51",
@@ -418,7 +439,8 @@
       ["modal", "might"],
       ["verdict", "false"]
     ],
-    "comment": "The hearer disagrees: a newborn baby would not have bent the fork. Repeated as (56), (59), (69), and, with 'newborn child', (73)."
+    "comment": "The hearer disagrees: a newborn baby would not have bent the fork. Repeated as (56), (59), (69), and, with 'newborn child' and without 'too', (73).",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovalle2009_58a",
@@ -438,7 +460,8 @@
       ["modal", "might"],
       ["verdict", "true"]
     ],
-    "comment": "Repeated as (61a) and (74a)."
+    "comment": "Repeated as (74a); (61a) has 'a good book on magic'.",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovalle2009_58b",
@@ -458,7 +481,8 @@
       ["modal", "might"],
       ["verdict", "false"]
     ],
-    "comment": "Repeated as (61b) and (74b)."
+    "comment": "Repeated as (61b); (74b) has 'newborn child'.",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovalle2009_64",
@@ -477,7 +501,8 @@
       ["antecedent", "magic book"],
       ["modal", "would"]
     ],
-    "comment": "The would counterfactual Stalnaker's analysis embeds under epistemic might in (61a)."
+    "comment": "The would counterfactual Stalnaker's analysis embeds under epistemic might in (61a).",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovalle2009_65",
@@ -495,7 +520,8 @@
       ["modal", "may"],
       ["antecedent", "disjunctive"]
     ],
-    "comment": "Repeated as (72). It is natural to conclude (66a) and (66b)."
+    "comment": "Repeated as (72). It is natural to conclude (66a) and (66b).",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovalle2009_66a",
@@ -512,7 +538,8 @@
     "paperFeatures": [
       ["modal", "may"]
     ],
-    "comment": "Repeated as (68a)."
+    "comment": "Repeated as (68a).",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovalle2009_66b",
@@ -529,7 +556,8 @@
     "paperFeatures": [
       ["modal", "may"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovalle2009_67",
@@ -546,7 +574,8 @@
     "paperFeatures": [
       ["modal", "may"]
     ],
-    "comment": "Sounds contradictory."
+    "comment": "Sounds contradictory.",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovalle2009_68b",
@@ -563,7 +592,8 @@
     "paperFeatures": [
       ["modal", "must"]
     ],
-    "comment": "Definitely not equivalent to (66a)."
+    "comment": "The paper says the conditional in (66b) is definitely not equivalent to the one in (68b).",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovalle2009_77",
@@ -580,7 +610,8 @@
     "paperFeatures": [
       ["modal", "might"]
     ],
-    "comment": "Deviant, but not predicted so by the manner principle (76)."
+    "comment": "Deviant, but not predicted so by the manner principle (76).",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovalle2009_79",
@@ -599,7 +630,8 @@
       ["antecedent", "good weather or sun cold"],
       ["modal", "might"]
     ],
-    "comment": "The might counterpart of (78a)."
+    "comment": "The might counterpart of (78a).",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovalle2009_80",
@@ -620,7 +652,8 @@
       ["closure", "existential"],
       ["verdict", "true"]
     ],
-    "comment": "Nute 1984. Intuitively true; the consequent is one of the disjuncts."
+    "comment": "Nute 1984. Intuitively true; the consequent is one of the disjuncts.",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovalle2009_83",
@@ -638,7 +671,8 @@
       ["modal", "would"],
       ["verdict", "contradictory"]
     ],
-    "comment": "Sounds contradictory unless forced into the readings paraphrased in (84)."
+    "comment": "Sounds contradictory unless forced into the readings paraphrased in (84).",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovalle2009_84a",
@@ -655,7 +689,8 @@
     "paperFeatures": [
       ["role", "paraphrase of (83)"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovalle2009_84b",
@@ -672,7 +707,8 @@
     "paperFeatures": [
       ["role", "paraphrase of (83)"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovalle2009_84c",
@@ -689,7 +725,8 @@
     "paperFeatures": [
       ["role", "paraphrase of (83)"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovalle2009_85a",
@@ -706,7 +743,8 @@
     "paperFeatures": [
       ["role", "paraphrase of (80)"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovalle2009_85b",
@@ -723,7 +761,8 @@
     "paperFeatures": [
       ["role", "paraphrase of (80)"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovalle2009_85c",
@@ -740,7 +779,8 @@
     "paperFeatures": [
       ["role", "paraphrase of (80)"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovalle2009_fn12",
@@ -758,7 +798,8 @@
       ["anaphor", "then"],
       ["role", "intersentential"]
     ],
-    "comment": "Due to an anonymous reviewer: the alternatives introduced by a disjunction in a modal context can antecede then across sentences."
+    "comment": "Due to an anonymous reviewer: the alternatives introduced by a disjunction in a modal context can antecede then across sentences.",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovalle2009_fn18",
@@ -775,7 +816,8 @@
     "paperFeatures": [
       ["modal", "might"]
     ],
-    "comment": "The denial of a would counterfactual is hard to follow with the corresponding might counterfactual."
+    "comment": "The denial of a would counterfactual is hard to follow with the corresponding might counterfactual.",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovalle2009_fn22",
@@ -794,7 +836,8 @@
     "paperFeatures": [
       ["closure", "existential"]
     ],
-    "comment": "Due to an anonymous reviewer."
+    "comment": "Due to an anonymous reviewer.",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovalle2009_bennettD",
@@ -812,7 +855,8 @@
       ["inference", "simplification"],
       ["role", "premise"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovalle2009_bennettDr",
@@ -830,7 +874,8 @@
       ["inference", "simplification"],
       ["role", "conclusion"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovalle2009_bennettDf",
@@ -848,7 +893,8 @@
       ["inference", "simplification"],
       ["role", "conclusion"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovalle2009_lewis1",
@@ -865,7 +911,8 @@
     "paperFeatures": [
       ["antecedent", "disjunctive"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovalle2009_lewis4",
@@ -882,7 +929,8 @@
     "paperFeatures": [
       ["construction", "disjunction under a modal"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovalle2009_lewis5",
@@ -899,7 +947,8 @@
     "paperFeatures": [
       ["construction", "disjunction under a modal"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovalle2009_lewis6",
@@ -916,6 +965,7 @@
     "paperFeatures": [
       ["construction", "disjunction under whether"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   }
 ]
