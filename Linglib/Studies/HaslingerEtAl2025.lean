@@ -1,28 +1,34 @@
 module
 
-public import Linglib.Fragments.German.Distributives
+public import Linglib.Semantics.Homogeneity.Plural
 public import Linglib.Data.Examples.HaslingerEtAl2025
+public import Mathlib.Order.UpperLower.Closure
 
 /-!
 # Haslinger, Rosina, Schmitt and Wurm (2025): On the relation between distributivity and maximality
 
-This file formalizes [haslinger-etal-2025]'s answer to whether every obligatorily distributive
-operator blocks non-maximal construals of its associate plural. German *jed-* is distributive and
+Haslinger, Rosina, Schmitt and Wurm ask whether every obligatorily distributive operator blocks
+non-maximal construals of its associate plural, and answer no. German *jed-* is distributive and
 exception-intolerant in both its determiner and its distance use, *alle* and numeral indefinites
 are exception-intolerant but not distributive, and definite plurals are neither (5); the
 distance distributor *jeweils* fills the remaining cell, since some speakers accept it in
 scenarios whose question under discussion makes an exception irrelevant, where DP-*jeder* is
 rejected and distance *jeder* mostly rejected (§3). `Item.class` is the classification of (5),
 which the paper's truth-value judgments in the scenarios of (3) confirm (`class_of_rows`), and
-`jeweils_answers_Q` is the negative answer. In [kriz-spector-2021]'s parameter semantics the
-contrast is a maximal distributive operator against a tolerant one with a contextually supplied
-tolerance, the denotations of *jeder* and *jeweils* in the German fragment:
-`jeweils_accepts_magnets` runs the magnets
-scenario of (23), where the tolerance identifies the pluralities the explosion question does
-not distinguish, and the speakers who reject *jeweils* there are those for whom the tolerance is
-the identity. The same tools define the hypothetical determiner *jeder\** of (27), which
-accepts the scenario as well (`jederStar_accepts_magnets`), so the framework does not predict the
-absence of exception-tolerant distributive determiners; the paper relates *jeweils*'s
+`jeweils_answers_Q` is their answer.
+
+The semantics of §2 relativizes a predicate to a tolerance relation, (14), which relates a
+plurality to the parts of it that are similar enough to it (`tolerant`). Varying the tolerance
+yields exactly Križ and Spector's readings of the plural predication
+(`exists_isTolerance_iff_mem_readings`), which is why footnote 3 can call the difference between
+the two ways of modelling the parameter irrelevant. *all*, which quantifies over tolerances,
+forces the maximal reading (`all_maximal`), and so does *each*, (21c), since an atom has no part
+short of itself (`each_maximal`). An exception-tolerant distributor has to depend on the
+tolerance itself, as *jeweils* does in (25): in the magnets scenario of (23) it is true under the
+tolerance the explosion question induces (`jeweils_accepts_magnets`) and false for the speakers
+whose tolerance is the identity (`jeweils_identity_rejects_magnets`). The hypothetical determiner
+*jeder\** of (27) is (25) applied to the sum of its restrictor, so the framework does not predict
+the absence of exception-tolerant distributive determiners; the paper relates *jeweils*'s
 permissiveness to its lacking a determiner use instead (`determiner_maximal`).
 
 ## Implementation notes
@@ -33,9 +39,10 @@ of a minimal pair above its distance-*jeder* counterpart. The paper's examples a
 the rows of `Data/Examples/HaslingerEtAl2025.json`; the (3) judgments classify an item as
 distributive when it is false in the cumulative scenario (3b) and as maximal when it is false in
 the exception scenario (3c), which for *jeweils* out of the blue gives the maximal cell, the
-non-maximal construal needing the questionnaire's contexts. The tolerance of the magnets scenario
-tolerates every nonempty subplurality of the boxes, since one box with two magnets already
-answers the explosion question.
+non-maximal construal needing the questionnaire's contexts. Pluralities are finite sets of
+individuals, whose empty set is excluded from the parts of a plurality as the paper's domain has
+no empty individual. The tolerance of the magnets scenario tolerates every part of the boxes,
+since one box with two magnets already answers the explosion question.
 
 ## References
 
@@ -47,10 +54,122 @@ answers the explosion question.
 
 namespace HaslingerEtAl2025
 
-open Plurality Plurality.Distributivity German.Distributives
+open Homogeneity
 
-/-- The expressions of (5) and (22): the distance distributor *jeweils* beside the
-determiner and distance uses of *jed-*, *alle*, numeral indefinites and definite plurals. -/
+/-! ### Tolerance relations (§2.2) -/
+
+section Tolerance
+
+variable {α W : Type*} [PartialOrder α] {r : α → α → Prop} {Q : α → Set W} {y : α} {w : W}
+
+/-- A tolerance relation (14) relates a part `z` of `y` to `y` when `z` is similar enough to
+`y`. It is reflexive and contained in parthood, and whatever lies between a tolerated part and
+the whole is tolerated too. -/
+structure IsTolerance (r : α → α → Prop) : Prop where
+  refl (x : α) : r x x
+  le_of_rel {x y : α} : r x y → x ≤ y
+  rel_of_le_of_le {x y z : α} : r x y → x ≤ z → z ≤ y → r z y
+
+/-- The identity relation of (16a), under which no proper part is similar enough. -/
+theorem isTolerance_eq : IsTolerance (α := α) (· = ·) :=
+  ⟨fun _ ↦ rfl, fun h ↦ h ▸ le_rfl, fun h hxz hzy ↦ le_antisymm hzy (h ▸ hxz)⟩
+
+/-- Parthood itself, (16b), under which every part is similar enough. -/
+theorem isTolerance_le : IsTolerance (α := α) (· ≤ ·) :=
+  ⟨fun _ ↦ le_rfl, id, fun _ _ hzy ↦ hzy⟩
+
+/-- A predicate relativized to a tolerance (15a) holds of `y` where it holds of a non-bottom
+part of `y` that is similar enough to `y`. -/
+def tolerant (r : α → α → Prop) (Q : α → Set W) (y : α) : Set W :=
+  {w | ∃ z, r z y ∧ ¬ IsBot z ∧ w ∈ Q z}
+
+/-- Under the identity relation, (16a), the predication is maximal. -/
+theorem tolerant_eq (hy : ¬ IsBot y) : tolerant (· = ·) Q y = Q y := by
+  ext
+  simp only [tolerant]
+  grind
+
+/-- Every tolerance yields one of [kriz-spector-2021]'s readings and every reading comes from a
+tolerance, which is why footnote 3 can set the difference aside. -/
+theorem exists_isTolerance_iff_mem_readings {p : Set W} :
+    (∃ r, IsTolerance r ∧ p = tolerant r Q y) ↔ p ∈ readings Q y := by
+  constructor
+  · rintro ⟨r, hr, rfl⟩
+    refine ⟨upperClosure {z | r z y}, subset_upperClosure (hr.refl y), Set.ext fun w ↦
+      ⟨fun ⟨z, hz, hzb, hw⟩ ↦ ⟨z, subset_upperClosure hz, hr.le_of_rel hz, hzb, hw⟩, ?_⟩⟩
+    rintro ⟨z, ⟨a, ha, haz⟩, hzy, hzb, hw⟩
+    exact ⟨z, hr.rel_of_le_of_le ha haz hzy, hzb, hw⟩
+  · rintro ⟨U, hyU, rfl⟩
+    refine ⟨fun z x ↦ z = x ∨ (z ≤ x ∧ z ∈ U), ⟨fun _ ↦ .inl rfl, ?_, ?_⟩, Set.ext fun w ↦ ?_⟩
+    · rintro z x (rfl | ⟨hzx, -⟩)
+      exacts [le_rfl, hzx]
+    · rintro z x u (rfl | ⟨-, hz⟩) hzu hux
+      exacts [.inl (le_antisymm hux hzu), .inr ⟨hux, U.upper hzu hz⟩]
+    · refine ⟨fun ⟨z, hz, hzy, hzb, hw⟩ ↦ ⟨z, .inr ⟨hzy, hz⟩, hzb, hw⟩, ?_⟩
+      rintro ⟨z, rfl | ⟨hzy, hz⟩, hzb, hw⟩
+      exacts [⟨z, hyU, le_rfl, hzb, hw⟩, ⟨z, hz, hzy, hzb, hw⟩]
+
+/-- *all*, which quantifies over tolerances (20), forces the maximal reading. -/
+theorem all_maximal (hy : ¬ IsBot y) :
+    (∀ r, IsTolerance r → w ∈ tolerant r Q y) ↔ w ∈ Q y := by
+  refine ⟨fun h ↦ ?_, fun h r hr ↦ ⟨y, hr.refl y, hy, h⟩⟩
+  obtain ⟨z, rfl, -, hw⟩ := h _ isTolerance_eq
+  exact hw
+
+end Tolerance
+
+/-! ### *each* (§2.3) -/
+
+section Distributivity
+
+variable {Atom W : Type*} {r : Finset Atom → Finset Atom → Prop}
+
+private theorem minimal_singleton (a : Atom) : Minimal (¬ IsBot ·) ({a} : Finset Atom) := by
+  refine ⟨fun h ↦ Finset.singleton_ne_empty a (isBot_iff_eq_bot.1 h), fun z hz hza ↦ ?_⟩
+  grind [isBot_iff_eq_bot]
+
+/-- *each* (21c) applies its predicate to the atoms of its argument, and an atom has no part
+short of itself, so *each* is maximal even over a predicate relativized to a tolerance (§2.3,
+(21d)). -/
+theorem each_maximal (hr : IsTolerance r) (Q : Finset Atom → Set W) (x : Finset Atom) :
+    {w | ∀ a ∈ x, w ∈ tolerant r Q {a}} = {w | ∀ a ∈ x, w ∈ Q {a}} := by
+  have h (a : Atom) : tolerant r Q {a} = Q {a} := by
+    have := (exists_isTolerance_iff_mem_readings (Q := Q) (y := {a})).1 ⟨r, hr, rfl⟩
+    rwa [readings_of_minimal (minimal_singleton a), Set.mem_singleton_iff] at this
+  simp only [h]
+
+end Distributivity
+
+/-! ### The classification of (5) -/
+
+/-- The four cells of (5) cross obligatory distributivity with exception intolerance. -/
+inductive DistMaxClass where
+  | distMax
+  | distNonMax
+  | nonDistMax
+  | nonDistNonMax
+  deriving DecidableEq, Repr
+
+/-- The item applies its predicate to each atom separately. -/
+def DistMaxClass.isDistributive : DistMaxClass → Prop
+  | .distMax | .distNonMax => True
+  | .nonDistMax | .nonDistNonMax => False
+
+instance : DecidablePred DistMaxClass.isDistributive
+  | .distMax | .distNonMax => isTrue trivial
+  | .nonDistMax | .nonDistNonMax => isFalse not_false
+
+/-- The item tolerates no exceptions. -/
+def DistMaxClass.isMaximal : DistMaxClass → Prop
+  | .distMax | .nonDistMax => True
+  | .distNonMax | .nonDistNonMax => False
+
+instance : DecidablePred DistMaxClass.isMaximal
+  | .distMax | .nonDistMax => isTrue trivial
+  | .distNonMax | .nonDistNonMax => isFalse not_false
+
+/-- The expressions of (5) and (22) are the distance distributor *jeweils* and the determiner and
+distance uses of *jed-*, beside *alle*, numeral indefinites and definite plurals. -/
 inductive Item where
   | definitePlural
   | numeralIndefinite
@@ -76,8 +195,8 @@ def Item.class : Item → DistMaxClass
   | .jederDP | .jederDistance => .distMax
   | .jeweils => .distNonMax
 
-/-- Their question Q answered in the negative: an obligatorily distributive item that permits
-exceptions. -/
+/-- Their question Q has a negative answer, since *jeweils* is obligatorily distributive and
+permits exceptions. -/
 theorem jeweils_answers_Q :
     Item.jeweils.class.isDistributive ∧ ¬ Item.jeweils.class.isMaximal := by decide
 
@@ -120,37 +239,27 @@ theorem jeweils_maximal_out_of_the_blue : classOfDatum Examples.ex22a = some .di
 /-- The five boxes of (23a). -/
 abbrev Box := Fin 5
 
-/-- Box `b` contains two magnets: all but the fifth. -/
-def hasTwoMagnets (b : Box) (_ : Unit) : Prop := b < 4
+/-- Every box but the fifth contains two magnets. -/
+def hasTwoMagnets (b : Box) : Prop := b < 4
 
-instance (b : Box) (u : Unit) : Decidable (hasTwoMagnets b u) := inferInstanceAs (Decidable (b < 4))
+instance : DecidablePred hasTwoMagnets := fun b ↦ inferInstanceAs (Decidable (b < 4))
 
-/-- DP-*jeder* and distance *jeder* are false in the scenario, since one box has one magnet. -/
-theorem jeder_rejects_magnets : ¬ jederSem hasTwoMagnets Finset.univ () := by decide
-
-/-- *jeweils* with the tolerance the explosion question induces, every nonempty subplurality:
-true, witnessed by the four boxes with two magnets. -/
-theorem jeweils_accepts_magnets :
-    jeweilsSem hasTwoMagnets Tolerance.trivial Finset.univ () := by
+/-- *jeder* in either use, (21c), is false in the scenario, since one box has one magnet. -/
+theorem jeder_rejects_magnets : ¬ ∀ b ∈ (Finset.univ : Finset Box), hasTwoMagnets b := by
   decide
+
+/-- *jeweils*, (25), under the tolerance the explosion question induces, every part, is true,
+witnessed by the four boxes with two magnets. So is the determiner *jeder\** of (27), which is
+(25) applied to the sum of its restrictor, here all five boxes. -/
+theorem jeweils_accepts_magnets :
+    () ∈ tolerant (· ≤ ·) (fun z ↦ {_u | ∀ b ∈ z, hasTwoMagnets b}) (Finset.univ : Finset Box) :=
+  ⟨{0, 1, 2, 3}, Finset.subset_univ _, isBot_iff_eq_bot.not.2 (by decide), by decide⟩
 
 /-- The speakers who reject *jeweils* in the scenario are those whose tolerance is the identity,
 for whom it coincides with *jeder*. -/
 theorem jeweils_identity_rejects_magnets :
-    ¬ jeweilsSem hasTwoMagnets Tolerance.identity Finset.univ () :=
-  λ h => jeder_rejects_magnets
-    ((distMaximal_iff_identity Finset.univ_nonempty).mpr h)
-
-/-- The hypothetical exception-tolerant determiner *jeder\** of (27): tolerant distribution
-of the scope over a subplurality of the restrictor. -/
-def distTolerantQuant {Atom W : Type*} (restrictor scope : Atom → W → Prop)
-    (tol : Tolerance Atom) (x : Finset Atom) (w : W) : Prop :=
-  ∃ z ⊆ x, z.Nonempty ∧ tol.rel z x ∧ (∀ a ∈ z, restrictor a w) ∧ ∀ a ∈ z, scope a w
-
-/-- *jeder\** accepts the scenario as *jeweils* does: the framework's tools do not predict its
-absence. -/
-theorem jederStar_accepts_magnets :
-    distTolerantQuant (λ _ _ => True) hasTwoMagnets Tolerance.trivial Finset.univ () :=
-  ⟨{0, 1, 2, 3}, by decide, by decide, by decide, λ _ _ => trivial, by decide⟩
+    () ∉ tolerant (· = ·) (fun z ↦ {_u | ∀ b ∈ z, hasTwoMagnets b}) (Finset.univ : Finset Box) := by
+  rw [tolerant_eq (isBot_iff_eq_bot.not.2 (by decide))]
+  exact jeder_rejects_magnets
 
 end HaslingerEtAl2025

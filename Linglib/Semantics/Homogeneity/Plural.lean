@@ -2,38 +2,95 @@ module
 
 public import Linglib.Semantics.Homogeneity.Usable
 public import Linglib.Semantics.Supervaluation
+public import Mathlib.Order.UpperLower.Principal
 
 /-!
-# Homogeneity: the plural instantiation
+# Homogeneity: plural predication
 
-Plural definite predication as the atoms-instantiation of the homogeneity
-substrate, after [kriz-2016]: `barePlural P x` is the trivalent sentence
-"the Xs are P" (supervaluation over the atoms of the plurality), and
-`allPlural P x` is its gap removal — *all*'s semantic contribution.
-Originates with [kriz-2016]; consumed by `Studies/Kriz2016.lean`,
-`Studies/BarLev2021.lean`, and `Studies/KrizSpector2021.lean`.
+A plural predication has many readings, one for each choice of the parts of the plurality that
+count as close enough to it, as Križ and Spector propose. For every upper set `U` containing the
+plurality `x`, the predicate is read as holding of some non-bottom part of `x` in `U`. The
+readings run from the universal one, where `U` holds only what lies above `x`, to the
+existential one, where `U` holds everything. A sentence is therefore true on all of its readings
+when the predicate holds of `x` and false on all of them when it holds of no part of `x`. On a
+distributive predicate this is Križ's trivalent plural `barePlural`, supervaluation over the
+atoms, and `allPlural` removes its gap, which is the contribution of *all*.
 
 ## Main definitions
 
-* `barePlural`: the bare plural sentence as a trivalent proposition.
-* `allPlural`: the *all*-sentence, pointwise meta-assertion of `barePlural`.
+* `readings Q x`: the readings of predicating `Q` of the plurality `x`.
+* `barePlural`, `allPlural`: the bare plural sentence and the *all*-sentence.
 
 ## Main results
 
-* `allPlural_prevents_nonmax`, `allPlural_blocked_by_wide_issue`,
-  `allPlural_exceptions_unmentionable`: *all* forces literal truth and
-  blocks non-maximal use.
-* `barePlural_eq_superTrue`: plural predication is supervaluation over
-  atoms.
+* `sInter_readings`, `sUnion_readings`: true on every reading iff true of the whole, and on some
+  reading iff true of some part.
+* `readings_of_minimal`: an atom has a single reading.
+* `barePlural_eq_true_iff`, `barePlural_eq_false_iff`: the bare plural is true where every
+  reading of the distributive predicate is, and false where none is.
+* `allPlural_prevents_nonmax`: *all* forces literal truth and blocks non-maximal use.
+
+## Implementation notes
+
+The readings are indexed by upper sets of the whole order, not by sets of parts of `x`, since only
+the trace of `U` on the parts of `x` matters. Križ and Spector's convex candidate domains,
+Haslinger and colleagues' tolerance relations and Bar-Lev's subdomain alternatives are all
+choices of `U`. Bottom elements are not parts, so that the vacuous truth of a distributive
+predicate at the empty plurality yields no reading.
 
 ## References
 
-* [M. Križ, *Homogeneity, Non-Maximality, and All*][kriz-2016]
+* [kriz-spector-2021]
+* [kriz-2016]
+* [haslinger-etal-2025]
+* [bar-lev-2021]
+* [fine-1975]
 -/
 
 @[expose] public section
 
 namespace Homogeneity
+
+/-! ### The readings of a plural predication -/
+
+section Readings
+
+variable {α W : Type*} [PartialOrder α] {Q : α → Set W} {x : α}
+
+/-- The readings of predicating `Q` of `x` ([kriz-spector-2021]'s (21)) say, for each upper set
+`U` containing `x`, that some non-bottom part of `x` in `U` is `Q`. -/
+def readings (Q : α → Set W) (x : α) : Set (Set W) :=
+  {p | ∃ U : UpperSet α, x ∈ U ∧ p = {w | ∃ z ∈ U, z ≤ x ∧ ¬ IsBot z ∧ w ∈ Q z}}
+
+/-- True on every reading is true of the whole. -/
+theorem sInter_readings (hx : ¬ IsBot x) : ⋂₀ readings Q x = Q x := by
+  ext w
+  refine ⟨fun h ↦ ?_, fun hw _ ⟨U, hxU, hp⟩ ↦ hp ▸ ⟨x, hxU, le_rfl, hx, hw⟩⟩
+  obtain ⟨z, hxz, hzx, -, hz⟩ := h _ ⟨UpperSet.Ici x, UpperSet.mem_Ici_iff.2 le_rfl, rfl⟩
+  exact le_antisymm hzx hxz ▸ hz
+
+/-- True on some reading is true of some non-bottom part. -/
+theorem sUnion_readings : ⋃₀ readings Q x = {w | ∃ z ≤ x, ¬ IsBot z ∧ w ∈ Q z} := by
+  ext w
+  refine ⟨fun ⟨_, ⟨U, _, hp⟩, hw⟩ ↦ ?_, fun ⟨z, hzx, hz, hw⟩ ↦
+    ⟨_, ⟨⊥, trivial, rfl⟩, z, trivial, hzx, hz, hw⟩⟩
+  obtain ⟨z, -, hzx, hz, hw⟩ := hp ▸ hw
+  exact ⟨z, hzx, hz, hw⟩
+
+/-- An atom has a single reading, since nothing short of it is a part. -/
+theorem readings_of_minimal (hx : Minimal (¬ IsBot ·) x) : readings Q x = {Q x} := by
+  have key (U : UpperSet α) (hxU : x ∈ U) :
+      {w | ∃ z ∈ U, z ≤ x ∧ ¬ IsBot z ∧ w ∈ Q z} = Q x := by
+    ext w
+    simp only [Set.mem_ofPred_eq]
+    grind [Minimal, le_antisymm]
+  ext p
+  refine ⟨fun ⟨U, hxU, hp⟩ ↦ hp ▸ key U hxU, fun hp ↦ ⟨⊥, trivial, ?_⟩⟩
+  rw [hp, key ⊥ trivial]
+
+end Readings
+
+/-! ### The bare plural and *all* -/
 
 variable {Atom W : Type*} (P : Atom → W → Prop) [∀ a w, Decidable (P a w)]
   (x : Finset Atom)
@@ -128,5 +185,22 @@ theorem barePlural_eq_superTrue (hne : x.Nonempty) (w : W) :
 /-- An *all*-sentence is never indefinite. -/
 theorem allPlural_ne_indet (w : W) : allPlural P x w ≠ .indet := by
   rcases isBivalent_allPlural P x w with h | h <;> simp [h]
+
+variable {P x} in
+/-- The bare plural is true where every reading of the distributive predicate is. -/
+theorem barePlural_eq_true_iff (hx : x.Nonempty) (w : W) :
+    barePlural P x w = .true ↔ w ∈ ⋂₀ readings (fun z ↦ {w | ∀ a ∈ z, P a w}) x := by
+  rw [sInter_readings (by simpa [isBot_iff_eq_bot, Finset.nonempty_iff_ne_empty] using hx)]
+  simp [barePlural, Trivalent.supervaluation_eq_true_iff]
+
+variable {P x} in
+/-- The bare plural is false where no reading of the distributive predicate is true. -/
+theorem barePlural_eq_false_iff (hx : x.Nonempty) (w : W) :
+    barePlural P x w = .false ↔ w ∉ ⋃₀ readings (fun z ↦ {w | ∀ a ∈ z, P a w}) x := by
+  simp only [sUnion_readings, barePlural, Trivalent.supervaluation_eq_false_iff, hx, true_and,
+    isBot_iff_eq_bot, Finset.bot_eq_empty, ← Finset.nonempty_iff_ne_empty, Set.mem_ofPred_eq,
+    not_exists, not_and]
+  exact ⟨fun h z hzx ⟨a, ha⟩ hz ↦ h a (hzx ha) (hz a ha), fun h a ha hPa ↦
+    h {a} (Finset.singleton_subset_iff.2 ha) (Finset.singleton_nonempty a) (by simpa using hPa)⟩
 
 end Homogeneity

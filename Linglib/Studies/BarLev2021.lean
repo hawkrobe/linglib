@@ -11,9 +11,11 @@ public import Linglib.Data.Examples.BarLev2021
 
 Bar-Lev derives homogeneity as an implicature. A plural definite means existential
 pluralization, that some atom of the plurality in a domain has the property, and its alternatives
-replace the domain by its subsets. Exhaustifying over them gives the universal reading, while
-under negation exhaustification is vacuous. Pruning the alternatives to subdomains of a fixed size
-gives the threshold readings of non-maximality, the question the context raises selects among
+replace the domain by its subsets; each alternative is one of the readings of the plural
+predication (`subdomainAlts_subset_readings`). Exhaustifying over them gives the universal
+reading, while under negation exhaustification is vacuous. Pruning the alternatives to subdomains
+of a fixed size gives the threshold readings of non-maximality, which are readings of the plural
+predication as well (`readings_subset_readings`); the question the context raises selects among
 them, and a world is gappy when it verifies the reading one question selects and falsifies
 another's.
 
@@ -117,6 +119,20 @@ theorem subdomainAlts_eq : subdomainAlts D x P = subDisjs (x ∩ D) (atom P) := 
     have hSx := Finset.inter_eq_right.2 (hS.trans Finset.inter_subset_left)
     exact ⟨S, hS.trans Finset.inter_subset_right, by rwa [hSx], by rw [existsPlural_eq_disj, hSx]⟩
 
+/-- The subdomain alternatives are readings of the distributive plural predication: the
+alternative for `D'` reads the predicate over the parts of `x` that meet `D'`. -/
+theorem subdomainAlts_subset_readings :
+    subdomainAlts D x P ⊆ Homogeneity.readings (fun z ↦ {w | ∀ a ∈ z, P a w}) x := by
+  rintro q ⟨D', -, hne, rfl⟩
+  refine ⟨⟨{z | (z ∩ D').Nonempty}, fun _ _ h ⟨c, hc⟩ ↦ ⟨c, Finset.mem_inter.2
+    ⟨h (Finset.mem_inter.1 hc).1, (Finset.mem_inter.1 hc).2⟩⟩⟩, hne, Set.ext fun w ↦ ⟨?_, ?_⟩⟩
+  · rintro ⟨a, hax, haD, hP⟩
+    exact ⟨{a}, ⟨a, by simpa using haD⟩, Finset.singleton_subset_iff.2 hax,
+      isBot_iff_eq_bot.not.2 (Finset.singleton_ne_empty a), by simpa using hP⟩
+  · rintro ⟨z, ⟨b, hb⟩, hzx, -, hP⟩
+    rw [Finset.mem_inter] at hb
+    exact ⟨b, hzx hb.1, hb.2, hP b hb.1⟩
+
 variable (D x P) in
 /-- Every atom laughs alone at some world, and all laugh together at some world. -/
 structure Separating : Prop where
@@ -185,6 +201,21 @@ theorem prunedAlts_eq {m : ℕ} : prunedAlts D x P m = subDisjsOfCard (x ∩ D) 
     have hSx := Finset.inter_eq_right.2 (hS.trans Finset.inter_subset_left)
     exact ⟨S, hS.trans Finset.inter_subset_right, by rwa [hSx], by rw [existsPlural_eq_disj, hSx]⟩
 
+variable (D x P) in
+/-- The readings of *the kids laughed* are the maximal one and the pruned ones. -/
+def readings : Set (Set W) :=
+  {q | ∃ m, 0 < m ∧ m ≤ (x ∩ D).card ∧ q = exhIEII (prunedAlts D x P m) (existsPlural D x P)}
+
+variable (D x P) in
+/-- The reading a partition selects is the strongest reading it decides. -/
+def IsReading (Q : Setoid W) (q : Set W) : Prop :=
+  q ∈ readings D x P ∧ Q.Decides q ∧ ∀ r ∈ readings D x P, Q.Decides r → q ⊆ r
+
+/-- A partition selects at most one reading. -/
+theorem IsReading.unique {Q : Setoid W} {q r : Set W} (hq : IsReading D x P Q q)
+    (hr : IsReading D x P Q r) : q = r :=
+  subset_antisymm (hq.2.2 r hr.1 hr.2.1) (hr.2.2 q hq.1 hq.2.1)
+
 section Pruning
 
 variable [∀ a w, Decidable (P a w)]
@@ -226,11 +257,6 @@ theorem exhIEII_prunedAlts (h : Separating D x P) {m : ℕ} (hm : 0 < m)
   change (x ∩ D).card < m + count D x P w ↔ (x ∩ D).card + 1 - m ≤ count D x P w
   omega
 
-variable (D x P) in
-/-- The readings of *the kids laughed* are the maximal one and the pruned ones. -/
-def readings : Set (Set W) :=
-  {q | ∃ m, 0 < m ∧ m ≤ (x ∩ D).card ∧ q = exhIEII (prunedAlts D x P m) (existsPlural D x P)}
-
 /-- The readings are the thresholds from one to the whole plurality. -/
 theorem mem_readings_iff (h : Separating D x P) {q : Set W} :
     q ∈ readings D x P ↔ ∃ k, 0 < k ∧ k ≤ (x ∩ D).card ∧ q = atLeast D x P k := by
@@ -242,6 +268,26 @@ theorem mem_readings_iff (h : Separating D x P) {q : Set W} :
     rw [exhIEII_prunedAlts h (by omega) (by omega)]
     congr 1; omega
 
+/-- The pruned readings are readings of the plural predication too: the threshold `k` reads the
+predicate over the parts of `x` with at least `k` atoms in the domain. -/
+theorem readings_subset_readings (h : Separating D x P) :
+    readings D x P ⊆ Homogeneity.readings (fun z ↦ {w | ∀ a ∈ z, P a w}) x := by
+  intro q hq
+  obtain ⟨k, hk, hkn, rfl⟩ := (mem_readings_iff h).1 hq
+  refine ⟨⟨{z | k ≤ (z ∩ D).card}, fun _ _ hzz hz ↦ hz.trans
+    (Finset.card_le_card (Finset.inter_subset_inter_right hzz))⟩, hkn, Set.ext fun w ↦ ⟨?_, ?_⟩⟩
+  · intro hw
+    refine ⟨(x ∩ D).filter (P · w), ?_, (Finset.filter_subset _ _).trans Finset.inter_subset_left,
+      isBot_iff_eq_bot.not.2 (Finset.nonempty_iff_ne_empty.1 (Finset.card_pos.1 (hk.trans_le hw))),
+      fun a ha ↦ (Finset.mem_filter.1 ha).2⟩
+    show k ≤ ((x ∩ D).filter (P · w) ∩ D).card
+    rw [Finset.inter_eq_left.2 ((Finset.filter_subset _ _).trans Finset.inter_subset_right)]
+    exact hw
+  · rintro ⟨z, hz, hzx, -, hP⟩
+    refine hz.trans (Finset.card_le_card fun a ha ↦ ?_)
+    rw [Finset.mem_inter] at ha
+    exact Finset.mem_filter.2 ⟨Finset.mem_inter.2 ⟨hzx ha.1, ha.2⟩, hP a ha.1⟩
+
 /-- Pruning only weakens, the maximal reading entailing every pruned one. -/
 theorem exhIEII_subdomainAlts_subset_exhIEII_prunedAlts (h : Separating D x P)
     (hne : (x ∩ D).Nonempty) {m : ℕ} (hm : 0 < m) (hmn : m ≤ (x ∩ D).card) :
@@ -251,17 +297,6 @@ theorem exhIEII_subdomainAlts_subset_exhIEII_prunedAlts (h : Separating D x P)
   exact atLeast_antitone (by omega)
 
 /-! ### Relevance and gappiness -/
-
-variable (D x P) in
-/-- The reading a partition selects is the strongest reading it decides. -/
-def IsReading (Q : Setoid W) (q : Set W) : Prop :=
-  q ∈ readings D x P ∧ Q.Decides q ∧ ∀ r ∈ readings D x P, Q.Decides r → q ⊆ r
-
-omit [∀ a w, Decidable (P a w)] in
-/-- A partition selects at most one reading. -/
-theorem IsReading.unique {Q : Setoid W} {q r : Set W} (hq : IsReading D x P Q q)
-    (hr : IsReading D x P Q r) : q = r :=
-  subset_antisymm (hq.2.2 r hr.1 hr.2.1) (hr.2.2 q hq.1 hq.2.1)
 
 /-- Given the polar question whether at least `k` of the kids laughed, *the kids laughed* means
 that at least `k` did, provided every number of laughers is realized at some world. -/
