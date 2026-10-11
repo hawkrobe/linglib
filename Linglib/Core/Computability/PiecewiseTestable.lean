@@ -7,7 +7,7 @@ module
 
 public import Mathlib.Computability.MyhillNerode
 public import Mathlib.Data.Set.Finite.List
-public import Linglib.Core.Relation.FactorsThroughOn
+public import Linglib.Core.Logic.Function.FactorsThrough
 
 /-!
 # Piecewise testable languages

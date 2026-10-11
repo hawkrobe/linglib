@@ -6,7 +6,7 @@ Authors: Robert Hawkins
 module
 
 public import Mathlib.Tactic.FinCases
-public import Linglib.Core.Relation.FactorsThroughOn
+public import Linglib.Core.Logic.Function.FactorsThrough
 public import Linglib.Phonology.OptimalityTheory.Tableau
 public import Linglib.Phonology.Prosody.Phrase
 public import Linglib.Semantics.Exhaustification.Excluder
@@ -20,7 +20,7 @@ public import Linglib.Data.Examples.HartmannZimmermann2004
 /-!
 # Hartmann and Zimmermann (2004): Focus strategies in Chadic
 
-This file formalizes [hartmann-zimmermann-2004]'s account of Tangale, which marks focus by four
+This file formalizes Hartmann and Zimmermann's account of Tangale, which marks focus by four
 devices conditioned on subjecthood, aspect and transitivity: obligatory postverbal movement for
 subjects, the suffix *-i* for intransitive predicate focus, a prosodic boundary, audible as
 blocked vowel elision and left-line delinking, for perfective transitive foci, and nothing at
@@ -29,25 +29,24 @@ obligatory, and the boundary underdetermines the focus extent
 (`boundary_underdetermines_extent`): verb, VP and object focus are string- and pitch-identical,
 and the particle *núm* 'only' associates with any of the three from one fixed DP-adjacent
 position, three contrast-set resolutions of one string (`num_readings_injOn`). The boundary
-itself is derived: focus alignment dominating phrasal economy, after [truckenbrodt-1999], places
-the φ-edge exactly in the focused cells (`focused_parse_separates`), and [kidda-1985]'s elision
-cascade makes it audible.
+itself is derived: focus alignment dominating phrasal economy, after Truckenbrodt, places the
+φ-edge exactly in the focused cells (`focused_parse_separates`), and Kidda's elision cascade
+makes it audible.
 
 ## Implementation notes
 
 Realisation uses the shared `Reflex` vocabulary, and the paper's strategy
 labels are read off the reflex shape where `marking_matches_rows` pins the configurations to the
 data rows. Configurations carry the fragment's tense–aspect type: the perfective rows are
-[kidda-1985]'s singular perfective and the paper's progressive is the fragment's continuous
+Kidda's singular perfective and the paper's progressive is the fragment's continuous
 (preposed *né*, transcribed *n* by the paper), with the paradigm restriction in the
 well-formedness predicate. The paper's fn. 6 notes that *-i* does not occur with all
 intransitive verbs; the realisation idealises it as the intransitive perfective strategy. The
-example numbers and sections were checked against the journal version of the paper,
-[hartmann-zimmermann-2007-tangale].
+example numbers and sections were checked against the journal version of the paper.
 
 ## TODO
 
-* The interleaved elision-feeding-tone-shift derivations of [kidda-1985] (34) on lexical forms.
+* The interleaved elision-feeding-tone-shift derivations of Kidda's (34) on lexical forms.
 * The paper's two solutions (§6): the prosodic-boundary account against the subjects-versus-
   non-subjects account as rival theories.
 
@@ -84,9 +83,8 @@ structure Config where
   transitive : Bool
   deriving DecidableEq, Repr
 
-/-- The paper's paradigm: object focus needs a transitive predicate,
-and only the perfective and continuous (the paper's progressive)
-frames are documented. -/
+/-- A configuration is in the paper's paradigm when object focus has a transitive predicate and
+the frame is perfective or continuous (the paper's progressive), the only two documented. -/
 def Config.WF (c : Config) : Prop :=
   (c.focused = .object → c.transitive) ∧
   (c.tam = .perfective ∨ c.tam = .continuous)
@@ -94,11 +92,10 @@ def Config.WF (c : Config) : Prop :=
 instance (c : Config) : Decidable c.WF :=
   inferInstanceAs (Decidable (_ ∧ _))
 
-/-- The overt reflexes: subjects surface displaced ((17b));
-intransitive predicate focus bears *-i* ((24b)); transitive perfective
-foci get the boundary after the verb ((25a–c)); progressive foci
-receive nothing ((31)/(32a–c)). Untested frames fall to the unmarked
-default, guarded by `Config.WF`. -/
+/-- `realize c` is the set of overt reflexes of the configuration `c`. Subjects surface
+displaced ((17b)), intransitive predicate focus bears *-i* ((24b)), transitive perfective foci
+get the boundary after the verb ((25a–c)), and progressive foci receive nothing ((31)/(32a–c)).
+Untested frames fall to the unmarked default, guarded by `Config.WF`. -/
 def realize : Config → Finset (Reflex Focused)
   | ⟨.subject, _, _⟩        => {.displacement .subject}
   | ⟨f, .perfective, false⟩ => {.morpheme f [Tangale.focusSuffix]}
@@ -120,8 +117,8 @@ theorem progressive_nonsubject_unmarked (c : Config)
   cases ha
   cases f <;> first | exact absurd rfl hs | rfl
 
-/-- Focus marking is not obligatory: a well-formed focus configuration
-with no overt reflex — (32a), object focus in the progressive. -/
+/-- Focus marking is not obligatory, since object focus in the progressive, (32a), is a
+well-formed focus configuration with no overt reflex. -/
 theorem focus_marking_not_obligatory :
     ∃ c : Config, c.WF ∧ ¬ (realize c).Nonempty :=
   ⟨⟨.object, .continuous, true⟩, ⟨fun _ ↦ rfl, Or.inr rfl⟩, Finset.not_nonempty_empty⟩
@@ -133,15 +130,16 @@ theorem tangale_refutes_perceptibility :
     ¬ ∀ c, (realize c).Nonempty :=
   fun h ↦ Finset.not_nonempty_empty (h ⟨.object, .continuous, true⟩)
 
-/-- The boundary underdetermines the focus extent: on the transitive
-perfective non-subject cells, `focused` does not factor through the
-reflexes — (25a–c) are string- and pitch-identical. -/
+/-- The boundary underdetermines the focus extent. On the transitive perfective non-subject
+cells `focused` does not factor through the reflexes, since (25a–c) are string- and
+pitch-identical. -/
 theorem boundary_underdetermines_extent :
-    ¬ Function.FactorsThroughOn Config.focused realize
-        {c | c.tam = .perfective ∧ c.transitive ∧ c.focused ≠ .subject} :=
-  Function.not_factorsThroughOn_iff_exists_witness.mpr
-    ⟨⟨.verb, .perfective, true⟩, ⟨.object, .perfective, true⟩,
-      ⟨rfl, rfl, nofun⟩, ⟨rfl, rfl, nofun⟩, rfl, nofun⟩
+    ¬ Function.FactorsThrough
+        (fun c : {c : Config // c.tam = .perfective ∧ c.transitive ∧ c.focused ≠ .subject} ↦
+          c.1.focused)
+        (fun c ↦ realize c.1) :=
+  fun h ↦ absurd (@h ⟨⟨.verb, .perfective, true⟩, rfl, rfl, nofun⟩
+    ⟨⟨.object, .perfective, true⟩, rfl, rfl, nofun⟩ rfl) nofun
 
 /-! ## Deriving the boundary ([truckenbrodt-1999]-style alignment)
 
@@ -163,8 +161,8 @@ def wrapped : Prosody.Tree := .node .iota [.node .ph [ω, ω]]
 def separated : Prosody.Tree :=
   .node .iota [.node .ph [ω], .node .ph [ω]]
 
-/-- The `(offset, size)` leaf-spans of the φ nodes, in left-to-right order: the offset counts
-leaves strictly to the node's left, the size its own leaves. -/
+/-- `phSpans t` lists the `(offset, size)` leaf-spans of the φ nodes of `t` from left to right,
+where the offset counts the leaves strictly to the node's left and the size its own leaves. -/
 def phSpans : Prosody.Tree → List (ℕ × ℕ) := go 0 where
   go (off : ℕ) : Prosody.Tree → List (ℕ × ℕ)
     | .node a cs =>
@@ -173,22 +171,22 @@ def phSpans : Prosody.Tree → List (ℕ × ℕ) := go 0 where
     | [] => []
     | c :: cs => go off c ++ goList (off + RoseTree.numLeaves c) cs
 
-/-- ALIGN-Focus: violated when no φ-edge sits at the focus's left edge
-(leaf offset 1, the object). -/
+/-- ALIGN-Focus is violated when no φ-edge sits at the focus's left edge (leaf offset 1, the
+object). -/
 def alignFocus : Constraint Prosody.Tree :=
   .binary (fun t ↦ ¬ ∃ s ∈ phSpans t, s.1 = 1)
 
-/-- Phrasal economy: one violation per φ. -/
+/-- Phrasal economy assigns one violation per φ. -/
 def starPhi : Constraint Prosody.Tree := fun t ↦ (phSpans t).length
 
-/-- Object focus: alignment dominates economy, and the separated parse
-wins — the derived φ-edge after the verb. -/
+/-- Under object focus alignment dominates economy and the separated parse wins, which derives
+the φ-edge after the verb. -/
 theorem focused_parse_separates :
     (Tableau.ofRanking [wrapped, separated] [alignFocus, starPhi]).optimal
       = {separated} := by decide
 
-/-- All-new: economy decides alone and the wrapped parse wins — no
-boundary, the elision cascade applies. -/
+/-- In an all-new utterance economy decides alone and the wrapped parse wins, so there is no
+boundary and the elision cascade applies. -/
 theorem neutral_parse_wraps :
     (Tableau.ofRanking [wrapped, separated] [starPhi]).optimal
       = {wrapped} := by decide
@@ -198,10 +196,9 @@ blocked there and applies in the wrapped one. -/
 theorem separated_edge_wrapped_internal :
     (0, 2) ∉ phSpans separated ∧ (0, 2) ∈ phSpans wrapped := by decide
 
-/-- The prosodic reflex is audible: the boundary-blocked perfective
-form differs from the phrase-medial elided form — [kidda-1985]'s
-elision cascade is what makes `Reflex.boundary` perceptible in the
-(25) cells. -/
+/-- The prosodic reflex is audible, since the boundary-blocked perfective form differs from the
+phrase-medial elided form. [kidda-1985]'s elision cascade is what makes `Reflex.boundary`
+perceptible in the (25) cells. -/
 theorem prosodic_reflex_audible :
     Tangale.blockedForm ≠ Tangale.elidedForm :=
   Tangale.boundary_audible.1
@@ -230,8 +227,8 @@ def readBookP : Set NumWorld := {w | w.readBook}
 /-- The alternative facts, as an indexed family. -/
 def alt : Fin 3 → Set NumWorld := ![boughtBookP, boughtShirtP, readBookP]
 
-/-- The alternatives are irredundant: each can hold while the others
-fail — one world per free Boolean field. -/
+/-- The alternatives are irredundant, since each can hold while the others fail, with one world
+per free Boolean field. -/
 theorem alt_irredundant : Irredundant alt := by
   intro i
   fin_cases i
@@ -242,33 +239,32 @@ theorem alt_irredundant : Irredundant alt := by
   · exact ⟨⟨false, false, true⟩, rfl, fun j hj ↦ by
       fin_cases j <;> first | exact absurd rfl hj | exact Bool.false_ne_true⟩
 
-/-- The contrast sets by association extent: object ((36a),
-alternatives to the book), VP ((36b), 'I did nothing else'), verb
-((36c), 'but I have not read it yet'). Subjects are outside the (36)
-paradigm; the arm shares the verb value and is never queried. -/
+/-- `extAlts x` is the contrast set of the association extent `x`, for the object ((36a),
+alternatives to the book), the VP ((36b), 'I did nothing else') and the verb ((36c), 'but I have
+not read it yet'). Subjects are outside the (36) paradigm; the arm shares the verb value and is
+never queried. -/
 def extAlts : Focused → Finset (Fin 3)
   | .object => {0, 1}
   | .vp     => {0, 1, 2}
   | _       => {0, 2}
 
-/-- The (36) readings: the exclusion asserted by *only* over the resolved
-contrast set, with 'bought the book' as prejacent. -/
+/-- The (36) reading of an extent is the exclusion asserted by *only* over the resolved contrast
+set, with 'bought the book' as prejacent. -/
 def numReading (x : Focused) : Set NumWorld :=
   excludes (alt '' ↑(extAlts x)) (alt 0)
 
-/-- One surface string, three semantically distinct readings: over a
-irredundant alternative family, *only* is injective in its
-resolution (`Irredundant.excludes_injOn`), and the three extents
-resolve to three different contrast sets. -/
+/-- One surface string has three semantically distinct readings. Over an irredundant alternative
+family *only* is injective in its resolution (`Irredundant.excludes_injOn`), and the three
+extents resolve to three different contrast sets. -/
 theorem num_readings_injOn : Set.InjOn numReading {.verb, .vp, .object} :=
   (alt_irredundant.excludes_injOn 0).comp
     (by rintro a (rfl | rfl | rfl) b (rfl | rfl | rfl) h <;>
       first | rfl | exact absurd h (by decide))
     (by rintro a (rfl | rfl | rfl) <;> decide)
 
-/-- The VP association is the strongest reading: 'I did nothing else'
-entails both 'I bought nothing else' and 'I did nothing else to the
-book' — `excludes_antitone` over the contrast-set inclusions. -/
+/-- The VP association is the strongest reading, since 'I did nothing else' entails both 'I
+bought nothing else' and 'I did nothing else to the book', by `excludes_antitone` over the
+contrast-set inclusions. -/
 theorem vp_reading_strongest :
     numReading .vp ⊆ numReading .object ∧ numReading .vp ⊆ numReading .verb :=
   ⟨excludes_antitone (Set.image_mono (Finset.coe_subset.mpr (by decide))) _,
@@ -310,9 +306,8 @@ def configRows :
    (⟨.vp, .continuous, true⟩, Examples.ex32b),
    (⟨.verb, .continuous, true⟩, Examples.ex32c)]
 
-/-- Every focus row's strategy label is read off `realize`'s reflexes:
-the conditioning function is derived from the data, not stipulated
-beside it. -/
+/-- Every focus row's strategy label is read off `realize`'s reflexes, so the conditioning
+function is derived from the data, not stipulated beside it. -/
 theorem marking_matches_rows :
     ∀ p ∈ configRows,
       p.2.feature? "strategy" = some (strategyLabel p.1) ∧

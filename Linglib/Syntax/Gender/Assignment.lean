@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Core.Relation.FactorsThroughOn
+public import Linglib.Core.Logic.Function.FactorsThrough
 public import Linglib.Syntax.Gender.Basic
 
 /-!
@@ -27,7 +27,7 @@ the core determines gender by meaning as a theorem rather than a stipulation.
 
 * `Gender.AssignmentSystem.assign_of_formal`: a formal rule decides only in the semantic
   residue.
-* `Gender.AssignmentSystem.factorsThroughOn_semanticCore`: on the semantic core, gender is
+* `Gender.AssignmentSystem.factorsThrough_semanticCore`: on the semantic core, gender is
   a function of meaning.
 * `Gender.AssignmentSystem.factorsThrough_of_isStrictSemantic`: in a strict semantic system,
   gender is a function of meaning everywhere.
@@ -49,8 +49,8 @@ functions to an optional gender, so their order of application is fixed by const
 
 namespace Gender
 
-/-- An assignment system: semantic rules reading a noun's meaning, formal rules reading its
-form, and the residue gender. -/
+/-- An assignment system consists of semantic rules reading a noun's meaning, formal rules
+reading its form, and the residue gender. -/
 structure AssignmentSystem (σ φ G : Type*) where
   /-- The semantic rules, as a partial function of the meaning. -/
   semantic : σ → Option G
@@ -63,15 +63,15 @@ namespace AssignmentSystem
 
 variable {N σ φ G : Type*} (A : AssignmentSystem σ φ G) (sem : N → σ) (form : N → φ)
 
-/-- The gender of a noun: the semantic rules first, the formal rules on the semantic residue,
-the residue gender last. -/
+/-- The gender of a noun is decided by the semantic rules first, then by the formal rules on the
+semantic residue, and by the residue gender last. -/
 def assign (n : N) : G := ((A.semantic (sem n)).or (A.formal (form n))).getD A.residue
 
 theorem assign_of_semantic {n : N} {g : G} (h : A.semantic (sem n) = some g) :
     A.assign sem form n = g := by
   simp [assign, h]
 
-/-- Semantic rules take precedence: a formal rule decides only in the semantic residue. -/
+/-- Semantic rules take precedence, so a formal rule decides only in the semantic residue. -/
 theorem assign_of_formal {n : N} {g : G} (h₁ : A.semantic (sem n) = none)
     (h₂ : A.formal (form n) = some g) : A.assign sem form n = g := by
   simp [assign, h₁, h₂]
@@ -85,18 +85,20 @@ def IsStrictSemantic : Prop := ∀ x, A.formal x = none
 
 /-- In a strict semantic system the gender is a function of the meaning. -/
 theorem factorsThrough_of_isStrictSemantic (h : A.IsStrictSemantic) :
-    Function.FactorsThrough (A.assign sem form) sem := λ a b hab => by
+    Function.FactorsThrough (A.assign sem form) sem := fun a b hab ↦ by
   simp [assign, hab, h (form a), h (form b)]
 
-/-- The semantic core: the nouns the semantic rules cover. -/
+/-- The semantic core is the set of nouns the semantic rules cover. -/
 def semanticCore : Set N := {n | (A.semantic (sem n)).isSome}
 
 /-- On the semantic core, gender is a function of meaning. -/
-theorem factorsThroughOn_semanticCore :
-    Function.FactorsThroughOn (A.assign sem form) sem (A.semanticCore sem) :=
-  λ _ b _ hb hab => by
-    obtain ⟨g, hg⟩ := Option.isSome_iff_exists.1 hb
-    simp [assign, hab, hg]
+theorem factorsThrough_semanticCore :
+    ((A.semanticCore sem).domRestrict (A.assign sem form)).FactorsThrough
+      ((A.semanticCore sem).domRestrict sem) :=
+  fun a b hab ↦ by
+    obtain ⟨g, hg⟩ := Option.isSome_iff_exists.1 b.2
+    have hab' : sem a = sem b := hab
+    simp [assign, hab', hg]
 
 end AssignmentSystem
 

@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Core.Relation.FactorsThroughOn
+public import Linglib.Core.Logic.Function.FactorsThrough
 public import Linglib.Logic.Team.Definability
 public import Mathlib.Data.Set.Restrict
 
@@ -51,7 +51,8 @@ variable {α β γ : Type*}
 /-! ### The atoms as team properties -/
 
 /-- The dependence atom holds of a team on which `g` is a function of `f`. -/
-def dep (f : α → β) (g : α → γ) : TeamProperty α := {T | Function.FactorsThroughOn g f T}
+def dep (f : α → β) (g : α → γ) : TeamProperty α :=
+  {T | ((T : Set α).domRestrict g).FactorsThrough ((T : Set α).domRestrict f)}
 
 /-- The inclusion atom holds of a team on which every value of `f` is a value of `g`. -/
 def incl (f g : α → β) : TeamProperty α := {T | ∀ a ∈ T, ∃ b ∈ T, f a = g b}
@@ -59,7 +60,7 @@ def incl (f g : α → β) : TeamProperty α := {T | ∀ a ∈ T, ∃ b ∈ T, f
 variable {f : α → β} {g : α → γ} {T T' : Finset α}
 
 theorem mem_dep : T ∈ dep f g ↔ ∀ a ∈ T, ∀ b ∈ T, f a = f b → g a = g b :=
-  ⟨fun h _ ha _ hb ↦ h ha hb, fun h _ _ ha hb ↦ h _ ha _ hb⟩
+  ⟨fun h a ha b hb hab ↦ @h ⟨a, ha⟩ ⟨b, hb⟩ hab, fun h a b hab ↦ h a a.2 b b.2 hab⟩
 
 @[simp] theorem mem_incl {f g : α → β} : T ∈ incl f g ↔ ∀ a ∈ T, ∃ b ∈ T, f a = g b := Iff.rfl
 
@@ -70,7 +71,7 @@ instance [DecidableEq β] (f g : α → β) (T : Finset α) : Decidable (T ∈ i
   inferInstanceAs (Decidable (∀ a ∈ T, ∃ b ∈ T, _))
 
 theorem isLowerSet_dep (f : α → β) (g : α → γ) : IsLowerSet (dep f g) :=
-  fun _ _ hT h ↦ Function.FactorsThroughOn.mono h (Finset.coe_subset.2 hT)
+  fun _ _ hT h a b hab ↦ @h ⟨a, hT a.2⟩ ⟨b, hT b.2⟩ hab
 
 theorem singleton_mem_dep (a : α) : {a} ∈ dep f g :=
   mem_dep.2 fun _ hx _ hy _ ↦ by rw [Finset.mem_singleton.1 hx, Finset.mem_singleton.1 hy]
@@ -142,7 +143,7 @@ instance [DecidableEq E] (T : Finset (V → E)) (Z : Finset V) (u : V) : Decidab
 of `Z` to the value of `u`. -/
 theorem dep_iff_exists [Nonempty E] :
     Dep T Z u ↔ ∃ h : (Z → E) → E, ∀ i ∈ T, i u = h ((Z : Set V).domRestrict i) :=
-  Function.factorsThroughOn_iff_exists_eqOn
+  (Function.factorsThrough_iff _).trans <| exists_congr fun _ ↦ funext_iff.trans Subtype.forall
 
 /-- Variation is the failure of dependence. -/
 @[simp] theorem not_dep : ¬ Dep T Z u ↔ Var T Z u := by

@@ -14,7 +14,7 @@ public import Mathlib.Data.Set.Finite.Range
 public import Linglib.Core.Computability.TransitionMonoid
 public import Linglib.Core.GroupTheory.Congruence.Hom
 public import Linglib.Core.Algebra.Group.Subquotient
-public import Linglib.Core.Relation.FactorsThroughOn
+public import Linglib.Core.Logic.Function.FactorsThrough
 
 /-!
 # The syntactic monoid of a language

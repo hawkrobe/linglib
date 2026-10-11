@@ -9,7 +9,7 @@ module
 
 public import Mathlib.Computability.Language
 public import Mathlib.Logic.Function.Basic
-public import Linglib.Core.Relation.FactorsThroughOn
+public import Linglib.Core.Logic.Function.FactorsThrough
 public import Linglib.Core.Data.List.DropRight
 public import Mathlib.Data.Fintype.Order
 public import Mathlib.Data.Set.Finite.Lemmas

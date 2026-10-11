@@ -2,8 +2,9 @@ module
 
 public import Mathlib.Data.Fintype.Pi
 public import Mathlib.Data.Set.Finite.Range
+public import Mathlib.Data.Setoid.Basic
 public import Mathlib.SetTheory.Cardinal.Finite
-public import Linglib.Core.Relation.FactorsThroughOn
+public import Linglib.Core.Logic.Function.FactorsThrough
 public import Linglib.Syntax.Gender.Basic
 
 /-!
@@ -34,8 +35,6 @@ German, or neither determines the other, as in Romanian or Lak.
   agreement map has values.
 * `Gender.card_range_le_prod`: the controller genders are at most the product over the
   targets of the target genders.
-* `Gender.agreementClasses_eq_ker_of_faithful`: when a faithful carrier mediates
-  agreement, the agreement classes are the fibres of the assignment.
 * `Gender.parallel_iff_ker_eq`, `Gender.convergent_iff_ker_lt`: the map between two numbers'
   target genders is the order of their kernels.
 * `Gender.Polar.card_le_two`, `Gender.Polar.parallel`: polarity forces two-valued features
@@ -84,15 +83,15 @@ abbrev targetGenders (agr : N → T → F) (t : T) : Set F := Set.range (agr · 
 theorem card_range_le_prod [Finite N] [Fintype T] (agr : N → T → F) :
     Nat.card (Set.range agr) ≤ ∏ t, Nat.card (targetGenders agr t) := by
   rw [← Nat.card_pi]
-  exact Nat.card_le_card_of_injective (λ f t => ⟨f.1 t, f.2.imp λ n hn => congrFun hn t⟩)
-    λ f g h => Subtype.ext (funext λ t => congrArg Subtype.val (congrFun h t))
+  exact Nat.card_le_card_of_injective (fun f t ↦ ⟨f.1 t, f.2.imp fun n hn ↦ congrFun hn t⟩)
+    fun f g h ↦ Subtype.ext (funext fun t ↦ congrArg Subtype.val (congrFun h t))
 
 /-- When noun-level agreement is the per-gender behaviour of a faithful carrier, the
-agreement classes are the fibres of the assignment: the genders are the agreement classes. -/
+agreement classes are the fibres of the assignment, so the genders are the agreement classes. -/
 theorem agreementClasses_eq_ker_of_faithful {G : Type*} {assign : N → G}
     {nounAgr : N → T → F} {agr : G → T → F} (med : nounAgr = agr ∘ assign)
     (faith : Faithful agr) : agreementClasses nounAgr = Setoid.ker assign :=
-  Setoid.ext λ a b => by
+  Setoid.ext fun a b ↦ by
     rw [Setoid.ker_def, Setoid.ker_def, med, Function.comp_apply, Function.comp_apply,
       faith.eq_iff]
 
@@ -115,13 +114,13 @@ def Crossed (sg : N → F) (pl : N → F') : Prop :=
 
 /-- Parallel target genders have the same kernel. -/
 theorem parallel_iff_ker_eq {sg : N → F} {pl : N → F'} :
-    Parallel sg pl ↔ Setoid.ker sg = Setoid.ker pl := by
-  simp only [Parallel, Function.factorsThrough_iff_ker_le, le_antisymm_iff]
+    Parallel sg pl ↔ Setoid.ker sg = Setoid.ker pl :=
+  (le_antisymm_iff (a := Setoid.ker sg) (b := Setoid.ker pl)).symm
 
 /-- Convergent target genders have strictly ordered kernels. -/
 theorem convergent_iff_ker_lt {sg : N → F} {pl : N → F'} :
-    Convergent sg pl ↔ Setoid.ker sg < Setoid.ker pl := by
-  simp only [Convergent, Function.factorsThrough_iff_ker_le, lt_iff_le_not_ge]
+    Convergent sg pl ↔ Setoid.ker sg < Setoid.ker pl :=
+  (lt_iff_le_not_ge (a := Setoid.ker sg) (b := Setoid.ker pl)).symm
 
 variable [Fintype N] [DecidableEq F] [DecidableEq F'] (sg : N → F) (pl : N → F')
 
