@@ -7,25 +7,29 @@ module
 
 public import Mathlib.Computability.MyhillNerode
 public import Mathlib.Data.Set.Finite.List
-public import Mathlib.Logic.Function.Basic
+public import Linglib.Core.Relation.FactorsThroughOn
 
 /-!
-# Piecewise testable languages (PT_k)
+# Piecewise testable languages
 
-A language is **piecewise `k`-testable** when its membership depends only on the set of
-length-`≤ k` subsequences (scattered subwords) of the input [simon-1975] — i.e. membership
-factors through the map `subseqSet k`, the piecewise analogue of locally testable.
+A language is *piecewise `k`-testable* when membership of a word depends only on the set of its
+subsequences of length at most `k`. These are the piecewise testable events of Simon.
 
 ## Main definitions
 
-* `subseqSet k w`: the subsequences of `w` of length `≤ k`.
-* `Language.IsPiecewiseTestable L k`: `Function.FactorsThrough (· ∈ L) (subseqSet k)`.
+* `subseqSet k w`: the subsequences of `w` of length at most `k`.
+* `Language.IsPiecewiseTestable`: membership in the language factors through `subseqSet k`.
 
 ## Main results
 
-* `subseqSet_append_congr`: sharing `subseqSet k` is a congruence for concatenation.
-* `Language.IsPiecewiseTestable.compl` / `.inter` / `.union`: boolean closure.
-* `Language.IsPiecewiseTestable.isRegular`: over a finite alphabet PT languages are regular.
+* `subseqSet_append_congr`: words with the same subsequences of length at most `k` still have the
+  same ones after concatenation.
+* `Language.IsPiecewiseTestable.isRegular`: over a finite alphabet, piecewise testable languages
+  are regular.
+
+## References
+
+* [simon-1975]
 -/
 
 @[expose] public section
@@ -34,8 +38,8 @@ open List
 
 variable {α : Type*}
 
-/-- The subsequences of `w` of length **at most** `k`. The "≤ k" (rather than
-"exactly k") bound is what keeps strings shorter than `k` distinguishable. -/
+/-- The subsequences of `w` of length at most `k`. The bound is at most `k`, not exactly `k`, so
+that words shorter than `k` stay distinguishable. -/
 def subseqSet (k : ℕ) (w : List α) : Set (List α) :=
   { s | s <+ w ∧ s.length ≤ k }
 
@@ -43,16 +47,14 @@ def subseqSet (k : ℕ) (w : List α) : Set (List α) :=
     s ∈ subseqSet k w ↔ s <+ w ∧ s.length ≤ k :=
   Iff.rfl
 
-/-- Subsequences of length at most `k` are interchangeable across strings sharing
-their `subseqSet k`. The ratchet for proving piecewise testability from a predicate
-depending only on length-`≤ k` subsequence presence. -/
+/-- Words with the same `subseqSet k` have the same subsequences of length at most `k`. -/
 lemma subseqSet_eq_iff {k : ℕ} {w₁ w₂ : List α}
     (heq : subseqSet k w₁ = subseqSet k w₂) {s : List α} (hlen : s.length ≤ k) :
     s <+ w₁ ↔ s <+ w₂ := by
   simpa [hlen] using Set.ext_iff.mp heq s
 
-/-- Sharing `subseqSet k` is a **congruence** for concatenation: a subsequence of `u ++ v`
-splits as a subsequence of `u` followed by one of `v`, each transferable separately. -/
+/-- Sharing `subseqSet k` is preserved by concatenation, since a subsequence of `u ++ v` splits
+as a subsequence of `u` followed by one of `v`. -/
 theorem subseqSet_append_congr {k : ℕ} {u₁ u₂ v₁ v₂ : List α}
     (hu : subseqSet k u₁ = subseqSet k u₂) (hv : subseqSet k v₁ = subseqSet k v₂) :
     subseqSet k (u₁ ++ v₁) = subseqSet k (u₂ ++ v₂) := by
@@ -66,57 +68,45 @@ theorem subseqSet_append_congr {k : ℕ} {u₁ u₂ v₁ v₂ : List α}
       ((subseqSet_eq_iff hv (by omega)).mp h₂), by simp [length_append]; omega⟩
   exact Set.Subset.antisymm (aux hu hv) (aux hu.symm hv.symm)
 
-/-- Over a finite alphabet `subseqSet k` takes finitely many values: the piecewise
-congruence has finite index. -/
+/-- Over a finite alphabet `subseqSet k` takes finitely many values. -/
 theorem finite_range_subseqSet [Finite α] (k : ℕ) :
     (Set.range (subseqSet (α := α) k)).Finite :=
   ((List.finite_length_le α k).finite_subsets).subset
-    (by rintro _ ⟨w, rfl⟩; exact fun s hs => hs.2)
+    (by rintro _ ⟨w, rfl⟩; exact fun s hs ↦ hs.2)
 
 namespace Language
 
-
-variable {α : Type*}
-
-/-- A language is **piecewise `k`-testable**: membership factors through the
-length-`≤ k` subsequence set `subseqSet k`. -/
+/-- A language is *piecewise `k`-testable* when membership factors through the set `subseqSet k`
+of subsequences of length at most `k`. -/
 def IsPiecewiseTestable (L : Language α) (k : ℕ) : Prop :=
   Function.FactorsThrough (· ∈ L) (subseqSet k)
 
-/-- Pointwise form: strings with equal `subseqSet k` are `L`-equivalent. -/
 lemma isPiecewiseTestable_iff {L : Language α} {k : ℕ} :
     L.IsPiecewiseTestable k ↔
       ∀ w₁ w₂, subseqSet k w₁ = subseqSet k w₂ → (w₁ ∈ L ↔ w₂ ∈ L) :=
-  ⟨fun h _ _ h' => iff_of_eq (h h'), fun h _ _ h' => propext (h _ _ h')⟩
+  ⟨fun h _ _ h' ↦ iff_of_eq (h h'), fun h _ _ h' ↦ propext (h _ _ h')⟩
 
 variable {L M : Language α} {k : ℕ}
 
-/-- **Piecewise testable languages are closed under complement.** -/
 theorem IsPiecewiseTestable.compl (h : L.IsPiecewiseTestable k) : Lᶜ.IsPiecewiseTestable k :=
-  isPiecewiseTestable_iff.mpr fun w₁ w₂ he => not_congr (isPiecewiseTestable_iff.mp h w₁ w₂ he)
+  isPiecewiseTestable_iff.mpr fun w₁ w₂ he ↦ not_congr (isPiecewiseTestable_iff.mp h w₁ w₂ he)
 
-/-- **Piecewise testable languages are closed under intersection.** -/
 theorem IsPiecewiseTestable.inter (hL : L.IsPiecewiseTestable k)
     (hM : M.IsPiecewiseTestable k) : (L ⊓ M).IsPiecewiseTestable k :=
-  isPiecewiseTestable_iff.mpr fun w₁ w₂ he =>
+  isPiecewiseTestable_iff.mpr fun w₁ w₂ he ↦
     and_congr (isPiecewiseTestable_iff.mp hL w₁ w₂ he) (isPiecewiseTestable_iff.mp hM w₁ w₂ he)
 
-/-- **Piecewise testable languages are closed under union.** -/
 theorem IsPiecewiseTestable.union (hL : L.IsPiecewiseTestable k)
     (hM : M.IsPiecewiseTestable k) : (L ⊔ M).IsPiecewiseTestable k :=
-  isPiecewiseTestable_iff.mpr fun w₁ w₂ he =>
+  isPiecewiseTestable_iff.mpr fun w₁ w₂ he ↦
     or_congr (isPiecewiseTestable_iff.mp hL w₁ w₂ he) (isPiecewiseTestable_iff.mp hM w₁ w₂ he)
 
-/-- Over a finite alphabet piecewise testable languages are **regular**: left quotients
-factor through the finitely many values of `subseqSet k`. -/
-theorem IsPiecewiseTestable.isRegular [Finite α] (h : L.IsPiecewiseTestable k) :
-    L.IsRegular := by
-  have hft : Function.FactorsThrough L.leftQuotient (subseqSet k) := fun w₁ w₂ hw =>
-    Set.ext fun x => isPiecewiseTestable_iff.mp h _ _ (subseqSet_append_congr hw rfl)
-  refine isRegular_iff_finite_range_leftQuotient.mpr
-    (((finite_range_subseqSet k).image
-      (Function.extend (subseqSet k) L.leftQuotient fun _ => ⊥)).subset ?_)
-  rintro _ ⟨w, rfl⟩
-  exact ⟨subseqSet k w, ⟨w, rfl⟩, hft.extend_apply _ w⟩
+/-- Over a finite alphabet piecewise testable languages are regular, since left quotients factor
+through the finitely many values of `subseqSet k`. -/
+theorem IsPiecewiseTestable.isRegular [Finite α] (h : L.IsPiecewiseTestable k) : L.IsRegular :=
+  .of_finite_range_leftQuotient <| Function.FactorsThrough.finite_range
+    (fun _ _ hw ↦ Set.ext fun _ ↦
+      isPiecewiseTestable_iff.mp h _ _ (subseqSet_append_congr hw rfl))
+    (finite_range_subseqSet k)
 
 end Language

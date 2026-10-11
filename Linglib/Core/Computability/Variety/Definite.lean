@@ -52,16 +52,6 @@ variable {α : Type*} {L : Language α} {k : ℕ}
 
 /-! ### Window characterizations -/
 
-/-- A language is regular when syntactic equivalence is implied by equality under a map with
-finite range, since the syntactic monoid is then covered by the classes of chosen preimages. -/
-private theorem isRegular_of_syntacticEquiv {β : Type*} (g : List α → β)
-    (hg : (Set.range g).Finite) (h : ∀ u v, g u = g v → L.SyntacticEquiv u v) : L.IsRegular := by
-  have := hg.to_subtype
-  refine IsRegular.of_finite_syntacticMonoid <| Finite.of_surjective
-    (fun b : Set.range g ↦ L.syntacticClass b.2.choose) fun m ↦ ?_
-  obtain ⟨u, rfl⟩ := L.syntacticClass_surjective m
-  exact ⟨⟨g u, u, rfl⟩, syntacticClass_eq_iff.2 (h _ _ (Exists.choose_spec (p := (g · = g u)) _))⟩
-
 private theorem rtake_append_middle {u : List α} (hu : k ≤ u.length) (t x y : List α) :
     (x ++ (t ++ u) ++ y).rtake k = (x ++ u ++ y).rtake k := by
   rw [List.rtake_append_append_of_le_length x (t ++ u) y
@@ -117,9 +107,9 @@ theorem IsDefinite.syntacticEquiv_of_rtake_eq (h : L.IsDefinite k) {u v : List �
 
 /-- A definite language over a finite alphabet is regular. -/
 theorem IsDefinite.isRegular [Finite α] (h : L.IsDefinite k) : L.IsRegular :=
-  isRegular_of_syntacticEquiv (·.rtake k)
+  .of_finite_range_leftQuotient <| Function.FactorsThrough.finite_range
+    (fun _ _ e ↦ (h.syntacticEquiv_of_rtake_eq e).leftQuotient_eq)
     ((List.finite_length_le α k).subset (Set.range_subset_iff.2 fun w ↦ by simp))
-    fun _ _ ↦ h.syntacticEquiv_of_rtake_eq
 
 /-! #### Reverse definite languages -/
 
@@ -162,9 +152,9 @@ theorem IsReverseDefinite.syntacticEquiv_of_take_eq (h : L.IsReverseDefinite k) 
 
 /-- A reverse definite language over a finite alphabet is regular. -/
 theorem IsReverseDefinite.isRegular [Finite α] (h : L.IsReverseDefinite k) : L.IsRegular :=
-  isRegular_of_syntacticEquiv (·.take k)
+  .of_finite_range_leftQuotient <| Function.FactorsThrough.finite_range
+    (fun _ _ e ↦ (h.syntacticEquiv_of_take_eq e).leftQuotient_eq)
     ((List.finite_length_le α k).subset (Set.range_subset_iff.2 fun w ↦ by simp))
-    fun _ _ ↦ h.syntacticEquiv_of_take_eq
 
 /-! #### Generalized definite languages -/
 
@@ -238,11 +228,12 @@ theorem IsGeneralizedDefinite.syntacticEquiv_of_take_eq_of_rtake_eq
 /-- A generalized definite language over a finite alphabet is regular. -/
 theorem IsGeneralizedDefinite.isRegular [Finite α] (h : L.IsGeneralizedDefinite k) :
     L.IsRegular :=
-  isRegular_of_syntacticEquiv (fun w ↦ (w.take k, w.rtake k))
+  .of_finite_range_leftQuotient <| Function.FactorsThrough.finite_range
+    (f := fun w ↦ (w.take k, w.rtake k))
+    (fun _ _ e ↦ (h.syntacticEquiv_of_take_eq_of_rtake_eq (congrArg Prod.fst e)
+      (congrArg Prod.snd e)).leftQuotient_eq)
     (((List.finite_length_le α k).prod (List.finite_length_le α k)).subset
       (Set.range_subset_iff.2 fun w ↦ by simp))
-    fun _ _ huv ↦ h.syntacticEquiv_of_take_eq_of_rtake_eq (congrArg Prod.fst huv)
-      (congrArg Prod.snd huv)
 
 /-! ### The syntactic semigroup -/
 
