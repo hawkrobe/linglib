@@ -8,6 +8,7 @@ public import Mathlib.Data.Finset.Powerset
 public import Mathlib.Data.Set.Lattice.Bounded
 public import Mathlib.Data.Fintype.Prod
 public import Linglib.Semantics.Alternatives.Competition
+public import Linglib.Semantics.Exhaustification.Finite
 
 /-!
 # Wang (2025): Presupposition, Competition, and Coherence
@@ -44,9 +45,10 @@ Table 4.6 (`omitted_of_ignorance`). For *you* and *zai* 'again' the first two ta
 stated on the adverb's meaning, `Presupposition.again` (`again_obligatory_of_entailed`,
 `again_omitted_of_not_entailed`). The exhaustification operator of (24) negates a maximal
 consistent subset of the alternatives, and where several maximal subsets exist it yields
-several readings (`MaxConsistent`, `exhMx`); the operator of (20) negates only the alternatives
-common to all of them (`exhIe`), so the two coincide when the maximal subset is unique
-(`exhIe_eq_exhMx_of_unique`), and a disjunction has two maximal subsets, (26)
+several readings (`Exhaustification.IsMaximalExclusion`, `exhMx`); the operator of (20) is
+innocent exclusion, which negates only the alternatives common to all of them, so the two coincide
+when the maximal subset is unique (`exhIE_eq_exhMx_of_unique`), and a disjunction has two maximal
+subsets, (26)
 (`disjunction_two_maxima`), which is how the optionality of the change-of-state triggers
 arises, Tables 4.7 and 4.9.
 
@@ -311,32 +313,21 @@ end Again
 
 variable [DecidableEq W]
 
-/-- `M` is a maximal subset of the alternatives whose joint negation is consistent with `φ`,
-the `Max` of (24). -/
-def MaxConsistent (φ : Finset W) (alts : Finset (Finset W)) (M : Finset (Finset W)) : Prop :=
-  M ⊆ alts ∧ (φ.filter (fun w ↦ ∀ q ∈ M, w ∉ q)).Nonempty ∧
-    ∀ M' ∈ alts.powerset, M ⊂ M' → ¬ (φ.filter (fun w ↦ ∀ q ∈ M', w ∉ q)).Nonempty
-
-instance (φ : Finset W) (alts M : Finset (Finset W)) : Decidable (MaxConsistent φ alts M) :=
-  inferInstanceAs (Decidable (_ ∧ _ ∧ ∀ M' ∈ alts.powerset, _))
-
 /-- The reading of (24) for the maximal subset `M` is `φ` with every member of `M` negated. -/
 def exhMx (φ : Finset W) (M : Finset (Finset W)) : Finset W :=
   φ.filter (fun w ↦ ∀ q ∈ M, w ∉ q)
 
-/-- The reading of (20) is `φ` with every innocently excludable alternative negated, those in
-every maximal consistent subset. -/
-def exhIe (φ : Finset W) (alts : Finset (Finset W)) : Set W :=
-  {w | w ∈ φ ∧ ∀ q ∈ alts, (∀ M, MaxConsistent φ alts M → q ∈ M) → w ∉ q}
-
-/-- When the maximal consistent subset is unique, the two operators agree, (25). -/
-theorem exhIe_eq_exhMx_of_unique {φ : Finset W} {alts M₀ : Finset (Finset W)}
-    (h₀ : MaxConsistent φ alts M₀) (huniq : ∀ M, MaxConsistent φ alts M → M = M₀) :
-    exhIe φ alts = ↑(exhMx φ M₀) := by
-  ext w
-  simp only [exhIe, exhMx, Set.mem_ofPred_eq, Finset.coe_filter]
-  refine and_congr_right fun _ ↦ ⟨fun h q hq ↦ h q (h₀.1 hq) (fun M hM ↦ huniq M hM ▸ hq),
-    fun h q _ hall ↦ h q (hall M₀ h₀)⟩
+open Exhaustification in
+/-- When the maximal consistent subset is unique, innocent exclusion, the operator of (20), and
+the operator of (24) agree, (25). -/
+theorem exhIE_eq_exhMx_of_unique {φ : Finset W} {alts M₀ : Finset (Finset W)}
+    (h₀ : IsMaximalExclusion alts φ M₀) (huniq : ∀ M, IsMaximalExclusion alts φ M → M = M₀) :
+    exhIE (asSetOfSets alts) ↑φ = ↑(exhMx φ M₀) := by
+  rw [exhIE_eq_sdiff_of_maximal_unique _ _ (isMaximalExclusion_iff.1 h₀) fun X hX ↦ ?_]
+  · ext w
+    simp [exhMx, mem_asSetOfSets]
+  · obtain ⟨M, -, rfl⟩ := exists_asSetOfSets_eq hX.prop.1
+    rw [huniq M (isMaximalExclusion_iff.2 hX)]
 
 /-- The worlds of the disjunction example (26) are the pairs of truth values of `p` and `q`. -/
 abbrev PQ := Bool × Bool
@@ -350,8 +341,10 @@ def qAlt : Finset PQ := Finset.univ.filter (·.2 = true)
 /-- The disjunction `p ∨ q` with the alternatives `p`, `q` and `p ∧ q`, (26), has two maximal
 consistent subsets, yielding the readings `q ∧ ¬p` and `p ∧ ¬q`. -/
 theorem disjunction_two_maxima :
-    MaxConsistent (pAlt ∪ qAlt) {pAlt, qAlt, pAlt ∩ qAlt} {pAlt, pAlt ∩ qAlt} ∧
-      MaxConsistent (pAlt ∪ qAlt) {pAlt, qAlt, pAlt ∩ qAlt} {qAlt, pAlt ∩ qAlt} ∧
+    Exhaustification.IsMaximalExclusion {pAlt, qAlt, pAlt ∩ qAlt} (pAlt ∪ qAlt)
+        {pAlt, pAlt ∩ qAlt} ∧
+      Exhaustification.IsMaximalExclusion {pAlt, qAlt, pAlt ∩ qAlt} (pAlt ∪ qAlt)
+        {qAlt, pAlt ∩ qAlt} ∧
       exhMx (pAlt ∪ qAlt) {pAlt, pAlt ∩ qAlt} = qAlt \ pAlt ∧
       exhMx (pAlt ∪ qAlt) {qAlt, pAlt ∩ qAlt} = pAlt \ qAlt := by
   decide

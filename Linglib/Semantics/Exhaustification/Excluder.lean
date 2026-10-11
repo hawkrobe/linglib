@@ -23,11 +23,13 @@ family, where each alternative has a world of its own, exclusion separates resol
 alternative set (`Irredundant.excludes_injOn`), and narrowing the alternatives weakens it
 (`excludes_antitone`). Read at a world, `exh` against a family of alternatives is `exhAgainst` the
 members the prejacent does not entail (`mem_exh_range_iff_exhAgainst`), over an irredundant family
-every other member (`Irredundant.mem_exh_range_iff`). When the prejacent is maximal among the
-alternatives, exclusion is Rooth's condition that every true alternative *equals* the prejacent
-(`mem_excludes_iff_forall_eq`). Against the strictly stronger alternatives alone, `exh` of a content
-is where it is unblocked under competition (`Alternatives.unblocked_eq_exh`), so Maximize
-Presupposition strengthens a presupposition as exhaustification strengthens an assertion.
+every other member (`Irredundant.mem_exh_range_iff`). Against the image or range of an indexed
+family, `exh` denies the members the prejacent does not entail (`mem_exh_image_iff`), decidably over
+finite worlds. When the prejacent is maximal among the alternatives, exclusion is Rooth's condition
+that every true alternative *equals* the prejacent (`mem_excludes_iff_forall_eq`). Against the
+strictly stronger alternatives alone, `exh` of a content is where it is unblocked under competition
+(`Alternatives.unblocked_eq_exh`), so Maximize Presupposition strengthens a presupposition as
+exhaustification strengthens an assertion.
 
 An `Excluder` is a selection over finite world types, `Excluder.exh` the resulting operator, and
 `tolerant` is `exh` there, contradiction or not, after Chierchia. `Excluder.restrict` keeps only
@@ -83,6 +85,32 @@ theorem notMem_excludes (hq : q ∈ C) (hw : w ∈ q) (h : ¬ p ⊆ q) : w ∉ e
 
 theorem notMem_exh (hq : q ∈ C) (hw : w ∈ q) (h : ¬ p ⊆ q) : w ∉ exh C p :=
   fun he ↦ notMem_excludes hq hw h he.2
+
+/-- Exhaustification denies every alternative the prejacent does not entail. -/
+theorem exh_subset_compl (hq : q ∈ C) (h : ¬ p ⊆ q) : exh C p ⊆ qᶜ :=
+  fun _ hw hwq ↦ notMem_exh hq hwq h hw
+
+/-- Against the image of an indexed family, exhaustification denies the members the prejacent
+does not entail. -/
+theorem mem_exh_image_iff {ι : Type*} {f : ι → Set W} {A : Set ι} :
+    w ∈ exh (f '' A) p ↔ w ∈ p ∧ ∀ i ∈ A, w ∈ f i → p ⊆ f i := by
+  simp only [mem_exh, Set.forall_mem_image]
+
+/-- Against the range of an indexed family, exhaustification denies the members the prejacent
+does not entail. -/
+theorem mem_exh_range_iff {ι : Type*} {f : ι → Set W} :
+    w ∈ exh (Set.range f) p ↔ w ∈ p ∧ ∀ i, w ∈ f i → p ⊆ f i := by
+  simp only [mem_exh, Set.forall_mem_range]
+
+/-- Over finite worlds and indices, exhaustifying against an indexed family is decidable. -/
+instance [Fintype W] {ι : Type*} [Fintype ι] {f : ι → Set W} [∀ i, DecidablePred (· ∈ f i)]
+    {A : Set ι} [DecidablePred (· ∈ A)] {p : Set W} [DecidablePred (· ∈ p)] :
+    DecidablePred (· ∈ exh (f '' A) p) := fun w ↦
+  decidable_of_iff (w ∈ p ∧ ∀ i, i ∈ A → w ∈ f i → ∀ x, x ∈ p → x ∈ f i) mem_exh_image_iff.symm
+
+instance [Fintype W] {ι : Type*} [Fintype ι] {f : ι → Set W} [∀ i, DecidablePred (· ∈ f i)]
+    {p : Set W} [DecidablePred (· ∈ p)] : DecidablePred (· ∈ exh (Set.range f) p) := fun w ↦
+  decidable_of_iff (w ∈ p ∧ ∀ i, w ∈ f i → ∀ x, x ∈ p → x ∈ f i) mem_exh_range_iff.symm
 
 /-- Exclusion from refuting every alternative the prejacent does not entail. -/
 theorem mem_excludes_of_forall_notMem (h : ∀ q ∈ C, ¬ p ⊆ q → w ∉ q) : w ∈ excludes C p :=
