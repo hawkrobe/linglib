@@ -14,6 +14,7 @@ public import Mathlib.Data.Set.Finite.Range
 public import Linglib.Core.Computability.TransitionMonoid
 public import Linglib.Core.GroupTheory.Congruence.Hom
 public import Linglib.Core.Algebra.Group.Subquotient
+public import Linglib.Core.Relation.FactorsThroughOn
 
 /-!
 # The syntactic monoid of a language
@@ -80,6 +81,9 @@ theorem append (h : L.SyntacticEquiv u u') (h' : L.SyntacticEquiv v v') :
 
 theorem mem_iff (h : L.SyntacticEquiv u v) : u ∈ L ↔ v ∈ L := by
   simpa using h [] []
+
+theorem leftQuotient_eq (h : L.SyntacticEquiv u v) : L.leftQuotient u = L.leftQuotient v :=
+  Set.ext (h [])
 
 theorem compl_iff : Lᶜ.SyntacticEquiv u v ↔ L.SyntacticEquiv u v :=
   forall_congr' fun _ ↦ forall_congr' fun _ ↦ not_iff_not
@@ -232,11 +236,9 @@ theorem IsRegular.finite_syntacticMonoid (h : L.IsRegular) : Finite L.SyntacticM
   rw [syntacticCon_eq_ker_transitionHom]
   exact Finite.of_equiv _ (DFA.transitionMonoidEquiv L.toDFA).symm.toEquiv
 
-theorem IsRegular.of_finite_syntacticMonoid (h : Finite L.SyntacticMonoid) : L.IsRegular := by
-  refine Language.IsRegular.of_finite_range_leftQuotient ?_
-  let g : L.SyntacticMonoid → Language α :=
-    fun c ↦ Con.liftOn c (fun w ↦ L.leftQuotient w.toList) fun _ _ huv ↦ Set.ext (huv [])
-  exact (Set.finite_range g).subset fun _ ⟨x, hx⟩ ↦ ⟨(FreeMonoid.ofList x : FreeMonoid α), hx⟩
+theorem IsRegular.of_finite_syntacticMonoid (h : Finite L.SyntacticMonoid) : L.IsRegular :=
+  .of_finite_range_leftQuotient <| Function.FactorsThrough.finite_range
+    (fun _ _ e ↦ (syntacticClass_eq_iff.mp e).leftQuotient_eq) (Set.toFinite _)
 
 /-- `L` is regular iff `L.SyntacticMonoid` is finite. -/
 theorem isRegular_iff_finite_syntacticMonoid : L.IsRegular ↔ Finite L.SyntacticMonoid :=

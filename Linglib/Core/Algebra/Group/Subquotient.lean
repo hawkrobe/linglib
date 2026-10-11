@@ -8,7 +8,7 @@ split `Defs`/`Finite` at upstream time (the cardinality import doubles the impor
 -/
 module
 
-public import Linglib.Core.Algebra.Group.Submonoid.Operations
+public import Mathlib.Algebra.Group.Submonoid.Operations
 public import Mathlib.Algebra.Group.Prod
 public import Mathlib.GroupTheory.Congruence.Hom
 public import Mathlib.SetTheory.Cardinal.Finite
@@ -17,14 +17,17 @@ public import Mathlib.SetTheory.Cardinal.Finite
 # Subquotients of monoids
 
 A monoid `T` is a *subquotient* of a monoid `S` when `T` is a homomorphic image of a
-submonoid of `S`. In finite semigroup theory the relation is called *division* (`T ≼ S`)
-[eilenberg-1976]; in group theory, a *section*. This file defines the relation and proves
-it transitive, closed under products, and, on finite monoids, antisymmetric up to
-isomorphism.
+submonoid of `S`. In finite semigroup theory the relation is called *division* (`T ≼ S`), and in
+group theory a *section*. This file defines the relation and proves it transitive, closed under
+products, and, on finite monoids, antisymmetric up to isomorphism.
 
 ## Main definitions
 
 * `Monoid.IsSubquotient T S`: `T` is a homomorphic image of a submonoid of `S`.
+
+## References
+
+* [eilenberg-1976]
 -/
 
 @[expose] public section
@@ -78,7 +81,8 @@ theorem IsSubquotient.trans (hTS : IsSubquotient T S) (hSR : IsSubquotient S R) 
 @[to_additive]
 theorem IsSubquotient.of_injective (f : T →* S) (hf : Function.Injective f) :
     IsSubquotient T S :=
-  (MulEquiv.ofInjective' hf).isSubquotient.trans (MonoidHom.mrange f).isSubquotient
+  (MulEquiv.ofLeftInverse' f (Function.leftInverse_invFun hf)).isSubquotient.trans
+    (MonoidHom.mrange f).isSubquotient
 
 @[to_additive isSubquotient_prod_left]
 theorem isSubquotient_prod_left (T S : Type*) [Monoid T] [Monoid S] :
@@ -123,7 +127,7 @@ theorem IsSubquotient.nonempty_mulEquiv_of_card_le [Finite S] (hTS : IsSubquotie
   exact ⟨(MulEquiv.ofBijective f (hf.bijective_of_nat_card_le (hNS.trans hle))).symm.trans
     (MulEquiv.ofBijective N.subtype (N.subtype_injective.bijective_of_nat_card_le hSN))⟩
 
-/-- Finite monoids that are subquotients of each other are isomorphic ([eilenberg-1976]). -/
+/-- Finite monoids that are subquotients of each other are isomorphic. -/
 @[to_additive /-- Finite additive monoids that are subquotients of each other are
 isomorphic. -/]
 theorem IsSubquotient.nonempty_mulEquiv [Finite S] (hTS : IsSubquotient T S)
