@@ -2,14 +2,14 @@
   <img src="assets/logo.svg" alt="linglib" width="560">
 </p>
 
-[![CI](https://github.com/hawkrobe/linglib/actions/workflows/ci.yml/badge.svg)](https://github.com/hawkrobe/linglib/actions/workflows/ci.yml)
+[![CI](https://github.com/linglib-community/linglib/actions/workflows/ci.yml/badge.svg)](https://github.com/linglib-community/linglib/actions/workflows/ci.yml)
 [![Lean 4](https://img.shields.io/badge/Lean-v4.34.1-blue)](https://leanprover.github.io/)
 [![Mathlib](https://img.shields.io/badge/mathlib-v4.34.1-blueviolet)](https://github.com/leanprover-community/mathlib4)
 [![License](https://img.shields.io/badge/license-Apache%202.0-green)](LICENSE)
 
 A Lean 4 library for formal linguistics across semantics, syntax, pragmatics, morphology, phonology, and processing.
 
-> ⚠️ Among other things, this repository is an experiment in "AI for Linguistics" using recent advances in proof assistants and autoformalization. If you find any inaccuracies or errors, please [open an issue](https://github.com/hawkrobe/linglib/issues)! 
+> ⚠️ Among other things, this repository is an experiment in "AI for Linguistics" using recent advances in proof assistants and autoformalization. If you find any inaccuracies or errors, please [open an issue](https://github.com/linglib-community/linglib/issues)! 
 
 ## Overview
 
@@ -34,7 +34,7 @@ Linglib pins a specific toolchain (currently **Lean v4.34.1 / mathlib v4.34.1**)
 
 ```lean
 require linglib from git
-  "https://github.com/hawkrobe/linglib" @ "v4.34.1"
+  "https://github.com/linglib-community/linglib" @ "v4.34.1"
 ```
 
 (Use `@ "main"` to track the latest development instead of the pinned release.)
