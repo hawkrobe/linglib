@@ -8,6 +8,7 @@ module
 public import Linglib.Core.Analysis.SpecialFunctions.Pow.NNReal
 public import Linglib.Core.MeasureTheory.Measure.Real
 public import Mathlib.MeasureTheory.Measure.Dirac.Basic
+public import Mathlib.MeasureTheory.Measure.Prod
 
 /-!
 # Geometric means under a measure on a finite type
@@ -24,6 +25,7 @@ the atoms of positive mass, and evaluation at a point under a point mass.
 ## Main results
 
 * `MeasureTheory.Measure.geomMean_dirac`: under a point mass the mean is evaluation.
+* `MeasureTheory.Measure.geomMean_prod`: under a product measure the mean is the iterated mean.
 * `MeasureTheory.Measure.geomMean_of_forall_eq`: the mean of a function constant on the atoms of
   positive mass is that constant.
 * `MeasureTheory.Measure.geomMean_eq_zero_iff`: the mean vanishes exactly when the function
@@ -99,6 +101,15 @@ theorem geomMean_eq_ofReal_exp_sum_log (h0 : ∀ a, μ {a} ≠ 0 → f a ≠ 0)
     have hpos : 0 < (f a).toReal := ENNReal.toReal_pos (h0 a hμ) (htop a hμ)
     rw [← ENNReal.ofReal_toReal (htop a hμ), ENNReal.ofReal_rpow_of_pos hpos,
       Real.rpow_def_of_pos hpos, ENNReal.toReal_ofReal hpos.le, mul_comm]
+
+/-- Under a product measure the geometric mean is the mean over the first factor of the means over
+the second. -/
+theorem geomMean_prod {β : Type*} [MeasurableSpace β] [Fintype β] (μ : Measure α) (ν : Measure β)
+    [SFinite ν] (f : α × β → ℝ≥0∞) :
+    (μ.prod ν).geomMean f = μ.geomMean fun a ↦ ν.geomMean fun b ↦ f (a, b) := by
+  simp only [geomMean, Fintype.prod_prod_type, ← Set.singleton_prod_singleton,
+    measureReal_prod_prod, ← ENNReal.prod_rpow_of_nonneg measureReal_nonneg, ← ENNReal.rpow_mul,
+    mul_comm]
 
 variable [MeasurableSingletonClass α]
 
