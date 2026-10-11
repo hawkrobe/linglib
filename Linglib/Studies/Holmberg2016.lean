@@ -12,7 +12,7 @@ public import Linglib.Data.Examples.Holmberg2016
 /-!
 # Holmberg (2016): The Syntax of Yes and No
 
-This file formalizes [holmberg-2016]'s account of answers to yes–no questions. A polar
+This file formalizes Holmberg's account of answers to yes–no questions. A polar
 interrogative contains an unvalued polarity head whose two values yield the Hamblin set it
 denotes, the same for a negative interrogative as for its positive counterpart
 (`PolarInterrogative.denote_eq_polar_radical`), and an answer is a full sentence: a focused
@@ -36,7 +36,7 @@ negative question (`polarityBased_iff_not_confirmsNegativeQuestion`). Such a lan
 negative neutralization (`PolarityBased.answer_ne_negative`); Swedish, whose negation is never low,
 is one (`swedish_polarityBased`), so confirming the positive alternative of a negative question
 takes the polarity-reversing *jo* (`swedish_negative_question`), which a truth-based configuration
-never needs (`no_reversal_needed_truth_based`). Crediting the REV feature to [farkas-bruce-2010],
+never needs (`no_reversal_needed_truth_based`). Crediting the REV feature to Farkas and Bruce,
 the mechanism derives what they say *si* and *doch* mark: the answers a reversing feature gives are
 their [reverse, +] answers (`responses_reversing_eq_reversePositive`). Positive-bias questions carry
 a high negation outside the inherited clause and are answered like neutral questions
@@ -341,7 +341,7 @@ instance : DecidablePred Row.Predicted := fun _ ↦ inferInstanceAs (Decidable (
 
 /-- The rows include *Har Johan inte kommit?* answered by *\*Ja* and by *Jo* (Section 4.5). -/
 theorem kommit_mem_rows :
-    ⟨.height .middle, swedish .ja, none, .unacceptable⟩ ∈ rows ∧
+    ⟨.height .middle, swedish .ja, none, .ungrammatical⟩ ∈ rows ∧
       ⟨.height .middle, swedish .jo, some .positive, .acceptable⟩ ∈ rows := by
   decide
 

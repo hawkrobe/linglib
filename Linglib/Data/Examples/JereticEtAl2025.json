@@ -7,7 +7,7 @@
     },
     "reportedIn": null,
     "language": "stan1293",
-    "primaryText": "#Lea broke all her arms.",
+    "primaryText": "Lea broke all her arms.",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
@@ -29,7 +29,8 @@
         "false"
       ]
     ],
-    "comment": "Anti-dual in a domain of two: both is available."
+    "comment": "Anti-dual in a domain of two: both is available.",
+    "verified": "page-image"
   },
   {
     "id": "jeretic2025_1c",
@@ -61,7 +62,8 @@
         "true"
       ]
     ],
-    "comment": "The lexical dual universal."
+    "comment": "The lexical dual universal.",
+    "verified": "page-image"
   },
   {
     "id": "jeretic2025_2a",
@@ -71,7 +73,7 @@
     },
     "reportedIn": null,
     "language": "stan1290",
-    "primaryText": "#Léa s'est cassé tous les bras.",
+    "primaryText": "Léa s'est cassé tous les bras.",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "Léa broke all her arms.",
@@ -93,7 +95,8 @@
         "false"
       ]
     ],
-    "comment": "Anti-dual although French has no word for both."
+    "comment": "Anti-dual although French has no word for both.",
+    "verified": "page-image"
   },
   {
     "id": "jeretic2025_2b",
@@ -125,7 +128,8 @@
         "true"
       ]
     ],
-    "comment": "The definite numeral, the indirect alternative to tous."
+    "comment": "The definite numeral, the indirect alternative to tous.",
+    "verified": "page-image"
   },
   {
     "id": "jeretic2025_6a",
@@ -135,7 +139,7 @@
     },
     "reportedIn": null,
     "language": "stan1293",
-    "primaryText": "#None of the sides of this sheet of paper has been used.",
+    "primaryText": "None of the sides of this sheet of paper has been used.",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
@@ -157,7 +161,8 @@
         "false"
       ]
     ],
-    "comment": "Anti-dual: neither is available."
+    "comment": "Anti-dual: neither is available.",
+    "verified": "page-image"
   },
   {
     "id": "jeretic2025_6a_neither",
@@ -189,7 +194,8 @@
         "true"
       ]
     ],
-    "comment": "The lexical dual negative."
+    "comment": "The lexical dual negative.",
+    "verified": "page-image"
   },
   {
     "id": "jeretic2025_6b",
@@ -221,7 +227,8 @@
         "false"
       ]
     ],
-    "comment": "Not anti-dual: aucun des deux and ni l'un ni l'autre are too complex to block the dual parse."
+    "comment": "Not anti-dual: aucun des deux and ni l'un ni l'autre are too complex to block the dual parse.",
+    "verified": "page-image"
   },
   {
     "id": "jeretic2025_6c",
@@ -253,7 +260,8 @@
         "false"
       ]
     ],
-    "comment": "Not anti-dual: German has beide but no dual negative."
+    "comment": "Not anti-dual: German has beide but no dual negative.",
+    "verified": "page-image"
   },
   {
     "id": "jeretic2025_7a",
@@ -263,7 +271,7 @@
     },
     "reportedIn": null,
     "language": "icel1247",
-    "primaryText": "Á hvorum handleggnum brotnaði hún?",
+    "primaryText": "Á hvor-um handlegg-num brotna-ði hún?",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "Which arm did she break?",
@@ -285,7 +293,8 @@
         "true"
       ]
     ],
-    "comment": "The dual interrogative hvor."
+    "comment": "The dual interrogative hvor.",
+    "verified": "page-image"
   },
   {
     "id": "jeretic2025_7b",
@@ -295,12 +304,12 @@
     },
     "reportedIn": null,
     "language": "icel1247",
-    "primaryText": "?Á hvaða handlegg brotnaði hún?",
+    "primaryText": "Á hvaða handlegg brotna-ði hún?",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "Which arm did she break?",
     "context": "",
-    "judgment": "questionable",
+    "judgment": "marginal",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -317,7 +326,8 @@
         "false"
       ]
     ],
-    "comment": "Marginal in a domain of two."
+    "comment": "Marginal in a domain of two.",
+    "verified": "page-image"
   },
   {
     "id": "jeretic2025_8a",
@@ -349,7 +359,8 @@
         "true"
       ]
     ],
-    "comment": "The dual indeterminate dotti."
+    "comment": "The dual indeterminate dotti.",
+    "verified": "page-image"
   },
   {
     "id": "jeretic2025_8b",
@@ -359,7 +370,7 @@
     },
     "reportedIn": null,
     "language": "nucl1643",
-    "primaryText": "#Taroo-wa dono ude-o o-tta-no?",
+    "primaryText": "Taroo-wa dono ude-o o-tta-no?",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "Which arm did Taro break?",
@@ -381,7 +392,8 @@
         "false"
       ]
     ],
-    "comment": "Anti-dual."
+    "comment": "Anti-dual.",
+    "verified": "page-image"
   },
   {
     "id": "jeretic2025_9a",
@@ -413,7 +425,8 @@
         "true"
       ]
     ],
-    "comment": "Dual each on dotti."
+    "comment": "Dual each on dotti.",
+    "verified": "page-image"
   },
   {
     "id": "jeretic2025_9b",
@@ -423,7 +436,7 @@
     },
     "reportedIn": null,
     "language": "nucl1643",
-    "primaryText": "#Taroo-wa dono ude-mo o-tta.",
+    "primaryText": "Taroo-wa dono ude-mo o-tta.",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "Taro broke each of his arms.",
@@ -445,7 +458,8 @@
         "false"
       ]
     ],
-    "comment": "Anti-dual."
+    "comment": "Anti-dual.",
+    "verified": "page-image"
   },
   {
     "id": "jeretic2025_10a",
@@ -477,7 +491,8 @@
         "true"
       ]
     ],
-    "comment": "Dual one on dotti."
+    "comment": "Dual one on dotti.",
+    "verified": "page-image"
   },
   {
     "id": "jeretic2025_10b",
@@ -487,7 +502,7 @@
     },
     "reportedIn": null,
     "language": "nucl1643",
-    "primaryText": "#Taroo-wa dono ude-ka-o o-tta.",
+    "primaryText": "Taroo-wa dono ude-ka-o o-tta.",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "Taro broke one of his arms.",
@@ -509,7 +524,8 @@
         "false"
       ]
     ],
-    "comment": "Anti-dual."
+    "comment": "Anti-dual.",
+    "verified": "page-image"
   },
   {
     "id": "jeretic2025_11a",
@@ -541,7 +557,8 @@
         "false"
       ]
     ],
-    "comment": "Not anti-dual: which of the two is more complex than which."
+    "comment": "Not anti-dual: which of the two is more complex than which.",
+    "verified": "page-image"
   },
   {
     "id": "jeretic2025_11b",
@@ -573,7 +590,8 @@
         "false"
       ]
     ],
-    "comment": "Not anti-dual."
+    "comment": "Not anti-dual.",
+    "verified": "page-image"
   },
   {
     "id": "jeretic2025_11c",
@@ -605,7 +623,8 @@
         "false"
       ]
     ],
-    "comment": "Not anti-dual."
+    "comment": "Not anti-dual.",
+    "verified": "page-image"
   },
   {
     "id": "jeretic2025_12a",
@@ -637,7 +656,8 @@
         "false"
       ]
     ],
-    "comment": "Not anti-dual."
+    "comment": "Not anti-dual.",
+    "verified": "page-image"
   },
   {
     "id": "jeretic2025_12b",
@@ -669,7 +689,8 @@
         "false"
       ]
     ],
-    "comment": "Not anti-dual."
+    "comment": "Not anti-dual.",
+    "verified": "page-image"
   },
   {
     "id": "jeretic2025_12c",
@@ -701,7 +722,8 @@
         "false"
       ]
     ],
-    "comment": "Not anti-dual."
+    "comment": "Not anti-dual. The paper prints the translation 'Which arm hurts you?' (copied from (12a)).",
+    "verified": "page-image"
   },
   {
     "id": "jeretic2025_80a",
@@ -711,7 +733,7 @@
     },
     "reportedIn": null,
     "language": "stan1293",
-    "primaryText": "#She came twice to visit us, and she always brought us flowers.",
+    "primaryText": "She came twice to visit us, and she always brought us flowers.",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
@@ -733,7 +755,8 @@
         "false"
       ]
     ],
-    "comment": "Anti-dual: both times is as complex as all+ways."
+    "comment": "Anti-dual: both times is as complex as all+ways.",
+    "verified": "page-image"
   },
   {
     "id": "jeretic2025_80b",
@@ -765,7 +788,8 @@
         "true"
       ]
     ],
-    "comment": "The dual of always."
+    "comment": "The dual of always.",
+    "verified": "page-image"
   },
   {
     "id": "jeretic2025_81a",
@@ -778,7 +802,7 @@
     "primaryText": "Elle est venue deux fois nous rendre visite, et elle nous a toujours apporté des fleurs.",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "She came twice to visit us, and she always brought us flowers.",
+    "translation": "",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -797,7 +821,8 @@
         "false"
       ]
     ],
-    "comment": "Not anti-dual: les deux fois is more complex than toujours."
+    "comment": "Not anti-dual: les deux fois is more complex than toujours.",
+    "verified": "page-image"
   },
   {
     "id": "jeretic2025_83a",
@@ -807,7 +832,7 @@
     },
     "reportedIn": null,
     "language": "stan1295",
-    "primaryText": "#Sie hat uns zweimal besucht und uns immer Blumen mitgebracht.",
+    "primaryText": "Sie hat uns zweimal besucht und uns immer Blumen mitgebracht.",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "She visited us twice and always brought us flowers.",
@@ -829,7 +854,8 @@
         "false"
       ]
     ],
-    "comment": "Anti-dual: suppletive immer competes with beide Male."
+    "comment": "Anti-dual: suppletive immer competes with beide Male.",
+    "verified": "page-image"
   },
   {
     "id": "jeretic2025_83b",
@@ -839,12 +865,12 @@
     },
     "reportedIn": null,
     "language": "nucl1643",
-    "primaryText": "?Kanozyo-wa watasi-tati-o ni-kai tazunete-kite, itu-mo hana-o motte-kita.",
+    "primaryText": "Kanozyo-wa watasi-tati-o ni-kai tazunete-kite, itu-mo hana-o motte-kita.",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "She came to visit us twice and she always brought us flowers.",
     "context": "",
-    "judgment": "questionable",
+    "judgment": "unacceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -861,7 +887,8 @@
         "false"
       ]
     ],
-    "comment": "Weakly anti-dual: ni-kai on its definite reading is as complex as itu-mo."
+    "comment": "Weakly anti-dual: ni-kai on its definite reading is as complex as itu-mo. The paper prints # although the prose calls the effect rather weak.",
+    "verified": "page-image"
   },
   {
     "id": "jeretic2025_85",
@@ -893,7 +920,8 @@
         "true"
       ]
     ],
-    "comment": "The bimorphemic dual, ni-kai."
+    "comment": "The bimorphemic dual, ni-kai.",
+    "verified": "page-image"
   },
   {
     "id": "jeretic2025_36",
@@ -903,7 +931,7 @@
     },
     "reportedIn": null,
     "language": "slov1268",
-    "primaryText": "Računalnika sta pokvarjena.",
+    "primaryText": "Računalnik-a sta pokvarjen-a",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "The computers are broken.",
@@ -921,7 +949,8 @@
         "true"
       ]
     ],
-    "comment": "Overt dual number morphology; felicitous only with two computers."
+    "comment": "Overt dual number morphology; felicitous only with two computers.",
+    "verified": "page-image"
   },
   {
     "id": "jeretic2025_25a",
@@ -945,7 +974,8 @@
         "25"
       ]
     ],
-    "comment": "The worked example: the plural parse of tous les verres."
+    "comment": "The worked example: the plural parse of tous les verres.",
+    "verified": "page-image"
   },
   {
     "id": "jeretic2025_25b",
@@ -969,6 +999,7 @@
         "25"
       ]
     ],
-    "comment": "The indirect alternative, at most as complex by node count (38)."
+    "comment": "The indirect alternative, at most as complex by node count (38).",
+    "verified": "page-image"
   }
 ]

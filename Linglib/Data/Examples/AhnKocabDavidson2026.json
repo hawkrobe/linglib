@@ -36,7 +36,8 @@
         "DANCE"
       ]
     ],
-    "comment": "Accepted by all three signers (3/3). One referent; the final verb is unmodified."
+    "comment": "Accepted by all three signers (3/3). One referent; the final verb is unmodified.",
+    "verified": "page-image"
   },
   {
     "id": "ahnkocabdavidson2026_ex10a",
@@ -76,7 +77,8 @@
         "DANCE"
       ]
     ],
-    "comment": "Accepted by one of three signers (1/3). Two referents, no loci established, unmodified verb."
+    "comment": "Printed with (1/3): accepted by one of three signers. The paper gives consultant judgments as such counts ((11a) is * and 0/3), so the count is the mark; the prose calls two-referent narratives without loci degraded. Two referents, no loci established, unmodified verb.",
+    "verified": "page-image"
   },
   {
     "id": "ahnkocabdavidson2026_ex10b",
@@ -116,7 +118,8 @@
         "DANCE"
       ]
     ],
-    "comment": "3/3. Two referents established in loci; the verb is signed at the agent's locus."
+    "comment": "3/3. Two referents established in loci; the verb is signed at the agent's locus.",
+    "verified": "page-image"
   },
   {
     "id": "ahnkocabdavidson2026_ex11a",
@@ -154,7 +157,8 @@
         "PUSH"
       ]
     ],
-    "comment": "Rejected by all three signers (0/3). No loci and no context making the agent salient."
+    "comment": "Rejected by all three signers (0/3). No loci and no context making the agent salient.",
+    "verified": "page-image"
   },
   {
     "id": "ahnkocabdavidson2026_ex11b",
@@ -192,7 +196,8 @@
         "PUSH"
       ]
     ],
-    "comment": "3/3. Loci marked and the verb moves between them."
+    "comment": "3/3. Loci marked and the verb moves between them.",
+    "verified": "page-image"
   },
   {
     "id": "ahnkocabdavidson2026_ex11c",
@@ -232,7 +237,8 @@
         "PUSH"
       ]
     ],
-    "comment": "3/3: context suffices. The surrounding context renders the agent salient; the same unmodified verb as in (11a)."
+    "comment": "3/3: context suffices. The surrounding context renders the agent salient; the same unmodified verb as in (11a).",
+    "verified": "page-image"
   },
   {
     "id": "ahnkocabdavidson2026_ex18",
@@ -276,7 +282,8 @@
         "DANCE"
       ]
     ],
-    "comment": "3/3 for both the null argument and the bare noun. One referent; a null argument and a bare noun are both accepted."
+    "comment": "3/3 for both the null argument and the bare noun. One referent; a null argument and a bare noun are both accepted. The paper prints the translation as 'A boy entered club.'",
+    "verified": "page-image"
   },
   {
     "id": "ahnkocabdavidson2026_ex19",
@@ -315,7 +322,8 @@
         "DANCE"
       ]
     ],
-    "comment": "3/3, but considered redundant and dispreferred relative to the null argument. One referent with locus marking."
+    "comment": "3/3, but considered redundant and dispreferred relative to the null argument. One referent with locus marking.",
+    "verified": "page-image"
   },
   {
     "id": "ahnkocabdavidson2026_ex20",
@@ -338,7 +346,7 @@
     "alternatives": [
       {
         "form": "BOY ENTER CLUB. MUSIC ON. SEE GIRL READ. ∅ DANCE.",
-        "judgment": "questionable"
+        "judgment": "marginal"
       }
     ],
     "readings": [],
@@ -360,7 +368,8 @@
         "DANCE"
       ]
     ],
-    "comment": "Bare noun accepted 3/3; the null-argument version was rejected by two of three signers. Two referents; the bare noun BOY disambiguates without a locus, the null argument does not."
+    "comment": "Bare noun accepted 3/3; the null-argument version was rejected by two of three signers. Two referents; the bare noun BOY disambiguates without a locus, the null argument does not.",
+    "verified": "page-image"
   },
   {
     "id": "ahnkocabdavidson2026_ex20null",
@@ -379,7 +388,7 @@
     "glossedTokens": [],
     "translation": "Intended: A boy entered a club. Music went on. He saw a girl reading. He danced.",
     "context": "",
-    "judgment": "questionable",
+    "judgment": "marginal",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -400,7 +409,8 @@
         "DANCE"
       ]
     ],
-    "comment": "Rejected by two of three signers. Two referents, null argument, no loci."
+    "comment": "Printed as the ?∅ variant of (20); the prose says two of three signers rejected it. Two referents, null argument, no loci.",
+    "verified": "page-image"
   },
   {
     "id": "ahnkocabdavidson2026_ex21",
@@ -440,7 +450,8 @@
         "DANCE"
       ]
     ],
-    "comment": "3/3, with no dispreference for marking the loci. Two referents established in different loci."
+    "comment": "3/3, with no dispreference for marking the loci. Two referents established in different loci.",
+    "verified": "page-image"
   },
   {
     "id": "ahnkocabdavidson2026_a1_1_one_noLocus",
@@ -455,7 +466,7 @@
       "CLASS FINISH, DANCE."
     ],
     "glossedTokens": [],
-    "translation": "A boy sat in class. When class finished, he danced.",
+    "translation": "",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -478,7 +489,8 @@
         "DANCE"
       ]
     ],
-    "comment": "Number condition: one vs. two referents."
+    "comment": "Number condition: one vs. two referents.",
+    "verified": "page-image"
   },
   {
     "id": "ahnkocabdavidson2026_a1_1_one_locus",
@@ -493,7 +505,7 @@
       "CLASS FINISH, IXA DANCEA."
     ],
     "glossedTokens": [],
-    "translation": "A boy sat in class. When class finished, he danced.",
+    "translation": "",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -516,7 +528,8 @@
         "DANCE"
       ]
     ],
-    "comment": "Number condition: one vs. two referents."
+    "comment": "Number condition: one vs. two referents.",
+    "verified": "page-image"
   },
   {
     "id": "ahnkocabdavidson2026_a1_1_two_noLocus",
@@ -532,9 +545,9 @@
       "CLASS FINISH, DANCE."
     ],
     "glossedTokens": [],
-    "translation": "A boy sat in class. A girl read. When class finished, he danced.",
+    "translation": "",
     "context": "",
-    "judgment": "marginal",
+    "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -555,7 +568,8 @@
         "DANCE"
       ]
     ],
-    "comment": "Number condition: one vs. two referents."
+    "comment": "Number condition: one vs. two referents. Printed unmarked in Appendix A1; Table 3 predicts this cell less acceptable.",
+    "verified": "page-image"
   },
   {
     "id": "ahnkocabdavidson2026_a1_1_two_locus",
@@ -571,7 +585,7 @@
       "CLASS FINISH, IXA DANCE."
     ],
     "glossedTokens": [],
-    "translation": "A boy sat in class. A girl read. When class finished, he danced.",
+    "translation": "",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -594,7 +608,8 @@
         "DANCE"
       ]
     ],
-    "comment": "Number condition: one vs. two referents."
+    "comment": "Number condition: one vs. two referents.",
+    "verified": "page-image"
   },
   {
     "id": "ahnkocabdavidson2026_a1_2_one_noLocus",
@@ -610,7 +625,7 @@
       "FALL."
     ],
     "glossedTokens": [],
-    "translation": "Linda went to the beach. She walked near the water. She fell.",
+    "translation": "",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -633,7 +648,8 @@
         "FALL"
       ]
     ],
-    "comment": "Number condition: one vs. two referents."
+    "comment": "Number condition: one vs. two referents.",
+    "verified": "page-image"
   },
   {
     "id": "ahnkocabdavidson2026_a1_2_one_locus",
@@ -672,7 +688,8 @@
         "FALL"
       ]
     ],
-    "comment": "Number condition: one vs. two referents."
+    "comment": "Number condition: one vs. two referents. Translation from (56).",
+    "verified": "page-image"
   },
   {
     "id": "ahnkocabdavidson2026_a1_2_two_noLocus",
@@ -688,9 +705,9 @@
       "FALL."
     ],
     "glossedTokens": [],
-    "translation": "Linda went to the beach. Will walked near the water. She fell.",
+    "translation": "",
     "context": "",
-    "judgment": "marginal",
+    "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -711,7 +728,8 @@
         "FALL"
       ]
     ],
-    "comment": "Number condition: one vs. two referents."
+    "comment": "Number condition: one vs. two referents. Printed unmarked in Appendix A1; Table 3 predicts this cell less acceptable.",
+    "verified": "page-image"
   },
   {
     "id": "ahnkocabdavidson2026_a1_2_two_locus",
@@ -727,7 +745,7 @@
       "IXA FALLA."
     ],
     "glossedTokens": [],
-    "translation": "Linda went to the beach. Will walked near the water. She fell.",
+    "translation": "",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -750,7 +768,8 @@
         "FALL"
       ]
     ],
-    "comment": "Number condition: one vs. two referents."
+    "comment": "Number condition: one vs. two referents.",
+    "verified": "page-image"
   },
   {
     "id": "ahnkocabdavidson2026_a1_3_one_noLocus",
@@ -766,7 +785,7 @@
       "JUMP."
     ],
     "glossedTokens": [],
-    "translation": "A girl went to the mall. She walked. She jumped.",
+    "translation": "",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -789,7 +808,8 @@
         "JUMP"
       ]
     ],
-    "comment": "Number condition: one vs. two referents."
+    "comment": "Number condition: one vs. two referents.",
+    "verified": "page-image"
   },
   {
     "id": "ahnkocabdavidson2026_a1_3_one_locus",
@@ -805,7 +825,7 @@
       "IXA JUMPA."
     ],
     "glossedTokens": [],
-    "translation": "A girl went to the mall. She walked. She jumped.",
+    "translation": "",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -828,7 +848,8 @@
         "JUMP"
       ]
     ],
-    "comment": "Number condition: one vs. two referents."
+    "comment": "Number condition: one vs. two referents.",
+    "verified": "page-image"
   },
   {
     "id": "ahnkocabdavidson2026_a1_3_two_noLocus",
@@ -844,9 +865,9 @@
       "JUMP."
     ],
     "glossedTokens": [],
-    "translation": "A girl went to the mall. A boy walked. She jumped.",
+    "translation": "",
     "context": "",
-    "judgment": "marginal",
+    "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -867,7 +888,8 @@
         "JUMP"
       ]
     ],
-    "comment": "Number condition: one vs. two referents."
+    "comment": "Number condition: one vs. two referents. Printed unmarked in Appendix A1; Table 3 predicts this cell less acceptable.",
+    "verified": "page-image"
   },
   {
     "id": "ahnkocabdavidson2026_a1_3_two_locus",
@@ -883,7 +905,7 @@
       "IXA JUMPA."
     ],
     "glossedTokens": [],
-    "translation": "A girl went to the mall. A boy walked. She jumped.",
+    "translation": "",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -906,7 +928,8 @@
         "JUMP"
       ]
     ],
-    "comment": "Number condition: one vs. two referents."
+    "comment": "Number condition: one vs. two referents.",
+    "verified": "page-image"
   },
   {
     "id": "ahnkocabdavidson2026_a1_4_one_noLocus",
@@ -921,7 +944,7 @@
       "DOCTOR DRINK WATER."
     ],
     "glossedTokens": [],
-    "translation": "A doctor went to the park. The doctor drank water. (The final verb is missing from the printed appendix line.)",
+    "translation": "",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -944,7 +967,8 @@
         "RUN"
       ]
     ],
-    "comment": "Number condition: one vs. two referents."
+    "comment": "Number condition: one vs. two referents. The printed appendix line has no final verb.",
+    "verified": "page-image"
   },
   {
     "id": "ahnkocabdavidson2026_a1_4_one_locus",
@@ -960,7 +984,7 @@
       "IXA RUNA."
     ],
     "glossedTokens": [],
-    "translation": "A doctor went to the park. She drank water. She ran.",
+    "translation": "",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -983,7 +1007,8 @@
         "RUN"
       ]
     ],
-    "comment": "Number condition: one vs. two referents."
+    "comment": "Number condition: one vs. two referents.",
+    "verified": "page-image"
   },
   {
     "id": "ahnkocabdavidson2026_a1_4_two_noLocus",
@@ -999,9 +1024,9 @@
       "RUN."
     ],
     "glossedTokens": [],
-    "translation": "A doctor went to the park. A police officer drank water. She ran.",
+    "translation": "",
     "context": "",
-    "judgment": "marginal",
+    "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -1022,7 +1047,8 @@
         "RUN"
       ]
     ],
-    "comment": "Number condition: one vs. two referents."
+    "comment": "Number condition: one vs. two referents. Printed unmarked in Appendix A1; Table 3 predicts this cell less acceptable.",
+    "verified": "page-image"
   },
   {
     "id": "ahnkocabdavidson2026_a1_4_two_locus",
@@ -1038,7 +1064,7 @@
       "IXA RUNA."
     ],
     "glossedTokens": [],
-    "translation": "A doctor went to the park. A police officer drank water. She ran.",
+    "translation": "",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -1061,7 +1087,8 @@
         "RUN"
       ]
     ],
-    "comment": "Number condition: one vs. two referents."
+    "comment": "Number condition: one vs. two referents.",
+    "verified": "page-image"
   },
   {
     "id": "ahnkocabdavidson2026_a1_5_narr_noLocus",
@@ -1077,9 +1104,9 @@
       "TOMORROW VISIT."
     ],
     "glossedTokens": [],
-    "translation": "Lisa went to the park. Donna needed help moving a couch. Tomorrow she will visit her.",
+    "translation": "",
     "context": "",
-    "judgment": "marginal",
+    "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -1100,7 +1127,8 @@
         "VISIT"
       ]
     ],
-    "comment": "Narrative condition: without loci, ratings were lower regardless of narrative support, and the narrative did not raise accuracy (§4.3)."
+    "comment": "Narrative condition: without loci, ratings were lower regardless of narrative support, and the narrative did not raise accuracy (§4.3). Printed unmarked in Appendix A1; Table 4 predicts this cell acceptable.",
+    "verified": "page-image"
   },
   {
     "id": "ahnkocabdavidson2026_a1_5_noNarr_noLocus",
@@ -1116,9 +1144,9 @@
       "TOMORROW VISIT."
     ],
     "glossedTokens": [],
-    "translation": "Lisa went to the park. Donna read. Tomorrow she will visit her.",
+    "translation": "",
     "context": "",
-    "judgment": "marginal",
+    "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -1139,7 +1167,8 @@
         "VISIT"
       ]
     ],
-    "comment": "Narrative condition: without loci, ratings were lower regardless of narrative support, and the narrative did not raise accuracy (§4.3)."
+    "comment": "Narrative condition: without loci, ratings were lower regardless of narrative support, and the narrative did not raise accuracy (§4.3). Printed unmarked in Appendix A1; Table 4 predicts this cell less acceptable. The appendix prints this line under [+narr +locus]; its content (no narrative, no loci) and items 6-8 show the label is a misprint for [-narr -locus].",
+    "verified": "page-image"
   },
   {
     "id": "ahnkocabdavidson2026_a1_5_narr_locus",
@@ -1155,7 +1184,7 @@
       "TOMORROW IXA AVISITB IXB."
     ],
     "glossedTokens": [],
-    "translation": "Lisa went to the park. Donna needed help moving a couch. Tomorrow she will visit her.",
+    "translation": "",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -1178,7 +1207,8 @@
         "VISIT"
       ]
     ],
-    "comment": "Narrative condition: without loci, ratings were lower regardless of narrative support, and the narrative did not raise accuracy (§4.3)."
+    "comment": "Narrative condition: without loci, ratings were lower regardless of narrative support, and the narrative did not raise accuracy (§4.3). The appendix prints this line under [-narr -locus]; its content (narrative, loci) and items 6-8 show the label is a misprint for [+narr +locus].",
+    "verified": "page-image"
   },
   {
     "id": "ahnkocabdavidson2026_a1_5_noNarr_locus",
@@ -1194,7 +1224,7 @@
       "TOMORROW IXA AVISITB IXB."
     ],
     "glossedTokens": [],
-    "translation": "Lisa went to the park. Donna read. Tomorrow she will visit her.",
+    "translation": "",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -1217,7 +1247,8 @@
         "VISIT"
       ]
     ],
-    "comment": "Narrative condition: without loci, ratings were lower regardless of narrative support, and the narrative did not raise accuracy (§4.3)."
+    "comment": "Narrative condition: without loci, ratings were lower regardless of narrative support, and the narrative did not raise accuracy (§4.3).",
+    "verified": "page-image"
   },
   {
     "id": "ahnkocabdavidson2026_a1_6_narr_noLocus",
@@ -1233,9 +1264,9 @@
       "YELL."
     ],
     "glossedTokens": [],
-    "translation": "Sue went to school. Mary said something bad. She yelled at her.",
+    "translation": "",
     "context": "",
-    "judgment": "marginal",
+    "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -1256,7 +1287,8 @@
         "YELL"
       ]
     ],
-    "comment": "Narrative condition: without loci, ratings were lower regardless of narrative support, and the narrative did not raise accuracy (§4.3)."
+    "comment": "Narrative condition: without loci, ratings were lower regardless of narrative support, and the narrative did not raise accuracy (§4.3). Printed unmarked in Appendix A1; Table 4 predicts this cell acceptable.",
+    "verified": "page-image"
   },
   {
     "id": "ahnkocabdavidson2026_a1_6_narr_locus",
@@ -1272,7 +1304,7 @@
       "IXA AYELLB IXB."
     ],
     "glossedTokens": [],
-    "translation": "Sue went to school. Mary said something bad. She yelled at her.",
+    "translation": "",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -1295,7 +1327,8 @@
         "YELL"
       ]
     ],
-    "comment": "Narrative condition: without loci, ratings were lower regardless of narrative support, and the narrative did not raise accuracy (§4.3)."
+    "comment": "Narrative condition: without loci, ratings were lower regardless of narrative support, and the narrative did not raise accuracy (§4.3).",
+    "verified": "page-image"
   },
   {
     "id": "ahnkocabdavidson2026_a1_6_noNarr_noLocus",
@@ -1311,9 +1344,9 @@
       "YELL."
     ],
     "glossedTokens": [],
-    "translation": "Sue went to school. Mary read. She yelled at her.",
+    "translation": "",
     "context": "",
-    "judgment": "marginal",
+    "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -1334,7 +1367,8 @@
         "YELL"
       ]
     ],
-    "comment": "Narrative condition: without loci, ratings were lower regardless of narrative support, and the narrative did not raise accuracy (§4.3)."
+    "comment": "Narrative condition: without loci, ratings were lower regardless of narrative support, and the narrative did not raise accuracy (§4.3). Printed unmarked in Appendix A1; Table 4 predicts this cell less acceptable.",
+    "verified": "page-image"
   },
   {
     "id": "ahnkocabdavidson2026_a1_6_noNarr_locus",
@@ -1350,7 +1384,7 @@
       "IXA AYELLB IXB."
     ],
     "glossedTokens": [],
-    "translation": "Sue went to school. Mary read. She yelled at her.",
+    "translation": "",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -1373,7 +1407,8 @@
         "YELL"
       ]
     ],
-    "comment": "Narrative condition: without loci, ratings were lower regardless of narrative support, and the narrative did not raise accuracy (§4.3)."
+    "comment": "Narrative condition: without loci, ratings were lower regardless of narrative support, and the narrative did not raise accuracy (§4.3).",
+    "verified": "page-image"
   },
   {
     "id": "ahnkocabdavidson2026_a1_7_narr_noLocus",
@@ -1389,9 +1424,9 @@
       "HELP."
     ],
     "glossedTokens": [],
-    "translation": "James and David went to work. David needed help lifting a heavy box. He helped him.",
+    "translation": "",
     "context": "",
-    "judgment": "marginal",
+    "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -1412,7 +1447,8 @@
         "HELP"
       ]
     ],
-    "comment": "Narrative condition: without loci, ratings were lower regardless of narrative support, and the narrative did not raise accuracy (§4.3)."
+    "comment": "Narrative condition: without loci, ratings were lower regardless of narrative support, and the narrative did not raise accuracy (§4.3). Printed unmarked in Appendix A1; Table 4 predicts this cell acceptable.",
+    "verified": "page-image"
   },
   {
     "id": "ahnkocabdavidson2026_a1_7_narr_locus",
@@ -1428,7 +1464,7 @@
       "IXA AHELPB IXB."
     ],
     "glossedTokens": [],
-    "translation": "James and David went to work. David needed help lifting a heavy box. He helped him.",
+    "translation": "",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -1451,7 +1487,8 @@
         "HELP"
       ]
     ],
-    "comment": "Narrative condition: without loci, ratings were lower regardless of narrative support, and the narrative did not raise accuracy (§4.3)."
+    "comment": "Narrative condition: without loci, ratings were lower regardless of narrative support, and the narrative did not raise accuracy (§4.3).",
+    "verified": "page-image"
   },
   {
     "id": "ahnkocabdavidson2026_a1_7_noNarr_noLocus",
@@ -1466,9 +1503,9 @@
       "HELP."
     ],
     "glossedTokens": [],
-    "translation": "James and David went to work. He helped him.",
+    "translation": "",
     "context": "",
-    "judgment": "marginal",
+    "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -1489,7 +1526,8 @@
         "HELP"
       ]
     ],
-    "comment": "Narrative condition: without loci, ratings were lower regardless of narrative support, and the narrative did not raise accuracy (§4.3)."
+    "comment": "Narrative condition: without loci, ratings were lower regardless of narrative support, and the narrative did not raise accuracy (§4.3). Printed unmarked in Appendix A1; Table 4 predicts this cell less acceptable.",
+    "verified": "page-image"
   },
   {
     "id": "ahnkocabdavidson2026_a1_7_noNarr_locus",
@@ -1504,7 +1542,7 @@
       "IXA AHELPB IXB."
     ],
     "glossedTokens": [],
-    "translation": "James and David went to work. He helped him.",
+    "translation": "",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -1527,13 +1565,14 @@
         "HELP"
       ]
     ],
-    "comment": "Narrative condition: without loci, ratings were lower regardless of narrative support, and the narrative did not raise accuracy (§4.3)."
+    "comment": "Narrative condition: without loci, ratings were lower regardless of narrative support, and the narrative did not raise accuracy (§4.3).",
+    "verified": "page-image"
   },
   {
     "id": "ahnkocabdavidson2026_a1_8_narr_noLocus",
     "source": {
       "bibkey": "ahn-kocab-davidson-2026",
-      "paperLabel": "Appendix A1, 8. ASK [+narr,-locus]"
+      "paperLabel": "Appendix A1, 8. ASK DIRECTION [+narr,-locus]"
     },
     "language": "amer1248",
     "primaryText": "GIRL TRAVEL. GIRL LOST. WOMAN SIT. ASK DIRECTION.",
@@ -1544,9 +1583,9 @@
       "ASK DIRECTION."
     ],
     "glossedTokens": [],
-    "translation": "A girl went traveling. The girl was lost, and a woman was sitting. She asked her for directions.",
+    "translation": "",
     "context": "",
-    "judgment": "marginal",
+    "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -1567,13 +1606,14 @@
         "ASK"
       ]
     ],
-    "comment": "Narrative condition: without loci, ratings were lower regardless of narrative support, and the narrative did not raise accuracy (§4.3)."
+    "comment": "Narrative condition: without loci, ratings were lower regardless of narrative support, and the narrative did not raise accuracy (§4.3). Printed unmarked in Appendix A1; Table 4 predicts this cell acceptable.",
+    "verified": "page-image"
   },
   {
     "id": "ahnkocabdavidson2026_a1_8_narr_locus",
     "source": {
       "bibkey": "ahn-kocab-davidson-2026",
-      "paperLabel": "Appendix A1, 8. ASK [+narr,+locus]"
+      "paperLabel": "Appendix A1, 8. ASK DIRECTION [+narr,+locus]"
     },
     "language": "amer1248",
     "primaryText": "GIRL IXA TRAVEL. IXA LOST. WOMAN IXB SIT. IXA AASKB IXB DIRECTION.",
@@ -1584,7 +1624,7 @@
       "IXA AASKB IXB DIRECTION."
     ],
     "glossedTokens": [],
-    "translation": "A girl went traveling. The girl was lost, and a woman was sitting. She asked her for directions.",
+    "translation": "",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -1607,13 +1647,14 @@
         "ASK"
       ]
     ],
-    "comment": "Narrative condition: without loci, ratings were lower regardless of narrative support, and the narrative did not raise accuracy (§4.3)."
+    "comment": "Narrative condition: without loci, ratings were lower regardless of narrative support, and the narrative did not raise accuracy (§4.3).",
+    "verified": "page-image"
   },
   {
     "id": "ahnkocabdavidson2026_a1_8_noNarr_noLocus",
     "source": {
       "bibkey": "ahn-kocab-davidson-2026",
-      "paperLabel": "Appendix A1, 8. ASK [-narr,-locus]"
+      "paperLabel": "Appendix A1, 8. ASK DIRECTION [-narr,-locus]"
     },
     "language": "amer1248",
     "primaryText": "GIRL TRAVEL. GIRL READ. WOMAN SIT. ASK DIRECTION.",
@@ -1626,7 +1667,7 @@
     "glossedTokens": [],
     "translation": "A girl went traveling. The girl was reading, and a woman was sitting. She asked her for directions.",
     "context": "",
-    "judgment": "marginal",
+    "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -1647,13 +1688,14 @@
         "ASK"
       ]
     ],
-    "comment": "Narrative condition: without loci, ratings were lower regardless of narrative support, and the narrative did not raise accuracy (§4.3)."
+    "comment": "Narrative condition: without loci, ratings were lower regardless of narrative support, and the narrative did not raise accuracy (§4.3). Translation from (55), where this line is (55a). Printed unmarked in Appendix A1; Table 4 predicts this cell less acceptable.",
+    "verified": "page-image"
   },
   {
     "id": "ahnkocabdavidson2026_a1_8_noNarr_locus",
     "source": {
       "bibkey": "ahn-kocab-davidson-2026",
-      "paperLabel": "Appendix A1, 8. ASK [-narr,+locus]"
+      "paperLabel": "Appendix A1, 8. ASK DIRECTION [-narr,+locus]"
     },
     "language": "amer1248",
     "primaryText": "GIRL IXA TRAVEL. IXA READ. WOMAN IXB SIT. IXA AASKB IXB DIRECTION.",
@@ -1687,7 +1729,8 @@
         "ASK"
       ]
     ],
-    "comment": "Narrative condition: without loci, ratings were lower regardless of narrative support, and the narrative did not raise accuracy (§4.3)."
+    "comment": "Narrative condition: without loci, ratings were lower regardless of narrative support, and the narrative did not raise accuracy (§4.3). Translation from (55), where this line is (55d).",
+    "verified": "page-image"
   },
   {
     "id": "ahnkocabdavidson2026_a1_9_inanimate_noLocus",
@@ -1703,7 +1746,7 @@
       "PUNCH."
     ],
     "glossedTokens": [],
-    "translation": "Jane visited the park. She saw a tree. She punched it.",
+    "translation": "",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -1726,7 +1769,8 @@
         "PUNCH"
       ]
     ],
-    "comment": "Animacy condition: an inanimate competitor cannot be the agent."
+    "comment": "Animacy condition: an inanimate competitor cannot be the agent.",
+    "verified": "page-image"
   },
   {
     "id": "ahnkocabdavidson2026_a1_9_inanimate_locus",
@@ -1742,7 +1786,7 @@
       "IXA APUNCHB IXB."
     ],
     "glossedTokens": [],
-    "translation": "Jane visited the park. She saw a tree. She punched it.",
+    "translation": "",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -1765,7 +1809,8 @@
         "PUNCH"
       ]
     ],
-    "comment": "Animacy condition: an inanimate competitor cannot be the agent."
+    "comment": "Animacy condition: an inanimate competitor cannot be the agent.",
+    "verified": "page-image"
   },
   {
     "id": "ahnkocabdavidson2026_a1_9_animate_noLocus",
@@ -1781,9 +1826,9 @@
       "PUNCH."
     ],
     "glossedTokens": [],
-    "translation": "Jane visited the park. She saw Ana. She punched her.",
+    "translation": "",
     "context": "",
-    "judgment": "marginal",
+    "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -1804,7 +1849,8 @@
         "PUNCH"
       ]
     ],
-    "comment": "Animacy condition: an inanimate competitor cannot be the agent."
+    "comment": "Animacy condition: an inanimate competitor cannot be the agent. Printed unmarked in Appendix A1; Table 5 predicts this cell less acceptable.",
+    "verified": "page-image"
   },
   {
     "id": "ahnkocabdavidson2026_a1_9_animate_locus",
@@ -1820,7 +1866,7 @@
       "IXA APUNCHB IXB."
     ],
     "glossedTokens": [],
-    "translation": "Jane visited the park. She saw Ana. She punched her.",
+    "translation": "",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -1843,7 +1889,8 @@
         "PUNCH"
       ]
     ],
-    "comment": "Animacy condition: an inanimate competitor cannot be the agent."
+    "comment": "Animacy condition: an inanimate competitor cannot be the agent.",
+    "verified": "page-image"
   },
   {
     "id": "ahnkocabdavidson2026_a1_10_inanimate_noLocus",
@@ -1859,7 +1906,7 @@
       "CLASS FINISH, KICK."
     ],
     "glossedTokens": [],
-    "translation": "John sat in class. He saw a cabinet. When class finished, he kicked it.",
+    "translation": "",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -1882,7 +1929,8 @@
         "KICK"
       ]
     ],
-    "comment": "Animacy condition: an inanimate competitor cannot be the agent."
+    "comment": "Animacy condition: an inanimate competitor cannot be the agent.",
+    "verified": "page-image"
   },
   {
     "id": "ahnkocabdavidson2026_a1_10_inanimate_locus",
@@ -1898,7 +1946,7 @@
       "CLASS FINISH, IXA AKICKB IXB."
     ],
     "glossedTokens": [],
-    "translation": "John sat in class. He saw a cabinet. When class finished, he kicked it.",
+    "translation": "",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -1921,7 +1969,8 @@
         "KICK"
       ]
     ],
-    "comment": "Animacy condition: an inanimate competitor cannot be the agent."
+    "comment": "Animacy condition: an inanimate competitor cannot be the agent.",
+    "verified": "page-image"
   },
   {
     "id": "ahnkocabdavidson2026_a1_10_animate_noLocus",
@@ -1937,9 +1986,9 @@
       "CLASS FINISH, KICK."
     ],
     "glossedTokens": [],
-    "translation": "John sat in class. He saw Bill. When class finished, he kicked him.",
+    "translation": "",
     "context": "",
-    "judgment": "marginal",
+    "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -1960,7 +2009,8 @@
         "KICK"
       ]
     ],
-    "comment": "Animacy condition: an inanimate competitor cannot be the agent."
+    "comment": "Animacy condition: an inanimate competitor cannot be the agent. Printed unmarked in Appendix A1; Table 5 predicts this cell less acceptable.",
+    "verified": "page-image"
   },
   {
     "id": "ahnkocabdavidson2026_a1_10_animate_locus",
@@ -1976,7 +2026,7 @@
       "CLASS FINISH, IXA AKICKB IXB."
     ],
     "glossedTokens": [],
-    "translation": "John sat in class. He saw Bill. When class finished, he kicked him.",
+    "translation": "",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -1999,7 +2049,8 @@
         "KICK"
       ]
     ],
-    "comment": "Animacy condition: an inanimate competitor cannot be the agent."
+    "comment": "Animacy condition: an inanimate competitor cannot be the agent.",
+    "verified": "page-image"
   },
   {
     "id": "ahnkocabdavidson2026_a1_11_inanimate_noLocus",
@@ -2015,7 +2066,7 @@
       "PUSH."
     ],
     "glossedTokens": [],
-    "translation": "Mike entered the living room. He saw a TV. He pushed it.",
+    "translation": "",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -2038,7 +2089,8 @@
         "PUSH"
       ]
     ],
-    "comment": "Animacy condition: an inanimate competitor cannot be the agent."
+    "comment": "Animacy condition: an inanimate competitor cannot be the agent.",
+    "verified": "page-image"
   },
   {
     "id": "ahnkocabdavidson2026_a1_11_inanimate_locus",
@@ -2077,7 +2129,8 @@
         "PUSH"
       ]
     ],
-    "comment": "Animacy condition: an inanimate competitor cannot be the agent."
+    "comment": "Animacy condition: an inanimate competitor cannot be the agent. Translation from (57).",
+    "verified": "page-image"
   },
   {
     "id": "ahnkocabdavidson2026_a1_11_animate_noLocus",
@@ -2093,9 +2146,9 @@
       "PUSH."
     ],
     "glossedTokens": [],
-    "translation": "Mike entered the living room. He saw Bob. He pushed him.",
+    "translation": "",
     "context": "",
-    "judgment": "marginal",
+    "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -2116,7 +2169,8 @@
         "PUSH"
       ]
     ],
-    "comment": "Animacy condition: an inanimate competitor cannot be the agent."
+    "comment": "Animacy condition: an inanimate competitor cannot be the agent. Printed unmarked in Appendix A1; Table 5 predicts this cell less acceptable.",
+    "verified": "page-image"
   },
   {
     "id": "ahnkocabdavidson2026_a1_11_animate_locus",
@@ -2132,7 +2186,7 @@
       "IXA APUSHB IXB."
     ],
     "glossedTokens": [],
-    "translation": "Mike entered the living room. He saw Bob. He pushed him.",
+    "translation": "",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -2155,13 +2209,14 @@
         "PUSH"
       ]
     ],
-    "comment": "Animacy condition: an inanimate competitor cannot be the agent."
+    "comment": "Animacy condition: an inanimate competitor cannot be the agent.",
+    "verified": "page-image"
   },
   {
     "id": "ahnkocabdavidson2026_a1_12_inanimate_noLocus",
     "source": {
       "bibkey": "ahn-kocab-davidson-2026",
-      "paperLabel": "Appendix A1, 12. TAKE-PICTURE [-animate,-locus]"
+      "paperLabel": "Appendix A1, 12. TAKE-PIC [-animate,-locus]"
     },
     "language": "amer1248",
     "primaryText": "BOY ENTER STORE. BOY SEE FLOWER. TAKE PICTURE.",
@@ -2171,7 +2226,7 @@
       "TAKE PICTURE."
     ],
     "glossedTokens": [],
-    "translation": "A boy entered a store. He saw a flower. He took a picture of it.",
+    "translation": "",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -2194,13 +2249,14 @@
         "TAKE-PICTURE"
       ]
     ],
-    "comment": "Animacy condition: an inanimate competitor cannot be the agent."
+    "comment": "Animacy condition: an inanimate competitor cannot be the agent.",
+    "verified": "page-image"
   },
   {
     "id": "ahnkocabdavidson2026_a1_12_inanimate_locus",
     "source": {
       "bibkey": "ahn-kocab-davidson-2026",
-      "paperLabel": "Appendix A1, 12. TAKE-PICTURE [-animate,+locus]"
+      "paperLabel": "Appendix A1, 12. TAKE-PIC [-animate,+locus]"
     },
     "language": "amer1248",
     "primaryText": "BOY IXA ENTER STORE. IXA SEE FLOWER IXB. IXA BTAKE-PICTUREA IXB.",
@@ -2210,7 +2266,7 @@
       "IXA BTAKE-PICTUREA IXB."
     ],
     "glossedTokens": [],
-    "translation": "A boy entered a store. He saw a flower. He took a picture of it.",
+    "translation": "",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -2233,13 +2289,14 @@
         "TAKE-PICTURE"
       ]
     ],
-    "comment": "Animacy condition: an inanimate competitor cannot be the agent."
+    "comment": "Animacy condition: an inanimate competitor cannot be the agent.",
+    "verified": "page-image"
   },
   {
     "id": "ahnkocabdavidson2026_a1_12_animate_noLocus",
     "source": {
       "bibkey": "ahn-kocab-davidson-2026",
-      "paperLabel": "Appendix A1, 12. TAKE-PICTURE [+animate,-locus]"
+      "paperLabel": "Appendix A1, 12. TAKE-PIC [+animate,-locus]"
     },
     "language": "amer1248",
     "primaryText": "BOY ENTER STORE. BOY SEE MAN. TAKE-PICTURE.",
@@ -2249,9 +2306,9 @@
       "TAKE-PICTURE."
     ],
     "glossedTokens": [],
-    "translation": "A boy entered a store. He saw a man. He took a picture of him.",
+    "translation": "",
     "context": "",
-    "judgment": "marginal",
+    "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -2272,13 +2329,14 @@
         "TAKE-PICTURE"
       ]
     ],
-    "comment": "Animacy condition: an inanimate competitor cannot be the agent."
+    "comment": "Animacy condition: an inanimate competitor cannot be the agent. Printed unmarked in Appendix A1; Table 5 predicts this cell less acceptable.",
+    "verified": "page-image"
   },
   {
     "id": "ahnkocabdavidson2026_a1_12_animate_locus",
     "source": {
       "bibkey": "ahn-kocab-davidson-2026",
-      "paperLabel": "Appendix A1, 12. TAKE-PICTURE [+animate,+locus]"
+      "paperLabel": "Appendix A1, 12. TAKE-PIC [+animate,+locus]"
     },
     "language": "amer1248",
     "primaryText": "BOY IXA ENTER STORE. IXA SEE MAN IXB. IXA BTAKE-PICTUREA IXB.",
@@ -2288,7 +2346,7 @@
       "IXA BTAKE-PICTUREA IXB."
     ],
     "glossedTokens": [],
-    "translation": "A boy entered a store. He saw a man. He took a picture of him.",
+    "translation": "",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -2311,6 +2369,7 @@
         "TAKE-PICTURE"
       ]
     ],
-    "comment": "Animacy condition: an inanimate competitor cannot be the agent."
+    "comment": "Animacy condition: an inanimate competitor cannot be the agent.",
+    "verified": "page-image"
   }
 ]

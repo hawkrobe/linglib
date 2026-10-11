@@ -12,7 +12,8 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [],
-    "comment": "Responsive verbs take declarative complements."
+    "comment": "Responsive verbs take declarative complements.",
+    "verified": "page-image"
   },
   {
     "id": "theileretal2018_1b",
@@ -27,7 +28,8 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [],
-    "comment": "Responsive verbs take interrogative complements."
+    "comment": "Responsive verbs take interrogative complements.",
+    "verified": "page-image"
   },
   {
     "id": "theileretal2018_12",
@@ -42,7 +44,8 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [],
-    "comment": "Judged true if John told Mary that Ann and Bill passed and nothing else, false if he also told her that Chris and Daniel passed: false answers matter to the weakly exhaustive reading."
+    "comment": "Judged true if John told Mary that Ann and Bill passed and nothing else, false if he also told her that Chris and Daniel passed: false answers matter to the weakly exhaustive reading.",
+    "verified": "page-image"
   },
   {
     "id": "theileretal2018_13a",
@@ -57,7 +60,8 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [],
-    "comment": "Judged true on the mention-some reading: Janna's information state is a truthful resolution."
+    "comment": "Judged true on the mention-some reading: Janna's information state is a truthful resolution.",
+    "verified": "page-image"
   },
   {
     "id": "theileretal2018_13b",
@@ -72,7 +76,8 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [],
-    "comment": "Judged false on the mention-some reading: Rupert's information state entails a false alternative, so it is not a truthful resolution."
+    "comment": "Judged false on the mention-some reading: Rupert's information state entails a false alternative, so it is not a truthful resolution.",
+    "verified": "page-image"
   },
   {
     "id": "theileretal2018_15",
@@ -87,7 +92,8 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [],
-    "comment": "Judged true: *be certain* evaluates truthful resolutions in Rupert's own doxastic worlds, where his false belief is true."
+    "comment": "Judged true: *be certain* evaluates truthful resolutions in Rupert's own doxastic worlds, where his false belief is true.",
+    "verified": "page-image"
   },
   {
     "id": "theileretal2018_17",
@@ -102,7 +108,8 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [],
-    "comment": "Dutch; the exhaustivity marker *allemaal* forces the exhaustive reading of the nucleus."
+    "comment": "Dutch; the exhaustivity marker *allemaal* forces the exhaustive reading of the nucleus.",
+    "verified": "page-image"
   },
   {
     "id": "theileretal2018_18",
@@ -117,7 +124,8 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [],
-    "comment": "Dutch; the non-exhaustivity marker *zoal* forces the non-exhaustive reading."
+    "comment": "Dutch; the non-exhaustivity marker *zoal* forces the non-exhaustive reading.",
+    "verified": "page-image"
   },
   {
     "id": "theileretal2018_26",
@@ -127,12 +135,13 @@
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
-    "context": "Only Ann and Bill, not Chris and Daniel, passed the exam.",
+    "context": "Only Anna and Bill, not Chris and Daniel, passed the exam.",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [],
-    "comment": "On the intermediate exhaustive reading John's state entails that Ann and Bill passed and does not entail that Chris or Daniel did; on the strongly exhaustive reading it entails the true cell of the partition."
+    "comment": "On the intermediate exhaustive reading John's state entails that Anna and Bill passed and does not entail that Chris or Daniel did; on the strongly exhaustive reading it entails the true cell of the partition.",
+    "verified": "page-image"
   },
   {
     "id": "theileretal2018_29",
@@ -147,7 +156,8 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [],
-    "comment": "The first conjunct is read intermediate exhaustively and the second mention-some, so completeness is a feature of the complement rather than of the verb."
+    "comment": "The first conjunct is read intermediate exhaustively and the second mention-some, so completeness is a feature of the complement rather than of the verb.",
+    "verified": "page-image"
   },
   {
     "id": "theileretal2018_31",
@@ -162,7 +172,8 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [],
-    "comment": "True although Rupert wrongly believes that Paperworld sells them too: the truthful resolutions of a declarative complement are downward closed."
+    "comment": "True although Rupert wrongly believes that Paperworld sells them too: the truthful resolutions of a declarative complement are downward closed.",
+    "verified": "page-image"
   },
   {
     "id": "theileretal2018_32",
@@ -177,7 +188,8 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [],
-    "comment": "Judged false when John's beliefs include a square that was not blue and true when they leave a blue square open; after Cremers and Chemla: an intermediate exhaustive reading under the external interpretation of the verb."
+    "comment": "Judged false when John believes of a square that was not blue that it was blue (scenario A) and true when he correctly identifies the blue squares and leaves a non-blue square open (scenario B); after Cremers and Chemla: an intermediate exhaustive reading under the external interpretation of the verb.",
+    "verified": "page-image"
   },
   {
     "id": "theileretal2018_37",
@@ -192,7 +204,8 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [],
-    "comment": "True under the internal interpretation and a mention-some reading, which resolution introspection allows and Heim introspection would not."
+    "comment": "True under the internal interpretation and a mention-some reading, which resolution introspection allows and Heim introspection would not.",
+    "verified": "page-image"
   },
   {
     "id": "theileretal2018_39",
@@ -207,7 +220,8 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [],
-    "comment": "Valid: *know* is veridical with respect to declarative complements."
+    "comment": "Valid: *know* is veridical with respect to declarative complements.",
+    "verified": "page-image"
   },
   {
     "id": "theileretal2018_40",
@@ -222,7 +236,8 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [],
-    "comment": "Invalid: *be certain* is not veridical."
+    "comment": "Invalid: *be certain* is not veridical.",
+    "verified": "page-image"
   },
   {
     "id": "theileretal2018_41",
@@ -237,7 +252,8 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [],
-    "comment": "Valid: the veridicality implication of *know* projects under negation, a factivity presupposition."
+    "comment": "Valid: the veridicality implication of *know* projects under negation, a factivity presupposition.",
+    "verified": "page-image"
   },
   {
     "id": "theileretal2018_42b",
@@ -252,7 +268,8 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [],
-    "comment": "Invalid: the veridicality implication of *be right* does not project."
+    "comment": "Invalid: the veridicality implication of *be right* does not project.",
+    "verified": "page-image"
   },
   {
     "id": "theileretal2018_45",
@@ -267,7 +284,8 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [],
-    "comment": "Valid: *know* is veridical with respect to interrogative complements."
+    "comment": "Valid: *know* is veridical with respect to interrogative complements.",
+    "verified": "page-image"
   },
   {
     "id": "theileretal2018_46",
@@ -282,7 +300,8 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [],
-    "comment": "Invalid: Mary may be certain that John was born in London."
+    "comment": "Invalid: Mary may be certain that John was born in London.",
+    "verified": "page-image"
   },
   {
     "id": "theileretal2018_57",
@@ -297,7 +316,8 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [],
-    "comment": "Presupposed by *be right* and *be wrong* alike."
+    "comment": "Presupposed by *be right* and *be wrong* alike.",
+    "verified": "page-image"
   },
   {
     "id": "theileretal2018_62",
@@ -312,7 +332,8 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [],
-    "comment": "*be wrong* is anti-veridical with respect to declarative complements, by entailment."
+    "comment": "*be wrong* is anti-veridical with respect to declarative complements, by entailment.",
+    "verified": "page-image"
   },
   {
     "id": "theileretal2018_67",
@@ -327,7 +348,8 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [],
-    "comment": "True on the mention-some reading whenever some store surprised Rupert; his beliefs about stores that do not sell are immaterial: no false-answer sensitivity effect."
+    "comment": "True on the mention-some reading whenever some store surprised Rupert; his beliefs about stores that do not sell are immaterial: no false-answer sensitivity effect.",
+    "verified": "page-image"
   },
   {
     "id": "theileretal2018_69a",
@@ -342,7 +364,8 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [],
-    "comment": "Presupposes that Mary left and that John knows it."
+    "comment": "Presupposes that Mary left and that John knows it.",
+    "verified": "page-image"
   },
   {
     "id": "theileretal2018_69b",
@@ -357,7 +380,8 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [],
-    "comment": "Presupposes no answer: with an interrogative complement the truthful resolutions are nonempty at every world."
+    "comment": "Presupposes no answer: with an interrogative complement the truthful resolutions are nonempty at every world.",
+    "verified": "page-image"
   },
   {
     "id": "theileretal2018_74",
@@ -372,13 +396,14 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [],
-    "comment": "Invalid, by presupposition failure: predicates of relevance are veridical with respect to declarative but not interrogative complements."
+    "comment": "Invalid, by presupposition failure: predicates of relevance are veridical with respect to declarative but not interrogative complements.",
+    "verified": "page-image"
   },
   {
     "id": "theileretal2018_77",
     "source": {"bibkey": "theiler-etal-2018", "paperLabel": "(77)"},
     "language": "stan1293",
-    "primaryText": "Old John told us whom he saw in the fog, but it turned out that he was mistaken.",
+    "primaryText": "Old John told us whom he saw in the fog, but it turned out that he was mistaken (the person he saw was Mr. Smith, not Mr. Brown).",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
@@ -387,7 +412,8 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [],
-    "comment": "The interrogative veridicality of *tell* is defeasible; after Tsohatzidis."
+    "comment": "The interrogative veridicality of *tell* is defeasible; cited from Tsohatzidis (1993, p. 272).",
+    "verified": "page-image"
   },
   {
     "id": "theileretal2018_79",
@@ -402,7 +428,8 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [],
-    "comment": "The veridicality implication of *know* is indefeasible."
+    "comment": "The veridicality implication of *know* is indefeasible.",
+    "verified": "page-image"
   },
   {
     "id": "theileretal2018_84",
@@ -417,6 +444,7 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [],
-    "comment": "Invalid for the fictitious verb, which is veridical with respect to interrogative complements: Spector and Egré's meaning postulates do not derive the declarative veridicality generalization."
+    "comment": "Invalid for the fictitious verb, which is veridical with respect to interrogative complements: Spector and Egré's meaning postulates do not derive the declarative veridicality generalization.",
+    "verified": "page-image"
   }
 ]

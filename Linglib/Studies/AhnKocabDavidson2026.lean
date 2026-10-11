@@ -21,7 +21,13 @@ two-dimensional introducing and anaphoric uses, `incorporate`, and a verb's Padd
 read off its selection. `that_isSome_iff` is the uniqueness presupposition; `scenario_help`
 derives the interpretation of `AHELPB` from the incorporated points; `paddenClass_of_selection`
 recovers the agreeing/spatial/plain trichotomy; the row theorems state the pragmatic
-hypothesis over the consultant data and the experimental stimuli.
+hypothesis over the consultants' judgments.
+
+## TODO
+
+The experiment's ratings in the number, animacy and narrative conditions are results for
+`Data/Experiments`; the hypothesis over them, including that the narrative manipulation did not
+disambiguate, is not yet stated. The stimuli of Appendix A1 are printed unmarked.
 
 ## References
 
@@ -177,32 +183,27 @@ theorem paddenClass_of_selection :
 Locus use is licensed to disambiguate between potential antecedents. Rows carry `locus`
 (whether nouns and verbs are locus-marked), `resolved` (whether context or an overt nominal
 already resolves reference), and `condition` (`consultant` for the elicited contrasts, else
-the experiment's manipulation). -/
+the experiment's manipulation). The consultants' judgments are counts of the three signers who
+accept a sentence. -/
 
 open Examples
 
-/-- Without loci and without resolution, discourses are degraded (consultant data, and the
-number and animacy conditions). -/
+/-- Without loci and without resolution, discourses are degraded. -/
 theorem unresolved_without_locus_degraded :
-    ∀ row ∈ Examples.all, row.feature? "locus" = some "false" →
-      row.feature? "resolved" = some "false" → row.feature? "condition" ≠ some "narrative" →
+    ∀ row ∈ Examples.all, row.feature? "condition" = some "consultant" →
+      row.feature? "locus" = some "false" → row.feature? "resolved" = some "false" →
       row.judgment ≠ .acceptable := by decide
 
 /-- Without loci, resolved discourses are fully acceptable. -/
 theorem resolved_without_locus_acceptable :
-    ∀ row ∈ Examples.all, row.feature? "locus" = some "false" →
-      row.feature? "resolved" = some "true" → row.feature? "condition" ≠ some "narrative" →
+    ∀ row ∈ Examples.all, row.feature? "condition" = some "consultant" →
+      row.feature? "locus" = some "false" → row.feature? "resolved" = some "true" →
       row.judgment = .acceptable := by decide
 
 /-- Locus-marked discourses are acceptable whether or not reference was already resolved. -/
 theorem locus_acceptable :
-    ∀ row ∈ Examples.all, row.feature? "locus" = some "true" → row.judgment = .acceptable := by
+    ∀ row ∈ Examples.all, row.feature? "condition" = some "consultant" →
+      row.feature? "locus" = some "true" → row.judgment = .acceptable := by
   decide
-
-/-- The narrative manipulation did not disambiguate: unmarked stimuli were rated lower with
-and without narrative support. -/
-theorem narrative_no_resolution_effect :
-    ∀ row ∈ Examples.all, row.feature? "condition" = some "narrative" →
-      row.feature? "locus" = some "false" → row.judgment = .marginal := by decide
 
 end AhnKocabDavidson2026

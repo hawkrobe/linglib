@@ -43,7 +43,7 @@ def ex14b_na : Datum :=
 
 def ex17_partwhole_bare : Datum :=
   { id := "ahnzhu2025_ex17_partwhole_bare"
-    source := ⟨"jenks-2018", "p. 508"⟩
+    source := ⟨"jenks-2018", "(14a)"⟩
     reportedIn := some ⟨"ahn-zhu-2025", "(17)"⟩
     language := "mand1415"
     primaryText := "chezi bei jingcha lanjie le yinwei mei you tiezhi zai paizhao shang."
@@ -56,11 +56,11 @@ def ex17_partwhole_bare : Datum :=
 
 def ex18_anaphoric_na : Datum :=
   { id := "ahnzhu2025_ex18_anaphoric_na"
-    source := ⟨"jenks-2018", "p. 510"⟩
+    source := ⟨"jenks-2018", "(15a), (15b)"⟩
     reportedIn := some ⟨"ahn-zhu-2025", "(18)"⟩
     language := "mand1415"
-    primaryText := "jiaoshi li zuo-zhe yi ge nansheng he yi ge nusheng. wo zuotian yudao na ge nansheng."
-    glossedTokens := [("jiaoshi", "classroom"), ("li", "inside"), ("zuo-zhe", "sit-PROG"), ("yi", "one"), ("ge", "CL"), ("nansheng", "boy"), ("he", "and"), ("yi", "one"), ("ge", "CL"), ("nusheng", "girl"), ("wo", "I"), ("zuotian", "yesterday"), ("yudao", "meet"), ("na", "that"), ("ge", "CL"), ("nansheng", "boy")]
+    primaryText := "jiaoshi li zuo-zhe yi ge nansheng he yi ge nüsheng. wo zuotian yudao na ge nansheng."
+    glossedTokens := [("jiaoshi", "classroom"), ("li", "inside"), ("zuo-zhe", "sit-PROG"), ("yi", "one"), ("ge", "CL"), ("nansheng", "boy"), ("he", "and"), ("yi", "one"), ("ge", "CL"), ("nüsheng", "girl"), ("wo", "I"), ("zuotian", "yesterday"), ("yudao", "meet"), ("na", "that"), ("ge", "CL"), ("nansheng", "boy")]
     context := "Anaphoric reference to a boy introduced by an indefinite in the previous sentence."
     judgment := .acceptable
     alternatives := [("wo zuotian yudao nansheng.", .unacceptable)]
@@ -167,7 +167,7 @@ def ex32_study1_painter : Datum :=
     glossedTokens := [("Zhou", "Zhou"), ("Yuxuan", "Yuxuan"), ("jia-li", "home-in"), ("gua-zhe", "hang-PROG"), ("youhua", "painting"), ("dan", "but"), ("ta", "he"), ("wanquan", "totally"), ("bu", "NEG"), ("renshi", "know"), ("na", "DEM"), ("ge", "CL"), ("huajia", "painter")]
     context := "Study 1 item REL2 (painting, painter), the only item where demonstratives were rated significantly higher than bare nouns (p = 0.02)."
     judgment := .acceptable
-    alternatives := [("Zhou Yuxuan jia-li gua-zhe youhua, dan ta wanquan bu renshi huajia.", .marginal)]
+    alternatives := [("Zhou Yuxuan jia-li gua-zhe youhua, dan ta wanquan bu renshi huajia.", .acceptable)]
     readings := []
     paperFeatures := [("definite_form", "naCL"), ("bridging_type", "relational"), ("noun_arity", "relational"), ("study", "1")] }
 
@@ -180,7 +180,7 @@ def ex33a_study1_steeringwheel : Datum :=
     glossedTokens := [("Lin", "Lin"), ("Zixuan", "Zixuan"), ("xin", "new"), ("mai-le", "buy-ASP"), ("qiche", "car"), ("dan", "but"), ("ta", "he"), ("hen-kuai", "very-fast"), ("faxian", "discover"), ("you-ren", "have-person"), ("touzou-le", "steal.away-ASP"), ("fangxiangpan", "steering.wheel")]
     context := "Study 1 item PW1 (car, steering wheel), where bare nouns were rated significantly higher than demonstratives (p = 0.00134)."
     judgment := .acceptable
-    alternatives := [("Lin Zixuan xin mai-le qiche, dan ta hen-kuai faxian you-ren touzou-le na ge fangxiangpan.", .marginal)]
+    alternatives := [("Lin Zixuan xin mai-le qiche, dan ta hen-kuai faxian you-ren touzou-le na ge fangxiangpan.", .acceptable)]
     readings := []
     paperFeatures := [("definite_form", "bare"), ("bridging_type", "partWhole"), ("noun_arity", "sortal"), ("study", "1")] }
 
@@ -257,8 +257,8 @@ def ex40_study3_pn : Datum :=
     primaryText := "Wang Yawen zhengzai yong liang tai diannao; ta faxian diannao haoxiang turan huai le."
     glossedTokens := [("Wang", "Wang"), ("Yawen", "Yawen"), ("zhengzai", "PROG"), ("yong", "use"), ("liang", "two"), ("tai", "CL"), ("diannao", "computer"), ("ta", "she"), ("faxian", "find"), ("diannao", "computer"), ("haoxiang", "seem.to"), ("turan", "suddenly"), ("huai", "break"), ("le", "ASP")]
     context := "Study 3 PN control: a plural indefinite antecedent, where neither singular form was expected to be chosen."
-    judgment := .marginal
-    alternatives := [("Wang Yawen zhengzai yong liang tai diannao; ta faxian na tai diannao haoxiang turan huai le.", .marginal)]
+    judgment := .acceptable
+    alternatives := [("Wang Yawen zhengzai yong liang tai diannao; ta faxian na tai diannao haoxiang turan huai le.", .acceptable)]
     readings := []
     paperFeatures := [("definite_form", "bare"), ("bridging_type", "none"), ("noun_arity", "sortal"), ("study", "3"), ("condition", "PN"), ("pct_bn", "53.8"), ("pct_dem", "38.8")] }
 
@@ -284,7 +284,7 @@ def ex42_study3_nn : Datum :=
     glossedTokens := [("Wang", "Wang"), ("Yawen", "Yawen"), ("ganggang", "just.now"), ("zai", "PROG"), ("gongzuo", "work"), ("ta", "she"), ("faxian", "find"), ("diannao", "computer"), ("haoxiang", "seem.to"), ("turan", "suddenly"), ("huai", "break"), ("le", "ASP")]
     context := "Study 3 NN control: no nominal antecedent; a computer cannot be uniquely identified from the working situation."
     judgment := .acceptable
-    alternatives := [("Wang Yawen ganggang zai gongzuo; ta faxian na tai diannao haoxiang turan huai le.", .marginal)]
+    alternatives := [("Wang Yawen ganggang zai gongzuo; ta faxian na tai diannao haoxiang turan huai le.", .acceptable)]
     readings := []
     paperFeatures := [("definite_form", "bare"), ("bridging_type", "none"), ("noun_arity", "sortal"), ("study", "3"), ("condition", "NN"), ("pct_bn", "89.5"), ("pct_dem", "29.6")] }
 
@@ -322,7 +322,7 @@ def ex59_study4_bare_novelist : Datum :=
     primaryText := "Wang Yawen xihuan shoucang tushu. ta mei-ci zhao-dao le yi ben xihuan de xiaoshuo, zuihou dou hui faxian ziji du-guo xiaoshuo-jia xie de ling yi ge gushi."
     glossedTokens := [("Wang", "Wang"), ("Yawen", "Yawen"), ("xihuan", "like"), ("shoucang", "collect"), ("tushu", "book"), ("ta", "she"), ("mei-ci", "every-time"), ("zhao-dao", "find-arrive"), ("le", "ASP"), ("yi", "one"), ("ben", "CL"), ("xihuan", "like"), ("de", "DE"), ("xiaoshuo", "novel"), ("zuihou", "finally"), ("dou", "always"), ("hui", "will"), ("faxian", "discover"), ("ziji", "self"), ("du-guo", "read-pass"), ("xiaoshuo-jia", "novel-person"), ("xie", "write"), ("de", "DE"), ("ling", "another"), ("yi", "one"), ("ge", "CL"), ("gushi", "story")]
     context := "Study 4 target: the bridged noun is the non-relational xiaoshuo-jia 'novelist', which fails the de diagnostic."
-    judgment := .marginal
+    judgment := .acceptable
     alternatives := []
     readings := []
     paperFeatures := [("definite_form", "bare"), ("bridging_type", "relational"), ("noun_arity", "sortal"), ("study", "4")] }
@@ -349,7 +349,7 @@ def fn13_intersentential_novelist : Datum :=
     glossedTokens := [("Wang", "Wang"), ("Yawen", "Yawen"), ("xihuan", "like"), ("shoucang", "collect"), ("tushu", "book"), ("ta", "she"), ("zhao-dao", "find-arrive"), ("le", "ASP"), ("yi", "one"), ("ben", "CL"), ("xihuan", "like"), ("de", "DE"), ("xiaoshuo", "novel"), ("ta", "she"), ("zuihou", "finally"), ("faxian", "discover"), ("ziji", "self"), ("du-guo", "read-pass"), ("na", "that"), ("wei", "CL"), ("xiaoshuo-jia", "novel-person"), ("xie", "write"), ("de", "DE"), ("ling", "another"), ("yi", "one"), ("ge", "CL"), ("gushi", "story")]
     context := "The intersentential version of the Study 4 item, reported in a footnote."
     judgment := .acceptable
-    alternatives := [("... ta zuihou faxian ziji du-guo xiaoshuo-jia xie de ling yi ge gushi.", .marginal)]
+    alternatives := [("... ta zuihou faxian ziji du-guo xiaoshuo-jia xie de ling yi ge gushi.", .acceptable)]
     readings := []
     paperFeatures := [("definite_form", "naCL"), ("bridging_type", "relational"), ("noun_arity", "sortal"), ("study", "none")] }
 
@@ -407,7 +407,7 @@ def ex62b_de_novelist : Datum :=
 
 def ex63_moon : Datum :=
   { id := "ahnzhu2025_ex63_moon"
-    source := ⟨"ahn-zhu-2025", "(63)"⟩
+    source := ⟨"ahn-zhu-2025", "(15), (63)"⟩
     reportedIn := none
     language := "mand1415"
     primaryText := "yueliang sheng shang lai le."
@@ -478,14 +478,14 @@ def ex34b_study2_relational_that : Datum :=
     primaryText := "Grace bought a CD last week, and every day she dreams about obtaining an autograph from that singer."
     glossedTokens := []
     context := "Study 2 target: English translation of the Study 1 (CD, singer) item with a demonstrative description."
-    judgment := .marginal
+    judgment := .acceptable
     alternatives := []
     readings := []
     paperFeatures := [("definite_form", "that"), ("bridging_type", "relational"), ("noun_arity", "relational"), ("study", "2")] }
 
 def ex34b_study2_relational_the : Datum :=
   { id := "ahnzhu2025_ex34b_study2_relational_the"
-    source := ⟨"ahn-zhu-2025", "(34b), definite variant"⟩
+    source := ⟨"ahn-zhu-2025", "(34b), definite variant; Fig. 5"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "Grace bought a CD last week, and every day she dreams about obtaining an autograph from the singer."
@@ -505,7 +505,7 @@ def ex36a_study2_author : Datum :=
     glossedTokens := []
     context := "Study 2 item REL1 (novel, author), one of two items without a significant definite vs demonstrative difference (p = 0.189)."
     judgment := .acceptable
-    alternatives := [("Lucas read a novel yesterday, and if possible, he really wants to meet that author.", .marginal)]
+    alternatives := [("Lucas read a novel yesterday, and if possible, he really wants to meet that author.", .acceptable)]
     readings := []
     paperFeatures := [("definite_form", "the"), ("bridging_type", "relational"), ("noun_arity", "relational"), ("study", "2")] }
 
@@ -518,7 +518,7 @@ def ex36b_study2_director : Datum :=
     glossedTokens := []
     context := "Study 2 item REL3 (movie, director), the other item without a significant difference (p = 0.124)."
     judgment := .acceptable
-    alternatives := [("Ryan watched a movie last week, and he believed that he ran into that director after the movie.", .marginal)]
+    alternatives := [("Ryan watched a movie last week, and he believed that he ran into that director after the movie.", .acceptable)]
     readings := []
     paperFeatures := [("definite_form", "the"), ("bridging_type", "relational"), ("noun_arity", "relational"), ("study", "2")] }
 

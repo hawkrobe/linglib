@@ -7,7 +7,7 @@ public import Linglib.Data.Examples.Cumming2026
 /-!
 # Cumming (2026): Tense and evidence
 
-This file formalizes [cumming-2026]'s answer to Ninan's puzzle, that a future-tense sentence
+This file formalizes Cumming's answer to Ninan's puzzle, that a future-tense sentence
 can be asserted on prior inferential grounds while the past-tense sentence about the same
 event cannot. Cumming, amending Cariani, assigns the nonfuture tenses the non-truth-conditional
 constraint that the speaker's evidence be downstream of the event, and the future forms no
@@ -248,6 +248,13 @@ def Scheduled (e : Datum) : Prop := e.feature? "scheduled" = some "true"
 
 instance : DecidablePred Scheduled := fun _ ↦ inferInstanceAs (Decidable (_ = _))
 
+/-- The paper judges the example felicitous: it prints no mark of infelicity and its prose does
+not call the example infelicitous. -/
+def JudgedFelicitous (e : Datum) : Prop :=
+  e.judgment = .acceptable ∧ e.feature? "felicity" ≠ some "infelicitous"
+
+instance : DecidablePred JudgedFelicitous := fun _ ↦ inferInstanceAs (Decidable (_ ∧ _))
+
 /-- Every example names a cell and a scenario. -/
 theorem cell?_frame?_isSome : ∀ e ∈ Examples.all, (cell? e).isSome ∧ (frame? e).isSome := by
   decide
@@ -255,7 +262,7 @@ theorem cell?_frame?_isSome : ∀ e ∈ Examples.all, (cell? e).isSome ∧ (fram
 /-- An assertion is felicitous exactly when its cell holds on the scenario's frame, planned
 or scheduled events exempt (§6). -/
 theorem judgment_iff : ∀ e ∈ Examples.all, ∀ c ∈ cell? e, ∀ f ∈ frame? e,
-    (e.judgment = .acceptable ↔ Scheduled e ∨ c.Holds f) := by
+    (JudgedFelicitous e ↔ Scheduled e ∨ c.Holds f) := by
   decide
 
 end Cumming2026

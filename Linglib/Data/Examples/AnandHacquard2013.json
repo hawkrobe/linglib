@@ -15,7 +15,8 @@
       {"name": "epistemic", "judgment": "acceptable"}
     ],
     "paperFeatures": {"attitude_class": "doxastic", "modal_force": "necessity", "modal_flavor": "epistemic", "anchor": "attitude"},
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "anandhacquard2013_1b",
@@ -33,7 +34,8 @@
       {"name": "epistemic", "judgment": "acceptable"}
     ],
     "paperFeatures": {"attitude_class": "argumentative", "modal_force": "necessity", "modal_flavor": "epistemic", "anchor": "attitude"},
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "anandhacquard2013_1c",
@@ -51,7 +53,8 @@
       {"name": "epistemic", "judgment": "acceptable"}
     ],
     "paperFeatures": {"attitude_class": "semifactive", "modal_force": "necessity", "modal_flavor": "epistemic", "anchor": "attitude"},
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "anandhacquard2013_2a",
@@ -63,13 +66,17 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [
-      {"name": "epistemic", "judgment": "unacceptable"}
+      {
+        "name": "epistemic",
+        "judgment": "ungrammatical"
+      }
     ],
     "paperFeatures": {"attitude_class": "desiderative", "modal_force": "necessity", "modal_flavor": "epistemic", "anchor": "attitude"},
-    "comment": "Starred on the epistemic interpretation only; the teleological reading is (3a)."
+    "comment": "Starred on the epistemic interpretation only; the teleological reading is (3a).",
+    "verified": "page-image"
   },
   {
     "id": "anandhacquard2013_2b",
@@ -81,13 +88,17 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [
-      {"name": "epistemic", "judgment": "unacceptable"}
+      {
+        "name": "epistemic",
+        "judgment": "ungrammatical"
+      }
     ],
     "paperFeatures": {"attitude_class": "desiderative", "modal_force": "necessity", "modal_flavor": "epistemic", "anchor": "attitude"},
-    "comment": "Starred on the epistemic interpretation only."
+    "comment": "Starred on the epistemic interpretation only.",
+    "verified": "page-image"
   },
   {
     "id": "anandhacquard2013_2c",
@@ -99,13 +110,17 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [
-      {"name": "epistemic", "judgment": "unacceptable"}
+      {
+        "name": "epistemic",
+        "judgment": "ungrammatical"
+      }
     ],
     "paperFeatures": {"attitude_class": "directive", "modal_force": "necessity", "modal_flavor": "epistemic", "anchor": "attitude"},
-    "comment": "Starred on the epistemic interpretation only."
+    "comment": "Starred on the epistemic interpretation only.",
+    "verified": "page-image"
   },
   {
     "id": "anandhacquard2013_3a",
@@ -123,7 +138,8 @@
       {"name": "teleological", "judgment": "acceptable"}
     ],
     "paperFeatures": {"attitude_class": "desiderative", "modal_force": "necessity", "modal_flavor": "teleological", "anchor": "attitude"},
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "anandhacquard2013_13",
@@ -143,7 +159,8 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": {"attitude_class": "doxastic", "modal_force": "necessity", "mood": "indicative", "modal_flavor": "epistemic", "anchor": "attitude"},
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "anandhacquard2013_14",
@@ -153,7 +170,7 @@
     "primaryText": "Jean a dit que Marie devait avoir connu son tueur.",
     "discourseSegments": [],
     "glossedTokens": [
-      ["Jean", "Jean"], ["a", "has"], ["dit", "said"], ["que", "that"], ["Marie", "Marie"],
+      ["Jean", "Jean"], ["a", "has"], ["dit", "said"], ["que", "that"], ["Marie", "M."],
       ["devait", "must-IND.IMPF"], ["avoir", "have"], ["connu", "known"], ["son", "her"],
       ["tueur", "killer"]
     ],
@@ -165,7 +182,8 @@
     ],
     "readings": [],
     "paperFeatures": {"attitude_class": "argumentative", "modal_force": "necessity", "mood": "indicative", "modal_flavor": "epistemic", "anchor": "attitude"},
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "anandhacquard2013_15",
@@ -185,7 +203,8 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": {"attitude_class": "semifactive", "modal_force": "necessity", "mood": "indicative", "modal_flavor": "epistemic", "anchor": "attitude"},
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "anandhacquard2013_16",
@@ -205,7 +224,8 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": {"attitude_class": "desiderative", "modal_force": "necessity", "mood": "subjunctive", "modal_flavor": "epistemic", "anchor": "attitude"},
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "anandhacquard2013_17",
@@ -225,7 +245,8 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": {"attitude_class": "directive", "modal_force": "necessity", "mood": "subjunctive", "modal_flavor": "epistemic", "anchor": "attitude"},
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "anandhacquard2013_18",
@@ -245,7 +266,8 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": {"attitude_class": "emotive_doxastic", "modal_force": "possibility", "mood": "subjunctive", "modal_flavor": "epistemic", "anchor": "attitude"},
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "anandhacquard2013_19",
@@ -265,7 +287,8 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": {"attitude_class": "emotive_doxastic", "modal_force": "necessity", "mood": "subjunctive", "modal_flavor": "epistemic", "anchor": "attitude"},
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "anandhacquard2013_20",
@@ -285,7 +308,8 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": {"attitude_class": "dubitative", "modal_force": "possibility", "mood": "subjunctive", "modal_flavor": "epistemic", "anchor": "attitude"},
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "anandhacquard2013_21",
@@ -305,7 +329,8 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": {"attitude_class": "dubitative", "modal_force": "necessity", "mood": "subjunctive", "modal_flavor": "epistemic", "anchor": "attitude"},
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "anandhacquard2013_22",
@@ -325,12 +350,13 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": {"attitude_class": "desiderative", "modal_force": "necessity", "mood": "subjunctive", "modal_flavor": "epistemic", "anchor": "third_party"},
-    "comment": "Escape-hatch reading: the modal targets the novel's information state, not John's desires."
+    "comment": "Escape-hatch reading: the modal targets the novel's information state, not John's desires.",
+    "verified": "page-image"
   },
   {
     "id": "anandhacquard2013_23a",
-    "source": {"bibkey": "yalcin-2007", "paperLabel": "(23a)"},
-    "reportedIn": {"bibkey": "anand-hacquard-2013", "paperLabel": "(23a)"},
+    "source": {"bibkey": "anand-hacquard-2013", "paperLabel": "(23a)"},
+    "reportedIn": null,
     "language": "stan1293",
     "primaryText": "Imagine that it's raining but you don't believe it is.",
     "discourseSegments": [],
@@ -341,12 +367,13 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": {"second_conjunct": "belief_predicate"},
-    "comment": ""
+    "comment": "A&H's adaptation of Yalcin's contrast: Yalcin (2007) prints '(14) Suppose it is raining and I do not know that it is raining' (p. 986) and '(7) # Suppose it is raining and it might not be raining' (p. 985); the imagine sentences are A&H's own.",
+    "verified": "page-image"
   },
   {
     "id": "anandhacquard2013_23b",
-    "source": {"bibkey": "yalcin-2007", "paperLabel": "(23b)"},
-    "reportedIn": {"bibkey": "anand-hacquard-2013", "paperLabel": "(23b)"},
+    "source": {"bibkey": "anand-hacquard-2013", "paperLabel": "(23b)"},
+    "reportedIn": null,
     "language": "stan1293",
     "primaryText": "Imagine that it's raining but it might not be.",
     "discourseSegments": [],
@@ -357,7 +384,8 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": {"second_conjunct": "epistemic_modal", "modal_force": "possibility"},
-    "comment": "Contradictory once the modal's information state is the imagination state itself."
+    "comment": "Contradictory once the modal's information state is the imagination state itself. A&H's adaptation of Yalcin's contrast: Yalcin (2007) prints '(14) Suppose it is raining and I do not know that it is raining' (p. 986) and '(7) # Suppose it is raining and it might not be raining' (p. 985); the imagine sentences are A&H's own.",
+    "verified": "page-image"
   },
   {
     "id": "anandhacquard2013_30a",
@@ -375,7 +403,8 @@
     ],
     "readings": [],
     "paperFeatures": {"attitude_class": "argumentative", "test": "parenthetical"},
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "anandhacquard2013_30b",
@@ -396,7 +425,8 @@
     ],
     "readings": [],
     "paperFeatures": {"attitude_class": "doxastic", "test": "verb_second", "complement_order": "verb_final"},
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "anandhacquard2013_30c",
@@ -417,7 +447,8 @@
     ],
     "readings": [],
     "paperFeatures": {"attitude_class": "doxastic", "test": "verb_second", "complement_order": "verb_second"},
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "anandhacquard2013_39",
@@ -433,27 +464,29 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": {"attitude_class": "desiderative", "modal_force": "necessity", "modal_flavor": "epistemic", "anchor": "third_party"},
-    "comment": "The *according to* phrase supplies the information state the epistemic is anaphoric to."
+    "comment": "The *according to* phrase supplies the information state the epistemic is anaphoric to.",
+    "verified": "page-image"
   },
   {
     "id": "anandhacquard2013_40",
-    "source": {"bibkey": "kratzer-2009", "paperLabel": "(40)"},
-    "reportedIn": {"bibkey": "anand-hacquard-2013", "paperLabel": "(40)"},
+    "source": {"bibkey": "anand-hacquard-2013", "paperLabel": "(40)"},
+    "reportedIn": null,
     "language": "stan1293",
     "primaryText": "I think I might have killed him.",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
-    "context": "Nobody among us has had access to the information in this filing cabinet, but we know that it contains the complete evidence (including possibly forged evidence) about the murder of Philip Boyes and narrows down the set of suspects. We are betting on who might have killed Boyes according to the information in the filing cabinet. Harriet, who is innocent, speaks.",
+    "context": "Nobody among us has had access to the information in this filing cabinet, but we know that it contains the complete evidence (including possibly forged evidence) about the murder of Philip Boyes and narrows down the set of suspects. We are betting on who might have killed Boyes according to the information in the filing cabinet. Harriet, who is innocent, says:",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": {"attitude_class": "doxastic", "modal_force": "possibility", "modal_flavor": "epistemic", "anchor": "third_party"},
-    "comment": "The epistemic quantifies over the filing cabinet's information, not Harriet's beliefs."
+    "comment": "The epistemic quantifies over the filing cabinet's information, not Harriet's beliefs. The paper cites the scenario from Kratzer (2009), pg. 33, which its references list as 'Modals and context-dependency', colloquium, Harvard University, February 20, 2009 (not Kratzer's Making a Pronoun).",
+    "verified": "page-image"
   },
   {
     "id": "anandhacquard2013_42",
-    "source": {"bibkey": "scheffler-2008", "paperLabel": "(42)"},
+    "source": {"bibkey": "scheffler-2008", "paperLabel": ""},
     "reportedIn": {"bibkey": "anand-hacquard-2013", "paperLabel": "(42)"},
     "language": "stan1295",
     "primaryText": "Ich hoffe, dass er heute kommt.",
@@ -470,11 +503,12 @@
     ],
     "readings": [],
     "paperFeatures": {"attitude_class": "emotive_doxastic", "test": "answer_to_question"},
-    "comment": "Attributed by Scheffler to Hubert Truckenbrodt; also the paper's (12). *Hope* partially answers the question through its doxastic component; *want* cannot."
+    "comment": "Attributed by Scheffler to Hubert Truckenbrodt; also the paper's (12). *Hope* partially answers the question through its doxastic component; *want* cannot.",
+    "verified": "page-image"
   },
   {
     "id": "anandhacquard2013_43a",
-    "source": {"bibkey": "scheffler-2008", "paperLabel": "(43a)"},
+    "source": {"bibkey": "scheffler-2008", "paperLabel": ""},
     "reportedIn": {"bibkey": "anand-hacquard-2013", "paperLabel": "(43a)"},
     "language": "stan1293",
     "primaryText": "I hope it is raining.",
@@ -488,11 +522,12 @@
     ],
     "readings": [],
     "paperFeatures": {"attitude_class": "emotive_doxastic", "test": "certainty_context"},
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "anandhacquard2013_43b",
-    "source": {"bibkey": "scheffler-2008", "paperLabel": "(43b)"},
+    "source": {"bibkey": "scheffler-2008", "paperLabel": ""},
     "reportedIn": {"bibkey": "anand-hacquard-2013", "paperLabel": "(43b)"},
     "language": "stan1293",
     "primaryText": "I want it to be raining.",
@@ -506,7 +541,8 @@
     ],
     "readings": [],
     "paperFeatures": {"attitude_class": "desiderative", "test": "certainty_context"},
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "anandhacquard2013_44a",
@@ -524,7 +560,8 @@
     ],
     "readings": [],
     "paperFeatures": {"attitude_class": "emotive_doxastic", "test": "certainty_context"},
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "anandhacquard2013_44b",
@@ -542,11 +579,12 @@
     ],
     "readings": [],
     "paperFeatures": {"attitude_class": "desiderative", "test": "certainty_context"},
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "anandhacquard2013_45",
-    "source": {"bibkey": "falaus-2010", "paperLabel": "(45)"},
+    "source": {"bibkey": "falaus-2010", "paperLabel": ""},
     "reportedIn": {"bibkey": "anand-hacquard-2013", "paperLabel": "(45)"},
     "language": "roma1327",
     "primaryText": "Vreau să iau vreun zbor spre Paris.",
@@ -561,11 +599,12 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": {"attitude_class": "desiderative", "test": "epistemic_indefinite", "indefinite": "vreun"},
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "anandhacquard2013_46",
-    "source": {"bibkey": "falaus-2010", "paperLabel": "(46)"},
+    "source": {"bibkey": "falaus-2010", "paperLabel": ""},
     "reportedIn": {"bibkey": "anand-hacquard-2013", "paperLabel": "(46)"},
     "language": "roma1327",
     "primaryText": "Sper să găsesc vreun zbor spre Paris.",
@@ -580,7 +619,8 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": {"attitude_class": "emotive_doxastic", "test": "epistemic_indefinite", "indefinite": "vreun"},
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "anandhacquard2013_60",
@@ -596,7 +636,8 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": {"attitude_class": "dubitative", "test": "uncertainty_cancellation", "suspender": "in fact"},
-    "comment": "Read as a retraction rather than an implicature suspension."
+    "comment": "Read as a retraction rather than an implicature suspension.",
+    "verified": "page-image"
   },
   {
     "id": "anandhacquard2013_61a",
@@ -612,7 +653,8 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": {"attitude_class": "dubitative", "test": "uncertainty_cancellation", "suspender": "because"},
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "anandhacquard2013_61b",
@@ -628,7 +670,8 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": {"test": "uncertainty_cancellation", "suspender": "because"},
-    "comment": "*Because* suspends the exhaustivity inference of *some* but not the uncertainty inference of *doubt*."
+    "comment": "*Because* suspends the exhaustivity inference of *some* but not the uncertainty inference of *doubt*.",
+    "verified": "page-image"
   },
   {
     "id": "anandhacquard2013_62",
@@ -646,7 +689,8 @@
     ],
     "readings": [],
     "paperFeatures": {"attitude_class": "doxastic", "test": "uncertainty_cancellation", "suspender": "in fact"},
-    "comment": ""
+    "comment": "Expands the printed #(In fact,): with in fact acceptable, without it #.",
+    "verified": "page-image"
   },
   {
     "id": "anandhacquard2013_65",
@@ -657,7 +701,7 @@
     "discourseSegments": [],
     "glossedTokens": [
       ["Gianni", "Gianni"], ["pensa", "thinks"], ["che", "that"], ["Maria", "Maria"],
-      ["debba", "must-SUBJ"], ["aver", "have"], ["conosciuto", "known"], ["il", "the"],
+      ["debba", "must-SUBJ"], ["aver", "have"], ["conosciuto", "known"], ["il", ""],
       ["suo", "her"], ["assassino", "killer"]
     ],
     "translation": "Gianni thinks that Maria must have known her killer.",
@@ -666,7 +710,8 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": {"attitude_class": "doxastic", "modal_force": "necessity", "mood": "subjunctive", "modal_flavor": "epistemic", "anchor": "attitude"},
-    "comment": "Italian *pensare* selects the subjunctive yet licenses epistemics: subjunctive is not what blocks them."
+    "comment": "Italian *pensare* selects the subjunctive yet licenses epistemics: subjunctive is not what blocks them.",
+    "verified": "page-image"
   },
   {
     "id": "anandhacquard2013_66_muss",
@@ -676,7 +721,7 @@
     "primaryText": "Der Jan denkt, dass die Maria ihren Moerder gekannt haben muss.",
     "discourseSegments": [],
     "glossedTokens": [
-      ["Der", "the"], ["Jan", "Jan"], ["denkt", "thinks"], ["dass", "that"], ["die", "the"],
+      ["Der", "The"], ["Jan", "Jan"], ["denkt", "thinks"], ["dass", "that"], ["die", "the"],
       ["Maria", "Maria"], ["ihren", "her"], ["Moerder", "murderer"], ["gekannt", "known"],
       ["haben", "have"], ["muss", "must"]
     ],
@@ -686,7 +731,8 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": {"attitude_class": "doxastic", "modal_force": "necessity", "modal_flavor": "epistemic", "anchor": "attitude"},
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "anandhacquard2013_66_koennte",
@@ -696,7 +742,7 @@
     "primaryText": "Der Jan denkt, dass die Maria ihren Moerder gekannt haben koennte.",
     "discourseSegments": [],
     "glossedTokens": [
-      ["Der", "the"], ["Jan", "Jan"], ["denkt", "thinks"], ["dass", "that"], ["die", "the"],
+      ["Der", "The"], ["Jan", "Jan"], ["denkt", "thinks"], ["dass", "that"], ["die", "the"],
       ["Maria", "Maria"], ["ihren", "her"], ["Moerder", "murderer"], ["gekannt", "known"],
       ["haben", "have"], ["koennte", "could"]
     ],
@@ -706,7 +752,8 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": {"attitude_class": "doxastic", "modal_force": "possibility", "modal_flavor": "epistemic", "anchor": "attitude"},
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "anandhacquard2013_67_muss",
@@ -716,7 +763,7 @@
     "primaryText": "Der Jan will, dass die Maria ihren Moerder gekannt haben muss.",
     "discourseSegments": [],
     "glossedTokens": [
-      ["Der", "the"], ["Jan", "Jan"], ["will", "wants"], ["dass", "that"], ["die", "the"],
+      ["Der", "The"], ["Jan", "Jan"], ["will", "wants"], ["dass", "that"], ["die", "the"],
       ["Maria", "Maria"], ["ihren", "her"], ["Moerder", "murderer"], ["gekannt", "known"],
       ["haben", "have"], ["muss", "must"]
     ],
@@ -726,7 +773,8 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": {"attitude_class": "desiderative", "modal_force": "necessity", "modal_flavor": "epistemic", "anchor": "attitude"},
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "anandhacquard2013_67_koennte",
@@ -736,7 +784,7 @@
     "primaryText": "Der Jan will, dass die Maria ihren Moerder gekannt haben koennte.",
     "discourseSegments": [],
     "glossedTokens": [
-      ["Der", "the"], ["Jan", "Jan"], ["will", "wants"], ["dass", "that"], ["die", "the"],
+      ["Der", "The"], ["Jan", "Jan"], ["will", "wants"], ["dass", "that"], ["die", "the"],
       ["Maria", "Maria"], ["ihren", "her"], ["Moerder", "murderer"], ["gekannt", "known"],
       ["haben", "have"], ["koennte", "could"]
     ],
@@ -746,7 +794,8 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": {"attitude_class": "desiderative", "modal_force": "possibility", "modal_flavor": "epistemic", "anchor": "attitude"},
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "anandhacquard2013_68",
@@ -756,7 +805,7 @@
     "primaryText": "Der Jan hofft, dass die Maria ihren Moerder gekannt haben koennte.",
     "discourseSegments": [],
     "glossedTokens": [
-      ["Der", "the"], ["Jan", "Jan"], ["hofft", "hopes"], ["dass", "that"], ["die", "the"],
+      ["Der", "The"], ["Jan", "Jan"], ["hofft", "hopes"], ["dass", "that"], ["die", "the"],
       ["Maria", "Maria"], ["ihren", "her"], ["Moerder", "murderer"], ["gekannt", "known"],
       ["haben", "have"], ["koennte", "could"]
     ],
@@ -766,7 +815,8 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": {"attitude_class": "emotive_doxastic", "modal_force": "possibility", "modal_flavor": "epistemic", "anchor": "attitude"},
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "anandhacquard2013_69",
@@ -776,7 +826,7 @@
     "primaryText": "Der Jan hofft, dass die Maria ihren Moerder gekannt haben muss.",
     "discourseSegments": [],
     "glossedTokens": [
-      ["Der", "the"], ["Jan", "Jan"], ["hofft", "hopes"], ["dass", "that"], ["die", "the"],
+      ["Der", "The"], ["Jan", "Jan"], ["hofft", "hopes"], ["dass", "that"], ["die", "the"],
       ["Maria", "Maria"], ["ihren", "her"], ["Moerder", "murderer"], ["gekannt", "known"],
       ["haben", "have"], ["muss", "must"]
     ],
@@ -786,7 +836,8 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": {"attitude_class": "emotive_doxastic", "modal_force": "necessity", "modal_flavor": "epistemic", "anchor": "attitude"},
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "anandhacquard2013_70",
@@ -796,10 +847,10 @@
     "primaryText": "Marie pense qu'elle doit être enceinte.",
     "discourseSegments": [],
     "glossedTokens": [
-      ["Marie", "Marie"], ["pense", "thinks"], ["qu'elle", "that.she"], ["doit", "must"],
+      ["Marie", "Marie"], ["pense", "thinks"], ["qu'elle", "that she"], ["doit", "must"],
       ["être", "be"], ["enceinte", "pregnant"]
     ],
-    "translation": "Marie thinks she must be pregnant.",
+    "translation": "Marie thinks she deontically must be pregnant.",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -808,7 +859,8 @@
       {"name": "epistemic", "judgment": "acceptable"}
     ],
     "paperFeatures": {"attitude_class": "doxastic", "modal_force": "necessity", "complement": "finite"},
-    "comment": ""
+    "comment": "The paper prints two translations, 'Marie thinks she deontically must be pregnant.' and 'Marie thinks she epistemically must be pregnant.'",
+    "verified": "page-image"
   },
   {
     "id": "anandhacquard2013_71",
@@ -821,7 +873,7 @@
       ["Marie", "Marie"], ["pense", "thinks"], ["devoir", "must-INF"], ["être", "be"],
       ["enceinte", "pregnant"]
     ],
-    "translation": "Marie thinks she must be pregnant.",
+    "translation": "Marie thinks she deontically must be pregnant.",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -830,7 +882,8 @@
       {"name": "epistemic", "judgment": "unacceptable"}
     ],
     "paperFeatures": {"attitude_class": "doxastic", "modal_force": "necessity", "complement": "infinitival"},
-    "comment": "Infinitival complements are too small to host an epistemic; no escape-hatch reading rescues it."
+    "comment": "Infinitival complements are too small to host an epistemic; no escape-hatch reading rescues it. The paper prints 'Marie thinks she deontically must be pregnant.' and '#Marie thinks she epistemically must be pregnant.'",
+    "verified": "page-image"
   },
   {
     "id": "anandhacquard2013_74",
@@ -849,7 +902,8 @@
     ],
     "readings": [],
     "paperFeatures": {"attitude_class": "emotive_doxastic", "modal_force": "possibility", "negation": "under_modal", "modal_flavor": "epistemic", "anchor": "attitude"},
-    "comment": "A possibility modal scoping under negation patterns with necessity: *can't* is a universal claim against the uncertainty presupposition."
+    "comment": "A possibility modal scoping under negation patterns with necessity: *can't* is a universal claim against the uncertainty presupposition.",
+    "verified": "page-image"
   },
   {
     "id": "anandhacquard2013_fn24_i",
@@ -865,7 +919,8 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": {"attitude_class": "dubitative", "modal_force": "necessity", "modal_flavor": "epistemic", "anchor": "metalinguistic", "focus": "contrastive"},
-    "comment": "Necessity under *doubt* only with contrastive focus on the modal and a prior assertion of the prejacent — metalinguistic."
+    "comment": "Necessity under *doubt* only with contrastive focus on the modal and a prior assertion of the prejacent — metalinguistic.",
+    "verified": "page-image"
   },
   {
     "id": "anandhacquard2013_fn25_i",
@@ -881,6 +936,7 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": {"attitude_class": "emotive_doxastic", "modal_force": "necessity", "modal_flavor": "epistemic", "negation": "over_modal"},
-    "comment": "Marked % by the authors: predicted licensed (negated necessity is possibility), but *have to* under negation disprefers epistemic readings."
+    "comment": "Marked % by the authors: predicted licensed (negated necessity is possibility), but *have to* under negation disprefers epistemic readings.",
+    "verified": "page-image"
   }
 ]

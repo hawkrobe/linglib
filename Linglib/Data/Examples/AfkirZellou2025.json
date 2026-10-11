@@ -25,7 +25,8 @@
         "rarely"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "afkirzellou2025_dqer",
@@ -38,7 +39,7 @@
     "primaryText": "ðqər",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "",
+    "translation": "weigh!",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -53,7 +54,8 @@
         "never"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "afkirzellou2025_ghder",
@@ -81,7 +83,8 @@
         "variably"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "afkirzellou2025_ghfer",
@@ -109,7 +112,8 @@
         "rarely"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "afkirzellou2025_ghreb",
@@ -137,7 +141,8 @@
         "almost exclusively"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "afkirzellou2025_hmed",
@@ -150,7 +155,7 @@
     "primaryText": "ħməð",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "",
+    "translation": "thank!",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -165,7 +170,8 @@
         "variably"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "afkirzellou2025_nqer",
@@ -193,7 +199,8 @@
         "variably"
       ]
     ],
-    "comment": "Listed as an exception: falling sonority yet intrusion about 13–17% of the time."
+    "comment": "Listed as an exception: falling sonority yet intrusion about 13–17% of the time.",
+    "verified": "page-image"
   },
   {
     "id": "afkirzellou2025_qber",
@@ -221,7 +228,8 @@
         "variably"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "afkirzellou2025_qdef",
@@ -249,7 +257,8 @@
         "variably"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "afkirzellou2025_qfer",
@@ -277,7 +286,8 @@
         "never"
       ]
     ],
-    "comment": "Rising sonority but voiceless C2."
+    "comment": "Rising sonority but voiceless C2.",
+    "verified": "page-image"
   },
   {
     "id": "afkirzellou2025_qreb",
@@ -305,7 +315,8 @@
         "almost exclusively"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "afkirzellou2025_qres",
@@ -333,7 +344,8 @@
         "almost exclusively"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "afkirzellou2025_qtes",
@@ -361,7 +373,8 @@
         "variably"
       ]
     ],
-    "comment": "Listed as an exception: plateauing sonority yet intrusion about 13–17% of the time."
+    "comment": "Listed as an exception: plateauing sonority yet intrusion about 13–17% of the time.",
+    "verified": "page-image"
   },
   {
     "id": "afkirzellou2025_rmed",
@@ -389,7 +402,8 @@
         "variably"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "afkirzellou2025_srem",
@@ -417,7 +431,8 @@
         "almost exclusively"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "afkirzellou2025_ster",
@@ -445,7 +460,8 @@
         "never"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "afkirzellou2025_xref",
@@ -473,7 +489,8 @@
         "almost exclusively"
       ]
     ],
-    "comment": "Often produced with a longer initial schwa than the other CrəC stems."
+    "comment": "Figure 22 illustrates it as [Că:CəC], with the intrusive C1–C2 vowel longer and louder than the C2–C3 schwa.",
+    "verified": "page-image"
   },
   {
     "id": "afkirzellou2025_zhbed",
@@ -486,7 +503,7 @@
     "primaryText": "ʒβəð",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "",
+    "translation": "pull!",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -501,7 +518,8 @@
         "variably"
       ]
     ],
-    "comment": "Listed as an exception: plateauing sonority."
+    "comment": "Listed as an exception: plateauing sonority.",
+    "verified": "page-image"
   },
   {
     "id": "afkirzellou2025_zhmed",
@@ -529,7 +547,8 @@
         "variably"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "afkirzellou2025_aybed",
@@ -542,7 +561,7 @@
     "primaryText": "ʕβəð",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "",
+    "translation": "worship!",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -557,7 +576,8 @@
         "variably"
       ]
     ],
-    "comment": ""
+    "comment": "Table 9 prints ʕbəð; Table 7 and the text of Section 2.1.1 print ʕβəð.",
+    "verified": "page-image"
   },
   {
     "id": "afkirzellou2025_ayrem",
@@ -585,7 +605,8 @@
         "almost exclusively"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "afkirzellou2025_hseb",
@@ -613,7 +634,8 @@
         "rarely"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "afkirzellou2025_hzen",
@@ -641,7 +663,8 @@
         "variably"
       ]
     ],
-    "comment": "Sometimes vowelless with a syllabic final nasal."
+    "comment": "Sometimes vowelless with a syllabic final nasal.",
+    "verified": "page-image"
   },
   {
     "id": "afkirzellou2025_shmeth",
@@ -669,7 +692,8 @@
         "variably"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "afkirzellou2025_xzen",
@@ -697,7 +721,8 @@
         "variably"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "afkirzellou2025_bkem",
@@ -725,7 +750,8 @@
         "never"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "afkirzellou2025_hlem",
@@ -753,7 +779,8 @@
         "variably"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "afkirzellou2025_hsen",
@@ -781,7 +808,8 @@
         "never"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "afkirzellou2025_nqeb",
@@ -809,7 +837,8 @@
         "variably"
       ]
     ],
-    "comment": "Listed as an exception: falling sonority yet intrusion about 13–17% of the time."
+    "comment": "Listed as an exception: falling sonority yet intrusion about 13–17% of the time.",
+    "verified": "page-image"
   },
   {
     "id": "afkirzellou2025_qmes",
@@ -837,7 +866,8 @@
         "variably"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "afkirzellou2025_sshen",
@@ -865,7 +895,8 @@
         "never"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "afkirzellou2025_xnes",
@@ -893,7 +924,8 @@
         "variably"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "afkirzellou2025_zhmes",
@@ -921,7 +953,8 @@
         "variably"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "afkirzellou2025_sxef",
@@ -949,7 +982,8 @@
         "never"
       ]
     ],
-    "comment": "Vowelless 13–20% of productions."
+    "comment": "Vowelless 13–20% of productions.",
+    "verified": "page-image"
   },
   {
     "id": "afkirzellou2025_hkem",
@@ -977,7 +1011,8 @@
         "never"
       ]
     ],
-    "comment": "Vowelless 13–20% of productions; flagged as idiosyncratic since C3 /m/ is high in sonority."
+    "comment": "Vowelless 13–20% of productions; flagged as idiosyncratic since C3 /m/ is high in sonority.",
+    "verified": "page-image"
   },
   {
     "id": "afkirzellou2025_ntef",
@@ -1005,7 +1040,8 @@
         "never"
       ]
     ],
-    "comment": "Vowelless in more than 30% of productions."
+    "comment": "Vowelless in more than 30% of productions.",
+    "verified": "page-image"
   },
   {
     "id": "afkirzellou2025_skef",
@@ -1033,7 +1069,8 @@
         "never"
       ]
     ],
-    "comment": "Vowelless in more than 30% of productions, the most of any word."
+    "comment": "Vowelless in more than 30% of productions, the most of any word.",
+    "verified": "page-image"
   },
   {
     "id": "afkirzellou2025_rseq",
@@ -1061,6 +1098,7 @@
         "rarely"
       ]
     ],
-    "comment": "Vowelless in more than 30% of productions; flagged as idiosyncratic given initial /r/."
+    "comment": "Vowelless in more than 30% of productions; flagged as idiosyncratic given initial /r/.",
+    "verified": "page-image"
   }
 ]

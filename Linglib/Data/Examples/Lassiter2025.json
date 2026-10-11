@@ -8,15 +8,17 @@
     "glossedTokens": [],
     "translation": "",
     "context": "Said of a conference the addressee doesn't know much about.",
-    "judgment": "unacceptable",
+    "judgment": "acceptable",
     "paperFeatures": [
       ["is_lnc", "true"],
       ["content", "bare"],
       ["antecedent_given", "false"],
       ["interpretation", "PC"],
-      ["diagnostic", "discourse_anchoring"]
+      ["diagnostic", "discourse_anchoring"],
+      ["felicity", "infelicitous"]
     ],
-    "comment": "Gibbard's classic bare LNC, odd out of the blue (quoted with example number changed)."
+    "comment": "Gibbard's classic bare LNC (quoted with example number changed). Printed without a judgment mark; the prose calls it 'an odd utterance out of the blue'.",
+    "verified": "page-image"
   },
   {
     "id": "lass2025_ex6",
@@ -36,7 +38,8 @@
       ["diagnostic", "discourse_anchoring"],
       ["polarity_item", "ppi"]
     ],
-    "comment": "PC echo of Alf's assertion, without the antecedent-uncertainty implication of HCs; anaphoric 'so' forces the PC reading."
+    "comment": "PC echo of Alf's assertion, without the antecedent-uncertainty implication of HCs; anaphoric 'so' forces the PC reading.",
+    "verified": "page-image"
   },
   {
     "id": "lass2025_ex11",
@@ -54,7 +57,8 @@
       ["interpretation", "PC"],
       ["diagnostic", "discourse_anchoring"]
     ],
-    "comment": "Gibbard's LNC improves dramatically when the antecedent echoes a previous assertion; a residual hint of oddity is attributed to an inference confound removed in (12)."
+    "comment": "Gibbard's LNC improves dramatically when the antecedent echoes a previous assertion; a residual hint of oddity is attributed to an inference confound removed in (12).",
+    "verified": "page-image"
   },
   {
     "id": "lass2025_ex12",
@@ -72,7 +76,8 @@
       ["interpretation", "PC"],
       ["diagnostic", "discourse_anchoring"]
     ],
-    "comment": "Echoic LNC where the consequent is clearly inferable from the echoed conditional."
+    "comment": "Echoic LNC where the consequent is clearly inferable from the echoed conditional.",
+    "verified": "page-image"
   },
   {
     "id": "lass2025_ex13",
@@ -90,7 +95,8 @@
       ["interpretation", "PC"],
       ["diagnostic", "discourse_anchoring"]
     ],
-    "comment": "Draws an inference from Carl's expressed plan without doubting it."
+    "comment": "Draws an inference from Carl's expressed plan without doubting it.",
+    "verified": "page-image"
   },
   {
     "id": "lass2025_ex14",
@@ -108,7 +114,8 @@
       ["interpretation", "PC"],
       ["diagnostic", "given_that_paraphrase"]
     ],
-    "comment": "Presuppositional 'given that'/'since' conveys approximately the same thought as the PC (13)."
+    "comment": "Presuppositional 'given that'/'since' conveys approximately the same thought as the PC (13).",
+    "verified": "page-image"
   },
   {
     "id": "lass2025_ex18",
@@ -116,8 +123,8 @@
     "language": "nucl1643",
     "primaryText": "Moshi meari-ga kita-{nara/ra} jon-ga kita-nara karera-wa tomodati-da",
     "glossedTokens": [
-      ["Moshi", "if"], ["meari-ga", "Mary-NOM"], ["kita-{nara/ra}", "came-{NARA/RA}"],
-      ["jon-ga", "John-NOM"], ["kita-nara", "came-NARA"], ["karera-wa", "they-TOP"],
+      ["Moshi", "If"], ["meari-ga", "M-NOM"], ["kita-{nara/ra}", "came-{NARA/RA}"],
+      ["jon-ga", "J-NOM"], ["kita-nara", "came-NARA"], ["karera-wa", "they-TOP"],
       ["tomodati-da", "friends-COP"]
     ],
     "translation": "If Mary came if John did, they are friends",
@@ -130,7 +137,8 @@
       ["diagnostic", "marker"],
       ["marker", "nara"]
     ],
-    "comment": "The main complementizer of a bare LNC can only be PC-compatible nara; the embedded conditional allows either marker."
+    "comment": "The main complementizer of a bare LNC can only be PC-compatible nara; the embedded conditional allows either marker.",
+    "verified": "page-image"
   },
   {
     "id": "lass2025_ex19",
@@ -138,8 +146,8 @@
     "language": "nucl1643",
     "primaryText": "Moshi meari-ga kita-{nara/ra} jon-ga kita-ra karera-wa tomodati-da",
     "glossedTokens": [
-      ["Moshi", "if"], ["meari-ga", "Mary-NOM"], ["kita-{nara/ra}", "came-{NARA/RA}"],
-      ["jon-ga", "John-NOM"], ["kita-ra", "came-RA"], ["karera-wa", "they-TOP"],
+      ["Moshi", "If"], ["meari-ga", "M-NOM"], ["kita-{nara/ra}", "came-{NARA/RA}"],
+      ["jon-ga", "J-NOM"], ["kita-ra", "came-RA"], ["karera-wa", "they-TOP"],
       ["tomodati-da", "friends-COP"]
     ],
     "translation": "Intended: 'If Mary came if John did, they are friends'",
@@ -152,16 +160,17 @@
       ["diagnostic", "marker"],
       ["marker", "ra"]
     ],
-    "comment": "HC-only -ra is impossible as the main complementizer of a bare LNC."
+    "comment": "HC-only -ra is impossible as the main complementizer of a bare LNC.",
+    "verified": "page-image"
   },
   {
     "id": "lass2025_ex23",
     "source": {"bibkey": "lassiter-2025", "paperLabel": "(23)"},
     "language": "stan1295",
-    "primaryText": "Wenn ihr das Spiel absagt, {wenn/falls} es regnet, seid ihr keine echten Göttinger",
+    "primaryText": "Wenn ihr das Spiel absagt, wenn/falls es regnet, seid ihr keine echten Göttinger",
     "glossedTokens": [
       ["Wenn", "WENN"], ["ihr", "you"], ["das", "the"], ["Spiel", "game"], ["absagt", "cancel"],
-      ["{wenn/falls}", "WENN/FALLS"], ["es", "it"], ["regnet", "rains"], ["seid", "are"],
+      ["wenn/falls", "WENN/FALLS"], ["es", "it"], ["regnet", "rains"], ["seid", "are"],
       ["ihr", "you"], ["keine", "no"], ["echten", "true"], ["Göttinger", "Göttinger"]
     ],
     "translation": "If you cancel the picnic if it rains, you aren't real Göttingers",
@@ -174,16 +183,17 @@
       ["diagnostic", "marker"],
       ["marker", "wenn"]
     ],
-    "comment": "General-purpose wenn is acceptable as the main complementizer of a LNC; the embedded conditional allows either marker."
+    "comment": "General-purpose wenn is acceptable as the main complementizer of a LNC; the embedded conditional allows either marker.",
+    "verified": "page-image"
   },
   {
     "id": "lass2025_ex24",
     "source": {"bibkey": "lassiter-2025", "paperLabel": "(24)"},
     "language": "stan1295",
-    "primaryText": "Falls ihr das Spiel absagt, {wenn/falls} es regnet, seid ihr keine echten Göttinger",
+    "primaryText": "Falls ihr das Spiel absagt, wenn/falls es regnet, seid ihr keine echten Göttinger",
     "glossedTokens": [
       ["Falls", "FALLS"], ["ihr", "you"], ["das", "the"], ["Spiel", "game"], ["absagt", "cancel"],
-      ["{wenn/falls}", "WENN/FALLS"], ["es", "it"], ["regnet", "rains"], ["seid", "are"],
+      ["wenn/falls", "WENN/FALLS"], ["es", "it"], ["regnet", "rains"], ["seid", "are"],
       ["ihr", "you"], ["keine", "no"], ["echten", "true"], ["Göttinger", "Göttinger"]
     ],
     "translation": "Intended: 'If you cancel the picnic if it rains, you aren't real Göttingers'",
@@ -196,7 +206,8 @@
       ["diagnostic", "marker"],
       ["marker", "falls"]
     ],
-    "comment": "HC-only falls is impossible as the main complementizer of a bare LNC."
+    "comment": "HC-only falls is impossible as the main complementizer of a bare LNC. The paper prints the first word in capitals (FALLS) on the object-language line.",
+    "verified": "page-image"
   },
   {
     "id": "lass2025_ex29",
@@ -216,7 +227,8 @@
       ["item", "rather"],
       ["item_position", "embedded_consequent"]
     ],
-    "comment": "PPI in the consequent of the embedded conditional is fine — most naturally read as an echoic PC."
+    "comment": "PPI in the consequent of the embedded conditional is fine — most naturally read as an echoic PC.",
+    "verified": "page-image"
   },
   {
     "id": "lass2025_ex30",
@@ -236,7 +248,8 @@
       ["item", "lift a finger"],
       ["item_position", "embedded_consequent"]
     ],
-    "comment": "NPI in the consequent of the embedded conditional is quite odd — it attempts to echo (31), which is unacceptable on its own."
+    "comment": "NPI in the consequent of the embedded conditional is quite odd — it attempts to echo (31), which is unacceptable on its own.",
+    "verified": "page-image"
   },
   {
     "id": "lass2025_ex31",
@@ -256,7 +269,8 @@
       ["item", "lift a finger"],
       ["item_position", "consequent"]
     ],
-    "comment": "NPI in the consequent of a simple conditional is unlicensed; the echo target of (30)."
+    "comment": "NPI in the consequent of a simple conditional is unlicensed; the echo target of (30).",
+    "verified": "page-image"
   },
   {
     "id": "lass2025_ex32b",
@@ -276,7 +290,8 @@
       ["item", "lift a finger"],
       ["item_position", "embedded_antecedent"]
     ],
-    "comment": "NPI acceptable in the antecedent of the embedded conditional, which can echo an HC with an NPI in its own antecedent (32a)."
+    "comment": "NPI acceptable in the antecedent of the embedded conditional, which can echo an HC with an NPI in its own antecedent (32a).",
+    "verified": "page-image"
   },
   {
     "id": "lass2025_ex33",
@@ -295,7 +310,8 @@
       ["diagnostic", "coordination"],
       ["coordinated_antecedent_given", "false"]
     ],
-    "comment": "Coordinated antecedents cannot mix PC and HC interpretations (Haegeman & Schönenberger 2023: p.284ff.)."
+    "comment": "Coordinated antecedents cannot mix PC and HC interpretations (Haegeman & Schönenberger 2023: p.284ff.).",
+    "verified": "page-image"
   },
   {
     "id": "lass2025_ex34",
@@ -314,7 +330,8 @@
       ["diagnostic", "coordination"],
       ["coordinated_antecedent_given", "true"]
     ],
-    "comment": "Conjoined-antecedent LNC is acceptable when both conjuncts can be PCs in context."
+    "comment": "Conjoined-antecedent LNC is acceptable when both conjuncts can be PCs in context.",
+    "verified": "page-image"
   },
   {
     "id": "lass2025_ex35",
@@ -324,7 +341,7 @@
     "glossedTokens": [],
     "translation": "",
     "context": "Alf: John came to the party if Mary did. Barbara: I have no idea about the food — sometimes it's great, sometimes it's terrible.",
-    "judgment": "marginal",
+    "judgment": "questionable",
     "paperFeatures": [
       ["is_lnc", "true"],
       ["content", "bare"],
@@ -333,7 +350,8 @@
       ["diagnostic", "coordination"],
       ["coordinated_antecedent_given", "false"]
     ],
-    "comment": "Same LNC degraded ('??') when the context favors an HC reading of the simple conjunct."
+    "comment": "Same LNC degraded ('??') when the context favors an HC reading of the simple conjunct.",
+    "verified": "page-image"
   },
   {
     "id": "lass2025_ex36",
@@ -351,7 +369,8 @@
       ["diagnostic", "only_inversion"],
       ["only_inversion", "true"]
     ],
-    "comment": "HCs allow subject-aux inversion triggered by initial 'only' (Haegeman & Schönenberger 2023: p.288)."
+    "comment": "HCs allow subject-aux inversion triggered by initial 'only' (Haegeman & Schönenberger 2023: p.288).",
+    "verified": "page-image"
   },
   {
     "id": "lass2025_ex37b",
@@ -361,16 +380,18 @@
     "glossedTokens": [],
     "translation": "",
     "context": "The chocolate manufacturers looked with pleasure at the statistics. If the chocolate manufacturers are pleased, they are not satisfied.",
-    "judgment": "unacceptable",
+    "judgment": "acceptable",
     "paperFeatures": [
       ["is_lnc", "false"],
       ["content", "bare"],
       ["antecedent_given", "true"],
       ["interpretation", "blocked"],
       ["diagnostic", "only_inversion"],
-      ["only_inversion", "true"]
+      ["only_inversion", "true"],
+      ["felicity", "infelicitous"]
     ],
-    "comment": "The context forces a PC reading; 'only' + inversion removes the PC interpretation and the HC reading is nonsensical."
+    "comment": "The context forces a PC reading; 'only' + inversion removes the PC interpretation and the HC reading is nonsensical. Printed without a judgment mark; the prose calls it 'simply infelicitous'.",
+    "verified": "page-image"
   },
   {
     "id": "lass2025_ex38a",
@@ -388,7 +409,8 @@
       ["diagnostic", "only_inversion"],
       ["only_inversion", "false"]
     ],
-    "comment": "Plain LNC counterpart of (38b). Given without a context; the paper reads it as a premise conditional, the baseline for (38b)."
+    "comment": "Plain LNC counterpart of (38b). Given without a context; the paper reads it as a premise conditional, the baseline for (38b).",
+    "verified": "page-image"
   },
   {
     "id": "lass2025_ex38b",
@@ -406,7 +428,8 @@
       ["diagnostic", "only_inversion"],
       ["only_inversion", "true"]
     ],
-    "comment": "LNCs are unacceptable with initial 'only' and inversion, as predicted if they are PC-only."
+    "comment": "LNCs are unacceptable with initial 'only' and inversion, as predicted if they are PC-only.",
+    "verified": "page-image"
   },
   {
     "id": "lass2025_ex39b",
@@ -424,7 +447,8 @@
       ["diagnostic", "only_inversion"],
       ["only_inversion", "true"]
     ],
-    "comment": "Second only-inversion LNC; the plain counterpart (39a) is acceptable."
+    "comment": "Second only-inversion LNC; the plain counterpart (39a) is acceptable.",
+    "verified": "page-image"
   },
   {
     "id": "lass2025_ex40",
@@ -442,7 +466,8 @@
       ["interpretation", "HC"],
       ["diagnostic", "content_exception"]
     ],
-    "comment": "Adverb of quantification in the embedded conditional makes an HC construal available."
+    "comment": "Adverb of quantification in the embedded conditional makes an HC construal available.",
+    "verified": "page-image"
   },
   {
     "id": "lass2025_ex41",
@@ -460,7 +485,8 @@
       ["interpretation", "HC"],
       ["diagnostic", "content_exception"]
     ],
-    "comment": "Modal in the embedded conditional makes an HC construal available."
+    "comment": "Modal in the embedded conditional makes an HC construal available.",
+    "verified": "page-image"
   },
   {
     "id": "lass2025_ex42",
@@ -478,7 +504,8 @@
       ["interpretation", "HC"],
       ["diagnostic", "content_exception"]
     ],
-    "comment": "Generic/habitual construal of the embedded conditional makes an HC construal available."
+    "comment": "Generic/habitual construal of the embedded conditional makes an HC construal available.",
+    "verified": "page-image"
   },
   {
     "id": "lass2025_ex43a",
@@ -496,7 +523,8 @@
       ["interpretation", "HC"],
       ["diagnostic", "content_exception"]
     ],
-    "comment": "From Kaufmann 2009: p.18, as cited by Lassiter; 'will' is a modal describing a disposition of the switch."
+    "comment": "From Kaufmann 2009: p.18, as cited by Lassiter; 'will' is a modal describing a disposition of the switch.",
+    "verified": "page-image"
   },
   {
     "id": "lass2025_ex43b",
@@ -514,6 +542,7 @@
       ["interpretation", "HC"],
       ["diagnostic", "content_exception"]
     ],
-    "comment": "From Douven 2016, as cited by Lassiter; generic interpretation of the material's tendency (cf. Lassiter & Baratgin 2021)."
+    "comment": "From Douven 2016, as cited by Lassiter; generic interpretation of the material's tendency (cf. Lassiter & Baratgin 2021).",
+    "verified": "page-image"
   }
 ]

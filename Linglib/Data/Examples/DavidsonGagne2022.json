@@ -22,7 +22,8 @@
       ["quantifier", "FS(ALL)"],
       ["realization", "simultaneous"]
     ],
-    "comment": "Also (3a) and (49a). The reading 'All of the people in the world became vampires' is marked # in (3a)."
+    "comment": "Also (3a) and (49a). The reading 'All of the people in the world became vampires' is marked # in (3a).",
+    "verified": "page-image"
   },
   {
     "id": "davidsongagne2022_32b",
@@ -47,7 +48,8 @@
       ["quantifier", "FS(ALL)"],
       ["realization", "simultaneous"]
     ],
-    "comment": "Also (3b) and (49b). The reading 'All of my friends became vampires' is marked # in (3b). The hands are no wider apart than at neutral height; eye gaze and the arc are directed up."
+    "comment": "Also (3b) and (49b). The reading 'All of my friends became vampires' is marked # in (3b). The hands are no wider apart than at neutral height; eye gaze and the arc are directed up.",
+    "verified": "page-image"
   },
   {
     "id": "davidsongagne2022_14a",
@@ -71,7 +73,8 @@
       ["height", "neutral"],
       ["locus", "implicit"]
     ],
-    "comment": "The second arc traces the remainder of the neutral plane: everyone else in the current context besides the students."
+    "comment": "The second arc traces the remainder of the neutral plane: everyone else in the current context besides the students.",
+    "verified": "page-image"
   },
   {
     "id": "davidsongagne2022_14b",
@@ -95,7 +98,8 @@
       ["height", "high"],
       ["locus", "implicit"]
     ],
-    "comment": "The same whole-plane arc made higher refers to a superset of both the students' locus and the neutral superset."
+    "comment": "The same whole-plane arc made higher refers to a superset of both the students' locus and the neutral superset.",
+    "verified": "page-image"
   },
   {
     "id": "davidsongagne2022_15a",
@@ -106,7 +110,7 @@
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "My family, they all wear clothes.",
-    "context": "Discussing an accidental family visit to a nudist colony. The family is a subset of the people at the nudist colony, who are in turn a subset of the people in the world.",
+    "context": "Discussing an accidental family visit to a nudist colony. The family is a subset of people at the nudist colony, who are in turn a subset of people in the world.",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
@@ -116,7 +120,8 @@
       ["height", "neutral"],
       ["levels", "3"]
     ],
-    "comment": "Three heights in one discourse."
+    "comment": "Three heights in one discourse.",
+    "verified": "page-image"
   },
   {
     "id": "davidsongagne2022_15b",
@@ -127,7 +132,7 @@
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "They all (at the nudist colony) don't wear clothes.",
-    "context": "Discussing an accidental family visit to a nudist colony. The family is a subset of the people at the nudist colony, who are in turn a subset of the people in the world.",
+    "context": "Discussing an accidental family visit to a nudist colony. The family is a subset of people at the nudist colony, who are in turn a subset of people in the world.",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
@@ -137,7 +142,8 @@
       ["height", "mid"],
       ["levels", "3"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "davidsongagne2022_15c",
@@ -148,7 +154,7 @@
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "They all (people generally) wear clothes.",
-    "context": "Discussing an accidental family visit to a nudist colony. The family is a subset of the people at the nudist colony, who are in turn a subset of the people in the world.",
+    "context": "Discussing an accidental family visit to a nudist colony. The family is a subset of people at the nudist colony, who are in turn a subset of people in the world.",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
@@ -158,7 +164,8 @@
       ["height", "high"],
       ["levels", "3"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "davidsongagne2022_16a",
@@ -169,7 +176,7 @@
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "They all (at the nudist colony) don't wear clothes.",
-    "context": "Discussing an accidental family visit to a nudist colony. The family is a subset of the people at the nudist colony, who are in turn a subset of the people in the world.",
+    "context": "Discussing an accidental family visit to a nudist colony. The family is a subset of people at the nudist colony, who are in turn a subset of people in the world.",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
@@ -179,7 +186,8 @@
       ["height", "neutral"],
       ["levels", "2"]
     ],
-    "comment": "With only two groups contrasted, the nudist colony takes the neutral height: heights convey relative, not absolute, restriction."
+    "comment": "With only two groups contrasted, the nudist colony takes the neutral height: heights convey relative, not absolute, restriction.",
+    "verified": "page-image"
   },
   {
     "id": "davidsongagne2022_16b",
@@ -190,7 +198,7 @@
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "They all (people generally) wear clothes.",
-    "context": "Discussing an accidental family visit to a nudist colony. The family is a subset of the people at the nudist colony, who are in turn a subset of the people in the world.",
+    "context": "Discussing an accidental family visit to a nudist colony. The family is a subset of people at the nudist colony, who are in turn a subset of people in the world.",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
@@ -200,7 +208,8 @@
       ["height", "high"],
       ["levels", "2"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "davidsongagne2022_17a",
@@ -222,7 +231,8 @@
       ["verb", "LIKE"],
       ["verbClass", "plain"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "davidsongagne2022_17b",
@@ -232,7 +242,7 @@
     "primaryText": "(IX-1) LIKE-arc-a",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "Intended: I like them.",
+    "translation": "I like them.",
     "context": "",
     "judgment": "ungrammatical",
     "alternatives": [],
@@ -244,7 +254,8 @@
       ["verb", "LIKE"],
       ["verbClass", "plain"]
     ],
-    "comment": "A plain verb does not change its form for its arguments."
+    "comment": "A plain verb does not change its form for its arguments.",
+    "verified": "page-image"
   },
   {
     "id": "davidsongagne2022_18a",
@@ -266,7 +277,8 @@
       ["verb", "INFORM"],
       ["verbClass", "directional"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "davidsongagne2022_18b",
@@ -288,7 +300,8 @@
       ["verb", "INFORM"],
       ["verbClass", "directional"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "davidsongagne2022_18c",
@@ -310,7 +323,8 @@
       ["verb", "INFORM"],
       ["verbClass", "directional"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "davidsongagne2022_21a",
@@ -320,7 +334,7 @@
     "primaryText": "(IX-1) LIKE-arc-neutral",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "Intended: I like them.",
+    "translation": "I like them.",
     "context": "",
     "judgment": "ungrammatical",
     "alternatives": [],
@@ -332,7 +346,8 @@
       ["verb", "LIKE"],
       ["verbClass", "plain"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "davidsongagne2022_21b",
@@ -354,7 +369,8 @@
       ["verb", "LIKE"],
       ["verbClass", "plain"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "davidsongagne2022_21c",
@@ -364,7 +380,7 @@
     "primaryText": "(IX-1) LIKE-arc-high",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "Intended: I like everyone.",
+    "translation": "I like everyone.",
     "context": "",
     "judgment": "ungrammatical",
     "alternatives": [],
@@ -376,7 +392,8 @@
       ["verb", "LIKE"],
       ["verbClass", "plain"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "davidsongagne2022_21d",
@@ -398,7 +415,8 @@
       ["verb", "LIKE"],
       ["verbClass", "plain"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "davidsongagne2022_22a",
@@ -420,7 +438,8 @@
       ["verb", "INFORM"],
       ["verbClass", "directional"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "davidsongagne2022_22b",
@@ -442,7 +461,8 @@
       ["verb", "INFORM"],
       ["verbClass", "directional"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "davidsongagne2022_23a",
@@ -464,7 +484,8 @@
       ["verb", "PICK-FROM"],
       ["verbClass", "directional"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "davidsongagne2022_23b",
@@ -486,7 +507,8 @@
       ["verb", "PICK-FROM"],
       ["verbClass", "directional"]
     ],
-    "comment": "The indiscriminate reading of a widened domain."
+    "comment": "The indiscriminate reading of a widened domain.",
+    "verified": "page-image"
   },
   {
     "id": "davidsongagne2022_24a",
@@ -496,8 +518,8 @@
     "primaryText": "GIVE-OUT-neutral CLASS, HAVE LEFT.",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "I passed out the flyers to my classmates, but I had some left.",
-    "context": "Someone is talking about a bunch of fliers they have printed to advertise an upcoming event.",
+    "translation": "I passed out (the flyers) to my classmates, but I had some left.",
+    "context": "Someone is talking about a bunch of fliers they've printed to advertise for an upcoming event.",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
@@ -509,7 +531,8 @@
       ["verbClass", "directional"],
       ["levels", "3"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "davidsongagne2022_24b",
@@ -519,8 +542,8 @@
     "primaryText": "GIVE-OUT-mid CAMPUS, STILL HAVE LEFT.",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "So I passed some out to people on campus, but I still had some left.",
-    "context": "Someone is talking about a bunch of fliers they have printed to advertise an upcoming event.",
+    "translation": "So I passed some out (to people) on campus, but I still had some left.",
+    "context": "Someone is talking about a bunch of fliers they've printed to advertise for an upcoming event.",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
@@ -532,7 +555,8 @@
       ["verbClass", "directional"],
       ["levels", "3"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "davidsongagne2022_24c",
@@ -542,8 +566,8 @@
     "primaryText": "GIVE-OUT-high OTHER PEOPLE MY TOWN.",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "So I gave them out to whoever I found in town.",
-    "context": "Someone is talking about a bunch of fliers they have printed to advertise an upcoming event.",
+    "translation": "So I gave them out (to whoever I found) in town.",
+    "context": "Someone is talking about a bunch of fliers they've printed to advertise for an upcoming event.",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
@@ -555,14 +579,15 @@
       ["verbClass", "directional"],
       ["levels", "3"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "davidsongagne2022_25",
     "source": {"bibkey": "davidson-gagne-2022", "paperLabel": "(25)"},
     "reportedIn": null,
     "language": "amer1248",
-    "primaryText": "INFORM-2 WORLD WILL MESS. IX-arc-neutral(thumb) GOVERNMENT HAVE SPECIAL BOAT READY. UNDERSTAND IX-arc-neutral PICK-neutral(alternating-repetition) LIMIT PEOPLE WHO CAN FILE-ON ON BOAT IX-left. UNDERSTAND IX-arc-right-neutral RESPONSIBILITY WHAT. POSS-neutral-right DRESS BAG EAT INVOLVE BRING FILE-ON-left. UNDERSTAND GOVERNMENT PROVIDE BOAT FINISH.",
+    "primaryText": "INFORM-2 WORLD WILL MESS. IX-arc-neutral(thumb) GOVERNMENT HAVE SPECIALf BOAT READY. UNDERSTAND IX-arc-neutral PICK-neutral(alternating-repetition) LIMIT PEOPLE WHObent FILE-ON ON BOAT IX-left. UNDERSTAND IX-arc-right-neutral RESPONSIBILITY WHATpu-rq. POSS-neutral-right DRESS BAG EAT INVOLVE BRING FILE-ON-left. UNDERSTAND GOVERNMENT PROVIDE BOAT FINISH.",
     "discourseSegments": [
       "INFORM-2 WORLD WILL MESS.",
       "IX-arc-neutral(thumb) GOVERNMENT HAVE SPECIAL BOAT READY.",
@@ -572,7 +597,7 @@
       "UNDERSTAND GOVERNMENT PROVIDE BOAT FINISH."
     ],
     "glossedTokens": [],
-    "translation": "I'll tell you, the world is getting destroyed but the government has a special boat, they're ready for it, and they choose people (from a previously determined set) who can go on it. The people who are chosen are responsible for bringing their own supplies. The government is just providing the boat.",
+    "translation": "I'll tell you, the world is getting destroyed but the government has a special boat — they're ready for it — and they choose people (from a previously determined set) who can go on it. The people who are chosen are responsible for bringing their own supplies. The government is just providing the boat.",
     "context": "A story about an apocalyptic event.",
     "judgment": "acceptable",
     "alternatives": [],
@@ -585,14 +610,15 @@
       ["verbClass", "directional"],
       ["anaphora", "locus"]
     ],
-    "comment": "The later IX-arc returns to the neutral locus of the verb's domain to refer to the people chosen from the specified set. Video on the paper's OSF site."
+    "comment": "The later IX-arc returns to the neutral locus of the verb's domain to refer to the people chosen from the specified set. Video on the paper's OSF site. The paper prints FILE-ON--left; FILE-ON-left as in (26).",
+    "verified": "page-image"
   },
   {
     "id": "davidsongagne2022_26",
     "source": {"bibkey": "davidson-gagne-2022", "paperLabel": "(26)"},
     "reportedIn": null,
     "language": "amer1248",
-    "primaryText": "WORLD HAPPEN MESS. INFORM GOVERNMENT HAVE SPECIAL BOAT READY FOR. UNDERSTAND IX-right-high PICK-high(alternating repetition) PEOPLE WHO CAN FILE-ON-left. UNDERSTAND IX-arc-right-high RESPONSIBILITY WHAT. POSS-right-mid BAG DRESS EAT INCLUDE. GOVERNMENT PROVIDE WHAT BOAT FINISH.",
+    "primaryText": "WORLD HAPPEN MESS PU. INFORM GOVERNMENT HAVE SPECIAL BOAT READY FOR. UNDERSTAND IX-right-high PICK-high(alternating repetition) PEOPLE WHObent CAN FILE-ON-left. UNDERSTAND IX-arc-right-high RESPONSIBILITY WHATpu-rq. POSS-right-mid BAG DRESS EAT INCLUDE. GOVERNMENT PROVIDE WHATpu-rq BOAT FINISH.",
     "discourseSegments": [
       "WORLD HAPPEN MESS.",
       "INFORM GOVERNMENT HAVE SPECIAL BOAT READY FOR.",
@@ -602,7 +628,7 @@
       "GOVERNMENT PROVIDE WHAT BOAT FINISH."
     ],
     "glossedTokens": [],
-    "translation": "The world is getting destroyed! But FYI, the government has a special boat, they're ready for it, and they are choosing people (randomly, from everyone) who can go on it. The people who are chosen (a subset of everyone) are responsible for bringing their own supplies. The government just provides the boat.",
+    "translation": "The world is getting destroyed! (But) FYI, the government has a special boat — they're ready for it — and they are choosing people (randomly, from everyone) who can go on it. The people who are chosen (a subset of everyone) are responsible for bringing their own supplies. The government just provides the boat.",
     "context": "A story about an apocalyptic event.",
     "judgment": "acceptable",
     "alternatives": [],
@@ -615,7 +641,8 @@
       ["verbClass", "directional"],
       ["anaphora", "locus"]
     ],
-    "comment": "The later IX-arc returns to the high locus introduced only by the height of the verb, so the widened domain licenses anaphora, unlike English covert domain restriction. Video on the paper's OSF site."
+    "comment": "The later IX-arc returns to the high locus introduced only by the height of the verb, so the widened domain licenses anaphora, unlike English covert domain restriction. Video on the paper's OSF site.",
+    "verified": "page-image"
   },
   {
     "id": "davidsongagne2022_27",
@@ -625,7 +652,7 @@
     "primaryText": "IX-1 WANT DOG-high",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "Intended: I want any/all dog(s).",
+    "translation": "I want any/all dog(s).",
     "context": "Talking about adopting a pet.",
     "judgment": "marginal",
     "alternatives": [],
@@ -638,7 +665,8 @@
       ["heightOn", "noun"],
       ["height", "high"]
     ],
-    "comment": "All consultants reject the widened-domain reading. The reading 'I want the dog that is high (up on that roof)' is marginal and needs eye gaze directed to the sign DOG rather than to the interlocutor."
+    "comment": "All consultants reject the widened-domain reading. The reading 'I want the/a dog that is high (e.g., up on that roof)' is marginal and needs eye gaze directed to the sign DOG rather than to the interlocutor.",
+    "verified": "page-image"
   },
   {
     "id": "davidsongagne2022_28",
@@ -648,7 +676,7 @@
     "primaryText": "IX-1 WANT DOG, SOMETHING-high",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "I want a dog, any kind of dog.",
+    "translation": "I want a dog, (any kind of dog).",
     "context": "Talking about adopting a pet.",
     "judgment": "acceptable",
     "alternatives": [],
@@ -660,7 +688,8 @@
       ["quantifier", "SOMETHING"],
       ["realization", "simultaneous"]
     ],
-    "comment": "The closest expression of the indiscriminate reading uses an existential quantifier signed high."
+    "comment": "The closest expression of the indiscriminate reading uses an existential quantifier signed high.",
+    "verified": "page-image"
   },
   {
     "id": "davidsongagne2022_33a",
@@ -670,7 +699,7 @@
     "primaryText": "NONEsym-neutral ALONE",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "None (of my immediate family); I'm the only one.",
+    "translation": "None (of my immediate family), I'm the only one.",
     "context": "Discussion of whether anyone in the signer's family is Deaf.",
     "judgment": "acceptable",
     "alternatives": [],
@@ -682,7 +711,8 @@
       ["quantifier", "NONEsym"],
       ["realization", "simultaneous"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "davidsongagne2022_33b",
@@ -692,7 +722,7 @@
     "primaryText": "NONEsym-high ALONE",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "None; I'm the only one (not even ancestors, distant relations, etc.).",
+    "translation": "None, I'm the only one (not even ancestors, distant relations, etc.)",
     "context": "Discussion of whether anyone in the signer's family is Deaf.",
     "judgment": "acceptable",
     "alternatives": [],
@@ -704,7 +734,8 @@
       ["quantifier", "NONEsym"],
       ["realization", "simultaneous"]
     ],
-    "comment": "Even the high domain is pragmatically restricted: the whole family in an unexpectedly broad sense, not everyone in the world."
+    "comment": "Even the high domain is pragmatically restricted: the whole family in an unexpectedly broad sense, not everyone in the world. The paper prints 'not even, ancestors'.",
+    "verified": "page-image"
   },
   {
     "id": "davidsongagne2022_34a",
@@ -715,7 +746,7 @@
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "There were no bananas in the store.",
-    "context": "Lack of bananas first at the store, then in town, then in the whole country.",
+    "context": "Lack of bananas first at store, then in town, then in whole country.",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
@@ -727,7 +758,8 @@
       ["realization", "simultaneous"],
       ["levels", "3"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "davidsongagne2022_34b",
@@ -738,7 +770,7 @@
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "There were no bananas in the whole town.",
-    "context": "Lack of bananas first at the store, then in town, then in the whole country.",
+    "context": "Lack of bananas first at store, then in town, then in whole country.",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
@@ -750,7 +782,8 @@
       ["realization", "simultaneous"],
       ["levels", "3"]
     ],
-    "comment": "The mid and high productions differ minimally in form, yet all consultants reported targeting three heights."
+    "comment": "The mid and high productions differ minimally in form, yet all consultants reported targeting three heights.",
+    "verified": "page-image"
   },
   {
     "id": "davidsongagne2022_34c",
@@ -761,7 +794,7 @@
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "In the whole country there are no bananas.",
-    "context": "Lack of bananas first at the store, then in town, then in the whole country.",
+    "context": "Lack of bananas first at store, then in town, then in whole country.",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
@@ -773,7 +806,8 @@
       ["realization", "simultaneous"],
       ["levels", "3"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "davidsongagne2022_35neutral",
@@ -796,7 +830,8 @@
       ["realization", "simultaneous"],
       ["bound", "typically"]
     ],
-    "comment": "Glossed none-sym-neutral/high in the paper. The adverb binds the domain: the restricted group may differ from test to test."
+    "comment": "Glossed none-sym-neutral/high in the paper. The adverb binds the domain: the restricted group may differ from test to test.",
+    "verified": "page-image"
   },
   {
     "id": "davidsongagne2022_35high",
@@ -819,7 +854,8 @@
       ["realization", "simultaneous"],
       ["bound", "typically"]
     ],
-    "comment": "The high variant of the same example."
+    "comment": "The high variant of the same example.",
+    "verified": "page-image"
   },
   {
     "id": "davidsongagne2022_36a",
@@ -829,7 +865,7 @@
     "primaryText": "TYPICALLY SOMEONE-neutral LIKE MUSTARD.",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "Usually there is someone who likes mustard (possibly a different person at different parties).",
+    "translation": "Usually there is someone who likes mustard.",
     "context": "Deciding condiments to put out at a party. The host says:",
     "judgment": "acceptable",
     "alternatives": [],
@@ -842,7 +878,8 @@
       ["realization", "simultaneous"],
       ["bound", "typically"]
     ],
-    "comment": "A specific, widest-scope reading with the same person at every party is also available."
+    "comment": "The paper adds: (may be a different person for different parties). A specific, widest-scope reading with the same person at every party is also available.",
+    "verified": "page-image"
   },
   {
     "id": "davidsongagne2022_36b",
@@ -852,7 +889,7 @@
     "primaryText": "TYPICALLY SOMEONE-high LIKE MUSTARD.",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "Usually there is someone (in the world) who likes mustard; easily made true, the person need not be at a party.",
+    "translation": "Usually there is someone (in the world) who likes mustard.",
     "context": "Deciding condiments to put out at a party. The host says:",
     "judgment": "acceptable",
     "alternatives": [],
@@ -865,7 +902,8 @@
       ["realization", "simultaneous"],
       ["bound", "typically"]
     ],
-    "comment": "The widened existential is weaker, not stronger, so height is not intensification."
+    "comment": "The paper adds: (easily made true, person doesn't have to be at a party). The widened existential is weaker, not stronger, so height is not intensification.",
+    "verified": "page-image"
   },
   {
     "id": "davidsongagne2022_37a",
@@ -887,7 +925,8 @@
       ["quantifier", "FEW"],
       ["realization", "sequential"]
     ],
-    "comment": "FEW cannot move for phonological reasons; the height-marked IX-arc follows it. Video on the paper's OSF site."
+    "comment": "FEW cannot move for phonological reasons; the height-marked IX-arc follows it. Video on the paper's OSF site.",
+    "verified": "page-image"
   },
   {
     "id": "davidsongagne2022_37b",
@@ -897,7 +936,7 @@
     "primaryText": "FEW IX-arc-high FEEL HIT SICK",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "A few of all the people at the beach got sick.",
+    "translation": "A few of (all) the people (at the beach) got sick.",
     "context": "My family goes to the beach every year.",
     "judgment": "acceptable",
     "alternatives": [],
@@ -909,7 +948,8 @@
       ["quantifier", "FEW"],
       ["realization", "sequential"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "davidsongagne2022_38a",
@@ -919,7 +959,7 @@
     "primaryText": "FS(ALL)-high IX-arc-neutral SICK",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "Intended: All (of all of the people) were sick.",
+    "translation": "All (of all of the people) were sick.",
     "context": "My family goes to the beach every year.",
     "judgment": "ungrammatical",
     "alternatives": [],
@@ -931,7 +971,8 @@
       ["quantifier", "FS(ALL)"],
       ["realization", "both"]
     ],
-    "comment": "Also with NONE-high and SOMEONE-high: a quantifier that incorporates the pronoun rejects a following spatially modified pronoun."
+    "comment": "Also with NONE-high and SOMEONE-high: a quantifier that incorporates the pronoun rejects a following spatially modified pronoun.",
+    "verified": "page-image"
   },
   {
     "id": "davidsongagne2022_39a_none",
@@ -953,7 +994,8 @@
       ["quantifier", "NONEsym"],
       ["realization", "simultaneous"]
     ],
-    "comment": "Glossed none in the paper."
+    "comment": "Glossed none in the paper.",
+    "verified": "page-image"
   },
   {
     "id": "davidsongagne2022_39a_each",
@@ -975,7 +1017,8 @@
       ["quantifier", "EACH"],
       ["realization", "sequential"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "davidsongagne2022_39b_one",
@@ -997,7 +1040,8 @@
       ["quantifier", "ONE"],
       ["realization", "simultaneous"]
     ],
-    "comment": "A weak quantifier with a widened domain takes an indiscriminate reading."
+    "comment": "A weak quantifier with a widened domain takes an indiscriminate reading.",
+    "verified": "page-image"
   },
   {
     "id": "davidsongagne2022_39b_two",
@@ -1019,7 +1063,8 @@
       ["quantifier", "TWO"],
       ["realization", "simultaneous"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "davidsongagne2022_39b_many",
@@ -1041,7 +1086,8 @@
       ["quantifier", "MANY"],
       ["realization", "sequential"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "davidsongagne2022_54a",
@@ -1062,7 +1108,8 @@
       ["height", "neutral"],
       ["levels", "3"]
     ],
-    "comment": "Signed at the chest."
+    "comment": "Signed at the chest.",
+    "verified": "page-image"
   },
   {
     "id": "davidsongagne2022_54b",
@@ -1083,7 +1130,8 @@
       ["height", "mid"],
       ["levels", "3"]
     ],
-    "comment": "Signed at the cheek."
+    "comment": "Signed at the cheek.",
+    "verified": "page-image"
   },
   {
     "id": "davidsongagne2022_54c",
@@ -1104,6 +1152,7 @@
       ["height", "high"],
       ["levels", "3"]
     ],
-    "comment": "Signed at the forehead."
+    "comment": "Signed at the forehead.",
+    "verified": "page-image"
   }
 ]

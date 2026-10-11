@@ -15,7 +15,8 @@
       {"name": "V1 alone is modified: the baby cried repeatedly until Mother woke once", "judgment": "questionable"}
     ],
     "paperFeatures": [],
-    "comment": "The V1-only reading is hard to access while the whole-event reading is available; (45) blocks the latter and recovers it."
+    "comment": "The V1-only reading is hard to access while the whole-event reading is available; (45) blocks the latter and recovers it.",
+    "verified": "page-image"
   },
   {
     "id": "tay2024_42",
@@ -33,7 +34,8 @@
       {"name": "V1 alone is modified: the baby cried repeatedly until Mother woke once", "judgment": "ungrammatical"}
     ],
     "paperFeatures": [],
-    "comment": "The compound's V1 cannot be independently modified: the components of a V-V resultative are inaccessible to syntactic operations."
+    "comment": "The compound's V1 cannot be independently modified: the components of a V-V resultative are inaccessible to syntactic operations.",
+    "verified": "page-image"
   },
   {
     "id": "tay2024_45",
@@ -43,12 +45,13 @@
     "discourseSegments": [],
     "glossedTokens": [["Bǎobao", "baby"], ["zài", "at"], ["jiā", "house"], ["lǐ", "inside"], ["kū", "cry"], ["de", "DE"], ["línjū", "neighbour"], ["xǐng-le", "awake-PFV"]],
     "translation": "The baby cried at home until the neighbours woke up (next door).",
-    "context": "The baby cried at home until the neighbours woke up next door, so the locative can only modify the crying.",
+    "context": "The baby cried at home until the neighbours woke up next door.",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [],
-    "comment": "V1 of a V-de resultative independently modified by a locative."
+    "comment": "V1 of a V-de resultative independently modified by a locative.",
+    "verified": "page-image"
   },
   {
     "id": "tay2024_46",
@@ -58,12 +61,13 @@
     "discourseSegments": [],
     "glossedTokens": [["Bǎobao", "baby"], ["zài", "at"], ["jiā", "house"], ["lǐ", "inside"], ["kū-xǐng-le", "cry-awake-PFV"], ["línjū", "neighbour"]],
     "translation": "The baby cried at home until the neighbours woke up (next door).",
-    "context": "The baby cried at home until the neighbours woke up next door, so the locative can only modify the crying.",
+    "context": "The baby cried at home until the neighbours woke up next door.",
     "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [],
-    "comment": "The minimal pair with (45): V1 of a V-V resultative cannot be independently modified."
+    "comment": "The minimal pair with (45): V1 of a V-V resultative cannot be independently modified.",
+    "verified": "page-image"
   },
   {
     "id": "tay2024_107",
@@ -78,7 +82,8 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [["externalArgument", "agent"]],
-    "comment": "The scenario the trieventive analysis fits and the monoeventive and bieventive analyses do not (108)."
+    "comment": "The scenario the trieventive analysis fits and the monoeventive and bieventive analyses do not (108).",
+    "verified": "page-image"
   },
   {
     "id": "tay2024_131",
@@ -87,13 +92,14 @@
     "primaryText": "Bǎobao kū-xǐng-le māma.",
     "discourseSegments": [],
     "glossedTokens": [["Bǎobao", "baby"], ["kū-xǐng-le", "cry-awake-PFV"], ["māma", "mother"]],
-    "translation": "The baby cried until, and as a result, Mother woke up.",
+    "translation": "The baby cried until/ and as a result Mother woke up.",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [["externalArgument", "agent"]],
-    "comment": "The external argument interpreted as the agent of an unergative V1."
+    "comment": "The external argument interpreted as the agent of an unergative V1.",
+    "verified": "page-image"
   },
   {
     "id": "tay2024_132",
@@ -108,7 +114,8 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [["externalArgument", "agent"]],
-    "comment": "The external argument interpreted as the agent of a transitive V1."
+    "comment": "The external argument interpreted as the agent of a transitive V1.",
+    "verified": "page-image"
   },
   {
     "id": "tay2024_133",
@@ -123,7 +130,8 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [["externalArgument", "theme"]],
-    "comment": "The external argument interpreted as the theme of an unaccusative V1; the thesis cites the example from Li 1980 via Williams 2005."
+    "comment": "The external argument interpreted as the theme of an unaccusative V1; the thesis cites the example from Li 1980 via Williams 2005.",
+    "verified": "page-image"
   },
   {
     "id": "tay2024_134",
@@ -138,7 +146,8 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [["externalArgument", "theme"]],
-    "comment": "The external argument interpreted as the theme of a transitive V1; the thesis cites the example from Ren 2001 via Williams 2005."
+    "comment": "The external argument interpreted as the theme of a transitive V1; the thesis cites the example from Ren 2001 via Williams 2005.",
+    "verified": "page-image"
   },
   {
     "id": "tay2024_137",
@@ -153,7 +162,8 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [["externalArgument", "agent"]],
-    "comment": "V1 names the striking, the initial event of the causal chain (136), in which the Russian forces take part (138)."
+    "comment": "V1 names the striking, the initial event of the causal chain (136), in which the Russian forces take part (138).",
+    "verified": "page-image"
   },
   {
     "id": "tay2024_139",
@@ -168,7 +178,8 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [["externalArgument", "pureCauser"]],
-    "comment": "A pure causer: V1 names the seawater rushing in, the second event of the causal chain (136), in which the Russian forces take no part (140)."
+    "comment": "A pure causer: V1 names the seawater rushing in, the second event of the causal chain (136), in which the Russian forces take no part (140).",
+    "verified": "page-image"
   },
   {
     "id": "tay2024_146",
@@ -183,7 +194,8 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [["externalArgument", "pureCauser"]],
-    "comment": "A pure causer: the coach is not a participant in the walking. The thesis cites the example from Liu 2019."
+    "comment": "A pure causer: the coach is not a participant in the walking. The thesis cites the example from Liu 2019.",
+    "verified": "page-image"
   },
   {
     "id": "tay2024_148",
@@ -198,7 +210,8 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [["externalArgument", "pureCauser"]],
-    "comment": "V1 'crack' is inchoative and has no causative alternant, so the external argument could only be a pure causer."
+    "comment": "V1 'crack' is inchoative and has no causative alternant, so the external argument could only be a pure causer.",
+    "verified": "page-image"
   },
   {
     "id": "tay2024_149",
@@ -213,7 +226,8 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [["externalArgument", "pureCauser"]],
-    "comment": "An inanimate pure causer that is not an argument of V1."
+    "comment": "An inanimate pure causer that is not an argument of V1.",
+    "verified": "page-image"
   },
   {
     "id": "tay2024_150",
@@ -228,7 +242,8 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [["externalArgument", "subjectMatter"]],
-    "comment": "The external argument is the subject matter of the crying, a participant in V1's event, not a pure causer: onions or tear gas in its place are out (154)."
+    "comment": "The external argument is the subject matter of the crying, a participant in V1's event, not a pure causer: onions or tear gas in its place are out (154).",
+    "verified": "page-image"
   },
   {
     "id": "tay2024_151",
@@ -237,13 +252,14 @@
     "primaryText": "Nèi ge xiàohuà xiào-téng-le Zhāngsān de dùzi.",
     "discourseSegments": [],
     "glossedTokens": [["Nèi", "that"], ["ge", "CLF"], ["xiàohuà", "joke"], ["xiào-téng-le", "laugh-hurt-PFV"], ["Zhāngsān", "Zhangsan"], ["de", "DE"], ["dùzi", "belly"]],
-    "translation": "Zhangsan's belly hurt as a result of laughing about this joke.",
+    "translation": "That joke caused Zhangsan to laugh and as a result his belly hurts. / Zhangsan's belly hurt as a result of laughing about this joke.",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [["externalArgument", "subjectMatter"]],
-    "comment": "The external argument is the subject matter of the laughing; the thesis cites the example from Gu 1992."
+    "comment": "The external argument is the subject matter of the laughing; the thesis cites the example from Gu 1992.",
+    "verified": "page-image"
   },
   {
     "id": "tay2024_202",
@@ -258,7 +274,8 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [["externalArgument", "agent"]],
-    "comment": "The theme of the obligatorily transitive V1 'cut' need not be realised: the internal argument is the knife, V2's argument."
+    "comment": "The theme of the obligatorily transitive V1 'cut' need not be realised: the internal argument is the knife, V2's argument.",
+    "verified": "page-image"
   },
   {
     "id": "tay2024_205",
@@ -267,7 +284,7 @@
     "primaryText": "Zhè dùn fàn chī-qióng-le wǒ.",
     "discourseSegments": [],
     "glossedTokens": [["Zhè", "this"], ["dùn", "CLF"], ["fàn", "meal"], ["chī-qióng-le", "eat-poor-PFV"], ["wǒ", "me"]],
-    "translation": "I became poor as a result of someone eating this meal.",
+    "translation": "I became poor as a result of {me/someone} eating this meal.",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -276,7 +293,8 @@
       {"name": "someone else ate the meal I paid for", "judgment": "acceptable"}
     ],
     "paperFeatures": [["externalArgument", "theme"]],
-    "comment": "The internal argument need not be the agent of V1."
+    "comment": "The internal argument need not be the agent of V1.",
+    "verified": "page-image"
   },
   {
     "id": "tay2024_206",
@@ -285,7 +303,7 @@
     "primaryText": "Zhè shǒu gē chàng-kū-le guānzhòng.",
     "discourseSegments": [],
     "glossedTokens": [["Zhè", "this"], ["shǒu", "CLF"], ["gē", "song"], ["chàng-kū-le", "sing-cry-PFV"], ["guānzhòng", "audience"]],
-    "translation": "The audience cried as a result of someone singing this song.",
+    "translation": "The audience cried as a result of {the audience/someone} singing this song.",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -294,7 +312,8 @@
       {"name": "the performer sang", "judgment": "acceptable"}
     ],
     "paperFeatures": [["externalArgument", "theme"]],
-    "comment": "The internal argument need not be the agent of V1; the performer reading is the more plausible."
+    "comment": "The internal argument need not be the agent of V1; the performer reading is the more plausible.",
+    "verified": "page-image"
   },
   {
     "id": "tay2024_216",
@@ -309,7 +328,8 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [],
-    "comment": "An unaccusative V-V resultative whose sole argument is the theme of V1; acceptable whoever washed the clothes. The thesis cites the example from C. Li 2007."
+    "comment": "An unaccusative V-V resultative whose sole argument is the theme of V1; acceptable whoever washed the clothes. The thesis cites the example from C. Li 2007.",
+    "verified": "page-image"
   },
   {
     "id": "tay2024_217",
@@ -324,7 +344,8 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [],
-    "comment": "The sole argument interpreted as the instrument of V1."
+    "comment": "The sole argument interpreted as the instrument of V1.",
+    "verified": "page-image"
   },
   {
     "id": "tay2024_219",
@@ -339,7 +360,8 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [],
-    "comment": "The sole argument interpreted as the agent of V1: a subject-oriented resultative without a reflexive. The thesis cites the example from C. Li 2007."
+    "comment": "The sole argument interpreted as the agent of V1: a subject-oriented resultative without a reflexive. The thesis cites the example from C. Li 2007.",
+    "verified": "page-image"
   },
   {
     "id": "tay2024_221",
@@ -350,11 +372,12 @@
     "glossedTokens": [["Shǒujuǎn", "handkerchief"], ["kū-shī-le", "cry-wet-PFV"]],
     "translation": "The handkerchief became wet from crying.",
     "context": "Out of the blue.",
-    "judgment": "marginal",
+    "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [],
-    "comment": "The sole argument thematically unrelated to V1. Reported as grammatical by Sybesma 1999; some of the thesis's consultants find it slightly degraded out of the blue."
+    "comment": "The sole argument thematically unrelated to V1. Printed without a judgment mark (Sybesma 1999:16); the prose adds that some of the thesis's consultants judge it slightly degraded, especially out of the blue.",
+    "verified": "page-image"
   },
   {
     "id": "tay2024_224",
@@ -372,7 +395,8 @@
       {"name": "Mother wakes from someone else crying", "judgment": "unacceptable"}
     ],
     "paperFeatures": [],
-    "comment": "An unaccusative resultative whose sole argument must be the agent of V1, a restriction the thesis leaves open."
+    "comment": "An unaccusative resultative whose sole argument must be the agent of V1, a restriction the thesis leaves open.",
+    "verified": "page-image"
   },
   {
     "id": "tay2024_330",
@@ -381,7 +405,7 @@
     "primaryText": "Zhāngsān qí-lèi-le mǎ.",
     "discourseSegments": [],
     "glossedTokens": [["Zhāngsān", "Zhangsan"], ["qí-lèi-le", "ride-tired-PFV"], ["mǎ", "horse"]],
-    "translation": "Zhangsan rode a horse and as a result the horse, or Zhangsan, became tired.",
+    "translation": "Zhangsan rode a horse and as a result {the horse/%Zhangsan} became tired.",
     "context": "A hybrid resultative, commonly described as a subject-oriented transitive resultative.",
     "judgment": "acceptable",
     "alternatives": [],
@@ -390,7 +414,8 @@
       {"name": "Zhangsan became tired", "judgment": "marginal"}
     ],
     "paperFeatures": [["externalArgument", "agent"]],
-    "comment": "The second reading is marked % for speaker variation; on both readings Tay analyzes the postverbal phrase as an argument of V2, a Locatum on the second."
+    "comment": "The second reading is marked % for speaker variation; on both readings Tay analyzes the postverbal phrase as an argument of V2, a Locatum on the second.",
+    "verified": "page-image"
   },
   {
     "id": "tay2024_668",
@@ -405,6 +430,7 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [["externalArgument", "agent"]],
-    "comment": "The witness for two of chapter 8's three typological parameters: X is a verb, and a transitive resultative takes an intransitive X, unlike Japanese (674)-(675)."
+    "comment": "The witness for two of chapter 8's three typological parameters: X is a verb, and a transitive resultative takes an intransitive X, unlike Japanese (674)-(675).",
+    "verified": "page-image"
   }
 ]

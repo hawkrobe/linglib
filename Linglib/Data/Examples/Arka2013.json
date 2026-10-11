@@ -20,7 +20,8 @@
     "paperFeatures": [
       ["tam", "contextual"]
     ],
-    "comment": "Contextual TAM: the bare verb is anchored by context alone."
+    "comment": "Contextual TAM: the bare verb is anchored by context alone.",
+    "verified": "page-image"
   },
   {
     "id": "arka2013_4a",
@@ -40,7 +41,8 @@
       ["frame", "S<E-R"],
       ["adjunct", "besok"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "arka2013_4b",
@@ -60,7 +62,8 @@
       ["frame", "E-R<S"],
       ["adjunct", "kemarin"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "arka2013_4c",
@@ -80,7 +83,8 @@
       ["frame", "E-R-S"],
       ["adjunct", "sekarang"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "arka2013_5a",
@@ -100,7 +104,8 @@
       ["aux", "sudah"],
       ["frame", "E<S,R"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "arka2013_5b",
@@ -121,7 +126,8 @@
       ["frame", "E<R<S"],
       ["adjunct", "kemarin"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "arka2013_6a",
@@ -143,7 +149,8 @@
       ["aspect", "progressive"],
       ["marking", "applicative -i"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "arka2013_6b",
@@ -165,7 +172,8 @@
       ["aspect", "progressive"],
       ["marking", "reduplication"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "arka2013_7",
@@ -186,7 +194,8 @@
       ["marking", "reduplication"],
       ["meaning", "unrealised expectation"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "arka2013_8",
@@ -206,7 +215,8 @@
       ["aspect", "progressive"],
       ["tam", "contextual"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "arka2013_10",
@@ -228,7 +238,8 @@
       ["withAux", "acceptable"],
       ["clause", "root"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "arka2013_11a",
@@ -250,7 +261,8 @@
       ["withAux", "ungrammatical"],
       ["matrix", "ingin"]
     ],
-    "comment": "(11b) is the starred alternative."
+    "comment": "(11b) is the starred alternative.",
+    "verified": "page-image"
   },
   {
     "id": "arka2013_11c",
@@ -273,7 +285,8 @@
       ["matrix", "tahu"],
       ["subordinator", "bahwa"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "arka2013_12a",
@@ -293,7 +306,8 @@
       ["withAux", "acceptable"],
       ["clause", "root"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "arka2013_12b",
@@ -315,7 +329,8 @@
       ["withAux", "ungrammatical"],
       ["matrix", "menyuruh"]
     ],
-    "comment": "(12c) is the starred alternative."
+    "comment": "(12c) is the starred alternative.",
+    "verified": "page-image"
   },
   {
     "id": "arka2013_13a",
@@ -331,14 +346,18 @@
     "context": "",
     "judgment": "acceptable",
     "alternatives": [
-      {"form": "Orang itu medorong saya [ _ akan/sedang/sudah jatuh].", "judgment": "ungrammatical"}
+      {
+        "form": "Orang itu mendorong saya [ _ akan/sedang/sudah jatuh].",
+        "judgment": "ungrammatical"
+      }
     ],
     "readings": [],
     "paperFeatures": [
       ["withAux", "ungrammatical"],
       ["matrix", "mendorong"]
     ],
-    "comment": "(13b) is the starred alternative."
+    "comment": "(13b) is the starred alternative. The paper prints medorong in (13b).",
+    "verified": "page-image"
   },
   {
     "id": "arka2013_14a",
@@ -353,14 +372,18 @@
     "context": "",
     "judgment": "acceptable",
     "alternatives": [
-      {"form": "Dia datang [(sambil) sedang menangis].", "judgment": "questionable"}
+      {
+        "form": "Dia datang [(sambil) sedang menangis].",
+        "judgment": "ungrammatical"
+      }
     ],
     "readings": [],
     "paperFeatures": [
-      ["withAux", "questionable"],
+      ["withAux", "ungrammatical"],
       ["adjunct", "sambil"]
     ],
-    "comment": "(14b) is marked ?*."
+    "comment": "(14b) is marked ?*; recorded as ungrammatical, the severe part of the mark.",
+    "verified": "page-image"
   },
   {
     "id": "arka2013_15a",
@@ -375,14 +398,18 @@
     "context": "",
     "judgment": "acceptable",
     "alternatives": [
-      {"form": "Saya belajar bisa [menembak].", "judgment": "questionable"}
+      {
+        "form": "Saya belajar bisa [menembak].",
+        "judgment": "ungrammatical"
+      }
     ],
     "readings": [],
     "paperFeatures": [
-      ["withAux", "questionable"],
+      ["withAux", "ungrammatical"],
       ["matrix", "belajar"]
     ],
-    "comment": "(15b) is marked ?*."
+    "comment": "(15b) is marked ?*; recorded as ungrammatical, the severe part of the mark.",
+    "verified": "page-image"
   },
   {
     "id": "arka2013_15c",
@@ -403,7 +430,8 @@
       ["withAux", "acceptable"],
       ["subordinator", "agar"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "arka2013_18a",
@@ -424,7 +452,8 @@
       ["aux", "sedang"],
       ["voice", "AV"]
     ],
-    "comment": "Google-attested; the actor voice verb with sedang."
+    "comment": "Google-attested; the actor voice verb with sedang.",
+    "verified": "page-image"
   },
   {
     "id": "arka2013_18b",
@@ -442,7 +471,8 @@
       ["aux", "sudah"],
       ["voice", "passive"]
     ],
-    "comment": "Google-attested; the passive verb with sudah."
+    "comment": "Google-attested; the passive verb with sudah.",
+    "verified": "page-image"
   },
   {
     "id": "arka2013_34a",
@@ -469,7 +499,8 @@
       ["predicate", "nominal"],
       ["withAux", "ungrammatical"]
     ],
-    "comment": "(34c) is the starred alternative: the nominalised verb takes no auxiliary."
+    "comment": "(34c) is the starred alternative: the nominalised verb takes no auxiliary.",
+    "verified": "page-image"
   },
   {
     "id": "arka2013_34b",
@@ -490,7 +521,8 @@
       ["axis", "future"],
       ["adjunct", "nanti"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "arka2013_34d",
@@ -512,7 +544,8 @@
       ["withAux", "acceptable"],
       ["clause", "root"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "arka2013_35a",
@@ -539,7 +572,8 @@
       ["predicate", "nominal"],
       ["withAux", "ungrammatical"]
     ],
-    "comment": "(35b) is the starred alternative."
+    "comment": "(35b) is the starred alternative. Reading (ii) is printed unmarked; the prose says kapan asks for a past point, 'not reading (ii)'.",
+    "verified": "page-image"
   },
   {
     "id": "arka2013_35c",
@@ -560,7 +594,8 @@
       ["withAux", "acceptable"],
       ["clause", "root"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "arka2013_36a",
@@ -569,7 +604,7 @@
     "primaryText": "Kapan lahirnya?",
     "discourseSegments": [],
     "glossedTokens": [
-      ["Kapan", "when"], ["lahir=nya", "birth=3s"]
+      ["Kapan", "when"], ["lahirnya", "birth=3s"]
     ],
     "translation": "",
     "context": "",
@@ -587,7 +622,8 @@
       ["predicate", "nominal"],
       ["withAux", "ungrammatical"]
     ],
-    "comment": "(36b) is the starred alternative."
+    "comment": "(36b) is the starred alternative.",
+    "verified": "page-image"
   },
   {
     "id": "arka2013_36c",
@@ -608,7 +644,8 @@
       ["withAux", "acceptable"],
       ["clause", "root"]
     ],
-    "comment": ""
+    "comment": "Printed under (36) after (36b) without a letter of its own.",
+    "verified": "page-image"
   },
   {
     "id": "arka2013_37a",
@@ -630,7 +667,8 @@
       ["soa", "future"],
       ["evaluation", "deontic"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "arka2013_37b",
@@ -652,7 +690,8 @@
       ["soa", "past"],
       ["evaluation", "counterfactual"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "arka2013_38a",
@@ -674,7 +713,8 @@
       ["soa", "future"],
       ["evaluation", "epistemic"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "arka2013_38b",
@@ -696,7 +736,8 @@
       ["soa", "past"],
       ["evaluation", "past ability"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "arka2013_39a",
@@ -707,7 +748,7 @@
     "glossedTokens": [
       ["Ia", "3s"], ["mau", "wish"], ["pulang", "go.home"]
     ],
-    "translation": "S/he wants/wanted to go home.",
+    "translation": "S/he wants/want(ed) to go home. / I want(ed) to go home.",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -717,7 +758,8 @@
       ["nominalised", "false"],
       ["soa", "future"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "arka2013_39b",
@@ -739,7 +781,8 @@
       ["soa", "present/past"],
       ["evaluation", "counterfactual"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "arka2013_40a",
@@ -763,7 +806,8 @@
       ["evidential", "visual"],
       ["predicate", "nominal"]
     ],
-    "comment": "(40b) is the starred alternative."
+    "comment": "(40b) is the starred alternative.",
+    "verified": "page-image"
   },
   {
     "id": "arka2013_41",
@@ -782,7 +826,8 @@
     "paperFeatures": [
       ["nominalised", "false"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "arka2013_42a",
@@ -801,7 +846,8 @@
     "paperFeatures": [
       ["evidential", "none"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "arka2013_42b",
@@ -821,7 +867,8 @@
       ["evidential", "reportative"],
       ["nominalised", "true"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "arka2013_43a",
@@ -841,7 +888,8 @@
       ["evidential", "reportative"],
       ["nominalised", "true"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "arka2013_43b",
@@ -861,7 +909,8 @@
       ["evidential", "none"],
       ["nominalised", "true"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "arka2013_44a",
@@ -883,7 +932,8 @@
       ["predicate", "verbal"],
       ["adalah", "ungrammatical"]
     ],
-    "comment": "(44b) is the starred alternative."
+    "comment": "(44b) is the starred alternative.",
+    "verified": "page-image"
   },
   {
     "id": "arka2013_45a",
@@ -903,7 +953,8 @@
       ["predicate", "nominal"],
       ["adalah", "acceptable"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "arka2013_45b",
@@ -921,7 +972,8 @@
       ["predicate", "nominal"],
       ["adalah", "acceptable"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "arka2013_46a",
@@ -942,7 +994,8 @@
       ["nominalised", "true"],
       ["adalah", "acceptable"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "arka2013_46b",
@@ -963,7 +1016,8 @@
       ["nominalised", "true"],
       ["adalah", "acceptable"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "arka2013_47a",
@@ -984,7 +1038,8 @@
       ["bukan", "acceptable"],
       ["tidak", "ungrammatical"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "arka2013_47b",
@@ -1003,7 +1058,8 @@
       ["bukan", "acceptable"],
       ["tidak", "ungrammatical"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "arka2013_48a",
@@ -1025,7 +1081,8 @@
       ["bukan", "acceptable"],
       ["tidak", "ungrammatical"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "arka2013_48b",
@@ -1050,6 +1107,7 @@
       ["bukan", "acceptable"],
       ["tidak", "acceptable"]
     ],
-    "comment": "tidak negates the internal clause headed by tidur."
+    "comment": "tidak negates the internal clause headed by tidur.",
+    "verified": "page-image"
   }
 ]

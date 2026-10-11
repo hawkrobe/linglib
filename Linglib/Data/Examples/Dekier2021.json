@@ -14,7 +14,8 @@
       ["specificUnknown", "some-"],
       ["specificKnown", "some-"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "dekier2021_polish",
@@ -31,7 +32,8 @@
       ["specificUnknown", "-ś"],
       ["specificKnown", "-ś"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "dekier2021_japanese",
@@ -48,7 +50,8 @@
       ["specificUnknown", "-ka"],
       ["specificKnown", "-ka"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "dekier2021_korean",
@@ -65,7 +68,8 @@
       ["specificUnknown", "-nka"],
       ["specificKnown", "-nka"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "dekier2021_lezgian",
@@ -82,7 +86,8 @@
       ["specificUnknown", "-jat'ani"],
       ["specificKnown", "-jat'ani"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "dekier2021_romanian",
@@ -99,7 +104,8 @@
       ["specificUnknown", "-va"],
       ["specificKnown", "-va"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "dekier2021_bulgarian",
@@ -116,7 +122,8 @@
       ["specificUnknown", "nja-"],
       ["specificKnown", "nja-"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "dekier2021_serbocroatian",
@@ -133,7 +140,8 @@
       ["specificUnknown", "ne-"],
       ["specificKnown", "ne-"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "dekier2021_czech",
@@ -150,7 +158,8 @@
       ["specificUnknown", "ně-"],
       ["specificKnown", "ně-"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "dekier2021_slovak",
@@ -167,7 +176,8 @@
       ["specificUnknown", "nie-"],
       ["specificKnown", "nie-"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "dekier2021_maltese",
@@ -184,7 +194,8 @@
       ["specificUnknown", "xi-"],
       ["specificKnown", "xi-"]
     ],
-    "comment": ""
+    "comment": "Table 7 prints the row label as \"Maltese Czech\", a misprint for Maltese (xi- is the Maltese marker).",
+    "verified": "page-image"
   },
   {
     "id": "dekier2021_hungarian",
@@ -201,7 +212,8 @@
       ["specificUnknown", "vala-"],
       ["specificKnown", "vala-"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "dekier2021_hebrew",
@@ -218,7 +230,8 @@
       ["specificUnknown", "-šehu"],
       ["specificKnown", "-šehu"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "dekier2021_turkish",
@@ -235,7 +248,8 @@
       ["specificUnknown", "bir-"],
       ["specificKnown", "bir-"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "dekier2021_latvian",
@@ -252,7 +266,8 @@
       ["specificUnknown", "kaut-"],
       ["specificKnown", "kaut-"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "dekier2021_yakut",
@@ -269,7 +284,8 @@
       ["specificUnknown", "-ere"],
       ["specificKnown", "-ere"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "dekier2021_georgian",
@@ -286,7 +302,8 @@
       ["specificUnknown", "-ɣac"],
       ["specificKnown", "-ɣac"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "dekier2021_ossetic",
@@ -303,7 +320,8 @@
       ["specificUnknown", "-dær"],
       ["specificKnown", "-dær"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "dekier2021_latin",
@@ -320,7 +338,8 @@
       ["specificUnknown", "ali-"],
       ["specificKnown", "-dam"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "dekier2021_russian",
@@ -337,7 +356,8 @@
       ["specificUnknown", "-to"],
       ["specificKnown", "koe-"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "dekier2021_lithuanian",
@@ -354,7 +374,8 @@
       ["specificUnknown", "kaž-"],
       ["specificKnown", "kai-"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "dekier2021_kannada",
@@ -370,7 +391,8 @@
       ["nonSpecific", "-aadaruu"],
       ["specificUnknown", "-oo"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "dekier2021_quechua",
@@ -386,7 +408,8 @@
       ["nonSpecific", "-pis/-pas"],
       ["specificUnknown", "-chi/-cha"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "dekier2021_mandarinchinese",
@@ -401,7 +424,8 @@
       ["language", "Mandarin Chinese"],
       ["nonSpecific", "wh-pronoun"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "dekier2021_irish",
@@ -415,7 +439,8 @@
     "paperFeatures": [
       ["language", "Irish"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "dekier2021_swahili",
@@ -429,7 +454,8 @@
     "paperFeatures": [
       ["language", "Swahili"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "dekier2021_filipino",
@@ -443,6 +469,7 @@
     "paperFeatures": [
       ["language", "Filipino"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   }
 ]
