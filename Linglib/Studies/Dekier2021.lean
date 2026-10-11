@@ -7,16 +7,16 @@ public import Linglib.Data.Examples.Dekier2021
 /-!
 # Dekier (2021): Morphosyntax of specific and non-specific indefinite markers
 
-This file formalizes the nanosyntactic analysis of [dekier-2021] of the markers of the
-non-specific, specific unknown and specific known functions of [haspelmath-1997]'s map. Across
-a sample of 45 languages the three markers show the syncretism patterns AAA, ABB, AAB and ABC
-and never ABA, Table 7, the generalization of [bobaljik-2012], so they spell out a hierarchy of
-structural containment, (4): the non-specific layer inside the specific unknown one inside the
-specific known one, the direction fixed by functional complexity, (37). A language's lexicon
-stores for each marker the largest layer it spells out; the Superset Principle of
-[starke-2009] and [caha-2009], (42), lets an entry spell out any layer it contains and the
-Elsewhere Principle, (47), picks the smallest match, so the lexicon read off the coverage
-[haspelmath-1997] draws for each paradigm reproduces that coverage by spellout, the absence of
+This file formalizes Dekier's nanosyntactic analysis of the markers of the non-specific,
+specific unknown and specific known functions of Haspelmath's map. Across a sample of 45
+languages the three markers show the syncretism patterns AAA, ABB, AAB and ABC and never ABA,
+Table 7, the generalization of Bobaljik, so they spell out a hierarchy of structural
+containment, (4): the non-specific layer inside the specific unknown one inside the specific
+known one, the direction fixed by functional complexity, (37). A language's lexicon stores for
+each marker the largest layer it spells out; the Superset Principle of Starke and Caha, (42),
+lets an entry spell out any layer it contains and the Elsewhere Principle, (47), picks the
+smallest match, so the lexicon read off the coverage Haspelmath draws for each paradigm
+reproduces that coverage by spellout, the absence of
 ABA is the contiguity of spellout, (48), and a paradigm gap, Table 6, sits above every filled
 layer, since an entry spelling out a layer spells out every layer below it. An interrogative pronoun
 can be spelled out as a subset of an indefinite entry, (78) and (79), and suffixes arise by
@@ -49,13 +49,12 @@ prefixes and suffixes in §4.2 are not modelled.
 
 namespace Dekier2021
 
-open Morphology Morphology.Containment Indefinite
-open Haspelmath1997 (Series english yakut latin kannada)
+open Morphology Morphology.Containment Indefinite Haspelmath1997
 
 /-! ### The hierarchy -/
 
-/-- The layer of the hierarchy (4) a specificity function's marker spells out: the non-specific
-function the lowest and the specific known the highest. -/
+/-- `layer` sends a specificity function to the layer of the hierarchy (4) its marker spells
+out, the non-specific function to the lowest and the specific known to the highest. -/
 def layer : SpecificityFunction ≃ Fin 3 where
   toFun
     | .nonSpecific => 0
@@ -68,8 +67,8 @@ def layer : SpecificityFunction ≃ Fin 3 where
 /-- The function of the map each layer spells out. -/
 def function (g : Fin 3) : HaspelmathFunction := (layer.symm g).toFunction
 
-/-- The form of a paradigm at a function, when one series covers it: `none` at a gap or where
-series overlap. -/
+/-- The form of a paradigm at a function is the form of the one series covering it, and `none`
+at a gap or where series overlap. -/
 def formAt (p : List Series) (f : HaspelmathFunction) : Option String :=
   match p.filter (f ∈ ·.functions) with
   | [e] => some e.pronoun.form
@@ -83,12 +82,12 @@ def pattern (p : List Series) : Paradigm 3 (Option String) :=
 def layers (e : Series) : Finset (Fin 3) :=
   Finset.univ.filter (function · ∈ e.functions)
 
-/-- The nanosyntactic lexicon of a paradigm: each form stores the largest layer it covers, the
+/-- In the nanosyntactic lexicon of a paradigm each form stores the largest layer it covers, the
 Superset and Elsewhere Principles deriving the rest of its coverage. -/
 def lexicon (p : List Series) : List (SpanRule 3 String) :=
   p.filterMap fun e ↦ (layers e).max.map (⟨e.pronoun.form, ·, none⟩)
 
-/-- The Russian series of the paper's row: *koe-*, *-to* and *-nibud'*. -/
+/-- The Russian series of the paper's row are *koe-*, *-to* and *-nibud'*. -/
 def russian : List Series :=
   Haspelmath1997.russian.filter fun e ↦
     e.pronoun ∈ [Russian.Indefinites.koeKto, Russian.Indefinites.ktoTo,
@@ -96,7 +95,7 @@ def russian : List Series :=
 
 /-! ### Syncretism and its absence -/
 
-/-- The syncretism patterns of Table 1 from the paradigms' coverage of the map: English AAA,
+/-- The paradigms' coverage of the map gives the syncretism patterns of Table 1, English AAA,
 Yakut ABB and Latin AAB. -/
 theorem map_syncretism :
     Setoid.ker (pattern english) = Setoid.ker Paradigm.aaa ∧
@@ -104,9 +103,9 @@ theorem map_syncretism :
       Setoid.ker (pattern latin) = Setoid.ker Paradigm.aab := by
   decide
 
-/-- Russian's ABC is the Elsewhere Principle at work: *-to* covers the non-specific function
-beside *-nibud'*, so coverage gives that layer no single form, and the lexicon, storing *-to* at
-the specific unknown layer, gives it to the smaller match *-nibud'*. -/
+/-- Russian's ABC is the Elsewhere Principle at work, since *-to* covers the non-specific
+function beside *-nibud'*, so coverage gives that layer no single form, and the lexicon, storing
+*-to* at the specific unknown layer, gives it to the smaller match *-nibud'*. -/
 theorem russian_elsewhere :
     pattern russian 0 = none ∧
       spellout (lexicon russian) = ![some "kto-nibud'", some "kto-to", some "koe-kto"] ∧
@@ -117,26 +116,27 @@ theorem russian_elsewhere :
 theorem kannada_gap : pattern kannada 2 = none := by decide
 
 /-- The lexicon read off each paradigm reproduces its coverage of the three functions by
-spellout: (59) English, (67) Yakut, (70) Latin, and Kannada with its gap. -/
+spellout, for English (59), Yakut (67), Latin (70), and Kannada with its gap. -/
 theorem spellout_lexicon :
     ∀ p ∈ [english, yakut, latin, kannada], spellout (lexicon p) = pattern p := by
   decide
 
-/-- The Elsewhere Principle rules out ABA, (48): spellout is contiguous, so a marker spelling
-out both the non-specific and the specific known layer spells out the specific unknown one. -/
+/-- The Elsewhere Principle rules out ABA, (48), since spellout is contiguous, so that a marker
+spelling out both the non-specific and the specific known layer spells out the specific unknown
+one. -/
 theorem not_aba {v : List (SpanRule 3 String)} (hv : Antihomophonous v)
     (h : spellout v 0 = spellout v 2) : spellout v 0 = spellout v 1 :=
   isContiguous_spellout hv (by decide) (by decide) h
 
-/-- A paradigm gap sits above every filled layer, §6.3: an entry spelling out a layer spells
-out every layer it contains, so a lone gap is the specific known type and two gaps are the
-specific types. -/
+/-- A paradigm gap sits above every filled layer, §6.3, since an entry spelling out a layer
+spells out every layer it contains; a lone gap is thus the specific known type and two gaps are
+the specific types. -/
 theorem ne_none_of_le {v : List (SpanRule 3 String)} {g g' : Fin 3} (h : g ≤ g')
     (hg' : spellout v g' ≠ none) : spellout v g ≠ none :=
   fun hg ↦ hg' (spellout_eq_none_of_le hg h)
 
-/-- With the interrogative pronoun as a layer below the hierarchy, (78) and (79): Mandarin
-*shénme* spells out the interrogative and the non-specific layer, Dutch *wat* all four. -/
+/-- With the interrogative pronoun as a layer below the hierarchy, (78) and (79), Mandarin
+*shénme* spells out the interrogative and the non-specific layer and Dutch *wat* all four. -/
 theorem interrogative_subset :
     spellout [(⟨"shénme", 1, none⟩ : SpanRule 4 String)] =
         ![some "shénme", some "shénme", none, none] ∧
@@ -149,11 +149,11 @@ theorem interrogative_subset :
 def rowPattern (e : Datum) : Paradigm 3 (Option String) :=
   ![e.feature? "nonSpecific", e.feature? "specificUnknown", e.feature? "specificKnown"]
 
-/-- Table 7: every paradigm of the sample is contiguous, so none is ABA. -/
+/-- Every paradigm of the sample in Table 7 is contiguous, so none is ABA. -/
 theorem rows_contiguous : ∀ e ∈ Examples.all, IsContiguous (rowPattern e) := by
   decide
 
-/-- Table 6: every gap of the sample sits above the filled layers. -/
+/-- Every gap of the sample in Table 6 sits above the filled layers. -/
 theorem rows_gap_above : ∀ e ∈ Examples.all, ∀ g g' : Fin 3, g ≤ g' →
     rowPattern e g' ≠ none → rowPattern e g ≠ none := by
   decide

@@ -8,7 +8,7 @@ public import Mathlib.Order.Interval.Set.OrdConnected
 /-!
 # Degano and Aloni (2025): How to be (non-)specific?
 
-This file formalizes the typology of marked indefinites of [degano-aloni-2025]. An indefinite
+This file formalizes Degano and Aloni's typology of marked indefinites. An indefinite
 has three uses, specific known, specific unknown and non-specific, and a marked indefinite is
 restricted to some of them: of the seven possible restrictions, six are attested and the one
 covering the specific known and the non-specific use without the specific unknown is not. In
@@ -29,8 +29,8 @@ attested requirements are all convex.
 
 German *irgend-*, Russian *koe-* and *-nibud'*, Kannada *-oo*, Italian *qualche-* and Georgian
 *-γac* instantiate the six attested types: the uses are the three specificity functions of
-[haspelmath-1997]'s map, the non-specific use being the irrealis function, and a series covers
-the uses whose functions lie in the region the book draws for it.
+Haspelmath's map, the non-specific use being the irrealis function, and a series covers the uses
+whose functions lie in the region the book draws for it.
 
 ## Main results
 
@@ -41,7 +41,7 @@ the uses whose functions lie in the region the book draws for it.
 * `forall_requires_imp_requires_iff`: semantic weakening is inclusion of profiles.
 * `IndefiniteType.ordConnected_requires_iff`: the attested requirements are convex and the
   unattested one is not.
-* `contiguous_profile_iff`, `sample_instantiates_attested`: the convex types are the connected
+* `connected_profile_iff`, `sample_instantiates_attested`: the convex types are the connected
   regions of the map, so no series of the sample instantiates the unattested type.
 
 ## TODO
@@ -59,13 +59,12 @@ indefinites and treats epistemic indefinites at length; neither is formalized he
 
 namespace DeganoAloni2025
 
-open Team Indefinite
-open Haspelmath1997 (Series)
+open Team Indefinite Haspelmath1997
 
 /-! ### Uses and types -/
 
-/-- The seven types of indefinite: the restriction a marked indefinite imposes on its uses, the
-unmarked indefinite imposing none. -/
+/-- The seven types of indefinite are the restrictions a marked indefinite can impose on its
+uses, the unmarked indefinite imposing none. -/
 inductive IndefiniteType where
   | unmarked
   | specific
@@ -104,9 +103,9 @@ section Teams
 variable {V E : Type*} {T : Finset (V → E)} {v x : V} {u u' : SpecificityFunction}
   {t : IndefiniteType}
 
-/-- The rendering of a use on a team, `v` the world variable and `x` the individual:
-constancy, constancy within a world with variation across the team, and variation within a
-world. -/
+/-- `Renders T v x u` says that the team `T` renders the use `u`, with `v` the world variable
+and `x` the individual variable. The three uses are constancy, constancy within a world with
+variation across the team, and variation within a world. -/
 def Renders (T : Finset (V → E)) (v x : V) : SpecificityFunction → Prop
   | .specificKnown => Dep T ∅ x
   | .specificUnknown => Dep T {v} x ∧ Var T ∅ x
@@ -123,8 +122,8 @@ def IndefiniteType.Requires (T : Finset (V → E)) (v x : V) : IndefiniteType �
   | .skPlusNS => Dep T ∅ x ∨ Var T {v} x
   | .specificUnknown => Dep T {v} x ∧ Var T ∅ x
 
-/-- Constancy across the team is constancy within a world, which excludes variation there: the
-two atoms of the unattested type cannot hold together. -/
+/-- Constancy across the team is constancy within a world, which excludes variation there, so
+the two atoms of the unattested type cannot hold together. -/
 theorem not_var_of_dep_empty (h : Dep T ∅ x) : ¬ Var T {v} x :=
   (h.mono (Finset.empty_subset _)).not_var
 
@@ -192,8 +191,8 @@ theorem exists_team_renders [Nontrivial E] (hvx : v ≠ x) (u : SpecificityFunct
   · exact ⟨_, renders_unknown hab⟩
   · exact ⟨_, renders_nonSpecific hab hvx⟩
 
-/-- The requirements reproduce the profiles: a use entails a type's requirement exactly when
-the type's profile lists it. -/
+/-- A use entails a type's requirement exactly when the type's profile lists it, so the
+requirements reproduce the profiles. -/
 theorem forall_renders_imp_requires_iff [Nontrivial E] (hvx : v ≠ x) :
     (∀ T : Finset (V → E), Renders T v x u → t.Requires T v x) ↔ u ∈ t.profile := by
   refine ⟨fun h ↦ ?_, fun hu T hT ↦ IndefiniteType.requires_iff.2 ⟨u, hu, hT⟩⟩
@@ -201,8 +200,8 @@ theorem forall_renders_imp_requires_iff [Nontrivial E] (hvx : v ≠ x) :
   obtain ⟨u', hu', hT'⟩ := IndefiniteType.requires_iff.1 (h T hT)
   exact renders_unique hT hT' ▸ hu'
 
-/-- Semantic weakening is inclusion of profiles: one requirement entails another exactly when
-every use of the first type is a use of the second. -/
+/-- One requirement entails another exactly when every use of the first type is a use of the
+second, so semantic weakening is inclusion of profiles. -/
 theorem forall_requires_imp_requires_iff [Nontrivial E] (hvx : v ≠ x) {t t' : IndefiniteType} :
     (∀ T : Finset (V → E), t.Requires T v x → t'.Requires T v x) ↔ t.profile ⊆ t'.profile := by
   simp only [IndefiniteType.requires_iff]
@@ -213,8 +212,8 @@ theorem forall_requires_imp_requires_iff [Nontrivial E] (hvx : v ≠ x) {t t' : 
 
 /-! ### Convexity -/
 
-/-- The attested requirements are convex: a single atom is closed under subteams or under
-superteams, and the specific unknown type intersects one of each kind. -/
+/-- The attested requirements are convex, since a single atom is closed under subteams or under
+superteams and the specific unknown type intersects one of each kind. -/
 theorem IndefiniteType.ordConnected_requires (ht : t ≠ .skPlusNS) (v x : V) :
     {T : Finset (V → E) | t.Requires T v x}.OrdConnected := by
   cases t
@@ -226,7 +225,7 @@ theorem IndefiniteType.ordConnected_requires (ht : t ≠ .skPlusNS) (v x : V) :
   · exact absurd rfl ht
   · exact (isLowerSet_dep _ _).ordConnected.inter (isUpperSet_var _ _).ordConnected
 
-/-- The unattested requirement is not convex: a specific known team lies below a specific
+/-- The unattested requirement is not convex, since a specific known team lies below a specific
 unknown team, which lies below a non-specific one. -/
 theorem IndefiniteType.not_ordConnected_skPlusNS [Nontrivial E] (hvx : v ≠ x) :
     ¬ {T : Finset (V → E) | skPlusNS.Requires T v x}.OrdConnected := fun h ↦ by
@@ -263,7 +262,7 @@ instance (s : Series) (t : IndefiniteType) : Decidable (Instantiates s t) :=
 /-- The unattested profile skips the specific unknown function, which lies between the two it
 covers, so no connected region of the map covers exactly its uses. -/
 theorem specificityFunctions_ne_skPlusNS_profile {s : Finset HaspelmathFunction}
-    (h : Contiguous s) :
+    (h : (implicationalMap.induce ↑s).Connected) :
     specificityFunctions s ≠ IndefiniteType.skPlusNS.profile := fun he ↦ by
   have hk : SpecificityFunction.specificKnown ∈ specificityFunctions s := he ▸ by decide
   have hn : SpecificityFunction.nonSpecific ∈ specificityFunctions s := he ▸ by decide
@@ -272,25 +271,26 @@ theorem specificityFunctions_ne_skPlusNS_profile {s : Finset HaspelmathFunction}
       (mem_specificityFunctions.1 hk) (mem_specificityFunctions.1 hn))
   exact absurd (he ▸ hu) (by decide)
 
-/-- The map orders the uses as the meaning space does: a type's uses form a connected region of
-the map exactly when the type is not the unattested one, which is when its requirement is
-convex. -/
-theorem contiguous_profile_iff {t : IndefiniteType} :
-    Contiguous (t.profile.image SpecificityFunction.toFunction) ↔ t ≠ .skPlusNS := by
+/-- The map orders the uses as the meaning space does, in that a type's uses form a connected
+region of the map exactly when the type is not the unattested one, which is when its requirement
+is convex. -/
+theorem connected_profile_iff {t : IndefiniteType} :
+    (implicationalMap.induce ↑(t.profile.image SpecificityFunction.toFunction)).Connected ↔
+      t ≠ .skPlusNS := by
   cases t <;> decide
 
-/-- The unattested type is unattested in the sample: every series covering one of the three
-uses instantiates an attested type, because it covers a connected region. -/
+/-- The unattested type is unattested in the sample, since every series covering one of the
+three uses covers a connected region and so instantiates an attested type. -/
 theorem sample_instantiates_attested :
     ∀ p ∈ Haspelmath1997.sample, ∀ s ∈ p, (specificityFunctions s.functions).Nonempty →
       ∃ t, t ≠ .skPlusNS ∧ Instantiates s t := fun p hp s hs hne ↦
   let ⟨t, ht⟩ := IndefiniteType.exists_profile_eq hne
   ⟨t, fun h ↦ specificityFunctions_ne_skPlusNS_profile
-    (Haspelmath1997.sample_contiguous p hp s hs) (h ▸ ht.symm), ht.symm⟩
+    (Haspelmath1997.sample_connected p hp s hs) (h ▸ ht.symm), ht.symm⟩
 
-/-- The paper's examples of the six attested types on the map: Italian *qualche-* is unmarked,
-Georgian *-γac* specific, Russian *-nibud'* non-specific, German *irgend-* epistemic, Russian
-*koe-* specific known, and Kannada *-oo* specific unknown. -/
+/-- The paper's examples instantiate the six attested types on the map, Italian *qualche-* the
+unmarked one, Georgian *-γac* the specific, Russian *-nibud'* the non-specific, German *irgend-*
+the epistemic, Russian *koe-* the specific known and Kannada *-oo* the specific unknown. -/
 theorem examples :
     (∃ s ∈ Haspelmath1997.italian, s.label = "qualche-" ∧ Instantiates s .unmarked) ∧
       (∃ s ∈ Haspelmath1997.georgian, s.label = "-γac" ∧ Instantiates s .specific) ∧

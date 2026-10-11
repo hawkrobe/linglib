@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Core.Combinatorics.SimpleGraph.Connectivity.Connected
+public import Linglib.Semantics.Quantification.Indefinite
 public import Linglib.Data.Examples.Haspelmath1997
 public import Linglib.Fragments.English.Indefinites
 public import Linglib.Fragments.Georgian.Indefinites
@@ -28,22 +28,22 @@ the nine-function map, the two further principles of §4.5 restricting which con
 occur, and the series of eighteen languages of the 40-language sample as Appendix A draws them.
 
 `attestedCombinations` is Table 4.1, the combinations of functions attested in the sample;
-`Principle1` and `Principle2` are the restrictions of §4.5, which `excluded_contiguous` shows to
-be independent of adjacency. `exists_adj_mem_of_contiguous` derives from contiguity that every
-function of a multi-function region has a map neighbour in the region, so a series covering a
-leaf of the map (specific known, direct negation, free choice) covers the leaf's unique
-neighbour; the specific-known case is the ban on the ABA syncretism
-(`specificUnknown_mem_of_irrealis_mem`). The paradigms verify the
-adjacency requirement (`sample_contiguous`) and the overlap of series that the book holds against
-contrast-based accounts of grammatical meaning (`sample_overlap`). The book's examples for
-fifteen of the languages are the rows of `Data/Examples/Haspelmath1997.json`, one row for each
-variant the book prints in a line; the figures cover the acceptable rows and exclude the starred
-ones (`acceptable_covers`, `ungrammatical_excludes`).
+`Principle1` and `Principle2` are the restrictions of §4.5, which `excluded_connected` shows to
+be independent of adjacency. A connected region with a second function contains a neighbour of
+each of its functions, so a series covering a leaf of the map (specific known, direct negation,
+free choice) covers the leaf's only neighbour (`mem_of_adjacent_eq_singleton`); the
+specific-known case is the ban on the ABA syncretism (`specificUnknown_mem_of_irrealis_mem`).
+The paradigms verify the adjacency requirement (`sample_connected`) and the overlap of series
+that the book holds against contrast-based accounts of grammatical meaning (`sample_overlap`).
+The book's examples for fifteen of the languages are the rows of
+`Data/Examples/Haspelmath1997.json`, one row for each variant the book prints in a line; the
+figures cover the acceptable rows and exclude the starred ones (`acceptable_covers`,
+`ungrammatical_excludes`).
 
 ## Implementation notes
 
-The map is `Indefinite.implicationalMap` and contiguity `Indefinite.Contiguous`, the
-connectedness of the induced subgraph; the book's numbering of the functions is
+The map is `Indefinite.implicationalMap` and the adjacency requirement on a region the
+connectedness of the subgraph it induces; the book's numbering of the functions is
 `HaspelmathFunction.number`, so Table 4.1 is entered in the book's digit notation. Each paradigm
 follows the figure and text of its Appendix A section rather than Table 4.1 where the two
 differ: Hungarian *akár-* is 4589 in the table but excluded from questions and admitted under
@@ -60,7 +60,7 @@ where a series is possible and not where it is preferred (Russian *-to* is drawn
 functions of *-nibud'*, which is preferred there), and it fills cells the book has no data for
 on the strength of the map (Yakut *da* and Mandarin
 bare interrogatives under indirect negation, the Swahili comparative). For those cells
-`sample_contiguous` restates the map; it tests the adjacency requirement on the others. The
+`sample_connected` restates the map; it tests the adjacency requirement on the others. The
 pronouns of English, Georgian, German, Hungarian, Kannada, Latin, Latvian, Russian and Yakut
 are their Fragments' entries.
 
@@ -83,42 +83,37 @@ open Indefinite
 
 /-! ### The map -/
 
-variable {s : Finset HaspelmathFunction}
+variable {s : Finset HaspelmathFunction} {f g : HaspelmathFunction}
 
-/-- Every function of a contiguous region with a second member has a map neighbour in the
-region. -/
-theorem exists_adj_mem_of_contiguous (h : Contiguous s) (hs : 1 < s.card) {f : HaspelmathFunction}
-    (hf : f ∈ s) : ∃ g ∈ s, implicationalMap.Adj f g :=
-  h.preconnected.exists_adj_mem_of_nontrivial (Finset.one_lt_card_iff_nontrivial.1 hs) hf
+/-- A connected region with a second function contains the only neighbour of each leaf of the
+map it contains. -/
+theorem mem_of_adjacent_eq_singleton (h : (implicationalMap.induce ↑s).Connected)
+    (hs : s.Nontrivial) (hf : f ∈ s) (hfg : f.adjacent = [g]) : g ∈ s := by
+  have := hs.coe_sort
+  obtain ⟨⟨g', hg'⟩, hadj⟩ := h.preconnected.exists_adj_of_nontrivial ⟨f, hf⟩
+  rw [SimpleGraph.induce_adj, implicationalMap_adj, hfg, List.mem_singleton] at hadj
+  exact hadj ▸ hg'
 
-/-- A contiguous region containing specific known and a second function contains specific
-unknown, the only neighbour of specific known. -/
-theorem specificUnknown_mem_of_specificKnown_mem (h : Contiguous s) (hs : 1 < s.card)
-    (hf : .specificKnown ∈ s) : .specificUnknown ∈ s := by
-  obtain ⟨g, hg, hadj⟩ := exists_adj_mem_of_contiguous h hs hf
-  simp only [implicationalMap, HaspelmathFunction.adjacent, List.mem_singleton] at hadj
-  exact hadj ▸ hg
+/-- Specific known's only neighbour is specific unknown. -/
+theorem specificUnknown_mem_of_specificKnown_mem (h : (implicationalMap.induce ↑s).Connected)
+    (hs : s.Nontrivial) (hf : .specificKnown ∈ s) : .specificUnknown ∈ s :=
+  mem_of_adjacent_eq_singleton h hs hf rfl
 
 /-- A series covering specific known and irrealis non-specific covers specific unknown, so the
 ABA syncretism of the three specific functions is not a connected region. -/
-theorem specificUnknown_mem_of_irrealis_mem (h : Contiguous s) (hk : .specificKnown ∈ s)
-    (hi : .irrealis ∈ s) : .specificUnknown ∈ s :=
-  specificUnknown_mem_of_specificKnown_mem h
-    (Finset.one_lt_card.2 ⟨_, hk, _, hi, by decide⟩) hk
+theorem specificUnknown_mem_of_irrealis_mem (h : (implicationalMap.induce ↑s).Connected)
+    (hk : .specificKnown ∈ s) (hi : .irrealis ∈ s) : .specificUnknown ∈ s :=
+  specificUnknown_mem_of_specificKnown_mem h ⟨_, hk, _, hi, by decide⟩ hk
 
 /-- Direct negation's only neighbour is indirect negation. -/
-theorem indirectNeg_mem_of_directNeg_mem (h : Contiguous s) (hs : 1 < s.card)
-    (hf : .directNeg ∈ s) : .indirectNeg ∈ s := by
-  obtain ⟨g, hg, hadj⟩ := exists_adj_mem_of_contiguous h hs hf
-  simp only [implicationalMap, HaspelmathFunction.adjacent, List.mem_singleton] at hadj
-  exact hadj ▸ hg
+theorem indirectNeg_mem_of_directNeg_mem (h : (implicationalMap.induce ↑s).Connected)
+    (hs : s.Nontrivial) (hf : .directNeg ∈ s) : .indirectNeg ∈ s :=
+  mem_of_adjacent_eq_singleton h hs hf rfl
 
 /-- Free choice's only neighbour is the comparative. -/
-theorem comparative_mem_of_freeChoice_mem (h : Contiguous s) (hs : 1 < s.card)
-    (hf : .freeChoice ∈ s) : .comparative ∈ s := by
-  obtain ⟨g, hg, hadj⟩ := exists_adj_mem_of_contiguous h hs hf
-  simp only [implicationalMap, HaspelmathFunction.adjacent, List.mem_singleton] at hadj
-  exact hadj ▸ hg
+theorem comparative_mem_of_freeChoice_mem (h : (implicationalMap.induce ↑s).Connected)
+    (hs : s.Nontrivial) (hf : .freeChoice ∈ s) : .comparative ∈ s :=
+  mem_of_adjacent_eq_singleton h hs hf rfl
 
 /-! ### Table 4.1 and the principles of §4.5 -/
 
@@ -176,19 +171,27 @@ def excludedByPrinciple2 : List (Finset HaspelmathFunction) :=
     region [1, 2, 3, 4, 6, 7, 8, 9], region [1, 2, 3, 5, 8], region [1, 2, 3, 4, 5, 8, 9]]
 
 /-- Every attested combination is a connected region of the map, as adjacency requires. -/
-theorem attested_contiguous : ∀ c ∈ attestedCombinations, Contiguous c.2 := by decide
+theorem attested_connected :
+    ∀ c ∈ attestedCombinations, (implicationalMap.induce ↑c.2).Connected := by
+  -- Reachability from one function of a region is much cheaper to decide than between all pairs.
+  simp only [SimpleGraph.connected_iff_exists_forall_reachable]
+  decide +kernel
 
 /-- Every attested combination satisfies both principles. -/
 theorem attested_principles :
     ∀ c ∈ attestedCombinations, Principle1 c.2 ∧ Principle2 c.2 := by
   decide
 
+-- Decide the quantifier by walking the list, not by enumerating every region of the map.
+attribute [local instance high] List.decidableBAll in
 /-- The principles restrict beyond adjacency, since every combination they exclude is a
 connected region. -/
-theorem excluded_contiguous :
-    ∀ s ∈ excludedByPrinciple1 ++ excludedByPrinciple2, Contiguous s := by
+theorem excluded_connected :
+    ∀ s ∈ excludedByPrinciple1 ++ excludedByPrinciple2, (implicationalMap.induce ↑s).Connected := by
+  simp only [SimpleGraph.connected_iff_exists_forall_reachable]
   decide +kernel
 
+attribute [local instance high] List.decidableBAll in
 theorem excluded_violate :
     (∀ s ∈ excludedByPrinciple1, ¬ Principle1 s) ∧
       ∀ s ∈ excludedByPrinciple2, ¬ Principle2 s := by
@@ -363,7 +366,10 @@ def sample : List (List Series) :=
     italian, finnish, korean, hungarian, georgian, quechua, swahili ]
 
 /-- Every series of the sample covers a connected region, as adjacency requires. -/
-theorem sample_contiguous : ∀ p ∈ sample, ∀ e ∈ p, Contiguous e.functions := by decide
+theorem sample_connected :
+    ∀ p ∈ sample, ∀ e ∈ p, (implicationalMap.induce ↑e.functions).Connected := by
+  simp only [SimpleGraph.connected_iff_exists_forall_reachable]
+  decide +kernel
 
 /-- Both principles hold of every series in the sample. -/
 theorem sample_principles :
@@ -433,8 +439,8 @@ instance (e : Datum) (label : String) : Decidable (Excludes e label) :=
   inferInstanceAs (Decidable (∃ f ∈ _, ∃ r ∈ _, _))
 
 /-- Every acceptable example of the book lies in the region its figure draws for each of its
-series: two for a sentence with two indefinites, none for an indefinite outside the series of its
-language. -/
+series; a sentence with two indefinites has two series, and an indefinite outside the series of
+its language has none. -/
 theorem acceptable_covers :
     ∀ e ∈ Examples.all, e.judgment = .acceptable → ∀ l ∈ e.features "series", Covers e l := by
   decide +kernel
