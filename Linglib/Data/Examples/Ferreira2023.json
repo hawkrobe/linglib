@@ -24,7 +24,8 @@
         "pos_notp"
       ]
     ],
-    "comment": "The paper gives an interlinear gloss; the translation follows (15). The paper prints *assasinado*."
+    "comment": "The paper gives an interlinear gloss; the translation follows (15). The paper prints *assasinado*.",
+    "verified": "page-image"
   },
   {
     "id": "ferreira2023_17",
@@ -51,7 +52,8 @@
         "pos_notp"
       ]
     ],
-    "comment": "The paper gives an interlinear gloss; the translation follows (15). The paper prints *assasinado*."
+    "comment": "The paper gives an interlinear gloss; the translation follows (15). The paper prints *assasinado*.",
+    "verified": "page-image"
   },
   {
     "id": "ferreira2023_18",
@@ -78,7 +80,8 @@
         "pos_notp"
       ]
     ],
-    "comment": "Repeated as (23). The paper gives an interlinear gloss; the translation follows (15). The paper prints *assasinado*."
+    "comment": "Repeated as (23). The paper gives an interlinear gloss; the translation follows (15). The paper prints *assasinado*.",
+    "verified": "page-image"
   },
   {
     "id": "ferreira2023_19",
@@ -105,7 +108,8 @@
         "not_wn_p"
       ]
     ],
-    "comment": "The paper gives an interlinear gloss; the translation follows (15). The paper prints *assasinado*."
+    "comment": "The paper gives an interlinear gloss; the translation follows (15). The paper prints *assasinado*.",
+    "verified": "page-image"
   },
   {
     "id": "ferreira2023_20",
@@ -132,7 +136,8 @@
         "not_sn_p"
       ]
     ],
-    "comment": "The paper gives an interlinear gloss; the translation follows (15). The paper prints *assasinado*."
+    "comment": "The paper gives an interlinear gloss; the translation follows (15). The paper prints *assasinado*.",
+    "verified": "page-image"
   },
   {
     "id": "ferreira2023_21",
@@ -159,7 +164,8 @@
         "not_pos_p"
       ]
     ],
-    "comment": "The paper gives an interlinear gloss; the translation follows (15). The paper prints *assasinado*."
+    "comment": "The paper gives an interlinear gloss; the translation follows (15). The paper prints *assasinado*.",
+    "verified": "page-image"
   },
   {
     "id": "ferreira2023_22",
@@ -186,7 +192,8 @@
         "not_wn_p"
       ]
     ],
-    "comment": "The paper gives an interlinear gloss; the translation follows (15). The paper prints *assasinado*."
+    "comment": "The paper gives an interlinear gloss; the translation follows (15). The paper prints *assasinado*.",
+    "verified": "page-image"
   },
   {
     "id": "ferreira2023_24",
@@ -213,7 +220,8 @@
         "wn_notp"
       ]
     ],
-    "comment": "The paper gives an interlinear gloss; the translation follows (15)."
+    "comment": "The paper gives an interlinear gloss; the translation follows (15).",
+    "verified": "page-image"
   },
   {
     "id": "ferreira2023_25",
@@ -240,7 +248,8 @@
         "sn_notp"
       ]
     ],
-    "comment": "The paper gives an interlinear gloss; the translation follows (15)."
+    "comment": "The paper gives an interlinear gloss; the translation follows (15).",
+    "verified": "page-image"
   },
   {
     "id": "ferreira2023_30a",
@@ -267,7 +276,8 @@
         "not_sn_p"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "ferreira2023_30b",
@@ -294,7 +304,8 @@
         "sn_p"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "ferreira2023_32a",
@@ -321,7 +332,8 @@
         "not_sn_p"
       ]
     ],
-    "comment": "Not being obliged is read as the negation of the strong necessity."
+    "comment": "Not being obliged is read as the negation of the strong necessity.",
+    "verified": "page-image"
   },
   {
     "id": "ferreira2023_32b",
@@ -348,7 +360,8 @@
         "not_sn_p"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "ferreira2023_80",
@@ -371,7 +384,8 @@
         "holiday"
       ]
     ],
-    "comment": "Repeats (65). The paper glosses devia as wn.pst.imp and contrasts the English 'That's why I expected him to be there.'"
+    "comment": "Repeats (65). The paper glosses devia as wn.pst.imp and contrasts the English 'That's why I expected him to be there.'",
+    "verified": "page-image"
   },
   {
     "id": "ferreira2023_81",
@@ -394,6 +408,7 @@
         "checked"
       ]
     ],
-    "comment": "Repeats (66). The paper glosses devia as wn.pst.imp."
+    "comment": "Repeats (66). The paper glosses devia as wn.pst.imp.",
+    "verified": "page-image"
   }
 ]

@@ -17,9 +17,9 @@ cline one level at a time, so that an intersubjective meaning arises from a subj
 (`subjective_mem_of_intersubjective_mem`).
 
 The case studies *a piece of*, *a bit of* and *a shred of* run from Partitive through Extended
-Partitive to Degree Modifier (`Stage`). The Degree Modifier is the subjectified stage, and it
-alone shows all three of the expansions that Himmelmann makes criterial for grammaticalization
-(`isGrammaticalized_iff`).
+Partitive to Quantifier (`Stage`), the last stage they share. The Quantifier is the subjectified
+stage, and it alone shows all three of the expansions that Himmelmann makes criterial for
+grammaticalization (`isGrammaticalized_iff`).
 
 ## Implementation notes
 
@@ -74,30 +74,31 @@ theorem subjective_mem_of_intersubjective_mem {a : SubjectivityLevel} {h : Histo
     .subjective ∈ a :: h :=
   hc.mem_of_le_of_le ha hi (by decide)
 
-/-! ### Partitive to Degree Modifier (section 4) -/
+/-! ### Partitive to Quantifier (section 4) -/
 
 /-- The stages the three case studies share are the Partitive, the Extended Partitive with
-non-food and abstract complements, and the Degree Modifier. -/
+non-food and abstract complements, and the Quantifier, Stage III; the Degree Modifier is a later
+stage. -/
 inductive Stage where
   | partitive
   | extendedPartitive
-  | degreeModifier
+  | quantifier
   deriving DecidableEq, Fintype, Repr
 
 /-- The stages are ordered as they are listed. -/
 instance : LinearOrder Stage := LinearOrder.lift' Stage.ctorIdx (by decide)
 
 /-- The coded level at each stage. The Extended Partitive's implication that the unit is small
-is an invited inference and not yet coded, while the Degree Modifier's scalar meaning is coded
-and subjective. -/
+is an invited inference and not yet coded, while the Quantifier's scalar meaning is coded and
+subjective. -/
 def Stage.level : Stage → SubjectivityLevel
   | .partitive => .nonSubjective
   | .extendedPartitive => .nonSubjective
-  | .degreeModifier => .subjective
+  | .quantifier => .subjective
 
 /-- The stages' coded levels follow the cline. -/
 theorem stages_unidirectional :
-    Unidirectional ([.partitive, .extendedPartitive, .degreeModifier].map Stage.level) := by
+    Unidirectional ([.partitive, .extendedPartitive, .quantifier].map Stage.level) := by
   decide
 
 /-- The three expansions of [himmelmann-2004]. -/
@@ -108,12 +109,12 @@ inductive Expansion where
   deriving DecidableEq, Fintype, Repr
 
 /-- The stage at which each expansion first occurs. The complement generalizes at the Extended
-Partitive. At the Degree Modifier the string gains a second syntactic analysis, and its first
+Partitive. At the Quantifier the string gains a second syntactic analysis, and its first
 noun loses partitive meaning and is enriched as a quantifier. -/
 def Expansion.stage : Expansion → Stage
   | .hostClass => .extendedPartitive
-  | .syntactic => .degreeModifier
-  | .semanticPragmatic => .degreeModifier
+  | .syntactic => .quantifier
+  | .semanticPragmatic => .quantifier
 
 /-- A stage is grammaticalized, by [himmelmann-2004]'s criteria, once every expansion has
 occurred. -/
@@ -121,8 +122,8 @@ def Stage.IsGrammaticalized (s : Stage) : Prop := ∀ e : Expansion, e.stage ≤
 
 instance (s : Stage) : Decidable s.IsGrammaticalized := inferInstanceAs (Decidable (∀ _, _))
 
-/-- The Degree Modifier is the grammaticalized stage. -/
-theorem isGrammaticalized_iff {s : Stage} : s.IsGrammaticalized ↔ s = .degreeModifier := by
+/-- The Quantifier is the grammaticalized stage. -/
+theorem isGrammaticalized_iff {s : Stage} : s.IsGrammaticalized ↔ s = .quantifier := by
   cases s <;> decide
 
 end Traugott2010

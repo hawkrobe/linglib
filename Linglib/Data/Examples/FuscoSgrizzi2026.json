@@ -61,7 +61,8 @@
         "yes"
       ]
     ],
-    "comment": "The belief reading: Marco causes Gianni to believe a state of affairs. PRO may be Marco or Gianni."
+    "comment": "The belief reading: Marco causes Gianni to believe a state of affairs. PRO may be Marco or Gianni.",
+    "verified": "page-image"
   },
   {
     "id": "fuscosgrizzi2026_ex4b",
@@ -125,7 +126,8 @@
         "yes"
       ]
     ],
-    "comment": "The intention reading: Gianni comes to intend to bring the state of affairs about; at the time of the convincing he does not yet have a child."
+    "comment": "The intention reading: Gianni comes to intend to bring the state of affairs about; at the time of the convincing he does not yet have a child.",
+    "verified": "page-image"
   },
   {
     "id": "fuscosgrizzi2026_ex4a_control",
@@ -170,7 +172,7 @@
         "child"
       ]
     ],
-    "translation": "Marco has convinced Gianni that he (Marco or Gianni) has a child.",
+    "translation": "Marco has convinced Gianni that he has a child",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -189,71 +191,8 @@
         "yes"
       ]
     ],
-    "comment": "The di-infinitive allows subject as well as object control: FinP hosts the logophoric centre."
-  },
-  {
-    "id": "fuscosgrizzi2026_ex4b_control",
-    "source": {
-      "bibkey": "fusco-sgrizzi-2026",
-      "paperLabel": "(4b)"
-    },
-    "language": "ital1282",
-    "primaryText": "Marco ha convinto Gianni a avere un figlio.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      [
-        "Marco",
-        "Marco"
-      ],
-      [
-        "ha",
-        "have-PRS.3SG"
-      ],
-      [
-        "convinto",
-        "convince-PST.PTCP"
-      ],
-      [
-        "Gianni",
-        "Gianni"
-      ],
-      [
-        "a",
-        "a"
-      ],
-      [
-        "avere",
-        "have-INF"
-      ],
-      [
-        "un",
-        "a"
-      ],
-      [
-        "figlio.",
-        "child"
-      ]
-    ],
-    "translation": "Marco has convinced Gianni that Marco will have a child.",
-    "context": "",
-    "judgment": "unacceptable",
-    "alternatives": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "size",
-        "aP"
-      ],
-      [
-        "diagnostic",
-        "subjectControl"
-      ],
-      [
-        "grammatical",
-        "no"
-      ]
-    ],
-    "comment": "The a-infinitive allows only object control: the matrix object is the closest referent for PRO. Footnote 1 reports a marginal subject-control reading for a causative complement."
+    "comment": "The di-infinitive allows subject as well as object control: FinP hosts the logophoric centre. The gloss line indexes PRO as 1/2 (Marco or Gianni).",
+    "verified": "page-image"
   },
   {
     "id": "fuscosgrizzi2026_ex11a",
@@ -333,7 +272,8 @@
         "yes"
       ]
     ],
-    "comment": "A propositional complement can be assessed for truth."
+    "comment": "A propositional complement can be assessed for truth.",
+    "verified": "page-image"
   },
   {
     "id": "fuscosgrizzi2026_ex11b",
@@ -413,7 +353,8 @@
         "no"
       ]
     ],
-    "comment": "The a-infinitive is not large enough to be a proposition; the continuation is infelicitous."
+    "comment": "The a-infinitive is not large enough to be a proposition; the continuation is infelicitous.",
+    "verified": "page-image"
   },
   {
     "id": "fuscosgrizzi2026_ex12",
@@ -447,7 +388,7 @@
       ],
       [
         "ad",
-        "a"
+        "to"
       ],
       [
         "essere",
@@ -455,7 +396,7 @@
       ],
       [
         "intervistato.",
-        "interviewed-PST.PTCP.M"
+        "interviewed-PST.PRT.M"
       ]
     ],
     "translation": "The conductor has convinced the guest to be interviewed.",
@@ -477,7 +418,8 @@
         "yes"
       ]
     ],
-    "comment": "Passive is available in the a-infinitive; the guest consents to the interview."
+    "comment": "Passive is available in the a-infinitive; the guest consents to the interview.",
+    "verified": "page-image"
   },
   {
     "id": "fuscosgrizzi2026_ex13",
@@ -541,7 +483,8 @@
         "yes"
       ]
     ],
-    "comment": "Low aspectual restructuring verbs, merged at the edge of vP, fit inside the a-infinitive; the paper also gives continuare a and finire di."
+    "comment": "Low aspectual restructuring verbs, merged at the edge of vP, fit inside the a-infinitive; the paper also gives continuare a and finire di.",
+    "verified": "page-image"
   },
   {
     "id": "fuscosgrizzi2026_ex14",
@@ -593,7 +536,8 @@
         "yes"
       ]
     ],
-    "comment": "Under the restructuring verb provare the object clitic climbs over the matrix verb: the infinitive is no larger than vP."
+    "comment": "Under the restructuring verb provare the object clitic climbs over the matrix verb: the infinitive is no larger than vP.",
+    "verified": "page-image"
   },
   {
     "id": "fuscosgrizzi2026_ex15",
@@ -632,7 +576,7 @@
     ],
     "translation": "Gianni thinks about building it tomorrow.",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -649,7 +593,8 @@
         "no"
       ]
     ],
-    "comment": "Under an attitude verb the a-infinitive does not let the clitic climb."
+    "comment": "Under an attitude verb the a-infinitive does not let the clitic climb.",
+    "verified": "page-image"
   },
   {
     "id": "fuscosgrizzi2026_ex16",
@@ -702,7 +647,7 @@
         "boss"
       ]
     ],
-    "translation": "Gianni has convinced me not to say hello to the boss anymore.",
+    "translation": "Gianni has convinced me not to say hello to the new boss anymore.",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -721,7 +666,8 @@
         "yes"
       ]
     ],
-    "comment": "The a-infinitive hosts negation, so it projects functional structure above vP."
+    "comment": "The a-infinitive hosts negation, so it projects functional structure above vP. The paper's translation has 'the new boss', though the Italian has no nuovo.",
+    "verified": "page-image"
   },
   {
     "id": "fuscosgrizzi2026_ex17",
@@ -805,7 +751,8 @@
         "yes"
       ]
     ],
-    "comment": "The a-infinitive is its own temporal domain and takes a temporal adverb of its own."
+    "comment": "The a-infinitive is its own temporal domain and takes a temporal adverb of its own.",
+    "verified": "page-image"
   },
   {
     "id": "fuscosgrizzi2026_ex18",
@@ -864,7 +811,7 @@
     ],
     "translation": "Yesterday Gianni has tried to repair the car next month.",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -881,6 +828,7 @@
         "no"
       ]
     ],
-    "comment": "A restructuring infinitive depends on the matrix clause for its temporal specification."
+    "comment": "A restructuring infinitive depends on the matrix clause for its temporal specification.",
+    "verified": "page-image"
   }
 ]

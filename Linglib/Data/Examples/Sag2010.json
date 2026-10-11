@@ -15,7 +15,8 @@
       ["construction", "topicalized"],
       ["parameter", "distinguished"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "sag2010_ex7b",
@@ -35,7 +36,8 @@
       ["whForm", "what"],
       ["whCategory", "np"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "sag2010_ex7c",
@@ -55,7 +57,8 @@
       ["whForm", "who"],
       ["whCategory", "np"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "sag2010_ex7d",
@@ -75,7 +78,8 @@
       ["whForm", "whatA"],
       ["whCategory", "detSing"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "sag2010_ex7e",
@@ -94,7 +98,8 @@
       ["parameter", "distinguished"],
       ["the", "true"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "sag2010_ex8a",
@@ -114,7 +119,8 @@
       ["whForm", "which"],
       ["whCategory", "det"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "sag2010_ex8a_ii",
@@ -134,7 +140,8 @@
       ["whForm", "who"],
       ["whCategory", "np"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "sag2010_ex8b",
@@ -154,7 +161,8 @@
       ["whForm", "whatA"],
       ["whCategory", "detSing"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "sag2010_ex8c",
@@ -174,7 +182,8 @@
       ["whForm", "what"],
       ["whCategory", "np"]
     ],
-    "comment": "Accepted by some speakers."
+    "comment": "Printed with %, the paper's sign for variation among speakers (accepted by some), not a judgment mark; marginal is the file's rendering of it.",
+    "verified": "page-image"
   },
   {
     "id": "sag2010_ex8d",
@@ -194,7 +203,8 @@
       ["whForm", "which"],
       ["whCategory", "det"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "sag2010_ex8d_ii",
@@ -214,7 +224,8 @@
       ["whForm", "what"],
       ["whCategory", "np"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "sag2010_ex8e",
@@ -234,7 +245,8 @@
       ["whForm", "which"],
       ["whCategory", "det"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "sag2010_ex9a",
@@ -254,7 +266,8 @@
       ["whForm", "who"],
       ["whCategory", "np"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "sag2010_ex9b",
@@ -274,7 +287,8 @@
       ["whForm", "who"],
       ["whCategory", "np"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "sag2010_ex9c",
@@ -294,7 +308,8 @@
       ["whForm", "who"],
       ["whCategory", "np"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "sag2010_ex10a",
@@ -314,7 +329,8 @@
       ["whForm", "whose"],
       ["whCategory", "det"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "sag2010_ex10b",
@@ -334,7 +350,8 @@
       ["whForm", "whose"],
       ["whCategory", "det"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "sag2010_ex10c",
@@ -354,7 +371,8 @@
       ["whForm", "whose"],
       ["whCategory", "det"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "sag2010_ex11a",
@@ -374,7 +392,8 @@
       ["whForm", "what"],
       ["whCategory", "np"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "sag2010_ex11b",
@@ -394,7 +413,8 @@
       ["whForm", "what"],
       ["whCategory", "np"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "sag2010_ex11c",
@@ -414,7 +434,8 @@
       ["whForm", "what"],
       ["whCategory", "np"]
     ],
-    "comment": "Accepted by some speakers."
+    "comment": "Printed with %, the paper's sign for variation among speakers (accepted by some), not a judgment mark; marginal is the file's rendering of it.",
+    "verified": "page-image"
   },
   {
     "id": "sag2010_ex12a",
@@ -434,7 +455,8 @@
       ["whForm", "what"],
       ["whCategory", "detSing"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "sag2010_ex12b",
@@ -454,7 +476,8 @@
       ["whForm", "what"],
       ["whCategory", "detSing"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "sag2010_ex12c",
@@ -474,7 +497,8 @@
       ["whForm", "what"],
       ["whCategory", "detSing"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "sag2010_ex13a",
@@ -494,7 +518,8 @@
       ["whForm", "what"],
       ["whCategory", "detPl"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "sag2010_ex13b",
@@ -514,7 +539,8 @@
       ["whForm", "what"],
       ["whCategory", "detPl"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "sag2010_ex13c",
@@ -534,7 +560,8 @@
       ["whForm", "what"],
       ["whCategory", "detPl"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "sag2010_ex14a",
@@ -554,7 +581,8 @@
       ["whForm", "what"],
       ["whCategory", "degree"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "sag2010_ex14b",
@@ -574,7 +602,8 @@
       ["whForm", "what"],
       ["whCategory", "degree"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "sag2010_ex14c",
@@ -594,7 +623,8 @@
       ["whForm", "what"],
       ["whCategory", "degree"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "sag2010_ex15a",
@@ -614,7 +644,8 @@
       ["whForm", "whatA"],
       ["whCategory", "detSing"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "sag2010_ex15b",
@@ -634,7 +665,8 @@
       ["whForm", "whatA"],
       ["whCategory", "detSing"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "sag2010_ex15c",
@@ -654,7 +686,8 @@
       ["whForm", "whatA"],
       ["whCategory", "detSing"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "sag2010_ex16a",
@@ -674,7 +707,8 @@
       ["whForm", "which"],
       ["whCategory", "det"]
     ],
-    "comment": "An elliptical NP containing the determiner which, so the interrogative is a use of the determiner rather than of the pronoun."
+    "comment": "An elliptical NP containing the determiner which, so the interrogative is a use of the determiner rather than of the pronoun.",
+    "verified": "page-image"
   },
   {
     "id": "sag2010_ex16b",
@@ -694,7 +728,8 @@
       ["whForm", "which"],
       ["whCategory", "np"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "sag2010_ex16c",
@@ -714,7 +749,8 @@
       ["whForm", "which"],
       ["whCategory", "np"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "sag2010_ex17a",
@@ -734,7 +770,8 @@
       ["whForm", "which"],
       ["whCategory", "det"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "sag2010_ex17b",
@@ -754,7 +791,8 @@
       ["whForm", "which"],
       ["whCategory", "det"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "sag2010_ex17c",
@@ -774,7 +812,8 @@
       ["whForm", "which"],
       ["whCategory", "det"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "sag2010_ex18a",
@@ -794,7 +833,8 @@
       ["whForm", "how"],
       ["whCategory", "advpManner"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "sag2010_ex18b",
@@ -814,7 +854,8 @@
       ["whForm", "how"],
       ["whCategory", "advpManner"]
     ],
-    "comment": "Peter and the Wolf."
+    "comment": "Peter and the Wolf.",
+    "verified": "page-image"
   },
   {
     "id": "sag2010_ex18c",
@@ -834,7 +875,8 @@
       ["whForm", "how"],
       ["whCategory", "advpManner"]
     ],
-    "comment": "Accepted by some speakers."
+    "comment": "Printed with %, the paper's sign for variation among speakers (accepted by some), not a judgment mark; marginal is the file's rendering of it.",
+    "verified": "page-image"
   },
   {
     "id": "sag2010_ex19a",
@@ -854,7 +896,8 @@
       ["whForm", "how"],
       ["whCategory", "ap"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "sag2010_ex19b",
@@ -874,7 +917,8 @@
       ["whForm", "how"],
       ["whCategory", "ap"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "sag2010_ex19c",
@@ -894,7 +938,8 @@
       ["whForm", "how"],
       ["whCategory", "ap"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "sag2010_ex20a",
@@ -914,7 +959,8 @@
       ["whForm", "how"],
       ["whCategory", "degree"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "sag2010_ex20b",
@@ -934,7 +980,8 @@
       ["whForm", "how"],
       ["whCategory", "degree"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "sag2010_ex20c",
@@ -954,7 +1001,8 @@
       ["whForm", "how"],
       ["whCategory", "degree"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "sag2010_ex21a",
@@ -974,7 +1022,8 @@
       ["whForm", "when"],
       ["whCategory", "ppTime"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "sag2010_ex21b",
@@ -994,7 +1043,8 @@
       ["whForm", "when"],
       ["whCategory", "ppTime"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "sag2010_ex21c",
@@ -1014,7 +1064,8 @@
       ["whForm", "when"],
       ["whCategory", "ppTime"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "sag2010_ex22a",
@@ -1034,7 +1085,8 @@
       ["whForm", "where"],
       ["whCategory", "ppPlace"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "sag2010_ex22b",
@@ -1054,7 +1106,8 @@
       ["whForm", "where"],
       ["whCategory", "ppPlace"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "sag2010_ex22c",
@@ -1074,7 +1127,8 @@
       ["whForm", "where"],
       ["whCategory", "ppPlace"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "sag2010_ex23a",
@@ -1094,7 +1148,8 @@
       ["whForm", "why"],
       ["whCategory", "ppReason"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "sag2010_ex23b",
@@ -1114,7 +1169,8 @@
       ["whForm", "why"],
       ["whCategory", "ppReason"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "sag2010_ex23c",
@@ -1134,7 +1190,8 @@
       ["whForm", "why"],
       ["whCategory", "ppReason"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "sag2010_ex4a",
@@ -1154,7 +1211,8 @@
       ["filler", "NP"],
       ["embedded", "true"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "sag2010_ex4b",
@@ -1175,7 +1233,8 @@
       ["finite", "false"],
       ["embedded", "true"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "sag2010_ex26a",
@@ -1195,7 +1254,8 @@
       ["filler", "AP"],
       ["embedded", "true"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "sag2010_ex26b",
@@ -1214,7 +1274,8 @@
       ["parameter", "fillerCategory"],
       ["filler", "VP"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "sag2010_ex26c",
@@ -1233,7 +1294,8 @@
       ["parameter", "fillerCategory"],
       ["filler", "VP"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "sag2010_ex26d",
@@ -1254,7 +1316,8 @@
       ["finite", "false"],
       ["embedded", "true"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "sag2010_ex63a",
@@ -1273,7 +1336,8 @@
       ["parameter", "fillerCategory"],
       ["filler", "NP"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "sag2010_ex63b",
@@ -1292,7 +1356,8 @@
       ["parameter", "fillerCategory"],
       ["filler", "PP"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "sag2010_ex63c",
@@ -1311,7 +1376,8 @@
       ["parameter", "fillerCategory"],
       ["filler", "AP"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "sag2010_ex63d",
@@ -1330,7 +1396,8 @@
       ["parameter", "fillerCategory"],
       ["filler", "AdvP"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "sag2010_ex76a",
@@ -1349,7 +1416,8 @@
       ["parameter", "fillerCategory"],
       ["filler", "NP"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "sag2010_ex76b",
@@ -1368,7 +1436,8 @@
       ["parameter", "fillerCategory"],
       ["filler", "AP"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "sag2010_ex76c",
@@ -1387,7 +1456,8 @@
       ["parameter", "fillerCategory"],
       ["filler", "AdvP"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "sag2010_ex76d",
@@ -1406,7 +1476,8 @@
       ["parameter", "fillerCategory"],
       ["filler", "PP"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "sag2010_ex76e",
@@ -1425,7 +1496,8 @@
       ["parameter", "fillerCategory"],
       ["filler", "VP"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "sag2010_ex76f",
@@ -1444,7 +1516,8 @@
       ["parameter", "fillerCategory"],
       ["filler", "VP"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "sag2010_ex86a",
@@ -1464,7 +1537,8 @@
       ["filler", "NP"],
       ["inverted", "true"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "sag2010_ex86b",
@@ -1484,7 +1558,8 @@
       ["filler", "PP"],
       ["inverted", "true"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "sag2010_ex86c",
@@ -1504,7 +1579,8 @@
       ["filler", "AP"],
       ["inverted", "true"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "sag2010_ex86d",
@@ -1524,7 +1600,8 @@
       ["filler", "AdvP"],
       ["inverted", "true"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "sag2010_ex87",
@@ -1544,7 +1621,8 @@
       ["filler", "VP"],
       ["inverted", "true"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "sag2010_ex96a",
@@ -1565,7 +1643,8 @@
       ["finite", "false"],
       ["embedded", "true"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "sag2010_ex96b",
@@ -1586,7 +1665,8 @@
       ["finite", "false"],
       ["embedded", "true"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "sag2010_ex96c",
@@ -1607,7 +1687,8 @@
       ["finite", "false"],
       ["embedded", "true"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "sag2010_ex96d",
@@ -1628,7 +1709,8 @@
       ["finite", "false"],
       ["embedded", "true"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "sag2010_ex96e",
@@ -1649,7 +1731,8 @@
       ["finite", "false"],
       ["embedded", "true"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "sag2010_ex27a",
@@ -1668,7 +1751,8 @@
       ["parameter", "headCategory"],
       ["head", "CP"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "sag2010_ex27a_ii",
@@ -1688,7 +1772,8 @@
       ["head", "CP"],
       ["embedded", "true"]
     ],
-    "comment": "Read as an embedded interrogative, so that only the category of the head daughter is at issue."
+    "comment": "Read as an embedded interrogative, so that only the category of the head daughter is at issue.",
+    "verified": "page-image"
   },
   {
     "id": "sag2010_ex27a_iii",
@@ -1708,7 +1793,8 @@
       ["head", "CP"],
       ["embedded", "true"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "sag2010_ex27a_iiii",
@@ -1727,7 +1813,8 @@
       ["parameter", "headCategory"],
       ["head", "CP"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "sag2010_ex28a",
@@ -1747,7 +1834,8 @@
       ["filler", "AP"],
       ["inverted", "true"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "sag2010_ex28a_ii",
@@ -1768,7 +1856,8 @@
       ["inverted", "true"],
       ["embedded", "true"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "sag2010_ex28b",
@@ -1787,7 +1876,8 @@
       ["parameter", "inversion"],
       ["inverted", "true"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "sag2010_ex28b_ii",
@@ -1807,7 +1897,8 @@
       ["inverted", "true"],
       ["embedded", "true"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "sag2010_ex28b_iii",
@@ -1827,7 +1918,8 @@
       ["filler", "AP"],
       ["inverted", "true"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "sag2010_ex28b_iiii",
@@ -1846,7 +1938,8 @@
       ["parameter", "inversion"],
       ["inverted", "true"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "sag2010_ex28c",
@@ -1865,7 +1958,8 @@
       ["parameter", "inversion"],
       ["inverted", "true"]
     ],
-    "comment": "A noninitial the-clause; inversion is optional."
+    "comment": "A noninitial the-clause; inversion is optional.",
+    "verified": "page-image"
   },
   {
     "id": "sag2010_ex28c_ii",
@@ -1883,7 +1977,8 @@
       ["construction", "theClause"],
       ["parameter", "inversion"]
     ],
-    "comment": "A noninitial the-clause; inversion is optional."
+    "comment": "A noninitial the-clause; inversion is optional.",
+    "verified": "page-image"
   },
   {
     "id": "sag2010_ex71a",
@@ -1902,7 +1997,8 @@
       ["parameter", "inversion"],
       ["embedded", "true"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "sag2010_ex71a_ii",
@@ -1922,7 +2018,8 @@
       ["inverted", "true"],
       ["embedded", "true"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "sag2010_ex71b",
@@ -1940,7 +2037,8 @@
       ["construction", "whExclamative"],
       ["parameter", "inversion"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "sag2010_ex71b_ii",
@@ -1959,7 +2057,8 @@
       ["parameter", "inversion"],
       ["inverted", "true"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "sag2010_ex84a",
@@ -1978,7 +2077,8 @@
       ["parameter", "inversion"],
       ["inverted", "true"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "sag2010_ex84b",
@@ -1996,7 +2096,8 @@
       ["construction", "whInterrogative"],
       ["parameter", "inversion"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "sag2010_ex84c",
@@ -2015,7 +2116,8 @@
       ["parameter", "inversion"],
       ["embedded", "true"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "sag2010_ex84d",
@@ -2035,7 +2137,8 @@
       ["inverted", "true"],
       ["embedded", "true"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "sag2010_ex29a",
@@ -2054,7 +2157,8 @@
       ["parameter", "finiteness"],
       ["finite", "false"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "sag2010_ex29a_ii",
@@ -2074,7 +2178,8 @@
       ["finite", "false"],
       ["embedded", "true"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "sag2010_ex29a_iii",
@@ -2094,7 +2199,8 @@
       ["filler", "AP"],
       ["finite", "false"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "sag2010_ex29b",
@@ -2114,7 +2220,8 @@
       ["finite", "false"],
       ["embedded", "true"]
     ],
-    "comment": "The paper stars the variant with an overt for-subject, for them to take."
+    "comment": "The paper stars the variant with an overt for-subject, for them to take.",
+    "verified": "page-image"
   },
   {
     "id": "sag2010_ex29b_ii",
@@ -2135,7 +2242,8 @@
       ["finite", "false"],
       ["embedded", "true"]
     ],
-    "comment": "The paper stars the variant with an overt for-subject, for them to finish."
+    "comment": "The paper stars the variant with an overt for-subject, for them to finish.",
+    "verified": "page-image"
   },
   {
     "id": "sag2010_ex71c",
@@ -2155,7 +2263,8 @@
       ["finite", "false"],
       ["embedded", "true"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "sag2010_ex85",
@@ -2175,7 +2284,8 @@
       ["finite", "false"],
       ["embedded", "true"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "sag2010_ex31a",
@@ -2194,7 +2304,8 @@
       ["parameter", "independence"],
       ["embedded", "true"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "sag2010_ex31b",
@@ -2212,7 +2323,8 @@
       ["construction", "whExclamative"],
       ["parameter", "independence"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "sag2010_ex67",
@@ -2230,7 +2342,8 @@
       ["construction", "topicalized"],
       ["parameter", "island"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "sag2010_ex74",
@@ -2248,7 +2361,8 @@
       ["construction", "whExclamative"],
       ["parameter", "island"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "sag2010_ex88a",
@@ -2268,7 +2382,8 @@
       ["finite", "false"],
       ["embedded", "true"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "sag2010_ex88b",
@@ -2279,7 +2394,7 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "questionable",
+    "judgment": "marginal",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -2287,7 +2402,8 @@
       ["parameter", "island"],
       ["embedded", "true"]
     ],
-    "comment": "Intermediate; the paper attributes the degradation to processing complexity."
+    "comment": "Intermediate; the paper attributes the degradation to processing complexity.",
+    "verified": "page-image"
   },
   {
     "id": "sag2010_ex88c",
@@ -2306,6 +2422,7 @@
       ["parameter", "island"],
       ["embedded", "true"]
     ],
-    "comment": "The finite verb with specific time reference degrades the example; the paper attributes this to processing complexity, not to a grammatical constraint."
+    "comment": "The paper says the finite verb with specific time reference renders the example unacceptable, and that such graded data are better explained by processing complexity than by grammatical constraints.",
+    "verified": "page-image"
   }
 ]

@@ -16,7 +16,8 @@
       ["mode", "indicative"],
       ["reading", "SDA"]
     ],
-    "comment": "Intuitively equivalent to the conjunction of its simplifications, (2a)."
+    "comment": "Intuitively equivalent to the conjunction of its simplifications, (2a).",
+    "verified": "page-image"
   },
   {
     "id": "zaniciardellisanfelici2026_1b",
@@ -35,12 +36,13 @@
       ["mode", "counterfactual"],
       ["reading", "SDA"]
     ],
-    "comment": "Intuitively equivalent to the conjunction of its simplifications, (2b)."
+    "comment": "Intuitively equivalent to the conjunction of its simplifications, (2b).",
+    "verified": "page-image"
   },
   {
     "id": "zaniciardellisanfelici2026_3",
     "source": {"bibkey": "zani-ciardelli-sanfelici-2026", "paperLabel": "(3)"},
-    "reportedIn": {"bibkey": "mckay-vaninwagen-1977", "paperLabel": ""},
+    "reportedIn": null,
     "language": "stan1293",
     "primaryText": "If Spain had fought either with the Axis or with the Allies in World War II, it would have fought with the Axis.",
     "discourseSegments": [],
@@ -55,7 +57,8 @@
       ["reading", "AR"],
       ["type", "specificational"]
     ],
-    "comment": "Cited from McKay and van Inwagen (1977): true because fighting with the Axis is the more realistic disjunct, so SDA fails."
+    "comment": "The paper presents it as a famous specificational DAC, without a citation: true because fighting with the Axis is the more realistic disjunct, so SDA fails.",
+    "verified": "page-image"
   },
   {
     "id": "zaniciardellisanfelici2026_4",
@@ -67,14 +70,15 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
       ["mode", "counterfactual"],
       ["reading", "SDA"]
     ],
-    "comment": "Nute's bumper-crop example: judged false because the simplification with the less realistic disjunct, (4b), is false, against Lewis's prediction."
+    "comment": "Nute's bumper-crop example, printed unmarked: judged false because the simplification with the less realistic disjunct, (4b), is false, against Lewis's prediction.",
+    "verified": "page-image"
   },
   {
     "id": "zaniciardellisanfelici2026_6",
@@ -93,7 +97,8 @@
       ["mode", "indicative"],
       ["reading", "DCR"]
     ],
-    "comment": "The continuation forces the disjunctive conditional reading: the disjunction of the simplifications."
+    "comment": "The continuation forces the disjunctive conditional reading: the disjunction of the simplifications.",
+    "verified": "page-image"
   },
   {
     "id": "zaniciardellisanfelici2026_7",
@@ -111,12 +116,13 @@
     "paperFeatures": [
       ["inference", "free choice"]
     ],
-    "comment": "Free-choice inference to each permission, taken to share its source with SDA."
+    "comment": "Free-choice inference to each permission, taken to share its source with SDA.",
+    "verified": "page-image"
   },
   {
     "id": "zaniciardellisanfelici2026_8",
     "source": {"bibkey": "zani-ciardelli-sanfelici-2026", "paperLabel": "(8)"},
-    "reportedIn": {"bibkey": "tieu-kriz-chemla-2019", "paperLabel": ""},
+    "reportedIn": null,
     "language": "stan1293",
     "primaryText": "The circles are red.",
     "discourseSegments": [],
@@ -129,7 +135,8 @@
     "paperFeatures": [
       ["phenomenon", "plural definite homogeneity"]
     ],
-    "comment": "Adults require all circles red; about a third of 4- and 5-year-olds accept it once some circles are red (Tieu et al. 2019)."
+    "comment": "The paper's own illustration of Tieu et al. (2019): adults require all circles red; about a third of 4- and 5-year-olds accept it once some circles are red.",
+    "verified": "page-image"
   },
   {
     "id": "zaniciardellisanfelici2026_target_ind",
@@ -154,7 +161,8 @@
       ["item", "target"],
       ["schema", "(9a)"]
     ],
-    "comment": "Target item: the hazelnut is the squirrel's prize, so one simplification is true and the other false."
+    "comment": "Target item: the hazelnut is the squirrel's prize, so one simplification is true and the other false.",
+    "verified": "page-image"
   },
   {
     "id": "zaniciardellisanfelici2026_target_ctf",
@@ -179,7 +187,8 @@
       ["item", "target"],
       ["schema", "(9a)"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "zaniciardellisanfelici2026_control_ind",
@@ -193,7 +202,7 @@
       ["la", "the"], ["gara", "race"], ["avrà", "get.FUT.3SG"], ["in", "as"], ["premio", "prize"],
       ["una", "a"], ["nocciola", "hazelnut"]
     ],
-    "translation": "If the squirrel wins the race, it will get a hazelnut.",
+    "translation": "If the squirrel wins the race, it will get the hazelnut.",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -203,7 +212,8 @@
       ["item", "control"],
       ["expected", "true"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "zaniciardellisanfelici2026_control_ctf",
@@ -228,7 +238,8 @@
       ["item", "control"],
       ["expected", "true"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "zaniciardellisanfelici2026_closeness_ind",
@@ -250,7 +261,8 @@
       ["mode", "indicative"],
       ["item", "closeness evaluation"]
     ],
-    "comment": "Acceptance reveals that the participant regards the squirrel as a more realistic winner than the tortoise."
+    "comment": "Acceptance reveals that the participant regards the squirrel as a more realistic winner than the tortoise.",
+    "verified": "page-image"
   },
   {
     "id": "zaniciardellisanfelici2026_closeness_ctf",
@@ -273,11 +285,12 @@
       ["mode", "counterfactual"],
       ["item", "closeness evaluation"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "zaniciardellisanfelici2026_app_1",
-    "source": {"bibkey": "zani-ciardelli-sanfelici-2026", "paperLabel": "Appendix (1)"},
+    "source": {"bibkey": "zani-ciardelli-sanfelici-2026", "paperLabel": "§6 (1)"},
     "reportedIn": null,
     "language": "ital1282",
     "primaryText": "Se il tasto rosso o il tasto blu viene premuto, il computer esplode. Non mi ricordo quale dei due.",
@@ -298,11 +311,12 @@
       ["agreement", "singular"],
       ["reading", "DCR"]
     ],
-    "comment": "Singular agreement with the disjunctive subject allows the ignorance continuation."
+    "comment": "Singular agreement with the disjunctive subject allows the ignorance continuation.",
+    "verified": "page-image"
   },
   {
     "id": "zaniciardellisanfelici2026_app_2",
-    "source": {"bibkey": "zani-ciardelli-sanfelici-2026", "paperLabel": "Appendix (2)"},
+    "source": {"bibkey": "zani-ciardelli-sanfelici-2026", "paperLabel": "§6 (2)"},
     "reportedIn": null,
     "language": "ital1282",
     "primaryText": "Se il tasto rosso o il tasto blu vengono premuti, il computer esplode. Non mi ricordo quale dei due.",
@@ -323,6 +337,7 @@
       ["agreement", "plural"],
       ["reading", "DCR"]
     ],
-    "comment": "Plural agreement blocks the ignorance continuation, marked # in the paper."
+    "comment": "Plural agreement blocks the ignorance continuation, which the paper marks # (on Non mi ricordo and its translation).",
+    "verified": "page-image"
   }
 ]

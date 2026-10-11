@@ -15,7 +15,8 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [],
-    "comment": "First member of the (1a)/(1c) minimal pair on za-: transparently spatial (lexical) use."
+    "comment": "First member of the (1a)/(1c) minimal pair on za-: transparently spatial (lexical) use.",
+    "verified": "page-image"
   },
   {
     "id": "svenonius2004_1b",
@@ -33,7 +34,8 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [],
-    "comment": "Lexical za- with idiomatic meaning 'give up' — lexical idiosyncrasy contrasts with the systematic meanings of superlexicals (his (56e))."
+    "comment": "Lexical za- with idiomatic meaning 'give up' — lexical idiosyncrasy contrasts with the systematic meanings of superlexicals (his (56e)).",
+    "verified": "page-image"
   },
   {
     "id": "svenonius2004_1c",
@@ -51,7 +53,8 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [],
-    "comment": "Second member of the (1a)/(1c) minimal pair: same prefix form, superlexical inceptive class."
+    "comment": "Second member of the (1a)/(1c) minimal pair: same prefix form, superlexical inceptive class.",
+    "verified": "page-image"
   },
   {
     "id": "svenonius2004_4a",
@@ -70,7 +73,8 @@
     ],
     "readings": [],
     "paperFeatures": [],
-    "comment": "His (4a) with the reversed order (4b) *vy-po-brasyvatj: the superlexical prefix always appears outside the lexical prefix."
+    "comment": "His (4a) with the reversed order (4b) *vy-po-brasyvatj: the superlexical prefix always appears outside the lexical prefix.",
+    "verified": "page-image"
   },
   {
     "id": "svenonius2004_4c",
@@ -89,11 +93,12 @@
     ],
     "readings": [],
     "paperFeatures": [],
-    "comment": "Attributed by Svenonius to Jabłońska 2004; not locatable as a numbered example in her paper. Reversed order (4d) *w-po-chodzili is ungrammatical."
+    "comment": "Attributed by Svenonius to Jabłońska 2004; not locatable as a numbered example in her paper. Reversed order (4d) *w-po-chodzili is ungrammatical.",
+    "verified": "page-image"
   },
   {
     "id": "svenonius2004_3a",
-    "source": {"bibkey": "istratkova-2004", "paperLabel": "§4 (kaža table)"},
+    "source": {"bibkey": "istratkova-2004", "paperLabel": "Table 1"},
     "reportedIn": {"bibkey": "svenonius-2004", "paperLabel": "(3a)"},
     "language": "bulg1262",
     "primaryText": "po-na-razkaža",
@@ -107,11 +112,12 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [],
-    "comment": "Svenonius glosses the outer po- DLMT; on Istratkova's own taxonomy the po- that stacks over na- is her attenuative po- (her (23c)), her delimitative po- does not stack."
+    "comment": "Svenonius glosses the outer po- DLMT; on Istratkova's own taxonomy the po- that stacks over na- is her attenuative po- (her (23c)), her delimitative po- does not stack.",
+    "verified": "page-image"
   },
   {
     "id": "svenonius2004_3e",
-    "source": {"bibkey": "istratkova-2004", "paperLabel": "§4 (kaža table)"},
+    "source": {"bibkey": "istratkova-2004", "paperLabel": "Table 1"},
     "reportedIn": {"bibkey": "svenonius-2004", "paperLabel": "(3e)"},
     "language": "bulg1262",
     "primaryText": "iz-po-na-pre-razkaža",
@@ -125,7 +131,8 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [],
-    "comment": "The deepest razkaža stack Svenonius cites from Istratkova's data; the po- after iz- is her distributive po-."
+    "comment": "The deepest razkaža stack Svenonius cites from Istratkova's data; the po- after iz- is her distributive po-.",
+    "verified": "page-image"
   },
   {
     "id": "svenonius2004_58za",
@@ -133,9 +140,7 @@
     "language": "russ1263",
     "primaryText": "za-kuritj",
     "discourseSegments": [],
-    "glossedTokens": [
-      ["za-kuritj", "incp-smoke"]
-    ],
+    "glossedTokens": [],
     "translation": "start smoking",
     "context": "Inceptive za- almost never forms secondary imperfectives in Russian.",
     "judgment": "acceptable",
@@ -144,7 +149,8 @@
     ],
     "readings": [],
     "paperFeatures": [],
-    "comment": "Datum for his (58a-i): inceptive za- blocks secondary imperfectivization, consistent with attachment above the SI position."
+    "comment": "Datum for his (58a-i): inceptive za- blocks secondary imperfectivization, consistent with attachment above the SI position.",
+    "verified": "page-image"
   },
   {
     "id": "svenonius2004_58po",
@@ -152,9 +158,7 @@
     "language": "russ1263",
     "primaryText": "po-čitatj",
     "discourseSegments": [],
-    "glossedTokens": [
-      ["po-čitatj", "atten-read"]
-    ],
+    "glossedTokens": [],
     "translation": "read for a little while",
     "context": "Attenuative po- generally resists secondary imperfectivization but sometimes allows it.",
     "judgment": "acceptable",
@@ -163,6 +167,7 @@
     ],
     "readings": [],
     "paperFeatures": [],
-    "comment": "Datum for his (58b): attenuative po- sometimes allows the secondary imperfective (po-čityvatj), unlike inceptive za-."
+    "comment": "Datum for his (58b): attenuative po- sometimes allows the secondary imperfective (po-čityvatj), unlike inceptive za-.",
+    "verified": "page-image"
   }
 ]

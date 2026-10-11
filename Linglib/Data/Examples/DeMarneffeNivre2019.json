@@ -16,7 +16,8 @@
       ["topic", "dependencyTree"],
       ["projective", "yes"]
     ],
-    "comment": "The introductory dependency tree: dogs is the subject and cats the object of chase, small an attributive modifier of dogs and happily an adverbial modifier of chase."
+    "comment": "The introductory dependency tree: dogs is the subject and cats the object of chase, small an attributive modifier of dogs and happily an adverbial modifier of chase.",
+    "verified": "page-image"
   },
   {
     "id": "demarneffenivre2019_fig2",
@@ -35,7 +36,8 @@
       ["topic", "coordination"],
       ["projective", "yes"]
     ],
-    "comment": "Coordination in four frameworks: Word Grammar brackets cats and cars into a word string licensing a double-object dependency, the bubble tree takes the coordination as a bubble, Functional Generative Description makes the coordinator the head, and Meaning-Text Theory makes the first conjunct the head."
+    "comment": "Coordination in four frameworks: Word Grammar brackets cats and cars into a word string licensing a double-object dependency, the bubble tree takes the coordination as a bubble, Functional Generative Description makes the coordinator the head, and Meaning-Text Theory makes the first conjunct the head.",
+    "verified": "page-image"
   },
   {
     "id": "demarneffenivre2019_fig3",
@@ -54,7 +56,8 @@
       ["topic", "projectivity"],
       ["projective", "no"]
     ],
-    "comment": "Nonprojective: dogs appears between the head bigger and its dependent mine without being dominated by bigger; the yield of bigger, bigger than mine, is not a contiguous substring."
+    "comment": "Nonprojective: dogs appears between the head bigger and its dependent mine without being dominated by bigger; the yield of bigger, bigger than mine, is not a contiguous substring.",
+    "verified": "page-image"
   },
   {
     "id": "demarneffenivre2019_fig4",
@@ -73,7 +76,8 @@
       ["topic", "headChoice"],
       ["projective", "yes"]
     ],
-    "comment": "Three trees for one sentence: (a) function words as heads, (b) content words as heads, (c) dependencies between nuclei in the sense of Tesnière."
+    "comment": "Three trees for one sentence: (a) function words as heads, (b) content words as heads, (c) dependencies between nuclei in the sense of Tesnière.",
+    "verified": "page-image"
   },
   {
     "id": "demarneffenivre2019_1a",
@@ -92,7 +96,8 @@
       ["topic", "wordOrder"],
       ["adverbialClause", "initial"]
     ],
-    "comment": "Identical dependency representation to (1b), which differs only in the place of the adverbial clause; the phrase-structure trees differ."
+    "comment": "Identical dependency representation to (1b), which differs only in the place of the adverbial clause; the phrase-structure trees differ.",
+    "verified": "page-image"
   },
   {
     "id": "demarneffenivre2019_1b",
@@ -111,7 +116,8 @@
       ["topic", "wordOrder"],
       ["adverbialClause", "final"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "demarneffenivre2019_2a",
@@ -131,7 +137,8 @@
       ["particle", "adjacent"],
       ["preferred", "yes"]
     ],
-    "comment": "Preferred to (2b): both out and bin are dependents of threw and both are close to it."
+    "comment": "Preferred to (2b): both out and bin are dependents of threw and both are close to it.",
+    "verified": "page-image"
   },
   {
     "id": "demarneffenivre2019_2b",
@@ -151,7 +158,8 @@
       ["particle", "postposed"],
       ["preferred", "no"]
     ],
-    "comment": "Dispreferred: the dependency between threw and out is much longer because of the length of the noun phrase headed by bin."
+    "comment": "Dispreferred: the dependency between threw and out is much longer because of the length of the noun phrase headed by bin.",
+    "verified": "page-image"
   },
   {
     "id": "demarneffenivre2019_3a",
@@ -171,7 +179,8 @@
       ["particle", "adjacent"],
       ["preferred", "neither"]
     ],
-    "comment": "No strong preference between (3a) and (3b): the noun phrase is short."
+    "comment": "No strong preference between (3a) and (3b): the noun phrase is short.",
+    "verified": "page-image"
   },
   {
     "id": "demarneffenivre2019_3b",
@@ -191,11 +200,12 @@
       ["particle", "postposed"],
       ["preferred", "neither"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "demarneffenivre2019_4a",
-    "source": {"bibkey": "gibson-1998", "paperLabel": "p. 2"},
+    "source": {"bibkey": "gibson-1998", "paperLabel": "(1a)"},
     "reportedIn": {"bibkey": "de-marneffe-nivre-2019", "paperLabel": "(4a)"},
     "language": "stan1293",
     "primaryText": "The reporter who the senator attacked admitted the error.",
@@ -210,11 +220,12 @@
       ["topic", "dependencyLength"],
       ["relativeClause", "object"]
     ],
-    "comment": "Harder to process than (4b): who, a dependent of attacked, is further from its head."
+    "comment": "Harder to process than (4b): who, a dependent of attacked, is further from its head.",
+    "verified": "page-image"
   },
   {
     "id": "demarneffenivre2019_4b",
-    "source": {"bibkey": "gibson-1998", "paperLabel": "p. 2"},
+    "source": {"bibkey": "gibson-1998", "paperLabel": "(1b)"},
     "reportedIn": {"bibkey": "de-marneffe-nivre-2019", "paperLabel": "(4b)"},
     "language": "stan1293",
     "primaryText": "The reporter who attacked the senator admitted the error.",
@@ -229,7 +240,8 @@
       ["topic", "dependencyLength"],
       ["relativeClause", "subject"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "demarneffenivre2019_5",
@@ -247,7 +259,8 @@
     "paperFeatures": [
       ["topic", "ellipsis"]
     ],
-    "comment": "Ellipsis is hard to analyze without empty nodes, which trees whose nodes are fixed by the input do not favor."
+    "comment": "Ellipsis is hard to analyze without empty nodes, which trees whose nodes are fixed by the input do not favor.",
+    "verified": "page-image"
   },
   {
     "id": "demarneffenivre2019_fig5_en",
@@ -267,7 +280,8 @@
       ["copula", "overt"],
       ["definiteness", "determiner"]
     ],
-    "comment": "Copula strategy with definiteness marked by a function word: two nuclei."
+    "comment": "Copula strategy with definiteness marked by a function word: two nuclei.",
+    "verified": "page-image"
   },
   {
     "id": "demarneffenivre2019_fig5_sv",
@@ -277,7 +291,7 @@
     "primaryText": "husen är nya",
     "discourseSegments": [],
     "glossedTokens": [
-      ["husen", "house.PL.DEF"], ["är", "be.PRS"], ["nya", "new.PL"]
+      ["husen", "the-houses"], ["är", "are"], ["nya", "new"]
     ],
     "translation": "the houses are new",
     "context": "",
@@ -289,7 +303,8 @@
       ["copula", "overt"],
       ["definiteness", "inflection"]
     ],
-    "comment": "Copula strategy with definiteness marked morphologically: one nucleus."
+    "comment": "Copula strategy with definiteness marked morphologically: one nucleus.",
+    "verified": "page-image"
   },
   {
     "id": "demarneffenivre2019_fig5_wsk",
@@ -311,7 +326,8 @@
       ["copula", "zero"],
       ["definiteness", "determiner"]
     ],
-    "comment": "Zero strategy with definiteness marked by a function word: one nucleus."
+    "comment": "Zero strategy with definiteness marked by a function word: one nucleus.",
+    "verified": "page-image"
   },
   {
     "id": "demarneffenivre2019_fig5_ru",
@@ -333,7 +349,8 @@
       ["copula", "zero"],
       ["definiteness", "unmarked"]
     ],
-    "comment": "Zero strategy with no marking of definiteness: no nucleus."
+    "comment": "Zero strategy with no marking of definiteness: no nucleus.",
+    "verified": "page-image"
   },
   {
     "id": "demarneffenivre2019_fig6_sv",
@@ -355,7 +372,8 @@
       ["topic", "annotationSchemes"],
       ["scheme", "SwedishTreebank"]
     ],
-    "comment": "Labels DT, SS, OO, CJ, CJ; the syntactic structures of the three parallel sentences are identical but at most 40% of relations are shared across a pair of schemes and none across all three."
+    "comment": "Labels DT, SS, OO, CJ, CJ; the syntactic structures of the three parallel sentences are identical but at most 40% of relations are shared across a pair of schemes and none across all three.",
+    "verified": "page-image"
   },
   {
     "id": "demarneffenivre2019_fig6_da",
@@ -377,7 +395,8 @@
       ["topic", "annotationSchemes"],
       ["scheme", "DanishDependencyTreebank"]
     ],
-    "comment": "Labels nobj, subj, dobj, coord, conj."
+    "comment": "Labels nobj, subj, dobj, coord, conj.",
+    "verified": "page-image"
   },
   {
     "id": "demarneffenivre2019_fig6_en",
@@ -396,7 +415,8 @@
       ["topic", "annotationSchemes"],
       ["scheme", "StanfordTypedDependencies"]
     ],
-    "comment": "Labels det, nsubj, dobj, cc, conj."
+    "comment": "Labels det, nsubj, dobj, cc, conj.",
+    "verified": "page-image"
   },
   {
     "id": "demarneffenivre2019_fig7_en",
@@ -415,7 +435,8 @@
       ["topic", "parallelism"],
       ["marking", "functionWords"]
     ],
-    "comment": "Universal Dependencies annotation; grammatical relations and categories encoded by determiners, auxiliaries, prepositions and word order."
+    "comment": "Universal Dependencies annotation; grammatical relations and categories encoded by determiners, auxiliaries, prepositions and word order.",
+    "verified": "page-image"
   },
   {
     "id": "demarneffenivre2019_fig7_fi",
@@ -425,8 +446,7 @@
     "primaryText": "koira jahtaa kissan huoneesta",
     "discourseSegments": [],
     "glossedTokens": [
-      ["koira", "dog.NOM"], ["jahtaa", "chase.PRS.3SG"], ["kissan", "cat.ACC"],
-      ["huoneesta", "room.ELA"]
+      ["koira", "dog.NOM"], ["jahtaa", "chase"], ["kissan", "cat.ACC"], ["huoneesta", "room.ELA"]
     ],
     "translation": "the dog will chase the cat out of the room",
     "context": "",
@@ -437,7 +457,8 @@
       ["topic", "parallelism"],
       ["marking", "case"]
     ],
-    "comment": "The same core dependency structure as the English sentence, with the relations encoded by case markers and no explicit definiteness or future tense."
+    "comment": "The same core dependency structure as the English sentence, with the relations encoded by case markers and no explicit definiteness or future tense.",
+    "verified": "page-image"
   },
   {
     "id": "demarneffenivre2019_fig8",
@@ -455,7 +476,8 @@
     "paperFeatures": [
       ["topic", "nonsyntacticRelations"]
     ],
-    "comment": "The relations flat, for the title-name combination, and goeswith, for the accidentally split word, are not syntactic dependency relations."
+    "comment": "The relations flat, for the title-name combination, and goeswith, for the accidentally split word, are not syntactic dependency relations.",
+    "verified": "page-image"
   },
   {
     "id": "demarneffenivre2019_fig9",
@@ -473,6 +495,7 @@
     "paperFeatures": [
       ["topic", "enhancedDependencies"]
     ],
-    "comment": "Basic tree and enhanced graph: the enhanced graph adds a coreference link from students to who, subject relations from forgot and come to students, and the modifier relation from exam to written."
+    "comment": "Basic tree and enhanced graph: the enhanced graph adds a coreference link from students to who, subject relations from forgot and come to students, and the modifier relation from exam to written.",
+    "verified": "page-image"
   }
 ]

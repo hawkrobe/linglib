@@ -3,7 +3,7 @@
     "id": "zheng2025_ex1",
     "source": {"bibkey": "zheng-2025", "paperLabel": "(1)"},
     "language": "mand1415",
-    "primaryText": "Nandao ta fafeng-le ma?",
+    "primaryText": "nandao ta fafeng-le ma?",
     "glossedTokens": [
       ["nandao", "nandao"], ["ta", "he"], ["fafeng-le", "go.crazy-PERF"], ["ma", "Y/N-Q"]
     ],
@@ -15,7 +15,8 @@
       ["epistemic_bias", "true"],
       ["unexpected_evidence", "true"]
     ],
-    "comment": "Rhetorical use: the evidence (Lee working Sunday) contradicts B's norm that people don't work Sundays."
+    "comment": "Rhetorical use: the evidence (Lee working Sunday) contradicts B's norm that people don't work Sundays.",
+    "verified": "page-image"
   },
   {
     "id": "zheng2025_ex2",
@@ -34,7 +35,8 @@
       ["epistemic_bias", "true"],
       ["unexpected_evidence", "true"]
     ],
-    "comment": "Biased-question use: the evidence contradicts A's prior belief."
+    "comment": "Biased-question use: the evidence contradicts A's prior belief.",
+    "verified": "page-image"
   },
   {
     "id": "zheng2025_ex3",
@@ -53,7 +55,8 @@
       ["epistemic_bias", "false"],
       ["unexpected_evidence", "true"]
     ],
-    "comment": "Pure-inquiry use, the paper's novel datum: felicitous with no prior belief about the prejacent."
+    "comment": "Pure-inquiry use, the paper's novel datum: felicitous with no prior belief about the prejacent.",
+    "verified": "page-image"
   },
   {
     "id": "zheng2025_ex4b",
@@ -65,14 +68,15 @@
       ["nandao", "nandao"], ["wuli", "room.in"], ["you", "exist"], ["ren", "person"]
     ],
     "translation": "It is not the case there are people in the room, right?",
-    "context": "The speaker believes there is no one in the room, and there is no contextual evidence (such as the light being on) that someone is in.",
-    "judgment": "unacceptable",
+    "context": "The speaker believes that there is no one in a room.",
+    "judgment": "acceptable",
     "paperFeatures": [
       ["evidential_bias", "false"],
       ["epistemic_bias", "true"],
       ["unexpected_evidence", "false"]
     ],
-    "comment": "Xu's context supplies only the negative belief; Zheng observes that without contextual evidence the question is still infelicitous, so epistemic bias is not sufficient."
+    "comment": "Printed unmarked (as in Xu 2018's own (3b)). Zheng's prose adds that if there is no contextual evidence (such as the light being on) that someone is in the room, (4b) is still infelicitous, so negative epistemic bias is not sufficient; the paperFeatures describe that no-evidence case.",
+    "verified": "page-image"
   },
   {
     "id": "zheng2025_ex5_ctx1",
@@ -84,14 +88,15 @@
       ["ma", "Y/N-Q"]
     ],
     "translation": "Is it raining outside?",
-    "context": "A sits in a windowless room with no prior beliefs about the weather. At 10, B enters the room with a dripping raincoat.",
+    "context": "A is sitting in a windowless room working. A doesn't know the weather or have any expectations that people will wear raincoats. At 10, B enters the room with a dripping raincoat.",
     "judgment": "acceptable",
     "paperFeatures": [
       ["evidential_bias", "true"],
       ["epistemic_bias", "false"],
       ["unexpected_evidence", "true"]
     ],
-    "comment": "Evidence without belief: positive evidential bias is sufficient."
+    "comment": "Evidence without belief: positive evidential bias is sufficient.",
+    "verified": "page-image"
   },
   {
     "id": "zheng2025_ex5_ctx2",
@@ -103,14 +108,15 @@
       ["ma", "Y/N-Q"]
     ],
     "translation": "Is it raining outside?",
-    "context": "A sits in a windowless room with no prior beliefs about the weather. At 10, B enters the room normally, without a raincoat.",
+    "context": "A is sitting in a windowless room working. A doesn't know the weather or have any expectations that people will wear raincoats. At 10, B enters the room.",
     "judgment": "unacceptable",
     "paperFeatures": [
       ["evidential_bias", "false"],
       ["epistemic_bias", "false"],
       ["unexpected_evidence", "false"]
     ],
-    "comment": "No evidence and no belief: infelicitous."
+    "comment": "No evidence and no belief: infelicitous.",
+    "verified": "page-image"
   },
   {
     "id": "zheng2025_ex5_ctx3",
@@ -122,20 +128,21 @@
       ["ma", "Y/N-Q"]
     ],
     "translation": "Is it raining outside?",
-    "context": "A thinks it will not rain today. At 10, B enters the room normally, without a raincoat.",
+    "context": "A thinks it will not rain today. At 10, B enters the room.",
     "judgment": "unacceptable",
     "paperFeatures": [
       ["evidential_bias", "false"],
       ["epistemic_bias", "true"],
       ["unexpected_evidence", "false"]
     ],
-    "comment": "Belief without evidence: negative epistemic bias alone does not license nandao."
+    "comment": "Belief without evidence: negative epistemic bias alone does not license nandao.",
+    "verified": "page-image"
   },
   {
     "id": "zheng2025_ex6_ctx1",
     "source": {"bibkey": "zheng-2025", "paperLabel": "(6) ctx 1"},
     "language": "mand1415",
-    "primaryText": "Nandao ta hen.mang ma?",
+    "primaryText": "nandao ta hen.mang ma?",
     "glossedTokens": [
       ["nandao", "nandao"], ["ta", "he"], ["hen.mang", "very.busy"], ["ma", "Y/N-Q"]
     ],
@@ -147,13 +154,14 @@
       ["epistemic_bias", "true"],
       ["unexpected_evidence", "true"]
     ],
-    "comment": "Unexpected evidence: Lee working Sunday deviates from B's expectation."
+    "comment": "Unexpected evidence: Lee working Sunday deviates from B's expectation.",
+    "verified": "page-image"
   },
   {
     "id": "zheng2025_ex6_ctx2",
     "source": {"bibkey": "zheng-2025", "paperLabel": "(6) ctx 2"},
     "language": "mand1415",
-    "primaryText": "Nandao ta hen.mang ma?",
+    "primaryText": "nandao ta hen.mang ma?",
     "glossedTokens": [
       ["nandao", "nandao"], ["ta", "he"], ["hen.mang", "very.busy"], ["ma", "Y/N-Q"]
     ],
@@ -165,7 +173,8 @@
       ["epistemic_bias", "false"],
       ["unexpected_evidence", "false"]
     ],
-    "comment": "Expected evidence: the same evidence is unremarkable given B's knowledge, so nandao is infelicitous."
+    "comment": "Expected evidence: the same evidence is unremarkable given B's knowledge, so nandao is infelicitous.",
+    "verified": "page-image"
   },
   {
     "id": "zheng2025_ex4a",
@@ -178,7 +187,7 @@
       ["nandao", "nandao"], ["wuli", "room.in"], ["mei", "no"], ["ren", "person"]
     ],
     "translation": "It is not the case there are not people in the room, right?",
-    "context": "The speaker believes there is no one in the room.",
+    "context": "The speaker believes that there is no one in a room.",
     "judgment": "unacceptable",
     "alternatives": [],
     "readings": [],
@@ -187,7 +196,8 @@
       ["epistemic_bias", "true"],
       ["unexpected_evidence", "false"]
     ],
-    "comment": "The prejacent matches the speaker's belief; with no evidence for it the question is out."
+    "comment": "Printed with #: the prejacent matches the speaker's belief, whereas a nandao-Q is taken (Xu 2017) to convey a belief opposite to its prejacent. Zheng prints the intended reading as 'It is not the case there are people in the room, right?'.",
+    "verified": "page-image"
   },
   {
     "id": "zheng2025_ex12a",
@@ -207,7 +217,8 @@
     "paperFeatures": [
       ["clause_type", "declarative"]
     ],
-    "comment": "Nandao does not combine with a declarative, with or without the question particle."
+    "comment": "Nandao does not combine with a declarative, with or without the question particle. The row records the variant without ma of the printed '*Nandao Lisi hui lai (*ma)'.",
+    "verified": "page-image"
   },
   {
     "id": "zheng2025_ex12b",
@@ -228,6 +239,7 @@
     "paperFeatures": [
       ["clause_type", "wh-question"]
     ],
-    "comment": "Nandao does not combine with a wh-question."
+    "comment": "Nandao does not combine with a wh-question. The row records the variant with ma of the printed '*Nandao Zhangdan weishenme qu xuexiao (ma)?'; the paper prints Zhangdan, glossed Zhangsan.",
+    "verified": "page-image"
   }
 ]

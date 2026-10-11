@@ -17,7 +17,8 @@
       ["polarity", "negative"],
       ["turn", "A"]
     ],
-    "comment": "The negative claim about A's topic situation; the negation particle is accented."
+    "comment": "The negative claim about A's topic situation; the negation particle is accented.",
+    "verified": "page-image"
   },
   {
     "id": "turcobraundimroth2014_1B1",
@@ -37,7 +38,8 @@
       ["polarity", "positive"],
       ["marking", "verumFocus"]
     ],
-    "comment": "Verum focus: a pitch accent on the finite auxiliary; the claims of A and B1 are compatible, being about different topic situations."
+    "comment": "Verum focus: a pitch accent on the finite auxiliary; the claims of A and B1 are compatible, being about different topic situations.",
+    "verified": "page-image"
   },
   {
     "id": "turcobraundimroth2014_1B2",
@@ -57,7 +59,8 @@
       ["polarity", "positive"],
       ["marking", "particle"]
     ],
-    "comment": "An accented affirmative particle, schon or wohl, in place of Verum focus; German speakers produced no such particle in the experiment."
+    "comment": "An accented affirmative particle, schon or wohl, in place of Verum focus; German speakers produced no such particle in the experiment.",
+    "verified": "page-image"
   },
   {
     "id": "turcobraundimroth2014_2A",
@@ -77,7 +80,8 @@
       ["polarity", "negative"],
       ["turn", "A"]
     ],
-    "comment": "The negative claim that B corrects."
+    "comment": "The negative claim that B corrects.",
+    "verified": "page-image"
   },
   {
     "id": "turcobraundimroth2014_2B1",
@@ -97,7 +101,8 @@
       ["polarity", "positive"],
       ["marking", "verumFocus"]
     ],
-    "comment": "Verum focus; the claims of A and B1 exclude each other, being about the same topic situation."
+    "comment": "Verum focus; the claims of A and B1 exclude each other, being about the same topic situation.",
+    "verified": "page-image"
   },
   {
     "id": "turcobraundimroth2014_2B2",
@@ -117,7 +122,8 @@
       ["polarity", "positive"],
       ["marking", "particle"]
     ],
-    "comment": "An accented affirmative particle in place of Verum focus."
+    "comment": "An accented affirmative particle in place of Verum focus.",
+    "verified": "page-image"
   },
   {
     "id": "turcobraundimroth2014_3",
@@ -141,7 +147,8 @@
       ["marking", "particle"],
       ["genre", "monologue"]
     ],
-    "comment": "Accented wel in a monologue marks a polarity contrast between two topic entities without undoing the earlier claim; from the Finite Story data of Dimroth and colleagues."
+    "comment": "Accented wel in a monologue marks a polarity contrast between two topic entities without undoing the earlier claim; from the Finite Story data of Dimroth and colleagues.",
+    "verified": "page-image"
   },
   {
     "id": "turcobraundimroth2014_vf_negated",
@@ -160,7 +167,8 @@
       ["polarity", "negative"],
       ["marking", "verumFocus"]
     ],
-    "comment": "Verum focus in a negated sentence: the assertion operator takes effect on a level above polarity."
+    "comment": "Verum focus in a negated sentence: the assertion operator takes effect on a level above polarity.",
+    "verified": "page-image"
   },
   {
     "id": "turcobraundimroth2014_wel_negated",
@@ -179,6 +187,7 @@
       ["polarity", "negative"],
       ["marking", "particle"]
     ],
-    "comment": "The affirmative particle cannot occur in a negated sentence: wel and niet are values of the one polarity operator."
+    "comment": "The affirmative particle cannot occur in a negated sentence: wel and niet are values of the one polarity operator.",
+    "verified": "page-image"
   }
 ]

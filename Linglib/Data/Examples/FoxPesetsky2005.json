@@ -41,7 +41,8 @@
         "none"
       ]
     ],
-    "comment": "Verb-second: the finite verb moves to C and the pronoun shifts."
+    "comment": "Verb-second: the finite verb moves to C and the pronoun shifts.",
+    "verified": "page-image"
   },
   {
     "id": "foxpesetsky2005_ex19b",
@@ -89,7 +90,8 @@
         "none"
       ]
     ],
-    "comment": "Embedded clause: the complementizer blocks verb movement."
+    "comment": "Embedded clause: the complementizer blocks verb movement.",
+    "verified": "page-image"
   },
   {
     "id": "foxpesetsky2005_ex19c",
@@ -137,7 +139,8 @@
         "none"
       ]
     ],
-    "comment": "The auxiliary moves to C and the participle stays in VP."
+    "comment": "The auxiliary moves to C and the participle stays in VP.",
+    "verified": "page-image"
   },
   {
     "id": "foxpesetsky2005_ex23a",
@@ -185,7 +188,8 @@
         "firstObject"
       ]
     ],
-    "comment": "The first object precedes the shifted object in VP."
+    "comment": "The first object precedes the shifted object in VP.",
+    "verified": "page-image"
   },
   {
     "id": "foxpesetsky2005_ex23b",
@@ -233,7 +237,8 @@
         "particle"
       ]
     ],
-    "comment": "The particle precedes the shifted object in VP."
+    "comment": "The particle precedes the shifted object in VP.",
+    "verified": "page-image"
   },
   {
     "id": "foxpesetsky2005_ex25a",
@@ -281,7 +286,8 @@
         "firstObject"
       ]
     ],
-    "comment": "The first object is wh-moved through the VP edge."
+    "comment": "The first object is wh-moved through the VP edge.",
+    "verified": "page-image"
   },
   {
     "id": "foxpesetsky2005_ex25b",
@@ -329,6 +335,7 @@
         "particle"
       ]
     ],
-    "comment": "The particle is topicalized through the VP edge."
+    "comment": "The particle is topicalized through the VP edge. The page prints the example with the optional continuation (bara ned för trappan) '(only down the stairs)'; this row is the variant without it.",
+    "verified": "page-image"
   }
 ]

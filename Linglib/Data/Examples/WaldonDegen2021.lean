@@ -24,7 +24,7 @@ def ex_1 : Datum :=
     glossedTokens := [("La", "det.def.f.sg"), ("tachuela", "pin"), ("azul", "blue"), ("pequeña", "small.f.sg")]
     context := ""
     judgment := .acceptable
-    alternatives := [("La tachuela pequeña azul", .unacceptable)]
+    alternatives := [("La tachuela pequeña azul", .ungrammatical)]
     readings := []
     paperFeatures := [("idiolect", "Spanish-postnominal"), ("order", "noun color size")] }
 

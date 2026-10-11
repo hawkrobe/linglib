@@ -993,7 +993,7 @@
     },
     "reportedIn": null,
     "language": "anua1242",
-    "primaryText": "ɲìlàal kwʌ̌n ā-cám-ε̄",
+    "primaryText": "ɲìlàal kwʌ̌n ā-cám-ɛ̄",
     "discourseSegments": [],
     "glossedTokens": [
       [
@@ -1005,7 +1005,7 @@
         "porridge"
       ],
       [
-        "ā-cám-ε̄",
+        "ā-cám-ɛ̄",
         "PST-eat-3SG.A"
       ]
     ],
@@ -1028,7 +1028,7 @@
         "topical"
       ]
     ],
-    "comment": "The pragmatically unmarked order, clause-final verb and topical A, is the only one with an A index.",
+    "comment": "The pragmatically unmarked order, clause-final verb and topical A, is the only one with an A index. The text layer maps the vowel to Greek ε; the language writes ɛ.",
     "verified": "page-image"
   },
   {

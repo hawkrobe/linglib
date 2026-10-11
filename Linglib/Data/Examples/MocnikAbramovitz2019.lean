@@ -25,7 +25,7 @@ def ex2 : Datum :=
     context := ""
     judgment := .acceptable
     alternatives := [("meʎʎo kivəŋ, kumuqetəŋ", .acceptable)]
-    readings := [("says", .acceptable), ("thinks", .acceptable), ("allows", .acceptable), ("hopes", .acceptable), ("fears", .acceptable), ("knows", .unacceptable), ("imagines", .unacceptable), ("wishes", .unacceptable)]
+    readings := [("says", .acceptable), ("thinks", .acceptable), ("allows", .acceptable), ("hopes", .acceptable), ("fears", .acceptable), ("knows", .ungrammatical), ("imagines", .ungrammatical), ("wishes", .ungrammatical)]
     paperFeatures := [("section", "1")] }
 
 def ex4 : Datum :=

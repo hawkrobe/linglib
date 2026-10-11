@@ -32,7 +32,8 @@
         "lower"
       ]
     ],
-    "comment": "The simpler member: a definite plural with potential for imprecision."
+    "comment": "The simpler member: a definite plural with potential for imprecision.",
+    "verified": "page-image"
   },
   {
     "id": "haslinger2025_ch1_6b",
@@ -67,7 +68,8 @@
         "higher"
       ]
     ],
-    "comment": "The more complex member: not blocked despite its complexity, because it is more precise."
+    "comment": "The more complex member: not blocked despite its complexity, because it is more precise.",
+    "verified": "page-image"
   },
   {
     "id": "haslinger2025_ch1_7a",
@@ -102,7 +104,8 @@
         "lower"
       ]
     ],
-    "comment": "A round bare numeral, imprecise in the right context."
+    "comment": "A round bare numeral, imprecise in the right context.",
+    "verified": "page-image"
   },
   {
     "id": "haslinger2025_ch1_7b",
@@ -137,7 +140,8 @@
         "higher"
       ]
     ],
-    "comment": "The modified numeral: more complex and more precise."
+    "comment": "The modified numeral: more complex and more precise.",
+    "verified": "page-image"
   },
   {
     "id": "haslinger2025_ch1_8a",
@@ -149,9 +153,9 @@
     "primaryText": "[DEF [all doors]] [are open]",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "",
+    "translation": "The doors are open.",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -176,7 +180,8 @@
         "yes"
       ]
     ],
-    "comment": "The hypothetical inverse pattern, an imprecise expression built by adding structure to the precise one: blocked in almost all contexts by No Needless Manner Violations, hence unattested."
+    "comment": "The hypothetical inverse pattern, an imprecise expression built by adding structure to the precise one. Printed without a mark; the prose says No Needless Manner Violations \"would block the use of (8-a) in almost all contexts\", so overt realizations of the pattern are not found.",
+    "verified": "page-image"
   },
   {
     "id": "haslinger2025_ch1_8b",
@@ -188,7 +193,7 @@
     "primaryText": "[all doors] [are open]",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "",
+    "translation": "All the doors are open.",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -215,7 +220,8 @@
         "yes"
       ]
     ],
-    "comment": "The hypothetical inverse pattern's precise member, simpler than its imprecise counterpart."
+    "comment": "The hypothetical inverse pattern's precise member, simpler than its imprecise counterpart.",
+    "verified": "page-image"
   },
   {
     "id": "haslinger2025_ch1_9a",
@@ -250,7 +256,8 @@
         "lower"
       ]
     ],
-    "comment": "A conjunction with a homogeneity gap but no non-maximal reading: potential for imprecision that Inference Preservation blocks."
+    "comment": "A conjunction with a homogeneity gap but no non-maximal reading: potential for imprecision that Inference Preservation blocks.",
+    "verified": "page-image"
   },
   {
     "id": "haslinger2025_ch1_9b",
@@ -285,7 +292,8 @@
         "higher"
       ]
     ],
-    "comment": "The gap-less counterpart, with extra material."
+    "comment": "The gap-less counterpart, with extra material.",
+    "verified": "page-image"
   },
   {
     "id": "haslinger2025_ch2_19",
@@ -320,7 +328,8 @@
         "98"
       ]
     ],
-    "comment": "CARS(EXACT): the salient issue is the tax rate, which separates 98 from 100, so the exact construal is the only relevant one and the utterance is rejected."
+    "comment": "CARS(EXACT): the salient issue is the tax rate, which separates 98 from 100, so the exact construal is the only relevant one and the utterance is rejected.",
+    "verified": "page-image"
   },
   {
     "id": "haslinger2025_ch2_20",
@@ -355,7 +364,8 @@
         "98"
       ]
     ],
-    "comment": "CARS(INEXACT): for the issue of extreme wealth 98 and 100 fall together, and the inexact construal makes the utterance acceptable."
+    "comment": "CARS(INEXACT): for the issue of extreme wealth 98 and 100 fall together, and the inexact construal makes the utterance acceptable.",
+    "verified": "page-image"
   },
   {
     "id": "haslinger2025_ch2_164a",
@@ -368,8 +378,8 @@
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "In this game, everyone collected 200 coins today.",
-    "context": "On a TV game show, there is a game in which participants have to collect 200 coins in a very brief time interval. Participants that achieve a count of exactly 200 win €250. Participants that come very close to that number, but do not meet the goal exactly, receive €50. Today all ten participants managed to collect amounts that come close to 200 (195, 198, 203, 205, 199 etc.) and therefore won €50. After the show, the producer wants to know how the individual games went. Her assistant points at the coins and says:",
-    "judgment": "questionable",
+    "context": "On a TV game show, there is a game in which participants have to collect 200 coins in a very brief time interval. Participants that achieve a count of exactly 200 win €250. Participants that come very close to that number, but do not meet the goal exactly, receive €50. Today all ten participants managed to collect amounts that come close to 200—195, 198, 203, 205, 199 etc.—and therefore won €50. After the show, the producer wants to know how the individual games went. Her assistant points at the coins and says:",
+    "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -386,7 +396,8 @@
         "gameShow"
       ]
     ],
-    "comment": "False on the exact construal, true on the inexact one; most consultants accept exactly one of (164a) and (164b), disagreeing on which, so round numerals show no homogeneity gap."
+    "comment": "False on the exact construal, true on the inexact one; most consultants accept exactly one of (164a) and (164b), disagreeing on which, so round numerals show no homogeneity gap. Printed without a mark; the prose: \"most speakers I consulted accept one of the two sentences and reject the other, although they disagree on which of the two sentences is the true one and some speakers report being unsure about the judgment\".",
+    "verified": "page-image"
   },
   {
     "id": "haslinger2025_ch2_164b",
@@ -399,8 +410,8 @@
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "In this game, nobody collected 200 coins today.",
-    "context": "On a TV game show, there is a game in which participants have to collect 200 coins in a very brief time interval. Participants that achieve a count of exactly 200 win €250. Participants that come very close to that number, but do not meet the goal exactly, receive €50. Today all ten participants managed to collect amounts that come close to 200 (195, 198, 203, 205, 199 etc.) and therefore won €50. After the show, the producer wants to know how the individual games went. Her assistant points at the coins and says:",
-    "judgment": "questionable",
+    "context": "On a TV game show, there is a game in which participants have to collect 200 coins in a very brief time interval. Participants that achieve a count of exactly 200 win €250. Participants that come very close to that number, but do not meet the goal exactly, receive €50. Today all ten participants managed to collect amounts that come close to 200—195, 198, 203, 205, 199 etc.—and therefore won €50. After the show, the producer wants to know how the individual games went. Her assistant points at the coins and says:",
+    "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -417,7 +428,8 @@
         "gameShow"
       ]
     ],
-    "comment": "True on the exact construal, false on the inexact one."
+    "comment": "True on the exact construal, false on the inexact one. Printed without a mark; see (164a) for the prose judgment.",
+    "verified": "page-image"
   },
   {
     "id": "haslinger2025_ch6_8a",
@@ -426,7 +438,7 @@
       "paperLabel": "Ch. 6, (8a)"
     },
     "language": "stan1293",
-    "primaryText": "150",
+    "primaryText": "The shirt cost 150 euros.",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
@@ -448,7 +460,8 @@
         "tens"
       ]
     ],
-    "comment": "A numeral on the conventionalized scale of tens, which permits imprecision."
+    "comment": "A numeral on the conventionalized scale of tens, which permits imprecision: printed with ✓ EXACT, ✓ INEXACT.",
+    "verified": "page-image"
   },
   {
     "id": "haslinger2025_ch6_8b",
@@ -457,7 +470,7 @@
       "paperLabel": "Ch. 6, (8b)"
     },
     "language": "stan1293",
-    "primaryText": "152",
+    "primaryText": "The shirt cost 152 euros.",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
@@ -479,7 +492,8 @@
         "units"
       ]
     ],
-    "comment": "A numeral off that scale, whose alternatives include 150: no imprecision."
+    "comment": "A numeral off that scale, whose alternatives include 150: printed with ✓ EXACT, × INEXACT.",
+    "verified": "page-image"
   },
   {
     "id": "haslinger2025_ch6_9a",
@@ -510,7 +524,8 @@
         "quarterHours"
       ]
     ],
-    "comment": "A clock time on the quarter-hour scale: acceptable exact and inexact."
+    "comment": "A clock time on the quarter-hour scale: acceptable exact and inexact.",
+    "verified": "page-image"
   },
   {
     "id": "haslinger2025_ch6_9b",
@@ -541,7 +556,8 @@
         "minutes"
       ]
     ],
-    "comment": "A clock time off that scale: acceptable exact, unacceptable inexact."
+    "comment": "A clock time off that scale: acceptable exact, unacceptable inexact.",
+    "verified": "page-image"
   },
   {
     "id": "haslinger2025_ch7_19b",
@@ -573,6 +589,7 @@
         "conjunctionMaximality"
       ]
     ],
-    "comment": "The precise truth conditions entail each conjunct alternative, so Inference Preservation admits only the maximal construal."
+    "comment": "The precise truth conditions entail each conjunct alternative, so Inference Preservation admits only the maximal construal.",
+    "verified": "page-image"
   }
 ]

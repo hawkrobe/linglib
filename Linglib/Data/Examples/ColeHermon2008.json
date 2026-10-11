@@ -22,7 +22,8 @@
       ["extracted", "patient"],
       ["wh", "fronted"]
     ],
-    "comment": "Repeated as (86) in the argument for the VOS Hypothesis."
+    "comment": "Repeated as (86) in the argument for the VOS Hypothesis.",
+    "verified": "page-image"
   },
   {
     "id": "colehermon2008_ex7b",
@@ -46,7 +47,8 @@
       ["extracted", "patient"],
       ["wh", "inSitu"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "colehermon2008_ex8a",
@@ -71,7 +73,8 @@
       ["extracted", "agent"],
       ["wh", "fronted"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "colehermon2008_ex8b",
@@ -96,7 +99,8 @@
       ["extracted", "agent"],
       ["wh", "inSitu"]
     ],
-    "comment": "The goal precedes the pivot: the marked V-Ag-IO-S order of (14)."
+    "comment": "The goal precedes the pivot: the marked V-Ag-IO-S order of (14).",
+    "verified": "page-image"
   },
   {
     "id": "colehermon2008_ex9",
@@ -121,7 +125,8 @@
       ["extracted", "goal"],
       ["wh", "fronted"]
     ],
-    "comment": "Repeated as (45)."
+    "comment": "Repeated as (45).",
+    "verified": "page-image"
   },
   {
     "id": "colehermon2008_ex10",
@@ -146,7 +151,8 @@
       ["extracted", "goal"],
       ["wh", "fronted"]
     ],
-    "comment": "Repeated as (46)."
+    "comment": "Repeated as (46).",
+    "verified": "page-image"
   },
   {
     "id": "colehermon2008_ex17",
@@ -170,7 +176,8 @@
       ["reflexive", "patient"],
       ["tableOne", "A"]
     ],
-    "comment": "Table 1, Type A: fully acceptable for all speakers."
+    "comment": "Table 1, Type A: fully acceptable for all speakers.",
+    "verified": "page-image"
   },
   {
     "id": "colehermon2008_ex21",
@@ -194,7 +201,8 @@
       ["reflexive", "agent"],
       ["tableOne", "C"]
     ],
-    "comment": "Table 1, Type C: not acceptable for any speakers. The active prefix is null on this verb (fn. 5)."
+    "comment": "Table 1, Type C: not acceptable for any speakers. The active prefix is null on this verb (fn. 5).",
+    "verified": "page-image"
   },
   {
     "id": "colehermon2008_ex37",
@@ -218,7 +226,8 @@
       ["reflexive", "agent"],
       ["tableOne", "B"]
     ],
-    "comment": "Table 1, Type B: acceptable, not the most usual way to express the sentence; marked ungrammatical by Schachter and Sugamoto."
+    "comment": "Table 1, Type B: acceptable, not the most usual way to express the sentence; marked ungrammatical by Schachter and Sugamoto.",
+    "verified": "page-image"
   },
   {
     "id": "colehermon2008_ex43",
@@ -242,7 +251,8 @@
       ["extracted", "patient"],
       ["wh", "fronted"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "colehermon2008_ex44",
@@ -266,7 +276,8 @@
       ["extracted", "patient"],
       ["wh", "inSitu"]
     ],
-    "comment": "The paper's gloss line reads act-see; the translation and (43) have 'hit'."
+    "comment": "The paper's gloss line reads act-see; the translation and (43) have 'hit'.",
+    "verified": "page-image"
   },
   {
     "id": "colehermon2008_ex62",
@@ -290,7 +301,8 @@
       ["reflexive", "patient"],
       ["tableOne", "A"]
     ],
-    "comment": "Derived in (63)–(65)."
+    "comment": "Derived in (63)–(65).",
+    "verified": "page-image"
   },
   {
     "id": "colehermon2008_ex66",
@@ -314,7 +326,8 @@
       ["reflexive", "agent"],
       ["tableOne", "C"]
     ],
-    "comment": "A Condition A violation, not the apparent Condition C violation (fn. 29)."
+    "comment": "A Condition A violation, not the apparent Condition C violation (fn. 29).",
+    "verified": "page-image"
   },
   {
     "id": "colehermon2008_ex67",
@@ -338,7 +351,8 @@
       ["reflexive", "patient"],
       ["tableOne", "A"]
     ],
-    "comment": "(27) and (36) in simplified form; derived in (72)–(74). The two reflexive forms do not differ here (fn. 30)."
+    "comment": "(27) and (36) in simplified form; derived in (72)–(74). The two reflexive forms do not differ here (fn. 30). The page prints dirina (sandiri); this row takes the variant with sandiri.",
+    "verified": "page-image"
   },
   {
     "id": "colehermon2008_ex68",
@@ -362,7 +376,8 @@
       ["reflexive", "agent"],
       ["tableOne", "B"]
     ],
-    "comment": "(38) in simplified form; derived in (75)–(77). Table 1, Type B."
+    "comment": "(38) in simplified form; derived in (75)–(77). Table 1, Type B. The page prints [dirina (sandiri)]; this row takes the variant with sandiri.",
+    "verified": "page-image"
   },
   {
     "id": "colehermon2008_ex85",
@@ -387,7 +402,8 @@
       ["extracted", "patient"],
       ["wh", "inSitu"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "colehermon2008_ex87",
@@ -411,7 +427,8 @@
       ["extracted", "agent"],
       ["wh", "inSitu"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "colehermon2008_ex88",
@@ -435,7 +452,8 @@
       ["extracted", "agent"],
       ["wh", "fronted"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "colehermon2008_ex95",
@@ -455,7 +473,8 @@
       ["antecedent", "patient"],
       ["reflexive", "agent"]
     ],
-    "comment": "Repeats (25); derived in (97)–(98)."
+    "comment": "Repeats (25); derived in (97)–(98).",
+    "verified": "page-image"
   },
   {
     "id": "colehermon2008_ex96",
@@ -475,6 +494,7 @@
       ["antecedent", "agent"],
       ["reflexive", "patient"]
     ],
-    "comment": "Repeats (26); derived in (99)–(100)."
+    "comment": "Repeats (26); derived in (99)–(100).",
+    "verified": "page-image"
   }
 ]

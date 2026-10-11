@@ -36,7 +36,8 @@
         "ok"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "jenks2018_10b",
@@ -79,7 +80,8 @@
         "bad"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "jenks2018_11a",
@@ -118,7 +120,8 @@
         "ok"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "jenks2018_11b",
@@ -157,7 +160,8 @@
         "ok"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "jenks2018_14a",
@@ -196,7 +200,8 @@
         "ok"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "jenks2018_14b",
@@ -239,7 +244,8 @@
         "ok"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "jenks2018_15b",
@@ -282,7 +288,8 @@
         "ok"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "jenks2018_15c",
@@ -325,7 +332,8 @@
         "ok"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "jenks2018_15d",
@@ -368,7 +376,8 @@
         "ok"
       ]
     ],
-    "comment": "Most speakers prefer the demonstrative."
+    "comment": "Most speakers prefer the demonstrative.",
+    "verified": "page-image"
   },
   {
     "id": "jenks2018_15e",
@@ -411,7 +420,8 @@
         "ok"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "jenks2018_16b",
@@ -450,7 +460,8 @@
         "ok"
       ]
     ],
-    "comment": "Anaphoric reference de dicto to the woman of (16a)."
+    "comment": "Anaphoric reference de dicto to the woman of (16a).",
+    "verified": "page-image"
   },
   {
     "id": "jenks2018_16c",
@@ -489,7 +500,8 @@
         "bad"
       ]
     ],
-    "comment": "The bare noun receives only an indefinite interpretation."
+    "comment": "The bare noun receives only an indefinite interpretation.",
+    "verified": "page-image"
   },
   {
     "id": "jenks2018_18b",
@@ -528,7 +540,8 @@
         "ok"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "jenks2018_19",
@@ -537,12 +550,12 @@
       "paperLabel": "(19)"
     },
     "language": "mand1415",
-    "primaryText": "#Ni jiao shei jinlai, wo dou jian ren.",
+    "primaryText": "Ni jiao shei jinlai, wo dou jian ren.",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "Whoever you ask to enter, I will see a person.",
     "context": "",
-    "judgment": "acceptable",
+    "judgment": "unacceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -567,7 +580,8 @@
         "bad"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "jenks2018_20",
@@ -610,7 +624,8 @@
         "ok"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "jenks2018_49",
@@ -653,7 +668,8 @@
         "bad"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "jenks2018_51B",
@@ -696,7 +712,8 @@
         "ok"
       ]
     ],
-    "comment": "The mouse, not the cat, is the topic of A's question."
+    "comment": "The mouse, not the cat, is the topic of A's question.",
+    "verified": "page-image"
   },
   {
     "id": "jenks2018_51Bp",
@@ -739,7 +756,8 @@
         "ok"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "jenks2018_52b",
@@ -782,7 +800,8 @@
         "ok"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "jenks2018_53",
@@ -821,7 +840,8 @@
         "ok"
       ]
     ],
-    "comment": "The contrastive topic marker ne makes the topic a continuing one."
+    "comment": "The contrastive topic marker ne makes the topic a continuing one.",
+    "verified": "page-image"
   },
   {
     "id": "jenks2018_54a",
@@ -860,7 +880,8 @@
         "ok"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "jenks2018_54b",
@@ -899,7 +920,8 @@
         "ok"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "jenks2018_55b",
@@ -938,7 +960,8 @@
         "ok"
       ]
     ],
-    "comment": "The demonstrative go2 is infelicitous here; the marked form is [Clf-N]."
+    "comment": "The demonstrative go2 is infelicitous here; the marked form is [Clf-N].",
+    "verified": "page-image"
   },
   {
     "id": "jenks2018_56",
@@ -977,6 +1000,7 @@
         "ok"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   }
 ]

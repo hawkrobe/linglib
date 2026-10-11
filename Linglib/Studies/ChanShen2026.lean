@@ -9,31 +9,29 @@ public import Linglib.Syntax.Minimalist.SyntacticObject.Locality
 /-!
 # Chan and Shen (2026): Conditions on *wh-the-hell* licensing
 
-A Singlish single wh-question fronts its wh-phrase, moves it to an intermediate Spec-CP, or
-leaves it in situ, and [chan-shen-2026]'s acceptability experiment, a pair of 2×2 designs in
-the manner of [sprouse-et-al-2012], finds that *the-hell* survives the first two and not the
-third: the in-situ comparison shows the superadditive interaction of a penalty, the
-partial-movement one only additive costs. This follows from two independent pieces.
-*The-hell* carries an unvalued point-of-view feature checked against the operator in matrix
-C, which ascribes its negative attitude (surprise, ignorance, doubt of every answer:
-[pesetsky-1987], [martin-2020], [rawlins-2008], [ippolito-2024]) to the speaker
-([chou-2012]); and as a modifier adjoined to the wh-head it moves only with the wh-phrase
-([merchant-2002]). The three strategies are three structures (7), (14), (8), each a chain of
-copies of the wh-phrase: full movement pronounces the top of the chain in matrix Spec-CP;
-partial movement pronounces a copy in the intermediate Spec-CP below a deleted one there, the
-covert second step; and an in-situ wh-phrase is bound unselectively, a single copy that never
-leaves ([sato-ngui-2017]). *The-hell* is licensed exactly when the top of its host's chain is
-matrix Spec-CP. Islands constrain the links of a chain, so extraction from a complex NP fails
-under full and partial movement and not in situ ((11), (15), with [cole-hermon-1998]'s Malay);
-covert movement of the in-situ wh-phrase ([huang-1982]), a deleted copy in matrix Spec-CP over
-the pronounced one, would cross the island and license *the-hell* in situ, against (11b) and
-(4d). Mandarin *daodi* moves on its own and so tolerates an in-situ host.
+A Singlish single wh-question fronts its wh-phrase, moves it to an intermediate Spec-CP, or leaves
+it in situ, and Chan and Shen's acceptability experiment, a pair of 2×2 designs in the manner of
+Sprouse et al., finds that *the-hell* survives the first two and not the third: the in-situ
+comparison shows the superadditive interaction of a penalty, the partial-movement one only additive
+costs. This follows from two independent pieces. *The-hell* carries an unvalued point-of-view
+feature checked against the operator in matrix C, which ascribes its negative attitude (surprise,
+ignorance, doubt of every answer) to the speaker, after Chou; and as a modifier adjoined to the
+wh-head it moves only with the wh-phrase, after Merchant. The three strategies are three structures
+(7), (14), (8), each a chain of copies of the wh-phrase: full movement pronounces the top of the
+chain in matrix Spec-CP; partial movement pronounces a copy in the intermediate Spec-CP below a
+deleted one there, the covert second step; and an in-situ wh-phrase is bound unselectively, a single
+copy that never leaves, after Sato and Ngui. *The-hell* is licensed exactly when the top of its
+host's chain is matrix Spec-CP. Islands constrain the links of a chain, so extraction from a complex
+NP fails under full and partial movement and not in situ ((11), (15), and the Malay pattern Cole and
+Hermon observe); covert movement of the in-situ wh-phrase in Huang's sense, a deleted copy in matrix
+Spec-CP over the pronounced one, would cross the island and license *the-hell* in situ, against
+(11b) and (4d). Mandarin *daodi* moves on its own and so tolerates an in-situ host.
 
-The intervention account of [den-dikken-giannakidou-2002] licenses *the-hell* in the
-immediate scope of the question operator ([linebarger-1987]) and so admits Singlish in-situ
-questions, where nothing intervenes; the attitude-phrase account of [vu-lohiniva-2020], after
-[huang-ochi-2004], base-generates *the-hell* in the matrix clause and so cannot generate the
-partial-movement order. The paper's Table 5 is the three accounts against the data.
+The intervention account of den Dikken and Giannakidou licenses *the-hell* in the immediate scope of
+the question operator, after Linebarger, and so admits Singlish in-situ questions, where nothing
+intervenes; the attitude-phrase account of Vu and Lohiniva, after Huang and Ochi, base-generates
+*the-hell* in the matrix clause and so cannot generate the partial-movement order. The paper's Table
+5 is the three accounts against the data.
 
 ## Implementation notes
 
@@ -259,7 +257,7 @@ theorem covert_mispredicts :
     (∃ t ∈ structureOf covert Examples.ex11b, CrossesIsland t) ∧
       Examples.ex11b.judgment = .acceptable ∧
       (∃ m ∈ modifierOf Examples.ex4d, ∃ h ∈ hostOf covert Examples.ex4d, Licensed m h) ∧
-      Examples.ex4d.judgment = .unacceptable := by
+      Examples.ex4d.judgment = .ungrammatical := by
   decide
 
 /-- Intervention is right except on the in-situ single questions ((4d), (22b)): nothing

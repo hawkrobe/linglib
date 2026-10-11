@@ -18,7 +18,8 @@
     "paperFeatures": [
       ["section", "2.3"]
     ],
-    "comment": "Both scopes are derived by covert movement of the two ⟨eit,it⟩ phrases, triggered by the optional i features on little v and ordered by Scope Economy; (21) gives the inverse and (23) the surface truth conditions."
+    "comment": "Both scopes are derived by covert movement of the two ⟨eit,it⟩ phrases, triggered by the optional i features on little v and ordered by Scope Economy; (21) gives the inverse and (23) the surface truth conditions.",
+    "verified": "page-image"
   },
   {
     "id": "elbourne2026_28",
@@ -38,7 +39,8 @@
       ["entry", "cute"],
       ["position", "predicative"]
     ],
-    "comment": "The copula [BE PAST] takes the adjective without its optional E_R feature; the truth conditions (30) are that Fido was cute at some earlier time."
+    "comment": "The copula [BE PAST] takes the adjective without its optional E_R feature; the truth conditions (30) are that Fido was cute at some earlier time.",
+    "verified": "page-image"
   },
   {
     "id": "elbourne2026_31",
@@ -56,7 +58,8 @@
     "paperFeatures": [
       ["section", "3.2"]
     ],
-    "comment": "The indefinite article has a second meaning (32) that turns the noun into something of the adjective's type, so that the copula can take a dog as its argument; Montague's is of identity is the alternative."
+    "comment": "The indefinite article has a second meaning (32) that turns the noun into something of the adjective's type, so that the copula can take a dog as its argument; Montague's is of identity is the alternative.",
+    "verified": "page-image"
   },
   {
     "id": "elbourne2026_36",
@@ -76,7 +79,8 @@
       ["entry", "former"],
       ["position", "predicative"]
     ],
-    "comment": "Predicted by the null-noun ENTITY analysis to mean that Joe is a former entity. Excluded here twice over: the article cannot combine with something of type ⟨eit,eit⟩, and former bears a compulsory E_R feature."
+    "comment": "Predicted by the null-noun ENTITY analysis to mean that Joe is a former entity. Excluded here twice over: the article cannot combine with something of type ⟨eit,eit⟩, and former bears a compulsory E_R feature.",
+    "verified": "page-image"
   },
   {
     "id": "elbourne2026_37",
@@ -94,7 +98,8 @@
     "paperFeatures": [
       ["section", "3.2"]
     ],
-    "comment": "Predicted by the null-noun analysis to mean that every red individual is attractive. Excluded because every, of type ⟨eit,⟨eit,it⟩⟩, cannot combine with red, of type ⟨eit,eit⟩."
+    "comment": "Predicted by the null-noun analysis to mean that every red individual is attractive. Excluded because every, of type ⟨eit,⟨eit,it⟩⟩, cannot combine with red, of type ⟨eit,eit⟩.",
+    "verified": "page-image"
   },
   {
     "id": "elbourne2026_42",
@@ -114,7 +119,8 @@
       ["entry", "former"],
       ["position", "predicative"]
     ],
-    "comment": "The types work out, so the exclusion is syntactic: former, like mere, bears a compulsory E_R feature, and Argument Interpretability keeps the copula from selecting it."
+    "comment": "The types work out, so the exclusion is syntactic: former, like mere, bears a compulsory E_R feature, and Argument Interpretability keeps the copula from selecting it.",
+    "verified": "page-image"
   },
   {
     "id": "elbourne2026_43",
@@ -137,7 +143,8 @@
     "paperFeatures": [
       ["section", "3.3"]
     ],
-    "comment": "Quang is said to be short for a man, not short for a Vietnamese person: the comparison class of a merely subsective adjective is supplied by the context, which either theory can do."
+    "comment": "Quang is said to be short for a man, not short for a Vietnamese person: the comparison class of a merely subsective adjective is supplied by the context, which either theory can do.",
+    "verified": "page-image"
   },
   {
     "id": "elbourne2026_45",
@@ -157,7 +164,8 @@
       ["entry", "former"],
       ["position", "attributive"]
     ],
-    "comment": "The truth conditions (46): at some earlier time John was not a judge but had been one before that; both conditions are asserted."
+    "comment": "The truth conditions (46): at some earlier time John was not a judge but had been one before that; both conditions are asserted.",
+    "verified": "page-image"
   },
   {
     "id": "elbourne2026_47",
@@ -177,7 +185,8 @@
     "paperFeatures": [
       ["section", "3.5"]
     ],
-    "comment": "The index on local is referential."
+    "comment": "The index on local is referential.",
+    "verified": "page-image"
   },
   {
     "id": "elbourne2026_48",
@@ -197,7 +206,8 @@
     "paperFeatures": [
       ["section", "3.5"]
     ],
-    "comment": "The index on local is bound by the quantifier; the example is the one discussed for relational adjectives by Mitchell and Partee."
+    "comment": "The index on local is bound by the quantifier; the example is the one discussed for relational adjectives by Mitchell and Partee.",
+    "verified": "page-image"
   },
   {
     "id": "elbourne2026_49",
@@ -215,7 +225,8 @@
     "paperFeatures": [
       ["section", "3.5"]
     ],
-    "comment": "The relatum is overt but needs the preposition to, which other relational adjectives vary (close to, remote from), so the preposition is plausibly contentful and local does not take an internal argument."
+    "comment": "The relatum is overt but needs the preposition to, which other relational adjectives vary (close to, remote from), so the preposition is plausibly contentful and local does not take an internal argument.",
+    "verified": "page-image"
   },
   {
     "id": "elbourne2026_55",
@@ -235,11 +246,12 @@
     "paperFeatures": [
       ["section", "3.5"]
     ],
-    "comment": "A simplified (48): the raised everyone binds the index on local, giving the truth conditions (58)."
+    "comment": "A simplified (48): the raised everyone binds the index on local, giving the truth conditions (58).",
+    "verified": "page-image"
   },
   {
     "id": "elbourne2026_64_long",
-    "source": {"bibkey": "morzycki-2015", "paperLabel": "p. 30"},
+    "source": {"bibkey": "morzycki-2015", "paperLabel": "ch. 2, (48)"},
     "reportedIn": {"bibkey": "elbourne-2026", "paperLabel": "(64)"},
     "language": "russ1263",
     "primaryText": "Zimnie noči budut dolgimi.",
@@ -257,11 +269,12 @@
       ["entry", "long form"],
       ["position", "predicative"]
     ],
-    "comment": "The long form in predicative position."
+    "comment": "The long form in predicative position.",
+    "verified": "page-image"
   },
   {
     "id": "elbourne2026_64_short",
-    "source": {"bibkey": "morzycki-2015", "paperLabel": "p. 30"},
+    "source": {"bibkey": "morzycki-2015", "paperLabel": "ch. 2, (48)"},
     "reportedIn": {"bibkey": "elbourne-2026", "paperLabel": "(64)"},
     "language": "russ1263",
     "primaryText": "Zimnie noči budut dolgi.",
@@ -279,11 +292,12 @@
       ["entry", "short form"],
       ["position", "predicative"]
     ],
-    "comment": "The short form in predicative position."
+    "comment": "The short form in predicative position.",
+    "verified": "page-image"
   },
   {
     "id": "elbourne2026_65a",
-    "source": {"bibkey": "morzycki-2015", "paperLabel": "p. 30"},
+    "source": {"bibkey": "morzycki-2015", "paperLabel": "ch. 2, (46a)"},
     "reportedIn": {"bibkey": "elbourne-2026", "paperLabel": "(65a)"},
     "language": "russ1263",
     "primaryText": "xorošaja teorija",
@@ -301,11 +315,12 @@
       ["entry", "long form"],
       ["position", "attributive"]
     ],
-    "comment": "The long form in attributive position."
+    "comment": "The long form in attributive position.",
+    "verified": "page-image"
   },
   {
     "id": "elbourne2026_65b",
-    "source": {"bibkey": "morzycki-2015", "paperLabel": "p. 30"},
+    "source": {"bibkey": "morzycki-2015", "paperLabel": "ch. 2, (46b)"},
     "reportedIn": {"bibkey": "elbourne-2026", "paperLabel": "(65b)"},
     "language": "russ1263",
     "primaryText": "xoroša teorija",
@@ -323,7 +338,8 @@
       ["entry", "short form"],
       ["position", "attributive"]
     ],
-    "comment": "The short form cannot appear in attributive position: on the present theory it has no E_R or E_L feature with which to take a noun."
+    "comment": "The short form cannot appear in attributive position: on the present theory it has no E_R or E_L feature with which to take a noun.",
+    "verified": "page-image"
   },
   {
     "id": "elbourne2026_82",
@@ -344,7 +360,8 @@
     "paperFeatures": [
       ["section", "4.4"]
     ],
-    "comment": "On the ⟨et,et⟩ theory the ambiguity is within one type, not between types."
+    "comment": "On the ⟨et,et⟩ theory the ambiguity is within one type, not between types.",
+    "verified": "page-image"
   },
   {
     "id": "elbourne2026_83",
@@ -364,7 +381,8 @@
     "paperFeatures": [
       ["section", "4.4"]
     ],
-    "comment": "The second sentence just says that Olga is beautiful, there being different ways of being beautiful; it can contradict someone who calls Olga ugly."
+    "comment": "The second sentence just says that Olga is beautiful, there being different ways of being beautiful; it can contradict someone who calls Olga ugly.",
+    "verified": "page-image"
   },
   {
     "id": "elbourne2026_92a",
@@ -386,7 +404,8 @@
     "paperFeatures": [
       ["section", "4.4"]
     ],
-    "comment": "jove takes presumpte assassí as its argument and intersects: the youth is asserted."
+    "comment": "jove takes presumpte assassí as its argument and intersects: the youth is asserted.",
+    "verified": "page-image"
   },
   {
     "id": "elbourne2026_92b",
@@ -408,7 +427,8 @@
     "paperFeatures": [
       ["section", "4.4"]
     ],
-    "comment": "jove is in the scope of presumpte, so there is no commitment to youth; the difference from (92a) is one of scope, not of type."
+    "comment": "jove is in the scope of presumpte, so there is no commitment to youth; the difference from (92a) is one of scope, not of type.",
+    "verified": "page-image"
   },
   {
     "id": "elbourne2026_93",
@@ -429,7 +449,8 @@
     "paperFeatures": [
       ["section", "4.5"]
     ],
-    "comment": "Prenominal position; the occasion reading is the one Kennedy adds."
+    "comment": "Prenominal position; the occasion reading is the one Kennedy adds.",
+    "verified": "page-image"
   },
   {
     "id": "elbourne2026_94",
@@ -450,7 +471,8 @@
     "paperFeatures": [
       ["section", "4.5"]
     ],
-    "comment": "Postnominal position has only the occasion reading; the ⟨et,et⟩ theory can build the structural difference in with E_L and E_R features."
+    "comment": "Postnominal position has only the occasion reading; the ⟨et,et⟩ theory can build the structural difference in with E_L and E_R features.",
+    "verified": "page-image"
   },
   {
     "id": "elbourne2026_101",
@@ -468,7 +490,8 @@
     "paperFeatures": [
       ["section", "4.6"]
     ],
-    "comment": "A non-gradable adjective does not enter degree constructions, so if gradable adjectives take degree arguments there would be two adjective types; the positive morpheme returns the gradable ones to ⟨eit,eit⟩."
+    "comment": "A non-gradable adjective does not enter degree constructions, so if gradable adjectives take degree arguments there would be two adjective types; the positive morpheme returns the gradable ones to ⟨eit,eit⟩.",
+    "verified": "page-image"
   },
   {
     "id": "elbourne2026_105",
@@ -489,6 +512,7 @@
     "paperFeatures": [
       ["section", "5"]
     ],
-    "comment": "Adjective ordering is regulated by semantic classes (evaluative before size before colour before material), a syntactic phenomenon governed by semantic categories."
+    "comment": "Adjective ordering is regulated by semantic classes (evaluative before size before colour before material), a syntactic phenomenon governed by semantic categories.",
+    "verified": "page-image"
   }
 ]

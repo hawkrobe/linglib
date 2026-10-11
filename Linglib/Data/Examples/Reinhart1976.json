@@ -9,16 +9,17 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "acceptable",
     "alternatives": [],
-    "readings": [],
+    "readings": [{"name": "coreference", "judgment": "unacceptable"}],
     "paperFeatures": [
       ["structure", "denied"],
       ["np1", "0"],
       ["np2", "110"],
       ["pronouns", "none"]
     ],
-    "comment": ""
+    "comment": "Printed unmarked among the four sentences the rules generate (p. 14); the prose judges coreference: 'coreference is only possible in (11c) and (11d)'.",
+    "verified": "page-image"
   },
   {
     "id": "reinhart1976_11b",
@@ -30,16 +31,17 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "acceptable",
     "alternatives": [],
-    "readings": [],
+    "readings": [{"name": "coreference", "judgment": "unacceptable"}],
     "paperFeatures": [
       ["structure", "denied"],
       ["np1", "0"],
       ["np2", "110"],
       ["pronouns", "np1"]
     ],
-    "comment": ""
+    "comment": "Printed unmarked among the four sentences the rules generate (p. 14); the prose judges coreference: 'coreference is only possible in (11c) and (11d)'.",
+    "verified": "page-image"
   },
   {
     "id": "reinhart1976_11c",
@@ -60,7 +62,8 @@
       ["np2", "110"],
       ["pronouns", "np2"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "reinhart1976_11d",
@@ -81,7 +84,8 @@
       ["np2", "110"],
       ["pronouns", "both"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "reinhart1976_IIa",
@@ -102,7 +106,8 @@
       ["np2", "110"],
       ["pronouns", "np2"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "reinhart1976_IIb",
@@ -123,7 +128,8 @@
       ["np2", "110"],
       ["pronouns", "np1"]
     ],
-    "comment": "repeated as (3)"
+    "comment": "repeated as (3)",
+    "verified": "page-image"
   },
   {
     "id": "reinhart1976_12a",
@@ -144,7 +150,8 @@
       ["np2", "11"],
       ["pronouns", "np2"]
     ],
-    "comment": "from Lasnik (1976)"
+    "comment": "from Lasnik (1976)",
+    "verified": "page-image"
   },
   {
     "id": "reinhart1976_12b",
@@ -165,7 +172,8 @@
       ["np2", "11"],
       ["pronouns", "np1"]
     ],
-    "comment": "from Lasnik (1976)"
+    "comment": "from Lasnik (1976)",
+    "verified": "page-image"
   },
   {
     "id": "reinhart1976_12c",
@@ -186,7 +194,8 @@
       ["np2", "11"],
       ["pronouns", "none"]
     ],
-    "comment": "from Lasnik (1976); marginal for some speakers, but not blocked, unlike (11a)"
+    "comment": "from Lasnik (1976); marginal for some speakers, but not blocked, unlike (11a)",
+    "verified": "page-image"
   },
   {
     "id": "reinhart1976_43a",
@@ -198,7 +207,7 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -207,7 +216,8 @@
       ["np2", "1"],
       ["pronouns", "np2"]
     ],
-    "comment": "repeated from (20a)"
+    "comment": "repeated from (20a)",
+    "verified": "page-image"
   },
   {
     "id": "reinhart1976_43b",
@@ -219,7 +229,7 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -228,7 +238,8 @@
       ["np2", "1"],
       ["pronouns", "none"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "reinhart1976_45",
@@ -249,7 +260,8 @@
       ["np2", "1"],
       ["pronouns", "np1"]
     ],
-    "comment": "repeated from (18a)"
+    "comment": "repeated from (18a)",
+    "verified": "page-image"
   },
   {
     "id": "reinhart1976_47",
@@ -270,7 +282,8 @@
       ["np2", "21"],
       ["pronouns", "np2"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "reinhart1976_44a",
@@ -282,7 +295,7 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -291,7 +304,8 @@
       ["np2", "2100"],
       ["pronouns", "np1"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "reinhart1976_44b",
@@ -303,7 +317,7 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -312,7 +326,8 @@
       ["np2", "2100"],
       ["pronouns", "none"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "reinhart1976_46",
@@ -333,7 +348,8 @@
       ["np2", "2100"],
       ["pronouns", "np1"]
     ],
-    "comment": "repeated from (19b)"
+    "comment": "(19b) without its two occurrences of finally",
+    "verified": "page-image"
   },
   {
     "id": "reinhart1976_48a",
@@ -345,7 +361,7 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -354,7 +370,8 @@
       ["np2", "11310"],
       ["pronouns", "np1"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "reinhart1976_51a",
@@ -375,7 +392,8 @@
       ["np2", "11"],
       ["pronouns", "np1"]
     ],
-    "comment": "from Ed Keenan, personal communication"
+    "comment": "from Ed Keenan, personal communication",
+    "verified": "page-image"
   },
   {
     "id": "reinhart1976_51b",
@@ -387,7 +405,7 @@
     "glossedTokens": [],
     "translation": "he killed Rakoto's sister.",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -396,6 +414,7 @@
       ["np2", "1"],
       ["pronouns", "np2"]
     ],
-    "comment": "from Ed Keenan, personal communication"
+    "comment": "from Ed Keenan, personal communication",
+    "verified": "page-image"
   }
 ]

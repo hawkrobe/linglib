@@ -103,8 +103,8 @@ def ex_14a : Datum :=
     context := "1586, Sidney, Apologie for Poetrie."
     judgment := .acceptable
     alternatives := []
-    readings := [("partitive: a small part or exemplar of a logician", .acceptable), ("degree modifier: somewhat of a logician", .acceptable)]
-    paperFeatures := [("item", "a piece of"), ("stage", "III Degree Modifier"), ("level", "subjective")] }
+    readings := [("partitive: a small part or exemplar of a logician", .acceptable), ("quantifier: a logician to a certain degree, somewhat of a logician", .acceptable)]
+    paperFeatures := [("item", "a piece of"), ("stage", "III Quantifier"), ("level", "subjective")] }
 
 def ex_16a : Datum :=
   { id := "traugott2010_16a"
@@ -156,7 +156,7 @@ def ex_19a : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("item", "a bit of"), ("stage", "III Degree Modifier"), ("level", "subjective"), ("pragmatic", "intersubjective hedge")] }
+    paperFeatures := [("item", "a bit of"), ("stage", "III Quantifier"), ("level", "subjective"), ("pragmatic", "intersubjective hedge")] }
 
 def ex_20 : Datum :=
   { id := "traugott2010_20"
@@ -192,10 +192,10 @@ def ex_22 : Datum :=
     primaryText := "Your friend is a bit of a beauty."
     glossedTokens := []
     context := ""
-    judgment := .questionable
+    judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("item", "a bit of"), ("stage", "III Degree Modifier"), ("head", "positively evaluated")] }
+    paperFeatures := [("item", "a bit of"), ("stage", "III Quantifier"), ("head", "positively evaluated")] }
 
 def ex_23 : Datum :=
   { id := "traugott2010_23"
@@ -228,13 +228,13 @@ def ex_25a : Datum :=
     source := ⟨"traugott-2010", "(25a)"⟩
     reportedIn := none
     language := "stan1293"
-    primaryText := "Loto has not a shred of beauty."
+    primaryText := "Loto has not a shred of beauty. She is a big, angular, raw-boned Normande, with a rough voice, and a villainous patois"
     glossedTokens := []
     context := "1867, Ouida, Under Two Flags."
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("item", "a shred of"), ("stage", "III Degree Modifier"), ("level", "subjective"), ("polarity", "negative")] }
+    paperFeatures := [("item", "a shred of"), ("stage", "III Quantifier"), ("level", "subjective"), ("polarity", "negative")] }
 
 def all : List Datum := [ex_5a, ex_5b, ex_5c, ex_6, ex_12a, ex_13a, ex_14a, ex_16a, ex_17, ex_18a, ex_19a, ex_20, ex_21b, ex_22, ex_23, ex_24b, ex_25a]
 

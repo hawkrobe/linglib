@@ -18,7 +18,8 @@
       ["predicate", "date"],
       ["property", "symmetric"]
     ],
-    "comment": "A symmetric binary predicate: the two orders are equivalent."
+    "comment": "A symmetric binary predicate: the two orders are equivalent.",
+    "verified": "page-image"
   },
   {
     "id": "winter2018_2",
@@ -37,7 +38,8 @@
       ["predicate", "date"],
       ["alternation", "plain"]
     ],
-    "comment": "The collective alternate of (1a), a plain reciprocal."
+    "comment": "The collective alternate of (1a), a plain reciprocal.",
+    "verified": "page-image"
   },
   {
     "id": "winter2018_3",
@@ -56,7 +58,8 @@
       ["predicate", "hug"],
       ["alternation", "non-plain"]
     ],
-    "comment": "The collective alternate of a non-symmetric binary predicate."
+    "comment": "The collective alternate of a non-symmetric binary predicate.",
+    "verified": "page-image"
   },
   {
     "id": "winter2018_4",
@@ -75,7 +78,8 @@
       ["predicate", "hug"],
       ["inference", "does not entail Sue and Dan hugged"]
     ],
-    "comment": "Two unidirectional hugs at different times do not make a collective hug."
+    "comment": "Two unidirectional hugs at different times do not make a collective hug.",
+    "verified": "page-image"
   },
   {
     "id": "winter2018_5",
@@ -94,7 +98,8 @@
       ["predicate", "agree"],
       ["inference", "one shared opinion"]
     ],
-    "comment": "The collective is stronger than pairwise binary predications: the members share one opinion."
+    "comment": "The collective is stronger than pairwise binary predications: the members share one opinion.",
+    "verified": "page-image"
   },
   {
     "id": "winter2018_6",
@@ -113,7 +118,8 @@
       ["predicate", "agree"],
       ["inference", "possibly three opinions"]
     ],
-    "comment": "Pairwise agreement allows a different opinion for each pair."
+    "comment": "Pairwise agreement allows a different opinion for each pair.",
+    "verified": "page-image"
   },
   {
     "id": "winter2018_7",
@@ -134,7 +140,8 @@
       ["predicate", "embrace"],
       ["property", "non-symmetric"]
     ],
-    "comment": "Subject and object cannot be exchanged."
+    "comment": "Subject and object cannot be exchanged.",
+    "verified": "page-image"
   },
   {
     "id": "winter2018_8",
@@ -154,7 +161,8 @@
       ["scenario", "(39)"],
       ["truth", "does not follow"]
     ],
-    "comment": "Not entailed by (38) under scenario (39)."
+    "comment": "Not entailed by (38) under scenario (39).",
+    "verified": "page-image"
   },
   {
     "id": "winter2018_9",
@@ -174,7 +182,8 @@
       ["scenario", "(39)"],
       ["truth", "true"]
     ],
-    "comment": "True under scenario (39): Sue hugged Dan while he slept, then he hugged her while she slept."
+    "comment": "True under scenario (39): Sue hugged Dan while he slept, then he hugged her while she slept.",
+    "verified": "page-image"
   },
   {
     "id": "winter2018_10",
@@ -193,7 +202,8 @@
       ["predicate", "hug"],
       ["inference", "entails Sue and Dan hugged"]
     ],
-    "comment": "With simultaneity the bidirectional hugs yield the collective."
+    "comment": "With simultaneity the bidirectional hugs yield the collective.",
+    "verified": "page-image"
   },
   {
     "id": "winter2018_11",
@@ -212,7 +222,8 @@
       ["predicate", "break up"],
       ["inference", "does not entail Sue broke up with Dan"]
     ],
-    "comment": "The instigator may have been Dan alone."
+    "comment": "The instigator may have been Dan alone.",
+    "verified": "page-image"
   },
   {
     "id": "winter2018_12",
@@ -231,7 +242,8 @@
       ["predicate", "break up"],
       ["inference", "entails Sue and Dan broke up"]
     ],
-    "comment": "One direction of the binary predicate yields the collective."
+    "comment": "One direction of the binary predicate yields the collective.",
+    "verified": "page-image"
   },
   {
     "id": "winter2018_13",
@@ -254,7 +266,8 @@
       ["predicate", "makir"],
       ["inference", "does not entail (48)"]
     ],
-    "comment": "Mutual acquaintance in the sense of having heard of each other."
+    "comment": "Mutual acquaintance in the sense of having heard of each other.",
+    "verified": "page-image"
   },
   {
     "id": "winter2018_14",
@@ -276,6 +289,7 @@
       ["predicate", "makir"],
       ["reading", "collective only"]
     ],
-    "comment": "The intransitive form is unambiguously collective and entails personal acquaintance."
+    "comment": "The intransitive form is unambiguously collective and entails personal acquaintance.",
+    "verified": "page-image"
   }
 ]

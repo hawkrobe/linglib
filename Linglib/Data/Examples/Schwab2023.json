@@ -22,7 +22,8 @@
       ["negation", "rc"],
       ["extraction", "subject"]
     ],
-    "comment": "Illusory licensing condition: negative quantifier inside the subject-extracted relative clause."
+    "comment": "Illusory licensing condition: negative quantifier inside the subject-extracted relative clause. Printed unmarked as one condition of the item template (7); the prose classes it with the ungrammatical conditions (\"illusory licensing may occur in the conditions using negation in the RC\"; \"both former (ungrammatical) conditions\"). The paper leaves its item conditions unmarked by design, so the prose classification is the judgment.",
+    "verified": "page-image"
   },
   {
     "id": "schwab2023_ex7b_jemals",
@@ -47,7 +48,8 @@
       ["negation", "matrix"],
       ["extraction", "subject"]
     ],
-    "comment": "Grammatical: matrix negative quantifier licenses the NPI."
+    "comment": "Grammatical: matrix negative quantifier licenses the NPI.",
+    "verified": "page-image"
   },
   {
     "id": "schwab2023_ex7c_jemals",
@@ -72,7 +74,8 @@
       ["negation", "none"],
       ["extraction", "subject"]
     ],
-    "comment": "Ungrammatical baseline: no negation."
+    "comment": "Ungrammatical baseline: no negation. Printed unmarked as one condition of the item template (7); the prose calls it ungrammatical (\"the conditions without negation (7c) form the ungrammatical baseline\"). The paper leaves its item conditions unmarked by design, so the prose classification is the judgment.",
+    "verified": "page-image"
   },
   {
     "id": "schwab2023_ex7a_sorecht",
@@ -97,7 +100,8 @@
       ["negation", "rc"],
       ["extraction", "subject"]
     ],
-    "comment": "Illusory licensing condition: negative quantifier inside the subject-extracted relative clause."
+    "comment": "Illusory licensing condition: negative quantifier inside the subject-extracted relative clause. Printed unmarked as one condition of the item template (7); the prose classes it with the ungrammatical conditions (\"illusory licensing may occur in the conditions using negation in the RC\"; \"both former (ungrammatical) conditions\"). The paper leaves its item conditions unmarked by design, so the prose classification is the judgment.",
+    "verified": "page-image"
   },
   {
     "id": "schwab2023_ex7b_sorecht",
@@ -122,7 +126,8 @@
       ["negation", "matrix"],
       ["extraction", "subject"]
     ],
-    "comment": "Grammatical: matrix negative quantifier licenses the NPI."
+    "comment": "Grammatical: matrix negative quantifier licenses the NPI.",
+    "verified": "page-image"
   },
   {
     "id": "schwab2023_ex7c_sorecht",
@@ -147,7 +152,8 @@
       ["negation", "none"],
       ["extraction", "subject"]
     ],
-    "comment": "Ungrammatical baseline: no negation."
+    "comment": "Ungrammatical baseline: no negation. Printed unmarked as one condition of the item template (7); the prose calls it ungrammatical (\"the conditions without negation (7c) form the ungrammatical baseline\"). The paper leaves its item conditions unmarked by design, so the prose classification is the judgment.",
+    "verified": "page-image"
   },
   {
     "id": "schwab2023_ex8a_jemals",
@@ -172,7 +178,8 @@
       ["negation", "rc"],
       ["extraction", "object"]
     ],
-    "comment": "Illusory licensing condition: negative quantifier inside the object-extracted relative clause."
+    "comment": "Illusory licensing condition: negative quantifier inside the object-extracted relative clause. Printed unmarked as one condition of the item template (8); the prose classes it with the ungrammatical conditions (\"illusory licensing may occur in the conditions using negation in the RC\"; \"both former (ungrammatical) conditions\"). The paper leaves its item conditions unmarked by design, so the prose classification is the judgment.",
+    "verified": "page-image"
   },
   {
     "id": "schwab2023_ex8b_jemals",
@@ -197,7 +204,8 @@
       ["negation", "matrix"],
       ["extraction", "object"]
     ],
-    "comment": "Grammatical: matrix negative quantifier licenses the NPI."
+    "comment": "Grammatical: matrix negative quantifier licenses the NPI.",
+    "verified": "page-image"
   },
   {
     "id": "schwab2023_ex8c_jemals",
@@ -222,7 +230,8 @@
       ["negation", "none"],
       ["extraction", "object"]
     ],
-    "comment": "Ungrammatical baseline: no negation."
+    "comment": "Ungrammatical baseline: no negation. Printed unmarked as one condition of the item template (8); the prose calls it ungrammatical (\"the conditions without negation (8c) form the ungrammatical baseline\"). The paper leaves its item conditions unmarked by design, so the prose classification is the judgment.",
+    "verified": "page-image"
   },
   {
     "id": "schwab2023_ex8a_sorecht",
@@ -247,7 +256,8 @@
       ["negation", "rc"],
       ["extraction", "object"]
     ],
-    "comment": "Illusory licensing condition: negative quantifier inside the object-extracted relative clause."
+    "comment": "Illusory licensing condition: negative quantifier inside the object-extracted relative clause. Printed unmarked as one condition of the item template (8); the prose classes it with the ungrammatical conditions (\"illusory licensing may occur in the conditions using negation in the RC\"; \"both former (ungrammatical) conditions\"). The paper leaves its item conditions unmarked by design, so the prose classification is the judgment.",
+    "verified": "page-image"
   },
   {
     "id": "schwab2023_ex8b_sorecht",
@@ -272,7 +282,8 @@
       ["negation", "matrix"],
       ["extraction", "object"]
     ],
-    "comment": "Grammatical: matrix negative quantifier licenses the NPI."
+    "comment": "Grammatical: matrix negative quantifier licenses the NPI.",
+    "verified": "page-image"
   },
   {
     "id": "schwab2023_ex8c_sorecht",
@@ -297,6 +308,7 @@
       ["negation", "none"],
       ["extraction", "object"]
     ],
-    "comment": "Ungrammatical baseline: no negation."
+    "comment": "Ungrammatical baseline: no negation. Printed unmarked as one condition of the item template (8); the prose calls it ungrammatical (\"the conditions without negation (8c) form the ungrammatical baseline\"). The paper leaves its item conditions unmarked by design, so the prose classification is the judgment.",
+    "verified": "page-image"
   }
 ]

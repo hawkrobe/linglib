@@ -54,19 +54,6 @@ def ex4a_control : Datum :=
     readings := []
     paperFeatures := [("size", "cP"), ("diagnostic", "subjectControl"), ("grammatical", "yes")] }
 
-def ex4b_control : Datum :=
-  { id := "fuscosgrizzi2026_ex4b_control"
-    source := ⟨"fusco-sgrizzi-2026", "(4b)"⟩
-    reportedIn := none
-    language := "ital1282"
-    primaryText := "Marco ha convinto Gianni a avere un figlio."
-    glossedTokens := [("Marco", "Marco"), ("ha", "have-PRS.3SG"), ("convinto", "convince-PST.PTCP"), ("Gianni", "Gianni"), ("a", "a"), ("avere", "have-INF"), ("un", "a"), ("figlio.", "child")]
-    context := ""
-    judgment := .unacceptable
-    alternatives := []
-    readings := []
-    paperFeatures := [("size", "aP"), ("diagnostic", "subjectControl"), ("grammatical", "no")] }
-
 def ex11a : Datum :=
   { id := "fuscosgrizzi2026_ex11a"
     source := ⟨"fusco-sgrizzi-2026", "(11a)"⟩
@@ -99,7 +86,7 @@ def ex12 : Datum :=
     reportedIn := none
     language := "ital1282"
     primaryText := "La conduttrice ha convinto l'ospite ad essere intervistato."
-    glossedTokens := [("La", "the"), ("conduttrice", "conductor"), ("ha", "have-PRS.3SG"), ("convinto", "convince-PST.PTCP"), ("l'ospite", "the.guest"), ("ad", "a"), ("essere", "be-INF"), ("intervistato.", "interviewed-PST.PTCP.M")]
+    glossedTokens := [("La", "the"), ("conduttrice", "conductor"), ("ha", "have-PRS.3SG"), ("convinto", "convince-PST.PTCP"), ("l'ospite", "the.guest"), ("ad", "to"), ("essere", "be-INF"), ("intervistato.", "interviewed-PST.PRT.M")]
     context := ""
     judgment := .acceptable
     alternatives := []
@@ -140,7 +127,7 @@ def ex15 : Datum :=
     primaryText := "Gianni lo pensa a costruire domani."
     glossedTokens := [("Gianni", "Gianni"), ("lo", "it"), ("pensa", "think-PRS.3SG"), ("a", "to"), ("costruire", "build"), ("domani.", "tomorrow")]
     context := ""
-    judgment := .unacceptable
+    judgment := .ungrammatical
     alternatives := []
     readings := []
     paperFeatures := [("size", "aP"), ("diagnostic", "cliticClimbing"), ("grammatical", "no")] }
@@ -179,11 +166,11 @@ def ex18 : Datum :=
     primaryText := "Ieri Gianni ha provato a riparare la macchina il mese prossimo."
     glossedTokens := [("Ieri", "yesterday"), ("Gianni", "Gianni"), ("ha", "have-PRS.3SG"), ("provato", "try-PST.PTCP"), ("a", "to"), ("riparare", "repair"), ("la", "the"), ("macchina", "car"), ("il", "the"), ("mese", "month"), ("prossimo.", "next")]
     context := ""
-    judgment := .unacceptable
+    judgment := .ungrammatical
     alternatives := []
     readings := []
     paperFeatures := [("size", "vP"), ("diagnostic", "independentTime"), ("grammatical", "no")] }
 
-def all : List Datum := [ex4a, ex4b, ex4a_control, ex4b_control, ex11a, ex11b, ex12, ex13, ex14, ex15, ex16, ex17, ex18]
+def all : List Datum := [ex4a, ex4b, ex4a_control, ex11a, ex11b, ex12, ex13, ex14, ex15, ex16, ex17, ex18]
 
 end FuscoSgrizzi2026.Examples

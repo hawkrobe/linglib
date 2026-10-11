@@ -12,7 +12,8 @@
       ["study", "1"],
       ["construction", "imperative"]
     ],
-    "comment": "Control imperative."
+    "comment": "Control imperative.",
+    "verified": "page-image"
   },
   {
     "id": "ruytenbeek2017_ex18",
@@ -27,7 +28,8 @@
       ["study", "1"],
       ["construction", "controlInterrogative"]
     ],
-    "comment": "Control interrogative."
+    "comment": "Control interrogative.",
+    "verified": "page-image"
   },
   {
     "id": "ruytenbeek2017_ex19",
@@ -42,7 +44,8 @@
       ["study", "1"],
       ["construction", "canYou"]
     ],
-    "comment": "Conventionalised indirect request."
+    "comment": "Conventionalised indirect request.",
+    "verified": "page-image"
   },
   {
     "id": "ruytenbeek2017_ex20",
@@ -57,7 +60,8 @@
       ["study", "1"],
       ["construction", "isItPossible"]
     ],
-    "comment": "Non-conventionalised indirect request."
+    "comment": "Non-conventionalised indirect request.",
+    "verified": "page-image"
   },
   {
     "id": "ruytenbeek2017_ex23",
@@ -72,7 +76,8 @@
       ["study", "2"],
       ["construction", "youMust"]
     ],
-    "comment": "Deontic necessity declarative."
+    "comment": "Deontic necessity declarative.",
+    "verified": "page-image"
   },
   {
     "id": "ruytenbeek2017_ex24",
@@ -87,7 +92,8 @@
       ["study", "2"],
       ["construction", "imperative"]
     ],
-    "comment": "Control imperative of Study 2."
+    "comment": "Control imperative of Study 2.",
+    "verified": "page-image"
   },
   {
     "id": "ruytenbeek2017_ex25",
@@ -95,14 +101,15 @@
     "language": "stan1290",
     "primaryText": "Vous pouvez mettre le cercle rouge à gauche du rectangle jaune.",
     "glossedTokens": [],
-    "translation": "You can move the red circle to the left of the yellow rectangle.",
+    "translation": "You can/may move the red circle to the left of the yellow rectangle.",
     "context": "Study 2: a grid of coloured shapes with true and false buttons beneath it; the sentence is heard through headphones and answered either by moving a shape or by clicking a button.",
     "judgment": "acceptable",
     "paperFeatures": [
       ["study", "2"],
       ["construction", "youCan"]
     ],
-    "comment": "Possibility declarative."
+    "comment": "Possibility declarative.",
+    "verified": "page-image"
   },
   {
     "id": "ruytenbeek2017_ex26",
@@ -117,7 +124,8 @@
       ["study", "2"],
       ["construction", "itIsPossible"]
     ],
-    "comment": "Impersonal possibility declarative."
+    "comment": "Impersonal possibility declarative.",
+    "verified": "page-image"
   },
   {
     "id": "ruytenbeek2017_ex27",
@@ -132,7 +140,8 @@
       ["study", "2"],
       ["construction", "controlDeclarative"]
     ],
-    "comment": "Control declarative."
+    "comment": "Control declarative.",
+    "verified": "page-image"
   },
   {
     "id": "ruytenbeek2017_corpus_pouvezvous",
@@ -146,7 +155,8 @@
     "paperFeatures": [
       ["construction", "canYou"]
     ],
-    "comment": "Frantext tokens after 1900 with a singular addressee, coded as indirect request, genuine question or rhetorical question."
+    "comment": "Frantext tokens after 1900 with a singular addressee, coded as indirect request, genuine question or rhetorical question.",
+    "verified": "page-image"
   },
   {
     "id": "ruytenbeek2017_corpus_estilpossible",
@@ -160,6 +170,7 @@
     "paperFeatures": [
       ["construction", "isItPossible"]
     ],
-    "comment": "Frantext tokens after 1900, coded as indirect request, genuine question or rhetorical question."
+    "comment": "Frantext tokens after 1900, coded as indirect request, genuine question or rhetorical question.",
+    "verified": "page-image"
   }
 ]

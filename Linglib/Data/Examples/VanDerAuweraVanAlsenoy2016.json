@@ -16,12 +16,13 @@
       ["concord", "strict"],
       ["exponents", "clausal negator + negative adverb"]
     ],
-    "comment": "One semantic negation with two exponents."
+    "comment": "One semantic negation with two exponents.",
+    "verified": "page-image"
   },
   {
     "id": "vanderauweravanalsenoy2016_2",
-    "source": {"bibkey": "van-der-auwera-van-alsenoy-2016", "paperLabel": "(2)"},
-    "reportedIn": {"bibkey": "de-swart-2010", "paperLabel": ""},
+    "source": {"bibkey": "de-swart-2010", "paperLabel": "p. 46"},
+    "reportedIn": {"bibkey": "van-der-auwera-van-alsenoy-2016", "paperLabel": "(2)"},
     "language": "stan1288",
     "primaryText": "Nadie ha dicho nada",
     "discourseSegments": [],
@@ -36,7 +37,8 @@
     "paperFeatures": [
       ["concord", "negative spread"]
     ],
-    "comment": "Two negative indefinites and no clausal negator: negative spread."
+    "comment": "Two negative indefinites and no clausal negator: negative spread.",
+    "verified": "page-image"
   },
   {
     "id": "vanderauweravanalsenoy2016_3a",
@@ -48,7 +50,7 @@
     "glossedTokens": [
       ["Je", "I"], ["n'ai", "NEG.have"], ["rien", "nothing"], ["entendu", "heard"]
     ],
-    "translation": "I have heard nothing",
+    "translation": "I have heard nothing / I haven't heard anything",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -57,7 +59,8 @@
       ["indefinite", "negative"],
       ["negator", "ne"]
     ],
-    "comment": "Rien is treated as negative, its dominant use being negation."
+    "comment": "Rien is treated as negative, its dominant use being negation.",
+    "verified": "page-image"
   },
   {
     "id": "vanderauweravanalsenoy2016_3e",
@@ -77,12 +80,13 @@
     "paperFeatures": [
       ["indefinite", "negative"]
     ],
-    "comment": "Rien cannot mean 'something'; without ne the sentence means 'I heard nothing' in the informal register."
+    "comment": "Rien cannot mean 'something'; without ne the sentence means 'I heard nothing' in the informal register.",
+    "verified": "page-image"
   },
   {
     "id": "vanderauweravanalsenoy2016_14a",
-    "source": {"bibkey": "van-der-auwera-van-alsenoy-2016", "paperLabel": "(14a)"},
-    "reportedIn": {"bibkey": "haspelmath-1997", "paperLabel": ""},
+    "source": {"bibkey": "haspelmath-1997", "paperLabel": "(431a)"},
+    "reportedIn": {"bibkey": "van-der-auwera-van-alsenoy-2016", "paperLabel": "(14a)"},
     "language": "poli1260",
     "primaryText": "Nikt nie przyszedł",
     "discourseSegments": [],
@@ -98,12 +102,13 @@
       ["concord", "strict"],
       ["position", "preverbal"]
     ],
-    "comment": "Strict concord: the negator is obligatory with a preverbal negative indefinite."
+    "comment": "Strict concord: the negator is obligatory with a preverbal negative indefinite.",
+    "verified": "page-image"
   },
   {
     "id": "vanderauweravanalsenoy2016_14b",
-    "source": {"bibkey": "van-der-auwera-van-alsenoy-2016", "paperLabel": "(14b)"},
-    "reportedIn": {"bibkey": "haspelmath-1997", "paperLabel": ""},
+    "source": {"bibkey": "haspelmath-1997", "paperLabel": "(431b)"},
+    "reportedIn": {"bibkey": "van-der-auwera-van-alsenoy-2016", "paperLabel": "(14b)"},
     "language": "poli1260",
     "primaryText": "Nie widziałam nikogo",
     "discourseSegments": [],
@@ -119,12 +124,13 @@
       ["concord", "strict"],
       ["position", "postverbal"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "vanderauweravanalsenoy2016_15a",
-    "source": {"bibkey": "van-der-auwera-van-alsenoy-2016", "paperLabel": "(15a)"},
-    "reportedIn": {"bibkey": "haspelmath-1997", "paperLabel": ""},
+    "source": {"bibkey": "haspelmath-1997", "paperLabel": "(433a)"},
+    "reportedIn": {"bibkey": "van-der-auwera-van-alsenoy-2016", "paperLabel": "(15a)"},
     "language": "stan1288",
     "primaryText": "Nadie vino",
     "discourseSegments": [],
@@ -141,12 +147,13 @@
       ["position", "preverbal"],
       ["negator", "absent"]
     ],
-    "comment": "The Spanish subtype: no clausal negator with a preverbal negative indefinite."
+    "comment": "The Spanish subtype: no clausal negator with a preverbal negative indefinite.",
+    "verified": "page-image"
   },
   {
     "id": "vanderauweravanalsenoy2016_15b",
-    "source": {"bibkey": "van-der-auwera-van-alsenoy-2016", "paperLabel": "(15b)"},
-    "reportedIn": {"bibkey": "haspelmath-1997", "paperLabel": ""},
+    "source": {"bibkey": "haspelmath-1997", "paperLabel": "(433b)"},
+    "reportedIn": {"bibkey": "van-der-auwera-van-alsenoy-2016", "paperLabel": "(15b)"},
     "language": "stan1288",
     "primaryText": "No vi a nadie",
     "discourseSegments": [],
@@ -163,7 +170,8 @@
       ["position", "postverbal"],
       ["negator", "obligatory"]
     ],
-    "comment": "The clausal negator is obligatory with a postverbal negative indefinite: Negative Early."
+    "comment": "The clausal negator is obligatory with a postverbal negative indefinite: Negative Early.",
+    "verified": "page-image"
   },
   {
     "id": "vanderauweravanalsenoy2016_16a",
@@ -184,7 +192,8 @@
       ["concord", "strict"],
       ["negator", "postverbal"]
     ],
-    "comment": "Strict concord in a sample language with a postverbal negator."
+    "comment": "Strict concord in a sample language with a postverbal negator.",
+    "verified": "page-image"
   },
   {
     "id": "vanderauweravanalsenoy2016_20a",
@@ -207,7 +216,8 @@
       ["position", "preverbal"],
       ["contact", "Spanish"]
     ],
-    "comment": "A preverbal negative indefinite in a VSO language, with the Spanish-type pattern borrowed along with the marker ni."
+    "comment": "A preverbal negative indefinite in a VSO language, with the Spanish-type pattern borrowed along with the marker ni.",
+    "verified": "page-image"
   },
   {
     "id": "vanderauweravanalsenoy2016_21a",
@@ -229,7 +239,8 @@
       ["position", "preverbal"],
       ["indefinite", "wala"]
     ],
-    "comment": "Only the scalar determiner wala shows non-strict concord in Egyptian Arabic."
+    "comment": "Only the scalar determiner wala shows non-strict concord in Egyptian Arabic.",
+    "verified": "page-image"
   },
   {
     "id": "vanderauweravanalsenoy2016_21b",
@@ -251,7 +262,8 @@
       ["position", "postverbal"],
       ["negator", "obligatory"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "vanderauweravanalsenoy2016_24",
@@ -273,17 +285,18 @@
       ["position", "postverbal"],
       ["paradigm", "neinn"]
     ],
-    "comment": "The second Icelandic paradigm takes the verbal negator postverbally."
+    "comment": "The second Icelandic paradigm goes with the verbal negator, which the negative indefinite follows; it cannot occur preverbally at all, (25).",
+    "verified": "page-image"
   },
   {
     "id": "vanderauweravanalsenoy2016_25",
     "source": {"bibkey": "van-der-auwera-van-alsenoy-2016", "paperLabel": "(25)"},
-    "reportedIn": {"bibkey": "haspelmath-1997", "paperLabel": ""},
+    "reportedIn": null,
     "language": "icel1247",
-    "primaryText": "Neinn sag (ekki) mig",
+    "primaryText": "Neinn sá (ekki) mig",
     "discourseSegments": [],
     "glossedTokens": [
-      ["Neinn", "nobody"], ["sag", "saw"], ["(ekki)", "NEG"], ["mig", "me"]
+      ["Neinn", "nobody"], ["sá", "saw"], ["(ekki)", "NEG"], ["mig", "me"]
     ],
     "translation": "Nobody saw me",
     "context": "",
@@ -295,12 +308,13 @@
       ["position", "preverbal"],
       ["paradigm", "neinn"]
     ],
-    "comment": "The neinn paradigm cannot occur preverbally at all, (26): concord depends on word order."
+    "comment": "The neinn paradigm cannot occur preverbally at all, (26): concord depends on word order. The paper gives the example as based on Haspelmath (1997: 214) and prints sag; Haspelmath's note 10 prints sá, the Icelandic past of sjá 'see'.",
+    "verified": "page-image"
   },
   {
     "id": "vanderauweravanalsenoy2016_27c",
-    "source": {"bibkey": "van-der-auwera-van-alsenoy-2016", "paperLabel": "(27c)"},
-    "reportedIn": {"bibkey": "haspelmath-1997", "paperLabel": ""},
+    "source": {"bibkey": "haspelmath-1997", "paperLabel": "(460c)"},
+    "reportedIn": {"bibkey": "van-der-auwera-van-alsenoy-2016", "paperLabel": "(27c)"},
     "language": "oldr1238",
     "primaryText": "jako svoego nikto že ne xulit'",
     "discourseSegments": [],
@@ -318,12 +332,13 @@
       ["position", "preverbal"],
       ["negator", "optional"]
     ],
-    "comment": "Older Slavic allows the negator with a preverbal negative indefinite, (28), unlike Spanish."
+    "comment": "Older Slavic allows the negator with a preverbal negative indefinite, (28), unlike Spanish. Haspelmath gives it from Křížková (1968: 24).",
+    "verified": "page-image"
   },
   {
     "id": "vanderauweravanalsenoy2016_29a",
-    "source": {"bibkey": "van-der-auwera-van-alsenoy-2016", "paperLabel": "(29a)"},
-    "reportedIn": {"bibkey": "de-swart-2010", "paperLabel": ""},
+    "source": {"bibkey": "de-swart-2010", "paperLabel": "p. 173"},
+    "reportedIn": {"bibkey": "van-der-auwera-van-alsenoy-2016", "paperLabel": "(29a)"},
     "language": "stan1289",
     "primaryText": "Ningú (no) ha vist Joan",
     "discourseSegments": [],
@@ -340,12 +355,13 @@
       ["position", "preverbal"],
       ["negator", "optional"]
     ],
-    "comment": "Catalan has the older Slavic pattern synchronically, moving from strict formal concord to Spanish-style informal concord."
+    "comment": "Catalan has the older Slavic pattern synchronically, moving from strict formal concord to Spanish-style informal concord. The paper cites the example as de Swart 2013: 173; its reference list has only de Swart 2010.",
+    "verified": "page-image"
   },
   {
     "id": "vanderauweravanalsenoy2016_31a",
-    "source": {"bibkey": "van-der-auwera-van-alsenoy-2016", "paperLabel": "(31a)"},
-    "reportedIn": {"bibkey": "haspelmath-1997", "paperLabel": ""},
+    "source": {"bibkey": "haspelmath-1997", "paperLabel": "(463a)"},
+    "reportedIn": {"bibkey": "van-der-auwera-van-alsenoy-2016", "paperLabel": "(31a)"},
     "language": "stan1293",
     "primaryText": "Nobody don't know where it's at",
     "discourseSegments": [],
@@ -360,7 +376,8 @@
       ["position", "preverbal"],
       ["negator", "optional"]
     ],
-    "comment": "The negator is optional in both positions, (32)."
+    "comment": "The negator is optional in both positions, (32). Haspelmath gives it from Labov (1972: 785-6).",
+    "verified": "page-image"
   },
   {
     "id": "vanderauweravanalsenoy2016_33b",
@@ -382,7 +399,8 @@
       ["position", "postverbal"],
       ["negator", "optional"]
     ],
-    "comment": "Ne drop makes French a non-strict system of the (32) type."
+    "comment": "Ne drop makes French a non-strict system of the (32) type.",
+    "verified": "page-image"
   },
   {
     "id": "vanderauweravanalsenoy2016_34a",
@@ -405,7 +423,8 @@
       ["position", "preverbal"],
       ["negator", "absent"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "vanderauweravanalsenoy2016_34b",
@@ -427,7 +446,8 @@
       ["position", "postverbal"],
       ["negator", "optional"]
     ],
-    "comment": "The pattern (30), stage 2 of Table 6, with a postverbal negator."
+    "comment": "The pattern (30), stage 2 of Table 6, with a postverbal negator.",
+    "verified": "page-image"
   },
   {
     "id": "vanderauweravanalsenoy2016_35b",
@@ -449,7 +469,8 @@
       ["concord", "non-strict"],
       ["parameter", "immediate precedence"]
     ],
-    "comment": "The negator is optional only when the negative indefinite immediately precedes the verb, (36)."
+    "comment": "The negator is optional only when the negative indefinite immediately precedes the verb, (36).",
+    "verified": "page-image"
   },
   {
     "id": "vanderauweravanalsenoy2016_37",
@@ -471,12 +492,13 @@
       ["position", "preverbal"],
       ["negator", "optional"]
     ],
-    "comment": "Western Armenian tolerates no postverbal negative indefinite, (38), being strongly verb-final."
+    "comment": "Western Armenian tolerates no postverbal negative indefinite, (38), being strongly verb-final.",
+    "verified": "page-image"
   },
   {
     "id": "vanderauweravanalsenoy2016_40b",
-    "source": {"bibkey": "van-der-auwera-van-alsenoy-2016", "paperLabel": "(40b)"},
-    "reportedIn": {"bibkey": "de-swart-2010", "paperLabel": ""},
+    "source": {"bibkey": "de-swart-2010", "paperLabel": "p. 187"},
+    "reportedIn": {"bibkey": "van-der-auwera-van-alsenoy-2016", "paperLabel": "(40b)"},
     "language": "wels1247",
     "primaryText": "Welish i neb",
     "discourseSegments": [],
@@ -493,7 +515,8 @@
       ["position", "postverbal"],
       ["negator", "optional"]
     ],
-    "comment": "Welsh is verb-initial, so there is no preverbal position, (39)."
+    "comment": "Welsh is verb-initial, so there is no preverbal position, (39).",
+    "verified": "page-image"
   },
   {
     "id": "vanderauweravanalsenoy2016_45",
@@ -512,6 +535,7 @@
       ["concord", "non-strict"],
       ["parameter", "emphasis"]
     ],
-    "comment": "In Yiddish the absence of concord creates emphasis, independently of word order."
+    "comment": "In Yiddish the absence of concord creates emphasis, independently of word order.",
+    "verified": "page-image"
   }
 ]

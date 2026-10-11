@@ -19,7 +19,7 @@
       ],
       [
         "hat",
-        "aux"
+        "AUX"
       ],
       [
         "gerade",
@@ -69,7 +69,8 @@
         "no"
       ]
     ],
-    "comment": "DP-internal jeder: obligatorily distributive, no exceptions."
+    "comment": "DP-internal jeder: obligatorily distributive, no exceptions.",
+    "verified": "page-image"
   },
   {
     "id": "haslingeretal2025_ex2",
@@ -91,7 +92,7 @@
       ],
       [
         "haben",
-        "aux"
+        "AUX"
       ],
       [
         "gerade",
@@ -145,7 +146,8 @@
         "no"
       ]
     ],
-    "comment": "Distance-distributive jeder: the same semantic effects."
+    "comment": "Distance-distributive jeder: the same semantic effects.",
+    "verified": "page-image"
   },
   {
     "id": "haslingeretal2025_ex4a",
@@ -167,7 +169,7 @@
       ],
       [
         "haben",
-        "aux"
+        "AUX"
       ],
       [
         "gerade",
@@ -217,7 +219,8 @@
         "no"
       ]
     ],
-    "comment": "Not obligatorily distributive, but no exceptions."
+    "comment": "Not obligatorily distributive, but no exceptions.",
+    "verified": "page-image"
   },
   {
     "id": "haslingeretal2025_ex4b",
@@ -239,7 +242,7 @@
       ],
       [
         "haben",
-        "aux"
+        "AUX"
       ],
       [
         "gerade",
@@ -289,7 +292,8 @@
         "no"
       ]
     ],
-    "comment": "A numeral-modified indefinite: like alle."
+    "comment": "A numeral-modified indefinite: like alle.",
+    "verified": "page-image"
   },
   {
     "id": "haslingeretal2025_ex4c",
@@ -311,7 +315,7 @@
       ],
       [
         "haben",
-        "aux"
+        "AUX"
       ],
       [
         "gerade",
@@ -361,7 +365,8 @@
         "yes"
       ]
     ],
-    "comment": "A definite plural: neither distributive nor exception-intolerant; true in (3c) given an adequate context."
+    "comment": "A definite plural: neither distributive nor exception-intolerant; true in (3c) given an adequate context.",
+    "verified": "page-image"
   },
   {
     "id": "haslingeretal2025_ex22a",
@@ -383,7 +388,7 @@
       ],
       [
         "haben",
-        "aux"
+        "AUX"
       ],
       [
         "gerade",
@@ -433,7 +438,8 @@
         "no"
       ]
     ],
-    "comment": "Distance-distributive jeweils, out of the blue: distributive, and apparently maximal without a context that makes a non-maximal construal salient."
+    "comment": "Distance-distributive jeweils, out of the blue: distributive, and apparently maximal without a context that makes a non-maximal construal salient.",
+    "verified": "page-image"
   },
   {
     "id": "haslingeretal2025_ex22b",
@@ -455,7 +461,7 @@
       ],
       [
         "hat",
-        "aux"
+        "AUX"
       ],
       [
         "gerade",
@@ -501,7 +507,8 @@
         "no"
       ]
     ],
-    "comment": "DP-jeder."
+    "comment": "DP-jeder.",
+    "verified": "page-image"
   },
   {
     "id": "haslingeretal2025_ex22c",
@@ -523,7 +530,7 @@
       ],
       [
         "haben",
-        "aux"
+        "AUX"
       ],
       [
         "gerade",
@@ -573,7 +580,8 @@
         "no"
       ]
     ],
-    "comment": "Distance jeder."
+    "comment": "Distance jeder.",
+    "verified": "page-image"
   },
   {
     "id": "haslingeretal2025_ex23b",
@@ -616,7 +624,7 @@
     ],
     "translation": "There are two magnets in each of the boxes!",
     "context": "Anna distributed 9 strong magnets, which should not be stored together, in 5 boxes. Four boxes contain two magnets, the fifth contains one. On the way home, Anna's co-driver reads the instructions to her. They say: ‘Each magnet absolutely needs to be stored separately, even just two magnets in the same box can trigger a horrible explosion.’ Anna exclaims: Oh no, we have to turn around ...",
-    "judgment": "questionable",
+    "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -637,7 +645,8 @@
         "yes"
       ]
     ],
-    "comment": "Questionnaire item in the magnets scenario: true only on a non-maximal construal, which the explosion QUD makes salient; judgments were mixed across speakers (Figure 1)."
+    "comment": "Questionnaire item in the magnets scenario, printed unmarked: true only on a non-maximal construal, which the explosion QUD makes salient; judgments were mixed across speakers (Figure 1).",
+    "verified": "page-image"
   },
   {
     "id": "haslingeretal2025_ex23c",
@@ -676,7 +685,7 @@
     ],
     "translation": "There are two magnets in every box!",
     "context": "Anna distributed 9 strong magnets, which should not be stored together, in 5 boxes. Four boxes contain two magnets, the fifth contains one. On the way home, Anna's co-driver reads the instructions to her. They say: ‘Each magnet absolutely needs to be stored separately, even just two magnets in the same box can trigger a horrible explosion.’ Anna exclaims: Oh no, we have to turn around ...",
-    "judgment": "unacceptable",
+    "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -697,7 +706,8 @@
         "yes"
       ]
     ],
-    "comment": "Questionnaire item in the magnets scenario: overwhelmingly rejected (Figure 1)."
+    "comment": "Questionnaire item in the magnets scenario, printed unmarked: DP-jeder sentences were overwhelmingly rejected (Figure 1).",
+    "verified": "page-image"
   },
   {
     "id": "haslingeretal2025_ex24b",
@@ -748,7 +758,7 @@
     ],
     "translation": "The volunteers have two dogs each on their leash.",
     "context": "At the animal shelter, there is a section for attack dogs with 9 dogs. Today, 5 volunteers showed up to walk the dogs. Billie gives the first four volunteers two dogs each; the fifth gets just one dog. Afterwards, Billie learns that one should under no circumstances let someone walk more than one of the dogs, because the dogs will have terrible fights. Billie: Good heavens ...",
-    "judgment": "questionable",
+    "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -769,7 +779,8 @@
         "yes"
       ]
     ],
-    "comment": "Jeweils with a subject associate: accepted by some speakers in the non-maximal scenario (Figure 2)."
+    "comment": "Questionnaire item, printed unmarked: jeweils with a subject associate, accepted by some speakers in the non-maximal scenario (Figure 2).",
+    "verified": "page-image"
   },
   {
     "id": "haslingeretal2025_ex24c",
@@ -820,7 +831,7 @@
     ],
     "translation": "The volunteers have two dogs each on their leash.",
     "context": "At the animal shelter, there is a section for attack dogs with 9 dogs. Today, 5 volunteers showed up to walk the dogs. Billie gives the first four volunteers two dogs each; the fifth gets just one dog. Afterwards, Billie learns that one should under no circumstances let someone walk more than one of the dogs, because the dogs will have terrible fights. Billie: Good heavens ...",
-    "judgment": "questionable",
+    "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -841,7 +852,8 @@
         "yes"
       ]
     ],
-    "comment": "Distance jeder: mostly rejected, less categorically than DP-jeder (Figure 2); 15 of 18 participants rated the jeweils minimal-pair sentence higher (Figure 3)."
+    "comment": "Questionnaire item, printed unmarked: distance jeder was mostly rejected (rating 1 or 2), less categorically than DP-jeder (Figure 2); for the two jeweils/distance-jeder minimal pairs, 15 participants' averages fell below the diagonal and 3 above it, favoring jeweils (Figure 3).",
+    "verified": "page-image"
   },
   {
     "id": "haslingeretal2025_ex24d",
@@ -888,7 +900,7 @@
     ],
     "translation": "Every volunteer has two dogs on their leash.",
     "context": "At the animal shelter, there is a section for attack dogs with 9 dogs. Today, 5 volunteers showed up to walk the dogs. Billie gives the first four volunteers two dogs each; the fifth gets just one dog. Afterwards, Billie learns that one should under no circumstances let someone walk more than one of the dogs, because the dogs will have terrible fights. Billie: Good heavens ...",
-    "judgment": "unacceptable",
+    "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -909,7 +921,8 @@
         "yes"
       ]
     ],
-    "comment": "DP-jeder: rejected in the non-maximal scenario (Figure 2)."
+    "comment": "Questionnaire item, printed unmarked: DP-jeder, rejected in the non-maximal scenario (Figure 2).",
+    "verified": "page-image"
   },
   {
     "id": "haslingeretal2025_ex26",
@@ -977,6 +990,7 @@
         "nonMaximal"
       ]
     ],
-    "comment": "A quantificational subject binds the tolerance parameter on its scope, so jeweils cannot add exception tolerance here."
+    "comment": "A quantificational subject binds the tolerance parameter on its scope, so jeweils cannot add exception tolerance here.",
+    "verified": "page-image"
   }
 ]

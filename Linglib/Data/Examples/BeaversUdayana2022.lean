@@ -121,7 +121,7 @@ def bu2022_17b : Datum :=
 
 def bu2022_18a : Datum :=
   { id := "bu2022_18a"
-    source := ⟨"beavers-udayana-2022", "(18a)"⟩
+    source := ⟨"beavers-udayana-2022", "(24b)"⟩
     reportedIn := none
     language := "indo1316"
     primaryText := "Orang itu ber-cuci=mata."
@@ -192,7 +192,7 @@ def bu2022_44a : Datum :=
     primaryText := "Tono dan Ali ber-dandan."
     glossedTokens := [("Tono", "Tono"), ("dan", "and"), ("Ali", "Ali"), ("ber-dandan", "MV-dress")]
     context := "Tono dressed himself and Ali was dressed by his mother."
-    judgment := .unacceptable
+    judgment := .ungrammatical
     alternatives := []
     readings := []
     paperFeatures := [("diagnostic", "mixed readings"), ("analysis", "open variable vs existential")] }
