@@ -4,6 +4,7 @@ public import Linglib.Core.LinearAlgebra.LinearIndependent
 public import Linglib.Fragments.English.Verbs.Inventory
 public import Linglib.Processing.DiscriminativeLexicon.Realization
 public import Linglib.Processing.DiscriminativeLexicon.Training
+public import Linglib.Processing.ErrorDrivenLearning
 import all Init.Data.String.Pattern.Basic  -- for unfolding `String.Slice.Pattern.Internal.memcmpSlice`
 import all Init.Data.String.Pattern.String  -- for unfolding `String.Slice.Pattern.BackwardSliceSearcher.endsWith`, `String.Slice.Pattern.BackwardSliceSearcher.skipSuffix?`
 import all Init.Data.String.Slice  -- for unfolding `String.Slice.endsWith`
@@ -33,6 +34,10 @@ irregular-linear cell of Table 16.2. The English past tense at the book's letter
 (§12.9) is the irregular table, *walk, walked* against *go, went*, with the forms taken from
 the English fragment.
 
+The file also relates the book's three ways of estimating a mapping. Incremental learning
+updates the mapping at each usage event by the Widrow–Hoff rule, and the mappings of endstate
+and frequency-informed learning are the matrices at which those updates cancel (§1.3, §6.2).
+
 ## Main results
 
 * `not_exists_paradigm_eq_of_not_regular`, `pos_weightedLoss_of_not_regular`: an irregular
@@ -43,6 +48,15 @@ the English fragment.
 * `exists_paradigm_eq_of_linearIndependent`: over linearly independent word-specific
   embeddings, every table is the paradigm of some linear lexicon.
 * `pastTense_not_regular`: *walk, walked, go, went* violates proportional analogy.
+* `isTrained_iff_sum_update_sub_eq_zero`: a mapping matrix is trained iff the frequency-weighted
+  Widrow–Hoff updates of the usage events cancel at it.
+
+## Implementation notes
+
+* The book describes endstate learning as the state incremental learning reaches after infinitely
+  many epochs. At a fixed learning rate the updates cancel only in their frequency-weighted sum,
+  and single events leave a matrix fixed only when it fits the experience exactly
+  (`mul_eq_iff_forall_update_eq_self`).
 
 ## References
 
@@ -53,7 +67,8 @@ the English fragment.
 
 namespace HeitmeierChuangBaayen2026
 
-open DiscriminativeLexicon Morphology Matrix
+open DiscriminativeLexicon ErrorDrivenLearning Morphology Matrix Filter
+open scoped Topology
 
 variable {d n : ℕ} {Lexeme Cell : Type*}
 
@@ -119,6 +134,75 @@ theorem pos_weightedLoss_of_not_regular {f : Lexeme → Cell → FormVec n}
   have h := congrFun (congrFun hint ((Fintype.equivFin (Lexeme × Cell)) (l, c))) j
   simpa [paradigmExperience, Linear.paradigm, toLin'_apply, mulVec_transpose, mul_apply,
     vecMul, dotProduct] using h
+
+/-! ### Incremental learning
+
+Incremental learning updates a mapping one usage event at a time by the Widrow–Hoff rule. The
+mapping matrices of endstate and frequency-informed learning are its equilibria. -/
+
+section Incremental
+
+variable {m : ℕ} (data : TrainingExperience m n d) (q : FrequencyVector m)
+  (G : Matrix (Fin d) (Fin n) ℝ) {η : ℝ}
+
+/-- The worked Widrow–Hoff step of the book's background box on the rule (§6.2). The book
+prints `0.4001` for the entry that the rule makes `0.401`. -/
+theorem update_example :
+    update ((0.01 : ℝ) • 1) 1 ![0, 1] ![0.5, 0.5] !![1.2, -0.3; 0.4, 0.45] =
+      !![1.2, -0.3; 0.401, 0.4505] := by
+  ext i j
+  fin_cases i <;> fin_cases j <;> norm_num [update_apply, vecMul, dotProduct]
+
+/-- One step scales the prediction error for its own input by `1 - η * x ⬝ᵥ x`. -/
+theorem sub_vecMul_update_smul_one (x : MeaningVec d) (y : FormVec n) :
+    y - x ᵥ* update (η • 1) 1 x y G = (1 - η * x ⬝ᵥ x) • (y - x ᵥ* G) := by
+  rw [sub_vecMul_update]
+  ext j
+  simp [mul_comm]
+
+/-- "The next predicted outcome from the same input vector is closer to the target than the
+previous one" (§6.2) exactly when `η * x ⬝ᵥ x` lies strictly between `0` and `2`. -/
+theorem abs_sub_vecMul_update_lt_iff {x : MeaningVec d} {y : FormVec n} {j : Fin n}
+    (hj : y j ≠ (x ᵥ* G) j) :
+    |y j - (x ᵥ* update (η • 1) 1 x y G) j| < |y j - (x ᵥ* G) j| ↔ |1 - η * x ⬝ᵥ x| < 1 := by
+  have h := congrFun (sub_vecMul_update_smul_one G x y (η := η)) j
+  simp only [Pi.sub_apply, Pi.smul_apply, smul_eq_mul] at h
+  rw [h, abs_mul, mul_lt_iff_lt_one_left (abs_pos.2 (sub_ne_zero.2 hj))]
+
+/-- For such a learning rate, "by redoing this step again and again, the error [...] will get
+smaller and smaller" (§6.2), and the prediction converges to the target. -/
+theorem tendsto_vecMul_iterate_update_smul_one {x : MeaningVec d} (y : FormVec n)
+    (h : |1 - η * x ⬝ᵥ x| < 1) :
+    Tendsto (fun k ↦ x ᵥ* (update (η • 1) 1 x y)^[k] G) atTop (𝓝 y) :=
+  tendsto_vecMul_iterate_update y G fun _ ↦ by simpa using h
+
+/-- A mapping matrix is trained exactly when the frequency-weighted changes that the usage
+events would each make to it cancel. Endstate learning, the case of uniform weights, is in this
+sense the "equilibrium state of network weights" of incremental learning (§1.3). -/
+theorem isTrained_iff_sum_update_sub_eq_zero (hη : η ≠ 0) :
+    IsTrained data q G ↔
+      ∑ i, (q i : ℝ) • (update (η • 1) 1 (data.S i) (data.C i) G - G) = 0 := by
+  have key : ∑ i, (q i : ℝ) • (update (η • 1) 1 (data.S i) (data.C i) G - G) =
+      -η • (data.Sᵀ * q.Q * (data.S * G - data.C)) := by
+    ext k j
+    simp only [update_smul_one, add_sub_cancel_left, Matrix.sum_apply, Matrix.smul_apply,
+      vecMulVec_apply, Pi.sub_apply, smul_eq_mul]
+    rw [mul_apply, Finset.mul_sum]
+    refine Finset.sum_congr rfl fun i _ ↦ ?_
+    rw [FrequencyVector.Q, mul_diagonal, transpose_apply, Matrix.sub_apply, mul_apply_eq_vecMul]
+    ring
+  rw [isTrained_iff, key, smul_eq_zero, neg_eq_zero, or_iff_right hη]
+
+/-- A mapping matrix fits the experience exactly iff no usage event changes it. -/
+theorem mul_eq_iff_forall_update_eq_self (hη : η ≠ 0) (hS : ∀ i, data.S i ≠ 0) :
+    data.S * G = data.C ↔ ∀ i, update (η • 1) 1 (data.S i) (data.C i) G = G := by
+  refine ⟨fun h i ↦ update_eq_self_of_vecMul_eq _ _ (congrFun h i), fun h ↦ funext fun i ↦ ?_⟩
+  rw [mul_apply_eq_vecMul]
+  rcases (update_eq_self_iff ..).1 (h i) with h0 | h0
+  · exact absurd (funext fun k ↦ by simpa [hη] using congrFun h0 k) (hS i)
+  · exact (sub_eq_zero.1 (by simpa using h0)).symm
+
+end Incremental
 
 /-! ### The English past tense -/
 
