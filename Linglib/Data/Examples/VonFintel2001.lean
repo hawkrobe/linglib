@@ -17,7 +17,7 @@ namespace VonFintel2001.Examples
 
 def ex_1 : Datum :=
   { id := "vonfintel2001_1"
-    source := ⟨"geis-zwicky-1971", ""⟩
+    source := ⟨"geis-zwicky-1971", "(4)"⟩
     reportedIn := some ⟨"von-fintel-2001", "(1)"⟩
     language := "stan1293"
     primaryText := "If you mow the lawn, I'll give you five dollars."
@@ -30,7 +30,7 @@ def ex_1 : Datum :=
 
 def ex_2 : Datum :=
   { id := "vonfintel2001_2"
-    source := ⟨"geis-zwicky-1971", ""⟩
+    source := ⟨"geis-zwicky-1971", "(1)"⟩
     reportedIn := some ⟨"von-fintel-2001", "(2)"⟩
     language := "stan1293"
     primaryText := "If John leans out of that window any further, he'll fall."
@@ -43,7 +43,7 @@ def ex_2 : Datum :=
 
 def ex_3 : Datum :=
   { id := "vonfintel2001_3"
-    source := ⟨"geis-zwicky-1971", ""⟩
+    source := ⟨"geis-zwicky-1971", "(8)"⟩
     reportedIn := some ⟨"von-fintel-2001", "(3)"⟩
     language := "stan1293"
     primaryText := "If you disturb me tonight, I won't let you go to the movies tomorrow."
@@ -56,7 +56,7 @@ def ex_3 : Datum :=
 
 def ex_4 : Datum :=
   { id := "vonfintel2001_4"
-    source := ⟨"geis-zwicky-1971", ""⟩
+    source := ⟨"geis-zwicky-1971", "(9)"⟩
     reportedIn := some ⟨"von-fintel-2001", "(4)"⟩
     language := "stan1293"
     primaryText := "If you heat iron in a fire, it turns red."
@@ -174,7 +174,7 @@ def ex_17b : Datum :=
 def seat : Datum :=
   { id := "vonfintel2001_seat"
     source := ⟨"cornulier-1983", ""⟩
-    reportedIn := some ⟨"von-fintel-2001", "p. 9"⟩
+    reportedIn := some ⟨"von-fintel-2001", "p. 10"⟩
     language := "stan1293"
     primaryText := "One is allowed to sit in this seat if one is disabled or one is older than 70."
     glossedTokens := []
@@ -186,8 +186,8 @@ def seat : Datum :=
 
 def p14_2 : Datum :=
   { id := "vonfintel2001_p14_2"
-    source := ⟨"groenendijk-stokhof-1984", ""⟩
-    reportedIn := some ⟨"von-fintel-2001", "(2) p. 14"⟩
+    source := ⟨"von-fintel-2001", "(2) p. 15"⟩
+    reportedIn := none
     language := "stan1293"
     primaryText := "Q: Who left the party early? A: Robin and Hilary left the party early."
     glossedTokens := []
@@ -199,8 +199,8 @@ def p14_2 : Datum :=
 
 def p15_3 : Datum :=
   { id := "vonfintel2001_p15_3"
-    source := ⟨"groenendijk-stokhof-1984", ""⟩
-    reportedIn := some ⟨"von-fintel-2001", "(3) p. 15"⟩
+    source := ⟨"von-fintel-2001", "(3) p. 16"⟩
+    reportedIn := none
     language := "stan1293"
     primaryText := "Q: Will Robin come to the party? A: If there is vegetarian food Robin will come to the party."
     glossedTokens := []
@@ -212,7 +212,7 @@ def p15_3 : Datum :=
 
 def p17_4a : Datum :=
   { id := "vonfintel2001_p17_4a"
-    source := ⟨"von-fintel-2001", "(4) p. 17"⟩
+    source := ⟨"von-fintel-2001", "(4) p. 18"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "Q: Will you give me $5 if I mow the lawn for you? A: Sure, I will give you $5 if you mow the lawn."
@@ -225,7 +225,7 @@ def p17_4a : Datum :=
 
 def p17_5 : Datum :=
   { id := "vonfintel2001_p17_5"
-    source := ⟨"von-fintel-2001", "(5) p. 17"⟩
+    source := ⟨"von-fintel-2001", "(5) p. 18"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "A: John is in Amherst today. B: If he is in Amherst, he'll be home late tonight."
@@ -238,7 +238,7 @@ def p17_5 : Datum :=
 
 def p17_6 : Datum :=
   { id := "vonfintel2001_p17_6"
-    source := ⟨"von-fintel-2001", "(6) p. 17"⟩
+    source := ⟨"von-fintel-2001", "(6) p. 18"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "Q: Where around here can I buy Italian newspapers? A: You can get them at Out of Town News in Harvard Square."

@@ -28,7 +28,8 @@
         "anyone"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "gajewski2011_ex15a",
@@ -59,7 +60,8 @@
         "in weeks"
       ]
     ],
-    "comment": "No sits at the end of its scale, so its enriched meaning is its plain, downward-entailing meaning."
+    "comment": "No sits at the end of its scale, so its enriched meaning is its plain, downward-entailing meaning.",
+    "verified": "page-image"
   },
   {
     "id": "gajewski2011_ex14b",
@@ -68,7 +70,7 @@
       "paperLabel": "(14b)"
     },
     "language": "stan1293",
-    "primaryText": "At most five doctors have seen anyone.",
+    "primaryText": "At most 5 doctors have seen anyone.",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
@@ -90,7 +92,8 @@
         "anyone"
       ]
     ],
-    "comment": "Downward entailing but not anti-additive."
+    "comment": "Downward entailing but not anti-additive.",
+    "verified": "page-image"
   },
   {
     "id": "gajewski2011_ex15b",
@@ -99,7 +102,7 @@
       "paperLabel": "(15b)"
     },
     "language": "stan1293",
-    "primaryText": "At most five doctors have seen Mary in weeks.",
+    "primaryText": "At most 5 doctors have seen Mary in weeks.",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
@@ -121,7 +124,8 @@
         "in weeks"
       ]
     ],
-    "comment": "Excluding the stronger alternative at most four leaves exactly five, which is not downward entailing."
+    "comment": "Excluding the stronger alternative at most four leaves exactly five, which is not downward entailing.",
+    "verified": "page-image"
   },
   {
     "id": "gajewski2011_ex1f",
@@ -152,7 +156,8 @@
         "ever"
       ]
     ],
-    "comment": "Upward entailing in its scope."
+    "comment": "Upward entailing in its scope.",
+    "verified": "page-image"
   },
   {
     "id": "gajewski2011_ex7f",
@@ -183,7 +188,8 @@
         "until"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "gajewski2011_ex39a",
@@ -214,7 +220,8 @@
         "ever, anyone"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "gajewski2011_ex39b",
@@ -245,7 +252,8 @@
         "in weeks"
       ]
     ],
-    "comment": "Only's presupposition that the focus satisfies the scope is upward entailing."
+    "comment": "Only's presupposition that the focus satisfies the scope is upward entailing.",
+    "verified": "page-image"
   },
   {
     "id": "gajewski2011_ex39c",
@@ -276,7 +284,8 @@
         "either"
       ]
     ],
-    "comment": "Only's presupposition that the focus satisfies the scope is upward entailing. The paper credits the example to Nathan (1999)."
+    "comment": "Only's presupposition that the focus satisfies the scope is upward entailing. The paper credits the example to Nathan (1999).",
+    "verified": "page-image"
   },
   {
     "id": "gajewski2011_ex39d",
@@ -307,7 +316,8 @@
         "until"
       ]
     ],
-    "comment": "Only's presupposition that the focus satisfies the scope is upward entailing."
+    "comment": "Only's presupposition that the focus satisfies the scope is upward entailing.",
+    "verified": "page-image"
   },
   {
     "id": "gajewski2011_ex40a",
@@ -338,7 +348,8 @@
         "ever, anyone"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "gajewski2011_ex40b",
@@ -369,7 +380,8 @@
         "in weeks"
       ]
     ],
-    "comment": "The conditional's presupposition that its antecedent is possible is upward entailing."
+    "comment": "The conditional's presupposition that its antecedent is possible is upward entailing.",
+    "verified": "page-image"
   },
   {
     "id": "gajewski2011_ex40c",
@@ -400,7 +412,8 @@
         "either"
       ]
     ],
-    "comment": "The conditional's presupposition that its antecedent is possible is upward entailing."
+    "comment": "The conditional's presupposition that its antecedent is possible is upward entailing.",
+    "verified": "page-image"
   },
   {
     "id": "gajewski2011_ex40d",
@@ -431,7 +444,8 @@
         "until"
       ]
     ],
-    "comment": "The conditional's presupposition that its antecedent is possible is upward entailing."
+    "comment": "The conditional's presupposition that its antecedent is possible is upward entailing.",
+    "verified": "page-image"
   },
   {
     "id": "gajewski2011_ex41a",
@@ -462,7 +476,8 @@
         "ever, anyone"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "gajewski2011_ex41b",
@@ -493,7 +508,8 @@
         "in weeks"
       ]
     ],
-    "comment": "The factive presupposition of sorry is upward entailing in the complement."
+    "comment": "The factive presupposition of sorry is upward entailing in the complement.",
+    "verified": "page-image"
   },
   {
     "id": "gajewski2011_ex41c",
@@ -524,7 +540,8 @@
         "either"
       ]
     ],
-    "comment": "The factive presupposition of sorry is upward entailing in the complement."
+    "comment": "The factive presupposition of sorry is upward entailing in the complement.",
+    "verified": "page-image"
   },
   {
     "id": "gajewski2011_ex41d",
@@ -555,6 +572,7 @@
         "until"
       ]
     ],
-    "comment": "The factive presupposition of sorry is upward entailing in the complement."
+    "comment": "The factive presupposition of sorry is upward entailing in the complement.",
+    "verified": "page-image"
   }
 ]

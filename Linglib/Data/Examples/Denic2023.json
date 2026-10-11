@@ -21,7 +21,8 @@
       ["disjuncts", "2"],
       ["preferred", "distributive"]
     ],
-    "comment": "Typically triggers the distributive inferences that at least one is French and at least one is Spanish, without ignorance inferences about them."
+    "comment": "Typically triggers the distributive inferences that at least one is French and at least one is Spanish, without ignorance inferences about them.",
+    "verified": "page-image"
   },
   {
     "id": "denic2023_7",
@@ -45,7 +46,8 @@
       ["disjuncts", "2"],
       ["preferred", "ignorance"]
     ],
-    "comment": "Minimally different from (6) in the cardinality of the restrictor; naturally interpreted with ignorance inferences about whether at least one is French and about whether at least one is Spanish."
+    "comment": "Minimally different from (6) in the cardinality of the restrictor; naturally interpreted with ignorance inferences about whether at least one is French and about whether at least one is Spanish.",
+    "verified": "page-image"
   },
   {
     "id": "denic2023_8",
@@ -69,7 +71,8 @@
       ["disjuncts", "2"],
       ["preferred", "distributive"]
     ],
-    "comment": "More naturally interpreted with distributive inferences than (9)."
+    "comment": "More naturally interpreted with distributive inferences than (9).",
+    "verified": "page-image"
   },
   {
     "id": "denic2023_9",
@@ -93,7 +96,8 @@
       ["disjuncts", "4"],
       ["preferred", "ignorance"]
     ],
-    "comment": "Same restrictor as (8), more disjuncts; more naturally interpreted with ignorance inferences."
+    "comment": "Same restrictor as (8), more disjuncts; more naturally interpreted with ignorance inferences.",
+    "verified": "page-image"
   },
   {
     "id": "denic2023_12",
@@ -112,14 +116,15 @@
       ["name", "unembedded"],
       ["disjuncts", "2"]
     ],
-    "comment": "Triggers the ignorance inferences that the speaker is ignorant about whether John is French (Spanish) and the scalar implicature that he is not both; the disjunct alternatives are symmetric and cannot be pruned one without the other."
+    "comment": "Triggers the ignorance inferences that the speaker is ignorant about whether John is French (Spanish) and the scalar implicature that he is not both; the disjunct alternatives are symmetric and cannot be pruned one without the other.",
+    "verified": "page-image"
   },
   {
     "id": "denic2023_31",
     "source": {"bibkey": "denic-2023", "paperLabel": "(31)"},
     "reportedIn": null,
     "language": "stan1293",
-    "primaryText": "#Each of those three girls is Mary, Susan, or Jane.",
+    "primaryText": "Each of those three girls is Mary, Susan, or Jane.",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
@@ -132,7 +137,8 @@
       ["predicate", "identityCopula"],
       ["singletonDenoting", "yes"]
     ],
-    "comment": "Contextually equivalent to (35) given that Mary, Susan and Jane are three different individuals, yet cannot be used to convey it."
+    "comment": "Contextually equivalent to (35) given that Mary, Susan and Jane are three different individuals, yet cannot be used to convey it.",
+    "verified": "page-image"
   },
   {
     "id": "denic2023_32",
@@ -152,14 +158,15 @@
       ["predicate", "beCalled"],
       ["singletonDenoting", "no"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "denic2023_33",
     "source": {"bibkey": "denic-2023", "paperLabel": "(33)"},
     "reportedIn": null,
     "language": "stan1293",
-    "primaryText": "#Each of those three writers wrote Anna Karenina, Germinal, or Harry Potter.",
+    "primaryText": "Each of those three writers wrote Anna Karenina, Germinal, or Harry Potter.",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
@@ -172,7 +179,8 @@
       ["predicate", "write"],
       ["singletonDenoting", "yes"]
     ],
-    "comment": "For any book there is exactly one singular or plural individual who wrote it."
+    "comment": "For any book there is exactly one singular or plural individual who wrote it.",
+    "verified": "page-image"
   },
   {
     "id": "denic2023_34",
@@ -192,7 +200,8 @@
       ["predicate", "read"],
       ["singletonDenoting", "no"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "denic2023_35",
@@ -210,14 +219,15 @@
     "paperFeatures": [
       ["name", "paraphrase-of-deviant-be"]
     ],
-    "comment": "The meaning (31) is contextually equivalent to and cannot convey."
+    "comment": "The meaning (31) is contextually equivalent to and cannot convey.",
+    "verified": "page-image"
   },
   {
     "id": "denic2023_37a",
     "source": {"bibkey": "denic-2023", "paperLabel": "(37a)"},
     "reportedIn": null,
     "language": "stan1293",
-    "primaryText": "This girl is my sister Susan. #That other girl is my sister Susan too.",
+    "primaryText": "This girl is my sister Susan. That other girl is my sister Susan too.",
     "discourseSegments": [
       "This girl is my sister Susan.",
       "That other girl is my sister Susan too."
@@ -232,7 +242,8 @@
       ["diagnostic", "singletonDenoting"],
       ["predicate", "identityCopula"]
     ],
-    "comment": "The continuation sounds contradictory: the identity predicate holds of at most one individual."
+    "comment": "The paper prints # on the second sentence only. The continuation sounds contradictory: the identity predicate holds of at most one individual.",
+    "verified": "page-image"
   },
   {
     "id": "denic2023_37b",
@@ -254,14 +265,15 @@
       ["diagnostic", "singletonDenoting"],
       ["predicate", "beCalled"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "denic2023_37c",
     "source": {"bibkey": "denic-2023", "paperLabel": "(37c)"},
     "reportedIn": null,
     "language": "stan1293",
-    "primaryText": "John wrote this book. #Peter wrote this book too.",
+    "primaryText": "John wrote this book. Peter wrote this book too.",
     "discourseSegments": [
       "John wrote this book.",
       "Peter wrote this book too."
@@ -276,7 +288,8 @@
       ["diagnostic", "singletonDenoting"],
       ["predicate", "write"]
     ],
-    "comment": ""
+    "comment": "The paper prints # on the second sentence only; the continuation sounds contradictory.",
+    "verified": "page-image"
   },
   {
     "id": "denic2023_37d",
@@ -298,7 +311,8 @@
       ["diagnostic", "singletonDenoting"],
       ["predicate", "read"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "denic2023_38",
@@ -317,14 +331,15 @@
       ["predicate", "write"],
       ["singletonDenoting", "no"]
     ],
-    "comment": "With an internal argument from the domain of letters, to write is not singleton-denoting and the sentence is not deviant."
+    "comment": "With an internal argument from the domain of letters, to write is not singleton-denoting and the sentence is not deviant.",
+    "verified": "page-image"
   },
   {
     "id": "denic2023_41",
     "source": {"bibkey": "magri-2009", "paperLabel": ""},
     "reportedIn": {"bibkey": "denic-2023", "paperLabel": "(41)"},
     "language": "stan1293",
-    "primaryText": "#Some Italians come from a warm country.",
+    "primaryText": "Some Italians come from a warm country.",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
@@ -335,14 +350,15 @@
     "paperFeatures": [
       ["diagnostic", "blindImplicature"]
     ],
-    "comment": "Deviant because its scalar implicature that not all Italians come from a warm country contradicts common knowledge."
+    "comment": "Deviant because its scalar implicature that not all Italians come from a warm country contradicts common knowledge.",
+    "verified": "page-image"
   },
   {
     "id": "denic2023_43a",
     "source": {"bibkey": "buccola-haida-2019", "paperLabel": ""},
     "reportedIn": {"bibkey": "denic-2023", "paperLabel": "(43a)"},
     "language": "stan1293",
-    "primaryText": "#Ann scored at least 3 points.",
+    "primaryText": "Ann scored at least 3 points.",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
@@ -353,7 +369,8 @@
     "paperFeatures": [
       ["diagnostic", "blindIgnorance"]
     ],
-    "comment": "Triggers the ignorance inference that the speaker is ignorant about whether Ann scored exactly 3 points, which contradicts common knowledge."
+    "comment": "Triggers the ignorance inference that the speaker is ignorant about whether Ann scored exactly 3 points, which contradicts common knowledge.",
+    "verified": "page-image"
   },
   {
     "id": "denic2023_43b",
@@ -371,7 +388,8 @@
     "paperFeatures": [
       ["diagnostic", "blindIgnorance"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "denic2023_48",
@@ -391,14 +409,15 @@
     "paperFeatures": [
       ["diagnostic", "symmetry"]
     ],
-    "comment": "The symmetric disjunct alternatives cannot be pruned one without the other, even though informativeness would favour pruning the cousins alternative."
+    "comment": "The symmetric disjunct alternatives cannot be pruned one without the other, even though informativeness would favour pruning the cousins alternative.",
+    "verified": "page-image"
   },
   {
     "id": "denic2023_55a",
     "source": {"bibkey": "denic-2023", "paperLabel": "(55a)"},
     "reportedIn": null,
     "language": "stan1293",
-    "primaryText": "#Each of these three girls must be Mary, Susan, or Jane.",
+    "primaryText": "Each of these three girls must be Mary, Susan, or Jane.",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
@@ -410,7 +429,8 @@
       ["diagnostic", "modalContrast"],
       ["modal", "necessity"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "denic2023_55b",
@@ -429,44 +449,47 @@
       ["diagnostic", "modalContrast"],
       ["modal", "possibility"]
     ],
-    "comment": "The possibility modal below the universal quantifier saves the sentence."
+    "comment": "The possibility modal below the universal quantifier saves the sentence.",
+    "verified": "page-image"
   },
   {
     "id": "denic2023_57",
     "source": {"bibkey": "denic-2023", "paperLabel": "(57)"},
     "reportedIn": null,
     "language": "stan1293",
-    "primaryText": "?Each of the twenty girls in this photo is Lisa or one of our neighbors.",
+    "primaryText": "Each of the twenty girls in this photo is Lisa or one of our neighbors.",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "questionable",
+    "judgment": "marginal",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
       ["diagnostic", "largerDomain"],
       ["restrictor", "20"]
     ],
-    "comment": "Deviant for some speakers although a restrictor of twenty favours distributive rather than ignorance inferences; a distribution estimate inference would contradict common knowledge."
+    "comment": "Deviant for some speakers although a restrictor of twenty favours distributive rather than ignorance inferences; a distribution estimate inference would contradict common knowledge.",
+    "verified": "page-image"
   },
   {
     "id": "denic2023_59",
     "source": {"bibkey": "denic-2023", "paperLabel": "(59)"},
     "reportedIn": null,
     "language": "stan1293",
-    "primaryText": "?It's not the case that both of these girls are Susan or Jane.",
+    "primaryText": "It's not the case that both of these girls are Susan or Jane.",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "questionable",
+    "judgment": "marginal",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
       ["diagnostic", "downwardEntailing"]
     ],
-    "comment": "Deviance persists under negation for some speakers, parallel to the embedded cases of Magri."
+    "comment": "Deviance persists under negation for some speakers, parallel to the embedded cases of Magri.",
+    "verified": "page-image"
   },
   {
     "id": "denic2023_63",
@@ -490,6 +513,7 @@
       ["disjuncts", "2"],
       ["preferred", "ignorance"]
     ],
-    "comment": "Even with a strong prior for American, the sentence is interpreted with ignorance and without distributive inferences, against domain-general reasoning from the literal meaning."
+    "comment": "Even with a strong prior for American, the sentence is interpreted with ignorance and without distributive inferences, against domain-general reasoning from the literal meaning.",
+    "verified": "page-image"
   }
 ]

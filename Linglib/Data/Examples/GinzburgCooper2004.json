@@ -45,7 +45,8 @@
         "shared"
       ]
     ],
-    "comment": "Clausal: are you asking if BO (of all people) finagled a raise? Constituent: who is Bo?"
+    "comment": "Clausal: are you asking if BO (of all people) finagled a raise? Constituent: who is Bo?",
+    "verified": "page-image"
   },
   {
     "id": "ginzburgcooper2004_4a_finagle",
@@ -93,7 +94,8 @@
         "shared"
       ]
     ],
-    "comment": "Clausal: are you asking if Bo FINAGLED a raise (of all actions)? Constituent: what does it mean to finagle?"
+    "comment": "Clausal: are you asking if Bo FINAGLED a raise (of all actions)? Constituent: what does it mean to finagle?",
+    "verified": "page-image"
   },
   {
     "id": "ginzburgcooper2004_6a",
@@ -102,7 +104,7 @@
       "paperLabel": "(6a)"
     },
     "language": "stan1293",
-    "primaryText": "George: you always had er er say every foot he had with a piece of spunyarn in the wire. Anon1: Spunyarn? George: Spunyarn, yes. Anon1: What's spunyarn? George: Well that's like er tarred rope.",
+    "primaryText": "George: … you always had er er say every foot he had with a piece of spunyarn in the wire. Anon1: Spunyarn? George: Spunyarn, yes. Anon1: What's spunyarn? George: Well that's like er tarred rope.",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
@@ -141,7 +143,8 @@
         "shared"
       ]
     ],
-    "comment": "George answers the clausal reading; Anon1 intended the constituent one and asks it non-elliptically."
+    "comment": "George answers the clausal reading; Anon1 intended the constituent one and asks it non-elliptically.",
+    "verified": "page-image"
   },
   {
     "id": "ginzburgcooper2004_8a",
@@ -189,7 +192,8 @@
         "shared"
       ]
     ],
-    "comment": "Clausal: are you asking if my cousin of all people left? Constituent: when you say Bo, are you referring to my cousin?"
+    "comment": "Clausal: are you asking if my cousin of all people left? Constituent: when you say Bo, are you referring to my cousin?",
+    "verified": "page-image"
   },
   {
     "id": "ginzburgcooper2004_8b",
@@ -237,7 +241,8 @@
         "shared"
       ]
     ],
-    "comment": "Clausal: are you asking if Sue of all people annoyed Bo? Constituent: when you say she, are you referring to Sue?"
+    "comment": "Clausal: are you asking if Sue of all people annoyed Bo? Constituent: when you say she, are you referring to Sue?",
+    "verified": "page-image"
   },
   {
     "id": "ginzburgcooper2004_8c",
@@ -285,7 +290,8 @@
         "shared"
       ]
     ],
-    "comment": "Clausal: are you asking if I, of all things, cycled to work yesterday? Constituent: when you say bike, are you referring to the activity of cycling?"
+    "comment": "Clausal: are you asking if I, of all things, cycled to work yesterday? Constituent: when you say bike, are you referring to the activity of cycling?",
+    "verified": "page-image"
   },
   {
     "id": "ginzburgcooper2004_9a",
@@ -333,7 +339,8 @@
         "shared"
       ]
     ],
-    "comment": "Clausal: who is it you are asking whether s/he left? Constituent: when you say Bo, who are you referring to?"
+    "comment": "Clausal: who is it you are asking whether s/he left? Constituent: when you say Bo, who are you referring to?",
+    "verified": "page-image"
   },
   {
     "id": "ginzburgcooper2004_10a_him",
@@ -372,7 +379,8 @@
         "shared"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "ginzburgcooper2004_10a_he",
@@ -411,7 +419,8 @@
         "shared"
       ]
     ],
-    "comment": "Marked # in the paper."
+    "comment": "Marked # in the paper.",
+    "verified": "page-image"
   },
   {
     "id": "ginzburgcooper2004_10b_he",
@@ -450,7 +459,8 @@
         "shared"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "ginzburgcooper2004_10b_him",
@@ -489,7 +499,8 @@
         "shared"
       ]
     ],
-    "comment": "Marked # in the paper."
+    "comment": "Marked # in the paper.",
+    "verified": "page-image"
   },
   {
     "id": "ginzburgcooper2004_10c_adore",
@@ -528,7 +539,8 @@
         "shared"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "ginzburgcooper2004_10c_adored",
@@ -567,7 +579,8 @@
         "shared"
       ]
     ],
-    "comment": "Marked # in the paper."
+    "comment": "Marked # in the paper.",
+    "verified": "page-image"
   },
   {
     "id": "ginzburgcooper2004_10d_cycling",
@@ -606,7 +619,8 @@
         "shared"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "ginzburgcooper2004_10d_biking",
@@ -645,7 +659,8 @@
         "shared"
       ]
     ],
-    "comment": "A non-identical fragment of the same category."
+    "comment": "A non-identical fragment of the same category.",
+    "verified": "page-image"
   },
   {
     "id": "ginzburgcooper2004_10d_biked",
@@ -684,7 +699,8 @@
         "shared"
       ]
     ],
-    "comment": "Marked # in the paper."
+    "comment": "Marked # in the paper.",
+    "verified": "page-image"
   },
   {
     "id": "ginzburgcooper2004_11",
@@ -732,7 +748,8 @@
         "distinct"
       ]
     ],
-    "comment": "Only: what location are you talking about? Not: are you asking if we should hold the conference in Hyderabad of all places?"
+    "comment": "Only: what location are you talking about? Not: are you asking if we should hold the conference in Hyderabad of all places?",
+    "verified": "page-image"
   },
   {
     "id": "ginzburgcooper2004_12",
@@ -780,7 +797,8 @@
         "shared"
       ]
     ],
-    "comment": "Either: what location are you talking about? Or: are you asking if we should hold the conference in Gothenburg of all places?"
+    "comment": "Either: what location are you talking about? Or: are you asking if we should hold the conference in Gothenburg of all places?",
+    "verified": "page-image"
   },
   {
     "id": "ginzburgcooper2004_13a",
@@ -828,6 +846,7 @@
         "distinct"
       ]
     ],
-    "comment": "Who is I, who are you? Cannot mean: am I asking if I of all people can come in."
+    "comment": "Who is I, who are you? Cannot mean: am I asking if I of all people can come in.",
+    "verified": "page-image"
   }
 ]

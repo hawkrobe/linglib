@@ -1,7 +1,7 @@
 [
   {
     "id": "bkg2020_25a",
-    "source": {"bibkey": "beavers-koontz-garboden-2020", "paperLabel": "(25a)"},
+    "source": {"bibkey": "beavers-koontz-garboden-2020", "paperLabel": "ch. 1 (25a)"},
     "language": "stan1293",
     "primaryText": "Mary flattened the rug again, and it had been flat before.",
     "glossedTokens": [],
@@ -15,11 +15,12 @@
       ["diagnostic", "sublexical again"],
       ["attachment", "root"]
     ],
-    "comment": "Lowest of the three attachment sites in (27)."
+    "comment": "Lowest of the three attachment sites in (27).",
+    "verified": "page-image"
   },
   {
     "id": "bkg2020_25b",
-    "source": {"bibkey": "beavers-koontz-garboden-2020", "paperLabel": "(25b)"},
+    "source": {"bibkey": "beavers-koontz-garboden-2020", "paperLabel": "ch. 1 (25b)"},
     "language": "stan1293",
     "primaryText": "Mary flattened the rug again, and it had flattened before.",
     "glossedTokens": [],
@@ -33,11 +34,12 @@
       ["diagnostic", "sublexical again"],
       ["attachment", "v_become"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bkg2020_25c",
-    "source": {"bibkey": "beavers-koontz-garboden-2020", "paperLabel": "(25c)"},
+    "source": {"bibkey": "beavers-koontz-garboden-2020", "paperLabel": "ch. 1 (25c)"},
     "language": "stan1293",
     "primaryText": "Mary flattened the rug again, and Mary had flattened it before.",
     "glossedTokens": [],
@@ -51,7 +53,8 @@
       ["diagnostic", "sublexical again"],
       ["attachment", "v_cause"]
     ],
-    "comment": "(25c) entails (25b) entails (25a) — the reading hierarchy."
+    "comment": "(25c) entails (25b) entails (25a) — the reading hierarchy.",
+    "verified": "page-image"
   },
   {
     "id": "bkg2020_ch2_46a",
@@ -69,7 +72,8 @@
       ["root class", "property concept"],
       ["diagnostic", "restitutive again"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bkg2020_ch2_47a",
@@ -87,7 +91,8 @@
       ["root class", "result"],
       ["diagnostic", "restitutive again"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bkg2020_ch2_47b",
@@ -105,7 +110,8 @@
       ["root class", "result"],
       ["diagnostic", "restitutive again"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bkg2020_ch2_48",
@@ -123,7 +129,8 @@
       ["root class", "result"],
       ["diagnostic", "restitutive again"]
     ],
-    "comment": "Even granting a prototypical fried state, no restitutive reading."
+    "comment": "Even granting a prototypical fried state, no restitutive reading.",
+    "verified": "page-image"
   },
   {
     "id": "bkg2020_ch3_10a",
@@ -139,7 +146,8 @@
       ["root class", "true possession"],
       ["diagnostic", "result denial"]
     ],
-    "comment": "Possession is non-cancelable with giving verbs (give, hand, pass)."
+    "comment": "Possession is non-cancelable with giving verbs (give, hand, pass).",
+    "verified": "page-image"
   },
   {
     "id": "bkg2020_ch3_11a",
@@ -155,7 +163,8 @@
       ["root class", "release"],
       ["diagnostic", "result denial"]
     ],
-    "comment": "Sending verbs cancel the possession inference: prospective rather than actual having."
+    "comment": "Sending verbs cancel the possession inference: prospective rather than actual having.",
+    "verified": "page-image"
   },
   {
     "id": "bkg2020_ch3_48a",
@@ -171,7 +180,8 @@
       ["root class", "transfer of possession by motion"],
       ["diagnostic", "result denial"]
     ],
-    "comment": "The hand root entails change along a possession-by-motion scale in both templates."
+    "comment": "The hand root entails change along a possession-by-motion scale in both templates.",
+    "verified": "page-image"
   },
   {
     "id": "bkg2020_ch4_25a",
@@ -187,7 +197,8 @@
       ["verb class", "manner of killing"],
       ["diagnostic", "result denial"]
     ],
-    "comment": "Manner-of-killing verbs pattern with result verbs: the result is entailed."
+    "comment": "Manner-of-killing verbs pattern with result verbs: the result is entailed.",
+    "verified": "page-image"
   },
   {
     "id": "bkg2020_ch4_26c",
@@ -203,7 +214,8 @@
       ["verb class", "manner of killing"],
       ["diagnostic", "object deletion"]
     ],
-    "comment": "On the transitive-killing reading: result verbs disallow object deletion."
+    "comment": "On the transitive-killing reading: result verbs disallow object deletion.",
+    "verified": "page-image"
   },
   {
     "id": "bkg2020_ch4_32b",
@@ -219,6 +231,7 @@
       ["verb class", "manner of killing"],
       ["diagnostic", "action denial"]
     ],
-    "comment": "Actor-oriented manner is entailed alongside the result: manner+result in one root."
+    "comment": "Actor-oriented manner is entailed alongside the result: manner+result in one root.",
+    "verified": "page-image"
   }
 ]

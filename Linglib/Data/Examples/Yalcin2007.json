@@ -9,14 +9,16 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
       ["type", "Moore-paradoxical"],
-      ["embedding", "none"]
+      ["embedding", "none"],
+      ["felicity", "infelicitous"]
     ],
-    "comment": "Unassertable, but coherent under embedding."
+    "comment": "Printed without a mark; the prose calls (5) and (6) \"odd, contradictory-sounding, and unassertable\". Unassertable, but coherent under embedding.",
+    "verified": "page-image"
   },
   {
     "id": "yalcin2007_2",
@@ -28,14 +30,16 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
       ["type", "Moore-paradoxical"],
-      ["embedding", "none"]
+      ["embedding", "none"],
+      ["felicity", "infelicitous"]
     ],
-    "comment": ""
+    "comment": "Printed without a mark; the prose calls (5) and (6) \"odd, contradictory-sounding, and unassertable\".",
+    "verified": "page-image"
   },
   {
     "id": "yalcin2007_3",
@@ -54,7 +58,8 @@
       ["type", "epistemic contradiction"],
       ["embedding", "suppose"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "yalcin2007_4",
@@ -73,7 +78,8 @@
       ["type", "epistemic contradiction"],
       ["embedding", "suppose"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "yalcin2007_5",
@@ -92,7 +98,8 @@
       ["type", "epistemic contradiction"],
       ["embedding", "suppose"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "yalcin2007_6",
@@ -111,7 +118,8 @@
       ["type", "epistemic contradiction"],
       ["embedding", "conditional antecedent"]
     ],
-    "comment": "Unintelligible whatever the consequent."
+    "comment": "Unintelligible whatever the consequent.",
+    "verified": "page-image"
   },
   {
     "id": "yalcin2007_7",
@@ -130,7 +138,8 @@
       ["type", "epistemic contradiction"],
       ["embedding", "conditional antecedent"]
     ],
-    "comment": "Unintelligible rather than trivially true."
+    "comment": "Unintelligible rather than trivially true.",
+    "verified": "page-image"
   },
   {
     "id": "yalcin2007_8",
@@ -149,7 +158,8 @@
       ["type", "Moore-paradoxical"],
       ["embedding", "suppose"]
     ],
-    "comment": "A coherent request."
+    "comment": "A coherent request.",
+    "verified": "page-image"
   },
   {
     "id": "yalcin2007_9",
@@ -168,7 +178,8 @@
       ["type", "Moore-paradoxical"],
       ["embedding", "suppose"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "yalcin2007_10",
@@ -187,7 +198,8 @@
       ["type", "Moore-paradoxical"],
       ["embedding", "conditional antecedent"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "yalcin2007_11",
@@ -206,7 +218,8 @@
       ["type", "Moore-paradoxical"],
       ["embedding", "conditional antecedent"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "yalcin2007_12",
@@ -225,7 +238,8 @@
       ["type", "epistemic contradiction"],
       ["embedding", "conditional antecedent"]
     ],
-    "comment": "A relational semantics on which might entails for-all-I-know predicts this true."
+    "comment": "A relational semantics on which might entails for-all-I-know predicts this true.",
+    "verified": "page-image"
   },
   {
     "id": "yalcin2007_13",
@@ -245,7 +259,8 @@
     "paperFeatures": [
       ["embedding", "believe"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "yalcin2007_14",
@@ -263,7 +278,8 @@
     "paperFeatures": [
       ["embedding", "think"]
     ],
-    "comment": "True without second-order beliefs on Fido's part."
+    "comment": "True without second-order beliefs on Fido's part.",
+    "verified": "page-image"
   },
   {
     "id": "yalcin2007_15",
@@ -281,7 +297,8 @@
     "paperFeatures": [
       ["reading", "expert information"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "yalcin2007_16",
@@ -299,7 +316,8 @@
     "paperFeatures": [
       ["reading", "target information state"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "yalcin2007_17",
@@ -319,7 +337,8 @@
       ["modal", "must"],
       ["embedding", "suppose"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "yalcin2007_18",
@@ -339,7 +358,8 @@
       ["modal", "probability"],
       ["embedding", "suppose"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "yalcin2007_19",
@@ -359,7 +379,8 @@
       ["modal", "probability"],
       ["embedding", "suppose"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "yalcin2007_20",
@@ -379,7 +400,8 @@
       ["modal", "probability"],
       ["embedding", "conditional antecedent"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "yalcin2007_21",
@@ -397,7 +419,8 @@
     "paperFeatures": [
       ["consequent", "plain"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "yalcin2007_22",
@@ -415,6 +438,7 @@
     "paperFeatures": [
       ["consequent", "must"]
     ],
-    "comment": "Sounds equivalent to (C1)."
+    "comment": "Sounds equivalent to (C1).",
+    "verified": "page-image"
   }
 ]

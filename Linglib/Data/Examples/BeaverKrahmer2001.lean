@@ -17,8 +17,8 @@ namespace BeaverKrahmer2001.Examples
 
 def ex_1 : Datum :=
   { id := "beaverkrahmer2001_1"
-    source := ⟨"beaver-krahmer-2001", "(1)"⟩
-    reportedIn := none
+    source := ⟨"karttunen-peters-1979", ""⟩
+    reportedIn := some ⟨"beaver-krahmer-2001", "(1)"⟩
     language := "stan1293"
     primaryText := "Somebody managed to succeed George V on the throne of England."
     glossedTokens := []
@@ -134,13 +134,13 @@ def ex_9 : Datum :=
 
 def ex_10 : Datum :=
   { id := "beaverkrahmer2001_10"
-    source := ⟨"beaver-krahmer-2001", "(10)"⟩
-    reportedIn := none
+    source := ⟨"karttunen-peters-1979", ""⟩
+    reportedIn := some ⟨"beaver-krahmer-2001", "(10)"⟩
     language := "stan1293"
     primaryText := "Somebody managed to succeed George V (on the throne of England)."
     glossedTokens := []
     context := ""
-    judgment := .questionable
+    judgment := .marginal
     alternatives := []
     readings := []
     paperFeatures := [("phenomenon", "quantified presupposition trigger")] }
@@ -173,8 +173,8 @@ def ex_16 : Datum :=
 
 def ex_17 : Datum :=
   { id := "beaverkrahmer2001_17"
-    source := ⟨"beaver-krahmer-2001", "(17)"⟩
-    reportedIn := none
+    source := ⟨"beaver-1997", ""⟩
+    reportedIn := some ⟨"beaver-krahmer-2001", "(17)"⟩
     language := "stan1293"
     primaryText := "If Mary knows that Bill is happy, then I'm a Dutchman - she merely believes it."
     glossedTokens := []

@@ -16,7 +16,8 @@
       ["connective", "before"],
       ["pattern", "transitivity"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "anscombe1964_ii",
@@ -35,7 +36,8 @@
       ["connective", "after"],
       ["pattern", "transitivity"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "anscombe1964_mutual_before",
@@ -47,14 +49,15 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
       ["connective", "before"],
       ["pattern", "mutual"]
     ],
-    "comment": "Incompatible with the consequent, and hence the antecedent, of (i)."
+    "comment": "Incompatible with the consequent, and hence the antecedent, of (i). The paper judges no acceptability here: \"The first is incompatible with the consequent and hence with the antecedent of (i)\", a consistency claim, so the sentence is recorded acceptable.",
+    "verified": "page-image"
   },
   {
     "id": "anscombe1964_mutual_after",
@@ -73,7 +76,8 @@
       ["connective", "after"],
       ["pattern", "mutual"]
     ],
-    "comment": "Compatible with the consequent and antecedent of (ii): after is not asymmetric."
+    "comment": "Compatible with the consequent and antecedent of (ii): after is not asymmetric.",
+    "verified": "page-image"
   },
   {
     "id": "anscombe1964_born",
@@ -92,7 +96,8 @@
       ["connective", "after"],
       ["pattern", "transitivity_failure"]
     ],
-    "comment": "After is not unrestrictedly transitive."
+    "comment": "After is not unrestrictedly transitive. The paper's judgment is in prose: the result might possibly be held unobjectionable, but \"the following piece of reasoning is not\".",
+    "verified": "page-image"
   },
   {
     "id": "anscombe1964_scout",
@@ -111,7 +116,8 @@
       ["connective", "after"],
       ["pattern", "alternative_verifications"]
     ],
-    "comment": "True if I became one after you did, if I went on after you stopped, or if I was one for a while after you became one."
+    "comment": "True if I became one after you did, if I went on after you stopped, or if I was one for a while after you became one.",
+    "verified": "page-image"
   },
   {
     "id": "anscombe1964_james1",
@@ -131,7 +137,8 @@
       ["pattern", "verification"],
       ["verification", "begin_after_begin"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "anscombe1964_james2",
@@ -151,7 +158,8 @@
       ["pattern", "verification"],
       ["verification", "begin_after_stop"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "anscombe1964_james3",
@@ -171,7 +179,8 @@
       ["pattern", "verification"],
       ["verification", "overlap_after_begin"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "anscombe1964_james4",
@@ -191,7 +200,8 @@
       ["pattern", "verification"],
       ["verification", "after_stop"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "anscombe1964_greece",
@@ -210,7 +220,8 @@
       ["connective", "before"],
       ["pattern", "quantification"]
     ],
-    "comment": "Right for 'I was in Greece before you were ever in Italy' (§V), stronger than plain 'before'."
+    "comment": "Right for 'I was in Greece before you were ever in Italy' (§V), stronger than plain 'before'.",
+    "verified": "page-image"
   },
   {
     "id": "anscombe1964_italy",
@@ -229,7 +240,8 @@
       ["connective", "after"],
       ["pattern", "quantification"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "anscombe1964_glass",
@@ -248,7 +260,8 @@
       ["connective", "before"],
       ["pattern", "before_ever"]
     ],
-    "comment": "Does not suggest that he did so before he ever in his life used the telephone."
+    "comment": "Does not suggest that he did so before he ever in his life used the telephone.",
+    "verified": "page-image"
   },
   {
     "id": "anscombe1964_battle",
@@ -267,7 +280,8 @@
       ["connective", "after"],
       ["pattern", "mutual"]
     ],
-    "comment": "Not inconsistent, unlike 'The battle took place after the rain'."
+    "comment": "Not inconsistent, unlike 'The battle took place after the rain'.",
+    "verified": "page-image"
   },
   {
     "id": "anscombe1964_quarrel",
@@ -286,7 +300,8 @@
       ["connective", "after"],
       ["pattern", "mutual"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "anscombe1964_report",
@@ -305,7 +320,8 @@
       ["connective", "after"],
       ["pattern", "mutual"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "anscombe1964_arrival",
@@ -325,7 +341,8 @@
       ["pattern", "nominal"],
       ["instantaneous", "yes"]
     ],
-    "comment": "Events named by nouns: one wholly preceded the other, so before and after are converses."
+    "comment": "Events named by nouns: one wholly preceded the other, so before and after are converses.",
+    "verified": "page-image"
   },
   {
     "id": "anscombe1964_john_tom",
@@ -345,6 +362,7 @@
       ["pattern", "instantaneous"],
       ["instantaneous", "yes"]
     ],
-    "comment": "No possibility that Tom also arrived after John."
+    "comment": "No possibility that Tom also arrived after John.",
+    "verified": "page-image"
   }
 ]

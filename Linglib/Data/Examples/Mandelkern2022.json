@@ -27,7 +27,7 @@
       ]
     ],
     "comment": "",
-    "verified": "text-layer"
+    "verified": "page-image"
   },
   {
     "id": "mandelkern2022_1b",
@@ -61,7 +61,7 @@
       ]
     ],
     "comment": "The paper: (1-b) can only be naturally interpreted as saying that some salient person is loved by every parent.",
-    "verified": "text-layer"
+    "verified": "page-image"
   },
   {
     "id": "mandelkern2022_2a",
@@ -94,7 +94,7 @@
       ]
     ],
     "comment": "",
-    "verified": "text-layer"
+    "verified": "page-image"
   },
   {
     "id": "mandelkern2022_2b",
@@ -131,7 +131,7 @@
       ]
     ],
     "comment": "The paper: (2-b) is much more naturally interpreted as saying that Sue herself is at boarding school, though the other interpretation is not impossible.",
-    "verified": "text-layer"
+    "verified": "page-image"
   },
   {
     "id": "mandelkern2022_3a",
@@ -164,7 +164,7 @@
       ]
     ],
     "comment": "",
-    "verified": "text-layer"
+    "verified": "page-image"
   },
   {
     "id": "mandelkern2022_3b",
@@ -197,7 +197,7 @@
       ]
     ],
     "comment": "",
-    "verified": "text-layer"
+    "verified": "page-image"
   },
   {
     "id": "mandelkern2022_4a",
@@ -367,7 +367,7 @@
       ]
     ],
     "comment": "The paper: (8) does not license the inference that everyone who bought a sage plant bought exactly one.",
-    "verified": "text-layer"
+    "verified": "page-image"
   },
   {
     "id": "mandelkern2022_9a",
@@ -392,7 +392,7 @@
       ]
     ],
     "comment": "",
-    "verified": "text-layer"
+    "verified": "page-image"
   },
   {
     "id": "mandelkern2022_9b",
@@ -417,7 +417,7 @@
       ]
     ],
     "comment": "",
-    "verified": "text-layer"
+    "verified": "page-image"
   },
   {
     "id": "mandelkern2022_12a",
@@ -450,7 +450,7 @@
       ]
     ],
     "comment": "",
-    "verified": "text-layer"
+    "verified": "page-image"
   },
   {
     "id": "mandelkern2022_12b",
@@ -487,7 +487,7 @@
       ]
     ],
     "comment": "The paper: the doubly negated sentence in (12-b) only seems to naturally license subsequent anaphora to Sue.",
-    "verified": "text-layer"
+    "verified": "page-image"
   },
   {
     "id": "mandelkern2022_13a",
@@ -521,7 +521,7 @@
       ]
     ],
     "comment": "An exchange: the first segment is one speaker's, the others a second speaker's; it brings out the contrast of (12).",
-    "verified": "text-layer"
+    "verified": "page-image"
   },
   {
     "id": "mandelkern2022_13b",
@@ -559,7 +559,7 @@
       ]
     ],
     "comment": "An exchange: the first segment is one speaker's, the others a second speaker's; it brings out the contrast of (12).",
-    "verified": "text-layer"
+    "verified": "page-image"
   },
   {
     "id": "mandelkern2022_14a",
@@ -589,7 +589,7 @@
       ]
     ],
     "comment": "",
-    "verified": "text-layer"
+    "verified": "page-image"
   },
   {
     "id": "mandelkern2022_14b",
@@ -619,7 +619,7 @@
       ]
     ],
     "comment": "The paper: only in (14-a) can 'she' be naturally interpreted as referring to Sue's child.",
-    "verified": "text-layer"
+    "verified": "page-image"
   },
   {
     "id": "mandelkern2022_15a",
@@ -1030,7 +1030,7 @@
       ]
     ],
     "comment": "Modal subordination; the paper sketches a cross-world witness bound for it.",
-    "verified": "text-layer"
+    "verified": "page-image"
   },
   {
     "id": "mandelkern2022_24",
@@ -1064,6 +1064,6 @@
       ]
     ],
     "comment": "Negative subordination; the paper says it is not straightforwardly accounted for.",
-    "verified": "text-layer"
+    "verified": "page-image"
   }
 ]

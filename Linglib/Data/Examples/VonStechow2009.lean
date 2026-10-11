@@ -194,7 +194,7 @@ def ex_64 : Datum :=
     context := ""
     judgment := .acceptable
     alternatives := []
-    readings := [("deictic: alive before the speech time", .acceptable), ("shifted: alive before the buying time", .questionable)]
+    readings := [("deictic: alive before the speech time", .acceptable), ("shifted: alive before the buying time", .marginal)]
     paperFeatures := [("clause", "relative"), ("tense", "past under future")] }
 
 def ex_68 : Datum :=
@@ -207,7 +207,7 @@ def ex_68 : Datum :=
     context := ""
     judgment := .acceptable
     alternatives := []
-    readings := [("deictic", .acceptable), ("simultaneous", .unacceptable)]
+    readings := [("deictic", .acceptable), ("simultaneous", .ungrammatical)]
     paperFeatures := [("clause", "relative"), ("feature", "uN")] }
 
 def ex_69 : Datum :=
@@ -332,11 +332,11 @@ def ex_86 : Datum :=
     source := ⟨"von-stechow-2009", "(86)"⟩
     reportedIn := none
     language := "stan1293"
-    primaryText := "Mary arrived after six."
+    primaryText := "Mary arrived after 6."
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("Mary arrived before six.", .acceptable)]
+    alternatives := [("Mary arrived before 6.", .acceptable)]
     readings := []
     paperFeatures := [("preposition", "temporal"), ("meaning", "precedence")] }
 

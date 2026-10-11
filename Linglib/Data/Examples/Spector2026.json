@@ -16,7 +16,7 @@
       ["section", "1"]
     ],
     "comment": "",
-    "verified": "text-layer"
+    "verified": "page-image"
   },
   {
     "id": "spector2026_3a",
@@ -35,7 +35,7 @@
       ["section", "1.1"]
     ],
     "comment": "",
-    "verified": "text-layer"
+    "verified": "page-image"
   },
   {
     "id": "spector2026_3b",
@@ -54,7 +54,7 @@
       ["section", "1.1"]
     ],
     "comment": "",
-    "verified": "text-layer"
+    "verified": "page-image"
   },
   {
     "id": "spector2026_4",
@@ -76,7 +76,7 @@
       ["section", "1.2"]
     ],
     "comment": "",
-    "verified": "text-layer"
+    "verified": "page-image"
   },
   {
     "id": "spector2026_5",
@@ -99,7 +99,7 @@
       ["section", "1.2"]
     ],
     "comment": "",
-    "verified": "text-layer"
+    "verified": "page-image"
   },
   {
     "id": "spector2026_s2_2_singing",
@@ -119,8 +119,8 @@
     "paperFeatures": [
       ["section", "2.2"]
     ],
-    "comment": "",
-    "verified": "text-layer"
+    "comment": "Printed inline; the prose: it 'can never mean ‘Someone is singing and standing’'.",
+    "verified": "page-image"
   },
   {
     "id": "spector2026_s3_1_purple",
@@ -138,8 +138,8 @@
     "paperFeatures": [
       ["section", "3.1"]
     ],
-    "comment": "",
-    "verified": "text-layer"
+    "comment": "Printed inline; the prose: 'It is purple is infelicitous out of the blue'.",
+    "verified": "page-image"
   },
   {
     "id": "spector2026_s3_1_table",
@@ -160,8 +160,8 @@
     "paperFeatures": [
       ["section", "3.1"]
     ],
-    "comment": "",
-    "verified": "text-layer"
+    "comment": "Printed inline; the prose: 'a discourse such as A table is in the room. It is purple. is felicitous'.",
+    "verified": "page-image"
   },
   {
     "id": "spector2026_s3_3_bathroom",
@@ -179,8 +179,8 @@
     "paperFeatures": [
       ["section", "3.3"]
     ],
-    "comment": "",
-    "verified": "text-layer"
+    "comment": "Printed inline as a 'bathroom sentence'; the paper shows it satisfies Transparency in every context.",
+    "verified": "page-image"
   },
   {
     "id": "spector2026_13",
@@ -202,7 +202,7 @@
       ["section", "3.4"]
     ],
     "comment": "A dialogue; the paper credits the kind of example to Rothschild (2017).",
-    "verified": "text-layer"
+    "verified": "page-image"
   },
   {
     "id": "spector2026_fn15_i",
@@ -221,10 +221,10 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["section", "4"]
+      ["section", "3.4"]
     ],
-    "comment": "A Stone disjunction (Stone 1992), which the paper does not account for.",
-    "verified": "text-layer"
+    "comment": "A Stone disjunction (Stone 1992), which the paper does not account for. Footnote 15 is attached to the end of Sect. 3.4.",
+    "verified": "page-image"
   },
   {
     "id": "spector2026_s4_smokes",
@@ -247,8 +247,8 @@
     "paperFeatures": [
       ["section", "4"]
     ],
-    "comment": "",
-    "verified": "text-layer"
+    "comment": "Printed inline; the prose: 'this is not a possible interpretation for something like Someone smokes. Someone drinks.'",
+    "verified": "page-image"
   },
   {
     "id": "spector2026_16a",
@@ -272,7 +272,7 @@
       ["section", "4"]
     ],
     "comment": "",
-    "verified": "text-layer"
+    "verified": "page-image"
   },
   {
     "id": "spector2026_17a",
@@ -293,7 +293,7 @@
       ["section", "5"]
     ],
     "comment": "",
-    "verified": "text-layer"
+    "verified": "page-image"
   },
   {
     "id": "spector2026_17b",
@@ -314,11 +314,11 @@
       ["section", "5"]
     ],
     "comment": "",
-    "verified": "text-layer"
+    "verified": "page-image"
   },
   {
     "id": "spector2026_fn19_he",
-    "source": {"bibkey": "spector-2026", "paperLabel": "fn. 19 he"},
+    "source": {"bibkey": "spector-2026", "paperLabel": "§6.2 he"},
     "reportedIn": null,
     "language": "stan1293",
     "primaryText": "Not every male student came. He stayed home.",
@@ -337,8 +337,8 @@
     "paperFeatures": [
       ["section", "6.2"]
     ],
-    "comment": "",
-    "verified": "text-layer"
+    "comment": "Printed inline in the text of Sect. 6.2 (footnote 19 is attached to it); the prose: 'is not felicitous in English under a reading where the pronoun he would refer to a male student who didn't come'.",
+    "verified": "page-image"
   },
   {
     "id": "spector2026_fn19_they",
@@ -360,10 +360,10 @@
       {"name": "they = the students who did not come", "judgment": "unacceptable"}
     ],
     "paperFeatures": [
-      ["section", "6.3"]
+      ["section", "6.2"]
     ],
-    "comment": "",
-    "verified": "text-layer"
+    "comment": "Footnote 19 is attached to the end of Sect. 6.2; the prose: 'the following discourse is much better'.",
+    "verified": "page-image"
   },
   {
     "id": "spector2026_35",
@@ -385,7 +385,7 @@
       ["section", "6.6"]
     ],
     "comment": "The intended reading is beyond the main system; the appendix treats it.",
-    "verified": "text-layer"
+    "verified": "page-image"
   },
   {
     "id": "spector2026_39",
@@ -407,7 +407,7 @@
       ["section", "7"]
     ],
     "comment": "",
-    "verified": "text-layer"
+    "verified": "page-image"
   },
   {
     "id": "spector2026_41",
@@ -418,7 +418,7 @@
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
-    "context": "Sue has two umbrellas; she took one with her and left the other at home.",
+    "context": "Sue has two umbrellas, and she took one with her and left the other one at home.",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
@@ -426,7 +426,7 @@
       ["section", "7"]
     ],
     "comment": "",
-    "verified": "text-layer"
+    "verified": "page-image"
   },
   {
     "id": "spector2026_43",
@@ -441,13 +441,16 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [
-      {"name": "no farmer who owns a donkey beats any donkey they own", "judgment": "acceptable"}
+      {
+        "name": "no farmer who owns a donkey beats any donkey they have",
+        "judgment": "acceptable"
+      }
     ],
     "paperFeatures": [
       ["section", "7"]
     ],
     "comment": "",
-    "verified": "text-layer"
+    "verified": "page-image"
   },
   {
     "id": "spector2026_45",
@@ -462,13 +465,16 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [
-      {"name": "no student who has an umbrella left every umbrella they have home", "judgment": "acceptable"}
+      {
+        "name": "no student who has an umbrella left every umbrella they have at home",
+        "judgment": "acceptable"
+      }
     ],
     "paperFeatures": [
       ["section", "7"]
     ],
     "comment": "",
-    "verified": "text-layer"
+    "verified": "page-image"
   },
   {
     "id": "spector2026_47a",
@@ -487,7 +493,7 @@
       ["section", "7"]
     ],
     "comment": "",
-    "verified": "text-layer"
+    "verified": "page-image"
   },
   {
     "id": "spector2026_47b",
@@ -506,7 +512,7 @@
       ["section", "7"]
     ],
     "comment": "",
-    "verified": "text-layer"
+    "verified": "page-image"
   },
   {
     "id": "spector2026_47c",
@@ -525,7 +531,7 @@
       ["section", "7"]
     ],
     "comment": "The paper prints 'that is it is upstairs'.",
-    "verified": "text-layer"
+    "verified": "page-image"
   },
   {
     "id": "spector2026_47d",
@@ -544,7 +550,7 @@
       ["section", "7"]
     ],
     "comment": "",
-    "verified": "text-layer"
+    "verified": "page-image"
   },
   {
     "id": "spector2026_47e",
@@ -563,7 +569,7 @@
       ["section", "7"]
     ],
     "comment": "",
-    "verified": "text-layer"
+    "verified": "page-image"
   },
   {
     "id": "spector2026_48",
@@ -584,7 +590,7 @@
       ["section", "7"]
     ],
     "comment": "",
-    "verified": "text-layer"
+    "verified": "page-image"
   },
   {
     "id": "spector2026_49",
@@ -605,7 +611,7 @@
       ["section", "7"]
     ],
     "comment": "",
-    "verified": "text-layer"
+    "verified": "page-image"
   },
   {
     "id": "spector2026_50",
@@ -624,7 +630,7 @@
       ["section", "7"]
     ],
     "comment": "",
-    "verified": "text-layer"
+    "verified": "page-image"
   },
   {
     "id": "spector2026_51",
@@ -643,7 +649,7 @@
       ["section", "7"]
     ],
     "comment": "",
-    "verified": "text-layer"
+    "verified": "page-image"
   },
   {
     "id": "spector2026_52",
@@ -664,7 +670,7 @@
       ["section", "7"]
     ],
     "comment": "",
-    "verified": "text-layer"
+    "verified": "page-image"
   },
   {
     "id": "spector2026_53",
@@ -683,7 +689,7 @@
       ["section", "7"]
     ],
     "comment": "",
-    "verified": "text-layer"
+    "verified": "page-image"
   },
   {
     "id": "spector2026_54",
@@ -704,7 +710,7 @@
       ["section", "7"]
     ],
     "comment": "",
-    "verified": "text-layer"
+    "verified": "page-image"
   },
   {
     "id": "spector2026_58a",
@@ -723,7 +729,7 @@
       ["section", "7"]
     ],
     "comment": "",
-    "verified": "text-layer"
+    "verified": "page-image"
   },
   {
     "id": "spector2026_61",
@@ -744,6 +750,6 @@
       ["section", "App."]
     ],
     "comment": "",
-    "verified": "text-layer"
+    "verified": "page-image"
   }
 ]

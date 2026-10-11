@@ -32,7 +32,8 @@
         "selected"
       ]
     ],
-    "comment": "The paper's first RP AP exemplar."
+    "comment": "The paper's first RP AP exemplar.",
+    "verified": "page-image"
   },
   {
     "id": "gj2004_5b",
@@ -67,7 +68,8 @@
         "unselected"
       ]
     ],
-    "comment": "The paper's first RP PP exemplar; object unselected by the verb."
+    "comment": "The paper's first RP PP exemplar; object unselected by the verb.",
+    "verified": "page-image"
   },
   {
     "id": "gj2004_6a",
@@ -98,7 +100,8 @@
         "AP"
       ]
     ],
-    "comment": "Intransitive resultative."
+    "comment": "Intransitive resultative.",
+    "verified": "page-image"
   },
   {
     "id": "gj2004_6b",
@@ -129,7 +132,8 @@
         "PP"
       ]
     ],
-    "comment": "Intransitive resultative."
+    "comment": "Intransitive resultative.",
+    "verified": "page-image"
   },
   {
     "id": "gj2004_7a",
@@ -164,7 +168,8 @@
         "selected"
       ]
     ],
-    "comment": "Selected transitive resultative: cf. The gardener watered the flowers."
+    "comment": "Selected transitive resultative: cf. The gardener watered the flowers.",
+    "verified": "page-image"
   },
   {
     "id": "gj2004_7b",
@@ -199,7 +204,8 @@
         "selected"
       ]
     ],
-    "comment": "Selected transitive resultative: cf. Bill broke the bathtub. The PP names the result state, a property RP in the AP/PP sense of the paper's summary (97a)."
+    "comment": "Selected transitive resultative: cf. Bill broke the bathtub. The PP names the result state, a property RP in the AP/PP sense of the paper's summary (97a).",
+    "verified": "page-image"
   },
   {
     "id": "gj2004_8a",
@@ -216,7 +222,7 @@
     "judgment": "acceptable",
     "alternatives": [
       {
-        "form": "*They drank the pub.",
+        "form": "They drank the pub.",
         "judgment": "ungrammatical"
       }
     ],
@@ -239,7 +245,8 @@
         "unselected"
       ]
     ],
-    "comment": "Unselected transitive resultative: object licensed only by the construction."
+    "comment": "Unselected transitive resultative: object licensed only by the construction.",
+    "verified": "page-image"
   },
   {
     "id": "gj2004_8b",
@@ -256,7 +263,7 @@
     "judgment": "acceptable",
     "alternatives": [
       {
-        "form": "*The professor talked us.",
+        "form": "The professor talked us.",
         "judgment": "ungrammatical"
       }
     ],
@@ -279,7 +286,8 @@
         "unselected"
       ]
     ],
-    "comment": "Unselected transitive resultative; the PP names the result state."
+    "comment": "Unselected transitive resultative; the PP names the result state.",
+    "verified": "page-image"
   },
   {
     "id": "gj2004_9a",
@@ -296,11 +304,11 @@
     "judgment": "acceptable",
     "alternatives": [
       {
-        "form": "*We yelled ourselves.",
+        "form": "We yelled ourselves.",
         "judgment": "ungrammatical"
       },
       {
-        "form": "*We yelled Harry hoarse.",
+        "form": "We yelled Harry hoarse.",
         "judgment": "ungrammatical"
       }
     ],
@@ -323,7 +331,8 @@
         "fake reflexive"
       ]
     ],
-    "comment": "Fake reflexive: unselected (bad without the RP) and does not alternate with other NPs."
+    "comment": "Fake reflexive: unselected (bad without the RP) and does not alternate with other NPs.",
+    "verified": "page-image"
   },
   {
     "id": "gj2004_23a",
@@ -358,7 +367,8 @@
         "false"
       ]
     ],
-    "comment": "Non-end-bounded AP RP: atelic resultative, for-adverbial fine."
+    "comment": "Non-end-bounded AP RP: atelic resultative, for-adverbial fine.",
+    "verified": "page-image"
   },
   {
     "id": "gj2004_23b",
@@ -393,7 +403,8 @@
         "false"
       ]
     ],
-    "comment": "Non-end-bounded AP RP: atelic resultative, for-adverbial fine."
+    "comment": "Non-end-bounded AP RP: atelic resultative, for-adverbial fine.",
+    "verified": "page-image"
   },
   {
     "id": "gj2004_23c",
@@ -428,7 +439,8 @@
         "false"
       ]
     ],
-    "comment": "Non-end-bounded AP RP: atelic resultative, for-adverbial fine."
+    "comment": "Non-end-bounded AP RP: atelic resultative, for-adverbial fine.",
+    "verified": "page-image"
   },
   {
     "id": "gj2004_24a",
@@ -437,7 +449,7 @@
       "paperLabel": "(24a)"
     },
     "language": "stan1293",
-    "primaryText": "*Bill floated into the cave for hours.",
+    "primaryText": "Bill floated into the cave for hours.",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
@@ -463,7 +475,8 @@
         "true"
       ]
     ],
-    "comment": "End-bounded spatial PP: telic resultative, for-adverbial out."
+    "comment": "End-bounded spatial PP: telic resultative, for-adverbial out. Expands the printed (24a) 'Bill floated into the cave (*for hours).' to its starred variant.",
+    "verified": "page-image"
   },
   {
     "id": "gj2004_24b",
@@ -472,7 +485,7 @@
       "paperLabel": "(24b)"
     },
     "language": "stan1293",
-    "primaryText": "*Bill pushed Harry off the sofa for hours.",
+    "primaryText": "Bill pushed Harry off the sofa for hours.",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
@@ -498,7 +511,8 @@
         "true"
       ]
     ],
-    "comment": "End-bounded spatial PP: telic resultative, for-adverbial out."
+    "comment": "End-bounded spatial PP: telic resultative, for-adverbial out. Expands the printed (24b) 'Bill pushed Harry off the sofa (*for hours).' to its starred variant.",
+    "verified": "page-image"
   },
   {
     "id": "gj2004_24c",
@@ -533,7 +547,8 @@
         "false"
       ]
     ],
-    "comment": "Non-end-bounded spatial PP: atelic resultative, for-adverbial fine."
+    "comment": "Non-end-bounded spatial PP: atelic resultative, for-adverbial fine. Expands the printed (24c) 'Bill floated down the river (for hours).' to its variant with the adverbial.",
+    "verified": "page-image"
   },
   {
     "id": "gj2004_24d",
@@ -568,7 +583,8 @@
         "false"
       ]
     ],
-    "comment": "Non-end-bounded spatial PP: atelic resultative, for-adverbial fine."
+    "comment": "Non-end-bounded spatial PP: atelic resultative, for-adverbial fine. Expands the printed (24d) 'Bill pushed Harry along the trail (for hours).' to its variant with the adverbial.",
+    "verified": "page-image"
   },
   {
     "id": "gj2004_45a",
@@ -577,7 +593,7 @@
       "paperLabel": "(45a)"
     },
     "language": "stan1293",
-    "primaryText": "*She yelled hoarse.",
+    "primaryText": "She yelled hoarse.",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
@@ -603,7 +619,8 @@
         "agent"
       ]
     ],
-    "comment": "Semantic coherence violation: the agent subject of yell cannot be construed as the patient of BECOME."
+    "comment": "Semantic coherence violation: the agent subject of yell cannot be construed as the patient of BECOME.",
+    "verified": "page-image"
   },
   {
     "id": "gj2004_45b",
@@ -612,7 +629,7 @@
       "paperLabel": "(45b)"
     },
     "language": "stan1293",
-    "primaryText": "*Ted cried to sleep.",
+    "primaryText": "Ted cried to sleep.",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
@@ -638,7 +655,8 @@
         "agent"
       ]
     ],
-    "comment": "Semantic coherence violation: the agent subject of cry cannot be construed as the patient of BECOME."
+    "comment": "Semantic coherence violation: the agent subject of cry cannot be construed as the patient of BECOME.",
+    "verified": "page-image"
   },
   {
     "id": "gj2004_45c",
@@ -673,7 +691,8 @@
         "patient"
       ]
     ],
-    "comment": "Noncausal property resultative: something happens to the bleeder, a patient, so the roles cohere."
+    "comment": "Noncausal property resultative: something happens to the bleeder, a patient, so the roles cohere.",
+    "verified": "page-image"
   },
   {
     "id": "gj2004_46a",
@@ -708,7 +727,8 @@
         "agent or patient"
       ]
     ],
-    "comment": "Web example: the single argument of cough is construable as a patient as well as an agent, so it can be the patient of BECOME."
+    "comment": "Web example: the single argument of cough is construable as a patient as well as an agent, so it can be the patient of BECOME.",
+    "verified": "page-image"
   },
   {
     "id": "gj2004_47a",
@@ -747,7 +767,8 @@
         "agent or patient"
       ]
     ],
-    "comment": "Web example with a fake object: the subject of cough is construable as an agent, the causer of CAUSE."
+    "comment": "Web example with a fake object: the subject of cough is construable as an agent, the causer of CAUSE.",
+    "verified": "page-image"
   },
   {
     "id": "gj2004_48a",
@@ -782,7 +803,8 @@
         "agent"
       ]
     ],
-    "comment": "The subject of wriggle is an agent, compatible with the agentive reading of GO."
+    "comment": "The subject of wriggle is an agent, compatible with the agentive reading of GO.",
+    "verified": "page-image"
   },
   {
     "id": "gj2004_48b",
@@ -817,7 +839,8 @@
         "patient"
       ]
     ],
-    "comment": "The subject of melt is a patient, compatible with the nonagentive reading of GO."
+    "comment": "The subject of melt is a patient, compatible with the nonagentive reading of GO.",
+    "verified": "page-image"
   },
   {
     "id": "gj2004_49a",
@@ -852,7 +875,8 @@
         "agent"
       ]
     ],
-    "comment": "Transitive spatial resultative: the subject is volitional and agentive."
+    "comment": "Transitive spatial resultative: the subject is volitional and agentive.",
+    "verified": "page-image"
   },
   {
     "id": "gj2004_49b",
@@ -887,7 +911,8 @@
         "agent"
       ]
     ],
-    "comment": "Transitive spatial resultative: the subject is volitional and agentive."
+    "comment": "Transitive spatial resultative: the subject is volitional and agentive.",
+    "verified": "page-image"
   },
   {
     "id": "gj2004_49c",
@@ -922,7 +947,8 @@
         "agent"
       ]
     ],
-    "comment": "The mechanical doll can instigate wiggling, so it is construable as an agent."
+    "comment": "The mechanical doll can instigate wiggling, so it is construable as an agent.",
+    "verified": "page-image"
   },
   {
     "id": "gj2004_49e",
@@ -931,7 +957,7 @@
       "paperLabel": "(49e)"
     },
     "language": "stan1293",
-    "primaryText": "*The ball wiggled itself loose.",
+    "primaryText": "The ball wiggled itself loose.",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
@@ -957,7 +983,8 @@
         "patient"
       ]
     ],
-    "comment": "The ball cannot independently instigate wiggling: it is construable only as undergoing it, not as the agent of CAUSE."
+    "comment": "The ball cannot independently instigate wiggling: it is construable only as undergoing it, not as the agent of CAUSE.",
+    "verified": "page-image"
   },
   {
     "id": "gj2004_wipe",
@@ -996,7 +1023,8 @@
         "patient"
       ]
     ],
-    "comment": "The wiped surface is potentially affected and so construable as a patient, satisfying semantic coherence."
+    "comment": "The wiped surface is potentially affected and so construable as a patient, satisfying semantic coherence.",
+    "verified": "page-image"
   },
   {
     "id": "gj2004_97c",
@@ -1031,6 +1059,7 @@
         "result"
       ]
     ],
-    "comment": "Sound-emission path resultative: the sound results from the motion."
+    "comment": "Sound-emission path resultative: the sound results from the motion.",
+    "verified": "page-image"
   }
 ]

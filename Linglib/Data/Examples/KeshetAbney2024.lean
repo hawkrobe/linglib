@@ -277,7 +277,7 @@ def ex_85 : Datum :=
 
 def ex_91 : Datum :=
   { id := "keshetabney2024_91"
-    source := ⟨"geach-1967", "(91)"⟩
+    source := ⟨"geach-1967", ""⟩
     reportedIn := some ⟨"keshet-abney-2024", "(91)"⟩
     language := "stan1293"
     primaryText := "Hob thinks a witch has blighted Bob's mare, and Nob wonders whether she (the same witch) killed Cob's sow."

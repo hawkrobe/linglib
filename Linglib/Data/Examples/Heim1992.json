@@ -24,7 +24,8 @@
         "Patrick believes he owns a cello"
       ]
     ],
-    "comment": "Karttunen: the report presupposes the belief, not the fact."
+    "comment": "Karttunen: the report presupposes the belief, not the fact.",
+    "verified": "page-image"
   },
   {
     "id": "heim1992_s2",
@@ -51,7 +52,8 @@
         "none as a whole"
       ]
     ],
-    "comment": "The first conjunct supplies the belief the second conjunct's complement presupposes."
+    "comment": "The first conjunct supplies the belief the second conjunct's complement presupposes.",
+    "verified": "page-image"
   },
   {
     "id": "heim1992_s10",
@@ -78,7 +80,8 @@
         "(13): true in w iff it rains in every world of Dox_J(w)"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "heim1992_s19",
@@ -109,7 +112,8 @@
         "none as a whole"
       ]
     ],
-    "comment": "The proof after (24): the intermediate context satisfies the too-clause's requirement."
+    "comment": "The proof after (24): the intermediate context satisfies the too-clause's requirement.",
+    "verified": "page-image"
   },
   {
     "id": "heim1992_s25",
@@ -123,7 +127,7 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -134,9 +138,14 @@
       [
         "presupposition",
         "guaranteed undefined after the first conjunct"
+      ],
+      [
+        "felicity",
+        "infelicitous"
       ]
     ],
-    "comment": "Doubt as not-believe leaves every Dox_J(w) failing to entail that Mary is here."
+    "comment": "Doubt as not-believe leaves every Dox_J(w) failing to entail that Mary is here. Printed unmarked; the prose: 'the discourse is deviant', 'the unacceptability of (25)'.",
+    "verified": "page-image"
   },
   {
     "id": "heim1992_s26",
@@ -150,7 +159,7 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -161,9 +170,14 @@
       [
         "presupposition",
         "undefined; the conditional inherits its antecedent's presupposition"
+      ],
+      [
+        "felicity",
+        "infelicitous"
       ]
     ],
-    "comment": "Deviant although the second complement's content is compatible with Mary's absence."
+    "comment": "Deviant although the second complement's content is compatible with Mary's absence. Printed unmarked; the prose: 'This use of too is likewise deviant'.",
+    "verified": "page-image"
   },
   {
     "id": "heim1992_s28",
@@ -190,7 +204,8 @@
         "none as a whole"
       ]
     ],
-    "comment": "A want-want sequence filters the presupposition, as (27) but not Karttunen's (3) predicts."
+    "comment": "A want-want sequence filters the presupposition, as (27) but not Karttunen's (3) predicts.",
+    "verified": "page-image"
   },
   {
     "id": "heim1992_s29",
@@ -217,7 +232,8 @@
         "none as a whole"
       ]
     ],
-    "comment": "Filtered under (27); a presupposition failure under (39), Section 4.3.4."
+    "comment": "Filtered under (27); a presupposition failure under (39), Section 4.2.4 (printed 4.3.4).",
+    "verified": "page-image"
   },
   {
     "id": "heim1992_s30",
@@ -244,7 +260,8 @@
         "none as a whole"
       ]
     ],
-    "comment": "A believe-want sequence: Karttunen's generalization, not (27), filters it."
+    "comment": "A believe-want sequence: Karttunen's generalization, not (27), filters it.",
+    "verified": "page-image"
   },
   {
     "id": "heim1992_s32a",
@@ -257,7 +274,7 @@
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
-    "context": "Nicholas would love to fly on the Concorde for free but is not willing to pay the $3,000 he believes it would cost.",
+    "context": "Nicholas is not willing to pay the $3,000 that he believes it would cost him if he flew to Paris on the Concorde, but he would love to fly on the Concorde if he could get the trip for free.",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
@@ -275,7 +292,8 @@
         "Asher 1987"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "heim1992_s32b",
@@ -288,7 +306,7 @@
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
-    "context": "Nicholas would love to fly on the Concorde for free but is not willing to pay the $3,000 he believes it would cost.",
+    "context": "Nicholas is not willing to pay the $3,000 that he believes it would cost him if he flew to Paris on the Concorde, but he would love to fly on the Concorde if he could get the trip for free.",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
@@ -306,7 +324,8 @@
         "Asher 1987"
       ]
     ],
-    "comment": "(31) blocks the inference from (32a): the likely belief-worlds where he flies and pays are worse than similar worlds where he does not fly."
+    "comment": "(31) blocks the inference from (32a): the likely belief-worlds where he flies and pays are worse than similar worlds where he does not fly.",
+    "verified": "page-image"
   },
   {
     "id": "heim1992_s33",
@@ -333,7 +352,8 @@
         "true under (31), false under (27)"
       ]
     ],
-    "comment": "In the worlds compatible with everything the speaker desires she does not teach at all."
+    "comment": "In the worlds compatible with everything the speaker desires she does not teach at all.",
+    "verified": "page-image"
   },
   {
     "id": "heim1992_s41",
@@ -360,7 +380,8 @@
         "no doubt about where John will be"
       ]
     ],
-    "comment": "A threat to the (40) amendment; want here reads like intend, with the accessibility function F_a of (43)."
+    "comment": "A threat to the (40) amendment; want here reads like intend, with the accessibility function F_a of (43).",
+    "verified": "page-image"
   },
   {
     "id": "heim1992_s42",
@@ -387,7 +408,8 @@
         "wanting what one is convinced will not happen"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "heim1992_s44",
@@ -414,7 +436,8 @@
         "Patrick believes he has a cello independently of what he does"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "heim1992_s46",
@@ -428,7 +451,7 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "questionable",
+    "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -441,7 +464,8 @@
         "not filtered: want before believe"
       ]
     ],
-    "comment": "A bit less good than (2) or (28)."
+    "comment": "Printed unmarked; the prose: '(46) does seem a bit less good than (2) or (28)'. The paper numbers this section 4.3.4 (between 4.2.3 and 4.3).",
+    "verified": "page-image"
   },
   {
     "id": "heim1992_s47a",
@@ -472,7 +496,8 @@
         "it as the car his wife will buy him"
       ]
     ],
-    "comment": ""
+    "comment": "The paper numbers this section 4.3.4 (between 4.2.3 and 4.3).",
+    "verified": "page-image"
   },
   {
     "id": "heim1992_s47b",
@@ -486,7 +511,7 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "questionable",
+    "judgment": "marginal",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -499,7 +524,8 @@
         "Asher 1987"
       ]
     ],
-    "comment": ""
+    "comment": "The paper numbers this section 4.3.4 (between 4.2.3 and 4.3).",
+    "verified": "page-image"
   },
   {
     "id": "heim1992_s47c",
@@ -513,7 +539,7 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -526,7 +552,8 @@
         "Asher 1987"
       ]
     ],
-    "comment": ""
+    "comment": "The paper numbers this section 4.3.4 (between 4.2.3 and 4.3).",
+    "verified": "page-image"
   },
   {
     "id": "heim1992_s48",
@@ -557,7 +584,8 @@
         "the belief as an implicit conditional"
       ]
     ],
-    "comment": "Accommodation by modal subordination."
+    "comment": "Accommodation by modal subordination. The paper numbers this section 4.3.4 (between 4.2.3 and 4.3).",
+    "verified": "page-image"
   },
   {
     "id": "heim1992_s49",
@@ -588,7 +616,8 @@
         "the belief as an implicit conditional"
       ]
     ],
-    "comment": ""
+    "comment": "The paper numbers this section 4.3.4 (between 4.2.3 and 4.3).",
+    "verified": "page-image"
   },
   {
     "id": "heim1992_s50",
@@ -601,7 +630,7 @@
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
-    "context": "The speaker missed the last set of the Wimbledon women's final and does not know who won, though the game is over and decided.",
+    "context": "Suppose I had to miss the last set of the Wimbledon women's final because of a hairdresser's appointment, so I don't know who won, though I do know the game is over and decided by now.",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
@@ -611,7 +640,8 @@
         "4.2.4"
       ]
     ],
-    "comment": ""
+    "comment": "The paper numbers this section 4.3.4 (between 4.2.3 and 4.3).",
+    "verified": "page-image"
   },
   {
     "id": "heim1992_s51",
@@ -625,7 +655,7 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -634,7 +664,8 @@
         "4.2.4"
       ]
     ],
-    "comment": "A strange continuation of (50), though it should be another way of saying that Steffi cried if Gabriela won."
+    "comment": "A strange continuation of (50), though it should be another way of saying that Steffi cried if Gabriela won. The paper numbers this section 4.3.4 (between 4.2.3 and 4.3).",
+    "verified": "page-image"
   },
   {
     "id": "heim1992_s52",
@@ -661,7 +692,8 @@
         "not doxastic: John may be certain he will not teach Tuesdays"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "heim1992_s53",
@@ -688,7 +720,8 @@
         "none as a whole"
       ]
     ],
-    "comment": "As felicitous as (30), yet (39) with (40) would leave the wish-clause undefined."
+    "comment": "As felicitous as (30), yet (39) with (40) would leave the wish-clause undefined.",
+    "verified": "page-image"
   },
   {
     "id": "heim1992_s54",
@@ -715,7 +748,8 @@
         "John believes he will teach on Tuesdays"
       ]
     ],
-    "comment": "A factive desire predicate; (39) would trivialize its truth conditions."
+    "comment": "A factive desire predicate; (39) would trivialize its truth conditions.",
+    "verified": "page-image"
   },
   {
     "id": "heim1992_s55",
@@ -742,7 +776,8 @@
         "satisfied in the belief-worlds"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "heim1992_s56a",
@@ -769,7 +804,8 @@
         "none as a whole"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "heim1992_s56b",
@@ -796,7 +832,8 @@
         "none as a whole"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "heim1992_s57a",
@@ -823,7 +860,8 @@
         "accommodated: Patrick believes he sold his cello"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "heim1992_s57b",
@@ -850,7 +888,8 @@
         "accommodated: Patrick believes he did not sell his cello"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "heim1992_s59",
@@ -877,7 +916,8 @@
         "someone else attended, in the common ground"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "heim1992_s60",
@@ -904,6 +944,7 @@
         "someone else attended, in the common ground"
       ]
     ],
-    "comment": "Licensed under the same condition as (59): the revision (61) keeps the antecedent's presuppositions."
+    "comment": "Licensed under the same condition as (59): the revision (61) keeps the antecedent's presuppositions.",
+    "verified": "page-image"
   }
 ]

@@ -12,7 +12,8 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [],
-    "comment": "Where Peter, Paul and Mary might be mowing, the assertion implies that Peter and Paul did not: a quantity implicature over ad hoc alternatives."
+    "comment": "Where Peter, Paul and Mary might be mowing, the assertion implies that Peter and Paul did not: a quantity implicature over ad hoc alternatives.",
+    "verified": "page-image"
   },
   {
     "id": "evcenbalebarner2026_1b",
@@ -27,7 +28,8 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [],
-    "comment": "An ad hoc alternative to (1a)."
+    "comment": "An ad hoc alternative to (1a).",
+    "verified": "page-image"
   },
   {
     "id": "evcenbalebarner2026_1c",
@@ -42,7 +44,8 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [],
-    "comment": "An ad hoc alternative to (1a)."
+    "comment": "An ad hoc alternative to (1a).",
+    "verified": "page-image"
   },
   {
     "id": "evcenbalebarner2026_2a",
@@ -57,7 +60,8 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [],
-    "comment": "Perfected to only if, on von Fintel's account, by excluding the conditionals with the alternative antecedents (2b) and (2c)."
+    "comment": "Perfected to only if, on von Fintel's account, by excluding the conditionals with the alternative antecedents (2b) and (2c).",
+    "verified": "page-image"
   },
   {
     "id": "evcenbalebarner2026_2b",
@@ -72,7 +76,8 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "evcenbalebarner2026_2c",
@@ -87,7 +92,8 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "evcenbalebarner2026_3a",
@@ -102,7 +108,8 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [],
-    "comment": "As an answer to this question (1a) implies that neither Peter nor Paul mowed; (1b) and (1c) are answers to it."
+    "comment": "As an answer to this question (1a) implies that neither Peter nor Paul mowed; (1b) and (1c) are answers to it.",
+    "verified": "page-image"
   },
   {
     "id": "evcenbalebarner2026_3b",
@@ -117,7 +124,8 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [],
-    "comment": "As an answer to this question (1a) says nothing about Peter or Paul."
+    "comment": "As an answer to this question (1a) says nothing about Peter or Paul.",
+    "verified": "page-image"
   },
   {
     "id": "evcenbalebarner2026_3c",
@@ -132,7 +140,8 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "evcenbalebarner2026_exp1_antecedent",
@@ -151,7 +160,8 @@
       ["tested", "all"],
       ["response", "no"]
     ],
-    "comment": "Perfection rate 0.65 (SE 0.10); the follow-ups with 'what buttons' and 'which buttons' gave 0.86 and 0.77."
+    "comment": "Perfection rate 0.65 (SE 0.10); the follow-ups with 'what buttons' and 'which buttons' gave 0.86 and 0.77.",
+    "verified": "page-image"
   },
   {
     "id": "evcenbalebarner2026_exp1_consequent",
@@ -170,7 +180,8 @@
       ["tested", "all"],
       ["response", "cantTell"]
     ],
-    "comment": "Perfection rate 0.22 (SE 0.10)."
+    "comment": "Perfection rate 0.22 (SE 0.10).",
+    "verified": "page-image"
   },
   {
     "id": "evcenbalebarner2026_exp1_neutral",
@@ -189,7 +200,8 @@
       ["tested", "all"],
       ["response", "cantTell"]
     ],
-    "comment": "Perfection rate 0.29 (SE 0.11), not different from the consequent-focused condition."
+    "comment": "Perfection rate 0.29 (SE 0.11), not different from the consequent-focused condition.",
+    "verified": "page-image"
   },
   {
     "id": "evcenbalebarner2026_exp3_full",
@@ -208,7 +220,8 @@
       ["tested", "all"],
       ["response", "no"]
     ],
-    "comment": "Perfection rate 0.72 (SE 0.13)."
+    "comment": "Perfection rate 0.72 (SE 0.13).",
+    "verified": "page-image"
   },
   {
     "id": "evcenbalebarner2026_exp3_partial",
@@ -227,7 +240,8 @@
       ["tested", "two"],
       ["response", "cantTell"]
     ],
-    "comment": "Perfection rate 0.21 (SE 0.12)."
+    "comment": "Perfection rate 0.21 (SE 0.12).",
+    "verified": "page-image"
   },
   {
     "id": "evcenbalebarner2026_exp2_optimal",
@@ -245,7 +259,8 @@
       ["answerType", "optimallyInformative"],
       ["response", "no"]
     ],
-    "comment": "Asked whether the squares play the same sound: perfection rate 0.92 (SE 0.09)."
+    "comment": "Asked whether the squares play the same sound: perfection rate 0.92 (SE 0.09).",
+    "verified": "page-image"
   },
   {
     "id": "evcenbalebarner2026_exp2_overly",
@@ -263,6 +278,7 @@
       ["answerType", "overlyInformative"],
       ["response", "no"]
     ],
-    "comment": "Asked whether the red square plays the same sound: perfection rate 0.84 (SE 0.07), not reliably different (p = .16)."
+    "comment": "Asked whether the red square plays the same sound: perfection rate 0.84 (SE 0.07), not reliably different (p = .16).",
+    "verified": "page-image"
   }
 ]

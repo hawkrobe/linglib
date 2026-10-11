@@ -168,7 +168,7 @@ def ex_23a : Datum :=
     context := ""
     judgment := .acceptable
     alternatives := []
-    readings := [("every > two > someone", .unacceptable)]
+    readings := [("every > two > someone", .ungrammatical)]
     paperFeatures := [("quantifiers", "two someone every"), ("constituent", "someone every")] }
 
 def ex_26a : Datum :=
@@ -181,7 +181,7 @@ def ex_26a : Datum :=
     context := ""
     judgment := .acceptable
     alternatives := []
-    readings := [("every > most > an", .unacceptable)]
+    readings := [("every > most > an", .ungrammatical)]
     paperFeatures := [("quantifiers", "most an every"), ("constituent", "an every")] }
 
 def ex_27a : Datum :=

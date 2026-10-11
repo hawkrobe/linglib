@@ -19,7 +19,8 @@
       ["setup", "none"],
       ["anchor", "hereNow"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "ritchieschiller2024_1_fig2",
@@ -39,7 +40,8 @@
       ["setup", "none"],
       ["anchor", "hereNow"]
     ],
-    "comment": "uniqueness fails under the default restriction"
+    "comment": "uniqueness fails under the default restriction",
+    "verified": "page-image"
   },
   {
     "id": "ritchieschiller2024_2a",
@@ -60,7 +62,8 @@
       ["restriction", "aesthetic"],
       ["setup", "none"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "ritchieschiller2024_2b",
@@ -81,7 +84,8 @@
       ["restriction", "history"],
       ["setup", "none"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "ritchieschiller2024_2c",
@@ -102,7 +106,8 @@
       ["restriction", "color"],
       ["setup", "none"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "ritchieschiller2024_3",
@@ -124,7 +129,8 @@
       ["setup", "none"],
       ["anchor", "hereNow"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "ritchieschiller2024_4a",
@@ -145,7 +151,8 @@
       ["restriction", "subkind"],
       ["setup", "none"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "ritchieschiller2024_4b",
@@ -166,7 +173,8 @@
       ["restriction", "aesthetic"],
       ["setup", "none"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "ritchieschiller2024_4c",
@@ -187,7 +195,8 @@
       ["restriction", "history"],
       ["setup", "none"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "ritchieschiller2024_3_now",
@@ -209,7 +218,8 @@
       ["setup", "none"],
       ["anchor", "hereNow"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "ritchieschiller2024_3_tomorrow",
@@ -231,7 +241,8 @@
       ["setup", "none"],
       ["anchor", "elsewhere"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "ritchieschiller2024_fn4",
@@ -253,7 +264,8 @@
       ["setup", "question"],
       ["anchor", "elsewhere"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "ritchieschiller2024_5",
@@ -274,7 +286,8 @@
       ["restriction", "color"],
       ["setup", "question"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "ritchieschiller2024_7",
@@ -296,7 +309,8 @@
       ["setup", "question"],
       ["anchor", "elsewhere"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "ritchieschiller2024_9",
@@ -317,7 +331,8 @@
       ["restriction", "shape"],
       ["setup", "question"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "ritchieschiller2024_10",
@@ -338,7 +353,8 @@
       ["restriction", "plan"],
       ["setup", "priorGoal"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "ritchieschiller2024_16",
@@ -358,7 +374,8 @@
       ["setup", "none"],
       ["anchor", "hereNow"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "ritchieschiller2024_17",
@@ -378,7 +395,8 @@
       ["setup", "none"],
       ["anchor", "hereNow"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "ritchieschiller2024_18_room",
@@ -398,7 +416,8 @@
       ["setup", "none"],
       ["anchor", "hereNow"]
     ],
-    "comment": "the room’s boundaries fix the default domain"
+    "comment": "the room’s boundaries fix the default domain",
+    "verified": "page-image"
   },
   {
     "id": "ritchieschiller2024_18_window",
@@ -418,7 +437,8 @@
       ["setup", "none"],
       ["anchor", "hereNow"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "ritchieschiller2024_18_meadow",
@@ -438,7 +458,8 @@
       ["setup", "none"],
       ["anchor", "hereNow"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "ritchieschiller2024_19",
@@ -458,7 +479,8 @@
       ["setup", "none"],
       ["anchor", "hereNow"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "ritchieschiller2024_20_hands",
@@ -480,7 +502,8 @@
       ["setup", "none"],
       ["anchor", "hereNow"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "ritchieschiller2024_20_hammers",
@@ -502,7 +525,8 @@
       ["setup", "none"],
       ["anchor", "hereNow"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "ritchieschiller2024_21",
@@ -521,7 +545,8 @@
       ["restriction", "color"],
       ["setup", "assertion"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "ritchieschiller2024_22",
@@ -540,7 +565,8 @@
       ["restriction", "color"],
       ["setup", "directive"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "ritchieschiller2024_23",
@@ -559,7 +585,8 @@
       ["restriction", "plan"],
       ["setup", "priorGoal"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "ritchieschiller2024_library",
@@ -578,7 +605,8 @@
       ["restriction", "plan"],
       ["setup", "priorGoal"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "ritchieschiller2024_25",
@@ -600,7 +628,8 @@
       ["setup", "displacement"],
       ["anchor", "elsewhere"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "ritchieschiller2024_26",
@@ -622,6 +651,7 @@
       ["setup", "displacement"],
       ["anchor", "elsewhere"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   }
 ]

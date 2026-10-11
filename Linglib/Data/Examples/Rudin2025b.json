@@ -15,7 +15,8 @@
       ["tune", "rising"],
       ["volume", "neutral"]
     ],
-    "comment": "The quoted clause is pronounced as its own intonational phrase with the rising tune of a rising declarative."
+    "comment": "The quoted clause is pronounced as its own intonational phrase with the rising tune of a rising declarative.",
+    "verified": "page-image"
   },
   {
     "id": "rudin2025b_ex7b_claim",
@@ -33,7 +34,8 @@
       ["tune", "rising"],
       ["volume", "neutral"]
     ],
-    "comment": "The quoted clause is pronounced as a rising declarative. Marked # in the paper."
+    "comment": "The quoted clause is pronounced as a rising declarative. Marked # in the paper.",
+    "verified": "page-image"
   },
   {
     "id": "rudin2025b_ex8_whisper",
@@ -51,7 +53,8 @@
       ["tune", "rising"],
       ["volume", "whispered"]
     ],
-    "comment": "The quoted clause is pronounced as a rising declarative, whispered. One of the manner-of-speech verbs listed in (8)."
+    "comment": "The quoted clause is pronounced as a rising declarative, whispered. One of the manner-of-speech verbs listed in (8).",
+    "verified": "page-image"
   },
   {
     "id": "rudin2025b_ex10_shout",
@@ -69,7 +72,8 @@
       ["tune", "rising"],
       ["volume", "loud"]
     ],
-    "comment": "The quoted clause is a polar interrogative, shouted. One of the manner-of-speech verbs listed in (10)."
+    "comment": "The quoted clause is a polar interrogative, shouted. One of the manner-of-speech verbs listed in (10).",
+    "verified": "page-image"
   },
   {
     "id": "rudin2025b_ex12a",
@@ -87,7 +91,8 @@
       ["tune", "rising"],
       ["volume", "neutral"]
     ],
-    "comment": "The indexical is interpreted relative to Polina's utterance."
+    "comment": "The indexical is interpreted relative to Polina's utterance.",
+    "verified": "page-image"
   },
   {
     "id": "rudin2025b_ex18a",
@@ -105,7 +110,8 @@
       ["tune", "falling"],
       ["volume", "neutral"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "rudin2025b_ex37a",
@@ -121,7 +127,8 @@
       ["material", "inarticulate"],
       ["volume", "neutral"]
     ],
-    "comment": "Nonphonemic noise quoted under say."
+    "comment": "Nonphonemic noise quoted under say.",
+    "verified": "page-image"
   },
   {
     "id": "rudin2025b_ex42a",
@@ -137,7 +144,8 @@
       ["material", "none"],
       ["volume", "neutral"]
     ],
-    "comment": "Marked # in the paper: a performance with no linguistic material."
+    "comment": "Marked # in the paper: a performance with no linguistic material.",
+    "verified": "page-image"
   },
   {
     "id": "rudin2025b_ex48",
@@ -155,7 +163,8 @@
       ["tune", "rising"],
       ["volume", "neutral"]
     ],
-    "comment": "Interpreted as reporting an asking, not the assertion of an answer."
+    "comment": "Interpreted as reporting an asking, not the assertion of an answer.",
+    "verified": "page-image"
   },
   {
     "id": "rudin2025b_ex49",
@@ -171,7 +180,8 @@
       ["material", "inarticulate"],
       ["volume", "neutral"]
     ],
-    "comment": "A string with no propositional content quoted under say."
+    "comment": "A string with no propositional content quoted under say.",
+    "verified": "page-image"
   },
   {
     "id": "rudin2025b_ex69a",
@@ -189,7 +199,8 @@
       ["tune", "falling"],
       ["volume", "loud"]
     ],
-    "comment": "The quoted clause is shouted."
+    "comment": "The quoted clause is shouted.",
+    "verified": "page-image"
   },
   {
     "id": "rudin2025b_ex69b",
@@ -207,7 +218,8 @@
       ["tune", "falling"],
       ["volume", "whispered"]
     ],
-    "comment": "The quoted clause is whispered. Marked # in the paper."
+    "comment": "The quoted clause is whispered. Marked # in the paper.",
+    "verified": "page-image"
   },
   {
     "id": "rudin2025b_ex70a",
@@ -225,7 +237,8 @@
       ["tune", "falling"],
       ["volume", "loud"]
     ],
-    "comment": "The quoted clause is shouted. Marked # in the paper."
+    "comment": "The quoted clause is shouted. Marked # in the paper.",
+    "verified": "page-image"
   },
   {
     "id": "rudin2025b_ex70b",
@@ -243,7 +256,8 @@
       ["tune", "falling"],
       ["volume", "whispered"]
     ],
-    "comment": "The quoted clause is whispered."
+    "comment": "The quoted clause is whispered.",
+    "verified": "page-image"
   },
   {
     "id": "rudin2025b_ex74a",
@@ -261,7 +275,8 @@
       ["tune", "rising"],
       ["volume", "neutral"]
     ],
-    "comment": "The quoted clause is pronounced as a rising declarative. Interpreted as reporting an asking."
+    "comment": "The quoted clause is pronounced as a rising declarative. Interpreted as reporting an asking.",
+    "verified": "page-image"
   },
   {
     "id": "rudin2025b_ex75",
@@ -279,7 +294,8 @@
       ["tune", "rising"],
       ["volume", "loud"]
     ],
-    "comment": "The quoted clause is a shouted rising declarative."
+    "comment": "The quoted clause is a shouted rising declarative.",
+    "verified": "page-image"
   },
   {
     "id": "rudin2025b_ex78a",
@@ -297,7 +313,8 @@
       ["tune", "rising"],
       ["volume", "neutral"]
     ],
-    "comment": "The quoted clause is pronounced as a rising declarative. Marked # in the paper."
+    "comment": "The quoted clause is pronounced as a rising declarative. Marked # in the paper.",
+    "verified": "page-image"
   },
   {
     "id": "rudin2025b_ex82a",
@@ -315,6 +332,7 @@
       ["tune", "rising"],
       ["volume", "neutral"]
     ],
-    "comment": "The quoted clause is pronounced as a rising declarative."
+    "comment": "The quoted clause is pronounced as a rising declarative.",
+    "verified": "page-image"
   }
 ]

@@ -28,7 +28,8 @@
         "exact"
       ]
     ],
-    "comment": "Based on Horn (1989)."
+    "comment": "Based on Horn (1989).",
+    "verified": "page-image"
   },
   {
     "id": "huang2013_ex2",
@@ -59,7 +60,8 @@
         "lower-bounded"
       ]
     ],
-    "comment": "Adapted from Kadmon (2001): true and felicitous with five chairs in the office."
+    "comment": "Adapted from Kadmon (2001): true and felicitous with five chairs in the office.",
+    "verified": "page-image"
   },
   {
     "id": "huang2013_ex3",
@@ -94,7 +96,8 @@
         "calculated"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "huang2013_ex4",
@@ -129,7 +132,8 @@
         "cancelled"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "huang2013_ex5",
@@ -160,7 +164,8 @@
         "stronger alternative to (3)"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "huang2013_ex6",
@@ -195,7 +200,8 @@
         "lower-bounded"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "huang2013_ex7",
@@ -230,7 +236,8 @@
         "exact"
       ]
     ],
-    "comment": "Breheny (2008): the numeral stays exact where the scalar goes lower-bounded."
+    "comment": "Breheny (2008): the numeral stays exact where the scalar goes lower-bounded.",
+    "verified": "page-image"
   },
   {
     "id": "huang2013_ex8",
@@ -261,7 +268,8 @@
         "implicit domain restriction"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "huang2013_exp1_some",
@@ -296,7 +304,8 @@
         "some(NONE,SOME), some(SOME,ALL), some(NONE,ALL)"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "huang2013_exp1_two",
@@ -331,7 +340,8 @@
         "two(1,2), two(2,3V5), two(1,3V5)"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "huang2013_exp2_giveN_some",
@@ -340,7 +350,7 @@
       "paperLabel": "Exp. 2, pretest"
     },
     "language": "stan1293",
-    "primaryText": "Put some of the fish into the pond.",
+    "primaryText": "Put some of the fish.",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
@@ -362,7 +372,8 @@
         "Give-N"
       ]
     ],
-    "comment": ""
+    "comment": "The paper prints the instruction once as \"Put some (all) of the fish\", put into a basket (\"the pond\"); the row expands one variant of the parenthesized all.",
+    "verified": "page-image"
   },
   {
     "id": "huang2013_exp2_giveN_all",
@@ -371,7 +382,7 @@
       "paperLabel": "Exp. 2, pretest"
     },
     "language": "stan1293",
-    "primaryText": "Put all of the fish into the pond.",
+    "primaryText": "Put all of the fish.",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
@@ -393,7 +404,8 @@
         "Give-N"
       ]
     ],
-    "comment": ""
+    "comment": "The paper prints the instruction once as \"Put some (all) of the fish\", put into a basket (\"the pond\"); the row expands one variant of the parenthesized all.",
+    "verified": "page-image"
   },
   {
     "id": "huang2013_exp3_all",
@@ -428,7 +440,8 @@
         "all(NONE,ALL), all(SOME,ALL), all(SOME,NONE)"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "huang2013_exp4_two",
@@ -463,42 +476,8 @@
         "two(1,3)"
       ]
     ],
-    "comment": ""
-  },
-  {
-    "id": "huang2013_exp4_fn2",
-    "source": {
-      "bibkey": "huang-spelke-snedeker-2013",
-      "paperLabel": "fn. 2"
-    },
-    "language": "stan1293",
-    "primaryText": "Give me the box where Cookie Monster has two of the cookies.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "The displays of the some trials, with Cookie Monster holding 0 of 4 or 4 of 4 cookies.",
-    "judgment": "acceptable",
-    "alternatives": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "section",
-        "5.2"
-      ],
-      [
-        "term",
-        "two"
-      ],
-      [
-        "task",
-        "covered box"
-      ],
-      [
-        "displays",
-        "of the some(NONE,ALL) trials"
-      ]
-    ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "huang2013_s62_some",
@@ -533,7 +512,8 @@
         "some of the soc-"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "huang2013_s62_three",
@@ -568,7 +548,8 @@
         "lower-bound control"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "huang2013_s62_two",
@@ -603,6 +584,7 @@
         "upper-bound probe"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   }
 ]

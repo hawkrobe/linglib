@@ -13,7 +13,8 @@
       ["alternation", "locative"],
       ["direct", "theme"]
     ],
-    "comment": "Theme object: all the hay moved (quantized); the wagon at least partly filled (nonquantized)."
+    "comment": "Theme object: all the hay moved (quantized); the wagon at least partly filled (nonquantized).",
+    "verified": "page-image"
   },
   {
     "id": "beavers2010_9b",
@@ -29,7 +30,8 @@
       ["alternation", "locative"],
       ["direct", "location"]
     ],
-    "comment": "Location object: the wagon completely filled (quantized); the hay at least partly moved (nonquantized) — Anderson's holistic effect."
+    "comment": "Location object: the wagon completely filled (quantized); the hay at least partly moved (nonquantized) — Anderson's holistic effect.",
+    "verified": "page-image"
   },
   {
     "id": "beavers2010_10a",
@@ -45,7 +47,8 @@
       ["alternation", "locative"],
       ["diagnostic", "holistic effect"]
     ],
-    "comment": "Infelicitous: the theme object entails total movement."
+    "comment": "Infelicitous: the theme object entails total movement.",
+    "verified": "page-image"
   },
   {
     "id": "beavers2010_18a",
@@ -61,7 +64,8 @@
       ["alternation", "locative"],
       ["verb class", "cut/slice"]
     ],
-    "comment": "Diamond affected: the object is damaged (nonquantized), the oblique only potentially (potential)."
+    "comment": "Diamond affected: the object is damaged (nonquantized), the oblique only potentially (potential).",
+    "verified": "page-image"
   },
   {
     "id": "beavers2010_18b",
@@ -77,7 +81,8 @@
       ["alternation", "locative"],
       ["verb class", "cut/slice"]
     ],
-    "comment": "No holistic effect, so locative alternations are not in general governed by aspect."
+    "comment": "No holistic effect, so locative alternations are not in general governed by aspect.",
+    "verified": "page-image"
   },
   {
     "id": "beavers2010_20a",
@@ -93,7 +98,8 @@
       ["alternation", "conative"],
       ["verb class", "cut"]
     ],
-    "comment": "The rope is cut, to no specific degree: nonquantized change."
+    "comment": "The rope is cut, to no specific degree: nonquantized change.",
+    "verified": "page-image"
   },
   {
     "id": "beavers2010_20b",
@@ -109,7 +115,8 @@
       ["alternation", "conative"],
       ["verb class", "cut"]
     ],
-    "comment": "The rope may or may not be cut: potential for change only."
+    "comment": "The rope may or may not be cut: potential for change only.",
+    "verified": "page-image"
   },
   {
     "id": "beavers2010_21a",
@@ -125,7 +132,8 @@
       ["alternation", "conative"],
       ["verb class", "consumption"]
     ],
-    "comment": "All (or a contextually significant amount) of the cake consumed: quantized change."
+    "comment": "All (or a contextually significant amount) of the cake consumed: quantized change.",
+    "verified": "page-image"
   },
   {
     "id": "beavers2010_21b",
@@ -141,7 +149,8 @@
       ["alternation", "conative"],
       ["verb class", "consumption"]
     ],
-    "comment": "At least some consumed, not necessarily all: nonquantized change."
+    "comment": "At least some consumed, not necessarily all: nonquantized change.",
+    "verified": "page-image"
   },
   {
     "id": "beavers2010_22a",
@@ -157,7 +166,8 @@
       ["alternation", "conative"],
       ["verb class", "impact"]
     ],
-    "comment": "Defarge is hit but not necessarily affected: potential for change."
+    "comment": "Defarge is hit but not necessarily affected: potential for change.",
+    "verified": "page-image"
   },
   {
     "id": "beavers2010_22b",
@@ -173,7 +183,8 @@
       ["alternation", "conative"],
       ["verb class", "impact"]
     ],
-    "comment": "Defarge not necessarily even hit: unspecified for change (double modality)."
+    "comment": "Defarge not necessarily even hit: unspecified for change (double modality).",
+    "verified": "page-image"
   },
   {
     "id": "beavers2010_24a",
@@ -189,7 +200,8 @@
       ["alternation", "locative"],
       ["contrast", "none"]
     ],
-    "comment": "Alternates with 'John hit the stick against the fence' with no truth-conditional contrast — the equal-role case the MAP permits."
+    "comment": "Alternates with 'John hit the stick against the fence' with no truth-conditional contrast — the equal-role case the MAP permits.",
+    "verified": "page-image"
   },
   {
     "id": "beavers2010_29",
@@ -205,7 +217,8 @@
       ["degree", "quantized"],
       ["diagnostic", "telicity"]
     ],
-    "comment": "Specific predicate-supplied result state: telic, quantized change."
+    "comment": "Specific predicate-supplied result state: telic, quantized change.",
+    "verified": "page-image"
   },
   {
     "id": "beavers2010_30",
@@ -221,7 +234,8 @@
       ["degree", "nonquantized"],
       ["diagnostic", "telicity"]
     ],
-    "comment": "Some result on the length scale, unspecified which: atelic, nonquantized change."
+    "comment": "Some result on the length scale, unspecified which: atelic, nonquantized change.",
+    "verified": "page-image"
   },
   {
     "id": "beavers2010_81a",
@@ -237,7 +251,8 @@
       ["alternation", "traversal"],
       ["degree", "totally traversed"]
     ],
-    "comment": "The stairs all traversed; the affected participant is John (quantized change of location)."
+    "comment": "The stairs all traversed; the affected participant is John (quantized change of location).",
+    "verified": "page-image"
   },
   {
     "id": "beavers2010_81b",
@@ -253,7 +268,8 @@
       ["alternation", "traversal"],
       ["degree", "traversed"]
     ],
-    "comment": "The stairs all or partly traversed: the oblique weakens total traversal to mere traversal."
+    "comment": "The stairs all or partly traversed: the oblique weakens total traversal to mere traversal.",
+    "verified": "page-image"
   },
   {
     "id": "beavers2010_88a",
@@ -263,7 +279,7 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "marginal",
+    "judgment": "unacceptable",
     "readings": [
       {"name": "London as an agency (Scotland Yard reading)", "judgment": "acceptable"}
     ],
@@ -271,7 +287,8 @@
       ["alternation", "dative"],
       ["direct", "recipient"]
     ],
-    "comment": "Indirect objects must be prospective possessors: the goal-only reading is out."
+    "comment": "Indirect objects must be prospective possessors: the goal-only reading is out.",
+    "verified": "page-image"
   },
   {
     "id": "beavers2010_88b",
@@ -287,6 +304,7 @@
       ["alternation", "dative"],
       ["oblique", "goal"]
     ],
-    "comment": "The to-variant needs only a goal: the indirect object monotonically adds prospective possession (90)."
+    "comment": "The to-variant needs only a goal: the indirect object monotonically adds prospective possession (90).",
+    "verified": "page-image"
   }
 ]

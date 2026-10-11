@@ -8,7 +8,7 @@ public import Linglib.Data.Examples.OsborneLi2023
 /-!
 # Osborne and Li (2023): Coordination and Referential Dependencies
 
-This file formalizes the Conjunct Referential Dependency Constraint of [osborne-li-2023],
+This file formalizes Osborne and Li's Conjunct Referential Dependency Constraint,
 the descriptive generalization of the paper's fifth section: a referentially dependent
 conjunct valent can be co-valued with a full co-valent, but a referentially dependent full
 valent can hardly be co-valued with a conjunct co-valent. A conjunct valent of a predicate is
@@ -212,15 +212,15 @@ def ex24a : Stimulus :=
 /-- (28d) *John expected Mary and him to be able to leave soon*: the pronoun is a conjunct of
 the raised object. -/
 def ex28d : Stimulus :=
-  ⟨8, .ofArcs
+  ⟨11, .ofArcs
     [Word.mk' "John" .PROPN, Word.mk' "expected" .VERB, Word.mk' "Mary" .PROPN,
-     Word.mk' "and" .CCONJ, Word.mk' "him" .PRON, Word.mk' "to" .PART,
-     Word.mk' "leave" .VERB, Word.mk' "soon" .ADV]
-    1 [(1, 0, .nsubj), (1, 2, .obj), (2, 3, .cc), (2, 4, .conj), (1, 6, .xcomp),
-       (6, 5, .mark), (6, 7, .advmod)],
+     Word.mk' "and" .CCONJ, Word.mk' "him" .PRON, Word.mk' "to" .PART, Word.mk' "be" .AUX,
+     Word.mk' "able" .ADJ, Word.mk' "to" .PART, Word.mk' "leave" .VERB, Word.mk' "soon" .ADV]
+    1 [(1, 0, .nsubj), (1, 2, .obj), (2, 3, .cc), (2, 4, .conj), (1, 7, .xcomp),
+       (7, 5, .mark), (7, 6, .cop), (7, 9, .xcomp), (9, 8, .mark), (9, 10, .advmod)],
    1, 4, 0, Examples.ex28d⟩
 
-/-- The stimuli of the paper's third section. -/
+/-- The paper's stimuli. -/
 def stimuli : List Stimulus :=
   [ex2a, ex3a, ex5a, ex9a, ex9b, ex11a, ex11e, ex20b, ex24a, ex28d]
 

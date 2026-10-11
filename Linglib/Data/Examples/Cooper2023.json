@@ -24,7 +24,8 @@
         "predication"
       ]
     ],
-    "comment": "Marked # by Cooper: truth-conditionally equivalent to Dudamel is a conductor by the compositional contents (94), but the construction-based content conductor(d) (92a) is available only to the latter."
+    "comment": "Marked # by Cooper: truth-conditionally equivalent to Dudamel is a conductor by the compositional contents (94), but the construction-based content conductor(d) (92a) is available only to the latter.",
+    "verified": "page-image"
   },
   {
     "id": "cooper2023_6_25",
@@ -64,7 +65,8 @@
         "modality"
       ]
     ],
-    "comment": "Portner's example: bouletic when the fact that Mary loves broccoli is at issue, deontic when children are to eat everything on their plates; the deontic and the bouletic topos (28) each witness the necessity (29)."
+    "comment": "Portner's example: bouletic when the fact that Mary loves broccoli is at issue, deontic when children are to eat everything on their plates; the deontic and the bouletic topos (28) each witness the necessity (29).",
+    "verified": "page-image"
   },
   {
     "id": "cooper2023_7_27",
@@ -99,7 +101,8 @@
         "every"
       ]
     ],
-    "comment": "Plural discourse anaphora to a universal antecedent: a bare function witness for every yields no witness set for they to pick up."
+    "comment": "Plural discourse anaphora to a universal antecedent: a bare function witness for every yields no witness set for they to pick up.",
+    "verified": "page-image"
   },
   {
     "id": "cooper2023_7_64",
@@ -134,7 +137,8 @@
         "a"
       ]
     ],
-    "comment": "Singular anaphora to the x-field of the particular witness (63)."
+    "comment": "Singular anaphora to the x-field of the particular witness (63).",
+    "verified": "page-image"
   },
   {
     "id": "cooper2023_7_66",
@@ -169,7 +173,8 @@
         "some"
       ]
     ],
-    "comment": "Plural anaphora to the witness set of the general condition (65); no particular condition is needed."
+    "comment": "Plural anaphora to the witness set of the general condition (65); no particular condition is needed.",
+    "verified": "page-image"
   },
   {
     "id": "cooper2023_7_71",
@@ -204,7 +209,8 @@
         "no"
       ]
     ],
-    "comment": "They picks up the witness set of type every-w(dog'), the dogs which did not bark: complement set anaphora (Moxey and Sanford), evidence for the particular condition (70) over the general one (67)."
+    "comment": "They picks up the witness set of type every-w(dog'), the dogs which did not bark: complement set anaphora (Moxey and Sanford), evidence for the particular condition (70) over the general one (67).",
+    "verified": "page-image"
   },
   {
     "id": "cooper2023_7_73",
@@ -239,7 +245,8 @@
         "every"
       ]
     ],
-    "comment": "Plural discourse anaphora predicted by the general condition (72)."
+    "comment": "Plural discourse anaphora predicted by the general condition (72).",
+    "verified": "page-image"
   },
   {
     "id": "cooper2023_7_75",
@@ -278,7 +285,8 @@
         "most"
       ]
     ],
-    "comment": "They refers to the witness set containing most dogs (REFSET) or to dogs in general (MAXSET); Cooper leaves the source of the MAXSET reading unresolved."
+    "comment": "They refers to the witness set containing most dogs (REFSET) or to dogs in general (MAXSET); Cooper leaves the source of the MAXSET reading unresolved.",
+    "verified": "page-image"
   },
   {
     "id": "cooper2023_7_76",
@@ -295,7 +303,7 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "acceptable",
+    "judgment": "unacceptable",
     "alternatives": [],
     "readings": [
       {
@@ -313,7 +321,8 @@
         "most"
       ]
     ],
-    "comment": "Cooper's # marks the COMPSET reading: they cannot refer to the dogs which do not bark (Nouwen), consistent with the general condition (74)."
+    "comment": "Cooper's # marks the COMPSET reading: they cannot refer to the dogs which do not bark (Nouwen), consistent with the general condition (74).",
+    "verified": "page-image"
   },
   {
     "id": "cooper2023_7_87",
@@ -348,7 +357,8 @@
         "few"
       ]
     ],
-    "comment": "COMPSET anaphora predicted by the particular condition (85)–(86) with the complement witness set."
+    "comment": "COMPSET anaphora predicted by the particular condition (85)–(86) with the complement witness set.",
+    "verified": "page-image"
   },
   {
     "id": "cooper2023_7_88",
@@ -384,7 +394,8 @@
         "few"
       ]
     ],
-    "comment": "Quoted by Cooper from Nouwen's discussion of Evans: REFSET anaphora with few, predicted by the general condition (79)–(80) rather than the particular one."
+    "comment": "Quoted by Cooper from Nouwen's discussion of Evans: REFSET anaphora with few, predicted by the general condition (79)–(80) rather than the particular one.",
+    "verified": "page-image"
   },
   {
     "id": "cooper2023_7_91",
@@ -419,7 +430,8 @@
         "a few"
       ]
     ],
-    "comment": "REFSET anaphora predicted by the general condition (89)–(90)."
+    "comment": "REFSET anaphora predicted by the general condition (89)–(90).",
+    "verified": "page-image"
   },
   {
     "id": "cooper2023_7_92",
@@ -436,7 +448,7 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "acceptable",
+    "judgment": "unacceptable",
     "alternatives": [],
     "readings": [
       {
@@ -454,7 +466,8 @@
         "a few"
       ]
     ],
-    "comment": "Cooper's # marks the COMPSET reading: they cannot refer to the dogs that did not bark, since only the general condition is available."
+    "comment": "Cooper's # marks the COMPSET reading: they cannot refer to the dogs that did not bark, since only the general condition is available.",
+    "verified": "page-image"
   },
   {
     "id": "cooper2023_7_103a",
@@ -489,7 +502,8 @@
         "a"
       ]
     ],
-    "comment": "They is dogs in general, the restr path of the content (102); Cooper: we could potentially have all of the anaphora in (103)."
+    "comment": "They is dogs in general, the restr path of the content (102); Cooper: we could potentially have all of the anaphora in (103).",
+    "verified": "page-image"
   },
   {
     "id": "cooper2023_7_103d",
@@ -524,7 +538,8 @@
         "a"
       ]
     ],
-    "comment": "It is the dog which barked, the x-field of the witness (100)."
+    "comment": "It is the dog which barked, the x-field of the witness (100).",
+    "verified": "page-image"
   },
   {
     "id": "cooper2023_7_108a",
@@ -559,7 +574,8 @@
         "no"
       ]
     ],
-    "comment": "They is dogs in general, the restr path of the content (107)."
+    "comment": "They is dogs in general, the restr path of the content (107).",
+    "verified": "page-image"
   },
   {
     "id": "cooper2023_7_108d",
@@ -594,7 +610,8 @@
         "no"
       ]
     ],
-    "comment": "They is the dogs which did not bark, the X-field of the witness (106)."
+    "comment": "They is the dogs which did not bark, the X-field of the witness (106).",
+    "verified": "page-image"
   },
   {
     "id": "cooper2023_7_113a",
@@ -629,7 +646,8 @@
         "few"
       ]
     ],
-    "comment": "They is dogs in general, the restr path of the content (112)."
+    "comment": "They is dogs in general, the restr path of the content (112).",
+    "verified": "page-image"
   },
   {
     "id": "cooper2023_7_113d",
@@ -664,7 +682,8 @@
         "few"
       ]
     ],
-    "comment": "They is the dogs which did not bark, the X-field of the witness (111); Cooper notes, after an anonymous referee, a possible garden-path effect on this reading."
+    "comment": "They is the dogs which did not bark, the X-field of the witness (111); Cooper notes, after an anonymous referee, a possible garden-path effect on this reading.",
+    "verified": "page-image"
   },
   {
     "id": "cooper2023_8_1",
@@ -700,7 +719,8 @@
         "scope"
       ]
     ],
-    "comment": "(1a) every boy is such that there is a dog he hugged, (1b) there is a dog every boy hugged: the content type has both as witnesses."
+    "comment": "(1a) every boy is such that there is a dog he hugged, (1b) there is a dog every boy hugged: the content type has both as witnesses.",
+    "verified": "page-image"
   },
   {
     "id": "cooper2023_8_2a",
@@ -736,7 +756,8 @@
         "scope"
       ]
     ],
-    "comment": "(2b) is the reading with the boy outermost; the wide scope of every dog comes from storage (17) and retrieval (19)."
+    "comment": "(2b) is the reading with the boy outermost; the wide scope of every dog comes from storage (17) and retrieval (19).",
+    "verified": "page-image"
   },
   {
     "id": "cooper2023_8_46a",
@@ -768,7 +789,8 @@
         "donkey anaphora"
       ]
     ],
-    "comment": "Donkey anaphora treated as discourse anaphora within the scope property (54)–(55): no dog catches any cat it chases."
+    "comment": "Donkey anaphora treated as discourse anaphora within the scope property (54)–(55): no dog catches any cat it chases.",
+    "verified": "page-image"
   },
   {
     "id": "cooper2023_8_46b",
@@ -800,7 +822,8 @@
         "donkey anaphora"
       ]
     ],
-    "comment": "Cooper: it is difficult to relate the singular pronoun to every cat, as in the discourse anaphora of (46d)."
+    "comment": "Cooper: it is difficult to relate the singular pronoun to every cat, as in the discourse anaphora of (46d).",
+    "verified": "page-image"
   },
   {
     "id": "cooper2023_8_46c",
@@ -832,7 +855,8 @@
         "donkey anaphora"
       ]
     ],
-    "comment": "The plural pronoun relates to every cat, as in the discourse anaphora of (46e)."
+    "comment": "The plural pronoun relates to every cat, as in the discourse anaphora of (46e).",
+    "verified": "page-image"
   },
   {
     "id": "cooper2023_8_46d",
@@ -867,7 +891,8 @@
         "discourse anaphora"
       ]
     ],
-    "comment": "Cooper: it is difficult to relate the singular pronoun to every cat."
+    "comment": "Cooper: it is difficult to relate the singular pronoun to every cat.",
+    "verified": "page-image"
   },
   {
     "id": "cooper2023_8_46e",
@@ -902,7 +927,8 @@
         "every"
       ]
     ],
-    "comment": "The plural pronoun relates easily to every cat."
+    "comment": "The plural pronoun relates easily to every cat.",
+    "verified": "page-image"
   },
   {
     "id": "cooper2023_8_56a",
@@ -942,7 +968,8 @@
         "donkey anaphora"
       ]
     ],
-    "comment": "Does not suggest that anyone who had several dimes put them all in the meter: the weak reading, from the existential purification (59)."
+    "comment": "Does not suggest that anyone who had several dimes put them all in the meter: the weak reading, from the existential purification (59).",
+    "verified": "page-image"
   },
   {
     "id": "cooper2023_8_56b",
@@ -982,7 +1009,8 @@
         "donkey anaphora"
       ]
     ],
-    "comment": "Does not commit a man with two daughters to the contradictory belief that each is the one most beautiful girl."
+    "comment": "Does not commit a man with two daughters to the contradictory belief that each is the one most beautiful girl.",
+    "verified": "page-image"
   },
   {
     "id": "cooper2023_8_57",
@@ -1022,7 +1050,8 @@
         "donkey anaphora"
       ]
     ],
-    "comment": "A modification of an example in Heim (1990), which Chierchia uses to argue for the strong reading, from the universal purification (60), (66): one man owning a slave but not the slave's offspring falsifies it. Cooper finds the case of a slave with several offspring, one owned by somebody else, unclear."
+    "comment": "A modification of an example in Heim (1990), which Chierchia uses to argue for the strong reading, from the universal purification (60), (66): one man owning a slave but not the slave's offspring falsifies it. Cooper finds the case of a slave with several offspring, one owned by somebody else, unclear.",
+    "verified": "page-image"
   },
   {
     "id": "cooper2023_8_67",
@@ -1054,7 +1083,8 @@
         "binding"
       ]
     ],
-    "comment": "Principle B: him cannot be anaphorically related to Sam within the clause, though the two may refer to the same individual, as when Sam likes the person described on a page he does not realise is about himself."
+    "comment": "Principle B: him cannot be anaphorically related to Sam within the clause, though the two may refer to the same individual, as when Sam likes the person described on a page he does not realise is about himself.",
+    "verified": "page-image"
   },
   {
     "id": "cooper2023_8_man_walked",
@@ -1089,7 +1119,8 @@
         "a"
       ]
     ],
-    "comment": "Cross-sentential anaphora: the previous content is merged into the context under the label for the previous utterance and the pronoun's path identified with the man's."
+    "comment": "Cross-sentential anaphora: the previous content is merged into the context under the label for the previous utterance and the pronoun's path identified with the man's.",
+    "verified": "page-image"
   },
   {
     "id": "cooper2023_8_no_girl",
@@ -1121,6 +1152,7 @@
         "binding"
       ]
     ],
-    "comment": "The stored no girl leaves a pronoun path in the context which anaphoric combination relates to she; retrieval quantifies over the property of being a girl who thinks she failed."
+    "comment": "The stored no girl leaves a pronoun path in the context which anaphoric combination relates to she; retrieval quantifies over the property of being a girl who thinks she failed.",
+    "verified": "page-image"
   }
 ]

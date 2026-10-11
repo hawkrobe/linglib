@@ -30,8 +30,8 @@ def ch3_5 : Datum :=
 
 def ch5_2 : Datum :=
   { id := "elbourne2013_ch5_2"
-    source := ⟨"donnellan-1966", "pp. 285–286"⟩
-    reportedIn := some ⟨"elbourne-2013", "ch. 5, (2)"⟩
+    source := ⟨"elbourne-2013", "ch. 5, (2)"⟩
+    reportedIn := none
     language := "stan1293"
     primaryText := "The murderer is insane."
     glossedTokens := []
@@ -121,8 +121,8 @@ def ch7_7 : Datum :=
 
 def ch7_16 : Datum :=
   { id := "elbourne2013_ch7_16"
-    source := ⟨"kripke-1977", "p. 9"⟩
-    reportedIn := some ⟨"elbourne-2013", "ch. 7, (16)"⟩
+    source := ⟨"elbourne-2013", "ch. 7, (16)"⟩
+    reportedIn := none
     language := "stan1293"
     primaryText := "The number of the planets is necessarily odd."
     glossedTokens := []
@@ -141,7 +141,7 @@ def ch8_3 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("Hans wants there to be exactly one ghost in his attic and for it to be quiet tonight.", .unacceptable)]
+    alternatives := [("Hans wants there to be exactly one ghost in his attic and for it to be quiet tonight.", .acceptable)]
     readings := []
     paperFeatures := [("chapter", "8"), ("presupposition", "Hans believes there is exactly one ghost in his attic")] }
 
@@ -166,10 +166,10 @@ def ch8_22 : Datum :=
     primaryText := "I do not know whether there are any ghosts in Hans's attic. But if the ghost in his attic is quiet tonight, he will hold a party."
     glossedTokens := []
     context := ""
-    judgment := .unacceptable
+    judgment := .acceptable
     alternatives := [("I do not know whether there are any ghosts in Hans's attic. But if there is exactly one ghost in his attic and it is quiet tonight, he will hold a party.", .acceptable)]
     readings := []
-    paperFeatures := [("chapter", "8"), ("contrast", "definite description against its Russellian paraphrase")] }
+    paperFeatures := [("chapter", "8"), ("contrast", "definite description against its Russellian paraphrase"), ("felicity", "infelicitous")] }
 
 def ch8_33 : Datum :=
   { id := "elbourne2013_ch8_33"
@@ -179,10 +179,10 @@ def ch8_33 : Datum :=
     primaryText := "I am unsure whether there is a ghost in my attic. I would like the ghost in my attic to be quiet tonight."
     glossedTokens := []
     context := "Hans sincerely says both."
-    judgment := .unacceptable
+    judgment := .acceptable
     alternatives := [("I am unsure whether there is a ghost in my attic. I would like there to be an entity such that it is a ghost in my attic and nothing else is a ghost in my attic and it is quiet tonight.", .acceptable)]
     readings := []
-    paperFeatures := [("chapter", "8"), ("contrast", "definite description against its Russellian paraphrase under an attitude verb")] }
+    paperFeatures := [("chapter", "8"), ("contrast", "definite description against its Russellian paraphrase under an attitude verb"), ("felicity", "infelicitous")] }
 
 def ch8_36 : Datum :=
   { id := "elbourne2013_ch8_36"
@@ -220,7 +220,7 @@ def ch9_17a : Datum :=
     context := "The final verb phrase is downstressed."
     judgment := .acceptable
     alternatives := []
-    readings := [("strict", .acceptable), ("sloppy", .unacceptable)]
+    readings := [("strict", .acceptable), ("sloppy", .ungrammatical)]
     paperFeatures := [("chapter", "9"), ("description", "the donkey")] }
 
 def ch9_17b : Datum :=
@@ -271,7 +271,7 @@ def ch10_34 : Datum :=
     glossedTokens := []
     context := "Said while pointing at Benedict XVI."
     judgment := .acceptable
-    alternatives := [("Benedict XVI is usually an Italian.", .unacceptable)]
+    alternatives := [("Benedict XVI is usually an Italian.", .acceptable)]
     readings := [("descriptive indexical", .acceptable)]
     paperFeatures := [("chapter", "10"), ("structure", "[[he Pope] s3]")] }
 

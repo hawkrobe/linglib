@@ -140,7 +140,7 @@ theorem either_iff_negative :
 
 /-- *Too* occurs in both polarities; its infelicity needs a missing antecedent. -/
 theorem too_any_polarity :
-    ∀ e ∈ Examples.all, e.feature? "particle" = some "too" → e.judgment = .unacceptable →
+    ∀ e ∈ Examples.all, e.feature? "particle" = some "too" → ¬ e.JudgedFelicitous →
       e.feature? "polarity" = some "positive" ∧ (e.context ≠ "") := by
   decide
 

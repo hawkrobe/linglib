@@ -45,7 +45,8 @@
         "60"
       ]
     ],
-    "comment": "Osborne & Li 2023 ex (2a), p. ~632. Crowdsourced mean 2.38 → `??` per paper p. 630 fn. 3 threshold table (1.65–2.29 = ?, 2.30–2.94 = ??, 2.95–4.00 = *)."
+    "comment": "Osborne & Li 2023 ex (2a), p. 630. Crowdsourced mean 2.38 → `??` per paper p. 630 fn. 3 threshold table (1.65–2.29 = ?, 2.30–2.94 = ??, 2.95–4.00 = *).",
+    "verified": "page-image"
   },
   {
     "id": "osborneli2023_ex3a",
@@ -58,13 +59,13 @@
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
-    "context": "Coordinate subject; reflexive in PP complement. Co-valuing `himself` with `John` (a conjunct valent of the subject) is marginal — the reflexive cannot find a fully matching antecedent in the local domain but is licensed by the conjunct valent.",
+    "context": "Coordinate subject; reflexive in PP complement. Co-valuing `himself` with `John` (a conjunct valent of the subject) is marginal.",
     "judgment": "questionable",
     "alternatives": [],
     "readings": [
       {
         "name": "himself = John",
-        "judgment": "marginal"
+        "judgment": "questionable"
       }
     ],
     "paperFeatures": [
@@ -82,7 +83,7 @@
       ],
       [
         "paperSection",
-        "3"
+        "2"
       ],
       [
         "paperMeanScore",
@@ -93,7 +94,8 @@
         "60"
       ]
     ],
-    "comment": "Osborne & Li 2023 ex (3a). Mean 2.15 → `?` per threshold table. CRDC predicts marginality (full reflexive of conjunct antecedent); some speakers tolerate semantic-plural agreement, others not."
+    "comment": "Osborne & Li 2023 ex (3a), p. 632. Mean 2.15 falls in the `?` band of the threshold table, but the paper prints `??`; informants judged the grammaticality of self-pronoun sentences (fn. 5).",
+    "verified": "page-image"
   },
   {
     "id": "osborneli2023_ex3b",
@@ -126,7 +128,7 @@
       ],
       [
         "paperSection",
-        "3"
+        "2"
       ],
       [
         "paperMeanScore",
@@ -137,7 +139,8 @@
         "60"
       ]
     ],
-    "comment": "Osborne & Li 2023 ex (3b). Mean 2.43 → `??`."
+    "comment": "Osborne & Li 2023 ex (3b). Mean 2.43 → `??`.",
+    "verified": "page-image"
   },
   {
     "id": "osborneli2023_ex5a",
@@ -150,13 +153,13 @@
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
-    "context": "`both ... and ...` coordinator; pronoun as object of a symmetric predicate (`love`). Co-valuing `him` with `John` instantiates the CRDC configuration: `him` is a full valent, `John` is a conjunct of the coordinate subject.",
+    "context": "`both ... and ...` coordinator; pronoun as object of `love`. `both` forces the distributive reading, which blocks co-valuing `him` with `John` under Safir's Coargument Dependency Constraint (CDC).",
     "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [
       {
         "name": "him = John",
-        "judgment": "questionable"
+        "judgment": "ungrammatical"
       }
     ],
     "paperFeatures": [
@@ -174,7 +177,7 @@
       ],
       [
         "paperSection",
-        "3"
+        "2"
       ],
       [
         "paperMeanScore",
@@ -185,7 +188,8 @@
         "60"
       ]
     ],
-    "comment": "Osborne & Li 2023 ex (5a). CRDC predicts marginality (`.questionable`). Mean score and respondent count not verified against the paper PDF; the paired-coordinator variant pairs with a bare-`and` baseline that the paper itself uses to argue the symmetric-predicate `love` is the locus of the contrast, not the `both`-coordinator. Re-check both the score and the analytic attribution on next audit pass."
+    "comment": "Osborne & Li 2023 ex (5a), p. 633. Mean 3.20 → `*`. Illustrates Safir's CDC: contrast (5b) `?Both John and Mary love his mother` (60/1.72), where the bolded expressions are not coarguments.",
+    "verified": "page-image"
   },
   {
     "id": "osborneli2023_ex6a",
@@ -222,7 +226,7 @@
       ],
       [
         "paperSection",
-        "3"
+        "2"
       ],
       [
         "paperMeanScore",
@@ -233,7 +237,8 @@
         "60"
       ]
     ],
-    "comment": "Osborne & Li 2023 ex (6a). Mean 2.42 → `??`. Raising-to-object case strengthens the empirical base for CRDC over coordinate-subject configurations."
+    "comment": "Osborne & Li 2023 ex (6a). Mean 2.42 → `??`. Raising-to-object case strengthens the empirical base for CRDC over coordinate-subject configurations.",
+    "verified": "page-image"
   },
   {
     "id": "osborneli2023_ex9a",
@@ -277,7 +282,8 @@
         "60"
       ]
     ],
-    "comment": "Osborne & Li 2023 ex (9a). Mean 1.28 → no indicator (acceptable). Non-coordinate baseline; CRDC says nothing because there is no coordination."
+    "comment": "Osborne & Li 2023 ex (9a). Mean 1.28 → no indicator (acceptable). Non-coordinate baseline; CRDC says nothing because there is no coordination.",
+    "verified": "page-image"
   },
   {
     "id": "osborneli2023_ex9b",
@@ -325,7 +331,8 @@
         "60"
       ]
     ],
-    "comment": "Osborne & Li 2023 ex (9b). Mean 2.92 → `??`. The marginality here comes from Condition B (local pronoun bound by subject), not CRDC."
+    "comment": "Osborne & Li 2023 ex (9b). Mean 2.92 → `??`. The marginality here comes from Condition B (local pronoun bound by subject), not CRDC.",
+    "verified": "page-image"
   },
   {
     "id": "osborneli2023_ex11a",
@@ -373,7 +380,8 @@
         "60"
       ]
     ],
-    "comment": "Osborne & Li 2023 ex (11a). Mean 1.20 → no indicator. Embedding the pronoun inside a possessive DP defuses CRDC."
+    "comment": "Osborne & Li 2023 ex (11a). Mean 1.20 → no indicator. Embedding the pronoun inside a possessive DP defuses CRDC.",
+    "verified": "page-image"
   },
   {
     "id": "osborneli2023_ex11e",
@@ -386,17 +394,13 @@
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
-    "context": "Coordinate subject; R-expression repeated as object. Condition C is in play, not CRDC. The repeated R-expression is acceptable on the disjoint reading (two different Maxes).",
+    "context": "Coordinate subject; name repeated as object. Condition C is in play, not CRDC; the co-valued reading is available.",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [
       {
-        "name": "object Max ≠ subject Max",
+        "name": "object Max = subject Max (co-valued)",
         "judgment": "acceptable"
-      },
-      {
-        "name": "object Max = subject Max (same individual)",
-        "judgment": "marginal"
       }
     ],
     "paperFeatures": [
@@ -425,7 +429,8 @@
         "100"
       ]
     ],
-    "comment": "Osborne & Li 2023 ex (11e). Mean 1.47 → no indicator. R-expressions skirt CRDC because they need no antecedent."
+    "comment": "Osborne & Li 2023 ex (11e). Mean 1.47 → no indicator. R-expressions skirt CRDC because they need no antecedent.",
+    "verified": "page-image"
   },
   {
     "id": "osborneli2023_ex20b",
@@ -473,7 +478,8 @@
         "60"
       ]
     ],
-    "comment": "Osborne & Li 2023 ex (20b). Mean 2.68 → `??`. Raising-with-experiencer pattern: CRDC continues to apply across the raising chain."
+    "comment": "Osborne & Li 2023 ex (20b). Mean 2.68 → `??`. Raising-with-experiencer pattern: CRDC continues to apply across the raising chain.",
+    "verified": "page-image"
   },
   {
     "id": "osborneli2023_ex24a",
@@ -517,7 +523,8 @@
         "60"
       ]
     ],
-    "comment": "Osborne & Li 2023 ex (24a). Mean 1.14 → no indicator. Key directionality test: conjunct anaphor of full-valent antecedent is fine; only the full-anaphor-of-conjunct direction triggers CRDC marginality."
+    "comment": "Osborne & Li 2023 ex (24a). Mean 1.14 → no indicator. Key directionality test: conjunct anaphor of full-valent antecedent is fine; only the full-anaphor-of-conjunct direction triggers CRDC marginality.",
+    "verified": "page-image"
   },
   {
     "id": "osborneli2023_ex25c",
@@ -561,7 +568,8 @@
         "40"
       ]
     ],
-    "comment": "Osborne & Li 2023 ex (25c). Mean 3.20 → `*`. Standard Condition B violation; cited to contrast with the coordinate-object licensing in (24a)."
+    "comment": "Osborne & Li 2023 ex (25c). Mean 3.20 → `*`. Standard Condition B violation; cited to contrast with the coordinate-object licensing in (24a).",
+    "verified": "page-image"
   },
   {
     "id": "osborneli2023_ex28d",
@@ -609,7 +617,8 @@
         "60"
       ]
     ],
-    "comment": "Osborne & Li 2023 ex (28d). Mean 1.40 → no indicator. Confirms the directionality asymmetry: conjunct anaphor of full antecedent is fine even with raising-to-object."
+    "comment": "Osborne & Li 2023 ex (28d). Mean 1.40 → no indicator. Confirms the directionality asymmetry: conjunct anaphor of full antecedent is fine even with raising-to-object.",
+    "verified": "page-image"
   },
   {
     "id": "osborneli2023_ex55a",
@@ -618,8 +627,8 @@
       "paperLabel": "(55a)"
     },
     "language": "stan1293",
-    "primaryText": "Sophy and Edgar voted for her.",
-    "discourseSegments": [],
+    "primaryText": "Who voted for Sophy? – Sophy and Edgar voted for her.",
+    "discourseSegments": ["Who voted for Sophy?", "Sophy and Edgar voted for her."],
     "glossedTokens": [],
     "translation": "",
     "context": "Coordinate-subject CRDC configuration, but a structural counterexample: speakers accept co-valuation of `her` with `Sophy` despite CRDC's marginality prediction. Paper discusses this as a candidate exception (Section 6).",
@@ -657,6 +666,7 @@
         "40"
       ]
     ],
-    "comment": "Osborne & Li 2023 ex (55a). Mean 1.43 → no indicator. Section 6 counterexample: predicates like `vote for` allow `her` to pick out an individual outside the coordination (a third party), making CRDC's prediction empirically wrong here. Flagged in `paperFeatures.isCounterexample`."
+    "comment": "Osborne & Li 2023 ex (55a), p. 653. Mean 1.43 → no indicator. Section 6 apparent counterexample raised by a reviewer: the low score contradicts the CRDC, but (55b) `?Who voted for Sophy? – Sophy voted for her` (2.05) shows Condition B is weak here too; the paper suggests `vote` allows an identity split (the voter Sophy vs. the candidate Sophy), so the CRDC is not implicated. Flagged in `paperFeatures.isCounterexample`.",
+    "verified": "page-image"
   }
 ]

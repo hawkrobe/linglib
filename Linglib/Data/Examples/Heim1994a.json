@@ -28,7 +28,8 @@
         "g(1) < t_c"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "heim1994a_s5",
@@ -59,7 +60,8 @@
         "every time in the restriction precedes t_c"
       ]
     ],
-    "comment": "The bound tense's presupposition projects universally through the quantifier."
+    "comment": "The bound tense's presupposition projects universally through the quantifier.",
+    "verified": "page-image"
   },
   {
     "id": "heim1994a_s11",
@@ -90,7 +92,8 @@
         "simultaneous only"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "heim1994a_s13a",
@@ -117,7 +120,8 @@
         "cannot describe the situation of (13b)"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "heim1994a_s13b",
@@ -140,7 +144,8 @@
         "2"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "heim1994a_s14a",
@@ -167,7 +172,8 @@
         "cannot describe the situation of (14b)"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "heim1994a_s14b",
@@ -190,7 +196,8 @@
         "2"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "heim1994a_s19",
@@ -221,7 +228,8 @@
         "(i) John believed the birthday to precede t_c; (ii) he located himself at or after it"
       ]
     ],
-    "comment": "Inappropriate if John is known to have thought Bill was 39; (i) is unwelcome and is removed in Section 3."
+    "comment": "Inappropriate if John is known to have thought Bill was 39; (i) is unwelcome and is removed in Section 3.",
+    "verified": "page-image"
   },
   {
     "id": "heim1994a_s22",
@@ -244,7 +252,8 @@
         "2"
       ]
     ],
-    "comment": "Incoherent: the ULC presupposition (ii) of (19) is violated."
+    "comment": "The paper prints no judgment marks; prose: \"(22) sounds incoherent\". Incoherent: the ULC presupposition (ii) of (19) is violated.",
+    "verified": "page-image"
   },
   {
     "id": "heim1994a_s23",
@@ -267,7 +276,8 @@
         "2"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "heim1994a_s24",
@@ -298,7 +308,8 @@
         "(26): woll shifts the evaluation time forward"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "heim1994a_s27",
@@ -325,7 +336,8 @@
         "PRES1 woll λ0 [a man who PRES0 love her λ2 [she INF0 marry t2]]"
       ]
     ],
-    "comment": "Shows why woll must shift the evaluation time: otherwise the ULC would exclude future loving."
+    "comment": "Shows why woll must shift the evaluation time: otherwise the ULC would exclude future loving.",
+    "verified": "page-image"
   },
   {
     "id": "heim1994a_s28",
@@ -356,7 +368,8 @@
         "simultaneous; back-shifted"
       ]
     ],
-    "comment": "LFs (30) and (31) with a free lower past attribute to John beliefs about his own location in time and are set aside."
+    "comment": "LFs (30) and (31) with a free lower past attribute to John beliefs about his own location in time and are set aside.",
+    "verified": "page-image"
   },
   {
     "id": "heim1994a_s34",
@@ -383,7 +396,8 @@
         "(35): a de re report about six o'clock with g_c(1) = 5 o'clock, g_c(2) = 6 o'clock"
       ]
     ],
-    "comment": "If de re, a belief about a time later than the believing time reported with a past, as the ULC but not the descriptive generalization allows."
+    "comment": "If de re, a belief about a time later than the believing time reported with a past, as the ULC but not the descriptive generalization allows.",
+    "verified": "page-image"
   },
   {
     "id": "heim1994a_s36",
@@ -414,7 +428,8 @@
         "double access"
       ]
     ],
-    "comment": "Presuppositions (i)–(iv); reportable for the belief 'she is pregnant today' on the same day only, never for 'she was pregnant a year ago'."
+    "comment": "Presuppositions (i)–(iv); reportable for the belief 'she is pregnant today' on the same day only, never for 'she was pregnant a year ago'.",
+    "verified": "page-image"
   },
   {
     "id": "heim1994a_s39",
@@ -441,7 +456,8 @@
         "PRES overlapping t_c"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "heim1994a_s40",
@@ -468,7 +484,8 @@
         "PAST preceding t_c"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "heim1994a_s41",
@@ -491,7 +508,8 @@
         "3"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "heim1994a_s42",
@@ -514,7 +532,8 @@
         "3"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "heim1994a_s43",
@@ -549,7 +568,8 @@
         "the lowest PAST licensed non-locally by <-decide"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "heim1994a_s44",
@@ -584,7 +604,8 @@
         "the lowest PAST licensed non-locally by <-say"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "heim1994a_s45",
@@ -611,7 +632,8 @@
         "A. Santisteban, p.c."
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "heim1994a_s54",
@@ -642,7 +664,8 @@
         "transparent only"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "heim1994a_s59",
@@ -669,6 +692,7 @@
         "(60): John PAST1 <-meet [the man who PAST2 ¬<-live next door]"
       ]
     ],
-    "comment": "Licensed under definition (53) with the unattested reading where PAST2 is the utterance time; excluded once the object is an extensional argument, (61)."
+    "comment": "Licensed under definition (53) with the unattested reading where PAST2 is the utterance time; excluded once the object is an extensional argument, (61).",
+    "verified": "page-image"
   }
 ]

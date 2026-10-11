@@ -2,8 +2,8 @@
  {
   "id": "tbd2018_1a_nrrc",
   "source": {
-   "bibkey": "tonhauser-beaver-degen-2018",
-   "paperLabel": "Exp 1a materials, target expression / projective content pairs"
+    "bibkey": "tonhauser-beaver-degen-2018",
+    "paperLabel": "(12), Exp 1a materials, target expression / projective content pairs"
   },
   "reportedIn": null,
   "language": "stan1293",
@@ -21,13 +21,14 @@
     "NRRC"
    ]
   ],
-  "comment": ""
+  "comment": "",
+  "verified": "page-image"
  },
  {
   "id": "tbd2018_1a_nominalAppositive",
   "source": {
-   "bibkey": "tonhauser-beaver-degen-2018",
-   "paperLabel": "Exp 1a materials, target expression / projective content pairs"
+    "bibkey": "tonhauser-beaver-degen-2018",
+    "paperLabel": "(12), Exp 1a materials, target expression / projective content pairs"
   },
   "reportedIn": null,
   "language": "stan1293",
@@ -35,7 +36,7 @@
   "discourseSegments": [],
   "glossedTokens": [],
   "translation": "",
-  "context": "Projective content: 'Martha'",
+  "context": "Projective content: 'Martha's new car is a BMW'",
   "judgment": "acceptable",
   "alternatives": [],
   "readings": [],
@@ -45,13 +46,14 @@
     "nominalAppositive"
    ]
   ],
-  "comment": ""
+  "comment": "",
+  "verified": "page-image"
  },
  {
   "id": "tbd2018_1a_possessiveNP",
   "source": {
-   "bibkey": "tonhauser-beaver-degen-2018",
-   "paperLabel": "Exp 1a materials, target expression / projective content pairs"
+    "bibkey": "tonhauser-beaver-degen-2018",
+    "paperLabel": "(12), Exp 1a materials, target expression / projective content pairs"
   },
   "reportedIn": null,
   "language": "stan1293",
@@ -59,7 +61,7 @@
   "discourseSegments": [],
   "glossedTokens": [],
   "translation": "",
-  "context": "Projective content: 'Martha has a new BMW.'",
+  "context": "Projective content: 'Martha's new car is a BMW'",
   "judgment": "acceptable",
   "alternatives": [],
   "readings": [],
@@ -69,13 +71,14 @@
     "possessiveNP"
    ]
   ],
-  "comment": ""
+  "comment": "",
+  "verified": "page-image"
  },
  {
   "id": "tbd2018_1a_annoyed",
   "source": {
-   "bibkey": "tonhauser-beaver-degen-2018",
-   "paperLabel": "Exp 1a materials, target expression / projective content pairs"
+    "bibkey": "tonhauser-beaver-degen-2018",
+    "paperLabel": "(12), Exp 1a materials, target expression / projective content pairs"
   },
   "reportedIn": null,
   "language": "stan1293",
@@ -93,13 +96,14 @@
     "annoyed"
    ]
   ],
-  "comment": ""
+  "comment": "",
+  "verified": "page-image"
  },
  {
   "id": "tbd2018_1a_discover",
   "source": {
-   "bibkey": "tonhauser-beaver-degen-2018",
-   "paperLabel": "Exp 1a materials, target expression / projective content pairs"
+    "bibkey": "tonhauser-beaver-degen-2018",
+    "paperLabel": "(12), Exp 1a materials, target expression / projective content pairs"
   },
   "reportedIn": null,
   "language": "stan1293",
@@ -107,7 +111,7 @@
   "discourseSegments": [],
   "glossedTokens": [],
   "translation": "",
-  "context": "Projective content: 'Mary'",
+  "context": "Projective content: 'Mary's daughter has been biting her nails'",
   "judgment": "acceptable",
   "alternatives": [],
   "readings": [],
@@ -117,13 +121,14 @@
     "discover"
    ]
   ],
-  "comment": ""
+  "comment": "",
+  "verified": "page-image"
  },
  {
   "id": "tbd2018_1a_know",
   "source": {
-   "bibkey": "tonhauser-beaver-degen-2018",
-   "paperLabel": "Exp 1a materials, target expression / projective content pairs"
+    "bibkey": "tonhauser-beaver-degen-2018",
+    "paperLabel": "(12), Exp 1a materials, target expression / projective content pairs"
   },
   "reportedIn": null,
   "language": "stan1293",
@@ -141,13 +146,14 @@
     "know"
    ]
   ],
-  "comment": ""
+  "comment": "",
+  "verified": "page-image"
  },
  {
   "id": "tbd2018_1a_only",
   "source": {
-   "bibkey": "tonhauser-beaver-degen-2018",
-   "paperLabel": "Exp 1a materials, target expression / projective content pairs"
+    "bibkey": "tonhauser-beaver-degen-2018",
+    "paperLabel": "(12), Exp 1a materials, target expression / projective content pairs"
   },
   "reportedIn": null,
   "language": "stan1293",
@@ -165,13 +171,14 @@
     "only"
    ]
   ],
-  "comment": ""
+  "comment": "",
+  "verified": "page-image"
  },
  {
   "id": "tbd2018_1a_stop",
   "source": {
-   "bibkey": "tonhauser-beaver-degen-2018",
-   "paperLabel": "Exp 1a materials, target expression / projective content pairs"
+    "bibkey": "tonhauser-beaver-degen-2018",
+    "paperLabel": "(12), Exp 1a materials, target expression / projective content pairs"
   },
   "reportedIn": null,
   "language": "stan1293",
@@ -179,7 +186,7 @@
   "discourseSegments": [],
   "glossedTokens": [],
   "translation": "",
-  "context": "Projective content: 'Mary'",
+  "context": "Projective content: 'Mary's daughter has been biting her nails'",
   "judgment": "acceptable",
   "alternatives": [],
   "readings": [],
@@ -189,13 +196,14 @@
     "stop"
    ]
   ],
-  "comment": ""
+  "comment": "",
+  "verified": "page-image"
  },
  {
   "id": "tbd2018_1a_stupid",
   "source": {
-   "bibkey": "tonhauser-beaver-degen-2018",
-   "paperLabel": "Exp 1a materials, target expression / projective content pairs"
+    "bibkey": "tonhauser-beaver-degen-2018",
+    "paperLabel": "(12), Exp 1a materials, target expression / projective content pairs"
   },
   "reportedIn": null,
   "language": "stan1293",
@@ -203,7 +211,7 @@
   "discourseSegments": [],
   "glossedTokens": [],
   "translation": "",
-  "context": "Projective content: 'Mary'",
+  "context": "Projective content: 'Mary's daughter has been biting her nails'",
   "judgment": "acceptable",
   "alternatives": [],
   "readings": [],
@@ -213,13 +221,14 @@
     "stupid"
    ]
   ],
-  "comment": ""
+  "comment": "",
+  "verified": "page-image"
  },
  {
   "id": "tbd2018_1a_sampleTarget_nominalAppositive",
   "source": {
-   "bibkey": "tonhauser-beaver-degen-2018",
-   "paperLabel": "Exp 1a materials, sample target stimulus"
+    "bibkey": "tonhauser-beaver-degen-2018",
+    "paperLabel": "(14a), Exp 1a materials, sample target stimulus"
   },
   "reportedIn": null,
   "language": "stan1293",
@@ -237,13 +246,14 @@
     "nominal appositive"
    ]
   ],
-  "comment": "The target stimuli were polar questions asked by a named speaker."
+  "comment": "The target stimuli were polar questions asked by a named speaker.",
+  "verified": "page-image"
  },
  {
   "id": "tbd2018_1a_sampleTarget_beStupidTo",
   "source": {
-   "bibkey": "tonhauser-beaver-degen-2018",
-   "paperLabel": "Exp 1a materials, sample target stimulus"
+    "bibkey": "tonhauser-beaver-degen-2018",
+    "paperLabel": "(14b), Exp 1a materials, sample target stimulus"
   },
   "reportedIn": null,
   "language": "stan1293",
@@ -261,13 +271,14 @@
     "be stupid to"
    ]
   ],
-  "comment": ""
+  "comment": "",
+  "verified": "page-image"
  },
  {
   "id": "tbd2018_1a_control",
   "source": {
-   "bibkey": "tonhauser-beaver-degen-2018",
-   "paperLabel": "Exp 1a materials, sample control stimulus"
+    "bibkey": "tonhauser-beaver-degen-2018",
+    "paperLabel": "(15), Exp 1a materials, sample control stimulus"
   },
   "reportedIn": null,
   "language": "stan1293",
@@ -285,13 +296,14 @@
     "main clause"
    ]
   ],
-  "comment": ""
+  "comment": "",
+  "verified": "page-image"
  },
  {
   "id": "tbd2018_1b_sample_aware",
   "source": {
-   "bibkey": "tonhauser-beaver-degen-2018",
-   "paperLabel": "Exp 1b materials, sample target stimuli"
+    "bibkey": "tonhauser-beaver-degen-2018",
+    "paperLabel": "(16a), Exp 1b materials, sample target stimuli"
   },
   "reportedIn": null,
   "language": "stan1293",
@@ -309,13 +321,14 @@
     "be aware"
    ]
   ],
-  "comment": ""
+  "comment": "",
+  "verified": "page-image"
  },
  {
   "id": "tbd2018_1b_sample_discover",
   "source": {
-   "bibkey": "tonhauser-beaver-degen-2018",
-   "paperLabel": "Exp 1b materials, sample target stimuli"
+    "bibkey": "tonhauser-beaver-degen-2018",
+    "paperLabel": "(16b), Exp 1b materials, sample target stimuli"
   },
   "reportedIn": null,
   "language": "stan1293",
@@ -333,6 +346,7 @@
     "discover"
    ]
   ],
-  "comment": ""
+  "comment": "",
+  "verified": "page-image"
  }
 ]

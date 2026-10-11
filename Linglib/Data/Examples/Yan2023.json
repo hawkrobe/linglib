@@ -16,7 +16,8 @@
       ["puzzle", "Asher"],
       ["role", "premise"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "yan2023_2",
@@ -28,14 +29,16 @@
     "glossedTokens": [],
     "translation": "",
     "context": "As in (1b).",
-    "judgment": "unacceptable",
+    "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
       ["puzzle", "Asher"],
-      ["role", "monotonic conclusion"]
+      ["role", "monotonic conclusion"],
+      ["holds", "no"]
     ],
-    "comment": "False in the scenario although a free trip is a trip."
+    "comment": "False in the scenario although a free trip is a trip.",
+    "verified": "page-image"
   },
   {
     "id": "yan2023_3",
@@ -54,7 +57,8 @@
       ["puzzle", "Heim"],
       ["role", "premise"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "yan2023_4",
@@ -66,14 +70,15 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
       ["puzzle", "Heim"],
       ["role", "monotonic conclusion"]
     ],
-    "comment": "Utterable in a situation where the speaker does not want to teach at all."
+    "comment": "Utterable in a situation where the speaker does not want to teach at all.",
+    "verified": "page-image"
   },
   {
     "id": "yan2023_5",
@@ -92,7 +97,8 @@
       ["puzzle", "Ross"],
       ["role", "premise"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "yan2023_6",
@@ -104,14 +110,15 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
       ["puzzle", "Ross"],
       ["role", "monotonic conclusion"]
     ],
-    "comment": "Suggests that John is okay with burning the letter."
+    "comment": "Suggests that John is okay with burning the letter.",
+    "verified": "page-image"
   },
   {
     "id": "yan2023_7",
@@ -131,7 +138,8 @@
     "paperFeatures": [
       ["inference", "box free choice"]
     ],
-    "comment": "The distributive inference does not rely on John not wanting a Ferrari and not wanting a Porsche."
+    "comment": "The distributive inference does not rely on John not wanting a Ferrari and not wanting a Porsche.",
+    "verified": "page-image"
   },
   {
     "id": "yan2023_8",
@@ -150,7 +158,8 @@
       ["puzzle", "Ross"],
       ["formula", "◇SEND a"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "yan2023_9",
@@ -162,14 +171,15 @@
     "glossedTokens": [],
     "translation": "",
     "context": "John wants to send the letter.",
-    "judgment": "unacceptable",
+    "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
       ["puzzle", "Ross"],
       ["formula", "◇BURN a"]
     ],
-    "comment": "Licensed only by the enriched disjunctive want, which the premise does not support."
+    "comment": "Licensed only by the enriched disjunctive want, which the premise does not support. The paper prints 'It is ok for John to burn letter.'",
+    "verified": "page-image"
   },
   {
     "id": "yan2023_10",
@@ -188,7 +198,8 @@
       ["puzzle", "Asher"],
       ["formula", "◇∃x FREE x"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "yan2023_11",
@@ -200,14 +211,15 @@
     "glossedTokens": [],
     "translation": "",
     "context": "Nicholas wants a free trip on the Concorde.",
-    "judgment": "unacceptable",
+    "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
       ["puzzle", "Asher"],
       ["formula", "◇∃x ¬FREE x"]
     ],
-    "comment": "Licensed only by the enriched reinterpretation of TRIP, which the premise does not justify."
+    "comment": "Licensed only by the enriched reinterpretation of TRIP, which the premise does not justify.",
+    "verified": "page-image"
   },
   {
     "id": "yan2023_12",
@@ -226,7 +238,8 @@
       ["evidence", "monotonicity"],
       ["item", "NPI any"]
     ],
-    "comment": "The NPI is licensed under negated want, which requires want to be upward monotonic."
+    "comment": "The NPI is licensed under negated want, which requires want to be upward monotonic.",
+    "verified": "page-image"
   },
   {
     "id": "yan2023_13",
@@ -238,14 +251,16 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
       ["evidence", "monotonicity"],
-      ["role", "contradiction"]
+      ["role", "contradiction"],
+      ["felicity", "infelicitous"]
     ],
-    "comment": "Infelicitous, as expected if want is upward monotonic; from Zimmermann 2006."
+    "comment": "Printed unmarked; the paper speaks of 'the intuitive infelicity of the following sentence', which an upward-monotonic want explains; from Zimmermann 2006.",
+    "verified": "page-image"
   },
   {
     "id": "yan2023_14",
@@ -264,7 +279,8 @@
       ["puzzle", "Ross"],
       ["role", "free-choice inference"]
     ],
-    "comment": "The □-free-choice inference from the disjunctive want (8a), read with want scoping over the disjunction."
+    "comment": "The □-free-choice inference from the disjunctive want (8a), read with want scoping over the disjunction.",
+    "verified": "page-image"
   },
   {
     "id": "yan2023_15",
@@ -276,14 +292,15 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
       ["puzzle", "Heim"],
       ["role", "unwarranted inference"]
     ],
-    "comment": "Drawn from the reinterpreted conclusion (16b) by free choice; not justified by the premise."
+    "comment": "Drawn from the reinterpreted conclusion (16b) by free choice; not justified by the premise.",
+    "verified": "page-image"
   },
   {
     "id": "yan2023_16",
@@ -302,7 +319,8 @@
       ["puzzle", "Good Samaritan under desire"],
       ["role", "premise"]
     ],
-    "comment": "A Good Samaritan case under desire, with a wide- and a narrow-scope reading of the relative clause."
+    "comment": "A Good Samaritan case under desire, with a wide- and a narrow-scope reading of the relative clause.",
+    "verified": "page-image"
   },
   {
     "id": "yan2023_17",
@@ -314,13 +332,14 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
       ["puzzle", "Good Samaritan under desire"],
       ["role", "monotonic conclusion"]
     ],
-    "comment": "Follows from the wide-scope reading of (19a) by conjunction elimination; the paper leaves this case to a scope solution."
+    "comment": "Follows from the wide-scope reading of (19a) by conjunction elimination; the paper leaves this case to a scope solution.",
+    "verified": "page-image"
   }
 ]

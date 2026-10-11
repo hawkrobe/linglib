@@ -156,7 +156,7 @@ def fn15_i : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("section", "4")] }
+    paperFeatures := [("section", "3.4")] }
 
 def s4_smokes : Datum :=
   { id := "spector2026_s4_smokes"
@@ -212,7 +212,7 @@ def ex_17b : Datum :=
 
 def fn19_he : Datum :=
   { id := "spector2026_fn19_he"
-    source := ⟨"spector-2026", "fn. 19 he"⟩
+    source := ⟨"spector-2026", "§6.2 he"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "Not every male student came. He stayed home."
@@ -234,7 +234,7 @@ def fn19_they : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := [("they = all the students", .acceptable), ("they = the students who did not come", .unacceptable)]
-    paperFeatures := [("section", "6.3")] }
+    paperFeatures := [("section", "6.2")] }
 
 def ex_35 : Datum :=
   { id := "spector2026_35"
@@ -269,7 +269,7 @@ def ex_41 : Datum :=
     language := "stan1293"
     primaryText := "It is not true that Sue has an umbrella and that she left it home."
     glossedTokens := []
-    context := "Sue has two umbrellas; she took one with her and left the other at home."
+    context := "Sue has two umbrellas, and she took one with her and left the other one at home."
     judgment := .acceptable
     alternatives := []
     readings := []
@@ -285,7 +285,7 @@ def ex_43 : Datum :=
     context := ""
     judgment := .acceptable
     alternatives := []
-    readings := [("no farmer who owns a donkey beats any donkey they own", .acceptable)]
+    readings := [("no farmer who owns a donkey beats any donkey they have", .acceptable)]
     paperFeatures := [("section", "7")] }
 
 def ex_45 : Datum :=
@@ -298,7 +298,7 @@ def ex_45 : Datum :=
     context := ""
     judgment := .acceptable
     alternatives := []
-    readings := [("no student who has an umbrella left every umbrella they have home", .acceptable)]
+    readings := [("no student who has an umbrella left every umbrella they have at home", .acceptable)]
     paperFeatures := [("section", "7")] }
 
 def ex_47a : Datum :=

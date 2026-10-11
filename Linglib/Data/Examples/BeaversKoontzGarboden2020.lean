@@ -17,7 +17,7 @@ namespace BeaversKoontzGarboden2020.Examples
 
 def bkg2020_25a : Datum :=
   { id := "bkg2020_25a"
-    source := ⟨"beavers-koontz-garboden-2020", "(25a)"⟩
+    source := ⟨"beavers-koontz-garboden-2020", "ch. 1 (25a)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "Mary flattened the rug again, and it had been flat before."
@@ -30,7 +30,7 @@ def bkg2020_25a : Datum :=
 
 def bkg2020_25b : Datum :=
   { id := "bkg2020_25b"
-    source := ⟨"beavers-koontz-garboden-2020", "(25b)"⟩
+    source := ⟨"beavers-koontz-garboden-2020", "ch. 1 (25b)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "Mary flattened the rug again, and it had flattened before."
@@ -43,7 +43,7 @@ def bkg2020_25b : Datum :=
 
 def bkg2020_25c : Datum :=
   { id := "bkg2020_25c"
-    source := ⟨"beavers-koontz-garboden-2020", "(25c)"⟩
+    source := ⟨"beavers-koontz-garboden-2020", "ch. 1 (25c)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "Mary flattened the rug again, and Mary had flattened it before."

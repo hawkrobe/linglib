@@ -35,11 +35,11 @@ def ex3a : Datum :=
     language := "stan1293"
     primaryText := "John and Mary talked about himself."
     glossedTokens := []
-    context := "Coordinate subject; reflexive in PP complement. Co-valuing `himself` with `John` (a conjunct valent of the subject) is marginal — the reflexive cannot find a fully matching antecedent in the local domain but is licensed by the conjunct valent."
+    context := "Coordinate subject; reflexive in PP complement. Co-valuing `himself` with `John` (a conjunct valent of the subject) is marginal."
     judgment := .questionable
     alternatives := []
-    readings := [("himself = John", .marginal)]
-    paperFeatures := [("coordinateSubject", "true"), ("coVValuedPair", "himself;John"), ("anaphorType", "reflexive"), ("paperSection", "3"), ("paperMeanScore", "2.15"), ("paperNRespondents", "60")] }
+    readings := [("himself = John", .questionable)]
+    paperFeatures := [("coordinateSubject", "true"), ("coVValuedPair", "himself;John"), ("anaphorType", "reflexive"), ("paperSection", "2"), ("paperMeanScore", "2.15"), ("paperNRespondents", "60")] }
 
 def ex3b : Datum :=
   { id := "osborneli2023_ex3b"
@@ -52,7 +52,7 @@ def ex3b : Datum :=
     judgment := .questionable
     alternatives := []
     readings := [("him = John (co-valued)", .questionable)]
-    paperFeatures := [("coordinateSubject", "true"), ("coVValuedPair", "him;John"), ("paperSection", "3"), ("paperMeanScore", "2.43"), ("paperNRespondents", "60")] }
+    paperFeatures := [("coordinateSubject", "true"), ("coVValuedPair", "him;John"), ("paperSection", "2"), ("paperMeanScore", "2.43"), ("paperNRespondents", "60")] }
 
 def ex5a : Datum :=
   { id := "osborneli2023_ex5a"
@@ -61,11 +61,11 @@ def ex5a : Datum :=
     language := "stan1293"
     primaryText := "Both John and Mary love him."
     glossedTokens := []
-    context := "`both ... and ...` coordinator; pronoun as object of a symmetric predicate (`love`). Co-valuing `him` with `John` instantiates the CRDC configuration: `him` is a full valent, `John` is a conjunct of the coordinate subject."
+    context := "`both ... and ...` coordinator; pronoun as object of `love`. `both` forces the distributive reading, which blocks co-valuing `him` with `John` under Safir's Coargument Dependency Constraint (CDC)."
     judgment := .ungrammatical
     alternatives := []
-    readings := [("him = John", .questionable)]
-    paperFeatures := [("coordinateSubject", "true"), ("coordinator", "both...and"), ("coVValuedPair", "him;John"), ("paperSection", "3"), ("paperMeanScore", "3.20"), ("paperNRespondents", "60")] }
+    readings := [("him = John", .ungrammatical)]
+    paperFeatures := [("coordinateSubject", "true"), ("coordinator", "both...and"), ("coVValuedPair", "him;John"), ("paperSection", "2"), ("paperMeanScore", "3.20"), ("paperNRespondents", "60")] }
 
 def ex6a : Datum :=
   { id := "osborneli2023_ex6a"
@@ -78,7 +78,7 @@ def ex6a : Datum :=
     judgment := .questionable
     alternatives := []
     readings := [("him = Bill", .questionable)]
-    paperFeatures := [("coordinateSubject", "true"), ("construction", "raising-to-object"), ("coVValuedPair", "him;Bill"), ("paperSection", "3"), ("paperMeanScore", "2.42"), ("paperNRespondents", "60")] }
+    paperFeatures := [("coordinateSubject", "true"), ("construction", "raising-to-object"), ("coVValuedPair", "him;Bill"), ("paperSection", "2"), ("paperMeanScore", "2.42"), ("paperNRespondents", "60")] }
 
 def ex9a : Datum :=
   { id := "osborneli2023_ex9a"
@@ -126,10 +126,10 @@ def ex11e : Datum :=
     language := "stan1293"
     primaryText := "Max and Lucie talked about Max."
     glossedTokens := []
-    context := "Coordinate subject; R-expression repeated as object. Condition C is in play, not CRDC. The repeated R-expression is acceptable on the disjoint reading (two different Maxes)."
+    context := "Coordinate subject; name repeated as object. Condition C is in play, not CRDC; the co-valued reading is available."
     judgment := .acceptable
     alternatives := []
-    readings := [("object Max ≠ subject Max", .acceptable), ("object Max = subject Max (same individual)", .marginal)]
+    readings := [("object Max = subject Max (co-valued)", .acceptable)]
     paperFeatures := [("coordinateSubject", "true"), ("coVValuedPair", "Max;Max"), ("anaphorType", "R-expression"), ("paperSection", "3"), ("paperMeanScore", "1.47"), ("paperNRespondents", "100")] }
 
 def ex20b : Datum :=
@@ -189,7 +189,7 @@ def ex55a : Datum :=
     source := ⟨"osborne-li-2023", "(55a)"⟩
     reportedIn := none
     language := "stan1293"
-    primaryText := "Sophy and Edgar voted for her."
+    primaryText := "Who voted for Sophy? – Sophy and Edgar voted for her."
     glossedTokens := []
     context := "Coordinate-subject CRDC configuration, but a structural counterexample: speakers accept co-valuation of `her` with `Sophy` despite CRDC's marginality prediction. Paper discusses this as a candidate exception (Section 6)."
     judgment := .acceptable

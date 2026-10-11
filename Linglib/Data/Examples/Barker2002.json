@@ -12,7 +12,8 @@
     "paperFeatures": [
       ["translation", "left j"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "barker2002_4b",
@@ -27,7 +28,8 @@
     "paperFeatures": [
       ["translation", "saw m j"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "barker2002_14",
@@ -43,7 +45,8 @@
       ["translation", "∀x.saw x j"],
       ["quantifiers", "everyone"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "barker2002_17a",
@@ -59,7 +62,8 @@
       ["translation", "∀x.man x → saw x j"],
       ["quantifiers", "every"]
     ],
-    "comment": "Printed 'every men'."
+    "comment": "The paper prints 'John saw every men.'",
+    "verified": "page-image"
   },
   {
     "id": "barker2002_17b",
@@ -75,7 +79,8 @@
       ["translation", "most(man)(λx.saw x j)"],
       ["quantifiers", "most"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "barker2002_17c",
@@ -93,7 +98,8 @@
     "paperFeatures": [
       ["quantifiers", "every a"]
     ],
-    "comment": "(17c) prints the inverse scoping; the surface scoping arrives with subject priority."
+    "comment": "(17c) prints the inverse scoping; the surface scoping arrives with subject priority.",
+    "verified": "page-image"
   },
   {
     "id": "barker2002_19a",
@@ -109,7 +115,8 @@
       ["quantifiers", "a every"],
       ["natural_reading", "every > a"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "barker2002_19b",
@@ -125,7 +132,8 @@
       ["quantifiers", "a every"],
       ["natural_reading", "every > a"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "barker2002_19c",
@@ -141,7 +149,8 @@
       ["quantifiers", "a every"],
       ["natural_reading", "every > a"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "barker2002_21a",
@@ -158,7 +167,8 @@
       ["translation", "∃y.man y ∧ thought(∀x.saw m x) y"],
       ["island", "tensed S"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "barker2002_22a",
@@ -176,7 +186,8 @@
     "paperFeatures": [
       ["quantifiers", "no a"]
     ],
-    "comment": "(22b) linear, (22c) inverse linking."
+    "comment": "(22b) linear, (22c) inverse linking.",
+    "verified": "page-image"
   },
   {
     "id": "barker2002_23a",
@@ -188,13 +199,17 @@
     "context": "",
     "judgment": "acceptable",
     "readings": [
-      {"name": "every > two > someone", "judgment": "unacceptable"}
+      {
+        "name": "every > two > someone",
+        "judgment": "ungrammatical"
+      }
     ],
     "paperFeatures": [
       ["quantifiers", "two someone every"],
       ["constituent", "someone every"]
     ],
-    "comment": "May's observation."
+    "comment": "May's observation; (23b) prints the scoping with *.",
+    "verified": "page-image"
   },
   {
     "id": "barker2002_26a",
@@ -206,13 +221,17 @@
     "context": "",
     "judgment": "acceptable",
     "readings": [
-      {"name": "every > most > an", "judgment": "unacceptable"}
+      {
+        "name": "every > most > an",
+        "judgment": "ungrammatical"
+      }
     ],
     "paperFeatures": [
       ["quantifiers", "most an every"],
       ["constituent", "an every"]
     ],
-    "comment": ""
+    "comment": "(26b) prints the scoping with *.",
+    "verified": "page-image"
   },
   {
     "id": "barker2002_27a",
@@ -228,7 +247,8 @@
       ["coordination", "S"],
       ["translation", "and(left j)(slept j)"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "barker2002_27b",
@@ -244,7 +264,8 @@
       ["coordination", "VP"],
       ["translation", "and(left j)(slept j)"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "barker2002_27c",
@@ -260,7 +281,8 @@
       ["coordination", "Vt"],
       ["translation", "and(saw m j)(liked m j)"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "barker2002_27d",
@@ -276,7 +298,8 @@
       ["coordination", "NP"],
       ["translation", "and(left j)(left m)"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "barker2002_42a",
@@ -294,7 +317,8 @@
     "paperFeatures": [
       ["quantifiers", "someone everyone"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "barker2002_43",
@@ -318,6 +342,7 @@
       ["constituent", "a everyone"],
       ["derivation", "someone saw a friend of everyone"]
     ],
-    "comment": "Four of the six orders; the two splitting the object's quantifiers are excluded by Integrity."
+    "comment": "Four of the six orders; the two splitting the object's quantifiers are excluded by Integrity.",
+    "verified": "page-image"
   }
 ]

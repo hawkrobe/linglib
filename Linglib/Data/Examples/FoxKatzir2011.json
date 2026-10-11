@@ -37,7 +37,8 @@
         "no"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "foxkatzir2011_ex2",
@@ -77,7 +78,8 @@
         "no"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "foxkatzir2011_ex3",
@@ -117,7 +119,8 @@
         "no"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "foxkatzir2011_ex29",
@@ -157,7 +160,8 @@
         "no"
       ]
     ],
-    "comment": "Context: What did John do? The symmetric 'read exactly three books' is not a formal alternative."
+    "comment": "Context: What did John do? The symmetric 'read exactly three books' is not a formal alternative.",
+    "verified": "page-image"
   },
   {
     "id": "foxkatzir2011_ex33",
@@ -197,13 +201,14 @@
         "no"
       ]
     ],
-    "comment": "Context: Mary read exactly three books. What did John do? Making the symmetric alternative salient does not let context keep it and prune 'four books'."
+    "comment": "Context: Mary read exactly three books. What did John do? Making the symmetric alternative salient does not let context keep it and prune 'four books'.",
+    "verified": "page-image"
   },
   {
     "id": "foxkatzir2011_ex38",
     "source": {
-      "bibkey": "sauerland-2004",
-      "paperLabel": "disjunction"
+      "bibkey": "fox-katzir-2011",
+      "paperLabel": "(38)"
     },
     "language": "stan1293",
     "primaryText": "John did all of the homework or none of the homework.",
@@ -237,11 +242,9 @@
         "no"
       ]
     ],
-    "comment": "Neither disjunct's negation is an implicature; the disjuncts partition the assertion.",
-    "reportedIn": {
-      "bibkey": "fox-katzir-2011",
-      "paperLabel": "(38)"
-    }
+    "comment": "Neither disjunct's negation is an implicature; the disjuncts partition the assertion. The disjuncts as alternatives follow Sauerland (2004b).",
+    "reportedIn": null,
+    "verified": "page-image"
   },
   {
     "id": "foxkatzir2011_ex40",
@@ -281,7 +284,8 @@
         "no"
       ]
     ],
-    "comment": "Both implicatures arise: the universal operator removes the symmetry."
+    "comment": "Both implicatures arise: the universal operator removes the symmetry.",
+    "verified": "page-image"
   },
   {
     "id": "foxkatzir2011_ex41",
@@ -321,13 +325,14 @@
         "no"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "foxkatzir2011_ex42a",
     "source": {
-      "bibkey": "katzir-2007",
-      "paperLabel": "Matsumoto examples"
+      "bibkey": "fox-katzir-2011",
+      "paperLabel": "(42a)"
     },
     "language": "stan1293",
     "primaryText": "John did some of the homework yesterday, and he did just some of the homework today.",
@@ -361,11 +366,9 @@
         "no"
       ]
     ],
-    "comment": "'Just some' is salient, so both it and 'all' are formal alternatives of 'some'; context cannot keep one and prune the other.",
-    "reportedIn": {
-      "bibkey": "fox-katzir-2011",
-      "paperLabel": "(42a)"
-    }
+    "comment": "'Just some' is salient, so both it and 'all' are formal alternatives of 'some'; context cannot keep one and prune the other. Based on examples discussed by Katzir (2007), modified from Matsumoto (1995) (fn. 22).",
+    "reportedIn": null,
+    "verified": "page-image"
   },
   {
     "id": "foxkatzir2011_ex44",
@@ -405,7 +408,8 @@
         "no"
       ]
     ],
-    "comment": "Also: not required to do all of it yesterday."
+    "comment": "Also: not required to do all of it yesterday.",
+    "verified": "page-image"
   },
   {
     "id": "foxkatzir2011_ex46",
@@ -414,7 +418,7 @@
       "paperLabel": "(46)"
     },
     "language": "stan1293",
-    "primaryText": "Every single student got some of the questions right last week; today every single student got just some of the questions right.",
+    "primaryText": "Last week I gave an exam to the third graders, who are a highly motivated bunch, and I was very happy to learn that every single student (even the weakest of them all) got some of the questions right. Today I gave an exam to the fifth graders, who are all very talented. I was disappointed to learn that this time every single student got just some of the questions right.",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
@@ -445,7 +449,8 @@
         "no"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "foxkatzir2011_ex47a",
@@ -485,7 +490,8 @@
         "no"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "foxkatzir2011_ex49a",
@@ -525,7 +531,8 @@
         "no"
       ]
     ],
-    "comment": "Also: not that they stole the books and the jewelry."
+    "comment": "Also: not that they stole the books and the jewelry.",
+    "verified": "page-image"
   },
   {
     "id": "foxkatzir2011_ex53",
@@ -565,6 +572,7 @@
         "yes"
       ]
     ],
-    "comment": "The disjuncts are compatible, so not symmetric; the pruned disjunct is exhaustively relevant given the restriction, which the allowable-restriction condition forbids."
+    "comment": "The disjuncts are compatible, so not symmetric; the pruned disjunct is exhaustively relevant given the restriction, which the allowable-restriction condition forbids.",
+    "verified": "page-image"
   }
 ]

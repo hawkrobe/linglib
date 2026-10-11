@@ -2,8 +2,8 @@
  {
   "id": "beaverkrahmer2001_1",
   "source": {
-   "bibkey": "beaver-krahmer-2001",
-   "paperLabel": "(1)"
+   "bibkey": "karttunen-peters-1979",
+   "paperLabel": ""
   },
   "language": "stan1293",
   "primaryText": "Somebody managed to succeed George V on the throne of England.",
@@ -20,7 +20,9 @@
     "quantified presupposition trigger"
    ]
   ],
-  "comment": "Karttunen and Peters's classic manage-to example; the quantifier binds into the trigger."
+  "comment": "Karttunen and Peters's classic manage-to example; the quantifier binds into the trigger.",
+  "reportedIn": {"bibkey": "beaver-krahmer-2001", "paperLabel": "(1)"},
+  "verified": "page-image"
  },
  {
   "id": "beaverkrahmer2001_2",
@@ -38,11 +40,12 @@
   "alternatives": [],
   "readings": [],
   "paperFeatures": [],
-  "comment": "Heim's indefinite with a presupposing predicate; existential projection intuitive.",
+  "comment": "Heim's indefinite with a presupposing predicate. Heim prints (25) as 'A fat man was pushing his bicycle.'; the row keeps Beaver and Krahmer's wording. Heim finds Karttunen and Peters's existential presupposition too weak and a universal one too strong; Beaver and Krahmer note that Heim's own system predicts a universal one.",
   "reportedIn": {
    "bibkey": "beaver-krahmer-2001",
    "paperLabel": "(2)"
-  }
+  },
+  "verified": "page-image"
  },
  {
   "id": "beaverkrahmer2001_3",
@@ -64,7 +67,8 @@
   "reportedIn": {
    "bibkey": "beaver-krahmer-2001",
    "paperLabel": "(3)"
-  }
+  },
+  "verified": "page-image"
  },
  {
   "id": "beaverkrahmer2001_4",
@@ -86,7 +90,8 @@
   "reportedIn": {
    "bibkey": "beaver-krahmer-2001",
    "paperLabel": "(4)"
-  }
+  },
+  "verified": "page-image"
  },
  {
   "id": "beaverkrahmer2001_5",
@@ -117,7 +122,8 @@
     "p"
    ]
   ],
-  "comment": "The factive's complement is the elementary presupposition."
+  "comment": "The factive's complement is the elementary presupposition.",
+  "verified": "page-image"
  },
  {
   "id": "beaverkrahmer2001_6",
@@ -140,7 +146,8 @@
     "nested elementary presupposition"
    ]
   ],
-  "comment": "A transplication inside the subscript of another."
+  "comment": "A transplication inside the subscript of another.",
+  "verified": "page-image"
  },
  {
   "id": "beaverkrahmer2001_7",
@@ -175,7 +182,8 @@
     "correct"
    ]
   ],
-  "comment": ""
+  "comment": "",
+  "verified": "page-image"
  },
  {
   "id": "beaverkrahmer2001_8",
@@ -218,7 +226,8 @@
     "correct"
    ]
   ],
-  "comment": ""
+  "comment": "",
+  "verified": "page-image"
  },
  {
   "id": "beaverkrahmer2001_9",
@@ -253,13 +262,14 @@
     "incorrect"
    ]
   ],
-  "comment": ""
+  "comment": "",
+  "verified": "page-image"
  },
  {
   "id": "beaverkrahmer2001_10",
   "source": {
-   "bibkey": "beaver-krahmer-2001",
-   "paperLabel": "(10)"
+   "bibkey": "karttunen-peters-1979",
+   "paperLabel": ""
   },
   "language": "stan1293",
   "primaryText": "Somebody managed to succeed George V (on the throne of England).",
@@ -267,7 +277,7 @@
   "glossedTokens": [],
   "translation": "",
   "context": "",
-  "judgment": "questionable",
+  "judgment": "marginal",
   "alternatives": [],
   "readings": [],
   "paperFeatures": [
@@ -276,7 +286,9 @@
     "quantified presupposition trigger"
    ]
   ],
-  "comment": "Printed with ?; a Karttunen-and-Peters-style reading is argued to be too weak."
+  "comment": "Printed with ?; a Karttunen-and-Peters-style reading is argued to be too weak.",
+  "reportedIn": {"bibkey": "beaver-krahmer-2001", "paperLabel": "(10)"},
+  "verified": "page-image"
  },
  {
   "id": "beaverkrahmer2001_13",
@@ -303,7 +315,8 @@
   "reportedIn": {
    "bibkey": "beaver-krahmer-2001",
    "paperLabel": "(13)"
-  }
+  },
+  "verified": "page-image"
  },
  {
   "id": "beaverkrahmer2001_16",
@@ -326,13 +339,14 @@
     "cancellation under negation"
    ]
   ],
-  "comment": ""
+  "comment": "",
+  "verified": "page-image"
  },
  {
   "id": "beaverkrahmer2001_17",
   "source": {
-   "bibkey": "beaver-krahmer-2001",
-   "paperLabel": "(17)"
+   "bibkey": "beaver-1997",
+   "paperLabel": ""
   },
   "language": "stan1293",
   "primaryText": "If Mary knows that Bill is happy, then I'm a Dutchman - she merely believes it.",
@@ -349,7 +363,9 @@
     "cancellation in a conditional"
    ]
   ],
-  "comment": "Beaver 1997's example; the same cancellation without a negation to blame."
+  "comment": "Beaver 1997's example; the same cancellation without a negation to blame.",
+  "reportedIn": {"bibkey": "beaver-krahmer-2001", "paperLabel": "(17)"},
+  "verified": "page-image"
  },
  {
   "id": "beaverkrahmer2001_18",
@@ -380,7 +396,8 @@
     "leftProjects"
    ]
   ],
-  "comment": ""
+  "comment": "",
+  "verified": "page-image"
  },
  {
   "id": "beaverkrahmer2001_19",
@@ -411,7 +428,8 @@
     "rightProjects"
    ]
   ],
-  "comment": ""
+  "comment": "",
+  "verified": "page-image"
  },
  {
   "id": "beaverkrahmer2001_20",
@@ -434,7 +452,8 @@
     "bothProject"
    ]
   ],
-  "comment": ""
+  "comment": "",
+  "verified": "page-image"
  },
  {
   "id": "beaverkrahmer2001_21",
@@ -465,7 +484,8 @@
     "cancelLeft"
    ]
   ],
-  "comment": ""
+  "comment": "",
+  "verified": "page-image"
  },
  {
   "id": "beaverkrahmer2001_22",
@@ -488,7 +508,8 @@
     "cancelRight"
    ]
   ],
-  "comment": ""
+  "comment": "",
+  "verified": "page-image"
  },
  {
   "id": "beaverkrahmer2001_23",
@@ -511,7 +532,8 @@
     "cancelBothAssertions"
    ]
   ],
-  "comment": ""
+  "comment": "",
+  "verified": "page-image"
  },
  {
   "id": "beaverkrahmer2001_24",
@@ -542,7 +564,8 @@
     "cancelBothInconsistent"
    ]
   ],
-  "comment": ""
+  "comment": "",
+  "verified": "page-image"
  },
  {
   "id": "beaverkrahmer2001_25",
@@ -585,7 +608,8 @@
     "incorrect"
    ]
   ],
-  "comment": "The presupposition should project strongly; the conditional prediction is inappropriately weak."
+  "comment": "The presupposition should project strongly; the conditional prediction is inappropriately weak.",
+  "verified": "page-image"
  },
  {
   "id": "beaverkrahmer2001_26",
@@ -628,11 +652,12 @@
     "correct"
    ]
   ],
-  "comment": "A case where the Karttunen-style conditional presupposition is exactly what intuition wants.",
+  "comment": "A case where the Karttunen-style conditional presupposition is exactly what intuition wants. Beaver and Krahmer cite it from Beaver (1995); the book's E154 reads 'his weight is greater than it would be on Earth', and the row keeps Beaver and Krahmer's wording.",
   "reportedIn": {
    "bibkey": "beaver-krahmer-2001",
    "paperLabel": "(26)"
-  }
+  },
+  "verified": "page-image"
  },
  {
   "id": "beaverkrahmer2001_27",
@@ -663,7 +688,8 @@
     "none"
    ]
   ],
-  "comment": ""
+  "comment": "",
+  "verified": "page-image"
  },
  {
   "id": "beaverkrahmer2001_28",
@@ -690,7 +716,8 @@
     "A(q<p>) |w A(r<~p>)"
    ]
   ],
-  "comment": "The basic translation is nowhere defined; meta-asserting both disjuncts is the only coherent and defined translation."
+  "comment": "The basic translation is nowhere defined; meta-asserting both disjuncts is the only coherent and defined translation.",
+  "verified": "page-image"
  },
  {
   "id": "beaverkrahmer2001_29",
@@ -721,7 +748,8 @@
     "none"
    ]
   ],
-  "comment": "The antecedent makes the bare consequent redundant; meta-asserting it removes the violation."
+  "comment": "In the basic translation the antecedent is redundant (replacing it with the tautology leaves the truth conditions unchanged), violating informativity; meta-asserting the consequent removes the violation.",
+  "verified": "page-image"
  },
  {
   "id": "beaverkrahmer2001_30",
@@ -744,6 +772,7 @@
     "unconditional accommodation"
    ]
   ],
-  "comment": "Heard as presupposing the weight increase outright; the paper sketches a plausibility constraint on initial common grounds."
+  "comment": "Heard as presupposing the weight increase outright; the paper sketches a plausibility constraint on initial common grounds.",
+  "verified": "page-image"
  }
 ]
