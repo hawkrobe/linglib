@@ -32,9 +32,9 @@ alternative set selected by innocent excludability.
   are the sets of alternatives false at a minimal world.
 * `isInnocentlyExcludable_iff_exhMW_subset_compl`
 * `exhIE_eq_exh`, `exhIE_eq_exh_of_nonempty`, `exhIE_eq_sdiff_of_maximal_unique`
-* `exh_nonempty_iff`, `mem_exhIE_iff_subset_sUnion`: `exh` is consistent iff the profiles of the
-  prejacent have a least element, and `exhIE` keeps the profiles within the union of the minimal
-  ones
+* `exh_nonempty_iff`, `mem_exhIE_iff_subset_sUnion`: `exh` is consistent iff some prejacent world
+  verifies the least set of alternatives, and `exhIE` keeps the worlds verifying only alternatives
+  in a minimal verified set
 * `exhMW_eq_exhIE_of_infClosed`, `exhIE_sUnion_image_powerset`
 
 ## References
@@ -391,18 +391,19 @@ theorem exhMW_eq_exhIE_of_infClosed_sUnion_image (hfin : ALT.Finite)
   rw [← exhMW_sUnion_image_powerset, ← exhIE_sUnion_image_powerset]
   exact exhMW_eq_exhIE_of_infClosed _ _ (hfin.finite_subsets.image _) hinf
 
-/-! ### Profiles
+/-! ### Verified alternatives
 
-Each operator reads a world only through its profile, the alternatives it verifies, and the
-prejacent only through the profiles of its worlds. `exh` keeps the worlds whose profile is the
-least of the prejacent's, `exhMW` those whose profile is minimal (`mem_exhMW_iff_minimal`), and
-`exhIE` those whose profile lies within the union of the minimal profiles. -/
+Each operator reads a world only through the alternatives it verifies, and the prejacent only
+through the sets of alternatives its worlds verify. `exh` keeps the worlds verifying the least such
+set, `exhMW` those verifying a minimal one (`mem_exhMW_iff_minimal`), and `exhIE` those verifying
+only alternatives that some minimal verified set contains. -/
 
-section Profile
+section Verified
 
 variable {ALT φ} {w : World}
 
-/-- Exhaustification keeps the prejacent worlds whose profile is the least of the prejacent's. -/
+/-- Exhaustification keeps the prejacent worlds verifying the least set of alternatives that a
+prejacent world verifies. -/
 theorem mem_exh_iff_isLeast :
     w ∈ exh ALT φ ↔
       w ∈ φ ∧ IsLeast (Preorder.satisfied (· ∈ ·) ALT '' φ) (Preorder.satisfied (· ∈ ·) ALT w) := by
@@ -412,14 +413,15 @@ theorem mem_exh_iff_isLeast :
   rintro _ ⟨v, hv, rfl⟩ a ⟨ha, hwa⟩
   exact ⟨ha, h a ha hwa hv⟩
 
-/-- Exhaustification is consistent iff the profiles of the prejacent have a least element. -/
+/-- Exhaustification is consistent iff the sets of alternatives the prejacent worlds verify have a
+least element. -/
 theorem exh_nonempty_iff :
     (exh ALT φ).Nonempty ↔ ∃ P, IsLeast (Preorder.satisfied (· ∈ ·) ALT '' φ) P := by
   refine ⟨fun ⟨w, hw⟩ ↦ ⟨_, (mem_exh_iff_isLeast.1 hw).2⟩, ?_⟩
   rintro ⟨P, ⟨w, hw, rfl⟩, hP⟩
   exact ⟨w, mem_exh_iff_isLeast.2 ⟨hw, ⟨w, hw, rfl⟩, hP⟩⟩
 
-/-- An alternative is innocently excludable iff no minimal profile of the prejacent contains it. -/
+/-- An alternative is innocently excludable iff no minimal verified set contains it. -/
 theorem isInnocentlyExcludable_iff_forall_minimal {a : Set World} (ha : a ∈ ALT) :
     IsInnocentlyExcludable ALT φ a ↔
       ∀ P, Minimal (· ∈ Preorder.satisfied (· ∈ ·) ALT '' φ) P → a ∉ P := by
@@ -428,8 +430,8 @@ theorem isInnocentlyExcludable_iff_forall_minimal {a : Set World} (ha : a ∈ AL
   rintro h _ ⟨⟨u, hu, rfl⟩, hmin⟩ ⟨-, hua⟩
   exact h ((mem_exhMW_iff_minimal ALT φ).2 ⟨hu, ⟨u, hu, rfl⟩, hmin⟩) hua
 
-/-- Innocent exclusion keeps the prejacent worlds whose profile lies within the union of the
-minimal profiles. -/
+/-- Innocent exclusion keeps the prejacent worlds verifying only alternatives that some minimal
+verified set contains. -/
 theorem mem_exhIE_iff_subset_sUnion :
     w ∈ exhIE ALT φ ↔ w ∈ φ ∧ Preorder.satisfied (· ∈ ·) ALT w ⊆
       ⋃₀ {P | Minimal (· ∈ Preorder.satisfied (· ∈ ·) ALT '' φ) P} := by
@@ -441,6 +443,6 @@ theorem mem_exhIE_iff_subset_sUnion :
   · obtain ⟨P, hP, haP⟩ := h ⟨ha.1, hwa⟩
     exact (isInnocentlyExcludable_iff_forall_minimal ha.1).1 ha P hP haP
 
-end Profile
+end Verified
 
 end Exhaustification

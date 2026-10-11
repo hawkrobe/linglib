@@ -103,10 +103,11 @@ end Witnesses
 
 /-! ### Exhaustification in a model realizing every set of witnesses
 
-When every set of witnesses is possible at some world, the profile characterizations of innocent
-exclusion and inclusion compute the exhaustified readings of a modalized existential. Against the
-possibility of each member, innocent exclusion is vacuous (`exhIE_singletons_eq`) and innocent
-inclusion yields free choice without pre-exhaustification (`exhIEII_singletons_eq_freeChoice`). -/
+When every set of witnesses is possible at some world, the characterizations of innocent exclusion
+and inclusion by verified alternatives compute the exhaustified readings of a modalized existential.
+Against the possibility of each member, innocent exclusion is vacuous (`exhIE_singletons_eq`) and
+innocent inclusion yields free choice without pre-exhaustification
+(`exhIEII_singletons_eq_freeChoice`). -/
 
 /-- A model realizes every set of witnesses when each nonempty set of members of the domain is
 the set of possible witnesses at some world. -/
@@ -127,8 +128,9 @@ private theorem exists_single_witness (h : RealizesWitnessSets R D Q) {x : E} (h
   (h {x} (Finset.singleton_subset_iff.2 hx) ⟨x, by simp⟩).imp fun _ hv y hy ↦
     (hv y hy).trans Finset.mem_singleton
 
-/-- Against the possibility of each member of the domain, the minimal profiles of the possibility
-of the claim are those of the single-witness worlds, and together they cover every alternative. -/
+/-- Against the possibility of each member of the domain, the minimal verified sets of the
+possibility of the claim are those of the single-witness worlds, and together they contain every
+alternative. -/
 theorem sUnion_minimal_singletons (h : RealizesWitnessSets R D Q) :
     ⋃₀ {M | Minimal (· ∈ Preorder.satisfied (· ∈ ·) ((fun x ↦ {v | ◇[R] (Q · x) v}) '' ↑D) ''
       {v | ◇[R] (claim Q D) v}) M} = (fun x ↦ {v | ◇[R] (Q · x) v}) '' ↑D := by

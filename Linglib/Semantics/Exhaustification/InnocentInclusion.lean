@@ -20,7 +20,7 @@ Inclusion adds nothing to Innocent Exclusion.
   alternatives.
 * `exhIEII`: exhaustification with Innocent Exclusion and Innocent Inclusion.
 * `cell`, `exhIEII_eq_cell_of_cell_nonempty`, `mem_cell_iff`: cell identification, the cell being
-  the prejacent worlds whose profile is the union of the minimal profiles.
+  the prejacent worlds verifying exactly the alternatives of the minimal verified sets.
 * `IsMinimalCover.exhIEII_eq`, `IsMinimalCover.II_eq`: exhaustification read off representative
   minimal worlds.
 
@@ -274,14 +274,14 @@ theorem exhIEII_singleton (hsat : φ.Nonempty) : exhIEII {φ} φ = φ :=
 
 end MinimalCover
 
-/-! ### Profiles -/
+/-! ### Verified alternatives -/
 
-section Profile
+section Verified
 
 variable {ALT φ} {w : World}
 
-/-- The cell of the prejacent consists of the prejacent worlds whose profile is the union of the
-minimal profiles. -/
+/-- The cell of the prejacent consists of the prejacent worlds verifying exactly the alternatives
+of the minimal verified sets. -/
 theorem mem_cell_iff : w ∈ cell ALT φ ↔ w ∈ φ ∧ Preorder.satisfied (· ∈ ·) ALT w =
     ⋃₀ {P | Minimal (· ∈ Preorder.satisfied (· ∈ ·) ALT '' φ) P} := by
   change (w ∈ φ ∧ (∀ q, IsInnocentlyExcludable ALT φ q → w ∉ q) ∧
@@ -303,14 +303,14 @@ theorem mem_cell_iff : w ∈ cell ALT φ ↔ w ∈ φ ∧ Preorder.satisfied (·
         hn ⟨P, hP, hrP⟩)
     exact (h ▸ this : r ∈ Preorder.satisfied (· ∈ ·) ALT w).2
 
-/-- The cell is consistent iff the union of the minimal profiles is the profile of a prejacent
-world. -/
+/-- The cell is consistent iff some prejacent world verifies exactly the alternatives of the
+minimal verified sets. -/
 theorem cell_nonempty_iff : (cell ALT φ).Nonempty ↔
     ⋃₀ {P | Minimal (· ∈ Preorder.satisfied (· ∈ ·) ALT '' φ) P} ∈
       Preorder.satisfied (· ∈ ·) ALT '' φ :=
   ⟨fun ⟨w, hw⟩ ↦ ⟨w, (mem_cell_iff.1 hw).1, (mem_cell_iff.1 hw).2⟩,
     fun ⟨w, hw, h⟩ ↦ ⟨w, mem_cell_iff.2 ⟨hw, h⟩⟩⟩
 
-end Profile
+end Verified
 
 end Exhaustification

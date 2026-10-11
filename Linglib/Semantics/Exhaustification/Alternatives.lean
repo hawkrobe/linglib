@@ -76,8 +76,8 @@ theorem mem_exhMW_iff_minimalFor {u : World} :
   exact and_congr_right fun _ ↦ ⟨fun h v hv hvu ↦ not_not.1 fun hn ↦ h ⟨v, hv, hvu, hn⟩,
     fun h ⟨v, hv, hvu, hn⟩ ↦ hn (h hv hvu)⟩
 
-/-- A minimal world is a prejacent world whose profile, the set of alternatives it verifies, is
-minimal among the profiles of the prejacent worlds. -/
+/-- A minimal world is a prejacent world whose set of verified alternatives is minimal among those
+of the prejacent worlds. -/
 theorem mem_exhMW_iff_minimal {u : World} :
     u ∈ exhMW ALT φ ↔ u ∈ φ ∧
       Minimal (· ∈ Preorder.satisfied (· ∈ ·) ALT '' φ) (Preorder.satisfied (· ∈ ·) ALT u) := by
