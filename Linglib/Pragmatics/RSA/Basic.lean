@@ -290,6 +290,13 @@ theorem listener_truthful_apply_singleton_of_notMem {u : U} {w : W} (h : w ∉ s
   rw [listener_truthful_apply, cond_apply .of_discrete, Set.inter_comm,
     Set.singleton_inter_eq_empty.mpr h, measure_empty, mul_zero]
 
+/-- On reals the listener of a truthful speaker gives a state the utterance is true at its share of
+the prior mass of the denotation. -/
+theorem listener_truthful_real_singleton {u : U} {w : W} (h : w ∈ sem u) :
+    (listener μ (truthful sem) u).real {w} = μ.real {w} / μ.real (sem u) := by
+  rw [measureReal_def, listener_truthful_apply_singleton μ sem h, ENNReal.toReal_mul,
+    ENNReal.toReal_inv, div_eq_inv_mul, measureReal_def, measureReal_def]
+
 /-- A tautology leaves a probability prior unchanged. -/
 theorem listener_truthful_apply_singleton_of_eq_univ [IsProbabilityMeasure μ] {u : U}
     (h : sem u = Set.univ) (w : W) : listener μ (truthful sem) u {w} = μ {w} := by
@@ -517,6 +524,18 @@ theorem speaker_dirac_eq_ofWeights (α : ℝ) (C : U → ℝ) (L : U → Measure
     speaker α C L Measure.dirac =
       Kernel.ofWeights fun w u ↦ L u {w} ^ α * ENNReal.ofReal (Real.exp (-(α * C u))) := by
   simp only [speaker, Measure.geomMean_dirac]
+
+/-- A speaker who knows the state is the softmax of the log of the listener's mass there less the
+cost, scaled by the rationality. The extended logarithm gives an utterance whose listener rules the
+state out the score `⊥` at positive rationality, so no condition on the listener is needed. -/
+theorem speaker_dirac_eq_softmax (α : ℝ) (C : U → ℝ) (L : U → Measure W) :
+    speaker α C L Measure.dirac = Kernel.softmax fun w u ↦
+      α * ENNReal.log (L u {w}) - ((α * C u : ℝ) : EReal) := by
+  rw [speaker_dirac_eq_ofWeights]
+  refine congrArg Kernel.ofWeights (funext fun w ↦ funext fun u ↦ ?_)
+  beta_reduce
+  rw [sub_eq_add_neg, ← EReal.coe_neg, EReal.exp_add, ← ENNReal.log_rpow, ENNReal.exp_log,
+    EReal.exp_coe]
 
 /-- The speaker is a probability kernel whenever every state has a true utterance. -/
 theorem isMarkovKernel_speaker_dirac (hα : 0 ≤ α) (C : U → ℝ) (L : Kernel U W) [IsFiniteKernel L]

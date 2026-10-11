@@ -7,27 +7,26 @@ public import Linglib.Core.Analysis.SpecialFunctions.Softmax
 # The decision-theoretic listener
 
 This file defines the listener of Rational Speech Act models who acts. After an utterance the
-listener's belief is a kernel from utterances to states; a decision problem is a reward for
-each action at each state ([van-rooy-2003]); the listener's expected reward of an action is
-the reward averaged over the belief, and the listener chooses an action by the softmax of
-expected reward at a rationality, the score speaker of `Linglib.Pragmatics.RSA.Basic` applied
-to actions. The decision-theoretic utility of an utterance for the speaker is the true reward
-of the action the listener's policy chooses, the relevance of [sumers-etal-2024] and the
-utility of [harding-gerstenberg-icard-2025]; the action-oriented speakers of
-[qing-franke-2015] are the case in which the reward is the payoff of a signaling game.
+listener's belief is a kernel from utterances to states, and a decision problem is a reward for
+each action at each state. The listener's expected reward of an action is the reward averaged over
+the belief, and the listener chooses an action by the softmax of expected reward at a rationality.
+The decision-theoretic utility of an utterance for the speaker is the true reward of the action
+the listener's policy chooses. In a signaling game an action is a guess of the state, rewarded
+when right, so the expected reward of a guess is the belief's mass on it.
 
 ## Main definitions
 
-* `RSA.expectedReward` — the listener's expected reward of an action after an utterance.
-* `RSA.policy` — the listener's policy, the softmax of expected reward at a rationality.
-* `RSA.actionUtility` — the expected true reward of the listener's choice, the speaker's
+* `RSA.expectedReward`: the listener's expected reward of an action after an utterance.
+* `RSA.policy`: the listener's policy, the softmax of expected reward at a rationality.
+* `RSA.actionUtility`: the expected true reward of the listener's choice, the speaker's
   decision-theoretic utility of an utterance at a state.
 
 ## Main results
 
-* `RSA.policy_real_lt_iff` — the listener prefers the action with the higher expected reward.
-* `RSA.policy_real_singleton` — the policy's share of an action is the real softmax.
-* `RSA.policy_real_of_pair`, `RSA.actionUtility_of_pair` — with two actions the share is the
+* `RSA.policy_real_lt_iff`, `RSA.policy_single_real_lt_iff`: the listener prefers the action with
+  the higher expected reward, and in a signaling game the state the belief finds more probable.
+* `RSA.policy_real_singleton`: the policy's share of an action is the real softmax.
+* `RSA.policy_real_of_pair`, `RSA.actionUtility_of_pair`: with two actions the share is the
   logistic function of the scaled difference in expected reward, and the utility is the rewards
   weighted by the shares.
 
@@ -76,6 +75,12 @@ the belief. -/
 noncomputable def expectedReward (L : Kernel U W) (R : A → W → ℝ) (u : U) (a : A) : ℝ :=
   ∑ w, (L u).real {w} * R a w
 
+/-- In a signaling game an action is a guess of the state, rewarded when right, so the expected
+reward of a guess is the belief's mass on it. -/
+theorem expectedReward_single [DecidableEq W] (L : Kernel U W) (u : U) (w : W) :
+    expectedReward L (fun a ↦ Pi.single a 1) u w = (L u).real {w} := by
+  simp [expectedReward, Pi.single_apply]
+
 variable [Fintype U] [DiscreteMeasurableSpace U] [Fintype A] [MeasurableSpace A]
   [DiscreteMeasurableSpace A]
 
@@ -106,6 +111,14 @@ theorem policy_real_lt_iff (hβ : 0 < β) :
     (fun _ => EReal.coe_ne_top _) ⟨a, EReal.coe_ne_bot _⟩, policyScore, policyScore,
     EReal.coe_lt_coe_iff]
   exact mul_lt_mul_iff_right₀ hβ
+
+/-- A listener rewarded for guessing the state prefers the states the belief finds more
+probable. -/
+theorem policy_single_real_lt_iff [DecidableEq W] [DiscreteMeasurableSpace W] (hβ : 0 < β)
+    {w' : W} :
+    (policy β L (fun a ↦ Pi.single a 1) u).real {w} <
+        (policy β L (fun a ↦ Pi.single a 1) u).real {w'} ↔ (L u).real {w} < (L u).real {w'} := by
+  rw [policy_real_lt_iff _ _ hβ, expectedReward_single, expectedReward_single]
 
 /-- The policy's share of an action is the real softmax of the scaled expected rewards. -/
 theorem policy_real_singleton :
