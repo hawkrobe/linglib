@@ -6,7 +6,7 @@
       "paperLabel": "(2a)"
     },
     "language": "stan1293",
-    "primaryText": "*There is any student (in that building).",
+    "primaryText": "There is any student (in that building).",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
@@ -24,7 +24,8 @@
         "episodic"
       ]
     ],
-    "comment": "Widening the domain of an existential in a positive context yields a weaker statement."
+    "comment": "Widening the domain of an existential in a positive context yields a weaker statement.",
+    "verified": "page-image"
   },
   {
     "id": "chierchia2006_ex2b",
@@ -51,7 +52,8 @@
         "negation"
       ]
     ],
-    "comment": "Within the scope of negation the wider domain gives the stronger statement."
+    "comment": "Within the scope of negation the wider domain gives the stronger statement.",
+    "verified": "page-image"
   },
   {
     "id": "chierchia2006_ex3",
@@ -83,7 +85,8 @@
         "future"
       ]
     ],
-    "comment": "Existential, with the speaker not choosy about which doctor."
+    "comment": "Existential, with the speaker not choosy about which doctor.",
+    "verified": "page-image"
   },
   {
     "id": "chierchia2006_ex4",
@@ -119,7 +122,8 @@
         "covertModal"
       ]
     ],
-    "comment": "An episodic sentence that still requires a covert epistemic modal for its interpretation."
+    "comment": "An episodic sentence that still requires a covert epistemic modal for its interpretation.",
+    "verified": "page-image"
   },
   {
     "id": "chierchia2006_ex5",
@@ -151,7 +155,8 @@
         "episodicSubtrigged"
       ]
     ],
-    "comment": "Episodic, universal, and inviting counterfactual conclusions."
+    "comment": "Episodic, universal, and inviting counterfactual conclusions.",
+    "verified": "page-image"
   },
   {
     "id": "chierchia2006_ex6",
@@ -183,7 +188,8 @@
         "imperative"
       ]
     ],
-    "comment": "Not an instruction to push all keys."
+    "comment": "Not an instruction to push all keys.",
+    "verified": "page-image"
   },
   {
     "id": "chierchia2006_ex8a",
@@ -192,7 +198,7 @@
       "paperLabel": "(8a)"
     },
     "language": "ital1282",
-    "primaryText": "?Sono uscito in strada e mi sono messo a bussare come un matto ad una porta qualsiasi con i battenti in legno.",
+    "primaryText": "Sono uscito in strada e mi sono messo a bussare come un matto ad una porta qualsiasi con i battenti in legno.",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "I went out on the street and started knocking like a madman at a door whatever with wooden shutters.",
@@ -219,7 +225,8 @@
         "covertModal"
       ]
     ],
-    "comment": "Slightly marginal out of the blue; existential in a semimodalized context."
+    "comment": "Slightly marginal out of the blue; existential in a semimodalized context.",
+    "verified": "page-image"
   },
   {
     "id": "chierchia2006_ex8b",
@@ -251,7 +258,8 @@
         "episodicSubtrigged"
       ]
     ],
-    "comment": "Universal, with the modifier construed restrictively."
+    "comment": "Universal, with the modifier construed restrictively.",
+    "verified": "page-image"
   },
   {
     "id": "chierchia2006_ex10a",
@@ -287,7 +295,8 @@
         "future"
       ]
     ],
-    "comment": "Under a modal the universal free-choice item also admits an existential reading."
+    "comment": "Under a modal the universal free-choice item also admits an existential reading.",
+    "verified": "page-image"
   },
   {
     "id": "chierchia2006_ex10b",
@@ -319,7 +328,8 @@
         "future"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "chierchia2006_ex10c",
@@ -355,7 +365,8 @@
         "imperative"
       ]
     ],
-    "comment": "The ambiguity is very clear with imperatives."
+    "comment": "The ambiguity is very clear with imperatives.",
+    "verified": "page-image"
   },
   {
     "id": "chierchia2006_ex10d",
@@ -387,7 +398,8 @@
         "imperative"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "chierchia2006_ex10e",
@@ -423,7 +435,8 @@
         "possibility"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "chierchia2006_ex10f",
@@ -455,7 +468,8 @@
         "possibility"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "chierchia2006_ex10g",
@@ -491,7 +505,8 @@
         "necessity"
       ]
     ],
-    "comment": "The universal reading is favored; the existential one needs a special context."
+    "comment": "The universal reading is favored; the existential one needs a special context.",
+    "verified": "page-image"
   },
   {
     "id": "chierchia2006_ex10h",
@@ -523,7 +538,8 @@
         "necessity"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "chierchia2006_ex11a",
@@ -532,7 +548,7 @@
       "paperLabel": "(11a)"
     },
     "language": "ital1282",
-    "primaryText": "??Ieri ho parlato con un qualsiasi filosofo.",
+    "primaryText": "Ieri ho parlato con un qualsiasi filosofo.",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "Yesterday I spoke with a philosopher (I don't know/don't care who).",
@@ -550,7 +566,8 @@
         "episodic"
       ]
     ],
-    "comment": "Marginal out of the blue."
+    "comment": "Marginal out of the blue.",
+    "verified": "page-image"
   },
   {
     "id": "chierchia2006_ex11b",
@@ -559,7 +576,7 @@
       "paperLabel": "(11b)"
     },
     "language": "ital1282",
-    "primaryText": "??Ieri ho parlato con un qualsiasi filosofo che fosse interessato a parlarmi.",
+    "primaryText": "Ieri ho parlato con un qualsiasi filosofo che fosse interessato a parlarmi.",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "Yesterday I spoke with a philosopher (I don't know/don't care who) that was interested in speaking with me.",
@@ -577,7 +594,8 @@
         "episodicSubtrigged"
       ]
     ],
-    "comment": "The relative clause, if anything, makes things worse."
+    "comment": "The relative clause, if anything, makes things worse.",
+    "verified": "page-image"
   },
   {
     "id": "chierchia2006_ex11c",
@@ -586,7 +604,7 @@
       "paperLabel": "(11c)"
     },
     "language": "ital1282",
-    "primaryText": "??Ieri ho parlato con qualsiasi filosofo.",
+    "primaryText": "Ieri ho parlato con qualsiasi filosofo.",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "Yesterday I spoke with any philosopher.",
@@ -604,7 +622,8 @@
         "episodic"
       ]
     ],
-    "comment": "Marginal unless a special context is provided."
+    "comment": "Marginal unless a special context is provided.",
+    "verified": "page-image"
   },
   {
     "id": "chierchia2006_ex11d",
@@ -636,7 +655,8 @@
         "episodicSubtrigged"
       ]
     ],
-    "comment": "The relative clause restores full acceptability: subtrigging."
+    "comment": "The relative clause restores full acceptability: subtrigging.",
+    "verified": "page-image"
   },
   {
     "id": "chierchia2006_ex12",
@@ -672,7 +692,8 @@
         "negation"
       ]
     ],
-    "comment": "Acceptable only with the intonation of the rhetorical reading, not every book."
+    "comment": "Acceptable only with the intonation of the rhetorical reading, not every book.",
+    "verified": "page-image"
   },
   {
     "id": "chierchia2006_ex13",
@@ -708,7 +729,8 @@
         "negationSubtrigged"
       ]
     ],
-    "comment": "The rhetorical reading remains and a negative-polarity reading, no book at all, appears."
+    "comment": "The rhetorical reading remains and a negative-polarity reading, no book at all, appears.",
+    "verified": "page-image"
   },
   {
     "id": "chierchia2006_ex14",
@@ -744,7 +766,8 @@
         "negation"
       ]
     ],
-    "comment": "Only the rhetorical reading, unlike German irgendein."
+    "comment": "Only the rhetorical reading, unlike German irgendein.",
+    "verified": "page-image"
   },
   {
     "id": "chierchia2006_ex47a",
@@ -753,7 +776,7 @@
       "paperLabel": "(47a)"
     },
     "language": "stan1293",
-    "primaryText": "*I saw any boy.",
+    "primaryText": "I saw any boy.",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
@@ -771,7 +794,8 @@
         "episodic"
       ]
     ],
-    "comment": "With large domain alternatives the even-like implicature is inconsistent: every alternative is stronger than the statement."
+    "comment": "With large domain alternatives the even-like implicature is inconsistent: every alternative is stronger than the statement.",
+    "verified": "page-image"
   },
   {
     "id": "chierchia2006_ex49a",
@@ -798,7 +822,8 @@
         "negation"
       ]
     ],
-    "comment": "Under negation the widest domain gives the strongest statement and the implicature is consistent."
+    "comment": "Under negation the widest domain gives the strongest statement and the implicature is consistent.",
+    "verified": "page-image"
   },
   {
     "id": "chierchia2006_ex55a",
@@ -830,7 +855,8 @@
         "generic"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "chierchia2006_ex55b",
@@ -862,7 +888,8 @@
         "episodicSubtrigged"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "chierchia2006_ex64a",
@@ -898,7 +925,8 @@
         "negation"
       ]
     ],
-    "comment": "Negation over the freezing operator gives the rhetorical reading; freezing over negation the negative-polarity reading, whose implicature the assertion entails."
+    "comment": "Negation over the freezing operator gives the rhetorical reading; freezing over negation the negative-polarity reading, whose implicature the assertion entails.",
+    "verified": "page-image"
   },
   {
     "id": "chierchia2006_ex67a",
@@ -907,7 +935,7 @@
       "paperLabel": "(67a)"
     },
     "language": "stan1293",
-    "primaryText": "*I saw any student.",
+    "primaryText": "I saw any student.",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
@@ -925,7 +953,8 @@
         "episodic"
       ]
     ],
-    "comment": "Universal over every possible student: too strong for an episodic statement."
+    "comment": "Universal over every possible student: too strong for an episodic statement.",
+    "verified": "page-image"
   },
   {
     "id": "chierchia2006_ex68a",
@@ -957,7 +986,8 @@
         "episodicSubtrigged"
       ]
     ],
-    "comment": "The relative clause anchors the possible students to actual ones."
+    "comment": "The relative clause anchors the possible students to actual ones.",
+    "verified": "page-image"
   },
   {
     "id": "chierchia2006_ex69a",
@@ -966,7 +996,7 @@
       "paperLabel": "(69a)"
     },
     "language": "ital1282",
-    "primaryText": "(?)Non ho visto qualunque studente.",
+    "primaryText": "Non ho visto qualunque studente.",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "I didn't see just any student.",
@@ -993,7 +1023,8 @@
         "negation"
       ]
     ],
-    "comment": "Awkward out of the blue unless intonation or context warrants the rhetorical reading."
+    "comment": "Awkward out of the blue unless intonation or context warrants the rhetorical reading. The page prints the mark in parentheses, (?).",
+    "verified": "page-image"
   },
   {
     "id": "chierchia2006_ex71a",
@@ -1025,7 +1056,8 @@
         "future"
       ]
     ],
-    "comment": "In a positive context adding the implicature properly strengthens the assertion."
+    "comment": "In a positive context adding the implicature properly strengthens the assertion.",
+    "verified": "page-image"
   },
   {
     "id": "chierchia2006_ex77c",
@@ -1057,7 +1089,8 @@
         "necessity"
       ]
     ],
-    "comment": "An overt modality rescues an existential free-choice item."
+    "comment": "An overt modality rescues an existential free-choice item.",
+    "verified": "page-image"
   },
   {
     "id": "chierchia2006_ex79a",
@@ -1066,7 +1099,7 @@
       "paperLabel": "(79a)"
     },
     "language": "ital1282",
-    "primaryText": "??Ho sposato un qualsiasi dottore.",
+    "primaryText": "Ho sposato un qualsiasi dottore.",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "I have married a whatsoever doctor.",
@@ -1084,7 +1117,8 @@
         "episodic"
       ]
     ],
-    "comment": "The free-choice implicature clashes with the uniqueness implicature."
+    "comment": "The free-choice implicature clashes with the uniqueness implicature.",
+    "verified": "page-image"
   },
   {
     "id": "chierchia2006_ex83a",
@@ -1116,7 +1150,8 @@
         "possibility"
       ]
     ],
-    "comment": "The doctors distribute across the accessible worlds."
+    "comment": "The doctors distribute across the accessible worlds.",
+    "verified": "page-image"
   },
   {
     "id": "chierchia2006_ex86a",
@@ -1125,7 +1160,7 @@
       "paperLabel": "(86a)"
     },
     "language": "ital1282",
-    "primaryText": "(??)Un linguista ha sposato un qualunque dottore.",
+    "primaryText": "Un linguista ha sposato un qualunque dottore.",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "A linguist has married a whatever doctor.",
@@ -1147,7 +1182,8 @@
         "intervention"
       ]
     ],
-    "comment": "A quantified DP between the freezing operator and the item does not rescue it: intervention."
+    "comment": "A quantified DP between the freezing operator and the item does not rescue it: intervention. The page prints the mark in parentheses, (??).",
+    "verified": "page-image"
   },
   {
     "id": "chierchia2006_ex88a",
@@ -1179,7 +1215,8 @@
         "possibility"
       ]
     ],
-    "comment": "One modal licenses two existential free-choice items."
+    "comment": "One modal licenses two existential free-choice items.",
+    "verified": "page-image"
   },
   {
     "id": "chierchia2006_ex90a",
@@ -1215,7 +1252,8 @@
         "negationNecessity"
       ]
     ],
-    "comment": "The negative-polarity reading is preferred; the rhetorical one needs contrastive intonation."
+    "comment": "The negative-polarity reading is preferred; the rhetorical one needs contrastive intonation.",
+    "verified": "page-image"
   },
   {
     "id": "chierchia2006_ex90b",
@@ -1251,7 +1289,8 @@
         "negationNecessity"
       ]
     ],
-    "comment": "Only the rhetorical reading."
+    "comment": "Only the rhetorical reading.",
+    "verified": "page-image"
   },
   {
     "id": "chierchia2006_ex92a",
@@ -1287,7 +1326,8 @@
         "imperative"
       ]
     ],
-    "comment": "Freezing inside the imperative gives the existential reading with free choice over doughnuts."
+    "comment": "Freezing inside the imperative gives the existential reading with free choice over doughnuts.",
+    "verified": "page-image"
   },
   {
     "id": "chierchia2006_ex92b",
@@ -1323,7 +1363,8 @@
         "imperative"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "chierchia2006_ex115",
@@ -1355,7 +1396,8 @@
         "necessity"
       ]
     ],
-    "comment": "Appendix A4: the free-choice implicature with a universal modal."
+    "comment": "Appendix A4: the free-choice implicature with a universal modal.",
+    "verified": "page-image"
   },
   {
     "id": "chierchia2006_fn42i",
@@ -1391,6 +1433,7 @@
         "possibility"
       ]
     ],
-    "comment": "Cannot mean that he could do anything: freezing below the modal is contradictory."
+    "comment": "Cannot mean that he could do anything: freezing below the modal is contradictory.",
+    "verified": "page-image"
   }
 ]

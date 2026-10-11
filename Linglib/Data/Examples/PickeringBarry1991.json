@@ -15,7 +15,8 @@
       ["construction", "piedPiping"],
       ["section", "Processing without gaps"]
     ],
-    "comment": "The filler associates with put as soon as the verb is read."
+    "comment": "The filler associates with put as soon as the verb is read.",
+    "verified": "page-image"
   },
   {
     "id": "pickeringbarry1991_ex16",
@@ -26,14 +27,16 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "marginal",
+    "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "prepositionStranding"],
-      ["section", "Processing without gaps"]
+      ["section", "Processing without gaps"],
+      ["difficulty", "hard"]
     ],
-    "comment": "Rather awkward: the filler associates with the stranded preposition at the end."
+    "comment": "Printed unmarked; the paper calls it rather awkward: the filler associates with the stranded preposition at the end.",
+    "verified": "page-image"
   },
   {
     "id": "pickeringbarry1991_ex42",
@@ -50,7 +53,8 @@
     "paperFeatures": [
       ["construction", "multiplePiedPiping"],
       ["section", "Processing recursive constructions"]
-    ]
+    ],
+    "verified": "page-image"
   },
   {
     "id": "pickeringbarry1991_ex44",
@@ -67,7 +71,8 @@
     "paperFeatures": [
       ["construction", "multipleSubjectRelative"],
       ["section", "Processing recursive constructions"]
-    ]
+    ],
+    "verified": "page-image"
   },
   {
     "id": "pickeringbarry1991_ex45",
@@ -78,14 +83,16 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "multipleObjectRelative"],
-      ["section", "Processing recursive constructions"]
+      ["section", "Processing recursive constructions"],
+      ["difficulty", "hard"]
     ],
-    "comment": "Grammatical but very hard to process."
+    "comment": "Printed unmarked: grammatical, with 'processing difficulties' the paper attributes to nested associations.",
+    "verified": "page-image"
   },
   {
     "id": "pickeringbarry1991_ex48",
@@ -94,20 +101,22 @@
     "primaryText": "Der Bauer der das Mädchen das den Jungen küßte schlug ging.",
     "discourseSegments": [],
     "glossedTokens": [
-      ["Der", "the.NOM"], ["Bauer", "farmer"], ["der", "who.NOM"], ["das", "the.ACC"],
-      ["Mädchen", "girl"], ["das", "who.NOM"], ["den", "the.ACC"], ["Jungen", "boy"],
+      ["Der", "The"], ["Bauer", "farmer.NOM"], ["der", "who.NOM"], ["das", "the"],
+      ["Mädchen", "girl.ACC"], ["das", "who.NOM"], ["den", "the"], ["Jungen", "boy.ACC"],
       ["küßte", "kissed"], ["schlug", "hit"], ["ging", "went"]
     ],
     "translation": "The farmer who hit the girl who kissed the boy went.",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "multipleSubjectRelative"],
-      ["section", "Processing recursive constructions"]
+      ["section", "Processing recursive constructions"],
+      ["difficulty", "hard"]
     ],
-    "comment": "German speakers find it difficult in the same way English speakers find (45) difficult."
+    "comment": "Printed unmarked; German speakers find it difficult in the same way English speakers find (45) difficult.",
+    "verified": "page-image"
   },
   {
     "id": "pickeringbarry1991_ex51",
@@ -125,7 +134,8 @@
       ["construction", "multipleSubjectRelative"],
       ["section", "Processing recursive constructions"]
     ],
-    "comment": "A further relative clause adds no processing complexity."
+    "comment": "A further relative clause adds no processing complexity.",
+    "verified": "page-image"
   },
   {
     "id": "pickeringbarry1991_ex52",
@@ -136,14 +146,15 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "multipleObjectRelative"],
       ["section", "Processing recursive constructions"]
     ],
-    "comment": "Extreme processing difficulty."
+    "comment": "Printed unmarked; extending (45) 'makes the sentence virtually incomprehensible'.",
+    "verified": "page-image"
   },
   {
     "id": "pickeringbarry1991_ex53",
@@ -152,21 +163,22 @@
     "primaryText": "Der Bauer der das Mädchen das den Jungen der die Katze streichelte küßte schlug ging.",
     "discourseSegments": [],
     "glossedTokens": [
-      ["Der", "the.NOM"], ["Bauer", "farmer"], ["der", "who.NOM"], ["das", "the.ACC"],
-      ["Mädchen", "girl"], ["das", "who.NOM"], ["den", "the.ACC"], ["Jungen", "boy"],
-      ["der", "who.NOM"], ["die", "the.ACC"], ["Katze", "cat"], ["streichelte", "stroked"],
+      ["Der", "The"], ["Bauer", "farmer.NOM"], ["der", "who.NOM"], ["das", "the"],
+      ["Mädchen", "girl.ACC"], ["das", "who.NOM"], ["den", "the"], ["Jungen", "boy.ACC"],
+      ["der", "who.NOM"], ["die", "the"], ["Katze", "cat.ACC"], ["streichelte", "stroked"],
       ["küßte", "kissed"], ["schlug", "hit"], ["ging", "went"]
     ],
     "translation": "The farmer who hit the girl who kissed the boy who stroked the cat went.",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "multipleSubjectRelative"],
       ["section", "Processing recursive constructions"]
     ],
-    "comment": "Virtually incomprehensible."
+    "comment": "Printed unmarked; the further relative clause 'leads to extreme processing difficulty'.",
+    "verified": "page-image"
   },
   {
     "id": "pickeringbarry1991_ex54",
@@ -184,7 +196,8 @@
       ["construction", "multiplePiedPiping"],
       ["section", "Processing recursive constructions"]
     ],
-    "comment": "Processed like (51), not like (52)."
+    "comment": "Processed like (51), not like (52).",
+    "verified": "page-image"
   },
   {
     "id": "pickeringbarry1991_ex55",
@@ -202,7 +215,8 @@
       ["construction", "multiplePiedPiping"],
       ["section", "Processing recursive constructions"]
     ],
-    "comment": "Five gaps at the end of the sentence under the empty-category analysis, with no increase in processing difficulty."
+    "comment": "Five gaps at the end of the sentence under the empty-category analysis, with no increase in processing difficulty.",
+    "verified": "page-image"
   },
   {
     "id": "pickeringbarry1991_ex60",
@@ -213,14 +227,15 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "multiplePrepositionStranding"],
       ["section", "Discussion"]
     ],
-    "comment": "Very hard to process: the filler–preposition associations are nested."
+    "comment": "Printed unmarked; very hard to process: the filler–preposition associations are nested.",
+    "verified": "page-image"
   },
   {
     "id": "pickeringbarry1991_ex62",
@@ -238,7 +253,8 @@
       ["construction", "multipleObjectRelativeDitransitive"],
       ["section", "Discussion"]
     ],
-    "comment": "Under the reading where Mary gave the slave the punishment and Tom sold the nobleman the slave."
+    "comment": "Under the reading where Mary gave the slave the punishment and Tom sold the nobleman the slave.",
+    "verified": "page-image"
   },
   {
     "id": "pickeringbarry1991_ex82a",
@@ -255,7 +271,8 @@
     "paperFeatures": [
       ["construction", "embeddedQuestion"],
       ["section", "Unbounded dependencies in categorial grammar"]
-    ]
+    ],
+    "verified": "page-image"
   },
   {
     "id": "pickeringbarry1991_ex82b",
@@ -272,7 +289,8 @@
     "paperFeatures": [
       ["construction", "embeddedQuestion"],
       ["section", "Unbounded dependencies in categorial grammar"]
-    ]
+    ],
+    "verified": "page-image"
   },
   {
     "id": "pickeringbarry1991_ex82c",
@@ -289,7 +307,8 @@
     "paperFeatures": [
       ["construction", "embeddedQuestion"],
       ["section", "Unbounded dependencies in categorial grammar"]
-    ]
+    ],
+    "verified": "page-image"
   },
   {
     "id": "pickeringbarry1991_ex82d",
@@ -307,7 +326,8 @@
       ["construction", "embeddedQuestion"],
       ["section", "Unbounded dependencies in categorial grammar"]
     ],
-    "comment": "Also with whom."
+    "comment": "Also with whom.",
+    "verified": "page-image"
   },
   {
     "id": "pickeringbarry1991_ex93",
@@ -325,6 +345,7 @@
       ["construction", "recursivePassive"],
       ["section", "Passives"]
     ],
-    "comment": "Not hard to process, even if further recursions are added."
+    "comment": "Not hard to process, even if further recursions are added.",
+    "verified": "page-image"
   }
 ]

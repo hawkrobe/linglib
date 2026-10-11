@@ -237,14 +237,15 @@ theorem not_claims_top : ¬ Claims id (⊤ : Language Letter) := fun h ↦ by
 
 open German.Zurich.Verbs
 
-/-- `glossCase? g` is the case the gloss `g` marks on its noun phrase, if any. -/
-def glossCase? (g : String) : Option German.Zurich.Case :=
-  if ".ACC".toList <:+ g.toList then some .acc
-  else if ".DAT".toList <:+ g.toList then some .dat else none
+/-- `npCase? np` is the case the article of the noun phrase `np` marks: a word article followed
+by its noun, or the clitic *d'* attached to it. -/
+def npCase? (np : String) : Option German.Zurich.Case :=
+  (German.Zurich.articleCase.find? fun a ↦
+    a.1.toList ++ [' '] <+: np.toList ∨ (a.1 = "d'" ∧ a.1.toList <+: np.toList)).map (·.2)
 
-/-- `objectCases e` lists the cases the glosses of the clause `e` mark on its noun phrases. -/
+/-- `objectCases e` lists the cases the articles of the clause `e` mark on its noun phrases. -/
 def objectCases (e : Datum) : List German.Zurich.Case :=
-  e.glossedTokens.filterMap (glossCase? ·.2)
+  e.glossedTokens.filterMap (npCase? ·.1)
 
 /-- `requiredCases e` lists the cases the verbs of the clause `e` require of their objects. -/
 def requiredCases (e : Datum) : List German.Zurich.Case :=

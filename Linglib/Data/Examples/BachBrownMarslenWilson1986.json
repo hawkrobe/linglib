@@ -13,7 +13,8 @@
       ["dependency", "crossed"],
       ["verb_cluster_size", "2"]
     ],
-    "comment": "Word-by-word order: The men have Hans the horses teach feed."
+    "comment": "Word-by-word order: The men have Hans the horses teach feed.",
+    "verified": "page-image"
   },
   {
     "id": "bachbrownmarslenwilson1986_2",
@@ -29,7 +30,8 @@
       ["dependency", "nested"],
       ["verb_cluster_size", "2"]
     ],
-    "comment": "Word-by-word order: The men have Hans the horses feed teach."
+    "comment": "Word-by-word order: The men have Hans the horses feed teach.",
+    "verified": "page-image"
   },
   {
     "id": "bachbrownmarslenwilson1986_3",
@@ -45,7 +47,8 @@
       ["dependency", "right-branching"],
       ["verb_cluster_size", "2"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bachbrownmarslenwilson1986_4",
@@ -55,13 +58,14 @@
     "glossedTokens": [],
     "translation": "Jeanine helped the men teach Hans to feed the horses.",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "acceptable",
     "readings": [],
     "paperFeatures": [
       ["dependency", "crossed"],
       ["verb_cluster_size", "3"]
     ],
-    "comment": "Rejected outright by native speakers of Dutch as unacceptable."
+    "comment": "Rejected outright by native speakers of Dutch as unacceptable.",
+    "verified": "page-image"
   },
   {
     "id": "bachbrownmarslenwilson1986_5",
@@ -71,13 +75,14 @@
     "glossedTokens": [],
     "translation": "Johanna helped the men teach Hans to feed the horses.",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "acceptable",
     "readings": [],
     "paperFeatures": [
       ["dependency", "nested"],
       ["verb_cluster_size", "3"]
     ],
-    "comment": "Rejected outright by native speakers of German as unacceptable."
+    "comment": "Rejected outright by native speakers of German as unacceptable.",
+    "verified": "page-image"
   },
   {
     "id": "bachbrownmarslenwilson1986_6",
@@ -93,7 +98,8 @@
       ["dependency", "right-branching"],
       ["verb_cluster_size", "3"]
     ],
-    "comment": "Only marginally more complex than (3) to a speaker of English; readily comprehensible."
+    "comment": "Only marginally more complex than (3) to a speaker of English; readily comprehensible.",
+    "verified": "page-image"
   },
   {
     "id": "bachbrownmarslenwilson1986_7",
@@ -103,13 +109,14 @@
     "glossedTokens": [],
     "translation": "Charles saw Joanna help the men teach Hans to feed the horses.",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "acceptable",
     "readings": [],
     "paperFeatures": [
       ["dependency", "crossed"],
       ["verb_cluster_size", "4"]
     ],
-    "comment": "Third level of embedding; clearly not normally acceptable."
+    "comment": "Third level of embedding; clearly not normally acceptable.",
+    "verified": "page-image"
   },
   {
     "id": "bachbrownmarslenwilson1986_8",
@@ -119,13 +126,14 @@
     "glossedTokens": [],
     "translation": "Charles saw Joanna help the men teach Hans to feed the horses.",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "acceptable",
     "readings": [],
     "paperFeatures": [
       ["dependency", "nested"],
       ["verb_cluster_size", "4"]
     ],
-    "comment": "Third level of embedding; clearly not normally acceptable."
+    "comment": "Third level of embedding; clearly not normally acceptable.",
+    "verified": "page-image"
   },
   {
     "id": "bachbrownmarslenwilson1986_9",
@@ -141,7 +149,8 @@
       ["dependency", "right-branching"],
       ["verb_cluster_size", "4"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bachbrownmarslenwilson1986_level1_nl",
@@ -157,7 +166,8 @@
       ["sentence_type", "test"],
       ["embedding_level", "1"]
     ],
-    "comment": "Sample test-set item. Mean comprehensibility rating 1.14 (1 = easy, 9 = hard)."
+    "comment": "Sample test-set item. Dutch Level 1 Test mean comprehensibility rating 1.14 (1 = easy, 9 = difficult).",
+    "verified": "page-image"
   },
   {
     "id": "bachbrownmarslenwilson1986_level1_de",
@@ -173,7 +183,8 @@
       ["sentence_type", "test"],
       ["embedding_level", "1"]
     ],
-    "comment": "Sample test-set item."
+    "comment": "Sample test-set item.",
+    "verified": "page-image"
   },
   {
     "id": "bachbrownmarslenwilson1986_level2_nl",
@@ -190,7 +201,8 @@
       ["embedding_level", "2"],
       ["dependency", "crossed"]
     ],
-    "comment": "One level of embedding, two-verb cluster helpen-opruimen in crossed order."
+    "comment": "One level of embedding, two-verb cluster helpen-opruimen in crossed order.",
+    "verified": "page-image"
   },
   {
     "id": "bachbrownmarslenwilson1986_level2_de",
@@ -207,7 +219,8 @@
       ["embedding_level", "2"],
       ["dependency", "nested"]
     ],
-    "comment": "Infinitive version; the participle version ends in geholfen."
+    "comment": "Infinitive version; the participle version ends in geholfen.",
+    "verified": "page-image"
   },
   {
     "id": "bachbrownmarslenwilson1986_level3_nl",
@@ -224,7 +237,8 @@
       ["embedding_level", "3"],
       ["dependency", "crossed"]
     ],
-    "comment": "Two levels of embedding, three-verb cluster laten-helpen-opruimen in crossed order."
+    "comment": "Two levels of embedding, three-verb cluster laten-helpen-opruimen in crossed order.",
+    "verified": "page-image"
   },
   {
     "id": "bachbrownmarslenwilson1986_level3_de",
@@ -241,7 +255,8 @@
       ["embedding_level", "3"],
       ["dependency", "nested"]
     ],
-    "comment": "Infinitive version; lassen appears only in the infinitive."
+    "comment": "Infinitive version; lassen appears only in the infinitive.",
+    "verified": "page-image"
   },
   {
     "id": "bachbrownmarslenwilson1986_level4_nl",
@@ -258,7 +273,8 @@
       ["embedding_level", "4"],
       ["dependency", "crossed"]
     ],
-    "comment": "Third level of embedding; separate nine-sentence set, mean rating 7.66."
+    "comment": "Third level of embedding; separate nine-sentence set, Dutch Level 4 Test mean rating 7.66.",
+    "verified": "page-image"
   },
   {
     "id": "bachbrownmarslenwilson1986_level4_de",
@@ -275,7 +291,8 @@
       ["embedding_level", "4"],
       ["dependency", "nested"]
     ],
-    "comment": "Third level of embedding; mean rating 8.26 (infinitive version)."
+    "comment": "Third level of embedding; German/Infinitive Level 4 Test mean rating 8.26.",
+    "verified": "page-image"
   },
   {
     "id": "bachbrownmarslenwilson1986_para2_nl",
@@ -292,7 +309,8 @@
       ["embedding_level", "2"],
       ["dependency", "right-branching"]
     ],
-    "comment": "Same propositions as the Level 2 test sentence, right-branching structure."
+    "comment": "Same propositions as the Level 2 test sentence, right-branching structure.",
+    "verified": "page-image"
   },
   {
     "id": "bachbrownmarslenwilson1986_para2_de",
@@ -309,15 +327,16 @@
       ["embedding_level", "2"],
       ["dependency", "right-branching"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bachbrownmarslenwilson1986_para3_de",
     "source": {"bibkey": "bach-brown-marslen-wilson-1986", "paperLabel": "Paraphrase Level 3 (German)"},
     "language": "stan1295",
-    "primaryText": "Arnim hat Wolfgang dazu gebracht, der Lehrerin beim aufräumen der Murmeln zu helfen.",
+    "primaryText": "Arnim hat Wolfgang dazu gebracht, der Lehrerin beim Aufräumen der Murmeln zu helfen.",
     "glossedTokens": [],
-    "translation": "Arnim got Wolfgang to help the teacher with collecting up the marbles.",
+    "translation": "",
     "context": "",
     "judgment": "acceptable",
     "readings": [],
@@ -326,7 +345,8 @@
       ["embedding_level", "3"],
       ["dependency", "right-branching"]
     ],
-    "comment": ""
+    "comment": "The paper prints beim aufräumen.",
+    "verified": "page-image"
   },
   {
     "id": "bachbrownmarslenwilson1986_10",
@@ -342,7 +362,8 @@
       ["dependency", "crossed"],
       ["verb_cluster_size", "3"]
     ],
-    "comment": "Interpretation (12): P(let (H, (see (the children, (milk (A, the cows))))))."
+    "comment": "Interpretation (12): P(let (H, (see (the children, (milk (A, the cows)))))).",
+    "verified": "page-image"
   },
   {
     "id": "bachbrownmarslenwilson1986_11",
@@ -358,7 +379,8 @@
       ["dependency", "nested"],
       ["verb_cluster_size", "3"]
     ],
-    "comment": "Same interpretation (12) as the Dutch (10)."
+    "comment": "Same interpretation (12) as the Dutch (10).",
+    "verified": "page-image"
   },
   {
     "id": "bachbrownmarslenwilson1986_13",
@@ -368,13 +390,14 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "marginal",
+    "judgment": "acceptable",
     "readings": [],
     "paperFeatures": [
       ["dependency", "crossed"],
       ["construction", "long-distance filler-gap"]
     ],
-    "comment": "Crossing long-distance dependencies; English listeners react markedly against these."
+    "comment": "Crossing long-distance dependencies; the ease of Level 2 Dutch contrasts markedly with the reactions of English listeners to these.",
+    "verified": "page-image"
   },
   {
     "id": "bachbrownmarslenwilson1986_14",
@@ -390,7 +413,8 @@
       ["dependency", "nested"],
       ["construction", "long-distance filler-gap"]
     ],
-    "comment": "Nested long-distance dependencies, contrasting with the crossed (13)."
+    "comment": "Nested long-distance dependencies, contrasting with the crossed (13).",
+    "verified": "page-image"
   },
   {
     "id": "bachbrownmarslenwilson1986_filler1_de",
@@ -398,7 +422,7 @@
     "language": "stan1295",
     "primaryText": "Der Ball wurde durch das Fenster geworfen.",
     "glossedTokens": [],
-    "translation": "The ball was thrown through the window.",
+    "translation": "",
     "context": "",
     "judgment": "acceptable",
     "readings": [],
@@ -406,6 +430,7 @@
       ["sentence_type", "filler"],
       ["embedding_level", "1"]
     ],
-    "comment": "Fillers match the test levels in numbers of nouns and verbs but not in structure."
+    "comment": "Fillers match the test levels in numbers of nouns and verbs but not in structure.",
+    "verified": "page-image"
   }
 ]

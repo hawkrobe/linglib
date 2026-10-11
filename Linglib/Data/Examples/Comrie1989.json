@@ -16,7 +16,8 @@
       ["test", "coordination"],
       ["grouping", "withA"]
     ],
-    "comment": "The reading 'the man hit the woman and the woman came here' is unavailable: English requires the omitted noun phrase to be S or A."
+    "comment": "The reading 'the man hit the woman and the woman came here' is unavailable: English requires the omitted noun phrase to be S or A.",
+    "verified": "page-image"
   },
   {
     "id": "comrie1989_ch5_ex15",
@@ -38,7 +39,8 @@
       ["test", "coordination"],
       ["grouping", "withP"]
     ],
-    "comment": "Cannot mean 'the man hit the woman and the man came here': Dyirbal requires the coreferential noun phrases to be S or P."
+    "comment": "Cannot mean 'the man hit the woman and the man came here': Dyirbal requires the coreferential noun phrases to be S or P.",
+    "verified": "page-image"
   },
   {
     "id": "comrie1989_ch5_ex19",
@@ -49,7 +51,7 @@
     "glossedTokens": [
       ["Ŋadʸa", "I-nom"], ["ŋinuna", "you-acc"], ["balgan,", "hit"], ["baninʸu", "came-here"]
     ],
-    "translation": "I hit you, and you came here.",
+    "translation": "I hit you, and you/*I came here.",
     "context": "Coordination with first and second person pronouns, which carry nominative-accusative case: the omitted S is still the P, not the A.",
     "judgment": "acceptable",
     "alternatives": [],
@@ -59,7 +61,8 @@
       ["test", "coordination"],
       ["grouping", "withP"]
     ],
-    "comment": "The book glosses the omitted S as 'you/*I': the ergative-absolutive basis of the construction is independent of the pronouns' morphology."
+    "comment": "The book glosses the omitted S as 'you/*I': the ergative-absolutive basis of the construction is independent of the pronouns' morphology.",
+    "verified": "page-image"
   },
   {
     "id": "comrie1989_ch5_ex20",
@@ -81,16 +84,17 @@
       ["test", "coordination"],
       ["grouping", "neither"]
     ],
-    "comment": "Chukchi patterns like neither English nor Dyirbal in coordination: the book's list is English nominative-accusative, Dyirbal ergative-absolutive, Yidiny both, Chukchi neither."
+    "comment": "Chukchi patterns like neither English nor Dyirbal in coordination: the book's list is English nominative-accusative, Dyirbal ergative-absolutive, Yidiny both, Chukchi neither.",
+    "verified": "page-image"
   },
   {
     "id": "comrie1989_ch5_ex25",
     "source": {"bibkey": "comrie-1989", "paperLabel": "ch. 5, (25)"},
     "language": "chuk1273",
-    "primaryText": "Γəmnan γət tite məvinretγət ermetvi-k.",
+    "primaryText": "Ɣəmnan γət tite məvinretγət ermetvi-k.",
     "discourseSegments": [],
     "glossedTokens": [
-      ["Γəmnan", "I-erg"], ["γət", "you-abs"], ["tite", "sometime"],
+      ["Ɣəmnan", "I-erg"], ["γət", "you-abs"], ["tite", "sometime"],
       ["məvinretγət", "let-me-help-you"], ["ermetvi-k", "to-grow-strong"]
     ],
     "translation": "Let me help you to grow strong.",
@@ -103,17 +107,18 @@
       ["test", "infinitive"],
       ["grouping", "withA"]
     ],
-    "comment": "The infinitive construction omits the S or A of the infinitive: nominative-accusative syntax in a language whose coordination is neutral, (20)."
+    "comment": "The infinitive construction omits the S or A of the infinitive: nominative-accusative syntax in a language whose coordination is neutral, (20).",
+    "verified": "page-image"
   },
   {
     "id": "comrie1989_ch5_ex26",
     "source": {"bibkey": "comrie-1989", "paperLabel": "ch. 5, (26)"},
     "language": "chuk1273",
-    "primaryText": "Morγənan γət mətrevinretγət rivl-ək əmalʔo γečʔeyot.",
+    "primaryText": "Morγənan γət mətrevinretγət rivl-ək əmalʔo γećeyot.",
     "discourseSegments": [],
     "glossedTokens": [
       ["Morγənan", "we-erg"], ["γət", "you-abs"], ["mətrevinretγət", "we-will-help-you"],
-      ["rivl-ək", "to-move"], ["əmalʔo", "all"], ["γečʔeyot", "gathered-things-abs"]
+      ["rivl-ək", "to-move"], ["əmalʔo", "all"], ["γećeyot", "gathered-things-abs"]
     ],
     "translation": "We will help you move all the gathered items.",
     "context": "The infinitive construction, with omission of the A of the infinitive 'move'.",
@@ -125,7 +130,8 @@
       ["test", "infinitive"],
       ["grouping", "withA"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "comrie1989_ch5_english_imperative",
@@ -144,7 +150,8 @@
       ["test", "imperative"],
       ["grouping", "withA"]
     ],
-    "comment": "Cited in prose; the book's (32)-(33) show that passive imperatives with an addressee patient are possible but unnatural."
+    "comment": "Cited in prose; the book's (32)-(33) show that passive imperatives with an addressee patient are possible but unnatural.",
+    "verified": "page-image"
   },
   {
     "id": "comrie1989_ch5_ex30",
@@ -165,7 +172,8 @@
       ["test", "imperative"],
       ["grouping", "withA"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "comrie1989_ch5_ex31",
@@ -186,7 +194,8 @@
       ["test", "imperative"],
       ["grouping", "withA"]
     ],
-    "comment": "Explained by the agent property of addressees: S and especially A control the situation, P rarely does."
+    "comment": "Explained by the agent property of addressees: S and especially A control the situation, P rarely does.",
+    "verified": "page-image"
   },
   {
     "id": "comrie1989_ch5_ex34",
@@ -208,7 +217,8 @@
       ["test", "indirectCommand"],
       ["grouping", "withP"]
     ],
-    "comment": "The book's counterexample to an agent-bound property yielding S/A: nominative-accusative syntax does not carry over from imperatives to indirect commands in Dyirbal."
+    "comment": "The book's counterexample to an agent-bound property yielding S/A: nominative-accusative syntax does not carry over from imperatives to indirect commands in Dyirbal.",
+    "verified": "page-image"
   },
   {
     "id": "comrie1989_ch5_ex35",
@@ -230,7 +240,8 @@
       ["test", "indirectCommand"],
       ["grouping", "withP"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "comrie1989_ch5_ex37",
@@ -251,7 +262,8 @@
       ["test", "resultative"],
       ["grouping", "withP"]
     ],
-    "comment": "The suffix -γəta forms the resultative; -dʼ marks finiteness."
+    "comment": "The suffix -γəta forms the resultative; -dʼ marks finiteness.",
+    "verified": "page-image"
   },
   {
     "id": "comrie1989_ch5_ex39",
@@ -291,7 +303,8 @@
       ["test", "resultative"],
       ["grouping", "withA"]
     ],
-    "comment": "Cited in prose as the reason the ergative bias of resultatives is a tendency, not an absolute universal."
+    "comment": "Cited in prose as the reason the ergative bias of resultatives is a tendency, not an absolute universal.",
+    "verified": "page-image"
   },
   {
     "id": "comrie1989_ch6_ex7",
@@ -315,7 +328,8 @@
       ["P.animacy", "human"],
       ["P.marked", "unmarked"]
     ],
-    "comment": "Also ch. 5, (12). Dyirbal's cut on both roles is between first and second person pronouns and all other noun phrases, the top of the animacy hierarchy."
+    "comment": "Also ch. 5, (12). Dyirbal's cut on both roles is between first and second person pronouns and all other noun phrases, the top of the animacy hierarchy.",
+    "verified": "page-image"
   },
   {
     "id": "comrie1989_ch6_ex8",
@@ -338,7 +352,8 @@
       ["P.animacy", "addressee"],
       ["P.marked", "marked"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "comrie1989_ch6_ex9",
@@ -361,7 +376,8 @@
       ["P.animacy", "speaker"],
       ["P.marked", "marked"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "comrie1989_ch6_ex10",
@@ -384,7 +400,8 @@
       ["P.animacy", "human"],
       ["P.marked", "unmarked"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "comrie1989_ch6_ex11_boy",
@@ -392,9 +409,7 @@
     "language": "russ1263",
     "primaryText": "Ja videl malʼčik-a.",
     "discourseSegments": [],
-    "glossedTokens": [
-      ["Ja", "I"], ["videl", "saw"], ["malʼčik-a", "boy-acc"]
-    ],
+    "glossedTokens": [],
     "translation": "I saw the boy.",
     "context": "Masculine singular nouns of declension Ia take a separate accusative in -a if animate.",
     "judgment": "acceptable",
@@ -405,7 +420,8 @@
       ["P.animacy", "human"],
       ["P.marked", "marked"]
     ],
-    "comment": "The book gives the four objects of (11) with slashes; each is a row here. Russian marking is by animacy alone."
+    "comment": "The book gives the four objects of (11) with slashes; each is a row here. Russian marking is by animacy alone.",
+    "verified": "page-image"
   },
   {
     "id": "comrie1989_ch6_ex11_hippopotamus",
@@ -413,9 +429,7 @@
     "language": "russ1263",
     "primaryText": "Ja videl begemot-a.",
     "discourseSegments": [],
-    "glossedTokens": [
-      ["Ja", "I"], ["videl", "saw"], ["begemot-a", "hippopotamus-acc"]
-    ],
+    "glossedTokens": [],
     "translation": "I saw the hippopotamus.",
     "context": "An animate non-human noun takes the accusative in -a.",
     "judgment": "acceptable",
@@ -426,7 +440,8 @@
       ["P.animacy", "higherAnimal"],
       ["P.marked", "marked"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "comrie1989_ch6_ex11_oak",
@@ -434,9 +449,7 @@
     "language": "russ1263",
     "primaryText": "Ja videl dub.",
     "discourseSegments": [],
-    "glossedTokens": [
-      ["Ja", "I"], ["videl", "saw"], ["dub", "oak"]
-    ],
+    "glossedTokens": [],
     "translation": "I saw the oak.",
     "context": "An inanimate noun has no separate accusative.",
     "judgment": "acceptable",
@@ -447,7 +460,8 @@
       ["P.animacy", "discreteInanimate"],
       ["P.marked", "unmarked"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "comrie1989_ch6_ex11_table",
@@ -455,9 +469,7 @@
     "language": "russ1263",
     "primaryText": "Ja videl stol.",
     "discourseSegments": [],
-    "glossedTokens": [
-      ["Ja", "I"], ["videl", "saw"], ["stol", "table"]
-    ],
+    "glossedTokens": [],
     "translation": "I saw the table.",
     "context": "An inanimate noun has no separate accusative.",
     "judgment": "acceptable",
@@ -468,7 +480,8 @@
       ["P.animacy", "discreteInanimate"],
       ["P.marked", "unmarked"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "comrie1989_ch6_ex12_boys",
@@ -476,9 +489,7 @@
     "language": "poli1260",
     "primaryText": "Widziałem chłopców.",
     "discourseSegments": [],
-    "glossedTokens": [
-      ["Widziałem", "I-saw"], ["chłopców", "boys-acc"]
-    ],
+    "glossedTokens": [],
     "translation": "I saw the boys.",
     "context": "In the plural only male human nouns have a special accusative; the nominative plural is chłopcy.",
     "judgment": "acceptable",
@@ -489,7 +500,8 @@
       ["P.animacy", "human"],
       ["P.marked", "marked"]
     ],
-    "comment": "The book gives the five objects of (12) with slashes; each is a row here."
+    "comment": "The book gives the five objects of (12) with slashes; each but dęby 'oaks' is a row here.",
+    "verified": "page-image"
   },
   {
     "id": "comrie1989_ch6_ex12_girls",
@@ -497,9 +509,7 @@
     "language": "poli1260",
     "primaryText": "Widziałem dziewczyny.",
     "discourseSegments": [],
-    "glossedTokens": [
-      ["Widziałem", "I-saw"], ["dziewczyny", "girls"]
-    ],
+    "glossedTokens": [],
     "translation": "I saw the girls.",
     "context": "A human but not male plural noun is identical with the nominative plural: the Polish cut is male human, a gender parameter beside the animacy hierarchy.",
     "judgment": "acceptable",
@@ -511,7 +521,8 @@
       ["P.animacy", "human"],
       ["P.marked", "unmarked"]
     ],
-    "comment": "Outside the monotonicity: the book calls male human 'a different cut-off point on the animacy hierarchy', but the substrate's hierarchy has no gender, and chapter 9 lists declension class and number as parameters of the Slavonic accusative not directly linked to it."
+    "comment": "Outside the monotonicity: the book calls male human 'a different cut-off point on the animacy hierarchy', but the substrate's hierarchy has no gender, and chapter 9 lists declension class and number as parameters of the Slavonic accusative not directly linked to it.",
+    "verified": "page-image"
   },
   {
     "id": "comrie1989_ch6_ex12_dogs",
@@ -519,9 +530,7 @@
     "language": "poli1260",
     "primaryText": "Widziałem psy.",
     "discourseSegments": [],
-    "glossedTokens": [
-      ["Widziałem", "I-saw"], ["psy", "dogs"]
-    ],
+    "glossedTokens": [],
     "translation": "I saw the dogs.",
     "context": "Animate non-human plurals are identical with the nominative plural.",
     "judgment": "acceptable",
@@ -532,7 +541,8 @@
       ["P.animacy", "higherAnimal"],
       ["P.marked", "unmarked"]
     ],
-    "comment": "A different cut-off point on the animacy hierarchy from Russian's."
+    "comment": "A different cut-off point on the animacy hierarchy from Russian's.",
+    "verified": "page-image"
   },
   {
     "id": "comrie1989_ch6_ex12_tables",
@@ -540,9 +550,7 @@
     "language": "poli1260",
     "primaryText": "Widziałem stoły.",
     "discourseSegments": [],
-    "glossedTokens": [
-      ["Widziałem", "I-saw"], ["stoły", "tables"]
-    ],
+    "glossedTokens": [],
     "translation": "I saw the tables.",
     "context": "Inanimate plurals are identical with the nominative plural.",
     "judgment": "acceptable",
@@ -553,7 +561,8 @@
       ["P.animacy", "discreteInanimate"],
       ["P.marked", "unmarked"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "comrie1989_ch6_ex13",
@@ -574,7 +583,8 @@
       ["P.definiteness", "definite"],
       ["P.marked", "marked"]
     ],
-    "comment": "Turkish marking is by definiteness alone."
+    "comment": "Turkish marking is by definiteness alone.",
+    "verified": "page-image"
   },
   {
     "id": "comrie1989_ch6_ex14",
@@ -595,7 +605,8 @@
       ["P.definiteness", "nonSpecific"],
       ["P.marked", "unmarked"]
     ],
-    "comment": "Repeated as (24); the suffixless version is neutral as to whether the ox recurs in the discourse."
+    "comment": "Repeated as (24); the suffixless version is neutral as to whether the ox recurs in the discourse.",
+    "verified": "page-image"
   },
   {
     "id": "comrie1989_ch6_ex15",
@@ -616,7 +627,8 @@
       ["P.definiteness", "definite"],
       ["P.marked", "marked"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "comrie1989_ch6_ex16",
@@ -637,7 +649,8 @@
       ["P.definiteness", "nonSpecific"],
       ["P.marked", "unmarked"]
     ],
-    "comment": "Repeated as (26)."
+    "comment": "Repeated as (26).",
+    "verified": "page-image"
   },
   {
     "id": "comrie1989_ch6_ex17",
@@ -659,7 +672,8 @@
       ["P.animacy", "human"],
       ["P.marked", "marked"]
     ],
-    "comment": "The book translates the object as 'the/a child': a human P takes ko whether or not it is definite, so no definiteness is recorded. The oblique bacce of baccā is automatic before a postposition."
+    "comment": "The book translates the object as 'the/a child': a human P takes ko whether or not it is definite, so no definiteness is recorded. The oblique bacce of baccā is automatic before a postposition.",
+    "verified": "page-image"
   },
   {
     "id": "comrie1989_ch6_ex18",
@@ -667,10 +681,8 @@
     "language": "hind1269",
     "primaryText": "Aurat baccā bulā rahī hai.",
     "discourseSegments": [],
-    "glossedTokens": [
-      ["Aurat", "woman"], ["baccā", "child"], ["bulā", "calling"], ["rahī", "prog"], ["hai", "is"]
-    ],
-    "translation": "The woman is calling a child.",
+    "glossedTokens": [],
+    "translation": "",
     "context": "A human direct object without ko: found only occasionally, with affective value, and only when indefinite.",
     "judgment": "marginal",
     "alternatives": [],
@@ -681,7 +693,8 @@
       ["P.definiteness", "indefiniteSpecific"],
       ["P.marked", "unmarked"]
     ],
-    "comment": "The book marks the example with a query."
+    "comment": "The book marks the example with a query and prints it without gloss or translation.",
+    "verified": "page-image"
   },
   {
     "id": "comrie1989_ch6_ex19",
@@ -703,7 +716,8 @@
       ["P.definiteness", "definite"],
       ["P.marked", "optional"]
     ],
-    "comment": "Marking is optional at this position: (20) is the same position without ko."
+    "comment": "Marking is optional at this position: (20) is the same position without ko.",
+    "verified": "page-image"
   },
   {
     "id": "comrie1989_ch6_ex20",
@@ -725,7 +739,8 @@
       ["P.definiteness", "definite"],
       ["P.marked", "optional"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "comrie1989_ch6_ex21",
@@ -747,7 +762,8 @@
       ["P.definiteness", "nonSpecific"],
       ["P.marked", "unmarked"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "comrie1989_ch6_ex22_car",
@@ -755,9 +771,7 @@
     "language": "stan1288",
     "primaryText": "El director busca el carro.",
     "discourseSegments": [],
-    "glossedTokens": [
-      ["El", "the"], ["director", "manager"], ["busca", "seeks"], ["el", "the"], ["carro", "car"]
-    ],
+    "glossedTokens": [],
     "translation": "The manager is looking for the car.",
     "context": "A non-human direct object takes no preposition.",
     "judgment": "acceptable",
@@ -769,7 +783,8 @@
       ["P.definiteness", "definite"],
       ["P.marked", "unmarked"]
     ],
-    "comment": "The book gives the four objects of (22) with slashes; each is a row here."
+    "comment": "The book gives the four objects of (22) with slashes; each is a row here.",
+    "verified": "page-image"
   },
   {
     "id": "comrie1989_ch6_ex22_the_clerk",
@@ -777,10 +792,7 @@
     "language": "stan1288",
     "primaryText": "El director busca al empleado.",
     "discourseSegments": [],
-    "glossedTokens": [
-      ["El", "the"], ["director", "manager"], ["busca", "seeks"], ["al", "acc-the"],
-      ["empleado", "clerk"]
-    ],
+    "glossedTokens": [],
     "translation": "The manager is looking for the clerk.",
     "context": "A human definite direct object takes the preposition a.",
     "judgment": "acceptable",
@@ -792,7 +804,8 @@
       ["P.definiteness", "definite"],
       ["P.marked", "marked"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "comrie1989_ch6_ex22_a_certain_clerk",
@@ -800,11 +813,8 @@
     "language": "stan1288",
     "primaryText": "El director busca a un empleado.",
     "discourseSegments": [],
-    "glossedTokens": [
-      ["El", "the"], ["director", "manager"], ["busca", "seeks"], ["a", "acc"], ["un", "a"],
-      ["empleado", "clerk"]
-    ],
-    "translation": "The manager is looking for a certain clerk.",
+    "glossedTokens": [],
+    "translation": "The manager is looking for a (certain) clerk.",
     "context": "A human indefinite direct object with a: there is a specific individual the manager is seeking.",
     "judgment": "acceptable",
     "alternatives": [],
@@ -815,7 +825,8 @@
       ["P.definiteness", "indefiniteSpecific"],
       ["P.marked", "marked"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "comrie1989_ch6_ex22_a_clerk",
@@ -823,10 +834,7 @@
     "language": "stan1288",
     "primaryText": "El director busca un empleado.",
     "discourseSegments": [],
-    "glossedTokens": [
-      ["El", "the"], ["director", "manager"], ["busca", "seeks"], ["un", "a"],
-      ["empleado", "clerk"]
-    ],
+    "glossedTokens": [],
     "translation": "The manager is looking for a clerk.",
     "context": "A human non-specific direct object without a: the manager needs any clerk.",
     "judgment": "acceptable",
@@ -838,7 +846,8 @@
       ["P.definiteness", "nonSpecific"],
       ["P.marked", "unmarked"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "comrie1989_ch6_ex23",
@@ -860,7 +869,8 @@
       ["P.definiteness", "indefiniteSpecific"],
       ["P.marked", "marked"]
     ],
-    "comment": "The book's 'definite superset': not uniquely identifiable, but a member of a delimited set."
+    "comment": "The book's 'definite superset': not uniquely identifiable, but a member of a delimited set.",
+    "verified": "page-image"
   },
   {
     "id": "comrie1989_ch6_ex25",
@@ -881,7 +891,8 @@
       ["P.definiteness", "indefiniteSpecific"],
       ["P.marked", "marked"]
     ],
-    "comment": "Translated the same as (24) but far from equivalent in Turkish."
+    "comment": "Translated the same as (24) but far from equivalent in Turkish.",
+    "verified": "page-image"
   },
   {
     "id": "comrie1989_ch6_ex27",
@@ -902,7 +913,8 @@
       ["P.definiteness", "indefiniteSpecific"],
       ["P.marked", "marked"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "comrie1989_ch8_ex6",
@@ -923,7 +935,8 @@
       ["complexity", "lexical"],
       ["mediation", "direct"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "comrie1989_ch8_ex7",
@@ -944,7 +957,8 @@
       ["complexity", "morphological"],
       ["mediation", "indirect"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "comrie1989_ch8_english_broke",
@@ -963,7 +977,8 @@
       ["complexity", "lexical"],
       ["mediation", "direct"]
     ],
-    "comment": "Cited in prose with its Russian equivalent 'Anton slomal palku'."
+    "comment": "Cited in prose with its Russian equivalent 'Anton slomal palku'.",
+    "verified": "page-image"
   },
   {
     "id": "comrie1989_ch8_english_brought_about",
@@ -982,7 +997,8 @@
       ["complexity", "analytic"],
       ["mediation", "indirect"]
     ],
-    "comment": "Cited in prose with its Russian equivalent 'Anton sdelal tak, čtoby palka slomalasʼ'."
+    "comment": "Cited in prose with its Russian equivalent 'Anton sdelal tak, čtoby palka slomalasʼ'.",
+    "verified": "page-image"
   },
   {
     "id": "comrie1989_ch8_ex8",
@@ -1004,7 +1020,8 @@
       ["causee", "directObject"],
       ["control", "less"]
     ],
-    "comment": "Repeated as (23)."
+    "comment": "Repeated as (23).",
+    "verified": "page-image"
   },
   {
     "id": "comrie1989_ch8_ex9",
@@ -1026,7 +1043,8 @@
       ["causee", "oblique"],
       ["control", "more"]
     ],
-    "comment": "Repeated as (24); the book's translation covers both. Not all speakers accept the instrumental causee. Hungarian has no passive that would express the agent in the instrumental, so the oblique causee cannot come from a passive."
+    "comment": "Repeated as (24); the book's translation covers both. Not all speakers accept the instrumental causee. Hungarian has no passive that would express the agent in the instrumental, so the oblique causee cannot come from a passive.",
+    "verified": "page-image"
   },
   {
     "id": "comrie1989_ch8_ex12",
@@ -1047,7 +1065,8 @@
       ["valency", "1"],
       ["causee", "directObject"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "comrie1989_ch8_ex14",
@@ -1069,7 +1088,8 @@
       ["valency", "2"],
       ["causee", "indirectObject"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "comrie1989_ch8_ex16",
@@ -1091,7 +1111,8 @@
       ["valency", "3"],
       ["causee", "oblique"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "comrie1989_ch8_ex17",
@@ -1113,7 +1134,8 @@
       ["valency", "2"],
       ["causee", "directObject"]
     ],
-    "comment": "Doubling on direct object, found in languages that otherwise allow two accusative objects."
+    "comment": "Doubling on direct object, found in languages that otherwise allow two accusative objects. The book prints kataṁ, without the dot under the t of the standard kaṭa.",
+    "verified": "page-image"
   },
   {
     "id": "comrie1989_ch8_ex18",
@@ -1135,7 +1157,8 @@
       ["valency", "3"],
       ["causee", "indirectObject"]
     ],
-    "comment": "Every language allowing the causee of a ditransitive allows doubling on indirect object."
+    "comment": "Every language allowing the causee of a ditransitive allows doubling on indirect object.",
+    "verified": "page-image"
   },
   {
     "id": "comrie1989_ch8_ex19",
@@ -1154,7 +1177,8 @@
       ["valency", "3"],
       ["causee", "oblique"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "comrie1989_ch8_ex20",
@@ -1173,7 +1197,8 @@
       ["valency", "2"],
       ["causee", "oblique"]
     ],
-    "comment": "A violation of the hierarchy as an absolute universal; the passive analysis predicts it, but (21) with passive morphology inside the causative is impossible."
+    "comment": "A violation of the hierarchy as an absolute universal; the passive analysis predicts it, but (21) with passive morphology inside the causative is impossible.",
+    "verified": "page-image"
   },
   {
     "id": "comrie1989_ch8_ex22",
@@ -1195,7 +1220,8 @@
       ["valency", "2"],
       ["causee", "oblique"]
     ],
-    "comment": "Demotion to the bottom of the hierarchy happens only when required to avoid two occurrences of a grammatical relation; passive has no such constraint."
+    "comment": "Demotion to the bottom of the hierarchy happens only when required to avoid two occurrences of a grammatical relation; passive has no such constraint.",
+    "verified": "page-image"
   },
   {
     "id": "comrie1989_ch8_ex25",
@@ -1215,7 +1241,8 @@
       ["causee", "directObject"],
       ["control", "less"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "comrie1989_ch8_ex26",
@@ -1235,7 +1262,8 @@
       ["causee", "indirectObject"],
       ["control", "more"]
     ],
-    "comment": "The book notes that no formal distinction between indirect object and passive agent is possible here; the indirect-object coding is one of the two readings of ni."
+    "comment": "The book notes that no formal distinction between indirect object and passive agent is possible here; the indirect-object coding is one of the two readings of ni.",
+    "verified": "page-image"
   },
   {
     "id": "comrie1989_ch8_ex27",
@@ -1258,7 +1286,8 @@
       ["causee", "indirectObject"],
       ["control", "less"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "comrie1989_ch8_ex28",
@@ -1278,6 +1307,7 @@
       ["causee", "oblique"],
       ["control", "more"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   }
 ]

@@ -46,7 +46,7 @@ def worker : Datum :=
     source := ⟨"marantz-2013", "(2)"⟩
     reportedIn := none
     language := "stan1293"
-    primaryText := "work-Ø-er"
+    primaryText := "work-Ø-(ø)-er"
     glossedTokens := []
     context := ""
     judgment := .acceptable
@@ -108,7 +108,7 @@ def gloriousness : Datum :=
 
 def house_v : Datum :=
   { id := "marantz2013_house_v"
-    source := ⟨"marantz-2013", "§6.2"⟩
+    source := ⟨"marantz-2013", "§6.3"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "hou[z]e"
@@ -121,10 +121,10 @@ def house_v : Datum :=
 
 def housed_denominal : Datum :=
   { id := "marantz2013_housed_denominal"
-    source := ⟨"marantz-2013", "§6.2"⟩
+    source := ⟨"marantz-2013", "§6.3"⟩
     reportedIn := none
     language := "stan1293"
-    primaryText := "hou[s]ed (the room)"
+    primaryText := "He took a bunch of plastic models and housed the room in revenge"
     glossedTokens := []
     context := ""
     judgment := .acceptable
@@ -264,7 +264,7 @@ def jp_mage : Datum :=
 
 def gr_axnistos : Datum :=
   { id := "marantz2013_gr_axnistos"
-    source := ⟨"marantz-2013", "(5)–(6)"⟩
+    source := ⟨"marantz-2013", "(5a)"⟩
     reportedIn := none
     language := "mode1248"
     primaryText := "axn-is-tos"
@@ -277,7 +277,7 @@ def gr_axnistos : Datum :=
 
 def gr_koudounistos : Datum :=
   { id := "marantz2013_gr_koudounistos"
-    source := ⟨"marantz-2013", "(5)–(6)"⟩
+    source := ⟨"marantz-2013", "(5b)"⟩
     reportedIn := none
     language := "mode1248"
     primaryText := "koudoun-is-tos"
@@ -290,7 +290,7 @@ def gr_koudounistos : Datum :=
 
 def gr_magireftos : Datum :=
   { id := "marantz2013_gr_magireftos"
-    source := ⟨"marantz-2013", "(5)–(6)"⟩
+    source := ⟨"marantz-2013", "(5c)"⟩
     reportedIn := none
     language := "mode1248"
     primaryText := "magir-ef-tos"
@@ -303,7 +303,7 @@ def gr_magireftos : Datum :=
 
 def gr_kolitos : Datum :=
   { id := "marantz2013_gr_kolitos"
-    source := ⟨"marantz-2013", "(5)–(6)"⟩
+    source := ⟨"marantz-2013", "(6a)"⟩
     reportedIn := none
     language := "mode1248"
     primaryText := "kol-i-tos"
@@ -316,7 +316,7 @@ def gr_kolitos : Datum :=
 
 def gr_xtiplitos : Datum :=
   { id := "marantz2013_gr_xtiplitos"
-    source := ⟨"marantz-2013", "(5)–(6)"⟩
+    source := ⟨"marantz-2013", "(6b)"⟩
     reportedIn := none
     language := "mode1248"
     primaryText := "xtipl-i-tos"
@@ -329,7 +329,7 @@ def gr_xtiplitos : Datum :=
 
 def gr_xoneftos : Datum :=
   { id := "marantz2013_gr_xoneftos"
-    source := ⟨"marantz-2013", "(5)–(6)"⟩
+    source := ⟨"marantz-2013", "(6c)"⟩
     reportedIn := none
     language := "mode1248"
     primaryText := "xon-ef-tos"
@@ -342,7 +342,7 @@ def gr_xoneftos : Datum :=
 
 def en_quantized_energy : Datum :=
   { id := "marantz2013_en_quantized_energy"
-    source := ⟨"marantz-2013", "(7)"⟩
+    source := ⟨"marantz-2013", "(7a)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "quantized energy"
@@ -355,7 +355,7 @@ def en_quantized_energy : Datum :=
 
 def en_pulverized_lime : Datum :=
   { id := "marantz2013_en_pulverized_lime"
-    source := ⟨"marantz-2013", "(7)"⟩
+    source := ⟨"marantz-2013", "(7b)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "pulverized lime"
@@ -368,7 +368,7 @@ def en_pulverized_lime : Datum :=
 
 def en_atomized_individual : Datum :=
   { id := "marantz2013_en_atomized_individual"
-    source := ⟨"marantz-2013", "(7)"⟩
+    source := ⟨"marantz-2013", "(7c)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "atomized individual"
@@ -381,7 +381,7 @@ def en_atomized_individual : Datum :=
 
 def en_globalized_universe : Datum :=
   { id := "marantz2013_en_globalized_universe"
-    source := ⟨"marantz-2013", "(7)"⟩
+    source := ⟨"marantz-2013", "(7d)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "globalized universe"
@@ -394,7 +394,7 @@ def en_globalized_universe : Datum :=
 
 def en_nationalized_island : Datum :=
   { id := "marantz2013_en_nationalized_island"
-    source := ⟨"marantz-2013", "(7)"⟩
+    source := ⟨"marantz-2013", "(7e)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "nationalized island"
@@ -407,7 +407,7 @@ def en_nationalized_island : Datum :=
 
 def en_fictionalized_account : Datum :=
   { id := "marantz2013_en_fictionalized_account"
-    source := ⟨"marantz-2013", "(7)"⟩
+    source := ⟨"marantz-2013", "(7f)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "fictionalized account"

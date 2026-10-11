@@ -268,7 +268,7 @@ theorem magahi_pronoun_rows :
 /-- A mismatch between two second-person pronouns is out (ex 41). -/
 theorem magahi_mismatch_row :
     ∀ row ∈ Examples.all, ∀ p ∈ row.feature? "pronoun2", ∀ q ∈ row.feature? "pronoun2Other",
-      q ≠ p → row.judgment = .unacceptable := by
+      q ≠ p → row.judgment = .ungrammatical := by
   decide +kernel
 
 /-- Third-person levels are set independently: the same nonhonorific-subject

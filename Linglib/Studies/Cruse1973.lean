@@ -127,8 +127,9 @@ def Profile.labels : List (String × Profile) :=
    ("instrumental", { energy := some .instrumental }),
    ("volitive+agentive", { volitive := true, energy := some .internal })]
 
-/-- An example of the paper: its frame, the profile of its noun, and the judgment, the paper's
-query mark read as questionable and a failed entailment as one. -/
+/-- An example of the paper: its frame, the profile of its noun, its judgment, and whether it
+states that an entailment fails. The paper's query mark is printed as `?`; it defines the mark as
+clear abnormality, so the study reads any marked example as abnormal. -/
 structure Row where
   frame : Frame
   /-- The profile attributed to the noun, if any; the stative and neutralized examples carry
@@ -143,6 +144,8 @@ structure Row where
   /-- Whether *do* and *happen* are neutralized, as in *why does the door do that*. -/
   neutralized : Bool
   judgment : Judgment
+  /-- The example states that the entailment fails, *X VP does not entail X did something*. -/
+  denied : Bool
 
 /-- An example read into its frame, profile and judgment. -/
 def Row.ofDatum (e : Datum) : Option Row := do
@@ -152,7 +155,8 @@ def Row.ofDatum (e : Datum) : Option Row := do
          inanimate := decide (e.feature? "animate" = some "false")
          verbClass := e.parse? "verbClass" [("process", .process), ("stative", .stative)]
          neutralized := decide (e.feature? "neutralized" = some "true")
-         judgment := e.judgment }
+         judgment := e.judgment
+         denied := decide (e.feature? "entailment" = some "denied") }
 
 /-- Every example names its frame. -/
 theorem isSome_ofDatum : ∀ e ∈ Examples.all, (Row.ofDatum e).isSome := by decide
@@ -160,10 +164,10 @@ theorem isSome_ofDatum : ∀ e ∈ Examples.all, (Row.ofDatum e).isSome := by de
 /-- The paper's examples. -/
 def data : List Row := Examples.all.filterMap Row.ofDatum
 
-/-- A sentence is normal in its frame exactly when its noun's profile predicts it,
-neutralization aside. -/
+/-- The paper reports a sentence normal in its frame, printing it unmarked and not denying its
+entailment, exactly when its noun's profile predicts it, neutralization aside. -/
 theorem acceptable_iff_normal : ∀ d ∈ data, d.neutralized = false →
-    ∀ p ∈ d.profile, (d.judgment = .acceptable ↔ d.frame.Normal p) := by
+    ∀ p ∈ d.profile, (d.judgment = .acceptable ∧ d.denied = false ↔ d.frame.Normal p) := by
   decide
 
 /-! ### Against the received opinions -/

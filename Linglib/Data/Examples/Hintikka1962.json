@@ -28,7 +28,8 @@
         "defensible; doxastically indefensible for the speaker"
       ]
     ],
-    "comment": "Moore's sentence: defensible, but its believed form (30)* is indefensible."
+    "comment": "'absurd to utter' (p. 9); 'something logically very queer about (8)' (p. 65). Moore's sentence: defensible, but its believed form (30)* is indefensible.",
+    "verified": "page-image"
   },
   {
     "id": "hintikka1962_s9",
@@ -59,7 +60,8 @@
         "defensible; epistemically indefensible for the speaker"
       ]
     ],
-    "comment": "Less strange than (8): the known form (40)* is indefensible."
+    "comment": "'sometimes also somewhat peculiar' (p. 9); 'often somewhat awkward although it is not itself indefensible' (p. 78). Less strange than (8): the known form (40)* is indefensible.",
+    "verified": "page-image"
   },
   {
     "id": "hintikka1962_s28",
@@ -90,7 +92,8 @@
         "defensible; doxastically defensible for a third person"
       ]
     ],
-    "comment": "A change of person removes the absurdity of (8)."
+    "comment": "A change of person removes the absurdity of (8).",
+    "verified": "page-image"
   },
   {
     "id": "hintikka1962_s29",
@@ -117,7 +120,8 @@
         "defensible"
       ]
     ],
-    "comment": "A change of tense removes the absurdity of (8); (32), its believed form, is defensible."
+    "comment": "A change of tense removes the absurdity of (8); (32), its believed form, is defensible.",
+    "verified": "page-image"
   },
   {
     "id": "hintikka1962_s30",
@@ -148,7 +152,8 @@
         "indefensible"
       ]
     ],
-    "comment": "(30)*, indefensible by the reductive argument (33)–(39)."
+    "comment": "'indefensible' (p. 67): (30)*, by the reductive argument (33)–(39).",
+    "verified": "page-image"
   },
   {
     "id": "hintikka1962_s30a",
@@ -179,7 +184,8 @@
         "defensible unless a = b"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "hintikka1962_s40",
@@ -210,7 +216,8 @@
         "indefensible"
       ]
     ],
-    "comment": ""
+    "comment": "'it is indefensible to say' (p. 79).",
+    "verified": "page-image"
   },
   {
     "id": "hintikka1962_s42",
@@ -241,7 +248,8 @@
         "epistemically indefensible for b"
       ]
     ],
-    "comment": "Sometimes strange: epistemically indefensible for the speaker, by a simple argument."
+    "comment": "'sometimes (not always) a somewhat strange thing to say' (p. 80): epistemically indefensible for the speaker, by a simple argument.",
+    "verified": "page-image"
   },
   {
     "id": "hintikka1962_s43",
@@ -272,7 +280,8 @@
         "epistemically defensible"
       ]
     ],
-    "comment": "Unlike (42), nothing is wrong with it."
+    "comment": "Unlike (42), nothing is wrong with it.",
+    "verified": "page-image"
   },
   {
     "id": "hintikka1962_s46",
@@ -303,7 +312,8 @@
         "defensible"
       ]
     ],
-    "comment": "Slightly queer only because more complicated than (47), which it virtually implies."
+    "comment": "'does not sound quite all right', 'slightly queer' (p. 83), only because more complicated than (47), which it virtually implies.",
+    "verified": "page-image"
   },
   {
     "id": "hintikka1962_s47",
@@ -334,7 +344,8 @@
         "defensible; its known form (48) defensible"
       ]
     ],
-    "comment": "A perfectly natural form of words; implies (46) doxastically."
+    "comment": "A perfectly natural form of words; implies (46) doxastically.",
+    "verified": "page-image"
   },
   {
     "id": "hintikka1962_s49",
@@ -365,7 +376,8 @@
         "epistemically indefensible for the speaker"
       ]
     ],
-    "comment": "A special case of (9): 'I believe that p' implies 'I know that I believe that p' epistemically."
+    "comment": "'the absurdity of (49)' (p. 87), in the sense in which the same page speaks of the absurdity of (9). A special case of (9): 'I believe that p' implies 'I know that I believe that p' epistemically.",
+    "verified": "page-image"
   },
   {
     "id": "hintikka1962_s51",
@@ -396,7 +408,8 @@
         "epistemically and doxastically defensible"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "hintikka1962_s52",
@@ -427,7 +440,8 @@
         "epistemically indefensible to address to its hearer"
       ]
     ],
-    "comment": "Antiperformatory: saying it to a well-informed hearer makes it false."
+    "comment": "'may sometimes be distinctly odd', 'sometimes felt to be somewhat odd' (p. 90). Antiperformatory: saying it to a well-informed hearer makes it false.",
+    "verified": "page-image"
   },
   {
     "id": "hintikka1962_prize",
@@ -458,7 +472,8 @@
         "a roundabout way of letting the hearer know that p"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "hintikka1962_s55",
@@ -489,7 +504,8 @@
         "epistemically indefensible"
       ]
     ],
-    "comment": "More natural than (56): religious discourse is not defeated by the failure to know."
+    "comment": "More natural than (56): religious discourse is not defeated by the failure to know.",
+    "verified": "page-image"
   },
   {
     "id": "hintikka1962_s56",
@@ -498,7 +514,7 @@
       "paperLabel": "(56)"
     },
     "language": "stan1293",
-    "primaryText": "Phosphorus melts at 41°C but I do not know that it does.",
+    "primaryText": "Phosphorus melts at 44°C. but I do not know that it does.",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
@@ -520,7 +536,8 @@
         "epistemically indefensible"
       ]
     ],
-    "comment": ""
+    "comment": "A '(putative) statement', less natural than (55) (p. 100).",
+    "verified": "page-image"
   },
   {
     "id": "hintikka1962_s57",
@@ -547,7 +564,8 @@
         "less awkward than (9)"
       ]
     ],
-    "comment": "Stress on the verb assimilates the sentence to (47)."
+    "comment": "Stress on the verb assimilates the sentence to (47).",
+    "verified": "page-image"
   },
   {
     "id": "hintikka1962_s58",
@@ -574,7 +592,8 @@
         "implies (8) yet less absurd"
       ]
     ],
-    "comment": "Shows that the absurdity of (8) is not indefensibility, which (58) would inherit."
+    "comment": "Shows that the absurdity of (8) is not indefensibility, which (58) would inherit.",
+    "verified": "page-image"
   },
   {
     "id": "hintikka1962_s59",
@@ -601,7 +620,8 @@
         "natural"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "hintikka1962_s60",
@@ -632,7 +652,8 @@
         "virtually equivalent to (62)"
       ]
     ],
-    "comment": "Rather strange, being virtually equivalent to the simpler (62)."
+    "comment": "'rather strange' (p. 104), being virtually equivalent to the simpler (62).",
+    "verified": "page-image"
   },
   {
     "id": "hintikka1962_s61",
@@ -663,7 +684,8 @@
         "virtually implies K_b p"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "hintikka1962_s62",
@@ -690,7 +712,8 @@
         "K_a p"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "hintikka1962_s70",
@@ -704,7 +727,7 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "questionable",
+    "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -721,7 +744,8 @@
         "indefensible"
       ]
     ],
-    "comment": "Has a use: a has not followed the implications of what he knows far enough."
+    "comment": "'may very well have uses in more or less ordinary discourse', 'not one which cannot reasonably be made' (p. 112), though indefensible: a has not followed the implications of what he knows far enough.",
+    "verified": "page-image"
   },
   {
     "id": "hintikka1962_s71",
@@ -752,6 +776,7 @@
         "indefensible"
       ]
     ],
-    "comment": "Absurd in a way (70) is not: the speaker cannot specify such a p himself."
+    "comment": "'absurd in a way (70) is not', 'more absurd than (70)' (p. 113): the speaker cannot specify such a p himself.",
+    "verified": "page-image"
   }
 ]

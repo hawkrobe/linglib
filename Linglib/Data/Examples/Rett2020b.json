@@ -15,7 +15,8 @@
     "paperFeatures": [
       ["strategy", "sufficientive"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "rett2020b_50b",
@@ -33,7 +34,8 @@
     "paperFeatures": [
       ["strategy", "smOnly"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "rett2020b_50c",
@@ -51,7 +53,8 @@
     "paperFeatures": [
       ["strategy", "conjoined"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "rett2020b_50d",
@@ -69,7 +72,8 @@
     "paperFeatures": [
       ["strategy", "predicateMain"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "rett2020b_51a",
@@ -88,7 +92,8 @@
       ["strategy", "sufficientive"],
       ["diagnostic", "weak"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "rett2020b_51b",
@@ -107,7 +112,8 @@
       ["strategy", "smOnly"],
       ["diagnostic", "weak"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "rett2020b_51c",
@@ -126,7 +132,8 @@
       ["strategy", "conjoined"],
       ["diagnostic", "weak"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "rett2020b_51d",
@@ -145,7 +152,8 @@
       ["strategy", "predicateMain"],
       ["diagnostic", "weak"]
     ],
-    "comment": "#"
+    "comment": "#",
+    "verified": "page-image"
   },
   {
     "id": "rett2020b_53a",
@@ -164,7 +172,8 @@
       ["strategy", "sufficientive"],
       ["diagnostic", "evaluativity"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "rett2020b_53b",
@@ -183,7 +192,8 @@
       ["strategy", "smOnly"],
       ["diagnostic", "evaluativity"]
     ],
-    "comment": "#"
+    "comment": "#",
+    "verified": "page-image"
   },
   {
     "id": "rett2020b_53c",
@@ -202,7 +212,8 @@
       ["strategy", "conjoined"],
       ["diagnostic", "evaluativity"]
     ],
-    "comment": "#"
+    "comment": "#",
+    "verified": "page-image"
   },
   {
     "id": "rett2020b_53d",
@@ -221,7 +232,8 @@
       ["strategy", "predicateMain"],
       ["diagnostic", "evaluativity"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "rett2020b_54a",
@@ -240,7 +252,8 @@
       ["strategy", "sufficientive"],
       ["diagnostic", "factor"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "rett2020b_54b",
@@ -259,7 +272,8 @@
       ["strategy", "smOnly"],
       ["diagnostic", "factor"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "rett2020b_54c",
@@ -278,7 +292,8 @@
       ["strategy", "conjoined"],
       ["diagnostic", "factor"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "rett2020b_54d",
@@ -297,7 +312,8 @@
       ["strategy", "predicateMain"],
       ["diagnostic", "factor"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "rett2020b_55",
@@ -316,7 +332,8 @@
       ["strategy", "predicateAdverbial"],
       ["diagnostic", "weak"]
     ],
-    "comment": "#; the consultant reports a contradiction"
+    "comment": "#; the consultant reports a contradiction",
+    "verified": "page-image"
   },
   {
     "id": "rett2020b_56",
@@ -335,7 +352,8 @@
       ["strategy", "predicateAdverbial"],
       ["diagnostic", "weak"]
     ],
-    "comment": "??"
+    "comment": "??",
+    "verified": "page-image"
   },
   {
     "id": "rett2020b_58",
@@ -353,7 +371,8 @@
     "paperFeatures": [
       ["strategy", "smOnly"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "rett2020b_59",
@@ -372,7 +391,8 @@
       ["strategy", "smOnly"],
       ["diagnostic", "factor"]
     ],
-    "comment": "??"
+    "comment": "??",
+    "verified": "page-image"
   },
   {
     "id": "rett2020b_61",
@@ -390,7 +410,8 @@
     "paperFeatures": [
       ["strategy", "smOnly"]
     ],
-    "comment": ""
+    "comment": "The paper prints Gianni e alto; standard Italian è (glossed 'is'), as in (70)-(72).",
+    "verified": "page-image"
   },
   {
     "id": "rett2020b_62",
@@ -409,7 +430,8 @@
       ["strategy", "smOnly"],
       ["diagnostic", "factor"]
     ],
-    "comment": ""
+    "comment": "The paper prints Gianni e (standard Italian è, glossed 'is') and the standard marker as come /quanto; the row records come.",
+    "verified": "page-image"
   },
   {
     "id": "rett2020b_63",
@@ -427,7 +449,8 @@
     "paperFeatures": [
       ["strategy", "sufficientive"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "rett2020b_64",
@@ -446,7 +469,8 @@
       ["strategy", "sufficientive"],
       ["diagnostic", "factor"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "rett2020b_65",
@@ -465,7 +489,8 @@
       ["strategy", "sufficientive"],
       ["diagnostic", "evaluativity"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "rett2020b_66",
@@ -484,7 +509,8 @@
       ["strategy", "sufficientive"],
       ["diagnostic", "weak"]
     ],
-    "comment": ""
+    "comment": "The paper prints zo lang is Piet; the gloss line has as(SM) and (63)-(65) print als.",
+    "verified": "page-image"
   },
   {
     "id": "rett2020b_67",
@@ -503,7 +529,8 @@
       ["strategy", "sufficientive"],
       ["diagnostic", "factor"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "rett2020b_68",
@@ -522,7 +549,8 @@
       ["strategy", "sufficientive"],
       ["diagnostic", "evaluativity"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "rett2020b_69",
@@ -541,7 +569,8 @@
       ["strategy", "sufficientive"],
       ["diagnostic", "weak"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "rett2020b_70",
@@ -560,14 +589,15 @@
       ["strategy", "demonstrative"],
       ["diagnostic", "evaluativity"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "rett2020b_71",
     "source": {"bibkey": "rett-2020b", "paperLabel": "(71)"},
     "reportedIn": null,
     "language": "ital1282",
-    "primaryText": "Gianni è tanto alto quanto Pietro. Infatti, è più alto.",
+    "primaryText": "G è tanto alto quanto P. Infatti, è più alto.",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "John is as tall as Peter. In fact, he is taller.",
@@ -579,7 +609,8 @@
       ["strategy", "demonstrative"],
       ["diagnostic", "weak"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "rett2020b_72",
@@ -598,7 +629,8 @@
       ["strategy", "demonstrative"],
       ["diagnostic", "factor"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "rett2020b_73",
@@ -617,7 +649,8 @@
       ["strategy", "demonstrative"],
       ["diagnostic", "evaluativity"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "rett2020b_74",
@@ -636,7 +669,8 @@
       ["strategy", "demonstrative"],
       ["diagnostic", "weak"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "rett2020b_75",
@@ -648,14 +682,15 @@
     "glossedTokens": [],
     "translation": "John is twice as tall as Peter.",
     "context": "",
-    "judgment": "questionable",
+    "judgment": "marginal",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
       ["strategy", "demonstrative"],
       ["diagnostic", "factor"]
     ],
-    "comment": "?; reported as unnatural, against the Italian (72)"
+    "comment": "?; the consultants reported it as unnatural, a putative contrast with the Italian factor equative (72) (the prose cites (71))",
+    "verified": "page-image"
   },
   {
     "id": "rett2020b_26",
@@ -673,7 +708,8 @@
     "paperFeatures": [
       ["strategy", "smOnly"]
     ],
-    "comment": "from Haspelmath and Buchholz (1998)"
+    "comment": "from Haspelmath and Buchholz (1998)",
+    "verified": "page-image"
   },
   {
     "id": "rett2020b_27",
@@ -691,7 +727,8 @@
     "paperFeatures": [
       ["strategy", "smOnly"]
     ],
-    "comment": "from Haspelmath and Buchholz (1998)"
+    "comment": "from Haspelmath and Buchholz (1998)",
+    "verified": "page-image"
   },
   {
     "id": "rett2020b_28",
@@ -709,7 +746,8 @@
     "paperFeatures": [
       ["strategy", "smOnly"]
     ],
-    "comment": "from Haspelmath and Buchholz (1998)"
+    "comment": "from Haspelmath and Buchholz (1998)",
+    "verified": "page-image"
   },
   {
     "id": "rett2020b_29",
@@ -727,7 +765,8 @@
     "paperFeatures": [
       ["strategy", "smOnly"]
     ],
-    "comment": "from Haspelmath and Buchholz (1998)"
+    "comment": "from Haspelmath and Buchholz (1998)",
+    "verified": "page-image"
   },
   {
     "id": "rett2020b_30",
@@ -745,14 +784,15 @@
     "paperFeatures": [
       ["strategy", "demonstrative"]
     ],
-    "comment": "from Haspelmath and Buchholz (1998)"
+    "comment": "from Haspelmath and Buchholz (1998)",
+    "verified": "page-image"
   },
   {
     "id": "rett2020b_31",
     "source": {"bibkey": "rett-2020b", "paperLabel": "(31)"},
     "reportedIn": null,
     "language": "panj1256",
-    "primaryText": "Ó ónna cangaa ai jínnaa ó daa pràà.",
+    "primaryText": "Ó ónna caŋgaa ai jínnaa ó daa pràà.",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "He is as good as his brother.",
@@ -763,14 +803,15 @@
     "paperFeatures": [
       ["strategy", "sufficientive"]
     ],
-    "comment": "from Haspelmath and Buchholz (1998)"
+    "comment": "from Haspelmath and Buchholz (1998)",
+    "verified": "page-image"
   },
   {
     "id": "rett2020b_34",
     "source": {"bibkey": "rett-2020b", "paperLabel": "(34)"},
     "reportedIn": null,
     "language": "swah1253",
-    "primaryText": "Mtoto wangu ni hodari sawa na wako.",
+    "primaryText": "M-toto wa-ngu ni hodari sawa na wa-ko.",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "My child is as clever as yours.",
@@ -781,7 +822,8 @@
     "paperFeatures": [
       ["strategy", "predicateMain"]
     ],
-    "comment": "from Henkelmann (2006)"
+    "comment": "from Henkelmann (2006)",
+    "verified": "page-image"
   },
   {
     "id": "rett2020b_37",
@@ -799,7 +841,8 @@
     "paperFeatures": [
       ["strategy", "predicateAdverbial"]
     ],
-    "comment": "from Haspelmath and Buchholz (1998)"
+    "comment": "from Haspelmath and Buchholz (1998)",
+    "verified": "page-image"
   },
   {
     "id": "rett2020b_39",
@@ -817,7 +860,8 @@
     "paperFeatures": [
       ["strategy", "predicateAdverbial"]
     ],
-    "comment": "from Haspelmath and Buchholz (1998)"
+    "comment": "from Haspelmath and Buchholz (1998). The paper prints Systir min et; standard Icelandic mín er (glossed 'my is').",
+    "verified": "page-image"
   },
   {
     "id": "rett2020b_47",
@@ -835,7 +879,8 @@
     "paperFeatures": [
       ["strategy", "dedicated"]
     ],
-    "comment": "from Haspelmath and Buchholz (1998)"
+    "comment": "from Haspelmath and Buchholz (1998)",
+    "verified": "page-image"
   },
   {
     "id": "rett2020b_92",
@@ -853,7 +898,8 @@
     "paperFeatures": [
       ["strategy", "demonstrative"]
     ],
-    "comment": "from Haspelmath and Buchholz (1998)"
+    "comment": "from Haspelmath and Buchholz (1998). The paper prints ès and tú; standard Catalan és, tu.",
+    "verified": "page-image"
   },
   {
     "id": "rett2020b_93",
@@ -871,7 +917,8 @@
     "paperFeatures": [
       ["strategy", "sufficientive"]
     ],
-    "comment": "from Haspelmath and Buchholz (1998)"
+    "comment": "from Haspelmath and Buchholz (1998)",
+    "verified": "page-image"
   },
   {
     "id": "rett2020b_95",
@@ -889,7 +936,8 @@
     "paperFeatures": [
       ["strategy", "demonstrative"]
     ],
-    "comment": "from Haspelmath and Buchholz (1998)"
+    "comment": "from Haspelmath and Buchholz (1998)",
+    "verified": "page-image"
   },
   {
     "id": "rett2020b_97",
@@ -907,7 +955,8 @@
     "paperFeatures": [
       ["strategy", "demonstrative"]
     ],
-    "comment": "from Haspelmath and Buchholz (1998)"
+    "comment": "from Haspelmath and Buchholz (1998)",
+    "verified": "page-image"
   },
   {
     "id": "rett2020b_100",
@@ -925,6 +974,7 @@
     "paperFeatures": [
       ["strategy", "demonstrative"]
     ],
-    "comment": "from Haspelmath and Buchholz (1998)"
+    "comment": "from Haspelmath and Buchholz (1998)",
+    "verified": "page-image"
   }
 ]

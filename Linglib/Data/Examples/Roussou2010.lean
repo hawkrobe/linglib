@@ -288,19 +288,6 @@ def ex19a : Datum :=
     readings := []
     paperFeatures := [("verb", "paradhexome"), ("complementizer", "oti"), ("tense", "past")] }
 
-def ex19a_pu : Datum :=
-  { id := "roussou2010_ex19a-pu"
-    source := ⟨"roussou-2010", "(19a-pu)"⟩
-    reportedIn := none
-    language := "mode1248"
-    primaryText := "O Janis paradextike pu eklepse ta lefta."
-    glossedTokens := []
-    context := ""
-    judgment := .ungrammatical
-    alternatives := []
-    readings := []
-    paperFeatures := [("verb", "paradhexome"), ("complementizer", "pu"), ("tense", "past")] }
-
 def ex20a : Datum :=
   { id := "roussou2010_ex20a"
     source := ⟨"roussou-2010", "(20a)"⟩
@@ -483,6 +470,6 @@ def ex34_star : Datum :=
     readings := []
     paperFeatures := [("verb", "ksero"), ("complementizer", "an")] }
 
-def all : List Datum := [ex1a, ex1a_an, ex1b, ex1b_oti, ex1c, ex1c_oti, ex1d, ex1d_oti, ex2a, ex2b_an, ex2b_oti, ex2c_an, ex2c_oti, ex3a_oti, ex3a_na, ex3b_oti, ex3b_na, ex16a, ex17_oti, ex17_pu, ex19a, ex19a_pu, ex20a, ex20a_oti, ex20b_pu, ex20b_oti, ex22a, ex23c, ex23c_star, ex23d, ex25a, ex25b, ex26a, ex26a_star, ex34, ex34_star]
+def all : List Datum := [ex1a, ex1a_an, ex1b, ex1b_oti, ex1c, ex1c_oti, ex1d, ex1d_oti, ex2a, ex2b_an, ex2b_oti, ex2c_an, ex2c_oti, ex3a_oti, ex3a_na, ex3b_oti, ex3b_na, ex16a, ex17_oti, ex17_pu, ex19a, ex20a, ex20a_oti, ex20b_pu, ex20b_oti, ex22a, ex23c, ex23c_star, ex23d, ex25a, ex25b, ex26a, ex26a_star, ex34, ex34_star]
 
 end Roussou2010.Examples

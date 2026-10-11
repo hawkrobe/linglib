@@ -16,10 +16,10 @@ inside another (abba) and disjoint when none overlap (aabb), and nested associat
 ones that must be held open while others are formed.
 
 Under the analysis with empty categories neither pattern lines up with nested constructions in
-Chomsky's sense or with the judgments (Table 1): the multiple pied-piping sentence (42) has
-nested filler–gap and nested gap–verb associations yet is as easy as the multiple subject
-relative. Under the gap-free analysis the one pattern coincides with nestedness in Chomsky's
-sense (Table 2) and with the judgments (`table1`, `table2`, `difficulty`,
+Chomsky's sense or with the reported difficulty (Table 1): the multiple pied-piping sentence
+(42) has nested filler–gap and nested gap–verb associations yet is as easy as the multiple
+subject relative. Under the gap-free analysis the one pattern coincides with nestedness in Chomsky's
+sense (Table 2) and with the reported difficulty (`table1`, `table2`, `difficulty`,
 `trace_prediction_fails`), and it stays disjoint however far the pied-piping and the recursive
 passive are extended, where the empty-category analysis holds every filler to the end of the
 sentence (`peripheralGaps_fillerVerb_disjoint`, `peripheralGaps_fillerGap_common`). The
@@ -168,22 +168,28 @@ def rows : List (Datum × Analysis) :=
   [(ex44, subjectRelative), (ex45, objectRelative), (ex48, germanSubjectRelative),
    (ex42, piedPiping)]
 
+/-- The paper reports the sentence hard to process. Its examples are grammatical and printed
+unmarked, so difficulty is a separate observation from the judgment. -/
+def Hard (e : Datum) : Prop := e.feature? "difficulty" = some "hard"
+
+instance : DecidablePred Hard := fun _ ↦ inferInstanceAs (Decidable (_ = _))
+
 /-- Processing difficulty is nesting of the filler–verb associations: the sentences that are
 hard to process are exactly those whose gap-free pattern is nested. -/
-theorem difficulty : ∀ p ∈ rows, p.1.judgment = .acceptable ↔ ¬ Nested p.2.fillerVerb := by
+theorem difficulty : ∀ p ∈ rows, Hard p.1 ↔ Nested p.2.fillerVerb := by
   decide
 
 /-- The trace analysis predicts difficulty for the multiple pied-piping sentence, whose
 filler–gap and gap–verb associations are both nested, yet it is easy. -/
 theorem trace_prediction_fails :
-    Nested piedPiping.fillerGap ∧ Nested piedPiping.gapVerb ∧ ex42.judgment = .acceptable := by
+    Nested piedPiping.fillerGap ∧ Nested piedPiping.gapVerb ∧ ¬ Hard ex42 := by
   decide
 
 /-- Pied piping against preposition stranding, (15) and (16): the filler associates with the
 verb in one and with the stranded preposition at the end in the other, a longer association
-for a less acceptable sentence. -/
+for a harder sentence. -/
 theorem stranding :
-    ex15.judgment = .acceptable ∧ ex16.judgment ≠ .acceptable ∧
+    ¬ Hard ex15 ∧ Hard ex16 ∧
       ((⟨0, 15, 3⟩ : Dependency).fillerVerb).snd
         < ((⟨0, 14, 14⟩ : Dependency).fillerVerb).snd := by
   decide

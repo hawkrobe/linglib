@@ -9,28 +9,7 @@
     "language": "stan1293",
     "primaryText": "I'm parked on the hill",
     "discourseSegments": [],
-    "glossedTokens": [
-      [
-        "I'm",
-        "I.am"
-      ],
-      [
-        "parked",
-        "parked"
-      ],
-      [
-        "on",
-        "on"
-      ],
-      [
-        "the",
-        "the"
-      ],
-      [
-        "hill",
-        "hill"
-      ]
-    ],
+    "glossedTokens": [],
     "translation": "My car is parked on the hill.",
     "context": "",
     "judgment": "acceptable",
@@ -42,7 +21,8 @@
     ],
     "readings": [],
     "paperFeatures": [],
-    "comment": "The pronoun refers to the car, but agreement with the referent is impossible: semantic information alone does not determine agreement."
+    "comment": "The pronoun refers to the car, but agreement with the referent is impossible: semantic information alone does not determine agreement.",
+    "verified": "page-image"
   },
   {
     "id": "corbett1998_1",
@@ -83,7 +63,8 @@
         "yj"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "corbett1998_2",
@@ -124,7 +105,8 @@
         "aja"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "corbett1998_3",
@@ -165,7 +147,8 @@
         "oe"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "corbett1998_4",
@@ -206,7 +189,8 @@
         "ye"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "corbett1998_5",
@@ -251,7 +235,8 @@
         "loc"
       ]
     ],
-    "comment": "The preposition governs the locative, which noun and adjective both take: covariance imposed on both alike, not agreement."
+    "comment": "The preposition governs the locative, which noun and adjective both take: covariance imposed on both alike, not agreement.",
+    "verified": "page-image"
   },
   {
     "id": "corbett1998_s2_3a",
@@ -263,16 +248,7 @@
     "language": "russ1263",
     "primaryText": "ja beru",
     "discourseSegments": [],
-    "glossedTokens": [
-      [
-        "ja",
-        "I"
-      ],
-      [
-        "beru",
-        "take.1SG"
-      ]
-    ],
+    "glossedTokens": [],
     "translation": "I take",
     "context": "",
     "judgment": "acceptable",
@@ -284,7 +260,8 @@
         "1"
       ]
     ],
-    "comment": "Person is inherent to the pronoun and marked on the verb."
+    "comment": "Person is inherent to the pronoun and marked on the verb.",
+    "verified": "page-image"
   },
   {
     "id": "corbett1998_s2_3b",
@@ -296,16 +273,7 @@
     "language": "russ1263",
     "primaryText": "ty bereš'",
     "discourseSegments": [],
-    "glossedTokens": [
-      [
-        "ty",
-        "you"
-      ],
-      [
-        "bereš'",
-        "take.2SG"
-      ]
-    ],
+    "glossedTokens": [],
     "translation": "you take",
     "context": "",
     "judgment": "acceptable",
@@ -317,7 +285,8 @@
         "2"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "corbett1998_s2_3c",
@@ -329,16 +298,7 @@
     "language": "russ1263",
     "primaryText": "on beret",
     "discourseSegments": [],
-    "glossedTokens": [
-      [
-        "on",
-        "he"
-      ],
-      [
-        "beret",
-        "take.3SG"
-      ]
-    ],
+    "glossedTokens": [],
     "translation": "he takes",
     "context": "",
     "judgment": "acceptable",
@@ -350,7 +310,8 @@
         "3"
       ]
     ],
-    "comment": "Also ona beret 'she takes'."
+    "comment": "Also ona beret 'she takes'.",
+    "verified": "page-image"
   },
   {
     "id": "corbett1998_6",
@@ -403,7 +364,8 @@
         "e-pe"
       ]
     ],
-    "comment": "The adjective marks gender by its infixed vowel."
+    "comment": "The adjective marks gender by its infixed vowel.",
+    "verified": "page-image"
   },
   {
     "id": "corbett1998_7",
@@ -456,7 +418,8 @@
         "u-pe"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "corbett1998_8",
@@ -509,7 +472,8 @@
         "e-pe"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "corbett1998_9",
@@ -562,7 +526,8 @@
         "i-pe"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "corbett1998_10",
@@ -572,7 +537,7 @@
     },
     "reportedIn": null,
     "language": "arch1244",
-    "primaryText": "d-as̄-a-r-ej-r-u-t̄u-r x̌anna",
+    "primaryText": "d-as̄-a-r-ej-r-u-t̄u-r x̌̄anna",
     "discourseSegments": [],
     "glossedTokens": [
       [
@@ -580,7 +545,7 @@
         "II-of.me-SELF-II-SUFFIX-II-SUFFIX-ADJ-II"
       ],
       [
-        "x̌anna",
+        "x̌̄anna",
         "wife"
       ]
     ],
@@ -599,7 +564,8 @@
         "4"
       ]
     ],
-    "comment": "A prefixed marker d-, a suffixed -r and two internal -r-, all for the same controller in the same features: four slots, the most found on one target."
+    "comment": "A prefixed marker d-, a suffixed -r and two internal -r-, all for the same controller in the same features: four slots, the most found on one target.",
+    "verified": "page-image"
   },
   {
     "id": "corbett1998_11",
@@ -648,7 +614,8 @@
         "y"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "corbett1998_12",
@@ -697,7 +664,8 @@
         "t"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "corbett1998_13",
@@ -746,7 +714,8 @@
         "y"
       ]
     ],
-    "comment": "-dii is -tii after a vowel."
+    "comment": "-dii is -tii after a vowel.",
+    "verified": "page-image"
   },
   {
     "id": "corbett1998_14",
@@ -795,7 +764,8 @@
         "y"
       ]
     ],
-    "comment": "-hii is -kii after a vowel other than i."
+    "comment": "-hii is -kii after a vowel other than i.",
+    "verified": "page-image"
   },
   {
     "id": "corbett1998_s3_2a",
@@ -807,12 +777,7 @@
     "language": "soma1255",
     "primaryText": "nin-kii",
     "discourseSegments": [],
-    "glossedTokens": [
-      [
-        "nin-kii",
-        "man-the.SG.MASC"
-      ]
-    ],
+    "glossedTokens": [],
     "translation": "the man",
     "context": "",
     "judgment": "acceptable",
@@ -832,7 +797,8 @@
         "kii"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "corbett1998_s3_2b",
@@ -844,12 +810,7 @@
     "language": "soma1255",
     "primaryText": "niman-kii",
     "discourseSegments": [],
-    "glossedTokens": [
-      [
-        "niman-kii",
-        "men-the.PL.MASC"
-      ]
-    ],
+    "glossedTokens": [],
     "translation": "the men",
     "context": "",
     "judgment": "acceptable",
@@ -869,7 +830,8 @@
         "kii"
       ]
     ],
-    "comment": "A masculine noun with a reduplicated plural keeps the singular article: not all nouns are in the polarity system."
+    "comment": "A masculine noun with a reduplicated plural keeps the singular article: not all nouns are in the polarity system.",
+    "verified": "page-image"
   },
   {
     "id": "corbett1998_s4a",
@@ -902,7 +864,8 @@
         "III"
       ]
     ],
-    "comment": "The allative marker brings an agreement slot with it: a case-marked noun agrees."
+    "comment": "The allative marker brings an agreement slot with it: a case-marked noun agrees.",
+    "verified": "page-image"
   },
   {
     "id": "corbett1998_s4b",
@@ -935,7 +898,8 @@
         "III"
       ]
     ],
-    "comment": "The essive has no marker of its own; the agreement slot signals the case."
+    "comment": "The essive has no marker of its own; the agreement slot signals the case.",
+    "verified": "page-image"
   },
   {
     "id": "corbett1998_15",
@@ -980,7 +944,8 @@
         "II"
       ]
     ],
-    "comment": "The dative subject pronoun has an agreement slot and agrees with the object, as the verb does."
+    "comment": "The dative subject pronoun has an agreement slot and agrees with the object, as the verb does.",
+    "verified": "page-image"
   },
   {
     "id": "corbett1998_16",
@@ -1025,7 +990,8 @@
         "III"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "corbett1998_17",
@@ -1066,7 +1032,8 @@
         "number,gender"
       ]
     ],
-    "comment": "The finite verb agrees in number and person, the participle in number and gender."
+    "comment": "The finite verb agrees in number and person, the participle in number and gender.",
+    "verified": "page-image"
   },
   {
     "id": "corbett1998_18",
@@ -1115,7 +1082,8 @@
         "a"
       ]
     ],
-    "comment": "Two plural nouns of one gender take its plural form rather than the zi- the general rule for non-humans predicts."
+    "comment": "Two plural nouns of one gender take its plural form rather than the zi- the general rule for non-humans predicts.",
+    "verified": "page-image"
   },
   {
     "id": "corbett1998_19",
@@ -1168,6 +1136,7 @@
         "a"
       ]
     ],
-    "comment": "Plural nouns of different genders whose subject forms coincide take that form; zi- may be an alternative."
+    "comment": "Plural nouns of different genders whose subject forms coincide take that form; zi- may be an alternative.",
+    "verified": "page-image"
   }
 ]
