@@ -1,5 +1,6 @@
 module
 
+public import Linglib.Core.MeasureTheory.Constructions.Option
 public import Linglib.Pragmatics.RSA.QUD
 public import Linglib.Semantics.Degree.Granularity
 public import Mathlib.Data.Rat.Floor
@@ -129,31 +130,18 @@ theorem mem_sem {u : Price} {m : Meaning} : m ∈ sem u ↔ m.1 = u := Iff.rfl
 noncomputable def L0 (μ : Measure Meaning) : Kernel Price Meaning :=
   listener μ (truthful sem)
 
-theorem L0_apply (μ : Measure Meaning) (u : Price) : L0 μ u = μ[|sem u] := by
-  rw [L0, listener_truthful_apply]
-
 instance (μ : Measure Meaning) : IsFiniteKernel (L0 μ) :=
   inferInstanceAs (IsFiniteKernel (listener _ (truthful _)))
-
-/-- The literal listener gives a meaning mass exactly when the utterance names its price and
-the prior gives it mass. -/
-theorem L0_apply_singleton_ne_zero_iff (μ : Measure Meaning) [IsFiniteMeasure μ] (u : Price)
-    (m : Meaning) : L0 μ u {m} ≠ 0 ↔ m.1 = u ∧ μ {m} ≠ 0 := by
-  by_cases h : m ∈ sem u
-  · rw [L0, listener_truthful_apply_singleton μ sem h]
-    exact ⟨fun h' ↦ ⟨h, (mul_ne_zero_iff.mp h').2⟩,
-      fun h' ↦ mul_ne_zero (ENNReal.inv_ne_zero.mpr (measure_ne_top _ _)) h'.2⟩
-  · rw [L0, listener_truthful_apply_singleton_of_notMem μ sem h]
-    exact iff_of_false (fun h' ↦ h' rfl) (fun h' ↦ h h'.1)
 
 /-- The cost `C(u)` of eq. 7 is one at a round price and the fitted parameter `c` at a sharp
 one. -/
 def cost (c : ℝ) (u : Price) : ℝ := if u.IsRound then 1 else c
 
-/-- The goal-indexed speaker, eqs. 5 to 8, is the best response to the projected literal listener of
-the goal, at unit rationality, less the cost. -/
+/-- The goal-indexed speaker, eqs. 5 to 8, knows the answer to her goal and is informative about
+the literal listener's distribution over the topical subspace (eq. 6), at unit rationality, less
+the cost. -/
 noncomputable def S1 (μ : Measure Meaning) (c : ℝ) (p : Meaning × Goal) : Measure Price :=
-  speaker 1 (cost c) (projListener project (L0 μ) p.2) Measure.dirac p.1
+  speaker 1 (cost c) ((L0 μ).map (project p.2)) Measure.dirac (project p.2 p.1)
 
 instance (μ : Measure Meaning) (c : ℝ) (p : Meaning × Goal) : IsFiniteMeasure (S1 μ c p) :=
   inferInstanceAs (IsFiniteMeasure (speaker _ _ _ _ _))
@@ -169,33 +157,17 @@ section Support
 variable (μ : Measure Meaning) [IsProbabilityMeasure μ] (ν : Measure Goal)
   [IsProbabilityMeasure ν] (c : ℝ)
 
-/-- A goal's speaker produces an utterance at a meaning exactly when the meaning's cell holds
-a meaning of positive prior at which the utterance is literally true. -/
-theorem S1_apply_singleton_ne_zero_iff (g : Goal) (m : Meaning) (u : Price) :
-    S1 μ c (m, g) {u} ≠ 0 ↔ ∃ m', project g m' = project g m ∧ m'.1 = u ∧ μ {m'} ≠ 0 := by
-  rw [S1]
-  constructor
-  · intro h
-    have hL : projListener project (L0 μ) g u {m} ≠ 0 := fun h' ↦
-      h (speaker_dirac_apply_singleton_eq_zero one_pos h')
-    rw [projListener_apply_singleton_ne_zero_iff] at hL
-    obtain ⟨m', hm', h0⟩ := hL
-    exact ⟨m', hm', (L0_apply_singleton_ne_zero_iff μ u m').mp h0⟩
-  · rintro ⟨m', hm', hu, hμ⟩
-    exact speaker_dirac_apply_singleton_ne_zero zero_le_one
-      ((projListener_apply_singleton_ne_zero_iff _ _ _ _ _).mpr
-        ⟨m', hm', (L0_apply_singleton_ne_zero_iff μ u m').mpr ⟨hu, hμ⟩⟩)
-
 /-- A meaning is in the support of the meaning listener at an utterance exactly when it has positive
-prior and some goal of positive prior projects it into the cell of a meaning of positive prior at
-which the utterance is literally true. -/
+prior and, under some goal of positive prior, shares its answer with a meaning of positive prior
+at which the utterance is literally true. -/
 theorem listener_ne_zero_iff (u : Price) (m : Meaning) :
     (L1 μ ν c u).fst {m} ≠ 0
       ↔ μ {m} ≠ 0 ∧ ∃ g, ν {g} ≠ 0 ∧ ∃ m', project g m' = project g m ∧ m'.1 = u ∧ μ {m'} ≠ 0 := by
-  rw [L1, listener_fst_apply_singleton_ne_zero_iff]
-  simp only [← S1_apply_singleton_ne_zero_iff μ c, ← Set.singleton_prod_singleton,
-    Measure.prod_prod, mul_ne_zero_iff]
-  exact ⟨fun ⟨g, ⟨hm, hg⟩, hs⟩ ↦ ⟨hm, g, hg, hs⟩, fun ⟨hm, g, hg, hs⟩ ↦ ⟨g, ⟨hm, hg⟩, hs⟩⟩
+  rw [L1]
+  refine (listener_prod_speaker_map_dirac_fst_apply_singleton_ne_zero_iff one_pos (cost c) (L0 μ)
+    project μ ν u m).trans ?_
+  simp only [L0, listener_truthful_apply_singleton_ne_zero_iff]
+  rfl
 
 /-- A low price with affect is a possible meaning of a high price under the affect goal whenever the
 prior gives mass to both meanings with affect, which is hyperbole. -/
@@ -233,15 +205,16 @@ section Halo
 
 variable (μ : Measure Meaning) [IsProbabilityMeasure μ] (c : ℝ)
 
-/-- At an approximate price goal, an utterance naming a price with positive prior puts all its
-projected mass on every meaning of the same round price. -/
-theorem projListener_approximate {u p : Price} (hμ : μ (sem u) ≠ 0) (hp : u.round = p.round)
-    (a : Bool) : projListener project (L0 μ) (.approximate, .price) u {(p, a)} = 1 := by
-  rw [projListener_apply_singleton, L0_apply, cond_apply .of_discrete,
+/-- At an approximate price goal, the literal listener who hears a price of positive prior is
+certain of the answer at every meaning of the same round price. -/
+theorem map_L0_approximate {u p : Price} (hμ : μ (sem u) ≠ 0) (hp : u.round = p.round)
+    (a : Bool) : (L0 μ).map (project (.approximate, .price)) u
+      {project (.approximate, .price) (p, a)} = 1 := by
+  rw [L0, listener_truthful_map_apply_singleton,
     Set.inter_eq_self_of_subset_left (fun m hm ↦ by
       simp only [Set.mem_preimage, Set.mem_singleton_iff, project, Price.project, mem_sem.mp hm, hp]
       rfl),
-    ENNReal.inv_mul_cancel hμ (measure_ne_top _ _)]
+    ENNReal.div_self hμ (measure_ne_top _ _)]
 
 /-- At an approximate price goal a sharp price projects with its round neighbour, so the speaker
 prefers the round utterance exactly when sharp numbers cost more, the cost mechanism of the halo
@@ -251,8 +224,8 @@ theorem approximate_prefers_round {p : Price} (hp : ¬ p.IsRound) (h₁ : μ (se
     (S1 μ c ((p, a), (.approximate, .price))).real {p}
         < (S1 μ c ((p, a), (.approximate, .price))).real {p.round} ↔ 1 < c := by
   rw [S1, speaker_dirac_real_singleton_lt_iff zero_le_one
-    ⟨p, by rw [projListener_approximate μ h₁ rfl]; simp⟩,
-    projListener_approximate μ h₁ rfl, projListener_approximate μ h₂ (Price.round_round p),
+    ⟨p, by rw [map_L0_approximate μ h₁ rfl]; simp⟩,
+    map_L0_approximate μ h₁ rfl, map_L0_approximate μ h₂ (Price.round_round p),
     ENNReal.one_rpow, cost, cost, ite_eq_right hp, ite_eq_left (Price.isRound_round p)]
   simp only [one_mul]
   rw [ENNReal.ofReal_lt_ofReal_iff (Real.exp_pos _), Real.exp_lt_exp, neg_lt_neg_iff]

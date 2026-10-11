@@ -1,7 +1,9 @@
 module
 
 public import Linglib.Core.MeasureTheory.Measure.Real
-public import Linglib.Pragmatics.RSA.QUD
+public import Linglib.Core.MeasureTheory.MeasurableSpace.Sum
+public import Linglib.Core.Probability.Kernel.Basic
+public import Linglib.Pragmatics.RSA.Uniform
 public import Linglib.Semantics.Quantification.NumberTree
 public import Linglib.Semantics.Degree.Comparison
 public import Linglib.Core.Probability.Distributions.Binomial
@@ -10,72 +12,49 @@ public import Linglib.Core.Probability.Kernel.Posterior
 /-!
 # Scontras and Pearl (2021): When Pragmatics Matters More for Truth-Value Judgments
 
-This file formalizes Scontras and Pearl's Rational Speech Act model of the truth-value judgment
-task for the scopally ambiguous sentences *every horse didn't jump* and *two horses didn't jump*.
-A world is the number of horses that jumped. A speaker who knows the world, a scope
-interpretation and a question under discussion chooses between the sentence and silence, aiming
-to convey the answer to the question. A pragmatic listener inverts that speaker jointly over
-worlds, interpretations and questions. The endorsing speaker, who sees only the world, chooses
-between the sentence and silence by the listener's beliefs about the world, so that a truth-value
-judgment is a production decision.
-
-## Main definitions
-
-* `Scope.negation`: the negation of a determiner that a scope interpretation expresses.
-* `ext`: the worlds at which an utterance is true under a scope interpretation, for a determiner
-  on the tree of numbers.
-* `project`, `cell`: the answer a question assigns to a world, and the worlds sharing that answer.
-* `L0`, `S1`, `L1`, `S2`: the literal listener, the speaker, the pragmatic listener and the
-  endorsing speaker, as kernels.
-* `share`, `production`, `expectedProduction`: the probability that the speaker produces the
-  sentence at a world under an interpretation and a question, its average over interpretations
-  and questions, and the expectation of that average under the world prior.
-* `endorse`: the endorsement probability as a function of production and expected production.
+Scontras and Pearl model the truth-value judgment task for the scopally ambiguous sentences
+*every horse didn't jump* and *two horses didn't jump*. A world is the number of horses that
+jumped. A speaker who knows the world, a scope interpretation and a question under discussion
+chooses between the sentence and silence, aiming to convey the answer to the question (`S1`). A
+pragmatic listener inverts that speaker jointly over worlds, interpretations and questions
+(`L1`). The endorsing speaker, who sees only the world, chooses between the sentence and silence
+by the listener's beliefs about the world (`S2`), so that a truth-value judgment is a production
+decision.
 
 ## Main results
 
-* `S2_real_amb`: the endorsement probability is `endorse` of the production at the observed world
-  and the expected production.
 * `one_half_lt_S2_real_amb_iff`: the sentence is endorsed more often than not exactly when it is
-  produced at the observed world more often than on average (§5.1).
-* `S1_all_scope`, `S2_real_amb_all`: under the question *all?* the two interpretations of
-  *every horse didn't jump* produce alike, so with that question settled the scope prior does
-  not affect endorsement (§3.2, Figure 3).
-* `share_le_share_all`, `share_none_le_share`: at the not-all world of the two-horse scenario
-  *all?* maximizes and *none?* minimizes production under either interpretation (Figure 2).
-* `share_antitone`, `S2_real_amb_mono_baseRate`: production falls with the number of jumpers, so
-  a higher success base rate in the binomial world prior raises endorsement (Figure 2).
-* `S2_numeral_eq_self`, `S2_numeral_ge_self`: with as many horses as the numeral counts, the
-  numeral sentence has the extension of the *every* sentence on both interpretations, so the two
-  models coincide (§4.2.1).
+  produced at the observed world more often than on average.
+* `S2_real_amb_all`: once the question is whether all the horses jumped, the two interpretations
+  of *every horse didn't jump* produce alike and the scope prior does not affect endorsement.
+* `S2_real_amb_mono_baseRate`: production falls with the number of jumpers, so a higher success
+  base rate in the binomial world prior raises endorsement.
 * `share_twoAtLeast_le_share_twoExact`, `share_twoExact_lt_share_twoAtLeast`: with four horses
   and two jumpers the surface speaker favors the exact reading whatever the question, while the
-  inverse speaker under *all?* favors the at-least reading, which is why the 2-of-4 fit needs a
-  low prior on inverse scope (§4.2.2, Figure 7).
+  inverse speaker asked whether all jumped favors the at-least reading.
 
 ## Implementation notes
 
 * The rationality of `S1` and the priors on worlds, interpretations and questions are
-  parameters. The numerical predictions of Figures 2, 3, 6 and 7, at unit rationality and the
-  paper's grid of priors, are not restated, and the endorsement rates of the experiments the
-  paper reviews are not data of this file.
+  parameters.
 * A determiner is a quantifier on van Benthem's tree of numbers, a relation between the number
-  of restrictor members outside its scope and the number inside it. So *every* is
-  `NumberTree.all`, a numeral is the cardinal quantifier of the interval of a
-  `Degree.Comparison`, `.eq` for the exact reading and `.ge` for the at-least reading, and a
-  scope interpretation is a negation of the determiner (`Scope.negation`), inner for surface
-  scope and outer for inverse scope. The truth conditions (2) and (6), which the paper
-  tabulates at two and at four horses, follow for any number of horses
-  (`mem_ext_every_surface`, `mem_ext_numeral_surface` and their inverse counterparts).
-* Both models share the five questions of (7): the every-not model is the case of a question
-  prior carried by the first three, and with two horses the numeral questions partition the
-  worlds as *all?* does (`cell_exactlyTwo_two`, `cell_atLeastTwo_two`).
+  of restrictor members outside its scope and the number inside it. *Every* is `NumberTree.all`,
+  a numeral is the cardinal quantifier of the interval of a `Degree.Comparison`, and a scope
+  interpretation is a negation of the determiner (`Scope.negation`), inner for surface scope and
+  outer for inverse scope. The paper tabulates the truth conditions at two and at four horses,
+  and here they follow for any number.
+* Both models share the paper's five questions. The every-not model is the case of a question
+  prior carried by the first three.
+* Utterances are costless and the literal listener carries no world prior, following Qing and
+  Franke. The speaker addresses the question as in the hyperbole model of Kao and colleagues.
+
+## TODO
+
+* The numerical predictions of the paper's figures, at unit rationality and its grid of priors,
+  are not stated.
 * The base-rate result is proved at two horses, the paper's scenario. For any number of horses
   it would follow from `production` being antitone and the binomial family being stochastically
   increasing in its success probability.
-* Utterances are costless (fn. 8) and the literal listener carries no world prior (fn. 6),
-  following Qing and Franke; the projected listener is that of Kao and colleagues' hyperbole
-  model.
 
 ## References
 
@@ -302,46 +281,41 @@ noncomputable def L0 (i : Scope) : Kernel Utt (World n) :=
 instance (i : Scope) : IsFiniteKernel (L0 D n i) :=
   inferInstanceAs (IsFiniteKernel (listener _ (truthful _)))
 
-theorem L0_apply (i : Scope) (u : Utt) : L0 D n i u = uniformOn ↑(ext D n i u) := by
-  rw [L0, listener_truthful_apply, uniformOn, uniformOn,
-    cond_cond_eq_cond_inter' MeasurableSet.univ (Finset.measurableSet _) (by simp),
-    Set.univ_inter]
-
-/-- The literal listener of a scope interpretation projected by a question puts on a world the
+/-- The literal listener of a scope interpretation gives a world's answer to a question the
 fraction of the extension lying in the world's cell. -/
-theorem projListener_L0_apply (i : Scope) (q : QUD) (u : Utt) (w : World n) :
-    projListener (project n) (L0 D n i) q u {w}
+theorem map_L0_apply (i : Scope) (q : QUD) (u : Utt) (w : World n) :
+    (L0 D n i).map (project n q) u {project n q w}
       = uniformOn ↑(ext D n i u) (↑(cell n q w) : Set (World n)) := by
-  rw [projListener_apply_singleton, L0_apply]
+  rw [Kernel.map_apply_singleton, L0, listener_uniformOn_truthful_apply]
   congr 1
   ext w'
   simp [cell]
 
 variable (α : ℝ)
 
-/-- The speaker of §3.1 is, at a world, a scope interpretation and a question, the best response
-at rationality `α` to the literal listener of the interpretation projected by the question. The
-utterances are costless (fn. 8). -/
+/-- The speaker of §3.1, at a world, a scope interpretation and a question, knows the world's
+answer to the question and is informative at rationality `α` about the belief of the
+interpretation's literal listener about it. The utterances are costless (fn. 8). -/
 noncomputable def S1 : Kernel (World n × (Scope × QUD)) Utt :=
   Kernel.ofFunOfCountable fun p ↦
-    speaker α 0 (projListener (project n) (L0 D n p.2.1) p.2.2) Measure.dirac p.1
+    speaker α 0 ((L0 D n p.2.1).map (project n p.2.2)) Measure.dirac (project n p.2.2 p.1)
 
 theorem S1_apply (w : World n) (l : Scope × QUD) :
-    S1 D n α (w, l) = speaker α 0 (projListener (project n) (L0 D n l.1) l.2) Measure.dirac w := rfl
+    S1 D n α (w, l) =
+      speaker α 0 ((L0 D n l.1).map (project n l.2)) Measure.dirac (project n l.2 w) := rfl
 
 instance : IsFiniteKernel (S1 D n α) :=
-  ⟨⟨1, ENNReal.one_lt_top, fun p ↦ speaker_apply_univ_le_one α 0 _ Measure.dirac p.1⟩⟩
+  ⟨⟨1, ENNReal.one_lt_top, fun p ↦ speaker_apply_univ_le_one α 0
+    ((L0 D n p.2.1).map (project n p.2.2)) Measure.dirac (project n p.2.2 p.1)⟩⟩
 
 theorem isMarkovKernel_S1 (hα : 0 ≤ α) : IsMarkovKernel (S1 D n α) := by
   refine ⟨fun p ↦ ?_⟩
   obtain ⟨w, l⟩ := p
   rw [S1_apply]
-  have := isMarkovKernel_speaker_dirac hα 0 (projListener (project n) (L0 D n l.1) l.2)
-    (fun w ↦ ⟨.null, by
-      rw [projListener_L0_apply, Ne, uniformOn_eq_zero_iff (Finset.finite_toSet _)]
-      exact Set.nonempty_iff_ne_empty.mp
-        ⟨w, Finset.mem_coe.mpr (Finset.mem_univ w), Finset.mem_coe.mpr (mem_cell_self l.2 w)⟩⟩)
-  exact IsMarkovKernel.isProbabilityMeasure w
+  exact isProbabilityMeasure_speaker_dirac hα 0 _ ⟨.null, by
+    rw [map_L0_apply, Ne, uniformOn_eq_zero_iff (Finset.finite_toSet _)]
+    exact Set.nonempty_iff_ne_empty.mp
+      ⟨w, Finset.mem_coe.mpr (Finset.mem_univ w), Finset.mem_coe.mpr (mem_cell_self l.2 w)⟩⟩
 
 variable (μ : Measure (World n)) (ν : Measure (Scope × QUD))
 
@@ -376,14 +350,14 @@ section Share
 variable (D : NumberTree) [DecidableRel D] (n : ℕ) (α : ℝ)
 
 /-- The cell mass is the fraction of the extension of an utterance under a scope interpretation
-that lies in the cell of a world under a question, which is the projected literal listener's mass
-on the world. -/
+that lies in the cell of a world under a question, which is the literal listener's mass on the
+world's answer. -/
 noncomputable def cellMass (l : Scope × QUD) (u : Utt) (w : World n) : ℝ :=
-  (projListener (project n) (L0 D n l.1) l.2 u).real {w}
+  ((L0 D n l.1).map (project n l.2) u).real {project n l.2 w}
 
 theorem cellMass_eq (l : Scope × QUD) (u : Utt) (w : World n) :
     cellMass D n l u w = ((ext D n l.1 u ∩ cell n l.2 w).card : ℝ) / (ext D n l.1 u).card := by
-  rw [cellMass, measureReal_def, projListener_L0_apply, uniformOn_apply_finset, ENNReal.toReal_div,
+  rw [cellMass, measureReal_def, map_L0_apply, uniformOn_apply_finset, ENNReal.toReal_div,
     ENNReal.toReal_natCast, ENNReal.toReal_natCast]
 
 theorem cellMass_nonneg (l : Scope × QUD) (u : Utt) (w : World n) : 0 ≤ cellMass D n l u w :=
@@ -677,12 +651,12 @@ theorem ext_every_amb_card_pos (hn : 0 < n) (i : Scope) : 0 < (ext NumberTree.al
   Finset.card_pos.mpr ⟨0, zero_mem_ext_every hn i⟩
 
 /-- Under the question *all?* the sentence *every horse didn't jump* fully resolves the question
-in the negative on either interpretation, as its projected literal listener is certain of every
-world short of total success. -/
-theorem projListener_L0_every_all (hn : 0 < n) (i : Scope) (w : World n) :
-    projListener (project n) (L0 NumberTree.all n i) .all .amb {w}
+in the negative on either interpretation, as its literal listener is certain of the answer at
+every world short of total success. -/
+theorem map_L0_every_all (hn : 0 < n) (i : Scope) (w : World n) :
+    (L0 NumberTree.all n i).map (project n .all) .amb {project n .all w}
       = if w = Fin.last n then 0 else 1 := by
-  rw [projListener_L0_apply]
+  rw [map_L0_apply]
   have hcell : ∀ w', w' ∈ cell n .all w ↔ (w' = Fin.last n ↔ w = Fin.last n) := fun _ ↦ mem_cell_all
   have hext : ∀ w', w' ∈ ext NumberTree.all n i .amb → w' ≠ Fin.last n := fun w' h ↦ by
     cases i
@@ -702,13 +676,13 @@ alike at every world, since the sentence answers the question in the negative on
 theorem S1_all_scope (hn : 0 < n) (w : World n) :
     S1 NumberTree.all n α (w, (.surface, .all)) = S1 NumberTree.all n α (w, (.inverse, .all)) := by
   rw [S1_apply, S1_apply, speaker_dirac_eq_ofWeights, speaker_dirac_eq_ofWeights]
-  have key : ∀ u, projListener (project n) (L0 NumberTree.all n .surface) .all u {w}
-      = projListener (project n) (L0 NumberTree.all n .inverse) .all u {w} := by
+  have key : ∀ u, (L0 NumberTree.all n .surface).map (project n .all) u {project n .all w}
+      = (L0 NumberTree.all n .inverse).map (project n .all) u {project n .all w} := by
     intro u
     cases u
-    · rw [projListener_L0_apply, projListener_L0_apply]
+    · rw [map_L0_apply, map_L0_apply]
       rfl
-    · rw [projListener_L0_every_all hn, projListener_L0_every_all hn]
+    · rw [map_L0_every_all hn, map_L0_every_all hn]
   exact Measure.ext_of_singleton fun u ↦ by simp only [Kernel.ofWeights_apply_singleton, key]
 
 theorem share_all_scope (hn : 0 < n) (w : World n) :
