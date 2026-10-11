@@ -7,9 +7,7 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Mathlib.Computability.Language
-public import Mathlib.Logic.Function.Basic
-public import Linglib.Core.Logic.Function.FactorsThrough
+public import Linglib.Core.Computability.MyhillNerode
 public import Linglib.Core.Data.List.DropRight
 public import Mathlib.Data.Fintype.Order
 public import Mathlib.Data.Set.Finite.Lemmas
@@ -37,6 +35,8 @@ prefix, and *generalized `k`-definite* languages are decided by the prefix and s
 * `Language.IsDefinite.toIsGeneralizedDefinite`,
   `Language.IsReverseDefinite.toIsGeneralizedDefinite`: definite and reverse definite languages are
   generalized definite.
+* `Language.IsDefinite.isRegular`, `Language.IsReverseDefinite.isRegular`,
+  `Language.IsGeneralizedDefinite.isRegular`: over a finite alphabet all three are regular.
 * `Language.isFiniteOrCofinite_iff_exists_isDefinite_and_isReverseDefinite`: over a finite
   alphabet, a language is finite or cofinite exactly when it is both definite and reverse definite.
 
@@ -102,6 +102,31 @@ lemma takeAt_takeAt_of_le {k k' : ℕ} (h : k ≤ k') (xs : List α) :
     e.takeAt k (e.takeAt k' xs) = e.takeAt k xs := by
   cases e <;> simp [List.take_take, List.rtake_rtake, h]
 
+/-- Words with the same edge substring of some length have the same shorter ones. -/
+lemma takeAt_eq_of_le {k k' : ℕ} (h : k ≤ k') {xs xs' : List α}
+    (hxs : e.takeAt k' xs = e.takeAt k' xs') : e.takeAt k xs = e.takeAt k xs' := by
+  rw [← takeAt_takeAt_of_le e h, hxs, takeAt_takeAt_of_le e h]
+
+/-- Truncating the first factor of a concatenation to its edge substring leaves the edge substring
+of the whole unchanged. -/
+lemma takeAt_takeAt_append (ys : List α) :
+    e.takeAt k (e.takeAt k xs ++ ys) = e.takeAt k (xs ++ ys) := by
+  cases e with
+  | left =>
+    rcases le_total k xs.length with h | h
+    · simp [List.take_append_of_le_length, h]
+    · simp [List.take_of_length_le h]
+  | right => exact List.rtake_append_rtake k xs ys
+
+/-- Words with the same edge substring keep the same one after appending a word. -/
+lemma takeAt_append_congr {k : ℕ} {xs xs' : List α} (h : e.takeAt k xs = e.takeAt k xs')
+    (ys : List α) : e.takeAt k (xs ++ ys) = e.takeAt k (xs' ++ ys) := by
+  rw [← takeAt_takeAt_append, h, takeAt_takeAt_append]
+
+/-- Over a finite alphabet there are finitely many edge substrings of a given length. -/
+lemma finite_range_takeAt [Finite α] : (Set.range (e.takeAt (α := α) k)).Finite :=
+  (List.finite_length_le α k).subset (Set.range_subset_iff.2 fun w ↦ by simp [length_takeAt])
+
 end Edge
 
 /-! ### Edge-bridge identities
@@ -126,9 +151,6 @@ private lemma takeAt_left_eq_of_bridge {k k' : ℕ} {w₁ w₂ : List α}
     List.take_append_of_le_length (by rw [List.length_take]; omega), List.take_take, min_self]
 
 namespace Language
-
-variable {α : Type*}
-
 
 /-! ### The definite family -/
 
@@ -191,25 +213,18 @@ theorem isReverseDefinite_setOf_left (k : ℕ) (P : Set (List α)) :
 /-- A `k`-definite language is `k'`-definite for every `k' ≥ k`. -/
 theorem IsDefinite.mono {k k' : ℕ} {L : Language α} (h : L.IsDefinite k) (hk : k ≤ k') :
     L.IsDefinite k' :=
-  fun _ _ hab ↦
-    h (by rw [← Edge.takeAt_takeAt_of_le .right hk, hab, Edge.takeAt_takeAt_of_le .right hk])
+  fun _ _ hab ↦ h (Edge.takeAt_eq_of_le .right hk hab)
 
 /-- A reverse `k`-definite language is reverse `k'`-definite for every `k' ≥ k`. -/
 theorem IsReverseDefinite.mono {k k' : ℕ} {L : Language α} (h : L.IsReverseDefinite k)
     (hk : k ≤ k') : L.IsReverseDefinite k' :=
-  fun _ _ hab ↦
-    h (by rw [← Edge.takeAt_takeAt_of_le .left hk, hab, Edge.takeAt_takeAt_of_le .left hk])
+  fun _ _ hab ↦ h (Edge.takeAt_eq_of_le .left hk hab)
 
 /-- A generalized `k`-definite language is generalized `k'`-definite for every `k' ≥ k`. -/
 theorem IsGeneralizedDefinite.mono {k k' : ℕ} {L : Language α} (h : L.IsGeneralizedDefinite k)
     (hk : k ≤ k') : L.IsGeneralizedDefinite k' :=
-  fun a b hab ↦ by
-    obtain ⟨h₁, h₂⟩ := Prod.mk.inj hab
-    refine h (Prod.ext ?_ ?_)
-    · show Edge.left.takeAt k a = Edge.left.takeAt k b
-      rw [← Edge.takeAt_takeAt_of_le .left hk, h₁, Edge.takeAt_takeAt_of_le .left hk]
-    · show Edge.right.takeAt k a = Edge.right.takeAt k b
-      rw [← Edge.takeAt_takeAt_of_le .right hk, h₂, Edge.takeAt_takeAt_of_le .right hk]
+  fun _ _ hab ↦ h (Prod.ext (Edge.takeAt_eq_of_le .left hk (congrArg Prod.fst hab))
+    (Edge.takeAt_eq_of_le .right hk (congrArg Prod.snd hab)))
 
 /-! ### Affix languages -/
 
@@ -267,6 +282,29 @@ theorem IsDefinite.toIsGeneralizedDefinite {k : ℕ} {L : Language α}
 theorem IsReverseDefinite.toIsGeneralizedDefinite {k : ℕ} {L : Language α}
     (h : L.IsReverseDefinite k) : L.IsGeneralizedDefinite k :=
   fun _ _ hab ↦ h (congrArg Prod.fst hab)
+
+/-! ### Regularity -/
+
+/-- A definite language over a finite alphabet is regular. -/
+theorem IsDefinite.isRegular [Finite α] {k : ℕ} {L : Language α} (h : L.IsDefinite k) :
+    L.IsRegular :=
+  .of_factorsThrough h (fun _ _ x e ↦ Edge.takeAt_append_congr .right e x)
+    (Edge.finite_range_takeAt .right k)
+
+/-- A reverse definite language over a finite alphabet is regular. -/
+theorem IsReverseDefinite.isRegular [Finite α] {k : ℕ} {L : Language α}
+    (h : L.IsReverseDefinite k) : L.IsRegular :=
+  .of_factorsThrough h (fun _ _ x e ↦ Edge.takeAt_append_congr .left e x)
+    (Edge.finite_range_takeAt .left k)
+
+/-- A generalized definite language over a finite alphabet is regular. -/
+theorem IsGeneralizedDefinite.isRegular [Finite α] {k : ℕ} {L : Language α}
+    (h : L.IsGeneralizedDefinite k) : L.IsRegular :=
+  .of_factorsThrough h
+    (fun _ _ x e ↦ Prod.ext (Edge.takeAt_append_congr .left (congrArg Prod.fst e) x)
+      (Edge.takeAt_append_congr .right (congrArg Prod.snd e) x))
+    (((Edge.finite_range_takeAt .left k).prod (Edge.finite_range_takeAt .right k)).subset
+      (Set.range_subset_iff.2 fun w ↦ ⟨⟨w, rfl⟩, ⟨w, rfl⟩⟩))
 
 /-! ### Finite and cofinite languages -/
 
