@@ -33,7 +33,7 @@ proprial feature. The article vocabulary derives the article of every class
 (`Teop.agreementClasses_targetArticle`). Jarawara's possessed nouns are the unmarked
 feminine, and the *mano* ~ *mani* alternation is agreement with the possessor: gender
 impoverishment next to a plural or participant feature bleeds the masculine exponent
-(`Jarawara.decl_masc_only`, `Jarawara.mano_eq_manoParadigm`), and a monomoraic possessor prefix
+(`Jarawara.decl_masc_only`, `Jarawara.agreeingForm_eq_form`), and a monomoraic possessor prefix
 forms one word with the noun it possesses and is invisible beyond it, so in *o-mano baki* the
 outer noun agrees with the possessed noun's own feminine (`Jarawara.complex_match`,
 `Jarawara.complex_mismatch`).
@@ -258,7 +258,7 @@ end Teop
 
 namespace Jarawara
 
-open _root_.Jarawara (Possessor PossessedForm manoParadigm paradigmCells form)
+open _root_.Jarawara
 
 /-- The privative φ-features are [masc], [pl], and [participant] for first and second person. -/
 inductive Phi where
@@ -268,9 +268,11 @@ inductive Phi where
   deriving DecidableEq, Repr
 
 /-- The features a possessor contributes to agreement. -/
-def possessorPhi (p : Possessor) : List Phi :=
-  (if p.person = .third then [] else [.participant]) ++ (if p.number = .Plur then [.pl] else []) ++
-    (if p.gender = some .masc then [.masc] else [])
+def possessorPhi : Possessor → List Phi
+  | .sg1 | .sg2 => [.participant]
+  | .incl | .excl | .nsg2 => [.participant, .pl]
+  | .sg3 g => if g = .masc then [.masc] else []
+  | .nsg3 g => .pl :: if g = .masc then [.masc] else []
 
 /-- Gender impoverishment deletes [masc] next to [pl] and next to [participant]. -/
 def impoverishment : List (ImpoverishmentRule (List Phi) Phi) :=
@@ -298,37 +300,32 @@ unmarked form elsewhere. -/
 def possessedItems (marked unmarked : String) : List (VocabularyItem Phi String) :=
   [[.participant] ⟷ marked, [.masc] ⟷ marked, [] ⟷ unmarked]
 
-/-- The form of *mano* 'arm' agreeing with possessor `p`. -/
-def mano (p : Possessor) : Option String :=
-  subsetPrinciple (possessedItems "mano" "mani") (impoverish (possessorPhi p))
+/-- The form of a possessed noun agreeing with a possessor of features `φ`. -/
+def agreeingForm (n : PossessedNoun) (φ : List Phi) : Option String :=
+  subsetPrinciple (possessedItems n.mForm n.fForm) (impoverish φ)
 
-/-- Impoverishment then insertion derives the paradigm of *mano*; the third masculine plural
-*mani* is the cell where impoverishment does the work. -/
-theorem mano_eq_manoParadigm : ∀ p ∈ paradigmCells, mano p = some (form (manoParadigm p)).1 := by
+/-- Impoverishment then insertion derives the form of every possessed noun with every possessor;
+the third person masculine nonsingular, *mee mani*, is where impoverishment does the work. -/
+theorem agreeingForm_eq_form :
+    ∀ n ∈ possessedNouns, ∀ p, agreeingForm n (possessorPhi p) = some (n.form p) := by
   decide
 
 /-- A possessor makes its features visible outside the word of the noun it possesses unless it
-is a pronoun below the two-mora minimal word, which forms one word with that noun. -/
-def visibleOutside (p : Possessor) : List Phi :=
-  match p.pronoun with
-  | some (_, m) => if m < 2 then [] else possessorPhi p
-  | none => possessorPhi p
+is a prefix, a pronoun below the two-mora minimal word that forms one word with that noun. -/
+def visibleOutside (p : Possessor) : List Phi := if p.IsPrefix then [] else possessorPhi p
 
-/-- *bako* 'inside' in `[[p mano] bako]` agrees with the possessor when its features percolate
-and with the feminine possessed noun otherwise. -/
-def inside (p : Possessor) : Option String :=
-  subsetPrinciple (possessedItems "bako" "baki") (impoverish (visibleOutside p))
+/-- *bako* 'inside' in `[[p mano] bako]`, agreeing with the possessor when its features
+percolate and with the feminine possessed noun otherwise. -/
+def inside (p : Possessor) : Option String := agreeingForm bako (visibleOutside p)
 
-/-- Possessors of two or more moras percolate, so the inner and outer nouns match. -/
-theorem complex_match :
-    ∀ p ∈ paradigmCells, (∀ f ∈ p.pronoun, 2 ≤ f.2) →
-      inside p = some (form (manoParadigm p)).2 := by
+/-- A possessor that is a separate word percolates, so the inner and outer nouns match. -/
+theorem complex_match : ∀ p, ¬ p.IsPrefix → inside p = some (bako.form p) := by
   decide
 
-/-- The monomoraic *o-* and *ti-* do not, as in *o-mano baki* and *ti-mano baki*. -/
+/-- The prefixes *o-* and *ti-* do not, as in *o-mano baki* and *ti-mano baki*. -/
 theorem complex_mismatch :
-    mano ⟨.first, .Sing, none⟩ = some "mano" ∧ inside ⟨.first, .Sing, none⟩ = some "baki" ∧
-      mano ⟨.second, .Sing, none⟩ = some "mano" ∧ inside ⟨.second, .Sing, none⟩ = some "baki" := by
+    ∀ p, p.IsPrefix →
+      agreeingForm mano (possessorPhi p) = some "mano" ∧ inside p = some "baki" := by
   decide
 
 end Jarawara
@@ -341,10 +338,18 @@ open _root_.Yanyuwa
 
 /-- Quantifiers and demonstratives agreeing with *wini* 'name' take the prefix of an
 inalienable possessor's class. -/
-theorem name_agreement (g : _root_.Yanyuwa.Gender) :
-    (inheritedGender PossessionType.inalienable.possessorPosition g).map agreementPrefix =
-      some (agreementPrefix g) :=
+theorem name_agreement (s : Speaker) (g : _root_.Yanyuwa.Gender) :
+    (inheritedGender PossessionType.inalienable.possessorPosition g).map (agreementPrefix s) =
+      some (agreementPrefix s g) :=
   rfl
+
+/-- A prefix alone does not tell female from feminine, nor, in men's speech, male from
+masculine; with number, which only the female and male classes distinguish, every class is told
+apart. -/
+theorem classes_separated (s : Speaker) :
+    ¬ Function.Injective (agreementPrefix s) ∧
+      Function.Injective fun g ↦ (agreementPrefix s g, decide g.HasNumber) := by
+  cases s <;> decide
 
 /-- An alienable possessor is out of the probe's reach. -/
 theorem name_alienable (g : _root_.Yanyuwa.Gender) :
@@ -359,17 +364,18 @@ open _root_.CoastalMarind
 
 /-- The demonstrative agreeing with *igih* 'name' takes the possessor's gender. -/
 theorem name_demonstrative (g : _root_.CoastalMarind.Gender) :
-    (inheritedGender PossessionType.inalienable.possessorPosition g).map demonstrative =
-      some (demonstrative g) :=
+    (inheritedGender PossessionType.inalienable.possessorPosition g).map (demonstrative · false) =
+      some (demonstrative g false) :=
   rfl
 
 /-- *nanVh* 'face' is *nanih* with a gender I possessor and *nanuh* with a gender II one, the
 similative agreeing alongside. -/
 theorem face_inherits :
-    (inheritedGender PossessionType.inalienable.possessorPosition .gI).map face = some "nanih" ∧
-      (inheritedGender PossessionType.inalienable.possessorPosition .gII).map face =
+    (inheritedGender PossessionType.inalienable.possessorPosition .gI).map (face · false) =
+        some "nanih" ∧
+      (inheritedGender PossessionType.inalienable.possessorPosition .gII).map (face · false) =
         some "nanuh" ∧
-      similative .gI = some "hi" ∧ similative .gII = some "hu" := by
+      similative .gI false = "hi" ∧ similative .gII false = "hu" := by
   decide
 
 end CoastalMarind

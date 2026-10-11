@@ -78,23 +78,23 @@ open Agreement
 
 /-! ### Agreement features (§§1–2) -/
 
-/-- Where the value of a covarying feature originates: on the controller, inherent to it or
-relating primarily to it; on a governor outside the phrase; or on the phrase as a whole. -/
+/-- Where the value of a covarying feature originates, on the controller, on a governor outside
+the phrase, or on the phrase as a whole. -/
 inductive Origin where
   | controller
   | governor
   | phrase
   deriving DecidableEq, Repr, Fintype
 
-/-- The chapter's classification: gender is inherent to the noun and person to the pronoun,
-number relates primarily to the noun, case is imposed by government and definiteness on the
-phrase as a whole. -/
+/-- The origin of each feature in the chapter's classification. Gender is inherent to the noun and
+person to the pronoun, number relates primarily to the noun, case is imposed by government, and
+definiteness belongs to the phrase. -/
 def origin : Dimension → Origin
   | .gender | .number | .person => .controller
   | .case => .governor
   | .definiteness => .phrase
 
-/-- Covariance is agreement when it is asymmetric: the value originates on the controller. -/
+/-- Covariance is agreement when it is asymmetric, the value originating on the controller. -/
 abbrev IsAgreementFeature (d : Dimension) : Prop := origin d = .controller
 
 /-- The three indisputable agreement features, read off the classification. -/
@@ -102,7 +102,7 @@ theorem isAgreementFeature_iff (d : Dimension) :
     IsAgreementFeature d ↔ d = .gender ∨ d = .number ∨ d = .person := by
   cases d <;> decide
 
-/-- What a target agrees in: the dimensions it is inflected for that are agreement features. -/
+/-- The agreement features among the dimensions a target is inflected for. -/
 def agreementFeatures (D : Finset Dimension) : Finset Dimension := D.filter IsAgreementFeature
 
 namespace Russian
@@ -112,7 +112,7 @@ open _root_.Russian.Agreement
 /-- The attributive adjective is inflected for case, (5). -/
 theorem case_mem_features_longAdjective : .case ∈ Target.longAdjective.features := by decide
 
-/-- But case is imposed by government: covariance without asymmetry. -/
+/-- Case is imposed by government, covariance without asymmetry. -/
 theorem not_isAgreementFeature_case : ¬ IsAgreementFeature .case := by decide
 
 /-- The attributive adjective agrees in number and gender, (1)–(5). -/
@@ -128,10 +128,10 @@ namespace CoastalMarind
 open _root_.CoastalMarind
 
 /-- The infixed vowel of *ak-k* 'light' distinguishes all four genders, (6)–(9). -/
-theorem faithful_light : Function.Injective light := by decide
+theorem faithful_light : Function.Injective (light · false) := by decide
 
-/-- The demonstrative does not: genders I and III share *e-pe*. -/
-theorem not_faithful_demonstrative : ¬ Function.Injective demonstrative := by decide
+/-- The demonstrative does not, since genders I and III share *e-pe*. -/
+theorem not_faithful_demonstrative : ¬ Function.Injective (demonstrative · false) := by decide
 
 end CoastalMarind
 
@@ -141,7 +141,7 @@ namespace Russian
 
 open _root_.Russian.Gender _root_.Russian.Agreement
 
-/-- Adjectives distinguish gender only in the singular, (1)–(4): a convergent system. -/
+/-- Adjectives distinguish gender only in the singular, (1)–(4), a convergent system. -/
 theorem convergent :
     Gender.Convergent (Value.adjEnding · false) (Value.adjEnding · true) := by decide
 
@@ -151,8 +151,8 @@ theorem card_adjEnding_pl_le :
       Nat.card (Set.range (Value.adjEnding · false)) :=
   convergent.1.card_range_le
 
-/-- Gender agreement on the verb is confined to the past tense: the past tense is inflected
-for gender and the nonpast is not. -/
+/-- Gender agreement on the verb is confined to the past tense, which is inflected for gender
+where the nonpast is not. -/
 theorem gender_mem_features_pastVerb :
     .gender ∈ Target.pastVerb.features ∧ .gender ∉ Target.nonpastVerb.features := by decide
 
@@ -162,15 +162,15 @@ namespace Somali
 
 open _root_.Somali.Gender
 
-/-- The verbal prefix is not polar, (11)–(14): the plural prefix of either gender is the
-masculine singular's, another syncretism. -/
+/-- The verbal prefix is not polar, (11)–(14), the plural prefix of either gender being the
+masculine singular's. -/
 theorem not_polar_verbPrefix : ¬ Gender.Polar Value.verbPrefix := by decide
 
 /-- The plural prefix of either gender is the masculine singular's. -/
 theorem verbPrefix_plural (g : Value) : g.verbPrefix true = Value.masc.verbPrefix false := by
   cases g <;> rfl
 
-/-- Nor are all nouns in the polarity system: *nin* 'man' keeps *-kii* in the plural. -/
+/-- Not every noun is in the polarity system, since *nin* 'man' keeps *-kii* in the plural. -/
 theorem article_nin : nin.article true = nin.article false := rfl
 
 /-- In the typology of gender the article is a parallel system and the verb a convergent
@@ -215,8 +215,8 @@ namespace Russian
 
 open _root_.Russian.Agreement
 
-/-- Nor within a word class: Russian verbs agree in person and number except in the past
-tense, which agrees in gender and number. -/
+/-- Agreement varies within a word class too. Russian verbs agree in person and number, except in
+the past tense, which agrees in gender and number. -/
 theorem features_nonpastVerb_ne_pastVerb :
     Target.nonpastVerb.features ≠ Target.pastVerb.features := by decide
 
@@ -226,8 +226,8 @@ namespace Latin
 
 open _root_.Latin.Gender
 
-/-- Table 9.2: *facilis* distinguishes only part of what *acer* does, and *felix* nothing of
-what *facilis* does: each class's forms factor through the previous, never conversely. -/
+/-- In Table 9.2 *facilis* distinguishes only part of what *acer* does and *felix* nothing of what
+*facilis* does, so each class's forms factor through the previous, never conversely. -/
 theorem facilis_factorsThrough_acer :
     Function.FactorsThrough facilis.nomSg acer.nomSg ∧
       ¬ Function.FactorsThrough acer.nomSg facilis.nomSg := by decide
@@ -249,7 +249,8 @@ open _root_.Chichewa.Gender Agreement.ResolutionRule
 def sharedFormRules : List (ResolutionRule Chichewa.Gender.Noun SubjPrefix) :=
   [⟨.all, (·.gender.plSubjPrefix = .a), .a⟩, ⟨.all, (·.gender.plSubjPrefix = .zi), .zi⟩]
 
-/-- The regular rule: humans take the plural of gender 1/2 and the rest the plural of 7/8. -/
+/-- The regular rule, by which humans take the plural of gender 1/2 and the rest the plural of
+7/8. -/
 def semanticRules : List (ResolutionRule Chichewa.Gender.Noun SubjPrefix) :=
   [⟨.all, (·.human = true), .a⟩, otherwise .zi]
 
@@ -257,7 +258,7 @@ def semanticRules : List (ResolutionRule Chichewa.Gender.Noun SubjPrefix) :=
 def rules : List (ResolutionRule Chichewa.Gender.Noun SubjPrefix) :=
   sharedFormRules ++ semanticRules
 
-/-- Syncretism licenses agreement, (18) and (19): conjuncts sharing a form take it. -/
+/-- Syncretism licenses agreement, (18) and (19), conjuncts sharing a form taking it. -/
 theorem resolve_of_shared {cs : List Chichewa.Gender.Noun} (hne : cs ≠ []) {f : SubjPrefix}
     (h : ∀ c ∈ cs, c.gender.plSubjPrefix = f) : resolve rules cs = some f := by
   obtain ⟨c, hc⟩ := List.exists_mem_of_ne_nil cs hne
@@ -277,7 +278,7 @@ theorem resolve_of_ne {cs : List Chichewa.Gender.Noun} (ha : ∃ c ∈ cs, c.gen
   have h₂ : ¬ ∀ c ∈ cs, c.gender.plSubjPrefix = .zi := fun h ↦ hz' (h z hz)
   simp [rules, sharedFormRules, resolve, ResolutionRule.Applies, h₁, h₂]
 
-/-- The regular rule on its own: gender 1/2 for humans, 7/8 for the rest. -/
+/-- The regular rule on its own, gender 1/2 for humans and 7/8 for the rest. -/
 theorem resolve_semanticRules (cs : List Chichewa.Gender.Noun) :
     resolve semanticRules cs = some (if ∀ c ∈ cs, c.human = true then .a else .zi) := by
   unfold semanticRules
@@ -296,7 +297,7 @@ end Chichewa
 
 /-! ### The chapter's examples -/
 
-/-- Russian adjectives, (1)–(4): the ending is the fragment's by gender and number. -/
+/-- In the Russian adjectives of (1)–(4) the ending is the fragment's by gender and number. -/
 theorem russian_rows : ∀ row ∈ Examples.all, row.language = "russ1263" →
     ∀ g ∈ row.parse? "gender"
       [("masc", _root_.Russian.Gender.Value.masc), ("fem", .fem), ("neut", .neut)],
@@ -306,15 +307,15 @@ theorem russian_rows : ∀ row ∈ Examples.all, row.language = "russ1263" →
       e = g.adjEnding pl := by
   decide +kernel
 
-/-- Marind, (6)–(9): the adjective and the demonstrative are the fragment's by gender. -/
+/-- In the Marind rows (6)–(9) the adjective and the demonstrative are the fragment's by gender. -/
 theorem marind_rows : ∀ row ∈ Examples.all, row.language = "nucl1622" →
     ∀ g ∈ row.parse? "gender"
       [("I", CoastalMarind.Gender.gI), ("II", .gII), ("III", .gIII), ("IV", .gIV)],
-      (∀ a ∈ row.feature? "adjective", a = CoastalMarind.light g) ∧
-        ∀ d ∈ row.feature? "demonstrative", d = CoastalMarind.demonstrative g := by
+      (∀ a ∈ row.feature? "adjective", a = CoastalMarind.light g false) ∧
+        ∀ d ∈ row.feature? "demonstrative", d = CoastalMarind.demonstrative g false := by
   decide +kernel
 
-/-- Upper Sorbian, (17): each target agrees in the features the row records for it. -/
+/-- In the Upper Sorbian row (17) each target agrees in the features the row records for it. -/
 theorem upperSorbian_rows : ∀ row ∈ Examples.all, row.language = "uppe1395" →
     ∀ t : UpperSorbian.Target, ∀ D ∈ row.parse? t.key
       [("number,person", ({.number, .person} : Finset Dimension)),
@@ -322,8 +323,8 @@ theorem upperSorbian_rows : ∀ row ∈ Examples.all, row.language = "uppe1395" 
       UpperSorbian.features t = D := by
   decide +kernel
 
-/-- Somali, (11)–(14) and *nin*: the article is the noun's by number and the verbal prefix
-the gender's. -/
+/-- In the Somali rows (11)–(14) and *nin* the article is the noun's by number and the verbal
+prefix the gender's. -/
 theorem somali_rows : ∀ row ∈ Examples.all, row.language = "soma1255" →
     ∀ n ∈ row.parse? "noun" (_root_.Somali.Gender.allNouns.map fun n ↦ (n.form, n)),
     ∀ pl ∈ row.parse? "number" [("sg", false), ("pl", true)],
@@ -333,7 +334,8 @@ theorem somali_rows : ∀ row ∈ Examples.all, row.language = "soma1255" →
         v = n.gender.verbPrefix pl := by
   decide +kernel
 
-/-- Chichewa, (18) and (19): the verb's prefix is the rules' resolution of the conjuncts. -/
+/-- In the Chichewa rows (18) and (19) the verb's prefix is the rules' resolution of the
+conjuncts. -/
 theorem chichewa_rows : ∀ row ∈ Examples.all, row.language = "nyan1308" →
     ∀ a ∈ row.parse? "conjunct1" (_root_.Chichewa.Gender.allNouns.map fun n ↦ (n.form, n)),
     ∀ b ∈ row.parse? "conjunct2" (_root_.Chichewa.Gender.allNouns.map fun n ↦ (n.form, n)),
