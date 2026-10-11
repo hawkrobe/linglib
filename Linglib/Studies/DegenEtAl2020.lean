@@ -1,9 +1,7 @@
 module
 
 public import Linglib.Pragmatics.RSA.Basic
-public import Linglib.Core.Probability.UniformOn
 public import Linglib.Semantics.Reference.Distinguishing
-public import Mathlib.Algebra.Order.Field.Basic
 
 /-!
 # Degen, Hawkins, Graf, Kreiss and Goodman (2020): When Redundancy Is Useful: A Bayesian Approach to "Overinformative" Referring Expressions
@@ -110,6 +108,9 @@ private theorem L0_ne_zero (hm : ∀ v o', 0 ≤ m v o') (h : 0 < m u o) : L0 m 
   rw [L0_apply (hm u) (sum_pos_of_pos hm h)]
   exact (ENNReal.ofReal_pos.2 (div_pos h (sum_pos_of_pos hm h))).ne'
 
+private theorem L0_eq_zero (h : m u o = 0) : L0 m u {o} = 0 := by
+  rw [L0, Kernel.ofDensity_uniformOn_apply_singleton, h, ENNReal.ofReal_zero, ENNReal.zero_div]
+
 /-- The odds of one expression against another for an object are the ratio of the listener's
 probabilities of the object to the power `α`, discounted by the difference in cost. -/
 theorem S1_real_div (hα : 0 ≤ α) (hm : ∀ v o', 0 ≤ m v o') (hu : 0 < m u o) (hu' : 0 < m u' o) :
@@ -125,23 +126,19 @@ theorem S1_real_lt_iff (hα : 0 < α) (hm : ∀ v o', 0 ≤ m v o') (hu : 0 < m 
     (hu' : 0 < m u' o) :
     (S1 α C m o).real {u} < (S1 α C m o).real {u'} ↔
       Real.log (m u o / ∑ o', m u o') - C u < Real.log (m u' o / ∑ o', m u' o') - C u' := by
-  have hr := div_pos hu (sum_pos_of_pos hm hu)
-  have hr' := div_pos hu' (sum_pos_of_pos hm hu')
-  have hp : 0 < (S1 α C m o).real {u} := ENNReal.toReal_pos
-    (speaker_dirac_apply_singleton_ne_zero hα.le (L0_ne_zero hm hu)) (measure_ne_top _ _)
-  rw [← one_lt_div hp, S1_real_div hα.le hm hu hu', Real.rpow_def_of_pos (div_pos hr' hr),
-    ← Real.exp_add, Real.one_lt_exp_iff, Real.log_div hr'.ne' hr.ne']
-  constructor <;> intro h <;> nlinarith
+  rw [S1, speaker_dirac_real_singleton_lt_iff_log hα (L0_ne_zero hm hu) (L0_ne_zero hm hu'),
+    ← measureReal_def, ← measureReal_def, L0_real_singleton (hm u) (sum_pos_of_pos hm hu),
+    L0_real_singleton (hm u') (sum_pos_of_pos hm hu')]
 
-/-- With two expressions the probability of one is the logistic function of its advantage in
-utility over the other, scaled by the rationality. -/
-theorem S1_real_of_pair (hα : 0 ≤ α) (huu' : u ≠ u') (hall : ∀ v, v = u ∨ v = u')
-    (hm : ∀ v o', 0 ≤ m v o') (hu : 0 < m u o) (hu' : 0 < m u' o) :
-    (S1 α C m o).real {u'} = Real.sigmoid (α * (Real.log
-      ((m u' o / ∑ o', m u' o') / (m u o / ∑ o', m u o')) - (C u' - C u))) := by
-  rw [S1, speaker_dirac_real_singleton_of_pair hα huu' hall (L0_ne_zero hm hu)
-      (L0_ne_zero hm hu'), ← measureReal_def, ← measureReal_def,
-    L0_real_singleton (hm u) (sum_pos_of_pos hm hu),
+/-- When two expressions alone hold of an object to a positive degree, the probability of one is
+the logistic function of its advantage in utility over the other, scaled by the rationality. -/
+theorem S1_real_of_pair (hα : 0 < α) (huu' : u ≠ u') (hm : ∀ v o', 0 ≤ m v o') (hu : 0 < m u o)
+    (hu' : 0 < m u' o) (hsupp : ∀ v, 0 < m v o → v = u ∨ v = u') :
+    (S1 α C m o).real {u} = Real.sigmoid (α * ((Real.log (m u o / ∑ o', m u o') - C u) -
+      (Real.log (m u' o / ∑ o', m u' o') - C u'))) := by
+  rw [S1, speaker_dirac_real_singleton_of_pair hα huu' (L0_ne_zero hm hu) (L0_ne_zero hm hu')
+      fun v hv ↦ hsupp v ((hm v o).lt_of_ne fun h ↦ hv (L0_eq_zero h.symm)),
+    ← measureReal_def, ← measureReal_def, L0_real_singleton (hm u) (sum_pos_of_pos hm hu),
     L0_real_singleton (hm u') (sum_pos_of_pos hm hu')]
 
 /-- A description distinguishes an object under the literal listener, so that the object is the
@@ -149,11 +146,10 @@ listener's best guess, exactly when it does under the meaning. -/
 theorem distinguishes_L0_iff (hm : ∀ o', 0 ≤ m u o') (hpos : 0 < ∑ o', m u o') (D : Finset E)
     (r : E) :
     Reference.Distinguishes (fun u o ↦ L0 m u {o}) D r u ↔ Reference.Distinguishes m D r u :=
-  forall₂_congr fun c _ ↦ by
-    change L0 m u {c} < L0 m u {r} ↔ _
-    rw [L0_apply hm hpos, L0_apply hm hpos,
-      ENNReal.ofReal_lt_ofReal_iff_of_nonneg (div_nonneg (hm c) hpos.le),
-      div_lt_div_iff_of_pos_right hpos]
+  Reference.distinguishes_comp_iff (φ := fun x ↦ ENNReal.ofReal (x / ∑ o', m u o'))
+    (s := Set.Ici 0) (fun _ ha _ _ hab ↦ (ENNReal.ofReal_lt_ofReal_iff_of_nonneg
+      (div_nonneg ha hpos.le)).2 ((div_lt_div_iff_of_pos_right hpos).2 hab))
+    hm (L0_apply hm hpos)
 
 end Model
 

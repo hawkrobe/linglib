@@ -101,19 +101,24 @@ private theorem sum_object (f : Object → ℝ) :
 /-- The speaker's probability of the redundant expression for the target is a logistic function
 of the log of the informativeness the redundant adjective adds, the ratio of the listener's
 probabilities of the target under the two expressions, less the extra cost. -/
-theorem redundant_eq_sigmoid (hα : 0 ≤ α) (hs0 : 0 < xs) (hs1 : xs ≤ 1) (hr0 : 0 < xr)
+theorem redundant_eq_sigmoid (hα : 0 < α) (hs0 : 0 < xs) (hs1 : xs ≤ 1) (hr0 : 0 < xr)
     (hr1 : xr ≤ 1) :
     (S1 α C (meaning xs xr) .target).real {.redundant} = Real.sigmoid (α * (Real.log
       (xr * (3 - 2 * xs) / (xr + 2 * (1 - xs) * (1 - xr))) -
         (C .redundant - C .sufficient))) := by
   have hden : 0 < xr + 2 * (1 - xs) * (1 - xr) := by nlinarith
-  rw [S1_real_of_pair hα (u := .sufficient) (by decide) (fun v ↦ by cases v <;> simp)
-    (meaning_nonneg hs0.le hs1 hr0.le hr1) (by simp [meaning, noisy, hs0])
-    (by simp [meaning, noisy]; positivity), sum_object, sum_object]
-  simp only [meaning, noisy, reduceCtorEq, ↓reduceIte, or_false, or_true, or_self]
+  have hr : meaning xs xr .redundant .target = xs * xr := by simp [meaning, noisy]
+  have hs : meaning xs xr .sufficient .target = xs := by simp [meaning, noisy]
+  have hrow : ∑ o, meaning xs xr .redundant o = xr + 2 * (1 - xs) * (1 - xr) := by
+    rw [sum_object]; simp [meaning, noisy]; ring
+  have hrow' : ∑ o, meaning xs xr .sufficient o = 3 - 2 * xs := by
+    rw [sum_object]; simp [meaning, noisy]; ring
+  rw [S1_real_of_pair hα (u' := .sufficient) (by decide) (meaning_nonneg hs0.le hs1 hr0.le hr1)
+      (by rw [hr]; positivity) (by rwa [hs]) (fun v _ ↦ by cases v <;> simp),
+    hr, hs, hrow, hrow', sub_sub_sub_comm,
+    ← Real.log_div (by positivity) (div_pos hs0 (by linarith)).ne']
   congr 4
   field_simp
-  ring
 
 private theorem gain_pos (hs0 : 0 < xs) (hs1 : xs ≤ 1) (hr0 : 0 < xr) (hr1 : xr ≤ 1) :
     0 < xr * (3 - 2 * xs) / (xr + 2 * (1 - xs) * (1 - xr)) :=
@@ -121,7 +126,7 @@ private theorem gain_pos (hs0 : 0 < xs) (hs1 : xs ≤ 1) (hr0 : 0 < xr) (hr1 : x
 
 /-- Beside a Boolean sufficient adjective the redundant one adds no information, and the
 probability of the redundant expression does not depend on its noise. -/
-theorem redundant_of_boolean_sufficient (hα : 0 ≤ α) (hr0 : 0 < xr) (hr1 : xr ≤ 1) :
+theorem redundant_of_boolean_sufficient (hα : 0 < α) (hr0 : 0 < xr) (hr1 : xr ≤ 1) :
     (S1 α C (meaning 1 xr) .target).real {.redundant} =
       Real.sigmoid (-(α * (C .redundant - C .sufficient))) := by
   rw [redundant_eq_sigmoid hα one_pos le_rfl hr0 hr1]
@@ -135,7 +140,7 @@ private theorem redundant_lt_redundant_iff {xs' : ℝ} (hα : 0 < α) (hs0 : 0 <
         (S1 α C (meaning xs' xr') .target).real {.redundant} ↔
       0 < xr' * (3 - 2 * xs') * (xr + 2 * (1 - xs) * (1 - xr)) -
         xr * (3 - 2 * xs) * (xr' + 2 * (1 - xs') * (1 - xr')) := by
-  rw [redundant_eq_sigmoid hα.le hs0 hs1 hr0 hr1, redundant_eq_sigmoid hα.le hs0' hs1' hr0' hr1',
+  rw [redundant_eq_sigmoid hα hs0 hs1 hr0 hr1, redundant_eq_sigmoid hα hs0' hs1' hr0' hr1',
     Real.sigmoid_lt_iff, mul_lt_mul_iff_right₀ hα, sub_lt_sub_iff_right,
     Real.log_lt_log_iff (gain_pos hs0 hs1 hr0 hr1) (gain_pos hs0' hs1' hr0' hr1'),
     div_lt_div_iff₀ (by nlinarith) (by nlinarith), sub_pos]

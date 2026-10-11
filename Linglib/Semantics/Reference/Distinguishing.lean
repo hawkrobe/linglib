@@ -70,11 +70,13 @@ section LinearOrder
 
 variable [LinearOrder α] {compat : D → E → α} {C : Finset E} {r : E} {d : D}
 
-/-- A rescaling of compatibility that is strictly monotone at the description, such as the
-literal listener's normalization over the domain, preserves distinguishing. -/
-theorem distinguishes_comp_iff [Preorder β] {φ : D → α → β} (hφ : StrictMono (φ d)) :
-    Distinguishes (fun d x ↦ φ d (compat d x)) C r d ↔ Distinguishes compat C r d :=
-  forall₂_congr fun c _ ↦ hφ.lt_iff_lt (a := compat d c) (b := compat d r)
+/-- A rescaling of a description's compatibility that is strictly monotone on the values the
+description takes, such as the literal listener's normalization of a nonnegative meaning,
+preserves distinguishing. -/
+theorem distinguishes_comp_iff [Preorder β] {compat' : D → E → β} {φ : α → β} {s : Set α}
+    (hφ : StrictMonoOn φ s) (hs : ∀ x, compat d x ∈ s) (h : ∀ x, compat' d x = φ (compat d x)) :
+    Distinguishes compat' C r d ↔ Distinguishes compat C r d :=
+  forall₂_congr fun c _ ↦ by rw [h, h]; exact hφ.lt_iff_lt (hs c) (hs r)
 
 /-- A graded compatibility distinguishes exactly when some threshold of it does, and the
 referent's own compatibility is such a threshold. -/
