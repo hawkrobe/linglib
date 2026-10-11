@@ -204,11 +204,11 @@ theorem krapova_projection_rows :
   decide
 
 /-- In Krapova's contradiction tests (57c) and footnote 46, a continuation denying the
-complement is unacceptable exactly under a factive predicate, under *deto* and *če* alike. -/
+complement is starred exactly under a factive predicate, under *deto* and *če* alike. -/
 theorem krapova_contradiction_rows :
     ∀ row ∈ Krapova2010.Examples.all, row.feature? "diagnostic" = some "contradiction" →
       ∀ v ∈ Bulgarian.verbs, row.feature? "verb" = some v.form →
-        ((∃ a ∈ row.alternatives, a.2 = .unacceptable) ↔ v.toVerb.IsFactive) := by
+        ((∃ a ∈ row.alternatives, a.2 = .ungrammatical) ↔ v.toVerb.IsFactive) := by
   decide
 
 /-- English N complementation, *the fact that S*, is V D N CP without an Ā-dependency, the DP

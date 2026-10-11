@@ -60,7 +60,7 @@ def ex_57b : Datum :=
     reportedIn := none
     language := "bulg1262"
     primaryText := "Vinoven li săm deto gostite pristignaxa kăsno?"
-    glossedTokens := [("Vinoven", "guilty"), ("li", "Q"), ("săm", "am"), ("deto", "that"), ("gostite", "guests-the"), ("pristignaxa", "arrived-3pl"), ("kăsno", "late")]
+    glossedTokens := [("Vinoven", "guilty"), ("li", "Q"), ("săm", "am"), ("deto", "that"), ("gostite", "the guests"), ("pristignaxa", "arrived-3pl"), ("kăsno", "late")]
     context := ""
     judgment := .acceptable
     alternatives := [("Vinoven li săm če gostite pristignaxa kăsno?", .acceptable)]
@@ -76,7 +76,7 @@ def ex_57c : Datum :=
     glossedTokens := [("Săžaljavam,", "regret-1sg"), ("deto", "that"), ("ne", "not"), ("moža", "could-2sg"), ("da", "Mod"), ("ostaneš", "stay-2sg"), ("poveče", "more")]
     context := ""
     judgment := .acceptable
-    alternatives := [("Săžaljavam, če ne moža da ostaneš poveče.", .acceptable), ("Săžaljavam, deto ne moža da ostaneš poveče, no vsăšnost ti ostana poveče.", .unacceptable)]
+    alternatives := [("Săžaljavam, če ne moža da ostaneš poveče.", .acceptable), ("Săžaljavam, deto ne moža da ostaneš poveče, no vsăšnost ti ostana poveče.", .ungrammatical)]
     readings := []
     paperFeatures := [("verb", "săžaljavam"), ("complementizer", "deto"), ("diagnostic", "contradiction"), ("person", "1")] }
 
@@ -141,7 +141,7 @@ def fn46i : Datum :=
     glossedTokens := [("Văzmutix", "resent-1sg"), ("se", "refl"), ("če", "that"), ("ne", "not"), ("sa", "are-3pl"), ("mogli", "able-pl"), ("da", "Mod"), ("provedat", "organize-3pl"), ("sreštata", "meeting-the")]
     context := ""
     judgment := .acceptable
-    alternatives := [("Văzmutix se če ne sa mogli da provedat sreštata, no vsăšnost te provedoxa sreštata.", .unacceptable)]
+    alternatives := [("Văzmutix se če ne sa mogli da provedat sreštata, no vsăšnost te provedoxa sreštata.", .ungrammatical)]
     readings := []
     paperFeatures := [("verb", "văzmuštavam se"), ("complementizer", "če"), ("diagnostic", "contradiction"), ("person", "1")] }
 
