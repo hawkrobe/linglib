@@ -46,8 +46,7 @@ paper's findings off its printed statistics.
 
 namespace KursatDegen2021
 
-open Data.Experiments
-open DegenEtAl2020 (noisy noisy_nonneg S1 S1_real_of_pair)
+open Data.Experiments DegenEtAl2020
 
 /-! ### The critical display of the production experiment -/
 
@@ -99,13 +98,11 @@ private theorem sum_object (f : Object → ℝ) :
   ring
 
 /-- The speaker's probability of the redundant expression for the target is a logistic function
-of the log of the informativeness the redundant adjective adds, the ratio of the listener's
-probabilities of the target under the two expressions, less the extra cost. -/
+of the log of the gain of the redundant adjective, less the extra cost. -/
 theorem redundant_eq_sigmoid (hα : 0 < α) (hs0 : 0 < xs) (hs1 : xs ≤ 1) (hr0 : 0 < xr)
     (hr1 : xr ≤ 1) :
-    (S1 α C (meaning xs xr) .target).real {.redundant} = Real.sigmoid (α * (Real.log
-      (xr * (3 - 2 * xs) / (xr + 2 * (1 - xs) * (1 - xr))) -
-        (C .redundant - C .sufficient))) := by
+    (S1 α C (meaning xs xr) .target).real {.redundant} =
+      Real.sigmoid (α * (Real.log (gain 2 xs xr) - (C .redundant - C .sufficient))) := by
   have hden : 0 < xr + 2 * (1 - xs) * (1 - xr) := by nlinarith
   have hr : meaning xs xr .redundant .target = xs * xr := by simp [meaning, noisy]
   have hs : meaning xs xr .sufficient .target = xs := by simp [meaning, noisy]
@@ -116,34 +113,18 @@ theorem redundant_eq_sigmoid (hα : 0 < α) (hs0 : 0 < xs) (hs1 : xs ≤ 1) (hr0
   rw [S1_real_of_pair hα (u' := .sufficient) (by decide) (meaning_nonneg hs0.le hs1 hr0.le hr1)
       (by rw [hr]; positivity) (by rwa [hs]) (fun v _ ↦ by cases v <;> simp),
     hr, hs, hrow, hrow', sub_sub_sub_comm,
-    ← Real.log_div (by positivity) (div_pos hs0 (by linarith)).ne']
+    ← Real.log_div (by positivity) (div_pos hs0 (by linarith)).ne', gain, Nat.cast_ofNat]
   congr 4
   field_simp
-
-private theorem gain_pos (hs0 : 0 < xs) (hs1 : xs ≤ 1) (hr0 : 0 < xr) (hr1 : xr ≤ 1) :
-    0 < xr * (3 - 2 * xs) / (xr + 2 * (1 - xs) * (1 - xr)) :=
-  div_pos (by nlinarith) (by nlinarith)
+  ring
 
 /-- Beside a Boolean sufficient adjective the redundant one adds no information, and the
 probability of the redundant expression does not depend on its noise. -/
 theorem redundant_of_boolean_sufficient (hα : 0 < α) (hr0 : 0 < xr) (hr1 : xr ≤ 1) :
     (S1 α C (meaning 1 xr) .target).real {.redundant} =
       Real.sigmoid (-(α * (C .redundant - C .sufficient))) := by
-  rw [redundant_eq_sigmoid hα one_pos le_rfl hr0 hr1]
-  norm_num [hr0.ne']
-  ring
-
-private theorem redundant_lt_redundant_iff {xs' : ℝ} (hα : 0 < α) (hs0 : 0 < xs) (hs1 : xs ≤ 1)
-    (hr0 : 0 < xr) (hr1 : xr ≤ 1) (hs0' : 0 < xs') (hs1' : xs' ≤ 1) (hr0' : 0 < xr')
-    (hr1' : xr' ≤ 1) :
-    (S1 α C (meaning xs xr) .target).real {.redundant} <
-        (S1 α C (meaning xs' xr') .target).real {.redundant} ↔
-      0 < xr' * (3 - 2 * xs') * (xr + 2 * (1 - xs) * (1 - xr)) -
-        xr * (3 - 2 * xs) * (xr' + 2 * (1 - xs') * (1 - xr')) := by
-  rw [redundant_eq_sigmoid hα hs0 hs1 hr0 hr1, redundant_eq_sigmoid hα hs0' hs1' hr0' hr1',
-    Real.sigmoid_lt_iff, mul_lt_mul_iff_right₀ hα, sub_lt_sub_iff_right,
-    Real.log_lt_log_iff (gain_pos hs0 hs1 hr0 hr1) (gain_pos hs0' hs1' hr0' hr1'),
-    div_lt_div_iff₀ (by nlinarith) (by nlinarith), sub_pos]
+  rw [redundant_eq_sigmoid hα one_pos le_rfl hr0 hr1, gain_one_left hr0.ne', Real.log_one,
+    zero_sub, mul_neg]
 
 /-- Beside one sufficient adjective short of Boolean, the redundant expression is the likelier
 the less noisy the redundant adjective. -/
@@ -151,11 +132,10 @@ theorem redundant_lt_iff (hα : 0 < α) (hs0 : 0 < xs) (hs1 : xs < 1) (hr0 : 0 <
     (hr1 : xr ≤ 1) (hr0' : 0 < xr') (hr1' : xr' ≤ 1) :
     (S1 α C (meaning xs xr) .target).real {.redundant} <
       (S1 α C (meaning xs xr') .target).real {.redundant} ↔ xr < xr' := by
-  rw [redundant_lt_redundant_iff hα hs0 hs1.le hr0 hr1 hs0 hs1.le hr0' hr1',
-    show xr' * (3 - 2 * xs) * (xr + 2 * (1 - xs) * (1 - xr)) -
-        xr * (3 - 2 * xs) * (xr' + 2 * (1 - xs) * (1 - xr')) =
-      (xr' - xr) * ((3 - 2 * xs) * (2 * (1 - xs))) by ring,
-    mul_pos_iff_of_pos_right (mul_pos (by linarith) (by linarith)), sub_pos]
+  rw [redundant_eq_sigmoid hα hs0 hs1.le hr0 hr1, redundant_eq_sigmoid hα hs0 hs1.le hr0' hr1',
+    Real.sigmoid_lt_iff, mul_lt_mul_iff_right₀ hα, sub_lt_sub_iff_right,
+    Real.log_lt_log_iff (gain_pos hs0 hs1.le hr0 hr1) (gain_pos hs0 hs1.le hr0' hr1'),
+    gain_lt_gain_iff two_pos hs0 hs1 hr0 hr1 hr0' hr1']
 
 /-- When two adjectives trade the sufficient and the redundant role, the redundant expression is
 the likelier on the trial whose redundant adjective is the less noisy of the two. -/
@@ -163,13 +143,10 @@ theorem redundant_swap_lt_iff {x₁ x₂ : ℝ} (hα : 0 < α) (h₁0 : 0 < x₁
     (h₂0 : 0 < x₂) (h₂1 : x₂ ≤ 1) :
     (S1 α C (meaning x₂ x₁) .target).real {.redundant} <
       (S1 α C (meaning x₁ x₂) .target).real {.redundant} ↔ x₁ < x₂ := by
-  have hk : 0 < 2 * (x₁ * x₂) + 6 * ((1 - x₁) * (1 - x₂)) := by
-    nlinarith [mul_pos h₁0 h₂0, mul_nonneg (sub_nonneg.2 h₁1) (sub_nonneg.2 h₂1)]
-  rw [redundant_lt_redundant_iff hα h₂0 h₂1 h₁0 h₁1 h₁0 h₁1 h₂0 h₂1,
-    show x₂ * (3 - 2 * x₁) * (x₁ + 2 * (1 - x₂) * (1 - x₁)) -
-        x₁ * (3 - 2 * x₂) * (x₂ + 2 * (1 - x₁) * (1 - x₂)) =
-      (x₂ - x₁) * (2 * (x₁ * x₂) + 6 * ((1 - x₁) * (1 - x₂))) by ring,
-    mul_pos_iff_of_pos_right hk, sub_pos]
+  rw [redundant_eq_sigmoid hα h₂0 h₂1 h₁0 h₁1, redundant_eq_sigmoid hα h₁0 h₁1 h₂0 h₂1,
+    Real.sigmoid_lt_iff, mul_lt_mul_iff_right₀ hα, sub_lt_sub_iff_right,
+    Real.log_lt_log_iff (gain_pos h₂0 h₂1 h₁0 h₁1) (gain_pos h₁0 h₁1 h₂0 h₂1),
+    gain_swap_lt_iff two_pos h₁0 h₁1 h₂0 h₂1]
 
 end Model
 

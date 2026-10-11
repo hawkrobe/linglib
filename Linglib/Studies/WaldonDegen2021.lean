@@ -1,43 +1,57 @@
 module
 
-public import Linglib.Pragmatics.RSA.Basic
 public import Linglib.Pragmatics.RSA.Incremental
+public import Linglib.Studies.DegenEtAl2020
 public import Linglib.Data.Examples.WaldonDegen2021
 
 /-!
-# Waldon & Degen (2021): Modeling Cross-Linguistic Production of Referring Expressions
+# Waldon and Degen (2021): Modeling Cross-Linguistic Production of Referring Expressions
 
-This file formalizes Waldon and Degen's continuous-incremental Rational Speech Act model (CI-RSA) of
-redundant modification. The model joins the word-by-word production of Cohn-Gordon, Goodman and
-Potts with the noisy adjective semantics of Degen and colleagues: a word is true of a referent with
-its semantic value and false with the complement, an utterance's value is the product over its
-words, and the literal listener interprets a prefix by the average value of its grammatical
-completions among the utterances true of some referent in the scene (`prefixMeaning`). The
-incremental speaker is the softmax of the listener's mass on the referent against the word's cost,
-so a trajectory's probability is the product of its steps (`stepSpeaker`, `trajectory`). Where the
-standard, continuous and incremental models predict symmetric or language-blind rates, the paper
-reports that CI-RSA predicts the English color/size asymmetry, less redundant color in a postnominal
-Spanish, and its reversal there.
+Waldon and Degen's continuous-incremental rational speech act model of redundant modification,
+which joins two earlier models. From Cohn-Gordon, Goodman and Potts it takes word-by-word
+production: an incomplete string means the average of the complete utterances that continue it,
+the speaker chooses each word against a listener who hears the string so far, and the probability
+of an utterance is the product of its word choices. From Degen and colleagues it takes the
+continuous semantics, on which an adjective of semantic value `v` holds to degree `v` of the pins
+it is true of and to degree `1 − v` of the others. The incremental model with Boolean meanings is
+the case of both values one.
 
-The paper's Figure 3 locates the difference at the node where the redundant adjective is
-chosen after the informative one: in English, after *small* in the size-sufficient scene, the
-speaker chooses between the redundant *blue* and the noun; in postnominal Spanish, after
-*pin blue* in the color-sufficient scene, between the redundant *small* and stopping. The
-literal listener's odds at the two nodes are `v_color (2 − v_size) / (v_color v_size + 1 −
-v_size)` and its mirror image, so for every rationality and adjective cost the two steps are
-equally likely under the incremental model's Boolean semantics and the English redundant color
-step is the likelier exactly when color is the more reliable adjective
-(`english_color_step_gt_spanish_size_step`).
+English puts both adjectives before the noun, and the paper's postnominal Spanish puts both after
+it, colour first. The Spanish alternatives are then the mirror image of the English ones, with
+size and colour exchanged, so the Spanish speaker in a scene is the English speaker in the
+counterpart of the scene with the two semantic values exchanged.
+
+## Main statements
+
+* `spanish_cs_production_eq_english_ss`, `spanish_ss_production_eq_english_cs`: for the small blue
+  pin, *pin blue small* in one scene of Spanish is as likely as *small blue pin* in the other
+  scene of English with the semantic values exchanged. With equal values, and so with Boolean
+  meanings, redundant size in Spanish is as likely as redundant colour in English, and redundant
+  colour in Spanish as redundant size in English.
+* `english_step_eq_sigmoid`: after *small*, the English speaker adds the redundant *blue* with a
+  probability that is a logistic function of the log of the gain of the redundant adjective, less
+  its cost.
+* `spanish_size_step_lt_english_color_step_iff`: the Spanish speaker adds the redundant size after
+  *pin blue* less readily than the English speaker adds the redundant colour after *small*
+  exactly when size is noisier than colour.
+* `meaning_perm`: the meaning of an utterance does not depend on the order of its words, so a
+  speaker who chooses among whole utterances cannot tell the two languages apart.
 
 ## Implementation notes
 
-Referents are pairs of a size and a color, scenes are finsets of them, and the two languages
-are the utterance lists of Figure 1 closed by a stop token. Semantic values, the rationality and
-the per-adjective cost are free real parameters with the bounds the paper's values
-satisfy, in place of the simulated `v_size = 0.8`, `v_color = 0.95`, `α = 7` and cost `0.1`;
-the whole-trajectory and cross-scene comparisons of Figures 2 and 4 are reported from the
-paper's simulations and not proved. The paper's Spanish examples are the rows of
-`Data.Examples.WaldonDegen2021`.
+* The word-level speaker `step` is the speaker of Degen and colleagues at the string meaning, so
+  the redundancy step is their comparison of the redundant with the sufficient expression.
+* A scene lists three pins in the order of the paper's first figure, with the target last.
+* The costs are any that give a word and its counterpart the same cost. The paper charges each
+  adjective 0.1 and the noun and the stop token nothing.
+
+## TODO
+
+* The paper prints the utility of the incremental speaker without the logarithm. The transition
+  probabilities of its third figure are those of the speaker with the logarithm, which is the one
+  formalized.
+* The utterance probabilities at the simulated values, the split and conjunctive Spanish
+  idiolects, and the comparison over parameter values are not encoded.
 
 ## References
 
@@ -49,295 +63,373 @@ paper's simulations and not proved. The paper's Spanish examples are the rows of
 
 @[expose] public section
 
-open MeasureTheory ProbabilityTheory RSA
-open scoped ENNReal
-
 namespace WaldonDegen2021
 
-/-! ### Words, referents and semantics -/
+open MeasureTheory ProbabilityTheory RSA DegenEtAl2020
 
-/-- The words of the reference game, with an explicit stop token closing an utterance. -/
-inductive Word
-  | blue | red | big | small | pin | stop
+/-! ### Words and their meanings -/
+
+/-- The words of the reference game, with a stop token that closes an utterance. -/
+inductive Word where
+  | blue
+  | red
+  | big
+  | small
+  | pin
+  | stop
   deriving DecidableEq, Fintype
 
 instance : MeasurableSpace Word := ⊤
-instance : DiscreteMeasurableSpace Word := ⟨λ _ => trivial⟩
+instance : DiscreteMeasurableSpace Word := ⟨fun _ ↦ trivial⟩
 
-/-- A referent is big or small and blue or red. -/
-abbrev Referent := Bool × Bool
+/-- A word is true of a pin of a given size and colour. The noun and the stop token are true of
+every pin. -/
+def Word.Holds : Word → Size × Color → Prop
+  | .big, r => r.1 = .big
+  | .small, r => r.1 = .small
+  | .blue, r => r.2 = .blue
+  | .red, r => r.2 = .red
+  | .pin, _ => True
+  | .stop, _ => True
 
-/-- The target of every prediction, the small blue pin. -/
-abbrev smallBlue : Referent := (false, true)
+instance : ∀ (w : Word) (r : Size × Color), Decidable (w.Holds r)
+  | .big, r => inferInstanceAs (Decidable (r.1 = .big))
+  | .small, r => inferInstanceAs (Decidable (r.1 = .small))
+  | .blue, r => inferInstanceAs (Decidable (r.2 = .blue))
+  | .red, r => inferInstanceAs (Decidable (r.2 = .red))
+  | .pin, _ => inferInstanceAs (Decidable True)
+  | .stop, _ => inferInstanceAs (Decidable True)
 
-/-- Boolean truth of a word of a referent. -/
-def applies : Word → Referent → Bool
-  | .blue, r => r.2
-  | .red, r => !r.2
-  | .big, r => r.1
-  | .small, r => !r.1
-  | .pin, _ => true
-  | .stop, _ => true
+/-- The semantic value of a word is `vs` for a size adjective, `vc` for a colour adjective, and
+one for the noun and the stop token. -/
+def value (vs vc : ℝ) : Word → ℝ
+  | .big | .small => vs
+  | .blue | .red => vc
+  | .pin | .stop => 1
 
-/-- In the continuous lexicon of [degen-etal-2020] a color word is worth `vc` where true and
-`1 − vc` where false, a size word likewise with `vs`, and the noun and the stop token are worth
-one. -/
-def lexicon (vc vs : ℝ) : Word → Referent → ℝ
-  | .blue, r => if r.2 then vc else 1 - vc
-  | .red, r => if r.2 then 1 - vc else vc
-  | .big, r => if r.1 then vs else 1 - vs
-  | .small, r => if r.1 then 1 - vs else vs
-  | .pin, _ => 1
-  | .stop, _ => 1
+/-- In the continuous lexicon a word holds of a pin it is true of to the degree of its semantic
+value, and of any other pin to the complementary degree. -/
+def lexicon (vs vc : ℝ) (w : Word) (r : Size × Color) : ℝ := noisy (value vs vc w) (w.Holds r)
 
-variable {vc vs : ℝ}
+/-! ### Languages and scenes -/
 
-theorem lexicon_nonneg (hc : vc ≤ 1) (hc0 : 0 ≤ vc) (hs : vs ≤ 1) (hs0 : 0 ≤ vs) (w : Word)
-    (r : Referent) : 0 ≤ lexicon vc vs w r := by
-  cases w <;> simp only [lexicon] <;> first | (split_ifs <;> linarith) | norm_num
-
-/-! ### Languages and scenes (Figure 1) -/
-
-/-- English utterances put size then color before the noun, closed by the stop. -/
+/-- English puts size, then colour, before the noun. -/
 def english : List (List Word) :=
   [[.blue, .pin, .stop], [.red, .pin, .stop], [.big, .pin, .stop], [.small, .pin, .stop],
    [.small, .blue, .pin, .stop], [.small, .red, .pin, .stop],
    [.big, .blue, .pin, .stop], [.big, .red, .pin, .stop]]
 
-/-- Postnominal Spanish utterances put the noun first, then color then size, closed by the
-stop. -/
+/-- Postnominal Spanish puts colour, then size, after the noun. -/
 def spanish : List (List Word) :=
   [[.pin, .blue, .stop], [.pin, .red, .stop], [.pin, .big, .stop], [.pin, .small, .stop],
    [.pin, .blue, .small, .stop], [.pin, .red, .small, .stop],
    [.pin, .blue, .big, .stop], [.pin, .red, .big, .stop]]
 
+/-- A scene shows three pins, of which the third is the target. -/
+abbrev Scene := Fin 3 → Size × Color
+
+/-- The target of every prediction is the small blue pin, the third of each scene. -/
+abbrev target : Fin 3 := 2
+
 /-- In the size-sufficient scene the target is the only small pin. -/
-def ss : Finset Referent := {(true, true), (true, false), (false, true)}
+def ss : Scene
+  | 0 => (.big, .blue)
+  | 1 => (.big, .red)
+  | 2 => (.small, .blue)
 
-/-- In the color-sufficient scene the target is the only blue pin. -/
-def cs : Finset Referent := {(false, false), (true, false), (false, true)}
+/-- In the colour-sufficient scene the target is the only blue pin. -/
+def cs : Scene
+  | 0 => (.small, .red)
+  | 1 => (.big, .red)
+  | 2 => (.small, .blue)
 
-/-- The utterances of a language true of some referent of the scene. -/
-def inScene (L : List (List Word)) (scene : Finset Referent) : List (List Word) :=
-  L.filter λ u => decide (∃ r ∈ scene, ∀ w ∈ u, applies w r)
+/-- The alternatives of a language in a scene are its utterances true of one of the pins. -/
+def alternatives (L : List (List Word)) (s : Scene) : List (List Word) :=
+  L.filter fun u ↦ ∃ i, ∀ w ∈ u, w.Holds (s i)
 
-/-- The grammatical completions of a prefix. -/
-def continuations (L : List (List Word)) (scene : Finset Referent) (pfx : List Word) :
-    List (List Word) :=
-  (inScene L scene).filter (pfx.isPrefixOf ·)
+/-- The continuous meaning of an utterance at a pin of the scene is the product of the degrees to
+which its words hold of the pin. -/
+def meaning (vs vc : ℝ) (s : Scene) (u : List Word) (i : Fin 3) : ℝ :=
+  prodMeaning (lexicon vs vc) u (s i)
 
-/-! ### The literal listener and the incremental speaker -/
+section Meaning
 
-/-- The continuous meaning of a prefix is the average utterance value over its
-completions. -/
-noncomputable def prefixMeaning (vc vs : ℝ) (L : List (List Word)) (scene : Finset Referent)
-    (pfx : List Word) (r : Referent) : ℝ :=
-  ((continuations L scene pfx).map (prodMeaning (lexicon vc vs) · r)).sum /
-    (continuations L scene pfx).length
+variable {vs vc : ℝ}
 
-theorem prefixMeaning_nonneg (hc : vc ≤ 1) (hc0 : 0 ≤ vc) (hs : vs ≤ 1) (hs0 : 0 ≤ vs)
-    (L : List (List Word)) (scene : Finset Referent) (pfx : List Word) (r : Referent) :
-    0 ≤ prefixMeaning vc vs L scene pfx r :=
-  div_nonneg (List.sum_nonneg λ x hx => by
-      obtain ⟨u, -, rfl⟩ := List.mem_map.1 hx
-      exact prodMeaning_nonneg (λ w r => lexicon_nonneg hc hc0 hs hs0 w r) u r)
-    (Nat.cast_nonneg _)
+theorem meaning_nonneg (hs0 : 0 ≤ vs) (hs1 : vs ≤ 1) (hc0 : 0 ≤ vc) (hc1 : vc ≤ 1) (s : Scene)
+    (u : List Word) (i : Fin 3) : 0 ≤ meaning vs vc s u i :=
+  prodMeaning_nonneg (fun w r ↦ by
+    cases w <;> exact noisy_nonneg (by simp [value, *]) (by simp [value, *]) _) u (s i)
 
-/-- A prefix with no completion has meaning zero. -/
-theorem prefixMeaning_eq_zero {L : List (List Word)} {scene : Finset Referent}
-    {pfx : List Word} (h : continuations L scene pfx = []) (r : Referent) :
-    prefixMeaning vc vs L scene pfx r = 0 := by
-  simp [prefixMeaning, h]
+/-- The meaning of an utterance does not depend on the order of its words. -/
+theorem meaning_perm (s : Scene) {u u' : List Word} (h : u.Perm u') :
+    meaning vs vc s u = meaning vs vc s u' :=
+  funext fun i ↦ prodMeaning_perm h (s i)
 
-/-- The listener weighs a referent of the scene by the prefix meaning. -/
-noncomputable def listenerWeight (vc vs : ℝ) (L : List (List Word)) (scene : Finset Referent)
-    (pfx : List Word) (r : Referent) : ℝ≥0∞ :=
-  if r ∈ scene then ENNReal.ofReal (prefixMeaning vc vs L scene pfx r) else 0
+/-- With both semantic values one the continuous meaning is truth, so the incremental model with
+Boolean meanings is the continuous one at these values. -/
+theorem meaning_one_one (s : Scene) (u : List Word) (i : Fin 3) :
+    meaning 1 1 s u i = if ∀ w ∈ u, w.Holds (s i) then 1 else 0 := by
+  induction u with
+  | nil => simp [meaning]
+  | cons w u ih =>
+    rw [meaning, prodMeaning_cons, ← meaning, ih, lexicon,
+      show value 1 1 w = 1 by cases w <;> rfl, noisy]
+    by_cases hw : w.Holds (s i) <;> simp [hw]
 
-/-- Given the next word, the literal listener at a context is a distribution over the scene's
-referents proportional to the prefix meaning. -/
-noncomputable def listener (vc vs : ℝ) (L : List (List Word)) (scene : Finset Referent)
-    (ctx : List Word) : Kernel Word Referent :=
-  Kernel.ofWeights λ w r => listenerWeight vc vs L scene (ctx ++ [w]) r
+end Meaning
 
-instance (L : List (List Word)) (scene : Finset Referent) (ctx : List Word) :
-    IsFiniteKernel (listener vc vs L scene ctx) :=
-  inferInstanceAs (IsFiniteKernel (Kernel.ofWeights _))
+/-! ### The incremental speaker -/
 
-/-- The incremental speaker at a context is the RSA speaker of rationality `α`, against the word
-costs, over the literal listener at that context. -/
-noncomputable def stepSpeaker (α : ℝ) (cost : Word → ℝ) (vc vs : ℝ) (L : List (List Word))
-    (scene : Finset Referent) (ctx : List Word) : Kernel Referent Word :=
-  speaker α cost (listener vc vs L scene ctx) Measure.dirac
+/-- At a context the incremental speaker is the speaker of Degen and colleagues against a
+listener who interprets the context extended by the next word as a string. -/
+noncomputable def step (α : ℝ) (cost : Word → ℝ) (vs vc : ℝ) (L : List (List Word)) (s : Scene)
+    (ctx : List Word) : Kernel (Fin 3) Word :=
+  S1 α cost fun w i ↦ stringMeaning (alternatives L s) (meaning vs vc s) (ctx ++ [w]) i
 
-/-- The probability of an utterance is the product of its steps, the chain rule. -/
-noncomputable def trajectory (α : ℝ) (cost : Word → ℝ) (vc vs : ℝ) (L : List (List Word))
-    (scene : Finset Referent) (r : Referent) (u : List Word) : ℝ :=
-  ((List.range u.length).map λ k =>
-    (stepSpeaker α cost vc vs L scene (u.take k) r).real {u.getD k .stop}).prod
+/-- The probability of an utterance for the target is the product of its word choices. -/
+noncomputable def production (α : ℝ) (cost : Word → ℝ) (vs vc : ℝ) (L : List (List Word))
+    (s : Scene) (u : List Word) : ℝ :=
+  chain (step α cost vs vc L s) target [] u
 
-/-! ### The listener at the redundancy nodes -/
+/-! ### Spanish as the mirror image of English -/
 
-private theorem sum_referent (f : Referent → ℝ) :
-    ∑ r, f r = f (false, false) + f (false, true) + f (true, false) + f (true, true) := by
-  simp only [Fintype.sum_prod_type, Fintype.sum_bool]
+/-- The counterpart of a word exchanges size with colour, and the noun, which closes the
+adjectives of an English utterance, with the stop token, which closes those of a Spanish one. -/
+def mirror : Word → Word
+  | .small => .blue
+  | .blue => .small
+  | .big => .red
+  | .red => .big
+  | .pin => .stop
+  | .stop => .pin
+
+theorem mirror_mirror (w : Word) : mirror (mirror w) = w := by cases w <;> rfl
+
+/-- The counterpart of a pin exchanges its size with its colour, small with blue and big with
+red. -/
+def swap : Size × Color → Size × Color
+  | (.small, .blue) => (.small, .blue)
+  | (.big, .blue) => (.small, .red)
+  | (.small, .red) => (.big, .blue)
+  | (.big, .red) => (.big, .red)
+
+/-- The Spanish counterpart of an English utterance puts the noun first and the counterparts of
+the adjectives after it. -/
+def mirrorUtterance (u : List Word) : List Word :=
+  .pin :: u.dropLast.dropLast.map mirror ++ [.stop]
+
+/-- Each scene is the counterpart of the other. -/
+theorem cs_eq_swap_ss (i : Fin 3) : cs i = swap (ss i) := by revert i; decide
+
+theorem ss_eq_swap_cs (i : Fin 3) : ss i = swap (cs i) := by revert i; decide
+
+/-- The Spanish alternatives in the colour-sufficient scene are the counterparts of the English
+alternatives in the size-sufficient scene. -/
+theorem alternatives_spanish_cs :
+    (alternatives spanish cs).Perm ((alternatives english ss).map mirrorUtterance) := by decide
+
+/-- The Spanish alternatives in the size-sufficient scene are the counterparts of the English
+alternatives in the colour-sufficient scene. -/
+theorem alternatives_spanish_ss :
+    (alternatives spanish ss).Perm ((alternatives english cs).map mirrorUtterance) := by decide
+
+section Mirror
+
+variable {vs vc α : ℝ} {cost : Word → ℝ} {s s' : Scene}
+
+theorem lexicon_mirror (w : Word) (r : Size × Color) :
+    lexicon vs vc (mirror w) (swap r) = lexicon vc vs w r := by
+  obtain ⟨_ | _, _ | _⟩ := r <;> cases w <;> simp [lexicon, value, Word.Holds, mirror, swap]
+
+/-- An English utterance means at a pin, with the semantic values exchanged, what its Spanish
+counterpart means at the counterpart of the pin. -/
+theorem meaning_mirror (hs : ∀ i, s' i = swap (s i)) {u : List Word} (hu : u ∈ english)
+    (i : Fin 3) : meaning vs vc s' (mirrorUtterance u) i = meaning vc vs s u i := by
+  have hpin (a b : ℝ) (r : Size × Color) : lexicon a b .pin r = 1 := by
+    simp [lexicon, value, Word.Holds, noisy]
+  have hstop (a b : ℝ) (r : Size × Color) : lexicon a b .stop r = 1 := by
+    simp [lexicon, value, Word.Holds, noisy]
+  simp only [english, List.mem_cons, List.not_mem_nil, or_false] at hu
+  rcases hu with rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl <;>
+    simp [mirrorUtterance, meaning, prodMeaning, hs, lexicon_mirror, hpin, hstop]
+
+private theorem step_mirror (hcost : ∀ w, cost (mirror w) = cost w)
+    (hs : ∀ i, s' i = swap (s i))
+    (hperm : (alternatives spanish s').Perm ((alternatives english s).map mirrorUtterance))
+    {ctx ctx' : List Word}
+    (hpfx : ∀ w, ∀ u ∈ alternatives english s,
+      (ctx' ++ [mirror w]) <+: mirrorUtterance u ↔ (ctx ++ [w]) <+: u)
+    (w : Word) (i : Fin 3) :
+    step α cost vs vc spanish s' ctx' i {mirror w} = step α cost vc vs english s ctx i {w} := by
+  have := S1_apply_singleton_of_equiv (Function.Involutive.toPerm mirror mirror_mirror) α cost
+    (m := fun w i ↦ stringMeaning (alternatives english s) (meaning vc vs s) (ctx ++ [w]) i)
+    (m' := fun w i ↦ stringMeaning (alternatives spanish s') (meaning vs vc s') (ctx' ++ [w]) i)
+    (fun v ↦ funext fun i ↦ stringMeaning_eq_of_perm_map mirrorUtterance hperm (hpfx v)
+      fun u hu ↦ meaning_mirror hs (List.mem_filter.1 hu).1 i) i w
+  rw [show cost ∘ ⇑(Function.Involutive.toPerm mirror mirror_mirror) = cost from
+    funext hcost] at this
+  exact this
+
+private theorem stringMeaning_nonneg' (hs0 : 0 < vs) (hs1 : vs ≤ 1) (hc0 : 0 < vc) (hc1 : vc ≤ 1)
+    (L : List (List Word)) (s : Scene) (ctx : List Word) (v : Word) (i : Fin 3) :
+    0 ≤ stringMeaning (alternatives L s) (meaning vs vc s) (ctx ++ [v]) i :=
+  stringMeaning_nonneg fun u _ ↦ meaning_nonneg hs0.le hs1 hc0.le hc1 s u i
+
+/-- A word that alone continues the context is produced with certainty. -/
+private theorem step_real_eq_one (hα : 0 < α) (hs0 : 0 < vs) (hs1 : vs ≤ 1) (hc0 : 0 < vc)
+    (hc1 : vc ≤ 1) {L : List (List Word)} {ctx u : List Word} {w : Word}
+    (h : ∀ v, v ≠ w → continuations (alternatives L s) (ctx ++ [v]) = [])
+    (hu : u ∈ continuations (alternatives L s) (ctx ++ [w])) (hpos : 0 < meaning vs vc s u target) :
+    (step α cost vs vc L s ctx target).real {w} = 1 :=
+  S1_real_eq_one hα (stringMeaning_nonneg' hs0 hs1 hc0 hc1 L s ctx)
+    (stringMeaning_pos (fun u _ ↦ meaning_nonneg hs0.le hs1 hc0.le hc1 s u target) hu hpos)
+    fun v hv ↦ stringMeaning_of_continuations_eq_nil (h v hv) _
+
+private theorem meaning_small_blue (ht : s target = (.small, .blue)) :
+    meaning vs vc s [.small, .blue, .pin, .stop] target = vs * vc := by
+  simp [meaning, prodMeaning, lexicon, value, Word.Holds, noisy, ht]
+
+private theorem meaning_pin_blue_small (ht : s target = (.small, .blue)) :
+    meaning vs vc s [.pin, .blue, .small, .stop] target = vc * vs := by
+  simp [meaning, prodMeaning, lexicon, value, Word.Holds, noisy, ht]
+
+/-- When a Spanish scene is the counterpart of an English one, with the small blue pin the target
+of both, *pin blue small* is as likely in the first as *small blue pin* in the second with the
+semantic values exchanged. The two utterances share their two choices and are otherwise
+forced. -/
+private theorem production_mirror (hα : 0 < α) (hcost : ∀ w, cost (mirror w) = cost w)
+    (hs0 : 0 < vs) (hs1 : vs ≤ 1) (hc0 : 0 < vc) (hc1 : vc ≤ 1) (hs : ∀ i, s' i = swap (s i))
+    (ht : s target = (.small, .blue)) (ht' : s' target = (.small, .blue))
+    (hperm : (alternatives spanish s').Perm ((alternatives english s).map mirrorUtterance))
+    (hchoice : ∀ w, ∀ u ∈ alternatives english s,
+      ([Word.pin] ++ [mirror w]) <+: mirrorUtterance u ↔ ([] ++ [w]) <+: u)
+    (hredundancy : ∀ w, ∀ u ∈ alternatives english s,
+      ([Word.pin, Word.blue] ++ [mirror w]) <+: mirrorUtterance u ↔ ([Word.small] ++ [w]) <+: u)
+    (he3 : ∀ v, v ≠ Word.pin →
+      continuations (alternatives english s) ([Word.small, Word.blue] ++ [v]) = [])
+    (he3' : [Word.small, Word.blue, Word.pin, Word.stop] ∈
+      continuations (alternatives english s) ([Word.small, Word.blue] ++ [Word.pin]))
+    (he4 : ∀ v, v ≠ Word.stop →
+      continuations (alternatives english s) ([Word.small, Word.blue, Word.pin] ++ [v]) = [])
+    (he4' : [Word.small, Word.blue, Word.pin, Word.stop] ∈
+      continuations (alternatives english s) ([Word.small, Word.blue, Word.pin] ++ [Word.stop]))
+    (hs1' : ∀ v, v ≠ Word.pin → continuations (alternatives spanish s') ([] ++ [v]) = [])
+    (hs1'' : [Word.pin, Word.blue, Word.small, Word.stop] ∈
+      continuations (alternatives spanish s') ([] ++ [Word.pin]))
+    (hs4 : ∀ v, v ≠ Word.stop →
+      continuations (alternatives spanish s') ([Word.pin, Word.blue, Word.small] ++ [v]) = [])
+    (hs4' : [Word.pin, Word.blue, Word.small, Word.stop] ∈
+      continuations (alternatives spanish s') ([Word.pin, Word.blue, Word.small] ++ [Word.stop])) :
+    production α cost vs vc spanish s' [.pin, .blue, .small, .stop] =
+      production α cost vc vs english s [.small, .blue, .pin, .stop] := by
+  have h1 : step α cost vs vc spanish s' [.pin] target {.blue} =
+      step α cost vc vs english s [] target {.small} :=
+    step_mirror hcost hs hperm hchoice .small target
+  have h2 : step α cost vs vc spanish s' [.pin, .blue] target {.small} =
+      step α cost vc vs english s [.small] target {.blue} :=
+    step_mirror hcost hs hperm hredundancy .blue target
+  have e3 : (step α cost vc vs english s [.small, .blue] target).real {.pin} = 1 :=
+    step_real_eq_one hα hc0 hc1 hs0 hs1 he3 he3' (by rw [meaning_small_blue ht]; positivity)
+  have e4 : (step α cost vc vs english s [.small, .blue, .pin] target).real {.stop} = 1 :=
+    step_real_eq_one hα hc0 hc1 hs0 hs1 he4 he4' (by rw [meaning_small_blue ht]; positivity)
+  have s1 : (step α cost vs vc spanish s' [] target).real {.pin} = 1 :=
+    step_real_eq_one hα hs0 hs1 hc0 hc1 hs1' hs1''
+      (by rw [meaning_pin_blue_small ht']; positivity)
+  have s4 : (step α cost vs vc spanish s' [.pin, .blue, .small] target).real {.stop} = 1 :=
+    step_real_eq_one hα hs0 hs1 hc0 hc1 hs4 hs4'
+      (by rw [meaning_pin_blue_small ht']; positivity)
+  simp only [production, chain_cons, chain_nil, List.nil_append, List.cons_append, mul_one]
+  rw [s1, s4, e3, e4, measureReal_def, measureReal_def, h1, h2, ← measureReal_def,
+    ← measureReal_def]
   ring
 
-section Nodes
+/-- For the small blue pin, *pin blue small* in the colour-sufficient scene of Spanish is as
+likely as *small blue pin* in the size-sufficient scene of English with the semantic values of
+size and colour exchanged. With equal values, and so with Boolean meanings, redundant size in
+Spanish is as likely as redundant colour in English. -/
+theorem spanish_cs_production_eq_english_ss (hα : 0 < α)
+    (hcost : ∀ w, cost (mirror w) = cost w) (hs0 : 0 < vs) (hs1 : vs ≤ 1) (hc0 : 0 < vc)
+    (hc1 : vc ≤ 1) :
+    production α cost vs vc spanish cs [.pin, .blue, .small, .stop] =
+      production α cost vc vs english ss [.small, .blue, .pin, .stop] :=
+  production_mirror hα hcost hs0 hs1 hc0 hc1 cs_eq_swap_ss rfl rfl alternatives_spanish_cs
+    (by decide) (by decide) (by decide) (by decide) (by decide) (by decide) (by decide)
+    (by decide) (by decide) (by decide)
 
-variable (hc : vc < 1) (hc0 : 0 < vc) (hs : vs < 1) (hs0 : 0 < vs)
-include hc hc0 hs hs0
+/-- For the small blue pin, *pin blue small* in the size-sufficient scene of Spanish is as likely
+as *small blue pin* in the colour-sufficient scene of English with the semantic values exchanged.
+With equal values redundant colour in Spanish is as likely as redundant size in English. -/
+theorem spanish_ss_production_eq_english_cs (hα : 0 < α)
+    (hcost : ∀ w, cost (mirror w) = cost w) (hs0 : 0 < vs) (hs1 : vs ≤ 1) (hc0 : 0 < vc)
+    (hc1 : vc ≤ 1) :
+    production α cost vs vc spanish ss [.pin, .blue, .small, .stop] =
+      production α cost vc vs english cs [.small, .blue, .pin, .stop] :=
+  production_mirror hα hcost hs0 hs1 hc0 hc1 ss_eq_swap_cs rfl rfl alternatives_spanish_ss
+    (by decide) (by decide) (by decide) (by decide) (by decide) (by decide) (by decide)
+    (by decide) (by decide) (by decide)
 
-/-- The listener's real mass on a referent, as a ratio of prefix meanings over the scene. -/
-private theorem listener_real (L : List (List Word)) (scene : Finset Referent) (ctx : List Word)
-    (w : Word) (r : Referent) :
-    (listener vc vs L scene ctx w).real {r} =
-      (if r ∈ scene then prefixMeaning vc vs L scene (ctx ++ [w]) r else 0) /
-        ∑ r', if r' ∈ scene then prefixMeaning vc vs L scene (ctx ++ [w]) r' else 0 := by
-  have hnn := prefixMeaning_nonneg hc.le hc0.le hs.le hs0.le L scene (ctx ++ [w])
-  simp only [listener]
-  rw [Kernel.ofWeights_real_singleton _ _
-    (λ _ => by simp only [listenerWeight]; split_ifs <;> simp)]
-  congr 1
-  · simp only [listenerWeight]; split_ifs <;> simp [ENNReal.toReal_ofReal (hnn _)]
-  · exact Finset.sum_congr rfl λ r' _ => by
-      simp only [listenerWeight]; split_ifs <;> simp [ENNReal.toReal_ofReal (hnn _)]
+/-! ### The redundancy step -/
 
-/-- After *small* in the size-sufficient scene, the listener's mass on the target under the
-redundant *blue*. -/
-theorem listener_ss_small_blue :
-    (listener vc vs english ss [.small] .blue).real {smallBlue} =
-      vs * vc / (vs * vc + (1 - vs)) := by
-  rw [listener_real hc hc0 hs hs0, sum_referent]
-  have h : continuations english ss [.small, .blue] = [[.small, .blue, .pin, .stop]] := by
-    decide
-  simp only [List.cons_append, List.nil_append, prefixMeaning, h]
-  simp [lexicon, ss, smallBlue]
-  congr 1
-  ring
+/-- After *small*, the English speaker in the size-sufficient scene adds the redundant *blue*
+with a probability that is a logistic function of the log of the gain of the redundant adjective,
+less its cost over the noun's. -/
+theorem english_step_eq_sigmoid (hα : 0 < α) (hs0 : 0 < vs) (hs1 : vs ≤ 1) (hc0 : 0 < vc)
+    (hc1 : vc ≤ 1) :
+    (step α cost vs vc english ss [.small] target).real {.blue} =
+      Real.sigmoid (α * (Real.log (gain 1 vs vc) - (cost .blue - cost .pin))) := by
+  have hb (i : Fin 3) : stringMeaning (alternatives english ss) (meaning vs vc ss)
+      ([.small] ++ [.blue]) i = meaning vs vc ss [.small, .blue, .pin, .stop] i :=
+    stringMeaning_of_continuations_eq_singleton (by decide) i
+  have hp (i : Fin 3) : stringMeaning (alternatives english ss) (meaning vs vc ss)
+      ([.small] ++ [.pin]) i = meaning vs vc ss [.small, .pin, .stop] i :=
+    stringMeaning_of_continuations_eq_singleton (by decide) i
+  have hdead : ∀ v, v ≠ .blue → v ≠ .pin →
+      continuations (alternatives english ss) ([.small] ++ [v]) = [] := by decide
+  have hpt : meaning vs vc ss [.small, .pin, .stop] target = vs := by
+    simp [meaning, prodMeaning, lexicon, value, Word.Holds, noisy, ss]
+  have hbs : ∑ i, meaning vs vc ss [.small, .blue, .pin, .stop] i = 1 - vs + vs * vc := by
+    simp [Fin.sum_univ_three, meaning, prodMeaning, lexicon, value, Word.Holds, noisy, ss]
+    ring
+  have hps : ∑ i, meaning vs vc ss [.small, .pin, .stop] i = 2 - vs := by
+    simp [Fin.sum_univ_three, meaning, prodMeaning, lexicon, value, Word.Holds, noisy, ss]
+    ring
+  have h1 : 0 < 1 - vs + vs * vc := by nlinarith
+  rw [step, S1_real_of_pair hα (u' := .pin) (by decide)
+      (stringMeaning_nonneg' hs0 hs1 hc0 hc1 english ss [.small])
+      (by rw [hb, meaning_small_blue (s := ss) rfl]; positivity) (by rwa [hp, hpt])
+      (fun v hv ↦ by
+        by_contra h
+        rw [not_or] at h
+        exact hv.ne' (stringMeaning_of_continuations_eq_nil (hdead v h.1 h.2) _))]
+  simp only [hb, hp, hbs, hps, meaning_small_blue (s := ss) rfl, hpt]
+  rw [sub_sub_sub_comm, ← Real.log_div (div_pos (by positivity) h1).ne'
+    (div_pos hs0 (by linarith)).ne', div_div_eq_gain_one hs0 hs1 hc0]
 
-/-- After *small* in the size-sufficient scene, the listener's mass on the target under the
-noun. -/
-theorem listener_ss_small_pin :
-    (listener vc vs english ss [.small] .pin).real {smallBlue} = vs / (2 - vs) := by
-  rw [listener_real hc hc0 hs hs0, sum_referent]
-  have h : continuations english ss [.small, .pin] = [[.small, .pin, .stop]] := by decide
-  simp only [List.cons_append, List.nil_append, prefixMeaning, h]
-  simp [lexicon, ss, smallBlue]
-  congr 1
-  ring
+/-- With Boolean meanings the redundant adjective adds no information, and the speaker adds it
+only as far as its cost allows. -/
+theorem boolean_english_step (hα : 0 < α) :
+    (step α cost 1 1 english ss [.small] target).real {.blue} =
+      Real.sigmoid (-(α * (cost .blue - cost .pin))) := by
+  rw [english_step_eq_sigmoid hα one_pos le_rfl one_pos le_rfl, gain_one_left one_ne_zero,
+    Real.log_one, zero_sub, mul_neg]
 
-/-- After *pin blue* in the color-sufficient scene, the Spanish listener's mass on the target
-under the redundant *small*. -/
-theorem listener_cs_pin_blue_small :
-    (listener vc vs spanish cs [.pin, .blue] .small).real {smallBlue} =
-      vc * vs / (vc * vs + (1 - vc)) := by
-  rw [listener_real hc hc0 hs hs0, sum_referent]
-  have h : continuations spanish cs [.pin, .blue, .small] = [[.pin, .blue, .small, .stop]] := by
-    decide
-  simp only [List.cons_append, List.nil_append, prefixMeaning, h]
-  simp [lexicon, cs, smallBlue]
-  congr 1
-  ring
+/-- The Spanish speaker adds the redundant size after *pin blue* less readily than the English
+speaker adds the redundant colour after *small* exactly when size is noisier than colour. With
+equal values, and so with Boolean meanings, the two steps are equally likely. -/
+theorem spanish_size_step_lt_english_color_step_iff (hα : 0 < α)
+    (hcost : ∀ w, cost (mirror w) = cost w) (hs0 : 0 < vs) (hs1 : vs ≤ 1) (hc0 : 0 < vc)
+    (hc1 : vc ≤ 1) :
+    (step α cost vs vc spanish cs [.pin, .blue] target).real {.small} <
+      (step α cost vs vc english ss [.small] target).real {.blue} ↔ vs < vc := by
+  have h : step α cost vs vc spanish cs [.pin, .blue] target {.small} =
+      step α cost vc vs english ss [.small] target {.blue} :=
+    step_mirror hcost cs_eq_swap_ss alternatives_spanish_cs (by decide) .blue target
+  rw [measureReal_def, h, ← measureReal_def, english_step_eq_sigmoid hα hc0 hc1 hs0 hs1,
+    english_step_eq_sigmoid hα hs0 hs1 hc0 hc1, Real.sigmoid_lt_iff, mul_lt_mul_iff_right₀ hα,
+    sub_lt_sub_iff_right, Real.log_lt_log_iff (gain_pos hc0 hc1 hs0 hs1)
+      (gain_pos hs0 hs1 hc0 hc1), gain_swap_lt_iff one_pos hs0 hs1 hc0 hc1]
 
-/-- After *pin blue* in the color-sufficient scene, the Spanish listener's mass on the target
-under stopping. -/
-theorem listener_cs_pin_blue_stop :
-    (listener vc vs spanish cs [.pin, .blue] .stop).real {smallBlue} = vc / (2 - vc) := by
-  rw [listener_real hc hc0 hs hs0, sum_referent]
-  have h : continuations spanish cs [.pin, .blue, .stop] = [[.pin, .blue, .stop]] := by decide
-  simp only [List.cons_append, List.nil_append, prefixMeaning, h]
-  simp [lexicon, cs, smallBlue]
-  congr 1
-  ring
-
-end Nodes
-
-/-! ### The incremental speaker at the redundancy nodes -/
-
-section Speaker
-
-variable {α : ℝ} {cost : Word → ℝ} {L : List (List Word)} {scene : Finset Referent}
-  {ctx : List Word}
-
-/-- A next word with no completion receives no listener mass. -/
-theorem listener_apply_eq_zero {w : Word} (h : continuations L scene (ctx ++ [w]) = [])
-    (r : Referent) : listener vc vs L scene ctx w {r} = 0 :=
-  Kernel.ofWeights_apply_singleton_eq_zero (by simp [listenerWeight, prefixMeaning_eq_zero h])
-
-/-- At a node with two applicable words the speaker's share of one is its weight against the
-other's, the weight being the listener's mass raised to the rationality, discounted by the cost. -/
-theorem stepSpeaker_real_pair (hα : 0 < α) {u u' : Word} (huu' : u ≠ u')
-    (hsupp : ∀ w, w ≠ u → w ≠ u' → continuations L scene (ctx ++ [w]) = []) (r : Referent) :
-    (stepSpeaker α cost vc vs L scene ctx r).real {u} =
-      (listener vc vs L scene ctx u).real {r} ^ α * Real.exp (-(α * cost u)) /
-        ((listener vc vs L scene ctx u).real {r} ^ α * Real.exp (-(α * cost u)) +
-          (listener vc vs L scene ctx u').real {r} ^ α * Real.exp (-(α * cost u'))) := by
-  rw [stepSpeaker, speaker_dirac_eq_ofWeights, Kernel.ofWeights_real_singleton_of_pair r huu'
-      (λ w => ENNReal.mul_ne_top (ENNReal.rpow_ne_top_of_nonneg hα.le (measure_ne_top _ _))
-        ENNReal.ofReal_ne_top)
-      (λ w hw => by
-        by_contra hne
-        push Not at hne
-        exact hw (by rw [listener_apply_eq_zero (hsupp w hne.1 hne.2), ENNReal.zero_rpow_of_pos hα,
-          zero_mul]))]
-  simp only [ENNReal.toReal_mul, ← ENNReal.toReal_rpow, measureReal_def,
-    ENNReal.toReal_ofReal (Real.exp_pos _).le]
-
-/-- At the paper's Figure 3 nodes, with a common cost for the two adjectives and none for the
-noun and the stop, the English redundant color step after *small* in the size-sufficient scene
-is likelier than the Spanish redundant size step after *pin blue* in the color-sufficient scene
-exactly when color is the more reliable adjective, at every rationality. -/
-theorem english_color_step_gt_spanish_size_step (hα : 0 < α) (hadj : cost .small = cost .blue)
-    (hpin : cost .pin = 0) (hstop : cost .stop = 0) (hc : vc < 1) (hc0 : 0 < vc) (hs : vs < 1)
-    (hs0 : 0 < vs)
-    (h : vs < vc) :
-    (stepSpeaker α cost vc vs spanish cs [.pin, .blue] smallBlue).real {.small} <
-      (stepSpeaker α cost vc vs english ss [.small] smallBlue).real {.blue} := by
-  rw [stepSpeaker_real_pair hα (u := .small) (u' := .stop) (by decide)
-      (λ w h1 h2 => by cases w <;> first | decide | exact absurd rfl h1 | exact absurd rfl h2),
-    stepSpeaker_real_pair hα (u := .blue) (u' := .pin) (by decide)
-      (λ w h1 h2 => by cases w <;> first | decide | exact absurd rfl h1 | exact absurd rfl h2),
-    listener_cs_pin_blue_small hc hc0 hs hs0, listener_cs_pin_blue_stop hc hc0 hs hs0,
-    listener_ss_small_blue hc hc0 hs hs0, listener_ss_small_pin hc hc0 hs hs0, hadj, hpin, hstop,
-    mul_zero, neg_zero, Real.exp_zero, mul_one]
-  have hcpos : 0 < Real.exp (-(α * cost .blue)) := Real.exp_pos _
-  have hD : 0 < vs * vc + (1 - vs) := by nlinarith
-  have hD' : 0 < vc * vs + (1 - vc) := by nlinarith
-  have hA : 0 < vs * vc / (vs * vc + (1 - vs)) := div_pos (by positivity) hD
-  have hA' : 0 < vc * vs / (vc * vs + (1 - vc)) := div_pos (by positivity) hD'
-  have hB : 0 < vs / (2 - vs) := div_pos hs0 (by linarith)
-  have hB' : 0 < vc / (2 - vc) := div_pos hc0 (by linarith)
-  have hkey : vc * vs / (vc * vs + (1 - vc)) * (vs / (2 - vs)) <
-      vs * vc / (vs * vc + (1 - vs)) * (vc / (2 - vc)) := by
-    rw [div_mul_div_comm, div_mul_div_comm,
-      div_lt_div_iff₀ (mul_pos hD' (by linarith)) (mul_pos hD (by linarith))]
-    have e : vs * vc * vc * ((vc * vs + (1 - vc)) * (2 - vs)) -
-        vc * vs * vs * ((vs * vc + (1 - vs)) * (2 - vc)) =
-        vc * vs * ((vc - vs) * (2 * (1 - vc) * (1 - vs) + vc * vs)) := by ring
-    nlinarith [mul_pos (mul_pos hc0 hs0) (mul_pos (sub_pos.2 h)
-      (by nlinarith : 0 < 2 * (1 - vc) * (1 - vs) + vc * vs))]
-  have hpow := Real.rpow_lt_rpow (by positivity) hkey hα
-  rw [Real.mul_rpow hA'.le hB.le, Real.mul_rpow hA.le hB'.le] at hpow
-  rw [div_lt_div_iff₀ (by positivity) (by positivity)]
-  nlinarith [mul_lt_mul_of_pos_left hpow hcpos, Real.rpow_pos_of_pos hA α,
-    Real.rpow_pos_of_pos hA' α, Real.rpow_pos_of_pos hB α, Real.rpow_pos_of_pos hB' α]
-
-/-- With equally reliable adjectives, the Boolean case of the incremental model, the two steps
-are equally likely, the symmetry the paper's Figure 3 reports for I-RSA. -/
-theorem english_color_step_eq_spanish_size_step (hα : 0 < α) (hadj : cost .small = cost .blue)
-    (hpin : cost .pin = 0) (hstop : cost .stop = 0)
-    (hc : vc < 1) (hc0 : 0 < vc) (hs : vs < 1) (hs0 : 0 < vs) (h : vs = vc) :
-    (stepSpeaker α cost vc vs spanish cs [.pin, .blue] smallBlue).real {.small} =
-      (stepSpeaker α cost vc vs english ss [.small] smallBlue).real {.blue} := by
-  rw [stepSpeaker_real_pair hα (u := .small) (u' := .stop) (by decide)
-      (λ w h1 h2 => by cases w <;> first | decide | exact absurd rfl h1 | exact absurd rfl h2),
-    stepSpeaker_real_pair hα (u := .blue) (u' := .pin) (by decide)
-      (λ w h1 h2 => by cases w <;> first | decide | exact absurd rfl h1 | exact absurd rfl h2),
-    listener_cs_pin_blue_small hc hc0 hs hs0, listener_cs_pin_blue_stop hc hc0 hs hs0,
-    listener_ss_small_blue hc hc0 hs hs0, listener_ss_small_pin hc hc0 hs hs0, hadj, hpin, hstop,
-    h, mul_comm vc vc]
-
-end Speaker
+end Mirror
 
 end WaldonDegen2021
