@@ -10,13 +10,13 @@ public import Linglib.Data.Examples.Belth2026
 /-!
 # Belth (2026): A Learning-Based Account of Phonological Tiers
 
-This file formalizes D2L, the learner of [belth-2026], and the paper's own runs of it. D2L
+This file formalizes D2L, Belth's learner, and the paper's own runs of it. D2L
 receives pairs of underlying and surface forms, an alternating class, and a feature, and
 constructs the search-and-copy rule `Rel(A, F) / C __ ∘ proj(·, T)` (`Phonology.SearchCopy`) from
 adjacent dependencies alone: starting from the whole alphabet as the tier, it builds the
 left- and right-context rules whose contexts are the segments tier-adjacent to the targets,
 counts the applications and correct applications of the more accurate one, accepts it under
-Yang's Tolerance Principle ([yang-2016], `Yang2016.tolerates`) with the Elsewhere default the
+Yang's Tolerance Principle (`Yang2016.tolerates`) with the Elsewhere default the
 untouched targets show, and otherwise deletes from the tier the smallest natural class
 containing the contexts that produced errors (`D2L.iterate`, `D2L.learn`). On the paper's toy
 vocabulary (20) the learner runs exactly as its trace (21), (30), (32) and (33) says: three
@@ -39,7 +39,7 @@ alternating segments must stay on the tier ((19), step 8); on this reading of (2
 second iteration deletes exactly {n, k, g}. A trigger unspecified for the feature counts as
 an incorrect application, as the paper counts it. Ties in accuracy go to the left-context
 rule. Belth's Turkish rule (49a) transmits backness and rounding as one feature set; the
-fragment factors it into the two harmonies of [goksel-kerslake-2005], applied in turn. The
+fragment factors it into the two harmonies of Göksel and Kerslake, applied in turn. The
 predictions of section 4 need Finley's and McMullin and Hansson's full stimulus lists, which
 the paper does not print, so the learned rules (40) and (44) are not run here.
 
@@ -473,6 +473,12 @@ namespace Finnish
 
 open _root_.Finnish Phonology
 
+/-- `ofChar c` is the segment that the letter `c` of the paper's IPA transcription writes, which
+is the Fragment's spelling but for the vowels `ɑ`, `æ` and `ø`. -/
+def ofChar : Char → Option Segment
+  | 'ɑ' => some a | 'æ' => some ä | 'ø' => some ö
+  | c => _root_.Finnish.ofChar c
+
 /-- The segments of a transcription, the morpheme boundary dropped. -/
 def segments (cs : List Char) : List Segment := cs.filterMap ofChar
 
@@ -494,14 +500,16 @@ namespace Turkish
 
 open _root_.Turkish.Phonology Phonology
 
-/-- `ofChar c` is the segment that the letter `c` of the paper's Turkish transcription writes,
-which is the Fragment's spelling with the glide written *j*. -/
-def ofChar (c : Char) : Option Segment := Turkish.Phonology.ofChar (if c = 'j' then 'y' else c)
+/-- `ofChar c` is the segment that the letter `c` of the paper's IPA transcription writes, which
+is the Fragment's spelling but for the vowels `ɑ`, `ɯ`, `y` and `ø` and the glide `j`. -/
+def ofChar : Char → Option Segment
+  | 'ɑ' => some a | 'ɯ' => some ı | 'y' => some ü | 'ø' => some ö | 'j' => some y
+  | c => Turkish.Phonology.ofChar c
 
 /-- A letter of an affix, its vowel the archiphoneme unspecified for the harmonic features. -/
 def ofAffixChar : Char → Option Segment
-  | 'a' | 'e' => some A
-  | 'ı' | 'i' | 'u' | 'ü' => some I
+  | 'ɑ' | 'e' => some A
+  | 'ɯ' | 'i' | 'u' | 'y' => some I
   | c => ofChar c
 
 /-- The segments of a form, the morpheme boundaries dropped. -/

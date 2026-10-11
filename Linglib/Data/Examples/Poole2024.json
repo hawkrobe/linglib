@@ -19,7 +19,8 @@
       ["accessible", "yes"],
       ["licensor", "yes"]
     ],
-    "comment": "The shifted direct object is accusative; the accusative is obligatory."
+    "comment": "The shifted direct object is accusative; the accusative is obligatory.",
+    "verified": "page-image"
   },
   {
     "id": "poole2024_ex15_bare",
@@ -32,7 +33,7 @@
     ],
     "translation": "I gave the book to Masha.",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -40,7 +41,8 @@
       ["accessible", "yes"],
       ["licensor", "yes"]
     ],
-    "comment": "The shifted direct object cannot stay unmarked."
+    "comment": "The shifted direct object cannot stay unmarked.",
+    "verified": "page-image"
   },
   {
     "id": "poole2024_ex18",
@@ -61,7 +63,8 @@
       ["accessible", "no"],
       ["licensor", "yes"]
     ],
-    "comment": "The direct object inside VP stays unmarked."
+    "comment": "The direct object inside VP stays unmarked.",
+    "verified": "page-image"
   },
   {
     "id": "poole2024_ex18_acc",
@@ -75,7 +78,7 @@
     ],
     "translation": "I gave Masha books/a book.",
     "context": "",
-    "judgment": "questionable",
+    "judgment": "unacceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -83,11 +86,12 @@
       ["accessible", "no"],
       ["licensor", "yes"]
     ],
-    "comment": "Accusative on the unshifted direct object is infelicitous."
+    "comment": "Accusative on the unshifted direct object is infelicitous.",
+    "verified": "page-image"
   },
   {
     "id": "poole2024_ex20a",
-    "source": {"bibkey": "vinokurova-2005", "paperLabel": "(20a)"},
+    "source": {"bibkey": "vinokurova-2005", "paperLabel": "p. 366"},
     "language": "yaku1245",
     "primaryText": "Keskil Aisen-y kel-bet dien xomoj-do.",
     "discourseSegments": [],
@@ -105,7 +109,9 @@
       ["accessible", "yes"],
       ["licensor", "yes"]
     ],
-    "comment": "The raised embedded subject is accusative in the presence of a matrix DP."
+    "comment": "The raised embedded subject is accusative in the presence of a matrix DP.",
+    "reportedIn": {"bibkey": "poole-2024", "paperLabel": "(20a)"},
+    "verified": "page-image"
   },
   {
     "id": "poole2024_ex20b",
@@ -119,7 +125,7 @@
     ],
     "translation": "It became necessary for Aisen to buy a car.",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -127,7 +133,8 @@
       ["accessible", "yes"],
       ["licensor", "no"]
     ],
-    "comment": "No matrix DP unlocks the accusative."
+    "comment": "No matrix DP unlocks the accusative.",
+    "verified": "page-image"
   },
   {
     "id": "poole2024_ex20b_bare",
@@ -148,6 +155,7 @@
       ["acc", "no"],
       ["accessible", "yes"],
       ["licensor", "no"]
-    ]
+    ],
+    "verified": "page-image"
   }
 ]

@@ -23,7 +23,7 @@ def ch2_24 : Datum :=
     primaryText := "Mary is prouder of John_i than he_i is."
     glossedTokens := []
     context := ""
-    judgment := .unacceptable
+    judgment := .ungrammatical
     alternatives := []
     readings := []
     paperFeatures := [("coreference", "he = John"), ("deletion_site", "d-proud of John")] }
@@ -62,7 +62,7 @@ def ch4_85a : Datum :=
     primaryText := "He_i introduced Sally to more friends than Peter_i's sister."
     glossedTokens := []
     context := ""
-    judgment := .unacceptable
+    judgment := .ungrammatical
     alternatives := []
     readings := []
     paperFeatures := [("coreference", "he = Peter"), ("remnant_case", "ACC")] }
@@ -88,7 +88,7 @@ def ch4_87b : Datum :=
     primaryText := "Er_i hat ihr mehr Leute vorgestellt als Peters_i Schwester."
     glossedTokens := [("Er", "he"), ("hat", "has"), ("ihr", "her"), ("mehr", "more"), ("Leute", "people"), ("vorgestellt", "introduced"), ("als", "than"), ("Peters", "Peter's"), ("Schwester", "sister")]
     context := ""
-    judgment := .unacceptable
+    judgment := .ungrammatical
     alternatives := []
     readings := []
     paperFeatures := [("coreference", "er = Peter"), ("remnant_case", "DAT")] }

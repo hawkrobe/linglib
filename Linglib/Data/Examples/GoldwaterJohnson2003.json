@@ -9,12 +9,12 @@
     "primaryText": "ká.lo.jen",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "of the fish",
+    "translation": "fish",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [
       {
-        "form": "*ká.loi.den",
+        "form": "ká.loi.den",
         "judgment": "ungrammatical"
       }
     ],
@@ -37,7 +37,8 @@
         "12000001101"
       ]
     ],
-    "comment": "Stem class of kala 'fish': only the weak ending; difference vector 0 1 0 0 0 0 0 0 1 -1 0 (Table 3)."
+    "comment": "Stem class of kala 'fish': only the weak ending; difference vector 0 1 0 0 0 0 0 0 1 -1 0 (Table 3).",
+    "verified": "page-image"
   },
   {
     "id": "gj2003_naapuri",
@@ -49,7 +50,7 @@
     "primaryText": "náa.pu.ri.en",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "of the neighbors",
+    "translation": "neighbor",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [
@@ -77,7 +78,8 @@
         "01100000100"
       ]
     ],
-    "comment": "Stem class of naapuri 'neighbor': both endings occur; difference vector 0 0 1 0 0 -1 0 0 1 -1 -2."
+    "comment": "Stem class of naapuri 'neighbor': both endings occur; difference vector 0 0 1 0 0 -1 0 0 1 -1 -2.",
+    "verified": "page-image"
   },
   {
     "id": "gj2003_ministeri",
@@ -112,7 +114,8 @@
         "12100000101"
       ]
     ],
-    "comment": "Stem class of ministeri: a different violation pattern from naapuri but the same difference vector, so the two classes are one for a learner that sees only differences (Table 3)."
+    "comment": "Stem class of ministeri: a different violation pattern from naapuri but the same difference vector, so the two classes are one for a learner that sees only differences (Table 3).",
+    "verified": "page-image"
   },
   {
     "id": "gj2003_maailma",
@@ -147,6 +150,7 @@
         "02001000300"
       ]
     ],
-    "comment": "Stem class of maailma: difference vector 0 0 0 0 1 0 0 -1 2 0 -2."
+    "comment": "Stem class of maailma: difference vector 0 0 0 0 1 0 0 -1 2 0 -2.",
+    "verified": "page-image"
   }
 ]

@@ -12,8 +12,8 @@ finger*, *budge an inch*, *in years*, *until* and additive *either*, need an ant
 licenser, and Gajewski shows that *either* is out under *only* although *only* is Strawson
 anti-additive. *Any* and the free relatives *whatever*, *whoever* and *whichever* have free choice
 readings. The positive polarity items are blocked by clausal negation: *someone* also by the other
-anti-additive operators but not by *at most five* ([szabolcsi-2004]), and *already*, *too* (the
-positive counterpart of *either*), *somewhat*, *rather*, *tons of* and *utterly* at least by
+anti-additive operators but not by *at most five* (Szabolcsi), and *already*, *too* (the
+positive counterpart of *either*), *somewhat*, *rather*, *tons of* and *awfully* at least by
 clausal negation. The idioms *wild horses*, *all the tea in China*, *a ten-foot pole* and *in a
 million years* are Israel's maximizer negative polarity items and *at the drop of a hat*, *in a
 jiffy*, *for a pittance* and *for a song* his minimizer positive ones; his classification of the
@@ -31,7 +31,7 @@ and *ever* in `Studies/Chierchia2013.lean` and `Studies/KadmonLandman1993.lean`,
 
 ## Implementation notes
 
-A positive polarity item whose class [vanderwouden-1997] does not settle carries the weakest
+A positive polarity item whose class van der Wouden does not settle carries the weakest
 anti-licensor, anti-morphic strength, which every positive polarity item has by his (169).
 
 ## References
@@ -175,9 +175,9 @@ def tonsOf : PolarityItem :=
   { form := "tons of"
   , antiLicensor := some .antiMorphic }
 
-/-- *utterly*, an emphatic positive polarity item, as in *I was utterly depressed.* -/
-def utterly : PolarityItem :=
-  { form := "utterly"
+/-- *awfully*, an emphatic positive polarity item, as in *I was awfully depressed.* -/
+def awfully : PolarityItem :=
+  { form := "awfully"
   , antiLicensor := some .antiMorphic }
 
 /-! ### Maximizer NPIs -/
@@ -255,7 +255,7 @@ def allFCIs : List PolarityItem :=
 
 /-- The plain PPIs. -/
 def canonicalPPIs : List PolarityItem :=
-  [someone, already, too, somewhat, rather, tonsOf, utterly]
+  [someone, already, too, somewhat, rather, tonsOf, awfully]
 
 /-- The minimizer PPIs. -/
 def invertedPPIs : List PolarityItem :=

@@ -1,7 +1,7 @@
 [
   {
     "id": "sagwasowbender2003_ex2a",
-    "source": {"bibkey": "sag-wasow-bender-2003", "paperLabel": "(2a)"},
+    "source": {"bibkey": "sag-wasow-bender-2003", "paperLabel": "ch. 7, (2a)"},
     "language": "stan1293",
     "primaryText": "Susan likes herself.",
     "discourseSegments": [],
@@ -16,11 +16,12 @@
       ["sort", "anaphor"],
       ["binder", "local"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "sagwasowbender2003_ex2b",
-    "source": {"bibkey": "sag-wasow-bender-2003", "paperLabel": "(2b)"},
+    "source": {"bibkey": "sag-wasow-bender-2003", "paperLabel": "ch. 7, (2b)"},
     "language": "stan1293",
     "primaryText": "Susan likes her.",
     "discourseSegments": [],
@@ -35,11 +36,12 @@
       ["sort", "pronoun"],
       ["binder", "local"]
     ],
-    "comment": "Her coindexed with Susan."
+    "comment": "Her coindexed with Susan.",
+    "verified": "page-image"
   },
   {
     "id": "sagwasowbender2003_ex3a",
-    "source": {"bibkey": "sag-wasow-bender-2003", "paperLabel": "(3a)"},
+    "source": {"bibkey": "sag-wasow-bender-2003", "paperLabel": "ch. 7, (3a)"},
     "language": "stan1293",
     "primaryText": "Susan told herself a story.",
     "discourseSegments": [],
@@ -54,11 +56,12 @@
       ["sort", "anaphor"],
       ["binder", "local"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "sagwasowbender2003_ex3b",
-    "source": {"bibkey": "sag-wasow-bender-2003", "paperLabel": "(3b)"},
+    "source": {"bibkey": "sag-wasow-bender-2003", "paperLabel": "ch. 7, (3b)"},
     "language": "stan1293",
     "primaryText": "Susan told her a story.",
     "discourseSegments": [],
@@ -73,11 +76,12 @@
       ["sort", "pronoun"],
       ["binder", "local"]
     ],
-    "comment": "Her coindexed with Susan."
+    "comment": "Her coindexed with Susan.",
+    "verified": "page-image"
   },
   {
     "id": "sagwasowbender2003_ex4a",
-    "source": {"bibkey": "sag-wasow-bender-2003", "paperLabel": "(4a)"},
+    "source": {"bibkey": "sag-wasow-bender-2003", "paperLabel": "ch. 7, (4a)"},
     "language": "stan1293",
     "primaryText": "Susan told a story to herself.",
     "discourseSegments": [],
@@ -92,11 +96,12 @@
       ["sort", "anaphor"],
       ["binder", "local"]
     ],
-    "comment": "The object of the argument-marking preposition ranks with its PP, so the subject outranks it."
+    "comment": "The object of the argument-marking preposition ranks with its PP, so the subject outranks it.",
+    "verified": "page-image"
   },
   {
     "id": "sagwasowbender2003_ex4b",
-    "source": {"bibkey": "sag-wasow-bender-2003", "paperLabel": "(4b)"},
+    "source": {"bibkey": "sag-wasow-bender-2003", "paperLabel": "ch. 7, (4b)"},
     "language": "stan1293",
     "primaryText": "Susan told a story to her.",
     "discourseSegments": [],
@@ -111,11 +116,12 @@
       ["sort", "pronoun"],
       ["binder", "local"]
     ],
-    "comment": "Her coindexed with Susan."
+    "comment": "Her coindexed with Susan.",
+    "verified": "page-image"
   },
   {
     "id": "sagwasowbender2003_ex5a",
-    "source": {"bibkey": "sag-wasow-bender-2003", "paperLabel": "(5a)"},
+    "source": {"bibkey": "sag-wasow-bender-2003", "paperLabel": "ch. 7, (5a)"},
     "language": "stan1293",
     "primaryText": "Susan devoted herself to linguistics.",
     "discourseSegments": [],
@@ -130,11 +136,12 @@
       ["sort", "anaphor"],
       ["binder", "local"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "sagwasowbender2003_ex5b",
-    "source": {"bibkey": "sag-wasow-bender-2003", "paperLabel": "(5b)"},
+    "source": {"bibkey": "sag-wasow-bender-2003", "paperLabel": "ch. 7, (5b)"},
     "language": "stan1293",
     "primaryText": "Susan devoted her to linguistics.",
     "discourseSegments": [],
@@ -149,11 +156,12 @@
       ["sort", "pronoun"],
       ["binder", "local"]
     ],
-    "comment": "Her coindexed with Susan."
+    "comment": "Her coindexed with Susan.",
+    "verified": "page-image"
   },
   {
     "id": "sagwasowbender2003_ex6a",
-    "source": {"bibkey": "sag-wasow-bender-2003", "paperLabel": "(6a)"},
+    "source": {"bibkey": "sag-wasow-bender-2003", "paperLabel": "ch. 7, (6a)"},
     "language": "stan1293",
     "primaryText": "Nobody told Susan about herself.",
     "discourseSegments": [],
@@ -168,11 +176,12 @@
       ["sort", "anaphor"],
       ["binder", "local"]
     ],
-    "comment": "The local o-commander of herself is the object Susan."
+    "comment": "The local o-commander of herself is the object Susan.",
+    "verified": "page-image"
   },
   {
     "id": "sagwasowbender2003_ex6b",
-    "source": {"bibkey": "sag-wasow-bender-2003", "paperLabel": "(6b)"},
+    "source": {"bibkey": "sag-wasow-bender-2003", "paperLabel": "ch. 7, (6b)"},
     "language": "stan1293",
     "primaryText": "Nobody told Susan about her.",
     "discourseSegments": [],
@@ -187,11 +196,12 @@
       ["sort", "pronoun"],
       ["binder", "local"]
     ],
-    "comment": "Her coindexed with Susan."
+    "comment": "Her coindexed with Susan.",
+    "verified": "page-image"
   },
   {
     "id": "sagwasowbender2003_ex7a",
-    "source": {"bibkey": "sag-wasow-bender-2003", "paperLabel": "(7a)"},
+    "source": {"bibkey": "sag-wasow-bender-2003", "paperLabel": "ch. 7, (7a)"},
     "language": "stan1293",
     "primaryText": "Susan thinks that nobody likes herself.",
     "discourseSegments": [],
@@ -206,11 +216,12 @@
       ["sort", "anaphor"],
       ["binder", "nonlocal"]
     ],
-    "comment": "Herself coindexed with Susan, not with its local o-commander nobody."
+    "comment": "Herself coindexed with Susan, not with its local o-commander nobody.",
+    "verified": "page-image"
   },
   {
     "id": "sagwasowbender2003_ex7b",
-    "source": {"bibkey": "sag-wasow-bender-2003", "paperLabel": "(7b)"},
+    "source": {"bibkey": "sag-wasow-bender-2003", "paperLabel": "ch. 7, (7b)"},
     "language": "stan1293",
     "primaryText": "Susan thinks that nobody likes her.",
     "discourseSegments": [],
@@ -225,11 +236,12 @@
       ["sort", "pronoun"],
       ["binder", "nonlocal"]
     ],
-    "comment": "Her coindexed with Susan."
+    "comment": "Her coindexed with Susan.",
+    "verified": "page-image"
   },
   {
     "id": "sagwasowbender2003_ex8a",
-    "source": {"bibkey": "sag-wasow-bender-2003", "paperLabel": "(8a)"},
+    "source": {"bibkey": "sag-wasow-bender-2003", "paperLabel": "ch. 7, (8a)"},
     "language": "stan1293",
     "primaryText": "Susan's friends like herself.",
     "discourseSegments": [],
@@ -244,11 +256,12 @@
       ["sort", "anaphor"],
       ["binder", "nonlocal"]
     ],
-    "comment": "Herself coindexed with Susan, not with its local o-commander Susan's friends."
+    "comment": "Herself coindexed with Susan, not with its local o-commander Susan's friends.",
+    "verified": "page-image"
   },
   {
     "id": "sagwasowbender2003_ex8b",
-    "source": {"bibkey": "sag-wasow-bender-2003", "paperLabel": "(8b)"},
+    "source": {"bibkey": "sag-wasow-bender-2003", "paperLabel": "ch. 7, (8b)"},
     "language": "stan1293",
     "primaryText": "Susan's friends like her.",
     "discourseSegments": [],
@@ -263,11 +276,12 @@
       ["sort", "pronoun"],
       ["binder", "nonlocal"]
     ],
-    "comment": "Her coindexed with Susan."
+    "comment": "Her coindexed with Susan.",
+    "verified": "page-image"
   },
   {
     "id": "sagwasowbender2003_ex9a",
-    "source": {"bibkey": "sag-wasow-bender-2003", "paperLabel": "(9a)"},
+    "source": {"bibkey": "sag-wasow-bender-2003", "paperLabel": "ch. 7, (9a)"},
     "language": "stan1293",
     "primaryText": "That picture of Susan offended herself.",
     "discourseSegments": [],
@@ -282,11 +296,12 @@
       ["sort", "anaphor"],
       ["binder", "nonlocal"]
     ],
-    "comment": "Herself coindexed with Susan, not with its local o-commander the picture."
+    "comment": "Herself coindexed with Susan, not with its local o-commander the picture.",
+    "verified": "page-image"
   },
   {
     "id": "sagwasowbender2003_ex9b",
-    "source": {"bibkey": "sag-wasow-bender-2003", "paperLabel": "(9b)"},
+    "source": {"bibkey": "sag-wasow-bender-2003", "paperLabel": "ch. 7, (9b)"},
     "language": "stan1293",
     "primaryText": "That picture of Susan offended her.",
     "discourseSegments": [],
@@ -301,11 +316,12 @@
       ["sort", "pronoun"],
       ["binder", "nonlocal"]
     ],
-    "comment": "Her coindexed with Susan."
+    "comment": "Her coindexed with Susan.",
+    "verified": "page-image"
   },
   {
     "id": "sagwasowbender2003_ex37a",
-    "source": {"bibkey": "sag-wasow-bender-2003", "paperLabel": "(37a)"},
+    "source": {"bibkey": "sag-wasow-bender-2003", "paperLabel": "ch. 15, (37a)"},
     "language": "stan1293",
     "primaryText": "Here is the student that the principal suspended and Sandy defended him.",
     "discourseSegments": [],
@@ -320,11 +336,12 @@
       ["gapInFirst", "true"],
       ["gapInSecond", "false"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "sagwasowbender2003_ex37b",
-    "source": {"bibkey": "sag-wasow-bender-2003", "paperLabel": "(37b)"},
+    "source": {"bibkey": "sag-wasow-bender-2003", "paperLabel": "ch. 15, (37b)"},
     "language": "stan1293",
     "primaryText": "Here is the student that the student council passed new rules and the principal suspended.",
     "discourseSegments": [],
@@ -339,11 +356,12 @@
       ["gapInFirst", "false"],
       ["gapInSecond", "true"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "sagwasowbender2003_ex38a",
-    "source": {"bibkey": "sag-wasow-bender-2003", "paperLabel": "(38a)"},
+    "source": {"bibkey": "sag-wasow-bender-2003", "paperLabel": "ch. 15, (38a)"},
     "language": "stan1293",
     "primaryText": "Apple bagels, I can assure you that Leslie likes and Sandy hates cream cheese.",
     "discourseSegments": [],
@@ -358,11 +376,12 @@
       ["gapInFirst", "true"],
       ["gapInSecond", "false"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "sagwasowbender2003_ex38b",
-    "source": {"bibkey": "sag-wasow-bender-2003", "paperLabel": "(38b)"},
+    "source": {"bibkey": "sag-wasow-bender-2003", "paperLabel": "ch. 15, (38b)"},
     "language": "stan1293",
     "primaryText": "Apple bagels, I can assure you that Leslie likes cream cheese and Sandy hates.",
     "discourseSegments": [],
@@ -377,11 +396,12 @@
       ["gapInFirst", "false"],
       ["gapInSecond", "true"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "sagwasowbender2003_ex40a",
-    "source": {"bibkey": "sag-wasow-bender-2003", "paperLabel": "(40a)"},
+    "source": {"bibkey": "sag-wasow-bender-2003", "paperLabel": "ch. 15, (40a)"},
     "language": "stan1293",
     "primaryText": "This is the dancer that we bought a portrait of and two photos of.",
     "discourseSegments": [],
@@ -396,11 +416,12 @@
       ["gapInFirst", "true"],
       ["gapInSecond", "true"]
     ],
-    "comment": "Across the board: each conjunct has a gap paired with the same filler."
+    "comment": "Across the board: each conjunct has a gap paired with the same filler.",
+    "verified": "page-image"
   },
   {
     "id": "sagwasowbender2003_ex40b",
-    "source": {"bibkey": "sag-wasow-bender-2003", "paperLabel": "(40b)"},
+    "source": {"bibkey": "sag-wasow-bender-2003", "paperLabel": "ch. 15, (40b)"},
     "language": "stan1293",
     "primaryText": "Here is the student that the principal suspended and the teacher defended.",
     "discourseSegments": [],
@@ -415,11 +436,12 @@
       ["gapInFirst", "true"],
       ["gapInSecond", "true"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "sagwasowbender2003_ex40c",
-    "source": {"bibkey": "sag-wasow-bender-2003", "paperLabel": "(40c)"},
+    "source": {"bibkey": "sag-wasow-bender-2003", "paperLabel": "ch. 15, (40c)"},
     "language": "stan1293",
     "primaryText": "Apple bagels, I can assure you that Leslie likes and Sandy hates.",
     "discourseSegments": [],
@@ -434,11 +456,12 @@
       ["gapInFirst", "true"],
       ["gapInSecond", "true"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "sagwasowbender2003_ex36a",
-    "source": {"bibkey": "sag-wasow-bender-2003", "paperLabel": "(36a)"},
+    "source": {"bibkey": "sag-wasow-bender-2003", "paperLabel": "ch. 15, (36a)"},
     "language": "stan1293",
     "primaryText": "Here is the student that the principal suspended and Sandy.",
     "discourseSegments": [],
@@ -451,11 +474,12 @@
     "paperFeatures": [
       ["topic", "conjunctGap"]
     ],
-    "comment": "The first conjunct is a gap."
+    "comment": "The first conjunct is a gap.",
+    "verified": "page-image"
   },
   {
     "id": "sagwasowbender2003_ex36b",
-    "source": {"bibkey": "sag-wasow-bender-2003", "paperLabel": "(36b)"},
+    "source": {"bibkey": "sag-wasow-bender-2003", "paperLabel": "ch. 15, (36b)"},
     "language": "stan1293",
     "primaryText": "Here is the student that the principal suspended Sandy and.",
     "discourseSegments": [],
@@ -468,11 +492,12 @@
     "paperFeatures": [
       ["topic", "conjunctGap"]
     ],
-    "comment": "The second conjunct is a gap."
+    "comment": "The second conjunct is a gap.",
+    "verified": "page-image"
   },
   {
     "id": "sagwasowbender2003_ex44",
-    "source": {"bibkey": "sag-wasow-bender-2003", "paperLabel": "(44)"},
+    "source": {"bibkey": "sag-wasow-bender-2003", "paperLabel": "ch. 15, (44)"},
     "language": "stan1293",
     "primaryText": "Which rock legend would it be ridiculous to compare and?",
     "discourseSegments": [],
@@ -485,6 +510,7 @@
     "paperFeatures": [
       ["topic", "conjunctGap"]
     ],
-    "comment": "Both conjuncts are gaps paired with one filler, which the across-the-board exception as stated would permit."
+    "comment": "Both conjuncts are gaps paired with one filler, which the across-the-board exception as stated would permit.",
+    "verified": "page-image"
   }
 ]

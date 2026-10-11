@@ -33,7 +33,8 @@
         "tense"
       ]
     ],
-    "comment": "A root modal is evaluated at the time tense provides."
+    "comment": "A root modal is evaluated at the time tense provides.",
+    "verified": "page-image"
   },
   {
     "id": "hacquard2010_ex12",
@@ -69,7 +70,8 @@
         "tense"
       ]
     ],
-    "comment": "False in the scenario: an epistemic cannot describe a past epistemic state without an attitude, indirect discourse, or an overt background."
+    "comment": "False in the scenario: an epistemic cannot describe a past epistemic state without an attitude, indirect discourse, or an overt background.",
+    "verified": "page-image"
   },
   {
     "id": "hacquard2010_ex13a",
@@ -96,7 +98,8 @@
         "tense"
       ]
     ],
-    "comment": "The modal's time of evaluation is Poirot's thinking time; the past morpheme is sequence of tense."
+    "comment": "The modal's time of evaluation is Poirot's thinking time; the past morpheme is sequence of tense.",
+    "verified": "page-image"
   },
   {
     "id": "hacquard2010_ex13b",
@@ -123,7 +126,8 @@
         "tense"
       ]
     ],
-    "comment": "An indirect discourse past tense."
+    "comment": "An indirect discourse past tense.",
+    "verified": "page-image"
   },
   {
     "id": "hacquard2010_ex13c",
@@ -150,7 +154,8 @@
         "tense"
       ]
     ],
-    "comment": "An overt conversational background performs the event anchoring itself."
+    "comment": "An overt conversational background performs the event anchoring itself.",
+    "verified": "page-image"
   },
   {
     "id": "hacquard2010_ex14a",
@@ -211,7 +216,8 @@
         "tense"
       ]
     ],
-    "comment": "The complement is backshifted with respect to the modal: only the epistemic reading."
+    "comment": "The complement is backshifted with respect to the modal: only the epistemic reading.",
+    "verified": "page-image"
   },
   {
     "id": "hacquard2010_ex14b",
@@ -272,7 +278,8 @@
         "tense"
       ]
     ],
-    "comment": "Tense and aspect morphology on the modal put it in the scope of tense: no epistemic reading."
+    "comment": "Tense and aspect morphology on the modal put it in the scope of tense: no epistemic reading. The paper prints Giani in the example line and Gianni in the gloss.",
+    "verified": "page-image"
   },
   {
     "id": "hacquard2010_ex16",
@@ -344,7 +351,8 @@
         "actualityEntailment"
       ]
     ],
-    "comment": "The continuation contradicts the actuality entailment of the perfective root modal."
+    "comment": "The continuation contradicts the actuality entailment of the perfective root modal.",
+    "verified": "page-image"
   },
   {
     "id": "hacquard2010_ex17",
@@ -380,7 +388,8 @@
         "actualityEntailment"
       ]
     ],
-    "comment": "No contradiction on the epistemic reading: tense and aspect are interpreted below the modal."
+    "comment": "No contradiction on the epistemic reading: tense and aspect are interpreted below the modal.",
+    "verified": "page-image"
   },
   {
     "id": "hacquard2010_ex18_19",
@@ -416,7 +425,8 @@
         "actualityEntailment"
       ]
     ],
-    "comment": "(18) and (19): the two LFs; only the second forces the event into the actual world."
+    "comment": "(18) and (19): the two LFs; only the second forces the event into the actual world.",
+    "verified": "page-image"
   },
   {
     "id": "hacquard2010_ex22",
@@ -452,7 +462,8 @@
         "individualTimePair"
       ]
     ],
-    "comment": "Relativized to the subject, the modal is keyed to the time tense gives."
+    "comment": "Relativized to the subject, the modal is keyed to the time tense gives.",
+    "verified": "page-image"
   },
   {
     "id": "hacquard2010_ex23",
@@ -488,7 +499,8 @@
         "individualTimePair"
       ]
     ],
-    "comment": "Relativized to the speaker, the modal is keyed to the speech time."
+    "comment": "Relativized to the speaker, the modal is keyed to the speech time.",
+    "verified": "page-image"
   },
   {
     "id": "hacquard2010_ex24",
@@ -524,7 +536,8 @@
         "individualTimePair"
       ]
     ],
-    "comment": "Relativized to the attitude holder, the modal is keyed to the attitude time."
+    "comment": "Relativized to the attitude holder, the modal is keyed to the attitude time.",
+    "verified": "page-image"
   },
   {
     "id": "hacquard2010_ex25",
@@ -551,7 +564,8 @@
         "locality"
       ]
     ],
-    "comment": "Three events: the speech event, John's thinking yesterday, and Mary's train-taking the day before."
+    "comment": "Three events: the speech event, John's thinking yesterday, and Mary's train-taking the day before.",
+    "verified": "page-image"
   },
   {
     "id": "hacquard2010_ex26",
@@ -583,7 +597,8 @@
         "locality"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "hacquard2010_ex27",
@@ -619,7 +634,8 @@
         "locality"
       ]
     ],
-    "comment": "The modal must be keyed to the closest event."
+    "comment": "The modal must be keyed to the closest event.",
+    "verified": "page-image"
   },
   {
     "id": "hacquard2010_ex28",
@@ -655,7 +671,8 @@
         "locality"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "hacquard2010_ex45a",
@@ -682,7 +699,8 @@
         "speechEvent"
       ]
     ],
-    "comment": "True in all of the speaker's doxastic alternatives, the content of the asserting event."
+    "comment": "True in all of the speaker's doxastic alternatives, the content of the asserting event.",
+    "verified": "page-image"
   },
   {
     "id": "hacquard2010_ex50",
@@ -707,14 +725,15 @@
     "paperFeatures": [
       [
         "section",
-        "6.1"
+        "6.1.1"
       ],
       [
         "phenomenon",
         "embeddedEpistemic"
       ]
     ],
-    "comment": "The epistemic quantifies directly over the worlds the attitude provides, avoiding the problem of introspection."
+    "comment": "The epistemic quantifies directly over the worlds the attitude provides, avoiding the problem of introspection.",
+    "verified": "page-image"
   },
   {
     "id": "hacquard2010_ex55",
@@ -741,13 +760,14 @@
         "matrixEpistemic"
       ]
     ],
-    "comment": "In all worlds compatible with the content of the speech event it is raining; the ordering source makes it weaker than the bare assertion."
+    "comment": "In all worlds compatible with the content of the speech event it is raining; the ordering source makes it weaker than the bare assertion.",
+    "verified": "page-image"
   },
   {
     "id": "hacquard2010_ex58a",
     "source": {
       "bibkey": "yalcin-2007",
-      "paperLabel": "(58a)"
+      "paperLabel": "(7)"
     },
     "language": "stan1293",
     "primaryText": "Suppose that it is raining and that it might not be raining.",
@@ -768,11 +788,12 @@
         "yalcin"
       ]
     ],
-    "comment": "Lack of rain cannot be compatible with one's suppositions if one already supposes that it is raining.",
+    "comment": "Lack of rain cannot be compatible with one's suppositions if one already supposes that it is raining. Yalcin's (7) reads '# Suppose it is raining and it might not be raining'; the text follows Hacquard's (58a).",
     "reportedIn": {
       "bibkey": "hacquard-2010",
       "paperLabel": "(58a)"
-    }
+    },
+    "verified": "page-image"
   },
   {
     "id": "hacquard2010_ex59",
@@ -804,7 +825,8 @@
         "contentLicensing"
       ]
     ],
-    "comment": "Anchored to the VP event, which has no content, the modal cannot be epistemic."
+    "comment": "Anchored to the VP event, which has no content, the modal cannot be epistemic.",
+    "verified": "page-image"
   },
   {
     "id": "hacquard2010_ex60a",
@@ -836,7 +858,8 @@
         "contentLicensing"
       ]
     ],
-    "comment": "The complement is an attitude event with content, so the low modal can be epistemic. Credited to I. Heim."
+    "comment": "The complement is an attitude event with content, so the low modal can be epistemic. Credited to I. Heim.",
+    "verified": "page-image"
   },
   {
     "id": "hacquard2010_ex60b",
@@ -868,7 +891,8 @@
         "contentLicensing"
       ]
     ],
-    "comment": "The low position is shown by the actuality entailment."
+    "comment": "The low position is shown by the actuality entailment.",
+    "verified": "page-image"
   },
   {
     "id": "hacquard2010_ex62",
@@ -877,7 +901,7 @@
       "paperLabel": "(62)"
     },
     "language": "stan1293",
-    "primaryText": "Last night Mary had to take the train to go to Paris.",
+    "primaryText": "(Last night) Mary had to take the train (to go to Paris).",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
@@ -895,7 +919,8 @@
         "circumstantial"
       ]
     ],
-    "comment": "Obligatorily circumstantial: the circumstances of the train-taking, Mary's need to go to Paris, her car breaking down, the timetable."
+    "comment": "Obligatorily circumstantial: the circumstances of the train-taking, Mary's need to go to Paris, her car breaking down, the timetable.",
+    "verified": "page-image"
   },
   {
     "id": "hacquard2010_ex63",
@@ -922,6 +947,7 @@
         "circumstantial"
       ]
     ],
-    "comment": "A circumstantial reading with no agentive subject: the circumstances highlight properties of the location. Credited to Hackl (1998)."
+    "comment": "A circumstantial reading with no agentive subject: the circumstances highlight properties of the location. Credited to Hackl (1998).",
+    "verified": "page-image"
   }
 ]

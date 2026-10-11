@@ -328,9 +328,8 @@ def varieties : List (String × Variety) := [("stan1293", english), ("stan1295",
 def forms : List (String × Tense.Form) :=
   [("simple past", .simplePast), ("Präteritum", .simplePast), ("Perfekt", .presentPerfect)]
 
-/-- In (40) and (41) a form is acceptable out of the blue iff it can describe a past event
-there. The English simple past and the German present perfect can, and the German simple past
-cannot. -/
+/-- In (40) a form is acceptable out of the blue iff it can describe a past event there. The
+English simple past and the German present perfect can, and the German simple past cannot. -/
 theorem rows_outOfTheBlue :
     ∀ r ∈ Examples.all, r.feature? "context" = some "out of the blue" →
       ∃ v ∈ varieties.lookup r.language, ∃ f ∈ r.parse? "form" forms,

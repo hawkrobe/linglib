@@ -21,7 +21,8 @@
       ["host_tone", "L"],
       ["stab_tone", "H"]
     ],
-    "comment": "Polar tone: the host Kandè ends low, so the stabilizer surfaces high."
+    "comment": "Polar tone: the host Kandè ends low, so the stabilizer surfaces high.",
+    "verified": "page-image"
   },
   {
     "id": "hartmannzimmermann2007_ex3b",
@@ -45,7 +46,8 @@
       ["host_tone", "H"],
       ["stab_tone", "L"]
     ],
-    "comment": "Polar tone: the host Kiifii ends high (unmarked vowel), so the stabilizer surfaces low."
+    "comment": "Polar tone: the host Kiifii ends high (unmarked vowel), so the stabilizer surfaces low.",
+    "verified": "page-image"
   },
   {
     "id": "hartmannzimmermann2007_ex8",
@@ -67,7 +69,8 @@
       ["stabilizer", "none"],
       ["tam", "future"]
     ],
-    "comment": "Subject focus with no overt marking: the future TAM has no Relative form, so the (vacuous) fronting is invisible — 'subject foci are syntactically and morphologically unmarked in the future, habitual and subjunctive aspects' (p. 4)."
+    "comment": "Subject focus with no overt marking: the future TAM has no Relative form, so the (vacuous) fronting is invisible — 'subject foci are syntactically and morphologically unmarked in the future, habitual and subjunctive aspects' (p. 4).",
+    "verified": "page-image"
   },
   {
     "id": "hartmannzimmermann2007_ex17a1",
@@ -92,7 +95,8 @@
       ["stabilizer", "nee"],
       ["tam", "continuous"]
     ],
-    "comment": "The particle is parenthesized-optional in the paper; the alternative records the particle-less variant."
+    "comment": "The particle is parenthesized-optional in the paper; the alternative records the particle-less variant.",
+    "verified": "page-image"
   },
   {
     "id": "hartmannzimmermann2007_ex17a2",
@@ -105,7 +109,7 @@
     ],
     "translation": "Dauda is calling her.",
     "context": "Answer to: Wàa ya-kèe kirà-ntà? 'Who is calling her?'",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -115,7 +119,8 @@
       ["stabilizer", "none"],
       ["tam", "continuous"]
     ],
-    "comment": "Infelicitous as an answer to the subject wh-question: focused subjects cannot be realised in situ (paper §2.2.2); the General-mode auxiliary betrays the absence of movement."
+    "comment": "Infelicitous as an answer to the subject wh-question: focused subjects cannot be realised in situ (paper §2.2.2); the General-mode auxiliary betrays the absence of movement.",
+    "verified": "page-image"
   },
   {
     "id": "hartmannzimmermann2007_ex22",
@@ -138,7 +143,8 @@
       ["focused", "nonSubject"],
       ["stabilizer", "nee"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "hartmannzimmermann2007_ex23",
@@ -162,7 +168,8 @@
       ["focused", "nonSubject"],
       ["stabilizer", "none"]
     ],
-    "comment": "In-situ new-information focus with no morphosyntactic reflex at all — the witness for the BFR refutation."
+    "comment": "In-situ new-information focus with no morphosyntactic reflex at all — the witness for the BFR refutation. The paper prints the name with a lowercase hooked k (ƙwànni); its gloss line has Konni.",
+    "verified": "page-image"
   },
   {
     "id": "hartmannzimmermann2007_ex24",
@@ -185,7 +192,8 @@
       ["focused", "subject"],
       ["stabilizer", "cee"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "hartmannzimmermann2007_ex25",
@@ -209,7 +217,8 @@
       ["focused", "nonSubject"],
       ["stabilizer", "nee"]
     ],
-    "comment": "In-situ focus with the sentence-final particle nèe — a stabilizer without fronting or Relative morphology."
+    "comment": "In-situ focus with the sentence-final particle nèe — a stabilizer without fronting or Relative morphology.",
+    "verified": "page-image"
   },
   {
     "id": "hartmannzimmermann2007_ex26",
@@ -219,7 +228,7 @@
     "primaryText": "Tô, zân iyà bî ta baayansà?",
     "discourseSegments": [],
     "glossedTokens": [
-      ["Tô", "alright"], ["zân", "FUT.1SG"], ["iyà", "can"], ["bî", "follow"], ["ta", "in"],
+      ["Tô", "alright"], ["zân", "1SG.FUT"], ["iyà", "can"], ["bî", "follow"], ["ta", "in"],
       ["baayansà", "back.of.him"]
     ],
     "translation": "Alright, but can I pass BEHIND him?",
@@ -233,7 +242,8 @@
       ["focused", "nonSubject"],
       ["stabilizer", "none"]
     ],
-    "comment": "baayansà 'behind him' contrasts with the preceding utterance's ta gàbansà 'in front of him'."
+    "comment": "baayansà 'behind him' contrasts with the preceding utterance's ta gàbansà 'in front of him'.",
+    "verified": "page-image"
   },
   {
     "id": "hartmannzimmermann2007_ex27",
@@ -258,7 +268,8 @@
       ["focused", "nonSubject"],
       ["stabilizer", "none"]
     ],
-    "comment": "The fronted nominalised verb cî 'eating' contrasts with hiir̃a 'chatting'; the exhaustive flavour comes from kawài 'only' (paper §3.2.3)."
+    "comment": "The fronted nominalised verb cî 'eating' contrasts with hiir̃a 'chatting'; the exhaustive flavour comes from kawài 'only' (paper §3.2.3).",
+    "verified": "page-image"
   },
   {
     "id": "hartmannzimmermann2007_ex29",
@@ -281,7 +292,8 @@
       ["focused", "nonSubject"],
       ["stabilizer", "none"]
     ],
-    "comment": "The paper's gloss reads 1sg.rel.perf, an apparent erratum: the kèe formative is the Relative continuous (cf. the paper's exx. 16, 22, 27)."
+    "comment": "The paper's gloss reads 1sg.rel.perf, an apparent erratum: the kèe formative is the Relative continuous (cf. the paper's exx. 16, 22, 27).",
+    "verified": "page-image"
   },
   {
     "id": "hartmannzimmermann2007_ex30",
@@ -304,6 +316,7 @@
       ["focused", "nonSubject"],
       ["stabilizer", "none"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   }
 ]

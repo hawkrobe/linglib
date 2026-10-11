@@ -15,7 +15,8 @@
       ["suffix", "-alis"],
       ["analysis", "default l: tier-preceding consonant not lateral"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "belth2026_53b1",
@@ -33,7 +34,8 @@
       ["suffix", "-aris"],
       ["analysis", "dissimilation from tier-adjacent stem l"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "belth2026_53b2",
@@ -51,7 +53,8 @@
       ["suffix", "-aris"],
       ["analysis", "dissimilation across the coronal n"]
     ],
-    "comment": "Rule (54) predicts *lunalis here (the tier-preceding consonant is non-lateral n): a residual error the Tolerance Principle absorbs."
+    "comment": "Rule (54) predicts *lunalis here (the tier-preceding consonant is non-lateral n): a residual error the Tolerance Principle absorbs.",
+    "verified": "page-image"
   },
   {
     "id": "belth2026_53c",
@@ -69,7 +72,8 @@
       ["suffix", "-alis"],
       ["analysis", "blocked by intervening r"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "belth2026_53d1",
@@ -87,7 +91,8 @@
       ["suffix", "-alis"],
       ["analysis", "blocked by an intervening non-coronal consonant"]
     ],
-    "comment": "The non-coronal blocker stays on the tier, hiding the stem l from the suffix liquid."
+    "comment": "The non-coronal blocker stays on the tier, hiding the stem l from the suffix liquid.",
+    "verified": "page-image"
   },
   {
     "id": "belth2026_53d2",
@@ -105,15 +110,16 @@
       ["suffix", "-alis"],
       ["analysis", "blocked by intervening g"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "belth2026_46",
     "source": {"bibkey": "belth-2026", "paperLabel": "(46)"},
     "language": "nucl1301",
-    "primaryText": "dal-lar-ın / yer-ler-in / ip-ler-in",
+    "primaryText": "dɑl-lɑr-ɯn / jer-ler-in / ip-ler-in",
     "glossedTokens": [
-      ["dal-lar-ın", "branch-PL-GEN"], ["yer-ler-in", "place-PL-GEN"],
+      ["dɑl-lɑr-ɯn", "branch-PL-GEN"], ["jer-ler-in", "place-PL-GEN"],
       ["ip-ler-in", "rope-PL-GEN"]
     ],
     "translation": "of the branches / of the places / of the ropes",
@@ -124,15 +130,16 @@
       ["process", "backness harmony"],
       ["tier", "vowels"]
     ],
-    "comment": "Affix vowels harmonize with the preceding vowel across intervening consonants."
+    "comment": "Affix vowels harmonize with the preceding vowel across intervening consonants.",
+    "verified": "page-image"
   },
   {
     "id": "belth2026_47",
-    "source": {"bibkey": "belth-2026", "paperLabel": "(47)"},
+    "source": {"bibkey": "belth-2026", "paperLabel": "(47a)"},
     "language": "nucl1301",
-    "primaryText": "ip-in / jüz-ün / kız-ın / buz-un",
+    "primaryText": "ip-in / jyz-yn / kɯz-ɯn / buz-un",
     "glossedTokens": [
-      ["ip-in", "rope-GEN"], ["jüz-ün", "face-GEN"], ["kız-ın", "girl-GEN"], ["buz-un", "ice-GEN"]
+      ["ip-in", "rope-GEN"], ["jyz-yn", "face-GEN"], ["kɯz-ɯn", "girl-GEN"], ["buz-un", "ice-GEN"]
     ],
     "translation": "of the rope / of the face / of the girl / of the ice",
     "context": "",
@@ -142,16 +149,17 @@
       ["process", "secondary rounding harmony"],
       ["target", "high vowels only"]
     ],
-    "comment": "High affix vowels copy both backness and rounding from the preceding vowel of any height."
+    "comment": "High affix vowels copy both backness and rounding from the preceding vowel of any height.",
+    "verified": "page-image"
   },
   {
     "id": "belth2026_51",
     "source": {"bibkey": "belth-2026", "paperLabel": "(51)"},
     "language": "finn1318",
-    "primaryText": "pöytä-nä / pouta-na / koti-na / velje-nä",
+    "primaryText": "pøytæ-næ / poutɑ-nɑ / koti-nɑ / velje-næ",
     "glossedTokens": [
-      ["pöytä-nä", "table-ESS"], ["pouta-na", "fine.weather-ESS"], ["koti-na", "home-ESS"],
-      ["velje-nä", "road-ESS"]
+      ["pøytæ-næ", "table-ESS"], ["poutɑ-nɑ", "fine.weather-ESS"], ["koti-nɑ", "home-ESS"],
+      ["velje-næ", "road-ESS"]
     ],
     "translation": "as a table / as fine weather / as a home / as a road",
     "context": "",
@@ -162,6 +170,7 @@
       ["neutral vowels", "i, e off the tier"],
       ["default", "front when only neutral vowels precede"]
     ],
-    "comment": "koti-na: harmony passes over the neutral i; velje-nä: the Elsewhere default fires."
+    "comment": "koti-na: harmony passes over the neutral i; velje-nä: the Elsewhere default fires.",
+    "verified": "page-image"
   }
 ]

@@ -15,7 +15,8 @@
       ["section", "1.1"],
       ["form", "φ ⪰ ψ_i for each i"]
     ],
-    "comment": "True, since Sam holds as many tickets as anyone; the starting point of the iterated disjunction puzzle."
+    "comment": "True, since Sam holds as many tickets as anyone; the starting point of the iterated disjunction puzzle.",
+    "verified": "page-image"
   },
   {
     "id": "lassiter2015_ex8",
@@ -26,7 +27,7 @@
     "glossedTokens": [],
     "translation": "",
     "context": "The same lottery.",
-    "judgment": "unacceptable",
+    "judgment": "acceptable",
     "alternatives": [],
     "readings": [
       {"name": "φ ⪰ (ψ ∨ χ)", "judgment": "unacceptable"},
@@ -36,7 +37,8 @@
       ["section", "1.1"],
       ["form", "φ ⪰ (ψ ∨ χ)"]
     ],
-    "comment": "False on the reading equivalent to (9): Mary and Sue hold four tickets together against Sam's two; the conjunctive reading of the disjunction in a comparative complement is set aside."
+    "comment": "False on the reading equivalent to (9): Mary and Sue hold four tickets together against Sam's two; the conjunctive reading of the disjunction in a comparative complement is set aside.",
+    "verified": "page-image"
   },
   {
     "id": "lassiter2015_ex9",
@@ -47,14 +49,15 @@
     "glossedTokens": [],
     "translation": "",
     "context": "The same lottery.",
-    "judgment": "unacceptable",
+    "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
       ["section", "1.1"],
       ["form", "φ ⪰ (ψ ∨ χ)"]
     ],
-    "comment": "Unambiguously false; the reading (8) shares."
+    "comment": "Unambiguously false; the reading (8) shares.",
+    "verified": "page-image"
   },
   {
     "id": "lassiter2015_ex12",
@@ -65,14 +68,15 @@
     "glossedTokens": [],
     "translation": "",
     "context": "The lottery, with five more people holding two tickets each.",
-    "judgment": "unacceptable",
+    "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
       ["section", "1.1"],
       ["form", "φ ⪰ (ψ₁ ∨ … ∨ ψ₇)"]
     ],
-    "comment": "Iterating the puzzle; feeding each conclusion back as a premise reaches (14), that Sam is as likely to win as not."
+    "comment": "Iterating the puzzle; feeding each conclusion back as a premise reaches (14), that Sam is as likely to win as not.",
+    "verified": "page-image"
   },
   {
     "id": "lassiter2015_ex33c",
@@ -83,14 +87,15 @@
     "glossedTokens": [],
     "translation": "",
     "context": "The lottery with three siblings.",
-    "judgment": "unacceptable",
+    "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
       ["section", "1.4"],
       ["form", "(φ ∧ ¬ψ ∧ ¬χ) ⪰ ((¬φ ∧ ψ ∧ ¬χ) ∨ (¬φ ∧ ¬ψ ∧ χ))"]
     ],
-    "comment": "The modified disjunction puzzle's conclusion: as invalid as (8), yet valid for the revised comparative possibility once the alternatives are stated as disjoint."
+    "comment": "The modified disjunction puzzle's conclusion: as invalid as (8), yet valid for the revised comparative possibility once the alternatives are stated as disjoint.",
+    "verified": "page-image"
   },
   {
     "id": "lassiter2015_ex35",
@@ -108,7 +113,8 @@
       ["section", "1.5"],
       ["pattern", "must to more likely than not"]
     ],
-    "comment": "Intuitively obvious, weaker than (3); invalid when the m-lifting is combined with Kratzer's semantics for must."
+    "comment": "Intuitively obvious, weaker than (3); invalid when the m-lifting is combined with Kratzer's semantics for must.",
+    "verified": "page-image"
   },
   {
     "id": "lassiter2015_ex48",
@@ -119,14 +125,15 @@
     "glossedTokens": [],
     "translation": "",
     "context": "Sam might go to school, but he is somewhat more likely to cut class and go to the movies.",
-    "judgment": "unacceptable",
+    "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
       ["section", "2.2"],
       ["measure", "symmetric fuzzy"]
     ],
-    "comment": "Compatible with a symmetric fuzzy measure for likely; clearly wrong unless going to school is impossible, which the equal-shares axiom enforces."
+    "comment": "Compatible with a symmetric fuzzy measure for likely; clearly wrong unless going to school is impossible, which the equal-shares axiom enforces.",
+    "verified": "page-image"
   },
   {
     "id": "lassiter2015_ex50",
@@ -144,7 +151,8 @@
       ["section", "2.2"],
       ["modifier", "ratio"]
     ],
-    "comment": "Ratio modifiers are acceptable with likely, as with adjectives on additive scales."
+    "comment": "Ratio modifiers are acceptable with likely, as with adjectives on additive scales.",
+    "verified": "page-image"
   },
   {
     "id": "lassiter2015_ex51",
@@ -162,7 +170,8 @@
       ["section", "2.2"],
       ["modifier", "ratio"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "lassiter2015_ex53",
@@ -181,7 +190,8 @@
       ["modifier", "ratio"],
       ["scale", "additive"]
     ],
-    "comment": "The paper prints the variants tall, old and heavy with a single check mark."
+    "comment": "The paper prints the variants tall, old and heavy with a single check mark.",
+    "verified": "page-image"
   },
   {
     "id": "lassiter2015_ex54",
@@ -200,7 +210,8 @@
       ["modifier", "ratio"],
       ["scale", "non-additive"]
     ],
-    "comment": "Printed with two question marks, with the variants hungry and lecherous; ratio modifiers resist adjectives on non-additive scales."
+    "comment": "Printed with two question marks, with the variants hungry and lecherous; ratio modifiers resist adjectives on non-additive scales.",
+    "verified": "page-image"
   },
   {
     "id": "lassiter2015_ex56",
@@ -218,13 +229,14 @@
       ["section", "3"],
       ["pattern", "must to much more likely than not"]
     ],
-    "comment": "Clearly valid; none of the bridging rules BR1–BR3 validates it, and the quantificational and strong probabilistic auxiliaries do."
+    "comment": "Clearly valid; none of the bridging rules BR1–BR3 validates it, and the quantificational and strong probabilistic auxiliaries do.",
+    "verified": "page-image"
   },
   {
     "id": "lassiter2015_ex62",
     "source": {"bibkey": "lassiter-2015", "paperLabel": "(62)"},
     "language": "stan1293",
-    "primaryText": "[T]he 1880 census shows her living with mom, two brothers and herdaughter … So David [the father] must have died before 1880.",
+    "primaryText": "[T]he 1880 census shows her living with mom, two brothers and her daughter … So David [the father] must have died before 1880.",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
@@ -236,7 +248,8 @@
       ["section", "4"],
       ["issue", "weakness of must"]
     ],
-    "comment": "The conclusion is presented as the best explanation of the evidence, not as the only possibility: a marital split would be an obvious alternative."
+    "comment": "The conclusion is presented as the best explanation of the evidence, not as the only possibility: a marital split would be an obvious alternative. The paper prints herdaughter.",
+    "verified": "page-image"
   },
   {
     "id": "lassiter2015_ex65a",
@@ -254,7 +267,8 @@
       ["section", "4"],
       ["pattern", "more likely than to might"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "lassiter2015_ex65b",
@@ -265,13 +279,14 @@
     "glossedTokens": [],
     "translation": "",
     "context": "The same year.",
-    "judgment": "questionable",
+    "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
       ["section", "4"],
       ["pattern", "more likely than to might"]
     ],
-    "comment": "Not obviously inferable from (65a); if the inference fails, the weak probabilistic auxiliaries are favoured."
+    "comment": "Not obviously inferable from (65a); if the inference fails, the weak probabilistic auxiliaries are favoured.",
+    "verified": "page-image"
   }
 ]

@@ -26,7 +26,7 @@ def s1a : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("section", "0"), ("item", "the least bit"), ("type", "NPI")] }
+    paperFeatures := [("section", "1"), ("item", "the least bit"), ("type", "NPI")] }
 
 def s1b : Datum :=
   { id := "israel2001_s1b"
@@ -39,7 +39,7 @@ def s1b : Datum :=
     judgment := .ungrammatical
     alternatives := []
     readings := []
-    paperFeatures := [("section", "0"), ("item", "the least bit"), ("type", "NPI")] }
+    paperFeatures := [("section", "1"), ("item", "the least bit"), ("type", "NPI")] }
 
 def s2a : Datum :=
   { id := "israel2001_s2a"
@@ -52,7 +52,7 @@ def s2a : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("section", "0"), ("item", "rather"), ("type", "PPI")] }
+    paperFeatures := [("section", "1"), ("item", "rather"), ("type", "PPI")] }
 
 def s2b : Datum :=
   { id := "israel2001_s2b"
@@ -65,7 +65,7 @@ def s2b : Datum :=
     judgment := .ungrammatical
     alternatives := []
     readings := []
-    paperFeatures := [("section", "0"), ("item", "rather"), ("type", "PPI")] }
+    paperFeatures := [("section", "1"), ("item", "rather"), ("type", "PPI")] }
 
 def s3a : Datum :=
   { id := "israel2001_s3a"
@@ -78,7 +78,7 @@ def s3a : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("section", "0"), ("item", "the least bit"), ("context", "antecedent of a conditional")] }
+    paperFeatures := [("section", "1"), ("item", "the least bit"), ("context", "antecedent of a conditional")] }
 
 def s3b : Datum :=
   { id := "israel2001_s3b"
@@ -91,7 +91,7 @@ def s3b : Datum :=
     judgment := .questionable
     alternatives := []
     readings := []
-    paperFeatures := [("section", "0"), ("item", "rather"), ("context", "antecedent of a conditional")] }
+    paperFeatures := [("section", "1"), ("item", "rather"), ("context", "antecedent of a conditional")] }
 
 def s4a : Datum :=
   { id := "israel2001_s4a"
@@ -104,7 +104,7 @@ def s4a : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("section", "0"), ("item", "the least bit"), ("context", "interrogative")] }
+    paperFeatures := [("section", "1"), ("item", "the least bit"), ("context", "interrogative")] }
 
 def s4b : Datum :=
   { id := "israel2001_s4b"
@@ -117,7 +117,7 @@ def s4b : Datum :=
     judgment := .questionable
     alternatives := []
     readings := []
-    paperFeatures := [("section", "0"), ("item", "rather"), ("context", "interrogative")] }
+    paperFeatures := [("section", "1"), ("item", "rather"), ("context", "interrogative")] }
 
 def s5a : Datum :=
   { id := "israel2001_s5a"
@@ -130,7 +130,7 @@ def s5a : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("section", "0"), ("item", "the least bit"), ("context", "restriction of a universal")] }
+    paperFeatures := [("section", "1"), ("item", "the least bit"), ("context", "restriction of a universal")] }
 
 def s5b : Datum :=
   { id := "israel2001_s5b"
@@ -143,7 +143,7 @@ def s5b : Datum :=
     judgment := .questionable
     alternatives := []
     readings := []
-    paperFeatures := [("section", "0"), ("item", "rather"), ("context", "restriction of a universal")] }
+    paperFeatures := [("section", "1"), ("item", "rather"), ("context", "restriction of a universal")] }
 
 def s6a : Datum :=
   { id := "israel2001_s6a"
@@ -156,7 +156,7 @@ def s6a : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("section", "0"), ("item", "the least bit"), ("context", "standard of a comparative")] }
+    paperFeatures := [("section", "1"), ("item", "the least bit"), ("context", "standard of a comparative")] }
 
 def s6b : Datum :=
   { id := "israel2001_s6b"
@@ -169,7 +169,7 @@ def s6b : Datum :=
     judgment := .ungrammatical
     alternatives := []
     readings := []
-    paperFeatures := [("section", "0"), ("item", "rather"), ("context", "standard of a comparative")] }
+    paperFeatures := [("section", "1"), ("item", "rather"), ("context", "standard of a comparative")] }
 
 def s7a : Datum :=
   { id := "israel2001_s7a"
@@ -182,7 +182,7 @@ def s7a : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("section", "1"), ("item", "a wink"), ("cell", "emphatic NPI, low value")] }
+    paperFeatures := [("section", "2"), ("item", "a wink"), ("cell", "emphatic NPI, low value")] }
 
 def s7b : Datum :=
   { id := "israel2001_s7b"
@@ -195,7 +195,7 @@ def s7b : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("section", "1"), ("item", "the least bit"), ("cell", "emphatic NPI, low value")] }
+    paperFeatures := [("section", "2"), ("item", "the least bit"), ("cell", "emphatic NPI, low value")] }
 
 def s7c : Datum :=
   { id := "israel2001_s7c"
@@ -208,7 +208,7 @@ def s7c : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("section", "1"), ("item", "an inch"), ("cell", "emphatic NPI, low value")] }
+    paperFeatures := [("section", "2"), ("item", "an inch"), ("cell", "emphatic NPI, low value")] }
 
 def s8a : Datum :=
   { id := "israel2001_s8a"
@@ -221,7 +221,7 @@ def s8a : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("section", "1"), ("item", "much"), ("cell", "attenuating NPI, high value")] }
+    paperFeatures := [("section", "2"), ("item", "much"), ("cell", "attenuating NPI, high value")] }
 
 def s8b : Datum :=
   { id := "israel2001_s8b"
@@ -234,7 +234,7 @@ def s8b : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("section", "1"), ("item", "all that"), ("cell", "attenuating NPI, high value")] }
+    paperFeatures := [("section", "2"), ("item", "all that"), ("cell", "attenuating NPI, high value")] }
 
 def s8c : Datum :=
   { id := "israel2001_s8c"
@@ -247,33 +247,33 @@ def s8c : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("section", "1"), ("item", "long"), ("cell", "attenuating NPI, high value")] }
+    paperFeatures := [("section", "2"), ("item", "long"), ("cell", "attenuating NPI, high value")] }
 
 def s9a : Datum :=
   { id := "israel2001_s9a"
     source := ⟨"israel-2001", "(9a)"⟩
     reportedIn := none
     language := "stan1293"
-    primaryText := "She is insanely good-looking, and outrageously cruel."
+    primaryText := "She is insanely good-looking."
     glossedTokens := []
     context := ""
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("section", "1"), ("item", "insanely"), ("cell", "emphatic PPI, high value")] }
+    paperFeatures := [("section", "2"), ("item", "insanely"), ("cell", "emphatic PPI, high value")] }
 
 def s9b : Datum :=
   { id := "israel2001_s9b"
     source := ⟨"israel-2001", "(9b)"⟩
     reportedIn := none
     language := "stan1293"
-    primaryText := "The test was way too hard. I was utterly depressed."
+    primaryText := "I was awfully depressed."
     glossedTokens := []
     context := ""
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("section", "1"), ("item", "utterly"), ("cell", "emphatic PPI, high value")] }
+    paperFeatures := [("section", "2"), ("item", "awfully"), ("cell", "emphatic PPI, high value")] }
 
 def s9c : Datum :=
   { id := "israel2001_s9c"
@@ -286,7 +286,7 @@ def s9c : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("section", "1"), ("item", "a heap"), ("cell", "emphatic PPI, high value")] }
+    paperFeatures := [("section", "2"), ("item", "a heap"), ("cell", "emphatic PPI, high value")] }
 
 def s10a : Datum :=
   { id := "israel2001_s10a"
@@ -299,7 +299,7 @@ def s10a : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("section", "1"), ("item", "sorta"), ("cell", "attenuating PPI, low value")] }
+    paperFeatures := [("section", "2"), ("item", "sorta"), ("cell", "attenuating PPI, low value")] }
 
 def s10b : Datum :=
   { id := "israel2001_s10b"
@@ -312,7 +312,7 @@ def s10b : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("section", "1"), ("item", "rather"), ("cell", "attenuating PPI, low value")] }
+    paperFeatures := [("section", "2"), ("item", "rather"), ("cell", "attenuating PPI, low value")] }
 
 def s10c : Datum :=
   { id := "israel2001_s10c"
@@ -325,7 +325,7 @@ def s10c : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("section", "1"), ("item", "somewhat"), ("cell", "attenuating PPI, low value")] }
+    paperFeatures := [("section", "2"), ("item", "somewhat"), ("cell", "attenuating PPI, low value")] }
 
 def s11a : Datum :=
   { id := "israel2001_s11a"
@@ -338,7 +338,7 @@ def s11a : Datum :=
     judgment := .acceptable
     alternatives := [("Wild horses could keep me away.", .ungrammatical)]
     readings := []
-    paperFeatures := [("section", "3"), ("item", "wild horses"), ("cell", "maximizing NPI"), ("role", "facilitating: stimulus")] }
+    paperFeatures := [("section", "4"), ("item", "wild horses"), ("cell", "maximizing NPI"), ("role", "facilitating: stimulus")] }
 
 def s11b : Datum :=
   { id := "israel2001_s11b"
@@ -351,7 +351,7 @@ def s11b : Datum :=
     judgment := .acceptable
     alternatives := [("I would do it for all the tea in China.", .ungrammatical)]
     readings := []
-    paperFeatures := [("section", "3"), ("item", "all the tea in China"), ("cell", "maximizing NPI"), ("role", "facilitating: reward")] }
+    paperFeatures := [("section", "4"), ("item", "all the tea in China"), ("cell", "maximizing NPI"), ("role", "facilitating: reward")] }
 
 def s11c : Datum :=
   { id := "israel2001_s11c"
@@ -362,9 +362,9 @@ def s11c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    alternatives := [("I would touch it with a ten-foot pole.", .ungrammatical)]
     readings := []
-    paperFeatures := [("section", "3"), ("item", "a ten-foot pole"), ("cell", "maximizing NPI"), ("role", "facilitating: instrument")] }
+    paperFeatures := [("section", "4"), ("item", "a ten-foot pole"), ("cell", "maximizing NPI"), ("role", "facilitating: instrument")] }
 
 def s12a : Datum :=
   { id := "israel2001_s12a"
@@ -377,7 +377,7 @@ def s12a : Datum :=
     judgment := .acceptable
     alternatives := [("Godfrey is not scared of his own shadow.", .ungrammatical)]
     readings := []
-    paperFeatures := [("section", "3"), ("item", "his own shadow"), ("cell", "minimizing PPI"), ("role", "facilitating: stimulus")] }
+    paperFeatures := [("section", "4"), ("item", "his own shadow"), ("cell", "minimizing PPI"), ("role", "facilitating: stimulus")] }
 
 def s12b : Datum :=
   { id := "israel2001_s12b"
@@ -390,7 +390,7 @@ def s12b : Datum :=
     judgment := .acceptable
     alternatives := [("She would not betray us at the drop of a hat.", .ungrammatical)]
     readings := []
-    paperFeatures := [("section", "3"), ("item", "at the drop of a hat"), ("cell", "minimizing PPI"), ("role", "facilitating: stimulus")] }
+    paperFeatures := [("section", "4"), ("item", "at the drop of a hat"), ("cell", "minimizing PPI"), ("role", "facilitating: stimulus")] }
 
 def s12c : Datum :=
   { id := "israel2001_s12c"
@@ -401,9 +401,9 @@ def s12c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    alternatives := [("You could not have knocked me over with a feather.", .ungrammatical)]
     readings := []
-    paperFeatures := [("section", "3"), ("item", "with a feather"), ("cell", "minimizing PPI"), ("role", "facilitating: instrument")] }
+    paperFeatures := [("section", "4"), ("item", "with a feather"), ("cell", "minimizing PPI"), ("role", "facilitating: instrument")] }
 
 def s13a : Datum :=
   { id := "israel2001_s13a"
@@ -416,7 +416,7 @@ def s13a : Datum :=
     judgment := .acceptable
     alternatives := [("We have heard from you in a coon's age!", .ungrammatical)]
     readings := []
-    paperFeatures := [("section", "3"), ("item", "in a coon's age"), ("cell", "inverted NPI, large time span")] }
+    paperFeatures := [("section", "4"), ("item", "in a coon's age"), ("cell", "inverted NPI, large time span")] }
 
 def s13b : Datum :=
   { id := "israel2001_s13b"
@@ -429,7 +429,7 @@ def s13b : Datum :=
     judgment := .acceptable
     alternatives := [("You'll in a million years guess who I saw last night.", .ungrammatical)]
     readings := []
-    paperFeatures := [("section", "3"), ("item", "in a million years"), ("cell", "inverted NPI, large time span")] }
+    paperFeatures := [("section", "4"), ("item", "in a million years"), ("cell", "inverted NPI, large time span")] }
 
 def s14a : Datum :=
   { id := "israel2001_s14a"
@@ -442,7 +442,7 @@ def s14a : Datum :=
     judgment := .acceptable
     alternatives := [("We will not be back in a jiffy.", .ungrammatical)]
     readings := []
-    paperFeatures := [("section", "3"), ("item", "in a jiffy"), ("cell", "inverted PPI, minimal span")] }
+    paperFeatures := [("section", "4"), ("item", "in a jiffy"), ("cell", "inverted PPI, minimal span")] }
 
 def s14b : Datum :=
   { id := "israel2001_s14b"
@@ -455,7 +455,7 @@ def s14b : Datum :=
     judgment := .acceptable
     alternatives := [("I wouldn't marry that woman in a New York minute.", .ungrammatical)]
     readings := []
-    paperFeatures := [("section", "3"), ("item", "in a New York minute"), ("cell", "inverted PPI, minimal span")] }
+    paperFeatures := [("section", "4"), ("item", "in a New York minute"), ("cell", "inverted PPI, minimal span")] }
 
 def s15a : Datum :=
   { id := "israel2001_s15a"
@@ -468,7 +468,7 @@ def s15a : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("section", "3"), ("item", "a red cent"), ("cell", "canonical NPI"), ("role", "resource")] }
+    paperFeatures := [("section", "4"), ("item", "a red cent"), ("cell", "canonical NPI"), ("role", "resource")] }
 
 def s15b : Datum :=
   { id := "israel2001_s15b"
@@ -481,7 +481,7 @@ def s15b : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("section", "3"), ("item", "all the tea in China"), ("cell", "inverted NPI"), ("role", "reward")] }
+    paperFeatures := [("section", "4"), ("item", "all the tea in China"), ("cell", "inverted NPI"), ("role", "reward")] }
 
 def s16a : Datum :=
   { id := "israel2001_s16a"
@@ -494,7 +494,7 @@ def s16a : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("section", "3"), ("item", "a king's ransom"), ("cell", "canonical PPI"), ("role", "resource")] }
+    paperFeatures := [("section", "4"), ("item", "a king's ransom"), ("cell", "canonical PPI"), ("role", "resource")] }
 
 def s16b : Datum :=
   { id := "israel2001_s16b"
@@ -507,7 +507,7 @@ def s16b : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("section", "3"), ("item", "for peanuts"), ("cell", "inverted PPI"), ("role", "reward")] }
+    paperFeatures := [("section", "4"), ("item", "for peanuts"), ("cell", "inverted PPI"), ("role", "reward")] }
 
 def s17a : Datum :=
   { id := "israel2001_s17a"
@@ -520,20 +520,20 @@ def s17a : Datum :=
     judgment := .acceptable
     alternatives := [("I will be half a minute.", .questionable)]
     readings := []
-    paperFeatures := [("section", "4"), ("item", "half a minute"), ("role", "duration: impeding")] }
+    paperFeatures := [("section", "5"), ("item", "half a minute"), ("role", "duration: impeding")] }
 
 def s17b : Datum :=
   { id := "israel2001_s17b"
     source := ⟨"israel-2001", "(17b)"⟩
     reportedIn := none
     language := "stan1293"
-    primaryText := "I cannot for a second believe she would do that."
+    primaryText := "I can not for a second believe she would do that."
     glossedTokens := []
     context := ""
     judgment := .acceptable
     alternatives := [("I can for a second believe she would do that.", .ungrammatical)]
     readings := []
-    paperFeatures := [("section", "4"), ("item", "for a second"), ("role", "duration: impeding")] }
+    paperFeatures := [("section", "5"), ("item", "for a second"), ("role", "duration: impeding")] }
 
 def s18a : Datum :=
   { id := "israel2001_s18a"
@@ -546,7 +546,7 @@ def s18a : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("section", "4"), ("item", "time out of mind"), ("role", "duration: impeding")] }
+    paperFeatures := [("section", "5"), ("item", "time out of mind"), ("role", "duration: impeding")] }
 
 def s18b : Datum :=
   { id := "israel2001_s18b"
@@ -559,7 +559,7 @@ def s18b : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("section", "4"), ("item", "for ages"), ("role", "duration: impeding")] }
+    paperFeatures := [("section", "5"), ("item", "for ages"), ("role", "duration: impeding")] }
 
 def s19 : Datum :=
   { id := "israel2001_s19"
@@ -572,7 +572,7 @@ def s19 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("section", "5"), ("source", "Fillmore, Kay and O'Connor 1988"), ("scales", "five coordinated scales")] }
+    paperFeatures := [("section", "6"), ("source", "Fillmore, Kay and O'Connor 1988"), ("scales", "five coordinated scales")] }
 
 def s20a : Datum :=
   { id := "israel2001_s20a"
@@ -585,7 +585,7 @@ def s20a : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("section", "5"), ("scales", "solvers, problems, time spans")] }
+    paperFeatures := [("section", "6"), ("scales", "solvers, problems, time spans")] }
 
 def s20b : Datum :=
   { id := "israel2001_s20b"
@@ -598,7 +598,7 @@ def s20b : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("section", "5"), ("scales", "solvers, problems, time spans")] }
+    paperFeatures := [("section", "6"), ("scales", "solvers, problems, time spans")] }
 
 def s20c : Datum :=
   { id := "israel2001_s20c"
@@ -611,7 +611,7 @@ def s20c : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("section", "5"), ("scales", "solvers, problems, time spans")] }
+    paperFeatures := [("section", "6"), ("scales", "solvers, problems, time spans")] }
 
 def s21a : Datum :=
   { id := "israel2001_s21a"
@@ -624,7 +624,7 @@ def s21a : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("section", "5"), ("scales", "solvers, problems, time spans")] }
+    paperFeatures := [("section", "6"), ("scales", "solvers, problems, time spans")] }
 
 def s21b : Datum :=
   { id := "israel2001_s21b"
@@ -637,37 +637,24 @@ def s21b : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("section", "5"), ("scales", "solvers, problems, time spans")] }
+    paperFeatures := [("section", "6"), ("scales", "solvers, problems, time spans")] }
 
 def s21c : Datum :=
   { id := "israel2001_s21c"
     source := ⟨"israel-2001", "(21c)"⟩
     reportedIn := none
     language := "stan1293"
-    primaryText := "It all happened faster than Einstein could say E=MC2."
+    primaryText := "It all happened faster than Einstein could say E = MC²."
     glossedTokens := []
     context := ""
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("section", "5"), ("scales", "solvers, problems, time spans")] }
+    paperFeatures := [("section", "6"), ("scales", "solvers, problems, time spans")] }
 
 def s22a : Datum :=
   { id := "israel2001_s22a"
     source := ⟨"israel-2001", "(22a)"⟩
-    reportedIn := none
-    language := "stan1293"
-    primaryText := "Eve didn't hear even the faintest noise."
-    glossedTokens := []
-    context := ""
-    judgment := .acceptable
-    alternatives := []
-    readings := []
-    paperFeatures := [("section", "6"), ("scale", "existential")] }
-
-def s22b : Datum :=
-  { id := "israel2001_s22b"
-    source := ⟨"israel-2001", "(22b)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "Eve didn't hear even the loudest noise."
@@ -676,7 +663,20 @@ def s22b : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("section", "6"), ("scale", "perceptual ability")] }
+    paperFeatures := [("section", "7"), ("scale", "perceptual ability")] }
+
+def s22b : Datum :=
+  { id := "israel2001_s22b"
+    source := ⟨"israel-2001", "(22b)"⟩
+    reportedIn := none
+    language := "stan1293"
+    primaryText := "Eve didn't hear even the faintest noise."
+    glossedTokens := []
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("section", "7"), ("scale", "existential")] }
 
 def s22c : Datum :=
   { id := "israel2001_s22c"
@@ -689,7 +689,7 @@ def s22c : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("section", "6"), ("paraphrase", "of both (22a) and (22b)")] }
+    paperFeatures := [("section", "7"), ("paraphrase", "of both (22a) and (22b)")] }
 
 def s23a : Datum :=
   { id := "israel2001_s23a"
@@ -702,7 +702,7 @@ def s23a : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("section", "6"), ("scale", "existential")] }
+    paperFeatures := [("section", "7"), ("scale", "existential")] }
 
 def s23b : Datum :=
   { id := "israel2001_s23b"
@@ -715,7 +715,7 @@ def s23b : Datum :=
     judgment := .ungrammatical
     alternatives := []
     readings := []
-    paperFeatures := [("section", "6"), ("scale", "perceptual ability")] }
+    paperFeatures := [("section", "7"), ("scale", "perceptual ability")] }
 
 def s24a : Datum :=
   { id := "israel2001_s24a"
@@ -728,7 +728,7 @@ def s24a : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("section", "6"), ("scale", "perceptual ability")] }
+    paperFeatures := [("section", "7"), ("scale", "perceptual ability")] }
 
 def s24b : Datum :=
   { id := "israel2001_s24b"
@@ -741,7 +741,7 @@ def s24b : Datum :=
     judgment := .questionable
     alternatives := []
     readings := []
-    paperFeatures := [("section", "6"), ("scale", "existential")] }
+    paperFeatures := [("section", "7"), ("scale", "existential")] }
 
 def s25a : Datum :=
   { id := "israel2001_s25a"
@@ -754,7 +754,7 @@ def s25a : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("section", "6"), ("scale", "existential")] }
+    paperFeatures := [("section", "7"), ("scale", "existential")] }
 
 def s25b : Datum :=
   { id := "israel2001_s25b"
@@ -767,7 +767,7 @@ def s25b : Datum :=
     judgment := .ungrammatical
     alternatives := []
     readings := []
-    paperFeatures := [("section", "6"), ("scale", "perceptual ability")] }
+    paperFeatures := [("section", "7"), ("scale", "perceptual ability")] }
 
 def s26a : Datum :=
   { id := "israel2001_s26a"
@@ -780,7 +780,7 @@ def s26a : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("section", "6"), ("verb", "see")] }
+    paperFeatures := [("section", "7"), ("verb", "see")] }
 
 def s26b : Datum :=
   { id := "israel2001_s26b"
@@ -793,7 +793,7 @@ def s26b : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("section", "6"), ("verb", "see")] }
+    paperFeatures := [("section", "7"), ("verb", "see")] }
 
 def s27a : Datum :=
   { id := "israel2001_s27a"
@@ -806,7 +806,7 @@ def s27a : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("section", "6"), ("verb", "detect")] }
+    paperFeatures := [("section", "7"), ("verb", "detect")] }
 
 def s27b : Datum :=
   { id := "israel2001_s27b"
@@ -819,7 +819,7 @@ def s27b : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("section", "6"), ("verb", "detect")] }
+    paperFeatures := [("section", "7"), ("verb", "detect")] }
 
 def s28a : Datum :=
   { id := "israel2001_s28a"
@@ -832,7 +832,7 @@ def s28a : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("section", "6"), ("verb", "find")] }
+    paperFeatures := [("section", "7"), ("verb", "find")] }
 
 def s28b : Datum :=
   { id := "israel2001_s28b"
@@ -845,7 +845,7 @@ def s28b : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("section", "6"), ("verb", "find")] }
+    paperFeatures := [("section", "7"), ("verb", "find")] }
 
 def all : List Datum := [s1a, s1b, s2a, s2b, s3a, s3b, s4a, s4b, s5a, s5b, s6a, s6b, s7a, s7b, s7c, s8a, s8b, s8c, s9a, s9b, s9c, s10a, s10b, s10c, s11a, s11b, s11c, s12a, s12b, s12c, s13a, s13b, s14a, s14b, s15a, s15b, s16a, s16b, s17a, s17b, s18a, s18b, s19, s20a, s20b, s20c, s21a, s21b, s21c, s22a, s22b, s22c, s23a, s23b, s24a, s24b, s25a, s25b, s26a, s26b, s27a, s27b, s28a, s28b]
 

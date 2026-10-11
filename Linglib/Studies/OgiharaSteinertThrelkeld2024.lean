@@ -12,9 +12,9 @@ public import Linglib.Data.Examples.OgiharaSteinertThrelkeld2024
 
 Ogihara and Steinert-Threlkeld argue against Beaver and Condoravdi's branching-time analysis of
 *before* and propose an eventuality-based revision. *After* is veridical and *before* is not:
-*he left before she arrived* is compatible with her never arriving. Over event predicates the
-asymmetry is quantificational, *after* being existential over both events and *before*
-universal over the complement, and whole-run-time precedence is strictly stronger than
+*Mozart died before he finished the Requiem* is true although he never finished it. Over event
+predicates the asymmetry is quantificational, *after* being existential over both events and
+*before* universal over the complement, and whole-run-time precedence is strictly stronger than
 Anscombe's point-wise relation. Alternatives that branch only after the main-clause time cannot
 place a complement whose window closes at or before that time, as with Ohtani's tenth win, the
 first snow of 2020 and Nostradamus's prophecy. The revision relativizes world equivalence to an
@@ -64,25 +64,6 @@ open Event (τ)
 
 open OgiharaSteinertThrelkeld2024.Examples
 open Tense Anscombe1964 BeaverCondoravdi2003
-
-/-- `connective d` is the connective that the row `d` tests. -/
-def connective (e : Datum) : Option String := e.feature? "connective"
-
-/-- A row records that the sentence entails its complement clause. -/
-def ComplementEntailed (e : Datum) : Prop :=
-  e.feature? "complement_entailed" = some "true"
-
-instance : DecidablePred ComplementEntailed := λ _ => inferInstanceAs (Decidable (_ = _))
-
-/-- Every *after* sentence in the paper's data entails its complement. -/
-theorem after_rows_veridical :
-    ∀ e ∈ Examples.all, connective e = some "after" → ComplementEntailed e := by
-  decide
-
-/-- No *before* sentence in the paper's data entails its complement. -/
-theorem before_rows_nonveridical :
-    ∀ e ∈ Examples.all, connective e = some "before" → ¬ ComplementEntailed e := by
-  decide
 
 /-! The connectives over event predicates: *after* is doubly existential — both events
 exist and the complement's run-time wholly precedes the main event's — while *before* is
@@ -163,16 +144,15 @@ theorem not_eventBefore_of_anscombe :
   have := hall eQ rfl
   simp [NonemptyInterval.precedes, eP, eQ] at this
 
-/-- In *he left after she arrived*, with the arriving at `0` and the leaving at `1`, the arriving
-precedes the leaving. -/
+/-- An event at `1` is after an event at `0`. -/
 example : eventAfter (· = (.pure 1 : NonemptyInterval ℤ)) (· = .pure 0) :=
   ⟨_, _, rfl, rfl, by simp [NonemptyInterval.precedes]⟩
 
-/-- *He left before she arrived*, with the leaving at `1` and the arriving at `3`. -/
+/-- An event at `1` is before an event at `3`. -/
 example : eventBefore (· = (.pure 1 : NonemptyInterval ℤ)) (· = .pure 3) :=
   ⟨_, rfl, fun _ h ↦ by subst h; simp [NonemptyInterval.precedes]⟩
 
-/-- *The bomb exploded before anyone defused it* holds vacuously when nobody defused it. -/
+/-- *Mozart died before he finished the Requiem* holds vacuously when he never finished it. -/
 example : eventBefore (· = (.pure 5 : NonemptyInterval ℤ)) fun _ ↦ False :=
   ⟨_, rfl, fun _ h ↦ h.elim⟩
 

@@ -28,7 +28,8 @@
       ["conditioner", "3"],
       ["claim", "attested"]
     ],
-    "comment": "Perfect indicative: null T[pres] is pruned, Agr is concatenated with Asp[perf] and takes the special -ī."
+    "comment": "Perfect indicative: null T[pres] is pruned, Agr is concatenated with Asp[perf] and takes the special -ī.",
+    "verified": "page-image"
   },
   {
     "id": "embick2010_amavisti",
@@ -59,14 +60,15 @@
       ["conditioner", "3"],
       ["claim", "attested"]
     ],
-    "comment": "Perfect indicative 2sg: the special -istī next to Asp[perf]."
+    "comment": "Perfect indicative 2sg: the special -istī next to Asp[perf].",
+    "verified": "page-image"
   },
   {
     "id": "embick2010_amaveram",
     "source": {"bibkey": "embick-2010", "paperLabel": "ch. 3, (3), (10b)"},
     "reportedIn": null,
     "language": "lati1261",
-    "primaryText": "amā-ve-rā-m",
+    "primaryText": "amā-ve-ra-m",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "I had loved",
@@ -90,14 +92,15 @@
       ["conditioner", "3"],
       ["claim", "blocked"]
     ],
-    "comment": "Pluperfect: overt T between Asp[perf] and Agr, so the elsewhere -m."
+    "comment": "Pluperfect: overt T between Asp[perf] and Agr, so the elsewhere -m. Table (3) prints amā-ve-ra-m (underlying -rā shortened before /m/, as the prose says); (10b) prints the unsegmented amāverām.",
+    "verified": "page-image"
   },
   {
     "id": "embick2010_amaverim",
     "source": {"bibkey": "embick-2010", "paperLabel": "ch. 3, (3)"},
     "reportedIn": null,
     "language": "lati1261",
-    "primaryText": "amā-ve-rī-m",
+    "primaryText": "amā-ve-ri-m",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "I have loved (subjunctive)",
@@ -121,7 +124,8 @@
       ["conditioner", "3"],
       ["claim", "blocked"]
     ],
-    "comment": "Perfect subjunctive: overt T intervenes."
+    "comment": "Perfect subjunctive: overt T intervenes.",
+    "verified": "page-image"
   },
   {
     "id": "embick2010_amavero",
@@ -152,7 +156,8 @@
       ["conditioner", "3"],
       ["claim", "blocked"]
     ],
-    "comment": "Future perfect: overt T intervenes."
+    "comment": "Future perfect: overt T intervenes.",
+    "verified": "page-image"
   },
   {
     "id": "embick2010_capimus",
@@ -177,7 +182,8 @@
       ["conditioner", "root"],
       ["claim", "attested"]
     ],
-    "comment": "The theme sees the root's conjugation feature across the pruned v."
+    "comment": "The theme sees the root's conjugation feature across the pruned v.",
+    "verified": "page-image"
   },
   {
     "id": "embick2010_capessimus_root",
@@ -202,7 +208,8 @@
       ["conditioner", "root"],
       ["claim", "blocked"]
     ],
-    "comment": "The overt desiderative v intervenes: the theme cannot see the root's class."
+    "comment": "The overt desiderative v intervenes: the theme cannot see the root's class.",
+    "verified": "page-image"
   },
   {
     "id": "embick2010_capessimus_v",
@@ -227,7 +234,8 @@
       ["conditioner", "1"],
       ["claim", "attested"]
     ],
-    "comment": "The theme sees the class feature of the exponent it is concatenated with, -ess[III]."
+    "comment": "The theme sees the class feature of the exponent it is concatenated with, -ess[III].",
+    "verified": "page-image"
   },
   {
     "id": "embick2010_marriage",
@@ -250,7 +258,8 @@
       ["conditioner", "root"],
       ["claim", "attested"]
     ],
-    "comment": "Root-attached n: Root-determined -age."
+    "comment": "Root-attached n: Root-determined -age.",
+    "verified": "page-image"
   },
   {
     "id": "embick2010_marrying",
@@ -275,7 +284,8 @@
       ["conditioner", "root"],
       ["claim", "blocked"]
     ],
-    "comment": "Gerund: the Root is not present in the cycle in which n is spelled out."
+    "comment": "Gerund: the Root is not present in the cycle in which n is spelled out.",
+    "verified": "page-image"
   },
   {
     "id": "embick2010_bent",
@@ -300,32 +310,8 @@
       ["conditioner", "root"],
       ["claim", "attested"]
     ],
-    "comment": "Noncyclic T[past] sees the Root across the pruned v."
-  },
-  {
-    "id": "embick2010_oxen",
-    "source": {"bibkey": "embick-2010", "paperLabel": "ch. 2, (24)"},
-    "reportedIn": null,
-    "language": "stan1293",
-    "primaryText": "ox-en",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "oxen",
-    "context": "",
-    "judgment": "acceptable",
-    "alternatives": [],
-    "readings": [],
-    "paperFeatures": [
-      ["root", "OX"],
-      ["h1", "n"],
-      ["h1exp", ""],
-      ["h2", "number"],
-      ["h2exp", "-en"],
-      ["target", "2"],
-      ["conditioner", "root"],
-      ["claim", "attested"]
-    ],
-    "comment": "Noncyclic [pl] sees the Root across the pruned n."
+    "comment": "Noncyclic T[past] sees the Root across the pruned v.",
+    "verified": "page-image"
   },
   {
     "id": "embick2010_breakability",
@@ -350,7 +336,8 @@
       ["conditioner", "1"],
       ["claim", "attested"]
     ],
-    "comment": "Potentiation: n sees the a realized as -able."
+    "comment": "Potentiation: n sees the a realized as -able.",
+    "verified": "page-image"
   },
   {
     "id": "embick2010_colorization_v",
@@ -375,7 +362,8 @@
       ["conditioner", "1"],
       ["claim", "attested"]
     ],
-    "comment": "Outer n sees the v realized as -ize, which conditions -ation."
+    "comment": "Outer n sees the v realized as -ize, which conditions -ation.",
+    "verified": "page-image"
   },
   {
     "id": "embick2010_colorization_root",
@@ -400,7 +388,8 @@
       ["conditioner", "root"],
       ["claim", "blocked"]
     ],
-    "comment": "Outer n cannot see the Root."
+    "comment": "Outer n cannot see the Root.",
+    "verified": "page-image"
   },
   {
     "id": "embick2010_bachaanaa",
@@ -425,7 +414,8 @@
       ["conditioner", "root"],
       ["claim", "attested"]
     ],
-    "comment": "Transitive: noncyclic Voice[ag] shows Root-determined -aa vs -Ø."
+    "comment": "Transitive: noncyclic Voice[ag] shows Root-determined -aa vs -Ø.",
+    "verified": "page-image"
   },
   {
     "id": "embick2010_bachvaanaa",
@@ -454,6 +444,7 @@
       ["conditioner", "root"],
       ["claim", "blocked"]
     ],
-    "comment": "Indirect causative: the outer Voice[ag] is two cycles up, so the default -aa."
+    "comment": "Indirect causative: the outer Voice[ag] is two cycles up, so the default -aa.",
+    "verified": "page-image"
   }
 ]

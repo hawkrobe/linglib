@@ -11,7 +11,7 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "ungrammatical",
+    "judgment": "unacceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -40,7 +40,8 @@
     "reportedIn": {
       "bibkey": "fox-spector-2018",
       "paperLabel": "(14a)"
-    }
+    },
+    "verified": "page-image"
   },
   {
     "id": "foxspector2018_ex14b",
@@ -54,7 +55,7 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "ungrammatical",
+    "judgment": "unacceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -79,7 +80,8 @@
         "0"
       ]
     ],
-    "comment": ""
+    "comment": "The paper prints German Sheperd.",
+    "verified": "page-image"
   },
   {
     "id": "foxspector2018_ex16a",
@@ -122,7 +124,8 @@
     "reportedIn": {
       "bibkey": "fox-spector-2018",
       "paperLabel": "(16a)"
-    }
+    },
+    "verified": "page-image"
   },
   {
     "id": "foxspector2018_ex16b",
@@ -161,7 +164,8 @@
         "0"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "foxspector2018_ex16c",
@@ -204,7 +208,8 @@
     "reportedIn": {
       "bibkey": "fox-spector-2018",
       "paperLabel": "(16c)"
-    }
+    },
+    "verified": "page-image"
   },
   {
     "id": "foxspector2018_ex18a",
@@ -243,7 +248,8 @@
         "0"
       ]
     ],
-    "comment": "Exhaustification of the first disjunct has a detectable effect: four or five children falsify it."
+    "comment": "Exhaustification of the first disjunct has a detectable effect: four or five children falsify it.",
+    "verified": "page-image"
   },
   {
     "id": "foxspector2018_ex18b",
@@ -252,7 +258,7 @@
       "paperLabel": "(18b)"
     },
     "language": "stan1293",
-    "primaryText": "The water is warm or absolutely boiling.",
+    "primaryText": "The water is (somewhat) warm or absolutely boiling.",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
@@ -282,7 +288,8 @@
         "0"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "foxspector2018_ex12b",
@@ -296,7 +303,7 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "ungrammatical",
+    "judgment": "unacceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -325,7 +332,8 @@
     "reportedIn": {
       "bibkey": "fox-spector-2018",
       "paperLabel": "(12b)"
-    }
+    },
+    "verified": "page-image"
   },
   {
     "id": "foxspector2018_ex46",
@@ -334,7 +342,7 @@
       "paperLabel": "(46)"
     },
     "language": "stan1293",
-    "primaryText": "The water is absolutely boiling or somewhat warm.",
+    "primaryText": "The water is absolutely boiling or (somewhat) warm.",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
@@ -364,7 +372,8 @@
         "0"
       ]
     ],
-    "comment": "A reverse Hurford disjunction of distant entailing disjuncts: exhaustification is not vacuous."
+    "comment": "A reverse Hurford disjunction of distant entailing disjuncts: exhaustification is not vacuous.",
+    "verified": "page-image"
   },
   {
     "id": "foxspector2018_ex10a",
@@ -407,7 +416,8 @@
     "reportedIn": {
       "bibkey": "fox-spector-2018",
       "paperLabel": "(10a)"
-    }
+    },
+    "verified": "page-image"
   },
   {
     "id": "foxspector2018_ex65a",
@@ -446,7 +456,8 @@
         "1"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "foxspector2018_ex65b",
@@ -485,7 +496,8 @@
         "2"
       ]
     ],
-    "comment": "Two downward-entailing operators make the context upward-entailing again."
+    "comment": "Two downward-entailing operators make the context upward-entailing again.",
+    "verified": "page-image"
   },
   {
     "id": "foxspector2018_ex66a",
@@ -499,7 +511,7 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "ungrammatical",
+    "judgment": "unacceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -524,7 +536,8 @@
         "1"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "foxspector2018_ex66b",
@@ -563,6 +576,7 @@
         "2"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   }
 ]

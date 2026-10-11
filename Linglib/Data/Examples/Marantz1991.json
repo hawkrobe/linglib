@@ -3,9 +3,9 @@
     "id": "m1991_1a",
     "source": {"bibkey": "marantz-1991", "paperLabel": "(1a)"},
     "language": "nucl1302",
-    "primaryText": "vano pikr-ob-s marikaze.",
+    "primaryText": "vano pikr-ob-s mariḳaze.",
     "glossedTokens": [
-      ["vano", "Vano.NOM"], ["pikr-ob-s", "think-INFL.I"], ["marikaze", "Marika.on"]
+      ["vano", "Vano.NOM"], ["pikr-ob-s", "think-INFL.I"], ["mariḳaze", "Marika.on"]
     ],
     "translation": "Vano is thinking about Marika.",
     "context": "",
@@ -16,15 +16,16 @@
       ["inflection", "I"],
       ["subject", "NOM"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "m1991_1b",
     "source": {"bibkey": "marantz-1991", "paperLabel": "(1b)"},
     "language": "nucl1302",
-    "primaryText": "vano-m i-pikr-a marikaze.",
+    "primaryText": "vano-m i-pikr-a mariḳaze.",
     "glossedTokens": [
-      ["vano-m", "Vano-ERG"], ["i-pikr-a", "think-INFL.II"], ["marikaze", "Marika.on"]
+      ["vano-m", "Vano-ERG"], ["i-pikr-a", "think-INFL.II"], ["mariḳaze", "Marika.on"]
     ],
     "translation": "Vano thought about Marika.",
     "context": "",
@@ -35,7 +36,8 @@
       ["inflection", "II"],
       ["subject", "ERG"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "m1991_1c",
@@ -55,7 +57,8 @@
       ["subject", "NOM"],
       ["object", "DAT"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "m1991_1d",
@@ -75,7 +78,8 @@
       ["subject", "ERG"],
       ["object", "NOM"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "m1991_2a",
@@ -94,7 +98,8 @@
       ["inflection", "I"],
       ["subject", "NOM"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "m1991_2b",
@@ -113,7 +118,8 @@
       ["inflection", "II"],
       ["subject", "NOM"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "m1991_3a",
@@ -133,7 +139,8 @@
       ["subject", "DAT"],
       ["object", "NOM"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "m1991_3b",
@@ -153,7 +160,8 @@
       ["subject", "DAT"],
       ["object", "NOM"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "m1991_4a",
@@ -172,7 +180,8 @@
       ["inflection", "perfect"],
       ["subject", "NOM"]
     ],
-    "comment": "The paper gives no free translation."
+    "comment": "The paper gives no free translation.",
+    "verified": "page-image"
   },
   {
     "id": "m1991_4a_erg",
@@ -184,14 +193,15 @@
     ],
     "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "readings": [],
     "paperFeatures": [
       ["clause", "unaccusative"],
       ["inflection", "perfect"],
       ["subject", "ERG"]
     ],
-    "comment": "The paper gives the ergative marker as excluded, *siita (*ne) aayii*. The paper gives no free translation."
+    "comment": "The paper gives the ergative marker as excluded, *siita (*ne) aayii*. The paper gives no free translation.",
+    "verified": "page-image"
   },
   {
     "id": "m1991_4b",
@@ -210,7 +220,8 @@
       ["inflection", "perfect"],
       ["subject", "NOM"]
     ],
-    "comment": "The paper gives no free translation."
+    "comment": "The paper gives no free translation.",
+    "verified": "page-image"
   },
   {
     "id": "m1991_4c",
@@ -229,7 +240,8 @@
       ["inflection", "perfect"],
       ["subject", "ERG"]
     ],
-    "comment": "The paper gives no free translation."
+    "comment": "The paper gives no free translation.",
+    "verified": "page-image"
   },
   {
     "id": "m1991_4d",
@@ -249,7 +261,8 @@
       ["subject", "ERG"],
       ["object", "NOM"]
     ],
-    "comment": "The paper gives no free translation."
+    "comment": "The paper gives no free translation.",
+    "verified": "page-image"
   },
   {
     "id": "m1991_5a",
@@ -267,7 +280,8 @@
       ["clause", "unaccusative"],
       ["subject", "ABS"]
     ],
-    "comment": "The paper gives no free translation."
+    "comment": "The paper gives no free translation.",
+    "verified": "page-image"
   },
   {
     "id": "m1991_5b",
@@ -285,7 +299,8 @@
       ["clause", "unergative"],
       ["subject", "ERG"]
     ],
-    "comment": "The paper gives no free translation."
+    "comment": "The paper gives no free translation.",
+    "verified": "page-image"
   },
   {
     "id": "m1991_5c",
@@ -304,6 +319,7 @@
       ["subject", "ERG"],
       ["object", "ABS"]
     ],
-    "comment": "The paper gives no free translation and glosses *ekarri* as 'bought'."
+    "comment": "The paper gives no free translation and glosses *ekarri* as 'bought'.",
+    "verified": "page-image"
   }
 ]

@@ -24,7 +24,8 @@
         "p"
       ]
     ],
-    "comment": "The inference that there is a meeting projects through questions and negation, (1b)–(1c)."
+    "comment": "The inference that there is a meeting projects through questions and negation, (1b)–(1c).",
+    "verified": "page-image"
   },
   {
     "id": "glass2025_2a_p",
@@ -51,7 +52,8 @@
         "p"
       ]
     ],
-    "comment": "Whether there is a meeting depends on Alex's trustworthiness and the plausibility of a meeting."
+    "comment": "Whether there is a meeting depends on Alex's trustworthiness and the plausibility of a meeting.",
+    "verified": "page-image"
   },
   {
     "id": "glass2025_2a_unsettled",
@@ -78,7 +80,8 @@
         "unsettled"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "glass2025_2a_notP",
@@ -105,7 +108,8 @@
         "notP"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "glass2025_4_notP",
@@ -157,7 +161,8 @@
     "reportedIn": {
       "bibkey": "glass-2025",
       "paperLabel": "(4)"
-    }
+    },
+    "verified": "page-image"
   },
   {
     "id": "glass2025_4_p",
@@ -209,7 +214,8 @@
     "reportedIn": {
       "bibkey": "glass-2025",
       "paperLabel": "(4)"
-    }
+    },
+    "verified": "page-image"
   },
   {
     "id": "glass2025_5_notP",
@@ -261,7 +267,8 @@
     "reportedIn": {
       "bibkey": "glass-2025",
       "paperLabel": "(5)"
-    }
+    },
+    "verified": "page-image"
   },
   {
     "id": "glass2025_5_unsettled",
@@ -313,7 +320,8 @@
     "reportedIn": {
       "bibkey": "glass-2025",
       "paperLabel": "(5)"
-    }
+    },
+    "verified": "page-image"
   },
   {
     "id": "glass2025_7",
@@ -389,6 +397,7 @@
     "reportedIn": {
       "bibkey": "glass-2025",
       "paperLabel": "(7)"
-    }
+    },
+    "verified": "page-image"
   }
 ]

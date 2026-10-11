@@ -17,7 +17,7 @@ namespace Anderson2006a.Examples
 
 def komi_neg_pres : Datum :=
   { id := "anderson2006a_komi_neg_pres"
-    source := ⟨"anderson-2006a", "(47a)"⟩
+    source := ⟨"anderson-2006a", "ch. 1, (47a)"⟩
     reportedIn := none
     language := "komi1268"
     primaryText := "o-g mun"
@@ -30,7 +30,7 @@ def komi_neg_pres : Datum :=
 
 def komi_neg_past : Datum :=
   { id := "anderson2006a_komi_neg_past"
-    source := ⟨"anderson-2006a", "(47b)"⟩
+    source := ⟨"anderson-2006a", "ch. 1, (47b)"⟩
     reportedIn := none
     language := "komi1268"
     primaryText := "e-g mun"
@@ -43,7 +43,7 @@ def komi_neg_past : Datum :=
 
 def udihe_neg : Datum :=
   { id := "anderson2006a_udihe_neg"
-    source := ⟨"anderson-2006a", "(49)"⟩
+    source := ⟨"anderson-2006a", "ch. 1, (49)"⟩
     reportedIn := none
     language := "udih1248"
     primaryText := "bi ei-mi sa:"
@@ -56,7 +56,7 @@ def udihe_neg : Datum :=
 
 def kwerba_neg_fut : Datum :=
   { id := "anderson2006a_kwerba_neg_fut"
-    source := ⟨"anderson-2006a", "(52a)"⟩
+    source := ⟨"anderson-2006a", "ch. 1, (52a)"⟩
     reportedIn := none
     language := "kwer1242"
     primaryText := "co kwai kot-ri-m"
@@ -69,7 +69,7 @@ def kwerba_neg_fut : Datum :=
 
 def kwerba_neg_past : Datum :=
   { id := "anderson2006a_kwerba_neg_past"
-    source := ⟨"anderson-2006a", "(52b)"⟩
+    source := ⟨"anderson-2006a", "ch. 1, (52b)"⟩
     reportedIn := none
     language := "kwer1242"
     primaryText := "co kot-ri-m-o baye"
@@ -82,7 +82,7 @@ def kwerba_neg_past : Datum :=
 
 def doyayo_lexheaded : Datum :=
   { id := "anderson2006a_doyayo_lexheaded"
-    source := ⟨"anderson-2006a", "(15a)"⟩
+    source := ⟨"anderson-2006a", "ch. 3, (15a)"⟩
     reportedIn := none
     language := "doya1240"
     primaryText := "mi¹ (gi²) kpel¹-ko¹"
@@ -95,7 +95,7 @@ def doyayo_lexheaded : Datum :=
 
 def doyayo_splitdoubled : Datum :=
   { id := "anderson2006a_doyayo_splitdoubled"
-    source := ⟨"anderson-2006a", "(129)"⟩
+    source := ⟨"anderson-2006a", "ch. 5, (129)"⟩
     reportedIn := none
     language := "doya1240"
     primaryText := "hi¹-za¹ hi¹-zaa¹³ hi¹-lɔ-mɔ"
@@ -108,7 +108,7 @@ def doyayo_splitdoubled : Datum :=
 
 def gorum_tiger : Datum :=
   { id := "anderson2006a_gorum_tiger"
-    source := ⟨"anderson-2006a", "(63a)"⟩
+    source := ⟨"anderson-2006a", "ch. 4, (63a)"⟩
     reportedIn := none
     language := "pare1266"
     primaryText := "kula ne-giʔ-sun miŋ ne-butoŋ-tuʔ ne-i-tuʔ"
@@ -121,7 +121,7 @@ def gorum_tiger : Datum :=
 
 def gorum_vigorously : Datum :=
   { id := "anderson2006a_gorum_vigorously"
-    source := ⟨"anderson-2006a", "(63b)"⟩
+    source := ⟨"anderson-2006a", "ch. 4, (63b)"⟩
     reportedIn := none
     language := "pare1266"
     primaryText := "miŋ ne-gaʔ-ru ne-laʔ-ru"
@@ -134,7 +134,7 @@ def gorum_vigorously : Datum :=
 
 def hemba_progressive : Datum :=
   { id := "anderson2006a_hemba_progressive"
-    source := ⟨"anderson-2006a", "(105)"⟩
+    source := ⟨"anderson-2006a", "ch. 5, (105)"⟩
     reportedIn := none
     language := "hemb1242"
     primaryText := "tw-a-li tu-tib-a muti"
@@ -147,7 +147,7 @@ def hemba_progressive : Datum :=
 
 def pipil_capability : Datum :=
   { id := "anderson2006a_pipil_capability"
-    source := ⟨"anderson-2006a", "(49)"⟩
+    source := ⟨"anderson-2006a", "ch. 3, (49)"⟩
     reportedIn := none
     language := "pipi1250"
     primaryText := "weli ni-nehnemi wehka"
@@ -160,7 +160,7 @@ def pipil_capability : Datum :=
 
 def pipil_progressive : Datum :=
   { id := "anderson2006a_pipil_progressive"
-    source := ⟨"anderson-2006a", "(133b)"⟩
+    source := ⟨"anderson-2006a", "ch. 5, (133b)"⟩
     reportedIn := none
     language := "pipi1250"
     primaryText := "n-yu ni-mitsin-ilwitia"
@@ -173,7 +173,7 @@ def pipil_progressive : Datum :=
 
 def jakaltek_completive : Datum :=
   { id := "anderson2006a_jakaltek_completive"
-    source := ⟨"anderson-2006a", "(87a)"⟩
+    source := ⟨"anderson-2006a", "ch. 5, (87a)"⟩
     reportedIn := none
     language := "popt1235"
     primaryText := "šk-ach w-ila"

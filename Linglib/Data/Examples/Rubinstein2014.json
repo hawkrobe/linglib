@@ -19,7 +19,8 @@
       ["category", "modalVerb"],
       ["diagnostic", "negRaising"]
     ],
-    "comment": "Horn (1978, p. 198) ex. (31a): 'I don't think you should leave' is paraphrasable as 'I think you should stay' — the lower-negation (THINK > NOT > should) reading is available for weak necessity should."
+    "comment": "Horn (1978, p. 198) ex. (31a): 'I don't think you should leave' is paraphrasable as 'I think you should stay' — the lower-negation (THINK > NOT > should) reading is available for weak necessity should.",
+    "verified": "page-image"
   },
   {
     "id": "rubinstein2014_nr_ought",
@@ -41,7 +42,8 @@
       ["category", "modalVerb"],
       ["diagnostic", "negRaising"]
     ],
-    "comment": "Horn (1978, p. 198) ex. (31a): weak necessity 'ought to' admits the lower-negation reading 'I think you ought to stay'."
+    "comment": "Horn (1978, p. 198) ex. (31a): weak necessity 'ought to' admits the lower-negation reading 'I think you ought to stay'.",
+    "verified": "page-image"
   },
   {
     "id": "rubinstein2014_nr_better",
@@ -63,7 +65,8 @@
       ["category", "evaluativeComparative"],
       ["diagnostic", "negRaising"]
     ],
-    "comment": "Horn (1978, p. 198) ex. (31a): the comparative evaluative ''d better' neg-raises, paraphrasable as 'I think you'd better stay'."
+    "comment": "Horn (1978, p. 198) ex. (31a): the comparative evaluative 'better' ('(had) better' in the prose) neg-raises, paraphrasable as 'I think you better stay'.",
+    "verified": "page-image"
   },
   {
     "id": "rubinstein2014_nr_good",
@@ -85,7 +88,8 @@
       ["category", "evaluativeComparative"],
       ["diagnostic", "negRaising"]
     ],
-    "comment": "Horn (1978, p. 211) ex. (30): 'It wouldn't be good for you to cheat' is read as 'It would be good for you not to cheat' — modal 'good' neg-raises."
+    "comment": "Horn (1978, p. 211) ex. (30): 'It wouldn't be good for you to cheat' is read as 'It would be good for you not to cheat' — modal 'good' neg-raises.",
+    "verified": "page-image"
   },
   {
     "id": "rubinstein2014_nr_must",
@@ -107,7 +111,8 @@
       ["category", "modalVerb"],
       ["diagnostic", "negRaising"]
     ],
-    "comment": "Horn (1978, p. 198) ex. (31b): strong necessity 'must' does NOT support the lower-negation reading — 'I don't think you must leave' is not equivalent to 'I think you must stay'."
+    "comment": "Horn (1978, p. 198) ex. (31b): strong necessity 'must' does NOT support the lower-negation reading — 'I don't think you must leave' is not equivalent to 'I think you must stay'.",
+    "verified": "page-image"
   },
   {
     "id": "rubinstein2014_nr_haveTo",
@@ -129,7 +134,8 @@
       ["category", "modalVerb"],
       ["diagnostic", "negRaising"]
     ],
-    "comment": "Horn (1978, p. 198) ex. (31b): strong necessity 'have to' lacks the lower-negation reading; negation can only be interpreted in the matrix clause."
+    "comment": "Horn (1978, p. 198) ex. (31b): strong necessity 'have to' lacks the lower-negation reading; negation can only be interpreted in the matrix clause.",
+    "verified": "page-image"
   },
   {
     "id": "rubinstein2014_nr_adif",
@@ -139,8 +145,8 @@
     "primaryText": "ce'irim sinim kayom lo xošvim še-'adif axeret.",
     "discourseSegments": [],
     "glossedTokens": [
-      ["ce'irim", "young.PL"], ["sinim", "Chinese.PL"], ["kayom", "today"], ["lo", "NEG"],
-      ["xošvim", "think.PL"], ["še-'adif", "that-preferable"], ["axeret", "differently"]
+      ["ce'irim", "young"], ["sinim", "Chinese"], ["kayom", "these days"], ["lo", "NEG"],
+      ["xošvim", "think"], ["še-'adif", "that-preferable"], ["axeret", "differently"]
     ],
     "translation": "(I'm astonished that) young Chinese these days don't think it would be better if things were different.",
     "context": "Blog discussion of attitudes; tests neg-raising (cyclicity) of 'adif 'preferable' in Hebrew.",
@@ -154,7 +160,8 @@
       ["category", "evaluativeComparative"],
       ["diagnostic", "negRaising"]
     ],
-    "comment": "Rubinstein (2014) ex. (33): 'adif 'preferable' shows the neg-raising (cyclicity) reading in Hebrew — negation interpreted narrowly under the evaluative comparative (THINK > PREFERABLE > NOT)."
+    "comment": "Rubinstein (2014) ex. (33): 'adif 'preferable' shows the neg-raising (cyclicity) reading in Hebrew — negation interpreted narrowly under the evaluative comparative (THINK > PREFERABLE > NOT).",
+    "verified": "page-image"
   },
   {
     "id": "rubinstein2014_ought_lexical",
@@ -175,7 +182,8 @@
       ["strategy", "lexical"],
       ["diagnostic", "test1"]
     ],
-    "comment": "Rubinstein (2014) ex. (8a), 'Lexical WN': English dedicates a lexical item (ought/should) to weak necessity. Passes Test 1 — felicitous because weak necessity is strictly weaker than have-to."
+    "comment": "Rubinstein (2014) ex. (8a), 'Lexical WN': English dedicates a lexical item (ought/should) to weak necessity. Passes Test 1 — felicitous because weak necessity is strictly weaker than have-to.",
+    "verified": "page-image"
   },
   {
     "id": "rubinstein2014_compositional_deberia",
@@ -185,9 +193,8 @@
     "primaryText": "Debería limpiar los platos, pero no estoy obligado.",
     "discourseSegments": [],
     "glossedTokens": [
-      ["Debería", "must.COND"], ["limpiar", "clean.INF"], ["los", "DEF.M.PL"],
-      ["platos", "dish.PL"], ["pero", "but"], ["no", "NEG"], ["estoy", "be.1SG"],
-      ["obligado", "obliged"]
+      ["Debería", "must.COND"], ["limpiar", "clean"], ["los", "the"], ["platos", "dishes"],
+      ["pero", "but"], ["no", "not"], ["estoy", "am"], ["obligado", "obliged"]
     ],
     "translation": "I ought to do the dishes but I am not obliged to.",
     "context": "Spanish derives weak necessity compositionally: strong modal deber + conditional morphology.",
@@ -200,7 +207,8 @@
       ["strategy", "compositional"],
       ["diagnostic", "test1"]
     ],
-    "comment": "Rubinstein (2014) ex. (8b), 'Compositional WN' (von Fintel & Iatridou 2008, p. 122): Spanish builds weak necessity from a strong necessity modal (deber) plus the conditional morphology characteristic of counterfactual consequents."
+    "comment": "Rubinstein (2014) ex. (8b), 'Compositional WN' (von Fintel & Iatridou 2008, p. 122): Spanish builds weak necessity from a strong necessity modal (deber) plus the conditional morphology characteristic of counterfactual consequents. The paper prints Deberia (/Tendria que), without the accent.",
+    "verified": "page-image"
   },
   {
     "id": "rubinstein2014_test1_carix",
@@ -210,13 +218,13 @@
     "primaryText": "hu carix lištof et ha-kelim, aval hu lo xayav.",
     "discourseSegments": [],
     "glossedTokens": [
-      ["hu", "3SG.M"], ["carix", "need.SG.M"], ["lištof", "wash.INF"], ["et", "ACC"],
-      ["ha-kelim", "DEF-dish.PL"], ["aval", "but"], ["hu", "3SG.M"], ["lo", "NEG"],
-      ["xayav", "must.SG.M"]
+      ["hu", "he"], ["carix", "need.MSG"], ["lištof", "wash"], ["et", "ACC"],
+      ["ha-kelim", "the-dishes"], ["aval", "but"], ["hu", "he"], ["lo", "NEG"],
+      ["xayav", "must.MSG"]
     ],
-    "translation": "?He needs to do the dishes, but he doesn't have to.",
+    "translation": "He needs to do the dishes, but he doesn't have to.",
     "context": "Given the rules of the house. Test 1 (x ought to q, but doesn't have to) with carix 'need' substituted for ought.",
-    "judgment": "questionable",
+    "judgment": "marginal",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -224,7 +232,8 @@
       ["category", "modalVerb"],
       ["diagnostic", "test1"]
     ],
-    "comment": "Rubinstein (2014) ex. (16a): substituting carix 'need' for ought yields a contradiction in Test 1 — carix aligns with strong necessity (xayav 'must'), so 'needs to but doesn't have to' is infelicitous."
+    "comment": "Rubinstein (2014) ex. (16a): substituting carix 'need' for ought yields a contradiction in Test 1 — carix aligns with strong necessity (xayav 'must'), so 'needs to but doesn't have to' is infelicitous.",
+    "verified": "page-image"
   },
   {
     "id": "rubinstein2014_test2_carix",
@@ -234,13 +243,12 @@
     "primaryText": "melcarim xayavim lištof yadayim, aval orxim raq crxim.",
     "discourseSegments": [],
     "glossedTokens": [
-      ["melcarim", "waiter.PL"], ["xayavim", "must.PL"], ["lištof", "wash.INF"],
-      ["yadayim", "hand.DU"], ["aval", "but"], ["orxim", "guest.PL"], ["raq", "only"],
-      ["crxim", "need.PL"]
+      ["melcarim", "waiters"], ["xayavim", "must.MPL"], ["lištof", "wash"], ["yadayim", "hands"],
+      ["aval", "but"], ["orxim", "guests"], ["raq", "only"], ["crxim", "need.MPL"]
     ],
     "translation": "Waiters have to wash their hands, but guests only need to.",
     "context": "Test 2 with the exclusive 'only' (raq): y has to q, x only need-to q.",
-    "judgment": "questionable",
+    "judgment": "marginal",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -248,7 +256,8 @@
       ["category", "modalVerb"],
       ["diagnostic", "test2"]
     ],
-    "comment": "Rubinstein (2014) ex. (19): 'Test 2 with an exclusive' — carix 'need' does not set up a felicitous scalar contrast against xayav 'must', confirming it is not a weak necessity modal."
+    "comment": "Rubinstein (2014) ex. (19): 'Test 2 with an exclusive' — carix 'need' does not set up a felicitous scalar contrast against xayav 'must', confirming it is not a weak necessity modal.",
+    "verified": "page-image"
   },
   {
     "id": "rubinstein2014_heb_yoter_tov",
@@ -258,9 +267,8 @@
     "primaryText": "yoter tov še-hu yitpater, aval hu lo xayav lehitpater.",
     "discourseSegments": [],
     "glossedTokens": [
-      ["yoter", "more"], ["tov", "good"], ["še-hu", "that-3SG.M"],
-      ["yitpater", "resign.FUT.3SG.M"], ["aval", "but"], ["hu", "3SG.M"], ["lo", "NEG"],
-      ["xayav", "must.SG.M"], ["lehitpater", "resign.INF"]
+      ["yoter", "more"], ["tov", "good"], ["še-hu", "that-he"], ["yitpater", "will resign"],
+      ["aval", "but"], ["hu", "he"], ["lo", "NEG"], ["xayav", "must"], ["lehitpater", "resign"]
     ],
     "translation": "It is better that he resign, but he doesn't have to resign.",
     "context": "Bribe scenario: a convicted politician ought to resign though no law requires it. Hebrew renders weak-necessity 'ought' via morphological comparison (yoter tov 'more good').",
@@ -273,7 +281,8 @@
       ["strategy", "evaluativeComparative"],
       ["diagnostic", "test1"]
     ],
-    "comment": "Rubinstein (2014) ex. (21a): Hebrew, lacking a lexical weak-necessity modal, translates priority-type 'ought' with the morphological comparative yoter/haxi tov 'more/most good'. Passes Test 1."
+    "comment": "Rubinstein (2014) ex. (21a): Hebrew, lacking a lexical weak-necessity modal, translates priority-type 'ought' with the morphological comparative yoter/haxi tov 'more/most good'. Passes Test 1.",
+    "verified": "page-image"
   },
   {
     "id": "rubinstein2014_heb_adif",
@@ -283,9 +292,8 @@
     "primaryText": "'adif še-hu yitpater, aval hu lo xayav lehitpater.",
     "discourseSegments": [],
     "glossedTokens": [
-      ["'adif", "preferable"], ["še-hu", "that-3SG.M"], ["yitpater", "resign.FUT.3SG.M"],
-      ["aval", "but"], ["hu", "3SG.M"], ["lo", "NEG"], ["xayav", "must.SG.M"],
-      ["lehitpater", "resign.INF"]
+      ["'adif", "preferable"], ["še-hu", "that-he"], ["yitpater", "will resign"], ["aval", "but"],
+      ["hu", "he"], ["lo", "NEG"], ["xayav", "must"], ["lehitpater", "resign"]
     ],
     "translation": "It is preferable that he resign, but he doesn't have to resign.",
     "context": "Bribe scenario; lexical comparison with a predicate of preference, 'adif 'preferable'.",
@@ -298,7 +306,8 @@
       ["strategy", "evaluativeComparative"],
       ["diagnostic", "test1"]
     ],
-    "comment": "Rubinstein (2014) ex. (21b): lexical comparison with the predicate of preference 'adif 'preferable'."
+    "comment": "Rubinstein (2014) ex. (21b): lexical comparison with the predicate of preference 'adif 'preferable'.",
+    "verified": "page-image"
   },
   {
     "id": "rubinstein2014_heb_kday",
@@ -308,9 +317,8 @@
     "primaryText": "kday še-hu yitpater, aval hu lo xayav lehitpater.",
     "discourseSegments": [],
     "glossedTokens": [
-      ["kday", "worthwhile"], ["še-hu", "that-3SG.M"], ["yitpater", "resign.FUT.3SG.M"],
-      ["aval", "but"], ["hu", "3SG.M"], ["lo", "NEG"], ["xayav", "must.SG.M"],
-      ["lehitpater", "resign.INF"]
+      ["kday", "worthwhile"], ["še-hu", "that-he"], ["yitpater", "will resign"], ["aval", "but"],
+      ["hu", "he"], ["lo", "NEG"], ["xayav", "must"], ["lehitpater", "resign"]
     ],
     "translation": "It would be good that he resign, but he doesn't have to resign.",
     "context": "Bribe scenario; implicit comparison with evaluative predicates kday 'worthwhile' / ra'uy 'fitting'.",
@@ -323,7 +331,8 @@
       ["strategy", "evaluativeComparative"],
       ["diagnostic", "test1"]
     ],
-    "comment": "Rubinstein (2014) ex. (21c): implicit comparison with evaluative predicates kday 'worthwhile' / ra'uy 'fitting'."
+    "comment": "Rubinstein (2014) ex. (21c): implicit comparison with evaluative predicates kday 'worthwhile' / ra'uy 'fitting'.",
+    "verified": "page-image"
   },
   {
     "id": "rubinstein2014_comp_better",
@@ -343,7 +352,8 @@
       ["category", "evaluativeComparative"],
       ["pairwise", "true"]
     ],
-    "comment": "Rubinstein (2014) ex. (24) (Julia Staffel, p.c.): the morphological comparative 'better' supports an explicit than-clause comparing two alternatives, whereas modal 'ought' (positive/superlative) only selects the overall best. The comparative backbone is overt in the than-clause."
+    "comment": "Rubinstein (2014) ex. (24) (Julia Staffel, p.c.): the morphological comparative 'better' supports an explicit than-clause comparing two alternatives, whereas modal 'ought' (positive/superlative) only selects the overall best. The comparative backbone is overt in the than-clause.",
+    "verified": "page-image"
   },
   {
     "id": "rubinstein2014_nr_carix",
@@ -374,6 +384,7 @@
       ["diagnostic", "negRaising"],
       ["hybrid", "true"]
     ],
-    "comment": "Read as 'I think you shouldn't be here': the paper's apparent exception to the rule that strong necessity modals do not neg-raise, tied to the hybrid nature of carix."
+    "comment": "Read as 'I think you shouldn't be here': the paper's apparent exception to the rule that strong necessity modals do not neg-raise, tied to the hybrid nature of carix.",
+    "verified": "page-image"
   }
 ]

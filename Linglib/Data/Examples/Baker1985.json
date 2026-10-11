@@ -23,7 +23,8 @@
       ["m2", "small"],
       ["f2", "dikiki'"]
     ],
-    "comment": "Plural number agreement man- on an intransitive predicate; the singular form is null. Baker credits the Chamorro data to Gibson 1980."
+    "comment": "Plural number agreement man- on an intransitive predicate; the singular form is null. Baker credits the Chamorro data to Gibson 1980.",
+    "verified": "page-image"
   },
   {
     "id": "baker1985_chamorro_15b",
@@ -56,7 +57,8 @@
       ["m5", "spank"],
       ["f5", "saolak"]
     ],
-    "comment": "fan- (outside passive -in-) registers the plurality of the surface subject; -in- is infixed after the stem-initial consonant (s-in-aolak). The passive infix is listed before the root, as a prefix in the generalized sense the paper adopts."
+    "comment": "fan- (outside passive -in-) registers the plurality of the surface subject; -in- is infixed after the stem-initial consonant (s-in-aolak). The passive infix is listed before the root, as a prefix in the generalized sense the paper adopts.",
+    "verified": "page-image"
   },
   {
     "id": "baker1985_chamorro_15c",
@@ -86,7 +88,8 @@
       ["m4", "eat"],
       ["f4", "otchu"]
     ],
-    "comment": "fan- (inside causative na'-) registers the plurality of the semantic subject of 'eat', not the surface subject. Repeated as Baker's (30)."
+    "comment": "fan- (inside causative na'-) registers the plurality of the semantic subject of 'eat', not the surface subject. Repeated as Baker's (30).",
+    "verified": "page-image"
   },
   {
     "id": "baker1985_chamorro_25",
@@ -119,7 +122,8 @@
       ["m5", "spank"],
       ["f5", "saolak"]
     ],
-    "comment": "Causative of passive: fan- sits between -in- and na'- and registers the intermediate subject (post-passive, pre-causative) -- 'the children' is neither the semantic nor the surface subject. The passive infix is listed before the root, as a prefix in the generalized sense the paper adopts."
+    "comment": "Causative of passive: fan- sits between -in- and na'- and registers the intermediate subject (post-passive, pre-causative) -- 'the children' is neither the semantic nor the surface subject. The passive infix is listed before the root, as a prefix in the generalized sense the paper adopts.",
+    "verified": "page-image"
   },
   {
     "id": "baker1985_quechua_39a",
@@ -151,7 +155,8 @@
       ["m5", "3SBJ"],
       ["f5", "n"]
     ],
-    "comment": "Baker's translation carries coreference indices ('He_j is causing them_i to beat each other_i'): the reciprocal binds within the caused event. Quechua variety unspecified; Baker credits Muysken 1981. Glottocode is the Quechuan family."
+    "comment": "Baker's translation carries coreference indices ('He_j is causing them_i to beat each other_i'): the reciprocal binds within the caused event. Quechua variety unspecified; Baker credits Muysken 1981. Glottocode is the Quechuan family.",
+    "verified": "page-image"
   },
   {
     "id": "baker1985_quechua_39b",
@@ -183,7 +188,8 @@
       ["m5", "3SBJ"],
       ["f5", "n"]
     ],
-    "comment": "Baker's translation carries coreference indices ('They_j let someone_i beat each other_j'): the reciprocal binds the causers, applying after the causative."
+    "comment": "Baker's translation carries coreference indices ('They_j let someone_i beat each other_j'): the reciprocal binds the causers, applying after the causative.",
+    "verified": "page-image"
   },
   {
     "id": "baker1985_bemba_49a",
@@ -214,7 +220,8 @@
       ["m4", "CAUS"],
       ["f4", "ya"]
     ],
-    "comment": "Reciprocal -an inside causative -ya: the same order and interpretation as Quechua (39a). Baker credits the Bemba data to Givon 1976."
+    "comment": "Reciprocal -an inside causative -ya: the same order and interpretation as Quechua (39a). Baker credits the Bemba data to Givon 1976.",
+    "verified": "page-image"
   },
   {
     "id": "baker1985_bemba_49b",
@@ -245,7 +252,8 @@
       ["m4", "RECP"],
       ["f4", "ana"]
     ],
-    "comment": "Causative -eshy inside reciprocal -ana. Bemba's causative is Chamorro-type (Baker's (50)-(51)), so Reciprocal links causer and initial agent -- unlike Quechua (39b), where it links causer and initial patient."
+    "comment": "Causative -eshy inside reciprocal -ana. Bemba's causative is Chamorro-type (Baker's (50)-(51)), so Reciprocal links causer and initial agent -- unlike Quechua (39b), where it links causer and initial patient.",
+    "verified": "page-image"
   },
   {
     "id": "baker1985_huichol_55",
@@ -276,7 +284,8 @@
       ["m4", "PASS"],
       ["f4", "yeri"]
     ],
-    "comment": "Passive of the applicative (54b): the beneficiary has become subject (quantifier morphology, subject agreement), and benefactive -ri is closer to the verb than passive -yeri. Baker credits the Huichol data to Comrie 1982."
+    "comment": "Passive of the applicative (54b): the beneficiary has become subject (quantifier morphology, subject agreement), and benefactive -ri is closer to the verb than passive -yeri. Baker credits the Huichol data to Comrie 1982.",
+    "verified": "page-image"
   },
   {
     "id": "baker1985_chimwiini_56c",
@@ -309,7 +318,8 @@
       ["m5", "PASS"],
       ["f5", "a"]
     ],
-    "comment": "Passive of the applicative (56b): the goal 'the teacher' is surface subject; passive -a outside applied -el. SP = subject prefix (here null)."
+    "comment": "Passive of the applicative (56b): the goal 'the teacher' is surface subject; passive -a outside applied -el. SP = subject prefix (here null).",
+    "verified": "page-image"
   },
   {
     "id": "baker1985_chimwiini_56d",
@@ -342,7 +352,8 @@
       ["m5", "PASS"],
       ["f5", "a"]
     ],
-    "comment": "Starred by the Mirror Principle: Applicative precedes Passive morphologically (its affix is closer to the root), but Passive would have to precede Applicative syntactically (the patient, not the goal, maps to subject)."
+    "comment": "Starred by the Mirror Principle: Applicative precedes Passive morphologically (its affix is closer to the root), but Passive would have to precede Applicative syntactically (the patient, not the goal, maps to subject).",
+    "verified": "page-image"
   },
   {
     "id": "baker1985_kinyarwanda_57c",
@@ -377,7 +388,8 @@
       ["m6", "ASP"],
       ["f6", "a"]
     ],
-    "comment": "The instrument has become subject; passive -w outside applied -iish, as the Mirror Principle predicts. Baker credits the Kinyarwanda data to Kimenyi 1980."
+    "comment": "The instrument has become subject; passive -w outside applied -iish, as the Mirror Principle predicts. Baker credits the Kinyarwanda data to Kimenyi 1980.",
+    "verified": "page-image"
   },
   {
     "id": "baker1985_kinyarwanda_57d",
@@ -412,6 +424,7 @@
       ["m6", "ASP"],
       ["f6", "a"]
     ],
-    "comment": "Grammatical, unlike Chi-Mwi:ni (56d): Kinyarwanda passive independently promotes either postverbal NP of a double-object verb (Baker's (58)), so this is not a Mirror Principle counterexample."
+    "comment": "Grammatical, unlike Chi-Mwi:ni (56d): Kinyarwanda passive independently promotes either postverbal NP of a double-object verb (Baker's (58)), so this is not a Mirror Principle counterexample.",
+    "verified": "page-image"
   }
 ]

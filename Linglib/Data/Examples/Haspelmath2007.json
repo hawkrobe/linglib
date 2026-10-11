@@ -6,7 +6,7 @@
       "paperLabel": "(5)"
     },
     "language": "nucl1305",
-    "primaryText": "Narahariyu: So:maše:kharanu: pe:t.ege ho:daru",
+    "primaryText": "Narahariy-u: So:maše:kharan-u: pe:ṭe-ge ho:-d-aru",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "Narahari and Somashekhara went to the market",
@@ -24,7 +24,8 @@
         "a'co_b'co"
       ]
     ],
-    "comment": "Postpositive bisyndetic -u: on each coordinand."
+    "comment": "Postpositive bisyndetic -u: on each coordinand.",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath2007_ex6a",
@@ -55,7 +56,8 @@
         "yes"
       ]
     ],
-    "comment": "Emphatic coordination with the two-part coordinator."
+    "comment": "Emphatic coordination with the two-part coordinator.",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath2007_ex6b",
@@ -86,7 +88,8 @@
         "no"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath2007_ex7a",
@@ -121,7 +124,8 @@
         "yes"
       ]
     ],
-    "comment": "Emphatic negative coordination."
+    "comment": "Emphatic negative coordination.",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath2007_ex12a",
@@ -148,7 +152,8 @@
         "comitative"
       ]
     ],
-    "comment": "da as the comitative marker."
+    "comment": "da as the comitative marker.",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath2007_ex12b",
@@ -179,7 +184,8 @@
         "comitative"
       ]
     ],
-    "comment": "The same da as the coordinator."
+    "comment": "The same da as the coordinator.",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath2007_ex18b",
@@ -206,7 +212,8 @@
         "asyndetic"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath2007_ex20",
@@ -237,7 +244,8 @@
         "comitative"
       ]
     ],
-    "comment": "kèdè càk can still mean 'with milk'."
+    "comment": "kèdè càk can still mean 'with milk'.",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath2007_ex21",
@@ -246,7 +254,7 @@
       "paperLabel": "(21)"
     },
     "language": "clas1254",
-    "primaryText": "Blama-s bgegs-daŋ ndre btul",
+    "primaryText": "Blama-s bgegs-daŋ ɴdre btul",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "The lama tamed demons and spirits",
@@ -264,7 +272,8 @@
         "a'co_b"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath2007_ex22",
@@ -291,7 +300,8 @@
         "a_b'co"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath2007_ex23",
@@ -318,7 +328,8 @@
         "a_b'co"
       ]
     ],
-    "comment": "Postpositive de enclitic to the first word of the second coordinand."
+    "comment": "Postpositive de enclitic to the first word of the second coordinand. The chapter prints pisir-di (Turkish pişir- 'cook').",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath2007_ex24a",
@@ -345,7 +356,8 @@
         "a'co_b'co"
       ]
     ],
-    "comment": "Bisyndetic postpositive conjunction in a verb-final language."
+    "comment": "Bisyndetic postpositive conjunction in a verb-final language.",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath2007_ex24b",
@@ -376,7 +388,8 @@
         "disjunction"
       ]
     ],
-    "comment": "Monosyndetic prepositive disjunction beside the postpositive conjunction."
+    "comment": "Monosyndetic prepositive disjunction beside the postpositive conjunction.",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath2007_ex25",
@@ -385,7 +398,7 @@
       "paperLabel": "(25)"
     },
     "language": "yoru1245",
-    "primaryText": "àti èmi àti Kéhìndé",
+    "primaryText": "àti èmi àti Kẹ́hìndé",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "both I and Kehinde",
@@ -407,7 +420,8 @@
         "yes"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath2007_ex26",
@@ -434,7 +448,8 @@
         "a'co_b'co"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath2007_ex27",
@@ -461,7 +476,8 @@
         "a'co_co'b"
       ]
     ],
-    "comment": "A mixed bisyndetic pattern, extremely rare."
+    "comment": "A mixed bisyndetic pattern, extremely rare.",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath2007_ex28",
@@ -492,7 +508,8 @@
         "yes"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath2007_ex29",
@@ -501,7 +518,7 @@
       "paperLabel": "(29)"
     },
     "language": "nivk1234",
-    "primaryText": "Ñi jozo-γo meuţu-γo pos-ko γe-ḑ",
+    "primaryText": "Ñi jozo-ɣo meuţu-ɣo pos-ko ɣe-ḑ",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "I bought a lock, a rifle and cloth",
@@ -523,7 +540,8 @@
         "3"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath2007_ex30",
@@ -558,7 +576,8 @@
         "3"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath2007_ex31",
@@ -589,7 +608,8 @@
         "3"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath2007_ex32",
@@ -620,7 +640,8 @@
         "3"
       ]
     ],
-    "comment": "The last coordinand lacks a coordinator."
+    "comment": "The last coordinand lacks a coordinator.",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath2007_ex33",
@@ -651,7 +672,8 @@
         "3"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath2007_ex34",
@@ -686,7 +708,8 @@
         "allButLast"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath2007_ex35",
@@ -695,7 +718,7 @@
       "paperLabel": "(35)"
     },
     "language": "amha1245",
-    "primaryText": "č'äw bärbärre-nna qəbe amät't'awh",
+    "primaryText": "č̣äw bärbärre-nna qəbe amäṭṭaʷh",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "I brought salt, pepper and butter",
@@ -721,7 +744,8 @@
         "allButLast"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath2007_ex36a",
@@ -756,7 +780,8 @@
         "allButFirst"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath2007_ex36b",
@@ -765,7 +790,7 @@
       "paperLabel": "(36b)"
     },
     "language": "amha1245",
-    "primaryText": "č'äw-ənna bärbärre qəbe amät't'awh",
+    "primaryText": "č̣äw-ənna bärbärre qəbe amäṭṭaʷh",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "I brought salt, pepper and butter",
@@ -791,7 +816,8 @@
         "allButFirst"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath2007_ex37",
@@ -826,7 +852,8 @@
         "none"
       ]
     ],
-    "comment": "Coordinator omission is impossible."
+    "comment": "Coordinator omission is impossible.",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath2007_ex43",
@@ -857,7 +884,8 @@
         "yes"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath2007_ex44",
@@ -871,7 +899,7 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -884,7 +912,8 @@
         "yes"
       ]
     ],
-    "comment": "Two things cannot be separately similar."
+    "comment": "Two things cannot be separately similar.",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath2007_ex57a",
@@ -915,7 +944,8 @@
         "np"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath2007_ex57b",
@@ -942,7 +972,8 @@
         "event"
       ]
     ],
-    "comment": "The converb suffix -ko for event coordination."
+    "comment": "The converb suffix -ko for event coordination.",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath2007_ex58a",
@@ -973,7 +1004,8 @@
         "np"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath2007_ex58b",
@@ -1000,7 +1032,8 @@
         "event"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath2007_ex59a",
@@ -1009,7 +1042,7 @@
       "paperLabel": "(59a)"
     },
     "language": "yoru1245",
-    "primaryText": "èmi àti Kéhìndé",
+    "primaryText": "èmi àti Kẹ́hìndé",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "Kehinde and I",
@@ -1035,7 +1068,8 @@
         "no"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath2007_ex60a",
@@ -1066,7 +1100,8 @@
         "np"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath2007_ex62a",
@@ -1097,7 +1132,8 @@
         "natural"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath2007_ex62b",
@@ -1128,7 +1164,8 @@
         "accidental"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath2007_ex63a",
@@ -1159,7 +1196,8 @@
         "natural"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath2007_ex63b",
@@ -1168,7 +1206,7 @@
       "paperLabel": "(63b)"
     },
     "language": "buru1296",
-    "primaryText": "jε kε u:ŋ",
+    "primaryText": "jɛ kɛ u:ŋ",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "I and you",
@@ -1190,7 +1228,8 @@
         "accidental"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath2007_ex64a",
@@ -1199,7 +1238,7 @@
       "paperLabel": "(64a)"
     },
     "language": "bulg1262",
-    "primaryText": "Ivan veče možeše da čete i da pluva",
+    "primaryText": "Ivan veče mož-eše da čet-e i da pluva",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "Ivan could already read and swim",
@@ -1217,7 +1256,8 @@
         "accidental"
       ]
     ],
-    "comment": "The subjunctive particle da is repeated."
+    "comment": "The subjunctive particle da is repeated.",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath2007_ex64b",
@@ -1226,7 +1266,7 @@
       "paperLabel": "(64b)"
     },
     "language": "bulg1262",
-    "primaryText": "Ivan veče možeše da čete i piše",
+    "primaryText": "Ivan veče mož-eše da čet-e i piš-e",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "Ivan could already read and write",
@@ -1244,7 +1284,8 @@
         "natural"
       ]
     ],
-    "comment": "The subjunctive particle is not repeated in natural conjunction."
+    "comment": "The subjunctive particle is not repeated in natural conjunction.",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath2007_ex77a",
@@ -1271,7 +1312,8 @@
         "comitative"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath2007_ex77b",
@@ -1302,7 +1344,8 @@
         "comitative"
       ]
     ],
-    "comment": "Plural verb form with the comitative-conjoined subject."
+    "comment": "Plural verb form with the comitative-conjoined subject.",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath2007_ex78a",
@@ -1311,7 +1354,7 @@
       "paperLabel": "(78a)"
     },
     "language": "tani1257",
-    "primaryText": "Jũã-re turi-ko'o paki-ka",
+    "primaryText": "Jũã-re turi-koʔo paki-ka",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "Juan travelled with his father",
@@ -1329,7 +1372,8 @@
         "comitative"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath2007_ex78b",
@@ -1338,7 +1382,7 @@
       "paperLabel": "(78b)"
     },
     "language": "tani1257",
-    "primaryText": "Anita-ka Gloria-re wi'i-ẽrã baa-yu",
+    "primaryText": "Anita-ka Gloria-re wiʔi-ẽrã baa-yu",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "Anita and Gloria are going to get wet",
@@ -1360,7 +1404,8 @@
         "comitative"
       ]
     ],
-    "comment": "The comitative-marked NP in initial position must be the first conjunct."
+    "comment": "The comitative-marked NP in initial position must be the first conjunct.",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath2007_ex79",
@@ -1391,7 +1436,8 @@
         "comitative"
       ]
     ],
-    "comment": "Plural agreement with the comitative-conjoined NPs."
+    "comment": "Plural agreement with the comitative-conjoined NPs.",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath2007_ex80c",
@@ -1400,7 +1446,7 @@
       "paperLabel": "(80c)"
     },
     "language": "russ1263",
-    "primaryText": "*Kto s Kostej prišli?",
+    "primaryText": "Kto s Kostej prišli?",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "Who with Kostya came?",
@@ -1418,7 +1464,8 @@
         "comitative"
       ]
     ],
-    "comment": "The comitative conjunct obeys the coordinate structure constraint."
+    "comment": "The comitative conjunct obeys the coordinate structure constraint.",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath2007_ex81",
@@ -1449,7 +1496,8 @@
         "comitative"
       ]
     ],
-    "comment": "The possessive modifier has scope over both conjuncts."
+    "comment": "The possessive modifier has scope over both conjuncts.",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath2007_ex85a",
@@ -1458,7 +1506,7 @@
       "paperLabel": "(85a)"
     },
     "language": "tauy1241",
-    "primaryText": "Ya-ra Towe-sou yate-e-'a",
+    "primaryText": "Ya-ra Towe-sou yate-e-ʔa",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "I went with Towe",
@@ -1476,7 +1524,8 @@
         "comitative"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath2007_ex85b",
@@ -1485,7 +1534,7 @@
       "paperLabel": "(85b)"
     },
     "language": "tauy1241",
-    "primaryText": "Ya-sou Towe-sou yate-ene-'a",
+    "primaryText": "Ya-sou Towe-sou yate-ene-ʔa",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "Towe and I went",
@@ -1507,7 +1556,8 @@
         "comitative"
       ]
     ],
-    "comment": "The comitative suffix on both conjuncts when it means 'and'."
+    "comment": "The comitative suffix on both conjuncts when it means 'and'.",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath2007_ex86",
@@ -1538,7 +1588,8 @@
         "comitative"
       ]
     ],
-    "comment": "The ex-comitative -wan outside the genitive case suffix."
+    "comment": "The ex-comitative -wan outside the genitive case suffix.",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath2007_ex87a",
@@ -1565,7 +1616,8 @@
         "inclusory"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath2007_ex87c",
@@ -1596,7 +1648,8 @@
         "inclusory"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath2007_ex89c",
@@ -1623,7 +1676,8 @@
         "splitInclusory"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath2007_ex91b",
@@ -1650,6 +1704,7 @@
         "summary"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   }
 ]

@@ -3,7 +3,7 @@
     "id": "ariel2001_1",
     "source": {"bibkey": "ariel-2001", "paperLabel": "(1)"},
     "language": "stan1293",
-    "primaryText": "Melissa: Well, I'll say awakened, cause that's what I have written. Ron: (Sniff). Frank: Just watch, He'll put a note by it – note by that. I really like that word Melissa.",
+    "primaryText": "Melissa: Well, I'll say awakened, cause that's what I have written down. Ron: (Sniff). Frank: Just watch, He'll put a note by it – note by that. I really like that word Melissa.",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
@@ -17,7 +17,8 @@
       ["marker", "distalDem"],
       ["marker", "distalDemNP"]
     ],
-    "comment": "Household corpus. The word awakened is referred to by that, it, that, and that word."
+    "comment": "Household corpus. The word awakened is referred to by that, it, that, and that word.",
+    "verified": "page-image"
   },
   {
     "id": "ariel2001_3",
@@ -37,7 +38,8 @@
       ["victim", "zero"],
       ["rapists", "lastName"]
     ],
-    "comment": "Haaretz, 17 May 1995; the paper prints its English rendering. In the second sentence the victim is coded by zero and the rapist by a proper name."
+    "comment": "Haaretz, 17 May 1995; the paper prints its English rendering. In the second sentence the victim is coded by zero and the rapist by a proper name.",
+    "verified": "page-image"
   },
   {
     "id": "ariel2001_4",
@@ -57,7 +59,8 @@
       ["victim", "proxDem"],
       ["rapists", "zero"]
     ],
-    "comment": "Maariv, 17 May 1995; the paper prints its English rendering. In the second sentence the rapists are coded by zero and the victim by a demonstrative pronoun."
+    "comment": "Maariv, 17 May 1995; the paper prints its English rendering. In the second sentence the rapists are coded by zero and the victim by a demonstrative pronoun.",
+    "verified": "page-image"
   },
   {
     "id": "ariel2001_5",
@@ -74,7 +77,8 @@
     "paperFeatures": [
       ["speaker", "self"]
     ],
-    "comment": "Mudai, TV interview, 2 November 1998 (Mulokandov and Rieder 1998). The speaker refers to himself by first-person forms and by third-person generic forms."
+    "comment": "Mudai, TV interview, dated 2.11.1998 as printed (from Mulokandov and Rieder 1998); the paper writes its other dates month first (5.17.1995, 7.14.1998). The speaker refers to himself by first-person forms and by third-person generic forms.",
+    "verified": "page-image"
   },
   {
     "id": "ariel2001_6",
@@ -85,14 +89,15 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "questionable",
+    "judgment": "marginal",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
       ["antecedent", "girl and tree"],
       ["marker", "unstressedPron"]
     ],
-    "comment": "Sanford and Moxey's example: the second sentence is marked ? although both entities are highly accessible."
+    "comment": "Sanford and Moxey's example: the second sentence is marked ? although both entities are highly accessible.",
+    "verified": "page-image"
   },
   {
     "id": "ariel2001_7",
@@ -109,13 +114,14 @@
     "paperFeatures": [
       ["marker", "stressedPron"]
     ],
-    "comment": "TV interview with Yo Yo Ma and Mark Morris, Israeli TV, 9 July 1998."
+    "comment": "TV interview with Yo Yo Ma and Mark Morris, Israeli TV, 9 July 1998.",
+    "verified": "page-image"
   },
   {
     "id": "ariel2001_8a",
     "source": {"bibkey": "ariel-2001", "paperLabel": "(8a)"},
     "language": "hebr1245",
-    "primaryText": "Arafat invited Kadafi to pray in Jerusalem, when it will be the Palestinian capital",
+    "primaryText": "Arafat invited Kadafi to pray in Jerusalem, when ∅ will be the Palestinian capital",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
@@ -128,9 +134,9 @@
       ["marker", "lastName"],
       ["marker", "lastName"],
       ["marker", "fullName"],
-      ["marker", "unstressedPron"]
+      ["marker", "zero"]
     ],
-    "comment": "Haaretz, 14 July 1998, headline; the paper prints its English rendering. Markers in order: Arafat, Kadafi, Jerusalem, it."
+    "comment": "Haaretz, 14 July 1998, headline; the paper prints its English rendering. Markers in order: Arafat, Kadafi, Jerusalem, zero (the paper prints 0)."
   },
   {
     "id": "ariel2001_8b",
@@ -151,7 +157,8 @@
       ["marker", "fullNameMod"],
       ["marker", "proxDem"]
     ],
-    "comment": "Haaretz, 14 July 1998, opening sentence; the paper prints its English rendering. Markers in order, matching (8a)."
+    "comment": "Haaretz, 14 July 1998, opening sentence; the paper prints its English rendering. Markers in order, matching (8a).",
+    "verified": "page-image"
   },
   {
     "id": "ariel2001_9",
@@ -168,13 +175,14 @@
     "paperFeatures": [
       ["marker", "stressedPron"]
     ],
-    "comment": "Clark Reed, quoted in The International Herald Tribune, 2–3 January 1999: a pronoun lengthened by self."
+    "comment": "Clark Reed, quoted in The International Herald Tribune, 2–3 January 1999: a pronoun lengthened by self.",
+    "verified": "page-image"
   },
   {
     "id": "ariel2001_10",
     "source": {"bibkey": "ariel-2001", "paperLabel": "(10)"},
     "language": "stan1293",
-    "primaryText": "REBECCA: put the newspaper on his lap, RICKIE: Yeah, REBECCA: masturbated, and then lifted the paper up, RICKIE: Yeah, REBECCA: for her to see",
+    "primaryText": "REBECCA: put the newspaper on his lap, RICKIE: Yeah, REBECCA: ∅ masturbated, and then lifted the paper up, RICKIE: Yeah, REBECCA: for her to see",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
@@ -188,7 +196,8 @@
       ["marker", "shortDefDescription"],
       ["marker", "shortDefDescription"]
     ],
-    "comment": "Jury corpus. The shorter description the paper resumes the newspaper; no disjoint reading arises."
+    "comment": "Jury corpus. The shorter description the paper resumes the newspaper; no disjoint reading arises.",
+    "verified": "page-image"
   },
   {
     "id": "ariel2001_12",
@@ -206,7 +215,8 @@
       ["topicMarker", "unstressedPron"],
       ["subjectMarker", "shortDefDescription"]
     ],
-    "comment": "Haaretz, 21 January 1999; the paper prints its English rendering. The discourse topic (officer Feil) is pronominal although the higher officer is the subject of two consecutive clauses."
+    "comment": "Haaretz, 21 January 1999; the paper prints its English rendering. The discourse topic (officer Feil) is pronominal although the higher officer is the subject of two consecutive clauses.",
+    "verified": "page-image"
   },
   {
     "id": "ariel2001_maya_rachel",
@@ -227,6 +237,7 @@
       ["maya", "unstressedPron"],
       ["rachel", "stressedPron"]
     ],
-    "comment": "The first-mentioned, topical but more distant Maya is later coded by an unstressed pronoun; the more recent, non-topical Rachel by a stressed pronoun."
+    "comment": "The first-mentioned, topical but more distant Maya is later coded by an unstressed pronoun; the more recent, non-topical Rachel by a stressed pronoun.",
+    "verified": "page-image"
   }
 ]

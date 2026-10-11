@@ -3,10 +3,10 @@
     "id": "sandeclemdabkowski2026_ex11a",
     "source": {"bibkey": "sande-clem-dabkowski-2026", "paperLabel": "(11a)"},
     "language": "gabo1234",
-    "primaryText": "e ji ɟaci joku-ni",
+    "primaryText": "e⁴ ji³ ɟaci²³.¹ joku-ni².³.⁴",
     "discourseSegments": [],
     "glossedTokens": [
-      ["e", "1SG.NOM"], ["ji", "FUT"], ["ɟaci", "Djatchi"], ["joku-ni", "PART-see"]
+      ["e⁴", "1SG.NOM"], ["ji³", "FUT"], ["ɟaci²³.¹", "Djatchi"], ["joku-ni².³.⁴", "PART-see"]
     ],
     "translation": "I will see Djatchi.",
     "context": "",
@@ -18,16 +18,17 @@
       ["verb", "ni"],
       ["particleATR", "plus"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "sandeclemdabkowski2026_ex11b",
     "source": {"bibkey": "sande-clem-dabkowski-2026", "paperLabel": "(11b)"},
     "language": "gabo1234",
-    "primaryText": "e ni ɟaci jɔkʊ",
+    "primaryText": "e⁴ ni⁴ ɟaci²³.¹ jɔkʊ².³",
     "discourseSegments": [],
     "glossedTokens": [
-      ["e", "1SG.NOM"], ["ni", "see.PFV"], ["ɟaci", "Djatchi"], ["jɔkʊ", "PART"]
+      ["e⁴", "1SG.NOM"], ["ni⁴", "see.PFV"], ["ɟaci²³.¹", "Djatchi"], ["jɔkʊ².³", "PART"]
     ],
     "translation": "I saw Djatchi.",
     "context": "",
@@ -39,16 +40,17 @@
       ["verb", "ni"],
       ["particleATR", "minus"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "sandeclemdabkowski2026_ex11c",
     "source": {"bibkey": "sande-clem-dabkowski-2026", "paperLabel": "(11c)"},
     "language": "gabo1234",
-    "primaryText": "e joku-ni ɟaci",
+    "primaryText": "e⁴ joku-ni².³.⁴ ɟaci²³.¹",
     "discourseSegments": [],
     "glossedTokens": [
-      ["e", "1SG.NOM"], ["joku-ni", "PART-see.PFV"], ["ɟaci", "Djatchi"]
+      ["e⁴", "1SG.NOM"], ["joku-ni².³.⁴", "PART-see.PFV"], ["ɟaci²³.¹", "Djatchi"]
     ],
     "translation": "I saw Djatchi.",
     "context": "",
@@ -58,17 +60,18 @@
     "paperFeatures": [
       ["pattern", "S Part V O"]
     ],
-    "comment": "The particle cannot surface with the verb in the post-subject position."
+    "comment": "The particle cannot surface with the verb in the post-subject position.",
+    "verified": "page-image"
   },
   {
     "id": "sandeclemdabkowski2026_ex12b",
     "source": {"bibkey": "sande-clem-dabkowski-2026", "paperLabel": "(12b)"},
     "language": "gabo1234",
-    "primaryText": "ɟaci ji ɔnɛ ɡbɔɡɔ jɔkʊ-ŋwɔsa",
+    "primaryText": "ɟaci²³.¹ ji³ ɔnɛ³.³ ɡbɔɡɔ².² jɔkʊ-ŋʷɔsa².³.³.¹",
     "discourseSegments": [],
     "glossedTokens": [
-      ["ɟaci", "Djatchi"], ["ji", "FUT"], ["ɔnɛ", "3SG.POSS"], ["ɡbɔɡɔ", "leg"],
-      ["jɔkʊ-ŋwɔsa", "PART-scrape"]
+      ["ɟaci²³.¹", "Djatchi"], ["ji³", "FUT"], ["ɔnɛ³.³", "3SG.POSS"], ["ɡbɔɡɔ².²", "leg"],
+      ["jɔkʊ-ŋʷɔsa².³.³.¹", "PART-scrape"]
     ],
     "translation": "Djatchi will scrape his leg.",
     "context": "",
@@ -80,17 +83,18 @@
       ["verb", "ngwOsa"],
       ["particleATR", "minus"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "sandeclemdabkowski2026_ex13b",
     "source": {"bibkey": "sande-clem-dabkowski-2026", "paperLabel": "(13b)"},
     "language": "gabo1234",
-    "primaryText": "ɟaci ŋwɔsa ɔnɛ ɡbɔɡɔ jɔkʊ",
+    "primaryText": "ɟaci²³.¹ ŋʷɔsa³.¹ ɔnɛ³.³ ɡbɔɡɔ².² jɔkʊ².³",
     "discourseSegments": [],
     "glossedTokens": [
-      ["ɟaci", "Djatchi"], ["ŋwɔsa", "scrape.PFV"], ["ɔnɛ", "3SG.POSS"], ["ɡbɔɡɔ", "leg"],
-      ["jɔkʊ", "PART"]
+      ["ɟaci²³.¹", "Djatchi"], ["ŋʷɔsa³.¹", "scrape.PFV"], ["ɔnɛ³.³", "3SG.POSS"],
+      ["ɡbɔɡɔ².²", "leg"], ["jɔkʊ².³", "PART"]
     ],
     "translation": "Djatchi scraped his leg.",
     "context": "",
@@ -102,16 +106,17 @@
       ["verb", "ngwOsa"],
       ["particleATR", "minus"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "sandeclemdabkowski2026_ex21a",
     "source": {"bibkey": "sande-clem-dabkowski-2026", "paperLabel": "(21a)"},
     "language": "gabo1234",
-    "primaryText": "jɔkʊ ɔ ni=ɔ",
+    "primaryText": "jɔkʊ².³ ɔ³ ni=ɔ⁴.²",
     "discourseSegments": [],
     "glossedTokens": [
-      ["jɔkʊ", "PART"], ["ɔ", "3SG.NOM"], ["ni=ɔ", "see.PFV=3SG.ACC"]
+      ["jɔkʊ².³", "PART"], ["ɔ³", "3SG.NOM"], ["ni=ɔ⁴.²", "see.PFV=3SG.ACC"]
     ],
     "translation": "He SAW him.",
     "context": "",
@@ -123,16 +128,18 @@
       ["verb", "ni"],
       ["particleATR", "minus"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "sandeclemdabkowski2026_ex21b",
     "source": {"bibkey": "sande-clem-dabkowski-2026", "paperLabel": "(21b)"},
     "language": "gabo1234",
-    "primaryText": "joku-ni ɔ ni=ɔ",
+    "primaryText": "joku-ni².³.⁴ ɔ³ ni=ɔ⁴.² (jɔkʊ².³)",
     "discourseSegments": [],
     "glossedTokens": [
-      ["joku-ni", "PART-see"], ["ɔ", "3SG.NOM"], ["ni=ɔ", "see.PFV=3SG.ACC"]
+      ["joku-ni².³.⁴", "PART-see"], ["ɔ³", "3SG.NOM"], ["ni=ɔ⁴.²", "see.PFV=3SG.ACC"],
+      ["(jɔkʊ².³)", "PART"]
     ],
     "translation": "He SAW him.",
     "context": "",
@@ -142,16 +149,17 @@
     "paperFeatures": [
       ["pattern", "Part V S V O"]
     ],
-    "comment": "Also unacceptable with a clause-final copy of the particle."
+    "comment": "The clause-final copy of the particle is printed in parentheses: unacceptable with or without it.",
+    "verified": "page-image"
   },
   {
     "id": "sandeclemdabkowski2026_ex21c",
     "source": {"bibkey": "sande-clem-dabkowski-2026", "paperLabel": "(21c)"},
     "language": "gabo1234",
-    "primaryText": "ni ɔ ni=ɔ jɔkʊ",
+    "primaryText": "ni⁴ ɔ³ ni=ɔ⁴.² jɔkʊ².³",
     "discourseSegments": [],
     "glossedTokens": [
-      ["ni", "see"], ["ɔ", "3SG.NOM"], ["ni=ɔ", "see.PFV=3SG.ACC"], ["jɔkʊ", "PART"]
+      ["ni⁴", "see"], ["ɔ³", "3SG.NOM"], ["ni=ɔ⁴.²", "see.PFV=3SG.ACC"], ["jɔkʊ².³", "PART"]
     ],
     "translation": "He SAW him.",
     "context": "",
@@ -161,16 +169,17 @@
     "paperFeatures": [
       ["pattern", "V S V O Part"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "sandeclemdabkowski2026_ex21d",
     "source": {"bibkey": "sande-clem-dabkowski-2026", "paperLabel": "(21d)"},
     "language": "gabo1234",
-    "primaryText": "ni ɔ =ɔ jɔkʊ",
+    "primaryText": "ni⁴ ɔ³ =ɔ² jɔkʊ².³",
     "discourseSegments": [],
     "glossedTokens": [
-      ["ni", "see"], ["ɔ", "3SG.NOM"], ["=ɔ", "3SG.ACC"], ["jɔkʊ", "PART"]
+      ["ni⁴", "see"], ["ɔ³", "3SG.NOM"], ["=ɔ²", "3SG.ACC"], ["jɔkʊ².³", "PART"]
     ],
     "translation": "He SAW him.",
     "context": "",
@@ -180,16 +189,17 @@
     "paperFeatures": [
       ["pattern", "V S O Part"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "sandeclemdabkowski2026_ex21e",
     "source": {"bibkey": "sande-clem-dabkowski-2026", "paperLabel": "(21e)"},
     "language": "gabo1234",
-    "primaryText": "joku ɔ ni=ɔ jɔkʊ",
+    "primaryText": "joku².³ ɔ³ ni=ɔ⁴.² jɔkʊ².³",
     "discourseSegments": [],
     "glossedTokens": [
-      ["joku", "PART"], ["ɔ", "3SG.NOM"], ["ni=ɔ", "see.PFV=3SG.ACC"], ["jɔkʊ", "PART"]
+      ["joku².³", "PART"], ["ɔ³", "3SG.NOM"], ["ni=ɔ⁴.²", "see.PFV=3SG.ACC"], ["jɔkʊ².³", "PART"]
     ],
     "translation": "He SAW him.",
     "context": "",
@@ -199,16 +209,18 @@
     "paperFeatures": [
       ["pattern", "Part S V O Part"]
     ],
-    "comment": "Unacceptable with either value of the fronted particle's vowels."
+    "comment": "Unacceptable with either value of the fronted particle's vowels.",
+    "verified": "page-image"
   },
   {
     "id": "sandeclemdabkowski2026_ex22",
     "source": {"bibkey": "sande-clem-dabkowski-2026", "paperLabel": "(22)"},
     "language": "gabo1234",
-    "primaryText": "joku ɔ ji ɟaci ni",
+    "primaryText": "joku².³ ɔ³ ji³ ɟaci²³.¹ ni⁴",
     "discourseSegments": [],
     "glossedTokens": [
-      ["joku", "PART"], ["ɔ", "3SG.NOM"], ["ji", "FUT"], ["ɟaci", "Djatchi"], ["ni", "see"]
+      ["joku².³", "PART"], ["ɔ³", "3SG.NOM"], ["ji³", "FUT"], ["ɟaci²³.¹", "Djatchi"],
+      ["ni⁴", "see"]
     ],
     "translation": "He will SEE Djatchi.",
     "context": "",
@@ -220,22 +232,27 @@
       ["verb", "ni"],
       ["particleATR", "plus"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "sandeclemdabkowski2026_ex24b",
     "source": {"bibkey": "sande-clem-dabkowski-2026", "paperLabel": "(24b)"},
     "language": "gabo1234",
-    "primaryText": "joku ɔ ji ɟaci ni",
+    "primaryText": "joku².³ ɔ³ ji³ ɟaci²³.¹ ni⁴",
     "discourseSegments": [],
     "glossedTokens": [
-      ["joku", "PART"], ["ɔ", "3SG.NOM"], ["ji", "FUT"], ["ɟaci", "Djatchi"], ["ni", "see"]
+      ["joku².³", "PART"], ["ɔ³", "3SG.NOM"], ["ji³", "FUT"], ["ɟaci²³.¹", "Djatchi"],
+      ["ni⁴", "see"]
     ],
     "translation": "He will SEE Djatchi.",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [
-      {"form": "jɔkʊ ɔ ji ɟaci ni", "judgment": "ungrammatical"}
+      {
+        "form": "jɔkʊ².³ ɔ³ ji³ ɟaci²³.¹ ni⁴",
+        "judgment": "ungrammatical"
+      }
     ],
     "readings": [],
     "paperFeatures": [
@@ -243,16 +260,18 @@
       ["verb", "ni"],
       ["particleATR", "plus"]
     ],
-    "comment": "The fronted particle harmonizes with the clause-final verb across the subject, auxiliary and object."
+    "comment": "The fronted particle harmonizes with the clause-final verb across the subject, auxiliary and object.",
+    "verified": "page-image"
   },
   {
     "id": "sandeclemdabkowski2026_ex41",
     "source": {"bibkey": "sande-clem-dabkowski-2026", "paperLabel": "(41)"},
     "language": "gabo1234",
-    "primaryText": "joku ɔ ka ɟɔkʷɪ-a ni",
+    "primaryText": "joku².³ ɔ³ ka³ ɟɔkʷɪ-a².³.² ni⁴",
     "discourseSegments": [],
     "glossedTokens": [
-      ["joku", "PART"], ["ɔ", "3SG.NOM"], ["ka", "PROSP"], ["ɟɔkʷɪ-a", "bird-PL"], ["ni", "see"]
+      ["joku².³", "PART"], ["ɔ³", "3SG.NOM"], ["ka³", "PROSP"], ["ɟɔkʷɪ-a².³.²", "bird-PL"],
+      ["ni⁴", "see"]
     ],
     "translation": "He will SEE birds.",
     "context": "",
@@ -265,7 +284,8 @@
       ["particleATR", "plus"],
       ["interveningATR", "minus"]
     ],
-    "comment": "The subject, auxiliary and object, plural suffix included, surface -ATR between the +ATR particle and verb."
+    "comment": "The subject, auxiliary and object, plural suffix included, surface -ATR between the +ATR particle and verb.",
+    "verified": "page-image"
   },
   {
     "id": "sandeclemdabkowski2026_ex49a",
@@ -286,7 +306,8 @@
       ["headATR", "minus"],
       ["demATR", "minus"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "sandeclemdabkowski2026_ex49b",
@@ -307,7 +328,8 @@
       ["headATR", "plus"],
       ["demATR", "plus"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "sandeclemdabkowski2026_ex50a",
@@ -329,7 +351,8 @@
       ["stativeATR", "minus"],
       ["demATR", "minus"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "sandeclemdabkowski2026_ex50b",
@@ -351,7 +374,8 @@
       ["stativeATR", "plus"],
       ["demATR", "plus"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "sandeclemdabkowski2026_ex50c",
@@ -373,7 +397,8 @@
       ["stativeATR", "plus"],
       ["demATR", "minus"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "sandeclemdabkowski2026_ex50d",
@@ -395,6 +420,7 @@
       ["stativeATR", "minus"],
       ["demATR", "plus"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   }
 ]

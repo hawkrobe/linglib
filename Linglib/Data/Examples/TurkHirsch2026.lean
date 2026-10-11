@@ -20,7 +20,7 @@ def ex_4 : Datum :=
     source := ⟨"turk-hirsch-2026", "(4)"⟩
     reportedIn := none
     language := "nucl1301"
-    primaryText := "Ali uyudu mu?"
+    primaryText := "Ali uyudu=mu?"
     glossedTokens := [("Ali", "Ali[NOM]"), ("uyu-du=mu", "sleep-PST.3SG=FM")]
     context := ""
     judgment := .acceptable
@@ -33,8 +33,8 @@ def ex_5 : Datum :=
     source := ⟨"turk-hirsch-2026", "(5)"⟩
     reportedIn := none
     language := "nucl1301"
-    primaryText := "ALİ mi uyudu?"
-    glossedTokens := [("Ali=mi", "Ali[NOM]=FM"), ("uyu-du", "sleep-PST.3SG")]
+    primaryText := "ALI=mi uyudu?"
+    glossedTokens := [("ALI=mi", "Ali[NOM]=FM"), ("uyu-du", "sleep-PST.3SG")]
     context := ""
     judgment := .acceptable
     alternatives := []
@@ -72,7 +72,7 @@ def ex_14 : Datum :=
     source := ⟨"turk-hirsch-2026", "(14)"⟩
     reportedIn := none
     language := "nucl1301"
-    primaryText := "Yannis Ali uyudu mu diye merak etti."
+    primaryText := "Yannis Ali uyudu=mu diye meraketti."
     glossedTokens := [("Yannis", "Yannis[NOM]"), ("Ali", "Ali[NOM]"), ("uyu-du=mu", "sleep-PST=FM"), ("diye", "that"), ("meraket-ti", "wonder-PST")]
     context := ""
     judgment := .acceptable
@@ -85,7 +85,7 @@ def ex_18 : Datum :=
     source := ⟨"turk-hirsch-2026", "(18)"⟩
     reportedIn := none
     language := "nucl1301"
-    primaryText := "Yannis Ali uyudu diye mi merak etti?"
+    primaryText := "Yannis Ali uyudu diye=mi meraketti?"
     glossedTokens := [("Yannis", "Yannis[NOM]"), ("Ali", "Ali[NOM]"), ("uyu-du", "sleep-PST"), ("diye=mi", "that=FM"), ("meraket-ti", "wonder-PST")]
     context := ""
     judgment := .acceptable

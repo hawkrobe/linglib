@@ -13,7 +13,8 @@
       ["root class", "result"],
       ["form", "monomorphemic verb"]
     ],
-    "comment": "Change of state expressed by a basic verb, unlike 'became black' or 'flattened'."
+    "comment": "Change of state expressed by a basic verb, unlike 'became black' or 'flattened'.",
+    "verified": "page-image"
   },
   {
     "id": "beavers_etal2021_7a",
@@ -29,7 +30,8 @@
       ["root class", "property concept"],
       ["form", "basic stative"]
     ],
-    "comment": "PC roots show both a simple adjective and a deverbal one ('brightened', (7b))."
+    "comment": "PC roots show both a simple adjective and a deverbal one ('brightened', (7b)).",
+    "verified": "page-image"
   },
   {
     "id": "beavers_etal2021_10a",
@@ -45,7 +47,8 @@
       ["diagnostic", "change denial"],
       ["root class", "property concept"]
     ],
-    "comment": "Simple PC adjectives survive change denial; deverbal '#brightened photo' does not."
+    "comment": "Simple PC adjectives survive change denial; deverbal '#brightened photo' does not.",
+    "verified": "page-image"
   },
   {
     "id": "beavers_etal2021_11c",
@@ -61,7 +64,8 @@
       ["diagnostic", "change denial"],
       ["root class", "result"]
     ],
-    "comment": "Contradictory even in a prototypical-result context: the adjective entails prior change."
+    "comment": "Contradictory even in a prototypical-result context: the adjective entails prior change.",
+    "verified": "page-image"
   },
   {
     "id": "beavers_etal2021_13",
@@ -71,13 +75,15 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "marginal",
+    "judgment": "acceptable",
     "readings": [],
     "paperFeatures": [
       ["diagnostic", "change denial"],
-      ["root class", "result"]
+      ["root class", "result"],
+      ["judgedBy", "some speakers"]
     ],
-    "comment": "Acceptable for some speakers: lexical drift toward a 'not functioning' sense, expected variation."
+    "comment": "Printed unmarked; 'several speakers (including a referee) have told us that broken applied to physical artifacts does not entail change, such that 13 should be acceptable'. Lexical drift toward a 'not functioning' sense, expected variation.",
+    "verified": "page-image"
   },
   {
     "id": "beavers_etal2021_15a",
@@ -95,7 +101,8 @@
       ["diagnostic", "restitutive again"],
       ["root class", "property concept"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "beavers_etal2021_16a",
@@ -113,7 +120,8 @@
       ["diagnostic", "restitutive again"],
       ["root class", "result"]
     ],
-    "comment": "Result roots lack the restitutive reading."
+    "comment": "Result roots lack the restitutive reading.",
+    "verified": "page-image"
   },
   {
     "id": "beavers_etal2021_25a",
@@ -126,13 +134,14 @@
     ],
     "translation": "The desert is getting dry again.",
     "context": "The desert starts off dry. Then it is made nondry. Then it turns dry again.",
-    "judgment": "unacceptable",
+    "judgment": "acceptable",
     "readings": [],
     "paperFeatures": [
       ["diagnostic", "restitutive again"],
       ["root class", "property concept"]
     ],
-    "comment": "Kakataibo PC roots generally allow restitutive -tëkën; this token was rejected in the given context."
+    "comment": "Printed unmarked: Kakataibo PC roots generally allow restitutive readings under -tëkën, as in this example, while result roots usually resist them (25b).",
+    "verified": "page-image"
   },
   {
     "id": "beavers_etal2021_26",
@@ -150,7 +159,8 @@
       ["diagnostic", "restitutive again"],
       ["root class", "result"]
     ],
-    "comment": "Unlike English 'kill': rëtë means 'not alive', applicable to never-alive inanimates — expected lexicalization variation."
+    "comment": "Unlike English 'kill': rëtë means 'not alive', applicable to never-alive inanimates — expected lexicalization variation.",
+    "verified": "page-image"
   },
   {
     "id": "beavers_etal2021_28a",
@@ -168,7 +178,8 @@
       ["diagnostic", "change denial"],
       ["root class", "property concept"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "beavers_etal2021_28b",
@@ -186,7 +197,8 @@
       ["diagnostic", "change denial"],
       ["root class", "result"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "beavers_etal2021_29b",
@@ -205,18 +217,19 @@
       ["diagnostic", "restitutive again"],
       ["root class", "result"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "beavers_etal2021_31",
     "source": {"bibkey": "beavers-etal-2021", "paperLabel": "(31)"},
     "language": "hebr1245",
-    "primaryText": "ha-gesher 'arox 'aval 'afpa'am lo hu'arax.",
+    "primaryText": "ha-gesher 'arox 'aval 'afpaʕam lo hu'arax.",
     "glossedTokens": [
-      ["ha-gesher", "the-bridge"], ["'arox", "long"], ["'aval", "but"], ["'afpa'am", "never"],
+      ["ha-gesher", "the-bridge"], ["'arox", "long"], ["'aval", "but"], ["'afpaʕam", "never"],
       ["lo", "NEG"], ["hu'arax", "lengthened.PASS"]
     ],
-    "translation": "The bridge is long but was never lengthened.",
+    "translation": "The bridge is long but (was) never lengthened.",
     "context": "",
     "judgment": "acceptable",
     "readings": [],
@@ -224,16 +237,17 @@
       ["diagnostic", "change denial"],
       ["root class", "property concept"]
     ],
-    "comment": "With deverbal mu'arax 'lengthened' in place of 'arox the sentence is contradictory."
+    "comment": "With deverbal mu'arax 'lengthened' in place of 'arox the sentence is contradictory.",
+    "verified": "page-image"
   },
   {
     "id": "beavers_etal2021_32",
     "source": {"bibkey": "beavers-etal-2021", "paperLabel": "(32)"},
     "language": "hebr1245",
-    "primaryText": "ha-zxuxit menupecet, 'aval hi 'afpa'am lo hitnapca.",
+    "primaryText": "ha-zxuxit menupecet, 'aval hi 'afpaʕam lo hitnapca.",
     "glossedTokens": [
       ["ha-zxuxit", "the-glass"], ["menupecet", "shattered"], ["'aval", "but"], ["hi", "it"],
-      ["'afpa'am", "never"], ["lo", "NEG"], ["hitnapca", "shattered.REFL"]
+      ["'afpaʕam", "never"], ["lo", "NEG"], ["hitnapca", "shattered.REFL"]
     ],
     "translation": "The glass is shattered, but it never shattered.",
     "context": "",
@@ -243,7 +257,8 @@
       ["diagnostic", "change denial"],
       ["root class", "result"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "beavers_etal2021_33b",
@@ -262,7 +277,8 @@
       ["diagnostic", "restitutive again"],
       ["root class", "result"]
     ],
-    "comment": "mexadaš 'anew' generates only restitutive readings, similar to English re- prefixation."
+    "comment": "mexadaš 'anew' generates only restitutive readings, similar to English re- prefixation.",
+    "verified": "page-image"
   },
   {
     "id": "beavers_etal2021_35b",
@@ -282,7 +298,8 @@
       ["diagnostic", "change denial"],
       ["root class", "result"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "beavers_etal2021_36b",
@@ -301,7 +318,8 @@
       ["diagnostic", "restitutive again"],
       ["root class", "result"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "beavers_etal2021_38b",
@@ -320,6 +338,7 @@
       ["diagnostic", "additive restitutive"],
       ["root class", "result"]
     ],
-    "comment": "Spathas's additive test: ftiahno 'fix' rejects the restitutive-like additive reading, patterning with result roots."
+    "comment": "Spathas's additive test: ftiahno 'fix' rejects the restitutive-like additive reading, patterning with result roots.",
+    "verified": "page-image"
   }
 ]

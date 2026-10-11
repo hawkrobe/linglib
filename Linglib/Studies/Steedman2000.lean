@@ -314,7 +314,7 @@ def strippedConjunct : Derivation Atom (S \ (S / NP)) := .lex "Warren" (S \ (S /
 
 /-- `EllipsisType` enumerates the book's elliptical constructions. -/
 inductive EllipsisType
-  /-- "Dexter ate bread, and Warren, potatoes" -/
+  /-- "Dexter eats bread, and Warren, potatoes" -/
   | gapping
   /-- "Dexter ran away, and Warren (too)" -/
   | stripping

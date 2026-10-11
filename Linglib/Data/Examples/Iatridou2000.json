@@ -29,7 +29,8 @@
         "presCF"
       ]
     ],
-    "comment": "Iatridou 2000 ex (1a), Linguistic Inquiry 31(2) p. 232. First of the (1a)/(1b) wishes pair. The grammatical past-tense morpheme contributes counterfactuality (about the present), not temporal precedence — Iatridou's central exclusion-feature claim."
+    "comment": "Iatridou 2000 ex (1a), Linguistic Inquiry 31(2) p. 231. First of the (1a)/(1b) wishes pair. The grammatical past-tense morpheme contributes counterfactuality (about the present), not temporal precedence — Iatridou's central exclusion-feature claim.",
+    "verified": "page-image"
   },
   {
     "id": "iatridou2000_ex1b",
@@ -61,7 +62,8 @@
         "pastCF"
       ]
     ],
-    "comment": "Iatridou 2000 ex (1b), p. 232. Second of the wishes pair. The contrast (1a)/(1b) motivates separating the counterfactuality-marking past morpheme from the temporal past morpheme."
+    "comment": "Iatridou 2000 ex (1b), p. 231. Second of the wishes pair. The contrast (1a)/(1b) motivates separating the counterfactuality-marking past morpheme from the temporal past morpheme.",
+    "verified": "page-image"
   },
   {
     "id": "iatridou2000_ex2a",
@@ -93,7 +95,8 @@
         "presCF"
       ]
     ],
-    "comment": "Iatridou 2000 ex (2a), p. 232. Canonical present counterfactual conditional. Iatridou's own (2a) uses `If he were smart`; the generic `If John were here` / `If John were taller` form is widely cited but not verbatim from the paper."
+    "comment": "Iatridou 2000 ex (2a), p. 232. Canonical present counterfactual conditional. Iatridou's own (2a) uses `If he were smart`; the generic `If John were here` / `If John were taller` form is widely cited but not verbatim from the paper.",
+    "verified": "page-image"
   },
   {
     "id": "iatridou2000_ex2b",
@@ -125,7 +128,8 @@
         "pastCF"
       ]
     ],
-    "comment": "Iatridou 2000 ex (2b), p. 232. Past-CF counterpart to (2a). The (2a)/(2b) contrast — like (1a)/(1b) — diagnostics the exclusion-feature analysis: one past morpheme for counterfactuality (excludes the actual world), a second past morpheme for past tense (excludes the present)."
+    "comment": "Iatridou 2000 ex (2b), p. 232. Past-CF counterpart to (2a). The (2a)/(2b) contrast — like (1a)/(1b) — motivates the exclusion-feature analysis: one past morpheme for counterfactuality (excludes the actual world), a second past morpheme for past tense (excludes the present).",
+    "verified": "page-image"
   },
   {
     "id": "iatridou2000_en_flv",
@@ -164,7 +168,8 @@
         "no"
       ]
     ],
-    "comment": "Iatridou 2000 ex (62a), p. 250. English FLV: simple past in the antecedent, `would` in the consequent. No imperfective morphology (English lacks it)."
+    "comment": "Iatridou 2000 ex (62a), p. 250. English FLV: simple past in the antecedent, `would` in the consequent. No imperfective morphology (English lacks it).",
+    "verified": "page-image"
   },
   {
     "id": "iatridou2000_en_presCF",
@@ -203,7 +208,8 @@
         "no"
       ]
     ],
-    "comment": "Iatridou 2000 ex (61), p. 249. English PresCF, morphologically identical to the FLV (62a). The contrast is in predicate type, not morphology."
+    "comment": "Iatridou 2000 ex (61), p. 249. English PresCF, morphologically identical to the FLV (62a). The contrast is in predicate type, not morphology.",
+    "verified": "page-image"
   },
   {
     "id": "iatridou2000_en_pastCF",
@@ -242,7 +248,8 @@
         "no"
       ]
     ],
-    "comment": "Iatridou 2000 ex (48c), p. 245. English PastCF: pluperfect antecedent (`had been`), `would have` consequent. Two past layers distinguish PastCF from FLV/PresCF."
+    "comment": "Iatridou 2000 ex (48c), p. 245. English PastCF: pluperfect antecedent (`had been`), `would have` consequent. Two past layers distinguish PastCF from FLV/PresCF.",
+    "verified": "page-image"
   },
   {
     "id": "iatridou2000_gr_flv",
@@ -251,7 +258,7 @@
       "paperLabel": "(8)"
     },
     "language": "mode1248",
-    "primaryText": "An eperne afto to siropi tha yinotan kala.",
+    "primaryText": "An eperne afto to siropi θa γ₁inotan kala.",
     "discourseSegments": [],
     "glossedTokens": [
       [
@@ -268,18 +275,18 @@
       ],
       [
         "to",
-        "the"
+        ""
       ],
       [
         "siropi",
         "syrup"
       ],
       [
-        "tha",
+        "θa",
         "FUT"
       ],
       [
-        "yinotan",
+        "γ₁inotan",
         "become.PST.IPFV"
       ],
       [
@@ -314,7 +321,8 @@
         "no"
       ]
     ],
-    "comment": "Iatridou 2000 ex (8), p. 234. Modern Greek FLV: antecedent `an + past + impf`, consequent `tha + past + impf`. Greek FLV and PresCF are morphologically identical, distinguished by predicate type."
+    "comment": "Iatridou 2000 ex (8), p. 234. Modern Greek FLV: antecedent `an + past + impf`, consequent `θa + past + impf`. Greek FLV and PresCF are morphologically identical, distinguished by predicate type.",
+    "verified": "page-image"
   },
   {
     "id": "iatridou2000_gr_pastCF",
@@ -323,7 +331,7 @@
       "paperLabel": "(5)"
     },
     "language": "mode1248",
-    "primaryText": "An ixe pari to siropi tha ixe yini kala.",
+    "primaryText": "An iχ₁e pari to siropi θa iχ₁e γ₁ini kala.",
     "discourseSegments": [],
     "glossedTokens": [
       [
@@ -331,12 +339,12 @@
         "if"
       ],
       [
-        "ixe",
+        "iχ₁e",
         "had"
       ],
       [
         "pari",
-        "take.PFV"
+        "taken"
       ],
       [
         "to",
@@ -347,24 +355,24 @@
         "syrup"
       ],
       [
-        "tha",
+        "θa",
         "FUT"
       ],
       [
-        "ixe",
+        "iχ₁e",
         "had"
       ],
       [
-        "yini",
-        "become.PFV"
+        "γ₁ini",
+        "become"
       ],
       [
         "kala",
-        "well"
+        "better"
       ]
     ],
     "translation": "If he had taken the syrup, he would have gotten better.",
-    "context": "Modern Greek PastCF. Like English, MG uses the pluperfect in the antecedent of a PastCF; the future is an undeclinable particle (tha), so the highest verb (the perfect auxiliary) carries past morphology.",
+    "context": "Modern Greek PastCF. Like English, MG uses the pluperfect in the antecedent of a PastCF; the future is an undeclinable particle (θa), so the highest verb (the perfect auxiliary) carries past morphology.",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
@@ -390,7 +398,8 @@
         "no"
       ]
     ],
-    "comment": "Iatridou 2000 ex (5), p. 233. Modern Greek PastCF: the pluperfect (ixe + participle) adds a second past layer over the PresCF/FLV."
+    "comment": "Iatridou 2000 ex (5), p. 233. Modern Greek PastCF: the pluperfect (iχ₁e + participle) adds a second past layer over the PresCF/FLV.",
+    "verified": "page-image"
   },
   {
     "id": "iatridou2000_fr_flv",
@@ -412,7 +421,7 @@
       ],
       [
         "partait",
-        "leave.IPFV"
+        "left"
       ],
       [
         "demain",
@@ -424,7 +433,7 @@
       ],
       [
         "arriverait",
-        "arrive.COND"
+        "would arrive"
       ],
       [
         "là-bas",
@@ -470,7 +479,8 @@
         "no"
       ]
     ],
-    "comment": "Iatridou 2000 ex (100), p. 266. French FLV with imparfait/conditionnel. French uses the past indicative, not the (lost productive) past subjunctive."
+    "comment": "Iatridou 2000 ex (100), p. 266. French FLV with imparfait/conditionnel. French uses the past indicative, not the (lost productive) past subjunctive.",
+    "verified": "page-image"
   },
   {
     "id": "iatridou2000_fr_presCF",
@@ -492,7 +502,7 @@
       ],
       [
         "savais",
-        "know.IPFV"
+        "knew"
       ],
       [
         "que",
@@ -500,7 +510,7 @@
       ],
       [
         "c'était",
-        "it.be.IPFV"
+        "this were"
       ],
       [
         "du",
@@ -520,7 +530,7 @@
       ],
       [
         "mangerais",
-        "eat.COND"
+        "would eat"
       ]
     ],
     "translation": "If I knew that this were chocolate, I would eat it.",
@@ -550,7 +560,8 @@
         "no"
       ]
     ],
-    "comment": "Iatridou 2000 ex (101), p. 266. French PresCF, same morphology as the FLV (100)."
+    "comment": "Iatridou 2000 ex (101), p. 266. French PresCF, same morphology as the FLV (100).",
+    "verified": "page-image"
   },
   {
     "id": "iatridou2000_fr_pastCF",
@@ -572,11 +583,11 @@
       ],
       [
         "était",
-        "be.IPFV"
+        "had"
       ],
       [
         "venu",
-        "come.PTCP"
+        "come"
       ],
       [
         "je",
@@ -584,11 +595,11 @@
       ],
       [
         "l'aurais",
-        "it.have.COND"
+        "him would have"
       ],
       [
         "vu",
-        "see.PTCP"
+        "seen"
       ]
     ],
     "translation": "If Pierre had come, I would have seen him.",
@@ -618,7 +629,8 @@
         "no"
       ]
     ],
-    "comment": "Iatridou 2000 ex (102), p. 266. French PastCF: plus-que-parfait/conditionnel passé."
+    "comment": "Iatridou 2000 ex (102), p. 266. French PastCF: plus-que-parfait/conditionnel passé.",
+    "verified": "page-image"
   },
   {
     "id": "iatridou2000_ex7",
@@ -627,7 +639,7 @@
       "paperLabel": "(7)"
     },
     "language": "mode1248",
-    "primaryText": "An pari afto to siropi tha yini kala.",
+    "primaryText": "An pari afto to siropi θa γ₁ini kala.",
     "discourseSegments": [],
     "glossedTokens": [
       [
@@ -644,18 +656,18 @@
       ],
       [
         "to",
-        "the"
+        ""
       ],
       [
         "siropi",
         "syrup"
       ],
       [
-        "tha",
+        "θa",
         "FUT"
       ],
       [
-        "yini",
+        "γ₁ini",
         "become.NPST.PFV"
       ],
       [
@@ -690,7 +702,8 @@
         "no"
       ]
     ],
-    "comment": "The future neutral vivid: nonpast and perfective, usable as an instruction to a caretaker."
+    "comment": "The future neutral vivid: nonpast and perfective, usable as an instruction to a caretaker.",
+    "verified": "page-image"
   },
   {
     "id": "iatridou2000_ex10a",
@@ -717,7 +730,8 @@
         "fnv"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "iatridou2000_ex10b",
@@ -748,7 +762,8 @@
         "the actual world is more likely to become a not-p world"
       ]
     ],
-    "comment": "The FLV's unlikelihood implicature clashes with the parenthetical."
+    "comment": "The FLV's unlikelihood implicature clashes with the parenthetical.",
+    "verified": "page-image"
   },
   {
     "id": "iatridou2000_ex11",
@@ -779,7 +794,8 @@
         "survives negation"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "iatridou2000_ex13b",
@@ -788,7 +804,7 @@
       "paperLabel": "(13b)"
     },
     "language": "mode1248",
-    "primaryText": "An efevyes avrio tha eftanes eki tin ali evdomada.",
+    "primaryText": "An efevγ₁es avrio θa eftanes eki tin ali evδomaδa.",
     "discourseSegments": [],
     "glossedTokens": [
       [
@@ -796,7 +812,7 @@
         "if"
       ],
       [
-        "efevyes",
+        "efevγ₁es",
         "leave.PST.IPFV"
       ],
       [
@@ -804,7 +820,7 @@
         "tomorrow"
       ],
       [
-        "tha",
+        "θa",
         "FUT"
       ],
       [
@@ -824,7 +840,7 @@
         "other"
       ],
       [
-        "evdomada",
+        "evδomaδa",
         "week"
       ]
     ],
@@ -851,7 +867,8 @@
         "yes"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "iatridou2000_ex20",
@@ -860,7 +877,7 @@
       "paperLabel": "(20)"
     },
     "language": "mode1248",
-    "primaryText": "An ipxe afto to siropi tha eyine kala.",
+    "primaryText": "An ipχ₁e afto to siropi θa eγ₁ine kala.",
     "discourseSegments": [],
     "glossedTokens": [
       [
@@ -868,7 +885,7 @@
         "if"
       ],
       [
-        "ipxe",
+        "ipχ₁e",
         "drink.PST.PFV"
       ],
       [
@@ -877,18 +894,18 @@
       ],
       [
         "to",
-        "the"
+        ""
       ],
       [
         "siropi",
         "syrup"
       ],
       [
-        "tha",
+        "θa",
         "MOD"
       ],
       [
-        "eyine",
+        "eγ₁ine",
         "become.PST.PFV"
       ],
       [
@@ -919,7 +936,8 @@
         "no"
       ]
     ],
-    "comment": "With perfective aspect the past is real: an epistemic conditional about past events."
+    "comment": "With perfective aspect the past is real: an epistemic conditional about past events.",
+    "verified": "page-image"
   },
   {
     "id": "iatridou2000_ex21b",
@@ -928,7 +946,7 @@
       "paperLabel": "(21b)"
     },
     "language": "mode1248",
-    "primaryText": "An efiye avrio tha eftase tin ali evdomada.",
+    "primaryText": "An efiγ₁e avrio θa eftase tin ali evδomaδa.",
     "discourseSegments": [],
     "glossedTokens": [
       [
@@ -936,7 +954,7 @@
         "if"
       ],
       [
-        "efiye",
+        "efiγ₁e",
         "leave.PST.PFV"
       ],
       [
@@ -944,7 +962,7 @@
         "tomorrow"
       ],
       [
-        "tha",
+        "θa",
         "FUT"
       ],
       [
@@ -960,7 +978,7 @@
         "other"
       ],
       [
-        "evdomada",
+        "evδomaδa",
         "week"
       ]
     ],
@@ -983,7 +1001,8 @@
         "no"
       ]
     ],
-    "comment": "Past perfective cannot be fake, so a future adverbial clashes with its past orientation."
+    "comment": "Past perfective cannot be fake, so a future adverbial clashes with its past orientation.",
+    "verified": "page-image"
   },
   {
     "id": "iatridou2000_ex21c",
@@ -992,7 +1011,7 @@
       "paperLabel": "(21c)"
     },
     "language": "mode1248",
-    "primaryText": "An efiye proxtes tha eftase xthes.",
+    "primaryText": "An efiγ₁e proχtes θa eftase χθes.",
     "discourseSegments": [],
     "glossedTokens": [
       [
@@ -1000,15 +1019,15 @@
         "if"
       ],
       [
-        "efiye",
+        "efiγ₁e",
         "leave.PST.PFV"
       ],
       [
-        "proxtes",
+        "proχtes",
         "day.before.yesterday"
       ],
       [
-        "tha",
+        "θa",
         "MOD"
       ],
       [
@@ -1016,11 +1035,11 @@
         "arrive.PST.PFV"
       ],
       [
-        "xthes",
+        "χθes",
         "yesterday"
       ]
     ],
-    "translation": "If he left the day before yesterday, he must have arrived yesterday.",
+    "translation": "If he/she left the day before yesterday, he/she must have arrived yesterday.",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -1039,7 +1058,8 @@
         "no"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "iatridou2000_ex47a",
@@ -1070,7 +1090,8 @@
         "stage-level stative"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "iatridou2000_ex47b",
@@ -1101,7 +1122,8 @@
         "individual-level stative"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "iatridou2000_ex47d",
@@ -1132,7 +1154,8 @@
         "individual-level stative"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "iatridou2000_ex48a",
@@ -1159,7 +1182,8 @@
         "temporal"
       ]
     ],
-    "comment": "Ungrammatical on the usual reading of being tall."
+    "comment": "Ungrammatical on the usual reading of being tall.",
+    "verified": "page-image"
   },
   {
     "id": "iatridou2000_ex48b",
@@ -1186,7 +1210,8 @@
         "temporal"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "iatridou2000_ex53",
@@ -1217,7 +1242,8 @@
         "may include utterance time"
       ]
     ],
-    "comment": "The past relates the topic time, not the situation time, to the utterance time."
+    "comment": "The past relates the topic time, not the situation time, to the utterance time.",
+    "verified": "page-image"
   },
   {
     "id": "iatridou2000_ex54",
@@ -1248,7 +1274,8 @@
         "stage-level, not extended"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "iatridou2000_ex59",
@@ -1279,7 +1306,8 @@
         "includes both"
       ]
     ],
-    "comment": "The temporal analogue of cancelling counterfactuality."
+    "comment": "The temporal analogue of cancelling counterfactuality.",
+    "verified": "page-image"
   },
   {
     "id": "iatridou2000_ex60a",
@@ -1310,7 +1338,8 @@
         "feature over worlds"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "iatridou2000_ex60b",
@@ -1341,7 +1370,8 @@
         "feature over times"
       ]
     ],
-    "comment": "The same antecedent with the feature interpreted temporally."
+    "comment": "The same antecedent with the feature interpreted temporally.",
+    "verified": "page-image"
   },
   {
     "id": "iatridou2000_ex62b",
@@ -1372,7 +1402,8 @@
         "telic"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "iatridou2000_ex63a",
@@ -1403,7 +1434,8 @@
         "individual-level stative"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "iatridou2000_ex63b",
@@ -1434,7 +1466,8 @@
         "individual-level stative"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "iatridou2000_ex64a",
@@ -1465,7 +1498,8 @@
         "stage-level stative"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "iatridou2000_ex64b",
@@ -1496,7 +1530,8 @@
         "stage-level stative"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "iatridou2000_ex65",
@@ -1531,7 +1566,8 @@
         "future"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "iatridou2000_ex66",
@@ -1566,7 +1602,8 @@
         "now"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "iatridou2000_ex67a",
@@ -1601,7 +1638,8 @@
         "future"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "iatridou2000_ex67b",
@@ -1636,7 +1674,8 @@
         "now"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "iatridou2000_ex68a",
@@ -1667,7 +1706,8 @@
         "agnostic about the antecedent"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "iatridou2000_ex69b",
@@ -1698,7 +1738,8 @@
         "believes the antecedent false"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "iatridou2000_ex74",
@@ -1707,7 +1748,7 @@
       "paperLabel": "(74)"
     },
     "language": "mode1248",
-    "primaryText": "An ton ayapuse avrio, tha imun poli eftixismeni.",
+    "primaryText": "An ton aγapuse avrio, θa imun poli eftiχ₁ismeni.",
     "discourseSegments": [],
     "glossedTokens": [
       [
@@ -1719,7 +1760,7 @@
         "him"
       ],
       [
-        "ayapuse",
+        "aγapuse",
         "love.IPFV.PST"
       ],
       [
@@ -1727,19 +1768,19 @@
         "tomorrow"
       ],
       [
-        "tha",
+        "θa",
         "FUT"
       ],
       [
         "imun",
-        "be.PST.1SG"
+        "was"
       ],
       [
         "poli",
         "very"
       ],
       [
-        "eftixismeni",
+        "eftiχ₁ismeni",
         "happy"
       ]
     ],
@@ -1762,7 +1803,8 @@
         "stage-level stative, not inchoative"
       ]
     ],
-    "comment": "Fake imperfective does not yield the inchoative reading a perfective would."
+    "comment": "Fake imperfective does not yield the inchoative reading a perfective would.",
+    "verified": "page-image"
   },
   {
     "id": "iatridou2000_ex75",
@@ -1771,7 +1813,7 @@
       "paperLabel": "(75)"
     },
     "language": "mode1248",
-    "primaryText": "An ton ayapuse, tha itan poli eftixismeni.",
+    "primaryText": "An ton aγapuse, θa itan poli eftiχ₁ismeni.",
     "discourseSegments": [],
     "glossedTokens": [
       [
@@ -1783,23 +1825,23 @@
         "him"
       ],
       [
-        "ayapuse",
+        "aγapuse",
         "love.IPFV.PST"
       ],
       [
-        "tha",
+        "θa",
         "FUT"
       ],
       [
         "itan",
-        "be.PST.3SG"
+        "was"
       ],
       [
         "poli",
         "very"
       ],
       [
-        "eftixismeni",
+        "eftiχ₁ismeni",
         "happy"
       ]
     ],
@@ -1822,7 +1864,8 @@
         "yes"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "iatridou2000_ex79",
@@ -1831,7 +1874,7 @@
       "paperLabel": "(79)"
     },
     "language": "mode1248",
-    "primaryText": "An avrio kata tin diarkia tis teletis diavazes tin efimerida, tha se apelian.",
+    "primaryText": "An avrio kata tin δiarkia tis teletis δiavazes tin efimeriδa, θa se apelian.",
     "discourseSegments": [],
     "glossedTokens": [
       [
@@ -1848,11 +1891,11 @@
       ],
       [
         "tin",
-        "the"
+        ""
       ],
       [
-        "diarkia",
-        "duration"
+        "δiarkia",
+        ""
       ],
       [
         "tis",
@@ -1863,7 +1906,7 @@
         "ceremony"
       ],
       [
-        "diavazes",
+        "δiavazes",
         "read.IPFV.PST"
       ],
       [
@@ -1871,11 +1914,11 @@
         "the"
       ],
       [
-        "efimerida",
+        "efimeriδa",
         "newspaper"
       ],
       [
-        "tha",
+        "θa",
         "FUT"
       ],
       [
@@ -1910,7 +1953,8 @@
         "ongoing"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "iatridou2000_ex97a",
@@ -1924,7 +1968,7 @@
     "glossedTokens": [
       [
         "Dudo",
-        "doubt.1SG"
+        "I doubt"
       ],
       [
         "que",
@@ -1975,7 +2019,8 @@
         "past and present subjunctive"
       ]
     ],
-    "comment": ""
+    "comment": "The paper prints the forms without accents (este, *esta); the row records the standard spellings esté, está.",
+    "verified": "page-image"
   },
   {
     "id": "iatridou2000_ex98",
@@ -1993,7 +2038,7 @@
       ],
       [
         "doute",
-        "doubt.1SG"
+        "doubt"
       ],
       [
         "que",
@@ -2009,7 +2054,7 @@
       ],
       [
         "un",
-        "a"
+        "an"
       ],
       [
         "parapluie",
@@ -2048,7 +2093,8 @@
         "nonpast subjunctive only"
       ]
     ],
-    "comment": "Under doubt the subjunctive wins over loyalty to the tense of the original sentence."
+    "comment": "Under doubt the subjunctive wins over loyalty to the tense of the original sentence.",
+    "verified": "page-image"
   },
   {
     "id": "iatridou2000_ex99",
@@ -2074,7 +2120,7 @@
       ],
       [
         "un",
-        "a"
+        "an"
       ],
       [
         "parapluie",
@@ -2109,6 +2155,7 @@
         "nonpast subjunctive only"
       ]
     ],
-    "comment": "In the counterfactual the exclusion feature wins over the nonpast subjunctive."
+    "comment": "In the counterfactual the exclusion feature wins over the nonpast subjunctive.",
+    "verified": "page-image"
   }
 ]

@@ -6,7 +6,7 @@ public import Linglib.Data.Examples.DechaineWiltschko2002
 /-!
 # Déchaine and Wiltschko (2002): Decomposing Pronouns
 
-This file formalizes the categorial typology of proforms of [dechaine-wiltschko-2002]. The
+This file formalizes the categorial typology of proforms of Déchaine and Wiltschko. The
 notion "pronoun" is not a primitive: a proform is a DP, a φP or an NP by the layers it projects,
 and its category fixes its distribution and its binding-theoretic status, table (24). A DP is an
 argument and an R-expression under Condition C, a φP an argument or a predicate and a variable
@@ -138,12 +138,16 @@ theorem determiner_rows :
       ∀ c ∈ categoryOf e, (e.judgment = .acceptable ↔ c = .proDP) := by
   decide
 
+/-- The judgment of a row's bound-variable construal: under VP-ellipsis its sloppy reading's,
+otherwise the row's own, whose indices mark the bound construal. -/
+def boundJudgment (e : Datum) : Judgment := (e.readings.lookup "sloppy").getD e.judgment
+
 /-- A proform is construed as a bound variable exactly when its category makes it a variable:
 *he* under *every candidate*, but not *me* under VP-ellipsis, the sloppy reading of (40), nor
 *one* or *kare* under a quantifier, (30) and (22). -/
 theorem bound_variable_rows :
     ∀ e ∈ Examples.all, e.feature? "test" = some "boundVariable" →
-      ∀ c ∈ categoryOf e, (e.judgment = .acceptable ↔ c.bindingStatus = .variable) := by
+      ∀ c ∈ categoryOf e, (boundJudgment e = .acceptable ↔ c.bindingStatus = .variable) := by
   decide
 
 end DechaineWiltschko2002

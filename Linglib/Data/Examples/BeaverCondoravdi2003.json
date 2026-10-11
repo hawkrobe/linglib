@@ -12,7 +12,8 @@
     "paperFeatures": [
       ["connective", "before"]
     ],
-    "comment": "True iff (2) is — the intuition behind converseness; implies David did in fact leave Europe."
+    "comment": "True iff (2) is — the intuition behind converseness; implies David did in fact leave Europe.",
+    "verified": "page-image"
   },
   {
     "id": "beavercondoravdi2003_2",
@@ -27,7 +28,8 @@
     "paperFeatures": [
       ["connective", "after"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "beavercondoravdi2003_3",
@@ -43,7 +45,8 @@
       ["connective", "before"],
       ["phenomenon", "antisymmetry"]
     ],
-    "comment": "True iff (4) is false: before is antisymmetric."
+    "comment": "True iff (4) is false: before is antisymmetric.",
+    "verified": "page-image"
   },
   {
     "id": "beavercondoravdi2003_5",
@@ -59,7 +62,8 @@
       ["connective", "after"],
       ["phenomenon", "antisymmetry"]
     ],
-    "comment": "Can be true together with (6) in the overlap situation (7): after is not antisymmetric."
+    "comment": "Can be true together with (6) in the overlap situation (7): after is not antisymmetric.",
+    "verified": "page-image"
   },
   {
     "id": "beavercondoravdi2003_9",
@@ -75,7 +79,8 @@
       ["connective", "after"],
       ["phenomenon", "transitivity"]
     ],
-    "comment": "Judged true in situation (8)."
+    "comment": "Judged true in situation (8).",
+    "verified": "page-image"
   },
   {
     "id": "beavercondoravdi2003_10",
@@ -91,7 +96,8 @@
       ["connective", "after"],
       ["phenomenon", "transitivity"]
     ],
-    "comment": "Judged true in situation (8)."
+    "comment": "Judged true in situation (8).",
+    "verified": "page-image"
   },
   {
     "id": "beavercondoravdi2003_11",
@@ -107,7 +113,8 @@
       ["connective", "after"],
       ["phenomenon", "transitivity"]
     ],
-    "comment": "Judged false in situation (8): after is not transitive."
+    "comment": "Judged false in situation (8): after is not transitive.",
+    "verified": "page-image"
   },
   {
     "id": "beavercondoravdi2003_12",
@@ -123,7 +130,8 @@
       ["connective", "before"],
       ["phenomenon", "converseness"]
     ],
-    "comment": "Not judged true in situation (8), though (10) is — the direct counterexample to sentential converseness."
+    "comment": "Not judged true in situation (8), though (10) is — the direct counterexample to sentential converseness.",
+    "verified": "page-image"
   },
   {
     "id": "beavercondoravdi2003_15",
@@ -139,7 +147,8 @@
       ["connective", "before"],
       ["phenomenon", "npi-licensing"]
     ],
-    "comment": "Before licenses NPIs in its clause; also with 'could say a word'."
+    "comment": "Before licenses NPIs in its clause; also with 'could say a word'.",
+    "verified": "page-image"
   },
   {
     "id": "beavercondoravdi2003_16",
@@ -149,13 +158,14 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "readings": [],
     "paperFeatures": [
       ["connective", "after"],
       ["phenomenon", "npi-licensing"]
     ],
-    "comment": "After does not license NPIs; main clauses license none regardless of connective ((17), (18))."
+    "comment": "After does not license NPIs; main clauses license none regardless of connective ((17), (18)).",
+    "verified": "page-image"
   },
   {
     "id": "beavercondoravdi2003_22",
@@ -172,7 +182,8 @@
       ["phenomenon", "veridicality"],
       ["reading", "counterfactual"]
     ],
-    "comment": "Uncounted votes: the before-clause is not instantiated."
+    "comment": "Uncounted votes: the before-clause is not instantiated.",
+    "verified": "page-image"
   },
   {
     "id": "beavercondoravdi2003_23",
@@ -189,13 +200,14 @@
       ["phenomenon", "veridicality"],
       ["reading", "counterfactual"]
     ],
-    "comment": "No explosion."
+    "comment": "No explosion.",
+    "verified": "page-image"
   },
   {
     "id": "beavercondoravdi2003_24",
     "source": {"bibkey": "beaver-condoravdi-2003", "paperLabel": "(24)"},
     "language": "stan1293",
-    "primaryText": "Mozart died before he finished the Requiem and it was completed by his student, Franz Xavier Suessmayr.",
+    "primaryText": "Mozart died before he finished the Requiem and it was completed by his student, Franz Xavier [Süssmayr].",
     "glossedTokens": [],
     "translation": "",
     "context": "",
@@ -206,7 +218,8 @@
       ["phenomenon", "veridicality"],
       ["reading", "counterfactual"]
     ],
-    "comment": "Unfinished Requiem; simplified as (40), which implies (41): if Mozart had not died when he did, he might/would have finished it."
+    "comment": "Unfinished Requiem; simplified as (40), which implies (41): if Mozart had not died when he did, he might/would have finished it.",
+    "verified": "page-image"
   },
   {
     "id": "beavercondoravdi2003_25",
@@ -222,7 +235,8 @@
       ["connective", "after"],
       ["phenomenon", "veridicality"]
     ],
-    "comment": "Requiem finished: after-clauses stay veridical under any toying with the examples."
+    "comment": "Requiem finished: after-clauses stay veridical under any toying with the examples.",
+    "verified": "page-image"
   },
   {
     "id": "beavercondoravdi2003_26",
@@ -238,7 +252,8 @@
       ["connective", "after"],
       ["phenomenon", "veridicality"]
     ],
-    "comment": "Requiem finished post mortem: both clauses veridical."
+    "comment": "Requiem finished post mortem: both clauses veridical.",
+    "verified": "page-image"
   },
   {
     "id": "beavercondoravdi2003_32",
@@ -248,13 +263,14 @@
     "glossedTokens": [],
     "translation": "",
     "context": "David never won a gold medal at anything.",
-    "judgment": "marginal",
+    "judgment": "acceptable",
     "readings": [],
     "paperFeatures": [
       ["connective", "before"],
       ["phenomenon", "overgeneration"]
     ],
-    "comment": "Predicted true by the classical rendering whenever the before-clause is empty; odd because no context with common-sense assumptions makes the win reasonably probable."
+    "comment": "Predicted true by the classical rendering whenever the before-clause is empty; odd because no context with common-sense assumptions makes the win reasonably probable. Printed unmarked; the paper calls examples like (32) \"odd\".",
+    "verified": "page-image"
   },
   {
     "id": "beavercondoravdi2003_34",
@@ -270,7 +286,8 @@
       ["connective", "before"],
       ["phenomenon", "measure-phrase"]
     ],
-    "comment": "A universal rendering of the before-clause would require leaving exactly 5 seconds before every singing time."
+    "comment": "A universal rendering of the before-clause would require leaving exactly 5 seconds before every singing time.",
+    "verified": "page-image"
   },
   {
     "id": "beavercondoravdi2003_42",
@@ -287,13 +304,14 @@
       ["phenomenon", "veridicality"],
       ["reading", "counterfactual"]
     ],
-    "comment": "New information: the bomb did not explode because the police defused it before the time it would have exploded."
+    "comment": "New information: the bomb did not explode because the police defused it before the time it would have exploded.",
+    "verified": "page-image"
   },
   {
     "id": "beavercondoravdi2003_43",
     "source": {"bibkey": "beaver-condoravdi-2003", "paperLabel": "(43)"},
     "language": "stan1293",
-    "primaryText": "I left the party before there was any trouble.",
+    "primaryText": "I left the party before there was (any) trouble.",
     "glossedTokens": [],
     "translation": "",
     "context": "",
@@ -304,6 +322,7 @@
       ["phenomenon", "veridicality"],
       ["reading", "non-committal"]
     ],
-    "comment": "No commitment to there having been trouble, but trouble seemed likely shortly before the departure."
+    "comment": "No commitment to there having been trouble, but trouble seemed likely shortly before the departure.",
+    "verified": "page-image"
   }
 ]

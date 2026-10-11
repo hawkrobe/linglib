@@ -6,7 +6,7 @@
     "primaryText": "yeš la'hakot še-ahavti et ha-šeni.",
     "glossedTokens": [],
     "translation": "(There are bands that I liked the second one.)",
-    "context": "Empty noun (EN), deep anaphor: a bare n head hosting a resumptive bound by an Ā-operator.",
+    "context": "Empty noun (EN), deep anaphor: a bare n head with no internal structure to host the resumptive pronoun bound by the Ā-operator.",
     "judgment": "ungrammatical",
     "paperFeatures": [
       ["domain", "nP"],
@@ -14,7 +14,8 @@
       ["extractionAvailable", "false"],
       ["abarContext", "restrictive relative, interrogative, free relative"]
     ],
-    "comment": "Landau 2026, §2.2 (18a). EN fails EIR: no internal structure to host the resumptive, so the Ā-operator violates the BVQ. NP-ellipsis previously established; EIR gives additional confirmation via the EN/ENP contrast."
+    "comment": "Landau 2026, §2.2 (18a). EN fails EIR: no internal structure to host the resumptive, so the Ā-operator violates the BVQ. NP-ellipsis previously established; EIR gives additional confirmation via the EN/ENP contrast.",
+    "verified": "page-image"
   },
   {
     "id": "landau2026_hebrewENP",
@@ -31,7 +32,8 @@
       ["extractionAvailable", "false"],
       ["abarContext", "restrictive relative, interrogative, maximizing relative"]
     ],
-    "comment": "Landau 2026, §2.2 (19a). ENP passes EIR: the resumptive inside the elided nP supplies the variable the operator binds."
+    "comment": "Landau 2026, §2.2 (19a). ENP passes EIR: the resumptive inside the elided nP supplies the variable the operator binds.",
+    "verified": "page-image"
   },
   {
     "id": "landau2026_hebrewNCA_DP",
@@ -48,13 +50,14 @@
       ["extractionAvailable", "false"],
       ["abarContext", "restrictive relative, interrogative, free relative"]
     ],
-    "comment": "Landau 2026, §3.2 (31a). NCA/pro fails EIR: no internal structure. The existence of AE in Hebrew was debated; EIR provides a novel argument."
+    "comment": "Landau 2026, §3.2 (31a). NCA/pro fails EIR: no internal structure. The existence of AE in Hebrew was debated; EIR provides a novel argument.",
+    "verified": "page-image"
   },
   {
     "id": "landau2026_hebrewAE",
     "source": {"bibkey": "landau-2026", "paperLabel": "(32a)"},
     "language": "hebr1245",
-    "primaryText": "yeš li xaver še-kaniti et ha-oto šelo, ve-yeš li xaver axer še-maxarti.",
+    "primaryText": "yeš li xaver exad še-kaniti et ha-oto šelo, ve-yeš li xaver axer še-maxarti.",
     "glossedTokens": [],
     "translation": "I have one friend whose car I bought and I have another one whose car I sold.",
     "context": "Argument ellipsis (AE) / DP-ellipsis, surface anaphor: full DP structure deleted under identity.",
@@ -65,7 +68,8 @@
       ["extractionAvailable", "false"],
       ["abarContext", "restrictive relative, interrogative, free relative"]
     ],
-    "comment": "Landau 2026, §3.2 (32a). AE passes EIR: a resumptive inside the elided DP supplies the variable. Novel argument for AE in Hebrew."
+    "comment": "Landau 2026, §3.2 (32a). AE passes EIR: a resumptive inside the elided DP supplies the variable. Novel argument for AE in Hebrew.",
+    "verified": "page-image"
   },
   {
     "id": "landau2026_hebrewNCA_PP",
@@ -82,7 +86,8 @@
       ["extractionAvailable", "false"],
       ["abarContext", "restrictive relative, interrogative, free relative"]
     ],
-    "comment": "Landau 2026, §4.2 (37a). Null PP via NCA fails EIR: no internal structure."
+    "comment": "Landau 2026, §4.2 (37a). Null PP via NCA fails EIR: no internal structure.",
+    "verified": "page-image"
   },
   {
     "id": "landau2026_hebrewPPE",
@@ -99,7 +104,8 @@
       ["extractionAvailable", "false"],
       ["abarContext", "restrictive relative, interrogative, free relative"]
     ],
-    "comment": "Landau 2026, §4.2 (38a). PPE passes EIR: first robust evidence for PP-ellipsis; the paper argues this holds cross-linguistically, not only in Hebrew."
+    "comment": "Landau 2026, §4.2 (38a). PPE passes EIR: first robust evidence for PP-ellipsis; the paper argues this holds cross-linguistically, not only in Hebrew.",
+    "verified": "page-image"
   },
   {
     "id": "landau2026_englishVPE",
@@ -120,7 +126,8 @@
       ["extractionAvailable", "true"],
       ["abarContext", "left-dislocation"]
     ],
-    "comment": "Landau 2026, §5 (44a). VP-ellipsis passes EIR."
+    "comment": "Landau 2026, §5 (44a). VP-ellipsis passes EIR.",
+    "verified": "page-image"
   },
   {
     "id": "landau2026_englishDoSo",
@@ -141,7 +148,8 @@
       ["extractionAvailable", "true"],
       ["abarContext", "left-dislocation"]
     ],
-    "comment": "Landau 2026, §5 (44c). do so fails EIR; Ā-extraction is also impossible, but that is ambiguous between deep anaphor and derivational bleeding. EIR resolves the ambiguity: do so is deep [bruening-2019]."
+    "comment": "Landau 2026, §5 (44c). do so fails EIR; Ā-extraction is also impossible, but that is ambiguous between deep anaphor and derivational bleeding. EIR resolves the ambiguity: do so is deep [bruening-2019].",
+    "verified": "page-image"
   },
   {
     "id": "landau2026_dutchDatDoen",
@@ -158,7 +166,8 @@
       ["extractionAvailable", "true"],
       ["abarContext", "left-dislocation"]
     ],
-    "comment": "Landau 2026, §5 (45a). dat doen fails EIR (Marcel den Dikken, p.c.)."
+    "comment": "Landau 2026, §5 (45a). dat doen fails EIR (Marcel den Dikken, p.c.).",
+    "verified": "page-image"
   },
   {
     "id": "landau2026_danishDet",
@@ -175,13 +184,14 @@
       ["extractionAvailable", "true"],
       ["abarContext", "left-dislocation"]
     ],
-    "comment": "Landau 2026, §5 (46b). det fails EIR (Line Mikkelsen, p.c.). The grammatical baseline is (46a)."
+    "comment": "Landau 2026, §5 (46b). det fails EIR (Line Mikkelsen, p.c.). The grammatical baseline is (46a).",
+    "verified": "page-image"
   },
   {
     "id": "landau2026_koreanNullObj",
     "source": {"bibkey": "landau-2026", "paperLabel": "(47b)"},
     "language": "kore1280",
-    "primaryText": "Na-uy i chinkwu, nay-ka ku-uy cha-lul sasse. Nay-uy ce chinkwu, nay-ka phallasse.",
+    "primaryText": "Na-uy i chinkwu, nay-ka ku-uy cha-lul sasse. Nay-uy ce chinkwu, nay-ka phalasse.",
     "discourseSegments": [
       "Na-uy i chinkwu, nay-ka ku-uy cha-lul sasse.",
       "Nay-uy ce chinkwu, nay-ka phallasse."
@@ -196,6 +206,7 @@
       ["extractionAvailable", "true"],
       ["abarContext", "left-dislocation"]
     ],
-    "comment": "Landau 2026, §5 (47b). Korean null object fails EIR (Heejeong Ko, p.c.), supporting the pro analysis over AE. The grammatical baseline is (47a)."
+    "comment": "Landau 2026, §5 (47b). Korean null object fails EIR (Heejeong Ko, p.c.), supporting the pro analysis over AE. The grammatical baseline is (47a).",
+    "verified": "page-image"
   }
 ]

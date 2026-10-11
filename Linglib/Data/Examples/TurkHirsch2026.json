@@ -4,7 +4,7 @@
     "source": {"bibkey": "turk-hirsch-2026", "paperLabel": "(4)"},
     "reportedIn": null,
     "language": "nucl1301",
-    "primaryText": "Ali uyudu mu?",
+    "primaryText": "Ali uyudu=mu?",
     "discourseSegments": [],
     "glossedTokens": [
       ["Ali", "Ali[NOM]"], ["uyu-du=mu", "sleep-PST.3SG=FM"]
@@ -18,17 +18,18 @@
       ["clitic_site", "default"],
       ["focus", "sigma"]
     ],
-    "comment": "The focus clitic in its default rightmost position attaches to the covert polarity head; answerable by evet or hayır."
+    "comment": "The focus clitic in its default rightmost position attaches to the covert polarity head; answerable by evet or hayır.",
+    "verified": "page-image"
   },
   {
     "id": "turkhirsch2026_5",
     "source": {"bibkey": "turk-hirsch-2026", "paperLabel": "(5)"},
     "reportedIn": null,
     "language": "nucl1301",
-    "primaryText": "ALİ mi uyudu?",
+    "primaryText": "ALI=mi uyudu?",
     "discourseSegments": [],
     "glossedTokens": [
-      ["Ali=mi", "Ali[NOM]=FM"], ["uyu-du", "sleep-PST.3SG"]
+      ["ALI=mi", "Ali[NOM]=FM"], ["uyu-du", "sleep-PST.3SG"]
     ],
     "translation": "Was it Ali who slept?",
     "context": "",
@@ -39,7 +40,8 @@
       ["clitic_site", "subject"],
       ["focus", "subject"]
     ],
-    "comment": "The clitic on the stressed subject; the Hamblin set is the set of propositions that x slept, as for a wh-question, and a bare negative answer is incomplete, (6)."
+    "comment": "The clitic on the stressed subject; the Hamblin set is the set of propositions that x slept, as for a wh-question, and a bare negative answer is incomplete, (6).",
+    "verified": "page-image"
   },
   {
     "id": "turkhirsch2026_6a",
@@ -60,7 +62,8 @@
       ["answer", "negative particle"],
       ["complete", "no"]
     ],
-    "comment": "Not a complete answer to (5): the response particle is anaphoric to the ordinary value of the TP, but a true member of the Hamblin set must still be supplied."
+    "comment": "Not a complete answer to (5): the response particle is anaphoric to the ordinary value of the TP, but a true member of the Hamblin set must still be supplied.",
+    "verified": "page-image"
   },
   {
     "id": "turkhirsch2026_6b",
@@ -81,14 +84,15 @@
       ["answer", "negative particle with continuation"],
       ["complete", "yes"]
     ],
-    "comment": "A complete answer to (5), naming the true member of the Hamblin set."
+    "comment": "A complete answer to (5), naming the true member of the Hamblin set.",
+    "verified": "page-image"
   },
   {
     "id": "turkhirsch2026_14",
     "source": {"bibkey": "turk-hirsch-2026", "paperLabel": "(14)"},
     "reportedIn": null,
     "language": "nucl1301",
-    "primaryText": "Yannis Ali uyudu mu diye merak etti.",
+    "primaryText": "Yannis Ali uyudu=mu diye meraketti.",
     "discourseSegments": [],
     "glossedTokens": [
       ["Yannis", "Yannis[NOM]"], ["Ali", "Ali[NOM]"], ["uyu-du=mu", "sleep-PST=FM"],
@@ -103,14 +107,15 @@
       ["clitic_site", "below diye"],
       ["matrix", "declarative"]
     ],
-    "comment": "The clitic below the complementizer: the highest focus is in the embedded clause, whose alternatives are used up by the embedded question head, so the matrix clause is a declarative."
+    "comment": "The clitic below the complementizer: the highest focus is in the embedded clause, whose alternatives are used up by the embedded question head, so the matrix clause is a declarative.",
+    "verified": "page-image"
   },
   {
     "id": "turkhirsch2026_18",
     "source": {"bibkey": "turk-hirsch-2026", "paperLabel": "(18)"},
     "reportedIn": null,
     "language": "nucl1301",
-    "primaryText": "Yannis Ali uyudu diye mi merak etti?",
+    "primaryText": "Yannis Ali uyudu diye=mi meraketti?",
     "discourseSegments": [],
     "glossedTokens": [
       ["Yannis", "Yannis[NOM]"], ["Ali", "Ali[NOM]"], ["uyu-du", "sleep-PST"],
@@ -125,7 +130,8 @@
       ["clitic_site", "above diye"],
       ["matrix", "question"]
     ],
-    "comment": "The clitic above the complementizer: the embedded clause is focused as a whole, its alternatives propagate to the matrix question head, and the matrix clause is a question."
+    "comment": "The clitic above the complementizer: the embedded clause is focused as a whole, its alternatives propagate to the matrix question head, and the matrix clause is a question.",
+    "verified": "page-image"
   },
   {
     "id": "turkhirsch2026_35a",
@@ -146,7 +152,8 @@
       ["answer", "positive"],
       ["complete", "yes"]
     ],
-    "comment": "The complete answer; the type-theoretic Hamblin set wrongly makes it partial."
+    "comment": "The complete answer; the type-theoretic Hamblin set wrongly makes it partial.",
+    "verified": "page-image"
   },
   {
     "id": "turkhirsch2026_35b",
@@ -168,7 +175,8 @@
       ["answer", "modal conjunction"],
       ["complete", "over-informative"]
     ],
-    "comment": "Over-informative: the answer the type-theoretic Hamblin set predicts to be complete, (34)."
+    "comment": "Over-informative: the answer the type-theoretic Hamblin set predicts to be complete, (34).",
+    "verified": "page-image"
   },
   {
     "id": "turkhirsch2026_41",
@@ -189,6 +197,7 @@
       ["answer", "modal"],
       ["complete", "no"]
     ],
-    "comment": "Not a licit answer to (22) even in a context supporting the modalized Hamblin set (38); the answer would have to be that Ali did sleep."
+    "comment": "Not a licit answer to (22) even in a context supporting the modalized Hamblin set (38); the answer would have to be that Ali did sleep.",
+    "verified": "page-image"
   }
 ]

@@ -24,7 +24,7 @@ def gj2003_kala : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("*ká.loi.den", .ungrammatical)]
+    alternatives := [("ká.loi.den", .ungrammatical)]
     readings := []
     paperFeatures := [("stem", "kala"), ("loser", "ká.loi.den"), ("winnerViolations", "11000001011"), ("loserViolations", "12000001101")] }
 

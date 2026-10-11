@@ -21,7 +21,8 @@
       ["negation", "negated"],
       ["condition", "negated negative strong"]
     ],
-    "comment": "Three of the eight statements of the item; participants saw all eight concurrently and rated each room on the 1-5 scale. The same item appears in single-statement mode as Table 1 of Alexandropoulou and Gotzner (2024b)."
+    "comment": "Three of the eight statements of the item; participants saw all eight concurrently and rated each room on the 1-5 scale. The same item appears in single-statement mode as Table 1 of Alexandropoulou and Gotzner (2024b).",
+    "verified": "page-image"
   },
   {
     "id": "ag2024a_t2_david",
@@ -45,7 +46,8 @@
       ["negation", "nonNegated"],
       ["condition", "non-negated negative weak"]
     ],
-    "comment": "Three of the eight statements of the item; participants saw all eight concurrently and rated each room on the 1-5 scale. The same item appears in single-statement mode as Table 1 of Alexandropoulou and Gotzner (2024b)."
+    "comment": "Three of the eight statements of the item; participants saw all eight concurrently and rated each room on the 1-5 scale. The same item appears in single-statement mode as Table 1 of Alexandropoulou and Gotzner (2024b).",
+    "verified": "page-image"
   },
   {
     "id": "ag2024a_t2_brian",
@@ -69,7 +71,8 @@
       ["negation", "nonNegated"],
       ["condition", "non-negated positive strong"]
     ],
-    "comment": "Three of the eight statements of the item; participants saw all eight concurrently and rated each room on the 1-5 scale. The same item appears in single-statement mode as Table 1 of Alexandropoulou and Gotzner (2024b)."
+    "comment": "Three of the eight statements of the item; participants saw all eight concurrently and rated each room on the 1-5 scale. The same item appears in single-statement mode as Table 1 of Alexandropoulou and Gotzner (2024b).",
+    "verified": "page-image"
   },
   {
     "id": "ag2024a_t3_anthony",
@@ -93,7 +96,8 @@
       ["negation", "negated"],
       ["condition", "negated negative strong"]
     ],
-    "comment": "Three of the eight statements of the item; participants saw all eight concurrently and rated each hospital on the 1-5 scale. The same item appears in single-statement mode as Table 2 of Alexandropoulou and Gotzner (2024b)."
+    "comment": "Three of the eight statements of the item; participants saw all eight concurrently and rated each hospital on the 1-5 scale. The same item appears in single-statement mode as Table 2 of Alexandropoulou and Gotzner (2024b).",
+    "verified": "page-image"
   },
   {
     "id": "ag2024a_t3_joseph",
@@ -117,7 +121,8 @@
       ["negation", "negated"],
       ["condition", "negated negative weak"]
     ],
-    "comment": "Three of the eight statements of the item; participants saw all eight concurrently and rated each hospital on the 1-5 scale. The same item appears in single-statement mode as Table 2 of Alexandropoulou and Gotzner (2024b)."
+    "comment": "Three of the eight statements of the item; participants saw all eight concurrently and rated each hospital on the 1-5 scale. The same item appears in single-statement mode as Table 2 of Alexandropoulou and Gotzner (2024b).",
+    "verified": "page-image"
   },
   {
     "id": "ag2024a_t3_mary",
@@ -141,6 +146,7 @@
       ["negation", "nonNegated"],
       ["condition", "non-negated positive strong"]
     ],
-    "comment": "Three of the eight statements of the item; participants saw all eight concurrently and rated each hospital on the 1-5 scale. The same item appears in single-statement mode as Table 2 of Alexandropoulou and Gotzner (2024b)."
+    "comment": "Three of the eight statements of the item; participants saw all eight concurrently and rated each hospital on the 1-5 scale. The same item appears in single-statement mode as Table 2 of Alexandropoulou and Gotzner (2024b).",
+    "verified": "page-image"
   }
 ]

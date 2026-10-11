@@ -6,24 +6,24 @@ public import Mathlib.Order.Monotone.Basic
 /-!
 # Israel (2001): Minimizers, Maximizers and the Rhetoric of Scalar Reasoning
 
-This file formalizes the Scalar Model of polarity sensitivity of [israel-2001]. A scalar model,
-after [fillmore-kay-oconnor-1988], is a propositional function over an ordered scale whose
-values pragmatically entail one another;
-a polarity item encodes a quantity relative to the scalar norm and a rhetorical force, emphatic
-when the proposition it expresses entails the norm's and attenuating when it is entailed by it
-(`Emphatic`, `Attenuating`). Scale preserving contexts are the strictly monotone maps on
-propositions and scale reversing ones the strictly antitone maps, the positive and negative
-directions of `Polarity.StrictMonoBy`, and the direction of the expressed propositional
-function decides which quantities are emphatic (`felicitous_iff_of_strictMonoBy`). The four cells of Figure 1 follow: emphatic items with low values and attenuating
-items with high values need reversing contexts, the negative polarity items, the other two cells
-preserving contexts. The inverted items of Section 3, maximizing NPIs like *wild horses* and
-minimizing PPIs like *for peanuts*, follow from the thematic logic of Section 4: a propositional
-role either impedes the eventuality, so that the function is antitone in quantity, or
-facilitates it, so that it is monotone (`Role`). Directions compose as polarities multiply, so
-that the licensing context of any item is the product of the signs of its force, quantity and
-role (`licensingContext`, `felicitous_iff`). The pecuniary paradox
+This file formalizes Israel's Scalar Model of polarity sensitivity. A scalar model, after
+Fillmore, Kay and O'Connor, is a propositional function over an ordered scale whose values
+pragmatically entail one another; a polarity item encodes a quantity relative to the scalar norm
+and a rhetorical force, emphatic when the proposition it expresses entails the norm's and
+attenuating when it is entailed by it (`Emphatic`, `Attenuating`). Scale preserving contexts are
+the strictly monotone maps on propositions and scale reversing ones the strictly antitone maps,
+the positive and negative directions of `Polarity.StrictMonoBy`, and the direction of the
+expressed propositional function decides which quantities are emphatic
+(`felicitous_iff_of_strictMonoBy`). The four cells of Figure 1 follow: emphatic items with low
+values and attenuating items with high values need reversing contexts, the negative polarity
+items, the other two cells preserving contexts. The inverted items of Section 4, maximizing NPIs
+like *wild horses* and minimizing PPIs like *for peanuts*, follow from the thematic logic of
+Section 5: a propositional role either impedes the eventuality, so that the function is antitone
+in quantity, or facilitates it, so that it is monotone (`Role`). Directions compose as
+polarities multiply, so that the licensing context of any item is the product of the signs of
+its force, quantity and role (`licensingContext`, `felicitous_iff`). The pecuniary paradox
 dissolves because a resource is impeding and a reward facilitating, and the ambiguous
-superlatives of Section 6 are the same composition with an existential and a
+superlatives of Section 7 are the same composition with an existential and a
 perceptual-ability scale.
 
 ## Implementation notes
@@ -80,7 +80,7 @@ def Quantity.Rel : Quantity → α → α → Prop
   | .small, x, n => x < n
   | .large, x, n => n < x
 
-/-- The effect of a propositional role on the likelihood of the eventuality (Section 4): a
+/-- The effect of a propositional role on the likelihood of the eventuality (Section 5): a
 patient, theme, increment, expense or duration impedes it, the bigger the less likely, and an
 agent, stimulus, reward, instrument or interval facilitates it. -/
 inductive Role
@@ -148,7 +148,7 @@ theorem felicitous_iff_of_strictAnti (h : StrictAnti Q) (hx : x ≠ n) (d : Forc
 
 /-- The direction of the context in which an item of a given force, quantity and role is
 felicitous, scale preserving (positive) or scale reversing (negative), the scalar logic of
-Sections 1 and 4: the product of the three signs. Emphatic small items in impeding roles and
+Sections 2 and 5: the product of the three signs. Emphatic small items in impeding roles and
 emphatic large items in facilitating roles are NPIs, needing scale reversal, as are attenuating
 items of the opposite quantities; the remaining cells are PPIs. -/
 def licensingContext (d : Force) (q : Quantity) (r : Role) : Polarity := d.sign * q.sign * r.sign
@@ -216,14 +216,14 @@ structure Classified where
   quantity : Quantity
   role : Role
 
-/-- The paper's classifications of the fragment's items: the canonical minimizers of Section 4
-and the degree items of Figure 1 in impeding roles, the maximizing NPIs and minimizing PPIs of
-Section 3 in facilitating roles. -/
+/-- The paper's classifications of the fragment's items: the canonical minimizers and the degree
+items of Figure 1 in impeding roles, the maximizing NPIs and minimizing PPIs of Section 4 in
+facilitating roles. -/
 def classified : List Classified :=
   [⟨atAll, .emphatic, .small, .impeding⟩, ⟨liftAFinger, .emphatic, .small, .impeding⟩,
    ⟨budgeAnInch, .emphatic, .small, .impeding⟩, ⟨somewhat, .attenuating, .small, .impeding⟩,
    ⟨rather, .attenuating, .small, .impeding⟩, ⟨tonsOf, .emphatic, .large, .impeding⟩,
-   ⟨utterly, .emphatic, .large, .impeding⟩, ⟨wildHorses, .emphatic, .large, .facilitating⟩,
+   ⟨awfully, .emphatic, .large, .impeding⟩, ⟨wildHorses, .emphatic, .large, .facilitating⟩,
    ⟨allTheTeaInChina, .emphatic, .large, .facilitating⟩,
    ⟨aTenFootPole, .emphatic, .large, .facilitating⟩,
    ⟨inAMillionYears, .emphatic, .large, .facilitating⟩,

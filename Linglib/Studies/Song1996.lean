@@ -248,7 +248,7 @@ theorem compact_implicativity_varies : ∃ e₁ ∈ Examples.all, ∃ e₂ ∈ E
     e₁.feature? "effect" = some "negated" ∧ e₂.feature? "effect" = some "negated" ∧
     (Form.ofRow e₁).bind Form.type = some .compact ∧
     (Form.ofRow e₂).bind Form.type = some .compact ∧
-    e₁.judgment = .unacceptable ∧ e₂.judgment = .acceptable :=
+    e₁.judgment = .ungrammatical ∧ e₂.judgment = .acceptable :=
   ⟨Examples.ex_6, by simp [Examples.all], Examples.ex_104, by simp [Examples.all],
     by decide +kernel⟩
 

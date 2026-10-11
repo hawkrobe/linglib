@@ -10,14 +10,14 @@ public import Linglib.Semantics.ArgumentStructure.Unaccusativity
 /-!
 # Ozaki (2026): Japanese Accusative/Ablative Alternation Verbs Are Unaccusative
 
-This file formalizes the argument of [ozaki-2026] that the Japanese verbs of departure whose
+This file formalizes Ozaki's argument that the Japanese verbs of departure whose
 source argument is marked either accusative *o* or ablative *kara*, *hanareru* 'leave' and
 *deru* 'exit', project one dyadic unaccusative structure under both markings. The source is
 an argument whatever its marking, since it elides under an overt adjunct, the argumenthood
-diagnostic of [funakoshi-2016], and scrambles long-distance, that of [saito-1985]; and the
-verbs project no thematic Voice ([kratzer-1996]) under either marking, since their passive
+diagnostic of Funakoshi, and scrambles long-distance, that of Saito; and the
+verbs project no thematic Voice (Kratzer) under either marking, since their passive
 is the indirect passive, the direct passive with *niyotte* being ungrammatical, and the
-accusative wh-adjunct *nani-o* 'why' of [kurafuji-1997] is unavailable, as with
+accusative wh-adjunct *nani-o* 'why' of Kurafuji is unavailable, as with
 unaccusatives. Each diagnostic returns the same verdict for both markings (`verdict`,
 `judgment_eq_verdict`, `diagnostics_both_markings`). The alternation is then a matter of case
 assignment: *kara* is a lexical ablative assigned by an optional postposition, and *o* is the
@@ -58,7 +58,7 @@ def marking (e : Datum) : Option String := e.feature? "marking"
 /-- The verdict the argument assigns to each diagnostic: the alternation, the argumenthood
 diagnostics, and the indirect passive succeed, the direct passive and the wh-adjunct fail. -/
 def verdict : Option String → Judgment
-  | some "direct_passive" | some "nani_o" => .unacceptable
+  | some "direct_passive" | some "nani_o" => .ungrammatical
   | _ => .acceptable
 
 /-- Every example's judgment is its diagnostic's verdict: the marking of the source plays no
@@ -74,7 +74,7 @@ theorem diagnostics_both_markings :
       (∃ e ∈ Examples.all, marking e = some m ∧ diagnostic e = some "scrambling" ∧
         e.judgment = .acceptable) ∧
       ∃ e ∈ Examples.all, marking e = some m ∧ diagnostic e = some "nani_o" ∧
-        e.judgment = .unacceptable := by
+        e.judgment = .ungrammatical := by
   decide
 
 /-- The Fragment records both verbs with non-thematic Voice, from which their unaccusativity

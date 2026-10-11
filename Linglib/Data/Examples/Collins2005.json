@@ -18,7 +18,8 @@
       ["agent", "John"],
       ["patient", "the book"]
     ],
-    "comment": "Repeated as (36): without PartP movement the object would raise over the in-situ external argument, a Minimal Link Condition / Relativized Minimality violation."
+    "comment": "Repeated as (36): without PartP movement the object would raise over the in-situ external argument, a Minimal Link Condition / Relativized Minimality violation.",
+    "verified": "page-image"
   },
   {
     "id": "collins2005_ex9b",
@@ -39,7 +40,8 @@
       ["agent", "John"],
       ["patient", "the book"]
     ],
-    "comment": "Also (1b) and (3)."
+    "comment": "Also (1b) and (3).",
+    "verified": "page-image"
   },
   {
     "id": "collins2005_ex10a",
@@ -64,7 +66,8 @@
       ["patient", "the book"],
       ["pp", "to any student"]
     ],
-    "comment": "The PP stays inside the fronted PartP, where the external argument does not c-command it."
+    "comment": "The PP stays inside the fronted PartP, where the external argument does not c-command it.",
+    "verified": "page-image"
   },
   {
     "id": "collins2005_ex10b",
@@ -89,7 +92,8 @@
       ["patient", "the book"],
       ["pp", "to the other"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "collins2005_ex10c",
@@ -114,7 +118,8 @@
       ["patient", "the book"],
       ["pp", "to any student"]
     ],
-    "comment": "Repeated as (60d)."
+    "comment": "Repeated as (60d).",
+    "verified": "page-image"
   },
   {
     "id": "collins2005_ex10d",
@@ -139,7 +144,8 @@
       ["patient", "a book"],
       ["pp", "to the other"]
     ],
-    "comment": "(60c) has 'books' for 'a book'."
+    "comment": "(60c) has 'books' for 'a book'.",
+    "verified": "page-image"
   },
   {
     "id": "collins2005_ex15a",
@@ -161,7 +167,8 @@
       ["patient", "the argument"],
       ["particle", "up"]
     ],
-    "comment": "PartP, particle included, moves as a constituent to Spec,VoiceP; (16a) 'The paper was written up by John' likewise."
+    "comment": "PartP, particle included, moves as a constituent to Spec,VoiceP; (16a) 'The paper was written up by John' likewise.",
+    "verified": "page-image"
   },
   {
     "id": "collins2005_ex15b",
@@ -183,7 +190,8 @@
       ["patient", "the argument"],
       ["particle", "up"]
     ],
-    "comment": "(16b) '*The paper was written by John up' likewise; also (50b)."
+    "comment": "(16b) '*The paper was written by John up' likewise; also (50b).",
+    "verified": "page-image"
   },
   {
     "id": "collins2005_ex18a",
@@ -205,7 +213,8 @@
       ["patient", "John"],
       ["particle", "to"]
     ],
-    "comment": "(19a) 'The clown was laughed at by the children' likewise; also (51a)."
+    "comment": "(19a) 'The clown was laughed at by the children' likewise; also (51a).",
+    "verified": "page-image"
   },
   {
     "id": "collins2005_ex18b",
@@ -227,7 +236,8 @@
       ["patient", "John"],
       ["particle", "to"]
     ],
-    "comment": "(19b) '*The clown was laughed by the children at' likewise."
+    "comment": "(19b) '*The clown was laughed by the children at' likewise.",
+    "verified": "page-image"
   },
   {
     "id": "collins2005_ex23a",
@@ -246,7 +256,8 @@
       ["auxiliary", "have"],
       ["voiceP", "false"]
     ],
-    "comment": "Structure (26)."
+    "comment": "Structure (26).",
+    "verified": "page-image"
   },
   {
     "id": "collins2005_ex23b",
@@ -265,7 +276,8 @@
       ["auxiliary", "have"],
       ["voiceP", "true"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "collins2005_ex23c",
@@ -284,7 +296,8 @@
       ["auxiliary", "be"],
       ["voiceP", "true"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "collins2005_ex23d",
@@ -303,7 +316,8 @@
       ["auxiliary", "be"],
       ["voiceP", "false"]
     ],
-    "comment": "With a VoiceP it would instead fail on Case (§4)."
+    "comment": "With a VoiceP it would instead fail on Case (§4).",
+    "verified": "page-image"
   },
   {
     "id": "collins2005_ex27a",
@@ -322,7 +336,8 @@
       ["auxiliary", "none"],
       ["voiceP", "true"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "collins2005_ex27b",
@@ -341,7 +356,8 @@
       ["auxiliary", "none"],
       ["voiceP", "false"]
     ],
-    "comment": "The absolute constructions (28a)–(28b) show the same contrast."
+    "comment": "The absolute constructions (28a)–(28b) show the same contrast.",
+    "verified": "page-image"
   },
   {
     "id": "collins2005_ex29",
@@ -359,7 +375,8 @@
       ["construction", "byComplement"],
       ["complement", "DP"]
     ],
-    "comment": "Excluded once by heads VoiceP and takes only a vP complement: by cannot appear within VP."
+    "comment": "Excluded once by heads VoiceP and takes only a vP complement: by cannot appear within VP.",
+    "verified": "page-image"
   },
   {
     "id": "collins2005_ex56c",
@@ -382,7 +399,8 @@
       ["patient", "the book"],
       ["pp", "to Mary"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "collins2005_ex56d",
@@ -405,7 +423,8 @@
       ["patient", "the book"],
       ["pp", "to Mary"]
     ],
-    "comment": "Derived in (58); (68) and (69b) show the same order."
+    "comment": "Derived in (58); (68) and (69b) show the same order.",
+    "verified": "page-image"
   },
   {
     "id": "collins2005_ex72a",
@@ -430,7 +449,8 @@
       ["patient", "the magazines"],
       ["pp", "to herself"]
     ],
-    "comment": "Due to Goodall 1997; judgments vary, which the paper takes to show that reconstruction of PartP is marginal (§9.1–§9.2)."
+    "comment": "Due to Goodall 1997; judgments vary, which the paper takes to show that reconstruction of PartP is marginal (§9.1–§9.2).",
+    "verified": "page-image"
   },
   {
     "id": "collins2005_ex74a",
@@ -455,7 +475,8 @@
       ["patient", "the magazines"],
       ["pp", "to herself"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "collins2005_ex75",
@@ -480,7 +501,8 @@
       ["patient", "money"],
       ["pp", "to his mother"]
     ],
-    "comment": "The paper's '?': reconstruction is marginally available (§9.2)."
+    "comment": "The paper's '?': reconstruction is marginally available (§9.2).",
+    "verified": "page-image"
   },
   {
     "id": "collins2005_ex80a",
@@ -505,7 +527,8 @@
       ["patient", "the magazines"],
       ["pp", "to her"]
     ],
-    "comment": "Also (79a) and (80b)–(80g); principle B applies derivationally, (83)."
+    "comment": "Also (79a) and (80b)–(80g); principle B applies derivationally, (83).",
+    "verified": "page-image"
   },
   {
     "id": "collins2005_ex85a",
@@ -530,7 +553,8 @@
       ["patient", "the book"],
       ["pp", "to him"]
     ],
-    "comment": "Principle C is representational (§9.2); the pronoun inside PartP c-commands the by-phrase at no stage."
+    "comment": "Principle C is representational (§9.2); the pronoun inside PartP c-commands the by-phrase at no stage.",
+    "verified": "page-image"
   },
   {
     "id": "collins2005_ex85b",
@@ -555,6 +579,7 @@
       ["patient", "the book"],
       ["pp", "to John's mother"]
     ],
-    "comment": "Also (60e); (86)–(87) likewise."
+    "comment": "Also (60e); (86)–(87) likewise.",
+    "verified": "page-image"
   }
 ]
