@@ -1,7 +1,6 @@
 module
 
 public import Linglib.Semantics.Exhaustification.Disjunctive
-public import Linglib.Semantics.Exhaustification.PreExhaustified
 public import Mathlib.Basic.Rel
 
 /-!
@@ -94,7 +93,7 @@ theorem oMinus_subDisj (hD : D.Nonempty) : oMinus (subDisj P) D = ⋂ a ∈ D, P
     exact ⟨mem_subDisj.2 ⟨a, ha, h a ha⟩, fun _ _ T hT _ ⟨b, hb⟩ _ _ ↦
       mem_subDisj.2 ⟨b, hb, h b (hT hb)⟩⟩
 
-/-- On an existential the simpler (62) agrees with (108c): the enrichment asserts the statement
+/-- On an existential the simpler (62) agrees with (108c), the enrichment asserting the statement
 and every alternative over a nonempty subdomain, as in (63c). -/
 theorem oMinus_subDisj_eq_inter_sInter (hD : D.Nonempty) :
     oMinus (subDisj P) D = disj D P ∩ ⋂₀ subDisjs D P := by
@@ -109,16 +108,17 @@ theorem oMinus_antitone_eq {C : Set W → Set W} (hC : Antitone C) :
 /-- The presupposition of the strong σ, (72), fails under an antitone context, since the
 enrichment coincides with the plain statement: *qualunque* has no negative-polarity construal,
 (70). -/
-theorem not_properlyStrengthens_oMinus_antitone {C : Set W → Set W} (hC : Antitone C) :
-    ¬ ProperlyStrengthens (· ∈ oMinus (fun S ↦ C (subDisj P S)) D) (· ∈ C (disj D P)) :=
-  not_properlyStrengthens_of_iff fun w ↦ by rw [oMinus_antitone_eq P hC]
+theorem not_oMinus_ssubset_of_antitone {C : Set W → Set W} (hC : Antitone C) :
+    ¬ oMinus (fun S ↦ C (subDisj P S)) D ⊂ C (disj D P) := by
+  rw [oMinus_antitone_eq P hC]
+  exact ssubset_irrefl _
 
 /-- In a positive context the antiexhaustive enrichment properly strengthens the statement,
 (71): a world where one member of the domain is a witness and another is not satisfies the
 statement but not its enrichment. -/
-theorem properlyStrengthens_oMinus {a b : E} {w : W} (ha : a ∈ D) (hb : b ∈ D) (hPa : w ∈ P a)
-    (hPb : w ∉ P b) : ProperlyStrengthens (· ∈ oMinus (subDisj P) D) (· ∈ disj D P) :=
-  ⟨fun _ h ↦ h.1, w, mem_subDisj.2 ⟨a, ha, hPa⟩, fun h ↦
+theorem oMinus_ssubset {a b : E} {w : W} (ha : a ∈ D) (hb : b ∈ D) (hPa : w ∈ P a)
+    (hPb : w ∉ P b) : oMinus (subDisj P) D ⊂ disj D P :=
+  (Set.ssubset_iff_of_subset fun _ h ↦ h.1).2 ⟨w, mem_subDisj.2 ⟨a, ha, hPa⟩, fun h ↦
     hPb (Set.mem_iInter₂.1 (oMinus_subDisj P ⟨a, ha⟩ ▸ h) b hb)⟩
 
 /-- Under a possibility modal the antiexhaustive enrichment is the universal over the options:

@@ -8,7 +8,7 @@ module
 public import Linglib.Semantics.Quantification.Numerals.Basic
 public import Linglib.Semantics.Exhaustification.DomainAlternatives
 public import Linglib.Semantics.Exhaustification.Excluder
-public import Linglib.Semantics.Exhaustification.PreExhaustified
+public import Linglib.Semantics.Exhaustification.Pointwise
 public import Mathlib.Data.Set.Card
 
 /-!
@@ -34,8 +34,8 @@ prejacent, are deviant there.
   size.
 * `Mihoc2019.Ignorance.forall_domainImplicatures_iff`: keeping every subdomain alternative
   yields total ignorance.
-* `Mihoc2019.AntiNegativity.not_properlyStrengthens_negExh`: under negation the subdomain
-  exhaustification does not strengthen the prejacent.
+* `Mihoc2019.AntiNegativity.not_negExh_lt`: under negation the subdomain exhaustification does
+  not strengthen the prejacent.
 
 ## Implementation notes
 
@@ -330,7 +330,8 @@ def Winner : Prop := ∃ x, □[R] (μ · = x) w
 /-- The implicatures from the size-`k` subdomain alternatives of `T` deny each `□_S (max ∈ S)`
 pre-exhaustified against the others of its size. -/
 def DomainImplicatures (T : Finset ℕ) (k : ℕ) : Prop :=
-  ∀ S : T.powersetCard k, ¬ preExh (fun S : T.powersetCard k ↦ □[R] (μ · ∈ (S : Finset ℕ)) w) S
+  ∀ S : T.powersetCard k,
+    ¬ exhAgainst (· ≠ ·) (fun S : T.powersetCard k ↦ □[R] (μ · ∈ (S : Finset ℕ)) w) S
 
 variable {R μ w} {T : Finset ℕ} {k : ℕ}
 
@@ -379,7 +380,7 @@ theorem existsUnique_subset_iff (hT : possibleValues R μ w ⊆ T) (hk : k < T.c
 consider exactly `k` values possible. -/
 theorem domainImplicatures_iff (hT : □[R] (μ · ∈ (T : Set ℕ)) w) (hk : k < T.card) :
     DomainImplicatures R μ w T k ↔ (possibleValues R μ w).ncard ≠ k := by
-  simp only [DomainImplicatures, forall_not_preExh_iff, Finset.mem_coe.symm, box_mem_iff]
+  simp only [DomainImplicatures, forall_not_exhAgainst_ne_iff, Finset.mem_coe.symm, box_mem_iff]
   rw [existsUnique_subset_iff (box_mem_iff.1 hT) hk]
 
 theorem winner_iff [IsSerial R] : Winner R μ w ↔ (possibleValues R μ w).ncard = 1 := by
@@ -472,7 +473,7 @@ end Ignorance
 Under clausemate negation the subdomain alternatives are negated too, and each pre-exhaustified
 negated alternative `¬ (max ∈ D i) ∧ max ∈ D j` contradicts the negated prejacent, so negating
 them adds nothing (her Ch. 5 (9)) and exhaustification fails to strengthen the prejacent
-(`not_properlyStrengthens_negExh`). The superlative forms require their exhaustification to
+(`not_negExh_lt`). The superlative forms require their exhaustification to
 strengthen the prejacent, so they are deviant under negation, while the comparative forms, without
 the requirement, are not. -/
 
@@ -483,7 +484,7 @@ variable {ι : Type*} {φ : Form} {D : ι → Set ℕ}
 /-- Exhaustifying a negated form against its negated subdomain alternatives `D`, each
 pre-exhaustified against the others (her Ch. 5 (8)–(9)). -/
 def negExh (φ : Form) (D : ι → Set ℕ) (maxD : ℕ) : Prop :=
-  ¬ φ.tc maxD ∧ ∀ i, ¬ preExh (fun j ↦ maxD ∉ D j) i
+  ¬ φ.tc maxD ∧ ∀ i, ¬ exhAgainst (· ≠ ·) (fun j ↦ maxD ∉ D j) i
 
 /-- With two or more subdomain alternatives, exhaustifying the negated form says no more than the
 negated form. -/
@@ -491,12 +492,13 @@ theorem negExh_iff [Nontrivial ι] (hD : ∀ i, D i ∈ φ.domainAlts) (maxD : �
     negExh φ D maxD ↔ ¬ φ.tc maxD := by
   refine ⟨And.left, fun h ↦ ⟨h, fun i hi ↦ ?_⟩⟩
   obtain ⟨j, hj⟩ := exists_ne i
-  exact h (Form.tc_of_mem_domainAlts (hD j) (not_not.1 (hi.2 j hj)))
+  exact h (Form.tc_of_mem_domainAlts (hD j) (not_not.1 (hi.2 j hj.symm)))
 
-/-- Exhaustifying the negated form fails proper strengthening. -/
-theorem not_properlyStrengthens_negExh [Nontrivial ι] (hD : ∀ i, D i ∈ φ.domainAlts) :
-    ¬ ProperlyStrengthens (negExh φ D) (¬ φ.tc ·) :=
-  not_properlyStrengthens_of_iff (negExh_iff hD)
+/-- Exhaustifying the negated form is not strictly stronger than the negated form. -/
+theorem not_negExh_lt [Nontrivial ι] (hD : ∀ i, D i ∈ φ.domainAlts) :
+    ¬ negExh φ D < fun maxD ↦ ¬ φ.tc maxD := by
+  rw [show negExh φ D = _ from funext fun maxD ↦ propext (negExh_iff hD maxD)]
+  exact lt_irrefl _
 
 end AntiNegativity
 

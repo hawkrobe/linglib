@@ -2,6 +2,7 @@ module
 
 public import Linglib.Semantics.Quantification.Numerals.Basic
 public import Mathlib.Order.Interval.Set.Defs
+public import Mathlib.Data.Nat.SuccPred
 
 /-!
 # Spector (2013): Bare Numerals and Scalar Implicatures
@@ -16,9 +17,10 @@ ambiguity account, lexical in [geurts-2006] and through a covert exhaustivity op
 The paper's three generalizations are that *at least* readings are available in every
 embedded environment, *exactly* readings in every environment, and *at most* readings only
 in downward-entailing ones. The readings are the intervals `Comparison.ge.interval`,
-`Comparison.eq.interval` and `Comparison.le.interval` of the degree substrate; the exhaustivity
-operator `exh` asserts its prejacent and denies every stronger numeral alternative, and on the
-numeral itself it is the exact reading (`exh_iff_bare`, the substrate's `exhNumeral`).
+`Comparison.eq.interval` and `Comparison.le.interval` of the degree substrate; exhaustifying a
+family of readings indexed by the numeral against the stronger numerals asserts the prejacent and
+denies every stronger numeral alternative, and on the numeral itself it is the exact reading
+(`exh_iff_bare`, the substrate's `exhNumeral`).
 
 The theorems are symbolic in the numeral. Under a necessity modal the neo-Gricean wide-scope
 implicature is weaker than the exact reading (`necessity_implicature_of_exact`,
@@ -45,9 +47,10 @@ contradictory *at least* parse and the vacuous *exactly* parse (`intermediate_pa
 ## Implementation notes
 
 Modal environments are quantification over a set of accessible values, the counts or
-degrees compatible with the requirement or permission. `exh` denies every stronger
+degrees compatible with the requirement or permission. Exhaustification denies every stronger
 alternative; for the antitone families of numeral readings this is the denial of the next
-numeral alone (`exh_iff_succ`), which is how the paper computes it. Prosodic marking, the
+numeral alone (`Exhaustification.exhAgainst_lt_iff_succOrder`), which is how the paper computes
+it. Prosodic marking, the
 metalinguistic use of negation, and the acquisition and processing evidence the paper
 reviews are not formalized.
 
@@ -65,7 +68,7 @@ reviews are not formalized.
 
 namespace Spector2013
 
-open Numerals Degree Set
+open Numerals Degree Set Exhaustification
 
 /-! ### Environments and exhaustification -/
 
@@ -74,19 +77,6 @@ def nec (A I : Set ℕ) : Prop := ∀ k ∈ A, k ∈ I
 
 /-- Possibility over the accessible values `A` holds when one of them is among `I`. -/
 def poss (A I : Set ℕ) : Prop := ∃ k ∈ A, k ∈ I
-
-/-- The exhaustivity operator on a family of sentences indexed by the numeral: the prejacent
-holds and no stronger numeral alternative does. -/
-def exh (φ : ℕ → Prop) (m : ℕ) : Prop := φ m ∧ ∀ m' > m, ¬ φ m'
-
-/-- For an antitone family exhaustification denies the next numeral alone. -/
-theorem exh_iff_succ {φ : ℕ → Prop} (hφ : Antitone φ) (m : ℕ) :
-    exh φ m ↔ φ m ∧ ¬ φ (m + 1) := by
-  constructor
-  · rintro ⟨h, h'⟩
-    exact ⟨h, h' _ (Nat.lt_succ_self m)⟩
-  · rintro ⟨h, h'⟩
-    exact ⟨h, fun _ hm' hφ' ↦ h' (hφ (Nat.succ_le_of_lt hm') hφ')⟩
 
 theorem antitone_atLeast (k : ℕ) : Antitone (fun m ↦ k ∈ Comparison.ge.interval m) :=
   fun _ _ h hk ↦ by simp only [Comparison.interval_ge, mem_Ici] at *; omega
@@ -99,14 +89,14 @@ theorem antitone_poss (A : Set ℕ) : Antitone (fun m ↦ poss A (Comparison.ge.
 
 /-- On the numeral itself the operator is the substrate's `exhNumeral`. -/
 theorem exhNumeral_iff_exh (m k : ℕ) :
-    k ∈ exhNumeral m ↔ exh (fun m ↦ k ∈ Comparison.ge.interval m) m := by
-  rw [exh_iff_succ (antitone_atLeast k)]
+    k ∈ exhNumeral m ↔ exhAgainst (· < ·) (fun m ↦ k ∈ Comparison.ge.interval m) m := by
+  rw [exhAgainst_lt_iff_succOrder (antitone_atLeast k), Order.succ_eq_add_one]
   exact Iff.rfl
 
 /-- Exhaustifying the *at least* reading is the *exactly* reading, the second
 generalization's source. -/
 theorem exh_iff_bare (m k : ℕ) :
-    exh (fun m ↦ k ∈ Comparison.ge.interval m) m ↔ k ∈ Comparison.eq.interval m :=
+    exhAgainst (· < ·) (fun m ↦ k ∈ Comparison.ge.interval m) m ↔ k ∈ Comparison.eq.interval m :=
   (exhNumeral_iff_exh m k).symm.trans (by rw [exhNumeral_eq])
 
 theorem exact_imp_atLeast {m k : ℕ} (h : k ∈ Comparison.eq.interval m) :
@@ -119,8 +109,9 @@ theorem exact_imp_atLeast {m k : ℕ} (h : k ∈ Comparison.eq.interval m) :
 solve exactly three entails required to solve at least three and not required to solve at
 least four. -/
 theorem necessity_implicature_of_exact {A : Set ℕ} (hA : A.Nonempty) {m : ℕ}
-    (h : nec A (Comparison.eq.interval m)) : exh (fun m ↦ nec A (Comparison.ge.interval m)) m := by
-  rw [exh_iff_succ (antitone_nec A)]
+    (h : nec A (Comparison.eq.interval m)) :
+    exhAgainst (· < ·) (fun m ↦ nec A (Comparison.ge.interval m)) m := by
+  rw [exhAgainst_lt_iff_succOrder (antitone_nec A), Order.succ_eq_add_one]
   refine ⟨fun k hk ↦ exact_imp_atLeast (h k hk), fun hall ↦ ?_⟩
   obtain ⟨k, hk⟩ := hA
   have h1 := h k hk
@@ -131,10 +122,10 @@ theorem necessity_implicature_of_exact {A : Set ℕ} (hA : A.Nonempty) {m : ℕ}
 /-- The converse fails: the requirement may be met by three or four, so the numeral loses
 its exact reading under the modal while the implicature is still triggered. -/
 theorem necessity_implicature_ne_exact (m : ℕ) :
-    ∃ A : Set ℕ, exh (fun m ↦ nec A (Comparison.ge.interval m)) m ∧
+    ∃ A : Set ℕ, exhAgainst (· < ·) (fun m ↦ nec A (Comparison.ge.interval m)) m ∧
       ¬ nec A (Comparison.eq.interval m) := by
   refine ⟨{m, m + 1}, ?_, fun hall ↦ ?_⟩
-  · rw [exh_iff_succ (antitone_nec _)]
+  · rw [exhAgainst_lt_iff_succOrder (antitone_nec _), Order.succ_eq_add_one]
     refine ⟨fun k hk ↦ ?_, fun hall ↦ ?_⟩
     · rcases hk with rfl | rfl <;> simp
     · have := hall m (Or.inl rfl)
@@ -178,9 +169,9 @@ theorem poss_atMost_of_le {A : Set ℕ} {k m : ℕ} (hk : k ∈ A) (h : k ≤ m)
 /-- The intended reading is the neo-Gricean one: the *at least* reading under the
 possibility modal, exhaustified, says that no accessible value exceeds the numeral. -/
 theorem poss_implicature_iff (A : Set ℕ) (m : ℕ) :
-    exh (fun m ↦ poss A (Comparison.ge.interval m)) m ↔
+    exhAgainst (· < ·) (fun m ↦ poss A (Comparison.ge.interval m)) m ↔
       poss A (Comparison.ge.interval m) ∧ nec A (Comparison.le.interval m) := by
-  rw [exh_iff_succ (antitone_poss A)]
+  rw [exhAgainst_lt_iff_succOrder (antitone_poss A), Order.succ_eq_add_one]
   simp only [poss, nec, Comparison.interval_ge, mem_Ici, Comparison.interval_le, mem_Iic,
     not_exists, not_and]
   constructor <;> rintro ⟨h1, h2⟩ <;> exact ⟨h1, fun k hk ↦ by have := h2 k hk; omega⟩
@@ -193,7 +184,7 @@ theorem exact_extends_downward {B : ℕ → Prop} (hB : ∀ k k', k ≤ k' → B
     (h : ¬ B m) : ∀ k, k ∈ Comparison.le.interval m → ¬ B k :=
   fun k hk hBk ↦ h (hB k m hk hBk)
 
-/-- And upward: if exactly three children qualify, so do more. -/
+/-- The same holds upward: if exactly three children qualify, so do more. -/
 theorem exact_extends_upward {B : ℕ → Prop} (hB : ∀ k k', k ≤ k' → B k → B k') {m : ℕ}
     (h : B m) : ∀ k, k ∈ Comparison.ge.interval m → B k :=
   fun k hk ↦ hB m k hk h
@@ -217,8 +208,8 @@ theorem nec_Ici_atLeast (m : ℕ) : nec (Ici m) (Comparison.ge.interval m) := fu
 /-- The exhaustified *at least* reading under necessity says that the numeral is the
 minimum required. -/
 theorem nec_Ici_exh_iff (n m : ℕ) :
-    exh (fun m ↦ nec (Ici n) (Comparison.ge.interval m)) m ↔ n = m := by
-  rw [exh_iff_succ (antitone_nec _)]
+    exhAgainst (· < ·) (fun m ↦ nec (Ici n) (Comparison.ge.interval m)) m ↔ n = m := by
+  rw [exhAgainst_lt_iff_succOrder (antitone_nec _), Order.succ_eq_add_one]
   simp only [nec, mem_Ici, Comparison.interval_ge]
   constructor
   · rintro ⟨h1, h2⟩
@@ -256,9 +247,9 @@ differs from the operator below it, *possible exactly n*: the former fails, the 
 holds, when both `n` and `n + 1` are possible. -/
 theorem wide_scope_ne_narrow (m : ℕ) :
     ∃ A : Set ℕ, poss A (Comparison.eq.interval m) ∧
-      ¬ exh (fun m ↦ poss A (Comparison.ge.interval m)) m := by
+      ¬ exhAgainst (· < ·) (fun m ↦ poss A (Comparison.ge.interval m)) m := by
   refine ⟨{m, m + 1}, ⟨m, Or.inl rfl, rfl⟩, ?_⟩
-  rw [exh_iff_succ (antitone_poss _)]
+  rw [exhAgainst_lt_iff_succOrder (antitone_poss _), Order.succ_eq_add_one]
   rintro ⟨-, h⟩
   exact h ⟨m + 1, Or.inr rfl, mem_Ici.2 le_rfl⟩
 
@@ -295,7 +286,7 @@ theorem exact_parse_vacuous (s : S) : ¬ nec (Ici (n s)) (Comparison.eq.interval
 /-- The intermediate embedded implicature, the operator between *whenever* and *demanded*,
 restricts the quantification to the situations whose minimum is the numeral. -/
 theorem intermediate_parse_iff :
-    (∀ s, exh (fun m ↦ nec (Ici (n s)) (Comparison.ge.interval m)) m → managed s) ↔
+    (∀ s, exhAgainst (· < ·) (fun m ↦ nec (Ici (n s)) (Comparison.ge.interval m)) m → managed s) ↔
       ∀ s, n s = m → managed s := by
   simp only [nec_Ici_exh_iff]
 

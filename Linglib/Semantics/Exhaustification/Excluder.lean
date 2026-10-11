@@ -6,6 +6,7 @@ public import Mathlib.Data.Finset.Lattice.Fold
 public import Mathlib.Data.Finset.Powerset
 public import Mathlib.Data.Fintype.Basic
 public import Linglib.Semantics.Alternatives.Competition
+public import Linglib.Semantics.Exhaustification.Pointwise
 
 /-!
 # Exhaustification
@@ -14,18 +15,19 @@ An exhaustification operator asserts a prejacent and denies a selection of its a
 This file defines the selection every theory of *only* and of exhaustification shares, the
 alternatives the prejacent does not entail, and the finite excluders that vary it.
 
-`excludes C p` is the exclusion component, holding where every true alternative in `C` is
-entailed by `p`. It is the assertion of the entailment-scale *only* (`Focus.Particles.only`), as
-in Horn, Rooth and von Fintel, and `exh C p`, the prejacent together with the exclusion, is
-Chierchia's operator `O`. Exclusion is anti-additive in the prejacent (`excludes_union`). Over an
-`Irredundant` family, where each alternative has a world of its own, exclusion separates
-resolutions of the alternative set (`Irredundant.excludes_injOn`), and narrowing the alternatives
-weakens it (`excludes_antitone`). When the prejacent is maximal among the alternatives, exclusion
-is Rooth's condition that every true alternative *equals* the prejacent
-(`mem_excludes_iff_forall_eq`). Against the strictly stronger alternatives alone, `exh` of a
-content is where it is unblocked under competition (`Alternatives.unblocked_eq_exh`), so
-Maximize Presupposition strengthens a presupposition as exhaustification strengthens an
-assertion.
+`excludes C p` is the exclusion component, holding where every true alternative in `C` is entailed
+by `p`. It is the assertion of the entailment-scale *only* (`Focus.Particles.only`), as in Horn,
+Rooth and von Fintel, and `exh C p`, the prejacent together with the exclusion, is Chierchia's
+operator `O`. Exclusion is anti-additive in the prejacent (`excludes_union`). Over an `Irredundant`
+family, where each alternative has a world of its own, exclusion separates resolutions of the
+alternative set (`Irredundant.excludes_injOn`), and narrowing the alternatives weakens it
+(`excludes_antitone`). Read at a world, `exh` against a family of alternatives is `exhAgainst` the
+members the prejacent does not entail (`mem_exh_range_iff_exhAgainst`), over an irredundant family
+every other member (`Irredundant.mem_exh_range_iff`). When the prejacent is maximal among the
+alternatives, exclusion is Rooth's condition that every true alternative *equals* the prejacent
+(`mem_excludes_iff_forall_eq`). Against the strictly stronger alternatives alone, `exh` of a content
+is where it is unblocked under competition (`Alternatives.unblocked_eq_exh`), so Maximize
+Presupposition strengthens a presupposition as exhaustification strengthens an assertion.
 
 An `Excluder` is a selection over finite world types, `Excluder.exh` the resulting operator, and
 `tolerant` is `exh` there, contradiction or not, after Chierchia. `Excluder.restrict` keeps only
@@ -181,6 +183,23 @@ theorem Irredundant.excludes_injOn (hf : Irredundant f) (i₀ : ι) :
       by_contra h2
       exact hj ⟨fun h ↦ absurd h hmem, fun h ↦ absurd h h2⟩
     exact hf.excludes_ne h₂j hmem (fun h ↦ hmem (h ▸ h₁)) heq
+
+
+/-- Exhaustifying a member of a family against the family denies exactly the members it does not
+entail. -/
+theorem mem_exh_range_iff_exhAgainst (f : ι → Set W) (i : ι) (w : W) :
+    w ∈ exh (Set.range f) (f i) ↔ exhAgainst (fun i j ↦ ¬ f i ⊆ f j) (w ∈ f ·) i := by
+  simp only [mem_exh, Set.forall_mem_range, exhAgainst]
+  exact and_congr_right fun _ ↦ forall_congr' fun j ↦
+    ⟨fun h hn hw ↦ hn (h hw), fun h hw ↦ not_not.1 fun hn ↦ h hn hw⟩
+
+/-- Over an irredundant family a member entails no other, so exhaustifying against the family is
+exhaustifying against independent rivals. -/
+theorem Irredundant.mem_exh_range_iff {f : ι → Set W} (hf : Irredundant f) (i : ι) (w : W) :
+    w ∈ exh (Set.range f) (f i) ↔ exhAgainst (· ≠ ·) (w ∈ f ·) i := by
+  rw [mem_exh_range_iff_exhAgainst]
+  refine and_congr_right fun _ ↦ forall_congr' fun j ↦ ⟨fun h hij ↦ h (hf.not_subset hij),
+    fun h hn ↦ h fun hij ↦ hn (hij ▸ subset_rfl)⟩
 
 end Irredundant
 

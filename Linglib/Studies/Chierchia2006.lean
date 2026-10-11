@@ -38,7 +38,7 @@ and Shimoyama.
   (47)–(53).
 * `oMinus_subDisj`, `oMinus_subDisj_eq_inter_sInter`: `O⁻` gives an existential universal force
   over its domain, (63), and there agrees with the simpler (62).
-* `oMinus_antitone_eq`, `not_properlyStrengthens_oMinus_antitone`: under negation the
+* `oMinus_antitone_eq`, `not_oMinus_ssubset_of_antitone`: under negation the
   free-choice implicature vanishes, so *qualunque* has no negative-polarity construal, (65)–(72).
 * `oMinus_subDisj_eq_empty_of_isActualist`: an episodic universal over a widened domain is never
   true, (67).
@@ -182,10 +182,9 @@ theorem evenEnrich_image_antitone_eq {C : Set W → Set W} (hC : Antitone C) {A 
 
 /-- An item triggering the even-like implicature can meet the presupposition of the strong σ only
 by a contradiction, so pure negative-polarity items select the plain σ, footnote 33. -/
-theorem eq_empty_of_properlyStrengthens_evenEnrich {C : Set (Set W)} {p : Set W}
-    (h : ProperlyStrengthens (· ∈ evenEnrich C p) (· ∈ p)) : evenEnrich C p = ∅ :=
-  (evenEnrich_eq_or_eq_empty C p).resolve_left fun heq ↦
-    not_properlyStrengthens_of_iff (fun w ↦ by rw [heq]) h
+theorem eq_empty_of_evenEnrich_ssubset {C : Set (Set W)} {p : Set W}
+    (h : evenEnrich C p ⊂ p) : evenEnrich C p = ∅ :=
+  (evenEnrich_eq_or_eq_empty C p).resolve_left fun heq ↦ ssubset_irrefl p (by rwa [heq] at h)
 
 end Even
 
@@ -328,7 +327,7 @@ variable {p : Profile} {P : E → Set W} {D : Finset E}
 statement it freezes, (72). -/
 def Freezer.Admits : Freezer → Set W → Set W → Prop
   | .plain, _, _ => True
-  | .strong, s, q => ProperlyStrengthens (· ∈ s) (· ∈ q)
+  | .strong, s, q => s ⊂ q
 
 theorem Freezer.admits_of_strong (f : Freezer) {s q : Set W} (h : Freezer.strong.Admits s q) :
     f.Admits s q := by
@@ -419,7 +418,7 @@ theorem not_felicitous_freeze_of_antitone {outer inner : Set W → Set W}
     funext (Profile.statement_antitone hC)
   simp only [Profile.frozen, hmin, hstrong, hpre, DomainAlternatives.enrich,
     Freezer.Admits] at h
-  exact not_properlyStrengthens_oMinus_antitone P hC h
+  exact not_oMinus_ssubset_of_antitone P hC h
 
 /-- σ frozen directly over a scalar item's statement yields the clash of (82), which stays a
 contradiction under any operator that preserves it: no universal reading for *irgendwas* under
@@ -627,7 +626,7 @@ theorem Profile.felicitous_freeze {D : Finset E} {outer inner : Set W → Set W}
   refine ⟨p.freezer.admits_of_strong ?_, w, ?_⟩ <;>
     simp only [Profile.frozen, Profile.sentence, Profile.prejacent_freeze, hmin,
       DomainAlternatives.enrich]
-  · exact ⟨fun _ h ↦ h.1, v, hv, hv'⟩
+  · exact ⟨fun _ h ↦ h.1, fun h ↦ hv' (h hv)⟩
   · exact hw
 
 /-- A logical form `scopedOut C` is felicitous for any freezer under the same two conditions. -/
@@ -640,7 +639,7 @@ theorem Profile.felicitous_scopedOut {D : Finset E} {C : Set W → Set W} {v w :
   refine ⟨p.freezer.admits_of_strong ?_, w, ?_⟩ <;>
     simp only [Profile.frozen, Profile.sentence, Profile.prejacent_scopedOut, hmin,
       DomainAlternatives.enrich]
-  · exact ⟨fun _ h ↦ h.1, v, hv, hv'⟩
+  · exact ⟨fun _ h ↦ h.1, fun h ↦ hv' (h hv)⟩
   · exact hw
 
 /-- A property holds of every subdomain of a two-member domain when it holds of the four. -/

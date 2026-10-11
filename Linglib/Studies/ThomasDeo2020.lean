@@ -2,7 +2,7 @@ module
 
 public import Linglib.Semantics.Degree.Granularity
 public import Mathlib.Data.Setoid.Partition
-public import Linglib.Semantics.Exhaustification.Chain
+public import Linglib.Semantics.Exhaustification.Pointwise
 public import Linglib.Data.Examples.ThomasDeo2020
 
 /-!
@@ -76,6 +76,8 @@ def level (ε d : D) : Set D := Set.Ioo (d - ε) (d + ε)
 
 variable {ε ε₁ ε₂ εf d dc μx x : D} {G : Set D}
 
+section Grain
+
 variable [IsOrderedAddMonoid D]
 
 theorem mem_level : x ∈ level ε d ↔ |x - d| < ε := by
@@ -134,6 +136,8 @@ theorem level_eq_iUnion_cell {α : Type*} [Field α] [LinearOrder α] [IsStrictO
     exact (grain ε).trans hy ((grain ε).symm hd)
   · simpa using abs_sub_lt_of_grain hε ht
 
+end Grain
+
 /-! ### Constructions at a grain (sections 4.1 and 4.2) -/
 
 /-- The equative at a grain holds when the subject's degree exceeds the infimum of the standard's
@@ -144,10 +148,8 @@ def equative (ε dc μx : D) : Prop := dc - ε < μx
 standard's level, (49). -/
 def comparative (ε dc μx : D) : Prop := dc + ε < μx
 
-omit [IsOrderedAddMonoid D] in
 theorem equative_iff : equative ε dc μx ↔ dc - ε < μx := Iff.rfl
 
-omit [IsOrderedAddMonoid D] in
 theorem comparative_iff : comparative ε dc μx ↔ dc + ε < μx := Iff.rfl
 
 /-- A construction at one grain is at least as strong as at another when it entails it at every
@@ -158,6 +160,8 @@ def AtLeastAsStrong (p : D → D → Prop) (ε₁ ε₂ : D) : Prop := ∀ μx, 
 of the contextual set at which it would make a stronger claim. -/
 def just (p : D → D → Prop) (G : Set D) (εf μx : D) : Prop :=
   p εf μx ∧ ∀ ε ∈ G, p ε μx → AtLeastAsStrong p εf ε
+
+variable [IsOrderedAddMonoid D]
 
 /-- An equative at a finer grain is at least as strong, (47). -/
 theorem equative_mono (h : ε₁ ≤ ε₂) : AtLeastAsStrong (equative · dc) ε₁ ε₂ :=
@@ -224,7 +228,7 @@ theorem not_just_comparative_iff (hG : ∀ ε ∈ G, εf ≤ ε) :
 comparative is exhaustification against the strictly coarser grains, the stronger alternatives
 of the chain (section 5). -/
 theorem just_comparative_Ici_iff :
-    just (comparative · dc) (Set.Ici εf) εf μx ↔ exhChain (comparative · dc) εf μx :=
+    just (comparative · dc) (Set.Ici εf) εf μx ↔ exhAgainst (· < ·) (comparative · dc μx) εf :=
   (just_comparative_iff fun _ hε ↦ hε).trans
     ⟨fun h ↦ ⟨h.1, fun ε hε ↦ not_lt.2 (h.2 ε (le_of_lt hε) hε)⟩,
       fun h ↦ ⟨h.1, fun ε _ hε ↦ not_lt.1 (h.2 ε hε)⟩⟩
@@ -233,7 +237,7 @@ theorem just_comparative_Ici_iff :
 above the standard: Fafen's age is Siri's plus the finest grain, section 4.2. -/
 theorem just_comparative_iff_succ {ε' : D} (his : εf < ε') (hleast : ∀ ε, εf < ε → ε' ≤ ε) :
     just (comparative · dc) (Set.Ici εf) εf μx ↔ dc + εf < μx ∧ μx ≤ dc + ε' := by
-  rw [just_comparative_Ici_iff, exhChain_iff_succ (φ := fun ε ↦ comparative ε dc)
-    (fun _ _ h ↦ comparative_anti h) his hleast, comparative_iff, comparative_iff, not_lt]
+  rw [just_comparative_Ici_iff, exhAgainst_lt_iff_succ (A := (comparative · dc μx))
+    (fun _ _ h ↦ comparative_anti h μx) his hleast, comparative_iff, comparative_iff, not_lt]
 
 end ThomasDeo2020

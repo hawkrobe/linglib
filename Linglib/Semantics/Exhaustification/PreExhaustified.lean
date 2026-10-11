@@ -5,83 +5,56 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Mathlib.Basic.Logic.Basic
-public import Mathlib.Basic.ExistsUnique
-public import Mathlib.Data.Fintype.Basic
+public import Linglib.Semantics.Exhaustification.Finite
 
 /-!
-# Pre-exhaustified alternatives and proper strengthening
-[chierchia-2013] [fox-2007]
+# Pre-exhaustified alternatives
 
-The grammatical theory of implicature negates *pre-exhaustified* domain
-alternatives: each alternative strengthened against its rivals before being
-negated. For a family `A : ι → Prop`, the pre-exhaustification of `A i` is
-"`A i` and no rival holds" — i.e. `A i` holds *uniquely*. Negating every
-pre-exhaustified alternative is therefore exactly the claim that no
-alternative holds uniquely (`forall_not_preExh_iff`): the combinatorial core
-of free-choice effects — plain, modal ([chierchia-2013]), and epistemic
-(ignorance inferences, [mihoc-2019]) — where the assertion supplies "at
-least one region is live" and unique-truth failure spreads possibility
-across all of them.
-
-`ProperlyStrengthens` names the requirement some items impose on their
-exhaustification: the result must be *strictly* stronger than the prejacent.
-When every alternative is individually inconsistent with the prejacent,
-exhaustification is vacuous and the requirement fails
-(`not_properlyStrengthens_of_iff`) — the engine of anti-negativity
-(positive-polarity) verdicts.
+The grammatical theory of implicature negates *pre-exhaustified* subdomain alternatives, each
+alternative exhaustified against the alternative set before it is negated. `preExhaustify O C`
+collects the alternatives of `C`, each exhaustified by the operator `O` against `C`. Chierchia
+uses innocent exclusion, which `Excluder.preExhaustify` computes over finite worlds
+(`asSetOfSets_preExhaustify_innocent`). Over an irredundant family a pre-exhaustified alternative
+holds just where its own member holds and no other does (`Irredundant.mem_exh_range_iff`), the form
+`exhAgainst (· ≠ ·)` in which papers negate them under a modal.
 
 ## Main definitions
 
-- `preExh`: an alternative strengthened against its rivals
-- `ProperlyStrengthens`: strict strengthening of a prejacent
+* `Exhaustification.preExhaustify`: each alternative exhaustified against the set.
+* `Exhaustification.Excluder.preExhaustify`: the same over finite worlds.
 
-## Main results
+## References
 
-- `exists_preExh_iff_existsUnique`, `forall_not_preExh_iff`: negating all
-  pre-exhaustified alternatives = no alternative holds uniquely
-- `not_properlyStrengthens_of_iff`: vacuous exhaustification fails proper
-  strengthening
+* [chierchia-2013]
+* [fox-2007]
 -/
 
 @[expose] public section
 
 namespace Exhaustification
 
-variable {ι α : Type*} {A : ι → Prop}
+variable {W : Type*}
 
-/-- Pre-exhaustification of alternative `i` against its rivals: `A i` holds
-and no distinct alternative does. -/
-def preExh (A : ι → Prop) (i : ι) : Prop :=
-  A i ∧ ∀ j, j ≠ i → ¬ A j
+/-- The alternatives of `C`, each exhaustified by `O` against `C`. -/
+def preExhaustify (O : Set (Set W) → Set W → Set W) (C : Set (Set W)) : Set (Set W) :=
+  O C '' C
 
-instance [DecidableEq ι] [Fintype ι] [∀ i, Decidable (A i)] (i : ι) :
-    Decidable (preExh A i) :=
-  inferInstanceAs (Decidable (_ ∧ ∀ _, _ → _))
+variable [Fintype W] [DecidableEq W]
 
-/-- Some alternative is pre-exhaustifiedly true iff some alternative is
-*uniquely* true. -/
-theorem exists_preExh_iff_existsUnique : (∃ i, preExh A i) ↔ ∃! i, A i := by
+/-- The alternatives of `ALT`, each exhaustified by the excluder `E` against `ALT`. -/
+def Excluder.preExhaustify (E : Excluder W) (ALT : Finset (Finset W)) : Finset (Finset W) :=
+  ALT.image (E.exh ALT)
+
+/-- Pre-exhaustifying by the innocent excluder is pre-exhaustifying by innocent exclusion. -/
+theorem asSetOfSets_preExhaustify_innocent (ALT : Finset (Finset W)) :
+    asSetOfSets (innocent.preExhaustify ALT) = preExhaustify exhIE (asSetOfSets ALT) := by
+  ext s
+  simp only [mem_asSetOfSets, Excluder.preExhaustify, Finset.mem_image, preExhaustify,
+    Set.mem_image]
   constructor
-  · rintro ⟨i, hi, hunique⟩
-    exact ⟨i, hi, fun j hj => by_contra fun hne => hunique j hne hj⟩
-  · rintro ⟨i, hi, hunique⟩
-    exact ⟨i, hi, fun j hne hj => hne (hunique j hj)⟩
-
-/-- Negating every pre-exhaustified alternative is exactly the denial that
-any alternative holds uniquely. -/
-theorem forall_not_preExh_iff : (∀ i, ¬ preExh A i) ↔ ¬ ∃! i, A i := by
-  rw [← exists_preExh_iff_existsUnique, not_exists]
-
-/-- `strong` properly strengthens `weak`: it entails it, and excludes some
-possibility `weak` leaves open. -/
-def ProperlyStrengthens (strong weak : α → Prop) : Prop :=
-  (∀ x, strong x → weak x) ∧ ∃ x, weak x ∧ ¬ strong x
-
-/-- Vacuous exhaustification — the strengthened meaning coincides with the
-prejacent — fails the proper-strengthening requirement. -/
-theorem not_properlyStrengthens_of_iff {strong weak : α → Prop}
-    (h : ∀ x, strong x ↔ weak x) : ¬ ProperlyStrengthens strong weak :=
-  fun ⟨_, x, hw, hns⟩ => hns ((h x).mpr hw)
+  · rintro ⟨_, ⟨a, ha, rfl⟩, rfl⟩
+    exact ⟨a, ⟨a, ha, rfl⟩, (coe_innocent_exh ALT a).symm⟩
+  · rintro ⟨_, ⟨a, ha, rfl⟩, rfl⟩
+    exact ⟨_, ⟨a, ha, rfl⟩, coe_innocent_exh ALT a⟩
 
 end Exhaustification
