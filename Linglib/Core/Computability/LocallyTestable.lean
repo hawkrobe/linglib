@@ -28,7 +28,7 @@ locally testable events of McNaughton and Papert.
 * `List.kTestVector_append_congr`: words with the same `k`-test vectors have concatenations with
   the same `k`-test vector.
 * `Language.IsLocallyTestable.isStarFree`: over a finite alphabet, locally testable languages are
-  star-free.
+  star-free, and with them the generalized definite and the finite or cofinite languages.
 * `Language.IsLocallyTestable.leftQuotient`, `Language.IsLocallyTestable.rightQuotient`,
   `Language.IsLocallyTestable.preimage_map`: closure under quotients and under inverse images of
   letter-to-letter maps.
@@ -138,12 +138,6 @@ theorem isLocallyTestable_setOf_kFactors (k : ℕ) (P : Set (Set (List α))) :
     IsLocallyTestable {w | {f | f ∈ w.kFactors k} ∈ P} k :=
   fun _ _ e ↦ congrArg (fun p ↦ p.2.1 ∈ P) e
 
-/-- A generalized `(k - 1)`-definite language is locally `k`-testable. -/
-theorem IsGeneralizedDefinite.toIsLocallyTestable (h : L.IsGeneralizedDefinite (k - 1)) :
-    L.IsLocallyTestable k :=
-  fun _ _ e ↦ propext <|
-    isGeneralizedDefinite_iff_edges.mp h (congrArg Prod.fst e) (congrArg (·.2.2) e)
-
 theorem IsLocallyTestable.leftQuotient (h : L.IsLocallyTestable k) (u : List α) :
     (L.leftQuotient u).IsLocallyTestable k :=
   fun _ _ e ↦ h (List.kTestVector_append_congr rfl e)
@@ -161,6 +155,35 @@ theorem IsLocallyTestable.preimage_map {L : Language β} (h : L.IsLocallyTestabl
 theorem IsLocallyTestable.isStarFree [Finite α] (h : L.IsLocallyTestable k) : L.IsStarFree :=
   .of_factorsThrough h (fun _ _ _ _ ↦ List.kTestVector_append_congr)
     (List.finite_range_kTestVector k) (List.kTestVector_flatten_replicate_succ k)
+
+/-! ### Generalized definite languages -/
+
+/-- A generalized `k`-definite language is locally `(k + 1)`-testable. -/
+theorem IsGeneralizedDefinite.toIsLocallyTestable (h : L.IsGeneralizedDefinite k) :
+    L.IsLocallyTestable (k + 1) :=
+  fun _ _ e ↦ propext <|
+    isGeneralizedDefinite_iff_edges.mp h (congrArg Prod.fst e) (congrArg (·.2.2) e)
+
+section Finite
+
+variable [Finite α]
+
+/-- Over a finite alphabet generalized definite languages are star-free. -/
+theorem IsGeneralizedDefinite.isStarFree (h : L.IsGeneralizedDefinite k) : L.IsStarFree :=
+  h.toIsLocallyTestable.isStarFree
+
+theorem IsDefinite.isStarFree (h : L.IsDefinite k) : L.IsStarFree :=
+  h.toIsGeneralizedDefinite.isStarFree
+
+theorem IsReverseDefinite.isStarFree (h : L.IsReverseDefinite k) : L.IsStarFree :=
+  h.toIsGeneralizedDefinite.isStarFree
+
+/-- Over a finite alphabet finite and cofinite languages are star-free. -/
+theorem IsFiniteOrCofinite.isStarFree (h : L.IsFiniteOrCofinite) : L.IsStarFree :=
+  let ⟨⟨_, hD⟩, _⟩ := h.exists_isDefinite_and_isReverseDefinite
+  hD.isStarFree
+
+end Finite
 
 /-! ### Containing a factor -/
 

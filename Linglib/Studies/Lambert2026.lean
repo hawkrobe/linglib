@@ -42,8 +42,9 @@ one of Mayer and Major that the paper analyzes.
 
 Prove the equivalence of the order-based and tier-based formulae for Kagoshima Japanese ((42),
 (43)) and for Karanga Shona ((46)–(49)), and the piecewise testability of the Tsuut'ina
-grammar. The algebraic characterizations of §6 by equations on the syntactic semigroup are not
-formalized.
+grammar. The description of the Karanga Shona stem by substrings ((50)), which makes it locally
+testable, and the algebraic characterizations of §6 by equations on the syntactic semigroup are
+not formalized.
 
 ## References
 
@@ -93,7 +94,7 @@ private lemma sublist_pair_of_mem {l : List α} {x y : α} (hx : x ∈ l) (hy : 
       · exact Or.inr (Or.inl ((singleton_sublist.mpr hy').cons_cons x))
     · rcases mem_cons.mp hy with rfl | hy'
       · exact Or.inr (Or.inr ((singleton_sublist.mpr hx').cons_cons y))
-      · exact (ih hx' hy').imp_right λ h => h.imp (·.cons a) (·.cons a)
+      · exact (ih hx' hy').imp_right fun h ↦ h.imp (·.cons a) (·.cons a)
 
 end Sandwich
 
@@ -141,8 +142,8 @@ stressed syllable. -/
 theorem culminativity_isTierBased : IsTierBased IsFiniteOrCofinite culminativity :=
   ⟨_, _, rfl, Or.inl ((Set.finite_singleton _).insert _)⟩
 
-/-- Culminativity is not generalized definite: `σᵏσ́σᵏ` is in and `σᵏσ́σ́σᵏ` is out, with the
-same prefix and suffix of length `k`. -/
+/-- Culminativity is not generalized definite, since `σᵏσ́σᵏ` is in and `σᵏσ́σ́σᵏ` is out with
+the same prefix and suffix of length `k`. -/
 theorem culminativity_not_isGeneralizedDefinite (k : ℕ) :
     ¬ culminativity.IsGeneralizedDefinite k := by
   intro h
@@ -366,12 +367,12 @@ private lemma tsuutinaIn_mem (k : ℕ) : tsuutinaIn k ∈ tsuutina := by
   show tsuutinaIn k ∈ (TierStrictlyLocalGrammar.ofForbiddenPairs antPostForbidden
     Sibilant.onTier).language
   rw [mem_ofForbiddenPairs_language_iff_filter_isChain]
-  have h_filter : (tsuutinaIn k).filter (λ x => decide (Sibilant.onTier x)) = tsuutinaIn k := by
+  have h_filter : (tsuutinaIn k).filter (fun x ↦ decide (Sibilant.onTier x)) = tsuutinaIn k := by
     unfold tsuutinaIn sandwich
     simp
   rw [h_filter]
   show (sandwich (k + 1) Sibilant.posterior [] (k + 1) Sibilant.anterior).IsChain
-    (λ a b => ¬ antPostForbidden a b)
+    (fun a b ↦ ¬ antPostForbidden a b)
   unfold sandwich
   rw [append_nil, isChain_append]
   refine ⟨isChain_replicate_of_rel _ (by decide), isChain_replicate_of_rel _ (by decide), ?_⟩
@@ -387,12 +388,12 @@ private lemma tsuutinaOut_notMem (k : ℕ) : tsuutinaOut k ∉ tsuutina := by
   show ¬ (tsuutinaOut k ∈ (TierStrictlyLocalGrammar.ofForbiddenPairs antPostForbidden
     Sibilant.onTier).language)
   rw [mem_ofForbiddenPairs_language_iff_filter_isChain]
-  have h_filter : (tsuutinaOut k).filter (λ x => decide (Sibilant.onTier x)) = tsuutinaOut k := by
+  have h_filter : (tsuutinaOut k).filter (fun x ↦ decide (Sibilant.onTier x)) = tsuutinaOut k := by
     unfold tsuutinaOut sandwich
     simp
   rw [h_filter]
   show ¬ (sandwich k Sibilant.posterior [Sibilant.anterior, .posterior] k Sibilant.anterior).IsChain
-    (λ a b => ¬ antPostForbidden a b)
+    (fun a b ↦ ¬ antPostForbidden a b)
   unfold sandwich
   intro hchain
   rw [show replicate k Sibilant.posterior ++ [Sibilant.anterior, Sibilant.posterior] ++
@@ -403,8 +404,8 @@ private lemma tsuutinaOut_notMem (k : ℕ) : tsuutinaOut k ∉ tsuutina := by
   rw [isChain_append_cons_cons] at hchain
   exact hchain.2.1 (by decide : antPostForbidden Sibilant.anterior Sibilant.posterior)
 
-/-- Tsuut'ina is not multitier generalized definite (§4.2): `ʃᵏ⁺¹sᵏ⁺¹` is in and `ʃᵏsʃsᵏ` is
-out, with the same affixes of length `k` on every tier. -/
+/-- Tsuut'ina is not multitier generalized definite (§4.2), since `ʃᵏ⁺¹sᵏ⁺¹` is in and `ʃᵏsʃsᵏ`
+is out with the same affixes of length `k` on every tier. -/
 theorem tsuutina_not_isBTLI (k : ℕ) : ¬ IsBTLI k tsuutina :=
   not_isBTC_of_indist (IsBTC.indist_isGenDef_of_tierAffixes (tsuutina_tierAffixes k))
     (tsuutinaIn_mem k) (tsuutinaOut_notMem k)
@@ -455,7 +456,8 @@ def uyghur : Language UyghurSeg :=
     ((tierWord UyghurSeg.isHarmonizingVowel [] ⊓ tierSuffix UyghurSeg.isDorsal [.backDorsal])ᶜ ⊔
       tierWord UyghurSeg.isSuffixFront [])
 
-/-- Uyghur backness harmony is multitier definite (§4.3): every literal is a tier suffix. -/
+/-- Uyghur backness harmony is multitier definite (§4.3), since every literal is a tier
+suffix. -/
 theorem uyghur_isBTD : IsBTD 1 uyghur :=
   IsBTC.inter (IsBTC.inter (IsBTC.inter
     (IsBTC.union (IsBTC.compl (isBTD_tierSuffix _ _ (by decide))) (isBTD_tierWord _ _ (by decide)))
@@ -503,10 +505,10 @@ plateauing map. -/
 theorem plateauing_iff_mem_range_utp (w : List Tone) :
     w ∉ shuffleIdeal [.high, .low, .high] ↔
       w.map Tone.toTBU ∈ Set.range _root_.Tone.utp.map := by
-  have hinj : Function.Injective Tone.toTBU := fun a b h => by
+  have hinj : Function.Injective Tone.toTBU := fun a b h ↦ by
     cases a <;> cases b <;> first | rfl | cases h
   rw [_root_.Tone.utp.mem_range_map_iff, not_iff_not]
-  refine ⟨fun h => h.map Tone.toTBU, fun h => ?_⟩
+  refine ⟨fun h ↦ h.map Tone.toTBU, fun h ↦ ?_⟩
   obtain ⟨l, hl, he⟩ := sublist_map_iff.mp h
   rwa [show l = [.high, .low, .high] from (map_injective_iff.mpr hinj) he.symm] at hl
 
@@ -564,7 +566,7 @@ theorem arigibi_isPiecewiseTestable : arigibi.IsPiecewiseTestable 2 :=
 /-- The high tier of a tone string is a run of highs. -/
 private lemma filter_isHigh_eq_replicate (w : List Tone) :
     w.filter Tone.isHigh = replicate (w.filter Tone.isHigh).length .high :=
-  eq_replicate_iff.mpr ⟨rfl, λ x hx => by
+  eq_replicate_iff.mpr ⟨rfl, fun x hx ↦ by
     rcases x with _ | _
     · exact absurd (mem_filter.mp hx).2 (by decide)
     · rfl⟩
@@ -572,8 +574,8 @@ private lemma filter_isHigh_eq_replicate (w : List Tone) :
 /-- Two highs occur in a tone string iff they occur on its high tier. -/
 private lemma high_high_sublist_iff (w : List Tone) :
     [Tone.high, .high] <+ w ↔ [Tone.high, .high] <+ w.filter Tone.isHigh :=
-  ⟨λ h => by simpa only [filter_cons_of_pos (by decide : Tone.isHigh .high = true), filter_nil]
-    using h.filter Tone.isHigh, λ h => h.trans filter_sublist⟩
+  ⟨fun h ↦ by simpa only [filter_cons_of_pos (by decide : Tone.isHigh .high = true), filter_nil]
+    using h.filter Tone.isHigh, fun h ↦ h.trans filter_sublist⟩
 
 /-- Arigibi is tier-based co/finite (§5.3): on the high tier the word is empty or a single
 high, culminativity on tone. -/
@@ -614,6 +616,14 @@ def chuave : Language Tone := shuffleIdeal [.high]
 theorem chuave_isPiecewiseTestable : chuave.IsPiecewiseTestable 1 :=
   isPiecewiseTestable_shuffleIdeal (by decide)
 
+/-- Chuave is also locally testable (§5.5), since a high mora anywhere in a word is a factor of
+it. -/
+theorem chuave_isLocallyTestable : chuave.IsLocallyTestable 1 := by
+  convert isLocallyTestable_setOf_infix [Tone.high] using 1
+  ext w
+  exact singleton_sublist.trans
+    ⟨fun h ↦ let ⟨s, t, e⟩ := append_of_mem h; ⟨s, t, by simp [e]⟩, fun ⟨_, _, e⟩ ↦ e ▸ by simp⟩
+
 /-- Chuave is the complement of an empty high tier, `¬[⋊⋉]_{h}`. -/
 theorem chuave_eq_compl_tierWord : chuave = (tierWord Tone.isHigh [])ᶜ := by
   ext w
@@ -621,7 +631,7 @@ theorem chuave_eq_compl_tierWord : chuave = (tierWord Tone.isHigh [])ᶜ := by
   rw [singleton_sublist, filter_eq_nil_iff]
   push Not
   constructor
-  · exact λ h => ⟨.high, h, rfl⟩
+  · exact fun h ↦ ⟨.high, h, rfl⟩
   · rintro ⟨a, ha, hh⟩
     cases a
     · exact absurd hh (by decide)
@@ -648,7 +658,7 @@ def karangaShona : Language Tone :=
 theorem karangaShona_isBTLI : IsBTLI 5 karangaShona :=
   IsBTC.union (IsBTC.union
     (IsBTC.of_class (isDefinite_succ_of_forall_length_le (N := 4)
-      λ w hw => (by decide : ∀ w ∈ [[Tone.low], [.low, .high], [.low, .high, .low], [.high],
+      fun w hw ↦ (by decide : ∀ w ∈ [[Tone.low], [.low, .high], [.low, .high, .low], [.high],
         [.high, .low], [.high, .low, .high], [.high, .high, .low, .high]], w.length ≤ 4)
         w hw).toIsGeneralizedDefinite)
     (IsBTC.inter (IsBTK.toIsBTLI (isBTK_ofPrefix _ (by decide)))
