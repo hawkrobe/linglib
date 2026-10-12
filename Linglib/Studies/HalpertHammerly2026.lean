@@ -292,29 +292,16 @@ open Carstens2026
 def prefixGender (n : Nominal Core) : Xhosa.Gender := n.visible.gender
 
 /-- The nominal of a Xhosa noun (28), with the core from the entity denoted and a secondary n
-bearing the prefix class's features when that class is a core class other than the core's. It
-is undefined for the classes whose features the paper leaves open. -/
+bearing the features of the noun's gender when that is a core class other than the core's. It
+is undefined for the genders whose features the paper leaves open. -/
 def ofEntry (e : Xhosa.Noun) : Option (Nominal Core) :=
-  (Xhosa.Gender.ofSingular e.cls).bind fun g ↦
-    let core := Core.ofAnimacyLevel e.animacy
-    if g = core.gender then some ⟨core, none⟩
-    else (Core.ofGender g).map fun s ↦ ⟨core, some s⟩
+  (Core.ofGender e.gender).map (.stack (Core.ofAnimacyLevel e.animacy))
 
-/-- The prefix class of a nominal is the noun's class. -/
-theorem ofSingular_prefixGender {e : Xhosa.Noun} {n : Nominal Core} (h : ofEntry e = some n) :
-    Xhosa.Gender.ofSingular e.cls = some (prefixGender n) := by
-  unfold ofEntry at h
-  rcases hg : Xhosa.Gender.ofSingular e.cls with _ | g
-  · simp [hg] at h
-  · simp only [hg, Option.bind_some] at h
-    split at h
-    · obtain rfl := Option.some.inj h
-      simp_all [prefixGender, Nominal.visible]
-    · rcases hs : Core.ofGender g with _ | s
-      · simp [hs] at h
-      · simp only [hs, Option.map_some, Option.some.injEq] at h
-        subst h
-        rw [prefixGender, Nominal.visible, Option.getD_some, Core.gender_eq_of_ofGender hs]
+/-- The prefix class of a nominal is the noun's gender. -/
+theorem prefixGender_eq_gender {e : Xhosa.Noun} {n : Nominal Core} (h : ofEntry e = some n) :
+    prefixGender n = e.gender := by
+  obtain ⟨s, hs, rfl⟩ := Option.map_eq_some_iff.mp h
+  simpa [prefixGender] using Core.gender_eq_of_ofGender hs
 
 /-- In (28) *isikhohleli* 'coughing person' is a human core under a class 7 secondary n, its final
 vowel the animate -i and its prefix class 7. -/

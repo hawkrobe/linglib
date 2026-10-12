@@ -30,7 +30,7 @@ A nominal is a core gender with an optional outer gender. The visible gender's f
 annotated with the interpretability its n carries and resolved by
 `Minimalist.Coordination.resolve`, so the exclusion of u-genders is the substrate's
 percolation; the cores resolve as interpretable features. A noun's core is read off the
-animacy of what it denotes and its outer layer off its class, in the English fragments'
+animacy of what it denotes and its outer layer off its gender, in the Xhosa and Shona fragments'
 lexicons. The rows carry the paper's example sentences with the classes they accept and
 reject, and the Table 13 counts on one example per cell; single-conjunct agreement, the
 choices offered in at most 5% of cases and Taraldsen et al.'s Tables 4 and 6, which the paper
@@ -104,6 +104,15 @@ def visibleBundle : Bundle G := .single n.visible (interpretability (status n.vi
 
 /-- The core's feature, always interpretable. -/
 def coreBundle : Bundle G := .single n.core .interpretable
+
+variable [DecidableEq G]
+
+/-- The nominal of a noun of gender `g` over the core `c`, an outer nP of gender `g` stacked
+above the core unless the two coincide, (72)–(73). -/
+def stack (c g : G) : Nominal G := ⟨c, if g = c then none else some g⟩
+
+@[simp] theorem visible_stack (c g : G) : (stack c g).visible = g := by
+  grind [stack, visible]
 
 end Nominal
 
@@ -222,11 +231,8 @@ theorem xhosaCore_status (a : AnimacyLevel) :
     (xhosaCore a).status = .interpretable (xhosaFlavor a) := by
   cases a <;> rfl
 
-/-- A noun's nominal, its core from what it denotes and, when its class belongs to another
-gender, that gender stacked above, (72)–(73). -/
-def xhosaNominal (n : Xhosa.Noun) : Nominal Xhosa.Gender :=
-  ⟨xhosaCore n.animacy,
-    (Xhosa.Gender.ofSingular n.cls).filter λ g => decide (g ≠ xhosaCore n.animacy)⟩
+/-- A noun's nominal, its core from what it denotes and its gender stacked above. -/
+def xhosaNominal (n : Xhosa.Noun) : Nominal Xhosa.Gender := .stack (xhosaCore n.animacy) n.gender
 
 /-- A class values agreement on a Xhosa &P. -/
 abbrev XhosaValues (a b : Nominal Xhosa.Gender) (c : Xhosa.NounClass) : Prop :=
@@ -245,9 +251,7 @@ theorem shonaCore_status (a : AnimacyLevel) :
   cases a <;> rfl
 
 /-- A Shona noun's nominal, where a diminutive's u-gender 12/13 stacks above its core (98). -/
-def shonaNominal (n : Shona.Noun) : Nominal Shona.Gender :=
-  ⟨shonaCore n.animacy,
-    (Shona.Gender.ofSingular n.cls).filter λ g => decide (g ≠ shonaCore n.animacy)⟩
+def shonaNominal (n : Shona.Noun) : Nominal Shona.Gender := .stack (shonaCore n.animacy) n.gender
 
 /-- A class values agreement on a Shona &P. -/
 abbrev ShonaValues (a b : Nominal Shona.Gender) (c : Shona.NounClass) : Prop :=
@@ -279,15 +283,15 @@ def shonaClassOf : String → Option Shona.NounClass
 /-- A Xhosa row's conjuncts, from the fragment's nouns. -/
 def xhosaConjuncts (e : Datum) :
     Option (Nominal Xhosa.Gender × Nominal Xhosa.Gender) := do
-  let a ← (e.feature? "conjunct1").bind λ s => Xhosa.Nouns.all.find? (·.form = s)
-  let b ← (e.feature? "conjunct2").bind λ s => Xhosa.Nouns.all.find? (·.form = s)
+  let a ← (e.feature? "conjunct1").bind fun s ↦ Xhosa.Nouns.all.find? (·.form = s)
+  let b ← (e.feature? "conjunct2").bind fun s ↦ Xhosa.Nouns.all.find? (·.form = s)
   pure (xhosaNominal a, xhosaNominal b)
 
 /-- A Shona row's conjuncts. -/
 def shonaConjuncts (e : Datum) :
     Option (Nominal Shona.Gender × Nominal Shona.Gender) := do
-  let a ← (e.feature? "conjunct1").bind λ s => Shona.Nouns.all.find? (·.form = s)
-  let b ← (e.feature? "conjunct2").bind λ s => Shona.Nouns.all.find? (·.form = s)
+  let a ← (e.feature? "conjunct1").bind fun s ↦ Shona.Nouns.all.find? (·.form = s)
+  let b ← (e.feature? "conjunct2").bind fun s ↦ Shona.Nouns.all.find? (·.form = s)
   pure (shonaNominal a, shonaNominal b)
 
 /-- The classes a Xhosa row accepts and rejects for plural agreement on &P. -/

@@ -95,24 +95,11 @@ def Gender.pluralClass : Gender → NounClass
   | .genderD => .cl8
   | .genderE => .cl10
 
-/-- The gender whose singular class a class is, none for a plural class or class 15. -/
-def Gender.ofSingular : NounClass → Option Gender
-  | .cl1 => some .genderA
-  | .cl3 => some .genderB
-  | .cl5 => some .genderC
-  | .cl7 => some .genderD
-  | .cl9 => some .genderE
-  | _ => none
-
-@[simp] theorem Gender.ofSingular_singularClass (g : Gender) :
-    ofSingular g.singularClass = some g := by
-  cases g <;> rfl
-
 /-- The subject marker of a gender's plural class. -/
 def Gender.plSubjPrefix (g : Gender) : String := g.pluralClass.subjPrefix
 
-/-- The semantic core of each gender: A bears [human], D [inanimate] and E [animal], while B
-and C bear none. -/
+/-- Gender A bears the core [human], D [inanimate] and E [animal], while B and C bear
+none. -/
 def Gender.status : Gender → GenderStatus
   | .genderA => .interpretable .human
   | .genderB => .uninterpretable
