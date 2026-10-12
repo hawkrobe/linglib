@@ -55,19 +55,19 @@ variable {n : ℕ} (g : Graph n)
 /-! ### Crossings under a relabelling -/
 
 /-- The crossings `g` would show if its positions were rearranged by `σ`:
-    crossing quadruples are scored in the positions `σ` assigns rather than
-    in `g`'s own. -/
+crossing quadruples are scored in the positions `σ` assigns rather than
+in `g`'s own. -/
 def Graph.crossingsUnder (σ : Perm (Fin n)) : Nat :=
-  (Finset.univ.filter (λ x : Fin n × Fin n × Fin n × Fin n =>
+  (Finset.univ.filter (fun x : Fin n × Fin n × Fin n × Fin n ↦
     g.Linked x.1 x.2.1 ∧ g.Linked x.2.2.1 x.2.2.2 ∧
       Alternate (σ x.1) (σ x.2.1) (σ x.2.2.1) (σ x.2.2.2))).card
 
 /-- The unordered pairs of links sharing no endpoint — the pairs that can
-    cross at all, [ferrer-i-cancho-2017]'s potential crossings. Each pair is
-    counted once, by the representative with both links least-endpoint-first
-    and the earlier-starting link first. -/
+cross at all, [ferrer-i-cancho-2017]'s potential crossings. Each pair is
+counted once, by the representative with both links least-endpoint-first
+and the earlier-starting link first. -/
 def Graph.disjointLinkPairs : Nat :=
-  (Finset.univ.filter (λ x : Fin n × Fin n × Fin n × Fin n =>
+  (Finset.univ.filter (fun x : Fin n × Fin n × Fin n × Fin n ↦
     g.Linked x.1 x.2.1 ∧ g.Linked x.2.2.1 x.2.2.2 ∧
       x.1 < x.2.1 ∧ x.2.2.1 < x.2.2.2 ∧ x.1 < x.2.2.1 ∧
         x.2.1 ≠ x.2.2.1 ∧ x.2.1 ≠ x.2.2.2)).card
@@ -93,7 +93,7 @@ private theorem injective_vec4 {w x y z : Fin n} (hwx : w ≠ x) (hwy : w ≠ y)
   fin_cases i <;> fin_cases j <;> simp_all
 
 /-- Alternation is monotonicity of the permutation along the reordered
-    quadruple. -/
+quadruple. -/
 private theorem alternate_comp_iff {a b c d : Fin n} (σ : Perm (Fin n))
     (hq : Function.Injective ![a, c, b, d]) :
     Alternate (σ a) (σ b) (σ c) (σ d) ↔ Monotone (σ ∘ ![a, c, b, d]) := by
@@ -109,7 +109,7 @@ private theorem alternate_comp_iff {a b c d : Fin n} (σ : Perm (Fin n))
       by simpa using hs (show (2 : Fin 4) < 3 by decide)⟩
 
 /-- One linearization in `24` puts four fixed distinct positions into the
-    alternating pattern. -/
+alternating pattern. -/
 private theorem card_alternate {a b c d : Fin n} (hab : a ≠ b) (hac : a ≠ c)
     (had : a ≠ d) (hbc : b ≠ c) (hbd : b ≠ d) (hcd : c ≠ d) :
     24 * #{σ : Perm (Fin n) | Alternate (σ a) (σ b) (σ c) (σ d)} = n ! := by
@@ -118,7 +118,7 @@ private theorem card_alternate {a b c d : Fin n} (hab : a ≠ b) (hac : a ≠ c)
   have h := factorial_mul_card_monotone_comp (⟨_, hq⟩ : Fin 4 ↪ Fin n)
   rw [Fintype.card_fin, show (4 : ℕ)! = 24 from rfl] at h
   rw [← h]
-  refine congrArg (24 * ·) (Finset.card_equiv (Equiv.refl _) (λ σ => ?_))
+  refine congrArg (24 * ·) (Finset.card_equiv (Equiv.refl _) (fun σ ↦ ?_))
   simpa using alternate_comp_iff σ hq
 
 /-- Alternation forces its four positions to be distinct. -/
@@ -136,31 +136,31 @@ private def distinct4 (x : Fin n × Fin n × Fin n × Fin n) : Prop :=
     x.2.1 ≠ x.2.2.1 ∧ x.2.1 ≠ x.2.2.2 ∧ x.2.2.1 ≠ x.2.2.2
 
 private instance : DecidablePred (distinct4 (n := n)) :=
-  λ _ => inferInstanceAs (Decidable (_ ∧ _))
+  fun _ ↦ inferInstanceAs (Decidable (_ ∧ _))
 
 /-- The crossings of all linearizations, regrouped by the quadruple that
-    crosses. -/
+crosses. -/
 private theorem sum_crossingsUnder :
     ∑ σ : Perm (Fin n), g.crossingsUnder σ =
-      ∑ x ∈ univ.filter (λ x : Fin n × Fin n × Fin n × Fin n =>
+      ∑ x ∈ univ.filter (fun x : Fin n × Fin n × Fin n × Fin n ↦
           g.Linked x.1 x.2.1 ∧ g.Linked x.2.2.1 x.2.2.2),
         #{σ : Perm (Fin n) | Alternate (σ x.1) (σ x.2.1) (σ x.2.2.1) (σ x.2.2.2)} := by
   simp only [Graph.crossingsUnder, Finset.card_filter]
   rw [Finset.sum_comm]
   rw [Finset.sum_filter]
-  refine Finset.sum_congr rfl (λ x _ => ?_)
+  refine Finset.sum_congr rfl (fun x _ ↦ ?_)
   by_cases h1 : g.Linked x.1 x.2.1 <;> by_cases h2 : g.Linked x.2.2.1 x.2.2.2 <;>
     simp [h1, h2]
 
 /-- Each linked quadruple of distinct positions contributes `n !` to
-    twenty-four times the crossings of all linearizations; degenerate
-    quadruples contribute nothing. -/
+twenty-four times the crossings of all linearizations; degenerate
+quadruples contribute nothing. -/
 private theorem mul_sum_crossingsUnder :
     24 * ∑ σ : Perm (Fin n), g.crossingsUnder σ =
-      n ! * #(univ.filter (λ x : Fin n × Fin n × Fin n × Fin n =>
+      n ! * #(univ.filter (fun x : Fin n × Fin n × Fin n × Fin n ↦
         (g.Linked x.1 x.2.1 ∧ g.Linked x.2.2.1 x.2.2.2) ∧ distinct4 x)) := by
   rw [sum_crossingsUnder, Finset.mul_sum]
-  have hcongr : ∀ x ∈ univ.filter (λ x : Fin n × Fin n × Fin n × Fin n =>
+  have hcongr : ∀ x ∈ univ.filter (fun x : Fin n × Fin n × Fin n × Fin n ↦
       g.Linked x.1 x.2.1 ∧ g.Linked x.2.2.1 x.2.2.2),
       24 * #{σ : Perm (Fin n) |
         Alternate (σ x.1) (σ x.2.1) (σ x.2.2.1) (σ x.2.2.2)} =
@@ -177,16 +177,16 @@ private theorem mul_sum_crossingsUnder :
 /-! ### Eight ordered witnesses per unordered disjoint pair -/
 
 /-- An involution preserving `P` and toggling `C` halves the count: there
-    are as many `P`-elements with `C` as without. -/
+are as many `P`-elements with `C` as without. -/
 private theorem card_filter_eq_two_mul {α : Type*} [Fintype α] [DecidableEq α]
     {P C : α → Prop} [DecidablePred P] [DecidablePred C] (e : α → α)
     (he : Function.Involutive e) (hP : ∀ x, P x → P (e x))
     (hC : ∀ x, P x → (C (e x) ↔ ¬ C x)) :
-    #(univ.filter P) = 2 * #(univ.filter (λ x => P x ∧ C x)) := by
+    #(univ.filter P) = 2 * #(univ.filter (fun x ↦ P x ∧ C x)) := by
   rw [← Finset.filter_filter,
     ← Finset.card_filter_add_card_filter_not (s := univ.filter P) C, two_mul]
   congr 1
-  refine Finset.card_equiv (he.toPerm e) (λ x => ?_)
+  refine Finset.card_equiv (he.toPerm e) (fun x ↦ ?_)
   simp only [mem_filter, mem_univ, true_and, Function.Involutive.coe_toPerm]
   constructor
   · rintro ⟨hp, hnc⟩
@@ -196,59 +196,59 @@ private theorem card_filter_eq_two_mul {α : Type*} [Fintype α] [DecidableEq α
     exact ⟨hp, (hC x hp).mp hce⟩
 
 /-- Ordered linked quadruples of distinct positions come in eights: an
-    orientation for each link and the order of the two links. -/
+orientation for each link and the order of the two links. -/
 private theorem card_linked_distinct :
-    #(univ.filter (λ x : Fin n × Fin n × Fin n × Fin n =>
+    #(univ.filter (fun x : Fin n × Fin n × Fin n × Fin n ↦
         (g.Linked x.1 x.2.1 ∧ g.Linked x.2.2.1 x.2.2.2) ∧ distinct4 x)) =
       8 * g.disjointLinkPairs := by
-  have h1 : #(univ.filter (λ x : Fin n × Fin n × Fin n × Fin n =>
+  have h1 : #(univ.filter (fun x : Fin n × Fin n × Fin n × Fin n ↦
         (g.Linked x.1 x.2.1 ∧ g.Linked x.2.2.1 x.2.2.2) ∧ distinct4 x)) =
-      2 * #(univ.filter (λ x : Fin n × Fin n × Fin n × Fin n =>
+      2 * #(univ.filter (fun x : Fin n × Fin n × Fin n × Fin n ↦
         ((g.Linked x.1 x.2.1 ∧ g.Linked x.2.2.1 x.2.2.2) ∧ distinct4 x) ∧
           x.1 < x.2.1)) := by
-    refine card_filter_eq_two_mul (λ x => (x.2.1, x.1, x.2.2)) (λ _ => rfl) ?_ ?_
+    refine card_filter_eq_two_mul (fun x ↦ (x.2.1, x.1, x.2.2)) (fun _ ↦ rfl) ?_ ?_
     · rintro ⟨a, b, c, d⟩ ⟨⟨h1, h2⟩, d1, d2, d3, d4, d5, d6⟩
       exact ⟨⟨h1.symm, h2⟩, d1.symm, d4, d5, d2, d3, d6⟩
     · rintro ⟨a, b, c, d⟩ ⟨-, d1, -⟩
       have hd : a ≠ b := d1
       show b < a ↔ ¬ a < b
       omega
-  have h2 : #(univ.filter (λ x : Fin n × Fin n × Fin n × Fin n =>
+  have h2 : #(univ.filter (fun x : Fin n × Fin n × Fin n × Fin n ↦
         ((g.Linked x.1 x.2.1 ∧ g.Linked x.2.2.1 x.2.2.2) ∧ distinct4 x) ∧
           x.1 < x.2.1)) =
-      2 * #(univ.filter (λ x : Fin n × Fin n × Fin n × Fin n =>
+      2 * #(univ.filter (fun x : Fin n × Fin n × Fin n × Fin n ↦
         (((g.Linked x.1 x.2.1 ∧ g.Linked x.2.2.1 x.2.2.2) ∧ distinct4 x) ∧
           x.1 < x.2.1) ∧ x.2.2.1 < x.2.2.2)) := by
-    refine card_filter_eq_two_mul (λ x => (x.1, x.2.1, x.2.2.2, x.2.2.1))
-      (λ _ => rfl) ?_ ?_
+    refine card_filter_eq_two_mul (fun x ↦ (x.1, x.2.1, x.2.2.2, x.2.2.1))
+      (fun _ ↦ rfl) ?_ ?_
     · rintro ⟨a, b, c, d⟩ ⟨⟨⟨h1, h2⟩, d1, d2, d3, d4, d5, d6⟩, hab⟩
       exact ⟨⟨⟨h1, h2.symm⟩, d1, d3, d2, d5, d4, d6.symm⟩, hab⟩
     · rintro ⟨a, b, c, d⟩ ⟨⟨-, -, -, -, -, -, d6⟩, -⟩
       have hd : c ≠ d := d6
       show d < c ↔ ¬ c < d
       omega
-  have h3 : #(univ.filter (λ x : Fin n × Fin n × Fin n × Fin n =>
+  have h3 : #(univ.filter (fun x : Fin n × Fin n × Fin n × Fin n ↦
         (((g.Linked x.1 x.2.1 ∧ g.Linked x.2.2.1 x.2.2.2) ∧ distinct4 x) ∧
           x.1 < x.2.1) ∧ x.2.2.1 < x.2.2.2)) =
-      2 * #(univ.filter (λ x : Fin n × Fin n × Fin n × Fin n =>
+      2 * #(univ.filter (fun x : Fin n × Fin n × Fin n × Fin n ↦
         ((((g.Linked x.1 x.2.1 ∧ g.Linked x.2.2.1 x.2.2.2) ∧ distinct4 x) ∧
           x.1 < x.2.1) ∧ x.2.2.1 < x.2.2.2) ∧ x.1 < x.2.2.1)) := by
-    refine card_filter_eq_two_mul (λ x => (x.2.2.1, x.2.2.2, x.1, x.2.1))
-      (λ _ => rfl) ?_ ?_
+    refine card_filter_eq_two_mul (fun x ↦ (x.2.2.1, x.2.2.2, x.1, x.2.1))
+      (fun _ ↦ rfl) ?_ ?_
     · rintro ⟨a, b, c, d⟩ ⟨⟨⟨⟨h1, h2⟩, d1, d2, d3, d4, d5, d6⟩, hab⟩, hcd⟩
       exact ⟨⟨⟨⟨h2, h1⟩, d6, d2.symm, d4.symm, d3.symm, d5.symm, d1⟩, hcd⟩, hab⟩
     · rintro ⟨a, b, c, d⟩ ⟨⟨⟨-, -, d2, -⟩, -⟩, -⟩
       have hd : a ≠ c := d2
       show c < a ↔ ¬ a < c
       omega
-  have h4 : univ.filter (λ x : Fin n × Fin n × Fin n × Fin n =>
+  have h4 : univ.filter (fun x : Fin n × Fin n × Fin n × Fin n ↦
         ((((g.Linked x.1 x.2.1 ∧ g.Linked x.2.2.1 x.2.2.2) ∧ distinct4 x) ∧
           x.1 < x.2.1) ∧ x.2.2.1 < x.2.2.2) ∧ x.1 < x.2.2.1) =
-      univ.filter (λ x : Fin n × Fin n × Fin n × Fin n =>
+      univ.filter (fun x : Fin n × Fin n × Fin n × Fin n ↦
         g.Linked x.1 x.2.1 ∧ g.Linked x.2.2.1 x.2.2.2 ∧
           x.1 < x.2.1 ∧ x.2.2.1 < x.2.2.2 ∧ x.1 < x.2.2.1 ∧
             x.2.1 ≠ x.2.2.1 ∧ x.2.1 ≠ x.2.2.2) := by
-    refine Finset.filter_congr (λ x _ => ?_)
+    refine Finset.filter_congr (fun x _ ↦ ?_)
     obtain ⟨a, b, c, d⟩ := x
     constructor
     · rintro ⟨⟨⟨⟨⟨h1, h2⟩, d1, d2, d3, d4, d5, d6⟩, hab⟩, hcd⟩, hac⟩
@@ -262,10 +262,10 @@ private theorem card_linked_distinct :
 /-! ### The expected-crossings identity -/
 
 /-- **Expected crossings under random linearization** ([ferrer-i-cancho-2017],
-    eq. 13): summed over all `n !` linearizations, three times the crossing
-    count is `n !` times the number of disjoint link pairs. So a uniformly
-    random ordering expects a third of a crossing per pair of links sharing no
-    endpoint, whatever the sentence's own order was. -/
+eq. 13): summed over all `n !` linearizations, three times the crossing
+count is `n !` times the number of disjoint link pairs. So a uniformly
+random ordering expects a third of a crossing per pair of links sharing no
+endpoint, whatever the sentence's own order was. -/
 theorem Graph.three_mul_sum_crossings_map :
     3 * ∑ σ : Perm (Fin n), (g.map σ).crossings =
       n ! * g.disjointLinkPairs := by
@@ -274,7 +274,7 @@ theorem Graph.three_mul_sum_crossings_map :
     rw [mul_sum_crossingsUnder, card_linked_distinct]
   have hsum : ∑ σ : Perm (Fin n), (g.map σ).crossings =
       ∑ σ : Perm (Fin n), g.crossingsUnder σ :=
-    Finset.sum_congr rfl (λ σ _ => Graph.crossings_map σ)
+    Finset.sum_congr rfl (fun σ _ ↦ Graph.crossings_map σ)
   refine Nat.eq_of_mul_eq_mul_left (show 0 < 8 by omega) ?_
   calc 8 * (3 * ∑ σ : Perm (Fin n), (g.map σ).crossings)
       = 24 * ∑ σ : Perm (Fin n), g.crossingsUnder σ := by

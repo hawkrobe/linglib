@@ -149,7 +149,7 @@ theorem Graph.blockHead_self (hT : g.IsTree) : (g.blockHead v v : Fin n) = v := 
   split
   · rename_i c h
     have hc := find?_spec h
-    exact absurd hc.2 (hT.notMem_yield_of_adj hc.1)
+    exact absurd hc.2 (hT.not_dominates_of_adj hc.1)
   · rfl
 
 theorem Graph.blockHead_eq_of_mem_yield (hT : g.IsTree) {x c : Fin n} (hc : g.Adj v c)
@@ -195,13 +195,13 @@ include hT hP
 theorem Graph.lt_of_adj_of_mem_yield {d x : Fin n} (hd : g.Adj v d) (hvd : v < d)
     (hx : x ∈ g.yield d) : v < x := by
   by_contra h
-  exact hT.notMem_yield_of_adj hd ((hP d).uIcc_subset hx ReflTransGen.refl
+  exact hT.not_dominates_of_adj hd ((hP d).uIcc_subset hx ReflTransGen.refl
     (Set.mem_uIcc.2 (Or.inl ⟨not_lt.1 h, hvd.le⟩)))
 
 theorem Graph.lt_of_adj_of_mem_yield' {d x : Fin n} (hd : g.Adj v d) (hdv : d < v)
     (hx : x ∈ g.yield d) : x < v := by
   by_contra h
-  exact hT.notMem_yield_of_adj hd ((hP d).uIcc_subset ReflTransGen.refl hx
+  exact hT.not_dominates_of_adj hd ((hP d).uIcc_subset ReflTransGen.refl hx
     (Set.mem_uIcc.2 (Or.inl ⟨hdv.le, not_lt.1 h⟩)))
 
 /-- The phrases of two dependents lie in the order of their heads. -/

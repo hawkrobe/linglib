@@ -28,7 +28,7 @@ a constituent (`IsConstituent.isCatena`, `isCatena_pair`, `not_isConstituent_pai
 the material gapping elides (§12.7). Control and raising (§6.8, §6.9) share one basic tree,
 whose embedded verb lacks a subject; the enhanced graph adds the subject arc, which the basic
 tree cannot carry without ceasing to be a tree (`hasUnrepresentedArg_enhance`,
-`Graph.not_isTree_enhance`).
+`Graph.not_isForest_enhance`).
 
 ## Implementation notes
 
@@ -103,7 +103,8 @@ def intransWithObj : Graph 3 :=
 /-- *John devours: a transitive missing its object. -/
 def transNoObj : Graph 2 := .ofArcs [john, devours] 1 [(1, 0, .nsubj)]
 
-example : ¬ intransWithObj.SatisfiesFrames (.ofList [(1, citationValency English.Verbs.sleep)]) := by
+example :
+    ¬ intransWithObj.SatisfiesFrames (.ofList [(1, citationValency English.Verbs.sleep)]) := by
   decide
 example : ¬ transNoObj.SatisfiesFrames (.ofList [(1, citationValency English.Verbs.devour)]) := by
   decide
@@ -149,7 +150,8 @@ def longPassiveTree : Graph 6 :=
   .ofArcs [the_, ball, was_, kickedPass, by_, john] 3
     [(1, 0, .det), (3, 1, .nsubj), (3, 2, .auxPass), (3, 5, .obl), (5, 4, .case_)]
 
-example : passiveTree.SatisfiesFrames (.ofList [(3, passiveValency English.Verbs.kick)]) := by decide
+example : passiveTree.SatisfiesFrames (.ofList [(3, passiveValency English.Verbs.kick)]) := by
+  decide
 example : longPassiveTree.SatisfiesFrames (.ofList [(3, passiveValency English.Verbs.kick)]) := by
   decide
 
@@ -170,9 +172,11 @@ def ditransPassiveTree : Graph 5 :=
 def ditransPassiveNoObj : Graph 3 :=
   .ofArcs [mary, was_, givenPass] 2 [(2, 0, .nsubj), (2, 1, .auxPass)]
 
-example : ditransPassiveTree.SatisfiesFrames (.ofList [(2, passiveValency English.Verbs.give)]) := by
+example :
+    ditransPassiveTree.SatisfiesFrames (.ofList [(2, passiveValency English.Verbs.give)]) := by
   decide
-example : ¬ ditransPassiveNoObj.SatisfiesFrames (.ofList [(2, passiveValency English.Verbs.give)]) := by
+example :
+    ¬ ditransPassiveNoObj.SatisfiesFrames (.ofList [(2, passiveValency English.Verbs.give)]) := by
   decide
 
 /-! ### Catenae against constituents (fourth chapter, §12.7)
@@ -220,7 +224,8 @@ example : HasUnrepresentedArg objControl (objControl.enhance [(4, 2, .nsubj)]) 2
 example : HasUnrepresentedArg raising (raising.enhance [(3, 0, .nsubj)]) 0 :=
   hasUnrepresentedArg_enhance _ (x := 3) .nsubj _ (by simp) (by decide)
 
-example : ¬ (subjControl.enhance [(3, 0, .nsubj)]).IsTree :=
-  Graph.not_isTree_enhance (v := 1) (w := 0) (x := 3) (by decide) (by decide) .nsubj _ (by simp)
+example : ¬ (subjControl.enhance [(3, 0, .nsubj)]).IsTree := fun hT ↦
+  Graph.not_isForest_enhance (v := 1) (w := 0) (x := 3) (by decide) (by decide) .nsubj _ (by simp)
+    hT.toIsForest
 
 end Osborne2019

@@ -1,6 +1,7 @@
 module
 
-public import Linglib.Core.Order.SuccPred.Tree
+public import Mathlib.Order.Comparable
+public import Mathlib.Order.SuccPred.Archimedean
 public import Mathlib.Data.Finset.Piecewise
 
 /-!
@@ -83,7 +84,7 @@ theorem disjoint_naturalClass [PredOrder N] [IsPredArchimedean N] (h : IncompRel
   rw [Option.mem_def] at hm hm'
   rw [hm, Option.some.injEq] at hm'
   subst hm'
-  exact Set.disjoint_left.1 (disjoint_Ici_of_incompRel h) ham hbm
+  exact (le_total_of_directed ham hbm).elim h.2 h.1
 
 /-! ### Spreading -/
 
