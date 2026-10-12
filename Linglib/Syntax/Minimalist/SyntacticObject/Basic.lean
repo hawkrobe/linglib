@@ -14,19 +14,18 @@ public import Linglib.Syntax.Minimalist.Defs
 # Syntactic objects
 
 A syntactic object is a binary rooted tree with leaves labelled by the lexical alphabet and no
-labels at internal vertices: an element of the free non-associative commutative magma on `SO₀`.
-This file builds two carriers for it over one alphabet,
-`Vertex := Option LIToken ⊕ Option LIToken`. The left summand is structure: a lexical item
-`Vertex.lex tok` on a leaf, or the bare label `Vertex.bare` on a binary internal node. The right
-summand is a trace: the index-free `Vertex.trace`, or the trace `Vertex.traceOf tok` of a token,
-the cancellation `T/T_v` remembering the head of `T_v`. Traces are exactly the right summand, the
-convention of the trace coproduct. `SyntacticObject` is the well-formed unordered tree over
-`Vertex`, the object Merge builds, and `PlanarSyntacticObject` the well-formed ordered tree,
-[marcolli-chomsky-berwick-2025]'s planar embedding, the form linearization and PF read.
-Well-formedness is a local condition, each vertex licensing its children (`Vertex.Licenses`), so
-it descends to the quotient;
-`PlanarSyntacticObject.toSyntacticObject` forgets the order and is a homomorphism for the
-vocabulary the two carriers share, `leaf`, `trace`, `traceOf` and `merge`.
+labels at internal vertices: an element of the free non-associative commutative magma on `SO₀`. This
+file builds two carriers for it over one alphabet of vertices, `Vertex`, an option of a token on
+either side. The left summand is structure: a lexical item `Vertex.lex tok` on a leaf, or the
+bare label `Vertex.bare` on a binary internal node. The right summand is a trace: the index-free
+`Vertex.trace`, or the trace `Vertex.traceOf tok` of a token, the cancellation `T/T_v` remembering
+the head of `T_v`. Traces are exactly the right summand, the convention of the trace coproduct.
+`SyntacticObject` is the well-formed unordered tree over `Vertex`, the object Merge builds, and
+`PlanarSyntacticObject` the well-formed ordered tree, [marcolli-chomsky-berwick-2025]'s planar
+embedding, the form linearization and PF read. Well-formedness is a local condition, each vertex
+licensing its children (`Vertex.Licenses`), so it descends to the quotient;
+`PlanarSyntacticObject.toSyntacticObject` forgets the order and is a homomorphism for the vocabulary
+the two carriers share, `leaf`, `trace`, `traceOf` and `merge`.
 
 ## Main definitions
 
@@ -55,12 +54,12 @@ open RoseTree UnorderedTree
 
 /-- A vertex carries structure on the left, a lexical token or the bare internal label, and a
     trace on the right, index-free or of a token. -/
-abbrev SyntacticObject.Vertex : Type := Option LIToken ⊕ Option LIToken
+abbrev SyntacticObject.Vertex : Type := Option LexicalItem.Token ⊕ Option LexicalItem.Token
 
 namespace SyntacticObject
 
 /-- The lexical item `tok` on a leaf. -/
-@[match_pattern] abbrev Vertex.lex (tok : LIToken) : Vertex := .inl (some tok)
+@[match_pattern] abbrev Vertex.lex (tok : LexicalItem.Token) : Vertex := .inl (some tok)
 
 /-- The bare label of a binary internal node. -/
 @[match_pattern] abbrev Vertex.bare : Vertex := .inl none
@@ -69,7 +68,7 @@ namespace SyntacticObject
 @[match_pattern] abbrev Vertex.trace : Vertex := .inr none
 
 /-- The trace of the token `tok`. -/
-@[match_pattern] abbrev Vertex.traceOf (tok : LIToken) : Vertex := .inr (some tok)
+@[match_pattern] abbrev Vertex.traceOf (tok : LexicalItem.Token) : Vertex := .inr (some tok)
 
 /-! ### Well-formedness -/
 
@@ -150,7 +149,7 @@ instance : DecidableEq PlanarSyntacticObject := Subtype.instDecidableEq
 namespace SyntacticObject
 
 /-- A lexical leaf. -/
-@[coe] def leaf (tok : LIToken) : SyntacticObject :=
+@[coe] def leaf (tok : LexicalItem.Token) : SyntacticObject :=
   ⟨UnorderedTree.leaf (Vertex.lex tok), isSyntacticObject_mk_leaf (by simp)⟩
 
 /-- The index-free trace, the mark an admissible cut leaves in the remaining tree
@@ -159,17 +158,18 @@ def trace : SyntacticObject :=
   ⟨UnorderedTree.leaf Vertex.trace, isSyntacticObject_mk_leaf (by simp)⟩
 
 /-- The trace of `tok`. -/
-def traceOf (tok : LIToken) : SyntacticObject :=
+def traceOf (tok : LexicalItem.Token) : SyntacticObject :=
   ⟨UnorderedTree.leaf (Vertex.traceOf tok), isSyntacticObject_mk_leaf (by simp)⟩
 
-@[simp] theorem leaf_val (tok : LIToken) : (leaf tok).val = UnorderedTree.leaf (Vertex.lex tok) :=
+@[simp] theorem leaf_val (tok : LexicalItem.Token) :
+    (leaf tok).val = UnorderedTree.leaf (Vertex.lex tok) :=
   rfl
 
-@[simp] theorem leaf_inj {a b : LIToken} : leaf a = leaf b ↔ a = b :=
+@[simp] theorem leaf_inj {a b : LexicalItem.Token} : leaf a = leaf b ↔ a = b :=
   ⟨fun h ↦ Option.some_injective _
     (Sum.inl_injective (congrArg (fun s : SyntacticObject ↦ s.val.value) h)), congrArg leaf⟩
 @[simp] theorem trace_val : trace.val = UnorderedTree.leaf Vertex.trace := rfl
-@[simp] theorem traceOf_val (tok : LIToken) :
+@[simp] theorem traceOf_val (tok : LexicalItem.Token) :
     (traceOf tok).val = UnorderedTree.leaf (Vertex.traceOf tok) := rfl
 
 /-- A bare binary node is a syntactic object exactly when both daughters are. -/
@@ -213,23 +213,25 @@ namespace PlanarSyntacticObject
 open SyntacticObject (Vertex isSyntacticObject_mk_leaf isSyntacticObject_mk_merge)
 
 /-- A lexical leaf. -/
-@[coe] def leaf (tok : LIToken) : PlanarSyntacticObject :=
+@[coe] def leaf (tok : LexicalItem.Token) : PlanarSyntacticObject :=
   ⟨.node (Vertex.lex tok) [], isSyntacticObject_mk_leaf (by simp)⟩
 
 /-- The index-free trace. -/
 def trace : PlanarSyntacticObject := ⟨.node Vertex.trace [], isSyntacticObject_mk_leaf (by simp)⟩
 
 /-- The trace of `tok`. -/
-def traceOf (tok : LIToken) : PlanarSyntacticObject :=
+def traceOf (tok : LexicalItem.Token) : PlanarSyntacticObject :=
   ⟨.node (Vertex.traceOf tok) [], isSyntacticObject_mk_leaf (by simp)⟩
 
 /-- Merge, with the daughters in the given order. -/
 def merge (l r : PlanarSyntacticObject) : PlanarSyntacticObject :=
   ⟨.node Vertex.bare [l.val, r.val], (isSyntacticObject_mk_merge _ _).mpr ⟨l.2, r.2⟩⟩
 
-@[simp] theorem leaf_val (tok : LIToken) : (leaf tok).val = .node (Vertex.lex tok) [] := rfl
+@[simp] theorem leaf_val (tok : LexicalItem.Token) :
+    (leaf tok).val = .node (Vertex.lex tok) [] := rfl
 @[simp] theorem trace_val : trace.val = .node Vertex.trace [] := rfl
-@[simp] theorem traceOf_val (tok : LIToken) : (traceOf tok).val = .node (Vertex.traceOf tok) [] :=
+@[simp] theorem traceOf_val (tok : LexicalItem.Token) :
+    (traceOf tok).val = .node (Vertex.traceOf tok) [] :=
   rfl
 @[simp] theorem merge_val (l r : PlanarSyntacticObject) :
     (merge l r).val = .node Vertex.bare [l.val, r.val] := rfl
@@ -241,12 +243,12 @@ def merge (l r : PlanarSyntacticObject) : PlanarSyntacticObject :=
 @[simp] theorem toSyntacticObject_val (p : PlanarSyntacticObject) :
     p.toSyntacticObject.val = UnorderedTree.mk p.val := rfl
 
-@[simp] theorem toSyntacticObject_leaf (tok : LIToken) :
+@[simp] theorem toSyntacticObject_leaf (tok : LexicalItem.Token) :
     (leaf tok).toSyntacticObject = SyntacticObject.leaf tok := rfl
 
 @[simp] theorem toSyntacticObject_trace : trace.toSyntacticObject = SyntacticObject.trace := rfl
 
-@[simp] theorem toSyntacticObject_traceOf (tok : LIToken) :
+@[simp] theorem toSyntacticObject_traceOf (tok : LexicalItem.Token) :
     (traceOf tok).toSyntacticObject = SyntacticObject.traceOf tok := rfl
 
 /-- Forgetting the order commutes with Merge. -/

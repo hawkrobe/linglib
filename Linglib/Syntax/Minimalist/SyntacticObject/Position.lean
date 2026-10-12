@@ -173,7 +173,7 @@ end PlanarSyntacticObject
 /-! ### Head daughters -/
 
 /-- The raising head of a planar tree, that of its unordered image. -/
-def treeRaisingHead (s : RoseTree Vertex) : Option LIToken :=
+def treeRaisingHead (s : RoseTree Vertex) : Option LexicalItem.Token :=
   (liftN (fun tok ↦ (⟨.sel (.of tok tok.item.outerSel), 0⟩ : RaisingState)) raisingTraceState
     (UnorderedTree.mk s)).label.label
 
@@ -200,7 +200,7 @@ def headIndex? (s : RoseTree Vertex) : Option ℕ :=
 
 /-- Where a planar syntactic object with daughters has a raising head, its head daughter carries
 it. -/
-theorem exists_headIndex?_of_treeRaisingHead {s : RoseTree Vertex} {ℓ : LIToken}
+theorem exists_headIndex?_of_treeRaisingHead {s : RoseTree Vertex} {ℓ : LexicalItem.Token}
     (hs : IsSyntacticObject (UnorderedTree.mk s)) (hc : s.children ≠ [])
     (h : treeRaisingHead s = some ℓ) :
     ∃ i c, headIndex? s = some i ∧ s.children[i]? = some c ∧ treeRaisingHead c = some ℓ := by

@@ -153,7 +153,7 @@ open RoseTree UnorderedTree Minimalist SyntacticObject ConnesKreimer
 /-! ### Internal Merge: an example (§1.4.4) -/
 
 /-- A token of the simple lexical item of category `c` selecting `sel`, pronounced `pf`. -/
-def tok (c : Cat) (sel : SelStack) (pf : String) (i : ℕ) : LIToken :=
+def tok (c : Cat) (sel : SelStack) (pf : String) (i : ℕ) : LexicalItem.Token :=
   ⟨.simple c sel (phonForm := pf), i⟩
 
 /-- *the apple*, the term `T₂` that Internal Merge raises in §1.4.4. -/
@@ -558,38 +558,39 @@ theorem featureConsistency_eq_convMul
 
 /-- The head-probe value `Υ_{s,h}` on a tree (equation (3.2.1)), the probe `Υ` applied to the
 tree's selection head, and `inconsistent` when the tree has no well-defined head. -/
-def headProbeTree (Υ : LIToken → Consistency) (T : UnorderedTree Vertex) : Consistency :=
+def headProbeTree (Υ : LexicalItem.Token → Consistency) (T : UnorderedTree Vertex) : Consistency :=
   (selCheckN T).head.elim Consistency.inconsistent Υ
 
 /-- The head-following feature character `ϕ_{Υ,s,h}` of Lemma 3.2.5 as an algebra homomorphism:
 `Υ_{s,h}` extended multiplicatively to forests, so that a workspace is consistent iff each of its
 trees is. The unrenormalized feature assignment whose Birkhoff renormalization is the consistency
 map. -/
-noncomputable def headProbeChar (Υ : LIToken → Consistency) :
+noncomputable def headProbeChar (Υ : LexicalItem.Token → Consistency) :
     ConnesKreimer ℕ (UnorderedTree Vertex) →ₐ[ℕ] Consistency :=
   aeval (headProbeTree Υ)
 
-@[simp] theorem headProbeChar_apply_of' (Υ : LIToken → Consistency)
+@[simp] theorem headProbeChar_apply_of' (Υ : LexicalItem.Token → Consistency)
     (F : Forest (UnorderedTree Vertex)) :
     headProbeChar Υ (of' F) = (F.map (headProbeTree Υ)).prod :=
   aeval_of' _ F
 
-@[simp] theorem headProbeChar_apply_ofTree (Υ : LIToken → Consistency) (T : UnorderedTree Vertex) :
+@[simp] theorem headProbeChar_apply_ofTree (Υ : LexicalItem.Token → Consistency)
+    (T : UnorderedTree Vertex) :
     headProbeChar Υ (ofTree T) = headProbeTree Υ T :=
   aeval_ofTree _ T
 
-theorem headProbeChar_one (Υ : LIToken → Consistency) : headProbeChar Υ 1 = 1 := map_one _
+theorem headProbeChar_one (Υ : LexicalItem.Token → Consistency) : headProbeChar Υ 1 = 1 := map_one _
 
 /-- The feature-consistency verdict on a syntactic object (§3.1.5, Lemmas 3.2.5 and 3.2.7), the
 Birkhoff renormalization with the identity operator of the head-following character, consistent
 iff the head-probe agreements cohere across all substructures. -/
-noncomputable def headConsistency (Υ : LIToken → Consistency) (S : SyntacticObject) :
+noncomputable def headConsistency (Υ : LexicalItem.Token → Consistency) (S : SyntacticObject) :
     Consistency :=
   featureConsistency (headProbeChar Υ).toLinearMap Consistency.rbId S
 
 /-- The head-driven verdict factors as the semiring Birkhoff convolution `φ₊ = φ₋ ⋆ φ` of the
 head-following character (Definition 3.1.6, Lemma 3.2.7). -/
-theorem headConsistency_eq_convMul (Υ : LIToken → Consistency) (S : SyntacticObject) :
+theorem headConsistency_eq_convMul (Υ : LexicalItem.Token → Consistency) (S : SyntacticObject) :
     LinearMap.mul' ℕ Consistency
         ((TensorProduct.map
             (SemiringRenorm.birkhoffMinus (headProbeChar Υ).toLinearMap

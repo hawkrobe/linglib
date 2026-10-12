@@ -41,7 +41,7 @@ a by-product of Move. English, whose passive agent is an adjunct below the patie
 patient bind it but never the converse.
 
 The derivation is a `Derivation` on the syntactic-object carrier, freezing and binding at a
-stage are the substrate's `Derivation.Frozen`, `CCommandsAt` and `BindsAtSomeStage`, and the
+stage are the substrate's `Derivation.ObeysFreezing`, `CCommandsAt` and `BindsAtSomeStage`, and the
 paper's examples are the rows: `vos_remnant` says that the raised VoiceP is a remnant,
 `vos_hypothesis_only` and `derivational_only` single out, among the candidate analyses of word
 order and of binding, the paper's own, `Licenses.derivational` shows the paper's binding
@@ -63,9 +63,9 @@ condition the weakest of the configurational ones, `table1` derives its three gr
   on the difference. The functional heads F, whether T or Asp (fn. 22), are `Cat.T`; the
   paper's unfilled XP in Spec,VoiceP is omitted.
 * The replay externalizes leaf Merge only, so a goal PP enters as one leaf, as the paper
-  fronts it. The wh-step itself is not modelled: freezing asks whether the argument sits in a
-  constituent some step of the derivation moved, which the remnant, carrying the evacuees'
-  traces, decides; fn. 18's caveat on extraction from moved complements is the paper's.
+  fronts it. Wh-fronting is C's Merge and the raising of the argument to its specifier, and
+  Freezing reads the movers, so the remnant, carrying the evacuees' traces, freezes only what
+  stayed in it; fn. 18's caveat on extraction from moved complements is the paper's.
 * Binding at a stage is decided on the replay, which forgets to the derivation's own stage; a
   stage whose replay fails c-commands nothing, and the surface-order theorems witness that
   every derivation here replays.
@@ -123,19 +123,22 @@ structure Clause where
   /-- The voice, which picks the pivot. -/
   voice : Voice
   /-- The verb, the derivation's initial object. -/
-  verb : LIToken
+  verb : LexicalItem.Token
   /-- The agent, Merged as the specifier of vP. -/
-  agent : LIToken
+  agent : LexicalItem.Token
   /-- The patient, the verb's complement or, in a ditransitive, the specifier of VP. -/
-  patient : LIToken
+  patient : LexicalItem.Token
   /-- The goal PP of a ditransitive, one leaf. -/
-  goal : Option LIToken
+  goal : Option LexicalItem.Token
 
 /-- The silent light verb. -/
-def v₀ : LIToken := ⟨.simple .v [], 6⟩
+def v₀ : LexicalItem.Token := ⟨.simple .v [], 6⟩
 
 /-- The `i`-th functional head F, for `i ≥ 1`. -/
-def F (i : ℕ) : LIToken := ⟨.simple .T [], 6 + i⟩
+def F (i : ℕ) : LexicalItem.Token := ⟨.simple .T [], 6 + i⟩
+
+/-- The complementizer, whose specifier a fronted wh-phrase raises to. -/
+def c₀ : LexicalItem.Token := ⟨.simple .C [], 0⟩
 
 /-- The side at which each of the five base Merges attaches its item. -/
 abbrev Sides := Fin 5 → Side
@@ -153,18 +156,18 @@ def of (voice : Voice) (verb agent patient : String) (goal : Option String := no
 variable (c : Clause)
 
 /-- The voice head, *mang-* or *di-*. -/
-def voiceHead : LIToken :=
+def voiceHead : LexicalItem.Token :=
   ⟨.simple .Voice [] (phonForm := Morphology.Morph.surface c.voice.marker), 1⟩
 
 /-- The argument as a token, the goal when there is one. -/
-def arg? : Arg → Option LIToken
+def arg? : Arg → Option LexicalItem.Token
   | .core .external => some c.agent
   | .core .internal => some c.patient
   | .goal => c.goal
 
 /-- The pivot is the argument the voice raises to subject position, the agent in the active and
 the patient in the passive, the slot the voice selects. -/
-def pivot : LIToken :=
+def pivot : LexicalItem.Token :=
   if c.voice.pivot = some ArgumentFrame.Slot.external then c.agent else c.patient
 
 /-- The paper's own trees (50) and (57) put complements on the right, and the light verb, the
@@ -193,7 +196,7 @@ the pivot and the goal replaced by theirs. -/
 def remnant : PlanarSyntacticObject :=
   let leaf := PlanarSyntacticObject.leaf
   let trace := PlanarSyntacticObject.traceOf
-  let stranded (tok : LIToken) := if tok = c.pivot then trace tok else leaf tok
+  let stranded (tok : LexicalItem.Token) := if tok = c.pivot then trace tok else leaf tok
   let vp : PlanarSyntacticObject := match c.goal with
     | some pp => {stranded c.patient, {trace c.verb, trace pp}}
     | none => {trace c.verb, stranded c.patient}
@@ -349,10 +352,11 @@ namespace Extraction
 def clause (e : Extraction) : Clause :=
   .of e.voice "V" "Agent" "Patient" (if e.ditransitive then some "PP" else none)
 
-/-- Under a hypothesis, a fronted wh-phrase is predicted licit exactly when it is not frozen,
-and a wh-phrase in situ is unconstrained. -/
+/-- Under a hypothesis, a fronted wh-phrase is predicted licit exactly when its fronting to
+Spec,CP obeys Freezing, and a wh-phrase in situ is unconstrained. -/
 def Licit (e : Extraction) (hyp : OrderHypothesis) : Prop :=
-  e.fronted → ∃ x ∈ e.clause.arg? e.extracted, ¬ (e.clause.derivation hyp e.order).Frozen x
+  e.fronted → ∃ x ∈ e.clause.arg? e.extracted,
+    ((e.clause.derivation hyp e.order).append [.em .left c₀, .im x]).ObeysFreezing
 
 instance (e : Extraction) (hyp : OrderHypothesis) : Decidable (e.Licit hyp) := by
   unfold Licit; infer_instance
@@ -521,9 +525,9 @@ theorem surface_sides (σ : Sides) :
 
 /-! ### English passives (§7) -/
 
-def wasInjured : LIToken := ⟨.simple .V [] (phonForm := "was injured"), 21⟩
-def theBoy : LIToken := ⟨.simple .N [] (phonForm := "the boy"), 22⟩
-def byHimself : LIToken := ⟨.simple .P [] (phonForm := "by himself"), 23⟩
+def wasInjured : LexicalItem.Token := ⟨.simple .V [] (phonForm := "was injured"), 21⟩
+def theBoy : LexicalItem.Token := ⟨.simple .N [] (phonForm := "the boy"), 22⟩
+def byHimself : LexicalItem.Token := ⟨.simple .P [] (phonForm := "by himself"), 23⟩
 
 /-- In the English passive (97)–(98) of (95), the patient is [larson-1988]'s specifier of VP and
 the agent an adjunct, a *by*-phrase leaf below it, with no argument in Spec,vP, since the passive

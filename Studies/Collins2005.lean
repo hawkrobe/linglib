@@ -40,7 +40,8 @@ The passive is a `Derivation` on the syntactic-object carrier under each of the 
 the surface strings are its externalizations, Relativized Minimality is the substrate's
 closest-goal relation at the stage where Infl attracts, smuggling and remnant fronting are the
 substrate's step predicates, and the paper's examples are the rows: `rm_converges` singles out
-PartP movement, `licensing_rows` derives the c-command and binding judgments from surface and
+PartP movement, which `converges_iff_not_obeysFreezing` shows the one analysis Freezing
+excludes, `licensing_rows` derives the c-command and binding judgments from surface and
 derivational c-command, the binding judgments being the conditions of `Syntax/Binding` at the
 levels the paper assigns them, of which the rows force Principle B's (`principleB_anyStage`),
 `participle_rows` the auxiliary paradigm from the licensing principle, and `active_shares_vP`
@@ -101,35 +102,35 @@ in Spec,VP (17), or a PP, the leaf standing in for the PP the pseudo-passive str
 preposition from. -/
 structure Clause where
   /-- The verb, in its participial form. -/
-  verb : LIToken
+  verb : LexicalItem.Token
   /-- The external argument, Merged in Spec,vP. -/
-  agent : LIToken
+  agent : LexicalItem.Token
   /-- The internal argument. -/
-  patient : LIToken
+  patient : LexicalItem.Token
   /-- The auxiliary *be*. -/
-  be : LIToken
+  be : LexicalItem.Token
   /-- A particle, stranded preposition or PP, the verb's complement with the patient in Spec,VP
   (17). -/
-  extra : Option LIToken
+  extra : Option LexicalItem.Token
 
 /-- The participle head, silent, over the VP. -/
-def part₀ : LIToken := ⟨.simple .Asp [.V], 5⟩
+def part₀ : LexicalItem.Token := ⟨.simple .Asp [.V], 5⟩
 
 /-- The light verb, over PartP and the external argument. -/
-def v₀ : LIToken := ⟨.simple .v [.Asp, .D], 6⟩
+def v₀ : LexicalItem.Token := ⟨.simple .v [.Asp, .D], 6⟩
 
 /-- Voice, *by*, which takes a vP (§4). -/
-def by₀ : LIToken := ⟨.simple .Voice [.v] (phonForm := "by"), 7⟩
+def by₀ : LexicalItem.Token := ⟨.simple .Voice [.v] (phonForm := "by"), 7⟩
 
 /-- The host X of an evacuated PP, (58): a second participial layer over PartP that takes the
 PP, so that v selects the same category with or without evacuation. -/
-def x₀ : LIToken := ⟨.simple .Asp [.Asp, .P], 8⟩
+def x₀ : LexicalItem.Token := ⟨.simple .Asp [.Asp, .P], 8⟩
 
 /-- Infl. -/
-def infl₀ : LIToken := ⟨.simple .T [], 9⟩
+def infl₀ : LexicalItem.Token := ⟨.simple .T [], 9⟩
 
 /-- The auxiliary *have* of the active perfect (26). -/
-def has₀ : LIToken := ⟨.simple .V [] (phonForm := "has"), 10⟩
+def has₀ : LexicalItem.Token := ⟨.simple .V [] (phonForm := "has"), 10⟩
 
 namespace Clause
 
@@ -276,9 +277,16 @@ theorem rm_converges (a : Analysis) :
     ex9.Converges a false ↔ a = .partP := by
   cases a <;> decide
 
-/-- The smuggled object is extracted from a moved constituent: the paper assumes that
-[muller-1998]'s Freezing, (35), does not hold of PartP movement (fn. 25). -/
-theorem smuggled_frozen : (ex9.passive .partP false).Frozen ex9.patient := by decide
+/-- Of the three analyses, the one that converges is the one that violates [muller-1998]'s
+Freezing (35): the object raises out of the fronted PartP that smuggled it, so the paper assumes
+that Freezing does not hold of PartP movement (fn. 25). -/
+theorem converges_iff_not_obeysFreezing (a : Analysis) :
+    ex9.Converges a false ↔ ¬ (ex9.passive a false).ObeysFreezing := by
+  cases a
+  · refine iff_of_true ((rm_converges _).2 rfl) ?_
+    exact (show (ex9.preRaising .partP false).IsSmugglingStep (ex9.voiceP false).length
+      ex9.patient ex9.agent by decide).not_obeysFreezing_append_im .left
+  all_goals decide
 
 /-- θ-uniformity in the structure: at the vP stage of the active and of the passive alike, the
 external argument c-commands the internal one. -/
@@ -347,7 +355,7 @@ inductive Position
   deriving DecidableEq, Fintype, Repr
 
 /-- The leaf at a position. -/
-def Clause.at? (p : Clause) : Position → Option LIToken
+def Clause.at? (p : Clause) : Position → Option LexicalItem.Token
   | .external => some p.agent
   | .pp => p.extra
 

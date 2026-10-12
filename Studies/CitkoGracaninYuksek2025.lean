@@ -72,7 +72,7 @@ open Minimalist.SyntacticObject (Vertex)
 
 /-- `tok` builds a token from a category, its selection, its form, and the wh and [E] features. -/
 def tok (id : ℕ) (cat : Cat) (sel : SelStack := []) (phon : String := "") (wh : Bool := false)
-    (ellipsis : Bool := false) : LIToken :=
+    (ellipsis : Bool := false) : LexicalItem.Token :=
   ⟨LexicalItem.simple cat sel phon wh ellipsis, id⟩
 
 def what := tok 1 .D (phon := "what") (wh := true)
@@ -104,23 +104,24 @@ def saw := tok 20 .V [.D] "saw"
 
 /-- `clause` builds `[CP wh [C′ c [TP subj [T′ T [vP wh [v′ v VP]]]]]]`, the wh-phrase moved through
 the edge of vP. -/
-def clause (wh c subj T v : LIToken) (VP : PlanarSyntacticObject) : PlanarSyntacticObject :=
+def clause (wh c subj T v : LexicalItem.Token)
+    (VP : PlanarSyntacticObject) : PlanarSyntacticObject :=
   wh * (c * (subj * (T * (traceOf wh * (v * VP)))))
 
 /-- In non-bulk sharing under the complementizers `c₁` and `c₂`, each wh-phrase stays in its own
 conjunct and the subject, T, v and verb are shared ((10b), (14), (16b), (38d), (45b), (46b)). -/
-def nonBulk (c₁ c₂ : LIToken) : PlanarSyntacticObject :=
+def nonBulk (c₁ c₂ : LexicalItem.Token) : PlanarSyntacticObject :=
   (clause what c₁ you T v (teach * traceOf what)) * (clause when c₂ you T v (teach * traceOf when))
 
 /-- In bulk sharing one C′ sits under both wh-phrases, both of which moved through its vP edge
 ((12b), (20b)). -/
-def bulk (c : LIToken) : PlanarSyntacticObject :=
+def bulk (c : LexicalItem.Token) : PlanarSyntacticObject :=
   let c' := c * (you * (T * (traceOf what * (traceOf when * (v * ((teach * traceOf what) *
     traceOf when))))))
   (what * c') * (when * c')
 
 /-- Footnote 21's alternative to `bulk` shares a TP under two complementizers. -/
-def bulkTP (c₁ c₂ : LIToken) : PlanarSyntacticObject :=
+def bulkTP (c₁ c₂ : LexicalItem.Token) : PlanarSyntacticObject :=
   let tp := you * (T * (traceOf what * (traceOf when * (v * ((teach * traceOf what) *
     traceOf when)))))
   (what * (c₁ * tp)) * (when * (c₂ * tp))
@@ -140,7 +141,7 @@ def csEllipsis : PlanarSyntacticObject :=
 
 /-- In a multiple question both wh-phrases are fronted through the vP edge, as in (28b) and, under
 an [E] complementizer, the multiple sluice (29b). -/
-def multipleQuestion (c : LIToken) : PlanarSyntacticObject :=
+def multipleQuestion (c : LexicalItem.Token) : PlanarSyntacticObject :=
   who * (what * (c * (traceOf who * (T * (traceOf who * (traceOf what * (v * (saw *
     traceOf what))))))))
 
@@ -181,7 +182,8 @@ instance : DecidablePred Paired := fun _ ↦ inferInstanceAs (Decidable (∃ _ �
 /-! ### Economy and Pronunciation Economy (39) -/
 
 /-- The tokens of `t`, each once. -/
-def tokens (t : PlanarSyntacticObject) : Finset LIToken := ((tokenList t.val).map (·.2)).toFinset
+def tokens (t : PlanarSyntacticObject) : Finset LexicalItem.Token :=
+  ((tokenList t.val).map (·.2)).toFinset
 
 /-- The terms of `t` are its subtrees, a shared constituent counted once, as
 [marcolli-chomsky-berwick-2025]'s `subtrees` taken each once. -/
@@ -197,8 +199,8 @@ def planarCost (t : PlanarSyntacticObject) : DerivationCost
   | .ellipsisOps => (elidedDomains t).length
 
 /-- The pronounceable tokens the application of ellipsis at the domain `K` silences. -/
-def silencedBy (t : PlanarSyntacticObject) (K : Core.Order.TreePath) : Finset LIToken :=
-  (tokens t).filter fun s ↦ s.phonForm?.isSome ∧ (occurrences t s).any (decide <| K ≤ ·)
+def silencedBy (t : PlanarSyntacticObject) (K : Core.Order.TreePath) : Finset LexicalItem.Token :=
+  (tokens t).filter fun s ↦ s.item.outerPhonForm?.isSome ∧ (occurrences t s).any (decide <| K ≤ ·)
 
 /-- The application at `K` is vacuous when the earlier applications already silenced every token
 it silences. -/
@@ -220,7 +222,7 @@ instance (t : PlanarSyntacticObject) : Decidable (PronunciationEconomy t) :=
 /-- `projection t` finds the specifiers and head of the projection at the root of `t`. Going down
 the right spine, the specifiers are the left daughters above the head, which is the first
 selecting item met; the result is `none` when the spine ends first. -/
-def projection : RoseTree Vertex → Option (List (RoseTree Vertex) × LIToken)
+def projection : RoseTree Vertex → Option (List (RoseTree Vertex) × LexicalItem.Token)
   | .node (.inl none) [.node (.inl (some tok)) [], r] =>
       if tok.item.outerSel = [] then
         (projection r).map fun x ↦ (.node (.inl (some tok)) [] :: x.1, x.2)
@@ -230,7 +232,7 @@ def projection : RoseTree Vertex → Option (List (RoseTree Vertex) × LIToken)
 
 /-- The token heading a constituent is its raising head, and for a deleted copy the token whose
 phrase it copies. -/
-def headToken? (s : RoseTree Vertex) : Option LIToken :=
+def headToken? (s : RoseTree Vertex) : Option LexicalItem.Token :=
   match s.value with
   | .inr (some tok) => some tok
   | _ => treeRaisingHead s
@@ -244,7 +246,7 @@ instance (s : RoseTree Vertex) : Decidable (IsWhSpecifier s) :=
 
 /-- The heads of the projections whose edges host several wh-specifiers, each of which receives
 an asterisk. -/
-def asterisked (t : PlanarSyntacticObject) : List LIToken :=
+def asterisked (t : PlanarSyntacticObject) : List LexicalItem.Token :=
   t.val.positionedSubtrees.filterMap fun x ↦ (projection x.2).bind fun y ↦
     if 1 < y.1.countP (decide <| IsWhSpecifier ·) then some y.2 else none
 
@@ -385,7 +387,7 @@ def topics' := tok 34 .N (phon := "topics")
 def pivot : PlanarSyntacticObject := on * (different * topics)
 
 /-- `[TP subj [T′ T VP]]`. -/
-def tp (subj T : LIToken) (VP : PlanarSyntacticObject) : PlanarSyntacticObject :=
+def tp (subj T : LexicalItem.Token) (VP : PlanarSyntacticObject) : PlanarSyntacticObject :=
   subj * (T * VP)
 
 /-- Example (53b), after the pruning of [belk-neeleman-philip-2023] that removes the shared pivot

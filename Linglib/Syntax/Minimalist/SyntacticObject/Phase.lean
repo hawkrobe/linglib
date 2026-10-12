@@ -80,7 +80,7 @@ namespace SyntacticObject
 
 open Relation
 
-variable (T : SyntacticObject) (ℓ : LIToken) (x z : SyntacticObject)
+variable (T : SyntacticObject) (ℓ : LexicalItem.Token) (x z : SyntacticObject)
 
 /-- `ℓ` heads a phase of `T` when it projects, heading a mother of its leaf. -/
 def IsPhaseHead : Prop := ∃ m ∈ T.terms, m.raisingHead = some ℓ ∧ immediatelyContains m (leaf ℓ)
@@ -208,18 +208,20 @@ variable (T) in
 a goal within the complement of a phase head is reachable only from within its phase, under
 [chomsky-2001]'s condition only once a phase head above it is merged and the probe lies outside
 that head's interior. -/
-def Accessible (heads : List LIToken) : Impenetrability → SyntacticObject → SyntacticObject → Prop
+def Accessible (heads : List LexicalItem.Token) :
+    Impenetrability → SyntacticObject → SyntacticObject → Prop
   | .phase, probe, goal => ∀ H ∈ heads, T.WithinComplement H goal → T.WithinProjection H probe
   | .nextPhase, probe, goal => ∀ H ∈ heads, T.WithinComplement H goal → ∀ Z ∈ heads, Z ≠ H →
       T.WithinProjection Z (leaf H) → ¬ T.WithinComplement Z probe → T.WithinProjection H probe
 
-instance (heads : List LIToken) (s : Impenetrability) (probe goal : SyntacticObject) :
+instance (heads : List LexicalItem.Token) (s : Impenetrability) (probe goal : SyntacticObject) :
     Decidable (T.Accessible heads s probe goal) := by
   cases s <;> dsimp only [Accessible] <;> infer_instance
 
 /-- [chomsky-2000]'s condition is the stronger: what it leaves accessible, [chomsky-2001]'s does
 too. -/
-theorem Accessible.nextPhase_of_phase {heads : List LIToken} {probe goal : SyntacticObject}
+theorem Accessible.nextPhase_of_phase {heads : List LexicalItem.Token}
+    {probe goal : SyntacticObject}
     (h : T.Accessible heads .phase probe goal) : T.Accessible heads .nextPhase probe goal :=
   fun H hH hg _ _ _ _ _ ↦ h H hH hg
 

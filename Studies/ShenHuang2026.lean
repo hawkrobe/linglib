@@ -75,25 +75,25 @@ structure Config where
 /-! ### The object DP (5) -/
 
 /-- The wh-phrase, the complement of *about*. -/
-def wh : LIToken := ⟨.simple .D [] "what" true, 0⟩
+def wh : LexicalItem.Token := ⟨.simple .D [] "what" true, 0⟩
 
 /-- The preposition of the depiction nominal. -/
-def about : LIToken := ⟨.simple .P [.D] "about", 1⟩
+def about : LexicalItem.Token := ⟨.simple .P [.D] "about", 1⟩
 
 /-- The head noun, selecting the depiction PP. -/
-def book : LIToken := ⟨.simple .N [.P] "book", 2⟩
+def book : LexicalItem.Token := ⟨.simple .N [.P] "book", 2⟩
 
 /-- The demonstrative determiner of a definite object. -/
-def that : LIToken := ⟨.simple .D [.N] "that", 3⟩
+def that : LexicalItem.Token := ⟨.simple .D [.N] "that", 3⟩
 
 /-- The indefinite determiner. -/
-def a : LIToken := ⟨.simple .D [.N] "a", 4⟩
+def a : LexicalItem.Token := ⟨.simple .D [.N] "a", 4⟩
 
 /-- The main verb. -/
-def verb : LIToken := ⟨.simple .V [.D], 5⟩
+def verb : LexicalItem.Token := ⟨.simple .V [.D], 5⟩
 
 /-- The determiner of the object is the demonstrative when it is definite. -/
-def determiner : Definiteness → LIToken
+def determiner : Definiteness → LexicalItem.Token
   | .definite => that
   | .indefinite => a
 
@@ -144,7 +144,7 @@ def Config.covertTree (c : Config) : PlanarSyntacticObject :=
 
 /-- On the DP phasehood account (§2.1) the demonstrative heads a phase, which a verb of creation
 collapses by incorporating it. -/
-def Config.phaseHead (c : Config) : Option LIToken :=
+def Config.phaseHead (c : Config) : Option LexicalItem.Token :=
   if c.object = .definite ∧ c.creation = false then some that else none
 
 /-- The demonstrative-marked DP is the specific one, in [fiengo-1987]'s sense of familiar. -/
@@ -315,7 +315,7 @@ section Linearization
 open Terminal
 
 /-- Each terminal spells out its own lexical item. -/
-def Terminal.token : Terminal → LIToken
+def Terminal.token : Terminal → LexicalItem.Token
   | what => ⟨.simple .D [], 11⟩
   | «do» => ⟨.simple .T [], 12⟩
   | you => ⟨.simple .D [], 13⟩
@@ -325,11 +325,11 @@ def Terminal.token : Terminal → LIToken
   | eat => ⟨.simple .V [], 17⟩
 
 /-- A lexical item spells out at most one terminal. -/
-def Terminal.ofToken? (tok : LIToken) : Option Terminal :=
+def Terminal.ofToken? (tok : LexicalItem.Token) : Option Terminal :=
   [what, «do», you, think, mary, would, eat].find? (·.token = tok)
 
 /-- The embedded complementizer is silent. -/
-def embeddedC : LIToken := ⟨.simple .C [], 18⟩
+def embeddedC : LexicalItem.Token := ⟨.simple .C [], 18⟩
 
 /-- In the embedded clause *eat* merges with *what*, then *would*, *Mary* and the
 complementizer. -/

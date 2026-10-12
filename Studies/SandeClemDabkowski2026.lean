@@ -249,7 +249,7 @@ theorem optimal_rootFree :
 
 
 /-- Each terminal spells out its own lexical item. -/
-def Terminal.token : Terminal → LIToken
+def Terminal.token : Terminal → LexicalItem.Token
   | .particle => ⟨.simple .P [], 1⟩
   | .subject => ⟨.simple .D [], 2⟩
   | .aux => ⟨.simple .T [], 3⟩
@@ -257,17 +257,17 @@ def Terminal.token : Terminal → LIToken
   | .object => ⟨.simple .D [], 5⟩
 
 /-- A lexical item spells out at most one terminal. -/
-def Terminal.ofToken? (tok : LIToken) : Option Terminal :=
+def Terminal.ofToken? (tok : LexicalItem.Token) : Option Terminal :=
   [Terminal.particle, .subject, .aux, .verb, .object].find? (·.token = tok)
 
 /-- The light verb v is silent. -/
-def v₀ : LIToken := ⟨.simple .v [], 6⟩
+def v₀ : LexicalItem.Token := ⟨.simple .v [], 6⟩
 
 /-- The T a raised verb adjoins to is silent. -/
-def T₀ : LIToken := ⟨.simple .T [], 7⟩
+def T₀ : LexicalItem.Token := ⟨.simple .T [], 7⟩
 
 /-- The complementizer C is silent. -/
-def C₀ : LIToken := ⟨.simple .C [], 8⟩
+def C₀ : LexicalItem.Token := ⟨.simple .C [], 8⟩
 
 /-- The remnant VP that fronts holds the particle between the traces of the object and the
 verb. -/

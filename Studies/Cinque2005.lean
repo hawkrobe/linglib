@@ -100,10 +100,10 @@ inductive Marked
   | withoutPiedPiping | pictureOfWho | partialMovement
   deriving DecidableEq, Repr
 
-def tokN : LIToken := ⟨.simple .N [], 1⟩
-def tokA : LIToken := ⟨.simple .A [], 2⟩
-def tokNum : LIToken := ⟨.simple .Num [], 3⟩
-def tokDem : LIToken := ⟨.simple .Dem [], 4⟩
+def tokN : LexicalItem.Token := ⟨.simple .N [], 1⟩
+def tokA : LexicalItem.Token := ⟨.simple .A [], 2⟩
+def tokNum : LexicalItem.Token := ⟨.simple .Num [], 3⟩
+def tokDem : LexicalItem.Token := ⟨.simple .Dem [], 4⟩
 
 /-- The tree contains the overt noun; a trace does not count (7b-vi). -/
 def hasN : RoseTree SyntacticObject.Vertex → Bool
@@ -133,7 +133,7 @@ structure Stage where
 
 /-- Merge the modifier `m` above the current object, then optionally raise a subtree containing
 the overt noun to the left edge. -/
-def step (m : LIToken) (st : Stage) : List Stage :=
+def step (m : LexicalItem.Token) (st : Stage) : List Stage :=
   let d : Derivation := ⟨st.derivation.initial, st.derivation.steps ++ [.em .left (leaf m)]⟩
   let p := m * st.planar
   ⟨d, p, st.marks, st.raises⟩ ::

@@ -49,7 +49,7 @@ namespace Minimalist
 
 open RoseTree SyntacticObject Core.Order PhraseStructure
 
-variable (t : PlanarSyntacticObject) (tok : LIToken)
+variable (t : PlanarSyntacticObject) (tok : LexicalItem.Token)
 
 /-- The interior of the phase headed at `h` is the set of positions the head c-commands. -/
 def interior (h : TreePath) : Set TreePath := {q | CCommands t.val h q}
@@ -59,7 +59,7 @@ instance (h q : TreePath) : Decidable (q ∈ interior t h) :=
 
 /-- The interior positions of a phase head occurring only at `a` carry the terms within its
 complement. -/
-theorem withinComplement_iff_exists_mem_interior {t : PlanarSyntacticObject} {ℓ : LIToken}
+theorem withinComplement_iff_exists_mem_interior {t : PlanarSyntacticObject} {ℓ : LexicalItem.Token}
     {a : t.val.Positions} {x : SyntacticObject}
     (hu : ∀ q, t.termAt q = SyntacticObject.leaf ℓ ↔ q = a)
     (hph : (t : SyntacticObject).IsPhaseHead ℓ) :

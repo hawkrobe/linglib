@@ -99,7 +99,7 @@ inductive Term
   deriving DecidableEq, Repr, Fintype
 
 /-- Each terminal spells out its own lexical item, v+V being the complex head of v and V. -/
-def Term.token : Term → LIToken
+def Term.token : Term → LexicalItem.Token
   | .dp .agent => ⟨.simple .D [], 1⟩
   | .dp .theme => ⟨.simple .D [], 2⟩
   | .pp => ⟨.simple .P [], 3⟩
@@ -108,11 +108,11 @@ def Term.token : Term → LIToken
   | .aux => ⟨.simple .T [], 6⟩
 
 /-- A lexical item spells out at most one terminal. -/
-def Term.ofToken? (tok : LIToken) : Option Term :=
+def Term.ofToken? (tok : LexicalItem.Token) : Option Term :=
   [Term.dp .agent, .dp .theme, .pp, .voice, .verb, .aux].find? (·.token = tok)
 
 /-- The complementizer that attracts the Ā-extracted phrase is silent. -/
-def C₀ : LIToken := ⟨.simple .C [], 7⟩
+def C₀ : LexicalItem.Token := ⟨.simple .C [], 7⟩
 
 /-- An extracted phrase is a nominal or the PP. -/
 def Extracted.term : Extracted → Term

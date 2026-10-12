@@ -84,14 +84,14 @@ theorem mem_positions_iff {β : Type*} {f : Vertex → Option β} {t : RoseTree 
     fun ⟨s, hs, hb⟩ ↦ ⟨p, s, hs, b, hb, rfl, rfl⟩⟩
 
 /-- The pronounced copies, left to right. -/
-def tokenList : RoseTree Vertex → List (TreePath × LIToken) :=
+def tokenList : RoseTree Vertex → List (TreePath × LexicalItem.Token) :=
   positions (Sum.elim id fun _ ↦ none)
 
 /-- The deleted copies, left to right. -/
-def traceList : RoseTree Vertex → List (TreePath × LIToken) :=
+def traceList : RoseTree Vertex → List (TreePath × LexicalItem.Token) :=
   positions (Sum.elim (fun _ ↦ none) id)
 
-variable (t : PlanarSyntacticObject) (tok : LIToken)
+variable (t : PlanarSyntacticObject) (tok : LexicalItem.Token)
 
 /-- The positions of the pronounced copies of `tok`. -/
 def occurrences : List TreePath :=
@@ -126,14 +126,15 @@ theorem projectionAt_le (p : TreePath) : projectionAt t p ≤ p := maximalProjec
 
 /-- A deleted copy has an antecedent when the projection of a pronounced copy of its token
 c-commands it. -/
-def HasAntecedent (x : TreePath × LIToken) : Prop :=
+def HasAntecedent (x : TreePath × LexicalItem.Token) : Prop :=
   ∃ p ∈ occurrences t x.2, CCommands t.val (projectionAt t p) x.1
 
-instance (x : TreePath × LIToken) : Decidable (HasAntecedent t x) :=
+instance (x : TreePath × LexicalItem.Token) : Decidable (HasAntecedent t x) :=
   inferInstanceAs (Decidable (∃ _ ∈ _, _))
 
 /-- The deleted copies without antecedents. -/
-def orphanTraces : List (TreePath × LIToken) := (traceList t.val).filter (¬ HasAntecedent t ·)
+def orphanTraces : List (TreePath × LexicalItem.Token) :=
+  (traceList t.val).filter (¬ HasAntecedent t ·)
 
 /-! ### Links -/
 

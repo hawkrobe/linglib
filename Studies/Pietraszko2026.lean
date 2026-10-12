@@ -301,23 +301,23 @@ theorem optional_T_overgenerates :
 /-! ### The trees the derivation builds -/
 
 /-- The object. -/
-def obj : LIToken := ⟨.simple .D [] "obj", 0⟩
+def obj : LexicalItem.Token := ⟨.simple .D [] "obj", 0⟩
 
 /-- The subject. -/
-def subj : LIToken := ⟨.simple .D [] "subj", 1⟩
+def subj : LexicalItem.Token := ⟨.simple .D [] "subj", 1⟩
 
 /-- The verb. -/
-def V : LIToken := ⟨.simple .V [.D] "V", 2⟩
+def V : LexicalItem.Token := ⟨.simple .V [.D] "V", 2⟩
 
 /-- The head that introduces the subject, below Voice (fn. 3). -/
-def v : LIToken := ⟨.simple .v [.V, .D] "v", 3⟩
+def v : LexicalItem.Token := ⟨.simple .v [.V, .D] "v", 3⟩
 
 /-- The head at index `i` of a spine, selecting the category of the head below it. -/
-def tokOf (sp : Spine) (i : ℕ) (hd : Head) : LIToken :=
+def tokOf (sp : Spine) (i : ℕ) (hd : Head) : LexicalItem.Token :=
   ⟨.simple hd.cat [if i = 0 then .v else ((sp[i - 1]?).map Head.cat).getD .v] "", 10 + i⟩
 
 /-- The phase heads of a spine. -/
-def phaseHeads (sp : Spine) : List LIToken :=
+def phaseHeads (sp : Spine) : List LexicalItem.Token :=
   (sp.zipIdx.filter (·.1.phase)).map fun x ↦ tokOf sp x.2 x.1
 
 /-- The copy of the subject at height `j`, when it is pronounced at height `k`. -/

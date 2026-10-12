@@ -52,7 +52,7 @@ terminal elements" (quoting [chomsky-1995-bare] §4), and the strict head is
 recovered via `sel`. `SyntacticObject.linearize` is the harmonic candidate for the
 externalization section σ_L, defined on `Dom(h)` only — the book's σ_L must extend
 it *noncanonically* off `Dom(h)`. Conceptually the yield component is
-`WithZero (FreeMonoid LIToken)`: a silent trace is the unit, exocentricity the
+`WithZero (FreeMonoid LexicalItem.Token)`: a silent trace is the unit, exocentricity the
 absorbing zero, and head-final placement is multiplication in the opposite monoid.
 
 Only the two harmonic sections are realized: uniform head-side placement is right
@@ -68,7 +68,8 @@ open RoseTree UnorderedTree
 
 /-- Place the head daughter's yield on the convention side: `.initial` → head-yield
     first, `.final` → head-yield last. -/
-def placeYield : ConventionDir → List LIToken → List LIToken → List LIToken
+def placeYield :
+    ConventionDir → List LexicalItem.Token → List LexicalItem.Token → List LexicalItem.Token
   | .initial, headY, otherY => headY ++ otherY
   | .final,   headY, otherY => otherY ++ headY
 
@@ -78,7 +79,7 @@ def placeYield : ConventionDir → List LIToken → List LIToken → List LIToke
     with its residual stack, enriched with the yield; `0` off `Dom(h)`. The `side`
     parameter is phantom in the carrier — the multiplication reads it. -/
 structure LinearizationState (side : ConventionDir) : Type where
-  toOption : Option ((LIToken × List Cat) × List LIToken)
+  toOption : Option ((LexicalItem.Token × List Cat) × List LexicalItem.Token)
 deriving DecidableEq
 
 namespace LinearizationState
@@ -86,7 +87,8 @@ namespace LinearizationState
 variable {side : ConventionDir}
 
 /-- A defined state: projecting head `tok`, residual stack `stack`, yield `yld`. -/
-def of (tok : LIToken) (stack : List Cat) (yld : List LIToken) : LinearizationState side :=
+def of (tok : LexicalItem.Token) (stack : List Cat)
+    (yld : List LexicalItem.Token) : LinearizationState side :=
   ⟨some ((tok, stack), yld)⟩
 
 /-- Merge-local externalization: the `selCombine` decision places the projecting
@@ -103,7 +105,7 @@ instance : MulZeroClass (LinearizationState side) where
   mul_zero x := by rcases x with ⟨_ | _⟩ <;> rfl
 
 /-- `*` on defined states: the canonical accessor. -/
-theorem some_mul_some (s₁ s₂ : LIToken × List Cat) (y₁ y₂ : List LIToken) :
+theorem some_mul_some (s₁ s₂ : LexicalItem.Token × List Cat) (y₁ y₂ : List LexicalItem.Token) :
     (⟨some (s₁, y₁)⟩ * ⟨some (s₂, y₂)⟩ : LinearizationState side) =
       ⟨(selCombine ⟨some s₁⟩ ⟨some s₂⟩).map fun p =>
           (p.2, placeYield side (bif p.1 then y₁ else y₂) (bif p.1 then y₂ else y₁))⟩ := rfl
@@ -128,16 +130,17 @@ def sel : LinearizationState side →ₙ* SelectionState where
       simp only [Option.map_map]
       rfl
 
-@[simp] theorem sel_of (tok : LIToken) (stack : List Cat) (yld : List LIToken) :
+@[simp] theorem sel_of (tok : LexicalItem.Token) (stack : List Cat) (yld : List LexicalItem.Token) :
     sel (of tok stack yld : LinearizationState side) = .of tok stack := rfl
 
 @[simp] theorem sel_zero : sel (0 : LinearizationState side) = 0 := rfl
 
 /-- The yield component: the ordered leaf sequence, `none` off `Dom(h)`. -/
-def yield (x : LinearizationState side) : Option (List LIToken) :=
+def yield (x : LinearizationState side) : Option (List LexicalItem.Token) :=
   x.toOption.map (·.2)
 
-@[simp] theorem yield_of (tok : LIToken) (stack : List Cat) (yld : List LIToken) :
+@[simp] theorem yield_of (tok : LexicalItem.Token) (stack : List Cat)
+    (yld : List LexicalItem.Token) :
     (of tok stack yld : LinearizationState side).yield = some yld := rfl
 
 @[simp] theorem yield_zero : (0 : LinearizationState side).yield = none := rfl
@@ -152,22 +155,22 @@ variable (side : ConventionDir)
 
 /-- The linearization state of a trace: silent, and saturated as `traceState` has it, a copy of
     the phrase its token heads. -/
-def traceLinearizationState : Option LIToken → LinearizationState side
+def traceLinearizationState : Option LexicalItem.Token → LinearizationState side
   | some tok => .of tok [] []
-  | none => .of (mkTraceToken 0) [] []
+  | none => .of .bareTrace [] []
 
 /-- The head function's value on a syntactic object: the `liftFun` of pronounced
     lexical leaves and the silent, saturated traces. -/
 def linearizationState (s : SyntacticObject) : LinearizationState side :=
   liftFun (fun tok => .of tok tok.item.outerSel [tok]) (traceLinearizationState side) s
 
-@[simp] theorem linearizationState_leaf (tok : LIToken) :
+@[simp] theorem linearizationState_leaf (tok : LexicalItem.Token) :
     (SyntacticObject.leaf tok).linearizationState side = .of tok tok.item.outerSel [tok] := rfl
 
 @[simp] theorem linearizationState_trace :
-    trace.linearizationState side = .of (mkTraceToken 0) [] [] := rfl
+    trace.linearizationState side = .of .bareTrace [] [] := rfl
 
-@[simp] theorem linearizationState_traceOf (tok : LIToken) :
+@[simp] theorem linearizationState_traceOf (tok : LexicalItem.Token) :
     (traceOf tok).linearizationState side = .of tok [] [] := rfl
 
 @[simp] theorem linearizationState_node (l r : SyntacticObject) :
@@ -192,14 +195,14 @@ theorem sel_comp_headHom :
 /-- The surface token order under head-side convention `side`
     ([marcolli-chomsky-berwick-2025] §1.12.1): the yield readout of the
     linearization state. Not a morphism — placing a yield needs the head. -/
-def linearize (s : SyntacticObject) : Option (List LIToken) :=
+def linearize (s : SyntacticObject) : Option (List LexicalItem.Token) :=
   (s.linearizationState side).yield
 
 /-- The pronounced surface forms: the yield with unpronounced tokens dropped. -/
 def phonYield (s : SyntacticObject) : Option (List String) :=
-  (s.linearize side).map (·.filterMap LIToken.phonForm?)
+  (s.linearize side).map (·.filterMap (·.item.outerPhonForm?))
 
-@[simp] theorem linearize_leaf (tok : LIToken) :
+@[simp] theorem linearize_leaf (tok : LexicalItem.Token) :
     (SyntacticObject.leaf tok).linearize side = some [tok] := rfl
 
 @[simp] theorem linearize_trace : trace.linearize side = some [] := rfl

@@ -27,8 +27,8 @@ Foc° as CP-phase head gives the derivation, Force° does not.
 
 ## Implementation notes
 
-The spine (68) is a planar syntactic object over `Minimalist.LIToken`s, and `Closed p` reads
-the Phase Impenetrability Condition off it: *non* is outside the interior of the phase headed by
+The spine (68) is a planar syntactic object over tokens, and `Closed p` reads the Phase
+Impenetrability Condition off it: *non* is outside the interior of the phase headed by
 `p` exactly when `p` merged first. The representation (73) carries the raised TP in the
 specifier of the focus phrase, and the focus-side requirements read `areSistersIn` off it. The
 requirement a construction places on the clause is a feature of its example row, so the
@@ -175,28 +175,28 @@ theorem sneg_not_ene :
 /-! ### The representation: (59), (65), (68), and (73) -/
 
 /-- The negative marker *non* of (59): a head selecting the focus phrase. -/
-def non : LIToken := ⟨.simple .Neg [.Foc] "non", 0⟩
+def non : LexicalItem.Token := ⟨.simple .Neg [.Foc] "non", 0⟩
 
 /-- Force°, the highest head of the CP field in (68). -/
-def force : LIToken := ⟨.simple .Force [.Neg], 1⟩
+def force : LexicalItem.Token := ⟨.simple .Force [.Neg], 1⟩
 
 /-- Foc°, whose specifier hosts the raised TP. -/
-def foc : LIToken := ⟨.simple .Foc [.Top], 2⟩
+def foc : LexicalItem.Token := ⟨.simple .Foc [.Top], 2⟩
 
 /-- The lower Top° of (68), between Foc° and Fin°. -/
-def top : LIToken := ⟨.simple .Top [.Fin], 3⟩
+def top : LexicalItem.Token := ⟨.simple .Top [.Fin], 3⟩
 
 /-- Fin°, the lowest head of the CP field. -/
-def fin : LIToken := ⟨.simple .Fin [.T], 4⟩
+def fin : LexicalItem.Token := ⟨.simple .Fin [.T], 4⟩
 
 /-- T°. -/
-def t : LIToken := ⟨.simple .T [.v], 5⟩
+def t : LexicalItem.Token := ⟨.simple .T [.v], 5⟩
 
 /-- v*, the phase head of the verbal domain. -/
-def v : LIToken := ⟨.simple .v [.D], 6⟩
+def v : LexicalItem.Token := ⟨.simple .v [.D], 6⟩
 
 /-- An argument inside the v*P, the site of a negative-scope element. -/
-def arg : LIToken := ⟨.simple .D [], 7⟩
+def arg : LexicalItem.Token := ⟨.simple .D [], 7⟩
 
 /-- The v*P. -/
 def vP : PlanarSyntacticObject := v * arg
@@ -207,11 +207,11 @@ def spine : PlanarSyntacticObject := force * (non * (foc * (top * (fin * (t * vP
 /-- The v*P is closed to *non* under the CP-phase head `p`: the v*P lies in the interior of the
 phase `p` heads and *non* does not, so `p` merged first and transferred the v*P before *non*
 could bind into it ([chomsky-2001]'s Phase Impenetrability Condition). -/
-def Closed (p : LIToken) : Prop :=
+def Closed (p : LexicalItem.Token) : Prop :=
   (spine : SyntacticObject).WithinComplement p vP ∧
     ¬ (spine : SyntacticObject).WithinComplement p non
 
-instance (p : LIToken) : Decidable (Closed p) := inferInstanceAs (Decidable (_ ∧ _))
+instance (p : LexicalItem.Token) : Decidable (Closed p) := inferInstanceAs (Decidable (_ ∧ _))
 
 /-- (68): with Fin°, Top°, or Foc° as CP-phase head the v*P is closed when *non* merges; with
 Force°, merged after *non*, it is not. -/
@@ -240,7 +240,7 @@ instance : Decidable WholeTPFocused :=
 
 /-- Whether the representation meets a requirement, under CP-phase head `p`. A phrasal negator
 is excluded because the negator of (59) selects the focus phrase, which only a head does. -/
-def Allows (p : LIToken) : Requirement → Prop
+def Allows (p : LexicalItem.Token) : Requirement → Prop
   | .negScope => ¬ Closed p
   | .noNegScope => Closed p
   | .freeFocP => ¬ FocOccupied
@@ -249,11 +249,12 @@ def Allows (p : LIToken) : Requirement → Prop
   | .phrasalNegator => non.item.outerSel = []
   | .any => True
 
-instance (p : LIToken) (q : Requirement) : Decidable (Allows p q) := by
+instance (p : LexicalItem.Token) (q : Requirement) : Decidable (Allows p q) := by
   unfold Allows; cases q <;> infer_instance
 
 /-- The predictions depend on the phase head only through `Closed`. -/
-theorem allows_of_closed {p p' : LIToken} (hp : Closed p) (hp' : Closed p') (q : Requirement) :
+theorem allows_of_closed {p p' : LexicalItem.Token} (hp : Closed p) (hp' : Closed p')
+    (q : Requirement) :
     Allows p q ↔ Allows p' q := by
   cases q <;> simp [Allows, hp, hp']
 
@@ -264,7 +265,7 @@ private theorem rows_sneg_fin :
 
 /-- Sections 2 and 4: under any admissible CP-phase head, a Sneg row is acceptable exactly when
 the representation meets the requirement of the construction it tests. -/
-theorem rows_sneg {p : LIToken} (hp : Closed p) :
+theorem rows_sneg {p : LexicalItem.Token} (hp : Closed p) :
     ∀ r ∈ rows, r.construction = .sneg → ∀ q, r.requirement = some q →
       (r.judgment = .acceptable ↔ Allows p q) :=
   λ r hr hc q hq => (rows_sneg_fin r hr hc q hq).trans (allows_of_closed phase_heads.1 hp q)
@@ -279,7 +280,7 @@ theorem embedded_focus :
 /-- Table 2's Sneg row from the derivation: the strong class licenses no polarity class, the
 closed v*P excludes negative-scope elements, and (9a) to (9d) witness the rejection of each
 class. -/
-theorem table2_snegs {p : LIToken} (hp : Closed p) (c : PolarityClass) :
+theorem table2_snegs {p : LexicalItem.Token} (hp : Closed p) (c : PolarityClass) :
     c ∉ ENEnvironment.snegs.strength.licensed ∧ ¬ Allows p .negScope ∧
       ∃ r ∈ rows, r.polarity = some c ∧ r.requirement = some .negScope ∧
         r.judgment = .ungrammatical := by

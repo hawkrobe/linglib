@@ -179,10 +179,10 @@ theorem giveComb_adjunct_derivable :
   derives_node_of_thetaLocal ⟨[], rfl, .inl (.adjunct [])⟩
     giveComb_derivable (.unit (by simp [system, Color.IsTerminal]))
 
-variable (brian gave theBook toMary : LIToken)
+variable (brian gave theBook toMary : LexicalItem.Token)
 
 /-- The lexically anchored *give* comb. -/
-def anchoredGiveComb : Bud.Tree (Color LIToken) :=
+def anchoredGiveComb : Bud.Tree (Color LexicalItem.Token) :=
   .node .nontheta (.leaf (.lex brian [.down .agent]))
     (.node (.free (upGrid [.agent])) (.leaf (.lex theBook [.down .theme]))
       (.node (.free (upGrid [.agent, .theme]))

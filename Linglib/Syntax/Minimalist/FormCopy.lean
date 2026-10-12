@@ -65,15 +65,15 @@ variable {s t x y l r l' r' : SyntacticObject}
 /-- The tree of lexical items and traces an object inscribes, forgetting which token fills each
 leaf. -/
 def erase (s : SyntacticObject) : UnorderedTree (Option LexicalItem ⊕ Option LexicalItem) :=
-  s.val.map (Sum.map (Option.map LIToken.item) (Option.map LIToken.item))
+  s.val.map (Sum.map (Option.map LexicalItem.Token.item) (Option.map LexicalItem.Token.item))
 
 @[simp]
-theorem erase_leaf (tok : LIToken) :
+theorem erase_leaf (tok : LexicalItem.Token) :
     (leaf tok).erase = UnorderedTree.leaf (.inl (some tok.item)) :=
   map_leaf _ _
 
 @[simp]
-theorem erase_traceOf (tok : LIToken) :
+theorem erase_traceOf (tok : LexicalItem.Token) :
     (traceOf tok).erase = UnorderedTree.leaf (.inr (some tok.item)) :=
   map_leaf _ _
 

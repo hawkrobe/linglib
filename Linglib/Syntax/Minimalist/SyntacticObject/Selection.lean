@@ -43,14 +43,14 @@ head functions it is partial: `0` at exocentric nodes.
 
 ## Implementation notes
 
-`SelectionState` is a one-field structure over `Option (LIToken × List Cat)`, so that the
+`SelectionState` is a one-field structure over `Option (LexicalItem.Token × List Cat)`, so that the
 selection product can be an instance on it: the `Option` is implementation, and `0` is the
 public spelling of the exocentric failure, the off-domain value of a partial head function.
 There is no `One`, since two saturated states multiply to `0`, and no associativity claim, so the
 structure is `CommMagma` + `MulZeroClass` only. The trace of a token is a lower copy of the
 phrase it heads, so it gets that phrase's value, saturated with the token's category
 (`traceState`), and a head that selected the moved phrase still selects its trace; the bare
-trace remembers no token and gets the saturated dummy `.of (mkTraceToken 0) []`. `selCheck`
+trace remembers no token and gets the saturated dummy `.of .bareTrace []`. `selCheck`
 reads only the token's category and `outerSel`. Two saturated sisters have no head, as in
 [marcolli-chomsky-berwick-2025]'s partial head functions: a specifier and its sister are
 labeled, if at all, by the labeling algorithm (`SyntacticObject/Label.lean`).
@@ -67,22 +67,22 @@ open RoseTree UnorderedTree SyntacticObject
 /-- A constituent's selection state is the projecting head with its residual stack
     (`.of tok []` = saturated), and `0` off the endocentric domain. -/
 structure SelectionState : Type where
-  toOption : Option (LIToken × List Cat)
+  toOption : Option (LexicalItem.Token × List Cat)
 deriving DecidableEq
 
 /-- A defined selection state has projecting head `tok` and residual stack `stack`. -/
-def SelectionState.of (tok : LIToken) (stack : List Cat) : SelectionState :=
+def SelectionState.of (tok : LexicalItem.Token) (stack : List Cat) : SelectionState :=
   ⟨some (tok, stack)⟩
 
 instance : Zero SelectionState := ⟨⟨none⟩⟩
 
 /-- The projecting head token; `none` off the endocentric domain. -/
-def SelectionState.head (x : SelectionState) : Option LIToken := x.toOption.map (·.1)
+def SelectionState.head (x : SelectionState) : Option LexicalItem.Token := x.toOption.map (·.1)
 
 /-- The residual selectional stack (`some []` = saturated). -/
 def SelectionState.residual (x : SelectionState) : Option (List Cat) := x.toOption.map (·.2)
 
-@[simp] theorem SelectionState.head_of (tok : LIToken) (stack : List Cat) :
+@[simp] theorem SelectionState.head_of (tok : LexicalItem.Token) (stack : List Cat) :
     (SelectionState.of tok stack).head = some tok := rfl
 
 @[simp] theorem SelectionState.head_zero : (0 : SelectionState).head = none := rfl
@@ -93,7 +93,7 @@ variable (x y : SelectionState)
 
 /-- The selection decision at a binary node — (which sister projects, head,
     residual), `none` at exocentric nodes; `*` and `selSide` are its projections. -/
-def selCombine : SelectionState → SelectionState → Option (Bool × LIToken × List Cat)
+def selCombine : SelectionState → SelectionState → Option (Bool × LexicalItem.Token × List Cat)
   | ⟨some (ha, c :: rest)⟩, ⟨some (hb, [])⟩ =>
       if hb.item.outerCat = c then some (true, ha, rest) else none
   | ⟨some (ha, [])⟩, ⟨some (hb, c :: rest)⟩ =>
@@ -133,7 +133,7 @@ instance : CommMagma SelectionState where
 
 /-- Exocentricity is a zero divisor, since two saturated nonzero states multiply to `0`. -/
 example : ∃ x y : SelectionState, x ≠ 0 ∧ y ≠ 0 ∧ x * y = 0 :=
-  ⟨.of (mkTraceToken 0) [], .of (mkTraceToken 0) [], by decide⟩
+  ⟨.of .bareTrace [], .of .bareTrace [], by decide⟩
 
 /-- A state never combines with itself, since of two equal sisters neither selects the other. -/
 @[simp] theorem SelectionState.mul_self (x : SelectionState) : x * x = 0 := by
@@ -142,7 +142,7 @@ example : ∃ x y : SelectionState, x ≠ 0 ∧ y ≠ 0 ∧ x * y = 0 :=
 variable {x y}
 
 /-- The projected head is the head of the sister on the reported side. -/
-theorem selCombine_eq_some {b : Bool} {hd : LIToken} {res : List Cat}
+theorem selCombine_eq_some {b : Bool} {hd : LexicalItem.Token} {res : List Cat}
     (h : selCombine x y = some (b, hd, res)) :
     (bif b then x else y).head = some hd := by
   match x, y with
@@ -154,7 +154,7 @@ theorem selCombine_eq_some {b : Bool} {hd : LIToken} {res : List Cat}
   | ⟨none⟩, _ | ⟨some _⟩, ⟨none⟩ => simp [selCombine] at h
 
 /-- The head of `x * y` (when defined) is one of `x`/`y`'s heads. -/
-theorem SelectionState.head_mul {r : LIToken}
+theorem SelectionState.head_mul {r : LexicalItem.Token}
     (h : (x * y).head = some r) : x.head = some r ∨ y.head = some r := by
   simp only [SelectionState.mul_def, SelectionState.head, Option.map_map,
     Option.map_eq_some_iff] at h
@@ -163,7 +163,7 @@ theorem SelectionState.head_mul {r : LIToken}
   exacts [Or.inr (selCombine_eq_some hproj), Or.inl (selCombine_eq_some hproj)]
 
 /-- A saturated state never projects, so the head of its product is the other factor's head. -/
-theorem SelectionState.head_of_mul_of {a r : LIToken} {y : SelectionState}
+theorem SelectionState.head_of_mul_of {a r : LexicalItem.Token} {y : SelectionState}
     (h : (SelectionState.of a [] * y).head = some r) : y.head = some r := by
   rcases y with ⟨_ | ⟨hb, _ | ⟨c, rest⟩⟩⟩
   · cases h
@@ -175,9 +175,9 @@ theorem SelectionState.head_of_mul_of {a r : LIToken} {y : SelectionState}
 
 /-- The selection state of a trace is a saturated copy of the phrase its token heads, and for the
     bare trace the saturated dummy. -/
-def traceState : Option LIToken → SelectionState
+def traceState : Option LexicalItem.Token → SelectionState
   | some tok => .of tok []
-  | none => .of (mkTraceToken 0) []
+  | none => .of .bareTrace []
 
 /-- The selection algebra is the `SyntacticObject.mergeAlgebra` of token + `outerSel`
     leaves and the traces' `traceState`. -/
@@ -216,7 +216,7 @@ theorem selCheckN_node (a b : UnorderedTree Vertex) :
 
 /-! ### The selection-driven head on `SyntacticObject` -/
 
-variable (s : SyntacticObject) (tok : LIToken)
+variable (s : SyntacticObject) (tok : LexicalItem.Token)
 
 namespace SyntacticObject
 
@@ -225,7 +225,7 @@ namespace SyntacticObject
 def selCheck : SelectionState := selCheckN s.val
 
 /-- The projecting head's lexical item, by c-selection. -/
-def selHead : Option LIToken := s.selCheck.head
+def selHead : Option LexicalItem.Token := s.selCheck.head
 
 /-- Residual pending selectional features (`some []` = saturated). -/
 def checkedSel : Option (List Cat) := s.selCheck.residual
@@ -237,7 +237,7 @@ def outerCatC : Option Cat := s.selHead.map (·.item.outerCat)
 @[simp] theorem selCheck_leaf : (SyntacticObject.leaf tok).selCheck
     = .of tok tok.item.outerSel := rfl
 
-@[simp] theorem selCheck_trace : trace.selCheck = .of (mkTraceToken 0) [] := rfl
+@[simp] theorem selCheck_trace : trace.selCheck = .of .bareTrace [] := rfl
 
 @[simp] theorem selCheck_traceOf : (traceOf tok).selCheck = .of tok [] := rfl
 
@@ -256,7 +256,8 @@ noncomputable def selCheckHom : SyntacticObject →ₙ* SelectionState :=
 /-- A node's projecting head is one of its daughters' heads (endocentricity), the
     bare-phrase-structure projection ([chomsky-1995-bare] §4, abstracted as
     [marcolli-chomsky-berwick-2025] Definition 1.13.6 / Lemma 1.13.7). -/
-theorem selHead_node {l r : SyntacticObject} {h : LIToken} (hlr : (merge l r).selHead = some h) :
+theorem selHead_node {l r : SyntacticObject} {h : LexicalItem.Token}
+    (hlr : (merge l r).selHead = some h) :
     l.selHead = some h ∨ r.selHead = some h := by
   simp only [selHead, selCheck_node] at hlr ⊢
   exact SelectionState.head_mul hlr

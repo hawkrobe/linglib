@@ -64,13 +64,13 @@ def DP_ball   := mkLeafPhon .D []    "the ball" 311
 
 /-! The planar tokens of the result trees on which c-command is decided. -/
 
-def tok_send   : LIToken := ⟨.simple .V [.D] (phonForm := "send"), 300⟩
-def tok_to     : LIToken := ⟨.simple .P [.D] (phonForm := "to"), 301⟩
-def tok_john   : LIToken := ⟨.simple .D [] (phonForm := "John"), 302⟩
-def tok_mary   : LIToken := ⟨.simple .D [] (phonForm := "Mary"), 303⟩
-def tok_letter : LIToken := ⟨.simple .D [] (phonForm := "a letter"), 304⟩
-def tok_kick   : LIToken := ⟨.simple .V [.D] (phonForm := "kicked"), 310⟩
-def tok_ball   : LIToken := ⟨.simple .D [] (phonForm := "the ball"), 311⟩
+def tok_send   : LexicalItem.Token := ⟨.simple .V [.D] (phonForm := "send"), 300⟩
+def tok_to     : LexicalItem.Token := ⟨.simple .P [.D] (phonForm := "to"), 301⟩
+def tok_john   : LexicalItem.Token := ⟨.simple .D [] (phonForm := "John"), 302⟩
+def tok_mary   : LexicalItem.Token := ⟨.simple .D [] (phonForm := "Mary"), 303⟩
+def tok_letter : LexicalItem.Token := ⟨.simple .D [] (phonForm := "a letter"), 304⟩
+def tok_kick   : LexicalItem.Token := ⟨.simple .V [.D] (phonForm := "kicked"), 310⟩
+def tok_ball   : LexicalItem.Token := ⟨.simple .D [] (phonForm := "the ball"), 311⟩
 
 /-- The constituent *to Mary*. -/
 def ppToMaryP : PlanarSyntacticObject := tok_to * tok_mary
@@ -209,10 +209,10 @@ def DP_mary2   := mkLeafPhon .D []    "Mary"     321
 def DP_letter2 := mkLeafPhon .D []    "a letter" 322
 def P_to2      := mkLeafPhon .P [.D]  "to"       323
 
-def tok_sent    : LIToken := ⟨.simple .V [.D] (phonForm := "was-sent"), 320⟩
-def tok_mary2   : LIToken := ⟨.simple .D [] (phonForm := "Mary"), 321⟩
-def tok_letter2 : LIToken := ⟨.simple .D [] (phonForm := "a letter"), 322⟩
-def tok_to2     : LIToken := ⟨.simple .P [.D] (phonForm := "to"), 323⟩
+def tok_sent    : LexicalItem.Token := ⟨.simple .V [.D] (phonForm := "was-sent"), 320⟩
+def tok_mary2   : LexicalItem.Token := ⟨.simple .D [] (phonForm := "Mary"), 321⟩
+def tok_letter2 : LexicalItem.Token := ⟨.simple .D [] (phonForm := "a letter"), 322⟩
+def tok_to2     : LexicalItem.Token := ⟨.simple .P [.D] (phonForm := "to"), 323⟩
 
 def indirectPassive : Derivation :=
   { initial := V_sent

@@ -50,12 +50,12 @@ open RoseTree UnorderedTree SyntacticObject
 
 /-- The ordered leaf of a leaf object; `none` on a complex object. -/
 def SyntacticObject.toPlanarLeaf? (s : SyntacticObject) : Option PlanarSyntacticObject :=
-  match s.getLIToken with
+  match s.token? with
   | some tok => some (PlanarSyntacticObject.leaf tok)
   | none     => if s = trace then some PlanarSyntacticObject.trace else none
 
 /-- Left-to-right token yield of an ordered tree; traces are unpronounced. -/
-def planarYield (t : RoseTree Vertex) : List LIToken :=
+def planarYield (t : RoseTree Vertex) : List LexicalItem.Token :=
   t.leafList.filterMap (Sum.elim id fun _ ↦ none)
 
 /-- A subtree projects to `target` when its unordered tree is `target`'s. -/
@@ -256,7 +256,7 @@ def externalize? (d : Derivation) : Option PlanarSyntacticObject :=
   d.initial.toPlanarLeaf?.bind fun init => d.steps.foldl externStep (some init)
 
 /-- The pronounced tokens, left to right; empty if externalization fails. -/
-def surfaceTokens (d : Derivation) : List LIToken :=
+def surfaceTokens (d : Derivation) : List LexicalItem.Token :=
   (d.externalize?.map (planarYield ·.val)).getD []
 
 /-- The surface category sequence, the readout of word-order studies. -/
@@ -264,7 +264,7 @@ def surfaceCats (d : Derivation) : List Cat := d.surfaceTokens.map (·.item.oute
 
 /-- The surface string lists the pronounced forms left to right, dropping empty forms. -/
 def surfacePhon (d : Derivation) : List String :=
-  d.surfaceTokens.filterMap LIToken.phonForm?
+  d.surfaceTokens.filterMap (·.item.outerPhonForm?)
 
 end Derivation
 
@@ -283,18 +283,18 @@ private theorem toPlanarLeaf?_toSyntacticObject {s : SyntacticObject} {ip : Plan
     (h : s.toPlanarLeaf? = some ip) : ip.toSyntacticObject = s := by
   induction s using ind with
   | leaf tok =>
-    rw [toPlanarLeaf?, getLIToken_leaf] at h
+    rw [toPlanarLeaf?, token?_leaf] at h
     obtain rfl : ip = PlanarSyntacticObject.leaf tok := by simpa using h.symm
     rfl
   | trace =>
-    rw [toPlanarLeaf?, getLIToken_trace, ite_eq_left rfl] at h
+    rw [toPlanarLeaf?, token?_trace, ite_eq_left rfl] at h
     obtain rfl : ip = PlanarSyntacticObject.trace := by simpa using h.symm
     rfl
   | traceOf tok =>
-    rw [toPlanarLeaf?, getLIToken_traceOf, ite_eq_right (traceOf_ne_trace tok)] at h
+    rw [toPlanarLeaf?, token?_traceOf, ite_eq_right (traceOf_ne_trace tok)] at h
     exact absurd h (by simp)
   | merge l r _ _ =>
-    rw [toPlanarLeaf?, getLIToken_merge, ite_eq_right (merge_ne_trace l r)] at h
+    rw [toPlanarLeaf?, token?_merge, ite_eq_right (merge_ne_trace l r)] at h
     exact absurd h (by simp)
 
 /-- A successful replay step forgets to `Step.apply`. -/
