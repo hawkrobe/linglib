@@ -2,7 +2,6 @@ module
 
 public import Linglib.Fragments.German.Case
 public import Linglib.Fragments.German.Conjugation
-public import Linglib.Semantics.Presupposition.Verb
 public import Linglib.Syntax.Category.Verb.Basic
 public import Linglib.Syntax.Category.Verb.CaseArray
 
