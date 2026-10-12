@@ -1,0 +1,73 @@
+[
+  {
+    "id": "ogihara1989_46a",
+    "source": {"bibkey": "partee-1973", "paperLabel": ""},
+    "reportedIn": {"bibkey": "ogihara-1989", "paperLabel": "(46a)"},
+    "language": "stan1293",
+    "primaryText": "I didn't turn off the stove.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "Uttered when the speaker is driving down the freeway.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "no past time at which I turn off the stove", "judgment": "unacceptable"},
+      {"name": "some past time at which I do not turn off the stove", "judgment": "unacceptable"},
+      {"name": "no subinterval of the contextually salient past interval at which I turn off the stove", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["use", "deictic"]
+    ],
+    "comment": "Repeated as (53a). The first reading is (46b), probably false, the second (46c), trivially true, and the third (56).",
+    "verified": "page-image"
+  },
+  {
+    "id": "ogihara1989_47",
+    "source": {"bibkey": "partee-1973", "paperLabel": ""},
+    "reportedIn": {"bibkey": "ogihara-1989", "paperLabel": "(47)"},
+    "language": "stan1293",
+    "primaryText": "Sheila had a party last Friday, and Sam got drunk.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "Sam got drunk at the time of Sheila's party", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["use", "anaphoric"]
+    ],
+    "comment": "Repeated as (53b) without the adverb.",
+    "verified": "page-image"
+  },
+  {
+    "id": "ogihara1989_57",
+    "source": {"bibkey": "ogihara-1989", "paperLabel": "(57)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Bill: Did you see Mary? I have to talk to her. John: Yes, I saw her, but I don't know where she is now. Bill: What time did you see her? John: Sometime this morning. I don't remember exactly when.",
+    "discourseSegments": [
+      "Bill: Did you see Mary? I have to talk to her.",
+      "John: Yes, I saw her, but I don't know where she is now.",
+      "Bill: What time did you see her?",
+      "John: Sometime this morning. I don't remember exactly when."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "John saw Mary at some time within the contextually relevant interval", "judgment": "acceptable"},
+      {"name": "John saw Mary at some past time", "judgment": "unacceptable"}
+    ],
+    "paperFeatures": [
+      ["restriction", "contextual"]
+    ],
+    "comment": "The readings are those of John's first answer, translated as (58). The source prints a space before the first question mark.",
+    "verified": "page-image"
+  }
+]

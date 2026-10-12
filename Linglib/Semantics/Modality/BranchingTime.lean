@@ -37,8 +37,8 @@ maximal moment, so settledness is decidable.
   share a history exactly when they are comparable.
 * `Ockhamist.settled_atom`, `Ockhamist.settled_future_atom`: atomic propositions are settled,
   and the Peircean future is the settled Ockhamist future.
-* `Ockhamist.past_atom_iff_holds`, `Ockhamist.future_atom_iff_holds`: on a linear frame the
-  Ockhamist operators land in the library's tense comparison cells.
+* `Ockhamist.mem_past_atom_iff`, `Ockhamist.mem_future_atom_iff`: the Ockhamist operators
+  quantify along the relations of the library's tense cells.
 * `Peircean.mem_future_iff`: on a finite frame settled future truth is a bounded search over
   the maximal moments, hence decidable.
 
@@ -168,31 +168,18 @@ theorem settled_future_atom (φ : Set M) :
 
 /-! #### Grounding in the library's tense cells
 
-On a linear frame the Ockhamist past and future land in the same comparison cells as the rest
-of the library's tense: the witness of `past` compares into `⟦Tense.past⟧` against the
-evaluation moment, that of `future` into `⟦Tense.future⟧`. On a genuinely branching frame the
-comparison lives on each history's own chain order, mathlib's `LinearOrder ↥h`
-(`future_atom_iff_holds_on_hist`). -/
+The Ockhamist past and future quantify along the relations of the library's tense cells
+(`Tense.toSetRel`), which relate a moment to the moments below it and above it in the order of
+the frame. The witness of the future is kept on the history of evaluation. -/
 
-@[simp] theorem past_atom_iff_holds {M : Type*} [LinearOrder M]
-    (φ : Set M) (m : M) (h : Flag M) :
-    (m, h) ∈ past (atom φ) ↔ ∃ m', compare m' m ∈ ⟦Tense.past⟧ ∧ m' ∈ φ := by
-  simp only [mem_past, mem_atom, Tense.compare_mem_past]
+theorem mem_past_atom_iff (φ : Set M) (m : M) (h : Flag M) :
+    (m, h) ∈ past (atom φ) ↔ m ∈ (Tense.toSetRel ⟦Tense.past⟧).preimage φ := by
+  simp [and_comm]
 
-@[simp] theorem future_atom_iff_holds {M : Type*} [LinearOrder M]
-    (φ : Set M) (m : M) (h : Flag M) :
-    (m, h) ∈ future (atom φ) ↔ ∃ m' ∈ h, compare m' m ∈ ⟦Tense.future⟧ ∧ m' ∈ φ := by
-  simp only [mem_future, mem_atom, Tense.compare_mem_future]
-
-/-- The Ockhamist future along a history is the tense-cell future over the history's own
-chain order. -/
-theorem future_atom_iff_holds_on_hist {M : Type*} [PartialOrder M]
-    [DecidableEq M] [DecidableLE M] [DecidableLT M]
-    (φ : Set M) {m : M} {h : Flag M} (hm : m ∈ h) :
-    (m, h) ∈ future (atom φ) ↔
-      ∃ x : ↥h, compare x ⟨m, hm⟩ ∈ ⟦Tense.future⟧ ∧ (x : M) ∈ φ := by
-  simp only [mem_future, mem_atom, Tense.compare_mem_future]
-  exact ⟨fun ⟨m', hm', hlt, hφ⟩ ↦ ⟨⟨m', hm'⟩, hlt, hφ⟩, fun ⟨x, hlt, hφ⟩ ↦ ⟨x, x.2, hlt, hφ⟩⟩
+theorem mem_future_atom_iff (φ : Set M) (m : M) (h : Flag M) :
+    (m, h) ∈ future (atom φ) ↔ m ∈ (Tense.toSetRel ⟦Tense.future⟧).preimage (↑h ∩ φ) :=
+  ⟨fun ⟨m', hm', hlt, hφ⟩ ↦ ⟨m', ⟨hm', hφ⟩, Tense.mem_toSetRel_future.2 hlt⟩,
+    fun ⟨m', ⟨hm', hφ⟩, hlt⟩ ↦ ⟨m', hm', Tense.mem_toSetRel_future.1 hlt, hφ⟩⟩
 
 end Ockhamist
 

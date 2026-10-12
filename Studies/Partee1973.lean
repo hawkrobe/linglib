@@ -1,24 +1,38 @@
 module
 
-public import Linglib.Semantics.Tense.Compositional
+public import Linglib.Semantics.Composition.Assignment
+public import Linglib.Semantics.Tense.Quantificational
 
 /-!
 # Partee (1973): Some Structural Analogies between Tenses and Pronouns in English
 
-This file formalizes the analogy of [partee-1973]: tenses show the same three uses as
-pronouns, deictic, anaphoric, and bound, and so refer to times as pronouns refer to
-individuals rather than quantifying over them as the operators of [prior-1967] do. Past tense
-introduces a temporal variable resolved by an assignment to a contextually salient time
-(`parteeStoveExample`), so *I didn't turn off the stove* is false when the stove was turned
-off at that time, whereas the Priorean reading, that there is some past time at which it was
-not turned off, is trivially true (`stove_refutes_prior`); in a narrative two past tenses pick
-up the same salient time, as anaphoric pronouns corefer (`narrativeAnaphora`).
+Partee argues that tenses have the uses of pronouns, deictic, anaphoric and bound, and so refer
+to times as pronouns refer to individuals, where the tense operators of Prior quantify over
+them. Uttered halfway down the turnpike, *I didn't turn off the stove* is about a definite
+interval that the context makes salient, and says that the speaker did not turn off the stove
+then. An existential past gives the sentence two readings, by the scope of the negation, and it
+has neither: that the speaker never turned off the stove is too strong, and that there is a past
+time at which the speaker did not is too weak. In *Sheila had a party last Friday and Sam got
+drunk* the second tense picks up the time of the first, as an anaphoric pronoun picks up its
+antecedent, which two existential pasts do not require.
+
+## Main statements
+
+* `never_entails_deictic`, `deictic_entails_sometime_not`: the deictic reading of the stove
+  sentence follows from the reading on which the speaker never turned off the stove and entails
+  the one on which the speaker at some past time did not.
+* `never_too_strong`, `sometime_not_too_weak`: neither converse holds.
+* `anaphoric_iff`, `existential_pasts_not_anaphoric`: two past tenses with one index locate
+  their clauses at one time, and two existential pasts need not.
+* `exists_past_iff_sometime`: with its index bound by an existential quantifier, the past tense
+  is Prior's past.
 
 ## Implementation notes
 
-The temporal assignments and tense interpretation are those of
-`Semantics/Tense/Compositional`, the temporal counterpart of the entity assignments of the
-Montague substrate.
+* A time is an interval of a linear order, mathlib's `NonemptyInterval`, and a tense is an index
+  of an assignment of times, read as a pronoun by `HeimKratzer.interpPronoun`.
+* A clause in the past tense says that the time of its index precedes the speech time and that
+  the clause holds at that time, as a conjunction.
 
 ## References
 
@@ -28,30 +42,87 @@ Montague substrate.
 
 @[expose] public section
 
-open Tense
-open HeimKratzer
-
 namespace Partee1973
 
-open Reference
+open Semantics HeimKratzer ModalLogic Tense
+open scoped SetRel
 
-/-- *I didn't turn off the stove*: negation over a past tense that refers to the salient time
-the assignment supplies for variable `n`. -/
-def parteeStoveExample {T : Type*} (turnedOff : T → Prop) (g : Assignment T) (n : ℕ) :
-    Prop :=
-  ¬ turnedOff (interpPronoun n g)
+variable {T : Type*} [LinearOrder T] {P Q : NonemptyInterval T → Prop} {σ : NonemptyInterval T}
+  {g : Assignment (NonemptyInterval T)} {n : ℕ}
 
-/-- The argument against [prior-1967] as a countermodel: with the stove turned off at the
-salient time, the referential reading is false, while the Priorean existential reading stays
-true, witnessed by any other past time. -/
-theorem stove_refutes_prior :
-    ¬ parteeStoveExample (· = (-1 : ℤ)) (λ _ => (-1 : ℤ)) 0 ∧
-      ∃ s : Index Unit ℤ, PAST (λ s => s.time ≠ (-1 : ℤ)) s ⟨(), 0⟩ :=
-  ⟨λ h => h rfl, ⟨(), -2⟩, by decide, by decide⟩
+/-- A clause in the past tense with index `n` says that the time of `n` precedes the speech time
+`σ` and that the clause holds at it. -/
+def Past (n : ℕ) (P : NonemptyInterval T → Prop) (σ : NonemptyInterval T) :
+    Assignment (NonemptyInterval T) → Prop :=
+  fun g ↦ Perspective.Presup ⟦past⟧ σ (interpPronoun n g) ∧ P (interpPronoun n g)
 
-/-- *He turned the corner. He saw a house.*: both past tenses refer to the same narrative time,
-as anaphoric pronouns corefer with an established individual. -/
-def narrativeAnaphora {T : Type*} (P Q : T → Prop) (g : Assignment T) (n : ℕ) : Prop :=
-  P (interpPronoun n g) ∧ Q (interpPronoun n g)
+theorem past_iff : Past n P σ g ↔ (g n).precedes σ ∧ P (g n) := by
+  simp [Past]
+
+/-- A past tense is free in its clause, which depends on the context only for the time of the
+tense's index. -/
+theorem dependsOn_past : DependsOn (Past n P σ) {n} := fun g g' h ↦ by
+  simp only [Past, interpPronoun_apply, h n rfl]
+
+/-- What held at the time of a past tense held at some past time. -/
+theorem Past.sometime (h : Past n P σ g) : ◇[Perspective.toSetRel ⟦past⟧] P σ :=
+  ⟨_, h.1, h.2⟩
+
+/-- With its index bound by an existential quantifier, the past tense is Prior's past. -/
+theorem exists_past_iff_sometime :
+    (∃ t, lambdaAbsG n (Past n P σ) g t) ↔ ◇[Perspective.toSetRel ⟦past⟧] P σ := by
+  simp [Past, Diamond]
+
+/-! ### The stove
+
+*I didn't turn off the stove*, with `P` the times at which the speaker turns off the stove. -/
+
+/-- A speaker who never turned off the stove did not turn it off at the salient time. -/
+theorem never_entails_deictic (hn : Perspective.Presup ⟦past⟧ σ (g n))
+    (h : ¬ ◇[Perspective.toSetRel ⟦past⟧] P σ) : Past n (fun t ↦ ¬ P t) σ g :=
+  ⟨hn, fun hP ↦ h (Past.sometime ⟨hn, hP⟩)⟩
+
+/-- A speaker who did not turn off the stove at the salient time did not turn it off at some
+past time. -/
+theorem deictic_entails_sometime_not (h : Past n (fun t ↦ ¬ P t) σ g) :
+    ◇[Perspective.toSetRel ⟦past⟧] (fun t ↦ ¬ P t) σ :=
+  h.sometime
+
+/-- The sentence is true of a speaker who turned off the stove on an earlier occasion and not at
+the salient time, so the reading on which the speaker never turned it off is too strong. -/
+theorem never_too_strong :
+    ∃ (σ : NonemptyInterval ℤ) (g : Assignment (NonemptyInterval ℤ))
+      (P : NonemptyInterval ℤ → Prop),
+      Past 0 (fun t ↦ ¬ P t) σ g ∧ ◇[Perspective.toSetRel ⟦past⟧] P σ :=
+  ⟨.pure 10, fun _ ↦ .pure 5, (· = .pure 1), ⟨by decide, by decide⟩, .pure 1, by decide, rfl⟩
+
+/-- The sentence is false of a speaker who turned off the stove at the salient time, although
+there are past times at which the speaker did not, so that reading is too weak. -/
+theorem sometime_not_too_weak :
+    ∃ (σ : NonemptyInterval ℤ) (g : Assignment (NonemptyInterval ℤ))
+      (P : NonemptyInterval ℤ → Prop),
+      ◇[Perspective.toSetRel ⟦past⟧] (fun t ↦ ¬ P t) σ ∧ Perspective.Presup ⟦past⟧ σ (g 0) ∧
+        ¬ Past 0 (fun t ↦ ¬ P t) σ g :=
+  ⟨.pure 10, fun _ ↦ .pure 5, (· = .pure 5), ⟨.pure 1, by decide, by decide⟩, by decide,
+    fun h ↦ h.2 rfl⟩
+
+/-! ### Anaphora
+
+*Sheila had a party last Friday and Sam got drunk*, with `P` the times of the party and `Q`
+those of Sam's getting drunk. -/
+
+/-- Two past tenses with one index locate their clauses at one time, as an anaphoric pronoun and
+its antecedent pick out one individual. -/
+theorem anaphoric_iff :
+    Past n P σ g ∧ Past n Q σ g ↔ Past n (fun t ↦ P t ∧ Q t) σ g :=
+  ⟨fun h ↦ ⟨h.1.1, h.1.2, h.2.2⟩, fun h ↦ ⟨⟨h.1, h.2.1⟩, h.1, h.2.2⟩⟩
+
+/-- Two existential pasts may be true of different times and of no common one. -/
+theorem existential_pasts_not_anaphoric :
+    ∃ (σ : NonemptyInterval ℤ) (P Q : NonemptyInterval ℤ → Prop),
+      ◇[Perspective.toSetRel ⟦past⟧] P σ ∧ ◇[Perspective.toSetRel ⟦past⟧] Q σ ∧
+        ∀ t, ¬ (P t ∧ Q t) :=
+  ⟨.pure 10, (· = .pure 1), (· = .pure 2), ⟨_, by decide, rfl⟩, ⟨_, by decide, rfl⟩,
+    fun _ ⟨h₁, h₂⟩ ↦ absurd (h₁.symm.trans h₂) (by decide)⟩
 
 end Partee1973
