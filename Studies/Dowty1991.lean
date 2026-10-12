@@ -1,8 +1,8 @@
 module
 
-public import Linglib.Semantics.ArgumentStructure.AgentivityLattice.OfEntailmentProfile
 public import Linglib.Semantics.ArgumentStructure.RoleList
 public import Linglib.Data.Examples.Dowty1991
+public import Studies.Cruse1973
 
 /-!
 # Dowty (1991): Thematic proto-roles and argument selection
@@ -16,6 +16,8 @@ single-entailment exemplars of (29) and (30) to the three verb classes of (64).
 
 ## Main results
 
+* `cruse_volitive_is_volition_alone`: Dowty's exemplar of volition alone is Cruse's volitive
+  doer.
 * `alternates_iff`, `hierarchies`: Corollary 1 is the failure of (31) to select either way, and
   the role hierarchies of (36) follow from the principle.
 * `primary_transitives`, `buy_sell`, `psych_doublet`: the primary transitive verbs of (35) are
@@ -25,7 +27,7 @@ single-entailment exemplars of (29) and (30) to the three verb classes of (64).
   break class does not alternate.
 * `intransClass_unergative`, `intransClass_unaccusative`: the pure cells of Table 1.
 * `primary_transitives_match_templates`: the substrate's class templates agree with the paper's
-  attributions, save at three deliberate divergences.
+  attributions, save at two deliberate divergences.
 
 ## Implementation notes
 
@@ -39,6 +41,7 @@ The incremental theme homomorphism of §6 and the material of §11 are not repre
 ## References
 
 * [dowty-1991]
+* [cruse-1973]
 * [fillmore-1968]
 -/
 
@@ -88,6 +91,13 @@ instance (e : Datum) (p : EntailmentProfile) : Decidable (Matches e p) :=
 theorem matches_entailed {e : Datum} (h : Disjoint (entailed e) (denied e)) :
     Matches e (entailed e) :=
   ⟨le_rfl, h.le_compl_right⟩
+
+/-- Dowty's exemplar of volition alone (29a) is Cruse's (32), and the two analyses agree on it:
+Dowty attributes volition alone to its subject, and Cruse the volitive alone. -/
+theorem cruse_volitive_is_volition_alone :
+    entailed Examples.notEatSubject = {.volition} ∧
+      (Cruse1973.Row.ofDatum Cruse1973.Examples.ex_32).bind (·.profile) = some {.volitive} := by
+  decide
 
 /-! ### The selection principle and its corollaries, (31) to (34) -/
 
@@ -361,14 +371,12 @@ theorem break_object_it_divergence :
       Matches Examples.breakObject (insert .incrementalTheme accomplishmentObjectProfile) := by
   decide
 
-/-- (30e) counts destruction as dependent existence, which the paper never states for the
-object of *eat*; the consumption template omits it because adding it moves the object from
-the consumption to the creation persistence level. -/
-theorem eat_object_de_tension :
+/-- (30e) counts destruction as dependent existence, which the paper never states for the object
+of *eat*: the row leaves it open, so the consumption template and its extension by dependent
+existence both agree with it. -/
+theorem eat_object_de_open :
     Matches Examples.eatObject consumptionObject ∧
-      PersistenceLevel.fromPatientProfile consumptionObject = .exPersBeginning ∧
-      PersistenceLevel.fromPatientProfile
-        (insert .dependentExistence consumptionObject) = .exPersEnd := by
+      Matches Examples.eatObject (insert .dependentExistence consumptionObject) := by
   decide
 
 end Dowty1991

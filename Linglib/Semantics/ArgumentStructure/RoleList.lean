@@ -102,9 +102,7 @@ exist before the event ([dowty-1991] (30e)(i)). -/
 def creationObject : EntailmentProfile :=
   {.changeOfState, .incrementalTheme, .causallyAffected, .dependentExistence}
 
-/-- A consumed object is like a created one but exists before the event. That difference is what
-lets `PersistenceLevel.fromPatientProfile` separate creation (`exPersEnd`) from consumption
-(`exPersBeginning`). -/
+/-- A consumed object is like a created one but exists before the event. -/
 def consumptionObject : EntailmentProfile :=
   {.changeOfState, .incrementalTheme, .causallyAffected}
 

@@ -21,6 +21,8 @@ characterizations of the case regions.
 * `kill_subject_range`, `transitive_region_eq_Ici`: agents are closed upward and patients
   downward, so natural forces kill and the object of *hit* must exist when the event begins.
 * `kiss_outranking_from_dominance`: the dominance criterion reproduces Dowty's choice for *kiss*.
+* `build_object_admits_iff`: read literally, the correspondences between Dowty's Proto-Patient
+  entailments and persistence exclude the creation level for the object of *build*.
 * `transitivity_hierarchy`: along Tsunoda's hierarchy the agent keeps instigation and motion
   while the patient rises out of the transitivity region.
 * `pole_alignment`, `recipient_dative`: the poles read out to the core cases of either alignment,
@@ -83,6 +85,22 @@ theorem canonical_verbs_valid :
 /-- The projection of [dowty-1991]'s perception profile lands on the chain at *see*. -/
 theorem see_subject_agentivity :
     perception.subjectProfile.toAgentivity = knowAgentivity := by decide
+
+/-! ### Dowty's Proto-Patient entailments and persistence, section 2.1
+
+Grimm relates two of Dowty's Proto-Patient entailments to persistence (`EntailmentProfile.Admits`):
+a change of state excludes qualitative persistence at the end, and dependent existence, which
+conflates creation and destruction, excludes existential persistence at both ends. Dowty counts
+coming into existence as a change of state (his (30a)) and attributes all of (28) to the object of
+*build*, so read literally the correspondences exclude the creation level, existential persistence
+(end), at which Grimm places the objects of verbs of creation. -/
+
+/-- The object of *build*, with Dowty's entailments, admits only total non-persistence and
+existential persistence (beginning), not the creation level Grimm assigns it. -/
+theorem build_object_admits_iff (l : PersistenceLevel) :
+    (Dowty1991.entailed Dowty1991.Examples.buildObject).Admits l ↔
+      l = .totalNonPersistence ∨ l = .exPersBeginning := by
+  revert l; decide
 
 /-! ### Argument ranges and subject selection, section 2.3
 

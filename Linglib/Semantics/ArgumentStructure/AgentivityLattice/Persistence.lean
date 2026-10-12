@@ -19,11 +19,17 @@ rejoining at `totalPersistence`.
 
 * `PersistenceLevel.Feature`: the four persistence features.
 * `PersistenceLevel`: the five valid combinations, each a set of features.
+* `PersistenceLevel.Valid`: Grimm's exclusion principles, with `range_features` showing that the
+  five levels are exactly the combinations they leave.
 
 ## Implementation notes
 
-A level is `SetLike` over its features, so its order is inclusion. The five levels are not closed
-under intersection, so the meet is the largest level inside the intersection, given by a table.
+A level is `SetLike` over its features, so its order is inclusion. Grimm's first principle, that
+some qualitative persistence accompanies existential persistence, is read as qualitative
+persistence at the beginning with existence there and some qualitative persistence with existence
+at the end; this is the reading under which exactly five combinations remain, as the paper says.
+The levels are closed under union but not under intersection, so the meet is the largest level
+inside the intersection, given by a table.
 
 ## References
 
@@ -75,6 +81,18 @@ def features : PersistenceLevel → Finset Feature
   | .totalPersistence => {.exPB, .exPE, .quPB, .quPE}
 
 theorem features_injective : Function.Injective features := by decide
+
+/-- Grimm's exclusion principles on persistence features: qualities persist at a boundary only
+where the entity exists there, existence at the beginning brings qualitative persistence at the
+beginning, and existence at the end brings some qualitative persistence. -/
+def Valid (s : Finset Feature) : Prop :=
+  (.quPB ∈ s ↔ .exPB ∈ s) ∧ (.quPE ∈ s → .exPE ∈ s) ∧ (.exPE ∈ s → .quPB ∈ s ∨ .quPE ∈ s)
+
+instance : DecidablePred Valid := fun _ ↦ inferInstanceAs (Decidable (_ ∧ _ ∧ _))
+
+/-- The five levels are exactly the combinations of features the exclusion principles leave. -/
+theorem range_features : Set.range features = {s | Valid s} :=
+  Set.ext <| (by decide : ∀ s, (∃ l, features l = s) ↔ Valid s)
 
 instance : SetLike PersistenceLevel Feature where
   coe l := l.features
