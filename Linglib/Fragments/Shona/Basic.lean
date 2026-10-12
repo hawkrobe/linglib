@@ -1,5 +1,6 @@
 module
 
+public import Mathlib.Tactic.DeriveFintype
 public import Linglib.Fragments.Bantu.Params
 
 /-!
@@ -92,7 +93,7 @@ inductive Gender where
   | genderG
   /-- Classes 12/13, the diminutives. -/
   | genderH
-  deriving DecidableEq, Repr
+  deriving DecidableEq, Repr, Fintype
 
 def Gender.singularClass : Gender → NounClass
   | .genderA => .cl1
