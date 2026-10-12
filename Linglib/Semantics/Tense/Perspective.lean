@@ -7,10 +7,10 @@ public import Linglib.Semantics.Tense.Defs
 # Perspectival tense
 
 This file evaluates the comparison cells of `Semantics/Tense/Defs.lean` on time intervals, the
-perspectival presuppositions of [tsilia-zhao-2026] and [zhao-2025]. Tenses and temporal deictic
-adverbs are temporal pronouns: each denotes a time, an interval of a linear order, and
-presupposes that it stands to a temporal perspective `π`, itself an interval, in one of the
-positions its cell admits. An interval precedes, overlaps or follows another
+perspectival presuppositions of Tsilia and Zhao. Tenses and temporal deictic adverbs are
+temporal pronouns: each denotes a time, an interval of a linear order, and presupposes that it
+stands to a temporal perspective `π`, itself an interval, in one of the positions its cell
+admits. An interval precedes, overlaps or follows another
 (`NonemptyInterval.position`), so PRES, which presupposes overlap with `π`, is the cell
 `present`; PAST, which presupposes precedence, is `past`; and the adverb ⌈then⌉, which
 presupposes disjointness, is `presentᶜ`. On point intervals the presupposition is the comparison
@@ -30,6 +30,7 @@ clash with the present is the ⌈then⌉-present puzzle.
 * `Tense.DeicticAdverb.IsDistal`: the cell excludes overlap, as for English *then*.
 * `Tense.Perspective.Presup`: the presupposition of a temporal pronoun with a given cell,
   relative to a perspective.
+* `Tense.Perspective.toSetRel`: a cell as a relation between intervals.
 
 ## Main results
 
@@ -51,6 +52,7 @@ clash with the present is the ⌈then⌉-present puzzle.
 namespace Tense
 
 open Semantics
+open scoped SetRel
 
 /-- A temporal deictic adverb, a pro-form for a time located relative to an anchor: English
 *then* and *now*, Greek *tóte*, Russian *togda* and *sejčas*. The entry records the positions
@@ -64,7 +66,7 @@ structure DeicticAdverb where
   cell : Finset Ordering
   deriving DecidableEq
 
-/-- A distal adverb refers to a time away from its anchor: its cell excludes overlap. -/
+/-- A distal adverb refers to a time away from its anchor, so its cell excludes overlap. -/
 def DeicticAdverb.IsDistal (a : DeicticAdverb) : Prop := .eq ∉ a.cell
 
 instance : DecidablePred DeicticAdverb.IsDistal :=
@@ -74,8 +76,8 @@ namespace Perspective
 
 variable {T : Type*} [LinearOrder T] {C D : Finset Ordering} {π r th : NonemptyInterval T}
 
-/-- The perspectival presupposition of a temporal pronoun with cell `C`: its reference stands to
-the perspective `π` in one of the positions of `C`. -/
+/-- The perspectival presupposition of a temporal pronoun with cell `C` is that its reference
+stands to the perspective `π` in one of the positions of `C`. -/
 def Presup (C : Finset Ordering) (π ref : NonemptyInterval T) : Prop := ref.position π ∈ C
 
 instance : Decidable (Presup C π r) := inferInstanceAs (Decidable (_ ∈ C))
@@ -104,6 +106,20 @@ instance : Decidable (Presup C π r) := inferInstanceAs (Decidable (_ ∈ C))
   rw [Presup, NonemptyInterval.position_pure]
 
 theorem Presup.mono (h : Presup C π r) (hCD : C ⊆ D) : Presup D π r := hCD h
+
+/-- The relation of a cell on intervals relates a perspective to the intervals that stand to it
+in one of the cell's positions. -/
+def toSetRel (C : Finset Ordering) : SetRel (NonemptyInterval T) (NonemptyInterval T) :=
+  {x | Presup C x.1 x.2}
+
+@[simp] theorem mem_toSetRel : π ~[toSetRel C] r ↔ Presup C π r := .rfl
+
+instance : Decidable (π ~[toSetRel C] r) := inferInstanceAs (Decidable (Presup C π r))
+
+/-- On point intervals the relation of a cell is its relation on points. -/
+theorem pure_mem_toSetRel {p t : T} :
+    .pure p ~[toSetRel C] .pure t ↔ p ~[Tense.toSetRel C] t := by
+  simp
 
 /-! ### Restriction by an adverb -/
 
