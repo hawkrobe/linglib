@@ -57,18 +57,8 @@ theorem cond_le_cond_of_subset {u₁ u₂ e : Set Ω} (hu₁ : MeasurableSet u�
 
 /-- The conditional as a ratio of real-valued masses. -/
 theorem cond_real_apply (hs : MeasurableSet s) (e : Set Ω) :
-    (μ[|s] e).toReal = (μ (s ∩ e)).toReal / (μ s).toReal := by
-  rw [cond_apply hs, ENNReal.toReal_mul, ENNReal.toReal_inv, inv_mul_eq_div]
-
-/-- Total probability in real-valued form: a measurable conditioning event
-splits any event's mass. -/
-theorem real_total [IsFiniteMeasure μ] {h : Set Ω} (hm : MeasurableSet h) (e : Set Ω) :
-    (μ (h ∩ e)).toReal + (μ (hᶜ ∩ e)).toReal = (μ e).toReal := by
-  have h1 := measure_inter_add_sdiff (μ := μ) e hm
-  rw [Set.sdiff_eq] at h1
-  have h2 := congrArg ENNReal.toReal h1
-  rwa [ENNReal.toReal_add (measure_ne_top _ _) (measure_ne_top _ _),
-    Set.inter_comm e h, Set.inter_comm e hᶜ] at h2
+    μ[|s].real e = μ.real (s ∩ e) / μ.real s := by
+  simp only [measureReal_def, cond_apply hs, ENNReal.toReal_mul, ENNReal.toReal_inv, inv_mul_eq_div]
 
 end ProbabilityTheory
 

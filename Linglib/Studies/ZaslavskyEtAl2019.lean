@@ -164,10 +164,9 @@ theorem expectedSurprisal_ofPartition (f : C → W) (μ : Measure C) [IsProbabil
   have hsub := Set.singleton_subset_iff.mpr (mem_preimage_self f c)
   have hF : μ (f ⁻¹' {f c}) ≠ 0 := fun h => hc (measure_mono_null hsub h)
   rw [expectedSurprisal, Kernel.deterministic_apply, integral_dirac, surprisal,
-    posterior_deterministic_eq_cond μ _ hF, measureReal_def,
+    posterior_deterministic_eq_cond μ _ hF,
     cond_real_apply μ (measurable_of_finite f (measurableSet_singleton _)),
-    Set.inter_eq_right.mpr hsub, ← measureReal_def,
-    ← measureReal_def, log_div, neg_sub]
+    Set.inter_eq_right.mpr hsub, log_div, neg_sub]
   · rwa [Ne, measureReal_eq_zero_iff (measure_ne_top _ _)]
   · rwa [Ne, measureReal_eq_zero_iff (measure_ne_top _ _)]
 

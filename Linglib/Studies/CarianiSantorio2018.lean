@@ -307,8 +307,7 @@ theorem cap_warriors_credence_one_half :
       ext w; cases w <;> simp [wearsCap, warriorsCap], cynthiaCredence_coe]
     norm_num
   refine ⟨by rw [hwears]; norm_num, ?_⟩
-  rw [measureReal_def, cond_real_apply cynthiaCredence MeasurableSet.of_discrete, ← measureReal_def,
-    ← measureReal_def, hwears, hinter]
+  rw [cond_real_apply cynthiaCredence MeasurableSet.of_discrete, hwears, hinter]
   norm_num
 
 /-- No proposition over the Sports Fan model has probability 1/2, since every probability is a

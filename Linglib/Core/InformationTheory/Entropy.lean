@@ -641,8 +641,7 @@ theorem condEntropy_eq_sum_negLog (hX : Measurable X) (hY : Measurable Y) :
       * -log ((μ[|Y ⁻¹' {y}]).real (X ⁻¹' {x})) := by
   have hcond (x : S) (y : T) : (μ[|Y ⁻¹' {y}]).real (X ⁻¹' {x})
       = μ.real (X ⁻¹' {x} ∩ Y ⁻¹' {y}) / μ.real (Y ⁻¹' {y}) := by
-    rw [measureReal_def, cond_real_apply μ (hY (.singleton y)), Set.inter_comm]
-    rfl
+    rw [cond_real_apply μ (hY (.singleton y)), Set.inter_comm]
   have key (x : S) (y : T) :
       μ.real (X ⁻¹' {x} ∩ Y ⁻¹' {y}) * -log ((μ[|Y ⁻¹' {y}]).real (X ⁻¹' {x}))
         = μ.real (Y ⁻¹' {y}) * negMulLog ((μ[|Y ⁻¹' {y}]).real (X ⁻¹' {x})) := by
