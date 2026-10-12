@@ -5,6 +5,8 @@ public import Linglib.Data.Examples.ArregiPietraszko2021
 public import Linglib.Data.Examples.HarizanovGribanova2019
 public import Linglib.Data.Forms.ArregiPietraszko2021
 public import Linglib.Fragments.Ndebele.Phonology
+public import Linglib.Morphology.DistributedMorphology.Spellout
+public import Linglib.Morphology.DistributedMorphology.VocabularyInsertion.Basic
 public import Linglib.Phonology.Hiatus
 public import Linglib.Studies.HarizanovGribanova2019
 public import Linglib.Studies.Pollock1989
@@ -27,8 +29,9 @@ half without the verb, is exponed as *do*.
   head of the heads below it.
 * `doSupport_iff`: do-support arises exactly where the chain of a strong verb splits, whether
   the complex head is otherwise pronounced low or high.
-* `directionality_no_correlation`: under inversion English and Monnese both have do-support,
-  though elsewhere the English verb is pronounced low and the Monnese verb high.
+* `fronted_forms`: the finite, pseudo-infinitive, infinitive and bare forms of a fronted verb
+  are what Vocabulary Insertion gives when its orphan T is ignored, disregarded at its own
+  insertion, impoverished or obliterated.
 * `mirror_class9`, `mul_not_assoc`: regular vowel coalescence derives the Ndebele class 9
   relative prefix from the Mirror-obeying complex head and not from another bracketing of the
   same terminals, which it could not tell apart if it were associative.
@@ -40,8 +43,10 @@ half without the verb, is exponed as *do*.
   imperative, where Σ keeps C out of the verb's chain, is thereby the context of a declarative.
 * Split-by-Deletion applies in every language, the possibility the paper raises for its typology
   of splitting; Split-by-Intervention is a setting.
-* A language's settings record what the paper's data settle, so the form of a verb with an orphan
-  T is absent where no do-support or fronting datum shows it.
+* A language's settings record what the paper's data settle, so the fate of an orphan T is absent
+  where no do-support or fronting datum shows it. The fates are the library's impoverishment and
+  obliteration rules, and the elsewhere exponent comes from impoverishing the orphan at its own
+  insertion only, which leaves its features to condition the stem.
 * An M-value is an element of the free magma over the terminals, each product listing the lower
   constituent first. The operation leaves linear order open, and only the Ndebele prefix is
   linearized.
@@ -56,13 +61,14 @@ half without the verb, is exponed as *do*.
 * [baker-1985]
 * [pollock-1989]
 * [harizanov-gribanova-2019]
+* [arregi-nevins-2012]
 -/
 
 @[expose] public section
 
 namespace ArregiPietraszko2021
 
-open Phonology FreeMagma
+open Phonology FreeMagma DistributedMorphology
 
 /-! ### Head chains -/
 
@@ -146,11 +152,11 @@ end HeadChain
 
 /-! ### Languages -/
 
-/-- The form of a verbal word. A verb whose T is an orphan is finite where the orphan is ignored,
-a pseudo-infinitive where T takes its elsewhere exponent on a root still in its finite allomorph,
-an infinitive where T is impoverished of tense and agreement, and bare where T is obliterated. -/
-inductive VerbForm
-  | finite | pseudoInfinitive | infinitive | bare
+/-- The fate of an orphan T at spell-out. The mark of an orphan does nothing to it, or makes
+insertion at it disregard its tense and agreement, or impoverishes them, or obliterates the
+terminal. -/
+inductive OrphanFate
+  | ignored | elsewhere | impoverished | obliterated
   deriving DecidableEq, Repr
 
 /-- The settings of a language. -/
@@ -161,11 +167,12 @@ structure Language where
   splitByIntervention : Bool := false
   /-- Whether sentential negation is an adverbial, not the specifier of ΣP. -/
   adverbialNegation : Bool := false
-  /-- The form of a verb whose T is an orphan. -/
-  orphanT : Option VerbForm := none
+  /-- The fate of an orphan T. -/
+  orphanT : Option OrphanFate := none
 
 /-- English has strong lexical verbs and Split-by-Intervention, and obliterates an orphan T. -/
-def english : Language := { strong := {.V}, splitByIntervention := true, orphanT := some .bare }
+def english : Language :=
+  { strong := {.V}, splitByIntervention := true, orphanT := some .obliterated }
 
 /-- French has no strong head. -/
 def french : Language := {}
@@ -175,22 +182,22 @@ Split-by-Intervention. -/
 def danish : Language := { strong := {.V, .Aux, .C} }
 
 /-- Swedish has the Danish settings and ignores an orphan T. -/
-def swedish : Language := { danish with orphanT := some .finite }
+def swedish : Language := { danish with orphanT := some .ignored }
 
 /-- Monnese has strong lexical verbs, T and C, and Split-by-Intervention; its negation is an
 adverbial, and it impoverishes an orphan T. -/
 def monnese : Language :=
   { strong := {.V, .T, .C}, splitByIntervention := true, adverbialNegation := true,
-    orphanT := some .infinitive }
+    orphanT := some .impoverished }
 
 /-- Polish has weak verbs and impoverishes an orphan T. -/
-def polish : Language := { orphanT := some .infinitive }
+def polish : Language := { orphanT := some .impoverished }
 
 /-- Hebrew has weak verbs and impoverishes an orphan T. -/
-def hebrew : Language := { orphanT := some .infinitive }
+def hebrew : Language := { orphanT := some .impoverished }
 
 /-- Yiddish has weak verbs and gives an orphan T its elsewhere exponent. -/
-def yiddish : Language := { orphanT := some .pseudoInfinitive }
+def yiddish : Language := { orphanT := some .elsewhere }
 
 /-- Spanish has no strong head in imperatives. -/
 def spanish : Language := {}
@@ -201,10 +208,108 @@ def vallader : Language := { strong := {.T} }
 /-- Ndebele has a strong T. -/
 def ndebele : Language := { strong := {.T} }
 
-/-- `c.form L` is the form of the word that `c` is pronounced as, finite unless its T is an
-orphan. -/
-def HeadChain.form (L : Language) (c : HeadChain) : Option VerbForm :=
-  if c.Orphan .T then L.orphanT else some .finite
+/-! ### The spell-out of orphans -/
+
+/-- The features of the terminals of a verbal word are the verb, T with its tense and agreement,
+and the mark of an orphan. -/
+inductive Feat
+  | verb | T | tense | agr | orphan
+  deriving DecidableEq, Repr
+
+/-- The pieces of a verbal word are the stem, the allomorph of the stem that tense conditions,
+the dummy verb, and the finite and the infinitival exponent of T. -/
+inductive Piece
+  | stem | finiteStem | dummy | finite | infinitival
+  deriving DecidableEq, Repr
+
+/-- The Vocabulary of a verbal word. An orphan verb is the dummy verb, a verb beside a T that
+bears tense takes the allomorph that tense conditions, and the infinitival exponent is the
+elsewhere exponent of T. -/
+def vocabulary : List (VocabularyItem Feat Piece) :=
+  [[.verb, .orphan] ⟷ .dummy, ⟨⟨[.verb], [], [[.tense]]⟩, .finiteStem⟩, [.verb] ⟷ .stem,
+    [.T, .tense, .agr] ⟷ .finite, [.T] ⟷ .infinitival]
+
+/-- The dummy verb is inserted exactly at an orphan verb, whatever stands beside it. -/
+theorem subsetPrinciple_eq_dummy_iff {n : Neighborhood (List Feat)} (hT : .T ∉ n.focus) :
+    subsetPrinciple vocabulary n = some .dummy ↔ .verb ∈ n.focus ∧ .orphan ∈ n.focus := by
+  let dummy : VocabularyItem Feat Piece := [.verb, .orphan] ⟷ .dummy
+  constructor
+  · intro h
+    obtain ⟨i, hi, he, hs⟩ := subsetPrinciple_winner_mem h
+    have hf := Neighborhood.focus_subset_focus hs
+    simp only [vocabulary, List.mem_cons, List.not_mem_nil, or_false] at hi
+    rcases hi with rfl | rfl | rfl | rfl | rfl <;> cases he
+    exact ⟨hf (by simp [VocabularyItem.ofFeatures]), hf (by simp [VocabularyItem.ofFeatures])⟩
+  · rintro ⟨hv, ho⟩
+    have hT' : ∀ fs : List Feat, .T ∈ fs → ¬ (fs : Neighborhood (List Feat)) ⊆ n :=
+      fun fs h hs ↦ hT (Neighborhood.ofBundle_subset_iff.mp hs h)
+    have key : ∀ s ∈ vocabulary, Morphology.Exponence.Applies s n →
+        s = dummy ∨ s.specificity < dummy.specificity := by
+      intro s hs ha
+      simp only [vocabulary, List.mem_cons, List.not_mem_nil, or_false] at hs
+      rcases hs with rfl | rfl | rfl | rfl | rfl
+      · exact .inl rfl
+      · exact .inr (by decide)
+      · exact .inr (by decide)
+      · exact absurd ha (hT' _ (by simp))
+      · exact absurd ha (hT' _ (by simp))
+    exact Morphology.Exponence.realize_eq_of_forall_le (r := dummy) (by simp [vocabulary, dummy])
+      (Neighborhood.ofBundle_subset_iff.mpr (by simp [hv, ho]))
+      (fun s hs ha ↦ (key s hs ha).elim (fun h ↦ h ▸ le_rfl) le_of_lt)
+      (fun s hs ha he ↦ (key s hs ha).elim (fun h ↦ h ▸ rfl) fun h ↦ absurd he h.ne)
+
+/-- Impoverishment deletes the tense and the agreement of an orphan T. -/
+def impoverishment : List (ImpoverishmentRule (List Feat) Feat) :=
+  [.ofFocus (fun b ↦ .T ∈ b ∧ .orphan ∈ b) .tense, .ofFocus (fun b ↦ .T ∈ b ∧ .orphan ∈ b) .agr]
+
+/-- The focus of a neighborhood after impoverishment. -/
+def impoverish (n : Neighborhood (List Feat)) : List Feat :=
+  runChain (ImpoverishmentRule.apply List.erase) impoverishment n
+
+/-- Obliteration deletes an orphan T. -/
+def obliteration : ObliterationRule (List Feat) := ⟨fun n ↦ .T ∈ n.focus ∧ .orphan ∈ n.focus⟩
+
+/-- Vocabulary Insertion at each terminal of a word, with no rule before it. -/
+def insertion : Spellout (List Feat) Piece where
+  modules := []
+  insert n := (subsetPrinciple vocabulary n).toList
+
+/-- The spell-out of a word under each fate of an orphan T. Impoverishment applies before
+insertion, or to the orphan at its own insertion only, where its features still condition the
+stem beside it. -/
+def OrphanFate.spellout : OrphanFate → Spellout (List Feat) Piece
+  | .ignored => insertion
+  | .elsewhere => insertion.rewriteAt impoverish
+  | .impoverished => insertion.rewriteBefore impoverish
+  | .obliterated => { insertion with modules := [obliteration.apply] }
+
+/-- The features of a terminal that has an exponent in a verbal word. -/
+def Head.feats : Head → Option (List Feat)
+  | .V | .Aux => some [.verb]
+  | .T => some [.T, .tense, .agr]
+  | _ => none
+
+/-- `c.domain` is the word of `c` as Vocabulary Insertion meets it, its terminals that have
+exponents, each with the mark of an orphan if it is one. -/
+def HeadChain.domain (c : HeadChain) : SpelloutDomain (List Feat) :=
+  c.terminals.filterMap fun x ↦ x.feats.map fun fs ↦ if c.Orphan x then fs ++ [.orphan] else fs
+
+/-- The pieces of the word that a chain is pronounced as, terminal by terminal, or `none` where
+its T is an orphan and what the language does to an orphan T is not recorded. -/
+def HeadChain.word (L : Language) (c : HeadChain) : Option (List (List Piece)) :=
+  (if c.Orphan .T then L.orphanT else some .ignored).map (·.spellout.pf c.domain)
+
+/-- The four fates of an orphan T give the four forms of a fronted verb: a finite verb where the
+orphan is ignored, the infinitival exponent on the stem that tense conditions where insertion
+disregards the features of the orphan, a true infinitive under impoverishment, and a bare stem
+under obliteration. -/
+theorem fronted_forms :
+    let fronted : HeadChain := ⟨[.V], (HeadChain.ofHeads .V [.T]).mvalue⟩
+    OrphanFate.ignored.spellout.pf fronted.domain = [[.finiteStem], [.finite]] ∧
+      OrphanFate.elsewhere.spellout.pf fronted.domain = [[.finiteStem], [.infinitival]] ∧
+      OrphanFate.impoverished.spellout.pf fronted.domain = [[.stem], [.infinitival]] ∧
+      OrphanFate.obliterated.spellout.pf fronted.domain = [[.stem]] := by
+  decide
 
 /-! ### Contexts and chain splitting -/
 
@@ -391,9 +496,9 @@ def contexts (L : Language) : List (String × Context) :=
 def headLabels : List (String × Head) := [("V", .V), ("T", .T), ("C", .C)]
 
 @[inherit_doc headLabels]
-def formLabels : List (String × VerbForm) :=
-  [("finite", .finite), ("pseudoInfinitive", .pseudoInfinitive), ("infinitive", .infinitive),
-    ("bare", .bare)]
+def formLabels : List (String × List (List Piece)) :=
+  [("finite", [[.finiteStem], [.finite]]), ("pseudoInfinitive", [[.finiteStem], [.infinitival]]),
+    ("infinitive", [[.stem], [.infinitival]]), ("bare", [[.stem]])]
 
 @[inherit_doc headLabels]
 def boolLabels : List (String × Bool) := [("true", true), ("false", false)]
@@ -410,10 +515,10 @@ instance {α : Type*} [DecidableEq α] (r : Datum) (key : String) (table : List 
 /-- The surface properties a row records are those of the chains. -/
 def Chains.Matches (L : Language) (d : Chains) (r : Datum) : Prop :=
   Agrees r "finitePosition" headLabels (d.finitePosition L) ∧
-    Agrees r "doSupport" boolLabels (some (decide d.DoSupport)) ∧
-    Agrees r "verbForm" formLabels (d.verb.form L) ∧
+    Agrees r "doSupport" boolLabels ((d.finite.word L).map fun w ↦ decide ([.dummy] ∈ w)) ∧
+    Agrees r "verbForm" formLabels (d.verb.word L) ∧
     Agrees r "imperativeForm" boolLabels (some (decide d.HasC)) ∧
-    Agrees r "frontedForm" formLabels (d.fronted.bind (·.form L))
+    Agrees r "frontedForm" formLabels (d.fronted.bind (·.word L))
 
 instance (L : Language) (d : Chains) (r : Datum) : Decidable (d.Matches L r) :=
   inferInstanceAs (Decidable (_ ∧ _))
@@ -430,6 +535,15 @@ surfaces as the settings of its language derive. -/
 theorem rows_derived :
     ∀ r ∈ Examples.all, r.language ≠ "nort2795" → ∃ p ∈ derivation? r, p.2.Matches p.1 r := by
   decide +kernel
+
+/-- A split chain is pronounced as two words. Under English negation the higher is the dummy
+verb with finite inflection and the lower a bare stem, and under Monnese inversion the lower is
+an infinitive. -/
+theorem split_words :
+    (derive english (.negation english) .V).finite.word english = some [[.dummy], [.finite]] ∧
+      (derive english (.negation english) .V).verb.word english = some [[.stem]] ∧
+      (derive monnese .inversion .V).verb.word monnese = some [[.stem], [.infinitival]] := by
+  decide
 
 /-! ### Pollock's paradigm -/
 

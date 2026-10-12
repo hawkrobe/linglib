@@ -25,9 +25,10 @@ modules — Fission multiplies exponents within a position (`scansion`),
 not positions. `winner?_retreat` (`VocabularyInsertion/Basic.lean`) supplies the
 insertion-side ordering law.
 
-Consumers: `Studies/Middleton2026.lean` (Basque whole-terminal rules and
-the Ondarru ordering witness), `Studies/HalleMarantz1993.lean` (Tns+Agr
-fusion feeding one insertion).
+A focus-level rule can also be timed against insertion: applied to the
+domain before insertion, where the terminals beside a rewritten one see it
+rewritten, or to each terminal at its own insertion only, where they see it
+as it was. The two timings differ only for insertion that reads the context.
 
 ## Main definitions
 
@@ -37,12 +38,16 @@ fusion feeding one insertion).
   swap, each a decidable condition on a neighborhood.
 * `FusionRule.applyFirstAdjacent`: the domain lift of Fusion.
 * `Spellout`, `Spellout.run`, `Spellout.pf`: the module sequence, then insertion in context.
+* `Spellout.rewriteBefore`, `Spellout.rewriteAt`: a focus-level rule applied before insertion,
+  and at each terminal's own insertion.
 
 ## Main results
 
 * `length_rewriteFirst_le`, `length_rewriteFirst`: the count laws, which hold because each
   neighborhood reassembles to the domain (`Neighborhood.toList_of_mem_along`).
 * `Spellout.length_pf`: insertion positions equal terminals after the modules.
+* `Spellout.pf_rewriteBefore_eq_pf_rewriteAt`: the two timings of a focus-level rule give the
+  same exponents where insertion reads the focus alone.
 
 ## TODO
 
@@ -70,7 +75,7 @@ abbrev SpelloutDomain (Bundle : Type*) := List Bundle
 
 variable {Bundle : Type*}
 
-open Neighborhood (along toList_of_mem_along)
+open Neighborhood
 
 /-! ### Rewriting at the first neighborhood -/
 
@@ -107,10 +112,9 @@ theorem length_rewriteFirst (hf : ∀ n, (f n).length = n.toList.length)
 
 end RewriteFirst
 
-/-- A whole-terminal deletion rule — [arregi-nevins-2012]'s Obliteration:
-the terminal whose neighborhood satisfies `condition` is removed
-outright. The focus-level `ImpoverishmentRule` deletes a feature inside a
-terminal; this rule deletes the terminal. -/
+/-- An obliteration rule, in the sense of [arregi-nevins-2012], removes outright the terminal
+whose neighborhood satisfies `condition`. The focus-level `ImpoverishmentRule` deletes a feature
+inside a terminal, and this rule deletes the terminal. -/
 structure ObliterationRule (Bundle : Type*) where
   /-- The neighborhoods whose focus is removed. -/
   condition : Neighborhood Bundle → Prop
@@ -132,12 +136,9 @@ theorem length_apply_le (rule : ObliterationRule Bundle)
 
 end ObliterationRule
 
-/-- An adjacent-terminal swap rule — the terminal-order metathesis of
-[arregi-nevins-2012]'s Metathesis module (the feature metathesis of the Taos
-prefix in `Studies/Middleton2026.lean`): where `condition` holds of a
-neighborhood, its focus swaps with the terminal to its right. Ergative
-Metathesis, which fronts a clitic across intervening terminals, is a
-`rewriteFirst` of its own there. -/
+/-- A terminal metathesis rule, the terminal-order metathesis of [arregi-nevins-2012]'s
+Metathesis module, swaps the focus of a neighborhood satisfying `condition` with the terminal to
+its right. -/
 structure TerminalMetathesisRule (Bundle : Type*) where
   /-- The neighborhoods whose focus swaps with the terminal to its right. -/
   condition : Neighborhood Bundle → Prop
@@ -189,7 +190,7 @@ sequence; the Basque ordering witness in `Studies/Middleton2026.lean`
 shows reordering it has empirical content). -/
 def runModules (modules : List (SpelloutDomain Bundle → SpelloutDomain Bundle))
     (d : SpelloutDomain Bundle) : SpelloutDomain Bundle :=
-  modules.foldl (fun d m => m d) d
+  modules.foldl (fun d m ↦ m d) d
 
 /-- Module sequences compose by concatenation. -/
 theorem runModules_append
@@ -207,8 +208,8 @@ Vocabulary Insertion at each surviving position in its neighborhood. -/
 structure Spellout (Bundle F : Type*) where
   /-- The ordered postsyntactic module sequence. -/
   modules : List (SpelloutDomain Bundle → SpelloutDomain Bundle)
-  /-- The exponents inserted at a position, seeing its neighbors: one,
-  several under Fission (`scansion`), none at a non-licensed position. -/
+  /-- The exponents inserted at a position, which sees its neighbors. There is one, several
+  under Fission, or none at a position that licenses none. -/
   insert : Neighborhood Bundle → List F
 
 namespace Spellout
@@ -230,6 +231,46 @@ syntactic terminal count only through the modules. -/
 @[simp] theorem length_pf (s : Spellout Bundle F) (d : SpelloutDomain Bundle) :
     (s.pf d).length = (s.run d).length := by
   simp [pf]
+
+/-! ### The timing of a focus-level rule -/
+
+variable (r : Neighborhood Bundle → Bundle) (s : Spellout Bundle F)
+
+/-- `s.rewriteBefore r` applies the focus-level rule `r` to every terminal after the modules of
+`s` and before insertion, so that a terminal beside a rewritten one sees it rewritten. -/
+def rewriteBefore : Spellout Bundle F :=
+  { s with modules := s.modules ++ [fun d ↦ (along d).map r] }
+
+/-- `s.rewriteAt r` applies the focus-level rule `r` to each terminal at its own insertion only,
+so that a terminal beside it sees it as it was. -/
+def rewriteAt : Spellout Bundle F :=
+  { s with insert := fun n ↦ s.insert { n with focus := r n } }
+
+@[simp] theorem run_rewriteBefore (d : SpelloutDomain Bundle) :
+    (s.rewriteBefore r).run d = (along (s.run d)).map r := by
+  simp [run, rewriteBefore, runModules]
+
+@[simp] theorem run_rewriteAt (d : SpelloutDomain Bundle) : (s.rewriteAt r).run d = s.run d := rfl
+
+@[simp] theorem insert_rewriteBefore : (s.rewriteBefore r).insert = s.insert := rfl
+
+@[simp] theorem insert_rewriteAt (n : Neighborhood Bundle) :
+    (s.rewriteAt r).insert n = s.insert { n with focus := r n } := rfl
+
+/-- The timing of a focus-level rule matters only to insertion that reads the context. Where
+insertion reads the focus alone, the rule yields the same exponents applied before insertion and
+at insertion. -/
+theorem pf_rewriteBefore_eq_pf_rewriteAt
+    (hs : ∀ n n' : Neighborhood Bundle, n.focus = n'.focus → s.insert n = s.insert n')
+    (d : SpelloutDomain Bundle) : (s.rewriteBefore r).pf d = (s.rewriteAt r).pf d := by
+  have key (e : SpelloutDomain Bundle) :
+      (along e).map s.insert = e.map fun b ↦ s.insert (ofBundle b) :=
+    calc (along e).map s.insert
+        = ((along e).map focus).map fun b ↦ s.insert (ofBundle b) := by
+          rw [List.map_map]; exact List.map_congr_left fun n _ ↦ hs _ _ rfl
+      _ = e.map fun b ↦ s.insert (ofBundle b) := by rw [map_focus_along]
+  rw [pf, pf, run_rewriteBefore, run_rewriteAt, insert_rewriteBefore, key, List.map_map]
+  exact List.map_congr_left fun n _ ↦ hs _ _ rfl
 
 end Spellout
 
