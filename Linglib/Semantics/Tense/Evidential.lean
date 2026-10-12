@@ -1,23 +1,23 @@
 module
 
-public import Linglib.Semantics.Tense.Reichenbach
+public import Linglib.Semantics.Tense.Defs
 
 /-!
 # Tense and evidence
 
-This file extends Reichenbach's frame with the time at which the speaker acquires the
-evidence for the assertion, the learning time of Koev's account of the Bulgarian evidential
-and the acquisition time of Cumming's account of tense-evidential paradigms. Evidence is
-downstream of the event when the event precedes or coincides with its acquisition, and it is
-acquired when its acquisition precedes or coincides with speech. Downstream evidence that has
-been acquired is evidence for a nonfuture event, which is why no language restricts a true
-future tense to downstream evidence.
+An evidential frame locates an assertion by three times: the time of speech, the time of the
+event, and the time at which the speaker acquires the evidence for the assertion, the learning
+time of Koev's account of the Bulgarian evidential and the acquisition time of Cumming's account
+of tense-evidential paradigms. Evidence is downstream of the event when the event precedes or
+coincides with its acquisition, so that on linear time the event stands to the acquisition in a
+nonfuture position.
 
 ## Main definitions
 
-* `EvidentialFrame`: Reichenbach's frame with an acquisition time.
-* `EvidentialFrame.Downstream`, `EvidentialFrame.Acquired`: the relations of the acquisition
-  time to the event and to speech.
+* `Tense.EvidentialFrame`: the speech time, the event time and the acquisition time of an
+  assertion.
+* `Tense.EvidentialFrame.Downstream`: the event is no later than the acquisition of the
+  evidence.
 
 ## Implementation notes
 
@@ -26,54 +26,42 @@ future tense to downstream evidence.
 
 ## References
 
-* [S. Cumming, *Tense and evidence* (2026)][cumming-2026]
-* [T. Koev, *Evidentiality, learning events and spatiotemporal distance* (2017)][koev-2017]
-* [M. Huijsmans, *Timing of evidence and epistemic modal claims* (2025)][huijsmans-2025]
-* [H. Reichenbach, *Elements of symbolic logic* (1947)][reichenbach-1947]
+* [cumming-2026]
+* [koev-2017]
+* [huijsmans-2025]
 -/
 
 @[expose] public section
 
-namespace Tense.Evidential
+namespace Tense
 
 open Semantics
 
-variable {T : Type*}
-
-/-- Reichenbach's frame with the time at which the speaker acquires the evidence grounding
-the assertion. -/
-structure EvidentialFrame (T : Type*) extends ReichenbachFrame T where
+/-- An evidential frame consists of the time of speech, the time of the event, and the time at
+which the speaker acquires the evidence for the assertion. -/
+structure EvidentialFrame (T : Type*) where
+  /-- The time at which the utterance occurs. -/
+  speechTime : T
+  /-- The time at which the event occurs. -/
+  eventTime : T
   /-- The time at which the speaker acquires the evidence for the assertion. -/
   acquisitionTime : T
 
 namespace EvidentialFrame
 
+variable {T : Type*}
+
 /-- The evidence is downstream of the event when the event precedes or coincides with its
 acquisition. -/
 def Downstream [LE T] (f : EvidentialFrame T) : Prop := f.eventTime ≤ f.acquisitionTime
 
-/-- The evidence is acquired by the time of speech. -/
-def Acquired [LE T] (f : EvidentialFrame T) : Prop := f.acquisitionTime ≤ f.speechTime
-
 instance [LE T] [DecidableLE T] (f : EvidentialFrame T) : Decidable f.Downstream :=
   inferInstanceAs (Decidable (f.eventTime ≤ f.acquisitionTime))
-
-instance [LE T] [DecidableLE T] (f : EvidentialFrame T) : Decidable f.Acquired :=
-  inferInstanceAs (Decidable (f.acquisitionTime ≤ f.speechTime))
 
 theorem downstream_iff [LinearOrder T] (f : EvidentialFrame T) :
     f.Downstream ↔ compare f.eventTime f.acquisitionTime ∈ ⟦future⟧ᶜ :=
   (compare_mem_compl_future _ _).symm
 
-theorem acquired_iff [LinearOrder T] (f : EvidentialFrame T) :
-    f.Acquired ↔ compare f.acquisitionTime f.speechTime ∈ ⟦future⟧ᶜ :=
-  (compare_mem_compl_future _ _).symm
-
-/-- Downstream evidence acquired by the time of speech is evidence for a nonfuture event. -/
-theorem eventTime_le_speechTime [Preorder T] {f : EvidentialFrame T} (hd : f.Downstream)
-    (hA : f.Acquired) : f.eventTime ≤ f.speechTime :=
-  le_trans hd hA
-
 end EvidentialFrame
 
-end Tense.Evidential
+end Tense

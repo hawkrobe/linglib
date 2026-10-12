@@ -60,7 +60,7 @@ namespace Cumming2026
 
 open Semantics
 
-open Tense Tense.Evidential Presupposition
+open Tense Presupposition
 
 variable {T : Type*} [LinearOrder T]
 
@@ -106,8 +106,8 @@ theorem downstream_of_holds {c : Cell} (hc : c.ep ≤ ⟦future⟧ᶜ) {f : Evid
     (h : c.Holds f) : f.Downstream :=
   f.downstream_iff.2 (hc h.1)
 
-/-- The meaning of a cell at a frame, with the constraints presupposed and the content
-asserted: the constraint is not part of what is asserted. -/
+/-- The meaning of a cell at a frame presupposes the constraints and asserts the content, so the
+constraint is not part of what is asserted. -/
 @[simps] def meaning {W : Type*} (c : Cell) (f : EvidentialFrame T) (φ : W → Prop) :
     PartialProp W where
   presup _ := c.Holds f
@@ -163,8 +163,8 @@ theorem te_past_derivedUp : (te ⟦past⟧).derivedUp = ⟦past⟧ := comp_past_
 
 theorem te_present_derivedUp : (te ⟦present⟧).derivedUp = ⟦past⟧ := comp_present_left _
 
-/-- Prospective evidence acquired in the past of speech leaves the utterance perspective
-open: the future under *-te* is compatible with a past, present or future event. -/
+/-- Prospective evidence acquired in the past of speech leaves the utterance perspective open, so
+the future under *-te* is compatible with a past, present or future event. -/
 theorem te_future_derivedUp : (te ⟦future⟧).derivedUp = ⊤ := comp_future_past
 
 theorem ney_past_derivedUp : (ney ⟦past⟧).derivedUp = ⟦past⟧ := comp_present_right _
@@ -181,8 +181,8 @@ theorem l_nonfuture_derivedUp : (l ⟦future⟧ᶜ).derivedUp = ⟦future⟧ᶜ 
   rw [← past_sup_present, comp_sup_left, comp_sup_right, comp_sup_right]
   simp
 
-/-- Prospective evidence acquired by the time of speech leaves the utterance perspective
-open: the future under *-l* describes yesterday's forecast rain ((16)). -/
+/-- Prospective evidence acquired by the time of speech leaves the utterance perspective open, so
+the future under *-l* describes yesterday's forecast rain ((16)). -/
 theorem l_future_derivedUp : (l ⟦future⟧).derivedUp = ⊤ := by
   show comp ⟦future⟧ ⟦future⟧ᶜ = ⊤
   rw [← past_sup_present, comp_sup_right]
@@ -235,13 +235,12 @@ def cell? (e : Datum) : Option Cell :=
       ("-ney PAST", ney ⟦past⟧), ("-ney PRES", ney ⟦present⟧), ("-ney FUT", ney ⟦future⟧),
       ("NFUT + -l", l ⟦future⟧ᶜ), ("FUT + -l", l ⟦future⟧)]
 
-/-- The frame a row's scenario fixes, with the perspective and reference times at speech. -/
+/-- The frame a row's scenario fixes. -/
 def frame? (e : Datum) : Option (EvidentialFrame ℤ) := do
   let s ← e.nat? "speechTime"
   let a ← e.nat? "acquisitionTime"
   let t ← e.nat? "eventTime"
-  pure { speechTime := s, perspectiveTime := s, referenceTime := s, eventTime := t,
-         acquisitionTime := a }
+  pure { speechTime := s, eventTime := t, acquisitionTime := a }
 
 /-- The row describes a planned or scheduled event (§6). -/
 def Scheduled (e : Datum) : Prop := e.feature? "scheduled" = some "true"
