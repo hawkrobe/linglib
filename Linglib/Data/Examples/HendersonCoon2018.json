@@ -1,0 +1,918 @@
+[
+  {
+    "id": "hendersoncoon2018_1",
+    "source": {"bibkey": "henderson-coon-2018", "paperLabel": "(1), preprint numbering"},
+    "language": "kaqc1270",
+    "primaryText": "Achike x-Ø-u-löq' ri äk'?",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Achike", "who"], ["x-Ø-u-löq'", "CPL-ABS3S-ERG3S-buy"], ["ri", "the"], ["äk'", "chicken"]
+    ],
+    "translation": "Who bought the chicken?",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "extraction"],
+      ["extracted", "subject"],
+      ["verb", "TV"],
+      ["objectKind", "dp"],
+      ["subject", "3"],
+      ["object", "3"]
+    ],
+    "comment": "Repeated as (12b).",
+    "verified": "page-image"
+  },
+  {
+    "id": "hendersoncoon2018_2",
+    "source": {"bibkey": "henderson-coon-2018", "paperLabel": "(2), preprint numbering"},
+    "language": "kaqc1270",
+    "primaryText": "Achike x-Ø-loq'-o ri äk'?",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Achike", "who"], ["x-Ø-loq'-o", "CPL-ABS3S-buy-AF"], ["ri", "the"], ["äk'", "chicken"]
+    ],
+    "translation": "Who bought the chicken?",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "extraction"],
+      ["extracted", "subject"],
+      ["verb", "AF"],
+      ["objectKind", "dp"],
+      ["subject", "3"],
+      ["object", "3"]
+    ],
+    "comment": "Repeated as (13).",
+    "verified": "page-image"
+  },
+  {
+    "id": "hendersoncoon2018_12a",
+    "source": {"bibkey": "henderson-coon-2018", "paperLabel": "(12a), preprint numbering"},
+    "language": "kaqc1270",
+    "primaryText": "Achike x-Ø-u-löq' ri tijonel?",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Achike", "what"], ["x-Ø-u-löq'", "CPL-ABS3S-ERG3S-buy"], ["ri", "the"],
+      ["tijonel", "teacher"]
+    ],
+    "translation": "What did the teacher buy?",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "extraction"],
+      ["extracted", "object"],
+      ["verb", "TV"],
+      ["objectKind", "dp"],
+      ["subject", "3"],
+      ["object", "3"]
+    ],
+    "comment": "Object extraction needs no AF.",
+    "verified": "page-image"
+  },
+  {
+    "id": "hendersoncoon2018_18a",
+    "source": {"bibkey": "henderson-coon-2018", "paperLabel": "(18a), preprint numbering"},
+    "language": "kaqc1270",
+    "primaryText": "Ja ri ixoq x-Ø-u-ch'ëy r-i'.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Ja", "FOC"], ["ri", "the"], ["ixoq", "woman"], ["x-Ø-u-ch'ëy", "CPL-ABS3S-ERG3S-hit"],
+      ["r-i'", "ERG3S-self"]
+    ],
+    "translation": "It's the woman who hit herself.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "extraction"],
+      ["extracted", "subject"],
+      ["verb", "TV"],
+      ["objectKind", "reflexive"],
+      ["subject", "3"],
+      ["object", "3"]
+    ],
+    "comment": "Reflexive object: the focused subject triggers ergative agreement and no AF.",
+    "verified": "page-image"
+  },
+  {
+    "id": "hendersoncoon2018_18b",
+    "source": {"bibkey": "henderson-coon-2018", "paperLabel": "(18b), preprint numbering"},
+    "language": "kaqc1270",
+    "primaryText": "Achike x-Ø-u-k'äm pe r-ixayil pa nimaq'ij",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Achike", "who"], ["x-Ø-u-k'äm", "CPL-ABS3S-ERG3S-bring"], ["pe", "DIR"],
+      ["r-ixayil", "ERG3S-wife"], ["pa", "PREP"], ["nimaq'ij", "party"]
+    ],
+    "translation": "Who brought his (own) wife to the party?",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "extraction"],
+      ["extracted", "subject"],
+      ["verb", "TV"],
+      ["objectKind", "extendedReflexive"],
+      ["subject", "3"],
+      ["object", "3"]
+    ],
+    "comment": "Extended reflexive object: no AF.",
+    "verified": "page-image"
+  },
+  {
+    "id": "hendersoncoon2018_19",
+    "source": {"bibkey": "henderson-coon-2018", "paperLabel": "(19), preprint numbering"},
+    "language": "kaqc1270",
+    "primaryText": "... ri nik'aj chïk winäq ri ni-Ø-ki-b'ij chi ni-Ø-ki-b'än jun kosa y...",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["ri", "the"], ["nik'aj", "half"], ["chïk", "again"], ["winäq", "people"], ["ri", "REL"],
+      ["ni-Ø-ki-b'ij", "ICPL-ABS3S-ERG3P-say"], ["chi", "that"],
+      ["ni-Ø-ki-b'än", "ICPL-ABS3S-ERG3P-do"], ["jun", "one"], ["kosa", "thing"], ["y", "and"]
+    ],
+    "translation": "... the other half of the people who say that they do one thing and...",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "extraction"],
+      ["extracted", "subject"],
+      ["verb", "TV"],
+      ["objectKind", "clause"],
+      ["subject", "3"],
+      ["object", "3"]
+    ],
+    "comment": "Relativized subject of a verb with a clausal complement: ergative agreement, no AF (WBT).",
+    "verified": "page-image"
+  },
+  {
+    "id": "hendersoncoon2018_20",
+    "source": {"bibkey": "henderson-coon-2018", "paperLabel": "(20), preprint numbering"},
+    "language": "kaqc1270",
+    "primaryText": "Achike x-Ø-u-b'än manifestar pa b'ey?",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Achike", "who"], ["x-Ø-u-b'än", "CPL-ABS3S-ERG3S-do"], ["manifestar", "protest"],
+      ["pa", "in"], ["b'ey", "street"]
+    ],
+    "translation": "Who protested in the street?",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "extraction"],
+      ["extracted", "subject"],
+      ["verb", "TV"],
+      ["objectKind", "lightVerb"],
+      ["subject", "3"],
+      ["object", "3"]
+    ],
+    "comment": "Light verb b'än 'do' with a borrowed complement: no AF (WBT). The source glosses the verb ICPL-ABS3S-ERG3P-do.",
+    "verified": "page-image"
+  },
+  {
+    "id": "hendersoncoon2018_4",
+    "source": {"bibkey": "henderson-coon-2018", "paperLabel": "(4), preprint numbering"},
+    "language": "kaqc1270",
+    "primaryText": "Achike kan qitzij x-Ø-u-tij ri wäy?",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Achike", "who"], ["kan", "truly"], ["qitzij", "truth"],
+      ["x-Ø-u-tij", "CPL-ABS3S-ERG3S-eat"], ["ri", "the"], ["wäy", "tortilla"]
+    ],
+    "translation": "Who truly ate the tortilla?",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "extraction"],
+      ["extracted", "subject"],
+      ["verb", "TV"],
+      ["objectKind", "dp"],
+      ["subject", "3"],
+      ["object", "3"],
+      ["intervener", "kan qitzij"]
+    ],
+    "comment": "Cited from Erlewine (2016, 27) in standard orthography; repeated as (21) and (52).",
+    "verified": "page-image"
+  },
+  {
+    "id": "hendersoncoon2018_5",
+    "source": {"bibkey": "henderson-coon-2018", "paperLabel": "(5), preprint numbering"},
+    "language": "kaqc1270",
+    "primaryText": "Ri kan qitzij y-e-ya'-on ru-q'ij k'o chi e ütz chuqa'.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Ri", "REL"], ["kan", "truly"], ["qitzij", "truth"], ["y-e-ya'-on", "ICPL-ABS3P-give-AF"],
+      ["ru-q'ij", "ERG3S-day"], ["k'o chi", "must"], ["e", "ABS3P"], ["ütz", "good"],
+      ["chuqa'", "also"]
+    ],
+    "translation": "Those who truly valorize his word must also be good.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "extraction"],
+      ["extracted", "subject"],
+      ["verb", "AF"],
+      ["objectKind", "dp"],
+      ["subject", "3"],
+      ["object", "3"],
+      ["intervener", "kan qitzij"]
+    ],
+    "comment": "AF past kan qitzij (WBT); repeated as (22), translated 'present his word'.",
+    "verified": "page-image"
+  },
+  {
+    "id": "hendersoncoon2018_6",
+    "source": {"bibkey": "henderson-coon-2018", "paperLabel": "(6), preprint numbering"},
+    "language": "kaqc1270",
+    "primaryText": "... roma ri winäq ri kan qitzij n-Ø-u-ya' ru-q'ij ri Dios...",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["roma", "because"], ["ri", "the"], ["winäq", "person"], ["ri", "REL"], ["kan", "truly"],
+      ["qitzij", "truth"], ["n-Ø-u-ya'", "ICPL-ABS3S-ERG3S-give"], ["ru-q'ij", "ERG3S-day"],
+      ["ri", "the"], ["Dios", "God"]
+    ],
+    "translation": "... because the person who truly valorizes God...",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "extraction"],
+      ["extracted", "subject"],
+      ["verb", "TV"],
+      ["objectKind", "dp"],
+      ["subject", "3"],
+      ["object", "3"],
+      ["intervener", "kan qitzij"]
+    ],
+    "comment": "No AF past the same adverb as in (5) (WBT); repeated as (23).",
+    "verified": "page-image"
+  },
+  {
+    "id": "hendersoncoon2018_24",
+    "source": {"bibkey": "henderson-coon-2018", "paperLabel": "(24), preprint numbering"},
+    "language": "kaqc1270",
+    "primaryText": "... ri pastores ri kan x-Ø-ki-tzijoj ri ru-ch'ab'äl ri Dios ch-iw-e.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["ri", "the"], ["pastores", "pastors"], ["ri", "REL"], ["kan", "truly"],
+      ["x-Ø-ki-tzijoj", "CPL-ABS3S-ERG3P-preach"], ["ri", "the"], ["ru-ch'ab'äl", "ERG3S-word"],
+      ["ri", "the"], ["Dios", "God"], ["ch-iw-e", "PREP-ERG2P-RN.to"]
+    ],
+    "translation": "... the pastors who truly preach the word of God to y'all.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "extraction"],
+      ["extracted", "subject"],
+      ["verb", "TV"],
+      ["objectKind", "dp"],
+      ["subject", "3"],
+      ["object", "3"],
+      ["intervener", "kan"]
+    ],
+    "comment": "No AF past kan (WBT).",
+    "verified": "page-image"
+  },
+  {
+    "id": "hendersoncoon2018_25",
+    "source": {"bibkey": "henderson-coon-2018", "paperLabel": "(25), preprint numbering"},
+    "language": "kaqc1270",
+    "primaryText": "Rija' kan jun achi ri kan x-Ø-u-q'alaj-saj ri nu-ch'ab'äl.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Rija'", "He"], ["kan", "truly"], ["jun", "a"], ["achi", "man"], ["ri", "REL"],
+      ["kan", "truly"], ["x-Ø-u-q'alaj-saj", "CPL-ABS3S-ERG3S-visible-CAUS"], ["ri", "the"],
+      ["nu-ch'ab'äl", "ERG1S-word"]
+    ],
+    "translation": "He is truly a man that truly makes visible my word.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "extraction"],
+      ["extracted", "subject"],
+      ["verb", "TV"],
+      ["objectKind", "dp"],
+      ["subject", "3"],
+      ["object", "3"],
+      ["intervener", "kan"]
+    ],
+    "comment": "No AF past kan (WBT).",
+    "verified": "page-image"
+  },
+  {
+    "id": "hendersoncoon2018_27",
+    "source": {"bibkey": "henderson-coon-2018", "paperLabel": "(27), preprint numbering"},
+    "language": "kaqc1270",
+    "primaryText": "Ri kan xti-Ø-b'an-o k'a ri nu-samäj, xti-Ø-ya'-ox k'a ru-q'ij r-oma ri Nata'.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Ri", "REL"], ["kan", "truly"], ["xti-Ø-b'an-o", "POT-ABS3S-do-AF"], ["k'a ri", "then"],
+      ["nu-samäj", "ERG1S-work"], ["xti-Ø-ya'-ox", "POT-ABS3S-give-PASS"], ["k'a", "then"],
+      ["ru-q'ij", "ERG3S-day"], ["r-oma", "ERG3S-by"], ["ri", "the"], ["Nata'", "Father"]
+    ],
+    "translation": "Who truly does my work then, he will then be blessed by the Father.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "extraction"],
+      ["extracted", "subject"],
+      ["verb", "AF"],
+      ["objectKind", "dp"],
+      ["subject", "3"],
+      ["object", "3"],
+      ["intervener", "kan"]
+    ],
+    "comment": "AF past kan (WBT).",
+    "verified": "page-image"
+  },
+  {
+    "id": "hendersoncoon2018_28",
+    "source": {"bibkey": "henderson-coon-2018", "paperLabel": "(28), preprint numbering"},
+    "language": "kaqc1270",
+    "primaryText": "Achike k'a ri n-Ø-u-k'üt re tzij re' ch-qa-wäch?",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Achike", "who"], ["k'a ri", "then"], ["n-Ø-u-k'üt", "ICPL-ABS3S-ERG3S-show"],
+      ["re", "this"], ["tzij", "word"], ["re'", "DEIC"], ["ch-qa-wäch", "PREP-ERG1P-RN.front"]
+    ],
+    "translation": "Who then showed this word here to us?",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "extraction"],
+      ["extracted", "subject"],
+      ["verb", "TV"],
+      ["objectKind", "dp"],
+      ["subject", "3"],
+      ["object", "3"],
+      ["intervener", "k'a ri"]
+    ],
+    "comment": "No AF past k'a ri (WBT). The source glosses the aspect ICP.",
+    "verified": "page-image"
+  },
+  {
+    "id": "hendersoncoon2018_29",
+    "source": {"bibkey": "henderson-coon-2018", "paperLabel": "(29), preprint numbering"},
+    "language": "kaqc1270",
+    "primaryText": "Ri achike k'a ri n-Ø-r-ak'axaj ri ru-ch'ab'äl ri Nata' Dios y n-Ø-r-etamaj...",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Ri", "REL"], ["achike", "who"], ["k'a ri", "then"],
+      ["n-Ø-r-ak'axaj", "ICPL-ABS3S-ERG3S-hear"], ["ri", "the"], ["ru-ch'ab'äl", "ERG3S-word"],
+      ["ri", "the"], ["Nata'", "father"], ["Dios", "god"], ["y", "and"],
+      ["n-Ø-r-etamaj", "ICPL-ABS3S-ERG3S-learn"]
+    ],
+    "translation": "He who then hears the word of God the Father and learns it...",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "extraction"],
+      ["extracted", "subject"],
+      ["verb", "TV"],
+      ["objectKind", "dp"],
+      ["subject", "3"],
+      ["object", "3"],
+      ["intervener", "k'a ri"]
+    ],
+    "comment": "No AF past k'a ri (WBT). The source glosses the aspect ICP.",
+    "verified": "page-image"
+  },
+  {
+    "id": "hendersoncoon2018_30",
+    "source": {"bibkey": "henderson-coon-2018", "paperLabel": "(30), preprint numbering"},
+    "language": "kaqc1270",
+    "primaryText": "Achike k'a ri x-a-ch'ey-o?",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Achike", "who"], ["k'a ri", "then"], ["x-a-ch'ey-o", "CPL-ABS2S-fight-AF"]
+    ],
+    "translation": "Who then hit you?",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "extraction"],
+      ["extracted", "subject"],
+      ["verb", "AF"],
+      ["objectKind", "dp"],
+      ["subject", "3"],
+      ["object", "2"],
+      ["intervener", "k'a ri"]
+    ],
+    "comment": "AF past k'a ri (WBT).",
+    "verified": "page-image"
+  },
+  {
+    "id": "hendersoncoon2018_31",
+    "source": {"bibkey": "henderson-coon-2018", "paperLabel": "(31), preprint numbering"},
+    "language": "kaqc1270",
+    "primaryText": "Xab'achike k'a ri xti-Ø-nima-n ri Jesús kan xt-Ø-r-il wi k'a jun k'aslen ri...",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Xab'achike", "whoever"], ["k'a ri", "then"], ["xti-Ø-nima-n", "POT-ABS3S-believe-AF"],
+      ["ri", "the"], ["Jesús", "Jesus"], ["kan", "truly"], ["xt-Ø-r-il", "POT-ABS3S-ERG3S-find"],
+      ["wi", "FOC"], ["k'a", "then"], ["jun", "a"], ["k'aslen", "life"], ["ri", "REL"]
+    ],
+    "translation": "Whoever then will believe in Jesus will truly find then a life that...",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "extraction"],
+      ["extracted", "subject"],
+      ["verb", "AF"],
+      ["objectKind", "dp"],
+      ["subject", "3"],
+      ["object", "3"],
+      ["intervener", "k'a ri"]
+    ],
+    "comment": "AF past k'a ri (WBT).",
+    "verified": "page-image"
+  },
+  {
+    "id": "hendersoncoon2018_32",
+    "source": {"bibkey": "henderson-coon-2018", "paperLabel": "(32), preprint numbering"},
+    "language": "kaqc1270",
+    "primaryText": "Achike chi-k-e man x-Ø-tij-o ta ri takamal",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Achike", "who"], ["chi-k-e", "PREP-ERG3P-RN"], ["man", "NEG"],
+      ["x-Ø-tij-o", "CPL-ABS3S-eat-AF"], ["ta", "IRR"], ["ri", "the"], ["takamal", "tamale"]
+    ],
+    "translation": "Who among them didn't eat the tamale?",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "extraction"],
+      ["extracted", "subject"],
+      ["verb", "AF"],
+      ["objectKind", "dp"],
+      ["subject", "3"],
+      ["object", "3"],
+      ["intervener", "man"]
+    ],
+    "comment": "Negation does not obviate AF.",
+    "verified": "page-image"
+  },
+  {
+    "id": "hendersoncoon2018_33",
+    "source": {"bibkey": "henderson-coon-2018", "paperLabel": "(33), preprint numbering"},
+    "language": "kaqc1270",
+    "primaryText": "Achike chi-k-e man x-Ø-u-tij ta ri takamal",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Achike", "who"], ["chi-k-e", "PREP-ERG3P-RN"], ["man", "NEG"],
+      ["x-Ø-u-tij", "CPL-ABS3S-ERG3S-eat"], ["ta", "IRR"], ["ri", "the"], ["takamal", "tamale"]
+    ],
+    "translation": "Who among them didn't eat the tamale?",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "extraction"],
+      ["extracted", "subject"],
+      ["verb", "TV"],
+      ["objectKind", "dp"],
+      ["subject", "3"],
+      ["object", "3"],
+      ["intervener", "man"]
+    ],
+    "comment": "The transitive form is out under negation.",
+    "verified": "page-image"
+  },
+  {
+    "id": "hendersoncoon2018_45",
+    "source": {"bibkey": "henderson-coon-2018", "paperLabel": "(45), preprint numbering"},
+    "language": "kaqc1270",
+    "primaryText": "K'o q-ach'alal ri kan qitzij chi rije' y-e-ya'-o ru-q'ij.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["K'o", "EXST"], ["q-ach'alal", "ERG1P-family"], ["ri", "REL"], ["kan", "truly"],
+      ["qitzij", "truth"], ["chi", "COMP"], ["rije'", "PRON3P"],
+      ["y-e-ya'-o", "ICPL-ABS3P-give-AF"], ["ru-q'ij", "ERG3S-day"]
+    ],
+    "translation": "We have family that truly they valorize it.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "extraction"],
+      ["extracted", "subject"],
+      ["verb", "AF"],
+      ["objectKind", "dp"],
+      ["subject", "3"],
+      ["object", "3"],
+      ["intervener", "kan qitzij"],
+      ["complementizer", "chi"],
+      ["resumptive", "overt"]
+    ],
+    "comment": "An overt resumptive pronoun excludes AF.",
+    "verified": "page-image"
+  },
+  {
+    "id": "hendersoncoon2018_46",
+    "source": {"bibkey": "henderson-coon-2018", "paperLabel": "(46), preprint numbering"},
+    "language": "kaqc1270",
+    "primaryText": "K'o q-ach'alal ri kan qitzij chi rije' y-e-loq'-o ru-wäy.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["K'o", "EXST"], ["q-ach'alal", "ERG1P-family"], ["ri", "REL"], ["kan", "truly"],
+      ["qitzij", "truth"], ["chi", "COMP"], ["rije'", "PRON3P"],
+      ["y-e-loq'-o", "ICPL-ABS3P-buy-AF"], ["ru-wäy", "ERG3S-food"]
+    ],
+    "translation": "We have family that truly they bought him food.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "extraction"],
+      ["extracted", "subject"],
+      ["verb", "AF"],
+      ["objectKind", "dp"],
+      ["subject", "3"],
+      ["object", "3"],
+      ["intervener", "kan qitzij"],
+      ["complementizer", "chi"],
+      ["resumptive", "overt"]
+    ],
+    "comment": "An overt resumptive pronoun excludes AF.",
+    "verified": "page-image"
+  },
+  {
+    "id": "hendersoncoon2018_49",
+    "source": {"bibkey": "henderson-coon-2018", "paperLabel": "(49), preprint numbering"},
+    "language": "kaqc1270",
+    "primaryText": "K'o q-ach'alal ri kan qitzij chi rije' n-Ø-ki-ya' ru-q'ij.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["K'o", "EXST"], ["q-ach'alal", "ERG1P-family"], ["ri", "REL"], ["kan", "truly"],
+      ["qitzij", "truth"], ["chi", "COMP"], ["rije'", "PRON3P"],
+      ["n-Ø-ki-ya'", "ICPL-ABS3S-ERG3P-give"], ["ru-q'ij", "ERG3S-day"]
+    ],
+    "translation": "We have family that truly they valorize it.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "extraction"],
+      ["extracted", "subject"],
+      ["verb", "TV"],
+      ["objectKind", "dp"],
+      ["subject", "3"],
+      ["object", "3"],
+      ["intervener", "kan qitzij"],
+      ["complementizer", "chi"],
+      ["resumptive", "overt"]
+    ],
+    "comment": "An overt resumptive pronoun with the transitive form.",
+    "verified": "page-image"
+  },
+  {
+    "id": "hendersoncoon2018_50",
+    "source": {"bibkey": "henderson-coon-2018", "paperLabel": "(50), preprint numbering"},
+    "language": "kaqc1270",
+    "primaryText": "K'o q-ach'alal ri kan qitzij chi rije' n-Ø-ki-loq' ru-wäy.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["K'o", "EXST"], ["q-ach'alal", "ERG1P-family"], ["ri", "REL"], ["kan", "truly"],
+      ["qitzij", "truth"], ["chi", "COMP"], ["rije'", "PRON3P"],
+      ["n-Ø-ki-loq'", "ICPL-ABS3S-ERG3P-buy"], ["ru-wäy", "ERG3S-food"]
+    ],
+    "translation": "We have family that truly they bought him food.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "extraction"],
+      ["extracted", "subject"],
+      ["verb", "TV"],
+      ["objectKind", "dp"],
+      ["subject", "3"],
+      ["object", "3"],
+      ["intervener", "kan qitzij"],
+      ["complementizer", "chi"],
+      ["resumptive", "overt"]
+    ],
+    "comment": "An overt resumptive pronoun with the transitive form.",
+    "verified": "page-image"
+  },
+  {
+    "id": "hendersoncoon2018_51",
+    "source": {"bibkey": "henderson-coon-2018", "paperLabel": "(51), preprint numbering"},
+    "language": "kaqc1270",
+    "primaryText": "K'o q-ach'alal ri kan qitzij chi ja rije' y-e-ya-o ru-q'ij.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["K'o", "EXST"], ["q-ach'alal", "ERG1P-family"], ["ri", "REL"], ["kan", "truly"],
+      ["qitzij", "truth"], ["chi", "COMP"], ["ja", "FOC"], ["rije'", "PRON3P"],
+      ["y-e-ya-o", "CPL-ABS3P-give-AF"], ["ru-q'ij", "ERG3S-day"]
+    ],
+    "translation": "We have family that truly they valorize it.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "extraction"],
+      ["extracted", "subject"],
+      ["verb", "AF"],
+      ["objectKind", "dp"],
+      ["subject", "3"],
+      ["object", "3"],
+      ["intervener", "kan qitzij"],
+      ["complementizer", "chi"],
+      ["resumptive", "focused"]
+    ],
+    "comment": "A resumptive pronoun focused inside the lower clause takes AF. Transcribed as printed; (45) prints the verb y-e-ya'-o, glossed ICPL.",
+    "verified": "page-image"
+  },
+  {
+    "id": "hendersoncoon2018_56",
+    "source": {"bibkey": "henderson-coon-2018", "paperLabel": "(56), preprint numbering"},
+    "language": "kaqc1270",
+    "primaryText": "Achike kan qitzij x-Ø-tij-o ri wäy?",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Achike", "who"], ["kan", "truly"], ["qitzij", "truth"], ["x-Ø-tij-o", "CPL-ABS3S-eat-AF"],
+      ["ri", "the"], ["wäy", "tortilla"]
+    ],
+    "translation": "Who truly ate the tortilla?",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "extraction"],
+      ["extracted", "subject"],
+      ["verb", "AF"],
+      ["objectKind", "dp"],
+      ["subject", "3"],
+      ["object", "3"],
+      ["intervener", "kan qitzij"]
+    ],
+    "comment": "The monoclausal counterpart of (55), with AF.",
+    "verified": "page-image"
+  },
+  {
+    "id": "hendersoncoon2018_60a",
+    "source": {"bibkey": "henderson-coon-2018", "paperLabel": "(60a), preprint numbering"},
+    "language": "kaqc1270",
+    "primaryText": "Achike jantäq n-Ø-tij-o ri äk'.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Achike", "who/what"], ["jantäq", "sometimes"], ["n-Ø-tij-o", "ICPL-ABS3S-eat-AF"],
+      ["ri", "the"], ["äk'", "chicken"]
+    ],
+    "translation": "Who sometimes eats the chicken?",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "extraction"],
+      ["extracted", "subject"],
+      ["verb", "AF"],
+      ["objectKind", "dp"],
+      ["subject", "3"],
+      ["object", "3"],
+      ["intervener", "jantäq"]
+    ],
+    "comment": "AF past a non-embedding adverb.",
+    "verified": "page-image"
+  },
+  {
+    "id": "hendersoncoon2018_60b",
+    "source": {"bibkey": "henderson-coon-2018", "paperLabel": "(60b), preprint numbering"},
+    "language": "kaqc1270",
+    "primaryText": "Achike jantäq n-Ø-u-tij ri äk'.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Achike", "who/what"], ["jantäq", "sometimes"], ["n-Ø-u-tij", "ICPL-ABS3S-ERG3S-eat"],
+      ["ri", "the"], ["äk'", "chicken"]
+    ],
+    "translation": "Who sometimes eats the chicken?",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [
+      {"name": "subject extraction", "judgment": "ungrammatical"},
+      {"name": "object extraction", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["construction", "extraction"],
+      ["extracted", "subject"],
+      ["verb", "TV"],
+      ["objectKind", "dp"],
+      ["subject", "3"],
+      ["object", "3"],
+      ["intervener", "jantäq"]
+    ],
+    "comment": "Acceptable only as 'What did the chicken sometimes eat?'.",
+    "verified": "page-image"
+  },
+  {
+    "id": "hendersoncoon2018_61a",
+    "source": {"bibkey": "henderson-coon-2018", "paperLabel": "(61a), preprint numbering"},
+    "language": "kaqc1270",
+    "primaryText": "Achike jumul n-Ø-tij-o ri äk'.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Achike", "who/what"], ["jumul", "always"], ["n-Ø-tij-o", "ICPL-ABS3S-eat-AF"],
+      ["ri", "the"], ["äk'", "chicken"]
+    ],
+    "translation": "Who always eats the chicken?",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "extraction"],
+      ["extracted", "subject"],
+      ["verb", "AF"],
+      ["objectKind", "dp"],
+      ["subject", "3"],
+      ["object", "3"],
+      ["intervener", "jumul"]
+    ],
+    "comment": "AF past a non-embedding adverb.",
+    "verified": "page-image"
+  },
+  {
+    "id": "hendersoncoon2018_61b",
+    "source": {"bibkey": "henderson-coon-2018", "paperLabel": "(61b), preprint numbering"},
+    "language": "kaqc1270",
+    "primaryText": "Achike jumul n-Ø-u-tij ri äk'.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Achike", "who/what"], ["jumul", "always"], ["n-Ø-u-tij", "ICPL-ABS3S-ERG3S-eat"],
+      ["ri", "the"], ["äk'", "chicken"]
+    ],
+    "translation": "Who always eats the chicken?",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [
+      {"name": "subject extraction", "judgment": "ungrammatical"},
+      {"name": "object extraction", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["construction", "extraction"],
+      ["extracted", "subject"],
+      ["verb", "TV"],
+      ["objectKind", "dp"],
+      ["subject", "3"],
+      ["object", "3"],
+      ["intervener", "jumul"]
+    ],
+    "comment": "Acceptable only as 'What did the chicken always eat?'. The source glosses the object 'the chiken'.",
+    "verified": "page-image"
+  },
+  {
+    "id": "hendersoncoon2018_38",
+    "source": {"bibkey": "henderson-coon-2018", "paperLabel": "(38), preprint numbering"},
+    "language": "kaqc1270",
+    "primaryText": "K'a ri chi xi-Ø-k'achoj r-uma.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["K'a ri", "then"], ["chi", "COMP"], ["xi-Ø-k'achoj", "CPL-ABS3S-cure"],
+      ["r-uma", "ERG3S-RN.by"]
+    ],
+    "translation": "It was then that it was cured by him.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "embedding"],
+      ["adverb", "k'a ri"],
+      ["complement", "chi"]
+    ],
+    "comment": "k'a ri embeds a clause (WBT).",
+    "verified": "page-image"
+  },
+  {
+    "id": "hendersoncoon2018_40",
+    "source": {"bibkey": "henderson-coon-2018", "paperLabel": "(40), preprint numbering"},
+    "language": "kaqc1270",
+    "primaryText": "... ma x-Ø-in-kusaj ta chuqa' ch'ab'el ri kan janipe' na ru-b'an-ik...",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["ma", "NEG"], ["x-Ø-in-kusaj", "CPL-ABS3S-ERG1S-use"], ["ta", "IRR"], ["chuqa'", "also"],
+      ["ch'ab'el", "speech"], ["ri", "REL"], ["kan", "truly"], ["janipe'", "how.much"],
+      ["na", "PART"], ["ru-b'an-ik", "ERG3S-do-NML"]
+    ],
+    "translation": "... neither did I use language that truly (who knows) what (lit. how) its form is...",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "embedding"],
+      ["adverb", "kan"],
+      ["complement", "wh"]
+    ],
+    "comment": "kan embeds a wh-clause (WBT).",
+    "verified": "page-image"
+  },
+  {
+    "id": "hendersoncoon2018_57",
+    "source": {"bibkey": "henderson-coon-2018", "paperLabel": "(57), preprint numbering"},
+    "language": "kaqc1270",
+    "primaryText": "Kan qitzij chi x-a-samäj.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Kan", "truly"], ["qitzij", "truth"], ["chi", "COMP"], ["x-a-samäj", "CPL-ABS2S-work"]
+    ],
+    "translation": "It's true that you worked.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "embedding"],
+      ["adverb", "kan qitzij"],
+      ["complement", "chi"]
+    ],
+    "comment": "kan qitzij embeds a clause.",
+    "verified": "page-image"
+  },
+  {
+    "id": "hendersoncoon2018_58",
+    "source": {"bibkey": "henderson-coon-2018", "paperLabel": "(58), preprint numbering"},
+    "language": "kaqc1270",
+    "primaryText": "Jantäq chi x-a-samäj.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Jantäq", "sometimes"], ["chi", "COMP"], ["x-a-samäj", "CPL-ABS2S-work"]
+    ],
+    "translation": "It's sometimes that you worked.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "embedding"],
+      ["adverb", "jantäq"],
+      ["complement", "chi"]
+    ],
+    "comment": "jantäq takes no clausal complement.",
+    "verified": "page-image"
+  },
+  {
+    "id": "hendersoncoon2018_59",
+    "source": {"bibkey": "henderson-coon-2018", "paperLabel": "(59), preprint numbering"},
+    "language": "kaqc1270",
+    "primaryText": "Jumul chi x-a-samäj.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Jumul", "always"], ["chi", "COMP"], ["x-a-samäj", "CPL-ABS2S-work"]
+    ],
+    "translation": "It's always that you worked.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "embedding"],
+      ["adverb", "jumul"],
+      ["complement", "chi"]
+    ],
+    "comment": "jumul takes no clausal complement.",
+    "verified": "page-image"
+  }
+]
