@@ -22,37 +22,32 @@ with the entailment each carries from its complement.
 namespace English.Verbs
 
 open ArgumentStructure Aspect Degree
-open English.Inflection
 
 /-! ### Implicative / Control -/
 
 /-- "manage" — a positive implicative; "managed to VP" entails "VP", and on the traditional
     analysis the agentive subject controls the complement.
     -/
-def manage : Verb := .mkRegular {
+def manage : Verb where
   morphs := [.root "manage"]
   valency := .ofFrame ArgumentFrame.infinitival
   readings := [{ frame := ArgumentFrame.infinitival, control := some .subjectControl }]
   vendlerClass := some .achievement
   passivizable := false
-  implicative := ⟨.some .positive, .some .negative⟩ }
+  implicative := ⟨.some .positive, .some .negative⟩
 
 /-- "fail" — a negative implicative; "failed to VP" entails "not VP". -/
-def fail : Verb := .mkRegular {
+def fail : Verb where
   morphs := [.root "fail"]
   valency := .ofFrame ArgumentFrame.infinitival
   readings := [{ frame := ArgumentFrame.infinitival, control := some .subjectControl }]
   vendlerClass := some .achievement
   passivizable := false
-  implicative := ⟨.some .negative, .some .positive⟩ }
+  implicative := ⟨.some .negative, .some .positive⟩
 
 /-- "try" — subject control, no entailment -/
 def try_ : Verb where
   morphs := [.root "try"]
-  form3sg := "tries"
-  formPast := "tried"
-  formPastPart := "tried"
-  formPresPart := "trying"
   valency := .ofFrame ArgumentFrame.infinitival
   readings := [{ frame := ArgumentFrame.infinitival, control := some .subjectControl }]
   vendlerClass := some .activity
@@ -62,18 +57,18 @@ def try_ : Verb where
 /-- "persuade" — object control, "persuade X to VP" with X the agent of VP. A psychological
     attitude verb whose object comes to form an intention; it projects the AUTHOR coordinate,
     so control is obligatorily *de se* ([landau-2015] table (36)). -/
-def persuade : Verb := .mkRegular {
+def persuade : Verb where
   morphs := [.root "persuade"]
   valency := .ofFrame ArgumentFrame.infinitival
   readings := [{ frame := ArgumentFrame.infinitival, control := some .objectControl }]
   vendlerClass := some .accomplishment
   opaqueContext := true
-  attitude := some (.preferential .positive true) }
+  attitude := some (.preferential .positive true)
 
 /-- "promise" — subject control across an object, "promise X to VP". A desiderative attitude
     verb whose subject commits to a future action; [landau-2015] (5c) classifies it as
     desiderative, hence logophoric control. -/
-def promise : Verb := .mkRegular {
+def promise : Verb where
   morphs := [.root "promise"]
   valency := .of
     [(ArgumentFrame.infinitival, [0, 1]),
@@ -83,17 +78,17 @@ def promise : Verb := .mkRegular {
   vendlerClass := some .achievement
   opaqueContext := true
   attitude := some (.preferential .positive true)
-  levinClasses := {LevinClass.futureHaving} }
+  levinClasses := {LevinClass.futureHaving}
 
 /-- "remember" — implicative with infinitival ("remember to call") -/
-def remember : Verb := .mkRegular {
+def remember : Verb where
   morphs := [.root "remember"]
   valency := .ofFrame ArgumentFrame.infinitival
   readings := [{ frame := ArgumentFrame.infinitival, control := some .subjectControl }]
   vendlerClass := some .achievement
   passivizable := false
   implicative := ⟨.some .positive, .some .negative⟩
-  levinClasses := {LevinClass.characterize} }
+  levinClasses := {LevinClass.characterize}
 
 /-- "forget" with an infinitive, [karttunen-1971]'s negative implicative: *forgot to lock the
     door* entails *did not lock the door*. The factive sense that takes a finite clause, a
@@ -101,10 +96,9 @@ def remember : Verb := .mkRegular {
     whose plain infinitive carries a covert modal. -/
 def forget : Verb where
   morphs := [.root "forget"]
-  form3sg := "forgets"
-  formPast := "forgot"
-  formPastPart := "forgotten"
-  formPresPart := "forgetting"
+  past := "forgot"
+  pastPart := "forgotten"
+  doubling := true
   valency := .ofFrame ArgumentFrame.infinitival
   readings := [{ frame := ArgumentFrame.infinitival, control := some .subjectControl }]
   vendlerClass := some .achievement
@@ -114,23 +108,23 @@ def forget : Verb where
 /-- "neglect" — negative implicative, listed with *forget* and *fail* among
     [karttunen-1971]'s negative implicatives: neglecting to lock the door
     entails not locking it. -/
-def neglect : Verb := .mkRegular {
+def neglect : Verb where
   morphs := [.root "neglect"]
   valency := .ofFrame ArgumentFrame.infinitival
   readings := [{ frame := ArgumentFrame.infinitival, control := some .subjectControl }]
   vendlerClass := some .achievement
   passivizable := false
-  implicative := ⟨.some .negative, .some .positive⟩ }
+  implicative := ⟨.some .negative, .some .positive⟩
 
 /-! ### Raising -/
 
 /-- "seem" — raising verb (no theta role for subject, unaccusative) -/
-def seem : Verb := .mkRegular {
+def seem : Verb where
   morphs := [.root "seem"]
   valency := .ofFrame ArgumentFrame.raising
   readings := [{ frame := ArgumentFrame.raising, control := some .raising }]
   vendlerClass := some .state
-  passivizable := false }
+  passivizable := false
 
 /-! ### Prerequisite implicatives -/
 
@@ -143,25 +137,25 @@ occasioning eventuality in a parallel way the authors draw and then set apart. -
     to enter the cave" entails "Ana entered the cave" and presupposes that a daring action was
     required for the complement to be realized ([nadathur-2023-implicatives] §5.2, ex. 3–4,
     26). -/
-def dare : Verb := .mkRegular {
+def dare : Verb where
   morphs := [.root "dare"]
   valency := .ofFrame ArgumentFrame.infinitival
   readings := [{ frame := ArgumentFrame.infinitival, control := some .subjectControl }]
   vendlerClass := some .achievement
   passivizable := false
-  implicative := ⟨.some .positive, .some .negative⟩ }
+  implicative := ⟨.some .positive, .some .negative⟩
 
 /-- "bother" — a positive implicative whose prerequisite presupposition is engagement. "He
     bothered to answer" entails "He answered" and presupposes that apathy had to be overcome
     ([nadathur-2023-implicatives] §2, ex. 10, 28). -/
-def bother : Verb := .mkRegular {
+def bother : Verb where
   morphs := [.root "bother"]
   valency := .ofFrame ArgumentFrame.infinitival
   readings := [{ frame := ArgumentFrame.infinitival, control := some .subjectControl }]
   vendlerClass := some .achievement
   passivizable := false
   implicative := ⟨.some .positive, .some .negative⟩
-  levinClasses := {LevinClass.amuse, .marvel, .pain} }
+  levinClasses := {LevinClass.amuse, .marvel, .pain}
 
 /-- "hesitate" — polarity-reversing one-way implicative.
     "Amira hesitated to drink a beer" ↛ "Amira did not drink a beer."
@@ -169,44 +163,44 @@ def bother : Verb := .mkRegular {
     The paper does not explicitly name the prerequisite for *hesitate*;
     it is treated as a polarity-reversing analog of *dare*
     ([nadathur-2023-implicatives] §6.4, ex. 45–47). -/
-def hesitate : Verb := .mkRegular {
+def hesitate : Verb where
   morphs := [.root "hesitate"]
   valency := .ofFrame ArgumentFrame.infinitival
   readings := [{ frame := ArgumentFrame.infinitival, control := some .subjectControl }]
   vendlerClass := some .activity
   passivizable := false
   implicative := ⟨⊥, .some .positive⟩
-  levinClasses := {LevinClass.linger} }
+  levinClasses := {LevinClass.linger}
 
 /-- "venture" — positive implicative, among [karttunen-1971]'s implicative
     predicates: venturing to speak entails speaking. -/
-def venture : Verb := .mkRegular {
+def venture : Verb where
   morphs := [.root "venture"]
   valency := .ofFrame ArgumentFrame.infinitival
   readings := [{ frame := ArgumentFrame.infinitival, control := some .subjectControl }]
   vendlerClass := some .achievement
   passivizable := false
-  implicative := ⟨.some .positive, .some .negative⟩ }
+  implicative := ⟨.some .positive, .some .negative⟩
 
 /-- "condescend" — positive implicative, among [karttunen-1971]'s implicative
     predicates: condescending to help entails helping. -/
-def condescend : Verb := .mkRegular {
+def condescend : Verb where
   morphs := [.root "condescend"]
   valency := .ofFrame ArgumentFrame.infinitival
   readings := [{ frame := ArgumentFrame.infinitival, control := some .subjectControl }]
   vendlerClass := some .achievement
   passivizable := false
-  implicative := ⟨.some .positive, .some .negative⟩ }
+  implicative := ⟨.some .positive, .some .negative⟩
 
 /-- "happen" — raising verb, positive implicative, among [karttunen-1971]'s
     implicative predicates: happening to see Mary entails seeing her.
     Raising: "It happened to rain" — no theta role for matrix subject. -/
-def happen : Verb := .mkRegular {
+def happen : Verb where
   morphs := [.root "happen"]
   valency := .ofFrame ArgumentFrame.infinitival
   readings := [{ frame := ArgumentFrame.infinitival, control := some .raising }]
   passivizable := false
   implicative := ⟨.some .positive, .some .negative⟩
-  levinClasses := {LevinClass.occurrence} }
+  levinClasses := {LevinClass.occurrence}
 
 end English.Verbs

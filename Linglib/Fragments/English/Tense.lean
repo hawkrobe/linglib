@@ -54,16 +54,16 @@ participle under *be*. The auxiliary *have* governs a lexical verb or *be*, the 
 governs a lexical verb only, and no tense auxiliary governs an infinitive. -/
 def periphrasis : Tense.Periphrasis TenseVerb where
   finite
-    | .lexical v, .present => some v.form3sg
-    | .lexical v, .past => some v.formPast
+    | .lexical v, .present => some (v.realize .thirdSg)
+    | .lexical v, .past => some (v.realize .past)
     | .have, .present => some "has"
     | .have, .past => some "had"
     | .be, .present => some "is"
     | .be, .past => some "was"
     | _, .future => none
   nonfinite
-    | .lexical v, .pastParticiple => some v.formPastPart
-    | .lexical v, .presentParticiple => some v.formPresPart
+    | .lexical v, .pastParticiple => some (v.realize .pastParticiple)
+    | .lexical v, .presentParticiple => some (v.realize .presentParticiple)
     | .be, .pastParticiple => some "been"
     | _, _ => none
   auxiliary

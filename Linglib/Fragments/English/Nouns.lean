@@ -9,7 +9,7 @@ public import Linglib.Fragments.English.Inflection
 
 The English noun as a lexical entry is a `ClassifiedNoun` over no classifiers, which a numeral
 counts directly or not at all, with its lexical gender and its plural where it has them; a regular
-plural is the *-s* form of `Inflection.lean`'s `suffixS`. Names are the root `ProperName`. English
+plural is the noun with the suffix `English.Inflection.s`. Names are the root `ProperName`. English
 nouns have no grammatical gender; the label recorded for *man*, *woman* and the names is the natural
 gender their pronouns agree with. Bare plurals and bare mass nouns are arguments and a bare singular
 count noun is not, which Chierchia derives from the Nominal Mapping Parameter
@@ -36,9 +36,7 @@ Whether a numeral counts a noun and whether the noun has a plural are separate f
 
 namespace English.Nouns
 
-open English.Inflection
-
-open Morphology (Word Features)
+open Morphology
 
 /-- An English noun is a classified noun over no classifiers, with its lexical gender and its
 plural where it has them. -/
@@ -52,7 +50,8 @@ structure Noun extends ClassifiedNoun Empty where
 /-- A common count noun, counted directly and with the regular *-s* plural; English is the
 metalanguage, so the gloss is the form. -/
 def Noun.common (form : String) : Noun :=
-  { form, gloss := form, counters := {none}, plural := some (suffixS form) }
+  { form, gloss := form, counters := {none}
+    plural := some (Inflection.spell [.root form, Inflection.s]) }
 
 /-- A mass noun, which no numeral counts and which has no plural. -/
 def Noun.mass (form : String) : Noun := { form, gloss := form, counters := ∅ }

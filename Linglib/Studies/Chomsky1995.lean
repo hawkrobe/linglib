@@ -49,7 +49,7 @@ def verbToSelStack (v : English.Verbs.Verb) : SelStack :=
 /-- A `English.Verbs.Verb` as a `SyntacticObject` leaf (`Cat = .V`, selStack from the citation
 frame). -/
 def verbToSO (v : English.Verbs.Verb) (id : Nat) : SyntacticObject :=
-  mkLeafPhon .V (verbToSelStack v) v.form3sg id
+  mkLeafPhon .V (verbToSelStack v) (v.realize .thirdSg) id
 
 /-- A proper name as a leaf, projecting as `.D`. -/
 def nameToSO (n : ProperName) (id : Nat) : SyntacticObject := mkLeafPhon .D [] n.form id

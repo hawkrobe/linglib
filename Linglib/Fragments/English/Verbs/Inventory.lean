@@ -26,7 +26,6 @@ past participle, the patient the subject and the agent demoted to an optional *b
 namespace English.Verbs
 
 open ArgumentStructure Aspect Degree
-open English.Inflection
 
 /-! ### The inventory -/
 
@@ -69,6 +68,18 @@ def verbs : List Verb :=
    strike_, forgive, spare, deny, permit, assign, begrudge, bet,
    serve, teach, feed, show_, award, forward_, grant, offer,
    reserve, pass, hand, mail, lend]
+
+/-- Regular forms follow from the base, with the consonant doubled in *stopped* and *regretted*
+and the suffix on the verb in *depends on*, and a listed form stands in the cell it is listed
+for. -/
+example :
+    kick.realize .past = "kicked" ∧ stop.realize .past = "stopped" ∧
+      regret.realize .presentParticiple = "regretting" ∧ carry.realize .thirdSg = "carries" ∧
+      depend_on.realize .thirdSg = "depends on" ∧ wakeUp.realize .past = "woke up" ∧
+      run.realize .past = "ran" ∧ run.realize .pastParticiple = "run" ∧
+      run.realize .presentParticiple = "running" ∧ sleep.realize .pastParticiple = "slept" ∧
+      have_caus.realize .thirdSg = "has" ∧ go.realize .thirdSg = "goes" := by
+  decide
 
 /-! ### Voice -/
 

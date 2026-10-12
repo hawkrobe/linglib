@@ -23,27 +23,23 @@ The English periphrastic causatives are *cause*, *make*, *let*, *have*, *get*, *
 namespace English.Verbs
 
 open ArgumentStructure Aspect Degree
-open English.Inflection
 
 /-! ### Causative (Periphrastic) -/
 
 /-- *cause* takes an object and an infinitive, *cause the vase to fall*. -/
-def cause : Verb := .mkRegular {
+def cause : Verb where
   morphs := [.root "cause"]
   valency := .ofFrame ArgumentFrame.infinitival
   readings := [{ frame := ArgumentFrame.infinitival, control := some .objectControl }]
   vendlerClass := some .accomplishment
   implicative := ⟨.some .positive, ⊥⟩
-  levinClasses := {LevinClass.engender} }
+  levinClasses := {LevinClass.engender}
 
 /-- *make* takes an object and a bare infinitive, *make him leave*. Levin does not class it (the
 *make* of 26.1 is the verb of creation and that of 29.3 the dub verb). -/
 def make : Verb where
   morphs := [.root "make"]
-  form3sg := "makes"
-  formPast := "made"
-  formPastPart := "made"
-  formPresPart := "making"
+  past := "made"
   valency := .ofFrame ArgumentFrame.smallClause
   readings := [{ frame := ArgumentFrame.smallClause, control := some .objectControl }]
   vendlerClass := some .accomplishment
@@ -53,10 +49,7 @@ def make : Verb where
 /-- *let* is the permissive causative, *let him leave*. -/
 def let_ : Verb where
   morphs := [.root "let"]
-  form3sg := "lets"
-  formPast := "let"
-  formPastPart := "let"
-  formPresPart := "letting"
+  past := "let"
   valency := .ofFrame ArgumentFrame.smallClause
   readings := [{ frame := ArgumentFrame.smallClause, control := some .objectControl }]
   vendlerClass := some .achievement
@@ -64,10 +57,8 @@ def let_ : Verb where
 /-- *have* in its causative use takes an object and a bare infinitive, *have him leave*. -/
 def have_caus : Verb where
   morphs := [.root "have"]
-  form3sg := "has"
-  formPast := "had"
-  formPastPart := "had"
-  formPresPart := "having"
+  thirdSg := "has"
+  past := "had"
   valency := .ofFrame ArgumentFrame.smallClause
   readings := [{ frame := ArgumentFrame.smallClause, control := some .objectControl }]
   vendlerClass := some .achievement
@@ -78,10 +69,8 @@ def have_caus : Verb where
 not class it (the *get* of 13.5.1 is the verb of obtaining). -/
 def get_caus : Verb where
   morphs := [.root "get"]
-  form3sg := "gets"
-  formPast := "got"
-  formPastPart := "gotten"
-  formPresPart := "getting"
+  past := "got"
+  pastPart := "gotten"
   valency := .ofFrame ArgumentFrame.infinitival
   readings := [{ frame := ArgumentFrame.infinitival, control := some .objectControl }]
   vendlerClass := some .accomplishment
@@ -89,25 +78,25 @@ def get_caus : Verb where
   levinExcluded := {LevinClass.get}
 
 /-- *force* takes an object and an infinitive, *force him to leave*. -/
-def force : Verb := .mkRegular {
+def force : Verb where
   morphs := [.root "force"]
   valency := .ofFrame ArgumentFrame.infinitival
   readings := [{ frame := ArgumentFrame.infinitival, control := some .objectControl }]
   vendlerClass := some .accomplishment
-  implicative := ⟨.some .positive, ⊥⟩ }
+  implicative := ⟨.some .positive, ⊥⟩
 
 /-- *prevent* takes an object and a *from*-gerund, *prevent him from leaving*. -/
-def prevent : Verb := .mkRegular {
+def prevent : Verb where
   morphs := [.root "prevent"]
   valency := .ofFrame ArgumentFrame.gerund
   readings := [{ frame := ArgumentFrame.gerund, control := some .objectControl }]
   vendlerClass := some .accomplishment
-  implicative := ⟨.some .negative, ⊥⟩ }
+  implicative := ⟨.some .negative, ⊥⟩
 
 /-! ### Lexical Causatives -/
 
 /-- "kill" — Levin 42.1 murder verbs. -/
-def kill : Verb := .mkRegular {
+def kill : Verb where
   morphs := [.root "kill"]
   valency := .ofFrame ArgumentFrame.np
   vendlerClass := some .accomplishment
@@ -115,16 +104,14 @@ def kill : Verb := .mkRegular {
     resultGeometry := {.totalDestruction}
     agentControl := {.neutral, .compatible}
   } }
-  levinClasses := {LevinClass.murder} }
+  levinClasses := {LevinClass.murder}
 
 /-- "break" — Levin 45.1 break verbs, a change in "material integrity" with no specification
     of how the change comes about ([levin-1993]:241). -/
 def break_ : Verb where
   morphs := [.root "break"]
-  form3sg := "breaks"
-  formPast := "broke"
-  formPastPart := "broken"
-  formPresPart := "breaking"
+  past := "broke"
+  pastPart := "broken"
   valency := .of
     [(ArgumentFrame.np, [0, 1]),
      (ArgumentFrame.intransitive, [1]),
@@ -151,10 +138,8 @@ def break_ : Verb where
     tearing cloth by hand, and English speakers extend *tear* to pulling yarn apart. -/
 def tear_ : Verb where
   morphs := [.root "tear"]
-  form3sg := "tears"
-  formPast := "tore"
-  formPastPart := "torn"
-  formPresPart := "tearing"
+  past := "tore"
+  pastPart := "torn"
   valency := .of
     [(ArgumentFrame.np, [0, 1]),
      (ArgumentFrame.intransitive, [1]),

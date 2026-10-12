@@ -14,8 +14,9 @@ public import Linglib.Fragments.English.Adpositions
 
 This file defines the English verb entry and the simplest verbs. An entry extends the
 cross-linguistic `Verb`, with its argument frames, aspectual and semantic class, presupposition,
-causation and attitude facets, by the four inflected forms, and `Verb.realize` reads a cell
-while `Verb.mkRegular` derives the forms of a regular verb by the spelling rules of
+causation and attitude facets, by the forms a dictionary lists, the past and past participle of
+an irregular verb. `Verb.inflect` gives the morphs of each cell, the base with the regular suffix
+on its root where no form is listed, and `Verb.realize` their spelling by the rules of
 `English.Inflection`. The verbs here are the plain intransitives, transitives and ditransitives
 that the studies reach for first, *sleep*, *kick*, *give* and the like, and a few verbs of
 consumption and creation; the other classes are in the sibling files and `Verbs/Inventory.lean`
@@ -34,57 +35,27 @@ its citation form, less the classes that list the form in a sense the entry is n
 
 @[expose] public section
 
-open Morphology (Word Features)
+open Morphology
 
 namespace English.Verbs
 
 open ArgumentStructure Aspect Degree
-open English.Inflection
 
 /-! ### The entry type -/
 
-/--
-A complete English lexical entry for a verb.
-
-Extends the cross-linguistic `Verb` (argument structure, semantic class,
-compositional links) with English-specific inflectional morphology.
--/
+/-- An English verb is the cross-linguistic `Verb` with the forms that the regular suffixes do not
+give. An entry that lists none is regular. -/
 structure Verb extends _root_.Verb where
-  /-- Third person singular present (for agreement) -/
-  form3sg : String
-  /-- Past tense form -/
-  formPast : String
-  /-- Past participle (for passives, perfects) -/
-  formPastPart : String
-  /-- Present participle / gerund -/
-  formPresPart : String
+  /-- The third person singular present, where it is not the *-s* form, as in *has*. -/
+  thirdSg : Option String := none
+  /-- The past, where it is not the *-ed* form, as in *ran*. -/
+  past : Option String := none
+  /-- The past participle, where it is not the past, as in *run* and *shown*. -/
+  pastPart : Option String := none
+  /-- A base of more than one syllable doubles its final consonant letter before *-ed* and
+  *-ing*, as one stressed on its last syllable does, *regretted* against *visited*. -/
+  doubling : Bool := false
   deriving BEq
-
-/-- Construct a regular verb entry, computing the inflected forms from the citation form
-    by the regular spelling rules.
-
-    Usage:
-    ```
-    def kick : Verb := .mkRegular {
-      morphs := [.root "kick"], valency := .ofFrame ArgumentFrame.np }
-    ``` -/
-def Verb.mkRegular (core : _root_.Verb) : Verb :=
-  { toVerb := core
-    form3sg := suffixS core.form
-    formPast := suffixEd core.form
-    formPastPart := suffixEd core.form
-    formPresPart := suffixIng core.form }
-
-/-- Every inflected form follows the regular spelling rules from the citation form. -/
-def Verb.IsRegular (v : Verb) : Prop :=
-  v.form3sg = suffixS v.form ∧ v.formPast = suffixEd v.form ∧
-    v.formPastPart = suffixEd v.form ∧ v.formPresPart = suffixIng v.form
-
-instance (v : Verb) : Decidable v.IsRegular := inferInstanceAs (Decidable (_ ∧ _ ∧ _ ∧ _))
-
-/-- A regular entry is regular. -/
-theorem Verb.mkRegular_isRegular (core : _root_.Verb) : (Verb.mkRegular core).IsRegular :=
-  ⟨rfl, rfl, rfl, rfl⟩
 
 /-- The inflectional cells of an entry. -/
 inductive Verb.Cell where
@@ -96,43 +67,55 @@ inductive Verb.Cell where
   | presentParticiple
   deriving DecidableEq, Repr, Fintype
 
-/-- The form an entry realizes in each cell. -/
-def Verb.realize (e : Verb) : Verb.Cell → String
-  | .base => e.form
-  | .thirdSg => e.form3sg
-  | .presentPlural => e.form
-  | .past => e.formPast
-  | .pastParticiple => e.formPastPart
-  | .presentParticiple => e.formPresPart
+/-- `v.onRoot listed suffix` is the entry's morphs with the root replaced by the listed form,
+or with the suffix on the root where no form is listed. -/
+def Verb.onRoot (v : Verb) (listed : Option String) (suffix : Morph) : List Morph :=
+  v.morphs.flatMap fun m ↦
+    if m.kind = .root then listed.elim [m, suffix] fun f ↦ [.root f] else [m]
+
+/-- The morphs of an entry in each cell. The past participle is the past unless the entry lists
+one, and no entry lists a present participle. -/
+def Verb.inflect (v : Verb) : Verb.Cell → List Morph
+  | .base | .presentPlural => v.morphs
+  | .thirdSg => v.onRoot v.thirdSg Inflection.s
+  | .past => v.onRoot v.past Inflection.ed
+  | .pastParticiple => v.onRoot (v.pastPart <|> v.past) Inflection.ed
+  | .presentParticiple => v.onRoot none Inflection.ing
+
+/-- The form an entry realizes in each cell, the spelling of its morphs there. -/
+def Verb.realize (v : Verb) (c : Verb.Cell) : String := Inflection.spell (v.inflect c) v.doubling
+
+@[simp] theorem Verb.realize_presentPlural (v : Verb) :
+    v.realize .presentPlural = v.realize .base := rfl
+
+/-- A verb that lists no past participle has the form of its past for one. -/
+theorem Verb.realize_pastParticiple {v : Verb} (h : v.pastPart = none) :
+    v.realize .pastParticiple = v.realize .past := by
+  simp [realize, inflect, h]
 
 /-! ### Simple -/
 
 /-- "sleep" — intransitive, no presupposition -/
 def sleep : Verb where
   morphs := [.root "sleep"]
-  form3sg := "sleeps"
-  formPast := "slept"
-  formPastPart := "slept"
-  formPresPart := "sleeping"
+  past := "slept"
   valency := .ofFrame ArgumentFrame.intransitive
   passivizable := false
   vendlerClass := some .state
   levinClasses := {LevinClass.fit, .snooze}
 
 /-- "sneeze" — intransitive -/
-def sneeze : Verb := .mkRegular {
+def sneeze : Verb where
   morphs := [.root "sneeze"]
   valency := .ofFrame ArgumentFrame.intransitive
   passivizable := false
-  levinClasses := {LevinClass.hiccup, .nonverbalExpression} }
+  levinClasses := {LevinClass.hiccup, .nonverbalExpression}
 
 /-- "run" — intransitive, no presupposition -/
 def run : Verb where
   morphs := [.root "run"]
-  form3sg := "runs"
-  formPast := "ran"
-  formPastPart := "run"
-  formPresPart := "running"
+  past := "ran"
+  pastPart := "run"
   valency := .of
     [(ArgumentFrame.intransitive, [0]),
      (ArgumentFrame.np, [1, 0]),
@@ -148,30 +131,28 @@ def run : Verb where
   levinClasses := {LevinClass.meander, .prepare, .run, .swarm}
 
 /-- "dance" — intransitive activity -/
-def dance : Verb := .mkRegular {
+def dance : Verb where
   morphs := [.root "dance"]
   valency := .ofFrame ArgumentFrame.intransitive
   passivizable := false
   vendlerClass := some .activity
-  levinClasses := {LevinClass.modeOfBeingInvolvingMotion, .performance, .waltz} }
+  levinClasses := {LevinClass.modeOfBeingInvolvingMotion, .performance, .waltz}
 
 /-- "arrive" — unaccusative intransitive -/
-def arrive : Verb := .mkRegular {
+def arrive : Verb where
   morphs := [.root "arrive"]
   valency := .ofFrame ArgumentFrame.intransitive [some achievementSubjectProfile]
   voiceType := some .nonThematic
   passivizable := false
   vendlerClass := some .achievement
   direction := some .goal
-  levinClasses := {LevinClass.inherentlyDirectedMotion} }
+  levinClasses := {LevinClass.inherentlyDirectedMotion}
 
 /-- "come" — Levin 51.1 inherently directed motion, like `arrive`. -/
 def come : Verb where
   morphs := [.root "come"]
-  form3sg := "comes"
-  formPast := "came"
-  formPastPart := "come"
-  formPresPart := "coming"
+  past := "came"
+  pastPart := "come"
   valency := .ofFrame ArgumentFrame.intransitive
   passivizable := false
   vendlerClass := some .achievement
@@ -181,10 +162,8 @@ def come : Verb where
 /-- "go" — Levin 51.1 inherently directed motion, suppletive in the past. -/
 def go : Verb where
   morphs := [.root "go"]
-  form3sg := "goes"
-  formPast := "went"
-  formPastPart := "gone"
-  formPresPart := "going"
+  past := "went"
+  pastPart := "gone"
   valency := .ofFrame ArgumentFrame.intransitive
   passivizable := false
   vendlerClass := some .achievement
@@ -207,10 +186,8 @@ example : dance.direction = none ∧ run.direction = some .place ∧ arrive.dire
 /-- "eat" — transitive, implicit object is indefinite ("Have you eaten?") -/
 def eat : Verb where
   morphs := [.root "eat"]
-  form3sg := "eats"
-  formPast := "ate"
-  formPastPart := "eaten"
-  formPresPart := "eating"
+  past := "ate"
+  pastPart := "eaten"
   valency := .of
     [(ArgumentFrame.np, [0, 1]),
      (ArgumentFrame.objectDrop (some .indef), [0, 1]),
@@ -225,7 +202,7 @@ def eat : Verb where
   levinClasses := {LevinClass.eat}
 
 /-- "kick" — transitive -/
-def kick : Verb := .mkRegular {
+def kick : Verb where
   morphs := [.root "kick"]
   valency := .of
     [(ArgumentFrame.np, [0, 1]),
@@ -239,24 +216,22 @@ def kick : Verb := .mkRegular {
     forceDirection := {.unidirectional}
     agentControl := {.neutral, .compatible}
   } }
-  levinClasses := {LevinClass.bodyInternalMotion, .carry, .crane, .hit, .split, .throw} }
+  levinClasses := {LevinClass.bodyInternalMotion, .carry, .crane, .hit, .split, .throw}
 
 /-- "aim" — with an *at*-phrase, and transitive with one -/
-def aim : Verb := .mkRegular {
+def aim : Verb where
   morphs := [.root "aim"]
   valency := .of
     [(ArgumentFrame.pp (some Adpositions.at_), [0, 1]),
-     (ArgumentFrame.np_pp (some Adpositions.at_), [0, 2, 1])] }
+     (ArgumentFrame.np_pp (some Adpositions.at_), [0, 2, 1])]
 
 /-- "give" — ditransitive, alternates DOC/PP.
     Implicit goal is definite ([fillmore-1986]: pragmatically recoverable).
     Neither object can be implicit alone. -/
 def give : Verb where
   morphs := [.root "give"]
-  form3sg := "gives"
-  formPast := "gave"
-  formPastPart := "given"
-  formPresPart := "giving"
+  past := "gave"
+  pastPart := "given"
   valency := .of
     [(ArgumentFrame.np_np, [0, 1, 2]),
      (ArgumentFrame.np_pp, [0, 2, 1]),
@@ -269,43 +244,37 @@ def give : Verb where
 /-- "put" — locative -/
 def put : Verb where
   morphs := [.root "put"]
-  form3sg := "puts"
-  formPast := "put"
-  formPastPart := "put"
-  formPresPart := "putting"
+  past := "put"
   valency := .ofFrame ArgumentFrame.np_pp
   vendlerClass := some .achievement
   levinClasses := {LevinClass.put}
 
 /-- "weigh" — measure predicate selecting for mass/weight. -/
-def weigh : Verb := .mkRegular {
+def weigh : Verb where
   morphs := [.root "weigh"]
   valency := .ofFrame ArgumentFrame.np
   vendlerClass := some .state
-  levinClasses := {LevinClass.register} }
+  levinClasses := {LevinClass.register}
 
 /-- "cover" — motion/extent predicate selecting for distance. -/
-def cover : Verb := .mkRegular {
+def cover : Verb where
   morphs := [.root "cover"]
   valency := .ofFrame ArgumentFrame.np
   vendlerClass := some .accomplishment
   incrementality := some .strict
-  levinClasses := {LevinClass.contiguousLocation, .fill} }
+  levinClasses := {LevinClass.contiguousLocation, .fill}
 
 /-- "measure" — general measurement predicate. -/
-def measure : Verb := .mkRegular {
+def measure : Verb where
   morphs := [.root "measure"]
   valency := .ofFrame ArgumentFrame.np
   vendlerClass := some .state
-  levinClasses := {LevinClass.register} }
+  levinClasses := {LevinClass.register}
 
 /-- "buy" — irregular transitive -/
 def buy : Verb where
   morphs := [.root "buy"]
-  form3sg := "buys"
-  formPast := "bought"
-  formPastPart := "bought"
-  formPresPart := "buying"
+  past := "bought"
   valency := .of
     [(ArgumentFrame.np, [0, 1]),
      (ArgumentFrame.np_pp (some Adpositions.for_), [0, 1, 2]),
@@ -317,10 +286,7 @@ def buy : Verb where
 /-- "meet" — irregular transitive -/
 def meet : Verb where
   morphs := [.root "meet"]
-  form3sg := "meets"
-  formPast := "met"
-  formPastPart := "met"
-  formPresPart := "meeting"
+  past := "met"
   valency := .of [(ArgumentFrame.np, [0, 1]), (ArgumentFrame.objectDrop (some .reciprocal), [0, 1])]
   vendlerClass := some .achievement
   levinClasses := {LevinClass.contiguousLocation, .meet}
@@ -328,10 +294,7 @@ def meet : Verb where
 /-- "set" — irregular; the base, past and past participle forms coincide. -/
 def set_ : Verb where
   morphs := [.root "set"]
-  form3sg := "sets"
-  formPast := "set"
-  formPastPart := "set"
-  formPresPart := "setting"
+  past := "set"
   valency := .ofFrame ArgumentFrame.np
   vendlerClass := some .achievement
   levinClasses := {LevinClass.braid, .imageImpression, .prepare, .put}
@@ -339,20 +302,13 @@ def set_ : Verb where
 /-- "clarify" — regular transitive. -/
 def clarify : Verb where
   morphs := [.root "clarify"]
-  form3sg := "clarifies"
-  formPast := "clarified"
-  formPastPart := "clarified"
-  formPresPart := "clarifying"
   valency := .ofFrame ArgumentFrame.np
 
 /-- "sell" — change of possession, alternates DOC/PP.
     Implicit DO is definite; implicit goal is indefinite. -/
 def sell : Verb where
   morphs := [.root "sell"]
-  form3sg := "sells"
-  formPast := "sold"
-  formPastPart := "sold"
-  formPresPart := "selling"
+  past := "sold"
   valency := .of
     [(ArgumentFrame.np, [0, 1]),
      (ArgumentFrame.np_pp, [0, 1, 2]),
@@ -367,10 +323,7 @@ def sell : Verb where
 /-- "leave" — transitive (also used intransitively with argument drop) -/
 def leave : Verb where
   morphs := [.root "leave"]
-  form3sg := "leaves"
-  formPast := "left"
-  formPastPart := "left"
-  formPresPart := "leaving"
+  past := "left"
   valency := .ofFrame ArgumentFrame.np
   vendlerClass := some .achievement
   levinClasses := {LevinClass.fulfilling, .futureHaving, .get, .inherentlyDirectedMotion, .keep,
@@ -379,10 +332,8 @@ def leave : Verb where
 /-- "see" — transitive; factive with a finite-clause complement -/
 def see : Verb where
   morphs := [.root "see"]
-  form3sg := "sees"
-  formPast := "saw"
-  formPastPart := "seen"
-  formPresPart := "seeing"
+  past := "saw"
+  pastPart := "seen"
   valency := .of
     [(ArgumentFrame.np, [0, 1]),
      (ArgumentFrame.finiteClause, [0, 1])]
@@ -395,7 +346,7 @@ def see : Verb where
 /-! ### Other -/
 
 /-- "devour" — transitive, no presupposition -/
-def devour : Verb := .mkRegular {
+def devour : Verb where
   morphs := [.root "devour"]
   valency := .ofFrame ArgumentFrame.np
   vendlerClass := some .accomplishment
@@ -404,15 +355,13 @@ def devour : Verb := .mkRegular {
     force := {.moderate, .high}
     agentControl := {.neutral}
   } }
-  levinClasses := {LevinClass.devour} }
+  levinClasses := {LevinClass.devour}
 
 /-- "drink" — Levin 39.1 Eat verbs. -/
 def drink : Verb where
   morphs := [.root "drink"]
-  form3sg := "drinks"
-  formPast := "drank"
-  formPastPart := "drunk"
-  formPresPart := "drinking"
+  past := "drank"
+  pastPart := "drunk"
   valency := .of
     [(ArgumentFrame.np, [0, 1]),
      (ArgumentFrame.objectDrop (some .indef), [0, 1]),
@@ -425,10 +374,7 @@ def drink : Verb where
     transfer of a message (37.1) and the register verbs (54.1). -/
 def read : Verb where
   morphs := [.root "read"]
-  form3sg := "reads"
-  formPast := "read"
-  formPastPart := "read"
-  formPresPart := "reading"
+  past := "read"
   valency := .ofFrame ArgumentFrame.np
   vendlerClass := some .accomplishment
   incrementality := some .incremental
@@ -438,10 +384,7 @@ def read : Verb where
     Base transitive that productively takes DOC ("build us a house"). -/
 def build : Verb where
   morphs := [.root "build"]
-  form3sg := "builds"
-  formPast := "built"
-  formPastPart := "built"
-  formPresPart := "building"
+  past := "built"
   valency := .of
     [(ArgumentFrame.np, [0, 1]),
      (ArgumentFrame.objectDrop (some .indef), [0, 1]),
@@ -460,10 +403,8 @@ def build : Verb where
     Uniquely allows implicit DO in both DOC and PP ([bruening-2021]). -/
 def write : Verb where
   morphs := [.root "write"]
-  form3sg := "writes"
-  formPast := "wrote"
-  formPastPart := "written"
-  formPresPart := "writing"
+  past := "wrote"
+  pastPart := "written"
   valency := .of
     [(ArgumentFrame.np, [0, 1]),
      (ArgumentFrame.np_pp, [0, 1, 2]),
@@ -476,10 +417,7 @@ def write : Verb where
 /-- "sweep" — motion + sustained contact, variable agentivity (default sense). -/
 def sweep : Verb where
   morphs := [.root "sweep"]
-  form3sg := "sweeps"
-  formPast := "swept"
-  formPastPart := "swept"
-  formPresPart := "sweeping"
+  past := "swept"
   valency := .of
     [(ArgumentFrame.np, [0, 1]),
      (ArgumentFrame.pp (some Adpositions.at_), [0, 1]),
@@ -499,10 +437,7 @@ def sweep : Verb where
 /-- "sweep" instrument sense — obligatorily agentive, broom lexicalized. -/
 def sweep_instr : Verb where
   morphs := [.root "sweep"]
-  form3sg := "sweeps"
-  formPast := "swept"
-  formPastPart := "swept"
-  formPresPart := "sweeping"
+  past := "swept"
   valency := .of
     [(ArgumentFrame.np, [0, 1]),
      (ArgumentFrame.pp (some Adpositions.at_), [0, 1]),
@@ -539,7 +474,7 @@ def Verb.toWord (v : Verb) (c : Verb.Cell) : Word :=
 /-- The past participle in passive voice, the same form as `toWord .pastParticiple` marked
 passive. -/
 def Verb.passiveParticiple (v : Verb) : Word :=
-  { form := v.formPastPart, cat := .VERB,
+  { form := v.realize .pastParticiple, cat := .VERB,
     features := Features.of (verbForm := some .Part) (voice := some .Pass) }
 
 end English.Verbs
