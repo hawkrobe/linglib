@@ -120,6 +120,7 @@ icel1247,Icelandic,icel1247,isl,language,Eurasia,63.4837,-19.0212
 ilok1237,Iloko,ilok1237,ilo,language,Papunesia,15.9361,120.993
 indo1316,Standard Indonesian,indo1316,ind,language,Papunesia,-7.33458,109.716
 iris1253,Irish,iris1253,gle,language,Eurasia,53.2186,-7.61509
+ishk1246,Ishkashimi,ishk1246,isk,language,Eurasia,36.67,71.55
 ital1282,Italian,ital1282,ita,language,Eurasia,43.0464,12.6489
 itel1242,West Itelmen,itel1242,itl,language,Eurasia,56.046173,156.30704
 iton1250,Itonama,iton1250,ito,language,South America,-12.80431,-64.35748
@@ -141,6 +142,7 @@ kekc1242,Q'eqchi',kekc1242,kek,language,North America,15.3788,-89.2452
 khar1287,Kharia,khar1287,khr,language,Eurasia,22.3571,84.3922
 khmu1256,Khmu,khmu1256,kjg,language,Eurasia,20.2463,101.671
 kich1262,K'iche',kich1262,quc,language,North America,14.5278,-91.1696
+kiku1240,Kikuyu,kiku1240,kik,language,Africa,-0.29005,36.719
 kimb1241,Kimbundu,kimb1241,kmb,language,Africa,-8.97835,14.8893
 kiny1244,Kinyarwanda,kiny1244,kin,language,Africa,-1.56771,29.6441
 kiow1266,Kiowa,kiow1266,kio,language,North America,34.9403,-98.9042
@@ -330,6 +332,7 @@ telk1238,Christian Telkepe,telk1238,,dialect,Eurasia,37.0972,43.5027
 telu1262,Telugu,telu1262,tel,language,Eurasia,16.4529,78.7024
 teop1238,Teop,teop1238,tio,language,Papunesia,-5.67474,154.971
 tetu1245,Tetum,tetu1245,tet,language,Papunesia,-9.11217,125.528
+tibe1272,Tibetan,tibe1272,bod,language,Eurasia,28.3681,90.1872
 tigr1270,Tigre,tigr1270,tig,language,Africa,17.3494,38.2233
 tigr1271,Tigrinya,tigr1271,tir,language,Africa,15.3359,38.9266
 tiwi1244,Tiwi,tiwi1244,tiw,language,Australia,-11.6308,130.949
@@ -368,6 +371,7 @@ west2635,Akateko,west2635,knj,language,North America,15.5932,-91.8421
 west2821,Western Malayic Dayak,west2821,,family,Papunesia,0.5931945000000001,110.06875600000001
 xhos1239,Xhosa,xhos1239,xho,language,Africa,-31.0389,28.0769
 xokl1240,Xokleng,xokl1240,xok,language,South America,-26.9217,-49.5886
+yaey1239,Yaeyama,yaey1239,rys,language,Eurasia,24.3401,123.801
 yakk1236,Yakkha,yakk1236,ybh,language,Eurasia,27.3714,87.9306
 yaku1245,Sakha,yaku1245,sah,language,Eurasia,61.69744,133.98031
 yala1267,Yalálag Zapotec,yala1267,zpu,language,North America,17.2134,-96.2183

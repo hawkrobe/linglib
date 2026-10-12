@@ -11,56 +11,49 @@ public import Linglib.Morphology.Morph
 /-!
 # Overt reflexes of a designated constituent
 
-A grammar leaves perceptible traces of a constituent's designated status: a focus
-([hartmann-zimmermann-2004] on Tangale, [hartmann-zimmermann-2007] on Hausa,
-[branan-erlewine-2023]), an A′-extraction site (the Mayan fragments, whose `Extraction.realize`
-records the reflexes each extraction site licenses), an intermediate landing site of
-successive-cyclic movement ([mccloskey-2002], [georgi-2017]). A `Reflex` is a perceptible
-perturbation at a host constituent: a displaced exponent, a morpheme with its marker, a phrase
-edge, or metrical prominence. A marking system assigns each designated target its finite set of
-reflexes. Reflexes classify by `Reflex.Modality` and further by `Reflex.Channel`, the
-phonological vs morphological vs syntactic cut. Like `Judgment` for
-acceptability, this is a prediction-target vocabulary: studies translate theory-native
-predictions into it, and no theory consumes it as machinery.
+A grammar leaves perceptible traces of a constituent's designated status: of a focus, of an
+A′-extraction site, of an intermediate landing site of successive-cyclic movement. A `Reflex` is a
+perceptible perturbation at a host constituent: a displaced exponent, a morpheme with its marker,
+a phrase edge, or metrical prominence. A marking system assigns each designated target its finite
+set of reflexes. Reflexes classify by `Reflex.Modality` and further by `Reflex.Channel`, the
+phonological, morphological and syntactic cut. Like `Judgment` for acceptability, this is a
+vocabulary for what a theory predicts: studies translate their predictions into it, and no theory
+consumes it as machinery.
 
 ## Main declarations
 
-* `Reflex`: the four kinds of reflex, `Reflex.morpheme` carrying its marker as a list of
-  morphs so that one morpheme at two hosts is one marker twice.
+* `Reflex`: the four kinds of reflex, `Reflex.morpheme` carrying its marker as a list of morphs
+  so that one morpheme at two hosts is one marker twice.
 * `Reflex.IsOvert`: a morpheme reflex has a nonempty marker.
-* `Reflex.PiedPipes`, `Reflex.AntiPiedPipes`, `Reflex.ExactlyTargets`:
-  [branan-erlewine-2023]'s three host–target configurations in the containment order.
+* `Reflex.PiedPipes`, `Reflex.AntiPiedPipes`, `Reflex.ExactlyTargets`: Branan and Erlewine's
+  three configurations of host and target in the containment order.
+* `Reflex.ExactlyTargets.piedPipes_iff`, `Reflex.ExactlyTargets.antiPiedPipes_iff`: reflexes
+  sharing a host relate to a target as the host does.
 
 ## Implementation notes
 
-The universalist claim that every designated target receives an overt reflex is
-`∀ i, (realize i).Nonempty` over a marking system, which Tangale and Hausa focus each refute
-([hartmann-zimmermann-2004], [hartmann-zimmermann-2007]). Only perceptible alternants are
-reflexes. A string-vacuous operation (Hausa subject fronting)
-contributes none; a default exponent surfacing regardless of the designation (Wolof expletive
-*l-*, [georgi-2017]) is not a reflex, since reflexes covary with the target; and zero is never
-a reflex, covert marking being exponence-side competition rather than a marking modality, which
-`IsOvert` states of a morpheme reflex. Deletion of otherwise-expected material (Malay
-voice-marker deletion) is a reflex. Semantic reflexes of movement (intermediate scope,
-reconstruction) are interpretation facts formalized in their studies.
-
-The marker of a morpheme reflex is the list of morphs coding it, as `Voice.marker` codes a
-voice, so a fragment whose reflex is a voice alternation passes the voice's marker through. A
-paradigm alternation with no segmentable exponent, such as the Hausa relative form of the
-person–aspect complex, carries the alternant as a free morph.
-
-With constituents ordered by containment, a host is the target itself, properly contains it
-(pied-piping), is properly contained in it (anti-pied-piping), or is incomparable to it
-(`IncompRel (· ≤ ·)`: external hosting, such as the verb-hosted extraction morphology of the
-Mayan Agent Focus configuration). The predicates are stated in the order vocabulary directly
-rather than through a four-way classification, over a reflex set and an explicit target, so a
-study asserts the target in the claim rather than storing it beside the data. Overt marking of
-a target is `Finset.Nonempty` of its reflex set.
+* Only perceptible alternants are reflexes. A string-vacuous operation (Hausa subject fronting)
+  contributes none, a default exponent surfacing whatever the designation (the Wolof expletive
+  *l-*) is not one since reflexes covary with the target, and zero is never one, covert marking
+  being exponence-side competition, which `IsOvert` states of a morpheme reflex. Deletion of
+  otherwise expected material (Malay voice-marker deletion) is a reflex. Semantic reflexes of
+  movement (intermediate scope, reconstruction) are interpretation facts left to their studies.
+* The marker of a morpheme reflex is the list of morphs coding it, as `Voice.marker` codes a
+  voice, so a fragment whose reflex is a voice alternation passes the voice's marker through. A
+  paradigm alternation with no segmentable exponent, such as the Hausa relative form of the
+  person–aspect complex, carries the alternant as a free morph.
+* With constituents ordered by containment, a host is the target itself, properly contains it,
+  is properly contained in it, or is incomparable to it (`IncompRel (· ≤ ·)`, external hosting,
+  as with the verb-hosted extraction morphology of the Mayan Agent Focus configuration). The
+  predicates are stated in the order vocabulary over a reflex set and an explicit target, so a
+  study asserts the target in the claim.
+* The claim that every designated target receives an overt reflex is `∀ i, (realize i).Nonempty`
+  over a marking system, which Tangale and Hausa focus each refute.
 
 ## TODO
 
-* The overlap-weakening of [hartmann-zimmermann-2007]'s Ex-Situ Generalisation, which needs a
-  structured-meaning overlap predicate.
+* The overlap-weakening of Hartmann and Zimmermann's Ex-Situ Generalisation for Hausa, which
+  needs a structured-meaning overlap predicate.
 
 ## References
 
@@ -73,23 +66,24 @@ a target is `Finset.Nonempty` of its reflex set.
 
 @[expose] public section
 
-/-- The channel of a reflex: the literature's phonological vs morphological vs syntactic
-reflex cut, individuating the reflexes of one process by the module whose output carries the
-trace. -/
+/-- The channel of a reflex is the module whose output carries the trace, the literature's cut
+between phonological, morphological and syntactic reflexes of one process. -/
 inductive Reflex.Channel where
   | phonological | morphological | syntactic
   deriving DecidableEq, Repr
 
-/-- A marking modality: the kind of perceptible perturbation. The two prosodic cases keep the
-demarcative vs culminative cut visible. -/
+/-- A marking modality is a kind of perceptible perturbation. The two prosodic cases keep the
+demarcative and the culminative apart. -/
 inductive Reflex.Modality where
-  /-- Syntactic: an exponent constituent surfaces displaced from its base position. -/
+  /-- An exponent constituent surfaces displaced from its base position, a syntactic reflex. -/
   | displacement
-  /-- Morphological: a dedicated morpheme (affix, particle, or form alternation) at a host. -/
+  /-- A dedicated morpheme (affix, particle, or form alternation) at a host, a morphological
+  reflex. -/
   | morpheme
-  /-- Phonological, demarcative: a phrase edge at a host (the Tangale/Chadic pattern). -/
+  /-- A phrase edge at a host, a demarcative phonological reflex (the Tangale and Chadic
+  pattern). -/
   | boundary
-  /-- Phonological, culminative: metrical prominence on a host (the English pattern). -/
+  /-- Metrical prominence on a host, a culminative phonological reflex (the English pattern). -/
   | prominence
   deriving DecidableEq, Repr
 
@@ -155,18 +149,34 @@ contained in the target, attested in over sixty languages). -/
 
 section Containment
 
-variable [Preorder C] (s : Finset (Reflex C)) (target : C)
-
-/-- Some reflex is hosted by a constituent properly containing the target: Ross's pied-piping,
-generalized from movement to all marking morphosyntax by [branan-erlewine-2023]. -/
-def PiedPipes : Prop := ∃ ρ ∈ s, target < ρ.host
-
-/-- Some reflex is hosted by a proper subconstituent of the target:
-[branan-erlewine-2023]'s anti-pied-piping. -/
-def AntiPiedPipes : Prop := ∃ ρ ∈ s, ρ.host < target
+variable (s : Finset (Reflex C)) (target : C) {host : C}
 
 /-- Every reflex is hosted by the designated constituent itself. -/
 def ExactlyTargets : Prop := ∀ ρ ∈ s, ρ.host = target
+
+instance [DecidableEq C] : Decidable (ExactlyTargets s target) :=
+  inferInstanceAs (Decidable (∀ _ ∈ _, _))
+
+variable {s target} in
+theorem ExactlyTargets.exactlyTargets_iff (h : ExactlyTargets s host) (hs : s.Nonempty) :
+    ExactlyTargets s target ↔ host = target :=
+  ⟨fun h' ↦ hs.elim fun ρ hρ ↦ (h ρ hρ).symm.trans (h' ρ hρ), fun e ↦ e ▸ h⟩
+
+variable [Preorder C]
+
+/-- Some reflex is hosted by a constituent properly containing the target, which is Ross's
+pied-piping as [branan-erlewine-2023] generalize it from movement to all marking morphosyntax. -/
+def PiedPipes : Prop := ∃ ρ ∈ s, target < ρ.host
+
+/-- Some reflex is hosted by a proper subconstituent of the target, which is
+[branan-erlewine-2023]'s anti-pied-piping. -/
+def AntiPiedPipes : Prop := ∃ ρ ∈ s, ρ.host < target
+
+instance [DecidableLT C] : Decidable (PiedPipes s target) :=
+  inferInstanceAs (Decidable (∃ _ ∈ _, _))
+
+instance [DecidableLT C] : Decidable (AntiPiedPipes s target) :=
+  inferInstanceAs (Decidable (∃ _ ∈ _, _))
 
 variable {s target}
 
@@ -179,14 +189,17 @@ theorem AntiPiedPipes.not_exactlyTargets (h : AntiPiedPipes s target) :
     ¬ ExactlyTargets s target :=
   fun he ↦ let ⟨ρ, hρ, hlt⟩ := h; (he ρ hρ ▸ hlt).false
 
-instance [DecidableLT C] : Decidable (PiedPipes s target) :=
-  inferInstanceAs (Decidable (∃ _ ∈ _, _))
+/-- A nonempty reflex set hosted throughout by `host` pied-pipes a target exactly when `host`
+properly contains it. -/
+theorem ExactlyTargets.piedPipes_iff (h : ExactlyTargets s host) (hs : s.Nonempty) :
+    PiedPipes s target ↔ target < host :=
+  ⟨fun ⟨ρ, hρ, hlt⟩ ↦ h ρ hρ ▸ hlt, fun hlt ↦ hs.elim fun ρ hρ ↦ ⟨ρ, hρ, (h ρ hρ).symm ▸ hlt⟩⟩
 
-instance [DecidableLT C] : Decidable (AntiPiedPipes s target) :=
-  inferInstanceAs (Decidable (∃ _ ∈ _, _))
-
-instance [DecidableEq C] : Decidable (ExactlyTargets s target) :=
-  inferInstanceAs (Decidable (∀ _ ∈ _, _))
+/-- A nonempty reflex set hosted throughout by `host` anti-pied-pipes a target exactly when the
+target properly contains `host`. -/
+theorem ExactlyTargets.antiPiedPipes_iff (h : ExactlyTargets s host) (hs : s.Nonempty) :
+    AntiPiedPipes s target ↔ host < target :=
+  ⟨fun ⟨ρ, hρ, hlt⟩ ↦ h ρ hρ ▸ hlt, fun hlt ↦ hs.elim fun ρ hρ ↦ ⟨ρ, hρ, (h ρ hρ).symm ▸ hlt⟩⟩
 
 end Containment
 
