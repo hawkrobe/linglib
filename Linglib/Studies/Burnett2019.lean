@@ -69,16 +69,9 @@ def PersonaTrait.dimension : PersonaTrait → Dimension
   | .competent | .incompetent => .competence
   | .friendly | .aloof => .warmth
 
-/-- The property space of the example makes the two poles of each dimension incompatible. -/
-def incompatible : SimpleGraph PersonaTrait where
-  Adj p q := p ≠ q ∧ p.dimension = q.dimension
-  symm := ⟨fun _ _ h => ⟨h.1.symm, h.2.symm⟩⟩
-  loopless := ⟨fun _ h => h.1 rfl⟩
-
-instance : DecidableRel incompatible.Adj := fun p q => inferInstanceAs (Decidable (p ≠ q ∧ _))
-
-/-- A persona of the example is a maximal consistent set of its properties. -/
-abbrev Persona := SocialMeaning.Persona incompatible
+/-- A persona of the example is a maximal consistent set of its properties, the two poles of
+each dimension being incompatible. -/
+abbrev Persona := SocialMeaning.Persona (incompatible PersonaTrait.dimension)
 
 /-- The cool guy, competent and friendly. -/
 def coolGuy : Persona := ⟨{.competent, .friendly}, by decide +kernel⟩
@@ -105,7 +98,7 @@ def ingEckertField : INGVariant → Finset PersonaTrait
   | .apical => {.incompetent, .friendly}
 
 /-- The grounded field of (ING), both fields being consistent. -/
-def ingField : GroundedField INGVariant incompatible where
+def ingField : GroundedField INGVariant (incompatible PersonaTrait.dimension) where
   indexes := ingEckertField
   isIndepSet := by intro v; cases v <;> decide
 
