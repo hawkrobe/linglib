@@ -10,36 +10,34 @@ public import Mathlib.Data.List.MinMax
 public import Mathlib.Order.Nat
 
 /-!
-# N-ary rooted trees (rose trees)
+# Rose trees
 
-An **n-ary rooted tree** (rose tree) over `α`: a distinguished root carrying a
-value in `α`, and an ordered list of child subtrees. A leaf is `node a []`.
-This is the n-ary generalization of `BinaryTree` (`Mathlib.Data.Tree.Basic`),
-matching Haskell's `Data.RoseTree` (`Node a [RoseTree a]`).
+A rose tree over `α` is a root carrying a value in `α` with an ordered list of child subtrees, the
+n-ary counterpart of mathlib's `BinaryTree`. A leaf is `node a []`. The children are a `List`,
+which keeps the type computable and gives it the `map` and traversal API of a list. The unordered
+rooted tree, whose children form a multiset, is the quotient of this type by `RoseTree.Perm`
+(`UnorderedTree`).
 
-The children are an ordered `List`, not a `Multiset` or a `WType` branching
-family: `List`-valued children are positivity-clean, keep the type computable,
-and give the ergonomic `map`/traversal API that the unordered (`Multiset`) and
-`WType` encodings do not. The **unordered** rooted tree — the carrier of the
-free pre-Lie algebra and the Connes–Kreimer Hopf algebra — is a *quotient* of
-this type by child permutation, built downstream; it does not belong at this
-data-structure layer.
+The type is nested through `List`, so its recursor takes one motive for trees and one for lists.
+`RoseTree.rec'` is the induction principle with the single hypothesis `∀ c ∈ cs, motive c`, and
+`RoseTree.fold` is the catamorphism from which `map`, the counts and the frontier are defined.
 
-## The recursion principle
+## Main definitions
 
-The type is nested through `List`, so the auto-generated recursor hands a
-per-`List` motive rather than a `∀ c ∈ children, motive c` hypothesis. The
-`RoseTree.rec'` eliminator (registered `@[induction_eliminator]`) packages the
-`(tree, list-of-trees)` shape once, so downstream `map`/`height`/`numNodes`
-recurse and prove with a single `List`-shaped induction hypothesis instead of a
-hand-written `mutual` block per operation.
+* `RoseTree`, `RoseTree.value`, `RoseTree.children`, `RoseTree.leaf`: the type, its projections
+  and its leaves.
+* `RoseTree.rec'`, `RoseTree.fold`: induction and the catamorphism.
+* `RoseTree.map`, `RoseTree.traverse`: relabelling and effectful traversal.
+* `RoseTree.numNodes`, `RoseTree.numLeaves`, `RoseTree.height`, `RoseTree.arity`: the counts.
+* `RoseTree.values`, `RoseTree.localTrees`, `RoseTree.leafList`: the node values in preorder, each
+  node's value with the values of its children, and the frontier.
 -/
 
 @[expose] public section
 
 
-/-- An **n-ary rooted tree**, or rose tree, has a root `value : α` and an ordered list of
-child subtrees. A leaf is `node a []`. -/
+/-- A rose tree has a root `value : α` and an ordered list of child subtrees. A leaf is
+`node a []`. -/
 inductive RoseTree (α : Type*) where
   | node (value : α) (children : List (RoseTree α))
   deriving Repr
@@ -65,14 +63,13 @@ def children : RoseTree α → List (RoseTree α)
 @[simp] theorem children_node (a : α) (cs : List (RoseTree α)) :
     (node a cs).children = cs := rfl
 
-/-- A **leaf** is a root with no children. -/
+/-- A leaf is a root with no children. -/
 abbrev leaf (a : α) : RoseTree α := .node a []
 
 /-! ### Decidable equality
 
-`deriving DecidableEq` does not fire through the nested `List` occurrence (still
-true as of Lean v4.32.0-rc1), so the instance is built by mutual recursion on the
-tree and its child list. -/
+`deriving DecidableEq` does not fire through the nested `List` occurrence (as of Lean v4.34.1), so
+the instance is built by mutual recursion on the tree and its child list. -/
 
 section DecidableEq
 variable [DecidableEq α]
@@ -85,9 +82,9 @@ protected def decEq : (t s : RoseTree α) → Decidable (t = s)
     if hab : a = b then
       match RoseTree.decEqList cs ds with
       | isTrue h => isTrue (by rw [hab, h])
-      | isFalse h => isFalse fun he => by injection he with _ hcd; exact h hcd
+      | isFalse h => isFalse fun he ↦ by injection he with _ hcd; exact h hcd
     else
-      isFalse fun he => by injection he with hab' _; exact hab hab'
+      isFalse fun he ↦ by injection he with hab' _; exact hab hab'
 
 /-- Decidable equality on child lists (mutual with the tree case). -/
 protected def decEqList : (ts ss : List (RoseTree α)) → Decidable (ts = ss)
@@ -96,11 +93,11 @@ protected def decEqList : (ts ss : List (RoseTree α)) → Decidable (ts = ss)
   | _ :: _, [] => isFalse (by simp)
   | c :: cs, d :: ds =>
     match RoseTree.decEq c d with
-    | isFalse h => isFalse fun he => by injection he with hcd _; exact h hcd
+    | isFalse h => isFalse fun he ↦ by injection he with hcd _; exact h hcd
     | isTrue h =>
       match RoseTree.decEqList cs ds with
       | isTrue h2 => isTrue (by rw [h, h2])
-      | isFalse h2 => isFalse fun he => by injection he with _ htl; exact h2 htl
+      | isFalse h2 => isFalse fun he ↦ by injection he with _ htl; exact h2 htl
 
 end
 
@@ -110,9 +107,8 @@ end DecidableEq
 
 /-! ### Size -/
 
-/-- A child of a node is strictly smaller than the node, in the auto-generated
-`SizeOf`. This is the measure behind `rec'` and downstream well-founded
-recursions over `RoseTree`. -/
+/-- A child of a node is strictly smaller than the node in the generated `SizeOf`, the measure
+behind `rec'` and the well-founded recursions over `RoseTree`. -/
 theorem sizeOf_lt_of_mem [SizeOf α] {a : α} {cs : List (RoseTree α)} {c : RoseTree α}
     (hc : c ∈ cs) : sizeOf c < sizeOf (RoseTree.node a cs) := by
   have := List.sizeOf_lt_of_mem hc
@@ -121,23 +117,21 @@ theorem sizeOf_lt_of_mem [SizeOf α] {a : α} {cs : List (RoseTree α)} {c : Ros
 
 /-! ### The recursion principle -/
 
-/-- **Structural induction** for `RoseTree` proves `motive t` for all `t` from `motive (node a cs)`
-given `motive c` for every child `c ∈ cs`. It packages the nested-`List` recursion, so downstream
-definitions and proofs use a single `List`-shaped hypothesis. -/
+/-- Induction on a rose tree proves `motive t` for all `t` from `motive (node a cs)` given
+`motive c` for every child `c ∈ cs`. -/
 @[elab_as_elim, induction_eliminator]
 def rec' {motive : RoseTree α → Sort*}
     (node : ∀ (a : α) (cs : List (RoseTree α)),
       (∀ c ∈ cs, motive c) → motive (RoseTree.node a cs)) :
     ∀ t, motive t
-  | .node a cs => node a cs fun c _hc => rec' node c
+  | .node a cs => node a cs fun c _hc ↦ rec' node c
 termination_by t => sizeOf t
 decreasing_by exact sizeOf_lt_of_mem _hc
 
 /-! ### Catamorphism
 
-`fold f` is the workhorse: every structural operation (`map`, `numNodes`,
-`height`, …) is a one-line `fold` specialization, and their reduction lemmas fall
-out of `fold_node`. -/
+The structural operations (`map`, `numNodes`, `height`, …) are folds, and their equations at a
+node come from `fold_node`. -/
 
 mutual
 /-- The catamorphism replaces each `node a cs` by `f a (folded children)`. -/
@@ -168,13 +162,13 @@ theorem fold_hom (h : β → γ) {f : α → List β → β} {g : α → List γ
   induction t with
   | node a cs ih =>
     rw [fold_node, fold_node, hfg, List.map_map]
-    exact congrArg (g a) (List.map_congr_left fun c hc => ih c hc)
+    exact congrArg (g a) (List.map_congr_left fun c hc ↦ ih c hc)
 
 /-! ### Functoriality -/
 
 /-- Relabel every node by `f`, preserving shape. -/
 def map (f : α → β) : RoseTree α → RoseTree β :=
-  fold fun a cs => RoseTree.node (f a) cs
+  fold fun a cs ↦ RoseTree.node (f a) cs
 
 @[simp] theorem map_node (f : α → β) (a : α) (cs : List (RoseTree α)) :
     map f (node a cs) = node (f a) (cs.map (map f)) := by
@@ -197,8 +191,7 @@ theorem comp_map (f : α → β) (g : β → γ) (t : RoseTree α) :
 
 /-! ### Traversal
 
-Effectful traversal: act on the root, then the children left-to-right — the
-`Traversable` action for `RoseTree`. -/
+Effectful traversal acts on the root and then on the children from left to right. -/
 
 section Traverse
 universe u
@@ -229,7 +222,7 @@ private theorem traverseList_pure_of {m : Type u → Type u} [Applicative m] [La
           = (· :: ·) <$> traverse (pure : α → m α) c <*> traverseList (pure : α → m α) cs
         from rfl,
       h c (List.mem_cons_self ..),
-      traverseList_pure_of cs fun d hd => h d (List.mem_cons_of_mem _ hd)]
+      traverseList_pure_of cs fun d hd ↦ h d (List.mem_cons_of_mem _ hd)]
     simp [map_pure]
 
 theorem traverse_pure {m : Type u → Type u} [Applicative m] [LawfulApplicative m]
@@ -244,9 +237,9 @@ end Traverse
 
 /-! ### Counting -/
 
-/-- The total number of nodes (vertices). A leaf counts as `1`. -/
+/-- The number of nodes. A leaf counts as `1`. -/
 def numNodes : RoseTree α → ℕ :=
-  fold fun _ ns => ns.sum + 1
+  fold fun _ ns ↦ ns.sum + 1
 
 @[simp] theorem numNodes_node (a : α) (cs : List (RoseTree α)) :
     numNodes (node a cs) = (cs.map numNodes).sum + 1 := by
@@ -258,7 +251,7 @@ theorem numNodes_pos (t : RoseTree α) : 0 < numNodes t := by
 
 /-- The node values in preorder list the root first, then each child's values left to right. -/
 def values : RoseTree α → List α :=
-  fold fun a ls => a :: ls.flatten
+  fold fun a ls ↦ a :: ls.flatten
 
 @[simp] theorem values_node (a : α) (cs : List (RoseTree α)) :
     values (node a cs) = a :: (cs.map values).flatten := by
@@ -269,7 +262,7 @@ theorem length_values (t : RoseTree α) : t.values.length = t.numNodes := by
   | node a cs ih =>
     simp only [values_node, numNodes_node, List.length_cons, List.length_flatten,
       List.map_map, Function.comp_def]
-    rw [show (cs.map fun c => c.values.length) = cs.map numNodes from
+    rw [show (cs.map fun c ↦ c.values.length) = cs.map numNodes from
       List.map_congr_left ih]
 
 mutual
@@ -298,12 +291,12 @@ theorem length_localTrees (t : RoseTree α) : t.localTrees.length = t.numNodes :
   | node a cs ih =>
     simp only [localTrees_node, numNodes_node, List.length_cons, List.length_flatten,
       List.map_map, Function.comp_def]
-    rw [show (cs.map fun c => c.localTrees.length) = cs.map numNodes from
+    rw [show (cs.map fun c ↦ c.localTrees.length) = cs.map numNodes from
       List.map_congr_left ih]
 
 /-- The ordered frontier lists the leaf values from left to right. -/
 def leafList : RoseTree α → List α :=
-  fold fun a ls => match ls with
+  fold fun a ls ↦ match ls with
     | [] => [a]
     | ls => ls.flatten
 
@@ -329,9 +322,9 @@ theorem leafList_ne_nil (t : RoseTree α) : t.leafList ≠ [] := by
       exact List.flatten_ne_nil_iff.2 ⟨c.leafList, List.mem_map_of_mem (List.mem_cons_self ..),
         ih c (List.mem_cons_self ..)⟩
 
-/-- The number of leaves (childless nodes). A single leaf counts as `1`. -/
+/-- The number of leaves. A single leaf counts as `1`. -/
 def numLeaves : RoseTree α → ℕ :=
-  fold fun _ ns => max 1 ns.sum
+  fold fun _ ns ↦ max 1 ns.sum
 
 @[simp] theorem numLeaves_node (a : α) (cs : List (RoseTree α)) :
     numLeaves (node a cs) = max 1 (cs.map numLeaves).sum := by
@@ -345,12 +338,29 @@ theorem numLeaves_pos (t : RoseTree α) : 0 < numLeaves t := by
     rw [numLeaves_node]
     exact Nat.lt_of_lt_of_le Nat.one_pos (Nat.le_max_left _ _)
 
+theorem numLeaves_node_of_ne_nil (a : α) {cs : List (RoseTree α)} (h : cs ≠ []) :
+    numLeaves (node a cs) = (cs.map numLeaves).sum := by
+  obtain ⟨c, cs, rfl⟩ := List.exists_cons_of_ne_nil h
+  rw [numLeaves_node, List.map_cons, List.sum_cons]
+  have := numLeaves_pos c
+  omega
+
+/-- The frontier has one entry for each leaf. -/
+theorem length_leafList (t : RoseTree α) : t.leafList.length = t.numLeaves := by
+  induction t with
+  | node a cs ih =>
+    rcases eq_or_ne cs [] with rfl | hcs
+    · simp
+    · rw [leafList_node_of_ne_nil a hcs, numLeaves_node_of_ne_nil a hcs, List.length_flatten,
+        List.map_map]
+      exact congrArg List.sum (List.map_congr_left ih)
+
 /-! ### Height -/
 
-/-- The **height** is the number of vertices on a longest root-to-leaf path, so a leaf has
+/-- The height is the number of nodes on a longest path from the root to a leaf, so a leaf has
 height `1`. This is the convention of `BinaryTree.height`, where `nil` has height `0`. -/
 def height : RoseTree α → ℕ :=
-  fold fun _ hs => hs.foldr max 0 + 1
+  fold fun _ hs ↦ hs.foldr max 0 + 1
 
 @[simp] theorem height_node (a : α) (cs : List (RoseTree α)) :
     height (node a cs) = (cs.map height).foldr max 0 + 1 := by
@@ -401,12 +411,12 @@ def arity (t : RoseTree α) : ℕ := t.children.length
     exact congrArg (· + 1) (congrArg (List.foldr max 0) (List.map_congr_left ih))
 
 @[simp] theorem localTrees_map (f : α → β) (t : RoseTree α) :
-    (map f t).localTrees = t.localTrees.map fun p => (f p.1, p.2.map f) := by
+    (map f t).localTrees = t.localTrees.map fun p ↦ (f p.1, p.2.map f) := by
   induction t with
   | node a cs ih =>
     simp only [map_node, localTrees_node, List.map_map, List.map_cons, List.map_flatten]
-    refine congrArg₂ _ ?_ (congrArg List.flatten (List.map_congr_left fun c hc => ih c hc))
-    exact congrArg _ (List.map_congr_left fun c _ => by cases c; rfl)
+    refine congrArg₂ _ ?_ (congrArg List.flatten (List.map_congr_left fun c hc ↦ ih c hc))
+    exact congrArg _ (List.map_congr_left fun c _ ↦ by cases c; rfl)
 
 @[simp] theorem leafList_map (f : α → β) (t : RoseTree α) :
     (map f t).leafList = t.leafList.map f := by
@@ -417,7 +427,7 @@ def arity (t : RoseTree α) : ℕ := t.children.length
     | cons c cs =>
       simp only [map_node, List.map_cons, leafList_node_cons, List.map_flatten, List.map_map]
       exact congrArg List.flatten (congrArg₂ _ (ih c (List.mem_cons_self ..))
-        (List.map_congr_left fun d hd => ih d (List.mem_cons_of_mem _ hd)))
+        (List.map_congr_left fun d hd ↦ ih d (List.mem_cons_of_mem _ hd)))
 
 /-! ### Instances -/
 

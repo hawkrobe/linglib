@@ -40,14 +40,14 @@ variable {α : Type*}
 
 mutual
 
-/-- The natural correspondence: a forest becomes the binary tree obtained by `cons`ing its
+/-- The natural correspondence sends a forest to the binary tree obtained by `cons`ing its
 trees, in order, onto `nil`. -/
 def ofForest : List (RoseTree α) → BinaryTree α
   | [] => nil
   | t :: rest => cons t (ofForest rest)
 
-/-- The list `cons` transported along the natural correspondence: a tree becomes a node whose
-left subtree is the forest of its children and whose right subtree is the rest of the forest. -/
+/-- The list `cons` transported along the natural correspondence makes a tree a node whose left
+subtree is the forest of its children and whose right subtree is the rest of the forest. -/
 def cons : RoseTree α → BinaryTree α → BinaryTree α
   | .node a cs, r => node a (ofForest cs) r
 
