@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Syntax.Minimalist.Workspace.TraceCut
+public import Linglib.Syntax.Minimalist.Coproduct.TraceCut
 public import Linglib.Core.Data.UnorderedTree.Basic
 public import Mathlib.Tactic.Abel
 
@@ -11,7 +11,7 @@ The combinatorial heart of Δ^c coassociativity: both `(Δ^c ⊗ id) ∘ Δ^c` a
 `(id ⊗ Δ^c) ∘ Δ^c` enumerate ordered pairs of nested admissible cuts of a
 tree, and under trace coherence the two enumerations agree as UnorderedTree
 multisets. This file proves that agreement at the **planar** level (where
-`cutSummandsCP` recurses structurally); `TraceCoproduct.lean`
+`cutSummandsCP` recurses structurally); `Trace.lean`
 descends it through `UnorderedTree.mk` to close the UnorderedTree `doubleCut_eq`.
 
 ## Main results

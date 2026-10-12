@@ -6,9 +6,9 @@ public import Linglib.Fragments.TobaBatak.Voice
 public import Linglib.Semantics.ArgumentStructure.EntailmentProfile.ThetaRole
 public import Linglib.Semantics.ArgumentStructure.Valency
 public import Linglib.Syntax.Binding.Basic
-public import Linglib.Syntax.Minimalist.Movement.Freezing
-public import Linglib.Syntax.Minimalist.Movement.Reconstruction
-public import Linglib.Syntax.Minimalist.Movement.Remnant
+public import Linglib.Syntax.Minimalist.Derivation.Freezing
+public import Linglib.Syntax.Minimalist.Derivation.Reconstruction
+public import Linglib.Syntax.Minimalist.Derivation.Remnant
 import all Init.Data.String.Defs  -- for unfolding `String.join`
 
 /-!

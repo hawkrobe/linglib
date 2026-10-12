@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Syntax.Minimalist.FormCopy
+public import Linglib.Syntax.Minimalist.SyntacticObject.FormCopy
 public import Linglib.Syntax.Control.Basic
 public import Linglib.Fragments.Mixtec.SMPM.Pronouns
 

@@ -6,7 +6,7 @@ public import Linglib.Phonology.OptimalityTheory.Correspondence
 public import Linglib.Phonology.OptimalityTheory.Tableau
 public import Linglib.Syntax.Minimalist.Linearization.Cyclic
 public import Linglib.Syntax.Minimalist.Linearization.SpelloutDomain
-public import Linglib.Syntax.Minimalist.Movement.Remnant
+public import Linglib.Syntax.Minimalist.Derivation.Remnant
 public import Linglib.Data.Examples.SandeClemDabkowski2026
 public import Mathlib.Data.List.Sections
 

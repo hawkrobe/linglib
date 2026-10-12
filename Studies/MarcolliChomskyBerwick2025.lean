@@ -8,9 +8,9 @@ module
 public import Linglib.Core.Algebra.RootedTree.BirkhoffFactorizationSemiring
 public import Linglib.Core.Algebra.RootedTree.Coproduct.Primitive
 public import Linglib.Syntax.Minimalist.Linearization.Externalization
-public import Linglib.Syntax.Minimalist.Economy.Derivation
+public import Linglib.Syntax.Minimalist.Derivation.Economy
 public import Linglib.Syntax.Minimalist.SyntacticObject.Selection
-public import Linglib.Syntax.Minimalist.FormCopy
+public import Linglib.Syntax.Minimalist.SyntacticObject.FormCopy
 public import Mathlib.Combinatorics.Enumerative.Catalan.Tree
 public import Mathlib.RingTheory.PowerSeries.Basic
 
@@ -68,7 +68,7 @@ The book's algebra lives in `Core/` and in `Syntax/Minimalist/{Workspace,Merge,E
 * Definitions 1.2.6 and 1.2.8 (admissible cuts, the coproducts `Δ^ω`): `ConnesKreimer.cutSummandsN`
   and `comulAlgHomN` for `Δ^ρ`, which Remark 1.2.9 identifies with the Connes–Kreimer coproduct;
   `cutSummandsCN` and `comulCAlgHomN` for `Δ^c`.
-* Lemma 1.2.10: `ConnesKreimer.comulCN_coassoc` and the edge grading of `Workspace/TraceGrading`.
+* Lemma 1.2.10: `ConnesKreimer.comulCN_coassoc` and the edge grading of `Coproduct/TraceGrading`.
 * Lemma 1.2.11 and (1.2.12): `ConnesKreimer.instBialgebraRho`, the `HopfAlgebra` instance, and
   `antipodeTreeN`.
 * The comparison of `Δ^d` with `Δ^ρ` displayed before (1.3.10):

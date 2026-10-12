@@ -2,7 +2,7 @@ module
 
 public import Mathlib.Data.List.Permutation
 public import Linglib.Morphology.DistributedMorphology.Spellout
-public import Linglib.Syntax.Minimalist.Features
+public import Linglib.Syntax.Minimalist.Feature.Basic
 public import Linglib.Fragments.Taos.Agreement
 public import Linglib.Syntax.Person.Features
 public import Linglib.Phonology.RuleInteraction

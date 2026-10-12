@@ -5,8 +5,8 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Syntax.Minimalist.Movement.Freezing
-public import Linglib.Syntax.Minimalist.Movement.Reconstruction
+public import Linglib.Syntax.Minimalist.Derivation.Freezing
+public import Linglib.Syntax.Minimalist.Derivation.Reconstruction
 
 /-!
 # Smuggling

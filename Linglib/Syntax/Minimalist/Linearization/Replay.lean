@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Syntax.Minimalist.SyntacticObject.Derivation
+public import Linglib.Syntax.Minimalist.Derivation.Basic
 
 /-!
 # Derivation-grounded externalization

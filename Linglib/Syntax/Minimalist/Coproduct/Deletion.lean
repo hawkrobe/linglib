@@ -8,8 +8,8 @@ module
 public import Linglib.Core.Algebra.BigOperators.Multiset
 public import Linglib.Core.Data.Multiset.FilterMap
 public import Linglib.Core.Algebra.RootedTree.Coproduct.Pruning
-public import Linglib.Syntax.Minimalist.Workspace.CutFilterMap
-public import Linglib.Syntax.Minimalist.Workspace.TraceCoproduct
+public import Linglib.Syntax.Minimalist.Coproduct.CutFilterMap
+public import Linglib.Syntax.Minimalist.Coproduct.Trace
 public import Linglib.Core.Data.UnorderedTree.FilterMap
 
 @[expose] public section
@@ -21,7 +21,7 @@ open RoseTree UnorderedTree
 
 The deletion variant of the Connes-Kreimer admissible-cut coproduct
 (Marcolli, Chomsky and Berwick's comparison displayed before (1.3.10), p. 44),
-obtained from the trace coproduct Δ^c (`TraceCoproduct.lean`) by erasing
+obtained from the trace coproduct Δ^c (`Trace.lean`) by erasing
 trace-placeholder leaves from both tensor channels:
 `Δ^d = (Π_{d,c} ⊗ Π_{d,c}) ∘ Δ^c`, where `Π_{d,c}` erases
 trace-placeholder leaves.

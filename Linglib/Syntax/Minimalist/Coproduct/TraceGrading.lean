@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Syntax.Minimalist.Workspace.TraceCoproduct
+public import Linglib.Syntax.Minimalist.Coproduct.Trace
 
 @[expose] public section
 

@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Syntax.Minimalist.Merge.Basic
-public import Linglib.Syntax.Minimalist.Workspace.TraceConservation
+public import Linglib.Syntax.Minimalist.Coproduct.TraceConservation
 
 /-!
 # Minimal Search as a weighting of Merge
