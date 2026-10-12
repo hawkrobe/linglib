@@ -65,7 +65,7 @@ half without the verb, is exponed as *do*.
 
 namespace ArregiPietraszko2021
 
-open Phonology FreeMagma DistributedMorphology
+open Phonology FreeMagma DistributedMorphology Morphology.Exponence
 
 /-! ### Head chains -/
 
@@ -223,7 +223,7 @@ inductive Piece
 /-- The Vocabulary of a verbal word. An orphan verb is the dummy verb, a verb beside a T that
 bears tense takes the allomorph that tense conditions, and the infinitival exponent is the
 elsewhere exponent of T. -/
-def vocabulary : List (VocabularyItem Feat Piece) :=
+def vocabulary : Vocabulary (VocabularyItem Feat Piece) :=
   [[.verb, .orphan] ⟷ .dummy, ⟨⟨[.verb], [], [[.tense]]⟩, .finiteStem⟩, [.verb] ⟷ .stem,
     [.T, .tense, .agr] ⟷ .finite, [.T] ⟷ .infinitival, [.neg] ⟷ .contracted]
 
@@ -252,7 +252,7 @@ theorem subsetPrinciple_eq_dummy_iff {n : Neighborhood (List Feat)} (hT : .T ∉
       · exact absurd ha (hT' _ (by simp))
       · exact absurd ha (hT' _ (by simp))
       · exact .inr (by decide)
-    exact Morphology.Exponence.realize_eq_of_forall_le (r := dummy) (by simp [vocabulary, dummy])
+    exact Vocabulary.realize_eq_of_forall_le (r := dummy) (by simp [vocabulary, dummy])
       (Neighborhood.ofBundle_subset_iff.mpr (by simp [hv, ho]))
       (fun s hs ha ↦ (key s hs ha).elim (fun h ↦ h ▸ le_rfl) le_of_lt)
       (fun s hs ha he ↦ (key s hs ha).elim (fun h ↦ h ▸ rfl) fun h ↦ absurd he h.ne)

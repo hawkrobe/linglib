@@ -99,27 +99,27 @@ Each generalization hypothesizes exactly the conditions it needs, and vocabulari
 condition witness the corresponding unattested pattern. -/
 
 /-- Every rule expones the bare root, so the vocabulary has no portmanteaux. -/
-def Terminal (v : List (SpanRule n F)) : Prop :=
+def Terminal (v : Vocabulary (SpanRule n F)) : Prop :=
   ∀ it ∈ v, (it.spans : ℕ) = 0
 
-instance (v : List (SpanRule n F)) : Decidable (Terminal v) := by
+instance (v : Vocabulary (SpanRule n F)) : Decidable (Terminal v) := by
   unfold Terminal; infer_instance
 
 /-- Conditioning heads are adjacent to the exponed span, the adjacency condition on contextual
 allomorphy that [bobaljik-2012] tentatively adopts. -/
-def Adjacent (v : List (SpanRule n F)) : Prop :=
+def Adjacent (v : Vocabulary (SpanRule n F)) : Prop :=
   ∀ it ∈ v, ∀ c : Fin n, it.context = some c → (c : ℕ) = (it.spans : ℕ) + 1
 
-instance (v : List (SpanRule n F)) : Decidable (Adjacent v) := by
+instance (v : Vocabulary (SpanRule n F)) : Decidable (Adjacent v) := by
   unfold Adjacent; infer_instance
 
 /-- [bobaljik-2012]'s markedness condition requires, for each context-sensitive rule involving a
 node, a context-free rule involving that node. Under the threshold encoding the vocabulary's
 thresholds are closed downward. -/
-def Grounded (v : List (SpanRule n F)) : Prop :=
+def Grounded (v : Vocabulary (SpanRule n F)) : Prop :=
   ∀ it ∈ v, ∀ k : Fin n, k < it.threshold → ∃ jt ∈ v, jt.threshold = k
 
-instance (v : List (SpanRule n F)) : Decidable (Grounded v) := by
+instance (v : Vocabulary (SpanRule n F)) : Decidable (Grounded v) := by
   unfold Grounded; infer_instance
 
 /-! ### The Superset reading: lexical entries -/

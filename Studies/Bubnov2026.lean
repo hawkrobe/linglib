@@ -49,7 +49,7 @@ change is a weakening of a restriction, whichever direction it takes along the m
 
 namespace Bubnov2026
 
-open DeganoAloni2025 Dekier2021 Indefinite Morphology.Containment
+open DeganoAloni2025 Dekier2021 Indefinite Morphology.Containment Morphology.Exponence
 open Haspelmath1997 hiding russian
 
 /-! ### The containment the hierarchy predicts -/
@@ -112,12 +112,12 @@ theorem entry_loss_example :
 storing the layer. The loss of an entry extends coverage downwards and never upwards, so it
 derives the change from a specific unknown form to an epistemic one and never the change from a
 non-specific form to an epistemic one, although both are attested. -/
-theorem entry_loss_extends_downward_only {n : ℕ} {v v' : List (SupersetRule n String)}
+theorem entry_loss_extends_downward_only {n : ℕ} {v v' : Vocabulary (SupersetRule n String)}
     (hv : v'.Sublist v) {g : Fin n} {φ : String} (h : spellout v' g = some φ) :
     ∃ e ∈ v, e.exponent = φ ∧ g ≤ e.spans := by
   obtain ⟨e, he, rfl⟩ := Option.map_eq_some_iff.mp h
-  exact ⟨e, hv.subset (Morphology.Exponence.selectBy_mem he), rfl,
-    Morphology.Exponence.selectBy_applies he⟩
+  exact ⟨e, hv.subset (Vocabulary.selectBy_mem he), rfl,
+    Vocabulary.selectBy_applies he⟩
 
 /-! ### Coexpression as underspecification -/
 

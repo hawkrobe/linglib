@@ -74,7 +74,7 @@ preposition and the root are read off its attachment. The event-modifier account
 
 namespace Wood2023
 
-open DistributedMorphology DistributedMorphology.Allosemy Icelandic.Nouns
+open DistributedMorphology DistributedMorphology.Allosemy Icelandic.Nouns Morphology.Exponence
 open Wood2023.Examples
 open Morphology (Morph)
 
@@ -105,7 +105,7 @@ def nAfter (m : Morph) (e : String) : VocabularyItem Feature Morph :=
 *not*, *-er* after *analýs*, and zero elsewhere; n is *-ing* after *-er*, *-un* after *-k*
 and after the roots the fragment shows with *-un*, *-n*, *-ttur* and *-ð* after their roots,
 and has no elsewhere item, as the rule (2.8) of the book has it. -/
-def vocab : List (VocabularyItem Feature Morph) :=
+def vocab : Vocabulary (VocabularyItem Feature Morph) :=
   [⟨⟨[cat .v], [[exp (.root "sein")]], []⟩, .suff "k"⟩,
    ⟨⟨[cat .v], [[exp (.root "not")]], [[cat .n]]⟩, .suff "k"⟩,
    ⟨⟨[cat .v], [[exp (.root "analýs")]], []⟩, .suff "er"⟩,
@@ -233,9 +233,9 @@ theorem nominalizer_of_er (h : verbalizer r = .suff "er") :
 nominalization. -/
 theorem nominalizer_eq_none (h : verbalizer r = zero) (hr : r ∉ listed) :
     nominalizer r = none := by
-  rw [nominalizer_of_eq_zero r h, subsetPrinciple, Morphology.Exponence.realize_eq_none_iff]
+  rw [nominalizer_of_eq_zero r h, subsetPrinciple, Vocabulary.realize_eq_none_iff]
   simp [listed] at hr
-  simp [Morphology.Exponence.applicable, vocab, nAfter, VocabularyItem.applies_iff,
+  simp [Vocabulary.applicable, vocab, nAfter, VocabularyItem.applies_iff,
     Neighborhood.subset_iff_positioned, Neighborhood.positioned, Morph.root, Morph.suff, zero]
   simpa [eq_comm] using hr
 
@@ -360,7 +360,7 @@ namespace IStar.Alloseme
 end IStar.Alloseme
 
 /-- i* is an agent in the context of an eventive complement and a possessor elsewhere. -/
-def IStar.vocabulary : List (VocabularyItem Feature IStar.Alloseme) :=
+def IStar.vocabulary : Vocabulary (VocabularyItem Feature IStar.Alloseme) :=
   [⟨complement [.eventive], .agent⟩, [] ⟷ .possessor]
 
 /-- The alloseme of i* selected by its complement's features. -/

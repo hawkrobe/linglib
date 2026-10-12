@@ -43,59 +43,61 @@ open Morphology.Exponence
 
 section SubsetPrinciple
 
-variable {F E : Type*} [DecidableEq F] {items : List (VocabularyItem F E)}
+variable {F E : Type*} [DecidableEq F] {items : Vocabulary (VocabularyItem F E)}
   {n n' : Neighborhood (List F)} {i i' : VocabularyItem F E} {e : E}
 
 /-- The Subset Principle's winning item is the applicable item of greatest `specificity`, the
 earliest under ties. -/
-def winner? (items : List (VocabularyItem F E)) (n : Neighborhood (List F)) :
+def winner? (items : Vocabulary (VocabularyItem F E)) (n : Neighborhood (List F)) :
     Option (VocabularyItem F E) :=
-  selectBy VocabularyItem.specificity items n
+  items.selectBy VocabularyItem.specificity n
 
 /-- The **Subset Principle** yields the exponent of the most specific item whose site the
 neighborhood contains, and `none` iff no item applies. -/
-def subsetPrinciple (items : List (VocabularyItem F E)) (n : Neighborhood (List F)) : Option E :=
-  realize VocabularyItem.specificity items n
+def subsetPrinciple (items : Vocabulary (VocabularyItem F E)) (n : Neighborhood (List F)) :
+    Option E :=
+  items.realize VocabularyItem.specificity n
 
 /-- The Subset Principle's exponent comes from an applicable item, so the selection never draws on
 features the neighborhood does not bear. -/
 theorem subsetPrinciple_winner_mem (h : subsetPrinciple items n = some e) :
     ∃ i ∈ items, i.exponent = e ∧ i.site ⊆ n := by
   obtain ⟨i, hi, rfl⟩ := Option.map_eq_some_iff.mp h
-  exact ⟨i, selectBy_mem hi, rfl, selectBy_applies hi⟩
+  exact ⟨i, Vocabulary.selectBy_mem hi, rfl, Vocabulary.selectBy_applies hi⟩
 
 theorem winner?_isSome_iff : (winner? items n).isSome ↔ ∃ i ∈ items, i.site ⊆ n :=
-  selectBy_isSome_iff
+  Vocabulary.selectBy_isSome_iff
 
 /-- The winner is an Elsewhere winner of the shared core, with no faithfulness hypothesis, since
 `VocabularyItem.specificity` is strictly antitone outright. -/
-theorem winner?_isElsewhereWinner (h : winner? items n = some i) : IsElsewhereWinner items n i :=
-  selectBy_isElsewhereWinner (VocabularyItem.specificity_strictAnti.strictAntiOn _) h
+theorem winner?_isElsewhereWinner (h : winner? items n = some i) : items.IsElsewhereWinner n i :=
+  Vocabulary.selectBy_isElsewhereWinner (VocabularyItem.specificity_strictAnti.strictAntiOn _) h
 
-theorem subsetPrinciple_realizes (h : subsetPrinciple items n = some e) : Realizes items n e :=
-  realize_realizes (VocabularyItem.specificity_strictAnti.strictAntiOn _) h
+theorem subsetPrinciple_realizes (h : subsetPrinciple items n = some e) : items.Realizes n e :=
+  Vocabulary.realize_realizes (VocabularyItem.specificity_strictAnti.strictAntiOn _) h
 
 /-- Impoverishment that deletes only features the winning item does not mention leaves the winner
 in place, since every item applicable after the deletion was applicable before it. -/
 theorem winner?_eq_of_subset (hsub : n' ⊆ n) (h : winner? items n = some i) (hi : i.site ⊆ n') :
     winner? items n' = some i :=
-  selectBy_eq_some_of_applies (fun _ _ hs ↦ hs.trans hsub) h hi
+  Vocabulary.selectBy_eq_some_of_applies (fun _ _ hs ↦ hs.trans hsub) h hi
 
 /-- **Retreat to the general case.** Shrinking the neighborhood, deleting features by
 Impoverishment, can only make the winner weakly less specific, which is why impoverishment yields
 syncretism with a more general exponent rather than a different specific one. -/
 theorem winner?_retreat (hsub : n' ⊆ n) (h' : winner? items n' = some i') :
     ∃ i, winner? items n = some i ∧ i'.specificity ≤ i.specificity := by
-  have hi' : i'.site ⊆ n := (selectBy_applies h').trans hsub
-  obtain ⟨i, hi⟩ := Option.isSome_iff_exists.mp (winner?_isSome_iff.mpr ⟨i', selectBy_mem h', hi'⟩)
-  exact ⟨i, hi, le_of_selectBy_eq_some hi (selectBy_mem h') hi'⟩
+  have hi' : i'.site ⊆ n := (Vocabulary.selectBy_applies h').trans hsub
+  obtain ⟨i, hi⟩ := Option.isSome_iff_exists.mp
+    (winner?_isSome_iff.mpr ⟨i', Vocabulary.selectBy_mem h', hi'⟩)
+  exact ⟨i, hi, Vocabulary.le_of_selectBy_eq_some hi (Vocabulary.selectBy_mem h') hi'⟩
 
 /-- An antihomophonous vocabulary realizes no ABA pattern over neighborhoods ordered by inclusion:
 an exponent inserted at two nested neighborhoods is inserted at every neighborhood between
 them. -/
-theorem isContiguous_subsetPrinciple (hv : Antihomophonous items) :
+theorem isContiguous_subsetPrinciple (hv : items.Antihomophonous) :
     Morphology.IsContiguous (subsetPrinciple items) :=
-  isContiguous_realize_of_monotone hv fun _ _ _ _ hn hs ↦ hs.trans hn
+  Vocabulary.isContiguous_realize_of_monotone hv fun _ _ _ _ hn hs ↦ hs.trans hn
 
 end SubsetPrinciple
 

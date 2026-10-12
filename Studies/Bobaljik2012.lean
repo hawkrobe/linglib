@@ -82,7 +82,7 @@ the Greek (93), with the comparative root *xud-* that §6.4.4 identifies in
 
 namespace Bobaljik2012
 
-open Morphology Morphology.Containment DistributedMorphology
+open Morphology Morphology.Exponence Morphology.Containment DistributedMorphology
 open English.Adjectives
 
 /-! ### The patterns on the Fragments (ch. 4) -/
@@ -152,7 +152,7 @@ Each vocabulary is run through the Elsewhere engine of
 realized cells is the root pattern. -/
 
 /-- Czech BAD (39), with *hor-* under CMPR and *špatn-* elsewhere. -/
-def czechBad : List (SpanRule 3 String) := [⟨"špatn", 0, none⟩, ⟨"hor", 0, some 1⟩]
+def czechBad : Vocabulary (SpanRule 3 String) := [⟨"špatn", 0, none⟩, ⟨"hor", 0, some 1⟩]
 
 /-- The comparative allomorph is chosen in the superlative, *špatn-ý, hor-ší, nej-hor-ší*, since
 the superlative contains its context. -/
@@ -162,18 +162,18 @@ theorem czech_bad_realize : realize czechBad = ![some "špatn", some "hor", some
 theorem czech_bad_abb : Setoid.ker (realize czechBad) = Setoid.ker Paradigm.abb := by decide
 
 /-- English GOOD (203), with *bett-* under CMPR and *good* elsewhere. -/
-def englishGood : List (SpanRule 3 String) := [⟨"good", 0, none⟩, ⟨"bett", 0, some 1⟩]
+def englishGood : Vocabulary (SpanRule 3 String) := [⟨"good", 0, none⟩, ⟨"bett", 0, some 1⟩]
 
 theorem english_good_abb : Setoid.ker (realize englishGood) = Setoid.ker Paradigm.abb := by decide
 
 /-- English BAD (194), with the √ROOT+CMPR portmanteau *worse* and *bad* elsewhere. -/
-def englishBad : List (SpanRule 3 String) := [⟨"bad", 0, none⟩, ⟨"worse", 1, none⟩]
+def englishBad : Vocabulary (SpanRule 3 String) := [⟨"bad", 0, none⟩, ⟨"worse", 1, none⟩]
 
 theorem english_bad_abb : Setoid.ker (realize englishBad) = Setoid.ker Paradigm.abb := by decide
 
 /-- Welsh GOOD (198), with the √ROOT+CMPR portmanteaus *gor-* under SPRL and *gwell*, and *da*
 elsewhere. -/
-def welshGood : List (SpanRule 3 String) :=
+def welshGood : Vocabulary (SpanRule 3 String) :=
   [⟨"da", 0, none⟩, ⟨"gwell", 1, none⟩, ⟨"gor", 1, some 2⟩]
 
 /-- Welsh *da, gwell, gor-au* is ABC, since the superlative exponent is a portmanteau. -/
@@ -182,7 +182,7 @@ theorem welsh_good_abc : Setoid.ker (realize welshGood) = Setoid.ker Paradigm.ab
 /-- Latin GOOD (204), with the √ROOT+CMPR portmanteau *opt-* under SPRL, the root allomorph
 *mel-* under CMPR, and *bon* elsewhere. Since *opt-* expones the CMPR cell, *-ior* has nothing to
 realize, which gives *opt-imus* and not *\*opt-ior-imus*. -/
-def latinBonus : List (SpanRule 3 String) :=
+def latinBonus : Vocabulary (SpanRule 3 String) :=
   [⟨"bon", 0, none⟩, ⟨"mel", 0, some 1⟩, ⟨"opt", 1, some 2⟩]
 
 theorem latin_bonus_realize : realize latinBonus = ![some "bon", some "mel", some "opt"] := by
@@ -192,7 +192,7 @@ theorem latin_realize_abc : Setoid.ker (realize latinBonus) = Setoid.ker Paradig
 
 /-- Latin satisfies every condition the CSG2 derivation uses. -/
 theorem latin_wellformed :
-    Adjacent latinBonus ∧ Grounded latinBonus ∧ Exponence.Antihomophonous latinBonus := by decide
+    Adjacent latinBonus ∧ Grounded latinBonus ∧ latinBonus.Antihomophonous := by decide
 
 /-- Latin is not terminal, and must not be, since terminal adjacent rules plateau at the
 comparative (`realize_const_of_terminal_adjacent`), which would exclude ABC. -/
@@ -200,13 +200,13 @@ theorem latin_not_terminal : ¬ Terminal latinBonus := by decide
 
 /-- The superlative winner is the portmanteau *opt-*. -/
 theorem latin_superlative_portmanteau :
-    Exponence.selectBy SpanRule.threshold latinBonus 2 = some ⟨"opt", 1, some 2⟩ := by
+    latinBonus.selectBy SpanRule.threshold 2 = some ⟨"opt", 1, some 2⟩ := by
   decide
 
 /-- ABC needs a portmanteau ((199), §5.3.1). Under adjacency, distinct comparative and
 superlative cells force a winner exponing more than the root. -/
 theorem latin_sprl_needs_portmanteau :
-    ∃ it ∈ latinBonus, Exponence.selectBy SpanRule.threshold latinBonus 2 = some it ∧
+    ∃ it ∈ latinBonus, latinBonus.selectBy SpanRule.threshold 2 = some it ∧
       0 < (it.spans : ℕ) :=
   exists_portmanteau_of_ne (by decide) (by decide)
 
@@ -218,7 +218,7 @@ conditioned by SPRL with no comparative-level counterpart ((201)). Surface
 ABA has one, accidental homophony, closed by Antihomophony ((44)). -/
 
 /-- The vocabulary (190), with *be(tt)-* conditioned by SPRL across the comparative. -/
-def aabContextual : List (SpanRule 3 String) := [⟨"good", 0, none⟩, ⟨"bett", 0, some 2⟩]
+def aabContextual : Vocabulary (SpanRule 3 String) := [⟨"good", 0, none⟩, ⟨"bett", 0, some 2⟩]
 
 theorem aabContextual_realizes_aab :
     Setoid.ker (realize aabContextual) = Setoid.ker Paradigm.aab := by decide
@@ -228,7 +228,7 @@ theorem aabContextual_not_adjacent : ¬ Adjacent aabContextual := by decide
 
 /-- The vocabulary (201), with *gor-* restricted to the superlative and no comparative-level
 counterpart, which gives *\*da – da-ch – gor-au*. -/
-def welshAAB : List (SpanRule 3 String) := [⟨"da", 0, none⟩, ⟨"gor", 1, some 2⟩]
+def welshAAB : Vocabulary (SpanRule 3 String) := [⟨"da", 0, none⟩, ⟨"gor", 1, some 2⟩]
 
 theorem welshAAB_realizes_aab : Setoid.ker (realize welshAAB) = Setoid.ker Paradigm.aab := by decide
 
@@ -237,23 +237,23 @@ excludes. -/
 theorem welshAAB_not_grounded : ¬ Grounded welshAAB := by decide
 
 /-- By `realize_const_of_grounded`, the AAB cells refute Antihomophony and (202) together. -/
-theorem welshAAB_blocked : ¬ (Exponence.Antihomophonous welshAAB ∧ Grounded welshAAB) :=
+theorem welshAAB_blocked : ¬ (welshAAB.Antihomophonous ∧ Grounded welshAAB) :=
   fun ⟨hAH, hG⟩ ↦
     absurd (realize_const_of_grounded hAH hG (by decide) (by decide)) (by decide)
 
 /-- A superlative allomorph accidentally homophonous with the positive yields surface ABA, the
 loophole that Antihomophony (44) closes. -/
-def fakeAba : List (SpanRule 3 String) :=
+def fakeAba : Vocabulary (SpanRule 3 String) :=
   [⟨"A", 0, none⟩, ⟨"B", 0, some 1⟩, ⟨"A", 0, some 2⟩]
 
 theorem fakeAba_realizes_aba : Setoid.ker (realize fakeAba) = Setoid.ker Paradigm.aba := by decide
 
-theorem fakeAba_not_antihomophonous : ¬ Exponence.Antihomophonous fakeAba := by decide
+theorem fakeAba_not_antihomophonous : ¬ fakeAba.Antihomophonous := by decide
 
 /-! ### Periphrasis and locality (§3.3) -/
 
 /-- Modern Greek BAD (93), with *cheiró-* under CMPR and *kak-* elsewhere. -/
-def greekBad : List (SpanRule 3 String) := [⟨"kak", 0, none⟩, ⟨"cheiró", 0, some 1⟩]
+def greekBad : Vocabulary (SpanRule 3 String) := [⟨"kak", 0, none⟩, ⟨"cheiró", 0, some 1⟩]
 
 /-- With Merger the comparative is *cheiró-ter-os*. Without it the root cannot see CMPR, and the
 periphrastic comparative is *pjo kak-ós*, not *\*pjo cheir-ós* (94), which is the RSG from
@@ -277,7 +277,7 @@ holds of the first type and fails for the second. -/
 /-- With a suppletive comparative, CSG1 holds of the superlative exactly when the superlative's
 adjective word contains the comparative head. -/
 theorem csg1_iff_one_le {F : Type*} {e : Fin 3 → Fin 3} (he : ∀ g, e g ≤ g)
-    {v : List (SpanRule 3 F)} (hAH : Exponence.Antihomophonous v)
+    {v : Vocabulary (SpanRule 3 F)} (hAH : v.Antihomophonous)
     (h : realize v (e 1) ≠ realize v (e 0)) :
     realize v (e 2) ≠ realize v (e 0) ↔ 1 ≤ e 2 := by
   have h0 : e 0 = 0 := Fin.le_zero_iff.mp (he 0)
@@ -298,9 +298,9 @@ theorem greek_superlative : realizeIn (⟨1⟩ : Synthesis 3) greekBad 2 = some 
   decide
 
 /-- Russian BAD, with *xud-* under CMPR and *plox-* elsewhere. -/
-def russianBad : List (SpanRule 3 String) := [⟨"plox", 0, none⟩, ⟨"xud", 0, some 1⟩]
+def russianBad : Vocabulary (SpanRule 3 String) := [⟨"plox", 0, none⟩, ⟨"xud", 0, some 1⟩]
 
-theorem russianBad_antihomophonous : Exponence.Antihomophonous russianBad := by decide
+theorem russianBad_antihomophonous : russianBad.Antihomophonous := by decide
 
 /-- The word extents of a synthetic comparative and a superlative embedding the positive, as in
 *samyj sux-oj* (107d). -/
@@ -342,7 +342,7 @@ lexicon does it with context-free entries storing successively larger
 constituents, competing under the Superset Principle. -/
 
 /-- The Latin entries as a nanosyntax lexicon. -/
-def latinBonusNS : List (SupersetRule 3 String) := [⟨"bon", 0⟩, ⟨"mel", 1⟩, ⟨"opt", 2⟩]
+def latinBonusNS : Vocabulary (SupersetRule 3 String) := [⟨"bon", 0⟩, ⟨"mel", 1⟩, ⟨"opt", 2⟩]
 
 /-- Superset spellout derives the same paradigm with no contextual
 apparatus. -/

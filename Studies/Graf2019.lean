@@ -65,7 +65,7 @@ syncretisms and the nominative stem-allomorphy generalization (16) remain.
 
 namespace Graf2019
 
-open Morphology Morphology.Containment
+open Morphology Morphology.Exponence Morphology.Containment
 open English.Adjectives
 
 /-! ### Four characterizations coincide over a linear hierarchy -/
@@ -146,8 +146,8 @@ theorem aab_feasiblyMonotone : FeasiblyMonotone Paradigm.aab := by
 /-- Under antihomophony and [bobaljik-2012]'s markedness condition no vocabulary realizes an
 AAB pattern, so the gradation-side exclusion is carried by the realization engine, not by
 monotonicity. -/
-theorem aab_not_groundedly_realizable {v : List (SpanRule 3 ℕ)}
-    {a b : ℕ} (hAH : Exponence.Antihomophonous v) (hG : Grounded v) (hab : a ≠ b) :
+theorem aab_not_groundedly_realizable {v : Vocabulary (SpanRule 3 ℕ)}
+    {a b : ℕ} (hAH : v.Antihomophonous) (hG : Grounded v) (hab : a ≠ b) :
     realize v ≠ ![some a, some a, some b] := by
   intro h
   have h01 : realize v 0 = realize v 1 := by simp [h]

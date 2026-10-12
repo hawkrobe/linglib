@@ -101,7 +101,7 @@ def blockIII : Block Verb String (Finset Feat) :=
     IFD ]
 
 /-- Rules of basic stem choice (7); the strong verbs' ablaut alternants are listed as stems. -/
-def iceStems : List (PFM.Rule Verb (Finset Feat) String) :=
+def iceStems : Vocabulary (PFM.Rule Verb (Finset Feat) String) :=
   [ ⟨{kalla}, {}, "kall"⟩,
     ⟨{aetla}, {}, "ætl"⟩,
     ⟨{gripa}, {ind, pst, sg}, "greip"⟩,
@@ -118,7 +118,7 @@ def lindex (v : Verb) : String → Verb := fun _ ↦ v
 
 /-- Bonami and Stump's basic stem choice (7) gives a cell the stem of its narrowest applicable
 rule of basic stem choice, the narrowness order of the rules of exponence resolving conflicts. -/
-def stemChoice : Verb × Finset Feat → String := realizeMinimalD iceStems fun _ ↦ ""
+def stemChoice : Verb × Finset Feat → String := iceStems.realizeMinimalD fun _ ↦ ""
 
 /-- The Icelandic paradigm function (13) applies basic stem choice and then Blocks I–III. -/
 def pf (v : Verb) (σ : Finset Feat) : String × Finset Feat :=
@@ -190,7 +190,7 @@ theorem as_portmanteau :
       = ("aśāna", {p2, sg, imp, act}) := by decide
 
 /-- No portmanteau rule applies at (23). -/
-theorem kri_no_portmanteau : applicable blockAna (kri, ({p2, sg, imp, act} : Finset SF)) = [] :=
+theorem kri_no_portmanteau : blockAna.applicable (kri, ({p2, sg, imp, act} : Finset SF)) = [] :=
   rfl
 
 /-- At (23), Block [ii,i] defaults to the composition of Blocks ii and i, the Function

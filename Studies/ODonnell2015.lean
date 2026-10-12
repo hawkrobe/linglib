@@ -502,7 +502,7 @@ vocabulary's generators is an Elsewhere winner
 assumption needed, because card-minimality forces `⊆`-minimality. Since
 higher probability is smaller support (`genProb_le_iff_card_le`), this is
 the size principle as a specificity score in the shared core:
-`selectByCard_isElsewhereWinner` runs `Exponence.selectBy` on the
+`selectByCard_isElsewhereWinner` runs `Exponence.Vocabulary.selectBy` on the
 dualized support cardinality, discharging the core's conditional
 soundness law via `Finset.eq_of_subset_of_card_le`. -/
 
@@ -560,15 +560,15 @@ private theorem finRule_card_strictAnti :
 /-- **The size principle as a specificity score** ([odonnell-2015]
 §5.5.3): selecting the finitely supported rule of least support
 cardinality — dualized so smaller supports win the `argmax` — through
-the shared core's `Exponence.selectBy` yields an Elsewhere winner.
+the shared core's `Exponence.Vocabulary.selectBy` yields an Elsewhere winner.
 Minimizing support cardinality *is* maximizing uniform generation
 probability (`genProb_le_iff_card_le`), so this is Elsewhere selection as
 maximum-likelihood inference, on record as a score. -/
-theorem selectByCard_isElsewhereWinner {v : List (DomainRule Ctx F)} {c : Ctx}
+theorem selectByCard_isElsewhereWinner {v : Vocabulary (DomainRule Ctx F)} {c : Ctx}
     {r : DomainRule Ctx F}
-    (h : selectBy (fun s ↦ OrderDual.toDual s.dom.card) v c = some r) :
-    IsElsewhereWinner v c r :=
-  selectBy_isElsewhereWinner (finRule_card_strictAnti.strictAntiOn _) h
+    (h : v.selectBy (fun s ↦ OrderDual.toDual s.dom.card) c = some r) :
+    v.IsElsewhereWinner c r :=
+  Vocabulary.selectBy_isElsewhereWinner (finRule_card_strictAnti.strictAntiOn _) h
 
 /-- **Elsewhere selection is maximum-likelihood inference**
 ([odonnell-2015] §5.5.3): a rule maximizing uniform generation
@@ -577,10 +577,10 @@ winner of the corresponding vocabulary. Maximizing probability is
 minimizing support cardinality (`genProb_le_iff_card_le`), whence
 card-minimality forces `⊆`-minimality — the same reasoning
 `selectByCard_isElsewhereWinner` routes through the core's score. -/
-theorem maxGenProb_isElsewhereWinner {v : List (DomainRule Ctx F)} {c : Ctx}
+theorem maxGenProb_isElsewhereWinner {v : Vocabulary (DomainRule Ctx F)} {c : Ctx}
     {r : DomainRule Ctx F} (hrv : r ∈ v) (hrc : c ∈ r.dom)
     (hmax : ∀ s ∈ v, c ∈ s.dom → genProb s.dom c ≤ genProb r.dom c) :
-    IsElsewhereWinner v c r := by
+    v.IsElsewhereWinner c r := by
   refine ⟨⟨hrv, hrc⟩, ?_⟩
   rintro s ⟨hsv, htc⟩ hle
   have htc' : c ∈ s.dom := htc

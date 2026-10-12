@@ -51,7 +51,7 @@ namespace Harley2014
 
 open DistributedMorphology
 open DistributedMorphology.Allosemy (toInterpreted embedding)
-open Morphology.Exponence (selectBy)
+open Morphology.Exponence
 open Clause (Arguments)
 open Clause.Arguments (unaccusative unergative transitive empty)
 
@@ -89,11 +89,12 @@ def site (c : Arguments Number) (r : Root) : Neighborhood (List SiteFeature) :=
 
 /-- A suppletive root's two items ((14), fn. 16): the form conditioned by a
 singular internal argument below, and the Elsewhere form. -/
-def suppletive (r : Root) (sgForm elseForm : String) : List (VocabularyItem SiteFeature String) :=
+def suppletive (r : Root) (sgForm elseForm : String) :
+    Vocabulary (VocabularyItem SiteFeature String) :=
   [⟨⟨[.root r], [[.internal .singular]], []⟩, sgForm⟩, [.root r] ⟷ elseForm]
 
 /-- The Hiaki suppletive vocabulary of (3a), (3f), (3g). -/
-def vocabulary : List (VocabularyItem SiteFeature String) :=
+def vocabulary : Vocabulary (VocabularyItem SiteFeature String) :=
   suppletive run "vuite" "tenne" ++ suppletive walk "weye" "kaate" ++ suppletive kill "mea" "sua"
 
 /-- Spell out root `r` in clause `c` by the Subset Principle over
@@ -181,7 +182,7 @@ def cahoot : Root := ⟨548⟩
 
 /-- The List-3 entry of √548: "a conspiracy" in the frame of (16), recorded by
 its categorizing head, and no Elsewhere. -/
-def cahootLF : List (VocabularyItem Allosemy.Feature String) :=
+def cahootLF : Vocabulary (VocabularyItem Allosemy.Feature String) :=
   [⟨embedding [.cat .n], "a conspiracy"⟩]
 
 /-- Outside its frame the caboodle item has no interpretation. The paper adds

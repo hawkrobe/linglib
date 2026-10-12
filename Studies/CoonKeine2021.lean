@@ -451,19 +451,19 @@ instance : DecidableRel (Applies : VI σ → List σ → Prop) := fun vi value �
   inferInstanceAs (Decidable (vi.spec ⊆ value))
 
 /-- A value demands the most specific applicable item. -/
-abbrev demand (vocab : List (VI σ)) (value : List σ) : Option (VI σ) :=
-  selectBy (·.spec.length) vocab value
+abbrev demand (vocab : Vocabulary (VI σ)) (value : List σ) : Option (VI σ) :=
+  vocab.selectBy (·.spec.length) value
 
 /-- The values a probe carries are resolvable when the items they demand are all the same one
 (85); a value that demands no item, as in (88), competes with nothing. -/
-def Resolvable (vocab : List (VI σ)) (vals : List (List σ)) : Prop :=
+def Resolvable (vocab : Vocabulary (VI σ)) (vals : List (List σ)) : Prop :=
   (vals.filterMap (demand vocab)).Pairwise (· = ·)
 
-instance (vocab : List (VI σ)) (vals : List (List σ)) : Decidable (Resolvable vocab vals) :=
+instance (vocab : Vocabulary (VI σ)) (vals : List (List σ)) : Decidable (Resolvable vocab vals) :=
   inferInstanceAs (Decidable (List.Pairwise _ _))
 
 /-- The exponent inserted for resolvable values. -/
-def realization (vocab : List (VI σ)) (vals : List (List σ)) : Option String :=
+def realization (vocab : Vocabulary (VI σ)) (vals : List (List σ)) : Option String :=
   (vals.filterMap (demand vocab)).head?.map (·.exponent)
 
 end Vocabulary
@@ -497,7 +497,7 @@ def addr : List PersonSegment := [.pi, .participant, .addressee]
 
 /-- The person items of a paradigm in the context of the number probe's value (82), undefined
 where the paper glosses no forms. -/
-def Paradigm.person : Paradigm → Bool → Option (List (VI PersonSegment))
+def Paradigm.person : Paradigm → Bool → Option (Vocabulary (VI PersonSegment))
   | .icelandicMediopassivePast, false => some [⟨[], "-ist"⟩]
   | .icelandicMediopassivePast, true => some [⟨[], "-ust"⟩, ⟨spkr, "-umst"⟩]
   | .icelandicLikaPast, false => some [⟨[], "líkaði"⟩, ⟨addr, "líkaðir"⟩]
@@ -513,7 +513,7 @@ def Paradigm.person : Paradigm → Bool → Option (List (VI PersonSegment))
   | _, _ => none
 
 /-- The number items of a paradigm, where the paper gives them. -/
-def Paradigm.number : Paradigm → List (VI NumberSegment)
+def Paradigm.number : Paradigm → Vocabulary (VI NumberSegment)
   | .germanPresent => [⟨[.num], "ist"⟩, ⟨[.num, .pl], "sind"⟩]
   | .hindiPresent => [⟨[.num], "hai"⟩, ⟨[.num, .pl], "hẼ"⟩]
   | _ => []
@@ -558,7 +558,7 @@ theorem icelandic_syncretism :
   decide +kernel
 
 /-- Kichean Agent Focus number agreement (88) has one item, realizing plural. -/
-def kicheanAgentFocus : List (VI NumberSegment) := [⟨[.num, .pl], "-e"⟩]
+def kicheanAgentFocus : Vocabulary (VI NumberSegment) := [⟨[.num, .pl], "-e"⟩]
 
 /-- Two 3rd person goals of the given numbers, the cells of (88). -/
 def kicheanGoals (s o : Bool) : List Goal := [⟨.third, s, false⟩, ⟨.third, o, false⟩]

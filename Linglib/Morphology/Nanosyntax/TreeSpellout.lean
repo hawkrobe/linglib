@@ -115,26 +115,26 @@ instance : DecidableRel (Applies : LexicalEntry F α → RoseTree F → Prop) :=
 
 /-- `treeSelect entries t` is the matching entry with the smallest stored tree, the first listed
 on ties. -/
-def treeSelect (entries : List (LexicalEntry F α)) (t : RoseTree F) :
+def treeSelect (entries : Vocabulary (LexicalEntry F α)) (t : RoseTree F) :
     Option (LexicalEntry F α) :=
-  selectBy (fun e ↦ OrderDual.toDual e.tree.numNodes) entries t
+  entries.selectBy (fun e ↦ OrderDual.toDual e.tree.numNodes) t
 
 /-- `treeSpellout entries t` is the exponent of the entry `treeSelect` picks. -/
-def treeSpellout (entries : List (LexicalEntry F α)) (t : RoseTree F) : Option α :=
+def treeSpellout (entries : Vocabulary (LexicalEntry F α)) (t : RoseTree F) : Option α :=
   (treeSelect entries t).map (·.exponent)
 
 /-- Smallest-tree selection picks an Elsewhere winner. -/
-theorem treeSelect_isElsewhereWinner {entries : List (LexicalEntry F α)} {t : RoseTree F}
+theorem treeSelect_isElsewhereWinner {entries : Vocabulary (LexicalEntry F α)} {t : RoseTree F}
     {e : LexicalEntry F α} (h : treeSelect entries t = some e) :
-    IsElsewhereWinner entries t e :=
-  selectBy_isElsewhereWinner (numNodes_strictAnti.strictAntiOn _) h
+    entries.IsElsewhereWinner t e :=
+  Vocabulary.selectBy_isElsewhereWinner (numNodes_strictAnti.strictAntiOn _) h
 
 /-- The spelled-out exponent is the exponent of an Elsewhere winner. -/
-theorem treeSpellout_isElsewhereWinner {entries : List (LexicalEntry F α)} {t : RoseTree F}
+theorem treeSpellout_isElsewhereWinner {entries : Vocabulary (LexicalEntry F α)} {t : RoseTree F}
     {x : α} (h : treeSpellout entries t = some x) :
-    ∃ e ∈ entries, e.exponent = x ∧ IsElsewhereWinner entries t e := by
+    ∃ e ∈ entries, e.exponent = x ∧ entries.IsElsewhereWinner t e := by
   obtain ⟨e, he, rfl⟩ := Option.map_eq_some_iff.mp h
-  exact ⟨e, selectBy_mem he, rfl, treeSelect_isElsewhereWinner he⟩
+  exact ⟨e, Vocabulary.selectBy_mem he, rfl, treeSelect_isElsewhereWinner he⟩
 
 end
 
@@ -295,10 +295,10 @@ def LexicalEntry.ofSupersetRule {n : ℕ} (feat : ℕ → F) (e : Containment.Su
 /-- On chains, tree spellout is the spellout of the containment engine, since containment of
 chains is comparison of their ranks. -/
 theorem treeSpellout_ofSupersetRule [DecidableEq F] {n : ℕ} (feat : ℕ → F)
-    (v : List (Containment.SupersetRule n α)) (g : Fin n) :
+    (v : Vocabulary (Containment.SupersetRule n α)) (g : Fin n) :
     treeSpellout (v.map (LexicalEntry.ofSupersetRule feat)) (chainTree feat g) =
       Containment.spellout v g := by
-  rw [treeSpellout, treeSelect, selectBy_map (c := g)
+  rw [treeSpellout, treeSelect, Vocabulary.selectBy_map (c := g)
     (f := fun e : Containment.SupersetRule n α ↦ OrderDual.toDual e.spans)
     (fun _ _ ↦ (chainTree_isSubtree_iff feat _ _).trans Fin.val_fin_le)
     fun _ _ _ _ ↦ by simp [LexicalEntry.ofSupersetRule, chainTree_numNodes], Option.map_map]

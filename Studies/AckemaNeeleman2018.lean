@@ -471,7 +471,7 @@ end NaturalClasses
 open Dutch.Pronouns in
 /-- The spell-out rules of the Dutch strong subject pronouns, none of which mentions two
 `PROX`. -/
-def dutch : List (SpellOut PersonalPronoun) :=
+def dutch : Vocabulary (SpellOut PersonalPronoun) :=
   [⟨{.prox}, false, ik⟩, ⟨{.prox, .dist}, false, jij⟩, ⟨{.dist}, false, hij⟩,
     ⟨{.prox}, true, wij⟩, ⟨{.prox, .dist}, true, jullie⟩, ⟨{.dist}, true, zij_pl⟩]
 
@@ -479,22 +479,24 @@ open Dutch.Pronouns in
 /-- Under Maximal Encoding the rule mentioning the most features is used, so the Dutch rules
 realize the inventory with one form for the inclusive and the exclusive. -/
 theorem dutch_paradigm :
-    inventory.map (realize SpellOut.size dutch) =
+    inventory.map (dutch.realize SpellOut.size) =
       [some ik, some jij, some hij, some wij, some wij, some jullie, some zij_pl] := by
   decide
 
 /-- Each Dutch pronoun denotes the referential categories that the pronouns it realizes cover. -/
 theorem dutch_referential : ∀ r ∈ dutch, ∀ c,
     c ∈ r.exponent.referential ↔
-      ∃ p ∈ inventory, realize SpellOut.size dutch p = some r.exponent ∧ c ∈ p.categories := by
+      ∃ p ∈ inventory, dutch.realize SpellOut.size p = some r.exponent ∧ c ∈ p.categories := by
   decide
+
+/-- A vocabulary with a rule mentioning two `PROX` and a rule mentioning one, both with `PL`. -/
+def clusive (a b : E) : Vocabulary (SpellOut E) := [⟨{.prox, .prox}, true, a⟩, ⟨{.prox}, true, b⟩]
 
 /-- A rule mentioning two `PROX` gives the exclusive a form of its own. It blocks the rule
 mentioning one on the exclusive and cannot apply to the inclusive. -/
 theorem clusive_split (a b : E) :
-    realize SpellOut.size [⟨{.prox, .prox}, true, a⟩, ⟨{.prox}, true, b⟩] ⟨first, true⟩ = some a ∧
-      realize SpellOut.size [⟨{.prox, .prox}, true, a⟩, ⟨{.prox}, true, b⟩] ⟨inclusive, true⟩ =
-        some b :=
+    (clusive a b).realize SpellOut.size ⟨first, true⟩ = some a ∧
+      (clusive a b).realize SpellOut.size ⟨inclusive, true⟩ = some b :=
   ⟨rfl, rfl⟩
 
 end AckemaNeeleman2018

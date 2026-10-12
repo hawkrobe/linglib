@@ -140,12 +140,12 @@ inductive Feat where
 
 /-- The Vocabulary entries for idx, (119) and (131), are *gi* elsewhere, *ge* under dependent
 case, and null before an overt NP. -/
-def idxItems : List (VocabularyItem Feat String) :=
+def idxItems : Vocabulary (VocabularyItem Feat String) :=
   [[Feat.idx] ⟷ "gi", [Feat.idx, .dep] ⟷ "ge", ⟨⟨[.idx], [], [[.np]]⟩, ""⟩]
 
 /-- The Vocabulary entries for D, (130), are null elsewhere, *hádi* distal and *wídi* proximal,
 the speaker's space. -/
-def dItems : List (VocabularyItem Feat String) :=
+def dItems : Vocabulary (VocabularyItem Feat String) :=
   [[Feat.d] ⟷ "", [Feat.d, .deixis Person.first.participantSetsᶜ] ⟷ "hádi",
     [Feat.d, .deixis Person.first.participantSets] ⟷ "wídi"]
 
@@ -157,11 +157,11 @@ def contextualSpecificity (i : VocabularyItem Feat String) : ℕ ×ₗ ℕ :=
 
 /-- `idxExponent n` is the exponent of idx in the neighborhood `n`. -/
 def idxExponent (n : Neighborhood (List Feat)) : Option String :=
-  realize contextualSpecificity idxItems n
+  idxItems.realize contextualSpecificity n
 
 /-- `dExponent n` is the exponent of D in the neighborhood `n`. -/
 def dExponent (n : Neighborhood (List Feat)) : Option String :=
-  realize contextualSpecificity dItems n
+  dItems.realize contextualSpecificity n
 
 /-- The exponent *gi ~ ge* is distributed as in (108) to (115) and (127) to (129). It is overt in
 pronouns, whose NP is elided (113), at the edge of clausal nominalizations (114), and in
