@@ -6,9 +6,9 @@ public import Linglib.Data.Forms.SmithMoskalEtAl2019
 /-!
 # Smith, Moskal, Xu, Kang and Bobaljik (2019): Case and Number Suppletion in Pronouns
 
-This file formalizes [smith-moskal-xu-kang-bobaljik-2019]'s extension of [bobaljik-2012]'s
+This file formalizes Smith, Moskal, Xu, Kang and Bobaljik's extension of Bobaljik's
 containment account of suppletion from adjectival degree to pronominal case, over the case
-hierarchy of [caha-2009], and to pronominal number, over a hierarchy in which the dual contains
+hierarchy of Caha, and to pronominal number, over a hierarchy in which the dual contains
 the plural (Greenberg's Universal 34, the paper's (26)). Each hierarchy is a three-grade
 containment structure, so Elsewhere insertion over it generates exactly the contiguous
 patterns and excludes *ABA (`generable_iff_contiguous`, `aba_not_generable`); the attested
@@ -16,7 +16,7 @@ AAA, ABB and ABC patterns are read off the pronoun paradigms of `Data/Forms/Smit
 (`paradigm`, `lezgian_aaa`, `icelandic_abb`, `russian_abb`, `awtuw_abb`), and the rules (15) for
 the Icelandic first person generate its ABB (`icelandic_abb_generated`).
 
-The domains diverge on AAB. Under the structural adjacency [bobaljik-2012] assumes for degree,
+The domains diverge on AAB. Under the structural adjacency Bobaljik assumes for degree,
 terminal rules with adjacent contexts cannot distinguish the second and third grades, so AAB is
 unattested for degree (`realize_one_eq_two_of_terminal_adjacent`,
 `aab_not_generable_of_terminal_adjacent`); section 3.6 finds genuine AAB in pronominal case,
@@ -120,23 +120,24 @@ exactly when it is contiguous, for case and for number alike. -/
 theorem generable_iff_contiguous (p : Paradigm 3 ℕ) : ElsewhereGenerable p ↔ IsContiguous p :=
   (isContiguous_iff_generable p).symm
 
-/-- No ABA pattern is generable: the reading that excludes the apparent Archi second plural for
-case and the doubtful Yagua third person for number. -/
+/-- No ABA pattern is generable. This is the reading that excludes the apparent Archi second
+plural for case and the doubtful Yagua third person for number. -/
 theorem aba_not_generable : ¬ ElsewhereGenerable ![0, 1, 0] :=
   mt (generable_iff_contiguous _).mp (by decide)
 
-/-- The attested patterns of the case hierarchy: Lezgian AAA, Icelandic and Russian ABB. -/
+/-- Of the attested patterns of the case hierarchy, Lezgian's is AAA and Icelandic's and
+Russian's are ABB. -/
 theorem lezgian_aaa : Setoid.ker lezgian1sg = Setoid.ker Paradigm.aaa := by decide
 
 theorem icelandic_abb : Setoid.ker icelandic1sg = Setoid.ker Paradigm.abb := by decide
 
 theorem russian_abb : Setoid.ker russian1sg = Setoid.ker Paradigm.abb := by decide
 
-/-- The attested ABB of the number hierarchy: Awtuw's plural and dual share a base. -/
+/-- Awtuw's plural and dual share a base, the attested ABB of the number hierarchy. -/
 theorem awtuw_abb : Setoid.ker awtuw1 = Setoid.ker Paradigm.abb := by decide
 
-/-- The rules (15) for the Icelandic first singular: an accusative-conditioned *m-* and an
-elsewhere *ég*; by containment the *m-* base spreads to the dative. -/
+/-- The rules (15) for the Icelandic first singular are an accusative-conditioned *m-* and an
+elsewhere *ég*. By containment the *m-* base spreads to the dative. -/
 def icelandicVocab : List (SpanRule 3 String) := [⟨"ég", 0, none⟩, ⟨"m", 0, some 1⟩]
 
 theorem icelandic_abb_generated :
@@ -160,14 +161,14 @@ theorem aab_not_generable_of_terminal_adjacent {v : List (SpanRule 3 ℕ)} (hT :
 
 /-! ### AAB attested for case, section 3.6, and for number, section 4.2 -/
 
-/-- Wardaman and Khinalugh are AAB: contiguous, the third cell alone suppletive. -/
+/-- Wardaman and Khinalugh are AAB, contiguous with the third cell alone suppletive. -/
 theorem wardaman_aab : Setoid.ker wardaman3sg = Setoid.ker Paradigm.aab := by decide
 
 theorem khinalugh_aab : Setoid.ker khinalugh2sg = Setoid.ker Paradigm.aab := by decide
 
-/-- Genuine AAB against syncretism: the Wardaman and Khinalugh absolutive and ergative are
-distinct forms on one base, where the Archi second singular's are identical, the {A=A}B of
-Table 20 the paper sets aside as a two-way contrast. -/
+/-- The Wardaman and Khinalugh AAB is genuine rather than syncretism, since the absolutive and
+ergative are distinct forms on one base, where the Archi second singular's are identical, the
+{A=A}B of Table 20 the paper sets aside as a two-way contrast. -/
 theorem genuine_aab :
     Forms.wardaman_3sg_abs.form ≠ Forms.wardaman_3sg_erg.form ∧
       Forms.khinalugh_2sg_abs.form ≠ Forms.khinalugh_2sg_erg.form := by
@@ -183,8 +184,8 @@ theorem wambaya_aab : Setoid.ker wambaya1incl = Setoid.ker Paradigm.aab := by de
 theorem dehu_aab : Setoid.ker dehu3m = Setoid.ker Paradigm.aab := by decide
 
 /-- The attested AAB patterns are contiguous, so containment admits them, yet no terminal
-vocabulary under structural adjacency generates them: the adjacency condition is what the
-pronominal data refute. -/
+vocabulary under structural adjacency generates them, so the pronominal data refute the
+adjacency condition. -/
 theorem aab_contiguous_not_adjacent_generable :
     IsContiguous wardaman3sg ∧ IsContiguous yagua2 ∧
       ∀ v : List (SpanRule 3 ℕ), Terminal v → Adjacent v →
@@ -200,8 +201,8 @@ heads may condition root suppletion; a lexical noun or adjective has a category 
 keeps case and the superlative outside the domain, a pronoun has none and every case head is
 visible. -/
 
-/-- Every conditioning head lies within the accessibility domain `[0, d]`: a bound on the
-contexts of rules, not on the spans they expone. -/
+/-- Every conditioning head lies within the accessibility domain `[0, d]`. This bounds the
+contexts of rules, not the spans they expone. -/
 def DomainLocal {n : ℕ} {F : Type*} (d : Fin n) (v : List (SpanRule n F)) : Prop :=
   ∀ it ∈ v, ∀ c : Fin n, it.context = some c → c ≤ d
 
@@ -223,8 +224,8 @@ theorem threshold_le_of_terminal_domainLocal {n : ℕ} {F : Type*} {d : Fin n}
     simp only [Option.getD_some]
     exact max_le (by rw [Fin.le_def]; omega) (hD it hit c hc)
 
-/-- The plateau relative to a domain: with terminal rules whose contexts lie in the domain,
-realization is constant above it. At the comparative this is the no-AAB plateau of degree
+/-- With terminal rules whose contexts lie in a domain, realization is constant above the
+domain. At the comparative this is the no-AAB plateau of degree
 without an adjacency condition. -/
 theorem realize_const_of_terminal_domainLocal {n : ℕ} {F : Type*} {d : Fin n}
     {v : List (SpanRule n F)} (hT : Terminal v) (hD : DomainLocal d v) {g g' : Fin n}
@@ -239,25 +240,25 @@ theorem domainLocal_of_terminal_adjacent {n : ℕ} {F : Type*} {d : Fin n} (hd :
   have h0 := hT it hit
   rw [Fin.le_def]; omega
 
-/-- The rules (20b) and (20f) for the Wardaman third person: a dative-conditioned *gunga* and
+/-- The rules (20b) and (20f) for the Wardaman third person are a dative-conditioned *gunga* and
 an elsewhere *narnaj*. -/
 def wardamanVocab : List (SpanRule 3 String) := [⟨"narnaj", 0, none⟩, ⟨"gunga", 0, some 2⟩]
 
 /-- The Wardaman vocabulary is antihomophonous and local at the trivial domain of a pronoun,
 and generates the attested AAB. -/
 theorem wardaman_aab_generated :
-    Antihomophonous wardamanVocab ∧ DomainLocal 2 wardamanVocab ∧
+    Exponence.Antihomophonous wardamanVocab ∧ DomainLocal 2 wardamanVocab ∧
       Setoid.ker (realize wardamanVocab) = Setoid.ker Paradigm.aab := by
   refine ⟨?_, ?_, ?_⟩ <;> decide
 
 /-- The same vocabulary satisfies neither structural adjacency nor [bobaljik-2012]'s
-markedness condition (202): the attested pronominal AAB refutes both as conditions on
+markedness condition (202), so the attested pronominal AAB refutes both as conditions on
 suppletion in general. -/
 theorem wardaman_not_adjacent_not_grounded :
     ¬ Adjacent wardamanVocab ∧ ¬ Grounded wardamanVocab := by
   refine ⟨?_, ?_⟩ <;> decide
 
-/-- ABA stays excluded at the trivial domain: containment with the Elsewhere condition
+/-- ABA stays excluded at the trivial domain, where containment with the Elsewhere condition
 suffices. -/
 theorem wardaman_realize_contiguous : IsContiguous (realize wardamanVocab) :=
   isContiguous_realize (by decide)

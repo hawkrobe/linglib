@@ -1,7 +1,8 @@
 module
 
+public import Linglib.Core.Data.List.MinMax
 public import Linglib.Morphology.Exponence.Elsewhere
-public import Mathlib.Data.List.MinMax
+public import Linglib.Morphology.Paradigm.Contiguity
 
 /-!
 # Elsewhere selection
@@ -23,6 +24,14 @@ root and by Bonami and Stump's rules of basic stem choice.
 
 ## Main results
 
+* `selectBy_eq_some_of_applies`: selection by a score is consistent under contraction, so the
+  rule selected in a context stays selected in any context with fewer applicable rules where it
+  still applies.
+* `selectBy_map`: selection commutes with a map of rules preserving applicability and the
+  comparison of scores.
+* `isContiguous_realize_of_monotone`, `isContiguous_realize_of_antitone`: rules applicable on
+  upper sets, or on lower sets, of ordered contexts realize contiguous patterns when distinct
+  rules carry distinct exponents.
 * `selectBy_isElsewhereWinner`, `selectMinimal_isElsewhereWinner`: both
   selections produce Elsewhere winners.
 * `selectMinimal_factorsThrough`, `realizeMinimalD_factorsThrough`: selection,
@@ -72,6 +81,9 @@ theorem selectBy_applies (h : selectBy f v c = some r) : Applies r c :=
 theorem selectBy_eq_none_iff : selectBy f v c = none ↔ applicable v c = [] :=
   List.argmax_eq_none
 
+theorem selectBy_isSome_iff : (selectBy f v c).isSome ↔ ∃ r ∈ v, Applies r c := by
+  simp [← Option.ne_none_iff_isSome, selectBy_eq_none_iff, applicable, List.filter_eq_nil_iff]
+
 /-- Contexts with the same applicable rules select the same rule. -/
 theorem selectBy_congr (h : applicable v c = applicable v c') :
     selectBy f v c = selectBy f v c' := by
@@ -87,6 +99,95 @@ theorem realize_eq_none_iff : realize f v c = none ↔ applicable v c = [] :=
 theorem realize_congr (h : applicable v c = applicable v c') :
     realize f v c = realize f v c' :=
   congrArg (Option.map exponent) (selectBy_congr h)
+
+/-- The selected rule scores at least as high as every applicable rule. -/
+theorem le_of_selectBy_eq_some (h : selectBy f v c = some r) (hs : s ∈ v) (hsc : Applies s c) :
+    f s ≤ f r :=
+  List.le_of_mem_argmax (mem_applicable.mpr ⟨hs, hsc⟩) h
+
+/-- An applicable rule scoring at least as high as every applicable rule is realized, provided
+the applicable rules with its score share its exponent. -/
+theorem realize_eq_of_forall_le (hr : r ∈ v) (hrc : Applies r c)
+    (hle : ∀ s ∈ v, Applies s c → f s ≤ f r)
+    (heq : ∀ s ∈ v, Applies s c → f s = f r → exponent s = exponent r) :
+    realize f v c = some (exponent r) := by
+  obtain ⟨w, hw⟩ := Option.isSome_iff_exists.mp (selectBy_isSome_iff (f := f).mpr ⟨r, hr, hrc⟩)
+  have hw' := selectBy_mem hw
+  have hwc := selectBy_applies hw
+  rw [realize, hw, Option.map_some,
+    heq w hw' hwc ((hle w hw' hwc).antisymm (le_of_selectBy_eq_some hw hr hrc))]
+
+/-! ### Contraction -/
+
+theorem applicable_eq_filter (h : ∀ s ∈ v, Applies s c → Applies s c') :
+    applicable v c = (applicable v c').filter (fun s ↦ Applies s c) := by
+  rw [applicable, applicable, List.filter_filter]
+  exact List.filter_congr fun s hs ↦ by by_cases hc : Applies s c <;> simp [hc, h s hs]
+
+/-- Selection by a score is consistent under contraction. The rule selected at `c'` is selected
+at any context whose applicable rules are among those at `c'`, as long as it applies there. -/
+theorem selectBy_eq_some_of_applies (h : ∀ s ∈ v, Applies s c → Applies s c')
+    (hr : selectBy f v c' = some r) (hrc : Applies r c) : selectBy f v c = some r := by
+  rw [selectBy, applicable_eq_filter h]
+  exact List.argmax_filter_of_mem hr (by simpa using hrc)
+
+theorem selectBy_eq_none_of_applies (h : ∀ s ∈ v, Applies s c → Applies s c')
+    (hr : selectBy f v c' = none) : selectBy f v c = none := by
+  rw [selectBy_eq_none_iff, applicable_eq_filter h, selectBy_eq_none_iff.mp hr, List.filter_nil]
+
+/-- Selection admits no ABA. Across three contexts whose applicable rules are nested, an
+antihomophonous vocabulary that realizes one exponent at both outer contexts realizes it at the
+middle one. -/
+theorem realize_eq_of_applies {c₁ c₂ c₃ : Ctx} (hv : Antihomophonous v)
+    (h₁ : ∀ s ∈ v, Applies s c₁ → Applies s c₂) (h₂ : ∀ s ∈ v, Applies s c₂ → Applies s c₃)
+    (h : realize f v c₁ = realize f v c₃) : realize f v c₂ = realize f v c₁ := by
+  rcases h₃ : selectBy f v c₃ with - | r
+  · rw [realize, realize, selectBy_eq_none_of_applies h₂ h₃,
+      selectBy_eq_none_of_applies h₁ (selectBy_eq_none_of_applies h₂ h₃)]
+  · obtain ⟨r₁, hr₁, he⟩ : ∃ r₁, selectBy f v c₁ = some r₁ ∧ exponent r₁ = exponent r := by
+      simpa [realize, h₃] using h
+    obtain rfl := hv (selectBy_mem hr₁) (selectBy_mem h₃) he
+    rw [realize, realize, hr₁,
+      selectBy_eq_some_of_applies h₂ h₃ (h₁ _ (selectBy_mem hr₁) (selectBy_applies hr₁))]
+
+section Contiguity
+
+variable [Preorder Ctx]
+
+/-- Rules applicable on upper sets of contexts realize contiguous patterns. -/
+theorem isContiguous_realize_of_monotone (hv : Antihomophonous v)
+    (h : ∀ r ∈ v, Monotone (Applies r)) : IsContiguous (realize f v) :=
+  fun _ _ _ hij hjk he ↦
+    (realize_eq_of_applies hv (fun s hs ↦ h s hs hij) (fun s hs ↦ h s hs hjk) he).symm
+
+/-- Rules applicable on lower sets of contexts realize contiguous patterns. -/
+theorem isContiguous_realize_of_antitone (hv : Antihomophonous v)
+    (h : ∀ r ∈ v, Antitone (Applies r)) : IsContiguous (realize f v) :=
+  fun _ _ _ hij hjk he ↦ he.trans
+    (realize_eq_of_applies hv (fun s hs ↦ h s hs hjk) (fun s hs ↦ h s hs hij) he.symm).symm
+
+end Contiguity
+
+/-! ### Transport -/
+
+section Map
+
+variable {R' Ctx' E' : Type*} [Rule R' Ctx' E'] [DecidableRel (Applies : R' → Ctx' → Prop)]
+  {β : Type*} [LinearOrder β] {f' : R' → β} {g : R → R'} {c' : Ctx'}
+
+/-- Selection commutes with a map of rules that preserves applicability and the comparison of
+scores. -/
+theorem selectBy_map (happ : ∀ r ∈ v, Applies (g r) c' ↔ Applies r c)
+    (hf : ∀ r ∈ v, ∀ s ∈ v, f' (g r) ≤ f' (g s) ↔ f r ≤ f s) :
+    selectBy f' (v.map g) c' = (selectBy f v c).map g := by
+  have happ' : applicable (v.map g) c' = (applicable v c).map g := by
+    rw [applicable, applicable, List.filter_map]
+    exact congrArg _ (List.filter_congr fun r hr ↦ by simp [happ r hr])
+  rw [selectBy, happ', List.argmax_map, selectBy]
+  exact congrArg _ (List.argmax_congr fun r hr s hs ↦
+    hf r (mem_applicable.mp hr).1 s (mem_applicable.mp hs).1)
+
+end Map
 
 /-! ### Soundness -/
 

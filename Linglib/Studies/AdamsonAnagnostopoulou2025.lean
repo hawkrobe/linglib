@@ -256,12 +256,12 @@ theorem clausal : system.realize ∅ = some .neuter := by decide
 
 /-- No neuter–feminine syncretism to the exclusion of masculine, for any vocabulary with one
 item per exponent over the Greek feature sets. -/
-theorem no_aba (v : List (VocabularyItem Node Gender)) (hinj : (v.map exponent).Nodup) {φ : Gender}
+theorem no_aba (v : List (VocabularyItem Node Gender)) (hv : Antihomophonous v) {φ : Gender}
     (hn : Realizes v (Neighborhood.ofBundle [.cls]) φ)
     (hf : Realizes v (Neighborhood.ofBundle [.fem, .masc, .cls]) φ) :
     Realizes v (Neighborhood.ofBundle [.masc, .cls]) φ :=
-  Realizes.of_realizes hinj (fun _ h ↦ subset_trans h (by decide))
-    (fun _ h ↦ subset_trans h (by decide)) hn hf
+  Realizes.of_realizes hv (fun _ _ h ↦ subset_trans h (by decide))
+    (fun _ _ h ↦ subset_trans h (by decide)) hn hf
 
 end Greek
 
@@ -391,8 +391,8 @@ theorem cls_mem_entailments :
     ∀ L ∈ [Greek.system, Icelandic.system, BCS.system], ∀ n, .cls ∈ L.entailments n := by
   decide
 
-/-- All three geometries satisfy mismatch resolution: any two nodes share CLASS, so no pair of
-nodes needs a default. -/
+/-- All three geometries satisfy mismatch resolution, since any two nodes share CLASS and so no
+pair of nodes needs a default. -/
 theorem mismatchResolution :
     ∀ L ∈ [Greek.system, Icelandic.system, BCS.system], ∀ a b,
       (L.entailments a ∩ L.entailments b).Nonempty := fun L hL a b ↦

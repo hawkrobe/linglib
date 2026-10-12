@@ -147,7 +147,7 @@ theorem aab_feasiblyMonotone : FeasiblyMonotone Paradigm.aab := by
 AAB pattern, so the gradation-side exclusion is carried by the realization engine, not by
 monotonicity. -/
 theorem aab_not_groundedly_realizable {v : List (SpanRule 3 ℕ)}
-    {a b : ℕ} (hAH : Antihomophonous v) (hG : Grounded v) (hab : a ≠ b) :
+    {a b : ℕ} (hAH : Exponence.Antihomophonous v) (hG : Grounded v) (hab : a ≠ b) :
     realize v ≠ ![some a, some a, some b] := by
   intro h
   have h01 : realize v 0 = realize v 1 := by simp [h]

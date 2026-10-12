@@ -10,40 +10,29 @@ public import Mathlib.Data.Finset.Image
 /-!
 # Paradigm contiguity: the *ABA generalization
 
-Across graded paradigms — degree (positive < comparative < superlative,
-[bobaljik-2012]), case (NOM < ACC < GEN < DAT, [caha-2009]), path roles
-([pantcheva-2011]) — the cross-linguistic *ABA generalization says a
-form never recurs across a distinct intervening form: each form's fiber
-is order-connected (`IsContiguous`). The predicate is stated over any
-preordered cell type, so it applies alike to a `Paradigm n F` over
-`Fin n` and, under `open scoped Case.Caha`, to a form assignment
-`Case → F` over the containment order of `Syntax/Case/Order.lean`.
-[graf-2019] reconstructs *ABA across these domains as *feasible
-monotonicity*: the form assignment is monotone with respect to *some*
-linear order on the output forms (his def. (6); the cell order is what
-is fixed). Over linearly ordered cells, that is equivalent to the
-assignment being the kernel of a monotone score (`FeasiblyMonotone`) —
-`isContiguous_iff_feasiblyMonotone`, stated here as the general theorem
-behind Graf's instance-by-instance verification, independently of any
-insertion mechanism.
+A form assignment on preordered cells is contiguous when no form recurs across a distinct
+intervening form, so that the cells sharing a form are order-connected. The *ABA generalization
+says graded paradigms are contiguous, for degree (positive < comparative < superlative, after
+Bobaljik), case (after Caha), and path roles (after Pantcheva). Graf recasts *ABA as feasible
+monotonicity, monotonicity of the assignment with respect to some linear order on the forms,
+which over linearly ordered cells is contiguity. Of the five syncretism patterns of three cells,
+named as Bobaljik names the degree patterns, contiguity excludes exactly ABA.
 
-Over three cells the five syncretism patterns are named as
-[bobaljik-2012] names the degree patterns (`Paradigm.aaa`, `Paradigm.abb`,
-`Paradigm.abc`, `Paradigm.aba`, `Paradigm.aab`); ABA is the one contiguity
-excludes (`isContiguous_iff_ker_ne_ker_aba`). Theory-laden derivations
-of contiguity (vocabulary insertion under the Elsewhere Condition over
-containment hierarchies) live in
-`Morphology/Exponence/Containment/Contiguity.lean`.
+## Main definitions
 
-## Main declarations
+* `IsContiguous`: no form recurs across a distinct intervening form.
+* `FeasiblyMonotone`: some monotone score identifies the cells the assignment identifies.
+* `Paradigm.aaa`, `Paradigm.abb`, `Paradigm.abc`, `Paradigm.aba`, `Paradigm.aab`: the
+  three-cell patterns.
 
-* `IsContiguous`, `isContiguous_iff_ordConnected_preimage` — no ABA
-  configuration: every fiber is `Set.OrdConnected`
-* `FeasiblyMonotone`, `isContiguous_iff_feasiblyMonotone` —
-  [graf-2019]'s monotonicity reconstruction of *ABA
-* `IsContiguous.comp_monotone`, `isContiguous_comp_left` — composition API
-* `Paradigm.aaa` … `Paradigm.aab`, `isContiguous_iff_ker_ne_ker_aba` —
-  the three-cell patterns and the one contiguity excludes
+## Main results
+
+* `isContiguous_iff_ordConnected_preimage`: contiguity is order-connectedness of every fiber.
+* `isContiguous_comp_iff`: postcomposition with an injective map preserves and reflects
+  contiguity.
+* `isContiguous_iff_ker_ne_ker_aba`: over three cells contiguity excludes exactly ABA.
+* `isContiguous_iff_feasiblyMonotone`: over linearly ordered cells contiguity is feasible
+  monotonicity.
 
 ## References
 
@@ -65,7 +54,7 @@ section Preorder
 variable {ι κ : Type*} [Preorder ι] [Preorder κ]
 
 /-- A form assignment on preordered cells is **contiguous** when no form
-recurs across a distinct intervening form: if the cells at `i ≤ k` agree,
+recurs across a distinct intervening form. If the cells at `i ≤ k` agree,
 every cell between them agrees too, so each form's fiber is order-connected.
 ABA (`![a, b, a]`) violates this; AAA, ABB, ABC — and AAB — satisfy it.
 (*AAB is excluded by vocabulary-level conditions, not by contiguity;
@@ -85,6 +74,12 @@ theorem isContiguous_iff_ordConnected_preimage (p : ι → F) :
     exact (hp hj.1 hj.2 (hi.trans hk.symm)).symm.trans hi
   · exact ((h (p i)).out (Set.mem_singleton _) hik.symm ⟨hij, hjk⟩).symm
 
+/-- Postcomposition with an injective map preserves and reflects contiguity. -/
+theorem isContiguous_comp_iff {G : Type*} {h : F → G} (hh : Function.Injective h) {p : ι → F} :
+    IsContiguous (h ∘ p) ↔ IsContiguous p :=
+  ⟨fun hp _ _ _ hij hjk he ↦ hh (hp hij hjk (congrArg h he)),
+    fun hp _ _ _ hij hjk he ↦ congrArg h (hp hij hjk (hh he))⟩
+
 /-- Precomposition with a monotone regrading preserves contiguity. -/
 theorem IsContiguous.comp_monotone {p : ι → F} (hp : IsContiguous p) {f : κ → ι}
     (hf : Monotone f) : IsContiguous (p ∘ f) :=
@@ -99,11 +94,10 @@ theorem isContiguous_comp_left {β : Type*} [PartialOrder β] {g : ι → β}
   have hgik : g i = g k := hh (Set.mem_range_self i) (Set.mem_range_self k) heq
   exact congrArg h (le_antisymm (hg hij) (hgik.symm ▸ hg hjk))
 
-/-- **Feasible monotonicity** ([graf-2019] def. (6)), in monotone-score
-form: some monotone score identifies exactly the cells the assignment
-identifies. Equivalent to Graf's literal statement — monotone with
-respect to *some* linear order on the output forms — over finitely many
-cells, since forms are bins and only the kernel matters. -/
+/-- A form assignment is **feasibly monotone** ([graf-2019] def. (6)) when some monotone score
+identifies exactly the cells the assignment identifies. Over finitely many cells this is Graf's
+literal statement, monotonicity with respect to *some* linear order on the output forms, since
+forms are bins and only the kernel matters. -/
 def FeasiblyMonotone (p : ι → F) : Prop :=
   ∃ g : ι → ℕ, Monotone g ∧ ∀ i j, p i = p j ↔ g i = g j
 
@@ -120,19 +114,20 @@ is contiguous, and its exclusion for degree is a vocabulary-level matter
 
 namespace Paradigm
 
-/-- AAA: one form throughout (*tall – taller – tallest*). -/
+/-- The AAA pattern has one form throughout (*tall – taller – tallest*). -/
 def aaa : Paradigm 3 ℕ := ![0, 0, 0]
 
-/-- ABB: the two upper cells share a form the lowest lacks (*good – better – best*). -/
+/-- In the ABB pattern the two upper cells share a form the lowest lacks
+(*good – better – best*). -/
 def abb : Paradigm 3 ℕ := ![0, 1, 1]
 
-/-- ABC: three forms (*bonus – melior – optimus*). -/
+/-- The ABC pattern has three forms (*bonus – melior – optimus*). -/
 def abc : Paradigm 3 ℕ := ![0, 1, 2]
 
-/-- ABA: the outer cells share a form the middle one lacks. -/
+/-- In the ABA pattern the outer cells share a form the middle one lacks. -/
 def aba : Paradigm 3 ℕ := ![0, 1, 0]
 
-/-- AAB: the two lower cells share a form the highest lacks. -/
+/-- In the AAB pattern the two lower cells share a form the highest lacks. -/
 def aab : Paradigm 3 ℕ := ![0, 0, 1]
 
 end Paradigm
@@ -199,8 +194,8 @@ section
 
 variable [DecidableEq F]
 
-/-- The prefix-image score of a paradigm: how many distinct forms appear
-among the cells up to and including `i`. -/
+/-- The prefix-image score of a paradigm counts the distinct forms among the cells up to and
+including `i`. -/
 private def score (p : ι → F) (i : ι) : ℕ :=
   ((Finset.Iic i).image p).card
 
@@ -234,10 +229,10 @@ private theorem eq_of_score_eq {p : ι → F} (hp : IsContiguous p)
 
 end
 
-/-- **[graf-2019]'s monotonicity reconstruction of *ABA**: over linearly
-ordered cells, a paradigm is contiguous iff it is feasibly monotonic.
-Forward direction via the prefix-image score; backward direction is the
-sandwich argument that makes monotone kernels convex. -/
+/-- Over linearly ordered cells a paradigm is contiguous iff it is feasibly monotonic,
+[graf-2019]'s monotonicity reconstruction of *ABA. The forward direction uses the prefix-image
+score, and the backward direction is the sandwich argument that makes monotone kernels
+convex. -/
 theorem isContiguous_iff_feasiblyMonotone (p : ι → F) :
     IsContiguous p ↔ FeasiblyMonotone p := by
   classical

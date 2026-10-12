@@ -5,26 +5,35 @@ public import Mathlib.Order.Interval.Set.Basic
 public import Mathlib.Order.Fin.Basic
 
 /-!
-# Vocabularies over containment hierarchies: rules and specificity
+# Vocabularies over containment hierarchies
 
-The carrier for the realizational engine of [bobaljik-2012]'s
-comparative-suppletion generalizations, over an arbitrary `n`-grade
-containment hierarchy. An `SpanRule` realizes the initial span `[0, spans]`
-of the hierarchy, optionally conditioned on a higher head. One carrier
-carries two `Exponence.Rule` views: the **Subset** reading (`SpanRule`,
-applicability is threshold containment) is DM Elsewhere insertion; the
-**Superset** reading (`SupersetRule`, applicability is constituent
-containment) is nanosyntax spellout, dual à la `OrderDual`.
+The rules of the two realizational engines over an `n`-grade containment hierarchy, where grade
+`g`'s structure contains every lower grade's. A `SpanRule` is a Distributed Morphology rule of
+exponence realizing the initial span `[0, spans]`, optionally conditioned on a higher head; it
+applies, by the Subset Principle, at every grade containing all it mentions, the up-set of its
+`threshold`. A `SupersetRule` is a nanosyntax lexical entry storing the constituent `[0, spans]`;
+it applies, by the Superset Principle, at every grade its constituent contains, the down-set of
+`spans`. Specificity is threshold comparison for the first and span comparison for the second,
+in opposite directions.
 
-## Main declarations
+## Main definitions
 
-* `SpanRule` — exponent, exponed span `[0, spans]`, optional conditioning head
-* `SpanRule.threshold`, `AppliesAt`, `MoreSpecific` — Subset applicability
-  and its `moreSpecific_iff_threshold_le` reflection
-* `SpanRule.Matches`, `SupersetRule` — Superset applicability and its
-  `matches_imp_iff_spans_le` reflection
-* `Terminal`, `Adjacent`, `Antihomophonous`, `Grounded`, `ContextFree` —
-  well-formedness conditions on vocabularies
+* `SpanRule`, `SpanRule.threshold`: a rule of exponence and the least grade it applies at.
+* `SupersetRule`: a lexical entry storing an initial span.
+* `Terminal`, `Adjacent`, `Grounded`: well-formedness conditions on DM vocabularies.
+
+## Main results
+
+* `SpanRule.le_iff`: a rule is more specific than another iff its threshold is higher.
+* `SupersetRule.le_iff`: an entry is more specific than another iff its span is smaller, the
+  nanosyntax principle Minimize Junk.
+
+## References
+
+* [bobaljik-2012]
+* [caha-2009]
+* [kiparsky-1973]
+* [starke-2009]
 -/
 
 @[expose] public section
@@ -35,197 +44,123 @@ open Morphology.Exponence
 
 variable {n : ℕ} {F : Type*}
 
-/-! ### Rules of exponence and derived specificity -/
+/-! ### The Subset reading: rules of exponence -/
 
-/-- A **rule of exponence** ([bobaljik-2012]) over an `n`-grade containment
-hierarchy. The rule realizes the initial span `[0, spans]` — the bare root
-when `spans = 0`, a root+heads portmanteau when `spans > 0` — and applies
-only when its optional conditioning head `context` is present. Latin
-([bobaljik-2012] (204)): `bon` is `⟨bon, 0, none⟩`, `mel-` is
-`⟨mel, 0, some 1⟩`, the portmanteau `opt-` is `⟨opt, 1, some 2⟩`. -/
+/-- A rule of exponence ([bobaljik-2012]) over an `n`-grade containment hierarchy realizes the
+initial span `[0, spans]`, the bare root when `spans = 0` and a portmanteau when `spans > 0`, and
+applies only when its conditioning head `context`, if any, is present. In Latin `bon` is
+`⟨bon, 0, none⟩`, `mel-` is `⟨mel, 0, some 1⟩` and the portmanteau `opt-` is `⟨opt, 1, some 2⟩`. -/
 structure SpanRule (n : ℕ) (F : Type*) where
-  /-- The phonological exponent inserted for the span. -/
+  /-- The exponent inserted for the span. -/
   exponent : F
-  /-- Upper end of the exponed initial span `[0, spans]`. -/
+  /-- The upper end of the exponed initial span `[0, spans]`. -/
   spans : Fin n
-  /-- Head whose presence conditions the rule, if any. -/
+  /-- The head whose presence conditions the rule, if any. -/
   context : Option (Fin n)
   deriving DecidableEq, Repr
 
-namespace SpanRule
-
-/-- The least grade at which the rule is applicable: everything the
-rule mentions — exponed span and conditioning context — must be
-contained in the structure. -/
-def threshold (it : SpanRule n F) : Fin n :=
+/-- The least grade at which the rule applies, the least containing both the exponed span and
+the conditioning head. -/
+def SpanRule.threshold (it : SpanRule n F) : Fin n :=
   max it.spans (it.context.getD it.spans)
 
-/-- A rule applies at grade `g` when grade `g`'s structure contains
-everything the rule mentions. -/
-def AppliesAt (it : SpanRule n F) (g : Fin n) : Prop :=
-  it.threshold ≤ g
+/-- A rule applies at the grades from its threshold up. -/
+instance : Rule (SpanRule n F) (Fin n) F :=
+  ⟨SpanRule.exponent, fun it g ↦ it.threshold ≤ g⟩
 
-instance (it : SpanRule n F) (g : Fin n) : Decidable (it.AppliesAt g) :=
-  inferInstanceAs (Decidable (_ ≤ _))
+instance : Preorder (SpanRule n F) := toPreorder
 
-/-- A rule `it` is at least as specific as `jt` when it applies in a
-subset of the contexts `jt` applies in (Pāṇinian specificity). -/
-def MoreSpecific (it jt : SpanRule n F) : Prop :=
-  ∀ ⦃g : Fin n⦄, it.AppliesAt g → jt.AppliesAt g
+instance : DecidableRel (Applies : SpanRule n F → Fin n → Prop) :=
+  fun it g ↦ inferInstanceAs (Decidable (it.threshold ≤ g))
 
-/-- Over a linear containment hierarchy, applicability sets are nested
-upward sets, so derived specificity is threshold comparison — the
-Elsewhere ordering ([kiparsky-1973]) is total. -/
-theorem moreSpecific_iff_threshold_le {it jt : SpanRule n F} :
-    it.MoreSpecific jt ↔ jt.threshold ≤ it.threshold :=
-  ⟨λ h => h (le_refl it.threshold), λ h _ hg => le_trans h hg⟩
+namespace SpanRule
+
+variable {it jt : SpanRule n F} {g : Fin n}
+
+@[simp] theorem applies_iff : Applies it g ↔ it.threshold ≤ g := Iff.rfl
+
+@[simp] theorem exponent_eq : Rule.exponent it = it.exponent := rfl
+
+/-- Over a linear hierarchy the applicability sets are nested, so specificity is the reverse of
+threshold order and the Elsewhere ordering ([kiparsky-1973]) is total. -/
+theorem le_iff : it ≤ jt ↔ jt.threshold ≤ it.threshold := Set.Ici_subset_Ici
+
+theorem lt_iff : it < jt ↔ jt.threshold < it.threshold := by
+  simp only [lt_iff_le_not_ge, le_iff]
+
+theorem threshold_strictAnti : StrictAnti (threshold : SpanRule n F → Fin n) :=
+  fun _ _ ↦ lt_iff.mp
 
 end SpanRule
 
 /-! ### Well-formedness conditions on vocabularies
 
-Each generalization below hypothesizes exactly the conditions it
-needs; vocabularies violating a condition witness the corresponding
-unattested pattern (see the worked examples in
-`Studies/Bobaljik2012.lean`). -/
+Each generalization hypothesizes exactly the conditions it needs, and vocabularies violating a
+condition witness the corresponding unattested pattern. -/
 
-/-- Every rule expones the bare root (no portmanteaux). -/
+/-- Every rule expones the bare root, so the vocabulary has no portmanteaux. -/
 def Terminal (v : List (SpanRule n F)) : Prop :=
   ∀ it ∈ v, (it.spans : ℕ) = 0
 
 instance (v : List (SpanRule n F)) : Decidable (Terminal v) := by
   unfold Terminal; infer_instance
 
-/-- Conditioning heads are adjacent to the exponed span —
-[bobaljik-2012]'s (tentatively adopted) adjacency condition on
-contextual allomorphy. -/
+/-- Conditioning heads are adjacent to the exponed span, the adjacency condition on contextual
+allomorphy that [bobaljik-2012] tentatively adopts. -/
 def Adjacent (v : List (SpanRule n F)) : Prop :=
   ∀ it ∈ v, ∀ c : Fin n, it.context = some c → (c : ℕ) = (it.spans : ℕ) + 1
 
 instance (v : List (SpanRule n F)) : Decidable (Adjacent v) := by
   unfold Adjacent; infer_instance
 
-/-- Distinct rules carry distinct exponents — [bobaljik-2012]'s Antihomophony
-assumption (44), closing the loophole where a surface-ABA pattern is really an
-ABC with accidental A ≡ C homophony. -/
-def Antihomophonous (v : List (SpanRule n F)) : Prop :=
-  ∀ it ∈ v, ∀ jt ∈ v, it.exponent = jt.exponent → it = jt
-
-instance [DecidableEq F] (v : List (SpanRule n F)) : Decidable (Antihomophonous v) := by
-  unfold Antihomophonous; infer_instance
-
-/-- [bobaljik-2012]'s markedness condition (202): a context-sensitive rule of
-exponence involving a node requires a context-free rule involving that node.
-Under the threshold encoding, this is downward closure of the vocabulary's
-threshold set. -/
+/-- [bobaljik-2012]'s markedness condition requires, for each context-sensitive rule involving a
+node, a context-free rule involving that node. Under the threshold encoding the vocabulary's
+thresholds are closed downward. -/
 def Grounded (v : List (SpanRule n F)) : Prop :=
   ∀ it ∈ v, ∀ k : Fin n, k < it.threshold → ∃ jt ∈ v, jt.threshold = k
 
 instance (v : List (SpanRule n F)) : Decidable (Grounded v) := by
   unfold Grounded; infer_instance
 
-/-- The nanosyntax restriction, in the pointer-free idealization of
-[caha-2009]: entries store bare constituents, with no DM-style
-contextual environment. -/
-def ContextFree (v : List (SpanRule n F)) : Prop :=
-  ∀ it ∈ v, it.context = none
+/-! ### The Superset reading: lexical entries -/
 
-instance (v : List (SpanRule n F)) : Decidable (ContextFree v) := by
-  unfold ContextFree; infer_instance
+/-- A nanosyntax lexical entry over an `n`-grade containment hierarchy stores the constituent
+`[0, spans]`, with no contextual condition, in the pointer-free idealization of [caha-2009]. -/
+structure SupersetRule (n : ℕ) (F : Type*) where
+  /-- The exponent the entry spells out. -/
+  exponent : F
+  /-- The upper end of the stored constituent `[0, spans]`. -/
+  spans : Fin n
+  deriving DecidableEq, Repr
 
-/-! ### The Subset reading: DM Elsewhere insertion
-
-The containment engine implements `Morphology.Exponence.Rule`
-directly: applicability is threshold containment (the upper set
-`Set.Ici threshold`) and derived specificity is threshold comparison. -/
-
-instance : Rule (SpanRule n F) (Fin n) F :=
-  ⟨SpanRule.exponent, fun it i => it.threshold ≤ i⟩
-
-instance : Preorder (SpanRule n F) := Exponence.toPreorder
-
-instance : DecidableRel (Applies : SpanRule n F → Fin n → Prop) :=
-  fun it g => inferInstanceAs (Decidable (it.threshold ≤ g))
-
-/-- Subset applicability is threshold containment. -/
-@[simp] theorem SpanRule.applies_iff {it : SpanRule n F} {g : Fin n} :
-    Exponence.Applies it g ↔ it.threshold ≤ g :=
-  Iff.rfl
-
-/-- Containment specificity is the shared core's specificity order. -/
-theorem SpanRule.le_iff {it jt : SpanRule n F} :
-    it ≤ jt ↔ it.MoreSpecific jt :=
-  Iff.rfl
-
-/-! ### The Superset reading: nanosyntax spellout
-
-One carrier, a dual view: the entry can spell out grade `g` when its
-stored constituent contains `g` (the down-set `Set.Iic spans`), and
-smallest-match selection is Pāṇinian specificity under superset
-matching. A distinct type synonym so the two readings carry different
-`Exponence.Rule` instances on one carrier, mirroring `OrderDual`. -/
-
-/-- The **Superset Principle** ([starke-2009]): an entry can spell out
-grade `g` when the constituent it stores contains grade `g`'s
-structure. Anti-monotone in `g`, dually to `AppliesAt`. -/
-def SpanRule.Matches (it : SpanRule n F) (g : Fin n) : Prop :=
-  g ≤ it.spans
-
-instance (it : SpanRule n F) (g : Fin n) : Decidable (it.Matches g) :=
-  inferInstanceAs (Decidable (_ ≤ _))
-
-theorem SpanRule.Matches.anti {it : SpanRule n F} {g g' : Fin n}
-    (h : it.Matches g') (hg : g ≤ g') : it.Matches g :=
-  le_trans hg h
-
-/-- Minimize Junk derived, dually to
-`SpanRule.moreSpecific_iff_threshold_le`: an entry matches in a
-subset of the structures another matches in iff it stores the smaller
-constituent — smallest-match selection is Pāṇinian specificity under
-superset matching. -/
-theorem SpanRule.matches_imp_iff_spans_le {it jt : SpanRule n F} :
-    (∀ ⦃g : Fin n⦄, it.Matches g → jt.Matches g) ↔ it.spans ≤ jt.spans :=
-  ⟨λ h => h (le_refl it.spans), λ h _ hg => le_trans hg h⟩
-
-/-- The **Superset** reading of an exponence rule: an entry spells out
-grade `g` when its stored constituent contains `g` (the down-set
-`Set.Iic spans`), dually to the Subset reading of `SpanRule`. -/
-def SupersetRule (n : ℕ) (F : Type*) := SpanRule n F
-
+/-- An entry spells out every grade its stored constituent contains, the Superset Principle
+([starke-2009]). -/
 instance : Rule (SupersetRule n F) (Fin n) F :=
-  ⟨SpanRule.exponent, fun it i => i ≤ SpanRule.spans it⟩
+  ⟨SupersetRule.exponent, fun e g ↦ g ≤ e.spans⟩
 
-instance : Preorder (SupersetRule n F) := Exponence.toPreorder
+instance : Preorder (SupersetRule n F) := toPreorder
 
 instance : DecidableRel (Applies : SupersetRule n F → Fin n → Prop) :=
-  fun it g => inferInstanceAs (Decidable (g ≤ SpanRule.spans it))
+  fun e g ↦ inferInstanceAs (Decidable (g ≤ e.spans))
 
-/-- Read an exponence rule under the Superset reading. -/
-def SpanRule.superset (it : SpanRule n F) : SupersetRule n F := it
+namespace SupersetRule
 
-/-- Superset applicability is constituent containment. -/
-@[simp] theorem SupersetRule.applies_iff {it : SupersetRule n F} {g : Fin n} :
-    Exponence.Applies it g ↔ g ≤ SpanRule.spans it :=
-  Iff.rfl
+variable {e e' : SupersetRule n F} {g : Fin n}
 
-/-- Minimize Junk is the Superset reading's specificity order: smaller
-span = more specific. -/
-theorem SupersetRule.le_iff {it jt : SupersetRule n F} :
-    it ≤ jt ↔ SpanRule.spans it ≤ SpanRule.spans jt :=
-  Set.Iic_subset_Iic
+@[simp] theorem applies_iff : Applies e g ↔ g ≤ e.spans := Iff.rfl
 
-/-- **Subset/Superset duality** over context-free vocabularies (the
-nanosyntax idealization): DM-style Subset specificity of `it` over `jt`
-is Superset specificity of `jt` over `it`. With contextual restrictions
-the Subset order compares thresholds, not spans, and the duality is
-only one-directional. -/
-theorem SpanRule.subset_le_iff_superset_le {it jt : SpanRule n F}
-    (hit : it.context = none) (hjt : jt.context = none) :
-    it ≤ jt ↔ jt.superset ≤ it.superset := by
-  rw [SpanRule.le_iff, SpanRule.moreSpecific_iff_threshold_le,
-    SupersetRule.le_iff]
-  unfold SpanRule.threshold SpanRule.superset
-  rw [hit, hjt]
-  simp
+@[simp] theorem exponent_eq : Rule.exponent e = e.exponent := rfl
+
+/-- An entry is more specific than another iff it stores the smaller constituent, the nanosyntax
+principle Minimize Junk. -/
+theorem le_iff : e ≤ e' ↔ e.spans ≤ e'.spans := Set.Iic_subset_Iic
+
+theorem lt_iff : e < e' ↔ e.spans < e'.spans := by
+  simp only [lt_iff_le_not_ge, le_iff]
+
+theorem spans_strictMono : StrictMono (spans : SupersetRule n F → Fin n) :=
+  fun _ _ ↦ lt_iff.mp
+
+end SupersetRule
 
 end Morphology.Containment

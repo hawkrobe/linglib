@@ -84,8 +84,8 @@ def layers (e : Series) : Finset (Fin 3) :=
 
 /-- In the nanosyntactic lexicon of a paradigm each form stores the largest layer it covers, the
 Superset and Elsewhere Principles deriving the rest of its coverage. -/
-def lexicon (p : List Series) : List (SpanRule 3 String) :=
-  p.filterMap fun e ↦ (layers e).max.map (⟨e.pronoun.form, ·, none⟩)
+def lexicon (p : List Series) : List (SupersetRule 3 String) :=
+  p.filterMap fun e ↦ (layers e).max.map (⟨e.pronoun.form, ·⟩)
 
 /-- The Russian series of the paper's row are *koe-*, *-to* and *-nibud'*. -/
 def russian : List Series :=
@@ -124,23 +124,23 @@ theorem spellout_lexicon :
 /-- The Elsewhere Principle rules out ABA, (48), since spellout is contiguous, so that a marker
 spelling out both the non-specific and the specific known layer spells out the specific unknown
 one. -/
-theorem not_aba {v : List (SpanRule 3 String)} (hv : Antihomophonous v)
+theorem not_aba {v : List (SupersetRule 3 String)} (hv : Exponence.Antihomophonous v)
     (h : spellout v 0 = spellout v 2) : spellout v 0 = spellout v 1 :=
   isContiguous_spellout hv (by decide) (by decide) h
 
 /-- A paradigm gap sits above every filled layer, §6.3, since an entry spelling out a layer
 spells out every layer it contains; a lone gap is thus the specific known type and two gaps are
 the specific types. -/
-theorem ne_none_of_le {v : List (SpanRule 3 String)} {g g' : Fin 3} (h : g ≤ g')
+theorem ne_none_of_le {v : List (SupersetRule 3 String)} {g g' : Fin 3} (h : g ≤ g')
     (hg' : spellout v g' ≠ none) : spellout v g ≠ none :=
   fun hg ↦ hg' (spellout_eq_none_of_le hg h)
 
 /-- With the interrogative pronoun as a layer below the hierarchy, (78) and (79), Mandarin
 *shénme* spells out the interrogative and the non-specific layer and Dutch *wat* all four. -/
 theorem interrogative_subset :
-    spellout [(⟨"shénme", 1, none⟩ : SpanRule 4 String)] =
+    spellout [(⟨"shénme", 1⟩ : SupersetRule 4 String)] =
         ![some "shénme", some "shénme", none, none] ∧
-      spellout [(⟨"wat", 3, none⟩ : SpanRule 4 String)] = fun _ ↦ some "wat" := by
+      spellout [(⟨"wat", 3⟩ : SupersetRule 4 String)] = fun _ ↦ some "wat" := by
   decide
 
 /-! ### The sample -/

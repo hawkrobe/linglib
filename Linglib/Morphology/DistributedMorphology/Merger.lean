@@ -6,7 +6,7 @@ public import Mathlib.Logic.Relation
 /-!
 # Synthetic and analytic realization: Merger over a containment hierarchy
 
-[bobaljik-2012] ch. 3 treats the synthetic/analytic distinction as structural. A grade is realized
+Bobaljik (ch. 3) treats the synthetic/analytic distinction as structural. A grade is realized
 synthetically when Merger has bundled its heads into the root's complex word, and periphrastically
 otherwise. `MergerStep` is one application of Merger, which adjoins a head to the merged region
 without skipping an intervening head, and the book's generalizations about periphrasis become
@@ -179,7 +179,8 @@ theorem realizeIn_eq_realize_wordTop_of_le {s : Synthesis n}
 /-- Word-internal realization is contiguous, since it is `realize` precomposed with the monotone
 regrading `min · wordTop`. -/
 theorem isContiguous_realizeIn {s : Synthesis n} {v : List (SpanRule n F)}
-    (hAH : Antihomophonous v) : IsContiguous (realizeIn s v) :=
+    (hAH : Morphology.Exponence.Antihomophonous v) :
+    IsContiguous (realizeIn s v) :=
   (isContiguous_realize hAH).comp_monotone fun _ _ h ↦ min_le_min_right _ h
 
 /-- A lexeme with no Merger at all (`wordTop = 0`, fully periphrastic

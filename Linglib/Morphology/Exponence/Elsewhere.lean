@@ -8,9 +8,9 @@ public import Mathlib.Data.Set.Finite.Basic
 /-!
 # The Elsewhere Condition
 
-This file defines Elsewhere winners — `≤`-minimal applicable rules of
-exponence under the specificity preorder ([kiparsky-1973]) — and the
-prediction relation they induce.
+An Elsewhere winner of a vocabulary at a context is a rule that applies there and is minimal,
+among the rules that apply, in Kiparsky's specificity preorder. This file defines Elsewhere
+winners and the prediction relation they induce.
 
 ## Main definitions
 
@@ -18,7 +18,16 @@ prediction relation they induce.
   context.
 * `Coherent`: equivalent rules carry the same exponent.
 * `Realizes`: some Elsewhere winner carries the given exponent.
+* `Antihomophonous`: distinct rules carry distinct exponents.
+
+## Main results
+
 * `Realizes.of_realizes`: no ABA pattern across nested contexts.
+
+## References
+
+* [kiparsky-1973]
+* [bobaljik-2012]
 -/
 
 @[expose] public section
@@ -74,21 +83,29 @@ theorem Realizes.eq {ψ : E} (hv : Coherent v)
 
 /-! ### Containment -/
 
-/-- A winner at a context that applies at a smaller context, in the sense that everything
-applicable there is applicable at the larger, is a winner at the smaller. -/
-theorem IsElsewhereWinner.of_applies {c' : Ctx} (h : ∀ s : R, Applies s c' → Applies s c)
-    (hr : IsElsewhereWinner v c r) (hc' : Applies r c') : IsElsewhereWinner v c' r :=
-  hr.mono (fun s hs => ⟨hs.1, h s hs.2⟩) ⟨hr.1.1, hc'⟩
+/-- A vocabulary is **antihomophonous** when distinct rules carry distinct exponents, the
+Antihomophony assumption of [bobaljik-2012] that sets accidental homophony aside. -/
+def Antihomophonous (v : List R) : Prop :=
+  Set.InjOn exponent {r | r ∈ v}
 
-/-- No ABA across nested contexts: with one item per exponent, an exponent realized at the
-smallest and the largest of three nested contexts is realized at the middle one. -/
-theorem Realizes.of_realizes {c₁ c₂ : Ctx} (hinj : (v.map exponent).Nodup)
-    (h₁ : ∀ s : R, Applies s c₁ → Applies s c₂) (h₂ : ∀ s : R, Applies s c₂ → Applies s c)
+instance [DecidableEq R] [DecidableEq E] (v : List R) : Decidable (Antihomophonous v) :=
+  inferInstanceAs (Decidable (∀ r ∈ v, ∀ s ∈ v, exponent r = exponent s → r = s))
+
+/-- A winner at a context that applies at a smaller context, in the sense that every rule
+applicable there is applicable at the larger, is a winner at the smaller. -/
+theorem IsElsewhereWinner.of_applies {c' : Ctx} (h : ∀ s ∈ v, Applies s c' → Applies s c)
+    (hr : IsElsewhereWinner v c r) (hc' : Applies r c') : IsElsewhereWinner v c' r :=
+  hr.mono (fun s hs => ⟨hs.1, h s hs.1 hs.2⟩) ⟨hr.1.1, hc'⟩
+
+/-- There is no ABA across nested contexts. Over an antihomophonous vocabulary, an exponent
+realized at the smallest and the largest of three nested contexts is realized at the middle
+one. -/
+theorem Realizes.of_realizes {c₁ c₂ : Ctx} (hv : Antihomophonous v)
+    (h₁ : ∀ s ∈ v, Applies s c₁ → Applies s c₂) (h₂ : ∀ s ∈ v, Applies s c₂ → Applies s c)
     (hr₁ : Realizes v c₁ φ) (hr : Realizes v c φ) : Realizes v c₂ φ := by
   obtain ⟨t, ht, rfl⟩ := hr
   obtain ⟨u, hu, hut⟩ := hr₁
-  have e := List.inj_on_of_nodup_map hinj hu.1.1 ht.1.1 hut
-  subst e
-  exact ⟨_, ht.of_applies h₂ (h₁ _ hu.1.2), rfl⟩
+  obtain rfl := hv hu.1.1 ht.1.1 hut
+  exact ⟨_, ht.of_applies h₂ (h₁ _ hu.1.1 hu.1.2), rfl⟩
 
 end Morphology.Exponence

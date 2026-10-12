@@ -16,7 +16,7 @@ superfluous material, that is the matching entry with the smallest tree. The Foo
 the lowest feature of a stored tree to occur in what it spells out. Taraldsen's matching relation
 instead pairs a node of the stored tree with the root of the syntactic tree and requires their
 daughters to match each other both ways; it agrees with containment on right-branching chains,
-where tree spellout is also the rank-based spellout of the containment engine.
+where tree spellout is also the spellout of the containment engine.
 
 ## Main definitions
 
@@ -25,8 +25,8 @@ where tree spellout is also the rank-based spellout of the containment engine.
   Condition.
 * `foot`, `FootConditionMet`: the Foot Condition.
 * `Matching`: Taraldsen's matching relation.
-* `chainTree`, `LexicalEntry.ofSpanRule`: right-branching chains, and rank-based entries read as
-  chain entries.
+* `chainTree`, `LexicalEntry.ofSupersetRule`: right-branching chains, and the containment
+  engine's entries read as chain entries.
 
 ## Main results
 
@@ -36,7 +36,8 @@ where tree spellout is also the rank-based spellout of the containment engine.
   wherever it matches, so the condition constrains only entries with branching trees.
 * `matching_chainTree_iff`, `exists_matching_not_isSubtree`: Taraldsen's matching is containment
   on chains but ignores the order of daughters in general.
-* `treeSpellout_ofSpanRule`: on chains, tree spellout is rank-based spellout.
+* `treeSpellout_ofSupersetRule`: on chains, tree spellout is the containment engine's
+  spellout.
 
 ## Implementation notes
 
@@ -284,55 +285,23 @@ theorem exists_matching_not_isSubtree :
   · exact ⟨.inr (.refl _), .inl (.refl _)⟩
   · exact ⟨.inr (.refl _), .inl (.refl _)⟩
 
-/-! ### Rank-based spellout -/
+/-! ### Spellout over containment hierarchies -/
 
-/-- The rank-based entry `it` read as an entry storing the chain up to its span. -/
-def LexicalEntry.ofSpanRule {n : ℕ} (feat : ℕ → F) (it : Containment.SpanRule n α) :
+/-- An entry of the containment engine read as an entry storing the chain up to its span. -/
+def LexicalEntry.ofSupersetRule {n : ℕ} (feat : ℕ → F) (e : Containment.SupersetRule n α) :
     LexicalEntry F α :=
-  ⟨chainTree feat it.spans, it.exponent⟩
+  ⟨chainTree feat e.spans, e.exponent⟩
 
-/-- On chains, tree spellout is the rank-based spellout of the containment engine, since both
-pick the first entry with the least matching span. -/
-theorem treeSpellout_ofSpanRule [DecidableEq F] {n : ℕ} (feat : ℕ → F)
-    (v : List (Containment.SpanRule n α)) (g : Fin n) :
-    treeSpellout (v.map (LexicalEntry.ofSpanRule feat)) (chainTree feat g) =
+/-- On chains, tree spellout is the spellout of the containment engine, since containment of
+chains is comparison of their ranks. -/
+theorem treeSpellout_ofSupersetRule [DecidableEq F] {n : ℕ} (feat : ℕ → F)
+    (v : List (Containment.SupersetRule n α)) (g : Fin n) :
+    treeSpellout (v.map (LexicalEntry.ofSupersetRule feat)) (chainTree feat g) =
       Containment.spellout v g := by
-  set E := LexicalEntry.ofSpanRule (n := n) feat
-  have happ : ∀ it : Containment.SpanRule n α,
-      Applies (E it) (chainTree feat g) ↔ g ≤ it.spans := fun it ↦
-    (chainTree_isSubtree_iff feat _ _).trans Fin.val_fin_le
-  have hsel : treeSelect (v.map E) (chainTree feat g) = (Containment.spelloutWinner v g).map E := by
-    cases hms : Containment.minSpan v g with
-    | top =>
-      rw [Containment.spelloutWinner_eq_none_of_top hms, Option.map_none, treeSelect,
-        selectBy_eq_none_iff, applicable, List.filter_eq_nil_iff]
-      rw [Containment.minSpan_eq_top_iff, Containment.matching, List.filter_eq_nil_iff] at hms
-      intro e he
-      obtain ⟨it, hit, rfl⟩ := List.mem_map.1 he
-      simpa [happ, Containment.SpanRule.Matches] using hms it hit
-    | coe m =>
-      obtain ⟨it₀, hit₀, hsp₀, hgm⟩ := Containment.exists_of_minSpan_eq_coe hms
-      rw [Containment.spelloutWinner_of_coe hms, treeSelect, selectBy,
-        Containment.argmax_eq_find _ (OrderDual.toDual ((m : ℕ) + 1)), applicable,
-        List.filter_map, List.find?_map, Containment.find?_filter_of_imp]
-      · congr 2
-        funext it
-        simp [E, LexicalEntry.ofSpanRule, chainTree_numNodes, Fin.val_inj]
-      · intro it hit
-        simp only [Function.comp, beq_iff_eq, OrderDual.toDual_inj, decide_eq_true_eq,
-          happ] at hit ⊢
-        have : it.spans = m :=
-          Fin.ext (by simpa [E, LexicalEntry.ofSpanRule, chainTree_numNodes] using hit)
-        exact this ▸ hgm
-      · intro e he
-        obtain ⟨hmem, happ'⟩ := mem_applicable.1 he
-        obtain ⟨it, hit, rfl⟩ := List.mem_map.1 hmem
-        have := Containment.le_spans_of_minSpan_eq_coe hms hit ((happ it).1 happ')
-        simpa [E, LexicalEntry.ofSpanRule, chainTree_numNodes] using Fin.le_def.1 this
-      · exact List.mem_map.2 ⟨E it₀, mem_applicable.2 ⟨List.mem_map_of_mem hit₀,
-          (happ it₀).2 (hsp₀ ▸ hgm)⟩,
-          by simp [E, LexicalEntry.ofSpanRule, chainTree_numNodes, hsp₀]⟩
-  rw [treeSpellout, Containment.spellout, hsel, Option.map_map]
+  rw [treeSpellout, treeSelect, selectBy_map (c := g)
+    (f := fun e : Containment.SupersetRule n α ↦ OrderDual.toDual e.spans)
+    (fun _ _ ↦ (chainTree_isSubtree_iff feat _ _).trans Fin.val_fin_le)
+    fun _ _ _ _ ↦ by simp [LexicalEntry.ofSupersetRule, chainTree_numNodes], Option.map_map]
   rfl
 
 end Morphology.Nanosyntax
