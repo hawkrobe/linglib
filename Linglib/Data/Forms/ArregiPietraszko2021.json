@@ -47,6 +47,26 @@
       "Lnk": "a",
       "D": "u",
       "T": "lu"
+    },
+    {
+      "ID": "arregipietraszko2021_doesnt",
+      "Language_ID": "stan1293",
+      "Parameter_ID": "do_3sg_neg",
+      "Form": "doesn't",
+      "Segments": ["doe", "s", "n't"],
+      "Comment": "The paper stars the order do(e)-n't-s, with contracted negation inside the inflection.",
+      "Source": ["arregi-pietraszko-2021[p. 264]"],
+      "Verb": "dummy"
+    },
+    {
+      "ID": "arregipietraszko2021_hadnt",
+      "Language_ID": "stan1293",
+      "Parameter_ID": "have_pst_neg",
+      "Form": "hadn't",
+      "Segments": ["ha", "d", "n't"],
+      "Comment": "The paper stars the order ha(ve)-n't-ed, with contracted negation inside the inflection.",
+      "Source": ["arregi-pietraszko-2021[p. 264]"],
+      "Verb": "auxiliary"
     }
   ],
   "ParameterTable": [
@@ -69,6 +89,16 @@
       "ID": "rel_cl11",
       "Name": "11REL",
       "Description": "relative agreement prefix of class 11"
+    },
+    {
+      "ID": "do_3sg_neg",
+      "Name": "do.PRS.3SG-NEG",
+      "Description": "third singular present of the dummy verb with contracted negation"
+    },
+    {
+      "ID": "have_pst_neg",
+      "Name": "have.PST-NEG",
+      "Description": "past of the auxiliary have with contracted negation"
     }
   ]
 }
