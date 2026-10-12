@@ -117,7 +117,7 @@ def GroundedField.personae {Variant P : Type*} {G : SimpleGraph P} [Fintype P] [
 of the variant's association with their dimension. -/
 def AssociationField.ground {Variant R : Type*} [Zero R] [Preorder R] [DecidableLT R]
     (M : AssociationField Variant Dimension R) :
-    GroundedField Variant (incompatible Pole.dimension) where
+    GroundedField Variant (dimensionalIncompatibility Pole.dimension) where
   indexes v := Finset.univ.filter fun p ↦ SignType.sign (M v p.dimension) = p.polarity
   isIndepSet v p hp q hq hne hadj := hne <| Pole.eq_iff.2 ⟨hadj.2, by
     rw [← (Finset.mem_filter.1 hp).2, ← (Finset.mem_filter.1 hq).2, hadj.2]⟩
@@ -140,7 +140,8 @@ private theorem card_filter_dimension_polarity (d : Dimension) (s : SignType) :
 other. -/
 theorem ground_indexes_mem_maximalIndepSets_iff [Zero R] [LinearOrder R]
     {M : AssociationField Variant Dimension R} :
-    M.ground.indexes v ∈ (incompatible Pole.dimension).maximalIndepSets ↔ ∀ d, M v d ≠ 0 := by
+    M.ground.indexes v ∈ (dimensionalIncompatibility Pole.dimension).maximalIndepSets ↔
+      ∀ d, M v d ≠ 0 := by
   rw [Pole.mem_maximalIndepSets_iff]
   refine forall_congr' fun d ↦ ?_
   have : (M.ground.indexes v).filter (·.dimension = d) =

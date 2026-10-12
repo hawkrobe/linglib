@@ -71,7 +71,7 @@ def PersonaTrait.dimension : PersonaTrait → Dimension
 
 /-- A persona of the example is a maximal consistent set of its properties, the two poles of
 each dimension being incompatible. -/
-abbrev Persona := SocialMeaning.Persona (incompatible PersonaTrait.dimension)
+abbrev Persona := SocialMeaning.Persona (dimensionalIncompatibility PersonaTrait.dimension)
 
 /-- The cool guy, competent and friendly. -/
 def coolGuy : Persona := ⟨{.competent, .friendly}, by decide +kernel⟩
@@ -98,7 +98,7 @@ def ingEckertField : INGVariant → Finset PersonaTrait
   | .apical => {.incompetent, .friendly}
 
 /-- The grounded field of (ING), both fields being consistent. -/
-def ingField : GroundedField INGVariant (incompatible PersonaTrait.dimension) where
+def ingField : GroundedField INGVariant (dimensionalIncompatibility PersonaTrait.dimension) where
   indexes := ingEckertField
   isIndepSet := by intro v; cases v <;> decide
 
