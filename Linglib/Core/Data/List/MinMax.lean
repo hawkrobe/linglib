@@ -13,7 +13,8 @@ public import Mathlib.Data.List.MinMax
 `Mathlib/Data/List/MinMax.lean` characterizes `argmax` (`List.argmax_eq_some_iff`) but has no
 lemma relating it to `filter` or `map`. The maximizer stays the maximizer of any filter that keeps
 it, the choice-consistency property of selection by a score; `argmax` commutes with `map`; and it
-depends only on how the scores order the list. [UPSTREAM] candidates for that file.
+depends only on how the scores order the list, and on a list sorted by decreasing score it is
+the head. [UPSTREAM] candidates for that file.
 
 ## Main results
 
@@ -21,6 +22,7 @@ depends only on how the scores order the list. [UPSTREAM] candidates for that fi
   keeps it.
 * `List.argmax_map`: `argmax` commutes with `map`.
 * `List.argmax_congr`: scores that order `l` the same way have the same maximizer.
+* `List.argmax_eq_head?`: on a list sorted by decreasing score the maximizer is the head.
 -/
 
 @[expose] public section
@@ -75,5 +77,15 @@ theorem argmax_congr {g : α → γ} (h : ∀ a ∈ l, ∀ b ∈ l, f a ≤ f b 
     rcases hc : argmax g t with - | c
     · rfl
     · simp only [← not_le, h c (mem_cons_of_mem _ (argmax_mem hc)) a mem_cons_self]
+
+/-- On a list sorted by decreasing score, `argmax` is the head. -/
+theorem argmax_eq_head? (h : l.Pairwise fun a b ↦ f b ≤ f a) : argmax f l = l.head? := by
+  induction l with
+  | nil => rfl
+  | cons a t ih =>
+    rw [argmax_cons, ih (pairwise_cons.mp h).2]
+    rcases t with - | ⟨b, t⟩
+    · rfl
+    · simp [not_lt.mpr ((pairwise_cons.mp h).1 b mem_cons_self)]
 
 end List
