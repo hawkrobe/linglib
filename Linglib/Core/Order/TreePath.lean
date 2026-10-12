@@ -20,16 +20,23 @@ is lexicographic order between positions neither of which dominates the other. I
 strict order, it passes to dominated positions, and any two positions are related by dominance or
 by precedence.
 
+Two positions are left-aligned when their addresses differ only in trailing first-daughter steps,
+so that the subtrees at them begin with the same leaf. Left-alignment is a decidable equivalence
+relation, and left-aligned positions lie on one branch.
+
 ## Main definitions
 
 * `Core.Order.TreePath`: Gorn addresses under the prefix order.
 * `Core.Order.TreePath.Precedes`: linear precedence of positions.
+* `Core.Order.TreePath.LeftAligned`: positions sharing a left edge.
 
 ## Main results
 
 * `TreePath.covBy_iff`: `q` covers `p` exactly when `q` extends `p` by one index.
 * `TreePath.precedes_iff_lt_and_not_le`: precedence is lexicographic order minus dominance.
 * `TreePath.Precedes.trichotomy`: two positions are related by dominance or by precedence.
+* `TreePath.leftAligned_iff_exists`: positions are left-aligned exactly when descending through
+  first daughters from each reaches a common position.
 -/
 
 @[expose] public section
@@ -224,6 +231,66 @@ protected theorem trichotomy (p q : TreePath) : p ≤ q ∨ q ≤ p ∨ Precedes
   · exact .inr (.inr (.inr (precedes_iff_lt_and_not_le.mpr ⟨h, hqp⟩)))
 
 end Precedes
+
+/-! ### Left edges -/
+
+/-- Two positions are left-aligned when their addresses agree once trailing first-daughter steps
+are dropped, so that the subtrees at them begin with the same leaf. -/
+def LeftAligned (p q : TreePath) : Prop :=
+  p.toList.reverse.dropWhile (· == 0) = q.toList.reverse.dropWhile (· == 0)
+
+instance : DecidableRel LeftAligned := fun _ _ ↦ inferInstanceAs (Decidable (_ = _))
+
+namespace LeftAligned
+
+variable {p q r : TreePath}
+
+@[refl] protected theorem refl (p : TreePath) : LeftAligned p p := rfl
+
+@[symm] protected theorem symm (h : LeftAligned p q) : LeftAligned q p := Eq.symm h
+
+@[trans] protected theorem trans (h₁ : LeftAligned p q) (h₂ : LeftAligned q r) :
+    LeftAligned p r :=
+  Eq.trans h₁ h₂
+
+end LeftAligned
+
+private theorem dropWhile_reverse_append_replicate (l : List ℕ) (k : ℕ) :
+    (l ++ List.replicate k 0).reverse.dropWhile (· == 0) = l.reverse.dropWhile (· == 0) := by
+  rw [List.reverse_append, List.reverse_replicate]
+  induction k with
+  | zero => rfl
+  | succ k ih => rw [List.replicate_succ, List.cons_append, List.dropWhile_cons_of_pos rfl, ih]
+
+private theorem exists_eq_reverse_dropWhile_append (l : List ℕ) :
+    ∃ k, l = (l.reverse.dropWhile (· == 0)).reverse ++ List.replicate k 0 := by
+  refine ⟨(l.reverse.takeWhile (· == 0)).length, ?_⟩
+  have h := congrArg List.reverse (List.takeWhile_append_dropWhile (p := (· == 0)) (l := l.reverse))
+  rw [List.reverse_append, List.reverse_reverse] at h
+  rw [← List.eq_replicate_iff.2 ⟨List.length_reverse, fun x hx ↦ ?_⟩, h]
+  exact beq_iff_eq.1 (List.all_eq_true.1 List.all_takeWhile x (List.mem_reverse.1 hx))
+
+/-- Positions are left-aligned exactly when descending through first daughters from each reaches
+a common position. -/
+theorem leftAligned_iff_exists {p q : TreePath} :
+    LeftAligned p q ↔
+      ∃ j k, p.toList ++ List.replicate j 0 = q.toList ++ List.replicate k 0 := by
+  constructor
+  · intro h
+    obtain ⟨j, hj⟩ := exists_eq_reverse_dropWhile_append p.toList
+    obtain ⟨k, hk⟩ := exists_eq_reverse_dropWhile_append q.toList
+    refine ⟨k, j, ?_⟩
+    rw [hj, hk, h, List.append_assoc, List.append_assoc, List.replicate_append_replicate,
+      List.replicate_append_replicate, Nat.add_comm]
+  · rintro ⟨j, k, h⟩
+    simpa only [LeftAligned, dropWhile_reverse_append_replicate] using
+      congrArg (fun l ↦ l.reverse.dropWhile (· == 0)) h
+
+/-- Left-aligned positions lie on one branch. -/
+theorem LeftAligned.le_or_ge {p q : TreePath} (h : LeftAligned p q) : p ≤ q ∨ q ≤ p := by
+  obtain ⟨j, k, h⟩ := leftAligned_iff_exists.1 h
+  have hq : q.toList <+: p.toList ++ List.replicate j 0 := h ▸ List.prefix_append _ _
+  exact List.prefix_or_prefix_of_prefix (List.prefix_append _ _) hq
 
 end TreePath
 

@@ -1,0 +1,934 @@
+[
+  {
+    "id": "brananerlewine2023_1",
+    "source": {"bibkey": "branan-erlewine-2023", "paperLabel": "(1)"},
+    "language": "hung1274",
+    "primaryText": "A házigazda Katinak mutatta be Jánost.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["A", "the"], ["házigazda", "host"], ["Katinak", "Cathy.DAT"], ["mutatta", "show"],
+      ["be", "VM"], ["Jánost", "John.ACC"]
+    ],
+    "translation": "The host introduced John to Cathy.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "goal", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["process", "movement"],
+      ["msf", "goal"],
+      ["mismatch", "none"]
+    ],
+    "comment": "From Horvath 1981:117. The dative moves to the immediately preverbal focus position, stranding the verb modifier.",
+    "verified": "page-image"
+  },
+  {
+    "id": "brananerlewine2023_2",
+    "source": {"bibkey": "branan-erlewine-2023", "paperLabel": "(2)"},
+    "language": "nucl1643",
+    "primaryText": "Hanako-wa hon-mo kat-ta.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Hanako-wa", "Hanako-TOP"], ["hon-mo", "book-also"], ["kat-ta", "buy-PST"]
+    ],
+    "translation": "Hanako also bought a book.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "object", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["process", "particle"],
+      ["msf", "object"],
+      ["mismatch", "none"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "brananerlewine2023_3",
+    "source": {"bibkey": "branan-erlewine-2023", "paperLabel": "(3)"},
+    "language": "hung1274",
+    "primaryText": "Anna a használt autót adta el.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Anna", "Anna"], ["a", "the"], ["használt", "used"], ["autót", "car.ACC"], ["adta", "sold"],
+      ["el", "VM"]
+    ],
+    "translation": "It's the used car that Anna sold (not the new one).",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "adjective", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["process", "movement"],
+      ["msf", "object"],
+      ["mismatch", "piedPiping"]
+    ],
+    "comment": "From Kenesei 1998b, ex. 13b.",
+    "verified": "page-image"
+  },
+  {
+    "id": "brananerlewine2023_4",
+    "source": {"bibkey": "branan-erlewine-2023", "paperLabel": "(4)"},
+    "language": "nucl1643",
+    "primaryText": "Hanako-wa hon-o kai-mo shi, zasshi-o kai-mo shi-ta.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Hanako-wa", "Hanako-TOP"], ["hon-o", "book-ACC"], ["kai-mo", "buy-also"], ["shi", "do"],
+      ["zasshi-o", "magazine-ACC"], ["kai-mo", "buy-also"], ["shi-ta", "do-PST"]
+    ],
+    "translation": "Hanako bought books and also bought magazines.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "object", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["process", "particle"],
+      ["msf", "predicate"],
+      ["mismatch", "piedPiping"]
+    ],
+    "comment": "Based on Kuroda 1965:78. The particle appears in each conjunct (n. 3).",
+    "verified": "page-image"
+  },
+  {
+    "id": "brananerlewine2023_7",
+    "source": {"bibkey": "branan-erlewine-2023", "paperLabel": "(7)"},
+    "language": "hung1274",
+    "primaryText": "Péter a Hamletet olvasta fel a kertben, nem pedig úszott.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Péter", "Peter"], ["a", "the"], ["Hamletet", "Hamlet.ACC"], ["olvasta", "read"],
+      ["fel", "VM"], ["a", "the"], ["kertben", "garden.INE"], ["nem", "not"], ["pedig", "rather"],
+      ["úszott", "swim"]
+    ],
+    "translation": "Peter read Hamlet in the garden, rather than swim.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "predicate", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["process", "movement"],
+      ["msf", "object"],
+      ["mismatch", "antiPiedPiping"]
+    ],
+    "comment": "From Kenesei 1998a:77.",
+    "verified": "page-image"
+  },
+  {
+    "id": "brananerlewine2023_8",
+    "source": {"bibkey": "branan-erlewine-2023", "paperLabel": "(8)"},
+    "language": "nucl1643",
+    "primaryText": "Ame-mo furu-shi, kaze-mo fuku.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Ame-mo", "rain-also"], ["furu-shi", "falls-CONJ"], ["kaze-mo", "wind-also"],
+      ["fuku", "blows"]
+    ],
+    "translation": "It's raining and the wind is blowing, too.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "sentence", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["process", "particle"],
+      ["msf", "subject"],
+      ["mismatch", "antiPiedPiping"]
+    ],
+    "comment": "From Nagano 1951:210. The particle appears in each conjunct (n. 3).",
+    "verified": "page-image"
+  },
+  {
+    "id": "brananerlewine2023_17b",
+    "source": {"bibkey": "branan-erlewine-2023", "paperLabel": "(17b)"},
+    "language": "yaey1239",
+    "primaryText": "Hajasi-san-du ziroo-ba bari.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Hajasi-san-du", "Hayashi-san-PRT"], ["ziroo-ba", "Jiro-BA"], ["bari", "hit"]
+    ],
+    "translation": "Hayashi-san hit Jiro.",
+    "context": "Answer to 'What happened?'",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "sentence", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["process", "particle"],
+      ["msf", "subject"],
+      ["leftmost", "strong"],
+      ["mismatch", "antiPiedPiping"]
+    ],
+    "comment": "From Davis 2013:33, Miyara Yaeyaman.",
+    "verified": "page-image"
+  },
+  {
+    "id": "brananerlewine2023_18b",
+    "source": {"bibkey": "branan-erlewine-2023", "paperLabel": "(18b)"},
+    "language": "yaey1239",
+    "primaryText": "Kunu midunpïto-o izï-ba-du fai.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Kunu", "this"], ["midunpïto-o", "woman-TOP"], ["izï-ba-du", "fish-BA-PRT"], ["fai", "ate"]
+    ],
+    "translation": "This woman ate fish.",
+    "context": "Answer to 'What did that woman do?'",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "predicate", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["process", "particle"],
+      ["msf", "object"],
+      ["leftmost", "strong"],
+      ["mismatch", "antiPiedPiping"]
+    ],
+    "comment": "From Davis 2013:33, Miyara Yaeyaman.",
+    "verified": "page-image"
+  },
+  {
+    "id": "brananerlewine2023_21",
+    "source": {"bibkey": "branan-erlewine-2023", "paperLabel": "(21)"},
+    "language": "ishk1246",
+    "primaryText": "Salima kulča-məs pacu.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Salima", "Salima"], ["kulča-məs", "kulcha-also"], ["pacu", "bake"]
+    ],
+    "translation": "Salima also bakes kulcha.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "object", "judgment": "acceptable"},
+      {"name": "predicate", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["process", "particle"],
+      ["msf", "object"],
+      ["leftmost", "strong"]
+    ],
+    "comment": "From Karvovskaya 2013:81.",
+    "verified": "page-image"
+  },
+  {
+    "id": "brananerlewine2023_30a",
+    "source": {"bibkey": "branan-erlewine-2023", "paperLabel": "(30a)"},
+    "language": "nucl1643",
+    "primaryText": "Taro-ga tako-o tabe-mo shi-ta.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Taro-ga", "Taro-NOM"], ["tako-o", "octopus-ACC"], ["tabe-mo", "eat-also"],
+      ["shi-ta", "do-PST"]
+    ],
+    "translation": "Taro also ate octopus.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "predicate", "judgment": "acceptable"},
+      {"name": "object", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["process", "particle"],
+      ["msf", "predicate"],
+      ["leftmost", "weak"]
+    ],
+    "comment": "From Ohno 2003:323-24. The paper adds that the particle may also associate narrowly with the object or with the verb; the reading with the verb is not recorded here, since the paper sets narrow focus on a lexical verb aside (n. 45).",
+    "verified": "page-image"
+  },
+  {
+    "id": "brananerlewine2023_30b",
+    "source": {"bibkey": "branan-erlewine-2023", "paperLabel": "(30b)"},
+    "language": "nucl1643",
+    "primaryText": "Taro-ga tako-mo tabe-ta.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Taro-ga", "Taro-NOM"], ["tako-mo", "octopus-also"], ["tabe-ta", "eat-PST"]
+    ],
+    "translation": "Taro also ate octopus.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "predicate", "judgment": "acceptable"},
+      {"name": "object", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["process", "particle"],
+      ["msf", "object"],
+      ["leftmost", "weak"]
+    ],
+    "comment": "From Ohno 2003:323-24. The paper adds that the sentence also allows narrow focus on the object.",
+    "verified": "page-image"
+  },
+  {
+    "id": "brananerlewine2023_38",
+    "source": {"bibkey": "branan-erlewine-2023", "paperLabel": "(38)"},
+    "language": "ishk1246",
+    "primaryText": "Wai mol-məs xi dusto-i zənayu isu.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Wai", "DEM"], ["mol-məs", "husband-also"], ["xi", "REFL"], ["dusto-i", "hands-ACC"],
+      ["zənayu", "wash"], ["isu", "come"]
+    ],
+    "translation": "Her husband goes to wash his hands, too.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "subject", "judgment": "acceptable"},
+      {"name": "sentence", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["process", "particle"],
+      ["msf", "subject"],
+      ["leftmost", "strong"]
+    ],
+    "comment": "From Karvovskaya 2013:82.",
+    "verified": "page-image"
+  },
+  {
+    "id": "brananerlewine2023_65_goal",
+    "source": {"bibkey": "branan-erlewine-2023", "paperLabel": "(65)"},
+    "language": "tibe1272",
+    "primaryText": "Kun.dga’ khyi-la-yang kha.lag sprad.gi.’dug.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Kun.dga’", "Kunga"], ["khyi-la-yang", "dog-DAT-also"], ["kha.lag", "food"],
+      ["sprad.gi.’dug", "gives"]
+    ],
+    "translation": "Kunga also gives food to dogs.",
+    "context": "Kunga's a very good person. She prays at the temple every day.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "predicate", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["process", "particle"],
+      ["msf", "goal"],
+      ["leftmost", "weak"]
+    ],
+    "comment": "Erlewine's field notes. The source prints one line with the particle in braces after each object; this is the variant marked with a check.",
+    "verified": "page-image"
+  },
+  {
+    "id": "brananerlewine2023_65_theme",
+    "source": {"bibkey": "branan-erlewine-2023", "paperLabel": "(65)"},
+    "language": "tibe1272",
+    "primaryText": "Kun.dga’ khyi-la kha.lag-yang sprad.gi.’dug.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Kun.dga’", "Kunga"], ["khyi-la", "dog-DAT"], ["kha.lag-yang", "food-also"],
+      ["sprad.gi.’dug", "gives"]
+    ],
+    "translation": "Kunga also gives food to dogs.",
+    "context": "Kunga's a very good person. She prays at the temple every day.",
+    "judgment": "marginal",
+    "alternatives": [],
+    "readings": [
+      {"name": "predicate", "judgment": "marginal"}
+    ],
+    "paperFeatures": [
+      ["process", "particle"],
+      ["msf", "theme"],
+      ["leftmost", "weak"]
+    ],
+    "comment": "Erlewine's field notes. The source prints one line with the particle in braces after each object; this is the variant marked ?.",
+    "verified": "page-image"
+  },
+  {
+    "id": "brananerlewine2023_66a",
+    "source": {"bibkey": "branan-erlewine-2023", "paperLabel": "(66a)"},
+    "language": "nucl1643",
+    "primaryText": "Taro-mo piano-o hiita.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Taro-mo", "Taro-also"], ["piano-o", "piano-ACC"], ["hiita", "played"]
+    ],
+    "translation": "Taro played piano, too.",
+    "context": "At yesterday's party, not only did Hanako dance, but ...",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "sentence", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["process", "particle"],
+      ["msf", "subject"],
+      ["leftmost", "weak"]
+    ],
+    "comment": "Based on Aoyagi 1998:151, 2006:123. All speakers allow the particle on the subject.",
+    "verified": "page-image"
+  },
+  {
+    "id": "brananerlewine2023_66b",
+    "source": {"bibkey": "branan-erlewine-2023", "paperLabel": "(66b)"},
+    "language": "nucl1643",
+    "primaryText": "Taro-ga piano-mo hiita.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Taro-ga", "Taro-NOM"], ["piano-mo", "piano-also"], ["hiita", "played"]
+    ],
+    "translation": "Taro played piano, too.",
+    "context": "At yesterday's party, not only did Hanako dance, but ...",
+    "judgment": "marginal",
+    "alternatives": [],
+    "readings": [
+      {"name": "sentence", "judgment": "marginal"}
+    ],
+    "paperFeatures": [
+      ["process", "particle"],
+      ["msf", "object"],
+      ["leftmost", "weak"]
+    ],
+    "comment": "Based on Aoyagi 1998:151, 2006:123. Marked %: only some speakers allow the particle on the object; Aoyagi reports optional placement and Numata that the particle always targets the leftmost constituent (n. 16).",
+    "verified": "page-image"
+  },
+  {
+    "id": "brananerlewine2023_67_goal",
+    "source": {"bibkey": "branan-erlewine-2023", "paperLabel": "(67)"},
+    "language": "hind1269",
+    "primaryText": "Vo sirf bachcho-ko hii tohfe de payaa hai.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Vo", "3SG"], ["sirf", "only"], ["bachcho-ko", "children-DAT"], ["hii", "PRT"],
+      ["tohfe", "gifts"], ["de", "give"], ["payaa", "able"], ["hai", "AUX"]
+    ],
+    "translation": "He could only give gifts to children.",
+    "context": "During Diwali, Pulkit plans to feed the poor and also distribute gifts to children. However, due to some emergency, he fails to be able to feed the poor.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "predicate", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["process", "particle"],
+      ["msf", "goal"],
+      ["leftmost", "weak"]
+    ],
+    "comment": "From Dash & Datta 2020, exx. 5, 17. The source prints one line with the particle in braces after each object, and Vo and sirf in parentheses; this is the variant marked with a check.",
+    "verified": "page-image"
+  },
+  {
+    "id": "brananerlewine2023_67_theme",
+    "source": {"bibkey": "branan-erlewine-2023", "paperLabel": "(67)"},
+    "language": "hind1269",
+    "primaryText": "Vo sirf bachcho-ko tohfe hii de payaa hai.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Vo", "3SG"], ["sirf", "only"], ["bachcho-ko", "children-DAT"], ["tohfe", "gifts"],
+      ["hii", "PRT"], ["de", "give"], ["payaa", "able"], ["hai", "AUX"]
+    ],
+    "translation": "He could only give gifts to children.",
+    "context": "During Diwali, Pulkit plans to feed the poor and also distribute gifts to children. However, due to some emergency, he fails to be able to feed the poor.",
+    "judgment": "marginal",
+    "alternatives": [],
+    "readings": [
+      {"name": "predicate", "judgment": "marginal"}
+    ],
+    "paperFeatures": [
+      ["process", "particle"],
+      ["msf", "theme"],
+      ["leftmost", "weak"]
+    ],
+    "comment": "From Dash & Datta 2020, exx. 5, 17. The source prints one line with the particle in braces after each object, and Vo and sirf in parentheses; this is the variant marked ?, for a 'weak leftmost preference'.",
+    "verified": "page-image"
+  },
+  {
+    "id": "brananerlewine2023_68a",
+    "source": {"bibkey": "branan-erlewine-2023", "paperLabel": "(68a)"},
+    "language": "stan1295",
+    "primaryText": "Die Bücher hab ich ins Regal gestellt.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Die", "the"], ["Bücher", "books"], ["hab", "have"], ["ich", "1SG"], ["ins", "into.the"],
+      ["Regal", "shelf"], ["gestellt", "placed"]
+    ],
+    "translation": "I put the books on the shelves.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "theme", "judgment": "acceptable"},
+      {"name": "predicate", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["process", "movement"],
+      ["msf", "theme"],
+      ["leftmost", "strong"]
+    ],
+    "comment": "From Fanselow 2004:11. The theme is leftmost in the base order of the verb phrase.",
+    "verified": "page-image"
+  },
+  {
+    "id": "brananerlewine2023_68b",
+    "source": {"bibkey": "branan-erlewine-2023", "paperLabel": "(68b)"},
+    "language": "stan1295",
+    "primaryText": "Ins Regal hab ich die Bücher gestellt.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Ins", "into.the"], ["Regal", "shelf"], ["hab", "have"], ["ich", "1SG"], ["die", "the"],
+      ["Bücher", "books"], ["gestellt", "placed"]
+    ],
+    "translation": "I put the books on the shelves.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "goal", "judgment": "acceptable"},
+      {"name": "predicate", "judgment": "ungrammatical"}
+    ],
+    "paperFeatures": [
+      ["process", "movement"],
+      ["msf", "goal"],
+      ["leftmost", "strong"]
+    ],
+    "comment": "From Fanselow 2004:11.",
+    "verified": "page-image"
+  },
+  {
+    "id": "brananerlewine2023_69a",
+    "source": {"bibkey": "branan-erlewine-2023", "paperLabel": "(69a)"},
+    "language": "kiku1240",
+    "primaryText": "Ne-mwana Abdul aðomaɣera iβuku.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Ne-mwana", "PRT-1.child"], ["Abdul", "Abdul"], ["aðomaɣera", "read"], ["iβuku", "book"]
+    ],
+    "translation": "Abdul reads the child a book.",
+    "context": "Q: What does Abdul do?",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "predicate", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["process", "movement"],
+      ["msf", "goal"],
+      ["leftmost", "weak"]
+    ],
+    "comment": "From Schwarz 2003:95, who notes that goal fronting 'seems to be slightly preferred'. The base order is goal before theme.",
+    "verified": "page-image"
+  },
+  {
+    "id": "brananerlewine2023_69b",
+    "source": {"bibkey": "branan-erlewine-2023", "paperLabel": "(69b)"},
+    "language": "kiku1240",
+    "primaryText": "Ne-iβuku Abdul aðomaɣera mwana.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Ne-iβuku", "PRT-book"], ["Abdul", "Abdul"], ["aðomaɣera", "read"], ["mwana", "child"]
+    ],
+    "translation": "Abdul reads the child a book.",
+    "context": "Q: What does Abdul do?",
+    "judgment": "marginal",
+    "alternatives": [],
+    "readings": [
+      {"name": "predicate", "judgment": "marginal"}
+    ],
+    "paperFeatures": [
+      ["process", "movement"],
+      ["msf", "theme"],
+      ["leftmost", "weak"]
+    ],
+    "comment": "From Schwarz 2003:95, 'although both seem to be acceptable'.",
+    "verified": "page-image"
+  },
+  {
+    "id": "brananerlewine2023_70a",
+    "source": {"bibkey": "branan-erlewine-2023", "paperLabel": "(70a)"},
+    "language": "sanm1291",
+    "primaryText": "Tsìnà shàshi koñu.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Tsìnà", "dog"], ["shàshi", "ate"], ["koñu", "meat"]
+    ],
+    "translation": "The dog ate the meat.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "sentence", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["process", "movement"],
+      ["msf", "subject"],
+      ["leftmost", "free"]
+    ],
+    "comment": "From Hedding 2019, ex. 43a. The base order is VSO.",
+    "verified": "page-image"
+  },
+  {
+    "id": "brananerlewine2023_70b",
+    "source": {"bibkey": "branan-erlewine-2023", "paperLabel": "(70b)"},
+    "language": "sanm1291",
+    "primaryText": "Koñu shàshi tsìnà.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Koñu", "meat"], ["shàshi", "ate"], ["tsìnà", "dog"]
+    ],
+    "translation": "The dog ate the meat.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "sentence", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["process", "movement"],
+      ["msf", "object"],
+      ["leftmost", "free"]
+    ],
+    "comment": "From Hedding 2019, ex. 43b. The base order is VSO.",
+    "verified": "page-image"
+  },
+  {
+    "id": "brananerlewine2023_109a",
+    "source": {"bibkey": "branan-erlewine-2023", "paperLabel": "(109a)"},
+    "language": "czec1258",
+    "primaryText": "Janu Linda hledala.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Janu", "Jana.ACC"], ["Linda", "Linda.NOM"], ["hledala", "looked.for.SG.F"]
+    ],
+    "translation": "Linda was looking for Jana.",
+    "context": "Q: What's new?",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "sentence", "judgment": "unacceptable"},
+      {"name": "object", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["process", "movement"],
+      ["msf", "object"],
+      ["leftmost", "strong"]
+    ],
+    "comment": "Radek Šimík, p.c., based on Lenertová & Junghanns 2007:356. Marked # as an answer to the question; the paper adds that the sentence can only be interpreted with narrow focus on the object.",
+    "verified": "page-image"
+  },
+  {
+    "id": "brananerlewine2023_109b",
+    "source": {"bibkey": "branan-erlewine-2023", "paperLabel": "(109b)"},
+    "language": "czec1258",
+    "primaryText": "Janu někdo hledal.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Janu", "Jana.ACC"], ["někdo", "somebody.NOM"], ["hledal", "looked.for.SG.M"]
+    ],
+    "translation": "Somebody was looking for Jana.",
+    "context": "Q: What's new?",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "sentence", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["process", "movement"],
+      ["msf", "object"],
+      ["leftmost", "strong"],
+      ["skipped", "subject"]
+    ],
+    "comment": "Radek Šimík, p.c., based on Lenertová & Junghanns 2007:356. The subject is indefinite.",
+    "verified": "page-image"
+  },
+  {
+    "id": "brananerlewine2023_111a",
+    "source": {"bibkey": "branan-erlewine-2023", "paperLabel": "(111a)"},
+    "language": "nucl1643",
+    "primaryText": "dareka-mo piano-o hiita.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["dareka-mo", "someone-also"], ["piano-o", "piano-ACC"], ["hiita", "played"]
+    ],
+    "translation": "Someone played piano, too.",
+    "context": "At yesterday's party, not only did Hanako dance a dance, but ...",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "sentence", "judgment": "unacceptable"}
+    ],
+    "paperFeatures": [
+      ["process", "particle"],
+      ["msf", "subject"],
+      ["leftmost", "weak"],
+      ["skipped", "subject"]
+    ],
+    "comment": "Based on (66). Marked #: speakers disprefer the particle on the nonspecific indefinite subject, on the judgments of eight speakers (n. 38).",
+    "verified": "page-image"
+  },
+  {
+    "id": "brananerlewine2023_111b",
+    "source": {"bibkey": "branan-erlewine-2023", "paperLabel": "(111b)"},
+    "language": "nucl1643",
+    "primaryText": "dareka-ga piano-mo hiita.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["dareka-ga", "someone-NOM"], ["piano-mo", "piano-also"], ["hiita", "played"]
+    ],
+    "translation": "Someone played piano, too.",
+    "context": "At yesterday's party, not only did Hanako dance a dance, but ...",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "sentence", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["process", "particle"],
+      ["msf", "object"],
+      ["leftmost", "weak"],
+      ["skipped", "subject"]
+    ],
+    "comment": "Based on (66). The subject is a nonspecific indefinite.",
+    "verified": "page-image"
+  },
+  {
+    "id": "brananerlewine2023_114a",
+    "source": {"bibkey": "branan-erlewine-2023", "paperLabel": "(114a)"},
+    "language": "haus1257",
+    "primaryText": "B’àràayii nèe su-kà yi mîn saatàa!",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["B’àràayii", "robbers"], ["nèe", "FM"], ["su-kà", "3PL-REL"], ["yi", "do"],
+      ["mîn", "to.me"], ["saatàa", "theft"]
+    ],
+    "translation": "Robbers have stolen from me!",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "sentence", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["process", "movement"],
+      ["msf", "subject"],
+      ["leftmost", "strong"]
+    ],
+    "comment": "From Hartmann & Zimmermann 2007b:385.",
+    "verified": "page-image"
+  },
+  {
+    "id": "brananerlewine2023_114b",
+    "source": {"bibkey": "branan-erlewine-2023", "paperLabel": "(114b)"},
+    "language": "haus1257",
+    "primaryText": "Dabboobi-n jeejìi nèe mutàanee su-kà kaamàa.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Dabboobi-n", "animals-of"], ["jeejìi", "wild"], ["nèe", "FM"], ["mutàanee", "men"],
+      ["su-kà", "3PL-REL"], ["kaamàa", "catch"]
+    ],
+    "translation": "The men caught wild animals!",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "sentence", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["process", "movement"],
+      ["msf", "object"],
+      ["leftmost", "strong"],
+      ["skipped", "subject"]
+    ],
+    "comment": "From Hartmann & Zimmermann 2007b:385. The paper takes the subject to be of the sort skipped for the evaluation of leftmost, and reports that fronting the subject is not available here.",
+    "verified": "page-image"
+  },
+  {
+    "id": "brananerlewine2023_120a",
+    "source": {"bibkey": "branan-erlewine-2023", "paperLabel": "(120a)"},
+    "language": "stan1293",
+    "primaryText": "Whose picture did you frame?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "wh", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["process", "movement"],
+      ["msf", "phrase"],
+      ["leftmost", "strong"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "brananerlewine2023_120b",
+    "source": {"bibkey": "branan-erlewine-2023", "paperLabel": "(120b)"},
+    "language": "stan1293",
+    "primaryText": "A picture of whom did you frame?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [
+      {"name": "wh", "judgment": "ungrammatical"}
+    ],
+    "paperFeatures": [
+      ["process", "movement"],
+      ["msf", "phrase"],
+      ["leftmost", "strong"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "brananerlewine2023_121a",
+    "source": {"bibkey": "branan-erlewine-2023", "paperLabel": "(121a)"},
+    "language": "stan1293",
+    "primaryText": "Whose brother's friend's father did you see?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "wh", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["process", "movement"],
+      ["msf", "phrase"],
+      ["leftmost", "strong"]
+    ],
+    "comment": "From Kotek & Erlewine 2016:687, based on Cable 2012:823.",
+    "verified": "page-image"
+  },
+  {
+    "id": "brananerlewine2023_121b",
+    "source": {"bibkey": "branan-erlewine-2023", "paperLabel": "(121b)"},
+    "language": "stan1293",
+    "primaryText": "The father of whose brother's friend did you see?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [
+      {"name": "wh", "judgment": "ungrammatical"}
+    ],
+    "paperFeatures": [
+      ["process", "movement"],
+      ["msf", "phrase"],
+      ["leftmost", "strong"]
+    ],
+    "comment": "From Kotek & Erlewine 2016:687, based on Cable 2012:823.",
+    "verified": "page-image"
+  },
+  {
+    "id": "brananerlewine2023_123",
+    "source": {"bibkey": "branan-erlewine-2023", "paperLabel": "(123)"},
+    "language": "stan1293",
+    "primaryText": "To which student's friend did you speak?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "wh", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["process", "movement"],
+      ["msf", "phrase"],
+      ["leftmost", "strong"],
+      ["skipped", "phrase"]
+    ],
+    "comment": "The preposition is light, and the phrase it heads is skipped.",
+    "verified": "page-image"
+  },
+  {
+    "id": "brananerlewine2023_124",
+    "source": {"bibkey": "branan-erlewine-2023", "paperLabel": "(124)"},
+    "language": "lati1261",
+    "primaryText": "ob eās-que rēs",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["ob", "because"], ["eās-que", "these-also"], ["rēs", "things"]
+    ],
+    "translation": "and because of these things, too",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "phrase", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["process", "particle"],
+      ["msf", "demonstrative"],
+      ["leftmost", "strong"],
+      ["skipped", "phrase"]
+    ],
+    "comment": "From Carlson 1983:73; the source prints the phrase alone. The particle follows one word at the left edge of its focus but skips monosyllabic prepositions.",
+    "verified": "page-image"
+  },
+  {
+    "id": "brananerlewine2023_125",
+    "source": {"bibkey": "branan-erlewine-2023", "paperLabel": "(125)"},
+    "language": "russ1263",
+    "primaryText": "Interesno na sestre druga č’ej materi on ženilsja.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Interesno", "interesting"], ["na", "on"], ["sestre", "sister"], ["druga", "friend"],
+      ["č’ej", "whose"], ["materi", "mother"], ["on", "he"], ["ženilsja", "married"]
+    ],
+    "translation": "I wonder whose mother's friend's sister he married.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "wh", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["process", "movement"],
+      ["msf", "phrase"],
+      ["leftmost", "free"]
+    ],
+    "comment": "From Heck 2008:79.",
+    "verified": "page-image"
+  },
+  {
+    "id": "brananerlewine2023_126",
+    "source": {"bibkey": "branan-erlewine-2023", "paperLabel": "(126)"},
+    "language": "stan1293",
+    "primaryText": "Reports the height of the lettering on the covers of which the government prescribes should be abolished.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "wh", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["process", "movement"],
+      ["msf", "phrase"],
+      ["leftmost", "free"]
+    ],
+    "comment": "From Ross 1967:198.",
+    "verified": "page-image"
+  }
+]
