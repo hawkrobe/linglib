@@ -7,7 +7,8 @@ public import Mathlib.Data.List.Chain
 # Vowel hiatus
 
 This file defines vowel hiatus, the adjacency of two vowels, and its repair at a morpheme
-juncture by eliding one of the vowels or by inserting a consonant between them.
+juncture by eliding one of the vowels, by merging the two into one, or by inserting a consonant
+between them.
 
 Many languages do not tolerate hiatus. Where a vowel-final morpheme meets a vowel-initial one,
 they elide one of the two vowels, turn the first into a glide, merge the two into a third
@@ -26,15 +27,18 @@ So neither constraint is an instance of the other.
   vowel pairs.
 * `Hiatus.Juncture`: hiatus at a morpheme boundary, where a vowel-final stem meets a
   vowel-initial suffix.
-* `Juncture.epenthesize`, `Juncture.elideV1`, `Juncture.elideV2`: the repairs by insertion of
-  a consonant and by elision of either vowel.
+* `Juncture.epenthesize`, `Juncture.elideV1`, `Juncture.elideV2`, `Juncture.coalesce`: the
+  repairs by insertion of a consonant, by elision of either vowel, and by merger of the two
+  into a given vowel.
 
 ## Main results
 
 * `Hiatus.free_iff_count_eq_zero`: the ban and the count agree.
 * `Juncture.not_free_input`: the unrepaired concatenation has a hiatus.
-* `Juncture.free_epenthesize`, `Juncture.free_elideV1`, `Juncture.free_elideV2`: a repaired
-  form is free of hiatus exactly when the material on each side of the juncture is.
+* `Juncture.free_epenthesize`, `Juncture.free_elideV1`, `Juncture.free_elideV2`,
+  `Juncture.free_coalesce`: a repaired form is free of hiatus exactly when the material on each
+  side of the juncture is.
+* `Juncture.coalesce_v2`, `Juncture.coalesce_v1`: elision is merger into the surviving vowel.
 * `Juncture.elideV1_eq_eraseIdx`, `Juncture.elideV2_eq_eraseIdx`,
   `Juncture.epenthesize_eq_insertIdx`: the repairs as the deletion of one position of the
   unrepaired concatenation and the insertion of one segment into it.
@@ -43,8 +47,9 @@ So neither constraint is an instance of the other.
 
 ## Implementation notes
 
-Glide formation, coalescence and diphthong formation are not defined, since they turn on the
-quality and syllabification of the two vowels and no study yet consumes them.
+Which vowel a merger yields turns on the quality of the two, so `Juncture.coalesce` takes the
+result as an argument. Glide formation and diphthong formation are not defined, since they turn
+on the syllabification of the two vowels and no study yet consumes them.
 
 ## References
 
@@ -133,6 +138,9 @@ def elideV1 : List Segment := j.stemBody ++ j.suffix
 /-- `j.elideV2` elides the suffix-initial vowel. -/
 def elideV2 : List Segment := j.stem ++ j.suffixBody
 
+/-- `j.coalesce v` merges the two vowels into `v`. -/
+def coalesce (v : Segment) : List Segment := j.stemBody ++ v :: j.suffixBody
+
 @[simp] theorem length_stem : j.stem.length = j.stemBody.length + 1 := by simp [stem]
 
 @[simp] theorem length_input : j.input.length = j.stemBody.length + j.suffixBody.length + 2 := by
@@ -149,6 +157,16 @@ def elideV2 : List Segment := j.stem ++ j.suffixBody
 @[simp] theorem length_elideV2 :
     j.elideV2.length = j.stemBody.length + j.suffixBody.length + 1 := by
   simp [elideV2, stem]; omega
+
+@[simp] theorem length_coalesce (v : Segment) :
+    (j.coalesce v).length = j.stemBody.length + j.suffixBody.length + 1 := by
+  simp [coalesce]; omega
+
+/-- Merger into the second vowel is elision of the first. -/
+theorem coalesce_v2 : j.coalesce j.v2 = j.elideV1 := rfl
+
+/-- Merger into the first vowel is elision of the second. -/
+theorem coalesce_v1 : j.coalesce j.v1 = j.elideV2 := by simp [coalesce, elideV2, stem]
 
 /-- The unrepaired concatenation is longer than the bare stem. -/
 theorem input_ne_stem : j.input ≠ j.stem := fun h ↦ by
@@ -229,6 +247,12 @@ vowel followed by the suffix body is. -/
 theorem free_elideV2 : Free j.elideV2 ↔ Free j.stem ∧ Free (j.v1 :: j.suffixBody) := by
   simp only [Free, elideV2, stem, List.append_assoc, List.singleton_append]
   exact List.isChain_split
+
+/-- The form with the two vowels merged into `v` is free of hiatus exactly when the stem body
+followed by `v` is, and `v` followed by the suffix body is. -/
+theorem free_coalesce (v : Segment) :
+    Free (j.coalesce v) ↔ Free (j.stemBody ++ [v]) ∧ Free (v :: j.suffixBody) :=
+  List.isChain_split
 
 end Juncture
 
