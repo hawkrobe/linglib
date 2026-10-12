@@ -10,7 +10,7 @@ public import Mathlib.Data.Finset.Powerset
 public import Mathlib.Data.Finset.Sups
 
 /-!
-# Phi lattices and their operations
+# Feature actions on lattices of groups
 
 In Harbour's calculus a feature denotes a lattice of groups, the nonempty sets of some atoms,
 and its values act on the lattice of its host. The positive value adds the feature's lattice
@@ -23,17 +23,17 @@ its atoms.
 
 ## Main definitions
 
-* `Minimalist.Phi.Lattice.nePowerset`: the lattice of groups of a set of atoms.
-* `Minimalist.Phi.Lattice.ominus`: the negative action of a feature.
-* `Minimalist.Phi.Lattice.act`: the action of a feature with a given value.
-* `Minimalist.Phi.Lattice.containing`: the groups containing an atom of a given set.
+* `Plurality.FeatureAction.nePowerset`: the lattice of groups of a set of atoms.
+* `Plurality.FeatureAction.ominus`: the negative action of a feature.
+* `Plurality.FeatureAction.act`: the action of a feature with a given value.
+* `Plurality.FeatureAction.containing`: the groups containing an atom of a given set.
 
 ## Main results
 
-* `Minimalist.Phi.Lattice.nePowerset_sups_nePowerset`,
-  `Minimalist.Phi.Lattice.nePowerset_sups_containing`: along an entailment chain, adding a
+* `Plurality.FeatureAction.nePowerset_sups_nePowerset`,
+  `Plurality.FeatureAction.nePowerset_sups_containing`: along an entailment chain, adding a
   feature's lattice gives the groups containing one of its atoms.
-* `Minimalist.Phi.Lattice.mem_containing_sdiff_containing_iff`: Lexical Complementarity
+* `Plurality.FeatureAction.mem_containing_sdiff_containing_iff`: Lexical Complementarity
   between two such denotations.
 
 ## References
@@ -46,7 +46,7 @@ its atoms.
 
 open scoped FinsetFamily
 
-namespace Minimalist.Phi.Lattice
+namespace Plurality.FeatureAction
 
 open Finset
 
@@ -156,4 +156,4 @@ theorem containing_not_subset_of_disjoint {X Y Z : Finset α} (hd : Disjoint X Y
   rw [mem_inter, mem_singleton] at hy
   exact disjoint_left.1 hd hx (hy.1 ▸ hy.2)
 
-end Minimalist.Phi.Lattice
+end Plurality.FeatureAction

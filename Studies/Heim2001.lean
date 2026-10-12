@@ -14,7 +14,7 @@ argument exceeds *t*, `Degree.MaxIn (Ioi t)`, and a DegP scopes under a quantifi
 domain the two scopes coincide and under a monotone decreasing one the maximum is undefined,
 so the *exactly*-differential and *less*, whose intervals are not upper sets, are the
 diagnostic cases: under *every girl* their high scope is a weaker reading the sentence lacks,
-which Kennedy's generalization, the Heim–Kennedy constraint `Minimalist.IsHeimKennedy`,
+which Kennedy's generalization, the Heim–Kennedy constraint `Degree.IsHeimKennedy`,
 excludes, while over the intensional verbs both scopes are attested. For the neg-raising verbs
 the maximum redefined as the greatest lower bound of the false degrees collapses the scopes
 (`negRaising_collapse`), and *-est*, using its complement twice, is the absolute superlative

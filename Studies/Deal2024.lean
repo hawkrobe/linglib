@@ -2,7 +2,7 @@ module
 
 public import Linglib.Syntax.Agreement.PersonCaseConstraint
 public import Linglib.Syntax.Minimalist.Probe.Basic
-public import Linglib.Syntax.Minimalist.Phi.PersonSegment
+public import Linglib.Syntax.Minimalist.Agree.PersonSegment
 public import Studies.CoonKeine2021
 public import Studies.Haspelmath2021
 public import Linglib.Syntax.Clause.Scenario
