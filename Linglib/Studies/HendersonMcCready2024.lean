@@ -1,41 +1,58 @@
 module
 
 public import Linglib.Pragmatics.SocialMeaning.Game
-public import Mathlib.Analysis.SpecialFunctions.Log.Basic
+public import Mathlib.Analysis.Complex.ExponentialBounds
 public import Mathlib.Tactic.DeriveFintype
 
 /-!
-# Henderson and McCready (2024): Signaling without Saying
+# Henderson and McCready (2024): Signaling without Saying: The Semantics and Pragmatics of Dogwhistles
 
-This file formalizes the social meaning games for identifying dogwhistles of Chapter 4 of Henderson
-and McCready. A dogwhistle sends one message to an in-group and another to an out-group, and the
-book models it by loosening Burnett's social meaning games in two ways. A listener holds, besides a
-prior over personae, a likelihood of each message given each persona, so that the literal listener
-is Bayes' rule over that likelihood and Burnett's indexation is the lexicalized special case (`L0`).
-And the speaker's social utility for a message toward a listener sums, over the personae, the log
-posterior with the speaker's and the listener's values of the persona weighted by the posterior
-(`socialUtility`); the utility toward an audience is the sum over its listeners (`groupUtility`),
-and the speaker is the softmax of the utility. A message is a dogwhistle to a population when the
-likelihood listeners assign it correlates with their approval of the personae it signals, so that
-those who hear the whistle and approve reward it, those who hear it and disapprove punish it, and
-those who do not hear it react to its innocuous reading alone.
+This file formalizes the identifying dogwhistles of Chapter 4, messages that tell part of an
+audience who the speaker is while the rest hears something innocuous. The book loosens Burnett's
+social meaning games in two ways. A listener holds, besides a prior over the speaker's personae, a
+likelihood of each message given each persona, so the literal listener is Bayes' rule over that
+likelihood, the RSA listener of the likelihood taken as a channel, and Burnett's literal listener
+is the case of a likelihood that is zero or one. And the speaker's social utility for a message
+toward a listener sums, over the personae, the log posterior and the speaker's and the listener's
+values of the persona weighted by the posterior; the utility toward a group is the sum over its
+members, and the speaker chooses by the softmax of that utility. So a group that prefers a message
+to a member makes the speaker favour it, and only the proportions of a group matter.
 
-The case study has Jill Stein choosing between *big pharma*, which savvy listeners tie to the
-anti-vaxxer persona and unsavvy ones read as merely anti-corporate, and *corporate scientists*.
-A savvy pro-vaxxer prefers that she disavow, an unsavvy one prefers it too but by less, and an
-anti-vaxxer prefers the dogwhistle (`savvyProVax_prefers_disavowal`,
-`unsavvyProVax_prefers_disavowal`, `antiVax_prefers_dogwhistle`), so a pro-vaxxer audience
-calls for the disavowal and an anti-vaxxer audience for the dogwhistle, and a mixed audience
-turns on its composition (`dogwhistle_optimal_iff`).
+In the case study Jill Stein chooses between *big pharma*, which savvy listeners tie to the
+anti-vaxxer persona and unsavvy ones read as merely anti-corporate, and the disavowal *corporate
+scientists*. To pro-vaxxers alone, savvy or not, she disavows; to anti-vaxxers alone she
+dogwhistles; a savvy pro-vaxxer weighs more against the dogwhistle than an unsavvy one; and to an
+audience of 400 anti-vaxxers, 100 savvy and 4500 unsavvy pro-vaxxers she dogwhistles.
+
+## Main statements
+
+* `Listener.L0_eq_listener_truthful`: a likelihood that is zero or one gives Burnett's literal
+  listener.
+* `disavows_to_proVaxxers`, `dogwhistles_to_antiVaxxers`: the speaker disavows to any group of
+  pro-vaxxers and dogwhistles to any group of anti-vaxxers.
+* `dogwhistles_to_mixedAudience`: she dogwhistles to the book's mixed audience.
 
 ## Implementation notes
 
-The book's percentages are recorded as integer weights, since the literal listener normalizes,
-and the log of a zero posterior is zero, which is mathlib's convention and matches the book's
-sum over the personae consistent with the message. The orderings of the utilities are proved
-symbolically from the exact posteriors, bounding the log terms by the quadratic lower bound
-on the exponential. The parameter exploration of Section 4.3 and the enriching dogwhistles of
-Chapter 5 are not represented.
+* The book's probabilities are integer weights in twentieths, since the literal listener
+  normalizes.
+* The social utility sums over all personae, mathlib's `Real.log 0 = 0` making the terms off the
+  posterior's support vanish. That is the sum the book's printed utilities compute, although its
+  table of the personae consistent with *corporate scientists* omits the pro-corporate
+  anti-vaxxer, to whom its likelihood gives .1.
+* The book conditions the speaker on her persona, but the utility does not depend on it, so
+  neither does `S1`; its utility is toward a group, the book's single listener being a group of
+  one. Stein values no persona over another, so her values are zero.
+
+## TODO
+
+* The book says (p. 65) that a few dozen more savvy pro-vaxxers or a thousand more naive listeners
+  would turn Stein from the dogwhistle; on its own numbers that takes about 74 savvy or 1314
+  naive ones, and a thousand more still leave her dogwhistling
+  (`dogwhistles_to_thousand_more_unsavvy`).
+* The book prints 73 for the anti-vaxxer's utility of *big pharma*, where the model gives 72.05;
+  the other five printed utilities agree.
+* The parameter exploration of Section 4.3 and the enriching dogwhistles of Chapter 5.
 
 ## References
 
@@ -51,7 +68,92 @@ namespace HendersonMcCready2024
 open SocialMeaning MeasureTheory ProbabilityTheory RSA
 open scoped ENNReal
 
-/-! ### Personae -/
+/-! ### The model -/
+
+section Model
+
+variable {P M : Type*} [MeasurableSpace P] [MeasurableSpace M]
+
+/-- A listener holds a prior over the speaker's personae, a likelihood of each message given each
+persona, and an approval of each persona. -/
+structure Listener (P M : Type*) [MeasurableSpace P] [MeasurableSpace M] where
+  /-- The prior over the speaker's personae. -/
+  prior : Measure P
+  /-- The likelihood of each message given each persona. -/
+  likelihood : P → Measure M
+  /-- How much the listener approves of each persona. -/
+  approval : P → ℝ
+
+variable [Countable M] [MeasurableSingletonClass M]
+
+/-- The literal listener is Bayes' rule over the likelihood, the RSA listener who takes the
+likelihood for the speaker's channel. -/
+noncomputable def Listener.L0 (L : Listener P M) : Kernel M P :=
+  listener L.prior L.likelihood
+
+/-- A likelihood that is zero or one, as for a lexicalized social meaning, gives Burnett's literal
+listener, who conditions the prior on the personae the message is true of. -/
+theorem Listener.L0_eq_listener_truthful (L : Listener P M)
+    (h : ∀ p m, L.likelihood p {m} = 0 ∨ L.likelihood p {m} = 1) :
+    L.L0 = listener L.prior (truthful fun m ↦ {p | L.likelihood p {m} = 1}) := by
+  refine congrArg (Kernel.ofDensity L.prior) (funext₂ fun m p ↦ ?_)
+  rw [truthful_apply_singleton]
+  rcases h p m with h | h <;> simp [h]
+
+/-- A message that every persona sends with likelihood zero leaves the literal listener in the
+absurd state, the zero measure. -/
+theorem Listener.L0_eq_zero (L : Listener P M) {m : M} (h : ∀ p, L.likelihood p {m} = 0) :
+    L.L0 m = 0 := by
+  simp [Listener.L0, listener_apply, h, ProbabilityTheory.cond]
+
+variable [Fintype P]
+
+/-- The speaker's social utility of a message toward a listener sums, over the personae, the log
+posterior and the speaker's and the listener's values of the persona weighted by the
+posterior. -/
+noncomputable def socialUtility (νS : P → ℝ) (L : Listener P M) (m : M) : ℝ :=
+  ∑ p, (Real.log ((L.L0 m).real {p}) + νS p * (L.L0 m).real {p} +
+    L.approval p * (L.L0 m).real {p})
+
+/-- The utility toward a group of listeners is the sum over its members. -/
+noncomputable def groupUtility (νS : P → ℝ) (G : Multiset (Listener P M)) (m : M) : ℝ :=
+  (G.map (socialUtility νS · m)).sum
+
+theorem groupUtility_nsmul (νS : P → ℝ) (n : ℕ) (G : Multiset (Listener P M)) (m : M) :
+    groupUtility νS (n • G) m = n * groupUtility νS G m := by
+  rw [groupUtility, groupUtility, Multiset.map_nsmul, Multiset.sum_nsmul, nsmul_eq_mul]
+
+variable [MeasurableSingletonClass P] [Fintype M] {α : ℝ} {νS : P → ℝ}
+  {G : Multiset (Listener P M)} {p : P} {m m' : M}
+
+/-- The speaker chooses a message by the softmax of its utility toward the group at
+rationality `α`. -/
+noncomputable def S1 (α : ℝ) (νS : P → ℝ) (G : Multiset (Listener P M)) : Kernel P M :=
+  Kernel.softmax fun _ m ↦ ((α * groupUtility νS G m : ℝ) : EReal)
+
+/-- The speaker favours the message of higher utility toward the group. -/
+theorem S1_real_singleton_lt_iff (hα : 0 < α) :
+    (S1 α νS G p).real {m} < (S1 α νS G p).real {m'} ↔
+      groupUtility νS G m < groupUtility νS G m' := by
+  rw [S1, Kernel.softmax_coe_real_singleton_lt_iff (fun _ m ↦ α * groupUtility νS G m),
+    mul_lt_mul_iff_right₀ hα]
+
+/-- A message every member of a group prefers is the one the speaker favours. -/
+theorem S1_real_singleton_lt_of_forall (hα : 0 < α) (hG : G ≠ 0)
+    (h : ∀ L ∈ G, socialUtility νS L m < socialUtility νS L m') :
+    (S1 α νS G p).real {m} < (S1 α νS G p).real {m'} :=
+  (S1_real_singleton_lt_iff hα).2 (Multiset.sum_lt_sum_of_nonempty hG h)
+
+/-- Only the proportions of a group matter to the speaker. -/
+theorem S1_nsmul_real_singleton_lt_iff (hα : 0 < α) {n : ℕ} (hn : n ≠ 0) :
+    (S1 α νS (n • G) p).real {m} < (S1 α νS (n • G) p).real {m'} ↔
+      (S1 α νS G p).real {m} < (S1 α νS G p).real {m'} := by
+  rw [S1_real_singleton_lt_iff hα, S1_real_singleton_lt_iff hα, groupUtility_nsmul,
+    groupUtility_nsmul, mul_lt_mul_iff_right₀ (by positivity)]
+
+end Model
+
+/-! ### Stein's predicament -/
 
 /-- The two issues of the case study. -/
 inductive Issue where
@@ -68,23 +170,15 @@ inductive Trait where
   deriving DecidableEq
 
 instance : Fintype Trait :=
-  ⟨{.proVax, .antiVax, .proCorporate, .antiCorporate}, fun t => by cases t <;> simp⟩
+  ⟨{.proVax, .antiVax, .proCorporate, .antiCorporate}, fun t ↦ by cases t <;> simp⟩
 
 /-- The issue a trait is a stance on. -/
 def Trait.issue : Trait → Issue
   | .proVax | .antiVax => .vaccines
   | .proCorporate | .antiCorporate => .corporations
 
-/-- The two stances on one issue are incompatible. -/
-def incompatible : SimpleGraph Trait where
-  Adj p q := p ≠ q ∧ p.issue = q.issue
-  symm := ⟨fun _ _ h => ⟨h.1.symm, h.2.symm⟩⟩
-  loopless := ⟨fun _ h => h.1 rfl⟩
-
-instance : DecidableRel incompatible.Adj := fun p q => inferInstanceAs (Decidable (p ≠ q ∧ _))
-
 /-- A persona takes a stance on each issue. -/
-abbrev Persona := SocialMeaning.Persona incompatible
+abbrev Persona := SocialMeaning.Persona (incompatible Trait.issue)
 
 def proVaxProCorp : Persona := ⟨{.proVax, .proCorporate}, by decide +kernel⟩
 def proVaxAntiCorp : Persona := ⟨{.proVax, .antiCorporate}, by decide +kernel⟩
@@ -96,9 +190,7 @@ theorem personae_eq :
       {proVaxProCorp, proVaxAntiCorp, antiVaxProCorp, antiVaxAntiCorp} := by
   decide +kernel
 
-/-! ### Messages, listeners and their beliefs -/
-
-/-- The two messages are the dogwhistle and the disavowal. -/
+/-- The dogwhistle and the disavowal. -/
 inductive Message where
   | bigPharma
   | corporateScientists
@@ -108,89 +200,75 @@ instance : MeasurableSpace Message := ⊤
 instance : MeasurableSingletonClass Message :=
   DiscreteMeasurableSpace.toMeasurableSingletonClass
 
-/-- The three kinds of listener in the audience. -/
-inductive ListenerType where
-  | savvyAntiVax
-  | savvyProVax
-  | unsavvyProVax
-  deriving DecidableEq, Fintype
+/-- Both messages mark Stein as anti-corporate, *big pharma* as anti-vax and *corporate
+scientists* as pro-vax. -/
+def field : GroundedField Message (incompatible Trait.issue) where
+  indexes
+    | .bigPharma => {.antiVax, .antiCorporate}
+    | .corporateScientists => {.proVax, .antiCorporate}
+  isIndepSet m := by cases m <;> decide
 
-/-- A listener is savvy when they know the anti-vaxxer discourse. -/
-def ListenerType.Savvy : ListenerType → Prop
-  | .unsavvyProVax => False
-  | _ => True
+/-- The personae consistent with *big pharma* are those it meets, the book's table. -/
+theorem field_personae_bigPharma :
+    field.personae .bigPharma = {proVaxAntiCorp, antiVaxProCorp, antiVaxAntiCorp} := by
+  decide +kernel
 
-instance : DecidablePred ListenerType.Savvy
-  | .savvyAntiVax => inferInstanceAs (Decidable True)
-  | .savvyProVax => inferInstanceAs (Decidable True)
-  | .unsavvyProVax => inferInstanceAs (Decidable False)
+/-- The personae consistent with *corporate scientists* are those it meets, the book's table. -/
+theorem field_personae_corporateScientists :
+    field.personae .corporateScientists = {proVaxProCorp, proVaxAntiCorp, antiVaxAntiCorp} := by
+  decide +kernel
 
-/-- Every listener holds the same prior about Stein, probably anti-corporate, pro- or anti-vax
-equally, and pro-corporate only if anti-vax, with weights 8, 8, 3 and 1. -/
+/-- Every listener's prior about Stein, in twentieths: probably anti-corporate, pro- or anti-vax
+equally, and pro-corporate likelier if anti-vax. -/
 def priorWeight (π : Persona) : ℕ :=
   if .antiCorporate ∈ π.1 then 8 else if .antiVax ∈ π.1 then 3 else 1
 
-/-- A listener's likelihood of each message given each persona, in twentieths. *Corporate
-scientists* all but rules out the anti-vaxxer and leans anti-corporate for everyone; *big
-pharma* is impossible from a pro-vax pro-corporate speaker, and savvy listeners tie it to the
-anti-vax anti-corporate persona where unsavvy ones read it as anti-corporate. -/
-def likelihood (t : ListenerType) : Message → Persona → ℕ
+/-- The likelihood of a message given a persona, in twentieths, for a listener who knows the
+anti-vaxxer discourse and for one who does not. *Big pharma* is impossible from a persona it does
+not meet; the savvy tie it to the anti-vax anti-corporate persona and the unsavvy read it as
+mainly anti-corporate. *Corporate scientists* all but rules out the anti-vaxxer and leans
+anti-corporate for everyone. -/
+def likelihoodWeight (savvy : Bool) : Message → Persona → ℕ
+  | .bigPharma, π =>
+    if π ∉ field.personae .bigPharma then 0
+    else if savvy then (if .antiVax ∈ π.1 ∧ .antiCorporate ∈ π.1 then 16 else 2)
+    else if .proVax ∈ π.1 then 14 else if .antiCorporate ∈ π.1 then 3 else 2
   | .corporateScientists, π =>
     if .antiVax ∈ π.1 then 2 else if .proCorporate ∈ π.1 then 12 else 16
-  | .bigPharma, π =>
-    if .proVax ∈ π.1 ∧ .proCorporate ∈ π.1 then 0
-    else if t.Savvy then (if .antiVax ∈ π.1 ∧ .antiCorporate ∈ π.1 then 16 else 2)
-    else if .proVax ∈ π.1 then 14 else if .antiCorporate ∈ π.1 then 3 else 2
 
-/-- A listener's approval of each persona has the pro- and anti-vaxxers reward their own
-stance and punish the other, the unsavvy pro-vaxxer less invested, and everyone slightly punish
-a pro-corporate speaker. -/
-def approval : ListenerType → Persona → ℤ
-  | .savvyAntiVax, π =>
-    (if .antiVax ∈ π.1 then 100 else -100) + (if .proCorporate ∈ π.1 then -25 else 0)
-  | .savvyProVax, π =>
-    (if .proVax ∈ π.1 then 100 else -100) + (if .proCorporate ∈ π.1 then -25 else 0)
-  | .unsavvyProVax, π =>
-    (if .proVax ∈ π.1 then 75 else -100) + (if .proCorporate ∈ π.1 then -25 else 0)
+/-- An anti-vaxxer knows the discourse, rewards an anti-vax speaker and punishes a pro-vax one,
+and slightly punishes a pro-corporate one. -/
+noncomputable def antiVaxxer : Listener Persona Message where
+  prior := .ofWeights (priorWeight ·)
+  likelihood π := .ofWeights fun m ↦ likelihoodWeight true m π
+  approval π := (if .antiVax ∈ π.1 then 100 else -100) + (if .proCorporate ∈ π.1 then -25 else 0)
 
-/-- Stein is accommodating and values no persona over another. -/
-def speakerValue : Persona → ℤ := fun _ => 0
+/-- A savvy pro-vaxxer, the anti-vaxxer's mirror image. -/
+noncomputable def savvyProVaxxer : Listener Persona Message where
+  prior := .ofWeights (priorWeight ·)
+  likelihood π := .ofWeights fun m ↦ likelihoodWeight true m π
+  approval π := (if .proVax ∈ π.1 then 100 else -100) + (if .proCorporate ∈ π.1 then -25 else 0)
 
-/-! ### The model -/
+/-- An unsavvy pro-vaxxer does not know the discourse and, less invested, approves less of a
+pro-vax speaker. -/
+noncomputable def unsavvyProVaxxer : Listener Persona Message where
+  prior := .ofWeights (priorWeight ·)
+  likelihood π := .ofWeights fun m ↦ likelihoodWeight false m π
+  approval π := (if .proVax ∈ π.1 then 75 else -100) + (if .proCorporate ∈ π.1 then -25 else 0)
 
-/-- A listener's literal listener is Bayes' rule over their likelihood, Burnett's literal
-listener when the likelihood is an indexation. -/
-noncomputable def L0 (t : ListenerType) : Kernel Message Persona :=
-  Kernel.ofDensity (Measure.ofWeights (priorWeight ·)) fun m π => (likelihood t m π : ℝ≥0∞)
+/-! ### Stein's choice -/
 
-/-- The posterior a listener assigns a persona on hearing a message, as a real number. -/
-theorem L0_real_singleton (t : ListenerType) (m : Message) (π : Persona) :
-    (L0 t m).real {π}
-      = (likelihood t m π * priorWeight π : ℝ) / ∑ π', (likelihood t m π' * priorWeight π' : ℝ) :=
-  Kernel.ofDensity_natCast_real_singleton priorWeight (likelihood t) m π
-
-/-- The speaker's social utility of a message toward a listener sums, over the personae, the
-log posterior with the speaker's and the listener's values weighted by the posterior. -/
-noncomputable def socialUtility (t : ListenerType) (m : Message) : ℝ :=
-  ∑ π, (Real.log ((L0 t m).real {π}) + (speakerValue π + approval t π) * (L0 t m).real {π})
-
-/-- The utility toward an audience with the given numbers of each kind of listener. -/
-noncomputable def groupUtility (audience : ListenerType → ℕ) (m : Message) : ℝ :=
-  ∑ t, audience t * socialUtility t m
-
-/-- The speaker chooses a message by the softmax of its utility toward the audience. -/
-noncomputable def speaker (α : ℝ) (audience : ListenerType → ℕ) : Measure Message :=
-  Kernel.softmax (fun _ : Unit => fun m => ((α * groupUtility audience m : ℝ) : EReal)) ()
-
-/-- The dogwhistle is optimal for an audience exactly when the listeners who reward it, counted
-with their numbers, outweigh those who punish it, the book's condition (2). -/
-theorem dogwhistle_optimal_iff (audience : ListenerType → ℕ) :
-    groupUtility audience .corporateScientists < groupUtility audience .bigPharma ↔
-      0 < ∑ t, audience t *
-        (socialUtility t .bigPharma - socialUtility t .corporateScientists) := by
-  simp only [groupUtility, mul_sub, Finset.sum_sub_distrib, sub_pos]
-
-/-! ### The case study -/
+private theorem L0_real_singleton (L : Listener Persona Message) (s : Bool)
+    (hp : L.prior = .ofWeights (priorWeight ·))
+    (hl : L.likelihood = fun π ↦ .ofWeights fun m ↦ likelihoodWeight s m π) (m : Message)
+    (π : Persona) :
+    (L.L0 m).real {π} = (likelihoodWeight s m π * priorWeight π : ℝ) /
+      ∑ π', (likelihoodWeight s m π' * priorWeight π' : ℝ) := by
+  have : L.L0 = Kernel.ofDensity (Measure.ofWeights (priorWeight ·))
+      fun m π ↦ (likelihoodWeight s m π : ℝ≥0∞) := by
+    simp [Listener.L0, listener, hp, hl]
+  rw [this]
+  exact Kernel.ofDensity_natCast_real_singleton priorWeight (likelihoodWeight s) m π
 
 private theorem sum_univ (f : Persona → ℝ) :
     ∑ π, f π = f proVaxProCorp + f proVaxAntiCorp + f antiVaxProCorp + f antiVaxAntiCorp := by
@@ -198,54 +276,121 @@ private theorem sum_univ (f : Persona → ℝ) :
     Finset.sum_insert (by decide +kernel), Finset.sum_singleton]
   ring
 
-/-- A lower bound on a log from the quadratic lower bound on the exponential. -/
-private theorem neg_lt_log {r g : ℝ} (hr : 0 < r) (hg : 0 ≤ g)
-    (h : 1 < r * (1 + g + g ^ 2 / 2)) : -g < Real.log r := by
-  rw [Real.lt_log_iff_exp_lt hr, Real.exp_neg, inv_lt_comm₀ (Real.exp_pos g) hr,
-    inv_lt_iff_one_lt_mul₀ hr]
-  exact h.trans_le (by
-    rw [mul_comm r]; exact mul_le_mul_of_nonneg_right (Real.quadratic_le_exp_of_nonneg hg) hr.le)
+private theorem log_savvy :
+    Real.log (531441 / 31250) = Real.log (8 / 75) + Real.log (1 / 25) + Real.log (64 / 75) -
+      (Real.log (2 / 27) + Real.log (64 / 81) + Real.log (1 / 27) + Real.log (8 / 81)) := by
+  rw [show (531441 / 31250 : ℝ) =
+    8 / 75 * (1 / 25) * (64 / 75) / (2 / 27 * (64 / 81) * (1 / 27) * (8 / 81)) by norm_num]
+  simp (disch := norm_num) only [Real.log_div, Real.log_mul]
 
-/-- A savvy pro-vaxxer hears the whistle and disapproves, so the disavowal is worth more to
-Stein toward them. -/
-theorem savvyProVax_prefers_disavowal :
-    socialUtility .savvyProVax .bigPharma < socialUtility .savvyProVax .corporateScientists := by
-  simp only [socialUtility, L0_real_singleton, sum_univ]
-  simp +decide only [likelihood, approval, speakerValue, priorWeight]
-  norm_num
-  have h := neg_lt_log (g := 149) (by norm_num) (by norm_num)
-    (r := ((2 / 27 : ℝ) * (64 / 81) * (1 / 27) * (8 / 81)) / ((8 / 75 : ℝ) * (1 / 25) * (64 / 75)))
-    (by norm_num)
-  rw [Real.log_div, Real.log_mul, Real.log_mul, Real.log_mul, Real.log_mul, Real.log_mul] at h
-  · linarith
-  all_goals norm_num
+private theorem log_unsavvy :
+    Real.log (301327047 / 11453152) = Real.log (56 / 71) + Real.log (3 / 71) + Real.log (12 / 71) -
+      (Real.log (2 / 27) + Real.log (64 / 81) + Real.log (1 / 27) + Real.log (8 / 81)) := by
+  rw [show (301327047 / 11453152 : ℝ) =
+    56 / 71 * (3 / 71) * (12 / 71) / (2 / 27 * (64 / 81) * (1 / 27) * (8 / 81)) by norm_num]
+  simp (disch := norm_num) only [Real.log_div, Real.log_mul]
 
-/-- An unsavvy pro-vaxxer does not hear the whistle and reads *big pharma* as anti-corporate,
-so the disavowal is still worth more, but by less. -/
-theorem unsavvyProVax_prefers_disavowal :
-    socialUtility .unsavvyProVax .bigPharma
-      < socialUtility .unsavvyProVax .corporateScientists := by
-  simp only [socialUtility, L0_real_singleton, sum_univ]
-  simp +decide only [likelihood, approval, speakerValue, priorWeight]
+private theorem advantage_antiVaxxer :
+    socialUtility 0 antiVaxxer .bigPharma - socialUtility 0 antiVaxxer .corporateScientists =
+      Real.log (531441 / 31250) + 12416 / 81 := by
+  simp only [socialUtility, L0_real_singleton antiVaxxer true rfl rfl, sum_univ]
+  simp +decide only [likelihoodWeight, priorWeight, antiVaxxer, field_personae_bigPharma]
   norm_num
-  have h := neg_lt_log (g := 11) (by norm_num) (by norm_num)
-    (r := ((2 / 27 : ℝ) * (64 / 81) * (1 / 27) * (8 / 81)) / ((56 / 71 : ℝ) * (3 / 71) * (12 / 71)))
-    (by norm_num)
-  rw [Real.log_div, Real.log_mul, Real.log_mul, Real.log_mul, Real.log_mul, Real.log_mul] at h
-  · linarith
-  all_goals norm_num
+  rw [log_savvy]
+  ring
 
-/-- An anti-vaxxer hears the whistle and approves, so the dogwhistle is worth more. -/
-theorem antiVax_prefers_dogwhistle :
-    socialUtility .savvyAntiVax .corporateScientists < socialUtility .savvyAntiVax .bigPharma := by
-  simp only [socialUtility, L0_real_singleton, sum_univ]
-  simp +decide only [likelihood, approval, speakerValue, priorWeight]
+private theorem advantage_savvyProVaxxer :
+    socialUtility 0 savvyProVaxxer .bigPharma -
+        socialUtility 0 savvyProVaxxer .corporateScientists =
+      Real.log (531441 / 31250) - 12128 / 81 := by
+  simp only [socialUtility, L0_real_singleton savvyProVaxxer true rfl rfl, sum_univ]
+  simp +decide only [likelihoodWeight, priorWeight, savvyProVaxxer, field_personae_bigPharma]
   norm_num
-  have h := neg_lt_log (g := 153) (by norm_num) (by norm_num)
-    (r := ((8 / 75 : ℝ) * (1 / 25) * (64 / 75)) / ((2 / 27 : ℝ) * (64 / 81) * (1 / 27) * (8 / 81)))
-    (by norm_num)
-  rw [Real.log_div, Real.log_mul, Real.log_mul, Real.log_mul, Real.log_mul, Real.log_mul] at h
-  · linarith
-  all_goals norm_num
+  rw [log_savvy]
+  ring
+
+private theorem advantage_unsavvyProVaxxer :
+    socialUtility 0 unsavvyProVaxxer .bigPharma -
+        socialUtility 0 unsavvyProVaxxer .corporateScientists =
+      Real.log (301327047 / 11453152) - 66050 / 5751 := by
+  simp only [socialUtility, L0_real_singleton unsavvyProVaxxer false rfl rfl, sum_univ]
+  simp +decide only [likelihoodWeight, priorWeight, unsavvyProVaxxer, field_personae_bigPharma]
+  norm_num
+  rw [log_unsavvy]
+  ring
+
+/-- The savvy ratio lies between 16 and 32, the unsavvy between 24 and 32. -/
+private theorem log_savvy_bounds :
+    4 * Real.log 2 < Real.log (531441 / 31250) ∧ Real.log (531441 / 31250) < 5 * Real.log 2 := by
+  have h4 := Real.log_pow (2 : ℝ) 4
+  have h5 := Real.log_pow (2 : ℝ) 5
+  norm_num at h4 h5
+  rw [← h4, ← h5]
+  constructor <;> exact Real.log_lt_log (by norm_num) (by norm_num)
+
+private theorem log_unsavvy_bounds :
+    3 * Real.log 2 + Real.log 3 < Real.log (301327047 / 11453152) ∧
+      Real.log (301327047 / 11453152) < 5 * Real.log 2 := by
+  have h3 := Real.log_pow (2 : ℝ) 3
+  have h5 := Real.log_pow (2 : ℝ) 5
+  norm_num at h3 h5
+  rw [← h3, ← h5, ← Real.log_mul (by norm_num) (by norm_num)]
+  constructor <;> exact Real.log_lt_log (by norm_num) (by norm_num)
+
+variable {α : ℝ} {G : Multiset (Listener Persona Message)} {π : Persona}
+
+/-- To any group of pro-vaxxers, savvy or not, Stein disavows. -/
+theorem disavows_to_proVaxxers (hα : 0 < α) (hG : G ≠ 0)
+    (h : ∀ L ∈ G, L = savvyProVaxxer ∨ L = unsavvyProVaxxer) :
+    (S1 α 0 G π).real {.bigPharma} < (S1 α 0 G π).real {.corporateScientists} := by
+  refine S1_real_singleton_lt_of_forall hα hG fun L hL ↦ ?_
+  rcases h L hL with rfl | rfl
+  · linarith [advantage_savvyProVaxxer, log_savvy_bounds.2, Real.log_two_lt_d9]
+  · linarith [advantage_unsavvyProVaxxer, log_unsavvy_bounds.2, Real.log_two_lt_d9]
+
+/-- To any group of anti-vaxxers Stein dogwhistles. -/
+theorem dogwhistles_to_antiVaxxers (hα : 0 < α) (hG : G ≠ 0) (h : ∀ L ∈ G, L = antiVaxxer) :
+    (S1 α 0 G π).real {.corporateScientists} < (S1 α 0 G π).real {.bigPharma} :=
+  S1_real_singleton_lt_of_forall hα hG fun L hL ↦ by
+    obtain rfl := h L hL
+    linarith [advantage_antiVaxxer, log_savvy_bounds.1, Real.log_two_gt_d9]
+
+/-- A savvy pro-vaxxer weighs more against the dogwhistle than an unsavvy one: where Stein
+disavows to a group with an unsavvy pro-vaxxer, she disavows to it with a savvy one instead. -/
+theorem disavows_of_savvy_for_unsavvy (hα : 0 < α)
+    (h : (S1 α 0 (unsavvyProVaxxer ::ₘ G) π).real {.bigPharma} <
+      (S1 α 0 (unsavvyProVaxxer ::ₘ G) π).real {.corporateScientists}) :
+    (S1 α 0 (savvyProVaxxer ::ₘ G) π).real {.bigPharma} <
+      (S1 α 0 (savvyProVaxxer ::ₘ G) π).real {.corporateScientists} := by
+  rw [S1_real_singleton_lt_iff hα] at h ⊢
+  simp only [groupUtility, Multiset.map_cons, Multiset.sum_cons] at h ⊢
+  linarith [advantage_savvyProVaxxer, advantage_unsavvyProVaxxer, log_savvy_bounds.2,
+    log_unsavvy_bounds.1, Real.log_two_gt_d9, Real.log_two_lt_d9, Real.log_three_gt_d9]
+
+/-- The book's audience of about 5000: 400 anti-vaxxers, 100 savvy pro-vaxxers, and the rest
+naive. -/
+noncomputable def mixedAudience : Multiset (Listener Persona Message) :=
+  .replicate 400 antiVaxxer + .replicate 100 savvyProVaxxer + .replicate 4500 unsavvyProVaxxer
+
+/-- To the mixed audience Stein dogwhistles. -/
+theorem dogwhistles_to_mixedAudience (hα : 0 < α) :
+    (S1 α 0 mixedAudience π).real {.corporateScientists} <
+      (S1 α 0 mixedAudience π).real {.bigPharma} := by
+  rw [S1_real_singleton_lt_iff hα]
+  simp only [groupUtility, mixedAudience, Multiset.map_add, Multiset.map_replicate,
+    Multiset.sum_add, Multiset.sum_replicate, nsmul_eq_mul, Nat.cast_ofNat]
+  linarith [advantage_antiVaxxer, advantage_savvyProVaxxer, advantage_unsavvyProVaxxer,
+    log_savvy_bounds.1, log_unsavvy_bounds.1, Real.log_two_gt_d9, Real.log_three_gt_d9]
+
+/-- A thousand more naive listeners still leave Stein dogwhistling to the mixed audience, where
+the book says they would turn her (p. 65). -/
+theorem dogwhistles_to_thousand_more_unsavvy (hα : 0 < α) :
+    (S1 α 0 (.replicate 1000 unsavvyProVaxxer + mixedAudience) π).real {.corporateScientists} <
+      (S1 α 0 (.replicate 1000 unsavvyProVaxxer + mixedAudience) π).real {.bigPharma} := by
+  rw [S1_real_singleton_lt_iff hα]
+  simp only [groupUtility, mixedAudience, Multiset.map_add, Multiset.map_replicate,
+    Multiset.sum_add, Multiset.sum_replicate, nsmul_eq_mul, Nat.cast_ofNat]
+  linarith [advantage_antiVaxxer, advantage_savvyProVaxxer, advantage_unsavvyProVaxxer,
+    log_savvy_bounds.1, log_unsavvy_bounds.1, Real.log_two_gt_d9, Real.log_three_gt_d9]
 
 end HendersonMcCready2024
