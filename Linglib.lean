@@ -771,10 +771,8 @@ import Linglib.Phonology.Prosody.Phrase
 import Linglib.Phonology.Prosody.Syllable
 import Linglib.Phonology.Prosody.Word
 import Linglib.Phonology.Subregular.Agree
-import Linglib.Phonology.Subregular.Aperiodicity
 import Linglib.Phonology.Subregular.BMRS
 import Linglib.Phonology.Subregular.Boundary
-import Linglib.Phonology.Subregular.ContainsFactor
 import Linglib.Phonology.Subregular.Dependence
 import Linglib.Phonology.Subregular.ForbiddenPairs
 import Linglib.Phonology.Subregular.ISL

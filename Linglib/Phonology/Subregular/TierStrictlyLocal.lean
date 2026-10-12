@@ -6,7 +6,6 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Phonology.Subregular.StrictlyLocal
-public import Linglib.Phonology.Subregular.Aperiodicity
 public import Mathlib.Data.List.Basic
 public import Mathlib.Computability.Language
 public import Linglib.Core.Data.List.Factors
@@ -114,7 +113,7 @@ theorem _root_.Subregular.TierStrictlyLocalGrammar.isTierStrictlyLocal_language 
 theorem IsStrictlyLocal.toIsTierStrictlyLocal {k : ℕ} {L : Language α}
     (h : L.IsStrictlyLocal k) : IsTierStrictlyLocal k L := by
   obtain ⟨G, rfl⟩ := h
-  exact ⟨{ tier := fun _ => True, permitted := G }, by ext w; simp⟩
+  exact ⟨{ tier := fun _ ↦ True, permitted := G }, by ext w; simp⟩
 
 /-- A tier-based strictly local language in which every symbol is visible somewhere, deleting it
 from some string changing membership, is strictly local, since its tier is the whole alphabet. -/
@@ -126,9 +125,9 @@ theorem IsTierStrictlyLocal.isStrictlyLocal {k : ℕ} {L : Language α}
     by_contra ha
     obtain ⟨u, v, huv⟩ := hvis a
     exact huv (G.mem_language_append_cons_of_not_tier ha u v)
-  refine ⟨G.permitted, Set.ext fun w => ?_⟩
+  refine ⟨G.permitted, Set.ext fun w ↦ ?_⟩
   change _ ↔ w.filter (G.tier ·) ∈ G.permitted.language k
-  rw [List.filter_eq_self.2 fun a _ => decide_eq_true (htier a)]
+  rw [List.filter_eq_self.2 fun a _ ↦ decide_eq_true (htier a)]
 
 variable [Finite α]
 

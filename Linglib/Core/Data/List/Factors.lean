@@ -6,6 +6,7 @@ Authors: Robert Hawkins
 module
 
 public import Mathlib.Data.List.Infix
+public import Linglib.Core.Data.List.DropRight
 
 /-!
 # Length-`k` infixes of a list
@@ -24,6 +25,9 @@ name is the subregular literature's "`k`-factor"; mathlib has no length-`k` infi
 * `List.mem_kFactors`: membership is being a length-`k` infix, mirroring `List.mem_sublistsLen`.
 * `List.kFactors_nil`, `List.kFactors_cons`, `List.kFactors_two_cons_cons`: the recursion, and its
   `k = 2` form used by chain characterizations of the strictly 2-local languages.
+* `List.mem_kFactors_append`: a `k`-factor of a concatenation lies in one of the two words or
+  across the seam between them.
+* `List.kFactors_map`: mapping a function over a list maps it over the `k`-factors.
 -/
 
 @[expose] public section
@@ -59,5 +63,39 @@ theorem mem_kFactors : f ∈ kFactors k xs ↔ f <:+: xs ∧ f.length = k := by
 theorem kFactors_two_cons_cons (a b : α) (rest : List α) :
     kFactors 2 (a :: b :: rest) = [a, b] :: kFactors 2 (b :: rest) := by
   rw [kFactors_cons, ite_eq_left (by simp)]; rfl
+
+/-- A `k`-factor of `u ++ v` lies in `u`, in `v`, or across the seam, in the last `k - 1` letters
+of `u` followed by the first `k - 1` letters of `v`. -/
+theorem mem_kFactors_append {u v : List α} :
+    f ∈ kFactors k (u ++ v) ↔ f ∈ kFactors k u ∨ f ∈ kFactors k v ∨
+      f ∈ kFactors k (u.rtake (k - 1) ++ v.take (k - 1)) := by
+  simp only [mem_kFactors]
+  constructor
+  · rintro ⟨hf, rfl⟩
+    rcases infix_append_iff_ne_nil.mp hf with h | h | ⟨l₁, l₂, h₁, h₂, rfl, hu, hv⟩
+    · exact .inl ⟨h, rfl⟩
+    · exact .inr (.inl ⟨h, rfl⟩)
+    · have := length_pos_iff.mpr h₁
+      have := length_pos_iff.mpr h₂
+      refine .inr (.inr ⟨infix_append_iff.mpr (.inr (.inr ⟨l₁, l₂, rfl, ?_, ?_⟩)), rfl⟩)
+      · refine suffix_of_suffix_length_le hu (rtake_suffix _ _) ?_
+        have := hu.length_le
+        simp only [length_rtake, length_append]; omega
+      · refine prefix_of_prefix_length_le hv (take_prefix _ _) ?_
+        have := hv.length_le
+        simp only [length_take, length_append]; omega
+  · rintro (⟨h, hk⟩ | ⟨h, hk⟩ | ⟨h, hk⟩)
+    · exact ⟨h.trans (prefix_append u v).isInfix, hk⟩
+    · exact ⟨h.trans (suffix_append u v).isInfix, hk⟩
+    · exact ⟨h.trans (infix_append_iff.mpr
+        (.inr (.inr ⟨_, _, rfl, rtake_suffix _ _, take_prefix _ _⟩))), hk⟩
+
+@[simp] theorem kFactors_map {β : Type*} (g : α → β) (xs : List α) :
+    kFactors k (xs.map g) = (kFactors k xs).map (map g) := by
+  induction xs with
+  | nil => simp only [map_nil, kFactors_nil]; split_ifs <;> rfl
+  | cons a l ih =>
+    rw [map_cons, kFactors_cons, kFactors_cons, ih, length_map]
+    split_ifs <;> simp [map_take]
 
 end List

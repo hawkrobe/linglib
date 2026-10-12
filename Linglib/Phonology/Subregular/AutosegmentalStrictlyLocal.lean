@@ -8,7 +8,6 @@ module
 public import Linglib.Phonology.Autosegmental.Factors
 public import Linglib.Phonology.Autosegmental.Realization
 public import Linglib.Phonology.Subregular.StrictlyLocal
-public import Linglib.Phonology.Subregular.ContainsFactor
 
 /-!
 # Autosegmental strictly local languages
@@ -82,19 +81,19 @@ theorem isAutosegmentalStrictlyLocal_bannedSubgraph :
   ⟨B, rfl⟩
 
 @[simp] theorem bannedSubgraph_nil : bannedSubgraph r [] = Set.univ :=
-  Set.eq_univ_of_forall fun _ => AR.free_nil
+  Set.eq_univ_of_forall fun _ ↦ AR.free_nil
 
 /-- A grammar's language is the intersection of its factors' avoidance languages. -/
 theorem bannedSubgraph_cons (F : {F : TieredAR.{u₁, u₂, u₃} ι τ // Finite F.obj.V}) :
     bannedSubgraph r (F :: B) = {w | F.val.FactorEmbeds (r w)}ᶜ ⊓ bannedSubgraph r B :=
-  Set.ext fun _ => AR.free_cons
+  Set.ext fun _ ↦ AR.free_cons
 
 /-! ### Downward closure -/
 
 /-- A banned-subgraph language is downward closed under containment of realizations. -/
 theorem mem_bannedSubgraph_of_factorEmbeds (h : (r u).FactorEmbeds (r v))
     (hv : v ∈ bannedSubgraph r B) : u ∈ bannedSubgraph r B :=
-  fun F hF hFu => hv F hF (hFu.trans h)
+  fun F hF hFu ↦ hv F hF (hFu.trans h)
 
 theorem IsAutosegmentalStrictlyLocal.mem_of_factorEmbeds
     (hL : IsAutosegmentalStrictlyLocal r L) (h : (r u).FactorEmbeds (r v)) (hv : v ∈ L) :
@@ -106,7 +105,7 @@ theorem IsAutosegmentalStrictlyLocal.mem_of_factorEmbeds
 is not autosegmental strictly local. -/
 theorem not_isAutosegmentalStrictlyLocal_of_factorEmbeds (h : (r u).FactorEmbeds (r v))
     (hu : u ∉ L) (hv : v ∈ L) : ¬ IsAutosegmentalStrictlyLocal r L :=
-  fun hL => hu (hL.mem_of_factorEmbeds h hv)
+  fun hL ↦ hu (hL.mem_of_factorEmbeds h hv)
 
 end Language
 
@@ -122,12 +121,12 @@ variable {α : Type*}
 over boundary-padded strings. -/
 theorem bannedSubgraph_ofList_boundary {Fs : List (Augmented α)} {k : ℕ}
     (hk : ∀ f ∈ Fs, f.length = k) :
-    bannedSubgraph (fun w => AR.ofList (boundary k w))
-        (Fs.map fun f => ⟨AR.ofList f, inferInstance⟩) =
+    bannedSubgraph (fun w ↦ AR.ofList (boundary k w))
+        (Fs.map fun f ↦ ⟨AR.ofList f, inferInstance⟩) =
       (StrictlyLocalGrammar.ofForbidden {f | f ∈ Fs}).language k :=
-  Set.ext fun w => by
-    refine Iff.trans (show _ ↔ ∀ F ∈ Fs.map fun f => (⟨AR.ofList f, inferInstance⟩ :
-      {F : TieredAR Unit (fun _ => Option α) // Finite F.obj.V}),
+  Set.ext fun w ↦ by
+    refine Iff.trans (show _ ↔ ∀ F ∈ Fs.map fun f ↦ (⟨AR.ofList f, inferInstance⟩ :
+      {F : TieredAR Unit (fun _ ↦ Option α) // Finite F.obj.V}),
         ¬ F.val.FactorEmbeds (AR.ofList (boundary k w)) from Iff.rfl) ?_
     rw [StrictlyLocalGrammar.mem_ofForbidden_language]
     simp only [List.forall_mem_map, AR.factorEmbeds_ofList_iff, Set.mem_ofPred_eq,
@@ -138,7 +137,7 @@ theorem bannedSubgraph_ofList_boundary {Fs : List (Augmented α)} {k : ℕ}
 autosegmental strictly local. -/
 theorem isAutosegmentalStrictlyLocal_ofForbidden {Fs : List (Augmented α)} {k : ℕ}
     (hk : ∀ f ∈ Fs, f.length = k) :
-    IsAutosegmentalStrictlyLocal (fun w => AR.ofList (boundary k w))
+    IsAutosegmentalStrictlyLocal (fun w ↦ AR.ofList (boundary k w))
       ((StrictlyLocalGrammar.ofForbidden {f | f ∈ Fs}).language k) :=
   ⟨_, bannedSubgraph_ofList_boundary hk⟩
 
@@ -173,10 +172,10 @@ theorem bannedSubgraph_realize_eq_of_link_free
     (hB : ∀ F ∈ B, ∀ i j p q, ¬ F.val.link i j p q) :
     bannedSubgraph (AR.realize g) B =
       ⋂ F ∈ B, ⋃ i, {w : List S | ¬ F.val.tierWord i <:+: AR.tierProj g i (FreeMonoid.ofList w)} :=
-  Set.ext fun w => by
+  Set.ext fun w ↦ by
     refine Iff.trans (show _ ↔ ∀ F ∈ B, ¬ F.val.FactorEmbeds (AR.realize g w) from Iff.rfl) ?_
     refine Iff.trans ?_ Set.mem_iInter₂.symm
-    refine forall₂_congr fun F hF => Iff.trans ?_ Set.mem_iUnion.symm
+    refine forall₂_congr fun F hF ↦ Iff.trans ?_ Set.mem_iUnion.symm
     rw [AR.factorEmbeds_iff_infix_of_link_free (hB F hF)]
     simp only [not_forall, Set.mem_ofPred_eq, AR.tierProj_ofList]
     exact Iff.rfl
@@ -193,8 +192,8 @@ theorem isStarFree_bannedSubgraph_realize
   | cons F B ih =>
     rw [bannedSubgraph_cons, setOf_factorEmbeds_realize_eq_of_link_free g F.val
       (hB F (List.mem_cons_self ..))]
-    exact (IsStarFree.iInter fun i =>
-      (isStarFree_containsFactor (F.val.tierWord i)).comap (AR.tierProj g i)).compl.inter
-        (ih fun F' hF' => hB F' (List.mem_cons_of_mem _ hF'))
+    exact (IsStarFree.iInter fun i ↦
+      (isStarFree_setOf_infix (F.val.tierWord i)).comap (AR.tierProj g i)).compl.inter
+        (ih fun F' hF' ↦ hB F' (List.mem_cons_of_mem _ hF'))
 
 end Language
