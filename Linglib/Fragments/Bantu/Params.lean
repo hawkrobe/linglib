@@ -19,7 +19,7 @@ the status of a gender as interpretable, bearing a core, or uninterpretable, pur
 
 namespace Bantu
 
-/-- A semantic core, the salient class of entities a gender is associated with: Xhosa has
+/-- A semantic core is the salient class of entities a gender is associated with. Xhosa has
 [human], [animal] and [inanimate], Shona [human] and [non-human]. -/
 inductive SemanticCore where
   | human
@@ -28,16 +28,11 @@ inductive SemanticCore where
   | nonhuman
   deriving DecidableEq, Repr
 
-/-- The status of a gender: interpretable, bearing a semantic core, or uninterpretable, with no
-association to a class of entities. -/
+/-- A gender is interpretable, bearing a semantic core, or uninterpretable, with no association
+to a class of entities. -/
 inductive GenderStatus where
   | interpretable : SemanticCore → GenderStatus
   | uninterpretable : GenderStatus
   deriving DecidableEq, Repr
-
-/-- The core an interpretable gender bears. -/
-def GenderStatus.core : GenderStatus → Option SemanticCore
-  | .interpretable c => some c
-  | .uninterpretable => none
 
 end Bantu
