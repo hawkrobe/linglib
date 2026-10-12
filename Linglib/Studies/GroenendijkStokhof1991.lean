@@ -786,7 +786,7 @@ noncomputable def _root_.DRT.DRS.toDPL : DRS L V → Formula L V
   | ⟨U, cs⟩ => exs U.toList (conjs (DRT.Condition.toDPLList cs))
 /-- The translation of a condition, Definition 28. -/
 noncomputable def _root_.DRT.Condition.toDPL : Condition L V → Formula L V
-  | .rel R args => rel R (Language.Term.var ∘ args)
+  | .atom a => rel a.rel (Language.Term.var ∘ a.args)
   | .eq a b => .var a ≐ .var b
   | .neg K => ¬ᵈ(DRT.DRS.toDPL K)
   | .imp a c => DRT.DRS.toDPL a ⟿ DRT.DRS.toDPL c
@@ -807,8 +807,8 @@ theorem _root_.DRT.DRS.toDPL_eq (K : DRS L V) :
     K.toDPL = exs K.referents.toList (conjs (K.conditions.map DRT.Condition.toDPL)) := by
   cases K; simp [DRT.DRS.toDPL]
 
-theorem _root_.DRT.Condition.toDPL_rel {n : ℕ} (R : L.Relations n) (args : Fin n → V) :
-    (Condition.rel R args).toDPL = rel R (Language.Term.var ∘ args) := rfl
+theorem _root_.DRT.Condition.toDPL_atom (a : Language.Atom L V) :
+    (Condition.atom a).toDPL = rel a.rel (Language.Term.var ∘ a.args) := rfl
 
 theorem _root_.DRT.Condition.toDPL_eq (a b : V) :
     (Condition.eq a b : Condition L V).toDPL = .var a ≐ .var b := rfl
@@ -831,16 +831,16 @@ private theorem eval_toDPL_of_conditions (K : DRS L V)
     K.toDPL.eval M = K.toRel := by
   ext ⟨g, k⟩
   rw [DRS.toDPL_eq, mem_eval_exs, eval_conjs_map M _ _ _ h]
-  simp only [mem_test, Finset.mem_toList, DRS.toRel_iff, verifies_iff, Set.mem_setOf_eq]
+  simp only [mem_test, Finset.mem_toList, DRS.toRel_iff, verifies_iff, Set.mem_ofPred_eq]
   exact ⟨fun ⟨_, hk, rfl, hv⟩ ↦ ⟨hk, hv⟩, fun ⟨hk, hv⟩ ↦ ⟨k, hk, rfl, hv⟩⟩
 
 /-- The translation of a condition is the test of its verification (Fact 25 for conditions). -/
 theorem _root_.DRT.Condition.eval_toDPL (c : Condition L V) :
     c.toDPL.eval M = test {f : V → M | VerifiesCondition f c} := by
   induction c with
-  | rel R args =>
-    rw [Condition.toDPL_rel, eval_rel]
-    exact congrArg test (Set.ext fun f ↦ by simp [Function.comp_def])
+  | atom a =>
+    rw [Condition.toDPL_atom, eval_rel]
+    exact congrArg test (Set.ext fun f ↦ by simp [Function.comp_def, Language.Atom.Realize])
   | eq a b =>
     rw [Condition.toDPL_eq, eval_equal]
     exact congrArg test (Set.ext fun f ↦ by simp)

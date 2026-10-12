@@ -115,7 +115,7 @@ def ifThen : Update S → Update S → Update S :=
 
 section Derivations
 
-variable [RegisterStructure R S E] [DecidableEq R] {u₁ u₂ : R}
+variable [RegisterStructure R S E] {u₁ u₂ : R}
 
 attribute [local simp] ofStatic ofStatic₂ Function.eval name indef no who ifThen Pi.mul_apply
   mul_def dom_comp preimage_comp preimage_randomAssign val_extend_self
@@ -128,7 +128,7 @@ def text (u₁ u₂ : R) (man woman : Set E) (adores abhors : SetRel E E) : Upda
 /-- The text reduces by merging to the box (20),
 `[u₁ u₂ | man u₁, woman u₂, u₁ adores u₂, u₂ abhors u₁]`, since `man u₁` does not mention `u₂`.
 -/
-theorem text_eq_box (h : u₁ ≠ u₂) (man woman : Set E) (adores abhors : SetRel E E) :
+theorem text_eq_box [DecidableEq R] (h : u₁ ≠ u₂) (man woman : Set E) (adores abhors : SetRel E E) :
     (text u₁ u₂ man woman adores abhors : Update S) =
       box {u₁, u₂} (val u₁ ⁻¹' man ∩ (val u₂ ⁻¹' woman ∩ {i | val u₁ i ~[adores] val u₂ i}) ∩
         {i | val u₂ i ~[abhors] val u₁ i}) := by
@@ -292,10 +292,10 @@ inductive GirlRel : ℕ → Type
 def girlLang : Language := ⟨fun _ ↦ Empty, GirlRel⟩
 
 /-- `[u₁ | girl u₁, walk u₁]`. -/
-def girlWalks : DRS girlLang ℕ := .mk {1} [.rel .girl (![1]), .rel .walk (![1])]
+def girlWalks : DRS girlLang ℕ := .mk {1} [.atom ⟨.girl, ![1]⟩, .atom ⟨.walk, ![1]⟩]
 
 /-- `[ | talk u₁]`. -/
-def talks : DRS girlLang ℕ := .mk ∅ [.rel .talk (![1])]
+def talks : DRS girlLang ℕ := .mk ∅ [.atom ⟨.talk, ![1]⟩]
 
 /-- The box (45) is `[ | not[u₁ | girl u₁, walk u₁]]`. -/
 def proper : DRS girlLang ℕ := .mk ∅ [.neg girlWalks]
@@ -340,10 +340,10 @@ inductive Fn4Rel : ℕ → Type
 def fn4Lang : Language := ⟨fun _ ↦ Empty, Fn4Rel⟩
 
 /-- The antecedent `[x | man x]`. -/
-def fn4Ante : DRS fn4Lang ℕ := .mk {0} [.rel .man (![0])]
+def fn4Ante : DRS fn4Lang ℕ := .mk {0} [.atom ⟨.man, ![0]⟩]
 
 /-- The consequent `[x | mortal x]`, re-declaring `x`. -/
-def fn4Cons : DRS fn4Lang ℕ := .mk {0} [.rel .mortal (![0])]
+def fn4Cons : DRS fn4Lang ℕ := .mk {0} [.atom ⟨.mortal, ![0]⟩]
 
 /-- `[ | [x | man x] ⇒ [x | mortal x]]`, with the referent `0` declared twice. -/
 def fn4 : DRS fn4Lang ℕ := .mk ∅ [.imp fn4Ante fn4Cons]
@@ -376,7 +376,7 @@ theorem fn4_trueRel (g : ℕ → Fin 2) : DRS.trueRel fn4 g := by
   intro c hc
   simp only [fn4Cons, DRS.conditions_mk, List.mem_singleton] at hc
   subst hc
-  rw [verifies_rel]
+  rw [verifies_atom, Language.Atom.realize_mk]
   show Function.update g₁ 0 1 0 = 1
   simp
 

@@ -2,29 +2,24 @@ module
 
 public import Linglib.Semantics.Dynamic.DRS.Box
 public import Mathlib.Logic.Relation
-public import Mathlib.ModelTheory.Basic
+public import Linglib.Core.ModelTheory.Atom
 
 /-!
 # Discourse representation structures
 
-This file defines discourse representation structures (DRSs) over a mathlib
-`FirstOrder.Language`, following [kamp-reyle-1993]. A DRS is a pair of a finite
-set of *discourse referents* (the textbook's universe `U`) and a list of
-*conditions* (Def. 1.4.1); a condition is atomic (`rel`, `eq`) or complex
-(`neg`, with `imp`/`dis` from Chapter 2; the book's disjunction is `n`-ary, binary
-here), and sub-DRSs occur only inside complex conditions. In the literature a DRS is
-also drawn as a *box*, [muskens-1996]'s `[u₁ … uₙ | γ₁ … γₘ]`.
-
-Verification and truth are model-theoretic and live in `DRS/Verification.lean`;
-the structural theory is in `DRS/Basic.lean`.
+A discourse representation structure (DRS) pairs a finite set of discourse referents, Kamp and
+Reyle's universe `U`, with a list of conditions on them (Def. 1.4.1). A condition is atomic, an
+atom of a `FirstOrder.Language` or an equation between referents, or complex, a negation or the
+conditional and binary disjunction of Chapter 2, and sub-DRSs occur only inside complex conditions.
+Muskens draws a DRS as a box `[u₁ … uₙ | γ₁ … γₘ]`. Verification and truth are in
+`DRS/Verification.lean`, the structural theory in `DRS/Basic.lean`.
 
 ## Main declarations
 
 * `Condition`, `DRS`: conditions and DRSs over a language `L` and referent type
   `V`; `DRS L V` is the generic container `Box` (`DRS/Box.lean`) instantiated at
   `Condition L V`.
-* `DRS.merge`: the merge `⊕` — union the referents, append the conditions
-  ([muskens-1996]).
+* `DRS.merge`: the merge `⊕`, which unions the referents and appends the conditions.
 * `DirectlySubordinate`, `Subordinate`, `WeakSubordinate`: immediate
   subordination and its transitive and reflexive-transitive closures
   (Def. 1.4.10, Def. 2.1.2). Accessibility is read off occurrences and lives in
@@ -45,6 +40,11 @@ the structural theory is in `DRS/Basic.lean`.
   `Finset`/`Multiset`; set semantics is recovered by the interpretation
   (`verifies_perm`, `DRS/Verification.lean`).
 * `DRT` is the owning namespace, on the `FirstOrder.Language` pattern.
+
+## References
+
+* [kamp-reyle-1993]
+* [muskens-1996]
 -/
 
 @[expose] public section
@@ -57,12 +57,11 @@ universe u v w x
 
 variable {L : Language.{u, v}} {V : Type w}
 
-/-- A DRS-condition: atomic (`rel`, `eq`) or complex — `neg` per Def. 1.4.1,
-`imp`/`dis` per its Chapter 2 extension. Sub-DRSs occur only inside complex
-conditions. -/
+/-- A DRS-condition is atomic, an atom or an equation, or complex, a negation (Def. 1.4.1) or a
+conditional or disjunction (Chapter 2). Sub-DRSs occur only inside complex conditions. -/
 inductive Condition (L : Language.{u, v}) (V : Type w) where
-  /-- Atomic condition: `n`-ary relation symbol `R` applied to referents `args`. -/
-  | rel {n : ℕ} (R : L.Relations n) (args : Fin n → V)
+  /-- The atomic condition of an atom over the referents. -/
+  | atom (a : L.Atom V)
   /-- Atomic equality condition `u = v`. -/
   | eq (u v : V)
   /-- Complex condition `¬K`. -/
@@ -72,10 +71,8 @@ inductive Condition (L : Language.{u, v}) (V : Type w) where
   /-- Complex condition `K₁ ∨ K₂`. -/
   | dis (left right : Box V (Condition L V))
 
-/-- A discourse representation structure consists of two parts: a universe of
-discourse referents, which represent the objects under discussion, and the
-DRS-conditions, which encode the information that has accumulated on them
-(Def. 1.4.1). -/
+/-- A discourse representation structure pairs a universe of discourse referents, the objects
+under discussion, with the conditions that record what has been said of them (Def. 1.4.1). -/
 abbrev DRS (L : Language.{u, v}) (V : Type w) := Box V (Condition L V)
 
 namespace DRS
@@ -106,11 +103,10 @@ def merge [DecidableEq V] (K₁ K₂ : DRS L V) : DRS L V :=
 
 end DRS
 
-/-- Induction on conditions, descending into sub-boxes: to prove `motive c` for
-every condition, handle each constructor given the motive for every condition
-of its sub-boxes. -/
+/-- Induction on conditions descends into sub-boxes, handling each constructor given the motive
+for every condition of its sub-boxes. -/
 @[induction_eliminator] theorem Condition.induction {motive : Condition L V → Prop}
-    (rel : ∀ {n : ℕ} (R : L.Relations n) (args : Fin n → V), motive (.rel R args))
+    (atom : ∀ a, motive (.atom a))
     (eq : ∀ u v, motive (.eq u v))
     (neg : ∀ K, (∀ c ∈ K.conditions, motive c) → motive (.neg K))
     (imp : ∀ a c, (∀ d ∈ a.conditions, motive d) → (∀ d ∈ c.conditions, motive d) →
@@ -118,20 +114,19 @@ of its sub-boxes. -/
     (dis : ∀ l r, (∀ d ∈ l.conditions, motive d) → (∀ d ∈ r.conditions, motive d) →
       motive (.dis l r)) (c : Condition L V) : motive c :=
   Condition.rec (motive_2 := fun K => ∀ c ∈ K.conditions, motive c)
-    (motive_3 := fun cs => ∀ c ∈ cs, motive c) rel eq neg imp dis (fun _ _ h => h)
+    (motive_3 := fun cs => ∀ c ∈ cs, motive c) atom eq neg imp dis (fun _ _ h => h)
     (fun _ h => absurd h List.not_mem_nil)
     (fun _ _ hd hds _ he => (List.mem_cons.1 he).elim (· ▸ hd) (hds _)) c
 
 /-! ### Subordination -/
 
-/-- `DirectlySubordinate K' K` says `K'` is a sub-box of one of `K`'s conditions —
-the `neg` case per Def. 1.4.10(i), the `⇒` cases per Def. 2.1.2 (which subordinates
-*both* components of a conditional to the containing DRS), and the `∨` cases per
-Def. 2.4.3(i)(c), where no disjunct is subordinate to another. A relation on DRS
-values, where the textbook's is on box occurrences. Every clause pins the containing
-box in its conclusion: an unpinned clause (such as consequent-below-antecedent) would
-hold of every pair of DRSs via a manufactured container, collapsing the relation. The
-`⇒` visibility asymmetry is not subordination but accessibility
+/-- `DirectlySubordinate K' K` says `K'` is a sub-box of one of `K`'s conditions, by the `neg`
+case of Def. 1.4.10(i), the `⇒` cases of Def. 2.1.2 (which subordinates *both* components of a
+conditional to the containing DRS), and the `∨` cases of Def. 2.4.3(i)(c), where no disjunct is
+subordinate to another. It is a relation on DRS values, where the textbook's is on box
+occurrences. Every clause pins the containing box in its conclusion, since an unpinned clause
+(such as consequent-below-antecedent) would hold of every pair of DRSs via a manufactured
+container. The `⇒` visibility asymmetry is not subordination but accessibility
 (`DRS/Accessibility.lean`). -/
 inductive DirectlySubordinate : DRS L V → DRS L V → Prop where
   /-- The body of a `¬` is directly subordinate to the containing DRS. -/

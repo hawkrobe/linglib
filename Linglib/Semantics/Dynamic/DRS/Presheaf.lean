@@ -29,7 +29,7 @@ context, and restriction along a context morphism `f` is substitution-preimage,
 
 ## Implementation notes
 
-[abramsky-sadrzadeh-2014] take the deductive closures of consistent finite sets of literals; in a
+Abramsky and Sadrzadeh take the deductive closures of consistent finite sets of literals; in a
 relational language the closure adds no literal, so a section is the consistent set itself.
 
 ## References
@@ -59,9 +59,8 @@ DRS. -/
 /-- A condition is a literal when it is an atom or the negation of a one-atom box with no
 referents. -/
 def Condition.IsLiteral : Condition L V → Prop
-  | .rel _ _ => True
-  | .neg K => K.referents = ∅ ∧ ∃ (n : ℕ) (R : L.Relations n) (args : Fin n → V),
-      K.conditions = [.rel R args]
+  | .atom _ => True
+  | .neg K => K.referents = ∅ ∧ ∃ a, K.conditions = [.atom a]
   | _ => False
 
 /-- A DRS is basic when every condition is a literal. -/
@@ -70,14 +69,14 @@ def DRS.IsBasic (K : DRS L V) : Prop := ∀ d ∈ K.conditions, d.IsLiteral
 /-- `l.toCondition` is the atom of `l`, or for a negative literal the negation of the one-atom
 box with no referents. -/
 def Literal.toCondition {c : Context L V} (l : Literal c) : Condition L V :=
-  if l.pos then .rel l.rel.1.2 fun i => (l.args i : V)
-  else .neg ⟨∅, [.rel l.rel.1.2 fun i => (l.args i : V)]⟩
+  if l.pos then .atom ⟨l.rel.1.2, fun i => (l.args i : V)⟩
+  else .neg ⟨∅, [.atom ⟨l.rel.1.2, fun i => (l.args i : V)⟩]⟩
 
 /-- Renaming a literal is `Condition.map` along the extended referent map. -/
 theorem Literal.toCondition_map [DecidableEq V] {c c' : Context L V} (f : c ⟶ c')
     (l : Literal c) : (l.map f).toCondition = l.toCondition.map f.extend := by
   cases hp : l.pos <;>
-    simp [toCondition, map, Condition.map, DRS.map, hp, Function.comp_def]
+    simp [toCondition, map, Condition.map, DRS.map, hp, Function.comp_def, Language.Atom.map]
 
 namespace Theory
 
@@ -103,7 +102,7 @@ theorem isBasic_toDRS (s : Theory c) : s.toDRS.IsBasic := by
   unfold Literal.toCondition
   split
   · trivial
-  · exact ⟨rfl, _, _, _, rfl⟩
+  · exact ⟨rfl, _, rfl⟩
 
 variable [DecidableEq V] [∀ n, DecidableEq (L.Relations n)]
 

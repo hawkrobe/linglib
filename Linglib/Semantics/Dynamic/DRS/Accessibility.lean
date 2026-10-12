@@ -7,8 +7,8 @@ public import Linglib.Semantics.Dynamic.DRS.Basic
 
 A discourse referent is accessible from a condition when it is declared in a box that is
 accessible where the condition occurs: the box containing the condition, the boxes it is
-nested in, and the antecedent of a conditional for its consequent ([kamp-reyle-1993],
-Def. 1.4.11, Def. 2.1.3, Def. 2.4.4). Accessibility is a property of occurrences: one box can
+nested in, and the antecedent of a conditional for its consequent (Kamp and Reyle, Def. 1.4.11,
+Def. 2.1.3, Def. 2.4.4). Accessibility is a property of occurrences: one box can
 occur twice in a DRS, at places with different accessible boxes. An occurrence is reached from
 the host by a walk that steps into the sub-boxes of complex conditions, collecting the boxes
 accessible at each step, and the walk is computed by a structural recursion that decides
@@ -20,7 +20,7 @@ accessibility.
   and the occurrences of boxes in a host.
 * `DRT.AccessibleFrom`: a referent accessible from a condition (Def. 1.4.11).
 * `DRT.DRS.Accessible`: a referent accessible where another is declared.
-* `DRT.AccessibleTo`: a box accessible to another ([geurts-beaver-maier-2024]).
+* `DRT.AccessibleTo`: a box accessible to another, in the sense of Geurts, Beaver and Maier.
 
 ## Main statements
 
@@ -119,7 +119,7 @@ conditions, matching each box as `⟨U, cs⟩`, so that the kernel evaluates the
 mutual
 /-- The occurrences of boxes below a condition, at accessible boxes `bs`. -/
 def Condition.occurrences : Condition L V → List (DRS L V) → List (List (DRS L V) × DRS L V)
-  | .rel _ _, _ => []
+  | .atom _, _ => []
   | .eq _ _, _ => []
   | .neg ⟨U, cs⟩, bs => (⟨U, cs⟩ :: bs, ⟨U, cs⟩) :: Condition.occurrencesList cs (⟨U, cs⟩ :: bs)
   | .imp ⟨Ua, ca⟩ ⟨Uc, cc⟩, bs =>
@@ -171,7 +171,7 @@ theorem Condition.occurrence_of_mem (c : Condition L V) :
     ∀ {bs : List (DRS L V)} {D : DRS L V} {p}, c ∈ D.conditions →
       p ∈ Condition.occurrences c bs → Relation.ReflTransGen ScopeStep (bs, D) p := by
   induction c with
-  | rel R args => intro bs D p _ hp; simp [Condition.occurrences] at hp
+  | atom a => intro bs D p _ hp; simp [Condition.occurrences] at hp
   | eq u v => intro bs D p _ hp; simp [Condition.occurrences] at hp
   | neg K ih =>
     intro bs D p hc hp
@@ -225,7 +225,7 @@ private theorem Condition.mem_occurrences_of_step (c : Condition L V) :
     ∀ {bs : List (DRS L V)} {p q}, p ∈ Condition.occurrences c bs → ScopeStep p q →
       q ∈ Condition.occurrences c bs := by
   induction c with
-  | rel R args => intro bs p q hp; simp [Condition.occurrences] at hp
+  | atom a => intro bs p q hp; simp [Condition.occurrences] at hp
   | eq u v => intro bs p q hp; simp [Condition.occurrences] at hp
   | neg K ih =>
     intro bs p q hp hs

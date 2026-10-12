@@ -6,16 +6,20 @@ public import Mathlib.Data.Fin.VecNotation
 /-!
 # Kamp, van Genabith and Reyle (2011): Discourse Representation Theory
 
-This file formalizes the information-state architecture of the Handbook of Philosophical Logic
-chapter [kamp-vangenabith-reyle-2011] on the indexed DRS substrate. Partee's marbles (42), the
-argument for Definition 22, are rendered minimally: two information states that determine the
-same proposition (Definition 23(v)) but record different witnesses for their referent, so that
-anaphoric potential lives strictly below truth conditions and propositions cannot be the objects
-of context change (`marble_worlds_eq_coin`, `marble_ne_coin`). The worked discourse (43), "John
-owns a donkey. It loves him.", instantiates the chapter's remark after Definition 24: applying
-the context change potential of the second sentence to the state the first expresses is the
-state of their merge (`ccp_action`), the second sentence being improper on its own, with its free
-referents supplied by the context.
+In this Handbook of Philosophical Logic chapter an information state records, for each world,
+the witnesses of its discourse referents, so anaphoric potential lives below truth conditions and
+the objects of context change are information states rather than propositions. Partee's marbles
+(42), the argument for Definition 22, are rendered minimally as two states that determine the
+same proposition (Definition 23(v)) but record different witnesses for their referent. In the
+worked discourse (43), *John owns a donkey. It loves him.*, applying the context change potential
+of the second sentence to the state the first expresses gives the state of their merge.
+
+## Main statements
+
+* `marble_worlds_eq_coin`, `marble_ne_coin`: the two marble states determine the same proposition
+  and differ.
+* `ccp_action`: updating the state of the first sentence of (43) with the second is the state of
+  their merge, as the chapter remarks after Definition 24.
 
 ## References
 
@@ -25,7 +29,7 @@ referents supplied by the context.
 @[expose] public section
 
 open FirstOrder FirstOrder.Language DRT
-open DynamicSemantics (Possibility State)
+open DynamicSemantics
 
 namespace KampVanGenabithReyle2011
 
@@ -78,15 +82,15 @@ inductive DRel : ℕ → Type
   | love : DRel 2
 
 /-- The first-order language of the discourse (no function symbols). -/
-def dLang : Language := ⟨λ _ => Empty, DRel⟩
+def dLang : Language := ⟨fun _ ↦ Empty, DRel⟩
 
 /-- The context DRS of (43), "John owns a donkey.", is `[x y | John x, donkey y, x owns y]`. -/
 def context : DRS dLang ℕ :=
-  .mk {0, 1} [.rel .john (![0]), .rel .donkey (![1]), .rel .own (![0, 1])]
+  .mk {0, 1} [.atom ⟨.john, ![0]⟩, .atom ⟨.donkey, ![1]⟩, .atom ⟨.own, ![0, 1]⟩]
 
 /-- The update DRS of (43), "It loves him.", is `[z u | u loves z, z = x, u = y]`, the
 pronouns resolved by equations to the context's referents. -/
-def update : DRS dLang ℕ := .mk {2, 3} [.rel .love (![3, 2]), .eq 2 0, .eq 3 1]
+def update : DRS dLang ℕ := .mk {2, 3} [.atom ⟨.love, ![3, 2]⟩, .eq 2 0, .eq 3 1]
 
 /-- The context DRS is proper. -/
 theorem context_proper : context.IsProper := by decide
@@ -103,9 +107,9 @@ theorem update_bound : update.freeVarFinset ⊆ context.referents := by
 theorem update_fresh : Disjoint update.referents (Condition.varFinsetL context.conditions) := by
   decide
 
-/-- The chapter's remark after Definition 24: applying the context change potential of the
-second sentence to the information state expressed by the first yields the information state
-expressed by their merge, the DRS of the whole discourse (43). -/
+/-- Applying the context change potential of the second sentence to the information state
+expressed by the first yields the information state expressed by their merge, the DRS of the
+whole discourse (43), as the chapter remarks after Definition 24. -/
 theorem ccp_action {W M : Type*} [dLang.Structure M] :
     (update.transition (M := M) W context.referents update_bound).applyState
         (context.state W context_proper) =

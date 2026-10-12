@@ -5,10 +5,10 @@ public import Linglib.Semantics.Dynamic.DRS.Defs
 /-!
 # Structural operations on DRSs
 
-This file develops the structural theory of the `DRS` type of `DRS/Defs.lean`:
-renaming of discourse referents, the merge algebra, transport of the extension
-relation along renaming, and occurring and free referents. Renaming along a bijection
-is [kamp-reyle-1993]'s *alphabetic variant* (the prose preceding Def. 1.4.8).
+This file develops the structural theory of the DRSs of `DRS/Defs.lean`, namely the renaming of
+discourse referents, the merge algebra, the transport of the extension relation along renaming,
+and occurring and free referents. Renaming along a bijection gives Kamp and Reyle's alphabetic
+variants (the prose preceding Def. 1.4.8).
 
 ## Main declarations
 
@@ -27,6 +27,10 @@ is [kamp-reyle-1993]'s *alphabetic variant* (the prose preceding Def. 1.4.8).
 Renaming, occurring and free referents, and reuse-freeness are each three mutually recursive
 functions, on DRSs, conditions and condition lists, by structural recursion through the
 nesting, so the kernel evaluates them and `decide` settles them on concrete DRSs.
+
+## References
+
+* [kamp-reyle-1993]
 -/
 
 @[expose] public section
@@ -51,7 +55,7 @@ def DRS.map (f : V → W) : DRS L V → DRS L W
   | ⟨U, cs⟩ => ⟨U.image f, Condition.mapList f cs⟩
 /-- `c.map f` renames the discourse referents of `c` along `f`. -/
 def Condition.map (f : V → W) : Condition L V → Condition L W
-  | .rel R args => .rel R (f ∘ args)
+  | .atom a => .atom (a.map f)
   | .eq a b => .eq (f a) (f b)
   | .neg K => .neg (DRS.map f K)
   | .imp a c => .imp (DRS.map f a) (DRS.map f c)
@@ -98,7 +102,7 @@ namespace Condition
 /-- Renaming a condition along the identity is the identity. -/
 @[simp] theorem map_id [DecidableEq V] (c : Condition L V) : map id c = c := by
   induction c with
-  | rel R args => rfl
+  | atom a => rfl
   | eq u v => rfl
   | neg K ih => exact congrArg neg (DRS.map_id_of_forall ih)
   | imp a c iha ihc =>
@@ -110,7 +114,7 @@ namespace Condition
 theorem map_map [DecidableEq W] [DecidableEq X] (g : W → X) (f : V → W)
     (c : Condition L V) : map g (map f c) = map (g ∘ f) c := by
   induction c with
-  | rel R args => rfl
+  | atom a => rfl
   | eq u v => rfl
   | neg K ih => exact congrArg neg (DRS.map_map_of_forall ih)
   | imp a c iha ihc =>
@@ -174,7 +178,7 @@ def DRS.varFinset : DRS L V → Finset V
 /-- Occurring referents (free or bound) in a condition, as a `Finset` — the DRS
 analogue of mathlib's `Term.varFinset`. -/
 def Condition.varFinset : Condition L V → Finset V
-  | .rel _ args => Finset.image args Finset.univ
+  | .atom a => Finset.image a.args Finset.univ
   | .eq u v => {u, v}
   | .neg K => DRS.varFinset K
   | .imp a c => DRS.varFinset a ∪ DRS.varFinset c
@@ -195,7 +199,7 @@ def DRS.freeVarFinset : DRS L V → Finset V
 /-- The free discourse referents of a condition (Def. 1.4.2); the consequent of a `⇒` also has
 the antecedent's universe bound. -/
 def Condition.freeVarFinset : Condition L V → Finset V
-  | .rel _ args => Finset.image args Finset.univ
+  | .atom a => Finset.image a.args Finset.univ
   | .eq u v => {u, v}
   | .neg K => DRS.freeVarFinset K
   | .imp a c => DRS.freeVarFinset a ∪ (DRS.freeVarFinset c \ a.referents)
@@ -211,8 +215,8 @@ namespace Condition
 @[simp] theorem varFinsetL_nil : varFinsetL ([] : List (Condition L V)) = ∅ := rfl
 @[simp] theorem varFinsetL_cons (c : Condition L V) (cs : List (Condition L V)) :
     varFinsetL (c :: cs) = c.varFinset ∪ varFinsetL cs := rfl
-@[simp] theorem varFinset_rel {n : ℕ} (R : L.Relations n) (args : Fin n → V) :
-    (rel R args).varFinset = Finset.image args Finset.univ := rfl
+@[simp] theorem varFinset_atom (a : L.Atom V) :
+    (atom a).varFinset = Finset.image a.args Finset.univ := rfl
 @[simp] theorem varFinset_eq (u v : V) : (eq u v : Condition L V).varFinset = {u, v} := rfl
 @[simp] theorem varFinset_neg (K : DRS L V) : (neg K).varFinset = K.varFinset := rfl
 @[simp] theorem varFinset_imp (a c : DRS L V) :
@@ -239,8 +243,8 @@ theorem varFinset_subset_varFinsetL {c : Condition L V} {cs : List (Condition L 
 @[simp] theorem freeVarFinsetL_nil : freeVarFinsetL ([] : List (Condition L V)) = ∅ := rfl
 @[simp] theorem freeVarFinsetL_cons (c : Condition L V) (cs : List (Condition L V)) :
     freeVarFinsetL (c :: cs) = c.freeVarFinset ∪ freeVarFinsetL cs := rfl
-@[simp] theorem freeVarFinset_rel {n : ℕ} (R : L.Relations n) (args : Fin n → V) :
-    (rel R args).freeVarFinset = Finset.image args Finset.univ := rfl
+@[simp] theorem freeVarFinset_atom (a : L.Atom V) :
+    (atom a).freeVarFinset = Finset.image a.args Finset.univ := rfl
 @[simp] theorem freeVarFinset_eq (u v : V) :
     (eq u v : Condition L V).freeVarFinset = {u, v} := rfl
 @[simp] theorem freeVarFinset_neg (K : DRS L V) : (neg K).freeVarFinset = K.freeVarFinset := rfl
@@ -312,7 +316,7 @@ theorem Condition.freeVarFinset_subset_varFinset (c : Condition L V) :
     | cons d ds ih =>
       exact Finset.union_subset_union (h d (by simp)) (ih fun e he => h e (by simp [he]))
   induction c with
-  | rel R args => simp
+  | atom a => simp
   | eq u v => simp
   | neg K ih => exact box ih
   | imp a c iha ihc =>
@@ -394,7 +398,7 @@ def DRS.ReuseFreeAt (X : Finset V) : DRS L V → Prop
 /-- A condition is reuse-free at ambient declarations `X` when each sub-box is, the
 consequent of a `⇒` at the declarations grown by the antecedent's universe. -/
 def Condition.ReuseFreeAt (X : Finset V) : Condition L V → Prop
-  | .rel _ _ => True
+  | .atom _ => True
   | .eq _ _ => True
   | .neg K => DRS.ReuseFreeAt X K
   | .imp a c => DRS.ReuseFreeAt X a ∧ DRS.ReuseFreeAt (X ∪ a.referents) c
@@ -407,8 +411,8 @@ end
 
 namespace Condition
 
-@[simp] theorem reuseFreeAt_rel (X : Finset V) {n : ℕ} (R : L.Relations n)
-    (args : Fin n → V) : ReuseFreeAt X (.rel R args) := trivial
+@[simp] theorem reuseFreeAt_atom (X : Finset V) (a : L.Atom V) : ReuseFreeAt X (.atom a) :=
+  trivial
 
 @[simp] theorem reuseFreeAt_eq (X : Finset V) (u v : V) :
     ReuseFreeAt X (.eq u v : Condition L V) := trivial
@@ -444,7 +448,7 @@ def DRS.decidableReuseFreeAt (X : Finset V) : (K : DRS L V) → Decidable (K.Reu
 @[instance_reducible]
 def Condition.decidableReuseFreeAt (X : Finset V) :
     (c : Condition L V) → Decidable (c.ReuseFreeAt X)
-  | .rel _ _ => instDecidableTrue
+  | .atom _ => instDecidableTrue
   | .eq _ _ => instDecidableTrue
   | .neg K => DRS.decidableReuseFreeAt X K
   | .imp a c =>
