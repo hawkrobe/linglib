@@ -1,138 +1,142 @@
 module
 
+public import Mathlib.Data.Fintype.Powerset
+public import Mathlib.Data.SetLike.Basic
 public import Mathlib.Order.Lattice
-public import Mathlib.Order.BoundedOrder.Basic
 public import Mathlib.Tactic.DeriveFintype
 
 /-!
-# Persistence levels ([grimm-2011] §2.2, Fig. 2)
+# Persistence levels
 
-Dowty's five Proto-Patient entailments are replaced by four persistence
-dimensions — existential and qualitative persistence at the beginning and
-end of the event. Logical dependencies (an entity that exists does so with
-its qualities; nonexistence at a boundary erases them) leave exactly five
-valid combinations, ordered by feature inclusion: a lattice with a creation
-branch (`exPersEnd`) and an affectedness branch
-(`exPersBeginning ≤ quPersBeginning`) rejoining at `totalPersistence`.
+Grimm replaces Dowty's five Proto-Patient entailments by four persistence features, existential
+and qualitative persistence at the beginning and at the end of the event. Their logical
+dependencies, that an entity that exists does so with its qualities and that nonexistence at a
+boundary erases them, leave five valid combinations, ordered by inclusion: a lattice with a
+creation branch (`exPersEnd`) and an affectedness branch (`exPersBeginning ≤ quPersBeginning`)
+rejoining at `totalPersistence`.
+
+## Main definitions
+
+* `PersistenceLevel.Feature`: the four persistence features.
+* `PersistenceLevel`: the five valid combinations, each a set of features.
+
+## Implementation notes
+
+A level is `SetLike` over its features, so its order is inclusion. The five levels are not closed
+under intersection, so the meet is the largest level inside the intersection, given by a table.
+
+## References
+
+* [grimm-2011]
 -/
 
 @[expose] public section
 
 namespace ArgumentStructure
 
-/-- The five valid persistence levels (p.524–525, Fig. 2).
-
-    Each level is a valid combination of four persistence dimensions:
-    - ExPB: existential persistence (beginning) — entity exists before event
-    - ExPE: existential persistence (end) — entity exists after event
-    - QuPB: qualitative persistence (beginning) — qualities unchanged before
-    - QuPE: qualitative persistence (end) — qualities unchanged after
-
-    Constraints (ExPB→QuPB, QuPE→ExPE, etc.) reduce the 16 possible
-    combinations to exactly 5. -/
+/-- The five valid persistence levels ([grimm-2011] pp.524–525, Fig. 2). -/
 inductive PersistenceLevel where
-  /-- ∅ExPB, ∅ExPE, ∅QuPB, ∅QuPE — entity has no entailed existence.
-      Arguments of *seek*, *want*; negated copulas. -/
+  /-- No entailed existence, as for the arguments of *seek*, *want* and negated copulas. -/
   | totalNonPersistence
-  /-- ∅ExPB, +ExPE, ∅QuPB, +QuPE — entity comes into existence.
-      Objects of *build*, *invent*; subjects of *appear*. -/
+  /-- The entity comes into existence, as the objects of *build*, *invent* and the subject of
+  *appear* do. -/
   | exPersEnd
-  /-- +ExPB, ∅ExPE, +QuPB, ∅QuPE — entity exists before, ceases to exist.
-      Subjects of *die*, *evaporate*; objects of *destroy*, *ruin*. -/
+  /-- The entity exists before the event and ceases to, as the subjects of *die*, *evaporate*
+  and the objects of *destroy*, *ruin* do. -/
   | exPersBeginning
-  /-- +ExPB, +ExPE, +QuPB, ∅QuPE — entity persists but is qualitatively
-      changed. Objects of transitive *move*, *dim*, *frighten*;
-      intransitive subjects of *fall*. -/
+  /-- The entity persists but is qualitatively changed, as the objects of transitive *move*,
+  *dim*, *frighten* and the intransitive subject of *fall* are. -/
   | quPersBeginning
-  /-- +ExPB, +ExPE, +QuPB, +QuPE — entity persists unchanged throughout.
-      Prototypical transitive subjects; unaffected objects of *see*, *cut at*. -/
+  /-- The entity persists unchanged throughout, as prototypical transitive subjects and the
+  unaffected objects of *see* and *cut at* do. -/
   | totalPersistence
   deriving DecidableEq, Repr, Fintype
 
-/-- Existential persistence at beginning (positive feature).
-    Also serves as "entity exists at the beginning of the event." -/
-def PersistenceLevel.exPersB : PersistenceLevel → Bool
-  | .exPersBeginning | .quPersBeginning | .totalPersistence => true
-  | _ => false
+namespace PersistenceLevel
 
-/-- Existential persistence at end (positive feature). -/
-def PersistenceLevel.exPersE : PersistenceLevel → Bool
-  | .exPersEnd | .quPersBeginning | .totalPersistence => true
-  | _ => false
+/-- The four persistence features ([grimm-2011] Table 2). -/
+inductive Feature where
+  /-- Existential persistence at the beginning of the event. -/
+  | exPB
+  /-- Existential persistence at the end of the event. -/
+  | exPE
+  /-- Qualitative persistence at the beginning of the event. -/
+  | quPB
+  /-- Qualitative persistence at the end of the event. -/
+  | quPE
+  deriving DecidableEq, Repr, Fintype
 
-/-- Qualitative persistence at beginning (positive feature). -/
-def PersistenceLevel.quPersB : PersistenceLevel → Bool
-  | .exPersBeginning | .quPersBeginning | .totalPersistence => true
-  | _ => false
+/-- The features of a level. -/
+def features : PersistenceLevel → Finset Feature
+  | .totalNonPersistence => ∅
+  | .exPersEnd => {.exPE, .quPE}
+  | .exPersBeginning => {.exPB, .quPB}
+  | .quPersBeginning => {.exPB, .exPE, .quPB}
+  | .totalPersistence => {.exPB, .exPE, .quPB, .quPE}
 
-/-- Qualitative persistence at end (positive feature). -/
-def PersistenceLevel.quPersE : PersistenceLevel → Bool
-  | .exPersEnd | .totalPersistence => true
-  | _ => false
+theorem features_injective : Function.Injective features := by decide
 
-/-- Subset inclusion ordering on persistence features. -/
-def PersistenceLevel.leBool (a b : PersistenceLevel) : Bool :=
-  (!a.exPersB || b.exPersB) && (!a.exPersE || b.exPersE) &&
-  (!a.quPersB || b.quPersB) && (!a.quPersE || b.quPersE)
+instance : SetLike PersistenceLevel Feature where
+  coe l := l.features
+  coe_injective _ _ h := features_injective (Finset.coe_injective h)
 
-instance : PartialOrder PersistenceLevel where
-  le a b := a.leBool b = true
-  le_refl := by decide
-  le_trans := by decide
-  le_antisymm := by decide
+instance : PartialOrder PersistenceLevel := .ofSetLike PersistenceLevel Feature
 
-instance : DecidableRel (α := PersistenceLevel) (· ≤ ·) := fun a b =>
-  inferInstanceAs (Decidable (a.leBool b = true))
+@[simp] theorem mem_features {l : PersistenceLevel} {f : Feature} : f ∈ l.features ↔ f ∈ l :=
+  Iff.rfl
 
-instance : OrderBot PersistenceLevel where
-  bot := .totalNonPersistence
-  bot_le := by decide
+instance (l : PersistenceLevel) : DecidablePred (· ∈ l) := fun f ↦
+  inferInstanceAs (Decidable (f ∈ l.features))
 
-instance : OrderTop PersistenceLevel where
-  top := .totalPersistence
-  le_top := by decide
+theorem le_iff_features_subset {l m : PersistenceLevel} : l ≤ m ↔ l.features ⊆ m.features :=
+  SetLike.le_def.trans Finset.coe_subset
 
-/-- Join on persistence levels. The 5 valid levels do not form a sublattice
-    of the powerset on {ExPB, ExPE, QuPB, QuPE} — the join is the smallest
-    valid level containing the union of features. -/
-def PersistenceLevel.sup' (a b : PersistenceLevel) : PersistenceLevel :=
-  match a, b with
+instance : DecidableRel (α := PersistenceLevel) (· ≤ ·) := fun _ _ ↦
+  decidable_of_iff _ le_iff_features_subset.symm
+
+/-- The join of two levels, the level whose features are the union of theirs. -/
+def sup' : PersistenceLevel → PersistenceLevel → PersistenceLevel
   | .totalNonPersistence, x | x, .totalNonPersistence => x
   | .totalPersistence, _ | _, .totalPersistence => .totalPersistence
   | .exPersBeginning, .exPersBeginning => .exPersBeginning
   | .exPersEnd, .exPersEnd => .exPersEnd
   | .quPersBeginning, .quPersBeginning => .quPersBeginning
-  | .exPersBeginning, .quPersBeginning
-  | .quPersBeginning, .exPersBeginning => .quPersBeginning
-  | .exPersBeginning, .exPersEnd
-  | .exPersEnd, .exPersBeginning => .totalPersistence
-  | .exPersEnd, .quPersBeginning
-  | .quPersBeginning, .exPersEnd => .totalPersistence
+  | .exPersBeginning, .quPersBeginning | .quPersBeginning, .exPersBeginning => .quPersBeginning
+  | .exPersBeginning, .exPersEnd | .exPersEnd, .exPersBeginning => .totalPersistence
+  | .exPersEnd, .quPersBeginning | .quPersBeginning, .exPersEnd => .totalPersistence
 
-/-- Meet on persistence levels. The largest valid level contained in the
-    intersection of features. -/
-def PersistenceLevel.inf' (a b : PersistenceLevel) : PersistenceLevel :=
-  match a, b with
+/-- The meet of two levels, the largest level inside the intersection of their features. -/
+def inf' : PersistenceLevel → PersistenceLevel → PersistenceLevel
   | .totalPersistence, x | x, .totalPersistence => x
   | .totalNonPersistence, _ | _, .totalNonPersistence => .totalNonPersistence
   | .exPersBeginning, .exPersBeginning => .exPersBeginning
   | .exPersEnd, .exPersEnd => .exPersEnd
   | .quPersBeginning, .quPersBeginning => .quPersBeginning
-  | .exPersBeginning, .quPersBeginning
-  | .quPersBeginning, .exPersBeginning => .exPersBeginning
-  | .exPersBeginning, .exPersEnd
-  | .exPersEnd, .exPersBeginning => .totalNonPersistence
-  | .exPersEnd, .quPersBeginning
-  | .quPersBeginning, .exPersEnd => .totalNonPersistence
+  | .exPersBeginning, .quPersBeginning | .quPersBeginning, .exPersBeginning => .exPersBeginning
+  | .exPersBeginning, .exPersEnd | .exPersEnd, .exPersBeginning => .totalNonPersistence
+  | .exPersEnd, .quPersBeginning | .quPersBeginning, .exPersEnd => .totalNonPersistence
+
+/-- The features of a join are the union of the features. -/
+theorem features_sup' (l m : PersistenceLevel) : (sup' l m).features = l.features ∪ m.features := by
+  revert l m; decide
 
 instance : Lattice PersistenceLevel where
-  sup := PersistenceLevel.sup'
-  inf := PersistenceLevel.inf'
+  __ := (inferInstance : PartialOrder PersistenceLevel)
+  sup := sup'
+  inf := inf'
   le_sup_left := by decide
   le_sup_right := by decide
   sup_le := by decide
   inf_le_left := by decide
   inf_le_right := by decide
   le_inf := by decide
+
+instance : BoundedOrder PersistenceLevel where
+  bot := .totalNonPersistence
+  bot_le := by decide
+  top := .totalPersistence
+  le_top := by decide
+
+end PersistenceLevel
 
 end ArgumentStructure

@@ -11,23 +11,23 @@ public import Linglib.Semantics.Plurality.Groups
 /-!
 # Siloni (2012): Reciprocal Verbs and Symmetry
 
-This file formalizes [siloni-2012]'s split of reciprocal verbs, the predicates expressing
+This file formalizes Siloni's split of reciprocal verbs, the predicates expressing
 reciprocity without an anaphoric object, by the locus of reciprocalization, the lexicon or the
-syntax (`Reciprocal.Formation`, [reinhart-siloni-2005]'s lex-syn parameter, building on
-[siloni-2008]), and its derivation of nine clustering properties from that split alone.
+syntax (`Reciprocal.Formation`, Reinhart and Siloni's lex-syn parameter, building on
+Siloni (2008)), and its derivation of nine clustering properties from that split alone.
 Reciprocalization eliminates the internal argument position and leaves the subject carrying
 both profiles' entailments, as a bundled complex role in the lexicon ((35) and (36),
 `reciprocalize`) or as two roles assigned separately by last-resort parasitic assignment in the
 syntax ((43), `Merger`, which also derives the ban on derived subjects and the ECM derivation
-(63)). Both loci share [landman-2000]'s group operators: a symmetric verb is a set of atomic
+(63)). Both loci share Landman's group operators: a symmetric verb is a set of atomic
 events whose complex role assigns the group atom over an unordered pair, related to its base by
 the meaning postulate of footnote 17 (`Verb.SymmetricDenotation`), from which the underlying
 directional events of (41) follow (`underlying_of_symmetric`); the syntactic reciprocal has the
 accumulation reading (46b) and the packed singular reading (47), whose content coincides with
 the symmetric verb's (`GroupEventReading.underlyingReading`). The "I" reading of embedded
-reciprocals ([higginbotham-1980]) needs a sub-event reading and a sole-role subject, so both
+reciprocals (Higginbotham) needs a sub-event reading and a sole-role subject, so both
 verb types lack it (`I_reading_iff_periphrastic`); the periphrastic sub-event reading is derived
-from [heim-lasnik-may-1991]'s LF (`accumulation_of_eachOtherLF`).
+from Heim, Lasnik and May's LF (`accumulation_of_eachOtherLF`).
 
 The nine properties of the conclusion are each a literal of one of four affordances of the
 locus, plural events (generalization (29)), stored outputs, the roles of two predicates, and
@@ -36,7 +36,7 @@ cluster and the complementarity of the two clusters are theorems (`lexical_prope
 `holds_syntactic_iff`). The case against an object-clitic analysis of *se* (section 3) is three
 diagnostics on which the transitive grid and the reciprocalized grid diverge and the data side
 with reciprocalization: Czech depictive case (`depictive_diagnostic`), comparative-ellipsis
-remnants (`ellipsis_diagnostic`) and [kayne-1975]'s causative causee (`causative_diagnostic`).
+remnants (`ellipsis_diagnostic`) and Kayne's causative causee (`causative_diagnostic`).
 The count-adverbial contrast of (15) and (16) is modelled by five atomic mutual events with
 inaccessible parts against five accumulation events with ten accessible directional parts
 (`mutualEvent_not_subEventReading`, `accumulated_subEventReading`), and the discontinuous
@@ -49,7 +49,7 @@ construction is the dyadic realization of a symmetric entry (section 7.5, `Dyadi
   role is one with both Proto-Agent and Proto-Patient content.
 * The affordances of a locus are the four parameters the paper's mechanisms turn on; the
   properties are derived from them and not recorded per formation. The exceptions the paper
-  notes, Czech reciprocal event nominals ([hron-2005]) and English *kiss* and *hug* resisting
+  notes, Czech reciprocal event nominals (Hron) and English *kiss* and *hug* resisting
   the discontinuous construction (footnote 32), are recorded in the docstrings.
 * The counting model takes events to be finite sets of markers, with a group atom for each
   round of kissing; the participants' roles are read off the parity of the marker.
@@ -74,11 +74,11 @@ open Reciprocal ArgumentStructure Plurality
 
 /-! ### Three-way reciprocal classification (section 2.4) -/
 
-/-- The three classes of reciprocal constructions: the reciprocal anaphor in object position
-(*each other*, *l'un l'autre*) with a subject bearing one θ-role; the reciprocal verb formed in
-the lexicon by θ-role bundling (section 4.1), whose subject bears a complex [Agent-Theme] role;
-and the reciprocal verb formed in the syntax by a clitic (section 4.2), whose subject bears two
-θ-roles via parasitic assignment. -/
+/-- The three classes of reciprocal constructions, namely the reciprocal anaphor in object position
+(*each other*, *l'un l'autre*) with a subject bearing one θ-role, the reciprocal verb formed in the
+lexicon by θ-role bundling (section 4.1), whose subject bears a complex [Agent-Theme] role, and the
+reciprocal verb formed in the syntax by a clitic (section 4.2), whose subject bears two θ-roles via
+parasitic assignment. -/
 inductive Construction
   | periphrastic | lexicalVerb | syntacticVerb
   deriving DecidableEq
@@ -100,8 +100,8 @@ inductive Affordance
   | pluralEvents | storesOutputs | spansPredicates | reducesAccusative
   deriving DecidableEq, Fintype
 
-/-- The affordances of a locus: the syntax has plural events and sees the roles of two
-predicates, the lexicon stores its outputs and reduces accusative case. -/
+/-- The affordances of a locus. The syntax has plural events and sees the roles of two predicates;
+the lexicon stores its outputs and reduces accusative case. -/
 def Affordance.Available : Affordance → Formation → Prop
   | .pluralEvents, f | .spansPredicates, f => f = .syntactic
   | .storesOutputs, f | .reducesAccusative, f => f = .lexical
@@ -109,9 +109,9 @@ def Affordance.Available : Affordance → Formation → Prop
 instance (a : Affordance) (f : Formation) : Decidable (a.Available f) := by
   cases a <;> unfold Affordance.Available <;> infer_instance
 
-/-- The locus where a construction's reciprocity is composed: in the lexicon only for lexical
-reciprocal verbs, since periphrastic reciprocity is composed by the anaphor's plural operator
-in the syntax (section 2.4). -/
+/-- The locus where a construction's reciprocity is composed. Only lexical reciprocal verbs compose
+it in the lexicon; periphrastic reciprocity is composed by the anaphor's plural operator in the
+syntax (section 2.4). -/
 def Construction.compositionLocus : Construction → Formation
   | .lexicalVerb => .lexical
   | .periphrastic | .syntacticVerb => .syntactic
@@ -146,8 +146,8 @@ by (41b), (46b) and (47). -/
 def CrossedPair (V : Set E) (ag th : E → D) (d₁ d₂ : D) (e₁ e₂ : E) : Prop :=
   e₁ ∈ V ∧ e₂ ∈ V ∧ ag e₁ = d₁ ∧ th e₁ = d₂ ∧ ag e₂ = d₂ ∧ th e₂ = d₁
 
-/-- The accumulation reading of a syntactic reciprocal (46b): the event is the plain sum of the
-two directional sub-events. -/
+/-- The accumulation reading of a syntactic reciprocal (46b), on which the event is the plain sum of
+the two directional sub-events. -/
 def AccumulationReading (V : Set E) (ag th : E → D) (d₁ d₂ : D) (e : E) : Prop :=
   ∃ e₁ e₂, e = e₁ ⊔ e₂ ∧ CrossedPair V ag th d₁ d₂ e₁ e₂
 
@@ -157,7 +157,8 @@ def GroupEventReading (GE : GroupStructure E) (V : Set E) (ag th : E → D)
     (d₁ d₂ : D) (e : E) : Prop :=
   ∃ e₁ e₂, e = GE.up (e₁ ⊔ e₂) ∧ CrossedPair V ag th d₁ d₂ e₁ e₂
 
-/-- The content of (41b): the event's dissolution is the sum of two directional base events. -/
+/-- The content of (41b), on which the event's dissolution is the sum of two directional base
+events. -/
 def UnderlyingReading (GE : GroupStructure E) (V : Set E) (ag th : E → D)
     (d₁ d₂ : D) (e : E) : Prop :=
   ∃ e₁ e₂, GE.down e = e₁ ⊔ e₂ ∧ CrossedPair V ag th d₁ d₂ e₁ e₂
@@ -197,7 +198,7 @@ theorem GroupEventReading.underlyingReading (h : GroupEventReading GE V ag th d�
 
 variable [SemilatticeSup D] {GD : GroupStructure D} {Vsym : Set E} {agTh : E → D}
 
-/-- (41): a symmetric kissing of the pair entails two underlying directional kissings, by
+/-- A symmetric kissing of the pair entails two underlying directional kissings (41), by
 `Verb.SymmetricDenotation`'s meaning postulate (the SYM marking of (36), footnote 17). -/
 theorem underlying_of_symmetric [h : Verb.SymmetricDenotation GD GE V ag th Vsym agTh]
     (he : e ∈ Vsym) (hne : d₁ ≠ d₂) (hrole : agTh e = GD.up (d₁ ⊔ d₂)) :
@@ -210,7 +211,7 @@ whatsoever: the underlying events are invisible to counting and modification (se
 theorem not_subEventReading_of_symmetric [h : Verb.SymmetricDenotation GD GE V ag th Vsym agTh]
     (he : e ∈ Vsym) {V' : Set E} {ag' th' : E → D} {d₁' d₂' : D} :
     ¬ SubEventReading V' ag' th' d₁' d₂' e :=
-  λ hs => hs.not_atom (h.atomic e he)
+  fun hs ↦ hs.not_atom (h.atomic e he)
 
 end Events
 
@@ -227,13 +228,12 @@ section Reciprocalize
 
 variable {r : RoleList} {o : EntailmentProfile}
 
-/-- Reciprocalization (35): the internal position is eliminated and its profile bundled onto
-the subject; the bundle retains the thematic properties of both roles
-(`reciprocalize_dominates`). -/
+/-- Reciprocalization (35) eliminates the internal position and bundles its profile onto the
+subject; the bundle retains the thematic properties of both roles (`reciprocalize_dominates`). -/
 def reciprocalize (r : RoleList) : RoleList where
   subjectProfile :=
     match r.objectProfile with
-    | some o => r.subjectProfile ⊔ o
+    | some o => r.subjectProfile ∪ o
     | none => r.subjectProfile
 
 /-- Reciprocalization leaves no internal argument. -/
@@ -241,25 +241,26 @@ theorem reciprocalize_objectProfile (r : RoleList) :
     (reciprocalize r).objectProfile = none := rfl
 
 theorem reciprocalize_subjectProfile (ho : r.objectProfile = some o) :
-    (reciprocalize r).subjectProfile = r.subjectProfile ⊔ o := by
+    (reciprocalize r).subjectProfile = r.subjectProfile ∪ o := by
   simp [reciprocalize, ho]
 
 /-- The reciprocalized subject retains the base subject's Proto-Agent entailments and inherits
 the object's Proto-Patient entailments, the Czech depictive (section 3.1) and
 comparative-ellipsis (section 3.2) diagnostics. -/
 theorem reciprocalize_dominates (ho : r.objectProfile = some o) :
-    PAgentDominates (reciprocalize r).subjectProfile r.subjectProfile ∧
-    PPatientDominates (reciprocalize r).subjectProfile o := by
+    r.subjectProfile.protoAgent ⊆ (reciprocalize r).subjectProfile.protoAgent ∧
+      o.protoPatient ⊆ (reciprocalize r).subjectProfile.protoPatient := by
   rw [reciprocalize_subjectProfile ho]
-  exact ⟨pAgentDominates_sup_left .., pPatientDominates_sup_right ..⟩
+  exact ⟨EntailmentProfile.protoAgent_mono Finset.subset_union_left,
+    EntailmentProfile.protoPatient_mono Finset.subset_union_right⟩
 
 /-- For any transitive base with an agentive subject and an affected object, the reciprocalized
 subject bears a complex role (section 4.1). -/
 theorem reciprocalize_isComplexRole (ho : r.objectProfile = some o)
-    (ha : 0 < r.subjectProfile.pAgentScore) (hp : 0 < o.pPatientScore) :
+    (ha : r.subjectProfile.protoAgent.Nonempty) (hp : o.protoPatient.Nonempty) :
     ((reciprocalize r).subjectProfile).IsComplexRole := by
   rw [reciprocalize_subjectProfile ho]
-  exact EntailmentProfile.isComplexRole_sup ha hp
+  exact EntailmentProfile.isComplexRole_union ha hp
 
 /-- A reciprocal verb entry's bundled subject role is the subject of its reciprocalized base
 grid: the entry-level and grid-level operations agree. -/
@@ -296,28 +297,28 @@ object-taking predicate is introduced by dative *à*; an intransitive's causee s
 def causeeRegion (r : RoleList) : CaseRegion :=
   if r.objectProfile.isSome then .dative else .accAbs
 
-/-- (25a) against (25d): keeping the transitive grid predicts the dative causee;
-reciprocalization predicts the bare causee, and *Pierre a fait s'embrasser Jean et Marie*
-decides for reciprocalization. -/
+/-- Keeping the transitive grid predicts the dative causee and reciprocalization the bare causee,
+and *Pierre a fait s'embrasser Jean et Marie* decides for reciprocalization ((25a) against (25d)).
+-/
 theorem causative_diagnostic (ho : base.objectProfile = some o) :
     causeeRegion (reciprocalize base) = .accAbs ∧ causeeRegion base = .dative :=
   ⟨rfl, by simp [causeeRegion, ho]⟩
 
-/-- The case of a depictive construing with the Theme (section 3.1): accusative if the internal
-role sits on an object (17), nominative if it sits on the subject. -/
+/-- The case of a depictive construing with the Theme (section 3.1), accusative if the internal role
+sits on an object (17) and nominative if it sits on the subject. -/
 def themeDepictiveRegion (r : RoleList) : CaseRegion :=
   if r.objectProfile.isSome then .accAbs else .nomErg
 
-/-- (18): with *se*, the theme-oriented depictive is nominative, and licitly so since the
-reciprocalized subject bears the object's Proto-Patient entailments; the object-clitic grid
-predicts accusative. -/
-theorem depictive_diagnostic (ho : base.objectProfile = some o) (hp : 0 < o.pPatientScore) :
+/-- With *se* the theme-oriented depictive is nominative (18), and licitly so since the
+reciprocalized subject bears the object's Proto-Patient entailments; the object-clitic grid predicts
+accusative. -/
+theorem depictive_diagnostic (ho : base.objectProfile = some o) (hp : o.protoPatient.Nonempty) :
     themeDepictiveRegion (reciprocalize base) = .nomErg ∧
-      0 < (reciprocalize base).subjectProfile.pPatientScore ∧
+      (reciprocalize base).subjectProfile.protoPatient.Nonempty ∧
       themeDepictiveRegion base = .accAbs := by
   refine ⟨rfl, ?_, by simp [themeDepictiveRegion, ho]⟩
   rw [reciprocalize_subjectProfile ho]
-  exact hp.trans_le (EntailmentProfile.pPatientScore_mono le_sup_right)
+  exact hp.mono (EntailmentProfile.protoPatient_mono Finset.subset_union_right)
 
 /-- The comparative remnant construes with a grid position (section 3.2): the transitive offers
 two readings (19a), the reciprocalized grid one (19b); with no object there is no accusative
@@ -369,8 +370,8 @@ never discharge a retained role ((45), section 3.4). -/
 theorem Merger.eq_of_assigned_nil (h : Merger m before [] after) : after = before := by
   cases h; rfl
 
-/-- (63c): at the matrix TP, *se*-marked merger assigns the matrix external role of *entendre*
-together with the retained embedded Agent of *chanter*. -/
+/-- At the matrix TP, *se*-marked merger assigns the matrix external role of *entendre* together
+with the retained embedded Agent of *chanter* (63c). -/
 theorem ecm_parasitic : Merger true [.experiencer, .agent] [.experiencer, .agent] [] :=
   .parasitic _ _ (by simp)
 
@@ -411,7 +412,7 @@ def Property.Holds : Property → Formation → Prop
 instance (p : Property) (f : Formation) : Decidable (p.Holds f) := by
   cases p <;> unfold Property.Holds <;> infer_instance
 
-/-- The concluding table: the properties of lexical reciprocal verbs. -/
+/-- The concluding table, listing the properties of lexical reciprocal verbs. -/
 theorem lexical_properties : Finset.univ.filter (Property.Holds · .lexical) =
     {.singularEvent, .frozenInput, .semanticDrift, .phrasalIdioms, .eventNominals,
       .discontinuous} := by
@@ -439,27 +440,26 @@ section IReading
 
 variable {r : RoleList} {o : EntailmentProfile} {c : Construction}
 
-/-- The subject's entailment profile over a transitive base: the periphrastic subject bears the
-base subject role, while both verb types accumulate both profiles' entailments, as one bundled
-complex role in the lexicon (36) or as two separately assigned roles in the syntax ((43),
-`Merger`). -/
+/-- The subject's entailment profile over a transitive base. The periphrastic subject bears the base
+subject role, while both verb types accumulate both profiles' entailments, as one bundled complex
+role in the lexicon (36) or as two separately assigned roles in the syntax ((43), `Merger`). -/
 def Construction.subjectProfile (r : RoleList) : Construction → EntailmentProfile
   | .periphrastic => r.subjectProfile
   | .lexicalVerb | .syntacticVerb => (reciprocalize r).subjectProfile
 
-/-- The "I" reading over a transitive base (section 4.3): the sub-event reading must be
-available and the subject must bear a sole role, a profile that is not complex. -/
+/-- The "I" reading over a transitive base (section 4.3), which requires the sub-event reading to be
+available and the subject to bear a sole role, a profile that is not complex. -/
 def Construction.AllowsIReading (r : RoleList) (c : Construction) : Prop :=
   c.AllowsSubEventReading ∧ ¬ (c.subjectProfile r).IsComplexRole
 
 /-- Sub-event availability is necessary for the "I" reading. -/
 theorem subevents_necessary_for_I (h : ¬ c.AllowsSubEventReading) : ¬ c.AllowsIReading r :=
-  λ hc => h hc.1
+  fun hc ↦ h hc.1
 
 /-- A sole θ-role on the subject is necessary for the "I" reading. -/
 theorem complex_role_blocks_I (h : (c.subjectProfile r).IsComplexRole) :
     ¬ c.AllowsIReading r :=
-  λ hc => hc.2 h
+  fun hc ↦ hc.2 h
 
 /-- A periphrastic reciprocal over a non-complex subject role allows the "I" reading:
 sub-events from the anaphor's plural operator and a sole role on the subject. -/
@@ -475,14 +475,14 @@ theorem lexical_no_I_reading (r : RoleList) :
 /-- In the syntax the bundled subject is a complex role, so there is no "I" reading though the
 sub-event reading is available. -/
 theorem syntactic_no_I_reading (ho : r.objectProfile = some o)
-    (ha : 0 < r.subjectProfile.pAgentScore) (hp : 0 < o.pPatientScore) :
+    (ha : r.subjectProfile.protoAgent.Nonempty) (hp : o.protoPatient.Nonempty) :
     ¬ (Construction.ofFormation .syntactic).AllowsIReading r :=
   complex_role_blocks_I (reciprocalize_isComplexRole ho ha hp)
 
 /-- Neither reciprocal verb type allows the "I" reading, over any transitive base with an
 agentive subject and an affected object. -/
 theorem no_I_reading_either_formation (f : Formation) (ho : r.objectProfile = some o)
-    (ha : 0 < r.subjectProfile.pAgentScore) (hp : 0 < o.pPatientScore) :
+    (ha : r.subjectProfile.protoAgent.Nonempty) (hp : o.protoPatient.Nonempty) :
     ¬ (Construction.ofFormation f).AllowsIReading r := by
   cases f
   exacts [lexical_no_I_reading r, syntactic_no_I_reading ho ha hp]
@@ -490,8 +490,8 @@ theorem no_I_reading_either_formation (f : Formation) (ho : r.objectProfile = so
 /-- Over any transitive base whose subject role is agentive but not complex and whose object is
 affected, the "I" reading is available in the periphrastic construction and only there. -/
 theorem I_reading_iff_periphrastic (hs : ¬ r.subjectProfile.IsComplexRole)
-    (ho : r.objectProfile = some o) (ha : 0 < r.subjectProfile.pAgentScore)
-    (hp : 0 < o.pPatientScore) : c.AllowsIReading r ↔ c = .periphrastic := by
+    (ho : r.objectProfile = some o) (ha : r.subjectProfile.protoAgent.Nonempty)
+    (hp : o.protoPatient.Nonempty) : c.AllowsIReading r ↔ c = .periphrastic := by
   cases c
   · exact iff_of_true (periphrastic_allows_I hs) rfl
   · exact iff_of_false (subevents_necessary_for_I (by decide)) (by decide)
@@ -537,7 +537,7 @@ theorem eachOtherLF_pair (R : D → D → Prop) (hne : d₁ ≠ d₂) :
 relations, read off the base verb's events, sum to a plural reciprocal event (sections 2.1 to
 2.2). -/
 theorem accumulation_of_eachOtherLF (hne : d₁ ≠ d₂)
-    (h : HeimLasnikMay1991.eachOtherLF {d₁, d₂} (λ a b => ∃ e ∈ V, ag e = a ∧ th e = b)) :
+    (h : HeimLasnikMay1991.eachOtherLF {d₁, d₂} (fun a b ↦ ∃ e ∈ V, ag e = a ∧ th e = b)) :
     ∃ e, AccumulationReading V ag th d₁ d₂ e := by
   obtain ⟨⟨e₁, he₁, ha₁, ht₁⟩, e₂, he₂, ha₂, ht₂⟩ := (eachOtherLF_pair _ hne).mp h
   exact ⟨e₁ ⊔ e₂, e₁, e₂, rfl, he₁, he₂, ha₁, ht₁, ha₂, ht₂⟩
@@ -563,8 +563,8 @@ inductive Kisser
   | dan | rina
   deriving DecidableEq
 
-/-- The event domain: finite sets of atomic event markers, the left summand for directional
-kissings and the right for group atoms. -/
+/-- The event domain, finite sets of atomic event markers, the left summand for directional kissings
+and the right for group atoms. -/
 abbrev KissEvent : Type := Finset (ℕ ⊕ ℕ)
 
 noncomputable def kissGroups : GroupStructure KissEvent := GroupStructure.finsetModel ℕ
@@ -573,7 +573,7 @@ noncomputable def kissGroups : GroupStructure KissEvent := GroupStructure.finset
 def directional (i : ℕ) : KissEvent := {Sum.inl i}
 
 theorem directional_injective : Function.Injective directional :=
-  λ _ _ h => Sum.inl.inj (Finset.singleton_injective h)
+  fun _ _ h ↦ Sum.inl.inj (Finset.singleton_injective h)
 
 /-- Round `j` kisses in both directions: Dan's is event `2j`, Rina's is event `2j + 1`. -/
 def kiss : Set KissEvent := {e | ∃ i < 10, e = directional i}
@@ -581,13 +581,13 @@ def kiss : Set KissEvent := {e | ∃ i < 10, e = directional i}
 /-- The even directional events, Dan's kissings of Rina. -/
 def IsDansKissing (e : KissEvent) : Prop := ∃ j < 5, e = directional (2 * j)
 
-instance : DecidablePred IsDansKissing := λ e =>
+instance : DecidablePred IsDansKissing := fun e ↦
   decidable_of_iff (∃ j ∈ Finset.range 5, e = directional (2 * j)) (by simp [IsDansKissing])
 
-/-- The agent of a directional kissing: Dan for the even events. -/
+/-- The agent of a directional kissing, Dan for the even events. -/
 def kissAg (e : KissEvent) : Kisser := if IsDansKissing e then .dan else .rina
 
-/-- The theme of a directional kissing: Rina for the even events. -/
+/-- The theme of a directional kissing, Rina for the even events. -/
 def kissTh (e : KissEvent) : Kisser := if IsDansKissing e then .rina else .dan
 
 /-- Round `j`'s two directional events form a crossed pair. -/
@@ -602,7 +602,7 @@ theorem crossedPair_round {j : ℕ} (hj : j < 5) :
     by rw [kissAg, ite_eq_right hodd], by rw [kissTh, ite_eq_right hodd]⟩
 
 theorem directional_not_le {i k : ℕ} (h : i ≠ k) : ¬ directional i ≤ directional k :=
-  λ hle => by
+  fun hle ↦ by
     have hmem : (Sum.inl i : ℕ ⊕ ℕ) ∈ ({Sum.inl k} : Finset (ℕ ⊕ ℕ)) :=
       Finset.singleton_subset_iff.mp hle
     rw [Finset.mem_singleton] at hmem
@@ -625,7 +625,7 @@ theorem mutualEvent_injective : Function.Injective mutualEvent := by
   simp only [Finset.mem_union, Finset.mem_singleton, Sum.inl.injEq] at hmem
   exact Fin.ext (by omega)
 
-/-- (15): five mutual kissing events. -/
+/-- Five mutual kissing events (15). -/
 theorem card_mutualEvent : (Finset.univ.image mutualEvent).card = 5 := by
   rw [Finset.card_image_of_injective _ mutualEvent_injective]
   simp
@@ -644,9 +644,9 @@ theorem mutualEvent_down (j : Fin 5) :
 see one atomic event per round ((15a) and (15d)). -/
 theorem mutualEvent_not_subEventReading (j : Fin 5) :
     ¬ SubEventReading kiss kissAg kissTh .dan .rina (mutualEvent j) :=
-  λ hs => hs.not_atom (kissGroups.atom_up _)
+  fun hs ↦ hs.not_atom (kissGroups.atom_up _)
 
-/-- (16): the French accumulation event of round `j` is the plain sum. -/
+/-- The French accumulation event of round `j` is the plain sum (16). -/
 def accumulated (j : Fin 5) : KissEvent := directional (2 * j) ⊔ directional (2 * j + 1)
 
 /-- Five accumulation events, the five-count of (16b). -/
@@ -692,8 +692,8 @@ section Dyadic
 variable {D E : Type*} [SemilatticeSup D] {GD : GroupStructure D} {Vsym : Set E} {d₁ d₂ : D}
   {e : E}
 
-/-- The dyadic realization (section 7.5): the verb's events and complex role are those of the
-monadic symmetric entry, the role taken at the subject and comitative's pair-group. -/
+/-- The dyadic realization (section 7.5), whose events and complex role are those of the monadic
+symmetric entry, the role taken at the subject and comitative's pair-group. -/
 def DyadicReading (GD : GroupStructure D) (Vsym : Set E) (agTh : E → D) (d₁ d₂ : D) (e : E) :
     Prop :=
   e ∈ Vsym ∧ agTh e = GD.up (d₁ ⊔ d₂)
@@ -716,18 +716,18 @@ end Dyadic
 
 /-! ### The language sample (sections 2.4, 5 and 7) -/
 
-/-- The paper's language sample: the abstract announces ten languages and eleven are named with
+/-- The paper's language sample; the abstract announces ten languages and eleven are named with
 data. -/
 inductive Language
   | hebrew | russian | hungarian | english
   | french | italian | spanish | czech | romanian | serboCroatian | bulgarian
   deriving DecidableEq, Fintype
 
-/-- The locus at which a language forms its reciprocal verbs (section 2.4): the lexicon in
-Hebrew, Russian, Hungarian and English, the syntax in the Romance languages, Czech,
-Serbo-Croatian and Bulgarian. English's reciprocal verbs (intransitive *kiss*, *meet*,
-*collide*) are lexicon-formed though the language's primary strategy is periphrastic, and
-footnote 32 notes that *kiss* and *hug* nonetheless resist the discontinuous construction. -/
+/-- The locus at which a language forms its reciprocal verbs (section 2.4), the lexicon in Hebrew,
+Russian, Hungarian and English and the syntax in the Romance languages, Czech, Serbo-Croatian and
+Bulgarian. English's reciprocal verbs (intransitive *kiss*, *meet*, *collide*) are lexicon-formed
+though the language's primary strategy is periphrastic, and footnote 32 notes that *kiss* and
+*hug* nonetheless resist the discontinuous construction. -/
 def Language.formation : Language → Formation
   | .hebrew | .russian | .hungarian | .english => .lexical
   | .french | .italian | .spanish | .czech | .romanian | .serboCroatian | .bulgarian => .syntactic

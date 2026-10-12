@@ -216,7 +216,8 @@ end Construal
 /-- The construal a verb entry lexicalizes reads change off the subject's causation entailment,
 volitionality off its volition entailment, and telicity off the Vendler class. -/
 def construal (v : Verb) : Construal :=
-  ⟨(v.subjectEntailments.getD {}).causation, (v.subjectEntailments.getD {}).volition,
+  let p := v.subjectEntailments.getD ∅
+  ⟨decide (.causation ∈ p), decide (.volition ∈ p),
     decide ((v.vendlerClass.map Aspect.VendlerClass.telicity).getD .atelic = .telic)⟩
 
 /-- *Par* selects a sense whose construal is at least as proto-agentive as that of every

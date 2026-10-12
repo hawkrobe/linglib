@@ -1,7 +1,6 @@
 module
 
 public import Linglib.Semantics.ArgumentStructure.ThetaRole
-public import Linglib.Semantics.ArgumentStructure.Projection
 
 /-!
 # Argument-structure templates
@@ -42,7 +41,7 @@ exactly at the ties behind the psych doublets (`roleList_not_asp_reversed`). -/
 structure RoleList where
   subjectProfile : EntailmentProfile
   objectProfile : Option EntailmentProfile := none
-  deriving DecidableEq, Repr
+  deriving DecidableEq
 
 /-- `r.args` lists the profiles of the role list, subject first, as
 [levin-rappaport-hovav-2005] (ch. 2) present role lists. -/
@@ -57,30 +56,29 @@ The consensus profiles of verb classes, which studies and fragments reference. -
 ([dowty-1991] (38)), and exists independently, by Dowty's generalization that every verb entailing
 any of (27a–d) also entails the existence of its subject (p. 573). -/
 def experiencerProfile : EntailmentProfile :=
-  { sentience := true, independentExistence := true }
+  {.sentience, .independentExistence}
 
 /-- A stimulus causes the experience without being sentient with respect to it
 ([dowty-1991] (38)). -/
 def stimulusProfile : EntailmentProfile :=
-  { causation := true, independentExistence := true }
+  {.causation, .independentExistence}
 
 /-- The object of the surface-contact classes is contacted but not changed, causally affected and
 stationary without a change of state. [dowty-1991] attributes no change of state to the objects of
 the hit class ((64 III)), and [beavers-2011] (60c) gives impact verbs only potential for change. -/
 def contactObject : EntailmentProfile :=
-  { causallyAffected := true, stationary := true }
+  {.causallyAffected, .stationary}
 
 /-- A created object changes state, is an incremental theme, is causally affected and does not
 exist before the event ([dowty-1991] (30e)(i)). -/
 def creationObject : EntailmentProfile :=
-  { changeOfState := true, incrementalTheme := true, causallyAffected := true,
-    dependentExistence := true }
+  {.changeOfState, .incrementalTheme, .causallyAffected, .dependentExistence}
 
 /-- A consumed object is like a created one but exists before the event. That difference is what
 lets `PersistenceLevel.fromPatientProfile` separate creation (`exPersEnd`) from consumption
 (`exPersBeginning`). -/
 def consumptionObject : EntailmentProfile :=
-  { changeOfState := true, incrementalTheme := true, causallyAffected := true }
+  {.changeOfState, .incrementalTheme, .causallyAffected}
 
 /-- In manner contact a full agent acts on an object it contacts without changing it. Manner verbs
 lack result entailments ([beavers-koontz-garboden-2020]). -/
@@ -115,13 +113,13 @@ def selfMotion : RoleList where
 /-- In nonagentive motion the subject moves without volition, as the ball does in *the ball
 rolled*, a change of position in the causative/inchoative alternation ([levin-1993] §1.1.2.1). -/
 def nonagentiveMotion : RoleList where
-  subjectProfile := { movement := true, independentExistence := true }
+  subjectProfile := {.movement, .independentExistence}
 
 /-- In perception the subject is a sentient, independently existing experiencer, neither volitional
 nor causal. -/
 def perception : RoleList where
   subjectProfile := experiencerProfile
-  objectProfile  := some ⟨false, false, false, false, true, false, false, false, false, false⟩
+  objectProfile  := some {.independentExistence}
 
 /-- Stimulus-experiencer psych verbs (Levin 31.1, the amuse verbs; [belletti-rizzi-1988]) have a
 causal stimulus as subject and an experiencer as object, the mirror image of `psychState`. -/
@@ -143,8 +141,8 @@ entail subject existence but have none of (a)–(d)" (p. 573), so there is no en
 sentience, unlike the admire class (*this situation needs a solution*). The object is de dicto or
 nonspecific, and so exists dependently ((30e)). -/
 def desire : RoleList where
-  subjectProfile := { independentExistence := true }
-  objectProfile  := some { dependentExistence := true }
+  subjectProfile := {.independentExistence}
+  objectProfile  := some {.dependentExistence}
 
 /-- Change of possession (Levin 13.1, the give verbs *give, lend, pass, sell*; 13.5, the verbs of
 obtaining *buy, get, obtain*) has a volitional agent as subject without entailed movement, since
@@ -153,15 +151,14 @@ have identical profiles, the tie behind the *buy*/*sell* doublet (§8.3). There 
 profile, Dowty raising a "two Themes" worry about the goods and the currency (§3.2) and
 attributing no entailments to the object. -/
 def possessionTransfer : RoleList where
-  subjectProfile := { volition := true, sentience := true, causation := true,
-                      independentExistence := true }
+  subjectProfile := {.volition, .sentience, .causation, .independentExistence}
 
 /-- The manner subclass of the wipe verbs (Levin 10.4.1, *wipe, scrub, sweep, rub, wash*) has a
 subject that only moves and exists independently, underspecified for volition, so that agentivity
 is resolved pragmatically ([rappaport-hovav-levin-1998] on *sweep*, which [dowty-1991] does not
 discuss). The object is contacted without an entailed change. -/
 def wipeManner : RoleList where
-  subjectProfile := { movement := true, independentExistence := true }
+  subjectProfile := {.movement, .independentExistence}
   objectProfile  := some contactObject
 
 /-- The instrument subclass of the wipe verbs (Levin 10.4.2, *brush, comb, mop, vacuum*)
@@ -187,15 +184,14 @@ def directedMotion : RoleList where
 that changes state, is causally affected and exists dependently, since the effected argument
 "will not exist after the event" ([dowty-1991] (30e)(i)). -/
 def disappearance : RoleList where
-  subjectProfile := { changeOfState := true, causallyAffected := true,
-                      dependentExistence := true }
+  subjectProfile := {.changeOfState, .causallyAffected, .dependentExistence}
 
 /-! ### Manner roots lack result entailments -/
 
 /-- The object of the hit class does not change state, the generalization of
 [beavers-koontz-garboden-2020] that manner roots lack result entailments. -/
-theorem mannerContact_object_no_cos :
-    (mannerContact.objectProfile.map (·.changeOfState)) = some false := rfl
+theorem mannerContact_object_no_cos : ∀ o ∈ mannerContact.objectProfile, .changeOfState ∉ o := by
+  simp [mannerContact, contactObject]
 
 /-! ### Derived role labels -/
 

@@ -18,7 +18,7 @@ an argument's entailment profile and never a stored primitive.
 ## Main declarations
 
 * `ArgumentStructure.ThetaRole`: the nine traditional labels.
-* `ThetaRole.canonicalProfile`: the entailments a label combines, `⊥` for source, goal and
+* `ThetaRole.canonicalProfile`: the entailments a label combines, none for source, goal and
   recipient;
   `ThetaRole.IsDefined` says a label has defining entailments.
 * `EntailmentProfile.toRole`: the label of a profile, with `toRole_eq_some_agent_iff` and its
@@ -68,15 +68,13 @@ stimulus causation, the instrument causation and movement, the theme change with
 and dependent existence, the patient the causally affected theme, and the source, goal and recipient
 nothing. -/
 def canonicalProfile : ThetaRole → EntailmentProfile
-  | .agent => { volition := true, sentience := true, causation := true, movement := true }
-  | .experiencer => { sentience := true }
-  | .stimulus => { causation := true }
-  | .instrument => { causation := true, movement := true }
-  | .theme => { changeOfState := true, incrementalTheme := true, dependentExistence := true }
-  | .patient =>
-    { changeOfState := true, incrementalTheme := true, causallyAffected := true,
-      dependentExistence := true }
-  | .goal | .source | .recipient => ⊥
+  | .agent => {.volition, .sentience, .causation, .movement}
+  | .experiencer => {.sentience}
+  | .stimulus => {.causation}
+  | .instrument => {.causation, .movement}
+  | .theme => {.changeOfState, .incrementalTheme, .dependentExistence}
+  | .patient => {.changeOfState, .incrementalTheme, .causallyAffected, .dependentExistence}
+  | .goal | .source | .recipient => ∅
 
 /-- A label is defined by proto-role entailments; source, goal and recipient are not. -/
 def IsDefined (r : ThetaRole) : Prop := r ≠ .source ∧ r ≠ .goal ∧ r ≠ .recipient
@@ -84,20 +82,20 @@ def IsDefined (r : ThetaRole) : Prop := r ≠ .source ∧ r ≠ .goal ∧ r ≠ 
 instance : DecidablePred IsDefined := fun r ↦
   inferInstanceAs (Decidable (r ≠ .source ∧ r ≠ .goal ∧ r ≠ .recipient))
 
-@[simp] theorem canonicalProfile_source : canonicalProfile .source = ⊥ := rfl
+@[simp] theorem canonicalProfile_source : canonicalProfile .source = ∅ := rfl
 
-@[simp] theorem canonicalProfile_goal : canonicalProfile .goal = ⊥ := rfl
+@[simp] theorem canonicalProfile_goal : canonicalProfile .goal = ∅ := rfl
 
-@[simp] theorem canonicalProfile_recipient : canonicalProfile .recipient = ⊥ := rfl
+@[simp] theorem canonicalProfile_recipient : canonicalProfile .recipient = ∅ := rfl
 
 /-- A label has defining entailments iff its profile is not empty. -/
-theorem isDefined_iff_canonicalProfile_ne_bot (r : ThetaRole) :
-    r.IsDefined ↔ r.canonicalProfile ≠ ⊥ := by
+theorem isDefined_iff_canonicalProfile_nonempty (r : ThetaRole) :
+    r.IsDefined ↔ r.canonicalProfile.Nonempty := by
   cases r <;> decide
 
 /-- A patient is a theme that is causally affected. -/
 theorem canonicalProfile_theme_le_patient :
-    canonicalProfile .theme ≤ canonicalProfile .patient := by
+    canonicalProfile .theme ⊆ canonicalProfile .patient := by
   decide
 
 /-- Every canonical profile satisfies Dowty's internal constraint that volition entails
@@ -115,40 +113,38 @@ and not causing, else instrument or stimulus if causing according to movement, e
 causally affected, else theme if changing, measuring out the event, depending on it, or moving, and
 otherwise none. -/
 def toRole (p : EntailmentProfile) : Option ThetaRole :=
-  if p.volition then some .agent
-  else if p.sentience then if p.causation then none else some .experiencer
-  else if p.causation then some (if p.movement then .instrument else .stimulus)
-  else if p.causallyAffected then some .patient
-  else if p.changeOfState || p.incrementalTheme || p.dependentExistence || p.movement then
-    some .theme
+  if .volition ∈ p then some .agent
+  else if .sentience ∈ p then if .causation ∈ p then none else some .experiencer
+  else if .causation ∈ p then some (if .movement ∈ p then .instrument else .stimulus)
+  else if .causallyAffected ∈ p then some .patient
+  else if .changeOfState ∈ p ∨ .incrementalTheme ∈ p ∨ .dependentExistence ∈ p ∨ .movement ∈ p
+  then some .theme
   else none
 
 variable {p : EntailmentProfile}
 
-theorem toRole_eq_some_agent_iff : p.toRole = some .agent ↔ p.volition = true := by
+theorem toRole_eq_some_agent_iff : p.toRole = some .agent ↔ .volition ∈ p := by
   unfold toRole; split_ifs <;> simp_all
 
 theorem toRole_eq_some_experiencer_iff : p.toRole = some .experiencer ↔
-    p.volition = false ∧ p.sentience = true ∧ p.causation = false := by
+    .volition ∉ p ∧ .sentience ∈ p ∧ .causation ∉ p := by
   unfold toRole; split_ifs <;> simp_all
 
 theorem toRole_eq_some_instrument_iff : p.toRole = some .instrument ↔
-    p.volition = false ∧ p.sentience = false ∧ p.causation = true ∧ p.movement = true := by
+    .volition ∉ p ∧ .sentience ∉ p ∧ .causation ∈ p ∧ .movement ∈ p := by
   unfold toRole; split_ifs <;> simp_all
 
 theorem toRole_eq_some_stimulus_iff : p.toRole = some .stimulus ↔
-    p.volition = false ∧ p.sentience = false ∧ p.causation = true ∧ p.movement = false := by
+    .volition ∉ p ∧ .sentience ∉ p ∧ .causation ∈ p ∧ .movement ∉ p := by
   unfold toRole; split_ifs <;> simp_all
 
 theorem toRole_eq_some_patient_iff : p.toRole = some .patient ↔
-    p.volition = false ∧ p.sentience = false ∧ p.causation = false ∧
-      p.causallyAffected = true := by
+    .volition ∉ p ∧ .sentience ∉ p ∧ .causation ∉ p ∧ .causallyAffected ∈ p := by
   unfold toRole; split_ifs <;> simp_all
 
 theorem toRole_eq_some_theme_iff : p.toRole = some .theme ↔
-    p.volition = false ∧ p.sentience = false ∧ p.causation = false ∧
-      p.causallyAffected = false ∧
-        (p.changeOfState || p.incrementalTheme || p.dependentExistence || p.movement) = true := by
+    .volition ∉ p ∧ .sentience ∉ p ∧ .causation ∉ p ∧ .causallyAffected ∉ p ∧
+      (.changeOfState ∈ p ∨ .incrementalTheme ∈ p ∨ .dependentExistence ∈ p ∨ .movement ∈ p) := by
   unfold toRole; split_ifs <;> simp_all
 
 /-- Source, goal and recipient are never read off a profile: they are not defined by
@@ -167,8 +163,8 @@ theorem isDefined_of_toRole_eq_some {r : ThetaRole} (h : p.toRole = some r) : r.
   ⟨fun hr ↦ toRole_ne_some_source (hr ▸ h), fun hr ↦ toRole_ne_some_goal (hr ▸ h),
     fun hr ↦ toRole_ne_some_recipient (hr ▸ h)⟩
 
-theorem causation_of_toRole_eq_some_stimulus (h : p.toRole = some .stimulus) :
-    p.causation = true :=
+theorem causation_mem_of_toRole_eq_some_stimulus (h : p.toRole = some .stimulus) :
+    .causation ∈ p :=
   (toRole_eq_some_stimulus_iff.mp h).2.2.1
 
 end EntailmentProfile

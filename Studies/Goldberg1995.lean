@@ -122,7 +122,7 @@ instance (M : Sem) (k : Finset Feature) (R : SubeventRelation) : Decidable (M.Ad
 
 /-- `causers` is the set of labels whose Dowty profile entails causation, the roles a cause
 admits: "a putter is a type of cause" (p. 52). -/
-def causers : Finset ThetaRole := Finset.univ.filter fun r ↦ r.canonicalProfile.causation
+def causers : Finset ThetaRole := Finset.univ.filter fun r ↦ .causation ∈ r.canonicalProfile
 
 example : causers = {.agent, .instrument, .stimulus} := by decide
 

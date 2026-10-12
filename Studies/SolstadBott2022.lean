@@ -7,19 +7,19 @@ public import Linglib.Discourse.Coherence
 /-!
 # Solstad & Bott (2022): On the Nature of Implicit Causality and Consequentiality
 
-This file formalizes the Two-Mechanism Account of [solstad-bott-2022]. Implicit causality
+This file formalizes the Two-Mechanism Account of Solstad and Bott. Implicit causality
 (I-Caus), the coreference bias of a continuation after *because*, is verb-semantic: on the
 authors' Empty Slot Theory, a stimulus argument causes the psychological state the verb
 names without the verb saying how, so the argument carries an underspecified proposition
 that an explanation fills. Implicit consequentiality (I-Cons), the bias after *and so*, is
-discourse-structural: on the Contiguity Principle of [kehler-2002], a consequence continues
+discourse-structural: on the Contiguity Principle of Kehler, a consequence continues
 from the final state of the prompt's eventuality, held by the experiencer of the state or by
 the participant the action affects. Both mechanisms read off a verb class's proto-role grid
-([dowty-1991]): `CarriesSlot` is the stimulus label, `HoldsEndState` the experiencer label or
+(Dowty): `CarriesSlot` is the stimulus label, `HoldsEndState` the experiencer label or
 causal affectedness, `ICaus` and `ICons` the resulting coreference predictions, and `Bias`
 routes them through the direction of the cause–effect relation a connective signals.
 
-The rival One-Mechanism Account of [crinean-garnham-2006] reads both biases off one causal
+The rival One-Mechanism Account of Crinean and Garnham reads both biases off one causal
 decomposition, causes with agents and stimuli alike, consequences with experiencers and
 patients, so a continuation about the end-state argument should be a consequence. The
 Two-Mechanism Account lets slot filling take precedence over contiguity, so a slot predicate
@@ -47,7 +47,7 @@ The experimental results are reported in prose above; the library's format for
 experimental data is pending. The psych grids are the substrate's `psychCausal` and
 `psychState`, which are each other's `flip`, so the mirror theorem is one instance of
 `bias_flip`. The agent-evocator grid `judgment` follows the paper's description of
-[crinean-garnham-2006]: the evocator is causally affected by the agent's act and, through
+Crinean and Garnham: the evocator is causally affected by the agent's act and, through
 the verb's presupposition of a preceding eventuality it took part in, the non-agentive cause
 of the agent's intention, so it is both the slot argument and the end-state argument.
 Agent-patient verbs take the manner-contact grid `mannerContact`.
@@ -84,7 +84,7 @@ def profileAt (r : RoleList) : Argument → Option EntailmentProfile
 
 /-- The grid with subject and object exchanged, when there is an object. -/
 def flip (r : RoleList) : Option RoleList :=
-  r.objectProfile.map λ o => ⟨o, some r.subjectProfile⟩
+  r.objectProfile.map fun o ↦ ⟨o, some r.subjectProfile⟩
 
 theorem profileAt_flip {r r' : RoleList} (h : flip r = some r') (a : Argument) :
     profileAt r' a = profileAt r a.swap := by
@@ -102,7 +102,7 @@ def CarriesSlot (p : EntailmentProfile) : Prop := p.toRole = some .stimulus
 the prompt's eventuality, held by the experiencer of the psychological state or by the
 participant the action affects. -/
 def HoldsEndState (p : EntailmentProfile) : Prop :=
-  p.toRole = some .experiencer ∨ p.causallyAffected = true
+  p.toRole = some .experiencer ∨ .causallyAffected ∈ p
 
 instance (p : EntailmentProfile) : Decidable (CarriesSlot p) :=
   inferInstanceAs (Decidable (p.toRole = some .stimulus))
@@ -111,14 +111,14 @@ instance (p : EntailmentProfile) : Decidable (HoldsEndState p) :=
   inferInstanceAs (Decidable (_ ∨ _))
 
 /-- A slot argument is entailed to cause. -/
-theorem causation_of_carriesSlot {p : EntailmentProfile} (h : CarriesSlot p) :
-    p.causation = true :=
-  EntailmentProfile.causation_of_toRole_eq_some_stimulus h
+theorem causation_mem_of_carriesSlot {p : EntailmentProfile} (h : CarriesSlot p) :
+    .causation ∈ p :=
+  EntailmentProfile.causation_mem_of_toRole_eq_some_stimulus h
 
 /-- A slot argument holds the end state only if it is causally affected, so on a grid
 without affected arguments the two mechanisms never pick the same argument. -/
 theorem holdsEndState_iff_of_carriesSlot {p : EntailmentProfile} (h : CarriesSlot p) :
-    HoldsEndState p ↔ p.causallyAffected = true := by
+    HoldsEndState p ↔ .causallyAffected ∈ p := by
   simp [HoldsEndState, CarriesSlot] at *; simp [h]
 
 /-- I-Caus coreference goes to the slot argument. -/
@@ -133,8 +133,8 @@ instance (r : RoleList) (a : Argument) : Decidable (ICaus r a) := by
 instance (r : RoleList) (a : Argument) : Decidable (ICons r a) := by
   unfold ICons; infer_instance
 
-/-- The connectives of the continuation prompts: German *weil* and *sodass*, the paper's
-*because* and *and so*. -/
+/-- The connectives of the continuation prompts, German *weil* and *sodass*, the paper's *because*
+and *and so*. -/
 inductive Connective where
   | because
   | andSo
@@ -145,9 +145,9 @@ def Connective.relation : Connective → Relation
   | .because => .explanation
   | .andSo => .result
 
-/-- The coreference bias a connective elicits: the slot argument when the relation it
-signals seeks its cause in the continuation, the end-state argument when it seeks its
-effect there. -/
+/-- A connective elicits a coreference bias toward the slot argument when the relation it signals
+seeks its cause in the continuation, and toward the end-state argument when it seeks its effect
+there. -/
 def Bias (r : RoleList) (c : Connective) (a : Argument) : Prop :=
   match c.relation.causalDirection with
   | some .backward => ICaus r a
@@ -202,13 +202,13 @@ theorem expStim_bias (a : Argument) :
 /-- The One-Mechanism Account's I-Caus argument: whichever argument the verb entails to
 cause, agent or stimulus alike. -/
 def ICausOne (r : RoleList) (a : Argument) : Prop :=
-  ∃ p ∈ profileAt r a, p.causation = true
+  ∃ p ∈ profileAt r a, .causation ∈ p
 
 instance (r : RoleList) (a : Argument) : Decidable (ICausOne r a) := by
   unfold ICausOne; infer_instance
 
 theorem icausOne_of_icaus {r : RoleList} {a : Argument} (h : ICaus r a) : ICausOne r a :=
-  let ⟨p, hp, hs⟩ := h; ⟨p, hp, causation_of_carriesSlot hs⟩
+  let ⟨p, hp, hs⟩ := h; ⟨p, hp, causation_mem_of_carriesSlot hs⟩
 
 /-- The coherence relation the One-Mechanism Account predicts for a continuation about `a`:
 an explanation about a cause argument, a consequence about an end-state argument. -/
@@ -230,8 +230,8 @@ theorem twoMechanism_of_icaus {r : RoleList} {a : Argument} (h : ICaus r a) :
     twoMechanism r = some .explanation := by
   simp [twoMechanism, (⟨a, h⟩ : ∃ a, ICaus r a)]
 
-/-- The Asymmetry Hypothesis: about the end-state argument of a slot predicate, an argument
-not itself entailed to cause, the One-Mechanism Account predicts a consequence and the
+/-- The Asymmetry Hypothesis holds that about the end-state argument of a slot predicate, an
+argument not itself entailed to cause, the One-Mechanism Account predicts a consequence and the
 Two-Mechanism Account an explanation. -/
 theorem asymmetry {r : RoleList} {a b : Argument} (hb : ICaus r b) (ha : ¬ ICausOne r a)
     (he : ICons r a) :
@@ -251,7 +251,7 @@ theorem psych_asymmetry :
 agent's act and, through the verb's presupposition of a preceding eventuality it took part in,
 the non-agentive cause of the agent's intention. -/
 def evocator : EntailmentProfile :=
-  { causation := true, causallyAffected := true, independentExistence := true }
+  {.causation, .causallyAffected, .independentExistence}
 
 /-- Agent-evocator verbs: an agent acting on an evocator. -/
 def judgment : RoleList := ⟨accomplishmentSubjectProfile, some evocator⟩
@@ -295,7 +295,7 @@ theorem iconsBias_eq :
     VerbClass.agentEvocator.iconsBias = some .np2 ∧ VerbClass.agentPat.iconsBias = some .np2 := by
   decide
 
-/-- The evocator's dual role: it is both the slot argument and the end-state argument. -/
+/-- The evocator plays a dual role, being both the slot argument and the end-state argument. -/
 theorem agentEvocator_dual : ICaus judgment .np2 ∧ ICons judgment .np2 := by decide
 
 /-- Where the accounts part on agent-patient verbs: the agent is a cause on the

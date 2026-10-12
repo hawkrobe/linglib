@@ -134,7 +134,7 @@ def ofVerb (v : Verb) : Option AuxiliarySelectionHierarchy := do
   else if v.scaleDimension.isSome then pure changeOfState
   else if v.direction.isSome then pure motionalProcess
   else v.subjectProfile?.map fun θ ↦
-    if θ.volition then nonmotionalProcess else uncontrolledProcess
+    if .volition ∈ θ then nonmotionalProcess else uncontrolledProcess
 
 /-- A bounded directional phrase makes a dynamic verb that selects one a change of location, the
 bottom of the hierarchy: the directed motion use in which verbs of manner of motion take *be*

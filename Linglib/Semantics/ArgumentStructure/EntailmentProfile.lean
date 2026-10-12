@@ -1,37 +1,34 @@
 module
 
-public import Mathlib.Data.Fintype.Pi
-public import Mathlib.Order.BooleanAlgebra.Basic
+public import Mathlib.Data.Fintype.Powerset
 public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # Proto-role entailment profiles
 
-An `EntailmentProfile` records which of Dowty's ten proto-role entailments a verb imposes on one
-of its arguments. Proto-Agent and Proto-Patient are cluster concepts: each is a set of
-entailments, and an argument's degree of agenthood or patienthood is the set it satisfies.
-Following Grimm, the Argument Selection Principle is stated lattice-theoretically: subjecthood
-tracks strict superset dominance on Proto-Agent feature sets, Proto-Patient dominance breaking
-ties.
+An `EntailmentProfile` is the set of Dowty's ten proto-role entailments a verb imposes on one of
+its arguments. Proto-Agent and Proto-Patient are cluster concepts: each is a set of five
+entailments, and an argument's agenthood and patienthood are the parts of its profile that fall in
+each cluster, `protoAgent` and `protoPatient`. Following Grimm, the Argument Selection Principle
+is stated by inclusion: subjecthood tracks strict inclusion of Proto-Agent parts, Proto-Patient
+inclusion breaking ties.
 
 ## Main definitions
 
-* `EntailmentProfile`: the ten entailments a verb imposes on an argument.
-* `PAgentDominates`, `PPatientDominates`: inclusion of Proto-Agent and Proto-Patient feature
-  sets.
-* `OutranksForSubject`: the lattice-based Argument Selection Principle.
-* `PredictsUnaccusative`, `PredictsUnergative`: the split-intransitivity predictions.
+* `EntailmentProfile`: the entailments a verb imposes on an argument.
+* `EntailmentProfile.protoAgent`, `EntailmentProfile.protoPatient`: its parts in the two
+  clusters.
+* `OutranksForSubject`: the Argument Selection Principle by inclusion.
 * `activitySubjectProfile`, …, `accomplishmentObjectProfile`: Rappaport Hovav and Levin's
   template-level defaults.
 
 ## Implementation notes
 
-The entailments are not independent: volition presupposes sentience (`WellFormedInternal`), and
-causation, movement and independent existence pair asymmetrically with Proto-Patient entailments
-(`WellFormedPair`). Under the pointwise Boolean algebra `≤` is entailment-set inclusion, so
-Davis and Koenig's causation priority needs no extra clause; the counts `pAgentScore` and
-`pPatientScore`, cardinalities of the support, serve Dowty's flat principle in
-`Studies/Dowty1991.lean`. The projection to Grimm's lattice is in `Projection.lean`.
+The entailments are not independent: volition presupposes sentience (`WellFormedInternal`).
+Since profiles are sets, `p ⊆ q` is entailment inclusion and `p ∪ q` imposes both profiles'
+entailments, Reinhart and Siloni's role bundling; Davis and Koenig's causation priority needs no
+extra clause. Dowty's flat principle counts the parts, in `Studies/Dowty1991.lean`, and the
+projection to Grimm's agentivity lattice is in `Projection.lean`.
 
 ## References
 
@@ -39,8 +36,6 @@ Davis and Koenig's causation priority needs no extra clause; the counts `pAgentS
 * [grimm-2011]
 * [davis-koenig-2000]
 * [levin-2019]
-* [beavers-2010]
-* [primus-1999]
 * [reinhart-siloni-2005]
 * [rappaport-hovav-levin-1998]
 -/
@@ -57,225 +52,146 @@ inductive Volitionality where
   | volitional
   deriving DecidableEq, Repr
 
-/-- The ten entailments defining the proto-roles ([dowty-1991] pp.572–573):
-the first five are Proto-Agent, the last five Proto-Patient. Fields default
-to `false`, so a profile lists only the entailments it imposes. -/
-structure EntailmentProfile where
-  /-- Volitional involvement in the event. -/
-  volition : Bool := false
-  /-- Sentience or perception. -/
-  sentience : Bool := false
-  /-- Causes an event or change of state in another participant. -/
-  causation : Bool := false
-  /-- Movement relative to another participant. -/
-  movement : Bool := false
-  /-- Exists independently of the event named by the verb. -/
-  independentExistence : Bool := false
-  /-- Undergoes a change of state. -/
-  changeOfState : Bool := false
-  /-- The argument is an incremental theme, measuring out the event. -/
-  incrementalTheme : Bool := false
-  /-- Causally affected by another participant. -/
-  causallyAffected : Bool := false
-  /-- Stationary relative to another participant. -/
-  stationary : Bool := false
-  /-- Does not exist independently of the event. -/
-  dependentExistence : Bool := false
-  deriving DecidableEq, Repr
-
-/-- The ten proto-role entailments as a feature index ([dowty-1991]
-pp.572–573): five Proto-Agent, then five Proto-Patient. -/
+/-- The ten entailments defining the proto-roles ([dowty-1991] pp.572–573): the first five are
+Proto-Agent, the last five Proto-Patient. -/
 inductive ProtoRoleFeature where
-  | volition | sentience | causation | movement | independentExistence
-  | changeOfState | incrementalTheme | causallyAffected | stationary
+  /-- Volitional involvement in the event. -/
+  | volition
+  /-- Sentience or perception. -/
+  | sentience
+  /-- Causes an event or change of state in another participant. -/
+  | causation
+  /-- Movement relative to another participant. -/
+  | movement
+  /-- Exists independently of the event named by the verb. -/
+  | independentExistence
+  /-- Undergoes a change of state. -/
+  | changeOfState
+  /-- The argument is an incremental theme, measuring out the event. -/
+  | incrementalTheme
+  /-- Causally affected by another participant. -/
+  | causallyAffected
+  /-- Stationary relative to another participant. -/
+  | stationary
+  /-- Does not exist independently of the event. -/
   | dependentExistence
   deriving DecidableEq, Repr, Fintype
 
+namespace ProtoRoleFeature
+
+/-- Dowty's five Proto-Agent entailments. -/
+def agentCluster : Finset ProtoRoleFeature :=
+  {.volition, .sentience, .causation, .movement, .independentExistence}
+
+/-- Dowty's five Proto-Patient entailments. -/
+def patientCluster : Finset ProtoRoleFeature :=
+  {.changeOfState, .incrementalTheme, .causallyAffected, .stationary, .dependentExistence}
+
+theorem disjoint_agentCluster_patientCluster : Disjoint agentCluster patientCluster := by
+  decide
+
+theorem agentCluster_union_patientCluster : agentCluster ∪ patientCluster = Finset.univ := by
+  decide
+
+end ProtoRoleFeature
+
+open ProtoRoleFeature
+
+/-- The proto-role entailments a verb imposes on one of its arguments. -/
+abbrev EntailmentProfile := Finset ProtoRoleFeature
+
+/-- A profile is printed as the list of its entailments in Dowty's order. -/
+instance : Repr EntailmentProfile where
+  reprPrec p _ := repr ([ProtoRoleFeature.volition, .sentience, .causation, .movement,
+    .independentExistence, .changeOfState, .incrementalTheme, .causallyAffected, .stationary,
+    .dependentExistence].filter (· ∈ p))
+
 namespace EntailmentProfile
 
-variable (p q subj obj : EntailmentProfile)
+variable {p q : EntailmentProfile}
 
-/-- A profile as its feature-indicator function: the profile *is* a point
-of the Boolean cube on `ProtoRoleFeature`. -/
-def feature (p : EntailmentProfile) : ProtoRoleFeature → Bool
-  | .volition => p.volition
-  | .sentience => p.sentience
-  | .causation => p.causation
-  | .movement => p.movement
-  | .independentExistence => p.independentExistence
-  | .changeOfState => p.changeOfState
-  | .incrementalTheme => p.incrementalTheme
-  | .causallyAffected => p.causallyAffected
-  | .stationary => p.stationary
-  | .dependentExistence => p.dependentExistence
+/-- The Proto-Agent entailments of a profile. -/
+def protoAgent (p : EntailmentProfile) : Finset ProtoRoleFeature := p ∩ agentCluster
 
-/-- `EntailmentProfile` is the Boolean cube `ProtoRoleFeature → Bool`; the
-`Fintype` instance (and any order or Boolean-algebra structure a consumer
-needs) transports along this equivalence. -/
-def equivFeatures : EntailmentProfile ≃ (ProtoRoleFeature → Bool) where
-  toFun := feature
-  invFun g :=
-    { volition := g .volition, sentience := g .sentience
-      causation := g .causation, movement := g .movement
-      independentExistence := g .independentExistence
-      changeOfState := g .changeOfState
-      incrementalTheme := g .incrementalTheme
-      causallyAffected := g .causallyAffected, stationary := g .stationary
-      dependentExistence := g .dependentExistence }
-  left_inv p := by cases p; rfl
-  right_inv g := by funext f; cases f <;> rfl
+/-- The Proto-Patient entailments of a profile. -/
+def protoPatient (p : EntailmentProfile) : Finset ProtoRoleFeature := p ∩ patientCluster
 
-instance : Fintype EntailmentProfile := Fintype.ofEquiv _ equivFeatures.symm
+theorem protoAgent_mono : Monotone protoAgent := fun _ _ h ↦ Finset.inter_subset_inter_right h
 
-/-! ### Feature counting -/
+theorem protoPatient_mono : Monotone protoPatient := fun _ _ h ↦ Finset.inter_subset_inter_right h
 
-/-- Number of Proto-Agent entailments. Informational: the Argument Selection
-Principle uses lattice comparison ([grimm-2011]), not counting. -/
-def pAgentScore : Nat :=
-  p.volition.toNat + p.sentience.toNat + p.causation.toNat +
-  p.movement.toNat + p.independentExistence.toNat
+/-- The profile imposes entailments from both proto-role clusters, [reinhart-siloni-2005]'s
+complex role. -/
+def IsComplexRole (p : EntailmentProfile) : Prop := p.protoAgent.Nonempty ∧ p.protoPatient.Nonempty
 
-/-- Number of Proto-Patient entailments. -/
-def pPatientScore : Nat :=
-  p.changeOfState.toNat + p.incrementalTheme.toNat +
-  p.causallyAffected.toNat + p.stationary.toNat +
-  p.dependentExistence.toNat
+instance : DecidablePred IsComplexRole := fun p ↦
+  inferInstanceAs (Decidable (p.protoAgent.Nonempty ∧ p.protoPatient.Nonempty))
+
+/-- Bundling an agentive profile with an affected one yields a complex role. -/
+theorem isComplexRole_union (ha : p.protoAgent.Nonempty) (hp : q.protoPatient.Nonempty) :
+    IsComplexRole (p ∪ q) :=
+  ⟨ha.mono (protoAgent_mono Finset.subset_union_left),
+    hp.mono (protoPatient_mono Finset.subset_union_right)⟩
 
 end EntailmentProfile
 
-variable (p q subj obj : EntailmentProfile)
+open EntailmentProfile
 
-/-! ### Lattice comparison -/
-
-/-- `p` has every Proto-Agent feature that `q` has: the subset ordering on
-Proto-Agent feature sets. -/
-def PAgentDominates : Prop :=
-  (q.volition = true → p.volition = true) ∧
-  (q.sentience = true → p.sentience = true) ∧
-  (q.causation = true → p.causation = true) ∧
-  (q.movement = true → p.movement = true) ∧
-  (q.independentExistence = true → p.independentExistence = true)
-
-instance : Decidable (PAgentDominates p q) := by
-  unfold PAgentDominates; infer_instance
-
-/-- `p` has every Proto-Patient feature that `q` has. -/
-def PPatientDominates : Prop :=
-  (q.changeOfState = true → p.changeOfState = true) ∧
-  (q.incrementalTheme = true → p.incrementalTheme = true) ∧
-  (q.causallyAffected = true → p.causallyAffected = true) ∧
-  (q.stationary = true → p.stationary = true) ∧
-  (q.dependentExistence = true → p.dependentExistence = true)
-
-instance : Decidable (PPatientDominates p q) := by
-  unfold PPatientDominates; infer_instance
-
-/-- `p`'s Proto-Agent feature set is a strict superset of `q`'s. -/
-def PAgentStrictlyDominates : Prop :=
-  PAgentDominates p q ∧ ¬ PAgentDominates q p
-
-instance : Decidable (PAgentStrictlyDominates p q) := by
-  unfold PAgentStrictlyDominates; infer_instance
-
-/-- `p`'s Proto-Patient feature set is a strict superset of `q`'s. -/
-def PPatientStrictlyDominates : Prop :=
-  PPatientDominates p q ∧ ¬ PPatientDominates q p
-
-instance : Decidable (PPatientStrictlyDominates p q) := by
-  unfold PPatientStrictlyDominates; infer_instance
-
-theorem pAgentDominates_refl : PAgentDominates p p :=
-  ⟨id, id, id, id, id⟩
-
-theorem pPatientDominates_refl : PPatientDominates p p :=
-  ⟨id, id, id, id, id⟩
+variable (p subj obj : EntailmentProfile)
 
 /-! ### Argument selection -/
 
-/-- The lattice-based Argument Selection Principle ([grimm-2011],
-[davis-koenig-2000]): `subj` outranks `obj` for subjecthood iff `subj`
-strictly Proto-Agent-dominates `obj`, or the two are Proto-Agent-incomparable
-and `obj` strictly Proto-Patient-dominates `subj`. Causation priority is
-structural: `{causation, IE}` strictly dominates `{IE}` yet is incomparable
-with `{sentience, IE}`. -/
+/-- The Argument Selection Principle by inclusion ([grimm-2011], [davis-koenig-2000]): `subj`
+outranks `obj` for subjecthood when its Proto-Agent entailments strictly include `obj`'s, or
+when neither Proto-Agent part strictly includes the other and `obj`'s Proto-Patient entailments
+strictly include `subj`'s. Causation priority is structural: `{causation, independentExistence}`
+strictly includes `{independentExistence}` yet is incomparable with
+`{sentience, independentExistence}`. -/
 def OutranksForSubject : Prop :=
-  PAgentStrictlyDominates subj obj ∨
-  (¬ PAgentStrictlyDominates subj obj ∧ ¬ PAgentStrictlyDominates obj subj ∧
-   PPatientStrictlyDominates obj subj)
+  obj.protoAgent ⊂ subj.protoAgent ∨
+    (¬ subj.protoAgent ⊂ obj.protoAgent ∧ subj.protoPatient ⊂ obj.protoPatient)
 
 instance : Decidable (OutranksForSubject subj obj) := by
   unfold OutranksForSubject; infer_instance
 
-/-- [dowty-1991]'s Corollary 1 (p.579): neither argument outranks the other,
-so subject choice may alternate (*buy*/*sell*, *like*/*please*). -/
-def AllowsAlternation : Prop :=
-  ¬ OutranksForSubject p q ∧ ¬ OutranksForSubject q p
-
-instance : Decidable (AllowsAlternation p q) := by
-  unfold AllowsAlternation; infer_instance
-
 /-! ### Split intransitivity -/
 
-/-- The sole argument lacks the priority Proto-Agent entailments — volition
-and causation ([davis-koenig-2000]) — and bears at least one Proto-Patient
-entailment ([dowty-1991] Table 1). Unlike flat counting, this classifies
-*arrive* as unaccusative. -/
+/-- The sole argument lacks the priority Proto-Agent entailments, volition and causation
+([davis-koenig-2000]), and bears at least one Proto-Patient entailment ([dowty-1991] Table 1).
+Unlike flat counting, this classifies *arrive* as unaccusative. -/
 def PredictsUnaccusative : Prop :=
-  p.volition = false ∧ p.causation = false ∧ p.pPatientScore > 0
+  .volition ∉ p ∧ .causation ∉ p ∧ p.protoPatient.Nonempty
 
 instance : DecidablePred PredictsUnaccusative := fun p ↦ by
   unfold PredictsUnaccusative; infer_instance
 
-/-- The sole argument bears a priority Proto-Agent entailment (volition or
-causation) and no Proto-Patient entailment. -/
-def PredictsUnergative : Prop :=
-  (p.volition = true ∨ p.causation = true) ∧ p.pPatientScore = 0
-
-instance : DecidablePred PredictsUnergative := fun p ↦ by
-  unfold PredictsUnergative; infer_instance
-
 /-! ### Well-formedness -/
 
-/-- Volition presupposes sentience: only sentient entities can act
-volitionally ([dowty-1991] p.607, [levin-2019] §2.1). -/
-def WellFormedInternal : Prop :=
-  p.volition = true → p.sentience = true
+/-- Volition presupposes sentience: only sentient entities can act volitionally ([dowty-1991]
+p.607, [levin-2019] §2.1). -/
+def WellFormedInternal : Prop := .volition ∈ p → .sentience ∈ p
 
-instance : DecidablePred WellFormedInternal := fun p ↦ by
-  unfold WellFormedInternal; infer_instance
-
-/-- Three Proto-Agent entailments pair asymmetrically across a
-subject–object pair ([davis-koenig-2000], [primus-1999]): causation →
-changeOfState, movement → stationary, independentExistence →
-dependentExistence. -/
-def WellFormedPair : Prop :=
-  (subj.causation = true → obj.changeOfState = true) ∧
-  (subj.movement = true → obj.stationary = true) ∧
-  (subj.independentExistence = true → obj.dependentExistence = true)
-
-instance : Decidable (WellFormedPair subj obj) := by
-  unfold WellFormedPair; infer_instance
+instance : DecidablePred WellFormedInternal := fun _ ↦
+  inferInstanceAs (Decidable (_ → _))
 
 /-! ### Template-level proto-role defaults
 
-Per-template subject/object defaults ([rappaport-hovav-levin-1998] with
-[dowty-1991]'s entailments), consumed by Fragment-level verb entries. Per-verb
-entailment content is NOT stored here: it lives in the Levin-class map
-(`LevinClass.subjectProfile`), and Dowty's own per-verb attributions are typed
-data rows in `Data/ProtoRoles/Dowty1991.json` consumed by `Studies/Dowty1991.lean`. -/
+Per-template subject and object defaults, [rappaport-hovav-levin-1998]'s templates with
+[dowty-1991]'s entailments, consumed by Fragment-level verb entries. Per-verb entailments live in
+the Levin-class map (`LevinClass.subjectProfile`), and Dowty's own per-verb attributions are the
+rows of `Data/ProtoRoles/Dowty1991.json` consumed by `Studies/Dowty1991.lean`. -/
 
 /-- The activity template's subject, with volition, sentience, movement and independent existence.
 Transitive activities like *hit* add causation at the class level via root-contributed objects. -/
 def activitySubjectProfile : EntailmentProfile :=
-  { volition := true, sentience := true, movement := true,
-    independentExistence := true }
+  {.volition, .sentience, .movement, .independentExistence}
 
 /-- The achievement template's subject, which moves, exists independently and undergoes a change of
 state. The movement entailment fits directed-motion achievements (*arrive*) but overgeneralizes to
 non-motion achievements (*recognize*, *notice*), whose subjects are sentient rather than moving;
 those pattern with the psych-state templates in `LevinClass.subjectProfile`. -/
 def achievementSubjectProfile : EntailmentProfile :=
-  { movement := true, independentExistence := true, changeOfState := true }
+  {.movement, .independentExistence, .changeOfState}
 
 /-- The accomplishment template's subject, a full proto-agent with volition, sentience, causation,
 movement and independent existence. Dowty confirms it at the class level: the primary transitive
@@ -283,8 +199,7 @@ verbs of [dowty-1991] (35) (*build*, *write*, *murder*, *eat*, *wash*) have subj
 sentience, causation, and movement" and no Proto-Patient entailments (p. 577); independent existence
 is the parenthesized (27e). -/
 def accomplishmentSubjectProfile : EntailmentProfile :=
-  { volition := true, sentience := true, causation := true, movement := true,
-    independentExistence := true }
+  {.volition, .sentience, .causation, .movement, .independentExistence}
 
 /-- The accomplishment template's object, a result patient that changes state and is causally
 affected. Dowty confirms it at the class level: the (35) objects have "change, causally affected"
@@ -292,189 +207,6 @@ affected. Dowty confirms it at the class level: the (35) objects have "change, c
 stationary, dependent existence", so incremental themes (*eat*, *build*) add IT per class or per
 verb — not all accomplishment objects measure the event. -/
 def accomplishmentObjectProfile : EntailmentProfile :=
-  { changeOfState := true, causallyAffected := true }
-
-/-! ### The Boolean cube order
-
-Pointwise order and Boolean-algebra structure, transported along
-`equivFeatures`: `p ≤ q` is entailment-set inclusion, and `p ⊔ q` imposes
-the union of the two profiles' entailments — [reinhart-siloni-2005]'s role
-bundling. `support` is the imposed entailment set; the counting accessors
-and dominance relations are its cardinality and cluster-restricted
-inclusion (`pAgentScore_eq_card`, `pAgentDominates_iff_subset`). -/
-
-/-- [dowty-1991]'s five Proto-Agent entailments as a feature set. -/
-def ProtoRoleFeature.agentCluster : Finset ProtoRoleFeature :=
-  {.volition, .sentience, .causation, .movement, .independentExistence}
-
-/-- The five Proto-Patient entailments as a feature set. -/
-def ProtoRoleFeature.patientCluster : Finset ProtoRoleFeature :=
-  {.changeOfState, .incrementalTheme, .causallyAffected, .stationary,
-   .dependentExistence}
-
-theorem ProtoRoleFeature.disjoint_agentCluster_patientCluster :
-    Disjoint ProtoRoleFeature.agentCluster ProtoRoleFeature.patientCluster :=
-  Finset.disjoint_left.mpr (by decide)
-
-theorem ProtoRoleFeature.agentCluster_union_patientCluster :
-    ProtoRoleFeature.agentCluster ∪ ProtoRoleFeature.patientCluster =
-      Finset.univ := by decide
-
-namespace EntailmentProfile
-
-instance : BooleanAlgebra EntailmentProfile := equivFeatures.booleanAlgebra
-
-theorem le_def {p q : EntailmentProfile} :
-    p ≤ q ↔ ∀ f, p.feature f ≤ q.feature f := Iff.rfl
-
-instance : DecidableRel (α := EntailmentProfile) (· ≤ ·) := fun _ _ =>
-  decidable_of_iff _ le_def.symm
-
-@[simp] theorem feature_sup (p q : EntailmentProfile) (f : ProtoRoleFeature) :
-    (p ⊔ q).feature f = (p.feature f || q.feature f) := by
-  cases f <;> rfl
-
-/-- The set of entailments a profile imposes. -/
-def support (p : EntailmentProfile) : Finset ProtoRoleFeature :=
-  Finset.univ.filter (fun f => p.feature f)
-
-@[simp] theorem mem_support {p : EntailmentProfile} {f : ProtoRoleFeature} :
-    f ∈ p.support ↔ p.feature f = true := by
-  simp [support]
-
-@[simp] theorem support_sup (p q : EntailmentProfile) :
-    (p ⊔ q).support = p.support ∪ q.support := by
-  ext f; simp
-
-theorem le_iff_support_subset {p q : EntailmentProfile} :
-    p ≤ q ↔ p.support ⊆ q.support := by
-  simp [le_def, Finset.subset_iff, Bool.le_iff_imp]
-
-theorem support_inter_eq_filter (p : EntailmentProfile)
-    (s : Finset ProtoRoleFeature) :
-    p.support ∩ s = s.filter (fun f => p.feature f) := by
-  ext f; simp [and_comm]
-
-/-- The Proto-Agent count is the size of the support's agent-cluster part. -/
-theorem pAgentScore_eq_card (p : EntailmentProfile) :
-    p.pAgentScore = (p.support ∩ ProtoRoleFeature.agentCluster).card := by
-  rw [support_inter_eq_filter]
-  obtain ⟨v, s, c, m, ie, _, _, _, _, _⟩ := p
-  cases v <;> cases s <;> cases c <;> cases m <;> cases ie <;> rfl
-
-/-- The Proto-Patient count is the size of the support's patient-cluster
-    part. -/
-theorem pPatientScore_eq_card (p : EntailmentProfile) :
-    p.pPatientScore = (p.support ∩ ProtoRoleFeature.patientCluster).card := by
-  rw [support_inter_eq_filter]
-  obtain ⟨_, _, _, _, _, cs, it, ca, st, de⟩ := p
-  cases cs <;> cases it <;> cases ca <;> cases st <;> cases de <;> rfl
-
-theorem pAgentScore_mono : Monotone pAgentScore := fun _ _ h => by
-  rw [pAgentScore_eq_card, pAgentScore_eq_card]
-  exact Finset.card_le_card
-    (Finset.inter_subset_inter (le_iff_support_subset.mp h) Finset.Subset.rfl)
-
-theorem pPatientScore_mono : Monotone pPatientScore := fun _ _ h => by
-  rw [pPatientScore_eq_card, pPatientScore_eq_card]
-  exact Finset.card_le_card
-    (Finset.inter_subset_inter (le_iff_support_subset.mp h) Finset.Subset.rfl)
-
-/-- The profile imposes entailments from both proto-role clusters —
-    [reinhart-siloni-2005]'s complex role. -/
-def IsComplexRole (p : EntailmentProfile) : Prop :=
-  0 < p.pAgentScore ∧ 0 < p.pPatientScore
-
-instance : DecidablePred IsComplexRole := fun p =>
-  inferInstanceAs (Decidable (0 < p.pAgentScore ∧ 0 < p.pPatientScore))
-
-/-- Joining an agentive profile with an affected one yields a complex
-    role. -/
-theorem isComplexRole_sup {p q : EntailmentProfile}
-    (ha : 0 < p.pAgentScore) (hp : 0 < q.pPatientScore) :
-    IsComplexRole (p ⊔ q) :=
-  ⟨ha.trans_le (pAgentScore_mono le_sup_left),
-   hp.trans_le (pPatientScore_mono le_sup_right)⟩
-
-end EntailmentProfile
-
-/-- Proto-Agent dominance is inclusion of the supports' agent-cluster
-    parts. -/
-theorem pAgentDominates_iff_subset (p q : EntailmentProfile) :
-    PAgentDominates p q ↔
-      q.support ∩ ProtoRoleFeature.agentCluster ⊆
-        p.support ∩ ProtoRoleFeature.agentCluster := by
-  constructor
-  · rintro ⟨h1, h2, h3, h4, h5⟩ f hf
-    rw [Finset.mem_inter, EntailmentProfile.mem_support] at hf ⊢
-    obtain ⟨hq, hA⟩ := hf
-    refine ⟨?_, hA⟩
-    simp only [ProtoRoleFeature.agentCluster, Finset.mem_insert,
-      Finset.mem_singleton] at hA
-    rcases hA with rfl | rfl | rfl | rfl | rfl
-    exacts [h1 hq, h2 hq, h3 hq, h4 hq, h5 hq]
-  · intro h
-    have H : ∀ f ∈ ProtoRoleFeature.agentCluster,
-        q.feature f = true → p.feature f = true := fun f hA hq =>
-      EntailmentProfile.mem_support.mp
-        (Finset.mem_inter.mp (h (Finset.mem_inter.mpr
-          ⟨EntailmentProfile.mem_support.mpr hq, hA⟩))).1
-    exact ⟨H .volition (by decide), H .sentience (by decide),
-      H .causation (by decide), H .movement (by decide),
-      H .independentExistence (by decide)⟩
-
-/-- Proto-Patient dominance is inclusion of the supports' patient-cluster
-    parts. -/
-theorem pPatientDominates_iff_subset (p q : EntailmentProfile) :
-    PPatientDominates p q ↔
-      q.support ∩ ProtoRoleFeature.patientCluster ⊆
-        p.support ∩ ProtoRoleFeature.patientCluster := by
-  constructor
-  · rintro ⟨h1, h2, h3, h4, h5⟩ f hf
-    rw [Finset.mem_inter, EntailmentProfile.mem_support] at hf ⊢
-    obtain ⟨hq, hA⟩ := hf
-    refine ⟨?_, hA⟩
-    simp only [ProtoRoleFeature.patientCluster, Finset.mem_insert,
-      Finset.mem_singleton] at hA
-    rcases hA with rfl | rfl | rfl | rfl | rfl
-    exacts [h1 hq, h2 hq, h3 hq, h4 hq, h5 hq]
-  · intro h
-    have H : ∀ f ∈ ProtoRoleFeature.patientCluster,
-        q.feature f = true → p.feature f = true := fun f hA hq =>
-      EntailmentProfile.mem_support.mp
-        (Finset.mem_inter.mp (h (Finset.mem_inter.mpr
-          ⟨EntailmentProfile.mem_support.mpr hq, hA⟩))).1
-    exact ⟨H .changeOfState (by decide), H .incrementalTheme (by decide),
-      H .causallyAffected (by decide), H .stationary (by decide),
-      H .dependentExistence (by decide)⟩
-
-/-- The join retains the left component's Proto-Agent entailments. -/
-theorem pAgentDominates_sup_left (p q : EntailmentProfile) :
-    PAgentDominates (p ⊔ q) p :=
-  (pAgentDominates_iff_subset _ _).mpr <| by
-    rw [EntailmentProfile.support_sup]
-    exact Finset.inter_subset_inter Finset.subset_union_left Finset.Subset.rfl
-
-/-- The join retains the right component's Proto-Agent entailments. -/
-theorem pAgentDominates_sup_right (p q : EntailmentProfile) :
-    PAgentDominates (p ⊔ q) q :=
-  (pAgentDominates_iff_subset _ _).mpr <| by
-    rw [EntailmentProfile.support_sup]
-    exact Finset.inter_subset_inter Finset.subset_union_right Finset.Subset.rfl
-
-/-- The join inherits the left component's Proto-Patient entailments. -/
-theorem pPatientDominates_sup_left (p q : EntailmentProfile) :
-    PPatientDominates (p ⊔ q) p :=
-  (pPatientDominates_iff_subset _ _).mpr <| by
-    rw [EntailmentProfile.support_sup]
-    exact Finset.inter_subset_inter Finset.subset_union_left Finset.Subset.rfl
-
-/-- The join inherits the right component's Proto-Patient entailments. -/
-theorem pPatientDominates_sup_right (p q : EntailmentProfile) :
-    PPatientDominates (p ⊔ q) q :=
-  (pPatientDominates_iff_subset _ _).mpr <| by
-    rw [EntailmentProfile.support_sup]
-    exact Finset.inter_subset_inter Finset.subset_union_right Finset.Subset.rfl
+  {.changeOfState, .causallyAffected}
 
 end ArgumentStructure
-
