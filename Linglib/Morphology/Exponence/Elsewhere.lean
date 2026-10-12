@@ -2,6 +2,7 @@ module
 
 public import Linglib.Morphology.Exponence.Basic
 public import Mathlib.Order.Antisymmetrization
+public import Mathlib.Order.Preorder.Chain
 public import Mathlib.Order.Preorder.Finite
 public import Mathlib.Data.Set.Finite.Basic
 
@@ -22,6 +23,8 @@ winners and the prediction relation they induce.
 
 ## Main results
 
+* `Realizes.eq`: where the Elsewhere winners form a chain, Pāṇinian Determinism, a coherent
+  vocabulary makes a unique prediction.
 * `Realizes.of_realizes`: no ABA pattern across nested contexts.
 
 ## References
@@ -73,13 +76,13 @@ theorem exists_isElsewhereWinner
 def Realizes (v : List R) (c : Ctx) (φ : E) : Prop :=
   ∃ r, IsElsewhereWinner v c r ∧ exponent r = φ
 
-/-- Over a coherent vocabulary with comparable winners, the prediction is unique. -/
-theorem Realizes.eq {ψ : E} (hv : Coherent v)
-    (hcmp : ∀ ⦃r s⦄, IsElsewhereWinner v c r → IsElsewhereWinner v c s → s ≤ r ∨ r ≤ s)
+/-- Over a coherent vocabulary whose Elsewhere winners form a chain, Stump's Pāṇinian
+Determinism, the prediction is unique. -/
+theorem Realizes.eq {ψ : E} (hv : Coherent v) (hc : IsChain (· ≤ ·) {s | IsElsewhereWinner v c s})
     (hφ : Realizes v c φ) (hψ : Realizes v c ψ) : φ = ψ := by
   obtain ⟨r, hr, rfl⟩ := hφ
   obtain ⟨s, hs, rfl⟩ := hψ
-  exact hr.exponent_eq hv hs (hcmp hr hs)
+  exact hr.exponent_eq hv hs (hc.total hs hr)
 
 /-! ### Containment -/
 
