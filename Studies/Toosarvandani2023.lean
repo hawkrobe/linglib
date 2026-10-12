@@ -65,27 +65,27 @@ open scoped FinsetFamily
 variable {Ind : Type*} [DecidableEq Ind] [Fintype Ind]
 
 /-- The denotation of π holds every singular or plural individual (48c). -/
-def piDen : Finset (Finset Ind) := nePowerset univ
+def piDen : Finset (Finset Ind) := Ioc ∅ univ
 
 /-- A feature specification adds the features' lattices by `⊻` over π, the last listed
 innermost (51), (61). -/
 def specification (fs : List (Finset Ind)) : Finset (Finset Ind) :=
-  fs.foldr (fun X acc ↦ nePowerset X ⊻ acc) piDen
+  fs.foldr (fun X acc ↦ Ioc ∅ X ⊻ acc) piDen
 
 @[simp] theorem specification_nil : specification ([] : List (Finset Ind)) = piDen := rfl
 
 @[simp] theorem specification_cons (X : Finset Ind) (fs : List (Finset Ind)) :
-    specification (X :: fs) = nePowerset X ⊻ specification fs := rfl
+    specification (X :: fs) = Ioc ∅ X ⊻ specification fs := rfl
 
 /-- Along an entailment chain of features, a specification denotes the groups containing an atom
 of its most specific feature (53), (62). -/
 theorem specification_eq_containing : ∀ {fs : List (Finset Ind)} {X : Finset Ind},
     (X :: fs).Pairwise (· ⊆ ·) → specification (X :: fs) = containing X univ
-  | [], X, _ => nePowerset_sups_nePowerset (subset_univ X)
+  | [], X, _ => Ioc_sups_Ioc (subset_univ X)
   | Y :: fs, X, h => by
     have h' := List.pairwise_cons.1 h
     rw [specification_cons, specification_eq_containing h'.2,
-      nePowerset_sups_containing (h'.1 Y (by simp)) (subset_univ _)]
+      Ioc_sups_containing (h'.1 Y (by simp)) (subset_univ _)]
 
 /-- A group of an elder and a nonelder human lies in the elder and the human specifications, and
 lexical complementarity removes it from the human pronoun, marked reference (62). -/
@@ -130,16 +130,16 @@ theorem singular_containing (X : Finset Ind) : singular (containing X univ) = X.
 
 /-- A feature composed by `⊻` after *singular* restores pluralities (63). -/
 theorem pair_mem_sups_singular {X : Finset Ind} {x : Ind} (hx : x ∈ X) (y : Ind) :
-    ({x, y} : Finset Ind) ∈ nePowerset X ⊻ singular piDen := by
+    ({x, y} : Finset Ind) ∈ Ioc ∅ X ⊻ singular piDen := by
   rw [insert_eq]
   exact sup_mem_sups
-    (mem_nePowerset_iff.2 ⟨singleton_nonempty x, singleton_subset_iff.2 hx⟩)
+    (mem_Ioc.2 ⟨empty_ssubset.2 (singleton_nonempty x), singleton_subset_iff.2 hx⟩)
     (mem_filter.2
-      ⟨mem_nePowerset_iff.2 ⟨singleton_nonempty y, subset_univ _⟩, card_singleton y⟩)
+      ⟨mem_Ioc.2 ⟨empty_ssubset.2 (singleton_nonempty y), subset_univ _⟩, card_singleton y⟩)
 
 /-- So person and animacy must compose before number. -/
 theorem exists_plural_sups_singular {X : Finset Ind} {x y : Ind} (hx : x ∈ X) (hxy : x ≠ y) :
-    ∃ s ∈ nePowerset X ⊻ singular piDen, s.card ≠ 1 :=
+    ∃ s ∈ Ioc ∅ X ⊻ singular piDen, s.card ≠ 1 :=
   ⟨{x, y}, pair_mem_sups_singular hx y, by rw [card_pair hxy]; decide⟩
 
 /-! ### Social gender (section 3.5) -/

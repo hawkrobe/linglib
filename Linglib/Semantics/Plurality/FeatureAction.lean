@@ -5,6 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
+public import Mathlib.Data.Finset.Interval
 public import Mathlib.Data.Finset.Lattice.Fold
 public import Mathlib.Data.Finset.Powerset
 public import Mathlib.Data.Finset.Sups
@@ -13,7 +14,8 @@ public import Mathlib.Data.Finset.Sups
 # Feature actions on lattices of groups
 
 In Harbour's calculus a feature denotes a lattice of groups, the nonempty sets of some atoms,
-and its values act on the lattice of its host. The positive value adds the feature's lattice
+and its values act on the lattice of its host. The groups of a set of atoms `X` are its nonempty
+subsets, mathlib's interval `Finset.Ioc ∅ X`. The positive value adds the feature's lattice
 pairwise, which is mathlib's pointwise join `⊻` of set families (`Finset.sups`, Harbour's `⊕`);
 the negative value subtracts the feature lattice's maximum from every group. When one feature
 specification denotes a proper subset of another, Lexical Complementarity confines the larger to
@@ -23,15 +25,14 @@ its atoms.
 
 ## Main definitions
 
-* `Plurality.FeatureAction.nePowerset`: the lattice of groups of a set of atoms.
 * `Plurality.FeatureAction.ominus`: the negative action of a feature.
 * `Plurality.FeatureAction.act`: the action of a feature with a given value.
 * `Plurality.FeatureAction.containing`: the groups containing an atom of a given set.
 
 ## Main results
 
-* `Plurality.FeatureAction.nePowerset_sups_nePowerset`,
-  `Plurality.FeatureAction.nePowerset_sups_containing`: along an entailment chain, adding a
+* `Plurality.FeatureAction.Ioc_sups_Ioc`,
+  `Plurality.FeatureAction.Ioc_sups_containing`: along an entailment chain, adding a
   feature's lattice gives the groups containing one of its atoms.
 * `Plurality.FeatureAction.mem_containing_sdiff_containing_iff`: Lexical Complementarity
   between two such denotations.
@@ -51,23 +52,6 @@ namespace Plurality.FeatureAction
 open Finset
 
 variable {α : Type*} [DecidableEq α]
-
-/-! ### The lattice of groups -/
-
-/-- The lattice of groups of `atoms` is its nonempty subsets. -/
-def nePowerset (atoms : Finset α) : Finset (Finset α) := atoms.powerset.erase ∅
-
-theorem mem_nePowerset_iff {X s : Finset α} : s ∈ nePowerset X ↔ s.Nonempty ∧ s ⊆ X := by
-  simp [nePowerset, nonempty_iff_ne_empty]
-
-theorem nePowerset_mono {s t : Finset α} (h : s ⊆ t) : nePowerset s ⊆ nePowerset t :=
-  erase_subset_erase ∅ (powerset_mono.mpr h)
-
-/-- The groups of a set of atoms are closed under union. -/
-theorem supClosed_nePowerset (X : Finset α) : SupClosed (nePowerset X : Set (Finset α)) :=
-  fun s hs t ht ↦ by
-    rw [mem_coe, mem_nePowerset_iff] at hs ht ⊢
-    exact ⟨hs.1.mono subset_union_left, union_subset hs.2 ht.2⟩
 
 /-! ### The actions of a feature -/
 
@@ -94,11 +78,11 @@ def act (sign : Bool) (F G : Finset (Finset α)) : Finset (Finset α) :=
 
 /-- `containing X Y` is the set of groups of `Y` that contain an atom of `X`. -/
 def containing (X Y : Finset α) : Finset (Finset α) :=
-  (nePowerset Y).filter fun s ↦ (s ∩ X).Nonempty
+  (Ioc ∅ Y).filter fun s ↦ (s ∩ X).Nonempty
 
 theorem mem_containing_iff {X Y s : Finset α} :
     s ∈ containing X Y ↔ s ⊆ Y ∧ (s ∩ X).Nonempty := by
-  rw [containing, mem_filter, mem_nePowerset_iff]
+  simp only [containing, mem_filter, mem_Ioc, empty_ssubset]
   exact ⟨fun h ↦ ⟨h.1.2, h.2⟩, fun h ↦ ⟨⟨h.2.mono inter_subset_left, h.1⟩, h.2⟩⟩
 
 theorem containing_mono {X X' Y : Finset α} (h : X ⊆ X') :
@@ -108,32 +92,32 @@ theorem containing_mono {X X' Y : Finset α} (h : X ⊆ X') :
 
 /-- Adding the lattice of `X` to the lattice of `Y ⊇ X` gives the groups of `Y` containing an
 atom of `X`. -/
-theorem nePowerset_sups_nePowerset {X Y : Finset α} (h : X ⊆ Y) :
-    nePowerset X ⊻ nePowerset Y = containing X Y := by
+theorem Ioc_sups_Ioc {X Y : Finset α} (h : X ⊆ Y) :
+    Ioc ∅ X ⊻ Ioc ∅ Y = containing X Y := by
   ext s
   rw [mem_sups, mem_containing_iff]
   constructor
   · rintro ⟨x, hx, y, hy, rfl⟩
-    rw [mem_nePowerset_iff] at hx hy
+    simp only [mem_Ioc, empty_ssubset] at hx hy
     exact ⟨union_subset (hx.2.trans h) hy.2, hx.1.mono (subset_inter subset_union_left hx.2)⟩
   · rintro ⟨hs, hX⟩
-    exact ⟨s ∩ X, mem_nePowerset_iff.2 ⟨hX, inter_subset_right⟩, s,
-      mem_nePowerset_iff.2 ⟨hX.mono inter_subset_left, hs⟩, union_eq_right.2 inter_subset_left⟩
+    exact ⟨s ∩ X, mem_Ioc.2 ⟨empty_ssubset.2 hX, inter_subset_right⟩, s,
+      mem_Ioc.2 ⟨empty_ssubset.2 (hX.mono inter_subset_left), hs⟩, union_eq_right.2 inter_subset_left⟩
 
 /-- Along an entailment chain `X ⊆ Y ⊆ Z`, adding the lattice of `X` to the groups of `Z`
 containing a `Y`-atom gives the groups containing an `X`-atom. -/
-theorem nePowerset_sups_containing {X Y Z : Finset α} (hXY : X ⊆ Y) (hYZ : Y ⊆ Z) :
-    nePowerset X ⊻ containing Y Z = containing X Z := by
+theorem Ioc_sups_containing {X Y Z : Finset α} (hXY : X ⊆ Y) (hYZ : Y ⊆ Z) :
+    Ioc ∅ X ⊻ containing Y Z = containing X Z := by
   ext s
   rw [mem_sups, mem_containing_iff]
   constructor
   · rintro ⟨x, hx, y, hy, rfl⟩
-    rw [mem_nePowerset_iff] at hx
+    simp only [mem_Ioc, empty_ssubset] at hx
     rw [mem_containing_iff] at hy
     exact ⟨union_subset (hx.2.trans (hXY.trans hYZ)) hy.1,
       hx.1.mono (subset_inter subset_union_left hx.2)⟩
   · rintro ⟨hs, hX⟩
-    exact ⟨s ∩ X, mem_nePowerset_iff.2 ⟨hX, inter_subset_right⟩, s,
+    exact ⟨s ∩ X, mem_Ioc.2 ⟨empty_ssubset.2 hX, inter_subset_right⟩, s,
       mem_containing_iff.2 ⟨hs, hX.mono (inter_subset_inter (Subset.refl _) hXY)⟩,
       union_eq_right.2 inter_subset_left⟩
 

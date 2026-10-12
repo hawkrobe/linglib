@@ -1,5 +1,6 @@
 module
 
+public import Mathlib.Data.Finset.Interval
 public import Mathlib.Data.Fintype.Powerset
 public import Linglib.Semantics.Quantification.NP
 public import Linglib.Semantics.Questions.Exhaustivity
@@ -99,8 +100,7 @@ theorem mem_disjProp (X : Finset Entity) (w : W) :
 /-- The Hamblin set (29), the meets and joins over every nonempty subdomain of `D`, applied to
 `P`. -/
 def hamblin (D : Finset Entity) : Finset (Finset W) :=
-  (D.powerset.filter (·.Nonempty)).image (conjProp P) ∪
-    (D.powerset.filter (·.Nonempty)).image (disjProp P)
+  (Ioc ∅ D).image (conjProp P) ∪ (Ioc ∅ D).image (disjProp P)
 
 /-- With *-ro* (52) the selection function returns a singleton, so the Hamblin set is the
 union of the Hamblin sets over the singleton subdomains. -/

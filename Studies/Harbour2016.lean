@@ -115,7 +115,7 @@ def ℒau : Finset (Finset Ω) := {{0}}
 /-- The participant lattice `ℒpt` has the groups `{i}`, `{u}` and `{i, u}`. -/
 def ℒpt : Finset (Finset Ω) := {{0}, {1}, {0, 1}}
 /-- The π lattice has every nonempty set of referents as a group. -/
-def ℒπ  : Finset (Finset Ω) := nePowerset univ
+def ℒπ  : Finset (Finset Ω) := Ioc ∅ univ
 
 /-- The lattices are egocentrically nested, `ℒau ⊆ ℒpt ⊆ ℒπ` (p. 74). -/
 theorem lattice_chain : ℒau ⊆ ℒpt ∧ ℒpt ⊆ ℒπ := by decide

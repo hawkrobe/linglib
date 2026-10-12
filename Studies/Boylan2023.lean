@@ -1,5 +1,6 @@
 module
 
+public import Mathlib.Data.Finset.Interval
 public import Mathlib.Order.Partition.Finpartition
 public import Mathlib.Algebra.Order.BigOperators.Group.Finset
 public import Mathlib.Data.Fintype.Prod
@@ -57,13 +58,13 @@ variable {acc : Finset W} (Q : Finpartition acc)
 
 /-- The partial answers to the relevance question restricted to the background information,
 `Q|f(w)`: the unions of nonempty sets of complete answers. -/
-def partialAnswers : Finset (Finset W) := (Q.parts.powerset.erase ∅).image (·.sup id)
+def partialAnswers : Finset (Finset W) := (Ioc ∅ Q.parts).image (·.sup id)
 
 variable {Q}
 
 theorem mem_partialAnswers {p : Finset W} :
     p ∈ partialAnswers Q ↔ ∃ s, s ≠ ∅ ∧ s ⊆ Q.parts ∧ s.sup id = p := by
-  simp [partialAnswers, and_assoc]
+  simp [partialAnswers, and_assoc, nonempty_iff_ne_empty]
 
 /-- A complete answer is a partial answer. -/
 theorem parts_subset_partialAnswers : Q.parts ⊆ partialAnswers Q := λ q hq =>

@@ -1,5 +1,6 @@
 module
 
+public import Mathlib.Data.Finset.Interval
 public import Mathlib.Data.Fintype.Powerset
 public import Mathlib.Tactic.DeriveFintype
 public import Linglib.Syntax.Cat
@@ -66,9 +67,6 @@ open PhraseStructure Alternatives
 
 variable {α : Type*}
 
-/-- Over the boys `B`, the singular noun denotes every nonempty group of them. -/
-def general (B : Finset α) : Finset (Finset α) := B.powerset.filter (·.Nonempty)
-
 /-- The plural noun denotes the groups of two or more. -/
 def strictPlural (B : Finset α) : Finset (Finset α) := B.powerset.filter (2 ≤ ·.card)
 
@@ -78,11 +76,16 @@ def ofCard (n : ℕ) (P : Finset (Finset α)) : Finset (Finset α) := P.filter (
 /-- *yergu* 'two'. -/
 abbrev two (P : Finset (Finset α)) : Finset (Finset α) := ofCard 2 P
 
-theorem mem_general {B x : Finset α} : x ∈ general B ↔ x ⊆ B ∧ x.Nonempty := by
-  simp [general]
-
 theorem mem_strictPlural {B x : Finset α} : x ∈ strictPlural B ↔ x ⊆ B ∧ 2 ≤ x.card := by
   simp [strictPlural]
+
+variable [DecidableEq α]
+
+/-- Over the boys `B`, the singular noun denotes every nonempty group of them. -/
+def general (B : Finset α) : Finset (Finset α) := Finset.Ioc ∅ B
+
+theorem mem_general {B x : Finset α} : x ∈ general B ↔ x ⊆ B ∧ x.Nonempty := by
+  simp [general, and_comm]
 
 /-- The plural denotation is included in the singular's, so the singular has general number. -/
 theorem strictPlural_subset_general (B : Finset α) : strictPlural B ⊆ general B := fun x hx ↦ by
@@ -97,8 +100,6 @@ theorem two_general_eq_two_strictPlural (B : Finset α) :
   constructor
   · rintro ⟨⟨h, -⟩, hc⟩; exact ⟨⟨h, by omega⟩, hc⟩
   · rintro ⟨⟨h, -⟩, hc⟩; exact ⟨⟨h, Finset.card_pos.1 (by omega)⟩, hc⟩
-
-variable [DecidableEq α]
 
 /-- The supremum operator returns the join of a set of groups when the set contains it. -/
 def sup? (P : Finset (Finset α)) : Option (Finset α) :=
