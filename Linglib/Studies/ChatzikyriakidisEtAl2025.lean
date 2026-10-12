@@ -1,9 +1,8 @@
 module
 
+public import Linglib.Core.Data.Fin.VecNotation
+public import Linglib.Core.ModelTheory.Atom
 public import Linglib.Studies.Cooper2023
-public import Mathlib.Algebra.Group.Action.End
-public import Mathlib.Algebra.Group.Action.Pointwise.Set.Basic
-public import Mathlib.Order.Concept
 
 /-!
 # Chatzikyriakidis, Cooper, Gregoromichelaki and Sutton (2025): Types and the Structure of Meaning
@@ -33,13 +32,13 @@ every modal system is exactly its actual beliefs up to relabelling. The datum is
 
 ## Implementation notes
 
-* A record type is the set of its fields `ℓ : P(ℓ₁, …, ℓₙ)`, each a predicate applied to the
-  labels it depends on, and its witnesses are the upper polar of its fields under satisfaction.
-  Labels are flat, so a path such as `idᵢ.x` is one label.
+* A field `ℓ : P(ℓ₁, …, ℓₙ)` is the atom `P(ℓ, ℓ₁, …, ℓₙ)`, its witness first, and a record type
+  is a set of such atoms. A possibility is a structure for the predicates, every record type occurs
+  in every possibility, and labels are flat, so a path such as `idᵢ.x` is one label.
 * A relabelling is a permutation of the labels, extending a one-one relabelling of a record type's
   finitely many labels, so the relabellings of a record type are its orbit.
-* The ptypes come from a modal system whose types are predicates and whose objects are pairs of
-  arguments and a witness.
+* The free model behind the actual-belief theorems is the structure a record type presents on its
+  labels.
 
 ## TODO
 
@@ -61,128 +60,86 @@ every modal system is exactly its actual beliefs up to relabelling. The datum is
 
 namespace ChatzikyriakidisEtAl2025
 
-open Cooper2023 MulAction Pointwise
+open Cooper2023 FirstOrder Language MulAction Pointwise
 
 /-! ### Record types over a modal system -/
 
 section RecType
 
-variable {M Pred L E : Type}
+variable {L : Language.{0, 0}} {M α E : Type}
 
-/-- A field `ℓ : P(ℓ₁, …, ℓₙ)` of a record type (30b) has a label, a predicate, and the labels the
-predicate is applied to. -/
-structure RecField (Pred L : Type) where
-  label : L
-  pred : Pred
-  args : List L
+/-- The modal system of record types over a family of structures, one for each possibility. A
+record type occurs in every possibility, and a record witnesses it there when it realizes each of
+its fields. -/
+def recTypes (S : M → L.Structure E) : ModalSystem M (Set (L.Atom α)) (α → E) := fun p ↦
+  letI := S p
+  { occurs _ := True
+    witnesses T r := r ∈ Atom.realizers E T
+    occurs_of_witnesses _ _ _ := trivial }
 
-/-- A record type is the set of its fields. -/
-abbrev RecType (Pred L : Type) := Set (RecField Pred L)
+variable {S : M → L.Structure E} {T T₁ T₂ B : Set (L.Atom α)} {p : M} {r : α → E}
 
-/-- A permutation of the labels relabels a field. -/
-instance : MulAction (Equiv.Perm L) (RecField Pred L) where
-  smul σ f := ⟨σ f.label, f.pred, f.args.map σ⟩
-  one_smul f := by cases f; simp [HSMul.hSMul]
-  mul_smul _ _ _ := by simp only [HSMul.hSMul, Equiv.Perm.coe_mul, Function.comp_apply,
-    List.map_map]
-
-namespace RecField
-
-variable (σ : Equiv.Perm L) (f : RecField Pred L)
-
-@[simp] theorem smul_label : (σ • f).label = σ f.label := rfl
-@[simp] theorem smul_pred : (σ • f).pred = f.pred := rfl
-@[simp] theorem smul_args : (σ • f).args = f.args.map σ := rfl
-
-@[simp] theorem smul_mk (ℓ : L) (P : Pred) (a : List L) :
-    σ • (⟨ℓ, P, a⟩ : RecField Pred L) = ⟨σ ℓ, P, a.map σ⟩ :=
-  rfl
-
-end RecField
-
-/-- The modal system of record types over a modal system of ptypes. A record type occurs where its
-predicates occur, and a record witnesses it when its value at each field's label witnesses the
-field's predicate at its values at the field's arguments. -/
-def recTypes (ms : ModalSystem M Pred (List E × E)) : ModalSystem M (RecType Pred L) (L → E) :=
-  fun p ↦
-  { occurs T := ∀ f ∈ T, (ms p).occurs f.pred
-    witnesses T r := r ∈ upperPolar (fun f r ↦ (ms p).witnesses f.pred (f.args.map r, r f.label)) T
-    occurs_of_witnesses _ _ h _ hf := (ms p).occurs_of_witnesses (h hf) }
-
-variable {ms : ModalSystem M Pred (List E × E)} {T T₁ T₂ B : RecType Pred L} {p : M} {r : L → E}
-
-theorem mem_extension_recTypes : r ∈ (recTypes ms).extension T p ↔
-    ∀ f ∈ T, (ms p).witnesses f.pred (f.args.map r, r f.label) :=
+theorem mem_extension_recTypes :
+    r ∈ (recTypes S).extension T p ↔ letI := S p; ∀ a ∈ T, a.Realize r :=
   .rfl
 
 /-- Merging record types intersects their witnesses. -/
-theorem extension_recTypes_union : (recTypes ms).extension (T₁ ∪ T₂) p =
-    (recTypes ms).extension T₁ p ∩ (recTypes ms).extension T₂ p :=
-  upperPolar_union ..
+theorem extension_recTypes_union : (recTypes S).extension (T₁ ∪ T₂) p =
+    (recTypes S).extension T₁ p ∩ (recTypes S).extension T₂ p :=
+  letI := S p; Atom.realizers_union T₁ T₂
 
-theorem mem_extension_recTypes_smul (σ : Equiv.Perm L) :
-    r ∈ (recTypes ms).extension (σ • T) p ↔ r ∘ σ ∈ (recTypes ms).extension T p := by
-  simp [mem_extension_recTypes, Set.mem_smul_set, List.map_map]
+theorem mem_extension_recTypes_smul (σ : Equiv.Perm α) :
+    r ∈ (recTypes S).extension (σ • T) p ↔ r ∘ σ ∈ (recTypes S).extension T p :=
+  letI := S p; Atom.mem_realizers_smul
 
-/-- A record type with more fields is a subtype, since its witnesses have the fields of the other.
--/
-theorem subtypeR_recTypes_of_subset (h : T₂ ⊆ T₁) : (recTypes ms).SubtypeR T₁ T₂ :=
-  fun _ ↦ upperPolar_anti _ h
+/-- A record type with more fields is a subtype, since its witnesses realize the fields of the
+other. -/
+theorem subtypeR_recTypes_of_subset (h : T₂ ⊆ T₁) : (recTypes S).SubtypeR T₁ T₂ :=
+  fun p ↦ letI := S p; Atom.realizers_anti h
 
 /-- A belief type that contains the fields of a relabelling of a type believes it. -/
-theorem subtypeRelabel_of_smul_subset (σ : Equiv.Perm L) (h : σ • T ⊆ B) :
-    (recTypes ms).SubtypeRelabel (orbitRel (Equiv.Perm L) _) B T :=
+theorem subtypeRelabel_of_smul_subset (σ : Equiv.Perm α) (h : σ • T ⊆ B) :
+    (recTypes S).SubtypeRelabel (orbitRel (Equiv.Perm α) _) B T :=
   ⟨σ • T, ⟨σ⁻¹, inv_smul_smul σ T⟩, (subtypeR_recTypes_of_subset h).subtypeI⟩
 
 /-- Belief is blind to the labels of the believed type. -/
-theorem subtypeRelabel_smul (σ : Equiv.Perm L) :
-    (recTypes ms).SubtypeRelabel (orbitRel (Equiv.Perm L) _) B (σ • T) ↔
-      (recTypes ms).SubtypeRelabel (orbitRel (Equiv.Perm L) _) B T :=
+theorem subtypeRelabel_smul (σ : Equiv.Perm α) :
+    (recTypes S).SubtypeRelabel (orbitRel (Equiv.Perm α) _) B (σ • T) ↔
+      (recTypes S).SubtypeRelabel (orbitRel (Equiv.Perm α) _) B T :=
   ModalSystem.subtypeRelabel_congr ⟨σ, rfl⟩
 
 end RecType
 
 /-! ### Actual beliefs (§2.3.1)
 
-The free modal system of a belief type witnesses a ptype exactly when it is one of its fields, so
-the beliefs that hold in every modal system are the ones the belief type contains. -/
+A record type presents a structure on its labels, in which a map of labels is a witness of
+another record type exactly when it carries its fields into those of the first. So the beliefs
+that hold in every modal system are the ones the belief type contains, up to relabelling. -/
 
 section ActualBelief
 
-variable {Pred L : Type} {T T₁ T₂ B : RecType Pred L}
-
-/-- The free modal system of a record type has one possibility, records valued in labels, and a
-ptype witnessed exactly when it is a field of the record type. -/
-def freeSystem (B : RecType Pred L) : ModalSystem Unit Pred (List L × L) := fun _ ↦
-  { occurs _ := True
-    witnesses P a := ⟨a.2, P, a.1⟩ ∈ B
-    occurs_of_witnesses _ _ _ := trivial }
-
-/-- The record of labels witnesses a record type in its free modal system. -/
-theorem id_mem_extension_freeSystem : id ∈ (recTypes (freeSystem B)).extension B () := by
-  intro f hf
-  simpa [freeSystem] using hf
+variable {L : Language.{0, 0}} [L.IsRelational] {α : Type} {T T₁ T₂ B : Set (L.Atom α)}
 
 /-- A record type is a subtype of another in every modal system exactly when it has all of its
 fields. -/
 theorem forall_subtypeR_recTypes_iff :
-    (∀ (M E : Type) (ms : ModalSystem M Pred (List E × E)), (recTypes ms).SubtypeR T₁ T₂) ↔
-      T₂ ⊆ T₁ := by
-  refine ⟨fun h f hf ↦ ?_, fun h _ _ _ ↦ subtypeR_recTypes_of_subset h⟩
-  simpa [freeSystem] using h _ _ (freeSystem T₁) () id_mem_extension_freeSystem hf
+    (∀ (M E : Type) (S : M → L.Structure E), (recTypes S).SubtypeR T₁ T₂) ↔ T₂ ⊆ T₁ := by
+  refine ⟨fun h ↦ ?_, fun h _ _ _ ↦ subtypeR_recTypes_of_subset h⟩
+  simpa using Atom.forall_realizers_subset_preimage_iff (T := T₂) (B := T₁) (f := id).1
+    fun E inst ↦ h Unit E (fun _ ↦ inst) ()
 
 /-- A belief type believes a type in every modal system exactly when it contains the fields of some
 relabelling of it, as an actual belief. -/
 theorem forall_subtypeRelabel_recTypes_iff :
-    (∀ (M E : Type) (ms : ModalSystem M Pred (List E × E)),
-      (recTypes ms).SubtypeRelabel (orbitRel (Equiv.Perm L) _) B T) ↔
-      ∃ σ : Equiv.Perm L, σ • T ⊆ B := by
+    (∀ (M E : Type) (S : M → L.Structure E),
+      (recTypes S).SubtypeRelabel (orbitRel (Equiv.Perm α) _) B T) ↔
+      ∃ σ : Equiv.Perm α, σ • T ⊆ B := by
   refine ⟨fun h ↦ ?_, fun ⟨σ, h⟩ _ _ _ ↦ subtypeRelabel_of_smul_subset σ h⟩
-  obtain ⟨_, ⟨σ, rfl⟩, hs⟩ := h _ _ (freeSystem B)
-  refine ⟨σ⁻¹, fun f hf ↦ ?_⟩
-  rw [inv_smul_smul] at hf
-  simpa [freeSystem] using
-    hs () (fun _ _ ↦ trivial) (fun _ _ ↦ trivial) id_mem_extension_freeSystem hf
+  obtain ⟨_, ⟨σ, rfl⟩, hs⟩ := h Unit (Atom.Canonical B) fun _ ↦ inferInstance
+  refine ⟨σ⁻¹, ?_⟩
+  rw [inv_smul_smul]
+  simpa using Atom.Canonical.of_comp_mem_realizers_iff (f := id).1 <|
+    hs () trivial trivial (Atom.Canonical.of_mem_realizers B)
 
 end ActualBelief
 
@@ -190,19 +147,29 @@ end ActualBelief
 
 namespace Kim
 
-inductive Pred | ind | woman | conductor
+/-- The predicates of (32)–(35), each taking its witness as first argument. -/
+inductive Rel : ℕ → Type
+  | ind : Rel 1
+  | woman : Rel 2
+  | conductor : Rel 2
+
+/-- The language of the predicates of (32)–(35). -/
+abbrev lang : Language := ⟨fun _ ↦ Empty, Rel⟩
+
+instance : lang.IsRelational := fun _ ↦ inferInstanceAs (IsEmpty Empty)
 
 /-- The labels of (32) and (34). The path `idᵢ.x` of (32) is the label `«idᵢ.x»`. -/
 inductive Label | x | c | e | «idᵢ.x» | «idᵢ.e» | «idⱼ.e»
   deriving DecidableEq
 
 /-- The fields of Kim's belief type (32). -/
-def belief : RecType Pred Label :=
-  {⟨.«idᵢ.x», .ind, []⟩, ⟨.«idᵢ.e», .woman, [.«idᵢ.x»]⟩, ⟨.«idⱼ.e», .conductor, [.«idᵢ.x»]⟩}
+def belief : Set (lang.Atom Label) :=
+  {⟨Rel.ind, ![.«idᵢ.x»]⟩, ⟨Rel.woman, ![.«idᵢ.e», .«idᵢ.x»]⟩,
+    ⟨Rel.conductor, ![.«idⱼ.e», .«idᵢ.x»]⟩}
 
 /-- The complement (34) of the report. -/
-def complement : RecType Pred Label :=
-  {⟨.x, .ind, []⟩, ⟨.c, .woman, [.x]⟩, ⟨.e, .conductor, [.x]⟩}
+def complement : Set (lang.Atom Label) :=
+  {⟨Rel.ind, ![.x]⟩, ⟨Rel.woman, ![.c, .x]⟩, ⟨Rel.conductor, ![.e, .x]⟩}
 
 /-- The relabelling (35a). -/
 def relabelling : Equiv.Perm Label :=
@@ -210,14 +177,14 @@ def relabelling : Equiv.Perm Label :=
 
 /-- Relabelling (34) by (35a) gives the fields of (32), the type (35b). -/
 theorem relabelling_smul_complement : relabelling • complement = belief := by
-  simp [relabelling, complement, belief, Set.smul_set_insert, Equiv.Perm.mul_apply,
-    Equiv.swap_apply_def]
+  simp [relabelling, complement, belief, Set.smul_set_insert, Atom.smul_def, Atom.map,
+    Matrix.comp_vecCons, Matrix.comp_vecEmpty, Equiv.swap_apply_def]
 
 /-- Whatever its labelling, (34) is believed by any belief type with the fields of (32), in every
 modal system. -/
-theorem believes {M E : Type} (ms : ModalSystem M Pred (List E × E)) {B : RecType Pred Label}
+theorem believes {M E : Type} (S : M → lang.Structure E) {B : Set (lang.Atom Label)}
     (hB : belief ⊆ B) (τ : Equiv.Perm Label) :
-    (recTypes ms).SubtypeRelabel (orbitRel (Equiv.Perm Label) _) B (τ • complement) :=
+    (recTypes S).SubtypeRelabel (orbitRel (Equiv.Perm Label) _) B (τ • complement) :=
   (subtypeRelabel_smul τ).2 <|
     subtypeRelabel_of_smul_subset relabelling (relabelling_smul_complement ▸ hB)
 
@@ -231,7 +198,15 @@ one witch blighted the mare and another killed the sow. -/
 
 namespace HobNob
 
-inductive Pred | ind | witch | blightedBobsMare | killedCobsSow
+/-- The predicates of the Hob–Nob sentence, each taking its witness as first argument. -/
+inductive Rel : ℕ → Type
+  | ind : Rel 1
+  | witch : Rel 2
+  | blightedBobsMare : Rel 2
+  | killedCobsSow : Rel 2
+
+/-- The language of the predicates of the Hob–Nob sentence. -/
+abbrev lang : Language := ⟨fun _ ↦ Empty, Rel⟩
 
 /-- The witch `x`, her being one `c`, the blighting `b` and the killing `k`, and another label
 `y`. -/
@@ -239,14 +214,14 @@ inductive Label | x | y | c | b | k
   deriving DecidableEq
 
 /-- The context Hob and Nob share, that there is a witch. -/
-def witch : RecType Pred Label := {⟨.x, .ind, []⟩, ⟨.c, .witch, [.x]⟩}
+def witch : Set (lang.Atom Label) := {⟨Rel.ind, ![.x]⟩, ⟨Rel.witch, ![.c, .x]⟩}
 
 /-- Hob's belief that a witch blighted Bob's mare. -/
-def hob : RecType Pred Label := insert ⟨.b, .blightedBobsMare, [.x]⟩ witch
+def hob : Set (lang.Atom Label) := insert ⟨Rel.blightedBobsMare, ![.b, .x]⟩ witch
 
 /-- The content of Nob's question, that she killed Cob's sow, with *she* the witch of the shared
 context. -/
-def nob : RecType Pred Label := insert ⟨.k, .killedCobsSow, [.x]⟩ witch
+def nob : Set (lang.Atom Label) := insert ⟨Rel.killedCobsSow, ![.k, .x]⟩ witch
 
 inductive Possib | actual | twoWitches
   deriving DecidableEq
@@ -255,21 +230,27 @@ inductive Possib | actual | twoWitches
 inductive Obj | w₁ | w₂ | s
   deriving DecidableEq
 
-/-- Both women are individuals in both possibilities. In `twoWitches` both are witches, `w₁`
-blighted Bob's mare and `w₂` killed Cob's sow, in the situation `s`. -/
-def system : ModalSystem Possib Pred (List Obj × Obj) := fun p ↦
-  { occurs _ := True
-    witnesses
-      | .ind, (args, a) => args = [] ∧ a ≠ .s
-      | .witch, (args, a) => p = .twoWitches ∧ (args = [.w₁] ∨ args = [.w₂]) ∧ a = .s
-      | .blightedBobsMare, (args, a) => p = .twoWitches ∧ args = [.w₁] ∧ a = .s
-      | .killedCobsSow, (args, a) => p = .twoWitches ∧ args = [.w₂] ∧ a = .s
-    occurs_of_witnesses _ _ _ := trivial }
+/-- The ptypes that hold in each possibility. Both women are individuals in both, and in
+`twoWitches` both are witches, `w₁` blighted Bob's mare and `w₂` killed Cob's sow, in the situation
+`s`. -/
+def holds (p : Possib) : ∀ {n}, Rel n → (Fin n → Obj) → Prop
+  | _, .ind, xs => xs 0 ≠ .s
+  | _, .witch, xs => p = .twoWitches ∧ (xs 1 = .w₁ ∨ xs 1 = .w₂) ∧ xs 0 = .s
+  | _, .blightedBobsMare, xs => p = .twoWitches ∧ xs 1 = .w₁ ∧ xs 0 = .s
+  | _, .killedCobsSow, xs => p = .twoWitches ∧ xs 1 = .w₂ ∧ xs 0 = .s
+
+/-- The possibilities as structures. -/
+abbrev system (p : Possib) : lang.Structure Obj where
+  RelMap := holds p
+
+@[simp] theorem relMap_system {p : Possib} {n : ℕ} (R : Rel n) (xs : Fin n → Obj) :
+    @Structure.RelMap lang Obj (system p) n R xs ↔ holds p R xs :=
+  .rfl
 
 /-- No witch exists. -/
 theorem extension_witch_actual : (recTypes system).extension witch .actual = ∅ := by
   ext r
-  simp [mem_extension_recTypes, witch, system]
+  simp [mem_extension_recTypes, Atom.Realize, witch, holds]
 
 /-- Hob believes that there is a witch. -/
 theorem believes_witch :
@@ -283,18 +264,17 @@ theorem not_believes_blighted :
   rintro ⟨T, ⟨σ, hσ : σ • T = hob⟩, h⟩
   let r : Label → Obj := fun ℓ ↦ if ℓ = .c then .s else .w₂
   have hr : r ∈ (recTypes system).extension T .twoWitches :=
-    h .twoWitches (fun _ _ ↦ trivial) (fun _ _ ↦ trivial) <| by
-      simp [mem_extension_recTypes, witch, system, r]
+    h .twoWitches trivial trivial <| by simp [mem_extension_recTypes, Atom.Realize, witch, holds, r]
   rw [← inv_smul_smul σ T, hσ, mem_extension_recTypes_smul, mem_extension_recTypes] at hr
   have := hr _ (Set.mem_insert _ _)
-  simp [system, r] at this
+  simp [Atom.Realize, holds, r] at this
   grind
 
 /-- *She (the same witch)*. Aligned on the witch's label, Hob's belief and the content of Nob's
 question are not both true where different witches blighted the mare and killed the sow. -/
 theorem same_witch : (recTypes system).extension (hob ∪ nob) .twoWitches = ∅ := by
   ext r
-  simp [mem_extension_recTypes, hob, nob, witch, system]
+  simp [mem_extension_recTypes, Atom.Realize, hob, nob, witch, holds]
   grind
 
 /-- Moving Nob's witch to another label, which leaves Nob's beliefs as they are, makes Hob's belief
@@ -303,7 +283,7 @@ theorem other_witch :
     ((recTypes system).extension (hob ∪ Equiv.swap Label.x .y • nob) .twoWitches).Nonempty := by
   refine ⟨fun | .x => .w₁ | .y => .w₂ | _ => .s, ?_⟩
   rw [extension_recTypes_union, Set.mem_inter_iff, mem_extension_recTypes_smul]
-  simp [mem_extension_recTypes, hob, nob, witch, system, Equiv.swap_apply_def]
+  simp [mem_extension_recTypes, Atom.Realize, hob, nob, witch, holds, Equiv.swap_apply_def]
 
 end HobNob
 
