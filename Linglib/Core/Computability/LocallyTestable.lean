@@ -14,19 +14,19 @@ public import Mathlib.Data.Fintype.Powerset
 # Locally testable languages
 
 A language is *locally `k`-testable* when membership of a word depends only on its prefix and
-suffix of length `k - 1` and on the set of its factors of length `k`. These are the locally
-testable events of McNaughton and Papert.
+suffix of length `k - 1` and on the set of its factors of length `k`. Over all `k` these are the
+locally testable events of McNaughton and Papert.
 
 ## Main definitions
 
-* `List.localProfile k w`: the prefix and suffix of `w` of length `k - 1` and the set of its
-  factors of length `k`.
-* `Language.IsLocallyTestable`: membership in the language factors through `List.localProfile k`.
+* `List.kTestVector k w`: the prefix of `w` of length `k - 1`, the set of its factors of length
+  `k`, and its suffix of length `k - 1`.
+* `Language.IsLocallyTestable`: membership in the language factors through `List.kTestVector k`.
 
 ## Main results
 
-* `List.localProfile_append_congr`: words with the same local profiles have concatenations with
-  the same local profile.
+* `List.kTestVector_append_congr`: words with the same `k`-test vectors have concatenations with
+  the same `k`-test vector.
 * `Language.IsLocallyTestable.isStarFree`: over a finite alphabet, locally testable languages are
   star-free.
 * `Language.IsLocallyTestable.leftQuotient`, `Language.IsLocallyTestable.rightQuotient`,
@@ -37,9 +37,10 @@ testable events of McNaughton and Papert.
 
 ## Implementation notes
 
-The prefix and suffix have length `k - 1`, the width of the boundary padding that a strictly
-`k`-local grammar reads, so that a strictly `k`-local language is locally `k`-testable at the
-same `k`.
+The name is McNaughton and Papert's, the convention Pin's. McNaughton and Papert take the two ends
+at length `k` and only the interior factors, and leave words shorter than `k` unconstrained. Here
+the ends have length `k - 1` and every factor counts, so that a factor crossing the seam of a
+concatenation lies in the suffix of one word followed by the prefix of the other.
 
 ## References
 
@@ -53,60 +54,61 @@ namespace List
 
 variable {α β : Type*} {k : ℕ} {u u' v v' : List α}
 
-/-- The prefix and suffix of `w` of length `k - 1`, and the set of its factors of length `k`. -/
-def localProfile (k : ℕ) (w : List α) : List α × List α × Set (List α) :=
-  (Edge.left.takeAt (k - 1) w, Edge.right.takeAt (k - 1) w, {f | f ∈ w.kFactors k})
+/-- The *`k`-test vector* of `w` is its prefix of length `k - 1`, the set of its factors of length
+`k`, and its suffix of length `k - 1`. -/
+def kTestVector (k : ℕ) (w : List α) : List α × Set (List α) × List α :=
+  (Edge.left.takeAt (k - 1) w, {f | f ∈ w.kFactors k}, Edge.right.takeAt (k - 1) w)
 
-/-- Words with the same local profiles have concatenations with the same local profile, since a
-factor across the seam lies in the suffix of one word followed by the prefix of the other. -/
-theorem localProfile_append_congr (hu : u.localProfile k = u'.localProfile k)
-    (hv : v.localProfile k = v'.localProfile k) :
-    (u ++ v).localProfile k = (u' ++ v').localProfile k := by
-  simp only [localProfile, Prod.mk.injEq, Set.ext_iff, Set.mem_ofPred_eq] at hu hv ⊢
-  obtain ⟨hul, hur, huf⟩ := hu
-  obtain ⟨hvl, hvr, hvf⟩ := hv
+/-- Words with the same `k`-test vectors have concatenations with the same `k`-test vector, since
+a factor across the seam lies in the suffix of one word followed by the prefix of the other. -/
+theorem kTestVector_append_congr (hu : u.kTestVector k = u'.kTestVector k)
+    (hv : v.kTestVector k = v'.kTestVector k) :
+    (u ++ v).kTestVector k = (u' ++ v').kTestVector k := by
+  simp only [kTestVector, Prod.mk.injEq, Set.ext_iff, Set.mem_ofPred_eq] at hu hv ⊢
+  obtain ⟨hul, huf, hur⟩ := hu
+  obtain ⟨hvl, hvf, hvr⟩ := hv
   refine ⟨(Edge.takeAt_append_congr _ hul _).trans (Edge.takeAt_append_congr_right _ hvl _),
-    (Edge.takeAt_append_congr _ hur _).trans (Edge.takeAt_append_congr_right _ hvr _), fun f ↦ ?_⟩
+    fun f ↦ ?_, (Edge.takeAt_append_congr _ hur _).trans (Edge.takeAt_append_congr_right _ hvr _)⟩
   grind [mem_kFactors_append, Edge.takeAt_left, Edge.takeAt_right]
 
-/-- Mapping a function over a word maps it over the local profile. -/
-theorem localProfile_map (g : α → β) (w : List α) :
-    (w.map g).localProfile k =
-      Prod.map (map g) (Prod.map (map g) (Set.image (map g))) (w.localProfile k) := by
-  ext <;> simp [localProfile, Edge.takeAt_map]
+/-- Mapping a function over a word maps it over the `k`-test vector. -/
+theorem kTestVector_map (g : α → β) (w : List α) :
+    (w.map g).kTestVector k =
+      Prod.map (map g) (Prod.map (Set.image (map g)) (map g)) (w.kTestVector k) := by
+  ext <;> simp [kTestVector, Edge.takeAt_map]
 
-/-- `k + 1` copies of a word have the same local profile as `k` copies, since a factor of length
+/-- `k + 1` copies of a word have the same `k`-test vector as `k` copies, since a factor of length
 `k` reaches across at most `k` consecutive copies. -/
-theorem localProfile_flatten_replicate_succ (k : ℕ) (w : List α) :
-    (replicate (k + 1) w).flatten.localProfile k = (replicate k w).flatten.localProfile k := by
+theorem kTestVector_flatten_replicate_succ (k : ℕ) (w : List α) :
+    (replicate (k + 1) w).flatten.kTestVector k = (replicate k w).flatten.kTestVector k := by
   rcases eq_or_ne w [] with rfl | hw
   · simp
   obtain _ | n := k
-  · simp [localProfile, Set.ext_iff, mem_kFactors]
+  · simp [kTestVector, Set.ext_iff, mem_kFactors]
   have hlen (m : ℕ) : m ≤ (replicate m w).flatten.length := by
     simpa using Nat.le_mul_of_pos_right m (length_pos_iff.mpr hw)
   have hl (m : ℕ) : (replicate (m + 1) w).flatten = (replicate m w).flatten ++ w := by
     rw [replicate_succ', flatten_append, flatten_singleton]
   have hr (m : ℕ) : (replicate (m + 1) w).flatten = w ++ (replicate m w).flatten := by
     rw [replicate_succ, flatten_cons]
-  simp only [localProfile, Nat.add_sub_cancel, Prod.mk.injEq, Edge.takeAt_left, Edge.takeAt_right,
+  simp only [kTestVector, Nat.add_sub_cancel, Prod.mk.injEq, Edge.takeAt_left, Edge.takeAt_right,
     Set.ext_iff, Set.mem_ofPred_eq]
-  refine ⟨?_, ?_, fun f ↦ ?_⟩
+  refine ⟨?_, fun f ↦ ?_, ?_⟩
   · rw [hl, take_append_of_le_length ((Nat.le_succ n).trans (hlen _))]
-  · rw [hr, rtake_append_of_le_length ((Nat.le_succ n).trans (hlen _))]
   · rw [hl, mem_kFactors_append, Nat.add_sub_cancel]
     refine or_iff_left_of_imp ?_
     rintro (hf | hf) <;> rw [mem_kFactors] at hf ⊢ <;> refine ⟨hf.1.trans ?_, hf.2⟩
     · exact hr n ▸ (prefix_append _ _).isInfix
     · rw [hr n, rtake_append_of_le_length (hlen n), ← hr n, hl n]
       exact infix_append_iff.mpr (.inr (.inr ⟨_, _, rfl, rtake_suffix _ _, take_prefix _ _⟩))
+  · rw [hr, rtake_append_of_le_length ((Nat.le_succ n).trans (hlen _))]
 
-/-- Over a finite alphabet `List.localProfile k` takes finitely many values. -/
-theorem finite_range_localProfile [Finite α] (k : ℕ) :
-    (Set.range (localProfile (α := α) k)).Finite :=
-  ((Edge.finite_range_takeAt .left (k - 1)).prod <| (Edge.finite_range_takeAt .right (k - 1)).prod
-    (List.finite_length_eq α k).finite_subsets).subset <| Set.range_subset_iff.2 fun w ↦
-      ⟨⟨w, rfl⟩, ⟨w, rfl⟩, fun _ hf ↦ (mem_kFactors.mp hf).2⟩
+/-- Over a finite alphabet `List.kTestVector k` takes finitely many values. -/
+theorem finite_range_kTestVector [Finite α] (k : ℕ) :
+    (Set.range (kTestVector (α := α) k)).Finite :=
+  ((Edge.finite_range_takeAt .left (k - 1)).prod <| (List.finite_length_eq α k).finite_subsets.prod
+    (Edge.finite_range_takeAt .right (k - 1))).subset <| Set.range_subset_iff.2 fun w ↦
+      ⟨⟨w, rfl⟩, fun _ hf ↦ (mem_kFactors.mp hf).2, ⟨w, rfl⟩⟩
 
 end List
 
@@ -117,7 +119,7 @@ variable {α β : Type*} {L M : Language α} {k : ℕ}
 /-- A language is *locally `k`-testable* when membership factors through the prefix and suffix of
 length `k - 1` and the set of factors of length `k`. -/
 def IsLocallyTestable (L : Language α) (k : ℕ) : Prop :=
-  Function.FactorsThrough (· ∈ L) (List.localProfile k)
+  Function.FactorsThrough (· ∈ L) (List.kTestVector k)
 
 theorem IsLocallyTestable.compl (h : L.IsLocallyTestable k) : Lᶜ.IsLocallyTestable k :=
   fun _ _ e ↦ congrArg Not (h e)
@@ -134,31 +136,31 @@ theorem IsLocallyTestable.union (hL : L.IsLocallyTestable k) (hM : M.IsLocallyTe
 `k`-testable language. -/
 theorem isLocallyTestable_setOf_kFactors (k : ℕ) (P : Set (Set (List α))) :
     IsLocallyTestable {w | {f | f ∈ w.kFactors k} ∈ P} k :=
-  fun _ _ e ↦ congrArg (fun p ↦ p.2.2 ∈ P) e
+  fun _ _ e ↦ congrArg (fun p ↦ p.2.1 ∈ P) e
 
 /-- A generalized `(k - 1)`-definite language is locally `k`-testable. -/
 theorem IsGeneralizedDefinite.toIsLocallyTestable (h : L.IsGeneralizedDefinite (k - 1)) :
     L.IsLocallyTestable k :=
   fun _ _ e ↦ propext <|
-    isGeneralizedDefinite_iff_edges.mp h (congrArg Prod.fst e) (congrArg (·.2.1) e)
+    isGeneralizedDefinite_iff_edges.mp h (congrArg Prod.fst e) (congrArg (·.2.2) e)
 
 theorem IsLocallyTestable.leftQuotient (h : L.IsLocallyTestable k) (u : List α) :
     (L.leftQuotient u).IsLocallyTestable k :=
-  fun _ _ e ↦ h (List.localProfile_append_congr rfl e)
+  fun _ _ e ↦ h (List.kTestVector_append_congr rfl e)
 
 theorem IsLocallyTestable.rightQuotient (h : L.IsLocallyTestable k) (u : List α) :
     (L.rightQuotient u).IsLocallyTestable k :=
-  fun _ _ e ↦ h (List.localProfile_append_congr e rfl)
+  fun _ _ e ↦ h (List.kTestVector_append_congr e rfl)
 
 /-- Locally testable languages are closed under inverse images of letter-to-letter maps. -/
 theorem IsLocallyTestable.preimage_map {L : Language β} (h : L.IsLocallyTestable k) (g : α → β) :
     IsLocallyTestable {w : List α | w.map g ∈ L} k :=
-  fun _ _ e ↦ h (by rw [List.localProfile_map, List.localProfile_map, e])
+  fun _ _ e ↦ h (by rw [List.kTestVector_map, List.kTestVector_map, e])
 
 /-- Over a finite alphabet locally testable languages are star-free. -/
 theorem IsLocallyTestable.isStarFree [Finite α] (h : L.IsLocallyTestable k) : L.IsStarFree :=
-  .of_factorsThrough h (fun _ _ _ _ ↦ List.localProfile_append_congr)
-    (List.finite_range_localProfile k) (List.localProfile_flatten_replicate_succ k)
+  .of_factorsThrough h (fun _ _ _ _ ↦ List.kTestVector_append_congr)
+    (List.finite_range_kTestVector k) (List.kTestVector_flatten_replicate_succ k)
 
 /-! ### Containing a factor -/
 
