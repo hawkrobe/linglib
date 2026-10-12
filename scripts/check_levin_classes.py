@@ -6,7 +6,7 @@ mismatch."""
 import re, sys, json, collections, pathlib
 root = pathlib.Path(__file__).resolve().parent.parent
 data = json.loads((root / "Linglib/Data/VerbClasses/Levin1993.json").read_text(encoding="utf-8"))
-enum = (root / "Linglib/Semantics/ArgumentStructure/LevinClass.lean").read_text(encoding="utf-8")
+enum = (root / "Linglib/Semantics/ArgumentStructure/LevinClass/Basic.lean").read_text(encoding="utf-8")
 ctors = re.findall(r"^  \| (\w+)\s", enum.split("inductive LevinClass where")[1].split("deriving")[0],
                    re.M)
 if len(ctors) != len(data["classes"]):

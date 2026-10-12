@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Semantics.ArgumentStructure.ParticipantType
+public import Linglib.Semantics.ArgumentStructure.AgentivityLattice.Basic
 public import Mathlib.Order.Interval.Set.OrdConnected
 public import Linglib.Syntax.Case.Basic
 

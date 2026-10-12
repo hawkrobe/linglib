@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Syntax.Minimalist.Verbal.Voice
-public import Linglib.Semantics.ArgumentStructure.EntailmentProfile
+public import Linglib.Semantics.ArgumentStructure.Unaccusativity
 public import Linglib.Fragments.Romance.French.Verbs
 
 /-!

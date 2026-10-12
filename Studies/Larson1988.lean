@@ -8,7 +8,7 @@ module
 public import Linglib.Syntax.Minimalist.SyntacticObject.Term
 public import Linglib.Syntax.Minimalist.SyntacticObject.Build
 public import Linglib.Syntax.Minimalist.Linearization.Replay
-public import Linglib.Semantics.ArgumentStructure.ThetaRole
+public import Linglib.Semantics.ArgumentStructure.EntailmentProfile.ThetaRole
 
 /-!
 # Larson (1988): On the Double Object Construction

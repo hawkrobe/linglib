@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Semantics.ArgumentStructure.EntailmentProfile
+public import Linglib.Semantics.ArgumentStructure.EntailmentProfile.Basic
 
 /-!
 # Theta roles as proto-role clusters

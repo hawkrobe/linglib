@@ -2,7 +2,7 @@ module
 
 public import Mathlib.Order.Disjoint
 public import Mathlib.Data.Finset.Lattice.Basic
-public import Linglib.Semantics.ArgumentStructure.ThetaRole
+public import Linglib.Semantics.ArgumentStructure.EntailmentProfile.ThetaRole
 public import Linglib.Syntax.Category.Verb.ArgumentFrame.Basic
 
 /-!

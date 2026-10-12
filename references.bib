@@ -673,7 +673,7 @@
   subfield  = {syntax/argument-structure},
   validated = {true},
   role      = {formalized},
-  sources   = {Semantics/Lexical/LevinClassProfiles.lean;Studies/HartshorneEtAl2016.lean;Studies/Kim2024.lean;Studies/Pesetsky1995.lean}
+  sources   = {Semantics/Lexical/LevinClassProfiles.lean;Studies/HartshorneEtAl2016.lean;Studies/Kim2024.lean;Studies/Pesetsky1995.lean;Semantics/ArgumentStructure/RoleList.lean}
 }
 @inproceedings{bassi-bar-lev-2018,
   author    = {Bassi, Itai and Bar-Lev, Moshe},
@@ -5781,7 +5781,7 @@
   role      = {formalized},
   doi       = {10.2307/414531},
   validated = {true},
-  sources   = {Data/Examples/FillmoreKayOConnor1988.json;Semantics/ArgumentStructure/LevinClass.lean;Studies/FillmoreKayOConnor1988.lean;Studies/Israel2001.lean;Syntax/ConstructionGrammar/Basic.lean}
+  sources   = {Data/Examples/FillmoreKayOConnor1988.json;Semantics/ArgumentStructure/LevinClass/Basic.lean;Studies/FillmoreKayOConnor1988.lean;Studies/Israel2001.lean;Syntax/ConstructionGrammar/Basic.lean}
 }
 @article{barss-lasnik-1986,
   author    = {Barss, Andrew and Lasnik, Howard},
@@ -6194,7 +6194,7 @@
   subfield  = {semantics/compositional},
   role      = {formalized},
   validated = {true},
-  sources   = {Data/Examples/Dowty1991.json;Fragments/Romance/French/Verbs.lean;Semantics/ArgumentStructure/Agentivity.lean;Semantics/ArgumentStructure/EntailmentProfile.lean;Semantics/ArgumentStructure/LevinClass.lean;Semantics/ArgumentStructure/Projection.lean;Semantics/ArgumentStructure/RoleList.lean;Studies/Dowty1991.lean;Studies/GoldbergJackendoff2004.lean;Studies/Grimm2011.lean;Studies/KoontzGarboden2009.lean;Studies/SolstadBott2022.lean;Studies/StapsRooryck2024.lean;Syntax/Category/Verb/Argument.lean;Syntax/Category/Verb/Basic.lean;Syntax/Category/Verb/Defs.lean}
+  sources   = {Data/Examples/Dowty1991.json;Fragments/Romance/French/Verbs.lean;Semantics/ArgumentStructure/AgentivityLattice/Agentivity.lean;Semantics/ArgumentStructure/EntailmentProfile/Basic.lean;Semantics/ArgumentStructure/LevinClass/Basic.lean;Semantics/ArgumentStructure/AgentivityLattice/OfEntailmentProfile.lean;Semantics/ArgumentStructure/RoleList.lean;Studies/Dowty1991.lean;Studies/GoldbergJackendoff2004.lean;Studies/Grimm2011.lean;Studies/KoontzGarboden2009.lean;Studies/SolstadBott2022.lean;Studies/StapsRooryck2024.lean;Syntax/Category/Verb/Argument.lean;Syntax/Category/Verb/Basic.lean;Syntax/Category/Verb/Defs.lean;Semantics/ArgumentStructure/EntailmentProfile/Selection.lean;Semantics/ArgumentStructure/Unaccusativity.lean}
 }
 @article{johnson-1991,
   author    = {Johnson, Kyle},
@@ -6541,7 +6541,7 @@
   subfield  = {semantics/compositional},
   role      = {formalized},
   validated = {true},
-  sources   = {Data/Examples/LevinRappaportHovav1995.json;Data/Examples/LevinRappaportHovav1995.lean;Fragments/Dutch/Verbs.lean;Fragments/English/Verbs/Basic.lean;Fragments/Romance/Italian/Verbs.lean;Semantics/ArgumentStructure/AuxiliarySelection.lean;Semantics/ArgumentStructure/LevinClass.lean;Studies/BeaversZubair2013.lean;Studies/Bohnemeyer2004.lean;Studies/GoldbergJackendoff2004.lean;Studies/KoontzGarboden2009.lean;Studies/LevinRappaportHovav1995.lean;Syntax/Category/Verb/Basic.lean;Syntax/Category/Verb/Defs.lean}
+  sources   = {Data/Examples/LevinRappaportHovav1995.json;Data/Examples/LevinRappaportHovav1995.lean;Fragments/Dutch/Verbs.lean;Fragments/English/Verbs/Basic.lean;Fragments/Romance/Italian/Verbs.lean;Semantics/ArgumentStructure/AuxiliarySelection.lean;Semantics/ArgumentStructure/LevinClass/Basic.lean;Studies/BeaversZubair2013.lean;Studies/Bohnemeyer2004.lean;Studies/GoldbergJackendoff2004.lean;Studies/KoontzGarboden2009.lean;Studies/LevinRappaportHovav1995.lean;Syntax/Category/Verb/Basic.lean;Syntax/Category/Verb/Defs.lean;Semantics/ArgumentStructure/Unaccusativity.lean}
 }
 @phdthesis{rullmann-1995,
   author    = {Rullmann, Hotze},
@@ -7853,7 +7853,7 @@
   subfield  = {semantics/argument-structure},
   role      = {cited},
   validated = {true},
-  sources   = {Semantics/ArgumentStructure/EntailmentProfile.lean}
+  sources   = {;Semantics/ArgumentStructure/EntailmentProfile/Selection.lean;Semantics/ArgumentStructure/Unaccusativity.lean}
 }
 @book{primus-1999,
   author    = {Primus, Beatrice},
@@ -7866,7 +7866,7 @@
   subfield  = {semantics/argument-structure},
   role      = {cited},
   validated = {true},
-  sources   = {Semantics/ArgumentStructure/ThetaRole.lean}
+  sources   = {Semantics/ArgumentStructure/EntailmentProfile/ThetaRole.lean}
 }
 @book{levin-rappaport-hovav-2005,
   author    = {Levin, Beth and Rappaport Hovav, Malka},
@@ -7878,7 +7878,7 @@
   subfield  = {semantics/argument-structure},
   role      = {cited},
   validated = {true},
-  sources   = {Semantics/ArgumentStructure/LevinClass.lean;Semantics/ArgumentStructure/Linking.lean;Semantics/ArgumentStructure/RoleList.lean;Studies/HartshorneEtAl2016.lean}
+  sources   = {Semantics/ArgumentStructure/LevinClass/Basic.lean;Semantics/ArgumentStructure/Linking.lean;Semantics/ArgumentStructure/RoleList.lean;Studies/HartshorneEtAl2016.lean}
 }
 @misc{grinberg-reiner-2020,
   author    = {Grinberg, Darij and Reiner, Victor},
@@ -7914,7 +7914,7 @@
   subfield  = {semantics/compositional},
   role      = {formalized},
   validated = {true},
-  sources   = {Semantics/ArgumentStructure/Agentivity.lean;Semantics/ArgumentStructure/CaseRegion.lean;Semantics/ArgumentStructure/EntailmentProfile.lean;Semantics/ArgumentStructure/ParticipantType.lean;Semantics/ArgumentStructure/PersistenceLevel.lean;Semantics/ArgumentStructure/Projection.lean;Studies/Grimm2011.lean;Syntax/Category/Verb/Defs.lean}
+  sources   = {Semantics/ArgumentStructure/AgentivityLattice/Agentivity.lean;Semantics/ArgumentStructure/AgentivityLattice/Case.lean;Semantics/ArgumentStructure/AgentivityLattice/Basic.lean;Semantics/ArgumentStructure/AgentivityLattice/Persistence.lean;Semantics/ArgumentStructure/AgentivityLattice/OfEntailmentProfile.lean;Studies/Grimm2011.lean;Syntax/Category/Verb/Defs.lean;Semantics/ArgumentStructure/EntailmentProfile/Selection.lean}
 }
 @article{von-heusinger-2008,
   author    = {von Heusinger, Klaus},
@@ -9922,7 +9922,7 @@
   subfield  = {semantics/modality},
   validated = {true},
   role      = {cited},
-  sources   = {Fragments/English/Adposition.lean;Semantics/ArgumentStructure/LevinClass.lean;Semantics/Aspect/Defs.lean;Semantics/Aspect/Phasal.lean;Semantics/Aspect/SubintervalProperty.lean;Semantics/Aspect/Viewpoint.lean;Studies/Cohen2013.lean;Studies/Filip2012.lean;Studies/FuscoSgrizzi2026.lean;Studies/HayKennedyLevin1999.lean;Studies/IatridouEtAl2001.lean;Studies/Krejci2012.lean;Studies/VonStechow2009.lean}
+  sources   = {Fragments/English/Adposition.lean;Semantics/ArgumentStructure/LevinClass/Basic.lean;Semantics/Aspect/Defs.lean;Semantics/Aspect/Phasal.lean;Semantics/Aspect/SubintervalProperty.lean;Semantics/Aspect/Viewpoint.lean;Studies/Cohen2013.lean;Studies/Filip2012.lean;Studies/FuscoSgrizzi2026.lean;Studies/HayKennedyLevin1999.lean;Studies/IatridouEtAl2001.lean;Studies/Krejci2012.lean;Studies/VonStechow2009.lean}
 }
 @book{fitting-mendelsohn-2023,
   author    = {Fitting, Melvin and Mendelsohn, Richard L.},
@@ -12778,7 +12778,7 @@
   subfield  = {semantics/causation},
   role      = {cited},
   validated = {true},
-  sources   = {Semantics/ArgumentStructure/EntailmentProfile.lean;Syntax/Category/Verb/Defs.lean}
+  sources   = {Semantics/ArgumentStructure/EntailmentProfile/Basic.lean;Syntax/Category/Verb/Defs.lean}
 }
 @article{levin-2026,
   author    = {Levin, Beth},
@@ -14762,7 +14762,7 @@
     subfield  = {semantics/lexical},
   validated = {true},
   role      = {formalized},
-  sources   = {Data/VerbClasses/Levin1993.lean;Data/VerbClasses/Schema.lean;Semantics/ArgumentStructure/DiathesisAlternation.lean;Semantics/ArgumentStructure/LevinClass.lean;Semantics/ArgumentStructure/LevinTheory.lean;Semantics/ArgumentStructure/RoleList.lean;Semantics/Root/Content.lean;Studies/Beavers2010.lean;Studies/BeaversKoontzGarboden2020.lean;Studies/HartshorneEtAl2016.lean;Studies/Levin1993.lean;Studies/Levin2026.lean;Studies/LuPanDegen2025.lean;Studies/MajidBosterBowerman2008.lean;Studies/MartinRoseNichols2025.lean;Studies/RappaportHovavLevin2024.lean;Studies/ShenHuang2026.lean;Studies/SpalekMcNally2026.lean;Syntax/Category/Verb/Basic.lean;Syntax/Category/Verb/Defs.lean;Syntax/Voice/Basic.lean}
+  sources   = {Data/VerbClasses/Levin1993.lean;Data/VerbClasses/Schema.lean;Semantics/ArgumentStructure/LevinClass/Alternation.lean;Semantics/ArgumentStructure/LevinClass/Basic.lean;Semantics/ArgumentStructure/LevinClass/RootEntailment.lean;Semantics/ArgumentStructure/RoleList.lean;Semantics/Root/Content.lean;Studies/Beavers2010.lean;Studies/BeaversKoontzGarboden2020.lean;Studies/HartshorneEtAl2016.lean;Studies/Levin1993.lean;Studies/Levin2026.lean;Studies/LuPanDegen2025.lean;Studies/MajidBosterBowerman2008.lean;Studies/MartinRoseNichols2025.lean;Studies/RappaportHovavLevin2024.lean;Studies/ShenHuang2026.lean;Studies/SpalekMcNally2026.lean;Syntax/Category/Verb/Basic.lean;Syntax/Category/Verb/Defs.lean;Syntax/Voice/Basic.lean}
 }
 @article{klein-1980,
   author    = {Klein, Ewan},
@@ -15148,7 +15148,7 @@
   subfield  = {semantics/lexical},
   validated = {true},
   role      = {foundational},
-  sources   = {Semantics/ArgumentStructure/LevinClass.lean;Studies/DelPinal2015.lean;Studies/Pustejovsky1995.lean;Studies/ViknerJensen2002.lean}
+  sources   = {Semantics/ArgumentStructure/LevinClass/Basic.lean;Studies/DelPinal2015.lean;Studies/Pustejovsky1995.lean;Studies/ViknerJensen2002.lean}
 }
 @book{giannakidou-1998,
   author    = {Giannakidou, Anastasia},
@@ -22589,7 +22589,7 @@
   subfield  = {syntax},
   role      = {cited},
   validated = {true},
-  sources   = {Semantics/ArgumentStructure/AuxiliarySelection.lean;Studies/Dendikken1995.lean;Studies/Halpert2012.lean;Studies/Woolford1997.lean}
+  sources   = {Semantics/ArgumentStructure/AuxiliarySelection.lean;Studies/Dendikken1995.lean;Studies/Halpert2012.lean;Studies/Woolford1997.lean;Semantics/ArgumentStructure/Unaccusativity.lean}
 }
 @book{pollard-sag-1987,
   author    = {Pollard, Carl and Sag, Ivan A.},
@@ -23744,7 +23744,7 @@
   subfield  = {syntax},
   role      = {cited},
   validated = {true},
-  sources   = {Semantics/ArgumentStructure/EntailmentProfile.lean;Studies/KoontzGarboden2009.lean;Studies/Siloni2012.lean;Syntax/Reciprocal.lean;Syntax/Category/Verb/Reciprocal.lean}
+  sources   = {Semantics/ArgumentStructure/EntailmentProfile/Basic.lean;Studies/KoontzGarboden2009.lean;Studies/Siloni2012.lean;Syntax/Reciprocal.lean;Syntax/Category/Verb/Reciprocal.lean}
 }
 @incollection{majid-et-al-2011,
   author    = {Majid, Asifa and Evans, Nicholas and Gaby, Alice and Levinson, Stephen C.},
@@ -25032,7 +25032,7 @@
     subfield  = {semantics/events},
   validated = {true},
   role      = {cited},
-  sources   = {Semantics/ArgumentStructure/EntailmentProfile.lean;Semantics/ArgumentStructure/EventStructure.lean;Studies/KoontzGarboden2009.lean;Studies/RappaportHovavLevin2024.lean;Syntax/Category/Verb/Defs.lean}
+  sources   = {Semantics/ArgumentStructure/EventStructure/Basic.lean;Studies/KoontzGarboden2009.lean;Studies/RappaportHovavLevin2024.lean;Syntax/Category/Verb/Defs.lean;Semantics/ArgumentStructure/RoleList.lean}
 }
 @book{champollion-2017,
   author    = {Champollion, Lucas},
@@ -25161,7 +25161,7 @@
   subfield  = {semantics/events},
   validated = {true},
   role      = {formalized},
-  sources   = {Data/Examples/BeaversKoontzGarboden2020.json;Semantics/ArgumentStructure/EventStructure/Interpretation.lean;Semantics/ArgumentStructure/EventStructure.lean;Semantics/ArgumentStructure/LevinTheory.lean;Semantics/ArgumentStructure/RoleList.lean;Semantics/Root/Defs.lean;Semantics/Root/Kinds.lean;Studies/BeaversEtAl2021.lean;Studies/BeaversKoontzGarboden2020.lean;Studies/HaninkKoontzGarboden2025.lean;Studies/Krejci2012.lean;Studies/Levin2026.lean;Studies/Lucy1994.lean;Studies/SpalekMcNally2026.lean;Syntax/Category/Verb/Basic.lean;Syntax/Minimalist/Ellipsis.lean;Studies/YuAusensiSmith2023.lean}
+  sources   = {Data/Examples/BeaversKoontzGarboden2020.json;Semantics/ArgumentStructure/EventStructure/Interpretation.lean;Semantics/ArgumentStructure/EventStructure/Basic.lean;Semantics/ArgumentStructure/LevinClass/RootEntailment.lean;Semantics/ArgumentStructure/RoleList.lean;Semantics/Root/Defs.lean;Semantics/Root/Kinds.lean;Studies/BeaversEtAl2021.lean;Studies/BeaversKoontzGarboden2020.lean;Studies/HaninkKoontzGarboden2025.lean;Studies/Krejci2012.lean;Studies/Levin2026.lean;Studies/Lucy1994.lean;Studies/SpalekMcNally2026.lean;Syntax/Category/Verb/Basic.lean;Syntax/Minimalist/Ellipsis.lean;Studies/YuAusensiSmith2023.lean}
 }
 @article{beavers-etal-2021,
   author    = {Beavers, John and Everdell, Michael and Jerro, Kyle and Kauhanen, Henri and Koontz-Garboden, Andrew and Le Bovidge, Elise and Nichols, Stephen},
@@ -47581,7 +47581,7 @@
   doi       = {10.1017/S0022226700010318},
   subfield  = {syntax},
   role      = {cited},
-  sources   = {Studies/Grimm2011.lean;Semantics/ArgumentStructure/ParticipantType.lean}
+  sources   = {Studies/Grimm2011.lean;Semantics/ArgumentStructure/AgentivityLattice/Basic.lean}
 }
 
 @phdthesis{wasike-2006,

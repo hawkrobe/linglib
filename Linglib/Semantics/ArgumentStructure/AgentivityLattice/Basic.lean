@@ -1,19 +1,19 @@
 module
 
-public import Linglib.Semantics.ArgumentStructure.Agentivity
-public import Linglib.Semantics.ArgumentStructure.PersistenceLevel
+public import Linglib.Semantics.ArgumentStructure.AgentivityLattice.Agentivity
+public import Linglib.Semantics.ArgumentStructure.AgentivityLattice.Persistence
 public import Mathlib.Data.Fintype.Prod
 public import Mathlib.Order.Sublattice
 
 /-!
-# Participant types
+# The agentivity lattice
 
 Grimm combines the lattice of agentivity properties with the persistence lattice by taking their
 Cartesian product, ordered componentwise, and excludes the conceptually impossible nodes: an
-argument not entailed to exist when the event begins has no agentivity property. Each remaining
-node is a participant type, and together they form the agentivity lattice, a sublattice of the
-product. The named participant types anchor the case regions of `CaseRegion.lean`, and Tsunoda's
-transitivity hierarchy places a canonical patient for each class.
+argument not entailed to exist when the event begins has no agentivity property. Each remaining node
+is a participant type, and together they form the agentivity lattice, a sublattice of the product.
+The named participant types anchor the case regions, `CaseRegion`, and Tsunoda's transitivity
+hierarchy places a canonical patient for each class.
 
 ## Main definitions
 

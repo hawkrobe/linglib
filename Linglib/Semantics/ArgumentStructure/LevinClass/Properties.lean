@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Semantics.ArgumentStructure.LevinClass.Members
-public import Linglib.Semantics.ArgumentStructure.DiathesisAlternation
+public import Linglib.Semantics.ArgumentStructure.LevinClass.Alternation
 
 /-!
 # The property tables of the Levin classes

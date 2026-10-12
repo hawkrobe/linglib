@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Syntax.Category.Verb.Basic
-public import Linglib.Semantics.ArgumentStructure.ThetaRole
+public import Linglib.Semantics.ArgumentStructure.EntailmentProfile.ThetaRole
 public import Linglib.Semantics.ArgumentStructure.Linking
 
 /-!

@@ -1,7 +1,7 @@
 module
 
-public import Linglib.Semantics.ArgumentStructure.CaseRegion
-public import Linglib.Semantics.ArgumentStructure.Projection
+public import Linglib.Semantics.ArgumentStructure.AgentivityLattice.Case
+public import Linglib.Semantics.ArgumentStructure.AgentivityLattice.OfEntailmentProfile
 public import Linglib.Semantics.ArgumentStructure.RoleList
 public import Studies.Dowty1991
 

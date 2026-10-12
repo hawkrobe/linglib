@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Syntax.Category.Verb.ArgumentFrame.Basic
-public import Linglib.Semantics.ArgumentStructure.EntailmentProfile
+public import Linglib.Semantics.ArgumentStructure.EntailmentProfile.Basic
 public import Mathlib.Data.Vector.Defs
 
 /-!
