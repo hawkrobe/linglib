@@ -1,6 +1,5 @@
 module
 
-public import Linglib.Semantics.Quantification.Basic
 public import Studies.BeaverCondoravdi2003
 public import Linglib.Semantics.Tense.Pronoun
 
@@ -13,13 +12,6 @@ reports. Under Beaver and Condoravdi's semantics of *before*, a quantificational
 *before*-clause makes the definedness condition of EARLIEST fail, while a pronominal past does
 not. With the sequence-of-tense rule and the shiftability of the present this yields a typology
 of languages and three universal predictions, checked here on English, Polish and Japanese.
-
-## Main definitions
-
-* `quantificationalPast`: the quantificational past.
-* `pronominalLookup`: the pronominal past.
-* `Shiftability`: the shiftability of the present tense.
-* `LanguageTenseProfile`: a language's three tense parameters.
 
 ## Main results
 
@@ -52,7 +44,7 @@ of languages and three universal predictions, checked here on English, Polish an
 
 namespace Sharvit2014
 
-open Semantics
+open Semantics ModalLogic
 
 
 /-- The `EARLIEST` presupposition of `before^{B&C}` holds of the body `p` when the set of
@@ -81,11 +73,10 @@ inductive LexicalType
   | quantificational
   deriving DecidableEq, Repr
 
-/-- The quantificational past, (30b), is the generalized quantifier `some` over the contextual
-restrictor `K` with the scope "precedes `t` and satisfies `p`". -/
-def quantificationalPast {T : Type*} [LT T]
-    (K : Set T) (p : T → Prop) (t : T) : Prop :=
-  Quantifier.GQ.some (· ∈ K) (fun t' => t' < t ∧ p t')
+/-- The quantificational past, (30b), holds of a predicate at `t` when the predicate holds at
+some time of the contextual restrictor `K` before `t`. -/
+def quantificationalPast {T : Type*} [LT T] (K : Set T) (p : T → Prop) (t : T) : Prop :=
+  ◇[Tense.toSetRel ⟦Tense.past⟧] (fun t' ↦ t' ∈ K ∧ p t') t
 
 /-- When the body of `before^{B&C}` is the quantificational past and the restrictor `C` is
 dense with `K ⊆ C`, the `EARLIEST` presupposition fails, since by density any witness lifts to
@@ -96,10 +87,10 @@ theorem ipf_quantificationalPast {T : Type*} [LinearOrder T]
     (hC_dense : ∀ a b, a ∈ C → b ∈ C → a < b → ∃ c ∈ C, a < c ∧ c < b)
     (q : T → Prop) :
     ¬ hasEarliest C (quantificationalPast K q) := by
-  rintro ⟨t_min, ⟨ht_min_C, t_q, ht_q_K, ht_q_lt, hq_t_q⟩, hmin⟩
+  rintro ⟨t_min, ⟨ht_min_C, t_q, ht_q_lt, ht_q_K, hq_t_q⟩, hmin⟩
   obtain ⟨t_mid, ht_mid_C, ht_q_lt_mid, ht_mid_lt_min⟩ :=
-    hC_dense t_q t_min (hK ht_q_K) ht_min_C ht_q_lt
-  exact absurd (hmin ⟨ht_mid_C, t_q, ht_q_K, ht_q_lt_mid, hq_t_q⟩)
+    hC_dense t_q t_min (hK ht_q_K) ht_min_C (Tense.mem_toSetRel_past.1 ht_q_lt)
+  exact absurd (hmin ⟨ht_mid_C, t_q, Tense.mem_toSetRel_past.2 ht_q_lt_mid, ht_q_K, hq_t_q⟩)
     (not_le.mpr ht_mid_lt_min)
 
 /-- `triggersIPFInBefore l` says whether a tense of type `l` triggers IPF in a *before*-clause;
@@ -114,46 +105,13 @@ iff it is pronominal, (27) on p. 272. -/
     triggersIPFInBefore τ = false ↔ τ = .pronominal := by
   cases τ <;> simp [triggersIPFInBefore]
 
-/-! ### The pronominal past ((30a))
-
-The pronominal-past lookup and its grounding in the codebase's canonical
-tense pronoun: `pronominalLookup` is the presupposition-gated referent of a
-past-constraint `TensePronoun`, so [sharvit-2014]'s (30a) and
-[partee-1973]'s tense-pronoun carrier coincide
-(`pronominalLookup_eq_some_iff_tensePronoun`). -/
+/-! ### The pronominal past ((30a)) -/
 
 /-- The pronominal past `[[past_{j,k}]]^g`, (30a), with evaluation index `j` and referential index
-`k`, is defined iff `g k < g j`, and then denotes `g k`. -/
-def pronominalLookup {T : Type*} [LT T] [DecidableLT T]
-    (g : ℕ → T) (j k : ℕ) : Option T :=
-  if g k < g j then some (g k) else none
-
-/-- The pronominal past denotes the referential index when defined. -/
-@[simp]
-theorem pronominalLookup_eq_some_iff {T : Type*} [LT T]
-    [DecidableLT T] (g : ℕ → T) (j k : ℕ) (t : T) :
-    pronominalLookup g j k = some t ↔ g k < g j ∧ g k = t := by
-  unfold pronominalLookup; split <;> simp_all
-
-/-- The pronominal past is undefined exactly when the constraint fails. -/
-@[simp]
-theorem pronominalLookup_eq_none_iff {T : Type*} [LT T]
-    [DecidableLT T] (g : ℕ → T) (j k : ℕ) :
-    pronominalLookup g j k = none ↔ ¬ g k < g j := by
-  unfold pronominalLookup; split <;> simp_all
-
-/-- The pronominal past (30a) is defined with value `t` iff the past `TensePronoun` with
-referential index `k` and evaluation index `j` satisfies its presupposition and resolves to
-`t`, for any binding mode. -/
-theorem pronominalLookup_eq_some_iff_tensePronoun {T : Type*} [LinearOrder T]
-    (g : Assignment T) (j k : ℕ) (t : T)
-    (mode : Tense.ReferentialMode) :
-    pronominalLookup g j k = some t ↔
-      (Tense.TensePronoun.mk k ⟦Tense.past⟧ mode j).fullPresupposition g ∧
-      (Tense.TensePronoun.mk k ⟦Tense.past⟧ mode j).resolve g = t := by
-  simp only [Tense.TensePronoun.fullPresupposition, Tense.TensePronoun.resolve,
-    Tense.TensePronoun.evalTime, HeimKratzer.interpPronoun, Tense.compare_mem_past]
-  exact pronominalLookup_eq_some_iff g j k t
+`k`, is the pronominal tense of the past cell, defined iff `g k < g j` and then denoting `g k`. -/
+theorem pronominalPast_presup {W T : Type*} [LT T] (g : Assignment T) (j k : ℕ) (w : W) :
+    (Tense.pronoun ⟦Tense.past⟧ k j).presup g w ↔ g k < g j := by
+  simp
 
 /-! ### The parameter space ((98)) -/
 
@@ -362,10 +320,7 @@ example : english.pShiftabilityBare = false := rfl
 example : polish.wellFormedPresentUnderPastBefore = false := rfl
 example : japanese.wellFormedPresentUnderPastBefore = true := rfl
 
-/-! ### The simultaneous reading
-
-The Sharvit ↔ [klecha-2016] comparison (same simultaneous-reading prediction, different
-mechanisms) lives in the later paper's study file, `Studies/Klecha2016.lean §F1`. -/
+/-! ### The simultaneous reading -/
 
 /-- In English the SOT rule and the pronominal past yield the simultaneous reading of
 past-under-past in attitudes. -/

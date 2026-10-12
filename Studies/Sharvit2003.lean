@@ -8,11 +8,11 @@ public import Linglib.Data.Examples.Sharvit2003
 # Sharvit (2003): Embedded Tense and Universal Grammar
 
 This file formalizes the squib's typological argument. Under the Deletion Theory of
-[ogihara-1996] and [von-stechow-1995], sequence of tense is a parameter: an SOT language deletes
+Ogihara and von Stechow, sequence of tense is a parameter: an SOT language deletes
 an embedded tense under agreement with a c-commanding attitude tense, and the deleted tense is a
-bound zero tense, the relative now of [heim-1994-comments], so past under past has a nonpast
+bound zero tense, the relative now of Heim, so past under past has a nonpast
 reading beside its anteriority reading (`Tense.pastUnderPast`). A second parameter, matrix
-indexicality after [schlenker-1999], is whether the present-tense morpheme must refer to the
+indexicality after Schlenker, is whether the present-tense morpheme must refer to the
 utterance time in present-under-past sentences or may be interpreted as a bound variable. The
 two cross to the typology (11): English deletes and has an indexical present, Hebrew neither
 deletes nor has an indexical present, Modern Greek deletes and has a bindable present, and the
@@ -23,13 +23,13 @@ content-matching λ0-abstract embeddable under an attitude verb; a language meet
 a source of zero tense, a deleted tense or a bound present (`ZeroTense`, `Language.Provides`),
 which is exactly what type 4 lacks (`embeddabilityPrinciple_iff`).
 
-The readings follow from the tense-pronoun substrate. A bound present resolves to the attitude's
-now, the nonpast reading of (5) and (12a) (`boundPresent_nonpast`); an indexical present
-resolves to the utterance time, which a past attitude's now cannot match, so (3) keeps only the
-double access reading (`indexicalPresent_no_nonpast`), and an interval too short to span the two
-years of (4b) cannot give it (`not_doubleAccess_of_short`). The LF (7) of the nonpast reading of
-(1), three λ0-abstracts rebinding one zero tense, denotes (10) under the entries (8) and (9)
-(`lf7_iff`). The typology predicts the availability of the nonpast reading across the paper's
+The readings follow from the pronominal tense of `Semantics/Tense/Pronoun.lean`. A bound present
+denotes the attitude's now, the nonpast reading of (5) and (12a) (`boundPresent_nonpast`); an
+indexical present denotes the utterance time, which a past attitude's now cannot match, so (3) keeps
+only the double access reading (`indexicalPresent_no_nonpast`), and an interval too short to span
+the two years of (4b) cannot give it (`not_doubleAccess_of_short`). The LF (7) of the nonpast
+reading of (1), three λ0-abstracts rebinding one zero tense, denotes (10) under the entries (8) and
+(9) (`lf7_iff`). The typology predicts the availability of the nonpast reading across the paper's
 examples (1)–(6) and (12) (`nonpast_rows`).
 
 ## Implementation notes
@@ -71,36 +71,37 @@ inductive PresentTense
   | matrixIndexical | bindable
   deriving DecidableEq, Repr
 
-/-- A language type of the Deletion Theory (11): the SOT rule, which deletes a tense under
-agreement and interprets it as a bound zero tense, and the indexicality of the present. -/
+/-- A language type of the Deletion Theory (11) is given by whether it has the SOT rule, which
+deletes a tense under agreement and interprets it as a bound zero tense, and by the indexicality of
+its present. -/
 structure Language where
   /-- The language has the SOT rule. -/
   sotRule : Bool
   present : PresentTense
   deriving DecidableEq, Repr
 
-/-- Type 1, English: the SOT rule and a matrix-indexical present. -/
+/-- English, type 1, has the SOT rule and a matrix-indexical present. -/
 def english : Language := ⟨true, .matrixIndexical⟩
 
-/-- Type 2, Hebrew: no SOT rule and a bindable present. -/
+/-- Hebrew, type 2, has no SOT rule and a bindable present. -/
 def hebrew : Language := ⟨false, .bindable⟩
 
-/-- Type 3, Modern Greek: the SOT rule and a bindable present. -/
+/-- Modern Greek, type 3, has the SOT rule and a bindable present. -/
 def greek : Language := ⟨true, .bindable⟩
 
-/-- Type 4, unattested: no SOT rule and a matrix-indexical present. -/
+/-- The unattested type 4 has no SOT rule and a matrix-indexical present. -/
 def type4 : Language := ⟨false, .matrixIndexical⟩
 
 /-! ### Zero tense and the Embeddability Principle -/
 
-/-- The sources of a bound zero tense in a complement clause: a tense deleted under agreement
-by the SOT rule, or a present morpheme interpreted as a bound variable. -/
+/-- The sources of a bound zero tense in a complement clause are a tense deleted under agreement by
+the SOT rule and a present morpheme interpreted as a bound variable. -/
 inductive ZeroTense
   | deleted | boundPresent
   deriving DecidableEq, Repr, Fintype
 
-/-- A language provides a source of zero tense: deletion needs the SOT rule, and a bound
-present needs a present morpheme that is not a matrix indexical. -/
+/-- A language provides a source of zero tense when it has what the source needs, the SOT rule for
+deletion and a present morpheme that is not a matrix indexical for a bound present. -/
 def Language.Provides (L : Language) : ZeroTense → Prop
   | .deleted => L.sotRule
   | .boundPresent => L.present = .bindable
@@ -109,8 +110,8 @@ instance (L : Language) : DecidablePred L.Provides
   | .deleted => inferInstanceAs (Decidable (L.sotRule : Prop))
   | .boundPresent => inferInstanceAs (Decidable (L.present = .bindable))
 
-/-- The Embeddability Principle (13) as a condition on a language: some source of zero tense
-is available, so that every well-formed matrix LF has a content-matching λ0-abstract that can
+/-- The Embeddability Principle (13), as a condition on a language, says that some source of zero
+tense is available, so that every well-formed matrix LF has a content-matching λ0-abstract that can
 be embedded under an attitude verb carrying past or present. -/
 def EmbeddabilityPrinciple (L : Language) : Prop := ∃ z, L.Provides z
 
@@ -157,28 +158,23 @@ theorem nonpastAvailable_past_iff (L : Language) :
     NonpastAvailable L .past ↔ L.Provides .deleted :=
   eq_mem_pastUnderPast_iff
 
-/-- The present morpheme of a complement clause as a tense pronoun: variable `n` under the
-present constraint, in the mode the language admits, evaluated at the attitude's now, slot
-`e`. -/
-def embeddedPresent (n e : ℕ) (mode : ReferentialMode) : TensePronoun :=
-  ⟨n, ⟦Tense.present⟧, mode, e⟩
+/-- A bindable present bound by the attitude verb denotes the attitude's now, the time of its
+evaluation index, so its present presupposition holds there, which is the nonpast reading of (5) and
+(12a). -/
+theorem boundPresent_nonpast {W : Type*} [LinearOrder T] (n e : ℕ) (g : Assignment T) (now : T)
+    (w : W) :
+    (pronoun ⟦Tense.present⟧ n e).presup
+      (Function.update (Function.update g e now) n now) w := by
+  simp [Function.update_apply, denote_present]
 
-/-- A bindable present bound by the attitude verb resolves to the attitude's now, so its present
-constraint holds relative to the embedded perspective: the nonpast reading of (5) and (12a). -/
-theorem boundPresent_nonpast [LinearOrder T] (n e : ℕ) (g : Assignment T) (now : T) :
-    (embeddedPresent n e .bound).presupposition
-      ((embeddedPresent n e .bound).resolve (Function.update g n now)) now := by
-  simp [TensePronoun.presupposition, TensePronoun.resolve, embeddedPresent, Tense.denote_present]
-
-/-- A matrix-indexical present under a past attitude verb refers to the utterance time, which
-the attitude's earlier now cannot match, so the present constraint fails relative to the
-embedded perspective: (3) has no nonpast reading, only the double access reading. -/
-theorem indexicalPresent_no_nonpast [LinearOrder T] (tp : TensePronoun)
-    (hPres : tp.constraint = ⟦Tense.present⟧) {resolved speech now : T}
-    (hSpeech : tp.presupposition resolved speech) (hlt : now < speech) :
-    ¬ tp.presupposition resolved now := by
-  obtain rfl := TensePronoun.indexical_present_at_speech tp resolved speech hPres hSpeech
-  simp [TensePronoun.presupposition, hPres, hlt.ne']
+/-- A matrix-indexical present under a past attitude verb refers to the utterance time, the time of
+the index `0`, which the attitude's earlier now cannot match, so its present presupposition fails at
+the attitude's now and (3) has only the double access reading. -/
+theorem indexicalPresent_no_nonpast {W : Type*} [LinearOrder T] {n e : ℕ} {g : Assignment T}
+    {w : W} (hSpeech : (pronoun ⟦Tense.present⟧ n 0).presup g w) (hlt : g e < g 0) :
+    ¬ (pronoun ⟦Tense.present⟧ n e).presup g w := by
+  simp only [pronoun_presup, mem_toSetRel_present] at hSpeech ⊢
+  exact fun h ↦ hlt.ne (h.symm.trans hSpeech)
 
 /-- The double access reading of (4b) needs the pregnancy interval to contain both the finding
 out and the utterance time; an interval too short to span the two years between them cannot,
@@ -189,32 +185,32 @@ theorem not_doubleAccess_of_short [Sub T] [Preorder T] {I : Set T} {b u : T}
 
 /-! ### The nonpast reading of (1) under the Deletion Theory -/
 
-/-- The entry (8) for *decide* and *tell*: the complement holds at every time compatible with
+/-- By the entry (8) for *decide* and *tell*, the complement holds at every time compatible with
 what the holder decides or tells at `t`. -/
 def attitude (compatible : T → Set T) (p : T → Prop) (t : T) : Prop :=
   ∀ t' ∈ compatible t, p t'
 
-/-- The entry (9) for *will*: the complement holds at some later time. -/
+/-- By the entry (9) for *will*, the complement holds at some later time. -/
 def will [LT T] (p : T → Prop) (t : T) : Prop := ∃ t', t < t' ∧ p t'
 
-/-- The LF (7) of the nonpast reading of (1): the matrix past locates the deciding before the
-utterance time, slot `0` of the assignment, and each complement is a λ0-abstract that rebinds
-the zero tense read by the deleted past on *will*, the base-generated zero tense on *tell* and
-the deleted past on *miss*. -/
+/-- In the LF (7) of the nonpast reading of (1), the matrix past locates the deciding before the
+utterance time, the time of the index `0`, and each complement is a λ0-abstract that rebinds the
+zero tense read by the deleted past on *will*, the base-generated zero tense on *tell* and the
+deleted past on *miss*. -/
 def lf7 [LT T] (decides tells : T → Set T) (miss : T → Prop) (g : Assignment T) :
     Prop :=
   ∃ t, t < interpPronoun 0 g ∧
     attitude decides
-      (lambdaAbsG 0 (λ g₁ =>
+      (lambdaAbsG 0 (fun g₁ ↦
         will
-          (lambdaAbsG 0 (λ g₂ =>
-            attitude tells (lambdaAbsG 0 (λ g₃ => miss (interpPronoun 0 g₃)) g₂)
+          (lambdaAbsG 0 (fun g₂ ↦
+            attitude tells (lambdaAbsG 0 (fun g₃ ↦ miss (interpPronoun 0 g₃)) g₂)
               (interpPronoun 0 g₂)) g₁)
           (interpPronoun 0 g₁)) g) t
 
-/-- The interpretation (10): for every time compatible with what John decides at some time
-before the utterance time there is a later time at which he tells his mother, and he misses
-her at every time compatible with that telling. -/
+/-- The LF (7) has the interpretation (10), that for every time compatible with what John decides at
+some time before the utterance time there is a later time at which he tells his mother, and he
+misses her at every time compatible with that telling. -/
 theorem lf7_iff [LT T] (decides tells : T → Set T) (miss : T → Prop)
     (g : Assignment T) :
     lf7 decides tells miss g ↔
@@ -223,7 +219,7 @@ theorem lf7_iff [LT T] (decides tells : T → Set T) (miss : T → Prop)
 
 /-! ### The paper's examples -/
 
-/-- A row of the paper's data: the language, the embedded morpheme, and whether the nonpast
+/-- A row of the paper's data records the language, the embedded morpheme, and whether the nonpast
 reading is available. -/
 structure Row where
   language : Language
@@ -254,7 +250,7 @@ def rows : List Row := Examples.all.filterMap Row.ofDatum
 /-- Every example carries the three features. -/
 theorem rows_complete : ∀ e ∈ Examples.all, (Row.ofDatum e).isSome = true := by decide
 
-/-- The typology (11) predicts the paper's judgments: the nonpast reading is available exactly
+/-- The typology (11) predicts the paper's judgments, the nonpast reading being available exactly
 where the language provides a zero tense for the embedded morpheme. -/
 theorem nonpast_rows :
     ∀ r ∈ rows, r.nonpast = true ↔ NonpastAvailable r.language r.embedded := by
