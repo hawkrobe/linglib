@@ -44,7 +44,8 @@ takes the lexeme's root.
 `IsTotal`, `IsUnivalent`, and the per-lexeme `IsInvariant`, `IsSuppletive`, and
 `IsOverabundant` (Thornton's cell-mates) are inherited from `Realization`. Taking `S = M` and
 `ι = id` recovers a single type of property sets. The universal default rule (5) is not a
-listed rule of `ofRules` but the fallback of `Exponence.realizeMinimalD`, the lexeme's root.
+listed rule of `ofRules` but the fallback of `Exponence.RuleSet.realizeMinimalD`, the lexeme's
+root.
 
 ## References
 
@@ -337,7 +338,7 @@ lexeme's rules realize, the exponent of an applicable rule that no applicable ru
 than, or the lexeme's root, by the universal default rule (5) of [stump-2006], where none of its
 rules applies; its form property set is the image under `ι` of the cell's. -/
 abbrev ofRules (ι : S → M) (rules : L → List R) (root : L → Z) : Linkage L Z S M :=
-  ofFun ι fun l σ ↦ Exponence.realizeMinimalD (rules l) (fun _ ↦ root l) σ
+  ofFun ι fun l σ ↦ Exponence.RuleSet.realizeMinimalD (rules l) (fun _ ↦ root l) σ
 
 /-- With no language-specific rules, the linkage of rules is the canonical linkage of the
 roots. -/

@@ -257,13 +257,13 @@ def positionalLah : DiagOp :=
 
 /-- The diagnostic inventory, in the paper's order: the three transitivisers of (1), then the
 positional derivation. -/
-def inventory : List DiagOp :=
+def inventory : Exponence.RuleSet DiagOp :=
   [affectiveT, zeroDeriv, causativeS, positionalLah]
 
 /-- The exponents of the inventory's applicable operators at `r`, in inventory order: the root's
 predicted derivational behaviour. -/
 def predictedExponents (r : Root) : List String :=
-  (Exponence.applicable inventory r).map DiagOp.exponent
+  (inventory.applicable r).map DiagOp.exponent
 
 /-! ### Predicted against attested derivations -/
 
@@ -300,7 +300,7 @@ theorem predictedExponents_eq (r : Root) :
     predictedExponents r =
       (predictedClass r).toList.map exponentOf ++
         (if IsPositional r.kinds then ["=lah"] else []) := by
-  simp only [predictedExponents, predictedClass, Exponence.applicable,
+  simp only [predictedExponents, predictedClass, Exponence.RuleSet.applicable,
     applies_iff, inventory, affectiveT, zeroDeriv, causativeS,
     positionalLah, List.filter_cons, List.filter_nil, decide_eq_true_eq,
     SalienceClass.ofKinds]

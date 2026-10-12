@@ -57,40 +57,40 @@ section
 variable [PartialOrder P] [DecidableEq L] [DecidableLE P]
 
 theorem toList_evalBlockForm (LindexZ : List M → L)
-    (b : List (Rule L P (Morph.Side × M))) (t : Word.Tree M) (σ : P) :
+    (b : RuleSet (Rule L P (Morph.Side × M))) (t : Word.Tree M) (σ : P) :
     (evalBlockForm (fun t => LindexZ t.toList)
         (b.map (Rule.mapPayload attachTreeAction)) (t, σ)).toList
       = evalBlockForm LindexZ (b.map (Rule.mapPayload attachAction))
           (t.toList, σ) := by
   simp only [evalBlockForm, selectMinimal_map_payload]
-  rcases selectMinimal b (LindexZ t.toList, σ) with _ | ⟨rk, rp, _ | _, m⟩ <;> rfl
+  rcases b.selectMinimal (LindexZ t.toList, σ) with _ | ⟨rk, rp, _ | _, m⟩ <;> rfl
 
 theorem stem_evalBlockForm {infl : M → Bool} (LindexZ : List M → L)
-    (b : List (Rule L P (Morph.Side × M))) (hb : ∀ r ∈ b, infl r.payload.2)
+    (b : RuleSet (Rule L P (Morph.Side × M))) (hb : ∀ r ∈ b, infl r.payload.2)
     (t : Word.Tree M) (σ : P) :
     (evalBlockForm (fun t => LindexZ t.toList)
         (b.map (Rule.mapPayload attachTreeAction)) (t, σ)).stem infl
       = t.stem infl := by
   simp only [evalBlockForm, selectMinimal_map_payload]
-  cases h : selectMinimal b (LindexZ t.toList, σ) with
+  cases h : b.selectMinimal (LindexZ t.toList, σ) with
   | none => rfl
-  | some r => exact Word.Tree.stem_attach r.payload.1 t (hb r (selectMinimal_mem h))
+  | some r => exact Word.Tree.stem_attach r.payload.1 t (hb r (RuleSet.selectMinimal_mem h))
 
 theorem isKindCoherent_evalBlockForm (LindexZ : List Morph → L)
-    (b : List (Rule L P (Morph.Side × Morph))) (hb : ∀ r ∈ b, KindCoherent r.payload)
+    (b : RuleSet (Rule L P (Morph.Side × Morph))) (hb : ∀ r ∈ b, KindCoherent r.payload)
     (t : Word.Tree Morph) (ht : t.IsKindCoherent) (σ : P) :
     (evalBlockForm (fun t => LindexZ t.toList)
         (b.map (Rule.mapPayload attachTreeAction)) (t, σ)).IsKindCoherent := by
   simp only [evalBlockForm, selectMinimal_map_payload]
-  cases h : selectMinimal b (LindexZ t.toList, σ) with
+  cases h : b.selectMinimal (LindexZ t.toList, σ) with
   | none => exact ht
-  | some r => exact Word.Tree.isKindCoherent_attach (hb r (selectMinimal_mem h)) ht
+  | some r => exact Word.Tree.isKindCoherent_attach (hb r (RuleSet.selectMinimal_mem h)) ht
 
 end
 
 section
 variable [PartialOrder P] [DecidableEq L] [DecidableLE P]
-variable (LindexZ : List M → L) (blocks : List (List (Rule L P (Morph.Side × M))))
+variable (LindexZ : List M → L) (blocks : List (RuleSet (Rule L P (Morph.Side × M))))
 
 theorem toList_blocksEval (t : Word.Tree M) (σ : P) :
     ((blocksEval (fun t => LindexZ t.toList)
@@ -153,7 +153,7 @@ end
 
 section
 variable [PartialOrder P] [DecidableEq L] [DecidableLE P]
-variable (LindexZ : List Morph → L) (blocks : List (List (Rule L P (Morph.Side × Morph))))
+variable (LindexZ : List Morph → L) (blocks : List (RuleSet (Rule L P (Morph.Side × Morph))))
 
 theorem isKindCoherent_blocksEval
     (hbs : ∀ b ∈ blocks, ∀ r ∈ b, KindCoherent r.payload)

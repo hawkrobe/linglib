@@ -68,6 +68,7 @@ conditioning of v.
 namespace DistributedMorphology.Allosemy
 
 open Minimalist.Voice (Head)
+open Morphology.Exponence
 
 /-! ### The alloseme carrier
 
@@ -159,13 +160,13 @@ def embedding (fs : List Feature) : Neighborhood (List Feature) := ⟨[], [], [f
 its applicable entries. Ambiguity in a context is non-singleton licensing;
 the canonical default among the licensed entries is the Elsewhere winner
 (`winner?_isElsewhereWinner`). -/
-def licensed {Sem : Type*} (v : List (VocabularyItem Feature Sem))
+def licensed {Sem : Type*} (v : RuleSet (VocabularyItem Feature Sem))
     (n : Neighborhood (List Feature)) : List Sem :=
-  (Morphology.Exponence.applicable v n).map (·.exponent)
+  (v.applicable n).map (·.exponent)
 
 /-- The alloseme vocabulary of v. The eventive alloseme requires an eventive complement and the
 zero alloseme is the elsewhere case. -/
-def Verbalizer.vocabulary : List (VocabularyItem Feature Verbalizer.Alloseme) :=
+def Verbalizer.vocabulary : RuleSet (VocabularyItem Feature Verbalizer.Alloseme) :=
   [⟨complement [.eventive], .eventive⟩, [] ⟷ .zero]
 
 /-- Root change-type conditions v alloseme selection: result roots,
@@ -216,7 +217,7 @@ end Nominalizer.Alloseme
 
 /-- The alloseme vocabulary of n. The deverbal allosemes require a verbal complement, the CEN and
 result allosemes an eventive one, and the others are unconditioned. -/
-def Nominalizer.vocabulary : List (VocabularyItem Feature Nominalizer.Alloseme) :=
+def Nominalizer.vocabulary : RuleSet (VocabularyItem Feature Nominalizer.Alloseme) :=
   [[] ⟷ .relational, [] ⟷ .sortal, [] ⟷ .alienator,
     ⟨complement [.cat .v], .content⟩,
     ⟨complement [.cat .v, .eventive], .zero⟩,
@@ -260,7 +261,7 @@ instance : DecidablePred Voice.Alloseme.AssignsTheta :=
 
 /-- The alloseme vocabulary of Voice. The engineer takes a saturated eventive complement, the
 holder a stative one, and the expletive is the elsewhere case. -/
-def Voice.vocabulary : List (VocabularyItem Feature Voice.Alloseme) :=
+def Voice.vocabulary : RuleSet (VocabularyItem Feature Voice.Alloseme) :=
   [⟨complement [.cat .v, .eventive], .engineer⟩, ⟨complement [.stative], .holder⟩,
     [] ⟷ .expletive]
 
@@ -342,7 +343,7 @@ claim that allosemy is allomorphy's LF analogue, is then literally
 
 /-- The allosemy engine as a `Realization.Interpreted` view, whose one head is interpreted as the
 alloseme the Subset Principle picks. -/
-def toInterpreted {Sem : Type} (v : List (VocabularyItem Feature Sem)) :
+def toInterpreted {Sem : Type} (v : RuleSet (VocabularyItem Feature Sem)) :
     Morphology.Realization.Interpreted Unit (Neighborhood (List Feature)) Unit Sem where
   realize _ _ := ∅
   interp _ n := (subsetPrinciple v n).elim ∅ ({·})

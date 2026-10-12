@@ -376,7 +376,7 @@ def czRoot (l : CzNoun) : Stem := (entry l).root
 /-- The stem of a cell's form correspondent is the one Pāṇini's principle selects, that of an
 applicable rule no applicable rule is narrower than, or the root where no rule applies. -/
 def stemFor (l : CzNoun) (σ : CzCell) : Stem :=
-  Exponence.realizeMinimalD (czRules l) (fun _ ↦ czRoot l) σ
+  Exponence.RuleSet.realizeMinimalD (czRules l) (fun _ ↦ czRoot l) σ
 
 /-- Every noun's entry describes that noun. -/
 @[simp] theorem entry_lexeme (l : CzNoun) : (entry l).lexeme = l := by cases l <;> rfl
@@ -398,7 +398,7 @@ theorem lexeme_stem_of_mem_rulesFor {e : Entry} {r : CellRule} (hr : r ∈ rules
 
 /-- A noun's cells are all built on its own stems. -/
 theorem stemFor_lexeme (l : CzNoun) (σ : CzCell) : (stemFor l σ).lexeme = l :=
-  Exponence.realizeMinimalD_induction (fun z ↦ z.lexeme = l) (entry_lexeme l)
+  Exponence.RuleSet.realizeMinimalD_induction (fun z ↦ z.lexeme = l) (entry_lexeme l)
     fun _ hr ↦ (lexeme_stem_of_mem_rulesFor hr).trans (entry_lexeme l)
 
 /-! ### Realization -/
@@ -776,8 +776,8 @@ and this rule is sensitive to the value of any inflectional category, then it is
 the value of a privileged inflectional category for members of C." The lexemes `L` are taken to
 form one privileged syntactic category, so the antecedent on the syntactic category is left
 implicit. -/
-def SatisfiesPCR (cls : L → A × B → K) (rules : L → List (Exponence.DomainRule (A × B) E)) :
-    Prop :=
+def SatisfiesPCR (cls : L → A × B → K)
+    (rules : L → Exponence.RuleSet (Exponence.DomainRule (A × B) E)) : Prop :=
   ∀ l, ∀ r ∈ rules l, (∃ c, SensitiveTo r c) → ∃ c, Privileged cls c ∧ SensitiveTo r c
 
 variable [Fintype A] [Fintype B] [DecidableEq A] [DecidableEq B]
@@ -826,7 +826,8 @@ instance (r : Exponence.DomainRule (A × B) E) (c : Category) : Decidable (Sensi
 instance [Fintype L] (cls : L → A × B → K) (c : Category) : Decidable (Privileged cls c) :=
   inferInstanceAs (Decidable (∃ _, _))
 
-instance [Fintype L] (cls : L → A × B → K) (rules : L → List (Exponence.DomainRule (A × B) E)) :
+instance [Fintype L] (cls : L → A × B → K)
+    (rules : L → Exponence.RuleSet (Exponence.DomainRule (A × B) E)) :
     Decidable (SatisfiesPCR cls rules) :=
   have (r : Exponence.DomainRule (A × B) E) :
       Decidable ((∃ c, SensitiveTo r c) → ∃ c, Privileged cls c ∧ SensitiveTo r c) :=
@@ -893,7 +894,7 @@ type-I verbal lexemes" (p. 317). -/
 theorem isAbsoluteCorrelate_of_rules {V : Type*} (l : CzNoun) (A : CzCell → V)
     (h : ∀ r ∈ czRules l, (Exponence.Applies r).FactorsThrough A) :
     (fun σ ↦ (stemFor l σ).decl).FactorsThrough A :=
-  (Exponence.realizeMinimalD_factorsThrough (fun _ _ _ ↦ rfl) fun r hr _ _ hA ↦
+  (Exponence.RuleSet.realizeMinimalD_factorsThrough (fun _ _ _ ↦ rfl) fun r hr _ _ hA ↦
     Iff.of_eq (h r hr hA)).comp_left Stem.decl
 
 /-- A category is an absolute correlate of a noun's paradigm when none of its rules is
@@ -1112,7 +1113,7 @@ default; b. but instances of {α accusative plural} are weak; in addition, c. an
 gender/case/number combination that is not strong according to (a) is weak." Clause (19b)
 overrides (19a) by Pāṇini's principle, and (19c) is the default. -/
 def strength (g : SktGender) (σ : SktCell) : Strength :=
-  Exponence.realizeMinimalD [rule19a g, rule19b g] (fun _ ↦ .weak) σ
+  Exponence.RuleSet.realizeMinimalD [rule19a g, rule19b g] (fun _ ↦ .weak) σ
 
 /-- `weak g` is the set of weak property sets of a lexeme of gender `g`. -/
 def weak (g : SktGender) : Finset SktCell := {σ | strength g σ = .weak}
@@ -1221,8 +1222,8 @@ form-correspondent." -/
 def rule20b (e : SktEntry) : Option SktRule := e.middle.map (⟨weak e.gender, ·⟩)
 
 /-- The rules (20a,b) that apply to a lexeme are those whose coradicals it has. The Sanskrit
-default (12) is not among them: it is the root that `Exponence.realizeMinimalD` falls back
-on. -/
+default (12) is not among them: it is the root that `Exponence.RuleSet.realizeMinimalD` falls
+back on. -/
 def sktRulesFor (e : SktEntry) : List SktRule := (rule20a e).toList ++ (rule20b e).toList
 
 /-- `sktRules l` are the rules of paradigm linkage of the lexeme `l`. -/
@@ -1237,7 +1238,7 @@ def sktRoot (l : SktLex) : SktStem := (sktEntry l).root
 narrower of the two rules, override 20b in any instance in which the former rule is applicable"
 (p. 295). -/
 def sktStem (l : SktLex) (σ : SktCell) : SktStem :=
-  Exponence.realizeMinimalD (sktRules l) (fun _ ↦ sktRoot l) σ
+  Exponence.RuleSet.realizeMinimalD (sktRules l) (fun _ ↦ sktRoot l) σ
 
 /-- The Sanskrit paradigm linkage gives each content cell the stem its rules select, with the
 form property set that `f₁` maps its property set to. -/
@@ -1300,7 +1301,7 @@ theorem SktEntry.exponent_mem_stems {e : SktEntry} {r : SktRule} (hr : r ∈ skt
 
 /-- Each cell is built on one of its lexeme's stems. -/
 theorem sktStem_mem_stems (l : SktLex) (σ : SktCell) : sktStem l σ ∈ (sktEntry l).stems :=
-  Exponence.realizeMinimalD_induction (· ∈ (sktEntry l).stems) List.mem_cons_self
+  Exponence.RuleSet.realizeMinimalD_induction (· ∈ (sktEntry l).stems) List.mem_cons_self
     fun _ hr ↦ SktEntry.exponent_mem_stems hr
 
 /-- A lexeme of §3.2 is heteroclite exactly when two of its cells differ in class. -/

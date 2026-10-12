@@ -37,7 +37,7 @@ metageneralizations (the `-a`-loss and umlaut rules of the Icelandic fragment) a
 substance and live in `Phonology/`; here stem alternants like *köll* enter as data-level stem
 values, not string operations.
 
-Because payloads are functions, `Exponence.Coherent` and `Realizes` over `Action Z P` are
+Because payloads are functions, `Exponence.RuleSet.Coherent` and `Realizes` over `Action Z P` are
 `funext` propositions rather than decidable checks; a study decides realized values, not
 payload equality.
 
@@ -47,8 +47,8 @@ payload equality.
   realization rule, with its `Exponence.Rule` and two-clause narrowness `Preorder` instances.
 * `identityDefault`: the Identity Function Default.
 * `evalBlock`, `paradigmFunction`: narrowest-rule block evaluation and the block cascade.
-  Basic stem choice over rules of stem choice is `Exponence.realizeMinimalD`, narrowest-rule
-  realization with a per-lexeme fallback.
+  Basic stem choice over rules of stem choice is `Exponence.RuleSet.realizeMinimalD`,
+  narrowest-rule realization with a per-lexeme fallback.
 * `evalPortmanteau`, `functionCompositionDefault`: portmanteau blocks, and the Function
   Composition Default as a derived `≤`-maximal rule.
 
@@ -211,9 +211,9 @@ theorem le_identityDefault (r : Rule L P (Action Z P)) :
 /-- A block containing the IFD always selects a rule — the totality of Nar
 ([bonami-stump-2016]'s (14)) that [stump-2001] secures by stipulating the IFD. -/
 theorem selectMinimal_isSome_of_mem_identityDefault
-    {v : List (Rule L P (Action Z P))} {c : L × P}
-    (h : identityDefault (Z := Z) (P := P) ∈ v) : (selectMinimal v c).isSome :=
-  selectMinimal_isSome_iff.mpr
+    {v : RuleSet (Rule L P (Action Z P))} {c : L × P}
+    (h : identityDefault (Z := Z) (P := P) ∈ v) : (v.selectMinimal c).isSome :=
+  RuleSet.selectMinimal_isSome_iff.mpr
     ⟨identityDefault (P := P), h, identityDefault_applies c⟩
 
 end IdentityDefault
@@ -222,7 +222,7 @@ end IdentityDefault
 
 /-- A **rule block** ([bonami-stump-2016]) is a list of rules of exponence and
 referral in paradigmatic opposition, of which only the narrowest applies. -/
-abbrev Block (L Z P : Type*) := List (Rule L P (Action Z P))
+abbrev Block (L Z P : Type*) := RuleSet (Rule L P (Action Z P))
 
 /-- `expoFragment b` keeps the rules of exponence in the block `b` and drops its
 referral rules; it is the target of a referral's re-selection. -/
@@ -244,12 +244,12 @@ a form. An exponence rule applies its form operation, and a referral rule
 re-selects among the block's exponence rules at the retargeted property set (one
 hop). The stem is left unchanged when nothing applies. -/
 def evalBlockForm (Lindex : Z → L) (b : Block L Z P) (wσ : Z × P) : Z :=
-  match selectMinimal b (Lindex wσ.1, wσ.2) with
+  match b.selectMinimal (Lindex wσ.1, wσ.2) with
   | some r =>
     match r.payload with
     | .expo f => f wσ.2 wσ.1
     | .referral retarget =>
-      match selectMinimal (expoFragment b) (Lindex wσ.1, retarget wσ.2) with
+      match RuleSet.selectMinimal (expoFragment b) (Lindex wσ.1, retarget wσ.2) with
       | some s =>
         match s.payload with
         | .expo g => g (retarget wσ.2) wσ.1
@@ -262,14 +262,14 @@ rule at `(w, σ)` is a referral to `retarget`, evaluating the block equals evalu
 exponence fragment at the retargeted cell. -/
 theorem evalBlockForm_referral {Lindex : Z → L} {b : Block L Z P} {w : Z} {σ : P}
     {r : Rule L P (Action Z P)} {retarget : P → P}
-    (hr : selectMinimal b (Lindex w, σ) = some r)
+    (hr : b.selectMinimal (Lindex w, σ) = some r)
     (hpay : r.payload = Action.referral retarget) :
     evalBlockForm Lindex b (w, σ)
       = evalBlockForm Lindex (expoFragment b) (w, retarget σ) := by
-  cases hs : selectMinimal (expoFragment b) (Lindex w, retarget σ) with
+  cases hs : RuleSet.selectMinimal (expoFragment b) (Lindex w, retarget σ) with
   | none => simp only [evalBlockForm, hr, hpay, hs]
   | some s =>
-    obtain ⟨g, hg⟩ := mem_expoFragment_expo (selectMinimal_mem hs)
+    obtain ⟨g, hg⟩ := mem_expoFragment_expo (RuleSet.selectMinimal_mem hs)
     simp only [evalBlockForm, hr, hpay, hs, hg]
 
 /-- `evalBlock` evaluates a block at a form-state and keeps the property set, as
@@ -309,7 +309,7 @@ portmanteau rule as the conflation of two rules, sitting in a single block and
 winning by ordinary narrowness), the route [stump-2022] develops. It is kept here
 as the faithfully pre-conflation account. -/
 def evalPortmanteau (Lindex : Z → L) (bmn bm bn : Block L Z P) (wσ : Z × P) : Z × P :=
-  if (applicable bmn (Lindex wσ.1, wσ.2)).isEmpty
+  if (bmn.applicable (Lindex wσ.1, wσ.2)).isEmpty
   then evalBlock Lindex bm (evalBlock Lindex bn wσ)
   else evalBlock Lindex bmn wσ
 
@@ -317,7 +317,7 @@ def evalPortmanteau (Lindex : Z → L) (bmn bm bn : Block L Z P) (wσ : Z × P) 
 of its component blocks, the **Function Composition Default**
 ([bonami-stump-2016]). -/
 theorem evalPortmanteau_eq_comp_of_not_applies (Lindex : Z → L) (bmn bm bn : Block L Z P)
-    (wσ : Z × P) (h : applicable bmn (Lindex wσ.1, wσ.2) = []) :
+    (wσ : Z × P) (h : bmn.applicable (Lindex wσ.1, wσ.2) = []) :
     evalPortmanteau Lindex bmn bm bn wσ = evalBlock Lindex bm (evalBlock Lindex bn wσ) := by
   simp [evalPortmanteau, h]
 
@@ -326,23 +326,24 @@ selection unchanged when the block already selects, and picks that rule otherwis
 since a maximal rule is preempted by any genuine competitor and fires only in the
 elsewhere. This is the mechanism shared by `identityDefault` and
 `functionCompositionDefault`. -/
-theorem selectMinimal_append_maximal {v : List (Rule L P F)} {c : L × P}
+theorem selectMinimal_append_maximal {v : RuleSet (Rule L P F)} {c : L × P}
     {top : Rule L P F} (hmax : ∀ r, r ≤ top)
     (htop : Exponence.Applies top c) :
-    selectMinimal (v ++ [top]) c = (selectMinimal v c).or (some top) := by
+    RuleSet.selectMinimal (v ++ [top]) c = (v.selectMinimal c).or (some top) := by
   have htop' : c.1 ∈ top.klass ∧ top.props ≤ c.2 := htop
-  have happl : applicable (v ++ [top]) c = applicable v c ++ [top] := by
-    simp [applicable, List.filter_append, htop']
-  have hpred : (fun r : Rule L P F => (applicable (v ++ [top]) c).all (fun s => decide (¬ s < r)))
-      = (fun r : Rule L P F => (applicable v c).all (fun s => decide (¬ s < r))) := by
+  have happl : RuleSet.applicable (v ++ [top]) c = v.applicable c ++ [top] := by
+    simp [RuleSet.applicable, List.filter_append, htop']
+  have hpred : (fun r : Rule L P F =>
+        (RuleSet.applicable (v ++ [top]) c).all (fun s => decide (¬ s < r)))
+      = (fun r : Rule L P F => (v.applicable c).all (fun s => decide (¬ s < r))) := by
     funext r
     have : ¬ top < r := fun hlt => absurd (hmax r) (not_le_of_gt hlt)
     rw [happl]; simp [List.all_append, this]
-  have hfold : List.find? (fun r => (applicable v c).all (fun s => decide (¬ s < r)))
-      (applicable v c) = selectMinimal v c := rfl
-  rw [selectMinimal, hpred, happl, List.find?_append, hfold]
-  rcases hs : selectMinimal v c with _ | r
-  · have hnil : applicable v c = [] := selectMinimal_eq_none_iff.mp hs
+  have hfold : List.find? (fun r => (v.applicable c).all (fun s => decide (¬ s < r)))
+      (v.applicable c) = v.selectMinimal c := rfl
+  rw [RuleSet.selectMinimal, hpred, happl, List.find?_append, hfold]
+  rcases hs : v.selectMinimal c with _ | r
+  · have hnil : v.applicable c = [] := RuleSet.selectMinimal_eq_none_iff.mp hs
     rw [Option.none_or, hnil]
     simp
   · rfl
@@ -400,10 +401,10 @@ theorem evalPortmanteau_eq_functionCompositionDefault (Lindex : Z → L)
     (c := (Lindex wσ.1, wσ.2)) (le_functionCompositionDefault Lindex bm bn)
     (functionCompositionDefault_applies Lindex bm bn (Lindex wσ.1, wσ.2))
   unfold evalPortmanteau
-  by_cases h : (applicable bmn (Lindex wσ.1, wσ.2)).isEmpty = true
+  by_cases h : (bmn.applicable (Lindex wσ.1, wσ.2)).isEmpty = true
   · rw [ite_eq_left h]
     rw [List.isEmpty_iff] at h
-    rw [selectMinimal_eq_none_iff.mpr h, Option.none_or] at hsel
+    rw [RuleSet.selectMinimal_eq_none_iff.mpr h, Option.none_or] at hsel
     conv_rhs => rw [evalBlock, evalBlockForm, hsel]
     simp only [functionCompositionDefault, Prod.mk.eta]
     refine Prod.ext rfl ?_
@@ -412,9 +413,9 @@ theorem evalPortmanteau_eq_functionCompositionDefault (Lindex : Z → L)
     rw [List.isEmpty_iff] at h
     obtain ⟨r, hr⟩ := List.exists_mem_of_ne_nil _ h
     obtain ⟨r', hr'⟩ := Option.isSome_iff_exists.mp
-      (selectMinimal_isSome_iff.mpr
-        ⟨r, (mem_applicable.mp hr).1, (mem_applicable.mp hr).2⟩)
-    obtain ⟨f, hf⟩ := hbmn r' (selectMinimal_mem hr')
+      (RuleSet.selectMinimal_isSome_iff.mpr
+        ⟨r, (RuleSet.mem_applicable.mp hr).1, (RuleSet.mem_applicable.mp hr).2⟩)
+    obtain ⟨f, hf⟩ := hbmn r' (RuleSet.selectMinimal_mem hr')
     rw [hr', Option.some_or] at hsel
     simp only [evalBlock, evalBlockForm, hsel, hr', hf]
 
@@ -448,8 +449,8 @@ theorem _root_.Morphology.Linkage.ofRules_realized_eq_paradigmFunction [Decidabl
     [DecidableRel (Exponence.Applies : R → P → Prop)] (rules : L → List R) (root : L → Z)
     (Lindex : Z → L) (blocks : List (Block L Z P)) (l : L) (σ : P) :
     (Linkage.ofRules id rules root).realized (fun z τ ↦ (blocksEval Lindex blocks (z, τ)).1) l σ
-      = {paradigmFunction Lindex (fun c ↦ realizeMinimalD (rules c.1) (fun _ ↦ root c.1) c.2)
-          blocks (l, σ)} :=
+      = {paradigmFunction Lindex
+          (fun c ↦ RuleSet.realizeMinimalD (rules c.1) (fun _ ↦ root c.1) c.2) blocks (l, σ)} :=
   Linkage.realized_eq_paradigmFunction _ Lindex _ blocks l σ (fun _ _ ↦ rfl) fun _ _ ↦ rfl
 
 /-- `paradigmRealization` presents the paradigm function as a realization whose
@@ -503,14 +504,14 @@ variable [PartialOrder P] [DecidableEq L] [DecidableLE P]
 
 /-- Applicability and narrowness read only class and props, so narrowest-rule
 selection is blind to a payload relabelling. -/
-theorem selectMinimal_map_payload (g : F → F') (v : List (Rule L P F)) (c : L × P) :
-    selectMinimal (v.map (Rule.mapPayload g)) c
-      = (selectMinimal v c).map (Rule.mapPayload g) := by
-  have hA : applicable (v.map (Rule.mapPayload g)) c
-      = (applicable v c).map (Rule.mapPayload g) := by
-    simp only [applicable, List.filter_map, Function.comp_def, Rule.applies_iff,
+theorem selectMinimal_map_payload (g : F → F') (v : RuleSet (Rule L P F)) (c : L × P) :
+    RuleSet.selectMinimal (v.map (Rule.mapPayload g)) c
+      = (v.selectMinimal c).map (Rule.mapPayload g) := by
+  have hA : RuleSet.applicable (v.map (Rule.mapPayload g)) c
+      = (v.applicable c).map (Rule.mapPayload g) := by
+    simp only [RuleSet.applicable, List.filter_map, Function.comp_def, Rule.applies_iff,
       Rule.mapPayload_klass, Rule.mapPayload_props]
-  rw [selectMinimal, selectMinimal, hA, List.find?_map]
+  rw [RuleSet.selectMinimal, RuleSet.selectMinimal, hA, List.find?_map]
   simp only [Function.comp_def, List.all_map, Rule.mapPayload_lt_iff]
 
 end

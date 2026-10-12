@@ -6,24 +6,30 @@ public import Mathlib.Data.Set.Basic
 /-!
 # Rules of exponence
 
-This file defines the `Exponence.Rule` typeclass, pairing an exponent
-`exponent : R → E` with an applicability condition `Applies : R → Ctx → Prop`
-([matthews-1991]), and the specificity preorder it induces.
+A rule of exponence, in Matthews's sense, pairs an exponent with a condition on the contexts it
+applies in. This file defines the interface for types of such rules, rule sets, and
+the specificity preorder of Kiparsky's Elsewhere Condition, under which a rule is more specific
+when it applies in fewer contexts.
 
 ## Main definitions
 
-* `Exponence.Rule`: the exponent-plus-applicability interface.
-* `Exponence.toPreorder`: the specificity preorder ([kiparsky-1973]'s
-  Elsewhere Condition); not an instance — each engine installs it on its
-  own carrier.
+* `Exponence.Rule`: a type of rules, each with an exponent and an applicability condition.
+* `Exponence.RuleSet`: a list of rules, earlier rules winning ties.
+* `Exponence.toPreorder`: the specificity preorder. It is not an instance, and each type of
+  rules installs it itself.
+
+## References
+
+* [matthews-1991]
+* [kiparsky-1973]
 -/
 
 @[expose] public section
 
 namespace Morphology.Exponence
 
-/-- `Rule R Ctx E` says that `R` is a type of rules of exponence: each rule
-carries an exponent in `E` and applies in a class of contexts in `Ctx`. -/
+/-- `Rule R Ctx E` says that `R` is a type of rules of exponence, each carrying an exponent in
+`E` and applying in a class of contexts in `Ctx`. -/
 class Rule (R : Type*) (Ctx E : outParam Type*) where
   /-- The exponent a rule inserts. -/
   exponent : R → E
@@ -31,6 +37,9 @@ class Rule (R : Type*) (Ctx E : outParam Type*) where
   Applies : R → Ctx → Prop
 
 export Rule (exponent Applies)
+
+/-- A rule set is a list of rules of exponence, earlier rules winning ties. -/
+abbrev RuleSet (R : Type*) := List R
 
 variable {Ctx E : Type*} {R : Type*} [Rule R Ctx E]
 

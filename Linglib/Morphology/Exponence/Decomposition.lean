@@ -53,7 +53,7 @@ structure Rule (Cell : Type*) (D : Cell → Finset K) (F : Type*) where
 variable {Cell F : Type*} {D : Cell → Finset K}
 
 instance : Exponence.Rule (Rule Cell D F) Cell F :=
-  ⟨Rule.exponent, fun r c => r.feats ⊆ D c⟩
+  ⟨Rule.exponent, fun r c ↦ r.feats ⊆ D c⟩
 
 @[simp] theorem applies_iff {r : Rule Cell D F} {c : Cell} :
     Exponence.Applies r c ↔ r.feats ⊆ D c := Iff.rfl
@@ -71,35 +71,35 @@ theorem le_iff {r s : Rule Cell D F} :
   Iff.rfl
 
 /-- In strict competition `r` beats every other applicable rule on feature cardinality. -/
-def IsWinner (v : List (Rule Cell D F)) (c : Cell) (r : Rule Cell D F) : Prop :=
+def IsWinner (v : RuleSet (Rule Cell D F)) (c : Cell) (r : Rule Cell D F) : Prop :=
   r ∈ v ∧ r.feats ⊆ D c ∧
     ∀ s ∈ v, s.feats ⊆ D c → s ≠ r → s.feats.card < r.feats.card
 
 variable [DecidableEq K]
 
 instance : DecidableRel (Exponence.Applies : Rule Cell D F → Cell → Prop) :=
-  fun r c => inferInstanceAs (Decidable (r.feats ⊆ D c))
+  fun r c ↦ inferInstanceAs (Decidable (r.feats ⊆ D c))
 
-/-- The surface pattern of a vocabulary is, at each cell, the exponent of the most highly
+/-- The surface pattern of a rule set is, at each cell, the exponent of the most highly
 specified applicable rule, the Elsewhere Principle as `selectBy` on feature cardinality
 ([halle-1997]'s counting formulation). -/
-def pattern (v : List (Rule Cell D F)) (c : Cell) : Option F :=
-  (selectBy (fun r : Rule Cell D F => r.feats.card) v c).map Rule.exponent
+def pattern (v : RuleSet (Rule Cell D F)) (c : Cell) : Option F :=
+  (v.selectBy (fun r : Rule Cell D F ↦ r.feats.card) c).map Rule.exponent
 
 /-- When the middle cell `y` nests between the outer cells, with `D y ⊆ D z` (appliers at `y`
 persist to `z`) and `D x ∩ D z ⊆ D y` (appliers at both outer cells reach `y`), a rule winning
 both `x` and `z` also wins `y`, so no exponent can interrupt an A_A pattern with a distinct
 middle B. This is *ABA order-theoretically. The hypotheses are the shared profile of Strong and
 Weak Case Containment, and No Case Containment violates the first. -/
-theorem noABA {v : List (Rule Cell D F)} {A B : Rule Cell D F} {x y z : Cell}
+theorem noABA {v : RuleSet (Rule Cell D F)} {A B : Rule Cell D F} {x y z : Cell}
     (h1 : D y ⊆ D z) (h2 : D x ∩ D z ⊆ D y)
     (hx : IsWinner v x A) (hz : IsWinner v z A) (hy : IsWinner v y B) : B = A := by
   by_contra hne
-  have hAy : A.feats ⊆ D y := fun k hk =>
+  have hAy : A.feats ⊆ D y := fun k hk ↦
     h2 (Finset.mem_inter.mpr ⟨hx.2.1 hk, hz.2.1 hk⟩)
   have hAB : A.feats.card < B.feats.card :=
-    hy.2.2 A hx.1 hAy (fun h => hne h.symm)
-  have hBz : B.feats ⊆ D z := fun k hk => h1 (hy.2.1 hk)
+    hy.2.2 A hx.1 hAy (fun h ↦ hne h.symm)
+  have hBz : B.feats ⊆ D z := fun k hk ↦ h1 (hy.2.1 hk)
   exact absurd (hz.2.2 B hy.1 hBz hne) (Nat.lt_asymm hAB)
 
 end Morphology.Decomposition

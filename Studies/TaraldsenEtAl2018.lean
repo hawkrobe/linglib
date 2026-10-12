@@ -100,8 +100,8 @@ theorem matches_plTree_iff {e : LexicalEntry NCFeature String} (he : IsClassEntr
 theorem treeSpellout_plTree_eq_none_iff {L : List (LexicalEntry NCFeature String)}
     (hL : ∀ e ∈ L, IsClassEntry e) (n : ℕ) :
     treeSpellout L (plTree n) = none ↔ ∀ e ∈ L, e.tree ≠ plTree n := by
-  rw [treeSpellout, Option.map_eq_none_iff, treeSelect, selectBy_eq_none_iff, applicable,
-    List.filter_eq_nil_iff]
+  rw [treeSpellout, Option.map_eq_none_iff, treeSelect, RuleSet.selectBy_eq_none_iff,
+    RuleSet.applicable, List.filter_eq_nil_iff]
   have happ : ∀ e : LexicalEntry NCFeature String, Applies e (plTree n) ↔ e.Matches (plTree n) :=
     λ _ => Iff.rfl
   simp only [decide_eq_true_eq, happ]
@@ -114,7 +114,7 @@ theorem exists_of_treeSpellout_eq_some {L : List (LexicalEntry NCFeature String)
     ∃ e ∈ L, e.Matches t ∧ e.exponent = x := by
   rw [treeSpellout, Option.map_eq_some_iff] at h
   obtain ⟨e, he, rfl⟩ := h
-  exact ⟨e, selectBy_mem he, selectBy_applies he, rfl⟩
+  exact ⟨e, RuleSet.selectBy_mem he, RuleSet.selectBy_applies he, rfl⟩
 
 /-- `SharesClassifierN sg pl` holds when a singular and a plural entry contain the same classifier
 N, the foot of each stored tree, which is the conjoined-subject diagnostic of section 2. -/
