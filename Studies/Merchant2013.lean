@@ -32,24 +32,24 @@ open Minimalist.Ellipsis
 
 /-- Fragment answers move the remnant to Spec,CP and delete TP, the [E] position of sluicing
     ([merchant-2004]). -/
-def fragmentAnswers : Ellipsis SpinePosition := ⟨.C⟩
+def fragmentAnswers : Ellipsis clausalSpine := ⟨.C⟩
 
 /-- Gapping elides material containing VoiceP, with [E] at C or higher. -/
-def gapping : Ellipsis SpinePosition := ⟨.C⟩
+def gapping : Ellipsis clausalSpine := ⟨.C⟩
 
 /-- Stripping, bare argument ellipsis, is a subcase of gapping. -/
-def stripping : Ellipsis SpinePosition := ⟨.C⟩
+def stripping : Ellipsis clausalSpine := ⟨.C⟩
 
 /-- Pseudogapping extracts the remnant from vP and deletes a domain that includes VoiceP, with
     [E] at T or higher. -/
-def pseudogapping : Ellipsis SpinePosition := ⟨.T⟩
+def pseudogapping : Ellipsis clausalSpine := ⟨.T⟩
 
 /-- A voice mismatch datum across an ellipsis boundary. -/
 structure VoiceMismatchDatum where
   description : String
   antecedentVoice : Head
   targetVoice : Head
-  ellipsisType : Ellipsis SpinePosition
+  ellipsisType : Ellipsis clausalSpine
   grammatical : Bool
   language : String := "English"
   deriving Repr
@@ -136,7 +136,7 @@ theorem high_ellipsis_voice_predicted :
 structure ArgStructureDatum where
   description : String
   alternationType : Mismatch
-  ellipsisType : Ellipsis SpinePosition
+  ellipsisType : Ellipsis clausalSpine
   grammatical : Bool
   deriving Repr
 
@@ -250,13 +250,14 @@ theorem voice_uniquely_discriminates :
 high, Sailor's generalization would force them to be tolerated in VP-ellipsis, with [E] low, so
 no language has the reverse of the attested pattern. -/
 theorem no_inverse_language : sluicing.Tolerates .voice → vpEllipsis.Tolerates .voice :=
-  fun h ↦ h.of_le (by decide)
+  fun h ↦ h.of_mem_below (by decide)
 
 /-- Voice's discriminating power follows from its spine position: it sits between the VP-ellipsis
 boundary, Voice, and the sluicing boundary, C, while every other mismatch dimension sits at v or
 below. -/
 theorem voice_between_boundaries :
-    Mismatch.voice.head = .Voice ∧ ∀ m : Mismatch, m ≠ .voice → m.head ≤ .v :=
+    Mismatch.voice.head = .Voice ∧
+      ∀ m : Mismatch, m ≠ .voice → m.head ∈ clausalSpine.below .Voice :=
   ⟨rfl, fun m hm ↦ by cases m <;> first | exact absurd rfl hm | decide⟩
 
 /-- End-to-end chain: Voice severing ([kratzer-1996]) →

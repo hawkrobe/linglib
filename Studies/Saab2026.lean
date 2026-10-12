@@ -87,8 +87,9 @@ def equative : Structure := ⟨.index, some .coda⟩
 /-- The gap a structure leaves when its coda is missing, as a null site of the nominal spine.
 With the indexical empty noun as the complement of Num the gap is that noun, a null pro-form at n
 whose value the assignment function supplies; otherwise it is the nP that [E] on Num silences. -/
-def Structure.site (s : Structure) : Minimalist.NullSite Minimalist.NominalSpinePosition :=
-  if s.head = .index then .proform .n else .elided Minimalist.Ellipsis.nPEllipsis ⟨.N, by decide⟩
+def Structure.site (s : Structure) : Minimalist.NullSite Minimalist.Ellipsis.nominalSpine :=
+  if s.head = .index then .proform (.head .n)
+  else .elided Minimalist.Ellipsis.nPEllipsis ⟨.head .N, by decide⟩
 
 /-- The depth of the gap, read from the Minimalist model of null sites. -/
 def Structure.depth (s : Structure) : Anaphor.Depth := Anaphor.DepthModel.depth s.site
@@ -96,7 +97,7 @@ def Structure.depth (s : Structure) : Anaphor.Depth := Anaphor.DepthModel.depth 
 /-- The gap has internal structure exactly when it contains the noun's position, where the noun's
 arguments and any sub-extracted material originate. -/
 theorem Structure.hasInternalStructure_depth_iff (s : Structure) :
-    s.depth.HasInternalStructure ↔ s.site.Silences .N := by
+    s.depth.HasInternalStructure ↔ s.site.Silences (.head .N) := by
   revert s; decide
 
 /-- A nominal can be elided when it is the complement of Num, whose [E]-feature licenses the

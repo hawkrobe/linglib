@@ -53,11 +53,11 @@ inductive Attachment
   | reason
   deriving DecidableEq, Fintype, Repr
 
-/-- The spine position of the adjunct: adjoined to VP, or at the height of tense, above the
-negation a reason clause outscopes. -/
-def Attachment.spinePosition : Attachment → SpinePosition
-  | .vp => .vpAdjunct
-  | .reason => .T
+/-- The site of the adjunct, adjoined to VP, or to TP above the negation a reason clause
+outscopes. -/
+def Attachment.site : Attachment → ClauseSpine.Site
+  | .vp => .adjunct .V
+  | .reason => .adjunct .T
 
 /-- The clause-mate object of the ellipsis clause: absent in an intransitive clause, null, overt
 without contrastive focus, or overt and contrastively focused. -/
@@ -79,7 +79,7 @@ structure Config where
 with its adjuncts while the verb, raised to tense, is stranded: the adjunct sits in the site, and
 the object, if any, is elided with it or extracted as a contrastively focused remnant. -/
 def NullAdjunct (c : Config) : Prop :=
-  Ellipsis.vpEllipsis.Deletes c.adjunct.spinePosition ∧ c.object ≠ .overt
+  Ellipsis.vpEllipsis.Deletes c.adjunct.site ∧ c.object ≠ .overt
 
 instance : DecidablePred NullAdjunct := fun _ ↦ inferInstanceAs (Decidable (_ ∧ _))
 
