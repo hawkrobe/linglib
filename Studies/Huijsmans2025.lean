@@ -6,7 +6,7 @@ public import Linglib.Semantics.Tense.Evidential
 /-!
 # Huijsmans (2025): Timing of evidence and epistemic modal claims
 
-This file formalizes [huijsmans-2025]'s account of the ʔayʔaǰuθəm future clitic *səm* and
+This file formalizes Huijsmans's account of the ʔayʔaǰuθəm future clitic *səm* and
 inferential *č̓ɛ* and of English *will* and *must* as strong epistemic necessity modals that
 differ in a presupposition on the timing of the evidence. The modal base is a set of
 propositions each with an earliest moment at which it holds (`IsEarliest`); *səm* and *will*
@@ -21,7 +21,7 @@ take *səm* and *will*, and contexts with evidence arising at or after it take *
 gone missing.
 
 The rival analysis in terms of an evidence acquisition time relates that time to the event
-time on the library's `Tense.Evidential.EvidentialFrame`. Evidence that has become true can
+time on the library's `Tense.EvidentialFrame`. Evidence that has become true can
 be acquired only afterwards, so the inferential's presupposition entails downstream evidence
 (`downstream_of_inferentialPresup`); the converse fails, and the contexts where the speaker
 learns of rain or of a night's clam-digging after the wetting or the cold are the wedge:
@@ -50,32 +50,32 @@ the modal-base timing licenses *will*, and the acquisition timing does not
 
 namespace Huijsmans2025
 
-open Modality Tense.Evidential
+open Modality Tense
 
 variable {T W : Type*} [LinearOrder T]
 
 /-! ### Earliest moments and the presuppositions -/
 
-/-- The earliest moment at which an untensed proposition holds in a world, the function of
-(63): a time at which it holds that precedes every other. -/
+/-- The earliest moment at which an untensed proposition holds in a world, the function of (63), is
+a time at which it holds that precedes every other. -/
 def IsEarliest (p : T → W → Prop) (w : W) (m : T) : Prop := p m w ∧ ∀ t, p t w → m ≤ t
 
 theorem IsEarliest.unique {p : T → W → Prop} {w : W} {m m' : T} (h : IsEarliest p w m)
     (h' : IsEarliest p w m') : m = m' :=
   le_antisymm (h.2 _ h'.1) (h'.2 _ h.1)
 
-/-- (65): the presupposition of *səm* and *will*, that every modal-base proposition has its
+/-- The presupposition of *səm* and *will*, (65), is that every modal-base proposition has its
 earliest moment before the earliest moment of the prejacent. -/
 def FuturePresup (mb : Set (T → W → Prop)) (p : T → W → Prop) (w : W) : Prop :=
   ∀ q ∈ mb, ∃ mq mp, IsEarliest q w mq ∧ IsEarliest p w mp ∧ mq < mp
 
-/-- (87): the presupposition of *č̓ɛ*, that some modal-base proposition has its earliest
-moment at or after the earliest moment of the prejacent. -/
+/-- The presupposition of *č̓ɛ*, (87), is that some modal-base proposition has its earliest moment
+at or after the earliest moment of the prejacent. -/
 def InferentialPresup (mb : Set (T → W → Prop)) (p : T → W → Prop) (w : W) : Prop :=
   ∃ q ∈ mb, ∃ mq mp, IsEarliest q w mq ∧ IsEarliest p w mp ∧ mp ≤ mq
 
-/-- Where the earliest moments exist, the two presuppositions are complementary: the contexts
-of Section 4 split between *səm* and *č̓ɛ*. -/
+/-- Where the earliest moments exist, the two presuppositions are complementary, so the contexts of
+Section 4 split between *səm* and *č̓ɛ*. -/
 theorem futurePresup_iff_not_inferentialPresup {mb : Set (T → W → Prop)} {p : T → W → Prop}
     {w : W} (hmb : ∀ q ∈ mb, ∃ m, IsEarliest q w m) (hp : ∃ m, IsEarliest p w m) :
     FuturePresup mb p w ↔ ¬ InferentialPresup mb p w := by
@@ -87,9 +87,9 @@ theorem futurePresup_iff_not_inferentialPresup {mb : Set (T → W → Prop)} {p 
     exact absurd hlt (not_lt.2 hle)
   · intro h q hq
     obtain ⟨mq, hmq⟩ := hmb q hq
-    refine ⟨mq, mp, hmq, hmp, not_le.1 λ hle => h ⟨q, hq, mq, mp, hmq, hmp, hle⟩⟩
+    refine ⟨mq, mp, hmq, hmp, not_le.1 fun hle ↦ h ⟨q, hq, mq, mp, hmq, hmp, hle⟩⟩
 
-/-- An inference from no evidence cannot be an inferential: (56). -/
+/-- An inference from no evidence cannot be an inferential, as in (56). -/
 theorem not_inferentialPresup_empty (p : T → W → Prop) (w : W) :
     ¬ InferentialPresup (∅ : Set (T → W → Prop)) p w := by
   rintro ⟨q, hq, _⟩
@@ -99,30 +99,30 @@ theorem not_inferentialPresup_empty (p : T → W → Prop) (w : W) :
 
 /-- The modal base at a reference time, as the world-propositions of the untensed ones. -/
 def modalBaseAt (mb : Set (T → W → Prop)) (t : T) : ConvBackground W :=
-  λ _ => (λ q w => q t w) '' mb
+  fun _ ↦ (fun q w ↦ q t w) '' mb
 
-/-- (62): the at-issue content of *səm* and *will*, that the prejacent holds at or after the
+/-- The at-issue content of *səm* and *will*, (62), is that the prejacent holds at or after the
 reference time in every best world. -/
 def futureClaim (mb : Set (T → W → Prop)) (h : ConvBackground W) (p : T → W → Prop)
     (t : T) (w : W) : Prop :=
-  necessity (modalBaseAt mb t) h (λ w' => ∃ t', t ≤ t' ∧ p t' w') w
+  necessity (modalBaseAt mb t) h (fun w' ↦ ∃ t', t ≤ t' ∧ p t' w') w
 
-/-- (87) and (96): the at-issue content of *č̓ɛ* and *must*, that the prejacent holds at the
+/-- The at-issue content of *č̓ɛ* and *must*, (87) and (96), is that the prejacent holds at the
 reference time in every best world. -/
 def necessityClaim (mb : Set (T → W → Prop)) (h : ConvBackground W) (p : T → W → Prop)
     (t : T) (w : W) : Prop :=
-  necessity (modalBaseAt mb t) h (λ w' => p t w') w
+  necessity (modalBaseAt mb t) h (fun w' ↦ p t w') w
 
 /-- Present orientation is a case of the future morphemes' non-past orientation. -/
 theorem futureClaim_of_necessityClaim {mb : Set (T → W → Prop)} {h : ConvBackground W}
     {p : T → W → Prop} {t : T} {w : W} (hc : necessityClaim mb h p t w) :
     futureClaim mb h p t w :=
-  λ w' hw' => ⟨t, le_rfl, hc w' hw'⟩
+  fun w' hw' ↦ ⟨t, le_rfl, hc w' hw'⟩
 
 /-! ### The evidence acquisition time -/
 
-/-- (39): the rival analysis, on which the future morphemes require the evidence to be
-acquired before the event and the inferential at or after it, the frame's `Downstream`. -/
+/-- On the rival analysis (39), the future morphemes require the evidence to be acquired before the
+event, and the inferential at or after it, the frame's `Downstream`. -/
 def EatFuture (f : EvidentialFrame T) : Prop := f.acquisitionTime < f.eventTime
 
 instance (f : EvidentialFrame T) : Decidable (EatFuture f) :=
@@ -145,15 +145,15 @@ theorem downstream_of_inferentialPresup {mb : Set (T → W → Prop)} {p : T →
 /-! ### The contexts of Section 4 -/
 
 /-- A proposition describing an eventuality holds from its onset on. -/
-def from' (o : ℤ) : ℤ → Unit → Prop := λ t _ => o ≤ t
+def from' (o : ℤ) : ℤ → Unit → Prop := fun t _ ↦ o ≤ t
 
 theorem isEarliest_from' (o : ℤ) : IsEarliest (from' o) () o :=
-  ⟨le_rfl, λ _ h => h⟩
+  ⟨le_rfl, fun _ h ↦ h⟩
 
 theorem isEarliest_from'_iff {o m : ℤ} : IsEarliest (from' o) () m ↔ m = o :=
-  ⟨λ h => h.unique (isEarliest_from' o), λ h => h ▸ isEarliest_from' o⟩
+  ⟨fun h ↦ h.unique (isEarliest_from' o), fun h ↦ h ▸ isEarliest_from' o⟩
 
-/-- A context: the onsets of the modal-base eventualities, the onset of the prejacent
+/-- A context gives the onsets of the modal-base eventualities, the onset of the prejacent
 eventuality, and the times of the evidence's acquisition and of the utterance. -/
 structure Context where
   onsets : List ℤ
@@ -168,10 +168,9 @@ variable (c : Context)
 def mb : Set (ℤ → Unit → Prop) := {q | ∃ o ∈ c.onsets, q = from' o}
 
 def frame : EvidentialFrame ℤ :=
-  { speechTime := c.speech, referenceTime := c.speech, perspectiveTime := c.speech,
-    eventTime := c.prejacent, acquisitionTime := c.acquisition }
+  { speechTime := c.speech, eventTime := c.prejacent, acquisitionTime := c.acquisition }
 
-/-- (35) in the form of the diagrams: every onset precedes the prejacent's. -/
+/-- In the form of the diagrams, (35) says that every onset precedes the prejacent's. -/
 theorem futurePresup_iff :
     FuturePresup c.mb (from' c.prejacent) () ↔ ∀ o ∈ c.onsets, o < c.prejacent := by
   constructor
@@ -181,7 +180,7 @@ theorem futurePresup_iff :
   · rintro h q ⟨o, ho, rfl⟩
     exact ⟨o, c.prejacent, isEarliest_from' o, isEarliest_from' _, h o ho⟩
 
-/-- (36) in the form of the diagrams: some onset is at or after the prejacent's. -/
+/-- In the form of the diagrams, (36) says that some onset is at or after the prejacent's. -/
 theorem inferentialPresup_iff :
     InferentialPresup c.mb (from' c.prejacent) () ↔ ∃ o ∈ c.onsets, c.prejacent ≤ o := by
   constructor
@@ -198,43 +197,44 @@ instance : Decidable (InferentialPresup c.mb (from' c.prejacent) ()) :=
 
 end Context
 
-/-- (40)–(41): the fish went into the oven and past occasions are known before it is cooked;
+/-- In (40)–(41) the fish went into the oven and past occasions are known before it is cooked, and
 the watch is checked before the cooking is complete. -/
 def cooking : Context := ⟨[0, 0], 2, 1, 2⟩
 
-/-- (42)–(43): Daniel's leaving and the length of the trip precede his getting home. -/
+/-- In (42)–(43) Daniel's leaving and the length of the trip precede his getting home. -/
 def daniel : Context := ⟨[0, 0], 2, 1, 3⟩
 
-/-- (44)–(45): the poisoning precedes the death. -/
+/-- In (44)–(45) the poisoning precedes the death. -/
 def poison : Context := ⟨[0, 0], 2, 0, 3⟩
 
-/-- (46)–(47): the rain and the coat left behind precede Felipe's wetting at five, but the
-speaker sees the rain only at six. -/
+/-- In (46)–(47) the rain and the coat left behind precede Felipe's wetting at five, but the speaker
+sees the rain only at six. -/
 def felipe : Context := ⟨[4, 0], 5, 6, 6⟩
 
-/-- (48)–(49): the cold night and the clam-digging precede the friend's getting cold, and the
+/-- In (48)–(49) the cold night and the clam-digging precede the friend's getting cold, and the
 speaker learns of the clam-digging the next day. -/
 def clamDigging : Context := ⟨[0, 0], 1, 2, 2⟩
 
-/-- (50)–(51): the smell of the fish arises as it is cooked. -/
+/-- In (50)–(51) the smell of the fish arises as it is cooked. -/
 def smell : Context := ⟨[1], 1, 1, 1⟩
 
-/-- (52)–(53) and (83): the car is in the driveway from the arrival home on. -/
+/-- In (52)–(53) and (83) the car is in the driveway from the arrival home on. -/
 def driveway : Context := ⟨[1], 1, 2, 2⟩
 
-/-- (54)–(55): the bear stops moving as it dies. -/
+/-- In (54)–(55) the bear stops moving as it dies. -/
 def bear : Context := ⟨[1], 1, 2, 2⟩
 
-/-- (57)–(58): evidence both before and at the prejacent, the time of day and the car and
-lights, is taken together. -/
+/-- In (57)–(58) evidence both before and at the prejacent, the time of day and the car and lights,
+is taken together. -/
 def homeFromWork : Context := ⟨[0, 1, 1], 1, 2, 2⟩
 
-/-- (59)–(60): twenty minutes in the oven and the smell; the smell may be set aside. -/
+/-- In (59)–(60) there are twenty minutes in the oven and the smell, and the smell may be set aside.
+-/
 def ovenAndSmell : Context := ⟨[0, 1], 1, 1, 1⟩
 
 def ovenOnly : Context := ⟨[0], 1, 1, 1⟩
 
-/-- (56): no evidence at all. -/
+/-- In (56) there is no evidence at all. -/
 def missingCat : Context := ⟨[], 1, 0, 0⟩
 
 theorem cooking_future : FuturePresup cooking.mb (from' cooking.prejacent) () := by decide
@@ -247,8 +247,8 @@ theorem felipe_future : FuturePresup felipe.mb (from' felipe.prejacent) () := by
 theorem felipe_not_inferential : ¬ InferentialPresup felipe.mb (from' felipe.prejacent) () := by
   decide
 
-/-- The wedge: the evidence is acquired after the event, so the acquisition analysis rejects
-*will* and *səm* here, against the judgments. -/
+/-- The evidence is acquired after the event, so the acquisition analysis rejects *will* and *səm*
+here, against the judgments. -/
 theorem felipe_not_eatFuture : ¬ EatFuture felipe.frame := by decide
 
 theorem felipe_downstream : felipe.frame.Downstream := by decide
@@ -267,14 +267,14 @@ theorem driveway_inferential : InferentialPresup driveway.mb (from' driveway.pre
 
 theorem bear_not_future : ¬ FuturePresup bear.mb (from' bear.prejacent) () := by decide
 
-/-- (57): evidence on both sides of the prejacent forces the inferential. -/
+/-- In (57) evidence on both sides of the prejacent forces the inferential. -/
 theorem homeFromWork_inferential :
     InferentialPresup homeFromWork.mb (from' homeFromWork.prejacent) () := by decide
 
 theorem homeFromWork_not_future :
     ¬ FuturePresup homeFromWork.mb (from' homeFromWork.prejacent) () := by decide
 
-/-- (59)–(60): with the smell in the modal base the inferential is licensed, and with it set
+/-- In (59)–(60), with the smell in the modal base the inferential is licensed, and with it set
 aside the future is. -/
 theorem ovenAndSmell_inferential :
     InferentialPresup ovenAndSmell.mb (from' ovenAndSmell.prejacent) () := by decide

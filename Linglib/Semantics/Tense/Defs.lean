@@ -52,8 +52,8 @@ namespace Tense
 
 open Semantics SetRel
 
-/-- A tense denotes the cell of orderings in which the reference time may stand to the
-perspective time: before it for the past, at it for the present, after it for the future. -/
+/-- A tense denotes the cell of orderings in which the reference time may stand to the perspective
+time, before it for the past, at it for the present and after it for the future. -/
 def denote : Tense → Finset Ordering
   | past => {.lt}
   | present => {.eq}
