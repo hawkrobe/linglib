@@ -14,11 +14,15 @@ a type when its belief type is a subtype of some relabelling of it, so the label
 make no difference to the truth of a belief report. They make a difference to anaphora. In Geach's
 *Hob thinks a witch has blighted Bob's mare, and Nob wonders whether she (the same witch) killed
 Cob's sow*, the two belief contexts overlap in the label of the witch, so that Nob's question is
-about Hob's witch although no witch need exist. The datum is
+about Hob's witch although no witch need exist. Ranta separates the actual beliefs, the hypotheses
+in an agent's context, from those that follow from it; on record types, what an agent believes in
+every modal system is exactly its actual beliefs up to relabelling. The datum is
 `Data/Examples/ChatzikyriakidisEtAl2025.json`.
 
 ## Main statements
 
+* `forall_subtypeRelabel_recTypes_iff`: a belief type believes a type in every modal system
+  exactly when it contains the fields of some relabelling of it.
 * `Kim.believes`: a belief type with the fields of (32) believes (34) under every labelling of
   (34), in every modal system.
 * `HobNob.believes_witch`, `HobNob.extension_witch_actual`: Hob believes that there is a witch,
@@ -41,6 +45,8 @@ about Hob's witch although no witch need exist. The datum is
 
 * Manifest fields (31), and the point of view by which a Roman reports Alexander's belief about
   Zeus with the name *Jupiter*.
+* Nested record types, whose relabellings preserve the prefix order of paths, so that a belief in
+  some boy who runs, (21), stays apart from a belief in the type of boys who run, (23).
 * Section 3 of the Element, on polysemy, copredication and counting.
 
 ## References
@@ -135,6 +141,50 @@ theorem subtypeRelabel_smul (σ : Equiv.Perm L) :
   ModalSystem.subtypeRelabel_congr ⟨σ, rfl⟩
 
 end RecType
+
+/-! ### Actual beliefs (§2.3.1)
+
+The free modal system of a belief type witnesses a ptype exactly when it is one of its fields, so
+the beliefs that hold in every modal system are the ones the belief type contains. -/
+
+section ActualBelief
+
+variable {Pred L : Type} {T T₁ T₂ B : RecType Pred L}
+
+/-- The free modal system of a record type has one possibility, records valued in labels, and a
+ptype witnessed exactly when it is a field of the record type. -/
+def freeSystem (B : RecType Pred L) : ModalSystem Unit Pred (List L × L) := fun _ ↦
+  { occurs _ := True
+    witnesses P a := ⟨a.2, P, a.1⟩ ∈ B
+    occurs_of_witnesses _ _ _ := trivial }
+
+/-- The record of labels witnesses a record type in its free modal system. -/
+theorem id_mem_extension_freeSystem : id ∈ (recTypes (freeSystem B)).extension B () := by
+  intro f hf
+  simpa [freeSystem] using hf
+
+/-- A record type is a subtype of another in every modal system exactly when it has all of its
+fields. -/
+theorem forall_subtypeR_recTypes_iff :
+    (∀ (M E : Type) (ms : ModalSystem M Pred (List E × E)), (recTypes ms).SubtypeR T₁ T₂) ↔
+      T₂ ⊆ T₁ := by
+  refine ⟨fun h f hf ↦ ?_, fun h _ _ _ ↦ subtypeR_recTypes_of_subset h⟩
+  simpa [freeSystem] using h _ _ (freeSystem T₁) () id_mem_extension_freeSystem hf
+
+/-- A belief type believes a type in every modal system exactly when it contains the fields of some
+relabelling of it, as an actual belief. -/
+theorem forall_subtypeRelabel_recTypes_iff :
+    (∀ (M E : Type) (ms : ModalSystem M Pred (List E × E)),
+      (recTypes ms).SubtypeRelabel (orbitRel (Equiv.Perm L) _) B T) ↔
+      ∃ σ : Equiv.Perm L, σ • T ⊆ B := by
+  refine ⟨fun h ↦ ?_, fun ⟨σ, h⟩ _ _ _ ↦ subtypeRelabel_of_smul_subset σ h⟩
+  obtain ⟨_, ⟨σ, rfl⟩, hs⟩ := h _ _ (freeSystem B)
+  refine ⟨σ⁻¹, fun f hf ↦ ?_⟩
+  rw [inv_smul_smul] at hf
+  simpa [freeSystem] using
+    hs () (fun _ _ ↦ trivial) (fun _ _ ↦ trivial) id_mem_extension_freeSystem hf
+
+end ActualBelief
 
 /-! ### *Kim believes that some woman is a conductor*, (32)–(35) -/
 
