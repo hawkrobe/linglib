@@ -9,6 +9,7 @@ public import Linglib.Phonology.Subregular.TierStrictlyLocal
 public import Linglib.Phonology.Subregular.StrictlyPiecewise
 public import Linglib.Core.Computability.PiecewiseTestable
 public import Linglib.Core.Computability.Definite
+public import Linglib.Core.Computability.LocallyTestable
 public import Mathlib.Computability.Language
 public import Mathlib.Order.BooleanSubalgebra
 public import Linglib.Core.Data.List.Factors
@@ -27,17 +28,17 @@ tier projection.
 * `IsBTC 𝒞`: the multitier closure: the `BooleanSubalgebra.closure` of the
   tier-projected family, with injections `IsBTC.base`/`of_class` and closure
   operations `IsBTC.inter`/`union`/`compl`.
-* `IsBTSL`/`IsBTSP`/`IsBTD`/`IsBTK`/`IsBTLI`/`IsBTN`: its six specializations
-  (strictly local, strictly piecewise, definite, reverse definite, generalized
-  definite, finite-or-cofinite).
+* `IsBTSL`/`IsBTSP`/`IsBTD`/`IsBTK`/`IsBTLI`/`IsBTN`: its six specializations, to the strictly
+  local, strictly piecewise, definite, reverse definite, generalized definite and
+  finite-or-cofinite languages. Lambert calls the first the multitier locally testable languages.
 * `IsBTC.Indist`: tier-indistinguishability, the congruence behind membership refutation.
 
 ## Main results
 
 * `IsBTC.mono`: monotonicity in the base class.
 * `isTierStrictlyLocal_iff_isTierBased`: TSL_k is the tier-based closure of SL_k.
-* `IsBTC.isStarFree`: the multitier closure of a star-free base class is star-free, so
-  `IsBTSL.isStarFree` and `IsBTSP.isStarFree`.
+* `IsBTC.isStarFree`: the multitier closure of a star-free base class is star-free, so all six
+  specializations are star-free over a finite alphabet.
 * `IsBTC.mem_iff_of_indist` and `not_isBTC_of_indist`: membership respects
   tier-indistinguishability, yielding the standard non-membership argument.
 
@@ -79,12 +80,12 @@ def IsTierBased (𝒞 : Language α → Prop) (L : Language α) : Prop :=
 namespace IsTierBased
 
 /-- Every `𝒞`-language is tier-based for `𝒞` via the universal tier, which erases no
-symbol. The witness is `T = fun _ => true`
+symbol. The witness is `T = fun _ ↦ true`
 and `L' = L`. -/
 theorem of_class (h : 𝒞 L) : IsTierBased 𝒞 L := by
-  refine ⟨fun _ => true, L, ?_, h⟩
+  refine ⟨fun _ ↦ true, L, ?_, h⟩
   ext w
-  show w ∈ L ↔ List.filter (fun _ => true) w ∈ L
+  show w ∈ L ↔ List.filter (fun _ ↦ true) w ∈ L
   rw [List.filter_true]
 
 /-- Monotonicity in the base class. -/
@@ -127,14 +128,14 @@ theorem IsBTC.of_tierBased (h : IsTierBased 𝒞 L) : IsBTC 𝒞 L :=
 
 /-- Monotonicity of multitier closure in the base class. -/
 theorem IsBTC.mono (h : ∀ L, 𝒞 L → 𝒟 L) (hL : IsBTC 𝒞 L) : IsBTC 𝒟 L :=
-  BooleanSubalgebra.closure_mono (fun _ hL' => IsTierBased.mono h hL') hL
+  BooleanSubalgebra.closure_mono (fun _ hL' ↦ IsTierBased.mono h hL') hL
 
 /-! ## Specializations
 
 One line each. Closure under intersection, union, and complement comes
 from `IsBTC.inter`/`union`/`compl`; class injection from `IsBTC.of_class`. -/
 
-/-- The **multitier strictly local** languages (BTSL) are the Boolean closure of the
+/-- The *multitier locally testable* languages (BTSL) are the Boolean closure of the
 tier-projected SL_k languages. -/
 def IsBTSL (k : ℕ) : Language α → Prop := IsBTC (Language.IsStrictlyLocal · k)
 
@@ -166,11 +167,11 @@ pointwise, then `IsBTC 𝒞 ⊆ IsBTC 𝒟`. Specializing the `D_k ⊆ ℒℐ_k`
 
 /-- **D_k ⊆ ℒℐ_k** lifts to **BTD_k ⊆ BTLI_k**. -/
 theorem IsBTD.toIsBTLI (h : IsBTD k L) : IsBTLI k L :=
-  IsBTC.mono (fun _ => Language.IsDefinite.toIsGeneralizedDefinite) h
+  IsBTC.mono (fun _ ↦ Language.IsDefinite.toIsGeneralizedDefinite) h
 
 /-- **RD_k ⊆ ℒℐ_k** lifts to **BTK_k ⊆ BTLI_k**. -/
 theorem IsBTK.toIsBTLI (h : IsBTK k L) : IsBTLI k L :=
-  IsBTC.mono (fun _ => Language.IsReverseDefinite.toIsGeneralizedDefinite) h
+  IsBTC.mono (fun _ ↦ Language.IsReverseDefinite.toIsGeneralizedDefinite) h
 
 /-! ## Tier literals
 
@@ -195,11 +196,11 @@ theorem isBTN_tierWord : IsBTN (tierWord T xs) :=
 
 theorem isBTD_tierWord (hk : xs.length < k) : IsBTD k (tierWord T xs) :=
   .base ⟨T, {xs}, rfl, (isDefinite_succ_of_forall_length_le
-    λ _ hw => le_of_eq (congrArg List.length hw)).mono hk⟩
+    fun _ hw ↦ le_of_eq (congrArg List.length hw)).mono hk⟩
 
 theorem isBTK_tierWord (hk : xs.length < k) : IsBTK k (tierWord T xs) :=
   .base ⟨T, {xs}, rfl, (isReverseDefinite_succ_of_forall_length_le
-    λ _ hw => le_of_eq (congrArg List.length hw)).mono hk⟩
+    fun _ hw ↦ le_of_eq (congrArg List.length hw)).mono hk⟩
 
 theorem isBTK_tierPrefix (hk : xs.length ≤ k) : IsBTK k (tierPrefix T xs) :=
   .base ⟨T, ofPrefix xs, rfl, (isReverseDefinite_ofPrefix xs).mono hk⟩
@@ -248,15 +249,15 @@ def IsBTC.Indist (𝒞 : Language α → Prop) (w₁ w₂ : List α) : Prop :=
 namespace IsBTC.Indist
 
 @[refl] protected theorem refl (𝒞 : Language α → Prop) (w : List α) :
-    IsBTC.Indist 𝒞 w w := fun _ _ _ => Iff.rfl
+    IsBTC.Indist 𝒞 w w := fun _ _ _ ↦ Iff.rfl
 
 @[symm] protected theorem symm (h : IsBTC.Indist 𝒞 w₁ w₂) : IsBTC.Indist 𝒞 w₂ w₁ :=
-  fun T L' hL' => (h T L' hL').symm
+  fun T L' hL' ↦ (h T L' hL').symm
 
 @[trans] protected theorem trans {w₃ : List α}
     (h₁ : IsBTC.Indist 𝒞 w₁ w₂) (h₂ : IsBTC.Indist 𝒞 w₂ w₃) :
     IsBTC.Indist 𝒞 w₁ w₃ :=
-  fun T L' hL' => (h₁ T L' hL').trans (h₂ T L' hL')
+  fun T L' hL' ↦ (h₁ T L' hL').trans (h₂ T L' hL')
 
 end IsBTC.Indist
 
@@ -276,7 +277,7 @@ theorem IsBTC.mem_iff_of_indist (hL : IsBTC 𝒞 L) (hindist : IsBTC.Indist 𝒞
 theorem not_isBTC_of_indist (h_indist : IsBTC.Indist 𝒞 w₁ w₂)
     (h_w₁ : w₁ ∈ L) (h_w₂ : w₂ ∉ L) :
     ¬ IsBTC 𝒞 L :=
-  fun hL => h_w₂ ((IsBTC.mem_iff_of_indist hL h_indist).mp h_w₁)
+  fun hL ↦ h_w₂ ((IsBTC.mem_iff_of_indist hL h_indist).mp h_w₁)
 
 /-- Shared length-`k` prefix-and-suffix on every Bool-tier projection implies
 `IsBTC.Indist (Language.IsGeneralizedDefinite · k)` — the standard specialization
@@ -314,13 +315,21 @@ section Finite
 
 variable [Finite α]
 
-/-- **Multitier strictly local languages are star-free.** -/
 theorem IsBTSL.isStarFree (h : IsBTSL k L) : L.IsStarFree :=
   IsBTC.isStarFree (fun _ ↦ IsStrictlyLocal.isStarFree) h
 
-/-- **Multitier strictly piecewise languages are star-free.** -/
 theorem IsBTSP.isStarFree (h : IsBTSP k L) : L.IsStarFree :=
   IsBTC.isStarFree (fun _ ↦ IsStrictlyPiecewise.isStarFree) h
+
+theorem IsBTLI.isStarFree (h : IsBTLI k L) : L.IsStarFree :=
+  IsBTC.isStarFree (fun _ ↦ IsGeneralizedDefinite.isStarFree) h
+
+theorem IsBTD.isStarFree (h : IsBTD k L) : L.IsStarFree := h.toIsBTLI.isStarFree
+
+theorem IsBTK.isStarFree (h : IsBTK k L) : L.IsStarFree := h.toIsBTLI.isStarFree
+
+theorem IsBTN.isStarFree (h : IsBTN L) : L.IsStarFree :=
+  IsBTC.isStarFree (fun _ ↦ IsFiniteOrCofinite.isStarFree) h
 
 end Finite
 
