@@ -1,5 +1,6 @@
 module
 
+public import Mathlib.Data.Finset.Interval
 public import Mathlib.Data.Finset.Powerset
 public import Mathlib.Data.Fintype.Basic
 public import Linglib.Logic.Modal.Basic
@@ -194,15 +195,15 @@ variable [DecidableEq E]
 /-- The subdomain alternatives of `D`. -/
 def subdomainAlternatives : Subdomains → Finset E → Finset (Finset E)
   | .singletons, D => D.image ({·})
-  | .proper, D => D.powerset.filter fun S => S.Nonempty ∧ S ≠ D
+  | .proper, D => Finset.Ioo ∅ D
 
 /-- The singleton alternatives are among the proper ones. -/
 theorem subdomainAlternatives_singletons_subset (hD : 1 < D.card) :
     subdomainAlternatives .singletons D ⊆ subdomainAlternatives .proper D := by
   intro S hS
   obtain ⟨a, ha, rfl⟩ := Finset.mem_image.1 hS
-  refine Finset.mem_filter.2 ⟨Finset.mem_powerset.2 (Finset.singleton_subset_iff.2 ha),
-    Finset.singleton_nonempty a, fun h => ?_⟩
+  refine Finset.mem_Ioo.2 ⟨Finset.empty_ssubset.2 (Finset.singleton_nonempty a),
+    Finset.ssubset_iff_subset_ne.2 ⟨Finset.singleton_subset_iff.2 ha, fun h => ?_⟩⟩
   simp [← h] at hD
 
 /-- The negated pre-exhaustified alternative for `S`: if `S` is possible, so is the rest
@@ -269,9 +270,8 @@ theorem freeChoice_of_proper (h : ◇[R] (claim Q D) w)
   obtain ⟨v, hv, x, hx, hqx⟩ := h
   have hxa : x ≠ a := fun h => hna ⟨v, hv, h ▸ hqx⟩
   have hS : D.erase a ∈ subdomainAlternatives .proper D := by
-    refine Finset.mem_filter.2 ⟨Finset.mem_powerset.2 (Finset.erase_subset a D),
-      ⟨x, Finset.mem_erase.2 ⟨hxa, hx⟩⟩, fun h => ?_⟩
-    exact Finset.notMem_erase a D (by rw [h]; exact ha)
+    exact Finset.mem_Ioo.2 ⟨Finset.empty_ssubset.2 ⟨x, Finset.mem_erase.2 ⟨hxa, hx⟩⟩,
+      Finset.erase_ssubset ha⟩
   obtain ⟨v', hv', y, hy, hqy⟩ := hs _ hS ⟨v, hv, x, Finset.mem_erase.2 ⟨hxa, hx⟩, hqx⟩
   obtain ⟨-, hy'⟩ := Finset.mem_sdiff.1 hy
   have : y = a := by
@@ -292,7 +292,8 @@ variable {R w D Q} {S₀ : Finset E}
 
 theorem mem_subdomainAlternatives_proper {S : Finset E} :
     S ∈ subdomainAlternatives .proper D ↔ S ⊆ D ∧ S.Nonempty ∧ S ≠ D := by
-  simp [subdomainAlternatives]
+  rw [subdomainAlternatives, Finset.mem_Ioo, Finset.empty_ssubset, Finset.ssubset_iff_subset_ne]
+  tauto
 
 /-- A domain with a proper nonempty subdomain has each of its singletons as a subdomain
 alternative. -/

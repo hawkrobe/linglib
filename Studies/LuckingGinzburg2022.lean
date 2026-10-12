@@ -1,5 +1,6 @@
 module
 
+public import Mathlib.Data.Finset.Interval
 public import Linglib.Semantics.Quantification.Witness
 public import Linglib.Semantics.Quantification.Counting
 public import Mathlib.Data.Finset.Powerset
@@ -15,7 +16,7 @@ quantifier word acting as a sieve on them through a descriptive condition on the
 cardinalities (`sieve`). Such a condition is a quantifier on [van-benthem-1984]'s tree of numbers
 (`Quantifier.NumberTree`), and the sieve reads only the row of the tree at the size of the noun
 (`sieve_eq_iff`), which yields the paper's count of `2 ^ (k + 1) - 1` denotations over a noun
-with `k` instances (`card_powerset_antidiagonal_erase`). A verb phrase predicates on the
+with `k` instances (`card_Ioc_antidiagonal`). A verb phrase predicates on the
 reference set and anti-predicates on the complement set (`AntiPredication`), so the sentence is
 true exactly when the condition holds of the sizes of `N \ VP` and `N ∩ VP`
 (`exists_antiPredication_iff`). So referential transparency has the truth conditions of the tree
@@ -222,16 +223,15 @@ theorem sieve_eq_iff {q' : NumberTree} [DecidableRel q'] :
 /-- A condition selects one of `2 ^ (k + 1)` sets of points of row `k`, so the paper's
 `2 ^ (k + 1) - 1` combinatorially possible denotations over a noun with `k` instances (§4.8)
 are the nonempty ones. -/
-theorem card_powerset_antidiagonal_erase (k : ℕ) :
-    #((antidiagonal k).powerset.erase ∅) = 2 ^ (k + 1) - 1 := by
-  rw [card_erase_of_mem (empty_mem_powerset _), card_powerset, Nat.card_antidiagonal]
+theorem card_Ioc_antidiagonal (k : ℕ) : #(Ioc ∅ (antidiagonal k)) = 2 ^ (k + 1) - 1 := by
+  rw [card_Ioc_finset (empty_subset _), Nat.card_antidiagonal, card_empty, Nat.sub_zero]
 
 /-- The paper's count of quantifiers on a domain `M` (§4.8): a nonempty selection of a row for
 each subset of the domain, taken as a head noun's extension. -/
 def domainCount (M : Finset α) : ℕ := ∏ R ∈ M.powerset, (2 ^ (#R + 1) - 1)
 
 /-- The seven denotations over two individuals enumerated in §4.8. -/
-example : #((antidiagonal 2).powerset.erase ∅) = 7 := by decide
+example : #(Ioc ∅ (antidiagonal 2)) = 7 := by decide
 
 /-- The paper's `1 × 3 × 3 × 7 = 63` quantifiers on a domain of two individuals, against the 512
 conservative ones it cites, the `2 ^ 3 ^ 2` of [keenan-stavi-1986]. -/
