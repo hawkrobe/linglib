@@ -274,7 +274,7 @@ theorem not_cCommands_direct (m q : List ℕ) :
   have hb : IsBranchingAt e.direct ⟨[1]⟩ := ⟨_, rfl, by simp⟩
   have hlt : (⟨[1]⟩ : TreePath) < ⟨1 :: 1 :: m⟩ :=
     lt_of_le_of_ne (TreePath.le_def.2 ⟨1 :: m, rfl⟩) (by simp)
-  simpa [TreePath.le_def] using h _ hb hlt
+  simpa [TreePath.le_def] using h hb hlt
 
 /-- At the raised position of the direct analysis the remnant c-commands every term of the
 clause. -/

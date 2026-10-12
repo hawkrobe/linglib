@@ -118,7 +118,8 @@ theorem hostsQuantifier_iff {a : Attachment} : a.HostsQuantifier ↔ a = clitic 
   | clitic => decide
   | head u =>
     refine iff_of_false (fun h ↦ ?_) nofun
-    exact absurd (h.1.1 ⟨[0]⟩ ⟨_, rfl, le_rfl⟩ (show (⟨[0]⟩ : TreePath) < ⟨[0, 0]⟩ by decide))
+    exact absurd (mem_commandRelation.1 h.1.1 ⟨[0]⟩ ⟨_, rfl, le_rfl⟩
+        (show (⟨[0]⟩ : TreePath) < ⟨[0, 0]⟩ by decide))
       (show ¬ (⟨[0]⟩ : TreePath) ≤ ⟨[1]⟩ by decide)
 
 /-- A particle's phrase can be the focus of a cleft when it can bear Case and bears none yet. On

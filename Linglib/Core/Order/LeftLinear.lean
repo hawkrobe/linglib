@@ -76,6 +76,12 @@ theorem isChain_Iio (m : M) : IsChain (· ≤ ·) (Set.Iio m) := by
   intro a ha b hb _
   exact comparable_of_le_common (le_of_lt (Set.mem_Iio.mp ha)) (le_of_lt (Set.mem_Iio.mp hb))
 
+/-- In a left-linear order everything strictly below an element is below the element it covers,
+its mother in a tree. -/
+theorem le_of_lt_of_covBy {a b m : M} (hm : m ⋖ a) (hb : b < a) : b ≤ m :=
+  (comparable_of_le_common hb.le hm.le).elim id fun h ↦
+    h.eq_or_lt.elim Eq.ge fun hlt ↦ (hm.2 hlt hb).elim
+
 end IsLeftLinear
 
 /-! ### Flags
