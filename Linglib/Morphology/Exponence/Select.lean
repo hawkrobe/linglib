@@ -1,5 +1,6 @@
 module
 
+public import Linglib.Core.Data.List.Find
 public import Linglib.Core.Data.List.MinMax
 public import Linglib.Morphology.Exponence.Elsewhere
 public import Linglib.Morphology.Paradigm.Contiguity
@@ -9,9 +10,12 @@ public import Linglib.Morphology.Paradigm.Contiguity
 
 This file defines selection by a specificity score (`selectBy`) and over the
 specificity preorder (`selectMinimal`), and proves that both produce Elsewhere
-winners. The exponent of the minimal selection, falling back on a default where
-no rule applies, is the shape shared by Stump's rules of paradigm linkage over a
-root and by Bonami and Stump's rules of basic stem choice.
+winners. Selection by a score keeps its choice when the competition shrinks around the winner,
+so rules applicable on upper sets of ordered contexts realize contiguous patterns. Minimal
+selection does the same, and agrees with selection by a score, where Stump's Pāṇinian
+Determinism holds, the Elsewhere winners forming a chain. The exponent of the minimal selection,
+falling back on a default where no rule applies, is the shape shared by Stump's rules of
+paradigm linkage over a root and by Bonami and Stump's rules of basic stem choice.
 
 ## Main definitions
 
@@ -34,11 +38,15 @@ root and by Bonami and Stump's rules of basic stem choice.
   rules carry distinct exponents.
 * `selectBy_isElsewhereWinner`, `selectMinimal_isElsewhereWinner`: both
   selections produce Elsewhere winners.
+* `selectMinimal_eq_some_of_applies`, `isContiguous_realizeMinimal_of_monotone`: under Pāṇinian
+  Determinism minimal selection is consistent under contraction and realizes contiguous patterns.
+* `realizeMinimal_eq_realize`: under Pāṇinian Determinism minimal selection realizes what
+  selection on any score strictly reversing specificity realizes.
 * `selectMinimal_factorsThrough`, `realizeMinimalD_factorsThrough`: selection,
   and realization with a fallback, factor through any map on contexts that every
   rule's applicability (and the fallback) factors through.
-* `realizeMinimalD_eq_of_isElsewhereWinner`: over a coherent vocabulary with
-  comparable winners, realization with a fallback is the exponent of any
+* `realizeMinimalD_eq_of_isElsewhereWinner`: over a coherent vocabulary under
+  Pāṇinian Determinism, realization with a fallback is the exponent of any
   Elsewhere winner, whatever the order of the vocabulary.
 
 ## References
@@ -218,6 +226,15 @@ variable [DecidableRel (· < · : R → R → Prop)]
 def selectMinimal (v : List R) (c : Ctx) : Option R :=
   (applicable v c).find? (fun r => (applicable v c).all (fun s => decide (¬ s < r)))
 
+/-- Minimal selection picks the first rule of the vocabulary that applies and that no applicable
+rule strictly undercuts. -/
+theorem selectMinimal_eq_find? : selectMinimal v c =
+    v.find? (fun r ↦ decide (Applies r c ∧ ∀ s ∈ applicable v c, ¬ s < r)) := by
+  unfold selectMinimal
+  nth_rewrite 2 [applicable]
+  rw [List.find?_filter]
+  exact List.find?_congr fun r _ ↦ by simp only [decide_eq_true_eq, List.all_eq_true]
+
 /-- `selectMinimal` returns an Elsewhere winner. -/
 theorem selectMinimal_isElsewhereWinner
     (h : selectMinimal v c = some r) : IsElsewhereWinner v c r := by
@@ -279,15 +296,93 @@ theorem realizeMinimal_realizes (h : realizeMinimal v c = some φ) : Realizes v 
   obtain ⟨r, hr, rfl⟩ := Option.map_eq_some_iff.mp h
   exact ⟨r, selectMinimal_isElsewhereWinner hr, rfl⟩
 
-/-- Over a coherent vocabulary whose Elsewhere winners are comparable, the minimally realized
+/-- Over a coherent vocabulary whose Elsewhere winners form a chain, the minimally realized
 exponent is that of any Elsewhere winner, so it does not depend on the order of the
 vocabulary. -/
 theorem realizeMinimal_eq_of_isElsewhereWinner (hv : Coherent v)
-    (hcmp : ∀ ⦃r s⦄, IsElsewhereWinner v c r → IsElsewhereWinner v c s → s ≤ r ∨ r ≤ s)
-    (hr : IsElsewhereWinner v c r) : realizeMinimal v c = some (exponent r) := by
+    (hc : IsChain (· ≤ ·) {s | IsElsewhereWinner v c s}) (hr : IsElsewhereWinner v c r) :
+    realizeMinimal v c = some (exponent r) := by
   obtain ⟨φ, hφ⟩ := Option.isSome_iff_exists.mp
     (realizeMinimal_isSome_iff.mpr ⟨r, hr.prop.1, hr.prop.2⟩)
-  rw [hφ, (realizeMinimal_realizes hφ).eq hv hcmp ⟨r, hr, rfl⟩]
+  rw [hφ, (realizeMinimal_realizes hφ).eq hv hc ⟨r, hr, rfl⟩]
+
+/-- Under Pāṇinian Determinism a coherent vocabulary realizes by minimal selection what it
+realizes by selection on any score strictly reversing specificity. -/
+theorem realizeMinimal_eq_realize (hv : Coherent v)
+    (hc : IsChain (· ≤ ·) {s | IsElsewhereWinner v c s})
+    (hf : StrictAntiOn f {r | r ∈ applicable v c}) : realizeMinimal v c = realize f v c := by
+  rcases hs : selectBy f v c with - | r
+  · rw [realize, hs, Option.map_none, realizeMinimal_eq_none_iff,
+      ← selectBy_eq_none_iff (f := f), hs]
+  · rw [realize, hs, Option.map_some,
+      realizeMinimal_eq_of_isElsewhereWinner hv hc (selectBy_isElsewhereWinner hf hs)]
+
+/-! ### Contraction under Pāṇinian Determinism -/
+
+/-- Minimal selection is consistent under contraction where the Elsewhere winners of the smaller
+context form a chain, Stump's Pāṇinian Determinism. The rule selected at `c'` is then selected
+at any context whose applicable rules are among those at `c'`, as long as it applies there. -/
+theorem selectMinimal_eq_some_of_applies (h : ∀ s ∈ v, Applies s c → Applies s c')
+    (hc : IsChain (· ≤ ·) {s | IsElsewhereWinner v c s}) (hr : selectMinimal v c' = some r)
+    (hrc : Applies r c) : selectMinimal v c = some r := by
+  have hwr' := selectMinimal_isElsewhereWinner hr
+  have hwr : IsElsewhereWinner v c r := hwr'.of_applies h hrc
+  rw [selectMinimal_eq_find?] at hr ⊢
+  refine List.find?_eq_some_of_imp hr ?_ fun x hx hpx ↦ ?_
+  · exact decide_eq_true ⟨hrc, fun s hs hlt ↦ hwr.not_lt (mem_applicable.mp hs) hlt⟩
+  obtain ⟨hxc, hxmin⟩ := of_decide_eq_true hpx
+  have hwx : IsElsewhereWinner v c x := minimal_iff_forall_lt.mpr
+    ⟨⟨hx, hxc⟩, fun s hlt hs ↦ hxmin s (mem_applicable.mpr hs) hlt⟩
+  have hxr : x ≤ r := by
+    by_contra hxr
+    exact hxmin r (mem_applicable.mpr hwr.prop)
+      (lt_of_le_not_ge ((hc.total hwx hwr).resolve_left hxr) hxr)
+  exact decide_eq_true ⟨h x hx hxc,
+    fun s hs hlt ↦ hwr'.not_lt (mem_applicable.mp hs) (lt_of_lt_of_le hlt hxr)⟩
+
+theorem selectMinimal_eq_none_of_applies (h : ∀ s ∈ v, Applies s c → Applies s c')
+    (hr : selectMinimal v c' = none) : selectMinimal v c = none := by
+  rw [selectMinimal_eq_none_iff, applicable_eq_filter h, selectMinimal_eq_none_iff.mp hr,
+    List.filter_nil]
+
+/-- Minimal selection admits no ABA where Pāṇinian Determinism holds at the middle context.
+Across three contexts whose applicable rules are nested, an antihomophonous vocabulary that
+realizes one exponent at both outer contexts realizes it at the middle one. -/
+theorem realizeMinimal_eq_of_applies {c₁ c₂ c₃ : Ctx} (hv : Antihomophonous v)
+    (hc : IsChain (· ≤ ·) {s | IsElsewhereWinner v c₂ s})
+    (h₁ : ∀ s ∈ v, Applies s c₁ → Applies s c₂) (h₂ : ∀ s ∈ v, Applies s c₂ → Applies s c₃)
+    (h : realizeMinimal v c₁ = realizeMinimal v c₃) :
+    realizeMinimal v c₂ = realizeMinimal v c₁ := by
+  rcases h₃ : selectMinimal v c₃ with - | r
+  · rw [realizeMinimal, realizeMinimal, selectMinimal_eq_none_of_applies h₂ h₃,
+      selectMinimal_eq_none_of_applies h₁ (selectMinimal_eq_none_of_applies h₂ h₃)]
+  · obtain ⟨r₁, hr₁, he⟩ : ∃ r₁, selectMinimal v c₁ = some r₁ ∧ exponent r₁ = exponent r := by
+      simpa [realizeMinimal, h₃] using h
+    obtain rfl := hv (selectMinimal_mem hr₁) (selectMinimal_mem h₃) he
+    rw [realizeMinimal, realizeMinimal, hr₁, selectMinimal_eq_some_of_applies h₂ hc h₃
+      (h₁ _ (selectMinimal_mem hr₁) (selectMinimal_applies hr₁))]
+
+section Contiguity
+
+variable [Preorder Ctx]
+
+/-- Under Pāṇinian Determinism, rules applicable on upper sets of contexts realize contiguous
+patterns by minimal selection. -/
+theorem isContiguous_realizeMinimal_of_monotone (hv : Antihomophonous v)
+    (hc : ∀ c, IsChain (· ≤ ·) {s | IsElsewhereWinner v c s})
+    (h : ∀ r ∈ v, Monotone (Applies r)) : IsContiguous (realizeMinimal v) :=
+  fun _ _ _ hij hjk he ↦ (realizeMinimal_eq_of_applies hv (hc _)
+    (fun s hs ↦ h s hs hij) (fun s hs ↦ h s hs hjk) he).symm
+
+/-- Under Pāṇinian Determinism, rules applicable on lower sets of contexts realize contiguous
+patterns by minimal selection. -/
+theorem isContiguous_realizeMinimal_of_antitone (hv : Antihomophonous v)
+    (hc : ∀ c, IsChain (· ≤ ·) {s | IsElsewhereWinner v c s})
+    (h : ∀ r ∈ v, Antitone (Applies r)) : IsContiguous (realizeMinimal v) :=
+  fun _ _ _ hij hjk he ↦ he.trans (realizeMinimal_eq_of_applies hv (hc _)
+    (fun s hs ↦ h s hs hjk) (fun s hs ↦ h s hs hij) he.symm).symm
+
+end Contiguity
 
 /-! ### Realization with a fallback -/
 
@@ -343,11 +438,11 @@ theorem realizeMinimalD_factorsThrough {V : Type*} {A : Ctx → V}
   fun _ _ hA ↦ by rw [realizeMinimalD, realizeMinimalD, realizeMinimal, realizeMinimal,
     selectMinimal_factorsThrough h hA, hd hA]
 
-/-- Over a coherent vocabulary whose Elsewhere winners are comparable, the realized value is the
+/-- Over a coherent vocabulary whose Elsewhere winners form a chain, the realized value is the
 exponent of any Elsewhere winner, so it does not depend on the order of the vocabulary. -/
 theorem realizeMinimalD_eq_of_isElsewhereWinner (hv : Coherent v)
-    (hcmp : ∀ ⦃r s⦄, IsElsewhereWinner v c r → IsElsewhereWinner v c s → s ≤ r ∨ r ≤ s)
-    (hr : IsElsewhereWinner v c r) : realizeMinimalD v fallback c = exponent r := by
-  rw [realizeMinimalD, realizeMinimal_eq_of_isElsewhereWinner hv hcmp hr, Option.getD_some]
+    (hc : IsChain (· ≤ ·) {s | IsElsewhereWinner v c s}) (hr : IsElsewhereWinner v c r) :
+    realizeMinimalD v fallback c = exponent r := by
+  rw [realizeMinimalD, realizeMinimal_eq_of_isElsewhereWinner hv hc hr, Option.getD_some]
 
 end Morphology.Exponence
