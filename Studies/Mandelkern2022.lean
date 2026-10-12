@@ -40,8 +40,9 @@ bound equivalences to arbitrary formulae fails for one of them (`not_boundEntail
   indefinite licenses a later pronoun, and a logically equivalent sentence without one does not.
 * `realize_ex22b_iff`, `realize_ex21b_iff_of_familiar`: a pronoun covaries under a quantifier
   only with an indefinite in the restrictor.
-* `not_felicitous_ex15b_asymmetric`, `satt_ex15b_symmetric`: a pronoun before its indefinite in
-  a conjunction depends on the order of local contexts.
+* `felicitous_ex15a_asymmetric`, `not_felicitous_ex15b_asymmetric`, `satt_ex15b_symmetric`: a
+  pronoun after its indefinite in a conjunction is felicitous, and one before it depends on the
+  order of local contexts.
 
 ## Implementation notes
 
@@ -546,6 +547,28 @@ section Updating
 
 variable (F G H : L.Relations 1)
 
+theorem realize_indef_atom₁ : (indef x (atom₁ F x) (atom₁ G x)).Realize I g w ↔
+    (extension I F w ∩ extension I G w).Nonempty := by
+  simp [Set.Nonempty]
+
+/-- The witness bound of `ɜx(Fx, Gx)`: when some `F` is a `G`, `x` is one. -/
+theorem satt_indef_atom₁ [Nonempty E] : (indef x (atom₁ F x) (atom₁ G x)).Satt I .asymmetric c g w ↔
+    ((extension I F w ∩ extension I G w).Nonempty →
+      (g, w) ∈ valuedIn x (extension I F ⊓ extension I G)) := by
+  obtain ⟨e⟩ := ‹Nonempty E›
+  have hg' : ∃ g' : Assign V Δ E, g' x ≠ ⊥ ∧ g' x ≠ ⊥ := ⟨⟨fun _ ↦ e, fun _ _ ↦ ⊥⟩, by simp⟩
+  rw [satt_indef, realize_indef_atom₁, ← valuedIn_inter_valuedIn]
+  simp only [satt_conj, satt_atom₁, hg', true_and, realize_conj, realize_atom₁, Set.mem_inter_iff,
+    mem_valuedIn]
+  grind [Flat.coe_ne_bot]
+
+/-- At every world some assignment satisfies the witness bound of `ɜx(Fx, Gx)`. -/
+theorem exists_satt_indef_atom₁ [Nonempty E] (c : Set (Assign V Δ E × W)) (w : W) :
+    ∃ g, (indef x (atom₁ F x) (atom₁ G x)).Satt I .asymmetric c g w := by
+  obtain h | ⟨a, ha⟩ := (extension I F w ∩ extension I G w).eq_empty_or_nonempty
+  · exact ⟨⊥, (satt_indef_atom₁ F G).2 fun hne ↦ absurd h hne.ne_empty⟩
+  · exact ⟨⟨fun _ ↦ a, fun _ _ ↦ ⊥⟩, (satt_indef_atom₁ F G).2 fun _ ↦ ⟨a, ha, rfl⟩⟩
+
 theorem truthSet_indef_atom₁ :
     ((indef x (atom₁ F x) (atom₁ G x)).toPartialProp I .asymmetric c).truthSet =
       valuedIn x (extension I F ⊓ extension I G) := by
@@ -599,6 +622,14 @@ theorem truthSet_iota_top_after_indef_atom₁ :
   rw [truthSet_iota_of_update_eq (update_top_of_subset hc), truthSet_atom₁]
   exact Set.inter_eq_right.2 fun _ hi ↦ ne_bot_of_mem_valuedIn hi
 
+/-- After `ɜx(Fx, Gx)`, the bounds of the pronoun `ιx(⊤x, Hx)` hold at every point, its local
+context valuing `x` throughout. -/
+theorem satt_iota_top_after_indef_atom₁ : (iota x (top x) (atom₁ H x)).Satt I .asymmetric
+    (update I .asymmetric c (indef x (atom₁ F x) (atom₁ G x))) g w := by
+  rw [satt_iota, update_top_of_subset (S := extension I F) fun i hi ↦ by
+    rw [update_indef_atom₁] at hi; exact valuedIn_mono inf_le_left hi.2]
+  exact ⟨rfl, satt_atom₁.2⟩
+
 /-- *There is a cat. The cat is tabby.* keeps the points whose `x` is a cat that exists and is
 tabby (p. 1104). -/
 theorem update_indef_then_the :
@@ -623,16 +654,10 @@ theorem update_indef_then_it :
 theorem truthSet_neg_indef_atom₁ [Nonempty E] :
     ((neg (indef x (atom₁ F x) (atom₁ G x))).toPartialProp I .asymmetric c).truthSet =
       {i | extension I F i.2 ∩ extension I G i.2 = ∅} := by
-  have key : ∀ (g : Assign V Δ E) w, (indef x (atom₁ F x) (atom₁ G x)).Realize I g w ↔
-      (extension I F w ∩ extension I G w).Nonempty := fun g w ↦ by
-    simp [Set.Nonempty]
-  obtain ⟨e⟩ := ‹Nonempty E›
   ext ⟨g, w⟩
-  simp only [mem_truthSet_toPartialProp, realize_neg, satt_neg, Set.mem_ofPred_eq, key,
-    Set.not_nonempty_iff_eq_empty]
-  refine ⟨fun ⟨_, hr⟩ ↦ hr, fun hr ↦ ⟨⟨⟨⟨fun _ ↦ e, fun _ _ ↦ ⊥⟩, ?_⟩, fun h ↦ ?_⟩, hr⟩⟩
-  · simp [Order.junct]
-  · exact absurd ((key g w).1 h) (Set.not_nonempty_iff_eq_empty.2 hr)
+  simp only [mem_truthSet_toPartialProp, realize_neg, satt_neg, satt_indef_atom₁,
+    realize_indef_atom₁, Set.mem_ofPred_eq, Set.not_nonempty_iff_eq_empty]
+  exact ⟨And.right, fun hr ↦ ⟨fun h ↦ absurd hr h.ne_empty, hr⟩⟩
 
 /-- (19) *We don't have a cat. # She is a tabby.* Updating the null context with a negated
 indefinite and then a pronoun on its variable leaves no point, once some world has no `F` that is
@@ -845,13 +870,11 @@ theorem truthSet_bathroom [Nonempty E] :
     rw [update_neg_neg, satt_iota, update_atom₁_of_subset fun i hi ↦ by
       rw [update_indef_atom₁] at hi; exact valuedIn_mono inf_le_left hi.2]
     exact ⟨rfl, fun h ↦ satt_atom₁.2 (ne_bot_of_realize_atom₁ h)⟩
-  have hex : ∀ (g : Assign V Δ E) w, (indef x (atom₁ F x) (atom₁ G x)).Realize I g w ↔
-      (extension I F w ∩ extension I G w).Nonempty := fun g w ↦ by
-    simp [Set.Nonempty]
   ext ⟨g, w⟩
   simp only [mem_truthSet_toPartialProp, satt_disj, hι, and_true, satt_neg, satt_indef,
-    satt_conj, satt_atom₁, realize_disj, realize_neg, realize_conj, realize_iota, hex,
-    Set.mem_union, Set.mem_ofPred_eq, mem_valuedIn, ← Set.not_nonempty_iff_eq_empty]
+    satt_conj, satt_atom₁, realize_disj, realize_neg, realize_conj, realize_iota,
+    realize_indef_atom₁, Set.mem_union, Set.mem_ofPred_eq, mem_valuedIn,
+    ← Set.not_nonempty_iff_eq_empty]
   simp only [show ∃ g' : Assign V Δ E, g' x ≠ ⊥ ∧ g' x ≠ ⊥ from ⟨⟨fun _ ↦ e, fun _ _ ↦ ⊥⟩, by simp⟩,
     true_and]
   obtain hgx | ⟨b, hgx⟩ := (em (g x = ⊥)).imp_right Flat.ne_bot_iff_exists.1
@@ -871,6 +894,17 @@ theorem truthSet_bathroom [Nonempty E] :
       · exact ⟨fun a hF hG ↦ (hA a hF hG).elim, .inl hA⟩
       · exact ⟨fun _ _ _ ↦ hFG, .inr ⟨hFG.1, hH⟩⟩
 
+/-- (16-a) *Either there isn't a bathroom, or it is upstairs*, `¬ɜx(Fx, Gx) ∨ ιx(⊤x, Hx)`, is
+felicitous in the null context: the pronoun's local context is the update with the doubly
+negated indefinite, which values `x` throughout (p. 1105). -/
+theorem felicitous_bathroom [Nonempty W] [Nonempty E] : Felicitous I .asymmetric Set.univ
+    (disj (neg (indef x (atom₁ F x) (atom₁ G x))) (iota x (top x) (atom₁ H x)) :
+      Formula L V Δ) := by
+  obtain ⟨w⟩ := ‹Nonempty W›
+  obtain ⟨g, hg⟩ := exists_satt_indef_atom₁ (I := I) (x := x) F G Set.univ w
+  exact ⟨(g, w), trivial, satt_disj.2
+    ⟨hg, by rw [update_neg_neg]; exact satt_iota_top_after_indef_atom₁ F G H⟩⟩
+
 end Classicality
 
 /-! ### Order (§5.5) -/
@@ -878,6 +912,15 @@ end Classicality
 section Order
 
 variable (S M C : L.Relations 1) (x : V)
+
+/-- With asymmetric local contexts (15-a) *A man came in and he sat down*,
+`ɜx(Mx, Cx) & ιx(⊤x, Sx)`, is felicitous in the null context: the pronoun's local context is the
+update with the indefinite, which values `x` throughout (p. 1105). -/
+theorem felicitous_ex15a_asymmetric [Nonempty W] [Nonempty E] : Felicitous I .asymmetric Set.univ
+    (conj (indef x (atom₁ M x) (atom₁ C x)) (iota x (top x) (atom₁ S x)) : Formula L V Δ) := by
+  obtain ⟨w⟩ := ‹Nonempty W›
+  obtain ⟨g, hg⟩ := exists_satt_indef_atom₁ (I := I) (x := x) M C Set.univ w
+  exact ⟨(g, w), trivial, hg, satt_iota_top_after_indef_atom₁ M C S⟩
 
 /-- (15-b) *He sat down and a man came in*, `ιx(⊤x, Sx) & ɜx(Mx, Cx)`. -/
 def ex15b : Formula L V Δ := conj (iota x (top x) (atom₁ S x)) (indef x (atom₁ M x) (atom₁ C x))
