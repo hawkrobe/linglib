@@ -179,7 +179,6 @@ import Linglib.Core.Probability.Kernel.OfWeights
 import Linglib.Core.Probability.Kernel.Posterior
 import Linglib.Core.Probability.Uniform
 import Linglib.Core.Probability.UniformOn
-import Linglib.Core.Probability.LikelihoodRatio
 import Linglib.Core.Probability.PolyaUrn
 import Linglib.Core.Relation.ReflTransGen
 import Linglib.Core.RingTheory.Bialgebra.Basic

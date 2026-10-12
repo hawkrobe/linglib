@@ -98,9 +98,9 @@ theorem averageDifficulty_of_lossless {mp : MemoryProcess C R W} (h : mp.IsLossl
     rw [← Measure.snd_apply (.singleton c), joint, Measure.snd_map_swap, Measure.fst_compProd]
   have hcond (c : C) (w : W) (hc : π.real {c} ≠ 0) :
       ((joint L π)[|Prod.snd ⁻¹' {c}]).real (Prod.fst ⁻¹' {w}) = (L c).real {w} := by
-    rw [measureReal_def, cond_real_apply _ (measurable_snd (.singleton c)), Set.inter_comm,
-      ← Set.prod_eq, Set.singleton_prod_singleton, ← measureReal_def, joint_real_singleton, hsnd,
-      ← measureReal_def, mul_div_cancel_left₀ _ hc]
+    rw [cond_real_apply _ (measurable_snd (.singleton c)), Set.inter_comm, ← Set.prod_eq,
+      Set.singleton_prod_singleton, joint_real_singleton, measureReal_def _ (Prod.snd ⁻¹' {c}),
+      hsnd, ← measureReal_def, mul_div_cancel_left₀ _ hc]
   rw [condEntropy_eq_sum_negLog _ measurable_fst measurable_snd, MemoryProcess.averageDifficulty]
   simp only [integral_fintype, Integrable.of_finite,
     MemoryProcess.expectedSurprisal_eq_surprisal_of_lossless h, smul_eq_mul, ← Set.prod_eq,

@@ -208,8 +208,8 @@ theorem share_eq {α : ℝ} (hα : 0 < α) :
     · rw [Set.inter_eq_self_of_subset_right (Set.singleton_subset_iff.mpr (by exact h))]
     · rw [Set.inter_singleton_eq_empty.mpr (by exact h), measureReal_empty]
   simp only [hw]
-  rw [share, speaker, measureReal_def, cond_real_apply _ (Set.toFinite _).measurableSet,
-    ← measureReal_def, ← measureReal_def, hnum, hT, ← sum_measureReal_singleton,
+  rw [share, speaker, cond_real_apply _ (Set.toFinite _).measurableSet, hnum, hT,
+    ← sum_measureReal_singleton,
     ← Finset.sum_filter]
   split_ifs with h
   · simp only [speaker_dirac_zero_real_singleton hα.le, ← Finset.sum_div]

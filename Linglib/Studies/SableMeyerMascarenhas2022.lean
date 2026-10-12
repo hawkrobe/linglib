@@ -333,7 +333,7 @@ variable {W : Type*} [MeasurableSpace W] (μ : Measure W)
 
 /-- The Difference measure of confirmation, `D(h, e) = P(h|e) − P(h)`
 [crupi-fitelson-tentori-2008]. -/
-noncomputable def confirmationD (h e : Set W) : ℝ := (μ[|e] h).toReal - (μ h).toReal
+noncomputable def confirmationD (h e : Set W) : ℝ := μ[|e].real h - μ.real h
 
 variable {μ} {a b c d f : Set W}
 
@@ -344,8 +344,8 @@ theorem confirmationD_inter_eq_mul (hd : MeasurableSet d) (hab : IndepSet a b μ
     confirmationD μ (a ∩ b) d = (μ b).toReal * confirmationD μ a d := by
   have h1 : μ (d ∩ (a ∩ b)) = μ (d ∩ a) * μ b := by
     rw [inter_comm d a, ← hadb.measure_inter_eq_mul]; congr 1; ext; simp; tauto
-  simp only [confirmationD, cond_real_apply μ hd, h1, hab.measure_inter_eq_mul,
-    ENNReal.toReal_mul]
+  rw [confirmationD, confirmationD, cond_real_apply μ hd, cond_real_apply μ hd]
+  simp only [measureReal_def, h1, hab.measure_inter_eq_mul, ENNReal.toReal_mul]
   ring
 
 /-- `D(c, d) = 0` when `c` and `d` are independent: the hint is orthogonal to the second
@@ -354,8 +354,9 @@ theorem confirmationD_eq_zero (hd : MeasurableSet d) (hcd : IndepSet c d μ) (h0
     (hT : μ d ≠ ⊤) : confirmationD μ c d = 0 := by
   have h1 : μ (d ∩ c) = μ d * μ c := by rw [inter_comm, hcd.measure_inter_eq_mul, mul_comm]
   have h2 : (μ d).toReal ≠ 0 := ENNReal.toReal_ne_zero.2 ⟨h0, hT⟩
-  rw [confirmationD, cond_real_apply μ hd, h1, ENNReal.toReal_mul, mul_comm, mul_div_assoc,
-    div_self h2, mul_one, sub_self]
+  rw [confirmationD, cond_real_apply μ hd]
+  simp only [measureReal_def]
+  rw [h1, ENNReal.toReal_mul, mul_comm, mul_div_assoc, div_self h2, mul_one, sub_self]
 
 /-- The §5.4 asymmetry: a hint that confirms `a` confirms the conjunction `a ∧ b`. -/
 theorem confirmationD_inter_pos (hd : MeasurableSet d) (hab : IndepSet a b μ)

@@ -306,30 +306,33 @@ theorem cond_lt_iff_hContrary (ctx : Context W) [IsProbabilityMeasure ctx.prior]
   set μ := ctx.prior
   set H := ctx.topic
   have hHm : MeasurableSet H := ctx.topicMeasurable
-  have hcipH' := congrArg ENNReal.toReal
-    (show μ[|H] (a ∩ b) = μ[|H] a * μ[|H] b from (hcip true).measure_inter_eq_mul)
-  rw [ENNReal.toReal_mul, cond_real_apply μ hHm, cond_real_apply μ hHm,
-    cond_real_apply μ hHm] at hcipH'
-  have hcipNH' := congrArg ENNReal.toReal
-    (show μ[|Hᶜ] (a ∩ b) = μ[|Hᶜ] a * μ[|Hᶜ] b from (hcip false).measure_inter_eq_mul)
-  rw [ENNReal.toReal_mul, cond_real_apply μ hHm.compl, cond_real_apply μ hHm.compl,
-    cond_real_apply μ hHm.compl] at hcipNH'
+  have hsplit (e : Set W) : μ.real e = μ.real (H ∩ e) + μ.real (Hᶜ ∩ e) := by
+    rw [← measureReal_inter_add_sdiff (s := e) hHm, Set.sdiff_eq, Set.inter_comm e, Set.inter_comm e]
+  have hcip' (s : Set W) (hs : MeasurableSet s) (θ : Bool) (hθ : ctx.conditional θ = μ[|s]) :
+      μ.real (s ∩ (a ∩ b)) / μ.real s =
+        μ.real (s ∩ a) / μ.real s * (μ.real (s ∩ b) / μ.real s) := by
+    rw [← cond_real_apply μ hs, ← cond_real_apply μ hs, ← cond_real_apply μ hs, measureReal_def,
+      ← hθ, (hcip θ).measure_inter_eq_mul, ENNReal.toReal_mul, hθ, ← measureReal_def,
+      ← measureReal_def]
+  have hcipH' := hcip' H hHm true rfl
+  have hcipNH' := hcip' Hᶜ hHm.compl false rfl
   rw [← ENNReal.toReal_lt_toReal (measure_ne_top μ[|a] b) (measure_ne_top μ b),
-    cond_real_apply μ ham b, div_lt_iff₀ (ENNReal.toReal_pos ha0 (measure_ne_top μ a)),
-    ← real_total μ hHm a, ← real_total μ hHm b, ← real_total μ hHm (a ∩ b)]
-  set pH := (μ H).toReal
-  set pnH := (μ Hᶜ).toReal
-  set aH := (μ (H ∩ a)).toReal
-  set anH := (μ (Hᶜ ∩ a)).toReal
-  set bH := (μ (H ∩ b)).toReal
-  set bnH := (μ (Hᶜ ∩ b)).toReal
-  set abH := (μ (H ∩ (a ∩ b))).toReal
-  set abnH := (μ (Hᶜ ∩ (a ∩ b))).toReal
+    ← measureReal_def, ← measureReal_def, cond_real_apply μ ham b,
+    div_lt_iff₀ (show 0 < μ.real a from ENNReal.toReal_pos ha0 (measure_ne_top μ a)),
+    hsplit a, hsplit b,
+    hsplit (a ∩ b)]
+  set pH := μ.real H
+  set pnH := μ.real Hᶜ
+  set aH := μ.real (H ∩ a)
+  set anH := μ.real (Hᶜ ∩ a)
+  set bH := μ.real (H ∩ b)
+  set bnH := μ.real (Hᶜ ∩ b)
+  set abH := μ.real (H ∩ (a ∩ b))
+  set abnH := μ.real (Hᶜ ∩ (a ∩ b))
   have hpH : 0 < pH := ENNReal.toReal_pos hH (measure_ne_top μ _)
   have hpnH : 0 < pnH := ENNReal.toReal_pos hNH (measure_ne_top μ _)
   have hsum : pH + pnH = 1 := by
-    rw [← ENNReal.toReal_add (measure_ne_top _ _) (measure_ne_top _ _),
-      measure_add_measure_compl hHm, measure_univ, ENNReal.toReal_one]
+    rw [measureReal_add_measureReal_compl hHm, probReal_univ]
   have hcipH : abH * pH = aH * bH := by
     field_simp at hcipH'
     linear_combination hcipH'
