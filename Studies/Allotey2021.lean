@@ -4,7 +4,7 @@ public import Linglib.Fragments.Ga.Pronouns
 public import Linglib.Fragments.Ga.Verbs
 public import Linglib.Syntax.Category.Verb.Basic
 public import Linglib.Data.WALS.Features.F101A
-public import Linglib.Syntax.Minimalist.MinimalPronoun
+public import Linglib.Syntax.Binding.MinimalPronoun
 public import Linglib.Syntax.Control.Head
 public import Studies.Landau2013
 public import Linglib.Data.Examples.Allotey2021
@@ -69,7 +69,7 @@ comparison with [landau-2004]'s scale is stated for those two.
 
 namespace Allotey2021
 
-open Minimalist.MinimalPronoun Control Ga Ga.Pronouns
+open Binding.MinimalPronoun Control Ga Ga.Pronouns
 
 /-! ### Pronouns (Table 3) -/
 

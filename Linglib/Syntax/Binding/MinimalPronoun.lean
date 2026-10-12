@@ -49,7 +49,7 @@ minimal pronouns, Landau's two tiers, is in `Studies/Landau2015.lean`.
 
 @[expose] public section
 
-namespace Minimalist.MinimalPronoun
+namespace Binding.MinimalPronoun
 
 open DistributedMorphology
 
@@ -146,4 +146,4 @@ theorem exists_null_item_of_controlForm_eq_null {v : Vocabulary Form}
 
 end Vocabulary
 
-end Minimalist.MinimalPronoun
+end Binding.MinimalPronoun

@@ -1053,7 +1053,6 @@ import Linglib.Syntax.Minimalist.Economy.MinimalYield.Laurent
 import Linglib.Syntax.Minimalist.Economy.NoComplexityLoss
 import Linglib.Syntax.Minimalist.Ellipsis
 import Linglib.Syntax.Minimalist.LateMerger
-import Linglib.Syntax.Minimalist.LeftPeriphery
 import Linglib.Syntax.Minimalist.Linearization.Cyclic
 import Linglib.Syntax.Minimalist.Linearization.Externalization
 import Linglib.Syntax.Minimalist.Linearization.Replay
@@ -1062,8 +1061,6 @@ import Linglib.Syntax.Minimalist.Merge.External
 import Linglib.Syntax.Minimalist.Merge.Internal
 import Linglib.Syntax.Minimalist.Merge.Sideward
 import Linglib.Syntax.Minimalist.Merge.SyntacticObject
-import Linglib.Syntax.Minimalist.MinimalPronoun
-import Linglib.Syntax.Minimalist.Phi.Lattice
 import Linglib.Syntax.Minimalist.Probe.Basic
 import Linglib.Syntax.Minimalist.Probe.Phi
 import Linglib.Syntax.Minimalist.Probe.Profile

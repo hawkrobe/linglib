@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Syntax.Minimalist.MinimalPronoun
+public import Linglib.Syntax.Binding.MinimalPronoun
 public import Linglib.Fragments.Mixtec.SMPM.Pronouns
 public import Linglib.Fragments.Mixtec.SMPM.Verbs
 public import Linglib.Syntax.Control.Head
@@ -57,7 +57,7 @@ the language. Example numbers follow the manuscript version of the article.
 
 namespace Ostrove2026
 
-open Minimalist.MinimalPronoun
+open Binding.MinimalPronoun
 open scoped DistributedMorphology
 open Control
 open Mixtec.SMPM

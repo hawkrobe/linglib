@@ -9,7 +9,7 @@ public import Linglib.Syntax.Person.Features
 public import Linglib.Syntax.Person.System
 public import Linglib.Semantics.Plurality.NumberFeatures
 public import Studies.Harbour2014
-public import Linglib.Syntax.Minimalist.Phi.Lattice
+public import Linglib.Semantics.Plurality.FeatureAction
 public import Studies.Corbett2000
 public import Linglib.Syntax.Category.Pronoun.Basic
 public import Linglib.Fragments.Tamil.Pronouns
@@ -61,7 +61,7 @@ One other suffices for the person partition, whose four cells are fixed by the p
 speaker and the hearer, so the ontology is `Fin 3` and the third-person group is not modeled;
 every result is checked on this finite model. Lexical Complementarity applies once, after both
 features, not cyclically (appendix B.1.2.3). Pairwise addition is mathlib's `⊻`; `ominus` and
-`act` come from `Syntax/Minimalist/Phi/Lattice.lean`.
+`act` come from `Semantics/Plurality/FeatureAction.lean`.
 
 ## References
 
@@ -76,9 +76,9 @@ features, not cyclically (appendix B.1.2.3). Pairwise addition is mathlib's `⊻
 namespace Harbour2016
 
 open Finset
-open Minimalist.Phi.Lattice
+open Plurality.FeatureAction
 
-/-! ### The partition construction (over `Phi.Lattice`'s operators) -/
+/-! ### The partition construction (over `Plurality.FeatureAction`'s operators) -/
 
 section Construction
 variable {Ω : Type*} [DecidableEq Ω]

@@ -2,7 +2,7 @@ module
 
 public import Linglib.Data.Examples.BhattTakahashi2011
 public import Studies.Lechner2004
-public import Linglib.Syntax.Minimalist.Movement.HeimKennedy
+public import Linglib.Semantics.Degree.HeimKennedy
 public import Linglib.Syntax.Tree.Basic
 public import Linglib.Syntax.Command
 
@@ -55,7 +55,7 @@ against the rows rather than presupposed by their coding.
 
 namespace BhattTakahashi2011
 
-open Core.Order Minimalist PhraseStructure
+open Core.Order Degree PhraseStructure
 open PhraseStructure.Tree
 
 /-! ### The binding generalization (§2) -/

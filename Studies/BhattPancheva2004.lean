@@ -2,7 +2,7 @@ module
 
 public import Linglib.Data.Examples.BhattPancheva2004
 public import Studies.Heim2001
-public import Linglib.Syntax.Minimalist.Movement.HeimKennedy
+public import Linglib.Semantics.Degree.HeimKennedy
 public import Linglib.Syntax.Tree.Basic
 public import Linglib.Syntax.Command
 public import Linglib.Semantics.Quantification.Defs
@@ -31,7 +31,7 @@ clause into the second argument of the nonconservative *-er* and yield a contrad
 
 * LFs are category-free trees at the paper's bracketing, `PhraseStructure.Tree Unit String`, with
   non-branching and elided material written as one leaf; scope is `Branching.cCommandAt` and the
-  constraint `Minimalist.IsHeimKennedy` on it.
+  constraint `Degree.IsHeimKennedy` on it.
 * The comparative of (84) is `erSem`, proper inclusion of degree sets, and (85) is its value on
   [kennedy-1999]'s positive extents; Trace Conversion itself is not formalized, only the second
   argument it hands `-er`.
@@ -52,7 +52,7 @@ clause into the second argument of the nonconservative *-er* and yield a contrad
 
 namespace BhattPancheva2004
 
-open Core.Order Degree Minimalist Set PhraseStructure PhraseStructure.Tree
+open Core.Order Degree Set PhraseStructure PhraseStructure.Tree
 
 /-! ### The Heim–Kennedy constraint (Section 4.1) -/
 

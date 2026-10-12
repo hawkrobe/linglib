@@ -1,7 +1,7 @@
 module
 
 public import Mathlib.Tactic.DeriveFintype
-public import Linglib.Syntax.Minimalist.Phi.Lattice
+public import Linglib.Semantics.Plurality.FeatureAction
 public import Linglib.Data.Examples.Toosarvandani2023
 
 /-!
@@ -32,7 +32,7 @@ condition on Agree behind the person-case constraint (86) compares them together
 ## Implementation notes
 
 Individuals are a finite type and a group a nonempty finite set of atoms, the join being
-union, as in `Syntax/Minimalist/Phi/Lattice.lean`, where the composition and complementarity
+union, as in `Semantics/Plurality/FeatureAction.lean`, where the composition and complementarity
 lemmas live; a feature's atoms are a `Finset`, with the speaker and addressee among the
 elders, (58a). Context-dependence, (54), is not modelled: the associate relation is left to
 the context. The person-based constraint is absolute in Zapotec while (86) derives a relative
@@ -57,7 +57,7 @@ data of (77)–(81) and the English context-dependence examples of (16)–(18) a
 
 namespace Toosarvandani2023
 
-open Minimalist.Phi.Lattice Finset
+open Plurality.FeatureAction Finset
 open scoped FinsetFamily
 
 /-! ### Features and their composition (section 3) -/

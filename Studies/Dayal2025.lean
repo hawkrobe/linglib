@@ -7,7 +7,7 @@ public import Linglib.Fragments.English.Verbs.Inventory
 public import Linglib.Fragments.HindiUrdu.Particles
 public import Linglib.Fragments.Japanese.Particles
 public import Linglib.Semantics.Questions.Exhaustivity
-public import Linglib.Syntax.Minimalist.LeftPeriphery
+public import Linglib.Semantics.Presupposition.Verb
 
 /-!
 # Dayal (2025): The interrogative left periphery
@@ -70,8 +70,77 @@ lacks. Question particles sit at the layer their embedding distribution shows.
 
 namespace Dayal2025
 
-open Minimalist Question Clause
+open Question Clause
 open English English.Particles HindiUrdu.Particles Japanese.Particles English.Verbs
+
+/-! ### The left periphery
+
+The WH-feature on C, the three layers ordered by height, and the classes of embedding predicates
+by the largest layer they select. -/
+
+/-- The WH-feature on C is interrogative, declarative, or unspecified with typing delayed to a
+higher layer (Hindi-Urdu polar clauses, [dayal-2025] §4.4). -/
+inductive WHFeature where
+  | plusWH
+  | minusWH
+  | alphaWH
+  deriving DecidableEq, Repr, Fintype
+
+/-- The interrogative left periphery has three layers, clause typing at C, centering at PerspP,
+and the speech act at SAP. -/
+inductive PeripheryLayer where
+  | cp
+  | perspP
+  | sap
+  deriving DecidableEq, Repr, Fintype
+
+/-- The height of a layer in the periphery. -/
+def PeripheryLayer.height : PeripheryLayer → ℕ
+  | .cp => 0
+  | .perspP => 1
+  | .sap => 2
+
+/-- Layers ordered by height. -/
+instance : LinearOrder PeripheryLayer := LinearOrder.lift' PeripheryLayer.height (by decide)
+
+/-- Embedding predicates are classed by the largest left-peripheral structure they select
+([dayal-2025] §1.2). Uninterrogatives take no interrogative; rogatives take CP only
+(*depend on*, *investigate*), PerspP (*wonder*, *want to know*) or SAP (*ask*); responsives
+(*know*, *remember*, *forget*) take CP and, where their meaning leaves the center's ignorance
+open, PerspP. -/
+inductive SelectionClass where
+  | uninterrogative
+  | rogativeCP
+  | rogativePerspP
+  | rogativeSAP
+  | responsive
+  deriving DecidableEq, Repr, Fintype
+
+/-- The largest layer a class selects. -/
+def SelectionClass.layer : SelectionClass → Option PeripheryLayer
+  | .uninterrogative => none
+  | .rogativeCP => some .cp
+  | .rogativePerspP => some .perspP
+  | .rogativeSAP => some .sap
+  | .responsive => some .perspP
+
+/-- The selection class of a lexical entry. Question-taking factives are responsive,
+non-veridical doxastic attitudes uninterrogative, question-taking speech-act verbs select SAP,
+opaque question-taking verbs PerspP, and other question-taking verbs CP. -/
+def deriveSelectionClass (v : _root_.Verb) : SelectionClass :=
+  if ¬ v.TakesQuestion then .uninterrogative
+  else if v.IsFactive then .responsive
+  else match v.attitude with
+  | some (.doxastic .nonVeridical) => .uninterrogative
+  | _ =>
+    if v.speechActVerb && citationQuestion v then .rogativeSAP
+    else if v.opaqueContext && citationQuestion v then .rogativePerspP
+    else if citationQuestion v then .rogativeCP
+    else .uninterrogative
+where
+  /-- The basic frame is an embedded question. -/
+  citationQuestion (v : _root_.Verb) : Bool :=
+    decide (∃ fr ∈ v.valency.frames.head?, ∃ t, t.IsInterrogative ∧ fr.hasType t)
 
 /-! ### The three layers (7), (20) -/
 
