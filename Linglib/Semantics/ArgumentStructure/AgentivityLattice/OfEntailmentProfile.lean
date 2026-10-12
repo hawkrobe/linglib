@@ -19,8 +19,8 @@ subject wherever it strictly dominates.
 
 * `Agentivity.Feature.toProtoRole`: the agentivity features as Dowty's entailments.
 * `EntailmentProfile.toAgentivity`: the agentivity of a profile.
-* `PersistenceLevel.fromPatientProfile`: a persistence level read off the Proto-Patient
-  entailments.
+* `EntailmentProfile.Admits`: Grimm's correspondences between Proto-Patient entailments and
+  persistence.
 
 ## Main results
 
@@ -30,9 +30,8 @@ subject wherever it strictly dominates.
 
 ## Implementation notes
 
-Grimm states the persistence counterparts of Dowty's Proto-Patient entailments only in prose, so
-`fromPatientProfile` is an approximation by cases, with incremental themehood telling creation
-from destruction among the dependently existing.
+Grimm states the persistence counterparts of Dowty's Proto-Patient entailments as two constraints,
+not as a function, so a profile is related to the levels it admits rather than mapped to one.
 
 ## References
 
@@ -103,15 +102,15 @@ theorem outranks_of_lattice_dominance {subj obj : EntailmentProfile}
   .inl (Finset.ssubset_def.2 ⟨protoAgent_subset_iff.2 ⟨hlt.subset, hie⟩,
     fun h ↦ hlt.not_subset (protoAgent_subset_iff.1 h).1⟩)
 
-/-- A persistence level read off the Proto-Patient entailments: created if dependently existing
-and an incremental theme, destroyed or consumed if one of these, changed but persisting under a
-change of state, unchanged if causally affected or stationary, and otherwise not entailed to
-exist. -/
-def PersistenceLevel.fromPatientProfile (p : EntailmentProfile) : PersistenceLevel :=
-  if .dependentExistence ∈ p ∧ .incrementalTheme ∈ p then .exPersEnd
-  else if .dependentExistence ∈ p ∨ .incrementalTheme ∈ p then .exPersBeginning
-  else if .changeOfState ∈ p then .quPersBeginning
-  else if .causallyAffected ∈ p ∨ .stationary ∈ p then .totalPersistence
-  else .totalNonPersistence
+/-- A profile admits a persistence level when the level respects Grimm's two correspondences with
+Dowty's Proto-Patient entailments: an argument entailed to change state is not entailed to persist
+qualitatively at the end ([grimm-2011] p.522), and one whose existence depends on the event,
+created, destroyed or not entailed to exist, does not persist existentially at both ends
+(p.524). -/
+def EntailmentProfile.Admits (p : EntailmentProfile) (l : PersistenceLevel) : Prop :=
+  (.changeOfState ∈ p → .quPE ∉ l) ∧ (.dependentExistence ∈ p → ¬ (.exPB ∈ l ∧ .exPE ∈ l))
+
+instance (p : EntailmentProfile) : DecidablePred p.Admits := fun _ ↦
+  inferInstanceAs (Decidable (_ ∧ _))
 
 end ArgumentStructure

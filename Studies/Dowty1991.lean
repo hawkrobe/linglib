@@ -1,6 +1,5 @@
 module
 
-public import Linglib.Semantics.ArgumentStructure.AgentivityLattice.OfEntailmentProfile
 public import Linglib.Semantics.ArgumentStructure.RoleList
 public import Linglib.Data.Examples.Dowty1991
 
@@ -25,7 +24,7 @@ single-entailment exemplars of (29) and (30) to the three verb classes of (64).
   break class does not alternate.
 * `intransClass_unergative`, `intransClass_unaccusative`: the pure cells of Table 1.
 * `primary_transitives_match_templates`: the substrate's class templates agree with the paper's
-  attributions, save at three deliberate divergences.
+  attributions, save at two deliberate divergences.
 
 ## Implementation notes
 
@@ -361,14 +360,12 @@ theorem break_object_it_divergence :
       Matches Examples.breakObject (insert .incrementalTheme accomplishmentObjectProfile) := by
   decide
 
-/-- (30e) counts destruction as dependent existence, which the paper never states for the
-object of *eat*; the consumption template omits it because adding it moves the object from
-the consumption to the creation persistence level. -/
-theorem eat_object_de_tension :
+/-- (30e) counts destruction as dependent existence, which the paper never states for the object
+of *eat*: the row leaves it open, so the consumption template and its extension by dependent
+existence both agree with it. -/
+theorem eat_object_de_open :
     Matches Examples.eatObject consumptionObject ∧
-      PersistenceLevel.fromPatientProfile consumptionObject = .exPersBeginning ∧
-      PersistenceLevel.fromPatientProfile
-        (insert .dependentExistence consumptionObject) = .exPersEnd := by
+      Matches Examples.eatObject (insert .dependentExistence consumptionObject) := by
   decide
 
 end Dowty1991
