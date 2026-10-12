@@ -3,8 +3,8 @@ module
 public import Linglib.Data.Examples.ArregiPietraszko2021
 public import Linglib.Data.Forms.ArregiPietraszko2021
 public import Linglib.Fragments.Ndebele.Phonology
-public import Linglib.Morphology.Word.Tree
 public import Linglib.Phonology.Hiatus
+public import Linglib.Studies.HarizanovGribanova2019
 public import Linglib.Studies.Pollock1989
 
 /-!
@@ -20,14 +20,15 @@ half without the verb, is exponed as *do*.
 
 ## Main statements
 
-* `HeadChain.toList_mvalue_ofHeads_after`, `HeadChain.toList_mvalue_ofHeads_before`: the Mirror
-  Principle, the terminals of a complex head ordered outward as its heads are ordered upward.
+* `HeadChain.terminals_ofHeads`: the Mirror Principle, the terminals of a complex head ordered
+  as its heads are, each attached outside the complex head of the heads below it.
 * `doSupport_iff`: do-support arises exactly where the chain of a strong verb splits, whether
   the complex head is otherwise pronounced low or high.
 * `directionality_no_correlation`: under inversion English and Monnese both have do-support,
   though elsewhere the English verb is pronounced low and the Monnese verb high.
-* `mirror_class9`: regular vowel coalescence derives the Ndebele class 9 relative prefix from
-  the Mirror-obeying complex head and not from the opposite bracketing of the same terminals.
+* `mirror_class9`, `amalgamation_class9`: regular vowel coalescence derives the Ndebele class 9
+  relative prefix from the Mirror-obeying complex head and not from another bracketing of the
+  same terminals, such as amalgamation builds when a head Raises into one that Lowers.
 
 ## Implementation notes
 
@@ -38,13 +39,13 @@ half without the verb, is exponed as *do*.
   of splitting; Split-by-Intervention is a setting.
 * A language's settings record what the paper's data settle, so the form of a verb with an orphan
   T is absent where no do-support or fronting datum shows it.
+* An M-value is an element of the free magma over the terminals, each product listing the lower
+  constituent first. The operation leaves linear order open, and only the Ndebele prefix is
+  linearized.
 
 ## TODO
 
 * Negative Merger, the postsyntactic rule that adds contracted negation outside the complex head.
-* The comparison with Harizanov and Gribanova's amalgamation, where a raising step feeding a
-  lowering step builds a complex head that violates the Mirror Principle:
-  `HarizanovGribanova2019.Amalgam` lists the members of a complex head without their bracketing.
 
 ## References
 
@@ -58,7 +59,7 @@ half without the verb, is exponed as *do*.
 
 namespace ArregiPietraszko2021
 
-open Morphology Morphology.Word Phonology
+open Phonology FreeMagma
 
 /-! ### Head chains -/
 
@@ -72,49 +73,44 @@ inductive Head
 complex head over morphological terminals. -/
 structure HeadChain where
   positions : List Head
-  mvalue : Tree Head
+  mvalue : FreeMagma Head
 
 namespace HeadChain
 
-/-- Generalized Head Movement relates a head to the chain of its complement's head. The head
-joins the chain, and its morphological terminal attaches outside the shared M-value. -/
-def genHM (side : Morph.Side) (x : Head) (c : HeadChain) : HeadChain :=
-  ⟨c.positions ++ [x], c.mvalue.attach side x⟩
+/-- The morphological terminals of the M-value, lowest first. -/
+def terminals (c : HeadChain) : List Head := (FreeMagma.lift FreeMonoid.of c.mvalue).toList
+
+/-- Generalized Head Movement, GenHM, relates a head to the chain of its complement's head. The
+head joins the chain, and its morphological terminal attaches outside the shared M-value. -/
+def extend (x : Head) (c : HeadChain) : HeadChain := ⟨c.positions ++ [x], c.mvalue * of x⟩
 
 /-- The chain that cyclic GenHM builds from `bottom` up through the heads `above`. -/
-def ofHeads (side : Morph.Side) (bottom : Head) (above : List Head) : HeadChain :=
-  ⟨bottom :: above, .attachAll bottom (above.map (side, ·))⟩
+def ofHeads (bottom : Head) (above : List Head) : HeadChain :=
+  ⟨bottom :: above, above.foldl (· * of ·) (of bottom)⟩
 
-theorem genHM_ofHeads (side : Morph.Side) (bottom x : Head) (above : List Head) :
-    (ofHeads side bottom above).genHM side x = ofHeads side bottom (above ++ [x]) := by
-  simp [genHM, ofHeads, Tree.attachAll_concat]
+theorem extend_ofHeads (bottom x : Head) (above : List Head) :
+    (ofHeads bottom above).extend x = ofHeads bottom (above ++ [x]) := by
+  simp [extend, ofHeads]
 
-/-- By the **Mirror Principle**, the suffixal terminals of a complex head follow the root in the
-order of their heads. -/
-theorem toList_mvalue_ofHeads_after (bottom : Head) (above : List Head) :
-    (ofHeads .after bottom above).mvalue.toList = bottom :: above := by
-  simp [ofHeads, Tree.toList_attachAll, List.filter_map, Function.comp_def]
-
-/-- By the **Mirror Principle**, the prefixal terminals of a complex head precede the root in the
-reverse of the order of their heads. -/
-theorem toList_mvalue_ofHeads_before (bottom : Head) (above : List Head) :
-    (ofHeads .before bottom above).mvalue.toList = above.reverse ++ [bottom] := by
-  simp [ofHeads, Tree.toList_attachAll, List.filter_map, Function.comp_def]
-
-theorem mem_toList_mvalue_ofHeads {side : Morph.Side} {bottom x : Head} {above : List Head} :
-    x ∈ (ofHeads side bottom above).mvalue.toList ↔ x ∈ bottom :: above := by
-  cases side <;> simp [toList_mvalue_ofHeads_before, toList_mvalue_ofHeads_after, or_comm]
+/-- By the **Mirror Principle**, the terminals of a complex head are ordered as its heads are. -/
+theorem terminals_ofHeads (bottom : Head) (above : List Head) :
+    (ofHeads bottom above).terminals = bottom :: above := by
+  suffices ∀ m : FreeMagma Head, (FreeMagma.lift FreeMonoid.of (above.foldl (· * of ·) m)).toList =
+      (FreeMagma.lift FreeMonoid.of m).toList ++ above from this (of bottom)
+  induction above with
+  | nil => simp
+  | cons x above ih => intro m; simp [ih]
 
 /-- Orphan Assignment marks a morphological terminal in a chain that does not contain its
 syntactic terminal. -/
-def Orphan (c : HeadChain) (x : Head) : Prop := x ∈ c.mvalue.toList ∧ x ∉ c.positions
+def Orphan (c : HeadChain) (x : Head) : Prop := x ∈ c.terminals ∧ x ∉ c.positions
 
 instance (c : HeadChain) (x : Head) : Decidable (c.Orphan x) := inferInstanceAs (Decidable (_ ∧ _))
 
 /-- GenHM creates no orphans. -/
-theorem not_orphan_ofHeads (side : Morph.Side) (bottom x : Head) (above : List Head) :
-    ¬ (ofHeads side bottom above).Orphan x :=
-  fun h ↦ h.2 (mem_toList_mvalue_ofHeads.mp h.1)
+theorem not_orphan_ofHeads (bottom x : Head) (above : List Head) :
+    ¬ (ofHeads bottom above).Orphan x := by
+  rw [Orphan, terminals_ofHeads]; exact fun h ↦ h.2 h.1
 
 /-- Head Chain Pronunciation delinks every position of a chain but its highest strong one, or
 its highest if none is strong. -/
@@ -137,9 +133,9 @@ theorem pronounced_of_forall_not_mem {strong : Finset Head} {c : HeadChain}
 
 /-- A chain extended by a strong head is pronounced there, wherever it was pronounced before:
 downward displacement feeds upward displacement. -/
-theorem pronounced_genHM_of_mem {strong : Finset Head} {x : Head} (hx : x ∈ strong)
-    (side : Morph.Side) (c : HeadChain) : (c.genHM side x).pronounced strong = some x := by
-  simp [pronounced, genHM, List.filter_append, hx]
+theorem pronounced_extend_of_mem {strong : Finset Head} {x : Head} (hx : x ∈ strong)
+    (c : HeadChain) : (c.extend x).pronounced strong = some x := by
+  simp [pronounced, extend, List.filter_append, hx]
 
 end HeadChain
 
@@ -265,7 +261,7 @@ structure Chains where
 it, a split leaves the verb alone in one half, and a fronted verb phrase carries a copy of the
 verb with the whole M-value. -/
 def derive (L : Language) (cx : Context) (verb : Head) : Chains :=
-  let c := HeadChain.ofHeads .after verb cx.above
+  let c := HeadChain.ofHeads verb cx.above
   let alone : HeadChain := ⟨[verb], c.mvalue⟩
   { verb := if Splits L cx verb then alone else c
     finite := if Splits L cx verb then ⟨cx.above, c.mvalue⟩ else c
@@ -282,7 +278,7 @@ def DoSupport (d : Chains) : Prop := d.finite.Orphan .V
 instance (d : Chains) : Decidable d.DoSupport := inferInstanceAs (Decidable (HeadChain.Orphan ..))
 
 /-- The verb's M-value contains C, which conditions the imperative allomorphs of the verb. -/
-def HasC (d : Chains) : Prop := .C ∈ d.verb.mvalue.toList
+def HasC (d : Chains) : Prop := .C ∈ d.verb.terminals
 
 instance (d : Chains) : Decidable d.HasC := inferInstanceAs (Decidable (_ ∈ _))
 
@@ -293,14 +289,15 @@ variable {L : Language} {cx : Context} {verb : Head}
 theorem splits_of_doSupport (h : (derive L cx verb).DoSupport) : Splits L cx verb := by
   by_contra hs
   simp only [Chains.DoSupport, derive, hs, ↓reduceIte] at h
-  exact HeadChain.not_orphan_ofHeads _ _ _ _ h
+  exact HeadChain.not_orphan_ofHeads _ _ _ h
 
 /-- Do-support arises exactly where the chain of a strong verb splits. -/
 theorem doSupport_iff (h : .V ∉ cx.above) : (derive L cx verb).DoSupport ↔ Splits L cx verb := by
   refine ⟨splits_of_doSupport, fun hs ↦ ?_⟩
   obtain rfl := hs.1
-  simpa [Chains.DoSupport, derive, hs, HeadChain.Orphan, HeadChain.toList_mvalue_ofHeads_after]
-    using h
+  have ht : (⟨cx.above, (HeadChain.ofHeads .V cx.above).mvalue⟩ : HeadChain).terminals =
+      .V :: cx.above := HeadChain.terminals_ofHeads .V cx.above
+  simp [Chains.DoSupport, derive, hs, HeadChain.Orphan, ht, h]
 
 /-- No auxiliary takes do-support. -/
 theorem not_doSupport_aux : ¬ (derive L cx .Aux).DoSupport :=
@@ -356,7 +353,7 @@ theorem imperatives :
       (∀ L, (derive L .toC .V).HasC ∧ ¬ (derive L .declarative .V).HasC) := by
   refine ⟨by decide, by decide, fun L ↦ ?_⟩
   simp [Chains.HasC, derive, Splits, Context.toC, Context.declarative,
-    HeadChain.toList_mvalue_ofHeads_after]
+    HeadChain.terminals_ofHeads]
 
 /-! ### The paper's examples -/
 
@@ -441,9 +438,8 @@ theorem pollock_finite (l : Pollock1989.Language) (v : Pollock1989.Verb) :
 
 /-! ### Ndebele relative prefixes -/
 
-/-- The chain of an Ndebele relative clause holds T, a null C, the augment in D and the linker,
-each a prefix on the complex head below it. -/
-def relative : HeadChain := .ofHeads .before .T [.C, .D, .Lnk]
+/-- The chain of an Ndebele relative clause holds T, a null C, the augment in D and the linker. -/
+def relative : HeadChain := .ofHeads .T [.C, .D, .Lnk]
 
 /-- The relative prefix is pronounced low, in the strong T below the subject, as the example
 with an overt subject shows. -/
@@ -468,13 +464,12 @@ def join (x y : List Segment) : List Segment :=
     else x ++ y
   | _, _ => x ++ y
 
-/-- Cyclic spell-out of a complex head spells out a constituent before the one containing it.
-Operations other than attachment, which GenHM does not perform, concatenate. -/
-def spellOut : Tree (List Segment) → List Segment
-  | .root x => x
-  | .prefixed x t => join x (spellOut t)
-  | .suffixed t x => join (spellOut t) x
-  | t => t.toList.flatten
+/-- `spellOut e` spells out a complex head of prefixes cyclically from the exponents `e` of its
+terminals, a constituent before the one containing it and the higher constituent before the
+lower. -/
+def spellOut (e : Head → List Segment) : FreeMagma Head → List Segment
+  | .of h => e h
+  | .mul x y => join (spellOut e y) (spellOut e x)
 
 /-- The segments the letters of the prefix table write. -/
 def letters : List (Char × Segment) :=
@@ -497,21 +492,51 @@ def exponents? (f : Data.Forms.Form) : Option (Head → List Segment) := do
 class, free of the hiatus its exponents present. -/
 theorem relative_prefixes :
     ∀ f ∈ Forms.all, ∃ e ∈ exponents? f,
-      some (spellOut (relative.mvalue.map e)) = transcribe? f.form.toList ∧
-        Hiatus.Free (spellOut (relative.mvalue.map e)) ∧
-        ¬ Hiatus.Free (relative.mvalue.map e).toList.flatten := by
+      some (spellOut e relative.mvalue) = transcribe? f.form.toList ∧
+        Hiatus.Free (spellOut e relative.mvalue) ∧
+        ¬ Hiatus.Free (relative.terminals.reverse.flatMap e) := by
   decide +kernel
 
 /-- The same terminals in the same order with the opposite bracketing, the linker innermost. -/
-def nonMirror : Tree Head := .attachAll .Lnk [(.after, .D), (.after, .C), (.after, .T)]
+def nonMirror : FreeMagma Head := of .T * (of .C * (of .D * of .Lnk))
 
 /-- In class 9 the Mirror-obeying complex head spells out as the attested *e-* and the opposite
 bracketing of the same terminals as *i-*. -/
 theorem mirror_class9 :
-    nonMirror.toList = relative.mvalue.toList ∧
+    (FreeMagma.lift FreeMonoid.of nonMirror).toList = relative.terminals ∧
       ∀ f ∈ Forms.all, f.parameterId = "rel_cl9" → ∃ e ∈ exponents? f,
-        spellOut (relative.mvalue.map e) = [Ndebele.e] ∧
-          spellOut (nonMirror.map e) = [Ndebele.i] := by
+        spellOut e relative.mvalue = [Ndebele.e] ∧ spellOut e nonMirror = [Ndebele.i] := by
   decide +kernel
+
+/-! ### Amalgamation -/
+
+section Amalgamation
+
+open HarizanovGribanova2019
+
+/-- Harizanov and Gribanova's amalgamation builds the complex head of GenHM when each head
+Lowers, and another bracketing of the same terminals in the same order when a head Raises into a
+head that then Lowers: it allows the Mirror Principle and does not derive it. -/
+theorem amalgamation_bracketing (x y z : Head) :
+    amalgamateSpine [.single z none, .single y (some .lowering), .single x (some .lowering)] =
+        some [⟨z, (HeadChain.ofHeads z [y, x]).mvalue, none⟩] ∧
+      amalgamateSpine [.single z none, .single y (some .raising), .single x (some .lowering)] =
+        some [⟨z, of z * (of y * of x), none⟩] :=
+  ⟨rfl, rfl⟩
+
+/-- With C, D and the linker all Lowering, amalgamation builds the complex head of the Ndebele
+relative chain. With D Raising into the linker before the linker Lowers, it builds a complex
+head with the same terminals in the same order that spells out the class 9 prefix as *i-*. -/
+theorem amalgamation_class9 :
+    amalgamateSpine [.single .T none, .single .C (some .lowering), .single .D (some .lowering),
+        .single .Lnk (some .lowering)] = some [⟨.T, relative.mvalue, none⟩] ∧
+      ∃ a, amalgamateSpine [.single .T none, .single .C (some .lowering),
+          .single .D (some .raising), .single .Lnk (some .lowering)] = some [a] ∧
+        a.members = relative.terminals ∧ a.complex ≠ relative.mvalue ∧
+        ∀ f ∈ Forms.all, f.parameterId = "rel_cl9" → ∃ e ∈ exponents? f,
+          spellOut e a.complex = [Ndebele.i] :=
+  ⟨rfl, _, rfl, rfl, by decide, by decide +kernel⟩
+
+end Amalgamation
 
 end ArregiPietraszko2021

@@ -47,6 +47,10 @@
       [
         "diagnostic",
         "adverb"
+      ],
+      [
+        "verbPrecedes",
+        "true"
       ]
     ],
     "comment": "The finite verb precedes the VP adverb.",
@@ -104,6 +108,10 @@
       [
         "diagnostic",
         "adverb"
+      ],
+      [
+        "verbPrecedes",
+        "false"
       ]
     ],
     "comment": "The finite verb cannot follow the VP adverb.",
@@ -161,6 +169,10 @@
       [
         "diagnostic",
         "negation"
+      ],
+      [
+        "verbPrecedes",
+        "true"
       ]
     ],
     "comment": "The finite verb precedes negation.",
@@ -218,6 +230,10 @@
       [
         "diagnostic",
         "negation"
+      ],
+      [
+        "verbPrecedes",
+        "false"
       ]
     ],
     "comment": "The finite verb cannot follow negation.",
@@ -275,6 +291,10 @@
       [
         "diagnostic",
         "quantifier"
+      ],
+      [
+        "verbPrecedes",
+        "true"
       ]
     ],
     "comment": "The finite verb precedes the floating quantifier.",
@@ -332,6 +352,10 @@
       [
         "diagnostic",
         "quantifier"
+      ],
+      [
+        "verbPrecedes",
+        "false"
       ]
     ],
     "comment": "The finite verb cannot follow the floating quantifier.",
@@ -754,6 +778,10 @@
       [
         "diagnostic",
         "adverb"
+      ],
+      [
+        "verbPrecedes",
+        "true"
       ]
     ],
     "comment": "Verb second in a root clause: the finite verb precedes the adverb. The paper prints often and morgonen; (8b) and Vikner's (33c) have ofte and morgenen.",
@@ -831,6 +859,10 @@
       [
         "diagnostic",
         "adverb"
+      ],
+      [
+        "verbPrecedes",
+        "false"
       ]
     ],
     "comment": "No verb movement to C in the embedded clause: the finite verb follows the adverb.",
@@ -904,6 +936,10 @@
       [
         "diagnostic",
         "adverb"
+      ],
+      [
+        "verbPrecedes",
+        "false"
       ]
     ],
     "comment": "The embedded finite verb follows the adverb: no raising even to T.",
@@ -977,6 +1013,10 @@
       [
         "diagnostic",
         "adverb"
+      ],
+      [
+        "verbPrecedes",
+        "true"
       ]
     ],
     "comment": "The embedded finite verb cannot precede the adverb.",
@@ -1050,6 +1090,10 @@
       [
         "diagnostic",
         "negation"
+      ],
+      [
+        "verbPrecedes",
+        "false"
       ]
     ],
     "comment": "The embedded finite verb follows negation. The paper's translation line repeats that of (9a).",
@@ -1123,6 +1167,10 @@
       [
         "diagnostic",
         "negation"
+      ],
+      [
+        "verbPrecedes",
+        "true"
       ]
     ],
     "comment": "The embedded finite verb cannot precede negation.",
@@ -1217,6 +1265,10 @@
       [
         "diagnostic",
         "adverb"
+      ],
+      [
+        "verbPrecedes",
+        "false"
       ]
     ],
     "comment": "No low adverb between the finite verb and the object: the verb is below T.",
@@ -1274,6 +1326,10 @@
       [
         "diagnostic",
         "quantifier"
+      ],
+      [
+        "verbPrecedes",
+        "false"
       ]
     ],
     "comment": "No floating quantifier between the finite verb and the object.",

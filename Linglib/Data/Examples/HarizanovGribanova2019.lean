@@ -26,7 +26,7 @@ def ex2a : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("section", "2.1"), ("phenomenon", "finiteVerbPlacement"), ("diagnostic", "adverb")] }
+    paperFeatures := [("section", "2.1"), ("phenomenon", "finiteVerbPlacement"), ("diagnostic", "adverb"), ("verbPrecedes", "true")] }
 
 def ex2b : Datum :=
   { id := "harizanovgribanova2019_ex2b"
@@ -39,7 +39,7 @@ def ex2b : Datum :=
     judgment := .ungrammatical
     alternatives := []
     readings := []
-    paperFeatures := [("section", "2.1"), ("phenomenon", "finiteVerbPlacement"), ("diagnostic", "adverb")] }
+    paperFeatures := [("section", "2.1"), ("phenomenon", "finiteVerbPlacement"), ("diagnostic", "adverb"), ("verbPrecedes", "false")] }
 
 def ex3a : Datum :=
   { id := "harizanovgribanova2019_ex3a"
@@ -52,7 +52,7 @@ def ex3a : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("section", "2.1"), ("phenomenon", "finiteVerbPlacement"), ("diagnostic", "negation")] }
+    paperFeatures := [("section", "2.1"), ("phenomenon", "finiteVerbPlacement"), ("diagnostic", "negation"), ("verbPrecedes", "true")] }
 
 def ex3b : Datum :=
   { id := "harizanovgribanova2019_ex3b"
@@ -65,7 +65,7 @@ def ex3b : Datum :=
     judgment := .ungrammatical
     alternatives := []
     readings := []
-    paperFeatures := [("section", "2.1"), ("phenomenon", "finiteVerbPlacement"), ("diagnostic", "negation")] }
+    paperFeatures := [("section", "2.1"), ("phenomenon", "finiteVerbPlacement"), ("diagnostic", "negation"), ("verbPrecedes", "false")] }
 
 def ex4a : Datum :=
   { id := "harizanovgribanova2019_ex4a"
@@ -78,7 +78,7 @@ def ex4a : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("section", "2.1"), ("phenomenon", "finiteVerbPlacement"), ("diagnostic", "quantifier")] }
+    paperFeatures := [("section", "2.1"), ("phenomenon", "finiteVerbPlacement"), ("diagnostic", "quantifier"), ("verbPrecedes", "true")] }
 
 def ex4b : Datum :=
   { id := "harizanovgribanova2019_ex4b"
@@ -91,7 +91,7 @@ def ex4b : Datum :=
     judgment := .ungrammatical
     alternatives := []
     readings := []
-    paperFeatures := [("section", "2.1"), ("phenomenon", "finiteVerbPlacement"), ("diagnostic", "quantifier")] }
+    paperFeatures := [("section", "2.1"), ("phenomenon", "finiteVerbPlacement"), ("diagnostic", "quantifier"), ("verbPrecedes", "false")] }
 
 def ex5a : Datum :=
   { id := "harizanovgribanova2019_ex5a"
@@ -195,7 +195,7 @@ def ex8a : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("section", "2.1"), ("phenomenon", "finiteVerbPlacement"), ("clause", "root"), ("diagnostic", "adverb")] }
+    paperFeatures := [("section", "2.1"), ("phenomenon", "finiteVerbPlacement"), ("clause", "root"), ("diagnostic", "adverb"), ("verbPrecedes", "true")] }
 
 def ex8b : Datum :=
   { id := "harizanovgribanova2019_ex8b"
@@ -208,7 +208,7 @@ def ex8b : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("section", "2.1"), ("phenomenon", "finiteVerbPlacement"), ("clause", "embedded"), ("diagnostic", "adverb")] }
+    paperFeatures := [("section", "2.1"), ("phenomenon", "finiteVerbPlacement"), ("clause", "embedded"), ("diagnostic", "adverb"), ("verbPrecedes", "false")] }
 
 def ex9a : Datum :=
   { id := "harizanovgribanova2019_ex9a"
@@ -221,7 +221,7 @@ def ex9a : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("section", "2.1"), ("phenomenon", "finiteVerbPlacement"), ("clause", "embedded"), ("diagnostic", "adverb")] }
+    paperFeatures := [("section", "2.1"), ("phenomenon", "finiteVerbPlacement"), ("clause", "embedded"), ("diagnostic", "adverb"), ("verbPrecedes", "false")] }
 
 def ex9b : Datum :=
   { id := "harizanovgribanova2019_ex9b"
@@ -234,7 +234,7 @@ def ex9b : Datum :=
     judgment := .ungrammatical
     alternatives := []
     readings := []
-    paperFeatures := [("section", "2.1"), ("phenomenon", "finiteVerbPlacement"), ("clause", "embedded"), ("diagnostic", "adverb")] }
+    paperFeatures := [("section", "2.1"), ("phenomenon", "finiteVerbPlacement"), ("clause", "embedded"), ("diagnostic", "adverb"), ("verbPrecedes", "true")] }
 
 def ex10a : Datum :=
   { id := "harizanovgribanova2019_ex10a"
@@ -247,7 +247,7 @@ def ex10a : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("section", "2.1"), ("phenomenon", "finiteVerbPlacement"), ("clause", "embedded"), ("diagnostic", "negation")] }
+    paperFeatures := [("section", "2.1"), ("phenomenon", "finiteVerbPlacement"), ("clause", "embedded"), ("diagnostic", "negation"), ("verbPrecedes", "false")] }
 
 def ex10b : Datum :=
   { id := "harizanovgribanova2019_ex10b"
@@ -260,7 +260,7 @@ def ex10b : Datum :=
     judgment := .ungrammatical
     alternatives := []
     readings := []
-    paperFeatures := [("section", "2.1"), ("phenomenon", "finiteVerbPlacement"), ("clause", "embedded"), ("diagnostic", "negation")] }
+    paperFeatures := [("section", "2.1"), ("phenomenon", "finiteVerbPlacement"), ("clause", "embedded"), ("diagnostic", "negation"), ("verbPrecedes", "true")] }
 
 def ex11 : Datum :=
   { id := "harizanovgribanova2019_ex11"
@@ -286,7 +286,7 @@ def ex12 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("section", "2.1"), ("phenomenon", "finiteVerbPlacement"), ("diagnostic", "adverb")] }
+    paperFeatures := [("section", "2.1"), ("phenomenon", "finiteVerbPlacement"), ("diagnostic", "adverb"), ("verbPrecedes", "false")] }
 
 def ex13 : Datum :=
   { id := "harizanovgribanova2019_ex13"
@@ -299,7 +299,7 @@ def ex13 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("section", "2.1"), ("phenomenon", "finiteVerbPlacement"), ("diagnostic", "quantifier")] }
+    paperFeatures := [("section", "2.1"), ("phenomenon", "finiteVerbPlacement"), ("diagnostic", "quantifier"), ("verbPrecedes", "false")] }
 
 def ex14 : Datum :=
   { id := "harizanovgribanova2019_ex14"
