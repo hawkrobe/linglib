@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Semantics.Questions.Partition.Basic
-public import Linglib.Semantics.ArgumentStructure.LevinClass
+public import Linglib.Semantics.ArgumentStructure.LevinClass.Basic
 public import Linglib.Fragments.English.Verbs.Inventory
 public import Linglib.Data.Examples.LuPanDegen2025
 

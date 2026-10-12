@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Semantics.ArgumentStructure.Affectedness
-public import Linglib.Semantics.ArgumentStructure.DiathesisAlternation
+public import Linglib.Semantics.ArgumentStructure.LevinClass.Alternation
 public import Linglib.Data.Examples.Levin1993
 public import Linglib.Data.Examples.Beavers2010
 public import Mathlib.Order.Cover

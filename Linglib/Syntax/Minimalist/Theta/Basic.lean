@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Core.Algebra.RootedTree.Bud
-public import Linglib.Semantics.ArgumentStructure.ThetaRole
+public import Linglib.Semantics.ArgumentStructure.EntailmentProfile.ThetaRole
 
 /-!
 # Theta theory as a coloring algorithm

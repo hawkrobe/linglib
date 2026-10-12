@@ -1,6 +1,7 @@
 module
 
 public import Linglib.Semantics.ArgumentStructure.RoleList
+public import Linglib.Semantics.ArgumentStructure.EntailmentProfile.Selection
 public import Linglib.Semantics.Events.Path
 public import Linglib.Semantics.Aspect.Defs
 public import Mathlib.Data.Finset.Fold
@@ -10,12 +11,11 @@ public import Mathlib.Tactic.DeriveFintype
 # The verb classes of Levin 1993
 
 `LevinClass` enumerates the verb classes of Part II of Levin's *English Verb Classes and
-Alternations*, one constructor for each class page with a member list, with the section number
-and title the book prints for it. The classes' property tables are in
-`LevinClass/Properties.lean`, their member lists in `LevinClass/Members.lean` and their root
-entailments in `LevinTheory.lean`; the `levinClasses` field of a `Verb` entry carries the classes
-listing it. A class may also carry a default argument-structure template, from which a verb
-entry's argument profiles are derived.
+Alternations*, one constructor for each class page with a member list, with the section number and
+title the book prints for it. The classes' property tables are in `Properties.lean`, their member
+lists in `Members.lean` and their root entailments in `RootEntailment.lean`; the `levinClasses`
+field of a `Verb` entry carries the classes listing it. A class may also carry a default
+argument-structure template, from which a verb entry's argument profiles are derived.
 
 ## Implementation notes
 

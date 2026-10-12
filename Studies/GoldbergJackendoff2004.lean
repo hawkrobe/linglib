@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Semantics.ArgumentStructure.ThetaRole
+public import Linglib.Semantics.ArgumentStructure.EntailmentProfile.ThetaRole
 public import Linglib.Semantics.ArgumentStructure.Linking
 public import Linglib.Semantics.Events.Path
 public import Linglib.Semantics.Mereology

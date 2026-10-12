@@ -1,7 +1,7 @@
 module
 
 public import Mathlib.Data.List.MinMax
-public import Linglib.Semantics.ArgumentStructure.LevinClass
+public import Linglib.Semantics.ArgumentStructure.LevinClass.Basic
 public import Studies.Pesetsky1995
 
 /-!

@@ -3,8 +3,8 @@ module
 public import Linglib.Semantics.Root.Defs
 public import Linglib.Syntax.Category.Verb.Basic
 public import Linglib.Semantics.ArgumentStructure.EventStructure.Interpretation
-public import Linglib.Semantics.ArgumentStructure.EventStructure
-public import Linglib.Semantics.ArgumentStructure.LevinTheory
+public import Linglib.Semantics.ArgumentStructure.EventStructure.Basic
+public import Linglib.Semantics.ArgumentStructure.LevinClass.RootEntailment
 public import Linglib.Semantics.ArgumentStructure.LevinClass.Properties
 public import Linglib.Semantics.Presupposition.Iterative
 public import Linglib.Data.Examples.BeaversKoontzGarboden2020

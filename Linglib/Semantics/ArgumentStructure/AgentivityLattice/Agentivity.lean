@@ -23,8 +23,9 @@ the name agentivity lattice for its product with the persistence lattice.
 
 ## Implementation notes
 
-The persistence features are in `PersistenceLevel.lean`, their product in
-`ParticipantType.lean`, and the projection from Dowty's profiles in `Projection.lean`.
+The persistence features are `PersistenceLevel.Feature`, their product with the agentivity
+features is `ParticipantType`, and the projection from Dowty's profiles is
+`EntailmentProfile.toAgentivity`.
 
 ## References
 

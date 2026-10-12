@@ -1,7 +1,6 @@
 module
 
 public import Linglib.Syntax.Category.Verb.Basic
-public import Linglib.Semantics.ArgumentStructure.EntailmentProfile
 public import Linglib.Fragments.Indonesian.Phonology
 
 /-!
@@ -56,11 +55,11 @@ def HasAgent (c : TerClass) : Prop := c ≠ .stative
 
 instance : DecidablePred HasAgent := fun _ ↦ inferInstanceAs (Decidable (_ ≠ _))
 
-/-- An accidental *ter-* verb marks the action as not intended, and the other two readings
-leave volition open. -/
-def volitionality : TerClass → Volitionality
-  | .accidental => .nonvolitional
-  | .stative | .abilitative => .neutral
+/-- An accidental *ter-* verb marks the action as not intended; the other two readings leave
+volition open. -/
+def IsNonvolitional (c : TerClass) : Prop := c = .accidental
+
+instance : DecidablePred IsNonvolitional := fun _ ↦ inferInstanceAs (Decidable (_ = _))
 
 /-- An abilitative *ter-* verb keeps the suffix *-kan* or *-i* of its base, as in
 *terpecahkan* 'can be solved', which the other two readings drop. -/

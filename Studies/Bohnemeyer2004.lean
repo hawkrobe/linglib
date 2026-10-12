@@ -2,7 +2,7 @@ module
 
 public import Linglib.Fragments.Mayan.Yukatek.VerbClasses
 public import Linglib.Fragments.HindiUrdu.Case
-public import Linglib.Semantics.ArgumentStructure.EventStructure
+public import Linglib.Semantics.ArgumentStructure.EventStructure.Basic
 public import Linglib.Core.Relation.ReflTransGen
 public import Studies.Lucy1994
 public import Linglib.Syntax.Voice.Basic

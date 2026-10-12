@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Semantics.ArgumentStructure.ThetaRole
+public import Linglib.Semantics.ArgumentStructure.EntailmentProfile.ThetaRole
 
 /-!
 # Argument-structure templates
@@ -51,6 +51,34 @@ def RoleList.args (r : RoleList) : List EntailmentProfile :=
 /-! ### Named templates
 
 The consensus profiles of verb classes, which studies and fragments reference. -/
+
+/-- The activity template's subject, with volition, sentience, movement and independent existence.
+Transitive activities like *hit* add causation at the class level via root-contributed objects. -/
+def activitySubjectProfile : EntailmentProfile :=
+  {.volition, .sentience, .movement, .independentExistence}
+
+/-- The achievement template's subject, which moves, exists independently and undergoes a change of
+state. The movement entailment fits directed-motion achievements (*arrive*) but overgeneralizes to
+non-motion achievements (*recognize*, *notice*), whose subjects are sentient rather than moving;
+those pattern with the psych-state templates in `LevinClass.subjectProfile`. -/
+def achievementSubjectProfile : EntailmentProfile :=
+  {.movement, .independentExistence, .changeOfState}
+
+/-- The accomplishment template's subject, a full proto-agent with volition, sentience, causation,
+movement and independent existence. Dowty confirms it at the class level: the primary transitive
+verbs of [dowty-1991] (35) (*build*, *write*, *murder*, *eat*, *wash*) have subjects with "volition,
+sentience, causation, and movement" and no Proto-Patient entailments (p. 577); independent existence
+is the parenthesized (27e). -/
+def accomplishmentSubjectProfile : EntailmentProfile :=
+  {.volition, .sentience, .causation, .movement, .independentExistence}
+
+/-- The accomplishment template's object, a result patient that changes state and is causally
+affected. Dowty confirms it at the class level: the (35) objects have "change, causally affected"
+(p. 577); the remaining Proto-Patient entailments are hedged there as "(mostly) incremental theme,
+stationary, dependent existence", so incremental themes (*eat*, *build*) add IT per class or per
+verb — not all accomplishment objects measure the event. -/
+def accomplishmentObjectProfile : EntailmentProfile :=
+  {.changeOfState, .causallyAffected}
 
 /-- An experiencer is sentient with respect to the event but neither volitional nor causal
 ([dowty-1991] (38)), and exists independently, by Dowty's generalization that every verb entailing

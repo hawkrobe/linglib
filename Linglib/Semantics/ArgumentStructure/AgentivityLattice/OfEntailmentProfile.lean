@@ -1,7 +1,7 @@
 module
 
-public import Linglib.Semantics.ArgumentStructure.EntailmentProfile
-public import Linglib.Semantics.ArgumentStructure.ParticipantType
+public import Linglib.Semantics.ArgumentStructure.EntailmentProfile.Selection
+public import Linglib.Semantics.ArgumentStructure.AgentivityLattice.Basic
 public import Mathlib.Data.Finset.Preimage
 
 /-!

@@ -5,7 +5,7 @@ public import Studies.HeimLasnikMay1991
 public import Linglib.Syntax.Category.Verb.Reciprocal
 public import Linglib.Syntax.Category.Verb.Symmetric
 public import Linglib.Semantics.ArgumentStructure.RoleList
-public import Linglib.Semantics.ArgumentStructure.CaseRegion
+public import Linglib.Semantics.ArgumentStructure.AgentivityLattice.Case
 public import Linglib.Semantics.Plurality.Groups
 
 /-!

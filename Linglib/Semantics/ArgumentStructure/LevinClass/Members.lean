@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Semantics.ArgumentStructure.LevinClass
+public import Linglib.Semantics.ArgumentStructure.LevinClass.Basic
 public import Linglib.Data.VerbClasses.Levin1993
 
 /-!

@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Semantics.ArgumentStructure.Projection
+public import Linglib.Semantics.ArgumentStructure.AgentivityLattice.OfEntailmentProfile
 public import Linglib.Semantics.ArgumentStructure.RoleList
 public import Linglib.Data.Examples.Dowty1991
 

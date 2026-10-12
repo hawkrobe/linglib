@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Semantics.ArgumentStructure.LevinClass
+public import Linglib.Semantics.ArgumentStructure.LevinClass.Basic
 public import Linglib.Data.Examples.LevinRappaportHovav1995
 
 /-!

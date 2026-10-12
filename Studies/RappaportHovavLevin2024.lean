@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Semantics.ArgumentStructure.EnergySource
-public import Linglib.Semantics.ArgumentStructure.EventStructure
+public import Linglib.Semantics.ArgumentStructure.EventStructure.Basic
 public import Linglib.Data.Examples.RappaportHovavLevin2024
 
 /-!
