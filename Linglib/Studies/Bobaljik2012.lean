@@ -9,7 +9,7 @@ public import Linglib.Fragments.Slavic.Russian.Adjectives
 /-!
 # Universals in comparative morphology
 
-[bobaljik-2012] surveys comparative and superlative suppletion in some 300
+Bobaljik surveys comparative and superlative suppletion in some 300
 languages and finds three root patterns — AAA, ABB, ABC — with *ABA and
 *AAB unattested: the Comparative-Superlative Generalization (1)–(2), beside
 the Synthetic Superlative Generalization (3), the Root Suppletion
@@ -192,20 +192,22 @@ theorem latin_realize_abc : Setoid.ker (realize latinBonus) = Setoid.ker Paradig
 
 /-- Latin satisfies every condition the CSG2 derivation uses. -/
 theorem latin_wellformed :
-    Adjacent latinBonus ∧ Grounded latinBonus ∧ Antihomophonous latinBonus := by decide
+    Adjacent latinBonus ∧ Grounded latinBonus ∧ Exponence.Antihomophonous latinBonus := by decide
 
 /-- Latin is not terminal, and must not be, since terminal adjacent rules plateau at the
 comparative (`realize_const_of_terminal_adjacent`), which would exclude ABC. -/
 theorem latin_not_terminal : ¬ Terminal latinBonus := by decide
 
 /-- The superlative winner is the portmanteau *opt-*. -/
-theorem latin_superlative_portmanteau : winner latinBonus 2 = some ⟨"opt", 1, some 2⟩ := by
+theorem latin_superlative_portmanteau :
+    Exponence.selectBy SpanRule.threshold latinBonus 2 = some ⟨"opt", 1, some 2⟩ := by
   decide
 
 /-- ABC needs a portmanteau ((199), §5.3.1). Under adjacency, distinct comparative and
 superlative cells force a winner exponing more than the root. -/
 theorem latin_sprl_needs_portmanteau :
-    ∃ it ∈ latinBonus, winner latinBonus 2 = some it ∧ 0 < (it.spans : ℕ) :=
+    ∃ it ∈ latinBonus, Exponence.selectBy SpanRule.threshold latinBonus 2 = some it ∧
+      0 < (it.spans : ℕ) :=
   exists_portmanteau_of_ne (by decide) (by decide)
 
 /-! ### The unattested shapes
@@ -235,7 +237,7 @@ excludes. -/
 theorem welshAAB_not_grounded : ¬ Grounded welshAAB := by decide
 
 /-- By `realize_const_of_grounded`, the AAB cells refute Antihomophony and (202) together. -/
-theorem welshAAB_blocked : ¬ (Antihomophonous welshAAB ∧ Grounded welshAAB) :=
+theorem welshAAB_blocked : ¬ (Exponence.Antihomophonous welshAAB ∧ Grounded welshAAB) :=
   fun ⟨hAH, hG⟩ ↦
     absurd (realize_const_of_grounded hAH hG (by decide) (by decide)) (by decide)
 
@@ -246,7 +248,7 @@ def fakeAba : List (SpanRule 3 String) :=
 
 theorem fakeAba_realizes_aba : Setoid.ker (realize fakeAba) = Setoid.ker Paradigm.aba := by decide
 
-theorem fakeAba_not_antihomophonous : ¬ Antihomophonous fakeAba := by decide
+theorem fakeAba_not_antihomophonous : ¬ Exponence.Antihomophonous fakeAba := by decide
 
 /-! ### Periphrasis and locality (§3.3) -/
 
@@ -275,7 +277,8 @@ holds of the first type and fails for the second. -/
 /-- With a suppletive comparative, CSG1 holds of the superlative exactly when the superlative's
 adjective word contains the comparative head. -/
 theorem csg1_iff_one_le {F : Type*} {e : Fin 3 → Fin 3} (he : ∀ g, e g ≤ g)
-    {v : List (SpanRule 3 F)} (hAH : Antihomophonous v) (h : realize v (e 1) ≠ realize v (e 0)) :
+    {v : List (SpanRule 3 F)} (hAH : Exponence.Antihomophonous v)
+    (h : realize v (e 1) ≠ realize v (e 0)) :
     realize v (e 2) ≠ realize v (e 0) ↔ 1 ≤ e 2 := by
   have h0 : e 0 = 0 := Fin.le_zero_iff.mp (he 0)
   have h1 : e 1 = 1 := by
@@ -297,7 +300,7 @@ theorem greek_superlative : realizeIn (⟨1⟩ : Synthesis 3) greekBad 2 = some 
 /-- Russian BAD, with *xud-* under CMPR and *plox-* elsewhere. -/
 def russianBad : List (SpanRule 3 String) := [⟨"plox", 0, none⟩, ⟨"xud", 0, some 1⟩]
 
-theorem russianBad_antihomophonous : Antihomophonous russianBad := by decide
+theorem russianBad_antihomophonous : Exponence.Antihomophonous russianBad := by decide
 
 /-- The word extents of a synthetic comparative and a superlative embedding the positive, as in
 *samyj sux-oj* (107d). -/
@@ -339,10 +342,7 @@ lexicon does it with context-free entries storing successively larger
 constituents, competing under the Superset Principle. -/
 
 /-- The Latin entries as a nanosyntax lexicon. -/
-def latinBonusNS : List (SpanRule 3 String) :=
-  [⟨"bon", 0, none⟩, ⟨"mel", 1, none⟩, ⟨"opt", 2, none⟩]
-
-theorem latin_ns_contextFree : ContextFree latinBonusNS := by decide
+def latinBonusNS : List (SupersetRule 3 String) := [⟨"bon", 0⟩, ⟨"mel", 1⟩, ⟨"opt", 2⟩]
 
 /-- Superset spellout derives the same paradigm with no contextual
 apparatus. -/

@@ -6,29 +6,30 @@ public import Mathlib.Data.Finset.Card
 /-!
 # Feature-decomposition exponence and the Subset Principle
 
-The realizational engine for privative **feature-decomposition** accounts of
-syncretism ([caha-2009], [bobaljik-2012]): a cell space is decomposed into
-feature sets `D : Cell → Finset K`, and a rule applies where its feature
-specification is contained in the cell's — the **Subset Principle**. Competition
-is [halle-1997]'s feature counting: the applicable rule of greatest
-specification wins, as the shared core's `selectBy` on `feats.card`.
+In privative feature-decomposition accounts of syncretism, as Caha's and Bobaljik's, each cell
+is decomposed into a set of features `D : Cell → Finset K`, and a rule applies where its feature
+specification is contained in the cell's, the Subset Principle. Competition is Halle's feature
+counting, the applicable rule of greatest specification winning. Specifications ordered by
+inclusion need not be nested, so counting is specificity only when the applicable specifications
+are; the linear containment engine is the chain decomposition `Finset.Iic`
+(`Containment.pattern_toDecomposition`).
 
-Where the linear containment engine (`Exponence/Containment/`) orders spans by a
-single threshold, this engine orders arbitrary feature *sets* by inclusion, so
-`card`-maximization is genuine specificity only when the applicable
-specifications happen to be nested; the general soundness lives in the
-`IsWinner` strict-competition predicate rather than the core's linear
-`selectBy_isElsewhereWinner`. The linear engine embeds as the chain
-decomposition `chainDecomp i = Finset.Iic i` (`Exponence/Containment/Selection.lean`).
+## Main definitions
 
-## Main declarations
+* `Decomposition.Rule`: a feature specification with an exponent.
+* `Decomposition.pattern`: the exponent at each cell of the applicable rule with the most
+  features.
+* `Decomposition.IsWinner`: strict feature-count competition.
 
-* `Rule` — a feature specification plus an exponent; `Applies` is Subset
-  containment
-* `pattern` — the surface exponent at each cell, `selectBy` on `feats.card`
-* `IsWinner` — strict feature-count competition
-* `noABA` — the order-theoretic *ABA exclusion for a cell triple whose
-  decomposition nests the middle cell between the outer two
+## Main results
+
+* `Decomposition.noABA`: a cell nested between two others is realized by any rule winning both.
+
+## References
+
+* [bobaljik-2012]
+* [caha-2009]
+* [halle-1997]
 -/
 
 @[expose] public section
@@ -37,11 +38,11 @@ namespace Morphology.Decomposition
 
 open Morphology Morphology.Exponence
 
-variable {K : Type*} [DecidableEq K]
+variable {K : Type*}
 
-/-- A rule of exponence over a feature decomposition `D`: a feature
-specification and an exponent. Applicability is the **Subset Principle** — the
-rule's features are a subset of the cell's ([halle-1997]). -/
+/-- A rule of exponence over a feature decomposition `D` pairs a feature specification with an
+exponent. It applies where its features are a subset of the cell's, the **Subset Principle**
+([halle-1997]). -/
 structure Rule (Cell : Type*) (D : Cell → Finset K) (F : Type*) where
   /-- The rule's feature specification. -/
   feats : Finset K
@@ -54,44 +55,42 @@ variable {Cell F : Type*} {D : Cell → Finset K}
 instance : Exponence.Rule (Rule Cell D F) Cell F :=
   ⟨Rule.exponent, fun r c => r.feats ⊆ D c⟩
 
-instance : DecidableRel (Exponence.Applies : Rule Cell D F → Cell → Prop) :=
-  fun r c => inferInstanceAs (Decidable (r.feats ⊆ D c))
-
-omit [DecidableEq K] in
 @[simp] theorem applies_iff {r : Rule Cell D F} {c : Cell} :
     Exponence.Applies r c ↔ r.feats ⊆ D c := Iff.rfl
 
-/-- The specificity preorder: applicability-set inclusion, so the engine
-participates in the shared core's Elsewhere selection theory
-(`Exponence/Select.lean`). Unlike the linear containment order this is only a
-preorder — incomparable specifications (No Case Containment) are the point. -/
+/-- Rules are preordered by inclusion of their applicability sets, so the engine participates in
+the shared core's Elsewhere selection theory (`Exponence/Select.lean`). Unlike the linear
+containment order this is only a preorder, since incomparable specifications (No Case
+Containment) are the point. -/
 instance : Preorder (Rule Cell D F) := Exponence.toPreorder
 
-omit [DecidableEq K] in
-/-- Specificity unfolds to applicability-set inclusion: `r ≤ s` iff `r` applies
-wherever `s` does. -/
+/-- Specificity is applicability-set inclusion, so `r ≤ s` iff `s` applies wherever `r`
+does. -/
 theorem le_iff {r s : Rule Cell D F} :
     r ≤ s ↔ ∀ ⦃c⦄, Exponence.Applies r c → Exponence.Applies s c :=
   Iff.rfl
 
-/-- The surface pattern of a vocabulary: at each cell, the exponent of the most
-highly specified applicable rule — the Elsewhere Principle as `selectBy` on
-feature cardinality ([halle-1997]'s counting formulation). -/
-def pattern (v : List (Rule Cell D F)) (c : Cell) : Option F :=
-  (selectBy (fun r : Rule Cell D F => r.feats.card) v c).map Rule.exponent
-
-/-- Strict competition: `r` beats every other applicable rule on feature
-cardinality. -/
+/-- In strict competition `r` beats every other applicable rule on feature cardinality. -/
 def IsWinner (v : List (Rule Cell D F)) (c : Cell) (r : Rule Cell D F) : Prop :=
   r ∈ v ∧ r.feats ⊆ D c ∧
     ∀ s ∈ v, s.feats ⊆ D c → s ≠ r → s.feats.card < r.feats.card
 
-/-- ***ABA, order-theoretically**: whenever the middle cell `y` nests between
-the outer cells — `D y ⊆ D z` (appliers at `y` persist to `z`) and
-`D x ∩ D z ⊆ D y` (appliers at both outer cells reach `y`) — a rule winning both
-`x` and `z` also wins `y`, so no exponent can interrupt an A_A pattern with a
-distinct middle B. The hypotheses are the shared profile of Strong and Weak Case
-Containment; No Case Containment violates the first. -/
+variable [DecidableEq K]
+
+instance : DecidableRel (Exponence.Applies : Rule Cell D F → Cell → Prop) :=
+  fun r c => inferInstanceAs (Decidable (r.feats ⊆ D c))
+
+/-- The surface pattern of a vocabulary is, at each cell, the exponent of the most highly
+specified applicable rule, the Elsewhere Principle as `selectBy` on feature cardinality
+([halle-1997]'s counting formulation). -/
+def pattern (v : List (Rule Cell D F)) (c : Cell) : Option F :=
+  (selectBy (fun r : Rule Cell D F => r.feats.card) v c).map Rule.exponent
+
+/-- When the middle cell `y` nests between the outer cells, with `D y ⊆ D z` (appliers at `y`
+persist to `z`) and `D x ∩ D z ⊆ D y` (appliers at both outer cells reach `y`), a rule winning
+both `x` and `z` also wins `y`, so no exponent can interrupt an A_A pattern with a distinct
+middle B. This is *ABA order-theoretically. The hypotheses are the shared profile of Strong and
+Weak Case Containment, and No Case Containment violates the first. -/
 theorem noABA {v : List (Rule Cell D F)} {A B : Rule Cell D F} {x y z : Cell}
     (h1 : D y ⊆ D z) (h2 : D x ∩ D z ⊆ D y)
     (hx : IsWinner v x A) (hz : IsWinner v z A) (hy : IsWinner v y B) : B = A := by

@@ -59,9 +59,7 @@ structures, *-nibud'* the bare non-specific layer, *-to* that layer with the spe
 above it, and *koe-* all three. Distinct exponents for nested structures are what morphological
 containment consists in, and none is attested in any indefinite paradigm. -/
 theorem russian_spans_properly_nested :
-    (spelloutWinner (lexicon russian) 0).map SpanRule.spans = some 0 ∧
-      (spelloutWinner (lexicon russian) 1).map SpanRule.spans = some 1 ∧
-      (spelloutWinner (lexicon russian) 2).map SpanRule.spans = some 2 := by
+    ∀ g, ∃ e ∈ lexicon russian, e.spans = g ∧ spellout (lexicon russian) g = some e.exponent := by
   decide
 
 /-! ### The unattested type
@@ -97,10 +95,10 @@ theorem attested_changes_gain_opposite_functions :
   decide
 
 /-- The narrow entry of a language with a non-specific and a specific-unknown marker. -/
-def nonSpecificRule : SpanRule 3 String := ⟨"A", 0, none⟩
+def nonSpecificRule : SupersetRule 3 String := ⟨"A", 0⟩
 
 /-- Its wider entry, spelling out the specific-unknown structure. -/
-def specificUnknownRule : SpanRule 3 String := ⟨"B", 1, none⟩
+def specificUnknownRule : SupersetRule 3 String := ⟨"B", 1⟩
 
 /-- Losing the narrow entry lets the wider one spell out both structures, the change from a
 specific unknown form to an epistemic one, while losing the wider entry leaves the narrow one
@@ -110,14 +108,16 @@ theorem entry_loss_example :
       spellout [specificUnknownRule] = ![some "B", some "B", none] ∧
       spellout [nonSpecificRule] = ![some "A", none, none] := by decide
 
-/-- Whatever entries a lexicon loses, a surviving entry spells out only layers of the structure
-it stores. The loss of an entry extends coverage downwards and never upwards, so it derives the
-change from a specific unknown form to an epistemic one and never the change from a non-specific
-form to an epistemic one, although both are attested. -/
-theorem entry_loss_extends_downward_only {n : ℕ} {v v' : List (SpanRule n String)}
-    (hv : v'.Sublist v) {g : Fin n} {it : SpanRule n String}
-    (h : spelloutWinner v' g = some it) : it ∈ v ∧ g ≤ it.spans :=
-  ⟨hv.subset (spelloutWinner_spec h).1, le_spans_of_spelloutWinner_eq_some h⟩
+/-- Whatever entries a lexicon loses, a form it spells out at a layer is that of an entry
+storing the layer. The loss of an entry extends coverage downwards and never upwards, so it
+derives the change from a specific unknown form to an epistemic one and never the change from a
+non-specific form to an epistemic one, although both are attested. -/
+theorem entry_loss_extends_downward_only {n : ℕ} {v v' : List (SupersetRule n String)}
+    (hv : v'.Sublist v) {g : Fin n} {φ : String} (h : spellout v' g = some φ) :
+    ∃ e ∈ v, e.exponent = φ ∧ g ≤ e.spans := by
+  obtain ⟨e, he, rfl⟩ := Option.map_eq_some_iff.mp h
+  exact ⟨e, hv.subset (Morphology.Exponence.selectBy_mem he), rfl,
+    Morphology.Exponence.selectBy_applies he⟩
 
 /-! ### Coexpression as underspecification -/
 
