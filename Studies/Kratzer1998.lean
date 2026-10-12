@@ -30,17 +30,15 @@ English simple past and the German *Perfekt* and never to the *Präteritum*.
 
 ## Implementation notes
 
-An out-of-the-blue context is the temporal assignment sending every variable to the
-utterance time, so the definedness of a tense pronoun there is its presupposition under the
-library's `TensePronoun.fullPresupposition`, which holds iff the tense's cell admits
-coincidence. The aspect operators take a reference interval; a tense supplies a point, embedded
-as `NonemptyInterval.pure`. The aspects are instances of the library's `Aspect.ofRel`.
-The imperfective and the perfective are the library's `Aspect.UNBOUNDED` and `Aspect.PRFV`, and
-the perfect, with strict precedence, is stronger than the perfect viewpoint of
-`Aspect.ViewpointType`, which admits an event abutting the reference time
-(`perfect_viewpointType`). The zero-pronoun typology of §2–§3 and the locality argument from
-switch reference are prose. The French table is not entered, since the library has no French
-tense forms.
+An out-of-the-blue context is the temporal assignment sending every variable to the utterance time,
+so a tense is defined there iff its cell admits coincidence, by the presupposition of
+`Tense.pronoun`. The aspect operators take a reference interval; a tense supplies a point, embedded
+as `NonemptyInterval.pure`. The aspects are instances of the library's `Aspect.ofRel`. The
+imperfective and the perfective are the library's `Aspect.UNBOUNDED` and `Aspect.PRFV`, and the
+perfect, with strict precedence, is stronger than the perfect viewpoint of `Aspect.ViewpointType`,
+which admits an event abutting the reference time (`perfect_viewpointType`). The zero-pronoun
+typology of §2–§3 and the locality argument from switch reference are prose. The French table is not
+entered, since the library has no French tense forms.
 
 ## References
 
@@ -67,23 +65,18 @@ open Aspect (ofRel ofRel_mono UNBOUNDED PRFV ViewpointType)
 
 /-! ### The tenses (§4–§5) -/
 
-/-- The indexical tense with cell `C` is the variable `n` presupposing that its reference stands
-to the utterance time in a position of `C`. The present and the past are the tenses of the
-cells `present` and `past`. -/
-def tense (C : Finset Ordering) (n : ℕ) : TensePronoun where
-  varIndex := n
-  constraint := C
-  mode := .indexical
-
-/-- The zero tense is a variable with no presupposition, bound by the next tense up. -/
-def zeroTense (n : ℕ) : TensePronoun where
-  varIndex := n
-  constraint := ⊤
-  mode := .bound
-
 section Tenses
 
-variable {T : Type*}
+variable {W T : Type*}
+
+/-- The indexical tense with cell `C` is the variable `n` presupposing that its reference stands
+to the utterance time, the time of the index `0`, in a position of `C`. The present and the past
+are the tenses of the cells `present` and `past`. -/
+abbrev tense [LT T] (C : Finset Ordering) (n : ℕ) : Reference.Nominal (Assignment T) W T :=
+  pronoun C n 0
+
+/-- The zero tense is a variable with no presupposition, bound by the next tense up. -/
+abbrev zeroTense [LT T] (n : ℕ) : Reference.Nominal (Assignment T) W T := pronoun ⊤ n 0
 
 /-- An out-of-the-blue context has no salient time but the utterance time, so every temporal
 variable resolves to it. -/
@@ -91,27 +84,27 @@ def outOfTheBlue (t₀ : T) : Assignment T := Function.const ℕ t₀
 
 /-- Out of the blue a tense is defined iff its cell admits coincidence with the utterance time,
 as the present does and the past does not. -/
-theorem tense_outOfTheBlue_iff [LinearOrder T] (C : Finset Ordering) (n : ℕ) (t₀ : T) :
-    (tense C n).fullPresupposition (outOfTheBlue t₀) ↔ .eq ∈ C :=
-  TensePronoun.fullPresupposition_const _ t₀
+theorem tense_outOfTheBlue_iff [LinearOrder T] (C : Finset Ordering) (n : ℕ) (t₀ : T) (w : W) :
+    (tense C n).presup (outOfTheBlue t₀) w ↔ .eq ∈ C :=
+  pronoun_presup_const t₀
 
 /-- The zero tense has no presupposition. -/
-theorem zeroTense_fullPresupposition [LinearOrder T] (n : ℕ) (g : Assignment T) :
-    (zeroTense n).fullPresupposition g := Finset.mem_univ _
+theorem zeroTense_presup [LinearOrder T] (n : ℕ) (g : Assignment T) (w : W) :
+    (zeroTense n).presup g w := by
+  simp
 
 /-- A zero tense with a binder index makes its clause a property of times, (31). Whatever the
-assignment, the abstract applied to `t` evaluates the clause at `t`. -/
-theorem zeroTense_abstract (n : ℕ) (P : T → Prop) (g : Assignment T) (t : T) :
-    lambdaAbsG n (fun g ↦ P ((zeroTense n).resolve g)) g t ↔ P t := by
-  simp [lambdaAbsG, TensePronoun.resolve, interpPronoun, zeroTense]
+assignment, the tense under the abstract denotes the time the abstract is applied to. -/
+theorem zeroTense_abstract [LT T] (n : ℕ) (g : Assignment T) (t : T) (w : W) :
+    lambdaAbsG n (fun g ↦ (zeroTense n).selector g w) g t = some t := by
+  simp
 
-/-- An indexical tense cannot be abstracted over by another index. The binder leaves the clause
-a proposition about the tense's own reference, which is why an attitude verb forces a zero
-tense. -/
-theorem tense_not_abstracted (C : Finset Ordering) {m n : ℕ} (hn : n ≠ m) (P : T → Prop)
-    (g : Assignment T) (t : T) :
-    lambdaAbsG m (fun g ↦ P ((tense C n).resolve g)) g t ↔ P (g n) := by
-  simp [lambdaAbsG, TensePronoun.resolve, interpPronoun, tense, Function.update_of_ne hn]
+/-- An indexical tense cannot be abstracted over by another index. The binder leaves the tense
+with its own reference, which is why an attitude verb forces a zero tense. -/
+theorem tense_not_abstracted [LT T] (C : Finset Ordering) {m n : ℕ} (hn : n ≠ m)
+    (g : Assignment T) (t : T) (w : W) :
+    lambdaAbsG m (fun g ↦ (tense C n).selector g w) g t = some (g n) := by
+  simp [Function.update_of_ne hn]
 
 end Tenses
 
@@ -192,7 +185,7 @@ theorem AspectHead.IsAnterior.precedes {a : AspectHead} (ha : a.IsAnterior T)
 defined and the aspect holds of the property at the tense's reference. -/
 def denote (C : Finset Ordering) (a : AspectHead) (n : ℕ) (P : W → E → Prop)
     (g : Assignment T) (w : W) : Prop :=
-  (tense C n).fullPresupposition g ∧ .pure ((tense C n).resolve g) ∈ a.denote P w
+  (tense C n).presup g w ∧ .pure (interpPronoun n g) ∈ a.denote P w
 
 /-- Out of the blue a tense with an aspect is true iff the tense admits coincidence with the
 utterance time and the aspect holds there. -/
@@ -265,8 +258,8 @@ variable (T : Type*) [LinearOrder T] in
 /-- A form can describe a past event out of the blue when it spells out a tense defined out of
 the blue with an anterior aspect. -/
 def DescribesPastOutOfTheBlue (f : Tense.Form) : Prop :=
-  ∃ C a, v.SpellsOut f C a ∧ (∀ t₀ : T, (tense C 0).fullPresupposition (outOfTheBlue t₀)) ∧
-    a.IsAnterior T
+  ∃ C a, v.SpellsOut f C a ∧
+    (∀ t₀ : T, (tense (W := Unit) C 0).presup (outOfTheBlue t₀) ()) ∧ a.IsAnterior T
 
 /-- A form can describe a past event out of the blue iff it spells out, with the perfect, a
 tense that admits coincidence with the utterance time. -/

@@ -9,20 +9,16 @@ public import Linglib.Data.Examples.Ogihara1996
 /-!
 # Ogihara (1996): Tense, Attitudes, and Scope
 
-This file formalizes the ambiguity thesis of [ogihara-1996], developing [ogihara-1989]:
-an embedded past tense is ambiguous between a genuine past, contributing temporal
-precedence, and a zero tense, a bound variable that receives the matrix event time. The
-simultaneous reading is the zero-tense reading (`zeroTense_simultaneous`) and the shifted reading
-the genuine-past reading (`genuinePast_shifted`), against
-[kratzer-1998], for whom the past is never ambiguous and the simultaneous reading arises
-from deletion at logical form, and [klecha-2016], for whom it arises from the composition
-of modal base and tense. Japanese is a pure relative-tense language, every tense being
-interpreted in the scope of the structurally higher tenses, so an embedded past is anterior
-to the matrix event and *Taroo-wa Hanako-ga byookidat-ta to it-ta* has only the shifted
-reading (`embeddedByookiDatta`, `byookiDatta_shifted`), a reading of a language without the
-Sequence of Tense rule (`byookiDatta_mem`), the simultaneous reading requiring
-the embedded present; the English past perfect under a past matrix is built against the
-same matrix frame (`pluperfectShifted`, `pluperfect_is_past`).
+Ogihara, developing his dissertation, takes an embedded past tense to be ambiguous between a genuine
+past, contributing temporal precedence, and a zero tense, a bound variable that receives the matrix
+event time. The simultaneous reading is the zero-tense reading (`zeroTense_simultaneous`) and the
+shifted reading the genuine-past reading (`genuinePast_shifted`). Japanese is a pure relative-tense
+language, every tense being interpreted in the scope of the structurally higher tenses, so an
+embedded past is anterior to the matrix event and *Taroo-wa Hanako-ga byookidat-ta to it-ta* has
+only the shifted reading (`embeddedByookiDatta`, `byookiDatta_shifted`), a reading of a language
+without the Sequence of Tense rule (`byookiDatta_mem`), the simultaneous reading requiring the
+embedded present. The English past perfect under a past matrix is built against the same matrix
+frame (`pluperfectShifted`, `pluperfect_is_past`).
 
 ## Implementation notes
 
@@ -36,8 +32,6 @@ carry both the morphological tense and the divergent event location.
 
 * [ogihara-1996]
 * [ogihara-1989]
-* [kratzer-1998]
-* [klecha-2016]
 -/
 
 @[expose] public section
@@ -55,17 +49,16 @@ now. -/
   ⟨matrixFrame.speechTime, matrixFrame.eventTime, embeddedR, embeddedE⟩
 
 /-- The simultaneous reading is the zero-tense reading: a zero tense bound by the attitude
-receives its now, so it coincides with it. -/
-theorem zeroTense_simultaneous {T : Type*} [LinearOrder T] (g : Assignment T) (n : ℕ)
-    (now : T) : compare (interpPronoun n (Function.update g n now)) now = .eq := by
-  rw [zeroTense_receives_binder_time, compare_eq_iff_eq]
+denotes its now. -/
+theorem zeroTense_simultaneous {W T : Type*} [LT T] (g : Assignment T) (n : ℕ) (now : T)
+    (w : W) : (pronoun ⊤ n 0).selector (Function.update g n now) w = some now := by
+  simp
 
-/-- The shifted reading is the genuine-past reading: a pronoun under the past cell whose
-presupposition holds precedes its evaluation time. -/
-theorem genuinePast_shifted {T : Type*} [LinearOrder T] (tp : TensePronoun)
-    (hc : tp.constraint = ⟦past⟧) (g : Assignment T) (h : tp.fullPresupposition g) :
-    compare (tp.resolve g) (tp.evalTime g) = .lt := by
-  simpa [TensePronoun.fullPresupposition, hc, compare_lt_iff_lt] using h
+/-- The shifted reading is the genuine-past reading: a pronominal past whose presupposition
+holds precedes its evaluation time. -/
+theorem genuinePast_shifted {W T : Type*} [LinearOrder T] {k j : ℕ} {g : Assignment T} {w : W}
+    (h : (pronoun ⟦past⟧ k j).presup g w) : compare (g k) (g j) = .lt := by
+  simpa [compare_lt_iff_lt] using h
 
 /-- The matrix frame *Taroo-wa … to it-ta*, past and perfective: the speech and perspective
 times at the origin, the reference and event times two units earlier. -/
@@ -92,7 +85,7 @@ Tense rule. -/
 theorem byookiDatta_mem : embeddedByookiDatta.referencePosition ∈ pastUnderPast False := by
   decide
 
-/-- The past perfect is perfect: its event precedes its reference time. -/
+/-- The past perfect is perfect, its event preceding its reference time. -/
 theorem pluperfect_is_perfect : pluperfectShifted.eventPosition = .lt := by decide
 
 /-- The past perfect is past relative to the embedded perspective. -/

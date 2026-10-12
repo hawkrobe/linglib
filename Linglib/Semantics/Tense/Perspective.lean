@@ -14,7 +14,8 @@ admits. An interval precedes, overlaps or follows another
 (`NonemptyInterval.position`), so PRES, which presupposes overlap with `π`, is the cell
 `present`; PAST, which presupposes precedence, is `past`; and the adverb ⌈then⌉, which
 presupposes disjointness, is `presentᶜ`. On point intervals the presupposition is the comparison
-of points that `TensePronoun.presupposition` checks (`presup_pure`).
+of the points, which the pronominal tense of `Semantics/Tense/Pronoun.lean` presupposes
+(`presup_pure`).
 
 The perspective is an interpretation parameter that an operator rebinds for a whole clause, so a
 clausemate tense and adverb read the same `π`, and the adverb restricts the tense: the reference
@@ -132,8 +133,8 @@ theorem eq_mem_of_presup_present (hr : Presup ⟦present⟧ π r) (hle : r ≤ t
       (presup_present.1 hr)) hle
   rwa [Presup, h] at hth
 
-/-- The ⌈then⌉-present clash: a reference overlapping the perspective cannot be restricted by an
-adverb whose cell excludes overlap with it. -/
+/-- A reference overlapping the perspective cannot be restricted by an adverb whose cell excludes
+overlap with it, the ⌈then⌉-present clash. -/
 theorem not_presup_of_presup_present (hC : .eq ∉ C) (hr : Presup ⟦present⟧ π r) (hle : r ≤ th) :
     ¬ Presup C π th :=
   fun hth ↦ hC (eq_mem_of_presup_present hr hle hth)
