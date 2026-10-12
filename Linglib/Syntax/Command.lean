@@ -1,6 +1,7 @@
 module
 
 public import Mathlib.Basic.Rel
+public import Mathlib.Order.Atoms
 public import Mathlib.Order.Concept
 public import Mathlib.Order.Cover
 public import Linglib.Core.Data.RoseTree.Positions
@@ -35,7 +36,9 @@ bounds, and on a tree it is the cone of one node, the lowest generator above the
   `a` commands exactly what it dominates.
 * `PhraseStructure.mem_commandRelation_iff_le_of_covBy`,
   `PhraseStructure.mem_commandRelation_iff_of_covBy`: on a tree a node commands what its mother
-  dominates if the mother is a generator, and what its mother commands if not.
+  dominates if the mother is a generator, and what its mother commands if not. By
+  `PhraseStructure.eq_commandRelation_of_forall_covBy` the command relation is the only relation
+  obeying these two rules in which the root commands every node.
 * `PhraseStructure.cCommands_iff_parent_lt`: c-command is sisterhood plus dominance.
 
 ## Implementation notes
@@ -134,6 +137,23 @@ theorem mem_commandRelation_iff_of_covBy (ha : m ⋖ a) (hm : m ∉ P) :
     a ~[commandRelation P] b ↔ m ~[commandRelation P] b :=
   ⟨fun h _ hx hxm ↦ h hx (hxm.trans ha.lt), fun h _ hx hxa ↦
     h hx ((IsLeftLinear.le_of_lt_of_covBy ha hxa).lt_of_ne fun e ↦ hm (e ▸ hx))⟩
+
+/-- The command relation of `P` is the only relation in which the root commands every node and a
+node commands what its mother dominates or what its mother commands, according as the mother is
+in `P` or not. -/
+theorem eq_commandRelation_of_forall_covBy [OrderBot α] [WellFoundedLT α] [IsStronglyCoatomic α]
+    {R : SetRel α α} (hbot : ∀ b, ⊥ ~[R] b)
+    (hmem : ∀ ⦃m a⦄, m ⋖ a → m ∈ P → ∀ b, a ~[R] b ↔ m ≤ b)
+    (hnot : ∀ ⦃m a⦄, m ⋖ a → m ∉ P → ∀ b, a ~[R] b ↔ m ~[R] b) : R = commandRelation P := by
+  ext ⟨a, b⟩
+  induction a using WellFoundedLT.induction generalizing b with | ind a ih
+  rcases eq_or_ne a ⊥ with rfl | ha
+  · exact iff_of_true (hbot b) fun _ _ hx ↦ absurd hx not_lt_bot
+  · obtain ⟨m, -, hm⟩ := exists_le_covBy_of_lt (bot_lt_iff_ne_bot.2 ha)
+    by_cases hP : m ∈ P
+    · exact (hmem hm hP b).trans (mem_commandRelation_iff_le_of_covBy hm hP).symm
+    · exact (hnot hm hP b).trans <|
+        (ih m hm.lt b).trans (mem_commandRelation_iff_of_covBy hm hP).symm
 
 end LeftLinear
 
