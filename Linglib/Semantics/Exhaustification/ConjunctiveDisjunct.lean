@@ -14,18 +14,12 @@ illusion. Against the four-member Sauerland set the strengthening does not arise
 exclusion only denies the conjunction of the disjuncts — so the subconstituent alternatives
 are load-bearing.
 
-Consumers: `Studies/SableMeyerMascarenhas2022` (the strongly exhaustive reading is the gaps-as-
-negations interpretation of the revised mental model theory) and `Studies/BadeEtAl2022` (the
-implicature route that separates disjunctive from indefinite illusory inferences).
-
 ## References
 
-* [B. Spector, *Scalar implicatures: exhaustivity and Gricean reasoning* (2007)][spector-2007]
-* [U. Sauerland, *Scalar implicatures in complex sentences* (2004)][sauerland-2004]
-* [M. Sablé-Meyer and S. Mascarenhas, *Indirect illusory inferences from disjunction*
-  (2022)][sable-meyer-mascarenhas-2022]
-* [N. Bade, L. Picat, W. Chung and S. Mascarenhas, *Alternatives and attention in language and
-  reasoning* (2022)][bade-picat-chung-mascarenhas-2022]
+* [spector-2007]
+* [sauerland-2004]
+* [sable-meyer-mascarenhas-2022]
+* [bade-picat-chung-mascarenhas-2022]
 -/
 
 @[expose] public section

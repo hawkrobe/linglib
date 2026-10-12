@@ -24,11 +24,6 @@ The generators formalized with the schema are the three the literature has estab
 disjunction, indefinites (one alternative per witness), and the epistemic modal *might*, whose
 attentive content is the alternative pair of the prejacent with the tautology.
 
-Consumers: `Studies/SableMeyerMascarenhas2022` (the indirect schema, the selection-rule
-contrast, and selection by confirmation) and `Studies/BadeEtAl2022` (the modal instances and
-the experiment-facing anatomy). The full Koralus–Mascarenhas deduction system over truth-maker
-semantics is not formalized.
-
 ## Implementation notes
 
 * Alternatives are bare `Set W` propositions; `Matches p := p ⊆ hint` renders exact content
@@ -39,20 +34,13 @@ semantics is not formalized.
 
 ## References
 
-* [P. Koralus and S. Mascarenhas, *The erotetic theory of reasoning*
-  (2013)][koralus-mascarenhas-2013]
-* [P. Koralus and S. Mascarenhas, *Illusory Inferences in a Question-Based Theory of
-  Reasoning* (2018)][koralus-mascarenhas-2018]
-* [C. Walsh and P. N. Johnson-Laird, *Co-reference and reasoning*
-  (2004)][walsh-johnson-laird-2004]
-* [S. Mascarenhas and P. Koralus, *Illusory inferences with quantifiers*
-  (2017)][mascarenhas-koralus-2017]
-* [S. Mascarenhas and L. Picat, *'Might' as a generator of alternatives: The view from
-  reasoning* (2019)][mascarenhas-picat-2019]
-* [M. Sablé-Meyer and S. Mascarenhas, *Indirect illusory inferences from disjunction*
-  (2022)][sable-meyer-mascarenhas-2022]
-* [N. Bade, L. Picat, W. Chung and S. Mascarenhas, *Alternatives and attention in language and
-  reasoning* (2022)][bade-picat-chung-mascarenhas-2022]
+* [koralus-mascarenhas-2013]
+* [koralus-mascarenhas-2018]
+* [walsh-johnson-laird-2004]
+* [mascarenhas-koralus-2017]
+* [mascarenhas-picat-2019]
+* [sable-meyer-mascarenhas-2022]
+* [bade-picat-chung-mascarenhas-2022]
 -/
 
 @[expose] public section

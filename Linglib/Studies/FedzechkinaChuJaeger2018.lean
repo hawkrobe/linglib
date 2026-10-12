@@ -1,10 +1,10 @@
 module
 
+public import Linglib.Core.Probability.Independence.Basic
 public import Linglib.Syntax.DependencyGrammar.Length
 public import Mathlib.MeasureTheory.Constructions.UnitInterval
 public import Mathlib.MeasureTheory.Integral.Bochner.Set
 public import Mathlib.Probability.ConditionalProbability
-public import Mathlib.Probability.Independence.Basic
 public import Mathlib.Probability.UniformOn
 
 /-!
@@ -202,8 +202,7 @@ theorem abs_measureReal_symmDiff_sub_half_le (hA : MeasurableSet A) (hB : Measur
 theorem measureReal_symmDiff_of_indepSet (hA : MeasurableSet A) (hB : MeasurableSet B)
     (hAB : IndepSet A B P) :
     P.real (A ∆ B) = P.real A + P.real B - 2 * (P.real A * P.real B) := by
-  have hi : P.real (A ∩ B) = P.real A * P.real B := by
-    simp [Measure.real, hAB.measure_inter_eq_mul, ENNReal.toReal_mul]
+  have hi := hAB.measureReal_inter_eq_mul
   have h₁ := measureReal_sdiff_add_inter (μ := P) (s := A) hB
   have h₂ := measureReal_sdiff_add_inter (μ := P) (s := B) hA
   rw [Set.inter_comm] at h₂
