@@ -12,8 +12,8 @@ as *mejorar* 'improve' does in *los sueldos mejoraron*. A few allow both: *hervi
 usually bare and marginally takes the clitic, and the unaccusatives *caer* 'fall' and *morir*
 'die' occur with and without it. Each verb records the marking of its intransitive, and whether it
 alternates is read off its diatheses: an alternating verb has a transitive diathesis and an
-intransitive one with the patient as subject. The proto-role entailments of the subject are those Koontz-Garboden discusses for the
-causer, and the classification by marking follows Muñoz Pérez.
+intransitive one with the patient as subject. The proto-role entailments of the subject are those
+Koontz-Garboden discusses for the causer, and the classification by marking follows Muñoz Pérez.
 
 The verbs with a lexical reciprocal entry beside their transitive use are those of Palmieri's
 appendix. They are ordinary verb entries here, and `Spanish.Reciprocals.lexicalReciprocals`
@@ -69,7 +69,7 @@ abbrev SpanishVerbEntry.Alternates (v : SpanishVerbEntry) : Prop :=
 
 /-- The subject of a verb whose causer need only cause the change, whether an agent, an
 instrument, a natural force or an event: [koontz-garboden-2009]'s EFFECTOR. -/
-def effectorSubject : EntailmentProfile := { causation := true, independentExistence := true }
+def effectorSubject : EntailmentProfile := {.causation, .independentExistence}
 
 /-- *abrir* 'open', with a marked intransitive *abrirse*. Its causer may be an agent, an
 instrument or a natural force ([koontz-garboden-2009]). -/

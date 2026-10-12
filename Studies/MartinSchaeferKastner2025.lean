@@ -8,7 +8,7 @@ public import Linglib.Fragments.Romance.French.Verbs
 # Martin, Schäfer and Kastner (2025): The Lexical Pragmatics of Reflexive Marking
 
 This file formalizes the pragmatic account of French anticausative marking of
-[martin-schaefer-kastner-2025]. Anticausatives marked with *se* and unmarked ones do not
+Martin, Schäfer and Kastner. Anticausatives marked with *se* and unmarked ones do not
 differ in meaning; the *se* form is ambiguous between anticausative and reflexive voice while
 the bare form is not (`Form.voiceOptions`, `se_ambiguous`), and cooperative speakers manage
 that ambiguity under the Manner supermaxim. With a human argument the reflexive parse is
@@ -29,9 +29,9 @@ both forms (`SeMarking.HasChoice`).
 ## Implementation notes
 
 The voice flavours are the non-thematic and reflexive Voice heads of
-`Syntax/Minimalist/Verbal/Voice.lean` after [schaefer-2008], and the entailments of an
+`Syntax/Minimalist/Verbal/Voice.lean` after Schäfer (2008), and the entailments of an
 anticausative's sole argument are those of the French fragment's entries; the
-account presupposes the reflexive–anticausative syncretism of [koontz-garboden-2009]. The
+account presupposes the reflexive–anticausative syncretism of Koontz-Garboden. The
 experiments' rating means are described in the paper and not represented.
 
 ## References
@@ -96,7 +96,7 @@ theorem control_level_not_from_entailments :
 theorem movement_sufficient_not_necessary :
     approcher.subjectEntailments = some movingUndergoer ∧
       refroidir.subjectEntailments = some undergoer ∧
-      movingUndergoer.movement = true ∧ undergoer.movement = false := by
+      .movement ∈ movingUndergoer ∧ .movement ∉ undergoer := by
   decide
 
 /-! ### The voice ambiguity of *se* -/

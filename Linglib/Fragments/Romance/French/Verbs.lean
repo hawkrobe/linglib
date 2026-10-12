@@ -80,11 +80,11 @@ of their experiment 1b, whose change the undergoer typically controls. -/
 exists independently of the event. It is not entailed to be sentient, as *le mur rougit* 'the
 wall reddened' shows, nor to be stationary, which is relative to another participant. -/
 def undergoer : EntailmentProfile :=
-  { independentExistence := true, changeOfState := true, causallyAffected := true }
+  {.independentExistence, .changeOfState, .causallyAffected}
 
 /-- The sole argument of an anticausative of motion or posture is an `undergoer` that also
 moves. -/
-def movingUndergoer : EntailmentProfile := { undergoer with movement := true }
+def movingUndergoer : EntailmentProfile := insert .movement undergoer
 
 /-- The entry of an anticausative with an optional *se* has the intransitive, its patient the
 subject, as its basic diathesis and the transitive of the alternation after it. -/
@@ -134,17 +134,17 @@ of following and accompaniment an object that merely exists independently of the
 /-- An argument entailed only to exist independently of the event, neither agentive nor
 affected: the object of a psych verb or of a verb of accompaniment, and the subject of a
 stative positional verb. -/
-def independentParticipant : EntailmentProfile := { independentExistence := true }
+def independentParticipant : EntailmentProfile := {.independentExistence}
 
 /-- The subject of *accompagner* is sentient and moves but is not entailed to be volitional,
 since the accompanying party may merely watch ([staps-rooryck-2024] §3.2). -/
 def companionSubject : EntailmentProfile :=
-  { sentience := true, movement := true, independentExistence := true }
+  {.sentience, .movement, .independentExistence}
 
 /-- The subject of the neglect reading of *abandonner* and *délaisser* is volitional and
 sentient but brings about no change. -/
 def neglectSubject : EntailmentProfile :=
-  { volition := true, sentience := true, independentExistence := true }
+  {.volition, .sentience, .independentExistence}
 
 /-- The entry of a transitive verb with the given subject and object entailments, Vendler
 class and sense. -/
@@ -172,7 +172,7 @@ def construire : Verb :=
 /-- *tuer* 'kill', whose object does not survive the event ([staps-rooryck-2024] Table 1). -/
 def tuer : Verb :=
   transitive "tuer" accomplishmentSubjectProfile
-    { accomplishmentObjectProfile with dependentExistence := true } .achievement
+    (insert .dependentExistence accomplishmentObjectProfile) .achievement
 
 /-- *aimer* 'love', a stative psych verb ([staps-rooryck-2024] Table 1). -/
 def aimer : Verb := transitive "aimer" experiencerProfile independentParticipant .state

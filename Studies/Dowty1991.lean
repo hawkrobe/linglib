@@ -5,46 +5,35 @@ public import Linglib.Semantics.ArgumentStructure.RoleList
 public import Linglib.Data.ProtoRoles.Dowty1991
 
 /-!
-# Dowty (1991): Thematic Proto-Roles and Argument Selection
+# Dowty (1991): Thematic proto-roles and argument selection
 
-This file formalizes the argument selection theory of [dowty-1991]. Thematic roles are
-replaced by two cluster concepts, the Proto-Agent and Proto-Patient, each a list of five
-entailments a predicate may impose on an argument, (27) and (28), the substrate's
-`ArgumentStructure.EntailmentProfile`; the per-argument attributions the paper states, from
-the single-entailment exemplars of (29) and (30) to the three verb classes of (64), are the
-rows of `Data/ProtoRoles/Dowty1991.json`, and every argument profile here is read off a
-row, `ProtoRoleDatum.profile`. The Argument Selection
-Principle, (31), lexicalizes as subject the argument with the greatest number of Proto-Agent
-entailments and as direct object the one with the greatest number of Proto-Patient
-entailments, `Outranks`; its first corollary, (32), lets equal counts be lexicalized either
-way, `Alternates`, and its second, (33), selects among the nonsubject arguments of a
-three-place predicate the one with more Proto-Patient entailments as direct object,
-`DirectObjectOver`. The primary transitive verbs of (35) are the stable case; the role
-hierarchies of (36) fall out of the principle over the canonical role profiles; the doublets
-*buy* and *sell* and *like* and *please* are ties, (38), which Croft's inchoative
-interpretation breaks in favour of the stimulus subject, §9.2; the partially symmetric
-interactive predicates of §9.1 entail volition, or with *collide* motion, for the subject
-alone. The three classes of direct and oblique object alternation are (64): a change of
-state entailed for one nonsubject argument but not the other fixes it as direct object,
-`directObjectOver_of_changeOfState`, so *break* does not alternate, while the spray/load
-class with change of state in both arguments and the hit class with it in neither do,
-`eitherObject_of_cosSymmetric`. Table 1 of §12 classifies intransitives by agentivity and
-telicity, `intransClass`: agentive atelic predicates are invariably unergative and
-non-agentive telic ones invariably unaccusative, the mixed cells varying across languages.
-The final section checks the substrate's class-level templates against the paper's rows,
-`Matches`, and records the three points at which the templates deliberately diverge.
+Dowty replaces thematic roles by two cluster concepts, the Proto-Agent and the Proto-Patient,
+each a list of five entailments a predicate may impose on an argument, (27) and (28). The
+Argument Selection Principle (31) lexicalizes as subject the argument with the most
+Proto-Agent entailments and as direct object the one with the most Proto-Patient entailments.
+Every argument profile here is read off a row of `Data/ProtoRoles/Dowty1991.json`, from the
+single-entailment exemplars of (29) and (30) to the three verb classes of (64).
+
+## Main results
+
+* `alternates_iff`, `hierarchies`: Corollary 1 is the failure of (31) to select either way, and
+  the role hierarchies of (36) follow from the principle.
+* `primary_transitives`, `buy_sell`, `psych_doublet`: the primary transitive verbs of (35) are
+  selected outright, while *buy* and *sell* and *like* and *please* tie.
+* `directObjectOver_of_changeOfState`, `three_classes`: a change of state entailed for one
+  nonsubject argument alone fixes it as direct object, so of the three classes of (64) only the
+  break class does not alternate.
+* `intransClass_unergative`, `intransClass_unaccusative`: the pure cells of Table 1.
+* `primary_transitives_match_templates`: the substrate's class templates agree with the paper's
+  attributions, save at three deliberate divergences.
 
 ## Implementation notes
 
 A row's profile takes the attributions it states and treats what the paper leaves open as
-absent, so the counts the principle compares are counts of stated entailments; the
-parenthesized entailments (27e) and (28e) count like the others. `Outranks` reads the two
-clauses of (31) with the Proto-Agent clause first and the Proto-Patient clause deciding ties,
-which is how the inchoative psych verbs of §9.2 are selected; "approximately equal" in the
-corollaries is read as equal. Telicity in Table 1 is incremental themehood or a change of
-state, the paper's "incremental or holistic theme". The incremental theme homomorphism of
-§6, the representation-source predicates of §9.3.4, and the psycholinguistic and typological
-material of §11 are not represented.
+absent, so the principle compares counts of stated entailments; the parenthesized (27e) and (28e)
+count like the others. `Outranks` reads the Proto-Agent clause of (31) first and lets the
+Proto-Patient clause decide ties, and "approximately equal" in the corollaries is read as equal.
+The incremental theme homomorphism of §6 and the material of §11 are not represented.
 
 ## References
 
@@ -57,11 +46,12 @@ material of §11 are not represented.
 namespace Dowty1991
 
 open ArgumentStructure
+open scoped Finset
 
 /-! ### The profile a row states -/
 
-/-- The attribution a row makes about one entailment: stated present, stated absent, or
-left open. -/
+/-- The attribution a row makes about one entailment, stated present, stated absent, or left
+open. -/
 def ProtoRoleDatum.stated (d : ProtoRoleDatum) : ProtoRoleFeature → Option Bool
   | .volition => d.volition
   | .sentience => d.sentience
@@ -76,43 +66,43 @@ def ProtoRoleDatum.stated (d : ProtoRoleDatum) : ProtoRoleFeature → Option Boo
 
 /-- The profile of a row's stated attributions, with what the paper leaves open absent. -/
 def ProtoRoleDatum.profile (d : ProtoRoleDatum) : EntailmentProfile :=
-  EntailmentProfile.equivFeatures.symm λ f => (d.stated f).getD false
+  Finset.univ.filter fun f ↦ (d.stated f).getD false = true
 
-theorem ProtoRoleDatum.feature_profile (d : ProtoRoleDatum) (f : ProtoRoleFeature) :
-    d.profile.feature f = (d.stated f).getD false :=
-  congrFun (EntailmentProfile.equivFeatures.apply_symm_apply _) f
+@[simp] theorem ProtoRoleDatum.mem_profile {d : ProtoRoleDatum} {f : ProtoRoleFeature} :
+    f ∈ d.profile ↔ (d.stated f).getD false = true := by
+  simp [ProtoRoleDatum.profile]
 
 /-- A profile agrees with every entailment a row states; what the row leaves open is
 unconstrained. -/
 def Matches (d : ProtoRoleDatum) (p : EntailmentProfile) : Prop :=
-  ∀ f b, d.stated f = some b → p.feature f = b
+  ∀ f, ∀ b ∈ d.stated f, (f ∈ p ↔ b = true)
 
 instance (d : ProtoRoleDatum) (p : EntailmentProfile) : Decidable (Matches d p) := by
   unfold Matches; infer_instance
 
-theorem matches_profile (d : ProtoRoleDatum) : Matches d d.profile := λ f b h => by
-  rw [ProtoRoleDatum.feature_profile, h]; rfl
+theorem matches_profile (d : ProtoRoleDatum) : Matches d d.profile := fun f b h ↦ by
+  simp [Option.mem_def.1 h]
 
 /-! ### The selection principle and its corollaries, (31) to (34) -/
 
 variable (p q : EntailmentProfile)
 
-/-- (31): `p` is lexicalized as subject over `q` when it has strictly more Proto-Agent
-entailments, or as many and strictly fewer Proto-Patient entailments. -/
+/-- By the selection principle (31), `p` is lexicalized as subject over `q` when it has strictly
+more Proto-Agent entailments, or as many and strictly fewer Proto-Patient entailments. -/
 def Outranks : Prop :=
-  q.pAgentScore < p.pAgentScore ∨
-    (p.pAgentScore = q.pAgentScore ∧ p.pPatientScore < q.pPatientScore)
+  #q.protoAgent < #p.protoAgent ∨
+    (#p.protoAgent = #q.protoAgent ∧ #p.protoPatient < #q.protoPatient)
 
-/-- (32), Corollary 1: two arguments with equal counts may be lexicalized either way. -/
-def Alternates : Prop := p.pAgentScore = q.pAgentScore ∧ p.pPatientScore = q.pPatientScore
+/-- Two arguments with equal counts may be lexicalized either way, Corollary 1 (32). -/
+def Alternates : Prop := #p.protoAgent = #q.protoAgent ∧ #p.protoPatient = #q.protoPatient
 
-/-- (33), Corollary 2: of two nonsubject arguments, the one with more Proto-Patient
-entailments is lexicalized as direct object and the other as oblique. -/
-def DirectObjectOver : Prop := q.pPatientScore < p.pPatientScore
+/-- Of two nonsubject arguments, the one with more Proto-Patient entailments is lexicalized as
+direct object and the other as oblique, Corollary 2 (33). -/
+def DirectObjectOver : Prop := #q.protoPatient < #p.protoPatient
 
-/-- (33): two nonsubject arguments with equal Proto-Patient counts may either be direct
-object. -/
-def EitherObject : Prop := p.pPatientScore = q.pPatientScore
+/-- Two nonsubject arguments with equal Proto-Patient counts may either be direct object
+(33). -/
+def EitherObject : Prop := #p.protoPatient = #q.protoPatient
 
 instance : Decidable (Outranks p q) := by unfold Outranks; infer_instance
 instance : Decidable (Alternates p q) := by unfold Alternates; infer_instance
@@ -123,14 +113,14 @@ instance : Decidable (EitherObject p q) := by unfold EitherObject; infer_instanc
 theorem alternates_iff : Alternates p q ↔ ¬ Outranks p q ∧ ¬ Outranks q p := by
   unfold Alternates Outranks; omega
 
-/-- (34): the principle does not select uniquely; a profile ties with itself, so a relation
+/-- The principle does not select uniquely (34): a profile ties with itself, so a relation
 lexicalized twice with the arguments swapped is licensed. -/
 theorem alternates_self : Alternates p p := ⟨rfl, rfl⟩
 
-/-- §8.2: one Proto-Agent entailment against none qualifies an argument for subject. -/
-theorem outranks_of_pAgentScore_pos (hp : 0 < p.pAgentScore) (hq : q.pAgentScore = 0) :
+/-- One Proto-Agent entailment against none qualifies an argument for subject (§8.2). -/
+theorem outranks_of_protoAgent_nonempty (hp : p.protoAgent.Nonempty) (hq : q.protoAgent = ∅) :
     Outranks p q :=
-  Or.inl (hq ▸ hp)
+  .inl (by simpa [hq] using hp.card_pos)
 
 /-- The hierarchies of (36) fall out of the principle over the canonical role profiles:
 Agent over Instrument, Instrument and Experiencer over Patient, and Patient over Goal for
@@ -146,8 +136,8 @@ theorem hierarchies :
 
 /-! ### The stable case and the ties, (35) and §8.3 -/
 
-/-- The primary transitive verbs of (35): a subject with four Proto-Agent entailments and
-no Proto-Patient entailment against an object with the reverse, (31) selecting outright. -/
+/-- In the primary transitive verbs of (35) a subject with four Proto-Agent entailments and no
+Proto-Patient entailment faces an object with the reverse, and (31) selects outright. -/
 theorem primary_transitives :
     Outranks Rows.buildSubject.profile Rows.buildObject.profile ∧
       Outranks Rows.writeSubject.profile Rows.writeObject.profile ∧
@@ -156,29 +146,29 @@ theorem primary_transitives :
       Outranks Rows.washSubject.profile Rows.washObject.profile := by
   decide
 
-/-- Corollary 2 on *put* and *remove*, §8.2: the theme, changed and affected, outranks the
-stationary goal or source for direct object. -/
+/-- By Corollary 2, the theme of *put* and *remove*, changed and affected, outranks the
+stationary goal or source for direct object (§8.2). -/
 theorem put_remove :
     DirectObjectOver Rows.putTheme.profile Rows.putGoal.profile ∧
       DirectObjectOver Rows.removeTheme.profile Rows.removeSource.profile := by
   decide
 
-/-- §3.2 and §8.3: buyer and seller are both volitional and otherwise alike, so *buy* and
-*sell* are licensed as a doublet. -/
+/-- Buyer and seller are both volitional and otherwise alike, so *buy* and *sell* are licensed
+as a doublet (§3.2, §8.3). -/
 theorem buy_sell : Alternates Rows.buySubject.profile Rows.buySeller.profile ∧
     Alternates Rows.sellSubject.profile Rows.sellBuyer.profile := by
   decide
 
-/-- (38): the experiencer is sentient and the stimulus causal, one Proto-Agent entailment
-each, so *like* and *please* tie. -/
+/-- The experiencer is sentient and the stimulus causal, one Proto-Agent entailment each, so
+*like* and *please* tie (38). -/
 theorem psych_doublet :
     Alternates Rows.likeSubject.profile Rows.likeObject.profile ∧
       Alternates Rows.pleaseObject.profile Rows.pleaseSubject.profile := by
   decide
 
-/-- §9.2: under the inchoative interpretation the experiencer undergoes a change of state,
-the Proto-Patient entailment that selects the stimulus as subject; Croft's generalization
-that only stimulus-subject psych verbs take the inchoative reading. -/
+/-- Under the inchoative interpretation the experiencer undergoes a change of state, the
+Proto-Patient entailment that selects the stimulus as subject, which is Croft's generalization
+that only stimulus-subject psych verbs take the inchoative reading (§9.2). -/
 theorem inchoative_stimulus_subject :
     Outranks Rows.surpriseSubject.profile Rows.surpriseObjectInchoative.profile := by
   decide
@@ -198,8 +188,8 @@ theorem kiss_subject_outranks :
       Alternates kissSubjectProfile kissSubjectProfile := by
   decide
 
-/-- *collide*, (45): the entailment distinguishing subject from oblique is motion, not
-volition. -/
+/-- The entailment distinguishing the subject of *collide* from its oblique is motion, not
+volition (45). -/
 theorem collide_subject_outranks :
     Outranks Rows.collideSubject.profile Rows.collideObject.profile := by
   decide
@@ -207,85 +197,90 @@ theorem collide_subject_outranks :
 /-! ### Alternations in direct versus oblique objects, §9.3 and (64) -/
 
 /-- Two nonsubject arguments agree on the change-of-state entailment. -/
-def CosSymmetric : Prop := p.changeOfState = q.changeOfState
+def CosSymmetric : Prop := .changeOfState ∈ p ↔ .changeOfState ∈ q
 
 instance : Decidable (CosSymmetric p q) := by unfold CosSymmetric; infer_instance
 
-/-- §9.3.3: a change of state entailed for one nonsubject argument but not the other, the
-remaining Proto-Patient entailments being equal, fixes it as direct object. -/
-theorem directObjectOver_of_changeOfState (hp : p.changeOfState = true)
-    (hq : q.changeOfState = false) (hIT : p.incrementalTheme = q.incrementalTheme)
-    (hCA : p.causallyAffected = q.causallyAffected) (hSt : p.stationary = q.stationary)
-    (hDE : p.dependentExistence = q.dependentExistence) : DirectObjectOver p q := by
-  unfold DirectObjectOver EntailmentProfile.pPatientScore
-  rw [hp, hq, hIT, hCA, hSt, hDE]
-  simp only [Bool.toNat_true, Bool.toNat_false]
+/-- A change of state entailed for one nonsubject argument but not the other, the remaining
+Proto-Patient entailments being equal, fixes it as direct object (§9.3.3). -/
+theorem directObjectOver_of_changeOfState (hp : .changeOfState ∈ p) (hq : .changeOfState ∉ q)
+    (h : p.protoPatient.erase .changeOfState = q.protoPatient.erase .changeOfState) :
+    DirectObjectOver p q := by
+  have hp' : .changeOfState ∈ p.protoPatient := Finset.mem_inter.2 ⟨hp, by decide⟩
+  have hq' : .changeOfState ∉ q.protoPatient := fun h ↦ hq (Finset.mem_inter.1 h).1
+  unfold DirectObjectOver
+  rw [← Finset.card_erase_add_one hp', h, Finset.erase_eq_of_notMem hq']
   omega
 
 /-- Nonsubject arguments alike in the change-of-state entailment and the rest may either
 be direct object. -/
 theorem eitherObject_of_cosSymmetric (h : CosSymmetric p q)
-    (hIT : p.incrementalTheme = q.incrementalTheme)
-    (hCA : p.causallyAffected = q.causallyAffected) (hSt : p.stationary = q.stationary)
-    (hDE : p.dependentExistence = q.dependentExistence) : EitherObject p q := by
-  unfold EitherObject EntailmentProfile.pPatientScore
-  rw [h, hIT, hCA, hSt, hDE]
+    (h' : p.protoPatient.erase .changeOfState = q.protoPatient.erase .changeOfState) :
+    EitherObject p q := by
+  have : p.protoPatient = q.protoPatient := by
+    ext f
+    by_cases hf : f = .changeOfState
+    · subst hf
+      simp only [EntailmentProfile.protoPatient, Finset.mem_inter]
+      exact and_congr_left fun _ ↦ h
+    · simpa [hf] using congrArg (f ∈ ·) h'
+  unfold EitherObject; rw [this]
 
-/-- The hay and the truck of (49), (64 I): both change state. -/
+/-- The hay and the truck of (49), (64 I), which both change state. -/
 def sprayLoadTheme : EntailmentProfile := Rows.loadTheme.profile
 
 def sprayLoadLocation : EntailmentProfile := Rows.loadLocation.profile
 
-/-- The fence and the stick of (63), (64 II): only the direct object changes state. -/
+/-- The fence and the stick of (63), (64 II), of which only the direct object changes state. -/
 def breakDirectObject : EntailmentProfile := Rows.breakObject.profile
 
 def breakInstrument : EntailmentProfile := Rows.breakInstrument.profile
 
-/-- The fence and the stick of (62), (64 III): neither changes state nor measures the
+/-- The fence and the stick of (62), (64 III), neither of which changes state or measures the
 event. -/
 def hitArg1 : EntailmentProfile := Rows.hitObject.profile
 
 def hitArg2 : EntailmentProfile := Rows.hitInstrument.profile
 
-/-- (64): the spray/load class alternates, the break class fixes its direct object, and the
-hit class alternates with complete synonymy. -/
+/-- The spray/load class alternates, the break class fixes its direct object, and the hit class
+alternates with complete synonymy (64). -/
 theorem three_classes :
     EitherObject sprayLoadTheme sprayLoadLocation ∧
       DirectObjectOver breakDirectObject breakInstrument ∧
       EitherObject hitArg1 hitArg2 := by
   decide
 
-/-- The hit class puzzle, §9.3.3: the instrument moves, a Proto-Agent entailment the
-principle leaves out of object selection. -/
-theorem hit_instrument_moves : hitArg2.pAgentScore = 1 ∧ hitArg1.pAgentScore = 0 := by
+/-- In the hit class puzzle the instrument moves, a Proto-Agent entailment the principle leaves
+out of object selection (§9.3.3). -/
+theorem hit_instrument_moves : #hitArg2.protoAgent = 1 ∧ #hitArg1.protoAgent = 0 := by
   decide
 
 /-! ### The unaccusative hypothesis, §12 -/
 
-/-- The three cases of Table 1: the two pure cells and the two mixed cells that vary
-across languages. -/
+/-- The three cases of Table 1, the two pure cells and the two mixed cells that vary across
+languages. -/
 inductive IntransClass
   | unergative
   | unaccusative
   | unstable
   deriving DecidableEq, Repr
 
-/-- Table 1: agentivity crossed with telicity. -/
+/-- Table 1 crosses agentivity with telicity. -/
 def table1 : Bool → Bool → IntransClass
   | true, false => .unergative
   | false, true => .unaccusative
   | _, _ => .unstable
 
 /-- The most important Proto-Agent entailment for the contrast: volition. -/
-def Agentive : Prop := p.volition = true
+def Agentive : Prop := .volition ∈ p
 
 /-- The most important Proto-Patient property for the contrast: an incremental or holistic
 theme, that is, telicity. -/
-def Telic : Prop := p.incrementalTheme = true ∨ p.changeOfState = true
+def Telic : Prop := .incrementalTheme ∈ p ∨ .changeOfState ∈ p
 
-instance : DecidablePred Agentive := λ p => by unfold Agentive; infer_instance
+instance : DecidablePred Agentive := fun _ ↦ inferInstanceAs (Decidable (_ ∈ _))
 
-instance : DecidablePred Telic := λ p => by unfold Telic; infer_instance
+instance : DecidablePred Telic := fun _ ↦ inferInstanceAs (Decidable (_ ∨ _))
 
 /-- The class Table 1 assigns to an intransitive by its sole argument's profile. -/
 def intransClass : IntransClass := table1 (decide (Agentive p)) (decide (Telic p))
@@ -350,14 +345,14 @@ theorem psych_desire_split :
 the template follows the (35) hedge that creation objects are only mostly stationary. -/
 theorem build_object_stationary_divergence :
     ¬ Matches Rows.buildObject creationObject ∧
-      Matches Rows.buildObject { creationObject with stationary := true } := by
+      Matches Rows.buildObject (insert .stationary creationObject) := by
   decide
 
 /-- The accomplishment object template carries no incremental themehood, which (64 II)
 attributes to the object of *break*; the template adds it per verb. -/
 theorem break_object_it_divergence :
     ¬ Matches Rows.breakObject accomplishmentObjectProfile ∧
-      Matches Rows.breakObject { accomplishmentObjectProfile with incrementalTheme := true } := by
+      Matches Rows.breakObject (insert .incrementalTheme accomplishmentObjectProfile) := by
   decide
 
 /-- (30e) counts destruction as dependent existence, which the paper never states for the
@@ -367,7 +362,7 @@ theorem eat_object_de_tension :
     Matches Rows.eatObject consumptionObject ∧
       PersistenceLevel.fromPatientProfile consumptionObject = .exPersBeginning ∧
       PersistenceLevel.fromPatientProfile
-        { consumptionObject with dependentExistence := true } = .exPersEnd := by
+        (insert .dependentExistence consumptionObject) = .exPersEnd := by
   decide
 
 end Dowty1991

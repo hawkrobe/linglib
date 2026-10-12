@@ -6,38 +6,33 @@ public import Linglib.Semantics.ArgumentStructure.RoleList
 public import Studies.Dowty1991
 
 /-!
-# Grimm (2011): Semantics of Case
+# Grimm (2011): Semantics of case
 
-This file formalizes [grimm-2011]'s account of case assignment over the agentivity lattice of
-`Semantics/ArgumentStructure/`: [dowty-1991]'s proto-role entailments recast as four privative
-agentivity properties and a persistence axis, whose product orders participant types by semantic
-prominence, with a case a connected region of that lattice. The canonical subjects of section 2.2
-climb a chain from the positional verbs to *assassinate* (`canonical_verb_chain`), and the
-acceptable arguments of a predicate are closed upward for agents and downward for patients, so
-that natural forces kill and the object of *hit* may be unaffected or destroyed but must exist
-when the event begins (`kill_subject_range`, `transitive_region_eq_Ici`); the dominance
-criterion for subject selection reproduces [dowty-1991]'s choice for *kiss*
-(`kiss_outranking_from_dominance`). Section 3 maps [tsunoda-1985]'s effectiveness hierarchy: the
-agent of *break*, *shoot*, and *search* keeps instigation and motion while the patient rises
-from existential persistence through qualitative persistence and out of the transitivity
-region (`transitivity_hierarchy`). Section 4 reads the two core cases of either alignment off
-the poles (`pole_alignment`), section 5.1 places the recipient, the dative experiencer, and the
-dative object of *danken* and *helfen* at one node of the dative region (`recipient_dative`), and
-section 5.2 derives the Russian genitive/accusative alternation of *ždat'* 'wait for' from
-referentiality: a referring object exists when the event begins and falls in the accusative
-region, a non-specific one may stay at the bottom node that the governed genitive marks, and
-only a verb without existential persistence entailments on its object leaves that node open
-(`genitive_accusative_alternation`, `genitive_outside_region`).
+Grimm recasts Dowty's proto-role entailments as four privative agentivity properties and four
+persistence properties, whose product orders participant types by semantic prominence, and
+treats a case as a connected region of that lattice. This file supplies the paper's placements
+on the lattice of `Semantics/ArgumentStructure/` and reads its predictions off the interval
+characterizations of the case regions.
+
+## Main results
+
+* `canonical_verb_chain`: the canonical subjects of section 2.2 climb a chain from the
+  positional verbs to *assassinate*.
+* `kill_subject_range`, `transitive_region_eq_Ici`: agents are closed upward and patients
+  downward, so natural forces kill and the object of *hit* must exist when the event begins.
+* `kiss_outranking_from_dominance`: the dominance criterion reproduces Dowty's choice for *kiss*.
+* `transitivity_hierarchy`: along Tsunoda's hierarchy the agent keeps instigation and motion
+  while the patient rises out of the transitivity region.
+* `pole_alignment`, `recipient_dative`: the poles read out to the core cases of either alignment,
+  and the dative uses of section 5.1 share one node.
+* `genitive_accusative_alternation`: the Russian genitive of *ždat'* marks a non-referring object
+  at the bottom node.
 
 ## Implementation notes
 
-The lattice, the named participant types, the case regions, and the projection from
-[dowty-1991]'s profiles are substrate; this file supplies the paper's placements and reads its
-predictions off the interval characterizations of the regions. The paper's remarks on
-differential object marking (the interaction of verbal and referential properties, deferred to
-[grimm-2005]) and on the size of the nominative or ergative region in a given language are not
-formalized. Definiteness is the paper's three-step hierarchy (14), with the referring feature the
-one that entails existence.
+The paper's remarks on differential object marking, deferred to Grimm (2005), and on the size of
+the nominative or ergative region in a given language are not formalized. Definiteness is the
+paper's three-step hierarchy (14), the referring feature being the one that entails existence.
 
 ## References
 
@@ -60,13 +55,13 @@ open ArgumentStructure
 def sitAgentivity : Agentivity := ⊥
 
 /-- The subject of *know* and *see*: sentience. -/
-def knowAgentivity : Agentivity := .mk false true false false
+def knowAgentivity : Agentivity := {.sentience}
 
 /-- The subject of *discover*: sentience and instigation. -/
-def discoverAgentivity : Agentivity := .mk false true true false
+def discoverAgentivity : Agentivity := {.sentience, .instigation}
 
 /-- The subject of *look at*: sentience, instigation, and motion. -/
-def lookAtAgentivity : Agentivity := .mk false true true true
+def lookAtAgentivity : Agentivity := {.sentience, .instigation, .motion}
 
 /-- The subject of *assassinate*: all four properties. -/
 def assassinateAgentivity : Agentivity := ⊤
@@ -87,7 +82,7 @@ theorem canonical_verbs_valid :
 
 /-- The projection of [dowty-1991]'s perception profile lands on the chain at *see*. -/
 theorem see_subject_agentivity :
-    Agentivity.fromEntailmentProfile perception.subjectProfile = knowAgentivity := rfl
+    perception.subjectProfile.toAgentivity = knowAgentivity := by decide
 
 /-! ### Argument ranges and subject selection, section 2.3
 
@@ -104,7 +99,7 @@ theorem kill_subject_range {n : ParticipantType} (h : minimalInstigator ≤ n) :
     n.toCaseRegion = .nomErg :=
   (ParticipantType.toCaseRegion_eq_nomErg_iff n).mpr h
 
-/-- The endpoints of the range: electricity, with instigation alone, and the assassin. -/
+/-- The endpoints of the range are electricity, with instigation alone, and the assassin. -/
 theorem kill_subject_endpoints :
     minimalInstigator.toCaseRegion = .nomErg ∧ (⊤ : ParticipantType).toCaseRegion = .nomErg :=
   ⟨kill_subject_range le_rfl, kill_subject_range le_top⟩
@@ -113,14 +108,14 @@ theorem kill_subject_endpoints :
 of existential persistence (beginning): the range of the patient of *hit* and, in section 3, the
 persistence axis of the transitivity region. -/
 theorem transitive_region_eq_Ici (n : ParticipantType) :
-    n.InTransitiveRegion ↔ PersistenceLevel.exPersBeginning ≤ n.persistence := by
+    n.InTransitiveRegion ↔ PersistenceLevel.exPersBeginning ≤ n.2 := by
   revert n; decide
 
 /-- The subject of *kiss* strictly dominates its object on the agentivity lattice, so the
 dominance criterion selects it, [dowty-1991]'s result for (43) without counting entailments. -/
 theorem kiss_outranking_from_dominance :
     OutranksForSubject Dowty1991.kissSubjectProfile Dowty1991.kissObjectProfile :=
-  outranks_of_lattice_dominance _ _ (by decide) (by decide)
+  outranks_of_lattice_dominance (by decide) (by decide)
 
 /-! ### The transitivity region and the effectiveness hierarchy, section 3
 
@@ -130,11 +125,11 @@ entails instigation and motion; the agent of pursuit adds sentience (Fig. 5). -/
 
 /-- The agent of *search*, Fig. 5's IIIa: instigation, motion, and sentience at total
 persistence. -/
-def pursuitAgent : ParticipantType := ⟨.mk false true true true, .totalPersistence⟩
+def pursuitAgent : ParticipantType := ({.sentience, .instigation, .motion}, .totalPersistence)
 
-/-- The hierarchy as a progression of the patient away from the maximal patient: the patient
-of *break* is the maximal patient, that of *shoot* lies above it inside the transitivity region,
-that of *search* outside it, while the agents stay in the nominative or ergative region. -/
+/-- Along the hierarchy the patient moves away from the maximal patient: the patient of *break*
+is the maximal patient, that of *shoot* lies above it inside the transitivity region, and that of
+*search* outside it, while the agents stay in the nominative or ergative region. -/
 theorem transitivity_hierarchy :
     TransitivityRank.resultativeEffective.patientType = maximalPatient ∧
       TransitivityRank.resultativeEffective.patientType ≤ TransitivityRank.contact.patientType ∧
@@ -187,8 +182,8 @@ whose existence is not entailed, the bottom node of the lattice; the accusative 
 the node of existential persistence (beginning). An opacity-creating verb entails nothing for
 its object, so the noun phrase decides: a referring one exists when the event begins. -/
 
-/-- The definiteness hierarchy (14): a specific indefinite is referring, a definite referring and
-given, a non-specific indefinite neither. -/
+/-- The definiteness hierarchy (14), on which a specific indefinite is referring, a definite
+referring and given, and a non-specific indefinite neither. -/
 inductive Definiteness where
   | nonSpecificIndefinite
   | specificIndefinite
@@ -205,8 +200,8 @@ given definiteness: the maximal patient once existence is entailed, the bottom o
 def opacityObject (d : Definiteness) : ParticipantType :=
   if d.Referring then maximalPatient else ⊥
 
-/-- (12): the object is in the accusative region exactly when the noun phrase refers; the
-non-specific reading stays at the bottom node, the governed genitive's. -/
+/-- The object is in the accusative region exactly when the noun phrase refers, and the
+non-specific reading stays at the bottom node, the governed genitive's (12). -/
 theorem genitive_accusative_alternation (d : Definiteness) :
     ((opacityObject d).toCaseRegion = .accAbs ↔ d.Referring) ∧
       (opacityObject d = ⊥ ↔ ¬ d.Referring) := by
@@ -216,6 +211,6 @@ theorem genitive_accusative_alternation (d : Definiteness) :
 object: any node inside the transitivity region lies above the genitive's. -/
 theorem genitive_outside_region (n : ParticipantType) (h : n.InTransitiveRegion) :
     n ≠ ⊥ :=
-  λ hn => absurd h (hn ▸ by decide)
+  fun hn ↦ absurd h (hn ▸ by decide)
 
 end Grimm2011

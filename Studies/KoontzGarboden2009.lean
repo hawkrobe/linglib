@@ -244,7 +244,7 @@ causer that must be an agent entails volition, one that need only cause the chan
 EFFECTOR, and a subject that causes nothing is no causer. -/
 def causer (v : Verb) : Option Causer :=
   v.subjectEntailments.bind fun p ↦
-    if p.volition then some .agent else if p.causation then some .effector else none
+    if .volition ∈ p then some .agent else if .causation ∈ p then some .effector else none
 
 /-- Only causative verbs with underspecified causers have derived inchoatives (§3.1–§3.2), so
 among the fragment's verbs that have a causer, the alternating ones are the EFFECTOR verbs. -/

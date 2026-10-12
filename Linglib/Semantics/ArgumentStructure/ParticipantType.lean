@@ -3,172 +3,123 @@ module
 public import Linglib.Semantics.ArgumentStructure.Agentivity
 public import Linglib.Semantics.ArgumentStructure.PersistenceLevel
 public import Mathlib.Data.Fintype.Prod
+public import Mathlib.Order.Sublattice
 
 /-!
-# Participant types ([grimm-2011] §2.2, Fig. 3)
+# Participant types
 
-A participant type pairs an agentivity value with a persistence level —
-Grimm's term for a node of the full lattice ("each node of the lattice
-determines one type of participant"). The product carrier has 80 elements;
-Grimm's Fig. 3 lattice is the 38-element `Valid` subset (volition →
-sentience, and no agentivity without existence at the event's beginning,
-p.526–527).
+Grimm combines the lattice of agentivity properties with the persistence lattice by taking their
+Cartesian product, ordered componentwise, and excludes the conceptually impossible nodes: an
+argument not entailed to exist when the event begins has no agentivity property. Each remaining
+node is a participant type, and together they form the agentivity lattice, a sublattice of the
+product. The named participant types anchor the case regions of `CaseRegion.lean`, and Tsunoda's
+transitivity hierarchy places a canonical patient for each class.
 
-Named participant types anchor the case regions (`CaseRegion.lean`):
-`maximalAgent = ⊤`, `maximalPatient`, `effectorAgent`, and the dative
-convergence point `sentientNonInstigator`. Tsunoda's transitivity hierarchy
-(§3, example 8) is `TransitivityRank`, with the canonical patient
-placement of each class (Fig. 5).
+## Main definitions
+
+* `ParticipantType`: an agentivity and a persistence level.
+* `ParticipantType.lattice`: the valid participant types, Grimm's agentivity lattice.
+* `maximalAgent`, `maximalPatient`, `effectorAgent`, `sentientNonInstigator`: named nodes.
+* `TransitivityRank`: Tsunoda's transitivity hierarchy.
+
+## References
+
+* [grimm-2011]
+* [tsunoda-1985]
 -/
 
 @[expose] public section
 
 namespace ArgumentStructure
 
-/-- A participant type: agentivity × persistence (80 elements). Grimm's
-    Fig. 3 lattice is the 38-element `Valid` subset. -/
-structure ParticipantType where
-  agentivity  : Agentivity
-  persistence : PersistenceLevel
-  deriving DecidableEq, Repr
+/-- A participant type, a node of the product of the agentivity and persistence lattices. -/
+abbrev ParticipantType := Agentivity × PersistenceLevel
 
-/-- The agentivity constraint: volition → sentience. -/
-def ParticipantType.AgentivityValid (n : ParticipantType) : Prop :=
-  n.agentivity.Valid
+namespace ParticipantType
 
-instance (n : ParticipantType) : Decidable n.AgentivityValid := by
-  unfold ParticipantType.AgentivityValid; infer_instance
+/-- An argument not entailed to exist when the event begins has no agentivity property. -/
+def CrossValid (n : ParticipantType) : Prop := .exPB ∈ n.2 ∨ n.1 = ∅
 
-/-- The cross-lattice constraint: if the argument does not exist at the
-    beginning of the event, it cannot have any agentivity properties. -/
-def ParticipantType.CrossValid (n : ParticipantType) : Prop :=
-  n.persistence.exPersB = true ∨ n.agentivity = ⊥
+instance : DecidablePred CrossValid := fun _ ↦ inferInstanceAs (Decidable (_ ∨ _))
 
-instance (n : ParticipantType) : Decidable n.CrossValid := by
-  unfold ParticipantType.CrossValid; infer_instance
+/-- A participant type respects both the relation among the agentivity properties and the
+dependence of agentivity on initial existence. -/
+def Valid (n : ParticipantType) : Prop := n.1.Valid ∧ n.CrossValid
 
-/-- Full validity: both constraints satisfied. Carves Grimm's 38-element
-    Fig. 3 lattice out of the 80-element carrier. -/
-def ParticipantType.Valid (n : ParticipantType) : Prop :=
-  n.AgentivityValid ∧ n.CrossValid
+instance : DecidablePred Valid := fun _ ↦ inferInstanceAs (Decidable (_ ∧ _))
 
-instance (n : ParticipantType) : Decidable n.Valid := by
-  unfold ParticipantType.Valid; infer_instance
+private theorem exPB_mem_inf {l m : PersistenceLevel} (hl : .exPB ∈ l) (hm : .exPB ∈ m) :
+    .exPB ∈ l ⊓ m := by
+  revert l m; decide
 
-def ParticipantType.equiv : ParticipantType ≃ (Agentivity × PersistenceLevel) where
-  toFun n := (n.agentivity, n.persistence)
-  invFun p := ⟨p.1, p.2⟩
-  left_inv n := by cases n; rfl
-  right_inv p := by cases p; rfl
+/-- The valid participant types form a sublattice of the product, Grimm's agentivity lattice. -/
+def lattice : Sublattice ParticipantType where
+  carrier := {n | n.Valid}
+  supClosed' a ha b hb := ⟨Agentivity.lattice.supClosed ha.1 hb.1, by
+    rcases ha.2 with h | h
+    · exact .inl (SetLike.le_def.1 le_sup_left h)
+    rcases hb.2 with h' | h'
+    · exact .inl (SetLike.le_def.1 le_sup_right h')
+    · exact .inr (by simp [h, h'])⟩
+  infClosed' a ha b hb := ⟨Agentivity.lattice.infClosed ha.1 hb.1, by
+    rcases ha.2 with h | h
+    · rcases hb.2 with h' | h'
+      · exact .inl (exPB_mem_inf h h')
+      · exact .inr (by simp [h'])
+    · exact .inr (by simp [h])⟩
 
-instance : Fintype ParticipantType := Fintype.ofEquiv _ ParticipantType.equiv.symm
+@[simp] theorem mem_lattice {n : ParticipantType} : n ∈ lattice ↔ n.Valid := Iff.rfl
 
-/-- Product order: componentwise `≤` on agentivity and persistence. -/
-instance : LE ParticipantType where
-  le a b := a.agentivity ≤ b.agentivity ∧ a.persistence ≤ b.persistence
+/-- Of the eighty nodes of the product, thirty-eight are valid. -/
+theorem card_valid : (Finset.univ.filter Valid).card = 38 := by decide
 
-instance : LT ParticipantType where
-  lt a b := a ≤ b ∧ ¬ b ≤ a
-
-instance : PartialOrder ParticipantType where
-  le_refl a := ⟨le_refl _, le_refl _⟩
-  le_trans _ _ _ h g := ⟨le_trans h.1 g.1, le_trans h.2 g.2⟩
-  le_antisymm a b h g := by
-    have := le_antisymm h.1 g.1
-    have := le_antisymm h.2 g.2
-    cases a; cases b; simp_all
-
-instance : DecidableRel (α := ParticipantType) (· ≤ ·) := fun a b =>
-  inferInstanceAs (Decidable (a.agentivity ≤ b.agentivity ∧ a.persistence ≤ b.persistence))
-
-instance : OrderBot ParticipantType where
-  bot := ⟨⊥, ⊥⟩
-  bot_le _ := ⟨bot_le, bot_le⟩
-
-instance : OrderTop ParticipantType where
-  top := ⟨⊤, ⊤⟩
-  le_top _ := ⟨le_top, le_top⟩
-
-/-- Componentwise lattice: meet/join on each axis independently. -/
-instance : Lattice ParticipantType where
-  sup a b := ⟨a.agentivity ⊔ b.agentivity, a.persistence ⊔ b.persistence⟩
-  inf a b := ⟨a.agentivity ⊓ b.agentivity, a.persistence ⊓ b.persistence⟩
-  le_sup_left _ _ := ⟨le_sup_left, le_sup_left⟩
-  le_sup_right _ _ := ⟨le_sup_right, le_sup_right⟩
-  sup_le _ _ _ h1 h2 := ⟨sup_le h1.1 h2.1, sup_le h1.2 h2.2⟩
-  inf_le_left _ _ := ⟨inf_le_left, inf_le_left⟩
-  inf_le_right _ _ := ⟨inf_le_right, inf_le_right⟩
-  le_inf _ _ _ h1 h2 := ⟨le_inf h1.1 h2.1, le_inf h1.2 h2.2⟩
+end ParticipantType
 
 /-! ### Named participant types -/
 
-/-- Maximal Agent (Fig. 4): all agentivity features at total persistence —
-    the top of the participant lattice. The prototypical transitive
-    subject. -/
+/-- The maximal agent has every agentivity property at total persistence; it is the top of the
+lattice and the prototypical transitive subject. -/
 def maximalAgent : ParticipantType := ⊤
 
-/-- Maximal Patient (Fig. 4): no agentivity features,
-    existential persistence (beginning). The prototypical affected object
-    that ceases to exist (break, destroy). -/
-def maximalPatient : ParticipantType :=
-  ⟨⊥, .exPersBeginning⟩
+/-- The maximal patient has no agentivity property and exists when the event begins but not
+after it, as the object of *break* or *destroy* does. -/
+def maximalPatient : ParticipantType := (∅, .exPersBeginning)
 
-/-- The "effector" participant type: instigation + motion, total
-    persistence. The canonical agent of effective action verbs (kill, break).
-    §3, labeled Ia/IIa in Fig. 5. -/
-def effectorAgent : ParticipantType :=
-  ⟨.mk false false true true, .totalPersistence⟩
+/-- The effector has instigation and motion at total persistence, as the agent of the effective
+action verbs *kill* and *break* does ([grimm-2011] §3, Ia and IIa in Fig. 5). -/
+def effectorAgent : ParticipantType := ({.instigation, .motion}, .totalPersistence)
 
-/-- Sentience without instigation, at qualitative persistence (beginning):
-    the single position where Grimm's §5.1 dative uses converge —
-    recipients, dative experiencers, and second arguments of two-place
-    communication/service verbs (Fig. 7). -/
-def sentientNonInstigator : ParticipantType :=
-  ⟨.mk false true false false, .quPersBeginning⟩
+/-- Sentience without instigation at qualitative persistence (beginning), where Grimm's dative
+uses converge: recipients, dative experiencers and the second arguments of two-place
+communication and service verbs (§5.1, Fig. 7). -/
+def sentientNonInstigator : ParticipantType := ({.sentience}, .quPersBeginning)
 
-/-! ### Transitivity region (§3, Fig. 4) -/
+/-! ### The transitivity region -/
 
-/-- A node is in the **transitivity region** iff its persistence level
-    is in {exPersBeginning, quPersBeginning, totalPersistence}.
+/-- A participant type is in the transitivity region when the argument exists at the beginning of
+the event, which both participants of the prototypical transitive event do ([grimm-2011]
+pp.529–530). -/
+def ParticipantType.InTransitiveRegion (n : ParticipantType) : Prop := .exPB ∈ n.2
 
-    The transitivity region excludes totalNonPersistence and exPersEnd
-    because the prototypical transitive event requires both participants
-    to exist at the beginning (p.529–530). -/
-def ParticipantType.InTransitiveRegion (n : ParticipantType) : Prop :=
-  n.persistence.exPersB = true
+instance : DecidablePred ParticipantType.InTransitiveRegion := fun _ ↦
+  inferInstanceAs (Decidable (_ ∈ _))
 
-instance (n : ParticipantType) : Decidable n.InTransitiveRegion := by
-  unfold ParticipantType.InTransitiveRegion; infer_instance
-
-/-- Tsunoda's transitivity hierarchy (§3, example 8).
-
-    | Class | Example verbs | Transitivity |
-    |-------|--------------|-------------|
-    | I     | kill, break  | Highest     |
-    | II    | shoot, hit   | Middle      |
-    | III   | search, seek | Lowest      |
-
-    Named `TransitivityRank` (rank on Tsunoda's hierarchy) to avoid
-    collision with `ArgumentStructure.AuxiliarySelection.TransitivityClass`
-    (the Burzio unaccusative/unergative/transitive classification). -/
+/-- Tsunoda's transitivity hierarchy ([grimm-2011] §3, example 8), distinct from the Burzio
+classification `AuxiliarySelection.TransitivityClass`. -/
 inductive TransitivityRank where
-  /-- Resultative Effective Action: kill, break. Object is destroyed
-      (exPersBeginning). Maximal opposition between agent and patient. -/
+  /-- Resultative effective action, *kill* and *break*: the object is destroyed. -/
   | resultativeEffective
-  /-- Contact: shoot, hit. Object is affected but persists
-      (quPersBeginning). Less opposition than Class I. -/
+  /-- Contact, *shoot* and *hit*: the object is affected but persists. -/
   | contact
-  /-- Pursuit: search, seek. Object may not even exist
-      (totalNonPersistence). Outside the transitivity region. -/
+  /-- Pursuit, *search* and *seek*: the object need not exist. -/
   | pursuit
   deriving DecidableEq, Repr
 
-/-- The canonical patient position for each transitivity class
-    (Fig. 5). The agent of classes I and II is `effectorAgent` (Ia/IIa share
-    one node); the agent of class III adds sentience to it (IIIa). -/
+/-- The canonical patient of each transitivity class (Fig. 5); the agent of classes I and II is
+`effectorAgent`, and the agent of class III adds sentience to it. -/
 def TransitivityRank.patientType : TransitivityRank → ParticipantType
-  | .resultativeEffective => ⟨⊥, .exPersBeginning⟩     -- Ip
-  | .contact              => ⟨⊥, .quPersBeginning⟩     -- IIp
-  | .pursuit              => ⟨⊥, .totalNonPersistence⟩ -- IIIp
+  | .resultativeEffective => (∅, .exPersBeginning)
+  | .contact => (∅, .quPersBeginning)
+  | .pursuit => (∅, .totalNonPersistence)
 
 end ArgumentStructure

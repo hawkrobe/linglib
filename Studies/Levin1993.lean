@@ -12,7 +12,7 @@ public import Linglib.Data.Examples.Levin1993
 /-!
 # Levin (1993): English Verb Classes and Alternations
 
-This file formalizes the diagnostic of [levin-1993]: a verb's participation in diathesis
+This file formalizes Levin's diagnostic: a verb's participation in diathesis
 alternations follows from its meaning, so verbs fall into semantically coherent classes that
 share an alternation profile (`ArgumentStructure.LevinClass.Participates`). The book's
 opening quadruple *break*, *cut*, *hit*, *touch* takes four distinct profiles across the
@@ -119,8 +119,8 @@ theorem participation_matches_profile :
 *break*, *cut*, *hit* and *touch* are told apart by the four diagnostic alternations (p. 7), and
 the Introduction explains the difference by the components of their meanings (pp. 7–10). -/
 
-/-- A component of verb meaning to which diathesis alternations are sensitive: "the notions of
-motion, contact, change of state, and causation" (p. 10). -/
+/-- A component of verb meaning to which diathesis alternations are sensitive, among "the notions
+of motion, contact, change of state, and causation" (p. 10). -/
 inductive MeaningComponent where
   | motion
   | contact
@@ -233,10 +233,11 @@ def schema? : DiathesisAlternation → Option Voice
       (of (.np_pp (some with_)) .np [none, some (complement 0), some external])
   | _ => none
 where
-  /-- The unexpressed object alternations: the object dropped with interpretation `i`. -/
+  /-- The unexpressed object alternations, which drop the object with interpretation `i`. -/
   objectDrop (i : ImplicitInterp) : Voice :=
     of .np (.objectDrop (some i)) [some external, some (complement 0)]
-  /-- The dative and benefactive alternations: the *p* phrase becomes the first object. -/
+  /-- The dative and benefactive alternations, in which the *p* phrase becomes the first
+  object. -/
   toDoubleObject (p : Adposition) : Voice :=
     of (.np_pp (some p)) .np_np [some external, some (complement 1), some (complement 0)]
 
@@ -262,8 +263,8 @@ instance {n : ℕ} (c d : Diathesis n) (i : Fin n) : Decidable (IsCausee c d i) 
 alternation, and in the causative/inchoative alternation for one that is not volitional and changes
 state or position. -/
 def CauseeCondition : DiathesisAlternation → EntailmentProfile → Prop
-  | .causativeInchoative, θ => θ.volition = false ∧ (θ.changeOfState = true ∨ θ.movement = true)
-  | .inducedAction, θ => θ.volition = true
+  | .causativeInchoative, θ => .volition ∉ θ ∧ (.changeOfState ∈ θ ∨ .movement ∈ θ)
+  | .inducedAction, θ => .volition ∈ θ
   | _, _ => True
 
 instance (a : DiathesisAlternation) (θ : EntailmentProfile) : Decidable (CauseeCondition a θ) := by
