@@ -22,7 +22,8 @@ In the case study Jill Stein chooses between *big pharma*, which savvy listeners
 anti-vaxxer persona and unsavvy ones read as merely anti-corporate, and the disavowal *corporate
 scientists*. To pro-vaxxers alone, savvy or not, she disavows; to anti-vaxxers alone she
 dogwhistles; a savvy pro-vaxxer weighs more against the dogwhistle than an unsavvy one; and to an
-audience of 400 anti-vaxxers, 100 savvy and 4500 unsavvy pro-vaxxers she dogwhistles.
+audience of 400 anti-vaxxers, 100 savvy and 4500 unsavvy pro-vaxxers she dogwhistles until 74 more
+savvy or 1314 more naive pro-vaxxers join it.
 
 ## Main statements
 
@@ -30,7 +31,8 @@ audience of 400 anti-vaxxers, 100 savvy and 4500 unsavvy pro-vaxxers she dogwhis
   listener.
 * `disavows_to_proVaxxers`, `dogwhistles_to_antiVaxxers`: the speaker disavows to any group of
   pro-vaxxers and dogwhistles to any group of anti-vaxxers.
-* `dogwhistles_to_mixedAudience`: she dogwhistles to the book's mixed audience.
+* `dogwhistles_iff_savvy_lt`, `dogwhistles_iff_naive_lt`: she dogwhistles to the book's mixed
+  audience until 74 more savvy or 1314 more naive pro-vaxxers join it.
 
 ## Implementation notes
 
@@ -46,10 +48,6 @@ audience of 400 anti-vaxxers, 100 savvy and 4500 unsavvy pro-vaxxers she dogwhis
 
 ## TODO
 
-* The book says (p. 65) that a few dozen more savvy pro-vaxxers or a thousand more naive listeners
-  would turn Stein from the dogwhistle; on its own numbers that takes about 74 savvy or 1314
-  naive ones, and a thousand more still leave her dogwhistling
-  (`dogwhistles_to_thousand_more_unsavvy`).
 * The book prints 73 for the anti-vaxxer's utility of *big pharma*, where the model gives 72.05;
   the other five printed utilities agree.
 * The parameter exploration of Section 4.3 and the enriching dogwhistles of Chapter 5.
@@ -319,23 +317,23 @@ private theorem advantage_unsavvyProVaxxer :
   rw [log_unsavvy]
   ring
 
-/-- The savvy ratio lies between 16 and 32, the unsavvy between 24 and 32. -/
+/-- The savvy ratio is `2 ^ 4` times `1 + 0.062882`, whose log the series bounds. -/
 private theorem log_savvy_bounds :
-    4 * Real.log 2 < Real.log (531441 / 31250) ∧ Real.log (531441 / 31250) < 5 * Real.log 2 := by
-  have h4 := Real.log_pow (2 : ℝ) 4
-  have h5 := Real.log_pow (2 : ℝ) 5
-  norm_num at h4 h5
-  rw [← h4, ← h5]
-  constructor <;> exact Real.log_lt_log (by norm_num) (by norm_num)
+    2.833572 < Real.log (531441 / 31250) ∧ Real.log (531441 / 31250) < 2.833574 := by
+  have h := Real.abs_log_sub_add_sum_range_le (x := -31441 / 500000) (by norm_num [abs_div]) 5
+  rw [show (531441 / 31250 : ℝ) = 2 ^ 4 * (1 - -31441 / 500000) by norm_num,
+    Real.log_mul (by norm_num) (by norm_num), Real.log_pow]
+  norm_num [Finset.sum_range_succ, abs_le] at h ⊢
+  constructor <;> linarith [Real.log_two_gt_d9, Real.log_two_lt_d9]
 
+/-- The unsavvy ratio is `3 ^ 3` times `1 - 292891 / 11453152`, whose log the series bounds. -/
 private theorem log_unsavvy_bounds :
-    3 * Real.log 2 + Real.log 3 < Real.log (301327047 / 11453152) ∧
-      Real.log (301327047 / 11453152) < 5 * Real.log 2 := by
-  have h3 := Real.log_pow (2 : ℝ) 3
-  have h5 := Real.log_pow (2 : ℝ) 5
-  norm_num at h3 h5
-  rw [← h3, ← h5, ← Real.log_mul (by norm_num) (by norm_num)]
-  constructor <;> exact Real.log_lt_log (by norm_num) (by norm_num)
+    3.269930 < Real.log (301327047 / 11453152) ∧ Real.log (301327047 / 11453152) < 3.269932 := by
+  have h := Real.abs_log_sub_add_sum_range_le (x := 292891 / 11453152) (by norm_num [abs_div]) 5
+  rw [show (301327047 / 11453152 : ℝ) = 3 ^ 3 * (1 - 292891 / 11453152) by norm_num,
+    Real.log_mul (by norm_num) (by norm_num), Real.log_pow]
+  norm_num [Finset.sum_range_succ, abs_le] at h ⊢
+  constructor <;> linarith [Real.log_three_gt_d9, Real.log_three_lt_d9]
 
 variable {α : ℝ} {G : Multiset (Listener Persona Message)} {π : Persona}
 
@@ -345,15 +343,15 @@ theorem disavows_to_proVaxxers (hα : 0 < α) (hG : G ≠ 0)
     (S1 α 0 G π).real {.bigPharma} < (S1 α 0 G π).real {.corporateScientists} := by
   refine S1_real_singleton_lt_of_forall hα hG fun L hL ↦ ?_
   rcases h L hL with rfl | rfl
-  · linarith [advantage_savvyProVaxxer, log_savvy_bounds.2, Real.log_two_lt_d9]
-  · linarith [advantage_unsavvyProVaxxer, log_unsavvy_bounds.2, Real.log_two_lt_d9]
+  · linarith [advantage_savvyProVaxxer, log_savvy_bounds.2]
+  · linarith [advantage_unsavvyProVaxxer, log_unsavvy_bounds.2]
 
 /-- To any group of anti-vaxxers Stein dogwhistles. -/
 theorem dogwhistles_to_antiVaxxers (hα : 0 < α) (hG : G ≠ 0) (h : ∀ L ∈ G, L = antiVaxxer) :
     (S1 α 0 G π).real {.corporateScientists} < (S1 α 0 G π).real {.bigPharma} :=
   S1_real_singleton_lt_of_forall hα hG fun L hL ↦ by
     obtain rfl := h L hL
-    linarith [advantage_antiVaxxer, log_savvy_bounds.1, Real.log_two_gt_d9]
+    linarith [advantage_antiVaxxer, log_savvy_bounds.1]
 
 /-- A savvy pro-vaxxer weighs more against the dogwhistle than an unsavvy one: where Stein
 disavows to a group with an unsavvy pro-vaxxer, she disavows to it with a savvy one instead. -/
@@ -365,32 +363,60 @@ theorem disavows_of_savvy_for_unsavvy (hα : 0 < α)
   rw [S1_real_singleton_lt_iff hα] at h ⊢
   simp only [groupUtility, Multiset.map_cons, Multiset.sum_cons] at h ⊢
   linarith [advantage_savvyProVaxxer, advantage_unsavvyProVaxxer, log_savvy_bounds.2,
-    log_unsavvy_bounds.1, Real.log_two_gt_d9, Real.log_two_lt_d9, Real.log_three_gt_d9]
+    log_unsavvy_bounds.1]
 
 /-- The book's audience of about 5000: 400 anti-vaxxers, 100 savvy pro-vaxxers, and the rest
 naive. -/
 noncomputable def mixedAudience : Multiset (Listener Persona Message) :=
   .replicate 400 antiVaxxer + .replicate 100 savvyProVaxxer + .replicate 4500 unsavvyProVaxxer
 
-/-- To the mixed audience Stein dogwhistles. -/
-theorem dogwhistles_to_mixedAudience (hα : 0 < α) :
-    (S1 α 0 mixedAudience π).real {.corporateScientists} <
-      (S1 α 0 mixedAudience π).real {.bigPharma} := by
+/-- Stein dogwhistles to the mixed audience until 74 more savvy pro-vaxxers join it, the book's
+"few dozen" (p. 65). -/
+theorem dogwhistles_iff_savvy_lt (hα : 0 < α) (n : ℕ) :
+    (S1 α 0 (.replicate n savvyProVaxxer + mixedAudience) π).real {.corporateScientists} <
+      (S1 α 0 (.replicate n savvyProVaxxer + mixedAudience) π).real {.bigPharma} ↔ n < 74 := by
   rw [S1_real_singleton_lt_iff hα]
   simp only [groupUtility, mixedAudience, Multiset.map_add, Multiset.map_replicate,
     Multiset.sum_add, Multiset.sum_replicate, nsmul_eq_mul, Nat.cast_ofNat]
-  linarith [advantage_antiVaxxer, advantage_savvyProVaxxer, advantage_unsavvyProVaxxer,
-    log_savvy_bounds.1, log_unsavvy_bounds.1, Real.log_two_gt_d9, Real.log_three_gt_d9]
+  have hA := advantage_antiVaxxer
+  have hS := advantage_savvyProVaxxer
+  have hU := advantage_unsavvyProVaxxer
+  have hs := log_savvy_bounds
+  have hu := log_unsavvy_bounds
+  have hc : 0 ≤ socialUtility 0 savvyProVaxxer .corporateScientists -
+      socialUtility 0 savvyProVaxxer .bigPharma := by linarith
+  constructor
+  · intro h
+    by_contra hn
+    have hn : (74 : ℝ) ≤ n := by exact_mod_cast not_lt.1 hn
+    linarith [mul_nonneg (sub_nonneg.2 hn) hc]
+  · intro hn
+    have hn : (n : ℝ) ≤ 73 := by exact_mod_cast Nat.lt_succ_iff.1 hn
+    linarith [mul_nonneg (sub_nonneg.2 hn) hc]
 
-/-- A thousand more naive listeners still leave Stein dogwhistling to the mixed audience, where
-the book says they would turn her (p. 65). -/
-theorem dogwhistles_to_thousand_more_unsavvy (hα : 0 < α) :
-    (S1 α 0 (.replicate 1000 unsavvyProVaxxer + mixedAudience) π).real {.corporateScientists} <
-      (S1 α 0 (.replicate 1000 unsavvyProVaxxer + mixedAudience) π).real {.bigPharma} := by
+/-- Stein dogwhistles to the mixed audience until 1314 more naive listeners join it, the book's
+"thousand more" (p. 65). -/
+theorem dogwhistles_iff_naive_lt (hα : 0 < α) (n : ℕ) :
+    (S1 α 0 (.replicate n unsavvyProVaxxer + mixedAudience) π).real {.corporateScientists} <
+      (S1 α 0 (.replicate n unsavvyProVaxxer + mixedAudience) π).real {.bigPharma} ↔
+      n < 1314 := by
   rw [S1_real_singleton_lt_iff hα]
   simp only [groupUtility, mixedAudience, Multiset.map_add, Multiset.map_replicate,
     Multiset.sum_add, Multiset.sum_replicate, nsmul_eq_mul, Nat.cast_ofNat]
-  linarith [advantage_antiVaxxer, advantage_savvyProVaxxer, advantage_unsavvyProVaxxer,
-    log_savvy_bounds.1, log_unsavvy_bounds.1, Real.log_two_gt_d9, Real.log_three_gt_d9]
+  have hA := advantage_antiVaxxer
+  have hS := advantage_savvyProVaxxer
+  have hU := advantage_unsavvyProVaxxer
+  have hs := log_savvy_bounds
+  have hu := log_unsavvy_bounds
+  have hc : 0 ≤ socialUtility 0 unsavvyProVaxxer .corporateScientists -
+      socialUtility 0 unsavvyProVaxxer .bigPharma := by linarith
+  constructor
+  · intro h
+    by_contra hn
+    have hn : (1314 : ℝ) ≤ n := by exact_mod_cast not_lt.1 hn
+    linarith [mul_nonneg (sub_nonneg.2 hn) hc]
+  · intro hn
+    have hn : (n : ℝ) ≤ 1313 := by exact_mod_cast Nat.lt_succ_iff.1 hn
+    linarith [mul_nonneg (sub_nonneg.2 hn) hc]
 
 end HendersonMcCready2024
