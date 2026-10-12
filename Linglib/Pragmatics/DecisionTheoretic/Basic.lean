@@ -1,11 +1,11 @@
 module
 
 public import Linglib.Core.Probability.ConditionalProbability
+public import Linglib.Core.Probability.Independence.Basic
 public import Linglib.Core.Probability.UniformOn
 public import Mathlib.Analysis.SpecialFunctions.Log.Basic
 public import Mathlib.MeasureTheory.Measure.Count
 public import Mathlib.MeasureTheory.Measure.Real
-public import Mathlib.Probability.Independence.Basic
 
 /-!
 # Decision-Theoretic Semantics
@@ -317,7 +317,8 @@ theorem negRelevant_iff_real_cross (he : ctx.prior e ≠ 0) :
       positivity
   · rw [negRelevant_iff_cond_lt h, ← ENNReal.toReal_lt_toReal (measure_ne_top _ _)
       (measure_ne_top _ _), ← measureReal_def, ← measureReal_def, cond_real_apply _ hHm.compl,
-      cond_real_apply _ hHm, div_lt_div_iff₀ (measureReal_topic_pos ctx) (measureReal_compl_pos ctx)]
+      cond_real_apply _ hHm,
+      div_lt_div_iff₀ (measureReal_topic_pos ctx) (measureReal_compl_pos ctx)]
 
 end Cross
 
@@ -478,8 +479,7 @@ private theorem div_union_bounds {μ ν : Measure W} [IsProbabilityMeasure μ]
       simpa using (ENNReal.lt_div_iff_mul_lt (.inl h0) (.inl (measure_ne_top _ _))).1 hs
   have hunion {ρ : Measure W} [IsProbabilityMeasure ρ] (h : IndepSet a b ρ) :
       ρ.real (a ∪ b) = ρ.real a + ρ.real b - ρ.real a * ρ.real b := by
-    rw [eq_sub_iff_add_eq, ← measureReal_union_add_inter hbm, measureReal_def ρ (a ∩ b),
-      h.measure_inter_eq_mul, ENNReal.toReal_mul, ← measureReal_def, ← measureReal_def]
+    rw [eq_sub_iff_add_eq, ← measureReal_union_add_inter hbm, h.measureReal_inter_eq_mul]
   have hfin {s : Set W} (h0 : ν s ≠ 0) : μ s / ν s ≠ ⊤ := ENNReal.div_ne_top (measure_ne_top _ _) h0
   have hνu : ν (a ∪ b) ≠ 0 := fun h0 ↦ hνa (measure_mono_null Set.subset_union_left h0)
   have hA := hlt ha hνa
@@ -530,8 +530,8 @@ theorem posRelevant_iff_lt_cond (ctx : Context W) [IsProbabilityMeasure ctx.prio
     posRelevant ctx e ↔ ctx.prior e < ctx.prior[|ctx.topic] e := by
   have hHm := ctx.topicMeasurable
   rw [posRelevant_iff_cond_lt, ← cond_add_cond_compl_eq hHm ctx.prior]
-  conv_rhs => rhs; rw [← mul_one (ctx.prior[|ctx.topic] e), ← prob_add_prob_compl (μ := ctx.prior) hHm,
-    mul_add]
+  conv_rhs => rhs; rw [← mul_one (ctx.prior[|ctx.topic] e),
+    ← prob_add_prob_compl (μ := ctx.prior) hHm, mul_add]
   rw [ENNReal.add_lt_add_iff_left (ENNReal.mul_ne_top (measure_ne_top _ _) (measure_ne_top _ _)),
     ENNReal.mul_lt_mul_iff_left Context.Nondegenerate.compl_ne_zero (measure_ne_top _ _)]
 

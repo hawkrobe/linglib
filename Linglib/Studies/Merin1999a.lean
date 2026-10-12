@@ -307,13 +307,13 @@ theorem cond_lt_iff_hContrary (ctx : Context W) [IsProbabilityMeasure ctx.prior]
   set H := ctx.topic
   have hHm : MeasurableSet H := ctx.topicMeasurable
   have hsplit (e : Set W) : μ.real e = μ.real (H ∩ e) + μ.real (Hᶜ ∩ e) := by
-    rw [← measureReal_inter_add_sdiff (s := e) hHm, Set.sdiff_eq, Set.inter_comm e, Set.inter_comm e]
+    rw [← measureReal_inter_add_sdiff (s := e) hHm, Set.sdiff_eq, Set.inter_comm e,
+      Set.inter_comm e]
   have hcip' (s : Set W) (hs : MeasurableSet s) (θ : Bool) (hθ : ctx.conditional θ = μ[|s]) :
       μ.real (s ∩ (a ∩ b)) / μ.real s =
         μ.real (s ∩ a) / μ.real s * (μ.real (s ∩ b) / μ.real s) := by
-    rw [← cond_real_apply μ hs, ← cond_real_apply μ hs, ← cond_real_apply μ hs, measureReal_def,
-      ← hθ, (hcip θ).measure_inter_eq_mul, ENNReal.toReal_mul, hθ, ← measureReal_def,
-      ← measureReal_def]
+    rw [← cond_real_apply μ hs, ← cond_real_apply μ hs, ← cond_real_apply μ hs, ← hθ]
+    exact (hcip θ).measureReal_inter_eq_mul
   have hcipH' := hcip' H hHm true rfl
   have hcipNH' := hcip' Hᶜ hHm.compl false rfl
   rw [← ENNReal.toReal_lt_toReal (measure_ne_top μ[|a] b) (measure_ne_top μ b),
