@@ -3,6 +3,10 @@
 # download them instead of compiling linglib from source (see
 # `preferReleaseBuild` in lakefile.lean). One archive serves every platform:
 # linglib's compiled .olean files do not depend on the operating system.
+#
+# The archive holds each module as one compressed file (.ltar) beside its
+# .trace file, and nothing unpacked. Lake unpacks a module the first time a
+# build needs it, so a project spends disk space only on the modules it imports.
 name: Release build
 
 on:
@@ -44,6 +48,13 @@ jobs:
 
       - name: Build linglib
         run: lake build
+
+      - name: Pack each module into its own compressed file
+        run: |
+          find .lake/build/lib/lean -name '*.trace' \
+            | sed -e 's|^\.lake/build/lib/lean/|+|' -e 's|\.trace$|:ltar|' -e 's|/|.|g' \
+            | xargs lake build
+          find .lake/build -type f ! -name '*.ltar' ! -name '*.trace' -delete
 
       - name: Attach the compiled files to the release
         env:
