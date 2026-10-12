@@ -31,8 +31,9 @@ properties are corollaries of `Monoid.Pseudovariety.langs`.
   syntactic monoid.
 * `Language.IsStarFree.compl`, `Language.IsStarFree.inter`, `Language.IsStarFree.union`: Boolean
   closure.
-* `Language.IsStarFree.of_recognizes`: a language recognized by a finite aperiodic monoid is
-  star-free.
+* `Language.IsStarFree.of_recognizes`, `Language.IsStarFree.of_factorsThrough`: a language is
+  star-free when a finite aperiodic monoid recognizes it, or when membership factors through a
+  finite invariant that respects concatenation and stabilizes on powers.
 * `Language.IsStarFree.comap`: closure under inverse homomorphisms, with the erasing instance
   `Language.IsStarFree.preimage_filter`.
 
@@ -82,6 +83,37 @@ theorem IsStarFree.of_recognizes {M : Type*} [Monoid M] [Finite M]
     (hL : ∀ w : List α, w ∈ L ↔ η (FreeMonoid.ofList w) ∈ P) : L.IsStarFree := by
   obtain ⟨N, f, hf⟩ := Recognizes.syntacticMonoid_isSubquotient (φ := η) ⟨P, Set.ext hL⟩
   exact ⟨.of_surjective f hf, (hM.of_injective N.subtype_injective).of_surjective hf⟩
+
+/-- A language is star-free when membership factors through a map `g` with finite range that
+respects concatenation and takes the same value on `n + 1` copies of a word as on `n`. -/
+theorem IsStarFree.of_factorsThrough {β : Type*} {g : List α → β} {n : ℕ}
+    (hL : Function.FactorsThrough (· ∈ L) g)
+    (hg : ∀ ⦃u u' v v'⦄, g u = g u' → g v = g v' → g (u ++ v) = g (u' ++ v'))
+    (hfin : (Set.range g).Finite)
+    (hpow : ∀ w, g (List.replicate (n + 1) w).flatten = g (List.replicate n w).flatten) :
+    L.IsStarFree := by
+  have hcls : Function.FactorsThrough L.syntacticClass g := fun _ _ e ↦
+    syntacticClass_eq_iff.mpr fun _ _ ↦ iff_of_eq (hL (hg (hg rfl e) rfl))
+  refine ⟨Set.finite_univ_iff.mp ?_, n, fun x ↦ ?_⟩
+  · exact L.syntacticClass_surjective.range_eq ▸ hcls.finite_range hfin
+  · obtain ⟨w, rfl⟩ := L.syntacticClass_surjective x
+    simpa [syntacticClass_flatten] using hcls (hpow w)
+
+/-- A star-free language cannot tell `n + 1` copies of a word from `n` copies, for some `n`. -/
+theorem IsStarFree.exists_flatten_replicate_succ_mem_iff (h : L.IsStarFree) :
+    ∃ n, ∀ w : List α,
+      (List.replicate (n + 1) w).flatten ∈ L ↔ (List.replicate n w).flatten ∈ L := by
+  obtain ⟨n, hn⟩ := h.isAperiodic
+  exact ⟨n, fun w ↦ mem_iff_of_syntacticClass_eq <| by
+    simpa [syntacticClass_flatten] using hn (L.syntacticClass w)⟩
+
+/-- The words of even length do not form a star-free language. -/
+theorem not_isStarFree_setOf_even_length [Nonempty α] :
+    ¬ IsStarFree {w : List α | Even w.length} := fun h ↦ by
+  obtain ⟨n, hn⟩ := h.exists_flatten_replicate_succ_mem_iff
+  have h' := hn [Classical.arbitrary α]
+  rw [Set.mem_ofPred_eq, Set.mem_ofPred_eq] at h'
+  simp [Nat.even_add_one, -Nat.not_even_iff_odd] at h'
 
 /-- Star-free languages are closed under inverse homomorphisms of free monoids. -/
 theorem IsStarFree.comap {α β : Type*} {L : Language β} (h : L.IsStarFree)

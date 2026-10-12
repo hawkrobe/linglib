@@ -137,6 +137,10 @@ def syntacticClass (L : Language α) (w : List α) : L.SyntacticMonoid :=
 @[simp] theorem syntacticClass_append (L : Language α) (u v : List α) :
     L.syntacticClass (u ++ v) = L.syntacticClass u * L.syntacticClass v := map_mul _ _ _
 
+theorem syntacticClass_flatten (L : Language α) (ws : List (List α)) :
+    L.syntacticClass ws.flatten = (ws.map L.syntacticClass).prod := by
+  induction ws <;> simp [*]
+
 theorem syntacticClass_surjective (L : Language α) : Function.Surjective L.syntacticClass :=
   Con.mk'_surjective.comp FreeMonoid.ofList.surjective
 

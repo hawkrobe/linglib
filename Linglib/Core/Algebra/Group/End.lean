@@ -18,6 +18,5 @@ public import Mathlib.Basic.Finite.Prod
 
 @[expose] public section
 
-/-- `Function.End α` is a plain `def`, so `Finite` does not see through it to `α → α`. -/
 instance Function.End.instFinite {α : Type*} [Finite α] : Finite (Function.End α) :=
   inferInstanceAs (Finite (α → α))

@@ -106,6 +106,26 @@ lemma takeAt_append_congr {k : ℕ} {xs xs' : List α} (h : e.takeAt k xs = e.ta
     (ys : List α) : e.takeAt k (xs ++ ys) = e.takeAt k (xs' ++ ys) := by
   rw [← takeAt_takeAt_append, h, takeAt_takeAt_append]
 
+/-- Truncating the second factor of a concatenation to its edge substring leaves the edge
+substring of the whole unchanged. -/
+lemma takeAt_append_takeAt (ys : List α) :
+    e.takeAt k (xs ++ e.takeAt k ys) = e.takeAt k (xs ++ ys) := by
+  cases e with
+  | left => simp [List.take_append, List.take_take]
+  | right =>
+    rcases le_total k ys.length with h | h
+    · simp [List.rtake_append_of_le_length, List.rtake_rtake, h]
+    · simp [List.rtake_of_length_le h]
+
+/-- Words with the same edge substring keep the same one after prepending a word. -/
+lemma takeAt_append_congr_right {k : ℕ} {ys ys' : List α} (h : e.takeAt k ys = e.takeAt k ys')
+    (xs : List α) : e.takeAt k (xs ++ ys) = e.takeAt k (xs ++ ys') := by
+  rw [← takeAt_append_takeAt, h, takeAt_append_takeAt]
+
+/-- Mapping a function over a word maps it over the edge substring. -/
+lemma takeAt_map {β : Type*} (g : α → β) : e.takeAt k (xs.map g) = (e.takeAt k xs).map g := by
+  cases e <;> simp [List.rtake, List.map_take, List.map_drop]
+
 /-- Over a finite alphabet there are finitely many edge substrings of a given length. -/
 lemma finite_range_takeAt [Finite α] : (Set.range (e.takeAt (α := α) k)).Finite :=
   (List.finite_length_le α k).subset (Set.range_subset_iff.2 fun w ↦ by simp [length_takeAt])

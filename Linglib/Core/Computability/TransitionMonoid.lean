@@ -49,10 +49,10 @@ variable {α : Type u} {σ : Type v} (M : DFA α σ)
 
 /-- `M.transitionHom w` is the transformation of states induced by the word `w`. -/
 def transitionHom : FreeMonoid α →* (Function.End σ)ᵐᵒᵖ where
-  toFun w := MulOpposite.op fun s => M.evalFrom s w.toList
+  toFun w := MulOpposite.op fun s ↦ M.evalFrom s w.toList
   map_one' := rfl
   map_mul' u v := MulOpposite.unop_injective <|
-    funext fun s => M.evalFrom_of_append s u.toList v.toList
+    funext fun s ↦ M.evalFrom_of_append s u.toList v.toList
 
 @[simp]
 theorem unop_transitionHom_apply (w : FreeMonoid α) (s : σ) :

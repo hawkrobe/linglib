@@ -6,7 +6,7 @@ Authors: Robert Hawkins
 module
 
 public import Mathlib.Data.Set.Finite.List
-public import Linglib.Core.Computability.MyhillNerode
+public import Linglib.Core.Computability.StarFree
 
 /-!
 # Piecewise testable languages
@@ -23,8 +23,10 @@ subsequences of length at most `k`. These are the piecewise testable events of S
 
 * `subseqSet_append_congr`: words with the same subsequences of length at most `k` still have the
   same ones after concatenation.
-* `Language.IsPiecewiseTestable.isRegular`: over a finite alphabet, piecewise testable languages
-  are regular.
+* `subseqSet_flatten_replicate_succ`: `k + 1` copies of a word have the same subsequences of
+  length at most `k` as `k` copies.
+* `Language.IsPiecewiseTestable.isStarFree`: over a finite alphabet, piecewise testable languages
+  are star-free.
 
 ## References
 
@@ -67,6 +69,26 @@ theorem subseqSet_append_congr {k : ℕ} {u₁ u₂ v₁ v₂ : List α}
       ((subseqSet_eq_iff hv (by omega)).mp h₂), by simp [length_append]; omega⟩
   exact Set.Subset.antisymm (aux hu hv) (aux hu.symm hv.symm)
 
+/-- A subsequence of `m + 1` copies of `w` that is no longer than `m` misses one of the copies, so
+it is a subsequence of `m` copies. -/
+theorem List.sublist_flatten_replicate_of_length_le {w : List α} :
+    ∀ {m : ℕ} {s : List α}, s.length ≤ m → s <+ (replicate (m + 1) w).flatten →
+      s <+ (replicate m w).flatten
+  | 0, s, hs, _ => by simp [length_eq_zero_iff.mp (Nat.le_zero.mp hs)]
+  | m + 1, s, hs, h => by
+    rw [replicate_succ, flatten_cons] at h ⊢
+    obtain ⟨s₁, s₂, rfl, h₁, h₂⟩ := sublist_append_iff.mp h
+    rcases s₁ with _ | ⟨a, s₁⟩
+    · exact h₂
+    · exact h₁.append (sublist_flatten_replicate_of_length_le
+        (by simp only [length_append, length_cons] at hs; omega) h₂)
+
+/-- `k + 1` copies of a word have the same subsequences of length at most `k` as `k` copies. -/
+theorem subseqSet_flatten_replicate_succ (k : ℕ) (w : List α) :
+    subseqSet k (replicate (k + 1) w).flatten = subseqSet k (replicate k w).flatten :=
+  Set.ext fun _ ↦ ⟨fun h ↦ ⟨sublist_flatten_replicate_of_length_le h.2 h.1, h.2⟩,
+    fun h ↦ ⟨h.1.trans (by simp [replicate_succ]), h.2⟩⟩
+
 /-- Over a finite alphabet `subseqSet k` takes finitely many values. -/
 theorem finite_range_subseqSet [Finite α] (k : ℕ) :
     (Set.range (subseqSet (α := α) k)).Finite :=
@@ -93,8 +115,12 @@ theorem IsPiecewiseTestable.union (hL : L.IsPiecewiseTestable k)
     (hM : M.IsPiecewiseTestable k) : (L ⊔ M).IsPiecewiseTestable k :=
   fun _ _ e ↦ congrArg₂ Or (hL e) (hM e)
 
-/-- Over a finite alphabet piecewise testable languages are regular. -/
+/-- Over a finite alphabet piecewise testable languages are star-free. -/
+theorem IsPiecewiseTestable.isStarFree [Finite α] (h : L.IsPiecewiseTestable k) : L.IsStarFree :=
+  .of_factorsThrough h (fun _ _ _ _ ↦ subseqSet_append_congr) (finite_range_subseqSet k)
+    (subseqSet_flatten_replicate_succ k)
+
 theorem IsPiecewiseTestable.isRegular [Finite α] (h : L.IsPiecewiseTestable k) : L.IsRegular :=
-  .of_factorsThrough h (fun _ _ _ e ↦ subseqSet_append_congr e rfl) (finite_range_subseqSet k)
+  h.isStarFree.isRegular
 
 end Language
