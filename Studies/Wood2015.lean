@@ -160,7 +160,7 @@ theorem cell_of_anticausative (h : V.Interpretable) (hc : V.Coherent) :
     (V.spec = .st → V.head.params = Voice.anticausative.params) ∧
       (V.spec = .none → V.head.params = Voice.middle.params) := by
   revert h hc
-  rcases V with ⟨⟨t, d, i, o, q, c, f⟩, s⟩
+  rcases V with ⟨⟨t, d⟩, s⟩
   cases s <;> cases t <;> cases d <;>
     simp [Interpretable, Coherent, Voice.Head.IsThematic, Voice.Head.HasD, Voice.Head.params,
       Voice.anticausative, Voice.middle]

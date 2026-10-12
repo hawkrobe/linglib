@@ -40,7 +40,7 @@ Coon's sketch are the sources.
 ## Implementation notes
 
 The non-perfective case function is `Alignment.extendedErgative`, Coon's genitive on the
-subject rather than a nominative, the analysis of `Studies/Coon2013.lean`; the plural cells
+subject rather than a nominative; the plural cells
 carry the inclusive *=la*, the exclusive *=l(oj)oñ* having no cell in the person–number
 bundles. The first person prefix is *j-* before a stem-initial *k*.
 

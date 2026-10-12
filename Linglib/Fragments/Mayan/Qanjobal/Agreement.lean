@@ -6,55 +6,39 @@ public import Linglib.Fragments.Mayan.Agreement
 public import Linglib.Syntax.Clause.ArgumentRole
 
 /-!
-# Q'anjob'al Agreement and Case Fragment
+# Q'anjob'al agreement
 
-Agreement morphology and case assignment for Q'anjob'al (Q'anjob'alan,
-Mayan), following [mateo-toledo-2008] and [imanishi-2020]: a high
-absolutive VSO language whose split ergativity is triggered by the
-absence of a preverbal aspect marker. Q'anjob'al has the same Set A
-(ergative) / Set B (absolutive) paradigm as other Mayan languages. Per
-[mateo-toledo-2008] p. 9 it sits in the "Q'anjob'alan group,
-Q'anjob'alan branch, Western division" of the Mayan family (citing
-England 1992:21, Kaufman 1974) — alongside the Cholan-Tzeltalan branch
-(where Chol lives) within Western Mayan.
+Q'anjob'al, of the Q'anjob'alan branch of Mayan, is a verb-initial language that marks person
+with the two Mayan sets: Set A, prefixes with pre-consonantal and pre-vocalic shapes, indexes
+the transitive subject and the possessor, and Set B the transitive object and the intransitive
+subject. Set B follows the aspect marker and precedes the stem, so Q'anjob'al is a
+high-absolutive language. The aspect markers are clitics, completive *(ma)x-*, incompletive
+*chi-* and irrealis *(ho)q-*, unlike the auxiliaries of Chol. The alignment is ergative in every
+clause with a preverbal aspect marker, the incompletive included, and Set A marks every subject
+in a clause without one, such as the progressive with *lanan*. Mateo-Toledo's grammar and
+Imanishi's comparison of the splits are the sources, and Coon, Mateo Pedro and Preminger give
+the paradigms.
 
 ## Main declarations
 
-* `Qanjobal.setAExponent`, `Qanjobal.setBExponent`: Set A ergative
-  markers by following-segment environment (pre-consonantal vs
-  pre-vocalic variant shapes) and the Set B absolutive suffixes
-  ([coon-mateo-pedro-preminger-2014] table (13)).
-* `Qanjobal.template`, `Qanjobal.assignCase`: the verbal complex, with Set B
-  between the aspect marker and the stem, and case ergative wherever an aspect
-  marker is present and extended-ergative in the progressive.
+* `Qanjobal.setAExponent`, `Qanjobal.setBExponent`: the Set A markers by the following segment
+  and the Set B markers.
+* `Qanjobal.template`, `Qanjobal.assignCase`: the verbal complex and the case of each argument by
+  aspect.
 
 ## Implementation notes
 
-Per [mateo-toledo-2008] §1.3, ex. (35), the verbal predicate structure
-is `Asp + (Particle) + Abs + (Particle) + Erg-Verb + (Particle) +
-(DIRs)`, i.e. `[Asp] [Abs Erg-Verb]` — the high absolutive template,
-against Chol's low-absolutive `[Aux] [Erg-Verb-Abs]`
-([vazquez-alvarez-2011] §3.4).
+Set A on the subject of an aspectless clause is `Alignment.extendedErgative`, Coon's genitive
+rather than a nominative; the descriptive grammars call the pattern nominative-accusative. The
+case function sees aspect only, so the other aspectless contexts, purpose clauses and aspectless
+complements among them, lie outside it.
 
-Unlike Chol's aspect-category split (accusative in all non-perfective
-aspects), Q'anjob'al splits only in clauses lacking an overt preverbal
-aspect marker — "split ergativity occurs in any clause without an
-overt preverbal aspect marker" ([mateo-toledo-2008] §1.1.1, citing
-Mateo 2004a/2007b) — so the imperfective `chi-` keeps canonical
-ergative, and only aspectless contexts (e.g. the `lanan` progressive)
-put Set A on all subjects. The choice of genitive rather than nominative for Set A
-on non-perfective subjects is `Alignment.extendedErgative`'s, following
-[coon-2013]'s analysis; the descriptive grammars call the pattern
-nominative-accusative.
+## References
 
-One real Cholan/Q'anjob'alan difference the shared alignment substrate
-does not capture is aspect-marker word class: Chol markers are
-auxiliaries (independent words *tyi* perfective, *mi* imperfective;
-[vazquez-alvarez-2011] §3.4), whereas Q'anjob'al markers are clitics or
-"grammaticized particles" (*(ma)x-* completive, *chi/ch-* incompletive,
-*(ho)q-* irrealis; [mateo-toledo-2008] §1.1.2, Kaufman 1990:71,
-Robertson 1992:57). `Qanjobal.assignCase` captures the alignment
-facts, not the morpheme-class difference.
+* [mateo-toledo-2008]
+* [imanishi-2020]
+* [coon-mateo-pedro-preminger-2014]
+* [coon-2013]
 -/
 
 @[expose] public section

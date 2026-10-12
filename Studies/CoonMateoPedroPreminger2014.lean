@@ -17,75 +17,72 @@ public import Linglib.Fragments.Mayan.Yukatek.Agreement
 public import Linglib.Data.Examples.CoonMateoPedroPreminger2014
 
 /-!
-# Coon, Mateo Pedro and Preminger 2014: case and extraction asymmetries in Mayan
+# Coon, Mateo Pedro and Preminger (2014): The role of Case in A-bar extraction asymmetries
 
-[coon-mateo-pedro-preminger-2014] argue that the ban on extracting transitive subjects in some
-morphologically ergative languages, syntactic ergativity, is not a property of the ergative
-subject but a locality problem in licensing the object. Following Legate and Aldridge, every
-ergative language licenses the transitive subject from v, but the object is licensed either by
-Infl, so that absolutive is nominative, or by v, so that it is a default, and in Mayan the two
-settings are read off the position of the absolutive morpheme: high, on the aspect marker, or
-low, on the verb stem. Since Infl sits outside the phasal transitive verb phrase, an object it
-licenses must raise through the phrase's single escape hatch and so traps the subject generated
-below it, while an object licensed by v stays put and the subject is free, which derives Tada's
-generalization that high-absolutive languages extract subjects only through a special
-construction, and predicts that absolutive objects survive in non-finite clauses of low- but
-not high-absolutive languages. The Q'anjob'al Agent Focus suffix -on is a marked Voice that
-licenses the object itself, so that v is intransitive, non-phasal and marked with the
-intransitive status suffix, and the same suffix licenses the object of a non-finite embedded
-transitive, the Crazy Antipassive; both are a last resort, so in a finite extraction clause
-Agent Focus fails with reflexive, extended reflexive and bare objects, which are
-pseudo-incorporated and need no Case, while those very objects let the subject extract from a
-regular transitive.
+Many Mayan languages cannot extract the subject of a regular transitive clause and use the Agent
+Focus form of the verb instead. Coon, Mateo Pedro and Preminger trace this syntactic ergativity
+to the Case of the object rather than to the ergative subject. Following Legate and Aldridge,
+every Mayan language licenses the transitive subject low, from v, but the object is licensed
+either by Infl, where the absolutive marker sits high on the aspect marker, or by v, where it
+sits low on the stem. A transitive verb phrase is a phase with a single escape hatch that
+contains the subject, so an object that must reach Infl takes the hatch and traps the subject,
+which is Tada's generalization, and in a non-finite clause, which lacks Infl, it has no Case at
+all. The Q'anjob'al Agent Focus suffix *-on* is a marked Voice that cases the object itself, so
+no ergative is assigned and v is intransitive, non-phasal and spelled out by the intransitive
+status suffix; it frees the subject, licenses non-finite transitives (the Crazy Antipassive),
+and as a last resort fails with reflexive and bare objects, which need no Case and let the
+subject of a regular transitive extract.
+
+## Main statements
+
+* `tada`: a registered language marks the extraction of an argument from a finite transitive
+  exactly when the regular derivation fails, which for the subject is when the absolutive is
+  high.
+* `converges_iff_verbForm`: in Q'anjob'al the derivation that converges uses the verb form the
+  fragment records, Agent Focus in every non-finite transitive and under extraction of a
+  third-person subject.
+* `formallyTransitive_iff_hasSetA`, `formallyTransitive_iff_statusSuffix`: Agent Focus selects
+  intransitive v, so it has no Set A and takes the intransitive status suffix.
+* `analysed_rows`: every analysed example is grammatical exactly when its clause converges.
 
 ## Implementation notes
 
-A clause is the head licensing its object, its finiteness, verb phrase, extracted argument and,
-for the Chuj contrast, whether an adverb separates the verb from its object; convergence asks
-that the object and the intransitive subject be licensed, that an extracting subject not be
-trapped, that a Case-checking Voice be a last resort and that a pseudo-incorporated object be
-adjacent. Of the three factors the conclusion lists, the phasehood of the transitive verb
-phrase is the Voice head's, while a subject generated inside it and a single escape hatch are
-built into trapping as the paper assumes them. The substrate's single Voice head stands in for
-the paper's pair of v, which carries phasehood and the status suffix, and Voice, which
-introduces the agent: the regular transitive is agentive Voice, Agent Focus the agentive head
-with Case checking and phasehood overridden off, the antipassive its own flavor. The last
-resort is the paper's later formulation, that the marked Voice merges only where the object
-would otherwise have no source of Case or trap the extracting subject, compared against the
-derivation with regular Voice; that is definitional and not derived from a ranking. The
-registered languages are the fragments' verbal complexes, from which the absolutive's position
-is read, and rows carry the paper's high or low classification of their language, checked
-against that reading; the absolutive on an intransitive subject needs finite Infl, and the
-ergative on one is left to the nominalized non-finite clause without a model of
-nominalization. Kaqchikel Agent Focus, the nominal-stem and passive strategies for non-finite
-transitives, and the constructions of the section on other extractions from the verb phrase
-are recorded as data without a configuration.
+* The paper's v sits above the substrate's Voice head and is formally transitive when Voice
+  would head a phase by Chomsky's criterion and leaves the object's Case to Infl or v;
+  phasehood, Set A and the status suffix are read off that one property.
+* Trapping builds in the subject's position inside the phase and the single escape hatch, as
+  the paper assumes them.
+* The last resort is the paper's later formulation, that the Case-checking Voice merges only
+  where the regular derivation would leave the object without Case or trap the extracting
+  subject.
+* Rows carry the paper's high or low classification of their language, checked against the
+  fragment's verbal template; Kaqchikel Agent Focus and the nominal-stem and passive strategies
+  for non-finite transitives are recorded as rows without a configuration.
 
 ## TODO
 
-- The person restriction on Agent Focus (72) is not modelled; a focused 1st person agent is
-  recorded as a regular transitive without extraction, the paper's tentative suggestion.
-- Agent Focus with reflexive objects in non-finite clauses, which the paper's fn. 31 records
-  and leaves unexplained, does not converge here either.
+- The person restriction on Agent Focus (72), which the paper tentatively derives by
+  base-generating first- and second-person agents high, is not modelled, so
+  `converges_iff_verbForm` is stated for third-person agents.
+- Agent Focus with reflexive objects in non-finite clauses, which the paper's fn. 31 records and
+  leaves unexplained, does not converge here either.
+- Trapping could be derived from `SyntacticObject.phaseEdge` on the tree (55) once the substrate
+  bounds the number of specifiers at a phase edge.
 - The extraction of low adverbs and the instrumental voice (§5.3) are not modelled.
 
 ## References
 
 * [J. Coon, P. Mateo Pedro and O. Preminger, *The role of Case in A-bar extraction
   asymmetries: Evidence from Mayan* (2014)][coon-mateo-pedro-preminger-2014]
-* [J. A. Legate, *Morphological and abstract Case* (2008)][legate-2008]
+* [J. A. Legate, *Morphological and abstract case* (2008)][legate-2008]
 * [E. Aldridge, *Ergativity and word order in Austronesian languages* (2004)][aldridge-2004]
 * [H. Tada, *A/A-bar partition in derivation* (1993)][tada-1993]
+* [N. Chomsky, *Derivation by Phase* (2001)][chomsky-2001]
+* [H. Harley, *External arguments and the Mirror Principle: On the distinctness of Voice and v*
+  (2013)][harley-2013]
 * [F. Ordóñez, *The antipassive in Jacaltec: A last resort strategy* (1995)][ordonez-1995]
-* [B. Stiebels, *Agent focus in Mayan languages* (2006)][stiebels-2006]
-* [H. Harley, *External arguments and the Mirror Principle* (2013)][harley-2013]
 * [D. Massam, *Pseudo noun incorporation in Niuean* (2001)][massam-2001]
-* [T. W. Larsen and W. M. Norman, *Correlates of ergativity in Mayan grammar*
-  (1979)][larsen-norman-1979]
-* [J. Aissen, *On the syntax of agent focus in K'ichee'* (2011)][aissen-2011]
-* [Y. Imanishi, *Default ergative* (2014)][imanishi-2014]
 * [L. Hou, *Agent focus in Chuj reflexive constructions* (2013)][hou-2013]
-* [N. Chomsky, *Derivation by phase* (2001)][chomsky-2001]
 -/
 
 @[expose] public section
@@ -102,7 +99,7 @@ inductive Licenser where
   | v
   deriving DecidableEq, Repr
 
-/-- The head licensing transitive objects, read off the absolutive's position (24): Infl when
+/-- The head licensing transitive objects is read off the absolutive's position (24): Infl when
 the absolutive is high, so that it is nominative ([legate-2008]'s ABS=NOM), and v when it is
 low, so that it is a default (ABS=DEF). -/
 def Licenser.ofPosition : ABSPosition → Licenser
@@ -111,32 +108,29 @@ def Licenser.ofPosition : ABSPosition → Licenser
 
 /-- What a transitive verb takes as its object. -/
 inductive Object where
-  /-- A full DP: it needs structural Case and satisfies the EPP of v. -/
+  /-- A full DP, which needs structural Case and satisfies the EPP of v. -/
   | dp
-  /-- A reflexive, extended reflexive or bare NP: pseudo-incorporated, needing neither (§5.2). -/
+  /-- A reflexive, extended reflexive or bare NP, pseudo-incorporated ([massam-2001]) and
+  needing neither (§5.2). -/
   | caseless
-  /-- An object licensed inside its own oblique phrase: the demoted patient of an antipassive
+  /-- An object licensed inside its own oblique phrase, the demoted patient of an antipassive
   (59) or the relational-noun complement of a Mam infinitive (39a). -/
   | oblique
-  deriving DecidableEq, Repr
+  deriving DecidableEq, Repr, Fintype
 
-/-- Agent Focus as the marked Voice (66): agentive Voice that also assigns structural Case to
-the object, so no ergative is assigned, v is intransitive and non-phasal, and the status suffix
-is *-i*. -/
-def voiceAF : Head := { agentive with phaseOverride := some false, checksCase := true }
+/-- Agent Focus as the marked Voice (66), agentive Voice that also assigns structural Case to
+the object. -/
+def voiceAF : Head := { agentive with checksCase := true }
 
-/-- The antipassive Voice (59): the patient is oblique and v intransitive. -/
-def voiceAP : Head := antipassive
-
-/-- The verb phrase of a clause: an intransitive with the marker series of its sole argument,
-or a transitive with its Voice and its object. -/
+/-- The verb phrase of a clause, an intransitive with the marker series of its sole argument or
+a transitive with its Voice and its object. -/
 inductive Predicate where
   | intransitive (marking : MarkerSet)
   | transitive (voice : Head) (object : Object)
   deriving DecidableEq
 
-/-- A clause: the head licensing its object, finiteness, the verb phrase, the argument
-extracted, and whether an adverb separates the verb from its object. -/
+/-- A clause, with the head licensing its object, its finiteness, its verb phrase, the argument
+extracted and whether an adverb separates the verb from its object. -/
 structure Clause where
   /-- The head licensing transitive objects. -/
   licenser : Licenser
@@ -173,17 +167,19 @@ def regular : Predicate → Predicate
   | .transitive _ o => .transitive agentive o
   | p => p
 
-/-- The verb phrase is phasal: its Voice head is, standing in for the transitive v whose
-phasehood covaries with its ergative assignment and status suffix (55). -/
-def IsPhasal (p : Predicate) : Prop := ∃ v ∈ p.voice?, v.IsPhasal
+/-- The verb phrase has formally transitive v, the phase head above Voice that assigns ergative
+to the subject and is spelled out by the status suffix ((55), [harley-2013]). It is selected by
+a Voice head that would head a phase by [chomsky-2001]'s criterion, unless that head cases the
+object itself and so leaves no ergative to assign (§4.2). -/
+def FormallyTransitive (p : Predicate) : Prop := ∃ v ∈ p.voice?, v.IsPhasal ∧ ¬ v.ChecksCase
 
-/-- The Voice checks the object's Case: Agent Focus. -/
+/-- The Voice checks the object's Case, as Agent Focus does. -/
 def ChecksCase (p : Predicate) : Prop := ∃ v ∈ p.voice?, v.ChecksCase
 
 /-- The object raises to the edge of the verb phrase: Case is assigned within the phase and
 Infl sits outside it, so a full DP object licensed by Infl must reach the edge (51), which the
-EPP of high-abs eventive v keeps true under Agent Focus (66); an object licensed by v stays in
-situ (52). -/
+EPP of eventive v keeps true under Agent Focus (66); an object licensed by v stays in situ
+(52). -/
 def Raises (p : Predicate) (l : Licenser) : Prop := p.object? = some .dp ∧ l = .infl
 
 /-- The object's Case is available (27): Voice checks it, v assigns it, or finite Infl does; a
@@ -197,61 +193,53 @@ ergative/possessive marking of a non-finite one is the nominalization's. -/
 def SubjectLicensed (p : Predicate) (finite : Bool) : Prop :=
   p.marking? = some .setB → finite = true
 
-/-- A pseudo-incorporated object stays adjacent to the verb, the Chuj contrast (81); the paper's
-fn. 28 notes that the word-order reflex does not hold of Q'anjob'al extended reflexives. -/
+/-- A pseudo-incorporated object stays adjacent to the verb, the Chuj contrast (81) of
+[hou-2013]; the paper's fn. 28 notes that the word-order reflex does not hold of Q'anjob'al
+extended reflexives. -/
 def Adjacent (p : Predicate) (separated : Bool) : Prop :=
   p.object? = some .caseless → separated = false
 
-instance (p : Predicate) : Decidable p.IsPhasal := by unfold IsPhasal; infer_instance
-instance (p : Predicate) : Decidable p.ChecksCase := by unfold ChecksCase; infer_instance
-instance (p : Predicate) (l : Licenser) : Decidable (p.Raises l) := by
-  unfold Raises; infer_instance
-instance (p : Predicate) (l : Licenser) (b : Bool) : Decidable (p.ObjectLicensed l b) := by
-  unfold ObjectLicensed; infer_instance
-instance (p : Predicate) (b : Bool) : Decidable (p.SubjectLicensed b) := by
-  unfold SubjectLicensed; infer_instance
-instance (p : Predicate) (b : Bool) : Decidable (p.Adjacent b) := by
-  unfold Adjacent; infer_instance
+instance : DecidablePred FormallyTransitive := fun p ↦
+  inferInstanceAs (Decidable (∃ v ∈ p.voice?, _))
+instance : DecidablePred ChecksCase := fun p ↦ inferInstanceAs (Decidable (∃ v ∈ p.voice?, _))
+instance (p : Predicate) (l : Licenser) : Decidable (p.Raises l) :=
+  inferInstanceAs (Decidable (_ ∧ _))
+instance (p : Predicate) (l : Licenser) (b : Bool) : Decidable (p.ObjectLicensed l b) :=
+  inferInstanceAs (Decidable (_ → _))
+instance (p : Predicate) (b : Bool) : Decidable (p.SubjectLicensed b) :=
+  inferInstanceAs (Decidable (_ → _))
+instance (p : Predicate) (b : Bool) : Decidable (p.Adjacent b) :=
+  inferInstanceAs (Decidable (_ → _))
 
 end Predicate
 
-/-! ### Trapping (§3.2, (89)) -/
+/-! ### Trapping -/
 
 /-- The subject is trapped (53): the raised object takes the single escape hatch of the phasal
 verb phrase, inside which the subject is generated, the three factors of (89). -/
-def Trapped (c : Clause) : Prop := c.predicate.IsPhasal ∧ c.predicate.Raises c.licenser
+def Trapped (c : Clause) : Prop :=
+  c.predicate.FormallyTransitive ∧ c.predicate.Raises c.licenser
 
-instance (c : Clause) : Decidable (Trapped c) := by unfold Trapped; infer_instance
-
-/-- A non-phasal verb phrase traps nothing: the antipassive and Agent Focus. -/
-theorem not_trapped_of_not_phasal {c : Clause} (h : ¬ c.predicate.IsPhasal) : ¬ Trapped c :=
-  fun ht ↦ h ht.1
-
-/-- A verb phrase whose object does not raise traps nothing: caseless and oblique objects. -/
-theorem not_trapped_of_not_raises {c : Clause} (h : ¬ c.predicate.Raises c.licenser) :
-    ¬ Trapped c :=
-  fun ht ↦ h ht.2
+instance : DecidablePred Trapped := fun _ ↦ inferInstanceAs (Decidable (_ ∧ _))
 
 /-- Where v licenses the object nothing is trapped (52): the object never raises. -/
 theorem not_trapped_of_v {c : Clause} (h : c.licenser = .v) : ¬ Trapped c :=
-  not_trapped_of_not_raises fun hr ↦ by simp [Predicate.Raises, h] at hr
+  fun ht ↦ by simpa [Predicate.Raises, h] using ht.2
 
-/-- Syntactic ergativity: the subject of a finite regular transitive with a full DP object is
-trapped when extracted (21c). -/
+/-- A language is syntactically ergative when the subject of a finite regular transitive with a
+full DP object is trapped when extracted (21c). -/
 def SyntacticallyErgative (l : Licenser) : Prop :=
   Trapped ⟨l, true, .transitive agentive .dp, some .A, false⟩
 
-instance (l : Licenser) : Decidable (SyntacticallyErgative l) :=
-  inferInstanceAs (Decidable (Trapped _))
+instance : DecidablePred SyntacticallyErgative := fun _ ↦ inferInstanceAs (Decidable (Trapped _))
 
-/-- Tada's generalization derived (19), (24): a language bans subject extraction exactly when
-Infl licenses the object. -/
+/-- A language bans subject extraction exactly when Infl licenses the object ((19), (24)). -/
 theorem syntacticallyErgative_iff (l : Licenser) : SyntacticallyErgative l ↔ l = .infl := by
   cases l <;> decide
 
-/-! ### Case configurations (3), (10) -/
+/-! ### Case configurations -/
 
-/-- A clausal Case configuration (3): the licenser of the transitive subject and of the
+/-- A clausal Case configuration (3), with the licensers of the transitive subject and of the
 object, where Infl licenses at most one of them. -/
 structure Configuration where
   /-- The head licensing the transitive subject. -/
@@ -261,11 +249,11 @@ structure Configuration where
   /-- Infl licenses at most one argument. -/
   infl_once : subject = .infl → object = .v
 
-/-- Morphological ergativity: v licenses the transitive subject. -/
+/-- A configuration is morphologically ergative when v licenses the transitive subject. -/
 def Configuration.MorphologicallyErgative (k : Configuration) : Prop := k.subject = .v
 
-/-- Table (10): syntactic ergativity entails morphological ergativity, since Infl licensing the
-object leaves the subject to v. -/
+/-- Syntactic ergativity entails morphological ergativity (10), since Infl licensing the object
+leaves the subject to v. -/
 theorem morphologicallyErgative_of_syntacticallyErgative (k : Configuration)
     (h : SyntacticallyErgative k.object) : k.MorphologicallyErgative := by
   rw [syntacticallyErgative_iff] at h
@@ -279,7 +267,7 @@ theorem v_not_syntacticallyErgative :
     (⟨.v, .v, nofun⟩ : Configuration).MorphologicallyErgative ∧ ¬ SyntacticallyErgative .v :=
   ⟨rfl, by decide⟩
 
-/-! ### Convergence: licensing, extraction and the last resort (§4, §5) -/
+/-! ### Convergence -/
 
 /-- The same clause under regular transitive Voice. -/
 def Clause.regular (c : Clause) : Clause := { c with predicate := c.predicate.regular }
@@ -290,22 +278,22 @@ def RegularCrashes (c : Clause) : Prop :=
   ¬ c.regular.predicate.ObjectLicensed c.licenser c.finite ∨
     (c.extracted = some .A ∧ Trapped c.regular)
 
-instance (c : Clause) : Decidable (RegularCrashes c) := by unfold RegularCrashes; infer_instance
+instance : DecidablePred RegularCrashes := fun _ ↦ inferInstanceAs (Decidable (_ ∨ _))
 
 /-- Agent Focus is a last resort ([ordonez-1995]; §4.2, §5.1): the Case-checking Voice merges
 only where the object would otherwise lack a source of Case or trap the extracting subject. -/
 def LastResort (c : Clause) : Prop := c.predicate.ChecksCase → RegularCrashes c
 
-instance (c : Clause) : Decidable (LastResort c) := inferInstanceAs (Decidable (_ → _))
+instance : DecidablePred LastResort := fun _ ↦ inferInstanceAs (Decidable (_ → _))
 
-/-- A clause converges: its object and intransitive subject are licensed, an extracted subject
-is not trapped, a Case-checking Voice is a last resort, and a pseudo-incorporated object is
-adjacent to the verb. -/
+/-- A clause converges when its object and intransitive subject are licensed, an extracted
+subject is not trapped, a Case-checking Voice is a last resort, and a pseudo-incorporated
+object is adjacent to the verb. -/
 def Converges (c : Clause) : Prop :=
   c.predicate.ObjectLicensed c.licenser c.finite ∧ c.predicate.SubjectLicensed c.finite ∧
     (c.extracted = some .A → ¬ Trapped c) ∧ LastResort c ∧ c.predicate.Adjacent c.separated
 
-instance (c : Clause) : Decidable (Converges c) := by unfold Converges; infer_instance
+instance : DecidablePred Converges := fun _ ↦ inferInstanceAs (Decidable (_ ∧ _))
 
 /-- Non-finite licensing (27): a regular transitive object survives without Infl exactly where
 v licenses it, and an absolutive intransitive subject only under finite Infl. -/
@@ -314,9 +302,8 @@ theorem nonfinite_licensing (l : Licenser) :
       ¬ (Predicate.intransitive .setB).SubjectLicensed false := by
   cases l <;> decide
 
-/-- Agent Focus in a high-abs language: it frees the extracting subject (67) and licenses the
-object of a non-finite transitive (70), and the regular derivation crashes in both, so it is
-a last resort in both; the same object under regular Voice is trapped or unlicensed. -/
+/-- Agent Focus in a high-abs language frees the extracting subject (67) and licenses the
+object of a non-finite transitive (70); the regular derivation crashes in both. -/
 theorem agent_focus :
     Converges ⟨.infl, true, .transitive voiceAF .dp, some .A, false⟩ ∧
     ¬ Converges ⟨.infl, true, .transitive agentive .dp, some .A, false⟩ ∧
@@ -334,15 +321,36 @@ theorem last_resort :
     Converges ⟨.infl, true, .transitive agentive .caseless, some .A, false⟩ := by
   decide
 
-/-- The antipassive frees the subject (60), on either count: its verb phrase is intransitive,
-and its oblique patient never raises to the edge. -/
+/-- The antipassive frees the subject (60) on either count: its v is intransitive, and its
+oblique patient never raises to the edge. -/
 theorem antipassive_frees (l : Licenser) :
-    ¬ (Predicate.transitive voiceAP .oblique).IsPhasal ∧
-      ¬ (Predicate.transitive voiceAP .oblique).Raises l ∧
-        ¬ Trapped ⟨l, true, .transitive voiceAP .oblique, some .A, false⟩ := by
+    ¬ (Predicate.transitive antipassive .oblique).FormallyTransitive ∧
+      ¬ (Predicate.transitive antipassive .oblique).Raises l ∧
+        ¬ Trapped ⟨l, true, .transitive antipassive .oblique, some .A, false⟩ := by
   cases l <;> decide
 
-/-! ### The Mayan fragments (§2.1, §2.2) -/
+/-! ### Agent Focus and intransitive v -/
+
+/-- The Voice head of each verb form, regular Voice for the transitive and the marked Voice for
+Agent Focus. -/
+def voiceOf : VerbForm → Head
+  | .transitive => agentive
+  | .agentFocus => voiceAF
+
+/-- A form has Set A exactly when its v is formally transitive: the ergative that transitive v
+assigns is absent under Agent Focus (§4.1, §4.2). -/
+theorem formallyTransitive_iff_hasSetA (f : VerbForm) (o : Object) :
+    (Predicate.transitive (voiceOf f) o).FormallyTransitive ↔ f.HasSetA := by
+  decide +revert
+
+/-- The Q'anjob'al status suffix spells out v ((55), (65)): transitive *-V'* exactly when v is
+formally transitive, intransitive *-i* under Agent Focus. -/
+theorem formallyTransitive_iff_statusSuffix (f : VerbForm) (o : Object) :
+    (Predicate.transitive (voiceOf f) o).FormallyTransitive ↔
+      Qanjobal.VerbForm.statusSuffix f = .tv := by
+  decide +revert
+
+/-! ### The Mayan fragments -/
 
 /-- The Mayan languages with registered fragments. -/
 inductive Language where
@@ -373,9 +381,11 @@ def template : Language → Morphology.AffixTemplate VerbSlot
   | .kiche => Kiche.template
   | .yukatek => Yukatek.template
 
-/-- The absolutive's position in a language, read off its verbal complex (16): high when Set B
-precedes the stem. -/
+/-- The absolutive's position in a language, read off its verbal complex (16). -/
 def absPosition (L : Language) : ABSPosition := Mayan.absPosition L.template
+
+/-- The head licensing a language's transitive objects. -/
+def licenser (L : Language) : Licenser := .ofPosition L.absPosition
 
 /-- The Set B exponents of a language, from its fragment. -/
 def setB : Language → ExponentTable
@@ -402,26 +412,26 @@ def assignCase : Language → UD.Aspect → ArgumentRole → Case
 /-- The language is ergatively aligned in the perfective (§2.1). -/
 def IsErgativePerfective (L : Language) : Prop := Alignment.IsErgative (L.assignCase .Perf)
 
-instance (L : Language) : Decidable L.IsErgativePerfective :=
+instance : DecidablePred IsErgativePerfective := fun _ ↦
   inferInstanceAs (Decidable (Alignment.IsErgative _))
 
-/-- The fragment marks transitive-subject extraction on the verb; the Yukatek fragment records
-no extraction reflexes. -/
-def MarksSubjectExtraction : Language → Prop
-  | .chol => (Chol.Extraction.realize .A).Nonempty
-  | .qanjobal => ∃ p, (Qanjobal.Extraction.realize p .A).Nonempty
-  | .kaqchikel => ∀ c, (Kaqchikel.Extraction.realize c (.core .A)).Nonempty
-  | .tseltal => (Tseltal.Extraction.realize .A).Nonempty
-  | .tsotsil => (Tsotsil.Extraction.realize .A).Nonempty
-  | .mam => (Mam.Extraction.realize (.core .A)).Nonempty
-  | .kiche => ∀ c, (Kiche.Extraction.realize c (.core .A)).Nonempty
-  | .yukatek => False
+/-- The fragment marks the extraction of an argument on some verb, with a third-person agent
+where the marking depends on its person. The Yukatek fragment records no extraction reflexes,
+and its value is a junk `False`. -/
+def MarksExtraction : Language → ArgumentRole → Prop
+  | .chol, r => (Chol.Extraction.realize r).Nonempty
+  | .qanjobal, r => (Qanjobal.Extraction.realize .third r).Nonempty
+  | .kaqchikel, r => ∃ c, (Kaqchikel.Extraction.realize c (.core r)).Nonempty
+  | .tseltal, r => (Tseltal.Extraction.realize r).Nonempty
+  | .tsotsil, r => (Tsotsil.Extraction.realize r).Nonempty
+  | .mam, r => (Mam.Extraction.realize (.core r)).Nonempty
+  | .kiche, r => ∃ c, (Kiche.Extraction.realize c (.core r)).Nonempty
+  | .yukatek, _ => False
 
-instance : ∀ L : Language, Decidable L.MarksSubjectExtraction
-  | .chol | .tseltal | .tsotsil | .mam => Finset.decidableNonempty
-  | .qanjobal => Fintype.decidableExistsFintype
-  | .kaqchikel | .kiche => Fintype.decidableForallFintype
-  | .yukatek => inferInstanceAs (Decidable False)
+instance : ∀ L r, Decidable (MarksExtraction L r)
+  | .chol, _ | .qanjobal, _ | .tseltal, _ | .tsotsil, _ | .mam, _ => Finset.decidableNonempty
+  | .kaqchikel, _ | .kiche, _ => Fintype.decidableExistsFintype
+  | .yukatek, _ => inferInstanceAs (Decidable False)
 
 end Language
 
@@ -436,19 +446,44 @@ theorem thirdSgZero_of_isErgativePerfective {L : Language} (h : L.IsErgativePerf
     L.setB.IsThirdSgZero := by
   cases L <;> first | decide | exact absurd h (by decide)
 
-/-- Tada's generalization over the fragments (19): a registered language marks subject
-extraction exactly when its absolutive is high, as the trapping derivation predicts. Table
-(19) omits Tsotsil, whose two absolutive series resist the classification (fn. 8), and lists
-Yucatec as an outlier whose Agent Focus fn. 9 reanalyses; the Yukatek fragment records no
-extraction reflexes, so both stay outside the theorem. -/
-theorem tada (L : Language) (h₁ : L ≠ .tsotsil) (h₂ : L ≠ .yukatek) :
-    L.MarksSubjectExtraction ↔ SyntacticallyErgative (.ofPosition L.absPosition) := by
-  cases L <;> first | exact (h₁ rfl).elim | exact (h₂ rfl).elim | decide
+/-- Tada's generalization over the fragments (19), extended to every argument. A registered
+language marks the extraction of an argument from a finite transitive exactly when the regular
+derivation fails, so its subject's extraction is marked when the absolutive is high and its
+object's never. Footnote 8 leaves Tsotsil out of table (19), its two absolutive series
+resisting the classification, and calls Yucatec an apparent outlier; the Yukatek fragment
+records no extraction reflexes, so both stay outside. -/
+theorem tada (L : Language) (h₁ : L ≠ .tsotsil) (h₂ : L ≠ .yukatek) (r : ArgumentRole) :
+    L.MarksExtraction r ↔
+      ¬ Converges ⟨L.licenser, true, .transitive agentive .dp, some r, false⟩ := by
+  cases L <;> first | exact (h₁ rfl).elim | exact (h₂ rfl).elim | cases r <;> decide
+
+/-- Tsotsil, low absolutive by its template, still marks the extraction of a transitive subject
+that the regular derivation allows, with its optional Agent Focus. -/
+theorem tsotsil_marks_free_extraction :
+    Language.tsotsil.MarksExtraction .A ∧
+      Converges ⟨Language.tsotsil.licenser, true, .transitive agentive .dp, some .A, false⟩ := by
+  decide
+
+/-- The derivation picks out the fragment's verb form (§4.2, §5.1): with a third-person agent
+and a full DP object, a Q'anjob'al clause converges under the Voice of exactly the form
+`Qanjobal.verbForm` records, Agent Focus in every non-finite transitive and under subject
+extraction. -/
+theorem converges_iff_verbForm {agent : Person} (ha : ¬ agent.IsSAP) (finite : Bool)
+    (e : Option ArgumentRole) (f : VerbForm) :
+    Converges ⟨Language.qanjobal.licenser, finite, .transitive (voiceOf f) .dp, e, false⟩ ↔
+      Qanjobal.verbForm finite e agent = f := by
+  have h3 : ¬ Person.third.IsSAP := by decide
+  rw [show Qanjobal.verbForm finite e agent = Qanjobal.verbForm finite e .third by
+    simp [Qanjobal.verbForm, ha, h3]]
+  revert finite e f
+  decide
 
 /-! ### The paper's examples -/
 
+/-- The paper's labels for the absolutive positions. -/
 def absPositions : List (String × ABSPosition) := [("high", .high), ("low", .low)]
 
+/-- The rows' labels for the objects. -/
 def objects : List (String × Object) :=
   [("dp", .dp), ("caseless", .caseless), ("oblique", .oblique)]
 
@@ -459,7 +494,7 @@ def Predicate.ofRow (row : Datum) : Option Predicate := do
       Predicate.intransitive <$> row.parse? "marking" [("abs", MarkerSet.setB), ("erg", .setA)]
   | "transitive" => Predicate.transitive agentive <$> row.parse? "object" objects
   | "agentFocus" => Predicate.transitive voiceAF <$> row.parse? "object" objects
-  | "antipassive" => Predicate.transitive voiceAP <$> row.parse? "object" objects
+  | "antipassive" => Predicate.transitive antipassive <$> row.parse? "object" objects
   | _ => none
 
 /-- The clause a row describes, its object's licenser read off the paper's classification of
