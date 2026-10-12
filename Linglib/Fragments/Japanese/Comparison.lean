@@ -1,6 +1,7 @@
 module
 
 public import Linglib.Syntax.Comparative
+public import Linglib.Fragments.Japanese.Adpositions
 
 /-!
 # Japanese comparison
@@ -27,9 +28,13 @@ open Comparative
 /-- The *yori*-comparative marks the standard with the postposition *yori* in the ablative and has
 no degree morphology. -/
 def yori : Comparative :=
-  { standardMarker := some "yori"
+  { standardMarker := Adpositions.yori.morphs
   , caseAssignment := .fixed
   , fixedEncoding := some .adverbial
   , standardCase := some .abl }
+
+/-- The case of the standard is a function the postposition is entered with. -/
+theorem standardCase_mem_functions : ∀ k ∈ yori.standardCase, k ∈ Adpositions.yori.functions := by
+  decide
 
 end Japanese.Comparison

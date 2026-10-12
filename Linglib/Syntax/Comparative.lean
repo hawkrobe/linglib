@@ -2,77 +2,68 @@ module
 
 public import Linglib.Data.WALS.Features.F121A
 public import Linglib.Syntax.Case.Basic
+public import Linglib.Morphology.Morph
 
 /-!
-# Comparison: comparative-construction typology
+# Comparative constructions
 
-The `Comparative` object — a comparative construction's anatomy in
-[stassen-1985]'s parameters, with its WALS Ch 121 type ([stassen-2013],
-[wals-2013]) derived from that anatomy — plus the [beck-2009] degree-word
-typology, superlative strategies, and the WALS Ch 121A lookup and aggregates.
+A comparative construction, *X is taller than Y*, marks the standard of comparison *Y* and may
+mark the degree on the predicate. Stassen classifies constructions by the case of the standard,
+which is derived from the case of the comparee or fixed by the construction, and by the role of
+a fixed-case standard, the object of a verb of exceeding or an adverbial. This file defines the
+construction by these parameters and derives from them its type in Stassen's chapter of the
+World Atlas of Language Structures, whose sample it also counts.
 
 ## Main definitions
 
-- `Comparative` : the construction object (standard marker, case assignment,
-  encoding role, spatial case, degree slot). Fragments instantiate one def per
-  construction (`German.Comparison.als`; Latin has `quam` *and* `ablative`).
-- `Comparative.type` : the WALS Ch 121 type, derived from the anatomy —
-  derived-case constructions split on marker presence (particle vs conjoined),
-  fixed-case constructions on encoding role (exceed vs locational).
-- `Comparative.CaseAssignment`, `Comparative.FixedCaseEncoding` :
-  [stassen-1985]'s standard-NP parameters (derived vs fixed case; object vs
-  adverbial encoding).
-- `DegreeWordType` ([beck-2009] 3-way), `SuperlativeStrategy` (6-way).
-- WALS Ch 121A aggregate generalisations (`locational_most_common`,
-  `particle_rarest`, `locational_and_particle_dominant`).
+* `Comparative`: a construction, with the marker of its standard and its markers of degree as
+  morphs.
+* `Comparative.type`: the type of a construction in the atlas.
+* `Comparative.SuperlativeStrategy`: the ways a language forms superlatives.
 
-Stassen's 1985 fine-grained adverbial typology (`ComparativeType1985`, the
-chaining universals) lives in `Studies/Stassen1985.lean` (paper-anchored).
+## References
+
+* [stassen-1985]
+* [stassen-2013]
+* [wals-2013]
 -/
 
 @[expose] public section
 
-/-- Case assignment to the standard NP of a comparative ([stassen-1985]
-    §2.2.1): `derived` — the standard NP derives its case from the comparee
-    NP's; `fixed` — one construction-determined case regardless of the
-    comparee's. -/
+/-- The standard of a comparative takes its case from the comparee or has one case that the
+construction fixes ([stassen-1985] §2.2.1). -/
 inductive Comparative.CaseAssignment where
   | derived
   | fixed
   deriving DecidableEq, Repr
 
-/-- Syntactic encoding of a fixed-case standard NP ([stassen-1985] §2.2.2):
-    direct object of a transitive (exceed) verb, or adverbial. -/
+/-- A fixed-case standard is the direct object of a transitive verb of exceeding or an
+adverbial ([stassen-1985] §2.2.2). -/
 inductive Comparative.FixedCaseEncoding where
   | directObject
   | adverbial
   deriving DecidableEq, Repr
 
-/-- A comparative construction: how it encodes the standard of comparison in
-    "X is more Adj than Y" — [stassen-1985]'s construction parameters. A
-    language may have more than one (Latin *quam* and the bare ablative).
-    Coexists with `namespace Comparative` (a type and a namespace may share a
-    name, cf. `Pronoun`). -/
+/-- A comparative construction, by the way it encodes the standard of comparison in *X is more
+Adj than Y*, in the parameters of [stassen-1985]. A language may have more than one, as Latin
+has *quam* and the bare ablative. -/
 structure Comparative where
-  /-- Surface form of the standard marker (*than*, *als*, *yori*, *bǐ*);
-      `none` when no segmental marker flags the standard (conjoined
-      constructions, bare case-marked standards like the Latin ablative). -/
-  standardMarker : Option String := none
-  /-- Case assignment to the standard NP: derived from the comparee's case vs
-      fixed by the construction ([stassen-1985]). -/
+  /-- The marker of the standard as the morphs of its form in order, *than* or the two pieces
+  of Yoruba *ju … lọ*. It is empty where no segmental marker flags the standard, as in a
+  conjoined construction and with a bare case-marked standard like the Latin ablative. -/
+  standardMarker : List Morphology.Morph := []
+  /-- The standard takes its case from the comparee or has a case the construction fixes. -/
   caseAssignment : Comparative.CaseAssignment
-  /-- For fixed-case constructions: the standard's syntactic role — direct
-      object of an exceed verb, or adverbial. -/
+  /-- The role of a fixed-case standard, the object of a verb of exceeding or an adverbial. -/
   fixedEncoding : Option Comparative.FixedCaseEncoding := none
-  /-- Case on an adverbially encoded standard (ablative for separatives,
-      partitive for the Finnish secondary option). Adpositions with the
-      corresponding semantics count (Japanese *yori*, Arabic *min* → `abl`). -/
+  /-- The case of an adverbially encoded standard, the ablative of a separative and the partitive
+  of the Finnish secondary construction. An adposition with the meaning of the case counts, as
+  Japanese *yori* and Arabic *min* do for the ablative. -/
   standardCase : Option Case := none
-  /-- The construction's degree-slot filler (*more*, *-er*, *daha*), if any. -/
-  degreeMarker : Option String := none
-  /-- Dedicated bound degree morphology on the parameter (English *-er*,
-      Latin *-ior*) — [stassen-1985]'s binary parameter. -/
-  degreeMorphology : Bool := false
+  /-- The markers of degree on the predicate, each an alternative, as English *more* and *-er*.
+  A bound marker is degree morphology and a free one a degree word, and the list is empty where
+  the construction marks no degree. -/
+  degreeMarkers : List Morphology.Morph := []
   deriving Repr, BEq, DecidableEq
 
 namespace Comparative
@@ -81,49 +72,36 @@ abbrev ch121 := Data.WALS.F121A.allData
 
 /-! ### Classifications -/
 
-/-- WALS Ch 121: how a comparative construction encodes the **standard of
-    comparison** (the Y in "X is more Adj than Y"). A language with more than
-    one productive construction has one `Comparative` object per construction,
-    each with its own type. -/
+/-- The type of a comparative construction in the atlas, by how it encodes the standard of
+comparison. A language with more than one productive construction has one `Comparative` for
+each, with its own type. -/
 inductive ComparativeType where
-  /-- Locational: the standard is marked with a locational/ablative case
-      or adposition. Example: Japanese `Y yori X tall` 'Y from/than X tall'.
-      Also Turkish (ablative), Hindi-Urdu (`se`), Latin (ablative). -/
+  /-- The standard is marked with a locational or ablative case or adposition, as in Japanese
+  *Y yori X tall*, Turkish, Hindi-Urdu and the Latin ablative. -/
   | locational
-  /-- Exceed: a verb meaning 'exceed/surpass' encodes comparison.
-      Example: Yoruba `Ade ga ju Bola lo`. Common in Niger-Congo + SE Asian. -/
+  /-- A verb meaning 'exceed' or 'surpass' encodes the comparison, as in Yoruba
+  *Ade ga ju Bola lo*. -/
   | exceed
-  /-- Conjoined: two juxtaposed clauses, one attributing the property to X
-      and the other denying / contrasting it for Y. Rarest type. -/
+  /-- Two juxtaposed clauses, one attributing the property to X and the other denying it of Y
+  or contrasting it. -/
   | conjoined
-  /-- Particle: a dedicated comparative particle marks the standard
-      (e.g. English `than`, German `als`). Standard Average European pattern. -/
+  /-- A dedicated comparative particle marks the standard, as English *than* and German *als*
+  do. -/
   | particle
   deriving DecidableEq, BEq, Repr
 
-/-- [beck-2009]: presence of degree words in comparison constructions. -/
-inductive DegreeWordType where
-  /-- Free degree word (English `more`, French `plus`, Mandarin `geng`). -/
-  | hasDegreeWord
-  /-- Bound comparative morphology, no free degree word
-      (English `-er` for short adjectives, Turkish `-rak`). -/
-  | morphological
-  /-- No overt degree marking (exceed-verb, juxtaposition, pragmatic). -/
-  | noDegreeMarking
-  deriving DecidableEq, BEq, Repr
-
-/-- How a language forms superlatives. Partially independent of comparative
-    type; some languages lack a dedicated superlative entirely. -/
+/-- The ways a language forms superlatives, which are partly independent of its comparative
+type. -/
 inductive SuperlativeStrategy where
-  /-- Dedicated superlative morphology (English `-est`, Latin `-issimus`). -/
+  /-- Dedicated superlative morphology, as English *-est* and Latin *-issimus*. -/
   | morphological
-  /-- Definite article + comparative (French `le plus grand`). -/
+  /-- The definite article with the comparative, as French *le plus grand*. -/
   | definiteComparative
-  /-- Elative pattern without comparison class (Arabic `ʔafʕal`). -/
+  /-- The elative pattern without a comparison class, as Arabic *ʔafʕal*. -/
   | elative
-  /-- Exceed verb + universal quantifier ("X exceeds all"). -/
+  /-- A verb of exceeding with a universal quantifier, 'X exceeds all'. -/
   | exceedAll
-  /-- Comparative + universal standard (Japanese `dare yori mo takai`). -/
+  /-- The comparative with a universal standard, as Japanese *dare yori mo takai*. -/
   | comparativeUniversal
   /-- No dedicated superlative strategy. -/
   | none
@@ -131,19 +109,19 @@ inductive SuperlativeStrategy where
 
 /-! ### The derived type -/
 
-/-- The WALS Ch 121 type of a construction, derived from its anatomy:
-    derived-case constructions split on marker presence (particle vs
-    conjoined); fixed-case constructions on encoding role (exceed vs
-    locational, with adverbial the default). -/
+/-- The type of a construction in the atlas, derived from its anatomy. A derived-case
+construction is a particle comparative when it has a standard marker and a conjoined one
+otherwise, and a fixed-case construction is an exceed comparative when the standard is a direct
+object and a locational one otherwise. -/
 def type (c : Comparative) : ComparativeType :=
   match c.caseAssignment, c.fixedEncoding with
-  | .derived, _ => if c.standardMarker.isSome then .particle else .conjoined
+  | .derived, _ => if c.standardMarker = [] then .conjoined else .particle
   | .fixed, some .directObject => .exceed
   | .fixed, _ => .locational
 
-/-! ### WALS Ch 121A aggregate generalisations -/
+/-! ### Counts over the sample of the atlas -/
 
-/-- Per-type counts sum to sample total. -/
+/-- The four types exhaust the sample. -/
 theorem ch121_counts_sum :
     (ch121.filter (·.2 == .locational)).length +
     (ch121.filter (·.2 == .exceed)).length +
@@ -151,7 +129,7 @@ theorem ch121_counts_sum :
     (ch121.filter (·.2 == .particle)).length =
     ch121.length := by decide +kernel
 
-/-- Locational comparatives are the most common single type in WALS Ch 121. -/
+/-- Locational comparatives are the most common type in the sample. -/
 theorem locational_most_common :
     let loc := (ch121.filter (·.2 == .locational)).length
     let exc := (ch121.filter (·.2 == .exceed)).length
@@ -159,7 +137,7 @@ theorem locational_most_common :
     let par := (ch121.filter (·.2 == .particle)).length
     loc > exc ∧ loc > con ∧ loc > par := by decide +kernel
 
-/-- Particle comparatives are the rarest single type in the WALS data. -/
+/-- Particle comparatives are the rarest type in the sample. -/
 theorem particle_rarest :
     let loc := (ch121.filter (·.2 == .locational)).length
     let exc := (ch121.filter (·.2 == .exceed)).length
@@ -167,7 +145,7 @@ theorem particle_rarest :
     let par := (ch121.filter (·.2 == .particle)).length
     par < loc ∧ par < exc ∧ par < con := by decide +kernel
 
-/-- Locational + particle together account for more than half the sample. -/
+/-- Locational and particle comparatives together are more than half the sample. -/
 theorem locational_and_particle_dominant :
     let loc := (ch121.filter (·.2 == .locational)).length
     let par := (ch121.filter (·.2 == .particle)).length

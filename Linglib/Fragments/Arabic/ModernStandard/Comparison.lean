@@ -3,12 +3,16 @@ module
 public import Linglib.Syntax.Comparative
 
 /-!
-# Modern Standard Arabic comparative data
+# Modern Standard Arabic comparison
 
-MSA compares with *X ʔafʕal min Y*: the separative preposition *min* 'from'
-marks the standard (WALS Ch 121A: locational, [stassen-2013]) and the elative
-pattern *ʔafʕal* carries the comparison, with no separate degree word.
-Superlative via the elative without a comparison standard.
+Modern Standard Arabic compares with *X ʔafʕal min Y*. The preposition *min* 'from' marks the
+standard, a locational comparative in the atlas, and the elative pattern *ʔafʕal* of the
+adjective carries the comparison, with no separate degree word. The superlative is the elative
+without a standard of comparison.
+
+## References
+
+* [stassen-2013]
 -/
 
 @[expose] public section
@@ -17,17 +21,14 @@ namespace Arabic.ModernStandard.Comparison
 
 open Comparative
 
-/-- The *min*-comparative: separative preposition-marked standard. -/
+/-- The *min*-comparative, whose standard follows the separative preposition *min*. -/
 def min : Comparative :=
-  { standardMarker := some "min"
+  { standardMarker := [.free "min"]
   , caseAssignment := .fixed
   , fixedEncoding := some .adverbial
   , standardCase := some .abl }
 
-/-- The elative pattern carries comparison; no separate degree word. -/
-def degreeWord : DegreeWordType := .noDegreeMarking
-
-/-- Elative superlative. -/
+/-- The superlative is the elative. -/
 def superlative : SuperlativeStrategy := .elative
 
 end Arabic.ModernStandard.Comparison

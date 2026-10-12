@@ -3,13 +3,17 @@ module
 public import Linglib.Syntax.Comparative
 
 /-!
-# Finnish comparative data
+# Finnish comparison
 
-Finnish compares with *X on Adj-mpi kuin Y*: the particle *kuin* marks the
-standard (WALS Ch 121A: particle, [stassen-2013]), with a secondary
-separative option marking the standard with the partitive instead —
-[stassen-1985] classifies Finnish as particle-primary, separative-secondary.
-Degree is marked by the bound affix *-mpi*; the superlative is morphological.
+Finnish compares with *X on Adj-mpi kuin Y*. The particle *kuin* marks the standard, a particle
+comparative in the atlas, and a secondary construction puts the standard in the partitive
+instead; Stassen classes Finnish as primarily particle and secondarily separative. The degree is
+marked by the suffix *-mpi*, and the superlative is morphological.
+
+## References
+
+* [stassen-1985]
+* [stassen-2013]
 -/
 
 @[expose] public section
@@ -18,25 +22,19 @@ namespace Finnish.Comparison
 
 open Comparative
 
-/-- The *kuin*-comparative: the primary, particle-marked construction. -/
+/-- The suffix of the comparative. -/
+def mpi : Morphology.Morph := .suff "mpi"
+
+/-- The *kuin*-comparative, the primary construction, with a particle-marked standard. -/
 def kuin : Comparative :=
-  { standardMarker := some "kuin"
-  , caseAssignment := .derived
-  , degreeMarker := some "-mpi"
-  , degreeMorphology := true }
+  { standardMarker := [.free "kuin"], caseAssignment := .derived, degreeMarkers := [mpi] }
 
-/-- The secondary separative construction: partitive-marked standard. -/
+/-- The secondary construction, with the standard in the partitive. -/
 def partitive : Comparative :=
-  { caseAssignment := .fixed
-  , fixedEncoding := some .adverbial
-  , standardCase := some .part
-  , degreeMarker := some "-mpi"
-  , degreeMorphology := true }
+  { caseAssignment := .fixed, fixedEncoding := some .adverbial, standardCase := some .part
+    degreeMarkers := [mpi] }
 
-/-- Bound comparative affix *-mpi*. -/
-def degreeWord : DegreeWordType := .morphological
-
-/-- Morphological superlative. -/
+/-- The superlative is morphological. -/
 def superlative : SuperlativeStrategy := .morphological
 
 end Finnish.Comparison

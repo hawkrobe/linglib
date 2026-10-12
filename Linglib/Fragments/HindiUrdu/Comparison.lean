@@ -1,14 +1,18 @@
 module
 
 public import Linglib.Syntax.Comparative
+public import Linglib.Fragments.HindiUrdu.Adpositions
 
 /-!
-# Hindi-Urdu comparative data
+# Hindi-Urdu comparison
 
-Hindi-Urdu compares with *X Y se (zyaadaa) Adj hai*: the ablative postposition
-*se* 'from' marks the standard (WALS Ch 121A: locational, [stassen-2013]), and
-the free degree word *zyaadaa* 'more' is optional. Superlative via comparative
-with a universal standard (*sab se* 'than all').
+Hindi-Urdu compares with *X Y se (zyaadaa) Adj hai*. The postposition *se* 'from' marks the
+standard, a locational comparative in the atlas, and the free degree word *zyaadaa* 'more' is
+optional. The superlative is the comparative with a universal standard, *sab se* 'than all'.
+
+## References
+
+* [stassen-2013]
 -/
 
 @[expose] public section
@@ -17,18 +21,19 @@ namespace HindiUrdu.Comparison
 
 open Comparative
 
-/-- The *se*-comparative: separative postposition-marked standard. -/
+/-- The *se*-comparative, whose standard takes the postposition *se* in its ablative use. -/
 def se : Comparative :=
-  { standardMarker := some "se"
+  { standardMarker := Adpositions.se.morphs
   , caseAssignment := .fixed
   , fixedEncoding := some .adverbial
   , standardCase := some .abl
-  , degreeMarker := some "zyaadaa" }
+  , degreeMarkers := [.free "zyaadaa"] }
 
-/-- Optional free degree word *zyaadaa*. -/
-def degreeWord : DegreeWordType := .hasDegreeWord
+/-- The case of the standard is a function the postposition is entered with. -/
+theorem standardCase_mem_functions : ∀ k ∈ se.standardCase, k ∈ Adpositions.se.functions := by
+  decide
 
-/-- Superlative as comparative with universal standard (*sab se*). -/
+/-- The superlative is the comparative with a universal standard, *sab se*. -/
 def superlative : SuperlativeStrategy := .comparativeUniversal
 
 end HindiUrdu.Comparison

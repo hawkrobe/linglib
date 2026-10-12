@@ -18,7 +18,6 @@ Stassen's finer typology.
 ## Main definitions
 
 * `Turkish.Comparison.dan`: the comparative construction
-* `Turkish.Comparison.degreeWord`: the free degree word *daha*
 
 ## Main results
 
@@ -44,11 +43,8 @@ open Comparative
 /-- The ablative comparative, whose standard takes *-DAn* and whose adjective is preceded by
 the optional *daha* and carries no comparative morphology. -/
 def dan : Comparative :=
-  { standardMarker := some "-DAn", caseAssignment := .fixed, fixedEncoding := some .adverbial,
-    standardCase := some .abl, degreeMarker := some "daha" }
-
-/-- The degree word *daha* is free and optional. -/
-def degreeWord : DegreeWordType := .hasDegreeWord
+  { standardMarker := [.suff "DAn"], caseAssignment := .fixed, fixedEncoding := some .adverbial,
+    standardCase := some .abl, degreeMarkers := [.free "daha"] }
 
 /-- The construction is locational. -/
 theorem type_dan : dan.type = .locational := rfl

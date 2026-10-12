@@ -24,18 +24,15 @@ namespace Korean.Comparison
 
 open Comparative
 
-/-- The *-boda* comparative: separative postposition-marked standard, no
-    degree morphology. -/
+/-- The *-boda* comparative, whose standard takes the separative particle *-boda* and whose
+adjective has no degree marking, the adverb *deo* being an optional intensifier. -/
 def boda : Comparative :=
-  { standardMarker := some "-boda"
+  { standardMarker := [.encl "boda"]
   , caseAssignment := .fixed
   , fixedEncoding := some .adverbial
   , standardCase := some .abl }
 
-/-- No overt degree marking; the adverb *deo* is an optional intensifier. -/
-def degreeWord : DegreeWordType := .noDegreeMarking
-
-/-- Superlative as comparative with universal standard. -/
+/-- The superlative is the comparative with a universal standard. -/
 def superlative : SuperlativeStrategy := .comparativeUniversal
 
 end Korean.Comparison

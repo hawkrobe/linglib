@@ -3,12 +3,15 @@ module
 public import Linglib.Syntax.Comparative
 
 /-!
-# French comparative data
+# French comparison
 
-French compares with *X est plus Adj que Y*: the particle *que* marks the
-standard (WALS Ch 121A: particle, [stassen-2013]) and the free word *plus*
-marks degree; the superlative is the definite article plus the comparative
-(*le plus grand*).
+French compares with *X est plus Adj que Y*. The particle *que* marks the standard, a particle
+comparative in the atlas, and the free word *plus* marks the degree. The superlative is the
+definite article with the comparative, *le plus grand*.
+
+## References
+
+* [stassen-2013]
 -/
 
 @[expose] public section
@@ -17,16 +20,12 @@ namespace French.Comparison
 
 open Comparative
 
-/-- The *que*-comparative: particle-marked standard, free *plus* degree. -/
+/-- The *que*-comparative, with a particle-marked standard and the degree word *plus*. -/
 def que : Comparative :=
-  { standardMarker := some "que"
-  , caseAssignment := .derived
-  , degreeMarker := some "plus" }
+  { standardMarker := [.free "que"], caseAssignment := .derived
+    degreeMarkers := [.free "plus"] }
 
-/-- Free degree word *plus*. -/
-def degreeWord : DegreeWordType := .hasDegreeWord
-
-/-- Definite article + comparative superlative. -/
+/-- The superlative is the definite article with the comparative. -/
 def superlative : SuperlativeStrategy := .definiteComparative
 
 end French.Comparison

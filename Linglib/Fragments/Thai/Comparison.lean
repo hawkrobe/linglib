@@ -3,12 +3,15 @@ module
 public import Linglib.Syntax.Comparative
 
 /-!
-# Thai comparative data
+# Thai comparison
 
-Thai compares with *X Adj kwàa Y* (WALS Ch 121A: exceed, [stassen-2013]):
-*kwàa* 'exceed' takes the standard as its object after the predicate. The
-adjective carries no degree marking; superlative via exceeding a universal
-standard.
+Thai compares with *X Adj kwàa Y*, an exceed comparative in the atlas: *kwàa* 'exceed' takes the
+standard as its object after the predicate. The adjective carries no degree marking, and the
+superlative exceeds a universal standard.
+
+## References
+
+* [stassen-2013]
 -/
 
 @[expose] public section
@@ -17,16 +20,13 @@ namespace Thai.Comparison
 
 open Comparative
 
-/-- The *kwàa*-comparative: exceed marker taking the standard as object. -/
+/-- The *kwàa*-comparative, whose marker takes the standard as its object. -/
 def kwaa : Comparative :=
-  { standardMarker := some "kwaa"
+  { standardMarker := [.free "kwaa"]
   , caseAssignment := .fixed
   , fixedEncoding := some .directObject }
 
-/-- No degree marking on the adjective. -/
-def degreeWord : DegreeWordType := .noDegreeMarking
-
-/-- Superlative by exceeding a universal standard. -/
+/-- The superlative exceeds a universal standard. -/
 def superlative : SuperlativeStrategy := .exceedAll
 
 end Thai.Comparison
