@@ -1,6 +1,7 @@
 module
 
-public import Linglib.Pragmatics.SocialMeaning.Game
+public import Linglib.Pragmatics.RSA.Basic
+public import Linglib.Pragmatics.SocialMeaning.Persona
 public import Linglib.Studies.Eckert2008
 public import Linglib.Studies.Labov2012
 
@@ -115,7 +116,7 @@ inverts the speaker against the same prior. -/
 
 /-- The literal listener conditions the prior on the variant's Eckert–Montague field. -/
 noncomputable abbrev L0 (prior : Measure Persona) : Kernel INGVariant Persona :=
-  listener prior (truthful ingField.indexation)
+  listener prior (truthful fun v ↦ ↑(ingField.personae v))
 
 /-- The speaker, the softmax of the literal listener at rationality 6 (p. 435), without costs. -/
 noncomputable abbrev S1 (prior : Measure Persona) : Kernel Persona INGVariant :=
@@ -182,7 +183,8 @@ theorem prefers_iff (prior : Measure Persona) [IsFiniteMeasure prior] {p : Perso
     (h₂ : p ∈ ingField.personae v₂) (h0 : prior {p} ≠ 0) :
     (S1 prior p).real {v₁} < (S1 prior p).real {v₂}
       ↔ prior {excluded v₁} < prior {excluded v₂} := by
-  rw [ingField.speaker_indexation_real_singleton_lt_iff prior (by norm_num) h0 h₁ h₂,
+  rw [speaker_listener_truthful_dirac_real_singleton_lt_iff (by norm_num) 0 prior
+    (fun v ↦ (ingField.personae v : Set Persona)) h0 (Finset.mem_coe.2 h₁) (Finset.mem_coe.2 h₂),
     measure_personae_lt_iff prior hne]
 
 /-! ### The contexts
@@ -294,12 +296,14 @@ produced with certainty by the persona it is exclusive to. -/
 theorem sternLeader_certain {w : Persona → ℕ} (hw : ∀ p, w p ≠ 0) :
     S1 (Measure.ofWeights (w ·)) sternLeader {.velar} = 1 ∧
       S1 (Measure.ofWeights (w ·)) doofus {.apical} = 1 :=
-  ⟨ingField.speaker_indexation_eq_one_of_exclusive _ (by norm_num)
-      (Measure.ofWeights_apply_singleton_ne_zero (Nat.cast_ne_zero.2 (hw _))) (by decide +kernel)
-      (by decide +kernel),
-    ingField.speaker_indexation_eq_one_of_exclusive _ (by norm_num)
-      (Measure.ofWeights_apply_singleton_ne_zero (Nat.cast_ne_zero.2 (hw _))) (by decide +kernel)
-      (by decide +kernel)⟩
+  ⟨speaker_listener_truthful_dirac_eq_one (by norm_num) _ _ _
+      (Measure.ofWeights_apply_singleton_ne_zero (Nat.cast_ne_zero.2 (hw _)))
+      (Finset.mem_coe.2 (by decide +kernel)) fun v hv ↦ Finset.mem_coe.not.2 (by
+        revert v; decide +kernel),
+    speaker_listener_truthful_dirac_eq_one (by norm_num) _ _ _
+      (Measure.ofWeights_apply_singleton_ne_zero (Nat.cast_ne_zero.2 (hw _)))
+      (Finset.mem_coe.2 (by decide +kernel)) fun v hv ↦ Finset.mem_coe.not.2 (by
+        revert v; decide +kernel)⟩
 
 /-- A variant gives no posterior mass to a persona it cannot convey, so hearing *-ing* rules
 out the doofus and hearing *-in'* rules out the stern leader, whatever the listener believed
@@ -307,16 +311,17 @@ beforehand. -/
 theorem L1_eq_zero_of_excluded (prior : Measure Persona) (v : INGVariant) :
     L1 prior v {excluded v} = 0 := by
   cases v <;>
-    exact ingField.listener_indexation_apply_singleton_of_not_meets _ (by norm_num)
-      (by decide +kernel)
+    exact listener_speaker_listener_truthful_apply_singleton_of_notMem (by norm_num) _ _ _
+      (Finset.mem_coe.not.2 (by decide +kernel))
 
 /-- With no prior beliefs the literal listener spreads its mass evenly over the three personae
 the variant can convey, the game-theoretic literal listener of Definition 4.1. -/
 theorem L0_uniform_apply {v : INGVariant} {p : Persona} (hp : p ∈ ingField.personae v) :
     L0 (Measure.ofWeights (riceWeight ·)) v {p} = 3⁻¹ := by
   have hcard : (ingField.personae v).card = 3 := by cases v <;> decide +kernel
-  rw [ingField.listener_truthful_indexation_apply_singleton _ hp, Measure.ofWeights_apply_singleton,
-    ← sum_measure_singleton]
+  rw [listener_truthful_apply_singleton _ (fun v ↦ (ingField.personae v : Set Persona))
+      (Finset.mem_coe.2 hp),
+    Measure.ofWeights_apply_singleton, ← sum_measure_singleton]
   simp only [Measure.ofWeights_apply_singleton, riceWeight, Nat.cast_one, Finset.sum_const,
     nsmul_eq_mul, mul_one, hcard]
   norm_num
