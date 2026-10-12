@@ -10,8 +10,9 @@ The entry-level readers of a verb: lookup by citation form and sense, the root's
 the argument profiles with their Levin-class fallback, and the predicate a verb forms with a
 path phrase (`Verb.withPath`). The semantic classifications of an
 entry live with their theories, each under the `Verb` namespace: factivity and trigger status
-in `Semantics/Presupposition/Verb.lean`, the attitude in `Semantics/Attitudes/Verb.lean`, and
-unaccusativity in `Semantics/ArgumentStructure/Unaccusativity.lean`.
+in `Semantics/Presupposition/Verb.lean` and unaccusativity in
+`Semantics/ArgumentStructure/Unaccusativity.lean`. The attitude classification is the entry's
+`attitude` field itself.
 
 ## References
 

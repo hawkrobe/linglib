@@ -8,23 +8,21 @@ public import Linglib.Semantics.Degree.Antonymy
 This file is the root of the attitude API: the semantic classification a clause-embedding
 predicate's lexical entry records, from which its combinatorial properties are derived. A
 doxastic predicate is veridical or not, the classical cut between *know* and *believe*
-(`Doxastic.Veridicality`); [karttunen-1971b]'s finer split of the factives into emotive and
-semi-factive is `Factivity`, on the presupposition facet. A preferential predicate has the
-evaluative valence of a gradable predicate, positive for *hope* and negative for *fear*, and is
-clausally distributive or not. The degree comparison of [villalta-2008] relates its subject to a
-question exactly when it relates her to some answer, while *worry* ([anand-hacquard-2013]),
-Mandarin *qidai* and *care* ([elliott-etal-2017]) relate her to the question itself and can hold
-of no particular answer. `Attitude` composes the two dimensions, and its projections are what
-verb entries and the semantics of `Doxastic.lean` and the `Preference/` files read.
+(`Doxastic.Veridicality`); Karttunen's finer split of the factives into full and semi-factives is
+`Factivity`, on the presupposition facet. A preferential predicate has the evaluative valence of
+a gradable predicate, positive for *hope* and negative for *fear*, and is clausally distributive
+or not. Villalta's degree comparison relates its subject to a question exactly when it relates
+her to some answer, while *worry*, Mandarin *qidai* and *care* relate her to the question itself
+and can hold of no particular answer. `Attitude` composes the two dimensions: verb entries
+record one, and `Doxastic.lean` interprets the veridicality.
 
 ## Implementation notes
 
-The binary cut between veridical and non-veridical is the classical default;
-[giannakidou-1998]'s three-way veridical, nonveridical, and antiveridical taxonomy and finer
-attitude typologies ([anand-hacquard-2013]) cut the space differently. Clausal distributivity is
-recorded, as in [qing-uegaki-2025]'s classification, rather than derived, since the
-non-distributive predicates share no denotation. Speech-act predicates are outside the
-classification.
+The binary cut between veridical and non-veridical is the classical default; Giannakidou's
+three-way veridical, nonveridical, and antiveridical taxonomy and finer attitude typologies such
+as Anand and Hacquard's cut the space differently. Clausal distributivity is recorded, as in Qing
+and Uegaki's classification, rather than derived, since the non-distributive predicates share no
+denotation. Speech-act predicates are outside the classification.
 
 ## References
 
@@ -62,20 +60,14 @@ def veridicality : Attitude → Doxastic.Veridicality
   | .doxastic v => v
   | .preferential _ _ => .nonVeridical
 
-/-- The attitude is doxastic. -/
-def IsDoxastic : Attitude → Prop
-  | .doxastic _ => True
-  | .preferential _ _ => False
-
-instance : DecidablePred IsDoxastic := fun a ↦ by unfold IsDoxastic; split <;> infer_instance
-
 /-- The attitude is preferential. -/
 def IsPreferential : Attitude → Prop
   | .doxastic _ => False
   | .preferential _ _ => True
 
-instance : DecidablePred IsPreferential := fun a ↦ by
-  unfold IsPreferential; split <;> infer_instance
+instance : DecidablePred IsPreferential
+  | .doxastic _ => isFalse id
+  | .preferential _ _ => isTrue trivial
 
 /-- The valence of a preferential predicate. -/
 def valence : Attitude → Option Degree.EvaluativeValence

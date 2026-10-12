@@ -197,8 +197,7 @@ structure Reading where
 structure Attitude where
   /-- Does the verb create an opaque context for its complement? -/
   opaqueContext : Bool := false
-  /-- Unified attitude classification covering doxastic and preferential attitudes.
-      Theoretical properties (C-distributivity, parasitic, etc.) are DERIVED. -/
+  /-- The attitude the verb expresses, doxastic or preferential, if it is an attitude verb. -/
   attitude : Option _root_.Attitude := none
   /-- The frame-conditioned readings ([bondarenko-2022] §4.4.3), per-frame attitude and opacity
       overrides and control keyed to the frames of `valency`. -/

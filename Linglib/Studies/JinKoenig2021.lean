@@ -6,31 +6,20 @@ public import Linglib.Studies.Karttunen1974
 public import Linglib.Semantics.Modality.Necessity
 public import Linglib.Semantics.Conditionals.Basic
 public import Linglib.Fragments.English.Verbs.Inventory
-public import Linglib.Semantics.Attitudes.Verb
 
 /-!
 # Jin and Koenig (2021): A Cross-Linguistic Study of Expletive Negation
 
-Jin and Koenig give a typology of expletive negation, a negator in the dependent of a lexical item,
-triggered by the item's meaning, that contributes no negation to the dependent's proposition, (2). A
-survey of 722 languages finds it in 74, across 37 genera, most often under *before* and *fear*, and
-a comparison of English, French, Januubi, Mandarin and Zarma-Sonrai finds the same trigger classes
-in all five, Table 5. The account is that a trigger's meaning activates both its argument and the
-argument's negation, in distinct sets of worlds, at distinct times, in the meaning itself, or as
-predications of distinct entities, the four licensing conditions of (13) (`Negation.ENLicensing`);
-the classes and concepts of Tables 5 and 6 are `Negation.ENTriggerClass` and `Negation.ENConcept`,
-and the paper's examples are rows. The activation is `DualInference`, the argument true at one point
-of a domain and false at another, and the substrate's operators deliver it: *q before p* leaves *p*
-false at the time of *q* (`before_dual`), *impossible p* leaves it false at the best worlds
-(`impossible_dual`), *without* and *unless* carry the negation in their meaning, and a comparative
-predicates a degree of one entity and denies it of the other (`comparative_dual`). The verbal
-triggers are the negative-valence attitudes and the verbs whose affirmation implies the negation of
-their complement, *forget* and *prevent* among them (`negative_valence_is_en_trigger` and its
-sibling). The rows carry Section 6's negator facts: Mandarin's imperative negator under *fear* and
-deontic negator under the *regret* class, French *ne* alone in its entrenched uses, and Januubi's
-standard negator in the exemplified classes (`mandarin_negators`, `french_ne_of_entrenched`,
-`januubi_standard`); under *fear* the paper reports the Januubi prohibitive *laa*, without an
-example.
+Jin and Koenig give a typology of expletive negation, a negator in the dependent of a lexical
+item, triggered by the item's meaning, that contributes no negation to the dependent's
+proposition. English, French, Januubi, Mandarin and Zarma-Sonrai share its trigger classes
+(`Negation.ENTriggerClass`). A trigger's meaning activates both its argument and the argument's
+negation, at distinct worlds, times or entities or within the meaning itself
+(`Negation.ENLicensing`); the substrate's operators deliver this dual inference for *before*,
+*impossible* and comparatives (`before_dual`, `impossible_dual`, `comparative_dual`), and the
+verbal triggers are the negative-valence attitudes and the verbs whose affirmation implies the
+negation of their complement (`english_triggers`). The paper's examples are rows carrying its
+negator facts (`mandarin_negators`, `french_ne_of_entrenched`, `januubi_standard`).
 
 ## Implementation notes
 
@@ -39,6 +28,8 @@ example.
   Sections 6.4 and 7, is `blocking`.
 * The propositional-attitude condition is not derived from the preferential semantics, whose
   valence is a label; the paper's production model is not formalized.
+* Under *fear* the paper reports the Januubi prohibitive *laa* without an example, so no row
+  records it.
 
 ## References
 
@@ -117,20 +108,10 @@ theorem comparative_dual {Entity α : Type*} [LinearOrder α] (μ : Entity → �
 attitude (*fear*) or its affirmation implies the negation of its complement (*forget*,
 *prevent*). -/
 def IsExpletiveNegationTrigger (v : Verb) : Prop :=
-  v.preferentialValence? = some .negative ∨ v.implicative.positive = .some .negative
+  v.attitude.bind Attitude.valence = some .negative ∨ v.implicative.positive = .some .negative
 
 instance : DecidablePred IsExpletiveNegationTrigger := fun _ ↦
   inferInstanceAs (Decidable (_ ∨ _))
-
-/-- A negative-valence preferential attitude is a trigger of the *fear* class. -/
-theorem negative_valence_is_en_trigger {v : Verb} (h : v.preferentialValence? = some .negative) :
-    IsExpletiveNegationTrigger v := Or.inl h
-
-/-- A verb whose affirmation implies the negation of its complement is a trigger of the *forget*
-class. -/
-theorem negative_implicative_is_en_trigger {v : Verb}
-    (h : v.implicative.positive = .some .negative) :
-    IsExpletiveNegationTrigger v := Or.inr h
 
 open English
 open English.Verbs hiding Verb
@@ -139,9 +120,7 @@ theorem english_triggers :
     IsExpletiveNegationTrigger fear.toVerb ∧ IsExpletiveNegationTrigger dread.toVerb ∧
       IsExpletiveNegationTrigger worry.toVerb ∧ IsExpletiveNegationTrigger forget.toVerb ∧
       IsExpletiveNegationTrigger prevent.toVerb :=
-  ⟨negative_valence_is_en_trigger rfl, negative_valence_is_en_trigger rfl,
-    negative_valence_is_en_trigger rfl, negative_implicative_is_en_trigger rfl,
-    negative_implicative_is_en_trigger rfl⟩
+  ⟨.inl rfl, .inl rfl, .inl rfl, .inr rfl, .inr rfl⟩
 
 /-! ### The examples -/
 
