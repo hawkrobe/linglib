@@ -67,18 +67,44 @@ def ex_21a : Datum :=
     readings := []
     paperFeatures := [("phenomenon", "self-talk"), ("person", "first plural")] }
 
-def ex_24 : Datum :=
-  { id := "ackemaneeleman2018_24"
-    source := ⟨"ackema-neeleman-2018", "ch. 2 (24)"⟩
+def ex_24a : Datum :=
+  { id := "ackemaneeleman2018_24a"
+    source := ⟨"ackema-neeleman-2018", "ch. 2 (24a)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "It seems that Vitesse won."
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("It seem that Vitesse won.", .ungrammatical), ("I seem that Vitesse won.", .ungrammatical), ("You seem that Vitesse won.", .ungrammatical)]
+    alternatives := [("It seem that Vitesse won.", .ungrammatical)]
     readings := []
-    paperFeatures := [("phenomenon", "expletive"), ("person", "third singular")] }
+    paperFeatures := [("phenomenon", "expletive"), ("person", "third")] }
+
+def ex_24b_i : Datum :=
+  { id := "ackemaneeleman2018_24b_i"
+    source := ⟨"ackema-neeleman-2018", "ch. 2 (24b)"⟩
+    reportedIn := none
+    language := "stan1293"
+    primaryText := "I seem that Vitesse won."
+    glossedTokens := []
+    context := ""
+    judgment := .ungrammatical
+    alternatives := []
+    readings := []
+    paperFeatures := [("phenomenon", "expletive"), ("person", "first")] }
+
+def ex_24b_you : Datum :=
+  { id := "ackemaneeleman2018_24b_you"
+    source := ⟨"ackema-neeleman-2018", "ch. 2 (24b)"⟩
+    reportedIn := none
+    language := "stan1293"
+    primaryText := "You seem that Vitesse won."
+    glossedTokens := []
+    context := ""
+    judgment := .ungrammatical
+    alternatives := []
+    readings := []
+    paperFeatures := [("phenomenon", "expletive"), ("person", "second")] }
 
 def ex_25 : Datum :=
   { id := "ackemaneeleman2018_25"
@@ -104,8 +130,8 @@ def ex_30 : Datum :=
     judgment := .ungrammatical
     alternatives := []
     readings := []
-    paperFeatures := [("phenomenon", "expletive"), ("pronoun", "featureless impersonal")] }
+    paperFeatures := [("phenomenon", "expletive"), ("person", "featureless")] }
 
-def all : List Datum := [ex_2a, ex_2b, ex_20a, ex_21a, ex_24, ex_25, ex_30]
+def all : List Datum := [ex_2a, ex_2b, ex_20a, ex_21a, ex_24a, ex_24b_i, ex_24b_you, ex_25, ex_30]
 
 end AckemaNeeleman2018.Examples

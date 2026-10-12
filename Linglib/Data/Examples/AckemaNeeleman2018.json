@@ -83,8 +83,8 @@
     "verified": "page-image"
   },
   {
-    "id": "ackemaneeleman2018_24",
-    "source": {"bibkey": "ackema-neeleman-2018", "paperLabel": "ch. 2 (24)"},
+    "id": "ackemaneeleman2018_24a",
+    "source": {"bibkey": "ackema-neeleman-2018", "paperLabel": "ch. 2 (24a)"},
     "reportedIn": null,
     "language": "stan1293",
     "primaryText": "It seems that Vitesse won.",
@@ -94,16 +94,54 @@
     "context": "",
     "judgment": "acceptable",
     "alternatives": [
-      {"form": "It seem that Vitesse won.", "judgment": "ungrammatical"},
-      {"form": "I seem that Vitesse won.", "judgment": "ungrammatical"},
-      {"form": "You seem that Vitesse won.", "judgment": "ungrammatical"}
+      {"form": "It seem that Vitesse won.", "judgment": "ungrammatical"}
     ],
     "readings": [],
     "paperFeatures": [
       ["phenomenon", "expletive"],
-      ["person", "third singular"]
+      ["person", "third"]
     ],
     "comment": "Expletives are third person singular: plural is undefined on the empty set.",
+    "verified": "page-image"
+  },
+  {
+    "id": "ackemaneeleman2018_24b_i",
+    "source": {"bibkey": "ackema-neeleman-2018", "paperLabel": "ch. 2 (24b)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "I seem that Vitesse won.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["phenomenon", "expletive"],
+      ["person", "first"]
+    ],
+    "comment": "A first person pronoun cannot be an expletive: PROX never delivers the empty set.",
+    "verified": "page-image"
+  },
+  {
+    "id": "ackemaneeleman2018_24b_you",
+    "source": {"bibkey": "ackema-neeleman-2018", "paperLabel": "ch. 2 (24b)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "You seem that Vitesse won.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["phenomenon", "expletive"],
+      ["person", "second"]
+    ],
+    "comment": "A second person pronoun cannot be an expletive: its set has an obligatory addressee.",
     "verified": "page-image"
   },
   {
@@ -150,7 +188,7 @@
     "readings": [],
     "paperFeatures": [
       ["phenomenon", "expletive"],
-      ["pronoun", "featureless impersonal"]
+      ["person", "featureless"]
     ],
     "comment": "The featureless pronoun refers to the whole input set, which has two obligatory members, so it cannot be a dummy.",
     "verified": "page-image"
