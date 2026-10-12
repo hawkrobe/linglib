@@ -21,38 +21,52 @@ agreement with a second person subject.
 
 @[expose] public section
 
-namespace Basque.Pronouns
+namespace Basque
+
+/-- The honorific grades of Basque pronouns and allocutive markers, lowest first. -/
+inductive Grade where
+  /-- The familiar grade, *hi*. -/
+  | familiar
+  /-- The polite grade, *zu*. -/
+  | polite
+  deriving DecidableEq, Fintype, Repr
+
+instance : LinearOrder Grade := LinearOrder.lift' Grade.ctorIdx (by decide)
+
+namespace Pronouns
 
 /-- *ni* — 1sg. -/
-def ni : PersonalPronoun := { form := "ni", person := some .first, number := some .singular }
+def ni : PersonalPronoun Grade :=
+  { form := "ni", person := some .first, number := some .singular }
 
 /-- *gu* — 1pl. -/
-def gu : PersonalPronoun := { form := "gu", person := some .first, number := some .plural }
+def gu : PersonalPronoun Grade :=
+  { form := "gu", person := some .first, number := some .plural }
 
 /-- *hi* — 2sg familiar. -/
-def hi : PersonalPronoun :=
+def hi : PersonalPronoun Grade :=
   { form := "hi", person := some .second, number := some .singular,
-    honorific := some .nonhonorific }
+    grades := {.familiar} }
 
 /-- *Zu* addresses one person and agrees as a second person plural. -/
-def zu : PersonalPronoun :=
-  { form := "zu", person := some .second, number := some .plural, honorific := some .honorific,
+def zu : PersonalPronoun Grade :=
+  { form := "zu", person := some .second, number := some .plural, grades := {.polite},
     referential := {.addressee} }
 
 /-- *zuek* — 2pl. -/
-def zuek : PersonalPronoun :=
+def zuek : PersonalPronoun Grade :=
   { form := "zuek", person := some .second, number := some .plural }
 
 /-- *hura* — 3sg. -/
-def hura : PersonalPronoun :=
+def hura : PersonalPronoun Grade :=
   { form := "hura", person := some .third, number := some .singular }
 
 /-- *haiek* — 3pl. -/
-def haiek : PersonalPronoun :=
+def haiek : PersonalPronoun Grade :=
   { form := "haiek", person := some .third, number := some .plural }
 
 /-- The pronoun inventory. -/
-def pronouns : Finset PersonalPronoun := {ni, gu, hi, zu, zuek, hura, haiek}
+def pronouns : Finset (PersonalPronoun Grade) := {ni, gu, hi, zu, zuek, hura, haiek}
 
 /-- *Zu* bears the agreement features of the plural *zuek*. -/
 theorem phi_zu : HasPhi.phi zu = HasPhi.phi zuek := by decide
@@ -61,17 +75,19 @@ theorem phi_zu : HasPhi.phi zu = HasPhi.phi zuek := by decide
 theorem referential_zu : zu.referential = hi.referential := by decide
 
 /-- *-k* — nonhonorific male addressee. -/
-def allocM : AllocutiveMarker :=
-  { form := "-k", honorific := .nonhonorific, gender := some .masculine }
+def allocM : AllocutiveMarker Grade :=
+  { form := "-k", grade := .familiar, gender := some .masculine }
 
 /-- *-n* — nonhonorific female addressee. -/
-def allocF : AllocutiveMarker :=
-  { form := "-n", honorific := .nonhonorific, gender := some .feminine }
+def allocF : AllocutiveMarker Grade :=
+  { form := "-n", grade := .familiar, gender := some .feminine }
 
 /-- *-zü* — honorific addressee. -/
-def allocH : AllocutiveMarker := { form := "-zü", honorific := .honorific }
+def allocH : AllocutiveMarker Grade := { form := "-zü", grade := .polite }
 
 /-- The Souletin allocutive markers. -/
-def allocutiveMarkers : List AllocutiveMarker := [allocM, allocF, allocH]
+def allocutiveMarkers : List (AllocutiveMarker Grade) := [allocM, allocF, allocH]
 
-end Basque.Pronouns
+end Pronouns
+
+end Basque

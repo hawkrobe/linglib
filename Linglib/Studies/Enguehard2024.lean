@@ -253,13 +253,13 @@ theorem bookRows_judgment :
 open English.Pronouns (it they pronouns)
 
 /-- The rows name the pronouns by their forms. -/
-def pronounTable : List (String × PersonalPronoun) := [("it", it), ("they", they)]
+def pronounTable : List (String × PersonalPronoun Empty) := [("it", it), ("they", they)]
 
 /-- A continuation of (18)–(19) records the number of the negated indefinite, the pronoun resuming
 it and the judgment. -/
 structure ContinuationRow where
   antecedent : Number
-  pronoun : PersonalPronoun
+  pronoun : PersonalPronoun Empty
   judgment : Judgment
   deriving DecidableEq
 

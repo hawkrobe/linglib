@@ -40,36 +40,37 @@ open Agreement
 
 /-- The enclitic *=i*, the second person singular pronoun and the reduced first person
 singular and exclusive plural, underspecified for person and number. -/
-def iDisagr : PersonalPronoun := { form := "=i", person := none, number := none }
+def iDisagr : PersonalPronoun Empty := { form := "=i", person := none, number := none }
 
 /-- The independent first person singular *qini*. -/
-def qini : PersonalPronoun := { form := "qini", person := some .first, number := some .singular }
+def qini : PersonalPronoun Empty :=
+  { form := "qini", person := some .first, number := some .singular }
 
 /-- The independent first person plural exclusive *qoy*. -/
-def qoy : PersonalPronoun :=
+def qoy : PersonalPronoun Empty :=
   { form := "qoy", person := some .firstExclusive, number := some .plural }
 
 /-- The first person plural inclusive *qo*. -/
-def qo : PersonalPronoun :=
+def qo : PersonalPronoun Empty :=
   { form := "qo", person := some .firstInclusive, number := some .plural }
 
 /-- The second person plural *qi*. -/
-def qi : PersonalPronoun := { form := "qi", person := some .second, number := some .plural }
+def qi : PersonalPronoun Empty := { form := "qi", person := some .second, number := some .plural }
 
 /-- The third person plural *qa*, the plural marker of the language. -/
-def qa : PersonalPronoun := { form := "qa", person := some .third, number := some .plural }
+def qa : PersonalPronoun Empty := { form := "qa", person := some .third, number := some .plural }
 
 /-! ### The two series -/
 
 /-- The independent series, with no pronoun in the third person singular. -/
-def independent : Paradigm PersonalPronoun :=
+def independent : Paradigm (PersonalPronoun Empty) :=
   [(.personNumber .first .singular, qini), (.personNumber .firstExclusive .plural, qoy),
     (.personNumber .firstInclusive .plural, qo), (.personNumber .second .singular, iDisagr),
     (.personNumber .second .plural, qi), (.personNumber .third .plural, qa)]
 
 /-- The subject and possessor series, the bare enclitic in the first person singular and
 exclusive plural and no pronoun in the inclusive plural and the third person singular. -/
-def subjPoss : Paradigm PersonalPronoun :=
+def subjPoss : Paradigm (PersonalPronoun Empty) :=
   [(.personNumber .first .singular, iDisagr), (.personNumber .firstExclusive .plural, iDisagr),
     (.personNumber .second .singular, iDisagr), (.personNumber .second .plural, qi),
     (.personNumber .third .plural, qa)]

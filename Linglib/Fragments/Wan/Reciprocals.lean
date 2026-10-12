@@ -33,10 +33,11 @@ namespace Wan.Reciprocals
     (31). The logophoric pronouns stand for the person whose speech is reported and, with verbs
     of mental activity such as 'know' and 'imagine', for the person the state is attributed to;
     they do not distinguish a second from a third person antecedent ([nikitina-2012]). -/
-def logPl : LogophoricPronoun := { form := "mɔ̄", number := some .plural }
+def logPl : LogophoricPronoun Empty := { form := "mɔ̄", number := some .plural }
 
 /-- *à̰* — the ordinary third-person plural pronoun ((32)). -/
-def ordinaryPl : PersonalPronoun := { form := "à̰", person := some .third, number := some .plural }
+def ordinaryPl : PersonalPronoun Empty :=
+  { form := "à̰", person := some .third, number := some .plural }
 
 /-- *ē* — the reflexive (REFL) of (28). -/
 def reflexive : ReflexivePronoun := { form := "ē" }

@@ -52,71 +52,73 @@ namespace English.Pronouns
 /-! ### Personal pronouns -/
 
 /-- The first person singular nominative *I*. -/
-def i : PersonalPronoun :=
+def i : PersonalPronoun Empty :=
   { form := "I", person := some .first, number := some .singular, case_ := some .nom }
 
 /-- The first person singular accusative *me*. -/
-def me : PersonalPronoun :=
+def me : PersonalPronoun Empty :=
   { form := "me", person := some .first, number := some .singular, case_ := some .acc }
 
 /-- The first person plural nominative *we*. -/
-def we : PersonalPronoun :=
+def we : PersonalPronoun Empty :=
   { form := "we", person := some .first, number := some .plural, case_ := some .nom }
 
 /-- The first person plural accusative *us*. -/
-def us : PersonalPronoun :=
+def us : PersonalPronoun Empty :=
   { form := "us", person := some .first, number := some .plural, case_ := some .acc }
 
 /-- The second person singular *you*, one form for both cases. -/
-def you : PersonalPronoun := { form := "you", person := some .second, number := some .singular }
+def you : PersonalPronoun Empty :=
+  { form := "you", person := some .second, number := some .singular }
 
 /-- The second person plural *you*, one form for both cases. -/
-def you_pl : PersonalPronoun := { form := "you", person := some .second, number := some .plural }
+def you_pl : PersonalPronoun Empty :=
+  { form := "you", person := some .second, number := some .plural }
 
 /-- The third person singular masculine nominative *he*. -/
-def he : PersonalPronoun :=
+def he : PersonalPronoun Empty :=
   { form := "he", person := some .third, number := some .singular, case_ := some .nom,
     gender := some .masculine }
 
 /-- The third person singular masculine accusative *him*. -/
-def him : PersonalPronoun :=
+def him : PersonalPronoun Empty :=
   { form := "him", person := some .third, number := some .singular, case_ := some .acc,
     gender := some .masculine }
 
 /-- The third person singular feminine nominative *she*. -/
-def she : PersonalPronoun :=
+def she : PersonalPronoun Empty :=
   { form := "she", person := some .third, number := some .singular, case_ := some .nom,
     gender := some .feminine }
 
 /-- The third person singular feminine accusative *her*. -/
-def her : PersonalPronoun :=
+def her : PersonalPronoun Empty :=
   { form := "her", person := some .third, number := some .singular, case_ := some .acc,
     gender := some .feminine }
 
 /-- The third person singular neuter *it*, one form for both cases. -/
-def it : PersonalPronoun :=
+def it : PersonalPronoun Empty :=
   { form := "it", person := some .third, number := some .singular, gender := some .neuter }
 
 /-- The third person plural nominative *they*. -/
-def they : PersonalPronoun :=
+def they : PersonalPronoun Empty :=
   { form := "they", person := some .third, number := some .plural, case_ := some .nom }
 
 /-- The third person plural accusative *them*. -/
-def them : PersonalPronoun :=
+def them : PersonalPronoun Empty :=
   { form := "them", person := some .third, number := some .plural, case_ := some .acc }
 
 /-- Singular *they* in the nominative, for a referent of unknown or unspecified gender and for
 a person whose pronoun it is ([balhorn-2004], [arnold-2026]). It bears no gender feature
 ([konnelly-cowper-2020]). -/
-def they_sg : PersonalPronoun :=
+def they_sg : PersonalPronoun Empty :=
   { form := "they", person := some .third, number := some .singular, case_ := some .nom }
 
 /-- Singular *they* in the accusative. -/
-def them_sg : PersonalPronoun :=
+def them_sg : PersonalPronoun Empty :=
   { form := "them", person := some .third, number := some .singular, case_ := some .acc }
 
 /-- The personal pronoun inventory. -/
-def pronouns : Finset PersonalPronoun :=
+def pronouns : Finset (PersonalPronoun Empty) :=
   {i, me, we, us, you, you_pl, he, him, she, her, it, they, them, they_sg, them_sg}
 
 /-- Gender is marked in the third person singular only. -/
@@ -142,7 +144,7 @@ theorem paradigm_others_subset : paradigm .others ⊆ paradigm .other := by
 /-! ### Reflexive pronouns -/
 
 /-- The reflexive of a personal pronoun, with its person, number and gender. -/
-def reflexive (p : PersonalPronoun) (form : String) : ReflexivePronoun :=
+def reflexive (p : PersonalPronoun Empty) (form : String) : ReflexivePronoun :=
   { form, person := p.person, number := p.number, gender := p.gender }
 
 /-- The first person singular reflexive *myself*. -/
