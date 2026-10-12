@@ -33,14 +33,14 @@ namespace ArgumentStructure
 
 /-- The source of the energy with which a participant exerts force. -/
 inductive EnergySource where
-  /-- The participant's own energy: living things, self-propelled machines, natural agents
-  (Cruse's agentive feature). -/
+  /-- The participant's own energy, as with living things, self-propelled machines and natural
+  agents (Cruse's agentive feature). -/
   | internal
-  /-- Energy imparted to the participant or held in its position or motion: a projectile, a
-  load-bearing column (Cruse's effective feature). -/
+  /-- Energy imparted to the participant or held in its position or motion, as with a projectile
+  or a load-bearing column (Cruse's effective feature). -/
   | imparted
-  /-- The energy of a participant that uses it: an instrument or a body part (Cruse's and
-  Fillmore's instrumental). -/
+  /-- The energy of a participant that uses it, as with an instrument or a body part (Cruse's
+  and Fillmore's instrumental). -/
   | instrumental
   deriving DecidableEq, Fintype
 
@@ -50,7 +50,7 @@ namespace EnergySource
 supplied by a user, and so one of which *did something* holds. -/
 def IsSelfEnergetic (s : EnergySource) : Prop := s ≠ .instrumental
 
-instance : DecidablePred IsSelfEnergetic := λ _ => inferInstanceAs (Decidable (_ ≠ _))
+instance : DecidablePred IsSelfEnergetic := fun _ ↦ inferInstanceAs (Decidable (_ ≠ _))
 
 @[simp] theorem isSelfEnergetic_internal : IsSelfEnergetic .internal := by decide
 
