@@ -1,6 +1,7 @@
 module
 
 public import Linglib.Data.Examples.ArregiPietraszko2021
+public import Linglib.Data.Examples.HarizanovGribanova2019
 public import Linglib.Data.Forms.ArregiPietraszko2021
 public import Linglib.Fragments.Ndebele.Phonology
 public import Linglib.Phonology.Hiatus
