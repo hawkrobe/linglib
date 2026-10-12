@@ -1,6 +1,7 @@
 module
 
-public import Linglib.Syntax.Minimalist.Defs
+public import Linglib.Syntax.Minimalist.Category.Basic
+public import Mathlib.Data.Nat.Basic
 public import Mathlib.Order.RelClasses
 
 /-!

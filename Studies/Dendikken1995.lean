@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Syntax.Minimalist.FunctionalSequence
+public import Linglib.Syntax.Minimalist.Category.FunctionalSequence
 public import Linglib.Syntax.Voice.Basic
 public import Linglib.Fragments.Norwegian.Verbs
 public import Linglib.Data.Examples.Dendikken1995

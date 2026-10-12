@@ -2,6 +2,7 @@ module
 
 public import Linglib.Syntax.Minimalist.Clause.Spine
 public import Linglib.Syntax.Minimalist.Probe.Basic
+public import Mathlib.Data.Finset.Empty
 public import Mathlib.Order.Monotone.Defs
 
 /-!
