@@ -13,29 +13,22 @@ public import Linglib.Morphology.Word.Agree
 /-!
 # Binding theory
 
-This file defines the binding conditions over an arbitrary configuration and proves how they
-relate. A configuration says which positions command which and gives each position a binding
-domain; an anaphoric dependency says which positions are antecedents of which. A position binds
-another when it is an antecedent of it, distinct from it, that commands it. An anaphor is bound
-in its domain (Condition A), a pronominal is not (Condition B), and an R-expression is not bound
-at all (Condition C), the three conditions of Chomsky's binding theory.
+A configuration says which positions command which and gives each position a binding domain; an
+anaphoric dependency says which positions are antecedents of which. A position binds another
+when it is an antecedent of it, distinct from it, that commands it. An anaphor is bound in its
+domain (Condition A), a pronominal is not (Condition B), and an R-expression is not bound at all
+(Condition C), the three conditions of Chomsky's binding theory.
 
 Frameworks differ in what they supply. Chomsky binds coindexed noun phrases under c-command
-within the governing category; Pollard and Sag bind under local o-command, which holds between a
-less oblique and a more oblique argument of one head; Charnavel takes the domain to be the
-smallest spell-out domain. C-command is one of the tree-configurational command relations of
-Barker and Pullum; o-command is not configurational.
+within the governing category, Pollard and Sag under local o-command, and Charnavel within the
+smallest spell-out domain. The dependency is a relation `L`, with `L a b` read as "`a` is an
+antecedent of `b`"; coindexation is one encoding of it, and the logical binding that Reuland
+reviews is another.
 
-The dependency is a relation, not an assignment of indices. Coindexation is one encoding of it;
-Reuland reviews why syntactic indices were given up and binding redefined from the logical
-binding of a λ-operator. Both are relations `L` with `L a b` read as "`a` is an antecedent of
-`b`".
-
-Condition A holds of the anaphors outside an exempt set. Pollard and Sag exempt an anaphor that
-nothing in its domain commands (`Configuration.exempt`), Chomsky exempts none, and Charnavel
-argues that exempt anaphors are logophoric, so that interpretation rather than structure fixes
-the set. Outside the exempt set anaphors and pronominals are in complementary distribution;
-inside it an anaphor meets its condition under any dependency, so both forms are possible.
+Condition A holds of the anaphors outside an exempt set. Chomsky exempts none and Pollard and Sag
+exempt an anaphor that nothing in its domain commands (`Configuration.exempt`). Charnavel argues
+that exemption is only apparent: the anaphor is bound in its domain by a silent pronoun, and
+looks exempt when that position is left out of account.
 
 ## Main definitions
 
@@ -47,18 +40,19 @@ inside it an anaphor meets its condition under any dependency, so both forms are
 * `Binding.pair`: the dependency relating two positions to each other alone.
 * `Configuration.Binds`, `Bound`, `LocallyBound`, `LocallyCommanded`, `exempt`.
 * `Configuration.Condition`, `Configuration.Satisfies`: Conditions A, B and C.
+* `Configuration.covertlyBound`: the positions bound in their domain by a position that a
+  restriction of the configuration leaves out.
 
-## Main results
+## Main statements
 
-* `Configuration.condition_iff_not_condition_pronoun`: complementarity outside the exempt set.
-* `Configuration.condition_of_mem`: an anaphor at an exempt position meets its condition.
+* `Configuration.condition_iff_not_condition_pronoun`: outside the exempt set an anaphor and a
+  pronominal with one domain are in complementary distribution.
 * `Configuration.condition_exempt_iff`: with the structural exemption, an anaphor meets its
   condition when, if commanded in its domain, it is bound there.
-* `Configuration.condition_empty_iff`: without exemption an anaphor must in addition be
-  commanded in its domain.
-* `Configuration.condition_pronoun_of_rExpression`: Condition C entails Condition B.
 * `Configuration.condition_mono`, `condition_pronoun_anti`, `condition_rExpression_anti`: more
   command binds more, so Condition A is monotone in the configuration and B and C antitone.
+* `Configuration.condition_comap`: Condition A with nothing exempt among all positions is
+  Condition A among some of them with those bound by a position left out exempt.
 
 ## Implementation notes
 
@@ -67,15 +61,12 @@ Reuland stresses, and outside this file.
 
 ## References
 
-* [N. Chomsky, *Lectures on government and binding* (1981)][chomsky-1981]
-* [C. Pollard and I. A. Sag, *Head-driven phrase structure grammar* (1994)][pollard-sag-1994]
-* [C. Barker and G. K. Pullum, *A theory of command relations* (1990)][barker-pullum-1990]
-* [E. Reuland, *Reflexives and reflexivity* (2018)][reuland-2018]
-* [I. Charnavel, *Locality and logophoricity: A theory of exempt anaphora* (2019)][charnavel-2019]
+* [chomsky-1981]
+* [pollard-sag-1994]
+* [reuland-2018]
+* [charnavel-2019]
 -/
 @[expose] public section
-
-open Morphology (Word)
 
 namespace Binding
 
@@ -118,7 +109,7 @@ def isNominalCat (cat : UD.UPOS) : Bool :=
 /-- `bindingClassOf w` reads the binding class of `w` off its morphology and category.
 Reflexive marking makes a reflexive, the reciprocal pronoun type a reciprocal, any other pronoun
 a pronominal, and a noun an R-expression. -/
-def bindingClassOf (w : Word) : Option BindingClass :=
+def bindingClassOf (w : Morphology.Word) : Option BindingClass :=
   if (w.features .reflex).isSome then some .reflexive
   else match w.features .pronType with
     | some .Rcp => some .reciprocal
@@ -166,6 +157,9 @@ another when their images do and a position's domain is the preimage of its imag
 def comap {κ : Type*} (f : κ → ι) (s : Configuration ι) : Configuration κ where
   commands a b := s.commands (f a) (f b)
   domain b := f ⁻¹' s.domain (f b)
+
+theorem comap_mono {κ : Type*} (f : κ → ι) : Monotone (comap f) :=
+  fun _ _ h ↦ ⟨fun _ _ hc ↦ h.1 _ _ hc, fun _ _ ha ↦ h.2 _ ha⟩
 
 instance {κ : Type*} (f : κ → ι) (s : Configuration ι) [DecidableRel s.commands] :
     DecidableRel (s.comap f).commands :=
@@ -350,6 +344,94 @@ theorem condition_rExpression_anti :
     Antitone fun s : Configuration ι ↦ s.Condition L E b .rExpression :=
   fun _ _ hst h hb ↦ h (hb.of_le hst)
 
+/-! ### Positions left out of account
+
+A configuration restricts along an injection `f` to the positions `f` reaches. A position bound
+in its domain by one that `f` does not reach is bound in the whole configuration and may be free
+in the restriction. -/
+
+section Comap
+
+open scoped Function
+
+variable {κ : Type*} {f : κ → ι} {a b : κ}
+
+variable (s L f) in
+/-- `s.covertlyBound L f` is the set of positions whose images are bound in their domains by a
+position outside the range of `f`. -/
+def covertlyBound : Set κ := {b | ∃ x ∈ s.domain (f b), x ∉ Set.range f ∧ s.Binds L x (f b)}
+
+theorem binds_comap (hf : f.Injective) :
+    (s.comap f).Binds (L on f) a b ↔ s.Binds L (f a) (f b) := by
+  simp only [Binds, comap, ne_eq, hf.eq_iff]
+
+/-- A position is bound in its domain when a position `f` reaches binds it there or one that
+`f` does not reach does. -/
+theorem locallyBound_comap_or (hf : f.Injective) :
+    (s.comap f).LocallyBound (L on f) b ∨ b ∈ s.covertlyBound L f ↔ s.LocallyBound L (f b) := by
+  constructor
+  · rintro (⟨a, ha, h⟩ | ⟨x, hx, -, h⟩)
+    exacts [⟨f a, ha, (binds_comap hf).1 h⟩, ⟨x, hx, h⟩]
+  · rintro ⟨x, hx, h⟩
+    by_cases hr : x ∈ Set.range f
+    · obtain ⟨a, rfl⟩ := hr
+      exact .inl ⟨a, hx, (binds_comap hf).2 h⟩
+    · exact .inr ⟨x, hx, hr, h⟩
+
+theorem bound_comap_or (hf : f.Injective) :
+    (s.comap f).Bound (L on f) b ∨ (∃ x ∉ Set.range f, s.Binds L x (f b)) ↔ s.Bound L (f b) := by
+  constructor
+  · rintro (⟨a, h⟩ | ⟨x, -, h⟩)
+    exacts [⟨f a, (binds_comap hf).1 h⟩, ⟨x, h⟩]
+  · rintro ⟨x, h⟩
+    by_cases hr : x ∈ Set.range f
+    · obtain ⟨a, rfl⟩ := hr
+      exact .inl ⟨a, (binds_comap hf).2 h⟩
+    · exact .inr ⟨x, hr, h⟩
+
+/-- An anaphor meets Condition A among all positions exactly when it meets it among those `f`
+reaches with the covertly bound positions exempt. -/
+theorem condition_comap (hf : f.Injective) (hc : c.IsAnaphor) :
+    (s.comap f).Condition (L on f) (f ⁻¹' E ∪ s.covertlyBound L f) b c ↔
+      s.Condition L E (f b) c := by
+  rw [condition_anaphor hc, condition_anaphor hc, ← locallyBound_comap_or hf, Set.mem_union,
+    Set.mem_preimage, or_assoc, or_comm (a := b ∈ s.covertlyBound L f)]
+
+/-- An anaphor that meets Condition A among all positions with nothing exempt, and that no
+position `f` reaches binds in its domain, is covertly bound. -/
+theorem mem_covertlyBound_of_condition (hf : f.Injective) (hc : c.IsAnaphor)
+    (h : s.Condition L ∅ (f b) c) (hb : ¬ (s.comap f).LocallyBound (L on f) b) :
+    b ∈ s.covertlyBound L f :=
+  ((locallyBound_comap_or hf).2 (((condition_anaphor hc).1 h).resolve_left id)).resolve_left hb
+
+/-- A pronominal meets Condition B among all positions exactly when it meets it among those `f`
+reaches and no position left out binds it in its domain. -/
+theorem condition_pronoun_comap (hf : f.Injective) {F : Set κ} :
+    (s.comap f).Condition (L on f) F b .pronoun ∧ b ∉ s.covertlyBound L f ↔
+      s.Condition L E (f b) .pronoun := by
+  simp only [Condition, ← locallyBound_comap_or hf, not_or]
+
+/-- An R-expression meets Condition C among all positions exactly when it meets it among those
+`f` reaches and no position left out binds it. -/
+theorem condition_rExpression_comap (hf : f.Injective) {F : Set κ} :
+    (s.comap f).Condition (L on f) F b .rExpression ∧ (¬ ∃ x ∉ Set.range f, s.Binds L x (f b)) ↔
+      s.Condition L E (f b) .rExpression := by
+  simp only [Condition, ← bound_comap_or hf, not_or]
+
+/-- Two covertly bound positions whose domains hold at most one position left out between them
+have the same binder, so a symmetric and transitive dependency, as coindexation is, relates
+them. -/
+theorem rel_of_mem_covertlyBound (hs : ∀ ⦃x y⦄, L x y → L y x)
+    (ht : ∀ ⦃x y z⦄, L x y → L y z → L x z)
+    (h : ∀ x ∈ s.domain (f a), ∀ y ∈ s.domain (f b), x ∉ Set.range f → y ∉ Set.range f → x = y)
+    (ha : a ∈ s.covertlyBound L f) (hb : b ∈ s.covertlyBound L f) : L (f a) (f b) := by
+  obtain ⟨x, hx, hxr, hxa⟩ := ha
+  obtain ⟨y, hy, hyr, hyb⟩ := hb
+  obtain rfl := h x hx y hy hxr hyr
+  exact ht (hs hxa.2.1) hyb.2.1
+
+end Comap
+
 section Decidable
 
 variable (s L) [Fintype ι] [DecidableEq ι] [DecidableRel L] [DecidableRel s.commands]
@@ -363,6 +445,9 @@ instance (b : ι) : Decidable (s.LocallyBound L b) := inferInstanceAs (Decidable
 
 instance (b : ι) : Decidable (s.LocallyCommanded b) :=
   inferInstanceAs (Decidable (∃ _, _ ∧ _))
+
+instance {κ : Type*} [Fintype κ] (f : κ → ι) (b : κ) : Decidable (b ∈ s.covertlyBound L f) :=
+  inferInstanceAs (Decidable (∃ x, x ∈ s.domain (f b) ∧ x ∉ Set.range f ∧ _))
 
 instance : DecidablePred (· ∈ s.exempt) := fun _ ↦ inferInstanceAs (Decidable (¬ _))
 
