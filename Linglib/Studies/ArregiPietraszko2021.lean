@@ -49,11 +49,8 @@ half without the verb, is exponed as *do*.
   insertion only, which leaves its features to condition the stem.
 * An M-value is an element of the free magma over the terminals, each product listing the lower
   constituent first. The operation leaves linear order open, and only the Ndebele prefix is
-  linearized.
-
-## TODO
-
-* Negative Merger, the postsyntactic rule that adds contracted negation outside the complex head.
+  linearized. Negative Merger applies to a chain, which makes its terminal an orphan there, an
+  ordering the paper notes is indistinguishable from its own.
 
 ## References
 
@@ -73,9 +70,10 @@ open Phonology FreeMagma DistributedMorphology
 /-! ### Head chains -/
 
 /-- The syntactic terminals of the paper's derivations are the lexical verb, an auxiliary, Σ, T,
-C, and the D and linker heads above an Ndebele relative clause. -/
+C, the D and linker heads above an Ndebele relative clause, and the negation in the specifier
+of ΣP. -/
 inductive Head
-  | V | Aux | sigma | T | C | D | Lnk
+  | V | Aux | sigma | T | C | D | Lnk | Neg
   deriving DecidableEq, Repr
 
 /-- A head chain is a sequence of syntactic terminals, lowest first, that share one M-value, a
@@ -211,15 +209,15 @@ def ndebele : Language := { strong := {.T} }
 /-! ### The spell-out of orphans -/
 
 /-- The features of the terminals of a verbal word are the verb, T with its tense and agreement,
-and the mark of an orphan. -/
+negation, and the mark of an orphan. -/
 inductive Feat
-  | verb | T | tense | agr | orphan
+  | verb | T | tense | agr | neg | orphan
   deriving DecidableEq, Repr
 
 /-- The pieces of a verbal word are the stem, the allomorph of the stem that tense conditions,
-the dummy verb, and the finite and the infinitival exponent of T. -/
+the dummy verb, the finite and the infinitival exponent of T, and contracted negation. -/
 inductive Piece
-  | stem | finiteStem | dummy | finite | infinitival
+  | stem | finiteStem | dummy | finite | infinitival | contracted
   deriving DecidableEq, Repr
 
 /-- The Vocabulary of a verbal word. An orphan verb is the dummy verb, a verb beside a T that
@@ -227,7 +225,7 @@ bears tense takes the allomorph that tense conditions, and the infinitival expon
 elsewhere exponent of T. -/
 def vocabulary : List (VocabularyItem Feat Piece) :=
   [[.verb, .orphan] ⟷ .dummy, ⟨⟨[.verb], [], [[.tense]]⟩, .finiteStem⟩, [.verb] ⟷ .stem,
-    [.T, .tense, .agr] ⟷ .finite, [.T] ⟷ .infinitival]
+    [.T, .tense, .agr] ⟷ .finite, [.T] ⟷ .infinitival, [.neg] ⟷ .contracted]
 
 /-- The dummy verb is inserted exactly at an orphan verb, whatever stands beside it. -/
 theorem subsetPrinciple_eq_dummy_iff {n : Neighborhood (List Feat)} (hT : .T ∉ n.focus) :
@@ -238,7 +236,7 @@ theorem subsetPrinciple_eq_dummy_iff {n : Neighborhood (List Feat)} (hT : .T ∉
     obtain ⟨i, hi, he, hs⟩ := subsetPrinciple_winner_mem h
     have hf := Neighborhood.focus_subset_focus hs
     simp only [vocabulary, List.mem_cons, List.not_mem_nil, or_false] at hi
-    rcases hi with rfl | rfl | rfl | rfl | rfl <;> cases he
+    rcases hi with rfl | rfl | rfl | rfl | rfl | rfl <;> cases he
     exact ⟨hf (by simp [VocabularyItem.ofFeatures]), hf (by simp [VocabularyItem.ofFeatures])⟩
   · rintro ⟨hv, ho⟩
     have hT' : ∀ fs : List Feat, .T ∈ fs → ¬ (fs : Neighborhood (List Feat)) ⊆ n :=
@@ -247,12 +245,13 @@ theorem subsetPrinciple_eq_dummy_iff {n : Neighborhood (List Feat)} (hT : .T ∉
         s = dummy ∨ s.specificity < dummy.specificity := by
       intro s hs ha
       simp only [vocabulary, List.mem_cons, List.not_mem_nil, or_false] at hs
-      rcases hs with rfl | rfl | rfl | rfl | rfl
+      rcases hs with rfl | rfl | rfl | rfl | rfl | rfl
       · exact .inl rfl
       · exact .inr (by decide)
       · exact .inr (by decide)
       · exact absurd ha (hT' _ (by simp))
       · exact absurd ha (hT' _ (by simp))
+      · exact .inr (by decide)
     exact Morphology.Exponence.realize_eq_of_forall_le (r := dummy) (by simp [vocabulary, dummy])
       (Neighborhood.ofBundle_subset_iff.mpr (by simp [hv, ho]))
       (fun s hs ha ↦ (key s hs ha).elim (fun h ↦ h ▸ le_rfl) le_of_lt)
@@ -287,6 +286,7 @@ def OrphanFate.spellout : OrphanFate → Spellout (List Feat) Piece
 def Head.feats : Head → Option (List Feat)
   | .V | .Aux => some [.verb]
   | .T => some [.T, .tense, .agr]
+  | .Neg => some [.neg]
   | _ => none
 
 /-- `c.domain` is the word of `c` as Vocabulary Insertion meets it, its terminals that have
@@ -473,6 +473,68 @@ theorem imperatives :
   simp [Chains.HasC, derive, Splits, Context.toC, Context.declarative,
     HeadChain.terminals_ofHeads]
 
+/-! ### Negative Merger -/
+
+/-- Negative Merger, a postsyntactic rule, adjoins the M-value of the negation in the specifier
+of ΣP to the M-value of a chain that contains Σ, outside what GenHM has built. -/
+def HeadChain.negativeMerger (c : HeadChain) : HeadChain :=
+  if .sigma ∈ c.positions then ⟨c.positions, c.mvalue * of .Neg⟩ else c
+
+theorem HeadChain.terminals_negativeMerger {c : HeadChain} (h : .sigma ∈ c.positions) :
+    c.negativeMerger.terminals = c.terminals ++ [.Neg] := by
+  simp [negativeMerger, h, terminals]
+
+/-- Negative Merger in a clause applies to each chain that contains Σ. -/
+def Chains.negativeMerger (d : Chains) : Chains :=
+  { d with verb := d.verb.negativeMerger, finite := d.finite.negativeMerger }
+
+/-- Contracted negation takes do-support exactly where full negation does. -/
+theorem Chains.doSupport_negativeMerger (d : Chains) :
+    d.negativeMerger.DoSupport ↔ d.DoSupport := by
+  simp only [DoSupport, negativeMerger, HeadChain.negativeMerger]
+  split <;> simp [HeadChain.Orphan, HeadChain.terminals]
+
+theorem Chains.finitePosition_negativeMerger (L : Language) (d : Chains) :
+    d.negativeMerger.finitePosition L = d.finitePosition L := by
+  simp only [finitePosition, negativeMerger, HeadChain.negativeMerger]
+  split <;> rfl
+
+/-- With a lexical verb the finite word is the dummy verb, its inflection, and contracted negation
+outside both, and the verb is bare. With an auxiliary the negation is outside the inflection of
+the auxiliary. In a negative question the word is pronounced in C. -/
+theorem contracted_negation :
+    let negated := (derive english (.negation english) .V).negativeMerger
+    let question : Context := { above := [.sigma, .T, .C], intervener := true }
+    negated.finite.word english = some [[.dummy], [.finite], [.contracted]] ∧
+      negated.verb.word english = some [[.stem]] ∧
+      (derive english (.negation english) .Aux).negativeMerger.finite.word english =
+        some [[.finiteStem], [.finite], [.contracted]] ∧
+      (derive english question .V).negativeMerger.finitePosition english = some .C := by
+  decide
+
+/-- Were contracted negation a head between T and the verb, GenHM would put its terminal inside
+the inflection, the order the paper stars. Negative Merger applies after syntax, so its terminal
+is outside every terminal of the chain, though the negation stands below T. -/
+theorem negation_outside_inflection :
+    (HeadChain.ofHeads .Aux [.Neg, .T]).word english =
+        some [[.stem], [.contracted], [.finite]] ∧
+      (HeadChain.ofHeads .Aux [.sigma, .T]).negativeMerger.terminals =
+        [.Aux, .sigma, .T, .Neg] := by
+  decide
+
+/-- The pieces that the segments of the paper's contracted forms write. -/
+def segmentPieces : List (String × Piece) :=
+  [("doe", .dummy), ("ha", .finiteStem), ("s", .finite), ("d", .finite), ("n't", .contracted)]
+
+/-- The paper's *doe-s-n't* and *ha-d-n't* have their pieces in the order that Negative Merger
+derives. -/
+theorem contracted_forms :
+    ∀ f ∈ Forms.all, f.languageId = "stan1293" →
+      ∃ verb ∈ f.columnAs? "Verb" [("dummy", Head.V), ("auxiliary", .Aux)],
+        (derive english (.negation english) verb).negativeMerger.finite.word english =
+          some (f.segments.map fun s ↦ (segmentPieces.lookup s).toList) := by
+  decide +kernel
+
 /-! ### The paper's examples -/
 
 /-- The settings of a row's language, by Glottocode. -/
@@ -622,7 +684,7 @@ def exponents? (f : Data.Forms.Form) : Option (Head → Exponent) := do
 /-- Cyclic coalescence over the Mirror-obeying complex head derives the relative prefix of each
 class, free of the hiatus its exponents present. -/
 theorem relative_prefixes :
-    ∀ f ∈ Forms.all, ∃ e ∈ exponents? f,
+    ∀ f ∈ Forms.all, f.languageId = "nort2795" → ∃ e ∈ exponents? f,
       some (lift e relative.mvalue).segments = transcribe? f.form.toList ∧
         Hiatus.Free (lift e relative.mvalue).segments ∧
         ¬ Hiatus.Free (relative.terminals.reverse.flatMap fun h ↦ (e h).segments) := by
