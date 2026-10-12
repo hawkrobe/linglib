@@ -68,7 +68,8 @@ theorem mergeOp_node (S S' : SyntacticObject) :
 
 /-- External Merge on the carrier is the trace-cut Merge with the bare root label on the
     two-object workspace, for any trace encoder. -/
-theorem mergeOpC_node (τ : UnorderedTree Vertex → Option LIToken) (S S' : SyntacticObject) :
+theorem mergeOpC_node (τ : UnorderedTree Vertex → Option LexicalItem.Token)
+    (S S' : SyntacticObject) :
     Merge.mergeOpC (R := ℤ) τ Vertex.bare S.val S'.val
         (of' ({S.val, S'.val} : Forest (UnorderedTree Vertex)))
       = of' (R := ℤ) ({(merge S S').val} : Forest (UnorderedTree Vertex)) := by
@@ -77,7 +78,7 @@ theorem mergeOpC_node (τ : UnorderedTree Vertex → Option LIToken) (S S' : Syn
 /-! ### Internal Merge through the trace cuts -/
 
 /-- The trace encoder of derivations sends a tree to its head by selection. -/
-def traceEncoder (t : UnorderedTree Vertex) : Option LIToken := (selCheckN t).head
+def traceEncoder (t : UnorderedTree Vertex) : Option LexicalItem.Token := (selCheckN t).head
 
 /-- A moved object leaves the trace of its head by selection, or the bare trace when it has
     none. -/
@@ -154,7 +155,7 @@ private theorem disjoint_pair_subtrees {S S' U : SyntacticObject}
 
 /-- External Merge on the carrier beside a spectator workspace none of whose components contains
     `S` or `S'`. -/
-theorem mergeOpC_node_residual (τ : UnorderedTree Vertex → Option LIToken)
+theorem mergeOpC_node_residual (τ : UnorderedTree Vertex → Option LexicalItem.Token)
     (S S' : SyntacticObject) {W : Workspace} (hW : ∀ U ∈ W, S ∉ U.terms ∧ S' ∉ U.terms) :
     Merge.mergeOpC (R := ℤ) τ Vertex.bare S.val S'.val (of' (({S, S'} + W).map Subtype.val))
       = of' (({merge S S'} + W).map Subtype.val) := by
@@ -179,18 +180,20 @@ theorem mergeOpC_im_residual (hm : mover.val.value.isLeft) (h : current.terms.co
   obtain ⟨U', hU', rfl⟩ := Multiset.mem_map.mp hU
   exact disjoint_pair_subtrees (hW U' hU')
 
+private def demoTok (i : ℕ) : LexicalItem.Token := ⟨.simple .N [], i⟩
+
 private def demoCurrent : SyntacticObject :=
-  (PlanarSyntacticObject.merge (.leaf (mkTraceToken 0))
-    (.leaf (mkTraceToken 1))).toSyntacticObject
+  (PlanarSyntacticObject.merge (.leaf (demoTok 0))
+    (.leaf (demoTok 1))).toSyntacticObject
 
 /-- Raising one daughter of a two-leaf object meets the hypotheses of `mergeOpC_im`. -/
 example :
     Merge.mergeOpC (R := ℤ) traceEncoder Vertex.bare
-        (deleteAccessible (leaf (mkTraceToken 0)) demoCurrent).val (leaf (mkTraceToken 0)).val
-        (Merge.mergeOpUnitC traceEncoder (leaf (mkTraceToken 0)).val
+        (deleteAccessible (leaf (demoTok 0)) demoCurrent).val (leaf (demoTok 0)).val
+        (Merge.mergeOpUnitC traceEncoder (leaf (demoTok 0)).val
           (of' ({demoCurrent.val} : Forest (UnorderedTree Vertex))))
-      = of' (R := ℤ) ({(merge (deleteAccessible (leaf (mkTraceToken 0)) demoCurrent)
-          (leaf (mkTraceToken 0))).val} : Forest (UnorderedTree Vertex)) :=
+      = of' (R := ℤ) ({(merge (deleteAccessible (leaf (demoTok 0)) demoCurrent)
+          (leaf (demoTok 0))).val} : Forest (UnorderedTree Vertex)) :=
   mergeOpC_im (by decide) (by decide) (by decide)
 
 /-! ### The pruning cuts on syntactic objects -/

@@ -31,8 +31,8 @@ changes no stage and no mover.
 
 * `Minimalist.Side`, `Minimalist.Step`, `Step.apply`, `Step.mover?`, `Step.mergeOp`,
   `Step.Admissible`
-* `Minimalist.Derivation`, `Derivation.final`, `stageAt`, `movedItems`, `take`, `append`,
-  `leftward`, `items`, `Admissible`
+* `Minimalist.Derivation`, `Derivation.final`, `stageAt`, `movedItems`, `mover?`, `take`,
+  `append`, `leftward`, `items`, `Admissible`
 
 ## Main results
 
@@ -243,6 +243,9 @@ def length (d : Derivation) : Nat := d.steps.length
 /-- The movers of the `im` steps. -/
 def movedItems (d : Derivation) : List SyntacticObject := d.steps.filterMap Step.mover?
 
+/-- The mover of step `i`, when that step is an Internal Merge. -/
+def mover? (d : Derivation) (i : ℕ) : Option SyntacticObject := d.steps[i]? >>= Step.mover?
+
 /-- The first `n` steps. -/
 def take (d : Derivation) (n : Nat) : Derivation := ⟨d.initial, d.steps.take n⟩
 
@@ -293,10 +296,21 @@ theorem final_append (d : Derivation) (steps : List Step) :
 
 /-- A step at index `i` has a mover only if `i` indexes a step. -/
 theorem lt_length_of_mem_mover? {d : Derivation} {i : Nat} {m : SyntacticObject}
-    (h : m ∈ d.steps[i]? >>= Step.mover?) : i < d.length := by
+    (h : m ∈ d.mover? i) : i < d.length := by
   by_contra hlt
-  rw [List.getElem?_eq_none (Nat.le_of_not_lt hlt)] at h
+  rw [mover?, List.getElem?_eq_none (Nat.le_of_not_lt hlt)] at h
   simp at h
+
+/-- The mover of a step is one of the derivation's movers. -/
+theorem mem_movedItems_of_mem_mover? {d : Derivation} {i : Nat} {m : SyntacticObject}
+    (h : m ∈ d.mover? i) : m ∈ d.movedItems := by
+  obtain ⟨step, hs, hm⟩ := Option.bind_eq_some_iff.1 h
+  exact List.mem_filterMap.2 ⟨step, List.mem_of_getElem? hs, hm⟩
+
+/-- The early steps of an extension have the original's movers. -/
+theorem mover?_append_of_lt {d : Derivation} {i : Nat} (h : i < d.length) (steps : List Step) :
+    (d.append steps).mover? i = d.mover? i := by
+  simp only [mover?, append, List.getElem?_append_left h]
 
 /-! ### The sides of Merge
 

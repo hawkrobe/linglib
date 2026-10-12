@@ -83,7 +83,7 @@ theorem replace_merge_of_ne {l r target replacement : SyntacticObject} (h : merg
   rw [← merge_val]
   exact fun heq => h (Subtype.ext heq)
 
-theorem replace_lexLeaf_of_ne {tok : LIToken} {target replacement : SyntacticObject}
+theorem replace_lexLeaf_of_ne {tok : LexicalItem.Token} {target replacement : SyntacticObject}
     (h : SyntacticObject.leaf tok ≠ target) : replace (SyntacticObject.leaf tok) target replacement
       = SyntacticObject.leaf tok := by
   apply Subtype.ext

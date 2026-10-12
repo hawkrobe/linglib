@@ -87,19 +87,19 @@ section Syntax
 open Minimalist SyntacticObject
 
 /-- `voice` is agentive Voice, which subcategorizes for the verb phrase. -/
-def voice : LIToken := ⟨.simple .Voice [.v] "Voice", 200⟩
+def voice : LexicalItem.Token := ⟨.simple .Voice [.v] "Voice", 200⟩
 
 /-- `little_v` is the verbalizer. -/
-def little_v : LIToken := ⟨.simple .v [.V] "v", 201⟩
+def little_v : LexicalItem.Token := ⟨.simple .v [.V] "v", 201⟩
 
 /-- `fed` is the verb *fed*, which subcategorizes for its internal argument. -/
-def fed : LIToken := ⟨.simple .V [.D] "fed", 202⟩
+def fed : LexicalItem.Token := ⟨.simple .V [.D] "fed", 202⟩
 
 /-- `mittie` is the external argument. -/
-def mittie : LIToken := ⟨.simple .D [] "Mittie", 203⟩
+def mittie : LexicalItem.Token := ⟨.simple .D [] "Mittie", 203⟩
 
 /-- `theDog` is the internal argument. -/
-def theDog : LIToken := ⟨.simple .D [] "the dog", 204⟩
+def theDog : LexicalItem.Token := ⟨.simple .D [] "the dog", 204⟩
 
 /-- The tree of the sentence is `[VoiceP Mittie [Voice' Voice [vP v [VP fed [DP the dog]]]]]`. -/
 def tree : PlanarSyntacticObject := mittie * (voice * (little_v * (fed * theDog)))

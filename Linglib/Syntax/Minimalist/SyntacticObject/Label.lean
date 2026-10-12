@@ -74,7 +74,7 @@ inductive LabelState where
   /-- The selection state of a constituent the labeling algorithm sees. -/
   | sel (x : SelectionState)
   /-- A lower copy of the phrase `tok` heads. -/
-  | copy (tok : LIToken)
+  | copy (tok : LexicalItem.Token)
   deriving DecidableEq
 
 namespace LabelState
@@ -92,10 +92,10 @@ instance : Mul LabelState where
 
 @[simp] theorem sel_mul_sel (x y : SelectionState) : sel x * sel y = sel (x * y) := rfl
 
-theorem copy_mul_sel (a : LIToken) (y : SelectionState) :
+theorem copy_mul_sel (a : LexicalItem.Token) (y : SelectionState) :
     copy a * sel y = if SelectionState.of a [] * y = 0 then sel y else sel (.of a [] * y) := rfl
 
-theorem sel_mul_copy (x : SelectionState) (a : LIToken) :
+theorem sel_mul_copy (x : SelectionState) (a : LexicalItem.Token) :
     sel x * copy a = if x * SelectionState.of a [] = 0 then sel x else sel (x * .of a []) := rfl
 
 instance : CommMagma LabelState where
@@ -116,7 +116,7 @@ instance : MulZeroClass LabelState where
 
 /-- The label a labeling state provides is the head of a visible constituent, and none for a lower
 copy. -/
-def label : LabelState → Option LIToken
+def label : LabelState → Option LexicalItem.Token
   | sel x => x.head
   | copy _ => none
 
@@ -128,7 +128,7 @@ def label : LabelState → Option LIToken
   · rfl
 
 /-- The head of a labeling product is a daughter's head. -/
-theorem label_mul {x y : LabelState} {h : LIToken} (hxy : (x * y).label = some h) :
+theorem label_mul {x y : LabelState} {h : LexicalItem.Token} (hxy : (x * y).label = some h) :
     x.label = some h ∨ y.label = some h := by
   rcases x with x | a <;> rcases y with y | b
   · exact SelectionState.head_mul hxy
@@ -148,7 +148,7 @@ end LabelState
 
 /-- A trace's labeling state is the lower copy of the phrase its token heads; the bare trace, which
 remembers no token and belongs to no chain, keeps its selection state. -/
-def labelTraceState : Option LIToken → LabelState
+def labelTraceState : Option LexicalItem.Token → LabelState
   | some tok => .copy tok
   | none => .sel (traceState none)
 
@@ -161,12 +161,13 @@ def labelCheck : LabelState :=
   liftFun (fun tok ↦ .sel (.of tok tok.item.outerSel)) labelTraceState s
 
 /-- The label of a syntactic object, `none` where the labeling algorithm finds none. -/
-def label : Option LIToken := s.labelCheck.label
+def label : Option LexicalItem.Token := s.labelCheck.label
 
-@[simp] theorem labelCheck_leaf (tok : LIToken) :
+@[simp] theorem labelCheck_leaf (tok : LexicalItem.Token) :
     (SyntacticObject.leaf tok).labelCheck = .sel (.of tok tok.item.outerSel) := rfl
 
-@[simp] theorem labelCheck_traceOf (tok : LIToken) : (traceOf tok).labelCheck = .copy tok := rfl
+@[simp] theorem labelCheck_traceOf (tok : LexicalItem.Token) :
+    (traceOf tok).labelCheck = .copy tok := rfl
 
 @[simp] theorem labelCheck_trace : trace.labelCheck = .sel (traceState none) := rfl
 
@@ -200,7 +201,8 @@ theorem labelCheck_eq_sel_or (h : s.selCheck ≠ 0) :
 
 /-- The label extends the selection head: where [marcolli-chomsky-berwick-2025]'s head function
 is defined, it labels. -/
-theorem label_eq_of_selHead {h : LIToken} (hs : s.selHead = some h) (hc : ∀ tok, s ≠ traceOf tok) :
+theorem label_eq_of_selHead {h : LexicalItem.Token} (hs : s.selHead = some h)
+    (hc : ∀ tok, s ≠ traceOf tok) :
     s.label = some h := by
   have h0 : s.selCheck ≠ 0 := fun h0 ↦ by simp [selHead, h0] at hs
   rcases s.labelCheck_eq_sel_or h0 with hl | ⟨tok, rfl⟩
@@ -208,13 +210,13 @@ theorem label_eq_of_selHead {h : LIToken} (hs : s.selHead = some h) (hc : ∀ to
   · exact absurd rfl (hc tok)
 
 /-- A lower copy beside a saturated phrase is invisible, so the phrase labels their sum. -/
-theorem label_merge_traceOf (a : LIToken) {r : SyntacticObject} {h : LIToken}
+theorem label_merge_traceOf (a : LexicalItem.Token) {r : SyntacticObject} {h : LexicalItem.Token}
     (hr : r.labelCheck = .sel (.of h [])) : (merge (traceOf a) r).label = some h := by
   rw [label, labelCheck_merge, labelCheck_traceOf, hr]
   rfl
 
 /-- Two saturated phrases leave their sum unlabeled. -/
-theorem label_merge_eq_none {l r : SyntacticObject} {a b : LIToken}
+theorem label_merge_eq_none {l r : SyntacticObject} {a b : LexicalItem.Token}
     (hl : l.labelCheck = .sel (.of a [])) (hr : r.labelCheck = .sel (.of b [])) :
     (merge l r).label = none := by
   rw [label, labelCheck_merge, hl, hr, LabelState.sel_mul_sel]
@@ -230,7 +232,7 @@ structure RaisingState where
   /-- The labeling state. -/
   label : LabelState
   /-- The tokens heading the phrases of which the constituent contains a lower copy. -/
-  copies : Multiset LIToken
+  copies : Multiset LexicalItem.Token
   deriving DecidableEq
 
 namespace RaisingState
@@ -267,7 +269,7 @@ end RaisingState
 
 /-- A trace's raising state is the lower copy of the phrase its token heads, with the token recorded
 among the copies; the bare trace remembers no token. -/
-def raisingTraceState : Option LIToken → RaisingState
+def raisingTraceState : Option LexicalItem.Token → RaisingState
   | some tok => ⟨.copy tok, {tok}⟩
   | none => ⟨.sel (traceState none), 0⟩
 
@@ -282,7 +284,7 @@ def raisingCheck : RaisingState :=
 /-- The raising head of a syntactic object, [marcolli-chomsky-berwick-2025]'s raising head
 function: the label where there is one, and at a landing site the head of the phrase moved out
 of. -/
-def raisingHead : Option LIToken := s.raisingCheck.label.label
+def raisingHead : Option LexicalItem.Token := s.raisingCheck.label.label
 
 @[simp] theorem raisingCheck_merge (l r : SyntacticObject) :
     (merge l r).raisingCheck = l.raisingCheck * r.raisingCheck :=
@@ -306,15 +308,17 @@ theorem raisingCheck_label_eq_or : s.raisingCheck.label = s.labelCheck ∨ s.lab
     · exact .inr (by rw [hl, zero_mul])
 
 /-- The raising head extends the label. -/
-theorem raisingHead_eq_of_label {a : LIToken} (hs : s.label = some a) : s.raisingHead = some a := by
+theorem raisingHead_eq_of_label {a : LexicalItem.Token} (hs : s.label = some a) :
+    s.raisingHead = some a := by
   rcases s.raisingCheck_label_eq_or with hl | hl
   · rw [raisingHead, hl]; exact hs
   · rw [label, hl] at hs
-    exact absurd (show (none : Option LIToken) = some a from hs) (Option.some_ne_none a).symm
+    exact absurd (show (none : Option LexicalItem.Token) = some a from hs)
+      (Option.some_ne_none a).symm
 
 /-- The raising head of a merge is a daughter's raising head
 ([marcolli-chomsky-berwick-2025] Lemma 1.13.7). -/
-theorem raisingHead_merge {l r : SyntacticObject} {h : LIToken}
+theorem raisingHead_merge {l r : SyntacticObject} {h : LexicalItem.Token}
     (hlr : (merge l r).raisingHead = some h) : l.raisingHead = some h ∨ r.raisingHead = some h := by
   simp only [raisingHead, raisingCheck_merge, RaisingState.mul_def, RaisingState.raise] at hlr ⊢
   split_ifs at hlr with h0
@@ -327,7 +331,7 @@ theorem raisingHead_merge {l r : SyntacticObject} {h : LIToken}
     · split_ifs at hlr
       · right; simp_all
       · left; simp_all
-      · exact absurd (show (none : Option LIToken) = some h from hlr) (by simp)
+      · exact absurd (show (none : Option LexicalItem.Token) = some h from hlr) (by simp)
 
 /-- An object merged with itself has no raising head. -/
 @[simp] theorem raisingHead_merge_self (x : SyntacticObject) : (merge x x).raisingHead = none := by

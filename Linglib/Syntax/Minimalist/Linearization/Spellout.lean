@@ -38,7 +38,7 @@ open RoseTree SyntacticObject Core.Order
 variable (t : PlanarSyntacticObject)
 
 /-- `tok` is pronounced at its last occurrence. -/
-def pronouncedAt (tok : LIToken) : Option TreePath := (occurrences t tok).getLast?
+def pronouncedAt (tok : LexicalItem.Token) : Option TreePath := (occurrences t tok).getLast?
 
 /-! ### Ellipsis -/
 
@@ -57,17 +57,18 @@ def elidedDomains : List TreePath :=
       else acc ++ [p]) []
 
 /-- `tok` is silenced when one of its occurrences lies in an elided domain. -/
-def IsSilenced (tok : LIToken) : Prop := ∃ K ∈ elidedDomains t, ∃ p ∈ occurrences t tok, K ≤ p
+def IsSilenced (tok : LexicalItem.Token) : Prop :=
+  ∃ K ∈ elidedDomains t, ∃ p ∈ occurrences t tok, K ≤ p
 
-instance (tok : LIToken) : Decidable (IsSilenced t tok) :=
+instance (tok : LexicalItem.Token) : Decidable (IsSilenced t tok) :=
   inferInstanceAs (Decidable (∃ _ ∈ _, _))
 
 /-- The pronounced tokens, left to right, each at its last occurrence unless silenced. -/
-def pfYield : List LIToken :=
+def pfYield : List LexicalItem.Token :=
   (tokenList t.val).filterMap fun x ↦
     if pronouncedAt t x.2 = some x.1 ∧ ¬ IsSilenced t x.2 then some x.2 else none
 
 /-- The pronounced forms, left to right. -/
-def pfPhon : List String := (pfYield t).filterMap LIToken.phonForm?
+def pfPhon : List String := (pfYield t).filterMap (·.item.outerPhonForm?)
 
 end Minimalist

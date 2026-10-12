@@ -1,5 +1,11 @@
+/-
+Copyright (c) 2026 Robert Hawkins. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Robert Hawkins
+-/
 module
 
+public import Linglib.Syntax.Minimalist.Movement.Freezing
 public import Linglib.Syntax.Minimalist.Movement.Reconstruction
 
 /-!
@@ -14,10 +20,18 @@ c-commands `xp`. The blocking is rendered as `w`'s c-command of `xp`; the probe 
 is the consumer's to supply, as the passive study does when Infl finds the object closest once
 PartP has carried it past the external argument in Spec-vP. Which heads let a constituent out
 of their complement is a question each account answers for itself, and none is fixed here.
+What a step smuggles is frozen, so a derivation that goes on to move it violates Freezing, which
+smuggling accounts must therefore lift for the smuggling movement.
+
+## Main results
+
+* `Minimalist.Derivation.IsSmugglingStep.not_obeysFreezing_append_im`: moving the smuggled
+  phrase on violates Freezing.
 
 ## References
 
-* [C. Collins, *A Smuggling Approach to the Passive in English* (2005)][collins-2005]
+* [collins-2005]
+* [muller-1998]
 -/
 
 @[expose] public section
@@ -31,7 +45,7 @@ variable {d : Derivation} {steps : List Step} {i : Nat} {xp w : SyntacticObject}
 /-- Step `i` of `d` smuggles `xp` past `w`: its mover contains `xp`, which `w` c-commands before
 the step, and after it the mover c-commands `w` and `w` no longer c-commands `xp`. -/
 def IsSmugglingStep (d : Derivation) (i : Nat) (xp w : SyntacticObject) : Prop :=
-  ∃ m ∈ d.steps[i]? >>= Step.mover?,
+  ∃ m ∈ d.mover? i,
     contains m xp ∧ d.CCommandsAt i w xp ∧ d.CCommandsAt (i + 1) m w ∧
       ¬ d.CCommandsAt (i + 1) w xp
 
@@ -44,8 +58,17 @@ theorem IsSmugglingStep.append (h : d.IsSmugglingStep i xp w) :
     (d.append steps).IsSmugglingStep i xp w := by
   obtain ⟨m, hm, hc, h₁, h₂, h₃⟩ := h
   have hi := lt_length_of_mem_mover? hm
-  refine ⟨m, by rwa [Derivation.append, List.getElem?_append_left hi], hc,
-    (cCommandsAt_append_of_le hi.le).2 h₁, (cCommandsAt_append_of_le hi).2 h₂,
-    λ h => h₃ ((cCommandsAt_append_of_le hi).1 h)⟩
+  exact ⟨m, by rwa [mover?_append_of_lt hi], hc, (cCommandsAt_append_of_le hi.le).2 h₁,
+    (cCommandsAt_append_of_le hi).2 h₂, fun h ↦ h₃ ((cCommandsAt_append_of_le hi).1 h)⟩
+
+/-- What a step smuggles is frozen, since the smuggler contains it. -/
+theorem IsSmugglingStep.frozen (h : d.IsSmugglingStep i xp w) : d.Frozen xp :=
+  let ⟨m, hm, hc, _⟩ := h
+  ⟨m, mem_movedItems_of_mem_mover? hm, hc⟩
+
+/-- Moving the smuggled phrase on violates Freezing. -/
+theorem IsSmugglingStep.not_obeysFreezing_append_im (h : d.IsSmugglingStep i xp w)
+    (side : Side) : ¬ (d.append [.im xp side]).ObeysFreezing :=
+  fun h' ↦ (obeysFreezing_append_im_iff.1 h').2 h.frozen
 
 end Minimalist.Derivation

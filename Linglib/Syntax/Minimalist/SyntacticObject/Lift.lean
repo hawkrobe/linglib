@@ -48,7 +48,7 @@ variable {β : Type*}
 
 /-- The node algebra of a magma-with-zero: lexical leaf ↦ `ℓ`, trace leaf ↦ `τ` of the token it
     is the trace of, if any, bare binary node ↦ `*`, off-carrier arities ↦ `0`. -/
-def mergeAlgebra [Mul β] [Zero β] (ℓ : LIToken → β) (τ : Option LIToken → β) :
+def mergeAlgebra [Mul β] [Zero β] (ℓ : LexicalItem.Token → β) (τ : Option LexicalItem.Token → β) :
     Vertex → List β → β
   | .inl (some tok), _ => ℓ tok
   | .inl none, [x, y]  => x * y
@@ -57,20 +57,22 @@ def mergeAlgebra [Mul β] [Zero β] (ℓ : LIToken → β) (τ : Option LIToken 
   | .inr _, _          => 0
 
 /-- The trace of a token is a leaf: any daughters put it off the carrier. -/
-private theorem mergeAlgebra_some [Mul β] [Zero β] (ℓ : LIToken → β) (τ : Option LIToken → β)
-    (tok : LIToken) (l : List β) :
+private theorem mergeAlgebra_some [Mul β] [Zero β] (ℓ : LexicalItem.Token → β)
+    (τ : Option LexicalItem.Token → β) (tok : LexicalItem.Token) (l : List β) :
     mergeAlgebra ℓ τ (Sum.inr (some tok)) l = if l.isEmpty then τ (some tok) else 0 := by
   match l with
   | [] | [_] | [_, _] | _ :: _ :: _ :: _ => rfl
 
 /-- The index-free trace is a leaf: any daughters put it off the carrier. -/
-private theorem mergeAlgebra_none [Mul β] [Zero β] (ℓ : LIToken → β) (τ : Option LIToken → β)
+private theorem mergeAlgebra_none [Mul β] [Zero β] (ℓ : LexicalItem.Token → β)
+    (τ : Option LexicalItem.Token → β)
     (l : List β) : mergeAlgebra ℓ τ (Sum.inr none) l = if l.isEmpty then τ none else 0 := by
   match l with
   | [] | [_] | [_, _] | _ :: _ :: _ :: _ => rfl
 
 /-- A daughter list of three or more is off the carrier. -/
-private theorem mergeAlgebra_big [Mul β] [Zero β] {ℓ : LIToken → β} {τ : Option LIToken → β}
+private theorem mergeAlgebra_big [Mul β] [Zero β] {ℓ : LexicalItem.Token → β}
+    {τ : Option LexicalItem.Token → β}
     {l : List β}
     (h : 2 < l.length) : mergeAlgebra ℓ τ Vertex.bare l = 0 := by
   match l with
@@ -101,7 +103,7 @@ private theorem perm_congr_arity₂ {β γ : Type*} {g : List β → γ} {c : γ
 
 section CommMagma
 
-variable [CommMagma β] [Zero β] (ℓ : LIToken → β) (τ : Option LIToken → β)
+variable [CommMagma β] [Zero β] (ℓ : LexicalItem.Token → β) (τ : Option LexicalItem.Token → β)
 
 /-- `mergeAlgebra` is invariant under permutation of the daughter values: only the
     binary shape is order-sensitive, and there `mul_comm` applies. -/
@@ -139,12 +141,14 @@ theorem liftN_merge (a b : UnorderedTree Vertex) :
 /-- The induced map on syntactic objects, unbundled — computable, `decide`-friendly. -/
 def liftFun (s : SyntacticObject) : β := liftN ℓ τ s.val
 
-@[simp] theorem liftFun_leaf (tok : LIToken) : liftFun ℓ τ (SyntacticObject.leaf tok) = ℓ tok :=
+@[simp] theorem liftFun_leaf (tok : LexicalItem.Token) :
+    liftFun ℓ τ (SyntacticObject.leaf tok) = ℓ tok :=
   rfl
 
 @[simp] theorem liftFun_trace : liftFun ℓ τ trace = τ none := rfl
 
-@[simp] theorem liftFun_traceOf (tok : LIToken) : liftFun ℓ τ (traceOf tok) = τ (some tok) := rfl
+@[simp] theorem liftFun_traceOf (tok : LexicalItem.Token) :
+    liftFun ℓ τ (traceOf tok) = τ (some tok) := rfl
 
 @[simp] theorem liftFun_merge (l r : SyntacticObject) :
     liftFun ℓ τ (merge l r) = liftFun ℓ τ l * liftFun ℓ τ r := by

@@ -11,28 +11,31 @@ public import Linglib.Syntax.Minimalist.SyntacticObject.Term
 /-!
 # Freezing
 
-A constituent a derivation has moved is an island for later extraction, the freezing effect that
-descends from [ross-1967]'s Sentential Subject Constraint and that [chung-2006] makes the test
-of VP-raising analyses of VOS order: whatever a raised VP still contains cannot be extracted,
-whatever left it before it raised can. `Frozen d x` says that `x` sits inside some mover of `d`.
-Movers carry the traces of what evacuated them earlier, not the evacuees, so an evacuee is not
-frozen by the constituent it left; and a mover is itself available to move again. Freezing is
-monotone under extending the derivation and blind to the sides of External Merge.
+A constituent that has moved is an island for later extraction, though it may itself move again.
+This is the Freezing condition, and it is what makes VP-raising analyses of VOS order testable,
+since whatever a raised VP still contains cannot be extracted and whatever left it before it
+raised can. `Frozen d x` says that `x` sits inside some
+mover of `d`, and `ObeysFreezing d` that no mover of `d` sits inside an earlier one, a pairwise
+condition on the list of movers in the shape of `List.Nodup`. Movers carry the traces of what
+evacuated them earlier, not the evacuees, so a remnant freezes nothing that left it.
 
 ## Main definitions
 
-* `Minimalist.Derivation.Frozen`
+* `Minimalist.Derivation.Frozen`, `Minimalist.Derivation.ObeysFreezing`
 
 ## Main results
 
-* `Minimalist.Derivation.frozen_append_iff`: extending a derivation freezes
-  what its new movers contain and nothing else.
-* `Minimalist.Derivation.Frozen.append`, `frozen_leftward_iff`.
+* `Minimalist.Derivation.frozen_append_iff`: extending a derivation freezes what its new movers
+  contain and nothing else.
+* `Minimalist.Derivation.obeysFreezing_append_im_iff`: a further movement obeys Freezing exactly
+  when its mover is not frozen.
 
 ## References
 
-* [ross-1967]
+* [muller-1998]
 * [chung-2006]
+* [collins-2005]
+* [cole-hermon-2008]
 -/
 
 @[expose] public section
@@ -46,8 +49,8 @@ variable {d : Derivation} {steps : List Step} {x : SyntacticObject}
 /-- `x` sits inside a constituent `d` has moved. -/
 def Frozen (d : Derivation) (x : SyntacticObject) : Prop := ∃ m ∈ d.movedItems, contains m x
 
-instance (d : Derivation) (x : SyntacticObject) : Decidable (d.Frozen x) := by
-  unfold Frozen; infer_instance
+instance (d : Derivation) (x : SyntacticObject) : Decidable (d.Frozen x) :=
+  inferInstanceAs (Decidable (∃ m ∈ d.movedItems, contains m x))
 
 /-- Extending a derivation freezes what its new movers contain and nothing else. -/
 theorem frozen_append_iff :
@@ -61,6 +64,31 @@ theorem Frozen.append (h : d.Frozen x) : (d.append steps).Frozen x :=
 
 /-- Freezing is blind to the sides of External Merge. -/
 @[simp] theorem frozen_leftward_iff : d.leftward.Frozen x ↔ d.Frozen x := by
-  unfold Frozen; rw [movedItems_leftward]
+  rw [Frozen, Frozen, movedItems_leftward]
+
+/-- A derivation obeys Freezing when no step moves a constituent that an earlier mover
+contains. -/
+def ObeysFreezing (d : Derivation) : Prop :=
+  d.movedItems.Pairwise fun m m' ↦ ¬ contains m m'
+
+instance (d : Derivation) : Decidable d.ObeysFreezing :=
+  inferInstanceAs (Decidable (d.movedItems.Pairwise _))
+
+theorem obeysFreezing_append_iff :
+    (d.append steps).ObeysFreezing ↔ d.ObeysFreezing ∧
+      (steps.filterMap Step.mover?).Pairwise (fun m m' ↦ ¬ contains m m') ∧
+        ∀ m ∈ steps.filterMap Step.mover?, ¬ d.Frozen m := by
+  simp only [ObeysFreezing, movedItems_append, List.pairwise_append, Frozen]
+  grind
+
+/-- A further movement obeys Freezing exactly when its mover is not frozen. -/
+@[simp] theorem obeysFreezing_append_im_iff {m : SyntacticObject} {side : Side} :
+    (d.append [.im m side]).ObeysFreezing ↔ d.ObeysFreezing ∧ ¬ d.Frozen m := by
+  simp [obeysFreezing_append_iff]
+
+/-- A further External Merge obeys Freezing exactly when the derivation does. -/
+@[simp] theorem obeysFreezing_append_em_iff {item : SyntacticObject} {side : Side} :
+    (d.append [.em side item]).ObeysFreezing ↔ d.ObeysFreezing := by
+  simp [obeysFreezing_append_iff]
 
 end Minimalist.Derivation

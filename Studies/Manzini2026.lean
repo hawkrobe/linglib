@@ -37,7 +37,7 @@ namespace Manzini2026
 open Minimalist SyntacticObject
 
 /-- A token of the simple lexical item of category `c` selecting `sel`, pronounced `pf`. -/
-def tok (c : Cat) (sel : SelStack) (pf : String) (i : ℕ) : LIToken :=
+def tok (c : Cat) (sel : SelStack) (pf : String) (i : ℕ) : LexicalItem.Token :=
   ⟨.simple c sel (phonForm := pf), i⟩
 
 /-- *Gianni*, the matrix subject of (31a). -/

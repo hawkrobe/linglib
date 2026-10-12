@@ -74,7 +74,7 @@ def immediatelyContains (x y : SyntacticObject) : Prop := y.val ∈ children x.v
 instance (x y : SyntacticObject) : Decidable (immediatelyContains x y) :=
   inferInstanceAs (Decidable (_ ∈ _))
 
-@[simp] theorem immediatelyContains_leaf (tok : LIToken) (y : SyntacticObject) :
+@[simp] theorem immediatelyContains_leaf (tok : LexicalItem.Token) (y : SyntacticObject) :
     ¬ immediatelyContains (leaf tok) y := by
   simp [immediatelyContains]
 
@@ -82,7 +82,7 @@ instance (x y : SyntacticObject) : Decidable (immediatelyContains x y) :=
     ¬ immediatelyContains trace y := by
   simp [immediatelyContains]
 
-@[simp] theorem immediatelyContains_traceOf (tok : LIToken) (y : SyntacticObject) :
+@[simp] theorem immediatelyContains_traceOf (tok : LexicalItem.Token) (y : SyntacticObject) :
     ¬ immediatelyContains (traceOf tok) y := by
   simp [immediatelyContains]
 
@@ -116,14 +116,14 @@ theorem contains_iff_exists_immediatelyContains :
     contains x y ↔ ∃ z, immediatelyContains x z ∧ containsOrEq z y :=
   TransGen.head'_iff
 
-@[simp] theorem contains_leaf (tok : LIToken) (y : SyntacticObject) :
+@[simp] theorem contains_leaf (tok : LexicalItem.Token) (y : SyntacticObject) :
     ¬ contains (leaf tok) y := by
   simp [contains_iff_exists_immediatelyContains]
 
 @[simp] theorem contains_trace (y : SyntacticObject) : ¬ contains trace y := by
   simp [contains_iff_exists_immediatelyContains]
 
-@[simp] theorem contains_traceOf (tok : LIToken) (y : SyntacticObject) :
+@[simp] theorem contains_traceOf (tok : LexicalItem.Token) (y : SyntacticObject) :
     ¬ contains (traceOf tok) y := by
   simp [contains_iff_exists_immediatelyContains]
 
@@ -131,14 +131,14 @@ theorem contains_iff_exists_immediatelyContains :
     contains (merge l r) y ↔ containsOrEq l y ∨ containsOrEq r y := by
   simp [contains_iff_exists_immediatelyContains, or_and_right, exists_or]
 
-@[simp] theorem containsOrEq_leaf (tok : LIToken) :
+@[simp] theorem containsOrEq_leaf (tok : LexicalItem.Token) :
     containsOrEq (leaf tok) y ↔ y = leaf tok :=
   reflTransGen_iff_eq (immediatelyContains_leaf tok)
 
 @[simp] theorem containsOrEq_trace : containsOrEq trace y ↔ y = trace :=
   reflTransGen_iff_eq immediatelyContains_trace
 
-@[simp] theorem containsOrEq_traceOf (tok : LIToken) :
+@[simp] theorem containsOrEq_traceOf (tok : LexicalItem.Token) :
     containsOrEq (traceOf tok) y ↔ y = traceOf tok :=
   reflTransGen_iff_eq (immediatelyContains_traceOf tok)
 
@@ -202,7 +202,7 @@ def terms (s : SyntacticObject) : Multiset SyntacticObject :=
     s.terms.map Subtype.val = UnorderedTree.subtrees s.val := by
   simp [terms, Multiset.map_pmap, Multiset.pmap_eq_map]
 
-@[simp] theorem terms_leaf (tok : LIToken) : (leaf tok).terms = {leaf tok} :=
+@[simp] theorem terms_leaf (tok : LexicalItem.Token) : (leaf tok).terms = {leaf tok} :=
   Multiset.map_injective Subtype.val_injective <| by
     rw [Multiset.map_singleton, map_val_terms, leaf_val, UnorderedTree.subtrees_leaf]
 
@@ -210,7 +210,7 @@ def terms (s : SyntacticObject) : Multiset SyntacticObject :=
   Multiset.map_injective Subtype.val_injective <| by
     rw [Multiset.map_singleton, map_val_terms, trace_val, UnorderedTree.subtrees_leaf]
 
-@[simp] theorem terms_traceOf (tok : LIToken) : (traceOf tok).terms = {traceOf tok} :=
+@[simp] theorem terms_traceOf (tok : LexicalItem.Token) : (traceOf tok).terms = {traceOf tok} :=
   Multiset.map_injective Subtype.val_injective <| by
     rw [Multiset.map_singleton, map_val_terms, traceOf_val, UnorderedTree.subtrees_leaf]
 
@@ -249,13 +249,15 @@ def accessibleTerms (s : SyntacticObject) : Multiset SyntacticObject := s.terms.
 theorem cons_accessibleTerms (s : SyntacticObject) : s ::ₘ s.accessibleTerms = s.terms :=
   Multiset.cons_erase (self_mem_terms s)
 
-@[simp] theorem accessibleTerms_leaf (tok : LIToken) : (leaf tok).accessibleTerms = 0 := by
+@[simp] theorem accessibleTerms_leaf (tok : LexicalItem.Token) :
+    (leaf tok).accessibleTerms = 0 := by
   simp [accessibleTerms]
 
 @[simp] theorem accessibleTerms_trace : trace.accessibleTerms = 0 := by
   simp [accessibleTerms]
 
-@[simp] theorem accessibleTerms_traceOf (tok : LIToken) : (traceOf tok).accessibleTerms = 0 := by
+@[simp] theorem accessibleTerms_traceOf (tok : LexicalItem.Token) :
+    (traceOf tok).accessibleTerms = 0 := by
   simp [accessibleTerms]
 
 @[simp] theorem accessibleTerms_merge (l r : SyntacticObject) :

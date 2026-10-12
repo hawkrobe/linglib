@@ -42,7 +42,7 @@ namespace Landau2024b
 open Minimalist SyntacticObject Control
 
 /-- A token of the simple lexical item of category `c` selecting `sel`, pronounced `pf`. -/
-def tok (c : Cat) (sel : SelStack) (pf : String) (i : ℕ) : LIToken :=
+def tok (c : Cat) (sel : SelStack) (pf : String) (i : ℕ) : LexicalItem.Token :=
   ⟨.simple c sel (phonForm := pf), i⟩
 
 /-! ### Controlled pronouns (46) -/

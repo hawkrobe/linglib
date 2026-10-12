@@ -46,7 +46,7 @@ open Minimalist Minimalist.PlanarSyntacticObject
 
 /-- A token of the examples. -/
 def tok (id : ℕ) (cat : Cat) (sel : SelStack := []) (phon : String := "") (wh : Bool := false) :
-    LIToken :=
+    LexicalItem.Token :=
   ⟨LexicalItem.simple cat sel phon wh false, id⟩
 
 /-! ### Copular small clauses (18) -/

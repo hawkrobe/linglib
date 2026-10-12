@@ -102,7 +102,7 @@ inductive Terminal
 
 
 /-- Each terminal spells out its own lexical item. -/
-def Terminal.token : Terminal → LIToken
+def Terminal.token : Terminal → LexicalItem.Token
   | .S => ⟨.simple .D [], 1⟩
   | .V => ⟨.simple .V [], 2⟩
   | .O => ⟨.simple .D [], 3⟩
@@ -112,7 +112,7 @@ def Terminal.token : Terminal → LIToken
   | .XP => ⟨.simple .P [], 7⟩
 
 /-- A lexical item spells out at most one terminal. -/
-def Terminal.ofToken? (tok : LIToken) : Option Terminal :=
+def Terminal.ofToken? (tok : LexicalItem.Token) : Option Terminal :=
   [Terminal.S, .V, .O, .adv, .C, .aux, .XP].find? (·.token = tok)
 
 /-- The paper sketches the derivation of an Object Shift sentence as one of (20)–(22), (24) and

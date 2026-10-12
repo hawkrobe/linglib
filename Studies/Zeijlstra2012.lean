@@ -76,11 +76,11 @@ instance [DecidablePred pred] (root goal : SyntacticObject) (probes : List Synta
 phase interior may Agree with a goal outside the phase only if an element of the phase edge
 carries the uninterpretable feature `uF` too. -/
 def EdgeParticipates (root probe goal : SyntacticObject) (uF : SyntacticObject → Prop)
-    (ℓ : LIToken) : Prop :=
+    (ℓ : LexicalItem.Token) : Prop :=
   probe ∈ root.phaseInterior ℓ → goal ∉ root.phase ℓ → ∃ e ∈ root.phaseEdge ℓ, uF e
 
 instance {uF : SyntacticObject → Prop} [DecidablePred uF] (root probe goal : SyntacticObject)
-    (ℓ : LIToken) : Decidable (EdgeParticipates root probe goal uF ℓ) :=
+    (ℓ : LexicalItem.Token) : Decidable (EdgeParticipates root probe goal uF ℓ) :=
   have : Decidable (∃ e ∈ root.phaseEdge ℓ, uF e) := Multiset.decidableExistsMultiset
   inferInstanceAs (Decidable (_ → _ → _))
 

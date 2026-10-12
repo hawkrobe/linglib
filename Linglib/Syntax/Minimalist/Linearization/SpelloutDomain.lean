@@ -74,7 +74,7 @@ def spelloutDomain : Option PlanarSyntacticObject :=
   (d.stage? m).map fun D ↦ ((d.steps.drop m).take (n - m)).foldl (fun D step ↦ step.applyInside D) D
 
 /-- The Spell-out at stage `n` of the domain built by stage `m` is its pronounced yield. -/
-def spellout : List LIToken := ((d.spelloutDomain m n).map (planarYield ·.val)).getD []
+def spellout : List LexicalItem.Token := ((d.spelloutDomain m n).map (planarYield ·.val)).getD []
 
 /-- `d.mergeStage? item` is the stage right after `item` is externally merged, if it is. -/
 def mergeStage? (item : SyntacticObject) : Option ℕ :=
