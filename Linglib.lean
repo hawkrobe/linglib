@@ -971,7 +971,6 @@ import Linglib.Semantics.Reference.Nominal
 import Linglib.Semantics.Reference.Rigidity
 import Linglib.Semantics.Tense.Defs
 import Linglib.Semantics.Tense.Embedding
-import Linglib.Semantics.Tense.Licensing
 import Linglib.Semantics.Tense.Evidential
 import Linglib.Semantics.Tense.Perspective
 import Linglib.Semantics.Tense.Pronoun

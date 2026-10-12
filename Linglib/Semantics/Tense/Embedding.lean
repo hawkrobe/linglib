@@ -33,9 +33,9 @@ applies.
 
 ## Implementation notes
 
-Abusch motivates the constraint by the branching of the future across epistemic alternatives;
-that motivation is not formalized here, and the derivation of the cell from a doxastic modal base
-is Klecha's (`Studies/Klecha2016.lean`).
+Abusch motivates the constraint by the branching of the future across epistemic alternatives,
+which `Studies/Abusch1997.lean` states on branching frames; the derivation of the cell from a
+doxastic modal base is Klecha's (`Studies/Klecha2016.lean`).
 
 ## References
 
@@ -49,9 +49,10 @@ is Klecha's (`Studies/Klecha2016.lean`).
 namespace Tense
 
 open Semantics
+open scoped SetRel
 
 /-- The Upper Limit Constraint is the cell of the positions a tense's reference time may take
-against its local evaluation time: before it or at it, never after it. -/
+against its local evaluation time, before it or at it and never after it. -/
 def upperLimitConstraint : Finset Ordering := ⟦future⟧ᶜ
 
 /-- The Upper Limit Constraint admits the past and the present positions. -/
@@ -65,9 +66,16 @@ theorem mem_upperLimitConstraint {o : Ordering} : o ∈ upperLimitConstraint ↔
     compare r p ∈ upperLimitConstraint ↔ r ≤ p :=
   compare_mem_compl_future r p
 
-/-- The positions an embedded past's reference time may take against the attitude's now, given
-whether the Sequence of Tense rule can delete it: a genuine past precedes the now, and a deleted
-past is a zero tense bound to it. -/
+/-- On any partial order of times, branching ones among them, the upper limit constraint relates
+a time to the times at or before it. -/
+@[simp] theorem mem_toSetRel_upperLimitConstraint {T : Type*} [PartialOrder T] {p r : T} :
+    p ~[toSetRel upperLimitConstraint] r ↔ r ≤ p := by
+  rw [upperLimitConstraint_eq_past_sup_present, toSetRel_sup, Set.mem_union, mem_toSetRel_past,
+    mem_toSetRel_present, le_iff_lt_or_eq]
+
+/-- `pastUnderPast sot` is the cell of the positions an embedded past's reference time may take
+against the attitude's now, where `sot` says whether the Sequence of Tense rule can delete it. A
+genuine past precedes the now, and a deleted past is a zero tense bound to it. -/
 def pastUnderPast (sot : Prop) [Decidable sot] : Finset Ordering :=
   ⟦past⟧ ⊔ if sot then ⟦present⟧ else ⊥
 
