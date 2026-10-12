@@ -6,15 +6,17 @@ public import Linglib.Pragmatics.SocialMeaning.IndexicalField
 /-!
 # Personae and grounded fields
 
-This file defines the personae and grounded indexical fields of [burnett-2019] and the
-Eckert–Montague lift of a field to persona compatibility. A property space is a graph of
+This file defines the personae and grounded indexical fields of Burnett's social meaning games
+and the Eckert–Montague lift of a field to persona compatibility. A property space is a graph of
 incompatibility on social properties, a persona is a maximal independent set of it, and a
 grounded field indexes each variant to an independent set of properties. The lift sends a
-variant to the personae compatible with it,
-those with every property it indexes, or on the Montagovian-individual reading those sharing
-some property with it, as an entity lifts to the generalized quantifier of the properties it
-has. An association field over the dimensions of social evaluation grounds as the poles whose
-polarity is the sign of the association.
+variant to the personae compatible with it, those with every property it indexes, or on the
+Montagovian-individual reading those sharing some property with it, as an entity lifts to the
+generalized quantifier of the properties it has. An association field over the dimensions of
+social evaluation grounds as the poles whose polarity is the sign of the association. A social
+meaning game runs the RSA pipeline on the personae, its literal listener conditioning a prior on
+the personae a variant meets; Burnett's 2023 book keeps these definitions, and her 2026 review
+takes the game as the current formalization of social meaning as reasoning.
 
 ## Main definitions
 
@@ -39,6 +41,8 @@ polarity is the sign of the association.
 ## References
 
 * [burnett-2019]
+* [burnett-2023]
+* [burnett-2026]
 * [eckert-2008]
 -/
 
