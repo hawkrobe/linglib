@@ -35,7 +35,7 @@ from collections import Counter, defaultdict
 from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
-LINGLIB_DIR = REPO_ROOT / "Linglib"
+SOURCE_DIRS = [REPO_ROOT / d for d in ("Linglib", "Studies")]
 
 BANNED_FIRST_SEGMENTS = {"Theories", "Linglib", "Mathlib"}
 
@@ -63,7 +63,7 @@ LAYER_RULES: list[tuple[str, str, str]] = [
 
 
 def find_lean_files() -> list[Path]:
-    return sorted(LINGLIB_DIR.rglob("*.lean"))
+    return sorted(f for d in SOURCE_DIRS for f in d.rglob("*.lean"))
 
 
 def file_imports(filepath: Path) -> list[tuple[int, str]]:

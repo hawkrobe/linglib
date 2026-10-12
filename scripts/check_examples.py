@@ -65,11 +65,16 @@ def strip_comments(src):
     return re.sub(r"--[^\n]*", "", src)
 
 
+def lean_sources():
+    """The Lean files that may import an example set: the library's and the studies'."""
+    return sorted(path for d in ("Linglib", "Studies")
+                  for path in glob.glob(os.path.join(ROOT, d, "**", "*.lean"), recursive=True)
+                  if os.sep + "Examples" + os.sep not in path)
+
+
 def imported_sets():
     imps = set()
-    for path in glob.glob(os.path.join(ROOT, "Linglib", "**", "*.lean"), recursive=True):
-        if os.sep + "Examples" + os.sep in path:
-            continue
+    for path in lean_sources():
         src = open(path, encoding="utf-8").read()
         imps |= set(re.findall(r"^(?:public )?import Linglib\.Data\.Examples\.(\w+)", src, flags=re.M))
     return imps
@@ -137,9 +142,7 @@ WARNINGS = {"ORPHAN", "JUDGMENT"}
 def main():
     papers = load_papers()
     findings = check_bibkeys(papers, imported_sets())
-    for path in sorted(glob.glob(os.path.join(ROOT, "Linglib", "**", "*.lean"), recursive=True)):
-        if os.sep + "Examples" + os.sep in path:
-            continue
+    for path in lean_sources():
         findings += check_study(path, papers)
     errors = [f for f in findings if f[1] not in WARNINGS]
     for f in findings:

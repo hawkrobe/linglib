@@ -63,7 +63,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: .lake
-          key: lake-${{ runner.os }}-${{ hashFiles('lean-toolchain') }}-${{ hashFiles('lake-manifest.json') }}-${{ hashFiles('Linglib/**/*.lean', 'Linglib.lean') }}
+          key: lake-${{ runner.os }}-${{ hashFiles('lean-toolchain') }}-${{ hashFiles('lake-manifest.json') }}-${{ hashFiles('Linglib/**/*.lean', 'Studies/**/*.lean', 'Eval/**/*.lean', 'Linglib.lean') }}
           restore-keys: |
             lake-${{ runner.os }}-${{ hashFiles('lean-toolchain') }}-${{ hashFiles('lake-manifest.json') }}-
 
@@ -76,4 +76,4 @@ jobs:
       - name: Check for sorries (informational)
         run: |
           echo "=== Files with sorry ==="
-          grep -r "sorry" Linglib/ --include="*.lean" | grep -v "-- " | head -50 || echo "No sorries found"
+          grep -r "sorry" Linglib/ Studies/ --include="*.lean" | grep -v "-- " | head -50 || echo "No sorries found"

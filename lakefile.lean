@@ -31,6 +31,13 @@ require mathlib from git
 lean_lib Linglib where
   globs := #[.submodules `Linglib]
 
+/-- The studies: one file per paper, formalizing the paper's data, model and predictions on top
+    of `Linglib`. A library of its own, so that `Linglib` is the theory and data the studies are
+    checked against, and `import Linglib` does not bring the studies in. -/
+@[default_target]
+lean_lib Studies where
+  globs := #[.submodules `Studies]
+
 /-- Evaluation of the library's accounts against data: which judgments each registered theory
     gets right, wrong, or says nothing about, and how the theories compare. A default target, so
     that a change of verdict shows up in the pull request that causes it. -/
