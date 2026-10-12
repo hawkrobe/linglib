@@ -2,6 +2,7 @@ module
 
 public import Linglib.Core.Data.Fin.VecNotation
 public import Linglib.Core.ModelTheory.Atom
+public import Linglib.Semantics.Dynamic.DRS.Realizers
 public import Linglib.Studies.Cooper2023
 
 /-!
@@ -26,9 +27,11 @@ every modal system is exactly its actual beliefs up to relabelling. The datum is
   (34), in every modal system.
 * `HobNob.believes_witch`, `HobNob.extension_witch_actual`: Hob believes that there is a witch,
   and there is none.
-* `HobNob.same_witch`, `HobNob.other_witch`: Hob's belief and Nob's question, aligned on the
-  witch's label, cannot both be true when different witches did the deeds, while Hob's belief and
-  a relabelling of Nob's question can.
+* `HobNob.atom_image_sameGlue`, `HobNob.same_witch`: gluing Hob's belief context and that of
+  Nob's question along a cover that identifies their witches gives the merge of their record
+  types, whose witnesses are the compatible pairs of local witnesses, so it is not true when
+  different witches did the deeds; along a cover that keeps the witches apart it is
+  (`HobNob.other_witch`).
 
 ## Implementation notes
 
@@ -39,6 +42,9 @@ every modal system is exactly its actual beliefs up to relabelling. The datum is
   finitely many labels, so the relabellings of a record type are its orbit.
 * The free model behind the actual-belief theorems is the structure a record type presents on its
   labels.
+* The alignment of §2.3.2, and the alignment of discourse referents the Element compares it with
+  in §2.3.3, is gluing of basic DRSs along a cover of contexts in the sense of Abramsky and
+  Sadrzadeh.
 
 ## TODO
 
@@ -54,6 +60,7 @@ every modal system is exactly its actual beliefs up to relabelling. The datum is
 * [ranta-1994]
 * [cooper-2023]
 * [geach-1967]
+* [abramsky-sadrzadeh-2014]
 -/
 
 @[expose] public section
@@ -204,6 +211,7 @@ inductive Rel : ℕ → Type
   | witch : Rel 2
   | blightedBobsMare : Rel 2
   | killedCobsSow : Rel 2
+  deriving DecidableEq
 
 /-- The language of the predicates of the Hob–Nob sentence. -/
 abbrev lang : Language := ⟨fun _ ↦ Empty, Rel⟩
@@ -270,20 +278,137 @@ theorem not_believes_blighted :
   simp [Atom.Realize, holds, r] at this
   grind
 
-/-- *She (the same witch)*. Aligned on the witch's label, Hob's belief and the content of Nob's
-question are not both true where different witches blighted the mare and killed the sow. -/
-theorem same_witch : (recTypes system).extension (hob ∪ nob) .twoWitches = ∅ := by
-  ext r
-  simp [mem_extension_recTypes, Atom.Realize, hob, nob, witch, holds]
-  grind
+/-! #### Aligning the two contexts
 
-/-- Moving Nob's witch to another label, which leaves Nob's beliefs as they are, makes Hob's belief
-and the content of Nob's question true together. -/
+Hob's belief context and the content of Nob's question each have their own referents, Nob's witch
+being `y`. Aligning them on the witch is a cover of the discourse that sends both witches to one
+referent, and gluing along it gives the merge of their record types; a cover that keeps the
+witches apart gives the merge with Nob's witch relabelled. -/
+
+open DRT
+
+/-- `lit A x̄` is the positive literal `A(x̄)` over a context. -/
+def lit {γ : Context lang Label} {n : ℕ} (r : Rel n) (args : Fin n → Label)
+    (hr : ⟨n, r⟩ ∈ γ.vocab := by decide +kernel) (h : ∀ i, args i ∈ γ.vars := by decide +kernel) :
+    Literal γ :=
+  ⟨⟨⟨n, r⟩, hr⟩, fun i ↦ ⟨args i, h i⟩, true⟩
+
+@[simp] theorem atom_lit {γ : Context lang Label} {n : ℕ} (r : Rel n) (args : Fin n → Label)
+    (hr : ⟨n, r⟩ ∈ γ.vocab) (h : ∀ i, args i ∈ γ.vars) : (lit r args hr h).atom = ⟨r, args⟩ :=
+  rfl
+
+/-- `hom f` is the context morphism acting as `f` on referents. -/
+def hom {γ γ' : Context lang Label} (f : Label → Label)
+    (hf : ∀ t ∈ γ.vars, f t ∈ γ'.vars := by decide +kernel)
+    (hL : γ.vocab ⊆ γ'.vocab := by decide +kernel) : γ ⟶ γ' :=
+  ⟨hL, fun t ↦ ⟨f t, hf t t.2⟩⟩
+
+/-- Hob's belief context, with the witch `x`. -/
+abbrev hobCtx : Context lang Label :=
+  ⟨{⟨1, .ind⟩, ⟨2, .witch⟩, ⟨2, .blightedBobsMare⟩}, {.x, .c, .b}⟩
+
+/-- The context of Nob's question, with the witch `y`. -/
+abbrev nobCtx : Context lang Label :=
+  ⟨{⟨1, .ind⟩, ⟨2, .witch⟩, ⟨2, .killedCobsSow⟩}, {.y, .c, .k}⟩
+
+/-- Hob's belief over Hob's context, and the content of Nob's question over Nob's. -/
+def sections : ∀ i, Theory (![hobCtx, nobCtx] i)
+  | 0 => ⟨{lit .ind ![.x], lit .witch ![.c, .x], lit .blightedBobsMare ![.b, .x]},
+      by decide +kernel⟩
+  | 1 => ⟨{lit .ind ![.y], lit .witch ![.c, .y], lit .killedCobsSow ![.k, .y]}, by decide +kernel⟩
+
+/-- The vocabulary of the discourse. -/
+abbrev vocab : Finset (Σ n, lang.Relations n) :=
+  {⟨1, .ind⟩, ⟨2, .witch⟩, ⟨2, .blightedBobsMare⟩, ⟨2, .killedCobsSow⟩}
+
+/-- The discourse with one witch. -/
+abbrev sameCtx : Context lang Label := ⟨vocab, {.x, .c, .b, .k}⟩
+
+/-- The discourse with two witches. -/
+abbrev apartCtx : Context lang Label := ⟨vocab, {.x, .y, .c, .b, .k}⟩
+
+/-- The cover of the discourse that sends Nob's witch to Hob's. -/
+def sameCover : Cover sameCtx (Fin 2) where
+  part := ![hobCtx, nobCtx]
+  map
+    | 0 => hom id
+    | 1 => hom fun | .y => .x | t => t
+  exists_map_eq := by decide +kernel
+  exists_mem_vocab := by decide +kernel
+
+/-- The cover of the discourse that keeps the witches apart. -/
+def apartCover : Cover apartCtx (Fin 2) where
+  part := ![hobCtx, nobCtx]
+  map
+    | 0 => hom id
+    | 1 => hom id
+  exists_map_eq := by decide +kernel
+  exists_mem_vocab := by decide +kernel
+
+/-- The gluing of the two contexts along the aligning cover. -/
+def sameGlue : Theory sameCtx :=
+  ⟨sameCover.pushforward sections, by decide +kernel⟩
+
+/-- The gluing of the two contexts along the cover that keeps the witches apart. -/
+def apartGlue : Theory apartCtx :=
+  ⟨apartCover.pushforward sections, by decide +kernel⟩
+
+theorem isGluing_sameGlue : sameCover.IsGluing (presheaf lang Label) sections sameGlue := by
+  decide +kernel
+
+theorem isGluing_apartGlue : apartCover.IsGluing (presheaf lang Label) sections apartGlue := by
+  decide +kernel
+
+/-- Gluing along the aligning cover merges Hob's belief and the content of Nob's question as
+record types. -/
+theorem atom_image_sameGlue :
+    Literal.atom '' (sameGlue.lits : Set (Literal sameCtx)) = hob ∪ nob := by
+  have : sameGlue.lits = {lit .ind ![.x], lit .witch ![.c, .x], lit .blightedBobsMare ![.b, .x],
+      lit .killedCobsSow ![.k, .x]} := by decide +kernel
+  rw [this]
+  ext a
+  simp [hob, nob, witch]
+  tauto
+
+/-- Gluing along the other cover merges them with Nob's witch relabelled. -/
+theorem atom_image_apartGlue :
+    Literal.atom '' (apartGlue.lits : Set (Literal apartCtx)) =
+      hob ∪ Equiv.swap Label.x .y • nob := by
+  have : apartGlue.lits = {lit .ind ![.x], lit .witch ![.c, .x], lit .blightedBobsMare ![.b, .x],
+      lit .ind ![.y], lit .witch ![.c, .y], lit .killedCobsSow ![.k, .y]} := by decide +kernel
+  rw [this]
+  ext a
+  simp [hob, nob, witch, Set.smul_set_insert, Atom.smul_def, Atom.map, Matrix.comp_vecCons,
+    Matrix.comp_vecEmpty, Equiv.swap_apply_def]
+  tauto
+
+/-- *She (the same witch)*. Aligned on the witch, Hob's belief and the content of Nob's question
+are not both true where different witches blighted the mare and killed the sow, since their
+witnesses are the compatible pairs of local witnesses and compatibility gives both one witch. -/
+theorem same_witch : (recTypes system).extension (hob ∪ nob) .twoWitches = ∅ := by
+  let _ := system .twoWitches
+  refine Set.eq_empty_of_forall_notMem fun r hr ↦ ?_
+  rw [mem_extension_recTypes, ← Atom.mem_realizers, ← atom_image_sameGlue,
+    ← Theory.comp_val_mem_realizers_iff (by decide +kernel)] at hr
+  obtain ⟨g, hg⟩ := sameCover.realizersEquiv (M := Obj) (x := sections) rfl ⟨_, hr⟩
+  have h₀ := (g 0).2 (lit .blightedBobsMare ![.b, .x]) (by decide +kernel)
+  have h₁ := (g 1).2 (lit .killedCobsSow ![.k, .y]) (by decide +kernel)
+  have h := hg 0 1 ⟨.x, by decide⟩ ⟨.y, by decide⟩ rfl
+  simp [Literal.Holds, lit, holds] at h₀ h₁
+  simp_all
+
+/-- Keeping the witches apart, which leaves Nob's beliefs as they are, makes Hob's belief and the
+content of Nob's question true together. -/
 theorem other_witch :
     ((recTypes system).extension (hob ∪ Equiv.swap Label.x .y • nob) .twoWitches).Nonempty := by
+  let _ := system .twoWitches
   refine ⟨fun | .x => .w₁ | .y => .w₂ | _ => .s, ?_⟩
-  rw [extension_recTypes_union, Set.mem_inter_iff, mem_extension_recTypes_smul]
-  simp [mem_extension_recTypes, Atom.Realize, hob, nob, witch, holds, Equiv.swap_apply_def]
+  rw [mem_extension_recTypes, ← Atom.mem_realizers, ← atom_image_apartGlue,
+    ← Theory.comp_val_mem_realizers_iff (by decide +kernel), apartCover.mem_realizers_iff rfl]
+  intro i
+  fin_cases i <;> intro l hl <;>
+    simp only [sections, Finset.mem_insert, Finset.mem_singleton] at hl <;>
+    rcases hl with rfl | rfl | rfl <;> simp [Literal.Holds, lit, apartCover, hom, holds]
 
 end HobNob
 
