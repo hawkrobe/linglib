@@ -164,6 +164,13 @@ def IsFalse (m : StateSet D Trivalent) (g : PartialAssign ℕ D) : Prop :=
 def IsIndet (m : StateSet D Trivalent) (g : PartialAssign ℕ D) : Prop :=
   extension .true m g = ∅ ∧ extension .false m g = ∅ ∧ (extension .indet m g).Nonempty
 
+/-- `m` is true or false at `g` when it has a positive or a negative output, the condition
+Stalnaker's bridge puts on every point of a state (Def. 3.2). -/
+theorem isTrue_or_isFalse_iff {m : StateSet D Trivalent} {g : PartialAssign ℕ D} :
+    IsTrue m g ∨ IsFalse m g ↔
+      (extension .true m g).Nonempty ∨ (extension .false m g).Nonempty := by
+  rcases (extension .true m g).eq_empty_or_nonempty with h | h <;> simp [IsTrue, IsFalse, h]
+
 theorem rel_neg (v : Trivalent) (m : StateSet D Trivalent) :
     StateT.rel (neg m) v = StateT.rel m v.neg := by
   rw [neg, StateT.rel_map]
@@ -453,6 +460,18 @@ theorem mem_atom_update (x : D) {v : Trivalent} {h : PartialAssign ℕ D} :
     (v, h) ∈ atom W n (g.update n x) ↔ v = ofProp (x ∈ W) ∧ h = g.update n x := by
   rw [mem_atom, valueAt_of_eq_coe W (PartialAssign.update_self n x g), Prod.mk.injEq]
 
+/-- The negation of an atom is the atom of the complement. -/
+theorem neg_atom (n : ℕ) : neg (atom W n) = atom Wᶜ n := by
+  funext g
+  have key : (valueAt W g n).neg = valueAt Wᶜ g n := by
+    cases hg : g n with
+    | bot => simp [valueAt_of_eq_bot _ hg]
+    | coe d => by_cases hd : d ∈ W <;> simp [valueAt_of_eq_coe _ hg, hd]
+  ext ⟨v, h⟩
+  simp only [neg, Set.mk_mem_stateT_map, mem_atom, Prod.mk.injEq]
+  exact ⟨by rintro ⟨t, ⟨rfl, rfl⟩, rfl⟩; exact ⟨key, rfl⟩,
+    by rintro ⟨rfl, rfl⟩; exact ⟨_, ⟨rfl, rfl⟩, key.symm⟩⟩
+
 /-- The positive extension of `εₙ W n` consists of the resets of `n` to a `W` ((17a)). -/
 theorem extension_true_dplExists_atom (hf : e.Fresh g n) :
     extension .true (dplExists e n (atom W n)) g = {h | ∃ x ∈ W, h = g.update n x} := by
@@ -560,6 +579,19 @@ theorem extension_true_bathroom [Nonempty D] (hf : e.Fresh g 1) :
         rw [extension_false_neg_exists_atom B hf]; exact ⟨x, hxB, rfl⟩
       · rw [mem_extension, mem_atom_update]; exact ⟨by simp [hxU], rfl⟩
 
+/-- The bathroom sentence is falsified by the resets of 1 to a bathroom that is not upstairs. -/
+theorem extension_false_bathroom (hf : e.Fresh g 1) :
+    extension .false (disj (neg (exists_ e 1 (atom B 1))) (atom U 1)) g =
+      {h | ∃ x ∈ B, x ∉ U ∧ h = g.update 1 x} := by
+  ext i
+  rw [mem_extension_false_disj, extension_false_neg_exists_atom B hf]
+  constructor
+  · rintro ⟨h, ⟨x, hxB, rfl⟩, hi⟩
+    rw [mem_extension, mem_atom_update] at hi
+    exact ⟨x, hxB, Trivalent.ofProp_eq_false_iff.1 hi.1.symm, hi.2⟩
+  · rintro ⟨x, hxB, hxU, rfl⟩
+    exact ⟨g.update 1 x, ⟨x, hxB, rfl⟩, by rw [mem_extension, mem_atom_update]; simp [hxU]⟩
+
 /-- The donkey conditional `∃₁ B 1 → U 1`, *if anyone is outside, they are happy*, has the same
 positive extension as the bathroom sentence, so its truth conditions are existential ((42)). -/
 theorem extension_true_donkey [Nonempty D] (hf : e.Fresh g 1) :
@@ -572,14 +604,7 @@ theorem extension_true_donkey [Nonempty D] (hf : e.Fresh g 1) :
 theorem extension_false_donkey (hf : e.Fresh g 1) :
     extension .false (imp (exists_ e 1 (atom B 1)) (atom U 1)) g =
       {h | ∃ x ∈ B, x ∉ U ∧ h = g.update 1 x} := by
-  ext i
-  rw [imp_eq_disj_neg, mem_extension_false_disj, extension_false_neg_exists_atom B hf]
-  constructor
-  · rintro ⟨h, ⟨x, hxB, rfl⟩, hi⟩
-    rw [mem_extension, mem_atom_update] at hi
-    exact ⟨x, hxB, Trivalent.ofProp_eq_false_iff.1 hi.1.symm, hi.2⟩
-  · rintro ⟨x, hxB, hxU, rfl⟩
-    exact ⟨g.update 1 x, ⟨x, hxB, rfl⟩, by rw [mem_extension, mem_atom_update]; simp [hxU]⟩
+  rw [imp_eq_disj_neg, extension_false_bathroom B U hf]
 
 /-- A pronoun before its indefinite, `P 1 ∧ ∃₁ Q 1`, is never verified at an input not valuing
 1 ((27)). -/
@@ -591,6 +616,30 @@ theorem extension_true_conj_atom_exists (P Q : Set D) (hg : g 1 = ⊥) :
   rintro ⟨h, hh, -⟩
   rw [mem_extension, mem_atom, valueAt_of_eq_bot P hg] at hh
   simp at hh
+
+/-- An indefinite before its pronoun, `∃₁ P 1 ∧ Q 1`, is verified by the resets of 1 to a `P`
+that is a `Q`, as in DPL. -/
+theorem extension_true_conj_exists_atom (P Q : Set D) (hf : e.Fresh g 1) :
+    extension .true (conj (exists_ e 1 (atom P 1)) (atom Q 1)) g =
+      {h | ∃ x ∈ P, x ∈ Q ∧ h = g.update 1 x} := by
+  ext i
+  rw [mem_extension_true_conj, extension_true_exists_atom P hf]
+  constructor
+  · rintro ⟨h, ⟨x, hxP, rfl⟩, hi⟩
+    rw [mem_extension, mem_atom_update] at hi
+    exact ⟨x, hxP, Trivalent.ofProp_eq_true_iff.1 hi.1.symm, hi.2⟩
+  · rintro ⟨x, hxP, hxQ, rfl⟩
+    exact ⟨g.update 1 x, ⟨x, hxP, rfl⟩, by rw [mem_extension, mem_atom_update]; simp [hxQ]⟩
+
+/-- `∃₁ P 1 ∧ Q 1` is falsified by the input when nothing is a `P`, and by the resets of 1 to a
+`P` that is not a `Q` ((30)). By de Morgan's law these are the outputs verifying the bathroom
+sentence `¬ ∃₁ P 1 ∨ ¬ Q 1` ((31)). -/
+theorem extension_false_conj_exists_atom [Nonempty D] (P Q : Set D) (hf : e.Fresh g 1) :
+    extension .false (conj (exists_ e 1 (atom P 1)) (atom Q 1)) g =
+      {h | h = g ∧ P = ∅} ∪ {h | ∃ x ∈ P, x ∉ Q ∧ h = g.update 1 x} := by
+  have h := extension_neg .true (conj (exists_ e 1 (atom P 1)) (atom Q 1)) g
+  rw [neg_conj, neg_atom, extension_true_bathroom P Qᶜ hf] at h
+  exact h.symm
 
 end Atoms
 
@@ -955,6 +1004,40 @@ theorem isTrue_or_isFalse_neg_exists_atom [Nonempty D] (W : Set D) {n : ℕ} (hf
   · refine .inr ⟨?_, g.update n x, by rw [extension_false_neg_exists_atom W hf]; exact ⟨x, hx, rfl⟩⟩
     rw [extension_true_neg_exists_atom W hf]
     exact Set.eq_empty_iff_forall_notMem.2 fun h hh ↦ (Set.nonempty_of_mem hx).ne_empty hh.2
+
+/-- An indefinite before its pronoun is true or false at an input not valuing the variable. -/
+theorem isTrue_or_isFalse_conj_exists_atom [Nonempty D] (P Q : Set D) (hf : e.Fresh g 1) :
+    IsTrue (conj (exists_ e 1 (atom P 1)) (atom Q 1)) g ∨
+      IsFalse (conj (exists_ e 1 (atom P 1)) (atom Q 1)) g := by
+  rw [isTrue_or_isFalse_iff, extension_true_conj_exists_atom P Q hf,
+    extension_false_conj_exists_atom P Q hf]
+  rcases P.eq_empty_or_nonempty with hP | ⟨x, hx⟩
+  · exact .inr ⟨g, .inl ⟨rfl, hP⟩⟩
+  · by_cases hQ : x ∈ Q
+    exacts [.inl ⟨_, x, hx, hQ, rfl⟩, .inr ⟨_, .inr ⟨x, hx, hQ, rfl⟩⟩]
+
+/-- The initial state admits *a philosopher₁ is attending this talk and she₁'s sitting in the
+back*: the indefinite values 1 on every output the pronoun is read at ((10a)). -/
+theorem defined_initial_someone_and_they [Nonempty D] (P Q : W → Set D) :
+    Defined (⊤ : State W ℕ D) fun w ↦ conj (exists_ e 1 (atom (P w) 1)) (atom (Q w) 1) :=
+  fun _ hp ↦ isTrue_or_isFalse_conj_exists_atom _ _
+    (Existential.fresh_of_eq_bot (State.mem_top.1 hp 1))
+
+/-- The bathroom sentence is true or false at an input not valuing the variable. -/
+theorem isTrue_or_isFalse_bathroom [Nonempty D] (B U : Set D) (hf : e.Fresh g 1) :
+    IsTrue (disj (neg (exists_ e 1 (atom B 1))) (atom U 1)) g ∨
+      IsFalse (disj (neg (exists_ e 1 (atom B 1))) (atom U 1)) g := by
+  rw [isTrue_or_isFalse_iff, extension_true_bathroom B U hf, extension_false_bathroom B U hf]
+  rcases B.eq_empty_or_nonempty with hB | ⟨x, hx⟩
+  · exact .inl ⟨g, .inl ⟨rfl, hB⟩⟩
+  · by_cases hU : x ∈ U
+    exacts [.inl ⟨_, .inr ⟨x, hx, hU, rfl⟩⟩, .inr ⟨_, x, hx, hU, rfl⟩]
+
+/-- The initial state admits the bathroom sentence *either there is no₁ bathroom, or it₁'s
+upstairs*, although its pronoun follows a negated indefinite ((33)). -/
+theorem defined_initial_bathroom [Nonempty D] (B U : W → Set D) :
+    Defined (⊤ : State W ℕ D) fun w ↦ disj (neg (exists_ e 1 (atom (B w) 1))) (atom (U w) 1) :=
+  fun _ hp ↦ isTrue_or_isFalse_bathroom _ _ (Existential.fresh_of_eq_bot (State.mem_top.1 hp 1))
 
 /-- After *nobody is here*, in a state with a world where nobody is here, 1 is not familiar, so a
 pronoun cannot follow a negated indefinite ((4), (5)). -/
