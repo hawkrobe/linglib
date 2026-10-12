@@ -12,9 +12,9 @@ public import Mathlib.MeasureTheory.Measure.WithDensity
 # Conditional probability
 
 Lemmas on mathlib's conditional measure `μ[|s]` that mathlib does not state: zero-one
-consequences of conditioning, real-valued forms, invariance under scaling with the composition of
-two Bayesian updates, and conditioning on nested events up to null sets. `[UPSTREAM]` candidates
-for `Mathlib/Probability/ConditionalProbability.lean`.
+consequences of conditioning, real-valued forms, pushforwards, invariance under scaling with the
+composition of two Bayesian updates, and conditioning on nested events up to null sets.
+`[UPSTREAM]` candidates for `Mathlib/Probability/ConditionalProbability.lean`.
 -/
 
 @[expose] public section
@@ -62,6 +62,20 @@ theorem cond_real_apply (hs : MeasurableSet s) (e : Set Ω) :
 
 end ProbabilityTheory
 
+/-! ### Pushforwards -/
+
+namespace ProbabilityTheory
+
+variable {Ω Ω' : Type*} [MeasurableSpace Ω] [MeasurableSpace Ω'] {μ : Measure Ω}
+
+/-- Conditioning a pushforward on a set is pushing forward the conditional on its preimage. -/
+theorem cond_map {f : Ω → Ω'} (hf : AEMeasurable f μ) {s : Set Ω'} (hs : MeasurableSet s) :
+    (μ.map f)[|s] = (μ[|f ⁻¹' s]).map f := by
+  rw [cond, cond, Measure.map_smul _ hf.restrict, Measure.restrict_map_of_aemeasurable hf hs,
+    Measure.map_apply_of_aemeasurable hf hs]
+
+end ProbabilityTheory
+
 /-! ### Sequential conditioning
 
 Conditioning is scale-invariant, so two Bayesian updates compose: reweighting by `f`,
@@ -78,8 +92,8 @@ theorem cond_smul {c : ℝ≥0∞} (hc0 : c ≠ 0) (hc : c ≠ ∞) (μ : Measur
   rw [ENNReal.mul_inv (Or.inl hc0) (Or.inl hc), mul_right_comm, ENNReal.inv_mul_cancel hc0 hc,
     one_mul]
 
-/-- Two Bayesian updates compose: normalizing after reweighting by `f` and again after
-reweighting by `g` is normalizing once after reweighting by `f * g`. -/
+/-- Normalizing after reweighting by `f` and again after reweighting by `g` is normalizing once
+after reweighting by `f * g`, so two Bayesian updates compose. -/
 theorem cond_univ_withDensity_mul (μ : Measure Ω) {f g : Ω → ℝ≥0∞} (hf : Measurable f)
     (hg : Measurable g) (hfin : μ.withDensity f Set.univ ≠ ∞) :
     (((μ.withDensity f)[|Set.univ]).withDensity g)[|Set.univ] =

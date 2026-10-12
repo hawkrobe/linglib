@@ -502,7 +502,7 @@ noncomputable def jointL0 : Kernel M (X × O) := Kernel.ofDensity P fun m p ↦ 
 value-marginal prior, so eq. (BIR) is recovered inside the full model (footnote 23). -/
 theorem jointL0_map_fst (m : M) :
     (jointL0 P meaning m).map Prod.fst = Kernel.ofDensity (P.map Prod.fst) meaning m :=
-  Kernel.ofDensity_map_fst P meaning (fun _ ↦ measurable_of_countable _) m
+  Kernel.ofDensity_map P (measurable_of_countable _).aemeasurable measurable_fst.aemeasurable
 
 variable [Fintype O] [MeasurableSingletonClass O] [IsFiniteMeasure P] (lam : ℝ)
 
