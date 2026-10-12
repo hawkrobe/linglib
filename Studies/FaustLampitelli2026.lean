@@ -159,25 +159,25 @@ theorem not_isNaturalClass_gutturals :
 /-- `vowelET v` is the melody of the vowel `v` (21)–(22). [ʌ] is |A| and [a] headed |A|, the mid
 vowels combine |A| with |I| or |U|, and the weak vowel is the realization of an empty nucleus. -/
 def vowelET : Vowel → MR
-  | .a => MR.headedSimplex .A
-  | .aBare => MR.simplex .A
-  | .i => MR.headedSimplex .I
-  | .u => MR.headedSimplex .U
-  | .e => MR.headPlusOp .I .A
-  | .o => MR.headPlusOp .U .A
-  | .weak => MR.empty
+  | .a => .headedSimplex .A
+  | .aBare => .simplex .A
+  | .i => .headedSimplex .I
+  | .u => .headedSimplex .U
+  | .e => .headedSimplex .I ⊔ .simplex .A
+  | .o => .headedSimplex .U ⊔ .simplex .A
+  | .weak => ⊥
 
 /-- `gutturalET g` is the melody of the guttural `g`. Every guttural contains |A|, and the
 pharyngeals are headed by it (20). -/
 def gutturalET : Guttural → MR
-  | .glottalStop => MR.headPlusOp .glottal .A
-  | .h => MR.headPlusOp .H .A
-  | .pharyngealVoiceless => (MR.numeration {.glottal, .H}).headCompose .A
-  | .pharyngealVoiced => (MR.numeration {.glottal, .H, .L}).headCompose .A
+  | .glottalStop => .headedSimplex .glottal ⊔ .simplex .A
+  | .h => .headedSimplex .H ⊔ .simplex .A
+  | .pharyngealVoiceless => .headedSimplex .A ⊔ .simplex .glottal ⊔ .simplex .H
+  | .pharyngealVoiced => .headedSimplex .A ⊔ .simplex .glottal ⊔ .simplex .H ⊔ .simplex .L
 
-theorem gutturalET_hasElement_A : ∀ g : Guttural, (gutturalET g).HasElement .A := by decide
+theorem mem_elements_gutturalET : ∀ g : Guttural, .A ∈ (gutturalET g).elements := by decide
 
-theorem isHead_A_iff_isPharyngeal : ∀ g : Guttural, (gutturalET g).IsHead .A ↔ g.IsPharyngeal := by
+theorem mem_heads_gutturalET_iff : ∀ g : Guttural, .A ∈ (gutturalET g).heads ↔ g.IsPharyngeal := by
   decide
 
 /-- `IsLowA v` says that the vowel's melody is |A| alone, as for the low vowels of (21). The mid
@@ -194,7 +194,7 @@ def Vowel.ofMR? (m : MR) : Option Vowel :=
 
 /-- The fused |A|, spanning nucleus and consonant, is headed ((21), (27)), so a fused vowel is
 realized with |A| as its head and [ʌ] lowers to [a]. -/
-def lowered (v : Vowel) : Vowel := (Vowel.ofMR? ((vowelET v).headCompose .A)).getD v
+def lowered (v : Vowel) : Vowel := (Vowel.ofMR? (vowelET v ⊔ .headedSimplex .A)).getD v
 
 theorem lowered_aBare : lowered .aBare = .a := by decide
 
@@ -216,12 +216,12 @@ def Cons.ofIPA (s : String) : Cons :=
 consonants carry no representation here, since ejectives also lower but never trigger syneresis (fn.
 8). -/
 def Cons.HasA : Cons → Prop
-  | .guttural g => (gutturalET g).HasElement .A
+  | .guttural g => .A ∈ (gutturalET g).elements
   | .plain _ => False
 
 instance : DecidablePred Cons.HasA := fun c ↦ by cases c <;> unfold Cons.HasA <;> infer_instance
 
-theorem hasA_guttural (g : Guttural) : (Cons.guttural g).HasA := gutturalET_hasElement_A g
+theorem hasA_guttural (g : Guttural) : (Cons.guttural g).HasA := mem_elements_gutturalET g
 
 /-- The transcription of a consonant. -/
 def Cons.chars : Cons → List Char

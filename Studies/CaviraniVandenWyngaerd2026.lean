@@ -6,51 +6,59 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Phonology.Segmental.ElementTheory
+public import Linglib.Morphology.Morphotactics.CVTemplate
+public import Linglib.Fragments.Slavic.Czech.Phonology
+public import Linglib.Data.Forms.CaviraniVandenWyngaerd2026
 
 /-!
-# Cavirani and Vanden Wyngaerd 2026: Czech palatalisation
+# Cavirani and Vanden Wyngaerd (2026): A representational analysis of Czech palatalisation
 
-This file formalizes the representational analysis of Czech palatalisation in
-[cavirani-vandenwyngaerd-2026]. Czech has three palatalisation patterns, and what separates them
-is not the front vowel of the triggering suffix — `-ý` and `-í` are both [iː] and only the second
-palatalises — but a floating element the suffix carries. The three triggers stand in a containment
-relation: PAL₁ adds |I|, PAL₂ adds |H| and |I|, PAL₃ adds |H| and a headed |I̲|, which is the
-substrate's `Segment.Refines` order.
+Czech suffixes palatalise the consonant before them in three patterns, small, medium and big,
+which the vowel of the suffix does not tell apart: *-ě*, *-ěj* and *-ěn* begin alike and
+palatalise differently. Cavirani and Vanden Wyngaerd give each suffix floating elements that dock
+onto the base-final consonant, |I| for the small pattern, |H| and |I| for the medium one, |H| and
+a headed |I| for the big one. What is built is pronounced by lookup in a phonetic lexicon, so
+several structures may share a phone. A labial and /l/ have |U| at the place node, which repels
+|I|. After a labial the |I| is then heard as a segment of its own, unless the vowel of the suffix
+floats, and after /l/ it is not heard.
 
-Floating elements dock onto a base node by node, and a substance-free `interpret` reads the result
-off. That map is not injective — palatalised /x/ and big-palatalised /s/ are different structures
-both pronounced [ʃ] — and it reads the |I| versus |I̲| contrast differently on velars, where
-headedness is invisible, than on /s/, where it separates [s] from [ʃ]. Labials and the lateral
-resist palatalisation for a representational reason rather than a stipulated one: their place node
-carries |U|, and docking |I| there would put two antagonistic colour elements in one node.
+The rows are the word pairs of the paper's tables, and the Czech fragment reads the alternating
+consonant off their spelling.
 
-## Scope
+## Main statements
 
-Representational output only: which elements end up in which node. The strict-CV skeleton and the
-government and licensing that drive the slot-by-slot derivations ([lowenstamm-1996],
-[scheer-2004]), the glide-versus-invisible-labial split, and the /m/ → [mɲ] nasal spreading are
-not modelled.
+* `derive_eq_sup`: on a velar or a coronal the palataliser docks whole, whatever the suffix.
+* `associate_of_mem`: a consonant with |U| at its place keeps its place and leaves |I| afloat.
+* `interpret_roots`: outside /ɦ/, the root nodes built for a row are pronounced as the phonemes
+  of its attested alternant.
+* `derive_comparative`, `derive_h`: a fricative builds one structure under small and medium
+  palatalisation, where /ɦ/ has two reflexes.
 
-## Main definitions
+## Implementation notes
 
-* `PAL₁`, `PAL₂`, `PAL₃`, `Suffix.palataliser` — the three floating palatalisers and the suffixes
-  carrying them
-* `palatalise`, `interpret` — docking a palataliser, and the substance-free phonetic reading
-* `PlaceColourClash` — two antagonistic colour elements in one place node
+* The skeleton is reduced to what the outcome depends on: the root node of the base-final
+  consonant, whether the vowel of the suffix floats, and what a sonorant spreads. Government,
+  licensing and the reduction of empty slots are not modelled.
+* The melodies are those of the paper's tables of plain and palatalised consonants. Its closing
+  summary table prints /s/ without |I| and /n/ without |A|.
+* Union is taken in the structure, so small and medium palatalisation of /x/ build one structure
+  where the paper counts two.
+* The palatal segment after a labial is a root node under a V slot, a vowel for the paper. The
+  fragment follows Short in writing it /j/.
 
-## Main results
+## TODO
 
-* `palataliser_chain_strict` — the three palatalisers are strictly ordered by containment
-* `velar_derivations`, `coronal_derivations` — the paper's derivation tables
-* `interpret_not_injective`, `headedness_invisible_on_velars`,
-  `headedness_visible_on_coronal_s` — what the substance-free reading loses, and where
-* `labial_output_invisible`, `lateral_resists`, `velar_no_clash` — resistance from the colour clash
+The paper derives a voiced obstruent as its voiceless counterpart with a headed |L| at the
+laryngeal node, and pairs /ɦ/ with /x/. Since /x/ has |H| at its manner node, /ɦ/ then has one
+structure under small and medium palatalisation, where the forms have [z] and [ʒ] (`derive_h`).
+The reflexes of /ɦ/ pattern as those of /k/ do, small against medium and big.
 
 ## References
 
 * [cavirani-vandenwyngaerd-2026]
 * [backley-2011]
-* [janku-2022]
+* [backley-2017]
+* [short-1993-czech]
 * [lowenstamm-1996]
 * [scheer-2004]
 -/
@@ -59,222 +67,335 @@ not modelled.
 
 namespace CaviraniVandenWyngaerd2026
 
-open ElementTheory
+open ElementTheory Data.Forms
+open Morphology (CVSlot)
 
-/-! ### Plain consonants (Tables 9, 11, 13; voiceless members only)
+/-! ### The plain consonants -/
 
-The dot convention is manner node `.` place node. /r/ has |A| in the *manner*
-node whereas /s/ has |A| in the *place* node — the contrast the geometry is for. -/
+/-- The stop /k/ is |ʔ|, with no place. -/
+def k : Segment := { manner := .simplex .glottal }
 
-/-- /k/ = |ʔ| — a placeless velar stop. -/
-def k : Segment := ⟨MR.simplex .glottal, .empty, .empty⟩
-/-- /x/ = |H| — a placeless velar fricative. -/
-def x : Segment := ⟨MR.simplex .H, .empty, .empty⟩
-/-- /t/ = |ʔ.A| — coronal stop (|ʔ| manner, |A| place). -/
-def t : Segment := ⟨MR.simplex .glottal, MR.simplex .A, .empty⟩
-/-- /s/ = |H.AI| — coronal fricative (|H| manner, |A I| place). -/
-def s : Segment := ⟨MR.simplex .H, MR.numeration {.A, .I}, .empty⟩
-/-- /n/ = |L.A| — coronal nasal (|L| manner, |A| place). -/
-def n : Segment := ⟨MR.simplex .L, MR.simplex .A, .empty⟩
-/-- /r/ = |A| — a rhotic, |A| in the *manner* node. -/
-def r : Segment := ⟨MR.simplex .A, .empty, .empty⟩
+/-- The fricative /x/ is |H|, with no place. -/
+def x : Segment := { manner := .simplex .H }
 
-/-- /p/ = |ʔ.U| — labial stop (|ʔ| manner, |U| place). -/
-def p : Segment := ⟨MR.simplex .glottal, MR.simplex .U, .empty⟩
-/-- /f/ = |H.U| — labial fricative. -/
-def f : Segment := ⟨MR.simplex .H, MR.simplex .U, .empty⟩
-/-- /m/ = |L.U| — labial nasal. -/
-def m : Segment := ⟨MR.simplex .L, MR.simplex .U, .empty⟩
-/-- /l/ = |A.U| — the lateral; its |U| place makes it pattern with the labials
-    [cavirani-vandenwyngaerd-2026]. -/
-def l : Segment := ⟨MR.simplex .A, MR.simplex .U, .empty⟩
+/-- The stop /t/ is |ʔ.A|. -/
+def t : Segment := { manner := .simplex .glottal, place := .simplex .A }
 
-/-! ### The three palatalisers (Table 8) and their suffixes -/
+/-- The fricative /s/ is |H.AI|. -/
+def s : Segment := { manner := .simplex .H, place := .simplex .A ⊔ .simplex .I }
 
-/-- **PAL₁** ("small"): a floating |I| in the place node. -/
-def PAL₁ : Segment := ⟨.empty, MR.simplex .I, .empty⟩
-/-- **PAL₂** ("medium"): floating |H| (manner) + |I| (place). -/
-def PAL₂ : Segment := ⟨MR.simplex .H, MR.simplex .I, .empty⟩
-/-- **PAL₃** ("big"): floating |H| (manner) + headed |I̲| (place). -/
-def PAL₃ : Segment := ⟨MR.simplex .H, MR.headedSimplex .I, .empty⟩
+/-- The nasal /n/ is |L.A|. -/
+def n : Segment := { manner := .simplex .L, place := .simplex .A }
 
-/-- The palatalising suffixes; look-alikes split by their floating element, not
-    their vowel (`-ý`/`-í` are both [iː] but only `-í` palatalises). -/
-inductive Suffix
-  /-- `-ě` LOC/DAT.F.SG, e.g. `louka` 'meadow' ~ `louce`. -/
-  | locDatFSg
-  /-- `-ěj` comparative, e.g. `divoký` 'wild' ~ `divočejší`. -/
-  | comparative
-  /-- `-i` causative, e.g. `trpký` 'bitter' ~ `ztrpčil`. -/
-  | causative
-  /-- `-ěn` passive participle, e.g. `nutit` 'force' ~ `nucen`. -/
-  | passPtcp
+/-- The rhotic /r/ is |A| at the manner node, where /s/ has |A| at the place node. -/
+def r : Segment := { manner := .simplex .A }
+
+/-- The stop /p/ is |ʔ.U|. -/
+def p : Segment := { manner := .simplex .glottal, place := .simplex .U }
+
+/-- The fricative /f/ is |H.U|. -/
+def f : Segment := { manner := .simplex .H, place := .simplex .U }
+
+/-- The nasal /m/ is |L.U|. -/
+def m : Segment := { manner := .simplex .L, place := .simplex .U }
+
+/-- The lateral /l/ is |A.U|, a liquid with the place of the labials. -/
+def l : Segment := { manner := .simplex .A, place := .simplex .U }
+
+/-- Voicing is a headed |L| at the laryngeal node. -/
+def voice : Segment := { laryngeal := .headedSimplex .L }
+
+/-- The consonants of the paper's tables by the symbols it prints, each with its phoneme in the
+fragment and with its melody if the paper analyses it. A voiced obstruent is its voiceless
+counterpart with voicing. The paper sets /g/ and /ʦ/ aside. -/
+def consonants : List (String × Phonology.Segment × Option Segment) :=
+  [("k", Czech.Phonology.k, some k), ("g", Czech.Phonology.g, none),
+   ("x", Czech.Phonology.ch, some x), ("ɦ", Czech.Phonology.h, some (x ⊔ voice)),
+   ("t", Czech.Phonology.t, some t), ("d", Czech.Phonology.d, some (t ⊔ voice)),
+   ("ʦ", Czech.Phonology.c, none), ("s", Czech.Phonology.s, some s),
+   ("z", Czech.Phonology.z, some (s ⊔ voice)), ("n", Czech.Phonology.n, some n),
+   ("r", Czech.Phonology.r, some r), ("l", Czech.Phonology.l, some l),
+   ("p", Czech.Phonology.p, some p), ("b", Czech.Phonology.b, some (p ⊔ voice)),
+   ("f", Czech.Phonology.f, some f), ("v", Czech.Phonology.v, some (f ⊔ voice)),
+   ("m", Czech.Phonology.m, some m)]
+
+/-- Each node of a melody holds only elements that it hosts. -/
+theorem wellFormed_consonants : ∀ a ∈ consonants, ∀ c ∈ a.2.2, c.WellFormed := by decide
+
+/-! ### The palatalisers and their suffixes -/
+
+/-- The small palataliser is a floating |I|. -/
+def PAL₁ : Segment := { place := .simplex .I }
+
+/-- The medium palataliser is a floating |H| and |I|. -/
+def PAL₂ : Segment := { manner := .simplex .H, place := .simplex .I }
+
+/-- The big palataliser is a floating |H| and a headed |I|. -/
+def PAL₃ : Segment := { manner := .simplex .H, place := .headedSimplex .I }
+
+theorem PAL₁_lt_PAL₂ : PAL₁ < PAL₂ := by decide
+
+theorem PAL₂_lt_PAL₃ : PAL₂ < PAL₃ := by decide
+
+theorem wellFormed_PAL : PAL₁.WellFormed ∧ PAL₂.WellFormed ∧ PAL₃.WellFormed := by decide
+
+/-- How the vowel of a suffix sits on the skeleton. -/
+inductive Link
+  /-- The vowel is linked to a V slot of the suffix, which begins with an empty C slot. -/
+  | linked
+  /-- The vowel is on a root node that floats. -/
+  | floating
   deriving DecidableEq, Repr
 
-/-- The palataliser each suffix carries (§4.2 / Table 8). -/
-def Suffix.palataliser : Suffix → Segment
-  | .locDatFSg   => PAL₁
-  | .comparative => PAL₂
-  | .causative   => PAL₂
-  | .passPtcp    => PAL₃
+/-- A palatalising suffix has a floating palataliser before its vowel. -/
+structure Suffix where
+  /-- The floating elements. -/
+  palataliser : Segment
+  /-- The melody of the vowel. -/
+  vowel : MR
+  /-- How the vowel sits on the skeleton. -/
+  link : Link
+  deriving DecidableEq
 
-/-! ### Palatalisation -/
+/-- The locative and dative singular feminine *-ě* has the small palataliser and a linked
+/ɛ/ (14). -/
+def locDat : Suffix := ⟨PAL₁, .simplex .A ⊔ .simplex .I, .linked⟩
 
-/-- Palatalisation: the floating palataliser `dock`s onto the base node-by-node
-    ([cavirani-vandenwyngaerd-2026] §4.3, convention (13)). -/
-def palatalise (base pal : Segment) : Segment := base.dock pal
+/-- The comparative *-ěj* has the medium palataliser and a linked /ɛ/ (15). -/
+def comparative : Suffix := ⟨PAL₂, .simplex .A ⊔ .simplex .I, .linked⟩
 
-/-! ### The palataliser containment chain -/
+/-- The causative *-i* has the medium palataliser and a floating /i/ (16). -/
+def causative : Suffix := ⟨PAL₂, .simplex .I, .floating⟩
 
-/-- **PAL₁ ⊏ PAL₂ ⊏ PAL₃** in the refinement order [cavirani-vandenwyngaerd-2026]:
-    PAL₁ ⊏ PAL₂ adds |H|; PAL₂ ⊏ PAL₃ heads |I|. -/
-theorem palataliser_chain : PAL₁ ≤ PAL₂ ∧ PAL₂ ≤ PAL₃ := by decide
+/-- The passive participle *-ěn* has the big palataliser and a floating /ɛ/ (17). -/
+def passPtcp : Suffix := ⟨PAL₃, .simplex .A ⊔ .simplex .I, .floating⟩
 
-/-- The three palatalisers are distinct. -/
-theorem palatalisers_distinct : PAL₁ ≠ PAL₂ ∧ PAL₂ ≠ PAL₃ ∧ PAL₁ ≠ PAL₃ := by decide
+/-! ### Docking -/
 
-/-- The chain is therefore strict: PAL₁ ⊏ PAL₂ ⊏ PAL₃. -/
-theorem palataliser_chain_strict : PAL₁ < PAL₂ ∧ PAL₂ < PAL₃ :=
-  ⟨lt_of_le_of_ne palataliser_chain.1 palatalisers_distinct.1,
-   lt_of_le_of_ne palataliser_chain.2 palatalisers_distinct.2.1⟩
+variable {b a : Segment} {σ : Suffix}
 
-/-! ### Phonetic interpretation and derivation tables (Tables 11, 13) -/
+/-- A stronger palataliser builds a larger structure on any base. -/
+theorem sup_PAL_mono (b : Segment) :
+    b ≤ b ⊔ PAL₁ ∧ b ⊔ PAL₁ ≤ b ⊔ PAL₂ ∧ b ⊔ PAL₂ ≤ b ⊔ PAL₃ :=
+  ⟨le_sup_left, sup_le_sup_left PAL₁_lt_PAL₂.le b, sup_le_sup_left PAL₂_lt_PAL₃.le b⟩
 
-/-- The voiceless Czech phones; ASCII for IPA: `tsh`=[t͡ʃ], `sh`=[ʃ], `nj`=[ɲ],
-    `rj`=[r̝]. -/
-inductive CzechPhone
-  | k | x | t | s | n | r          -- plain
-  | ts | tsh | c | sh | nj | rj    -- palatalised
-  deriving DecidableEq, Repr
+/-- /s/ contains the small and the medium palataliser, so neither changes it. -/
+theorem s_sup_PAL : s ⊔ PAL₁ = s ∧ s ⊔ PAL₂ = s :=
+  ⟨sup_eq_left.2 (by decide), sup_eq_left.2 (by decide)⟩
 
-/-- Substance-free phonetic interpretation (lexical access, [backley-2011]-style;
-    [cavirani-vandenwyngaerd-2026] §4.1); domain is the non-labial inventory. -/
-def interpret (seg : Segment) : CzechPhone :=
-  if seg.manner.HasElement .glottal then                         -- stop / affricate
-    if seg.place.HasElement .I then
-      if seg.place.HasElement .A then
-        if seg.place.IsHead .I then .ts else .c                  -- |…A I̲|→ts, |…A I|→c
-      else
-        if seg.manner.HasElement .H then .tsh else .ts           -- |ʔH.I|→tʃ, |ʔ.I|→ts
-    else
-      if seg.place.HasElement .A then .t else .k                 -- plain |ʔ.A|→t, |ʔ|→k
-  else if seg.manner.HasElement .L then                          -- nasal
-    if seg.place.HasElement .I then .nj else .n
-  else if seg.manner.HasElement .A then                          -- liquid (|A| in manner)
-    if seg.place.HasElement .I then .rj else .r
-  else if seg.manner.HasElement .H then                          -- fricative
-    if seg.place.HasElement .I then
-      if seg.place.HasElement .A ∧ ¬ seg.place.IsHead .I then .s else .sh  -- |H.AI|→s, else ʃ
-    else .x
-  else .x
-
-/-- The plain consonants interpret as themselves. -/
-theorem plain_interpretation :
-    interpret k = .k ∧ interpret x = .x ∧ interpret t = .t ∧
-    interpret s = .s ∧ interpret n = .n ∧ interpret r = .r := by decide
-
-/-- **Velar derivations** (Table 11): /k/ ts ~ tʃ ~ tʃ; /x/ neutralises to [ʃ]. -/
-theorem velar_derivations :
-    interpret (palatalise k PAL₁) = .ts ∧
-    interpret (palatalise k PAL₂) = .tsh ∧
-    interpret (palatalise k PAL₃) = .tsh ∧
-    interpret (palatalise x PAL₁) = .sh ∧
-    interpret (palatalise x PAL₂) = .sh ∧
-    interpret (palatalise x PAL₃) = .sh := by decide
-
-/-- **Coronal derivations** (Table 13): /t/ c ~ c ~ ts; /s/ s ~ s ~ ʃ; /n/, /r/
-    uniform [ɲ], [r̝]. -/
-theorem coronal_derivations :
-    interpret (palatalise t PAL₁) = .c ∧
-    interpret (palatalise t PAL₂) = .c ∧
-    interpret (palatalise t PAL₃) = .ts ∧
-    interpret (palatalise s PAL₁) = .s ∧
-    interpret (palatalise s PAL₂) = .s ∧
-    interpret (palatalise s PAL₃) = .sh ∧
-    interpret (palatalise n PAL₁) = .nj ∧
-    interpret (palatalise n PAL₂) = .nj ∧
-    interpret (palatalise n PAL₃) = .nj ∧
-    interpret (palatalise r PAL₁) = .rj ∧
-    interpret (palatalise r PAL₂) = .rj ∧
-    interpret (palatalise r PAL₃) = .rj := by decide
-
-/-! ### Small / medium / big (Table 4b) -/
-
-/-- Surface phone of a suffix's palataliser applied to a base. -/
-def applySuffix (base : Segment) (suf : Suffix) : CzechPhone :=
-  interpret (palatalise base suf.palataliser)
-
-/-- The suffixes' outcomes on the diagnostic velar /k/: `-ě` [ts]; `-ěj`/`-i`
-    [tʃ]; `-ěn` [tʃ] — look-alikes splitting by floating element, not vowel. -/
-theorem suffix_outcomes_on_k :
-    applySuffix k .locDatFSg = .ts ∧
-    applySuffix k .comparative = .tsh ∧
-    applySuffix k .causative = .tsh ∧
-    applySuffix k .passPtcp = .tsh := by decide
-
-/-- /k/ diagnoses **small vs medium**: PAL₁ [ts] ≠ PAL₂ [tʃ]. -/
-theorem k_small_vs_medium :
-    interpret (palatalise k PAL₁) ≠ interpret (palatalise k PAL₂) := by decide
-
-/-- /t/ diagnoses **medium vs big**: PAL₂ [c] ≠ PAL₃ [ts]. -/
-theorem t_medium_vs_big :
-    interpret (palatalise t PAL₂) ≠ interpret (palatalise t PAL₃) := by decide
-
-/-- The three patterns are genuinely three (separated by /k/ and /t/). -/
-theorem three_distinct_patterns :
-    (∃ base, interpret (palatalise base PAL₁) ≠ interpret (palatalise base PAL₂)) ∧
-    (∃ base, interpret (palatalise base PAL₂) ≠ interpret (palatalise base PAL₃)) :=
-  ⟨⟨k, k_small_vs_medium⟩, ⟨t, t_medium_vs_big⟩⟩
-
-/-! ### The substance-free payoff -/
-
-/-- **`interpret` is non-injective** (Table 12): palatalised /x/ (|H.I|) and
-    big-palatalised /s/ (|H.A I̲|) are different structures, both [ʃ]. -/
-theorem interpret_not_injective :
-    interpret (palatalise x PAL₁) = .sh ∧
-    interpret (palatalise s PAL₃) = .sh ∧
-    (palatalise x PAL₁).place.elements ≠ (palatalise s PAL₃).place.elements := by
+/-- Big-palatalised /d/ has two heads, |I| at its place node and |L| at its laryngeal node, one
+for each of two fundamentals. -/
+theorem heads_d_sup_PAL₃ :
+    (t ⊔ voice ⊔ PAL₃).place.heads ∪ (t ⊔ voice ⊔ PAL₃).laryngeal.heads = {.I, .L} ∧
+      Element.AntagonismFree {.I, .L} := by
   decide
 
-/-- Headedness of |I| is **invisible on velars**: PAL₂ and PAL₃ differ in the
-    place head but both surface as [tʃ]. -/
-theorem headedness_invisible_on_velars :
-    interpret (palatalise k PAL₂) = interpret (palatalise k PAL₃) ∧
-    (palatalise k PAL₂).place.head ≠ (palatalise k PAL₃).place.head := by decide
+/-! ### Association -/
 
-/-- …yet the same |I|-vs-|I̲| difference is **visible on /s/**: [s] vs [ʃ]. -/
-theorem headedness_visible_on_coronal_s :
-    interpret (palatalise s PAL₂) ≠ interpret (palatalise s PAL₃) := by decide
+/-- The association of floating elements with a root node (13). They join its nodes, except that
+floating place elements stay afloat where the place node would come to hold both |I| and |U|,
+which Czech has on one tier. The result is the root node and the elements left afloat. -/
+def associate (root floating : Segment) : Segment × Segment :=
+  if Element.AntagonismFree (root.place ⊔ floating.place).elements then (root ⊔ floating, ⊥)
+  else (root ⊔ { floating with place := ⊥ }, { place := floating.place })
 
-/-! ### Labial output-invisibility and lateral resistance (the |U|⊕|I| clash) -/
+/-- Floating elements associate whole with a root node whose place holds at most |A| and |I|, as
+that of a velar or a coronal does. -/
+theorem associate_eq_sup (hb : b.place.elements ⊆ {.A, .I}) (ha : a.place.elements ⊆ {.A, .I}) :
+    associate b a = (b ⊔ a, ⊥) :=
+  ite_eq_left <| .subset (t := {.A, .I}) (by decide) (Finset.union_subset hb ha)
 
-/-- A **colour clash**: |U| and |I| (antagonistic) both in the place node — which
-    Czech forbids ([cavirani-vandenwyngaerd-2026] §4.3.3, after [janku-2022]). -/
-def PlaceColourClash (seg : Segment) : Prop := ¬ seg.place.AntagonismFree
+/-- A root node with |U| at its place repels a floating |I|. The root node keeps its place and
+the floating place elements stay afloat, while the other floating elements associate. -/
+theorem associate_of_mem (hU : .U ∈ b.place.elements) (hI : .I ∈ a.place.elements) :
+    associate b a = (b ⊔ { a with place := ⊥ }, { place := a.place }) :=
+  ite_eq_right fun h ↦ Element.noConfusion <|
+    h (Finset.mem_coe.2 (Finset.mem_union_left _ hU))
+      (Finset.mem_coe.2 (Finset.mem_union_right _ hI)) rfl
 
-instance (seg : Segment) : Decidable (PlaceColourClash seg) := by
-  unfold PlaceColourClash; infer_instance
+/-- Elements away from the place node commute with association, so a voiced base is derived as
+its voiceless counterpart is, with voicing added. -/
+theorem associate_sup {c : Segment} (hc : c.place = ⊥) (b a : Segment) :
+    associate (b ⊔ c) a = ((associate b a).1 ⊔ c, (associate b a).2) := by
+  have hp : (b ⊔ c).place = b.place := by rw [Segment.sup_place, hc, sup_bot_eq]
+  simp only [associate, hp]
+  split_ifs <;> simp only [sup_right_comm]
 
-/-- **Labial output-invisibility**: docking |I| onto a labial (place |U|) would
-    forge the forbidden |U I| place — so labials never fully palatalise. -/
-theorem labial_output_invisible : PlaceColourClash (palatalise p PAL₁) := by decide
+/-- A base with |H| at its manner node associates with the medium palataliser as with the small
+one. -/
+theorem associate_PAL₂ (h : .H ∈ b.manner.elements) : associate b PAL₂ = associate b PAL₁ :=
+  have hm : b.manner ⊔ .simplex .H = b.manner ⊔ ⊥ := by simpa using h
+  congrArg₂ (fun c c' ↦ if Element.AntagonismFree (b.place ⊔ PAL₁.place).elements
+    then (c, (⊥ : Segment)) else (c', { place := PAL₁.place }))
+    (Segment.ext hm rfl rfl) (Segment.ext hm rfl rfl)
 
-/-- /f/ and /m/ clash too — all labials carry |U| in place. -/
-theorem all_labials_clash :
-    PlaceColourClash (palatalise f PAL₁) ∧ PlaceColourClash (palatalise m PAL₁) := by
+/-! ### Derivations -/
+
+/-- What a sonorant spreads to a following C slot, a nasal its manner node (29) and a liquid its
+root node (34). An obstruent spreads nothing. -/
+def spread (c : Segment) : Option Segment :=
+  if .L ∈ c.manner.elements then some { manner := c.manner }
+  else if .A ∈ c.manner.elements then some c
+  else none
+
+/-- The root nodes on which a base-final consonant and the palataliser of a suffix are pronounced,
+each with the slot of the skeleton it is linked to. The palataliser associates with the consonant. Elements left afloat join a
+floating vowel on the base-final V slot, and so have no root node of their own (31), (33). Before
+a linked vowel they take the base-final V slot (28), unless the consonant spreads to the C slot of
+the suffix and so bars the way, when they associate with that slot if it does not repel them (29)
+and otherwise stay afloat (34). -/
+def derive (b : Segment) (σ : Suffix) : List (CVSlot × Segment) :=
+  let c := associate b σ.palataliser
+  (.C, c.1) :: if c.2 = ⊥ ∨ σ.link = .floating then [] else
+    match spread c.1 with
+    | none => [(.V, c.2)]
+    | some c' => if (associate c' c.2).2 = ⊥ then [(.C, (associate c' c.2).1)] else []
+
+/-- On a velar or a coronal the palataliser docks whole, whatever the suffix. -/
+theorem derive_eq_sup (hb : b.place.elements ⊆ {.A, .I})
+    (hσ : σ.palataliser.place.elements ⊆ {.A, .I}) :
+    derive b σ = [(.C, b ⊔ σ.palataliser)] := by
+  simp [derive, associate_eq_sup hb hσ]
+
+/-- Before a floating vowel the palataliser has no root node of its own, whatever the base. -/
+theorem derive_of_floating (h : σ.link = .floating) :
+    derive b σ = [(.C, (associate b σ.palataliser).1)] := by
+  simp [derive, h]
+
+/-- A floating vowel has every element that its palataliser can leave afloat, so the two are one
+vowel when they meet on the base-final V slot. -/
+theorem palataliser_place_subset_vowel :
+    causative.palataliser.place.elements ⊆ causative.vowel.elements ∧
+      passPtcp.palataliser.place.elements ⊆ passPtcp.vowel.elements := by
   decide
 
-/-- **Lateral resistance**: /l/ carries |U| in place, so it clashes like the
-    labials — why /l/ never palatalises ([cavirani-vandenwyngaerd-2026] §4.3.4). -/
-theorem lateral_resists : PlaceColourClash (palatalise l PAL₁) := by decide
-
-/-- A velar (placeless) keeps an antagonism-free place node — so velars
-    palatalise freely. -/
-theorem velar_no_clash : (palatalise k PAL₁).place.AntagonismFree := by decide
-
-/-- The clash is colour-specific: coronals (place |A I|) stay antagonism-free. -/
-theorem coronal_no_clash :
-    (palatalise t PAL₁).place.AntagonismFree ∧ (palatalise s PAL₁).place.AntagonismFree := by
+/-- The labials and the lateral before the comparative, the causative and the locative. /p/ takes
+the |H| and leaves |I| to the base-final V slot, or to the floating vowel. /m/ spreads its manner
+node, where the |I| docks, and /l/ spreads its root node, which repels it. -/
+theorem derive_labial :
+    derive p comparative = [(.C, p ⊔ { manner := .simplex .H }), (.V, PAL₁)] ∧
+      derive p causative = [(.C, p ⊔ { manner := .simplex .H })] ∧
+      derive m comparative = [(.C, m ⊔ { manner := .simplex .H }),
+        (.C, { manner := .simplex .L ⊔ .simplex .H, place := .simplex .I })] ∧
+      derive l locDat = [(.C, l)] := by
   decide
+
+private theorem derive_congr {τ : Suffix}
+    (hp : associate b σ.palataliser = associate b τ.palataliser) (hl : σ.link = τ.link) :
+    derive b σ = derive b τ := by
+  unfold derive
+  rw [hp, hl]
+
+/-- A base with |H| at its manner node builds in the comparative what it builds in the locative,
+so a fricative cannot tell medium palatalisation from small. -/
+theorem derive_comparative (h : .H ∈ b.manner.elements) :
+    derive b comparative = derive b locDat :=
+  derive_congr (associate_PAL₂ h) rfl
+
+/-! ### The rows of the tables -/
+
+/-- The phonemes that the alternating consonant of a form writes, its second segment, read in the
+context of the whole form. -/
+def alternant (form : Form) : Option (List Phonology.Segment) :=
+  match form.segments.map fun w ↦ w.toList.map Char.toLower with
+  | stem :: c :: ending => do
+    let whole ← Czech.Phonology.ofChars (stem ++ c ++ ending.flatten)
+    let pre ← Czech.Phonology.ofChars stem
+    let post ← Czech.Phonology.ofChars ending.flatten
+    pure ((whole.drop pre.length).take (whole.length - pre.length - post.length))
+  | _ => none
+
+/-- A row of the tables pairs a base-final consonant and a suffix with the suffixed form. -/
+structure Row where
+  /-- The base-final consonant. -/
+  base : Phonology.Segment
+  /-- The melody of the base-final consonant, if the paper analyses it. -/
+  melody : Option Segment
+  /-- The suffix. -/
+  suffix : Suffix
+  /-- The suffixed form. -/
+  form : Form
+
+/-- The suffixes, by the names of the relations in the data. -/
+def suffixes : List (String × Suffix) :=
+  [("locDatFSg", locDat), ("comparative", comparative), ("causative", causative),
+   ("passPtcp", passPtcp)]
+
+/-- The row of a relation between a base form and a suffixed form. -/
+def Row.ofRelation (rel : FormRelation) (target : Form) : Option Row := do
+  let suffix ← suffixes.lookup rel.relation
+  let base ← target.columnAs? "Base" consonants
+  pure ⟨base.1, base.2, suffix, target⟩
+
+/-- Every pair of the tables is a row, save the two possessives that stand in for a participle. -/
+theorem isSome_ofRelation : ∀ a ∈ Forms.relations.zip Forms.relationForms,
+    a.1.relation ≠ "possessive" → (Row.ofRelation a.1 a.2.2).isSome := by
+  decide +kernel
+
+/-- The rows of the tables of small and big palatalisation, of the comparative and of the
+causative. -/
+def rows : List Row :=
+  (Forms.relations.zip Forms.relationForms).filterMap fun a ↦ Row.ofRelation a.1 a.2.2
+
+/-- The root nodes that the analysis builds for a row, if it gives the base a melody. -/
+def Row.roots (a : Row) : Option (List (CVSlot × Segment)) := a.melody.map (derive · a.suffix)
+
+/-- A noun or an adjective writes the base-final consonant itself. The base form of a participle
+is an infinitive, whose theme vowel palatalises. -/
+theorem alternant_base : ∀ a ∈ Forms.relations.zip Forms.relationForms,
+    a.1.relation ∈ ["locDatFSg", "comparative", "causative"] →
+      alternant a.2.1 = (a.2.2.columnAs? "Base" consonants).map ([·.1]) := by
+  decide +kernel
+
+/-- Small palatalisation of a velar is the second palatalisation of velars. -/
+theorem alternant_eq_secondPalatalization : ∀ a ∈ rows, a.suffix = locDat →
+    a.base ∈ Czech.Phonology.palatalizing →
+      alternant a.form = some [Czech.Phonology.secondPalatalization a.base] := by
+  decide +kernel
+
+/-! ### Lexical access -/
+
+/-- The phonetic lexicon that the rows induce, each root node that the analysis builds with the
+phoneme attested for it. A plain consonant is listed first, with its melody. -/
+def lexicon : List ((CVSlot × Segment) × Phonology.Segment) :=
+  consonants.filterMap (fun a ↦ a.2.2.map fun c ↦ ((.C, c), a.2.1)) ++
+    rows.flatMap fun a ↦ (a.roots.getD []).zip ((alternant a.form).getD [])
+
+/-- Lexical access pronounces a root node as the lexicon lists it. -/
+def interpret (c : CVSlot × Segment) : Option Phonology.Segment := lexicon.lookup c
+
+/-- Outside /ɦ/, the root nodes that the analysis builds for a row are pronounced as the phonemes
+of its alternant. Since the lexicon is read off the rows, this says that there is a root node for
+each phoneme, two where a palatal segment follows a labial before a linked vowel, and that root
+nodes built alike are pronounced alike. -/
+theorem interpret_roots : ∀ a ∈ rows, a.base ≠ Czech.Phonology.h →
+    ∀ c ∈ a.roots, c.mapM interpret = alternant a.form := by
+  decide +kernel
+
+/-- As the voiced counterpart of /x/, /ɦ/ builds one structure under small and medium
+palatalisation, while *knize* has [z] and *strožejší* has [ʒ]. -/
+theorem derive_h :
+    derive (x ⊔ voice) comparative = derive (x ⊔ voice) locDat ∧
+      alternant Forms.knize = some [Czech.Phonology.z] ∧
+      alternant Forms.strozejsi = some [Czech.Phonology.ž] :=
+  ⟨derive_comparative (by decide), by decide +kernel⟩
+
+/-- Three structures are pronounced [ʃ], palatalised /x/ with unheaded and with headed |I|, and
+big-palatalised /s/. -/
+theorem interpret_š :
+    [x ⊔ PAL₁, x ⊔ PAL₃, s ⊔ PAL₃].Nodup ∧
+      ∀ c ∈ [x ⊔ PAL₁, x ⊔ PAL₃, s ⊔ PAL₃], interpret (.C, c) = some Czech.Phonology.š := by
+  decide +kernel
+
+/-- The medium pattern goes with the big one on a velar and with the small one on a coronal:
+/k/ gives [ts], [tʃ], [tʃ] and /t/ gives [c], [c], [ts], though the three structures differ on
+each. -/
+theorem interpret_medium :
+    [k ⊔ PAL₁, k ⊔ PAL₂, k ⊔ PAL₃].Nodup ∧ [t ⊔ PAL₁, t ⊔ PAL₂, t ⊔ PAL₃].Nodup ∧
+      [k ⊔ PAL₁, k ⊔ PAL₂, k ⊔ PAL₃].map (fun c ↦ interpret (.C, c)) =
+        [some Czech.Phonology.c, some Czech.Phonology.č, some Czech.Phonology.č] ∧
+      [t ⊔ PAL₁, t ⊔ PAL₂, t ⊔ PAL₃].map (fun c ↦ interpret (.C, c)) =
+        [some Czech.Phonology.ť, some Czech.Phonology.ť, some Czech.Phonology.c] := by
+  decide +kernel
 
 end CaviraniVandenWyngaerd2026
