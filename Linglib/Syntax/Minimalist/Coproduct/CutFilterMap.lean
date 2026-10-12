@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Syntax.Minimalist.Workspace.TraceCut
+public import Linglib.Syntax.Minimalist.Coproduct.TraceCut
 public import Linglib.Core.Data.UnorderedTree.FilterMap
 
 @[expose] public section
@@ -25,7 +25,7 @@ maps total.
 
 This is the combinatorial content of the Δ^d = Δ^ρ comparison
 (Marcolli, Chomsky and Berwick's comparison displayed before (1.3.10)); the algebra
-layer (`DeletionCoproduct.lean`) transports it
+layer (`Deletion.lean`) transports it
 through a cut-summand tensor builder.
 
 ## Main results

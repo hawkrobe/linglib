@@ -3,7 +3,7 @@ module
 public import Linglib.Semantics.Plurality.NumberFeatures
 public import Linglib.Semantics.Reference.Prominence
 public import Linglib.Syntax.Agreement.Bundle
-public import Linglib.Syntax.Minimalist.FeatureSlot
+public import Linglib.Syntax.Minimalist.Feature.Slot
 public import Linglib.Syntax.Person.Features
 
 /-!

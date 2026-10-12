@@ -2,7 +2,7 @@ module
 
 public import Linglib.Morphology.DistributedMorphology.Categorizer.Basic
 public import Linglib.Morphology.DistributedMorphology.Locality
-public import Linglib.Syntax.Minimalist.Features
+public import Linglib.Syntax.Minimalist.Feature.Basic
 public import Linglib.Syntax.Minimalist.Probe.Basic
 
 /-!

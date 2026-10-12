@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Syntax.Minimalist.Features
+public import Linglib.Syntax.Minimalist.Feature.Basic
 public import Linglib.Morphology.DistributedMorphology.VocabularyInsertion.Basic
 
 /-!

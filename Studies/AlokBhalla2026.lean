@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Syntax.Minimalist.Features
+public import Linglib.Syntax.Minimalist.Feature.Basic
 public import Linglib.Fragments.Basque.Pronouns
 public import Linglib.Fragments.Magahi.Pronouns
 public import Linglib.Fragments.Tamil.Pronouns

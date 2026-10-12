@@ -3,9 +3,9 @@ module
 public import Linglib.Data.Examples.Collins2005
 public import Linglib.Syntax.Binding.Basic
 public import Linglib.Syntax.Minimalist.Agree.Basic
-public import Linglib.Syntax.Minimalist.Movement.Freezing
-public import Linglib.Syntax.Minimalist.Movement.Remnant
-public import Linglib.Syntax.Minimalist.Movement.Smuggling
+public import Linglib.Syntax.Minimalist.Derivation.Freezing
+public import Linglib.Syntax.Minimalist.Derivation.Remnant
+public import Linglib.Syntax.Minimalist.Derivation.Smuggling
 
 /-!
 # Collins 2005: a smuggling approach to the passive in English

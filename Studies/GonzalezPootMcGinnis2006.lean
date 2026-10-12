@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Morphology.DistributedMorphology.Fission
-public import Linglib.Syntax.Minimalist.Features
+public import Linglib.Syntax.Minimalist.Feature.Basic
 public import Linglib.Syntax.Person.Features
 public import Linglib.Data.Examples.GonzalezPootMcGinnis2006
 

@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Syntax.Minimalist.SyntacticObject.Derivation
+public import Linglib.Syntax.Minimalist.Derivation.Basic
 public import Linglib.Syntax.Minimalist.SyntacticObject.Term
 
 /-!
@@ -23,7 +23,7 @@ earlier mover left. Whether the evacuee's lower copy is pronounced inside the re
 doubling of predicate clefts, is a matter of chain pronunciation, phonological for
 [landau-2006] and syntactic for [koopman-1997] and [harizanov-gribanova-2017]; the carrier
 pronounces no trace and does not decide it. Remnant movement is the converse of smuggling
-(`Movement/Smuggling.lean`, [collins-2005]), in which the larger constituent moves with the
+(`Derivation/Smuggling.lean`, [collins-2005]), in which the larger constituent moves with the
 smaller one still inside it.
 
 ## Main definitions

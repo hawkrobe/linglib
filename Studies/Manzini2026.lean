@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Syntax.Minimalist.FormCopy
+public import Linglib.Syntax.Minimalist.SyntacticObject.FormCopy
 
 /-!
 # Manzini (2026): The FormCopy Theory of Control: Remarks on Landau

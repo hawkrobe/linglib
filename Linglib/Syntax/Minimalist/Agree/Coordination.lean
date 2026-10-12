@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Syntax.Minimalist.Features
+public import Linglib.Syntax.Minimalist.Feature.Basic
 
 /-!
 # Coordination resolution over a dual-feature system

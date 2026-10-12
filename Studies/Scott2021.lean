@@ -3,7 +3,7 @@ module
 public import Linglib.Syntax.Tree.Basic
 public import Linglib.Fragments.Swahili.Relativization
 public import Linglib.Morphology.DistributedMorphology.VocabularyInsertion.Basic
-public import Linglib.Syntax.Minimalist.Features
+public import Linglib.Syntax.Minimalist.Feature.Basic
 public import Linglib.Data.Examples.Scott2021
 
 /-!

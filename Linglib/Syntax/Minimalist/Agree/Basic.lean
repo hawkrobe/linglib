@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Syntax.Minimalist.Features
+public import Linglib.Syntax.Minimalist.Feature.Basic
 public import Linglib.Syntax.Minimalist.Probe.Basic
 public import Linglib.Syntax.Minimalist.SyntacticObject.Build
 public import Linglib.Syntax.Minimalist.SyntacticObject.Term

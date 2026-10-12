@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Data.Examples.Storment2026
-public import Linglib.Syntax.Minimalist.Features
+public import Linglib.Syntax.Minimalist.Feature.Basic
 
 /-!
 # Storment (2026): Quotative Inversion as Smuggling
