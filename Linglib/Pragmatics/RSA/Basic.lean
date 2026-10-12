@@ -4,7 +4,6 @@ public import Linglib.Core.Analysis.SpecialFunctions.Sigmoid
 public import Linglib.Core.MeasureTheory.Measure.AbsolutelyContinuous
 public import Linglib.Core.MeasureTheory.Measure.GeomMean
 public import Linglib.Core.MeasureTheory.Measure.Prod
-public import Linglib.Core.MeasureTheory.Measure.WithDensity
 public import Linglib.Core.Probability.GibbsVariational
 public import Linglib.Core.Probability.Kernel.OfDensity
 public import Linglib.Core.Probability.Kernel.OfWeights

@@ -1,6 +1,7 @@
 module
 
 public import Linglib.Core.MeasureTheory.Measure.WithDensity
+public import Linglib.Core.Probability.ConditionalProbability
 public import Linglib.Core.Probability.Kernel.OfWeights
 public import Linglib.Core.Probability.Kernel.Posterior
 
@@ -68,13 +69,8 @@ absorbs. -/
 theorem ofDensity_apply_eq_of_eq_mul (μ : Measure β) {f f' : α → β → ℝ≥0∞} {a : α} {c : ℝ≥0∞}
     (hc0 : c ≠ 0) (hc : c ≠ ∞) (h : ∀ b, f' a b = c * f a b) :
     ofDensity μ f' a = ofDensity μ f a := by
-  rw [ofDensity_apply, ofDensity_apply,
-    show μ.withDensity (f' a) = c • μ.withDensity (f a) by
-      rw [show f' a = fun b ↦ c * f a b from funext h]; exact withDensity_smul' c (f a) hc]
-  ext s hs
-  rw [cond_apply MeasurableSet.univ, cond_apply MeasurableSet.univ, Measure.smul_apply,
-    Measure.smul_apply, smul_eq_mul, smul_eq_mul, ENNReal.mul_inv (Or.inl hc0) (Or.inl hc),
-    mul_mul_mul_comm, ENNReal.inv_mul_cancel hc0 hc, one_mul]
+  rw [ofDensity_apply, ofDensity_apply, show f' a = c • f a from funext h,
+    withDensity_smul' c (f a) hc, cond_smul hc0 hc]
 
 /-- The kernel depends on the density only up to a positive finite scalar. -/
 theorem ofDensity_const_mul (μ : Measure β) (f : α → β → ℝ≥0∞) {c : ℝ≥0∞} (hc0 : c ≠ 0)
@@ -144,19 +140,15 @@ theorem isProbabilityMeasure_ofDensity (μ : Measure β) (f : α → β → ℝ�
   refine cond_isProbabilityMeasure_of_finite ?_ ?_ <;>
     rwa [withDensity_apply _ MeasurableSet.univ, Measure.restrict_univ]
 
-/-- Marginalizing a row over a product whose density depends on the first coordinate alone gives
-the row on the marginal base, since the density carries no information about the second
-coordinate. -/
-theorem ofDensity_map_fst {γ : Type*} [MeasurableSpace γ] (μ : Measure (β × γ))
-    (f : α → β → ℝ≥0∞) (hf : ∀ a, Measurable (f a)) (a : α) :
-    (ofDensity μ (fun a p ↦ f a p.1) a).map Prod.fst = ofDensity (μ.map Prod.fst) f a := by
-  have key : (μ.withDensity fun p ↦ f a p.1).map Prod.fst = (μ.map Prod.fst).withDensity (f a) :=
-    Measure.map_withDensity_comp (hf a) measurable_fst
-  have huniv : (μ.withDensity fun p ↦ f a p.1) Set.univ =
-      (μ.map Prod.fst).withDensity (f a) Set.univ := by
-    rw [← key, Measure.map_apply measurable_fst MeasurableSet.univ, Set.preimage_univ]
-  simp only [ofDensity_apply, ProbabilityTheory.cond, Measure.restrict_univ,
-    Measure.map_smul _ measurable_fst.aemeasurable, key, huniv]
+/-- Pushing a row forward along a map through which its density factors gives the row on the
+pushed-forward base. With a projection as the map, marginalizing a row whose density ignores a
+coordinate gives the row on the marginal base. -/
+theorem ofDensity_map {γ : Type*} [MeasurableSpace γ] (μ : Measure β) {f : α → γ → ℝ≥0∞}
+    {g : β → γ} {a : α} (hf : AEMeasurable (f a) (μ.map g)) (hg : AEMeasurable g μ) :
+    (ofDensity μ (fun a ↦ f a ∘ g) a).map g = ofDensity (μ.map g) f a := by
+  rw [ofDensity_apply, ofDensity_apply, ← Measure.map_withDensity_comp hf hg,
+    cond_map (hg.mono_ac (MeasureTheory.withDensity_absolutelyContinuous _ _)) .univ,
+    Set.preimage_univ]
 
 /-- On natural-number weights and densities the mass of an atom is its weighted density over the
 total. -/

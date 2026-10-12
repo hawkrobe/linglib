@@ -6,13 +6,13 @@ Authors: Robert Hawkins
 module
 
 public import Mathlib.MeasureTheory.Measure.WithDensity
-public import Mathlib.MeasureTheory.Integral.Lebesgue.Map
 
 /-!
 # Densities and pushforwards
 
-A density that factors through a map commutes with the pushforward along it.
-`[UPSTREAM]` candidate for `Mathlib/MeasureTheory/Measure/WithDensity.lean`.
+Reweighting a measure by a density that factors through a map and then pushing forward along the
+map is reweighting the pushforward by the factor. `[UPSTREAM]` candidate for
+`Mathlib/MeasureTheory/Measure/WithDensity.lean`.
 -/
 
 @[expose] public section
@@ -23,11 +23,14 @@ namespace MeasureTheory.Measure
 
 variable {α β : Type*} [MeasurableSpace α] [MeasurableSpace β] {μ : Measure α}
 
-theorem map_withDensity_comp {f : β → ℝ≥0∞} {g : α → β} (hf : Measurable f) (hg : Measurable g) :
-    (μ.withDensity (f ∘ g)).map g = (μ.map g).withDensity f :=
-  ext λ s hs => by
-    rw [map_apply hg hs, withDensity_apply _ (hg hs), withDensity_apply _ hs,
-      setLIntegral_map hs hf hg]
-    rfl
+/-- The pushforward along `g` of a measure with density `f ∘ g` is the pushforward with
+density `f`. -/
+theorem map_withDensity_comp {f : β → ℝ≥0∞} {g : α → β} (hf : AEMeasurable f (μ.map g))
+    (hg : AEMeasurable g μ) : (μ.withDensity (f ∘ g)).map g = (μ.map g).withDensity f :=
+  ext fun s hs ↦ by
+    rw [map_apply_of_aemeasurable (hg.mono_ac (withDensity_absolutelyContinuous _ _)) hs,
+      withDensity_apply₀ _ (hg.nullMeasurable hs), withDensity_apply _ hs,
+      restrict_map_of_aemeasurable hg hs]
+    exact (lintegral_map' (restrict_map_of_aemeasurable hg hs ▸ hf.restrict) hg.restrict).symm
 
 end MeasureTheory.Measure
