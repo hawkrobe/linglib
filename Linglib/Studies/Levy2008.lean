@@ -81,8 +81,8 @@ theorem klDiv_posterior_eq_surprisal (h : P (consistent str (ws ++ [w])) ≠ 0) 
   have hws : P (consistent str ws) ≠ 0 := fun h0 ↦
     h (measure_mono_null (consistent_anti str (List.prefix_append ws [w])) h0)
   have : IsProbabilityMeasure (posterior P str ws) := cond_isProbabilityMeasure hws
-  rw [← posterior_incremental, klDiv_cond_self _ .of_discrete, posterior_consistent_append,
-    surprisal, measureReal_def, nextWord_singleton_some]
+  rw [← posterior_incremental, klDiv_cond_self _ .of_discrete, surprisal, measureReal_def,
+    measureReal_def, posterior_consistent_append, nextWord_singleton_some]
   rw [posterior_consistent_append, nextProb_eq_div]
   exact ENNReal.div_ne_zero.mpr ⟨h, measure_ne_top _ _⟩
 

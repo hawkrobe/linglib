@@ -5,7 +5,6 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Core.InformationTheory.KullbackLeibler.Finite
 public import Linglib.Core.InformationTheory.Surprisal
 public import Linglib.Core.MeasureTheory.Measure.Prod
 public import Linglib.Core.MeasureTheory.Measure.Real
@@ -221,6 +220,21 @@ theorem measureEntropy_eq_zero_iff [Fintype S] (μ : Measure S) [IsProbabilityMe
   · rw [Measure.dirac_apply, Set.indicator_of_notMem (by simpa using ha.symm)]
     exact measure_mono_null (Set.singleton_subset_iff.2 (by simpa using ha))
       ((prob_compl_eq_zero_iff (.singleton x)).2 hμx)
+
+/-- On a finite type the divergence is the textbook relative entropy, the `μ`-expected log-ratio
+of the masses of the atoms. -/
+theorem toReal_klDiv_eq_sum_log_div [Fintype S] {ν : Measure S} [IsProbabilityMeasure μ]
+    [IsProbabilityMeasure ν] (hμν : μ ≪ ν) :
+    (klDiv μ ν).toReal = ∑ s, μ.real {s} * log (μ.real {s} / ν.real {s}) := by
+  have h : llr μ ν =ᵐ[μ] fun s ↦ log (μ.real {s} / ν.real {s}) := by
+    refine ae_iff_of_countable.2 fun s hs ↦ ?_
+    dsimp only
+    have hd := Measure.setLIntegral_rnDeriv hμν {s}
+    rw [lintegral_singleton] at hd
+    rw [llr, measureReal_def, measureReal_def, ← ENNReal.toReal_div, ← hd,
+      ENNReal.mul_div_cancel_right (fun h ↦ hs (hμν h)) (measure_ne_top _ _)]
+  rw [toReal_klDiv_of_measure_eq hμν (by simp), integral_congr_ae h, integral_fintype .of_finite]
+  simp
 
 /-- The divergence and the entropy add up to the cross-entropy, the expected surprisal under `μ`
 of the atoms as `ν` weighs them. -/

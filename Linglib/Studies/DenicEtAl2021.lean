@@ -267,16 +267,16 @@ section MeaningRoute
 
 open MeasureTheory ProbabilityTheory KadmonLandman1993
 
-variable {Ω ε : Type*} [MeasurableSpace Ω] [DiscreteMeasurableSpace Ω]
+variable {Ω ε : Type*} [MeasurableSpace Ω]
 
 /-- Since *any* widens the domain of the object, (30), seeing doves makes seeing any birds certain
 whenever it makes seeing birds certain, (34). So the bridge premise of the probabilistic downward
 inference (33) from *No aliens saw birds* (`ProbabilityTheory.cond_eq_zero_of_cond_eq_one`) gives
 that of the inference from *No aliens saw any birds*. -/
-theorem cond_eq_one_of_widen {μ : Measure Ω} [IsFiniteMeasure μ] {saw : ε → Set Ω}
+theorem cond_eq_one_of_widen {μ : Measure Ω} {saw : ε → Set Ω}
     {birds anyBirds : Set ε} {D : Set Ω} (h : birds ⊆ anyBirds)
     (hD : μ[existsInDomain birds saw | D] = 1) : μ[existsInDomain anyBirds saw | D] = 1 :=
-  le_antisymm (cond_apply_le_one μ .of_discrete _) (hD ▸ measure_mono (existsInDomain_mono saw h))
+  le_antisymm prob_le_one (hD ▸ measure_mono (existsInDomain_mono saw h))
 
 /-- A believer may take an individual to have seen a dove outside the plain domain of birds, so
 that seeing doves makes seeing any birds certain but not seeing birds, the room (34) leaves for
