@@ -36,7 +36,7 @@ positive, is ABA without any homophony.
   counterpart.
 * `positiveEmbedding`: the word extents of a superlative embedding the positive.
 * `latinBonusNS`: the Latin entries in nanosyntax form.
-* `Periphrastic`: a two-word grade form.
+* `Synthetic`, `Periphrastic`: a grade form of one word, and one of several.
 
 ## Main results
 
@@ -56,7 +56,7 @@ positive, is ABA without any homophony.
   the suppletive root ((106a)) and the Russian one does not ((106d)), whose
   pattern the Fragment records.
 * `periphrastic_of_aba`: on the Fragments every ABA has a periphrastic
-  superlative.
+  superlative that embeds the positive.
 * `latin_ns_eq_dm`: nanosyntax and DM realize Latin alike.
 
 ## Implementation notes
@@ -122,23 +122,27 @@ theorem csg1 {F : Type*} {p : Paradigm 3 F} (hc : IsContiguous p) (h : p 1 ≠ p
 theorem good_csg1 : good.comparison.suppletion 2 ≠ good.comparison.suppletion 0 :=
   csg1 (by decide) (by decide)
 
-/-- A form of two words, such as periphrastic *more X*. -/
-def Periphrastic (f : String) : Prop := ' ' ∈ f.toList
+/-- A grade form of one word is synthetic, as *taller* is. -/
+def Synthetic (f : List Morph) : Prop := (Morph.wordsAt .clitic f).length = 1
 
-instance (f : String) : Decidable (Periphrastic f) := inferInstanceAs (Decidable (_ ∈ _))
+/-- A grade form of several words is periphrastic, as *more careful* is. -/
+def Periphrastic (f : List Morph) : Prop := 1 < (Morph.wordsAt .clitic f).length
+
+instance (f : List Morph) : Decidable (Synthetic f) := inferInstanceAs (Decidable (_ = _))
+
+instance (f : List Morph) : Decidable (Periphrastic f) := inferInstanceAs (Decidable (_ < _))
 
 /-- On the English Fragment a synthetic superlative comes with a synthetic comparative. This is
 the SSG (3), which `Synthesis.syntheticAt_of_le` derives structurally. -/
 theorem english_ssg :
-    ∀ e ∈ allEntries, ∀ s ∈ e.comparison.formSuper,
-      ¬ Periphrastic s → ∃ c ∈ e.comparison.formComp, ¬ Periphrastic c := by
+    ∀ e ∈ allEntries, Synthetic e.comparison.superlative → Synthetic e.comparison.comparative := by
   decide
 
 /-- On the English Fragment a suppletive comparative is synthetic (*better*, *worse*, never
 *more bett*). This is the RSG (4). -/
 theorem english_rsg :
     ∀ e ∈ allEntries, e.comparison.suppletion 1 ≠ e.comparison.suppletion 0 →
-      ∃ c ∈ e.comparison.formComp, ¬ Periphrastic c := by
+      Synthetic e.comparison.comparative := by
   decide
 
 /-! ### The book's vocabularies (ch. 2, ch. 5)
@@ -318,12 +322,12 @@ theorem russian_bad_synthetic_abb : Setoid.ker (realize russianBad) = Setoid.ker
   decide
 
 /-- In the English, Latin and Russian Fragments every ABA root pattern has a periphrastic
-superlative, so every morphological superlative satisfies CSG1. -/
+superlative that embeds the positive, so every morphological superlative satisfies CSG1. -/
 theorem periphrastic_of_aba :
     ∀ e ∈ allEntries.map (·.toAdjective) ++ Latin.Adjectives.allEntries ++
         Russian.Adjectives.allEntries,
       Setoid.ker e.comparison.suppletion = Setoid.ker Paradigm.aba →
-        e.comparison.superlativeStrategy = .periphrastic := by
+        Periphrastic e.comparison.superlative ∧ .root e.form ∈ e.comparison.superlative := by
   simp only [List.mem_append, or_imp, forall_and, List.forall_mem_map]
   exact ⟨⟨by decide, by decide⟩, by decide⟩
 

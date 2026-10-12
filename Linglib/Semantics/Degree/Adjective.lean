@@ -157,9 +157,9 @@ structure AntonymPair where
   /-- The negative pole's surface form. -/
   negForm : String
   /-- The positive pole's comparison paradigm. -/
-  posComparison : Adjective.Comparison := .regular
+  posComparison : Adjective.Comparison := {}
   /-- The negative pole's comparison paradigm. -/
-  negComparison : Adjective.Comparison := .regular
+  negComparison : Adjective.Comparison := {}
   /-- The positive pole's lexically fixed standard, when it departs from the scale's default, is
       for instance the minimum for a partial adjective like *open* on a closed scale, or the
       extreme standard of *gigantic*. -/
