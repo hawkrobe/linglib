@@ -8,7 +8,7 @@ public import Linglib.Data.Examples.Wood2023
 /-!
 # Wood (2023): Icelandic Nominalizations and Allosemy
 
-This file formalizes [wood-2023]'s account of Icelandic deverbal nominalizations as complex
+This file formalizes Wood's account of Icelandic deverbal nominalizations as complex
 heads: a root categorized by v and then by n, with no verb phrase and no Voice, whose
 ambiguity between complex event, simple event, and referring readings is allosemy of v and n
 (`Derivation`). A complex event nominal has eventive v and zero n, so the noun inherits the
@@ -82,8 +82,8 @@ open Morphology (Morph)
 
 namespace Allomorphy
 
-/-- What a Vocabulary Item of v or n may mention: the category of its own head, or the
-exponent of a concatenated neighbor, a root or an affix. -/
+/-- A Vocabulary Item of v or n may mention the category of its own head, or the exponent of a
+concatenated neighbor, a root or an affix. -/
 inductive Feature
   | cat (c : Categorizer)
   | exp (m : Morph)
@@ -143,16 +143,16 @@ theorem fragment_realize :
   decide
 
 private theorem root_ne_zero : Morph.root r ≠ zero := by
-  simp [zero, Morph.root, Morph.suff, Morph.bound]
+  simp [zero, Morph.root, Morph.suff]
 
 private theorem subsetPrinciple_eq (c : Neighborhood (List Feature)) :
     subsetPrinciple vocab c = (winner? vocab c).map (·.exponent) := rfl
 
-/-- The context v presents: the root inside, the bare n outside. -/
+/-- In the context v presents, the root is inside and the bare n outside. -/
 def vContext : Neighborhood (List Feature) := ⟨[cat .v], [[exp (.root r)]], [[cat .n]]⟩
 
-/-- The context n presents after the exponent `e` of v: v when it is overt, and the root past
-a pruned zero v. -/
+/-- In the context n presents after the exponent `e` of v, the inner neighbor is v when it is
+overt, and the root past a pruned zero v. -/
 def nContext : Neighborhood (List Feature) :=
   if e = zero then ⟨[cat .n], [[exp (.root r)]], []⟩ else ⟨[cat .n], [[cat .v, exp e]], []⟩
 
@@ -188,14 +188,10 @@ theorem insertAt_word_one :
   rw [contextAt_word_one]
   cases h : winner? vocab (nContext r e) <;> simp [h, word, subsetPrinciple_eq, Morpheme.IsRealized]
 
-/-- v always receives an exponent: zero is its elsewhere item. -/
+/-- v always receives an exponent, since zero is its elsewhere item. -/
 theorem subsetPrinciple_vContext_isSome : (subsetPrinciple vocab (vContext r)).isSome := by
   rw [subsetPrinciple_eq, Option.isSome_map, winner?_isSome_iff]
-  intro h
-  have : ([Feature.cat .v] ⟷ zero) ∈ Morphology.Exponence.applicable vocab (vContext r) :=
-    Morphology.Exponence.mem_applicable.mpr ⟨by simp [vocab],
-      by simp [VocabularyItem.applies_iff, vContext]⟩
-  simp [h] at this
+  exact ⟨[Feature.cat .v] ⟷ zero, by simp [vocab], by simp [vContext]⟩
 
 /-- The exponent of v in the nominal of the root `r`. -/
 def verbalizer : Morph := (subsetPrinciple vocab (vContext r)).getD zero
@@ -214,12 +210,12 @@ theorem nominalizer_eq : nominalizer r = subsetPrinciple vocab (nContext r (verb
   change (insertAt (insertAt (word r none) 0) 1).heads[1]? >>= _ = _
   rw [insertAt_word_zero, he, insertAt_word_one, verbalizer, he, Option.getD_some]
 
-/-- An overt verbalizer hides the root: the nominalizer is chosen by the verbalizer alone. -/
+/-- An overt verbalizer hides the root, so the nominalizer is chosen by the verbalizer alone. -/
 theorem nominalizer_of_ne_zero (h : verbalizer r ≠ zero) :
     nominalizer r = subsetPrinciple vocab ⟨[cat .n], [[cat .v, exp (verbalizer r)]], []⟩ := by
   simp [nominalizer_eq, nContext, h]
 
-/-- A zero verbalizer is pruned: the nominalizer is chosen by the root. -/
+/-- A zero verbalizer is pruned, so the nominalizer is chosen by the root. -/
 theorem nominalizer_of_eq_zero (h : verbalizer r = zero) :
     nominalizer r = subsetPrinciple vocab ⟨[cat .n], [[exp (.root r)]], []⟩ := by
   simp [nominalizer_eq, nContext, h]
@@ -240,18 +236,17 @@ theorem nominalizer_eq_none (h : verbalizer r = zero) (hr : r ∉ listed) :
   rw [nominalizer_of_eq_zero r h, subsetPrinciple, Morphology.Exponence.realize_eq_none_iff]
   simp [listed] at hr
   simp [Morphology.Exponence.applicable, vocab, nAfter, VocabularyItem.applies_iff,
-    Neighborhood.subset_iff_positioned, Neighborhood.positioned, Morph.root, Morph.suff,
-    Morph.bound, zero]
+    Neighborhood.subset_iff_positioned, Neighborhood.positioned, Morph.root, Morph.suff, zero]
   simpa [eq_comm] using hr
 
-/-- *borða* 'eat' has no nominalization: *\*borð-un*. -/
+/-- *borða* 'eat' has no nominalization (*\*borð-un*). -/
 theorem borda : nominalizer "borð" = none := nominalizer_eq_none _ (by decide) (by decide)
 
 end Allomorphy
 
 /-! ### The complex head and its readings -/
 
-/-- A head of the complex head: a categorizer with its alloseme. -/
+/-- A head of the complex head is a categorizer with its alloseme. -/
 inductive Head where
   | v (a : Verbalizer.Alloseme)
   | n (a : Nominalizer.Alloseme)
@@ -276,16 +271,16 @@ def reading (d : Derivation) : Option NominalizationReading := readingFromAllose
 /-- The heads of the nominalization, innermost first. -/
 def heads (d : Derivation) : List Head := [.v d.v, .n d.n]
 
-/-- The complex event derivation: eventive v, zero n. -/
+/-- The complex event derivation has eventive v and zero n. -/
 def cen : Derivation := ⟨.eventive, .zero⟩
 
-/-- The simple event derivation: zero v, the simple event alloseme of n. -/
+/-- The simple event derivation has zero v and the simple event alloseme of n. -/
 def sen : Derivation := ⟨.zero, .simpleEvent⟩
 
-/-- The simple entity derivation: zero v, the entity alloseme of n. -/
+/-- The simple entity derivation has zero v and the entity alloseme of n. -/
 def simpleEntity : Derivation := ⟨.zero, .entity⟩
 
-/-- The result derivation: eventive v, the result alloseme of n. -/
+/-- The result derivation has eventive v and the result alloseme of n. -/
 def result : Derivation := ⟨.eventive, .result⟩
 
 theorem reading_cen : cen.reading = some .complexEvent := rfl
@@ -315,30 +310,30 @@ end Derivation
 
 /-! ### Spines -/
 
-/-- The verb: the root categorized by eventive v. -/
+/-- The verb is the root categorized by eventive v. -/
 def verb (r : Root) : Spine Head := ⟨r, [.v .eventive]⟩
 
-/-- The nominalization: the root categorized by v and then by n. -/
+/-- The nominalization is the root categorized by v and then by n. -/
 def nominal (r : Root) (d : Derivation) : Spine Head := ⟨r, d.heads⟩
 
-/-- A *-væða* verb: the root categorized by n, compounded with the v of *-væða*. -/
+/-- A *-væða* verb is the root categorized by n, compounded with the v of *-væða*. -/
 def vaedaVerb (r : Root) (a : Nominalizer.Alloseme) : Spine Head := ⟨r, [.n a, .v .eventive]⟩
 
-/-- A *-væðing* nominal: the *-væða* verb categorized by n. -/
+/-- A *-væðing* nominal is the *-væða* verb categorized by n. -/
 def vaedaNominal (r : Root) (a c : Nominalizer.Alloseme) : Spine Head :=
   ⟨r, (vaedaVerb r a).heads ++ [.n c]⟩
 
 /-! ### Borer's Generalization -/
 
-/-- The n of a nominalization is not in the root's domain: category change closes it. -/
+/-- The n of a nominalization is not in the root's domain, since category change closes it. -/
 theorem nominal_n_not_rootLocal (r : Root) (d : Derivation) :
     ¬ (nominal r d).RootLocal Head.Cyclic ⟨1, Nat.one_lt_two⟩ :=
   Spine.not_rootLocal_of_cyclic_of_cyclic (j := ⟨0, Nat.two_pos⟩)
     (Fin.mk_lt_mk.2 Nat.zero_lt_one) trivial trivial
 
-/-- Borer's Generalization: a complex event nominal contains the eventive v of the verb, and
-its n cannot condition suppletion of the root, so the nominal is built on a verb with the
-same root exponent and the same meaning. -/
+/-- By Borer's Generalization a complex event nominal contains the eventive v of the verb and its
+n cannot condition suppletion of the root, so the nominal is built on a verb with the same root
+exponent and the same meaning. -/
 theorem borers_generalization (r : Root) {d : Derivation}
     (h : d.reading = some .complexEvent) :
     d.v = .eventive ∧ ¬ (nominal r d).RootLocal Head.Cyclic ⟨1, Nat.one_lt_two⟩ :=
@@ -372,8 +367,7 @@ def IStar.vocabulary : List (VocabularyItem Feature IStar.Alloseme) :=
 def IStar.alloseme (fs : List Feature) : IStar.Alloseme :=
   (subsetPrinciple IStar.vocabulary (complement fs)).getD .possessor
 
-/-- The features an nP presents to i*: its category, and eventivity when it denotes an
-event. -/
+/-- An nP presents its category to i*, and eventivity when it denotes an event. -/
 def Derivation.features (d : Derivation) : List Feature :=
   if d.Eventive then [.cat .n, .eventive] else [.cat .n]
 
@@ -387,19 +381,19 @@ theorem iStar_agent_iff (d : Derivation) :
 
 /-! ### Phase locality of special meaning -/
 
-/-- Wood's phase locality: a dependency conditioning special meaning may cross at most one
+/-- Wood's phase locality lets a dependency conditioning special meaning cross at most one
 categorizer. -/
 def Local (between : List Head) : Prop := between.length ≤ 1
 
-/-- Where a preposition attaches to a complex head: adjoined to it, or heading its
-complement PP. -/
+/-- A preposition attaches to a complex head either adjoined to it or heading its complement
+PP. -/
 inductive Attachment where
   | adjunct
   | complement
   deriving DecidableEq, Repr
 
-/-- The heads between a preposition and the root: every head of the complex head when the
-preposition heads its complement, all but the outermost when it adjoins to the complex head,
+/-- The heads between a preposition and the root are every head of the complex head when the
+preposition heads its complement, and all but the outermost when it adjoins to the complex head,
 since a head does not c-command its own adjunct. -/
 def interveners (s : Spine Head) : Attachment → List Head
   | .complement => s.heads
@@ -414,13 +408,14 @@ theorem Local.adjunct_of_complement {s : Spine Head}
 theorem verb_local (r : Root) (a : Attachment) : Local (interveners (verb r) a) := by
   cases a <;> simp [Local, interveners, verb]
 
-/-- A preposition heading the complement of a nominal cannot condition its root: v and n
+/-- A preposition heading the complement of a nominal cannot condition its root, since v and n
 intervene. A preposition that conditions the root's meaning must therefore be prefixed. -/
 theorem nominal_complement_not_local (r : Root) (d : Derivation) :
     ¬ Local (interveners (nominal r d) .complement) := by
   simp [Local, interveners, nominal, Derivation.heads]
 
-/-- A preposition adjoined to the complex n head may condition the root: only v intervenes. -/
+/-- A preposition adjoined to the complex n head may condition the root, since only v
+intervenes. -/
 theorem nominal_adjunct_local (r : Root) (d : Derivation) :
     Local (interveners (nominal r d) .adjunct) := by
   simp [Local, interveners, nominal, Derivation.heads]
@@ -429,13 +424,13 @@ theorem nominal_adjunct_local (r : Root) (d : Derivation) :
 theorem nominal_n_local (r : Root) (d : Derivation) : Local ((nominal r d).heads.take 1) := by
   simp [Local, nominal, Derivation.heads]
 
-/-- The outer n of a *-væðing* nominal cannot condition the root: the inner n and v intervene,
-so the nominal has no idiosyncratic referring reading. -/
+/-- The outer n of a *-væðing* nominal cannot condition the root, since the inner n and v
+intervene, so the nominal has no idiosyncratic referring reading. -/
 theorem vaeda_n_not_local (r : Root) (a c : Nominalizer.Alloseme) :
     ¬ Local ((vaedaNominal r a c).heads.take 2) := by
   simp [Local, vaedaNominal, vaedaVerb]
 
-/-- A PP complement of a *-væða* verb cannot condition its root: its interpretation is
+/-- A PP complement of a *-væða* verb cannot condition its root, so its interpretation is
 compositional. -/
 theorem vaeda_complement_not_local (r : Root) (a : Nominalizer.Alloseme) :
     ¬ Local (interveners (vaedaVerb r a) .complement) := by
@@ -443,19 +438,19 @@ theorem vaeda_complement_not_local (r : Root) (a : Nominalizer.Alloseme) :
 
 /-! ### The prefixes *marg-* and *endur-* -/
 
-/-- The event-modifying prefixes: iterative *marg-* 'many' and *endur-* 're-'. -/
+/-- The event-modifying prefixes are iterative *marg-* 'many' and *endur-* 're-'. -/
 inductive Prefix where
   | marg
   | endur
   deriving DecidableEq, Repr
 
-/-- The heads a prefix adjoins to at the complex head: *marg-* to v, *endur-* to v or n. -/
+/-- At the complex head *marg-* adjoins to v, and *endur-* to v or n. -/
 def Prefix.AdjoinsTo : Prefix → Head → Prop
   | .marg, .v _ => True
   | .marg, .n _ => False
   | .endur, _ => True
 
-/-- Whether a head's alloseme carries an event variable: eventive v, and the simple event and
+/-- A head's alloseme carries an event variable for eventive v and for the simple event and
 result allosemes of n. -/
 def Head.HasEvent : Head → Prop
   | .v a => a = .eventive
@@ -487,8 +482,8 @@ instance (p : Prefix) (d : Derivation) : Decidable (Licensed p d) :=
 /-- The prefixes as the rows name them. -/
 def prefixTable : List (String × Prefix) := [("marg-", .marg), ("endur-", .endur)]
 
-/-- The readings as the rows name them: the referring reading of *þvottur* is the simple entity
-one, that of *endurprentun* the result. -/
+/-- The readings as the rows name them, where the referring reading of *þvottur* is the simple
+entity one and that of *endurprentun* the result. -/
 def readingTable : List (String × Derivation) :=
   [("CEN", .cen), ("SEN", .sen), ("RN", .simpleEntity), ("result RN", .result)]
 
@@ -498,8 +493,8 @@ def ofRow (ex : Datum) : Option (Prefix × Derivation) := do
   let d ← ex.parse? "reading" readingTable
   pure (p, d)
 
-/-- The book's judgments on *marg-* and *endur-*: a prefixed nominal is acceptable on a reading
-exactly when the prefix is licensed on that reading's derivation. -/
+/-- By the book's judgments on *marg-* and *endur-*, a prefixed nominal is acceptable on a
+reading exactly when the prefix is licensed on that reading's derivation. -/
 theorem rows_licensed :
     ∀ ex ∈ Examples.all, ∀ pd ∈ ofRow ex,
       (ex.judgment = .acceptable ↔ Licensed pd.1 pd.2) := by
@@ -513,8 +508,8 @@ def judgments (w : Deverbal) (reading : String) : List Judgment :=
     ex.feature? "nominal" = some (Morph.surface w.morphs) ∧
       ex.feature? "reading" = some reading).map (·.judgment)
 
-/-- The reading is not a function of the nominalizer: *aðdáun* and *viðvörun* share *-un*, and
-only *viðvörun* is a concrete entity. -/
+/-- The reading is not a function of the nominalizer, since *aðdáun* and *viðvörun* share *-un*
+and only *viðvörun* is a concrete entity. -/
 theorem reading_not_by_nominalizer :
     addaun.nominalizer = vidvorun.nominalizer ∧
       judgments addaun "RN" = [.ungrammatical] ∧ judgments vidvorun "RN" = [.acceptable] := by

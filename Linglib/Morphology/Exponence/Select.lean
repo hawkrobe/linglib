@@ -113,6 +113,11 @@ theorem le_of_selectBy_eq_some (h : selectBy f v c = some r) (hs : s ∈ v) (hsc
     f s ≤ f r :=
   List.le_of_mem_argmax (mem_applicable.mpr ⟨hs, hsc⟩) h
 
+/-- On a vocabulary sorted by decreasing score, the selected rule is the first applicable one. -/
+theorem selectBy_eq_head? (h : v.Pairwise fun r s ↦ f s ≤ f r) :
+    selectBy f v c = (applicable v c).head? :=
+  List.argmax_eq_head? (h.filter _)
+
 /-- An applicable rule scoring at least as high as every applicable rule is realized, provided
 the applicable rules with its score share its exponent. -/
 theorem realize_eq_of_forall_le (hr : r ∈ v) (hrc : Applies r c)

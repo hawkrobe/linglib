@@ -35,8 +35,9 @@ subject and object, and an item draws on one of them.
   items' sites and the residue sum to the node.
 * `bind_insertions_le`, `pairwise_disjoint_insertions`: the inserted items' sites fit inside the
   node, and on a node without repetitions they are disjoint.
-* `head?_scansion_singleton`: on a Vocabulary ordered by specificity, the first insertion at a
-  single matrix is the Subset Principle's winner.
+* `head?_insertions_singleton`, `head?_scansion_singleton`: at a single matrix the first insertion
+  is the first applicable item, so on a Vocabulary ordered by specificity it is the Subset
+  Principle's winner.
 
 ## References
 
@@ -195,33 +196,26 @@ theorem discharge_singleton (i : VocabularyItem F E) (m : List F) :
         then some [m.diff i.site.focus.dedup] else none := by
   simp [discharge]
 
-/-- On a Vocabulary ordered by decreasing specificity, the first insertion at
-a single matrix is the Subset Principle's winner: scansion agrees with
-Elsewhere competition where both apply. -/
+/-- At a single matrix, the first item inserted is the first item that applies there. -/
+theorem head?_insertions_singleton (m : List F) : ∀ items : List (VocabularyItem F E),
+    (insertions items env [m]).head? =
+      (applicable items ({ env with focus := m } : Neighborhood (List F))).head?
+  | [] => rfl
+  | i :: rest => by
+    by_cases h : i.site ⊆ ({ env with focus := m } : Neighborhood (List F))
+    · rw [insertions, scan_cons_of_discharge_eq_some (by rw [discharge_singleton, ite_eq_left h])]
+      simp [applicable, show Applies i _ from h]
+    · rw [insertions, scan_cons_of_discharge_eq_none (by rw [discharge_singleton, ite_eq_right h])]
+      simpa [insertions, applicable, show ¬ Applies i _ from h] using
+        head?_insertions_singleton m rest
+
+/-- On a Vocabulary ordered by decreasing specificity, the first insertion at a single matrix is
+the Subset Principle's winner, so scansion agrees with Elsewhere competition where both
+apply. -/
 theorem head?_scansion_singleton (m : List F)
     (hsorted : items.Pairwise fun i j => j.specificity ≤ i.specificity) :
     (scansion items env [m]).head? =
       (winner? items ({ env with focus := m } : Neighborhood (List F))).map (·.exponent) := by
-  induction items with
-  | nil => simp [scansion, insertions, winner?, selectBy, applicable]
-  | cons i rest ih =>
-    rw [List.pairwise_cons] at hsorted
-    simp only [scansion, insertions, scan, discharge_singleton]
-    by_cases h : i.site ⊆ ({ env with focus := m } : Neighborhood (List F))
-    · rw [ite_eq_left h]
-      simp only [winner?, selectBy, applicable, List.filter_cons,
-        decide_eq_true (show Applies i _ from h), ite_true]
-      rw [List.argmax_cons]
-      rcases hc : List.argmax VocabularyItem.specificity
-        (rest.filter fun r =>
-          decide (Applies r ({ env with focus := m } : Neighborhood (List F)))) with _ | c
-      · rfl
-      · have hle : c.specificity ≤ i.specificity :=
-          hsorted.1 c (List.mem_of_mem_filter (List.argmax_mem hc))
-        simp [not_lt.mpr hle]
-    · rw [ite_eq_right h]
-      have := ih hsorted.2
-      simpa [scansion, insertions, winner?, selectBy, applicable, List.filter_cons,
-        decide_eq_false (show ¬ Applies i _ from h)] using this
+  rw [scansion, List.head?_map, head?_insertions_singleton, winner?, selectBy_eq_head? hsorted]
 
 end DistributedMorphology
