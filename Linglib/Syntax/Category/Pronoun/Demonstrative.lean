@@ -18,7 +18,7 @@ on the strong article that encode no deixis, so they are `PersonalPronoun`s here
 (`Studies/PatelGroszGrosz2017.lean`), whereas Harbour treats stressed *der* as a demonstrative
 without a deictic contrast.
 
-## Main declarations
+## Main definitions
 
 * `DemonstrativePronoun`: a pronoun with its deictic content.
 * `DemonstrativePronoun.toWord`: its token, of UD pronoun type `Dem`.
@@ -38,8 +38,6 @@ structure DemonstrativePronoun extends Pronoun where
   /-- The participant sets of the referents in whose vicinity the form locates its referent. -/
   deixis : Finset (Finset Discourse.Role)
   deriving DecidableEq
-
-instance : HasPhi DemonstrativePronoun := ⟨fun d ↦ d.toPronoun.phi⟩
 
 /-- A demonstrative's token is of UD pronoun type `Dem`. -/
 def DemonstrativePronoun.toWord (d : DemonstrativePronoun) : Morphology.Word :=

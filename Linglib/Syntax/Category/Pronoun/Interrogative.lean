@@ -8,23 +8,22 @@ public import Linglib.Syntax.Category.Pronoun.Basic
 
 An interrogative pronoun is a pronoun with the ontological category it asks about: a person for
 *who*, a thing for *what*, a place for *where*. The categories are those of the indefinite
-series, which many languages build on their interrogatives ([haspelmath-1997]), and they take
-in the pro-forms for place, time and manner, which surface as adverbs.
+series, which many languages build on their interrogatives, and they take in the pro-forms for
+place, time and manner, which surface as adverbs.
 
-## Main declarations
+## Main definitions
 
-* `InterrogativePronoun` — a pronoun with its ontological category
-* `InterrogativePronoun.toWord`, `InterrogativePronoun.isWh_toWord` — its word, wh-marked
+* `InterrogativePronoun`: a pronoun with its ontological category.
+* `InterrogativePronoun.toWord`: its token, wh-marked (`InterrogativePronoun.isWh_toWord`).
 
 ## References
 
-* [M. Haspelmath, *Indefinite Pronouns* (1997)][haspelmath-1997]
+* [haspelmath-1997]
 -/
 
 @[expose] public section
 
-/-- An interrogative pronoun: the general `Pronoun` with the ontological category it asks
-about. -/
+/-- An interrogative pronoun is a `Pronoun` with the ontological category it asks about. -/
 structure InterrogativePronoun extends Pronoun where
   /-- The ontological category the form asks about. -/
   ontology : Indefinite.OntologicalCategory
@@ -34,9 +33,7 @@ namespace InterrogativePronoun
 
 variable (p : InterrogativePronoun)
 
-instance : HasPhi InterrogativePronoun := ⟨fun p ↦ p.toPronoun.phi⟩
-
-/-- The form is a pro-adverb: it asks about a place, a time or a manner. -/
+/-- The form is a pro-adverb, asking about a place, a time or a manner. -/
 def IsAdverbial : Prop := p.ontology = .place ∨ p.ontology = .time ∨ p.ontology = .manner
 
 instance : Decidable p.IsAdverbial := inferInstanceAs (Decidable (_ ∨ _ ∨ _))

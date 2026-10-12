@@ -1,53 +1,50 @@
 module
 
 public import Mathlib.Order.Nat
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # Logophoric roles
 
-[sells-1987] replaces a single notion of logophoricity with three discourse roles: the source,
-who makes the report; the self, whose mind is reported; and the pivot, from whose point of view
-the report is made. His discourse environments predicate the roles of a sentence-internal
-referent cumulatively: a third-person point of view makes only the pivot internal, a
-psychological verb the self and the pivot, and a logophoric verb all three. So an internal source
-is a self and a self is a pivot, and the roles form a chain `pivot ≤ self ≤ source`.
-
-A logophoric form is licensed by an antecedent that reaches the role the form requires. Japanese
-*zibun* needs a pivot and Icelandic *sig* a self ([sells-1987]); Ewe *yè* needs the bearer of an
-attitude, a self ([pearson-2015]), where [sells-1987] suggests source-orientation for logophoric
-pronouns. [pancheva-zubizarreta-2018] map their prominence values onto the same roles.
+Sells replaces a single notion of logophoricity with three discourse roles, each defined with
+respect to a proposition: the source, the intentional agent of the communication; the self, whose
+mental state or attitude the proposition describes; and the pivot, with respect to whose location
+the proposition is evaluated. A report predicates each role of the external speaker or of a
+referent inside the sentence, and the roles form a hierarchy: where the source is internal so is
+the self, and where the self is internal so is the pivot. The order here is that hierarchy, the
+pivot least.
 
 ## Main definitions
 
-* `Reference.LogophoricRole` — the three roles, a bounded linear order
-* `Reference.Logophoric` — a carrier whose every element requires a role of its antecedent
-* `Reference.Logophoric.LicensedBy` — the antecedent's role reaches the required one
+* `Reference.LogophoricRole`: the three roles, a bounded linear order.
+
+## Implementation notes
+
+* The discourse environments the hierarchy sorts, and the forms oriented to each role, are in
+  `Studies/Sells1987.lean`.
 
 ## References
 
-* [P. Sells, *Aspects of Logophoricity* (1987)][sells-1987]
-* [H. Pearson, *The interpretation of the logophoric pronoun in Ewe* (2015)][pearson-2015]
-* [R. Pancheva and M. L. Zubizarreta, *The Person Case Constraint: The Syntactic Encoding of
-  Perspective* (2018)][pancheva-zubizarreta-2018]
+* [sells-1987]
 -/
 
 @[expose] public section
 
 namespace Reference
 
-/-- The discourse roles of [sells-1987], ordered by entailment with the pivot least. -/
+/-- The discourse roles of [sells-1987], ordered by his hierarchy with the pivot least. -/
 inductive LogophoricRole where
-  /-- The one from whose point of view the report is made. -/
+  /-- The one with respect to whose location the content of the report is evaluated. -/
   | pivot
-  /-- The one whose mind is reported. -/
+  /-- The one whose mental state or attitude the content of the report describes. -/
   | self
-  /-- The one who makes the report. -/
+  /-- The intentional agent of the communication. -/
   | source
-  deriving DecidableEq, Repr
+  deriving DecidableEq, Fintype, Repr
 
 namespace LogophoricRole
 
-/-- The rank of a role in the entailment order. -/
+/-- The rank of a role in the hierarchy. -/
 def toNat : LogophoricRole → ℕ
   | .pivot => 0
   | .self => 1
@@ -65,30 +62,5 @@ instance : BoundedOrder LogophoricRole where
   le_top r := by cases r <;> decide
 
 end LogophoricRole
-
-/-- A carrier whose every element is logophoric: `requiredRole` is the least role an antecedent
-must fill to license the form. The capability is neutral as to word class, so a logophoric
-pronoun and verbal logophoric marking are sibling carriers. -/
-class Logophoric (α : Type*) where
-  /-- The least role an antecedent must fill to license the form. -/
-  requiredRole : α → LogophoricRole
-
-namespace Logophoric
-
-variable {α : Type*} [Logophoric α] {a : α} {r r' : LogophoricRole}
-
-/-- The form is licensed by an antecedent filling the role `r`: `r` reaches the role the form
-requires. -/
-def LicensedBy (a : α) (r : LogophoricRole) : Prop := requiredRole a ≤ r
-
-instance : Decidable (LicensedBy a r) := inferInstanceAs (Decidable (_ ≤ _))
-
-/-- Every logophoric form is licensed by a source. -/
-theorem source_licenses (a : α) : LicensedBy a .source := le_top (a := requiredRole a)
-
-/-- Licensing is monotone in the antecedent's role. -/
-theorem LicensedBy.mono (h : LicensedBy a r) (hr : r ≤ r') : LicensedBy a r' := h.trans hr
-
-end Logophoric
 
 end Reference

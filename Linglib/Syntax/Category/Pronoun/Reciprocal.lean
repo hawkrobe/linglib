@@ -13,23 +13,26 @@ derives its `Reciprocal.Marker` with `toMarker`; Hungarian *egymás*, Japanese *
 *ɔ̄ŋ̄* are such objects. Verbal and clitic reciprocal strategies are not pronouns and stay bare
 markers.
 
-## Main declarations
+## Main definitions
 
-* `ReciprocalPronoun` — a pronoun with its reciprocal strategy and readings
-* `ReciprocalPronoun.toMarker` — its entry in a marker inventory
-* `ReciprocalPronoun.bindingClassOf_toWord` — its token classifies as a reciprocal anaphor
+* `ReciprocalPronoun`: a pronoun with its reciprocal strategy and readings.
+* `ReciprocalPronoun.toMarker`: its entry in a marker inventory.
+
+## Main statements
+
+* `ReciprocalPronoun.bindingClassOf_toWord`: its token classifies as a reciprocal anaphor.
 
 ## References
 
-* [R. Nordlinger, *The Typology of Reciprocal Constructions* (2023)][nordlinger-2023]
+* [nordlinger-2023]
 -/
 
 @[expose] public section
 
-/-- A reciprocal pronoun: the general `Pronoun` as the nominal exponent of reciprocity, with the
+/-- A reciprocal pronoun is a `Pronoun` that is the nominal exponent of reciprocity, with the
 strategy it realizes and the readings it covers. -/
 structure ReciprocalPronoun extends Pronoun where
-  /-- The nominal strategy: a dedicated pronoun (*egymás*, *otagai*) or a two-part quantifier
+  /-- The nominal strategy, a dedicated pronoun (*egymás*, *otagai*) or a two-part quantifier
   noun phrase (*each other*). -/
   strategy : Reciprocal.Strategy := .recipPronoun
   /-- The readings the form covers. -/
@@ -39,8 +42,6 @@ structure ReciprocalPronoun extends Pronoun where
 /-- The marker entry of a reciprocal pronoun. -/
 def ReciprocalPronoun.toMarker (p : ReciprocalPronoun) : Reciprocal.Marker :=
   { morphs := [.free p.form], script := p.script, strategy := p.strategy, readings := p.readings }
-
-instance : HasPhi ReciprocalPronoun := ⟨fun p ↦ p.toPronoun.phi⟩
 
 /-- A reciprocal's word is of UD pronoun type `Rcp`. -/
 def ReciprocalPronoun.toWord (p : ReciprocalPronoun) : Morphology.Word :=
