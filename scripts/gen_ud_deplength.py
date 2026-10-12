@@ -7,7 +7,7 @@ lengths, measured over Universal Dependencies treebanks — are canonical JSON
 at `Linglib/Data/UD/DependencyLength/<Paper>.json`; this emits the
 kernel-reducible typed Lean module
 `Linglib/Data/UD/DependencyLength/<Paper>.lean` (`<Paper>.rows`). Mirrors
-`gen_protoroles.py`: the generated Lean is never hand-edited — edit the JSON
+`gen_examples.py`: the generated Lean is never hand-edited — edit the JSON
 and re-run.
 
     python3 scripts/gen_ud_deplength.py FutrellEtAl2020       # (re)generate
