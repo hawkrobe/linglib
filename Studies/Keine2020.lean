@@ -50,11 +50,11 @@ def row (sizes : List ClauseSpine) (p : Probe.Profile) : List Bool :=
   sizes.map fun s ↦ decide (p.TransparentTo s.label)
 
 /-- The Hindi nominalized clause `[V, v, T, Nmlz]`, a clause type distinct from CP (Chapter 2). -/
-def nmlzP : ClauseSpine := ⟨[.V, .v, .T, .Nmlz], by simp⟩
+def nmlzP : ClauseSpine := ⟨[.V, .v, .T, .Nmlz]⟩
 
 /-- The German verb-second clause `[V, v, T, C, Force]`, projecting ForceP above CP
 (Chapter 4). -/
-def forceP : ClauseSpine := ⟨[.V, .v, .T, .C, .Force], by simp⟩
+def forceP : ClauseSpine := ⟨[.V, .v, .T, .C, .Force]⟩
 
 /-! ### Upward Entailment -/
 
@@ -185,9 +185,9 @@ def tsezPhi (head : Cat) : Probe.Profile := ⟨head, some .Force⟩
 def tsezMove (head : Cat) : Probe.Profile := ⟨head, some .Top⟩
 
 /-- The Tsez clause sizes above TP are TopP and ForceP, which requires TopP below it. -/
-def tsezTopP : ClauseSpine := ⟨[.V, .v, .T, .Top], by simp⟩
+def tsezTopP : ClauseSpine := ⟨[.V, .v, .T, .Top]⟩
 
-def tsezForceP : ClauseSpine := ⟨[.V, .v, .T, .Top, .Force], by simp⟩
+def tsezForceP : ClauseSpine := ⟨[.V, .v, .T, .Top, .Force]⟩
 
 /-- (269), (271): movement and agreement mismatch in both directions. An Itelmen TP clause is
 transparent to movement but opaque to agreement; a Tsez TopP clause is transparent to agreement

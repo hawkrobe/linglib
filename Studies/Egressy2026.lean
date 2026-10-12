@@ -3,6 +3,7 @@ module
 public import Linglib.Data.Examples.Egressy2026
 public import Linglib.Fragments.Hungarian.Verbs
 public import Linglib.Semantics.Tense.Embedding
+public import Linglib.Syntax.Minimalist.Clause.Size
 public import Linglib.Syntax.Minimalist.Probe.Profile
 
 /-!

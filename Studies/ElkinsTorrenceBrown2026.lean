@@ -93,16 +93,16 @@ def spine (s : ClauseSpine) (n : ℕ) : Spine :=
     if c = .Voice then .cat .Voice :: List.replicate n .dir else [.cat c]
 
 /-- The Mam finite clause of (8), a CP over the aspect layer, Voice, v and V. -/
-def finiteClause : ClauseSpine := ⟨[.V, .v, .Voice, .Asp, .C], by simp⟩
+def finiteClause : ClauseSpine := ⟨[.V, .v, .Voice, .Asp, .C]⟩
 
 /-- The aspectless clause, a VoiceP-sized reduced clause without the aspect layer or C (§3.3). -/
-def aspectlessClause : ClauseSpine := ⟨[.V, .v, .Voice], by simp⟩
+def aspectlessClause : ClauseSpine := ⟨[.V, .v, .Voice]⟩
 
 /-- The nonfinite clause, a VP-sized complement (§3.4). -/
-def nonfiniteClause : ClauseSpine := ⟨[.V], by simp⟩
+def nonfiniteClause : ClauseSpine := ⟨[.V]⟩
 
 /-- The reduced K'ichean complement of [mendes-ranero-2021], an AspP without a CP layer (§5.1). -/
-def aspP : ClauseSpine := ⟨[.V, .v, .Voice, .Asp], by simp⟩
+def aspP : ClauseSpine := ⟨[.V, .v, .Voice, .Asp]⟩
 
 /-- C⁰, Voice⁰ and Dir⁰ bear [Ā], (41) and (44). -/
 def BearsA (h : Head) : Prop := h = .cat .C ∨ h = .cat .Voice ∨ h = .dir

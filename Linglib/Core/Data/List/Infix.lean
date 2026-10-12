@@ -8,7 +8,7 @@ module
 public import Mathlib.Data.List.Infix
 
 /-!
-# Infixes of a three-part concatenation, and longest common prefixes
+# Infixes of a three-part concatenation, and prefixes
 
 An infix of `u ++ m ++ v` lies within `u ++ m`, lies within `m ++ v`, or contains `m`. So an infix
 no longer than `m` cannot contain both an element that occurs only in `u` and an element that
@@ -29,6 +29,8 @@ both, the meet of the prefix order.
 * `List.IsInfix.notMem_or_notMem_of_length_le`: an infix of `u ++ m ++ v` no longer than `m` misses
   every element occurring only in `u` or every element occurring only in `v`.
 * `List.pairwise_inits`: the prefixes `inits` lists ascend in the prefix order.
+* `List.takeWhile_bne_prefix_of_mem`: what precedes the first `c` is a prefix of what precedes
+  the first `d`, when `c` comes before the first `d`.
 
 ## Implementation notes
 
@@ -64,7 +66,7 @@ theorem IsInfix.notMem_or_notMem_of_length_le (hl : l <:+: u ++ m ++ v)
   · exact .inl fun hx' ↦ hx (h.subset hx')
   · exact .inl fun hx' ↦ hx (mem_append_left v (h.eq_of_length_le hlen ▸ hx'))
 
-section CommonPrefix
+section DecidableEq
 
 variable [DecidableEq α]
 
@@ -93,7 +95,23 @@ theorem prefix_commonPrefix : ∀ {r l₁ l₂ : List α}, r <+: l₁ → r <+: 
   | _ :: rs, _, _, ⟨_, rfl⟩, ⟨_, rfl⟩ => by
     simpa [commonPrefix] using prefix_commonPrefix (r := rs) (prefix_append _ _) (prefix_append _ _)
 
-end CommonPrefix
+/-- An element before the first `d` cuts off a prefix of what comes before the first `d`. -/
+theorem takeWhile_bne_prefix_of_mem {c d : α} :
+    ∀ {l : List α}, c ∈ l.takeWhile (· != d) → l.takeWhile (· != c) <+: l.takeWhile (· != d)
+  | [], _ => by simp
+  | x :: l, h => by
+    by_cases hxd : x = d
+    · simp [hxd] at h
+    by_cases hxc : x = c
+    · simp [hxc]
+    have hd : (x :: l).takeWhile (· != d) = x :: l.takeWhile (· != d) := by simp [hxd]
+    have hc : (x :: l).takeWhile (· != c) = x :: l.takeWhile (· != c) := by simp [hxc]
+    rw [hd] at h
+    rw [hd, hc]
+    exact cons_prefix_cons.2 ⟨rfl,
+      takeWhile_bne_prefix_of_mem ((mem_cons.1 h).resolve_left (Ne.symm hxc))⟩
+
+end DecidableEq
 
 /-- The prefixes of a list, as `inits` lists them, ascend in the prefix order. -/
 theorem pairwise_inits : ∀ l : List α, l.inits.Pairwise (· <+: ·)

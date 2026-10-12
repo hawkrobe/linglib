@@ -13,10 +13,9 @@ contrastive and the noun is not; make the noun contrastive and recovery becomes 
 English and Spanish alike. The [E] feature can then sit on n, deleting only NP while the noun
 survives in its raised position — the nominal counterpart of V-stranding VP-ellipsis.
 
-The nominal spine is `Minimalist.NominalSpinePosition`, with an adjunction position for
-prenominal modifiers alongside the head positions: that distinction is what the paper's evidence
-against deleting individual constituents turns on, and it is why the spine is not stated over the
-`Cat` positions of the extended projection.
+The nominal spine is `Minimalist.Ellipsis.nominalSpine`, N, n, Num and D, whose sites include the
+adjunction site of NP for prenominal modifiers beside the heads: that distinction is what the
+paper's evidence against deleting individual constituents turns on.
 
 ## Main definitions
 
@@ -53,10 +52,10 @@ open Minimalist Minimalist.Ellipsis
 
 /-- N-stranding NP-ellipsis: [E] on n, deleting NP alone. The noun survives in its raised
 position, and prenominal modifiers, being outside n's complement, survive with it. -/
-def nStrandingNPE : Ellipsis NominalSpinePosition := ⟨.n⟩
+def nStrandingNPE : Ellipsis nominalSpine := ⟨.n⟩
 
 /-- NumP-ellipsis: [E] on D, leaving only the determiner. -/
-def numPEllipsis : Ellipsis NominalSpinePosition := ⟨.D⟩
+def numPEllipsis : Ellipsis nominalSpine := ⟨.D⟩
 
 /-! ### N-stranding -/
 
@@ -64,59 +63,60 @@ def numPEllipsis : Ellipsis NominalSpinePosition := ⟨.D⟩
 complement while n itself is external, so [E] on n deletes NP and spares the moved noun
 (§1.1). -/
 theorem n_stranding_is_xStranding :
-    External NominalSpinePosition.n NominalSpinePosition.n ∧
-      InDomain NominalSpinePosition.N NominalSpinePosition.n :=
-  ⟨external_self _, by decide⟩
+    ¬ nominalSpine.Deletes .n (.head .n) ∧ nominalSpine.Deletes .n (.head .N) :=
+  ⟨nominalSpine.not_deletes_head_self _, by decide⟩
 
 /-- The clausal and nominal patterns are the same theorem at the categorizer of each extended
 projection: V is to v as N is to n. -/
 theorem clausal_nominal_parallel :
-    InDomain SpinePosition.V SpinePosition.v ∧
-      InDomain NominalSpinePosition.N NominalSpinePosition.n := by decide
+    clausalSpine.Deletes .v (.head .V) ∧ nominalSpine.Deletes .n (.head .N) := by decide
 
 /-- Under N-stranding the noun's dependents go and everything above n stays: the postnominal PP of
 *zwei Studenten der Physik* is recovered in *zwei Professoren*, while the numeral and determiner
 are pronounced ((6a)). -/
 theorem nStranding_domain :
-    nStrandingNPE.Deletes .N ∧ nStrandingNPE.Spares .npAdjunct ∧ nStrandingNPE.Spares .n ∧
-      nStrandingNPE.Spares .Num ∧ nStrandingNPE.Spares .D := by decide
+    nStrandingNPE.Deletes (.head .N) ∧ nStrandingNPE.Spares (.adjunct .N) ∧
+      nStrandingNPE.Spares (.head .n) ∧ nStrandingNPE.Spares (.head .Num) ∧
+      nStrandingNPE.Spares (.head .D) := by decide
 
 /-! ### Against deleting individual constituents -/
 
 /-- No [E] position deletes a prenominal modifier while sparing the noun, since the noun lies in
 the complement of every head that dominates the modifier: *das schönste Auto … das schönste
 Motorrad* is out on the elided-adjective reading ((25a)). -/
-theorem no_individual_prenominal_deletion {p : NominalSpinePosition}
-    (h : InDomain NominalSpinePosition.npAdjunct p) : InDomain NominalSpinePosition.N p :=
-  ⟨(by decide : NominalSpinePosition.N < .npAdjunct).trans h.1, fun e ↦ by cases e⟩
+theorem no_individual_prenominal_deletion {p : Cat} (h : nominalSpine.Deletes p (.adjunct .N)) :
+    nominalSpine.Deletes p (.head .N) :=
+  let ⟨_, he, hN⟩ := h
+  (nominalSpine.below_prefix he).subset hN
 
 /-- The same holds for numerals, since only [E] on D puts Num in the deletion domain, and that
 deletes the noun too ((25b)). -/
-theorem no_individual_numeral_deletion {p : NominalSpinePosition}
-    (h : InDomain NominalSpinePosition.Num p) :
-    InDomain NominalSpinePosition.N p :=
-  ⟨(by decide : NominalSpinePosition.N < .Num).trans h.1, fun e ↦ by cases e⟩
+theorem no_individual_numeral_deletion {p : Cat} (h : nominalSpine.Deletes p (.head .Num)) :
+    nominalSpine.Deletes p (.head .N) :=
+  (nominalSpine.below_prefix h).subset (by decide : .N ∈ nominalSpine.below .Num)
 
 /-- Deleting a postnominal dependent requires deleting the noun's whole complement, so if one
 postnominal modifier is pronounced no other can be recovered ((28a)) while eliding both is fine
 ((28b)). -/
-theorem postnominal_all_or_nothing (e : Ellipsis NominalSpinePosition) (h : e.Deletes .N) :
-    ∀ p, p ≤ .N → e.Deletes p := by
-  intro p hp
-  cases p <;> first | exact h | exact absurd hp (by decide)
+theorem postnominal_all_or_nothing (e : Ellipsis nominalSpine) (h : e.Deletes (.head .N)) :
+    ∀ d, d = .N ∨ d ∈ nominalSpine.below .N → e.Deletes (.head d) := by
+  rintro d (rfl | hd)
+  · exact h
+  · simp [nominalSpine, ClauseSpine.below] at hd
 
 /-! ### The contrast condition -/
 
 /-- [E] sits on n when the noun is contrastive and higher when it is not (§2.1, motivated by
 (27)). -/
-def ePositionOfContrast (nounContrastive : Bool) : Ellipsis NominalSpinePosition :=
+def ePositionOfContrast (nounContrastive : Bool) : Ellipsis nominalSpine :=
   if nounContrastive then nStrandingNPE else nPEllipsis
 
 /-- A postnominal dependent of the noun is recoverable exactly when the noun is contrastive: with
 contrast the noun survives while its complement is deleted, without it the noun is deleted along
 with the dependent — the difference between (6a) and Spanish (5), and between (26b) and (27). -/
 theorem contrast_governs_recovery (b : Bool) :
-    (ePositionOfContrast b).Deletes .N ∧ ((ePositionOfContrast b).Spares .n ↔ b = true) := by
+    (ePositionOfContrast b).Deletes (.head .N) ∧
+      ((ePositionOfContrast b).Spares (.head .n) ↔ b = true) := by
   cases b <;> exact ⟨by decide, by decide⟩
 
 /-! ### Ellipsis height and mismatches -/
@@ -124,14 +124,14 @@ theorem contrast_governs_recovery (b : Bool) :
 /-- German N-stranding deletes strictly less than the Spanish configuration: the categorizer and
 the prenominal modifiers survive the one and not the other. -/
 theorem german_smaller_domain_than_spanish :
-    nStrandingNPE.Spares .npAdjunct ∧ nPEllipsis.Deletes .npAdjunct ∧
-      nStrandingNPE.Spares .n ∧ nPEllipsis.Deletes .n := by decide
+    nStrandingNPE.Spares (.adjunct .N) ∧ nPEllipsis.Deletes (.adjunct .N) ∧
+      nStrandingNPE.Spares (.head .n) ∧ nPEllipsis.Deletes (.head .n) := by decide
 
 /-- Gender mismatches pattern with voice mismatches: the head bearing the feature is external
 exactly when [E] sits on it. Gender lives on n, which survives N-stranding but not nP-ellipsis,
 as Voice survives VP-ellipsis but not sluicing (§3). -/
 theorem gender_parallels_voice :
-    nStrandingNPE.Spares .n ∧ nPEllipsis.Deletes .n ∧
+    nStrandingNPE.Spares (.head .n) ∧ nPEllipsis.Deletes (.head .n) ∧
       vpEllipsis.Tolerates .voice ∧ ¬ sluicing.Tolerates .voice := by decide
 
 end BenzSalzmann2025

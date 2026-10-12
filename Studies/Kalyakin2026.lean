@@ -44,11 +44,11 @@ open Minimalist.Ellipsis
 
 /-! ### Mismatch predictions -/
 
-/-- The spine position of a root. A change-of-state root merges with the direct object, at V in
+/-- The site of a root on the clausal spine. A change-of-state root merges with the direct object, at V in
 v's complement, and a manner root attaches to v, at the VP-adjunction site outside it (§2.2). -/
-def rootSite : Semantics.Root.Position → SpinePosition
-  | .complement => .V
-  | .adjoined => .vpAdjunct
+def rootSite : Semantics.Root.Position → ClauseSpine.Site
+  | .complement => .head .V
+  | .adjoined => .adjunct .V
 
 
 /-- The core prediction is that vVPE tolerates both voice and transitivity mismatches while
@@ -122,7 +122,7 @@ theorem mismatch_hierarchy :
 /-- vVPE's [E] position, v, is strictly below English VPE's, Voice, so by Sailor's generalization
     any mismatch tolerated by English VPE is tolerated by vVPE. -/
 theorem vVPE_below_vpEllipsis :
-    vStrandingVPE.ePosition < vpEllipsis.ePosition := by decide
+    vStrandingVPE.ePosition ∈ clausalSpine.below vpEllipsis.ePosition := by decide
 
 /-! ### The causative chain -/
 
@@ -226,7 +226,7 @@ survive ((90), after Toosarvandani), and British *do*, which tolerates voice and
 argument-structure mismatches alike ((97)–(98), after Silk), put [E] on v; Bangla puts it on
 Voice, where the restitutive reading is lost (94) and adjuncts are recovered (95), the light
 verb evacuating by head movement (after Haldar). -/
-def Language.ellipsis : Language → Ellipsis SpinePosition
+def Language.ellipsis : Language → Ellipsis clausalSpine
   | .bangla => vpEllipsis
   | _ => vStrandingVPE
 
@@ -254,7 +254,8 @@ theorem persian_stricter_than_dargwa :
 /-- Bangla's ellipsis is the larger one, and the *again* test shows it, since restitutive
 *again* is deleted in Bangla but survives in Muira Dargwa. -/
 theorem bangla_larger_domain :
-    Language.muiraDargwa.ellipsis.ePosition < Language.bangla.ellipsis.ePosition ∧
+    Language.muiraDargwa.ellipsis.ePosition ∈
+        clausalSpine.below Language.bangla.ellipsis.ePosition ∧
       ¬ Language.bangla.ellipsis.Spares AgainReading.restitutive.site ∧
       Language.muiraDargwa.ellipsis.Spares AgainReading.restitutive.site := by
   decide
