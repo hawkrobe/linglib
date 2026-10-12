@@ -2,7 +2,7 @@ module
 
 public import Mathlib.Algebra.Group.Action.End
 public import Mathlib.Algebra.Group.Action.Pointwise.Set.Basic
-public import Mathlib.ModelTheory.Basic
+public import Mathlib.ModelTheory.Semantics
 public import Mathlib.Order.Concept
 
 /-!
@@ -18,7 +18,8 @@ theorem on the containment of conjunctive queries.
 
 ## Main definitions
 
-* `FirstOrder.Language.Atom`: atoms, renamed by `Atom.map` and permuted by `Equiv.Perm`.
+* `FirstOrder.Language.Atom`: atoms, renamed by `Atom.map`, permuted by `Equiv.Perm`, and read as
+  atomic formulas by `Atom.toFormula`.
 * `FirstOrder.Language.Atom.realizers`: the assignments realizing a set of atoms.
 * `FirstOrder.Language.Atom.Canonical`: the structure a set of atoms presents on its variables.
 
@@ -67,9 +68,20 @@ def map (f : α → β) (a : L.Atom α) : L.Atom β := ⟨a.rel, f ∘ a.args⟩
 /-- An assignment realizes an atom when the relation holds of the values of its variables. -/
 def Realize (a : L.Atom α) (v : α → M) : Prop := RelMap a.rel (v ∘ a.args)
 
+@[simp] theorem realize_mk {n : ℕ} (R : L.Relations n) (xs : Fin n → α) (v : α → M) :
+    (⟨R, xs⟩ : L.Atom α).Realize v ↔ RelMap R (v ∘ xs) :=
+  .rfl
+
 @[simp] theorem realize_map {f : α → β} {a : L.Atom α} {v : β → M} :
     (a.map f).Realize v ↔ a.Realize (v ∘ f) :=
   .rfl
+
+/-- An atom as an atomic formula. -/
+def toFormula (a : L.Atom α) : L.Formula α := a.rel.formula (Term.var ∘ a.args)
+
+@[simp] theorem realize_toFormula {a : L.Atom α} {v : α → M} :
+    a.toFormula.Realize v ↔ a.Realize v := by
+  simp [toFormula, Realize, Function.comp_def]
 
 /-- Permutations of the variables act on atoms by renaming. -/
 instance : MulAction (Equiv.Perm α) (L.Atom α) where

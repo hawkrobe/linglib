@@ -5,8 +5,8 @@ public import Linglib.Semantics.Dynamic.DRS.Basic
 /-!
 # Verifying embeddings for DRSs
 
-This file defines verification of DRSs by embeddings into a model, following
-[kamp-reyle-1993]'s Def. 1.4.4 over a mathlib `FirstOrder.Language.Structure`.
+This file defines verification of DRSs by embeddings into a `FirstOrder.Language.Structure`,
+following Kamp and Reyle's Def. 1.4.4.
 An embedding `f : V → M` assigns discourse referents to individuals;
 `Verifies f K` says `f` verifies every condition of `K`, and a sub-DRS is
 entered by existentially (re)assigning along its extension relation
@@ -33,13 +33,18 @@ not depend on the input: it is truth in the model (Def. 1.4.5).
 
 * Embeddings here are total, and a re-declared referent is freely reassigned;
   the book's are partial functions that sub-DRSs strictly *extend*, so a
-  re-declared referent keeps its value ([muskens-1996], fn. 4). The two agree
+  re-declared referent keeps its value (Muskens, fn. 4). The two agree
   on DRSs that declare each referent once — the construction algorithm never
   re-declares — but diverge on re-declaration: `[ | [x | man x] ⇒ [x | mortal x]]`
   says "every man is mortal" there, "if there is a man there is a mortal" here.
 * `Verifies`, `VerifiesCondition` and `VerifiesAll` are defined by structural recursion
   through the nested conditions, so the clause characterizations (`verifies_neg`, …) hold by
   `Iff.rfl`; `verifies_iff` recovers the `∀ c ∈ K.conditions` form.
+
+## References
+
+* [kamp-reyle-1993]
+* [muskens-1996]
 -/
 
 @[expose] public section
@@ -61,7 +66,7 @@ def Verifies : (V → M) → DRS L V → Prop
 (Def. 1.4.4(ii)); a sub-DRS is entered by existentially (re)assigning along its extension
 relation. -/
 def VerifiesCondition : (V → M) → Condition L V → Prop
-  | f, .rel R args => Structure.RelMap R (f ∘ args)
+  | f, .atom a => a.Realize f
   | f, .eq a b => f a = f b
   | f, .neg K => ¬ ∃ g, K.Extends f g ∧ Verifies g K
   | f, .imp a c => ∀ g, a.Extends f g → Verifies g a → ∃ h, c.Extends g h ∧ Verifies h c
@@ -96,8 +101,8 @@ theorem verifies_iff {K : DRS L V} :
     Verifies f (K₁.merge K₂) ↔ Verifies f K₁ ∧ Verifies f K₂ := by
   simp only [verifies_iff, DRS.conditions_merge, List.forall_mem_append]
 
-@[simp] theorem verifies_rel {n : ℕ} (R : L.Relations n) (args : Fin n → V) :
-    VerifiesCondition f (.rel R args) ↔ Structure.RelMap R (f ∘ args) := Iff.rfl
+@[simp] theorem verifies_atom (a : L.Atom V) : VerifiesCondition f (.atom a) ↔ a.Realize f :=
+  .rfl
 
 @[simp] theorem verifies_eq (a b : V) :
     VerifiesCondition f (.eq a b : Condition L V) ↔ f a = f b := Iff.rfl
@@ -149,7 +154,7 @@ private theorem exists_extends_verifies_map_aux (e : V ≃ W) (K : DRS L V) (f :
 theorem verifies_map_condition (e : V ≃ W) (f : W → M) (c : Condition L V) :
     VerifiesCondition f (c.map e) ↔ VerifiesCondition (f ∘ e) c := by
   induction c generalizing f with
-  | rel R args => simp [Condition.map, Function.comp_assoc]
+  | atom a => simp [Condition.map]
   | eq a b => simp [Condition.map]
   | neg K ih =>
     simp only [Condition.map, verifies_neg]
@@ -201,9 +206,9 @@ private theorem verifies_of_eqOn {K : DRS L V}
 theorem verifiesCondition_congr (c : Condition L V) {f₁ f₂ : V → M}
     (h : Set.EqOn f₁ f₂ ↑c.freeVarFinset) : VerifiesCondition f₁ c ↔ VerifiesCondition f₂ c := by
   induction c generalizing f₁ f₂ with
-  | rel R args =>
-    simp only [verifies_rel]
-    rw [show f₁ ∘ args = f₂ ∘ args from funext fun i => h (by simp)]
+  | atom a =>
+    simp only [verifies_atom, Atom.Realize]
+    rw [show f₁ ∘ a.args = f₂ ∘ a.args from funext fun i => h (by simp)]
   | eq a b =>
     simp only [verifies_eq]
     rw [h (by simp), h (by simp)]

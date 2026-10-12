@@ -45,7 +45,7 @@ to the spine, where the action equation is an instance of functoriality
 @[expose] public section
 
 open FirstOrder FirstOrder.Language
-open DynamicSemantics (Possibility State Transition)
+open DynamicSemantics
 
 namespace DRT
 
@@ -65,7 +65,7 @@ def DRS.toRelAt (X : Finset V) : DRS L V → (V → M) → (V → M) → Prop
 /-- A condition holds at a base under an assignment; sub-DRSs are entered as
 context extensions of the current base. -/
 def Condition.holdsAt (X : Finset V) : Condition L V → (V → M) → Prop
-  | .rel R args => fun g => Structure.RelMap R (g ∘ args)
+  | .atom a => a.Realize
   | .eq u v => fun g => g u = g v
   | .neg K => fun g => ¬ ∃ g', DRS.toRelAt X K g g'
   | .imp a c => fun g => ∀ g', DRS.toRelAt X a g g' →
@@ -85,9 +85,9 @@ end
     DRS.toRelAt X (.mk U conds) f g ↔
       Set.EqOn g f ↑X ∧ Condition.holdsAllAt (X ∪ U) conds g := Iff.rfl
 
-@[simp] theorem Condition.holdsAt_rel (X : Finset V) {n : ℕ} (R : L.Relations n)
-    (args : Fin n → V) (g : V → M) :
-    (Condition.rel R args).holdsAt X g ↔ Structure.RelMap R (g ∘ args) := Iff.rfl
+@[simp] theorem Condition.holdsAt_atom (X : Finset V) (a : L.Atom V) (g : V → M) :
+    (Condition.atom a).holdsAt X g ↔ a.Realize g :=
+  .rfl
 
 @[simp] theorem Condition.holdsAt_eq (X : Finset V) (u v : V) (g : V → M) :
     (Condition.eq u v : Condition L V).holdsAt X g ↔ g u = g v := Iff.rfl
@@ -132,9 +132,9 @@ theorem Condition.holdsAt_congr {X : Finset V} (c : Condition L V)
     (hfv : c.freeVarFinset ⊆ X) {g g' : V → M} (hgg' : Set.EqOn g g' ↑X) :
     Condition.holdsAt X c g ↔ Condition.holdsAt X c g' := by
   match c with
-  | .rel R args =>
-    simp only [Condition.holdsAt_rel]
-    rw [show g ∘ args = g' ∘ args from
+  | .atom a =>
+    simp only [Condition.holdsAt_atom, Atom.Realize]
+    rw [show g ∘ a.args = g' ∘ a.args from
       funext fun i => hgg' (Finset.mem_coe.mpr (hfv (by simp)))]
   | .eq u v =>
     simp only [Condition.holdsAt_eq]
@@ -338,7 +338,7 @@ theorem Condition.holdsAt_union_fresh {X Δ : Finset V} (c : Condition L V)
     (hocc : Disjoint Δ c.varFinset) (hfv : c.freeVarFinset ⊆ X) (g : V → M) :
     Condition.holdsAt (X ∪ Δ) c g ↔ Condition.holdsAt X c g := by
   match c with
-  | .rel R args => exact Iff.rfl
+  | .atom a => exact Iff.rfl
   | .eq u v => exact Iff.rfl
   | .neg K =>
     obtain ⟨U, conds⟩ := K
@@ -541,7 +541,7 @@ theorem Condition.verifies_iff_holdsAt {X : Finset V} (c : Condition L V)
     (hrf : Condition.ReuseFreeAt X c) (hfv : c.freeVarFinset ⊆ X) (g : V → M) :
     VerifiesCondition g c ↔ Condition.holdsAt X c g := by
   match c with
-  | .rel R args => simp only [verifies_rel, Condition.holdsAt_rel]
+  | .atom a => simp only [verifies_atom, Condition.holdsAt_atom]
   | .eq u v => simp only [verifies_eq, Condition.holdsAt_eq]
   | .neg K =>
     obtain ⟨U, conds⟩ := K

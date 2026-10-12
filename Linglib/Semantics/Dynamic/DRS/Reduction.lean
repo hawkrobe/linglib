@@ -6,13 +6,12 @@ public import Mathlib.ModelTheory.Semantics
 /-!
 # From DRT to predicate logic
 
-This file translates each DRS into a mathlib `FirstOrder.Language.Formula` and
-proves that the translation's `Realize` coincides with verification —
-[kamp-reyle-1993]'s §1.5 reduction of the DRS language to first-order logic
-(cf. [muskens-1996]). The universe of a sub-DRS is existentially closed
-(`closeExists`, via `Formula.iExs`); the antecedent of a `⇒` is universally
-closed (`closeForall`, via `Formula.iAlls`). The translation of a proper DRS
-realizes the same way under every assignment, as truth in the model (p. 138).
+This file translates each DRS into a `FirstOrder.Language.Formula` and proves that the
+translation is realized exactly when the DRS is verified, Kamp and Reyle's reduction of the DRS
+language to first-order logic in §1.5, also given by Muskens. The universe of a sub-DRS is
+existentially closed (`closeExists`, via `Formula.iExs`), and the antecedent of a `⇒` universally
+(`closeForall`, via `Formula.iAlls`). The translation of a proper DRS realizes the same way under
+every assignment, as truth in the model (p. 138).
 
 ## Main declarations
 
@@ -27,6 +26,11 @@ realizes the same way under every assignment, as truth in the model (p. 138).
 The translation of a proper DRS is closed (p. 138), so it is an `L.Sentence` and
 Def. 1.4.6's logical consequence is mathlib's `⊨ᵇ`; this needs `freeVarFinset`
 lemmas for `relabel`, `iExs` and `iAlls`, which mathlib lacks.
+
+## References
+
+* [kamp-reyle-1993]
+* [muskens-1996]
 -/
 
 @[expose] public section
@@ -59,15 +63,15 @@ section Translation
 variable [DecidableEq V]
 
 mutual
-/-- Translate a DRS to a first-order formula: existentially close the universe
-over the conjunction of the (translated) conditions (§1.5). -/
+/-- The translation of a DRS existentially closes its universe over the conjunction of its
+translated conditions (§1.5). -/
 noncomputable def DRS.toFormula : DRS L V → L.Formula V
   | ⟨U, cs⟩ => closeExists U (Condition.toFormulaAll cs)
-/-- Translate a single DRS-condition to a formula: each sub-box's universe is
-existentially closed over the conjunction of its translated conditions; the
-antecedent of a `⇒` is universally closed instead (§1.5). -/
+/-- The translation of a condition closes the universe of each sub-box existentially over the
+conjunction of its translated conditions, and that of the antecedent of a `⇒` universally (§1.5).
+-/
 noncomputable def Condition.toFormula : Condition L V → L.Formula V
-  | .rel R args => Relations.formula R (Term.var ∘ args)
+  | .atom a => a.toFormula
   | .eq a b => Term.equal (Term.var a) (Term.var b)
   | .neg K => (DRS.toFormula K).not
   | .imp ⟨Ua, ca⟩ c => closeForall Ua ((Condition.toFormulaAll ca).imp (DRS.toFormula c))
@@ -191,9 +195,7 @@ private theorem DRS.realize_toFormula_of_forall [DecidableEq V] {K : DRS L V}
 theorem Condition.realize_toFormula [DecidableEq V] (c : Condition L V) (v : V → M) :
     (Condition.toFormula c).Realize v ↔ VerifiesCondition v c := by
   induction c generalizing v with
-  | rel R args =>
-    simp [Condition.toFormula, Relations.formula, Formula.Realize,
-      BoundedFormula.realize_rel, Term.realize_var, Function.comp_def]
+  | atom a => simp [Condition.toFormula]
   | eq a b => simp [Condition.toFormula, Formula.realize_equal]
   | neg K ih =>
     rw [Condition.toFormula_neg, Formula.realize_not, DRS.realize_toFormula_of_forall ih,
