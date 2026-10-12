@@ -76,21 +76,21 @@ theorem dProbe_sees_through (root probe target : SyntacticObject) :
 
 /-! ### The structures -/
 
-def C₀ : PlanarSyntacticObject := .leaf ⟨.simple .C [], 1⟩
-def T₀ : PlanarSyntacticObject := .leaf ⟨.simple .T [], 2⟩
-def V₀ : PlanarSyntacticObject := .leaf ⟨.simple .V [], 3⟩
-def v₀ : PlanarSyntacticObject := .leaf ⟨.simple .v [], 4⟩
-def Appl₀ : PlanarSyntacticObject := .leaf ⟨.simple .Appl [], 5⟩
-def P₀ : PlanarSyntacticObject := .leaf ⟨.simple .P [], 6⟩
-def Psr : PlanarSyntacticObject := .leaf ⟨.simple .D [], 7⟩
-def Psm : PlanarSyntacticObject := .leaf ⟨.simple .N [], 8⟩
-def D₀ : PlanarSyntacticObject := .leaf ⟨.simple .D [], 9⟩
-def Agt : PlanarSyntacticObject := .leaf ⟨.simple .D [], 10⟩
-def SubjD : PlanarSyntacticObject := .leaf ⟨.simple .D [], 11⟩
-def SubjN : PlanarSyntacticObject := .leaf ⟨.simple .N [], 12⟩
-def ThemeD : PlanarSyntacticObject := .leaf ⟨.simple .D [], 13⟩
-def ThemeN : PlanarSyntacticObject := .leaf ⟨.simple .N [], 14⟩
-def Pivot : PlanarSyntacticObject := .leaf ⟨.simple .N [], 15⟩
+def C₀ : PlanarSyntacticObject := .leaf ⟨.of .C [], 1⟩
+def T₀ : PlanarSyntacticObject := .leaf ⟨.of .T [], 2⟩
+def V₀ : PlanarSyntacticObject := .leaf ⟨.of .V [], 3⟩
+def v₀ : PlanarSyntacticObject := .leaf ⟨.of .v [], 4⟩
+def Appl₀ : PlanarSyntacticObject := .leaf ⟨.of .Appl [], 5⟩
+def P₀ : PlanarSyntacticObject := .leaf ⟨.of .P [], 6⟩
+def Psr : PlanarSyntacticObject := .leaf ⟨.of .D [], 7⟩
+def Psm : PlanarSyntacticObject := .leaf ⟨.of .N [], 8⟩
+def D₀ : PlanarSyntacticObject := .leaf ⟨.of .D [], 9⟩
+def Agt : PlanarSyntacticObject := .leaf ⟨.of .D [], 10⟩
+def SubjD : PlanarSyntacticObject := .leaf ⟨.of .D [], 11⟩
+def SubjN : PlanarSyntacticObject := .leaf ⟨.of .N [], 12⟩
+def ThemeD : PlanarSyntacticObject := .leaf ⟨.of .D [], 13⟩
+def ThemeN : PlanarSyntacticObject := .leaf ⟨.of .N [], 14⟩
+def Pivot : PlanarSyntacticObject := .leaf ⟨.of .N [], 15⟩
 
 /-- A non-specific possessive, `{Psr, Psm}`. -/
 def PossP : PlanarSyntacticObject := {Psr, Psm}

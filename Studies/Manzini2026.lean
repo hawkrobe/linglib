@@ -38,7 +38,7 @@ open Minimalist SyntacticObject
 
 /-- A token of the simple lexical item of category `c` selecting `sel`, pronounced `pf`. -/
 def tok (c : Cat) (sel : SelStack) (pf : String) (i : ℕ) : LexicalItem.Token :=
-  ⟨.simple c sel (phonForm := pf), i⟩
+  ⟨.of c sel (phonForm := pf), i⟩
 
 /-- *Gianni*, the matrix subject of (31a). -/
 def gianni : SyntacticObject := leaf (tok .N [] "Gianni" 0)

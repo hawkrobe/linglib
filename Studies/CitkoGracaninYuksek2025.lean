@@ -73,7 +73,7 @@ open Minimalist.SyntacticObject (Vertex)
 /-- `tok` builds a token from a category, its selection, its form, and the wh and [E] features. -/
 def tok (id : ℕ) (cat : Cat) (sel : SelStack := []) (phon : String := "") (wh : Bool := false)
     (ellipsis : Bool := false) : LexicalItem.Token :=
-  ⟨LexicalItem.simple cat sel phon wh ellipsis, id⟩
+  ⟨LexicalItem.of cat sel phon wh ellipsis, id⟩
 
 def what := tok 1 .D (phon := "what") (wh := true)
 def when := tok 2 .P (phon := "when") (wh := true)
@@ -200,7 +200,7 @@ def planarCost (t : PlanarSyntacticObject) : DerivationCost
 
 /-- The pronounceable tokens the application of ellipsis at the domain `K` silences. -/
 def silencedBy (t : PlanarSyntacticObject) (K : Core.Order.TreePath) : Finset LexicalItem.Token :=
-  (tokens t).filter fun s ↦ s.item.outerPhonForm?.isSome ∧ (occurrences t s).any (decide <| K ≤ ·)
+  (tokens t).filter fun s ↦ s.item.phonForm?.isSome ∧ (occurrences t s).any (decide <| K ≤ ·)
 
 /-- The application at `K` is vacuous when the earlier applications already silenced every token
 it silences. -/
@@ -224,7 +224,7 @@ the right spine, the specifiers are the left daughters above the head, which is 
 selecting item met; the result is `none` when the spine ends first. -/
 def projection : RoseTree Vertex → Option (List (RoseTree Vertex) × LexicalItem.Token)
   | .node (.inl none) [.node (.inl (some tok)) [], r] =>
-      if tok.item.outerSel = [] then
+      if tok.item.sel = [] then
         (projection r).map fun x ↦ (.node (.inl (some tok)) [] :: x.1, x.2)
       else some ([], tok)
   | .node (.inl none) [l, r] => (projection r).map fun x ↦ (l :: x.1, x.2)
@@ -239,7 +239,7 @@ def headToken? (s : RoseTree Vertex) : Option LexicalItem.Token :=
 
 /-- A constituent is a wh-specifier when its head is a wh-token or its trace. -/
 def IsWhSpecifier (s : RoseTree Vertex) : Prop :=
-  ∃ tok ∈ (headToken? s).toList, tok.item.outerWh = true
+  ∃ tok ∈ (headToken? s).toList, tok.item.wh = true
 
 instance (s : RoseTree Vertex) : Decidable (IsWhSpecifier s) :=
   inferInstanceAs (Decidable (∃ _ ∈ _, _))
@@ -254,7 +254,7 @@ def asterisked (t : PlanarSyntacticObject) : List LexicalItem.Token :=
 converges at PF under a multiple-wh-fronting parameter, the categories of the phases whose
 asterisks PF cannot interpret, iff the parameter is disjoint from them. -/
 def pfAsterisks (t : PlanarSyntacticObject) : Finset Cat :=
-  (((asterisked t).filter (¬ IsSilenced t ·)).map (·.item.outerCat)).toFinset
+  (((asterisked t).filter (¬ IsSilenced t ·)).map (·.item.cat)).toFinset
 
 /-! ### The multiple-wh-fronting parameter (27) by language -/
 

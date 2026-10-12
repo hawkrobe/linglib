@@ -154,7 +154,7 @@ open RoseTree UnorderedTree Minimalist SyntacticObject ConnesKreimer
 
 /-- A token of the simple lexical item of category `c` selecting `sel`, pronounced `pf`. -/
 def tok (c : Cat) (sel : SelStack) (pf : String) (i : ℕ) : LexicalItem.Token :=
-  ⟨.simple c sel (phonForm := pf), i⟩
+  ⟨.of c sel (phonForm := pf), i⟩
 
 /-- *the apple*, the term `T₂` that Internal Merge raises in §1.4.4. -/
 private def theApple : SyntacticObject :=
@@ -381,8 +381,8 @@ end CoreMerge
 /-- A determiner over a noun, in which `D` selects `N` and so projects. -/
 private def theDog : SyntacticObject :=
   ⟨UnorderedTree.mk (.node Vertex.bare
-    [.node (Vertex.lex ⟨.simple .D [.N] (phonForm := "the"), 0⟩) [],
-     .node (Vertex.lex ⟨.simple .N [] (phonForm := "dog"), 1⟩) []]), by decide⟩
+    [.node (Vertex.lex ⟨.of .D [.N] (phonForm := "the"), 0⟩) [],
+     .node (Vertex.lex ⟨.of .N [] (phonForm := "dog"), 1⟩) []]), by decide⟩
 
 /-- In the harmonic head-initial order the projecting `D`'s yield comes first. -/
 example : (theDog.linearize .initial).map (·.map (·.id)) = some [0, 1] := by decide
@@ -397,8 +397,8 @@ example : theDog.phonYield .final = some ["dog", "the"] := by decide
 no order. -/
 private def exoNN : SyntacticObject :=
   ⟨UnorderedTree.mk (.node Vertex.bare
-    [.node (Vertex.lex ⟨.simple .N [] (phonForm := "cats"), 0⟩) [],
-     .node (Vertex.lex ⟨.simple .N [] (phonForm := "dogs"), 1⟩) []]), by decide⟩
+    [.node (Vertex.lex ⟨.of .N [] (phonForm := "cats"), 0⟩) [],
+     .node (Vertex.lex ⟨.of .N [] (phonForm := "dogs"), 1⟩) []]), by decide⟩
 
 example : exoNN.linearize .initial = none := by decide
 example : exoNN.linearize .final = none := by decide

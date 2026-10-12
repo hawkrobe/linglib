@@ -74,7 +74,7 @@ open WhModifier Singlish.Questions Minimalist Core.Order
 /-- A token of the schematic questions. -/
 def tok (id : ℕ) (cat : Cat) (sel : SelStack := []) (phon : String := "") (wh : Bool := false) :
     LexicalItem.Token :=
-  ⟨LexicalItem.simple cat sel phon wh false, id⟩
+  ⟨LexicalItem.of cat sel phon wh false, id⟩
 
 /-- The wh-phrase; *the-hell*, adjoined to it, goes where it goes. -/
 def what := tok 0 .D (phon := "what") (wh := true)

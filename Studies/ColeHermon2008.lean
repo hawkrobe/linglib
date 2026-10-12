@@ -132,13 +132,13 @@ structure Clause where
   goal : Option LexicalItem.Token
 
 /-- The silent light verb. -/
-def v₀ : LexicalItem.Token := ⟨.simple .v [], 6⟩
+def v₀ : LexicalItem.Token := ⟨.of .v [], 6⟩
 
 /-- The `i`-th functional head F, for `i ≥ 1`. -/
-def F (i : ℕ) : LexicalItem.Token := ⟨.simple .T [], 6 + i⟩
+def F (i : ℕ) : LexicalItem.Token := ⟨.of .T [], 6 + i⟩
 
 /-- The complementizer, whose specifier a fronted wh-phrase raises to. -/
-def c₀ : LexicalItem.Token := ⟨.simple .C [], 0⟩
+def c₀ : LexicalItem.Token := ⟨.of .C [], 0⟩
 
 /-- The side at which each of the five base Merges attaches its item. -/
 abbrev Sides := Fin 5 → Side
@@ -149,15 +149,15 @@ namespace Clause
 head. -/
 def of (voice : Voice) (verb agent patient : String) (goal : Option String := none) :
     Clause :=
-  ⟨voice, ⟨.simple .V [] (phonForm := verb), 2⟩, ⟨.simple .N [] (phonForm := agent), 3⟩,
-    ⟨.simple .N [] (phonForm := patient), 4⟩,
-    goal.map fun g => ⟨.simple .P [] (phonForm := g), 5⟩⟩
+  ⟨voice, ⟨.of .V [] (phonForm := verb), 2⟩, ⟨.of .N [] (phonForm := agent), 3⟩,
+    ⟨.of .N [] (phonForm := patient), 4⟩,
+    goal.map fun g => ⟨.of .P [] (phonForm := g), 5⟩⟩
 
 variable (c : Clause)
 
 /-- The voice head, *mang-* or *di-*. -/
 def voiceHead : LexicalItem.Token :=
-  ⟨.simple .Voice [] (phonForm := Morphology.Morph.surface c.voice.marker), 1⟩
+  ⟨.of .Voice [] (phonForm := Morphology.Morph.surface c.voice.marker), 1⟩
 
 /-- The argument as a token, the goal when there is one. -/
 def arg? : Arg → Option LexicalItem.Token
@@ -525,9 +525,9 @@ theorem surface_sides (σ : Sides) :
 
 /-! ### English passives (§7) -/
 
-def wasInjured : LexicalItem.Token := ⟨.simple .V [] (phonForm := "was injured"), 21⟩
-def theBoy : LexicalItem.Token := ⟨.simple .N [] (phonForm := "the boy"), 22⟩
-def byHimself : LexicalItem.Token := ⟨.simple .P [] (phonForm := "by himself"), 23⟩
+def wasInjured : LexicalItem.Token := ⟨.of .V [] (phonForm := "was injured"), 21⟩
+def theBoy : LexicalItem.Token := ⟨.of .N [] (phonForm := "the boy"), 22⟩
+def byHimself : LexicalItem.Token := ⟨.of .P [] (phonForm := "by himself"), 23⟩
 
 /-- In the English passive (97)–(98) of (95), the patient is [larson-1988]'s specifier of VP and
 the agent an adjunct, a *by*-phrase leaf below it, with no argument in Spec,vP, since the passive

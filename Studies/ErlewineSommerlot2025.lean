@@ -35,8 +35,8 @@ extraction (§5.2); and the registers of Madurese differ in whether Voice has a 
 ## Implementation notes
 
 * A clause is its syntactic parameters, and the exponents of Voice and v are chosen after VoiceP
-  Spell-out. v+V is one complex head, the paper not showing V-to-v movement, and one terminal
-  stands for T with its auxiliaries.
+  Spell-out. v+V is one terminal of category v, the paper not showing V-to-v movement, and one
+  terminal stands for T with its auxiliaries.
 * The active v always projects its agent (30). The ban on an agent licensed by the passive v
   moving to Spec,VoiceP is the antilocality the paper tentatively suggests (§3.3).
 * Desa's T licenses a nominal in situ instead of attracting one under nominal Ā-extraction (§3.3).
@@ -98,21 +98,21 @@ inductive Term
   | aux
   deriving DecidableEq, Repr, Fintype
 
-/-- Each terminal spells out its own lexical item, v+V being the complex head of v and V. -/
+/-- Each terminal spells out its own lexical item, v+V that of the light verb it projects. -/
 def Term.token : Term → LexicalItem.Token
-  | .dp .agent => ⟨.simple .D [], 1⟩
-  | .dp .theme => ⟨.simple .D [], 2⟩
-  | .pp => ⟨.simple .P [], 3⟩
-  | .voice => ⟨.simple .Voice [], 4⟩
-  | .verb => ⟨.combine (.simple .v []) (.simple .V []), 5⟩
-  | .aux => ⟨.simple .T [], 6⟩
+  | .dp .agent => ⟨.of .D [], 1⟩
+  | .dp .theme => ⟨.of .D [], 2⟩
+  | .pp => ⟨.of .P [], 3⟩
+  | .voice => ⟨.of .Voice [], 4⟩
+  | .verb => ⟨.of .v [], 5⟩
+  | .aux => ⟨.of .T [], 6⟩
 
 /-- A lexical item spells out at most one terminal. -/
 def Term.ofToken? (tok : LexicalItem.Token) : Option Term :=
   [Term.dp .agent, .dp .theme, .pp, .voice, .verb, .aux].find? (·.token = tok)
 
 /-- The complementizer that attracts the Ā-extracted phrase is silent. -/
-def C₀ : LexicalItem.Token := ⟨.simple .C [], 7⟩
+def C₀ : LexicalItem.Token := ⟨.of .C [], 7⟩
 
 /-- An extracted phrase is a nominal or the PP. -/
 def Extracted.term : Extracted → Term

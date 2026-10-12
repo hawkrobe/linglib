@@ -100,10 +100,10 @@ inductive Marked
   | withoutPiedPiping | pictureOfWho | partialMovement
   deriving DecidableEq, Repr
 
-def tokN : LexicalItem.Token := ⟨.simple .N [], 1⟩
-def tokA : LexicalItem.Token := ⟨.simple .A [], 2⟩
-def tokNum : LexicalItem.Token := ⟨.simple .Num [], 3⟩
-def tokDem : LexicalItem.Token := ⟨.simple .Dem [], 4⟩
+def tokN : LexicalItem.Token := ⟨.of .N [], 1⟩
+def tokA : LexicalItem.Token := ⟨.of .A [], 2⟩
+def tokNum : LexicalItem.Token := ⟨.of .Num [], 3⟩
+def tokDem : LexicalItem.Token := ⟨.of .Dem [], 4⟩
 
 /-- The tree contains the overt noun; a trace does not count (7b-vi). -/
 def hasN : RoseTree SyntacticObject.Vertex → Bool

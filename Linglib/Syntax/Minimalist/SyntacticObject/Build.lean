@@ -102,11 +102,11 @@ namespace SyntacticObject
 
 /-- A lexical leaf from a category and selectional stack. -/
 def mkLeaf (cat : Cat) (sel : SelStack) (id : Nat) : SyntacticObject :=
-  SyntacticObject.leaf ⟨.simple cat sel, id⟩
+  SyntacticObject.leaf ⟨.of cat sel, id⟩
 
 /-- A lexical leaf with a phonological form. -/
 def mkLeafPhon (cat : Cat) (sel : SelStack) (phon : String) (id : Nat) : SyntacticObject :=
-  SyntacticObject.leaf ⟨.simple cat sel (phonForm := phon), id⟩
+  SyntacticObject.leaf ⟨.of cat sel (phonForm := phon), id⟩
 
 /-! ### Accessors -/
 
@@ -123,14 +123,14 @@ def token? (s : SyntacticObject) : Option LexicalItem.Token :=
 
 @[simp] theorem token?_traceOf (tok : LexicalItem.Token) : (traceOf tok).token? = none := rfl
 
-/-- `s` is a lexical leaf whose item's outer category is `c`. -/
+/-- `s` is a lexical leaf whose item's category is `c`. -/
 def isLeafOf (c : Cat) (s : SyntacticObject) : Prop :=
-  s.token?.map (·.item.outerCat) = some c
+  s.token?.map (·.item.cat) = some c
 
 instance (c : Cat) : DecidablePred (isLeafOf c) := λ _ => inferInstanceAs (Decidable (_ = _))
 
 @[simp] theorem isLeafOf_leaf (c : Cat) (tok : LexicalItem.Token) :
-    isLeafOf c (SyntacticObject.leaf tok) ↔ tok.item.outerCat = c := by
+    isLeafOf c (SyntacticObject.leaf tok) ↔ tok.item.cat = c := by
   simp [isLeafOf]
 
 @[simp] theorem not_isLeafOf_trace (c : Cat) : ¬ isLeafOf c trace := by simp [isLeafOf]
@@ -188,7 +188,7 @@ end SyntacticObject
 
 /-! ### Carrier tests -/
 
-private def demoTok (i : ℕ) : LexicalItem.Token := ⟨.simple .N [], i⟩
+private def demoTok (i : ℕ) : LexicalItem.Token := ⟨.of .N [], i⟩
 
 private def demoVP : SyntacticObject :=
   (PlanarSyntacticObject.merge (PlanarSyntacticObject.leaf (demoTok 0))

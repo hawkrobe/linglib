@@ -114,33 +114,33 @@ structure Clause where
   extra : Option LexicalItem.Token
 
 /-- The participle head, silent, over the VP. -/
-def part₀ : LexicalItem.Token := ⟨.simple .Asp [.V], 5⟩
+def part₀ : LexicalItem.Token := ⟨.of .Asp [.V], 5⟩
 
 /-- The light verb, over PartP and the external argument. -/
-def v₀ : LexicalItem.Token := ⟨.simple .v [.Asp, .D], 6⟩
+def v₀ : LexicalItem.Token := ⟨.of .v [.Asp, .D], 6⟩
 
 /-- Voice, *by*, which takes a vP (§4). -/
-def by₀ : LexicalItem.Token := ⟨.simple .Voice [.v] (phonForm := "by"), 7⟩
+def by₀ : LexicalItem.Token := ⟨.of .Voice [.v] (phonForm := "by"), 7⟩
 
 /-- The host X of an evacuated PP, (58): a second participial layer over PartP that takes the
 PP, so that v selects the same category with or without evacuation. -/
-def x₀ : LexicalItem.Token := ⟨.simple .Asp [.Asp, .P], 8⟩
+def x₀ : LexicalItem.Token := ⟨.of .Asp [.Asp, .P], 8⟩
 
 /-- Infl. -/
-def infl₀ : LexicalItem.Token := ⟨.simple .T [], 9⟩
+def infl₀ : LexicalItem.Token := ⟨.of .T [], 9⟩
 
 /-- The auxiliary *have* of the active perfect (26). -/
-def has₀ : LexicalItem.Token := ⟨.simple .V [] (phonForm := "has"), 10⟩
+def has₀ : LexicalItem.Token := ⟨.of .V [] (phonForm := "has"), 10⟩
 
 namespace Clause
 
 /-- A clause from its words. -/
 def of (verb agent patient : String) (extra : Option String := none) (be : String := "was") :
     Clause :=
-  ⟨⟨.simple .V (if extra.isSome then [.P, .D] else [.D]) (phonForm := verb), 1⟩,
-    ⟨.simple .D [] (phonForm := agent), 2⟩,
-    ⟨.simple .D [] (phonForm := patient), 3⟩, ⟨.simple .V [] (phonForm := be), 4⟩,
-    extra.map λ x => ⟨.simple .P [] (phonForm := x), 11⟩⟩
+  ⟨⟨.of .V (if extra.isSome then [.P, .D] else [.D]) (phonForm := verb), 1⟩,
+    ⟨.of .D [] (phonForm := agent), 2⟩,
+    ⟨.of .D [] (phonForm := patient), 3⟩, ⟨.of .V [] (phonForm := be), 4⟩,
+    extra.map λ x => ⟨.of .P [] (phonForm := x), 11⟩⟩
 
 variable (p : Clause)
 

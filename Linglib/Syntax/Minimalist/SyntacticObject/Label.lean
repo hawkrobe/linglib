@@ -158,13 +158,13 @@ variable (s : SyntacticObject)
 
 /-- The labeling state of a syntactic object. -/
 def labelCheck : LabelState :=
-  liftFun (fun tok ↦ .sel (.of tok tok.item.outerSel)) labelTraceState s
+  liftFun (fun tok ↦ .sel (.of tok tok.item.sel)) labelTraceState s
 
 /-- The label of a syntactic object, `none` where the labeling algorithm finds none. -/
 def label : Option LexicalItem.Token := s.labelCheck.label
 
 @[simp] theorem labelCheck_leaf (tok : LexicalItem.Token) :
-    (SyntacticObject.leaf tok).labelCheck = .sel (.of tok tok.item.outerSel) := rfl
+    (SyntacticObject.leaf tok).labelCheck = .sel (.of tok tok.item.sel) := rfl
 
 @[simp] theorem labelCheck_traceOf (tok : LexicalItem.Token) :
     (traceOf tok).labelCheck = .copy tok := rfl
@@ -279,7 +279,7 @@ variable (s : SyntacticObject)
 
 /-- The raising state of a syntactic object. -/
 def raisingCheck : RaisingState :=
-  liftFun (fun tok ↦ ⟨.sel (.of tok tok.item.outerSel), 0⟩) raisingTraceState s
+  liftFun (fun tok ↦ ⟨.sel (.of tok tok.item.sel), 0⟩) raisingTraceState s
 
 /-- The raising head of a syntactic object, [marcolli-chomsky-berwick-2025]'s raising head
 function: the label where there is one, and at a landing site the head of the phrase moved out

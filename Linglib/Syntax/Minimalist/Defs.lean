@@ -1,3 +1,8 @@
+/-
+Copyright (c) 2026 Robert Hawkins. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Robert Hawkins
+-/
 module
 
 public import Mathlib.Data.Set.Basic
@@ -9,16 +14,15 @@ public import Linglib.Data.UD.UPOS
 
 The leaves of syntactic objects are drawn from `SO₀`, the lexical items and syntactic features. This
 file defines that alphabet: categorial features `Cat`, a selectional stack `SelStack` consumed left
-to right, the feature bundle `SimpleLI` of a category and its selectional requirements,
-`LexicalItem` as a nonempty list of bundles (a head that has incorporated another carries both), and
-`LexicalItem.Token`, a lexical item with the index that tells its tokens apart. It is
-carrier-agnostic; the carrier built over tokens is `SyntacticObject/Basic.lean`. `ConventionDir` is
-the harmonic head-side parameter, and `uposToCat` the map from Universal Dependencies part-of-speech
-tags into `Cat`.
+to right, `LexicalItem`, a category with its selectional stack and its phonological form, [wh] and
+[E] features, and `LexicalItem.Token`, a lexical item with the index that tells its tokens apart.
+It is carrier-agnostic; the carrier built over tokens is `SyntacticObject/Basic.lean`.
+`ConventionDir` is the harmonic head-side parameter, and `uposToCat` the map from Universal
+Dependencies part-of-speech tags into `Cat`.
 
 ## Main definitions
 
-* `Minimalist.Cat`, `Minimalist.SelStack`, `Minimalist.SimpleLI`, `Minimalist.LexicalItem`,
+* `Minimalist.Cat`, `Minimalist.SelStack`, `Minimalist.LexicalItem`,
   `Minimalist.LexicalItem.Token`
 * `Minimalist.ConventionDir`
 
@@ -78,59 +82,30 @@ inductive Cat where
 /-- A selectional stack, consumed left to right. -/
 abbrev SelStack := List Cat
 
-/-- A category with its selectional stack, and optionally a phonological form for
-    linearization. -/
-structure SimpleLI where
-  cat : Cat
-  sel : SelStack
-  phonForm : String := ""
-  /-- The [wh] feature, read by wh-movement and the multiple-wh-fronting parameter. -/
-  wh : Bool := false
-  /-- The [E] feature, which leaves the head's complement unpronounced ([merchant-2001]). -/
-  ellipsis : Bool := false
-  deriving Repr, DecidableEq
-
-/-- A lexical item is a nonempty list of feature bundles, one for a simple item and several for a
-    head that has incorporated others. -/
+/-- A lexical item is a category with its selectional stack, a phonological form, empty for a
+silent item, and the [wh] and [E] features. -/
 structure LexicalItem where
-  features : List SimpleLI
-  nonempty : features ≠ []
+  /-- The category. -/
+  cat : Cat
+  /-- The selectional stack, consumed left to right. -/
+  sel : SelStack
+  /-- The phonological form, empty for a silent item. -/
+  phonForm : String
+  /-- The [wh] feature, read by wh-movement and the multiple-wh-fronting parameter. -/
+  wh : Bool
+  /-- The [E] feature, which leaves the head's complement unpronounced ([merchant-2001]). -/
+  ellipsis : Bool
   deriving Repr, DecidableEq
 
-/-- The simple lexical item with one feature bundle. -/
-def LexicalItem.simple (cat : Cat) (sel : SelStack) (phonForm : String := "") (wh : Bool := false)
+/-- The lexical item of a category and selectional stack, silent and without [wh] or [E] unless
+the optional arguments say otherwise. -/
+def LexicalItem.of (cat : Cat) (sel : SelStack) (phonForm : String := "") (wh : Bool := false)
     (ellipsis : Bool := false) : LexicalItem :=
-  ⟨[⟨cat, sel, phonForm, wh, ellipsis⟩], by simp⟩
+  ⟨cat, sel, phonForm, wh, ellipsis⟩
 
-/-- The outer, projecting category, that of the first feature bundle. -/
-def LexicalItem.outerCat (li : LexicalItem) : Cat := (li.features.head li.nonempty).cat
-
-/-- The outer selectional stack, that of the first feature bundle. -/
-def LexicalItem.outerSel (li : LexicalItem) : SelStack := (li.features.head li.nonempty).sel
-
-/-- The outer [wh] feature, that of the first feature bundle. -/
-def LexicalItem.outerWh (li : LexicalItem) : Bool := (li.features.head li.nonempty).wh
-
-/-- The outer [E] feature, that of the first feature bundle. -/
-def LexicalItem.outerEllipsis (li : LexicalItem) : Bool := (li.features.head li.nonempty).ellipsis
-
-/-- The outer phonological form, that of the first feature bundle, or `none` for a silent
-item. -/
-def LexicalItem.outerPhonForm? (li : LexicalItem) : Option String :=
-  let p := (li.features.head li.nonempty).phonForm
-  if p.isEmpty then none else some p
-
-/-- A complex lexical item carries more than one feature bundle. -/
-def LexicalItem.IsComplex (li : LexicalItem) : Prop := 1 < li.features.length
-
-instance (li : LexicalItem) : Decidable li.IsComplex := inferInstanceAs (Decidable (_ < _))
-
-/-- Head-to-head movement: the target keeps projecting, with the mover's bundles appended. -/
-def LexicalItem.combine (target mover : LexicalItem) : LexicalItem :=
-  ⟨target.features ++ mover.features, by
-    cases htf : target.features with
-    | nil => exact absurd htf target.nonempty
-    | cons hd tl => simp⟩
+/-- The phonological form of a pronounced item, `none` for a silent one. -/
+def LexicalItem.phonForm? (li : LexicalItem) : Option String :=
+  if li.phonForm.isEmpty then none else some li.phonForm
 
 /-- A token of a lexical item. Syntactic objects are compared as values, so two occurrences of
 one item, the two *the*s of a transitive clause, are different leaves only through their tokens;
@@ -145,7 +120,7 @@ structure LexicalItem.Token where
 /-- The placeholder head of a bare trace, which remembers no token. Selection reads it as a
 saturated silent noun, and its index lies above those lexical tokens use, so it equals none of
 them. -/
-def LexicalItem.Token.bareTrace : LexicalItem.Token := ⟨.simple .N [], 10000⟩
+def LexicalItem.Token.bareTrace : LexicalItem.Token := ⟨.of .N [], 10000⟩
 
 /-! ### Head-side convention (MCB Lemma 1.13.5) -/
 

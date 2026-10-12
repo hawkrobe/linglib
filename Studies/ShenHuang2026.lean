@@ -75,22 +75,22 @@ structure Config where
 /-! ### The object DP (5) -/
 
 /-- The wh-phrase, the complement of *about*. -/
-def wh : LexicalItem.Token := ⟨.simple .D [] "what" true, 0⟩
+def wh : LexicalItem.Token := ⟨.of .D [] "what" true, 0⟩
 
 /-- The preposition of the depiction nominal. -/
-def about : LexicalItem.Token := ⟨.simple .P [.D] "about", 1⟩
+def about : LexicalItem.Token := ⟨.of .P [.D] "about", 1⟩
 
 /-- The head noun, selecting the depiction PP. -/
-def book : LexicalItem.Token := ⟨.simple .N [.P] "book", 2⟩
+def book : LexicalItem.Token := ⟨.of .N [.P] "book", 2⟩
 
 /-- The demonstrative determiner of a definite object. -/
-def that : LexicalItem.Token := ⟨.simple .D [.N] "that", 3⟩
+def that : LexicalItem.Token := ⟨.of .D [.N] "that", 3⟩
 
 /-- The indefinite determiner. -/
-def a : LexicalItem.Token := ⟨.simple .D [.N] "a", 4⟩
+def a : LexicalItem.Token := ⟨.of .D [.N] "a", 4⟩
 
 /-- The main verb. -/
-def verb : LexicalItem.Token := ⟨.simple .V [.D], 5⟩
+def verb : LexicalItem.Token := ⟨.of .V [.D], 5⟩
 
 /-- The determiner of the object is the demonstrative when it is definite. -/
 def determiner : Definiteness → LexicalItem.Token
@@ -316,20 +316,20 @@ open Terminal
 
 /-- Each terminal spells out its own lexical item. -/
 def Terminal.token : Terminal → LexicalItem.Token
-  | what => ⟨.simple .D [], 11⟩
-  | «do» => ⟨.simple .T [], 12⟩
-  | you => ⟨.simple .D [], 13⟩
-  | think => ⟨.simple .V [], 14⟩
-  | mary => ⟨.simple .D [], 15⟩
-  | would => ⟨.simple .T [], 16⟩
-  | eat => ⟨.simple .V [], 17⟩
+  | what => ⟨.of .D [], 11⟩
+  | «do» => ⟨.of .T [], 12⟩
+  | you => ⟨.of .D [], 13⟩
+  | think => ⟨.of .V [], 14⟩
+  | mary => ⟨.of .D [], 15⟩
+  | would => ⟨.of .T [], 16⟩
+  | eat => ⟨.of .V [], 17⟩
 
 /-- A lexical item spells out at most one terminal. -/
 def Terminal.ofToken? (tok : LexicalItem.Token) : Option Terminal :=
   [what, «do», you, think, mary, would, eat].find? (·.token = tok)
 
 /-- The embedded complementizer is silent. -/
-def embeddedC : LexicalItem.Token := ⟨.simple .C [], 18⟩
+def embeddedC : LexicalItem.Token := ⟨.of .C [], 18⟩
 
 /-- In the embedded clause *eat* merges with *what*, then *would*, *Mary* and the
 complementizer. -/
