@@ -1,15 +1,16 @@
 module
 
 public import Linglib.Semantics.Degree.Adjective
+public import Linglib.Fragments.English.Inflection
 
 /-!
 # English adjectives
 
 This file lists the English adjective lexemes. An entry records the surface
-form, the scalar dimension, the polarity, the antonym and the comparison
-paradigm: the comparative and superlative forms with their root pattern,
-`Paradigm.abb` for *good – better – best*. An antonym pair is entered once,
-as an `AntonymPair` on its shared scale, and its two polar adjectives are the
+form, the scalar dimension, the polarity, the antonym and, where it is given, the comparison
+paradigm. An adjective compares with the suffixes *-er* and *-est*, with the degree words
+*more* and *most*, or on another root, as *good*, *better*, *best* does. An antonym pair is
+entered once, as an `AntonymPair` on its shared scale, and its two polar adjectives are the
 pair's `pos` and `neg`.
 
 ## References
@@ -33,12 +34,35 @@ pair's `pos` and `neg`.
 
 namespace English.Adjectives
 
-open Degree
+open Degree Morphology
+
+/-! ### Grade -/
+
+/-- The degree word of the analytic comparative. -/
+def more : Morph := .free "more"
+
+/-- The degree word of the analytic superlative. -/
+def most : Morph := .free "most"
+
+/-- The inflectional comparison of `form`, with the suffixes *-er* and *-est*. -/
+def inflectional (form : String) : Adjective.Comparison :=
+  { comparative := [.root form, Inflection.er], superlative := [.root form, Inflection.est] }
+
+/-- The analytic comparison of `form`, with the degree words *more* and *most*. -/
+def analytic (form : String) : Adjective.Comparison :=
+  { comparative := [more, .root form], superlative := [most, .root form] }
+
+/-- The comparison of an adjective whose comparative and superlative are on another root. -/
+def suppletive (comparative superlative : String) : Adjective.Comparison :=
+  { comparative := [.root comparative], superlative := [.root superlative]
+    suppletion := Paradigm.abb }
+
+/-! ### The lexemes -/
 
 def height : AntonymPair :=
   { dimension := .height, posForm := "tall", negForm := "short"
-  , posComparison := .synthetic "taller" "tallest"
-  , negComparison := .synthetic "shorter" "shortest" }
+  , posComparison := inflectional "tall"
+  , negComparison := inflectional "short" }
 
 abbrev tall := height.pos
 
@@ -51,8 +75,8 @@ def high : GradableAdjective :=
 attitude predicate "x is happy that p" is in `Studies/UegakiSudo2019.lean`. -/
 def happiness : AntonymPair :=
   { dimension := .happiness, posForm := "happy", negForm := "unhappy"
-  , posComparison := .synthetic "happier" "happiest"
-  , negComparison := .synthetic "unhappier" "unhappiest", evaluativeValence := some .positive }
+  , posComparison := inflectional "happy"
+  , negComparison := inflectional "unhappy", evaluativeValence := some .positive }
 
 abbrev happy := happiness.pos
 
@@ -60,7 +84,7 @@ abbrev unhappy := happiness.neg
 
 def sad : GradableAdjective :=
   { form := "sad", polarity := .negative, dimension := some .happiness
-  , comparison := .synthetic "sadder" "saddest"
+  , comparison := inflectional "sad"
   , antonymForm := some "happy"
   , evaluativeValence := some .negative }
 
@@ -69,8 +93,8 @@ def sad : GradableAdjective :=
 so a half-full glass is neither full nor empty. -/
 def fullness : AntonymPair :=
   { dimension := .fullness, posForm := "full", negForm := "empty"
-  , posComparison := .synthetic "fuller" "fullest"
-  , negComparison := .synthetic "emptier" "emptiest" }
+  , posComparison := inflectional "full"
+  , negComparison := inflectional "empty" }
 
 abbrev full := fullness.pos
 
@@ -78,7 +102,7 @@ abbrev empty := fullness.neg
 
 def heat : AntonymPair :=
   { dimension := .temperature, posForm := "hot", negForm := "cold"
-  , posComparison := .synthetic "hotter" "hottest", negComparison := .synthetic "colder" "coldest" }
+  , posComparison := inflectional "hot", negComparison := inflectional "cold" }
 
 abbrev hot := heat.pos
 
@@ -86,8 +110,8 @@ abbrev cold := heat.neg
 
 def cost : AntonymPair :=
   { dimension := .cost, posForm := "expensive", negForm := "cheap"
-  , posComparison := .periphrastic "more expensive" "most expensive"
-  , negComparison := .synthetic "cheaper" "cheapest" }
+  , posComparison := analytic "expensive"
+  , negComparison := inflectional "cheap" }
 
 abbrev expensive := cost.pos
 
@@ -95,7 +119,7 @@ abbrev cheap := cost.neg
 
 def wetness : AntonymPair :=
   { dimension := .wetness, posForm := "wet", negForm := "dry"
-  , posComparison := .synthetic "wetter" "wettest", negComparison := .synthetic "drier" "driest" }
+  , posComparison := inflectional "wet", negComparison := inflectional "dry" }
 
 abbrev wet := wetness.pos
 
@@ -286,7 +310,7 @@ scale, with *certain* at its maximum and *doubtful*, *unsure* and *uncertain*
 on its negative pole. -/
 
 def smart : GradableAdjective :=
-  { form := "smart", dimension := some .intelligence, comparison := .synthetic "smarter" "smartest"
+  { form := "smart", dimension := some .intelligence, comparison := inflectional "smart"
   , antonymForm := some "dumb" }
 
 /-- *Confident* is relative on the upper-closed confidence scale. [cariani-santorio-wellwood-2024]
@@ -298,15 +322,15 @@ more confident that p or q* (3). Interpretive Economy ([kennedy-2007] (66)) woul
 maximum of the scale, so the standard is lexical. -/
 def confident : GradableAdjective :=
   { form := "confident", dimension := some .confidence, lexicalStandard := some .contextual
-  , comparison := .periphrastic "more confident" "most confident" }
+  , comparison := analytic "confident" }
 
 /-- *certain* and *uncertain* measure on an upper-closed scale, *certain* with the maximum standard
 and *uncertain* with the minimum, as *perfectly certain* and *slightly uncertain* show
 ([kennedy-2007] (64)), so the pair is contradictory. -/
 def confidence : AntonymPair :=
   { dimension := .confidence, posForm := "certain", negForm := "uncertain"
-  , posComparison := .periphrastic "more certain" "most certain"
-  , negComparison := .periphrastic "more uncertain" "most uncertain" }
+  , posComparison := analytic "certain"
+  , negComparison := analytic "uncertain" }
 
 abbrev certain := confidence.pos
 
@@ -315,8 +339,8 @@ abbrev uncertain := confidence.neg
 /-- *sure* and *unsure* are entered on the scale of *certain* and *uncertain*. -/
 def sureness : AntonymPair :=
   { dimension := .confidence, posForm := "sure", negForm := "unsure"
-  , posComparison := .synthetic "surer" "surest"
-  , negComparison := .periphrastic "more unsure" "most unsure" }
+  , posComparison := inflectional "sure"
+  , negComparison := analytic "unsure" }
 
 abbrev sure := sureness.pos
 
@@ -324,7 +348,7 @@ abbrev unsure := sureness.neg
 
 def doubtful : GradableAdjective :=
   { form := "doubtful", polarity := .negative, dimension := some .confidence
-  , comparison := .periphrastic "more doubtful" "most doubtful" }
+  , comparison := analytic "doubtful" }
 
 /-! ## Evaluative adjectives -/
 
@@ -334,7 +358,7 @@ def doubtful : GradableAdjective :=
     stipulated, so no `lexicalStandard` is needed. -/
 def value : AntonymPair :=
   { dimension := .value, posForm := "good", negForm := "bad"
-  , posComparison := .suppletive "better" "best", negComparison := .suppletive "worse" "worst"
+  , posComparison := suppletive "better" "best", negComparison := suppletive "worse" "worst"
   , evaluativeValence := some .positive }
 
 abbrev good := value.pos
@@ -565,5 +589,25 @@ def lookup (form : String) : Option GradableAdjective :=
 /-- The antonym pair with a given surface form as one of its poles. -/
 def pairOf (form : String) : Option AntonymPair :=
   pairs.find? fun p ↦ p.posForm == form || p.negForm == form
+
+/-- A recorded comparative or superlative is built on the adjective's own form exactly where the
+root pattern keeps the root of the positive. -/
+theorem root_mem_iff_suppletion_eq : ∀ e ∈ allEntries,
+    (e.comparison.comparative ≠ [] → (.root e.form ∈ e.comparison.comparative ↔
+      e.comparison.suppletion 1 = e.comparison.suppletion 0)) ∧
+    (e.comparison.superlative ≠ [] → (.root e.form ∈ e.comparison.superlative ↔
+      e.comparison.suppletion 2 = e.comparison.suppletion 0)) := by
+  decide
+
+/-- The grades are spelled by the rules of `English.Inflection`, with the consonant doubled in
+*sadder*, the *y* replaced in *happiest* and *drier* and the *e* dropped in *surer*. -/
+example :
+    Inflection.spell sad.comparison.comparative = "sadder" ∧
+      Inflection.spell happy.comparison.superlative = "happiest" ∧
+      Inflection.spell dry.comparison.comparative = "drier" ∧
+      Inflection.spell sure.comparison.comparative = "surer" ∧
+      Inflection.spell confident.comparison.comparative = "more confident" ∧
+      Inflection.spell good.comparison.superlative = "best" := by
+  decide
 
 end English.Adjectives
