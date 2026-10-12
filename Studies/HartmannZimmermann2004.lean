@@ -6,6 +6,7 @@ Authors: Robert Hawkins
 module
 
 public import Mathlib.Tactic.FinCases
+public import Linglib.Core.Data.RoseTree.Span
 public import Linglib.Core.Logic.Function.FactorsThrough
 public import Linglib.Phonology.OptimalityTheory.Tableau
 public import Linglib.Phonology.Prosody.Phrase
@@ -161,15 +162,11 @@ def wrapped : Prosody.Tree := .node .iota [.node .ph [ω, ω]]
 def separated : Prosody.Tree :=
   .node .iota [.node .ph [ω], .node .ph [ω]]
 
-/-- `phSpans t` lists the `(offset, size)` leaf-spans of the φ nodes of `t` from left to right,
-where the offset counts the leaves strictly to the node's left and the size its own leaves. -/
-def phSpans : Prosody.Tree → List (ℕ × ℕ) := go 0 where
-  go (off : ℕ) : Prosody.Tree → List (ℕ × ℕ)
-    | .node a cs =>
-        (if a.isPh then [(off, RoseTree.numLeaves (.node a cs))] else []) ++ goList off cs
-  goList (off : ℕ) : List Prosody.Tree → List (ℕ × ℕ)
-    | [] => []
-    | c :: cs => go off c ++ goList (off + RoseTree.numLeaves c) cs
+/-- `phSpans t` lists the spans of the φ nodes of `t` in preorder, each as the number of leaves
+to its left and the number of its own leaves. -/
+def phSpans (t : Prosody.Tree) : List (ℕ × ℕ) :=
+  (t.positionedSubtrees.filter (·.2.value.isPh)).map fun x ↦
+    (t.leafIndex x.1.toList, x.2.numLeaves)
 
 /-- ALIGN-Focus is violated when no φ-edge sits at the focus's left edge (leaf offset 1, the
 object). -/

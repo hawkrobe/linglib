@@ -7,6 +7,7 @@ module
 
 public import Linglib.Core.Computability.ContextFreeGrammar
 public import Linglib.Core.Data.RoseTree.Licensed
+public import Linglib.Core.Data.RoseTree.Span
 public import Linglib.Core.Data.RoseTree.Encodable
 public import Mathlib.Algebra.BigOperators.Group.Multiset.Basic
 public import Mathlib.Data.Finset.Card
@@ -84,10 +85,11 @@ of the subtree there, and the terminals to its right. -/
 theorem yield_replaceAt {t s : RoseTree (Symbol T N)} {p : List ℕ} (h : subtreeAt t p = some s) :
     ∃ pre post : List T, t.yield = pre ++ s.yield ++ post ∧
       ∀ new : RoseTree (Symbol T N), (t.replaceAt p new).yield = pre ++ new.yield ++ post := by
-  obtain ⟨pre, post, hy, hy'⟩ := leafList_replaceAt h
-  exact ⟨pre.filterMap Symbol.terminal?, post.filterMap Symbol.terminal?,
-    by simp [yield, hy, List.filterMap_append],
-    fun new => by simp [yield, hy', List.filterMap_append]⟩
+  refine ⟨(t.leafList.take (t.leafIndex p)).filterMap Symbol.terminal?,
+    (t.leafList.drop (t.leafIndex p + s.numLeaves)).filterMap Symbol.terminal?, ?_, fun new ↦ ?_⟩
+  · conv_lhs => rw [yield, ← take_append_leafList_append_drop h]
+    simp only [yield, List.filterMap_append]
+  · simp only [yield, leafList_replaceAt h, List.filterMap_append]
 
 /-! ### Licensing -/
 

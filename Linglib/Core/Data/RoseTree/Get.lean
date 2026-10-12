@@ -44,8 +44,8 @@ a binary-search-tree lookup, which has no analogue for a general rose tree.
   frontier (`map_snd_positionedLeaves`), which is precedence (`pairwise_precedes_positionedLeaves`).
 * `RoseTree.replaceAt`: replacement at an address, leaving the subtrees away from it unchanged
   (`subtreeAt_replaceAt_of_not_prefix`) and those above it holding the replacement
-  (`subtreeAt_replaceAt_of_prefix`), splitting the frontier (`leafList_replaceAt`) and shrinking
-  the tree when the new subtree is smaller (`numNodes_replaceAt_lt`).
+  (`subtreeAt_replaceAt_of_prefix`) and shrinking the tree when the new subtree is smaller
+  (`numNodes_replaceAt_lt`). Its effect on the frontier is in `RoseTree/Span.lean`.
 -/
 
 @[expose] public section
@@ -159,13 +159,13 @@ theorem exists_subtreeAt_height_sub (t : RoseTree α) (k : ℕ) (hk : k < t.heig
       ∀ i ≤ k, ∃ s, subtreeAt t (p.take i) = some s ∧ s.height = t.height - i := by
   induction k generalizing t with
   | zero =>
-    exact ⟨[], rfl, fun i hi => by obtain rfl := Nat.le_zero.mp hi; exact ⟨t, rfl, by simp⟩⟩
+    exact ⟨[], rfl, fun i hi ↦ by obtain rfl := Nat.le_zero.mp hi; exact ⟨t, rfl, by simp⟩⟩
   | succ k ih =>
     obtain ⟨c, hc, hch⟩ := exists_mem_children_height_add_one
       (Nat.lt_of_le_of_lt (Nat.succ_le_succ (Nat.zero_le k)) hk)
     obtain ⟨j, hj⟩ := List.getElem?_of_mem hc
     obtain ⟨p, hp, hsub⟩ := ih c (by omega)
-    refine ⟨j :: p, by simp [hp], fun i hi => ?_⟩
+    refine ⟨j :: p, by simp [hp], fun i hi ↦ ?_⟩
     cases i with
     | zero => exact ⟨t, rfl, by simp⟩
     | succ i =>
@@ -367,7 +367,7 @@ mutual
 theorem nodup_vertices : ∀ t : RoseTree α, t.vertices.Nodup
   | node _ cs => by
     rw [vertices_node, List.nodup_cons]
-    refine ⟨fun h => ?_, nodup_verticesList cs⟩
+    refine ⟨fun h ↦ ?_, nodup_verticesList cs⟩
     obtain ⟨_, _, h⟩ := exists_cons_of_mem_verticesList h
     exact List.cons_ne_nil _ _ h.symm
 theorem nodup_verticesList : ∀ cs : List (RoseTree α), (verticesList cs).Nodup
@@ -525,31 +525,6 @@ private theorem eq_take_append_cons_drop {cs : List (RoseTree α)} {i : ℕ} {c 
 private theorem set_eq_take_append_cons_drop {cs : List (RoseTree α)} {i : ℕ} {c : RoseTree α}
     (hc : cs[i]? = some c) (x : RoseTree α) : cs.set i x = cs.take i ++ x :: cs.drop (i + 1) := by
   rw [List.set_eq_take_append_cons_drop, ite_eq_left (List.getElem?_eq_some_iff.mp hc).1]
-
-/-- Replacing inside the tree splits the frontier into the leaves left of the address, the
-frontier of the subtree there, and the leaves to its right. -/
-theorem leafList_replaceAt {t s : RoseTree α} {p : List ℕ} (h : subtreeAt t p = some s) :
-    ∃ pre post : List α, t.leafList = pre ++ s.leafList ++ post ∧
-      ∀ new : RoseTree α, (t.replaceAt p new).leafList = pre ++ new.leafList ++ post := by
-  induction p generalizing t with
-  | nil => exact ⟨[], [], by simp [Option.some.inj h], fun new => by simp⟩
-  | cons i p ih =>
-    obtain ⟨c, hc, hcs⟩ := subtreeAt_cons_eq_some_iff.mp h
-    obtain ⟨pre, post, hy, hy'⟩ := ih hcs
-    cases t with
-    | node a cs =>
-      rw [children_node] at hc
-      refine ⟨((cs.take i).map leafList).flatten ++ pre,
-        post ++ ((cs.drop (i + 1)).map leafList).flatten, ?_, fun new => ?_⟩
-      · conv_lhs => rw [eq_take_append_cons_drop hc]
-        rw [leafList_node_of_ne_nil _ (List.append_ne_nil_of_right_ne_nil _ (List.cons_ne_nil _ _)),
-          List.map_append, List.map_cons, List.flatten_append, List.flatten_cons, hy]
-        simp only [List.append_assoc]
-      · rw [replaceAt_cons_of_getElem? (by simpa using hc), value_node, children_node,
-          set_eq_take_append_cons_drop hc,
-          leafList_node_of_ne_nil _ (List.append_ne_nil_of_right_ne_nil _ (List.cons_ne_nil _ _)),
-          List.map_append, List.map_cons, List.flatten_append, List.flatten_cons, hy']
-        simp only [List.append_assoc]
 
 /-- Away from the replaced address, at an address neither above nor below it, the subtree is
 unchanged. -/

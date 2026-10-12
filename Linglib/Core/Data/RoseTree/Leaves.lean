@@ -14,11 +14,11 @@ public import Mathlib.Algebra.Order.Group.Nat
 /-!
 # Leaf projections of a rose tree
 
-`leavesWithDepth` collects the leaves of a rose tree as a multiset of
-`(label, root-distance)` pairs; `leaves` forgets the depths. Leaf statistics are then
-`Multiset` computations: a count of the leaves satisfying a predicate is `Multiset.countP`
-on `leaves`, their depth-weighted count is the sum of `Prod.snd` over the filtered
-`leavesWithDepth`, and bounds are inherited from `Multiset.countP_le_card`.
+`RoseTree.leavesWithDepth` collects the leaves of a rose tree as a multiset of pairs of a label
+and its distance from the root. `RoseTree.leaves` forgets the distances, which leaves the
+frontier `RoseTree.leafList` without its order. The number of leaves satisfying a predicate is
+`Multiset.countP` on `leaves`, and their depth-weighted count is a sum over the filtered
+`leavesWithDepth`.
 
 ## Main definitions
 
@@ -27,6 +27,7 @@ on `leaves`, their depth-weighted count is the sum of `Prod.snd` over the filter
 ## Main results
 
 * `RoseTree.card_leavesWithDepth`: the projection has `numLeaves` elements.
+* `RoseTree.coe_leafList`: the leaf labels are the frontier with its order forgotten.
 * `RoseTree.numLeaves_le_numNodes`: a leaf is a vertex.
 * `RoseTree.countP_leaves_lt_numNodes_of_not`: when the root fails the predicate, the
   counted leaves are among the non-root vertices.
@@ -44,10 +45,10 @@ variable {α : Type*} (a : α) (c : RoseTree α) (cs : List (RoseTree α))
 
 /-- The leaves of a rose tree, each paired with its distance from the root. -/
 def leavesWithDepth : RoseTree α → Multiset (α × ℕ) :=
-  fold fun a ps =>
+  fold fun a ps ↦
     match ps with
     | [] => {(a, 0)}
-    | ps => (ps.map (Multiset.map fun p => (p.1, p.2 + 1))).sum
+    | ps => (ps.map (Multiset.map fun p ↦ (p.1, p.2 + 1))).sum
 
 /-- The multiset of leaf labels of a rose tree. -/
 def leaves (t : RoseTree α) : Multiset α := t.leavesWithDepth.map Prod.fst
@@ -56,18 +57,18 @@ def leaves (t : RoseTree α) : Multiset α := t.leavesWithDepth.map Prod.fst
 
 @[simp] theorem leavesWithDepth_node_cons :
     leavesWithDepth (node a (c :: cs))
-      = ((c :: cs).map fun t => t.leavesWithDepth.map fun p => (p.1, p.2 + 1)).sum := by
+      = ((c :: cs).map fun t ↦ t.leavesWithDepth.map fun p ↦ (p.1, p.2 + 1)).sum := by
   simp only [leavesWithDepth, fold_node, List.map_cons, List.map_map, Function.comp_def]
 
 @[simp] theorem leaves_leaf : leaves (node a []) = {a} := rfl
 
 /-- Depth-forgetting collapses the shift: the leaf labels of a node are the children's
-    leaf labels. -/
+leaf labels. -/
 @[simp] theorem leaves_node_cons :
     leaves (node a (c :: cs)) = ((c :: cs).map leaves).sum := by
   rw [leaves, leavesWithDepth_node_cons, ← Multiset.coe_mapAddMonoidHom, map_list_sum,
     List.map_map]
-  refine congrArg List.sum (List.map_congr_left fun t _ => ?_)
+  refine congrArg List.sum (List.map_congr_left fun t _ ↦ ?_)
   simp [leaves, Multiset.map_map]
 
 /-! ### Cardinality -/
@@ -82,14 +83,14 @@ theorem card_leavesWithDepth (t : RoseTree α) :
     · rw [leavesWithDepth_node_cons, numLeaves_node]
       have hsum : ∀ ds : List (RoseTree α), (∀ d ∈ ds, Multiset.card d.leavesWithDepth
             = d.numLeaves) →
-          Multiset.card ((ds.map fun t => t.leavesWithDepth.map fun p => (p.1, p.2 + 1)).sum)
+          Multiset.card ((ds.map fun t ↦ t.leavesWithDepth.map fun p ↦ (p.1, p.2 + 1)).sum)
             = (ds.map numLeaves).sum := by
         intro ds hds
         induction ds with
         | nil => rfl
         | cons d ds ihd =>
           simp only [List.map_cons, List.sum_cons, Multiset.card_add, Multiset.card_map]
-          rw [hds d List.mem_cons_self, ihd fun x hx => hds x (List.mem_cons_of_mem _ hx)]
+          rw [hds d List.mem_cons_self, ihd fun x hx ↦ hds x (List.mem_cons_of_mem _ hx)]
       rw [hsum (c :: cs) ih]
       have : 0 < ((c :: cs).map numLeaves).sum := by
         simp only [List.map_cons, List.sum_cons]
@@ -100,6 +101,20 @@ theorem card_leavesWithDepth (t : RoseTree α) :
 /-- The number of leaf labels is the number of leaves. -/
 theorem card_leaves (t : RoseTree α) : Multiset.card t.leaves = t.numLeaves := by
   rw [leaves, Multiset.card_map, card_leavesWithDepth]
+
+/-- The leaf labels are the frontier with its order forgotten. -/
+theorem coe_leafList (t : RoseTree α) : (t.leafList : Multiset α) = t.leaves := by
+  induction t with
+  | node a cs ih =>
+    rcases cs with _ | ⟨c, cs⟩
+    · rfl
+    · rw [leafList_node_cons, leaves_node_cons, ← List.map_congr_left ih]
+      generalize c :: cs = ds
+      induction ds with
+      | nil => rfl
+      | cons d ds ihd =>
+        rw [List.map_cons, List.flatten_cons, ← Multiset.coe_add, ihd]
+        simp
 
 /-- A leaf is a vertex. -/
 theorem numLeaves_le_numNodes (t : RoseTree α) : t.numLeaves ≤ t.numNodes := by
@@ -112,16 +127,16 @@ theorem numLeaves_le_numNodes (t : RoseTree α) : t.numLeaves ≤ t.numNodes := 
 /-! ### `Perm` invariance -/
 
 /-- `leavesWithDepth` is a `Perm`-invariant: the fold algebra reads its arguments only
-    through a nil test and a sum. -/
+through a nil test and a sum. -/
 theorem leavesWithDepth_perm {t s : RoseTree α} (h : Perm t s) :
     t.leavesWithDepth = s.leavesWithDepth := by
-  refine fold_perm (fun v l₁ l₂ h' => ?_) h
+  refine fold_perm (fun v l₁ l₂ h' ↦ ?_) h
   cases l₁ with
   | nil => rw [← h'.nil_eq]
   | cons x xs =>
     cases l₂ with
     | nil => exact absurd h'.eq_nil (by simp)
-    | cons y ys => exact (h'.map (Multiset.map fun p : α × ℕ => (p.1, p.2 + 1))).sum_eq
+    | cons y ys => exact (h'.map (Multiset.map fun p : α × ℕ ↦ (p.1, p.2 + 1))).sum_eq
 
 /-- `leaves` is a `Perm`-invariant. -/
 theorem leaves_perm {t s : RoseTree α} (h : Perm t s) : t.leaves = s.leaves :=
@@ -138,19 +153,19 @@ theorem countP_leaves_leaf (a : α) :
     Nat.zero_add]
 
 @[simp] theorem countP_leaves_node_cons (a : α) (c : RoseTree α) (cs : List (RoseTree α)) :
-    (leaves (node a (c :: cs))).countP p = ((c :: cs).map fun t => t.leaves.countP p).sum := by
+    (leaves (node a (c :: cs))).countP p = ((c :: cs).map fun t ↦ t.leaves.countP p).sum := by
   rw [leaves_node_cons, ← Multiset.coe_countPAddMonoidHom, map_list_sum, List.map_map]
   rfl
 
 /-- On a non-leaf node the count is the children's total, for any root label. -/
 theorem countP_leaves_node_of_ne_nil (a : α) {cs : List (RoseTree α)} (h : cs ≠ []) :
-    (leaves (node a cs)).countP p = (cs.map fun t => t.leaves.countP p).sum := by
+    (leaves (node a cs)).countP p = (cs.map fun t ↦ t.leaves.countP p).sum := by
   obtain ⟨c, cs, rfl⟩ := List.exists_cons_of_ne_nil h
   rw [countP_leaves_node_cons]
 
 /-- A root failing `p` contributes nothing, for any child list. -/
 theorem countP_leaves_node_of_not {a : α} (cs : List (RoseTree α)) (h : ¬p a) :
-    (leaves (node a cs)).countP p = (cs.map fun t => t.leaves.countP p).sum := by
+    (leaves (node a cs)).countP p = (cs.map fun t ↦ t.leaves.countP p).sum := by
   cases cs with
   | nil => rw [countP_leaves_leaf, ite_eq_right h]; rfl
   | cons c cs => rw [countP_leaves_node_cons]
@@ -163,50 +178,50 @@ theorem countP_leaves_eq_numLeaves {t : RoseTree α} :
 
 /-- The counted leaves are exactly the depth entries. -/
 @[simp] theorem card_filter_leavesWithDepth (t : RoseTree α) :
-    Multiset.card (t.leavesWithDepth.filter fun q : α × ℕ => p q.1) = t.leaves.countP p := by
+    Multiset.card (t.leavesWithDepth.filter fun q : α × ℕ ↦ p q.1) = t.leaves.countP p := by
   rw [leaves, Multiset.countP_map]
 
 theorem sum_map_snd_filter_leavesWithDepth_leaf (a : α) :
-    Multiset.sum (((leavesWithDepth (node a [])).filter fun q : α × ℕ => p q.1).map Prod.snd)
+    Multiset.sum (((leavesWithDepth (node a [])).filter fun q : α × ℕ ↦ p q.1).map Prod.snd)
       = 0 := by
   rw [leavesWithDepth_leaf, Multiset.filter_singleton]
   split_ifs <;> rfl
 
 /-- The counted leaves of a node are the children's, each one edge deeper. -/
 theorem filter_leavesWithDepth_node_cons (a : α) (c : RoseTree α) (cs : List (RoseTree α)) :
-    (leavesWithDepth (node a (c :: cs))).filter (fun q : α × ℕ => p q.1)
-      = ((c :: cs).map fun t =>
-          (t.leavesWithDepth.filter fun q : α × ℕ => p q.1).map
-            fun q => (q.1, q.2 + 1)).sum := by
+    (leavesWithDepth (node a (c :: cs))).filter (fun q : α × ℕ ↦ p q.1)
+      = ((c :: cs).map fun t ↦
+          (t.leavesWithDepth.filter fun q : α × ℕ ↦ p q.1).map
+            fun q ↦ (q.1, q.2 + 1)).sum := by
   rw [leavesWithDepth_node_cons]
-  refine (map_list_sum (⟨⟨Multiset.filter fun q : α × ℕ => p q.1, Multiset.filter_zero _⟩,
+  refine (map_list_sum (⟨⟨Multiset.filter fun q : α × ℕ ↦ p q.1, Multiset.filter_zero _⟩,
     Multiset.filter_add _⟩ : Multiset (α × ℕ) →+ Multiset (α × ℕ)) _).trans ?_
   rw [List.map_map]
-  refine congrArg List.sum (List.map_congr_left fun t _ => ?_)
+  refine congrArg List.sum (List.map_congr_left fun t _ ↦ ?_)
   simp only [Function.comp_def, AddMonoidHom.coe_mk, ZeroHom.coe_mk, Multiset.filter_map]
 
 /-- Each child contributes its own depth-weighted count plus one per counted leaf it
-    carries (the extra edge from the node to the child). -/
+carries (the extra edge from the node to the child). -/
 @[simp] theorem sum_map_snd_filter_leavesWithDepth_node (a : α) (cs : List (RoseTree α)) :
-    Multiset.sum (((leavesWithDepth (node a cs)).filter fun q : α × ℕ => p q.1).map Prod.snd)
-      = (cs.map fun c =>
-          Multiset.sum ((c.leavesWithDepth.filter fun q : α × ℕ => p q.1).map Prod.snd)
+    Multiset.sum (((leavesWithDepth (node a cs)).filter fun q : α × ℕ ↦ p q.1).map Prod.snd)
+      = (cs.map fun c ↦
+          Multiset.sum ((c.leavesWithDepth.filter fun q : α × ℕ ↦ p q.1).map Prod.snd)
             + c.leaves.countP p).sum := by
   rcases cs with _ | ⟨c, cs⟩
   · exact sum_map_snd_filter_leavesWithDepth_leaf p a
   · rw [filter_leavesWithDepth_node_cons, ← Multiset.coe_mapAddMonoidHom, map_list_sum,
       ← Multiset.coe_sumAddMonoidHom, map_list_sum, List.map_map, List.map_map]
-    refine congrArg List.sum (List.map_congr_left fun t _ => ?_)
+    refine congrArg List.sum (List.map_congr_left fun t _ ↦ ?_)
     simp [Function.comp_def, Multiset.map_map, Multiset.sum_map_add]
 
 /-- The children's counted leaves are bounded by the node's. -/
 theorem sum_map_countP_leaves_le_node (a : α) (cs : List (RoseTree α)) :
-    (cs.map fun t => t.leaves.countP p).sum ≤ (leaves (node a cs)).countP p := by
+    (cs.map fun t ↦ t.leaves.countP p).sum ≤ (leaves (node a cs)).countP p := by
   rcases cs with _ | ⟨c, cs⟩
   · exact Nat.zero_le _
   · exact (countP_leaves_node_cons p a c cs).ge
 
-/-- A counted leaf is a vertex: `Multiset.countP_le_card` through the leaf projection. -/
+/-- A counted leaf is a vertex. -/
 theorem countP_leaves_le_numNodes (t : RoseTree α) : t.leaves.countP p ≤ t.numNodes :=
   (Multiset.countP_le_card _ _).trans ((card_leaves t).trans_le (numLeaves_le_numNodes t))
 
@@ -214,19 +229,19 @@ theorem countP_leaves_le_numNodes (t : RoseTree α) : t.leaves.countP p ≤ t.nu
 theorem countP_leaves_lt_numNodes_of_not {a : α} (cs : List (RoseTree α)) (h : ¬p a) :
     (leaves (node a cs)).countP p < numNodes (node a cs) := by
   rw [countP_leaves_node_of_not p cs h, numNodes_node]
-  have := List.sum_le_sum (l := cs) (f := fun t => t.leaves.countP p) (g := numNodes)
-    fun c _ => countP_leaves_le_numNodes p c
+  have := List.sum_le_sum (l := cs) (f := fun t ↦ t.leaves.countP p) (g := numNodes)
+    fun c _ ↦ countP_leaves_le_numNodes p c
   omega
 
 /-- A root failing `p` puts every counted leaf at depth at least `1`, so the depth-weighted
-    count dominates the plain count. -/
+count dominates the plain count. -/
 theorem countP_leaves_le_sum_map_snd_filter_leavesWithDepth_of_not {a : α}
     (cs : List (RoseTree α)) (h : ¬p a) :
     (leaves (node a cs)).countP p
       ≤ Multiset.sum
-          (((leavesWithDepth (node a cs)).filter fun q : α × ℕ => p q.1).map Prod.snd) := by
+          (((leavesWithDepth (node a cs)).filter fun q : α × ℕ ↦ p q.1).map Prod.snd) := by
   rw [countP_leaves_node_of_not p cs h, sum_map_snd_filter_leavesWithDepth_node]
-  exact List.sum_le_sum fun c _ => Nat.le_add_left _ _
+  exact List.sum_le_sum fun c _ ↦ Nat.le_add_left _ _
 
 end Statistics
 
