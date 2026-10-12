@@ -12,7 +12,6 @@ public import Linglib.Semantics.Presupposition.Environment
 public import Linglib.Studies.Karttunen1971b
 public import Linglib.Syntax.Minimalist.Clause.Spine
 public import Linglib.Semantics.Presupposition.Verb
-public import Linglib.Semantics.Attitudes.Verb
 
 /-!
 # Deal (2026): Clausal complementation as relativization, revisited
@@ -31,20 +30,13 @@ The Nez Perce embedding strategy is read off the paper's judgments in
 typer, and the Bulgarian flag is Krapova's double requirement over the Fragment's frames, checked
 against her sentences (56)–(59) in `Data/Examples/Krapova2010.json`.
 
-## Main definitions
-
-* `RelativeEmbedding`: a predicate embeds relatively when a grammatical notional complement of
-  it carries the *yox̂ ke* edge.
-* `DetoComplement`: Krapova's double requirement on the predicates whose complement *deto*
-  introduces.
-* `Cell`, `rows`: the cells of table (79), each a spine with an Ā flag.
-
 ## Main results
 
 * `relative_factive`, `projection_rows`: every relative embedding is factive, factivity being
   the Fragment entries' Karttunen class, which the projection trials (33)–(36) and (68) confirm
   row by row.
-* `table79`, `table80`: every cell of the two tables is filled.
+* `table79`, `table80`: each shell over C, none, D N or P D, occurs with and without an
+  Ā-dependency, and factivity varies independently of the Ā-dependency.
 * `detoComplement_iff`, `deto_rows`: the double requirement picks out Krapova's *deto*-takers.
 * `paradigm_case_discriminates`: the case half of the diagnostic (21) that *yox̂* is a D.
 
@@ -52,17 +44,17 @@ against her sentences (56)–(59) in `Data/Examples/Krapova2010.json`.
 
 The Ā column of (79) is a datum for English, Ndebele and Washo, whose Fragments carry no
 relativizer observable, and the Washo V D CP structure of footnote 33, the complementation
-spine of [bochnak-hanink-2021], is a row beside the table's six. Table (81), nominalization
+spine Bochnak and Hanink propose, is a row beside the table's six. Table (81), nominalization
 against factivity, needs Turkish *düşün-* 'think', which has no Fragment.
 
 ## TODO
 
-* *ke*-agreement (§2, after [deal-2015a-nels]): the φ-probe on C interacts with all
+* *ke*-agreement (§2, after Deal's earlier analysis): the φ-probe on C interacts with all
   φ-features, probing from the subject downward until [addr] satisfies it; needs
   value-sensitive satisfaction and ordered-goal probing.
 * §6: relative embeddings block indexical shift and take matrix-matching tense as temporal de
-  re, while simplex embeddings allow shift and relative tense; rests on [deal-2025b]'s
-  clause-type semantics.
+  re, while simplex embeddings allow shift and relative tense; rests on Deal's clause-type
+  semantics.
 
 ## References
 
@@ -163,11 +155,11 @@ def adygheRelative : Cell :=
 of a predicate that is an emotive factive, a factive preferential attitude, and takes a *za*
 phrase. -/
 def DetoComplement (v : Bulgarian.Verb) : Prop :=
-  v.toVerb.IsPreferential ∧ v.toVerb.IsFactive ∧
+  (∃ a ∈ v.attitude, a.IsPreferential) ∧ v.toVerb.IsFactive ∧
     ∃ fr ∈ v.valency.frames, fr.HasAdpositional
 
 instance (v : Bulgarian.Verb) : Decidable (DetoComplement v) :=
-  inferInstanceAs (Decidable (_ ∧ _ ∧ ∃ fr ∈ v.valency.frames, _))
+  inferInstanceAs (Decidable ((∃ a ∈ v.attitude, _) ∧ _ ∧ ∃ fr ∈ v.valency.frames, _))
 
 /-- The double requirement picks out exactly the predicates Krapova lists as *deto*-takers, and
 neither condition suffices: *văzmuštavam se* 'resent' is emotive without a *za* phrase, and
