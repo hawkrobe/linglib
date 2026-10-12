@@ -24,7 +24,7 @@ one of several dependents is a catena that is not a constituent.
 ## Main statements
 
 * `DependencyGrammar.IsConstituent.isCatena`: every constituent is a catena.
-* `DependencyGrammar.not_isConstituent_pair`: in a tree, a head with one of two dependents is
+* `DependencyGrammar.not_isConstituent_pair`: in a forest, a head with one of two dependents is
   not a constituent.
 
 ## References
@@ -84,18 +84,18 @@ theorem isCatena_pair (g : Graph n) {v w : Fin n} (h : g.Adj v w) (hne : v ≠ w
   rw [IsCatena, Finset.coe_pair]
   exact SimpleGraph.induce_pair_connected_of_adj ⟨hne, .inl h⟩
 
-/-- In a tree, a head with one of its dependents is not a constituent when the head has
+/-- In a forest, a head with one of its dependents is not a constituent when the head has
 another dependent, since the head's cone contains the other dependent and the dependent's cone
 does not contain the head. -/
-theorem not_isConstituent_pair {g : Graph n} (hT : g.IsTree) {v w u : Fin n} (hw : g.Adj v w)
+theorem not_isConstituent_pair {g : Graph n} (hF : g.IsForest) {v w u : Fin n} (hw : g.Adj v w)
     (hu : g.Adj v u) (huw : u ≠ w) : ¬ IsConstituent g {v, w} := by
   rintro ⟨c, hc⟩
   rcases Finset.mem_insert.mp ((hc c).2 Relation.ReflTransGen.refl) with rfl | hcw
   · rcases Finset.mem_insert.mp ((hc u).2 (Relation.ReflTransGen.single hu)) with rfl | hu'
-    · exact hT.acyclic u (Relation.TransGen.single hu)
+    · exact hF.not_adj_self hu
     · exact huw (Finset.mem_singleton.mp hu')
   · rw [Finset.mem_singleton] at hcw; subst hcw
-    exact not_adj_dominates hT.acyclic hw ((hc v).1 (by simp))
+    exact hF.not_dominates_of_adj hw ((hc v).1 (by simp))
 
 /-- The whole sentence is a constituent, the dominance cone of the root. -/
 theorem isConstituent_univ {g : Graph n} (hT : g.IsTree) :

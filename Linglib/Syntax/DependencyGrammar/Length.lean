@@ -297,19 +297,19 @@ open Relation
 variable {n : ℕ}
 
 /-- Total dependency length sums `Nat.dist` over all arcs, the quantity dependency-length
-    minimisation is about. -/
+minimisation is about. -/
 def Graph.totalLength (g : Graph n) : Nat :=
   ∑ v : Fin n, ∑ w ∈ g.children v, Nat.dist v w
 
 /-- Total dependency length reads only the arc structure, never the
-    tokens. -/
+tokens. -/
 theorem Graph.totalLength_words (g : Graph n) (words' : Fin n → Morphology.Word) :
     Graph.totalLength { g with words := words' } = g.totalLength := rfl
 
 /-! ### Transport: same structure, different linearization -/
 
 /-- `g.map σ` transports `g` along the position permutation `σ`. Arcs, tokens and root move
-    together, so the labeled structure is unchanged and only the linearization varies. -/
+together, so the labeled structure is unchanged and only the linearization varies. -/
 def Graph.map (g : Graph n) (σ : Equiv.Perm (Fin n)) : Graph n :=
   { words := g.words ∘ σ.symm
     label := fun v w ↦ g.label (σ.symm v) (σ.symm w)
@@ -343,14 +343,14 @@ theorem _root_.Fin.dist_rev_rev (v w : Fin n) :
   omega
 
 /-- The mirror image of a graph has the same total dependency length —
-    the head-final preference is the exact mirror of the head-initial one
-    ([futrell-levy-gibson-2020], examples (7)–(8)). -/
+the head-final preference is the exact mirror of the head-initial one
+([futrell-levy-gibson-2020], examples (7)–(8)). -/
 theorem Graph.totalLength_mirror (g : Graph n) :
     g.mirror.totalLength = g.totalLength :=
   g.totalLength_map _ Fin.dist_rev_rev
 
 /-- The graph read in the order `order`, which lists every position once. The token at
-    position `p` is the token of `g` at `order[p]`, arcs and root following. -/
+position `p` is the token of `g` at `order[p]`, arcs and root following. -/
 def Graph.linearize (g : Graph n) (order : List (Fin n)) (h : order.Perm (List.finRange n)) :
     Graph n :=
   g.map ((finCongr (h.length_eq.trans List.length_finRange).symm).trans
@@ -366,9 +366,9 @@ theorem Graph.linearize_words (g : Graph n) (order : List (Fin n))
 /-! ### Arc length and the dependent's phrase -/
 
 /-- An arc to the far end of the dependent's own phrase is at least as long as the phrase:
-    when every position the dependent dominates lies between the head and the dependent, the
-    arc's length bounds their number. Direction is free for a one-word phrase and costly for a
-    long one. -/
+when every position the dependent dominates lies between the head and the dependent, the
+arc's length bounds their number. Direction is free for a one-word phrase and costly for a
+long one. -/
 theorem Graph.ncard_yield_le_dist (g : Graph n) {v w : Fin n} (hv : v ∉ g.yield w)
     (h : ∀ x ∈ g.yield w, x ∈ Set.uIcc v w) : (g.yield w).ncard ≤ Nat.dist v w := by
   have hsub : g.yield w ⊆ Set.uIcc v w \ {v} := Set.subset_sdiff_singleton h hv
@@ -438,7 +438,7 @@ theorem Graph.yieldDist_eq_one_add_sum (hT : g.IsTree) (hP : g.IsProjective) (h 
   obtain ⟨m, hmY, hm⟩ := Finset.exists_mem_eq_inf' (g.toFinset_yield_nonempty w)
     fun x ↦ Nat.dist v x
   have hmY : m ∈ g.yield w := by simpa using hmY
-  have hvY := hT.notMem_yield_of_adj h
+  have hvY := hT.not_dominates_of_adj h
   have hmin : ∀ y ∈ g.yield w, Nat.dist v m ≤ Nat.dist v y := fun y hy ↦
     hm ▸ Finset.inf'_le _ (by simpa using hy)
   have hgap : ∀ y ∈ g.yield w, ¬ (v < y ∧ y < m ∨ m < y ∧ y < v) := by
@@ -472,7 +472,7 @@ theorem Graph.yieldDist_eq_one_add_sum (hT : g.IsTree) (hP : g.IsProjective) (h 
       have hxY : x ∉ g.yield w := fun hxY ↦ hgap x hxY hx
       have huw : u ≠ w := by rintro rfl; exact hxY hxu
       have hdis := hT.disjoint_yield_of_adj hvu h huw
-      have hb := (hP u).between hxu (ReflTransGen.refl) hx (hT.notMem_yield_of_adj hvu)
+      have hb := (hP u).between hxu (ReflTransGen.refl) hx (hT.not_dominates_of_adj hvu)
         (Set.disjoint_right.1 hdis hmY)
       have hs := hside w ReflTransGen.refl
       refine ⟨u, by simpa using hvu, ?_, hxu⟩
@@ -490,7 +490,7 @@ theorem Graph.yieldDist_eq_one_add_sum (hT : g.IsTree) (hP : g.IsProjective) (h 
           huY ((hP w).uIcc_subset hmY ReflTransGen.refl (Set.mem_uIcc.2 hc))
         simp only [Fin.lt_def, Fin.le_def] at hb hs hmw ⊢
         omega
-      exact (hP u).between ReflTransGen.refl hxu hum (hT.notMem_yield_of_adj hvu)
+      exact (hP u).between ReflTransGen.refl hxu hum (hT.not_dominates_of_adj hvu)
         (Set.disjoint_right.1 hdis hmY)
   have hvm : v ≠ m := fun e ↦ hvY (e ▸ hmY)
   have hT' : (Finset.univ.filter fun x ↦ v < x ∧ x < m ∨ m < x ∧ x < v) =
@@ -566,7 +566,7 @@ theorem Graph.yieldDist_eq_boundaryDist (hT : g.IsTree) (hP : g.IsProjective) {w
     (h : g.Adj v w) :
     g.yieldDist v w = (g.siblingArrangement v).boundaryDist (fun c ↦ g.phraseLength c)
       ⟨v, g.self_mem_siblings v⟩ ⟨w, Graph.mem_siblings_of_adj h⟩ := by
-  have hvw : v ≠ w := fun e ↦ hT.notMem_yield_of_adj h (e ▸ ReflTransGen.refl)
+  have hvw : v ≠ w := fun e ↦ hT.not_dominates_of_adj h (e ▸ ReflTransGen.refl)
   rw [Graph.yieldDist_eq_one_add_sum hT hP h, Arrangement.boundaryDist, ite_eq_right (by simpa)]
   congr 1
   simp only [Graph.siblingArrangement_precedes, Graph.phraseLength_eq_ncard, sum_filter]

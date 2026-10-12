@@ -312,7 +312,7 @@ variable {A L root}
 
 /-- Two words cannot each be the other's landmark: by transitivity each would be its own. -/
 theorem not_isTree_graphOf (h₁ : L w p) (h₂ : L p w) : ¬ (A.graphOf L root).IsTree := fun hT ↦
-  not_adj_dominates hT.acyclic (graphOf_adj.2 h₁) (.single (graphOf_adj.2 h₂))
+  hT.not_dominates_of_adj (graphOf_adj.2 h₁) (.single (graphOf_adj.2 h₂))
 
 /-- Two words that depend on each other cannot each be the other's landmark. -/
 theorem not_isTree_parentGraph (h₁ : A.Parent p w) (h₂ : A.Parent w p) :

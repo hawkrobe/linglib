@@ -67,7 +67,6 @@ import Linglib.Core.Computability.Variety.Langs
 import Linglib.Core.Computability.Variety.Definite
 import Linglib.Core.Data.Fin.Tuple.Basic
 import Linglib.Core.Data.Fin.VecNotation
-import Linglib.Core.Data.Fintype.ExistsUnique
 import Linglib.Core.Data.Fintype.List
 import Linglib.Core.Data.Fintype.Sets
 import Linglib.Core.Data.Fintype.Transfer
@@ -163,7 +162,6 @@ import Linglib.Core.Order.Ortholattice
 import Linglib.Core.Order.PartialUnify
 import Linglib.Core.Order.PreorderLattice
 import Linglib.Core.Order.StrictBounds
-import Linglib.Core.Order.SuccPred.Tree
 import Linglib.Core.Order.Valuation
 import Linglib.Core.Order.TreePath
 import Linglib.Core.Order.UpperLower.Closure

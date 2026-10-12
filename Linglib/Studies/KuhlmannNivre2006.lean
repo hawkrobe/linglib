@@ -17,9 +17,10 @@ through, are the substrate of `Syntax/DependencyGrammar/`, whose definitions fol
 edge degree, the number of constituents an edge spans without dominating, is `edgeDegree`, and
 `edgeDegree_eq_zero_iff` proves for it the paper's observation that degree zero is
 projectivity, as `Graph.isProjective_iff_gapDegree_eq_zero` proves it for gap degree. The
-hierarchy projective ⊂ planar ⊂ well-nested is the substrate's; the paper's figures supply the
-witnesses that keep the inclusions strict, that separate the two graded measures, and that
-show well-nestedness independent of both.
+hierarchy projective ⊂ planar ⊂ well-nested is the substrate's, proved there for the paper's
+dependency forests, of which Figure 1 is one with two roots (`fig1_isForest_not_isTree`); the
+paper's figures supply the witnesses that keep the inclusions strict, that separate the two
+graded measures, and that show well-nestedness independent of both.
 
 The counts of Table 1 are the rows of `Data/Treebank/Coverage/KuhlmannNivre2006.json`, over
 which the paper's percentages are recomputed: about 15% of the Danish and 23% of the Prague
@@ -31,11 +32,11 @@ planarity covers fewer than a quarter while well-nestedness covers more than 99%
 ## Implementation notes
 
 Positions are zero-based, so node `i` of a figure is position `i - 1`. A connected component
-of the subgraph an edge's span induces is identified by its root, the position of the span
-whose head lies outside it or which is the root of the graph, so the degree of an edge counts
-those positions its head does not dominate. The trees of the figures are read off the
-drawings, and the paper's remarks about them, the projections of the nodes marked `i`, the
-edges of degree one, and the interleaving subtrees, are proved of the reconstructions.
+of the subgraph an edge's span induces is identified by its root, the position of the span with
+no head inside it, so the degree of an edge counts those positions its head does not dominate.
+The trees of the figures are read off the drawings, and the paper's remarks about them, the
+projections of the nodes marked `i`, the edges of degree one, and the interleaving subtrees, are
+proved of the reconstructions.
 Percentages are recomputed from the rows as rounded hundredths of a percent, the precision the
 paper prints, and the subtable over non-projective trees is the difference from the projective
 row, since planarity and well-nestedness each contain projectivity.
@@ -63,19 +64,18 @@ variable {n : ℕ} (g : Graph n)
 /-! ### Edge degree (Definition 9) -/
 
 /-- The roots of the connected components of the subgraph induced by the span of the arc from
-`h` to `d`: the positions of the span that are the root of the graph or whose head lies outside
-the span. -/
+`h` to `d`: the positions of the span with no head inside it. -/
 def componentRoots (h d : Fin n) : Finset (Fin n) :=
-  (Finset.uIcc h d).filter λ v => v = g.root ∨ g.headOf v ∉ Finset.uIcc h d
+  (Finset.uIcc h d).filter fun v ↦ ∀ u, g.Adj u v → u ∉ Finset.uIcc h d
 
 /-- The degree of the arc from `h` to `d`: the number of components of the subgraph induced by
 its span whose root `h` does not dominate. -/
 def edgeDegreeAt (h d : Fin n) : ℕ :=
-  ((componentRoots g h d).filter λ v => ¬ Dominates g h v).card
+  ((componentRoots g h d).filter fun v ↦ ¬ Dominates g h v).card
 
 /-- The edge degree of a graph: the maximum degree of its arcs. -/
 def edgeDegree : ℕ :=
-  (Finset.univ.filter λ p : Fin n × Fin n => g.Adj p.1 p.2).sup λ p => edgeDegreeAt g p.1 p.2
+  (Finset.univ.filter fun p : Fin n × Fin n ↦ g.Adj p.1 p.2).sup fun p ↦ edgeDegreeAt g p.1 p.2
 
 variable {g}
 
@@ -88,12 +88,12 @@ theorem edgeDegreeAt_eq_zero_iff (hT : g.IsTree) {h d : Fin n} :
   constructor
   · intro H v hv
     by_cases hr : g.root ∈ Set.uIcc h d
-    · exact (Dominates.antisymm hT.acyclic (H hr (.inl rfl)) (hT.root_dominates h)).symm ▸
-        hT.root_dominates v
+    · exact (hT.dominates_antisymm (H hr fun u hu ↦ absurd hu (hT.not_adj_root u))
+        (hT.root_dominates h)).symm ▸ hT.root_dominates v
     · obtain ⟨p, q, hpq, hp, hq, -, hqv⟩ :=
         (hT.root_dominates v).exists_boundary (S := (Set.uIcc h d)ᶜ) hr (not_not_intro hv)
-      exact (H (not_not.mp hq) (.inr (by rw [hT.headOf_eq hpq]; exact hp))).trans hqv
-  · exact λ H v hv _ => H v hv
+      exact (H (not_not.mp hq) fun u hu ↦ hT.leftUnique_adj hu hpq ▸ hp).trans hqv
+  · exact fun H v hv _ ↦ H v hv
 
 /-- Degree zero is projectivity, for edge degree as for gap degree: a tree has edge degree zero
 exactly when it is projective. -/
@@ -104,21 +104,42 @@ theorem edgeDegree_eq_zero_iff (hT : g.IsTree) : edgeDegree g = 0 ↔ g.IsProjec
     edgeDegreeAt_eq_zero_iff hT]
   exact Iff.rfl
 
+/-! ### Figure 1: a dependency forest
+
+The analysis of *Není proto zapotřebí uzavírat nové nájemní smlouvy.* leaves *proto* and the final
+punctuation mark without a head, so it is a forest and not a tree, and the yield of *není* skips
+*proto*. -/
+
+/-- An unlabelled position. -/
+def dot : Word := Word.mk' "•" .X
+
+/-- Figure 1: nodes 2 and 8 have no head. -/
+def fig1 : Graph 8 :=
+  .ofArcs [dot, dot, dot, dot, dot, dot, dot, dot] 1
+    [(1, 0, .dep), (0, 2, .dep), (0, 3, .dep), (3, 6, .dep), (6, 4, .dep), (6, 5, .dep)]
+
+/-- Figure 1 is a forest whose roots are nodes 2 and 8, and so not a tree. -/
+theorem fig1_isForest_not_isTree :
+    fig1.IsForest ∧ ¬ fig1.IsTree ∧ ∀ w, (∀ v, ¬ fig1.Adj v w) ↔ w = 1 ∨ w = 7 := by
+  decide
+
+/-- Figure 1 is not projective: the projection of node 1 lacks node 2. -/
+theorem fig1_not_isProjective :
+    fig1.projection 0 = [0, 2, 3, 4, 5, 6] ∧ ¬ fig1.IsProjective := by
+  decide
+
 /-! ### Figure 2: planarity
 
 Figure 2a is planar but not projective, its root inside the gap where the substrate's
 `Graph.IsPlanar.root_mem_gap` says a planar tree's root has to be; Figure 2b is not planar,
 its two named edges crossing. -/
 
-/-- An unlabelled position. -/
-def dot : Word := Word.mk' "•" .X
-
 /-- Figure 2a: the yield of node 1, `{1, 3}`, skips the root. -/
 def fig2a : Graph 3 := .ofArcs [dot, dot, dot] 1 [(1, 0, .dep), (0, 2, .dep)]
 
 /-- Figure 2b: the edges (1, 4) and (3, 5) cross. -/
 def fig2b : Graph 5 :=
-  .ofArcs [dot, dot, dot, dot, dot] 0 [(0, 1, .dep), (0, 3, .dep), (3, 2, .dep), (2, 4, .dep)]
+  .ofArcs [dot, dot, dot, dot, dot] 1 [(1, 0, .dep), (0, 3, .dep), (3, 2, .dep), (2, 4, .dep)]
 
 theorem fig2a_isTree : fig2a.IsTree := by decide
 theorem fig2b_isTree : fig2b.IsTree := by decide
@@ -214,7 +235,7 @@ abbrev rows : List Row := Data.Treebank.Coverage.KuhlmannNivre2006.rows
 
 /-- The number of trees of a treebank meeting a constraint. -/
 def count (treebank : String) (c : Constraint) : ℕ :=
-  match rows.find? λ r => r.treebank = treebank ∧ r.constraint = c with
+  match rows.find? fun r ↦ r.treebank = treebank ∧ r.constraint = c with
   | some r => r.value
   | none => 0
 
@@ -226,7 +247,7 @@ def total (treebank : String) : ℕ :=
 
 /-- The number of trees of degree at most `k` on a graded measure. -/
 def atMost (treebank : String) (measure : ℕ → Constraint) (k : ℕ) : ℕ :=
-  ((List.range (k + 1)).map λ d => count treebank (measure d)).sum
+  ((List.range (k + 1)).map fun d ↦ count treebank (measure d)).sum
 
 /-- The number of non-projective trees of a treebank. -/
 def nonProjective (treebank : String) : ℕ := total treebank - count treebank .projective

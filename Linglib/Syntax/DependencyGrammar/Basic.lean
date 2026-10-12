@@ -65,9 +65,9 @@ namespace DependencyGrammar
 /-! ### Dependency graphs -/
 
 /-- A dependency graph on `n` words: the sentence's tokens as a labeling of
-    the positions `Fin n`, the arcs as a partial labeling of ordered position
-    pairs (head → dependent) by UD relations, and a distinguished root
-    position. -/
+the positions `Fin n`, the arcs as a partial labeling of ordered position
+pairs (head → dependent) by UD relations, and a distinguished root
+position. -/
 @[ext]
 structure Graph (n : ℕ) where
   /-- The token at each position. -/
@@ -84,13 +84,13 @@ variable {n : ℕ} (g : Graph n)
 /-- Adjacency: there is an arc from head `v` to dependent `w`. -/
 def Adj (v w : Fin n) : Prop := (g.label v w).isSome
 
-instance : DecidableRel g.Adj := λ _ _ => inferInstanceAs (Decidable (_ = true))
+instance : DecidableRel g.Adj := fun _ _ ↦ inferInstanceAs (Decidable (_ = true))
 
 theorem adj_iff_exists {g : Graph n} {v w : Fin n} :
     g.Adj v w ↔ ∃ r, g.label v w = some r := Option.isSome_iff_exists
 
 /-- Positions linked by an arc in either direction — the undirected view of
-    adjacency. -/
+adjacency. -/
 def Linked (a b : Fin n) : Prop := g.Adj a b ∨ g.Adj b a
 
 instance (a b : Fin n) : Decidable (g.Linked a b) :=
@@ -108,18 +108,18 @@ def toDigraph : Digraph (Fin n) := ⟨g.Adj⟩
   Iff.rfl
 
 /-- The graph's undirected view: mathlib's orientation-forgetting
-    `Digraph.toSimpleGraphInclusive` applied to `toDigraph`. Planarity and
-    catena connectivity are stated through it. -/
+`Digraph.toSimpleGraphInclusive` applied to `toDigraph`. Planarity and
+catena connectivity are stated through it. -/
 def toSimpleGraph : SimpleGraph (Fin n) := g.toDigraph.toSimpleGraphInclusive
 
 @[simp] theorem toSimpleGraph_adj (v w : Fin n) :
     g.toSimpleGraph.Adj v w ↔ v ≠ w ∧ g.Linked v w := Iff.rfl
 
 instance : DecidableRel g.toSimpleGraph.Adj :=
-  λ v w => decidable_of_iff _ (g.toSimpleGraph_adj v w).symm
+  fun v w ↦ decidable_of_iff _ (g.toSimpleGraph_adj v w).symm
 
 /-- Off the diagonal the two undirected views agree; they can differ only on
-    self-arcs, which `toSimpleGraph` drops and `Linked` keeps. -/
+self-arcs, which `toSimpleGraph` drops and `Linked` keeps. -/
 theorem toSimpleGraph_adj_of_ne {g : Graph n} {v w : Fin n} (h : v ≠ w) :
     g.toSimpleGraph.Adj v w ↔ g.Linked v w := by simp [h]
 
@@ -140,13 +140,13 @@ def children (v : Fin n) : Finset (Fin n) := {w | g.Adj v w}
 /-! ### Constructors -/
 
 /-- The partial label function induced by a CoNLL-U-style arc list of
-    (head, dependent, relation) triples. First match wins. -/
+(head, dependent, relation) triples. First match wins. -/
 def arcsLabel (arcs : List (Fin n × Fin n × UD.DepRel)) (v w : Fin n) :
     Option UD.DepRel :=
-  (arcs.find? λ a => a.1 == v && a.2.1 == w).map (·.2.2)
+  (arcs.find? fun a ↦ a.1 == v && a.2.1 == w).map (·.2.2)
 
 /-- An arc list labels a pair exactly when some triple mentions it; which
-    relation wins on duplicates is `arcsLabel`'s business, not whether. -/
+relation wins on duplicates is `arcsLabel`'s business, not whether. -/
 theorem arcsLabel_isSome_iff {arcs : List (Fin n × Fin n × UD.DepRel)}
     {v w : Fin n} : (arcsLabel arcs v w).isSome ↔ ∃ r, (v, w, r) ∈ arcs := by
   simp only [arcsLabel, Option.isSome_map, List.find?_isSome, Bool.and_eq_true,
@@ -158,9 +158,9 @@ theorem arcsLabel_isSome_iff {arcs : List (Fin n × Fin n × UD.DepRel)}
     exact ⟨(v, w, r), hmem, rfl, rfl⟩
 
 /-- Build a graph from CoNLL-U-style data: the token list (whose length
-    fixes `n`), the root position, and the arcs as
-    (head, dependent, relation) triples. Later arcs for the same pair are
-    ignored. -/
+fixes `n`), the root position, and the arcs as
+(head, dependent, relation) triples. Later arcs for the same pair are
+ignored. -/
 def ofArcs (words : List Word) (root : Fin words.length)
     (arcs : List (Fin words.length × Fin words.length × UD.DepRel)) :
     Graph words.length :=
@@ -173,11 +173,11 @@ def ofArcs (words : List Word) (root : Fin words.length)
   arcsLabel_isSome_iff
 
 /-- Add arcs to a graph (existing labels win), as in UD's *enhanced*
-    representation: semantic relations the single-headed tree cannot
-    encode — shared dependents in coordination, controlled subjects,
-    relative-clause gaps — become explicit arcs. -/
+representation: semantic relations the single-headed tree cannot
+encode — shared dependents in coordination, controlled subjects,
+relative-clause gaps — become explicit arcs. -/
 def enhance (extra : List (Fin n × Fin n × UD.DepRel)) : Graph n :=
-  { g with label := λ v w => g.label v w <|> arcsLabel extra v w }
+  { g with label := fun v w ↦ g.label v w <|> arcsLabel extra v w }
 
 @[simp] theorem enhance_adj {g : Graph n}
     {extra : List (Fin n × Fin n × UD.DepRel)} {v w : Fin n} :
@@ -189,7 +189,7 @@ def enhance (extra : List (Fin n × Fin n × UD.DepRel)) : Graph n :=
 end Graph
 
 /-- Position `w` has an argument relation in the enhanced graph that the
-    basic graph fails to encode. -/
+basic graph fails to encode. -/
 def HasUnrepresentedArg {n : ℕ} (basic enhanced : Graph n) (w : Fin n) : Prop :=
   ∃ v, enhanced.Adj v w ∧ ¬ basic.Adj v w
 

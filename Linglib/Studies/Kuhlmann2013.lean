@@ -75,36 +75,15 @@ theorem not_isWellNested_iff_siblings (hT : g.IsTree) :
   constructor
   · intro h
     simp only [Graph.IsWellNested, not_forall, not_or] at h
-    obtain ⟨u, v, hI, huv, hvu⟩ := h
-    have : Fact g.IsTree := ⟨hT⟩
-    let u₀ : DominanceOrder g := u
-    let v₀ : DominanceOrder g := v
-    have hau : u₀ ⊓ v₀ ≤ u₀ := inf_le_left
-    have hav : u₀ ⊓ v₀ ≤ v₀ := inf_le_right
-    change Dominates g _ _ at hau hav
-    rcases ReflTransGen.cases_head hau with hu | ⟨u', hu', hu'u⟩
-    · rw [hu] at hav
-      exact absurd hav huv
-    rcases ReflTransGen.cases_head hav with hv | ⟨v', hv', hv'v⟩
-    · rw [hv] at hau
-      exact absurd hau hvu
-    refine ⟨_, u', v', hu', hv', λ he => ?_, ?_⟩
-    · subst he
-      let u'₀ : DominanceOrder g := u'
-      have h₁ : u'₀ ≤ u₀ := hu'u
-      have h₂ : u'₀ ≤ v₀ := hv'v
-      have hle := le_inf h₁ h₂
-      change Dominates g _ _ at hle
-      exact not_adj_dominates hT.acyclic hu' hle
-    · obtain ⟨a, ha, b, hb, c, hc, d, hd, halt⟩ := hI
-      exact ⟨a, hu'u.trans ha, b, hu'u.trans hb, c, hv'v.trans hc, d, hv'v.trans hd, halt⟩
+    obtain ⟨u, v, ⟨a, ha, b, hb, c, hc, d, hd, halt⟩, huv, hvu⟩ := h
+    obtain ⟨p, u', v', hu', hv', hne, hu'u, hv'v⟩ :=
+      exists_adj_adj_of_not_dominates (hT.root_dominates u) (hT.root_dominates v) huv hvu
+    exact ⟨p, u', v', hu', hv', hne,
+      a, hu'u.trans ha, b, hu'u.trans hb, c, hv'v.trans hc, d, hv'v.trans hd, halt⟩
   · rintro ⟨p, u, v, hpu, hpv, huv, hI⟩ hW
     rcases hW u v hI with h | h
-    · exact not_adj_dominates hT.acyclic hpu
-        ((Dominates.antisymm hT.acyclic (Dominates.to_head hT h huv hpv) (.single hpu)) ▸ .refl)
-    · exact not_adj_dominates hT.acyclic hpv
-        ((Dominates.antisymm hT.acyclic (Dominates.to_head hT h huv.symm hpu) (.single hpv)) ▸
-          .refl)
+    · exact hT.not_dominates_of_adj hpu (hT.dominates_head h huv hpv)
+    · exact hT.not_dominates_of_adj hpv (hT.dominates_head h huv.symm hpu)
 
 /-! ### Figure 1: nested against cross-serial
 
@@ -210,7 +189,7 @@ def lossBp (r : Row) : ℤ := round ((1 - r.coverage) * 10000)
 
 /-- The items a treebank loses under a constraint. -/
 def lost (treebank : String) (item : Item) (c : Constraint) : ℕ :=
-  match rows.find? λ r => r.treebank = treebank ∧ r.item = item ∧ r.constraint = c with
+  match rows.find? fun r ↦ r.treebank = treebank ∧ r.item = item ∧ r.constraint = c with
   | some r => r.total - r.value
   | none => 0
 
