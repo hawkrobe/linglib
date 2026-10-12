@@ -1,42 +1,26 @@
 module
 
-public import Linglib.Semantics.Reference.Logophoricity
 public import Linglib.Syntax.Category.Pronoun.Personal
 
 /-!
 # Logophoric pronouns
 
-A logophoric pronoun is a personal pronoun reserved for an antecedent that fills a perspectival
-role, the reported speaker or thinker of the clause it sits in: Ewe *yè*, Wan *mɔ̄*.
-`LogophoricPronoun` extends `PersonalPronoun` with the least [sells-1987] role its antecedent
-must fill, and is a carrier of the word-class-neutral `Logophoric` capability of
-`Semantics/Reference/Logophoricity.lean`. A long-distance reflexive is role-oriented too, but it
-is a reflexive; its role lives on `ReflexivePronoun`.
+A logophoric pronoun is a personal pronoun reserved for the one whose speech, thoughts or feelings
+a report conveys, a form distinct from the ordinary third person: Ewe *yè*, Wan *mɔ̄*. Which
+reports license one varies by language and is not recorded on the entry. A long-distance reflexive
+is sensitive to the same factors, but it is a reflexive and a `ReflexivePronoun`.
 
-## Main declarations
+## Main definitions
 
-* `LogophoricPronoun` — a personal pronoun with the role its antecedent must fill
-* `instance : Reference.Logophoric LogophoricPronoun` — the pronoun carrier of the capability
+* `LogophoricPronoun`: a personal pronoun of the logophoric kind.
 
 ## References
 
-* [P. Sells, *Aspects of Logophoricity* (1987)][sells-1987]
+* [sells-1987]
 -/
 
 @[expose] public section
 
-/-- A logophoric pronoun: a `PersonalPronoun` with the least [sells-1987] role its antecedent
-must fill. It is a pronominal, and what licenses it is the role, not a binding configuration. -/
-structure LogophoricPronoun extends PersonalPronoun where
-  /-- The least [sells-1987] role an antecedent must fill to license the form. -/
-  requiredRole : Reference.LogophoricRole
+/-- A logophoric pronoun is a `PersonalPronoun` of the logophoric kind. -/
+structure LogophoricPronoun extends PersonalPronoun
   deriving DecidableEq
-
-instance : HasPhi LogophoricPronoun := ⟨fun p ↦ p.toPronoun.phi⟩
-
-instance : Reference.Logophoric LogophoricPronoun := ⟨LogophoricPronoun.requiredRole⟩
-
-/-- Every logophoric pronoun is licensed by a source, the top of the role hierarchy. -/
-theorem LogophoricPronoun.licensedBy_source (p : LogophoricPronoun) :
-    Reference.Logophoric.LicensedBy p .source :=
-  Reference.Logophoric.source_licenses p

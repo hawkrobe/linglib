@@ -1,0 +1,655 @@
+[
+  {
+    "id": "sells1987_11a",
+    "source": {"bibkey": "sells-1987", "paperLabel": "(11a)"},
+    "reportedIn": null,
+    "language": "ewee1241",
+    "primaryText": "kofi be yè-dzo",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["kofi", "Kofi"], ["be", "say"], ["yè-dzo", "Log-leave"]
+    ],
+    "translation": "Kofi_i said that he_i left.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["pronoun", "yè"],
+      ["environment", "logophoric verb"]
+    ],
+    "comment": "From Clements. Printed without capital or full stop. 'It is a fact about the verb \"say\" that it determines that its subject may be the antecedent for the logophoric pronoun' (p. 448).",
+    "verified": "page-image"
+  },
+  {
+    "id": "sells1987_12",
+    "source": {"bibkey": "sells-1987", "paperLabel": "(12)"},
+    "reportedIn": null,
+    "language": "ewee1241",
+    "primaryText": "ana kpɔ dyidzo be yè-dyi vi",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["ana", "Ana"], ["kpɔ", "see"], ["dyidzo", "happiness"], ["be", "Comp"],
+      ["yè-dyi", "Log-bear"], ["vi", "child"]
+    ],
+    "translation": "Ana_i was happy that she_i bore a child.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["pronoun", "yè"],
+      ["environment", "psych-verb"]
+    ],
+    "comment": "From Clements. Printed without capital or full stop. 'The logophoric pronoun may appear with psychological predicates, as in (12)' (p. 448).",
+    "verified": "page-image"
+  },
+  {
+    "id": "sells1987_17",
+    "source": {"bibkey": "sells-1987", "paperLabel": "(17)"},
+    "reportedIn": null,
+    "language": "icel1247",
+    "primaryText": "Hann sagði að sig vantaði hæfileika.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Hann", "he"], ["sagði", "said"], ["að", "that"], ["sig", "self"], ["vantaði", "lacked"],
+      ["hæfileika", "ability"]
+    ],
+    "translation": "He_i said that he_i lacked ability.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["pronoun", "sig"],
+      ["environment", "logophoric verb"]
+    ],
+    "comment": "The Icelandic examples are taken from Maling and Sigurðsson (p. 450); the embedded verb is subjunctive (fn. 8). The brackets around the complement clause are not transcribed.",
+    "verified": "page-image"
+  },
+  {
+    "id": "sells1987_43",
+    "source": {"bibkey": "sells-1987", "paperLabel": "(43)"},
+    "reportedIn": null,
+    "language": "nucl1643",
+    "primaryText": "Taroo wa Yosiko ga zibun o aisiteiru to itta.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Taroo_i said that Yosiko loved self_i.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["pronoun", "zibun"],
+      ["environment", "logophoric verb"]
+    ],
+    "comment": "Printed without an interlinear gloss. The discourse structure drawn under it predicates source, self and pivot of Taroo.",
+    "verified": "page-image"
+  },
+  {
+    "id": "sells1987_44",
+    "source": {"bibkey": "sells-1987", "paperLabel": "(44)"},
+    "reportedIn": null,
+    "language": "nucl1643",
+    "primaryText": "Yosiko ga zibun o musisita koto ga Taroo o yuutunisita.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "That Yosiko ignored self_i distressed Taroo_i.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["pronoun", "zibun"],
+      ["environment", "psych-verb"]
+    ],
+    "comment": "Printed without an interlinear gloss. The discourse structure drawn under it predicates the source of the external speaker and self and pivot of Taroo.",
+    "verified": "page-image"
+  },
+  {
+    "id": "sells1987_45",
+    "source": {"bibkey": "sells-1987", "paperLabel": "(45)"},
+    "reportedIn": null,
+    "language": "nucl1643",
+    "primaryText": "Takasi wa Taroo ni baka no Yosiko ga zibun o oikake-mawasiteiru koto o hanasita.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Takasi", "Takasi"], ["wa", "Top"], ["Taroo", "Taroo"], ["ni", "Dat"], ["baka", "fool"],
+      ["no", "Gen"], ["Yosiko", "Yosiko"], ["ga", "Subj"], ["zibun", "self"], ["o", "Obj"],
+      ["oikake-mawasiteiru", "chase-around-be"], ["koto", "Comp"], ["o", "Obj"],
+      ["hanasita", "told"]
+    ],
+    "translation": "Takasi_i told Taroo that that fool Yosiko was following him_i.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "internal protagonist", "judgment": "acceptable"},
+      {"name": "external speaker", "judgment": "marginal"}
+    ],
+    "paperFeatures": [
+      ["pronoun", "zibun"],
+      ["diagnostic", "that fool"],
+      ["environment", "logophoric verb"]
+    ],
+    "comment": "'we must understand the ascription of foolishness to Yosiko to be due to Takasi, or possibly (if marginally) to the external speaker' (p. 462).",
+    "verified": "page-image"
+  },
+  {
+    "id": "sells1987_46",
+    "source": {"bibkey": "sells-1987", "paperLabel": "(46)"},
+    "reportedIn": null,
+    "language": "nucl1643",
+    "primaryText": "Taroo wa Takasi kara baka no Yosiko ga zibun o oikake-mawasiteiru to kiita.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Taroo", "Taroo"], ["wa", "Top"], ["Takasi", "Takasi"], ["kara", "from"], ["baka", "fool"],
+      ["no", "Gen"], ["Yosiko", "Yosiko"], ["ga", "Subj"], ["zibun", "self"], ["o", "Obj"],
+      ["oikake-mawasiteiru", "chase-around-be"], ["to", "Comp"], ["kiita", "heard"]
+    ],
+    "translation": "Taroo heard from Takasi_i that that fool Yosiko was following him_i.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "internal protagonist", "judgment": "acceptable"},
+      {"name": "external speaker", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["pronoun", "zibun"],
+      ["diagnostic", "that fool"],
+      ["environment", "logophoric verb"]
+    ],
+    "comment": "'again either Takasi or the external speaker is calling Yosiko a fool' (p. 463).",
+    "verified": "page-image"
+  },
+  {
+    "id": "sells1987_47",
+    "source": {"bibkey": "sells-1987", "paperLabel": "(47)"},
+    "reportedIn": null,
+    "language": "nucl1643",
+    "primaryText": "Baka no Yosiko ga zibun o oikake-mawasiteiru koto ga Mitiko o zetuboo e oiyatta.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Baka", "fool"], ["no", "Gen"], ["Yosiko", "Yosiko"], ["ga", "Subj"], ["zibun", "self"],
+      ["o", "Obj"], ["oikake-mawasiteiru", "chase-around-be"], ["koto", "Comp"], ["ga", "Subj"],
+      ["Mitiko", "Mitiko"], ["o", "Obj"], ["zetuboo", "desperation"], ["e", "to"],
+      ["oiyatta", "drove"]
+    ],
+    "translation": "That that fool Yosiko was following her_i drove Mitiko_i to desperation.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "internal protagonist", "judgment": "unacceptable"},
+      {"name": "external speaker", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["pronoun", "zibun"],
+      ["diagnostic", "that fool"],
+      ["environment", "psych-verb"]
+    ],
+    "comment": "'the evaluation is only the external speaker's evaluation' (p. 463).",
+    "verified": "page-image"
+  },
+  {
+    "id": "sells1987_48",
+    "source": {"bibkey": "sells-1987", "paperLabel": "(48)"},
+    "reportedIn": null,
+    "language": "nucl1643",
+    "primaryText": "Taroo wa baka no Yosiko ga mizu o zibun no ue ni kobosita node nurete-simatta.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Taroo", "Taroo"], ["wa", "Top"], ["baka", "fool"], ["no", "Gen"], ["Yosiko", "Yosiko"],
+      ["ga", "Subj"], ["mizu", "water"], ["o", "Obj"], ["zibun", "self"], ["no", "Gen"],
+      ["ue", "on"], ["ni", "Loc"], ["kobosita", "spilled"], ["node", "because"],
+      ["nurete-simatta", "wet-got"]
+    ],
+    "translation": "Taroo_i got wet because that fool Yosiko spilled water on him_i.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "internal protagonist", "judgment": "unacceptable"},
+      {"name": "external speaker", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["pronoun", "zibun"],
+      ["diagnostic", "that fool"],
+      ["environment", "3POV"]
+    ],
+    "comment": "'the evaluation is taken to be due to the external speaker, as before, and cannot be understood relative to the PIVOT of the adverbial clause' (p. 463).",
+    "verified": "page-image"
+  },
+  {
+    "id": "sells1987_49",
+    "source": {"bibkey": "sells-1987", "paperLabel": "(49)"},
+    "reportedIn": null,
+    "language": "nucl1643",
+    "primaryText": "Takasi wa Yosiko ga hukakainimo ato o tuke-mawasiteiru to itta.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Takasi", "Takasi"], ["wa", "Top"], ["Yosiko", "Yosiko"], ["ga", "Subj"],
+      ["hukakainimo", "mysteriously"], ["ato o tuke-mawasiteiru", "be-following"], ["to", "Comp"],
+      ["itta", "said"]
+    ],
+    "translation": "Takasi_i said that Yosiko was mysteriously following him_i.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "internal protagonist", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["diagnostic", "mysteriously"],
+      ["environment", "logophoric verb"]
+    ],
+    "comment": "'In all of these examples it is Takasi (the SELF) for whom the following is mysterious' (p. 464). The object of the embedded clause is a zero pronoun (fn. 21).",
+    "verified": "page-image"
+  },
+  {
+    "id": "sells1987_50",
+    "source": {"bibkey": "sells-1987", "paperLabel": "(50)"},
+    "reportedIn": null,
+    "language": "nucl1643",
+    "primaryText": "Taroo wa Takasi kara Yosiko ga hukakainimo ato o tuke-mawasiteiru to kiita.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Taroo", "Taroo"], ["wa", "Top"], ["Takasi", "Takasi"], ["kara", "from"],
+      ["Yosiko", "Yosiko"], ["ga", "Subj"], ["hukakainimo", "mysteriously"],
+      ["ato o tuke-mawasiteiru", "be-following"], ["to", "Comp"], ["kiita", "heard"]
+    ],
+    "translation": "Taroo heard from Takasi_i that Yosiko was mysteriously following him_i.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "internal protagonist", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["diagnostic", "mysteriously"],
+      ["environment", "logophoric verb"]
+    ],
+    "comment": "'In all of these examples it is Takasi (the SELF) for whom the following is mysterious' (p. 464).",
+    "verified": "page-image"
+  },
+  {
+    "id": "sells1987_51",
+    "source": {"bibkey": "sells-1987", "paperLabel": "(51)"},
+    "reportedIn": null,
+    "language": "nucl1643",
+    "primaryText": "Yosiko ga hukakainimo ato o tuke-mawasiteiru koto ga Takasi o iradataseteiru.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Yosiko", "Yosiko"], ["ga", "Subj"], ["hukakainimo", "mysteriously"],
+      ["ato o tuke-mawasiteiru", "be-following"], ["koto", "Comp"], ["ga", "Subj"],
+      ["Takasi", "Takasi"], ["o", "Obj"], ["iradataseteiru", "bothers"]
+    ],
+    "translation": "That Yosiko is mysteriously following him_i bothers Takasi_i.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "internal protagonist", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["diagnostic", "mysteriously"],
+      ["environment", "psych-verb"]
+    ],
+    "comment": "'In all of these examples it is Takasi (the SELF) for whom the following is mysterious' (p. 464).",
+    "verified": "page-image"
+  },
+  {
+    "id": "sells1987_52",
+    "source": {"bibkey": "sells-1987", "paperLabel": "(52)"},
+    "reportedIn": null,
+    "language": "nucl1643",
+    "primaryText": "Yosiko ga hukakainimo ato o tuke-mawasiteiru noni Takasi wa ki ni sitei-nai.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Yosiko", "Yosiko"], ["ga", "Subj"], ["hukakainimo", "mysteriously"],
+      ["ato o tuke-mawasiteiru", "be-following"], ["noni", "though"], ["Takasi", "Takasi"],
+      ["wa", "Top"], ["ki", "care"], ["ni", "to"], ["sitei-nai", "give-not"]
+    ],
+    "translation": "Takasi_i doesn't mind though Yosiko is mysteriously following him_i.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "internal protagonist", "judgment": "unacceptable"},
+      {"name": "external speaker", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["diagnostic", "mysteriously"],
+      ["environment", "3POV"]
+    ],
+    "comment": "'that is not so in the 3POV example (52), and the mystery must be that experienced by the external speaker' (p. 464).",
+    "verified": "page-image"
+  },
+  {
+    "id": "sells1987_56",
+    "source": {"bibkey": "sells-1987", "paperLabel": "(56)"},
+    "reportedIn": null,
+    "language": "nucl1643",
+    "primaryText": "Takasi wa Taroo ni itosii Yosiko ga zibun o nikundeiru koto o hanasita.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Takasi", "Takasi"], ["wa", "Top"], ["Taroo", "Taroo"], ["ni", "Dat"],
+      ["itosii", "beloved"], ["Yosiko", "Yosiko"], ["ga", "Subj"], ["zibun", "self"], ["o", "Obj"],
+      ["nikundeiru", "be-hating"], ["koto", "Comp"], ["o", "Obj"], ["hanasita", "told"]
+    ],
+    "translation": "Takasi_i told Taroo that his beloved Yosiko hated him_i.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "internal protagonist", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["pronoun", "zibun"],
+      ["diagnostic", "beloved"],
+      ["environment", "logophoric verb"]
+    ],
+    "comment": "'itosii Yosiko \"beloved Yosiko\" unambiguously links with Takasi' (p. 465). The matrix verb is that of (45).",
+    "verified": "page-image"
+  },
+  {
+    "id": "sells1987_57",
+    "source": {"bibkey": "sells-1987", "paperLabel": "(57)"},
+    "reportedIn": null,
+    "language": "nucl1643",
+    "primaryText": "Taroo wa Takasi kara itosii Yosiko ga zibun o nikundeiru to kiita.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Taroo", "Taroo"], ["wa", "Top"], ["Takasi", "Takasi"], ["kara", "from"],
+      ["itosii", "beloved"], ["Yosiko", "Yosiko"], ["ga", "Subj"], ["zibun", "self"], ["o", "Obj"],
+      ["nikundeiru", "be-hating"], ["to", "Comp"], ["kiita", "heard"]
+    ],
+    "translation": "Taroo heard from Takasi_i that his beloved Yosiko hated him_i.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "internal protagonist", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["pronoun", "zibun"],
+      ["diagnostic", "beloved"],
+      ["environment", "logophoric verb"]
+    ],
+    "comment": "'Exactly the same is true of the following example' (p. 465). The string also allows Taroo as the antecedent of zibun, a matrix pivot, and 'beloved Yosiko' then goes with Taroo (fn. 24). The matrix verb is that of (46).",
+    "verified": "page-image"
+  },
+  {
+    "id": "sells1987_58",
+    "source": {"bibkey": "sells-1987", "paperLabel": "(58)"},
+    "reportedIn": null,
+    "language": "nucl1643",
+    "primaryText": "Itosii Yosiko ga zibun o nikundeiru koto ga Mitiko o zetuboo e oiyatta.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Itosii", "beloved"], ["Yosiko", "Yosiko"], ["ga", "Subj"], ["zibun", "self"], ["o", "Obj"],
+      ["nikundeiru", "be-hating"], ["koto", "Comp"], ["ga", "Subj"], ["Mitiko", "Mitiko"],
+      ["o", "Obj"], ["zetuboo", "desperation"], ["e", "to"], ["oiyatta", "drove"]
+    ],
+    "translation": "That her beloved Yosiko hated her_i drove Mitiko_i to desperation.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "internal protagonist", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["pronoun", "zibun"],
+      ["diagnostic", "beloved"],
+      ["environment", "psych-verb"]
+    ],
+    "comment": "'the example is understood to be unambiguous, and is about Mitiko's beloved Yosiko' (p. 465).",
+    "verified": "page-image"
+  },
+  {
+    "id": "sells1987_59",
+    "source": {"bibkey": "sells-1987", "paperLabel": "(59)"},
+    "reportedIn": null,
+    "language": "nucl1643",
+    "primaryText": "Takasi wa itosii Yosiko ga mizu o zibun no ue ni kobosita node nurete-simatta.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Takasi", "Takasi"], ["wa", "Top"], ["itosii", "beloved"], ["Yosiko", "Yosiko"],
+      ["ga", "Subj"], ["mizu", "water"], ["o", "Obj"], ["zibun", "self"], ["no", "Gen"],
+      ["ue", "on"], ["ni", "Loc"], ["kobosita", "spilled"], ["node", "because"],
+      ["nurete-simatta", "wet-got"]
+    ],
+    "translation": "Takasi_i got wet because his beloved Yosiko spilled water on him_i.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "internal protagonist", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["pronoun", "zibun"],
+      ["diagnostic", "beloved"],
+      ["environment", "3POV"]
+    ],
+    "comment": "'the adverbial must be about Takasi's beloved Yosiko, for he is the PIVOT. This is correct' (p. 466).",
+    "verified": "page-image"
+  },
+  {
+    "id": "sells1987_60",
+    "source": {"bibkey": "sells-1987", "paperLabel": "(60)"},
+    "reportedIn": null,
+    "language": "nucl1643",
+    "primaryText": "Takasi wa Yosiko ga mizu o zibun no ue ni kobosita node nurete-simatta.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Takasi", "Takasi"], ["wa", "Top"], ["Yosiko", "Yosiko"], ["ga", "Subj"], ["mizu", "water"],
+      ["o", "Obj"], ["zibun", "self"], ["no", "Gen"], ["ue", "on"], ["ni", "Loc"],
+      ["kobosita", "spilled"], ["node", "because"], ["nurete-simatta", "wet-got"]
+    ],
+    "translation": "Takasi_i got wet because Yosiko spilled water on him_i.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["pronoun", "zibun"],
+      ["environment", "3POV"]
+    ],
+    "comment": "Repeats (33).",
+    "verified": "page-image"
+  },
+  {
+    "id": "sells1987_61",
+    "source": {"bibkey": "sells-1987", "paperLabel": "(61)"},
+    "reportedIn": null,
+    "language": "nucl1643",
+    "primaryText": "Takasi wa Yosiko ga mizu o zibun no ue ni kobosita toki nurete-simatta.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Takasi", "Takasi"], ["wa", "Top"], ["Yosiko", "Yosiko"], ["ga", "Subj"], ["mizu", "water"],
+      ["o", "Obj"], ["zibun", "self"], ["no", "Gen"], ["ue", "on"], ["ni", "Loc"],
+      ["kobosita", "spilled"], ["toki", "when"], ["nurete-simatta", "wet-got"]
+    ],
+    "translation": "Takasi_i got wet when Yosiko spilled water on him_i.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["pronoun", "zibun"],
+      ["environment", "external"]
+    ],
+    "comment": "Repeats (34). The star is on the binding of zibun by Takasi. 'node \"because\" (but not toki \"when\") implicates the external speaker and thereby allows that speaker to take the point of view of the matrix subject' (p. 466): with toki the clause is not a 3POV environment, recorded as every role external.",
+    "verified": "page-image"
+  },
+  {
+    "id": "sells1987_71",
+    "source": {"bibkey": "sells-1987", "paperLabel": "(71)"},
+    "reportedIn": null,
+    "language": "nucl1643",
+    "primaryText": "Oedipus wa Jocasta ga zibun o unda ie de ima wa kodomotati to koohuku-soo-ni kurasite-imasu.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Oedipus", "Oedipus"], ["wa", "Top"], ["Jocasta", "Jocasta"], ["ga", "Subj"],
+      ["zibun", "self"], ["o", "Obj"], ["unda", "bore"], ["ie", "house"], ["de", "Loc"],
+      ["ima", "now"], ["wa", "Top"], ["kodomotati", "children"], ["to", "with"],
+      ["koohuku-soo-ni", "happily"], ["kurasite-imasu", "living-is"]
+    ],
+    "translation": "Oedipus_i now lives happily with his children in the house where Jocasta bore him_i.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["pronoun", "zibun"],
+      ["environment", "3POV"]
+    ],
+    "comment": "From Kuroda. 'this will be a 3POV example, presented from Oedipus' point of view by the speaker' (p. 471).",
+    "verified": "page-image"
+  },
+  {
+    "id": "sells1987_72",
+    "source": {"bibkey": "sells-1987", "paperLabel": "(72)"},
+    "reportedIn": null,
+    "language": "nucl1643",
+    "primaryText": "Takasi wa Taroo ni Yosiko ga zibun o nikundeiru koto o hanasanakatta.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Takasi", "Takasi"], ["wa", "Top"], ["Taroo", "Taroo"], ["ni", "Dat"], ["Yosiko", "Yosiko"],
+      ["ga", "Subj"], ["zibun", "self"], ["o", "Obj"], ["nikundeiru", "be-hating"],
+      ["koto", "Comp"], ["o", "Obj"], ["hanasanakatta", "told-not"]
+    ],
+    "translation": "Takasi_i didn't tell Taroo that Yosiko hated him_i.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["pronoun", "zibun"],
+      ["environment", "logophoric verb"]
+    ],
+    "comment": "'The representation of (72) will be all but identical to that of the nonnegated counterpart (the basic structure is that of (43))' (p. 472).",
+    "verified": "page-image"
+  },
+  {
+    "id": "sells1987_73",
+    "source": {"bibkey": "sells-1987", "paperLabel": "(73)"},
+    "reportedIn": null,
+    "language": "nucl1643",
+    "primaryText": "Taroo wa Takasi kara Yosiko ga zibun o nikundeiru to kikanakatta.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Taroo", "Taroo"], ["wa", "Top"], ["Takasi", "Takasi"], ["kara", "from"],
+      ["Yosiko", "Yosiko"], ["ga", "Subj"], ["zibun", "self"], ["o", "Obj"],
+      ["nikundeiru", "be-hating"], ["to", "Comp"], ["kikanakatta", "heard-not"]
+    ],
+    "translation": "Taroo didn't hear from Takasi_i that Yosiko hated him_i.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["pronoun", "zibun"],
+      ["environment", "logophoric verb"]
+    ],
+    "comment": "'In such cases the facts of zibun-binding do not change from their nonnegated counterparts' (p. 471); the counterpart has the matrix verb of (46).",
+    "verified": "page-image"
+  },
+  {
+    "id": "sells1987_74",
+    "source": {"bibkey": "sells-1987", "paperLabel": "(74)"},
+    "reportedIn": null,
+    "language": "nucl1643",
+    "primaryText": "Yosiko ga zibun o nikundeiru koto ga Mitiko o yuutunisite-wa-inai.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Yosiko", "Yosiko"], ["ga", "Subj"], ["zibun", "self"], ["o", "Obj"],
+      ["nikundeiru", "be-hating"], ["koto", "Comp"], ["ga", "Subj"], ["Mitiko", "Mitiko"],
+      ["o", "Obj"], ["yuutunisite-wa-inai", "bothered-at all-not"]
+    ],
+    "translation": "That Yosiko hated her_i didn't bother Mitiko_i at all.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["pronoun", "zibun"],
+      ["environment", "psych-verb"]
+    ],
+    "comment": "'The same considerations apply to the psych-verb cases' (p. 472).",
+    "verified": "page-image"
+  },
+  {
+    "id": "sells1987_75",
+    "source": {"bibkey": "sells-1987", "paperLabel": "(75)"},
+    "reportedIn": null,
+    "language": "nucl1643",
+    "primaryText": "Takasi wa Yosiko ga zibun o tazunete-kita node kanasigaranakatta.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Takasi", "Takasi"], ["wa", "Top"], ["Yosiko", "Yosiko"], ["ga", "Subj"], ["zibun", "self"],
+      ["o", "Obj"], ["tazunete-kita", "visit-came"], ["node", "because"],
+      ["kanasigaranakatta", "sad(verb)-not-Past"]
+    ],
+    "translation": "Takasi_i was not sad because Yosiko came to visit him_i.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["pronoun", "zibun"],
+      ["environment", "3POV"]
+    ],
+    "comment": "'In (75) we again have the 3POV environment' (p. 472).",
+    "verified": "page-image"
+  },
+  {
+    "id": "sells1987_76",
+    "source": {"bibkey": "sells-1987", "paperLabel": "(76)"},
+    "reportedIn": null,
+    "language": "icel1247",
+    "primaryText": "Jón er hér enn þó að María kyssi sig.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Jón", "Jon"], ["er", "is"], ["hér", "here"], ["enn", "still"], ["þó að", "although"],
+      ["María", "Maria"], ["kyssi", "kisses(subj)"], ["sig", "self"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["pronoun", "sig"],
+      ["environment", "external"]
+    ],
+    "comment": "Printed with Jón and sig coindexed and without a free translation. 'the clause is an adverbial, and not subcategorized; since it is not subcategorized, no internally oriented role-predicates are possible' (p. 473).",
+    "verified": "page-image"
+  },
+  {
+    "id": "sells1987_77",
+    "source": {"bibkey": "sells-1987", "paperLabel": "(77)"},
+    "reportedIn": null,
+    "language": "icel1247",
+    "primaryText": "Jón segir að Haraldur sé hér enn þó að María kyssi sig.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Jón", "Jon"], ["segir", "says"], ["að", "that"], ["Haraldur", "Harold"],
+      ["sé", "is(subj)"], ["hér", "here"], ["enn", "still"], ["þó að", "although"],
+      ["María", "Maria"], ["kyssi", "kisses(subj)"], ["sig", "self"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["pronoun", "sig"],
+      ["environment", "logophoric verb"]
+    ],
+    "comment": "Printed with Jón and sig coindexed and without a free translation. 'a non-clause-bounded reflexive becomes possible if the whole matrix plus adverbial is embedded under a \"logophoric\" verb' (p. 473).",
+    "verified": "page-image"
+  }
+]

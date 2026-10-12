@@ -9,15 +9,16 @@ public import Linglib.Syntax.Category.Pronoun.Interrogative
 /-!
 # Japanese pronouns and the addressee-honorific marker
 
-The personal pronouns of Japanese — the register-differentiated first-person forms *watashi*,
-*boku* and *ore* ([ochs-1992] on the masculine stance the latter index), the second-person
-contrast *kimi* and *anata*, and the third-person *kare*, *kanojo* and *karera* — the reciprocal
-*otagai*, the reflexive *jibun*, and the addressee-honorific verbal marker *-mas-*, which is
-sensitive to the complementizer when embedded ([alok-bhalla-2026]). The indeterminate pronouns
-*dare* 'who', *nani* 'what', *dono* 'which', *doko* 'where', *itsu* 'when', *naze* 'why' and *dō*
-'how' ([kratzer-shimoyama-2002]) are the interrogatives, and the quantifiers and indefinite
-series of `Fragments/Japanese/Determiners.lean` and `Fragments/Japanese/Indefinites.lean` are
-built on them, as is *nan-* 'how many' before a classifier.
+The personal pronouns of Japanese are the first-person forms *watashi*, *boku* and *ore*, which
+differ in register, the last two indexing the masculine stance Ochs describes, the second-person
+*kimi* and *anata*, and the third-person *kare*, *kanojo* and *karera*. With them are the
+reciprocal *otagai*, the reflexive *jibun*, and the addressee-honorific verbal marker *-mas-*,
+which Alok and Bhalla show to be sensitive to the complementizer when embedded. The indeterminate
+pronouns of Kratzer and Shimoyama, *dare* 'who', *nani* 'what', *dono* 'which', *doko* 'where',
+*itsu* 'when', *naze* 'why' and *dō* 'how', are the interrogatives, and the quantifiers and
+indefinite series of `Fragments/Japanese/Determiners.lean` and
+`Fragments/Japanese/Indefinites.lean` are built on them, as is *nan-* 'how many' before a
+classifier.
 
 ## References
 
@@ -85,14 +86,9 @@ def pronouns : Finset PersonalPronoun :=
 def otagai : ReciprocalPronoun :=
   { form := "otagai", script := some "互い", number := some .plural }
 
-/-- 自分 *jibun* — the reflexive, which also takes an antecedent outside its clause when that
-    antecedent is a pivot, the point-of-view centre ([sells-1987]). -/
-def jibun : ReflexivePronoun :=
-  { form := "jibun", script := some "自分", requiredRole := some .pivot }
-
-/-- Any perspectival antecedent licenses *jibun* at a distance: a pivot is the weakest role. -/
-theorem jibun_licensedBy (r : Reference.LogophoricRole) : jibun.LicensedBy r :=
-  ⟨.pivot, rfl, bot_le (a := r)⟩
+/-- 自分 *jibun*, romanized *zibun* in [sells-1987], is the reflexive, which also takes an
+antecedent outside its clause. -/
+def jibun : ReflexivePronoun := { form := "jibun", script := some "自分" }
 
 /-! ### Indeterminate pronouns -/
 

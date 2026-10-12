@@ -7,12 +7,11 @@ public import Linglib.Syntax.Reciprocal
 # Icelandic reciprocals
 
 Icelandic marks reciprocity with the two-part noun phrase *hvort annað* 'each other', cited in
-its neuter forms as in [nordlinger-2023]'s (17a). The noun phrase fills the object position, so
-the clause stays transitive, and its two parts inflect for case independently: the quantifier
-*hvor* agrees in case with the antecedent, and *annað* takes the case of its argument position
-([hurst-nordlinger-2021]). The reciprocal is distinct in form from the reflexive *sig*, which is
-also bound from outside its clause, out of a subjunctive complement, by an antecedent that is a
-self ([sells-1987]).
+its neuter forms as in Nordlinger's (17a). The noun phrase fills the object position, so the
+clause stays transitive, and its two parts inflect for case independently, as Hurst and Nordlinger
+describe: the quantifier *hvor* agrees in case with the antecedent, and *annað* takes the case of
+its argument position. The reciprocal is distinct in form from the reflexive *sig*, which is also
+bound from outside its clause, out of a subjunctive complement, as in the examples of Sells.
 
 ## Main definitions
 
@@ -38,8 +37,8 @@ open Reciprocal
 parts inflect for case and gender independently. -/
 def hvorAnnad : Marker := { morphs := [.free "hvort", .free "annað"], strategy := .bipartiteNP }
 
-/-- *sig*, the reflexive pronoun, bound at a distance by an antecedent that is a self. -/
-def sig : ReflexivePronoun := { form := "sig", person := some .third, requiredRole := some .self }
+/-- The reflexive pronoun *sig*, which is also bound from outside its clause. -/
+def sig : ReflexivePronoun := { form := "sig", person := some .third }
 
 /-- The reciprocal markers. -/
 def markers : Finset Marker := {hvorAnnad}
