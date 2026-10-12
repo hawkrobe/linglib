@@ -176,7 +176,7 @@ def Trait.issue : Trait → Issue
   | .proCorporate | .antiCorporate => .corporations
 
 /-- A persona takes a stance on each issue. -/
-abbrev Persona := SocialMeaning.Persona (incompatible Trait.issue)
+abbrev Persona := SocialMeaning.Persona (dimensionalIncompatibility Trait.issue)
 
 def proVaxProCorp : Persona := ⟨{.proVax, .proCorporate}, by decide +kernel⟩
 def proVaxAntiCorp : Persona := ⟨{.proVax, .antiCorporate}, by decide +kernel⟩
@@ -200,7 +200,7 @@ instance : MeasurableSingletonClass Message :=
 
 /-- Both messages mark Stein as anti-corporate, *big pharma* as anti-vax and *corporate
 scientists* as pro-vax. -/
-def field : GroundedField Message (incompatible Trait.issue) where
+def field : GroundedField Message (dimensionalIncompatibility Trait.issue) where
   indexes
     | .bigPharma => {.antiVax, .antiCorporate}
     | .corporateScientists => {.proVax, .antiCorporate}
