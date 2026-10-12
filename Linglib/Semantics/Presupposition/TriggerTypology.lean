@@ -7,24 +7,23 @@ A presupposition trigger is an expression whose use takes some proposition for g
 belongs to a class by the kind of expression that hosts it (`Trigger`), the consensus inventory of
 the projection literature after Zeevat and after Tonhauser, Beaver, Roberts and Simons. Abusch
 divides triggers into hard ones, whose presupposition always projects, and soft ones, whose
-presupposition can be suspended, and Karttunen's implicatives form a third type (`TriggerType`).
-Karttunen divides the factive predicates into true factives and semi-factives (`Factivity`). A
-verb's entry records its factivity, and its trigger type is derived (`Verb.triggerType?`); an
-adverb, particle or affix that triggers a presupposition is a `TriggerItem`.
+presupposition can be suspended (`TriggerType`). Karttunen divides the factive predicates into
+true factives and semi-factives (`Factivity`). A verb's entry records its factivity, and whether
+it is a trigger is derived (`Verb.IsTrigger`); an adverb, particle or affix that triggers a
+presupposition is a `TriggerItem`.
 
 ## Implementation notes
 
 What a predicate does with the presuppositions of its complement is not recorded on its entry.
 It follows from the predicate's semantics: a factive, an aspectual or an implicative passes them
-on unchanged, and an attitude verb makes its report presuppose that the holder believes them
-([karttunen-1974-presupposition], [heim-1992]).
+on unchanged, and an attitude verb makes its report presuppose that the holder believes them,
+as Karttunen and Heim argue.
 
 ## References
 
 * [zeevat-1992]
 * [tonhauser-beaver-roberts-simons-2013]
 * [abusch-2010]
-* [karttunen-1971]
 * [karttunen-1971b]
 * [karttunen-1974-presupposition]
 * [heim-1992]
@@ -37,18 +36,14 @@ on unchanged, and an attitude verb makes its report presuppose that the holder b
 
 namespace Presupposition
 
-/-- The kind of presupposition trigger a predicate is, in the hard/soft classification of
-[abusch-2010]. Hard triggers always project (*too*, *again*, *also*), soft triggers project
-context-sensitively (*stop*, *know*), and an implicative presupposes that what it asserts is a
-condition for its complement. -/
+/-- The kind of presupposition trigger an expression is, in the hard/soft classification of
+[abusch-2010]. Hard triggers always project (*too*, *again*, *also*), and soft triggers project
+context-sensitively (*stop*, *know*). -/
 inductive TriggerType where
-  /-- Projective in every context. -/
+  /-- A trigger whose presupposition projects in every context. -/
   | hard
-  /-- A factive or change-of-state trigger, locally accommodatable. -/
+  /-- A trigger whose presupposition can be suspended in context. -/
   | soft
-  /-- An implicative verb, presupposing that what it asserts is a condition for its complement
-  ([karttunen-1971]). -/
-  | implicative
   deriving DecidableEq, Repr
 
 /-- The factivity class of a predicate ([karttunen-1971b]). -/

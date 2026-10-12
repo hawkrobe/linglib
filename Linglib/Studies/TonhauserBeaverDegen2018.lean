@@ -2,36 +2,26 @@ module
 
 public import Linglib.Core.Algebra.Order.Interval.Set.Instances
 public import Linglib.Data.Experiments.TonhauserBeaverDegen2018
+public import Linglib.Semantics.Presupposition.TriggerTypology
 public import Mathlib.Tactic.Linarith
 
 /-!
 # Tonhauser, Beaver and Degen (2018): How Projective Is Projective Content? Gradience in Projectivity and At-Issueness
 
-This file formalizes the Gradient Projection Principle of [tonhauser-beaver-degen-2018], (7):
-content expressed by a constituent embedded under an entailment-cancelling operator projects
-to the extent that it is not at-issue. Projectivity, the extent to which a listener takes the
-speaker of the embedding utterance to be committed to the content, and at-issueness are
-gradient properties measured on the unit interval, so the principle is the involution
-`Set.Icc.symm`, `gppProjection`, and restricted to binary at-issueness it is the Projection
-Principle of [simons-tonhauser-beaver-roberts-2010] and
-[beaver-roberts-simons-tonhauser-2017], projects iff not at-issue, `gppProjection_eq_one_iff`.
-The analyses of projection the paper reviews predict projection at the ceiling for every
-presupposition not under a plug or a filter, [karttunen-1973], [gazdar-1979] and global
-accommodation after [heim-1983] and [van-der-sandt-1992], as [potts-2005]'s two-dimensional
-analysis does for conventional implicatures: `ceilingProjection`.
+Tonhauser, Beaver and Degen's Gradient Projection Principle says that content embedded under an
+entailment-cancelling operator projects to the extent that it is not at-issue. Projectivity and
+at-issueness are gradient, measured on the unit interval, so the principle is the involution
+`Set.Icc.symm` (`gppProjection`); restricted to binary at-issueness it is the Projection Principle
+of Simons, Tonhauser, Beaver and Roberts, that content projects iff it is not at-issue
+(`gppProjection_eq_one_iff`). The categorical analyses the paper reviews predict projection at
+the ceiling (`ceilingProjection`).
 
-The two accounts are run against the observed by-expression means of
-`Data.Experiments.TonhauserBeaverDegen2018`. The principle beats the ceiling exactly on
-content observed below the midpoint between its not-at-issueness and the ceiling,
-`gpp_closer_iff`; on the paper's own worked prediction the content of an NRRC is more
-not-at-issue and more projective than the complement of *discover*,
-`nrrc_more_projective_than_discover`; the principle is the closer account on every expression
-and predicate except the pre-state of *stop*, observed well above its not-at-issueness, where
-the ceiling wins, `gpp_closer_than_ceiling` and `ceiling_closer_on_stop`. The direction the
-principle predicts for the regressions holds in all four experiments,
-`atIssuenessEffect_beta_pos`, and the printed Tukey comparisons divide the contents into more
-than two projectivity classes cutting across the hard/soft classification, `three_classes`,
-`soft_not_a_class` and `hard_soft_indistinguishable`.
+Against the observed means of `Data.Experiments.TonhauserBeaverDegen2018`, the principle is the
+closer account on every content but the pre-state of *stop* (`gpp_closer_than_ceiling`,
+`ceiling_closer_on_stop`), the effect it predicts holds in all four experiments
+(`atIssuenessEffect_beta_pos`), and the printed Tukey comparisons divide the contents into more
+than two projectivity classes, cutting across the hard/soft classification (`three_classes`,
+`soft_not_a_class`, `hard_soft_indistinguishable`).
 
 ## Implementation notes
 
@@ -65,7 +55,7 @@ open Data.Experiments Set.Icc
 
 /-! ### The Gradient Projection Principle -/
 
-/-- (7): content projects to the extent that it is not at-issue. -/
+/-- By (7), content projects to the extent that it is not at-issue. -/
 def gppProjection : Set.Icc (0 : ℚ) 1 → Set.Icc (0 : ℚ) 1 := Set.Icc.symm
 
 /-- More not-at-issue content is more projective. -/
@@ -164,7 +154,7 @@ theorem gpp_closer_iff (a p : Set.Icc (0 : ℚ) 1) :
   · rw [abs_of_neg (by linarith), abs_of_nonneg (by linarith)]
     exact ⟨fun h' => ⟨by linarith, by linarith⟩, fun h' => by linarith [h'.2]⟩
 
-/-- The paper's worked prediction: the content of an NRRC is more not-at-issue than the
+/-- On the paper's worked prediction, the content of an NRRC is more not-at-issue than the
 complement of *discover*, so the principle predicts it more projective, and it is. -/
 theorem nrrc_more_projective_than_discover :
     Expression.nrrc.atIssueness < Expression.discover.atIssueness ∧
@@ -187,7 +177,7 @@ theorem ceiling_closer_on_stop :
       error gppProjection Expression.stop.atIssueness Expression.stop.projectivity := by
   decide +kernel
 
-/-- Sanity: the unrestricted universal is genuinely false. -/
+/-- The unrestricted universal is false. -/
 example : ¬ ∀ e : Expression,
     error gppProjection e.atIssueness e.projectivity <
       error ceilingProjection e.atIssueness e.projectivity := by
@@ -230,7 +220,7 @@ theorem three_classes :
       Expression.Distinguished .nrrc .only := by
   decide +kernel
 
-/-- Sanity: `Distinguished` genuinely rejects a pair the table marks `n.s`. -/
+/-- `Distinguished` rejects a pair the table marks `n.s`. -/
 example : ¬ Expression.Distinguished .nrrc .know := by decide +kernel
 
 /-- The complement of *know* is statistically indistinguishable in projectivity from that of
@@ -238,15 +228,10 @@ the hard-triggering factive *be annoyed*. -/
 theorem know_indistinguishable_from_annoyed : ¬ Expression.Distinguished .know .annoyed := by
   decide +kernel
 
-/-- The hard/soft classification the paper checks its ranking against: *be annoyed* a hard
-trigger; *discover*, *stop* and *only* soft triggers. -/
-inductive TriggerType where
-  | hard
-  | soft
-  deriving DecidableEq
-
-/-- The classification as the paper cites it for the Experiment 1a contents. -/
-def Expression.triggerType? : Expression → Option TriggerType
+/-- The hard/soft classification the paper checks its ranking against, as it cites it for the
+Experiment 1a contents: *be annoyed* is a hard trigger, and *discover*, *stop* and *only* are soft
+triggers. -/
+def Expression.triggerType? : Expression → Option Presupposition.TriggerType
   | .annoyed => some .hard
   | .discover | .stop | .only => some .soft
   | _ => none
@@ -260,7 +245,7 @@ theorem some_differences_align :
 /-- The soft triggers are not a projectivity class: the prejacent of *only* is distinguished
 from the pre-state of *stop*. -/
 theorem soft_not_a_class :
-    ∃ a b, a.triggerType? = some TriggerType.soft ∧ b.triggerType? = some TriggerType.soft ∧
+    ∃ a b, a.triggerType? = some .soft ∧ b.triggerType? = some .soft ∧
       Expression.Distinguished a b :=
   ⟨.stop, .only, rfl, rfl, by decide +kernel⟩
 
@@ -272,7 +257,7 @@ theorem hard_soft_indistinguishable :
         ¬ h.Distinguished s := by
   decide +kernel
 
-/-- The complement of *establish* is the least projective content: distinguished from every
+/-- The complement of *establish* is the least projective content, distinguished from every
 other Experiment 1b complement. -/
 theorem establish_least_projective (p : Predicate) (h : p ≠ .establish) :
     Predicate.Distinguished .establish p := by

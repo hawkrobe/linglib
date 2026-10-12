@@ -7,12 +7,12 @@ public import Linglib.Data.Examples.MocnikAbramovitz2019
 /-!
 # Močnik and Abramovitz (2019): a variable-force variable-flavor attitude verb in Koryak
 
-[mocnik-abramovitz-2019] document the Koryak attitude verb *ivək*, translated 'say' out of
+Močnik and Abramovitz document the Koryak attitude verb *ivək*, translated 'say' out of
 context, which also means 'think' and 'allow for the possibility that'. It varies in force and
-in flavor, against the universal of [nauze-2008] that a modal varies on one axis only.
+in flavor, against Nauze's universal that a modal varies on one axis only.
 
 Their entry (15) quantifies universally over the worlds a subset selection function picks from
-a domain, after [rullmann-matthewson-davis-2008], and closes the function existentially over a
+a domain, after Rullmann, Matthewson and Davis, and closes the function existentially over a
 cover that the context resolves either to the identity, the default, or to all nonempty
 selections (`Cover`). The identity cover gives the box over the domain and the full cover the
 diamond (`Frame.ivek_identity_iff`, `Frame.ivek_all_iff`), so the force varies with the cover.
@@ -31,7 +31,7 @@ context of (8) (`Frame.ex8b_all_false`). The flavor accounts for §3: the two *i
 set apart by an adverb, are consistent on different flavors (`ex14_consistent`), while one
 *ivək* over clauses that contradict each other, (20), is false on every reading
 (`Frame.not_ivek_and_not`). On the doxastic flavor and the identity cover *ivək* is the
-non-veridical *believe* of [hintikka-1962] (`Frame.ivek_doxastic_identity_iff_holdsAt`).
+non-veridical *believe* of Hintikka (`Frame.ivek_doxastic_identity_iff_holdsAt`).
 
 ## Implementation notes
 
@@ -69,8 +69,8 @@ variable {W E : Type*}
 
 /-! ### Force: a universal over a selected subset -/
 
-/-- The resolutions of the cover `C` of (11): the identity on the domain, the default, or all
-subset selection functions, which pick a nonempty subset of it. -/
+/-- The cover `C` of (11) resolves to the identity on the domain, the default, or all subset
+selection functions, which pick a nonempty subset of it. -/
 inductive Cover
   | identity
   | all
@@ -90,8 +90,8 @@ def force : Cover → ModalForce
 
 end Cover
 
-/-- The quantification of (11) over a domain `D`: some admitted selection function maps `D`
-into `p`. -/
+/-- The quantification of (11) over a domain `D` holds when some admitted selection function maps
+`D` into `p`. -/
 def Holds (c : Cover) (D : Set W) (p : W → Prop) : Prop :=
   ∃ f ∈ c.funs D, ∀ v ∈ f D, p v
 
@@ -128,8 +128,8 @@ def access (F : Frame W E) : Flavor → E → SetRel W W
   | .doxastic => F.belief
   | .assertive => F.sayings
 
-/-- The entry (15) of *ivək* on a flavor and a cover: some admitted selection from the holder's
-domain maps it into the complement. -/
+/-- By the entry (15), *ivək* on a flavor and a cover holds when some admitted selection from the
+holder's domain maps it into the complement. -/
 def ivek (F : Frame W E) (φ : Flavor) (c : Cover) (p : W → Prop) (x : E) (w : W) : Prop :=
   Holds c {v | w ~[F.access φ x] v} p
 
@@ -147,9 +147,9 @@ theorem ivek_all_iff : F.ivek φ .all p x w ↔ ◇[F.access φ x] p w :=
 [hintikka-1962]. -/
 theorem ivek_doxastic_identity_iff_holdsAt :
     F.ivek .doxastic .identity p x w ↔
-      (⟨F.belief, .nonVeridical⟩ : Doxastic.DoxasticPredicate W E).HoldsAt x p w := by
+      (⟨F.belief, .nonVeridical, none⟩ : Doxastic.DoxasticPredicate W E).HoldsAt x p w := by
   rw [Doxastic.DoxasticPredicate.holdsAt_iff, ivek_identity_iff]
-  exact ⟨fun h ↦ ⟨trivial, h⟩, fun h ↦ h.2⟩
+  exact ⟨fun h ↦ ⟨nofun, trivial, h⟩, fun h ↦ h.2.2⟩
 
 /-! ### Conjunction and negation, §2 -/
 
@@ -169,8 +169,8 @@ theorem ivek_all_and_iff :
       (∃ v, w ~[F.access φ x] v ∧ p v) ∧ ∃ v, w ~[F.access φ x] v ∧ q v :=
   and_congr ivek_all_iff ivek_all_iff
 
-/-- (8b) on the identity cover, the felicitous Option 1 of (13): the holder's beliefs leave
-open that the ball is not white and that it is not black. -/
+/-- On the identity cover (8b) is the felicitous Option 1 of (13), on which the holder's beliefs
+leave open that the ball is not white and that it is not black. -/
 theorem ex8b_identity_iff {white black : W → Prop} :
     ¬ F.ivek φ .identity white x w ∧ ¬ F.ivek φ .identity black x w ↔
       (∃ v, w ~[F.access φ x] v ∧ ¬ white v) ∧ ∃ v, w ~[F.access φ x] v ∧ ¬ black v := by
@@ -207,7 +207,7 @@ theorem not_ivek_and_not (h : ∃ v, w ~[F.access φ x] v) (c : Cover) :
 
 end Frame
 
-/-- (14): the two *ivək*s of a discourse, set to the assertive and the doxastic flavor, say that
+/-- In (14) the two *ivək*s of a discourse, set to the assertive and the doxastic flavor, say that
 the students study well and think that they study badly, on nonempty domains. -/
 theorem ex14_consistent : ∃ (F : Frame Bool Unit) (p : Bool → Prop),
     (∃ v, true ~[F.sayings ()] v) ∧ (∃ v, true ~[F.belief ()] v) ∧
@@ -233,7 +233,7 @@ theorem meaning_eq : meaning = {.necessity, .possibility} ×ˢ Finset.univ := by
 theorem not_singleAxis_meaning : ¬ SingleAxis meaning := by
   decide
 
-/-- The pairs the paper attests: 'think' (2), 'allow for the possibility' (4), (6), (8a), and
+/-- The paper attests the pairs 'think' (2), 'allow for the possibility' (4), (6), (8a), and
 'say' (2), (7). Footnote 10 could not confirm an existential 'say'. -/
 def attested : Finset (ModalForce × Flavor) :=
   {(.necessity, .doxastic), (.possibility, .doxastic), (.necessity, .assertive)}

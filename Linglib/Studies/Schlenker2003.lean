@@ -8,28 +8,17 @@ public import Linglib.Semantics.Reference.Kaplan
 /-!
 # Schlenker (2003): A Plea for Monsters
 
-This file formalizes the paper's semantics of attitude verbs as quantifiers over contexts.
-The Fixity Thesis of [kaplan-1989]'s direct-reference theory holds that the value of an
-indexical is fixed by the context of the actual speech act and untouched by any operator, so
-that no operator shifts contexts; the paper's counterexamples are the shifted indexicals of
-Amharic, where the
-first person under *say* denotes the reported speaker. An attitude verb therefore quantifies
-over contexts of the reported speech act or thought, of which [hintikka-1962]'s
-quantification over worlds is the special case where the embedded meaning reads only the
-world coordinate (`ContextBox`, `contextBox_world_only`); the doxastic predicates of
-`Semantics/Attitudes/Doxastic` are that special case with a veridicality requirement
-(`doxastic_holdsAt_iff_contextBox`). The reported context is the innermost context after the
-attitude shift, with the holder as agent and the accessible world as world
-(`reportedContext`). The Fixity Thesis is rendered as independence of a meaning's truth value
-from the context tower (`SatisfiesFixity`), which world-only meanings satisfy
-(`fixity_world_only`), while English *I* resolves to the origin agent under any shift
-(`english_I_invariant`) and Amharic *I* to the innermost agent, so the two diverge under a
-shift to another holder (`amharicI_ne_I`). Person features are presuppositions on contexts,
-and a logophoric pronoun is the author of an embedded context who is not the actual speaker
-(`Logophoric`, `logophoric_local_of_ne`, `not_logophoric_origin_agent`). A two-person,
-two-world model shows context quantification strictly exceeding world quantification: *Bob
-said that I am happy* is false read as English and true read as Amharic
-(`english_amharic_differ`).
+Schlenker treats attitude verbs as quantifiers over contexts. Kaplan's Fixity Thesis holds that
+an indexical's value is fixed by the context of the actual speech act, so that no operator shifts
+contexts (`SatisfiesFixity`); Amharic, where the first person under *say* denotes the reported
+speaker, is the counterexample. An attitude verb therefore quantifies over contexts of the
+reported speech act or thought (`ContextBox`), with the holder as agent and the accessible world
+as world (`reportedContext`), and Hintikka's quantification over worlds is the case where the
+embedded meaning reads only the world (`contextBox_world_only`, `doxastic_holdsAt_iff_contextBox`).
+English *I* resolves to the origin agent under any shift and Amharic *I* to the innermost agent
+(`english_I_invariant`, `amharicI_ne_I`), so *Bob said that I am happy* is false read as English
+and true read as Amharic in a two-person model (`english_amharic_differ`). A logophoric pronoun
+is the author of an embedded context who is not the actual speaker (`Logophoric`).
 
 ## Implementation notes
 
@@ -113,14 +102,13 @@ theorem contextBox_world_only (R : E → SetRel W W) (holder : E) (p : W → Pro
     ContextBox R holder (fun c ↦ p c.world) t = □[R holder] p := by
   simp only [ContextBox, reportedContext_world]
 
-/-- `DoxasticPredicate.HoldsAt` is a veridicality requirement plus context
-    quantification over a world-only meaning: every doxastic predicate
-    of `Doxastic.lean` is a special case of [schlenker-2003]'s context
-    quantification. -/
+/-- `DoxasticPredicate.HoldsAt` is a factivity and a veridicality requirement plus context
+    quantification over a world-only meaning, so every doxastic predicate of `Doxastic.lean` is
+    a special case of [schlenker-2003]'s context quantification. -/
 theorem doxastic_holdsAt_iff_contextBox (V : Doxastic.DoxasticPredicate W E) (agent : E)
     (p : W → Prop) (w : W) (t : ContextTower (Context W E P T)) :
     V.HoldsAt agent p w ↔
-      Doxastic.VeridicalityHolds V.veridicality p w ∧
+      (∀ _ ∈ V.factivity, p w) ∧ Doxastic.VeridicalityHolds V.veridicality p w ∧
         ContextBox V.access agent (fun c ↦ p c.world) t w := by
   rw [contextBox_world_only]
   exact V.holdsAt_iff agent p w
@@ -157,8 +145,8 @@ theorem english_I_invariant
     attitude shift the attitude holder. -/
 def amharicI : AccessPattern (Context W E P T) E := .innermost Context.agent
 
-/-- The paper's counterexample to Kaplan's thesis: under an attitude shift to a holder other
-    than the speaker, Amharic *I* and English *I* resolve differently. -/
+/-- The paper's counterexample to Kaplan's thesis is that under an attitude shift to a holder
+    other than the speaker, Amharic *I* and English *I* resolve differently. -/
 theorem amharicI_ne_I (c : Context W E P T) (holder : E) (w' : W) (h : c.agent ≠ holder) :
     amharicI.resolve ((ContextTower.root c).push (attitudeShift holder w')) ≠
       Kaplan.I.resolve ((ContextTower.root c).push (attitudeShift holder w')) := by
@@ -166,12 +154,12 @@ theorem amharicI_ne_I (c : Context W E P T) (holder : E) (w' : W) (h : c.agent �
 
 /-! ### Person features as presuppositions -/
 
-/-- `+author(x, cᵢ)` of the paper's MELP: `x` is the agent of the context at depth `d`,
-    `+author*(x)` being the case `d = .origin`. -/
+/-- The paper's `+author(x, cᵢ)` says that `x` is the agent of the context at depth `d`, and
+    `+author*(x)` is the case `d = .origin`. -/
 def AuthorAt (d : DepthSpec) (x : E) (t : ContextTower (Context W E P T)) : Prop :=
   x = (AccessPattern.mk d Context.agent).resolve t
 
-/-- A logophoric pronoun, §6: `+author(x, cᵢ) ∧ −author*(x)`, the agent of the embedded
+/-- A logophoric pronoun (§6) is `+author(x, cᵢ) ∧ −author*(x)`, the agent of the embedded
     context who is not the actual speaker. -/
 def Logophoric (d : DepthSpec) (x : E) (t : ContextTower (Context W E P T)) : Prop :=
   AuthorAt d x t ∧ ¬ AuthorAt .origin x t

@@ -162,8 +162,7 @@ structure Aspect where
   deriving Repr, BEq
 
 /-- The presupposition profile of a verb is its factivity class and its implication signature.
-    Whether the verb triggers a presupposition, and of which kind, is derived
-    (`Verb.triggerType?`). -/
+    Whether the verb triggers a presupposition is derived (`Verb.IsTrigger`). -/
 structure Presupposition where
   /-- The [karttunen-1971b] factivity class of a factive predicate; `none` for a
       non-factive. -/
