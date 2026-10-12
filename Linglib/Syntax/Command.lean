@@ -1,56 +1,51 @@
 module
 
-public import Mathlib.Order.Interval.Set.Basic
-public import Mathlib.Data.Set.Lattice.Indexed
-public import Linglib.Core.Data.RoseTree.Positions
+public import Mathlib.Basic.Rel
+public import Mathlib.Order.Concept
 public import Mathlib.Order.Cover
+public import Linglib.Core.Data.RoseTree.Positions
 
 /-!
 # Command relations
 
-This file develops Barker and Pullum's algebraic theory of command relations on a dominance
-order, with the root at `⊥` and `x ≤ y` for `x` dominates `y`. A set `P` of nodes generates
-the **command relation** `commandRelation P`: `a` P-commands `b` when every `P`-node properly
-dominating `a`, every member of `P ∩ Set.Iio a`, dominates `b`. The literature's relations are
-the choice of generator alone, c-command from the branching nodes, S-command from the S nodes,
-K-command from the S and NP nodes, and the Intersection Theorem makes `P ↦ commandRelation P`
-antitone, turning a union of generators into an intersection of relations. Generating from a
-relation instead of a property keeps everything but Fairness and closes the class under
-union, through the maximal generator of a relation.
+A dominance order has the root at `⊥` and `x ≤ y` for `x` dominates `y`. A set `P` of nodes
+generates a command relation: `a` commands `b` when every `P`-node properly dominating `a`
+dominates `b`. The relations of the literature differ in the generator alone, c-command taking
+the branching nodes, S-command the S nodes and MAX-command the maximal projections.
 
-## Main declarations
+The relation is an upper polar in the generator, so that its dependence on `P` is mathlib's
+polarity API: a union of generators gives the intersection of the relations by
+`upperPolar_union`, the map is antitone by `upperPolar_anti`, and the relations some property
+generates are the `Order.IsIntent` sets. In the commanded node it is a set of upper
+bounds, and on a tree it is the cone of one node, the lowest generator above the commander.
 
-* `PhraseStructure.commandRelation P` and `PhraseStructure.mateRelation P`: the relation `P`
-  generates, and its symmetric part.
-* `PhraseStructure.branchingNodes` and `PhraseStructure.cCommand`: the nodes covering two distinct
-  nodes, and the relation they generate, Reinhart's c-command.
-* `PhraseStructure.commandByRelation R` and `PhraseStructure.maximalGenerator R`: generation by a
-  relation, and the largest relation generating the same command relation.
-* `PhraseStructure.IsBranchingAt` and `PhraseStructure.cCommandAt`: on the positions of a rose tree,
-  the branching positions read off the tree and the c-command they generate, both decidable at
-  concrete positions; `PhraseStructure.CCommands`, Reinhart's c-command restricted to positions
-  neither of which dominates the other.
-* `PhraseStructure.mem_cCommand_iff`: on the rooted tree `Positions t` the order-theoretic
-  `cCommand` is the tree's `cCommandAt`, through `mem_branchingNodes_iff`;
-  `cCommandAt_map`: relabelling preserves c-command.
+## Main definitions
 
-## Main results
+* `PhraseStructure.commandRelation`: the command relation a set of nodes generates.
+* `PhraseStructure.mateRelation`: its symmetric part, each node commanding the other.
+* `PhraseStructure.IsBranchingAt`, `PhraseStructure.cCommandAt`: the branching positions of a rose
+  tree and the command relation they generate.
+* `PhraseStructure.CCommands`: c-command between positions neither of which dominates the other.
 
-* `PhraseStructure.commandRelation_union`, the Intersection Theorem, with `commandRelation_sUnion`
-  and `commandRelation_anti`; `sInter_mem_range_commandRelation`, closure under
-  intersection.
-* `PhraseStructure.mem_commandRelation_of_le` (Descent), `commandRelation_insert_bot` (Boundedness),
-  `commandRelation_fair` (Fairness) and `commandRelation_eq_Ici` (Constituency).
-* `PhraseStructure.mem_commandRelation_congr` and `PhraseStructure.mem_commandRelation_iff_of_le`:
-  what a node commands depends only on the generators above it, and in a tree order it commands a
-  node below `c` exactly when it commands `c`.
-* `PhraseStructure.commandByRelation_union_subset` and `commandByRelation_inf_subset`, the Union
-  Theorem, whose converse needs the ancestors of a node linearly ordered (`IsLeftLinear`).
-* `PhraseStructure.cCommands_iff_parent_lt`: c-command is sisterhood plus dominance, a position
-  c-commanding what lies properly below its parent and not below itself.
-* `PhraseStructure.mem_cCommandAt_replaceAt` and `PhraseStructure.cCommands_replaceAt_of_le`:
-  replacing a subtree leaves what the positions outside it c-command unchanged, and its positions
-  are c-commanded by what c-commanded its root, the configuration of reconstruction.
+## Main statements
+
+* `PhraseStructure.mem_commandRelation_iff_mem_upperBounds`: the nodes `a` commands are the upper
+  bounds of the generators properly dominating `a`.
+* `PhraseStructure.mem_commandRelation_iff_le`: when those generators have a greatest member,
+  `a` commands exactly what it dominates.
+* `PhraseStructure.mem_commandRelation_iff_le_of_covBy`,
+  `PhraseStructure.mem_commandRelation_iff_of_covBy`: on a tree a node commands what its mother
+  dominates if the mother is a generator, and what its mother commands if not.
+* `PhraseStructure.cCommands_iff_parent_lt`: c-command is sisterhood plus dominance.
+
+## Implementation notes
+
+* `commandRelation` is an `abbrev` for an upper polar, so the lemmas of `Mathlib/Order/Concept.lean`
+  apply to it as they stand and are not restated here.
+* The relations are `SetRel`s, written `a ~[commandRelation P] b`, since they are intersected,
+  inverted and compared; dominance, which is only ever applied, stays `≤`.
+* Barker and Pullum's own theorems, their generation by relations and their definition of
+  c-command through the mother relation are in `Studies/BarkerPullum1990.lean`.
 
 ## References
 
@@ -62,212 +57,106 @@ union, through the maximal generator of a relation.
 
 namespace PhraseStructure
 
-variable {α : Type*} [PartialOrder α]
+open Order Set
+open scoped SetRel
 
-/-! ### Command relations generated by a property -/
+variable {α : Type*}
 
-/-- `a` P-commands `b` when every `P`-node properly dominating `a` dominates `b`. -/
-def commandRelation (P : Set α) : Set (α × α) := {ab | ∀ x ∈ P, x < ab.1 → x ≤ ab.2}
+/-! ### Command relations -/
 
-theorem mem_commandRelation {P : Set α} {a b : α} :
-    (a, b) ∈ commandRelation P ↔ ∀ x ∈ P, x < a → x ≤ b := Iff.rfl
+section Preorder
 
-/-- A union of generators generates the intersection of their relations (the Intersection
-Theorem). -/
-theorem commandRelation_union (P Q : Set α) :
-    commandRelation (P ∪ Q) = commandRelation P ∩ commandRelation Q := by
-  ext ⟨a, b⟩
-  simp only [mem_commandRelation, Set.mem_inter_iff, Set.mem_union, or_imp, forall_and]
+variable [Preorder α] {P Q : Set α} {a b c m : α}
 
-theorem commandRelation_sUnion (S : Set (Set α)) :
-    commandRelation (⋃₀ S) = ⋂ P ∈ S, commandRelation P := by
-  ext ⟨a, b⟩
-  simp only [mem_commandRelation, Set.mem_iInter, Set.mem_sUnion]
-  exact ⟨fun h P hP x hx => h x ⟨P, hP, hx⟩, fun h x ⟨P, hP, hx⟩ => h P hP x hx⟩
+/-- A node `x` admits the pair `(a, b)` when it dominates `b` if it properly dominates `a`, so that
+it does not bound `a` away from `b`. -/
+abbrev Admits (x : α) (ab : α × α) : Prop := x < ab.1 → x ≤ ab.2
 
-theorem commandRelation_anti : Antitone (commandRelation (α := α)) :=
-  fun _ _ hPQ _ h x hx hxa => h x (hPQ hx) hxa
+/-- The command relation generated by `P`, in which `a` commands `b` when every `P`-node properly
+dominating `a` dominates `b`: the upper polar of `P` along `Admits`. -/
+abbrev commandRelation (P : Set α) : SetRel α α := upperPolar Admits P
 
-@[simp] theorem commandRelation_empty : commandRelation (∅ : Set α) = Set.univ := by
-  ext ⟨a, b⟩
-  simp [mem_commandRelation]
+theorem mem_commandRelation : a ~[commandRelation P] b ↔ ∀ x ∈ P, x < a → x ≤ b := Iff.rfl
 
-theorem mem_commandRelation_self (P : Set α) (a : α) : (a, a) ∈ commandRelation P :=
-  fun _ _ hx => hx.le
+/-- The nodes `a` commands are the upper bounds of the `P`-nodes properly dominating `a`. -/
+theorem mem_commandRelation_iff_mem_upperBounds :
+    a ~[commandRelation P] b ↔ b ∈ upperBounds (P ∩ Iio a) :=
+  ⟨fun h _ hx ↦ h hx.1 hx.2, fun h _ hx hxa ↦ h ⟨hx, hxa⟩⟩
 
-/-- A node commands everything below what it commands (Descent). -/
-theorem mem_commandRelation_of_le {P : Set α} {a b c : α} (h : (a, b) ∈ commandRelation P)
-    (hbc : b ≤ c) : (a, c) ∈ commandRelation P :=
-  fun x hx hxa => (h x hx hxa).trans hbc
+instance : (commandRelation P).IsRefl := ⟨fun _ _ _ hxa ↦ hxa.le⟩
+
+/-- A node commands everything below what it commands. -/
+theorem mem_commandRelation_of_le (h : a ~[commandRelation P] b) (hbc : b ≤ c) :
+    a ~[commandRelation P] c :=
+  fun _ hx hxa ↦ (h hx hxa).trans hbc
 
 /-- What a node commands depends only on the generators properly dominating it. -/
-theorem mem_commandRelation_congr {P Q : Set α} {a : α} (h : ∀ x < a, x ∈ P ↔ x ∈ Q) (b : α) :
-    (a, b) ∈ commandRelation P ↔ (a, b) ∈ commandRelation Q :=
-  ⟨fun hP x hx hxa => hP x ((h x hxa).2 hx) hxa, fun hQ x hx hxa => hQ x ((h x hxa).1 hx) hxa⟩
+theorem mem_commandRelation_congr (h : ∀ x < a, x ∈ P ↔ x ∈ Q) :
+    a ~[commandRelation P] b ↔ a ~[commandRelation Q] b :=
+  ⟨fun hP _ hx hxa ↦ hP ((h _ hxa).2 hx) hxa, fun hQ _ hx hxa ↦ hQ ((h _ hxa).1 hx) hxa⟩
+
+/-- When the `P`-nodes properly dominating `a` have a greatest member `m`, the lowest of them in
+the tree, `a` commands exactly what `m` dominates. -/
+theorem mem_commandRelation_iff_le (h : IsGreatest (P ∩ Iio a) m) :
+    a ~[commandRelation P] b ↔ m ≤ b := by
+  rw [mem_commandRelation_iff_mem_upperBounds, h.isLUB.upperBounds_eq, mem_Ici]
+
+end Preorder
+
+/-! ### Command on trees
+
+On an order whose ancestors are linearly ordered a node's command domain is fixed by its mother,
+the node it covers. -/
+
+section LeftLinear
+
+variable [PartialOrder α] [IsLeftLinear α] {P : Set α} {a b c m : α}
 
 /-- In a tree order a node commands a node below `c` exactly when it commands `c`, unless `c`
 properly dominates it. -/
-theorem mem_commandRelation_iff_of_le [IsLeftLinear α] {P : Set α} {a b c : α} (hcb : c ≤ b)
-    (hca : ¬ c < a) : (a, b) ∈ commandRelation P ↔ (a, c) ∈ commandRelation P :=
-  ⟨fun h x hx hxa => (IsLeftLinear.comparable_of_le_common (h x hx hxa) hcb).resolve_right
-      fun hcx => hca (hcx.trans_lt hxa),
-    fun h => mem_commandRelation_of_le h hcb⟩
+theorem mem_commandRelation_iff_of_le (hcb : c ≤ b) (hca : ¬ c < a) :
+    a ~[commandRelation P] b ↔ a ~[commandRelation P] c :=
+  ⟨fun h _ hx hxa ↦ (IsLeftLinear.comparable_of_le_common (h hx hxa) hcb).resolve_right
+      fun hcx ↦ hca (hcx.trans_lt hxa),
+    fun h ↦ mem_commandRelation_of_le h hcb⟩
 
-/-- A node with no `P`-node above it commands every node (Ambidextrousness). -/
-theorem mem_commandRelation_of_forall_not_lt {P : Set α} {a : α} (h : ∀ x ∈ P, ¬ x < a)
-    (b : α) : (a, b) ∈ commandRelation P :=
-  fun x hx hxa => absurd hxa (h x hx)
+/-- A node commands whatever its mother dominates, whatever the generator. -/
+theorem mem_commandRelation_of_covBy (ha : m ⋖ a) (hb : m ≤ b) : a ~[commandRelation P] b :=
+  fun _ _ hxa ↦ (IsLeftLinear.le_of_lt_of_covBy ha hxa).trans hb
 
-/-- The root adds nothing to a generator (Boundedness). -/
-theorem commandRelation_insert_bot [OrderBot α] (P : Set α) :
-    commandRelation (insert ⊥ P) = commandRelation P := by
-  ext ⟨a, b⟩
-  simp only [mem_commandRelation, Set.mem_insert_iff, or_imp, forall_and, forall_eq]
-  exact ⟨fun h => h.2, fun h => ⟨fun _ => bot_le, h⟩⟩
+/-- A node whose mother is a generator commands exactly what its mother dominates. -/
+theorem mem_commandRelation_iff_le_of_covBy (ha : m ⋖ a) (hm : m ∈ P) :
+    a ~[commandRelation P] b ↔ m ≤ b :=
+  mem_commandRelation_iff_le ⟨⟨hm, ha.lt⟩, fun _ hx ↦ IsLeftLinear.le_of_lt_of_covBy ha hx.2⟩
 
-/-- When `a` commands `b`, `b` commands `c` and `a` does not command `c`, the `P`-node separating
-`a` from `c` is `b` itself, so `b` dominates everything `a` commands (Fairness). -/
-theorem commandRelation_fair {P : Set α} {a b c : α} (hab : (a, b) ∈ commandRelation P)
-    (hbc : (b, c) ∈ commandRelation P) (hac : (a, c) ∉ commandRelation P) {d : α}
-    (had : (a, d) ∈ commandRelation P) : b ≤ d := by
-  simp only [mem_commandRelation] at hac
-  push Not at hac
-  obtain ⟨x, hx, hxa, hxc⟩ := hac
-  rcases (hab x hx hxa).lt_or_eq with hxb | rfl
-  · exact absurd (hbc x hx hxb) hxc
-  · exact had x hx hxa
+/-- A node whose mother is not a generator commands exactly what its mother commands. -/
+theorem mem_commandRelation_iff_of_covBy (ha : m ⋖ a) (hm : m ∉ P) :
+    a ~[commandRelation P] b ↔ m ~[commandRelation P] b :=
+  ⟨fun h _ hx hxm ↦ h hx (hxm.trans ha.lt), fun h _ hx hxa ↦
+    h hx ((IsLeftLinear.le_of_lt_of_covBy ha hxa).lt_of_ne fun e ↦ hm (e ▸ hx))⟩
 
-/-- The command domain of `a` is the cone of the greatest `P`-node properly dominating `a`,
-Reinhart's first branching node when `P` is the branching nodes (Constituency). -/
-theorem commandRelation_eq_Ici {P : Set α} {a m : α} (hm : m ∈ P) (hma : m < a)
-    (hmax : ∀ x ∈ P, x < a → x ≤ m) : {b | (a, b) ∈ commandRelation P} = Set.Ici m := by
-  ext b
-  exact ⟨fun h => h m hm hma, fun h x hx hxa => (hmax x hx hxa).trans h⟩
-
-/-- On a lower set, the relation generated by the restriction of `P` is the restriction of
-the relation `P` generates. -/
-theorem mem_commandRelation_subtype_iff {D : Set α} (hD : IsLowerSet D) (P : Set α) (a b : D) :
-    (a, b) ∈ commandRelation (Subtype.val ⁻¹' P) ↔ (a.val, b.val) ∈ commandRelation P :=
-  ⟨fun h x hx hxa => h ⟨x, hD hxa.le a.2⟩ hx hxa, fun h x hx hxa => h x.val hx hxa⟩
-
-/-- The intersection of the relations generated by a family is generated by the union of the
-generators, so command relations are closed under intersection. -/
-theorem sInter_mem_range_commandRelation {S : Set (Set (α × α))}
-    (hS : S ⊆ Set.range (commandRelation (α := α))) : ⋂₀ S ∈ Set.range commandRelation := by
-  refine ⟨⋃₀ {P | commandRelation P ∈ S}, ?_⟩
-  rw [commandRelation_sUnion]
-  ext ab
-  simp only [Set.mem_iInter, Set.mem_ofPred_eq, Set.mem_sInter]
-  exact ⟨fun h C hC => by obtain ⟨P, rfl⟩ := hS hC; exact h P hC, fun h P hP => h _ hP⟩
+end LeftLinear
 
 /-! ### Mates -/
 
+section Mates
+
+variable [Preorder α] {P : Set α} {a b : α}
+
 /-- Two nodes are `P`-mates when each `P`-commands the other. -/
-def mateRelation (P : Set α) : Set (α × α) :=
-  {ab | (ab.1, ab.2) ∈ commandRelation P ∧ (ab.2, ab.1) ∈ commandRelation P}
+abbrev mateRelation (P : Set α) : SetRel α α := (commandRelation P).symmetrize
 
-theorem mem_mateRelation {P : Set α} {a b : α} :
-    (a, b) ∈ mateRelation P ↔ (a, b) ∈ commandRelation P ∧ (b, a) ∈ commandRelation P :=
-  Iff.rfl
+theorem mem_mateRelation :
+    a ~[mateRelation P] b ↔ a ~[commandRelation P] b ∧ b ~[commandRelation P] a := Iff.rfl
 
-theorem mateRelation_swap {P : Set α} {a b : α} (h : (a, b) ∈ mateRelation P) :
-    (b, a) ∈ mateRelation P :=
-  ⟨h.2, h.1⟩
-
-theorem mem_mateRelation_self (P : Set α) (a : α) : (a, a) ∈ mateRelation P :=
-  ⟨mem_commandRelation_self P a, mem_commandRelation_self P a⟩
-
-theorem mateRelation_union (P Q : Set α) :
-    mateRelation (P ∪ Q) = mateRelation P ∩ mateRelation Q := by
-  ext ab
-  simp only [mateRelation, Set.mem_ofPred_eq, Set.mem_inter_iff, commandRelation_union]
-  tauto
-
-/-! ### Branching nodes and c-command -/
-
-/-- The branching nodes are those covering two distinct nodes, the mothers of two daughters. -/
-def branchingNodes : Set α := {n | ∃ a b, a ≠ b ∧ n ⋖ a ∧ n ⋖ b}
-
-/-- Reinhart's c-command is the relation the branching nodes generate. -/
-def cCommand : Set (α × α) := commandRelation (branchingNodes (α := α))
-
-/-! ### Command relations generated by a relation
-
-A relation `R` generates the command relation in which `a` commands `b` when every `x` with
-`R a x` dominates `b`; a property `P` is the relation pairing a node with the `P`-nodes
-properly dominating it. The maximal generator of `R` is the largest relation generating the
-same command relation, and it is through maximal generators that the class closes under
-union.
--/
-
-/-- `a` R-commands `b` when every `x` with `R a x` dominates `b`. -/
-def commandByRelation (R : α → α → Prop) : Set (α × α) := {ab | ∀ x, R ab.1 x → x ≤ ab.2}
-
-theorem commandRelation_eq_commandByRelation (P : Set α) :
-    commandRelation P = commandByRelation fun a x => x ∈ P ∧ x < a := by
-  ext ⟨a, b⟩
-  simp only [mem_commandRelation, commandByRelation, Set.mem_ofPred_eq, and_imp]
-
-theorem commandByRelation_or (R S : α → α → Prop) :
-    commandByRelation (fun a x => R a x ∨ S a x) = commandByRelation R ∩ commandByRelation S := by
-  ext ⟨a, b⟩
-  simp only [commandByRelation, Set.mem_ofPred_eq, Set.mem_inter_iff, or_imp, forall_and]
-
-/-- The maximal generator of `R` is the union of the relations containing `R` that generate the
-same command relation. -/
-def maximalGenerator (R : α → α → Prop) : α → α → Prop :=
-  fun a x => ∃ S, R ≤ S ∧ commandByRelation S = commandByRelation R ∧ S a x
-
-theorem le_maximalGenerator (R : α → α → Prop) : R ≤ maximalGenerator R :=
-  fun _ _ h => ⟨R, le_rfl, rfl, h⟩
-
-theorem commandByRelation_maximalGenerator (R : α → α → Prop) :
-    commandByRelation (maximalGenerator R) = commandByRelation R := by
-  ext ⟨a, b⟩
-  refine ⟨fun h x hx => h x (le_maximalGenerator R a x hx), fun h x ⟨S, _, hS, hSax⟩ => ?_⟩
-  have : (a, b) ∈ commandByRelation S := by rw [hS]; exact h
-  exact this x hSax
-
-/-- Anything below a node `R`-related to `a` is in the maximal generator of `R` at `a`. -/
-theorem maximalGenerator_of_le {R : α → α → Prop} {a c d : α} (hRad : R a d) (hcd : c ≤ d) :
-    maximalGenerator R a c := by
-  refine ⟨fun a' x' => R a' x' ∨ (a' = a ∧ x' = c), fun _ _ h => Or.inl h, ?_, Or.inr ⟨rfl, rfl⟩⟩
-  ext ⟨a', b'⟩
-  refine ⟨fun h x hx => h x (Or.inl hx), fun h x hx => ?_⟩
-  rcases hx with hx | ⟨rfl, rfl⟩
-  · exact h x hx
-  · exact hcd.trans (h d hRad)
-
-/-- The union of two command relations is generated by the intersection of the maximal
-generators (the Union Theorem). -/
-theorem commandByRelation_union_subset (R S : α → α → Prop) :
-    commandByRelation R ∪ commandByRelation S ⊆
-      commandByRelation fun a x => maximalGenerator R a x ∧ maximalGenerator S a x := by
-  rintro ⟨a, b⟩ (h | h) x ⟨hR, hS⟩
-  · rw [← commandByRelation_maximalGenerator] at h; exact h x hR
-  · rw [← commandByRelation_maximalGenerator] at h; exact h x hS
-
-/-- The converse of the Union Theorem, for relations pointing upward on an order whose
-ancestors are linearly ordered. -/
-theorem commandByRelation_inf_subset [IsLeftLinear α] {R S : α → α → Prop}
-    (hR : ∀ a x, R a x → x ≤ a) (hS : ∀ a x, S a x → x ≤ a) :
-    (commandByRelation fun a x => maximalGenerator R a x ∧ maximalGenerator S a x) ⊆
-      commandByRelation R ∪ commandByRelation S := by
-  rintro ⟨a, b⟩ h
-  by_contra hn
-  simp only [Set.mem_union, commandByRelation, Set.mem_ofPred_eq] at hn h
-  push Not at hn
-  obtain ⟨⟨c, hRac, hcb⟩, ⟨d, hSad, hdb⟩⟩ := hn
-  rcases IsLeftLinear.comparable_of_le_common (hR a c hRac) (hS a d hSad) with hcd | hdc
-  · exact hcb (h c ⟨le_maximalGenerator R a c hRac, maximalGenerator_of_le hSad hcd⟩)
-  · exact hdb (h d ⟨maximalGenerator_of_le hRac hdc, le_maximalGenerator S a d hSad⟩)
+end Mates
 
 /-! ### Command relations on the positions of a tree
 
 Membership in `commandRelation P` at concrete positions is decidable: the nodes properly
-dominating a position are its proper prefixes, a finite list, so the defining universal is
-a `List`-bounded one. The branching property of a position is read off the tree, at
-least two children, the geometric reading of [reinhart-1976]'s "branching node". -/
+dominating a position are its proper prefixes, a finite list, so the defining universal is a
+`List`-bounded one. The branching property of a position is read off the tree, at least two
+children, the geometric reading of [reinhart-1976]'s "branching node". -/
 
 section Positions
 
@@ -275,23 +164,23 @@ open Core.Order RoseTree
 
 /-- The nodes properly dominating a position are its proper prefixes. -/
 theorem mem_commandRelation_iff_inits (P : Set TreePath) (a b : TreePath) :
-    (a, b) ∈ commandRelation P ↔
+    a ~[commandRelation P] b ↔
       ∀ x ∈ a.toList.inits.map TreePath.mk, x ≠ a → x ∈ P → x ≤ b := by
   constructor
   · intro h x hx hne hP
     obtain ⟨l, hl, rfl⟩ := List.mem_map.mp hx
-    exact h ⟨l⟩ hP (lt_of_le_of_ne (TreePath.le_def.mpr ((List.mem_inits _ _).mp hl)) hne)
+    exact h hP (lt_of_le_of_ne (TreePath.le_def.mpr ((List.mem_inits _ _).mp hl)) hne)
   · intro h x hP hxa
     exact h x (List.mem_map.mpr
       ⟨x.toList, (List.mem_inits _ _).mpr (TreePath.le_def.mp hxa.le), rfl⟩) hxa.ne hP
 
 instance (P : Set TreePath) [DecidablePred (· ∈ P)] (a b : TreePath) :
-    Decidable ((a, b) ∈ commandRelation P) :=
+    Decidable (a ~[commandRelation P] b) :=
   decidable_of_iff _ (mem_commandRelation_iff_inits P a b).symm
 
 instance (P : Set TreePath) [DecidablePred (· ∈ P)] (ab : TreePath × TreePath) :
     Decidable (ab ∈ mateRelation P) :=
-  inferInstanceAs (Decidable (_ ∧ _))
+  inferInstanceAs (Decidable (ab.1 ~[commandRelation P] ab.2 ∧ ab.2 ~[commandRelation P] ab.1))
 
 variable {β : Type*}
 
@@ -305,13 +194,13 @@ instance (t : RoseTree β) (p : TreePath) : Decidable (IsBranchingAt t p) :=
 
 /-- C-command on the positions of `t` is generated by its branching positions; it is read off the
 tree, so decidable, and it is sister-form c-command on binary trees. -/
-abbrev cCommandAt (t : RoseTree β) : Set (TreePath × TreePath) :=
+abbrev cCommandAt (t : RoseTree β) : SetRel TreePath TreePath :=
   commandRelation {p | IsBranchingAt t p}
 
 /-- `a` c-commands `b` in `t` when neither dominates the other and every branching node properly
 dominating `a` dominates `b`. -/
 def CCommands (t : RoseTree β) (a b : TreePath) : Prop :=
-  (a, b) ∈ cCommandAt t ∧ ¬ a ≤ b ∧ ¬ b ≤ a
+  a ~[cCommandAt t] b ∧ ¬ a ≤ b ∧ ¬ b ≤ a
 
 instance (t : RoseTree β) : DecidableRel (CCommands t) :=
   fun _ _ ↦ inferInstanceAs (Decidable (_ ∧ _ ∧ _))
@@ -323,9 +212,7 @@ theorem cCommands_iff_parent_lt {t : RoseTree β} {a b : TreePath} (ha : a ≠ �
   have hcov : a.parent ⋖ a := by
     rw [← TreePath.pred_eq_parent]
     exact Order.pred_covBy_of_not_isMin (by simpa [isMin_iff_eq_bot] using ha)
-  have hcc : (a, b) ∈ cCommandAt t ↔ a.parent ≤ b :=
-    Set.ext_iff.1 (commandRelation_eq_Ici (P := {p | IsBranchingAt t p}) hp hcov.lt
-      fun _ _ hx ↦ TreePath.le_parent_of_lt hx) b
+  have hcc : a ~[cCommandAt t] b ↔ a.parent ≤ b := mem_commandRelation_iff_le_of_covBy hcov hp
   rw [CCommands, hcc]
   refine ⟨fun ⟨hpb, hab, hba⟩ ↦ ⟨lt_of_le_of_ne hpb fun he ↦ hba (he ▸ hcov.le), hab⟩,
     fun ⟨hpb, hab⟩ ↦ ⟨hpb.le, hab, fun hba ↦ hab ?_⟩⟩
@@ -352,9 +239,9 @@ theorem isBranchingAt_replaceAt {x : TreePath} (h : ¬ c ≤ x) :
 
 /-- Unless `c` lies properly above `a`, what `a` c-commands is unchanged by replacing the subtree
 at `c`. -/
-theorem mem_cCommandAt_replaceAt (h : ¬ c < a) (b : TreePath) :
-    (a, b) ∈ cCommandAt (t.replaceAt c.toList new) ↔ (a, b) ∈ cCommandAt t :=
-  mem_commandRelation_congr (fun _ hxa ↦ isBranchingAt_replaceAt fun hcx ↦ h (hcx.trans_lt hxa)) b
+theorem mem_cCommandAt_replaceAt (h : ¬ c < a) :
+    a ~[cCommandAt (t.replaceAt c.toList new)] b ↔ a ~[cCommandAt t] b :=
+  mem_commandRelation_congr fun _ hxa ↦ isBranchingAt_replaceAt fun hcx ↦ h (hcx.trans_lt hxa)
 
 /-- A position outside the subtree at `c` c-commands a position of its replacement exactly when it
 c-commands `c`. -/
@@ -371,44 +258,6 @@ theorem cCommands_replaceAt_self : CCommands (t.replaceAt c.toList new) c a ↔ 
   simp only [CCommands, mem_cCommandAt_replaceAt (lt_irrefl c)]
 
 end Replace
-
-/-- A position is a branching node of the rooted tree `Positions t` iff it is branching in `t`,
-since its covers are its valid daughters, two of which exist iff its subtree has two. -/
-theorem mem_branchingNodes_iff {t : RoseTree β} (p : t.Positions) :
-    p ∈ branchingNodes ↔ IsBranchingAt t p.val := by
-  obtain ⟨s, hs⟩ : ∃ s, t.subtreeAt p.val.toList = some s := Option.isSome_iff_exists.mp p.2
-  constructor
-  · rintro ⟨⟨⟨la⟩, ha'⟩, ⟨⟨lb⟩, hb'⟩, hab, ha, hb⟩
-    obtain ⟨i, hi⟩ := TreePath.covBy_iff.mp (Positions.covBy_iff.mp ha)
-    obtain ⟨j, hj⟩ := TreePath.covBy_iff.mp (Positions.covBy_iff.mp hb)
-    simp only at hi hj
-    subst hi hj
-    obtain ⟨s₁, hs₁, hi'⟩ := mem_validPaths_append_singleton_iff.mp ha'
-    obtain ⟨s₂, hs₂, hj'⟩ := mem_validPaths_append_singleton_iff.mp hb'
-    rw [hs, Option.some.injEq] at hs₁ hs₂
-    subst hs₁ hs₂
-    have hij : i ≠ j := fun h => hab (by subst h; rfl)
-    exact ⟨s, hs, show 2 ≤ s.children.length by omega⟩
-  · rintro ⟨s', hs', hlen⟩
-    rw [Option.mem_def, hs, Option.some.injEq] at hs'
-    subst hs'
-    rw [arity] at hlen
-    refine ⟨⟨⟨p.val.toList ++ [0]⟩, mem_validPaths_append_singleton_iff.mpr ⟨s, hs, by omega⟩⟩,
-      ⟨⟨p.val.toList ++ [1]⟩, mem_validPaths_append_singleton_iff.mpr ⟨s, hs, by omega⟩⟩,
-      fun h => ?_, ?_, ?_⟩
-    · simpa using congrArg (fun q : t.Positions => q.val.toList) h
-    · exact Positions.covBy_iff.mpr (TreePath.covBy_iff.mpr ⟨0, rfl⟩)
-    · exact Positions.covBy_iff.mpr (TreePath.covBy_iff.mpr ⟨1, rfl⟩)
-
-theorem branchingNodes_eq_preimage (t : RoseTree β) :
-    (branchingNodes : Set t.Positions) = Subtype.val ⁻¹' {p | IsBranchingAt t p} :=
-  Set.ext fun p => mem_branchingNodes_iff p
-
-/-- On the rooted tree of positions, c-command is the c-command of `t`. -/
-theorem mem_cCommand_iff {t : RoseTree β} (a b : t.Positions) :
-    (a, b) ∈ (cCommand : Set (t.Positions × t.Positions)) ↔ (a.val, b.val) ∈ cCommandAt t := by
-  rw [cCommand, branchingNodes_eq_preimage]
-  exact mem_commandRelation_subtype_iff (isLowerSet_validPaths t) _ a b
 
 end Positions
 
