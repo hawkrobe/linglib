@@ -43,6 +43,13 @@ def repo_root() -> Path:
 
 
 ROOT = repo_root()
+# The top-level directories of this repository's own modules that the ratchet covers.
+OWN_ROOTS = ('Linglib', 'Studies')
+OWN_FILES = [f'{d}/*.lean' for d in OWN_ROOTS]
+
+
+def is_own(name: str) -> bool:
+    return name.split('.')[0] in OWN_ROOTS
 
 
 def git_lines(*args: str) -> list[str]:
@@ -83,7 +90,7 @@ def header(path: Path) -> tuple[bool, list[str]]:
 
 def module_path(name: str) -> Path | None:
     rel = Path(*name.split('.')).with_suffix('.lean')
-    if name.startswith('Linglib.'):
+    if is_own(name):
         return ROOT / rel
     for pkg in (ROOT / '.lake' / 'packages').glob('*'):
         if (pkg / rel).exists():
@@ -96,7 +103,7 @@ def import_is_module(name: str) -> bool:
     path = module_path(name)
     if path is None or not path.exists():
         # Core `Lean`/`Std`/`Init` and packages not checked out: all modules.
-        return not name.startswith('Linglib.')
+        return not is_own(name)
     return header(path)[0]
 
 
@@ -106,7 +113,7 @@ def on_frontier(rel: str) -> bool:
 
 
 def tracked() -> list[str]:
-    return git_lines('ls-files', 'Linglib/*.lean')
+    return git_lines('ls-files', *OWN_FILES)
 
 
 def report() -> int:
@@ -124,7 +131,7 @@ def staged() -> int:
     blocked = []
     for status, flag in (('A', True), ('M', False)):
         for f in git_lines('diff', '--cached', '--name-only', f'--diff-filter={status}',
-                           '--', 'Linglib/*.lean'):
+                           '--', *OWN_FILES):
             if not on_frontier(f):
                 continue
             if flag:

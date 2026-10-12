@@ -1,7 +1,7 @@
 module
 
 public import Eval.Projection.Account
-public import Linglib.Studies.ChemlaSchlenker2012
+public import Studies.ChemlaSchlenker2012
 
 /-!
 # The map of projection accounts

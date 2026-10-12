@@ -24,7 +24,7 @@ existing files in the same area.
 ### Formalize a paper
 
 Most contributions start by picking a paper from a subfield you know
-and writing a study file at `Linglib/Studies/{AuthorYear}.lean` (study
+and writing a study file at `Studies/{AuthorYear}.lean` (study
 files are flat, named author-year).
 
 A study file typically:
@@ -37,7 +37,7 @@ A study file typically:
 - Cites the paper in the module docstring with `@cite{key}` (add the
   BibTeX entry to `blog/references.bib` first).
 
-Look at any existing file under `Linglib/Studies/` for a template —
+Look at any existing file under `Studies/` for a template —
 `Studies/Jenks2018.lean` (definiteness) and
 `Studies/FrankGoodman2012PMF.lean` (an RSA implicature model) are
 reasonable starting points. Theory-neutral empirical data lives

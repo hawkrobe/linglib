@@ -1,8 +1,8 @@
 module
 
 public import Eval.Basic
-public import Linglib.Studies.Schlenker2009
-public import Linglib.Studies.Kalomoiros2023
+public import Studies.Schlenker2009
+public import Studies.Kalomoiros2023
 
 /-!
 # Accounts of presupposition projection
