@@ -14,9 +14,8 @@ public import Mathlib.Order.Nat
 
 A rose tree over `α` is a root carrying a value in `α` with an ordered list of child subtrees, the
 n-ary counterpart of mathlib's `BinaryTree`. A leaf is `node a []`. The children are a `List`,
-which keeps the type computable and gives it the `map` and traversal API of a list. The unordered
-rooted tree, whose children form a multiset, is the quotient of this type by `RoseTree.Perm`
-(`UnorderedTree`).
+which keeps the type computable. The unordered rooted tree, whose children form a multiset, is the
+quotient of this type by `RoseTree.Perm` (`UnorderedTree`).
 
 The type is nested through `List`, so its recursor takes one motive for trees and one for lists.
 `RoseTree.rec'` is the induction principle with the single hypothesis `∀ c ∈ cs, motive c`, and
@@ -27,7 +26,7 @@ The type is nested through `List`, so its recursor takes one motive for trees an
 * `RoseTree`, `RoseTree.value`, `RoseTree.children`, `RoseTree.leaf`: the type, its projections
   and its leaves.
 * `RoseTree.rec'`, `RoseTree.fold`: induction and the catamorphism.
-* `RoseTree.map`, `RoseTree.traverse`: relabelling and effectful traversal.
+* `RoseTree.map`: relabelling.
 * `RoseTree.numNodes`, `RoseTree.numLeaves`, `RoseTree.height`, `RoseTree.arity`: the counts.
 * `RoseTree.values`, `RoseTree.localTrees`, `RoseTree.leafList`: the node values in preorder, each
   node's value with the values of its children, and the frontier.
@@ -188,52 +187,6 @@ theorem comp_map (f : α → β) (g : β → γ) (t : RoseTree α) :
     rw [map_node, map_node, map_node, Function.comp_apply, List.map_map]
     congr 1
     exact List.map_congr_left ih
-
-/-! ### Traversal
-
-Effectful traversal acts on the root and then on the children from left to right. -/
-
-section Traverse
-universe u
-
-mutual
-/-- Traverse a tree with an applicative action, root then children in order. -/
-def traverse {m : Type u → Type u} [Applicative m] {α β : Type u} (f : α → m β) :
-    RoseTree α → m (RoseTree β)
-  | .node a cs => RoseTree.node <$> f a <*> traverseList f cs
-/-- `traverseList` traverses a list of child subtrees. -/
-def traverseList {m : Type u → Type u} [Applicative m] {α β : Type u} (f : α → m β) :
-    List (RoseTree α) → m (List (RoseTree β))
-  | [] => pure []
-  | c :: cs => (· :: ·) <$> traverse f c <*> traverseList f cs
-end
-
-@[simp] theorem traverse_node {m : Type u → Type u} [Applicative m] {α β : Type u}
-    (f : α → m β) (a : α) (cs : List (RoseTree α)) :
-    traverse f (node a cs) = RoseTree.node <$> f a <*> traverseList f cs := rfl
-
-private theorem traverseList_pure_of {m : Type u → Type u} [Applicative m] [LawfulApplicative m]
-    {α : Type u} :
-    ∀ (cs : List (RoseTree α)), (∀ c ∈ cs, traverse (pure : α → m α) c = pure c) →
-      traverseList (pure : α → m α) cs = pure cs
-  | [], _ => rfl
-  | c :: cs, h => by
-    rw [show traverseList (pure : α → m α) (c :: cs)
-          = (· :: ·) <$> traverse (pure : α → m α) c <*> traverseList (pure : α → m α) cs
-        from rfl,
-      h c (List.mem_cons_self ..),
-      traverseList_pure_of cs fun d hd ↦ h d (List.mem_cons_of_mem _ hd)]
-    simp [map_pure]
-
-theorem traverse_pure {m : Type u → Type u} [Applicative m] [LawfulApplicative m]
-    {α : Type u} (t : RoseTree α) :
-    traverse (pure : α → m α) t = pure t := by
-  induction t with
-  | node a cs ih =>
-    rw [traverse_node, traverseList_pure_of cs ih]
-    simp [map_pure]
-
-end Traverse
 
 /-! ### Counting -/
 
