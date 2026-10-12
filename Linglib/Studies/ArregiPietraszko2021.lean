@@ -20,8 +20,9 @@ half without the verb, is exponed as *do*.
 
 ## Main statements
 
-* `HeadChain.terminals_ofHeads`: the Mirror Principle, the terminals of a complex head ordered
-  as its heads are, each attached outside the complex head of the heads below it.
+* `HeadChain.terminals_ofHeads`, `HeadChain.isLeftComb_mvalue_ofHeads`: the Mirror Principle,
+  the terminals of a complex head ordered as its heads are, each attached outside the complex
+  head of the heads below it.
 * `doSupport_iff`: do-support arises exactly where the chain of a strong verb splits, whether
   the complex head is otherwise pronounced low or high.
 * `directionality_no_correlation`: under inversion English and Monnese both have do-support,
@@ -95,11 +96,13 @@ theorem extend_ofHeads (bottom x : Head) (above : List Head) :
 /-- By the **Mirror Principle**, the terminals of a complex head are ordered as its heads are. -/
 theorem terminals_ofHeads (bottom : Head) (above : List Head) :
     (ofHeads bottom above).terminals = bottom :: above := by
-  suffices ∀ m : FreeMagma Head, (FreeMagma.lift FreeMonoid.of (above.foldl (· * of ·) m)).toList =
-      (FreeMagma.lift FreeMonoid.of m).toList ++ above from this (of bottom)
-  induction above with
-  | nil => simp
-  | cons x above ih => intro m; simp [ih]
+  simp [terminals, ofHeads, toList_lift_foldl_mul_of]
+
+/-- GenHM derives the Mirror Principle: each terminal of a complex head attaches outside the
+complex head of the heads below it. -/
+theorem isLeftComb_mvalue_ofHeads (bottom : Head) (above : List Head) :
+    (ofHeads bottom above).mvalue.IsLeftComb :=
+  (isLeftComb_foldl_mul_of _ _).mpr (isLeftComb_of _)
 
 /-- Orphan Assignment marks a morphological terminal in a chain that does not contain its
 syntactic terminal. -/
@@ -314,6 +317,14 @@ theorem doSupport_iff_of_intervener (h : .V ∉ cx.above) (hne : cx.above ≠ []
     (hvp : cx.vp = .inSitu) (hi : cx.intervener) :
     (derive L cx .V).DoSupport ↔ .V ∈ L.strong ∧ L.splitByIntervention := by
   simp [doSupport_iff h, Splits, hne, hvp, hi]
+
+/-- Below a weak T a verb is pronounced in V when it is strong and in T when it is weak, so the
+verbs of English and Danish are low for one reason. -/
+theorem finitePosition_declarative (hT : .T ∉ L.strong) :
+    (derive L .declarative .V).finitePosition L = some (if .V ∈ L.strong then .V else .T) := by
+  by_cases hV : Head.V ∈ L.strong <;>
+    simp [Chains.finitePosition, derive, Splits, Context.declarative, HeadChain.pronounced,
+      HeadChain.ofHeads, List.filter, hV, hT]
 
 /-- The complex head of a Danish clause is pronounced in V without C and in C with it, never in
 T: each step of GenHM is local, and the strong positions are not adjacent. -/
@@ -536,6 +547,70 @@ theorem amalgamation_class9 :
         ∀ f ∈ Forms.all, f.parameterId = "rel_cl9" → ∃ e ∈ exponents? f,
           spellOut e a.complex = [Ndebele.i] :=
   ⟨rfl, _, rfl, rfl, by decide, by decide +kernel⟩
+
+/-- The two accounts meet on a single complex head. Wherever a chain is pronounced, [M] features
+that Raise the heads below that position and Lower the heads above it make amalgamation build
+the same complex head there. -/
+theorem amalgamation_at_pronounced {lo hi rest : List Head} {s b : Head}
+    (h : lo ++ s :: hi = b :: rest) (hnd : (b :: rest).Nodup) :
+    (HeadChain.ofHeads b rest).pronounced {s} = some s ∧
+      amalgamateSpine (lo.map (.single · (some .raising)) ++ .single s none ::
+          hi.map (.single · (some .lowering))) =
+        some [⟨s, (HeadChain.ofHeads b rest).mvalue, none⟩] := by
+  refine ⟨?_, amalgamateSpine_raising_lowering h⟩
+  have hs : s ∉ lo ++ hi := (List.nodup_cons.mp (List.nodup_middle.mp (h ▸ hnd))).1
+  have h₁ : lo.filter (· = s) = [] :=
+    List.filter_eq_nil_iff.mpr fun a ha ↦ by simpa using fun h : a = s ↦ hs (by simp [← h, ha])
+  have h₂ : hi.filter (· = s) = [] :=
+    List.filter_eq_nil_iff.mpr fun a ha ↦ by simpa using fun h : a = s ↦ hs (by simp [← h, ha])
+  simp [HeadChain.pronounced, HeadChain.ofHeads, ← h, List.filter_append, h₁, h₂]
+
+/-- Whatever [M] features V and T bear, amalgamation pronounces a verb in the same position with
+C above it as without, since heads added above a spine do not change where its heads are
+pronounced. The amalgamation account of Danish verb second therefore moves V in the syntax,
+across T, where the GenHM chain is pronounced in its strong C. -/
+theorem amalgamation_keeps_verb_site (m : Head → Option Direction)
+    {out out' : List (Amalgam Head)} {a a' : Amalgam Head}
+    (h : amalgamateSpine ([Head.V, .T].map fun x ↦ .single x (m x)) = some out)
+    (h' : amalgamateSpine ([Head.V, .T, .C].map fun x ↦ .single x (m x)) = some out')
+    (ha : a ∈ out) (ha' : a' ∈ out') (hV : .V ∈ a.members) (hV' : .V ∈ a'.members) :
+    a'.site = a.site :=
+  site_eq_of_append (extra := [Amalgam.single Head.C (m .C)]) h h'
+    (by simp [Amalgam.members, Amalgam.single]) ha ha' hV hV'
+
+/-- Do-support turns on a specifier. A strong verb in a language with Split-by-Intervention
+takes it when the subject intervenes between C and the verb, and not when the same heads are
+related across a lower copy of the subject. A spine of heads is the same in both clauses, and
+Harizanov and Gribanova leave the union of English T with its verb to another operation. -/
+theorem doSupport_iff_intervener {L : Language} (hV : .V ∈ L.strong)
+    (hs : L.splitByIntervention) :
+    Context.inversion.above = Context.toC.above ∧ (derive L .inversion .V).DoSupport ∧
+      ¬ (derive L .toC .V).DoSupport := by
+  refine ⟨rfl, (doSupport_iff (by decide)).mpr ⟨rfl, hV, by decide, .inl ⟨hs, rfl⟩⟩, fun h ↦ ?_⟩
+  simpa [Splits, Context.toC] using splits_of_doSupport h
+
+/-- The settings and context of a French or Danish clause among the verb-placement examples of
+the amalgamation study. -/
+def clauseOf (r : Datum) : Option (Language × Context) :=
+  let cx (L : Language) : Context :=
+    if r.feature? "diagnostic" = some "negation" then .negation L else .declarative
+  match r.language, r.feature? "clause" with
+  | "stan1290", none => some (french, cx french)
+  | "dani1285", some "embedded" => some (danish, cx danish)
+  | "dani1285", some "root" => some (danish, .toC)
+  | _, _ => none
+
+/-- On the French and Danish verb-placement examples of the amalgamation study the two accounts
+agree. Each example is acceptable in exactly the order that the position of the finite word
+predicts, whether the finite verb is a lexical verb or an auxiliary. -/
+theorem amalgamation_rows :
+    ∀ r ∈ HarizanovGribanova2019.Examples.all,
+      r.feature? "phenomenon" = some "finiteVerbPlacement" →
+      r.feature? "diagnostic" ≠ some "coordination" → r.language ≠ "russ1263" →
+        ∃ p ∈ clauseOf r, ∃ b ∈ r.parse? "verbPrecedes" boolLabels, ∀ verb ∈ [Head.V, .Aux],
+          (r.judgment = .acceptable ↔
+            (b = true ↔ (derive p.1 p.2 verb).finitePosition p.1 ∈ [some .T, some .C])) := by
+  decide +kernel
 
 end Amalgamation
 

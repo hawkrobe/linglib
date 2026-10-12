@@ -1,9 +1,11 @@
 module
 
+public import Linglib.Core.Algebra.Free
 public import Linglib.Core.Data.List.Sublist
 public import Linglib.Data.Examples.HarizanovGribanova2019
 public import Mathlib.Algebra.Free
 public import Mathlib.Algebra.FreeMonoid.Basic
+public import Mathlib.Data.List.Pairwise
 
 /-!
 # Harizanov and Gribanova (2019): Whither head movement?
@@ -21,8 +23,9 @@ Neg in Russian and in V in Danish.
 * `flatMap_members_amalgamateSpine`: the complex heads partition the spine into contiguous
   stretches in the order of syntactic composition, which gives the Head Movement Constraint,
   the mirror generalization and the ban on excorporation.
-* `mem_of_mem_amalgamateSpine_of_nodup`: amalgamation alone skips no head, so a complex head
-  that skips one shows that a head has moved in the syntax.
+* `amalgamateSpine_raising_lowering`: the complex head of a spine can sit at any of its heads.
+* `forall_isLeftComb_iff`: the complex heads add one head at a time exactly when no head Lowers
+  right after a head has Raised into it.
 * `verb_placement`: the finite verbs of French, Danish and Russian precede a low adverb,
   negation or a floating quantifier exactly where their complex head is pronounced in T or
   above.
@@ -158,13 +161,12 @@ theorem mem_of_mem_amalgamateSpine_of_nodup [DecidableEq H] {spine out : List (A
     z ∈ a.members :=
   (members_infix_of_mem_amalgamateSpine h ha).mem_of_idxOf_le_of_le hnd hx hy hz hxz hzy
 
-private theorem amalgamate_append_single_none {below : List (Amalgam H)}
-    {pending : Option (FreeMagma H)} {above out : List (Amalgam H)} (y : H)
+theorem amalgamate_append {below : List (Amalgam H)} {pending : Option (FreeMagma H)}
+    {above out : List (Amalgam H)} (extra : List (Amalgam H))
     (h : amalgamate below pending above = some out) :
-    amalgamate below pending (above ++ [Amalgam.single y none]) =
-      some (Amalgam.single y none :: out) := by
+    amalgamate below pending (above ++ extra) = amalgamate out none extra := by
   induction above generalizing below pending out with
-  | nil => cases pending <;> simp_all [amalgamate, Amalgam.single]
+  | nil => cases pending <;> simp_all [amalgamate]
   | cons a above ih =>
     rcases ha : a.m with _ | _ | _ <;> cases below <;>
       simp only [List.cons_append, amalgamate, ha] at h ⊢ <;> first | exact ih h | simp at h
@@ -175,7 +177,53 @@ theorem amalgamateSpine_moveToRoot {spine out : List (Amalgam H)} (y : H)
     (h : amalgamateSpine spine = some out) :
     amalgamateSpine (moveToRoot spine y) = some (out ++ [Amalgam.single y none]) := by
   obtain ⟨out', h', rfl⟩ := Option.map_eq_some_iff.mp h
-  simp [amalgamateSpine, moveToRoot, amalgamate_append_single_none y h']
+  rw [amalgamateSpine, moveToRoot, amalgamate_append _ h']
+  cases out' <;> simp [amalgamate, Amalgam.single]
+
+private theorem exists_site_eq_of_amalgamate {below : List (Amalgam H)}
+    {pending : Option (FreeMagma H)} {extra res : List (Amalgam H)}
+    (h : amalgamate below pending extra = some res) {b : Amalgam H} (hb : b ∈ below) :
+    ∃ r ∈ res, r.site = b.site ∧ b.members <+: r.members := by
+  induction extra generalizing below pending res b with
+  | nil =>
+    cases pending with
+    | none =>
+      obtain rfl : below = res := by simpa [amalgamate] using h
+      exact ⟨b, hb, rfl, List.prefix_rfl⟩
+    | some _ => simp [amalgamate] at h
+  | cons a extra ih =>
+    rcases below with _ | ⟨b₀, bs⟩
+    · simp at hb
+    rcases ha : a.m with _ | _ | _ <;> simp only [amalgamate, ha] at h
+    · exact ih h (List.mem_cons_of_mem _ hb)
+    · exact ih h hb
+    · rcases List.mem_cons.mp hb with rfl | hb
+      · obtain ⟨r, hr, hs, hm⟩ := ih h (List.mem_cons_self ..)
+        exact ⟨r, hr, hs, (List.prefix_append _ _).trans (by simpa [Amalgam.members] using hm)⟩
+      · exact ih h (List.mem_cons_of_mem _ hb)
+
+/-- Amalgamation proceeds bottom-up: heads added above a spine leave each of its complex heads
+in the same position with the same members, to which a Lowering head may add. -/
+theorem exists_site_eq_of_append {spine extra out out' : List (Amalgam H)}
+    (h : amalgamateSpine spine = some out) (h' : amalgamateSpine (spine ++ extra) = some out')
+    {a : Amalgam H} (ha : a ∈ out) : ∃ a' ∈ out', a'.site = a.site ∧ a.members <+: a'.members := by
+  obtain ⟨r, hr, rfl⟩ := Option.map_eq_some_iff.mp h
+  obtain ⟨r', hr', rfl⟩ := Option.map_eq_some_iff.mp h'
+  rw [amalgamate_append extra hr] at hr'
+  simpa using exists_site_eq_of_amalgamate hr' (List.mem_reverse.mp ha)
+
+/-- Where no head repeats, the heads added above a spine do not change the position in which a
+head of the spine is pronounced: a higher position takes syntactic movement. -/
+theorem site_eq_of_append {spine extra out out' : List (Amalgam H)}
+    (h : amalgamateSpine spine = some out) (h' : amalgamateSpine (spine ++ extra) = some out')
+    (hnd : ((spine ++ extra).flatMap Amalgam.members).Nodup) {a a' : Amalgam H} (ha : a ∈ out)
+    (ha' : a' ∈ out') {x : H} (hx : x ∈ a.members) (hx' : x ∈ a'.members) : a'.site = a.site := by
+  obtain ⟨b, hb, hs, hm⟩ := exists_site_eq_of_append h h' ha
+  rw [← flatMap_members_amalgamateSpine h', List.nodup_flatMap] at hnd
+  by_contra hne
+  have : Std.Symm (Function.onFun List.Disjoint (Amalgam.members (H := H))) :=
+    ⟨fun _ _ hd ↦ hd.symm⟩
+  exact hnd.2.forall hb ha' (fun hba ↦ hne (hba ▸ hs)) (hm.subset hx) hx'
 
 open Amalgam
 
@@ -197,6 +245,80 @@ to Lower into, and the derivation does not converge. -/
 theorem lowering_without_target (x y z : H) :
     amalgamateSpine [single z (some .raising), single y (some .lowering), single x none] = none :=
   rfl
+
+private theorem amalgamate_raising (below : List (Amalgam H)) (pending : Option (FreeMagma H))
+    (lo : List H) (above : List (Amalgam H)) :
+    amalgamate below pending (lo.map (single · (some .raising)) ++ above) =
+      amalgamate below (lo.foldl (fun p h ↦ some (p.elim (of h) (· * of h))) pending) above := by
+  induction lo generalizing pending with
+  | nil => rfl
+  | cons h lo ih => cases below <;> simpa [amalgamate, single] using ih _
+
+private theorem amalgamate_none (below : List (Amalgam H)) (pending : Option (FreeMagma H))
+    (s : H) (above : List (Amalgam H)) :
+    amalgamate below pending (single s none :: above) =
+      amalgamate (⟨s, pending.elim (of s) (· * of s), none⟩ :: below) none above := by
+  cases pending <;> cases below <;> rfl
+
+private theorem amalgamate_lowering (b : Amalgam H) (below : List (Amalgam H)) (hi : List H) :
+    amalgamate (b :: below) none (hi.map (single · (some .lowering))) =
+      some ({ b with complex := hi.foldl (· * of ·) b.complex } :: below) := by
+  induction hi generalizing b with
+  | nil => rfl
+  | cons h hi ih => simpa [amalgamate, single] using ih _
+
+private theorem foldl_raising (p : FreeMagma H) (lo : List H) :
+    lo.foldl (fun p h ↦ some (p.elim (of h) (· * of h))) (some p) =
+      some (lo.foldl (· * of ·) p) := by
+  induction lo generalizing p with
+  | nil => rfl
+  | cons h lo ih => simpa using ih _
+
+/-- The complex head of a spine can sit at any of its heads. With the heads below Raising and
+the heads above Lowering, all the heads form one complex head there, each added to the complex
+head of the heads below it. -/
+theorem amalgamateSpine_raising_lowering {lo hi rest : List H} {s b : H}
+    (h : lo ++ s :: hi = b :: rest) :
+    amalgamateSpine (lo.map (single · (some .raising)) ++ single s none ::
+        hi.map (single · (some .lowering))) =
+      some [⟨s, rest.foldl (· * of ·) (of b), none⟩] := by
+  rw [amalgamateSpine, amalgamate_raising, amalgamate_none, amalgamate_lowering]
+  cases lo with
+  | nil =>
+    obtain ⟨rfl, rfl⟩ : s = b ∧ hi = rest := by simpa using h
+    rfl
+  | cons l lo =>
+    obtain ⟨rfl, rfl⟩ : l = b ∧ lo ++ s :: hi = rest := by simpa using h
+    simp [foldl_raising]
+
+private theorem forall_isLeftComb_amalgamate {below : List (Amalgam H)}
+    {pending : Option (FreeMagma H)} {hs : List (H × Option Direction)} {out : List (Amalgam H)}
+    (h : amalgamate below pending (hs.map fun p ↦ single p.1 p.2) = some out) :
+    (∀ a ∈ out, a.complex.IsLeftComb) ↔
+      (∀ b ∈ below, b.complex.IsLeftComb) ∧ (∀ p ∈ pending, p.IsLeftComb) ∧
+        ((pending.map fun _ ↦ Direction.raising) :: hs.map (·.2)).IsChain
+          fun p q ↦ ¬ (p = some .raising ∧ q = some .lowering) := by
+  induction hs generalizing below pending out with
+  | nil => cases pending <;> simp_all [amalgamate]
+  | cons x hs ih =>
+    obtain ⟨x, m⟩ := x
+    rcases m with _ | _ | _ <;> cases below <;> cases pending <;>
+      simp only [List.map_cons, amalgamate, single] at h <;>
+      first
+        | cases h
+        | (rw [ih h]; rcases hs with _ | ⟨⟨y, n⟩, hs⟩ <;>
+            simp [List.isChain_cons_cons] <;> tauto)
+
+/-- Every complex head of a convergent derivation adds one head at a time, the bracketing that
+mirrors the order of syntactic composition, exactly when no head Lowers right after a head has
+Raised into it. -/
+theorem forall_isLeftComb_iff {hs : List (H × Option Direction)} {out : List (Amalgam H)}
+    (h : amalgamateSpine (hs.map fun p ↦ single p.1 p.2) = some out) :
+    (∀ a ∈ out, a.complex.IsLeftComb) ↔
+      (hs.map (·.2)).IsChain fun p q ↦ ¬ (p = some .raising ∧ q = some .lowering) := by
+  obtain ⟨r, hr, rfl⟩ := Option.map_eq_some_iff.mp h
+  have := forall_isLeftComb_amalgamate hr
+  rcases hs with _ | ⟨⟨y, n⟩, hs⟩ <;> simp_all [List.isChain_cons_cons]
 
 /-- Chain Reduction pronounces the highest occurrence of a head, and a complex head formed at
 one occurrence of a moved head belongs to all of them. `PronouncedFrom spine h x` says that the
