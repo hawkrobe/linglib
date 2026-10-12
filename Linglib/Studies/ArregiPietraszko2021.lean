@@ -1,5 +1,6 @@
 module
 
+public import Linglib.Core.Algebra.Free
 public import Linglib.Data.Examples.ArregiPietraszko2021
 public import Linglib.Data.Examples.HarizanovGribanova2019
 public import Linglib.Data.Forms.ArregiPietraszko2021
@@ -28,9 +29,9 @@ half without the verb, is exponed as *do*.
   the complex head is otherwise pronounced low or high.
 * `directionality_no_correlation`: under inversion English and Monnese both have do-support,
   though elsewhere the English verb is pronounced low and the Monnese verb high.
-* `mirror_class9`, `amalgamation_class9`: regular vowel coalescence derives the Ndebele class 9
+* `mirror_class9`, `mul_not_assoc`: regular vowel coalescence derives the Ndebele class 9
   relative prefix from the Mirror-obeying complex head and not from another bracketing of the
-  same terminals, such as amalgamation builds when a head Raises into one that Lowers.
+  same terminals, which it could not tell apart if it were associative.
 
 ## Implementation notes
 
@@ -476,12 +477,16 @@ def join (x y : List Segment) : List Segment :=
     else x ++ y
   | _, _ => x ++ y
 
-/-- `spellOut e` spells out a complex head of prefixes cyclically from the exponents `e` of its
-terminals, a constituent before the one containing it and the higher constituent before the
-lower. -/
-def spellOut (e : Head → List Segment) : FreeMagma Head → List Segment
-  | .of h => e h
-  | .mul x y => join (spellOut e y) (spellOut e x)
+/-- The exponent of a constituent of a complex head of prefixes. -/
+structure Exponent where
+  segments : List Segment
+  deriving DecidableEq
+
+/-- The exponent of a complex head is the product of the exponents of its two constituents,
+lower first: the higher one is prefixed to the lower, and the hiatus between them resolved.
+Cyclic spell-out, each constituent before the one containing it, is thus the homomorphism of
+magmas `FreeMagma.lift e` that extends the exponents `e` of the terminals. -/
+instance : Mul Exponent := ⟨fun x y ↦ ⟨join y.segments x.segments⟩⟩
 
 /-- The segments the letters of the prefix table write. -/
 def letters : List (Char × Segment) :=
@@ -494,19 +499,19 @@ def transcribe? : List Char → Option (List Segment)
   | c :: cs => do pure ((← letters.lookup c) :: (← transcribe? cs))
 
 /-- The exponents a row of the prefix table gives the heads of the relative prefix. -/
-def exponents? (f : Data.Forms.Form) : Option (Head → List Segment) := do
+def exponents? (f : Data.Forms.Form) : Option (Head → Exponent) := do
   let lnk ← transcribe? (← f.column? "Lnk").toList
   let d ← transcribe? (← f.column? "D").toList
   let t ← transcribe? (← f.column? "T").toList
-  pure fun | .Lnk => lnk | .D => d | .T => t | _ => []
+  pure fun | .Lnk => ⟨lnk⟩ | .D => ⟨d⟩ | .T => ⟨t⟩ | _ => ⟨[]⟩
 
 /-- Cyclic coalescence over the Mirror-obeying complex head derives the relative prefix of each
 class, free of the hiatus its exponents present. -/
 theorem relative_prefixes :
     ∀ f ∈ Forms.all, ∃ e ∈ exponents? f,
-      some (spellOut e relative.mvalue) = transcribe? f.form.toList ∧
-        Hiatus.Free (spellOut e relative.mvalue) ∧
-        ¬ Hiatus.Free (relative.terminals.reverse.flatMap e) := by
+      some (lift e relative.mvalue).segments = transcribe? f.form.toList ∧
+        Hiatus.Free (lift e relative.mvalue).segments ∧
+        ¬ Hiatus.Free (relative.terminals.reverse.flatMap fun h ↦ (e h).segments) := by
   decide +kernel
 
 /-- The same terminals in the same order with the opposite bracketing, the linker innermost. -/
@@ -517,8 +522,20 @@ bracketing of the same terminals as *i-*. -/
 theorem mirror_class9 :
     (FreeMagma.lift FreeMonoid.of nonMirror).toList = relative.terminals ∧
       ∀ f ∈ Forms.all, f.parameterId = "rel_cl9" → ∃ e ∈ exponents? f,
-        spellOut e relative.mvalue = [Ndebele.e] ∧ spellOut e nonMirror = [Ndebele.i] := by
+        (lift e relative.mvalue).segments = [Ndebele.e] ∧
+          (lift e nonMirror).segments = [Ndebele.i] := by
   decide +kernel
+
+/-- Coalescence is not associative. An associative juncture rule would spell out every
+bracketing of the same terminals alike, and the two bracketings of the class 9 prefix come out
+differently, /i/ and /i/ merging before /a/ coalesces with them in one and after in the other. -/
+theorem mul_not_assoc : ¬ ∀ x y z : Exponent, x * y * z = x * (y * z) := fun h ↦ by
+  let _ : Semigroup Exponent := { (inferInstance : Mul Exponent) with mul_assoc := h }
+  obtain ⟨hterm, hspell⟩ := mirror_class9
+  obtain ⟨e, -, he, hi⟩ := hspell Forms.f_19_cl9 (by decide) rfl
+  have := congrArg Exponent.segments
+    (lift_eq_lift_of_lift_of_eq e (FreeMonoid.toList.injective hterm))
+  exact absurd (he.symm.trans (this.symm.trans hi)) (by decide)
 
 /-! ### Amalgamation -/
 
@@ -546,7 +563,7 @@ theorem amalgamation_class9 :
           .single .D (some .raising), .single .Lnk (some .lowering)] = some [a] ∧
         a.members = relative.terminals ∧ a.complex ≠ relative.mvalue ∧
         ∀ f ∈ Forms.all, f.parameterId = "rel_cl9" → ∃ e ∈ exponents? f,
-          spellOut e a.complex = [Ndebele.i] :=
+          (lift e a.complex).segments = [Ndebele.i] :=
   ⟨rfl, _, rfl, rfl, by decide, by decide +kernel⟩
 
 /-- The two accounts meet on a single complex head. Wherever a chain is pronounced, [M] features
