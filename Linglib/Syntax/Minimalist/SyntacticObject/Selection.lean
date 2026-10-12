@@ -28,8 +28,8 @@ head functions it is partial: `0` at exocentric nodes.
 * `Minimalist.selNode`, `Minimalist.selCheckPlanar`,
   `Minimalist.SyntacticObject.selCheck`: the selection algebra
   (`SyntacticObject.mergeAlgebra`), its catamorphism, and the carrier lift.
-* `Minimalist.SyntacticObject.selHead`, `Minimalist.SyntacticObject.outerCatC`:
-  the head token and its outer category, the head function of the phases
+* `Minimalist.SyntacticObject.selHead`, `Minimalist.SyntacticObject.cat?`:
+  the head token and its category, the head function of the phases
   (`SyntacticObject.IsPhaseHead`).
 * `Minimalist.SyntacticObject.selCheckHom`: `selCheck` as a morphism of magmas
   `SyntacticObject →ₙ* SelectionState`, via `SyntacticObject.lift`.
@@ -51,7 +51,7 @@ structure is `CommMagma` + `MulZeroClass` only. The trace of a token is a lower 
 phrase it heads, so it gets that phrase's value, saturated with the token's category
 (`traceState`), and a head that selected the moved phrase still selects its trace; the bare
 trace remembers no token and gets the saturated dummy `.of .bareTrace []`. `selCheck`
-reads only the token's category and `outerSel`. Two saturated sisters have no head, as in
+reads only the token's category and `sel`. Two saturated sisters have no head, as in
 [marcolli-chomsky-berwick-2025]'s partial head functions: a specifier and its sister are
 labeled, if at all, by the labeling algorithm (`SyntacticObject/Label.lean`).
 -/
@@ -95,9 +95,9 @@ variable (x y : SelectionState)
     residual), `none` at exocentric nodes; `*` and `selSide` are its projections. -/
 def selCombine : SelectionState → SelectionState → Option (Bool × LexicalItem.Token × List Cat)
   | ⟨some (ha, c :: rest)⟩, ⟨some (hb, [])⟩ =>
-      if hb.item.outerCat = c then some (true, ha, rest) else none
+      if hb.item.cat = c then some (true, ha, rest) else none
   | ⟨some (ha, [])⟩, ⟨some (hb, c :: rest)⟩ =>
-      if ha.item.outerCat = c then some (false, hb, rest) else none
+      if ha.item.cat = c then some (false, hb, rest) else none
   | _, _ => none
 
 /-- The projecting daughter is reported as `some true` for the left and `some false` for the
@@ -179,10 +179,10 @@ def traceState : Option LexicalItem.Token → SelectionState
   | some tok => .of tok []
   | none => .of .bareTrace []
 
-/-- The selection algebra is the `SyntacticObject.mergeAlgebra` of token + `outerSel`
+/-- The selection algebra is the `SyntacticObject.mergeAlgebra` of token + `sel`
     leaves and the traces' `traceState`. -/
 def selNode : Vertex → List SelectionState → SelectionState :=
-  mergeAlgebra (fun tok => .of tok tok.item.outerSel) traceState
+  mergeAlgebra (fun tok => .of tok tok.item.sel) traceState
 
 /-- `selNode` is invariant under permutation of the daughter states. -/
 theorem selNode_perm (a : Vertex) {l₁ l₂ : List SelectionState} (h : l₁.Perm l₂) :
@@ -205,7 +205,7 @@ theorem selCheckPlanar_perm {t s : RoseTree Vertex} (h : RoseTree.Perm t s) :
 
 /-- Selection check on the nonplanar carrier. -/
 def selCheckN : UnorderedTree Vertex → SelectionState :=
-  liftN (fun tok => .of tok tok.item.outerSel) traceState
+  liftN (fun tok => .of tok tok.item.sel) traceState
 
 @[simp] theorem selCheckN_mk (p : RoseTree Vertex) :
     selCheckN (UnorderedTree.mk p) = selCheckPlanar p := rfl
@@ -230,12 +230,11 @@ def selHead : Option LexicalItem.Token := s.selCheck.head
 /-- Residual pending selectional features (`some []` = saturated). -/
 def checkedSel : Option (List Cat) := s.selCheck.residual
 
-/-- The projecting head's **outer category** (the phase-head selector); `none` at
-    exocentric nodes. -/
-def outerCatC : Option Cat := s.selHead.map (·.item.outerCat)
+/-- The category of the projecting head, `none` at exocentric nodes. -/
+def cat? : Option Cat := s.selHead.map (·.item.cat)
 
 @[simp] theorem selCheck_leaf : (SyntacticObject.leaf tok).selCheck
-    = .of tok tok.item.outerSel := rfl
+    = .of tok tok.item.sel := rfl
 
 @[simp] theorem selCheck_trace : trace.selCheck = .of .bareTrace [] := rfl
 
@@ -247,7 +246,7 @@ def outerCatC : Option Cat := s.selHead.map (·.item.outerCat)
 /-- `selCheck` as a morphism of magmas ([marcolli-chomsky-berwick-2025] §1.13's
     algebraic frame): the `lift` of the leaf data. -/
 noncomputable def selCheckHom : SyntacticObject →ₙ* SelectionState :=
-  lift (fun tok => .of tok tok.item.outerSel) traceState
+  lift (fun tok => .of tok tok.item.sel) traceState
 
 @[simp] theorem selCheckHom_apply : selCheckHom s = s.selCheck := rfl
 
@@ -266,8 +265,8 @@ theorem selHead_node {l r : SyntacticObject} {h : LexicalItem.Token}
 @[simp] theorem selHead_merge_self (x : SyntacticObject) : (merge x x).selHead = none := by
   simp [selHead]
 
-@[simp] theorem outerCatC_leaf : (SyntacticObject.leaf tok).outerCatC
-    = some tok.item.outerCat := rfl
+@[simp] theorem cat?_leaf : (SyntacticObject.leaf tok).cat?
+    = some tok.item.cat := rfl
 
 end SyntacticObject
 

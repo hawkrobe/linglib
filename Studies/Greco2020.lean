@@ -175,28 +175,28 @@ theorem sneg_not_ene :
 /-! ### The representation: (59), (65), (68), and (73) -/
 
 /-- The negative marker *non* of (59): a head selecting the focus phrase. -/
-def non : LexicalItem.Token := ⟨.simple .Neg [.Foc] "non", 0⟩
+def non : LexicalItem.Token := ⟨.of .Neg [.Foc] "non", 0⟩
 
 /-- Force°, the highest head of the CP field in (68). -/
-def force : LexicalItem.Token := ⟨.simple .Force [.Neg], 1⟩
+def force : LexicalItem.Token := ⟨.of .Force [.Neg], 1⟩
 
 /-- Foc°, whose specifier hosts the raised TP. -/
-def foc : LexicalItem.Token := ⟨.simple .Foc [.Top], 2⟩
+def foc : LexicalItem.Token := ⟨.of .Foc [.Top], 2⟩
 
 /-- The lower Top° of (68), between Foc° and Fin°. -/
-def top : LexicalItem.Token := ⟨.simple .Top [.Fin], 3⟩
+def top : LexicalItem.Token := ⟨.of .Top [.Fin], 3⟩
 
 /-- Fin°, the lowest head of the CP field. -/
-def fin : LexicalItem.Token := ⟨.simple .Fin [.T], 4⟩
+def fin : LexicalItem.Token := ⟨.of .Fin [.T], 4⟩
 
 /-- T°. -/
-def t : LexicalItem.Token := ⟨.simple .T [.v], 5⟩
+def t : LexicalItem.Token := ⟨.of .T [.v], 5⟩
 
 /-- v*, the phase head of the verbal domain. -/
-def v : LexicalItem.Token := ⟨.simple .v [.D], 6⟩
+def v : LexicalItem.Token := ⟨.of .v [.D], 6⟩
 
 /-- An argument inside the v*P, the site of a negative-scope element. -/
-def arg : LexicalItem.Token := ⟨.simple .D [], 7⟩
+def arg : LexicalItem.Token := ⟨.of .D [], 7⟩
 
 /-- The v*P. -/
 def vP : PlanarSyntacticObject := v * arg
@@ -246,7 +246,7 @@ def Allows (p : LexicalItem.Token) : Requirement → Prop
   | .freeFocP => ¬ FocOccupied
   | .activeFocP => FocOccupied
   | .embedded | .noTP => ¬ WholeTPFocused
-  | .phrasalNegator => non.item.outerSel = []
+  | .phrasalNegator => non.item.sel = []
   | .any => True
 
 instance (p : LexicalItem.Token) (q : Requirement) : Decidable (Allows p q) := by

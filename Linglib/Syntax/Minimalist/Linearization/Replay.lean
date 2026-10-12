@@ -260,11 +260,11 @@ def surfaceTokens (d : Derivation) : List LexicalItem.Token :=
   (d.externalize?.map (planarYield ·.val)).getD []
 
 /-- The surface category sequence, the readout of word-order studies. -/
-def surfaceCats (d : Derivation) : List Cat := d.surfaceTokens.map (·.item.outerCat)
+def surfaceCats (d : Derivation) : List Cat := d.surfaceTokens.map (·.item.cat)
 
 /-- The surface string lists the pronounced forms left to right, dropping empty forms. -/
 def surfacePhon (d : Derivation) : List String :=
-  d.surfaceTokens.filterMap (·.item.outerPhonForm?)
+  d.surfaceTokens.filterMap (·.item.phonForm?)
 
 end Derivation
 
@@ -376,13 +376,13 @@ private def xNum : SyntacticObject := mkLeaf .Num [] 3
 private def xD : SyntacticObject := mkLeaf .D [] 4
 /-- The pied-piped `[N [A t]]` mover. -/
 private def xNAt : SyntacticObject :=
-  (PlanarSyntacticObject.merge (PlanarSyntacticObject.leaf ⟨.simple .N [], 1⟩)
-    (PlanarSyntacticObject.merge (PlanarSyntacticObject.leaf ⟨.simple .A [], 2⟩)
-      (PlanarSyntacticObject.traceOf ⟨.simple .N [], 1⟩))).toSyntacticObject
+  (PlanarSyntacticObject.merge (PlanarSyntacticObject.leaf ⟨.of .N [], 1⟩)
+    (PlanarSyntacticObject.merge (PlanarSyntacticObject.leaf ⟨.of .A [], 2⟩)
+      (PlanarSyntacticObject.traceOf ⟨.of .N [], 1⟩))).toSyntacticObject
 /-- The pied-piped `[A N]` mover. -/
 private def xAN : SyntacticObject :=
-  (PlanarSyntacticObject.merge (PlanarSyntacticObject.leaf ⟨.simple .A [], 2⟩)
-    (PlanarSyntacticObject.leaf ⟨.simple .N [], 1⟩)).toSyntacticObject
+  (PlanarSyntacticObject.merge (PlanarSyntacticObject.leaf ⟨.of .A [], 2⟩)
+    (PlanarSyntacticObject.leaf ⟨.of .N [], 1⟩)).toSyntacticObject
 
 /-- Without movement the order is `Dem Num A N`. -/
 private def xDerivBase : Derivation := ⟨xN, [.em .left xA, .em .left xNum, .em .left xD]⟩

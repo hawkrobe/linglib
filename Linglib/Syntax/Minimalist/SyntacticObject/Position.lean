@@ -174,7 +174,7 @@ end PlanarSyntacticObject
 
 /-- The raising head of a planar tree, that of its unordered image. -/
 def treeRaisingHead (s : RoseTree Vertex) : Option LexicalItem.Token :=
-  (liftN (fun tok ↦ (⟨.sel (.of tok tok.item.outerSel), 0⟩ : RaisingState)) raisingTraceState
+  (liftN (fun tok ↦ (⟨.sel (.of tok tok.item.sel), 0⟩ : RaisingState)) raisingTraceState
     (UnorderedTree.mk s)).label.label
 
 theorem treeRaisingHead_subtree {t : PlanarSyntacticObject} (p : t.val.Positions) :
@@ -187,7 +187,7 @@ head path it assigns. -/
 def conventionHeadPos? : RoseTree Vertex → Option (List ℕ)
   | .node (.inl (some _)) _ | .node (.inr (some _)) _ => some []
   | .node (.inl none) [.node (.inl (some tok)) [], r] =>
-      if tok.item.outerSel = [] then (conventionHeadPos? r).map (1 :: ·) else some [0]
+      if tok.item.sel = [] then (conventionHeadPos? r).map (1 :: ·) else some [0]
   | .node (.inl none) [_, r] => (conventionHeadPos? r).map (1 :: ·)
   | .node (.inl none) _ => none
   | .node (.inr none) _ => none

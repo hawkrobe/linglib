@@ -47,7 +47,7 @@ def complement (p : TreePath) : TreePath := ⟨p.toList.dropLast ++ [1 - p.toLis
 
 /-- The [E] heads. -/
 def eHeads : List TreePath :=
-  (tokenList t.val).filterMap fun x ↦ if x.2.item.outerEllipsis then some x.1 else none
+  (tokenList t.val).filterMap fun x ↦ if x.2.item.ellipsis then some x.1 else none
 
 /-- The elided domains are the distinct complements of the [E] heads, in the order of the heads,
 so a shared head over one shared complement applies once and over two complements twice. -/
@@ -69,6 +69,6 @@ def pfYield : List LexicalItem.Token :=
     if pronouncedAt t x.2 = some x.1 ∧ ¬ IsSilenced t x.2 then some x.2 else none
 
 /-- The pronounced forms, left to right. -/
-def pfPhon : List String := (pfYield t).filterMap (·.item.outerPhonForm?)
+def pfPhon : List String := (pfYield t).filterMap (·.item.phonForm?)
 
 end Minimalist

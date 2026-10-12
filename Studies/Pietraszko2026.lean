@@ -301,20 +301,20 @@ theorem optional_T_overgenerates :
 /-! ### The trees the derivation builds -/
 
 /-- The object. -/
-def obj : LexicalItem.Token := ⟨.simple .D [] "obj", 0⟩
+def obj : LexicalItem.Token := ⟨.of .D [] "obj", 0⟩
 
 /-- The subject. -/
-def subj : LexicalItem.Token := ⟨.simple .D [] "subj", 1⟩
+def subj : LexicalItem.Token := ⟨.of .D [] "subj", 1⟩
 
 /-- The verb. -/
-def V : LexicalItem.Token := ⟨.simple .V [.D] "V", 2⟩
+def V : LexicalItem.Token := ⟨.of .V [.D] "V", 2⟩
 
 /-- The head that introduces the subject, below Voice (fn. 3). -/
-def v : LexicalItem.Token := ⟨.simple .v [.V, .D] "v", 3⟩
+def v : LexicalItem.Token := ⟨.of .v [.V, .D] "v", 3⟩
 
 /-- The head at index `i` of a spine, selecting the category of the head below it. -/
 def tokOf (sp : Spine) (i : ℕ) (hd : Head) : LexicalItem.Token :=
-  ⟨.simple hd.cat [if i = 0 then .v else ((sp[i - 1]?).map Head.cat).getD .v] "", 10 + i⟩
+  ⟨.of hd.cat [if i = 0 then .v else ((sp[i - 1]?).map Head.cat).getD .v], 10 + i⟩
 
 /-- The phase heads of a spine. -/
 def phaseHeads (sp : Spine) : List LexicalItem.Token :=

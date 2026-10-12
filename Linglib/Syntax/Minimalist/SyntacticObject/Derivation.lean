@@ -348,7 +348,7 @@ end Derivation
 
 /-! ### Carrier tests -/
 
-private def demoTok (i : Nat) : SyntacticObject := SyntacticObject.leaf ⟨.simple .N [], i⟩
+private def demoTok (i : Nat) : SyntacticObject := SyntacticObject.leaf ⟨.of .N [], i⟩
 
 example :
     (Derivation.mk (demoTok 0)

@@ -84,17 +84,17 @@ theorem ambiguous_of_mutual_cCommand (hx : x ∈ qs) (hy : y ∈ qs) (hne : x �
 /-! ### The double object construction -/
 
 /-- The light verb bearing the P-feature that attracts quantifiers ([kratzer-1996]'s Voice). -/
-def v : PlanarSyntacticObject := .leaf ⟨.simple .Voice [.V] "v[P]", 400⟩
+def v : PlanarSyntacticObject := .leaf ⟨.of .Voice [.V] "v[P]", 400⟩
 /-- The applicative head introducing the first object ([pylkkanen-2008]). -/
-def appl : PlanarSyntacticObject := .leaf ⟨.simple .Appl [.D] "Appl", 402⟩
-def gave : PlanarSyntacticObject := .leaf ⟨.simple .V [.Appl] "gave", 404⟩
-def ozzy : PlanarSyntacticObject := .leaf ⟨.simple .D [] "Ozzy", 406⟩
+def appl : PlanarSyntacticObject := .leaf ⟨.of .Appl [.D] "Appl", 402⟩
+def gave : PlanarSyntacticObject := .leaf ⟨.of .V [.Appl] "gave", 404⟩
+def ozzy : PlanarSyntacticObject := .leaf ⟨.of .D [] "Ozzy", 406⟩
 /-- The first object, the goal. -/
-def aGirl : PlanarSyntacticObject := .leaf ⟨.simple .D [] "a girl", 407⟩
+def aGirl : PlanarSyntacticObject := .leaf ⟨.of .D [] "a girl", 407⟩
 /-- The second object, the theme. -/
-def everyTelescope : PlanarSyntacticObject := .leaf ⟨.simple .D [] "every telescope", 408⟩
+def everyTelescope : PlanarSyntacticObject := .leaf ⟨.of .D [] "every telescope", 408⟩
 /-- The preposition of the locative variant. -/
-def toP : PlanarSyntacticObject := .leaf ⟨.simple .P [.D] "to", 409⟩
+def toP : PlanarSyntacticObject := .leaf ⟨.of .P [.D] "to", 409⟩
 
 /-- `{Ozzy, {v, {gave, {a girl, {Appl, every telescope}}}}}`. The first object is the argument of
 the applicative head, merged above the projection containing the second, so it asymmetrically

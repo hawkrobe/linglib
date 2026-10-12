@@ -162,10 +162,10 @@ def traceLinearizationState : Option LexicalItem.Token → LinearizationState si
 /-- The head function's value on a syntactic object: the `liftFun` of pronounced
     lexical leaves and the silent, saturated traces. -/
 def linearizationState (s : SyntacticObject) : LinearizationState side :=
-  liftFun (fun tok => .of tok tok.item.outerSel [tok]) (traceLinearizationState side) s
+  liftFun (fun tok => .of tok tok.item.sel [tok]) (traceLinearizationState side) s
 
 @[simp] theorem linearizationState_leaf (tok : LexicalItem.Token) :
-    (SyntacticObject.leaf tok).linearizationState side = .of tok tok.item.outerSel [tok] := rfl
+    (SyntacticObject.leaf tok).linearizationState side = .of tok tok.item.sel [tok] := rfl
 
 @[simp] theorem linearizationState_trace :
     trace.linearizationState side = .of .bareTrace [] [] := rfl
@@ -181,7 +181,7 @@ def linearizationState (s : SyntacticObject) : LinearizationState side :=
 /-- The head function as a morphism of magmas ([marcolli-chomsky-berwick-2025]
     §1.13's algebraic frame): Merge multiplies constituents, `h` multiplies states. -/
 noncomputable def headHom : SyntacticObject →ₙ* LinearizationState side :=
-  lift (fun tok => .of tok tok.item.outerSel [tok]) (traceLinearizationState side)
+  lift (fun tok => .of tok tok.item.sel [tok]) (traceLinearizationState side)
 
 @[simp] theorem headHom_apply (s : SyntacticObject) :
     headHom side s = s.linearizationState side := rfl
@@ -200,7 +200,7 @@ def linearize (s : SyntacticObject) : Option (List LexicalItem.Token) :=
 
 /-- The pronounced surface forms: the yield with unpronounced tokens dropped. -/
 def phonYield (s : SyntacticObject) : Option (List String) :=
-  (s.linearize side).map (·.filterMap (·.item.outerPhonForm?))
+  (s.linearize side).map (·.filterMap (·.item.phonForm?))
 
 @[simp] theorem linearize_leaf (tok : LexicalItem.Token) :
     (SyntacticObject.leaf tok).linearize side = some [tok] := rfl

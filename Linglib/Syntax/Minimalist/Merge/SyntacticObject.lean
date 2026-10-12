@@ -180,7 +180,7 @@ theorem mergeOpC_im_residual (hm : mover.val.value.isLeft) (h : current.terms.co
   obtain ⟨U', hU', rfl⟩ := Multiset.mem_map.mp hU
   exact disjoint_pair_subtrees (hW U' hU')
 
-private def demoTok (i : ℕ) : LexicalItem.Token := ⟨.simple .N [], i⟩
+private def demoTok (i : ℕ) : LexicalItem.Token := ⟨.of .N [], i⟩
 
 private def demoCurrent : SyntacticObject :=
   (PlanarSyntacticObject.merge (.leaf (demoTok 0))

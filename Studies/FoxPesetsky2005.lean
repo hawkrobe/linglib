@@ -103,13 +103,13 @@ inductive Terminal
 
 /-- Each terminal spells out its own lexical item. -/
 def Terminal.token : Terminal → LexicalItem.Token
-  | .S => ⟨.simple .D [], 1⟩
-  | .V => ⟨.simple .V [], 2⟩
-  | .O => ⟨.simple .D [], 3⟩
-  | .adv => ⟨.simple .Neg [], 4⟩
-  | .C => ⟨.simple .C [], 5⟩
-  | .aux => ⟨.simple .T [], 6⟩
-  | .XP => ⟨.simple .P [], 7⟩
+  | .S => ⟨.of .D [], 1⟩
+  | .V => ⟨.of .V [], 2⟩
+  | .O => ⟨.of .D [], 3⟩
+  | .adv => ⟨.of .Neg [], 4⟩
+  | .C => ⟨.of .C [], 5⟩
+  | .aux => ⟨.of .T [], 6⟩
+  | .XP => ⟨.of .P [], 7⟩
 
 /-- A lexical item spells out at most one terminal. -/
 def Terminal.ofToken? (tok : LexicalItem.Token) : Option Terminal :=

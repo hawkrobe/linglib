@@ -87,16 +87,16 @@ instance {uF : SyntacticObject → Prop} [DecidablePred uF] (root probe goal : S
 /-! ### Sequence of Tense -/
 
 /-- The abstract past operator carrying `[iPAST]`. -/
-def opPast : PlanarSyntacticObject := .leaf ⟨.simple .T [.V] "Op[PAST]", 1⟩
-def john : PlanarSyntacticObject := .leaf ⟨.simple .D [] "John", 2⟩
+def opPast : PlanarSyntacticObject := .leaf ⟨.of .T [.V] "Op[PAST]", 1⟩
+def john : PlanarSyntacticObject := .leaf ⟨.of .D [] "John", 2⟩
 /-- The matrix verb, with its own vacuous `[uPAST]`. -/
-def said : PlanarSyntacticObject := .leaf ⟨.simple .V [.C] "said", 3⟩
+def said : PlanarSyntacticObject := .leaf ⟨.of .V [.C] "said", 3⟩
 /-- The embedding complementizer, carrying `[uT]`. -/
-def thatC : PlanarSyntacticObject := .leaf ⟨.simple .C [.V] "that", 4⟩
-def mary : PlanarSyntacticObject := .leaf ⟨.simple .D [] "Mary", 5⟩
+def thatC : PlanarSyntacticObject := .leaf ⟨.of .C [.V] "that", 4⟩
+def mary : PlanarSyntacticObject := .leaf ⟨.of .D [] "Mary", 5⟩
 /-- The subordinate verb, with `[uPAST]`, selecting its predicate and its subject. -/
-def was : PlanarSyntacticObject := .leaf ⟨.simple .V [.A, .D] "was", 6⟩
-def ill : PlanarSyntacticObject := .leaf ⟨.simple .A [] "ill", 7⟩
+def was : PlanarSyntacticObject := .leaf ⟨.of .V [.A, .D] "was", 6⟩
+def ill : PlanarSyntacticObject := .leaf ⟨.of .A [] "ill", 7⟩
 
 /-- *John said Mary was ill*, with the past operator above both verbs. -/
 def sot : PlanarSyntacticObject :=
@@ -123,25 +123,25 @@ theorem sot_not_downward : ¬ cCommandsIn sot said opPast ∧ ¬ cCommandsIn sot
 the phase headed by the complementizer, which itself carries an uninterpretable tense feature
 and so lies in the participating edge. -/
 theorem sot_licit :
-    (sot : SyntacticObject).WithinComplement ⟨.simple .C [.V] "that", 4⟩ was ∧
-      ¬ (sot : SyntacticObject).WithinProjection ⟨.simple .C [.V] "that", 4⟩ opPast ∧
-      EdgeParticipates sot was opPast uPast ⟨.simple .C [.V] "that", 4⟩ := by decide
+    (sot : SyntacticObject).WithinComplement ⟨.of .C [.V] "that", 4⟩ was ∧
+      ¬ (sot : SyntacticObject).WithinProjection ⟨.of .C [.V] "that", 4⟩ opPast ∧
+      EdgeParticipates sot was opPast uPast ⟨.of .C [.V] "that", 4⟩ := by decide
 
 /-! ### Negative Concord -/
 
-def gianni : PlanarSyntacticObject := .leaf ⟨.simple .D [] "Gianni", 11⟩
+def gianni : PlanarSyntacticObject := .leaf ⟨.of .D [] "Gianni", 11⟩
 /-- The negative marker carrying `[iNEG]`. -/
-def non : PlanarSyntacticObject := .leaf ⟨.simple .Neg [.T] "non", 12⟩
-def ha : PlanarSyntacticObject := .leaf ⟨.simple .T [.V] "ha", 13⟩
-def detto : PlanarSyntacticObject := .leaf ⟨.simple .V [.D] "detto", 14⟩
-def dettoC : PlanarSyntacticObject := .leaf ⟨.simple .V [.C] "detto", 15⟩
-def niente : PlanarSyntacticObject := .leaf ⟨.simple .D [.P] "niente", 16⟩
-def a : PlanarSyntacticObject := .leaf ⟨.simple .P [.D] "a", 17⟩
-def nessuno : PlanarSyntacticObject := .leaf ⟨.simple .D [] "nessuno", 18⟩
+def non : PlanarSyntacticObject := .leaf ⟨.of .Neg [.T] "non", 12⟩
+def ha : PlanarSyntacticObject := .leaf ⟨.of .T [.V] "ha", 13⟩
+def detto : PlanarSyntacticObject := .leaf ⟨.of .V [.D] "detto", 14⟩
+def dettoC : PlanarSyntacticObject := .leaf ⟨.of .V [.C] "detto", 15⟩
+def niente : PlanarSyntacticObject := .leaf ⟨.of .D [.P] "niente", 16⟩
+def a : PlanarSyntacticObject := .leaf ⟨.of .P [.D] "a", 17⟩
+def nessuno : PlanarSyntacticObject := .leaf ⟨.of .D [] "nessuno", 18⟩
 /-- The embedding complementizer, without any negative feature. -/
-def che : PlanarSyntacticObject := .leaf ⟨.simple .C [.T] "che", 19⟩
-def ha₂ : PlanarSyntacticObject := .leaf ⟨.simple .T [.V] "ha", 20⟩
-def telefonato : PlanarSyntacticObject := .leaf ⟨.simple .V [.P] "telefonato", 21⟩
+def che : PlanarSyntacticObject := .leaf ⟨.of .C [.T] "che", 19⟩
+def ha₂ : PlanarSyntacticObject := .leaf ⟨.of .T [.V] "ha", 20⟩
+def telefonato : PlanarSyntacticObject := .leaf ⟨.of .V [.P] "telefonato", 21⟩
 
 /-- *Gianni non ha detto niente a nessuno* has two n-words under one negative marker. -/
 def ncClausemate : PlanarSyntacticObject :=
@@ -168,11 +168,11 @@ theorem nc_clausemate_multipleAgree : MultipleAgree ncClausemate non [niente, ne
 
 /-- Within the clause no complementizer heads a phase, so no phase edge intervenes. -/
 theorem nc_clausemate_licit :
-    ∀ x ∈ (ncClausemate : SyntacticObject).terms, x.outerCatC ≠ some .C := by decide
+    ∀ x ∈ (ncClausemate : SyntacticObject).terms, x.cat? ≠ some .C := by decide
 
 /-- Across the embedded clause the complementizer carries no negative feature, so the phase
 edge does not participate and the concord relation is blocked. -/
 theorem nc_across_cp_illicit :
-    ¬ EdgeParticipates ncAcrossCP nessuno non uNeg ⟨.simple .C [.T] "che", 19⟩ := by decide
+    ¬ EdgeParticipates ncAcrossCP nessuno non uNeg ⟨.of .C [.T] "che", 19⟩ := by decide
 
 end Zeijlstra2012
