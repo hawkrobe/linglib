@@ -22,7 +22,7 @@ from check_module_frontier import as_module_if_possible  # noqa: E402
 
 ROOT = Path(__file__).resolve().parent.parent
 DATA_DIR = ROOT / "Linglib" / "Data" / "VerbClasses"
-ALTERNATIONS = ROOT / "Linglib" / "Semantics" / "ArgumentStructure" / "DiathesisAlternation.lean"
+ALTERNATIONS = ROOT / "Linglib" / "Semantics" / "ArgumentStructure" / "LevinClass" / "Alternation.lean"
 
 DIACRITICS = {"": ".none", "*": ".star", "?": ".question"}
 SCOPES = {"all", "most", "many", "some", "few"}
