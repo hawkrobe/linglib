@@ -10,7 +10,7 @@ public import Mathlib.Tactic.DeriveFintype
 /-!
 # Coon 2019: building verbs in Chuj
 
-[coon-2019] argues from the Chuj verb stem that the root decides whether there is an internal
+Coon argues from the Chuj verb stem that the root decides whether there is an internal
 argument and the functional head v ~ Voice⁰ decides the rest. Roots fall into four classes
 that semantic type partly distinguishes, transitive and intransitive roots being event
 predicates over an entity, positional roots measure functions and nominal roots properties, and
@@ -27,9 +27,10 @@ ergative case, Ch'ol, has no agentive intransitive stems.
 
 ## Implementation notes
 
-The heads are Minimalist Voice heads whose parametric semantics supplies the three properties
-the licensing count reads, an external argument, its implicitness, and inherent ergative case
-recorded as Case checking, and the count adopts the Obligatory Case Parameter of footnote 15,
+The heads are Minimalist Voice heads whose parametric semantics supplies two of the three
+properties the licensing count reads, an external argument and its implicitness; the third,
+inherent ergative case, is the transitive head's own, since the substrate's Case checking is
+the accusative of v. The count adopts the Obligatory Case Parameter of footnote 15,
 one of the two options the paper leaves open. The class of a root fixes which realizations its
 internal slot admits; that an intransitive root's argument is only ever a full DP encodes the
 absence of unaccusative subject incorporation, (48), which the paper leaves to typology, and no
@@ -87,7 +88,7 @@ theorem tv_itv_differ_only_in_voice :
 
 /-! ### The v ~ Voice⁰ heads -/
 
-/-- The v ~ Voice⁰ heads of the verb stem, (6) and (78): the transitive Ø, the null intransitive
+/-- The v ~ Voice⁰ heads of the verb stem ((6), (78)), the transitive Ø, the null intransitive
 head of §2.1, and the suffixes -w, -ch and -j. -/
 inductive V
   | transitive | intransitive | w | ch | j
@@ -95,45 +96,51 @@ inductive V
 
 /-- The Minimalist Voice head each realizes, a bundled v ~ Voice⁰ after [harley-2017]
 introducing the external argument as in [kratzer-1996] and specified for whether and what it
-introduces as in [alexiadou-anagnostopoulou-schaefer-2006] and [wood-2015]: the transitive
-head and -w both merge an agent, footnote 10, the former assigning it inherent ergative case,
-recorded as Case checking; -ch merges an implicit, existentially bound agent in its specifier,
-(64), the impersonal cell with a specifier; -j and the null intransitive head introduce no
-external argument and project no specifier, (68), the expletive cell. -/
+introduces as in [alexiadou-anagnostopoulou-schaefer-2006] and [wood-2015]. The transitive
+head and -w both merge an agent, footnote 10; -ch merges an implicit, existentially bound agent
+in its specifier, (64), the impersonal cell with a specifier; -j and the null intransitive head
+introduce no external argument and project no specifier, (68), the expletive cell. -/
 def V.head : V → Head
-  | .transitive => { Minimalist.Voice.agentive with checksCase := true }
+  | .transitive => Minimalist.Voice.agentive
   | .intransitive => Minimalist.Voice.middle
   | .w => Minimalist.Voice.agentive
   | .ch => { Minimalist.Voice.passive with hasD := true }
   | .j => Minimalist.Voice.middle
 
-/-- The two agent-introducing heads differ in inherent ergative case alone, footnote 10. -/
-theorem w_head_eq : V.w.head = { V.transitive.head with checksCase := false } := rfl
+/-- The head assigns inherent ergative case to the agent in its specifier, as the transitive
+head alone does (78). -/
+def V.AssignsErgative (v : V) : Prop := v = .transitive
+
+instance : DecidablePred V.AssignsErgative := fun v ↦ inferInstanceAs (Decidable (v = _))
+
+/-- The two agent-introducing heads are one Voice cell and differ in inherent ergative case
+alone, footnote 10. -/
+theorem w_head_eq : V.w.head = V.transitive.head ∧ ¬ V.w.AssignsErgative ∧
+    V.transitive.AssignsErgative :=
+  ⟨rfl, by decide, rfl⟩
 
 /-- Every head keeps its [D] feature in step with its cell except -ch, whose specifier hosts
 the implicit agent of (64) that the impersonal cell leaves specifierless. -/
 theorem dCoherent : (∀ v : V, v ≠ .ch → v.head.DCoherent) ∧ ¬ V.ch.head.DCoherent :=
-  ⟨λ v => by cases v <;> decide, by decide⟩
+  ⟨fun v ↦ by cases v <;> decide, by decide⟩
 
-/-- The head properties behind (78), read off the substrate cells: every head but -j and the
-null intransitive head introduces an external argument, -ch alone an implicit one, the
-transitive head alone assigns inherent ergative case, recorded as Case checking. -/
+/-- The head properties behind (78) are read off the substrate cells: every head but -j and the
+null intransitive head introduces an external argument, and -ch alone an implicit one. -/
 theorem head_table :
     (∀ v : V, v.head.IsThematic ↔ v ≠ .intransitive ∧ v ≠ .j) ∧
-      (∀ v : V, v.head.ExternalImplicit ↔ v = .ch) ∧
-      ∀ v : V, v.head.ChecksCase ↔ v = .transitive := by
-  refine ⟨?_, ?_, ?_⟩ <;> intro v <;> cases v <;> decide
+      ∀ v : V, v.head.ExternalImplicit ↔ v = .ch := by
+  refine ⟨?_, ?_⟩ <;> intro v <;> cases v <;> decide
 
 /-! ### Licensing -/
 
-/-- How the internal argument slot of a root is realized, (56) and (78): a full DP saturating
-it, a bare NP restricting it, an implicit argument saturating it as a variable to be bound, or
-no slot. -/
+/-- How the internal argument slot of a root is realized ((56), (78)), by a full DP saturating
+it, a bare NP restricting it, or an implicit argument saturating it as a variable to be bound,
+or else absent. -/
 inductive Internal
   | dp | np | implicit | absent
   deriving DecidableEq, Fintype, Repr
 
-/-- The realizations a root class admits: a transitive root composes with its argument in every
+/-- The realizations a root class admits. A transitive root composes with its argument in every
 stem, §5; nominal and positional roots select nothing, (39); an intransitive root's argument is
 a full DP, a coordinate stipulated here, since nothing in the analysis rules out (48b) and the
 paper leaves the absence of unaccusative subject incorporation to typology, while no implicit
@@ -148,13 +155,13 @@ inductive Licenser
   | voice | infl | unlicensed
   deriving DecidableEq, Repr
 
-/-- Who licenses each argument position of a stem, §3.2.1 and §3.2.2: the head cases its own
+/-- Who licenses each argument position of a stem (§3.2.1, §3.2.2). The head cases its own
 specifier when it assigns inherent ergative, finite Infl⁰ cases a DP the head does not, and a
 bare NP, an implicit argument and an absent one need no case. -/
 def licenser (v : V) (i : Internal) : ArgPosition → Licenser
   | .external =>
     if v.head.IsThematic ∧ ¬ v.head.ExternalImplicit then
-      (if v.head.ChecksCase then .voice else .infl) else .unlicensed
+      (if v.AssignsErgative then .voice else .infl) else .unlicensed
   | .internal => if i = .dp then .infl else .unlicensed
 
 /-- A stem is licensed when Infl⁰ has exactly one argument to license: it licenses one
@@ -162,11 +169,11 @@ absolutive argument, and must license one, the Obligatory Case Parameter that fo
 offers beside an economy condition to keep the transitive head off stems whose only DP it would
 case itself. -/
 def Licensed (v : V) (i : Internal) : Prop :=
-  (Finset.univ.filter λ a => licenser v i a = .infl).card = 1
+  (Finset.univ.filter fun a ↦ licenser v i a = .infl).card = 1
 
 instance (v : V) (i : Internal) : Decidable (Licensed v i) := by unfold Licensed; infer_instance
 
-/-- The selection each head imposes on the root, (78) and §2.1: the transitive head and the
+/-- The selection each head imposes on the root ((78), §2.1). The transitive head and the
 passive -ch need a root whose event admits an external agent, and so does -j apart from
 isolated forms like (71); the null intransitive head needs an unaccusative root; -w needs only
 a root, its ban on intransitive roots following from licensing rather than selection, §3.3. -/
@@ -205,7 +212,7 @@ def Forms (rc : RootClass) (v : V) : Prop := ∃ i, WellFormed rc v i
 
 instance (rc : RootClass) (v : V) : Decidable (Forms rc v) := by unfold Forms; infer_instance
 
-/-- The distribution of the heads over the root classes, derived: √TV takes every head but the
+/-- The distribution of the heads over the root classes is derived. √TV takes every head but the
 null intransitive one, (45) and (59) to (60); √ITV only that one, (47); √POS and √NOM only -w,
 (45), apart from isolated forms like (71). -/
 theorem forms_iff :
@@ -226,10 +233,10 @@ theorem voice_tv_iff (vo : Voice) :
     cases v <;> cases i <;> simp only [V.voice, Option.some.injEq, reduceCtorEq] at hv <;>
       first | exact absurd hw (by decide) | (subst hv; decide)
 
-/-- The stems of a transitive root, (78) and (79): a full DP under the transitive head and under
-both passives, a bare NP or an implicit argument under -w. -/
+/-- The stems of a transitive root ((78), (79)) have a full DP under the transitive head and
+under both passives, and a bare NP or an implicit argument under -w. -/
 theorem tv_stems :
-    Finset.univ.filter (λ p : V × Internal => WellFormed .tv p.1 p.2) =
+    Finset.univ.filter (fun p : V × Internal ↦ WellFormed .tv p.1 p.2) =
       {(.transitive, .dp), (.ch, .dp), (.j, .dp), (.w, .np), (.w, .implicit)} := by
   decide
 
@@ -245,16 +252,16 @@ theorem w_complement : ¬ WellFormed .tv .w .absent ∧ ¬ WellFormed .nom .w .n
 unlicensed, §3.3, a consequence of licensing rather than selection, given that the argument is a
 DP. -/
 theorem itv_no_w : (∀ i, ¬ WellFormed .itv .w i) ∧ V.w.Selects RootClass.itv.toRoot :=
-  ⟨λ i => by cases i <;> decide, trivial⟩
+  ⟨fun i ↦ by cases i <;> decide, trivial⟩
 
-/-- Every class forms a verb stem with some head, §5: root class is not surface category. -/
+/-- Every class forms a verb stem with some head, so root class is not surface category (§5). -/
 theorem every_class_verbalizes (rc : RootClass) : ∃ v, Forms rc v := by
   cases rc
   exacts [⟨.transitive, by decide⟩, ⟨.intransitive, by decide⟩, ⟨.w, by decide⟩, ⟨.w, by decide⟩]
 
-/-- Table (78) for the stems of a transitive root: the external argument licensed by
-v ~ Voice⁰ in the transitive, absent or implicit in the passives, licensed by Infl⁰ under -w;
-the internal argument licensed by Infl⁰ except under -w. -/
+/-- Table (78) for the stems of a transitive root. The external argument is licensed by
+v ~ Voice⁰ in the transitive, absent or implicit in the passives, and licensed by Infl⁰ under
+-w; the internal argument is licensed by Infl⁰ except under -w. -/
 theorem licenser_table :
     licenser .transitive .dp .external = .voice ∧ licenser .transitive .dp .internal = .infl ∧
       licenser .ch .dp .external = .unlicensed ∧ licenser .j .dp .external = .unlicensed ∧
@@ -262,8 +269,8 @@ theorem licenser_table :
       licenser .w .implicit .internal = .unlicensed := by
   decide
 
-/-- An agentive intransitive stem: an overt external argument licensed by Infl⁰, hence a single
-absolutive argument, §3. -/
+/-- A stem is agentive intransitive when Infl⁰ licenses its overt external argument, hence a
+single absolutive argument (§3). -/
 def AgentiveIntransitive (v : V) (i : Internal) : Prop :=
   licenser v i .external = .infl ∧ Licensed v i
 
@@ -279,7 +286,7 @@ theorem agentiveIntransitive_iff (v : V) (i : Internal) :
 
 /-! ### Implicit arguments and -aj -/
 
-/-- The implicit arguments of a stem: the existentially bound agent of -ch and the implicit
+/-- The implicit arguments of a stem, the existentially bound agent of -ch and the implicit
 internal argument of the absolutive antipassive. -/
 def Implicit (v : V) (i : Internal) : ArgPosition → Prop
   | .external => v.head.ExternalImplicit
@@ -294,9 +301,9 @@ instance (v : V) (i : Internal) (a : ArgPosition) : Decidable (Implicit v i a) :
 
 instance (v : V) (i : Internal) : Decidable (Aj v i) := by unfold Aj; infer_instance
 
-/-- Table (58): -aj on the -chaj passive and the -waj absolutive antipassive, on neither the -j
-passive, whose agent is absent, nor the incorporation antipassive, whose argument is bound at
-once, footnote 28. -/
+/-- Table (58) puts -aj on the -chaj passive and the -waj absolutive antipassive, and on neither
+the -j passive, whose agent is absent, nor the incorporation antipassive, whose argument is
+bound at once (footnote 28). -/
 theorem aj_table :
     Aj .ch .dp ∧ Aj .w .implicit ∧ ¬ Aj .j .dp ∧ ¬ Aj .w .np ∧ ¬ Aj .transitive .dp := by
   decide
@@ -330,31 +337,33 @@ variable {E S : Type*} (P : E → S → Prop) (Q : E → Prop) (a : E)
 
 /-- Restrict, footnote 19 after [chung-ladusaw-2004]: a property complement narrows the root
 without saturating its argument, (44b). -/
-def restrict : E → S → Prop := λ x e => P x e ∧ Q x
+def restrict : E → S → Prop := fun x e ↦ P x e ∧ Q x
 
 /-- Existential Closure, footnote 19 after [chung-ladusaw-2004]: the open argument is bound at
 the event level, (44c). -/
-def close : S → Prop := λ e => ∃ x, P x e
+def close : S → Prop := fun e ↦ ∃ x, P x e
 
-/-- The transitive stem, (43): the DP saturates the root by Functional Application. -/
+/-- The transitive stem (43), in which the DP saturates the root by Functional Application. -/
 def transitiveStem : S → Prop := P a
 
-/-- The incorporation antipassive, (44): the bare NP restricts the root and Existential Closure
+/-- The incorporation antipassive (44), in which the bare NP restricts the root and Existential
+Closure
 applies at once, so nothing is left open above v ~ VoiceP, footnote 28. -/
 def incorporationStem : S → Prop := close (restrict P Q)
 
-/-- The absolutive antipassive, (75): the implicit argument saturates the root as a variable
+/-- The absolutive antipassive (75), in which the implicit argument saturates the root as a
+variable
 that the closure -aj spells out binds; the truth conditions coincide with closing at the root,
 the difference of locus that footnote 28 draws being what `aj` records. -/
 def absolutiveStem : S → Prop := close P
 
-/-- Every stem of a transitive root composes with an internal argument, §5: each describes
+/-- Every stem of a transitive root composes with an internal argument (§5). Each describes
 events in which the root relation holds of some entity, so the transitive and incorporation
 stems entail the absolutive one, a corollary the paper does not draw. -/
 theorem stems_close :
     (∀ e, transitiveStem P a e → absolutiveStem P e) ∧
       ∀ e, incorporationStem P Q e → absolutiveStem P e :=
-  ⟨λ _ h => ⟨a, h⟩, λ _ ⟨x, h, _⟩ => ⟨x, h⟩⟩
+  ⟨fun _ h ↦ ⟨a, h⟩, fun _ ⟨x, h, _⟩ ↦ ⟨x, h⟩⟩
 
 end Semantics
 
@@ -362,14 +371,14 @@ end Semantics
 
 /-- The root of a row, from the fragment lexicon by its form. -/
 def rowRoot (row : Datum) : Option ChujRoot :=
-  row.feature? "rootForm" >>= λ f => allRoots.find? (·.form == f)
+  row.feature? "rootForm" >>= fun f ↦ allRoots.find? (·.form == f)
 
 def heads : List (String × V) :=
   [("transitive", .transitive), ("intransitive", .intransitive), ("w", .w), ("ch", .ch),
     ("j", .j)]
 
-/-- A stem row: the root class, the head, the realization of the internal slot, and whether
--aj appears. -/
+/-- A stem row, with the root class, the head, the realization of the internal slot, and
+whether -aj appears. -/
 structure Stem where
   /-- The root class. -/
   root : RootClass
@@ -388,7 +397,7 @@ def Stem.ofRow (row : Datum) : Option Stem := do
       [("dp", Internal.dp), ("np", .np), ("implicit", .implicit), ("none", .absent)],
     ← row.parse? "aj" [("yes", true), ("no", false)]⟩
 
-/-- The stems of §2 to §4 and (79): a row is grammatical exactly when its stem is well-formed,
+/-- For the stems of §2 to §4 and (79), a row is grammatical exactly when its stem is well-formed,
 and a grammatical row bears -aj exactly when its stem has an implicit argument. -/
 theorem stem_rows : ∀ row ∈ Examples.all, row.feature? "construction" = some "stem" →
     ∃ s ∈ Stem.ofRow row,
@@ -401,8 +410,8 @@ def diagnosticHead (row : Datum) : Option V := do
   guard (row.feature? "construction" = some "diagnostic")
   row.parse? "head" heads
 
-/-- (63) and (67): agent-oriented adverbs and purpose clauses are admitted exactly under a head
-with an agent. -/
+/-- Agent-oriented adverbs and purpose clauses are admitted exactly under a head with an agent
+((63), (67)). -/
 theorem diagnostic_rows : ∀ row ∈ Examples.all,
     row.feature? "construction" = some "diagnostic" →
     ∃ v ∈ diagnosticHead row, (row.judgment ≠ .ungrammatical ↔ v.head.IsThematic) := by
@@ -414,8 +423,8 @@ def obliqueRow (row : Datum) : Option (V × ObliqueReading) := do
   return (← row.parse? "head" heads,
     ← row.parse? "oblique" [("agent", ObliqueReading.agent), ("cause", .cause)])
 
-/-- (62), (65), (66), (70) and (73): the -uj phrase names the agent under -ch and a cause under
--j. -/
+/-- The -uj phrase names the agent under -ch and a cause under -j ((62), (65), (66), (70),
+(73)). -/
 theorem oblique_rows : ∀ row ∈ Examples.all, (row.feature? "oblique").isSome = true →
     ∃ p ∈ obliqueRow row, p.2 = p.1.obliqueReading := by
   decide

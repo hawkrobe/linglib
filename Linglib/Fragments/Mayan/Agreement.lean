@@ -17,12 +17,12 @@ fixed positions in the verbal complex, the word built from an aspect marker, the
 markers, the verb stem and a status suffix, and the position of Set B divides the family: in
 the highland languages of Guatemala (K'ichean, Mamean, Q'anjob'alan) Set B follows the aspect
 marker and precedes the stem, while in the lowland languages (Cholan, Tseltalan, Yucatecan) it
-follows the stem. [tada-1993] and [coon-mateo-pedro-preminger-2014] call the two settings high
-and low absolutive and observe that the high-absolutive languages ban the extraction of
+follows the stem. Coon, Mateo Pedro and Preminger call the two settings high and low
+absolutive, after Tada's observation that the high-absolutive languages ban the extraction of
 transitive subjects. Third person singular Set B has no segmental exponent in most of the
-family, a pattern [kaufman-norman-1984] reconstruct for proto-Mayan. Many Mayan languages
-split their alignment by aspect or clause type, Set A extending to every subject in the
-non-perfective aspects or in clauses without an aspect marker; [aissen-england-zavala-2017]
+family, a pattern Kaufman and Norman reconstruct for proto-Mayan. Many Mayan languages split
+their alignment by aspect or clause type, Set A extending to every subject in the
+non-perfective aspects or in clauses without an aspect marker; Aissen, England and Zavala
 survey the splits, which arose independently in Cholan, Q'anjob'alan and Yucatecan.
 
 ## Main declarations
@@ -35,15 +35,15 @@ survey the splits, which arose independently in Cholan, Q'anjob'alan and Yucatec
 
 ## Implementation notes
 
-A paradigm is an `Agreement.Paradigm` over `Agreement.Bundle.personNumberCells`, so a controller's
-`Word.phi` indexes it directly ([corbett-1998]); an exponent is a list of `Morphology.Morph`,
-empty for zero exponence and of length two for a discontinuous marker such as a person prefix
-with a separate plural word. A cell whose only marker is a process also renders as `[]`. Tables
-with pre-consonantal and pre-vocalic shapes are `Phonology.Segment.Class → ExponentTable`
-functions. Each language's fragment carries its own tables, its verbal template and its case
-function by aspect, so the position of the absolutive is read off the template rather than
-recorded beside it; quantification over the family is a study's, in
-`Studies/CoonMateoPedroPreminger2014.lean`.
+A paradigm is an `Agreement.Paradigm` over `Agreement.Bundle.personNumberCells`, so a
+controller's `Word.phi` indexes it directly, as in Corbett's account of agreement; an exponent is
+a list of `Morphology.Morph`, empty for zero exponence and of length two for a discontinuous
+marker such as a person prefix with a separate plural word. A cell whose only marker is a
+process also renders as `[]`. Tables with pre-consonantal and pre-vocalic shapes are
+`Phonology.Segment.Class → ExponentTable` functions. Each language's fragment carries its own
+tables, its verbal template and its case function by aspect, so the position of the absolutive
+is read off the template rather than recorded beside it; quantification over the family is a
+study's, in `Studies/CoonMateoPedroPreminger2014.lean`.
 
 ## References
 
