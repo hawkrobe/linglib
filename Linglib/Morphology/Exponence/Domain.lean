@@ -74,7 +74,7 @@ theorem factorsThrough_applies_iff {V : Type*} {A : Ctx → V} :
 
 /-- Rules whose overlapping domains are nested satisfy Pāṇinian Determinism, their Elsewhere
 winners at any context forming a chain. -/
-theorem isChain_of_nested {v : Vocabulary (DomainRule Ctx E)}
+theorem isChain_of_nested {v : RuleSet (DomainRule Ctx E)}
     (h : ∀ r ∈ v, ∀ s ∈ v, ¬ Disjoint r.dom s.dom → r ≤ s ∨ s ≤ r) (c : Ctx) :
     IsChain (· ≤ ·) {r | v.IsElsewhereWinner c r} :=
   fun r (hr : v.IsElsewhereWinner c r) s (hs : v.IsElsewhereWinner c s) _ ↦
@@ -98,7 +98,7 @@ inclusion, a rule `S` for feature `1`, a rule `R` for feature `0`, and a rule `T
 chain `{0} ⊆ {0, 1} ⊆ {0, 1, 2}`: at `{0, 1}` the winners `S` and `R` are incomparable, and the
 list order picks `S`. -/
 theorem exists_not_isContiguous_realizeMinimal :
-    ∃ v : Vocabulary (DomainRule (Finset (Fin 3)) String), v.Antihomophonous ∧
+    ∃ v : RuleSet (DomainRule (Finset (Fin 3)) String), v.Antihomophonous ∧
       (∀ r ∈ v, IsUpperSet (r.dom : Set (Finset (Fin 3)))) ∧ ¬ IsContiguous v.realizeMinimal := by
   let up (x : Finset (Fin 3)) : Finset (Finset (Fin 3)) := Finset.univ.filter (x ⊆ ·)
   have hup (x) : IsUpperSet (up x : Set (Finset (Fin 3))) := fun a b hab ha ↦ by

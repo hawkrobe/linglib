@@ -140,12 +140,12 @@ inductive Feat where
 
 /-- The Vocabulary entries for idx, (119) and (131), are *gi* elsewhere, *ge* under dependent
 case, and null before an overt NP. -/
-def idxItems : Vocabulary (VocabularyItem Feat String) :=
+def idxItems : RuleSet (VocabularyItem Feat String) :=
   [[Feat.idx] ⟷ "gi", [Feat.idx, .dep] ⟷ "ge", ⟨⟨[.idx], [], [[.np]]⟩, ""⟩]
 
 /-- The Vocabulary entries for D, (130), are null elsewhere, *hádi* distal and *wídi* proximal,
 the speaker's space. -/
-def dItems : Vocabulary (VocabularyItem Feat String) :=
+def dItems : RuleSet (VocabularyItem Feat String) :=
   [[Feat.d] ⟷ "", [Feat.d, .deixis Person.first.participantSetsᶜ] ⟷ "hádi",
     [Feat.d, .deixis Person.first.participantSets] ⟷ "wídi"]
 

@@ -31,7 +31,7 @@ exactly when the human's interpretable features and the inanimate's uninterpreta
 the same exponent (`Greek.human_inanimate_match`, `Greek.human_inanimate_crash`,
 `Greek.victim_painting`). Neuter is the least specified gender, so it realizes clausal subjects
 (`Greek.clausal`), and the vocabulary's containment rules out a neuter–feminine syncretism that
-excludes the masculine (`Greek.no_aba`, from `Vocabulary.Realizes.of_realizes`).
+excludes the masculine (`Greek.no_aba`, from `RuleSet.Realizes.of_realizes`).
 
 Icelandic differs only in its geometry, with MASC meaning male and FEM independent of it, so
 mismatched humans resolve neuter (`Icelandic.human_mismatch`) while fixed-gender *skáld* still
@@ -98,7 +98,7 @@ structure System where
   iNode : Referent → Node
   uNode : Gender → Bool → Node
   plural : Finset Node := ∅
-  vocabulary : Vocabulary (VocabularyItem Node Gender)
+  vocabulary : RuleSet (VocabularyItem Node Gender)
 
 namespace System
 
@@ -138,7 +138,7 @@ def mixed (human inan : Bundle Node) : Option Gender :=
 end System
 
 /-- The three-way vocabulary shared by Greek and Icelandic. -/
-def threeWay : Vocabulary (VocabularyItem Node Gender) :=
+def threeWay : RuleSet (VocabularyItem Node Gender) :=
   [[.fem, .masc] ⟷ .feminine, [.masc] ⟷ .masculine, [] ⟷ .neuter]
 
 /-! ### Greek -/
@@ -256,11 +256,11 @@ theorem clausal : system.realize ∅ = some .neuter := by decide
 
 /-- No neuter–feminine syncretism to the exclusion of masculine, for any vocabulary with one
 item per exponent over the Greek feature sets. -/
-theorem no_aba (v : Vocabulary (VocabularyItem Node Gender)) (hv : v.Antihomophonous) {φ : Gender}
+theorem no_aba (v : RuleSet (VocabularyItem Node Gender)) (hv : v.Antihomophonous) {φ : Gender}
     (hn : v.Realizes (Neighborhood.ofBundle [.cls]) φ)
     (hf : v.Realizes (Neighborhood.ofBundle [.fem, .masc, .cls]) φ) :
     v.Realizes (Neighborhood.ofBundle [.masc, .cls]) φ :=
-  Vocabulary.Realizes.of_realizes hv (fun _ _ h ↦ subset_trans h (by decide))
+  RuleSet.Realizes.of_realizes hv (fun _ _ h ↦ subset_trans h (by decide))
     (fun _ _ h ↦ subset_trans h (by decide)) hn hf
 
 end Greek

@@ -37,7 +37,7 @@ metageneralizations (the `-a`-loss and umlaut rules of the Icelandic fragment) a
 substance and live in `Phonology/`; here stem alternants like *köll* enter as data-level stem
 values, not string operations.
 
-Because payloads are functions, `Exponence.Vocabulary.Coherent` and `Realizes` over `Action Z P` are
+Because payloads are functions, `Exponence.RuleSet.Coherent` and `Realizes` over `Action Z P` are
 `funext` propositions rather than decidable checks; a study decides realized values, not
 payload equality.
 
@@ -47,7 +47,7 @@ payload equality.
   realization rule, with its `Exponence.Rule` and two-clause narrowness `Preorder` instances.
 * `identityDefault`: the Identity Function Default.
 * `evalBlock`, `paradigmFunction`: narrowest-rule block evaluation and the block cascade.
-  Basic stem choice over rules of stem choice is `Exponence.Vocabulary.realizeMinimalD`,
+  Basic stem choice over rules of stem choice is `Exponence.RuleSet.realizeMinimalD`,
   narrowest-rule realization with a per-lexeme fallback.
 * `evalPortmanteau`, `functionCompositionDefault`: portmanteau blocks, and the Function
   Composition Default as a derived `≤`-maximal rule.
@@ -211,9 +211,9 @@ theorem le_identityDefault (r : Rule L P (Action Z P)) :
 /-- A block containing the IFD always selects a rule — the totality of Nar
 ([bonami-stump-2016]'s (14)) that [stump-2001] secures by stipulating the IFD. -/
 theorem selectMinimal_isSome_of_mem_identityDefault
-    {v : Vocabulary (Rule L P (Action Z P))} {c : L × P}
+    {v : RuleSet (Rule L P (Action Z P))} {c : L × P}
     (h : identityDefault (Z := Z) (P := P) ∈ v) : (v.selectMinimal c).isSome :=
-  Vocabulary.selectMinimal_isSome_iff.mpr
+  RuleSet.selectMinimal_isSome_iff.mpr
     ⟨identityDefault (P := P), h, identityDefault_applies c⟩
 
 end IdentityDefault
@@ -222,7 +222,7 @@ end IdentityDefault
 
 /-- A **rule block** ([bonami-stump-2016]) is a list of rules of exponence and
 referral in paradigmatic opposition, of which only the narrowest applies. -/
-abbrev Block (L Z P : Type*) := Vocabulary (Rule L P (Action Z P))
+abbrev Block (L Z P : Type*) := RuleSet (Rule L P (Action Z P))
 
 /-- `expoFragment b` keeps the rules of exponence in the block `b` and drops its
 referral rules; it is the target of a referral's re-selection. -/
@@ -249,7 +249,7 @@ def evalBlockForm (Lindex : Z → L) (b : Block L Z P) (wσ : Z × P) : Z :=
     match r.payload with
     | .expo f => f wσ.2 wσ.1
     | .referral retarget =>
-      match Vocabulary.selectMinimal (expoFragment b) (Lindex wσ.1, retarget wσ.2) with
+      match RuleSet.selectMinimal (expoFragment b) (Lindex wσ.1, retarget wσ.2) with
       | some s =>
         match s.payload with
         | .expo g => g (retarget wσ.2) wσ.1
@@ -266,10 +266,10 @@ theorem evalBlockForm_referral {Lindex : Z → L} {b : Block L Z P} {w : Z} {σ 
     (hpay : r.payload = Action.referral retarget) :
     evalBlockForm Lindex b (w, σ)
       = evalBlockForm Lindex (expoFragment b) (w, retarget σ) := by
-  cases hs : Vocabulary.selectMinimal (expoFragment b) (Lindex w, retarget σ) with
+  cases hs : RuleSet.selectMinimal (expoFragment b) (Lindex w, retarget σ) with
   | none => simp only [evalBlockForm, hr, hpay, hs]
   | some s =>
-    obtain ⟨g, hg⟩ := mem_expoFragment_expo (Vocabulary.selectMinimal_mem hs)
+    obtain ⟨g, hg⟩ := mem_expoFragment_expo (RuleSet.selectMinimal_mem hs)
     simp only [evalBlockForm, hr, hpay, hs, hg]
 
 /-- `evalBlock` evaluates a block at a form-state and keeps the property set, as
@@ -326,24 +326,24 @@ selection unchanged when the block already selects, and picks that rule otherwis
 since a maximal rule is preempted by any genuine competitor and fires only in the
 elsewhere. This is the mechanism shared by `identityDefault` and
 `functionCompositionDefault`. -/
-theorem selectMinimal_append_maximal {v : Vocabulary (Rule L P F)} {c : L × P}
+theorem selectMinimal_append_maximal {v : RuleSet (Rule L P F)} {c : L × P}
     {top : Rule L P F} (hmax : ∀ r, r ≤ top)
     (htop : Exponence.Applies top c) :
-    Vocabulary.selectMinimal (v ++ [top]) c = (v.selectMinimal c).or (some top) := by
+    RuleSet.selectMinimal (v ++ [top]) c = (v.selectMinimal c).or (some top) := by
   have htop' : c.1 ∈ top.klass ∧ top.props ≤ c.2 := htop
-  have happl : Vocabulary.applicable (v ++ [top]) c = v.applicable c ++ [top] := by
-    simp [Vocabulary.applicable, List.filter_append, htop']
+  have happl : RuleSet.applicable (v ++ [top]) c = v.applicable c ++ [top] := by
+    simp [RuleSet.applicable, List.filter_append, htop']
   have hpred : (fun r : Rule L P F =>
-        (Vocabulary.applicable (v ++ [top]) c).all (fun s => decide (¬ s < r)))
+        (RuleSet.applicable (v ++ [top]) c).all (fun s => decide (¬ s < r)))
       = (fun r : Rule L P F => (v.applicable c).all (fun s => decide (¬ s < r))) := by
     funext r
     have : ¬ top < r := fun hlt => absurd (hmax r) (not_le_of_gt hlt)
     rw [happl]; simp [List.all_append, this]
   have hfold : List.find? (fun r => (v.applicable c).all (fun s => decide (¬ s < r)))
       (v.applicable c) = v.selectMinimal c := rfl
-  rw [Vocabulary.selectMinimal, hpred, happl, List.find?_append, hfold]
+  rw [RuleSet.selectMinimal, hpred, happl, List.find?_append, hfold]
   rcases hs : v.selectMinimal c with _ | r
-  · have hnil : v.applicable c = [] := Vocabulary.selectMinimal_eq_none_iff.mp hs
+  · have hnil : v.applicable c = [] := RuleSet.selectMinimal_eq_none_iff.mp hs
     rw [Option.none_or, hnil]
     simp
   · rfl
@@ -404,7 +404,7 @@ theorem evalPortmanteau_eq_functionCompositionDefault (Lindex : Z → L)
   by_cases h : (bmn.applicable (Lindex wσ.1, wσ.2)).isEmpty = true
   · rw [ite_eq_left h]
     rw [List.isEmpty_iff] at h
-    rw [Vocabulary.selectMinimal_eq_none_iff.mpr h, Option.none_or] at hsel
+    rw [RuleSet.selectMinimal_eq_none_iff.mpr h, Option.none_or] at hsel
     conv_rhs => rw [evalBlock, evalBlockForm, hsel]
     simp only [functionCompositionDefault, Prod.mk.eta]
     refine Prod.ext rfl ?_
@@ -413,9 +413,9 @@ theorem evalPortmanteau_eq_functionCompositionDefault (Lindex : Z → L)
     rw [List.isEmpty_iff] at h
     obtain ⟨r, hr⟩ := List.exists_mem_of_ne_nil _ h
     obtain ⟨r', hr'⟩ := Option.isSome_iff_exists.mp
-      (Vocabulary.selectMinimal_isSome_iff.mpr
-        ⟨r, (Vocabulary.mem_applicable.mp hr).1, (Vocabulary.mem_applicable.mp hr).2⟩)
-    obtain ⟨f, hf⟩ := hbmn r' (Vocabulary.selectMinimal_mem hr')
+      (RuleSet.selectMinimal_isSome_iff.mpr
+        ⟨r, (RuleSet.mem_applicable.mp hr).1, (RuleSet.mem_applicable.mp hr).2⟩)
+    obtain ⟨f, hf⟩ := hbmn r' (RuleSet.selectMinimal_mem hr')
     rw [hr', Option.some_or] at hsel
     simp only [evalBlock, evalBlockForm, hsel, hr', hf]
 
@@ -450,7 +450,7 @@ theorem _root_.Morphology.Linkage.ofRules_realized_eq_paradigmFunction [Decidabl
     (Lindex : Z → L) (blocks : List (Block L Z P)) (l : L) (σ : P) :
     (Linkage.ofRules id rules root).realized (fun z τ ↦ (blocksEval Lindex blocks (z, τ)).1) l σ
       = {paradigmFunction Lindex
-          (fun c ↦ Vocabulary.realizeMinimalD (rules c.1) (fun _ ↦ root c.1) c.2) blocks (l, σ)} :=
+          (fun c ↦ RuleSet.realizeMinimalD (rules c.1) (fun _ ↦ root c.1) c.2) blocks (l, σ)} :=
   Linkage.realized_eq_paradigmFunction _ Lindex _ blocks l σ (fun _ _ ↦ rfl) fun _ _ ↦ rfl
 
 /-- `paradigmRealization` presents the paradigm function as a realization whose
@@ -504,14 +504,14 @@ variable [PartialOrder P] [DecidableEq L] [DecidableLE P]
 
 /-- Applicability and narrowness read only class and props, so narrowest-rule
 selection is blind to a payload relabelling. -/
-theorem selectMinimal_map_payload (g : F → F') (v : Vocabulary (Rule L P F)) (c : L × P) :
-    Vocabulary.selectMinimal (v.map (Rule.mapPayload g)) c
+theorem selectMinimal_map_payload (g : F → F') (v : RuleSet (Rule L P F)) (c : L × P) :
+    RuleSet.selectMinimal (v.map (Rule.mapPayload g)) c
       = (v.selectMinimal c).map (Rule.mapPayload g) := by
-  have hA : Vocabulary.applicable (v.map (Rule.mapPayload g)) c
+  have hA : RuleSet.applicable (v.map (Rule.mapPayload g)) c
       = (v.applicable c).map (Rule.mapPayload g) := by
-    simp only [Vocabulary.applicable, List.filter_map, Function.comp_def, Rule.applies_iff,
+    simp only [RuleSet.applicable, List.filter_map, Function.comp_def, Rule.applies_iff,
       Rule.mapPayload_klass, Rule.mapPayload_props]
-  rw [Vocabulary.selectMinimal, Vocabulary.selectMinimal, hA, List.find?_map]
+  rw [RuleSet.selectMinimal, RuleSet.selectMinimal, hA, List.find?_map]
   simp only [Function.comp_def, List.all_map, Rule.mapPayload_lt_iff]
 
 end

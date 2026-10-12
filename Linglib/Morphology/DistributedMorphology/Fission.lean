@@ -71,7 +71,7 @@ def discharge (i : VocabularyItem F E) (env : Neighborhood (List F)) :
 
 /-- Strict scansion with local Fission at a node bearing the matrices `ms` in the environment
 `env` yields the items inserted, in Vocabulary order, and the matrices left over. -/
-def scan : Vocabulary (VocabularyItem F E) → Neighborhood (List F) → List (List F) →
+def scan : RuleSet (VocabularyItem F E) → Neighborhood (List F) → List (List F) →
     List (VocabularyItem F E) × List (List F)
   | [], _, ms => ([], ms)
   | i :: rest, env, ms =>
@@ -80,27 +80,27 @@ def scan : Vocabulary (VocabularyItem F E) → Neighborhood (List F) → List (L
     | none => scan rest env ms
 
 /-- `insertions` lists the items scansion inserts. -/
-def insertions (items : Vocabulary (VocabularyItem F E)) (env : Neighborhood (List F))
+def insertions (items : RuleSet (VocabularyItem F E)) (env : Neighborhood (List F))
     (ms : List (List F)) : List (VocabularyItem F E) :=
   (scan items env ms).1
 
 /-- `residue` lists the matrices scansion leaves, the features no inserted item discharged. -/
-def residue (items : Vocabulary (VocabularyItem F E)) (env : Neighborhood (List F))
+def residue (items : RuleSet (VocabularyItem F E)) (env : Neighborhood (List F))
     (ms : List (List F)) : List (List F) :=
   (scan items env ms).2
 
 /-- A node bearing the matrices `ms` in the environment `env` receives these exponents. -/
-def scansion (items : Vocabulary (VocabularyItem F E)) (env : Neighborhood (List F))
+def scansion (items : RuleSet (VocabularyItem F E)) (env : Neighborhood (List F))
     (ms : List (List F)) : List E :=
   (insertions items env ms).map (·.exponent)
 
-variable {items rest : Vocabulary (VocabularyItem F E)} {env : Neighborhood (List F)}
+variable {items rest : RuleSet (VocabularyItem F E)} {env : Neighborhood (List F)}
   {i : VocabularyItem F E} {ms ms' : List (List F)}
 
 @[simp] theorem discharge_nil (i : VocabularyItem F E) : discharge i env [] = none := rfl
 
 @[simp] theorem scan_nil (env : Neighborhood (List F)) (ms : List (List F)) :
-    scan ([] : Vocabulary (VocabularyItem F E)) env ms = ([], ms) := rfl
+    scan ([] : RuleSet (VocabularyItem F E)) env ms = ([], ms) := rfl
 
 theorem scan_cons_of_discharge_eq_some (h : discharge i env ms = some ms') :
     scan (i :: rest) env ms = (i :: insertions rest env ms', residue rest env ms') := by
@@ -131,7 +131,7 @@ theorem val_add_discharge : ∀ {ms ms' : List (List F)}, discharge i env ms = s
 /-- **Conservation.** In the free commutative monoid on the features, the inserted items' sites
 and the residue sum to the node. -/
 theorem bind_insertions_add_residue :
-    ∀ (items : Vocabulary (VocabularyItem F E)) (ms : List (List F)),
+    ∀ (items : RuleSet (VocabularyItem F E)) (ms : List (List F)),
     (insertions items env ms : Multiset (VocabularyItem F E)).bind (·.site.focus.toFinset.val) +
       ((residue items env ms).flatten : Multiset F) = ms.flatten
   | [], _ => by simp [insertions, residue]
@@ -148,7 +148,7 @@ theorem bind_insertions_add_residue :
 
 /-- **No multiple exponence.** The inserted items' sites fit inside the node, so no feature is
 discharged more often than the node bears it. -/
-theorem bind_insertions_le (items : Vocabulary (VocabularyItem F E)) (ms : List (List F)) :
+theorem bind_insertions_le (items : RuleSet (VocabularyItem F E)) (ms : List (List F)) :
     (insertions items env ms : Multiset (VocabularyItem F E)).bind (·.site.focus.toFinset.val) ≤
       (ms.flatten : Multiset F) :=
   bind_insertions_add_residue items ms ▸ Multiset.le_add_right _ _
@@ -163,14 +163,14 @@ theorem pairwise_disjoint_insertions (h : ms.flatten.Nodup) :
 
 /-- A node with no matrix receives nothing. -/
 @[simp] theorem insertions_nil_right :
-    ∀ items : Vocabulary (VocabularyItem F E), insertions items env [] = []
+    ∀ items : RuleSet (VocabularyItem F E), insertions items env [] = []
   | [] => rfl
   | _ :: rest => insertions_nil_right rest
 
 @[simp] theorem scansion_nil : scansion items env [] = [] := by simp [scansion]
 
 /-- Each item is inserted at most once, in Vocabulary order. -/
-theorem insertions_sublist : ∀ (items : Vocabulary (VocabularyItem F E)) (ms : List (List F)),
+theorem insertions_sublist : ∀ (items : RuleSet (VocabularyItem F E)) (ms : List (List F)),
     (insertions items env ms).Sublist items
   | [], _ => .slnil
   | i :: rest, ms => by
@@ -198,16 +198,16 @@ theorem discharge_singleton (i : VocabularyItem F E) (m : List F) :
   simp [discharge]
 
 /-- At a single matrix, the first item inserted is the first item that applies there. -/
-theorem head?_insertions_singleton (m : List F) : ∀ items : Vocabulary (VocabularyItem F E),
+theorem head?_insertions_singleton (m : List F) : ∀ items : RuleSet (VocabularyItem F E),
     (insertions items env [m]).head? =
       (items.applicable ({ env with focus := m } : Neighborhood (List F))).head?
   | [] => rfl
   | i :: rest => by
     by_cases h : i.site ⊆ ({ env with focus := m } : Neighborhood (List F))
     · rw [insertions, scan_cons_of_discharge_eq_some (by rw [discharge_singleton, ite_eq_left h])]
-      simp [Vocabulary.applicable, show Applies i _ from h]
+      simp [RuleSet.applicable, show Applies i _ from h]
     · rw [insertions, scan_cons_of_discharge_eq_none (by rw [discharge_singleton, ite_eq_right h])]
-      simpa [insertions, Vocabulary.applicable, show ¬ Applies i _ from h] using
+      simpa [insertions, RuleSet.applicable, show ¬ Applies i _ from h] using
         head?_insertions_singleton m rest
 
 /-- On a Vocabulary ordered by decreasing specificity, the first insertion at a single matrix is
@@ -218,6 +218,6 @@ theorem head?_scansion_singleton (m : List F)
     (scansion items env [m]).head? =
       (winner? items ({ env with focus := m } : Neighborhood (List F))).map (·.exponent) := by
   rw [scansion, List.head?_map, head?_insertions_singleton, winner?,
-    Vocabulary.selectBy_eq_head? hsorted]
+    RuleSet.selectBy_eq_head? hsorted]
 
 end DistributedMorphology

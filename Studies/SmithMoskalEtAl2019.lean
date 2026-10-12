@@ -138,7 +138,7 @@ theorem awtuw_abb : Setoid.ker awtuw1 = Setoid.ker Paradigm.abb := by decide
 
 /-- The rules (15) for the Icelandic first singular are an accusative-conditioned *m-* and an
 elsewhere *ég*. By containment the *m-* base spreads to the dative. -/
-def icelandicVocab : Vocabulary (SpanRule 3 String) := [⟨"ég", 0, none⟩, ⟨"m", 0, some 1⟩]
+def icelandicVocab : RuleSet (SpanRule 3 String) := [⟨"ég", 0, none⟩, ⟨"m", 0, some 1⟩]
 
 theorem icelandic_abb_generated :
     Setoid.ker (realize icelandicVocab) = Setoid.ker Paradigm.abb := by decide
@@ -147,12 +147,12 @@ theorem icelandic_abb_generated :
 
 /-- Under [bobaljik-2012]'s structural adjacency, terminal rules with adjacent contexts cannot
 distinguish the second grade from the third. -/
-theorem realize_one_eq_two_of_terminal_adjacent {v : Vocabulary (SpanRule 3 ℕ)} (hT : Terminal v)
+theorem realize_one_eq_two_of_terminal_adjacent {v : RuleSet (SpanRule 3 ℕ)} (hT : Terminal v)
     (hA : Adjacent v) : realize v 1 = realize v 2 :=
   realize_const_of_terminal_adjacent hT hA
 
 /-- So no AAB pattern is generable under structural adjacency. -/
-theorem aab_not_generable_of_terminal_adjacent {v : Vocabulary (SpanRule 3 ℕ)} (hT : Terminal v)
+theorem aab_not_generable_of_terminal_adjacent {v : RuleSet (SpanRule 3 ℕ)} (hT : Terminal v)
     (hA : Adjacent v) {a b : ℕ} (hab : a ≠ b) : realize v ≠ ![some a, some a, some b] := by
   intro h
   have h12 := realize_one_eq_two_of_terminal_adjacent hT hA
@@ -188,7 +188,7 @@ vocabulary under structural adjacency generates them, so the pronominal data ref
 adjacency condition. -/
 theorem aab_contiguous_not_adjacent_generable :
     IsContiguous wardaman3sg ∧ IsContiguous yagua2 ∧
-      ∀ v : Vocabulary (SpanRule 3 ℕ), Terminal v → Adjacent v →
+      ∀ v : RuleSet (SpanRule 3 ℕ), Terminal v → Adjacent v →
         realize v ≠ ![some 0, some 0, some 1] :=
   ⟨by decide, by decide, λ _ hT hA => aab_not_generable_of_terminal_adjacent hT hA (by decide)⟩
 
@@ -203,16 +203,16 @@ visible. -/
 
 /-- Every conditioning head lies within the accessibility domain `[0, d]`. This bounds the
 contexts of rules, not the spans they expone. -/
-def DomainLocal {n : ℕ} {F : Type*} (d : Fin n) (v : Vocabulary (SpanRule n F)) : Prop :=
+def DomainLocal {n : ℕ} {F : Type*} (d : Fin n) (v : RuleSet (SpanRule n F)) : Prop :=
   ∀ it ∈ v, ∀ c : Fin n, it.context = some c → c ≤ d
 
-instance {n : ℕ} {F : Type*} (d : Fin n) (v : Vocabulary (SpanRule n F)) :
+instance {n : ℕ} {F : Type*} (d : Fin n) (v : RuleSet (SpanRule n F)) :
     Decidable (DomainLocal d v) := by
   unfold DomainLocal; infer_instance
 
 /-- Terminal rules local to a domain have thresholds inside it. -/
 theorem threshold_le_of_terminal_domainLocal {n : ℕ} {F : Type*} {d : Fin n}
-    {v : Vocabulary (SpanRule n F)} (hT : Terminal v) (hD : DomainLocal d v) {it : SpanRule n F}
+    {v : RuleSet (SpanRule n F)} (hT : Terminal v) (hD : DomainLocal d v) {it : SpanRule n F}
     (hit : it ∈ v) : it.threshold ≤ d := by
   have h0 := hT it hit
   unfold SpanRule.threshold
@@ -228,13 +228,13 @@ theorem threshold_le_of_terminal_domainLocal {n : ℕ} {F : Type*} {d : Fin n}
 domain. At the comparative this is the no-AAB plateau of degree
 without an adjacency condition. -/
 theorem realize_const_of_terminal_domainLocal {n : ℕ} {F : Type*} {d : Fin n}
-    {v : Vocabulary (SpanRule n F)} (hT : Terminal v) (hD : DomainLocal d v) {g g' : Fin n}
+    {v : RuleSet (SpanRule n F)} (hT : Terminal v) (hD : DomainLocal d v) {g g' : Fin n}
     (hg : d ≤ g) (hg' : d ≤ g') : realize v g = realize v g' :=
   realize_const_of_cap (λ _ hit => threshold_le_of_terminal_domainLocal hT hD hit) hg hg'
 
 /-- Terminal adjacency is locality at any domain containing the first head. -/
 theorem domainLocal_of_terminal_adjacent {n : ℕ} {F : Type*} {d : Fin n} (hd : 1 ≤ (d : ℕ))
-    {v : Vocabulary (SpanRule n F)} (hT : Terminal v) (hA : Adjacent v) : DomainLocal d v := by
+    {v : RuleSet (SpanRule n F)} (hT : Terminal v) (hA : Adjacent v) : DomainLocal d v := by
   intro it hit c hc
   have h1 := hA it hit c hc
   have h0 := hT it hit
@@ -242,7 +242,7 @@ theorem domainLocal_of_terminal_adjacent {n : ℕ} {F : Type*} {d : Fin n} (hd :
 
 /-- The rules (20b) and (20f) for the Wardaman third person are a dative-conditioned *gunga* and
 an elsewhere *narnaj*. -/
-def wardamanVocab : Vocabulary (SpanRule 3 String) := [⟨"narnaj", 0, none⟩, ⟨"gunga", 0, some 2⟩]
+def wardamanVocab : RuleSet (SpanRule 3 String) := [⟨"narnaj", 0, none⟩, ⟨"gunga", 0, some 2⟩]
 
 /-- The Wardaman vocabulary is antihomophonous and local at the trivial domain of a pronoun,
 and generates the attested AAB. -/

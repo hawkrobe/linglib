@@ -471,7 +471,7 @@ end NaturalClasses
 open Dutch.Pronouns in
 /-- The spell-out rules of the Dutch strong subject pronouns, none of which mentions two
 `PROX`. -/
-def dutch : Vocabulary (SpellOut PersonalPronoun) :=
+def dutch : RuleSet (SpellOut PersonalPronoun) :=
   [⟨{.prox}, false, ik⟩, ⟨{.prox, .dist}, false, jij⟩, ⟨{.dist}, false, hij⟩,
     ⟨{.prox}, true, wij⟩, ⟨{.prox, .dist}, true, jullie⟩, ⟨{.dist}, true, zij_pl⟩]
 
@@ -489,8 +489,8 @@ theorem dutch_referential : ∀ r ∈ dutch, ∀ c,
       ∃ p ∈ inventory, dutch.realize SpellOut.size p = some r.exponent ∧ c ∈ p.categories := by
   decide
 
-/-- A vocabulary with a rule mentioning two `PROX` and a rule mentioning one, both with `PL`. -/
-def clusive (a b : E) : Vocabulary (SpellOut E) := [⟨{.prox, .prox}, true, a⟩, ⟨{.prox}, true, b⟩]
+/-- A rule set with a rule mentioning two `PROX` and a rule mentioning one, both with `PL`. -/
+def clusive (a b : E) : RuleSet (SpellOut E) := [⟨{.prox, .prox}, true, a⟩, ⟨{.prox}, true, b⟩]
 
 /-- A rule mentioning two `PROX` gives the exclusive a form of its own. It blocks the rule
 mentioning one on the exclusive and cannot apply to the inclusive. -/

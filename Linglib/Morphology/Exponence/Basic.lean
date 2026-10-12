@@ -7,14 +7,14 @@ public import Mathlib.Data.Set.Basic
 # Rules of exponence
 
 A rule of exponence, in Matthews's sense, pairs an exponent with a condition on the contexts it
-applies in. This file defines the interface for types of such rules, vocabularies of them, and
+applies in. This file defines the interface for types of such rules, rule sets, and
 the specificity preorder of Kiparsky's Elsewhere Condition, under which a rule is more specific
 when it applies in fewer contexts.
 
 ## Main definitions
 
 * `Exponence.Rule`: a type of rules, each with an exponent and an applicability condition.
-* `Exponence.Vocabulary`: a list of rules, earlier rules winning ties.
+* `Exponence.RuleSet`: a list of rules, earlier rules winning ties.
 * `Exponence.toPreorder`: the specificity preorder. It is not an instance, and each type of
   rules installs it itself.
 
@@ -38,8 +38,8 @@ class Rule (R : Type*) (Ctx E : outParam Type*) where
 
 export Rule (exponent Applies)
 
-/-- A vocabulary is a list of rules of exponence, earlier rules winning ties. -/
-abbrev Vocabulary (R : Type*) := List R
+/-- A rule set is a list of rules of exponence, earlier rules winning ties. -/
+abbrev RuleSet (R : Type*) := List R
 
 variable {Ctx E : Type*} {R : Type*} [Rule R Ctx E]
 

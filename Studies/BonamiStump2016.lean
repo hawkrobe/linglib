@@ -101,7 +101,7 @@ def blockIII : Block Verb String (Finset Feat) :=
     IFD ]
 
 /-- Rules of basic stem choice (7); the strong verbs' ablaut alternants are listed as stems. -/
-def iceStems : Vocabulary (PFM.Rule Verb (Finset Feat) String) :=
+def iceStems : RuleSet (PFM.Rule Verb (Finset Feat) String) :=
   [ ⟨{kalla}, {}, "kall"⟩,
     ⟨{aetla}, {}, "ætl"⟩,
     ⟨{gripa}, {ind, pst, sg}, "greip"⟩,

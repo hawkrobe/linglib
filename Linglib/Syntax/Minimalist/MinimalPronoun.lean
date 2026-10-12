@@ -77,7 +77,7 @@ inductive Form where
 binding contexts, and the elsewhere form, which realizes it where no item applies. -/
 structure Vocabulary (E : Type*) where
   /-- The items, each conditioned on binding contexts. -/
-  items : Morphology.Exponence.Vocabulary (VocabularyItem Context E)
+  items : Morphology.Exponence.RuleSet (VocabularyItem Context E)
   /-- The elsewhere form, the shape of the referential pronoun. -/
   elsewhere : E
 
@@ -107,13 +107,13 @@ theorem mem_syncretic [DecidableEq E] : c ∈ v.syncretic ↔ v.realize c = v.el
 selecting among the items followed by the item of empty site. -/
 theorem some_realize (c : Context) :
     some (v.realize c) = subsetPrinciple (v.items ++ [[] ⟷ v.elsewhere]) ↑[c] := by
-  have happ : Morphology.Exponence.Vocabulary.applicable (v.items ++ [[] ⟷ v.elsewhere])
+  have happ : Morphology.Exponence.RuleSet.applicable (v.items ++ [[] ⟷ v.elsewhere])
       (↑[c] : Neighborhood (List Context)) =
       v.items.applicable ↑[c] ++ [[] ⟷ v.elsewhere] := by
-    simp [Morphology.Exponence.Vocabulary.applicable, List.filter_append,
+    simp [Morphology.Exponence.RuleSet.applicable, List.filter_append,
       VocabularyItem.applies_iff]
-  simp only [realize, subsetPrinciple, Morphology.Exponence.Vocabulary.realize,
-    Morphology.Exponence.Vocabulary.selectBy, happ, List.argmax_concat]
+  simp only [realize, subsetPrinciple, Morphology.Exponence.RuleSet.realize,
+    Morphology.Exponence.RuleSet.selectBy, happ, List.argmax_concat]
   cases (v.items.applicable ↑[c]).argmax VocabularyItem.specificity with
   | none => rfl
   | some i => simp
@@ -122,7 +122,7 @@ theorem some_realize (c : Context) :
 theorem realize_eq_elsewhere (h : ∀ i ∈ v.items, ¬ i.site ⊆ ↑[c]) :
     v.realize c = v.elsewhere := by
   have : subsetPrinciple v.items ↑[c] = none :=
-    Morphology.Exponence.Vocabulary.realize_eq_none_iff.2 <| List.filter_eq_nil_iff.2 fun i hi ↦ by
+    Morphology.Exponence.RuleSet.realize_eq_none_iff.2 <| List.filter_eq_nil_iff.2 fun i hi ↦ by
       simpa [VocabularyItem.applies_iff] using h i hi
   simp [realize, this]
 

@@ -19,36 +19,36 @@ paradigm linkage over a root and by Bonami and Stump's rules of basic stem choic
 
 ## Main definitions
 
-* `Vocabulary.selectBy`, `Vocabulary.realize`: the applicable rule of greatest score, and its
+* `RuleSet.selectBy`, `RuleSet.realize`: the applicable rule of greatest score, and its
   exponent.
-* `Vocabulary.selectMinimal`, `Vocabulary.realizeMinimal`: the first applicable rule that no
+* `RuleSet.selectMinimal`, `RuleSet.realizeMinimal`: the first applicable rule that no
   applicable rule strictly undercuts, and its exponent.
-* `Vocabulary.realizeMinimalD`: the exponent of the minimal selection, or a fallback where
+* `RuleSet.realizeMinimalD`: the exponent of the minimal selection, or a fallback where
   no rule applies.
 
 ## Main results
 
-* `Vocabulary.selectBy_eq_some_of_applies`: selection by a score is consistent under
+* `RuleSet.selectBy_eq_some_of_applies`: selection by a score is consistent under
   contraction, so the rule selected in a context stays selected in any context with fewer
   applicable rules where it still applies.
-* `Vocabulary.selectBy_map`: selection commutes with a map of rules preserving applicability
+* `RuleSet.selectBy_map`: selection commutes with a map of rules preserving applicability
   and the comparison of scores.
-* `Vocabulary.isContiguous_realize_of_monotone`, `Vocabulary.isContiguous_realize_of_antitone`:
+* `RuleSet.isContiguous_realize_of_monotone`, `RuleSet.isContiguous_realize_of_antitone`:
   rules applicable on upper sets, or on lower sets, of ordered contexts realize contiguous
   patterns when distinct rules carry distinct exponents.
-* `Vocabulary.selectBy_isElsewhereWinner`, `Vocabulary.selectMinimal_isElsewhereWinner`: both
+* `RuleSet.selectBy_isElsewhereWinner`, `RuleSet.selectMinimal_isElsewhereWinner`: both
   selections produce Elsewhere winners.
-* `Vocabulary.selectMinimal_eq_some_of_applies`,
-  `Vocabulary.isContiguous_realizeMinimal_of_monotone`: under Pāṇinian Determinism minimal
+* `RuleSet.selectMinimal_eq_some_of_applies`,
+  `RuleSet.isContiguous_realizeMinimal_of_monotone`: under Pāṇinian Determinism minimal
   selection is consistent under contraction and realizes contiguous patterns.
-* `Vocabulary.realizeMinimal_eq_realize`: under Pāṇinian Determinism minimal selection realizes
+* `RuleSet.realizeMinimal_eq_realize`: under Pāṇinian Determinism minimal selection realizes
   what selection on any score strictly reversing specificity realizes.
-* `Vocabulary.selectMinimal_factorsThrough`, `Vocabulary.realizeMinimalD_factorsThrough`:
+* `RuleSet.selectMinimal_factorsThrough`, `RuleSet.realizeMinimalD_factorsThrough`:
   selection, and realization with a fallback, factor through any map on contexts that every
   rule's applicability (and the fallback) factors through.
-* `Vocabulary.realizeMinimalD_eq_of_isElsewhereWinner`: over a coherent vocabulary under
+* `RuleSet.realizeMinimalD_eq_of_isElsewhereWinner`: over a coherent rule set under
   Pāṇinian Determinism, realization with a fallback is the exponent of any
-  Elsewhere winner, whatever the order of the vocabulary.
+  Elsewhere winner, whatever the order of the rule set.
 
 ## References
 
@@ -58,16 +58,16 @@ paradigm linkage over a root and by Bonami and Stump's rules of basic stem choic
 
 @[expose] public section
 
-namespace Morphology.Exponence.Vocabulary
+namespace Morphology.Exponence.RuleSet
 
 variable {Ctx E : Type*} {R : Type*} [Rule R Ctx E]
 variable [DecidableRel (Applies : R → Ctx → Prop)]
-variable {v : Vocabulary R} {c c' : Ctx} {r s : R} {φ : E}
+variable {v : RuleSet R} {c c' : Ctx} {r s : R} {φ : E}
 
 /-! ### Score selection -/
 
-/-- The rules of `v` applicable at `c`, in vocabulary order. -/
-def applicable (v : Vocabulary R) (c : Ctx) : List R :=
+/-- The rules of `v` applicable at `c`, in the order of `v`. -/
+def applicable (v : RuleSet R) (c : Ctx) : List R :=
   v.filter (fun r ↦ Applies r c)
 
 @[simp] theorem mem_applicable :
@@ -76,9 +76,9 @@ def applicable (v : Vocabulary R) (c : Ctx) : List R :=
 
 variable {α : Type*} [LinearOrder α] {f : R → α}
 
-/-- The applicable rule of greatest score `f`, ties broken by vocabulary
-order; scores to be minimized pass through `OrderDual`. -/
-def selectBy (v : Vocabulary R) (f : R → α) (c : Ctx) : Option R :=
+/-- The applicable rule of greatest score `f`, ties broken by the order of
+the rule set; scores to be minimized pass through `OrderDual`. -/
+def selectBy (v : RuleSet R) (f : R → α) (c : Ctx) : Option R :=
   (v.applicable c).argmax f
 
 theorem selectBy_mem (h : v.selectBy f c = some r) : r ∈ v :=
@@ -99,7 +99,7 @@ theorem selectBy_congr (h : v.applicable c = v.applicable c') :
   rw [selectBy, selectBy, h]
 
 /-- The exponent of the rule selected by `selectBy`. -/
-def realize (v : Vocabulary R) (f : R → α) (c : Ctx) : Option E :=
+def realize (v : RuleSet R) (f : R → α) (c : Ctx) : Option E :=
   (v.selectBy f c).map exponent
 
 theorem realize_eq_none_iff : v.realize f c = none ↔ v.applicable c = [] :=
@@ -114,7 +114,7 @@ theorem le_of_selectBy_eq_some (h : v.selectBy f c = some r) (hs : s ∈ v) (hsc
     f s ≤ f r :=
   List.le_of_mem_argmax (mem_applicable.mpr ⟨hs, hsc⟩) h
 
-/-- On a vocabulary sorted by decreasing score, the selected rule is the first applicable one. -/
+/-- On a rule set sorted by decreasing score, the selected rule is the first applicable one. -/
 theorem selectBy_eq_head? (h : v.Pairwise fun r s ↦ f s ≤ f r) :
     v.selectBy f c = (v.applicable c).head? :=
   List.argmax_eq_head? (h.filter _)
@@ -150,7 +150,7 @@ theorem selectBy_eq_none_of_applies (h : ∀ s ∈ v, Applies s c → Applies s 
   rw [selectBy_eq_none_iff, applicable_eq_filter h, selectBy_eq_none_iff.mp hr, List.filter_nil]
 
 /-- Selection admits no ABA. Across three contexts whose applicable rules are nested, an
-antihomophonous vocabulary that realizes one exponent at both outer contexts realizes it at the
+antihomophonous rule set that realizes one exponent at both outer contexts realizes it at the
 middle one. -/
 theorem realize_eq_of_applies {c₁ c₂ c₃ : Ctx} (hv : v.Antihomophonous)
     (h₁ : ∀ s ∈ v, Applies s c₁ → Applies s c₂) (h₂ : ∀ s ∈ v, Applies s c₂ → Applies s c₃)
@@ -229,10 +229,10 @@ theorem realize_realizes (hf : StrictAntiOn f {r | r ∈ v.applicable c})
 variable [DecidableRel (· < · : R → R → Prop)]
 
 /-- The first applicable rule that no applicable rule strictly undercuts. -/
-def selectMinimal (v : Vocabulary R) (c : Ctx) : Option R :=
+def selectMinimal (v : RuleSet R) (c : Ctx) : Option R :=
   (v.applicable c).find? (fun r ↦ (v.applicable c).all (fun s ↦ decide (¬ s < r)))
 
-/-- Minimal selection picks the first rule of the vocabulary that applies and that no applicable
+/-- Minimal selection picks the first rule of the rule set that applies and that no applicable
 rule strictly undercuts. -/
 theorem selectMinimal_eq_find? : v.selectMinimal c =
     v.find? (fun r ↦ decide (Applies r c ∧ ∀ s ∈ v.applicable c, ¬ s < r)) := by
@@ -282,7 +282,7 @@ theorem selectMinimal_factorsThrough {V : Type*} {A : Ctx → V}
 
 /-- The exponent of the rule selected by `selectMinimal`, the order-based counterpart of
 `realize`. -/
-def realizeMinimal (v : Vocabulary R) (c : Ctx) : Option E :=
+def realizeMinimal (v : RuleSet R) (c : Ctx) : Option E :=
   (v.selectMinimal c).map exponent
 
 theorem realizeMinimal_eq_none_iff : v.realizeMinimal c = none ↔ v.applicable c = [] :=
@@ -302,9 +302,9 @@ theorem realizeMinimal_realizes (h : v.realizeMinimal c = some φ) : v.Realizes 
   obtain ⟨r, hr, rfl⟩ := Option.map_eq_some_iff.mp h
   exact ⟨r, selectMinimal_isElsewhereWinner hr, rfl⟩
 
-/-- Over a coherent vocabulary whose Elsewhere winners form a chain, the minimally realized
+/-- Over a coherent rule set whose Elsewhere winners form a chain, the minimally realized
 exponent is that of any Elsewhere winner, so it does not depend on the order of the
-vocabulary. -/
+rule set. -/
 theorem realizeMinimal_eq_of_isElsewhereWinner (hv : v.Coherent)
     (hc : IsChain (· ≤ ·) {s | v.IsElsewhereWinner c s}) (hr : v.IsElsewhereWinner c r) :
     v.realizeMinimal c = some (exponent r) := by
@@ -312,7 +312,7 @@ theorem realizeMinimal_eq_of_isElsewhereWinner (hv : v.Coherent)
     (realizeMinimal_isSome_iff.mpr ⟨r, hr.prop.1, hr.prop.2⟩)
   rw [hφ, (realizeMinimal_realizes hφ).eq hv hc ⟨r, hr, rfl⟩]
 
-/-- Under Pāṇinian Determinism a coherent vocabulary realizes by minimal selection what it
+/-- Under Pāṇinian Determinism a coherent rule set realizes by minimal selection what it
 realizes by selection on any score strictly reversing specificity. -/
 theorem realizeMinimal_eq_realize (hv : v.Coherent)
     (hc : IsChain (· ≤ ·) {s | v.IsElsewhereWinner c s})
@@ -352,7 +352,7 @@ theorem selectMinimal_eq_none_of_applies (h : ∀ s ∈ v, Applies s c → Appli
     List.filter_nil]
 
 /-- Minimal selection admits no ABA where Pāṇinian Determinism holds at the middle context.
-Across three contexts whose applicable rules are nested, an antihomophonous vocabulary that
+Across three contexts whose applicable rules are nested, an antihomophonous rule set that
 realizes one exponent at both outer contexts realizes it at the middle one. -/
 theorem realizeMinimal_eq_of_applies {c₁ c₂ c₃ : Ctx} (hv : v.Antihomophonous)
     (hc : IsChain (· ≤ ·) {s | v.IsElsewhereWinner c₂ s})
@@ -394,14 +394,14 @@ end Contiguity
 
 /-- `v.realizeMinimalD fallback c` is the exponent of the rule selected by `selectMinimal`, or
 `fallback c` where no rule of `v` applies at `c`. -/
-def realizeMinimalD (v : Vocabulary R) (fallback : Ctx → E) (c : Ctx) : E :=
+def realizeMinimalD (v : RuleSet R) (fallback : Ctx → E) (c : Ctx) : E :=
   (v.realizeMinimal c).getD (fallback c)
 
 variable {fallback : Ctx → E}
 
 /-- With no rules, realization is the fallback. -/
 @[simp] theorem realizeMinimalD_nil (fallback : Ctx → E) :
-    realizeMinimalD ([] : Vocabulary R) fallback = fallback :=
+    realizeMinimalD ([] : RuleSet R) fallback = fallback :=
   funext fun _ ↦ rfl
 
 theorem realizeMinimalD_eq_of_selectMinimal_eq_some (h : v.selectMinimal c = some r) :
@@ -444,11 +444,11 @@ theorem realizeMinimalD_factorsThrough {V : Type*} {A : Ctx → V}
   fun _ _ hA ↦ by rw [realizeMinimalD, realizeMinimalD, realizeMinimal, realizeMinimal,
     selectMinimal_factorsThrough h hA, hd hA]
 
-/-- Over a coherent vocabulary whose Elsewhere winners form a chain, the realized value is the
-exponent of any Elsewhere winner, so it does not depend on the order of the vocabulary. -/
+/-- Over a coherent rule set whose Elsewhere winners form a chain, the realized value is the
+exponent of any Elsewhere winner, so it does not depend on the order of the rule set. -/
 theorem realizeMinimalD_eq_of_isElsewhereWinner (hv : v.Coherent)
     (hc : IsChain (· ≤ ·) {s | v.IsElsewhereWinner c s}) (hr : v.IsElsewhereWinner c r) :
     v.realizeMinimalD fallback c = exponent r := by
   rw [realizeMinimalD, realizeMinimal_eq_of_isElsewhereWinner hv hc hr, Option.getD_some]
 
-end Morphology.Exponence.Vocabulary
+end Morphology.Exponence.RuleSet

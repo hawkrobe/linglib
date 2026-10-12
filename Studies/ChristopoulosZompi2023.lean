@@ -101,14 +101,14 @@ first (`ncc_aba_generable`). -/
 
 /-- *ABA under Strong Case Containment ([caha-2009],
 [smith-moskal-xu-kang-bobaljik-2019]). -/
-theorem noABA_scc {v : Vocabulary (Rule Case3 scc F)} {A B : Rule Case3 scc F}
+theorem noABA_scc {v : RuleSet (Rule Case3 scc F)} {A B : Rule Case3 scc F}
     (hnom : IsWinner v .nom A) (hdat : IsWinner v .dat A)
     (hacc : IsWinner v .acc B) : B = A :=
   noABA (by decide) (by decide) hnom hdat hacc
 
 /-- *ABA under Weak Case Containment: the paper's Table 24 decomposition keeps
 SCC's exclusion. -/
-theorem noABA_wcc {v : Vocabulary (Rule Case3 wcc F)} {A B : Rule Case3 wcc F}
+theorem noABA_wcc {v : RuleSet (Rule Case3 wcc F)} {A B : Rule Case3 wcc F}
     (hnom : IsWinner v .nom A) (hdat : IsWinner v .dat A)
     (hacc : IsWinner v .acc B) : B = A :=
   noABA (by decide) (by decide) hnom hdat hacc
@@ -145,7 +145,7 @@ the minimal `{k₂}` variant of the table's `{(k₁,)k₂}`. Rows 2–3 are the 
 derivations — rule A strictly or weakly outranks the elsewhere B. -/
 
 /-- The eight rows of Table 25: rule inventory and PATTERN column. -/
-def table25 : List (Vocabulary (Rule Case3 wcc Ex) × (Case3 → Ex)) :=
+def table25 : List (RuleSet (Rule Case3 wcc Ex) × (Case3 → Ex)) :=
   [([⟨∅, .A⟩], surface .A .A .A),
    ([⟨{.k0}, .A⟩, ⟨{.k1}, .B⟩], surface .A .B .B),
    ([⟨{.k0}, .A⟩, ⟨∅, .B⟩], surface .A .B .B),
@@ -201,7 +201,7 @@ def latvian (c : LCell) : Finset K :=
     ∪ (match c.gen with | .masc => {.m0} | .fem => {.f0})
 
 /-- Rules (7): *pat-* in k₀ singular contexts; *paš-* elsewhere. -/
-def latvianRules : Vocabulary (Rule LCell latvian String) :=
+def latvianRules : RuleSet (Rule LCell latvian String) :=
   [⟨{.k0, .s0}, "pat"⟩, ⟨∅, "paš"⟩]
 
 /-- The stem of Table 20 at a cell: the root of the form of *pats* in the
@@ -246,7 +246,7 @@ def yiddish (c : YCell) : Finset K :=
 
 /-- The three stem rules: *ix* a non-elsewhere nominative-singular stem,
 *undz* the k₁-plural stem, *m-* the elsewhere. -/
-def yiddishRules : Vocabulary (Rule YCell yiddish String) :=
+def yiddishRules : RuleSet (Rule YCell yiddish String) :=
   [⟨{.k0, .s0}, "ix"⟩, ⟨{.k1, .p0}, "undz"⟩, ⟨∅, "m"⟩]
 
 /-- The fn. 25 paradigm's stem distribution: *ix* / *m-ix* / *m-ir* in the
