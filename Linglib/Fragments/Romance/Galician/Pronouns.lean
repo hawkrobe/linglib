@@ -19,61 +19,78 @@ use occurs in every finite embedded clause and inside infinitives.
 
 @[expose] public section
 
-namespace Galician.Pronouns
+namespace Galician
+
+/-- The honorific grades of Galician pronouns, lowest first. -/
+inductive Grade where
+  /-- The familiar grade, *ti* and *vós*. -/
+  | familiar
+  /-- The formal grade, *vostede* and *vostedes*. -/
+  | formal
+  deriving DecidableEq, Fintype, Repr
+
+instance : LinearOrder Grade := LinearOrder.lift' Grade.ctorIdx (by decide)
+
+namespace Pronouns
 
 /-- *eu* — 1sg. -/
-def eu : PersonalPronoun := { form := "eu", person := some .first, number := some .singular }
+def eu : PersonalPronoun Grade :=
+  { form := "eu", person := some .first, number := some .singular }
 
 /-- *nós* — 1pl. -/
-def nos : PersonalPronoun := { form := "nós", person := some .first, number := some .plural }
+def nos : PersonalPronoun Grade :=
+  { form := "nós", person := some .first, number := some .plural }
 
 /-- *ti* — 2sg familiar. -/
-def ti : PersonalPronoun :=
+def ti : PersonalPronoun Grade :=
   { form := "ti", person := some .second, number := some .singular,
-    honorific := some .nonhonorific }
+    grades := {.familiar} }
 
 /-- *vostede* — 2sg formal. -/
-def vostede : PersonalPronoun :=
+def vostede : PersonalPronoun Grade :=
   { form := "vostede", person := some .second, number := some .singular,
-    honorific := some .honorific }
+    grades := {.formal} }
 
 /-- *vós* — 2pl familiar. -/
-def vosPl : PersonalPronoun :=
-  { form := "vós", person := some .second, number := some .plural, honorific := some .nonhonorific }
+def vosPl : PersonalPronoun Grade :=
+  { form := "vós", person := some .second, number := some .plural, grades := {.familiar} }
 
 /-- *vostedes* — 2pl formal. -/
-def vostedes : PersonalPronoun :=
+def vostedes : PersonalPronoun Grade :=
   { form := "vostedes", person := some .second, number := some .plural,
-    honorific := some .honorific }
+    grades := {.formal} }
 
 /-- *el* — 3sg masculine. -/
-def el : PersonalPronoun :=
+def el : PersonalPronoun Grade :=
   { form := "el", person := some .third, number := some .singular, gender := some .masculine }
 
 /-- *ela* — 3sg feminine. -/
-def ela : PersonalPronoun :=
+def ela : PersonalPronoun Grade :=
   { form := "ela", person := some .third, number := some .singular, gender := some .feminine }
 
 /-- *eles* — 3pl masculine. -/
-def eles : PersonalPronoun :=
+def eles : PersonalPronoun Grade :=
   { form := "eles", person := some .third, number := some .plural, gender := some .masculine }
 
 /-- *elas* — 3pl feminine. -/
-def elas : PersonalPronoun :=
+def elas : PersonalPronoun Grade :=
   { form := "elas", person := some .third, number := some .plural, gender := some .feminine }
 
 /-- The pronoun inventory. -/
-def pronouns : Finset PersonalPronoun :=
+def pronouns : Finset (PersonalPronoun Grade) :=
   {eu, nos, ti, vostede, vosPl, vostedes, el, ela, eles, elas}
 
 /-- *che* — familiar dative clitic, singular addressee. -/
-def che : AllocutiveMarker :=
-  { form := "che", honorific := .nonhonorific, number := some .singular }
+def che : AllocutiveMarker Grade :=
+  { form := "che", grade := .familiar, number := some .singular }
 
 /-- *vos* — familiar dative clitic, plural addressee. -/
-def vos : AllocutiveMarker := { form := "vos", honorific := .nonhonorific, number := some .plural }
+def vos : AllocutiveMarker Grade :=
+  { form := "vos", grade := .familiar, number := some .plural }
 
 /-- The allocutive clitics. -/
-def allocutiveClitics : List AllocutiveMarker := [che, vos]
+def allocutiveClitics : List (AllocutiveMarker Grade) := [che, vos]
 
-end Galician.Pronouns
+end Pronouns
+
+end Galician

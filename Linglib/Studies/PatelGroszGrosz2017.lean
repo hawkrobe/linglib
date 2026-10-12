@@ -56,34 +56,34 @@ inductive DEMLicensingContext where
 /-! ### The German inventory -/
 
 /-- The weak series: *er*. -/
-def er : PersonalPronoun :=
+def er : PersonalPronoun Empty :=
   { form := "er", person := some .third, number := some .singular, gender := some .masculine }
 
 /-- The weak series: *sie*. -/
-def sie : PersonalPronoun :=
+def sie : PersonalPronoun Empty :=
   { form := "sie", person := some .third, number := some .singular, gender := some .feminine }
 
 /-- The weak series: *es*. -/
-def es : PersonalPronoun :=
+def es : PersonalPronoun Empty :=
   { form := "es", person := some .third, number := some .singular, gender := some .neuter }
 
 /-- The strong series: *der*, the same core plus the anaphoric index. -/
-def der : PersonalPronoun :=
+def der : PersonalPronoun Empty :=
   { form := "der", person := some .third, number := some .singular, gender := some .masculine }
 
 /-- The strong series: *die*. -/
-def die : PersonalPronoun :=
+def die : PersonalPronoun Empty :=
   { form := "die", person := some .third, number := some .singular, gender := some .feminine }
 
 /-- The strong series: *das*. -/
-def das : PersonalPronoun :=
+def das : PersonalPronoun Empty :=
   { form := "das", person := some .third, number := some .singular, gender := some .neuter }
 
 /-- A language's third-person pronoun system: the weak and strong series, the article
 inventory, and the pragmatic effects that license the strong series. -/
 structure PronounSystem where
-  weak : List PersonalPronoun
-  strong : List PersonalPronoun
+  weak : List (PersonalPronoun Empty)
+  strong : List (PersonalPronoun Empty)
   determiners : Determiner.Inventory
   licensing : List DEMLicensingContext
 

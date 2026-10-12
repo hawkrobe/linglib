@@ -81,9 +81,8 @@ def languageOf : String → Option Language
 
 /-! ### The morphosyntax of the marker -/
 
-/-- The three kinds of allocutive marker: an agreement reflex on a functional
-    head, a head that itself hosts the addressee, a clitic spelling out the
-    addressee. -/
+/-- An allocutive marker is an agreement reflex on a functional head, a head
+    that itself hosts the addressee, or a clitic spelling out the addressee. -/
 inductive MarkerType where
   | agreement
   | head
@@ -99,8 +98,8 @@ def analyses : Language → List MarkerType
   | .japanese => [.agreement, .head]
   | .galician => [.clitic]
 
-/-- The honorific level named by a row's honorific feature. -/
-def levelOf : String → Option SocialMeaning.HonorificLevel
+/-- The Magahi honorific grade named by a row's honorific feature. -/
+def levelOf : String → Option Magahi.Grade
   | "nh" => some .nonhonorific
   | "h" => some .honorific
   | "hh" => some .highHonorific
@@ -125,8 +124,8 @@ theorem marker_rows :
 
 /-! ### Distribution and loci -/
 
-/-- The three distributional types: root clauses only; also embedded-root
-    contexts (complements of saying, reason clauses); freely in finite embedded
+/-- A marker occurs in root clauses only, also in embedded-root contexts
+    (complements of saying, reason clauses), or freely in finite embedded
     clauses. -/
 inductive Distribution where
   | rootOnly
@@ -139,9 +138,9 @@ def distribution : Language → Distribution
   | .japanese | .tamil => .embeddedRoot
   | .magahi | .innovativeSouthernBasque | .galician => .free
 
-/-- Where the discourse participants are represented: the speech-act phrase,
-    the finiteness phrase, or an applicative-like addressee phrase whose
-    licensing is language-specific. -/
+/-- The discourse participants are represented in the speech-act phrase, the
+    finiteness phrase, or an applicative-like addressee phrase whose licensing
+    is language-specific. -/
 inductive Locus where
   | sa
   | fin
@@ -189,7 +188,7 @@ def contextOf : String → Option Context
   | "nonfinite" => some .nonfinite
   | _ => none
 
-/-- Embedded rows: a marker in the embedded clause is grammatical exactly where
+/-- In the embedded rows, a marker in the embedded clause is grammatical exactly where
     the language's distributional type admits the context (exx 12–18, 21,
     30–31); rows whose alternatives add the marker are read through those
     alternatives. -/
@@ -220,21 +219,31 @@ theorem japanese_complementizer_rows :
 
 /-! ### Honorific features -/
 
-/-- The honorific level a row's status feature names. [iHON] orders the speaker against a
-    referent, ⟦iHON⟧ = λx. S ≺ x with ≺ one of ≥, <, <<, and the three orderings are the
-    nonhonorific, honorific and high honorific levels. -/
-def statusOf : String → Option SocialMeaning.HonorificLevel
-  | "ge" => some .nonhonorific
-  | "lt" => some .honorific
-  | "ll" => some .highHonorific
+/-- The ordering [iHON] presents between the speaker and a referent, ⟦iHON⟧ = λx. S ≺ x with ≺
+    one of ≥, <, <<. In the analysis of Magahi the review reports, its nonhonorific, honorific
+    and high honorific grades present the three orderings in turn. -/
+inductive Status where
+  /-- The speaker is at least the referent's equal, S ≥ x. -/
+  | atLeast
+  /-- The speaker is below the referent, S < x. -/
+  | below
+  /-- The speaker is far below the referent, S << x. -/
+  | farBelow
+  deriving DecidableEq, Repr
+
+/-- The ordering a row's status feature names. -/
+def statusOf : String → Option Status
+  | "ge" => some .atLeast
+  | "lt" => some .below
+  | "ll" => some .farBelow
   | _ => none
 
 /-- [portner-pak-zanuttini-2019]'s Korean speech-style particles as bundles of
     the speaker–addressee status and discourse formality (ex 34). -/
-def portnerParticle : SocialMeaning.HonorificLevel → Bool → Option String
-  | .honorific, true => some "supnita"
-  | .honorific, false => some "eyo"
-  | .nonhonorific, false => some "e"
+def portnerParticle : Status → Bool → Option String
+  | .below, true => some "supnita"
+  | .below, false => some "eyo"
+  | .atLeast, false => some "e"
   | _, _ => none
 
 /-- The Korean rows with status and formality features carry the particle the
@@ -254,14 +263,14 @@ theorem magahi_second_person_rows :
         ∀ a ∈ row.feature? "addressee", a = p := by
   decide +kernel
 
-/-- The pronouns of the Magahi rows carry the Fragment's honorific levels. Each level a row
-    names for a second- or third-person pronoun is that of a Fragment pronoun of that person
-    among the row's words (exx 39–45). -/
+/-- The pronouns of the Magahi rows carry the Fragment's honorific grades. Each grade a row
+    names for a second- or third-person pronoun is one a Fragment pronoun of that person among
+    the row's words realizes (exx 39–45). -/
 theorem magahi_pronoun_rows :
     ∀ row ∈ Examples.all, row.language = "maga1260" →
       ∀ kp ∈ [("pronoun2", Person.second), ("pronoun3", .third), ("pronoun3Other", .third)],
         ∀ v ∈ row.feature? kp.1, ∃ l, levelOf v = some l ∧
-          ∃ p ∈ Magahi.Pronouns.pronouns, p.person = some kp.2 ∧ p.honorific = some l ∧
+          ∃ p ∈ Magahi.Pronouns.pronouns, p.person = some kp.2 ∧ l ∈ p.grades ∧
             p.form ∈ row.surfaceTokens.map String.toLower := by
   decide +kernel
 

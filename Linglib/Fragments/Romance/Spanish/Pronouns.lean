@@ -24,70 +24,85 @@ students' cannot refer to the addressee ([adamson-zompi-2025], after [rezac-2011
 
 @[expose] public section
 
-namespace Spanish.Pronouns
+namespace Spanish
+
+/-- The honorific grades of Spanish pronouns, lowest first. -/
+inductive Grade where
+  /-- The familiar grade, *tú*, *vos*, *vosotros* and *vosotras*. -/
+  | familiar
+  /-- The polite grade, *usted* and *ustedes*. -/
+  | polite
+  deriving DecidableEq, Fintype, Repr
+
+instance : LinearOrder Grade := LinearOrder.lift' Grade.ctorIdx (by decide)
+
+namespace Pronouns
 
 /-- *yo* 'I'. -/
-def yo : PersonalPronoun := { form := "yo", person := some .first, number := some .singular }
+def yo : PersonalPronoun Grade :=
+  { form := "yo", person := some .first, number := some .singular }
 
 /-- *tú* 'you', familiar. -/
-def tu : PersonalPronoun :=
+def tu : PersonalPronoun Grade :=
   { form := "tú", person := some .second, number := some .singular,
-    honorific := some .nonhonorific }
+    grades := {.familiar} }
 
 /-- *vos* 'you', familiar, in some Latin-American countries. -/
-def vos : PersonalPronoun :=
+def vos : PersonalPronoun Grade :=
   { form := "vos", person := some .second, number := some .singular,
-    honorific := some .nonhonorific }
+    grades := {.familiar} }
 
 /-- *usted* 'you', polite, with third-person agreement. -/
-def usted : PersonalPronoun :=
-  { form := "usted", person := some .third, number := some .singular, honorific := some .honorific,
+def usted : PersonalPronoun Grade :=
+  { form := "usted", person := some .third, number := some .singular, grades := {.polite},
     referential := {.addressee} }
 
 /-- *él* 'he, it'. -/
-def el : PersonalPronoun :=
+def el : PersonalPronoun Grade :=
   { form := "él", person := some .third, number := some .singular, gender := some .masculine }
 
 /-- *ella* 'she, it'. -/
-def ella : PersonalPronoun :=
+def ella : PersonalPronoun Grade :=
   { form := "ella", person := some .third, number := some .singular, gender := some .feminine }
 
 /-- *nosotros* 'we', masculine or mixed. -/
-def nosotros : PersonalPronoun :=
+def nosotros : PersonalPronoun Grade :=
   { form := "nosotros", person := some .first, number := some .plural,
     gender := some .masculine }
 
 /-- *nosotras* 'we', feminine. -/
-def nosotras : PersonalPronoun :=
+def nosotras : PersonalPronoun Grade :=
   { form := "nosotras", person := some .first, number := some .plural,
     gender := some .feminine }
 
 /-- *vosotros* 'you', familiar plural, masculine or mixed, used in Spain. -/
-def vosotros : PersonalPronoun :=
+def vosotros : PersonalPronoun Grade :=
   { form := "vosotros", person := some .second, number := some .plural,
-    gender := some .masculine, honorific := some .nonhonorific }
+    gender := some .masculine, grades := {.familiar} }
 
 /-- *vosotras* 'you', familiar plural, feminine, used in Spain. -/
-def vosotras : PersonalPronoun :=
+def vosotras : PersonalPronoun Grade :=
   { form := "vosotras", person := some .second, number := some .plural,
-    gender := some .feminine, honorific := some .nonhonorific }
+    gender := some .feminine, grades := {.familiar} }
 
 /-- *ustedes* 'you', plural with third-person agreement: polite in Spain, the only plural of
 address in Latin America. -/
-def ustedes : PersonalPronoun :=
-  { form := "ustedes", person := some .third, number := some .plural, honorific := some .honorific,
+def ustedes : PersonalPronoun Grade :=
+  { form := "ustedes", person := some .third, number := some .plural, grades := {.polite},
     referential := {.addresseeOthers} }
 
 /-- *ellos* 'they', masculine or mixed. -/
-def ellos : PersonalPronoun :=
+def ellos : PersonalPronoun Grade :=
   { form := "ellos", person := some .third, number := some .plural, gender := some .masculine }
 
 /-- *ellas* 'they', feminine. -/
-def ellas : PersonalPronoun :=
+def ellas : PersonalPronoun Grade :=
   { form := "ellas", person := some .third, number := some .plural, gender := some .feminine }
 
 /-- The subject pronouns. -/
-def pronouns : Finset PersonalPronoun :=
+def pronouns : Finset (PersonalPronoun Grade) :=
   {yo, tu, vos, usted, el, ella, nosotros, nosotras, vosotros, vosotras, ustedes, ellos, ellas}
 
-end Spanish.Pronouns
+end Pronouns
+
+end Spanish

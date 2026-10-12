@@ -20,6 +20,6 @@ gives it also under psychological predicates.
 namespace Ewe.Pronouns
 
 /-- The logophoric pronoun *yè*. -/
-def ye : LogophoricPronoun := { form := "yè", person := some .third }
+def ye : LogophoricPronoun Empty := { form := "yè", person := some .third }
 
 end Ewe.Pronouns

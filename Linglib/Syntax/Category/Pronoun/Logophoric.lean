@@ -21,6 +21,7 @@ is sensitive to the same factors, but it is a reflexive and a `ReflexivePronoun`
 
 @[expose] public section
 
-/-- A logophoric pronoun is a `PersonalPronoun` of the logophoric kind. -/
-structure LogophoricPronoun extends PersonalPronoun
+/-- A logophoric pronoun is a `PersonalPronoun` of the logophoric kind, its honorific grades on
+the scale `G` of its language. -/
+structure LogophoricPronoun (G : Type) extends PersonalPronoun G
   deriving DecidableEq

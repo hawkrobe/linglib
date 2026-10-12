@@ -42,33 +42,33 @@ orthography lives in `form`.
 namespace Ga.Pronouns
 
 /-- *mi* — first person singular, the one form of all three columns. -/
-def mi : PersonalPronoun := { form := "mi", person := some .first, number := some .singular }
+def mi : PersonalPronoun Empty := { form := "mi", person := some .first, number := some .singular }
 
 /-- *o* — second person singular subjective and possessive. -/
-def o : PersonalPronoun := { form := "o", person := some .second, number := some .singular }
+def o : PersonalPronoun Empty := { form := "o", person := some .second, number := some .singular }
 
 /-- *bo* — second person singular objective. -/
-def bo : PersonalPronoun :=
+def bo : PersonalPronoun Empty :=
   { form := "bo", person := some .second, number := some .singular, case_ := some .acc }
 
 /-- *e* — third person singular subjective and possessive. -/
-def e : PersonalPronoun := { form := "e", person := some .third, number := some .singular }
+def e : PersonalPronoun Empty := { form := "e", person := some .third, number := some .singular }
 
 /-- *lɛ* — third person singular objective. -/
-def le : PersonalPronoun :=
+def le : PersonalPronoun Empty :=
   { form := "lɛ", person := some .third, number := some .singular, case_ := some .acc }
 
 /-- *wɔ* — first person plural, the one form of all three columns. -/
-def wo : PersonalPronoun := { form := "wɔ", person := some .first, number := some .plural }
+def wo : PersonalPronoun Empty := { form := "wɔ", person := some .first, number := some .plural }
 
 /-- *nyɛ* — second person plural, the one form of all three columns. -/
-def nye : PersonalPronoun := { form := "nyɛ", person := some .second, number := some .plural }
+def nye : PersonalPronoun Empty := { form := "nyɛ", person := some .second, number := some .plural }
 
 /-- *amɛ* — third person plural, the one form of all three columns. -/
-def ame : PersonalPronoun := { form := "amɛ", person := some .third, number := some .plural }
+def ame : PersonalPronoun Empty := { form := "amɛ", person := some .third, number := some .plural }
 
 /-- The personal pronoun inventory of Table 3. -/
-def pronouns : Finset PersonalPronoun := {mi, o, bo, e, le, wo, nye, ame}
+def pronouns : Finset (PersonalPronoun Empty) := {mi, o, bo, e, le, wo, nye, ame}
 
 /-- The forms of each referential category. -/
 def paradigm : Person.Category → Finset String := PersonalPronoun.paradigm pronouns

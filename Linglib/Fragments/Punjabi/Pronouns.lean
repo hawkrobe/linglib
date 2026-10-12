@@ -18,31 +18,49 @@ forms are not recorded here.
 
 @[expose] public section
 
-namespace Punjabi.Pronouns
+namespace Punjabi
+
+/-- The honorific grades of Punjabi pronouns, lowest first. -/
+inductive Grade where
+  /-- The nonhonorific grade, *tũ*. -/
+  | nonhonorific
+  /-- The honorific grade, *tusii*. -/
+  | honorific
+  deriving DecidableEq, Fintype, Repr
+
+instance : LinearOrder Grade := LinearOrder.lift' Grade.ctorIdx (by decide)
+
+namespace Pronouns
 
 /-- *maiṃ* — 1sg. -/
-def maiN : PersonalPronoun := { form := "maiṃ", person := some .first, number := some .singular }
+def maiN : PersonalPronoun Grade :=
+  { form := "maiṃ", person := some .first, number := some .singular }
 
 /-- *asiiṃ* — 1pl. -/
-def asiiN : PersonalPronoun := { form := "asiiṃ", person := some .first, number := some .plural }
+def asiiN : PersonalPronoun Grade :=
+  { form := "asiiṃ", person := some .first, number := some .plural }
 
 /-- *tũ* — 2sg nonhonorific. -/
-def tuN : PersonalPronoun :=
+def tuN : PersonalPronoun Grade :=
   { form := "tũ", person := some .second, number := some .singular,
-    honorific := some .nonhonorific }
+    grades := {.nonhonorific} }
 
 /-- *tusii* — 2sg honorific, also 2pl. -/
-def tusii : PersonalPronoun :=
+def tusii : PersonalPronoun Grade :=
   { form := "tusii", person := some .second, number := some .singular,
-    honorific := some .honorific }
+    grades := {.honorific} }
 
 /-- *uh* — 3sg, the distal demonstrative. -/
-def uhSg : PersonalPronoun := { form := "uh", person := some .third, number := some .singular }
+def uhSg : PersonalPronoun Grade :=
+  { form := "uh", person := some .third, number := some .singular }
 
 /-- *uh* — 3pl, the same form. -/
-def uhPl : PersonalPronoun := { form := "uh", person := some .third, number := some .plural }
+def uhPl : PersonalPronoun Grade :=
+  { form := "uh", person := some .third, number := some .plural }
 
 /-- The pronoun inventory. -/
-def pronouns : Finset PersonalPronoun := {maiN, asiiN, tuN, tusii, uhSg, uhPl}
+def pronouns : Finset (PersonalPronoun Grade) := {maiN, asiiN, tuN, tusii, uhSg, uhPl}
 
-end Punjabi.Pronouns
+end Pronouns
+
+end Punjabi

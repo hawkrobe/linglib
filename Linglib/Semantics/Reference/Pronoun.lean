@@ -46,8 +46,8 @@ open Reference
 
 namespace PersonalPronoun
 
-variable {E W P T : Type*} [PartialOrder E] [Gendered E] (e : PersonalPronoun) (i : ℕ)
-  (c : Context W E P T)
+variable {G : Type} {E W P T : Type*} [PartialOrder E] [Gendered E] (e : PersonalPronoun G)
+  (i : ℕ) (c : Context W E P T)
 
 /-- The φ-domain of a pronoun entry over an entity domain `E` is the intersection of the person
 domain of its referential person at the context of utterance, the number domain of its referential
@@ -65,7 +65,7 @@ def phiDom : Set E :=
 
 /-- The φ-domain depends on the referential categories and the gender alone, not on the
 agreement person and number. -/
-theorem phiDom_congr {e₁ e₂ : PersonalPronoun} (hr : e₁.referential = e₂.referential)
+theorem phiDom_congr {e₁ e₂ : PersonalPronoun G} (hr : e₁.referential = e₂.referential)
     (hg : e₁.gender = e₂.gender) : e₁.phiDom c = e₂.phiDom c := by
   simp only [phiDom, referentialPerson, referentialNumber, hr, hg]
 
@@ -80,7 +80,7 @@ universe u
 
 /-- A personal pronoun denotes on every model, the index and the context being the Reader
 arguments of its domain. -/
-instance : Semantics.Denotes PersonalPronoun
+instance : Semantics.Denotes (PersonalPronoun G)
     (∀ (E W P T : Type u) [PartialOrder E] [Gendered E], ℕ → Context W E P T →
       Nominal (Assignment E) W E) :=
   ⟨fun e _ _ _ _ _ _ ↦ e.denote⟩

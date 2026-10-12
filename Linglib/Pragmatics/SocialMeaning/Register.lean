@@ -14,11 +14,11 @@ or to neither. English *must* and *perhaps* are formal beside *have to* and *may
 simple past is the narrative tense of writing, and Indonesian *telah* is the written
 counterpart of *sudah*.
 
-Register is a property of the form and of the situation of use. The social relation a form
-presents between the speaker and a person it refers to or addresses is a separate property,
-its honorific level, `SocialMeaning.HonorificLevel`. The Korean speech-style particles carry
-one value of each: the polite and the formal particle present the same relation to the
-addressee and differ in the formality of the discourse.
+Register is a property of the form and of the situation of use. The deference a form presents
+toward a person it refers to or addresses is a separate property, its honorific grade
+(`PersonalPronoun.grades`). The Korean speech-style particles carry one value
+of each: the polite and the formal particle present the same grade to the addressee and differ
+in the formality of the discourse.
 
 ## Main definitions
 
@@ -38,11 +38,11 @@ namespace SocialMeaning
 
 /-- The register of a form is the formality of the situations in which speakers use it. -/
 inductive Register where
-  /-- Colloquial, casual speech: *have to*, *maybe*. -/
+  /-- Colloquial, casual speech, such as *have to* and *maybe*. -/
   | informal
   /-- Unmarked for formality. -/
   | neutral
-  /-- Written, literary or careful language: *must*, *shall*, *perhaps*. -/
+  /-- Written, literary or careful language, such as *must*, *shall* and *perhaps*. -/
   | formal
   deriving DecidableEq, Fintype, Repr
 
