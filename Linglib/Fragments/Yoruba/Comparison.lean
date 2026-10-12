@@ -3,11 +3,15 @@ module
 public import Linglib.Syntax.Comparative
 
 /-!
-# Yoruba comparative data
+# Yoruba comparison
 
-Yoruba compares with *X Adj ju Y lọ* (WALS Ch 121A: exceed, [stassen-2013]):
-the exceed verb *ju … lọ* takes the standard as its object. The adjective
-carries no degree marking; superlative via exceeding a universal standard.
+Yoruba compares with *X Adj ju Y lọ*, an exceed comparative in the atlas: the exceed verb
+*ju … lọ* takes the standard as its object, between its two pieces. The adjective carries no
+degree marking, and the superlative exceeds a universal standard.
+
+## References
+
+* [stassen-2013]
 -/
 
 @[expose] public section
@@ -16,16 +20,13 @@ namespace Yoruba.Comparison
 
 open Comparative
 
-/-- The *ju … lọ* comparative: exceed verb taking the standard as object. -/
+/-- The *ju … lọ* comparative, whose exceed verb takes the standard as its object. -/
 def ju : Comparative :=
-  { standardMarker := some "ju...lo"
+  { standardMarker := [.free "ju", .free "lo"]
   , caseAssignment := .fixed
   , fixedEncoding := some .directObject }
 
-/-- No degree marking on the adjective. -/
-def degreeWord : DegreeWordType := .noDegreeMarking
-
-/-- Superlative by exceeding a universal standard. -/
+/-- The superlative exceeds a universal standard. -/
 def superlative : SuperlativeStrategy := .exceedAll
 
 end Yoruba.Comparison

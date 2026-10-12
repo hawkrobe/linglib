@@ -569,7 +569,6 @@ import Linglib.Fragments.Mayan.Yukatek.VerbClasses
 import Linglib.Fragments.Mazatec.Verbs
 import Linglib.Fragments.Mongolian.Case
 import Linglib.Fragments.Mwaghavul.Basic
-import Linglib.Fragments.Navajo.Comparison
 import Linglib.Fragments.Ndebele.Clause
 import Linglib.Fragments.NezPerce.Clause
 import Linglib.Fragments.NezPerce.Modals

@@ -1,6 +1,7 @@
 module
 
 public import Linglib.Syntax.Comparative
+public import Linglib.Fragments.English.Adjectives
 
 /-!
 # English comparison
@@ -14,8 +15,7 @@ comparative.
 ## Main definitions
 
 * `English.Comparison.than`: the *than*-comparative.
-* `English.Comparison.degreeWord`, `English.Comparison.superlative`: the degree word and the
-  superlative strategy.
+* `English.Comparison.superlative`: the superlative strategy.
 
 ## References
 
@@ -32,11 +32,8 @@ open Comparative
 /-- The *than*-comparative, with a particle-marked standard and the degree marked by *more* or
 *-er*. -/
 def than : Comparative :=
-  { standardMarker := some "than", caseAssignment := .derived, degreeMarker := some "more / -er",
-    degreeMorphology := true }
-
-/-- English has the free degree word *more* beside the suffix *-er*. -/
-def degreeWord : DegreeWordType := .hasDegreeWord
+  { standardMarker := [.free "than"], caseAssignment := .derived
+    degreeMarkers := [Adjectives.more, Inflection.er] }
 
 /-- The superlative is morphological, *-est*. -/
 def superlative : SuperlativeStrategy := .morphological

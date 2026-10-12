@@ -129,7 +129,7 @@ end Type1985
 spatial case. -/
 def type1985 (c : Comparative) : Option Type1985 :=
   match c.caseAssignment, c.fixedEncoding, c.standardCase with
-  | .derived, _, _ => some (if c.standardMarker.isSome then .particle else .conjoined)
+  | .derived, _, _ => some (if c.standardMarker = [] then .conjoined else .particle)
   | .fixed, some .directObject, _ => some .exceed
   | .fixed, _, some .abl => some .separative
   | .fixed, _, some .all => some .allative
@@ -140,29 +140,27 @@ def type1985 (c : Comparative) : Option Type1985 :=
 the atlas. -/
 theorem toWALS_type1985 {c : Comparative} {t : Type1985} (h : type1985 c = some t) :
     t.toWALS = c.type := by
-  obtain ⟨m, ca, fe, sc, _, _⟩ := c
+  obtain ⟨m, ca, fe, sc, _⟩ := c
   cases ca
-  · cases hm : m.isSome <;> simp_all [type1985, Comparative.type, Type1985.toWALS] <;>
-      (subst h; rfl)
+  · cases m <;> simp_all [type1985, Comparative.type, Type1985.toWALS] <;> (subst h; rfl)
   · rcases fe with _ | _ | _ <;> rcases sc with _ | k <;> (try cases k) <;>
       simp_all [type1985, Comparative.type, Type1985.toWALS] <;> (subst h; rfl)
 
 /-- The case assignment of a construction's type is the construction's. -/
 theorem caseAssignment_type1985 {c : Comparative} {t : Type1985} (h : type1985 c = some t) :
     t.caseAssignment = c.caseAssignment := by
-  obtain ⟨m, ca, fe, sc, _, _⟩ := c
+  obtain ⟨m, ca, fe, sc, _⟩ := c
   cases ca
-  · cases hm : m.isSome <;> simp_all [type1985, Type1985.caseAssignment] <;> (subst h; rfl)
+  · cases m <;> simp_all [type1985, Type1985.caseAssignment] <;> (subst h; rfl)
   · rcases fe with _ | _ | _ <;> rcases sc with _ | k <;> (try cases k) <;>
       simp_all [type1985, Type1985.caseAssignment] <;> (subst h; rfl)
 
 /-- The spatial case of an adverbial type is the case of the construction's standard. -/
 theorem spatialCase_type1985 {c : Comparative} {t : Type1985} (h : type1985 c = some t)
     (hs : t.spatialCase.isSome) : t.spatialCase = c.standardCase := by
-  obtain ⟨m, ca, fe, sc, _, _⟩ := c
+  obtain ⟨m, ca, fe, sc, _⟩ := c
   cases ca
-  · cases hm : m.isSome <;> simp_all [type1985, Type1985.spatialCase] <;>
-      (subst h; simp at hs)
+  · cases m <;> simp_all [type1985, Type1985.spatialCase] <;> (subst h; simp at hs)
   · rcases fe with _ | _ | _ <;> rcases sc with _ | k <;> (try cases k) <;>
       simp_all [type1985, Type1985.spatialCase] <;>
       (subst h; first | rfl | simp at hs)

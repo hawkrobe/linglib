@@ -5,10 +5,15 @@ public import Linglib.Syntax.Comparative
 /-!
 # Russian comparison
 
-Russian compares with *X Adj-ee, chem Y*: the particle *chem* marks the standard, the particle
-comparative of WALS Ch 121A ([stassen-2013]). A bare genitive standard, *X Adj-ee Y-GEN*, is also
-available and is not entered. Degree is marked by the bound affix *-ee* ~ *-ej*, and the
-superlative is morphological.
+Russian compares with *X Adj-ee, chem Y*. The particle *chem* marks the standard, a particle
+comparative in the atlas, and a bare genitive standard, *X Adj-ee Y*, is also available and is
+not entered. The degree is marked by the suffix *-ee* or its variant *-ej*.
+
+## TODO
+
+`superlative` is entered as morphological, while `Russian/Adjectives.lean` records the
+periphrastic superlative with *samyj*, beside which a morphological one is literary;
+`SuperlativeStrategy` has no case for a superlative formed with a degree word.
 
 ## References
 
@@ -21,17 +26,12 @@ namespace Russian.Comparison
 
 open Comparative
 
-/-- The *chem*-comparative: particle-marked standard. -/
+/-- The *chem*-comparative, with a particle-marked standard. -/
 def chem : Comparative :=
-  { standardMarker := some "chem"
-  , caseAssignment := .derived
-  , degreeMarker := some "-ee/-ej"
-  , degreeMorphology := true }
+  { standardMarker := [.free "chem"], caseAssignment := .derived
+    degreeMarkers := [.suff "ee", .suff "ej"] }
 
-/-- Bound comparative affix *-ee* ~ *-ej*. -/
-def degreeWord : DegreeWordType := .morphological
-
-/-- Morphological superlative. -/
+/-- The superlative is morphological. -/
 def superlative : SuperlativeStrategy := .morphological
 
 end Russian.Comparison
