@@ -1,0 +1,356 @@
+[
+  {
+    "id": "charnavel2019_2_2a",
+    "source": {"bibkey": "charnavel-sportiche-2016", "paperLabel": "p. 43"},
+    "reportedIn": {"bibkey": "charnavel-2019", "paperLabel": "chapter 2, (2a)"},
+    "language": "stan1290",
+    "primaryText": "Cette auberge fait de l'ombre à son propre jardin et à celui de la maison voisine.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "[This inn]_i gives shade to its_i own garden and that of the neighboring house.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["animacy", "inanimate"]
+    ],
+    "comment": "p. 30, credited to Charnavel and Sportiche (2016a:43).",
+    "verified": "page-image"
+  },
+  {
+    "id": "charnavel2019_2_2b",
+    "source": {"bibkey": "charnavel-sportiche-2016", "paperLabel": "p. 43"},
+    "reportedIn": {"bibkey": "charnavel-2019", "paperLabel": "chapter 2, (2b)"},
+    "language": "stan1290",
+    "primaryText": "Cette auberge bénéficie du fait que son propre jardin est plus spacieux que celui des auberges voisines.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "[This inn]_i benefits from the fact that its_i own garden is more spacious than that of the neighboring inns.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [
+      {"form": "Cette auberge bénéficie du fait que son jardin est plus spacieux que celui des auberges voisines.", "judgment": "acceptable"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["animacy", "inanimate"]
+    ],
+    "comment": "p. 30, credited to Charnavel and Sportiche (2016a:43). Printed 'son_i (*propre) jardin', the tensed clause bracketed as TP.",
+    "verified": "page-image"
+  },
+  {
+    "id": "charnavel2019_2_8b",
+    "source": {"bibkey": "charnavel-2019", "paperLabel": "chapter 2, (8b)"},
+    "reportedIn": null,
+    "language": "stan1290",
+    "primaryText": "Marie bénéficie du fait que son propre hôtel est plus spacieux que celui de ses concurrents.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Mary_i benefits from the fact that her_i own hotel is more spacious than that of her competitors.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "p. 33, after Charnavel and Sportiche (2016a:65). 'animate son propre is grammatical in the same configuration that made inanimate son propre deviant in (2)b; son propre in (8)b is therefore an instance of exempt anaphor' (p. 32). The book runs none of its tests for logophoric centers on this sentence.",
+    "verified": "page-image"
+  },
+  {
+    "id": "charnavel2019_2_3a",
+    "source": {"bibkey": "charnavel-2019", "paperLabel": "chapter 2, (3a)"},
+    "reportedIn": null,
+    "language": "stan1290",
+    "primaryText": "La Terre tourne sur elle-même.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "[The earth]_i spins on itself_i.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["animacy", "inanimate"]
+    ],
+    "comment": "p. 30, after Charnavel and Sportiche (2016a:45, 64).",
+    "verified": "page-image"
+  },
+  {
+    "id": "charnavel2019_2_3b",
+    "source": {"bibkey": "charnavel-2019", "paperLabel": "chapter 2, (3b)"},
+    "reportedIn": null,
+    "language": "stan1290",
+    "primaryText": "La Terre a bénéficié du fait que des photos d'elle-même et de son satellite ont montré les effets néfastes de la pollution.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "[The earth]_i benefited from the fact that pictures of itself_i and its satellite showed the harmful effects of pollution.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [
+      {"form": "La Terre a bénéficié du fait que des photos d'elle et de son satellite ont montré les effets néfastes de la pollution.", "judgment": "acceptable"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["animacy", "inanimate"]
+    ],
+    "comment": "p. 30, after Charnavel and Sportiche (2016a:45, 64). Printed 'd'elle_i(*-même)'.",
+    "verified": "page-image"
+  },
+  {
+    "id": "charnavel2019_4_5",
+    "source": {"bibkey": "charnavel-2019", "paperLabel": "chapter 4, (5)"},
+    "reportedIn": null,
+    "language": "stan1290",
+    "primaryText": "Robert dit que son rival a voté pour son propre projet.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Robert_i says that his rival voted for his_i own project.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["antecedent", "attitude holder"]
+    ],
+    "comment": "p. 217. Printed with the silent logophoric pronoun, indexed i, at the edge of the embedded vP. 'attitude holder in (5)-(11)' (p. 219).",
+    "verified": "page-image"
+  },
+  {
+    "id": "charnavel2019_4_12",
+    "source": {"bibkey": "charnavel-2019", "paperLabel": "chapter 4, (12)"},
+    "reportedIn": null,
+    "language": "stan1290",
+    "primaryText": "Le courage de Paul a sauvé des flammes sa propre maison et celle de ses voisins.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Paul_i's courage saved from the fire his_i own house and his neighbors'.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["antecedent", "empathy locus"]
+    ],
+    "comment": "p. 218; repeated as (35). Printed with the silent pronoun, indexed i, at the edge of the vP. 'empathy locus in (12)-(15)' (p. 219).",
+    "verified": "page-image"
+  },
+  {
+    "id": "charnavel2019_4_14",
+    "source": {"bibkey": "charnavel-2019", "paperLabel": "chapter 4, (14)"},
+    "reportedIn": null,
+    "language": "stan1290",
+    "primaryText": "Les commentaires des internautes sur elle-même ont atteint le moral de Lucie.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "The net surfers' comments about herself_i have affected Lucy_i's morale.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["antecedent", "empathy locus"]
+    ],
+    "comment": "p. 218; repeated as (36). Printed with the silent pronoun, indexed i, at the edge of the subject DP. 'empathy locus in (12)-(15)' (p. 219).",
+    "verified": "page-image"
+  },
+  {
+    "id": "charnavel2019_4_17",
+    "source": {"bibkey": "charnavel-2019", "paperLabel": "chapter 4, (17)"},
+    "reportedIn": null,
+    "language": "stan1290",
+    "primaryText": "Irène tient de Paul qu'hier, plusieurs journaux ont parlé de lui-même.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Irene learned from Paul_i that yesterday, several newspapers talked about himself_i.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [
+      {"form": "Irène tient de Paul qu'hier, plusieurs journaux ont parlé de lui.", "judgment": "acceptable"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["antecedent", "non-attitudinal source"]
+    ],
+    "comment": "p. 219; (92b) and (135c) of chapter 3. Printed 'lui_i-(*même)' with the silent pronoun indexed k. Paul is 'the source of the report as indicated by the verb tenir de' but not the attitude holder (p. 153), the book's illustration of a non-attitudinal source (p. 189); the cher test shows he is no empathy locus, which Irène can be (p. 179).",
+    "verified": "page-image"
+  },
+  {
+    "id": "charnavel2019_4_20",
+    "source": {"bibkey": "charnavel-2019", "paperLabel": "chapter 4, (20)"},
+    "reportedIn": null,
+    "language": "stan1290",
+    "primaryText": "Le tableau à la gauche de l'épinette pourrait contenir une représentation d'elle-même.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "The painting on the left of [the virginal]_i could contain a representation of itself_i.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [
+      {"form": "Le tableau à la gauche de l'épinette pourrait contenir une représentation d'elle.", "judgment": "acceptable"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["animacy", "inanimate"],
+      ["antecedent", "deictic center"]
+    ],
+    "comment": "p. 220; (149) of chapter 3, where the virginal is construed as deictic center (p. 187). Printed 'd'elle_i(*-même)' with the silent pronoun indexed k.",
+    "verified": "page-image"
+  },
+  {
+    "id": "charnavel2019_4_21a",
+    "source": {"bibkey": "charnavel-2019", "paperLabel": "chapter 4, (21a)"},
+    "reportedIn": null,
+    "language": "stan1290",
+    "primaryText": "Sur ce tableau de ton cher ancêtre peut-être fini par un de ses élèves, le professeur de musique est placé à droite de sa propre élève penchée sur la belle épinette.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "On this painting by your dear ancestor maybe completed by one of his students, [the music teacher]_i is placed on the right of his_i own student bent over the beautiful virginal.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "p. 220; (163) of chapter 3. Printed with the silent pronoun indexed k and the trace of the subject, indexed i, in the vP: 'plain sa propre in (21)a is acceptable because it is bound by (the trace of) the subject of its spellout domain'.",
+    "verified": "page-image"
+  },
+  {
+    "id": "charnavel2019_4_21b",
+    "source": {"bibkey": "charnavel-2019", "paperLabel": "chapter 4, (21b)"},
+    "reportedIn": null,
+    "language": "stan1290",
+    "primaryText": "Sur ce tableau de ton cher ancêtre peut-être fini par un de ses élèves, il semble qu'à la droite du professeur de musique, sa propre élève joue de l'épinette.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "On this painting by your dear ancestor maybe completed by one of his students, it seems that to the right of [the music teacher]_i, his_i own student plays the virginal.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [
+      {"form": "Sur ce tableau de ton cher ancêtre peut-être fini par un de ses élèves, il semble qu'à la droite du professeur de musique, son élève joue de l'épinette.", "judgment": "acceptable"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["antecedent", "deictic center"]
+    ],
+    "comment": "p. 220; (147) of chapter 3. Printed 'sa_i (*propre) élève' with the silent pronoun indexed k at the edge of the embedded TP. The music teacher is the deictic center and cannot be the empathy locus, the addressee being the referent of ton cher (pp. 186-187).",
+    "verified": "page-image"
+  },
+  {
+    "id": "charnavel2019_4_25a",
+    "source": {"bibkey": "charnavel-2019", "paperLabel": "chapter 4, (25a)"},
+    "reportedIn": null,
+    "language": "stan1290",
+    "primaryText": "Julie pense que ma mère et sa propre mère devraient se parler.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Julie_i thinks that my_k mother and her_i own mother should talk.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "p. 222. Printed 'ma_k (*propre) mère et sa_i propre mère' with the silent pronoun indexed i at the edge of the embedded TP; this row is the variant without the first propre.",
+    "verified": "page-image"
+  },
+  {
+    "id": "charnavel2019_4_25",
+    "source": {"bibkey": "charnavel-2019", "paperLabel": "chapter 4, (25a) and (25b)"},
+    "reportedIn": null,
+    "language": "stan1290",
+    "primaryText": "Julie pense que ma propre mère et sa propre mère devraient se parler.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Julie_i thinks that my_k own mother and her_i own mother should talk.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "p. 222. The starred variant of (25a) and of (25b), with both anaphors.",
+    "verified": "page-image"
+  },
+  {
+    "id": "charnavel2019_4_25b",
+    "source": {"bibkey": "charnavel-2019", "paperLabel": "chapter 4, (25b)"},
+    "reportedIn": null,
+    "language": "stan1290",
+    "primaryText": "Julie pense que ma propre mère et sa mère devraient se parler.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Julie_i thinks that my_k own mother and her_i mother should talk.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "p. 222. Printed 'ma_k propre mère et sa_i (*propre) mère' with the silent pronoun indexed k; this row is the variant without the second propre.",
+    "verified": "page-image"
+  },
+  {
+    "id": "charnavel2019_4_27",
+    "source": {"bibkey": "charnavel-2019", "paperLabel": "chapter 4, (27)"},
+    "reportedIn": null,
+    "language": "stan1290",
+    "primaryText": "Solange pense que Cyril est fier d'elle-même et de sa propre fille.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Solange_i thinks that Cyril_k is proud of herself_i and his_k own daughter.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "p. 222. Printed with the silent pronoun, indexed i, and the trace of Cyril in the embedded vP.",
+    "verified": "page-image"
+  },
+  {
+    "id": "charnavel2019_4_39a",
+    "source": {"bibkey": "charnavel-2019", "paperLabel": "chapter 4, (39a)"},
+    "reportedIn": null,
+    "language": "stan1290",
+    "primaryText": "Les commentaires des internautes sur elle-même et sa soeur ont atteint le moral de Lucie.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "The net surfers' comments about herself_i and her_i sister have affected Lucy_i's morale.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "p. 228. Printed with the silent pronoun, indexed i, at the edge of the subject DP: 'co-valuation with pro_log can never violate Condition B'.",
+    "verified": "page-image"
+  },
+  {
+    "id": "charnavel2019_4_39b",
+    "source": {"bibkey": "charnavel-2019", "paperLabel": "chapter 4, (39b)"},
+    "reportedIn": null,
+    "language": "stan1290",
+    "primaryText": "Les commentaires des internautes sur elle et sa propre soeur ont atteint le moral de Lucie.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "The net surfers' comments about her_i and her_i own sister have affected Lucy_i's morale.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "p. 228. Printed with the silent pronoun, indexed i, at the edge of the subject DP.",
+    "verified": "page-image"
+  },
+  {
+    "id": "charnavel2019_4_38",
+    "source": {"bibkey": "charnavel-2019", "paperLabel": "chapter 4, (38)"},
+    "reportedIn": null,
+    "language": "stan1290",
+    "primaryText": "Les commentaires des internautes sur elle-même sur le blog de Lucie ont atteint son moral.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "The net surfers' comments about herself_i posted on Lucy_i's blog have affected her_i morale.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "p. 228. Printed with the silent pronoun, indexed i, at the edge of the subject DP; 'a Condition C violation due to covaluation between pro_log and Lucie'.",
+    "verified": "page-image"
+  }
+]
