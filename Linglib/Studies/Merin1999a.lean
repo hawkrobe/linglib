@@ -314,7 +314,7 @@ theorem cond_lt_iff_hContrary (ctx : Context W) [IsProbabilityMeasure ctx.prior]
     (show μ[|Hᶜ] (a ∩ b) = μ[|Hᶜ] a * μ[|Hᶜ] b from (hcip false).measure_inter_eq_mul)
   rw [ENNReal.toReal_mul, cond_real_apply μ hHm.compl, cond_real_apply μ hHm.compl,
     cond_real_apply μ hHm.compl] at hcipNH'
-  rw [← ENNReal.toReal_lt_toReal (cond_apply_ne_top μ ham b) (measure_ne_top μ b),
+  rw [← ENNReal.toReal_lt_toReal (measure_ne_top μ[|a] b) (measure_ne_top μ b),
     cond_real_apply μ ham b, div_lt_iff₀ (ENNReal.toReal_pos ha0 (measure_ne_top μ a)),
     ← real_total μ hHm a, ← real_total μ hHm b, ← real_total μ hHm (a ∩ b)]
   set pH := (μ H).toReal

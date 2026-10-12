@@ -1,6 +1,5 @@
 module
 
-public import Linglib.Core.InformationTheory.KullbackLeibler.Finite
 public import Linglib.Core.MeasureTheory.Measure.AbsolutelyContinuous
 public import Linglib.Pragmatics.RSA.Belief
 public import Mathlib.Data.Nat.Dist

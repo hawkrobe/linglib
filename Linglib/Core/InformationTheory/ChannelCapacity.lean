@@ -194,7 +194,7 @@ theorem measureMutualInfo_compProd_eq_channelCapacity
     (Real.iSup_le (fun ν => ?_) (measureMutualInfo_nonneg _))
   have hac (c : C) : κ c ≪ κ ∘ₘ μ := by
     by_contra hc
-    exact ENNReal.ofReal_ne_top (top_le_iff.mp (klDiv_eq_top_iff_not_ac.mpr hc ▸ h c))
+    exact ENNReal.ofReal_ne_top (top_le_iff.mp (klDiv_of_not_ac hc ▸ h c))
   calc Im[(ν : Measure C) ⊗ₘ κ]
       ≤ ∑ c, (ν : Measure C).real {c} * (klDiv (κ c) (κ ∘ₘ μ)).toReal := by
         rw [sum_mul_toReal_klDiv κ ν (κ ∘ₘ μ) fun c _ => hac c]
@@ -353,7 +353,7 @@ theorem eq_blahutArimoto_iff :
       exact fun h0 => uniformOn_univ_singleton_ne_zero c (absolutelyContinuous_tilted .of_finite h0)
     refine ⟨measureMutualInfo_compProd_eq_channelCapacity κ μ fun c => ?_, hμ⟩
     rw [hI, ← hD c, ENNReal.ofReal_toReal]
-    exact klDiv_eq_top_iff_not_ac.not.2 (not_not.2 (κ.absolutelyContinuous_comp μ (hμ c)))
+    exact klDiv_ne_top (κ.absolutelyContinuous_comp μ (hμ c)) .of_finite
 
 /-- **Necessity of the divergence condition.** An input distribution of positive mass everywhere
 that achieves capacity puts every row of the channel at divergence exactly the capacity from the

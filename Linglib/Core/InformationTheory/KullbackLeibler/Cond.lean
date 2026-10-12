@@ -5,20 +5,18 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Core.InformationTheory.KullbackLeibler.Basic
 public import Linglib.Core.Probability.ConditionalProbability
-public import Mathlib.Analysis.SpecialFunctions.Log.ENNRealLog
+public import Mathlib.InformationTheory.KullbackLeibler.Basic
 
 /-!
 # Kullback-Leibler divergence of conditional measures
 
 The conditioning identity: for a probability measure `μ` and an event `s` of nonzero mass,
-`klDiv (μ[|s]) μ = −log μ(s)`, so Bayesian update by pure restriction costs exactly the
+`klDiv μ[|s] μ = −log μ(s)`, so Bayesian update by pure restriction costs exactly the
 information content of the event. More generally the divergence between two conditionings of one
 finite measure is the log of the ratio of the events' masses when the first event is almost
 contained in the second (`klDiv_cond_cond`), and infinite otherwise
-(`klDiv_cond_cond_eq_top_iff`). A point mass is a probability measure conditioned on the point,
-so its divergence from the measure is the surprisal of the point (`coe_klDiv_dirac_left`).
+(`klDiv_cond_cond_eq_top_iff`).
 
 `[UPSTREAM]` candidate for `Mathlib/InformationTheory/KullbackLeibler/`
 (placement and namespace mirror `ChainRule.lean`, the directory's other
@@ -38,10 +36,18 @@ namespace InformationTheory
 theorem klDiv_cond_self {Ω : Type*} [MeasurableSpace Ω]
     (μ : Measure Ω) [IsProbabilityMeasure μ]
     {s : Set Ω} (hs : MeasurableSet s) (hs0 : μ s ≠ 0) :
-    klDiv (μ[|s]) μ = ENNReal.ofReal (-Real.log (μ s).toReal) := by
+    klDiv μ[|s] μ = ENNReal.ofReal (-Real.log (μ.real s)) := by
   have := cond_isProbabilityMeasure (μ := μ) hs0
-  rw [klDiv_of_rnDeriv_ae_const cond_absolutelyContinuous (rnDeriv_cond_ae_const hs),
-    ENNReal.toReal_inv, Real.log_inv]
+  have h : llr μ[|s] μ =ᵐ[μ[|s]] fun _ ↦ -Real.log (μ.real s) := by
+    filter_upwards [cond_absolutelyContinuous.ae_le (Measure.rnDeriv_smul_left_of_ne_top'
+      (μ.restrict s) μ (ENNReal.inv_ne_top.2 hs0)),
+      cond_absolutelyContinuous.ae_le (Measure.rnDeriv_restrict_self μ hs), ae_cond_mem hs]
+      with x h₁ h₂ hx
+    rw [llr, ProbabilityTheory.cond, h₁, Pi.smul_apply, h₂, Set.indicator_of_mem hx,
+      Pi.one_apply, smul_eq_mul, mul_one, ENNReal.toReal_inv, Real.log_inv, measureReal_def]
+  rw [klDiv_of_ac_of_integrable cond_absolutelyContinuous ((integrable_const _).congr h.symm),
+    integral_congr_ae h]
+  simp
 
 variable {Ω : Type*} [MeasurableSpace Ω] {μ : Measure Ω} [IsFiniteMeasure μ] {s t : Set Ω}
 
@@ -54,9 +60,9 @@ theorem klDiv_cond_cond (hs : MeasurableSet s) (ht : MeasurableSet t) (hs0 : μ 
     rw [cond_apply ht, Set.inter_comm, measure_congr (Filter.inter_eventuallyEqSet_left.2 hst)]
   have := cond_isProbabilityMeasure (μ := μ) fun h ↦ hs0 (measure_mono_null_ae hst h)
   rw [← cond_cond_of_ae_le hs ht hst, klDiv_cond_self _ hs (hts ▸ mul_ne_zero
-    (ENNReal.inv_ne_zero.2 (measure_ne_top _ _)) hs0), hts, ENNReal.toReal_mul,
-    ENNReal.toReal_inv, ← Real.log_inv, mul_inv, inv_inv, measureReal_def, measureReal_def,
-    div_eq_mul_inv]
+    (ENNReal.inv_ne_zero.2 (measure_ne_top _ _)) hs0), measureReal_def μ[|t], hts,
+    ENNReal.toReal_mul, ENNReal.toReal_inv, ← measureReal_def, ← measureReal_def, inv_mul_eq_div,
+    ← Real.log_inv, inv_div]
 
 /-- Among the events almost containing `s`, the one of smaller mass has its conditional closer
 to `μ[|s]`. -/
@@ -84,21 +90,5 @@ theorem klDiv_cond_cond_eq_top_iff (hs : MeasurableSet s) (ht : MeasurableSet t)
     exact measure_ne_top _ _ h
   · rw [klDiv_cond_cond hs ht hs0 hst] at h
     exact ENNReal.ofReal_ne_top h
-
-/-- The divergence of a probability measure from a point mass is the surprisal of the point. -/
-theorem coe_klDiv_dirac_left [MeasurableSingletonClass Ω] (a : Ω) (ν : Measure Ω)
-    [IsZeroOrProbabilityMeasure ν] : (klDiv (Measure.dirac a) ν : EReal) = -ENNReal.log (ν {a}) := by
-  rcases eq_or_ne (ν {a}) 0 with h0 | h0
-  · rw [klDiv_of_not_ac fun h ↦ by simpa using h h0, h0, ENNReal.log_zero, EReal.neg_bot,
-      EReal.coe_ennreal_top]
-  · have : NeZero ν := ⟨fun h ↦ h0 (by rw [h]; rfl)⟩
-    have := (eq_zero_or_isProbabilityMeasure ν).resolve_left (NeZero.ne ν)
-    have hd : ν[|{a}] = Measure.dirac a := by
-      rw [ProbabilityTheory.cond, Measure.restrict_singleton, smul_smul,
-        ENNReal.inv_mul_cancel h0 (measure_ne_top _ _), one_smul]
-    rw [← hd, klDiv_cond_self ν (.singleton a) h0, EReal.coe_ennreal_ofReal,
-      max_eq_left (neg_nonneg.2 (Real.log_nonpos ENNReal.toReal_nonneg
-        (ENNReal.toReal_le_of_le_ofReal zero_le_one (by simpa using prob_le_one)))),
-      ENNReal.log_pos_real h0 (measure_ne_top _ _), EReal.coe_neg]
 
 end InformationTheory

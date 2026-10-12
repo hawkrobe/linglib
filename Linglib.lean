@@ -94,9 +94,7 @@ import Linglib.Core.Data.Setoid.Basic
 import Linglib.Core.GroupTheory.Congruence.Hom
 import Linglib.Core.InformationTheory.Entropy
 import Linglib.Core.InformationTheory.Hellinger
-import Linglib.Core.InformationTheory.KullbackLeibler.Basic
 import Linglib.Core.InformationTheory.KullbackLeibler.Cond
-import Linglib.Core.InformationTheory.KullbackLeibler.Finite
 import Linglib.Core.LinearAlgebra.AffineSpace.Centroid
 import Linglib.Core.LinearAlgebra.SymmetricAlgebra.Derivation
 import Linglib.Logic.Aristotelian.Morphism
@@ -109,7 +107,6 @@ import Linglib.Logic.ComparativeProbability.Defs
 import Linglib.Logic.Consequence
 import Linglib.Logic.CylindricAlgebra
 import Linglib.Core.MeasureTheory.Measure.AbsolutelyContinuous
-import Linglib.Core.MeasureTheory.Measure.Decomposition.RadonNikodym
 import Linglib.Core.MeasureTheory.Measure.Prod
 import Linglib.Core.MeasureTheory.Measure.WithDensity
 import Linglib.Core.ModelTheory.Binders

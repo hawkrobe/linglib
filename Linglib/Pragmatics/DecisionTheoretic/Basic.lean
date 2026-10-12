@@ -367,9 +367,9 @@ theorem posRelevant_iff_real_cross (ctx : Context W) [IsFiniteMeasure ctx.prior]
       rw [h0] at hcross
       simp at hcross
   · rw [ENNReal.lt_div_iff_mul_lt (Or.inl hz)
-      (Or.inl (cond_apply_ne_top _ hHm.compl e)), one_mul,
-      ← ENNReal.toReal_lt_toReal (cond_apply_ne_top _ hHm.compl e)
-        (cond_apply_ne_top _ hHm e),
+      (Or.inl (measure_ne_top ctx.prior[|ctx.topicᶜ] e)), one_mul,
+      ← ENNReal.toReal_lt_toReal (measure_ne_top ctx.prior[|ctx.topicᶜ] e)
+        (measure_ne_top ctx.prior[|ctx.topic] e),
       cond_real_apply _ hHm.compl e, cond_real_apply _ hHm e,
       div_lt_div_iff₀ hpNH hpH]
 
@@ -410,9 +410,9 @@ theorem negRelevant_iff_real_cross (ctx : Context W) [IsFiniteMeasure ctx.prior]
       simp only [ENNReal.toReal_zero, zero_mul, not_lt]
       positivity
   · rw [ENNReal.div_lt_iff (Or.inl hz)
-      (Or.inl (cond_apply_ne_top _ hHm.compl e)), one_mul,
-      ← ENNReal.toReal_lt_toReal (cond_apply_ne_top _ hHm e)
-        (cond_apply_ne_top _ hHm.compl e),
+      (Or.inl (measure_ne_top ctx.prior[|ctx.topicᶜ] e)), one_mul,
+      ← ENNReal.toReal_lt_toReal (measure_ne_top ctx.prior[|ctx.topic] e)
+        (measure_ne_top ctx.prior[|ctx.topicᶜ] e),
       cond_real_apply _ hHm.compl e, cond_real_apply _ hHm e,
       div_lt_div_iff₀ hpH hpNH]
 
@@ -483,9 +483,9 @@ theorem sign_reversal_qual (ctx : Context W) [IsFiniteMeasure ctx.prior]
   unfold posRelevant negRelevant
   rw [bayesFactor_swapIssue, bayesFactor_def,
     ENNReal.lt_div_iff_mul_lt (Or.inl hENotH)
-      (Or.inl (cond_apply_ne_top _ ctx.topicMeasurable.compl e)), one_mul,
+      (Or.inl (measure_ne_top ctx.prior[|ctx.topicᶜ] e)), one_mul,
     ENNReal.div_lt_iff (Or.inl hEH)
-      (Or.inl (cond_apply_ne_top _ ctx.topicMeasurable e)), one_mul]
+      (Or.inl (measure_ne_top ctx.prior[|ctx.topic] e)), one_mul]
 
 /-- The Bayes factors of E for H and for ¬H multiply to one, BF_H(E) · BF_{¬H}(E) = 1, the
 quantitative form of Corollary 3. The identity is exact when both conditional probabilities are
@@ -496,8 +496,8 @@ theorem sign_reversal (ctx : Context W) [IsFiniteMeasure ctx.prior]
     (hENotH : ctx.prior[|ctx.topicᶜ] e ≠ 0) :
     bayesFactor ctx e * bayesFactor (swapIssue ctx) e = 1 := by
   rw [bayesFactor_swapIssue]
-  exact likelihoodRatio_mul_swap hEH (cond_apply_ne_top _ ctx.topicMeasurable e)
-    hENotH (cond_apply_ne_top _ ctx.topicMeasurable.compl e)
+  exact likelihoodRatio_mul_swap hEH (measure_ne_top ctx.prior[|ctx.topic] e)
+    hENotH (measure_ne_top ctx.prior[|ctx.topicᶜ] e)
 
 /-- Relevance is the differential of conditional informativeness (Fact 2):
 log BF_H(E) = inf(E, ¬H) − inf(E, H), where inf(E, X) = −log P(E∣X) is the conditional surprisal
@@ -520,7 +520,7 @@ theorem CondIndepIssue.bayesFactor_inter {ctx : Context W}
     (hNotH' : ctx.prior[|ctx.topicᶜ] b ≠ 0) :
     bayesFactor ctx (a ∩ b) = bayesFactor ctx a * bayesFactor ctx b :=
   likelihoodRatio_inter (h true) (h false) hNotH'
-    (cond_apply_ne_top _ ctx.topicMeasurable.compl b)
+    (measure_ne_top ctx.prior[|ctx.topicᶜ] b)
 
 /-- Under issue-conditional independence with A and B both positively relevant, their
 conjunction dominates both conjuncts, the conjunction case of Theorem 6a. -/
@@ -573,7 +573,7 @@ theorem posRelevant_iff_lt_cond (ctx : Context W) [IsProbabilityMeasure ctx.prio
     rw [← ENNReal.toReal_add (measure_ne_top _ _) (measure_ne_top _ _),
       measure_add_measure_compl hm, measure_univ, ENNReal.toReal_one]
   rw [posRelevant_iff_real_cross, ← ENNReal.toReal_lt_toReal (measure_ne_top _ _)
-    (cond_apply_ne_top _ hm e), cond_real_apply _ hm, ← real_total ctx.prior hm e,
+    (measure_ne_top ctx.prior[|ctx.topic] e), cond_real_apply _ hm, ← real_total ctx.prior hm e,
     lt_div_iff₀ hpH, eq_sub_of_add_eq' hsum]
   constructor <;> intro h <;> linarith
 
