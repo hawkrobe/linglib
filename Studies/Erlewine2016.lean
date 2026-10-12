@@ -56,7 +56,7 @@ Popti', Akatek and Ch'ol.
 * [cinque-1999]
 * [rizzi-1997]
 * [stiebels-2006]
-* [preminger-2011]
+* [preminger-2011b]
 * [coon-mateo-pedro-preminger-2014]
 * [prince-smolensky-1993]
 -/
@@ -184,7 +184,8 @@ def ssal (i : Input) : Constraint Candidate := fun c ↦
 def xref (i : Input) : Constraint Candidate := fun c ↦ (i.args.filter (¬ CrossRef c ·)).length
 
 /-- XRef-Participant assigns one violation per participant argument not cross-referenced
-(§5.2). -/
+(§5.2), deriving the Set B agreement of [preminger-2011b] and the salience hierarchy of
+[stiebels-2006]. -/
 def xrefP (i : Input) : Constraint Candidate := fun c ↦
   (i.args.filter fun a ↦ (i.person a).IsSAP ∧ ¬ CrossRef c a).length
 
