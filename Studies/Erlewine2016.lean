@@ -5,47 +5,49 @@ public import Linglib.Syntax.Person.Basic
 public import Linglib.Fragments.Mayan.Extraction
 public import Linglib.Phonology.OptimalityTheory.Tableau
 public import Mathlib.Order.Interval.Finset.Nat
+public import Studies.CoonMateoPedroPreminger2014
 
 /-!
 # Erlewine (2016): Anti-locality and Optimality in Kaqchikel Agent Focus
 
-This file formalizes [erlewine-2016]'s account of Kaqchikel Agent Focus (AF), the verb form with
-an AF suffix and no Set A agreement that a transitive subject takes under Ā-extraction. The
-trigger is not subject extraction but movement that is too short: AF disappears when a preverbal
-adverb (§3.1) or another preverbal operator (§3.2) intervenes, and long-distance extraction puts
-it on the embedded verb alone. Spec-to-Spec Anti-Locality (§4) bans Ā-movement from the
-specifier of XP that crosses no maximal projection but XP, crossing being dominance of the origin
-but not of the landing site. Kaqchikel T carries an obligatory Set B probe and an optional Set A
-probe with the EPP property (§4.1); a constraint that every argument be cross-referenced makes
-the transitive subject move to Spec,TP, from where its next step to Spec,CP is too short, while
-an intransitive subject stays in situ, which derives the ergative alignment of agreement (§4.2).
-Among the competing derivations of one numeration (§5.1) the AF derivation skips Spec,TP at the
-cost of a cross-referencing violation, so anti-locality outranks cross-referencing, and the AF
-suffix realizes an argument left un-cross-referenced (§4.1). Set B on an AF verb targets the
-participant argument ([stiebels-2006], [preminger-2011]), and when both arguments are
-participants the full-agreement transitive returns even under subject extraction (§5.2), which a
-top-ranked constraint cross-referencing participants derives and a last-resort account, such as
-[coon-mateo-pedro-preminger-2014]'s for Q'anjob'al, cannot (§5.3); evaluation must see the whole
-clause, since at TP the anti-locality violation is not yet visible. Rerankings give the typology
-of §6.1: Popti', whose Set B targets only the object, keeps the full form whenever the subject is
-a participant; Akatek ranks anti-locality highest and uses AF regardless of person; Ch'ol ranks
-cross-referencing highest and has no AF.
+Kaqchikel marks the Ā-extraction of a transitive subject with Agent Focus (AF), a verb form with
+an AF suffix and no Set A agreement. Erlewine argues that the trigger is movement that is too
+short: Spec-to-Spec Anti-Locality bans a step from the specifier of a phrase that crosses no other
+maximal projection, and a subject that T's optional Set A probe has moved to Spec,TP sits one
+step below Spec,CP, while an intransitive subject stays in situ. AF is the derivation that skips
+Spec,TP at the cost of an argument left un-cross-referenced, chosen by ranked constraints over
+competing derivations of the whole clause: anti-locality outranks cross-referencing, so AF
+disappears when an adverb or another operator intervenes, and cross-referencing participants
+outranks both, so the full transitive returns when both arguments are first or second person, an
+exception the paper argues no last-resort account of AF can make. Rerankings give the typology of
+Popti', Akatek and Ch'ol.
+
+## Main statements
+
+* `rows_optimal`: every example is grammatical exactly when an optimal derivation realizes its
+  verb form.
+* `af_iff_immediately_preverbal`: with at most one participant argument, Kaqchikel AF is optimal
+  exactly when the subject moves to the layer immediately above TP.
+* `lastResort_matches_iff`: the last-resort model of Coon, Mateo Pedro and Preminger, run on the
+  Kaqchikel examples, judges an example correctly exactly when its subject is not extracted past
+  an intervening layer and its arguments are not both participants.
 
 ## Implementation notes
 
-* A clause is the spine VP, vP, TP and the layers above TP, an adverb's projection
-  ([cinque-1999]), the CPs of a split periphery ([rizzi-1997]) and the topic projection (§4.4),
-  indexed from the bottom. A position lies within the projection of its index, so the crossing
-  set of a step is the interval of projections from the origin's up to but excluding the landing
+* A clause is the spine VP, vP, TP and the layers above TP, an adverb's projection after Cinque,
+  the CPs of Rizzi's split periphery and the topic projection, indexed from the bottom; the
+  crossing set of a step is the interval of projections from the origin's up to the landing
   site's. Long-distance extraction is the embedded clause's competition, since movement stops at
-  the embedded Spec,CP (§4.3).
+  the embedded Spec,CP.
 * A candidate is a choice of the optional Set A probe and of the Set B probe's target; the two
-  probes cannot share a goal, and the Set A probe, which moves its goal, sees only the subject at
-  the vP edge. Popti' and Akatek restrict Set B to the object.
-* The grammars are the rankings of §6.1 over the three constraints of §5; the constraint
-  preferring plural targets that the paper mentions in a footnote is not modelled.
-* Example numbers follow the lingbuzz preprint, the version consulted.
-* The examples are `Data.Examples.Erlewine2016`.
+  probes cannot share a goal, the Set A probe sees only the subject at the vP edge, and Popti'
+  and Akatek restrict Set B to the object. The constraint preferring plural targets is not
+  modelled.
+* The last-resort model is the one formalized in `Studies/CoonMateoPedroPreminger2014.lean`, run
+  on each Kaqchikel example with Infl licensing the object, the Voice of the attested form and
+  the extracted argument's role; its authors propose it for Q'anjob'al only, as the paper's
+  fn. 45 notes.
+* Example numbers follow the lingbuzz preprint; the examples are `Data.Examples.Erlewine2016`.
 
 ## References
 
@@ -71,7 +73,7 @@ inductive Arg
   | obj
   deriving DecidableEq, Repr
 
-/-- A layer of the clause above TP: an adverb's projection, a CP of the periphery, or the topic
+/-- A layer of the clause above TP, an adverb's projection, a CP of the periphery, or the topic
 projection. -/
 inductive Layer
   | advP
@@ -79,7 +81,7 @@ inductive Layer
   | topP
   deriving DecidableEq, Repr
 
-/-- A clause and its extraction: whether it is transitive, the layers above TP from the bottom,
+/-- A clause and its extraction, with whether it is transitive, the layers above TP from the bottom,
 the extracted argument with the index of the layer it lands in, and the person of each
 argument. -/
 structure Input where
@@ -109,13 +111,13 @@ def tP : ℕ := 2
 /-- The index of the `k`th layer above TP. -/
 def layerIndex (k : ℕ) : ℕ := 3 + k
 
-/-- The base position of an argument: Spec,vP for the subject, the complement of V for the
+/-- The base position of an argument, Spec,vP for the subject and the complement of V for the
 object (§4.1). -/
 def Arg.base : Arg → ℕ
   | .subj => 1
   | .obj => 0
 
-/-- The projections a step crosses, (43): those dominating the origin, which lies within
+/-- The projections a step crosses (43), those dominating the origin, which lies within
 projection `α`, but not the landing site, the specifier of projection `β`. -/
 def crosses (α β : ℕ) : Finset ℕ := Finset.Ico α β
 
@@ -139,17 +141,17 @@ theorem tooClose_iff {α β : ℕ} (h : α < β) : TooClose α β ↔ β = α + 
 
 /-! ### Derivations and constraints -/
 
-/-- A derivation of the clause (§5.1): whether T's optional Set A probe is used, moving the
+/-- A derivation of the clause (§5.1), fixing whether T's optional Set A probe is used, moving the
 subject to Spec,TP, and the argument its Set B probe targets. -/
 structure Candidate where
   aProbe : Bool
   bTarget : Arg
   deriving DecidableEq, Repr
 
-/-- The candidates of a numeration: the Set B target is an argument, the two probes cannot share
+/-- The candidates of a numeration. The Set B target is an argument, the two probes cannot share
 a goal, and where Set B is restricted to the object it targets the object. -/
 def candidatesOf (transitive objectOnly : Bool) : List Candidate :=
-  ([true, false].flatMap λ a => (argsOf transitive).map (⟨a, ·⟩)).filter λ c =>
+  ([true, false].flatMap fun a ↦ (argsOf transitive).map (⟨a, ·⟩)).filter fun c ↦
     (c.aProbe → c.bTarget ≠ .subj) ∧ (objectOnly → transitive → c.bTarget = .obj)
 
 /-- The candidates of a clause. -/
@@ -165,7 +167,7 @@ def CrossRef (c : Candidate) (a : Arg) : Prop := (c.aProbe ∧ a = .subj) ∨ c.
 
 instance (c : Candidate) (a : Arg) : Decidable (CrossRef c a) := by unfold CrossRef; infer_instance
 
-/-- The position an extracted argument moves from: Spec,TP for a subject the Set A probe has
+/-- The position an extracted argument moves from, Spec,TP for a subject the Set A probe has
 attracted, its base position otherwise. -/
 def Candidate.origin (c : Candidate) : Arg → ℕ
   | .subj => if c.aProbe then tP else Arg.subj.base
@@ -173,19 +175,20 @@ def Candidate.origin (c : Candidate) : Arg → ℕ
 
 /-- Spec-to-Spec Anti-Locality as a violable constraint: one violation per step that is too
 close. -/
-def ssal (i : Input) : Constraint Candidate := λ c =>
+def ssal (i : Input) : Constraint Candidate := fun c ↦
   match i.extracted with
   | none => 0
   | some (a, k) => if TooClose (c.origin a) (layerIndex k) then 1 else 0
 
-/-- XRef: one violation per argument not cross-referenced. -/
-def xref (i : Input) : Constraint Candidate := λ c => (i.args.filter (¬ CrossRef c ·)).length
+/-- XRef assigns one violation per argument not cross-referenced. -/
+def xref (i : Input) : Constraint Candidate := fun c ↦ (i.args.filter (¬ CrossRef c ·)).length
 
-/-- XRef-Participant: one violation per participant argument not cross-referenced (§5.2). -/
-def xrefP (i : Input) : Constraint Candidate := λ c =>
-  (i.args.filter λ a => (i.person a).IsSAP ∧ ¬ CrossRef c a).length
+/-- XRef-Participant assigns one violation per participant argument not cross-referenced
+(§5.2). -/
+def xrefP (i : Input) : Constraint Candidate := fun c ↦
+  (i.args.filter fun a ↦ (i.person a).IsSAP ∧ ¬ CrossRef c a).length
 
-/-- A grammar of §6.1: a ranking of the constraints and whether Set B is restricted to the
+/-- A grammar of §6.1, with a ranking of the constraints and whether Set B is restricted to the
 object. -/
 structure Grammar where
   ranking : List (Input → Constraint Candidate)
@@ -195,21 +198,21 @@ structure Grammar where
 def Grammar.tableau (g : Grammar) (i : Input) :=
   Tableau.ofRanking (candidates i g.objectOnly) (g.ranking.map (· i)) (candidates_ne_nil i _)
 
-/-- Kaqchikel: XRef-Participant ≫ SSAL ≫ XRef, Set B free to target either argument. -/
+/-- Kaqchikel ranks XRef-Participant ≫ SSAL ≫ XRef, Set B free to target either argument. -/
 def kaqchikel : Grammar := ⟨[xrefP, ssal, xref], false⟩
 
-/-- Popti': the Kaqchikel ranking with Set B restricted to the object. -/
+/-- Popti' has the Kaqchikel ranking with Set B restricted to the object. -/
 def popti : Grammar := ⟨[xrefP, ssal, xref], true⟩
 
-/-- Akatek: SSAL above both cross-referencing constraints, Set B restricted to the object. -/
+/-- Akatek ranks SSAL above both cross-referencing constraints, Set B restricted to the object. -/
 def akatek : Grammar := ⟨[ssal, xrefP, xref], true⟩
 
-/-- A Mayan language without AF, Ch'ol: XRef ≫ SSAL. -/
+/-- Ch'ol, a Mayan language without AF, ranks XRef ≫ SSAL. -/
 def chol : Grammar := ⟨[xref, ssal], false⟩
 
 /-! ### Realization -/
 
-/-- (48): the AF suffix is realized when some argument is not cross-referenced. -/
+/-- The AF suffix is realized when some argument is not cross-referenced (48). -/
 def Candidate.AFSuffix (args : List Arg) (c : Candidate) : Prop := ∃ a ∈ args, ¬ CrossRef c a
 
 instance (args : List Arg) (c : Candidate) : Decidable (c.AFSuffix args) := by
@@ -247,14 +250,14 @@ def extractedTable : List (String × Option Arg) :=
 /-- The persons as named in the rows. -/
 def personTable : List (String × Person) := [("1", .first), ("2", .second), ("3", .third)]
 
-/-- The verb forms as named in the rows: whether the AF suffix appears. -/
+/-- The verb forms as named in the rows, by whether the AF suffix appears. -/
 def verbTable : List (String × Bool) := [("AF", true), ("full", false)]
 
 /-- The grammars by glottocode. -/
 def grammarTable : List (String × Grammar) :=
   [("kaqc1270", kaqchikel), ("popt1235", popti), ("west2635", akatek), ("chol1282", chol)]
 
-/-- A row: the clause, its language's grammar, whether the attested form bears the AF suffix,
+/-- A row, with the clause, its language's grammar, whether the attested form bears the AF suffix,
 and the judgment. -/
 structure Row where
   input : Input
@@ -284,14 +287,14 @@ def rows : List Row := Examples.all.filterMap Row.ofDatum
 def kaqchikelRows : List Row :=
   (Examples.all.filter (·.language = "kaqc1270")).filterMap Row.ofDatum
 
-/-- Every row: the attested form is grammatical exactly when an optimal derivation realizes
+/-- In every row the attested form is grammatical exactly when an optimal derivation realizes
 it. -/
 theorem rows_optimal :
     ∀ r ∈ rows, r.judgment = .acceptable ↔
       ∃ c ∈ (r.grammar.tableau r.input).optimal, (c.AFSuffix r.input.args ↔ r.af = true) := by
   decide
 
-/-- The generalization of §3: with at most one participant argument, AF is optimal in Kaqchikel
+/-- The generalization of §3. With at most one participant argument, AF is optimal in Kaqchikel
 exactly when the subject moves to the layer immediately above TP. -/
 theorem af_iff_immediately_preverbal :
     ∀ r ∈ kaqchikelRows, ¬ (r.input.subj.IsSAP ∧ r.input.obj.IsSAP) →
@@ -304,33 +307,33 @@ theorem af_iff_immediately_preverbal :
 /-- Subject extraction to Spec,CP in a simple transitive clause. -/
 def subjectExtraction (s o : Person) : Input := ⟨true, [.cP], some (.subj, 0), s, o⟩
 
-/-- §5.1: without extraction, cross-referencing selects the derivation that moves the subject to
+/-- Without extraction (§5.1), cross-referencing selects the derivation that moves the subject to
 Spec,TP; this is also what an evaluation at TP would select before the anti-locality violation
 of a later extraction is visible, the argument of §5.3 for evaluation at the clause. -/
 theorem no_extraction_full (s o : Person) :
     (kaqchikel.tableau ⟨true, [.cP], none, s, o⟩).optimal = {⟨true, .obj⟩} := by
   cases s <;> cases o <;> decide
 
-/-- §5.1: under subject extraction with two third-person arguments, both AF derivations beat
+/-- Under subject extraction with two third-person arguments (§5.1), both AF derivations beat
 the derivation through Spec,TP, and the two constraints do not decide the Set B target. -/
 theorem subject_extraction_af :
     (kaqchikel.tableau (subjectExtraction .third .third)).optimal =
       {⟨false, .subj⟩, ⟨false, .obj⟩} := by
   decide
 
-/-- §5.2: a participant argument breaks the tie, Set B cross-referencing it. -/
+/-- A participant argument breaks the tie, Set B cross-referencing it (§5.2). -/
 theorem participant_breaks_tie :
     (kaqchikel.tableau (subjectExtraction .second .third)).optimal = {⟨false, .subj⟩} ∧
       (kaqchikel.tableau (subjectExtraction .third .second)).optimal = {⟨false, .obj⟩} := by
   decide
 
-/-- §5.2: with two participant arguments the full-agreement transitive is optimal, the
+/-- With two participant arguments the full-agreement transitive is optimal (§5.2), the
 anti-locality violation notwithstanding. -/
 theorem participant_exception :
     (kaqchikel.tableau (subjectExtraction .first .second)).optimal = {⟨true, .obj⟩} := by
   decide
 
-/-- §4.2: object extraction and intransitive subject extraction cross enough structure, and no
+/-- Object extraction and intransitive subject extraction cross enough structure (§4.2), and no
 optimal derivation bears the AF suffix. -/
 theorem no_af_without_short_step :
     (kaqchikel.tableau ⟨true, [.cP], some (.obj, 0), .third, .third⟩).optimal =
@@ -339,7 +342,7 @@ theorem no_af_without_short_step :
         ¬ c.AFSuffix (argsOf false) := by
   decide
 
-/-- §6.1: the typology of rerankings. Popti' keeps the full form when the subject is a
+/-- The typology of rerankings (§6.1). Popti' keeps the full form when the subject is a
 participant and uses AF when it is not; Akatek uses AF for a participant subject; Ch'ol keeps
 the full form throughout. -/
 theorem typology :
@@ -347,6 +350,46 @@ theorem typology :
       (popti.tableau (subjectExtraction .third .second)).optimal = {⟨false, .obj⟩} ∧
       (akatek.tableau (subjectExtraction .first .third)).optimal = {⟨false, .obj⟩} ∧
       (chol.tableau (subjectExtraction .third .second)).optimal = {⟨true, .obj⟩} := by
+  decide
+
+/-! ### The last-resort alternative -/
+
+/-- The role of an argument in a transitive or intransitive clause. -/
+def Arg.role (transitive : Bool) : Arg → ArgumentRole
+  | .subj => if transitive then .A else .S
+  | .obj => .P
+
+/-- The clause the last-resort model of Coon, Mateo Pedro and Preminger assigns a Kaqchikel row,
+finite, with Infl licensing the object as Kaqchikel's high absolutive has it, the Voice of the
+attested form, and the extracted argument by its role. -/
+def Row.lastResortClause (r : Row) : CoonMateoPedroPreminger2014.Clause :=
+  ⟨CoonMateoPedroPreminger2014.Language.kaqchikel.licenser, true,
+    if r.input.transitive then
+      .transitive (CoonMateoPedroPreminger2014.voiceOf (if r.af then .agentFocus else .transitive))
+        .dp
+    else .intransitive .setB,
+    r.input.extracted.map fun e ↦ e.1.role r.input.transitive, false⟩
+
+/-- The subject is extracted past an intervening layer, an adverb, another operator or a topic
+(§3). -/
+def Row.DistantSubject (r : Row) : Prop := ∃ e ∈ r.input.extracted, e.1 = .subj ∧ e.2 ≠ 0
+
+/-- Both arguments are participants (§5.2). -/
+def Row.TwoParticipants (r : Row) : Prop := r.input.subj.IsSAP ∧ r.input.obj.IsSAP
+
+instance : DecidablePred Row.DistantSubject := fun r ↦
+  inferInstanceAs (Decidable (∃ e ∈ r.input.extracted, _))
+instance : DecidablePred Row.TwoParticipants := fun _ ↦ inferInstanceAs (Decidable (_ ∧ _))
+
+/-- The last-resort model merges the Case-assigning AF Voice only where the regular derivation
+would crash, so it sees neither person nor what lies between the extracted subject and the verb.
+It judges a Kaqchikel example correctly exactly when the subject is not extracted past an
+intervening layer, the locality such Case-based accounts miss (fn. 46), and the arguments are not
+both participants, the exception for which a last resort would need a last resort of its own
+(§5.3, (81)); the optimality grammar fits every example (`rows_optimal`). -/
+theorem lastResort_matches_iff : ∀ r ∈ kaqchikelRows,
+    ((r.judgment = .acceptable ↔ CoonMateoPedroPreminger2014.Converges r.lastResortClause) ↔
+      ¬ r.DistantSubject ∧ ¬ r.TwoParticipants) := by
   decide
 
 end Erlewine2016
