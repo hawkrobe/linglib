@@ -1,0 +1,2480 @@
+[
+  {
+    "id": "dowty1991_buildSubject",
+    "source": {
+      "bibkey": "dowty-1991",
+      "paperLabel": "(30e)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "John built a house",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "predicate",
+        "build"
+      ],
+      [
+        "argument",
+        "subject"
+      ],
+      [
+        "participant",
+        "the builder"
+      ],
+      [
+        "entails",
+        "volition"
+      ],
+      [
+        "entails",
+        "sentience"
+      ],
+      [
+        "entails",
+        "causation"
+      ],
+      [
+        "entails",
+        "movement"
+      ],
+      [
+        "entails",
+        "independentExistence"
+      ]
+    ],
+    "comment": "pp. 572-573: 'build, for example has all of 27 for subject'; also (35) p. 577",
+    "verified": "text-layer"
+  },
+  {
+    "id": "dowty1991_buildObject",
+    "source": {
+      "bibkey": "dowty-1991",
+      "paperLabel": "(30e)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "John built a house",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "predicate",
+        "build"
+      ],
+      [
+        "argument",
+        "object"
+      ],
+      [
+        "participant",
+        "the thing built (a house)"
+      ],
+      [
+        "entails",
+        "changeOfState"
+      ],
+      [
+        "entails",
+        "incrementalTheme"
+      ],
+      [
+        "entails",
+        "causallyAffected"
+      ],
+      [
+        "entails",
+        "stationary"
+      ],
+      [
+        "entails",
+        "dependentExistence"
+      ]
+    ],
+    "comment": "pp. 572-573: 'all of 28 for object'; (30e) 'John built a house'; also (35) p. 577",
+    "verified": "text-layer"
+  },
+  {
+    "id": "dowty1991_bePoliteSubject",
+    "source": {
+      "bibkey": "dowty-1991",
+      "paperLabel": "(29a)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "John is being polite to Bill",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "predicate",
+        "be polite to"
+      ],
+      [
+        "argument",
+        "subject"
+      ],
+      [
+        "participant",
+        "the polite party"
+      ],
+      [
+        "entails",
+        "volition"
+      ]
+    ],
+    "comment": "(29a) p. 572, 'VOLITION ALONE: John is being polite to Bill'",
+    "verified": "text-layer"
+  },
+  {
+    "id": "dowty1991_ignoreSubject",
+    "source": {
+      "bibkey": "dowty-1991",
+      "paperLabel": "(29a)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "John is ignoring Mary",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "predicate",
+        "ignore"
+      ],
+      [
+        "argument",
+        "subject"
+      ],
+      [
+        "participant",
+        "the ignorer"
+      ],
+      [
+        "entails",
+        "volition"
+      ]
+    ],
+    "comment": "(29a) p. 572, 'is ignoring Mary'",
+    "verified": "text-layer"
+  },
+  {
+    "id": "dowty1991_notEatSubject",
+    "source": {
+      "bibkey": "cruse-1973",
+      "paperLabel": "(32)"
+    },
+    "reportedIn": {
+      "bibkey": "dowty-1991",
+      "paperLabel": "(29a)"
+    },
+    "language": "stan1293",
+    "primaryText": "What he did was not eat anything for two days",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "predicate",
+        "not eat"
+      ],
+      [
+        "argument",
+        "subject"
+      ],
+      [
+        "participant",
+        "the abstainer"
+      ],
+      [
+        "entails",
+        "volition"
+      ]
+    ],
+    "comment": "(29a) p. 572, 'VOLITION ALONE: ... What he did was not eat [anything] for two days (Cruse 1973:18)'",
+    "verified": "text-layer"
+  },
+  {
+    "id": "dowty1991_knowSubject",
+    "source": {
+      "bibkey": "dowty-1991",
+      "paperLabel": "(29b)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "John knows the statement",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "predicate",
+        "know"
+      ],
+      [
+        "argument",
+        "subject"
+      ],
+      [
+        "participant",
+        "the knower"
+      ],
+      [
+        "entails",
+        "sentience"
+      ]
+    ],
+    "comment": "(29b) p. 573, 'SENTIENCE/PERCEPTION ALONE: John knows ... the statement'",
+    "verified": "text-layer"
+  },
+  {
+    "id": "dowty1991_believeSubject",
+    "source": {
+      "bibkey": "dowty-1991",
+      "paperLabel": "(29b)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "John believes the statement",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "predicate",
+        "believe"
+      ],
+      [
+        "argument",
+        "subject"
+      ],
+      [
+        "participant",
+        "the believer"
+      ],
+      [
+        "entails",
+        "sentience"
+      ]
+    ],
+    "comment": "(29b) p. 573",
+    "verified": "text-layer"
+  },
+  {
+    "id": "dowty1991_seeSubject",
+    "source": {
+      "bibkey": "dowty-1991",
+      "paperLabel": "(29b)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "John sees Mary",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "predicate",
+        "see"
+      ],
+      [
+        "argument",
+        "subject"
+      ],
+      [
+        "participant",
+        "the perceiver"
+      ],
+      [
+        "entails",
+        "sentience"
+      ]
+    ],
+    "comment": "(29b) p. 573, 'John sees ... Mary'; p. 573 'the stative perception verbs'",
+    "verified": "text-layer"
+  },
+  {
+    "id": "dowty1991_fearSubject",
+    "source": {
+      "bibkey": "dowty-1991",
+      "paperLabel": "(29b)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "John fears Mary",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "predicate",
+        "fear"
+      ],
+      [
+        "argument",
+        "subject"
+      ],
+      [
+        "participant",
+        "the fearer"
+      ],
+      [
+        "entails",
+        "sentience"
+      ]
+    ],
+    "comment": "(29b) p. 573, 'John ... fears Mary'",
+    "verified": "text-layer"
+  },
+  {
+    "id": "dowty1991_causeSubject",
+    "source": {
+      "bibkey": "dowty-1991",
+      "paperLabel": "(29c)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "His loneliness causes his unhappiness",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "predicate",
+        "cause"
+      ],
+      [
+        "argument",
+        "subject"
+      ],
+      [
+        "participant",
+        "the causing state (his loneliness)"
+      ],
+      [
+        "entails",
+        "causation"
+      ],
+      [
+        "denies",
+        "movement"
+      ]
+    ],
+    "comment": "(29c) p. 573, 'CAUSATION ALONE'; p. 573 'stative causatives ... would fill this slot'",
+    "verified": "text-layer"
+  },
+  {
+    "id": "dowty1991_passSubject",
+    "source": {
+      "bibkey": "dowty-1991",
+      "paperLabel": "(29d)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "The rolling tumbleweed passed the rock",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "predicate",
+        "pass"
+      ],
+      [
+        "argument",
+        "subject"
+      ],
+      [
+        "participant",
+        "the mover (the rolling tumbleweed)"
+      ],
+      [
+        "entails",
+        "movement"
+      ],
+      [
+        "denies",
+        "volition"
+      ],
+      [
+        "denies",
+        "causation"
+      ]
+    ],
+    "comment": "(29d) p. 573; p. 573 'movement is found without causation or volition (29d)'",
+    "verified": "text-layer"
+  },
+  {
+    "id": "dowty1991_overtakeSubject",
+    "source": {
+      "bibkey": "dowty-1991",
+      "paperLabel": "(29d)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "The bullet overtook the arrow",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "predicate",
+        "overtake"
+      ],
+      [
+        "argument",
+        "subject"
+      ],
+      [
+        "participant",
+        "the faster mover (the bullet)"
+      ],
+      [
+        "entails",
+        "movement"
+      ],
+      [
+        "denies",
+        "volition"
+      ],
+      [
+        "denies",
+        "causation"
+      ]
+    ],
+    "comment": "(29d) p. 573, 'The bullet overtook the arrow'",
+    "verified": "text-layer"
+  },
+  {
+    "id": "dowty1991_fillSubject",
+    "source": {
+      "bibkey": "dowty-1991",
+      "paperLabel": "(29d)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Water filled the boat",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "predicate",
+        "fill"
+      ],
+      [
+        "argument",
+        "subject"
+      ],
+      [
+        "participant",
+        "the filling substance (water)"
+      ],
+      [
+        "entails",
+        "movement"
+      ],
+      [
+        "denies",
+        "volition"
+      ],
+      [
+        "denies",
+        "causation"
+      ]
+    ],
+    "comment": "(29d) p. 573, 'Water filled the boat'",
+    "verified": "text-layer"
+  },
+  {
+    "id": "dowty1991_fallSubject",
+    "source": {
+      "bibkey": "dowty-1991",
+      "paperLabel": "(29d)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "He accidentally fell",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "predicate",
+        "fall"
+      ],
+      [
+        "argument",
+        "subject"
+      ],
+      [
+        "participant",
+        "the faller"
+      ],
+      [
+        "entails",
+        "movement"
+      ],
+      [
+        "denies",
+        "volition"
+      ],
+      [
+        "denies",
+        "causation"
+      ]
+    ],
+    "comment": "(29d) p. 573, 'He accidentally fell'",
+    "verified": "text-layer"
+  },
+  {
+    "id": "dowty1991_needSubject",
+    "source": {
+      "bibkey": "dowty-1991",
+      "paperLabel": "(29e)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "John needs a new car",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "predicate",
+        "need"
+      ],
+      [
+        "argument",
+        "subject"
+      ],
+      [
+        "participant",
+        "the needer"
+      ],
+      [
+        "entails",
+        "independentExistence"
+      ],
+      [
+        "denies",
+        "volition"
+      ],
+      [
+        "denies",
+        "sentience"
+      ],
+      [
+        "denies",
+        "causation"
+      ],
+      [
+        "denies",
+        "movement"
+      ]
+    ],
+    "comment": "(29e) p. 573, 'John needs a new car'; p. 573 'verbs that entail subject existence but have none of (a)-(d)'",
+    "verified": "text-layer"
+  },
+  {
+    "id": "dowty1991_makeObject",
+    "source": {
+      "bibkey": "dowty-1991",
+      "paperLabel": "(30a)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "John made a mistake",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "predicate",
+        "make"
+      ],
+      [
+        "argument",
+        "object"
+      ],
+      [
+        "participant",
+        "the thing made (a mistake)"
+      ],
+      [
+        "entails",
+        "changeOfState"
+      ],
+      [
+        "entails",
+        "dependentExistence"
+      ]
+    ],
+    "comment": "(30a) p. 573, 'John made a mistake (coming into being, therefore also 30e below)'",
+    "verified": "text-layer"
+  },
+  {
+    "id": "dowty1991_moveObject",
+    "source": {
+      "bibkey": "dowty-1991",
+      "paperLabel": "(30a)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "John moved the rock",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "predicate",
+        "move"
+      ],
+      [
+        "argument",
+        "object"
+      ],
+      [
+        "participant",
+        "the thing moved (the rock)"
+      ],
+      [
+        "entails",
+        "changeOfState"
+      ]
+    ],
+    "comment": "(30a) p. 573, 'John moved the rock (indefinite change of position)'",
+    "verified": "text-layer"
+  },
+  {
+    "id": "dowty1991_eraseObject",
+    "source": {
+      "bibkey": "dowty-1991",
+      "paperLabel": "(30a)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "John erased the error",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "predicate",
+        "erase"
+      ],
+      [
+        "argument",
+        "object"
+      ],
+      [
+        "participant",
+        "the thing erased (the error)"
+      ],
+      [
+        "entails",
+        "changeOfState"
+      ],
+      [
+        "entails",
+        "dependentExistence"
+      ]
+    ],
+    "comment": "(30a) p. 573 'erased the error (ceasing to exist)'; (30e) pp. 573-574",
+    "verified": "text-layer"
+  },
+  {
+    "id": "dowty1991_crossObject",
+    "source": {
+      "bibkey": "dowty-1991",
+      "paperLabel": "(30b)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "John crossed the driveway",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "predicate",
+        "cross"
+      ],
+      [
+        "argument",
+        "object"
+      ],
+      [
+        "participant",
+        "the path crossed (the driveway)"
+      ],
+      [
+        "entails",
+        "incrementalTheme"
+      ],
+      [
+        "entails",
+        "stationary"
+      ]
+    ],
+    "comment": "(30b) p. 573, 'John crossed the driveway ... (also stationary relative to other arguments)'",
+    "verified": "text-layer"
+  },
+  {
+    "id": "dowty1991_fillObject",
+    "source": {
+      "bibkey": "dowty-1991",
+      "paperLabel": "(30b)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "John filled the glass with water",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "predicate",
+        "fill"
+      ],
+      [
+        "argument",
+        "object"
+      ],
+      [
+        "participant",
+        "the container filled (the glass)"
+      ],
+      [
+        "entails",
+        "incrementalTheme"
+      ],
+      [
+        "entails",
+        "stationary"
+      ]
+    ],
+    "comment": "(30b) p. 573, 'filled the glass with water'",
+    "verified": "text-layer"
+  },
+  {
+    "id": "dowty1991_causeObject",
+    "source": {
+      "bibkey": "dowty-1991",
+      "paperLabel": "(30c)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Smoking causes cancer",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "predicate",
+        "cause"
+      ],
+      [
+        "argument",
+        "object"
+      ],
+      [
+        "participant",
+        "the caused condition (cancer)"
+      ],
+      [
+        "entails",
+        "causallyAffected"
+      ]
+    ],
+    "comment": "(30c) p. 573, 'CAUSALLY AFFECTED: Smoking causes cancer'",
+    "verified": "text-layer"
+  },
+  {
+    "id": "dowty1991_enterObject",
+    "source": {
+      "bibkey": "dowty-1991",
+      "paperLabel": "(30d)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "The bullet entered the target",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "predicate",
+        "enter"
+      ],
+      [
+        "argument",
+        "object"
+      ],
+      [
+        "participant",
+        "the target entered"
+      ],
+      [
+        "entails",
+        "stationary"
+      ]
+    ],
+    "comment": "(30d) p. 573, 'The bullet entered the target'",
+    "verified": "text-layer"
+  },
+  {
+    "id": "dowty1991_overtakeObject",
+    "source": {
+      "bibkey": "dowty-1991",
+      "paperLabel": "(30d)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "The bullet overtook the arrow",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "predicate",
+        "overtake"
+      ],
+      [
+        "argument",
+        "object"
+      ],
+      [
+        "participant",
+        "the slower mover (the arrow)"
+      ],
+      [
+        "entails",
+        "stationary"
+      ]
+    ],
+    "comment": "(30d) p. 573; cf. p. 573 'only be stationary from the faster first object's perspective'",
+    "verified": "text-layer"
+  },
+  {
+    "id": "dowty1991_constituteObject",
+    "source": {
+      "bibkey": "dowty-1991",
+      "paperLabel": "(30e)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "This situation constitutes a major dilemma for us",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "predicate",
+        "constitute"
+      ],
+      [
+        "argument",
+        "object"
+      ],
+      [
+        "participant",
+        "the constituted state (a major dilemma)"
+      ],
+      [
+        "entails",
+        "dependentExistence"
+      ]
+    ],
+    "comment": "(30e) pp. 573-574, 'This situation constitutes a major dilemma for us'",
+    "verified": "text-layer"
+  },
+  {
+    "id": "dowty1991_needObject",
+    "source": {
+      "bibkey": "dowty-1991",
+      "paperLabel": "(30e)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "John needs a car",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "predicate",
+        "need"
+      ],
+      [
+        "argument",
+        "object"
+      ],
+      [
+        "participant",
+        "the thing needed (a car, de dicto)"
+      ],
+      [
+        "entails",
+        "dependentExistence"
+      ]
+    ],
+    "comment": "(30e) p. 574, 'John needs a car ... (de dicto objects: no existence)'",
+    "verified": "text-layer"
+  },
+  {
+    "id": "dowty1991_seekObject",
+    "source": {
+      "bibkey": "dowty-1991",
+      "paperLabel": "(30e)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "John seeks a unicorn",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "predicate",
+        "seek"
+      ],
+      [
+        "argument",
+        "object"
+      ],
+      [
+        "participant",
+        "the thing sought (a unicorn, de dicto)"
+      ],
+      [
+        "entails",
+        "dependentExistence"
+      ]
+    ],
+    "comment": "(30e) p. 574, 'seeks a unicorn'",
+    "verified": "text-layer"
+  },
+  {
+    "id": "dowty1991_lackObject",
+    "source": {
+      "bibkey": "dowty-1991",
+      "paperLabel": "(30e)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "John lacks enough money to buy it",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "predicate",
+        "lack"
+      ],
+      [
+        "argument",
+        "object"
+      ],
+      [
+        "participant",
+        "the thing lacked (de dicto)"
+      ],
+      [
+        "entails",
+        "dependentExistence"
+      ]
+    ],
+    "comment": "(30e) p. 574, 'lacks enough money to buy it'",
+    "verified": "text-layer"
+  },
+  {
+    "id": "dowty1991_writeSubject",
+    "source": {
+      "bibkey": "dowty-1991",
+      "paperLabel": "(35)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "write a letter",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "predicate",
+        "write"
+      ],
+      [
+        "argument",
+        "subject"
+      ],
+      [
+        "participant",
+        "the writer"
+      ],
+      [
+        "entails",
+        "volition"
+      ],
+      [
+        "entails",
+        "sentience"
+      ],
+      [
+        "entails",
+        "causation"
+      ],
+      [
+        "entails",
+        "movement"
+      ],
+      [
+        "denies",
+        "changeOfState"
+      ],
+      [
+        "denies",
+        "incrementalTheme"
+      ],
+      [
+        "denies",
+        "causallyAffected"
+      ],
+      [
+        "denies",
+        "stationary"
+      ],
+      [
+        "denies",
+        "dependentExistence"
+      ]
+    ],
+    "comment": "(35) p. 577: subjects have 'volition, sentience, causation, and movement ... and no P-Patient entailments'",
+    "verified": "text-layer"
+  },
+  {
+    "id": "dowty1991_murderSubject",
+    "source": {
+      "bibkey": "dowty-1991",
+      "paperLabel": "(35)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "murder",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "predicate",
+        "murder"
+      ],
+      [
+        "argument",
+        "subject"
+      ],
+      [
+        "participant",
+        "the murderer"
+      ],
+      [
+        "entails",
+        "volition"
+      ],
+      [
+        "entails",
+        "sentience"
+      ],
+      [
+        "entails",
+        "causation"
+      ],
+      [
+        "entails",
+        "movement"
+      ],
+      [
+        "denies",
+        "changeOfState"
+      ],
+      [
+        "denies",
+        "incrementalTheme"
+      ],
+      [
+        "denies",
+        "causallyAffected"
+      ],
+      [
+        "denies",
+        "stationary"
+      ],
+      [
+        "denies",
+        "dependentExistence"
+      ]
+    ],
+    "comment": "(35) p. 577",
+    "verified": "text-layer"
+  },
+  {
+    "id": "dowty1991_eatSubject",
+    "source": {
+      "bibkey": "dowty-1991",
+      "paperLabel": "(35)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "eat",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "predicate",
+        "eat"
+      ],
+      [
+        "argument",
+        "subject"
+      ],
+      [
+        "participant",
+        "the eater"
+      ],
+      [
+        "entails",
+        "volition"
+      ],
+      [
+        "entails",
+        "sentience"
+      ],
+      [
+        "entails",
+        "causation"
+      ],
+      [
+        "entails",
+        "movement"
+      ],
+      [
+        "denies",
+        "changeOfState"
+      ],
+      [
+        "denies",
+        "incrementalTheme"
+      ],
+      [
+        "denies",
+        "causallyAffected"
+      ],
+      [
+        "denies",
+        "stationary"
+      ],
+      [
+        "denies",
+        "dependentExistence"
+      ]
+    ],
+    "comment": "(35) p. 577",
+    "verified": "text-layer"
+  },
+  {
+    "id": "dowty1991_washSubject",
+    "source": {
+      "bibkey": "dowty-1991",
+      "paperLabel": "(35)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "wash a plate",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "predicate",
+        "wash"
+      ],
+      [
+        "argument",
+        "subject"
+      ],
+      [
+        "participant",
+        "the washer"
+      ],
+      [
+        "entails",
+        "volition"
+      ],
+      [
+        "entails",
+        "sentience"
+      ],
+      [
+        "entails",
+        "causation"
+      ],
+      [
+        "entails",
+        "movement"
+      ],
+      [
+        "denies",
+        "changeOfState"
+      ],
+      [
+        "denies",
+        "incrementalTheme"
+      ],
+      [
+        "denies",
+        "causallyAffected"
+      ],
+      [
+        "denies",
+        "stationary"
+      ],
+      [
+        "denies",
+        "dependentExistence"
+      ]
+    ],
+    "comment": "(35) p. 577",
+    "verified": "text-layer"
+  },
+  {
+    "id": "dowty1991_writeObject",
+    "source": {
+      "bibkey": "dowty-1991",
+      "paperLabel": "(35)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "write a letter",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "predicate",
+        "write"
+      ],
+      [
+        "argument",
+        "object"
+      ],
+      [
+        "participant",
+        "the thing written (a letter)"
+      ],
+      [
+        "entails",
+        "changeOfState"
+      ],
+      [
+        "entails",
+        "causallyAffected"
+      ]
+    ],
+    "comment": "(35) p. 577: objects have 'change, causally affected, and (mostly) incremental theme, stationary, dependent existence'",
+    "verified": "text-layer"
+  },
+  {
+    "id": "dowty1991_murderObject",
+    "source": {
+      "bibkey": "dowty-1991",
+      "paperLabel": "(35)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "murder",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "predicate",
+        "murder"
+      ],
+      [
+        "argument",
+        "object"
+      ],
+      [
+        "participant",
+        "the victim"
+      ],
+      [
+        "entails",
+        "changeOfState"
+      ],
+      [
+        "entails",
+        "causallyAffected"
+      ]
+    ],
+    "comment": "(35) p. 577",
+    "verified": "text-layer"
+  },
+  {
+    "id": "dowty1991_eatObject",
+    "source": {
+      "bibkey": "dowty-1991",
+      "paperLabel": "(35)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "eat",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "predicate",
+        "eat"
+      ],
+      [
+        "argument",
+        "object"
+      ],
+      [
+        "participant",
+        "the thing eaten"
+      ],
+      [
+        "entails",
+        "changeOfState"
+      ],
+      [
+        "entails",
+        "causallyAffected"
+      ]
+    ],
+    "comment": "(35) p. 577",
+    "verified": "text-layer"
+  },
+  {
+    "id": "dowty1991_washObject",
+    "source": {
+      "bibkey": "dowty-1991",
+      "paperLabel": "(35)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "wash a plate",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "predicate",
+        "wash"
+      ],
+      [
+        "argument",
+        "object"
+      ],
+      [
+        "participant",
+        "the thing washed (a plate)"
+      ],
+      [
+        "entails",
+        "changeOfState"
+      ],
+      [
+        "entails",
+        "causallyAffected"
+      ]
+    ],
+    "comment": "(35) p. 577",
+    "verified": "text-layer"
+  },
+  {
+    "id": "dowty1991_buySubject",
+    "source": {
+      "bibkey": "dowty-1991",
+      "paperLabel": "(4b)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Mary bought the piano from John for $1,000",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "predicate",
+        "buy"
+      ],
+      [
+        "argument",
+        "subject"
+      ],
+      [
+        "participant",
+        "the buyer"
+      ],
+      [
+        "entails",
+        "volition"
+      ]
+    ],
+    "comment": "sec. 3.2 p. 556: 'both buyer and seller must act agentively (voluntarily)'",
+    "verified": "text-layer"
+  },
+  {
+    "id": "dowty1991_buySeller",
+    "source": {
+      "bibkey": "dowty-1991",
+      "paperLabel": "(4b)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Mary bought the piano from John for $1,000",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "predicate",
+        "buy"
+      ],
+      [
+        "argument",
+        "oblique"
+      ],
+      [
+        "participant",
+        "the seller (from-phrase)"
+      ],
+      [
+        "entails",
+        "volition"
+      ]
+    ],
+    "comment": "sec. 3.2 p. 556; (4b) 'Mary bought the piano from John'",
+    "verified": "text-layer"
+  },
+  {
+    "id": "dowty1991_sellSubject",
+    "source": {
+      "bibkey": "dowty-1991",
+      "paperLabel": "(4a)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "John sold the piano to Mary for $1,000",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "predicate",
+        "sell"
+      ],
+      [
+        "argument",
+        "subject"
+      ],
+      [
+        "participant",
+        "the seller"
+      ],
+      [
+        "entails",
+        "volition"
+      ]
+    ],
+    "comment": "sec. 3.2 p. 556; (4a) 'John sold the piano to Mary'",
+    "verified": "text-layer"
+  },
+  {
+    "id": "dowty1991_sellBuyer",
+    "source": {
+      "bibkey": "dowty-1991",
+      "paperLabel": "(4a)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "John sold the piano to Mary for $1,000",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "predicate",
+        "sell"
+      ],
+      [
+        "argument",
+        "oblique"
+      ],
+      [
+        "participant",
+        "the buyer (to-phrase)"
+      ],
+      [
+        "entails",
+        "volition"
+      ]
+    ],
+    "comment": "sec. 3.2 p. 556",
+    "verified": "text-layer"
+  },
+  {
+    "id": "dowty1991_likeSubject",
+    "source": {
+      "bibkey": "dowty-1991",
+      "paperLabel": "(38)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "x likes y",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "predicate",
+        "like"
+      ],
+      [
+        "argument",
+        "subject"
+      ],
+      [
+        "participant",
+        "the experiencer"
+      ],
+      [
+        "entails",
+        "sentience"
+      ]
+    ],
+    "comment": "(38) p. 579: 'the Experiencer is entailed to be sentient/perceiving'",
+    "verified": "text-layer"
+  },
+  {
+    "id": "dowty1991_likeObject",
+    "source": {
+      "bibkey": "dowty-1991",
+      "paperLabel": "(38)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "x likes y",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "predicate",
+        "like"
+      ],
+      [
+        "argument",
+        "object"
+      ],
+      [
+        "participant",
+        "the stimulus"
+      ],
+      [
+        "entails",
+        "causation"
+      ],
+      [
+        "denies",
+        "sentience"
+      ]
+    ],
+    "comment": "(38) p. 579: 'the Stimulus causes some emotional reaction or cognitive judgment in the Experiencer', 'though the Stimulus is not [sentient/perceiving]'",
+    "verified": "text-layer"
+  },
+  {
+    "id": "dowty1991_pleaseSubject",
+    "source": {
+      "bibkey": "dowty-1991",
+      "paperLabel": "(38)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "y pleases x",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "predicate",
+        "please"
+      ],
+      [
+        "argument",
+        "subject"
+      ],
+      [
+        "participant",
+        "the stimulus"
+      ],
+      [
+        "entails",
+        "causation"
+      ],
+      [
+        "denies",
+        "sentience"
+      ]
+    ],
+    "comment": "(38) p. 579 (stimulus-subject column)",
+    "verified": "text-layer"
+  },
+  {
+    "id": "dowty1991_pleaseObject",
+    "source": {
+      "bibkey": "dowty-1991",
+      "paperLabel": "(38)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "y pleases x",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "predicate",
+        "please"
+      ],
+      [
+        "argument",
+        "object"
+      ],
+      [
+        "participant",
+        "the experiencer"
+      ],
+      [
+        "entails",
+        "sentience"
+      ]
+    ],
+    "comment": "(38) p. 579",
+    "verified": "text-layer"
+  },
+  {
+    "id": "dowty1991_surpriseObjectInchoative",
+    "source": {
+      "bibkey": "dowty-1991",
+      "paperLabel": "(38)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "y surprises x",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "predicate",
+        "surprise (inchoative)"
+      ],
+      [
+        "argument",
+        "object"
+      ],
+      [
+        "participant",
+        "the experiencer (coming to be surprised)"
+      ],
+      [
+        "entails",
+        "sentience"
+      ],
+      [
+        "entails",
+        "changeOfState"
+      ]
+    ],
+    "comment": "p. 580: 'the inchoative interpretation entails a Proto-Patient property in the Experiencer ... undergoing a (definite) change of state'",
+    "verified": "text-layer"
+  },
+  {
+    "id": "dowty1991_hitObject",
+    "source": {
+      "bibkey": "dowty-1991",
+      "paperLabel": "(62a)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "John hit the fence with the stick",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "predicate",
+        "hit"
+      ],
+      [
+        "argument",
+        "object"
+      ],
+      [
+        "participant",
+        "the location (the fence)"
+      ],
+      [
+        "denies",
+        "movement"
+      ],
+      [
+        "denies",
+        "changeOfState"
+      ],
+      [
+        "denies",
+        "incrementalTheme"
+      ]
+    ],
+    "comment": "sec. 9.3.3 p. 595: 'neither object can be a (nontrivial) Incremental Theme'; pp. 595-596: movement entailed for the prepositional argument 'but not its direct-object argument'; p. 596: 'no entailments of change of state'",
+    "verified": "text-layer"
+  },
+  {
+    "id": "dowty1991_hitInstrument",
+    "source": {
+      "bibkey": "dowty-1991",
+      "paperLabel": "(62a)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "John hit the fence with the stick",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "predicate",
+        "hit"
+      ],
+      [
+        "argument",
+        "oblique"
+      ],
+      [
+        "participant",
+        "the instrument (the stick)"
+      ],
+      [
+        "entails",
+        "movement"
+      ],
+      [
+        "denies",
+        "changeOfState"
+      ],
+      [
+        "denies",
+        "incrementalTheme"
+      ]
+    ],
+    "comment": "sec. 9.3.3 pp. 595-596: 'hit the fence with the stick entails movement for its prepositional argument'",
+    "verified": "text-layer"
+  },
+  {
+    "id": "dowty1991_breakObject",
+    "source": {
+      "bibkey": "dowty-1991",
+      "paperLabel": "(63a)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "John broke the fence with the stick",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "predicate",
+        "break"
+      ],
+      [
+        "argument",
+        "object"
+      ],
+      [
+        "participant",
+        "the thing broken"
+      ],
+      [
+        "entails",
+        "changeOfState"
+      ],
+      [
+        "entails",
+        "incrementalTheme"
+      ]
+    ],
+    "comment": "(64 II) p. 595: 'entails change of state (and Incremental Themehood) in only one argument'",
+    "verified": "text-layer"
+  },
+  {
+    "id": "dowty1991_loadTheme",
+    "source": {
+      "bibkey": "dowty-1991",
+      "paperLabel": "(49a)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Mary loaded the hay onto the truck",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "predicate",
+        "load"
+      ],
+      [
+        "argument",
+        "nonsubject"
+      ],
+      [
+        "participant",
+        "the locatum (the hay)"
+      ],
+      [
+        "entails",
+        "changeOfState"
+      ]
+    ],
+    "comment": "p. 594: 'in loading a truck with hay, the hay changes location'; (64 I) p. 595: 'entail change of state in both arguments'",
+    "verified": "text-layer"
+  },
+  {
+    "id": "dowty1991_loadLocation",
+    "source": {
+      "bibkey": "dowty-1991",
+      "paperLabel": "(49a)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Mary loaded the hay onto the truck",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "predicate",
+        "load"
+      ],
+      [
+        "argument",
+        "nonsubject"
+      ],
+      [
+        "participant",
+        "the location (the truck)"
+      ],
+      [
+        "entails",
+        "changeOfState"
+      ]
+    ],
+    "comment": "p. 594: 'the truck also changes from an unloaded to a loaded state'; (64 I) p. 595",
+    "verified": "text-layer"
+  },
+  {
+    "id": "dowty1991_kissSubject",
+    "source": {
+      "bibkey": "dowty-1991",
+      "paperLabel": "(43)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Kim kissed Sandy",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "predicate",
+        "kiss"
+      ],
+      [
+        "argument",
+        "subject"
+      ],
+      [
+        "participant",
+        "the kisser"
+      ],
+      [
+        "entails",
+        "volition"
+      ]
+    ],
+    "comment": "sec. 9.1 p. 585: 'If volition is entailed at all, it is entailed for the subject argument'; (43) 'Kim kissed Sandy'",
+    "verified": "text-layer"
+  },
+  {
+    "id": "dowty1991_kissObject",
+    "source": {
+      "bibkey": "dowty-1991",
+      "paperLabel": "(43)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Kim kissed Sandy",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "predicate",
+        "kiss"
+      ],
+      [
+        "argument",
+        "object"
+      ],
+      [
+        "participant",
+        "the one kissed"
+      ],
+      [
+        "denies",
+        "volition"
+      ]
+    ],
+    "comment": "sec. 9.1 p. 585: 'there is no verb that entails volition for object but not subject'; (41b) '#The drunk and the lamppost embraced'",
+    "verified": "text-layer"
+  },
+  {
+    "id": "dowty1991_collideSubject",
+    "source": {
+      "bibkey": "dowty-1991",
+      "paperLabel": "(45a)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "The truck collided with the lamppost",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "predicate",
+        "collide with"
+      ],
+      [
+        "argument",
+        "subject"
+      ],
+      [
+        "participant",
+        "the moving body (the truck)"
+      ],
+      [
+        "entails",
+        "movement"
+      ]
+    ],
+    "comment": "(45a) p. 585: '45a entails only that the truck was in motion in the event of collision'",
+    "verified": "text-layer"
+  },
+  {
+    "id": "dowty1991_collideObject",
+    "source": {
+      "bibkey": "dowty-1991",
+      "paperLabel": "(45a)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "The truck collided with the lamppost",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "predicate",
+        "collide with"
+      ],
+      [
+        "argument",
+        "oblique"
+      ],
+      [
+        "participant",
+        "the body collided with (the lamppost)"
+      ],
+      [
+        "denies",
+        "movement"
+      ]
+    ],
+    "comment": "(45a) p. 585, against (45b), which 'entails that both the truck and the lamppost were in motion'",
+    "verified": "text-layer"
+  },
+  {
+    "id": "dowty1991_surpriseSubject",
+    "source": {
+      "bibkey": "dowty-1991",
+      "paperLabel": "(38)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "y surprises x",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "predicate",
+        "surprise"
+      ],
+      [
+        "argument",
+        "subject"
+      ],
+      [
+        "participant",
+        "the stimulus"
+      ],
+      [
+        "entails",
+        "causation"
+      ],
+      [
+        "denies",
+        "sentience"
+      ]
+    ],
+    "comment": "(38) p. 579, stimulus-subject column 'y surprises x': 'the Stimulus causes some emotional reaction or cognitive judgment in the Experiencer', 'though the Stimulus is not' sentient/perceiving",
+    "verified": "text-layer"
+  },
+  {
+    "id": "dowty1991_breakInstrument",
+    "source": {
+      "bibkey": "dowty-1991",
+      "paperLabel": "(63a)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "John broke the fence with the stick",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "predicate",
+        "break"
+      ],
+      [
+        "argument",
+        "oblique"
+      ],
+      [
+        "participant",
+        "the instrument (the stick in 63a)"
+      ],
+      [
+        "denies",
+        "changeOfState"
+      ],
+      [
+        "denies",
+        "incrementalTheme"
+      ]
+    ],
+    "comment": "(63a) p. 594; (64 II) p. 595: 'entails change of state (and Incremental Themehood) in only one argument'",
+    "verified": "text-layer"
+  },
+  {
+    "id": "dowty1991_putTheme",
+    "source": {
+      "bibkey": "dowty-1991",
+      "paperLabel": "§8.2"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "John put the lamp on the table",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "predicate",
+        "put"
+      ],
+      [
+        "argument",
+        "object"
+      ],
+      [
+        "participant",
+        "the lamp"
+      ],
+      [
+        "entails",
+        "changeOfState"
+      ],
+      [
+        "entails",
+        "causallyAffected"
+      ]
+    ],
+    "comment": "sec. 8.2 p. 578: 'The lamp undergoes a change of position and is causally affected'",
+    "verified": "text-layer"
+  },
+  {
+    "id": "dowty1991_putGoal",
+    "source": {
+      "bibkey": "dowty-1991",
+      "paperLabel": "§8.2"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "John put the lamp on the table",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "predicate",
+        "put"
+      ],
+      [
+        "argument",
+        "oblique"
+      ],
+      [
+        "participant",
+        "the table"
+      ],
+      [
+        "entails",
+        "stationary"
+      ]
+    ],
+    "comment": "sec. 8.2 p. 578: 'the box and table remain stationary and relatively unaffected'",
+    "verified": "text-layer"
+  },
+  {
+    "id": "dowty1991_removeTheme",
+    "source": {
+      "bibkey": "dowty-1991",
+      "paperLabel": "§8.2"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "John removed the lamp from the box",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "predicate",
+        "remove"
+      ],
+      [
+        "argument",
+        "object"
+      ],
+      [
+        "participant",
+        "the lamp"
+      ],
+      [
+        "entails",
+        "changeOfState"
+      ],
+      [
+        "entails",
+        "causallyAffected"
+      ]
+    ],
+    "comment": "sec. 8.2 p. 578: 'The lamp undergoes a change of position and is causally affected'",
+    "verified": "text-layer"
+  },
+  {
+    "id": "dowty1991_removeSource",
+    "source": {
+      "bibkey": "dowty-1991",
+      "paperLabel": "§8.2"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "John removed the lamp from the box",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "predicate",
+        "remove"
+      ],
+      [
+        "argument",
+        "oblique"
+      ],
+      [
+        "participant",
+        "the box"
+      ],
+      [
+        "entails",
+        "stationary"
+      ]
+    ],
+    "comment": "sec. 8.2 p. 578: 'the box and table remain stationary and relatively unaffected'",
+    "verified": "text-layer"
+  }
+]

@@ -2,7 +2,7 @@ module
 
 public import Linglib.Semantics.ArgumentStructure.Projection
 public import Linglib.Semantics.ArgumentStructure.RoleList
-public import Linglib.Data.ProtoRoles.Dowty1991
+public import Linglib.Data.Examples.Dowty1991
 
 /-!
 # Dowty (1991): Thematic proto-roles and argument selection
@@ -11,7 +11,7 @@ Dowty replaces thematic roles by two cluster concepts, the Proto-Agent and the P
 each a list of five entailments a predicate may impose on an argument, (27) and (28). The
 Argument Selection Principle (31) lexicalizes as subject the argument with the most
 Proto-Agent entailments and as direct object the one with the most Proto-Patient entailments.
-Every argument profile here is read off a row of `Data/ProtoRoles/Dowty1991.json`, from the
+Every argument profile here is read off a row of `Data/Examples/Dowty1991.json`, from the
 single-entailment exemplars of (29) and (30) to the three verb classes of (64).
 
 ## Main results
@@ -29,9 +29,10 @@ single-entailment exemplars of (29) and (30) to the three verb classes of (64).
 
 ## Implementation notes
 
-A row's profile takes the attributions it states and treats what the paper leaves open as
-absent, so the principle compares counts of stated entailments; the parenthesized (27e) and (28e)
-count like the others. `Outranks` reads the Proto-Agent clause of (31) first and lets the
+A row attributes some entailments to its argument and denies others; the profiles agreeing with
+it form the interval between the two, and the profile the principle compares is the bottom of that
+interval, so counts are of stated entailments; the parenthesized (27e) and (28e) count like the
+others. `Outranks` reads the Proto-Agent clause of (31) first and lets the
 Proto-Patient clause decide ties, and "approximately equal" in the corollaries is read as equal.
 The incremental theme homomorphism of §6 and the material of §11 are not represented.
 
@@ -48,40 +49,45 @@ namespace Dowty1991
 open ArgumentStructure
 open scoped Finset
 
-/-! ### The profile a row states -/
+/-! ### What a row attributes -/
 
-/-- The attribution a row makes about one entailment, stated present, stated absent, or left
-open. -/
-def ProtoRoleDatum.stated (d : ProtoRoleDatum) : ProtoRoleFeature → Option Bool
-  | .volition => d.volition
-  | .sentience => d.sentience
-  | .causation => d.causation
-  | .movement => d.movement
-  | .independentExistence => d.independentExistence
-  | .changeOfState => d.changeOfState
-  | .incrementalTheme => d.incrementalTheme
-  | .causallyAffected => d.causallyAffected
-  | .stationary => d.stationary
-  | .dependentExistence => d.dependentExistence
+/-- The entailments by their `paperFeatures` labels. -/
+def featureLabels : List (String × ProtoRoleFeature) :=
+  [("volition", .volition), ("sentience", .sentience), ("causation", .causation),
+   ("movement", .movement), ("independentExistence", .independentExistence),
+   ("changeOfState", .changeOfState), ("incrementalTheme", .incrementalTheme),
+   ("causallyAffected", .causallyAffected), ("stationary", .stationary),
+   ("dependentExistence", .dependentExistence)]
 
-/-- The profile of a row's stated attributions, with what the paper leaves open absent. -/
-def ProtoRoleDatum.profile (d : ProtoRoleDatum) : EntailmentProfile :=
-  Finset.univ.filter fun f ↦ (d.stated f).getD false = true
+/-- The entailments a row attributes to its argument. -/
+def entailed (e : Datum) : EntailmentProfile :=
+  ((e.features "entails").filterMap (List.lookup · featureLabels)).toFinset
 
-@[simp] theorem ProtoRoleDatum.mem_profile {d : ProtoRoleDatum} {f : ProtoRoleFeature} :
-    f ∈ d.profile ↔ (d.stated f).getD false = true := by
-  simp [ProtoRoleDatum.profile]
+/-- The entailments a row denies of its argument. -/
+def denied (e : Datum) : EntailmentProfile :=
+  ((e.features "denies").filterMap (List.lookup · featureLabels)).toFinset
 
-/-- A profile agrees with every entailment a row states; what the row leaves open is
+/-- Every attribution names one of the ten entailments. -/
+theorem lookup_isSome : ∀ e ∈ Examples.all, ∀ s ∈ e.features "entails" ++ e.features "denies",
+    (List.lookup s featureLabels).isSome := by
+  decide
+
+/-- No row both attributes and denies an entailment. -/
+theorem disjoint_entailed_denied : ∀ e ∈ Examples.all, Disjoint (entailed e) (denied e) := by
+  decide
+
+/-- A profile agrees with a row when it imposes every entailment the row attributes and none it
+denies, so that the profiles agreeing with a row form an interval; what the row leaves open is
 unconstrained. -/
-def Matches (d : ProtoRoleDatum) (p : EntailmentProfile) : Prop :=
-  ∀ f, ∀ b ∈ d.stated f, (f ∈ p ↔ b = true)
+def Matches (e : Datum) (p : EntailmentProfile) : Prop := p ∈ Set.Icc (entailed e) (denied e)ᶜ
 
-instance (d : ProtoRoleDatum) (p : EntailmentProfile) : Decidable (Matches d p) := by
-  unfold Matches; infer_instance
+instance (e : Datum) (p : EntailmentProfile) : Decidable (Matches e p) :=
+  inferInstanceAs (Decidable (_ ≤ _ ∧ _ ≤ _))
 
-theorem matches_profile (d : ProtoRoleDatum) : Matches d d.profile := fun f b h ↦ by
-  simp [Option.mem_def.1 h]
+/-- A row's attributions agree with it, its denials being disjoint from them. -/
+theorem matches_entailed {e : Datum} (h : Disjoint (entailed e) (denied e)) :
+    Matches e (entailed e) :=
+  ⟨le_rfl, h.le_compl_right⟩
 
 /-! ### The selection principle and its corollaries, (31) to (34) -/
 
@@ -139,47 +145,47 @@ theorem hierarchies :
 /-- In the primary transitive verbs of (35) a subject with four Proto-Agent entailments and no
 Proto-Patient entailment faces an object with the reverse, and (31) selects outright. -/
 theorem primary_transitives :
-    Outranks Rows.buildSubject.profile Rows.buildObject.profile ∧
-      Outranks Rows.writeSubject.profile Rows.writeObject.profile ∧
-      Outranks Rows.murderSubject.profile Rows.murderObject.profile ∧
-      Outranks Rows.eatSubject.profile Rows.eatObject.profile ∧
-      Outranks Rows.washSubject.profile Rows.washObject.profile := by
+    Outranks (entailed Examples.buildSubject) (entailed Examples.buildObject) ∧
+      Outranks (entailed Examples.writeSubject) (entailed Examples.writeObject) ∧
+      Outranks (entailed Examples.murderSubject) (entailed Examples.murderObject) ∧
+      Outranks (entailed Examples.eatSubject) (entailed Examples.eatObject) ∧
+      Outranks (entailed Examples.washSubject) (entailed Examples.washObject) := by
   decide
 
 /-- By Corollary 2, the theme of *put* and *remove*, changed and affected, outranks the
 stationary goal or source for direct object (§8.2). -/
 theorem put_remove :
-    DirectObjectOver Rows.putTheme.profile Rows.putGoal.profile ∧
-      DirectObjectOver Rows.removeTheme.profile Rows.removeSource.profile := by
+    DirectObjectOver (entailed Examples.putTheme) (entailed Examples.putGoal) ∧
+      DirectObjectOver (entailed Examples.removeTheme) (entailed Examples.removeSource) := by
   decide
 
 /-- Buyer and seller are both volitional and otherwise alike, so *buy* and *sell* are licensed
 as a doublet (§3.2, §8.3). -/
-theorem buy_sell : Alternates Rows.buySubject.profile Rows.buySeller.profile ∧
-    Alternates Rows.sellSubject.profile Rows.sellBuyer.profile := by
+theorem buy_sell : Alternates (entailed Examples.buySubject) (entailed Examples.buySeller) ∧
+    Alternates (entailed Examples.sellSubject) (entailed Examples.sellBuyer) := by
   decide
 
 /-- The experiencer is sentient and the stimulus causal, one Proto-Agent entailment each, so
 *like* and *please* tie (38). -/
 theorem psych_doublet :
-    Alternates Rows.likeSubject.profile Rows.likeObject.profile ∧
-      Alternates Rows.pleaseObject.profile Rows.pleaseSubject.profile := by
+    Alternates (entailed Examples.likeSubject) (entailed Examples.likeObject) ∧
+      Alternates (entailed Examples.pleaseObject) (entailed Examples.pleaseSubject) := by
   decide
 
 /-- Under the inchoative interpretation the experiencer undergoes a change of state, the
 Proto-Patient entailment that selects the stimulus as subject, which is Croft's generalization
 that only stimulus-subject psych verbs take the inchoative reading (§9.2). -/
 theorem inchoative_stimulus_subject :
-    Outranks Rows.surpriseSubject.profile Rows.surpriseObjectInchoative.profile := by
+    Outranks (entailed Examples.surpriseSubject) (entailed Examples.surpriseObjectInchoative) := by
   decide
 
 /-! ### Partially symmetric interactive predicates, §9.1 -/
 
 /-- The subject of *kiss*, entailed volitional. -/
-def kissSubjectProfile : EntailmentProfile := Rows.kissSubject.profile
+def kissSubjectProfile : EntailmentProfile := entailed Examples.kissSubject
 
 /-- The object of *kiss*, not entailed volitional. -/
-def kissObjectProfile : EntailmentProfile := Rows.kissObject.profile
+def kissObjectProfile : EntailmentProfile := entailed Examples.kissObject
 
 /-- Volition, entailed for the subject alone, selects it, (43); with symmetric volition the
 collective subject of (42) is a tie. -/
@@ -191,7 +197,7 @@ theorem kiss_subject_outranks :
 /-- The entailment distinguishing the subject of *collide* from its oblique is motion, not
 volition (45). -/
 theorem collide_subject_outranks :
-    Outranks Rows.collideSubject.profile Rows.collideObject.profile := by
+    Outranks (entailed Examples.collideSubject) (entailed Examples.collideObject) := by
   decide
 
 /-! ### Alternations in direct versus oblique objects, §9.3 and (64) -/
@@ -227,20 +233,20 @@ theorem eitherObject_of_cosSymmetric (h : CosSymmetric p q)
   unfold EitherObject; rw [this]
 
 /-- The hay and the truck of (49), (64 I), which both change state. -/
-def sprayLoadTheme : EntailmentProfile := Rows.loadTheme.profile
+def sprayLoadTheme : EntailmentProfile := entailed Examples.loadTheme
 
-def sprayLoadLocation : EntailmentProfile := Rows.loadLocation.profile
+def sprayLoadLocation : EntailmentProfile := entailed Examples.loadLocation
 
 /-- The fence and the stick of (63), (64 II), of which only the direct object changes state. -/
-def breakDirectObject : EntailmentProfile := Rows.breakObject.profile
+def breakDirectObject : EntailmentProfile := entailed Examples.breakObject
 
-def breakInstrument : EntailmentProfile := Rows.breakInstrument.profile
+def breakInstrument : EntailmentProfile := entailed Examples.breakInstrument
 
 /-- The fence and the stick of (62), (64 III), neither of which changes state or measures the
 event. -/
-def hitArg1 : EntailmentProfile := Rows.hitObject.profile
+def hitArg1 : EntailmentProfile := entailed Examples.hitObject
 
-def hitArg2 : EntailmentProfile := Rows.hitInstrument.profile
+def hitArg2 : EntailmentProfile := entailed Examples.hitInstrument
 
 /-- The spray/load class alternates, the break class fixes its direct object, and the hit class
 alternates with complete synonymy (64). -/
@@ -310,56 +316,56 @@ theorem intransClass_examples :
 /-- The (35) attributions hold of the accomplishment templates and the creation and
 consumption objects. -/
 theorem primary_transitives_match_templates :
-    Matches Rows.buildSubject accomplishmentSubjectProfile ∧
-      Matches Rows.writeSubject accomplishmentSubjectProfile ∧
-      Matches Rows.murderSubject accomplishmentSubjectProfile ∧
-      Matches Rows.eatSubject accomplishmentSubjectProfile ∧
-      Matches Rows.washSubject accomplishmentSubjectProfile ∧
-      Matches Rows.murderObject accomplishmentObjectProfile ∧
-      Matches Rows.washObject accomplishmentObjectProfile ∧
-      Matches Rows.writeObject creationObject ∧
-      Matches Rows.eatObject consumptionObject := by
+    Matches Examples.buildSubject accomplishmentSubjectProfile ∧
+      Matches Examples.writeSubject accomplishmentSubjectProfile ∧
+      Matches Examples.murderSubject accomplishmentSubjectProfile ∧
+      Matches Examples.eatSubject accomplishmentSubjectProfile ∧
+      Matches Examples.washSubject accomplishmentSubjectProfile ∧
+      Matches Examples.murderObject accomplishmentObjectProfile ∧
+      Matches Examples.washObject accomplishmentObjectProfile ∧
+      Matches Examples.writeObject creationObject ∧
+      Matches Examples.eatObject consumptionObject := by
   decide
 
 /-- The hit class attributions, (64 III), hold of the contacted object template. -/
-theorem hit_class_matches_contact_object : Matches Rows.hitObject contactObject := by decide
+theorem hit_class_matches_contact_object : Matches Examples.hitObject contactObject := by decide
 
 /-- The single-entailment exemplars of (29) and (30) land in the perception and desire
 templates. -/
 theorem exemplars_match_templates :
-    Matches Rows.seeSubject perception.subjectProfile ∧
-      Matches Rows.needSubject desire.subjectProfile ∧
-      desire.objectProfile.all (Matches Rows.needObject ·) ∧
-      desire.objectProfile.all (Matches Rows.seekObject ·) := by
+    Matches Examples.seeSubject perception.subjectProfile ∧
+      Matches Examples.needSubject desire.subjectProfile ∧
+      desire.objectProfile.all (Matches Examples.needObject ·) ∧
+      desire.objectProfile.all (Matches Examples.seekObject ·) := by
   decide
 
 /-- The psych-state and desire templates split as the paper does: the *like* experiencer is
 sentient, (38), and the *need* subject entails existence but none of (27a) to (27d). -/
 theorem psych_desire_split :
-    Matches Rows.likeSubject psychState.subjectProfile ∧
-      Matches Rows.needSubject desire.subjectProfile ∧
-      ¬ Matches Rows.needSubject psychState.subjectProfile := by
+    Matches Examples.likeSubject psychState.subjectProfile ∧
+      Matches Examples.needSubject desire.subjectProfile ∧
+      ¬ Matches Examples.needSubject psychState.subjectProfile := by
   decide
 
 /-- The creation template omits (28d), which "all of 28" for the object of *build* includes:
 the template follows the (35) hedge that creation objects are only mostly stationary. -/
 theorem build_object_stationary_divergence :
-    ¬ Matches Rows.buildObject creationObject ∧
-      Matches Rows.buildObject (insert .stationary creationObject) := by
+    ¬ Matches Examples.buildObject creationObject ∧
+      Matches Examples.buildObject (insert .stationary creationObject) := by
   decide
 
 /-- The accomplishment object template carries no incremental themehood, which (64 II)
 attributes to the object of *break*; the template adds it per verb. -/
 theorem break_object_it_divergence :
-    ¬ Matches Rows.breakObject accomplishmentObjectProfile ∧
-      Matches Rows.breakObject (insert .incrementalTheme accomplishmentObjectProfile) := by
+    ¬ Matches Examples.breakObject accomplishmentObjectProfile ∧
+      Matches Examples.breakObject (insert .incrementalTheme accomplishmentObjectProfile) := by
   decide
 
 /-- (30e) counts destruction as dependent existence, which the paper never states for the
 object of *eat*; the consumption template omits it because adding it moves the object from
 the consumption to the creation persistence level. -/
 theorem eat_object_de_tension :
-    Matches Rows.eatObject consumptionObject ∧
+    Matches Examples.eatObject consumptionObject ∧
       PersistenceLevel.fromPatientProfile consumptionObject = .exPersBeginning ∧
       PersistenceLevel.fromPatientProfile
         (insert .dependentExistence consumptionObject) = .exPersEnd := by

@@ -179,7 +179,7 @@ instance : DecidablePred WellFormedInternal := fun _ ↦
 Per-template subject and object defaults, [rappaport-hovav-levin-1998]'s templates with
 [dowty-1991]'s entailments, consumed by Fragment-level verb entries. Per-verb entailments live in
 the Levin-class map (`LevinClass.subjectProfile`), and Dowty's own per-verb attributions are the
-rows of `Data/ProtoRoles/Dowty1991.json` consumed by `Studies/Dowty1991.lean`. -/
+rows of `Data/Examples/Dowty1991.json` consumed by `Studies/Dowty1991.lean`. -/
 
 /-- The activity template's subject, with volition, sentience, movement and independent existence.
 Transitive activities like *hit* add causation at the class level via root-contributed objects. -/
