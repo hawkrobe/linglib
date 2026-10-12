@@ -80,71 +80,71 @@ end Gender
 /-! ### Clitics -/
 
 /-- *=ì* is the first person singular clitic ((4), (61)). -/
-def cl1sg : PersonalPronoun Empty :=
+def cl1sg : PersonalPronoun :=
   { form := "=ì", person := some .first, number := some .singular, strength := some .clitic }
 
 /-- *=(y)é* is the first person plural inclusive clitic ((4), (61)). -/
-def cl1plIncl : PersonalPronoun Empty :=
+def cl1plIncl : PersonalPronoun :=
   { form := "=(y)é", person := some .firstInclusive, number := some .plural,
     strength := some .clitic }
 
 /-- *=ndú* is the first person plural exclusive clitic ((4), (61)). -/
-def cl1plExcl : PersonalPronoun Empty :=
+def cl1plExcl : PersonalPronoun :=
   { form := "=ndú", person := some .firstExclusive, number := some .plural,
     strength := some .clitic }
 
 /-- *=ú* is the second person singular clitic ((4), (61)). -/
-def cl2sg : PersonalPronoun Empty :=
+def cl2sg : PersonalPronoun :=
   { form := "=ú", person := some .second, number := some .singular, strength := some .clitic }
 
 /-- *=ndó* is the second person plural clitic ((4), (61)). -/
-def cl2pl : PersonalPronoun Empty :=
+def cl2pl : PersonalPronoun :=
   { form := "=ndó", person := some .second, number := some .plural, strength := some .clitic }
 
 /-- The nonlocal clitic of a gender is singular where the gender has a plural clitic, and
 number-neutral otherwise ((5)). -/
-def cl3 (g : Gender.Value) : PersonalPronoun Empty :=
+def cl3 (g : Gender.Value) : PersonalPronoun :=
   { form := g.clitic, person := some .third,
     number := some (if g.pluralClitic.isSome then .singular else .general),
     gender := g.toLabel, strength := some .clitic }
 
 /-- The nonlocal plural clitic of a gender, where it has one ((5)). -/
-def cl3pl (g : Gender.Value) : Option (PersonalPronoun Empty) :=
+def cl3pl (g : Gender.Value) : Option PersonalPronoun :=
   g.pluralClitic.map fun f ↦
     { form := f, person := some .third, number := some .plural, gender := g.toLabel,
       strength := some .clitic }
 
 /-- The clitic series. -/
-def clitics : Finset (PersonalPronoun Empty) :=
+def clitics : Finset PersonalPronoun :=
   {cl1sg, cl1plIncl, cl1plExcl, cl2sg, cl2pl} ∪
     Finset.univ.biUnion fun g ↦ insert (cl3 g) (cl3pl g).toFinset
 
 /-! ### Non-clitics -/
 
 /-- *yù'u* is the first person singular non-clitic ((4), (62)). -/
-def str1sg : PersonalPronoun Empty :=
+def str1sg : PersonalPronoun :=
   { form := "yù'u", person := some .first, number := some .singular, strength := some .strong }
 
 /-- *ndú'ú* is the first person plural exclusive non-clitic ((4), (62)). -/
-def str1plExcl : PersonalPronoun Empty :=
+def str1plExcl : PersonalPronoun :=
   { form := "ndú'ú", person := some .firstExclusive, number := some .plural,
     strength := some .strong }
 
 /-- *yô'o* is the second person singular non-clitic ((4), (62)). -/
-def str2sg : PersonalPronoun Empty :=
+def str2sg : PersonalPronoun :=
   { form := "yô'o", person := some .second, number := some .singular, strength := some .strong }
 
 /-- *ndó'ó* is the second person plural non-clitic ((4), (62)). -/
-def str2pl : PersonalPronoun Empty :=
+def str2pl : PersonalPronoun :=
   { form := "ndó'ó", person := some .second, number := some .plural, strength := some .strong }
 
 /-- The non-clitic series, which bears focus where a clitic cannot ((65), (66)). -/
-def nonclitics : Finset (PersonalPronoun Empty) := {str1sg, str1plExcl, str2sg, str2pl}
+def nonclitics : Finset PersonalPronoun := {str1sg, str1plExcl, str2sg, str2pl}
 
 /-! ### The paradigm -/
 
 /-- The personal pronouns. -/
-def pronouns : Finset (PersonalPronoun Empty) := clitics ∪ nonclitics
+def pronouns : Finset PersonalPronoun := clitics ∪ nonclitics
 
 /-- The forms of each referential category. -/
 def paradigm : Person.Category → Finset String := PersonalPronoun.paradigm pronouns
@@ -163,7 +163,7 @@ theorem clitic_mem_paradigm_others_iff (g : Gender.Value) :
 
 /-- The reflexive of a clitic is the clitic after the definite article *mí*, as in *mí =rà*
 'himself' ((71)). A possessor may take one without needing it: *mí =rí* 'its own' ((74)). -/
-def reflexive (p : PersonalPronoun Empty) : ReflexivePronoun :=
+def reflexive (p : PersonalPronoun) : ReflexivePronoun :=
   { toPronoun := { p.toPronoun with form := "mí " ++ p.form, strength := none } }
 
 end Mixtec.SMPM

@@ -1,6 +1,5 @@
 module
 
-public import Linglib.Syntax.Agreement.Allocutive
 public import Linglib.Syntax.Category.Pronoun.Personal
 
 /-!
@@ -22,8 +21,8 @@ them.
 ## Main definitions
 
 * `Tamil.Pronouns.pronouns`: the personal pronouns.
-* `Tamil.Pronouns.pluralSuffix`, `Tamil.Pronouns.alloc`: the plural suffix and its allocutive
-  use.
+* `Tamil.Pronouns.addressee`, `Tamil.Pronouns.thirdSg`: the singular pronouns at each grade.
+* `Tamil.Pronouns.pluralSuffix`: the plural suffix, which is also the allocutive marker.
 
 ## References
 
@@ -50,57 +49,59 @@ namespace Pronouns
 /-! ### Personal pronouns -/
 
 /-- The first person singular *naan*. -/
-def naan : PersonalPronoun Grade :=
-  { form := "naan", person := some .first, number := some .singular }
+def naan : PersonalPronoun := { form := "naan", person := some .first, number := some .singular }
 
 /-- The first person plural inclusive *naam*. -/
-def naam : PersonalPronoun Grade :=
+def naam : PersonalPronoun :=
   { form := "naam", person := some .firstInclusive, number := some .plural }
 
 /-- The first person plural exclusive *naan-ŋgæ*, the plural of *naan*. -/
-def naanŋgæ : PersonalPronoun Grade :=
+def naanŋgæ : PersonalPronoun :=
   { form := "naan-ŋgæ", person := some .firstExclusive, number := some .plural }
 
 /-- The familiar second person singular *nii*. -/
-def nii : PersonalPronoun Grade :=
-  { form := "nii", person := some .second, number := some .singular,
-    grades := {.familiar} }
+def nii : PersonalPronoun := { form := "nii", person := some .second, number := some .singular }
 
 /-- The second person plural *nii-ŋgæ*, which is also the polite singular. -/
-def niiŋgæ : PersonalPronoun Grade :=
+def niiŋgæ : PersonalPronoun :=
   { form := "nii-ŋgæ", person := some .second, number := some .plural,
-    grades := {.polite}, referential := {.addressee, .addresseeOthers} }
+    referential := {.addressee, .addresseeOthers} }
 
 /-- The third person singular masculine *avan*. -/
-def avan : PersonalPronoun Grade :=
-  { form := "avan", person := some .third, number := some .singular, gender := some .masculine,
-    grades := {.familiar} }
+def avan : PersonalPronoun :=
+  { form := "avan", person := some .third, number := some .singular, gender := some .masculine }
 
 /-- The third person singular feminine *avaɭ*. -/
-def avaL : PersonalPronoun Grade :=
-  { form := "avaɭ", person := some .third, number := some .singular, gender := some .feminine,
-    grades := {.familiar} }
+def avaL : PersonalPronoun :=
+  { form := "avaɭ", person := some .third, number := some .singular, gender := some .feminine }
 
 /-- The polite third person singular *avar*. -/
-def avar : PersonalPronoun Grade :=
-  { form := "avar", person := some .third, number := some .singular, grades := {.polite} }
+def avar : PersonalPronoun := { form := "avar", person := some .third, number := some .singular }
 
 /-- The third person plural *avan-ŋgæ*, the plural of *avan*. -/
-def avanŋgæ : PersonalPronoun Grade :=
+def avanŋgæ : PersonalPronoun :=
   { form := "avan-ŋgæ", person := some .third, number := some .plural, gender := some .masculine }
 
+/-- The second person singular at each grade. -/
+def addressee : Grade → PersonalPronoun
+  | .familiar => nii
+  | .polite => niiŋgæ
+
+/-- The third person singular pronouns at each grade, *avan* and *avaɭ* by gender at the familiar
+grade. -/
+def thirdSg : Grade → Finset PersonalPronoun
+  | .familiar => {avan, avaL}
+  | .polite => {avar}
+
 /-- The personal pronouns. -/
-def pronouns : Finset (PersonalPronoun Grade) :=
+def pronouns : Finset PersonalPronoun :=
   {naan, naam, naanŋgæ, nii, niiŋgæ, avan, avaL, avar, avanŋgæ}
 
 /-! ### The plural suffix and the allocutive marker -/
 
-/-- The plural suffix *-ŋgæ* of nouns and pronouns. -/
+/-- The plural suffix *-ŋgæ* of nouns and pronouns, which on the finite verb marks politeness to
+the addressee. -/
 def pluralSuffix : String := "-ŋgæ"
-
-/-- The allocutive marker, the plural suffix on the finite verb, marking politeness to the
-addressee. -/
-def alloc : AllocutiveMarker Grade := { form := pluralSuffix, grade := .polite }
 
 end Pronouns
 

@@ -34,35 +34,34 @@ instance : LinearOrder Grade := LinearOrder.lift' Grade.ctorIdx (by decide)
 namespace Pronouns
 
 /-- *maiṃ* — 1sg. -/
-def maiN : PersonalPronoun Grade :=
-  { form := "maiṃ", person := some .first, number := some .singular }
+def maiN : PersonalPronoun := { form := "maiṃ", person := some .first, number := some .singular }
 
 /-- *ham* — 1pl. -/
-def ham : PersonalPronoun Grade := { form := "ham", person := some .first, number := some .plural }
+def ham : PersonalPronoun := { form := "ham", person := some .first, number := some .plural }
 
 /-- *tuu* — 2sg nonhonorific. -/
-def tuu : PersonalPronoun Grade :=
-  { form := "tuu", person := some .second, number := some .singular,
-    grades := {.nonhonorific} }
+def tuu : PersonalPronoun := { form := "tuu", person := some .second, number := some .singular }
 
 /-- *tum* — 2sg honorific. -/
-def tum : PersonalPronoun Grade :=
-  { form := "tum", person := some .second, number := some .singular, grades := {.honorific} }
+def tum : PersonalPronoun := { form := "tum", person := some .second, number := some .singular }
 
 /-- *aap* — 2sg high honorific. -/
-def aap : PersonalPronoun Grade :=
-  { form := "aap", person := some .second, number := some .singular,
-    grades := {.highHonorific} }
+def aap : PersonalPronoun := { form := "aap", person := some .second, number := some .singular }
 
 /-- *vah* — 3sg, the distal demonstrative. -/
-def vah : PersonalPronoun Grade :=
-  { form := "vah", person := some .third, number := some .singular }
+def vah : PersonalPronoun := { form := "vah", person := some .third, number := some .singular }
 
 /-- *ve* — 3pl, the distal demonstrative plural. -/
-def ve : PersonalPronoun Grade := { form := "ve", person := some .third, number := some .plural }
+def ve : PersonalPronoun := { form := "ve", person := some .third, number := some .plural }
+
+/-- The second person singular at each grade. -/
+def addressee : Grade → PersonalPronoun
+  | .nonhonorific => tuu
+  | .honorific => tum
+  | .highHonorific => aap
 
 /-- The pronoun inventory. -/
-def pronouns : Finset (PersonalPronoun Grade) := {maiN, ham, tuu, tum, aap, vah, ve}
+def pronouns : Finset PersonalPronoun := {maiN, ham, tuu, tum, aap, vah, ve}
 
 end Pronouns
 

@@ -54,139 +54,149 @@ namespace Pronouns
 /-! ### The tonic series -/
 
 /-- *io* — 1sg. -/
-def io : PersonalPronoun Grade :=
+def io : PersonalPronoun :=
   { form := "io", person := some .first, number := some .singular, strength := some .strong }
 
 /-- *tu* — 2sg familiar (T form). -/
-def tu : PersonalPronoun Grade :=
-  { form := "tu", person := some .second, number := some .singular, grades := {.familiar},
+def tu : PersonalPronoun :=
+  { form := "tu", person := some .second, number := some .singular,
     strength := some .strong }
 
 /-- The polite second person singular *Lei*, the V form. It agrees as a third person singular,
 patterns with the feminine singular clitics and binds the third-person reflexive *si*, but it
 denotes the addressee, so it triggers PCC and Fancy Constraint effects and second person plural
 resolved agreement in coordination ([adamson-zompi-2025]). -/
-def lei_formal : PersonalPronoun Grade :=
-  { form := "Lei", person := some .third, number := some .singular, grades := {.polite},
+def lei_formal : PersonalPronoun :=
+  { form := "Lei", person := some .third, number := some .singular,
     referential := {.addressee}, strength := some .strong }
 
 /-- *lui* — 3sg masculine. -/
-def lui : PersonalPronoun Grade :=
+def lui : PersonalPronoun :=
   { form := "lui", person := some .third, number := some .singular, gender := some .masculine,
     strength := some .strong }
 
 /-- *lei* — 3sg feminine. -/
-def lei : PersonalPronoun Grade :=
+def lei : PersonalPronoun :=
   { form := "lei", person := some .third, number := some .singular, gender := some .feminine,
     strength := some .strong }
 
 /-- *noi* — 1pl. -/
-def noi : PersonalPronoun Grade :=
+def noi : PersonalPronoun :=
   { form := "noi", person := some .first, number := some .plural, strength := some .strong }
 
 /-- *voi* — 2pl (familiar; also used as general 2pl in modern Italian). -/
-def voi : PersonalPronoun Grade :=
-  { form := "voi", person := some .second, number := some .plural, grades := {.familiar},
+def voi : PersonalPronoun :=
+  { form := "voi", person := some .second, number := some .plural,
     strength := some .strong }
 
 /-- *Loro* — 2pl formal (archaic, largely replaced by *voi*). -/
-def loro_formal : PersonalPronoun Grade :=
-  { form := "Loro", person := some .second, number := some .plural, grades := {.polite},
+def loro_formal : PersonalPronoun :=
+  { form := "Loro", person := some .second, number := some .plural,
     strength := some .strong }
 
 /-- *loro* — 3pl. -/
-def loro : PersonalPronoun Grade :=
+def loro : PersonalPronoun :=
   { form := "loro", person := some .third, number := some .plural, strength := some .strong }
 
+/-- The second person singular at each grade. -/
+def addresseeSg : Grade → PersonalPronoun
+  | .familiar => tu
+  | .polite => lei_formal
+
+/-- The second person plural at each grade. -/
+def addresseePl : Grade → PersonalPronoun
+  | .familiar => voi
+  | .polite => loro_formal
+
 /-- The strong-pronoun inventory. -/
-def pronouns : Finset (PersonalPronoun Grade) :=
+def pronouns : Finset PersonalPronoun :=
   {io, tu, lei_formal, lui, lei, noi, voi, loro_formal, loro}
 
 /-! ### The accusative series -/
 
 /-- *mi*, first person singular accusative. -/
-def mi_acc : PersonalPronoun Grade :=
+def mi_acc : PersonalPronoun :=
   { form := "mi", person := some .first, number := some .singular, case_ := some .acc,
     strength := some .clitic }
 
 /-- *ti*, second person singular accusative. -/
-def ti_acc : PersonalPronoun Grade :=
+def ti_acc : PersonalPronoun :=
   { form := "ti", person := some .second, number := some .singular, case_ := some .acc,
     strength := some .clitic }
 
 /-- *lo*, third person singular masculine accusative. -/
-def lo : PersonalPronoun Grade :=
+def lo : PersonalPronoun :=
   { form := "lo", person := some .third, number := some .singular, case_ := some .acc,
     gender := some .masculine, strength := some .clitic }
 
 /-- *la*, third person singular feminine accusative. -/
-def la : PersonalPronoun Grade :=
+def la : PersonalPronoun :=
   { form := "la", person := some .third, number := some .singular, case_ := some .acc,
     gender := some .feminine, strength := some .clitic }
 
 /-- *ci*, first person plural accusative. -/
-def ci_acc : PersonalPronoun Grade :=
+def ci_acc : PersonalPronoun :=
   { form := "ci", person := some .first, number := some .plural, case_ := some .acc,
     strength := some .clitic }
 
 /-- *vi*, second person plural accusative. -/
-def vi_acc : PersonalPronoun Grade :=
+def vi_acc : PersonalPronoun :=
   { form := "vi", person := some .second, number := some .plural, case_ := some .acc,
     strength := some .clitic }
 
 /-- *li*, third person plural masculine accusative. -/
-def li : PersonalPronoun Grade :=
+def li : PersonalPronoun :=
   { form := "li", person := some .third, number := some .plural, case_ := some .acc,
     gender := some .masculine, strength := some .clitic }
 
 /-- *le*, third person plural feminine accusative. -/
-def le_acc : PersonalPronoun Grade :=
+def le_acc : PersonalPronoun :=
   { form := "le", person := some .third, number := some .plural, case_ := some .acc,
     gender := some .feminine, strength := some .clitic }
 
 /-- The accusative series. -/
-def accusative : Finset (PersonalPronoun Grade) :=
+def accusative : Finset PersonalPronoun :=
   {mi_acc, ti_acc, lo, la, ci_acc, vi_acc, li, le_acc}
 
 /-! ### The dative series -/
 
 /-- *mi*, first person singular dative. -/
-def mi_dat : PersonalPronoun Grade :=
+def mi_dat : PersonalPronoun :=
   { form := "mi", person := some .first, number := some .singular, case_ := some .dat,
     strength := some .clitic }
 
 /-- *ti*, second person singular dative. -/
-def ti_dat : PersonalPronoun Grade :=
+def ti_dat : PersonalPronoun :=
   { form := "ti", person := some .second, number := some .singular, case_ := some .dat,
     strength := some .clitic }
 
 /-- *gli*, third person singular masculine dative. -/
-def gli : PersonalPronoun Grade :=
+def gli : PersonalPronoun :=
   { form := "gli", person := some .third, number := some .singular, case_ := some .dat,
     gender := some .masculine, strength := some .clitic }
 
 /-- *le*, third person singular feminine dative. -/
-def le_dat : PersonalPronoun Grade :=
+def le_dat : PersonalPronoun :=
   { form := "le", person := some .third, number := some .singular, case_ := some .dat,
     gender := some .feminine, strength := some .clitic }
 
 /-- *ci*, first person plural dative. -/
-def ci_dat : PersonalPronoun Grade :=
+def ci_dat : PersonalPronoun :=
   { form := "ci", person := some .first, number := some .plural, case_ := some .dat,
     strength := some .clitic }
 
 /-- *vi*, second person plural dative. -/
-def vi_dat : PersonalPronoun Grade :=
+def vi_dat : PersonalPronoun :=
   { form := "vi", person := some .second, number := some .plural, case_ := some .dat,
     strength := some .clitic }
 
 /-- *loro*, third person plural dative, a weak pronoun that follows the verb. -/
-def loro_dat : PersonalPronoun Grade :=
+def loro_dat : PersonalPronoun :=
   { form := "loro", person := some .third, number := some .plural, case_ := some .dat,
     strength := some .weak }
 
 /-- The dative series. -/
-def dative : Finset (PersonalPronoun Grade) :=
+def dative : Finset PersonalPronoun :=
   {mi_dat, ti_dat, gli, le_dat, ci_dat, vi_dat, loro_dat}
 
 /-! ### The reflexive series -/
@@ -229,7 +239,7 @@ theorem paradigm_dative_eq_paradigm_reflexive_iff (c : Person.Category) :
   cases c <;> decide +kernel
 
 /-- Dative *loro* is the one atonic object form that is weak rather than a clitic. -/
-theorem strength_eq_weak_iff {p : PersonalPronoun Grade} (hp : p ∈ accusative ∪ dative) :
+theorem strength_eq_weak_iff {p : PersonalPronoun} (hp : p ∈ accusative ∪ dative) :
     p.strength = some .weak ↔ p = loro_dat := by
   revert p; decide +kernel
 

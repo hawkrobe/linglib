@@ -84,11 +84,11 @@ def sa : Category → String
   | .others => "kanila"
 
 /-- The pronoun of a category in a case series, with the series' comparative value. -/
-def entry (c : Category) (k : Case) (form : String) : PersonalPronoun Empty :=
+def entry (c : Category) (k : Case) (form : String) : PersonalPronoun :=
   { form, person := some c.person, number := some (number c), case_ := some k.label }
 
 /-- The pronoun inventory: the three series over the eight categories. -/
-def pronouns : Finset (PersonalPronoun Empty) :=
+def pronouns : Finset PersonalPronoun :=
   Finset.univ.biUnion fun c ↦ {entry c .ang (ang c), entry c .ng (ng c), entry c .sa (sa c)}
 
 /-- An entry denotes exactly its category. -/

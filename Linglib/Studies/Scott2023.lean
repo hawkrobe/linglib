@@ -125,11 +125,10 @@ def PronCell.sign (c : PronCell) : Person.Feature → Bool := Harbour2016.signOf
 def PronCell.singular (c : PronCell) : Bool := c.number = .singular
 
 /-- The fragment's independent pronoun of a cell. -/
-def independentOf (c : PronCell) : Option (PersonalPronoun Empty) :=
-  Mam.independent.realize c.bundle
+def independentOf (c : PronCell) : Option PersonalPronoun := Mam.independent.realize c.bundle
 
 /-- The fragment's subject and possessor pronoun of a cell. -/
-def subjPossOf (c : PronCell) : Option (PersonalPronoun Empty) := Mam.subjPoss.realize c.bundle
+def subjPossOf (c : PronCell) : Option PersonalPronoun := Mam.subjPoss.realize c.bundle
 
 /-! ### Features and Vocabulary Items -/
 
@@ -332,7 +331,7 @@ def form (l : Option Locus) (c : PronCell) : List Morph := formWith [rule84] l c
 
 /-- The morphemes of the Fragment's pronoun entries (Table 4.9) are *qin=i*, *qo'=y*, *qo*, *=i*,
 *q=i*, *qa*, and the null third-person singular. -/
-def morphemes : Option (PersonalPronoun Empty) → List Morph
+def morphemes : Option PersonalPronoun → List Morph
   | some p =>
     if p = qini then [.free "qin", .encl "i"]
     else if p = qoy then [.free "qo", .encl "i"]

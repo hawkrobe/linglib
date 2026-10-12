@@ -113,7 +113,7 @@ structure Antecedent where
 def Antecedent.ofNumber (n : Option Number) : Antecedent := { grain := n.bind Grain.ofNumber? }
 
 /-- A logophoric pronoun as local antecedent: its number, interpreted inside the report. -/
-def Antecedent.ofLogophor {G : Type} (p : LogophoricPronoun G) : Antecedent :=
+def Antecedent.ofLogophor (p : LogophoricPronoun) : Antecedent :=
   { Antecedent.ofNumber p.number with logophoric := true }
 
 /-- An analysis of reciprocal scope, by what it commits the local antecedent to under each

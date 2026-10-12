@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Syntax.Agreement.Allocutive
+public import Linglib.Morphology.Morph
 public import Linglib.Syntax.Category.Pronoun.Personal
 public import Linglib.Syntax.Category.Pronoun.Reciprocal
 public import Linglib.Syntax.Category.Pronoun.Reflexive
@@ -45,53 +45,56 @@ instance : LinearOrder Grade := LinearOrder.lift' Grade.ctorIdx (by decide)
 namespace Pronouns
 
 /-- 私 *watashi* — 1sg, neutral. -/
-def watashi : PersonalPronoun Grade :=
+def watashi : PersonalPronoun :=
   { form := "watashi", script := some "私", person := some .first, number := some .singular,
     register := .neutral }
 
 /-- 僕 *boku* — 1sg informal, masculine-associated through register rather
     than a gender feature ([ochs-1992]). -/
-def boku : PersonalPronoun Grade :=
+def boku : PersonalPronoun :=
   { form := "boku", script := some "僕", person := some .first, number := some .singular,
     register := .informal }
 
 /-- 俺 *ore* — 1sg very informal; indexes masculinity through an assertive
     stance ([ochs-1992]). -/
-def ore : PersonalPronoun Grade :=
+def ore : PersonalPronoun :=
   { form := "ore", script := some "俺", person := some .first, number := some .singular,
     register := .informal }
 
 /-- 私たち *watashitachi* — 1pl. -/
-def watashitachi : PersonalPronoun Grade :=
+def watashitachi : PersonalPronoun :=
   { form := "watashitachi", script := some "私たち", person := some .first,
     number := some .plural }
 
 /-- 君 *kimi* — 2sg plain. -/
-def kimi : PersonalPronoun Grade :=
-  { form := "kimi", script := some "君", person := some .second, number := some .singular,
-    grades := {.plain} }
+def kimi : PersonalPronoun :=
+  { form := "kimi", script := some "君", person := some .second, number := some .singular }
 
 /-- あなた *anata* — 2sg polite. -/
-def anata : PersonalPronoun Grade :=
-  { form := "anata", script := some "あなた", person := some .second, number := some .singular,
-    grades := {.polite} }
+def anata : PersonalPronoun :=
+  { form := "anata", script := some "あなた", person := some .second, number := some .singular }
 
 /-- 彼 *kare* — 3sg masculine. -/
-def kare : PersonalPronoun Grade :=
+def kare : PersonalPronoun :=
   { form := "kare", script := some "彼", person := some .third, number := some .singular,
     gender := some .masculine }
 
 /-- 彼女 *kanojo* — 3sg feminine. -/
-def kanojo : PersonalPronoun Grade :=
+def kanojo : PersonalPronoun :=
   { form := "kanojo", script := some "彼女", person := some .third, number := some .singular,
     gender := some .feminine }
 
 /-- 彼ら *karera* — 3pl. -/
-def karera : PersonalPronoun Grade :=
+def karera : PersonalPronoun :=
   { form := "karera", script := some "彼ら", person := some .third, number := some .plural }
 
+/-- The second person singular at each grade. -/
+def addressee : Grade → PersonalPronoun
+  | .plain => kimi
+  | .polite => anata
+
 /-- The personal-pronoun inventory. -/
-def pronouns : Finset (PersonalPronoun Grade) :=
+def pronouns : Finset PersonalPronoun :=
   {watashi, boku, ore, watashitachi, kimi, anata, kare, kanojo, karera}
 
 /-- 互い *otagai* — the reciprocal pronoun, distinct from the reflexive *jibun*. -/
@@ -129,8 +132,8 @@ def doo : InterrogativePronoun := { form := "dō", script := some "どう", onto
 /-- 何 *nan-* 'how many', before a classifier. -/
 def nan : InterrogativePronoun := { form := "nan", script := some "何", ontology := .amount }
 
-/-- *-mas-* — the addressee-honorific marker on the verb. -/
-def mas : AllocutiveMarker Grade := { form := "-mas-", grade := .polite }
+/-- The addressee-honorific suffix *-mas-* on the verb, of the polite grade. -/
+def mas : Morphology.Morph := .suff "mas"
 
 end Pronouns
 

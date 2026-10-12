@@ -143,10 +143,10 @@ theorem displacedErgative_head : ∀ c ∈ Bundle.personNumberCells,
       ((absolutive.realize c).bind (·.head?)).or (thirdAbsolutive .past) := by
   decide
 
-/-- The allocutive suffixes that mark the gender of an addressee who is no argument of the verb
-are the ergative suffixes of *hi*. -/
-theorem allocutive_eq_ergative : ∀ m ∈ Pronouns.allocutiveMarkers, ∀ g ∈ m.gender,
-    (ergative.realize (familiar g)).map Morph.surface = some m.form := by
-  decide +kernel
+/-- The allocutive suffix of a familiar addressee is, for each gender, the ergative suffix of
+*hi*. -/
+theorem allocutive_eq_ergative (g : Gender) :
+    (Pronouns.allocutive .familiar g).map ([·]) = ergative.realize (familiar g) := by
+  cases g <;> decide +kernel
 
 end Basque

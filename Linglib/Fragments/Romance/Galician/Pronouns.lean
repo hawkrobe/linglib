@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Syntax.Agreement.Allocutive
+public import Linglib.Morphology.Morph
 public import Linglib.Syntax.Category.Pronoun.Personal
 
 /-!
@@ -34,62 +34,63 @@ instance : LinearOrder Grade := LinearOrder.lift' Grade.ctorIdx (by decide)
 namespace Pronouns
 
 /-- *eu* — 1sg. -/
-def eu : PersonalPronoun Grade :=
-  { form := "eu", person := some .first, number := some .singular }
+def eu : PersonalPronoun := { form := "eu", person := some .first, number := some .singular }
 
 /-- *nós* — 1pl. -/
-def nos : PersonalPronoun Grade :=
-  { form := "nós", person := some .first, number := some .plural }
+def nos : PersonalPronoun := { form := "nós", person := some .first, number := some .plural }
 
 /-- *ti* — 2sg familiar. -/
-def ti : PersonalPronoun Grade :=
-  { form := "ti", person := some .second, number := some .singular,
-    grades := {.familiar} }
+def ti : PersonalPronoun := { form := "ti", person := some .second, number := some .singular }
 
 /-- *vostede* — 2sg formal. -/
-def vostede : PersonalPronoun Grade :=
-  { form := "vostede", person := some .second, number := some .singular,
-    grades := {.formal} }
+def vostede : PersonalPronoun :=
+  { form := "vostede", person := some .second, number := some .singular }
 
 /-- *vós* — 2pl familiar. -/
-def vosPl : PersonalPronoun Grade :=
-  { form := "vós", person := some .second, number := some .plural, grades := {.familiar} }
+def vosPl : PersonalPronoun := { form := "vós", person := some .second, number := some .plural }
 
 /-- *vostedes* — 2pl formal. -/
-def vostedes : PersonalPronoun Grade :=
-  { form := "vostedes", person := some .second, number := some .plural,
-    grades := {.formal} }
+def vostedes : PersonalPronoun :=
+  { form := "vostedes", person := some .second, number := some .plural }
 
 /-- *el* — 3sg masculine. -/
-def el : PersonalPronoun Grade :=
+def el : PersonalPronoun :=
   { form := "el", person := some .third, number := some .singular, gender := some .masculine }
 
 /-- *ela* — 3sg feminine. -/
-def ela : PersonalPronoun Grade :=
+def ela : PersonalPronoun :=
   { form := "ela", person := some .third, number := some .singular, gender := some .feminine }
 
 /-- *eles* — 3pl masculine. -/
-def eles : PersonalPronoun Grade :=
+def eles : PersonalPronoun :=
   { form := "eles", person := some .third, number := some .plural, gender := some .masculine }
 
 /-- *elas* — 3pl feminine. -/
-def elas : PersonalPronoun Grade :=
+def elas : PersonalPronoun :=
   { form := "elas", person := some .third, number := some .plural, gender := some .feminine }
 
+/-- The second person singular at each grade. -/
+def addresseeSg : Grade → PersonalPronoun
+  | .familiar => ti
+  | .formal => vostede
+
+/-- The second person plural at each grade. -/
+def addresseePl : Grade → PersonalPronoun
+  | .familiar => vosPl
+  | .formal => vostedes
+
 /-- The pronoun inventory. -/
-def pronouns : Finset (PersonalPronoun Grade) :=
+def pronouns : Finset PersonalPronoun :=
   {eu, nos, ti, vostede, vosPl, vostedes, el, ela, eles, elas}
 
-/-- *che* — familiar dative clitic, singular addressee. -/
-def che : AllocutiveMarker Grade :=
-  { form := "che", grade := .familiar, number := some .singular }
+/-- The familiar dative clitic *che*, for a single addressee. -/
+def che : Morphology.Morph := .encl "che"
 
-/-- *vos* — familiar dative clitic, plural addressee. -/
-def vos : AllocutiveMarker Grade :=
-  { form := "vos", grade := .familiar, number := some .plural }
+/-- The familiar dative clitic *vos*, for several addressees. -/
+def vos : Morphology.Morph := .encl "vos"
 
 /-- The allocutive clitics. -/
-def allocutiveClitics : List (AllocutiveMarker Grade) := [che, vos]
+def allocutiveClitics : List Morphology.Morph := [che, vos]
 
 end Pronouns
 

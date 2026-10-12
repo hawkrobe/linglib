@@ -65,31 +65,24 @@ open PCC Italian.Pronouns
 
 /-! ### Person restrictions over a person valuation -/
 
-section General
-
-variable {G : Type}
-
 /-- `R` licenses the dative–accusative pair `dat`, `acc` under the person valuation `person`. -/
-def Licit (R : Person → Person → Prop) (person : PersonalPronoun G → Option Person)
-    (dat acc : PersonalPronoun G) : Prop :=
+def Licit (R : Person → Person → Prop) (person : PersonalPronoun → Option Person)
+    (dat acc : PersonalPronoun) : Prop :=
   ∃ p q, person dat = some p ∧ person acc = some q ∧ R p q
 
 instance (R : Person → Person → Prop) [DecidableRel R]
-    (person : PersonalPronoun G → Option Person) (dat acc : PersonalPronoun G) :
+    (person : PersonalPronoun → Option Person) (dat acc : PersonalPronoun) :
     Decidable (Licit R person dat acc) := by
   unfold Licit; infer_instance
 
 /-- The morphosyntactic prediction has `R` read agreement person. -/
-abbrev Morphosyntactic (R : Person → Person → Prop) :
-    PersonalPronoun G → PersonalPronoun G → Prop :=
-  Licit R (·.person)
+abbrev Morphosyntactic (R : Person → Person → Prop) := Licit R (·.person)
 
 /-- The syntacticosemantic prediction has `R` read referential person. -/
-abbrev Syntacticosemantic (R : Person → Person → Prop) :
-    PersonalPronoun G → PersonalPronoun G → Prop :=
+abbrev Syntacticosemantic (R : Person → Person → Prop) :=
   Licit R PersonalPronoun.referentialPerson
 
-variable {R : Person → Person → Prop} {dat acc : PersonalPronoun G}
+variable {R : Person → Person → Prop} {dat acc : PersonalPronoun}
 
 /-- The two predictions coincide on ordinary pronouns, those denoting exactly the categories
 their agreement features realize. -/
@@ -98,10 +91,6 @@ theorem morphosyntactic_iff_of_ordinary (hd : dat.IsOrdinary) (hd' : dat.referen
     Morphosyntactic R dat acc ↔ Syntacticosemantic R dat acc := by
   simp [Licit, PersonalPronoun.referentialPerson_eq_person hd hd',
     PersonalPronoun.referentialPerson_eq_person ha ha']
-
-end General
-
-variable {R : Person → Person → Prop} {dat acc : PersonalPronoun Italian.Grade}
 
 /-- Every restriction reading agreement person treats LEI as *lei*. -/
 theorem morphosyntactic_lei_formal :
