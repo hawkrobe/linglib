@@ -66,17 +66,19 @@ def Condition.IsLiteral : Condition L V → Prop
 /-- A DRS is basic when every condition is a literal. -/
 def DRS.IsBasic (K : DRS L V) : Prop := ∀ d ∈ K.conditions, d.IsLiteral
 
+/-- The atom of a literal, over the referents. -/
+def Literal.atom {c : Context L V} (l : Literal c) : L.Atom V := ⟨l.rel.1.2, fun i => l.args i⟩
+
 /-- `l.toCondition` is the atom of `l`, or for a negative literal the negation of the one-atom
 box with no referents. -/
 def Literal.toCondition {c : Context L V} (l : Literal c) : Condition L V :=
-  if l.pos then .atom ⟨l.rel.1.2, fun i => (l.args i : V)⟩
-  else .neg ⟨∅, [.atom ⟨l.rel.1.2, fun i => (l.args i : V)⟩]⟩
+  if l.pos then .atom l.atom else .neg ⟨∅, [.atom l.atom]⟩
 
 /-- Renaming a literal is `Condition.map` along the extended referent map. -/
 theorem Literal.toCondition_map [DecidableEq V] {c c' : Context L V} (f : c ⟶ c')
     (l : Literal c) : (l.map f).toCondition = l.toCondition.map f.extend := by
   cases hp : l.pos <;>
-    simp [toCondition, map, Condition.map, DRS.map, hp, Function.comp_def, Language.Atom.map]
+    simp [toCondition, atom, map, Condition.map, DRS.map, hp, Function.comp_def, Language.Atom.map]
 
 namespace Theory
 
