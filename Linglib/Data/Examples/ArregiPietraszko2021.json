@@ -1,7 +1,8 @@
 [
   {
     "id": "arregipietraszko2021_6",
-    "source": {"bibkey": "arregi-pietraszko-2021", "paperLabel": "(6)"},
+    "source": {"bibkey": "pollock-1989", "paperLabel": "(4b)"},
+    "reportedIn": {"bibkey": "arregi-pietraszko-2021", "paperLabel": "(6)"},
     "language": "stan1290",
     "primaryText": "Jean embrasse souvent Marie.",
     "discourseSegments": [],
@@ -18,7 +19,7 @@
       ["verbType", "lexical"],
       ["finitePosition", "T"]
     ],
-    "comment": "Pollock 1989:367.",
+    "comment": "",
     "verified": "page-image"
   },
   {
@@ -66,7 +67,8 @@
   },
   {
     "id": "arregipietraszko2021_10b",
-    "source": {"bibkey": "arregi-pietraszko-2021", "paperLabel": "(10b)"},
+    "source": {"bibkey": "pollock-1989", "paperLabel": "(11b)"},
+    "reportedIn": {"bibkey": "arregi-pietraszko-2021", "paperLabel": "(10b)"},
     "language": "stan1290",
     "primaryText": "Il a pas compris.",
     "discourseSegments": [],
@@ -84,7 +86,7 @@
       ["finitePosition", "T"],
       ["doSupport", "false"]
     ],
-    "comment": "Pollock 1989:370.",
+    "comment": "Pollock prints the optional *ne*, Il (n')a pas compris.",
     "verified": "page-image"
   },
   {
@@ -149,96 +151,9 @@
     "verified": "page-image"
   },
   {
-    "id": "arregipietraszko2021_19_1",
-    "source": {"bibkey": "arregi-pietraszko-2021", "paperLabel": "(19)"},
-    "language": "nort2795",
-    "primaryText": "o-",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "alternatives": [],
-    "readings": [],
-    "paperFeatures": [
-      ["class", "1"],
-      ["linker", "a"],
-      ["augment", "u"],
-      ["agreement", "u"],
-      ["rel", "o"]
-    ],
-    "comment": "Relative agreement prefix by class, with its linker, augment, and subject-agreement components.",
-    "verified": "page-image"
-  },
-  {
-    "id": "arregipietraszko2021_19_9",
-    "source": {"bibkey": "arregi-pietraszko-2021", "paperLabel": "(19)"},
-    "language": "nort2795",
-    "primaryText": "e-",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "alternatives": [],
-    "readings": [],
-    "paperFeatures": [
-      ["class", "9"],
-      ["linker", "a"],
-      ["augment", "i"],
-      ["agreement", "i"],
-      ["rel", "e"]
-    ],
-    "comment": "Relative agreement prefix by class, with its linker, augment, and subject-agreement components.",
-    "verified": "page-image"
-  },
-  {
-    "id": "arregipietraszko2021_19_7",
-    "source": {"bibkey": "arregi-pietraszko-2021", "paperLabel": "(19)"},
-    "language": "nort2795",
-    "primaryText": "esi-",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "alternatives": [],
-    "readings": [],
-    "paperFeatures": [
-      ["class", "7"],
-      ["linker", "a"],
-      ["augment", "i"],
-      ["agreement", "si"],
-      ["rel", "esi"]
-    ],
-    "comment": "Relative agreement prefix by class, with its linker, augment, and subject-agreement components.",
-    "verified": "page-image"
-  },
-  {
-    "id": "arregipietraszko2021_19_11",
-    "source": {"bibkey": "arregi-pietraszko-2021", "paperLabel": "(19)"},
-    "language": "nort2795",
-    "primaryText": "olu-",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "alternatives": [],
-    "readings": [],
-    "paperFeatures": [
-      ["class", "11"],
-      ["linker", "a"],
-      ["augment", "u"],
-      ["agreement", "lu"],
-      ["rel", "olu"]
-    ],
-    "comment": "Relative agreement prefix by class, with its linker, augment, and subject-agreement components.",
-    "verified": "page-image"
-  },
-  {
     "id": "arregipietraszko2021_26",
-    "source": {"bibkey": "arregi-pietraszko-2021", "paperLabel": "(26)"},
+    "source": {"bibkey": "vikner-1995", "paperLabel": "p. 47"},
+    "reportedIn": {"bibkey": "arregi-pietraszko-2021", "paperLabel": "(26)"},
     "language": "dani1285",
     "primaryText": "Om morgenen drikker Peter ofte kaffe.",
     "discourseSegments": [],
@@ -257,12 +172,13 @@
       ["finitePosition", "C"],
       ["doSupport", "false"]
     ],
-    "comment": "Vikner 1995:47.",
+    "comment": "",
     "verified": "page-image"
   },
   {
     "id": "arregipietraszko2021_27",
-    "source": {"bibkey": "arregi-pietraszko-2021", "paperLabel": "(27)"},
+    "source": {"bibkey": "vikner-1995", "paperLabel": "p. 47"},
+    "reportedIn": {"bibkey": "arregi-pietraszko-2021", "paperLabel": "(27)"},
     "language": "dani1285",
     "primaryText": "Vi ved at Peter ofte drikker kaffe om morgenen.",
     "discourseSegments": [],
@@ -280,7 +196,7 @@
       ["verbType", "lexical"],
       ["finitePosition", "V"]
     ],
-    "comment": "Vikner 1995:47.",
+    "comment": "",
     "verified": "page-image"
   },
   {
@@ -331,7 +247,8 @@
   },
   {
     "id": "arregipietraszko2021_33",
-    "source": {"bibkey": "arregi-pietraszko-2021", "paperLabel": "(33)"},
+    "source": {"bibkey": "manzini-savoia-2005", "paperLabel": "p. 424"},
+    "reportedIn": {"bibkey": "arregi-pietraszko-2021", "paperLabel": "(33)"},
     "language": "lowe1386",
     "primaryText": "ans klɔˈmai",
     "discourseSegments": [],
@@ -349,12 +266,13 @@
       ["finitePosition", "T"],
       ["imperativeForm", "true"]
     ],
-    "comment": "Scuol variety of Vallader (Manzini and Savoia 2005:424); proclisis with imperative-specific inflection.",
+    "comment": "Scuol variety of Vallader; proclisis with imperative-specific inflection.",
     "verified": "page-image"
   },
   {
     "id": "arregipietraszko2021_34",
-    "source": {"bibkey": "arregi-pietraszko-2021", "paperLabel": "(34)"},
+    "source": {"bibkey": "manzini-savoia-2005", "paperLabel": "p. 424"},
+    "reportedIn": {"bibkey": "arregi-pietraszko-2021", "paperLabel": "(34)"},
     "language": "lowe1386",
     "primaryText": "nu ns klɔmaˈrai",
     "discourseSegments": [],
@@ -372,7 +290,7 @@
       ["finitePosition", "T"],
       ["imperativeForm", "false"]
     ],
-    "comment": "Manzini and Savoia 2005:424.",
+    "comment": "",
     "verified": "page-image"
   },
   {
@@ -545,7 +463,8 @@
   },
   {
     "id": "arregipietraszko2021_51",
-    "source": {"bibkey": "arregi-pietraszko-2021", "paperLabel": "(51)"},
+    "source": {"bibkey": "vikner-1995", "paperLabel": "p. 144"},
+    "reportedIn": {"bibkey": "arregi-pietraszko-2021", "paperLabel": "(51)"},
     "language": "dani1285",
     "primaryText": "Jeg tror at Johan ikke købte bogen.",
     "discourseSegments": [],
@@ -564,12 +483,13 @@
       ["finitePosition", "V"],
       ["doSupport", "false"]
     ],
-    "comment": "Vikner 1995:144.",
+    "comment": "",
     "verified": "page-image"
   },
   {
     "id": "arregipietraszko2021_52",
-    "source": {"bibkey": "arregi-pietraszko-2021", "paperLabel": "(52)"},
+    "source": {"bibkey": "vikner-1995", "paperLabel": "p. 47"},
+    "reportedIn": {"bibkey": "arregi-pietraszko-2021", "paperLabel": "(52)"},
     "language": "dani1285",
     "primaryText": "Om morgenen drikker Peter ofte kaffe.",
     "discourseSegments": [],
@@ -585,12 +505,13 @@
       ["finitePosition", "C"],
       ["doSupport", "false"]
     ],
-    "comment": "Vikner 1995:47; subject-verb inversion without do-support.",
+    "comment": "Subject-verb inversion without do-support.",
     "verified": "page-image"
   },
   {
     "id": "arregipietraszko2021_53a",
-    "source": {"bibkey": "arregi-pietraszko-2021", "paperLabel": "(53a)"},
+    "source": {"bibkey": "beninca-poletto-2004", "paperLabel": "pp. 59–60"},
+    "reportedIn": {"bibkey": "arregi-pietraszko-2021", "paperLabel": "(53a)"},
     "language": "lomb1257",
     "primaryText": "l tʃàkola semper",
     "discourseSegments": [],
@@ -607,12 +528,13 @@
       ["verbType", "lexical"],
       ["finitePosition", "T"]
     ],
-    "comment": "Monnese (Benincà and Poletto 2004:59–60).",
+    "comment": "",
     "verified": "page-image"
   },
   {
     "id": "arregipietraszko2021_53b",
-    "source": {"bibkey": "arregi-pietraszko-2021", "paperLabel": "(53b)"},
+    "source": {"bibkey": "beninca-poletto-2004", "paperLabel": "pp. 59–60"},
+    "reportedIn": {"bibkey": "arregi-pietraszko-2021", "paperLabel": "(53b)"},
     "language": "lomb1257",
     "primaryText": "l tʃàkola mìa",
     "discourseSegments": [],
@@ -630,12 +552,13 @@
       ["finitePosition", "T"],
       ["doSupport", "false"]
     ],
-    "comment": "Monnese; negation does not trigger do-support.",
+    "comment": "Negation does not trigger do-support.",
     "verified": "page-image"
   },
   {
     "id": "arregipietraszko2021_54",
-    "source": {"bibkey": "arregi-pietraszko-2021", "paperLabel": "(54)"},
+    "source": {"bibkey": "beninca-poletto-2004", "paperLabel": "p. 59"},
+    "reportedIn": {"bibkey": "arregi-pietraszko-2021", "paperLabel": "(54)"},
     "language": "lomb1257",
     "primaryText": "l à semper tʃakolà",
     "discourseSegments": [],
@@ -652,12 +575,13 @@
       ["verbType", "auxiliary"],
       ["finitePosition", "T"]
     ],
-    "comment": "Benincà and Poletto 2004:59.",
+    "comment": "",
     "verified": "page-image"
   },
   {
     "id": "arregipietraszko2021_55",
-    "source": {"bibkey": "arregi-pietraszko-2021", "paperLabel": "(55)"},
+    "source": {"bibkey": "beninca-poletto-2004", "paperLabel": "p. 52"},
+    "reportedIn": {"bibkey": "arregi-pietraszko-2021", "paperLabel": "(55)"},
     "language": "lomb1257",
     "primaryText": "à-l majà",
     "discourseSegments": [],
@@ -675,12 +599,13 @@
       ["finitePosition", "C"],
       ["doSupport", "false"]
     ],
-    "comment": "Benincà and Poletto 2004:52.",
+    "comment": "",
     "verified": "page-image"
   },
   {
     "id": "arregipietraszko2021_56b",
-    "source": {"bibkey": "arregi-pietraszko-2021", "paperLabel": "(56b)"},
+    "source": {"bibkey": "beninca-poletto-2004", "paperLabel": "p. 52"},
+    "reportedIn": {"bibkey": "arregi-pietraszko-2021", "paperLabel": "(56b)"},
     "language": "lomb1257",
     "primaryText": "fa-l majà",
     "discourseSegments": [],
@@ -701,12 +626,13 @@
       ["doSupport", "true"],
       ["verbForm", "infinitive"]
     ],
-    "comment": "Benincà and Poletto 2004:52; (56a) is the starred alternative.",
+    "comment": "(56a) is the starred alternative.",
     "verified": "page-image"
   },
   {
     "id": "arregipietraszko2021_57",
-    "source": {"bibkey": "arregi-pietraszko-2021", "paperLabel": "(57)"},
+    "source": {"bibkey": "bjorkman-2011", "paperLabel": "pp. 190–191"},
+    "reportedIn": {"bibkey": "arregi-pietraszko-2021", "paperLabel": "(57)"},
     "language": "lomb1257",
     "primaryText": "fe-t mia majal 'l pom",
     "discourseSegments": [],
@@ -726,7 +652,7 @@
       ["doSupport", "true"],
       ["verbForm", "infinitive"]
     ],
-    "comment": "Bjorkman 2011:190–191; the infinitive follows the adverbial.",
+    "comment": "The infinitive follows the adverbial.",
     "verified": "page-image"
   },
   {
@@ -778,7 +704,8 @@
   },
   {
     "id": "arregipietraszko2021_67",
-    "source": {"bibkey": "arregi-pietraszko-2021", "paperLabel": "(67)"},
+    "source": {"bibkey": "sailor-2018", "paperLabel": "pp. 855–856"},
+    "reportedIn": {"bibkey": "arregi-pietraszko-2021", "paperLabel": "(67)"},
     "language": "dani1285",
     "primaryText": "Mona og Jasper vaskede bilen, eller rettere Mona gjorde.",
     "discourseSegments": [],
@@ -800,7 +727,7 @@
       ["finitePosition", "C"],
       ["doSupport", "true"]
     ],
-    "comment": "Sailor 2018:855–856.",
+    "comment": "",
     "verified": "page-image"
   },
   {
@@ -872,7 +799,8 @@
   },
   {
     "id": "arregipietraszko2021_74b",
-    "source": {"bibkey": "arregi-pietraszko-2021", "paperLabel": "(74b)"},
+    "source": {"bibkey": "landau-2006", "paperLabel": "p. 32"},
+    "reportedIn": {"bibkey": "arregi-pietraszko-2021", "paperLabel": "(74b)"},
     "language": "hebr1245",
     "primaryText": "Lirkod, Gil lo yirkod ba-xayim.",
     "discourseSegments": [],
@@ -891,12 +819,13 @@
       ["doSupport", "false"],
       ["frontedForm", "infinitive"]
     ],
-    "comment": "Landau 2006:32.",
+    "comment": "",
     "verified": "page-image"
   },
   {
     "id": "arregipietraszko2021_77",
-    "source": {"bibkey": "arregi-pietraszko-2021", "paperLabel": "(77)"},
+    "source": {"bibkey": "platzack-2012", "paperLabel": "p. 281"},
+    "reportedIn": {"bibkey": "arregi-pietraszko-2021", "paperLabel": "(77)"},
     "language": "swed1254",
     "primaryText": "… och körde bilen gjorde han.",
     "discourseSegments": [],
@@ -917,12 +846,13 @@
       ["doSupport", "true"],
       ["frontedForm", "finite"]
     ],
-    "comment": "Platzack 2012:281; the fronted verb carries the same past inflection as the support verb.",
+    "comment": "The fronted verb carries the same past inflection as the support verb.",
     "verified": "page-image"
   },
   {
     "id": "arregipietraszko2021_80a",
-    "source": {"bibkey": "arregi-pietraszko-2021", "paperLabel": "(80a)"},
+    "source": {"bibkey": "travis-2003", "paperLabel": "p. 244"},
+    "reportedIn": {"bibkey": "arregi-pietraszko-2021", "paperLabel": "(80a)"},
     "language": "east2295",
     "primaryText": "Veys-n, veys ix.",
     "discourseSegments": [],
@@ -940,12 +870,13 @@
       ["doSupport", "false"],
       ["frontedForm", "pseudoInfinitive"]
     ],
-    "comment": "Waletzky 1969, cited in Travis 2003:244; the infinitive is vis-n.",
+    "comment": "From Waletzky 1969; the infinitive is vis-n.",
     "verified": "page-image"
   },
   {
     "id": "arregipietraszko2021_80b",
-    "source": {"bibkey": "arregi-pietraszko-2021", "paperLabel": "(80b)"},
+    "source": {"bibkey": "travis-2003", "paperLabel": "p. 244"},
+    "reportedIn": {"bibkey": "arregi-pietraszko-2021", "paperLabel": "(80b)"},
     "language": "east2295",
     "primaryText": "Iz-n, iz es reb yixezkl gombiners shtub.",
     "discourseSegments": [],
@@ -964,12 +895,13 @@
       ["doSupport", "false"],
       ["frontedForm", "pseudoInfinitive"]
     ],
-    "comment": "Waletzky 1969, cited in Travis 2003:244; the infinitive is zay-n. The paper's gloss line has six glosses for seven words, none for gombiners.",
+    "comment": "From Waletzky 1969; the infinitive is zay-n. Arregi and Pietraszko's gloss line has six glosses for seven words, none for gombiners.",
     "verified": "page-image"
   },
   {
     "id": "arregipietraszko2021_80c",
-    "source": {"bibkey": "arregi-pietraszko-2021", "paperLabel": "(80c)"},
+    "source": {"bibkey": "davis-prince-1986", "paperLabel": "p. 95"},
+    "reportedIn": {"bibkey": "arregi-pietraszko-2021", "paperLabel": "(80c)"},
     "language": "east2295",
     "primaryText": "Bin-en, bin ikh in amerike.",
     "discourseSegments": [],
@@ -988,7 +920,7 @@
       ["doSupport", "false"],
       ["frontedForm", "pseudoInfinitive"]
     ],
-    "comment": "Davis and Prince 1986:95.",
+    "comment": "",
     "verified": "page-image"
   },
   {

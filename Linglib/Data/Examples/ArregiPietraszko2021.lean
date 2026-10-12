@@ -17,8 +17,8 @@ namespace ArregiPietraszko2021.Examples
 
 def ex_6 : Datum :=
   { id := "arregipietraszko2021_6"
-    source := ⟨"arregi-pietraszko-2021", "(6)"⟩
-    reportedIn := none
+    source := ⟨"pollock-1989", "(4b)"⟩
+    reportedIn := some ⟨"arregi-pietraszko-2021", "(6)"⟩
     language := "stan1290"
     primaryText := "Jean embrasse souvent Marie."
     glossedTokens := []
@@ -56,8 +56,8 @@ def ex_10a : Datum :=
 
 def ex_10b : Datum :=
   { id := "arregipietraszko2021_10b"
-    source := ⟨"arregi-pietraszko-2021", "(10b)"⟩
-    reportedIn := none
+    source := ⟨"pollock-1989", "(11b)"⟩
+    reportedIn := some ⟨"arregi-pietraszko-2021", "(10b)"⟩
     language := "stan1290"
     primaryText := "Il a pas compris."
     glossedTokens := [("Il", "he"), ("a", "has"), ("pas", "not"), ("compris", "understood")]
@@ -106,62 +106,10 @@ def ex_16 : Datum :=
     readings := []
     paperFeatures := [("context", "relative"), ("relPrefixPosition", "T")] }
 
-def ex_19_1 : Datum :=
-  { id := "arregipietraszko2021_19_1"
-    source := ⟨"arregi-pietraszko-2021", "(19)"⟩
-    reportedIn := none
-    language := "nort2795"
-    primaryText := "o-"
-    glossedTokens := []
-    context := ""
-    judgment := .acceptable
-    alternatives := []
-    readings := []
-    paperFeatures := [("class", "1"), ("linker", "a"), ("augment", "u"), ("agreement", "u"), ("rel", "o")] }
-
-def ex_19_9 : Datum :=
-  { id := "arregipietraszko2021_19_9"
-    source := ⟨"arregi-pietraszko-2021", "(19)"⟩
-    reportedIn := none
-    language := "nort2795"
-    primaryText := "e-"
-    glossedTokens := []
-    context := ""
-    judgment := .acceptable
-    alternatives := []
-    readings := []
-    paperFeatures := [("class", "9"), ("linker", "a"), ("augment", "i"), ("agreement", "i"), ("rel", "e")] }
-
-def ex_19_7 : Datum :=
-  { id := "arregipietraszko2021_19_7"
-    source := ⟨"arregi-pietraszko-2021", "(19)"⟩
-    reportedIn := none
-    language := "nort2795"
-    primaryText := "esi-"
-    glossedTokens := []
-    context := ""
-    judgment := .acceptable
-    alternatives := []
-    readings := []
-    paperFeatures := [("class", "7"), ("linker", "a"), ("augment", "i"), ("agreement", "si"), ("rel", "esi")] }
-
-def ex_19_11 : Datum :=
-  { id := "arregipietraszko2021_19_11"
-    source := ⟨"arregi-pietraszko-2021", "(19)"⟩
-    reportedIn := none
-    language := "nort2795"
-    primaryText := "olu-"
-    glossedTokens := []
-    context := ""
-    judgment := .acceptable
-    alternatives := []
-    readings := []
-    paperFeatures := [("class", "11"), ("linker", "a"), ("augment", "u"), ("agreement", "lu"), ("rel", "olu")] }
-
 def ex_26 : Datum :=
   { id := "arregipietraszko2021_26"
-    source := ⟨"arregi-pietraszko-2021", "(26)"⟩
-    reportedIn := none
+    source := ⟨"vikner-1995", "p. 47"⟩
+    reportedIn := some ⟨"arregi-pietraszko-2021", "(26)"⟩
     language := "dani1285"
     primaryText := "Om morgenen drikker Peter ofte kaffe."
     glossedTokens := [("Om", "in"), ("morgenen", "the.morning"), ("drikker", "drinks"), ("Peter", "Peter"), ("ofte", "often"), ("kaffe", "coffee")]
@@ -173,8 +121,8 @@ def ex_26 : Datum :=
 
 def ex_27 : Datum :=
   { id := "arregipietraszko2021_27"
-    source := ⟨"arregi-pietraszko-2021", "(27)"⟩
-    reportedIn := none
+    source := ⟨"vikner-1995", "p. 47"⟩
+    reportedIn := some ⟨"arregi-pietraszko-2021", "(27)"⟩
     language := "dani1285"
     primaryText := "Vi ved at Peter ofte drikker kaffe om morgenen."
     glossedTokens := [("Vi", "we"), ("ved", "know"), ("at", "that"), ("Peter", "Peter"), ("ofte", "often"), ("drikker", "drinks"), ("kaffe", "coffee"), ("om", "in"), ("morgenen", "the.morning")]
@@ -212,8 +160,8 @@ def ex_31 : Datum :=
 
 def ex_33 : Datum :=
   { id := "arregipietraszko2021_33"
-    source := ⟨"arregi-pietraszko-2021", "(33)"⟩
-    reportedIn := none
+    source := ⟨"manzini-savoia-2005", "p. 424"⟩
+    reportedIn := some ⟨"arregi-pietraszko-2021", "(33)"⟩
     language := "lowe1386"
     primaryText := "ans klɔˈmai"
     glossedTokens := [("ans", "us"), ("klɔˈmai", "call.IMP.2PL")]
@@ -225,8 +173,8 @@ def ex_33 : Datum :=
 
 def ex_34 : Datum :=
   { id := "arregipietraszko2021_34"
-    source := ⟨"arregi-pietraszko-2021", "(34)"⟩
-    reportedIn := none
+    source := ⟨"manzini-savoia-2005", "p. 424"⟩
+    reportedIn := some ⟨"arregi-pietraszko-2021", "(34)"⟩
     language := "lowe1386"
     primaryText := "nu ns klɔmaˈrai"
     glossedTokens := [("nu", "not"), ("ns", "us"), ("klɔmaˈrai", "call.IMP/INF.2PL")]
@@ -329,8 +277,8 @@ def fn38 : Datum :=
 
 def ex_51 : Datum :=
   { id := "arregipietraszko2021_51"
-    source := ⟨"arregi-pietraszko-2021", "(51)"⟩
-    reportedIn := none
+    source := ⟨"vikner-1995", "p. 144"⟩
+    reportedIn := some ⟨"arregi-pietraszko-2021", "(51)"⟩
     language := "dani1285"
     primaryText := "Jeg tror at Johan ikke købte bogen."
     glossedTokens := [("Jeg", "I"), ("tror", "believe"), ("at", "that"), ("Johan", "Johan"), ("ikke", "not"), ("købte", "bought"), ("bogen", "the.book")]
@@ -342,8 +290,8 @@ def ex_51 : Datum :=
 
 def ex_52 : Datum :=
   { id := "arregipietraszko2021_52"
-    source := ⟨"arregi-pietraszko-2021", "(52)"⟩
-    reportedIn := none
+    source := ⟨"vikner-1995", "p. 47"⟩
+    reportedIn := some ⟨"arregi-pietraszko-2021", "(52)"⟩
     language := "dani1285"
     primaryText := "Om morgenen drikker Peter ofte kaffe."
     glossedTokens := []
@@ -355,8 +303,8 @@ def ex_52 : Datum :=
 
 def ex_53a : Datum :=
   { id := "arregipietraszko2021_53a"
-    source := ⟨"arregi-pietraszko-2021", "(53a)"⟩
-    reportedIn := none
+    source := ⟨"beninca-poletto-2004", "pp. 59–60"⟩
+    reportedIn := some ⟨"arregi-pietraszko-2021", "(53a)"⟩
     language := "lomb1257"
     primaryText := "l tʃàkola semper"
     glossedTokens := [("l", "he"), ("tʃàkola", "speak.PRS.IND.3SG"), ("semper", "always")]
@@ -368,8 +316,8 @@ def ex_53a : Datum :=
 
 def ex_53b : Datum :=
   { id := "arregipietraszko2021_53b"
-    source := ⟨"arregi-pietraszko-2021", "(53b)"⟩
-    reportedIn := none
+    source := ⟨"beninca-poletto-2004", "pp. 59–60"⟩
+    reportedIn := some ⟨"arregi-pietraszko-2021", "(53b)"⟩
     language := "lomb1257"
     primaryText := "l tʃàkola mìa"
     glossedTokens := [("l", "he"), ("tʃàkola", "speak.PRS.IND.3SG"), ("mìa", "not")]
@@ -381,8 +329,8 @@ def ex_53b : Datum :=
 
 def ex_54 : Datum :=
   { id := "arregipietraszko2021_54"
-    source := ⟨"arregi-pietraszko-2021", "(54)"⟩
-    reportedIn := none
+    source := ⟨"beninca-poletto-2004", "p. 59"⟩
+    reportedIn := some ⟨"arregi-pietraszko-2021", "(54)"⟩
     language := "lomb1257"
     primaryText := "l à semper tʃakolà"
     glossedTokens := [("l", "he"), ("à", "have.PRS.IND.3SG"), ("semper", "always"), ("tʃakolà", "spoken")]
@@ -394,8 +342,8 @@ def ex_54 : Datum :=
 
 def ex_55 : Datum :=
   { id := "arregipietraszko2021_55"
-    source := ⟨"arregi-pietraszko-2021", "(55)"⟩
-    reportedIn := none
+    source := ⟨"beninca-poletto-2004", "p. 52"⟩
+    reportedIn := some ⟨"arregi-pietraszko-2021", "(55)"⟩
     language := "lomb1257"
     primaryText := "à-l majà"
     glossedTokens := [("à-l", "have.PRS.IND.3SG-he"), ("majà", "eaten")]
@@ -407,8 +355,8 @@ def ex_55 : Datum :=
 
 def ex_56b : Datum :=
   { id := "arregipietraszko2021_56b"
-    source := ⟨"arregi-pietraszko-2021", "(56b)"⟩
-    reportedIn := none
+    source := ⟨"beninca-poletto-2004", "p. 52"⟩
+    reportedIn := some ⟨"arregi-pietraszko-2021", "(56b)"⟩
     language := "lomb1257"
     primaryText := "fa-l majà"
     glossedTokens := [("fa-l", "do.PRS.IND.3SG-he"), ("majà", "eat.INF")]
@@ -420,8 +368,8 @@ def ex_56b : Datum :=
 
 def ex_57 : Datum :=
   { id := "arregipietraszko2021_57"
-    source := ⟨"arregi-pietraszko-2021", "(57)"⟩
-    reportedIn := none
+    source := ⟨"bjorkman-2011", "pp. 190–191"⟩
+    reportedIn := some ⟨"arregi-pietraszko-2021", "(57)"⟩
     language := "lomb1257"
     primaryText := "fe-t mia majal 'l pom"
     glossedTokens := [("fe-t", "do.PRS.IND.2SG-you"), ("mia", "not"), ("majal", "eat.INF"), ("'l", "the"), ("pom", "apple")]
@@ -459,8 +407,8 @@ def ex_62 : Datum :=
 
 def ex_67 : Datum :=
   { id := "arregipietraszko2021_67"
-    source := ⟨"arregi-pietraszko-2021", "(67)"⟩
-    reportedIn := none
+    source := ⟨"sailor-2018", "pp. 855–856"⟩
+    reportedIn := some ⟨"arregi-pietraszko-2021", "(67)"⟩
     language := "dani1285"
     primaryText := "Mona og Jasper vaskede bilen, eller rettere Mona gjorde."
     glossedTokens := [("Mona", "Mona"), ("og", "and"), ("Jasper", "Jasper"), ("vaskede", "washed"), ("bilen", "the.car"), ("eller", "or"), ("rettere", "rather"), ("Mona", "Mona"), ("gjorde", "did")]
@@ -511,8 +459,8 @@ def ex_74a : Datum :=
 
 def ex_74b : Datum :=
   { id := "arregipietraszko2021_74b"
-    source := ⟨"arregi-pietraszko-2021", "(74b)"⟩
-    reportedIn := none
+    source := ⟨"landau-2006", "p. 32"⟩
+    reportedIn := some ⟨"arregi-pietraszko-2021", "(74b)"⟩
     language := "hebr1245"
     primaryText := "Lirkod, Gil lo yirkod ba-xayim."
     glossedTokens := [("Lirkod", "dance.INF"), ("Gil", "Gil"), ("lo", "not"), ("yirkod", "dance.FUT"), ("ba-xayim", "in.the-life")]
@@ -524,8 +472,8 @@ def ex_74b : Datum :=
 
 def ex_77 : Datum :=
   { id := "arregipietraszko2021_77"
-    source := ⟨"arregi-pietraszko-2021", "(77)"⟩
-    reportedIn := none
+    source := ⟨"platzack-2012", "p. 281"⟩
+    reportedIn := some ⟨"arregi-pietraszko-2021", "(77)"⟩
     language := "swed1254"
     primaryText := "… och körde bilen gjorde han."
     glossedTokens := [("och", "and"), ("körde", "drive.PST"), ("bilen", "the.car"), ("gjorde", "do.PST"), ("han", "he")]
@@ -537,8 +485,8 @@ def ex_77 : Datum :=
 
 def ex_80a : Datum :=
   { id := "arregipietraszko2021_80a"
-    source := ⟨"arregi-pietraszko-2021", "(80a)"⟩
-    reportedIn := none
+    source := ⟨"travis-2003", "p. 244"⟩
+    reportedIn := some ⟨"arregi-pietraszko-2021", "(80a)"⟩
     language := "east2295"
     primaryText := "Veys-n, veys ix."
     glossedTokens := [("Veys-n", "know.PRS.1SG-INF"), ("veys", "know.PRS.1SG"), ("ix", "I")]
@@ -550,8 +498,8 @@ def ex_80a : Datum :=
 
 def ex_80b : Datum :=
   { id := "arregipietraszko2021_80b"
-    source := ⟨"arregi-pietraszko-2021", "(80b)"⟩
-    reportedIn := none
+    source := ⟨"travis-2003", "p. 244"⟩
+    reportedIn := some ⟨"arregi-pietraszko-2021", "(80b)"⟩
     language := "east2295"
     primaryText := "Iz-n, iz es reb yixezkl gombiners shtub."
     glossedTokens := [("Iz-n", "be.PRS.3SG-INF"), ("iz", "be.PRS.3SG"), ("es", "it"), ("reb", "Mr."), ("yixezkl", "Yikhezkl's"), ("gombiners", ""), ("shtub", "home")]
@@ -563,8 +511,8 @@ def ex_80b : Datum :=
 
 def ex_80c : Datum :=
   { id := "arregipietraszko2021_80c"
-    source := ⟨"arregi-pietraszko-2021", "(80c)"⟩
-    reportedIn := none
+    source := ⟨"davis-prince-1986", "p. 95"⟩
+    reportedIn := some ⟨"arregi-pietraszko-2021", "(80c)"⟩
     language := "east2295"
     primaryText := "Bin-en, bin ikh in amerike."
     glossedTokens := [("Bin-en", "be.PRS.1SG-INF"), ("bin", "be.PRS.1SG"), ("ikh", "I"), ("in", "in"), ("amerike", "America")]
@@ -600,6 +548,6 @@ def ex_84 : Datum :=
     readings := []
     paperFeatures := [("context", "fronting"), ("verbType", "lexical"), ("doSupport", "true"), ("frontedForm", "bare")] }
 
-def all : List Datum := [ex_6, ex_7, ex_10a, ex_10b, ex_12, ex_13, ex_16, ex_19_1, ex_19_9, ex_19_7, ex_19_11, ex_26, ex_27, ex_30, ex_31, ex_33, ex_34, ex_36a, ex_36b, ex_36c, ex_37a, ex_37b, ex_37c, fn38, ex_51, ex_52, ex_53a, ex_53b, ex_54, ex_55, ex_56b, ex_57, ex_61, ex_62, ex_67, ex_70, ex_71, ex_74a, ex_74b, ex_77, ex_80a, ex_80b, ex_80c, ex_82, ex_84]
+def all : List Datum := [ex_6, ex_7, ex_10a, ex_10b, ex_12, ex_13, ex_16, ex_26, ex_27, ex_30, ex_31, ex_33, ex_34, ex_36a, ex_36b, ex_36c, ex_37a, ex_37b, ex_37c, fn38, ex_51, ex_52, ex_53a, ex_53b, ex_54, ex_55, ex_56b, ex_57, ex_61, ex_62, ex_67, ex_70, ex_71, ex_74a, ex_74b, ex_77, ex_80a, ex_80b, ex_80c, ex_82, ex_84]
 
 end ArregiPietraszko2021.Examples

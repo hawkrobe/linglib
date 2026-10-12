@@ -1,0 +1,74 @@
+{
+  "FormTable": [
+    {
+      "ID": "arregipietraszko2021_19_cl1",
+      "Language_ID": "nort2795",
+      "Parameter_ID": "rel_cl1",
+      "Form": "o",
+      "Segments": ["o"],
+      "Comment": "",
+      "Source": ["arregi-pietraszko-2021[(19)]"],
+      "Lnk": "a",
+      "D": "u",
+      "T": "u"
+    },
+    {
+      "ID": "arregipietraszko2021_19_cl9",
+      "Language_ID": "nort2795",
+      "Parameter_ID": "rel_cl9",
+      "Form": "e",
+      "Segments": ["e"],
+      "Comment": "",
+      "Source": ["arregi-pietraszko-2021[(19)]"],
+      "Lnk": "a",
+      "D": "i",
+      "T": "i"
+    },
+    {
+      "ID": "arregipietraszko2021_19_cl7",
+      "Language_ID": "nort2795",
+      "Parameter_ID": "rel_cl7",
+      "Form": "esi",
+      "Segments": ["e", "s", "i"],
+      "Comment": "",
+      "Source": ["arregi-pietraszko-2021[(19)]"],
+      "Lnk": "a",
+      "D": "i",
+      "T": "si"
+    },
+    {
+      "ID": "arregipietraszko2021_19_cl11",
+      "Language_ID": "nort2795",
+      "Parameter_ID": "rel_cl11",
+      "Form": "olu",
+      "Segments": ["o", "l", "u"],
+      "Comment": "",
+      "Source": ["arregi-pietraszko-2021[(19)]"],
+      "Lnk": "a",
+      "D": "u",
+      "T": "lu"
+    }
+  ],
+  "ParameterTable": [
+    {
+      "ID": "rel_cl1",
+      "Name": "1REL",
+      "Description": "relative agreement prefix of class 1"
+    },
+    {
+      "ID": "rel_cl9",
+      "Name": "9REL",
+      "Description": "relative agreement prefix of class 9"
+    },
+    {
+      "ID": "rel_cl7",
+      "Name": "7REL",
+      "Description": "relative agreement prefix of class 7"
+    },
+    {
+      "ID": "rel_cl11",
+      "Name": "11REL",
+      "Description": "relative agreement prefix of class 11"
+    }
+  ]
+}

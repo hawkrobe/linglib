@@ -6,7 +6,7 @@ public import Mathlib.Order.Basic
 /-!
 # Pollock (1989): Verb Movement, Universal Grammar, and the Structure of IP
 
-This file formalizes [pollock-1989]'s account of the placement of French and English verbs
+This file formalizes Pollock's account of the placement of French and English verbs
 relative to negation, adverbs, floating quantifiers, and the subject. The clause is
 `[TP T [NegP Neg [AgrP Agr [VP Adv V]]]]`, and a verb moves head to head: to Agr, the short
 movement that carries it past an adverb, and from Agr to T, the long movement that carries it
@@ -48,8 +48,7 @@ open Examples
 
 /-! ### Heads, verbs, and reachability -/
 
-/-- The positions a verb can occupy: in VP, in Agr after short movement, in T after long
-movement. -/
+/-- A verb occupies its position in VP, Agr after short movement, or T after long movement. -/
 inductive Height where
   | vp
   | agr
@@ -76,7 +75,7 @@ inductive Language where
   | english
   deriving DecidableEq, Repr, Fintype
 
-/-- A clause type: its language and whether its T is finite. -/
+/-- A clause type is a language with the finiteness of its T. -/
 structure Clause where
   language : Language
   finite : Bool
@@ -91,14 +90,14 @@ def Clause.TenseOpaque (c : Clause) : Prop := c.finite = false
 /-- A head hosts a verb unless it is opaque and the verb has θ-roles to assign. -/
 def Hosts (isOpaque : Prop) (v : Verb) : Prop := ¬ isOpaque ∨ v = .auxiliary
 
-/-- The heights a verb reaches in a clause, head by head: Agr if Agr hosts it, T if moreover T
+/-- A verb reaches the heights of a clause head by head, Agr if Agr hosts it and T if moreover T
 hosts it. -/
 def Reaches (c : Clause) (v : Verb) : Height → Prop
   | .vp => True
   | .agr => Hosts c.AgrOpaque v
   | .tense => Hosts c.AgrOpaque v ∧ Hosts c.TenseOpaque v
 
-instance (c : Clause) (v : Verb) : DecidablePred (Reaches c v) := λ h => by
+instance (c : Clause) (v : Verb) : DecidablePred (Reaches c v) := fun h ↦ by
   cases h <;> unfold Reaches Hosts Clause.AgrOpaque Clause.TenseOpaque <;> infer_instance
 
 /-- Long movement is short movement continued (the Head Movement Constraint). -/
@@ -120,7 +119,7 @@ theorem auxiliary_reaches_tense (c : Clause) : Reaches c .auxiliary .tense :=
 English idiosyncrasy. -/
 theorem lexical_not_reaches_nonfinite_tense (l : Language) :
     ¬ Reaches ⟨l, false⟩ .lexical .tense :=
-  λ h => h.2.elim (· rfl) (nomatch ·)
+  fun h ↦ h.2.elim (· rfl) (nomatch ·)
 
 /-- A lexical verb moves at all exactly in French: the lexical restrictions on short movement
 in infinitives and on long movement in finite clauses are the same restriction. -/
@@ -134,8 +133,8 @@ theorem lexical_reaches_agr_iff (c : Clause) : Reaches c .lexical .agr ↔ c.lan
 def top (c : Clause) (v : Verb) : Height :=
   if Reaches c v .tense then .tense else if Reaches c v .agr then .agr else .vp
 
-/-- The positions a verb may surface in: only the highest one in a finite clause, where T is an
-operator that must bind the verb's trace, and any reachable one in a nonfinite clause. -/
+/-- A verb may surface only in its highest position in a finite clause, where T is an operator
+that must bind the verb's trace, and in any position it reaches in a nonfinite clause. -/
 def Admits (c : Clause) (v : Verb) (h : Height) : Prop :=
   if c.finite then h = top c v else Reaches c v h
 
@@ -164,8 +163,8 @@ inductive Diagnostic where
   | inversion
   deriving DecidableEq, Repr, Fintype
 
-/-- Whether a verb at a height precedes the diagnostic element: negation and the inverted
-subject require T, an adverb or floating quantifier in the VP-initial position requires Agr. -/
+/-- A verb precedes negation and the inverted subject from T, and an adverb or floating
+quantifier in the VP-initial position from Agr or T. -/
 def precedes (h : Height) : Diagnostic → Bool
   | .negation | .inversion => h = .tense
   | .adverb | .floatingQ => h ≠ .vp
@@ -202,7 +201,7 @@ def interpret (r : Datum) : Option (Clause × Verb × Diagnostic × Bool) := do
     | _ => none
   pure (⟨language, finite⟩, verb, diagnostic, order)
 
-/-- A row is predicted: it is excluded exactly when no admitted height puts the verb on the
+/-- A row is predicted when it is excluded exactly where no admitted height puts the verb on the
 attested side of the diagnostic element. -/
 def Predicted (r : Datum) : Prop :=
   match interpret r with
@@ -212,7 +211,7 @@ def Predicted (r : Datum) : Prop :=
 instance (r : Datum) : Decidable (Predicted r) := by
   unfold Predicted; split <;> infer_instance
 
-/-- The paradigm (2) to (39): every row is predicted. -/
+/-- Every row of the paradigm (2) to (39) is predicted. -/
 theorem paradigm : ∀ r ∈ Examples.all, Predicted r := by
   decide
 
