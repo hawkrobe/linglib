@@ -19,17 +19,12 @@ adjacent phase.
 namespace English.Verbs
 
 open ArgumentStructure Aspect Degree
-open English.Inflection
 
 /-! ### Change of State -/
 
 /-- "stop" — phasal cessation, presupposes activity was happening -/
 def stop : Verb where
   morphs := [.root "stop"]
-  form3sg := "stops"
-  formPast := "stopped"
-  formPastPart := "stopped"
-  formPresPart := "stopping"
   valency := .of
     [(ArgumentFrame.gerund, [0, 1]),
      (ArgumentFrame.np, [0, 1]),
@@ -43,10 +38,7 @@ def stop : Verb where
 /-- "quit" — phasal cessation -/
 def quit : Verb where
   morphs := [.root "quit"]
-  form3sg := "quits"
-  formPast := "quit"
-  formPastPart := "quit"
-  formPresPart := "quitting"
+  past := "quit"
   valency := .of
     [(ArgumentFrame.gerund, [0, 1]),
      (ArgumentFrame.np, [0, 1]),
@@ -58,7 +50,7 @@ def quit : Verb where
   levinClasses := {LevinClass.complete}
 
 /-- "start" — phasal inception, presupposes activity wasn't happening -/
-def start : Verb := .mkRegular {
+def start : Verb where
   morphs := [.root "start"]
   valency := .of
     [(ArgumentFrame.gerund, [0, 1]),
@@ -68,15 +60,14 @@ def start : Verb := .mkRegular {
   vendlerClass := some .achievement
   passivizable := false
   phasal := some .inception
-  levinClasses := {LevinClass.begin} }
+  levinClasses := {LevinClass.begin}
 
 /-- "begin" — phasal inception -/
 def begin_ : Verb where
   morphs := [.root "begin"]
-  form3sg := "begins"
-  formPast := "began"
-  formPastPart := "begun"
-  formPresPart := "beginning"
+  past := "began"
+  pastPart := "begun"
+  doubling := true
   valency := .of
     [(ArgumentFrame.gerund, [0, 1]),
      (ArgumentFrame.np, [0, 1]),
@@ -88,7 +79,7 @@ def begin_ : Verb where
   levinClasses := {LevinClass.begin}
 
 /-- "continue" — phasal continuation, presupposes activity was happening -/
-def continue_ : Verb := .mkRegular {
+def continue_ : Verb where
   morphs := [.root "continue"]
   valency := .of
     [(ArgumentFrame.gerund, [0, 1]),
@@ -98,15 +89,12 @@ def continue_ : Verb := .mkRegular {
   vendlerClass := some .activity
   passivizable := false
   phasal := some .continuation
-  levinClasses := {LevinClass.begin} }
+  levinClasses := {LevinClass.begin}
 
 /-- "keep" — phasal continuation -/
 def keep : Verb where
   morphs := [.root "keep"]
-  form3sg := "keeps"
-  formPast := "kept"
-  formPastPart := "kept"
-  formPresPart := "keeping"
+  past := "kept"
   valency := .of
     [(ArgumentFrame.gerund, [0, 1]),
      (ArgumentFrame.np, [0, 1]),
