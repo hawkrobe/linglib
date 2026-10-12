@@ -136,14 +136,6 @@ theorem Perm.node_of_forall₂ {a : α} {cs ds : List (RoseTree α)}
     (h : List.Forall₂ Perm cs ds) : Perm (.node a cs) (.node a ds) :=
   .node (.of_forall₂ h)
 
-/-- Rewriting a single child by a `Perm`-related tree relates the nodes. -/
-theorem Perm.congr_child {a : α} (pre post : List (RoseTree α))
-    {old new : RoseTree α} (h : Perm old new) :
-    Perm (.node a (pre ++ old :: post)) (.node a (pre ++ new :: post)) :=
-  .node (.of_forall₂ (List.rel_append
-    (List.forall₂_same.mpr fun c _ ↦ Perm.refl c)
-    (.cons h (List.forall₂_same.mpr fun c _ ↦ Perm.refl c))))
-
 /-! ### The `Multiset.Rel` characterization -/
 
 private theorem PermList.rel : ∀ {cs ds : List (RoseTree α)}, PermList cs ds →
@@ -188,15 +180,6 @@ theorem Perm.value_eq {t s : RoseTree α} (h : Perm t s) : t.value = s.value :=
 theorem Perm.children_rel {t s : RoseTree α} (h : Perm t s) :
     Multiset.Rel Perm (↑t.children : Multiset (RoseTree α)) ↑s.children :=
   h.value_children.2
-
-/-- Prepending a shared child preserves relatedness of nodes. -/
-theorem Perm.cons_child (x : RoseTree α) {a : α} {cs ds : List (RoseTree α)}
-    (h : Perm (.node a cs) (.node a ds)) :
-    Perm (.node a (x :: cs)) (.node a (x :: ds)) := by
-  have hrel := (perm_node_iff.mp h).2
-  exact .node (permList_iff_rel.mpr (by
-    rw [← Multiset.cons_coe, ← Multiset.cons_coe]
-    exact hrel.cons (Perm.refl x)))
 
 /-- `PermList`-related lists have equal length. -/
 theorem PermList.length_eq {cs ds : List (RoseTree α)} (h : PermList cs ds) :
