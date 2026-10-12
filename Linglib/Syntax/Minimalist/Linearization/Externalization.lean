@@ -21,6 +21,7 @@ the book), c-selection computes the planar order.
 
 ## Main declarations
 
+* `Minimalist.ConventionDir`: the harmonic head-side convention, head-initial or head-final.
 * `Minimalist.LinearizationState`: the value of the book's head function in its two
   descriptions — the selection state enriched with the yield, `0` off `Dom(h)`; a
   `CommMagma` and `MulZeroClass` under the `side`-indexed Merge-local product.
@@ -65,6 +66,14 @@ for head–complement structure but does not model specifier placement (that nee
 namespace Minimalist
 
 open RoseTree UnorderedTree
+
+/-- The harmonic head-side convention: a head function determines a planar embedding by placing
+    the head daughter to the left (`initial`) or to the right (`final`) of every binary node
+    ([marcolli-chomsky-berwick-2025], Lemma 1.13.5). -/
+inductive ConventionDir where
+  | initial
+  | final
+  deriving Repr, DecidableEq, Inhabited
 
 /-- Place the head daughter's yield on the convention side: `.initial` → head-yield
     first, `.final` → head-yield last. -/

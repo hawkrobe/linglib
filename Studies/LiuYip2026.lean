@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Syntax.Minimalist.FunctionalSequence
+public import Linglib.Syntax.Minimalist.Category.FunctionalSequence
 public import Linglib.Syntax.Minimalist.Clause.Size
 public import Linglib.Fragments.Mandarin.Adverbs
 public import Linglib.Fragments.Mandarin.Verbs
@@ -63,7 +63,7 @@ embeddability of *you* (`Pred.embedsYou`) and into the blocking of aspect loweri
 
 The two projections are the binary split of [travis-2010], [macdonald-2008], [tsai-2008] and
 [sybesma-2017]; their heights are those of the functional sequence in
-`Syntax/Minimalist/FunctionalSequence`, outer aspect at the level of T and inner aspect at the
+`Syntax/Minimalist/Category/FunctionalSequence`, outer aspect at the level of T and inner aspect at the
 level of v, so containment is a comparison of levels. Chomsky's defective intervention is not a
 relation between heads: an embedded projection blocks association whatever its features, which
 is the paper's claim. The semicomplementizer and Exfoliation, the restitutive reading, the

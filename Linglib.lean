@@ -1048,7 +1048,6 @@ import Linglib.Syntax.Mereological.Parthood
 import Linglib.Syntax.Minimalist.Agree.Basic
 import Linglib.Syntax.Minimalist.Agree.Coordination
 import Linglib.Syntax.Minimalist.Agree.Cyclic
-import Linglib.Syntax.Minimalist.Defs
 import Linglib.Syntax.Minimalist.Economy.Basic
 import Linglib.Syntax.Minimalist.Economy.MinimalYield.Basic
 import Linglib.Syntax.Minimalist.Economy.MinimalYield.Laurent

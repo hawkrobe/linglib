@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Syntax.Minimalist.FunctionalSequence
+public import Linglib.Syntax.Minimalist.Category.FunctionalSequence
 public import Mathlib.Data.List.Chain
 
 /-!

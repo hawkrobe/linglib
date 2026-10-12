@@ -8,7 +8,7 @@ module
 public import Mathlib.Algebra.BigOperators.Group.Multiset.Basic
 public import Linglib.Core.Data.UnorderedTree.DecEq
 public import Linglib.Core.Data.UnorderedTree.Licensed
-public import Linglib.Syntax.Minimalist.Defs
+public import Linglib.Syntax.Minimalist.LexicalItem
 
 /-!
 # Syntactic objects

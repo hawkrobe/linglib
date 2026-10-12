@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Syntax.Case.Dependent
-public import Linglib.Syntax.Minimalist.Defs
+public import Linglib.Syntax.Minimalist.Category.Basic
 public import Linglib.Syntax.Minimalist.Probe.Basic
 public import Mathlib.Data.List.Lookmap
 

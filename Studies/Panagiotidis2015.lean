@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Data.UD.UPOS
-public import Linglib.Syntax.Minimalist.FunctionalSequence
+public import Linglib.Syntax.Minimalist.Category.FunctionalSequence
 
 /-!
 # Panagiotidis (2015): Categorial Features
