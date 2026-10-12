@@ -4,18 +4,30 @@ public import Linglib.Semantics.ArgumentStructure.EnergySource
 public import Linglib.Data.Examples.Cruse1973
 
 /-!
-# Some thoughts on agentivity
+# Cruse (1973): Some thoughts on agentivity
 
 Cruse replaces the referential definitions of agentivity, Fillmore's animate perceived
 instigator and Gruber's wilful source, by an entailment test: a noun is a doer in a sentence
 when the sentence entails that the noun did something. The test admits inanimate doers,
-process verbs and statives, against the received opinions, so doing is heterogeneous: at
-least four features each suffice for it, the volitive, the effective, the initiative and the
-agentive, an instrument being none of them, and each has contextual diagnostics of its own.
+process verbs and statives, against the received opinions, and what it detects is
+heterogeneous: at least four features each suffice for doing, the volitive, the effective, the
+initiative and the agentive, an instrument bearing none of them, and each has contextual
+diagnostics of its own.
 
-We check the paper's examples against its diagnostics: normality in each frame is what the
-noun's features predict, the three counterexamples to the received opinions are among the
-data, and the volitive and the effective alone each make a doer.
+A noun's profile is the set of features its sentence attributes to it, so a doer is a noun with
+a nonempty profile. The paper's examples are checked against the normality each frame predicts
+from the profile, the three received opinions are refuted among them, and Gruber's criteria of
+agentivity, as the paper reanalyzes them, pick out strictly nested classes of nouns.
+
+## Implementation notes
+
+* The agentive and the effective are the features of a force bearer drawing on its own energy
+  and on energy imparted to it; `isSelfEnergetic_iff_exists_energySource_eq` identifies them
+  with the self-energetic sources of `EnergySource`. An instrumental bears no feature.
+* The paper's query mark is printed as `?`; it defines the mark as clear abnormality, so a
+  marked example counts as abnormal.
+* The paper leaves open the contexts that neutralize *do* and *happen*, and its examples in
+  them are outside the model.
 
 ## References
 
@@ -38,21 +50,32 @@ namespace Cruse1973
 
 open ArgumentStructure
 
-/-- The doing features the paper attributes to a noun in relation to its verb. -/
-structure Profile where
+/-- The features whose presence makes a noun a doer. -/
+inductive Feature where
   /-- An act of will is stated or implied. -/
-  volitive : Bool := false
-  /-- The action is initiated by giving a command. -/
-  initiative : Bool := false
-  /-- The source of the noun's energy, if it bears force. -/
-  energy : Option EnergySource := none
-  deriving DecidableEq
+  | volitive
+  /-- The noun exerts a force by virtue of its position or motion, not of its own energy. -/
+  | effective
+  /-- The noun initiates the action by giving a command. -/
+  | initiative
+  /-- The noun uses its own energy in carrying out the action. -/
+  | agentive
+  deriving DecidableEq, Fintype
 
-/-- A doer: any feature suffices, an instrument's borrowed energy excepted. -/
-def Profile.IsDoer (p : Profile) : Prop :=
-  p.volitive = true ∨ p.initiative = true ∨ ∃ s ∈ p.energy, s.IsSelfEnergetic
+/-- The energy source a feature attributes to a force bearer. -/
+def Feature.energySource : Feature → Option EnergySource
+  | .agentive => some .internal
+  | .effective => some .imparted
+  | .volitive | .initiative => none
 
-instance : DecidablePred Profile.IsDoer := λ _ => by unfold Profile.IsDoer; infer_instance
+/-- The sources the features attribute are the self-energetic ones: an instrument, whose user
+supplies its energy, is no doer. -/
+theorem isSelfEnergetic_iff_exists_energySource_eq (s : EnergySource) :
+    s.IsSelfEnergetic ↔ ∃ f : Feature, f.energySource = some s := by
+  cases s <;> decide
+
+/-- The features a sentence attributes to a noun in relation to its verb. -/
+abbrev Profile := Finset Feature
 
 /-- The frames the paper places a sentence in. -/
 inductive Frame where
@@ -87,21 +110,19 @@ inductive Frame where
 
 /-- Normality of a sentence in a frame as the paper's diagnostics predict it from the noun's
 profile. The paper claims only that each feature suffices for the *do* form; that a noun with
-no feature is no doer is read off its happen-sentences. The sentence itself is normal, and
-the progressive, tied to stativity rather than to the profile, is left normal, no progressive
-example carrying a profile. -/
-def Frame.Normal (t : Frame) (p : Profile) : Prop :=
-  match t with
-  | .doForm | .entails => p.IsDoer
-  | .happenForm => ¬ p.IsDoer
-  | .purpose | .imperative => p.volitive = true
-  | .carefully => p.volitive = true ∧ p.energy = some .internal
-  | .reflexive | .manner | .causative => p.energy = some .internal
-  | .initiativeDenial => p.initiative = false
-  | .progressive | .plain => True
+no feature is no doer is read off its happen-sentences. The progressive tests the verb's
+stativity, on which the profile places no constraint. -/
+def Frame.Normal : Frame → Profile → Prop
+  | .doForm, p | .entails, p => p.Nonempty
+  | .happenForm, p => p = ∅
+  | .purpose, p | .imperative, p => .volitive ∈ p
+  | .carefully, p => .volitive ∈ p ∧ .agentive ∈ p
+  | .reflexive, p | .manner, p | .causative, p => .agentive ∈ p
+  | .initiativeDenial, p => .initiative ∉ p
+  | .progressive, _ | .plain, _ => True
 
-instance : DecidableRel Frame.Normal := λ t _ => by
-  cases t <;> simp only [Frame.Normal] <;> infer_instance
+instance (t : Frame) : DecidablePred t.Normal := fun _ ↦ by
+  cases t <;> unfold Frame.Normal <;> infer_instance
 
 /-- Lyons's verb classes at issue in the received opinions. -/
 inductive VerbClass where
@@ -110,6 +131,16 @@ inductive VerbClass where
   /-- A stative verb, *stand*, *have*. -/
   | stative
   deriving DecidableEq
+
+/-! ### Gruber's criteria -/
+
+/-- Gruber's criteria of agentivity, as the paper reanalyzes them, pick out strictly nested
+classes of nouns: *carefully* detects the volitive and the agentive together, the purpose
+phrase the volitive, and the *do* form any feature. -/
+theorem carefully_lt_purpose_lt_doForm :
+    Frame.carefully.Normal < Frame.purpose.Normal ∧ Frame.purpose.Normal < Frame.doForm.Normal :=
+  ⟨lt_of_le_not_ge (fun _ h ↦ h.1) fun h ↦ absurd (h {.volitive} (by decide)) (by decide),
+    lt_of_le_not_ge (fun _ h ↦ ⟨_, h⟩) fun h ↦ absurd (h {.agentive} (by decide)) (by decide)⟩
 
 /-! ### The paper's examples -/
 
@@ -120,19 +151,16 @@ def Frame.labels : List (String × Frame) :=
    ("manner", .manner), ("causative", .causative), ("initiativeDenial", .initiativeDenial),
    ("progressive", .progressive), ("plain", .plain)]
 
-/-- The profiles by their `paperFeatures` labels. -/
+/-- The profiles by their `paperFeatures` labels; an instrumental bears no feature. -/
 def Profile.labels : List (String × Profile) :=
-  [("", {}), ("volitive", { volitive := true }), ("initiative", { initiative := true }),
-   ("agentive", { energy := some .internal }), ("effective", { energy := some .imparted }),
-   ("instrumental", { energy := some .instrumental }),
-   ("volitive+agentive", { volitive := true, energy := some .internal })]
+  [("", ∅), ("volitive", {.volitive}), ("initiative", {.initiative}), ("agentive", {.agentive}),
+   ("effective", {.effective}), ("instrumental", ∅), ("volitive+agentive", {.volitive, .agentive})]
 
-/-- An example of the paper: its frame, the profile of its noun, its judgment, and whether it
-states that an entailment fails. The paper's query mark is printed as `?`; it defines the mark as
-clear abnormality, so the study reads any marked example as abnormal. -/
+/-- An example of the paper, with its frame, the profile of its noun, its judgment, and whether
+it states that an entailment fails. -/
 structure Row where
   frame : Frame
-  /-- The profile attributed to the noun, if any; the stative and neutralized examples carry
+  /-- The profile attributed to the noun, if any; the stative and some ambiguous examples carry
   none. -/
   profile : Option Profile
   /-- Whether the attribution is the study's rather than the paper's. -/
@@ -170,6 +198,12 @@ theorem acceptable_iff_normal : ∀ d ∈ data, d.neutralized = false →
     ∀ p ∈ d.profile, (d.judgment = .acceptable ∧ d.denied = false ↔ d.frame.Normal p) := by
   decide
 
+/-- Where *do* and *happen* are neutralized, the *do* form is normal though the noun bears no
+feature: why does the door do that? -/
+theorem exists_neutralized_doForm : ∃ d ∈ data, d.neutralized = true ∧ d.profile = some ∅ ∧
+    d.frame = .doForm ∧ d.judgment = .acceptable := by
+  decide
+
 /-! ### Against the received opinions -/
 
 /-- An inanimate noun is a doer: the wind, the computer, the bullet. -/
@@ -188,17 +222,11 @@ theorem exists_stative_doer :
 
 /-! ### The heterogeneity of doing -/
 
-/-- The volitive alone makes a doer on the paper's own attribution: drifting so as to avoid
-enemy territory. -/
-theorem exists_volitive_doer : ∃ d ∈ data, d.inferred = false ∧
-    d.profile = some { volitive := true } ∧ d.frame = .doForm ∧ d.judgment = .acceptable := by
-  decide
-
-/-- The effective alone makes a doer on the paper's own attribution: the flying stone breaking
-the window. The agentive alone, as in sneezing, rests on the study's attribution. -/
-theorem exists_effective_doer : ∃ d ∈ data, d.inferred = false ∧
-    d.profile = some { energy := some .imparted } ∧ d.frame = .doForm ∧
-    d.judgment = .acceptable := by
+/-- The volitive and the effective each make a doer alone on the paper's own attribution:
+drifting so as to avoid enemy territory, the flying stone breaking the window. The agentive
+alone, as in sneezing, rests on the study's attribution. -/
+theorem exists_doer_of_feature : ∀ f ∈ [Feature.volitive, .effective], ∃ d ∈ data,
+    d.inferred = false ∧ d.profile = some {f} ∧ d.frame = .doForm ∧ d.judgment = .acceptable := by
   decide
 
 end Cruse1973

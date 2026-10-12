@@ -7,48 +7,42 @@ public import Mathlib.Tactic.DeriveFintype
 /-!
 # Proto-role entailment profiles
 
-[dowty-1991] [grimm-2011] [davis-koenig-2000] [levin-2019]
+An `EntailmentProfile` records which of Dowty's ten proto-role entailments a verb imposes on one
+of its arguments. Proto-Agent and Proto-Patient are cluster concepts: each is a set of
+entailments, and an argument's degree of agenthood or patienthood is the set it satisfies.
+Following Grimm, the Argument Selection Principle is stated lattice-theoretically: subjecthood
+tracks strict superset dominance on Proto-Agent feature sets, Proto-Patient dominance breaking
+ties.
 
-An `EntailmentProfile` records which of [dowty-1991]'s ten proto-role
-entailments (pp.572–573) a verb imposes on one of its arguments. Proto-Agent
-and Proto-Patient are cluster concepts: each is a set of entailments, and an
-argument's degree of agenthood or patienthood is the set it satisfies. The
-Argument Selection Principle is stated lattice-theoretically ([grimm-2011]):
-subjecthood tracks strict superset dominance on Proto-Agent feature sets,
-with Proto-Patient dominance breaking ties.
+## Main definitions
 
-## Main declarations
-
-- `EntailmentProfile` — the ten Boolean entailment fields
-- `EntailmentProfile.pAgentScore`, `EntailmentProfile.pPatientScore` —
-  flat feature counts
-- `PAgentDominates`, `PPatientDominates` — subset ordering on feature sets
-- the pointwise `BooleanAlgebra` instance, `EntailmentProfile.support`, and
-  the cluster sets `ProtoRoleFeature.agentCluster`/`patientCluster` — the
-  Boolean-cube order, with the counting accessors and dominance relations
-  recharacterized as cardinality and cluster-restricted inclusion
-- `OutranksForSubject` — the lattice-based Argument Selection Principle
-- `PredictsUnaccusative`, `PredictsUnergative` — split-intransitivity
-  predictions
-- `activitySubjectProfile` … `accomplishmentObjectProfile` — the
-  [rappaport-hovav-levin-1998] template-level profile defaults (per-verb
-  content lives in the class map, `LevinClass.subjectProfile`)
-- the projection to [grimm-2011]'s lattice objects and its consistency
-  theorems live in `Projection.lean`
+* `EntailmentProfile`: the ten entailments a verb imposes on an argument.
+* `PAgentDominates`, `PPatientDominates`: inclusion of Proto-Agent and Proto-Patient feature
+  sets.
+* `OutranksForSubject`: the lattice-based Argument Selection Principle.
+* `PredictsUnaccusative`, `PredictsUnergative`: the split-intransitivity predictions.
+* `activitySubjectProfile`, …, `accomplishmentObjectProfile`: Rappaport Hovav and Levin's
+  template-level defaults.
 
 ## Implementation notes
 
-The ten entailments are not independent ([levin-2019] §2.1): volition
-presupposes sentience (`WellFormedInternal`); causation,
-movement, and independent existence pair asymmetrically with Proto-Patient
-entailments (`WellFormedPair`); and the affectedness-related Proto-Patient
-entailments form an implicational hierarchy ([beavers-2010]). Their algebraic
-counterparts live in `Agentivity.lean`, reached via the projection in
-`Projection.lean`. [dowty-1991]'s original
-flat-counting selection principle is preserved for comparison in
-`Studies/Dowty1991.lean`; the counting accessors here are informational only.
-Causation priority ([davis-koenig-2000]) needs no extra clause: it falls out
-of feature-set inclusion.
+The entailments are not independent: volition presupposes sentience (`WellFormedInternal`), and
+causation, movement and independent existence pair asymmetrically with Proto-Patient entailments
+(`WellFormedPair`). Under the pointwise Boolean algebra `≤` is entailment-set inclusion, so
+Davis and Koenig's causation priority needs no extra clause; the counts `pAgentScore` and
+`pPatientScore`, cardinalities of the support, serve Dowty's flat principle in
+`Studies/Dowty1991.lean`. The projection to Grimm's lattice is in `Projection.lean`.
+
+## References
+
+* [dowty-1991]
+* [grimm-2011]
+* [davis-koenig-2000]
+* [levin-2019]
+* [beavers-2010]
+* [primus-1999]
+* [reinhart-siloni-2005]
+* [rappaport-hovav-levin-1998]
 -/
 
 @[expose] public section
@@ -79,7 +73,7 @@ structure EntailmentProfile where
   independentExistence : Bool := false
   /-- Undergoes a change of state. -/
   changeOfState : Bool := false
-  /-- Incremental theme: the argument measures out the event. -/
+  /-- The argument is an incremental theme, measuring out the event. -/
   incrementalTheme : Bool := false
   /-- Causally affected by another participant. -/
   causallyAffected : Bool := false
@@ -229,7 +223,7 @@ entailment ([dowty-1991] Table 1). Unlike flat counting, this classifies
 def PredictsUnaccusative : Prop :=
   p.volition = false ∧ p.causation = false ∧ p.pPatientScore > 0
 
-instance : DecidablePred PredictsUnaccusative := λ p => by
+instance : DecidablePred PredictsUnaccusative := fun p ↦ by
   unfold PredictsUnaccusative; infer_instance
 
 /-- The sole argument bears a priority Proto-Agent entailment (volition or
@@ -237,7 +231,7 @@ causation) and no Proto-Patient entailment. -/
 def PredictsUnergative : Prop :=
   (p.volition = true ∨ p.causation = true) ∧ p.pPatientScore = 0
 
-instance : DecidablePred PredictsUnergative := λ p => by
+instance : DecidablePred PredictsUnergative := fun p ↦ by
   unfold PredictsUnergative; infer_instance
 
 /-! ### Well-formedness -/
@@ -247,7 +241,7 @@ volitionally ([dowty-1991] p.607, [levin-2019] §2.1). -/
 def WellFormedInternal : Prop :=
   p.volition = true → p.sentience = true
 
-instance : DecidablePred WellFormedInternal := λ p => by
+instance : DecidablePred WellFormedInternal := fun p ↦ by
   unfold WellFormedInternal; infer_instance
 
 /-- Three Proto-Agent entailments pair asymmetrically across a
@@ -262,38 +256,6 @@ def WellFormedPair : Prop :=
 instance : Decidable (WellFormedPair subj obj) := by
   unfold WellFormedPair; infer_instance
 
-/-! ### The do-test -/
-
-/-- The *do*-test ([cruse-1973] via [dowty-1991]) passes on semantic grounds
-iff the profile entails volition, causation, or movement. -/
-def PassesDoTestFromProfile : Prop :=
-  p.volition = true ∨ p.causation = true ∨ p.movement = true
-
-instance : DecidablePred PassesDoTestFromProfile := λ p => by
-  unfold PassesDoTestFromProfile; infer_instance
-
-/-! ### Effectors and force recipients -/
-
-/-- A self-energetic force bearer ([van-valin-wilkins-1996]): movement plus
-independent existence, realized as external argument. -/
-def IsEffector : Prop :=
-  p.movement = true ∧ p.independentExistence = true
-
-instance : DecidablePred IsEffector := λ p => by
-  unfold IsEffector; infer_instance
-
-/-- Causally affected or stationary, realized as internal argument. -/
-def IsForceRecipient : Prop :=
-  p.causallyAffected = true ∨ p.stationary = true
-
-instance : DecidablePred IsForceRecipient := λ p => by
-  unfold IsForceRecipient; infer_instance
-
-/-- An effector carries at least two Proto-Agent entailments. -/
-theorem two_le_pAgentScore_of_isEffector (h : IsEffector p) :
-    2 ≤ p.pAgentScore := by
-  simp [EntailmentProfile.pAgentScore, h.1, h.2]
-
 /-! ### Template-level proto-role defaults
 
 Per-template subject/object defaults ([rappaport-hovav-levin-1998] with
@@ -302,35 +264,33 @@ entailment content is NOT stored here: it lives in the Levin-class map
 (`LevinClass.subjectProfile`), and Dowty's own per-verb attributions are typed
 data rows in `Data/ProtoRoles/Dowty1991.json` consumed by `Studies/Dowty1991.lean`. -/
 
-/-- Activity template subject: V+S+M+IE. Transitive activities like *hit*
-add causation at the class level via root-contributed objects. -/
+/-- The activity template's subject, with volition, sentience, movement and independent existence.
+Transitive activities like *hit* add causation at the class level via root-contributed objects. -/
 def activitySubjectProfile : EntailmentProfile :=
   { volition := true, sentience := true, movement := true,
     independentExistence := true }
 
-/-- Achievement template subject: undergoes change (M+IE+CoS). Caveat: the
-movement entailment fits directed-motion achievements (*arrive*) but
-overgeneralizes to non-motion achievements (*recognize*, *notice*), whose
-subjects are sentient rather than moving — those pattern with the psych-state
-templates in `LevinClass.subjectProfile`. -/
+/-- The achievement template's subject, which moves, exists independently and undergoes a change of
+state. The movement entailment fits directed-motion achievements (*arrive*) but overgeneralizes to
+non-motion achievements (*recognize*, *notice*), whose subjects are sentient rather than moving;
+those pattern with the psych-state templates in `LevinClass.subjectProfile`. -/
 def achievementSubjectProfile : EntailmentProfile :=
   { movement := true, independentExistence := true, changeOfState := true }
 
-/-- Accomplishment template subject: full proto-agent (V+S+C+M+IE).
-Dowty-confirmed at the class level: the primary transitive verbs of
-[dowty-1991] (35) (*build*, *write*, *murder*, *eat*, *wash*) have subjects
-with "volition, sentience, causation, and movement" and no Proto-Patient
-entailments (p. 577); independent existence is the parenthesized (27e). -/
+/-- The accomplishment template's subject, a full proto-agent with volition, sentience, causation,
+movement and independent existence. Dowty confirms it at the class level: the primary transitive
+verbs of [dowty-1991] (35) (*build*, *write*, *murder*, *eat*, *wash*) have subjects with "volition,
+sentience, causation, and movement" and no Proto-Patient entailments (p. 577); independent existence
+is the parenthesized (27e). -/
 def accomplishmentSubjectProfile : EntailmentProfile :=
   { volition := true, sentience := true, causation := true, movement := true,
     independentExistence := true }
 
-/-- Accomplishment template object: result patient (CoS+CA). Dowty-confirmed
-at the class level: the (35) objects have "change, causally affected"
-(p. 577); the remaining Proto-Patient entailments are hedged there as
-"(mostly) incremental theme, stationary, dependent existence", so incremental
-themes (*eat*, *build*) add IT per class or per verb — not all accomplishment
-objects measure the event. -/
+/-- The accomplishment template's object, a result patient that changes state and is causally
+affected. Dowty confirms it at the class level: the (35) objects have "change, causally affected"
+(p. 577); the remaining Proto-Patient entailments are hedged there as "(mostly) incremental theme,
+stationary, dependent existence", so incremental themes (*eat*, *build*) add IT per class or per
+verb — not all accomplishment objects measure the event. -/
 def accomplishmentObjectProfile : EntailmentProfile :=
   { changeOfState := true, causallyAffected := true }
 
