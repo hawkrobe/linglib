@@ -89,42 +89,40 @@ inductive Grade where
 instance : LinearOrder Grade := LinearOrder.lift' Grade.ctorIdx (by decide)
 
 /-- The first person singular *in*. -/
-def in_ : PersonalPronoun Grade :=
-  { form := "in", person := some .first, number := some .singular }
+def in_ : PersonalPronoun := { form := "in", person := some .first, number := some .singular }
 
 /-- The second person singular *at*. -/
-def at_ : PersonalPronoun Grade :=
-  { form := "at", person := some .second, number := some .singular,
-    grades := {.nonhonorific} }
+def at_ : PersonalPronoun := { form := "at", person := some .second, number := some .singular }
 
 /-- The honorific second person singular *laal*. -/
-def laal : PersonalPronoun Grade :=
-  { form := "laal", person := some .second, number := some .singular,
-    grades := {.honorific} }
+def laal : PersonalPronoun := { form := "laal", person := some .second, number := some .singular }
 
 /-- The third person singular *are'*, usually with a determiner, *ri are'*. -/
-def are' : PersonalPronoun Grade :=
-  { form := "are'", person := some .third, number := some .singular }
+def are' : PersonalPronoun := { form := "are'", person := some .third, number := some .singular }
 
 /-- The first person plural *oj*. -/
-def oj : PersonalPronoun Grade :=
-  { form := "oj", person := some .first, number := some .plural }
+def oj : PersonalPronoun := { form := "oj", person := some .first, number := some .plural }
 
 /-- The second person plural *ix*. -/
-def ix : PersonalPronoun Grade :=
-  { form := "ix", person := some .second, number := some .plural,
-    grades := {.nonhonorific} }
+def ix : PersonalPronoun := { form := "ix", person := some .second, number := some .plural }
 
 /-- The honorific second person plural *alaq*. -/
-def alaq : PersonalPronoun Grade :=
-  { form := "alaq", person := some .second, number := some .plural,
-    grades := {.honorific} }
+def alaq : PersonalPronoun := { form := "alaq", person := some .second, number := some .plural }
 
 /-- The third person plural *a're'*, usually with a determiner, *ri a're'*. -/
-def a're' : PersonalPronoun Grade :=
-  { form := "a're'", person := some .third, number := some .plural }
+def a're' : PersonalPronoun := { form := "a're'", person := some .third, number := some .plural }
+
+/-- The second person singular at each grade. -/
+def addresseeSg : Grade → PersonalPronoun
+  | .nonhonorific => at_
+  | .honorific => laal
+
+/-- The second person plural at each grade. -/
+def addresseePl : Grade → PersonalPronoun
+  | .nonhonorific => ix
+  | .honorific => alaq
 
 /-- The independent pronouns. -/
-def pronouns : Finset (PersonalPronoun Grade) := {in_, at_, laal, are', oj, ix, alaq, a're'}
+def pronouns : Finset PersonalPronoun := {in_, at_, laal, are', oj, ix, alaq, a're'}
 
 end Kiche

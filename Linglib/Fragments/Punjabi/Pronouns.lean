@@ -33,33 +33,30 @@ instance : LinearOrder Grade := LinearOrder.lift' Grade.ctorIdx (by decide)
 namespace Pronouns
 
 /-- *maiṃ* — 1sg. -/
-def maiN : PersonalPronoun Grade :=
-  { form := "maiṃ", person := some .first, number := some .singular }
+def maiN : PersonalPronoun := { form := "maiṃ", person := some .first, number := some .singular }
 
 /-- *asiiṃ* — 1pl. -/
-def asiiN : PersonalPronoun Grade :=
-  { form := "asiiṃ", person := some .first, number := some .plural }
+def asiiN : PersonalPronoun := { form := "asiiṃ", person := some .first, number := some .plural }
 
 /-- *tũ* — 2sg nonhonorific. -/
-def tuN : PersonalPronoun Grade :=
-  { form := "tũ", person := some .second, number := some .singular,
-    grades := {.nonhonorific} }
+def tuN : PersonalPronoun := { form := "tũ", person := some .second, number := some .singular }
 
 /-- *tusii* — 2sg honorific, also 2pl. -/
-def tusii : PersonalPronoun Grade :=
-  { form := "tusii", person := some .second, number := some .singular,
-    grades := {.honorific} }
+def tusii : PersonalPronoun := { form := "tusii", person := some .second, number := some .singular }
 
 /-- *uh* — 3sg, the distal demonstrative. -/
-def uhSg : PersonalPronoun Grade :=
-  { form := "uh", person := some .third, number := some .singular }
+def uhSg : PersonalPronoun := { form := "uh", person := some .third, number := some .singular }
 
 /-- *uh* — 3pl, the same form. -/
-def uhPl : PersonalPronoun Grade :=
-  { form := "uh", person := some .third, number := some .plural }
+def uhPl : PersonalPronoun := { form := "uh", person := some .third, number := some .plural }
+
+/-- The second person singular at each grade. -/
+def addressee : Grade → PersonalPronoun
+  | .nonhonorific => tuN
+  | .honorific => tusii
 
 /-- The pronoun inventory. -/
-def pronouns : Finset (PersonalPronoun Grade) := {maiN, asiiN, tuN, tusii, uhSg, uhPl}
+def pronouns : Finset PersonalPronoun := {maiN, asiiN, tuN, tusii, uhSg, uhPl}
 
 end Pronouns
 

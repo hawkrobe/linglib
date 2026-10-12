@@ -39,68 +39,74 @@ instance : LinearOrder Grade := LinearOrder.lift' Grade.ctorIdx (by decide)
 namespace Pronouns
 
 /-- *yo* 'I'. -/
-def yo : PersonalPronoun Grade :=
-  { form := "yo", person := some .first, number := some .singular }
+def yo : PersonalPronoun := { form := "yo", person := some .first, number := some .singular }
 
 /-- *tú* 'you', familiar. -/
-def tu : PersonalPronoun Grade :=
-  { form := "tú", person := some .second, number := some .singular,
-    grades := {.familiar} }
+def tu : PersonalPronoun := { form := "tú", person := some .second, number := some .singular }
 
 /-- *vos* 'you', familiar, in some Latin-American countries. -/
-def vos : PersonalPronoun Grade :=
-  { form := "vos", person := some .second, number := some .singular,
-    grades := {.familiar} }
+def vos : PersonalPronoun := { form := "vos", person := some .second, number := some .singular }
 
 /-- *usted* 'you', polite, with third-person agreement. -/
-def usted : PersonalPronoun Grade :=
-  { form := "usted", person := some .third, number := some .singular, grades := {.polite},
+def usted : PersonalPronoun :=
+  { form := "usted", person := some .third, number := some .singular,
     referential := {.addressee} }
 
 /-- *él* 'he, it'. -/
-def el : PersonalPronoun Grade :=
+def el : PersonalPronoun :=
   { form := "él", person := some .third, number := some .singular, gender := some .masculine }
 
 /-- *ella* 'she, it'. -/
-def ella : PersonalPronoun Grade :=
+def ella : PersonalPronoun :=
   { form := "ella", person := some .third, number := some .singular, gender := some .feminine }
 
 /-- *nosotros* 'we', masculine or mixed. -/
-def nosotros : PersonalPronoun Grade :=
+def nosotros : PersonalPronoun :=
   { form := "nosotros", person := some .first, number := some .plural,
     gender := some .masculine }
 
 /-- *nosotras* 'we', feminine. -/
-def nosotras : PersonalPronoun Grade :=
+def nosotras : PersonalPronoun :=
   { form := "nosotras", person := some .first, number := some .plural,
     gender := some .feminine }
 
 /-- *vosotros* 'you', familiar plural, masculine or mixed, used in Spain. -/
-def vosotros : PersonalPronoun Grade :=
+def vosotros : PersonalPronoun :=
   { form := "vosotros", person := some .second, number := some .plural,
-    gender := some .masculine, grades := {.familiar} }
+    gender := some .masculine }
 
 /-- *vosotras* 'you', familiar plural, feminine, used in Spain. -/
-def vosotras : PersonalPronoun Grade :=
+def vosotras : PersonalPronoun :=
   { form := "vosotras", person := some .second, number := some .plural,
-    gender := some .feminine, grades := {.familiar} }
+    gender := some .feminine }
 
 /-- *ustedes* 'you', plural with third-person agreement: polite in Spain, the only plural of
 address in Latin America. -/
-def ustedes : PersonalPronoun Grade :=
-  { form := "ustedes", person := some .third, number := some .plural, grades := {.polite},
+def ustedes : PersonalPronoun :=
+  { form := "ustedes", person := some .third, number := some .plural,
     referential := {.addresseeOthers} }
 
 /-- *ellos* 'they', masculine or mixed. -/
-def ellos : PersonalPronoun Grade :=
+def ellos : PersonalPronoun :=
   { form := "ellos", person := some .third, number := some .plural, gender := some .masculine }
 
 /-- *ellas* 'they', feminine. -/
-def ellas : PersonalPronoun Grade :=
+def ellas : PersonalPronoun :=
   { form := "ellas", person := some .third, number := some .plural, gender := some .feminine }
 
+/-- The pronouns for a single addressee at each grade, *vos* beside *tú* where it is used. -/
+def addresseeSg : Grade → Finset PersonalPronoun
+  | .familiar => {tu, vos}
+  | .polite => {usted}
+
+/-- The pronouns for several addressees at each grade in Spain, *vosotros* and *vosotras* by
+gender at the familiar grade. -/
+def addresseePl : Grade → Finset PersonalPronoun
+  | .familiar => {vosotros, vosotras}
+  | .polite => {ustedes}
+
 /-- The subject pronouns. -/
-def pronouns : Finset (PersonalPronoun Grade) :=
+def pronouns : Finset PersonalPronoun :=
   {yo, tu, vos, usted, el, ella, nosotros, nosotras, vosotros, vosotras, ustedes, ellos, ellas}
 
 end Pronouns

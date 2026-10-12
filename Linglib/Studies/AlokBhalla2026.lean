@@ -111,13 +111,13 @@ def levelOf : String → Option Magahi.Grade
 theorem magahi_fusion_rows :
     ∀ row ∈ Examples.all, row.language = "maga1260" → ∀ m ∈ row.feature? "marker",
       ∀ s ∈ (row.feature? "subject").bind levelOf, ∀ a ∈ (row.feature? "addressee").bind levelOf,
-        Magahi.Pronouns.allocutive s a = some m := by
+        toString (Magahi.Pronouns.allocutive s a) = m := by
   decide +kernel
 
 /-- The Souletin markers of ex 1 and the Galician clitics are the Fragments'. -/
 theorem marker_rows :
     ∀ row ∈ Examples.all, ∀ m ∈ row.feature? "marker",
-      (row.language = "soul1243" → m ∈ Basque.Pronouns.allocutiveMarkers.map (·.form)) ∧
+      (row.language = "soul1243" → ∃ g x, (Basque.Pronouns.allocutive g x).map toString = some m) ∧
       (row.language = "gali1258" → m ∈ Galician.Pronouns.allocutiveClitics.map (·.form)) ∧
       (row.language = "tami1289" → m = Tamil.Pronouns.pluralSuffix) := by
   decide +kernel
@@ -263,15 +263,16 @@ theorem magahi_second_person_rows :
         ∀ a ∈ row.feature? "addressee", a = p := by
   decide +kernel
 
-/-- The pronouns of the Magahi rows carry the Fragment's honorific grades. Each grade a row
-    names for a second- or third-person pronoun is one a Fragment pronoun of that person among
-    the row's words realizes (exx 39–45). -/
+/-- The pronouns of the Magahi rows are the Fragment's at the grades the rows name. For each grade
+    a row names for a second- or third-person pronoun, the Fragment's singular table gives a form
+    at that grade, in some case, among the row's words (exx 39–45). -/
 theorem magahi_pronoun_rows :
     ∀ row ∈ Examples.all, row.language = "maga1260" →
-      ∀ kp ∈ [("pronoun2", Person.second), ("pronoun3", .third), ("pronoun3Other", .third)],
-        ∀ v ∈ row.feature? kp.1, ∃ l, levelOf v = some l ∧
-          ∃ p ∈ Magahi.Pronouns.pronouns, p.person = some kp.2 ∧ l ∈ p.grades ∧
-            p.form ∈ row.surfaceTokens.map String.toLower := by
+      ∀ kt ∈ [("pronoun2", Magahi.Pronouns.secondSingular),
+          ("pronoun3", Magahi.Pronouns.thirdSingular),
+          ("pronoun3Other", Magahi.Pronouns.thirdSingular)],
+        ∀ v ∈ row.feature? kt.1, ∃ l, levelOf v = some l ∧
+          ∃ c, (kt.2 c l).form ∈ row.surfaceTokens.map String.toLower := by
   decide +kernel
 
 /-- A mismatch between two second-person pronouns is out (ex 41). -/

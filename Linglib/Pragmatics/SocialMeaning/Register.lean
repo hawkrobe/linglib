@@ -15,10 +15,10 @@ simple past is the narrative tense of writing, and Indonesian *telah* is the wri
 counterpart of *sudah*.
 
 Register is a property of the form and of the situation of use. The deference a form presents
-toward a person it refers to or addresses is a separate property, its honorific grade
-(`PersonalPronoun.grades`). The Korean speech-style particles carry one value
-of each: the polite and the formal particle present the same grade to the addressee and differ
-in the formality of the discourse.
+toward a person it refers to or addresses is a separate property, its honorific grade, a
+coordinate of the language's own paradigms (`Syntax/Category/Pronoun/Personal.lean`). The Korean
+speech-style particles present the same grade to the addressee and differ in the formality of the
+discourse.
 
 ## Main definitions
 

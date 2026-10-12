@@ -104,12 +104,12 @@ theorem canBe_predicate_iff (c : Category) : c.CanBe .predicate ↔ c ≠ .proDP
 
 /-- The category of an English personal pronoun, from its person: first and second person
 pronouns are DPs and third person pronouns φPs, (33). -/
-def english (p : PersonalPronoun Empty) : Category :=
+def english (p : PersonalPronoun) : Category :=
   if p.person = some .third then .prophiP else .proDP
 
 /-- Dialect B, (34) and (37c): the accusative third person plural *them* is reanalyzed as the
 D-morpheme *th-* over the clitic φP *'em*, a DP. -/
-def dialectB (p : PersonalPronoun Empty) : Category :=
+def dialectB (p : PersonalPronoun) : Category :=
   if p.person = some .third ∧ p.number = some .plural ∧ p.case_ = some .acc then .proDP
   else english p
 

@@ -39,8 +39,8 @@ namespace Buring2012
 
 open English.Pronouns Presupposition
 
-variable {E P T : Type*} [PartialOrder E] [Gendered E] (e : PersonalPronoun Empty)
-  (g : Assignment E) (n : ℕ) (c : Reference.Context PUnit E P T) (scope : E → PUnit → Prop)
+variable {E P T : Type*} [PartialOrder E] [Gendered E] (e : PersonalPronoun) (g : Assignment E)
+  (n : ℕ) (c : Reference.Context PUnit E P T) (scope : E → PUnit → Prop)
 
 /-- A pronoun denotes the value of its index under the assignment: its selector is the canonical
 variable lookup, the same one for the bound, anaphoric and deictic uses. -/

@@ -22,15 +22,17 @@ no dative.
 ## Main definitions
 
 * `German.Pronouns.pronouns` — the personal pronoun inventory
+* `German.Pronouns.addresseeSg`, `German.Pronouns.addresseePl` — the pronouns of address at each
+  grade
 * `German.Pronouns.sich`, `German.Pronouns.einander` — the reflexive and the reciprocal pronoun
 * `German.Pronouns.wer`, `German.Pronouns.was` — the interrogative paradigms, a form for each case
 
 ## Main results
 
-* `German.Pronouns.addressee_honorific`, `German.Pronouns.addressee_polite`,
-  `German.Pronouns.sie_formal_referential` — the addressee pronouns realize both grades of the
-  familiar–polite opposition, and the single polite form denotes what the two familiar forms
-  denote together
+* `German.Pronouns.addresseeSg_eq_sie_formal_iff`, `German.Pronouns.addressee_number`,
+  `German.Pronouns.sie_formal_referential` — *Sie* is the pronoun of the polite grade, which does
+  not distinguish one addressee from several, and it denotes what the two familiar forms denote
+  together
 * `German.Pronouns.wer_isSome`, `German.Pronouns.was_isSome_iff` — *wer* has a form in every
   case, *was* in every case but the dative
 
@@ -63,59 +65,61 @@ namespace Pronouns
 /-! ### Personal pronouns -/
 
 /-- The first person singular *ich*. -/
-def ich : PersonalPronoun Grade :=
-  { form := "ich", person := some .first, number := some .singular }
+def ich : PersonalPronoun := { form := "ich", person := some .first, number := some .singular }
 
 /-- The familiar second person singular *du*. -/
-def du : PersonalPronoun Grade :=
-  { form := "du", person := some .second, number := some .singular,
-    grades := {.familiar} }
+def du : PersonalPronoun := { form := "du", person := some .second, number := some .singular }
 
 /-- The polite second person *Sie*, for one or several addressees. Its agreement person and
 number are those of the third person plural; it denotes the addressee alone or with others
 ([adamson-zompi-2025]). -/
-def sie_formal : PersonalPronoun Grade :=
-  { form := "Sie", person := some .third, number := some .plural, grades := {.polite},
+def sie_formal : PersonalPronoun :=
+  { form := "Sie", person := some .third, number := some .plural,
     referential := {.addressee, .addresseeOthers} }
 
 /-- The third person singular masculine *er*. -/
-def er : PersonalPronoun Grade :=
+def er : PersonalPronoun :=
   { form := "er", person := some .third, number := some .singular, gender := some .masculine }
 
 /-- The third person singular feminine *sie*. -/
-def sie_sg : PersonalPronoun Grade :=
+def sie_sg : PersonalPronoun :=
   { form := "sie", person := some .third, number := some .singular, gender := some .feminine }
 
 /-- The third person singular neuter *es*. -/
-def es : PersonalPronoun Grade :=
+def es : PersonalPronoun :=
   { form := "es", person := some .third, number := some .singular, gender := some .neuter }
 
 /-- The first person plural *wir*. -/
-def wir : PersonalPronoun Grade :=
-  { form := "wir", person := some .first, number := some .plural }
+def wir : PersonalPronoun := { form := "wir", person := some .first, number := some .plural }
 
 /-- The familiar second person plural *ihr*. -/
-def ihr : PersonalPronoun Grade :=
-  { form := "ihr", person := some .second, number := some .plural,
-    grades := {.familiar} }
+def ihr : PersonalPronoun := { form := "ihr", person := some .second, number := some .plural }
 
 /-- The third person plural *sie*. -/
-def sie_pl : PersonalPronoun Grade :=
-  { form := "sie", person := some .third, number := some .plural }
+def sie_pl : PersonalPronoun := { form := "sie", person := some .third, number := some .plural }
+
+/-- The pronoun for a single addressee at each grade. -/
+def addresseeSg : Grade → PersonalPronoun
+  | .familiar => du
+  | .polite => sie_formal
+
+/-- The pronoun for several addressees at each grade. -/
+def addresseePl : Grade → PersonalPronoun
+  | .familiar => ihr
+  | .polite => sie_formal
 
 /-- The personal pronoun inventory. -/
-def pronouns : Finset (PersonalPronoun Grade) :=
+def pronouns : Finset PersonalPronoun :=
   {ich, du, sie_formal, er, sie_sg, es, wir, ihr, sie_pl}
 
-/-- The pronouns referring to the addressee realize both the familiar and the polite grade. -/
-theorem addressee_honorific :
-    (pronouns.filter (·.referentialPerson = some .second)).biUnion (·.grades) = Finset.univ := by
-  decide
+/-- *Sie* is the pronoun of the polite grade and of no other, for one addressee or several. -/
+theorem addresseeSg_eq_sie_formal_iff (g : Grade) :
+    (addresseeSg g = sie_formal ↔ g = .polite) ∧ (addresseePl g = sie_formal ↔ g = .polite) := by
+  cases g <;> decide
 
-/-- *Sie* is the only honorific addressee pronoun. -/
-theorem addressee_polite :
-    pronouns.filter (fun p ↦ p.referentialPerson = some .second ∧ p.IsHonorific) =
-      {sie_formal} := by
+/-- The familiar grade distinguishes one addressee from several, and the polite grade does not. -/
+theorem addressee_number :
+    addresseeSg .familiar ≠ addresseePl .familiar ∧ addresseeSg .polite = addresseePl .polite := by
   decide
 
 /-- The polite form denotes exactly what the two familiar forms denote between them: *Sie* is
