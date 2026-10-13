@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Core.MeasureTheory.Measure.Dirac
-public import Mathlib.Probability.Kernel.Basic
+public import Linglib.Core.Probability.Kernel.Basic
 public import Mathlib.MeasureTheory.Measure.Real
 public import Mathlib.Probability.UniformOn
 
@@ -38,7 +38,7 @@ namespace ProbabilityTheory.Kernel
 variable {α β : Type*} [MeasurableSpace α] [MeasurableSpace β]
 
 /-- Two uniform experts weight a point by `(#A · #B)⁻¹` on their agreement set and `0` off it. -/
-theorem uniformOn_mul_uniformOn_apply_singleton [MeasurableSingletonClass β] [DecidableEq β]
+private theorem uniformOn_mul_uniformOn_apply_singleton [MeasurableSingletonClass β] [DecidableEq β]
     (A B : Finset β) (b : β) :
     uniformOn ↑A {b} * uniformOn ↑B {b} =
       if b ∈ A ∩ B then ((A.card : ℝ≥0∞) * B.card)⁻¹ else 0 := by
@@ -47,11 +47,7 @@ theorem uniformOn_mul_uniformOn_apply_singleton [MeasurableSingletonClass β] [D
     simp [Finset.inter_singleton_of_mem, Finset.inter_singleton_of_notMem, hA, hB,
       ENNReal.mul_inv, div_eq_mul_inv]
 
-variable [Countable α] [MeasurableSingletonClass α]
-
-theorem ofFunOfCountable_apply (f : α → Measure β) (a : α) : ofFunOfCountable f a = f a := rfl
-
-variable [Fintype β]
+variable [Countable α] [MeasurableSingletonClass α] [Fintype β]
 
 /-- The kernel that normalizes a nonnegative weight function on a finite target has row `a` the
 probability measure proportional to `w a`. A row of zero or infinite total weight collapses to

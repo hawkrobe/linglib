@@ -1,6 +1,7 @@
 module
 
 public import Linglib.Core.MeasureTheory.Measure.AbsolutelyContinuous
+public import Linglib.Core.Probability.Kernel.Module
 public import Linglib.Pragmatics.RSA.Belief
 public import Mathlib.Data.Nat.Dist
 public import Mathlib.Order.Interval.Finset.Nat
@@ -600,7 +601,7 @@ variable [Fintype I] [MeasurableSpace I] (PI : Measure I)
 speaker's use of the message, averaged over interpretations, and each later one (eqs. 5–7) by the
 previous speaker's. -/
 noncomputable def luListener : ℕ → Kernel M (W × O)
-  | 0 => Kernel.ofDensity P fun m p ↦ ∑ i, PI {i} * luS1 P sem cost lam i p.2 {m}
+  | 0 => RSA.listener P fun p ↦ (∑ i, PI {i} • luS1 P sem cost lam i) p.2
   | n + 1 => RSA.listener P fun p ↦
       RSA.speaker lam cost (luListener n) (fun o ↦ P[|Prod.snd ⁻¹' {o}]) p.2
 
@@ -617,8 +618,8 @@ theorem luSpeaker_eq_of_sameSupport (hlam : 0 < lam) {o₁ o₂ : O} (hs : SameS
   induction n with
   | zero =>
     exact speaker_ofDensity_snd_eq P cost lam hlam.le ho₁ ho₂
-      (fun o m ↦ ∑ i, PI {i} * luS1 P sem cost lam i o {m}) fun m ↦ by
-        simp only [luS1_eq_of_sameSupport P sem cost lam hlam hs ho₁ ho₂]
+      (fun o m ↦ (∑ i, PI {i} • luS1 P sem cost lam i) o {m}) fun m ↦ by
+        simp only [sum_apply, smul_apply, luS1_eq_of_sameSupport P sem cost lam hlam hs ho₁ ho₂]
   | succ n ih =>
     exact speaker_ofDensity_snd_eq P cost lam hlam.le ho₁ ho₂
       (fun o m ↦ luSpeaker P sem cost lam PI n o {m}) fun m ↦ by rw [ih]

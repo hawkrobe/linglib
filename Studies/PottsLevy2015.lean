@@ -1,7 +1,7 @@
 module
 
+public import Linglib.Core.Probability.Kernel.Module
 public import Linglib.Pragmatics.RSA.Uniform
-public import Linglib.Core.Probability.Kernel.Mixture
 
 /-!
 # Potts and Levy (2015): Negotiating Lexical Uncertainty and Speaker Expertise with Disjunction
@@ -221,7 +221,7 @@ noncomputable def L2 : Kernel Msg (World × Lex) := listener (uniformOn Set.univ
 
 /-- The marginal expertise speaker (17) at a flat lexicon prior. -/
 noncomputable def S2exp : Kernel World Msg :=
-  Kernel.mixture (fun _ : Lex => 3⁻¹) fun l => (S2 α β c).comap (·, l) (measurable_of_countable _)
+  ∑ l, uniformOn Set.univ {l} • (S2 α β c).comap (·, l) (measurable_of_countable _)
 
 end Tower
 
@@ -539,11 +539,14 @@ theorem s2_prefers_disjunction (hc0 : 0 ≤ c) (hc10 : c ≤ Real.log 10) (m : M
 the disjunction. -/
 theorem s2exp_uncertain : S2exp 2 1 c .w₁₂ {.A} = 0 ∧ S2exp 2 1 c .w₁₂ {.AorX} ≠ 0 := by
   refine ⟨?_, ?_⟩
-  · rw [S2exp, Kernel.mixture_apply']
+  · simp only [S2exp, sum_apply, smul_apply, Measure.finsetSum_apply, Measure.smul_apply,
+      smul_eq_mul]
     exact Finset.sum_eq_zero fun l _ => by
       rw [Kernel.comap_apply', S2_apply_eq_zero two_pos (by cases l <;> decide), mul_zero]
-  · rw [S2exp, Kernel.mixture_apply_ne_zero_iff]
-    exact ⟨.excl, by simp, by
+  · simp only [S2exp, sum_apply, smul_apply, Measure.finsetSum_apply, Measure.smul_apply,
+      smul_eq_mul, ne_eq, Finset.sum_eq_zero_iff, Finset.mem_univ, true_implies, mul_eq_zero,
+      not_forall, not_or]
+    exact ⟨.excl, uniformOn_univ_singleton_ne_zero _, by
       rw [Kernel.comap_apply']
       exact Kernel.ofWeights_apply_singleton_ne_zero
         (S2_weight_ne_zero two_pos (by decide))
