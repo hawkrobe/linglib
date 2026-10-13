@@ -56,14 +56,14 @@ inductive NCFeature where
   deriving DecidableEq, Repr
 
 /-- The structure a singular prefix lexicalizes, the bare classifier `[Nₙ]` (48a). -/
-def sgTree (n : ℕ) : RoseTree NCFeature := leaf (.cls n)
+def sgTree (n : ℕ) : RoseTree (Option NCFeature) := spine (.cls n) []
 
 /-- The structure a plural prefix lexicalizes, the Specifier `[# Nₙ]` (41), (48b). -/
-def plTree (n : ℕ) : RoseTree NCFeature := node .num [leaf (.cls n)]
+def plTree (n : ℕ) : RoseTree (Option NCFeature) := spine (.cls n) [.num]
 
 /-- `SharesClassifierN sg pl` holds when a singular and a plural entry contain the same classifier
 N, the foot of each stored tree, which is the conjoined-subject diagnostic of section 2. -/
-def SharesClassifierN (sg pl : LexicalEntry NCFeature String) : Prop :=
+def SharesClassifierN (sg pl : LexicalEntry (Option NCFeature) String) : Prop :=
   foot sg.tree = foot pl.tree
 
 instance : DecidableRel SharesClassifierN := fun _ _ ↦ inferInstanceAs (Decidable (_ = _))
@@ -74,39 +74,39 @@ The Specifier is derived from its classifier up. The standing assumption is that
 with the number head also has a classifier below it, (67), so that none lexicalizes the number
 head alone, the work of the Foot Condition (68). -/
 
-variable {L : RuleSet (LexicalEntry NCFeature String)} {base spec : ℕ}
+variable {L : RuleSet (LexicalEntry (Option NCFeature) String)} {base spec : ℕ}
 
 /-- The Specifier `[# Nₙ]` is lexicalized whole by a single prefix or not at all, the classifier
 never evacuating to leave the number head a suffix of its own. -/
-theorem exponents_cls_num (h : treeSpellout L (leaf .num) = none) (n : ℕ) :
-    exponents L [.cls n, .num] = (treeSpellout L (plTree n)).map fun x ↦ [x] := by
-  rw [exponents_cons_of_forall_leaf (L := L) (NCFeature.cls n) (fs := [NCFeature.num])
-    (by simpa using h)]
-  rfl
+theorem exponents_cls_num (h : treeSpellout L (leaf (some .num)) = none) (n : ℕ) :
+    exponents L [.cls n, .num] = (treeSpellout L (plTree n)).map fun x ↦ [x] :=
+  exponents_cons_of_forall_leaf (L := L) (NCFeature.cls n) (fs := [NCFeature.num])
+    (by simpa using h)
 
 /-- The prefixes of a plural noun whose root merged with the classifier `base`, outermost first,
 (65)–(75). The Specifier `[# N_base]` is lexicalized as it is where it can be. Otherwise, as a
 last resort, a second Specifier `[# N_spec]` is built inside it and the first keeps its singular
 prefix. -/
-def pluralPrefixes (L : RuleSet (LexicalEntry NCFeature String)) (base spec : ℕ) :
+def pluralPrefixes (L : RuleSet (LexicalEntry (Option NCFeature) String)) (base spec : ℕ) :
     Option (List String) :=
   exponents L [.cls base, .num] <|>
     (exponents L [.cls spec, .num]).bind fun outer ↦ (exponents L [.cls base]).map (outer ++ ·)
 
 /-- A plural has one prefix where an entry lexicalizes the Specifier on the singular's
 classifier, and otherwise a plural prefix stacked on the singular one (75). -/
-theorem pluralPrefixes_eq (h : treeSpellout L (leaf .num) = none) (base spec : ℕ) :
+theorem pluralPrefixes_eq (h : treeSpellout L (leaf (some .num)) = none) (base spec : ℕ) :
     pluralPrefixes L base spec =
       (((treeSpellout L (plTree base)).map fun x ↦ [x]) <|>
         (treeSpellout L (plTree spec)).bind fun outer ↦
           (treeSpellout L (sgTree base)).map fun inner ↦ [outer, inner]) := by
-  rw [pluralPrefixes, exponents_cls_num h, exponents_cls_num h, exponents_singleton, sgTree]
+  rw [pluralPrefixes, exponents_cls_num h, exponents_cls_num h, exponents_singleton, sgTree,
+    spine_nil]
   rcases treeSpellout L (plTree spec) with - | o <;>
-    rcases treeSpellout L (leaf (.cls base)) with - | i <;> rfl
+    rcases treeSpellout L (leaf (some (.cls base))) with - | i <;> rfl
 
 /-- A plural stacks exactly when no entry lexicalizes the plural Specifier on the singular's
 classifier, the correlation of section 4.5. -/
-theorem stacks_iff_no_entry (h : treeSpellout L (leaf .num) = none) {r : List String}
+theorem stacks_iff_no_entry (h : treeSpellout L (leaf (some .num)) = none) {r : List String}
     (hr : pluralPrefixes L base spec = some r) :
     1 < r.length ↔ ∀ e ∈ L, ¬ e.Matches (plTree base) := by
   rw [← treeSpellout_eq_none_iff]
@@ -120,7 +120,7 @@ theorem stacks_iff_no_entry (h : treeSpellout L (leaf .num) = none) {r : List St
 
 /-- The outer prefix of a stack lexicalizes a plural Specifier, so a singular prefix never
 stacks on a plural one (section 4.5). -/
-theorem outer_prefix_is_plural (h : treeSpellout L (leaf .num) = none)
+theorem outer_prefix_is_plural (h : treeSpellout L (leaf (some .num)) = none)
     {outer inner : String} (hr : pluralPrefixes L base spec = some [outer, inner]) :
     ∃ e ∈ L, e.Matches (plTree spec) ∧ e.exponent = outer := by
   rw [pluralPrefixes_eq h] at hr
@@ -136,7 +136,7 @@ theorem outer_prefix_is_plural (h : treeSpellout L (leaf .num) = none)
 
 /-- Where the plural entry's own classifier merges with the root, (82)–(83), the Specifier and
 the last resort are one derivation, so nothing stacks. -/
-theorem pluralPrefixes_self (L : RuleSet (LexicalEntry NCFeature String)) (n : ℕ) :
+theorem pluralPrefixes_self (L : RuleSet (LexicalEntry (Option NCFeature) String)) (n : ℕ) :
     pluralPrefixes L n n = exponents L [.cls n, .num] := by
   rw [pluralPrefixes]
   cases exponents L [.cls n, .num] <;> rfl
@@ -154,23 +154,25 @@ structure ClassPair where
   plPrefix : String
 
 /-- The singular entry `[N]`. -/
-def ClassPair.sg (p : ClassPair) : LexicalEntry NCFeature String := ⟨sgTree p.sgN, p.sgPrefix⟩
+def ClassPair.sg (p : ClassPair) : LexicalEntry (Option NCFeature) String :=
+  ⟨sgTree p.sgN, p.sgPrefix⟩
 
 /-- The plural entry `[# N]`. -/
-def ClassPair.pl (p : ClassPair) : LexicalEntry NCFeature String := ⟨plTree p.plN, p.plPrefix⟩
+def ClassPair.pl (p : ClassPair) : LexicalEntry (Option NCFeature) String :=
+  ⟨plTree p.plN, p.plPrefix⟩
 
 /-- The class-prefix lexicon of a list of class pairs. -/
-def lexicon (ps : List ClassPair) : RuleSet (LexicalEntry NCFeature String) :=
+def lexicon (ps : List ClassPair) : RuleSet (LexicalEntry (Option NCFeature) String) :=
   ps.map (·.sg) ++ ps.map (·.pl)
 
 /-- No class prefix lexicalizes the number head alone, every stored tree bottoming out in a
 classifier (67). -/
 theorem treeSpellout_lexicon_num (ps : List ClassPair) :
-    treeSpellout (lexicon ps) (leaf .num) = none := by
+    treeSpellout (lexicon ps) (leaf (some .num)) = none := by
   refine treeSpellout_eq_none_iff.2 fun e he hm ↦ ?_
   rcases List.mem_append.1 he with he | he <;> obtain ⟨p, -, rfl⟩ := List.mem_map.1 he
   · simp [LexicalEntry.Matches, ClassPair.sg, sgTree] at hm
-  · simp [LexicalEntry.Matches, ClassPair.pl, plTree, isSubtree_node_iff] at hm
+  · simp [LexicalEntry.Matches, ClassPair.pl, plTree, spine, phrase, isSubtree_node_iff] at hm
 
 /-! ### The Xhosa lexicon
 
@@ -190,16 +192,17 @@ def xhosa : Xhosa.Gender → ClassPair
   | .genderE => ⟨9, "n", 9, "zi"⟩
 
 /-- The Xhosa singular entries. -/
-def xhosaSg (g : Xhosa.Gender) : LexicalEntry NCFeature String := (xhosa g).sg
+def xhosaSg (g : Xhosa.Gender) : LexicalEntry (Option NCFeature) String := (xhosa g).sg
 
 /-- The Xhosa plural entries. -/
-def xhosaPl (g : Xhosa.Gender) : LexicalEntry NCFeature String := (xhosa g).pl
+def xhosaPl (g : Xhosa.Gender) : LexicalEntry (Option NCFeature) String := (xhosa g).pl
 
 /-- The five Xhosa genders. -/
 def xhosaGenders : List Xhosa.Gender := [.genderA, .genderB, .genderC, .genderD, .genderE]
 
 /-- The Xhosa class-prefix lexicon. -/
-def xhosaPrefixes : RuleSet (LexicalEntry NCFeature String) := lexicon (xhosaGenders.map xhosa)
+def xhosaPrefixes : RuleSet (LexicalEntry (Option NCFeature) String) :=
+  lexicon (xhosaGenders.map xhosa)
 
 /-- `[N₁]` is lexicalized as *m*, the singular entry winning over *ba* as the smaller match,
 and `[# N₁]` as *ba* (48). -/
@@ -242,7 +245,7 @@ def rhonga : List ClassPair :=
     ⟨9, "yi", 10, "ti"⟩]
 
 /-- The Changana and Rhonga class-prefix lexicon. -/
-def rhongaPrefixes : RuleSet (LexicalEntry NCFeature String) := lexicon rhonga
+def rhongaPrefixes : RuleSet (LexicalEntry (Option NCFeature) String) := lexicon rhonga
 
 /-- Classes 3, 5 and 9 stack, *mi-mu-twa* 'thorns', *ma-rhi-tu* 'words' and *ti-yi-n-dlu*
 'houses' (62), (78), and classes 1 and 7 have the one prefix of *va-nhu* and *swi-fambu*. -/
@@ -265,7 +268,7 @@ theorem rhonga_stacking_iff_not_sharesClassifierN {p : ClassPair} (hp : p ∈ rh
 /-! ### Shona double plurals (section 4.3) -/
 
 /-- Shona *mi* on the bare `[N₄]` (89) and *ma* on `[# N₆]`. -/
-def shonaPrefixes : RuleSet (LexicalEntry NCFeature String) :=
+def shonaPrefixes : RuleSet (LexicalEntry (Option NCFeature) String) :=
   [⟨sgTree 4, "mi"⟩, ⟨plTree 6, "ma"⟩]
 
 /-- The double plural *ma-mi-sha* 'groups of villages' (84), (88) is derived from the entry

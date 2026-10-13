@@ -41,13 +41,15 @@ where tree spellout is also the spellout of the containment engine.
 
 ## Implementation notes
 
-* A node is a phrase labelled by its head feature, with its complement as last daughter and the
-  constituents evacuated to its edge before it. A bare head merged as a complement is not told
-  apart from a phrase of one feature, so a stored tree does not record whether its foot is unary
-  or binary, the difference Starke draws between suffixes and prefixes.
-* Matching is the rigid Superset Principle of Caha's (6), identity of a subtree. The
-  lexicalization algorithm (`Nanosyntax/Lexicalization.lean`) follows the later formulation in
-  which evacuation leaves no trace, so it needs no matching that ignores traces.
+* Trees are over any type of labels. The lexicalization algorithm
+  (`Nanosyntax/Lexicalization.lean`) takes labels in `Option F`: a node labelled by a feature is
+  that feature's phrase over its complement, and an unlabelled node joins an evacuated
+  constituent to the remnant it left. A bare head merged as a complement is not told apart from
+  a phrase of one feature, so a stored tree does not record whether its foot is unary or binary,
+  the difference Starke draws between suffixes and prefixes.
+* Matching is the rigid Superset Principle of Caha's (6), identity of a subtree. The algorithm
+  follows the later formulation in which evacuation leaves no trace, so it needs no matching
+  that ignores traces.
 
 ## References
 
