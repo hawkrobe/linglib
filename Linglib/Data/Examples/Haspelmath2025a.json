@@ -1,0 +1,616 @@
+[
+  {
+    "id": "haspelmath2025a_ex1",
+    "source": {"bibkey": "haspelmath-2025a", "paperLabel": "(1)"},
+    "language": "stan1293",
+    "primaryText": "Lee is a baker.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "classificational"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "haspelmath2025a_ex2",
+    "source": {"bibkey": "haspelmath-2025a", "paperLabel": "(2)"},
+    "language": "stan1293",
+    "primaryText": "Kim is my mother.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "equational"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "haspelmath2025a_ex3",
+    "source": {"bibkey": "haspelmath-2025a", "paperLabel": "(3)"},
+    "language": "stan1293",
+    "primaryText": "The bird is small.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "attributional"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "haspelmath2025a_ex4",
+    "source": {"bibkey": "haspelmath-2025a", "paperLabel": "(4)"},
+    "language": "stan1293",
+    "primaryText": "The bird is on the roof.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "predlocative"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "haspelmath2025a_ex5",
+    "source": {"bibkey": "haspelmath-2025a", "paperLabel": "(5)"},
+    "language": "stan1293",
+    "primaryText": "There is a bird on the roof.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "existential"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "haspelmath2025a_ex6",
+    "source": {"bibkey": "haspelmath-2025a", "paperLabel": "(6)"},
+    "language": "stan1293",
+    "primaryText": "I have a boat.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "predpossessive"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "haspelmath2025a_ex7",
+    "source": {"bibkey": "haspelmath-2025a", "paperLabel": "(7)"},
+    "language": "stan1293",
+    "primaryText": "The boat belongs to me.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "appertentive"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "haspelmath2025a_ex8a",
+    "source": {"bibkey": "haspelmath-2025a", "paperLabel": "(8a)"},
+    "language": "lezg1247",
+    "primaryText": "Zi buba kešiš ja.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Zi", "my"], ["buba", "father"], ["kešiš", "priest"], ["ja", "COP"]
+    ],
+    "translation": "My father is a minister.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "classificational"],
+      ["bold", "ja"],
+      ["boldGloss", "COP"]
+    ],
+    "comment": "The source cites (Haspelmath 1993: 311) and also prints the sentence in Cyrillic.",
+    "verified": "page-image"
+  },
+  {
+    "id": "haspelmath2025a_ex8b",
+    "source": {"bibkey": "haspelmath-2025a", "paperLabel": "(8b)"},
+    "language": "lezg1247",
+    "primaryText": "Wi ktab im ja.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Wi", "your"], ["ktab", "book"], ["im", "this.one"], ["ja", "COP"]
+    ],
+    "translation": "Your book is this one.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "equational"],
+      ["bold", "ja"],
+      ["boldGloss", "COP"]
+    ],
+    "comment": "The source cites (Haspelmath 1993: 311) and also prints the sentence in Cyrillic.",
+    "verified": "page-image"
+  },
+  {
+    "id": "haspelmath2025a_ex9a",
+    "source": {"bibkey": "haspelmath-2025a", "paperLabel": "(9a)"},
+    "language": "wels1247",
+    "primaryText": "Mae Caerdydd yn ddinas hardd.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Mae", "be.PRS.3SG"], ["Caerdydd", "Cardiff"], ["yn", "PRED"], ["ddinas", "city"],
+      ["hardd", "beautiful"]
+    ],
+    "translation": "Cardiff is a beautiful city.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "classificational"],
+      ["bold", "Mae"],
+      ["boldGloss", "be.PRS.3SG"]
+    ],
+    "comment": "The source cites (Borsley et al. 2007: 130).",
+    "verified": "page-image"
+  },
+  {
+    "id": "haspelmath2025a_ex9b",
+    "source": {"bibkey": "haspelmath-2025a", "paperLabel": "(9b)"},
+    "language": "wels1247",
+    "primaryText": "Caerdydd yw prifddinas Cymru.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Caerdydd", "Cardiff"], ["yw", "be.PRS.3SG"], ["prifddinas", "capital"], ["Cymru", "Wales"]
+    ],
+    "translation": "Cardiff is the capital of Wales.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "equational"],
+      ["bold", "yw"],
+      ["boldGloss", "be.PRS.3SG"]
+    ],
+    "comment": "The source cites (Borsley et al. 2007: 130).",
+    "verified": "page-image"
+  },
+  {
+    "id": "haspelmath2025a_ex10a",
+    "source": {"bibkey": "haspelmath-2025a", "paperLabel": "(10a)"},
+    "language": "egyp1253",
+    "primaryText": "ʕAli mudarris",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["ʕAli", "Ali"], ["mudarris", "teacher"]
+    ],
+    "translation": "Ali is a teacher.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "classificational"]
+    ],
+    "comment": "The source cites (Eid 1991: 41) and also prints the sentence in Arabic script.",
+    "verified": "page-image"
+  },
+  {
+    "id": "haspelmath2025a_ex10b",
+    "source": {"bibkey": "haspelmath-2025a", "paperLabel": "(10b)"},
+    "language": "egyp1253",
+    "primaryText": "Miħammad huwwa ʕAli.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Miħammad", "Mohammed"], ["huwwa", "COP"], ["ʕAli", "Ali"]
+    ],
+    "translation": "Mohammed is Ali.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "Miħammad ʕAli.", "judgment": "ungrammatical"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "equational"],
+      ["bold", "huwwa"],
+      ["boldGloss", "COP"]
+    ],
+    "comment": "The source cites (Eid 1991: 41), also prints the sentence in Arabic script, and stars the sentence without the copula, which it writes with Ø.",
+    "verified": "page-image"
+  },
+  {
+    "id": "haspelmath2025a_ex23",
+    "source": {"bibkey": "haspelmath-2025a", "paperLabel": "(23)"},
+    "language": "west2369",
+    "primaryText": "Man pul ziyâde dâram.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Man", "I"], ["pul", "money"], ["ziyâde", "much"], ["dâram", "have"]
+    ],
+    "translation": "I have a lot of money.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["strategy", "transpossessive"],
+      ["bold", "dâram"],
+      ["boldGloss", "have"]
+    ],
+    "comment": "The source prints the glosses of the second and third words in the order 'much money', and also prints the sentence in Persian script.",
+    "verified": "page-image"
+  },
+  {
+    "id": "haspelmath2025a_ex24",
+    "source": {"bibkey": "haspelmath-2025a", "paperLabel": "(24)"},
+    "language": "haus1257",
+    "primaryText": "Bàlki ta-nàa dà kùjèeruu màasu kyâu.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Bàlki", "Balki"], ["ta-nàa", "3F.SG-be"], ["dà", "with"], ["kùjèeruu", "chairs"],
+      ["màasu", "having"], ["kyâu", "beauty"]
+    ],
+    "translation": "Balki has nice chairs.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["strategy", "compossessive"],
+      ["bold", "ta-nàa"],
+      ["boldGloss", "3F.SG-be"]
+    ],
+    "comment": "The source cites (Abdoulaye 2006: 1122) and adds the literal translation 'Balki is with nice chairs.'",
+    "verified": "page-image"
+  },
+  {
+    "id": "haspelmath2025a_ex25",
+    "source": {"bibkey": "haspelmath-2025a", "paperLabel": "(25)"},
+    "language": "finn1318",
+    "primaryText": "Peka-lla on auto.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Peka-lla", "Pekka-ADESS"], ["on", "is"], ["auto", "car.SG.NOM"]
+    ],
+    "translation": "Pekka has a car.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["strategy", "locpossessive"],
+      ["bold", "on"],
+      ["boldGloss", "is"]
+    ],
+    "comment": "The source cites (Creissels 2013: 468) and adds the literal translation 'A car is at Pekka'.",
+    "verified": "page-image"
+  },
+  {
+    "id": "haspelmath2025a_ex26",
+    "source": {"bibkey": "haspelmath-2025a", "paperLabel": "(26)"},
+    "language": "russ1263",
+    "primaryText": "Mašin-a prinadležit Miš-e.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Mašin-a", "car-NOM"], ["prinadležit", "belongs"], ["Miš-e", "Misha-DAT"]
+    ],
+    "translation": "The car belongs to Misha.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["strategy", "oblique-possessor"],
+      ["bold", "prinadležit"],
+      ["boldGloss", "belongs"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "haspelmath2025a_ex27",
+    "source": {"bibkey": "haspelmath-2025a", "paperLabel": "(27)"},
+    "language": "stan1288",
+    "primaryText": "Esta canasta es mía.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Esta", "this"], ["canasta", "basket"], ["es", "is"], ["mía", "mine"]
+    ],
+    "translation": "This basket is mine.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["strategy", "independent-possessor"],
+      ["bold", "es"],
+      ["boldGloss", "is"]
+    ],
+    "comment": "The source cites (Stolz & Levkovych 2019: 326).",
+    "verified": "page-image"
+  },
+  {
+    "id": "haspelmath2025a_ex31",
+    "source": {"bibkey": "haspelmath-2025a", "paperLabel": "(31)"},
+    "language": "nucl1301",
+    "primaryText": "Satıcı-y-dı-m.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Satıcı-y-dı-m", "seller-COP-PST-1SG"]
+    ],
+    "translation": "I was a seller.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["bold", "y"],
+      ["boldGloss", "COP"]
+    ],
+    "comment": "The source cites (Kornfilt 1997: 57) and prints the affix -y- in bold.",
+    "verified": "page-image"
+  },
+  {
+    "id": "haspelmath2025a_ex33",
+    "source": {"bibkey": "haspelmath-2025a", "paperLabel": "(33)"},
+    "language": "stan1288",
+    "primaryText": "Hay mucha gente afuera.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Hay", "EXV"], ["mucha", "many"], ["gente", "people"], ["afuera", "outside"]
+    ],
+    "translation": "There are many people outside.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "existential"],
+      ["bold", "Hay"],
+      ["boldGloss", "EXV"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "haspelmath2025a_ex50",
+    "source": {"bibkey": "haspelmath-2025a", "paperLabel": "(50)"},
+    "language": "taga1270",
+    "primaryText": "May mga tao sa labas.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["May", "EXV"], ["mga", "PL"], ["tao", "person"], ["sa", "LOC"], ["labas", "outside"]
+    ],
+    "translation": "There are people outside.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["strategy", "existive-copula"],
+      ["bold", "May"],
+      ["boldGloss", "EXV"]
+    ],
+    "comment": "The source cites (Sabbagh 2009: 678).",
+    "verified": "page-image"
+  },
+  {
+    "id": "haspelmath2025a_ex51",
+    "source": {"bibkey": "haspelmath-2025a", "paperLabel": "(51)"},
+    "language": "sese1246",
+    "primaryText": "Ler i annan koudvan zot pa reste lo sa zil.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Ler", "when"], ["i", "3SG"], ["annan", "have"], ["koudvan", "hurricane"], ["zot", "they"],
+      ["pa", "not"], ["reste", "stay"], ["lo", "on"], ["sa", "the"], ["zil", "island"]
+    ],
+    "translation": "When there is a hurricane they don't stay on the island.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["strategy", "transpossessive-existential"],
+      ["bold", "annan"],
+      ["boldGloss", "have"]
+    ],
+    "comment": "The source cites (Michaelis & Rosalie 2013).",
+    "verified": "page-image"
+  },
+  {
+    "id": "haspelmath2025a_ex52",
+    "source": {"bibkey": "haspelmath-2025a", "paperLabel": "(52)"},
+    "language": "ital1282",
+    "primaryText": "Ci sono molte montagne in Svizzera.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Ci", "PROLOC"], ["sono", "are"], ["molte", "many"], ["montagne", "mountains"],
+      ["in", "in"], ["Svizzera", "Switzerland"]
+    ],
+    "translation": "There are many mountains in Switzerland.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["strategy", "prolocative"],
+      ["bold", "Ci"],
+      ["boldGloss", "PROLOC"],
+      ["bold", "sono"],
+      ["boldGloss", "are"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "haspelmath2025a_ex53",
+    "source": {"bibkey": "haspelmath-2025a", "paperLabel": "(53)"},
+    "language": "finn1318",
+    "primaryText": "Kato-lla on lintu.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Kato-lla", "roof-ADESS"], ["on", "is"], ["lintu", "bird"]
+    ],
+    "translation": "There is a bird on the roof.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["strategy", "existent-postposing"],
+      ["bold", "on"],
+      ["boldGloss", "is"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "haspelmath2025a_ex53cf",
+    "source": {"bibkey": "haspelmath-2025a", "paperLabel": "(53)"},
+    "language": "finn1318",
+    "primaryText": "Lintu on katolla.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "The bird is on the roof.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "predlocative"]
+    ],
+    "comment": "The source gives the sentence, without a gloss, as the comparison for (53); its translation is example (4).",
+    "verified": "page-image"
+  },
+  {
+    "id": "haspelmath2025a_ex57",
+    "source": {"bibkey": "haspelmath-2025a", "paperLabel": "(57)"},
+    "language": "mand1436",
+    "primaryText": "Wùlôo bé yíròo kótò.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Wùlôo", "dog.DET"], ["bé", "LCOP"], ["yíròo", "tree.DET"], ["kótò", "under"]
+    ],
+    "translation": "The dog is under the tree.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "predlocative"],
+      ["construction", "existential"],
+      ["bold", "bé"],
+      ["boldGloss", "LCOP"]
+    ],
+    "comment": "The source cites (Creissels 2019: 51) and gives a second translation, 'There is a dog under the tree.'",
+    "verified": "page-image"
+  },
+  {
+    "id": "haspelmath2025a_ex64",
+    "source": {"bibkey": "haspelmath-2025a", "paperLabel": "(64)"},
+    "language": "lati1261",
+    "primaryText": "Cogito, ergo sum.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Cogito,", "I.think"], ["ergo", "therefore"], ["sum", "I.exist"]
+    ],
+    "translation": "I think, therefore I am.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "hyparctic"],
+      ["bold", "sum"],
+      ["boldGloss", "I.exist"]
+    ],
+    "comment": "The source attributes the sentence to (René Descartes, 1637).",
+    "verified": "page-image"
+  },
+  {
+    "id": "haspelmath2025a_ex65",
+    "source": {"bibkey": "haspelmath-2025a", "paperLabel": "(65)"},
+    "language": "stan1290",
+    "primaryText": "Il est des situations dans lesquelles personne n'aimerait se trouver.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Il", "it"], ["est", "is"], ["des", "INDF"], ["situations", "situations"], ["dans", "in"],
+      ["lesquelles", "which"], ["personne", "nobody"], ["n'aimerait", "would.like"],
+      ["se", "self"], ["trouver", "to.find"]
+    ],
+    "translation": "There are situations in which nobody would like to be.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "hyparctic"],
+      ["bold", "est"],
+      ["boldGloss", "is"]
+    ],
+    "comment": "The source cites (Creissels 2019: 44).",
+    "verified": "page-image"
+  },
+  {
+    "id": "haspelmath2025a_ex66",
+    "source": {"bibkey": "haspelmath-2025a", "paperLabel": "(66)"},
+    "language": "hame1242",
+    "primaryText": "Bajó dáa.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Bajó", "fate"], ["dáa", "EXV"]
+    ],
+    "translation": "Fate exists.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "hyparctic"],
+      ["bold", "dáa"],
+      ["boldGloss", "EXV"]
+    ],
+    "comment": "The source cites (Petrollino 2019: 8).",
+    "verified": "page-image"
+  }
+]
