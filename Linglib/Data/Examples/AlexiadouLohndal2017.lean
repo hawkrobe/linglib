@@ -1,0 +1,46 @@
+module
+
+public import Linglib.Data.Examples.Schema
+
+/-!
+# `AlexiadouLohndal2017` — typed example data
+
+Auto-generated from `Linglib/Data/Examples/AlexiadouLohndal2017.json` by
+`scripts/gen_examples.py`. Do not edit by hand; edit the JSON and re-run
+the generator. Consumers (the paper's study file, test-suite hubs) import
+this module; declarations live in `namespace AlexiadouLohndal2017.Examples`.
+-/
+
+@[expose] public section
+
+namespace AlexiadouLohndal2017.Examples
+
+def ex_56a : Datum :=
+  { id := "alexiadoulohndal2017_56a"
+    source := ⟨"alexiadou-lohndal-2017", "(56a)"⟩
+    reportedIn := none
+    language := "stan1293"
+    primaryText := "colored dark"
+    glossedTokens := []
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("root", "color"), ("rootClass", "manner")] }
+
+def ex_56b : Datum :=
+  { id := "alexiadoulohndal2017_56b"
+    source := ⟨"alexiadou-lohndal-2017", "(56b)"⟩
+    reportedIn := none
+    language := "stan1293"
+    primaryText := "blackened dark"
+    glossedTokens := []
+    context := ""
+    judgment := .ungrammatical
+    alternatives := []
+    readings := []
+    paperFeatures := [("root", "black"), ("rootClass", "result")] }
+
+def all : List Datum := [ex_56a, ex_56b]
+
+end AlexiadouLohndal2017.Examples

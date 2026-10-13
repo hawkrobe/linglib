@@ -22,6 +22,8 @@ generate are read off the tree, and the Head Feature Principle holds along every
   `PhraseStructure.Tree.ProjectsAt`, `PhraseStructure.Tree.AdjoinsAt`: the head relation and its
   split into projection and adjunction.
 * `PhraseStructure.Tree.maximalProjectionsAt`, `PhraseStructure.Tree.maxCommandAt`.
+* `PhraseStructure.Tree.isHead`, `PhraseStructure.Tree.IsHeadAt`: head-level nodes, a terminal or an
+  adjunction of heads.
 
 ## Main results
 
@@ -124,5 +126,65 @@ theorem cat_eq_of_isProjectionOf {t : Tree C W} {h p : TreePath}
     rw [hc, RoseTree.subtreeAt_append, hu, Option.bind_some, RoseTree.subtreeAt_cons, hd,
       Option.bind_some, RoseTree.subtreeAt_nil, Option.some.injEq] at hs'
     rw [← hs', hcat, ih hu]
+
+end PhraseStructure.Tree
+
+namespace PhraseStructure.Tree
+
+open Core.Order
+
+/-! ### Head-level nodes -/
+
+section HeadLevel
+
+variable {C W : Type*}
+
+mutual
+/-- A head-level node, an X⁰, is a terminal or an adjunction of heads. -/
+def isHead : Tree C W → Bool
+  | RoseTree.node (.terminal _ _) [] => true
+  | RoseTree.node (.segment _) ts => allHeads ts
+  | _ => false
+
+/-- Every tree of a list is head-level. -/
+def allHeads : List (Tree C W) → Bool
+  | [] => true
+  | t :: ts => isHead t && allHeads ts
+end
+
+theorem allHeads_iff : ∀ l : List (Tree C W), allHeads l = true ↔ ∀ x ∈ l, isHead x = true
+  | [] => by simp [allHeads]
+  | t :: ts => by simp [allHeads, allHeads_iff ts]
+
+/-- What a head-level node contains is head-level: a head-level tree with `t` inside has `t`
+head-level. -/
+theorem isHead_of_isHead_replaceAt : ∀ (s : Tree C W) (q : List ℕ) (t : Tree C W),
+    (s.subtreeAt q).isSome → isHead (s.replaceAt q t) = true → isHead t = true
+  | _, [], t, _, h => by simpa using h
+  | RoseTree.node l cs, i :: q, t, hv, h => by
+    rw [RoseTree.replaceAt_cons] at h
+    simp only [RoseTree.subtreeAt_cons, RoseTree.children_node, Option.isSome_bind] at hv
+    obtain ⟨c, hc⟩ : ∃ c, cs[i]? = some c := Option.isSome_iff_exists.mp
+      (by cases h' : cs[i]? <;> simp_all)
+    have hcv : (c.subtreeAt q).isSome := by simpa [hc] using hv
+    have hmem : c.replaceAt q t ∈ cs.modify i (·.replaceAt q t) := by
+      rw [List.mem_iff_getElem?]; exact ⟨i, by simp [hc]⟩
+    cases l with
+    | terminal a b =>
+      obtain ⟨d, ds, hds⟩ := List.exists_cons_of_ne_nil (List.ne_nil_of_mem hmem)
+      rw [hds] at h
+      simp [isHead] at h
+    | segment a =>
+      simp only [isHead] at h
+      exact isHead_of_isHead_replaceAt c q t hcv ((allHeads_iff _).mp h _ hmem)
+    | _ => simp [isHead] at h
+
+/-- The node at position `p` of `t` is head-level. -/
+def IsHeadAt (t : Tree C W) (p : TreePath) : Prop := (t.subtreeAt p.toList).all isHead = true
+
+instance (t : Tree C W) (p : TreePath) : Decidable (IsHeadAt t p) :=
+  inferInstanceAs (Decidable (_ = true))
+
+end HeadLevel
 
 end PhraseStructure.Tree

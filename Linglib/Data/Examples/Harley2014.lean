@@ -221,7 +221,7 @@ def ex30a : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("section", "3.3"), ("phenomenon", "applicative"), ("verbClass", "unergative")] }
+    paperFeatures := [("section", "3.3"), ("phenomenon", "applicative"), ("verbClass", "unergative"), ("applicative", "suffixed")] }
 
 def ex30b : Datum :=
   { id := "harley2014_ex30b"
@@ -234,7 +234,7 @@ def ex30b : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("section", "3.3"), ("phenomenon", "applicative"), ("verbClass", "transitive")] }
+    paperFeatures := [("section", "3.3"), ("phenomenon", "applicative"), ("verbClass", "transitive"), ("applicative", "suffixed")] }
 
 def ex31 : Datum :=
   { id := "harley2014_ex31"
@@ -247,7 +247,7 @@ def ex31 : Datum :=
     judgment := .ungrammatical
     alternatives := []
     readings := []
-    paperFeatures := [("section", "3.3"), ("phenomenon", "applicative"), ("verbClass", "unaccusative")] }
+    paperFeatures := [("section", "3.3"), ("phenomenon", "applicative"), ("verbClass", "unaccusative"), ("applicative", "suffixed")] }
 
 def ex32a : Datum :=
   { id := "harley2014_ex32a"
@@ -260,7 +260,7 @@ def ex32a : Datum :=
     judgment := .ungrammatical
     alternatives := []
     readings := []
-    paperFeatures := [("section", "3.3"), ("phenomenon", "applicative"), ("verbClass", "suppletiveIntransitive")] }
+    paperFeatures := [("section", "3.3"), ("phenomenon", "applicative"), ("verbClass", "suppletiveIntransitive"), ("applicative", "suffixed")] }
 
 def ex32b : Datum :=
   { id := "harley2014_ex32b"
@@ -273,7 +273,7 @@ def ex32b : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("section", "3.3"), ("phenomenon", "applicative"), ("verbClass", "suppletiveIntransitive")] }
+    paperFeatures := [("section", "3.3"), ("phenomenon", "applicative"), ("verbClass", "suppletiveIntransitive"), ("applicative", "periphrastic")] }
 
 def exfn33_i : Datum :=
   { id := "harley2014_exfn33-i"
@@ -286,7 +286,7 @@ def exfn33_i : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("section", "3.3"), ("phenomenon", "applicative"), ("verbClass", "suppletiveTransitive")] }
+    paperFeatures := [("section", "3.3"), ("phenomenon", "applicative"), ("verbClass", "suppletiveTransitive"), ("applicative", "suffixed")] }
 
 def all : List Datum := [ex3a, ex3b, ex3c, ex3d, ex3e, ex3f, ex3g, ex6a, ex6b, ex26a, ex26b, ex27a, ex27b, ex29a, ex29b, ex30a, ex30b, ex31, ex32a, ex32b, exfn33_i]
 

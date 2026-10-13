@@ -685,6 +685,10 @@
       [
         "verbClass",
         "unergative"
+      ],
+      [
+        "applicative",
+        "suffixed"
       ]
     ],
     "comment": "The high applicative on an unergative intransitive.",
@@ -734,6 +738,10 @@
       [
         "verbClass",
         "transitive"
+      ],
+      [
+        "applicative",
+        "suffixed"
       ]
     ],
     "comment": "The applicative on a transitive.",
@@ -783,6 +791,10 @@
       [
         "verbClass",
         "unaccusative"
+      ],
+      [
+        "applicative",
+        "suffixed"
       ]
     ],
     "comment": "No applicative on an unaccusative.",
@@ -836,6 +848,10 @@
       [
         "verbClass",
         "suppletiveIntransitive"
+      ],
+      [
+        "applicative",
+        "suffixed"
       ]
     ],
     "comment": "No applicative on a suppletive intransitive: the suppletive intransitives are unaccusative, as the locality of conditioning predicts.",
@@ -893,6 +909,10 @@
       [
         "verbClass",
         "suppletiveIntransitive"
+      ],
+      [
+        "applicative",
+        "periphrastic"
       ]
     ],
     "comment": "The periphrastic benefactive instead.",
@@ -942,6 +962,10 @@
       [
         "verbClass",
         "suppletiveTransitive"
+      ],
+      [
+        "applicative",
+        "suffixed"
       ]
     ],
     "comment": "The applicative on a suppletive transitive; suppletion still follows the thematic object, not the applied object.",

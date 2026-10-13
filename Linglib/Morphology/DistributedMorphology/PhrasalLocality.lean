@@ -1,0 +1,194 @@
+module
+
+public import Linglib.Syntax.Tree.Projection
+
+/-!
+# Phrasal locality of conditioning
+
+A trigger may condition the Vocabulary Item of a head only if no phrasal boundary separates
+them. In Bobaljik's formulation no maximal projection may intervene, so suppletion of a head by
+another is restricted to synthetic formations, in which Merger or head movement has brought the
+trigger into the target's complex head. Bobaljik and Harley's refinement lets no phrasal
+projection at all intervene, which renders specifiers non-local, so that a head is local only to
+the material of its complex head and to its complement. The boundaries crossed going from the
+target to the trigger are the nodes that dominate the target but not the trigger. The
+word-internal domains of cycles and pruning are in `Locality.lean`.
+
+Embedding a phrase in a larger tree leaves the locality of its heads unchanged when the phrase's
+root is phrasal: everything outside the phrase is separated from its heads by that root, and
+everything inside is related to them as it was.
+
+## Main definitions
+
+* `DistributedMorphology.MayCondition`, `DistributedMorphology.MayCondition'`: the two
+  formulations of locality.
+* `DistributedMorphology.localSet`, `DistributedMorphology.localLabels`: the labels of the
+  terminals that may condition a head under the refined formulation, as a set and as a list.
+* `DistributedMorphology.x0At`: the complex head containing a node.
+
+## Main statements
+
+* `DistributedMorphology.localSet_replaceAt`, `DistributedMorphology.x0At_replaceAt`: embedding a
+  phrase leaves the complex heads of its nodes and the labels local to them unchanged.
+
+## References
+
+* [bobaljik-2012]
+* [bobaljik-harley-2017]
+-/
+
+@[expose] public section
+
+namespace DistributedMorphology
+
+open PhraseStructure PhraseStructure.Tree Core.Order
+
+variable {C W : Type*}
+
+/-! ### The two formulations -/
+
+/-- The nodes crossed going from `α` to `β`, those that dominate `α` and not `β`. -/
+def crossed (α β : TreePath) : List TreePath :=
+  (α.toList.inits.map TreePath.mk).filter fun p ↦ ¬ p ≤ β
+
+theorem mem_crossed {α β p : TreePath} : p ∈ crossed α β ↔ p ≤ α ∧ ¬ p ≤ β := by
+  obtain ⟨p⟩ := p
+  simp [crossed, List.mem_inits, TreePath.le_def]
+
+/-- **Locality, Bobaljik's formulation.** A trigger at `β` may condition the head at `α` when no
+maximal projection is crossed going from `α` to `β`. -/
+def MayCondition [DecidableEq C] (t : Tree C W) (α β : TreePath) : Prop :=
+  ∀ p ∈ crossed α β, IsHeadAt t p ∨ ¬ IsMaximalCategory (Tree.ProjectsAt t) (Tree.AdjoinsAt t) p
+
+/-- **Locality, the refined formulation.** A trigger at `β` may condition the head at `α` when no
+phrasal node at all is crossed going from `α` to `β`. -/
+def MayCondition' (t : Tree C W) (α β : TreePath) : Prop := ∀ p ∈ crossed α β, IsHeadAt t p
+
+instance [DecidableEq C] (t : Tree C W) (α β : TreePath) : Decidable (MayCondition t α β) :=
+  List.decidableBAll _ _
+
+instance (t : Tree C W) (α β : TreePath) : Decidable (MayCondition' t α β) :=
+  List.decidableBAll _ _
+
+/-- The refined formulation is the stricter one. -/
+theorem MayCondition'.mayCondition [DecidableEq C] {t : Tree C W} {α β : TreePath}
+    (h : MayCondition' t α β) : MayCondition t α β :=
+  fun p hp ↦ .inl (h p hp)
+
+theorem mayCondition'_iff {t : Tree C W} {α β : TreePath} :
+    MayCondition' t α β ↔ ∀ p, p ≤ α → ¬ p ≤ β → IsHeadAt t p :=
+  ⟨fun h p hα hβ ↦ h p (mem_crossed.mpr ⟨hα, hβ⟩),
+    fun h p hp ↦ h p (mem_crossed.mp hp).1 (mem_crossed.mp hp).2⟩
+
+/-! ### Local labels and complex heads -/
+
+/-- The labels of the terminals that may condition the head at `α` under the refined
+formulation. -/
+def localSet (t : Tree C W) (α : TreePath) : Set (C × W) :=
+  {l | ∃ p : TreePath, t.subtreeAt p.toList = some (terminal l.1 l.2) ∧ MayCondition' t α p}
+
+/-- The labels of the terminals that may condition the head at `α`, in the order of the yield. -/
+def localLabels (t : Tree C W) (α : TreePath) : List (C × W) :=
+  t.positionedTerminals.filterMap fun x ↦ if MayCondition' t α x.1 then some x.2 else none
+
+theorem mem_localSet_iff {t : Tree C W} {α : TreePath} {l : C × W} :
+    l ∈ localSet t α ↔ l ∈ localLabels t α := by
+  simp only [localSet, localLabels, Set.mem_ofPred_eq, List.mem_filterMap,
+    Option.ite_none_right_eq_some, Option.some.injEq]
+  constructor
+  · rintro ⟨p, hp, hm⟩
+    exact ⟨(p, l), mem_positionedTerminals_of_subtreeAt hp, hm, rfl⟩
+  · rintro ⟨x, hx, hm, rfl⟩
+    exact ⟨x.1, subtreeAt_of_mem_positionedTerminals hx, hm⟩
+
+/-- The complex head containing the node at `α`, its highest head-level ancestor. -/
+def x0At (t : Tree C W) (α : TreePath) : Option (Tree C W) :=
+  (α.toList.inits.find? fun p ↦ (t.subtreeAt p).all isHead).bind t.subtreeAt
+
+/-! ### Embedding -/
+
+section Embedding
+
+variable {E t : Tree C W} {h : List ℕ}
+
+private theorem prefix_append_cases {r α : List ℕ} (hr : r <+: h ++ α) :
+    r <+: h ∨ ∃ p, p <+: α ∧ r = h ++ p := by
+  rw [← List.mem_inits, List.inits_append, List.mem_append] at hr
+  rcases hr with hr | hr
+  · exact .inl ((List.mem_inits _ _).mp hr)
+  · obtain ⟨p, hp, rfl⟩ := List.mem_map.mp hr
+    exact .inr ⟨p, (List.mem_inits _ _).mp (List.mem_of_mem_tail hp), rfl⟩
+
+private theorem inits_eq_nil_cons (α : List ℕ) : α.inits = [] :: α.inits.tail := by
+  cases α <;> rfl
+
+theorem isHeadAt_replaceAt_append (hE : (E.subtreeAt h).isSome) (q : List ℕ) :
+    IsHeadAt (E.replaceAt h t) ⟨h ++ q⟩ ↔ IsHeadAt t ⟨q⟩ := by
+  simp only [IsHeadAt, RoseTree.subtreeAt_replaceAt_append hE]
+
+/-- Within an embedded phrase, locality is what it was in the phrase. -/
+theorem mayCondition'_replaceAt_append (hE : (E.subtreeAt h).isSome) (α γ : List ℕ) :
+    MayCondition' (E.replaceAt h t) ⟨h ++ α⟩ ⟨h ++ γ⟩ ↔ MayCondition' t ⟨α⟩ ⟨γ⟩ := by
+  simp only [mayCondition'_iff]
+  constructor
+  · rintro hm ⟨p⟩ hα hγ
+    exact (isHeadAt_replaceAt_append hE p).mp
+      (hm ⟨h ++ p⟩ (by simpa [TreePath.le_def] using hα) (by simpa [TreePath.le_def] using hγ))
+  · rintro hm ⟨r⟩ hα hγ
+    rcases prefix_append_cases (TreePath.le_def.mp hα) with hr | ⟨p, hp, rfl⟩
+    · exact absurd (TreePath.le_def.mpr (hr.trans (List.prefix_append h γ))) hγ
+    · exact (isHeadAt_replaceAt_append hE p).mpr (hm ⟨p⟩ (TreePath.le_def.mpr hp)
+        (fun h' ↦ hγ (by simpa [TreePath.le_def] using TreePath.le_def.mp h')))
+
+/-- Nothing outside an embedded phrase with a phrasal root may condition a head within it. -/
+theorem not_mayCondition'_replaceAt (hE : (E.subtreeAt h).isSome) (ht : isHead t = false)
+    (α : List ℕ) {β : TreePath} (hβ : ¬ (⟨h⟩ : TreePath) ≤ β) :
+    ¬ MayCondition' (E.replaceAt h t) ⟨h ++ α⟩ β := fun hm ↦ by
+  have := mayCondition'_iff.mp hm ⟨h⟩ (TreePath.le_def.mpr (List.prefix_append h α)) hβ
+  have h0 := RoseTree.subtreeAt_replaceAt_append (new := t) hE []
+  simp only [List.append_nil] at h0
+  simp [IsHeadAt, h0, ht] at this
+
+/-- Embedding a phrase with a phrasal root leaves the labels local to its heads unchanged. -/
+theorem localSet_replaceAt (hE : (E.subtreeAt h).isSome) (ht : isHead t = false)
+    (α : List ℕ) : localSet (E.replaceAt h t) ⟨h ++ α⟩ = localSet t ⟨α⟩ := by
+  ext l
+  constructor
+  · rintro ⟨⟨p⟩, hp, hm⟩
+    by_cases hhp : (⟨h⟩ : TreePath) ≤ ⟨p⟩
+    · obtain ⟨γ, rfl⟩ := TreePath.le_def.mp hhp
+      exact ⟨⟨γ⟩, by rwa [RoseTree.subtreeAt_replaceAt_append hE] at hp,
+        (mayCondition'_replaceAt_append hE α γ).mp hm⟩
+    · exact absurd hm (not_mayCondition'_replaceAt hE ht α hhp)
+  · rintro ⟨⟨γ⟩, hp, hm⟩
+    exact ⟨⟨h ++ γ⟩, by rwa [RoseTree.subtreeAt_replaceAt_append hE],
+      (mayCondition'_replaceAt_append hE α γ).mpr hm⟩
+
+private theorem all_isHead_replaceAt_of_prefix (hE : (E.subtreeAt h).isSome)
+    (ht : isHead t = false) {r : List ℕ} (hr : r <+: h) :
+    ((E.replaceAt h t).subtreeAt r).all isHead = false := by
+  obtain ⟨d, rfl⟩ := hr
+  rw [RoseTree.subtreeAt_replaceAt_of_prefix (List.prefix_append r d)]
+  rw [RoseTree.subtreeAt_append] at hE
+  obtain ⟨s, hs⟩ : ∃ s, E.subtreeAt r = some s := Option.isSome_iff_exists.mp
+    (by cases h' : E.subtreeAt r <;> simp_all)
+  have hsd : (s.subtreeAt d).isSome := by simpa [hs] using hE
+  simp only [hs, Option.map_some, Option.all_some, List.drop_left]
+  cases hh : isHead (s.replaceAt d t)
+  · rfl
+  · exact absurd (isHead_of_isHead_replaceAt s d t hsd hh) (by simp [ht])
+
+/-- Embedding a phrase with a phrasal root leaves the complex heads of its nodes unchanged. -/
+theorem x0At_replaceAt (hE : (E.subtreeAt h).isSome) (ht : isHead t = false) (α : List ℕ) :
+    x0At (E.replaceAt h t) ⟨h ++ α⟩ = x0At t ⟨α⟩ := by
+  simp only [x0At]
+  rw [List.inits_append, List.find?_append, List.find?_eq_none.mpr
+    (fun r hr ↦ by simp [all_isHead_replaceAt_of_prefix hE ht ((List.mem_inits _ _).mp hr)]),
+    Option.none_or, List.find?_map, inits_eq_nil_cons α, List.find?_cons]
+  have h0 : ((t.subtreeAt []).all isHead) = false := by simp [ht]
+  simp only [h0, List.tail_cons, Function.comp_def, RoseTree.subtreeAt_replaceAt_append hE,
+    Option.bind_map]
+
+end Embedding
+
+end DistributedMorphology
