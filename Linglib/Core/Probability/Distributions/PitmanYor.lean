@@ -5,6 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
+public import Linglib.Core.Order.Partition.Finpartition
 public import Linglib.Core.Probability.Exchangeable
 public import Linglib.Core.Probability.Kernel.IonescuTulcea.SeqLaw
 public import Linglib.Core.Probability.PolyaUrn
@@ -85,6 +86,11 @@ open MeasureTheory Finset
 open scoped ENNReal Nat
 
 namespace ProbabilityTheory
+
+instance {ι : Type*} [DecidableEq ι] {s : Finset ι} : MeasurableSpace (Finpartition s) := ⊤
+
+instance {ι : Type*} [DecidableEq ι] {s : Finset ι} : DiscreteMeasurableSpace (Finpartition s) :=
+  ⟨fun _ ↦ trivial⟩
 
 variable {α θ : ℝ} {n : ℕ}
 

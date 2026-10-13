@@ -29,9 +29,8 @@ count vector `x`:
 in rising factorials `(a)_m = a (a + 1) ⋯ (a + m - 1)` (`ascPochhammer`). The drawn sequence is
 exchangeable, with Dirichlet-distributed limiting frequencies ([pitman-2006] Exercise 2.2.2).
 
-This file is measure-free: the law of the sequence, its exchangeability and the
-Dirichlet–multinomial distribution of the counts are in
-`Linglib.Core.Probability.Distributions.DirichletMultinomial`.
+This file is measure-free: the law of the sequence and its exchangeability are in
+`Linglib.Core.Probability.Distributions.PolyaUrn`.
 
 ## Main definitions
 

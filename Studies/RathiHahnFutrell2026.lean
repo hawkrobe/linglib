@@ -247,16 +247,6 @@ private theorem mod_lt_mod_of_not_div_lt {a b k : ℕ} (hab : a < b) (h : ¬ a /
   have := Nat.div_le_div_right (c := k) hab.le
   grind [Nat.div_add_mod]
 
-section Stream
-
-variable {M A B : Type*} {k : ℕ}
-
-private theorem uniformOn_singleton (j : Fin k) :
-    uniformOn (Set.univ : Set (Fin k)) {j} = (k : ℝ≥0∞)⁻¹ := by
-  rw [uniformOn_univ, Measure.count_singleton, Fintype.card_fin, one_div]
-
-end Stream
-
 section Char
 
 variable {M A : Type*} {k : ℕ} [NeZero k]
@@ -324,7 +314,7 @@ variable (P : Measure M) [IsProbabilityMeasure P]
 
 theorem measureReal_fst (j : Fin k) : (stream k P).real (Prod.fst ⁻¹' {j}) = (k : ℝ)⁻¹ := by
   rw [measureReal_def, ← Set.prod_univ, stream, Measure.prod_prod, measure_univ, mul_one,
-    uniformOn_singleton, ENNReal.toReal_inv, ENNReal.toReal_natCast]
+    uniformOn_univ_apply_singleton, Fintype.card_fin, ENNReal.toReal_inv, ENNReal.toReal_natCast]
 
 private theorem identDistrib_dirac_prod {S : Type*} [MeasurableSpace S]
     {X : Fin k → (ℕ → M) → S} (hX : ∀ j, Measurable (X j)) (j : Fin k) :
@@ -360,7 +350,7 @@ theorem cond_fst (j : Fin k) :
   have hk : (k : ℝ≥0∞) ≠ 0 := by exact_mod_cast NeZero.ne k
   rw [ProbabilityTheory.cond, ← Set.prod_univ, stream, ← Measure.prod_restrict,
     Measure.restrict_singleton, Measure.restrict_univ, Measure.prod_prod, measure_univ, mul_one,
-    uniformOn_singleton, Measure.prod_smul_left, smul_smul, inv_inv,
+    uniformOn_univ_apply_singleton, Fintype.card_fin, Measure.prod_smul_left, smul_smul, inv_inv,
     ENNReal.mul_inv_cancel hk (ENNReal.natCast_ne_top k), one_smul]
 
 theorem entropy_fst : H[Prod.fst ; stream k P] = log k := by
@@ -989,7 +979,7 @@ theorem pastCondEntropy_tagged_agg_one_lt :
       rw [show μ = stream 2 (meanings half) from rfl, stream, Measure.prod_prod,
         ← Measure.map_apply (by fun_prop) (measurableSet_singleton _),
         Measure.infinitePi_map_eval_prod zero_ne_one, ← Set.singleton_prod_singleton,
-        Measure.prod_prod, uniformOn_singleton]
+        Measure.prod_prod, uniformOn_univ_apply_singleton, Fintype.card_fin]
       simp [hpos]
     rw [hempty, measure_empty] at h
     exact mul_ne_zero hfst (fun h0 ↦ hpair (measure_mono_null hsub h0)) h.symm

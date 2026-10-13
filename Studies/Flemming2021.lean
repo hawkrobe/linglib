@@ -5,7 +5,7 @@ public import Mathlib.Algebra.Order.Field.Rat
 public import Mathlib.Tactic.NormNum
 public import Mathlib.Tactic.FieldSimp
 public import Linglib.Phonology.HarmonicGrammar.Noise
-public import Linglib.Core.Probability.Choice.GumbelLuce
+public import Linglib.Core.Probability.Choice.RandomUtility
 public import Linglib.Data.Examples.Flemming2021
 public import Linglib.Data.Experiments.Flemming2021
 
@@ -72,7 +72,7 @@ NoSchwa, \*CCC, \*Clash, Max, Dep and \*Cluster (20)–(28).
 
 namespace Flemming2021
 
-open Core Real OptimalityTheory HarmonicGrammar ProbabilityTheory MeasureTheory
+open Real OptimalityTheory HarmonicGrammar ProbabilityTheory MeasureTheory
 open scoped NNReal
 
 /-! ### Stochastic Harmonic Grammars as random utility models (§§4–5) -/
@@ -102,7 +102,7 @@ theorem probit_weightNoiseChoiceProb (con : ConstraintSet (Fin 2) (Fin n)) (w : 
       (harmonyScore con w 0 - harmonyScore con w 1) /
         √(v * (con.violationDiff 0 1 ⬝ᵥ con.violationDiff 0 1 : ℝ)) := by
   rw [weightNoiseChoiceProb_fin_two con w v hv hd,
-    ENNReal.toReal_ofReal (gaussianChoiceProb_pos _ _).le, gaussianChoiceProb, probit_normalCDF]
+    ENNReal.toReal_ofReal (normalCDF_pos _).le, probit_normalCDF]
 
 /-- Under independent noise of variance `v` on the candidates' harmonies, the probit of the first
 candidate is the harmony difference over the constant `√(2v)` (18). -/

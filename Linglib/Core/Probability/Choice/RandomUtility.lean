@@ -5,8 +5,10 @@ Authors: Robert Hawkins
 -/
 module
 
+public import Linglib.Core.Analysis.SpecialFunctions.Softmax
 public import Linglib.Core.MeasureTheory.Constructions.Pi
 public import Linglib.Core.Probability.Distributions.Gaussian
+public import Linglib.Core.Probability.Gumbel
 public import Mathlib.MeasureTheory.Group.Convolution
 
 /-!
@@ -23,15 +25,17 @@ family.
 For independent utilities the theory is independent of the noise family. Splitting coordinate `i`
 off the product measure (`measurePreserving_piSplitAt`) writes the choice probability as the
 integral against `ν i` of the product of the other coordinates' distribution functions. For
-atomless noise ties are null, so the choice probabilities of the alternatives sum to one. Gumbel
-noise gives the logit rule (`Linglib/Core/Probability/Choice/GumbelLuce.lean`), and Gaussian noise
-gives the probit rule, whose binary case is computed here from the convolution of two Gaussians.
+atomless noise ties are null, so the choice probabilities of the alternatives sum to one.
+Independent Gumbel noise gives the softmax rule. This direction is due to Marschak and, in
+constructive form, to Holman and Marley as reported by Luce and Suppes; McFadden proves it as his
+Lemma 1, and his Lemma 2 is the converse for choice sets of size at least three, since Yellott
+shows that binary logistic choice does not pin down Gumbel noise. Gaussian noise gives the probit
+rule, whose binary case is computed here from the convolution of two Gaussians.
 
 ## Main definitions
 
 * `ProbabilityTheory.choiceProb`: the probability that alternative `i` has the highest utility under
   a joint law of the utilities.
-* `ProbabilityTheory.gaussianChoiceProb`: the binary probit choice probability `Φ (Δ / σ)`.
 
 ## Main results
 
@@ -41,19 +45,19 @@ gives the probit rule, whose binary case is computed here from the convolution o
   `ν i`.
 * `ProbabilityTheory.sum_choiceProb_pi`: for independent atomless noise the choice probabilities
   sum to one.
+* `ProbabilityTheory.choiceProb_pi_gumbelMeasure`: under independent Gumbel utilities the choice
+  probabilities are softmax.
 * `ProbabilityTheory.choiceProb_pi_gaussianReal`: two alternatives with independent Gaussian
   utilities of common variance `v` have choice probability `Φ ((u 0 - u 1) / √(2 * v))`.
-
-## TODO
-
-`gaussianChoiceProb` is the closed form `Φ (Δ / σ)` for every real `σ`, so at `σ ≤ 0` it is a junk
-value and not the mass of a Gaussian tail. Defining it as `(gaussianReal Δ (σ ^ 2)).real (Ioi 0)`
-would give deterministic choice at `σ = 0`, at the cost of positivity hypotheses in the consumers.
 
 ## References
 
 * [L. L. Thurstone, *A law of comparative judgment* (1927)][thurstone-1927]
 * [D. McFadden, *Conditional logit analysis of qualitative choice behavior* (1974)][mcfadden-1974]
+* [marschak-1960]
+* [luce-suppes-1965]
+* [luce-1959]
+* [yellott-1977]
 -/
 
 @[expose] public section
@@ -162,63 +166,71 @@ theorem choiceProb_pi_gaussianReal (u : Fin 2 → ℝ) {v : ℝ≥0} (hv : v ≠
     ← Measure.map_apply (by fun_prop) measurableSet_Ioi, hmap, ← ofReal_measureReal,
     gaussianReal_real_Ioi _ hv2, sub_zero, NNReal.coe_add, two_mul]
 
-variable {Δ σ : ℝ}
+variable {σ : ℝ}
 
 open Real
 
-/-- The binary probit choice probability `Φ(Δ / σ)` is that of a Gaussian random utility model
-whose utility gap is `Δ` and whose noise on the gap has standard deviation `σ`, equivalently
-`P(X > 0)` for `X ~ N(Δ, σ²)`. -/
-noncomputable def gaussianChoiceProb (Δ σ : ℝ) : ℝ :=
-  normalCDF (Δ / σ)
-
-/-- The probit choice probability is the mass a Gaussian with mean `Δ` and standard deviation
-`σ` gives to the positive half-line. -/
+/-- The binary probit choice probability `Φ (Δ / σ)` is the mass a Gaussian with mean `Δ` and
+standard deviation `σ` gives to the positive half-line. -/
 theorem gaussianReal_real_Ioi_zero (Δ : ℝ) (hσ : 0 < σ) :
-    (gaussianReal Δ (.mk (σ ^ 2) (sq_nonneg σ))).real (Set.Ioi 0) = gaussianChoiceProb Δ σ := by
+    (gaussianReal Δ (.mk (σ ^ 2) (sq_nonneg σ))).real (Set.Ioi 0) = normalCDF (Δ / σ) := by
   have hv : NNReal.mk (σ ^ 2) (sq_nonneg σ) ≠ 0 := by simp [← NNReal.coe_eq_zero, hσ.ne']
-  simp only [gaussianReal_real_Ioi Δ hv, NNReal.coe_mk, sqrt_sq hσ.le, sub_zero,
-    gaussianChoiceProb]
+  simp only [gaussianReal_real_Ioi Δ hv, NNReal.coe_mk, sqrt_sq hσ.le, sub_zero]
 
 /-- Two alternatives with independent Gaussian utilities of common standard deviation `σ` follow the
 probit rule with standard deviation `σ * √2`, that of the difference of the two utilities. -/
 theorem choiceProb_pi_gaussianReal_sq (u : Fin 2 → ℝ) (hσ : 0 < σ) :
     choiceProb (Measure.pi fun j ↦ gaussianReal (u j) (.mk (σ ^ 2) (sq_nonneg σ))) 0 =
-      ENNReal.ofReal (gaussianChoiceProb (u 0 - u 1) (σ * √2)) := by
+      ENNReal.ofReal (normalCDF ((u 0 - u 1) / (σ * √2))) := by
   have hv : NNReal.mk (σ ^ 2) (sq_nonneg σ) ≠ 0 := by simp [← NNReal.coe_eq_zero, hσ.ne']
-  rw [choiceProb_pi_gaussianReal u hv, gaussianChoiceProb, NNReal.coe_mk, mul_comm (2 : ℝ),
+  rw [choiceProb_pi_gaussianReal u hv, NNReal.coe_mk, mul_comm (2 : ℝ),
     sqrt_mul (sq_nonneg σ), sqrt_sq hσ.le]
 
-@[simp]
-theorem gaussianChoiceProb_zero (σ : ℝ) : gaussianChoiceProb 0 σ = 2⁻¹ := by
-  simp only [gaussianChoiceProb, zero_div, normalCDF_zero]
+/-! ### Gumbel noise: the softmax rule -/
 
-/-- The probit choice probability is strictly positive. -/
-theorem gaussianChoiceProb_pos (Δ σ : ℝ) : 0 < gaussianChoiceProb Δ σ :=
-  normalCDF_pos _
+section GumbelRUM
 
-/-- The probit choice probability is strictly less than one. -/
-theorem gaussianChoiceProb_lt_one (Δ σ : ℝ) : gaussianChoiceProb Δ σ < 1 :=
-  normalCDF_lt_one _
+variable {ι : Type*} [Fintype ι] [DecidableEq ι] [Nonempty ι] {β : ℝ}
 
-/-- Choosing the first alternative or the second is certain. -/
-theorem gaussianChoiceProb_complement (Δ σ : ℝ) :
-    gaussianChoiceProb Δ σ + gaussianChoiceProb (-Δ) σ = 1 := by
-  simp only [gaussianChoiceProb, neg_div, normalCDF_neg]; ring
+/-- When the utilities are independent with `Gumbel(uⱼ, β)` laws, alternative `i` has the highest
+utility with probability `softmax ((1/β) • u) i`. McFadden states the unit-scale case; the scale
+of the noise is not separately identified from that of `u`. -/
+theorem choiceProb_pi_gumbelMeasure (u : ι → ℝ) (hβ : 0 < β) (i : ι) :
+    choiceProb (Measure.pi fun j ↦ gumbelMeasure (u j) β) i =
+      ENNReal.ofReal (softmax ((1 / β) • u) i) := by
+  have : ∀ j, IsProbabilityMeasure (gumbelMeasure (u j) β) :=
+    fun j ↦ isProbabilityMeasure_gumbelMeasure hβ (u j)
+  have hcdf : Measurable fun x ↦ ∏ j ∈ Finset.univ.erase i, cdf (gumbelMeasure (u j) β) x :=
+    Finset.measurable_fun_prod _ fun j _ ↦ (monotone_cdf _).measurable
+  have hnonneg : ∀ x, 0 ≤ ∏ j ∈ Finset.univ.erase i, cdf (gumbelMeasure (u j) β) x :=
+    fun x ↦ Finset.prod_nonneg fun j _ ↦ cdf_nonneg _ x
+  have hint : Integrable fun x ↦ gumbelPDFReal (u i) β x *
+      ∏ j ∈ Finset.univ.erase i, cdf (gumbelMeasure (u j) β) x :=
+    (integrable_gumbelPDFReal hβ (u i)).mul_bdd (c := 1) hcdf.aestronglyMeasurable
+      (.of_forall fun x ↦ by
+        rw [Real.norm_of_nonneg (hnonneg x)]
+        exact Finset.prod_le_one₀ (fun j _ ↦ cdf_nonneg _ x) fun j _ ↦ cdf_le_one _ x)
+  have hpdf : Measurable (gumbelPDF (u i) β) := (measurable_gumbelPDFReal _ _).ennreal_ofReal
+  rw [choiceProb_pi_eq_lintegral_cdf, gumbelMeasure,
+    lintegral_withDensity_eq_lintegral_mul _ hpdf hcdf.ennreal_ofReal]
+  simp_rw [Pi.mul_apply, gumbelPDF, ← ENNReal.ofReal_mul (gumbelPDFReal_nonneg hβ.le _ _)]
+  rw [← ofReal_integral_eq_lintegral_ofReal hint
+    (.of_forall fun x ↦ mul_nonneg (gumbelPDFReal_nonneg hβ.le _ _) (hnonneg x)),
+    integral_gumbelPDFReal_mul_prod_cdf u hβ i]
+  simp only [softmax, Pi.smul_apply, smul_eq_mul, one_div_mul_eq_div]
 
-/-- A positive utility gap is chosen more often than chance (for `σ > 0`). -/
-theorem inv_two_lt_gaussianChoiceProb (hΔ : 0 < Δ) (hσ : 0 < σ) :
-    2⁻¹ < gaussianChoiceProb Δ σ :=
-  inv_two_lt_normalCDF_iff.2 (div_pos hΔ hσ)
+end GumbelRUM
 
-/-- A negative utility gap is chosen less often than chance (for `σ > 0`). -/
-theorem gaussianChoiceProb_lt_inv_two (hΔ : Δ < 0) (hσ : 0 < σ) :
-    gaussianChoiceProb Δ σ < 2⁻¹ :=
-  normalCDF_lt_inv_two_iff.2 (div_neg_of_neg_of_pos hΔ hσ)
+/-! ### Binary case: the logistic function -/
 
-/-- The choice probability is strictly increasing in the utility gap (for `σ > 0`). -/
-theorem gaussianChoiceProb_strictMono (hσ : 0 < σ) :
-    StrictMono (fun Δ ↦ gaussianChoiceProb Δ σ) :=
-  fun _ _ h ↦ normalCDF_strictMono (div_lt_div_of_pos_right h hσ)
+/-- For two alternatives with Gumbel noise the choice probability is the logistic function
+`sigmoid ((u 0 - u 1) / β)`. The binary probit `choiceProb_pi_gaussianReal` is its Gaussian
+counterpart, and the two are indistinguishable on binary data alone. -/
+theorem choiceProb_pi_gumbelMeasure_fin_two (u : Fin 2 → ℝ) {β : ℝ} (hβ : 0 < β) :
+    choiceProb (Measure.pi fun j ↦ gumbelMeasure (u j) β) 0 =
+      ENNReal.ofReal (Real.sigmoid ((u 0 - u 1) / β)) := by
+  rw [choiceProb_pi_gumbelMeasure u hβ 0, softmax_fin_two]
+  simp only [Pi.smul_apply, smul_eq_mul]
+  congr 2; ring
 
 end ProbabilityTheory

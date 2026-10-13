@@ -10,7 +10,7 @@ public import Mathlib.Analysis.SpecialFunctions.ExpDeriv
 The Gumbel (Type I extreme value) distribution over ℝ, in the register of
 `Mathlib.Probability.Distributions.*`: density → measure via `withDensity` →
 CDF as a theorem. Application-agnostic — the random-utility reading lives in
-`Core/Probability/Choice/GumbelLuce.lean`.
+`Core/Probability/Choice/RandomUtility.lean`.
 
 ## Main definitions
 
@@ -38,7 +38,7 @@ but no `Iic` mirror — that general lemma is a separate small upstream candidat
 
 @[expose] public section
 
-namespace Core
+namespace ProbabilityTheory
 
 open scoped ENNReal NNReal
 open MeasureTheory Real Set Filter Topology ProbabilityTheory
@@ -137,6 +137,9 @@ end GumbelPDF
 /-- Measure defined by the Gumbel distribution. -/
 noncomputable def gumbelMeasure (μ β : ℝ) : Measure ℝ := volume.withDensity (gumbelPDF μ β)
 
+instance (μ β : ℝ) : NullSingletonClass (gumbelMeasure μ β) := by
+  unfold gumbelMeasure; infer_instance
+
 lemma isProbabilityMeasure_gumbelMeasure (hβ : 0 < β) (μ : ℝ) :
     IsProbabilityMeasure (gumbelMeasure μ β) where
   measure_univ := by simp [gumbelMeasure, lintegral_gumbelPDF_eq_one hβ μ]
@@ -213,4 +216,4 @@ theorem integral_gumbelPDFReal_mul_prod_cdf [DecidableEq ι] (u : ι → ℝ) (h
 
 end MaxStability
 
-end Core
+end ProbabilityTheory
