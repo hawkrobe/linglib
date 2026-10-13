@@ -15,6 +15,32 @@ this module; declarations live in `namespace AlexiadouLohndal2017.Examples`.
 
 namespace AlexiadouLohndal2017.Examples
 
+def ex_8a : Datum :=
+  { id := "alexiadoulohndal2017_8a"
+    source := ⟨"alexiadou-lohndal-2017", "(8a)"⟩
+    reportedIn := none
+    language := "stan1293"
+    primaryText := "the student of chemistry and the one of physics."
+    glossedTokens := []
+    context := ""
+    judgment := .ungrammatical
+    alternatives := []
+    readings := []
+    paperFeatures := [("section", "3.1"), ("stranded", "argument")] }
+
+def ex_8b : Datum :=
+  { id := "alexiadoulohndal2017_8b"
+    source := ⟨"alexiadou-lohndal-2017", "(8b)"⟩
+    reportedIn := none
+    language := "stan1293"
+    primaryText := "the student with long hair and the one with short hair"
+    glossedTokens := []
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("section", "3.1"), ("stranded", "adjunct")] }
+
 def ex_56a : Datum :=
   { id := "alexiadoulohndal2017_56a"
     source := ⟨"alexiadou-lohndal-2017", "(56a)"⟩
@@ -41,6 +67,6 @@ def ex_56b : Datum :=
     readings := []
     paperFeatures := [("root", "black"), ("rootClass", "result")] }
 
-def all : List Datum := [ex_56a, ex_56b]
+def all : List Datum := [ex_8a, ex_8b, ex_56a, ex_56b]
 
 end AlexiadouLohndal2017.Examples

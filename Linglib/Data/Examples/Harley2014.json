@@ -380,6 +380,70 @@
     "verified": "page-image"
   },
   {
+    "id": "harley2014_ex18a",
+    "source": {
+      "bibkey": "harley-2014",
+      "paperLabel": "(18a)"
+    },
+    "language": "stan1293",
+    "primaryText": "This student of chemistry and that one of physics sit together",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.1"
+      ],
+      [
+        "phenomenon",
+        "oneReplacement"
+      ],
+      [
+        "stranded",
+        "argument"
+      ]
+    ],
+    "comment": "one strands the argument of the noun it replaces.",
+    "verified": "page-image"
+  },
+  {
+    "id": "harley2014_ex18b",
+    "source": {
+      "bibkey": "harley-2014",
+      "paperLabel": "(18b)"
+    },
+    "language": "stan1293",
+    "primaryText": "That student with short hair and this one with long hair sit together",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.1"
+      ],
+      [
+        "phenomenon",
+        "oneReplacement"
+      ],
+      [
+        "stranded",
+        "adjunct"
+      ]
+    ],
+    "comment": "one strands an adjunct of the noun it replaces.",
+    "verified": "page-image"
+  },
+  {
     "id": "harley2014_ex26a",
     "source": {
       "bibkey": "harley-2014",
