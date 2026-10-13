@@ -6,7 +6,6 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Core.Algebra.RootedTree.GrossmanLarson.Basic
-public import Mathlib.LinearAlgebra.TensorProduct.Basis
 public import Mathlib.RingTheory.TensorProduct.Basic
 public import Linglib.Core.Combinatorics.RootedTree.Aut
 public import Mathlib.Tactic.Ring
@@ -23,14 +22,15 @@ the pruning coproduct (`Coproduct/PruningDuality.lean`).
 ## Main definitions
 
 * `GrossmanLarson.pairing`: the symmetry-weighted pairing.
-* `GrossmanLarson.pairing₂`, `GrossmanLarson.pairing₃`: its extensions to `H ⊗ H` and
-  `H ⊗ (H ⊗ H)`.
+* `GrossmanLarson.pairing₂`: its extension to `H ⊗ H`.
 
 ## Main results
 
 * `GrossmanLarson.pairing_symm`: the pairing is symmetric.
-* `GrossmanLarson.pairing_nondegenerate`: it is nondegenerate over a ring of characteristic zero
-  without zero divisors, and so are `pairing₂` and `pairing₃`.
+* `GrossmanLarson.pairing_of'`: pairing with a forest takes the coefficient of that forest,
+  times its number of symmetries.
+* `GrossmanLarson.pairing_nondegenerate`: the pairing is nondegenerate over a ring of
+  characteristic zero without zero divisors.
 * `GrossmanLarson.pairing_of'_mul`: pairing against a Connes–Kreimer product splits the basis
   forest over its antidiagonal.
 
@@ -50,13 +50,23 @@ variable {R : Type*} [CommSemiring R] {α : Type*} [DecidableEq α]
 
 /-! ### The bilinear pairing -/
 
-omit [DecidableEq α] in
 /-- `pairingAux` is the symmetry-weighted pairing on finitely supported functions on forests. -/
 noncomputable def pairingAux :
     (Forest (UnorderedTree α) →₀ R) →ₗ[R] (Forest (UnorderedTree α) →₀ R) →ₗ[R] R :=
   Finsupp.lift _ R (Forest (UnorderedTree α)) (fun F =>
     Finsupp.lift R R (Forest (UnorderedTree α)) (fun G =>
       if F = G then (forestAutCard F : R) else 0))
+
+/-- `pairing (of' F) (of' G)` is the number of symmetries of `F` when `F = G`, and `0`
+otherwise. -/
+noncomputable def pairing :
+    ConnesKreimer R (UnorderedTree α) →ₗ[R]
+      ConnesKreimer R (UnorderedTree α) →ₗ[R] R :=
+  pairingAux.compl₁₂
+    ((AddMonoidAlgebra.coeffLinearEquiv R).toLinearMap.comp
+      (ConnesKreimer.toFinsuppAlgEquiv (R := R) (T := UnorderedTree α)).toLinearMap)
+    ((AddMonoidAlgebra.coeffLinearEquiv R).toLinearMap.comp
+      (ConnesKreimer.toFinsuppAlgEquiv (R := R) (T := UnorderedTree α)).toLinearMap)
 
 private theorem pairingAux_single_single (F G : Forest (UnorderedTree α)) :
     pairingAux (R := R) (Finsupp.single F 1) (Finsupp.single G 1) =
@@ -74,18 +84,6 @@ private theorem pairingAux_single_single (F G : Forest (UnorderedTree α)) :
     · simp only [one_smul]
     · simp
   · simp
-
-omit [DecidableEq α] in
-/-- `pairing (of' F) (of' G)` is the number of symmetries of `F` when `F = G`, and `0`
-otherwise. -/
-noncomputable def pairing :
-    ConnesKreimer R (UnorderedTree α) →ₗ[R]
-      ConnesKreimer R (UnorderedTree α) →ₗ[R] R :=
-  pairingAux.compl₁₂
-    ((AddMonoidAlgebra.coeffLinearEquiv R).toLinearMap.comp
-      (ConnesKreimer.toFinsuppAlgEquiv (R := R) (T := UnorderedTree α)).toLinearMap)
-    ((AddMonoidAlgebra.coeffLinearEquiv R).toLinearMap.comp
-      (ConnesKreimer.toFinsuppAlgEquiv (R := R) (T := UnorderedTree α)).toLinearMap)
 
 private theorem pairing_apply (x y : ConnesKreimer R (UnorderedTree α)) :
     pairing (R := R) x y = pairingAux x.toFinsupp.coeff y.toFinsupp.coeff := rfl
@@ -167,6 +165,13 @@ theorem pairing_apply_of' (x : ConnesKreimer R (UnorderedTree α))
     · subst h
       simp [smul_eq_mul]
     · simp [ite_eq_right h]
+
+/-- Pairing with `of' F` takes the coefficient of `F`, weighted by the symmetries of `F`. -/
+theorem pairing_of' (F : Forest (UnorderedTree α)) :
+    pairing (R := R) (ConnesKreimer.of' F) = (forestAutCard F : R) • ConnesKreimer.lcoeff R F :=
+  LinearMap.ext fun x ↦ by
+    rw [pairing_symm, pairing_apply_of', LinearMap.smul_apply, ConnesKreimer.lcoeff_apply,
+      smul_eq_mul, mul_comm]
 
 /-- Over a ring of characteristic zero without zero divisors, the pairing is nondegenerate. -/
 theorem pairing_nondegenerate
@@ -419,11 +424,10 @@ theorem pairing_of'_mul (W : Forest (UnorderedTree α))
 
 open scoped TensorProduct
 
-/-! ### Pairings on tensor powers
+/-! ### The pairing on `H ⊗ H`
 
-The pairing extends to `H ⊗ H` and `H ⊗ (H ⊗ H)`, where the duality with the pruning coproduct is
-stated. No such duality holds for a coproduct that leaves marker leaves in the trunk, since
-grafting never produces them. -/
+The duality with the pruning coproduct is stated on `H ⊗ H`. No such duality holds for a coproduct
+that leaves marker leaves in the trunk, since grafting never produces them. -/
 
 /-- `pairing₂` is the pairing on `H ⊗ H` with `pairing₂ (x ⊗ y) (w ⊗ z) = ⟨x, w⟩ * ⟨y, z⟩`. -/
 noncomputable def pairing₂ :
@@ -446,168 +450,6 @@ noncomputable def pairing₂ :
     pairing₂ (R := R) (x ⊗ₜ y) (w ⊗ₜ z) =
       pairing x w * pairing y z := by
   rfl
-
-/-- `pairing₃` is the pairing on `H ⊗ (H ⊗ H)` with
-`pairing₃ (a ⊗ (b ⊗ c)) (x ⊗ (y ⊗ z)) = ⟨a, x⟩ * ⟨b, y⟩ * ⟨c, z⟩`. -/
-noncomputable def pairing₃ :
-    (ConnesKreimer R (UnorderedTree α) ⊗[R]
-      (ConnesKreimer R (UnorderedTree α) ⊗[R] ConnesKreimer R (UnorderedTree α))) →ₗ[R]
-    (ConnesKreimer R (UnorderedTree α) ⊗[R]
-      (ConnesKreimer R (UnorderedTree α) ⊗[R] ConnesKreimer R (UnorderedTree α))) →ₗ[R] R :=
-  let pair1 : ConnesKreimer R (UnorderedTree α) ⊗[R]
-                ConnesKreimer R (UnorderedTree α) →ₗ[R] R :=
-    TensorProduct.lift pairing
-  let pair2 : (ConnesKreimer R (UnorderedTree α) ⊗[R] ConnesKreimer R (UnorderedTree α))
-                ⊗[R] (ConnesKreimer R (UnorderedTree α) ⊗[R]
-                      ConnesKreimer R (UnorderedTree α)) →ₗ[R] R :=
-    TensorProduct.lift pairing₂
-  TensorProduct.curry <|
-    LinearMap.mul' R R ∘ₗ
-      TensorProduct.map pair1 pair2 ∘ₗ
-      (TensorProduct.tensorTensorTensorComm R
-        (ConnesKreimer R (UnorderedTree α))
-        (ConnesKreimer R (UnorderedTree α) ⊗[R] ConnesKreimer R (UnorderedTree α))
-        (ConnesKreimer R (UnorderedTree α))
-        (ConnesKreimer R (UnorderedTree α) ⊗[R]
-          ConnesKreimer R (UnorderedTree α))).toLinearMap
-
-/-- Evaluation of `pairing₃` on pure tensors. -/
-@[simp] theorem pairing₃_tmul_tmul_tmul
-    (a b c x y z : ConnesKreimer R (UnorderedTree α)) :
-    pairing₃ (R := R) (a ⊗ₜ (b ⊗ₜ c)) (x ⊗ₜ (y ⊗ₜ z)) =
-      pairing a x *
-        (pairing b y * pairing c z) := by
-  rfl
-
-/-! ### `pairing₃` on reassociated tensors -/
-
-/-- On a reassociated tensor `U ⊗ c`, `pairing₃` factors through `pairing₂` and the pairing. -/
-lemma pairing₃_assoc_tmul
-    (x y z' : ConnesKreimer R (UnorderedTree α))
-    (U : ConnesKreimer R (UnorderedTree α) ⊗[R] ConnesKreimer R (UnorderedTree α))
-    (c : ConnesKreimer R (UnorderedTree α)) :
-    pairing₃ (R := R) (x ⊗ₜ[R] (y ⊗ₜ[R] z'))
-        ((TensorProduct.assoc R _ _ _) (U ⊗ₜ[R] c)) =
-      pairing₂ (R := R) (x ⊗ₜ[R] y) U * pairing z' c := by
-  induction U using TensorProduct.inductionOn with
-  | tmul a b =>
-    simp only [TensorProduct.assoc_tmul, pairing₃_tmul_tmul_tmul,
-               pairing₂_tmul_tmul, _root_.mul_assoc]
-  | add U₁ U₂ ih₁ ih₂ =>
-    rw [TensorProduct.add_tmul, map_add, map_add, ih₁, ih₂, map_add, add_mul]
-
-/-- On a tensor `a ⊗ S`, `pairing₃` factors through the pairing and `pairing₂`. -/
-lemma pairing₃_tmul_apply
-    (x y z' a : ConnesKreimer R (UnorderedTree α))
-    (S : ConnesKreimer R (UnorderedTree α) ⊗[R] ConnesKreimer R (UnorderedTree α)) :
-    pairing₃ (R := R) (x ⊗ₜ[R] (y ⊗ₜ[R] z')) (a ⊗ₜ[R] S) =
-      pairing x a * pairing₂ (R := R) (y ⊗ₜ[R] z') S := by
-  induction S using TensorProduct.inductionOn with
-  | tmul b c =>
-    simp only [pairing₃_tmul_tmul_tmul, pairing₂_tmul_tmul]
-  | add S₁ S₂ ih₁ ih₂ =>
-    rw [TensorProduct.tmul_add, map_add, ih₁, ih₂, map_add, mul_add]
-
-/-! ### Nondegeneracy on tensor powers
-
-Nondegeneracy of `pairing₂` and `pairing₃` follows from that of the pairing along the basis of
-forests. -/
-
-private theorem pairing₃_of'_tmul_of'_tmul (F G : Forest (UnorderedTree α))
-    (s t : ConnesKreimer R (UnorderedTree α) ⊗[R] ConnesKreimer R (UnorderedTree α)) :
-    pairing₃ (R := R)
-        (ConnesKreimer.of' F ⊗ₜ[R] s)
-        (ConnesKreimer.of' G ⊗ₜ[R] t) =
-      pairing (ConnesKreimer.of' (R := R) F)
-                              (ConnesKreimer.of' G) *
-        pairing₂ (R := R) s t := by
-  induction s using TensorProduct.inductionOn with
-  | tmul b c =>
-    induction t using TensorProduct.inductionOn with
-    | tmul y z =>
-      simp only [pairing₃_tmul_tmul_tmul, pairing₂_tmul_tmul]
-    | add t₁ t₂ ih₁ ih₂ =>
-      -- pairing₃ is linear in 2nd arg (map_add); also `of' G ⊗ ·` distributes.
-      rw [TensorProduct.tmul_add, map_add, ih₁, ih₂, map_add, mul_add]
-  | add s₁ s₂ ih₁ ih₂ =>
-    -- pairing₃ is linear in 1st arg, via map_add at the outer; same for pairing₂.
-    rw [TensorProduct.tmul_add, map_add, LinearMap.add_apply, ih₁, ih₂,
-        map_add, LinearMap.add_apply, mul_add]
-
-private theorem pairing₂_nondegenerate
-    [CharZero R] [NoZeroDivisors R]
-    (U : ConnesKreimer R (UnorderedTree α) ⊗[R] ConnesKreimer R (UnorderedTree α))
-    (h : ∀ x y : ConnesKreimer R (UnorderedTree α),
-      pairing₂ (R := R) (x ⊗ₜ[R] y) U = 0) : U = 0 := by
-  classical
-  let ℬ : Module.Basis (Forest (UnorderedTree α)) R (ConnesKreimer R (UnorderedTree α)) :=
-    ConnesKreimer.basisSingleOne
-  obtain ⟨c, hc⟩ : ∃ c : Forest (UnorderedTree α) →₀ ConnesKreimer R (UnorderedTree α),
-      c.sum (fun F U_F => ℬ F ⊗ₜ[R] U_F) = U :=
-    TensorProduct.eq_repr_basis_left ℬ U
-  have hℬ : ∀ G : Forest (UnorderedTree α),
-      (ℬ G : ConnesKreimer R (UnorderedTree α)) = ConnesKreimer.of' G := fun _ =>
-    ConnesKreimer.basisSingleOne_apply _
-  have hc_zero : ∀ F, c F = 0 := by
-    intro F
-    apply pairing_nondegenerate (c F)
-    intro y
-    rw [pairing_symm]
-    have h_aut_ne : (UnorderedTree.forestAutCard F : R) ≠ 0 :=
-      Nat.cast_ne_zero.mpr (UnorderedTree.forestAutCard_pos F).ne'
-    have h_eval := h (ConnesKreimer.of' F) y
-    rw [← hc] at h_eval
-    rw [map_finsuppSum (pairing₂ (R := R) (ConnesKreimer.of' F ⊗ₜ[R] y))] at h_eval
-    simp only [hℬ, pairing₂_tmul_tmul, pairing_of'_of'] at h_eval
-    rw [Finsupp.sum_eq_single F
-          (fun G _ hGF => by rw [ite_eq_right (fun heq => hGF heq.symm), zero_mul])
-          (fun _ => by rw [LinearMap.map_zero, mul_zero])] at h_eval
-    rw [ite_eq_left rfl] at h_eval
-    rcases mul_eq_zero.mp h_eval with h' | h'
-    · exact absurd h' h_aut_ne
-    · exact h'
-  have hc_zero' : c = 0 := Finsupp.ext hc_zero
-  rw [← hc, hc_zero', Finsupp.sum_zero_index]
-
-/-- Over a ring of characteristic zero without zero divisors, `pairing₃` is nondegenerate. -/
-theorem pairing₃_nondegenerate
-    [CharZero R] [NoZeroDivisors R]
-    (U : ConnesKreimer R (UnorderedTree α) ⊗[R]
-          (ConnesKreimer R (UnorderedTree α) ⊗[R]
-            ConnesKreimer R (UnorderedTree α)))
-    (h : ∀ t, pairing₃ (R := R) t U = 0) : U = 0 := by
-  classical
-  let ℬ : Module.Basis (Forest (UnorderedTree α)) R
-        (ConnesKreimer R (UnorderedTree α)) :=
-    ConnesKreimer.basisSingleOne
-  obtain ⟨c, hc⟩ : ∃ c : Forest (UnorderedTree α) →₀
-        (ConnesKreimer R (UnorderedTree α) ⊗[R]
-          ConnesKreimer R (UnorderedTree α)),
-      c.sum (fun F U_F => ℬ F ⊗ₜ[R] U_F) = U :=
-    TensorProduct.eq_repr_basis_left ℬ U
-  have hℬ : ∀ G : Forest (UnorderedTree α),
-      (ℬ G : ConnesKreimer R (UnorderedTree α)) = ConnesKreimer.of' G :=
-    fun _ => ConnesKreimer.basisSingleOne_apply _
-  have hc_zero : ∀ F, c F = 0 := by
-    intro F
-    apply pairing₂_nondegenerate (c F)
-    intro x y
-    have h_aut_ne : (UnorderedTree.forestAutCard F : R) ≠ 0 :=
-      Nat.cast_ne_zero.mpr (UnorderedTree.forestAutCard_pos F).ne'
-    have h_eval := h (ConnesKreimer.of' F ⊗ₜ[R] (x ⊗ₜ[R] y))
-    rw [← hc] at h_eval
-    rw [map_finsuppSum
-          (pairing₃ (R := R) (ConnesKreimer.of' F ⊗ₜ[R] (x ⊗ₜ[R] y)))] at h_eval
-    simp only [hℬ, pairing₃_of'_tmul_of'_tmul, pairing_of'_of'] at h_eval
-    rw [Finsupp.sum_eq_single F
-          (fun G _ hGF => by rw [ite_eq_right (fun heq => hGF heq.symm), zero_mul])
-          (fun _ => by rw [LinearMap.map_zero, mul_zero])] at h_eval
-    rw [ite_eq_left rfl] at h_eval
-    rcases mul_eq_zero.mp h_eval with h' | h'
-    · exact absurd h' h_aut_ne
-    · exact h'
-  have hc_zero' : c = 0 := Finsupp.ext hc_zero
-  rw [← hc, hc_zero', Finsupp.sum_zero_index]
 
 end GrossmanLarson
 

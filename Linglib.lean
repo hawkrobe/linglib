@@ -176,10 +176,7 @@ import Linglib.Core.Probability.Kernel.Posterior
 import Linglib.Core.Probability.UniformOn
 import Linglib.Core.Probability.PolyaUrn
 import Linglib.Core.Relation.ReflTransGen
-import Linglib.Core.RingTheory.Bialgebra.Basic
 import Linglib.Core.RingTheory.Bialgebra.Primitive
-import Linglib.Core.RingTheory.Coalgebra.Basic
-import Linglib.Core.RingTheory.Coalgebra.Convolution
 import Linglib.Core.RingTheory.HopfAlgebra.SymmetricAlgebra
 import Linglib.Data.Complementation.Noonan2007
 import Linglib.Data.Complementation.Schema
