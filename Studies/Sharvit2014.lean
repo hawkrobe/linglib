@@ -1,329 +1,563 @@
 module
 
-public import Studies.BeaverCondoravdi2003
-public import Linglib.Semantics.Tense.Pronoun
+public import Linglib.Data.Examples.Sharvit2014
+public import Linglib.Semantics.Composition.Assignment
+public import Linglib.Semantics.Tense.Quantificational
+public import Linglib.Semantics.Tense.RunTimes
+public import Studies.Sharvit2003
+public import Mathlib.Algebra.Order.Field.Basic
+public import Mathlib.Algebra.Order.Field.Rat
+public import Mathlib.Data.Fintype.Sigma
+public import Mathlib.Data.Fintype.Sum
+public import Mathlib.Tactic.NormNum.Ineq
 
 /-!
-# Sharvit (2014): On the universal principles of tense embedding
+# Sharvit (2014): On the universal principles of tense embedding: The lesson from *before*
 
-Sharvit makes the distinction between pronominal tenses, after Partee, and quantificational
-ones, after Prior, the source of cross-linguistic variation in *before*-clauses and attitude
-reports. Under Beaver and Condoravdi's semantics of *before*, a quantificational past in a
-*before*-clause makes the definedness condition of EARLIEST fail, while a pronominal past does
-not. With the sequence-of-tense rule and the shiftability of the present this yields a typology
-of languages and three universal predictions, checked here on English, Polish and Japanese.
+Sharvit derives the tenses a language allows in *before*-clauses from the kind of tense it has.
+*Before* presupposes, with Beaver and Condoravdi, an earliest time of its clause within the
+contextually relevant interval, later than the start of that interval. A tense that quantifies
+existentially over times makes the presupposition fail on dense time: the times after some event
+have no earliest member, and where the event precedes the interval, the interval itself
+qualifies. A pronominal tense, after Partee, has no quantifier and leaves an earliest time,
+which its own presupposition places before the speech time. A tense with no meaning of its own,
+deleted by the sequence-of-tense rule or null, leaves the earliest time unconstrained. A present
+whose evaluation time stays the speech time makes the order of the two events follow from the
+tenses alone, the effect noted by Stump. With the sequence-of-tense rule and the shiftability of
+the present as parameters, the kind of tense gives the pattern of English, Japanese and Polish,
+a table of permissible languages, and three predictions.
 
-## Main results
+## Main statements
 
-* `ipf_quantificationalPast`: a quantificational past in a *before*-clause fails EARLIEST.
-* `pastUnderBefore_wellFormed_iff`: a past is well-formed under *before* iff it is pronominal.
-* `eq99a_pres_under_past_before_implies_shiftable`: the first universal prediction.
-* `eq99b_before_and_embedded_pshift_imply_simultaneous`: the second universal prediction.
-* `eq99c_before_and_no_simultaneous_imply_no_bare_pshift`: the third universal prediction.
+* `IsEarliest.eq_fst_of_diamond`: on dense time the earliest moment of an existentially
+  quantified tense within an interval is the start of the interval, whatever the tense.
+* `Reading.fails_iff`, `Reading.stumpEffect_iff`: of the readings of a tensed clause under
+  *before*, the existential ones fail and the pronominal present has the Stump effect.
+* `judgment_iff`, `simultaneous_iff`: the parameters of English, Japanese and Polish give the
+  paper's judgments on *before*-clauses and attitude reports.
+* `pShiftable_present_of_wellFormed`, `simultaneous_past_of_pShiftable`,
+  `noPShiftability_past_of_not_simultaneous`: the three predictions.
 
 ## Implementation notes
 
-* The typology covers English, Polish and Japanese. Modern Greek and the two Spanish varieties
-  need a mood parameter, and one of them a mixed past-present lexical type the profile cannot
-  represent; tenseless languages are outside the no-tenseless assumption.
-* Japanese's quantificational past follows Ogihara, against relative-tense alternatives, and
-  Polish's semi-shiftable present follows Sharvit, against Grønn and von Stechow's appeal to
-  Aktionsart.
+* A time is a closed interval of a dense linear order of moments, mathlib's `NonemptyInterval`,
+  and precedence and overlap are those of `Semantics/Tense/Perspective.lean`.
+* *Before* is the extensional one of the main text, and the contextual restrictor of the
+  quantificational past is left out, as in the paper's own derivations.
+* The Stump effect is the entailment the paper identifies, that the matrix event ends before the
+  embedded one does, and not a pragmatic principle that rules the sentence out.
+* The simultaneous readings of attitude reports are those of `Studies/Sharvit2003.lean`, and
+  the examples are the rows of `Data.Examples.Sharvit2014`.
+
+## TODO
+
+* Modern Greek and the two Spanish varieties need a mood parameter and a language whose past and
+  present differ in kind, which the parameters here cannot express.
+* The intensional *before* of the appendix, the relative-clause analysis and Geis ambiguities,
+  and the behaviour of the present in relative clauses are not formalized.
 
 ## References
 
 * [sharvit-2014]
-* [ogihara-sharvit-2012]
 * [sharvit-2003]
 * [beaver-condoravdi-2003]
 * [partee-1973]
-* [ogihara-1996]
+* [prior-1967]
+* [stump-1985]
+* [ogihara-sharvit-2012]
 -/
 
 @[expose] public section
 
 namespace Sharvit2014
 
-open Semantics ModalLogic
+open Semantics ModalLogic Tense HeimKratzer
+open Sharvit2003 (Embedded)
+open scoped SetRel
+
+variable {M : Type*} [LinearOrder M] {C SP t d : NonemptyInterval M}
+  {P q : Set (NonemptyInterval M)} {m : M}
+
+/-! ### The earliest time and *before* -/
+
+/-- `IsEarliest C P m` says that `m` is the leftmost moment of the intervals of `P` within `C`, the
+EARLIEST of (23). -/
+def IsEarliest (C : NonemptyInterval M) (P : Set (NonemptyInterval M)) (m : M) : Prop :=
+  IsLeast (timeTrace (P ∩ Set.Iic C)) m
+
+theorem IsEarliest.fst_le (h : IsEarliest C P m) : C.fst ≤ m :=
+  let ⟨_, ⟨_, ht⟩, hm⟩ := h.1
+  (NonemptyInterval.le_def.1 ht).1.trans hm.1
+
+theorem IsEarliest.le_of_mem (h : IsEarliest C P m) (ht : t ∈ P) (htC : t ≤ C) {a : M}
+    (ha : a ∈ t) : m ≤ a :=
+  h.2 ⟨t, ⟨ht, htC⟩, ha⟩
+
+/-- Where the interval `C` itself is among the times of the clause, the earliest moment is the
+start of `C`. -/
+theorem IsEarliest.eq_fst_of_mem (h : IsEarliest C P m) (hC : C ∈ P) : m = C.fst :=
+  le_antisymm (h.le_of_mem hC le_rfl ⟨le_rfl, C.fst_le_snd⟩) h.fst_le
+
+/-- A clause with one time `d`, within `C`, has the start of `d` as its earliest moment. -/
+theorem isEarliest_fst_of_subset_singleton (hd : d ∈ P) (hP : P ⊆ {d}) (hdC : d ≤ C) :
+    IsEarliest C P d.fst :=
+  ⟨⟨d, ⟨hd, hdC⟩, le_rfl, d.fst_le_snd⟩, fun _ ⟨_, ⟨ht, _⟩, ha⟩ ↦ hP ht ▸ ha.1⟩
+
+/-- *Before* (24) presupposes that its clause has an earliest moment within the contextually
+relevant interval `C`, later than the start of `C`. -/
+def BeforeDefined (C : NonemptyInterval M) (P : Set (NonemptyInterval M)) : Prop :=
+  ∃ m, IsEarliest C P m ∧ C.fst < m
 
 
-/-- The `EARLIEST` presupposition of `before^{B&C}` holds of the body `p` when the set of
-`C`-times at which `p` holds has a least element. -/
-def hasEarliest {T : Type*} [LinearOrder T] (C : Set T) (p : T → Prop) : Prop :=
-  ∃ t, IsLeast {t' | t' ∈ C ∧ p t'} t
+/-- On dense time, the earliest moment of a clause with an existentially quantified tense is the
+start of the contextually relevant interval, whatever the cell of the tense. A clause time that
+follows a time of the predicate can be started later, one that overlaps it can be widened to the
+whole interval, and one that precedes it can be started at the start of the interval. -/
+theorem IsEarliest.eq_fst_of_diamond [DenselyOrdered M] {c : Finset Ordering}
+    (h : IsEarliest C {t | ◇[Perspective.toSetRel c] (· ∈ q) t} m) : m = C.fst := by
+  refine h.fst_le.eq_of_not_lt' fun hlt ↦ ?_
+  obtain ⟨t, ⟨⟨r, hr, hq⟩, htC⟩, hm⟩ := h.1
+  obtain ⟨h₁, h₂⟩ := NonemptyInterval.le_def.1 htC
+  rw [Perspective.mem_toSetRel, Perspective.Presup] at hr
+  rcases hpos : r.position t with _ | _ | _
+  · have hrt : r.snd < t.fst := NonemptyInterval.position_eq_lt.1 hpos
+    obtain ⟨a, ha, ham⟩ := exists_between (max_lt (hrt.trans_le hm.1) hlt)
+    have hra : r.position (.pure a) = .lt :=
+      NonemptyInterval.position_eq_lt.2 ((le_max_left _ _).trans_lt ha)
+    exact absurd (h.le_of_mem (t := .pure a) ⟨r, by rwa [Perspective.mem_toSetRel,
+      Perspective.Presup, hra, ← hpos], hq⟩ (NonemptyInterval.le_def.2
+        ⟨(le_max_right _ _).trans ha.le, ham.le.trans (hm.2.trans h₂)⟩)
+      (NonemptyInterval.mem_pure_self a)) ham.not_ge
+  · have hrC : r.position C = .eq := NonemptyInterval.position_eq_eq.2
+      ((NonemptyInterval.overlaps_comm _ _).1 (((NonemptyInterval.overlaps_comm _ _).1
+        (NonemptyInterval.position_eq_eq.1 hpos)).mono_left htC))
+    exact hlt.ne' (h.eq_fst_of_mem ⟨r, by rwa [Perspective.mem_toSetRel, Perspective.Presup,
+      hrC, ← hpos], hq⟩)
+  · have hra : r.position (.pure C.fst) = .gt := NonemptyInterval.position_eq_gt.2
+      ((h₁.trans t.fst_le_snd).trans_lt (NonemptyInterval.position_eq_gt.1 hpos))
+    exact hlt.not_ge (h.le_of_mem (t := .pure C.fst) ⟨r, by rwa [Perspective.mem_toSetRel,
+      Perspective.Presup, hra, ← hpos], hq⟩ (NonemptyInterval.le_def.2 ⟨le_rfl, C.fst_le_snd⟩)
+      (NonemptyInterval.mem_pure_self _))
 
-/-- [beaver-condoravdi-2003]'s `earliest` is defined exactly when the `EARLIEST`
-    presupposition holds of the instantiation times, with trivial restrictor. -/
-theorem earliestAlt_nonempty_iff_hasEarliest {W T : Type*} [LinearOrder T]
-    (alt : HistoricalAlternatives W T) (B : Set (W × T)) (w : W) (t : T) :
-    (BeaverCondoravdi2003.earliestAlt alt B w t).Nonempty ↔
-      hasEarliest Set.univ (· ∈ BeaverCondoravdi2003.instTimes (alt ⟨w, t⟩) B) := by
-  unfold hasEarliest
-  simp only [Set.Nonempty, BeaverCondoravdi2003.earliestAlt, Set.mem_ofPred_eq, Set.mem_univ,
-    true_and, Set.ofPred_mem_eq]
+/-- On dense time a clause with an existentially quantified tense never satisfies the presupposition
+of *before*, the inherent presupposition failure of (27). -/
+theorem not_beforeDefined_diamond [DenselyOrdered M] {c : Finset Ordering} :
+    ¬ BeforeDefined C {t | ◇[Perspective.toSetRel c] (· ∈ q) t} :=
+  fun ⟨_, h, hlt⟩ ↦ hlt.ne' h.eq_fst_of_diamond
 
-/-! ### The two lexical types of tense ((30)) -/
+/-! ### Tensed clauses under *before* -/
 
-/-- A tense is of one of Sharvit's two semantic types, (30) on p. 274, pronominal or
-quantificational. -/
-inductive LexicalType
-  /-- A pronominal tense is an element of `D_i`, the two-indexed `past_{j,k}`. -/
-  | pronominal
-  /-- A quantificational tense is a Priorean operator over predicates of times. -/
-  | quantificational
-  deriving DecidableEq, Repr
+/-- The cell of an embedded tense. -/
+def cell : Embedded → Finset Ordering
+  | .past => ⟦Tense.past⟧
+  | .present => ⟦Tense.present⟧
 
-/-- The quantificational past, (30b), holds of a predicate at `t` when the predicate holds at
-some time of the contextual restrictor `K` before `t`. -/
-def quantificationalPast {T : Type*} [LT T] (K : Set T) (p : T → Prop) (t : T) : Prop :=
-  ◇[Tense.toSetRel ⟦Tense.past⟧] (fun t' ↦ t' ∈ K ∧ p t') t
+/-- The readings of a tensed clause that is the complement of *before*. -/
+inductive Reading
+  /-- A pronominal tense whose referential index *before* binds and whose evaluation index is
+  free, hence the speech time, as in (35) and (37). -/
+  | pronominal (τ : Embedded)
+  /-- A quantificational tense (34), or a pronominal one whose evaluation index *before* binds
+  and whose referential index is existentially closed (42). -/
+  | existential (τ : Embedded)
+  /-- A tense with no meaning of its own, whether deleted by the sequence-of-tense rule (56),
+  a null present (36), or a present with both indices bound by *before* (44). -/
+  | null
+  deriving DecidableEq, Fintype
 
-/-- When the body of `before^{B&C}` is the quantificational past and the restrictor `C` is
-dense with `K ⊆ C`, the `EARLIEST` presupposition fails, since by density any witness lifts to
-a smaller one, (27) on p. 272. -/
-theorem ipf_quantificationalPast {T : Type*} [LinearOrder T]
-    {C K : Set T}
-    (hK : K ⊆ C)
-    (hC_dense : ∀ a b, a ∈ C → b ∈ C → a < b → ∃ c ∈ C, a < c ∧ c < b)
-    (q : T → Prop) :
-    ¬ hasEarliest C (quantificationalPast K q) := by
-  rintro ⟨t_min, ⟨ht_min_C, t_q, ht_q_lt, ht_q_K, hq_t_q⟩, hmin⟩
-  obtain ⟨t_mid, ht_mid_C, ht_q_lt_mid, ht_mid_lt_min⟩ :=
-    hC_dense t_q t_min (hK ht_q_K) ht_min_C (Tense.mem_toSetRel_past.1 ht_q_lt)
-  exact absurd (hmin ⟨ht_mid_C, t_q, Tense.mem_toSetRel_past.2 ht_q_lt_mid, ht_q_K, hq_t_q⟩)
-    (not_le.mpr ht_mid_lt_min)
+/-- The times a clause holds at on a reading, with `q` the times of its predicate and `SP` the
+speech time. -/
+def Reading.denote (SP : NonemptyInterval M) (q : Set (NonemptyInterval M)) :
+    Reading → Set (NonemptyInterval M)
+  | .pronominal τ => {t | Perspective.Presup (cell τ) SP t ∧ t ∈ q}
+  | .existential τ => {t | ◇[Perspective.toSetRel (cell τ)] (· ∈ q) t}
+  | .null => q
 
-/-- `triggersIPFInBefore l` says whether a tense of type `l` triggers IPF in a *before*-clause;
-quantificational tenses do and pronominal ones do not. -/
-def triggersIPFInBefore : LexicalType → Bool
-  | .quantificational => true
-  | .pronominal       => false
+/-- A clause whose verb takes the pronominal tense `τ` with evaluation index `j` and referential
+index `k`, as in (30a), says that the time of `k` stands to the time of `j` as the tense requires
+and that the predicate holds at it. -/
+def clause (τ : Embedded) (j k : ℕ) (q : Set (NonemptyInterval M)) :
+    Assignment (NonemptyInterval M) → Prop :=
+  fun g ↦ Perspective.Presup (cell τ) (g j) (g k) ∧ g k ∈ q
 
-/-- A past tense is well-formed under `before^{B&C}` iff its type does not trigger IPF, that is,
-iff it is pronominal, (27) on p. 272. -/
-@[simp] theorem pastUnderBefore_wellFormed_iff (τ : LexicalType) :
-    triggersIPFInBefore τ = false ↔ τ = .pronominal := by
-  cases τ <;> simp [triggersIPFInBefore]
+variable {τ : Embedded} {j k : ℕ} {g : Assignment (NonemptyInterval M)}
 
-/-! ### The pronominal past ((30a)) -/
+/-- Abstraction over the referential index gives the pronominal reading at the time of the
+evaluation index. -/
+theorem lambdaAbsG_clause (hjk : j ≠ k) :
+    {t | lambdaAbsG k (clause τ j k q) g t} = (Reading.pronominal τ).denote (g j) q := by
+  ext t
+  simp [clause, Reading.denote, Function.update_of_ne hjk]
 
-/-- The pronominal past `[[past_{j,k}]]^g`, (30a), with evaluation index `j` and referential index
-`k`, is the pronominal tense of the past cell, defined iff `g k < g j` and then denoting `g k`. -/
-theorem pronominalPast_presup {W T : Type*} [LT T] (g : Assignment T) (j k : ℕ) (w : W) :
-    (Tense.pronoun ⟦Tense.past⟧ k j).presup g w ↔ g k < g j := by
-  simp
+/-- Existential closure of the referential index under abstraction over the evaluation index
+gives the existential reading. -/
+theorem lambdaAbsG_exists_clause (hjk : j ≠ k) :
+    {t | lambdaAbsG j (fun g ↦ ∃ t', lambdaAbsG k (clause τ j k q) g t') g t} =
+      (Reading.existential τ).denote SP q := by
+  ext t
+  simp [clause, Reading.denote, Diamond, Function.update_of_ne hjk]
 
-/-! ### The parameter space ((98)) -/
+/-- A present with both indices bound by one binder has no meaning of its own. -/
+theorem lambdaAbsG_clause_self :
+    {t | lambdaAbsG k (clause .present k k q) g t} = Reading.null.denote SP q := by
+  ext t
+  simp [clause, Reading.denote, cell]
 
-/-- The shiftability of the present tense, (71) and (78) on pp. 288–291, is full in Japanese,
-partial in Polish, whose present is bindable but not by the binder of its referential index, and
-absent in English. -/
+namespace Reading
+
+/-- A reading fails when on dense time its clause never satisfies the presupposition of
+*before*, the paper's inherent presupposition failure. -/
+def Fails (r : Reading) : Prop :=
+  ∀ (M : Type) [LinearOrder M] [DenselyOrdered M] (C SP : NonemptyInterval M)
+    (q : Set (NonemptyInterval M)), ¬ BeforeDefined C (r.denote SP q)
+
+/-- A reading has the Stump effect when every past time ends before each time of the clause
+does, so that the order of the two events follows from the tenses alone. -/
+def StumpEffect (r : Reading) : Prop :=
+  ∀ (M : Type) [LinearOrder M] (SP t d : NonemptyInterval M) (q : Set (NonemptyInterval M)),
+    t.precedes SP → d ∈ r.denote SP q → t.snd < d.snd
+
+/-- A reading has no p-shiftability when the earliest time of the clause precedes the speech
+time. -/
+def NoPShiftability (r : Reading) : Prop :=
+  ∀ (M : Type) [LinearOrder M] (C SP : NonemptyInterval M) (q : Set (NonemptyInterval M)) (m : M),
+    IsEarliest C (r.denote SP q) m → m < SP.fst
+
+/-- The existential readings are the ones that fail. -/
+theorem fails_iff {r : Reading} : r.Fails ↔ ∃ τ, r = .existential τ := by
+  refine ⟨fun h ↦ ?_, fun ⟨τ, hτ⟩ M _ _ C SP q ↦ hτ ▸ not_beforeDefined_diamond⟩
+  have key : ∀ (SP : NonemptyInterval ℚ) (r : Reading),
+      NonemptyInterval.pure 5 ∈ r.denote SP {.pure 5} → r.denote SP {.pure 5} ⊆ {.pure 5} →
+        ¬ r.Fails := fun SP r h₁ h₂ h ↦
+    h ℚ ⟨(0, 10), by norm_num⟩ SP {.pure 5} ⟨5, isEarliest_fst_of_subset_singleton h₁ h₂
+      (NonemptyInterval.le_def.2 ⟨by norm_num, by norm_num⟩), by norm_num⟩
+  rcases r with (_ | _) | τ | _
+  · exact absurd h (key (.pure 20) _ ⟨Perspective.presup_past.2 (by
+      show (5 : ℚ) < 20; norm_num), rfl⟩ fun _ h ↦ h.2)
+  · exact absurd h (key (.pure 5) _ ⟨Perspective.presup_present.2
+      (NonemptyInterval.overlaps_refl _), rfl⟩ fun _ h ↦ h.2)
+  · exact ⟨τ, rfl⟩
+  · exact absurd h (key (.pure 0) _ rfl subset_rfl)
+
+/-- The pronominal present is the reading with the Stump effect. -/
+theorem stumpEffect_iff {r : Reading} : r.StumpEffect ↔ r = .pronominal .present := by
+  refine ⟨fun h ↦ ?_, fun hr M _ SP t d q ht hd ↦ ?_⟩
+  · have key : ∀ r : Reading, (NonemptyInterval.pure 1 : NonemptyInterval ℤ) ∈
+        r.denote (.pure 10) {.pure 0, .pure 1} → ¬ r.StumpEffect := fun r hd h ↦
+      absurd (h ℤ (.pure 10) (.pure 5) (.pure 1) _ (by decide) hd) (by decide)
+    rcases r with (_ | _) | (_ | _) | _
+    · exact absurd h (key _ ⟨by decide, by simp⟩)
+    · rfl
+    · exact absurd h (key _ ⟨.pure 0, by decide, by simp⟩)
+    · exact absurd h (key _ ⟨.pure 1, by decide, by simp⟩)
+    · exact absurd h (key _ (by simp [denote]))
+  · subst hr
+    exact ht.trans_le (Perspective.presup_present.1 hd.1).2
+
+/-- The pronominal past has no p-shiftability, its earliest time preceding the speech time (35). -/
+theorem noPShiftability_pronominal_past : (pronominal .past).NoPShiftability :=
+  fun _ _ _ _ _ _ h ↦
+    let ⟨_, ⟨ht, _⟩, hm⟩ := h.1
+    hm.2.trans_lt (Perspective.presup_past.1 ht.1)
+
+/-- A tense with no meaning of its own is p-shiftable, in that the earliest time of its clause may
+follow the speech time (36). -/
+theorem not_noPShiftability_null : ¬ null.NoPShiftability := fun h ↦
+  absurd (h ℤ ⟨(0, 10), by decide⟩ (.pure 2) {.pure 5} 5 (isEarliest_fst_of_subset_singleton
+    (d := .pure 5) (Set.mem_singleton _) subset_rfl (by decide))) (by decide)
+
+/-- A reading is felicitous when it neither fails nor has the Stump effect. -/
+def Felicitous (r : Reading) : Prop := ¬ r.Fails ∧ ¬ r.StumpEffect
+
+/-- The felicitous readings are the pronominal past and the tense with no meaning. -/
+theorem felicitous_iff {r : Reading} : r.Felicitous ↔ r = .pronominal .past ∨ r = .null := by
+  rw [Felicitous, fails_iff, stumpEffect_iff]
+  rcases r with (_ | _) | τ | _ <;> simp
+
+end Reading
+
+/-! ### Languages -/
+
+/-- The shiftability of a present tense (71) says whether its evaluation index must be free, may be
+bound though not by the binder of its referential index, or may be bound freely. -/
 inductive Shiftability
-  /-- The present is free and cannot be bound, as in English. -/
-  | nonShiftable
-  /-- The present is bindable, but not by the binder of its referential index, as in Polish. -/
-  | semiShiftable
-  /-- The present is freely bindable, as in Japanese. -/
-  | fullyShiftable
-  deriving DecidableEq, Repr
+  | non | semi | full
+  deriving DecidableEq, Fintype, Repr
 
-/-- A language's tense profile, (98) on p. 300, records whether it has the SOT rule, the
-shiftability of its present, and the type of its past, of which there is at most one. -/
-structure LanguageTenseProfile where
-  /-- Whether the language has the SOT rule, deleting an agreeing embedded tense. -/
-  hasSOT : Bool
-  /-- The shiftability of the present tense. -/
-  presentShiftability : Shiftability
-  /-- The type of the past tense, or `none` for a tenseless language. -/
-  pastLexicalType : Option LexicalType
-  deriving DecidableEq, Repr
+/-- A language's tense parameters say whether it has the sequence-of-tense rule, how shiftable its
+present is, and whether it has pronominal and quantificational tenses. -/
+structure Language where
+  /-- The language has the sequence-of-tense rule. -/
+  sot : Bool
+  /-- The shiftability of the present. -/
+  present : Shiftability
+  /-- The language has pronominal tenses. -/
+  pronominal : Bool
+  /-- The language has quantificational tenses. -/
+  quantificational : Bool
+  deriving DecidableEq, Fintype, Repr
 
-namespace LanguageTenseProfile
+namespace Language
 
-/-- A language has tenses when its past has a type. -/
-def hasTenses (L : LanguageTenseProfile) : Bool := L.pastLexicalType.isSome
+variable (L : Language) (τ : Embedded)
 
-/-- A language's past is pronominal. -/
-def isPronominal (L : LanguageTenseProfile) : Bool := L.pastLexicalType == some .pronominal
+/-- A language gives a tense in a *before*-clause its existential reading when the tense is a
+quantificational past (34), a pronominal past, whose evaluation index may always be bound (42b),
+or a pronominal present whose evaluation index may be bound (69b). -/
+def HasExistential : Embedded → Prop
+  | .past => L.pronominal ∨ L.quantificational
+  | .present => L.pronominal ∧ L.present ≠ .non
 
-/-- A language's past is quantificational. -/
-def isQuantificational (L : LanguageTenseProfile) : Bool :=
-  L.pastLexicalType == some .quantificational
+/-- A language gives a tense in a *before*-clause no meaning of its own when the tense is a past
+that a quantificational matrix past raises above and deletes (56), since a pronominal matrix
+past does not raise (60), or a fully shiftable present, null if quantificational (36) and with
+both indices bound by *before* if pronominal (44). -/
+def HasNull : Embedded → Prop
+  | .past => L.quantificational ∧ L.sot
+  | .present => (L.pronominal ∨ L.quantificational) ∧ L.present = .full
 
-/-- A language's present is shiftable when it can be bound at all, which suffices to host a
-"now"-thought in attitudes. -/
-def hasShiftablePresent (L : LanguageTenseProfile) : Bool :=
-  L.presentShiftability != .nonShiftable
+instance : DecidablePred L.HasNull
+  | .past => inferInstanceAs (Decidable (_ ∧ _))
+  | .present => inferInstanceAs (Decidable (_ ∧ _))
 
-/-- A language's present is fully shiftable when it is freely bindable, the condition for a
-well-formed present-under-past *before*-clause, (78) on p. 291. -/
-def hasFullyShiftablePresent (L : LanguageTenseProfile) : Bool :=
-  L.presentShiftability == .fullyShiftable
+/-- The readings a language's grammar gives the tense `τ` of a *before*-clause under a past. -/
+def Available : Reading → Prop
+  | .pronominal τ' => τ' = τ ∧ L.pronominal
+  | .existential τ' => τ' = τ ∧ L.HasExistential τ
+  | .null => L.HasNull τ
 
-/-! ### Derived empirical predicates
+/-- The tense `τ` is well-formed in a *before*-clause under a past when it has a felicitous
+reading there. -/
+def WellFormed : Prop := ∃ r, L.Available τ r ∧ r.Felicitous
 
-These are not independent stipulations: the *before*-well-formedness predicate routes through the
-IPF dispatch `triggersIPFInBefore`, and deletion of a past under an agreeing past applies just in
-case the language has the SOT rule. -/
+/-- A *before*-clause in the tense `τ` is p-shiftable when a felicitous reading lets its time
+follow the speech time. -/
+def PShiftable : Prop := ∃ r, L.Available τ r ∧ r.Felicitous ∧ ¬ r.NoPShiftability
 
-/-- PAST-under-PAST in *before* is well-formed iff the past does not trigger IPF. -/
-def wellFormedPastUnderPastBefore (L : LanguageTenseProfile) : Bool :=
-  match L.pastLexicalType with
-  | some τ => !triggersIPFInBefore τ
-  | none   => false
+/-- A *before*-clause in the tense `τ` has no p-shiftability when it is well-formed and its time
+precedes the speech time on every felicitous reading. -/
+def NoPShiftability : Prop :=
+  L.WellFormed τ ∧ ∀ r, L.Available τ r → r.Felicitous → r.NoPShiftability
 
-/-- PRES-under-PAST in *before* is well-formed iff the present is fully shiftable, the Stump
-effect, which rules out English and Polish, (78) on p. 291. -/
-def wellFormedPresentUnderPastBefore (L : LanguageTenseProfile) : Bool :=
-  L.hasFullyShiftablePresent
+variable {L τ}
 
-/-- The simultaneous reading of past-under-past in attitude reports, (59b) on p. 284, needs a
-pronominal past and the SOT rule; Japanese's present-tense simultaneous reading is a different
-mechanism. -/
-def simultaneousAttitudeReading (L : LanguageTenseProfile) : Bool :=
-  L.isPronominal && L.hasSOT
+theorem wellFormed_iff : L.WellFormed τ ↔ τ = .past ∧ L.pronominal ∨ L.HasNull τ := by
+  simp only [WellFormed, Reading.felicitous_iff]
+  constructor
+  · rintro ⟨r, ha, rfl | rfl⟩
+    exacts [.inl ⟨ha.1.symm, ha.2⟩, .inr ha]
+  · rintro (⟨rfl, h⟩ | h)
+    exacts [⟨.pronominal .past, ⟨rfl, h⟩, .inl rfl⟩, ⟨.null, h, .inr rfl⟩]
 
-/-- A bare *before*-clause is p-shiftable, its past referring to a future time, when the past is
-quantificational, (51) on p. 281. -/
-def pShiftabilityBare (L : LanguageTenseProfile) : Bool := L.isQuantificational
+theorem pShiftable_iff : L.PShiftable τ ↔ L.HasNull τ := by
+  simp only [PShiftable, Reading.felicitous_iff]
+  constructor
+  · rintro ⟨r, ha, rfl | rfl, hn⟩
+    exacts [absurd Reading.noPShiftability_pronominal_past hn, ha]
+  · exact fun h ↦ ⟨.null, h, .inr rfl, Reading.not_noPShiftability_null⟩
 
-/-- An embedded *before*-clause is p-shiftable under a matrix attitude verb when the past is
-quantificational or the SOT rule deletes the matrix past, (66)–(68) on p. 287, for many
-speakers. -/
-def pShiftabilityEmbedded (L : LanguageTenseProfile) : Bool :=
-  L.isQuantificational || (L.isPronominal && L.hasSOT)
+instance : Decidable (L.WellFormed τ) := decidable_of_iff _ wellFormed_iff.symm
 
-/-- A language respects the Embeddability Principle, restated on p. 299, when it has some
-mechanism for embedding a "now"-thought, the SOT rule, a shiftable present, or a quantificational
-past. -/
-def respectsEmbeddability (L : LanguageTenseProfile) : Bool :=
-  L.hasSOT || L.hasShiftablePresent || L.isQuantificational
+instance : Decidable (L.PShiftable τ) := decidable_of_iff _ pShiftable_iff.symm
 
-/-- A pronominal past is not quantificational. -/
-theorem isQuantificational_eq_false_of_isPronominal (L : LanguageTenseProfile) :
-    L.isPronominal = true → L.isQuantificational = false := by
-  intro h
-  have : L.pastLexicalType = some .pronominal := by
-    simpa [isPronominal] using h
-  simp [isQuantificational, this]
+/-- A well-formed clause has no p-shiftability exactly when it is not p-shiftable. -/
+theorem noPShiftability_iff : L.NoPShiftability τ ↔ L.WellFormed τ ∧ ¬ L.PShiftable τ :=
+  and_congr_right fun _ ↦
+    ⟨fun h ⟨r, ha, hf, hn⟩ ↦ hn (h r ha hf), fun h r ha hf ↦ by_contra fun hn ↦ h ⟨r, ha, hf, hn⟩⟩
 
-/-- Past-under-past in *before* is well-formed iff the past is pronominal. -/
-theorem wellFormedPastUnderPastBefore_iff_pronominal (L : LanguageTenseProfile) :
-    L.wellFormedPastUnderPastBefore = true ↔ L.isPronominal = true := by
-  cases hτ : L.pastLexicalType with
-  | none => simp [wellFormedPastUnderPastBefore, isPronominal, hτ]
-  | some τ =>
-    cases τ <;> simp [wellFormedPastUnderPastBefore, isPronominal, triggersIPFInBefore, hτ]
+variable (L)
 
-end LanguageTenseProfile
+/-- The language as a type of Sharvit's earlier typology, which has the sequence-of-tense rule
+and whether the present may be bound. -/
+def toSharvit2003 : Sharvit2003.Language :=
+  ⟨L.sot, if L.present = .non then .matrixIndexical else .bindable⟩
 
-/-! ### Attested language types ((98), p. 300) -/
+/-- The tense `τ` under a past attitude verb has a simultaneous reading, a past where the
+sequence-of-tense rule deletes it and a present where its evaluation index may be bound. -/
+def Simultaneous (τ : Embedded) : Prop := Sharvit2003.NonpastAvailable L.toSharvit2003 τ
 
-/-- English, type 6 of (98), has the SOT rule, a non-shiftable present and a pronominal past. -/
-def english : LanguageTenseProfile where
-  hasSOT := true
-  presentShiftability := .nonShiftable
-  pastLexicalType := some .pronominal
+instance (τ : Embedded) : Decidable (L.Simultaneous τ) :=
+  inferInstanceAs (Decidable (Sharvit2003.NonpastAvailable _ _))
 
-/-- Polish, type 10 of (98), has no SOT rule, a semi-shiftable present and a pronominal past, so
-its present-under-past *before*-clauses are ill-formed as in English. -/
-def polish : LanguageTenseProfile where
-  hasSOT := false
-  presentShiftability := .semiShiftable
-  pastLexicalType := some .pronominal
+variable {L}
 
-/-- Japanese, type 11 of (98), has no SOT rule, a fully shiftable present and a quantificational
-past. -/
-def japanese : LanguageTenseProfile where
-  hasSOT := false
-  presentShiftability := .fullyShiftable
-  pastLexicalType := some .quantificational
+theorem simultaneous_past_iff : L.Simultaneous .past ↔ L.sot :=
+  eq_mem_pastUnderPast_iff
 
-/-- `attestedTypes` lists the attested language types of Sharvit's table (98). -/
-def attestedTypes : List LanguageTenseProfile := [english, polish, japanese]
+end Language
 
-/-! ### Structural constraints (§6.1) -/
+/-! ### English, Japanese and Polish -/
 
-/-- Every attested language has tenses. -/
-theorem all_attested_have_tenses : ∀ L ∈ attestedTypes, L.hasTenses = true := by decide
+/-- English has the sequence-of-tense rule, a present that cannot be bound, and pronominal
+tenses. -/
+def english : Language := ⟨true, .non, true, false⟩
 
-/-- Every attested language respects the Embeddability Principle. -/
-theorem all_attested_respect_embeddability :
-    ∀ L ∈ attestedTypes, L.respectsEmbeddability = true := by decide
+/-- Japanese has no sequence-of-tense rule, a fully shiftable present, and quantificational
+tenses. -/
+def japanese : Language := ⟨false, .full, false, true⟩
 
-/-! ### Cross-linguistic predictions ((99), p. 301)
+/-- Polish has no sequence-of-tense rule, a semi-shiftable present, and pronominal tenses. -/
+def polish : Language := ⟨false, .semi, true, false⟩
 
-Stated and proved over *all* profiles, not the three attested rows: each prediction follows
-structurally from the parameter definitions and the substrate grounding. -/
+/-- In attitude reports English is the first type of the earlier typology, and Japanese and
+Polish the second, with Hebrew. -/
+theorem toSharvit2003_eq : english.toSharvit2003 = Sharvit2003.english ∧
+    japanese.toSharvit2003 = Sharvit2003.hebrew ∧ polish.toSharvit2003 = Sharvit2003.hebrew :=
+  ⟨rfl, rfl, rfl⟩
 
-/-- A well-formed present-under-past in *before* implies a shiftable present, (99a). -/
-theorem eq99a_pres_under_past_before_implies_shiftable (L : LanguageTenseProfile) :
-    L.wellFormedPresentUnderPastBefore = true → L.hasShiftablePresent = true := by
-  cases hs : L.presentShiftability <;>
-    simp [LanguageTenseProfile.wellFormedPresentUnderPastBefore,
-      LanguageTenseProfile.hasFullyShiftablePresent, LanguageTenseProfile.hasShiftablePresent, hs]
+/-- A Japanese past in a *before*-clause has only a reading that fails (34). -/
+theorem japanese_past_fails {r : Reading} (h : japanese.Available .past r) : r.Fails := by
+  rcases r with τ | τ | _
+  · exact absurd h.2 (by decide)
+  · exact Reading.fails_iff.2 ⟨τ, rfl⟩
+  · exact absurd h.2 (by decide)
 
-/-- A well-formed PAST-under-PAST in *before* with embedded p-shiftability implies a simultaneous
-reading of past-under-past in attitudes, (99b). -/
-theorem eq99b_before_and_embedded_pshift_imply_simultaneous (L : LanguageTenseProfile) :
-    L.wellFormedPastUnderPastBefore = true → L.pShiftabilityEmbedded = true →
-      L.simultaneousAttitudeReading = true := by
-  intro hwf hemb
-  have hpron : L.isPronominal = true :=
-    (LanguageTenseProfile.wellFormedPastUnderPastBefore_iff_pronominal L).mp hwf
-  have hquant : L.isQuantificational = false :=
-    LanguageTenseProfile.isQuantificational_eq_false_of_isPronominal L hpron
-  simp only [LanguageTenseProfile.pShiftabilityEmbedded, hquant, hpron, Bool.false_or,
-    Bool.true_and] at hemb
-  simp only [LanguageTenseProfile.simultaneousAttitudeReading, hpron, Bool.true_and]
-  exact hemb
+/-- An English present in a *before*-clause has only the reading with the Stump effect (37). -/
+theorem english_present_stumpEffect {r : Reading} (h : english.Available .present r) :
+    r.StumpEffect := by
+  rcases r with τ | τ | _
+  · obtain rfl := h.1
+    exact Reading.stumpEffect_iff.2 rfl
+  · exact absurd h.2.2 (by decide)
+  · exact absurd h.2 (by decide)
 
-/-- A well-formed PAST-under-PAST in *before* without a simultaneous reading implies that bare
-past-under-past *before* is not p-shiftable, (99c). The consequent already follows from
-well-formedness, so the second antecedent is idle in this encoding. -/
-theorem eq99c_before_and_no_simultaneous_imply_no_bare_pshift (L : LanguageTenseProfile) :
-    L.wellFormedPastUnderPastBefore = true → L.simultaneousAttitudeReading = false →
-      L.pShiftabilityBare = false := by
-  intro hwf _hNoSim
-  have hpron : L.isPronominal = true :=
-    (LanguageTenseProfile.wellFormedPastUnderPastBefore_iff_pronominal L).mp hwf
-  exact LanguageTenseProfile.isQuantificational_eq_false_of_isPronominal L hpron
+/-- A Polish present in a *before*-clause has the reading with the Stump effect and, with its
+evaluation index bound, a reading that fails (69b). -/
+theorem polish_present_fails_or_stumpEffect {r : Reading} (h : polish.Available .present r) :
+    r.Fails ∨ r.StumpEffect := by
+  rcases r with τ | τ | _
+  · obtain rfl := h.1
+    exact .inr (Reading.stumpEffect_iff.2 rfl)
+  · exact .inl (Reading.fails_iff.2 ⟨τ, rfl⟩)
+  · exact absurd h.2 (by decide)
 
-/-! ### Substrate connection: IPF and quantificational past
+/-- The languages of the example rows. -/
+def languages : List (String × Language) :=
+  [("stan1293", english), ("nucl1643", japanese), ("poli1260", polish)]
 
-The `wellFormedPastUnderPastBefore` predicate is grounded in the [beaver-condoravdi-2003] IPF
-result formalized via `hasEarliest`; the two theorems below consume that
-grounding via `wellFormedPastUnderPastBefore_iff_pronominal`. -/
+/-- The embedded tenses of the example rows. -/
+def tenses : List (String × Embedded) := [("past", .past), ("present", .present)]
 
-/-- In a language with a quantificational past, such as Japanese, past-under-past in *before* is
-ill-formed. -/
-theorem quant_past_languages_fail_before (L : LanguageTenseProfile) :
-    L.isQuantificational = true → L.wellFormedPastUnderPastBefore = false := by
-  intro h
-  have : L.pastLexicalType = some .quantificational := by
-    simpa [LanguageTenseProfile.isQuantificational] using h
-  simp [LanguageTenseProfile.wellFormedPastUnderPastBefore, this, triggersIPFInBefore]
+/-- A tense in a *before*-clause under a past is acceptable exactly where the language's
+parameters make it well-formed. -/
+theorem judgment_iff :
+    ∀ e ∈ Examples.all, e.language ≠ "mode1248" → e.feature? "construction" = some "before" →
+      e.feature? "clauseTime" ≠ some "after speech" →
+      ∃ L ∈ languages.lookup e.language, ∃ τ ∈ e.parse? "embedded" tenses,
+        (e.judgment = .acceptable ↔ L.WellFormed τ) := by
+  decide
 
-/-- In English and Polish, whose past is pronominal, past-under-past in *before* is
-well-formed. -/
-theorem pronominal_past_languages_pass_before (L : LanguageTenseProfile) :
-    L.isPronominal = true → L.wellFormedPastUnderPastBefore = true :=
-  fun h => (LanguageTenseProfile.wellFormedPastUnderPastBefore_iff_pronominal L).mpr h
+/-- A *before*-clause whose time follows the speech time is acceptable exactly where the
+language's parameters make the clause p-shiftable. -/
+theorem clauseTime_iff :
+    ∀ e ∈ Examples.all, e.feature? "clauseTime" = some "after speech" →
+      ∃ L ∈ languages.lookup e.language, ∃ τ ∈ e.parse? "embedded" tenses,
+        (e.judgment = .acceptable ↔ L.PShiftable τ) := by
+  decide
 
-/-! ### Per-language payload
+/-- A tense under a past attitude verb has a simultaneous reading exactly where the language's
+parameters give it one. -/
+theorem simultaneous_iff :
+    ∀ e ∈ Examples.all, e.language ≠ "mode1248" → e.feature? "construction" = some "attitude" →
+      ∃ L ∈ languages.lookup e.language, ∃ τ ∈ e.parse? "embedded" tenses,
+        (e.readings.lookup "simultaneous" = some .acceptable ↔ L.Simultaneous τ) := by
+  decide
 
-The central typological contrast — and a regression guard on the three-valued shiftability: a
-binary `shiftablePresent` would wrongly make Polish's present-under-past in *before* well-formed. -/
+/-! ### Permissible languages -/
 
-example : japanese.pShiftabilityBare = true := rfl
-example : english.pShiftabilityBare = false := rfl
-example : polish.wellFormedPresentUnderPastBefore = false := rfl
-example : japanese.wellFormedPresentUnderPastBefore = true := rfl
+namespace Language
 
-/-! ### The simultaneous reading -/
+variable (L : Language)
 
-/-- In English the SOT rule and the pronominal past yield the simultaneous reading of
-past-under-past in attitudes. -/
-theorem english_predicts_simultaneous : english.simultaneousAttitudeReading = true := rfl
+/-- A language is permissible when it has tenses of exactly one kind and meets the Embeddability
+Principle for attitude reports, having the sequence-of-tense rule or a present that may be
+bound. -/
+def Permissible : Prop :=
+  (L.pronominal ∨ L.quantificational) ∧ ¬ (L.pronominal ∧ L.quantificational) ∧
+    Sharvit2003.EmbeddabilityPrinciple L.toSharvit2003
+
+instance : Decidable L.Permissible := inferInstanceAs (Decidable (_ ∧ _ ∧ _))
+
+/-- The number of a language's type in the table of language types (98), which lists the
+sixteen settings of the sequence-of-tense rule, a shiftable present, pronominal tenses and
+quantificational tenses. -/
+def row : ℕ :=
+  1 + (if L.sot then 0 else 8) + (if L.present = .non then 4 else 0) +
+    (if L.pronominal then 0 else 2) + (if L.quantificational then 0 else 1)
+
+/-- The permissible types are six of the sixteen. -/
+theorem permissible_iff : L.Permissible ↔ L.row ∈ ({2, 3, 6, 7, 10, 11} : Finset ℕ) := by
+  revert L
+  decide
+
+/-- A language that may have tenses of both kinds is of one of nine types. -/
+theorem permissible_without_economy_iff :
+    (L.pronominal ∨ L.quantificational) ∧ Sharvit2003.EmbeddabilityPrinciple L.toSharvit2003 ↔
+      L.row ∈ ({1, 2, 3, 5, 6, 7, 9, 10, 11} : Finset ℕ) := by
+  revert L
+  decide
+
+variable {L}
+
+/-- By the Embeddability Principle for *before*, some tense is well-formed in a *before*-clause
+under a past, which holds unless the language has only quantificational tenses, no sequence-of-tense
+rule and no fully shiftable present. -/
+theorem wellFormed_past_or_present_iff :
+    L.WellFormed .past ∨ L.WellFormed .present ↔
+      L.pronominal ∨ L.quantificational ∧ (L.sot ∨ L.present = .full) := by
+  revert L
+  decide
+
+end Language
+
+/-- English, Polish and Japanese are of the sixth, tenth and eleventh type. -/
+theorem row_eq : english.row = 6 ∧ polish.row = 10 ∧ japanese.row = 11 := by decide
+
+/-- A language like Japanese but with a semi-shiftable present is of a permissible type and has
+no well-formed tense in a *before*-clause under a past, so a quantificational present is fully
+shiftable. -/
+theorem semiShiftable_quantificational :
+    ({ japanese with present := .semi } : Language).Permissible ∧
+      ¬ ({ japanese with present := .semi } : Language).WellFormed .past ∧
+      ¬ ({ japanese with present := .semi } : Language).WellFormed .present := by
+  decide
+
+/-! ### Predictions -/
+
+variable {L : Language}
+
+/-- A language with a well-formed present in *before*-clauses under a past has p-shiftability
+there (99a), since the present is then fully shiftable. -/
+theorem pShiftable_present_of_wellFormed (h : L.WellFormed .present) : L.PShiftable .present :=
+  Language.pShiftable_iff.2
+    ((Language.wellFormed_iff.1 h).resolve_left fun h ↦ Embedded.noConfusion h.1)
+
+/-- A language with p-shiftability in past *before*-clauses under a past has simultaneous
+readings of a past under a past attitude verb (99b), since the embedded past is then deleted by
+the sequence-of-tense rule. -/
+theorem simultaneous_past_of_pShiftable (h : L.PShiftable .past) : L.Simultaneous .past :=
+  Language.simultaneous_past_iff.2 (Language.pShiftable_iff.1 h).2
+
+/-- A language with a well-formed past in *before*-clauses under a past and no simultaneous
+reading of a past under a past attitude verb has no p-shiftability there (99c), since the past
+of the *before*-clause is then pronominal. -/
+theorem noPShiftability_past_of_not_simultaneous (hw : L.WellFormed .past)
+    (hs : ¬ L.Simultaneous .past) : L.NoPShiftability .past :=
+  Language.noPShiftability_iff.2 ⟨hw, fun h ↦ hs (simultaneous_past_of_pShiftable h)⟩
+
+/-- A language with tenses and a simultaneous reading of a past under a past attitude verb has a
+well-formed past in *before*-clauses under a past, since a past that the sequence-of-tense rule
+can delete is either pronominal or deleted there too (102). -/
+theorem wellFormed_past_of_simultaneous (ht : L.pronominal ∨ L.quantificational)
+    (h : L.Simultaneous .past) : L.WellFormed .past :=
+  Language.wellFormed_iff.2 (ht.imp (⟨rfl, ·⟩) (⟨·, Language.simultaneous_past_iff.1 h⟩))
+
+/-- Modern Greek has the simultaneous reading (104) and no past in *before*-clauses (103), so no
+setting of the parameters gives its judgments. -/
+theorem not_exists_modernGreek :
+    ¬ ∃ L : Language, (L.pronominal ∨ L.quantificational) ∧
+      (Examples.ex_104.readings.lookup "simultaneous" = some .acceptable ↔ L.Simultaneous .past) ∧
+      (Examples.ex_103.judgment = .acceptable ↔ L.WellFormed .past) := by
+  decide
 
 end Sharvit2014
