@@ -172,7 +172,6 @@ import Linglib.Core.Probability.Distributions.Bernoulli
 import Linglib.Core.Probability.GibbsVariational
 import Linglib.Core.Probability.Gumbel
 import Linglib.Core.Probability.Kernel.Composition.Lemmas
-import Linglib.Core.Probability.Kernel.Mixture
 import Linglib.Core.Probability.Kernel.OfWeights
 import Linglib.Core.Probability.Kernel.Posterior
 import Linglib.Core.Probability.Uniform

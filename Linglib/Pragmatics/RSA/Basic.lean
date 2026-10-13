@@ -46,6 +46,9 @@ reduce to counting, are treated in `Linglib.Pragmatics.RSA.Uniform`.
 
 * `RSA.speaker_apply_singleton_eq_zero_iff`: the speaker produces exactly the utterances whose
   listener rules out no state she entertains.
+* `RSA.listener_prod_fst`: lexical uncertainty. Against independent priors over states and a
+  latent, the state marginal of the joint listener is the listener of the speaker averaged over
+  the latent.
 * `RSA.speaker_ofDensity_apply_singleton`: against the listener of a graded meaning the prior
   cancels from the speaker's choice, and she weighs an utterance by the geometric mean of its
   meaning over her belief and the inverse of the meaning's prior mass.
@@ -57,6 +60,8 @@ reduce to counting, are treated in `Linglib.Pragmatics.RSA.Uniform`.
 * [M. C. Frank and N. D. Goodman, *Predicting Pragmatic Reasoning in Language Games*
   (2012)][frank-goodman-2012]
 * [J. Degen, *The Rational Speech Act Framework* (2023)][degen-2023]
+* [L. Bergen, R. Levy and N. D. Goodman, *Pragmatic Reasoning through Semantic Inference*
+  (2016)][bergen-levy-goodman-2016]
 * [M. Franke and L. Bergen, *Theory-Driven Statistical Modeling for Semantics and Pragmatics: A
   Case Study on Grammatically Generated Implicature Readings* (2020)][franke-bergen-2020]
 -/
@@ -345,7 +350,9 @@ end Uniform
 A latent the speaker also knows, a lexicon or a threshold or a question, is a coordinate of the
 state: the speaker at a pair is `fun p ↦ speaker α C (L p.2) Measure.dirac p.1`, addressing that
 latent's listener, and her listener holds a prior over pairs. Its marginals pool the
-prior-weighted production probabilities over the other coordinate. -/
+prior-weighted production probabilities over the other coordinate. When the prior over pairs is a
+product, forgetting the latent after the joint inference is inverting the speaker averaged over
+the latent, so the two presentations of lexical uncertainty agree (`listener_prod_fst`). -/
 
 section Prod
 
@@ -406,6 +413,21 @@ theorem listener_snd_real_lt_iff (u : U) (b₁ b₂ : B) :
     simp [eq_comm]
   rw [key, key, listener_real_finset_lt_iff, Finset.sum_product, Finset.sum_product]
   simp only [Finset.sum_singleton]
+
+/-- **Lexical uncertainty.** Against a product prior, the first marginal of the listener is the
+listener of the speaker averaged over the second coordinate by its prior. -/
+theorem listener_prod_fst (μA : Measure A) (ν : Measure B) (S : A × B → Measure U) :
+    (listener (μA.prod ν) S).fst = listener μA fun a ↦ ∑ b, ν {b} • S (a, b) := by
+  ext u : 1
+  refine Measure.ext_of_singleton fun a ↦ ?_
+  change (listener (μA.prod ν) S u).fst {a} = _
+  simp_rw [Measure.fst_apply_singleton, listener_apply_singleton, div_eq_mul_inv, ← Finset.sum_mul,
+    Fintype.sum_prod_type, ← Set.singleton_prod_singleton, Measure.prod_prod,
+    Measure.finsetSum_apply, Measure.smul_apply, smul_eq_mul, Finset.sum_mul]
+  refine Finset.sum_congr rfl fun _ _ ↦ ?_
+  congr 1
+  · ring
+  · exact congrArg _ <| Finset.sum_congr rfl fun _ _ ↦ Finset.sum_congr rfl fun _ _ ↦ by ring
 
 /-- Against a product prior the first marginal of the listener is the prior at the point times
 the production probability averaged over the second coordinate, normalized. -/

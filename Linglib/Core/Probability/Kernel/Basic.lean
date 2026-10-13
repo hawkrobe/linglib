@@ -12,8 +12,9 @@ public import Mathlib.MeasureTheory.Measure.WithDensity
 /-!
 # Kernels between countable spaces
 
-Every measure on a countable type is s-finite, and every kernel out of a countable type with
-measurable singletons is a countable sum of the kernels concentrated at one point, so every
+The kernel `ofFunOfCountable f` that a function out of a countable type defines has row `f a`
+at `a`. Every measure on a countable type is s-finite, and every kernel out of a countable type
+with measurable singletons is a countable sum of the kernels concentrated at one point, so every
 kernel between two countable types is s-finite. The pushforward of a kernel into a countable type
 gives a point the mass of the fibre over it. `[UPSTREAM]` candidate for
 `Mathlib/Probability/Kernel/Basic.lean`.
@@ -26,6 +27,9 @@ open MeasureTheory
 namespace ProbabilityTheory.Kernel
 
 variable {α β : Type*} [MeasurableSpace α] [MeasurableSpace β]
+
+theorem ofFunOfCountable_apply [Countable α] [MeasurableSingletonClass α] (f : α → Measure β)
+    (a : α) : ofFunOfCountable f a = f a := rfl
 
 open scoped Classical in
 /-- A kernel out of a countable type is the sum over points `a` of the kernel that is `κ a` at
