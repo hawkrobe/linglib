@@ -81,23 +81,23 @@ def sing : Root := ⟨500⟩
 
 /-! ### The insertion site -/
 
-/-- What a root's Vocabulary Items may mention: its index, and the number
-of the internal argument on the terminal below. -/
+/-- A root's Vocabulary Items may mention its index and the number of the
+internal argument on the terminal below. -/
 inductive SiteFeature where
   | root (r : Root)
   | internal (n : Number)
   deriving DecidableEq, Repr
 
-/-- The neighborhood of root `r` in a clause bearing the numbers `c`: the
-internal argument is the terminal below; the external argument is not in the
-local environment (§3.3). -/
+/-- The neighborhood of root `r` in a clause bearing the numbers `c` has the
+internal argument as the terminal below, and the external argument is not in
+the local environment (§3.3). -/
 def site (c : Arguments Number) (r : Root) : Neighborhood (List SiteFeature) :=
   ⟨[.root r], ((c .internal).map fun n ↦ ([.internal n] : List SiteFeature)).toList, []⟩
 
 /-! ### List 2: the suppletive Vocabulary Items -/
 
-/-- A suppletive root's two items ((14), fn. 16): the form conditioned by a
-singular internal argument below, and the Elsewhere form. -/
+/-- A suppletive root has two items ((14), fn. 16), the form conditioned by a
+singular internal argument below and the Elsewhere form. -/
 def suppletive (r : Root) (sgForm elseForm : String) :
     RuleSet (VocabularyItem SiteFeature String) :=
   [⟨⟨[.root r], [[.internal .singular]], []⟩, sgForm⟩, [.root r] ⟷ elseForm]
@@ -135,15 +135,15 @@ theorem kill_sgObj_plObj :
 
 /-! ### §2.1–2.2 Individuation is not phonological -/
 
-/-- One index, two phonologically unrelated forms: a root identified by its
-form would split √322 in two (§2.2). -/
+/-- One index has two phonologically unrelated forms, so a root identified by
+its form would split √322 in two (§2.2). -/
 theorem run_two_forms :
     spellout (unaccusative .singular) run ≠ spellout (unaccusative .plural) run := by
   decide
 
-/-- The suppletive items compete only at their own index: a non-suppletive
-intransitive root receives no exponent from `vocabulary` — why List-1 roots
-must be distinct before spell-out (§2.1). -/
+/-- The suppletive items compete only at their own index, so a non-suppletive
+intransitive root receives no exponent from `vocabulary`, which is why List-1
+roots must be distinct before spell-out (§2.1). -/
 theorem index_local (c : Arguments Number) : spellout c sing = none := by
   unfold spellout site
   rcases h : c .internal with _ | n
@@ -156,9 +156,9 @@ theorem index_local (c : Arguments Number) : spellout c sing = none := by
 theorem suppletion_ignores_external (obj subj subj' : Number) (r : Root) :
     spellout (transitive obj subj) r = spellout (transitive obj subj') r := rfl
 
-/-- Only an internal argument conditions the form: an intransitive whose sole
+/-- Only an internal argument conditions the form. An intransitive whose sole
 argument is external gets the Elsewhere form whatever its number, so the
-suppletive intransitives must be unaccusative — the paper's prediction from
+suppletive intransitives must be unaccusative, the paper's prediction from
 locality. -/
 theorem unergative_elsewhere (n : Number) : spellout (unergative n) run = some "tenne" := rfl
 
@@ -176,7 +176,7 @@ def conditions : ArgumentRole → Bool
 /-- Suppletion follows an ergative–absolutive distribution. -/
 theorem isErgative_conditions : Alignment.IsErgative conditions := by decide
 
-/-- **Suppletion is not agreement**: Hiaki case is nominative–accusative ((29)), and no
+/-- **Suppletion is not agreement.** Hiaki case is nominative–accusative ((29)), and no
 setting of accessibility derives ergative agreement from accusative case
 (`Bobaljik2008.not_isErgative_controls_accusative`), so the pattern is local Vocabulary-Item
 competition, conditioned by the internal argument. -/
@@ -206,8 +206,8 @@ but gaps (an empty `interp` fiber outside the frame, via
 `Allosemy.toInterpreted`): `vocabulary` is the List-2 map, `cahootLF` the
 List-3 map. -/
 
-/-- List 2 as a `Realization`: a root's Elsewhere-selected exponent as a
-singleton fiber, `∅` at an index with no item. -/
+/-- List 2 is a `Realization` whose fiber at a root is its Elsewhere-selected
+exponent, and `∅` at an index with no item. -/
 def realization : Morphology.Realization Root (Arguments Number) String :=
   ⟨fun r c ↦ (spellout c r).elim ∅ ({·})⟩
 

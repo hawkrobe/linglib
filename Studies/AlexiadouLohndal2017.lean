@@ -3,6 +3,7 @@ module
 public import Linglib.Data.Examples.AlexiadouLohndal2017
 public import Studies.BobaljikHarley2017
 public import Studies.Embick2004
+public import Studies.DeBelderVanCraenenbroeck2015
 public import Studies.VanCraenenbroeck2014
 
 /-!
@@ -21,7 +22,9 @@ strands adjuncts and not arguments and the noun's argument is selected as the ve
 secondary resultative predicate, Direct Merge of a Root and its merger as a complement are
 practically indistinguishable. What does favor letting Roots merge in either way is a contrast in
 resultatives: *colored dark* is possible and *blackened dark* is not, since only a Root that can
-modify v leaves v's complement free for an aP.
+modify v leaves v's complement free for an aP. Inserting Roots after syntax into the empty position
+that Primary Merge leaves derives that the material over a Root labels it, but not that a Root is
+categorized at all.
 
 ## Main statements
 
@@ -30,6 +33,8 @@ modify v leaves v's complement free for an aP.
   representation (26) it may not.
 * `deverbal_derives`: in a deverbal noun every configuration of the Root and its argument derives
   the one-replacement contrast of (8) and selects the argument as the verb does.
+* `root_without_categorizer`: when Roots are inserted after syntax, a derivation builds a Root
+  from a resource with no categorizer.
 * `derives_iff`: of the four views only the one that merges some Roots as modifiers and others as
   complements derives the contrast of (56).
 
@@ -49,9 +54,7 @@ modify v leaves v's complement free for an aP.
 ## TODO
 
 The discussion of verb–object idioms, the generalization that only nouns derived from verbs have
-argument structure, the endocentricity argument for Roots as modifiers, and the post-syntactic
-insertion of Roots into an empty position, with the Dutch functional vocabulary in Root position,
-are not formalized.
+argument structure, and the endocentricity argument for Roots as modifiers are not formalized.
 
 ## References
 
@@ -187,5 +190,16 @@ theorem deverbal_derives (c : Config) :
   cases c <;> decide +kernel
 
 end Deverbal
+
+/-! ### Roots inserted after syntax -/
+
+/-- **A Root need not be categorized.** Primary Merge pairs the null derivation with whichever item
+it selects first, and that item labels the result, so the derivation of *the books* builds a Root
+from its definite and plural features alone, labelled by the definite feature. -/
+theorem root_without_categorizer :
+    ∃ o : DeBelderVanCraenenbroeck2015.Obj DeBelderVanCraenenbroeck2015.Feature,
+      Relation.ReflTransGen DeBelderVanCraenenbroeck2015.Step (.init [{.definite}, {.plural}])
+        ⟨[], o⟩ ∧ o.roots = 1 ∧ o.label = some {.definite} :=
+  ⟨_, DeBelderVanCraenenbroeck2015.derivation_theBooks, rfl, rfl⟩
 
 end AlexiadouLohndal2017

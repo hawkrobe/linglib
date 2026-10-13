@@ -60,9 +60,9 @@ open Core.Order (TreePath)
 
 /-! ### Pronominalization and selection -/
 
-/-- The configurations of a root and its argument: the root takes the argument as its complement,
-as in (12), or modifies the categorizer whose complement it is, or the argument is in the
-specifier of the categorizer, or in the specifier of a functional head over the root, as in
+/-- In the configurations of a root and its argument, the root takes the argument as its
+complement, as in (12), or modifies the categorizer whose complement it is, or the argument is in
+the specifier of the categorizer, or in the specifier of a functional head over the root, as in
 (14). -/
 inductive Config
   | complement | modifier | specifier | severed
@@ -123,8 +123,8 @@ def selectionData : List Categorizer :=
     if d.feature? "construction" = some "selection" then d.parse? "category" categoryTable
     else none
 
-/-- The pronominalization examples (11), (13) and (17): the category of the pronominalized
-phrase, the proform, its use and the judgment. -/
+/-- The pronominalization examples (11), (13) and (17), each with the category of the
+pronominalized phrase, the proform, its use and the judgment. -/
 def pronominalizationData : List (Categorizer × Proform × Use × Judgment) :=
   Examples.all.filterMap fun d ↦ do
     guard (d.feature? "construction" = some "pronominalization")
@@ -182,8 +182,8 @@ def Survives (d : Domain) (f : Form) : Prop := ∀ h ∈ f.altered, d.rank < h.r
 instance (d : Domain) (f : Form) : Decidable (Survives d f) :=
   inferInstanceAs (Decidable (∀ h ∈ f.altered, _))
 
-/-- The idioms of (18)–(22): *iemand de bons geven* 'dump someone', *iemand de das omdoen* 'be the
-end of someone', *de strijdbijl begraven* 'bury the hatchet' and *het ijs breken* 'break the
+/-- The idioms of (18)–(22) are *iemand de bons geven* 'dump someone', *iemand de das omdoen* 'be
+the end of someone', *de strijdbijl begraven* 'bury the hatchet' and *het ijs breken* 'break the
 ice'. -/
 inductive Idiom
   | bons | das | strijdbijl | ijs
