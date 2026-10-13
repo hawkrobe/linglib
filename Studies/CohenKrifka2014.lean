@@ -6,29 +6,29 @@ public import Linglib.Semantics.Degree.Comparison
 /-!
 # Cohen and Krifka 2014: superlative quantifiers and meta-speech acts
 
-Over commitment spaces (§2), Cohen and Krifka define the meta-speech act GRANT as the
-denegation of asserting the negation (38): it keeps the root and prunes the continuations
-in which the speaker asserts the negation, so it includes but does not enforce the
-assertion (39), and asserting is conversely the denegation of granting the negation (40).
-Superlative quantifiers quantify over GRANTs (§3): *at most n* says the greatest value
-whose GRANT the speaker leaves open is n (43), performed as the conjunction, over the
-values above n, of denegations of GRANTs (44) — by (40) a conjunction of assertions of
-the negations (46) — and *at least n* is the same over the values below n (48)–(51). We
-state the exclusion schema over an arbitrary set of values on a linear scale, after the
-paper's generalization beyond numerals (§3.6), and derive both conjunction forms, the
-greatest- and least-grantable characterizations, and the derived truth conditions (§3.2):
-the context set of the updated root is the intersection of the asserted denials, which on
-count scales is exactly the classical Keenan and Stavi meaning of the numeral quantifier
-(82), while no denial of an in-range value is entailed (53) — the model-level trace of
-the paper's claim that the sentence's falsity is semantic and its truth an implicature.
+Cohen and Krifka analyse superlative quantifiers as quantifying over meta-speech acts. Over
+commitment spaces, the meta-speech act GRANT is the denegation of asserting the negation: it
+keeps the root and prunes the continuations in which the speaker asserts the negation. *At most
+n* says that the greatest value whose GRANT the speaker leaves open is `n`, and is performed by
+denying the GRANT of every value above `n`, which amounts to asserting the denial of each; *at
+least n* does the same for the values below `n`. We state this exclusion over an arbitrary set
+of values on a linear scale, after the paper's generalization beyond numerals. The context set
+of the updated root is the intersection of the asserted denials, while no denial of a value in
+range is entailed, the trace in the model of the paper's claim that the sentence's falsity is
+semantic and its truth an implicature.
 
-Speech-act strength is inclusion of updated spaces (86): excluding more values is the
-stronger act, so *at most* strengthens as the bound drops and *at least* as it rises, and
-on count scales a pointwise larger count strengthens *at most* but weakens *at least* on
-derived truth conditions — the asymmetry behind NPI licensing with *at most* (84)–(88).
-The denegation of a superlative is, by de Morgan (34), the disjunction of the GRANTs it
-denied (98); it keeps the root, so it commits the speaker to nothing — the paper's
-account of why superlative quantifiers resist downward-entailing contexts (§5.2.2).
+## Main statements
+
+* `assert_le_grant`, `sdiff_coe_grant`: a GRANT includes but does not enforce the assertion,
+  and denegating a GRANT is asserting the negation.
+* `coe_exclude`, `sdiff_coe_exclude`: the exclusion is the conjunction of the assertions of the
+  denials, and its denegation is the disjunction of the GRANTs it denied, which keeps the root
+  and so commits the speaker to nothing.
+* `contextSet_atMost_exactly`, `contextSet_atLeast_exactly`: on count scales the derived truth
+  conditions are the classical Keenan and Stavi meanings of the numeral quantifiers.
+* `atMost_mono`, `contextSet_atLeast_exactly_mono`: *at most* strengthens as the bound drops and
+  as the count grows, while a larger count weakens *at least*, the asymmetry behind NPI
+  licensing.
 
 ## Implementation notes
 
@@ -40,9 +40,10 @@ account of why superlative quantifiers resist downward-entailing contexts (§5.2
   (44)/(46) — with three visitors ever and two last year, ¬(exactly two ever) holds while
   ¬(exactly two last year) does not — though the whole conjunctions are ordered as (87)
   concludes.
-* The general theorems carry freshness (no denial already in the root), injectivity of
-  the scale, and membership hypotheses locating the updated roots among the space's
-  states; the free space satisfies all of them, as the count model checks.
+* The general theorems carry freshness (no denial already in the root) and membership
+  hypotheses locating the updated roots among the space's states, and the greatest- and
+  least-grantable characterizations injectivity of the scale; the free space satisfies all
+  of them, as the count model checks.
 
 ## TODO
 
@@ -67,7 +68,42 @@ account of why superlative quantifiers resist downward-entailing contexts (§5.2
 
 namespace CohenKrifka2014
 
-open Commitment Commitment.Space
+open Commitment Space
+
+/-! ### Assertions and GRANTs (§2.3) -/
+
+section Grant
+
+variable {A W : Type*} (C : Space (State A W)) (a : A) (φ : Set W) {d : State A W}
+
+/-- `GRANT φ = ∼ASSERT ¬φ` ((38)). -/
+def grant : Space (State A W) := C.denegate (C.assert a φᶜ)
+
+@[simp] theorem root_grant : (grant C a φ).root = C.root := rfl
+
+/-- A grant keeps the root and the states in which `a` has not asserted `¬φ`. -/
+theorem mem_grant : d ∈ grant C a φ ↔ d = C.root ∨ d ∈ C ∧ commit a φᶜ ∉ d := by
+  rw [grant, mem_denegate, SetLike.mem_coe, mem_assert]
+  refine or_congr_right (and_congr_right fun hd ↦ ⟨fun h hk ↦ h (Or.inr ⟨hd, hk⟩), fun h ↦ ?_⟩)
+  rintro (rfl | ⟨-, hk⟩)
+  exacts [h (Set.mem_insert _ _), h hk]
+
+/-- On a space whose states never carry both a commitment and its denial, every state reached
+by asserting `φ` survives granting `φ`, so the grant includes the assertion ((39)). -/
+theorem assert_le_grant (hmem : insert (commit a φ) C.root ∈ C)
+    (hcons : ∀ d ∈ C, commit a φ ∈ d → commit a φᶜ ∉ d) : C.assert a φ ≤ grant C a φ := by
+  intro d hd
+  rw [mem_grant]
+  rcases (C.mem_assert a φ _).1 hd with rfl | hd
+  exacts [Or.inr ⟨hmem, hcons _ hmem (Set.mem_insert _ _)⟩, Or.inr ⟨hd.1, hcons d hd.1 hd.2⟩]
+
+/-- Denegating the GRANT of `φ` is asserting `¬φ` ((40)), for a projected assertion that is not
+redundant. -/
+theorem sdiff_coe_grant (hmem : insert (commit a φᶜ) C.root ∈ C) (h : commit a φᶜ ∉ C.root) :
+    (C : Set (State A W)) \ ↑(grant C a φ) = C.assert a φᶜ :=
+  C.sdiff_coe_denegate (C.update_le hmem) (mt (C.root_mem_assert_iff a φᶜ _).1 h)
+
+end Grant
 
 /-! ### Quantifying over GRANTs (§3.1, §3.6) -/
 
@@ -75,117 +111,71 @@ section Scale
 
 variable {A W ι : Type*} (C : Space (State A W)) (a : A) (φ : ι → Set W) (s : Set ι)
 
+/-- The denials by `a` of the values of `φ` in `s` are the commitments to `¬φ(m)` for `m ∈ s`. -/
+def denials : State A W := (fun m ↦ commit a (φ m)ᶜ) '' s
+
 /-- In the meta-speech act excluding the values of `φ` in `s`, `a` asserts `¬φ(m)` for every
 `m ∈ s` at once ((46), (51)). -/
-def exclude : Space (State A W) :=
-  C.reroot (C.root ∪ (fun m => commit a (φ m)ᶜ) '' s)
+def exclude : Space (State A W) := C.update (denials a φ s)
 
-@[simp] theorem exclude_root :
-    (exclude C a φ s).root = C.root ∪ (fun m => commit a (φ m)ᶜ) '' s := rfl
+@[simp] theorem root_exclude : (exclude C a φ s).root = denials a φ s ∪ C.root := rfl
+
+theorem denials_eq_sSup :
+    denials a φ s = sSup ((fun m ↦ ({commit a (φ m)ᶜ} : State A W)) '' s) := by
+  rw [Set.sSup_eq_sUnion, Set.sUnion_image, denials, Set.image_eq_iUnion]
 
 /-- The exclusion denies `φ(m)` exactly for the excluded values. -/
-theorem commit_mem_exclude_root_iff (hroot : ∀ m, commit a (φ m)ᶜ ∉ C.root)
+theorem commit_mem_root_exclude_iff (hroot : ∀ m, commit a (φ m)ᶜ ∉ C.root)
     (hinj : Function.Injective φ) {m : ι} :
-    commit a (φ m)ᶜ ∈ (exclude C a φ s).root ↔ m ∈ s := by
-  simp only [exclude_root, Set.mem_union, Set.mem_image]
-  constructor
-  · rintro (h | ⟨k, hk, e⟩)
-    · exact absurd h (hroot m)
-    · rwa [hinj (compl_injective (congrArg Commitment.content e))] at hk
-  · exact fun hm => Or.inr ⟨m, hm, rfl⟩
+    commit a (φ m)ᶜ ∈ (exclude C a φ s).root ↔ m ∈ s :=
+  (or_iff_left (hroot m)).trans <|
+    Function.Injective.mem_set_image fun _ _ e ↦ hinj (compl_injective (congrArg content e))
 
-/-- The denegation of the exclusion keeps the root, so it commits the speaker to nothing
-(§5.2.2). -/
-theorem root_notMem_exclude_states (hne : s.Nonempty)
-    (hroot : ∀ m ∈ s, commit a (φ m)ᶜ ∉ C.root) :
-    C.root ∉ (exclude C a φ s).states := by
-  obtain ⟨m₀, hm₀⟩ := hne
-  have hK : commit a (φ m₀)ᶜ ∈ (fun m => commit a (φ m)ᶜ) '' s := ⟨m₀, hm₀, rfl⟩
-  rintro (h | ⟨-, hsub⟩)
-  · exact hroot m₀ hm₀ ((Set.union_eq_left.1 h.symm) hK)
-  · exact hroot m₀ hm₀ (hsub (Or.inr hK))
+/-- The exclusion moves the root, so its denegation keeps the root and commits the speaker to
+nothing (§5.2.2). -/
+theorem root_notMem_exclude (hne : s.Nonempty) (hroot : ∀ m ∈ s, commit a (φ m)ᶜ ∉ C.root) :
+    C.root ∉ exclude C a φ s :=
+  let ⟨m, hm⟩ := hne
+  fun h ↦ hroot m hm (C.root_mem_update_iff.1 h ⟨m, hm, rfl⟩)
 
 /-- The exclusion is the generalized conjunction ((31)) of the single assertions of the
-denials ((44)⇒(46), (49)⇒(51) via (40)). -/
-theorem exclude_states (hne : s.Nonempty)
-    (hroot : ∀ m ∈ s, commit a (φ m)ᶜ ∉ C.root) (hinj : s.InjOn φ)
-    (hK : C.root ∪ (fun m => commit a (φ m)ᶜ) '' s ∈ C.states) :
-    (exclude C a φ s).states = ⋂ m ∈ s, (C.assert a (φ m)ᶜ).states := by
-  obtain ⟨m₀, hm₀⟩ := hne
-  ext d
-  simp only [exclude, assert, reroot_states, Set.mem_insert_iff, Set.mem_ofPred_eq,
-    Set.mem_iInter]
-  constructor
-  · rintro (rfl | ⟨hd, hsub⟩) m hm
-    · exact Or.inr ⟨hK, Set.insert_subset (Or.inr ⟨m, hm, rfl⟩) Set.subset_union_left⟩
-    · exact Or.inr ⟨hd, Set.insert_subset (hsub (Or.inr ⟨m, hm, rfl⟩))
-        (Set.subset_union_left.trans hsub)⟩
-  · intro hd
-    have hsub : C.root ∪ (fun m => commit a (φ m)ᶜ) '' s ⊆ d := by
-      refine Set.union_subset ?_ ?_
-      · rcases hd m₀ hm₀ with rfl | ⟨-, h⟩
-        exacts [Set.subset_insert _ _, (Set.subset_insert _ _).trans h]
-      · rintro - ⟨m, hm, rfl⟩
-        rcases hd m hm with rfl | ⟨-, h⟩
-        exacts [Set.mem_insert _ _, h (Set.mem_insert _ _)]
-    rcases hd m₀ hm₀ with rfl | ⟨hmem, -⟩
-    · left
-      have hs : s = {m₀} := Set.eq_singleton_iff_unique_mem.2 ⟨hm₀, fun m hm => by
-        rcases hsub (Or.inr ⟨m, hm, rfl⟩) with e | he
-        · exact hinj hm hm₀ (compl_injective (congrArg Commitment.content e))
-        · exact absurd he (hroot m hm)⟩
-      rw [hs, Set.image_singleton, Set.union_singleton]
-      rfl
-    · exact Or.inr ⟨hmem, hsub⟩
+denials ((46), (51)). -/
+theorem coe_exclude (hne : s.Nonempty) (hK : denials a φ s ∪ C.root ∈ C) :
+    (exclude C a φ s : Set (State A W)) = ⋂ m ∈ s, ↑(C.assert a (φ m)ᶜ) := by
+  rw [denials_eq_sSup] at hK
+  rw [exclude, denials_eq_sSup, C.coe_update_sSup (hne.image _) hK, Set.biInter_image]
+  rfl
 
-/-- In (44) and (49) each conjunct is the denegation of the GRANT of `φ(m)`, rewritten by
-(40). -/
-theorem exclude_states_grant (hne : s.Nonempty)
-    (hroot : ∀ m ∈ s, commit a (φ m)ᶜ ∉ C.root) (hinj : s.InjOn φ)
-    (hK : C.root ∪ (fun m => commit a (φ m)ᶜ) '' s ∈ C.states)
-    (hmem : ∀ m ∈ s, insert (commit a (φ m)ᶜ) C.root ∈ C.states) :
-    (exclude C a φ s).states =
-      ⋂ m, ⋂ (hm : m ∈ s), C.states \ (C.grant a (φ m) (hroot m hm)).states := by
-  rw [exclude_states C a φ s hne hroot hinj hK]
-  refine Set.iInter_congr fun m => Set.iInter_congr fun hm => ?_
-  have hsub : (C.assert a (φ m)ᶜ).states ⊆ C.states := by
-    rw [C.assert_states_of_mem a (φ m)ᶜ .doxastic (hmem m hm)]
-    exact fun d hd => hd.1
-  exact (Set.sdiff_sdiff_cancel_left hsub).symm
+/-- In (44) and (49) each conjunct is the denegation of the GRANT of `φ(m)`, which is the
+assertion of its denial by (40). -/
+theorem coe_exclude_eq_iInter_sdiff_grant (hne : s.Nonempty)
+    (hroot : ∀ m ∈ s, commit a (φ m)ᶜ ∉ C.root) (hK : denials a φ s ∪ C.root ∈ C)
+    (hmem : ∀ m ∈ s, insert (commit a (φ m)ᶜ) C.root ∈ C) :
+    (exclude C a φ s : Set (State A W)) = ⋂ m ∈ s, ↑C \ ↑(grant C a (φ m)) := by
+  rw [coe_exclude C a φ s hne hK]
+  exact Set.iInter₂_congr fun m hm ↦ (sdiff_coe_grant C a (φ m) (hmem m hm) (hroot m hm)).symm
 
 /-- The denegation of the superlative is the disjunction of the GRANTs it denied
 ((97)–(98), by (34)). -/
-theorem sdiff_exclude_states (hne : s.Nonempty)
-    (hroot : ∀ m ∈ s, commit a (φ m)ᶜ ∉ C.root) (hinj : s.InjOn φ)
-    (hK : C.root ∪ (fun m => commit a (φ m)ᶜ) '' s ∈ C.states)
-    (hmem : ∀ m ∈ s, insert (commit a (φ m)ᶜ) C.root ∈ C.states) :
-    C.states \ (exclude C a φ s).states =
-      ⋃ m, ⋃ (hm : m ∈ s), (C.grant a (φ m) (hroot m hm)).states := by
-  rw [exclude_states_grant C a φ s hne hroot hinj hK hmem, Set.sdiff_iInter]
-  refine Set.iUnion_congr fun m => ?_
-  rw [Set.sdiff_iInter]
-  refine Set.iUnion_congr fun hm => ?_
-  exact Set.sdiff_sdiff_cancel_left fun d hd => hd.1
+theorem sdiff_coe_exclude (hne : s.Nonempty) (hroot : ∀ m ∈ s, commit a (φ m)ᶜ ∉ C.root)
+    (hK : denials a φ s ∪ C.root ∈ C) :
+    (C : Set (State A W)) \ ↑(exclude C a φ s) = ⋃ m ∈ s, ↑(grant C a (φ m)) := by
+  simp_rw [coe_exclude C a φ s hne hK, Set.sdiff_iInter]
+  exact Set.iUnion₂_congr fun m hm ↦
+    (C.coe_denegate_of_root_notMem (mt (C.root_mem_assert_iff a _ _).1 (hroot m hm))).symm
 
 /-- Excluding more values is the stronger speech act ((86)), since its update is included in the
 weaker one's. -/
-theorem exclude_states_anti {s t : Set ι} (hst : s ⊆ t)
-    (hK : C.root ∪ (fun m => commit a (φ m)ᶜ) '' t ∈ C.states) :
-    (exclude C a φ t).states ⊆ (exclude C a φ s).states := by
-  have hsub : C.root ∪ (fun m => commit a (φ m)ᶜ) '' s ⊆
-      C.root ∪ (fun m => commit a (φ m)ᶜ) '' t :=
-    Set.union_subset_union_right _ (Set.image_mono hst)
-  rintro d (rfl | ⟨hd, hsub'⟩)
-  · exact Or.inr ⟨hK, hsub⟩
-  · exact Or.inr ⟨hd, hsub.trans hsub'⟩
+theorem exclude_anti {s t : Set ι} (hst : s ⊆ t) (hK : denials a φ t ∪ C.root ∈ C) :
+    exclude C a φ t ≤ exclude C a φ s :=
+  C.update_le_update (Set.image_mono hst) hK
 
 /-- On the derived truth conditions (§3.2), what the exclusion asserts is the intersection of
 the asserted denials ((52)). -/
-theorem contextSet_exclude_root :
+theorem contextSet_root_exclude :
     contextSet (exclude C a φ s).root = (⋂ m ∈ s, (φ m)ᶜ) ∩ contextSet C.root := by
-  rw [exclude_root, contextSet_union, Set.inter_comm]
-  congr 1
-  rw [contextSet, contents_image_commit, Set.sInter_image]
+  rw [root_exclude, contextSet_union, contextSet, denials, contents_image_commit,
+    Set.sInter_image]
 
 end Scale
 
@@ -203,16 +193,14 @@ def atMost : Space (State A W) := exclude C a φ (Set.Ioi n)
 def atLeast : Space (State A W) := exclude C a φ (Set.Iio n)
 
 /-- A lower bound makes *at most* stronger ((55), (118), by (86)). -/
-theorem atMost_states_mono {n n' : ι} (hnn : n ≤ n')
-    (hK : C.root ∪ (fun m => commit a (φ m)ᶜ) '' Set.Ioi n ∈ C.states) :
-    (atMost C a φ n).states ⊆ (atMost C a φ n').states :=
-  exclude_states_anti C a φ (Set.Ioi_subset_Ioi hnn) hK
+theorem atMost_mono {n n' : ι} (hnn : n ≤ n') (hK : denials a φ (Set.Ioi n) ∪ C.root ∈ C) :
+    atMost C a φ n ≤ atMost C a φ n' :=
+  exclude_anti C a φ (Set.Ioi_subset_Ioi hnn) hK
 
 /-- A higher bound makes *at least* stronger ((86)). -/
-theorem atLeast_states_anti {n n' : ι} (hnn : n ≤ n')
-    (hK : C.root ∪ (fun m => commit a (φ m)ᶜ) '' Set.Iio n' ∈ C.states) :
-    (atLeast C a φ n').states ⊆ (atLeast C a φ n).states :=
-  exclude_states_anti C a φ (Set.Iio_subset_Iio hnn) hK
+theorem atLeast_anti {n n' : ι} (hnn : n ≤ n') (hK : denials a φ (Set.Iio n') ∪ C.root ∈ C) :
+    atLeast C a φ n' ≤ atLeast C a φ n :=
+  exclude_anti C a φ (Set.Iio_subset_Iio hnn) hK
 
 /-- The value `n` is the greatest whose GRANT *at most `n`* leaves performable ((43), (60b)). -/
 theorem atMost_isGreatest (hroot : ∀ m, commit a (φ m)ᶜ ∉ C.root)
@@ -220,7 +208,7 @@ theorem atMost_isGreatest (hroot : ∀ m, commit a (φ m)ᶜ ∉ C.root)
     IsGreatest {m | commit a (φ m)ᶜ ∉ (atMost C a φ n).root} n := by
   have hs : {m | commit a (φ m)ᶜ ∉ (atMost C a φ n).root} = Set.Iic n := by
     ext m
-    rw [Set.mem_ofPred_eq, atMost, commit_mem_exclude_root_iff C a φ _ hroot hinj,
+    rw [Set.mem_ofPred_eq, atMost, commit_mem_root_exclude_iff C a φ _ hroot hinj,
       Set.mem_Ioi, not_lt, Set.mem_Iic]
   exact hs ▸ isGreatest_Iic
 
@@ -230,7 +218,7 @@ theorem atLeast_isLeast (hroot : ∀ m, commit a (φ m)ᶜ ∉ C.root)
     IsLeast {m | commit a (φ m)ᶜ ∉ (atLeast C a φ n).root} n := by
   have hs : {m | commit a (φ m)ᶜ ∉ (atLeast C a φ n).root} = Set.Ici n := by
     ext m
-    rw [Set.mem_ofPred_eq, atLeast, commit_mem_exclude_root_iff C a φ _ hroot hinj,
+    rw [Set.mem_ofPred_eq, atLeast, commit_mem_root_exclude_iff C a φ _ hroot hinj,
       Set.mem_Iio, not_lt, Set.mem_Ici]
   exact hs ▸ isLeast_Ici
 
@@ -253,26 +241,26 @@ meaning of the quantifier ((82)). -/
 theorem contextSet_atMost_exactly (f : W → ℕ) :
     contextSet (atMost C a (exactly f) n).root
       = f ⁻¹' Set.Iic n ∩ contextSet C.root := by
-  rw [atMost, contextSet_exclude_root]
+  rw [atMost, contextSet_root_exclude]
   congr 1
   ext w
   simp only [Set.mem_iInter, Set.mem_compl_iff, exactly, Set.mem_preimage, Set.mem_singleton_iff,
     Set.mem_Iic, Set.mem_Ioi]
-  exact ⟨fun h => not_lt.1 fun hlt => h (f w) hlt rfl,
-    fun h m hm e => absurd hm (not_lt.2 (e ▸ h))⟩
+  exact ⟨fun h ↦ not_lt.1 fun hlt ↦ h (f w) hlt rfl,
+    fun h m hm e ↦ absurd hm (not_lt.2 (e ▸ h))⟩
 
 /-- The derived truth conditions of *at least `n`* are the classical Keenan and Stavi
 meaning of the quantifier ((82)). -/
 theorem contextSet_atLeast_exactly (f : W → ℕ) :
     contextSet (atLeast C a (exactly f) n).root
       = f ⁻¹' Set.Ici n ∩ contextSet C.root := by
-  rw [atLeast, contextSet_exclude_root]
+  rw [atLeast, contextSet_root_exclude]
   congr 1
   ext w
   simp only [Set.mem_iInter, Set.mem_compl_iff, exactly, Set.mem_preimage, Set.mem_singleton_iff,
     Set.mem_Ici, Set.mem_Iio]
-  exact ⟨fun h => not_lt.1 fun hlt => h (f w) hlt rfl,
-    fun h m hm e => absurd hm (not_lt.2 (e ▸ h))⟩
+  exact ⟨fun h ↦ not_lt.1 fun hlt ↦ h (f w) hlt rfl,
+    fun h m hm e ↦ absurd hm (not_lt.2 (e ▸ h))⟩
 
 /-- A pointwise larger count strengthens *at most* on derived truth conditions, so denying
 counts of visitors ever entails denying counts last year ((84b), (87)). -/
@@ -280,7 +268,7 @@ theorem contextSet_atMost_exactly_anti {f g : W → ℕ} (hfg : ∀ w, g w ≤ f
     contextSet (atMost C a (exactly f) n).root ⊆
       contextSet (atMost C a (exactly g) n).root := by
   rw [contextSet_atMost_exactly, contextSet_atMost_exactly]
-  exact Set.inter_subset_inter_left _ fun w hw => le_trans (hfg w) hw
+  exact Set.inter_subset_inter_left _ fun w hw ↦ le_trans (hfg w) hw
 
 /-- A pointwise larger count weakens *at least*, the asymmetry behind NPI licensing ((84a),
 (88)). -/
@@ -288,7 +276,7 @@ theorem contextSet_atLeast_exactly_mono {f g : W → ℕ} (hfg : ∀ w, g w ≤ 
     contextSet (atLeast C a (exactly g) n).root ⊆
       contextSet (atLeast C a (exactly f) n).root := by
   rw [contextSet_atLeast_exactly, contextSet_atLeast_exactly]
-  exact Set.inter_subset_inter_left _ fun w hw => le_trans hw (hfg w)
+  exact Set.inter_subset_inter_left _ fun w hw ↦ le_trans hw (hfg w)
 
 end Numeral
 
@@ -305,7 +293,7 @@ section Model
 open Degree
 
 /-- The free space over counting worlds, with no prior commitments. -/
-def rabbits : Space (State Discourse.Role ℕ) := full ∅
+def rabbits : Space (State Discourse.Role ℕ) := Space.Ici ∅
 
 theorem exactly_id_injective : Function.Injective (exactly (id : ℕ → ℕ)) := by
   intro m k h
@@ -337,7 +325,7 @@ four is implicature, not entailment. -/
 theorem rabbits_atLeast_grant_four :
     commit Discourse.Role.speaker (exactly id 4)ᶜ ∉
       (atLeast rabbits .speaker (exactly id) 3).root := by
-  rw [atLeast, commit_mem_exclude_root_iff rabbits .speaker (exactly id) _ rabbits_root_fresh
+  rw [atLeast, commit_mem_root_exclude_iff rabbits .speaker (exactly id) _ rabbits_root_fresh
     exactly_id_injective]
   decide
 
@@ -349,29 +337,26 @@ theorem rabbits_atLeast_isLeast :
 
 /-- Denegating (1a) leaves the disjunction of the three GRANTs ((89b), (97)–(98)). -/
 theorem rabbits_sdiff_atLeast :
-    rabbits.states \ (atLeast rabbits .speaker (exactly id) 3).states =
-      ⋃ m, ⋃ (_ : m ∈ Set.Iio 3),
-        (rabbits.grant .speaker (exactly id m) (Set.notMem_empty _)).states :=
-  sdiff_exclude_states rabbits .speaker (exactly id) _ ⟨0, by decide⟩
-    (fun m _ => rabbits_root_fresh m) exactly_id_injective.injOn
-    (Set.mem_Ici.2 (Set.empty_subset _)) fun _ _ => Set.mem_Ici.2 (Set.empty_subset _)
+    (rabbits : Set (State Discourse.Role ℕ)) \ ↑(atLeast rabbits .speaker (exactly id) 3) =
+      ⋃ m ∈ Set.Iio 3, ↑(grant rabbits .speaker (exactly id m)) :=
+  sdiff_coe_exclude rabbits .speaker (exactly id) _ ⟨0, by decide⟩
+    (fun m _ ↦ rabbits_root_fresh m) (Set.empty_subset _)
 
 /-- The denegation keeps the root ((98)), so the negated superlative asserts nothing, which is
 why superlative quantifiers resist downward-entailing contexts (§5.2.2). -/
 theorem rabbits_root_notMem_atLeast :
-    rabbits.root ∉ (atLeast rabbits .speaker (exactly id) 3).states :=
-  root_notMem_exclude_states rabbits .speaker (exactly id) _ ⟨0, by decide⟩
-    fun m _ => rabbits_root_fresh m
+    rabbits.root ∉ atLeast rabbits .speaker (exactly id) 3 :=
+  root_notMem_exclude rabbits .speaker (exactly id) _ ⟨0, by decide⟩
+    fun m _ ↦ rabbits_root_fresh m
 
 end Model
 
 /-! ### Granting includes but does not enforce asserting ((39), p. 54)
 
-A two-state consistent space: nothing conceded, or `φ` asserted. Granting `φ` keeps both
-states while asserting reaches only the second. -/
+A two-state consistent space: nothing conceded, or `φ` asserted. Granting `φ` prunes neither
+state, while asserting `φ` leaves only the second. -/
 
 section Granting
-
 
 /-- It is raining, over two weather worlds. -/
 def raining : Set Bool := {true}
@@ -381,30 +366,25 @@ def granting : Space (State Discourse.Role Bool) :=
   ⟨{∅, insert (commit .speaker raining) ∅}, ∅, Or.inl rfl,
     by rintro d (rfl | rfl) <;> simp⟩
 
-theorem raining_ne_compl : (raining : Set Bool) ≠ rainingᶜ := fun h =>
+theorem raining_ne_compl : (raining : Set Bool) ≠ rainingᶜ := fun h ↦
   (h ▸ rfl : true ∈ rainingᶜ) rfl
 
-theorem granting_consistent : ∀ d ∈ granting.states,
-    ¬((⟨.speaker, raining, .commit, .doxastic, .selfGenerated⟩ :
-        Commitment Discourse.Role Bool) ∈ d ∧
-      (⟨.speaker, rainingᶜ, .commit, .doxastic, .selfGenerated⟩ :
-        Commitment Discourse.Role Bool) ∈ d) := by
-  rintro d (rfl | rfl) ⟨h₁, h₂⟩
+theorem granting_consistent : ∀ d ∈ granting,
+    commit .speaker raining ∈ d → commit .speaker rainingᶜ ∉ d := by
+  rintro d (rfl | rfl) h₁ h₂
   · exact Set.notMem_empty _ h₁
   · rcases Set.mem_insert_iff.1 h₂ with h₂ | h₂
-    · exact raining_ne_compl (congrArg Commitment.content h₂).symm
+    · exact raining_ne_compl (congrArg content h₂).symm
     · exact Set.notMem_empty _ h₂
 
-/-- Granting `raining` includes every state its assertion reaches ((39), p. 54)… -/
-theorem granting_assert_subset_grant :
-    (granting.assert .speaker raining).states ⊆
-      (granting.grant .speaker raining (Set.notMem_empty _)).states :=
-  granting.assert_states_subset_grant .speaker raining (Or.inr rfl) granting_consistent _
-
-/-- The grant does not enforce the assertion, since the unchanged root survives it. -/
-theorem granting_root_mem_grant :
-    granting.root ∈ (granting.grant .speaker raining (Set.notMem_empty _)).states :=
-  granting.root_mem_grant .speaker raining _
+/-- Granting `raining` includes every state its assertion reaches, and also the root, which
+the assertion leaves behind, so the grant does not enforce the assertion ((39), p. 54). -/
+theorem granting_assert_lt_grant :
+    granting.assert .speaker raining < grant granting .speaker raining :=
+  SetLike.lt_iff_le_and_exists.2
+    ⟨assert_le_grant granting .speaker raining (Or.inr rfl) granting_consistent,
+      granting.root, Space.root_mem _,
+      mt (granting.root_mem_assert_iff .speaker raining _).1 (Set.notMem_empty _)⟩
 
 end Granting
 
