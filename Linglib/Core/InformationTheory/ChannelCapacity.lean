@@ -325,7 +325,7 @@ theorem eq_blahutArimoto_iff :
         by_cases hν : ν {c'} = 0
         · rw [hν, zero_mul]
         · rw [h0 c' hν, mul_zero]
-      have hμw : (κ ∘ₘ μ) {w} ≠ 0 := comp_apply_singleton_ne_zero κ μ (hμ c') hk'
+      have hμw : (κ ∘ₘ μ) {w} ≠ 0 := Measure.comp_apply_singleton_ne_zero κ μ (hμ c') hk'
       by_contra hne
       exact (posterior_apply_singleton_ne_zero_iff κ μ hμw c).2
         ⟨hμ c, ((posterior_apply_singleton_ne_zero_iff κ ν hw c).1 hne).2⟩ hc

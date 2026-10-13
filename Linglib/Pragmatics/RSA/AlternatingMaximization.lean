@@ -288,7 +288,7 @@ theorem expectedUtility_listener_eq_posterior :
   refine Finset.sum_congr rfl fun u _ ↦ ?_
   rcases eq_or_ne ((S ∘ₖ κ) w {u}) 0 with hS | hS
   · simp [measureReal_def, hS]
-  rw [listener_apply_eq_posterior _ _ (comp_apply_singleton_ne_zero _ _ hμ hS)]
+  rw [listener_apply_eq_posterior _ _ (Measure.comp_apply_singleton_ne_zero _ _ hμ hS)]
 
 variable (L : Kernel U W) [∀ u, IsZeroOrProbabilityMeasure (L u)]
   (hL : ∀ u, ((S ∘ₖ κ) ∘ₘ μ) {u} ≠ 0 → listener μ (S ∘ₖ κ) u ≪ L u)

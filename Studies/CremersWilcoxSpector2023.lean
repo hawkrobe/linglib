@@ -540,7 +540,7 @@ theorem baseline_a_lt_aAndNotB_iff :
 /-- Every message is used somewhere, so is heard with positive probability. -/
 theorem comp_speaker_literal_ne_zero (u : Message) : (s.speaker literal ∘ₘ s.prior) {u} ≠ 0 :=
   let ⟨w, hw⟩ := literal.exists_world u
-  comp_apply_singleton_ne_zero _ _ (s.prior_ne_zero w) (speaker_ne_zero _ s.prior_ne_zero _ s hw)
+  Measure.comp_apply_singleton_ne_zero _ _ (s.prior_ne_zero w) (speaker_ne_zero _ s.prior_ne_zero _ s hw)
 
 /-- The pragmatic listener (eq. 4). -/
 noncomputable def listener : Kernel Message World :=
@@ -613,7 +613,7 @@ variable [Nonempty I] in
 theorem comp_luSpeaker_ne_zero (u : Message) : (luSpeaker s meaning ∘ₘ s.prior) {u} ≠ 0 :=
   let i := Classical.arbitrary I
   let ⟨w, hw⟩ := (meaning i).exists_world u
-  comp_apply_singleton_ne_zero _ _ (s.prior_ne_zero w)
+  Measure.comp_apply_singleton_ne_zero _ _ (s.prior_ne_zero w)
     ((luSpeaker_apply_singleton_ne_zero_iff s meaning).mpr
       ⟨i, speaker_ne_zero _ s.prior_ne_zero _ s hw⟩)
 
@@ -776,7 +776,7 @@ theorem liSpeaker_ne_zero {w : World} {u : Message} (hw : literal.sat u w = true
 theorem comp_liMessageSpeaker_ne_zero (u : Message) :
     (liMessageSpeaker s ∘ₘ s.prior) {u} ≠ 0 :=
   let ⟨w, hw⟩ := literal.exists_world u
-  comp_apply_singleton_ne_zero _ _ (s.prior_ne_zero w) (by
+  Measure.comp_apply_singleton_ne_zero _ _ (s.prior_ne_zero w) (by
     rw [liMessageSpeaker_apply_singleton]
     exact ne_of_gt (lt_of_lt_of_le (pos_iff_ne_zero.mpr (liSpeaker_ne_zero s hw)) le_self_add))
 
@@ -918,7 +918,7 @@ theorem comp_svSpeaker_ne_zero (u : Message) : (svSpeaker s ∘ₘ svJoint s Q) 
   let ⟨w, hw⟩ := exists_truth_and_exh u
   have hj : svJoint s Q {(w, .fine)} ≠ 0 := by
     rw [svJoint_apply_singleton]; exact mul_ne_zero (s.prior_ne_zero w) hQ
-  comp_apply_singleton_ne_zero _ _ hj (svSpeaker_fine_ne_zero s hw.1 hw.2)
+  Measure.comp_apply_singleton_ne_zero _ _ hj (svSpeaker_fine_ne_zero s hw.1 hw.2)
 
 variable [IsProbabilityMeasure Q]
 
@@ -935,17 +935,16 @@ every prior on the questions that gives the fine one positive probability, and e
 since the fine question contributes a use of *A* in the world of A alone and none in the
 world of both (Appendix A.3, the listener). -/
 theorem svListener_fst_lt_prior : (svListener s Q .a).fst.real {.wab} < s.prior.real {.wab} := by
-  have hm : 0 < (svSpeaker s ∘ₘ svJoint s Q).real {.a} :=
-    ENNReal.toReal_pos (comp_svSpeaker_ne_zero s Q hQ _) (measure_ne_top _ _)
+  have hm : 0 < ∑ p, (svJoint s Q).real {p} * (svSpeaker s p).real {.a} := by
+    rw [← Measure.comp_real_singleton]
+    exact ENNReal.toReal_pos (comp_svSpeaker_ne_zero s Q hQ _) (measure_ne_top _ _)
   have hy : 0 < (svSpeaker s (.wa, .fine)).real {.a} :=
     ENNReal.toReal_pos (svSpeaker_fine_ne_zero s rfl (by decide)) (measure_ne_top _ _)
   have hqf : 0 < Q.real {.fine} := ENNReal.toReal_pos hQ (measure_ne_top _ _)
   have hz := measureReal_nonneg (μ := svSpeaker s (.wa, .coarse)) (s := {.a})
   have hqc := measureReal_nonneg (μ := Q) (s := {.coarse})
   have hp' : 0 < 1 - s.p := by linarith [s.p_lt_one]
-  rw [svListener, RSA.listener_apply_eq_posterior _ _ (comp_svSpeaker_ne_zero s Q hQ _),
-    posterior_fst_real_singleton _ _ (comp_svSpeaker_ne_zero s Q hQ _),
-    div_lt_iff₀ hm, Measure.comp_real_singleton]
+  rw [svListener, RSA.listener_fst_real_singleton, div_lt_iff₀ hm]
   simp only [Fintype.sum_prod_type, sum_world, sum_qud, svJoint_real_singleton,
     Setting.prior_real_wa, Setting.prior_real_wab, svSpeaker_real_wab_fine_a, ← svSpeaker_coarse,
     mul_zero, add_zero]
@@ -1064,7 +1063,7 @@ theorem comp_bayesWonkySpeaker_ne_zero (u : Message) :
     (bayesWonkySpeaker s ω ∘ₘ s.prior) {u} ≠ 0 := by
   obtain ⟨w, hw⟩ := literal.exists_world u
   obtain ⟨b, hb⟩ := bgWeight_exists_ne_zero ω
-  refine comp_apply_singleton_ne_zero _ _ (s.prior_ne_zero w) ?_
+  refine Measure.comp_apply_singleton_ne_zero _ _ (s.prior_ne_zero w) ?_
   simp only [bayesWonkySpeaker, sum_apply, smul_apply, Measure.finsetSum_apply,
     Measure.smul_apply, smul_eq_mul, ne_eq, Finset.sum_eq_zero_iff, Finset.mem_univ,
     true_implies, mul_eq_zero, not_forall, not_or]
@@ -1154,7 +1153,7 @@ theorem comp_wonkySpeaker_ne_zero (u : Message) : (wonkySpeaker s ∘ₘ wonkyJo
   let ⟨b, hb⟩ := bgWeight_exists_ne_zero ω
   have hj : wonkyJoint s ω {(b, w)} ≠ 0 := by
     rw [wonkyJoint_apply_singleton]; exact mul_ne_zero hb (worldPrior_ne_zero s b w)
-  comp_apply_singleton_ne_zero _ _ hj (wonkySpeaker_ne_zero s b hw)
+  Measure.comp_apply_singleton_ne_zero _ _ hj (wonkySpeaker_ne_zero s b hw)
 
 /-- The non-Bayesian listener, uncertain about the background and the world jointly (item 4
 of the §4.1 model). -/
@@ -1172,11 +1171,10 @@ theorem prior_lt_wonkyListener_iff :
           s.p * s.logistic (s.cAndB + Real.log s.p))) <
       ω * 2⁻¹ * s.logistic (s.cAndB - Real.log 2) +
         (1 - ω) * (s.p * s.logistic (s.cAndB + Real.log s.p)) := by
-  have hm : 0 < (wonkySpeaker s ∘ₘ wonkyJoint s ω).real {.a} :=
-    ENNReal.toReal_pos (comp_wonkySpeaker_ne_zero s ω _) (measure_ne_top _ _)
-  rw [wonkyListener, RSA.listener_apply_eq_posterior _ _ (comp_wonkySpeaker_ne_zero s ω _),
-    posterior_snd_real_singleton _ _ (comp_wonkySpeaker_ne_zero s ω _),
-    lt_div_iff₀ hm, Measure.comp_real_singleton]
+  have hm : 0 < ∑ p, (wonkyJoint s ω).real {p} * (wonkySpeaker s p).real {.a} := by
+    rw [← Measure.comp_real_singleton]
+    exact ENNReal.toReal_pos (comp_wonkySpeaker_ne_zero s ω _) (measure_ne_top _ _)
+  rw [wonkyListener, RSA.listener_snd_real_singleton, lt_div_iff₀ hm]
   simp only [Fintype.sum_prod_type, sum_background, sum_world, wonkyJoint_real_singleton,
     wonkySpeaker_apply, bgSpeaker_wonky_wab_a, bgSpeaker_wonky_wa_a, bgSpeaker_measured_wab_a,
     bgSpeaker_measured_wa_a, bgWeight, ENNReal.toReal_ofReal hω₀,

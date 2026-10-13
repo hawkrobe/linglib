@@ -14,9 +14,9 @@ public import Mathlib.Probability.Kernel.Disintegration.StandardBorel
 Pushing a product measure through `η ∥ₖ η'` pushes each factor through its kernel. Pushing a
 joint measure on `α × β` through `Kernel.id ∥ₖ η` keeps the first marginal and composes the
 second with `η`. The joint is disintegrated as `ρ.fst ⊗ₘ ρ.condKernel`. On finite types, a
-composition-product and a joint pushed through `Kernel.id ∥ₖ η` are computed at atoms, and
-each row of a kernel charged by the input measure is absolutely continuous with respect to the
-output marginal.
+composition, a composition-product and a joint pushed through `Kernel.id ∥ₖ η` are computed at
+atoms, and each row of a kernel charged by the input measure is absolutely continuous with
+respect to the output marginal.
 `[UPSTREAM]` candidate for `Mathlib/Probability/Kernel/Composition/Lemmas.lean`.
 -/
 
@@ -46,10 +46,6 @@ section Marginals
 
 variable (η : Kernel β γ) [IsMarkovKernel η]
 
-theorem parallelComp_id_comp_prod (μ : Measure α) [SFinite μ] (ν : Measure β) [SFinite ν] :
-    (Kernel.id ∥ₖ η) ∘ₘ (μ.prod ν) = μ.prod (η ∘ₘ ν) := by
-  rw [parallelComp_comp_prod, id_comp]
-
 variable [StandardBorelSpace β] [Nonempty β] (ρ : Measure (α × β)) [IsFiniteMeasure ρ]
 
 theorem fst_parallelComp_id_comp : ((Kernel.id ∥ₖ η) ∘ₘ ρ).fst = ρ.fst := by
@@ -67,7 +63,33 @@ end Marginals
 
 section Atoms
 
+/-- An atom charged by the input measure and emitted by the kernel there is charged by the
+output marginal. -/
+theorem comp_apply_singleton_ne_zero [MeasurableSingletonClass β] (κ : Kernel α β)
+    (μ : Measure α) {a : α} {b : β} (hμ : μ {a} ≠ 0) (hκ : κ a {b} ≠ 0) : (κ ∘ₘ μ) {b} ≠ 0 := by
+  rw [bind_apply (.singleton b) (Kernel.aemeasurable _), ← pos_iff_ne_zero,
+    lintegral_pos_iff_support (Kernel.measurable_coe _ (.singleton b))]
+  exact lt_of_lt_of_le (pos_iff_ne_zero.mpr hμ) (measure_mono (Set.singleton_subset_iff.mpr hκ))
+
 variable [MeasurableSingletonClass α] [MeasurableSingletonClass β]
+
+/-- The output marginal at an atom sums the input mass times the emission over a finite input
+type. -/
+theorem comp_apply_singleton [Fintype α] (κ : Kernel α β) (μ : Measure α) (b : β) :
+    (κ ∘ₘ μ) {b} = ∑ a, μ {a} * κ a {b} := by
+  rw [bind_apply (.singleton b) (Kernel.aemeasurable _), lintegral_fintype]
+  exact Finset.sum_congr rfl fun a _ ↦ mul_comm _ _
+
+theorem comp_real_singleton [Fintype α] (κ : Kernel α β) [IsFiniteKernel κ] (μ : Measure α)
+    [IsFiniteMeasure μ] (b : β) : (κ ∘ₘ μ).real {b} = ∑ a, μ.real {a} * (κ a).real {b} := by
+  rw [measureReal_def, comp_apply_singleton,
+    ENNReal.toReal_sum fun a _ ↦ ENNReal.mul_ne_top (measure_ne_top _ _) (measure_ne_top _ _)]
+  simp_rw [ENNReal.toReal_mul, measureReal_def]
+
+/-- The output marginal at an atom is the input expectation of the emission. -/
+theorem comp_real_singleton_eq_integral [Fintype α] (κ : Kernel α β) [IsFiniteKernel κ]
+    (μ : Measure α) [IsFiniteMeasure μ] (b : β) : (κ ∘ₘ μ).real {b} = ∫ a, (κ a).real {b} ∂μ := by
+  rw [comp_real_singleton, integral_fintype .of_finite]; rfl
 
 /-- A composition-product at an atom. -/
 theorem compProd_apply_singleton (μ : Measure α) [SFinite μ] (κ : Kernel α β)
@@ -120,23 +142,18 @@ variable {α β γ : Type*} [MeasurableSpace α] [MeasurableSpace β] [Measurabl
 theorem comp_apply_singleton [Fintype β] [MeasurableSingletonClass β]
     [MeasurableSingletonClass γ] (η : Kernel β γ) (κ : Kernel α β) (a : α) (c : γ) :
     (η ∘ₖ κ) a {c} = ∑ b, κ a {b} * η b {c} := by
-  rw [comp_apply' _ _ _ (.singleton c), lintegral_fintype]
-  exact Finset.sum_congr rfl fun b _ => mul_comm _ _
+  rw [comp_apply, Measure.comp_apply_singleton]
 
 theorem comp_real_singleton [Fintype β] [MeasurableSingletonClass β]
     [MeasurableSingletonClass γ] (η : Kernel β γ) [IsFiniteKernel η] (κ : Kernel α β)
     [IsFiniteKernel κ] (a : α) (c : γ) :
     ((η ∘ₖ κ) a).real {c} = ∑ b, (κ a).real {b} * (η b).real {c} := by
-  rw [measureReal_def, comp_apply_singleton,
-    ENNReal.toReal_sum fun b _ ↦ ENNReal.mul_ne_top (measure_ne_top _ _) (measure_ne_top _ _)]
-  simp_rw [ENNReal.toReal_mul, measureReal_def]
+  rw [comp_apply, Measure.comp_real_singleton]
 
 /-- A row of a kernel is absolutely continuous with respect to the output marginal of an input
 measure that charges its input. -/
 theorem absolutelyContinuous_comp [Fintype α] [MeasurableSingletonClass α] (κ : Kernel α β)
-    (μ : Measure α) {a : α} (ha : μ {a} ≠ 0) : κ a ≪ κ ∘ₘ μ := by
-  refine Measure.AbsolutelyContinuous.mk fun s hs h0 => ?_
-  rw [Measure.bind_apply hs κ.aemeasurable, lintegral_fintype] at h0
-  exact (mul_eq_zero.mp (Finset.sum_eq_zero_iff.mp h0 a (Finset.mem_univ a))).resolve_right ha
+    (μ : Measure α) {a : α} (ha : μ {a} ≠ 0) : κ a ≪ κ ∘ₘ μ :=
+  ae_iff_of_countable.1 Measure.absolutelyContinuous_comp_of_countable a ha
 
 end ProbabilityTheory.Kernel

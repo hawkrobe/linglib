@@ -345,7 +345,7 @@ theorem measureMutualInfo_parallelComp_id_comp_le {U : Type*} [MeasurableSpace U
   have : Nonempty T := μ.nonempty_of_neZero.map Prod.snd
   rw [measureMutualInfo_eq_toReal_klDiv, measureMutualInfo_eq_toReal_klDiv,
     Measure.fst_parallelComp_id_comp, Measure.snd_parallelComp_id_comp,
-    ← Measure.parallelComp_id_comp_prod]
+    Measure.prod_comp_right]
   exact ENNReal.toReal_mono
     (klDiv_ne_top_iff.mpr ⟨μ.absolutelyContinuous_fst_prod_snd, .of_finite⟩)
     (klDiv_comp_right_le _ _ _)
