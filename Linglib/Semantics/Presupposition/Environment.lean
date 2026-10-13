@@ -9,10 +9,10 @@ public import Linglib.Data.UD.Features
 An environment is the position a sentence is embedded in: unembedded, or under one of the
 entailment-cancelling operators, negation, a polar question, the antecedent of a conditional
 and an epistemic possibility modal. The sentence in each environment is the family of sentences
-of a trigger ([matthewson-2004], [tonhauser-beaver-roberts-simons-2013]), and a content projects
-when the embedded members still carry it. Example rows record a sentence's environment, whether
-the content projected, and the person of the matrix subject, and the readers here type those
-features.
+of a trigger, in the terms of Matthewson and of Tonhauser, Beaver, Roberts and Simons, and a
+content projects when the embedded members still carry it. Example rows record a sentence's
+environment, whether the content projected, and the person of the matrix subject, and the
+readers here type those features.
 
 ## References
 
@@ -35,11 +35,6 @@ inductive Environment where
   deriving DecidableEq, Repr, Fintype
 
 namespace Environment
-
-/-- The member embeds the atomic sentence under an entailment-cancelling operator. -/
-def IsEmbedded (f : Environment) : Prop := f ≠ atomic
-
-instance : DecidablePred IsEmbedded := fun f ↦ inferInstanceAs (Decidable (f ≠ atomic))
 
 /-- The names of the environments as example rows record them. -/
 def table : List (String × Environment) :=
