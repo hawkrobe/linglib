@@ -1,66 +1,48 @@
 module
 
-public import Linglib.Morphology.DistributedMorphology.Categorizer.Basic
-public import Linglib.Morphology.Word.Tree
-public import Mathlib.Tactic.Abel
+public import Linglib.Morphology.DistributedMorphology.Basic
+public import Mathlib.Data.Fintype.Card
 
 /-!
 # Locality domains for contextual allomorphy and allosemy
 
-A word is its root with the heads merged above it, innermost first — the
-complex head that successive Merger builds, whose first `k` heads form the
-word after `k` steps. Its surface follows from the side on which each head's
-exponent attaches: prefixes outermost first, the root, suffixes innermost
-first, so the affixes of each side mirror the order of merger. The
-category-defining heads are cyclic: merging one sends the cyclic domains in
-its complement to the interfaces, so the heads of a word fall into cycles —
-a head's cycle is the number of cyclic heads at or below it — and a head
-undergoes Vocabulary Insertion in its own cycle, the material below the first
-cyclic head in the first. When a head is spelled out, the heads of its cycle
-and of the cycle before are present, the latter already realized, while
-earlier material is inactive and later cycles are not yet merged; the root,
-in the complement of the first cyclic head, is active in the first cycle only.
-Within a cycle each interface adds its own adjacency: a head conditions
-another only across heads null at that interface — pruned phonological zeros
-for allomorphy, semantically null heads for allosemy — so the two domains
-coincide exactly where the two kinds of nullness do. The idiom domain is a
-different bound, the heads below an agentive Voice, and neither contains the
-other.
+The category-defining heads of a complex head are cyclic: merging one sends the cyclic domains in
+its complement to the interfaces, so the heads of a word fall into cycles — a head's cycle is the
+number of cyclic heads at or below it — and a head undergoes Vocabulary Insertion in its own cycle,
+the material below the first cyclic head in the first. When a head is spelled out, the heads of its
+cycle and of the cycle before are present, the latter already realized, while earlier material is
+inactive and later cycles are not yet merged; the root, in the complement of the first cyclic head,
+is active in the first cycle only. Within a cycle each interface adds its own adjacency: a head
+conditions another only across heads null at that interface — pruned phonological zeros for
+allomorphy, semantically null heads for allosemy — so the two domains coincide exactly where the two
+kinds of nullness do. The idiom domain is a different bound, the heads below an agentive Voice, and
+neither contains the other.
 
 ## Main definitions
 
-* `Spine`, `Spine.toWordStructure`, `Spine.toTree`: the word as root and head
-  sequence, its word-structure tree, and its word tree by affix side.
-* `Spine.word`: the complex head after `k` steps of Merger.
-* `Spine.cycle`, `Spine.insertionCycle`: a head's cycle and the cycle of its
-  insertion.
-* `Spine.Coactive`, `Spine.RootLocal`: presence of one head at another's
-  insertion, and of the root.
-* `Spine.Sees`, `Spine.SeesRoot`: presence plus adjacency across heads null at
-  an interface.
-* `Spine.lastCycle`: the heads a probe merged above the word can find.
-* `Spine.IdiomLocal`: the heads below an agentive Voice.
+* `DistributedMorphology.ComplexHead.cycle`, `DistributedMorphology.ComplexHead.insertionCycle`:
+  a head's cycle and the cycle of its insertion.
+* `DistributedMorphology.ComplexHead.Coactive`, `DistributedMorphology.ComplexHead.RootLocal`:
+  presence of one head at another's insertion, and of the root.
+* `DistributedMorphology.ComplexHead.Sees`, `DistributedMorphology.ComplexHead.SeesRoot`: presence
+  plus adjacency across heads null at an interface.
+* `DistributedMorphology.ComplexHead.lastCycle`: the heads a probe merged above the word can find.
+* `DistributedMorphology.ComplexHead.IdiomLocal`: the heads below an agentive Voice.
 
 ## Main results
 
-* `surface_eq`: the Mirror Principle — the surface reads each side's heads
-  outward from the root in order of merger.
-* `heads_word_isPrefix`, `mem_word_of_le`: the merged word is an initial
-  segment of the spine.
-* `cycle_mono`, `RootLocal.of_le`: cycles grow outward and the root's domain is
-  an initial segment.
-* `not_rootLocal_of_cyclic_of_cyclic`, `RootLocal.cyclic_first`: an outer
-  cyclic head is not local to the root, and a local cyclic head is the first.
-* `not_coactive_of_lt_of_cyclic`, `not_coactive_of_cyclic_of_cyclic`: nothing
-  sees an outer cyclic head — no outward sensitivity to, and no fusion with,
-  a later category head.
+* `cycle_mono`, `RootLocal.of_le`: cycles grow outward and the root's domain is an initial
+  segment.
+* `not_rootLocal_of_cyclic_of_cyclic`, `RootLocal.cyclic_first`: an outer cyclic head is not local
+  to the root, and a local cyclic head is the first.
+* `not_coactive_of_lt_of_cyclic`, `not_coactive_of_cyclic_of_cyclic`: nothing sees an outer cyclic
+  head, so there is no outward sensitivity to, and no fusion with, a later category head.
 * `not_coactive_of_add_two_le`: material two cycles down is inactive.
-* `not_sees_of_not_null`, `sees_congr`: an intervening non-null head blocks
-  conditioning, and the interface domains agree where nullness agrees.
+* `not_sees_of_not_null`, `sees_congr`: an intervening non-null head blocks conditioning, and the
+  interface domains agree where nullness agrees.
 
 ## References
 
-* [M. Baker, *The Mirror Principle and morphosyntactic explanation*][baker-1985]
 * [D. Embick, *Localism versus globalism in morphology and phonology*][embick-2010]
 * [A. Marantz, *Locality domains for contextual allomorphy across the
   interfaces*][marantz-2013]
@@ -71,75 +53,9 @@ other.
 
 namespace DistributedMorphology
 
-/-- A word as its root and the heads merged above it, innermost first. -/
-structure Spine (H : Type*) where
-  /-- The root. -/
-  root : Root
-  /-- The heads above the root, innermost first. -/
-  heads : List H
-  deriving DecidableEq, Repr
+namespace ComplexHead
 
-namespace Spine
-
-variable {H : Type*} (s : Spine H)
-
-/-! ### The word-structure tree -/
-
-/-- The word structure the spine builds, each head categorizing what lies below it. -/
-noncomputable def toWordStructure : WordStructure H :=
-  s.heads.foldl (fun T h => categorize h T) (ofRoot s.root)
-
-theorem heads_foldl_categorize (T : WordStructure H) : ∀ hs : List H,
-    DistributedMorphology.heads (hs.foldl (fun T h => categorize h T) T) =
-      ↑hs + DistributedMorphology.heads T
-  | [] => by simp
-  | h :: hs => by
-    rw [List.foldl_cons, heads_foldl_categorize (categorize h T) hs, heads_categorize]
-    simp only [← Multiset.cons_coe, ← Multiset.singleton_add]
-    abel
-
-theorem roots_foldl_categorize (T : WordStructure H) : ∀ hs : List H,
-    DistributedMorphology.roots (hs.foldl (fun T h => categorize h T) T) =
-      DistributedMorphology.roots T
-  | [] => rfl
-  | h :: hs => by rw [List.foldl_cons, roots_foldl_categorize (categorize h T) hs, roots_categorize]
-
-@[simp] theorem roots_toWordStructure :
-    DistributedMorphology.roots s.toWordStructure = {s.root} := by
-  rw [toWordStructure, roots_foldl_categorize, roots_ofRoot]
-
-@[simp] theorem heads_toWordStructure :
-    DistributedMorphology.heads s.toWordStructure = ↑s.heads := by
-  rw [toWordStructure, heads_foldl_categorize, heads_ofRoot, add_zero]
-
-/-! ### Merger and the surface -/
-
-/-- The complex head after `k` steps of Merger, the root with the first `k` heads. The remaining
-heads are realized periphrastically. -/
-def word (k : ℕ) : Spine H := ⟨s.root, s.heads.take k⟩
-
-theorem heads_word_isPrefix (k : ℕ) : (s.word k).heads <+: s.heads := List.take_prefix k s.heads
-
-/-- Merger skips no head, so a head in the word brings every head below it. -/
-theorem mem_word_of_le {k : ℕ} {i j : Fin s.heads.length} (hji : j ≤ i)
-    (hi : (i : ℕ) < k) : (j : ℕ) < k := lt_of_le_of_lt hji hi
-
-/-- The word tree, each head attached on the side its exponent takes, innermost first. -/
-def toTree (side : H → Morphology.Morph.Side) : Morphology.Word.Tree (Root ⊕ H) :=
-  Morphology.Word.Tree.attachAll (.inl s.root) (s.heads.map fun h => (side h, .inr h))
-
-/-- The surface order of root and heads. -/
-def surface (side : H → Morphology.Morph.Side) : List (Root ⊕ H) := (s.toTree side).toList
-
-/-- **The Mirror Principle.** The surface is the prefixal heads outermost first, the root, and the
-suffixal heads innermost first, so on each side the surface order outward from the root is the
-order of merger. -/
-theorem surface_eq (side : H → Morphology.Morph.Side) :
-    s.surface side =
-      ((s.heads.filter fun h => side h = .before).map Sum.inr).reverse ++
-        Sum.inl s.root :: (s.heads.filter fun h => side h = .after).map Sum.inr := by
-  simp [surface, toTree, Morphology.Word.Tree.toList_attachAll, List.filter_map, List.map_map,
-    Function.comp_def]
+variable {R H : Type*} (s : ComplexHead R H)
 
 /-! ### Cycles -/
 
@@ -262,9 +178,9 @@ def lastCycle : List H :=
 
 /-- The last cycle of a word whose highest cyclic head is `h`, with the noncyclic heads `above`
 over it. -/
-theorem lastCycle_mk_append {r : Root} {hs above : List H} {h : H} (hc : cyclic h)
+theorem lastCycle_mk_append {r : R} {hs above : List H} {h : H} (hc : cyclic h)
     (ha : ∀ a ∈ above, ¬ cyclic a) :
-    (⟨r, hs ++ h :: above⟩ : Spine H).lastCycle cyclic = above.reverse ++ [h] := by
+    (⟨r, hs ++ h :: above⟩ : ComplexHead R H).lastCycle cyclic = above.reverse ++ [h] := by
   have key : ∀ l : List H, (∀ a ∈ l, ¬ cyclic a) →
       (l ++ h :: hs.reverse).takeWhile (fun x ↦ !decide (cyclic x)) ++
         ((l ++ h :: hs.reverse).dropWhile (fun x ↦ !decide (cyclic x))).take 1 = l ++ [h] := by
@@ -341,6 +257,6 @@ variable {s agentive}
 theorem IdiomLocal.of_le (h : s.IdiomLocal agentive i) (hji : j ≤ i) : s.IdiomLocal agentive j :=
   fun _ hj => h _ (hj.trans hji)
 
-end Spine
+end ComplexHead
 
 end DistributedMorphology

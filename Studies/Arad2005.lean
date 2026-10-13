@@ -670,7 +670,7 @@ instance : DecidablePred cyclic := fun _ ↦ inferInstanceAs (Decidable (_ ∨ _
 
 /-- `verbSpine base` is the structure of a verb, (26) and (7b), with v and Voice above the root, or
 above the category head of the word it is formed from. -/
-def verbSpine (base : Option Head) : Spine Head := ⟨⟨0⟩, base.toList ++ [.v, .voice]⟩
+def verbSpine (base : Option Head) : ComplexHead Root Head := ⟨⟨0⟩, base.toList ++ [.v, .voice]⟩
 
 /-- By (8), the v of a verb is local to the root exactly when no category head intervenes, so only a
 root-derived verb's v sees the root and a noun-derived verb's sees the noun. -/

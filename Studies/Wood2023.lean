@@ -1,7 +1,8 @@
 module
 
 public import Linglib.Morphology.DistributedMorphology.Allosemy
-public import Linglib.Morphology.DistributedMorphology.ComplexHead
+public import Linglib.Morphology.DistributedMorphology.Locality
+public import Linglib.Morphology.DistributedMorphology.VocabularyInsertion.InsideOut
 public import Linglib.Fragments.Icelandic.Nouns
 public import Linglib.Data.Examples.Wood2023
 
@@ -54,7 +55,7 @@ of *söfn-un* and *vönt-un* is not undone and the theme vowel *-a* of the verb 
 the book's own segmentation has it. The roots are identified by their forms. The prefixed
 preposition of *við-ger-ð* adjoins to n and is not inserted by the vocabulary; the derivation
 covers the root, v, and n. Wood's bound for allosemy, one intervening categorizer, is one
-phase looser than `Spine.RootLocal`, the bound the book keeps for root suppletion; the study
+phase looser than `ComplexHead.RootLocal`, the bound the book keeps for root suppletion; the study
 states the strict one through the substrate. A preposition adjoined to a complex head has no
 spine position, since a head does not c-command its own adjunct, so the heads between a
 preposition and the root are read off its attachment. The event-modifier account licenses
@@ -123,16 +124,17 @@ def listed : List String :=
 variable (r : String) (e : Morph)
 
 /-- The root categorized by v and then by n, with the exponent of v if already inserted. -/
-def word (v : Option Morph) : ComplexHead Feature Morph :=
+def word (v : Option Morph) : ComplexHead (Morpheme Feature Morph) (Morpheme Feature Morph) :=
   ⟨⟨[], some (.root r), .after⟩, [⟨[cat .v], v, .after⟩, ⟨[cat .n], none, .after⟩]⟩
 
 /-- Vocabulary Insertion at head `i`, over the concatenated neighbors with zero exponents
 pruned. -/
-abbrev insertAt (w : ComplexHead Feature Morph) (i : ℕ) : ComplexHead Feature Morph :=
+abbrev insertAt (w : ComplexHead (Morpheme Feature Morph) (Morpheme Feature Morph)) (i : ℕ) :
+    ComplexHead (Morpheme Feature Morph) (Morpheme Feature Morph) :=
   w.insertAt (· = zero) vocab .concatenation expFeatures .nondeletion i
 
 /-- The morphs of a complex head after insertion from the inside out. -/
-def realize (w : ComplexHead Feature Morph) : List Morph :=
+def realize (w : ComplexHead (Morpheme Feature Morph) (Morpheme Feature Morph)) : List Morph :=
   (w.insertAll (· = zero) vocab .concatenation expFeatures .nondeletion).exponents.filter
     (· ≠ zero)
 
@@ -308,19 +310,20 @@ theorem exists_reading (rd : NominalizationReading) : ∃ d : Derivation, d.read
 
 end Derivation
 
-/-! ### Spines -/
+/-! ### Complex heads -/
 
 /-- The verb is the root categorized by eventive v. -/
-def verb (r : Root) : Spine Head := ⟨r, [.v .eventive]⟩
+def verb (r : Root) : ComplexHead Root Head := ⟨r, [.v .eventive]⟩
 
 /-- The nominalization is the root categorized by v and then by n. -/
-def nominal (r : Root) (d : Derivation) : Spine Head := ⟨r, d.heads⟩
+def nominal (r : Root) (d : Derivation) : ComplexHead Root Head := ⟨r, d.heads⟩
 
 /-- A *-væða* verb is the root categorized by n, compounded with the v of *-væða*. -/
-def vaedaVerb (r : Root) (a : Nominalizer.Alloseme) : Spine Head := ⟨r, [.n a, .v .eventive]⟩
+def vaedaVerb (r : Root) (a : Nominalizer.Alloseme) : ComplexHead Root Head :=
+  ⟨r, [.n a, .v .eventive]⟩
 
 /-- A *-væðing* nominal is the *-væða* verb categorized by n. -/
-def vaedaNominal (r : Root) (a c : Nominalizer.Alloseme) : Spine Head :=
+def vaedaNominal (r : Root) (a c : Nominalizer.Alloseme) : ComplexHead Root Head :=
   ⟨r, (vaedaVerb r a).heads ++ [.n c]⟩
 
 /-! ### Borer's Generalization -/
@@ -328,7 +331,7 @@ def vaedaNominal (r : Root) (a c : Nominalizer.Alloseme) : Spine Head :=
 /-- The n of a nominalization is not in the root's domain, since category change closes it. -/
 theorem nominal_n_not_rootLocal (r : Root) (d : Derivation) :
     ¬ (nominal r d).RootLocal Head.Cyclic ⟨1, Nat.one_lt_two⟩ :=
-  Spine.not_rootLocal_of_cyclic_of_cyclic (j := ⟨0, Nat.two_pos⟩)
+  ComplexHead.not_rootLocal_of_cyclic_of_cyclic (j := ⟨0, Nat.two_pos⟩)
     (Fin.mk_lt_mk.2 Nat.zero_lt_one) trivial trivial
 
 /-- By Borer's Generalization a complex event nominal contains the eventive v of the verb and its
@@ -395,12 +398,12 @@ inductive Attachment where
 /-- The heads between a preposition and the root are every head of the complex head when the
 preposition heads its complement, and all but the outermost when it adjoins to the complex head,
 since a head does not c-command its own adjunct. -/
-def interveners (s : Spine Head) : Attachment → List Head
+def interveners (s : ComplexHead Root Head) : Attachment → List Head
   | .complement => s.heads
   | .adjunct => s.heads.dropLast
 
 /-- Adjunction is at least as local as complementation. -/
-theorem Local.adjunct_of_complement {s : Spine Head}
+theorem Local.adjunct_of_complement {s : ComplexHead Root Head}
     (h : Local (interveners s .complement)) : Local (interveners s .adjunct) := by
   simp only [Local, interveners, List.length_dropLast] at h ⊢; omega
 

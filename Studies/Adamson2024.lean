@@ -1,7 +1,7 @@
 module
 
 public import Mathlib.Order.Basic
-public import Linglib.Morphology.DistributedMorphology.Categorizer.Gender
+public import Linglib.Morphology.DistributedMorphology.Gender
 public import Linglib.Morphology.DistributedMorphology.VocabularyInsertion.Basic
 public import Linglib.Morphology.DistributedMorphology.Impoverishment
 public import Linglib.Fragments.Teop.Nouns
@@ -162,12 +162,12 @@ def free : List Head := [relationalN false, alienatorN]
 /-- The class of a nominal over the root `r` with the n's `hs`, the gender a probe finds in its
 last cycle, which is the o-class (gender II) by default. Every categorizer is a cyclic head. -/
 def classOf (r : Root) (hs : List Head) : NounClass :=
-  agreeingGender headClass .o ((⟨r, hs⟩ : Spine Head).lastCycle fun _ ↦ True)
+  agreeingGender headClass .o ((⟨r, hs⟩ : ComplexHead Root Head).lastCycle fun _ ↦ True)
 
 /-- *a bina-naa* 'my spleen' is a-class and *o bina* 'the spleen' is o-class, the o-class being
 gender II, the default. -/
 theorem switch (r : Root) : classOf r ipossessed = .a ∧ classOf r free = .o := by
-  simp only [classOf, Spine.lastCycle]
+  simp only [classOf, ComplexHead.lastCycle]
   decide
 
 /-- The plain alienator over the gender I nominalizer gives *o bina* the default o-class, as the
@@ -179,7 +179,7 @@ theorem free_cyclic (r : Root) :
 
 /-- Every body-part term of the fragment has the class of the unpossessed noun. -/
 theorem bodyPartTerms_free (r : Root) : ∀ n ∈ bodyPartTerms, n.gender = classOf r free := by
-  simp only [classOf, Spine.lastCycle]
+  simp only [classOf, ComplexHead.lastCycle]
   decide
 
 /-- The n's of a body-part or kinship noun, by how it is possessed. -/
@@ -192,7 +192,7 @@ theorem rows_class (r : Root) : ∀ e ∈ Examples.all, e.language = "teop1238" 
     ∀ s ∈ e.parse? "possession" possession,
       ∀ c ∈ e.parse? "gender" [("I", NounClass.a), ("II", .o)],
         classOf r s = c := by
-  simp only [classOf, Spine.lastCycle]
+  simp only [classOf, ComplexHead.lastCycle]
   decide
 
 /-- The features of the article, copied from DP by concord. -/
@@ -233,7 +233,7 @@ takes *o*, (51). -/
 theorem kinship (r : Root) :
     subsetPrinciple articles (.proper :: classFeatures (classOf r ipossessed)) = some .e ∧
       subsetPrinciple articles (.proper :: classFeatures (classOf r free)) = some .o := by
-  simp only [classOf, Spine.lastCycle]
+  simp only [classOf, ComplexHead.lastCycle]
   decide
 
 section Denotation

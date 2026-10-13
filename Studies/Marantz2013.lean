@@ -71,10 +71,10 @@ def semNull (m : Morpheme) : Prop := m.sem = .null
 /-- Introduces the external argument. -/
 def agentive (m : Morpheme) : Prop := m.head = .voice
 
-instance : DecidablePred cyclic := λ _ => inferInstanceAs (Decidable (_ ∨ _ ∨ _))
-instance : DecidablePred phonNull := λ _ => inferInstanceAs (Decidable (_ = _))
-instance : DecidablePred semNull := λ _ => inferInstanceAs (Decidable (_ = _))
-instance : DecidablePred agentive := λ _ => inferInstanceAs (Decidable (_ = _))
+instance : DecidablePred cyclic := fun _ ↦ inferInstanceAs (Decidable (_ ∨ _ ∨ _))
+instance : DecidablePred phonNull := fun _ ↦ inferInstanceAs (Decidable (_ = _))
+instance : DecidablePred semNull := fun _ ↦ inferInstanceAs (Decidable (_ = _))
+instance : DecidablePred agentive := fun _ ↦ inferInstanceAs (Decidable (_ = _))
 
 /-! ### The words -/
 
@@ -87,7 +87,7 @@ inductive Claim where
 paper's claims about allomorphy, allosemy, and idiomatic meaning. -/
 structure Row where
   form : String
-  spine : Spine Morpheme
+  spine : ComplexHead Root Morpheme
   trigger : Fin spine.heads.length
   allomorphy : Option Claim
   allosemy : Option Claim
@@ -125,7 +125,7 @@ def rootNames : List String := (Examples.all.filterMap (·.feature? "root")).era
 def Row.ofDatum (ex : Datum) : Option Row := do
   let root ← ex.feature? "root"
   let heads := [("h1", "h1exp"), ("h2", "h2exp"), ("h3", "h3exp"), ("h4", "h4exp")].filterMap
-    λ (k, e) => (ex.feature? k).bind (Morpheme.ofLabel ((ex.feature? e).getD ""))
+    fun (k, e) ↦ (ex.feature? k).bind (Morpheme.ofLabel ((ex.feature? e).getD ""))
   let t ← (ex.feature? "trigger").bind triggerOfLabel
   if h : t < heads.length then
     pure ⟨ex.primaryText, ⟨⟨rootNames.idxOf root⟩, heads⟩, ⟨t, h⟩,
@@ -174,7 +174,8 @@ theorem domains_cross_cut :
 /-- **The strong prediction** (§6.5): whatever conditions the root across an
 intervening head sees only null heads below it, and if it is itself a
 category head it is the first. -/
-theorem strong_prediction {s : Spine Morpheme} {null : Morpheme → Prop} {i : Fin s.heads.length}
+theorem strong_prediction {s : ComplexHead Root Morpheme} {null : Morpheme → Prop}
+    {i : Fin s.heads.length}
     (h : s.SeesRoot cyclic null i) :
     (∀ j < i, null s.heads[j]) ∧ (cyclic s.heads[i] → ∀ j < i, ¬ cyclic s.heads[j]) :=
   ⟨h.2, h.rootLocal.cyclic_first⟩

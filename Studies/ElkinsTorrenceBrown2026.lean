@@ -6,7 +6,7 @@ public import Linglib.Fragments.Mayan.Kiche.Extraction
 public import Linglib.Syntax.Minimalist.Clause.Spine
 public import Linglib.Syntax.Minimalist.Verbal.Voice
 public import Linglib.Syntax.Minimalist.Agree.Basic
-public import Linglib.Morphology.DistributedMorphology.VocabularyInsertion.FeatureBundle
+public import Linglib.Morphology.DistributedMorphology.VocabularyInsertion.Basic
 
 /-!
 # Elkins, Torrence and Brown (2026): Wh-movement paths and adjunct extraction in Mam
@@ -45,9 +45,9 @@ in K'ichean, and temporals trigger neither.
   reflex in a clause is decided by whether the clause projects Voice (`licensed_iff_mem_voice`).
   The rival
   mechanisms are predicates on the same dependencies, and the rows discriminate them.
-* The Agree-and-insertion step is the substrate's `applyAgree` and `spellout` on a Voice head with
-  an unvalued [oblique] probe and the vocabulary item (46a); the null exponent (46b) is the
-  independent optionality of each site, `patterns`.
+* The Agree-and-insertion step is the substrate's `applyAgree` and `subsetPrinciple` over the
+  valued features of a Voice head with an unvalued [oblique] probe and the vocabulary item (46a);
+  the null exponent (46b) is the independent optionality of each site, `patterns`.
 * [obl] on the movers is the article's featural hypothesis (§1.3, §4.2, §5.3): relational nouns
   assign it, the locative and manner wh-words are assumed to acquire it, temporals lack it.
 * The examples are `Data.Examples.ElkinsTorrenceBrown2026`; the K'ichean rows are
@@ -359,7 +359,7 @@ def eqYa : VocabularyItem FeatureVal String :=
 /-- Agree with an [obl] mover followed by insertion yields the enclitic. -/
 theorem agree_spellout :
     (voice.features.applyAgree (.single .oblique true) .oblique).bind
-      (spellout [eqYa]) = some "=(y)a'" := by
+      (fun b ↦ subsetPrinciple [eqYa] b.valued) = some "=(y)a'" := by
   decide
 
 /-- A mover without [obl], an absolutive argument or a temporal, transmits nothing to Voice⁰. -/

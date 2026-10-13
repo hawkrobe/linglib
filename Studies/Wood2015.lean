@@ -33,7 +33,7 @@ be adjacent to the root at spell-out, so v must be zero (`na_only_if_v_zero`). H
 
 ## Implementation notes
 
-The word is a `Spine` over the heads v and Voice with v the only cyclic head, and the
+The word is a `ComplexHead` over the heads v and Voice with v the only cyclic head, and the
 allomorphy domain is the substrate's `SeesRoot`, adjacency across phonologically null heads.
 The lists of roots for *-ka* and *-na* are parameters. Voice is a cell of `Minimalist.Voice`,
 thematic when the vP is agentive, and its D feature is read from the cell. The reciprocal,
@@ -79,13 +79,13 @@ def Position.AdmitsCaseless : Position → Prop
 /-- *-st* merges in a specifier position with no case requirement. -/
 def Position.AdmitsSt (p : Position) : Prop := p.IsSpecifier ∧ p.AdmitsCaseless
 
-instance : DecidablePred Position.IsSpecifier := λ p => by
+instance : DecidablePred Position.IsSpecifier := fun p ↦ by
   cases p <;> unfold Position.IsSpecifier <;> infer_instance
 
-instance : DecidablePred Position.AdmitsCaseless := λ p => by
+instance : DecidablePred Position.AdmitsCaseless := fun p ↦ by
   cases p <;> unfold Position.AdmitsCaseless <;> infer_instance
 
-instance : DecidablePred Position.AdmitsSt := λ _ => inferInstanceAs (Decidable (_ ∧ _))
+instance : DecidablePred Position.AdmitsSt := fun _ ↦ inferInstanceAs (Decidable (_ ∧ _))
 
 /-- *-st* merges in SpecVoiceP and SpecpP, not in SpecApplP nor as a direct object. -/
 theorem admitsSt_iff (p : Position) : p.AdmitsSt ↔ p = .specVoice ∨ p = .specP := by
@@ -224,13 +224,13 @@ def Head.Null : Head → Prop
   | .v ka => ka = false
   | .voice _ => False
 
-instance : DecidablePred Head.Cyclic := λ h => by
+instance : DecidablePred Head.Cyclic := fun h ↦ by
   cases h <;> unfold Head.Cyclic <;> infer_instance
 
-instance : DecidablePred Head.Null := λ h => by cases h <;> unfold Head.Null <;> infer_instance
+instance : DecidablePred Head.Null := fun h ↦ by cases h <;> unfold Head.Null <;> infer_instance
 
 /-- The verb consists of a root, v, and Voice. -/
-def verb (r : Root) (ka hasD : Bool) : Spine Head := ⟨r, [.v ka, .voice hasD]⟩
+def verb (r : Root) (ka hasD : Bool) : ComplexHead Root Head := ⟨r, [.v ka, .voice hasD]⟩
 
 /-- Voice's position in the verb. -/
 def voiceIdx (r : Root) (ka hasD : Bool) : Fin (verb r ka hasD).heads.length :=
@@ -239,14 +239,14 @@ def voiceIdx (r : Root) (ka hasD : Bool) : Fin (verb r ka hasD).heads.length :=
 /-- Voice is in the root's cycle: v is the only cyclic head. -/
 theorem rootLocal_voice (r : Root) (ka hasD : Bool) :
     (verb r ka hasD).RootLocal Head.Cyclic (voiceIdx r ka hasD) := by
-  unfold Spine.RootLocal Spine.cycle
+  unfold ComplexHead.RootLocal ComplexHead.cycle
   have key : ∀ x : Fin (verb r ka hasD).heads.length,
       x ≤ voiceIdx r ka hasD ∧ Head.Cyclic (verb r ka hasD).heads[x] → (x : ℕ) = 0 := by
     rintro ⟨_ | _ | x, hx⟩ ⟨-, h₂⟩
     · rfl
     · simp [verb, Head.Cyclic] at h₂
     · simp [verb] at hx <;> omega
-  refine Finset.card_le_one.mpr λ a ha b hb => Fin.ext ?_
+  refine Finset.card_le_one.mpr fun a ha b hb ↦ Fin.ext ?_
   simp only [Finset.mem_filter, Finset.mem_univ, true_and] at ha hb
   rw [key a ha, key b hb]
 
@@ -254,9 +254,9 @@ theorem rootLocal_voice (r : Root) (ka hasD : Bool) :
 theorem seesRoot_voice_iff (r : Root) (ka hasD : Bool) :
     (verb r ka hasD).SeesRoot Head.Cyclic Head.Null (voiceIdx r ka hasD) ↔ ka = false := by
   constructor
-  · exact λ h => h.2 ⟨0, by simp [verb]⟩ (by simp [voiceIdx, Fin.lt_def])
+  · exact fun h ↦ h.2 ⟨0, by simp [verb]⟩ (by simp [voiceIdx, Fin.lt_def])
   · rintro rfl
-    refine ⟨rootLocal_voice r false hasD, λ k hk => ?_⟩
+    refine ⟨rootLocal_voice r false hasD, fun k hk ↦ ?_⟩
     obtain ⟨_ | k, hk'⟩ := k
     · exact rfl
     · exact absurd (show k + 1 < 1 from hk) (by omega)
@@ -282,12 +282,12 @@ theorem na_only_if_v_zero {r : Root} {ka hasD : Bool} (h : Na naRoots r ka hasD)
 
 /-- *-na* and *-ka* never co-occur. -/
 theorem na_ka_exclusive {r : Root} {hasD : Bool} : ¬ Na naRoots r true hasD :=
-  λ h => Bool.noConfusion (na_only_if_v_zero h)
+  fun h ↦ Bool.noConfusion (na_only_if_v_zero h)
 
 /-- *-na* never marks an *-st* verb: *-st* checks the D feature of Voice, and *-na* spells out
 Voice without one. -/
 theorem na_st_exclusive {r : Root} {ka : Bool} : ¬ Na naRoots r ka true :=
-  λ h => Bool.noConfusion h.1
+  fun h ↦ Bool.noConfusion h.1
 
 /-- A listed root with zero v and specifierless Voice takes *-na*. -/
 theorem na_of_listed {r : Root} (h : r ∈ naRoots) : Na naRoots r false false :=

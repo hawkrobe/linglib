@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Morphology.DistributedMorphology.ComplexHead
+public import Linglib.Morphology.DistributedMorphology.VocabularyInsertion.InsideOut
 public import Linglib.Data.Examples.Bobaljik2000
 
 /-!
@@ -65,12 +65,13 @@ def itemFeatures (e : String) : List Feature := [item e]
 /-- The surface exponents after inside-out insertion under hierarchical locality, null exponents
 dropped. -/
 def morphs (dis : Discharge) (voc : List (VocabularyItem Feature String))
-    (w : ComplexHead Feature String) : List String :=
+    (w : ComplexHead (Morpheme Feature String) (Morpheme Feature String)) : List String :=
   (w.insertAll (· = "") voc .hierarchical itemFeatures dis).exponents.filter (· ≠ "")
 
 /-- The context head `i` presents when inside-out insertion reaches it. -/
-def stepContext (voc : List (VocabularyItem Feature String)) (w : ComplexHead Feature String)
-    (dis : Discharge) (i : ℕ) : Neighborhood (List Feature) :=
+def stepContext (voc : List (VocabularyItem Feature String))
+    (w : ComplexHead (Morpheme Feature String) (Morpheme Feature String)) (dis : Discharge)
+    (i : ℕ) : Neighborhood (List Feature) :=
   (w.insertUpTo (· = "") voc .hierarchical itemFeatures dis i).contextAt
     (· = "") .hierarchical itemFeatures i
 
@@ -107,7 +108,8 @@ def vocab : List (VocabularyItem Feature String) :=
 
 /-- The verb is the root with its class diacritics, then present tense, the class position, and
 the object and subject agreement nodes, as in (16). -/
-def word (r : String) (cls subj obj : List Feature) : ComplexHead Feature String :=
+def word (r : String) (cls subj obj : List Feature) :
+    ComplexHead (Morpheme Feature String) (Morpheme Feature String) :=
   ⟨⟨cls, some r, .after⟩,
    [⟨[pres], none, .after⟩, ⟨[classMarker], none, .after⟩, ⟨agrO :: obj, none, .after⟩,
     ⟨agrS :: subj, none, .before⟩]⟩
@@ -119,7 +121,8 @@ def rootClass : String → Option (List Feature)
   | _ => none
 
 /-- The verb of an Itelmen row. -/
-def ofRow (ex : Datum) : Option (ComplexHead Feature String) := do
+def ofRow (ex : Datum) :
+    Option (ComplexHead (Morpheme Feature String) (Morpheme Feature String)) := do
   word (← ex.feature? "root") (← rootClass (← ex.feature? "rootClass"))
     (← phi (← ex.feature? "subj")) (← phi (← ex.feature? "obj"))
 
@@ -132,7 +135,8 @@ theorem rows_morphs :
 
 /-- The verb of (9b), *t-tɸ-s-ki-čeʔn*, is 'bring' with a first-singular subject and a
 third-plural object. -/
-def bring : ComplexHead Feature String := word "tɸ" [classII] [first, sg] [third, pl]
+def bring : ComplexHead (Morpheme Feature String) (Morpheme Feature String) :=
+  word "tɸ" [classII] [first, sg] [third, pl]
 
 /-- In (9b) the Class II marker sees the root's diacritic inward, past the tense suffix already
 rewritten as *-s-*, and both agreement nodes outward, bare. -/
@@ -176,7 +180,8 @@ def vocab : List (VocabularyItem Feature String) :=
      [agrS, third] ⟷ "ne"]
 
 /-- The Past I verb is the root with the object and subject agreement nodes. -/
-def word (r : String) (subj obj : List Feature) : ComplexHead Feature String :=
+def word (r : String) (subj obj : List Feature) :
+    ComplexHead (Morpheme Feature String) (Morpheme Feature String) :=
   ⟨⟨[], some r, .after⟩, [⟨agrO :: obj, none, .after⟩, ⟨agrS :: subj, none, .before⟩]⟩
 
 /-- Object agreement targets a first- or second-person indirect object over a third-person direct
@@ -186,7 +191,8 @@ def agreesWith (dObj : List Feature) : Option (List Feature) → List Feature
   | none => dObj
 
 /-- The verb of a Chukchi row. -/
-def ofRow (ex : Datum) : Option (ComplexHead Feature String) := do
+def ofRow (ex : Datum) :
+    Option (ComplexHead (Morpheme Feature String) (Morpheme Feature String)) := do
   let io ← match ex.feature? "io" with
     | some s => (phi s).map some
     | none => some none

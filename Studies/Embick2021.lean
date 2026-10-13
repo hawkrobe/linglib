@@ -22,7 +22,7 @@ are both words, the word cannot be the domain; the domains are the cycles.
 
 ## Implementation notes
 
-* Cycles and the root's domain are the substrate's `Spine` API, the cyclic domains of
+* Cycles and the root's domain are the substrate's `ComplexHead` API, the cyclic domains of
   [embick-2010] that the paper adopts for (14) and (15); this file contributes the heads of the
   examples, the Agent-Licensing Assumption, the rows and the predictions checked over them.
 * The gerund's verbal structure is taken as v with the agent-licensing Voice above it, the second
@@ -44,7 +44,7 @@ namespace Embick2021
 
 open DistributedMorphology Embick2021.Examples
 
-/-- The heads of the examples: the categorizers, Voice, tense and aspect. -/
+/-- The heads of the examples are the categorizers, Voice, tense and aspect. -/
 inductive Head
   | n
   | v
@@ -57,14 +57,14 @@ inductive Head
 /-- The category-defining heads are the cyclic heads (§5). -/
 def cyclic (h : Head) : Prop := h = .n ∨ h = .v ∨ h = .a
 
-instance : DecidablePred cyclic := λ _ => inferInstanceAs (Decidable (_ ∨ _ ∨ _))
+instance : DecidablePred cyclic := fun _ ↦ inferInstanceAs (Decidable (_ ∨ _ ∨ _))
 
 /-- The Agent-Licensing Assumption (10): an agent is introduced by a Voice that selects v, so only
 a structure with v below Voice licenses one. -/
-def AgentLicensed (s : Spine Head) : Prop :=
+def AgentLicensed (s : ComplexHead Root Head) : Prop :=
   ∃ i : Fin s.heads.length, s.heads[i] = .voice ∧ ∃ j < i, s.heads[j] = .v
 
-instance (s : Spine Head) : Decidable (AgentLicensed s) :=
+instance (s : ComplexHead Root Head) : Decidable (AgentLicensed s) :=
   inferInstanceAs (Decidable (∃ i, _ ∧ ∃ j < i, _))
 
 /-! ### The words -/
@@ -82,10 +82,10 @@ inductive Construction
   | inflected
   deriving DecidableEq, Repr
 
-/-- A word of the examples: its heads above the root, the root's class where the paper gives one,
-its construction, and the paper's judgment of the agentive reading. -/
+/-- A word of the examples records its heads above the root, the root's class where the paper
+gives one, its construction, and the paper's judgment of the agentive reading. -/
 structure Row where
-  spine : Spine Head
+  spine : ComplexHead Root Head
   rootClass : Option RootClass
   construction : Construction
   judgment : Judgment
