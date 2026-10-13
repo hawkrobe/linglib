@@ -2,7 +2,7 @@ module
 
 public import Studies.Harley2014
 public import Linglib.Data.Examples.Harley2014
-public import Linglib.Syntax.Tree.Projection
+public import Linglib.Morphology.DistributedMorphology.PhrasalLocality
 
 /-!
 # Bobaljik and Harley (2017): Suppletion is local: Evidence from Hiaki
@@ -39,10 +39,11 @@ projection is already a maximal one.
 
 ## Implementation notes
 
-* A trigger's features are the number on the label of its DP, so a DP is represented by a
-  terminal bearing its number. The nodes crossed going from the target to the trigger are those
-  that dominate the target but not the trigger. The segments of a maximal category all count as
-  maximal, as the chapter's remark on specifiers as adjuncts presupposes.
+* The two formulations of locality are `DistributedMorphology.MayCondition` and
+  `DistributedMorphology.MayCondition'`, on which the segments of a maximal category all count as
+  maximal, as the chapter's remark on specifiers as adjuncts presupposes. A trigger's features
+  are the number on the label of its DP, so a DP is represented by a terminal bearing its
+  number.
 * The applicative examples are those of `Data/Examples/Harley2014.json`, which the chapter repeats
   as its (15)–(18). The verb classes are taken from them, the suppletive intransitives excepted,
   whose class the rows determine.
@@ -67,59 +68,9 @@ formalized.
 namespace BobaljikHarley2017
 
 open PhraseStructure Core.Order
+open DistributedMorphology (MayCondition MayCondition')
 open Clause (Arguments)
 open Clause.Arguments (unaccusative unergative transitive)
-
-/-! ### Locality -/
-
-section Locality
-
-variable {C W : Type*} [DecidableEq C]
-
-mutual
-/-- A head-level node, an X⁰, is a terminal or an adjunction of heads. -/
-def isHead : Tree C W → Bool
-  | RoseTree.node (.terminal _ _) _ => true
-  | RoseTree.node (.segment _) ts => allHeads ts
-  | _ => false
-
-/-- Every tree of a list is head-level. -/
-def allHeads : List (Tree C W) → Bool
-  | [] => true
-  | t :: ts => isHead t && allHeads ts
-end
-
-/-- The node at position `p` of `t` is head-level. -/
-def IsHeadAt (t : Tree C W) (p : TreePath) : Prop := (t.subtreeAt p.toList).all isHead = true
-
-instance (t : Tree C W) (p : TreePath) : Decidable (IsHeadAt t p) :=
-  inferInstanceAs (Decidable (_ = true))
-
-/-- The nodes crossed going from `α` to `β`, those that dominate `α` and not `β`. -/
-def crossed (α β : TreePath) : List TreePath :=
-  (α.toList.inits.map TreePath.mk).filter fun p ↦ ¬ p ≤ β
-
-/-- **Locality (1).** A trigger at `β` may condition the head at `α` when no maximal projection
-is crossed going from `α` to `β`. -/
-def MayCondition (t : Tree C W) (α β : TreePath) : Prop :=
-  ∀ p ∈ crossed α β, IsHeadAt t p ∨ ¬ IsMaximalCategory (Tree.ProjectsAt t) (Tree.AdjoinsAt t) p
-
-/-- **Locality (1′).** A trigger at `β` may condition the head at `α` when no phrasal node at all
-is crossed going from `α` to `β`. -/
-def MayCondition' (t : Tree C W) (α β : TreePath) : Prop := ∀ p ∈ crossed α β, IsHeadAt t p
-
-instance (t : Tree C W) (α β : TreePath) : Decidable (MayCondition t α β) :=
-  List.decidableBAll _ _
-
-instance (t : Tree C W) (α β : TreePath) : Decidable (MayCondition' t α β) :=
-  List.decidableBAll _ _
-
-/-- The refined condition is the stricter one. -/
-theorem MayCondition'.mayCondition {t : Tree C W} {α β : TreePath} (h : MayCondition' t α β) :
-    MayCondition t α β :=
-  fun p hp ↦ .inl (h p hp)
-
-end Locality
 
 /-! ### The configurations of the chapter -/
 

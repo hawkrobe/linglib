@@ -555,6 +555,13 @@ theorem subtreeAt_replaceAt_of_prefix {t new : RoseTree α} {p q : List ℕ} (hq
     obtain ⟨a, cs⟩ := t
     cases hc : cs[j]? <;> simp [replaceAt_cons, hc, ih h]
 
+/-- At an address below the replaced one, the subtree is that of the replacement. -/
+theorem subtreeAt_replaceAt_append {t new : RoseTree α} {p : List ℕ} (hp : (t.subtreeAt p).isSome)
+    (q : List ℕ) : (t.replaceAt p new).subtreeAt (p ++ q) = new.subtreeAt q := by
+  rw [subtreeAt_append, subtreeAt_replaceAt_of_prefix (List.prefix_refl p)]
+  obtain ⟨s, hs⟩ := Option.isSome_iff_exists.mp hp
+  simp [hs]
+
 /-- Replacing a subtree by a strictly smaller one shrinks the tree. -/
 theorem numNodes_replaceAt_lt {t s : RoseTree α} {p : List ℕ} (h : subtreeAt t p = some s)
     {new : RoseTree α} (hlt : new.numNodes < s.numNodes) :

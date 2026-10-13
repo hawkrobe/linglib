@@ -30,8 +30,8 @@ aP.
 ## Implementation notes
 
 * The locality condition (25) is the one the chapter quotes from the manuscript of Bobaljik and
-  Harley's chapter, `BobaljikHarley2017.MayCondition'`, and the trees are over that file's
-  categories. In (27c) the lower F is the complex head of F and the Root.
+  Harley's chapter, `DistributedMorphology.MayCondition'`, and the trees are over the categories
+  of `BobaljikHarley2017`. In (27c) the lower F is the complex head of F and the Root.
 * That Direct Merge and complement Merge build one complex head is
   `Embick2004.headDaughter?_moveRoot`.
 * A view's licensing of a resultative aP is read off how it attaches a Root of each class: a v
@@ -57,6 +57,7 @@ formalized.
 namespace AlexiadouLohndal2017
 
 open PhraseStructure BobaljikHarley2017
+open DistributedMorphology (MayCondition MayCondition')
 
 /-! ### Hiaki suppletion without Root complements -/
 
