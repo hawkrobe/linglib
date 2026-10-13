@@ -18,7 +18,8 @@ in the relation (`SetRel.core_subset_core_left`) and sends unions to intersectio
 ## Main definitions
 
 * `SetRel.ofSuccessors`: a set-valued function `α → Set β` as a relation, whose core at `a` is
-  inclusion of `f a` (`SetRel.mem_core_ofSuccessors`).
+  inclusion of `f a` (`SetRel.mem_core_ofSuccessors`) and whose image is the union of the values
+  (`SetRel.image_ofSuccessors`).
 * `SetRel.transGen`: the transitive closure of `R : SetRel α α`, `Relation.TransGen` of its
   pointwise relation.
 -/
@@ -47,6 +48,8 @@ theorem core_iUnion {ι : Sort*} (R : ι → SetRel α β) (t : Set β) :
 theorem core_subset_core_left (h : R₁ ⊆ R₂) : R₂.core t ⊆ R₁.core t :=
   fun _ ha _ hb ↦ ha (h hb)
 
+instance isRefl_id : (SetRel.id : SetRel α α).IsRefl := ⟨fun _ ↦ rfl⟩
+
 /-! ### Decidability over finite codomains -/
 
 instance [Fintype β] (R : SetRel α β) (t : Set β) (a : α) [∀ b, Decidable (a ~[R] b)]
@@ -59,7 +62,7 @@ instance [Fintype β] (R : SetRel α β) (t : Set β) (a : α) [∀ b, Decidable
 
 /-! ### Relations from set-valued functions -/
 
-/-- The relation relating `a` to every member of `f a`: a set-valued function as a relation. -/
+/-- A set-valued function as a relation, relating `a` to every member of `f a`. -/
 def ofSuccessors (f : α → Set β) : SetRel α β := {p | p.2 ∈ f p.1}
 
 variable {f : α → Set β} {y : β}
@@ -67,6 +70,10 @@ variable {f : α → Set β} {y : β}
 @[simp] theorem mem_ofSuccessors : a ~[ofSuccessors f] y ↔ y ∈ f a := .rfl
 
 theorem mem_core_ofSuccessors : a ∈ (ofSuccessors f).core t ↔ f a ⊆ t := .rfl
+
+theorem image_ofSuccessors (f : α → Set β) (s : Set α) :
+    (ofSuccessors f).image s = ⋃ a ∈ s, f a := by
+  ext; simp [image]
 
 theorem mem_preimage_ofSuccessors : a ∈ (ofSuccessors f).preimage t ↔ (f a ∩ t).Nonempty :=
   ⟨fun ⟨b, ht, hb⟩ ↦ ⟨b, hb, ht⟩, fun ⟨b, hb, ht⟩ ↦ ⟨b, ht, hb⟩⟩

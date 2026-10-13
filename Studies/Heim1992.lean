@@ -17,7 +17,7 @@ admit its complement's presupposition, which a belief report need not. The desir
 the Hintikka-style rule (27) with the comparative semantics (31) on similarity, the library's
 `Desire.Conditional.Want`, with the amendment (40) blocking `want p ∧ want ¬p`.
 
-## Main results
+## Main statements
 
 * `admits_believes_iff`, `believes_ofPartialProp`: on atomic complements the belief rule is
   Karttunen's admittance in the holder's beliefs, and the update with a partial proposition.
@@ -30,9 +30,9 @@ the Hintikka-style rule (27) with the comparative semantics (31) on similarity, 
 
 ## Implementation notes
 
-* The three-world model of Section 4.1 for Stalnaker's get-well and have-been-sick contrast
-  ([stalnaker-1984]) needs a non-trivial similarity ordering and is not formalized; the
-  four-world model here uses the trivial ordering.
+* The three-world model of Section 4.1 for Stalnaker's get-well and have-been-sick contrast needs
+  a non-trivial similarity ordering and is not formalized; the four-world model here uses the
+  trivial ordering.
 
 ## References
 
@@ -70,10 +70,12 @@ theorem admits_believes_ofPartialProp :
   Iff.rfl
 
 /-- On atomic complements, Karttunen's rule (3) makes definedness on each `Dox_a(w)` admittance
-in their union, the beliefs attributed to `a` in `c`. -/
+in their union, the image of `c` under the doxastic accessibility, which is what `a` is taken to
+believe in `c`. -/
 theorem admits_believes_iff :
-    (believes Dox a (ofPartialProp p)).Admits c ↔ p.Admits (beliefContext (Dox a) c) :=
-  beliefContext_subset_iff.symm
+    (believes Dox a (ofPartialProp p)).Admits c ↔
+      p.Admits ((SetRel.ofSuccessors (Dox a)).image c) :=
+  (PartialProp.admits_image_iff (p := p) (R := .ofSuccessors (Dox a))).symm
 
 /-- On atomic complements (18) is static, as in the calculation (24), since `a believes φ` is the
 update with the partial proposition that presupposes that `a` believes `φ`'s presupposition and
