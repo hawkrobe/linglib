@@ -35,9 +35,11 @@ applied to Paraguayan Guaraní and English find contents in all four.
 * Acceptability is taken as given, as the contexts in which consultants accept a sentence. The
   context is the utterance context before any accommodation, so the argument against local
   satisfaction leaves the reply by accommodation open, as the paper notes.
-* A content with the constraint projects when the constraint holds in every member of the family
-  of sentences. Projection of the other contents is diagnosed by implication judgments, which
-  are not modelled; the rows of (1) record such judgments.
+* A member of the family of sentences is acceptable only where its clause is acceptable in its
+  local context, the image of the context under a reflexive relation, so a constraint on that
+  context projects (`StrongContextualFelicity.of_image`). Projection of the other contents is
+  diagnosed by implication judgments, which are not modelled; the rows of (1) record such
+  judgments.
 * A stance to the negation of a content requires a consistent state, since the diagnostics need
   a belief predicate that enforces consistency.
 
@@ -95,10 +97,35 @@ that entail `m`, (11). -/
 def StrongContextualFelicity (m : Set W) (Acc : Set W → Prop) : Prop := ∀ c, Acc c → c ⊆ m
 
 /-- A belief report with the trigger in its complement, acceptable in the contexts `Acc`, is
-acceptable only where the local context of the complement, the holder's epistemic state, entails
-`m`, (40). -/
-def ObligatoryLocalEffect (Dox : W → Set W) (m : Set W) (Acc : Set W → Prop) : Prop :=
-  ∀ c, Acc c → beliefContext Dox c ⊆ m
+acceptable only where the local context of the complement entails `m`, (40). The local context is
+the image of the context under the holder's doxastic accessibility `R`. -/
+def ObligatoryLocalEffect (R : SetRel W W) (m : Set W) (Acc : Set W → Prop) : Prop :=
+  ∀ c, Acc c → R.image c ⊆ m
+
+section
+
+variable {R : SetRel W W} {m : Set W} {Acc Acc' : Set W → Prop}
+
+/-- Obligatory local effect is strong contextual felicity of the holder's belief in the
+content. -/
+theorem obligatoryLocalEffect_iff :
+    ObligatoryLocalEffect R m Acc ↔ StrongContextualFelicity (R.core m) Acc :=
+  forall₂_congr fun _ _ ↦ SetRel.image_subset_iff
+
+/-- A constraint on the local context of an embedded sentence is a constraint on the context of
+the embedding one when the embedding is along a reflexive relation, as in the family of
+sentences. The constraint then projects, (24). -/
+theorem StrongContextualFelicity.of_image [R.IsRefl] (h : StrongContextualFelicity m Acc)
+    (hloc : ∀ c, Acc' c → Acc (R.image c)) : StrongContextualFelicity m Acc' :=
+  fun c hc ↦ (SetRel.self_subset_image c).trans (h _ (hloc c hc))
+
+/-- A constraint that must be met in the local context of a belief report gives the content
+obligatory local effect, (41). -/
+theorem StrongContextualFelicity.obligatoryLocalEffect (h : StrongContextualFelicity m Acc)
+    (hloc : ∀ c, Acc' c → Acc (R.image c)) : ObligatoryLocalEffect R m Acc' :=
+  fun c hc ↦ h _ (hloc c hc)
+
+end
 
 /-! ### The four classes -/
 
@@ -141,19 +168,23 @@ inductive Test
   deriving DecidableEq, Repr
 
 /-- An instance of the test is acceptable, where `Acc e` holds of the contexts in which the
-family member `e` is acceptable and `AccB` of those in which the belief report is. -/
-def Test.Accepted (m : Set W) (Dox : W → Set W) (Acc : Environment → Set W → Prop)
+family member `e` is acceptable, `AccB` of those in which the belief report is, and `R` is the
+holder's doxastic accessibility, so that `R.image {w}` is the holder's epistemic state at `w`. -/
+def Test.Accepted (m : Set W) (R : SetRel W W) (Acc : Environment → Set W → Prop)
     (AccB : Set W → Prop) : Test → Prop
   | matrix e s => ∃ c, s.Holds c m ∧ Acc e c
-  | belief s => ∃ c, ∃ w ∈ c, s.Holds (Dox w) m ∧ AccB c
+  | belief s => ∃ c, ∃ w ∈ c, s.Holds (R.image {w}) m ∧ AccB c
 
 /-- A class excludes a test when no content with the properties of the class has an acceptable
-instance of it. A content with the constraint is projective, so the constraint holds in every
-member of the family of sentences, (24). -/
+instance of it. A member of the family of sentences is acceptable only where its clause, whose
+acceptability is `Acc₀`, is acceptable in its local context, the image of the context under the
+member's relation. The modal's accessibility `M` is reflexive, what is the case being possible. -/
 def Excludes (k : ProjectiveClass) (t : Test) : Prop :=
-  ∀ (W : Type) (m : Set W) (Dox : W → Set W) (Acc : Environment → Set W → Prop)
-    (AccB : Set W → Prop), (k.StrongContextualFelicity → ∀ e, StrongContextualFelicity m (Acc e)) →
-    (k.ObligatoryLocalEffect → ObligatoryLocalEffect Dox m AccB) → ¬ t.Accepted m Dox Acc AccB
+  ∀ (W : Type) (m : Set W) (M R : SetRel W W) [M.IsRefl] (Acc₀ : Set W → Prop)
+    (Acc : Environment → Set W → Prop) (AccB : Set W → Prop),
+    (∀ e c, Acc e c → Acc₀ ((e.rel M).image c)) →
+    (k.StrongContextualFelicity → StrongContextualFelicity m Acc₀) →
+    (k.ObligatoryLocalEffect → ObligatoryLocalEffect R m AccB) → ¬ t.Accepted m R Acc AccB
 
 variable {k : ProjectiveClass} {e : Environment} {s : Stance}
 
@@ -161,12 +192,14 @@ variable {k : ProjectiveClass} {e : Environment} {s : Stance}
 and the context does not entail the content, (12). -/
 theorem excludes_matrix_iff :
     Excludes k (.matrix e s) ↔ k.StrongContextualFelicity ∧ s ≠ .positive := by
-  refine ⟨fun h ↦ ?_, fun ⟨hk, hs⟩ W m Dox Acc AccB hA _ ⟨c, hc, hacc⟩ ↦
-    hc.not_subset hs (hA hk e c hacc)⟩
+  refine ⟨fun h ↦ ?_, fun ⟨hk, hs⟩ W m M R _ Acc₀ Acc AccB hloc hA _ ⟨c, hc, hacc⟩ ↦
+    hc.not_subset hs ((hA hk).of_image (hloc e) c hacc)⟩
   by_contra hks
   obtain ⟨c, m, hc⟩ := s.exists_holds
-  refine h Bool m (fun _ ↦ ∅) (fun _ c' ↦ k.StrongContextualFelicity → c' ⊆ m) (fun _ ↦ False)
-    (fun hk _ _ h ↦ h hk) (fun _ _ h ↦ h.elim) ⟨c, hc, fun hk ↦ ?_⟩
+  refine h Bool m .id .id (fun c' ↦ k.StrongContextualFelicity → c' ⊆ m)
+    (fun _ c' ↦ k.StrongContextualFelicity → c' ⊆ m) (fun _ ↦ False)
+    (fun e c' h hk ↦ by simpa using h hk) (fun hk _ h ↦ h hk) (fun _ _ h ↦ h.elim)
+    ⟨c, hc, fun hk ↦ ?_⟩
   obtain rfl : s = .positive := by_contra fun hs ↦ hks ⟨hk, hs⟩
   exact hc
 
@@ -174,15 +207,16 @@ theorem excludes_matrix_iff :
 the holder's epistemic state does not entail the content, (41). -/
 theorem excludes_belief_iff :
     Excludes k (.belief s) ↔ k.ObligatoryLocalEffect ∧ s ≠ .positive := by
-  refine ⟨fun h ↦ ?_, fun ⟨hk, hs⟩ W m Dox Acc AccB _ hB ⟨c, w, hw, hd, hacc⟩ ↦
-    hd.not_subset hs (beliefContext_subset_iff.1 (hB hk c hacc) hw)⟩
+  refine ⟨fun h ↦ ?_, fun ⟨hk, hs⟩ W m M R _ Acc₀ Acc AccB _ _ hB ⟨c, w, hw, hd, hacc⟩ ↦
+    hd.not_subset hs <| (SetRel.image_mono (Set.singleton_subset_iff.2 hw)).trans (hB hk c hacc)⟩
   by_contra hks
   obtain ⟨d, m, hd⟩ := s.exists_holds
-  refine h Bool m (fun _ ↦ d) (fun _ _ ↦ False)
-    (fun c ↦ k.ObligatoryLocalEffect → beliefContext (fun _ ↦ d) c ⊆ m)
-    (fun _ _ _ h ↦ h.elim) (fun hk _ h ↦ h hk) ⟨.univ, true, trivial, hd, fun hk ↦ ?_⟩
+  refine h Bool m .id (.ofSuccessors fun _ ↦ d) (fun _ ↦ False) (fun _ _ ↦ False)
+    (fun c ↦ k.ObligatoryLocalEffect → (SetRel.ofSuccessors fun _ ↦ d).image c ⊆ m)
+    (fun _ _ h ↦ h.elim) (fun _ _ h ↦ h.elim) (fun hk _ h ↦ h hk)
+    ⟨.univ, true, trivial, by simpa [SetRel.image_ofSuccessors] using hd, fun hk ↦ ?_⟩
   obtain rfl : s = .positive := by_contra fun hs ↦ hks ⟨hk, hs⟩
-  exact beliefContext_subset_iff.2 fun _ _ ↦ hd
+  exact fun v ⟨_, _, hv⟩ ↦ hd hv
 
 instance (k : ProjectiveClass) : DecidablePred (Excludes k)
   | .matrix _ _ => decidable_of_iff' _ excludes_matrix_iff
@@ -201,12 +235,13 @@ theorem eq_of_excludes_iff {k' : ProjectiveClass} (hs : s ≠ .positive)
 /-- If a sentence is acceptable exactly where its local context entails its presupposition, as
 for Karttunen, Heim and Schlenker, the presupposition has the two properties of class A, so no
 instance of a test that class A excludes is acceptable. The local context of a family member is
-the utterance context, and that of the complement of a belief report is the holder's epistemic
-state. -/
+the image of the utterance context under the member's relation, and that of the complement of a
+belief report its image under the holder's doxastic accessibility. -/
 theorem Excludes.not_accepted_admits {W : Type} {t : Test} (h : Excludes .A t) (p : PartialProp W)
-    (Dox : W → Set W) :
-    ¬ t.Accepted p.presup Dox (fun _ ↦ p.Admits) (fun c ↦ p.Admits (beliefContext Dox c)) :=
-  h W _ _ _ _ (fun _ _ _ h ↦ h) (fun _ _ h ↦ h)
+    (M R : SetRel W W) [M.IsRefl] :
+    ¬ t.Accepted p.presup R (fun e c ↦ p.Admits ((e.rel M).image c))
+      (fun c ↦ p.Admits (R.image c)) :=
+  h W _ M R p.Admits _ _ (fun _ _ h ↦ h) (fun _ _ h ↦ h) (fun _ _ h ↦ h)
 
 /-! ### The rows -/
 

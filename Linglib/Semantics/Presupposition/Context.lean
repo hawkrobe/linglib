@@ -1,43 +1,39 @@
 module
 
 public import Linglib.Semantics.Presupposition.Basic
+public import Linglib.Core.Relation.SetRel
 public import Linglib.Discourse.CommonGround
 
 /-!
 # Presuppositions in context
 
-A context set (`Set W`) admits a sentence with a presupposition (`PartialProp W`) when it
-entails the presupposition, [heim-1983]'s "c admits φ" and [karttunen-1974-presupposition]'s
-"c satisfies the presuppositions of φ", in the tradition of [stalnaker-1974]; otherwise the
-presupposition projects. An embedded presupposition is checked in its local context:
-[karttunen-1974-presupposition] gives the second argument of a conjunction or a conditional the
-context updated with the first argument's content, the second disjunct the context updated with
-its negation, and the first argument, or the argument of negation, the context itself.
-`Connective.localContext` is that table. Theories of projection agree on it and differ in why it
-holds, so each proves it of its own mechanism: Karttunen's filtering connectives are admittance
-in it (`PartialProp.admits_andFilter` and its siblings), Heim's context change potentials
-evaluate their second argument in it (`Semantics/Dynamic/Partial.lean`), and [schlenker-2009]
-derives it from transparency. The theories part at disjunction, where the table is asymmetric
-and symmetric filtering is `PartialProp.orKPSymmetric`.
+A context set admits a sentence with a presupposition when it entails the presupposition, in the
+tradition of Stalnaker, Karttunen and Heim. An embedded clause is checked in its local context,
+the image of the context under the relation that takes each world to the worlds at which the
+clause is evaluated. The local context entails a proposition iff the context entails its core
+along the relation, so a sentence inherits the core of an embedded clause's presupposition
+(`PartialProp.admits_image_iff`), which entails that presupposition when the relation is
+reflexive (`SetRel.core_subset_self`).
 
-[karttunen-1974-presupposition] extends the table to complement-taking verbs. A verb transparent
-to the presuppositions of its complement, such as a factive, a modal, an aspectual verb or
-negation, gives the complement the context itself; an attitude verb gives it the beliefs
-attributed to its subject in the context, which [heim-1992] construes as the worlds compatible
-with the subject's beliefs at some world of the context (`beliefContext`). The belief context is
-left adjoint to belief (`beliefContext_subset_iff`): it admits a presupposition iff the context
-entails that the subject believes it, so an attitude report presupposes that its subject believes
-what its complement presupposes.
+Karttunen's table of local contexts gives the relations of the connectives. A first argument and
+the argument of negation are evaluated along the identity. In the second argument of a
+conjunction or a conditional a world sees itself where the first argument holds, and in a second
+disjunct where it fails (`Connective.rel`). The complement of an attitude verb is evaluated along
+the subject's doxastic accessibility, so its local context is the beliefs attributed to the
+subject in the context, and the report presupposes that the subject believes what the complement
+presupposes. Theories of projection agree on the table and differ in why it holds. They part at
+disjunction, where the table is asymmetric and symmetric filtering is
+`PartialProp.orKPSymmetric`.
 
 ## Main declarations
 
-* `PartialProp.Admits` — the context entails the presupposition.
-* `Connective`, `Connective.localContext` — the local context of a connective's second argument.
-* `PartialProp.admits_andFilter`, `PartialProp.admits_impFilter`,
-  `PartialProp.admits_orFilter` — the filtering connectives are admittance in the local
-  contexts.
-* `beliefContext`, `beliefContext_subset_iff` — the local context of an attitude verb's
-  complement, left adjoint to belief.
+* `PartialProp.Admits`: the context entails the presupposition.
+* `PartialProp.admits_image_iff`: a local context admits a sentence iff the context entails the
+  core of its presupposition.
+* `Connective.localContext`, `Connective.rel`: the local context of the second argument of a
+  connective, and the relation whose image it is (`Connective.localContext_eq_image`).
+* `PartialProp.admits_andFilter`, `PartialProp.admits_impFilter`, `PartialProp.admits_orFilter`:
+  the filtering connectives are admittance in the local contexts.
 
 ## References
 
@@ -60,6 +56,12 @@ variable {W : Type*}
 presupposition projects. -/
 abbrev PartialProp.Admits (p : PartialProp W) (c : Set W) : Prop := c ⊆ p.presup
 
+/-- The local context along `R` admits `p` iff the context entails the core of `p`'s
+presupposition along `R`. -/
+theorem PartialProp.admits_image_iff {p : PartialProp W} {R : SetRel W W} {C : Set W} :
+    p.Admits (R.image C) ↔ C ⊆ R.core p.presup :=
+  SetRel.image_subset_iff
+
 /-- The binary connectives of [karttunen-1974-presupposition]'s table of local contexts. -/
 inductive Connective
   | conj
@@ -68,30 +70,24 @@ inductive Connective
   deriving DecidableEq, Fintype
 
 /-- The local context of a connective's second argument in the context `C`, where `A` is the
-first argument's content: `C` updated with `A` for a conjunction or a conditional, and with its
-negation for a disjunction. -/
+first argument's content. It is `C` updated with `A` for a conjunction or a conditional, and with
+the negation of `A` for a disjunction. -/
 def Connective.localContext (C A : Set W) : Connective → Set W
   | conj => C ∩ A
   | cond => C ∩ A
   | disj => C ∩ Aᶜ
 
-/-- The local context of an attitude verb's complement in the context `C`: the beliefs that
-[karttunen-1974-presupposition] attributes to the subject in `C`, as the worlds compatible with
-the subject's beliefs `Dox w` at some world `w` of `C` ([heim-1992]). -/
-def beliefContext (Dox : W → Set W) (C : Set W) : Set W := ⋃ w ∈ C, Dox w
+/-- The relation along which the second argument of a connective is evaluated, where `A` is the
+first argument's content. A world sees itself when it is in the local context of the trivial
+context, so where `A` holds for a conjunction or a conditional and where it fails for a
+disjunction. -/
+def Connective.rel (A : Set W) (c : Connective) : SetRel W W := .ofSet (c.localContext Set.univ A)
 
-section beliefContext
-
-variable {Dox : W → Set W} {C S : Set W}
-
-@[simp] theorem mem_beliefContext {v : W} : v ∈ beliefContext Dox C ↔ ∃ w ∈ C, v ∈ Dox w := by
-  simp [beliefContext]
-
-/-- The belief context entails `S` iff the context entails that the subject believes `S`. -/
-theorem beliefContext_subset_iff : beliefContext Dox C ⊆ S ↔ C ⊆ {w | Dox w ⊆ S} :=
-  Set.iUnion₂_subset_iff
-
-end beliefContext
+/-- The local context of a connective's second argument is the image of the context under the
+connective's relation. -/
+theorem Connective.localContext_eq_image (c : Connective) (C A : Set W) :
+    c.localContext C A = (c.rel A).image C := by
+  cases c <;> simp [Connective.localContext, Connective.rel]
 
 namespace PartialProp
 
