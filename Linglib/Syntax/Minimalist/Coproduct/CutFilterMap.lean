@@ -41,7 +41,7 @@ mutual
 private theorem cutSummandsCP_map_inl (τ : RoseTree (α ⊕ β) → β) :
     ∀ t : RoseTree α,
       (cutSummandsCP τ (t.map Sum.inl)).map (Prod.map id (filterMap Sum.getLeft?)) =
-        (cutSummandsP t).map (Prod.map (Multiset.map (map Sum.inl)) some)
+        (cutSummandsG pruning t).map (Prod.map (Multiset.map (map Sum.inl)) some)
   | .node a cs => by
     have h := congrArg (Multiset.map fun q : Multiset (RoseTree (α ⊕ β)) × List (RoseTree α) ↦
       (q.1, some (node a q.2))) (cutListSummandsG_map_inl τ cs)
@@ -51,22 +51,21 @@ private theorem cutListSummandsG_map_inl (τ : RoseTree (α ⊕ β) → β) :
     ∀ cs : List (RoseTree α),
       (cutListSummandsG (extractC τ) (cs.map (map Sum.inl))).map
           (Prod.map id (List.filterMap (filterMap Sum.getLeft?))) =
-        (cutListSummandsP cs).map (Prod.map (Multiset.map (map Sum.inl)) id)
+        (cutListSummandsG pruning cs).map (Prod.map (Multiset.map (map Sum.inl)) id)
   | [] => by simp
   | c :: cs => by
-    rw [List.map_cons, cutListSummandsG_cons, cutListSummandsP_cons',
+    rw [List.map_cons, cutListSummandsG_cons, cutListSummandsG_cons,
       Multiset.map_map_product_distrib (f' := fun p ↦ (p.1.1 + p.2.1, p.1.2 ++ p.2.2))
         (g₁ := Prod.map id (List.filterMap (filterMap Sum.getLeft?)))
         (g₂ := Prod.map id (List.filterMap (filterMap Sum.getLeft?))) (by simp),
       augActionG_map_inl τ c, cutListSummandsG_map_inl τ cs]
-    exact (Multiset.map_map_product_distrib
-      (by rintro ⟨F, _ | r⟩ ⟨G, l⟩ <;> simp [combineP_fn]) _ _).symm
+    exact (Multiset.map_map_product_distrib (by simp) _ _).symm
 
 private theorem augActionG_map_inl (τ : RoseTree (α ⊕ β) → β) :
     ∀ c : RoseTree α,
       (augActionG (extractC τ) (c.map Sum.inl)).map
           (Prod.map id (List.filterMap (filterMap Sum.getLeft?))) =
-        (augActionP c).map (Prod.map (Multiset.map (map Sum.inl)) Option.toList)
+        (augActionG pruning c).map (Prod.map (Multiset.map (map Sum.inl)) id)
   | c => by
     have hc : extractC τ (c.map Sum.inl) = some [traceLeaf (τ (c.map Sum.inl))] := by
       cases c; rfl
@@ -75,7 +74,8 @@ private theorem augActionG_map_inl (τ : RoseTree (α ⊕ β) → β) :
     have hL (x : RoseTree (α ⊕ β)) :
         [x].filterMap (filterMap Sum.getLeft?) = (filterMap Sum.getLeft? x).toList := by
       cases hx : filterMap Sum.getLeft? x <;> simp [hx]
-    rw [augActionG_eq_some _ _ _ hc, augActionP_eq, Multiset.map_cons, Multiset.map_cons]
+    rw [augActionG_eq_some _ _ _ hc, augActionG_eq_some pruning c [] rfl, Multiset.map_cons,
+      Multiset.map_cons]
     congr 1
     simpa [Multiset.map_map, Function.comp_def, cutSummandsCP, hL] using h
 

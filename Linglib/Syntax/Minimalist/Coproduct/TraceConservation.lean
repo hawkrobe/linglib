@@ -429,7 +429,7 @@ theorem cutSummandsCN_numNodes (τ : UnorderedTree (α ⊕ β) → β)
   rw [UnorderedTree.numNodes_mk, UnorderedTree.numNodes_mk, Multiset.card_map, Multiset.map_map,
       show q.1.map (UnorderedTree.numNodes ∘ UnorderedTree.mk) = q.1.map RoseTree.numNodes from
         Multiset.map_congr rfl (fun x _ => UnorderedTree.numNodes_mk x)]
-  exact hcons
+  rwa [one_mul] at hcons
 
 /-- The number of contractions in a Δ^c cut summand is its number of extracted crown
     components. -/

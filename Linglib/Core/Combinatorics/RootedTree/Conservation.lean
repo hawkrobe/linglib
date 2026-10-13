@@ -9,10 +9,6 @@ public import Linglib.Core.Combinatorics.RootedTree.ContractUnary
 public import Linglib.Core.Combinatorics.RootedTree.Cut
 public import Mathlib.Algebra.Order.BigOperators.Group.Multiset
 
-@[expose] public section
-
-open RoseTree UnorderedTree
-
 /-!
 # Vertex conservation for pruning cuts
 
@@ -35,105 +31,25 @@ founded.
 * [connes-kreimer-1998]
 -/
 
+@[expose] public section
+
+open RoseTree UnorderedTree
+
 namespace ConnesKreimer
 
 variable {α : Type*}
 
-/-! ### Vertex conservation for the pruning cuts
+/-! ### Vertex conservation for the pruning cuts -/
 
-The pruning enumeration `cutSummandsP` removes the cut subtrees entirely, leaving nothing in their
-place, so vertices are conserved exactly. Contracting the unary vertices of the remainder with
-`contractUnary` drops one vertex per contracted vertex. -/
-
-/-- The vertex count contributed by an `Option`-valued deletion remainder. -/
-def optNumNodes (o : Option (RoseTree α)) : ℕ := o.elim 0 RoseTree.numNodes
-
-@[simp] private theorem optNumNodes_none : optNumNodes (none : Option (RoseTree α)) = 0 := rfl
-@[simp] private theorem optNumNodes_some (t : RoseTree α) : optNumNodes (some t) = t.numNodes := rfl
-
-mutual
-
-/-- Crown vertices plus trunk vertices of a pruning cut recover the tree's vertices exactly. -/
-theorem cutSummandsP_numNodes :
-    ∀ (t : RoseTree α), ∀ p ∈ cutSummandsP t,
-      (Multiset.map RoseTree.numNodes p.1).sum + RoseTree.numNodes p.2 = RoseTree.numNodes t
-  | .node a cs => by
-    intro p hp
-    rw [cutSummandsP_node] at hp
-    obtain ⟨q, hq, rfl⟩ := Multiset.mem_map.mp hp
-    have h := cutListSummandsP_numNodes cs q hq
-    simp only [RoseTree.numNodes_node]
-    omega
-
-/-- Vertex conservation for the deletion cuts of a list of children. -/
-theorem cutListSummandsP_numNodes :
-    ∀ (cs : List (RoseTree α)), ∀ q ∈ cutListSummandsP cs,
-      (Multiset.map RoseTree.numNodes q.1).sum + (q.2.map RoseTree.numNodes).sum
-        = (cs.map RoseTree.numNodes).sum
-  | [] => by
-    intro q hq
-    rw [cutListSummandsP_nil] at hq
-    obtain rfl := Multiset.mem_singleton.mp hq
-    rfl
-  | t :: ts => by
-    intro q hq
-    rw [cutListSummandsP_cons] at hq
-    obtain ⟨pr, hpr, rfl⟩ := Multiset.mem_map.mp hq
-    obtain ⟨ha, hq'⟩ := Multiset.mem_product.mp hpr
-    have h1 := augActionP_numNodes t pr.1 ha
-    have h2 := cutListSummandsP_numNodes ts pr.2 hq'
-    cases hm : pr.1.2 with
-    | none =>
-      simp only [hm, optNumNodes_none] at h1
-      show (Multiset.map RoseTree.numNodes (pr.1.1 + pr.2.1)).sum
-          + (pr.2.2.map RoseTree.numNodes).sum
-        = ((t :: ts).map RoseTree.numNodes).sum
-      simp only [Multiset.map_add, Multiset.sum_add, List.map_cons, List.sum_cons]
-      omega
-    | some r =>
-      simp only [hm, optNumNodes_some] at h1
-      show (Multiset.map RoseTree.numNodes (pr.1.1 + pr.2.1)).sum
-          + ((r :: pr.2.2).map RoseTree.numNodes).sum
-        = ((t :: ts).map RoseTree.numNodes).sum
-      simp only [Multiset.map_add, Multiset.sum_add, List.map_cons, List.sum_cons]
-      omega
-
-/-- Vertex conservation for the per-child deletion actions. -/
-theorem augActionP_numNodes :
-    ∀ (t : RoseTree α), ∀ a ∈ augActionP t,
-      (Multiset.map RoseTree.numNodes a.1).sum + optNumNodes a.2 = RoseTree.numNodes t
-  | t => by
-    intro a ha
-    rw [augActionP_eq] at ha
-    rcases Multiset.mem_cons.mp ha with h | h
-    · obtain rfl := h
-      show (Multiset.map RoseTree.numNodes {t}).sum + optNumNodes (none : Option (RoseTree α))
-        = RoseTree.numNodes t
-      rw [Multiset.map_singleton, Multiset.sum_singleton, optNumNodes_none]
-      omega
-    · obtain ⟨p, hp, rfl⟩ := Multiset.mem_map.mp h
-      show (Multiset.map RoseTree.numNodes p.1).sum + optNumNodes (some p.2) = RoseTree.numNodes t
-      rw [optNumNodes_some]
-      exact cutSummandsP_numNodes t p hp
-
-end
-
-/-- Vertex conservation for the nonplanar deletion cuts. -/
+/-- The crown and the trunk of a pruning cut have exactly the vertices of the tree. -/
 theorem cutSummandsN_numNodes (T : UnorderedTree α) :
     ∀ p ∈ cutSummandsN T,
-      (p.1.map UnorderedTree.numNodes).sum + p.2.numNodes = T.numNodes := by
-  obtain ⟨T₀, rfl⟩ : ∃ T₀ : RoseTree α, T = UnorderedTree.mk T₀ :=
-    ⟨T.out, (Quotient.out_eq T).symm⟩
-  intro p hp
-  rw [cutSummandsN_mk] at hp
-  obtain ⟨q, hq, rfl⟩ := Multiset.mem_map.mp hp
-  have hcons := cutSummandsP_numNodes T₀ q hq
-  show ((q.1.map UnorderedTree.mk).map UnorderedTree.numNodes).sum + (UnorderedTree.mk q.2).numNodes
-    = (UnorderedTree.mk T₀).numNodes
-  rw [UnorderedTree.numNodes_mk, UnorderedTree.numNodes_mk, Multiset.map_map,
-      show q.1.map (UnorderedTree.numNodes ∘ UnorderedTree.mk) = q.1.map RoseTree.numNodes from
-        Multiset.map_congr rfl (fun x _ => UnorderedTree.numNodes_mk x)]
-  exact hcons
+      (p.1.map UnorderedTree.numNodes).sum + p.2.numNodes = T.numNodes :=
+  Quotient.inductionOn T fun t p hp ↦ by
+    rw [UnorderedTree.quot_mk_eq_mk, cutSummandsN_mk] at hp
+    obtain ⟨q, hq, rfl⟩ := Multiset.mem_map.mp hp
+    simpa [projSummand, Multiset.map_map, Function.comp_def] using
+      cutSummandsG_numNodes pruning (k := 0) (fun _ _ h ↦ by cases h; rfl) t q hq
 
 /-- No deletion cut extracts the whole tree as its crown; the full-tree extraction is the
     separate primitive term of the coproduct. -/

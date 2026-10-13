@@ -150,22 +150,14 @@ noncomputable def bPlusLin (a : α) :
   show ofTree (UnorderedTree.node a 0) = ofTree (UnorderedTree.leaf a)
   rfl
 
-/-! ### `comulForestN` as a sum over forest cuts
+/-! ### `comulForestN` as a sum over forest cuts -/
 
-Together with `cutSummandsN_node` (`Combinatorics/RootedTree/Cut.lean`),
-the expansion `comulForestN_eq_sum` drives the cocycle: cuts of a node
-decompose along the per-tree decisions of `cutForestSummandsN`, and
-`comulForestN` expands as the matching multiset sum. -/
-
-/-- The forest coproduct `comulForestN F` expands as a multiset sum of
-    `of' cf ⊗ of' rem` over `(cf, rem) ∈ cutForestSummandsN F`: the generic
-    `comulForestNG_eq_sum` at `cuts := cutSummandsN`, transported along
-    `cutForestSummandsN_eq_forestCutsG`. -/
+/-- The forest coproduct is the sum of `of' cf ⊗ of' rem` over the cuts `(cf, rem)` of the
+    forest. -/
 theorem comulForestN_eq_sum (F : Forest (UnorderedTree α)) :
-    comulForestN (R := R) F = ((cutForestSummandsN F).map
-      (fun pf => of' (R := R) pf.1 ⊗ₜ[R] of' (R := R) pf.2)).sum := by
-  rw [cutForestSummandsN_eq_forestCutsG]
-  exact comulForestNG_eq_sum cutSummandsN F
+    comulForestN (R := R) F = ((forestCutsG cutSummandsN F).map
+      (fun pf => of' (R := R) pf.1 ⊗ₜ[R] of' (R := R) pf.2)).sum :=
+  comulForestNG_eq_sum cutSummandsN F
 
 /-! ### The cocycle theorem (basis-level) -/
 
@@ -181,12 +173,7 @@ theorem comulTreeN_leaf (a : α) :
 /-- The **Hochschild 1-cocycle property of B+_a**, on basis elements:
     for every forest `F`, the coproduct of the grafted tree
     `UnorderedTree.node a F` decomposes as the explicit primitive term plus
-    the right-channel B+ application of `comulForestN F`. Proven via
-    the substrate `cutSummandsN_node` (cuts of a node decompose along
-    `cutForestSummandsN F`) and `comulForestN_eq_sum` (forest coproduct
-    expands as the matching multiset sum); the `LinearMap.lTensor`
-    distributes over the sum via `map_multiset_sum`, and the per-summand
-    check reduces to `LinearMap.lTensor_tmul` + `bPlusLin_of'`. -/
+    the right-channel B+ application of `comulForestN F`. -/
 theorem comulTreeN_node_cocycle (a : α) (F : Forest (UnorderedTree α)) :
     comulTreeN (R := R) (UnorderedTree.node a F) =
       ofTree (UnorderedTree.node a F) ⊗ₜ[R] (1 : ConnesKreimer R (UnorderedTree α)) +

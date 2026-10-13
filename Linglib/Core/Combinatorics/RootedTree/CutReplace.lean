@@ -5,26 +5,20 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Core.Combinatorics.RootedTree.Cut
+public import Linglib.Core.Combinatorics.RootedTree.Crown
 public import Linglib.Core.Data.Multiset.Bind
 public import Linglib.Core.Data.UnorderedTree.Replace
 public import Linglib.Core.Data.UnorderedTree.Subtree
 
-@[expose] public section
-
-open RoseTree UnorderedTree
-
 /-!
 # Single cuts as substitution
 
-The crown components of an admissible cut of `t` are proper subtrees of `t`. Under an extraction
-policy that replaces every copy of a subtree `M` by one tree of class `R`, the cuts of `t` with
-crown `{M}` match the occurrences of `M` below the root. When `M` occurs exactly once there, there
-is exactly one such cut, and its trunk is `t` with `M` replaced by `R`.
+Under an extraction policy that replaces every copy of a subtree `M` by one tree of class `R`,
+the cuts of `t` with crown `{M}` match the occurrences of `M` below the root. When `M` occurs
+exactly once there, there is exactly one such cut, and its trunk is `t` with `M` replaced by `R`.
 
 ## Main results
 
-* `ConnesKreimer.mk_mem_of_mem_crown_cutSummandsG`: crown components are proper subtrees.
 * `ConnesKreimer.map_trunk_filter_cutSummandsG`: the single cut extracting a subtree that occurs
   once, with trunk the substitution.
 
@@ -33,68 +27,13 @@ is exactly one such cut, and its trunk is `t` with `M` replaced by `R`.
 * [connes-kreimer-1998]
 -/
 
+@[expose] public section
+
+open RoseTree UnorderedTree
+
 namespace ConnesKreimer
 
 variable {γ : Type*}
-
-/-! ### Crown components are proper subtrees -/
-
-section Crown
-
-variable (E : RoseTree γ → Option (List (RoseTree γ)))
-
-mutual
-
-/-- Every crown component of a cut of `t` is a subtree of a child of `t`. -/
-theorem mk_mem_of_mem_crown_cutSummandsG :
-    ∀ (t : RoseTree γ), ∀ p ∈ cutSummandsG E t, ∀ x ∈ p.1,
-      UnorderedTree.mk x ∈ unorderedSubtreesList t.children
-  | .node a cs => by
-    intro p hp x hx
-    rw [cutSummandsG_node] at hp
-    obtain ⟨q, hq, rfl⟩ := Multiset.mem_map.mp hp
-    exact mk_mem_of_mem_crown_cutListSummandsG cs q hq x hx
-
-/-- Every crown component of a cut of a list of children is a subtree of one of them. -/
-theorem mk_mem_of_mem_crown_cutListSummandsG :
-    ∀ (cs : List (RoseTree γ)), ∀ q ∈ cutListSummandsG E cs, ∀ x ∈ q.1,
-      UnorderedTree.mk x ∈ unorderedSubtreesList cs
-  | [] => by
-    intro q hq x hx
-    rw [cutListSummandsG_nil] at hq
-    obtain rfl := Multiset.mem_singleton.mp hq
-    exact absurd hx (Multiset.notMem_zero x)
-  | t :: ts => by
-    intro q hq x hx
-    rw [cutListSummandsG_cons] at hq
-    obtain ⟨pr, hpr, rfl⟩ := Multiset.mem_map.mp hq
-    obtain ⟨ha, hq'⟩ := Multiset.mem_product.mp hpr
-    rw [unorderedSubtreesList, Multiset.mem_add]
-    rcases Multiset.mem_add.mp hx with h | h
-    · exact .inl (mk_mem_of_mem_crown_augActionG t pr.1 ha x h)
-    · exact .inr (mk_mem_of_mem_crown_cutListSummandsG ts pr.2 hq' x h)
-
-/-- Every crown component of a per-child action on `t` is a subtree of `t`. -/
-theorem mk_mem_of_mem_crown_augActionG :
-    ∀ (t : RoseTree γ), ∀ a ∈ augActionG E t, ∀ x ∈ a.1,
-      UnorderedTree.mk x ∈ unorderedSubtrees t
-  | .node b cs => by
-    intro a ha x hx
-    rw [augActionG_eq] at ha
-    rw [unorderedSubtrees, Multiset.mem_cons]
-    rcases Multiset.mem_add.mp ha with h | h
-    · cases hE : E (.node b cs) with
-      | none => rw [hE] at h; exact absurd h (Multiset.notMem_zero a)
-      | some r =>
-        rw [hE] at h
-        obtain rfl := Multiset.mem_singleton.mp h
-        exact .inl (by rw [Multiset.mem_singleton.mp hx])
-    · obtain ⟨p, hp, rfl⟩ := Multiset.mem_map.mp h
-      exact .inr (mk_mem_of_mem_crown_cutSummandsG (.node b cs) p hp x hx)
-
-end
-
-end Crown
 
 /-! ### Substitution of a subtree that does not occur -/
 
