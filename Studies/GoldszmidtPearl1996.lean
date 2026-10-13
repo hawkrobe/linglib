@@ -33,7 +33,9 @@ the flying rule (`zPlus_penguins_winged_iff`), and the Nixon diamond of Example 
 the relative strengths alone (`nixon_pacifist_iff`).
 
 Soft evidence for a proposition is read in two ways. A Type-J report fixes the final belief, and
-is Spohn's conditionalization `RankingFunction.conditionα` (Eq. (25)). A Type-L report shifts
+is Spohn's conditionalization `RankingFunction.conditionα` (Eq. (25)), which keeps the ranks
+given the proposition and given its negation and so ranks every proposition by Jeffrey's rule,
+Eq. (24) (`RankingFunction.rankSet_conditionα_eq`). A Type-L report shifts
 the belief by the evidence's strength: L-conditioning lifts the worlds outside the proposition
 by the strength and renormalizes. It commutes, and two reports for one proposition add their
 strengths (`lCondition_comm`, `lCondition_lCondition`). Its world ranks are those of Eq. (32),
@@ -140,9 +142,10 @@ def zRanking (rules : List (Rule W × ℕ)) (h : ∃ x, zRank rules x = 0) : Ran
   ⟨zRank rules, h⟩
 
 /-- A ranking is admissible exactly when each rule's consequent follows from its antecedent in
-the ranking's consequence relation `RankingFunction.Entails`, the paper's Definition 7; by
-`RankingFunction.entails_iff_forall_least` a consequent follows when it holds in every most
-normal world of the antecedent (Principle (3)). -/
+the ranking's consequence relation `RankingFunction.Entails`, the paper's Definition 7. By
+Principle (3) a consequent follows when its negation has positive rank given the antecedent
+(`RankingFunction.entails_iff_condRank`), equivalently when it holds in every most normal world
+of the antecedent (`RankingFunction.entails_iff_forall_least`). -/
 theorem admissible_iff_forall_entails {κ : RankingFunction W} {Δ : KnowledgeBase W} :
     Admissible κ Δ ↔ ∀ r ∈ Δ, κ.Entails {x | r.ante x} {x | r.cons x} := by
   simp only [Admissible, RankingFunction.entails_iff_exists_lt, Rule.Falsified, Set.mem_ofPred_eq,
@@ -680,7 +683,8 @@ private theorem toNat_min_rankSet (hA : A.Nonempty) (hA' : Aᶜ.Nonempty) :
   · rw [min_eq_left (by exact_mod_cast h), min_eq_left h, ENat.toNat_natCast]
   · rw [min_eq_right (by exact_mod_cast h), min_eq_right h, ENat.toNat_natCast]
 
-/-- Eq. (32) on the worlds of `A`, where `max[0; x − y]` is the truncated difference. -/
+/-- Eq. (32) on the worlds of `A`, where `κ(ω | φ)` is the A-part
+(`RankingFunction.condRank_singleton`) and `max[0; x − y]` is the truncated difference. -/
 theorem lCondition_eq_aPart_of_mem (hA : A.Nonempty) (hA' : Aᶜ.Nonempty) (hw : w ∈ A) :
     lCondition κ A L w = κ.aPart A w + ((κ.rankSet A).toNat - ((κ.rankSet Aᶜ).toNat + L)) := by
   have := κ.toNat_rankSet_le hw

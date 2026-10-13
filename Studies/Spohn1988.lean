@@ -273,31 +273,18 @@ theorem Independent.rankSet_inter (h : Independent κ 𝔅 ℭ) {B C : Set W} (h
 
 variable (κ)
 
-/-- The rank of `B` given `A`, `κ(B | A) = −κ(A) + κ(A ∩ B)`. -/
-noncomputable def condRank (A B : Set W) : ℕ∞ := κ.rankSet (A ∩ B) - κ.rankSet A
-
 /-- On a satisfiable intersection, the conditional rank is a difference of natural numbers. -/
 theorem condRank_eq {A B : Set W} (h : (A ∩ B).Nonempty) :
-    condRank κ A B = ((κ.rankSet (A ∩ B)).toNat - (κ.rankSet A).toNat : ℕ) := by
-  obtain ⟨m, hm⟩ := ENat.ne_top_iff_exists.1 (κ.rankSet_ne_top h)
-  obtain ⟨n, hn⟩ := ENat.ne_top_iff_exists.1 (κ.rankSet_ne_top (h.mono Set.inter_subset_left))
-  rw [condRank, ← hm, ← hn, ENat.toNat_natCast, ENat.toNat_natCast, ENat.natCast_sub]
-
-theorem condRank_eq_top_iff {A B : Set W} (hA : A.Nonempty) :
-    condRank κ A B = ⊤ ↔ A ∩ B = ∅ := by
-  obtain ⟨n, hn⟩ := ENat.ne_top_iff_exists.1 (κ.rankSet_ne_top hA)
-  rw [condRank, ← hn, ← κ.rankSet_eq_top_iff]
-  rcases eq_or_ne (κ.rankSet (A ∩ B)) ⊤ with h | h
-  · simp [h]
-  · obtain ⟨m, hm⟩ := ENat.ne_top_iff_exists.1 h
-    rw [← hm, ← ENat.natCast_sub]
-    simp
+    κ.condRank A B = ((κ.rankSet (A ∩ B)).toNat - (κ.rankSet A).toNat : ℕ) := by
+  have hA := κ.rankSet_ne_top (h.mono Set.inter_subset_left)
+  rw [condRank_of_ne_top _ hA, ENat.natCast_sub, ENat.natCast_toNat (κ.rankSet_ne_top h),
+    ENat.natCast_toNat hA]
 
 /-- On satisfiable intersections, `κ(X | A) = κ(Y | A) + κ(Z | A)` says that
 `κ(A ∩ X) + κ(A) = κ(A ∩ Y) + κ(A ∩ Z)`. -/
 theorem condRank_add_iff {A X Y Z : Set W} (hX : (A ∩ X).Nonempty) (hY : (A ∩ Y).Nonempty)
     (hZ : (A ∩ Z).Nonempty) :
-    condRank κ A X = condRank κ A Y + condRank κ A Z ↔
+    κ.condRank A X = κ.condRank A Y + κ.condRank A Z ↔
       (κ.rankSet (A ∩ X)).toNat + (κ.rankSet A).toNat =
         (κ.rankSet (A ∩ Y)).toNat + (κ.rankSet (A ∩ Z)).toNat := by
   have hA : ∀ {S : Set W}, (A ∩ S).Nonempty →
@@ -315,29 +302,19 @@ variable {κ}
 rank of `C` given `B` is the rank of `C` (Theorem 8, (a) and (b)). -/
 theorem independent_iff_condRank :
     Independent κ 𝔅 ℭ ↔ ∀ B C, 𝔅.Decides B → ℭ.Decides C → B.Nonempty → C.Nonempty →
-      condRank κ B C = κ.rankSet C := by
+      κ.condRank B C = κ.rankSet C := by
   constructor
   · intro h B C hB hC hB' hC'
-    obtain ⟨n, hn⟩ := ENat.ne_top_iff_exists.1 (κ.rankSet_ne_top hB')
-    rw [condRank, h.rankSet_inter hB hC hB' hC', ← hn]
-    obtain ⟨m, hm⟩ := ENat.ne_top_iff_exists.1 (κ.rankSet_ne_top hC')
-    rw [← hm, ← Nat.cast_add, ← ENat.natCast_sub, Nat.add_sub_cancel_left]
+    rw [condRank_of_ne_top _ (κ.rankSet_ne_top hB'), h.rankSet_inter hB hC hB' hC',
+      (ENat.addLECancellable_of_ne_top (κ.rankSet_ne_top hB')).add_tsub_cancel_left]
   · intro h w v
-    have hcell := h (𝔅.cell w) (ℭ.cell v) (𝔅.decides_cell w) (ℭ.decides_cell v)
-      (𝔅.cell_nonempty w) (ℭ.cell_nonempty v)
-    have hne : (𝔅.cell w ∩ ℭ.cell v).Nonempty := by
-      by_contra hempty
-      rw [Set.not_nonempty_iff_eq_empty, ← condRank_eq_top_iff κ (𝔅.cell_nonempty w)] at hempty
-      exact κ.rankSet_ne_top (ℭ.cell_nonempty v) (hcell ▸ hempty)
-    refine ⟨hne, ?_⟩
-    obtain ⟨n, hn⟩ := ENat.ne_top_iff_exists.1 (κ.rankSet_ne_top (𝔅.cell_nonempty w))
-    obtain ⟨m, hm⟩ := ENat.ne_top_iff_exists.1 (κ.rankSet_ne_top hne)
-    rw [condRank, ← hn, ← hm, ← ENat.natCast_sub] at hcell
-    have hle : n ≤ m := by
-      have := κ.rankSet_anti (Set.inter_subset_left (s := 𝔅.cell w) (t := ℭ.cell v))
-      rw [← hn, ← hm] at this
-      exact_mod_cast this
-    rw [← hn, ← hm, ← hcell, ← Nat.cast_add, Nat.add_sub_cancel' hle]
+    have heq : κ.rankSet (𝔅.cell w ∩ ℭ.cell v) = κ.rankSet (𝔅.cell w) + κ.rankSet (ℭ.cell v) := by
+      rw [← κ.condRank_add_rankSet, h _ _ (𝔅.decides_cell w) (ℭ.decides_cell v)
+        (𝔅.cell_nonempty w) (ℭ.cell_nonempty v), add_comm]
+    refine ⟨Set.nonempty_iff_ne_empty.2 fun he ↦ ?_, heq⟩
+    rw [he, rankSet_empty] at heq
+    exact WithTop.add_ne_top.2 ⟨κ.rankSet_ne_top (𝔅.cell_nonempty w),
+      κ.rankSet_ne_top (ℭ.cell_nonempty v)⟩ heq.symm
 
 /-- Independence holds exactly when generalized conditionalization on any ranking of the atoms
 of `𝔅` leaves the ranks of the satisfiable members of `ℭ` unchanged (Theorem 8, (a) and
@@ -445,7 +422,7 @@ variable (𝔅 ℭ : Setoid W) (A : Set W)
 `κ(B ∩ C | A) = κ(B | A) + κ(C | A)` for atoms `B` of `𝔅` and `C` of `ℭ` meeting `A`. -/
 def CondIndependent : Prop :=
   ∀ w v, (A ∩ 𝔅.cell w ∩ ℭ.cell v).Nonempty →
-    condRank κ A (𝔅.cell w ∩ ℭ.cell v) = condRank κ A (𝔅.cell w) + condRank κ A (ℭ.cell v)
+    κ.condRank A (𝔅.cell w ∩ ℭ.cell v) = κ.condRank A (𝔅.cell w) + κ.condRank A (ℭ.cell v)
 
 /-- `ℭ` is independent of `𝔅` given the subfield `𝔇` when it is so given each atom of `𝔇`. -/
 def CondIndependentOn (𝔇 : Setoid W) : Prop := ∀ d, CondIndependent κ 𝔅 ℭ (𝔇.cell d)
