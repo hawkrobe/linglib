@@ -55,11 +55,11 @@ namespace Tense
 open Semantics
 open scoped SetRel
 
-/-- A temporal deictic adverb, a pro-form for a time located relative to an anchor: English
-*then* and *now*, Greek *tóte*, Russian *togda* and *sejčas*. The entry records the positions
-the adverb's reference may occupy relative to the anchor as a comparison cell; what the anchor
-is, the utterance time or a shiftable perspective, is a matter of analysis and is left to
-studies. -/
+/-- A temporal deictic adverb is a pro-form for a time located relative to an anchor, such as
+English *then* and *now*, Greek *tóte*, and Russian *togda* and *sejčas*. The entry records the
+positions the adverb's reference may occupy relative to the anchor as a comparison cell; what
+the anchor is, the utterance time or a shiftable perspective, is a matter of analysis and is
+left to studies. -/
 structure DeicticAdverb where
   /-- The surface form. -/
   form : String
@@ -121,6 +121,15 @@ instance : Decidable (π ~[toSetRel C] r) := inferInstanceAs (Decidable (Presup 
 theorem pure_mem_toSetRel {p t : T} :
     .pure p ~[toSetRel C] .pure t ↔ p ~[Tense.toSetRel C] t := by
   simp
+
+/-- On dense time the past relation on intervals composed with itself is the past relation. -/
+theorem toSetRel_past_comp_self [DenselyOrdered T] :
+    (toSetRel ⟦past⟧ ○ toSetRel ⟦past⟧ : SetRel (NonemptyInterval T) (NonemptyInterval T)) =
+      toSetRel ⟦past⟧ := by
+  ext ⟨π, r⟩
+  simp only [SetRel.mem_comp, mem_toSetRel, presup_past]
+  exact ⟨fun ⟨_, h₁, h₂⟩ ↦ NonemptyInterval.precedes_trans h₂ h₁,
+    fun h ↦ let ⟨u, hu, hu'⟩ := exists_between h; ⟨.pure u, hu', hu⟩⟩
 
 /-! ### Restriction by an adverb -/
 

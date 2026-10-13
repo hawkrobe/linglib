@@ -38,7 +38,7 @@ def ex_3 : Datum :=
     context := ""
     judgment := .acceptable
     alternatives := []
-    readings := [("shifted", .acceptable)]
+    readings := [("shifted", .acceptable), ("simultaneous", .unacceptable)]
     paperFeatures := [("clause", "complement"), ("matrixTense", "past"), ("embeddedTense", "past")] }
 
 def ex_4 : Datum :=
@@ -181,7 +181,7 @@ def ex_10b : Datum :=
     context := "Ania said: \"Marcin was sick\"."
     judgment := .acceptable
     alternatives := []
-    readings := [("shifted", .acceptable)]
+    readings := [("shifted", .acceptable), ("simultaneous", .unacceptable)]
     paperFeatures := [("clause", "complement"), ("matrixTense", "past"), ("embeddedTense", "past")] }
 
 def ex_10c : Datum :=

@@ -39,7 +39,8 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [
-      {"name": "shifted", "judgment": "acceptable"}
+      {"name": "shifted", "judgment": "acceptable"},
+      {"name": "simultaneous", "judgment": "unacceptable"}
     ],
     "paperFeatures": [
       ["clause", "complement"],
@@ -315,14 +316,15 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [
-      {"name": "shifted", "judgment": "acceptable"}
+      {"name": "shifted", "judgment": "acceptable"},
+      {"name": "simultaneous", "judgment": "unacceptable"}
     ],
     "paperFeatures": [
       ["clause", "complement"],
       ["matrixTense", "past"],
       ["embeddedTense", "past"]
     ],
-    "comment": "The paper prints ze for że.",
+    "comment": "The paper prints ze for że. The paper gives the shifted paraphrase and says that simultaneity takes an embedded present (10a).",
     "verified": "page-image"
   },
   {
@@ -398,7 +400,7 @@
       ["matrixTense", "past"],
       ["embeddedTense", "present"]
     ],
-    "comment": "",
+    "comment": "The paper glosses przychodzi as perfective; it is the present of imperfective przychodzić.",
     "verified": "page-image"
   },
   {
@@ -964,7 +966,7 @@
       ["matrixTense", "past"],
       ["embeddedTense", "present"]
     ],
-    "comment": "",
+    "comment": "The paper glosses wychodzi as perfective; it is the present of imperfective wychodzić.",
     "verified": "page-image"
   }
 ]

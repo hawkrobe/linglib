@@ -32,6 +32,8 @@ by Predicate Abstraction, which is a capability of the effect (`PredAbs`) rather
   not fit, and `interpBinary` tries them in order; `tyBinary` is the type they compose to, a
   function of the daughters' types alone (`interpBinary_map_fst`).
 * `interp` interprets a tree under an assignment, over any leaf type.
+* `ty?` is the type a tree composes to, a function of the types of its leaves alone, and the
+  type of its denotation (`interp_map_fst`).
 * `interp_congr_of_agree` and its corollaries are Heim and Kratzer's theorems on variable
   binding: interpretability and the composed type never depend on the assignment
   (`interp_map_fst_congr`), and a tree's denotation depends on it only at the traces free in
@@ -77,6 +79,19 @@ class PredAbs (M : Type → Type) (E W : Type) (D : Type := ℝ) where
   dist? : Option (∀ ty : Ty, (E → M (Ty.Domain E W ty D)) → M (E → Ty.Domain E W ty D))
 
 instance (E W D : Type) : PredAbs Id E W D := ⟨some fun _ f ↦ f⟩
+
+@[simp] theorem PredAbs.dist?_id (E W D : Type) :
+    PredAbs.dist? (M := Id) (E := E) (W := W) (D := D) = some fun _ f ↦ f := rfl
+
+/-! The pure engine computes in `Id`, whose applicative operations are application. The lemmas
+are `simp` lemmas in this namespace only, since they identify `Id α` with `α`. -/
+
+@[scoped simp] theorem seq_eq_apply {α β : Type} (f : Id (α → β)) (x : Id α) : f <*> x = f x :=
+  rfl
+
+@[scoped simp] theorem map_eq_apply {α β : Type} (f : α → β) (x : Id α) : f <$> x = f x := rfl
+
+@[scoped simp] theorem pure_eq {α : Type} (a : α) : (pure a : Id α) = a := rfl
 
 /-! ### Composition modes -/
 
@@ -180,6 +195,19 @@ def valueAt {E W D : Type} {M : Type → Type} (τ : Ty) (v : M (Ty.Domain E W �
   | some ⟨ty, val⟩ => if h : ty = τ then h ▸ val else v
   | none => v
 
+@[simp] theorem valueAt_some {E W D : Type} {M : Type → Type} {τ : Ty}
+    (v x : M (Ty.Domain E W τ D)) :
+    valueAt τ v (some ⟨τ, x⟩ : Option (Denotation E W M D)) = x := by
+  simp [valueAt]
+
+theorem valueAt_of_map_fst {E W D : Type} {M : Type → Type} {τ : Ty}
+    {v v' : M (Ty.Domain E W τ D)} {d : Option (Denotation E W M D)}
+    (h : d.map (·.1) = some τ) : valueAt τ v d = valueAt τ v' d := by
+  obtain _ | ⟨ty, val⟩ := d
+  · simp at h
+  · simp only [Option.map_some, Option.some.injEq] at h
+    subst h; simp [valueAt]
+
 /-! ### Types compose independently of values
 
 The type a node composes to is a function of its daughters' types alone, by the modes in the
@@ -244,6 +272,64 @@ theorem intensionalApplication?_eq_none {d₁ d₂ : Denotation E W M D} (h₁ :
 
 end Typing
 
+/-! ### Reduction of the modes
+
+The modes reduce by `simp` at the types where they apply, toward the composed denotation. -/
+
+section Modes
+
+variable {E W D : Type} {M : Type → Type} [Applicative M]
+
+/-- Forward application reduces at any types; backward application reduces only at concrete
+types, since forward fires first whenever the left daughter is a function. -/
+@[simp] theorem applyForward?_fn {σ τ : Ty} (f : M (Ty.Domain E W (σ ⇒ τ) D))
+    (x : M (Ty.Domain E W σ D)) :
+    applyForward? (⟨σ ⇒ τ, f⟩ : Denotation E W M D) ⟨σ, x⟩ = some ⟨τ, f <*> x⟩ := by
+  simp only [applyForward?, ↓reduceDIte]
+
+@[simp] theorem functionalApplication?_forward {σ τ : Ty} (f : M (Ty.Domain E W (σ ⇒ τ) D))
+    (x : M (Ty.Domain E W σ D)) :
+    functionalApplication? (⟨σ ⇒ τ, f⟩ : Denotation E W M D) ⟨σ, x⟩ = some ⟨τ, f <*> x⟩ := by
+  simp only [functionalApplication?, applyForward?_fn]; rfl
+
+@[simp] theorem applyBackward?_fn {σ τ : Ty} (x : M (Ty.Domain E W σ D))
+    (f : M (Ty.Domain E W (σ ⇒ τ) D)) :
+    applyBackward? (⟨σ, x⟩ : Denotation E W M D) ⟨σ ⇒ τ, f⟩ =
+      some ⟨τ, (fun x g ↦ g x) <$> x <*> f⟩ := by
+  simp only [applyBackward?, ↓reduceDIte]
+
+/-- Backward application reduces at any types too, since forward cannot apply to an argument
+of the function's own argument type. -/
+@[simp] theorem functionalApplication?_backward {σ τ : Ty} (x : M (Ty.Domain E W σ D))
+    (f : M (Ty.Domain E W (σ ⇒ τ) D)) :
+    functionalApplication? (⟨σ, x⟩ : Denotation E W M D) ⟨σ ⇒ τ, f⟩ =
+      some ⟨τ, (fun x g ↦ g x) <$> x <*> f⟩ := by
+  have h : applyForward? (⟨σ, x⟩ : Denotation E W M D) ⟨σ ⇒ τ, f⟩ = none :=
+    Option.map_eq_none_iff.mp (by rw [applyForward?_map_fst]; exact Ty.apply?_fn_self σ τ)
+  simp only [functionalApplication?, h, applyBackward?_fn]; rfl
+
+@[simp] theorem interpBinary_forward {σ τ : Ty} (f : M (Ty.Domain E W (σ ⇒ τ) D))
+    (x : M (Ty.Domain E W σ D)) :
+    interpBinary (⟨σ ⇒ τ, f⟩ : Denotation E W M D) ⟨σ, x⟩ = some ⟨τ, f <*> x⟩ := by
+  simp [interpBinary]
+
+@[simp] theorem interpBinary_backward {σ τ : Ty} (x : M (Ty.Domain E W σ D))
+    (f : M (Ty.Domain E W (σ ⇒ τ) D)) :
+    interpBinary (⟨σ, x⟩ : Denotation E W M D) ⟨σ ⇒ τ, f⟩ =
+      some ⟨τ, (fun x g ↦ g x) <$> x <*> f⟩ := by
+  simp [interpBinary]
+
+/-- Two predicates compose by predicate modification, application failing on them. -/
+@[simp] theorem interpBinary_predicateModification (P Q : M (Ty.Domain E W (.e ⇒ .t) D)) :
+    interpBinary (⟨.e ⇒ .t, P⟩ : Denotation E W M D) ⟨.e ⇒ .t, Q⟩ =
+      some ⟨.e ⇒ .t, Modifier.intersective <$> P <*> Q⟩ := by
+  have h : intensionalApplication? (⟨.e ⇒ .t, P⟩ : Denotation E W M D) ⟨.e ⇒ .t, Q⟩ = none :=
+    intensionalApplication?_eq_none (.fn .e .t) (.fn .e .t)
+  simp [interpBinary, functionalApplication?, applyForward?, applyBackward?, h,
+    predicateModification?]
+
+end Modes
+
 /-! ### Tree interpretation -/
 
 open PhraseStructure
@@ -285,7 +371,7 @@ end TreeInterp
 /-! ### Reduction lemmas
 
 One `@[simp]` lemma per constructor, so that a derivation reduces by `simp` toward its
-composed denotation; the modes reduce at concrete types, since they case on `Ty`. -/
+composed denotation. -/
 
 section Reduction
 
@@ -347,50 +433,125 @@ theorem interp_junk (lex : L → Option (Denotation E W M D)) (g : Assignment E)
     · exact absurd rfl h
     · rfl
 
-omit [PredAbs M E W D] in
-/-- Forward application reduces at any types; backward application reduces only at concrete
-types, since forward fires first whenever the left daughter is a function. -/
-@[simp] theorem applyForward?_fn {σ τ : Ty} (f : M (Ty.Domain E W (σ ⇒ τ) D))
-    (x : M (Ty.Domain E W σ D)) :
-    applyForward? (⟨σ ⇒ τ, f⟩ : Denotation E W M D) ⟨σ, x⟩ = some ⟨τ, f <*> x⟩ := by
-  simp only [applyForward?, ↓reduceDIte]
-
-omit [PredAbs M E W D] in
-@[simp] theorem functionalApplication?_forward {σ τ : Ty} (f : M (Ty.Domain E W (σ ⇒ τ) D))
-    (x : M (Ty.Domain E W σ D)) :
-    functionalApplication? (⟨σ ⇒ τ, f⟩ : Denotation E W M D) ⟨σ, x⟩ = some ⟨τ, f <*> x⟩ := by
-  simp only [functionalApplication?, applyForward?_fn]; rfl
-
-omit [PredAbs M E W D] in
-@[simp] theorem applyBackward?_fn {σ τ : Ty} (x : M (Ty.Domain E W σ D))
-    (f : M (Ty.Domain E W (σ ⇒ τ) D)) :
-    applyBackward? (⟨σ, x⟩ : Denotation E W M D) ⟨σ ⇒ τ, f⟩ =
-      some ⟨τ, (fun x g ↦ g x) <$> x <*> f⟩ := by
-  simp only [applyBackward?, ↓reduceDIte]
-
-omit [PredAbs M E W D] in
-/-- Backward application reduces at any types too, since forward cannot apply to an argument
-of the function's own argument type. -/
-@[simp] theorem functionalApplication?_backward {σ τ : Ty} (x : M (Ty.Domain E W σ D))
-    (f : M (Ty.Domain E W (σ ⇒ τ) D)) :
-    functionalApplication? (⟨σ, x⟩ : Denotation E W M D) ⟨σ ⇒ τ, f⟩ =
-      some ⟨τ, (fun x g ↦ g x) <$> x <*> f⟩ := by
-  have h : applyForward? (⟨σ, x⟩ : Denotation E W M D) ⟨σ ⇒ τ, f⟩ = none :=
-    Option.map_eq_none_iff.mp (by rw [applyForward?_map_fst]; exact Ty.apply?_fn_self σ τ)
-  simp only [functionalApplication?, h, applyBackward?_fn]; rfl
-
-omit [PredAbs M E W D] in
-/-- Two predicates compose by predicate modification, application failing on them. -/
-@[simp] theorem interpBinary_predicateModification (P Q : M (Ty.Domain E W (.e ⇒ .t) D)) :
-    interpBinary (⟨.e ⇒ .t, P⟩ : Denotation E W M D) ⟨.e ⇒ .t, Q⟩ =
-      some ⟨.e ⇒ .t, Modifier.intersective <$> P <*> Q⟩ := by
-  have h : intensionalApplication? (⟨.e ⇒ .t, P⟩ : Denotation E W M D) ⟨.e ⇒ .t, Q⟩ = none :=
-    intensionalApplication?_eq_none (.fn .e .t) (.fn .e .t)
-  simp [interpBinary, functionalApplication?, applyForward?, applyBackward?, h,
-    predicateModification?]
-
 end Reduction
 
+
+/-! ### The type of a tree
+
+The type a tree composes to is a function of the types of its leaves: `ty?` computes it by the
+recursion of `interp`, with `tyBinary` at the binary nodes, and `interp_map_fst` is the
+agreement. Interpretability is therefore decided by the types of the leaves alone. -/
+
+section TreeTyping
+
+variable {C : Type} {L : Type*}
+
+/-- The type a tree composes to, from the types `lexTy` gives its leaves, with `abs` saying
+whether the effect supports Predicate Abstraction. -/
+def ty? (lexTy : L → Option Ty) (abs : Bool) : Tree C L → Option Ty
+  | .terminal _ w => lexTy w
+  | .node _ (t :: []) => ty? lexTy abs t
+  | .node _ (t1 :: t2 :: []) => do
+    let σ ← ty? lexTy abs t1
+    let τ ← ty? lexTy abs t2
+    tyBinary σ τ
+  | .node _ _ => none
+  | .adjoin _ (t :: []) => ty? lexTy abs t
+  | .adjoin _ (t1 :: t2 :: []) => do
+    let σ ← ty? lexTy abs t1
+    let τ ← ty? lexTy abs t2
+    tyBinary σ τ
+  | .adjoin _ _ => none
+  | .trace _ _ => some .e
+  | .bind _ _ body => if abs then (ty? lexTy abs body).map (.fn .e) else none
+  | _ => none
+
+variable (lexTy : L → Option Ty) (abs : Bool)
+
+@[simp] theorem ty?_terminal (c : C) (w : L) :
+    ty? lexTy abs (.terminal c w : Tree C L) = lexTy w := rfl
+
+@[simp] theorem ty?_node_unary (c : C) (t : Tree C L) :
+    ty? lexTy abs (.node c (t :: [])) = ty? lexTy abs t := rfl
+
+@[simp] theorem ty?_node_binary (c : C) (t₁ t₂ : Tree C L) :
+    ty? lexTy abs (.node c (t₁ :: t₂ :: [])) =
+      (ty? lexTy abs t₁).bind fun σ ↦ (ty? lexTy abs t₂).bind fun τ ↦ tyBinary σ τ := rfl
+
+@[simp] theorem ty?_adjoin_unary (c : C) (t : Tree C L) :
+    ty? lexTy abs (.adjoin c (t :: [])) = ty? lexTy abs t := rfl
+
+@[simp] theorem ty?_adjoin_binary (c : C) (t₁ t₂ : Tree C L) :
+    ty? lexTy abs (.adjoin c (t₁ :: t₂ :: [])) =
+      (ty? lexTy abs t₁).bind fun σ ↦ (ty? lexTy abs t₂).bind fun τ ↦ tyBinary σ τ := rfl
+
+@[simp] theorem ty?_trace (n : ℕ) (c : C) : ty? lexTy abs (.trace n c : Tree C L) = some .e := rfl
+
+@[simp] theorem ty?_bind (n : ℕ) (c : C) (body : Tree C L) :
+    ty? lexTy abs (.bind n c body) =
+      if abs then (ty? lexTy abs body).map (.fn .e) else none := rfl
+
+/-- A node whose daughters its label does not license has no type. -/
+theorem ty?_junk {l : Tree.Label C L} {cs : List (Tree C L)}
+    (h : ¬ Tree.Label.Licenses l (cs.map RoseTree.value)) :
+    ty? lexTy abs (RoseTree.node l cs) = none := by
+  cases l with
+  | terminal c w => cases cs with
+    | nil => exact absurd rfl h
+    | cons => rfl
+  | node c => exact absurd trivial h
+  | segment c => exact absurd trivial h
+  | trace n c => cases cs with
+    | nil => exact absurd rfl h
+    | cons => rfl
+  | bind n c =>
+    rcases cs with _ | ⟨t, _ | ⟨u, cs⟩⟩
+    · rfl
+    · exact absurd rfl h
+    · rfl
+
+variable {E W D : Type} {M : Type → Type} [Applicative M] [PredAbs M E W D]
+
+variable {lexTy} {lex : L → Option (Denotation E W M D)}
+
+/-- The type of a tree's denotation is the type `ty?` computes from the types of its leaves. -/
+theorem interp_map_fst (h : ∀ w, (lex w).map (·.1) = lexTy w) (g : Assignment E)
+    (t : Tree C L) :
+    (interp lex g t).map (·.1) =
+      ty? lexTy (PredAbs.dist? (M := M) (E := E) (W := W) (D := D)).isSome t := by
+  induction t using Tree.rec' generalizing g with
+  | terminal c w => exact h w
+  | node c cs ih =>
+    match cs with
+    | [] => rfl
+    | [t] => exact ih t (by simp) g
+    | [t₁, t₂] =>
+      rw [interp_node_binary, ty?_node_binary, ← ih t₁ (by simp) g, ← ih t₂ (by simp) g]
+      cases interp lex g t₁ <;> cases interp lex g t₂ <;> simp [interpBinary_map_fst]
+    | _ :: _ :: _ :: _ => rfl
+  | adjoin c cs ih =>
+    match cs with
+    | [] => rfl
+    | [t] => exact ih t (by simp) g
+    | [t₁, t₂] =>
+      rw [interp_adjoin_binary, ty?_adjoin_binary, ← ih t₁ (by simp) g, ← ih t₂ (by simp) g]
+      cases interp lex g t₁ <;> cases interp lex g t₂ <;> simp [interpBinary_map_fst]
+    | _ :: _ :: _ :: _ => rfl
+  | trace n c => rfl
+  | bind n c body ih =>
+    rw [interp_bind, ty?_bind, ← ih g]
+    cases PredAbs.dist? (M := M) (E := E) (W := W) (D := D) <;>
+      cases interp lex g body <;> rfl
+  | junk l cs hj _ => rw [interp_junk lex g hj, ty?_junk _ _ hj]; rfl
+
+/-- A tree is interpretable exactly when the types of its leaves give it a type. -/
+theorem isSome_interp (h : ∀ w, (lex w).map (·.1) = lexTy w) (g : Assignment E)
+    (t : Tree C L) :
+    (interp lex g t).isSome =
+      (ty? lexTy (PredAbs.dist? (M := M) (E := E) (W := W) (D := D)).isSome t).isSome := by
+  rw [← interp_map_fst h g t, Option.isSome_map]
+
+end TreeTyping
 
 /-! ### Assignment dependence and free variables
 
@@ -406,56 +567,10 @@ section FreeVariables
 variable {C : Type} {E W D : Type} {M : Type → Type} [Applicative M] [PredAbs M E W D]
   {L : Type*} (lex : L → Option (Denotation E W M D))
 
-omit [Applicative M] [PredAbs M E W D] in
-theorem valueAt_of_map_fst {τ : Ty} {v v' : M (Ty.Domain E W τ D)}
-    {d : Option (Denotation E W M D)} (h : d.map (·.1) = some τ) :
-    valueAt τ v d = valueAt τ v' d := by
-  obtain _ | ⟨ty, val⟩ := d
-  · simp at h
-  · simp only [Option.map_some, Option.some.injEq] at h
-    subst h; simp [valueAt]
-
 /-- Whether a tree is interpretable, and at which type, does not depend on the assignment. -/
 theorem interp_map_fst_congr (g g' : Assignment E) (t : Tree C L) :
     (interp lex g t).map (·.1) = (interp lex g' t).map (·.1) := by
-  induction t using Tree.rec' generalizing g g' with
-  | terminal c w => rfl
-  | node c cs ih =>
-    match cs with
-    | [] => rfl
-    | [t] => simp only [interp_node_unary]; exact ih t (by simp) g g'
-    | [t₁, t₂] =>
-      simp only [interp_node_binary]
-      have h₁ := ih t₁ (by simp) g g'
-      have h₂ := ih t₂ (by simp) g g'
-      revert h₁ h₂
-      cases interp lex g t₁ <;> cases interp lex g' t₁ <;>
-        cases interp lex g t₂ <;> cases interp lex g' t₂ <;>
-        intro h₁ h₂ <;> simp_all [interpBinary_map_fst]
-    | _ :: _ :: _ :: _ => rfl
-  | adjoin c cs ih =>
-    match cs with
-    | [] => rfl
-    | [t] => simp only [interp_adjoin_unary]; exact ih t (by simp) g g'
-    | [t₁, t₂] =>
-      simp only [interp_adjoin_binary]
-      have h₁ := ih t₁ (by simp) g g'
-      have h₂ := ih t₂ (by simp) g g'
-      revert h₁ h₂
-      cases interp lex g t₁ <;> cases interp lex g' t₁ <;>
-        cases interp lex g t₂ <;> cases interp lex g' t₂ <;>
-        intro h₁ h₂ <;> simp_all [interpBinary_map_fst]
-    | _ :: _ :: _ :: _ => rfl
-  | trace n c => rfl
-  | bind n c body ih =>
-    simp only [interp_bind]
-    cases PredAbs.dist? (M := M) (E := E) (W := W) (D := D) with
-    | none => rfl
-    | some dist =>
-      have h := ih g g'
-      revert h
-      cases interp lex g body <;> cases interp lex g' body <;> intro h <;> simp_all
-  | junk l cs h _ => rw [interp_junk lex g h, interp_junk lex g' h]
+  rw [interp_map_fst (fun _ ↦ rfl), interp_map_fst (fun _ ↦ rfl)]
 
 /-- Assignments agreeing on the traces free in a tree give it the same denotation, the
 coincidence theorem ([heim-kratzer-1998] §5.4.2). -/
