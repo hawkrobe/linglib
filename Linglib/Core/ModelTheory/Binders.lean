@@ -3,23 +3,23 @@ module
 public import Mathlib.ModelTheory.Semantics
 
 /-!
-# Computable named-variable binders for first-order formulas
+# Named-variable binders for first-order formulas
 
-Mathlib quantification on `BoundedFormula` is de Bruijn; formalizations whose
-formulas carry named free variables (trace indices in
-`Semantics/Composition/Reduction.lean`, QBSML variables in
-`Logic/Team/QBSML/Properties.lean`) need to close a *single named*
-variable. `Formula.all₁` / `Formula.ex₁` do so computably (unlike mathlib's
-`Formula.iAlls` / `iExs`), with realization phrased via `Function.update`.
-Upstream candidates.
+Mathlib's quantifiers on `BoundedFormula` bind de Bruijn indices, and its closures of named free
+variables, `Formula.iAlls` and `Formula.iExs`, are noncomputable. This file closes a single named
+free variable computably, with realization through `Function.update`; the definitions are
+upstream candidates.
 
-## Main declarations
+## Main definitions
 
-* `FirstOrder.Language.Formula.all₁` / `ex₁` — close the named free variable
-  `n` universally / existentially.
-* `realize_all₁` / `realize_ex₁` — realization via `Function.update`.
-* `toSentence` / `realize_toSentence` — a formula with no occurring free
-  variables, as a sentence.
+* `FirstOrder.Language.Formula.all₁`, `FirstOrder.Language.Formula.ex₁`: the universal and
+  existential closures of one named free variable.
+* `FirstOrder.Language.Formula.toSentence`: a formula with no free variables, as a sentence.
+
+## Main results
+
+* `FirstOrder.Language.Formula.realize_all₁`, `FirstOrder.Language.Formula.realize_ex₁`: a
+  closure is realized when its body is at every, or some, update of the valuation.
 -/
 
 @[expose] public section
@@ -53,10 +53,12 @@ theorem realize_relabel_update (n : α) (φ : L.Formula α) (v : α → M) (x : 
   refine iff_of_eq (congrArg₂ (BoundedFormula.Realize φ) ?_ (funext fun i ↦ i.elim0))
   simp [Fin.snoc, Function.comp_def]
 
+@[simp]
 theorem realize_all₁ {n : α} {φ : L.Formula α} {v : α → M} :
     (all₁ n φ).Realize v ↔ ∀ x : M, φ.Realize (Function.update v n x) :=
   BoundedFormula.realize_all.trans <| forall_congr' <| realize_relabel_update n φ v
 
+@[simp]
 theorem realize_ex₁ {n : α} {φ : L.Formula α} {v : α → M} :
     (ex₁ n φ).Realize v ↔ ∃ x : M, φ.Realize (Function.update v n x) :=
   BoundedFormula.realize_ex.trans <| exists_congr <| realize_relabel_update n φ v

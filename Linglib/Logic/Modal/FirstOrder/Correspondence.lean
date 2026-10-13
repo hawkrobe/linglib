@@ -141,7 +141,7 @@ theorem realize_stClose [DecidableEq Var] [L.correspondence.Structure (W ⊕ M)]
       Structure.RelMap (corrIndiv (L := L)) ![z] ↔ ∃ d : M, z = Sum.inr d) :
     (stClose k ψ).Realize val ↔
       ∃ w : W, ψ.Realize (Function.update val (Sum.inr k) (Sum.inl w)) := by
-  simp [stClose, Formula.realize_ex₁, hind, Sum.exists]
+  simp [stClose, hind, Sum.exists]
 
 /-! ### The encoded structure -/
 
@@ -230,9 +230,9 @@ theorem realize_st [DecidableEq Var] {φ : ModalFormula L Var} {k : ℕ}
   | falsum => exact Iff.rfl
   | imp φ ψ ih₁ ih₂ => simp [ModalFormula.st, ← ih₁, ← ih₂]
   | box φ ih =>
-    simp [ModalFormula.st, Formula.realize_all₁, stVal_update_world, ← ih]
+    simp [ModalFormula.st, stVal_update_world, ← ih]
   | all x φ ih =>
-    simp [ModalFormula.st, Formula.realize_all₁, stVal_update_indiv, ← ih]
+    simp [ModalFormula.st, stVal_update_indiv, ← ih]
   | @rel n R ts =>
     simp [ModalFormula.st, realize_stTerm K, ModalStructure.relInterp, ← funext_iff]
 

@@ -2,7 +2,7 @@ module
 
 public import Linglib.Logic.Assignment
 public import Linglib.Logic.CylindricAlgebra
-public import Linglib.Semantics.Dynamic.DPL.FirstOrder
+public import Linglib.Semantics.Dynamic.DPL.Context
 public import Linglib.Semantics.Dynamic.DRS.Dynamics
 
 /-!
@@ -36,9 +36,10 @@ paper's opening contrast is computed: `∃x Px ∧ Qx` binds the last occurrence
 double negation and its alphabetic variant `∃y Py ∧ Qx` do not. Section 4.1's normal binding form
 (`nbf`) is defined by structural recursion, Definition 24's rebracketing clauses being theorems
 of it; a formula is equivalent to its normal binding form, which is scope-bound, so that the
-dynamic truth conditions of any formula are the static ones of its normal binding form
-(`dom_eval_eq_static_nbf`), which are the satisfaction of a mathlib first-order formula
-(`mem_dom_eval_iff_realize_nbf`). Section 4.2's translation of discourse representation structures
+dynamic truth conditions of any formula are the first-order satisfaction conditions of its
+normal binding form (`mem_dom_eval_iff_realize_nbf`). Conversely, eliminating conjunction,
+implication and the existential gives every formula a scope-bound equivalent in predicate logic
+(`mem_dom_eval_staticForm_iff`). Section 4.2's translation of discourse representation structures
 (`DRT.DRS.toDPL`, Definition 28) preserves meaning: a condition becomes the test of its
 verification and a box denotes its box relation (`DRT.DRS.eval_toDPL`, Fact 25).
 
@@ -67,9 +68,8 @@ test in every structure and has an active quantifier (`isTest_eval_equal_conj_ex
 ## TODO
 
 The remaining laws of section 3.4 with side conditions (the leftward scope extension,
-commutativity and idempotency of conjunction, contraposition, distribution), Fact 22's converse
-translation from predicate logic, Facts 26 and 27 on the translated conditions, and the
-translation to quantificational dynamic logic of section 4.3.
+commutativity and idempotency of conjunction, contraposition, distribution), Facts 26 and 27 on
+the translated conditions, and the translation to quantificational dynamic logic of section 4.3.
 -/
 
 @[expose] public section
@@ -513,6 +513,17 @@ def nbf : Formula L V → Formula L V
   | .all x φ => ∀[x] (nbf φ)
   | φ => φ
 
+/-- The formula with conjunction, implication, and the existential eliminated in favour of
+negation, disjunction, and the universal, the `#φ` of Fact 22. -/
+def staticForm : Formula L V → Formula L V
+  | .neg φ => ¬ᵈ(staticForm φ)
+  | .conj φ ψ => ¬ᵈ(¬ᵈ(staticForm φ) ⋎ ¬ᵈ(staticForm ψ))
+  | .disj φ ψ => staticForm φ ⋎ staticForm ψ
+  | .imp φ ψ => ¬ᵈ(staticForm φ) ⋎ staticForm ψ
+  | .ex x φ => ¬ᵈ∀[x] ¬ᵈ(staticForm φ)
+  | .all x φ => ∀[x] (staticForm φ)
+  | φ => φ
+
 variable (φ ψ χ ρ : Formula L V) (x : V)
 
 theorem conjNbf_conjNbf : conjNbf (conjNbf φ ψ) ρ = conjNbf φ (conjNbf ψ ρ) := by
@@ -646,9 +657,10 @@ variable (M φ ψ χ)
 /-! #### The normal binding form and predicate logic
 
 A formula and its normal binding form have the same interpretation, the normal binding form is
-scope-bound, and on a scope-bound formula dynamic truth is static satisfaction
-(`DPL.Formula.IsScopeBound.dom_eval`, Fact 19). So the dynamic truth conditions of any formula
-are the static ones of its normal binding form. -/
+scope-bound, and on a scope-bound formula dynamic truth is first-order satisfaction
+(`DPL.Formula.IsScopeBound.mem_dom_eval_iff`, Fact 19). So the dynamic truth conditions of any
+formula are the first-order ones of its normal binding form, and those of a formula built from
+the static constants alone are its own. -/
 
 theorem eval_conjNbf : (conjNbf φ ψ).eval M = φ.eval M ○ ψ.eval M := by
   induction φ generalizing ψ <;> simp_all [conjNbf, dexists, comp_assoc]
@@ -675,22 +687,32 @@ theorem isScopeBound_nbf : (nbf φ).IsScopeBound := by
   | imp φ ψ ihφ ihψ => exact isScopeBound_impNbf _ _ ihφ ihψ
   | _ => simp_all [nbf, IsScopeBound]
 
-/-- The dynamic truth conditions of a formula are the static ones of its normal binding form
-(Facts 20 and 21). -/
-theorem dom_eval_eq_static_nbf : (φ.eval M).dom = (nbf φ).static M := by
-  rw [← eval_nbf, (isScopeBound_nbf φ).dom_eval M]
-
-/-- A formula is true under the dynamic interpretation exactly where the first-order
-translation of its normal binding form is satisfied (Fact 21 in first-order terms). -/
+/-- The dynamic truth conditions of a formula are the first-order ones of its normal binding
+form (Facts 20 and 21). -/
 theorem mem_dom_eval_iff_realize_nbf {g : V → M} :
     g ∈ (φ.eval M).dom ↔ (nbf φ).toFormula.Realize g := by
-  rw [dom_eval_eq_static_nbf, mem_static_iff]
+  rw [← eval_nbf]
+  exact (isScopeBound_nbf φ).mem_dom_eval_iff M
+
+theorem isScopeBound_staticForm : (staticForm φ).IsScopeBound := by
+  induction φ <;> simp_all [staticForm, IsScopeBound]
+
+theorem realize_toFormula_staticForm {g : V → M} :
+    (staticForm φ).toFormula.Realize g ↔ φ.toFormula.Realize g := by
+  induction φ generalizing g <;>
+    simp_all [staticForm, toFormula, imp_iff_not_or]
+
+/-- Read in predicate logic, every formula is equivalent to its static form, whose dynamic truth
+conditions are those same first-order ones (Fact 22). -/
+theorem mem_dom_eval_staticForm_iff {g : V → M} :
+    g ∈ ((staticForm φ).eval M).dom ↔ φ.toFormula.Realize g :=
+  ((isScopeBound_staticForm φ).mem_dom_eval_iff M).trans (realize_toFormula_staticForm M φ)
 
 /-- A scope-bound formula is valid in dynamic predicate logic iff it is in predicate logic
 (Fact 23). -/
-theorem valid_eval_iff (hφ : φ.IsScopeBound) : Valid (φ.eval M) ↔ φ.static M = Set.univ := by
-  rw [← hφ.dom_eval M, Set.eq_univ_iff_forall]
-  rfl
+theorem valid_eval_iff (hφ : φ.IsScopeBound) :
+    Valid (φ.eval M) ↔ ∀ g : V → M, φ.toFormula.Realize g :=
+  forall_congr' fun _ ↦ hφ.mem_dom_eval_iff M
 
 /-! #### Binding beyond scope
 

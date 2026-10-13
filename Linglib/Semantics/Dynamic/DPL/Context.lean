@@ -37,8 +37,8 @@ variables of Groenendijk and Stokhof, and the formula's interpretation has it.
 * `DPL.HasContext.dom_comp`: a relation that blocks no input of another commutes with its truth.
 * `DPL.Formula.hasContext_eval`: a formula's interpretation has its context (Theorem 3.13), with
   `DPL.Formula.context_I` and `DPL.Formula.context_B` identifying its inputs and blocks.
-* `DPL.Formula.IsScopeBound.dom_eval`: on the scope-bound formulas dynamic truth is static
-  satisfaction.
+* `DPL.Formula.IsScopeBound.mem_dom_eval_iff`: on the scope-bound formulas dynamic truth is
+  first-order satisfaction.
 
 ## Implementation notes
 
@@ -428,31 +428,27 @@ theorem hasContext_eval (φ : Formula L V) : HasContext (φ.eval M) φ.context :
   | all x φ ih => exact (hasContext_randomAssign x).impl ih
 
 /-- A scope-bound formula is true under the dynamic interpretation exactly where it is
-satisfied under the static one ([groenendijk-stokhof-1991]'s Fact 19). -/
-theorem IsScopeBound.dom_eval {φ : Formula L V} (h : φ.IsScopeBound) :
-    (φ.eval M).dom = φ.static M := by
-  induction φ with
-  | top => exact Set.ext fun g ↦ ⟨fun _ ↦ trivial, fun _ ↦ ⟨g, rfl⟩⟩
-  | rel R ts => exact dom_test _
-  | equal t₁ t₂ => exact dom_test _
-  | neg φ ih => rw [eval_neg, dom_test, neg_eq_compl_dom, ih h]; rfl
+satisfied as a first-order formula ([groenendijk-stokhof-1991]'s Fact 19). -/
+theorem IsScopeBound.mem_dom_eval_iff {φ : Formula L V} (h : φ.IsScopeBound) {g : V → M} :
+    g ∈ (φ.eval M).dom ↔ φ.toFormula.Realize g := by
+  induction φ generalizing g with
+  | top => exact iff_of_true ⟨g, rfl⟩ (by simp [toFormula])
+  | rel R ts => simp [toFormula]
+  | equal t₁ t₂ => simp [toFormula]
+  | neg φ ih => simp [toFormula, neg_eq_compl_dom, ih h]
   | conj φ ψ ihφ ihψ =>
     obtain ⟨hφ, hψ, hd⟩ := h
     rw [eval_conj, (φ.hasContext_eval M).dom_comp (ψ.hasContext_eval M)
-      (by rwa [context_B, context_I]), ihφ hφ, ihψ hψ]
-    rfl
-  | disj φ ψ ihφ ihψ =>
-    rw [eval_disj, dom_test, disj_eq_dom_union_dom, ihφ h.1, ihψ h.2]; rfl
+      (by rwa [context_B, context_I])]
+    simp [toFormula, ihφ hφ, ihψ hψ]
+  | disj φ ψ ihφ ihψ => simp [toFormula, disj_eq_dom_union_dom, ihφ h.1, ihψ h.2]
   | imp φ ψ ihφ ihψ =>
     obtain ⟨hφ, hψ, hd⟩ := h
     rw [eval_imp, dom_test, (φ.hasContext_eval M).impl_eq (ψ.hasContext_eval M)
-      (by rwa [context_B, context_I]), ihφ hφ, ihψ hψ]
-    rfl
-  | ex x φ ih => rw [eval_ex, dom_dexists, ih h]; rfl
-  | all x φ ih =>
-    rw [eval_all, dom_test, dforall, impl_eq_core_dom, ← compl_compl (φ.eval M).dom, core_compl,
-      preimage_randomAssign, ih h]
-    rfl
+      (by rwa [context_B, context_I])]
+    simp [toFormula, ihφ hφ, ihψ hψ, imp_iff_not_or]
+  | ex x φ ih => simp [toFormula, dom_dexists, ih h]
+  | all x φ ih => simp [toFormula, mem_dforall, ih h]
 
 end Formula
 

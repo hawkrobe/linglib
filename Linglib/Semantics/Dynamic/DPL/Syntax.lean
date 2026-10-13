@@ -1,6 +1,6 @@
 module
 
-public import Mathlib.ModelTheory.Syntax
+public import Linglib.Core.ModelTheory.Binders
 
 /-!
 # The syntax of dynamic predicate logic
@@ -18,6 +18,7 @@ quantifier variable of a left conjunct or an antecedent is free in what follows.
 
 * `DPL.Formula L V`: the formulas, with scoped notation `¬ᵈ`, `⋏`, `⋎`, `⟿`, `∃[x]`, `∀[x]`, `≐`;
   `DPL.Formula.exs` and `DPL.Formula.conjs` close over a list of variables and conjoin a list.
+* `DPL.Formula.toFormula`: the same formula as a first-order formula `L.Formula V`.
 * `DPL.Formula.aqv`: the active quantifier variables.
 * `DPL.Formula.fv`: the free variables.
 * `DPL.Formula.IsScopeBound`: every variable a quantifier binds is in its scope.
@@ -27,7 +28,9 @@ quantifier variable of a left conjunct or an antecedent is free in what follows.
 Mathlib's `FirstOrder.Language.BoundedFormula` binds de Bruijn indices and so identifies
 alphabetic variants by construction. Dynamic binding links a quantifier to a named occurrence
 outside its scope, which that syntax cannot express, and alphabetic variants are not equivalent
-under the dynamic interpretation; hence the named-variable syntax here.
+under the dynamic interpretation; hence the named-variable syntax here. Read statically, a
+formula is a mathlib formula over the same variables (`toFormula`), each quantifier closing its
+named variable through `Formula.ex₁` or `Formula.all₁`.
 
 All the connectives and both quantifiers of the paper's syntax are primitive, as in the paper,
 so that their interdefinability is a theorem about the interpretation: conjunction and the
@@ -109,6 +112,19 @@ def conjs (φs : List (Formula L V)) : Formula L V := φs.foldr conj top
     conjs (φ :: φs) = φ ⋏ conjs φs := rfl
 
 variable [DecidableEq V]
+
+/-- The first-order formula with the same connectives, a quantifier binding its named
+variable. -/
+def toFormula : Formula L V → L.Formula V
+  | top => ⊤
+  | rel R ts => R.formula ts
+  | equal t₁ t₂ => t₁.equal t₂
+  | neg φ => (toFormula φ).not
+  | conj φ ψ => toFormula φ ⊓ toFormula ψ
+  | disj φ ψ => toFormula φ ⊔ toFormula ψ
+  | imp φ ψ => (toFormula φ).imp (toFormula ψ)
+  | ex x φ => (toFormula φ).ex₁ x
+  | all x φ => (toFormula φ).all₁ x
 
 /-- The active quantifier variables are those `x` with an occurrence of `∃x` that can still
 bind to the right. Only an existential contributes one, and only conjunction passes them on. -/
