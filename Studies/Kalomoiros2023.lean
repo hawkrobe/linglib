@@ -6,49 +6,46 @@ public import Mathlib.Tactic.IntervalCases
 /-!
 # Kalomoiros (2023): Presupposition and Its (A-)Symmetries
 
-This file formalizes System 1 of the dissertation's Limited Symmetry (§3.4), a theory of
-presupposition projection that checks Transparency incrementally, at every point of the parse
-after a trigger. The language is the propositional fragment of [schlenker-2009]'s L
-(Definition 3.4.1), a trigger `p'p` presupposing `p'` and asserting `p`. At a parse point, a
-sentence is stably true (false) at a world when every good final of the string up to that point
-makes it true (false) there; Definition 3.4.4 (`TranspLS`) requires, at every trigger, every parse
-point after it and every assertion, that the worlds of the context where the sentence is stably
-true (false) are worlds where it is stably true (false) with the trigger replaced by its assertion.
+Limited Symmetry is a theory of presupposition projection that checks Transparency at every point
+of the parse after a trigger. At a parse point a sentence is stably true (false) at a world when
+every good final of the string up to that point makes it true (false) there. The constraint
+requires, at every trigger, every parse point after it and every assertion, that the worlds of
+the context where the sentence is stably true (false) stay so when the trigger is replaced by its
+assertion. This file covers the dissertation's first system, over the propositional fragment of
+Schlenker's language.
 
-The check is made world by world (`transpLSAt_iff`), and at a world only the truth functions that
-the good finals realize matter (`funs`, `forall_agreeUpTo_iff`), so that each of the
-dissertation's facts is a computation. Conjunction is asymmetric: `(p'p and q)` requires the
-context to entail `p'` (Fact 3.4.1), `(q and p'p)` only `q → p'` (Fact 3.4.2). Disjunction is
-symmetric: `(p'p or q)` requires `¬q → p'` (Fact 3.4.3). A conditional's antecedent behaves like a
-first conjunct (Fact 3.4.4) and its consequent like a second (Fact 3.4.5). A negated sentence
-respects the constraint iff the sentence does (Proposition 3.4.1), but a negation inside a
-coordination changes its polarity: `(if (not p'p). q)` behaves like `(p'p or q)` (Fact 3.4.10).
-With several triggers, each trigger's condition is computed separately (Facts 3.4.11–3.4.14), and
-material before the highest connective can filter symmetrically (Fact 3.4.15).
+## Main statements
 
-Two conditions printed in the dissertation differ from what Definition 3.4.4 gives. For
-`(if ((not p'p) and q). r)` the dissertation prints `(q ∧ r) → p'` and omits the derivation; the
-constraint gives `(q ∧ ¬r) → p'`, since the antecedent matters only where the consequent is false
-(`transpLS_if_not_and`, `not_transpLS_if_not_and_of_printed`). For the second trigger of
-`((not p'p) and q'q)` it prints `p'p → q'`; the constraint gives `(not p'p) → q'`, filtering by the
-first conjunct as the recipe of Fact 3.4.7 predicts (`transpLSAt_not_and_second`,
-`not_transpLSAt_not_and_second_of_printed`).
+* `transpLS_and_left`, `transpLS_and_right`, `transpLS_or_left`: conjunction is asymmetric, a
+  trigger in the first conjunct needing the context to entail its presupposition and one in the
+  second only that the first conjunct does, while a first disjunct is filtered by the second.
+* `transpLS_not`, `transpLS_if_not_left_iff_or`: a negated sentence respects the constraint iff
+  the sentence does, but a negation inside a coordination changes its polarity, so that a
+  conditional with a negated antecedent behaves like a disjunction.
+* `transpLSAt_iff`, `transpLSAt_iff_funs`: the constraint is checked world by world, on the truth
+  functions the good finals realize there, which makes each of the dissertation's facts a
+  computation.
 
 ## Implementation notes
 
-* A trigger `trigger p a` presupposes `p` and asserts `a`; the dissertation writes `p'p` with the
-  prime on the presupposition, the reverse of [schlenker-2009]'s convention.
-* The parse points after a trigger are the substrings κ of Definition 3.4.4. They are represented
-  by `SyntacticEnvironment.AgreeUpTo`, which counts the connective after a first argument and the
-  second argument as one item each and ignores closing brackets. At a point inside the second
-  argument, the good finals realize at each world either what they realize before the argument or
-  what they realize after it, because the argument's value there is either still open or already
-  fixed. Since the constraint is checked world by world, these points add no condition.
-* A context is a set of worlds, and "for all p" in Definition 3.4.4 ranges over the propositions
-  of the assertion.
-* Fact 3.4.6 concerns a postposed conditional `(q. if p'p)`, which is not in the language of
-  Definition 3.4.1, and is not formalized. Facts 3.4.7 and 3.4.9 are stated for arbitrary
-  sentences and are left as `TODO`.
+* A trigger `trigger p a` presupposes `p` and asserts `a`. The dissertation writes `p'p` with the
+  prime on the presupposition, the reverse of Schlenker's convention.
+* The parse points after a trigger are represented by `SyntacticEnvironment.AgreeUpTo`, which
+  counts the connective after a first argument and the second argument as one item each and
+  ignores closing brackets. Points inside the second argument add no condition, since the
+  constraint is checked world by world and the argument's value at a world is either still open
+  or already fixed.
+* A context is a set of worlds, and the assertions the constraint quantifies over are
+  propositions.
+
+## TODO
+
+* Two conditions printed in the dissertation differ from what the constraint gives, for a
+  conditional whose antecedent conjoins a negated trigger (`not_transpLS_if_not_and_of_printed`)
+  and for the second trigger of a conjunction with a negated first conjunct
+  (`not_transpLSAt_not_and_second_of_printed`).
+* Facts 3.4.7 and 3.4.9, stated for arbitrary sentences, are not formalized, nor is the postposed
+  conditional of Fact 3.4.6, which is outside the language.
 
 ## References
 
@@ -64,7 +61,7 @@ open Presupposition SyntacticEnvironment
 
 variable {Atom W : Type*} (I : Atom → Set W)
 
-/-! ### Definition 3.4.4 -/
+/-! ### The constraint -/
 
 /-- The worlds of `C` at which the sentence up to parse point `n` after the gap of `K`, with `X`
 in the gap, is true whatever follows. -/
@@ -76,21 +73,21 @@ in the gap, is false whatever follows. -/
 def stablyFalse (C : Set W) (n : ℕ) (K : SyntacticEnvironment Atom) (X : Set W) : Set W :=
   {w ∈ C | ∀ K', AgreeUpTo n K K' → w ∉ K'.truth I X}
 
-/-- Definition 3.4.4 at one trigger, with presupposition `p` at the gap of `K`: at every parse
-point after the trigger and for every assertion `D`, the worlds where the sentence is stably true
-(false) are worlds where it is stably true (false) with the presupposition deleted. -/
+/-- The constraint of Definition 3.4.4 at one trigger, with presupposition `p` at the gap of `K`. At
+every parse point after the trigger and for every assertion `D`, the worlds where the sentence is
+stably true (false) are worlds where it is stably true (false) with the presupposition deleted. -/
 def TranspLSAt (C : Set W) (K : SyntacticEnvironment Atom) (p : Atom) : Prop :=
   ∀ n ≤ K.rightItems, ∀ D : Set W,
     stablyTrue I C n K (I p ∩ D) ⊆ stablyTrue I C n K D ∧
       stablyFalse I C n K (I p ∩ D) ⊆ stablyFalse I C n K D
 
-/-- Definition 3.4.4: a formula is acceptable in `C` when the constraint holds at every trigger. -/
+/-- A formula is acceptable in `C` when the constraint holds at every trigger (Definition 3.4.4). -/
 def TranspLS (C : Set W) (F : Formula Atom) : Prop :=
   ∀ o ∈ F.occurrences, TranspLSAt I C o.1 o.2.1
 
-/-- The constraint is checked world by world: at a world where the presupposition fails, whenever
-every good final at a parse point makes the sentence true (false) with a false gap, every good
-final makes it true (false) with a true gap. -/
+/-- The constraint is checked world by world. At a world where the presupposition fails, whenever
+every good final at a parse point makes the sentence true (false) with a false gap, every good final
+makes it true (false) with a true gap. -/
 theorem transpLSAt_iff (C : Set W) (K : SyntacticEnvironment Atom) (p : Atom) :
     TranspLSAt I C K p ↔ ∀ w ∈ C, w ∉ I p → ∀ n ≤ K.rightItems,
       ((∀ K', AgreeUpTo n K K' → w ∈ K'.truth I ∅) →
@@ -234,7 +231,7 @@ theorem transpLSAt_iff_funs (C : Set W) (K : SyntacticEnvironment Atom) (p : Ato
   simp only [e₁, e₀]
   simp
 
-/-! ### Facts -/
+/-! ### What the constraint requires -/
 
 variable {C : Set W} {p a q b r : Atom}
 
@@ -242,7 +239,12 @@ theorem transpLS_of_occurrences {F : Formula Atom} {K : SyntacticEnvironment Ato
     (h : F.occurrences = [(K, p, a)]) : TranspLS I C F ↔ TranspLSAt I C K p := by
   simp [TranspLS, h]
 
-/-- Fact 3.4.1 (p. 124): `(p'p and q)` requires the context to entail `p'`. -/
+/-- A trigger standing alone requires the context to entail its presupposition. -/
+theorem transpLS_trigger : TranspLS I C (.trigger p a) ↔ C ⊆ I p := by
+  rw [transpLS_of_occurrences I (K := []) (a := a) rfl, transpLSAt_iff]
+  simp [AgreeUpTo, SyntacticEnvironment.truth, Set.subset_def]
+
+/-- `(p'p and q)` requires the context to entail `p'` (Fact 3.4.1, p. 124). -/
 theorem transpLS_and_left : TranspLS I C (.bin .conj (.trigger p a) (.atom q)) ↔ C ⊆ I p := by
   rw [transpLS_of_occurrences I (K := [.left .conj (.atom q)]) (a := a) rfl, transpLSAt_iff_funs]
   refine ⟨fun h w hw ↦ by_contra fun hp ↦ ?_, fun h w hw hp ↦ absurd (h hw) hp⟩
@@ -263,7 +265,7 @@ local macro "ls_at " h:term : tactic =>
   `(tactic| (simp [funs, stepFuns, evalB, val, Formula.truth, Step.rightItems,
                Connective.rightItems, compat, Connective.eval, *] at $h:term))
 
-/-- Fact 3.4.2 (p. 126): `(q and p'p)` requires the context to entail `q → p'`. -/
+/-- `(q and p'p)` requires the context to entail `q → p'` (Fact 3.4.2, p. 126). -/
 theorem transpLS_and_right :
     TranspLS I C (.bin .conj (.atom q) (.trigger p a)) ↔ C ⊆ {w | w ∈ I q → w ∈ I p} := by
   rw [transpLS_of_occurrences I (K := [.right .conj (.atom q)]) (a := a) rfl, transpLSAt_iff_funs]
@@ -273,7 +275,7 @@ theorem transpLS_and_right :
   · have hq : w ∉ I q := fun hq ↦ hp (h hw hq)
     ls_points
 
-/-- Fact 3.4.3 (p. 127): `(p'p or q)` requires the context to entail `¬q → p'`. -/
+/-- `(p'p or q)` requires the context to entail `¬q → p'` (Fact 3.4.3, p. 127). -/
 theorem transpLS_or_left :
     TranspLS I C (.bin .disj (.trigger p a) (.atom q)) ↔ C ⊆ {w | w ∉ I q → w ∈ I p} := by
   rw [transpLS_of_occurrences I (K := [.left .disj (.atom q)]) (a := a) rfl, transpLSAt_iff_funs]
@@ -283,14 +285,14 @@ theorem transpLS_or_left :
   · have hq : w ∈ I q := by_contra fun hq ↦ hp (h hw hq)
     ls_points
 
-/-- Fact 3.4.4 (p. 128): `(if p'p. q)` requires the context to entail `p'`. -/
+/-- `(if p'p. q)` requires the context to entail `p'` (Fact 3.4.4, p. 128). -/
 theorem transpLS_if_left : TranspLS I C (.bin .cond (.trigger p a) (.atom q)) ↔ C ⊆ I p := by
   rw [transpLS_of_occurrences I (K := [.left .cond (.atom q)]) (a := a) rfl, transpLSAt_iff_funs]
   refine ⟨fun h w hw ↦ by_contra fun hp ↦ ?_, fun h w hw hp ↦ absurd (h hw) hp⟩
   have := h w hw hp 0 (Nat.zero_le _)
   ls_at this
 
-/-- Fact 3.4.5 (p. 129): `(if q. p'p)` requires the context to entail `q → p'`. -/
+/-- `(if q. p'p)` requires the context to entail `q → p'` (Fact 3.4.5, p. 129). -/
 theorem transpLS_if_right :
     TranspLS I C (.bin .cond (.atom q) (.trigger p a)) ↔ C ⊆ {w | w ∈ I q → w ∈ I p} := by
   rw [transpLS_of_occurrences I (K := [.right .cond (.atom q)]) (a := a) rfl, transpLSAt_iff_funs]
@@ -300,8 +302,8 @@ theorem transpLS_if_right :
   · have hq : w ∉ I q := fun hq ↦ hp (h hw hq)
     ls_points
 
-/-- Fact 3.4.10 (p. 136), first half: `(if (not p'p). q)` requires the context to entail `¬q → p'`,
-as `(p'p or q)` does. -/
+/-- `(if (not p'p). q)` requires the context to entail `¬q → p'`, as `(p'p or q)` does (the first
+half of Fact 3.4.10, p. 136). -/
 theorem transpLS_if_not_left :
     TranspLS I C (.bin .cond (.not (.trigger p a)) (.atom q)) ↔ C ⊆ {w | w ∉ I q → w ∈ I p} := by
   rw [transpLS_of_occurrences I (K := [.not, .left .cond (.atom q)]) (a := a) rfl,
@@ -312,15 +314,14 @@ theorem transpLS_if_not_left :
   · have hq : w ∈ I q := by_contra fun hq ↦ hp (h hw hq)
     ls_points
 
-/-- Fact 3.4.10 (p. 136): `(if (not p'p). q)` respects the constraint iff `(p'p or q)` does. -/
+/-- `(if (not p'p). q)` respects the constraint iff `(p'p or q)` does (Fact 3.4.10, p. 136). -/
 theorem transpLS_if_not_left_iff_or :
     TranspLS I C (.bin .cond (.not (.trigger p a)) (.atom q)) ↔
       TranspLS I C (.bin .disj (.trigger p a) (.atom q)) := by
   rw [transpLS_if_not_left, transpLS_or_left]
 
-/-- Fact 3.4.8 (p. 134), as the constraint gives it: `(if ((not p'p) and q). r)` requires the
-context to entail `(q ∧ ¬r) → p'`. The dissertation prints `(q ∧ r) → p'` and omits the
-derivation (`not_transpLS_if_not_and_of_printed`). -/
+/-- `(if ((not p'p) and q). r)` requires the context to entail `(q ∧ ¬r) → p'`. Fact 3.4.8 (p. 134)
+prints `(q ∧ r) → p'` and omits the derivation (`not_transpLS_if_not_and_of_printed`). -/
 theorem transpLS_if_not_and :
     TranspLS I C (.bin .cond (.bin .conj (.not (.trigger p a)) (.atom q)) (.atom r)) ↔
       C ⊆ {w | w ∈ I q → w ∉ I r → w ∈ I p} := by
@@ -334,8 +335,8 @@ theorem transpLS_if_not_and :
       ls_points
     · ls_points
 
-/-- The condition printed in Fact 3.4.8 is not the constraint's: a context where `q` holds and `r`
-and `p'` fail entails `(q ∧ r) → p'` but violates the constraint. -/
+/-- The condition printed in Fact 3.4.8 is not the constraint's, since a context where `q` holds and
+`r` and `p'` fail entails `(q ∧ r) → p'` but violates the constraint. -/
 theorem not_transpLS_if_not_and_of_printed {w : W} (hq : w ∈ I q) (hr : w ∉ I r) (hp : w ∉ I p) :
     {w} ⊆ {w | w ∈ I q → w ∈ I r → w ∈ I p} ∧
       ¬ TranspLS I {w} (.bin .cond (.bin .conj (.not (.trigger p a)) (.atom q)) (.atom r)) := by
@@ -345,8 +346,8 @@ theorem not_transpLS_if_not_and_of_printed {w : W} (hq : w ∈ I q) (hr : w ∉ 
   subst hv
   exact fun _ hr' ↦ absurd hr' hr
 
-/-- Fact 3.4.11 (p. 137): in `(p'p and q'q)` the first trigger requires the context to entail
-`p'`. -/
+/-- In `(p'p and q'q)` the first trigger requires the context to entail `p'` (Fact 3.4.11, p.
+137). -/
 theorem transpLSAt_and_first :
     TranspLSAt I C [.left .conj (.trigger q b)] p ↔ C ⊆ I p := by
   rw [transpLSAt_iff_funs]
@@ -354,8 +355,8 @@ theorem transpLSAt_and_first :
   have := h w hw hp 1 (by simp [rightItems, Step.rightItems, Connective.rightItems])
   ls_at this
 
-/-- Fact 3.4.12 (p. 137), first trigger: in `((not p'p) and q'q)` it requires the context to entail
-`q'q → p'`. -/
+/-- In `((not p'p) and q'q)` the first trigger requires the context to entail `q'q → p'` (Fact
+3.4.12, p. 137). -/
 theorem transpLSAt_not_and_first :
     TranspLSAt I C [.not, .left .conj (.trigger q b)] p ↔
       C ⊆ {w | w ∈ I q → w ∈ I b → w ∈ I p} := by
@@ -368,9 +369,8 @@ theorem transpLSAt_not_and_first :
       ls_points
     · ls_points
 
-/-- Fact 3.4.12 (p. 137), second trigger, as the constraint gives it: in `((not p'p) and q'q)` it
-requires the context to entail `(not p'p) → q'`, filtering by the first conjunct. The
-dissertation prints `p'p → q'`. -/
+/-- In `((not p'p) and q'q)` the second trigger requires the context to entail `(not p'p) → q'`,
+filtering by the first conjunct. Fact 3.4.12 (p. 137) prints `p'p → q'`. -/
 theorem transpLSAt_not_and_second :
     TranspLSAt I C [.right .conj (.not (.trigger p a))] q ↔
       C ⊆ {w | w ∉ I p ∩ I a → w ∈ I q} := by
@@ -382,8 +382,8 @@ theorem transpLSAt_not_and_second :
     obtain ⟨hp, ha⟩ := hpa
     ls_points
 
-/-- Fact 3.4.13 (p. 138), first trigger: in `(p'p or q'q)` it requires the context to entail
-`p' or q'q`. -/
+/-- In `(p'p or q'q)` the first trigger requires the context to entail `p' or q'q` (Fact 3.4.13, p.
+138). -/
 theorem transpLSAt_or_first :
     TranspLSAt I C [.left .disj (.trigger q b)] p ↔ C ⊆ {w | w ∈ I p ∨ w ∈ I q ∩ I b} := by
   rw [transpLSAt_iff_funs]
@@ -397,8 +397,8 @@ theorem transpLSAt_or_first :
   · obtain ⟨hq, hb⟩ := (h hw).resolve_left hp
     ls_points
 
-/-- Fact 3.4.13 (p. 138), second trigger: in `(p'p or q'q)` it requires the context to entail
-`q' or p'p`. -/
+/-- In `(p'p or q'q)` the second trigger requires the context to entail `q' or p'p` (Fact 3.4.13, p.
+138). -/
 theorem transpLSAt_or_second :
     TranspLSAt I C [.right .disj (.trigger p a)] q ↔ C ⊆ {w | w ∈ I q ∨ w ∈ I p ∩ I a} := by
   rw [transpLSAt_iff_funs]
@@ -412,8 +412,8 @@ theorem transpLSAt_or_second :
   · obtain ⟨hp, ha⟩ := (h hw).resolve_left hq
     ls_points
 
-/-- Fact 3.4.14 (p. 138): in `((not p'p) or q'q)` the first trigger requires the context to entail
-`p'`. -/
+/-- In `((not p'p) or q'q)` the first trigger requires the context to entail `p'` (Fact 3.4.14, p.
+138). -/
 theorem transpLSAt_not_or_first :
     TranspLSAt I C [.not, .left .disj (.trigger q b)] p ↔ C ⊆ I p := by
   rw [transpLSAt_iff_funs]
@@ -421,8 +421,8 @@ theorem transpLSAt_not_or_first :
   have := h w hw hp 1 (by simp [rightItems, Step.rightItems, Connective.rightItems])
   ls_at this
 
-/-- Fact 3.4.15 (p. 138): `((p'p and q) or r)` requires the context to entail `q → (p' ∨ r)`:
-the second conjunct filters symmetrically, before the highest connective. -/
+/-- `((p'p and q) or r)` requires the context to entail `q → (p' ∨ r)`, the second conjunct
+filtering symmetrically, before the highest connective (Fact 3.4.15, p. 138). -/
 theorem transpLS_and_or :
     TranspLS I C (.bin .disj (.bin .conj (.trigger p a) (.atom q)) (.atom r)) ↔
       C ⊆ {w | w ∈ I q → w ∈ I p ∨ w ∈ I r} := by
@@ -438,8 +438,8 @@ theorem transpLS_and_or :
       ls_points
     · ls_points
 
-/-- The condition printed in Fact 3.4.12 for the second trigger is not the constraint's: a context
-where `p'` and `q'` fail entails `p'p → q'` but violates the constraint. -/
+/-- The condition printed in Fact 3.4.12 for the second trigger is not the constraint's, since a
+context where `p'` and `q'` fail entails `p'p → q'` but violates the constraint. -/
 theorem not_transpLSAt_not_and_second_of_printed {w : W} (hp : w ∉ I p) (hq : w ∉ I q) :
     {w} ⊆ {w | w ∈ I p ∩ I a → w ∈ I q} ∧
       ¬ TranspLSAt I {w} [.right .conj (.not (.trigger p a))] q := by
@@ -449,7 +449,7 @@ theorem not_transpLSAt_not_and_second_of_printed {w : W} (hp : w ∉ I p) (hq : 
   subst hv
   exact absurd hpa.1 hp
 
-/-! ### Proposition 3.4.1: negation -/
+/-! ### Negation -/
 
 theorem forall_agreeUpTo_append_not {n : ℕ} {K : SyntacticEnvironment Atom} {w : W} {X : Set W}
     (P : Prop → Prop) :
@@ -463,7 +463,7 @@ theorem forall_agreeUpTo_append_not {n : ℕ} {K : SyntacticEnvironment Atom} {w
     rw [truth_append]
     exact h K' hK
 
-/-- Proposition 3.4.1 (p. 130): a sentence respects the constraint iff its negation does. -/
+/-- A sentence respects the constraint iff its negation does (Proposition 3.4.1, p. 130). -/
 theorem transpLS_not (A : Formula Atom) : TranspLS I C (.not A) ↔ TranspLS I C A := by
   simp only [TranspLS, Formula.occurrences, List.forall_mem_map]
   refine forall₂_congr fun o _ ↦ ?_

@@ -170,49 +170,6 @@ theorem neutral_lt_of_licenses :
         (blockOneExp2 t .neutral).mean.toRat < (blockOneExp2 t k).mean.toRat := by
   decide +kernel
 
-/-! ### A trigger and a conjunct on the earlier accounts
-
-Schlenker's symmetric local context of a conjunct is the context updated with the other
-conjunct, whichever comes first. A trigger standing alone must be satisfied by the context on
-each account. -/
-
-section EarlierAccounts
-
-open Schlenker2009
-
-variable {Atom : Type*} (I : Atom → Set W) {C : Set W} {p p' q : Atom}
-
-private theorem satS_iff (F : Formula Atom) :
-    SatS I C F ↔ ∀ o ∈ F.occurrences, C ∩ {w | DependsAt (o.1.truth I) w} ⊆ I o.2.1 :=
-  forall₂_congr fun o _ ↦ by
-    rw [satisfied_iff (isLocalContext_of_isTruthFunctional fun _ hf ↦
-      isTruthFunctional_of_mem_singleton I hf)]
-    simp
-
-theorem satI_trigger_iff : SatI I C (.trigger p p') ↔ C ⊆ I p := by
-  rw [satI_iff_admits, Formula.admits_ccp_iff]
-  rfl
-
-theorem satS_trigger_iff : SatS I C (.trigger p p') ↔ C ⊆ I p := by
-  simp [satS_iff, Formula.occurrences, SyntacticEnvironment.truth, DependsAt]
-
-theorem satS_and_left_iff :
-    SatS I C (.bin .conj (.trigger p p') (.atom q)) ↔ C ∩ I q ⊆ I p := by
-  simp [satS_iff, Formula.occurrences, SyntacticEnvironment.truth, SyntacticEnvironment.Step.truth,
-    DependsAt, Connective.eval, Formula.truth, Set.subset_def]
-
-theorem satS_and_right_iff :
-    SatS I C (.bin .conj (.atom q) (.trigger p p')) ↔ C ∩ I q ⊆ I p := by
-  simp [satS_iff, Formula.occurrences, SyntacticEnvironment.truth, SyntacticEnvironment.Step.truth,
-    DependsAt, Connective.eval, Formula.truth, Set.subset_def]
-
-theorem transpLS_trigger_iff : Kalomoiros2023.TranspLS I C (.trigger p p') ↔ C ⊆ I p := by
-  rw [Kalomoiros2023.transpLS_of_occurrences I (K := []) (a := p') rfl,
-    Kalomoiros2023.transpLSAt_iff]
-  simp [SyntacticEnvironment.AgreeUpTo, SyntacticEnvironment.truth, Set.subset_def]
-
-end EarlierAccounts
-
 /-! ### Filtering in the antecedent of a conditional (Experiment 3) -/
 
 /-- The antecedent of a condition of Experiment 3, for a trigger with presupposition `p` and
@@ -261,16 +218,16 @@ theorem Account.filters_iff {a : Account} {x : Antecedent} :
       (by simp)
   · exact iff_of_true (fun _ _ I p p' q hq C ↦ (Schlenker2009.satI_and_iff I).2
       fun _ _ hw ↦ hq hw) (by simp)
-  · exact iff_of_false (hno fun I C h ↦ (satI_trigger_iff I).1 h) (by simp)
+  · exact iff_of_false (hno fun I C h ↦ (Schlenker2009.satI_trigger_iff I).1 h) (by simp)
   · exact iff_of_false (hno fun I C h ↦ (Kalomoiros2023.transpLS_and_left I).1 h) (by simp)
   · exact iff_of_true (fun _ _ I p p' q hq C ↦ (Kalomoiros2023.transpLS_and_right I).2
       fun _ _ hw ↦ hq hw) (by simp)
-  · exact iff_of_false (hno fun I C h ↦ (transpLS_trigger_iff I).1 h) (by simp)
-  · exact iff_of_true (fun _ _ I p p' q hq C ↦ (satS_and_left_iff I).2 fun _ hw ↦ hq hw.2)
-      (by simp)
-  · exact iff_of_true (fun _ _ I p p' q hq C ↦ (satS_and_right_iff I).2 fun _ hw ↦ hq hw.2)
-      (by simp)
-  · exact iff_of_false (hno fun I C h ↦ (satS_trigger_iff I).1 h) (by simp)
+  · exact iff_of_false (hno fun I C h ↦ (Kalomoiros2023.transpLS_trigger I).1 h) (by simp)
+  · exact iff_of_true (fun _ _ I p p' q hq C ↦ (Schlenker2009.satS_and_left_iff I).2
+      fun _ _ hw ↦ hq hw) (by simp)
+  · exact iff_of_true (fun _ _ I p p' q hq C ↦ (Schlenker2009.satS_and_right_iff I).2
+      fun _ _ hw ↦ hq hw) (by simp)
+  · exact iff_of_false (hno fun I C h ↦ (Schlenker2009.satS_trigger_iff I).1 h) (by simp)
   all_goals exact iff_of_true (fun _ _ _ _ _ _ _ _ _ _ ↦ trivial) (by simp)
 
 instance (a : Account) (x : Antecedent) : Decidable (a.Filters x) :=
