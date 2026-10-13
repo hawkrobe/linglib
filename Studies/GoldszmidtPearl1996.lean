@@ -32,12 +32,21 @@ by the priorities the paper computes for Example 24 under every choice of streng
 the flying rule (`zPlus_penguins_winged_iff`), and the Nixon diamond of Example 26 is decided by
 the relative strengths alone (`nixon_pacifist_iff`).
 
+Soft evidence for a proposition is read in two ways. A Type-J report fixes the final belief, and
+is Spohn's conditionalization `RankingFunction.conditionα` (Eq. (25)). A Type-L report shifts
+the belief by the evidence's strength: L-conditioning lifts the worlds outside the proposition
+by the strength and renormalizes. It commutes, and two reports for one proposition add their
+strengths (`lCondition_comm`, `lCondition_lCondition`). Its world ranks are those of Eq. (32),
+and it is Type-J conditioning at the firmness Eq. (30) gives the negation
+(`lCondition_eq_conditionα`). On the party of Example 28 the Type-L reading reproduces Fig. 6,
+while the Type-J reading leaves Mary's going at rank 1 where the paper reports 2 (`typeJ_bill`).
+
 ## Implementation notes
 
 Worlds are the truth assignments to the atoms of each example, given a `Fintype` instance through
 the product of Booleans so that tolerance, admissibility, and entailment decide. Uniqueness and
-minimality of κᶻ and κ⁺ (Theorems 16 and 21) and the paper's sections on soft evidence, belief
-revision, and causal networks are not formalized; Spohn's conditioning lives in `RankingFunction`.
+minimality of κᶻ and κ⁺ (Theorems 16 and 21), the complexity analysis of soft evidence, and the
+paper's sections on belief revision and causal networks are not formalized.
 
 ## References
 
@@ -87,7 +96,7 @@ abbrev KnowledgeBase (W : Type*) := List (Rule W)
 /-- A ranking is admissible for the base when every world falsifying a rule is outranked by a
 world verifying it, so that κ(φ ∧ ψ) < κ(φ ∧ ¬ψ) (Definition 2). -/
 def Admissible (κ : RankingFunction W) (Δ : KnowledgeBase W) : Prop :=
-  ∀ r ∈ Δ, ∀ x, r.Falsified x → ∃ y, r.ante y ∧ r.cons y ∧ κ.rank y < κ.rank x
+  ∀ r ∈ Δ, ∀ x, r.Falsified x → ∃ y, r.ante y ∧ r.cons y ∧ κ y < κ x
 
 instance [Fintype W] (κ : RankingFunction W) (Δ : KnowledgeBase W) :
     Decidable (Admissible κ Δ) := by
@@ -179,7 +188,7 @@ def StrengthBase.flat (Δ : StrengthBase W) : KnowledgeBase W := Δ.map (·.toRu
 /-- A ranking is δ-admissible when every world falsifying a rule lies at least δ + 1 ranks above
 a world verifying it (Definition 18). -/
 def StrengthAdmissible (κ : RankingFunction W) (Δ : StrengthBase W) : Prop :=
-  ∀ r ∈ Δ, ∀ x, r.Falsified x → ∃ y, r.ante y ∧ r.cons y ∧ κ.rank y + r.strength < κ.rank x
+  ∀ r ∈ Δ, ∀ x, r.Falsified x → ∃ y, r.ante y ∧ r.cons y ∧ κ y + r.strength < κ x
 
 private theorem strength_le_foldr_max (Δ : StrengthBase W) {r : StrengthRule W} (hr : r ∈ Δ) :
     r.strength ≤ Δ.foldr (fun r n ↦ max r.strength n) 0 := by
@@ -205,14 +214,14 @@ theorem strengthAdmissible_iff_flat [Fintype W] (Δ : StrengthBase W) :
     exact ⟨y, hya, hyc, by omega⟩
   · rintro ⟨κ, hκ⟩
     set M := 1 + Δ.foldr (fun r n ↦ max r.strength n) 0 with hM
-    refine ⟨⟨fun x ↦ κ.rank x * M, ?_⟩, fun r hr x hx ↦ ?_⟩
-    · obtain ⟨x, hx⟩ := κ.normalized
+    refine ⟨⟨fun x ↦ κ x * M, ?_⟩, fun r hr x hx ↦ ?_⟩
+    · obtain ⟨x, hx⟩ := κ.exists_eq_zero
       exact ⟨x, by simp [hx]⟩
     · obtain ⟨y, hya, hyc, hlt⟩ := hκ r.toRule (List.mem_map.mpr ⟨r, hr, rfl⟩) x hx
       refine ⟨y, hya, hyc, ?_⟩
       have hδ : r.strength < M := by have := strength_le_foldr_max Δ hr; omega
-      show κ.rank y * M + r.strength < κ.rank x * M
-      have h := Nat.mul_le_mul_right M (show κ.rank y + 1 ≤ κ.rank x by omega)
+      show κ y * M + r.strength < κ x * M
+      have h := Nat.mul_le_mul_right M (show κ y + 1 ≤ κ x by omega)
       rw [Nat.succ_mul] at h; omega
 
 /-- The rank a prioritized strength base induces (Eq. 15). -/
@@ -578,5 +587,245 @@ theorem nixon_pacifist_iff :
     rw [(zPlusRank_qrp δ₁ δ₂).1]; omega
 
 end Example26
+
+/-! ### Soft evidence (section 5) -/
+
+section SoftEvidence
+
+open RankingFunction
+
+variable (κ : RankingFunction W) {A : Set W} {L : ℕ} {w : W}
+
+open Classical in
+/-- L-conditioning on `A` with strength `L` answers a report that evidence of its own supports
+`A` to degree `L` (section 5.2). It lifts the worlds outside `A` by `L` and shifts the ranking
+back to start at `0` by subtracting `min[κ(A); κ(¬A) + L]`. -/
+noncomputable def lCondition (A : Set W) (L : ℕ) : RankingFunction W where
+  toFun w := κ w + (if w ∈ A then 0 else L) - (min (κ.rankSet A) (κ.rankSet Aᶜ + L)).toNat
+  exists_eq_zero' := by
+    rcases le_total (κ.rankSet A) (κ.rankSet Aᶜ + L) with h | h
+    · rcases A.eq_empty_or_nonempty with rfl | hA
+      · simp at h
+      obtain ⟨u, hu, e⟩ := κ.exists_rank_eq_rankSet hA
+      refine ⟨u, ?_⟩
+      rw [ite_eq_left hu, min_eq_left h, ← e, ENat.toNat_natCast, add_zero, Nat.sub_self]
+    · rcases Aᶜ.eq_empty_or_nonempty with he | hA'
+      · rw [Set.compl_empty_iff.1 he] at h
+        simp at h
+      obtain ⟨u, hu, e⟩ := κ.exists_rank_eq_rankSet hA'
+      refine ⟨u, ?_⟩
+      rw [ite_eq_right hu, min_eq_right h, ← e, ← Nat.cast_add, ENat.toNat_natCast, Nat.sub_self]
+
+theorem lCondition_of_mem (hw : w ∈ A) :
+    lCondition κ A L w = κ w - (min (κ.rankSet A) (κ.rankSet Aᶜ + L)).toNat := by
+  simp [lCondition, hw]
+
+theorem lCondition_of_notMem (hw : w ∉ A) :
+    lCondition κ A L w = κ w + L - (min (κ.rankSet A) (κ.rankSet Aᶜ + L)).toNat := by
+  simp [lCondition, hw]
+
+open Classical in
+/-- Up to the constant that normalizes it, L-conditioning lifts the worlds outside `A` by `L`. -/
+theorem exists_lCondition_add (A : Set W) (L : ℕ) :
+    ∃ c, ∀ w, lCondition κ A L w + c = κ w + if w ∈ A then 0 else L := by
+  refine ⟨(min (κ.rankSet A) (κ.rankSet Aᶜ + L)).toNat, fun w ↦ ?_⟩
+  by_cases hw : w ∈ A
+  · have := ENat.toNat_le_of_le_natCast ((min_le_left _ (κ.rankSet Aᶜ + L)).trans
+      (κ.rankSet_le hw))
+    rw [lCondition_of_mem κ hw, ite_eq_left hw]
+    omega
+  · have : (min (κ.rankSet A) (κ.rankSet Aᶜ + L)).toNat ≤ κ w + L :=
+      ENat.toNat_le_of_le_natCast ((min_le_right _ _).trans (by
+        rw [Nat.cast_add]
+        gcongr
+        exact κ.rankSet_le (A := Aᶜ) hw))
+    rw [lCondition_of_notMem κ hw, ite_eq_right hw]
+    omega
+
+/-- L-conditioning is commutative (section 5.2). -/
+theorem lCondition_comm (A B : Set W) (L M : ℕ) :
+    lCondition (lCondition κ A L) B M = lCondition (lCondition κ B M) A L := by
+  classical
+  obtain ⟨c₁, h₁⟩ := exists_lCondition_add (lCondition κ A L) B M
+  obtain ⟨c₂, h₂⟩ := exists_lCondition_add κ A L
+  obtain ⟨c₃, h₃⟩ := exists_lCondition_add (lCondition κ B M) A L
+  obtain ⟨c₄, h₄⟩ := exists_lCondition_add κ B M
+  refine eq_of_forall_add_eq_add (c := c₁ + c₂) (c' := c₃ + c₄) fun w ↦ ?_
+  have := h₁ w
+  have := h₂ w
+  have := h₃ w
+  have := h₄ w
+  split_ifs at * <;> omega
+
+/-- Two pieces of evidence for the same proposition add their strengths (section 5.2). -/
+theorem lCondition_lCondition (A : Set W) (L M : ℕ) :
+    lCondition (lCondition κ A L) A M = lCondition κ A (L + M) := by
+  classical
+  obtain ⟨c₁, h₁⟩ := exists_lCondition_add (lCondition κ A L) A M
+  obtain ⟨c₂, h₂⟩ := exists_lCondition_add κ A L
+  obtain ⟨c₃, h₃⟩ := exists_lCondition_add κ A (L + M)
+  refine eq_of_forall_add_eq_add (c := c₁ + c₂) (c' := c₃) fun w ↦ ?_
+  have := h₁ w
+  have := h₂ w
+  have := h₃ w
+  split_ifs at * <;> omega
+
+private theorem toNat_min_rankSet (hA : A.Nonempty) (hA' : Aᶜ.Nonempty) :
+    (min (κ.rankSet A) (κ.rankSet Aᶜ + L)).toNat =
+      min (κ.rankSet A).toNat ((κ.rankSet Aᶜ).toNat + L) := by
+  obtain ⟨u, -, e⟩ := κ.exists_rank_eq_rankSet hA
+  obtain ⟨u', -, e'⟩ := κ.exists_rank_eq_rankSet hA'
+  rw [← e, ← e', ← Nat.cast_add, ENat.toNat_natCast, ENat.toNat_natCast]
+  rcases le_total (κ u) (κ u' + L) with h | h
+  · rw [min_eq_left (by exact_mod_cast h), min_eq_left h, ENat.toNat_natCast]
+  · rw [min_eq_right (by exact_mod_cast h), min_eq_right h, ENat.toNat_natCast]
+
+/-- Eq. (32) on the worlds of `A`, where `max[0; x − y]` is the truncated difference. -/
+theorem lCondition_eq_aPart_of_mem (hA : A.Nonempty) (hA' : Aᶜ.Nonempty) (hw : w ∈ A) :
+    lCondition κ A L w = κ.aPart A w + ((κ.rankSet A).toNat - ((κ.rankSet Aᶜ).toNat + L)) := by
+  have := κ.toNat_rankSet_le hw
+  rw [lCondition_of_mem κ hw, toNat_min_rankSet κ hA hA', aPart]
+  omega
+
+/-- Eq. (32) on the worlds outside `A`. -/
+theorem lCondition_eq_aPart_of_notMem (hA : A.Nonempty) (hA' : Aᶜ.Nonempty) (hw : w ∉ A) :
+    lCondition κ A L w = κ.aPart Aᶜ w + ((κ.rankSet Aᶜ).toNat + L - (κ.rankSet A).toNat) := by
+  have := κ.toNat_rankSet_le (A := Aᶜ) hw
+  rw [lCondition_of_notMem κ hw, toNat_min_rankSet κ hA hA', aPart]
+  omega
+
+/-- When `A` comes out with rank `0`, L-conditioning is J-conditioning, Spohn's
+conditionalization of Eq. (25), at the firmness `κ(¬A) + L − κ(A)` that Eq. (30) gives the
+negation. -/
+theorem lCondition_eq_conditionα (hA : A.Nonempty) (hA' : Aᶜ.Nonempty)
+    (h : (κ.rankSet A).toNat ≤ (κ.rankSet Aᶜ).toNat + L) :
+    lCondition κ A L = κ.conditionα A hA ((κ.rankSet Aᶜ).toNat + L - (κ.rankSet A).toNat) := by
+  ext w
+  by_cases hw : w ∈ A
+  · rw [lCondition_eq_aPart_of_mem κ hA hA' hw, κ.conditionα_of_mem _ _ hw]
+    omega
+  · rw [lCondition_eq_aPart_of_notMem κ hA hA' hw, κ.conditionα_of_notMem _ _ hw]
+    omega
+
+end SoftEvidence
+
+/-! ### Example 28: Mary and Bill's party -/
+
+section Example28
+
+open RankingFunction
+
+/-- A world of Example 28 says whether Mary and whether Bill go to the party. -/
+structure Party where
+  m : Bool
+  b : Bool
+  deriving DecidableEq
+
+def Party.equivProd : Party ≃ Bool × Bool where
+  toFun x := (x.m, x.b)
+  invFun t := ⟨t.1, t.2⟩
+  left_inv _ := rfl
+  right_inv _ := rfl
+
+instance : Fintype Party := Fintype.ofEquiv _ Party.equivProd.symm
+
+def mary (x : Party) : Prop := x.m = true
+def bill (x : Party) : Prop := x.b = true
+
+instance : DecidablePred mary := fun x ↦ by unfold mary; infer_instance
+instance : DecidablePred bill := fun x ↦ by unfold bill; infer_instance
+
+/-- The single rule `r_m : M →² ¬B`, if Mary goes then Bill will not, at the priority 2 that
+Definition 20 gives it. The paper prints `Z⁺(r_m) = 4`, but its Fig. 5 ranks `M ∧ B` at 3, as
+priority 2 does. -/
+def Δm : List (StrengthRule Party × ℕ) := [(⟨⟨mary, fun x ↦ ¬ bill x⟩, 2⟩, 2)]
+
+theorem isZPlusOrdering_example28 : IsZPlusOrdering Δm := by
+  intro q hq
+  simp only [Δm, List.mem_singleton] at hq
+  subst hq
+  exact ⟨⟨⟨true, false⟩, rfl, by decide, by decide⟩, by rintro n ⟨x, -, -, rfl⟩; dsimp only; omega⟩
+
+/-- The ranking κ⁺ of Example 28, the left of Fig. 5. -/
+def κm : RankingFunction Party := ⟨zPlusRank Δm, ⟨false, false⟩, by decide⟩
+
+theorem κm_apply (x : Party) : κm x = if mary x ∧ bill x then 3 else 0 := by
+  revert x; decide
+
+/-- The ranking κ⁺′ after evidence of strength 2 that Mary goes, read as a Type-J report. -/
+noncomputable def κm' : RankingFunction Party := κm.conditionα {x | mary x} ⟨⟨true, false⟩, rfl⟩ 2
+
+/-- In the right of Fig. 5, the worlds without Mary rise to rank 2. -/
+theorem κm'_apply (x : Party) : κm' x = if mary x then (if bill x then 3 else 0) else 2 := by
+  have h₁ : κm.rankSet {x | mary x} = 0 :=
+    (κm.rankSet_eq_of_forall_le (A := {x | mary x}) (w := ⟨true, false⟩) rfl
+      (by simp only [κm_apply]; decide)).trans
+      (by simp [κm_apply, mary, bill])
+  have h₂ : κm.rankSet {x | mary x}ᶜ = 0 :=
+    (κm.rankSet_eq_of_forall_le (A := {x | mary x}ᶜ) (w := ⟨false, false⟩) (by decide)
+      (by simp only [κm_apply]; decide)).trans (by simp [κm_apply, mary, bill])
+  by_cases hx : mary x
+  · rw [κm', κm.conditionα_of_mem (A := {x | mary x}) _ _ hx, aPart, h₁, κm_apply]
+    simp [hx]
+  · rw [κm', κm.conditionα_of_notMem (A := {x | mary x}) _ _ hx, aPart, h₂, κm_apply]
+    simp [hx]
+
+/-- After the Type-J report on Mary, the belief that Bill stays home has strength 2. -/
+theorem rankSet_κm'_bill : κm'.rankSet {x | bill x} = 2 :=
+  (κm'.rankSet_eq_of_forall_le (A := {x | bill x}) (w := ⟨false, true⟩) rfl
+    (by simp only [κm'_apply]; decide)).trans
+    (by simp [κm'_apply, mary])
+
+theorem rankSet_κm'_not_bill : κm'.rankSet {x | bill x}ᶜ = 0 :=
+  (κm'.rankSet_eq_of_forall_le (A := {x | bill x}ᶜ) (w := ⟨true, false⟩) (by decide)
+    (by simp only [κm'_apply]; decide)).trans (by simp [κm'_apply, mary, bill])
+
+/-- L-conditioning κ⁺′ on evidence of strength 2 that Bill goes lowers `M ∧ B` to 1 and
+`¬M ∧ B` to 0, the right of Fig. 6. -/
+theorem lCondition_κm'_apply (x : Party) :
+    lCondition κm' {x | bill x} 2 x =
+      if mary x ∧ bill x then 1 else if mary x ∨ bill x then 0 else 2 := by
+  by_cases hx : bill x
+  · rw [lCondition_of_mem (A := {x | bill x}) _ hx, rankSet_κm'_bill, rankSet_κm'_not_bill,
+      κm'_apply]
+    by_cases hm : mary x <;> simp [hx, hm]
+  · rw [lCondition_of_notMem (A := {x | bill x}) _ hx, rankSet_κm'_bill, rankSet_κm'_not_bill,
+      κm'_apply]
+    by_cases hm : mary x <;> simp [hx, hm]
+
+/-- The Type-L report on Bill brings back the initial ranks of Bill and Mary, `κ⁺″(B) = 0` and
+`κ⁺″(¬M) = 0`, while lowering the disbelief in both going to `κ⁺″(M ∧ B) = 1`. -/
+theorem fig6 :
+    (lCondition κm' {x | bill x} 2).rankSet {x | bill x} = 0 ∧
+      (lCondition κm' {x | bill x} 2).rankSet {x | ¬ mary x} = 0 ∧
+        (lCondition κm' {x | bill x} 2).rankSet {x | mary x ∧ bill x} = 1 := by
+  refine ⟨?_, ?_, ?_⟩
+  · exact (rankSet_eq_zero_iff _).2 ⟨⟨false, true⟩, rfl, by rw [lCondition_κm'_apply]; decide⟩
+  · exact (rankSet_eq_zero_iff _).2
+      ⟨⟨false, true⟩, by decide, by rw [lCondition_κm'_apply]; decide⟩
+  · exact ((lCondition κm' {x | bill x} 2).rankSet_eq_of_forall_le (A := {x | mary x ∧ bill x})
+      (w := ⟨true, true⟩)
+      ⟨rfl, rfl⟩ (by simp only [lCondition_κm'_apply]; decide)).trans
+        (by rw [lCondition_κm'_apply]; simp [mary, bill])
+
+/-- Read as a Type-J report instead, the hunch that Bill goes makes his going believed with
+strength 2, but Mary's going keeps rank 1. The paper reports `κ⁺″(M) = 2`, which would need the
+prior to rank `M ∧ B` at 4 or more, and then the Type-L reading would leave `κ⁺″(M ∧ B)` above 1. -/
+theorem typeJ_bill :
+    (κm'.conditionα {x | bill x} ⟨⟨false, true⟩, rfl⟩ 2).rankSet {x | bill x}ᶜ = 2 ∧
+      (κm'.conditionα {x | bill x} ⟨⟨false, true⟩, rfl⟩ 2).rankSet {x | mary x} = 1 := by
+  refine ⟨rankSet_conditionα_compl _ _ ⟨⟨true, false⟩, by decide⟩ _, ?_⟩
+  have hJ : ∀ x, κm'.conditionα {x | bill x} ⟨⟨false, true⟩, rfl⟩ 2 x =
+      if bill x then (if mary x then 1 else 0) else (if mary x then 2 else 4) := fun x ↦ by
+    by_cases hx : bill x
+    · rw [κm'.conditionα_of_mem (A := {x | bill x}) _ _ hx, aPart, rankSet_κm'_bill, κm'_apply]
+      by_cases hm : mary x <;> simp [hx, hm]
+    · rw [κm'.conditionα_of_notMem (A := {x | bill x}) _ _ hx, aPart, rankSet_κm'_not_bill,
+        κm'_apply]
+      by_cases hm : mary x <;> simp [hx, hm]
+  exact ((κm'.conditionα _ _ 2).rankSet_eq_of_forall_le (A := {x | mary x}) (w := ⟨true, true⟩) rfl
+    (by simp only [hJ]; decide)).trans (by rw [hJ]; simp [mary, bill])
+
+end Example28
 
 end GoldszmidtPearl1996

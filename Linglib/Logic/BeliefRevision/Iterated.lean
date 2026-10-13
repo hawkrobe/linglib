@@ -28,8 +28,8 @@ equivalent to a condition on how the preorder of a state relates to the preorder
 non-`μ`-worlds, preservation of strict and of weak rankings of a `μ`-world over a non-`μ`-world,
 and agreement outside the revised belief set. Spohn's conditionalisation of rankings, which makes
 the evidence one degree more plausible than it was implausible, is represented by the rankings'
-own orderings and meets every postulate (Theorem 5). On normalised rankings it is the revision of
-`RankingFunction`.
+own orderings and meets every postulate (Theorem 5). On a normalised ranking it is
+conditionalisation on the evidence at the firmness one above the rank of its negation.
 
 ## Implementation notes
 
@@ -578,27 +578,26 @@ theorem spohnRevision_c3 [Finite W] : (spohnRevision W).C3 :=
 theorem spohnRevision_c4 [Finite W] : (spohnRevision W).C4 :=
   spohnRevision_faithful.c4_iff.2 spohn_preservesLe
 
-/-- On a normalised ranking, Spohn's revision is `RankingFunction.revise`. -/
-theorem _root_.RankingFunction.revise_rank (κ : RankingFunction W) (A : Set W)
-    (hA : A.Nonempty) : (κ.revise A hA).rank = spohn κ.rank A := by
-  have hrank : ∀ B : Set W, B.Nonempty → (κ.rankSet B).toNat = rank κ.rank B := fun B hB ↦ by
-    obtain ⟨u, hu, e⟩ := exists_rank_eq κ.rank B hB
-    obtain ⟨v, hv, e'⟩ := κ.exists_rank_eq_rankSet hB
-    rw [← e', ENat.toNat_natCast, ← e]
-    exact le_antisymm (by exact_mod_cast e' ▸ κ.rankSet_le hu) (e ▸ rank_le κ.rank B hv)
+/-- On a ranking function, Spohn's revision by `A` is conditionalization on `A` at the firmness
+`κ(Aᶜ) + 1`. -/
+theorem spohn_eq_conditionα (κ : RankingFunction W) {A : Set W} (hA : A.Nonempty) :
+    spohn κ A = κ.conditionα A hA ((κ.rankSet Aᶜ).toNat + 1) := by
   funext w
   by_cases hw : w ∈ A
-  · rw [RankingFunction.revise, κ.conditionα_of_mem _ _ hw, spohn_of_mem κ.rank A hw,
-      RankingFunction.aPart, hrank A hA]
-  · rw [RankingFunction.revise, κ.conditionα_of_notMem _ _ hw, spohn_of_notMem κ.rank A hw,
-      RankingFunction.aPart]
-    have := κ.toNat_rankSet_le (A := Aᶜ) hw
+  · obtain ⟨u, hu, e⟩ := exists_rank_eq κ A hA
+    obtain ⟨v, hv, e'⟩ := κ.exists_rank_eq_rankSet hA
+    have hrank : (κ.rankSet A).toNat = rank κ A := by
+      rw [← e', ENat.toNat_natCast, ← e]
+      exact le_antisymm (by exact_mod_cast e' ▸ κ.rankSet_le hu) (e ▸ rank_le κ A hv)
+    rw [κ.conditionα_of_mem _ _ hw, spohn_of_mem κ A hw, RankingFunction.aPart, hrank]
+  · have := κ.toNat_rankSet_le (A := Aᶜ) hw
+    rw [κ.conditionα_of_notMem _ _ hw, spohn_of_notMem κ A hw, RankingFunction.aPart]
     omega
 
 /-- The conditional beliefs of a ranking function under Spohn's revision are the consequences
 of its ranked model. -/
 theorem _root_.RankingFunction.accepts_spohnRevision_iff (κ : RankingFunction W) {A B : Set W} :
-    (spohnRevision W).Accepts κ.rank A B ↔ κ.Entails A B :=
+    (spohnRevision W).Accepts κ A B ↔ κ.Entails A B :=
   spohnRevision_faithful.accepts_iff
 
 end Spohn

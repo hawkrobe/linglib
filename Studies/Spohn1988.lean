@@ -61,8 +61,8 @@ variable {A B : Set W} (hA : A.Nonempty) (hB : B.Nonempty)
 theorem toNat_rankSet_eq_zero (h : κ.rankSet A = 0) : (κ.rankSet A).toNat = 0 := by
   rw [h]; rfl
 
-/-- Theorem 3, first half: after conditionalizing on `A` at any firmness, conditionalizing on
-`A` at the firmness with which `A` was believed restores the ranking. -/
+/-- After conditionalizing on `A` at any firmness, conditionalizing on `A` at the firmness with
+which `A` was believed restores the ranking (Theorem 3, first half). -/
 theorem conditionα_conditionα (h0 : κ.rankSet A = 0) (α : ℕ) :
     (κ.conditionα A hA α).conditionα A hA (κ.rankSet Aᶜ).toNat = κ := by
   ext w
@@ -79,8 +79,8 @@ theorem conditionα_conditionα (h0 : κ.rankSet A = 0) (α : ℕ) :
       κ.rankSet_conditionα_compl hA hA', ENat.toNat_natCast]
     omega
 
-/-- Theorem 3, second half: after conditionalizing on the negation of `A` at any firmness,
-conditionalizing on `A` at the firmness with which `A` was believed restores the ranking. -/
+/-- After conditionalizing on the negation of `A` at any firmness, conditionalizing on `A` at
+the firmness with which `A` was believed restores the ranking (Theorem 3, second half). -/
 theorem conditionα_compl_conditionα (hA' : Aᶜ.Nonempty) (h0 : κ.rankSet A = 0) (α : ℕ) :
     (κ.conditionα Aᶜ hA' α).conditionα A hA (κ.rankSet Aᶜ).toNat = κ := by
   have hAc : (κ.conditionα Aᶜ hA' α).rankSet A = α := by
@@ -88,7 +88,7 @@ theorem conditionα_compl_conditionα (hA' : Aᶜ.Nonempty) (h0 : κ.rankSet A =
     rwa [compl_compl] at this
   ext w
   by_cases hw : w ∈ A
-  · have hw' : w ∉ Aᶜ := λ h => h hw
+  · have hw' : w ∉ Aᶜ := fun h ↦ h hw
     rw [conditionα_of_mem _ _ _ hw, aPart, conditionα_of_notMem _ _ _ hw', aPart, compl_compl,
       toNat_rankSet_eq_zero _ h0, hAc, ENat.toNat_natCast]
     omega
@@ -98,13 +98,13 @@ theorem conditionα_compl_conditionα (hA' : Aᶜ.Nonempty) (h0 : κ.rankSet A =
       toNat_rankSet_eq_zero _ (κ.rankSet_conditionα hA' α)]
     omega
 
-/-- Theorem 4: conditionalizations on `A` and on `B` commute when the cells `A ∩ B`,
-`A ∩ Bᶜ` and `Aᶜ ∩ B` all have rank zero. -/
+/-- Conditionalizations on `A` and on `B` commute when the cells `A ∩ B`, `A ∩ Bᶜ` and
+`Aᶜ ∩ B` all have rank zero (Theorem 4). -/
 theorem conditionα_comm (hAB : κ.rankSet (A ∩ B) = 0) (hAB' : κ.rankSet (A ∩ Bᶜ) = 0)
     (hA'B : κ.rankSet (Aᶜ ∩ B) = 0) (α β : ℕ) :
     (κ.conditionα A hA α).conditionα B hB β = (κ.conditionα B hB β).conditionα A hA α := by
   classical
-  have zero_of_le : ∀ {S T : Set W}, S ⊆ T → κ.rankSet S = 0 → κ.rankSet T = 0 := λ h hS =>
+  have zero_of_le : ∀ {S T : Set W}, S ⊆ T → κ.rankSet S = 0 → κ.rankSet T = 0 := fun h hS ↦
     le_antisymm (hS ▸ κ.rankSet_anti h) bot_le
   have hA0 := zero_of_le Set.inter_subset_left hAB
   have hB0 := zero_of_le Set.inter_subset_right hAB
@@ -113,16 +113,20 @@ theorem conditionα_comm (hAB : κ.rankSet (A ∩ B) = 0) (hAB' : κ.rankSet (A 
   obtain ⟨u, ⟨huA, huB⟩, hu⟩ := κ.rankSet_eq_zero_iff.1 hAB
   obtain ⟨u', ⟨hu'A, hu'B⟩, hu'⟩ := κ.rankSet_eq_zero_iff.1 hAB'
   obtain ⟨u'', ⟨hu''A, hu''B⟩, hu''⟩ := κ.rankSet_eq_zero_iff.1 hA'B
-  have h1 : ∀ w, (κ.conditionα A hA α).rank w = if w ∈ A then κ.rank w else α + κ.rank w :=
-    λ w => by
+  have h1 : ∀ w, κ.conditionα A hA α w = if w ∈ A then κ w else α + κ w :=
+    fun w ↦ by
       by_cases hw : w ∈ A
       · rw [conditionα_of_mem _ _ _ hw, aPart, toNat_rankSet_eq_zero _ hA0, ite_eq_left hw]; rfl
-      · rw [conditionα_of_notMem _ _ _ hw, aPart, toNat_rankSet_eq_zero _ hA'0, ite_eq_right hw]; rfl
-  have h2 : ∀ w, (κ.conditionα B hB β).rank w = if w ∈ B then κ.rank w else β + κ.rank w :=
-    λ w => by
+      · rw [conditionα_of_notMem _ _ _ hw, aPart, toNat_rankSet_eq_zero _ hA'0,
+          ite_eq_right hw]
+        rfl
+  have h2 : ∀ w, κ.conditionα B hB β w = if w ∈ B then κ w else β + κ w :=
+    fun w ↦ by
       by_cases hw : w ∈ B
       · rw [conditionα_of_mem _ _ _ hw, aPart, toNat_rankSet_eq_zero _ hB0, ite_eq_left hw]; rfl
-      · rw [conditionα_of_notMem _ _ _ hw, aPart, toNat_rankSet_eq_zero _ hB'0, ite_eq_right hw]; rfl
+      · rw [conditionα_of_notMem _ _ _ hw, aPart, toNat_rankSet_eq_zero _ hB'0,
+          ite_eq_right hw]
+        rfl
   have h1B : (κ.conditionα A hA α).rankSet B = 0 :=
     (rankSet_eq_zero_iff _).2 ⟨u, huB, by rw [h1, ite_eq_left huA, hu]⟩
   have h1B' : (κ.conditionα A hA α).rankSet Bᶜ = 0 :=
@@ -131,19 +135,21 @@ theorem conditionα_comm (hAB : κ.rankSet (A ∩ B) = 0) (hAB' : κ.rankSet (A 
     (rankSet_eq_zero_iff _).2 ⟨u, huA, by rw [h2, ite_eq_left huB, hu]⟩
   have h2A' : (κ.conditionα B hB β).rankSet Aᶜ = 0 :=
     (rankSet_eq_zero_iff _).2 ⟨u'', hu''A, by rw [h2, ite_eq_left hu''B, hu'']⟩
-  have L : ∀ w, ((κ.conditionα A hA α).conditionα B hB β).rank w =
-      (if w ∈ B then 0 else β) + (if w ∈ A then 0 else α) + κ.rank w := λ w => by
+  have L : ∀ w, (κ.conditionα A hA α).conditionα B hB β w =
+      (if w ∈ B then 0 else β) + (if w ∈ A then 0 else α) + κ w := fun w ↦ by
     by_cases hwB : w ∈ B
     · rw [conditionα_of_mem _ _ _ hwB, aPart, h1 w, toNat_rankSet_eq_zero _ h1B, ite_eq_left hwB]
       split_ifs <;> omega
-    · rw [conditionα_of_notMem _ _ _ hwB, aPart, h1 w, toNat_rankSet_eq_zero _ h1B', ite_eq_right hwB]
+    · rw [conditionα_of_notMem _ _ _ hwB, aPart, h1 w, toNat_rankSet_eq_zero _ h1B',
+        ite_eq_right hwB]
       split_ifs <;> omega
-  have R : ∀ w, ((κ.conditionα B hB β).conditionα A hA α).rank w =
-      (if w ∈ A then 0 else α) + (if w ∈ B then 0 else β) + κ.rank w := λ w => by
+  have R : ∀ w, (κ.conditionα B hB β).conditionα A hA α w =
+      (if w ∈ A then 0 else α) + (if w ∈ B then 0 else β) + κ w := fun w ↦ by
     by_cases hwA : w ∈ A
     · rw [conditionα_of_mem _ _ _ hwA, aPart, h2 w, toNat_rankSet_eq_zero _ h2A, ite_eq_left hwA]
       split_ifs <;> omega
-    · rw [conditionα_of_notMem _ _ _ hwA, aPart, h2 w, toNat_rankSet_eq_zero _ h2A', ite_eq_right hwA]
+    · rw [conditionα_of_notMem _ _ _ hwA, aPart, h2 w, toNat_rankSet_eq_zero _ h2A',
+        ite_eq_right hwA]
       split_ifs <;> omega
   ext w
   rw [L, R]
@@ -157,38 +163,31 @@ section Generalized
 
 variable (𝔅 : Setoid W)
 
-theorem cell_nonempty (w : W) : (𝔅.cell w).Nonempty := ⟨w, 𝔅.mem_cell_self w⟩
-
-theorem cell_inf (ℭ : Setoid W) (w : W) : (𝔅 ⊓ ℭ).cell w = 𝔅.cell w ∩ ℭ.cell w := by
-  ext v
-  simp only [Set.mem_inter_iff, mem_cell]
-  exact Setoid.inf_iff_and
-
-/-- Definition 7: the conditionalization of `κ` by a ranking `l` on the atoms of a subfield,
-each world's rank being the rank of its atom under `l` plus its rank within the atom. -/
+/-- The conditionalization of `κ` by a ranking `l` on the atoms of a subfield (Definition 7)
+ranks each world by the rank of its atom under `l` plus its rank within the atom. -/
 noncomputable def condition (l : RankingFunction (Quotient 𝔅)) : RankingFunction W where
-  rank w := l.rank (Quotient.mk 𝔅 w) + κ.aPart (𝔅.cell w) w
-  normalized := by
-    obtain ⟨b, hb⟩ := l.normalized
+  toFun w := l (Quotient.mk 𝔅 w) + κ.aPart (𝔅.cell w) w
+  exists_eq_zero' := by
+    obtain ⟨b, hb⟩ := l.exists_eq_zero
     induction b using Quotient.inductionOn with
     | h w₀ =>
-      obtain ⟨w, hw, h0⟩ := κ.exists_aPart_eq_zero (cell_nonempty 𝔅 w₀)
+      obtain ⟨w, hw, h0⟩ := κ.exists_aPart_eq_zero (𝔅.cell_nonempty w₀)
       refine ⟨w, ?_⟩
       have hrel : 𝔅 w w₀ := 𝔅.mem_cell.1 hw
       simp only [Quotient.sound hrel, hb, cell_eq_of_rel hrel, h0]
 
 theorem condition_rank (l : RankingFunction (Quotient 𝔅)) (w : W) :
-    (condition κ 𝔅 l).rank w = l.rank (Quotient.mk 𝔅 w) + κ.aPart (𝔅.cell w) w :=
+    condition κ 𝔅 l w = l (Quotient.mk 𝔅 w) + κ.aPart (𝔅.cell w) w :=
   rfl
 
 /-- Within an atom, the conditionalized ranking starts at the atom's rank under `l`. -/
 theorem rankSet_condition_cell (l : RankingFunction (Quotient 𝔅)) (w : W) :
-    (condition κ 𝔅 l).rankSet (𝔅.cell w) = l.rank (Quotient.mk 𝔅 w) := by
-  obtain ⟨v, hv, h0⟩ := κ.exists_aPart_eq_zero (cell_nonempty 𝔅 w)
+    (condition κ 𝔅 l).rankSet (𝔅.cell w) = l (Quotient.mk 𝔅 w) := by
+  obtain ⟨v, hv, h0⟩ := κ.exists_aPart_eq_zero (𝔅.cell_nonempty w)
   have hrel : 𝔅 v w := 𝔅.mem_cell.1 hv
   refine le_antisymm (((condition κ 𝔅 l).rankSet_le hv).trans ?_) ?_
   · rw [condition_rank, cell_eq_of_rel hrel, h0, Quotient.sound hrel, add_zero]
-  · refine (le_rankSet_iff _).2 λ u hu => ?_
+  · refine (le_rankSet_iff _).2 fun u hu ↦ ?_
     rw [condition_rank, Quotient.sound (𝔅.mem_cell.1 hu)]
     exact_mod_cast Nat.le_add_right _ _
 
@@ -196,20 +195,12 @@ open Classical in
 /-- The two-atom ranking that believes `A` with firmness `α`. -/
 noncomputable def firmness (A : Set W) (hA : A.Nonempty) (α : ℕ) :
     RankingFunction (Quotient (polar A)) where
-  rank := Quotient.lift (λ w => if w ∈ A then 0 else α) λ w v h => by
+  toFun := Quotient.lift (fun w ↦ if w ∈ A then 0 else α) fun w v h ↦ by
     simp only [polar_iff.1 h]
-  normalized := ⟨Quotient.mk _ hA.some, by simp [hA.some_mem]⟩
+  exists_eq_zero' := ⟨Quotient.mk _ hA.some, by simp [hA.some_mem]⟩
 
-theorem polar_cell_of_mem {A : Set W} {w : W} (hw : w ∈ A) : (polar A).cell w = A := by
-  ext v
-  simp [hw]
-
-theorem polar_cell_of_notMem {A : Set W} {w : W} (hw : w ∉ A) : (polar A).cell w = Aᶜ := by
-  ext v
-  simp [hw]
-
-/-- Theorem 5: conditionalization on `A` at firmness `α` is generalized conditionalization by
-the two-atom ranking believing `A` with firmness `α`. -/
+/-- Conditionalization on `A` at firmness `α` is generalized conditionalization by the two-atom
+ranking believing `A` with firmness `α` (Theorem 5). -/
 theorem condition_firmness (A : Set W) (hA : A.Nonempty) (α : ℕ) :
     condition κ (polar A) (firmness A hA α) = κ.conditionα A hA α := by
   ext w
@@ -219,17 +210,17 @@ theorem condition_firmness (A : Set W) (hA : A.Nonempty) (α : ℕ) :
   · rw [condition_rank, conditionα_of_notMem _ _ _ hw, polar_cell_of_notMem hw]
     simp [firmness, hw]
 
-/-- The coarsening of `κ` to a subfield: each atom ranked by its rank under `κ`. -/
+/-- The coarsening of `κ` to a subfield ranks each atom by its rank under `κ`. -/
 noncomputable def coarsen : RankingFunction (Quotient 𝔅) where
-  rank := Quotient.lift (λ w => (κ.rankSet (𝔅.cell w)).toNat) λ w v h => by
+  toFun := Quotient.lift (fun w ↦ (κ.rankSet (𝔅.cell w)).toNat) fun w v h ↦ by
     rw [cell_eq_of_rel h]
-  normalized := by
-    obtain ⟨w, hw⟩ := κ.normalized
+  exists_eq_zero' := by
+    obtain ⟨w, hw⟩ := κ.exists_eq_zero
     exact ⟨Quotient.mk _ w, by
       simpa using toNat_rankSet_eq_zero κ (κ.rankSet_eq_zero_iff.2 ⟨w, 𝔅.mem_cell_self w, hw⟩)⟩
 
-/-- Theorem 6: generalized conditionalization is reversed by conditionalizing on the
-coarsening of the original ranking to the subfield. -/
+/-- Generalized conditionalization is reversed by conditionalizing on the coarsening of the
+original ranking to the subfield (Theorem 6). -/
 theorem condition_condition_coarsen (l : RankingFunction (Quotient 𝔅)) :
     condition (condition κ 𝔅 l) 𝔅 (coarsen κ 𝔅) = κ := by
   ext w
@@ -246,19 +237,19 @@ section Independence
 
 variable (𝔅 ℭ : Setoid W)
 
-/-- Definition 8: `ℭ` is independent of `𝔅` with respect to `κ`: every atom of `𝔅` meets
-every atom of `ℭ`, and the rank of their intersection is the sum of their ranks. -/
+/-- `ℭ` is independent of `𝔅` with respect to `κ` (Definition 8) when every atom of `𝔅` meets
+every atom of `ℭ` and the rank of their intersection is the sum of their ranks. -/
 def Independent : Prop :=
   ∀ w v, (𝔅.cell w ∩ ℭ.cell v).Nonempty ∧
     κ.rankSet (𝔅.cell w ∩ ℭ.cell v) = κ.rankSet (𝔅.cell w) + κ.rankSet (ℭ.cell v)
 
 variable {κ 𝔅 ℭ}
 
-theorem Independent.symm (h : Independent κ 𝔅 ℭ) : Independent κ ℭ 𝔅 := λ w v => by
+theorem Independent.symm (h : Independent κ 𝔅 ℭ) : Independent κ ℭ 𝔅 := fun w v ↦ by
   obtain ⟨hne, heq⟩ := h v w
   exact ⟨by rwa [Set.inter_comm], by rw [Set.inter_comm, heq, add_comm]⟩
 
-/-- Theorem 7: independence extends from atoms to all satisfiable members of the fields. -/
+/-- Independence extends from atoms to all satisfiable members of the fields (Theorem 7). -/
 theorem Independent.rankSet_inter (h : Independent κ 𝔅 ℭ) {B C : Set W} (hB : 𝔅.Decides B)
     (hC : ℭ.Decides C) (hB' : B.Nonempty) (hC' : C.Nonempty) :
     κ.rankSet (B ∩ C) = κ.rankSet B + κ.rankSet C := by
@@ -268,7 +259,7 @@ theorem Independent.rankSet_inter (h : Independent κ 𝔅 ℭ) {B C : Set W} (h
     calc κ.rankSet (B ∩ C) ≤ κ.rankSet (𝔅.cell b ∩ ℭ.cell c) :=
           κ.rankSet_anti (Set.inter_subset_inter (hB.cell_subset hb) (hC.cell_subset hc))
       _ = κ.rankSet (𝔅.cell b) + κ.rankSet (ℭ.cell c) := (h b c).2
-      _ ≤ κ.rank b + κ.rank c :=
+      _ ≤ κ b + κ c :=
           add_le_add (κ.rankSet_le (𝔅.mem_cell_self b)) (κ.rankSet_le (ℭ.mem_cell_self c))
       _ = κ.rankSet B + κ.rankSet C := by rw [eb, ec]
   · rcases Set.eq_empty_or_nonempty (B ∩ C) with hBC | hBC
@@ -277,7 +268,7 @@ theorem Independent.rankSet_inter (h : Independent κ 𝔅 ℭ) {B C : Set W} (h
     calc κ.rankSet B + κ.rankSet C ≤ κ.rankSet (𝔅.cell w) + κ.rankSet (ℭ.cell w) :=
           add_le_add (κ.rankSet_anti (hB.cell_subset hwB)) (κ.rankSet_anti (hC.cell_subset hwC))
       _ = κ.rankSet (𝔅.cell w ∩ ℭ.cell w) := ((h w w).2).symm
-      _ ≤ κ.rank w := κ.rankSet_le ⟨𝔅.mem_cell_self w, ℭ.mem_cell_self w⟩
+      _ ≤ κ w := κ.rankSet_le ⟨𝔅.mem_cell_self w, ℭ.mem_cell_self w⟩
       _ = κ.rankSet (B ∩ C) := e
 
 variable (κ)
@@ -310,7 +301,7 @@ theorem condRank_add_iff {A X Y Z : Set W} (hX : (A ∩ X).Nonempty) (hY : (A �
       (κ.rankSet (A ∩ X)).toNat + (κ.rankSet A).toNat =
         (κ.rankSet (A ∩ Y)).toNat + (κ.rankSet (A ∩ Z)).toNat := by
   have hA : ∀ {S : Set W}, (A ∩ S).Nonempty →
-      (κ.rankSet A).toNat ≤ (κ.rankSet (A ∩ S)).toNat := λ hS =>
+      (κ.rankSet A).toNat ≤ (κ.rankSet (A ∩ S)).toNat := fun hS ↦
     ENat.toNat_le_toNat (κ.rankSet_anti Set.inter_subset_left) (κ.rankSet_ne_top hS)
   have h1 := hA hX
   have h2 := hA hY
@@ -320,8 +311,8 @@ theorem condRank_add_iff {A X Y Z : Set W} (hX : (A ∩ X).Nonempty) (hY : (A �
 
 variable {κ}
 
-/-- Theorem 8, (a) and (b): independence holds exactly when, for satisfiable members `B` of
-`𝔅` and `C` of `ℭ`, the rank of `C` given `B` is the rank of `C`. -/
+/-- Independence holds exactly when, for satisfiable members `B` of `𝔅` and `C` of `ℭ`, the
+rank of `C` given `B` is the rank of `C` (Theorem 8, (a) and (b)). -/
 theorem independent_iff_condRank :
     Independent κ 𝔅 ℭ ↔ ∀ B C, 𝔅.Decides B → ℭ.Decides C → B.Nonempty → C.Nonempty →
       condRank κ B C = κ.rankSet C := by
@@ -333,13 +324,13 @@ theorem independent_iff_condRank :
     rw [← hm, ← Nat.cast_add, ← ENat.natCast_sub, Nat.add_sub_cancel_left]
   · intro h w v
     have hcell := h (𝔅.cell w) (ℭ.cell v) (𝔅.decides_cell w) (ℭ.decides_cell v)
-      (cell_nonempty 𝔅 w) (cell_nonempty ℭ v)
+      (𝔅.cell_nonempty w) (ℭ.cell_nonempty v)
     have hne : (𝔅.cell w ∩ ℭ.cell v).Nonempty := by
       by_contra hempty
-      rw [Set.not_nonempty_iff_eq_empty, ← condRank_eq_top_iff κ (cell_nonempty 𝔅 w)] at hempty
-      exact κ.rankSet_ne_top (cell_nonempty ℭ v) (hcell ▸ hempty)
+      rw [Set.not_nonempty_iff_eq_empty, ← condRank_eq_top_iff κ (𝔅.cell_nonempty w)] at hempty
+      exact κ.rankSet_ne_top (ℭ.cell_nonempty v) (hcell ▸ hempty)
     refine ⟨hne, ?_⟩
-    obtain ⟨n, hn⟩ := ENat.ne_top_iff_exists.1 (κ.rankSet_ne_top (cell_nonempty 𝔅 w))
+    obtain ⟨n, hn⟩ := ENat.ne_top_iff_exists.1 (κ.rankSet_ne_top (𝔅.cell_nonempty w))
     obtain ⟨m, hm⟩ := ENat.ne_top_iff_exists.1 (κ.rankSet_ne_top hne)
     rw [condRank, ← hn, ← hm, ← ENat.natCast_sub] at hcell
     have hle : n ≤ m := by
@@ -348,27 +339,27 @@ theorem independent_iff_condRank :
       exact_mod_cast this
     rw [← hn, ← hm, ← hcell, ← Nat.cast_add, Nat.add_sub_cancel' hle]
 
-/-- Theorem 8, (a) and (c): independence holds exactly when generalized conditionalization on
-any ranking of the atoms of `𝔅` leaves the ranks of the satisfiable members of `ℭ`
-unchanged. -/
+/-- Independence holds exactly when generalized conditionalization on any ranking of the atoms
+of `𝔅` leaves the ranks of the satisfiable members of `ℭ` unchanged (Theorem 8, (a) and
+(c)). -/
 theorem independent_iff_condition :
     Independent κ 𝔅 ℭ ↔ ∀ (l : RankingFunction (Quotient 𝔅)) (C : Set W), ℭ.Decides C →
       C.Nonempty → (condition κ 𝔅 l).rankSet C = κ.rankSet C := by
   constructor
   · intro h l C hC hC'
-    refine le_antisymm ?_ ((le_rankSet_iff _).2 λ v hvC => ?_)
+    refine le_antisymm ?_ ((le_rankSet_iff _).2 fun v hvC ↦ ?_)
     · obtain ⟨c, hc, ec⟩ := κ.exists_rank_eq_rankSet hC'
-      obtain ⟨b, hb⟩ := l.normalized
+      obtain ⟨b, hb⟩ := l.exists_eq_zero
       induction b using Quotient.inductionOn with
       | h b₀ =>
         obtain ⟨hne, heq⟩ := h b₀ c
         obtain ⟨v, ⟨hvb, hvc⟩, ev⟩ := κ.exists_rank_eq_rankSet hne
-        obtain ⟨n₀, hn₀⟩ := ENat.ne_top_iff_exists.1 (κ.rankSet_ne_top (cell_nonempty 𝔅 b₀))
-        obtain ⟨m, hm⟩ := ENat.ne_top_iff_exists.1 (κ.rankSet_ne_top (cell_nonempty ℭ c))
-        have hv : κ.rank v = n₀ + m := by
+        obtain ⟨n₀, hn₀⟩ := ENat.ne_top_iff_exists.1 (κ.rankSet_ne_top (𝔅.cell_nonempty b₀))
+        obtain ⟨m, hm⟩ := ENat.ne_top_iff_exists.1 (κ.rankSet_ne_top (ℭ.cell_nonempty c))
+        have hv : κ v = n₀ + m := by
           rw [heq, ← hn₀, ← hm, ← Nat.cast_add] at ev
           exact_mod_cast ev
-        have hmc : m ≤ κ.rank c := by
+        have hmc : m ≤ κ c := by
           have := κ.rankSet_le (ℭ.mem_cell_self c)
           rw [← hm] at this
           exact_mod_cast this
@@ -378,9 +369,9 @@ theorem independent_iff_condition :
           ENat.toNat_natCast, ← ec, Nat.cast_le]
         omega
     · obtain ⟨hne, heq⟩ := h v v
-      obtain ⟨n₀, hn₀⟩ := ENat.ne_top_iff_exists.1 (κ.rankSet_ne_top (cell_nonempty 𝔅 v))
-      obtain ⟨m, hm⟩ := ENat.ne_top_iff_exists.1 (κ.rankSet_ne_top (cell_nonempty ℭ v))
-      have h1 : n₀ + m ≤ κ.rank v := by
+      obtain ⟨n₀, hn₀⟩ := ENat.ne_top_iff_exists.1 (κ.rankSet_ne_top (𝔅.cell_nonempty v))
+      obtain ⟨m, hm⟩ := ENat.ne_top_iff_exists.1 (κ.rankSet_ne_top (ℭ.cell_nonempty v))
+      have h1 : n₀ + m ≤ κ v := by
         have := κ.rankSet_le (show v ∈ 𝔅.cell v ∩ ℭ.cell v from
           ⟨𝔅.mem_cell_self v, ℭ.mem_cell_self v⟩)
         rw [heq, ← hn₀, ← hm, ← Nat.cast_add] at this
@@ -391,24 +382,25 @@ theorem independent_iff_condition :
       omega
   · intro h w v
     classical
-    obtain ⟨n, hn⟩ := ENat.ne_top_iff_exists.1 (κ.rankSet_ne_top (cell_nonempty ℭ v))
-    obtain ⟨n₀, hn₀⟩ := ENat.ne_top_iff_exists.1 (κ.rankSet_ne_top (cell_nonempty 𝔅 w))
+    obtain ⟨n, hn⟩ := ENat.ne_top_iff_exists.1 (κ.rankSet_ne_top (ℭ.cell_nonempty v))
+    obtain ⟨n₀, hn₀⟩ := ENat.ne_top_iff_exists.1 (κ.rankSet_ne_top (𝔅.cell_nonempty w))
     let l : RankingFunction (Quotient 𝔅) :=
-      { rank := Quotient.lift (λ x => if 𝔅 x w then 0 else n + 1) λ x y hxy => by
-          simp only [show 𝔅 x w ↔ 𝔅 y w from ⟨λ h => 𝔅.trans (𝔅.symm hxy) h, λ h => 𝔅.trans hxy h⟩]
-        normalized := ⟨Quotient.mk _ w, by simp⟩ }
-    have hl : ∀ x, l.rank (Quotient.mk 𝔅 x) = if 𝔅 x w then 0 else n + 1 := λ x => rfl
-    have hC := h l (ℭ.cell v) (ℭ.decides_cell v) (cell_nonempty ℭ v)
+      { toFun := Quotient.lift (fun x ↦ if 𝔅 x w then 0 else n + 1) fun x y hxy ↦ by
+          simp only [show 𝔅 x w ↔ 𝔅 y w from
+            ⟨fun h ↦ 𝔅.trans (𝔅.symm hxy) h, fun h ↦ 𝔅.trans hxy h⟩]
+        exists_eq_zero' := ⟨Quotient.mk _ w, by simp⟩ }
+    have hl : ∀ x, l (Quotient.mk 𝔅 x) = if 𝔅 x w then 0 else n + 1 := fun x ↦ rfl
+    have hC := h l (ℭ.cell v) (ℭ.decides_cell v) (ℭ.cell_nonempty v)
     rw [← hn] at hC
-    have hgt : ∀ x ∈ ℭ.cell v, ¬ 𝔅 x w → n + 1 ≤ (condition κ 𝔅 l).rank x := λ x _ hx => by
+    have hgt : ∀ x ∈ ℭ.cell v, ¬ 𝔅 x w → n + 1 ≤ condition κ 𝔅 l x := fun x _ hx ↦ by
       rw [condition_rank, hl, ite_eq_right hx]
       exact Nat.le_add_right _ _
     have hne : (𝔅.cell w ∩ ℭ.cell v).Nonempty := by
       by_contra hempty
       rw [Set.not_nonempty_iff_eq_empty] at hempty
       have : (n + 1 : ℕ∞) ≤ (condition κ 𝔅 l).rankSet (ℭ.cell v) :=
-        (le_rankSet_iff _).2 λ x hx => by
-          exact_mod_cast hgt x hx λ hxw => Set.eq_empty_iff_forall_notMem.1 hempty x ⟨hxw, hx⟩
+        (le_rankSet_iff _).2 fun x hx ↦ by
+          exact_mod_cast hgt x hx fun hxw ↦ Set.eq_empty_iff_forall_notMem.1 hempty x ⟨hxw, hx⟩
       rw [hC] at this
       exact absurd (by exact_mod_cast this : n + 1 ≤ n) (by omega)
     refine ⟨hne, ?_⟩
@@ -420,18 +412,18 @@ theorem independent_iff_condition :
       exact_mod_cast this
     -- the minimum over the atom of ℭ is attained at a world of the atom of 𝔅
     obtain ⟨x, ⟨hxb, hxc⟩, ex⟩ := κ.exists_rank_eq_rankSet hne
-    have hx : κ.rank x = k := by rw [← hk] at ex; exact_mod_cast ex
+    have hx : κ x = k := by rw [← hk] at ex; exact_mod_cast ex
     have hrelx : 𝔅 x w := 𝔅.mem_cell.1 hxb
     have hle : n ≤ k - n₀ := by
       have := (condition κ 𝔅 l).rankSet_le hxc
       rw [hC, condition_rank, hl, ite_eq_left hrelx, zero_add, aPart, cell_eq_of_rel hrelx, ← hn₀,
         ENat.toNat_natCast, hx] at this
       exact_mod_cast this
-    obtain ⟨y, hyc, ey⟩ := (condition κ 𝔅 l).exists_rank_eq_rankSet (cell_nonempty ℭ v)
+    obtain ⟨y, hyc, ey⟩ := (condition κ 𝔅 l).exists_rank_eq_rankSet (ℭ.cell_nonempty v)
     rw [hC] at ey
-    have hy : (condition κ 𝔅 l).rank y = n := by exact_mod_cast ey
+    have hy : condition κ 𝔅 l y = n := by exact_mod_cast ey
     by_cases hyw : 𝔅 y w
-    · have hky : k ≤ κ.rank y := by
+    · have hky : k ≤ κ y := by
         have := κ.rankSet_le (show y ∈ 𝔅.cell w ∩ ℭ.cell v from ⟨hyw, hyc⟩)
         rw [← hk] at this
         exact_mod_cast this
@@ -449,28 +441,28 @@ section CondIndependence
 
 variable (𝔅 ℭ : Setoid W) (A : Set W)
 
-/-- Definition 10: `ℭ` is independent of `𝔅` given `A` with respect to `κ`: for atoms `B` of
-`𝔅` and `C` of `ℭ` meeting `A`, `κ(B ∩ C | A) = κ(B | A) + κ(C | A)`. -/
+/-- `ℭ` is independent of `𝔅` given `A` with respect to `κ` (Definition 10) when
+`κ(B ∩ C | A) = κ(B | A) + κ(C | A)` for atoms `B` of `𝔅` and `C` of `ℭ` meeting `A`. -/
 def CondIndependent : Prop :=
   ∀ w v, (A ∩ 𝔅.cell w ∩ ℭ.cell v).Nonempty →
     condRank κ A (𝔅.cell w ∩ ℭ.cell v) = condRank κ A (𝔅.cell w) + condRank κ A (ℭ.cell v)
 
-/-- `ℭ` is independent of `𝔅` given the subfield `𝔇`: given each atom of `𝔇`. -/
+/-- `ℭ` is independent of `𝔅` given the subfield `𝔇` when it is so given each atom of `𝔇`. -/
 def CondIndependentOn (𝔇 : Setoid W) : Prop := ∀ d, CondIndependent κ 𝔅 ℭ (𝔇.cell d)
 
 variable {κ 𝔅 ℭ A}
 
 theorem CondIndependent.symm (h : CondIndependent κ 𝔅 ℭ A) : CondIndependent κ ℭ 𝔅 A :=
-  λ w v hne => by
+  fun w v hne ↦ by
     rw [Set.inter_right_comm] at hne
     rw [Set.inter_comm, h v w hne, add_comm]
 
 theorem CondIndependentOn.symm {𝔇 : Setoid W} (h : CondIndependentOn κ 𝔅 ℭ 𝔇) :
     CondIndependentOn κ ℭ 𝔅 𝔇 :=
-  λ d => (h d).symm
+  fun d ↦ (h d).symm
 
-/-- Theorem 11: if `ℭ` is independent of `𝔅` given `𝔇 + 𝔈` and `𝔇` is independent of `𝔅`
-given `𝔈`, then `ℭ + 𝔇` is independent of `𝔅` given `𝔈`. -/
+/-- If `ℭ` is independent of `𝔅` given `𝔇 + 𝔈` and `𝔇` is independent of `𝔅` given `𝔈`, then
+`ℭ + 𝔇` is independent of `𝔅` given `𝔈` (Theorem 11). -/
 theorem CondIndependentOn.inf {𝔇 𝔈 : Setoid W} (h₁ : CondIndependentOn κ 𝔅 ℭ (𝔇 ⊓ 𝔈))
     (h₂ : CondIndependentOn κ 𝔅 𝔇 𝔈) : CondIndependentOn κ 𝔅 (ℭ ⊓ 𝔇) 𝔈 := by
   intro e w v hne
@@ -507,8 +499,8 @@ theorem CondIndependentOn.inf {𝔇 𝔈 : Setoid W} (h₁ : CondIndependentOn �
   rw [condRank_add_iff κ hX3 hY2 hZ3]
   omega
 
-/-- Theorem 12: if `𝔅` is independent of `ℭ` given `𝔇 + 𝔈` and of `𝔇` given `𝔈`, then it is
-independent of `ℭ + 𝔇` given `𝔈`. -/
+/-- If `𝔅` is independent of `ℭ` given `𝔇 + 𝔈` and of `𝔇` given `𝔈`, then it is independent
+of `ℭ + 𝔇` given `𝔈` (Theorem 12). -/
 theorem CondIndependentOn.inf' {𝔇 𝔈 : Setoid W} (h₁ : CondIndependentOn κ ℭ 𝔅 (𝔇 ⊓ 𝔈))
     (h₂ : CondIndependentOn κ 𝔇 𝔅 𝔈) : CondIndependentOn κ (ℭ ⊓ 𝔇) 𝔅 𝔈 :=
   (CondIndependentOn.inf h₁.symm h₂.symm).symm
