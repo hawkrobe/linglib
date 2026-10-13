@@ -57,8 +57,10 @@ theorem cell_mem_classes (w : W) : Q.cell w ∈ Q.classes := Q.mem_classes w
 
 theorem mem_cell_self (w : W) : w ∈ Q.cell w := Q.refl' w
 
+theorem cell_nonempty (w : W) : (Q.cell w).Nonempty := ⟨w, Q.mem_cell_self w⟩
+
 theorem cell_eq_of_rel (h : Q w v) : Q.cell w = Q.cell v :=
-  Set.ext λ _ => ⟨λ h' => Q.trans' h' h, λ h' => Q.trans' h' (Q.symm' h)⟩
+  Set.ext fun _ ↦ ⟨fun h' ↦ Q.trans' h' h, fun h' ↦ Q.trans' h' (Q.symm' h)⟩
 
 variable (Q) in
 /-- Two cells are equal or disjoint. -/
@@ -70,10 +72,13 @@ theorem cell_eq_or_disjoint (w v : W) : Q.cell w = Q.cell v ∨ Disjoint (Q.cell
 @[simp] theorem cell_bot (w : W) : (⊥ : Setoid W).cell w = {w} := by
   ext; simp [cell]
 
-instance [DecidableEq W] : DecidableRel (⊥ : Setoid W) :=
-  λ v w => decidable_of_iff (v = w) (by rw [Setoid.bot_def])
+theorem cell_inf (Q' : Setoid W) (w : W) : (Q ⊓ Q').cell w = Q.cell w ∩ Q'.cell w :=
+  Set.ext fun _ ↦ Setoid.inf_iff_and
 
-instance : DecidableRel (⊤ : Setoid W) := λ _ _ => isTrue trivial
+instance [DecidableEq W] : DecidableRel (⊥ : Setoid W) :=
+  fun v w ↦ decidable_of_iff (v = w) (by rw [Setoid.bot_def])
+
+instance : DecidableRel (⊤ : Setoid W) := fun _ _ ↦ isTrue trivial
 
 instance [DecidableRel Q] : Decidable (v ∈ Q.cell w) := inferInstanceAs (Decidable (Q v w))
 
@@ -88,11 +93,19 @@ def polar : Setoid W := Setoid.ker (· ∈ p)
 
 theorem polar_iff : polar p w v ↔ (w ∈ p ↔ v ∈ p) := eq_iff_iff
 
+theorem polar_cell_of_mem (hw : w ∈ p) : (polar p).cell w = p := by
+  ext v
+  simp [hw]
+
+theorem polar_cell_of_notMem (hw : w ∉ p) : (polar p).cell w = pᶜ := by
+  ext v
+  simp [hw]
+
 @[simp] theorem polar_compl : polar pᶜ = polar p :=
-  Setoid.ext λ _ _ => by simp only [polar_iff, Set.mem_compl_iff, not_iff_not]
+  Setoid.ext fun _ _ ↦ by simp only [polar_iff, Set.mem_compl_iff, not_iff_not]
 
 instance [DecidablePred (· ∈ p)] : DecidableRel (polar p) :=
-  λ _ _ => decidable_of_iff _ polar_iff.symm
+  fun _ _ ↦ decidable_of_iff _ polar_iff.symm
 
 variable (Q p) in
 /-- A question decides `p` when it refines the polar question whether `p`, so that `p` is
@@ -100,7 +113,7 @@ constant on its cells and a union of them. -/
 def Decides : Prop := Q ≤ polar p
 
 theorem decides_iff : Q.Decides p ↔ ∀ w v, Q w v → (w ∈ p ↔ v ∈ p) :=
-  ⟨λ h _ _ hwv => polar_iff.1 (h hwv), λ h _ _ hwv => polar_iff.2 (h _ _ hwv)⟩
+  ⟨fun h _ _ hwv ↦ polar_iff.1 (h hwv), fun h _ _ hwv ↦ polar_iff.2 (h _ _ hwv)⟩
 
 /-- Equivalent worlds agree on a decided proposition. -/
 theorem Decides.iff (h : Q.Decides p) (hwv : Q w v) : w ∈ p ↔ v ∈ p :=
@@ -110,10 +123,10 @@ theorem Decides.iff (h : Q.Decides p) (hwv : Q w v) : w ∈ p ↔ v ∈ p :=
 theorem decides_iff_forall_cell :
     Q.Decides p ↔ ∀ w, Q.cell w ⊆ p ∨ ∀ v ∈ Q.cell w, v ∉ p := by
   rw [decides_iff]
-  refine ⟨λ h w => ?_, λ h w v hwv => ?_⟩
+  refine ⟨fun h w ↦ ?_, fun h w v hwv ↦ ?_⟩
   · by_cases hw : w ∈ p
-    · exact Or.inl λ v hv => (h v w hv).2 hw
-    · exact Or.inr λ v hv hv' => hw ((h v w hv).1 hv')
+    · exact Or.inl fun v hv ↦ (h v w hv).2 hw
+    · exact Or.inr fun v hv hv' ↦ hw ((h v w hv).1 hv')
   · rcases h v with hall | hnone
     · exact iff_of_true (hall hwv) (hall (Q.refl' v))
     · exact iff_of_false (hnone w hwv) (hnone v (Q.refl' v))
@@ -141,18 +154,18 @@ theorem decides_compl_iff : Q.Decides pᶜ ↔ Q.Decides p := by
 theorem Decides.compl (h : Q.Decides p) : Q.Decides pᶜ := decides_compl_iff.2 h
 
 theorem Decides.inter (hp : Q.Decides p) (hq : Q.Decides q) : Q.Decides (p ∩ q) :=
-  decides_iff.2 λ _ _ h => and_congr (decides_iff.1 hp _ _ h) (decides_iff.1 hq _ _ h)
+  decides_iff.2 fun _ _ h ↦ and_congr (decides_iff.1 hp _ _ h) (decides_iff.1 hq _ _ h)
 
 theorem Decides.union (hp : Q.Decides p) (hq : Q.Decides q) : Q.Decides (p ∪ q) :=
-  decides_iff.2 λ _ _ h => or_congr (decides_iff.1 hp _ _ h) (decides_iff.1 hq _ _ h)
+  decides_iff.2 fun _ _ h ↦ or_congr (decides_iff.1 hp _ _ h) (decides_iff.1 hq _ _ h)
 
 /-- A question decides each of its cells. -/
 theorem decides_cell (w : W) : Q.Decides (Q.cell w) :=
-  decides_iff.2 λ _ _ hab => ⟨λ h => Q.trans (Q.symm hab) h, λ h => Q.trans hab h⟩
+  decides_iff.2 fun _ _ hab ↦ ⟨fun h ↦ Q.trans (Q.symm hab) h, fun h ↦ Q.trans hab h⟩
 
 /-- A cell of a question deciding `p` that meets `p` entails it. -/
 theorem Decides.cell_subset (h : Q.Decides p) (hw : w ∈ p) : Q.cell w ⊆ p :=
-  λ _ hv => (decides_iff.1 h _ _ hv).2 hw
+  fun _ hv ↦ (decides_iff.1 h _ _ hv).2 hw
 
 /-- A question settles the value of `f`, refining its kernel, exactly when it decides each fibre
 of `f`. -/
@@ -209,7 +222,7 @@ theorem ofProps_iff : ofProps ps w v ↔ ∀ p ∈ ps, (w ∈ p ↔ v ∈ p) := 
   simp only [Setoid.iInf_iff, polar_iff, Finset.mem_coe]
 
 instance [DecidableEq W] : DecidableRel (ofProps ps) :=
-  λ _ _ => decidable_of_iff _ (ofProps_iff ps).symm
+  fun _ _ ↦ decidable_of_iff _ (ofProps_iff ps).symm
 
 /-- The question raised by a family decides each of its members. -/
 theorem ofProps_decides {p : Finset W} (hp : p ∈ ps) : (ofProps ps).Decides ↑p :=
