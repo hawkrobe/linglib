@@ -204,6 +204,15 @@ theorem inv_toSetRel (C : Finset Ordering) :
 
 end LT
 
+/-- On dense time the past relation composed with itself is the past relation, since a time
+before an earlier time is earlier and an earlier time has a time between. -/
+theorem toSetRel_past_comp_self [Preorder T] [DenselyOrdered T] :
+    (toSetRel ⟦past⟧ ○ toSetRel ⟦past⟧ : SetRel T T) = toSetRel ⟦past⟧ := by
+  ext ⟨p, r⟩
+  simp only [SetRel.mem_comp, mem_toSetRel_past]
+  exact ⟨fun ⟨_, h₁, h₂⟩ ↦ h₂.trans h₁,
+    fun h ↦ let ⟨u, hu, hu'⟩ := exists_between h; ⟨u, hu', hu⟩⟩
+
 section LinearOrder
 
 variable [LinearOrder T]

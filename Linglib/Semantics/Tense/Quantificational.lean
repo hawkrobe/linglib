@@ -14,7 +14,8 @@ says that `P` held at some time before `t`, and necessity `□` along the relati
 held at all of them. The laws of `Logic/Modal` then apply. The past and the future are converse
 relations, so sometime in the one is adjoint to always in the other. A tense under a tense
 entails the tense of the composed cell, and is that tense when time is dense and has no first or
-last moment, where the past of a past is a past.
+last moment. The past of a past is a past as soon as time is dense, the density law of tense
+logic.
 
 ## Main statements
 
@@ -25,6 +26,7 @@ last moment, where the past of a past is a past.
 * `Tense.diamond_diamond_toSetRel`, `Tense.diamond_toSetRel_comp`: a quantificational tense
   under another entails the quantificational tense of the composed cell, and is that tense on
   dense time without endpoints.
+* `Tense.diamond_past_diamond_past`: on dense time the past of a past is a past.
 
 ## References
 
@@ -71,6 +73,11 @@ theorem diamond_future_box_past_gc :
 
 end LT
 
+/-- On dense time the past of a past is a past, the density law of tense logic. -/
+theorem diamond_past_diamond_past [Preorder T] [DenselyOrdered T] (P : T → Prop) :
+    ◇[toSetRel ⟦past⟧] (◇[toSetRel ⟦past⟧] P) = ◇[toSetRel ⟦past⟧] P := by
+  rw [← diamond_comp, toSetRel_past_comp_self]
+
 section LinearOrder
 
 variable [LinearOrder T]
@@ -97,6 +104,11 @@ variable [LinearOrder T] {π : NonemptyInterval T} {Q : NonemptyInterval T → P
 @[simp] theorem diamond_toSetRel_past :
     ◇[toSetRel ⟦past⟧] Q π ↔ ∃ r, r.precedes π ∧ Q r := by
   simp [Diamond]
+
+/-- On dense time the past of a past is a past on intervals too. -/
+theorem diamond_past_diamond_past [DenselyOrdered T] (Q : NonemptyInterval T → Prop) :
+    ◇[toSetRel ⟦past⟧] (◇[toSetRel ⟦past⟧] Q) = ◇[toSetRel ⟦past⟧] Q := by
+  rw [← diamond_comp, toSetRel_past_comp_self]
 
 end Perspective
 
