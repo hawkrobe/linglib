@@ -1,5 +1,6 @@
 module
 
+public import Linglib.Morphology.Nanosyntax.Lexicalization
 public import Studies.DeganoAloni2025
 public import Studies.Dekier2021
 public import Studies.Haspelmath1997
@@ -9,8 +10,10 @@ public import Studies.Haspelmath1997
 
 Indefinite pronouns coexpress the specific known, specific unknown and non-specific functions in
 the patterns AAA, ABB, AAB and ABC and never in the pattern ABA. Dekier derives the gap from a
-containment hierarchy whose most complex layer is the specific known one. Bubnov argues that the
-semantic account of Degano and Aloni explains it better. There a form carries one restriction on
+containment hierarchy whose most complex layer is the specific known one. Bubnov objects that a
+hierarchy whose higher layers had exponents of their own would show morphological containment,
+one marker built on another, which no indefinite paradigm does, and argues that the semantic
+account of Degano and Aloni explains the gap better. There a form carries one restriction on
 the variation and constancy of the indefinite's value and is used wherever the restriction is
 met, so coexpression is underspecification rather than syncretism, the unattested pattern is the
 type whose two restrictions exclude each other and can only be disjoined, and the complex type
@@ -26,19 +29,16 @@ is ordered.
 
 ## Main results
 
-* `no_hierarchy_derives_both_changes`: on no hierarchy does entry loss derive both attested
-  changes to the epistemic type.
-* `entry_loss_is_weakening`: a change entry loss derives is a semantic weakening.
+* `containment_of_two_exponents`, `no_containment_of_bottom_entries`: a layer with an exponent
+  of its own is a suffix on the form below it, and Dekier's lexicons have no such layer.
+* `no_hierarchy_derives_both_changes`, `entry_loss_is_weakening`: on no hierarchy does entry
+  loss derive both attested changes to the epistemic type, and what it derives is a semantic
+  weakening.
 * `specificUnknown_not_atomic`: no single restriction states the specific unknown type.
 * `coexpression_is_underspecification`: each form of the four coexpression patterns is a single
   type.
 
 ## TODO
-
-Bubnov's first objection is that a hierarchy whose higher features had exponents of their own
-would show morphological containment, the marker of one function built on the marker of another,
-and no indefinite paradigm does. Stating it needs the spellout of one structure by several
-entries, which the containment engine does not model.
 
 The paper calls the change from a specific to an unmarked form attested in one sentence of its
 comparison and unattested in the next, in the discussion of entry loss and in a footnote on the
@@ -58,7 +58,38 @@ reversed hierarchy. It is taken as unattested here.
 namespace Bubnov2026
 
 open DeganoAloni2025 Dekier2021 Indefinite Team Morphology.Containment Morphology.Exponence
+open Morphology.Nanosyntax
 open Haspelmath1997 hiding russian
+
+/-! ### Morphological containment -/
+
+/-- A structure of two layers that is not spelled out by one exponent is spelled out by the
+exponent of its lower layer and a suffix. Were a higher layer of the hierarchy to have an
+exponent of its own, the marker of one function would thus be built on the marker of another,
+the containment no indefinite paradigm shows. -/
+theorem containment_of_two_exponents {F : Type*} [DecidableEq F]
+    (L : RuleSet (LexicalEntry F String)) (f₁ f₂ : F) {x : String} {r : List String}
+    (h₁ : exponents L [f₁] = some [x]) (h₂ : exponents L [f₁, f₂] = some r) (hr : r.length ≠ 1) :
+    ∃ y, r = [x, y] := by
+  rw [exponents_singleton] at h₁
+  rw [exponents_pair] at h₂
+  rcases h : treeSpellout L (.leaf f₁) with - | x' <;> rw [h] at h₁ h₂
+  · simp at h₁
+  · obtain rfl : x' = x := by simpa using h₁
+    rcases hw : treeSpellout L (.node f₂ [.leaf f₁]) with - | y <;>
+      rcases hs : treeSpellout L (.leaf f₂) with - | z <;> simp [hw, hs] at h₂
+    · exact ⟨z, h₂.symm⟩
+    · exact absurd (by simp [← h₂]) hr
+    · exact absurd (by simp [← h₂]) hr
+
+/-- A lexicon like Dekier's, every entry of which stores the lowest layer, gives each layer a
+single exponent under the lexicalization algorithm, the one its spellout has there, so no
+marker is built on another. -/
+theorem no_containment_of_bottom_entries {n : ℕ} (L : RuleSet (SupersetRule n String))
+    (g : Fin n) :
+    exponents (L.map (LexicalEntry.ofSupersetRule id)) (List.range ((g : ℕ) + 1)) =
+      (spellout L g).map fun x ↦ [x] := by
+  simpa using exponents_ofSupersetRule (feat := id) Function.injective_id L g
 
 /-! ### Complexity -/
 
