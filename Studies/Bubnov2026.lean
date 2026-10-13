@@ -68,26 +68,30 @@ exponent of its lower layer and a suffix. Were a higher layer of the hierarchy t
 exponent of its own, the marker of one function would thus be built on the marker of another,
 the containment no indefinite paradigm shows. -/
 theorem containment_of_two_exponents {F : Type*} [DecidableEq F]
-    (L : RuleSet (LexicalEntry F String)) (f₁ f₂ : F) {x : String} {r : List String}
+    (L : RuleSet (LexicalEntry (Option F) String)) (f₁ f₂ : F) {x : String} {r : List String}
     (h₁ : exponents L [f₁] = some [x]) (h₂ : exponents L [f₁, f₂] = some r) (hr : r.length ≠ 1) :
     ∃ y, r = [x, y] := by
   rw [exponents_singleton] at h₁
   rw [exponents_pair] at h₂
-  rcases h : treeSpellout L (.leaf f₁) with - | x' <;> rw [h] at h₁ h₂
+  rcases h : treeSpellout L (.leaf (some f₁)) with - | x' <;> rw [h] at h₁ h₂
   · simp at h₁
   · obtain rfl : x' = x := by simpa using h₁
-    rcases hw : treeSpellout L (.node f₂ [.leaf f₁]) with - | y <;>
-      rcases hs : treeSpellout L (.leaf f₂) with - | z <;> simp [hw, hs] at h₂
-    · exact ⟨z, h₂.symm⟩
-    · exact absurd (by simp [← h₂]) hr
-    · exact absurd (by simp [← h₂]) hr
+    rcases hw : treeSpellout L (merge f₂ (.leaf (some f₁))) with - | y
+    · rcases hs : treeSpellout L (.leaf (some f₂)) with - | z
+      · simp [hw, hs] at h₂
+      · rcases ha : treeSpellout L (adjoin (.leaf (some f₁)) (.leaf (some f₂))) with - | w <;>
+          simp [hw, hs, ha] at h₂
+        · exact ⟨z, h₂.symm⟩
+        · exact absurd (by simp [← h₂]) hr
+    · simp [hw] at h₂
+      exact absurd (by simp [← h₂]) hr
 
 /-- A lexicon like Dekier's, every entry of which stores the lowest layer, gives each layer a
 single exponent under the lexicalization algorithm, the one its spellout has there, so no
 marker is built on another. -/
 theorem no_containment_of_bottom_entries {n : ℕ} (L : RuleSet (SupersetRule n String))
     (g : Fin n) :
-    exponents (L.map (LexicalEntry.ofSupersetRule id)) (List.range ((g : ℕ) + 1)) =
+    exponents (L.map (LexicalEntry.ofSupersetRule some)) (List.range ((g : ℕ) + 1)) =
       (spellout L g).map fun x ↦ [x] := by
   simpa using exponents_ofSupersetRule (feat := id) Function.injective_id L g
 
