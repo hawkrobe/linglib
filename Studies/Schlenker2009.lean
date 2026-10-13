@@ -136,6 +136,13 @@ theorem isLocalContext_right [Nonempty Atom] (c : Connective) (F : Formula Atom)
     IsLocalContext C (goodFinals I [.right c F]) (c.localContext C (F.truth I)) :=
   isLocalContext_goodFinals I _ C
 
+/-- The symmetric local context of any gap is the worlds of the context at which the truth value
+of the actual sentence depends on the gap. -/
+theorem isLocalContext_symmetric (K : SyntacticEnvironment Atom) (C : Set W) :
+    IsLocalContext C {K.truth I} (C ∩ {w | DependsAt (K.truth I) w}) := by
+  simpa using isLocalContext_of_isTruthFunctional (C := C) fun _ hf ↦
+    isTruthFunctional_of_mem_singleton I hf
+
 /-! ### Transparency, satisfaction and dynamic semantics -/
 
 /-- Incremental local satisfaction is incremental Transparency (C.21). -/
@@ -178,6 +185,12 @@ theorem transpI_iff_admits (C : Set W) (F : Formula Atom) :
 theorem satI_iff_admits (C : Set W) (F : Formula Atom) : SatI I C F ↔ (F.ccp I).Admits C :=
   (satI_iff_transpI I C F).trans (transpI_iff_admits I C F)
 
+/-- Symmetric satisfaction requires each trigger's presupposition at the worlds of the context
+at which the truth value of the sentence depends on the trigger. -/
+theorem satS_iff (C : Set W) (F : Formula Atom) :
+    SatS I C F ↔ ∀ o ∈ F.occurrences, C ∩ {w | DependsAt (o.1.truth I) w} ⊆ I o.2.1 :=
+  forall₂_congr fun o _ ↦ satisfied_iff (isLocalContext_symmetric I o.1 C) _
+
 /-! ### Examples (§2.3) -/
 
 variable {p p' q q' : Atom} {C : Set W}
@@ -217,6 +230,32 @@ theorem satI_then_iff :
   simp [Set.subset_def, Formula.filter, Formula.truth, Connective.filter, Connective.eval,
     PartialProp.impFilter]
   exact Iff.rfl
+
+/-! ### A trigger alone, and symmetric conjunction -/
+
+/-- A trigger standing alone presupposes `p` on the incremental theory. -/
+theorem satI_trigger_iff : SatI I C (.trigger p p') ↔ C ⊆ I p := by
+  rw [satI_iff_admits, Formula.admits_ccp_iff]
+  rfl
+
+/-- A trigger standing alone presupposes `p` on the symmetric theory. -/
+theorem satS_trigger_iff : SatS I C (.trigger p p') ↔ C ⊆ I p := by
+  simp [satS_iff, Formula.occurrences, SyntacticEnvironment.truth, DependsAt]
+
+/-- On the symmetric theory `(pp' and q)` presupposes `(if q . p)`, since the local context of a
+conjunct is the context updated with the other conjunct, whichever comes first. -/
+theorem satS_and_left_iff :
+    SatS I C (.bin .conj (.trigger p p') (.atom q)) ↔
+      C ⊆ (Formula.bin .cond (.atom q) (.atom p)).truth I := by
+  simp [satS_iff, Formula.occurrences, SyntacticEnvironment.truth, SyntacticEnvironment.Step.truth,
+    DependsAt, Connective.eval, Formula.truth, Set.subset_def]
+
+/-- On the symmetric theory `(q and pp')` presupposes `(if q . p)`, as on the incremental one. -/
+theorem satS_and_right_iff :
+    SatS I C (.bin .conj (.atom q) (.trigger p p')) ↔
+      C ⊆ (Formula.bin .cond (.atom q) (.atom p)).truth I := by
+  simp [satS_iff, Formula.occurrences, SyntacticEnvironment.truth, SyntacticEnvironment.Step.truth,
+    DependsAt, Connective.eval, Formula.truth, Set.subset_def]
 
 /-! ### Belief reports (§3.1.2) -/
 
