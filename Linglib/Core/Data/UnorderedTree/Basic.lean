@@ -28,6 +28,8 @@ grafting `B⁺` of a multiset of trees is well defined.
 * `UnorderedTree.cons`: adjoin a tree as a further child of the root, the transport of the list
   cons on children; it is left-commutative, so `Multiset.foldr` builds the constructor
   `UnorderedTree.node` on a multiset of children computably.
+* `UnorderedTree.induction_on`, `UnorderedTree.fold`: induction and recursion on a tree as a
+  label over a multiset of trees.
 
 ## References
 
@@ -211,6 +213,46 @@ theorem forest_inductionOn {motive : Multiset (UnorderedTree α) → Prop}
     exact (List.map_congr_left fun x _ => x.out_eq).trans (List.map_id lst)
   exact hrep ▸ h (lst.map Quotient.out)
 
+/-! ### Structural induction and recursion
+
+An unordered tree is a label over a multiset of unordered trees. `induction_on` is the induction
+principle of that description and `fold` its recursion principle, the counterparts of
+`RoseTree.rec'` and `RoseTree.fold`. A function defined by `fold` needs no proof of invariance
+under `RoseTree.Perm`, since its algebra already takes the children as a multiset. -/
+
+/-- Induction on an unordered tree proves `motive t` for all `t` from `motive (node a F)` given
+`motive c` for every child `c ∈ F`. -/
+@[elab_as_elim, induction_eliminator]
+theorem induction_on {motive : UnorderedTree α → Prop} (t : UnorderedTree α)
+    (node : ∀ (a : α) (F : Multiset (UnorderedTree α)), (∀ c ∈ F, motive c) → motive (node a F)) :
+    motive t := by
+  induction t using Quotient.inductionOn with
+  | h t =>
+    induction t with
+    | node a cs ih =>
+      rw [quot_mk_eq_mk, ← node_mk_tree_list]
+      refine node a _ fun c hc ↦ ?_
+      obtain ⟨c', hc', rfl⟩ := List.mem_map.1 (Multiset.mem_coe.1 hc)
+      exact ih c' hc'
+
+section Fold
+variable {β : Type*}
+
+/-- The catamorphism replaces each `node a F` by `f a` of the multiset of folded children. -/
+def fold (f : α → Multiset β → β) : UnorderedTree α → β :=
+  Quotient.lift (RoseTree.fold fun a bs ↦ f a bs) fun _ _ ↦
+    RoseTree.fold_perm fun a _ _ h ↦ congrArg (f a) (Multiset.coe_eq_coe.2 h)
+
+theorem fold_mk (f : α → Multiset β → β) (t : RoseTree α) :
+    fold f (mk t) = t.fold fun a bs ↦ f a bs := rfl
+
+@[simp] theorem fold_node (f : α → Multiset β → β) (a : α) (F : Multiset (UnorderedTree α)) :
+    fold f (node a F) = f a (F.map (fold f)) := by
+  induction F using forest_inductionOn with
+  | h cs => rw [node_mk_tree_list, fold_mk, RoseTree.fold_node, Multiset.map_coe, List.map_map]; rfl
+
+end Fold
+
 /-! ### The destructors of a `node` -/
 
 @[simp] theorem value_node (a : α) (F : Multiset (UnorderedTree α)) : value (node a F) = a := by
@@ -224,10 +266,8 @@ theorem forest_inductionOn {motive : Multiset (UnorderedTree α) → Prop}
 
 /-- Every tree is the `node` of its root value and children. -/
 theorem node_eta (t : UnorderedTree α) : node (value t) (children t) = t := by
-  induction t using Quotient.inductionOn with
-  | h p =>
-    cases p with
-    | node a cs => exact node_mk_tree_list a cs
+  induction t with
+  | node a F => rw [value_node, children_node]
 
 /-! ### Node count of a `node` -/
 

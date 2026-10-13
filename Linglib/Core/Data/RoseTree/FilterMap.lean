@@ -12,16 +12,16 @@ public import Linglib.Core.Data.RoseTree.Basic
 
 `RoseTree.filterMap f` relabels a rose tree along `f : α → Option β`, dropping every subtree whose
 root `f` sends to `none`. The result is `none` exactly when the root itself is dropped. It is the
-counterpart on rose trees of `List.filterMap`.
+counterpart on rose trees of `List.filterMap`, and a `RoseTree.fold`.
 
 ## Main definitions
 
-* `RoseTree.filterMap`, `RoseTree.filterMapList`: the partial map on a tree and on a list of
-  children.
+* `RoseTree.filterMap`: the partial map.
 
 ## Main results
 
-* `RoseTree.filterMapList_eq_filterMap`: on children the map is `List.filterMap`.
+* `RoseTree.filterMap_node`: at a node, the surviving children are the `List.filterMap` of the
+  children.
 * `RoseTree.filterMap_map`: `filterMap f (map g t) = filterMap (f ∘ g) t`.
 * `RoseTree.filterMap_some`: a total map drops nothing.
 -/
@@ -32,42 +32,14 @@ namespace RoseTree
 
 variable {α β γ : Type*}
 
-mutual
 /-- `filterMap f t` relabels `t` along `f`, dropping the subtrees whose root `f` sends to `none`.
 It is `none` when the root itself is dropped. -/
-def filterMap (f : α → Option β) : RoseTree α → Option (RoseTree β)
-  | .node a cs => (f a).map fun b ↦ .node b (filterMapList f cs)
-/-- `filterMapList f cs` applies `filterMap f` to a list of trees and keeps the results. -/
-def filterMapList (f : α → Option β) : List (RoseTree α) → List (RoseTree β)
-  | [] => []
-  | c :: cs =>
-    match filterMap f c with
-    | none => filterMapList f cs
-    | some t => t :: filterMapList f cs
-end
+def filterMap (f : α → Option β) : RoseTree α → Option (RoseTree β) :=
+  fold fun a cs ↦ (f a).map fun b ↦ node b (cs.filterMap id)
 
 @[simp] theorem filterMap_node (f : α → Option β) (a : α) (cs : List (RoseTree α)) :
-    filterMap f (node a cs) = (f a).map fun b ↦ .node b (filterMapList f cs) := rfl
-
-@[simp] theorem filterMapList_nil (f : α → Option β) :
-    filterMapList f ([] : List (RoseTree α)) = [] := rfl
-
-theorem filterMapList_eq_filterMap (f : α → Option β) (cs : List (RoseTree α)) :
-    filterMapList f cs = cs.filterMap (filterMap f) := by
-  induction cs with
-  | nil => rfl
-  | cons c cs ih =>
-    rw [filterMapList, ih]
-    cases h : filterMap f c <;> simp [h]
-
-theorem filterMapList_singleton (f : α → Option β) (t : RoseTree α) :
-    filterMapList f [t] = (filterMap f t).toList := by
-  rw [filterMapList_eq_filterMap]
-  cases h : filterMap f t <;> simp [h]
-
-theorem filterMapList_append (f : α → Option β) (l₁ l₂ : List (RoseTree α)) :
-    filterMapList f (l₁ ++ l₂) = filterMapList f l₁ ++ filterMapList f l₂ := by
-  simp only [filterMapList_eq_filterMap, List.filterMap_append]
+    filterMap f (node a cs) = (f a).map fun b ↦ node b (cs.filterMap (filterMap f)) := by
+  rw [filterMap, fold_node, List.filterMap_map, Function.id_comp]
 
 /-! ### Composition with total maps -/
 
@@ -75,18 +47,16 @@ theorem filterMap_map (f : β → Option γ) (g : α → β) (t : RoseTree α) :
     filterMap f (map g t) = filterMap (f ∘ g) t := by
   induction t with
   | node a cs ih =>
-    simp only [map_node, filterMap_node, filterMapList_eq_filterMap, List.filterMap_map,
-      Function.comp_apply]
-    rw [List.filterMap_congr fun c hc ↦ ih c hc]
+    rw [map_node, filterMap_node, filterMap_node, List.filterMap_map,
+      List.filterMap_congr (f := filterMap f ∘ map g) ih, Function.comp_apply]
 
 /-- A total map drops nothing. -/
 theorem filterMap_some (g : α → β) (t : RoseTree α) :
     filterMap (fun a ↦ some (g a)) t = some (map g t) := by
   induction t with
   | node a cs ih =>
-    rw [filterMap_node, map_node, Option.map_some, filterMapList_eq_filterMap,
-      List.filterMap_congr ih, ← List.filterMap_eq_map]
-    rfl
+    rw [filterMap_node, map_node, Option.map_some, List.filterMap_congr ih,
+      List.filterMap_eq_map']
 
 /-- Injecting on the left and then keeping the left labels is the identity. -/
 @[simp] theorem filterMap_getLeft?_map_inl (t : RoseTree α) :

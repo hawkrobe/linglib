@@ -30,6 +30,7 @@ sibling `Coproduct/` files and `HopfAlgebra.lean`.
 * `ConnesKreimer.lift`, `ConnesKreimer.aeval`, `ConnesKreimer.algHom_ext`,
   `ConnesKreimer.algHom_ext_ofTree`, `ConnesKreimer.addHom_ext`,
   `ConnesKreimer.linearLift`: the wrapper-native hom API.
+* `ConnesKreimer.rename`: the algebra hom induced by a map of trees.
 * `ConnesKreimer.counit`: the counit ε (coefficient of the empty forest)
   as an algebra hom.
 
@@ -420,6 +421,35 @@ def aeval (f : T → A) : ConnesKreimer R T →ₐ[R] A :=
 
 end Lift
 
+/-- A forest is the product of its trees. -/
+theorem prod_map_ofTree (F : Forest T) : (F.map (ofTree (R := R))).prod = of' F := by
+  induction F using Multiset.induction with
+  | empty => simp
+  | cons t F ih =>
+    rw [Multiset.map_cons, Multiset.prod_cons, ih, ← of'_singleton, ← of'_add,
+      Multiset.singleton_add]
+
+/-! ### Renaming trees -/
+
+section Rename
+variable {T' : Type*}
+
+/-- `rename f` replaces each tree `t` of every forest by `f t`, the action of a map of generators
+    on the free commutative algebra (`MvPolynomial.rename` analogue). -/
+def rename (f : T → T') : ConnesKreimer R T →ₐ[R] ConnesKreimer R T' :=
+  aeval fun t ↦ ofTree (f t)
+
+@[simp] theorem rename_ofTree (f : T → T') (t : T) :
+    rename (R := R) f (ofTree t) = ofTree (f t) :=
+  aeval_ofTree _ t
+
+@[simp] theorem rename_of' (f : T → T') (F : Forest T) :
+    rename (R := R) f (of' F) = of' (F.map f) := by
+  rw [rename, aeval_of', ← prod_map_ofTree, Multiset.map_map]
+  rfl
+
+end Rename
+
 /-- `ofFinsupp` as an `AddMonoidHom` (transport vehicle for `addHom_ext`). -/
 def ofFinsuppAddHom :
     AddMonoidAlgebra R (Forest T) →+ ConnesKreimer R T where
@@ -466,21 +496,6 @@ def linearLift (f : Forest T → M) : ConnesKreimer R T →ₗ[R] M :=
   rw [of', linearLift_single, one_smul]
 
 end LinearApi
-
-/-- Transport a forest-monoid hom to an algebra hom between Connes-Kreimer
-    algebras (wrapper-native `AddMonoidAlgebra.mapDomainAlgHom`). -/
-def mapDomainAlgHom {T' : Type*} (f : Forest T →+ Forest T') :
-    ConnesKreimer R T →ₐ[R] ConnesKreimer R T' :=
-  ((toFinsuppAlgEquiv (R := R) (T := T')).symm.toAlgHom.comp
-    (AddMonoidAlgebra.mapDomainAlgHom R R f)).comp
-    (toFinsuppAlgEquiv (R := R) (T := T)).toAlgHom
-
-@[simp] theorem mapDomainAlgHom_of' {T' : Type*} (f : Forest T →+ Forest T')
-    (F : Forest T) :
-    mapDomainAlgHom (R := R) f (of' F) = of' (f F) := by
-  refine ext ?_
-  show AddMonoidAlgebra.mapDomain f (.single F 1) = AddMonoidAlgebra.single (f F) 1
-  rw [AddMonoidAlgebra.mapDomain_single]
 
 /-! ### Base change
 

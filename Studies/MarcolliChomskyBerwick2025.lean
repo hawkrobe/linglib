@@ -71,8 +71,10 @@ The book's algebra lives in `Core/` and in `Syntax/Minimalist/{Workspace,Merge,E
 * Lemma 1.2.10: `ConnesKreimer.comulCN_coassoc` and the edge grading of `Coproduct/TraceGrading`.
 * Lemma 1.2.11 and (1.2.12): `ConnesKreimer.instBialgebraRho`, the `HopfAlgebra` instance, and
   `antipodeTreeN`.
-* The comparison of `Δ^d` with `Δ^ρ` displayed before (1.3.10):
-  `ConnesKreimer.comulDN_embedInl_eq_comulAlgHomN`.
+* The projections `Π_{ρ,c}` and `Π_{d,ρ}` and the relations `Δ^d = (id ⊗ Π_{d,ρ}) ∘ Δ^ρ =
+  (id ⊗ Π_{d,c}) ∘ Δ^c` displayed before (1.3.10): `ConnesKreimer.eraseTraces`,
+  `UnorderedTree.contractUnary`, `ConnesKreimer.comulDAlgHomN`,
+  `ConnesKreimer.eraseTraces_comulCAlgHomN`, `contractUnary_eraseTraces_comulCAlgHomN`.
 * Definition 1.3.4: `Minimalist.Merge.mergeOpG` over a cut enumeration, with `mergeOp` at `Δ^ρ`
   and `mergeOpC` at `Δ^c`.
 * Lemma 1.4.1: `Minimalist.Merge.mergeOpG_pair`, `mergeOpG_pair_residual`.

@@ -5,64 +5,56 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Core.Algebra.BigOperators.Multiset
-public import Linglib.Core.Data.Multiset.FilterMap
 public import Linglib.Core.Algebra.RootedTree.Coproduct.Pruning
+public import Linglib.Core.Combinatorics.RootedTree.ContractUnary
 public import Linglib.Syntax.Minimalist.Coproduct.CutFilterMap
 public import Linglib.Syntax.Minimalist.Coproduct.Trace
-public import Linglib.Core.Data.UnorderedTree.FilterMap
-
-@[expose] public section
-
-open RoseTree UnorderedTree
 
 /-!
-# The deletion coproduct Δ^d
+# The deletion coproduct and the erasure of traces
 
-The deletion variant of the Connes-Kreimer admissible-cut coproduct
-(Marcolli, Chomsky and Berwick's comparison displayed before (1.3.10), p. 44),
-obtained from the trace coproduct Δ^c (`Trace.lean`) by erasing
-trace-placeholder leaves from both tensor channels:
-`Δ^d = (Π_{d,c} ⊗ Π_{d,c}) ∘ Δ^c`, where `Π_{d,c}` erases
-trace-placeholder leaves.
+Marcolli, Chomsky and Berwick extract accessible terms from a syntactic object with three
+coproducts, which differ in the remainder an extraction leaves. `Δ^c` contracts each extracted
+term to a trace leaf, `Δ^ρ` leaves the remainder of the admissible cut, and `Δ^d` deletes the
+term and contracts the vertices left with a single child. They relate the three by projections
+of the right channel: `Π_{ρ,c}` deletes the trace leaves, `Π_{d,ρ}` contracts the non-branching
+vertices, and `Δ^d = (id ⊗ Π_{d,ρ}) ∘ Δ^ρ = (id ⊗ Π_{d,ρ} ∘ Π_{ρ,c}) ∘ Δ^c`, displayed before
+their (1.3.10). Here `Δ^d` is defined by the first expression, and the second is proved for trees
+without traces.
 
 ## Main definitions
 
-* `ConnesKreimer.eraseTracesAlgHom` — `Π_{d,c}` as an algebra hom
-  `ConnesKreimer R (UnorderedTree (α ⊕ β)) →ₐ[R] ConnesKreimer R (UnorderedTree α)`,
-  induced by the tree-level partial map (`Core/Data/RoseTree/FilterMap.lean`)
-  via `ConnesKreimer.mapDomainAlgHom`.
-* `ConnesKreimer.embedInlAlgHom` — the `Sum.inl` embedding as an algebra hom.
-* `ConnesKreimer.comulDN` — the deletion coproduct, as the composite above.
+* `ConnesKreimer.eraseTraces`: the projection that deletes every trace vertex.
+* `ConnesKreimer.comulDAlgHomN`: the deletion coproduct, which is the pruning coproduct with the
+  unary vertices of each trunk contracted.
 
 ## Main results
 
-* `ConnesKreimer.eraseTracesAlgHom_comp_embedInlAlgHom` — erasure
-  inverts the embedding.
-* `ConnesKreimer.comulDN_embedInl_eq_comulAlgHomN` — on embedded
-  trace-free trees, Δ^d agrees with the pruning coproduct Δ^ρ.
+* `ConnesKreimer.eraseTraces_comp_rename_inl`: erasure is a retraction of the embedding of the
+  trees without traces.
+* `ConnesKreimer.eraseTraces_comulCAlgHomN`: on trees without traces, erasing the traces that the
+  trace coproduct leaves gives the pruning coproduct.
+* `ConnesKreimer.contractUnary_eraseTraces_comulCAlgHomN`: erasing them and contracting the unary
+  vertices gives the deletion coproduct.
 
 ## Implementation notes
 
-Marcolli, Chomsky and Berwick work with binary trees: their Δ^d
-composes with a second projection `Π_{d,p}` contracting degree-1
-vertices to restore binary structure, and their comparison
-`Δ^d = (id ⊗ Π_{d,p}) ∘ Δ^ρ` holds only weakly (Lemma 1.2.12, a
-distance-≤-1 multiplicity discrepancy). On n-ary `UnorderedTree` trees
-`Π_{d,p}` is the identity, the erasure alone defines Δ^d, and the Δ^ρ
-comparison is an exact equality. We erase on both tensor channels so the
-target carrier is uniformly trace-free; on the embedded trace-free
-inputs of the comparison the crown-channel erasure is the identity,
-recovering MCB's one-channel form `(id ⊗ Π_{d,c}) ∘ Δ^c`.
-
-Δ^d carries no separate `Bialgebra` structure: consumers compose through
-`embedInlAlgHom` and use the Δ^ρ instance (`instBialgebraRho`,
-`Coproduct/PruningDuality.lean`).
+* Trees without traces are `UnorderedTree α` and trees with traces are `UnorderedTree (α ⊕ β)`,
+  so the relations hold along the embedding `rename (UnorderedTree.map Sum.inl)`. The left
+  channel of `Δ^c` on an embedded tree is embedded and the right channel is not, which is why
+  the projections act on the right channel alone.
+* The book's `Π_{d,ρ}` takes a tree whose vertices have at most two children to the maximal
+  binary tree obtained by contracting edges. Here it is `UnorderedTree.contractUnary`, on trees
+  of any arity.
+* `Δ^d` carries no `Bialgebra` structure: its coassociativity holds only up to the multiplicity
+  of some terms (the book's Lemma 1.2.12).
 
 ## References
 
 * [marcolli-chomsky-berwick-2025]
 -/
+
+@[expose] public section
 
 namespace ConnesKreimer
 
@@ -70,235 +62,66 @@ open scoped TensorProduct
 
 variable {R : Type*} [CommSemiring R] {α β : Type*}
 
-/-! ## The trace-erasure algebra hom Π_{d,c} -/
+/-! ### Erasing traces -/
 
-/-- The **trace-erasure algebra hom** `Π_{d,c}`: erase trace subtrees componentwise
-   across each basis
-    forest, dropping trace-rooted trees
-    (`Multiset.filterMapAddMonoidHom (UnorderedTree.filterMap Sum.getLeft?)`), lifted
-    through `ConnesKreimer.mapDomainAlgHom`. -/
-noncomputable def eraseTracesAlgHom :
+/-- `eraseTraces` is the projection `Π_{ρ,c}`. It sends a tree whose root is a trace to `1` and
+    removes from any other tree the subtrees rooted at a trace. -/
+noncomputable def eraseTraces :
     ConnesKreimer R (UnorderedTree (α ⊕ β)) →ₐ[R] ConnesKreimer R (UnorderedTree α) :=
-  ConnesKreimer.mapDomainAlgHom
-    (Multiset.filterMapAddMonoidHom (UnorderedTree.filterMap Sum.getLeft?))
+  aeval fun T ↦ (T.filterMap Sum.getLeft?).elim 1 ofTree
 
-@[simp] theorem eraseTracesAlgHom_of' (F : Forest (UnorderedTree (α ⊕ β))) :
-    eraseTracesAlgHom (R := R) (of' F) =
-      of' (R := R) (F.filterMap (UnorderedTree.filterMap Sum.getLeft?)) := by
-  rw [eraseTracesAlgHom, ConnesKreimer.mapDomainAlgHom_of']
-  rfl
+@[simp] theorem eraseTraces_ofTree (T : UnorderedTree (α ⊕ β)) :
+    eraseTraces (R := R) (ofTree T) = (T.filterMap Sum.getLeft?).elim 1 ofTree :=
+  aeval_ofTree _ T
 
-/-- On a single tree, `eraseTracesAlgHom` gives the trace-erased tree if the root
-    survives and `1` if the root is a trace placeholder. -/
-@[simp] theorem eraseTracesAlgHom_ofTree (T : UnorderedTree (α ⊕ β)) :
-    eraseTracesAlgHom (R := R) (ofTree T) =
-      (UnorderedTree.filterMap Sum.getLeft? T).elim 1 ofTree := by
-  rw [show (ofTree T : ConnesKreimer R (UnorderedTree (α ⊕ β))) = of' {T} from rfl,
-      eraseTracesAlgHom_of',
-      show ({T} : Forest (UnorderedTree (α ⊕ β))) = T ::ₘ 0 from rfl,
-      Multiset.filterMap_cons, Multiset.filterMap_zero, add_zero]
-  cases UnorderedTree.filterMap Sum.getLeft? T with
-  | none => simp [of'_zero]
-  | some t' => simp [of'_singleton]
-
-/-! ## Sum.inl embedding
-
-The embedding `α → α ⊕ β` lifts componentwise to trees and forests via
-`RoseTree.map` / `UnorderedTree.map` / `Multiset.map`. -/
-
-/-- The `Sum.inl` embedding relabels every basis forest
-    componentwise along `Sum.inl`, embedding trace-free trees into the
-    marked alphabet. -/
-noncomputable def embedInlAlgHom :
-    ConnesKreimer R (UnorderedTree α) →ₐ[R] ConnesKreimer R (UnorderedTree (α ⊕ β)) :=
-  ConnesKreimer.mapDomainAlgHom (Multiset.mapAddMonoidHom (UnorderedTree.map Sum.inl))
-
-@[simp] theorem embedInlAlgHom_of' (F : Forest (UnorderedTree α)) :
-    embedInlAlgHom (R := R) (β := β) (of' F) =
-      of' (R := R) (F.map (UnorderedTree.map Sum.inl)) := by
-  rw [embedInlAlgHom, ConnesKreimer.mapDomainAlgHom_of']
-  rfl
-
-/-! ### Erasure inverts embed -/
-
-/-- Erasure inverts the `Sum.inl` embedding: trace-free trees survive
-    the round trip. -/
-theorem eraseTracesAlgHom_comp_embedInlAlgHom :
-    (eraseTracesAlgHom (R := R) (α := α) (β := β)).comp embedInlAlgHom =
+/-- Erasure is a retraction of the embedding of the trees without traces. -/
+theorem eraseTraces_comp_rename_inl :
+    (eraseTraces (R := R) (β := β)).comp (rename (UnorderedTree.map Sum.inl)) =
       AlgHom.id R (ConnesKreimer R (UnorderedTree α)) := by
-  apply ConnesKreimer.algHom_ext
-  intro F
-  show eraseTracesAlgHom (embedInlAlgHom (of' F)) = of' F
-  rw [embedInlAlgHom_of', eraseTracesAlgHom_of', Multiset.filterMap_map,
-      show ((UnorderedTree.filterMap Sum.getLeft? ∘ UnorderedTree.map Sum.inl :
-              UnorderedTree α → Option (UnorderedTree α))) = some from
-        funext fun T => UnorderedTree.filterMap_getLeft?_map_inl T,
-      Multiset.filterMap_some]
+  ext T
+  simp
 
-/-! ## Δ^d definition
+/-- On trees without traces, erasing the traces that `Δ^c` leaves in the right channel gives the
+    pruning coproduct `Δ^ρ`. -/
+theorem eraseTraces_comulCAlgHomN (τ : UnorderedTree (α ⊕ β) → β) :
+    ((Algebra.TensorProduct.map (.id R _) eraseTraces).comp (comulCAlgHomN τ)).comp
+        (rename (UnorderedTree.map Sum.inl)) =
+      (Algebra.TensorProduct.map (rename (UnorderedTree.map Sum.inl)) (.id R _)).comp
+        (comulAlgHomN (R := R) (α := α)) := by
+  ext T
+  have h := congrArg (fun s ↦ (s.map fun q : Multiset (UnorderedTree (α ⊕ β)) ×
+      Option (UnorderedTree α) ↦ of' (R := R) q.1 ⊗ₜ[R] q.2.elim 1 (ofTree (R := R))).sum)
+    (cutSummandsCN_map_inl τ T)
+  simp only [Multiset.map_map, Function.comp_def, Prod.map_apply', id, Option.elim_some] at h
+  simp [comulCTreeN, comulTreeN, comulTreeNG, map_multiset_sum, Multiset.map_map,
+    Function.comp_def, h]
 
-`comulDN := (Π_{d,c} ⊗ Π_{d,c}) ∘ Δ^c`, MCB's comparison before (1.3.10) by
-construction. Target carrier is `UnorderedTree α` (trace-free). -/
+/-! ### The deletion coproduct -/
 
-/-- The **Δ^d coproduct on `ConnesKreimer R (UnorderedTree (α ⊕ β))`** as an
-    algebra hom, with trace-erasure applied to both channels of
-    `comulCAlgHomN τ`. -/
-noncomputable def comulDN (τ : UnorderedTree (α ⊕ β) → β) :
-    ConnesKreimer R (UnorderedTree (α ⊕ β)) →ₐ[R]
-      ConnesKreimer R (UnorderedTree α) ⊗[R] ConnesKreimer R (UnorderedTree α) :=
-  (Algebra.TensorProduct.map (eraseTracesAlgHom (R := R) (α := α) (β := β))
-    eraseTracesAlgHom).comp (comulCAlgHomN τ)
-
-/-! ## Equivalence with Δ^ρ via embedding
-
-The substantive MCB-correspondence: starting from a trace-free
-`T : UnorderedTree α` and embedding into `UnorderedTree (α ⊕ β)` via `Sum.inl`,
-applying `comulDN` (= Δ^c then erasure) gives the same result as applying
-`comulAlgHomN` (Δ^ρ) directly.
-
-In MCB's binary substrate this requires the additional `Π_{d,p}`
-rebinarize step on the right channel; in our n-ary substrate, the
-erasure is enough. -/
-
-/-- `eraseTracesAlgHom` applied to an embedded single tree recovers the
-    tree: single-tree form of `UnorderedTree.filterMap_getLeft?_map_inl`. -/
-private theorem eraseTracesAlgHom_ofTree_map_inl
-    (T : UnorderedTree α) :
-    eraseTracesAlgHom (R := R) (β := β)
-        (ofTree (UnorderedTree.map Sum.inl T)) =
-      ofTree T := by
-  rw [eraseTracesAlgHom_ofTree, UnorderedTree.filterMap_getLeft?_map_inl]
-  rfl
-
-/-! ### The cut-summand tensor builder
-
-`Option`-tolerant on both channels: a filtered-out crown entry (`none`)
-is dropped, a filtered-out trunk contributes `1`. The filtered Δ^c
-summands and the `some`-embedded Δ^ρ summands of
-`CutFilterMap.lean` both land in its
-domain. -/
-
-private noncomputable def optionCutTensor
-    (q : Multiset (Option (RoseTree α)) × Option (RoseTree α)) :
+/-- The deletion coproduct `Δ^d` is the pruning coproduct `Δ^ρ` followed, on the right channel,
+    by the contraction `Π_{d,ρ}` of unary vertices. -/
+noncomputable def comulDAlgHomN : ConnesKreimer R (UnorderedTree α) →ₐ[R]
     ConnesKreimer R (UnorderedTree α) ⊗[R] ConnesKreimer R (UnorderedTree α) :=
-  (of' (q.1.filterMap (Option.map UnorderedTree.mk)) : ConnesKreimer R (UnorderedTree α))
-    ⊗ₜ[R] (q.2.map UnorderedTree.mk).elim 1 ofTree
+  (Algebra.TensorProduct.map (.id R _) (rename UnorderedTree.contractUnary)).comp comulAlgHomN
 
-/-- The `(Π ⊗ Π)`-image of a projected Δ^c summand is `optionCutTensor` of its
-    filtered form. -/
-private theorem optionCutTensor_filterMap
-    (p : Multiset (RoseTree (α ⊕ β)) × RoseTree (α ⊕ β)) :
-    eraseTracesAlgHom (R := R) (of' (p.1.map UnorderedTree.mk)) ⊗ₜ[R]
-        eraseTracesAlgHom (ofTree (UnorderedTree.mk p.2)) =
-      optionCutTensor (R := R)
-        (Prod.map (Multiset.map (RoseTree.filterMap Sum.getLeft?))
-          (RoseTree.filterMap Sum.getLeft?) p) := by
-  unfold optionCutTensor
-  congr 1
-  · rw [eraseTracesAlgHom_of', Prod.map_fst, Multiset.filterMap_map,
-        Multiset.filterMap_map]
-    rfl
-  · rw [eraseTracesAlgHom_ofTree, UnorderedTree.filterMap_mk, Prod.map_snd]
+/-- On a tree, `Δ^d` sums the pruning cuts with the unary vertices of each trunk contracted. -/
+theorem comulDAlgHomN_apply_ofTree (T : UnorderedTree α) :
+    comulDAlgHomN (R := R) (ofTree T) = ofTree T ⊗ₜ[R] 1 +
+      ((cutSummandsN T).map fun p ↦ of' (R := R) p.1 ⊗ₜ[R] ofTree p.2.contractUnary).sum := by
+  simp [comulDAlgHomN, comulTreeN, comulTreeNG, map_multiset_sum, Multiset.map_map]
 
-/-- On `some`-embedded Δ^ρ summands, `optionCutTensor` is the plain summand
-    tensor. -/
-private theorem optionCutTensor_some (p : Multiset (RoseTree α) × RoseTree α) :
-    optionCutTensor (R := R) (Prod.map (Multiset.map some) some p) =
-      (of' (p.1.map UnorderedTree.mk) : ConnesKreimer R (UnorderedTree α)) ⊗ₜ[R]
-        ofTree (UnorderedTree.mk p.2) := by
-  unfold optionCutTensor
-  congr 1
-  · rw [Prod.map_fst, Multiset.filterMap_map,
-        show (Option.map UnorderedTree.mk ∘ (some : RoseTree α → Option (RoseTree α)))
-          = (some ∘ (UnorderedTree.mk : RoseTree α → UnorderedTree α)) from rfl,
-        Multiset.filterMap_eq_map]
-
-/-! ### Lift from tree-level to UnorderedTree -/
-
-/-- The `(Π ⊗ Π)`-image of a projected Δ^c summand tensor, as a composed
-    map: `optionCutTensor` after the summand filter. -/
-private theorem optionCutTensor_filterMap_comp :
-    (((Algebra.TensorProduct.map (eraseTracesAlgHom (R := R) (α := α) (β := β))
-        eraseTracesAlgHom) ∘
-      (fun p : Forest (UnorderedTree (α ⊕ β)) × UnorderedTree (α ⊕ β) =>
-        of' (R := R) p.1 ⊗ₜ[R] ofTree p.2)) ∘ projSummand) =
-    (optionCutTensor (R := R)) ∘
-      (Prod.map (Multiset.map (RoseTree.filterMap Sum.getLeft?))
-        (RoseTree.filterMap Sum.getLeft?)) := by
-  funext p
-  show (Algebra.TensorProduct.map eraseTracesAlgHom eraseTracesAlgHom)
-      (of' (p.1.map UnorderedTree.mk) ⊗ₜ[R] ofTree (UnorderedTree.mk p.2)) = _
-  rw [Algebra.TensorProduct.map_tmul]
-  exact optionCutTensor_filterMap p
-
-/-- The plain Δ^ρ summand tensor is `optionCutTensor` after the `some` embedding. -/
-private theorem optionCutTensor_some_comp :
-    ((fun p : Forest (UnorderedTree α) × UnorderedTree α =>
-        (of' (R := R) p.1 : ConnesKreimer R (UnorderedTree α)) ⊗ₜ[R] ofTree p.2) ∘
-      projSummand) =
-    (optionCutTensor (R := R)) ∘ (Prod.map (Multiset.map some) some) := by
-  funext p
-  exact (optionCutTensor_some p).symm
-
-/-- Per-tree form of the Δ^ρ comparison, descended from the cut-summand
-    identity `cutSummandsCP_map_inl_filterMap` through the quotient. -/
-private theorem eraseTraces_comulCTreeN_map_inl
-    (τ : UnorderedTree (α ⊕ β) → β) (T : UnorderedTree α) :
-    (Algebra.TensorProduct.map (eraseTracesAlgHom (R := R) (α := α) (β := β))
-        eraseTracesAlgHom) (comulCTreeN τ (UnorderedTree.map Sum.inl T)) =
-      comulTreeN T := by
-  refine Quotient.inductionOn T fun t => ?_
-  show (Algebra.TensorProduct.map (eraseTracesAlgHom (R := R)) eraseTracesAlgHom)
-        (comulCTreeN τ (UnorderedTree.mk (RoseTree.map Sum.inl t))) =
-      comulTreeN (UnorderedTree.mk t)
-  unfold comulCTreeN comulTreeNG comulTreeN
-  rw [map_add]
-  congr 1
-  · rw [Algebra.TensorProduct.map_tmul, map_one]
-    congr 1
-    exact eraseTracesAlgHom_ofTree_map_inl (UnorderedTree.mk t)
-  · rw [map_multiset_sum
-          (Algebra.TensorProduct.map (eraseTracesAlgHom (R := R)) eraseTracesAlgHom),
-        cutSummandsCN_mk, cutSummandsN_mk,
-        Multiset.map_map, Multiset.map_map, Multiset.map_map,
-        optionCutTensor_filterMap_comp, optionCutTensor_some_comp,
-        ← Multiset.map_map, ← Multiset.map_map, cutSummandsCP_map_inl_filterMap]
-
-/-- Forest-level form of the Δ^ρ comparison: the per-tree form lifted
-    multiplicatively. -/
-private theorem eraseTraces_comulCForestN_map_inl
-    (τ : UnorderedTree (α ⊕ β) → β) (F : Forest (UnorderedTree α)) :
-    (Algebra.TensorProduct.map (eraseTracesAlgHom (R := R) (α := α) (β := β))
-        eraseTracesAlgHom) (comulCForestN τ (F.map (UnorderedTree.map Sum.inl))) =
-      comulForestN F := by
-  induction F using Multiset.induction with
-  | empty =>
-    rw [Multiset.map_zero, comulCForestN_zero, comulForestN_zero, map_one]
-  | cons T F' ih =>
-    rw [Multiset.map_cons, comulForestN_cons]
-    -- comulCForestN τ (T_embed ::ₘ F'_embed) = comulCTreeN τ T_embed * comulCForestN τ F'_embed
-    have hcons : comulCForestN (R := R) τ
-        (UnorderedTree.map Sum.inl T ::ₘ F'.map (UnorderedTree.map Sum.inl)) =
-        comulCTreeN τ (UnorderedTree.map Sum.inl T) *
-          comulCForestN (R := R) τ (F'.map (UnorderedTree.map Sum.inl)) :=
-      comulForestNG_cons _ _ _
-    rw [hcons, map_mul, eraseTraces_comulCTreeN_map_inl, ih]
-
-/-- On embedded trace-free trees the deletion coproduct agrees with the
-    pruning coproduct Δ^ρ: the n-ary form of the
-    [marcolli-chomsky-berwick-2025] comparison
-    `Δ^d = (id ⊗ Π_{d,p}) ∘ Δ^ρ`, exact here because the rebinarize step
-    `Π_{d,p}` is the identity. -/
-theorem comulDN_embedInl_eq_comulAlgHomN (τ : UnorderedTree (α ⊕ β) → β) :
-    (comulDN (R := R) τ).comp (embedInlAlgHom (R := R) (β := β)) =
-      comulAlgHomN := by
-  apply ConnesKreimer.algHom_ext
-  intro F
-  show (Algebra.TensorProduct.map (eraseTracesAlgHom (R := R))
-          eraseTracesAlgHom) (comulCAlgHomN τ (embedInlAlgHom (of' F))) =
-       comulAlgHomN (of' F)
-  rw [embedInlAlgHom_of', comulCAlgHomN_apply_of', comulAlgHomN_apply_of']
-  exact eraseTraces_comulCForestN_map_inl τ F
+/-- On trees without traces, erasing the traces that `Δ^c` leaves and contracting the unary
+    vertices gives the deletion coproduct `Δ^d`. -/
+theorem contractUnary_eraseTraces_comulCAlgHomN (τ : UnorderedTree (α ⊕ β) → β) :
+    ((Algebra.TensorProduct.map (.id R _)
+          ((rename UnorderedTree.contractUnary).comp eraseTraces)).comp (comulCAlgHomN τ)).comp
+        (rename (UnorderedTree.map Sum.inl)) =
+      (Algebra.TensorProduct.map (rename (UnorderedTree.map Sum.inl)) (.id R _)).comp
+        (comulDAlgHomN (R := R) (α := α)) := by
+  have h := congrArg
+    (AlgHom.comp (Algebra.TensorProduct.map (.id R _) (rename UnorderedTree.contractUnary)))
+    (eraseTraces_comulCAlgHomN (R := R) τ)
+  simpa only [comulDAlgHomN, ← AlgHom.comp_assoc, ← Algebra.TensorProduct.map_comp,
+    AlgHom.comp_id, AlgHom.id_comp] using h
 
 end ConnesKreimer
-
