@@ -3,10 +3,11 @@ module
 public import Mathlib.Analysis.SpecialFunctions.Sigmoid
 
 /-!
-# The logistic function as a two-term softmax
+# The logistic function and the log-odds
 
-The share of one of two exponentials in their sum is the logistic function of the difference
-of their exponents, and the logistic function inverts the log-odds.
+The log-odds `Real.logit p = log (p / (1 - p))` invert the logistic function on `(0, 1)`. The share
+of one of two exponentials in their sum is the logistic function of the difference of their
+exponents.
 -/
 
 @[expose] public section
@@ -20,12 +21,20 @@ theorem exp_div_add_exp_eq_sigmoid (x y : ℝ) : exp x / (exp x + exp y) = sigmo
   rw [sigmoid_def, neg_sub, exp_sub]
   field_simp
 
-/-- The logistic function at the log-odds of a level in `(0, 1)` is that level. -/
-theorem sigmoid_log_div_one_sub {t : ℝ} (ht0 : 0 < t) (ht1 : t < 1) :
-    sigmoid (log (t / (1 - t))) = t := by
-  have h1t : 0 < 1 - t := sub_pos.2 ht1
-  rw [sigmoid_def, ← log_inv, exp_log (inv_pos.2 (div_pos ht0 h1t)), inv_div]
+/-- The sigmoid of the logarithm of odds `x` is the probability `x / (x + 1)`. -/
+theorem sigmoid_log {x : ℝ} (hx : 0 < x) : sigmoid (log x) = x / (x + 1) := by
+  rw [sigmoid_def, exp_neg, exp_log hx]
   field_simp
-  ring
+
+/-- The log-odds `log (p / (1 - p))`, the inverse of `Real.sigmoid`. -/
+noncomputable def logit (p : ℝ) : ℝ := log (p / (1 - p))
+
+@[simp] theorem logit_sigmoid (x : ℝ) : logit (sigmoid x) = x := by
+  rw [logit, ← sigmoid_neg, ← sigmoid_mul_rexp_neg, div_mul_cancel_left₀ (sigmoid_pos x).ne',
+    ← exp_neg, neg_neg, log_exp]
+
+theorem sigmoid_logit {p : ℝ} (hp : p ∈ Set.Ioo 0 1) : sigmoid (logit p) = p := by
+  obtain ⟨x, rfl⟩ : p ∈ Set.range sigmoid := range_sigmoid ▸ hp
+  rw [logit_sigmoid]
 
 end Real

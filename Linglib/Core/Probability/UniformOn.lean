@@ -86,22 +86,18 @@ theorem le_uniformOn_iff (hs : s.Finite) (hne : s.Nonempty) {θ : ℝ≥0∞} :
   rw [uniformOn_apply_of_finite hs, ENNReal.le_div_iff_mul_le
     (.inl (ncard_ne_zero_of_nonempty hs hne)) (.inl (by simp))]
 
-theorem lt_uniformOn_iff (hs : s.Finite) (hne : s.Nonempty) {θ : ℝ≥0∞} :
-    θ < uniformOn s t ↔ θ * s.ncard < (s ∩ t).ncard := by
-  rw [uniformOn_apply_of_finite hs, ENNReal.lt_div_iff_mul_lt
-    (.inl (ncard_ne_zero_of_nonempty hs hne)) (.inl (by simp))]
-
-theorem uniformOn_le_iff (hs : s.Finite) (hne : s.Nonempty) {θ : ℝ≥0∞} :
-    uniformOn s t ≤ θ ↔ (s ∩ t).ncard ≤ θ * s.ncard := by
-  rw [uniformOn_apply_of_finite hs, ENNReal.div_le_iff (ncard_ne_zero_of_nonempty hs hne)
-    (by simp)]
-
 /-- Conditioning the uniform measure on `s` by `t` gives the uniform measure on `s ∩ t`, so
 chained conditioning collapses, as `cond_cond_eq_cond_inter` does for `cond`. -/
 theorem uniformOn_cond (hs : s.Finite) (ht : MeasurableSet t) :
     (uniformOn s)[|t] = uniformOn (s ∩ t) := by
   rw [uniformOn, uniformOn,
     cond_cond_eq_cond_inter' hs.measurableSet ht (Measure.count_apply_lt_top.2 hs).ne]
+
+/-- Conditioning the uniform measure on a finite type by a set gives the uniform measure on the
+set. -/
+theorem uniformOn_univ_cond [Finite W] (A : Set W) :
+    (uniformOn (Set.univ : Set W))[|A] = uniformOn A := by
+  rw [uniformOn_cond Set.finite_univ (Set.toFinite A).measurableSet, Set.univ_inter]
 
 /-- The uniform measure on a nonempty finite set gives `t` the measure `1` exactly when `t`
 contains it. -/

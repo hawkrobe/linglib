@@ -11,8 +11,8 @@ public import Mathlib.MeasureTheory.Measure.WithDensity
 /-!
 # Conditional probability
 
-Lemmas on mathlib's conditional measure `μ[|s]` that mathlib does not state: zero-one
-consequences of conditioning, real-valued forms, pushforwards, invariance under scaling with the
+Lemmas on mathlib's conditional measure `μ[|s]` that mathlib does not state: monotonicity in
+the conditioning event, real-valued forms, pushforwards, invariance under scaling with the
 composition of two Bayesian updates, and conditioning on nested events up to null sets.
 `[UPSTREAM]` candidates for `Mathlib/Probability/ConditionalProbability.lean`.
 -/
@@ -27,24 +27,6 @@ open scoped ENNReal ProbabilityTheory
 namespace ProbabilityTheory
 
 variable {Ω : Type*} [MeasurableSpace Ω] (μ : Measure Ω) {s : Set Ω}
-
-/-- An event of conditional probability zero meets the conditioning event in a null set. -/
-theorem measure_inter_eq_zero_of_cond_eq_zero [IsFiniteMeasure μ] {e : Set Ω}
-    (hs : MeasurableSet s) (h : μ[e | s] = 0) : μ (s ∩ e) = 0 :=
-  by_contra fun hne ↦ (cond_pos_of_inter_ne_zero hs hne).ne' h
-
-/-- If `e` has probability zero given `s` and probability one given `u`, then `u` has
-probability zero given `s`. -/
-theorem cond_eq_zero_of_cond_eq_one [IsFiniteMeasure μ] {e u : Set Ω} (hs : MeasurableSet s)
-    (he : MeasurableSet e) (hu : MeasurableSet u) (h₁ : μ[e | s] = 0) (h₂ : μ[e | u] = 1) :
-    μ[u | s] = 0 := by
-  have hu₀ : μ u ≠ 0 := fun h ↦ by simp [cond_eq_zero_of_meas_eq_zero h] at h₂
-  have := cond_isProbabilityMeasure (μ := μ) hu₀
-  have hc := measure_inter_eq_zero_of_cond_eq_zero μ hu ((prob_compl_eq_zero_iff he).2 h₂)
-  have : μ (s ∩ u) = 0 := measure_mono_null
-    (fun x ⟨hx, hxu⟩ ↦ (em (x ∈ e)).imp (fun hxe ↦ ⟨hx, hxe⟩) fun hxe ↦ ⟨hxu, hxe⟩)
-    (measure_union_null (measure_inter_eq_zero_of_cond_eq_zero μ hs h₁) hc)
-  rw [cond_apply hs, this, mul_zero]
 
 /-- Conditioning on a subset that sheds only worlds outside `e` can only raise the conditional
 probability of `e`. -/

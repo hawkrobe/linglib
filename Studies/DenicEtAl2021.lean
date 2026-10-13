@@ -269,10 +269,24 @@ open MeasureTheory ProbabilityTheory KadmonLandman1993
 
 variable {Ω ε : Type*} [MeasurableSpace Ω]
 
+/-- The probabilistic downward inference (33): if `e` has probability zero given `s` and
+probability one given `u`, then `u` has probability zero given `s`. -/
+theorem cond_eq_zero_of_cond_eq_one {μ : Measure Ω} [IsFiniteMeasure μ] {s e u : Set Ω}
+    (hs : MeasurableSet s) (he : MeasurableSet e) (hu : MeasurableSet u) (h₁ : μ[e | s] = 0)
+    (h₂ : μ[e | u] = 1) : μ[u | s] = 0 := by
+  have hu₀ : μ u ≠ 0 := fun h ↦ by simp [cond_eq_zero_of_meas_eq_zero h] at h₂
+  have := cond_isProbabilityMeasure (μ := μ) hu₀
+  have null {t f : Set Ω} (ht : MeasurableSet t) (h : μ[f | t] = 0) : μ (t ∩ f) = 0 :=
+    by_contra fun hne ↦ (cond_pos_of_inter_ne_zero ht hne).ne' h
+  have : μ (s ∩ u) = 0 := measure_mono_null
+    (fun x ⟨hx, hxu⟩ ↦ (em (x ∈ e)).imp (fun hxe ↦ ⟨hx, hxe⟩) fun hxe ↦ ⟨hxu, hxe⟩)
+    (measure_union_null (null hs h₁) (null hu ((prob_compl_eq_zero_iff he).2 h₂)))
+  rw [cond_apply hs, this, mul_zero]
+
 /-- Since *any* widens the domain of the object, (30), seeing doves makes seeing any birds certain
 whenever it makes seeing birds certain, (34). So the bridge premise of the probabilistic downward
-inference (33) from *No aliens saw birds* (`ProbabilityTheory.cond_eq_zero_of_cond_eq_one`) gives
-that of the inference from *No aliens saw any birds*. -/
+inference (33) from *No aliens saw birds* (`cond_eq_zero_of_cond_eq_one`) gives that of the
+inference from *No aliens saw any birds*. -/
 theorem cond_eq_one_of_widen {μ : Measure Ω} {saw : ε → Set Ω}
     {birds anyBirds : Set ε} {D : Set Ω} (h : birds ⊆ anyBirds)
     (hD : μ[existsInDomain birds saw | D] = 1) : μ[existsInDomain anyBirds saw | D] = 1 :=

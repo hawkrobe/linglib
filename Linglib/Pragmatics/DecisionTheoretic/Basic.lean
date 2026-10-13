@@ -306,7 +306,8 @@ theorem negRelevant_iff_real_cross (he : ctx.prior e ≠ 0) :
         ctx.prior.real (ctx.topicᶜ ∩ e) * ctx.prior.real ctx.topic := by
   have hHm := ctx.topicMeasurable
   rcases eq_or_ne (ctx.prior[|ctx.topicᶜ] e) 0 with h | h
-  · have h0 := measure_inter_eq_zero_of_cond_eq_zero _ hHm.compl h
+  · have h0 : ctx.prior (ctx.topicᶜ ∩ e) = 0 :=
+      by_contra fun hne ↦ (cond_pos_of_inter_ne_zero hHm.compl hne).ne' h
     have hH : ctx.prior (ctx.topic ∩ e) ≠ 0 := fun hH ↦ he <| measure_mono_null
       (fun x hx ↦ (em (x ∈ ctx.topic)).imp (⟨·, hx⟩) (⟨·, hx⟩)) (measure_union_null hH h0)
     refine iff_of_false ?_ (not_lt.2 ?_)

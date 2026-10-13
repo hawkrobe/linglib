@@ -599,7 +599,7 @@ theorem weightNoiseChoiceProb_guddo (w : Fin 3 → ℝ) (hw : w 0 = w 1 + w 2) (
       harmonyScore (fun k o ↦ loanwordDevoicing.con k (.guddo, o)) w .voiced = 0 := by
     simp [harmonyScore_eq_neg_sum, Fin.sum_univ_three, loanwordDevoicing, identVoice, ocpVoice,
       voicedGeminate, hw]
-  rw [this, gaussianChoiceProb_zero, ENNReal.ofReal_inv_of_pos two_pos, ENNReal.ofReal_ofNat]
+  rw [this, zero_div, normalCDF_zero, ENNReal.ofReal_inv_of_pos two_pos, ENNReal.ofReal_ofNat]
 
 /-- The Noisy HG grammar of (21) weighs IDENT-VOICE as OCP-VOICE and \*VOICED-GEMINATE
 together. -/
@@ -738,12 +738,12 @@ theorem weightNoiseChoiceProb_feast_lt_most {w : Option (Lexeme × Fin 3) → �
       (by
         rw [hmost]
         exact fun h ↦ hd (funext fun k ↦ by simpa using congrFun h (exchange.symm k))),
-    ENNReal.ofReal_lt_ofReal_iff (gaussianChoiceProb_pos _ _), harmonyScore_sub,
+    ENNReal.ofReal_lt_ofReal_iff (normalCDF_pos _), harmonyScore_sub,
     harmonyScore_sub, hmost, show d ∘ exchange ⬝ᵥ d ∘ exchange = d ⬝ᵥ d from
       exchange.sum_comp fun k ↦ d k * d k]
-  refine gaussianChoiceProb_strictMono (Real.sqrt_pos.mpr (mul_pos
+  refine normalCDF_strictMono (div_lt_div_of_pos_right ?_ (Real.sqrt_pos.mpr (mul_pos
     (NNReal.coe_pos.mpr (pos_iff_ne_zero.mpr hv)) ((Finset.sum_nonneg fun k _ ↦
-      mul_self_nonneg (d k)).lt_of_ne (Ne.symm (mt dotProduct_self_eq_zero.mp hd))))) ?_
+      mul_self_nonneg (d k)).lt_of_ne (Ne.symm (mt dotProduct_self_eq_zero.mp hd))))))
   rw [neg_lt_neg_iff, show w ⬝ᵥ d ∘ exchange = ∑ k, w (exchange.symm k) * d k by
     rw [dotProduct, ← exchange.symm.sum_comp]; simp]
   have hf (j : Fin 3) : 0 ≤ d (some (.feast, j)) := by

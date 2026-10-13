@@ -55,8 +55,8 @@ with proportion correct `Φ (d' / √2)` (`forcedChoice_one_gaussianReal`).
 * `SignalDetection.likelihoodRatio_gaussianReal`: the likelihood ratio of the normal model.
 * `SignalDetection.forcedChoice_one_gaussianReal`: in the normal model the two-alternative
   proportion correct is `Φ (d' / √2)`, Macmillan and Creelman's eq. (7.6).
-* `SignalDetection.log_odds_hitRate_sub_log_odds_falseAlarmRate`,
-  `SignalDetection.log_odds_hitRate_add_log_odds_falseAlarmRate`: in the logistic model the
+* `SignalDetection.logit_hitRate_sub_logit_falseAlarmRate`,
+  `SignalDetection.logit_hitRate_add_logit_falseAlarmRate`: in the logistic model the
   sensitivity and the criterion are the difference and minus the mean of the log-odds of the rates,
   Macmillan and Creelman's eqs. (4.10) and (4.12).
 
@@ -277,24 +277,20 @@ theorem falseAlarmRate_logisticMeasure :
 /-- In the logistic model the sensitivity is the difference of the log-odds of the rates, whatever
 the criterion: on log-odds axes the receiver operating characteristic is a line of unit slope, `δ`
 above the chance line, [macmillan-creelman-2005]'s eq. (4.10) with `δ = 2 ln α`. -/
-theorem log_odds_hitRate_sub_log_odds_falseAlarmRate :
-    Real.log (hitRate (locationExperiment logisticMeasure δ) k /
-        (1 - hitRate (locationExperiment logisticMeasure δ) k)) -
-      Real.log (falseAlarmRate (locationExperiment logisticMeasure δ) k /
-        (1 - falseAlarmRate (locationExperiment logisticMeasure δ) k)) = δ := by
-  rw [hitRate_logisticMeasure, falseAlarmRate_logisticMeasure,
-    Real.log_sigmoid_div_one_sub_sigmoid, Real.log_sigmoid_div_one_sub_sigmoid]
+theorem logit_hitRate_sub_logit_falseAlarmRate :
+    Real.logit (hitRate (locationExperiment logisticMeasure δ) k) -
+      Real.logit (falseAlarmRate (locationExperiment logisticMeasure δ) k) = δ := by
+  rw [hitRate_logisticMeasure, falseAlarmRate_logisticMeasure, Real.logit_sigmoid,
+    Real.logit_sigmoid]
   ring
 
 /-- In the logistic model the criterion is minus the mean of the log-odds of the rates,
 [macmillan-creelman-2005]'s bias `ln b` of eq. (4.12). -/
-theorem log_odds_hitRate_add_log_odds_falseAlarmRate :
-    -(Real.log (hitRate (locationExperiment logisticMeasure δ) k /
-        (1 - hitRate (locationExperiment logisticMeasure δ) k)) +
-      Real.log (falseAlarmRate (locationExperiment logisticMeasure δ) k /
-        (1 - falseAlarmRate (locationExperiment logisticMeasure δ) k))) / 2 = k := by
-  rw [hitRate_logisticMeasure, falseAlarmRate_logisticMeasure,
-    Real.log_sigmoid_div_one_sub_sigmoid, Real.log_sigmoid_div_one_sub_sigmoid]
+theorem logit_hitRate_add_logit_falseAlarmRate :
+    -(Real.logit (hitRate (locationExperiment logisticMeasure δ) k) +
+      Real.logit (falseAlarmRate (locationExperiment logisticMeasure δ) k)) / 2 = k := by
+  rw [hitRate_logisticMeasure, falseAlarmRate_logisticMeasure, Real.logit_sigmoid,
+    Real.logit_sigmoid]
   ring
 
 end Logistic

@@ -125,12 +125,8 @@ noncomputable def stringProb (x : List α) : ℝ≥0∞ := M.prefixProb x * M.ne
 noncomputable def stringMeasure : Measure (List α) :=
   Measure.sum fun x ↦ M.stringProb x • Measure.dirac x
 
-@[simp] theorem stringMeasure_singleton (x : List α) : M.stringMeasure {x} = M.stringProb x := by
-  classical
-  rw [stringMeasure, Measure.sum_apply _ (measurableSet_singleton x)]
-  simp only [Measure.smul_apply, smul_eq_mul, Measure.dirac_apply' _ (measurableSet_singleton x),
-    Set.indicator_apply, Set.mem_singleton_iff, Pi.one_apply, mul_ite, mul_one, mul_zero]
-  exact tsum_ite_eq x _
+@[simp] theorem stringMeasure_singleton (x : List α) : M.stringMeasure {x} = M.stringProb x :=
+  Measure.sum_smul_dirac_singleton
 
 theorem stringMeasure_univ : M.stringMeasure Set.univ = ∑' x, M.stringProb x := by
   simp [stringMeasure, Measure.sum_apply _ MeasurableSet.univ]

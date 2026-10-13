@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Mathlib.Analysis.SpecialFunctions.Sigmoid
+public import Linglib.Core.Analysis.SpecialFunctions.Sigmoid
 public import Mathlib.Probability.CDF
 
 /-!
@@ -14,11 +14,8 @@ public import Mathlib.Probability.CDF
 The standard logistic distribution is the probability measure on `ℝ` whose distribution function is
 the sigmoid `σ x = 1 / (1 + exp (-x))`. It is the Stieltjes measure of `Real.sigmoid`, so its cdf is
 the sigmoid (`cdf_logisticMeasure`) and its upper tail at `x` is `σ (-x)`
-(`logisticMeasure_real_Ioi`). The odds of the sigmoid are exponential
-(`Real.sigmoid_div_one_sub_sigmoid`), so the log-odds `p ↦ log (p / (1 - p))` invert the
-distribution function on `(0, 1)`.
-`[UPSTREAM]` candidates for `Mathlib/Probability/Distributions/Logistic.lean` and
-`Mathlib/Analysis/SpecialFunctions/Sigmoid.lean`.
+(`logisticMeasure_real_Ioi`), so the log-odds `Real.logit` invert the distribution function on
+`(0, 1)`. `[UPSTREAM]` candidate for `Mathlib/Probability/Distributions/Logistic.lean`.
 
 ## Main definitions
 
@@ -29,31 +26,11 @@ distribution function on `(0, 1)`.
 * `ProbabilityTheory.cdf_logisticMeasure`: the cdf of the standard logistic distribution is the
   sigmoid.
 * `ProbabilityTheory.logisticMeasure_real_Ioi`: its upper tail at `x` is `σ (-x)`.
-* `Real.log_sigmoid_div_one_sub_sigmoid`: the log-odds of `σ x` are `x`.
-* `Real.sigmoid_log`: the sigmoid of the log-odds `log x` is `x / (x + 1)`.
 -/
 
 @[expose] public section
 
 open MeasureTheory Filter Set
-
-namespace Real
-
-/-- The odds of the sigmoid are exponential. -/
-theorem sigmoid_div_one_sub_sigmoid (x : ℝ) : sigmoid x / (1 - sigmoid x) = exp x := by
-  rw [← sigmoid_neg, ← sigmoid_mul_rexp_neg, div_mul_cancel_left₀ (sigmoid_pos x).ne', exp_neg,
-    inv_inv]
-
-/-- The log-odds of the sigmoid are its argument. -/
-theorem log_sigmoid_div_one_sub_sigmoid (x : ℝ) : log (sigmoid x / (1 - sigmoid x)) = x := by
-  rw [sigmoid_div_one_sub_sigmoid, log_exp]
-
-/-- The sigmoid of the logarithm of odds `x` is the probability `x / (x + 1)`. -/
-theorem sigmoid_log {x : ℝ} (hx : 0 < x) : sigmoid (log x) = x / (x + 1) := by
-  rw [sigmoid_def, exp_neg, exp_log hx]
-  field_simp
-
-end Real
 
 namespace ProbabilityTheory
 

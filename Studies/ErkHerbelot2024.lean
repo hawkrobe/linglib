@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Core.Probability.Distributions.DirichletMultinomial
+public import Linglib.Core.Probability.Distributions.PolyaUrn
 public import Linglib.Core.Probability.Kernel.OfWeights
 public import Linglib.Core.Probability.Kernel.Posterior
 public import Linglib.Core.Probability.UniformOn
@@ -230,14 +230,6 @@ private theorem sum_fin_three {S M : Type*} [Fintype S] [AddCommMonoid M]
   rw [Fintype.sum_unique]
   exact congrArg f (by funext i; fin_cases i <;> rfl)
 
-/-- The real mass of a decidable event under the uniform measure on a finset. -/
-private theorem uniformOn_real_setOf {C : Type*} [MeasurableSpace C] [MeasurableSingletonClass C]
-    [DecidableEq C] [Fintype C] (A : Finset C) (p : C → Prop) [DecidablePred p] :
-    (uniformOn ↑A).real {c | p c} = ((A.filter p).card : ℝ) / A.card := by
-  rw [show {c | p c} = (↑(Finset.univ.filter p) : Set C) by ext c; simp,
-    measureReal_def, uniformOn_apply_finset, Finset.inter_filter, Finset.inter_univ,
-    ENNReal.toReal_div, ENNReal.toReal_natCast, ENNReal.toReal_natCast]
-
 /-! ### *A player was holding a bat* (§5.1, Figure 5, Table 1) -/
 
 /-- The concept inventory (p. 569). -/
@@ -328,7 +320,7 @@ private theorem uniformOn_real_preimage {C L : Type*} [MeasurableSpace C]
     [MeasurableSingletonClass C] [DecidableEq C] [Fintype C] [DecidableEq L] (A : Finset C)
     (f : C → L) (y : L) :
     (uniformOn ↑A).real (f ⁻¹' {y}) = ((A.filter (f · = y)).card : ℝ) / A.card :=
-  uniformOn_real_setOf A (f · = y)
+  uniformOn_finset_real_setOf A (f · = y)
 
 private theorem countVec_vecCons {S : Type*} [DecidableEq S] {N : ℕ} (c : S) (seq : Fin N → S) :
     countVec (Matrix.vecCons c seq) = Function.update (countVec seq) c (countVec seq c + 1) :=
@@ -389,8 +381,8 @@ private theorem bat_num (α : ℝ) (hα : 0 < α) :
   simp +decide only [sum_batScenario, Fin.prod_univ_three, batRoles, batLabels,
     Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val_two, Matrix.head_cons,
     Matrix.tail_cons, SDS.emission, batSDS_poe, batSDS_scenario, batSDS_prior,
-    polyaUrnProb_countVec_vecCons, false_implies, true_implies, and_true, uniformOn_real_setOf,
-    bat_cards, bat_cards_num]
+    polyaUrnProb_countVec_vecCons, false_implies, true_implies, and_true,
+    uniformOn_finset_real_setOf, bat_cards, bat_cards_num]
   simp +decide only [countVec_vecCons, countVec_zero, polyaUrnProb_zero,
     polyaUrnPredictive, Pi.zero_apply, Function.update_apply,
     sum_batScenario, ↓reduceIte]
@@ -568,7 +560,7 @@ private theorem star_den (α : ℝ) (hα : 0 < α) :
   simp +decide only [sum_starScenario, Fin.prod_univ_three, starRoles, starLabels,
     Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val_two, Matrix.head_cons,
     Matrix.tail_cons, SDS.emission, starSDS_scenario, starSDS_prior, polyaUrnProb_countVec_vecCons,
-    preimage_singleton_eq, starSDS_poe_real, uniformOn_real_setOf, star_cards]
+    preimage_singleton_eq, starSDS_poe_real, uniformOn_finset_real_setOf, star_cards]
   simp +decide only [countVec_vecCons, countVec_zero, polyaUrnProb_zero,
     polyaUrnPredictive, Pi.zero_apply, Function.update_apply,
     sum_starScenario, Finset.sum_filter, sum_starConcept, uniformOn_finset_apply_singleton,
@@ -588,7 +580,7 @@ private theorem star_num (α : ℝ) (hα : 0 < α) :
   simp +decide only [sum_starScenario, Fin.prod_univ_three, starRoles, starLabels,
     Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val_two, Matrix.head_cons,
     Matrix.tail_cons, SDS.emission, starSDS_scenario, starSDS_prior, polyaUrnProb_countVec_vecCons,
-    false_implies, true_implies, and_true, starSDS_poe_real, uniformOn_real_setOf,
+    false_implies, true_implies, and_true, starSDS_poe_real, uniformOn_finset_real_setOf,
     star_cards]
   simp +decide only [countVec_vecCons, countVec_zero, polyaUrnProb_zero,
     polyaUrnPredictive, Pi.zero_apply, Function.update_apply,
@@ -609,7 +601,7 @@ private theorem star_num_sun (α : ℝ) (hα : 0 < α) :
   simp +decide only [sum_starScenario, Fin.prod_univ_three, starRoles, starLabels,
     Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val_two, Matrix.head_cons,
     Matrix.tail_cons, SDS.emission, starSDS_scenario, starSDS_prior, polyaUrnProb_countVec_vecCons,
-    false_implies, true_implies, and_true, starSDS_poe_real, uniformOn_real_setOf,
+    false_implies, true_implies, and_true, starSDS_poe_real, uniformOn_finset_real_setOf,
     star_cards]
   simp +decide only [countVec_vecCons, countVec_zero, polyaUrnProb_zero,
     polyaUrnPredictive, Pi.zero_apply, Function.update_apply,

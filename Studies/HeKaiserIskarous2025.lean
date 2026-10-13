@@ -161,8 +161,8 @@ theorem eval_lt_half_iff (hk : 0 < θ.k) (hL : 0 < θ.L) (hc : θ.c < 1 / 2)
     have h1 : θ.L + θ.c - 1 / 2 ≠ 0 := by linarith
     field_simp
     ring
-  rw [eval, ← lt_sub_iff_add_lt, ← lt_div_iff₀' hL, ← Real.sigmoid_log_div_one_sub ht0 ht1,
-    Real.sigmoid_lt_iff, key, ← lt_div_iff₀' hk, sub_lt_iff_lt_add', threshold]
+  rw [eval, ← lt_sub_iff_add_lt, ← lt_div_iff₀' hL, ← Real.sigmoid_logit ⟨ht0, ht1⟩,
+    Real.sigmoid_lt_iff, Real.logit, key, ← lt_div_iff₀' hk, sub_lt_iff_lt_add', threshold]
 
 end Sigmoid
 

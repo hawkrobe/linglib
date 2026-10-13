@@ -238,16 +238,15 @@ theorem dotProduct_violationDiff_self_p (q : Prefix) :
 substituted and unsubstituted candidates, with a noise scale fixed by the stem. -/
 private theorem weightNoiseSubst_eq (w : Fin 11 → ℝ) {v : ℝ≥0} (hv : v ≠ 0) (x : Prefix × StemC) :
     weightNoiseSubst w v x =
-      gaussianChoiceProb
-        (harmonyScore constraints w (x, .yes) - harmonyScore constraints w (x, .no))
-        √(v * diffSq (.mangOther, x.2)) := by
+      normalCDF ((harmonyScore constraints w (x, .yes) - harmonyScore constraints w (x, .no)) /
+        √(v * diffSq (.mangOther, x.2))) := by
   have hd : (constraints.violationDiff (x, .yes) (x, .no) : Fin 11 → ℝ) ≠ 0 := fun h ↦ by
     have := dotProduct_violationDiff_self_eq_diffSq x
     rw [h, zero_dotProduct] at this
     exact (diffSq_pos x).ne' (by exact_mod_cast this.symm)
   rw [weightNoiseSubst, weightNoiseChoiceProb_of_forall_ne_eq (constraints.comap (x, ·)) w v hv
       (fun y hy ↦ by cases y <;> simp_all) (by decide) hd,
-    ENNReal.toReal_ofReal (gaussianChoiceProb_pos _ _).le, ← diffSq_eq x.1,
+    ENNReal.toReal_ofReal (normalCDF_pos _).le, ← diffSq_eq x.1,
     ← dotProduct_violationDiff_self_eq_diffSq x]
   rfl
 
@@ -257,8 +256,8 @@ theorem weightNoise_acrossTheBoard (w : Fin 11 → ℝ) {v : ℝ≥0} (hv : v �
     (c c' : StemC) :
     AcrossTheBoard (square p p' c c') (weightNoiseSubst w v) := by
   rw [funext (weightNoiseSubst_eq w hv)]
-  refine acrossTheBoard_of_interaction_eq_zero (F := fun s Δ ↦ gaussianChoiceProb Δ s)
-    (fun x ↦ (gaussianChoiceProb_strictMono ?_).monotone)
+  refine acrossTheBoard_of_interaction_eq_zero (F := fun s Δ ↦ normalCDF (Δ / s))
+    (fun x ↦ (normalCDF_strictMono.comp (strictMono_id.div_const ?_)).monotone)
     ((independent p p' c c').interaction_harmonyScore_sub w _ _) ⟨rfl, rfl⟩
   have : (0 : ℝ) < diffSq (.mangOther, x.2) := by exact_mod_cast diffSq_pos _
   have : (0 : ℝ) < v := NNReal.coe_pos.mpr (pos_iff_ne_zero.mpr hv)

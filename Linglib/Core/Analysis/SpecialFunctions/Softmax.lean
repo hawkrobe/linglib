@@ -1,6 +1,6 @@
 module
 
-public import Mathlib.Analysis.SpecialFunctions.Sigmoid
+public import Linglib.Core.Analysis.SpecialFunctions.Sigmoid
 public import Mathlib.Analysis.SpecialFunctions.Pow.Real
 public import Mathlib.Analysis.SpecialFunctions.Log.NegMulLog
 public import Mathlib.Analysis.SpecialFunctions.Log.Deriv
@@ -282,17 +282,6 @@ theorem softmax_eq_sigmoid_of_univ_eq_pair [DecidableEq ι] {i j : ι} (hij : i 
 
 theorem softmax_fin_two (s : Fin 2 → ℝ) : softmax s 0 = sigmoid (s 0 - s 1) :=
   softmax_eq_sigmoid_of_univ_eq_pair zero_ne_one (by decide) s
-
-/-- The logit function `log (p / (1 - p))` is the inverse of `Real.sigmoid`. -/
-noncomputable def logit (p : ℝ) : ℝ := log (p / (1 - p))
-
-@[simp] theorem logit_sigmoid (x : ℝ) : logit (sigmoid x) = x := by
-  rw [logit, ← sigmoid_neg, ← sigmoid_mul_rexp_neg, div_mul_cancel_left₀ (sigmoid_pos x).ne',
-    ← exp_neg, neg_neg, log_exp]
-
-theorem sigmoid_logit {p : ℝ} (hp : p ∈ Set.Ioo 0 1) : sigmoid (logit p) = p := by
-  obtain ⟨x, rfl⟩ : p ∈ Set.range sigmoid := range_sigmoid ▸ hp
-  rw [logit_sigmoid]
 
 /-- With two alternatives, the log-odds are the score difference. -/
 theorem logit_softmax_fin_two (s : Fin 2 → ℝ) : logit (softmax s 0) = s 0 - s 1 := by

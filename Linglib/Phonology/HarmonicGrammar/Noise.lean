@@ -152,8 +152,8 @@ difference over its standard deviation. -/
 theorem weightNoise_setOf_harmonyScore_lt (hv : v ≠ 0) {a b : C}
     (hab : (con.violationDiff a b : ι → ℝ) ≠ 0) :
     weightNoise ι v {η | harmonyScore con (w + η) b < harmonyScore con (w + η) a} =
-      ENNReal.ofReal (gaussianChoiceProb (harmonyScore con w a - harmonyScore con w b)
-        √(v * (con.violationDiff a b ⬝ᵥ con.violationDiff a b : ℝ))) := by
+      ENNReal.ofReal (normalCDF ((harmonyScore con w a - harmonyScore con w b) /
+        √(v * (con.violationDiff a b ⬝ᵥ con.violationDiff a b : ℝ)))) := by
   have hdd : 0 < (con.violationDiff a b ⬝ᵥ con.violationDiff a b : ℝ) :=
     (dotProduct_violationDiff_self_nonneg con a b).lt_of_ne
       (Ne.symm (mt dotProduct_self_eq_zero.mp hab))
@@ -173,8 +173,8 @@ harmony difference over its standard deviation. -/
 theorem weightNoiseChoiceProb_of_forall_ne_eq (hv : v ≠ 0) {a b : C} (hb : ∀ c, c ≠ a → c = b)
     (hab : a ≠ b) (hd : (con.violationDiff a b : ι → ℝ) ≠ 0) :
     weightNoiseChoiceProb con w v a =
-      ENNReal.ofReal (gaussianChoiceProb (harmonyScore con w a - harmonyScore con w b)
-        √(v * (con.violationDiff a b ⬝ᵥ con.violationDiff a b : ℝ))) := by
+      ENNReal.ofReal (normalCDF ((harmonyScore con w a - harmonyScore con w b) /
+        √(v * (con.violationDiff a b ⬝ᵥ con.violationDiff a b : ℝ)))) := by
   rw [weightNoiseChoiceProb, ← weightNoise_setOf_harmonyScore_lt con w v hv hd]
   congr 1
   ext η
@@ -188,8 +188,8 @@ variable (con : ConstraintSet (Fin 2) ι) (w : ι → ℝ) (v : ℝ≥0)
 difference over its standard deviation. -/
 theorem weightNoiseChoiceProb_fin_two (hv : v ≠ 0) (hd : (con.violationDiff 0 1 : ι → ℝ) ≠ 0) :
     weightNoiseChoiceProb con w v 0 =
-      ENNReal.ofReal (gaussianChoiceProb (harmonyScore con w 0 - harmonyScore con w 1)
-        √(v * (con.violationDiff 0 1 ⬝ᵥ con.violationDiff 0 1 : ℝ))) :=
+      ENNReal.ofReal (normalCDF ((harmonyScore con w 0 - harmonyScore con w 1) /
+        √(v * (con.violationDiff 0 1 ⬝ᵥ con.violationDiff 0 1 : ℝ)))) :=
   weightNoiseChoiceProb_of_forall_ne_eq con w v hv (fun c hc ↦ by omega) zero_ne_one hd
 
 end FinTwo

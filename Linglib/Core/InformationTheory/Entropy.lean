@@ -726,12 +726,6 @@ section Empirical
 
 variable {Ω : Type*} [MeasurableSpace Ω] [MeasurableSingletonClass Ω]
 
-/-- Conditioning the uniform measure on a finite type by a set restricts it to the set. -/
-theorem uniformOn_univ_cond [Finite Ω] (A : Set Ω) :
-    (uniformOn (Set.univ : Set Ω))[|A] = uniformOn A := by
-  rw [uniformOn, uniformOn, cond_cond_eq_cond_inter' .univ (Set.toFinite A).measurableSet
-    (Measure.count_apply_lt_top.2 Set.finite_univ).ne, Set.univ_inter]
-
 /-- The entropy of an attribute of a finite population under the uniform measure on a part of
 it is the entropy of the attribute's empirical distribution, as counts. -/
 theorem entropy_uniformOn [Fintype Ω] {S : Type*} [MeasurableSpace S]
