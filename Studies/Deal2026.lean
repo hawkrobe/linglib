@@ -124,11 +124,15 @@ theorem projection_rows :
   decide
 
 /-- The semi-factive *cuukwe* 'know' projects from a third-person conditional antecedent, (68),
-where [karttunen-1971b]'s semi-factive postulates yield nothing; his (25b–c) are first person. -/
+where the complement does not follow from [karttunen-1971b]'s postulates for a semi-factive. His
+own conditionals, (25), are in the first person. -/
 theorem cuukwe_conditional_projects :
     ¬ Karttunen1971b.Projects .semi .conditionalAntecedent ∧
-      ∃ row ∈ Examples.all, row.environment? = some .conditionalAntecedent ∧
-        row.feature? "verb" = some cuukwe.form ∧ row.projective? = some true := by
+      (∃ row ∈ Examples.all, row.environment? = some .conditionalAntecedent ∧
+        row.person? = some .third ∧ row.feature? "verb" = some cuukwe.form ∧
+        row.projective? = some true) ∧
+      ∀ row ∈ Karttunen1971b.Examples.all, row.environment? = some .conditionalAntecedent →
+        row.person? = some .first := by
   decide
 
 /-! ### Table (79): internal against external syntax -/
@@ -162,7 +166,7 @@ instance (v : Bulgarian.Verb) : Decidable (DetoComplement v) :=
   inferInstanceAs (Decidable ((∃ a ∈ v.attitude, _) ∧ _ ∧ ∃ fr ∈ v.valency.frames, _))
 
 /-- The double requirement picks out exactly the predicates Krapova lists as *deto*-takers, and
-neither condition suffices: *văzmuštavam se* 'resent' is emotive without a *za* phrase, and
+neither condition suffices, since *văzmuštavam se* 'resent' is emotive without a *za* phrase and
 *razbiram* 'comprehend' is factive without being emotive. -/
 theorem detoComplement_iff :
     (∀ v ∈ Bulgarian.verbs, DetoComplement v ↔ v.form ∈ Bulgarian.detoTakers.map (·.form)) ∧
@@ -228,8 +232,8 @@ def rows : List Cell :=
   [nezPerce liloy, nezPerce neki, englishThink, adygheRelative, englishNComplementation,
     bulgarianRelative, ndebeleEmbedding, washoFactive]
 
-/-- Every cell of table (79) is filled: each of the three shells over C, none, D N and P D,
-occurs with and without an Ā-dependency in the CP. The internal syntax of a clause does not
+/-- Every cell of table (79) is filled, each of the three shells over C, none, D N and P D,
+occurring with and without an Ā-dependency in the CP. The internal syntax of a clause does not
 predict its external syntax, the category selected ranging over C, D and P for one CP-internal
 syntax, and not all complementation is relativization. -/
 theorem table79 :
@@ -239,8 +243,8 @@ theorem table79 :
 
 /-! ### Table (80): factivity against the Ā axis -/
 
-/-- Every cell of table (80) is filled: a factive relative embedding, *lilooy* 'be happy'; a
-factive simplex embedding, *cuukwe* 'know'; a non-factive simplex embedding, *neki* 'think';
+/-- Every cell of table (80) is filled, by a factive relative embedding, *lilooy* 'be happy', a
+factive simplex embedding, *cuukwe* 'know', a non-factive simplex embedding, *neki* 'think',
 and a non-factive relative embedding, Adyghe 'think', which requires the relative strategy for
 its tensed complement. Factivity and relative-embedding syntax vary independently. -/
 theorem table80 :
@@ -252,9 +256,9 @@ theorem table80 :
 
 /-! ### The D-inflection diagnostic (21) -/
 
-/-- The relative pronoun *yox̂* ~ *ko* inflects for case: cells of the paradigm with distinct
-cases share no forms. This is the case half of the diagnostic that *yox̂* ~ *ko* is a D while
-the invariant *ke* is a C. -/
+/-- The relative pronoun *yox̂* ~ *ko* inflects for case, in that cells of the paradigm with
+distinct cases share no forms. This is the case half of the diagnostic that *yox̂* ~ *ko* is a D
+while the invariant *ke* is a C. -/
 theorem paradigm_case_discriminates :
     ∀ p ∈ relativePronounParadigm, ∀ q ∈ relativePronounParadigm,
       p.case ≠ q.case → ∀ f ∈ p.forms, f ∉ q.forms := by

@@ -51,7 +51,7 @@ inductive Factivity where
   /-- A true factive such as *regret* or *forget*, whose complement follows even from the
   possibility of the sentence. -/
   | full
-  /-- A semi-factive such as *know* or *discover*, whose complement follows from the sentence
+  /-- A semi-factive such as *realize* or *discover*, whose complement follows from the sentence
   and its negation only. -/
   | semi
   deriving DecidableEq, Repr

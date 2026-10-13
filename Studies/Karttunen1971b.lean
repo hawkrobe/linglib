@@ -3,36 +3,45 @@ module
 public import Linglib.Fragments.English.Verbs.Inventory
 public import Linglib.Semantics.Presupposition.Environment
 public import Linglib.Semantics.Presupposition.Basic
+public import Linglib.Logic.Modal.Basic
 public import Linglib.Data.Examples.Karttunen1971b
 
 /-!
 # Karttunen (1971): Some observations on factivity
 
-This file formalizes the third of Karttunen's observations: the factive verbs are not one
-class. Every factive presupposes its complement under negation, (22), but in a question, (24),
-and in the antecedent of a conditional, (25), *regret* still commits the speaker to the
-complement while *realize* and *discover* do not. The account is a pair of meaning postulates
-per verb: the sentence and its negation each imply the complement, (11), and for a true factive
-so does the mere possibility of the sentence, (11'). Since a question or a conditional
-antecedent conversationally implies only the possibility of its sentence, (26), the complement
-follows there from a true factive and not from a semi-factive (`Projects`). The rows record the
-judgments, and the prediction matches them (`projection_rows`). The emphatic denial (23) carries
-no commitment: it is the external negation of three-valued logic, which is defined whether or
-not the presupposition holds (`negExt_no_inference`).
+Karttunen describes a factive verb by meaning postulates rather than by a presupposition split
+off from its sentence. A sentence is true, false or neither, and one sentence necessitates
+another, in van Fraassen's term, when the second is true wherever the first is. For a
+semi-factive such as *discover*, the sentence and its negation each necessitate the complement.
+For a true factive such as *regret*, so do the possibility of the sentence and the possibility
+of its negation, which Karttunen proposes as the definition of presupposition in general.
+
+An assertion commits its speaker to the sentence and a negative assertion to its negation, while
+a question and the antecedent of a conditional conversationally imply only that the sentence is
+possible. The two classes therefore agree in assertions and come apart in the other
+environments.
+
+## Main statements
+
+* `Karttunen1971b.projects_iff`: the complement follows in every model exactly when the verb is
+  a true factive or the sentence is asserted or negated.
+* `Karttunen1971b.projection_rows`: the paper's judgments on *regret*, *realize* and *discover*
+  are these predictions.
+* `Karttunen1971b.emphatic_denial`: denying that a true factive sentence is true is consistent
+  with the falsity of its complement.
 
 ## Implementation notes
 
-* The postulates (11) and (11') are read off the environment: what an environment makes
-  available of its sentence is the sentence, its negation, or only its possibility
-  (`Environment.available`), and a class yields the complement from the first two, a true
-  factive also from the third (`Factivity.Yields`).
-* The quantified complements of section 1 and the subjunctive *poss-ing* complements of
-  section 2 are not represented.
-* The verbs are the English Fragment's entries, whose factivity classes this paper anchors.
+* Possibility is read on an accessibility relation, of which the paper assumes only that what is
+  the case is possible, so the relation is reflexive and otherwise arbitrary.
+* A question and a conditional antecedent are represented by the possibility they conversationally
+  imply.
+* The subjunctive *poss-ing* complements of section 2 are not represented.
 
 ## References
 
 * [karttunen-1971b]
+* [van-fraassen-1968]
 * [kiparsky-kiparsky-1970]
 -/
 
@@ -40,86 +49,123 @@ not the presupposition holds (`negExt_no_inference`).
 
 namespace Karttunen1971b
 
-open Presupposition
-open English
-open English.Verbs hiding Verb
+open Presupposition PartialProp ModalLogic
+
+variable {W : Type*} {R : SetRel W W} {A : PartialProp W} {s : W → Prop}
+  {c : Factivity} {e : Environment}
 
 /-! ### The meaning postulates -/
 
-/-- What an environment makes available of its sentence is the sentence itself, its negation,
-or only its possibility, which a question and a conditional antecedent conversationally imply
-((26), fn. 5). -/
-inductive Available where
-  | sentence
-  | negation
-  | possibility
-  deriving DecidableEq, Repr
+/-- The meaning postulates of a factivity class, for a sentence `A` with complement `s`. A
+semi-factive sentence and its negation each necessitate the complement, (11). For a true factive
+the possibility of the sentence and the possibility of its negation do, (11′), which is to say
+that the sentence presupposes its complement (fn. 8). -/
+def Postulates (c : Factivity) (R : SetRel W W) (A : PartialProp W) (s : W → Prop) : Prop :=
+  match c with
+  | .semi => A.holds ≤ s ∧ A.neg.holds ≤ s
+  | .full => ◇[R] A.holds ≤ s ∧ ◇[R] A.neg.holds ≤ s
 
-/-- The availability each environment provides. -/
-def _root_.Presupposition.Environment.available : Environment → Available
-  | .atomic => .sentence
-  | .negation => .negation
-  | .question => .possibility
-  | .conditionalAntecedent => .possibility
-  | .epistemicModal => .possibility
+/-- A semi-factive sentence has a truth value only where its complement is true. -/
+theorem postulates_semi_iff : Postulates .semi R A s ↔ A.presup ≤ s := by
+  rw [← holds_sup_holds_neg, sup_le_iff]; rfl
 
-/-- The postulates of a class say that the sentence and its negation imply the complement for
-every factive, (11), and that its possibility does so for a true factive only, (11'). -/
-def _root_.Presupposition.Factivity.Yields : Factivity → Available → Prop
-  | _, .sentence => True
-  | _, .negation => True
-  | .full, .possibility => True
-  | .semi, .possibility => False
+/-- The complement of a true factive is true wherever its sentence may have a truth value. -/
+theorem postulates_full_iff : Postulates .full R A s ↔ ◇[R] A.presup ≤ s := by
+  rw [← holds_sup_holds_neg, diamond_sup, sup_le_iff]; rfl
 
-instance (c : Factivity) (a : Available) : Decidable (c.Yields a) := by
-  unfold Factivity.Yields; split <;> infer_instance
+/-- A true factive sentence has a truth value only where its complement is necessary, along the
+converse of the accessibility relation. -/
+theorem postulates_full_iff_le_box : Postulates .full R A s ↔ A.presup ≤ □[R.inv] s :=
+  postulates_full_iff.trans (diamond_box_gc R _ _)
 
-/-- The complement follows from a sentence with a factive of class `c` in environment `e`. -/
-def Projects (c : Factivity) (e : Environment) : Prop := c.Yields e.available
+/-- The stronger postulates yield the weaker ones, since what is the case is possible (fn. 9). -/
+theorem Postulates.semi [R.IsRefl] (h : Postulates .full R A s) : Postulates .semi R A s :=
+  postulates_semi_iff.2 <| (diamond_T_iff.2 ‹_› _).trans (postulates_full_iff.1 h)
+
+/-! ### Environments -/
+
+/-- What the speaker of a sentence in an environment is committed to. An assertion commits her
+to the sentence and a negative assertion to its negation. A question and the antecedent of a
+conditional conversationally imply that the sentence is possible (fn. 5), which a possibility
+statement asserts, (26). -/
+def commitment (R : SetRel W W) (A : PartialProp W) : Environment → W → Prop
+  | .atomic => A.holds
+  | .negation => A.neg.holds
+  | .question | .conditionalAntecedent | .epistemicModal => ◇[R] A.holds
+
+/-- The complement of a factive of class `c` follows in environment `e` when, in every model
+where what is the case is possible, the complement of a sentence obeying the postulates of `c`
+is true wherever the speaker's commitment is. -/
+def Projects (c : Factivity) (e : Environment) : Prop :=
+  ∀ (W : Type) (R : SetRel W W) [R.IsRefl] (A : PartialProp W) (s : W → Prop),
+    Postulates c R A s → commitment R A e ≤ s
+
+theorem Postulates.commitment_le [R.IsRefl] (h : Postulates c R A s)
+    (hce : c = .full ∨ e = .atomic ∨ e = .negation) : commitment R A e ≤ s := by
+  obtain rfl | rfl | rfl := hce
+  · cases e; exacts [h.semi.1, h.semi.2, h.1, h.1, h.1]
+  · cases c; exacts [h.semi.1, h.1]
+  · cases c; exacts [h.semi.2, h.2]
+
+/-- The possibility of a semi-factive sentence does not necessitate its complement, since from
+the fact that one may discover something it does not follow that it is the case, (26b) and
+(26c). -/
+theorem exists_semi_not_diamond_le :
+    ∃ (R : SetRel Bool Bool) (_ : R.IsRefl) (A : PartialProp Bool) (s : Bool → Prop),
+      Postulates .semi R A s ∧ ¬ ◇[R] A.holds ≤ s :=
+  ⟨.univ, inferInstance, ⟨(· = true), fun _ ↦ True⟩, (· = true), postulates_semi_iff.2 le_rfl,
+    fun h ↦ Bool.false_ne_true (h false ⟨true, trivial, rfl, trivial⟩)⟩
+
+/-- The complement follows exactly when the verb is a true factive or the sentence is asserted or
+negated. -/
+theorem projects_iff : Projects c e ↔ c = .full ∨ e = .atomic ∨ e = .negation := by
+  refine ⟨fun h ↦ ?_, fun h W R _ A s hA ↦ hA.commitment_le h⟩
+  obtain ⟨R, _, A, s, hA, hn⟩ := exists_semi_not_diamond_le
+  cases c
+  · exact .inl rfl
+  cases e
+  · exact .inr (.inl rfl)
+  · exact .inr (.inr rfl)
+  all_goals exact absurd (h Bool R A s hA) hn
 
 instance (c : Factivity) (e : Environment) : Decidable (Projects c e) :=
-  inferInstanceAs (Decidable (c.Yields e.available))
+  decidable_of_iff' _ projects_iff
 
-/-- A true factive's complement follows in every environment. -/
-theorem projects_full (e : Environment) : Projects .full e := by
-  cases e <;> trivial
+/-- In a model of any universe, the complement is true wherever the commitment is. -/
+theorem Projects.commitment_le [R.IsRefl] (hp : Projects c e) (h : Postulates c R A s) :
+    commitment R A e ≤ s :=
+  h.commitment_le (projects_iff.1 hp)
 
-/-- A semi-factive's complement follows exactly from the sentence or its negation. -/
-theorem projects_semi_iff (e : Environment) :
-    Projects .semi e ↔ e = .atomic ∨ e = .negation := by
-  cases e <;> decide
+/-- The postulates apply instance by instance under a quantifier that binds into the complement.
+If *some senators regret that they voted for the SST*, (5), or possibly regret it, (14), then
+some senators voted for it. -/
+theorem exists_complement {ι : Type*} {S : ι → Prop} {A : ι → PartialProp W} {s : ι → W → Prop}
+    [R.IsRefl] (hp : Projects c e) (hA : ∀ x, Postulates c R (A x) (s x)) {w : W}
+    (h : ∃ x, S x ∧ commitment R (A x) e w) : ∃ x, S x ∧ s x w :=
+  let ⟨x, hx, hw⟩ := h; ⟨x, hx, hp.commitment_le (hA x) w hw⟩
 
 /-! ### The rows -/
 
-/-- The three verbs of section 3. -/
-def verbs : List Verb := [regret.toVerb, realize.toVerb, discover.toVerb]
-
-/-- The Fragment entry for a row's verb. -/
-def verbOf (row : Datum) : Option Verb :=
-  (row.feature? "verb").bind (Verb.find? verbs ·)
-
-/-- The judgments of (2), (22) and (24)–(26) are the postulates' predictions, *regret*'s
-complement following everywhere and *realize*'s and *discover*'s under negation only. -/
+/-- The judgments of (2), (22) and (24)–(26) are the predictions of the postulates for the
+English entry of each verb, the complement of *regret* following everywhere and that of *realize*
+and *discover* in assertions and under negation only. -/
 theorem projection_rows :
     ∀ row ∈ Examples.all, row.feature? "diagnostic" = some "projection" →
-      ∀ e ∈ row.environment?, ∀ b ∈ row.projective?, ∀ v ∈ verbOf row, ∀ c ∈ v.factivity,
-        (b = true ↔ Projects c e) := by
+      ∀ e ∈ row.environment?, ∀ b ∈ row.projective?,
+        ∃ v ∈ English.Verbs.verbs, row.feature? "verb" = some v.form ∧
+          ∃ c ∈ v.factivity, (b = true ↔ Projects c e) := by
   decide
 
-/-! ### The emphatic denial, (23) -/
+/-! ### The emphatic denial -/
 
-variable {W : Type*}
-
-/-- (11): a factive sentence and its internal negation each imply the complement, which is
-their shared presupposition. -/
-theorem holds_presup (p : PartialProp W) (w : W) :
-    (p.holds w → p.presup w) ∧ ((PartialProp.neg p).holds w → p.presup w) :=
-  ⟨fun h ↦ h.1, fun h ↦ h.1⟩
-
-/-- Footnote 7: the emphatic denial 'it is not true that A' is the external negation, which
-holds whenever `A` fails to hold, so it yields no inference to the presupposition. -/
-theorem negExt_no_inference (p : PartialProp W) (w : W) :
-    (PartialProp.negExt p).holds w ↔ ¬ p.holds w :=
-  ⟨fun h hp ↦ h.2 ⟨hp.1, hp.2⟩, fun h ↦ ⟨trivial, fun hp ↦ h ⟨hp.1, hp.2⟩⟩⟩
+/-- The emphatic denial of a true factive sentence, *it is not true that John regretted that he
+had not told the truth*, is consistent with the falsity of the complement, (23). It is the
+external negation of three-valued logic, from which neither the possibility of the sentence nor
+that of its negation follows (fn. 7). -/
+theorem emphatic_denial :
+    ∃ (R : SetRel Unit Unit) (_ : R.IsRefl) (A : PartialProp Unit) (s : Unit → Prop),
+      Postulates .full R A s ∧ A.negExt.holds () ∧ ¬ ◇[R] A.presup () ∧ ¬ s () :=
+  ⟨.univ, inferInstance, .undefined, fun _ ↦ False,
+    postulates_full_iff.2 fun _ ⟨_, _, h⟩ ↦ h, holds_negExt.2 And.left, fun ⟨_, _, h⟩ ↦ h, id⟩
 
 end Karttunen1971b
