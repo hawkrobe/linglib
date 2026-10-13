@@ -45,8 +45,8 @@ namespace Embick2010
 
 open DistributedMorphology Embick2010.Examples
 
-/-- The heads of the case studies: the categorizers, active and passive Voice, the theme position,
-and the inflectional heads. -/
+/-- The heads of the case studies are the categorizers, active and passive Voice, the theme
+position, and the inflectional heads. -/
 inductive Head
   | n
   | v
@@ -72,8 +72,8 @@ def cyclic (m : Morpheme) : Prop := m.head = .n ∨ m.head = .v ∨ m.head = .a
 /-- A null exponent, pruned from the concatenation statements, (53) of ch. 2. -/
 def phonNull (m : Morpheme) : Prop := m.exponent = ""
 
-instance : DecidablePred cyclic := λ _ => inferInstanceAs (Decidable (_ ∨ _ ∨ _))
-instance : DecidablePred phonNull := λ _ => inferInstanceAs (Decidable (_ = _))
+instance : DecidablePred cyclic := fun _ ↦ inferInstanceAs (Decidable (_ ∨ _ ∨ _))
+instance : DecidablePred phonNull := fun _ ↦ inferInstanceAs (Decidable (_ = _))
 
 /-! ### The case studies -/
 
@@ -83,7 +83,7 @@ inductive Claim
   | blocked
   deriving DecidableEq, Repr
 
-/-- A conditioning relation: the word's heads, the head whose realization is at issue, its
+/-- A conditioning relation records the word's heads, the head whose realization is at issue, its
 conditioner, `none` for the root, and the book's verdict. -/
 structure Row where
   spine : Spine Morpheme
@@ -104,10 +104,10 @@ def rootNames : List String := (Examples.all.filterMap (·.feature? "root")).era
 
 /-- The heads of a row innermost first, `hᵢ` with the exponent `hᵢexp`. -/
 def heads (ex : Datum) : List Morpheme :=
-  ["h1", "h2", "h3", "h4", "h5"].filterMap λ k =>
-    (ex.parse? k headTable).map λ h => ⟨h, (ex.feature? (k ++ "exp")).getD ""⟩
+  ["h1", "h2", "h3", "h4", "h5"].filterMap fun k ↦
+    (ex.parse? k headTable).map fun h ↦ ⟨h, (ex.feature? (k ++ "exp")).getD ""⟩
 
-/-- A row from an example: positions count from one, innermost first. -/
+/-- The row of an example, whose positions count from one, innermost first. -/
 def Row.ofDatum (ex : Datum) : Option Row := do
   let root ← ex.feature? "root"
   let hs := heads ex
@@ -146,7 +146,7 @@ theorem head_rows :
       (r.spine.Sees cyclic phonNull r.target j ↔ r.claim = .attested) := by
   decide
 
-/-- The Latin perfects share one cycle: Agr is coactive with Asp[perf] throughout, and only the
+/-- The Latin perfects share one cycle. Agr is coactive with Asp[perf] throughout, and only the
 overt tense of the non-indicative forms intervenes, so the effect is linear rather than cyclic
 (§3.1.1). -/
 theorem perfect_one_cycle :
