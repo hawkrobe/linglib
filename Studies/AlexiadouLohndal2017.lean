@@ -1,0 +1,139 @@
+module
+
+public import Linglib.Data.Examples.AlexiadouLohndal2017
+public import Studies.BobaljikHarley2017
+public import Studies.Embick2004
+
+/-!
+# Alexiadou and Lohndal (2017): The structural configurations of root categorization
+
+Distributed Morphology agrees that a Root is categorized by a functional head, but not on the
+configuration. The Root may be merged as the complement of the categorizer, as its modifier, as
+either according to its class, or inserted after syntax into a position of its own. The chapter
+weighs the evidence for each view and finds none conclusive. Hiaki suppletion, offered for Roots
+that take their internal argument as a complement, survives on a derivation in which the Root never
+takes one: the Root moves into a low head, and the argument merges with the complex head they form,
+local enough under the refined locality condition. Without a secondary resultative predicate,
+Direct Merge of a Root and its merger as a complement are practically indistinguishable. What does
+favor letting Roots merge in either way is a contrast in resultatives: *colored dark* is possible
+and *blackened dark* is not, since only a Root that can modify v leaves v's complement free for an
+aP.
+
+## Main statements
+
+* `mayCondition'_tree27`: in the derivation of (27) the internal argument may condition the Root
+  under the refined locality condition, though the Root takes no complement, while in the
+  representation (26) it may not.
+* `derives_iff`: of the four views only the one that merges some Roots as modifiers and others as
+  complements derives the contrast of (56).
+
+## Implementation notes
+
+* The locality condition (25) is the one the chapter quotes from the manuscript of Bobaljik and
+  Harley's chapter, `BobaljikHarley2017.MayCondition'`, and the trees are over that file's
+  categories. In (27c) the lower F is the complex head of F and the Root.
+* That Direct Merge and complement Merge build one complex head is
+  `Embick2004.headDaughter?_moveRoot`.
+* A view's licensing of a resultative aP is read off how it attaches a Root of each class: a v
+  with a Root as its complement has no room for an aP, as Embick's analysis of v[FIENT] requires
+  (`interpretable_aP_iff`).
+
+## TODO
+
+The arguments from *one*-replacement, verb–object idioms and nominalizations against Roots taking
+complements, the endocentricity argument for Roots as modifiers, and the post-syntactic insertion
+of Roots into an empty position, with the Dutch functional vocabulary in Root position, are not
+formalized.
+
+## References
+
+* [alexiadou-lohndal-2017]
+* [bobaljik-harley-2017]
+* [embick-2004]
+-/
+
+@[expose] public section
+
+namespace AlexiadouLohndal2017
+
+open PhraseStructure BobaljikHarley2017
+
+/-! ### Hiaki suppletion without Root complements -/
+
+/-- The structure (26), the internal argument in the specifier of F over vP, the Root in situ. -/
+def tree26 : T :=
+  .node .voice [.terminal .d .phrase, .node .voice [.terminal .voice .voice,
+    .node .f [.terminal .d .phrase,
+      .node .f [.terminal .f .f, .node .v [.terminal .v .v, .terminal .root .root]]]]]
+
+/-- The last step of the derivation (27). Once vP is spelled out, the Root forms a complex head with
+F, and the internal argument merges with that head. -/
+def tree27 : T :=
+  .node .f [.terminal .d .phrase, .adjoin .f [.terminal .f .f, .terminal .root .root]]
+
+/-- **Suppletion without a Root complement.** In (27) the internal argument may condition the Root
+under (25), since only the complex head lies between them, while in the representation (26) the vP
+and the projection of F intervene, under either formulation of locality. -/
+theorem mayCondition'_tree27 :
+    MayCondition' tree27 ⟨[1, 1]⟩ ⟨[0]⟩ ∧ ¬ MayCondition tree26 ⟨[1, 1, 1, 1, 1]⟩ ⟨[1, 1, 0]⟩ := by
+  decide
+
+/-! ### The four views and the resultative contrast -/
+
+/-- The four views of how a Root is categorized (6) merge it as the complement of v, as its
+modifier, or as either according to its class, or insert it after syntax. -/
+inductive View
+  | complement | modifier | mixed | postSyntactic
+  deriving DecidableEq, Repr
+
+/-- The classes of Roots, manner Roots like √COLOR and state or result Roots like √BLACK. -/
+inductive RootClass
+  | manner | result
+  deriving DecidableEq, Repr
+
+/-- A Root is attached to v as its complement or as its modifier. -/
+inductive Attachment
+  | complement | modifier
+  deriving DecidableEq, Repr
+
+/-- How each view attaches a Root of each class to v; a Root inserted after syntax is attached in
+neither way. -/
+def View.attach : View → RootClass → Option Attachment
+  | .complement, _ => some .complement
+  | .modifier, _ => some .modifier
+  | .mixed, .manner => some .modifier
+  | .mixed, .result => some .complement
+  | .postSyntactic, _ => none
+
+/-- A view licenses a Root of a class with a resultative aP when it attaches the Root as v's
+modifier, since a Root that is v's complement leaves no room for an aP. -/
+def View.LicensesResultative (v : View) (c : RootClass) : Prop := v.attach c = some .modifier
+
+instance (v : View) (c : RootClass) : Decidable (v.LicensesResultative c) :=
+  inferInstanceAs (Decidable (_ = _))
+
+/-- In Embick's analysis of v[FIENT] an aP complement has an interpretation exactly when a Root is
+directly merged with v[FIENT]. -/
+theorem interpretable_aP_iff (x : Embick2004.DP) (m : Option Embick2004.Root)
+    (a : Embick2004.Root) (μ : Embick2004.MeansRule) :
+    (⟨some x, m, .aP a, some μ⟩ : Embick2004.FientP).Interpretable ↔ m.isSome := by
+  cases m <;> simp [Embick2004.FientP.Interpretable]
+
+/-- The classes as named in the rows. -/
+def classTable : List (String × RootClass) := [("manner", .manner), ("result", .result)]
+
+/-- The resultative examples, the class of their Root with their judgment. -/
+def data : List (RootClass × Judgment) :=
+  Examples.all.filterMap fun d ↦ (d.parse? "rootClass" classTable).map (·, d.judgment)
+
+theorem data_length : data.length = Examples.all.length := by decide +kernel
+
+/-- **Only the mixed view derives (56).** A view derives the contrast when the resultative of each
+example is acceptable exactly where the view licenses it. The views that attach every Root in the
+same way give *colored dark* and *blackened dark* the same status, and only the view that merges
+manner Roots as modifiers and result Roots as complements tells them apart. -/
+theorem derives_iff (v : View) :
+    (∀ p ∈ data, p.2 = .acceptable ↔ v.LicensesResultative p.1) ↔ v = .mixed := by
+  cases v <;> decide +kernel
+
+end AlexiadouLohndal2017
