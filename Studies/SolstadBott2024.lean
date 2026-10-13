@@ -1,230 +1,318 @@
 module
 
-public import Linglib.Semantics.Presupposition.Context
-public import Studies.SolstadBott2022
 public import Linglib.Fragments.German.Verbs
+public import Linglib.Semantics.Presupposition.Verb
 public import Linglib.Data.Experiments.SolstadBott2024
+public import Studies.SolstadBott2022
+public import Studies.Schlenker2009
+public import Studies.Kalomoiros2023
+public import Studies.TonhauserEtAl2013
 
 /-!
-# Solstad & Bott (2024): Cataphoric Resolution of Projective Content
+# Solstad & Bott (2024): Cataphoric Resolution of Projective Content: The Case of Occasion Verbs
 
-This file formalizes the contextual constraint and the filtering behaviour of the occasion
-verbs of [solstad-bott-2024]. An occasion verb (*gratulieren*, *kritisieren*, *bestrafen*) is
-an agent-evocator verb of the implicit-causality literature whose use implies that an
-eventuality prior to the agent's action gave the agent reason to act, the occasion. Three
-rating experiments in the paradigm of [tonhauser-beaver-degen-2018] find the occasion
-implication projective and not at issue like the content of established triggers, and find it,
-uniquely among those triggers, resolvable on either side of the trigger: an utterance of an
-occasion verb is degraded in a context that neither entails the occasion nor goes on to supply
-it, and is restored as well by a following segment as by a preceding one. In conjoined
-conditional antecedents the implication is filtered by a conjunct entailing it on either side,
-where the factive and aspectual triggers of [mandelkern-etal-2020] filter only from the left.
+An occasion verb such as *gratulieren* 'congratulate' implies that an eventuality before the
+agent's action gave the agent reason to act, the occasion. Solstad and Bott show in three rating
+experiments that the implication projects, that a sentence with an occasion verb is degraded
+unless another sentence supplies the occasion, and that the supporting sentence may follow the
+verb's sentence as well as precede it, where pronouns, demonstratives and *auch* 'too' need it to
+precede. In the antecedent of a conditional a conjoined clause entailing the occasion filters the
+implication from either side, where factive and aspectual triggers are filtered from the left
+only.
 
-`Given` and `Addressed` state two contextual constraints over a discourse: the strong
-contextual felicity of [tonhauser-beaver-roberts-simons-2013], which demands a preceding
-segment entailing the content, and the weaker constraint the paper introduces, which any
-segment can meet. The paper refines the m-positive contexts of the former into m-anaphoric and
-m-cataphoric ones, and `cataphoric_separates` shows that a cataphoric context meets the weak
-constraint and not the strong one. `andSymmetric` is conjunction under the symmetric local
-contexts of [schlenker-2009], `localAccommodation` the rival on which the trigger's content is
-asserted in place, and `exp3_predictions` derives the three accounts' projection verdicts on
-the three Experiment 3 antecedents: asymmetric filtering ([heim-1983]) levels the trigger-first
-condition with the trigger alone, local accommodation levels all three, and only symmetric
-filtering separates the trigger alone from both conjoined conditions, which is the pattern
-occasion verbs show.
+## Main statements
 
-Occasion verbs are the agent-evocator class of [solstad-bott-2022]: their empty slot is the
-occasion, presupposed rather than asserted, so the slot argument is the object and an
-explanation continuation is a cataphoric resolution. The psych verbs of Experiment 2 share the
-object bias and the explanation continuations but not the projectivity, so the two classes'
-underspecification has different sources. Against the printed Block 2 means of
-`Data.Experiments.SolstadBott2024`, occasion verbs show a greater degree of projectivity and
-not-at-issueness than both psych verb classes, `occasion_set_apart_from_psych`, the
-trigger-level negative correlation of [tonhauser-beaver-degen-2018] replicates in both
-experiments, `negative_correlation_replicates`, and the shared coreference bias fails to read
-off projectivity on the means themselves, `shared_bias_distinct_projectivity`.
+* `SolstadBott2024.strongContextualFelicity_iff`: of the three constraints a trigger may place
+  on the discourse around it, only the one demanding a preceding sentence is a strong contextual
+  felicity constraint in the sense of Tonhauser, Beaver, Roberts and Simons.
+* `SolstadBott2024.contextTests_iff_licenses`: a supported context differs reliably from the
+  neutral one in the paper's tests exactly where the trigger's constraint is met.
+* `SolstadBott2024.Account.filters_iff`: incremental local contexts and limited symmetry filter
+  the implication only after the clause entailing it, symmetric local contexts on either side,
+  and local accommodation everywhere.
+* `SolstadBott2024.fits_iff`: of the four accounts only symmetric local contexts fit the
+  occasion verbs of Experiment 3, and only the two asymmetric ones the factive and aspectual
+  triggers.
 
 ## Implementation notes
 
-The printed Block 2 means, ranges and correlations are `Data.Experiments.SolstadBott2024`;
-the means of the established German triggers appear only in figures, so no theorem compares
-occasion verbs to them numerically. Experiments 1 and 2 (Block 1) find occasion verbs, personal
-pronouns, demonstratives and *auch* degraded in neutral contexts, and only occasion verbs
-restored by a following segment; factives, *aufhören*, possessives and non-restrictive relatives
-are unconstrained. Block 2 replicates the negative correlation between projectivity and
-at-issueness across trigger types, with occasion verbs clustering with definites, clefts,
-*auch* and pronouns and the psych verbs forming a cluster of their own in the middle of both
-scales. Experiment 3 finds the trigger-first and trigger-last antecedents equally and clearly
-less projective than the trigger alone for occasion verbs, and the trigger-first antecedent as
-projective as the trigger alone for the factive and aspectual triggers.
+* A discourse is the information before and after the trigger's sentence, and a constraint is
+  met in a context type when it holds whenever the supporting sentence entails the content.
+* An antecedent is evaluated in the utterance context, without the conditional around it, and an
+  account filters the implication when the antecedent is acceptable in every context.
+* A test of Block 1 is reliable when its printed p is below .05, and a contrast of Experiment 3
+  when its printed t is at least 2 in absolute value, which agrees with the two tests the paper
+  reports for that experiment (`reliable_triggerLast_iff`).
+* The Block 1 means are recomputed from the authors' trial-level data. The Block 2 means of the
+  established triggers are plotted only.
 
-The paper does not test obligatory local effect, and its finding that occasion verbs are
-degraded in neutral contexts is a contextual felicity constraint, so occasion verbs are not
-placed in the taxonomy of [tonhauser-beaver-roberts-simons-2013] here.
+## TODO
+
+* The paper's suggestion that an occasion verb raises the question why the agent acted, which
+  must be addressed before or after the verb, is not formalized.
 
 ## References
 
 * [solstad-bott-2024]
-* [solstad-bott-2022]
 * [tonhauser-beaver-roberts-simons-2013]
 * [tonhauser-beaver-degen-2018]
 * [mandelkern-etal-2020]
 * [schlenker-2009]
-* [heim-1983]
+* [kalomoiros-2023]
+* [solstad-bott-2022]
 -/
 
 @[expose] public section
 
 namespace SolstadBott2024
 
-open Presupposition Presupposition.PartialProp
+open Presupposition Data.Experiments
 
 variable {W : Type*}
 
-/-! ### Anaphoric and cataphoric resolution -/
+/-! ### Contextual constraints -/
 
-/-- A discourse, the sequence of its segments' contents. -/
-abbrev Discourse (W : Type*) := List (Set W)
-
-/-- Segment `j` of the discourse entails `m`. -/
-def Entails (d : Discourse W) (j : ℕ) (m : Set W) : Prop := ∃ s ∈ d[j]?, s ⊆ m
-
-/-- The content `m` of the trigger in segment `i` is given: a preceding segment entails it,
-the m-positive context of [tonhauser-beaver-roberts-simons-2013], m-anaphoric here. -/
-def Given (d : Discourse W) (i : ℕ) (m : Set W) : Prop := ∃ j < i, Entails d j m
-
-/-- The content is resolved cataphorically: a following segment entails it. -/
-def Cataphoric (d : Discourse W) (i : ℕ) (m : Set W) : Prop := ∃ j > i, Entails d j m
-
-/-- The content is addressed: some other segment entails it, before or after the trigger. -/
-def Addressed (d : Discourse W) (i : ℕ) (m : Set W) : Prop := ∃ j ≠ i, Entails d j m
-
-theorem addressed_iff {d : Discourse W} {i : ℕ} {m : Set W} :
-    Addressed d i m ↔ Given d i m ∨ Cataphoric d i m := by
-  constructor
-  · rintro ⟨j, hj, h⟩
-    rcases Nat.lt_or_gt_of_ne hj with h' | h'
-    exacts [.inl ⟨j, h', h⟩, .inr ⟨j, h', h⟩]
-  · rintro (⟨j, hj, h⟩ | ⟨j, hj, h⟩) <;> exact ⟨j, by omega, h⟩
-
-theorem Given.addressed {d : Discourse W} {i : ℕ} {m : Set W} (h : Given d i m) :
-    Addressed d i m :=
-  addressed_iff.2 (.inl h)
-
-theorem Cataphoric.addressed {d : Discourse W} {i : ℕ} {m : Set W} (h : Cataphoric d i m) :
-    Addressed d i m :=
-  addressed_iff.2 (.inr h)
-
-/-- A trigger imposes on its content no contextual constraint, the strong contextual felicity of
-[tonhauser-beaver-roberts-simons-2013], or the weaker constraint of occasion verbs, which is met on
-either side of the trigger. -/
-inductive Felicity where
+/-- The constraint a trigger places on the discourse around its sentence. It places none, or it
+demands that what precedes entail the content, the strong contextual felicity of Tonhauser and
+colleagues, or that what precedes or what follows entail it, as occasion verbs do. -/
+inductive Felicity
   | free
   | strong
   | weak
-  deriving DecidableEq, Repr
+  deriving DecidableEq, Repr, Fintype
 
-/-- The constraint holds of the content `m` of the trigger in segment `i`. -/
-def Felicity.Satisfied : Felicity → Discourse W → ℕ → Set W → Prop
-  | .free, _, _, _ => True
-  | .strong, d, i, m => Given d i m
-  | .weak, d, i, m => Addressed d i m
+/-- The constraint holds of the content `m`, given the information before and after the
+trigger's sentence. -/
+def Felicity.Satisfied (m before after : Set W) : Felicity → Prop
+  | free => True
+  | strong => before ⊆ m
+  | weak => before ⊆ m ∨ after ⊆ m
 
-/-- The constraints are nested: whatever satisfies strong felicity satisfies weak felicity. -/
-theorem Felicity.Satisfied.weak_of_strong {d : Discourse W} {i : ℕ} {m : Set W}
-    (h : Felicity.strong.Satisfied d i m) : Felicity.weak.Satisfied d i m :=
-  Given.addressed h
+/-- The information before the trigger's sentence in a context type, where the supporting
+sentence has the content `p`. -/
+def Context.before (p : Set W) : Context → Set W
+  | anaphoric => p
+  | _ => Set.univ
 
-/-- In a neutral context, the trigger's segment alone, nothing is addressed. -/
-theorem not_addressed_neutral (t m : Set W) : ¬ Addressed [t] 0 m := by
-  rintro ⟨j, hj, s, hs, -⟩
-  cases j with
-  | zero => exact hj rfl
-  | succ j => simp at hs
+/-- The information after the trigger's sentence in a context type. -/
+def Context.after (p : Set W) : Context → Set W
+  | cataphoric => p
+  | _ => Set.univ
 
-/-- In an anaphoric context a preceding segment entailing the content gives it. -/
-theorem given_anaphoric {p m : Set W} (t : Set W) (h : p ⊆ m) : Given [p, t] 1 m :=
-  ⟨0, Nat.zero_lt_one, p, rfl, h⟩
+/-- A constraint is met in a context type when it is satisfied whenever the supporting sentence
+entails the content. -/
+def Felicity.Licenses (f : Felicity) (k : Context) : Prop :=
+  ∀ (W : Type) (m p : Set W), p ⊆ m → f.Satisfied m (k.before p) (k.after p)
 
-/-- In a cataphoric context the content is not given: nothing precedes the trigger. -/
-theorem not_given_cataphoric (t p m : Set W) : ¬ Given [t, p] 0 m := by
-  rintro ⟨j, hj, -⟩; omega
+variable {f : Felicity} {k : Context} {m : Set W}
 
-/-- In a cataphoric context a following segment entailing the content resolves it. -/
-theorem cataphoric_cataphoric {p m : Set W} (t : Set W) (h : p ⊆ m) : Cataphoric [t, p] 0 m :=
-  ⟨1, Nat.zero_lt_one, p, rfl, h⟩
+/-- The strong constraint is met in an anaphoric context only, and the weak one in an anaphoric
+or a cataphoric context. -/
+theorem Felicity.licenses_iff :
+    f.Licenses k ↔ f = .free ∨ f = .strong ∧ k = .anaphoric ∨ f = .weak ∧ k ≠ .neutral := by
+  refine ⟨fun h ↦ ?_, fun h W m p hp ↦ ?_⟩
+  · have := h Unit ∅ ∅ subset_rfl
+    cases f <;> cases k <;> simp_all [Satisfied, Context.before, Context.after]
+  · cases f <;> cases k <;> simp_all [Satisfied, Context.before, Context.after]
 
-/-- The paper refines m-positive contexts: a cataphoric context satisfies the weak constraint and
-not the strong one, which is where occasion verbs part from pronouns. -/
-theorem cataphoric_separates {p m : Set W} (t : Set W) (h : p ⊆ m) :
-    Felicity.weak.Satisfied [t, p] 0 m ∧ ¬ Felicity.strong.Satisfied [t, p] 0 m :=
-  ⟨(cataphoric_cataphoric t h).addressed, not_given_cataphoric t p m⟩
+instance (f : Felicity) (k : Context) : Decidable (f.Licenses k) :=
+  decidable_of_iff' _ Felicity.licenses_iff
 
-/-! ### Filtering in conditional antecedents -/
+/-- Take a sentence acceptable wherever some continuation meets its constraint. It is acceptable
+only in contexts that entail the content, the strong contextual felicity of Tonhauser and
+colleagues, exactly when the constraint is the strong one or the content is trivial. The
+constraint of occasion verbs is therefore not one. -/
+theorem strongContextualFelicity_iff :
+    TonhauserEtAl2013.StrongContextualFelicity m (fun b ↦ ∃ a, f.Satisfied m b a) ↔
+      f = .strong ∨ m = Set.univ := by
+  refine ⟨fun h ↦ ?_, ?_⟩
+  · cases f
+    · exact .inr (Set.univ_subset_iff.1 (h _ ⟨Set.univ, trivial⟩))
+    · exact .inl rfl
+    · exact .inr (Set.univ_subset_iff.1 (h _ ⟨m, .inr subset_rfl⟩))
+  · rintro (rfl | rfl)
+    exacts [fun _ ⟨_, h⟩ ↦ h, fun b _ ↦ b.subset_univ]
 
-/-- Under the symmetric local contexts of [schlenker-2009] either conjunct's assertion may
-satisfy the other's presupposition. -/
-def andSymmetric (p q : PartialProp W) : PartialProp W where
-  presup := λ w => (q.assertion w → p.presup w) ∧ (p.assertion w → q.presup w)
-  assertion := λ w => p.assertion w ∧ q.assertion w
+/-! ### Anaphoric and cataphoric contexts (Block 1) -/
 
-/-- Under local accommodation the trigger's presupposition is asserted in place of projecting. -/
-def localAccommodation (p : PartialProp W) : PartialProp W where
-  presup := λ _ => True
-  assertion := λ w => p.presup w ∧ p.assertion w
+/-- The constraint the paper finds for a trigger type of Experiment 1. -/
+def TriggerOne.felicity : TriggerOne → Felicity
+  | occasion => .weak
+  | pronoun | demonstrative => .strong
+  | _ => .free
 
-/-- Under asymmetric filtering the trigger-first antecedent presupposes what the trigger
-alone does: nothing is filtered from the right. -/
-theorem andFilter_triggerFirst_presup (t : PartialProp W) (s : W → Prop) :
-    (andFilter t (ofProp s)).presup = t.presup := by
-  ext w; simp [andFilter, ofProp]
+/-- The constraint the paper finds for a trigger type of Experiment 2. -/
+def TriggerTwo.felicity : TriggerTwo → Felicity
+  | occasion => .weak
+  | too => .strong
+  | _ => .free
 
-/-- Under asymmetric filtering the trigger-last antecedent is filtered whenever the first
-conjunct entails the content. -/
-theorem andFilter_triggerLast_satisfied (c : Set W) {t : PartialProp W} {s : W → Prop}
-    (h : ∀ w, s w → t.presup w) : (andFilter (ofProp s) t).Admits c :=
-  λ w _ => ⟨trivial, h w⟩
+/-- In both experiments a supported context differs reliably from the neutral one exactly where
+the trigger's constraint is met. A following sentence helps occasion verbs and does not help
+pronouns, demonstratives or *auch*. -/
+theorem contextTests_iff_licenses :
+    (∀ r ∈ contextTestsExp1, r.p.toRat < 1 / 20 ↔ r.trigger.felicity.Licenses r.context) ∧
+      ∀ r ∈ contextTestsExp2, r.p.toRat < 1 / 20 ↔ r.trigger.felicity.Licenses r.context := by
+  decide +kernel
 
-/-- Under symmetric filtering the trigger-first antecedent is filtered too. -/
-theorem andSymmetric_triggerFirst_satisfied (c : Set W) {t : PartialProp W} {s : W → Prop}
-    (h : ∀ w, s w → t.presup w) : (andSymmetric t (ofProp s)).Admits c :=
-  λ w _ => ⟨h w, λ _ => trivial⟩
+/-- The weak constraint is the only one of the three that the tests on occasion verbs fit. -/
+theorem weak_of_occasion_tests (f : Felicity) :
+    (∀ r ∈ contextTestsExp1, r.trigger = .occasion →
+      (r.p.toRat < 1 / 20 ↔ f.Licenses r.context ∧ ¬ f.Licenses .neutral)) ↔ f = .weak := by
+  revert f; decide +kernel
 
-theorem andSymmetric_triggerLast_satisfied (c : Set W) {t : PartialProp W} {s : W → Prop}
-    (h : ∀ w, s w → t.presup w) : (andSymmetric (ofProp s) t).Admits c :=
-  λ w _ => ⟨λ _ => trivial, h w⟩
+/-- Where a trigger's constraint is met only with a supporting sentence, the supported sentence
+is rated above the unsupported one. -/
+theorem neutral_lt_of_licenses :
+    (∀ t k, ¬ t.felicity.Licenses .neutral → t.felicity.Licenses k →
+      (blockOneExp1 t .neutral).mean.toRat < (blockOneExp1 t k).mean.toRat) ∧
+      ∀ t k, ¬ t.felicity.Licenses .neutral → t.felicity.Licenses k →
+        (blockOneExp2 t .neutral).mean.toRat < (blockOneExp2 t k).mean.toRat := by
+  decide +kernel
 
-/-- Local accommodation never projects, whatever the antecedent. -/
-theorem localAccommodation_admits (c : Set W) (p : PartialProp W) :
-    (localAccommodation p).Admits c :=
-  λ _ _ => trivial
+/-! ### A trigger and a conjunct on the earlier accounts
 
-/-- The three accounts on the three Experiment 3 antecedents, in an ignorance context with
-a world lacking the content and a conjunct entailing it. The trigger alone projects. Symmetric
-filtering filters both conjoined orders; asymmetric filtering filters only the trigger-last
-order, levelling trigger-first with the trigger alone; local accommodation levels all three.
-Occasion verbs show the first pattern, the factive and aspectual triggers the second. -/
-theorem exp3_predictions {c : Set W} {t : PartialProp W} {s : W → Prop}
-    (hc : ∃ w ∈ c, ¬ t.presup w) (h : ∀ w, s w → t.presup w) :
-    ¬ t.Admits c ∧
-    (andSymmetric t (ofProp s)).Admits c ∧
-    (andSymmetric (ofProp s) t).Admits c ∧
-    ¬ (andFilter t (ofProp s)).Admits c ∧
-    (andFilter (ofProp s) t).Admits c ∧
-    (localAccommodation t).Admits c := by
-  obtain ⟨w, hw, hm⟩ := hc
-  refine ⟨λ hs => hm (hs hw), andSymmetric_triggerFirst_satisfied c h,
-    andSymmetric_triggerLast_satisfied c h, λ hs => hm ?_,
-    andFilter_triggerLast_satisfied c h, localAccommodation_admits c t⟩
-  have := hs hw
-  rwa [andFilter_triggerFirst_presup] at this
+Schlenker's symmetric local context of a conjunct is the context updated with the other
+conjunct, whichever comes first. A trigger standing alone must be satisfied by the context on
+each account. -/
+
+section EarlierAccounts
+
+open Schlenker2009
+
+variable {Atom : Type*} (I : Atom → Set W) {C : Set W} {p p' q : Atom}
+
+private theorem satS_iff (F : Formula Atom) :
+    SatS I C F ↔ ∀ o ∈ F.occurrences, C ∩ {w | DependsAt (o.1.truth I) w} ⊆ I o.2.1 :=
+  forall₂_congr fun o _ ↦ by
+    rw [satisfied_iff (isLocalContext_of_isTruthFunctional fun _ hf ↦
+      isTruthFunctional_of_mem_singleton I hf)]
+    simp
+
+theorem satI_trigger_iff : SatI I C (.trigger p p') ↔ C ⊆ I p := by
+  rw [satI_iff_admits, Formula.admits_ccp_iff]
+  rfl
+
+theorem satS_trigger_iff : SatS I C (.trigger p p') ↔ C ⊆ I p := by
+  simp [satS_iff, Formula.occurrences, SyntacticEnvironment.truth, DependsAt]
+
+theorem satS_and_left_iff :
+    SatS I C (.bin .conj (.trigger p p') (.atom q)) ↔ C ∩ I q ⊆ I p := by
+  simp [satS_iff, Formula.occurrences, SyntacticEnvironment.truth, SyntacticEnvironment.Step.truth,
+    DependsAt, Connective.eval, Formula.truth, Set.subset_def]
+
+theorem satS_and_right_iff :
+    SatS I C (.bin .conj (.atom q) (.trigger p p')) ↔ C ∩ I q ⊆ I p := by
+  simp [satS_iff, Formula.occurrences, SyntacticEnvironment.truth, SyntacticEnvironment.Step.truth,
+    DependsAt, Connective.eval, Formula.truth, Set.subset_def]
+
+theorem transpLS_trigger_iff : Kalomoiros2023.TranspLS I C (.trigger p p') ↔ C ⊆ I p := by
+  rw [Kalomoiros2023.transpLS_of_occurrences I (K := []) (a := p') rfl,
+    Kalomoiros2023.transpLSAt_iff]
+  simp [SyntacticEnvironment.AgreeUpTo, SyntacticEnvironment.truth, Set.subset_def]
+
+end EarlierAccounts
+
+/-! ### Filtering in the antecedent of a conditional (Experiment 3) -/
+
+/-- The antecedent of a condition of Experiment 3, for a trigger with presupposition `p` and
+assertion `p'` and a conjoined clause `q`. -/
+def Antecedent.formula {Atom : Type*} (p p' q : Atom) : Antecedent → Formula Atom
+  | triggerFirst => .bin .conj (.trigger p p') (.atom q)
+  | triggerLast => .bin .conj (.atom q) (.trigger p p')
+  | triggerOnly => .trigger p p'
+
+/-- The accounts of filtering the paper weighs. On incremental local contexts and on the limited
+symmetry of Kalomoiros only what precedes a trigger in a conjunction can satisfy its
+presupposition, on the symmetric local contexts of Schlenker what follows can too, and on local
+accommodation the presupposition is asserted in place. -/
+inductive Account
+  | incremental
+  | limitedSymmetry
+  | symmetric
+  | localAccommodation
+  deriving DecidableEq, Repr, Fintype
+
+/-- The formula is acceptable in the context `C` on the account. -/
+def Account.Accepts {Atom : Type*} (I : Atom → Set W) (C : Set W) (F : Formula Atom) :
+    Account → Prop
+  | incremental => Schlenker2009.SatI I C F
+  | limitedSymmetry => Kalomoiros2023.TranspLS I C F
+  | symmetric => Schlenker2009.SatS I C F
+  | localAccommodation => (F.filter I).truthOp.Admits C
+
+/-- An account filters the implication in an antecedent type when the antecedent is acceptable
+in every context, provided the conjoined clause entails the implication. -/
+def Account.Filters (a : Account) (x : Antecedent) : Prop :=
+  ∀ (Atom W : Type) (I : Atom → Set W) (p p' q : Atom), I q ⊆ I p →
+    ∀ C, a.Accepts I C (x.formula p p' q)
+
+/-- Incremental local contexts and limited symmetry filter the implication only after the clause
+entailing it, symmetric local contexts on either side of it, and local accommodation
+everywhere. -/
+theorem Account.filters_iff {a : Account} {x : Antecedent} :
+    a.Filters x ↔ a = .localAccommodation ∨ a = .symmetric ∧ x ≠ .triggerOnly ∨
+      (a = .incremental ∨ a = .limitedSymmetry) ∧ x = .triggerLast := by
+  have hno : (∀ (I : Unit → Set Bool) C, a.Accepts I C (x.formula () () ()) → C ⊆ I ()) →
+      ¬ a.Filters x := fun h hf ↦
+    Bool.false_ne_true (h (fun _ ↦ {true}) Set.univ (hf _ _ _ _ _ _ subset_rfl _) trivial)
+  cases a <;> cases x
+  · exact iff_of_false (hno fun I C h ↦ (Schlenker2009.satI_initial_iff I (c := .conj) nofun).1 h)
+      (by simp)
+  · exact iff_of_true (fun _ _ I p p' q hq C ↦ (Schlenker2009.satI_and_iff I).2
+      fun _ _ hw ↦ hq hw) (by simp)
+  · exact iff_of_false (hno fun I C h ↦ (satI_trigger_iff I).1 h) (by simp)
+  · exact iff_of_false (hno fun I C h ↦ (Kalomoiros2023.transpLS_and_left I).1 h) (by simp)
+  · exact iff_of_true (fun _ _ I p p' q hq C ↦ (Kalomoiros2023.transpLS_and_right I).2
+      fun _ _ hw ↦ hq hw) (by simp)
+  · exact iff_of_false (hno fun I C h ↦ (transpLS_trigger_iff I).1 h) (by simp)
+  · exact iff_of_true (fun _ _ I p p' q hq C ↦ (satS_and_left_iff I).2 fun _ hw ↦ hq hw.2)
+      (by simp)
+  · exact iff_of_true (fun _ _ I p p' q hq C ↦ (satS_and_right_iff I).2 fun _ hw ↦ hq hw.2)
+      (by simp)
+  · exact iff_of_false (hno fun I C h ↦ (satS_trigger_iff I).1 h) (by simp)
+  all_goals exact iff_of_true (fun _ _ _ _ _ _ _ _ _ _ ↦ trivial) (by simp)
+
+instance (a : Account) (x : Antecedent) : Decidable (a.Filters x) :=
+  decidable_of_iff' _ Account.filters_iff
+
+/-- A contrast with the trigger-first antecedent is reliable for a group of items. -/
+def Reliable (g : TriggerGroup) (y : Antecedent) : Prop :=
+  (followUp g y).t.toRat ≤ -2 ∨ 2 ≤ (followUp g y).t.toRat
+
+instance (g : TriggerGroup) (y : Antecedent) : Decidable (Reliable g y) :=
+  inferInstanceAs (Decidable (_ ∨ _))
+
+/-- The criterion agrees with the tests the paper reports for the trigger-first against the
+trigger-last antecedent. -/
+theorem reliable_triggerLast_iff (g : TriggerGroup) :
+    Reliable g .triggerLast ↔ (orderTests g).p.toRat < 1 / 20 := by
+  revert g; decide +kernel
+
+/-- An account fits a group of items when each other antecedent type differs reliably from the
+trigger-first one exactly when the account filters the implication in one of the two and not in
+the other, and the antecedent where it is filtered is then the less projective. -/
+def Account.Fits (a : Account) (g : TriggerGroup) : Prop :=
+  ∀ y, y ≠ .triggerFirst →
+    (Reliable g y ↔ ¬ (a.Filters .triggerFirst ↔ a.Filters y)) ∧
+      (a.Filters .triggerFirst → ¬ a.Filters y → 0 < (followUp g y).estimate.toRat) ∧
+        (¬ a.Filters .triggerFirst → a.Filters y → (followUp g y).estimate.toRat < 0)
+
+instance (a : Account) (g : TriggerGroup) : Decidable (a.Fits g) :=
+  inferInstanceAs (Decidable (∀ y : Antecedent, y ≠ .triggerFirst → _))
+
+/-- Only symmetric local contexts fit the occasion verbs, and only the two asymmetric accounts
+the factive and aspectual triggers. Local accommodation fits neither, since it makes the trigger
+alone as little projective as the trigger after the clause entailing its content. -/
+theorem fits_iff (a : Account) (g : TriggerGroup) :
+    a.Fits g ↔ g = .occasion ∧ a = .symmetric ∨
+      g = .factiveAspectual ∧ (a = .incremental ∨ a = .limitedSymmetry) := by
+  revert a g; decide +kernel
 
 /-! ### Projectivity and at-issueness (Block 2) -/
 
-open Data.Experiments in
-/-- The summary of Experiment 2: a greater degree of projectivity and not-at-issueness for
-occasion verbs than for the other two major Implicit Causality verb classes, on the printed
-means. -/
+/-- The occasion implication is more projective and less at issue than the implications of the
+two classes of psychological verbs. -/
 theorem occasion_set_apart_from_psych :
     ∀ o ∈ blockTwo, ∀ r ∈ blockTwo, o.experiment = .exp2 → r.experiment = .exp2 →
       o.trigger = .occasion → r.trigger ≠ .occasion →
@@ -232,38 +320,30 @@ theorem occasion_set_apart_from_psych :
           o.atIssueness.toRat < r.atIssueness.toRat := by
   decide +kernel
 
-open Data.Experiments in
-/-- The negative correlation between projectivity and at-issueness across trigger types of
-[tonhauser-beaver-degen-2018] replicates in both experiments. -/
+/-- Across trigger types projectivity falls as at-issueness rises in both experiments, the
+correlation of Tonhauser, Beaver and Degen. -/
 theorem negative_correlation_replicates :
     ∀ r ∈ correlations, r.level = .triggerTypes → r.r.toRat < 0 := by
   decide +kernel
 
-/-! ### Occasion verbs as agent-evocator verbs -/
-
-open German.Verbs in
-/-- The paper's occasion verbs, the fragment entries carrying the occasion sense. -/
-def occasionVerbs : List German.Verb := allVerbs.filter (·.senseTag = .occasion)
-
 open SolstadBott2022 in
-/-- Occasion verbs are the agent-evocator class: the slot argument is the object, whose
-prior eventuality is the occasion. -/
-theorem occasion_icausBias : VerbClass.agentEvocator.icausBias = some .np2 := by decide
-
-open SolstadBott2022 in
-/-- The object bias is shared with experiencer-stimulus verbs, whose slot content is not
-projective: the coreference bias does not read off projectivity. -/
-theorem icausBias_shared_with_expStim :
-    VerbClass.agentEvocator.icausBias = VerbClass.expStim.icausBias := by decide
-
-open SolstadBott2022 Data.Experiments in
-/-- The same point on the means: the two classes share the coreference bias, yet
-experiencer-stimulus verbs sit below occasion verbs in projectivity in Experiment 2. -/
+/-- Occasion verbs and experiencer-stimulus verbs share the object bias of implicit causality,
+yet the implication of the latter is the less projective, so the bias does not come from
+projective content alone. -/
 theorem shared_bias_distinct_projectivity :
     VerbClass.agentEvocator.icausBias = VerbClass.expStim.icausBias ∧
       ∀ o ∈ blockTwo, ∀ e ∈ blockTwo, o.experiment = .exp2 → e.experiment = .exp2 →
         o.trigger = .occasion → e.trigger = .experiencerStimulus →
           e.projectivity.toRat < o.projectivity.toRat :=
-  ⟨icausBias_shared_with_expStim, by decide +kernel⟩
+  ⟨by decide, by decide +kernel⟩
+
+/-! ### The occasion verbs -/
+
+/-- The sixteen occasion verbs of the experiments are triggers in the German lexicon by their
+occasion sense alone, being neither factive nor phasal nor implicative. -/
+theorem occasion_isTrigger :
+    ∀ v ∈ German.Verbs.allVerbs, v.senseTag = .occasion →
+      v.toVerb.IsTrigger ∧ ¬ v.toVerb.IsFactive ∧ v.phasal = none ∧ v.implicative = ⊥ := by
+  decide
 
 end SolstadBott2024
