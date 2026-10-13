@@ -301,7 +301,7 @@ private theorem literal_eq_zero {c σ u w} (h : ¬ Holds c u σ w) : literal c �
 theorem comp_speaker_ne_zero (hα : 0 ≤ α) (c : Option Comparison) (u : Utterance) :
     (speaker c α cost ∘ₘ prior.prod Measure.count) {u} ≠ 0 := by
   obtain ⟨w, σ, h⟩ := exists_holds c u
-  refine comp_apply_singleton_ne_zero _ _ (w := (w, σ))
+  refine Measure.comp_apply_singleton_ne_zero _ _ (a := (w, σ))
     (by rw [prior_prod_count_singleton]; exact prior_singleton_ne_zero w) ?_
   rw [speaker_apply]
   exact RSA.speaker_dirac_apply_singleton_ne_zero hα (literal_ne_zero h)

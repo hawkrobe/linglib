@@ -322,7 +322,7 @@ theorem prior_ne_zero (p : HeartState × Phi) : prior {p} ≠ 0 :=
 positive probability. -/
 theorem comp_speaker_ne_zero (α c : ℝ) (u : Utterance) : (speaker α c ∘ₘ prior) {u} ≠ 0 := by
   have key : ∀ s : HeartState, meaning u s ≠ 0 → (speaker α c ∘ₘ prior) {u} ≠ 0 := fun s hs =>
-    comp_apply_singleton_ne_zero _ _ (prior_ne_zero (s, .p100))
+    Measure.comp_apply_singleton_ne_zero _ _ (prior_ne_zero (s, .p100))
       (Kernel.softmax_apply_singleton_ne_zero
         (by rw [util_ungated (by simp [hs])]; exact EReal.coe_ne_bot _) (util_ne_top α c _))
   obtain ⟨a, b⟩ := u

@@ -99,7 +99,7 @@ instance (a : Access) : IsMarkovKernel (belief P a) := inferInstanceAs (IsMarkov
 theorem belief_apply_singleton_ne_zero {a : Access} {o : Obs} {s : State} (hP : P {s} ≠ 0)
     (h : hypergeometricCount 10 s a o ≠ 0) : belief P a o {s} ≠ 0 :=
   have ho := (obs_apply_singleton_ne_zero_iff a s o).2 h
-  (posterior_apply_singleton_ne_zero_iff _ _ (comp_apply_singleton_ne_zero _ _ hP ho) s).2 ⟨hP, ho⟩
+  (posterior_apply_singleton_ne_zero_iff _ _ (Measure.comp_apply_singleton_ne_zero _ _ hP ho) s).2 ⟨hP, ho⟩
 
 /-- With complete access the belief is the point mass at the observed state. -/
 theorem belief_full {o : Obs} (hP : P {o} ≠ 0) : belief P 10 o = Measure.dirac o :=

@@ -228,7 +228,7 @@ theorem prior_lt_posterior (hα : 0 < α) (ht : μ {.typical} ≠ 0) (ha : μ {.
     (h : μ {.atypical} < μ {.typical}) :
     μ.real {.atypical} < (listener μ (spoke μ α cs cn) true).real {.atypical} := by
   rw [prior_lt_posterior_iff μ _
-    (comp_apply_singleton_ne_zero _ _ ht (spoke_apply_true_ne_zero μ α cs cn hα ht)) ht ha]
+    (Measure.comp_apply_singleton_ne_zero _ _ ht (spoke_apply_true_ne_zero μ α cs cn hα ht)) ht ha]
   simpa only [measureReal_def, spoke_apply_true μ α cs cn hα] using
     S_report_lt μ α cs cn hα ht ha h
 
@@ -249,7 +249,7 @@ theorem posterior_eq_prior_of_asked (hα : 0 < α) (ht : μ {.typical} ≠ 0)
       le_antisymm (speaker_apply_univ_le_one α _ _ _ v) (hv1 ▸ measure_mono (Set.subset_univ _)),
       ENNReal.toReal_one]
   have hx : (((askedS μ α cs).map fun _ ↦ true) ∘ₘ μ) {true} ≠ 0 :=
-    comp_apply_singleton_ne_zero _ _ ht fun h ↦ by simpa [measureReal_def, h] using h1 _ ht
+    Measure.comp_apply_singleton_ne_zero _ _ ht fun h ↦ by simpa [measureReal_def, h] using h1 _ ht
   rw [listener_apply_eq_posterior _ _ hx, posterior_real_singleton _ _ hx,
     Measure.comp_real_singleton_of_pair _ _ (by decide) (pair_support μ), h1 _ ha, h1 _ ht,
     mul_one, mul_one, measureReal_singleton_add_singleton_of_pair μ (by decide) (pair_support μ),
@@ -263,8 +263,8 @@ theorem posterior_lt_of_silence_lt (hα : 0 < α) {cn₁ cn₂ : ℝ} (hlt : cn�
     (listener μ (spoke μ α cs cn₁) true).real {.atypical} <
       (listener μ (spoke μ α cs cn₂) true).real {.atypical} := by
   rw [posterior_lt_posterior_iff μ _ _
-    (comp_apply_singleton_ne_zero _ _ ht (spoke_apply_true_ne_zero μ α cs cn₁ hα ht))
-    (comp_apply_singleton_ne_zero _ _ ht (spoke_apply_true_ne_zero μ α cs cn₂ hα ht)) ht ha]
+    (Measure.comp_apply_singleton_ne_zero _ _ ht (spoke_apply_true_ne_zero μ α cs cn₁ hα ht))
+    (Measure.comp_apply_singleton_ne_zero _ _ ht (spoke_apply_true_ne_zero μ α cs cn₂ hα ht)) ht ha]
   simp only [measureReal_def, spoke_apply_true μ α cs _ hα]
   rw [← measureReal_def, ← measureReal_def, ← measureReal_def, ← measureReal_def,
     S_report μ α cs cn₁ hα ha, S_report μ α cs cn₂ hα ht,

@@ -9,6 +9,7 @@ public import Linglib.Core.Probability.Kernel.OfDensity
 public import Linglib.Core.Probability.Kernel.OfWeights
 public import Linglib.Core.Probability.Kernel.Posterior
 public import Linglib.Core.Probability.Kernel.Softmax
+public import Linglib.Core.Probability.UniformOn
 public import Mathlib.Analysis.SpecialFunctions.Log.ENNRealLogExp
 
 /-!

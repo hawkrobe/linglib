@@ -87,7 +87,7 @@ theorem posterior_ne_zero_iff_mem_compatible (hk : (compatible n k).Nonempty)
     (s : Fin (N + 1)) :
     ((hypergeometric N n)†(uniformOn Set.univ)) k {s} ≠ 0 ↔ s ∈ compatible n k := by
   obtain ⟨s₀, hs₀⟩ := hk
-  rw [posterior_apply_singleton_ne_zero_iff _ _ (comp_apply_singleton_ne_zero _ _
+  rw [posterior_apply_singleton_ne_zero_iff _ _ (Measure.comp_apply_singleton_ne_zero _ _
     (uniformOn_univ_singleton_ne_zero s₀) ((hypergeometric_apply_singleton_ne_zero_iff s₀ k).2
       (mem_compatible.1 hs₀))), hypergeometric_apply_singleton_ne_zero_iff, mem_compatible]
   exact and_iff_right (uniformOn_univ_singleton_ne_zero s)
