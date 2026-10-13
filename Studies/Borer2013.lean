@@ -2,6 +2,7 @@ module
 
 public import Linglib.Data.Examples.Borer2013
 public import Linglib.Syntax.Minimalist.Category.FunctionalSequence
+public import Studies.Embick2010
 
 /-!
 # Borer (2013): Structuring Sense: Volume III: Taking Form
@@ -13,18 +14,26 @@ as verbs (*a green*, *to green*). Distributed Morphology categorizes a root by a
 *a* that may be null, so it has to rule each pairing of a root with a head in or out. Borer's
 resolution is that adjectives are not roots. Like derivatives they are born categorized, and a
 categorized core fits only the extended projection of its own category, while the adjectival
-extended projection cannot categorize a root. This file formalizes the resolution and derives from
-it every judgment of the paradigm that poses the puzzle.
+extended projection cannot categorize a root.
+
+A root also selects the realization of what attaches to it, as *run* selects its past *ran* and
+*goose* its plural *geese*. Selection is local, so only what attaches to a bare root can be
+selected: derivatives inflect regularly, and on the resolution so do adjectives. Distributed
+Morphology puts a head between every stem and its inflection, and recovers local selection only by
+letting null heads be transparent. The chapter ends on a problem it leaves open: *-ify* and *en-*
+are selected by the roots of *clarify* and *enlarge*, so a functor taking adjectives attaches to a
+bare root after all.
 
 ## Main statements
 
-* `licenses_nominal_and_verbal_iff`: roots, and roots alone, occur both as nouns and as verbs.
-* `Licenses.eq_adjectival`: a core that occurs as an adjective occurs in no other extended
-  projection.
-* `acceptable_iff_licensed`: the lexicon and the licensing condition derive every judgment of the
-  paradigm.
-* `exists_ne_of_verbal_of_adjectival`: a word that is both a verb and an adjective is listed
-  twice, as *thin* and *yellow* are.
+* `licenses_nominal_and_verbal_iff`: roots, and roots alone, occur both as nouns and as verbs,
+  which with the lexicon derives every judgment of the paradigm (`acceptable_iff_licensed`).
+* `complement_ne_none_of_wellFormed`: nothing that takes an adjective attaches to a bare root, so
+  no root selects its realization.
+* `not_exists_licensing`: no condition on the category of a complement both derives the paradigm
+  and lets the verbalizers of *clarify* and *enlarge* take their roots.
+* `dm_seesRoot`: in Distributed Morphology's representations no inflection sees its root unless
+  null heads are transparent.
 
 ## Implementation notes
 
@@ -34,17 +43,26 @@ it every judgment of the paradigm that poses the puzzle.
   which the paradigm does not test.
 * The verbal *thin* and *yellow* are listed as categorized verbs, since as roots they would be
   nouns as well.
+* A word's terminals are the book's categorial functors, with the category each projects and the
+  categories it takes, the segments of extended projections, among them the comparative and the
+  superlative, and the head an adjective is born with. Which realizations a root selects is taken
+  from the book's table of functors and its discussion of *-en* and *en-*.
+* Distributed Morphology's words are read with the heads, cycles and ∅-Transparency of
+  `Embick2010`.
 
 ## TODO
 
-The chapter supports the resolution with inflection and affixation: adjectives show none of the
-stem allomorphy or root-selected affixes that roots allow, taking only the regular *-er* and
-*-est* and the default nominalizers *-ness* and *-ity*. The verbs *clarify* and *enlarge*, built
-on underived adjectives, are left as a problem for it. Neither is formalized.
+The table of functors is not recorded as data, only the choices of the words built with them, and
+the functors with a meaning of their own (*-ing*, *-er*, *-ship*), which the book sets apart from
+the default-and-selection pattern, are treated as functors like the rest. The book's arguments
+from stacked null heads, which nothing rules out once null heads are transparent, and from the
+direction of derivation in Kiparsky's examples, are not formalized; they are where Embick's cycles
+and contextual categorization would come apart.
 
 ## References
 
 * [borer-2013]
+* [embick-2010]
 -/
 
 @[expose] public section
@@ -117,6 +135,7 @@ structure Row where
   frame : CatFamily
   cores : List (Option CatFamily)
   judgment : Judgment
+  deriving DecidableEq
 
 /-- The row of an example whose word is listed. -/
 def Row.ofDatum (d : Datum) : Option Row := do
@@ -129,14 +148,172 @@ def Row.ofDatum (d : Datum) : Option Row := do
 /-- The examples. -/
 def data : List Row := Examples.all.filterMap Row.ofDatum
 
-/-- Every example has its row, so every word of the paradigm is listed. -/
-theorem data_length : data.length = Examples.all.length := by decide +kernel
-
 /-- An example is acceptable exactly when its word is listed as a core that fits the extended
 projection the example puts it in: *a dance*, *to dance* and *too green* are acceptable, and
 *too dance*, *a green* and *to green* are not. -/
 theorem acceptable_iff_licensed :
     ∀ d ∈ data, d.judgment = .acceptable ↔ ∃ κ ∈ d.cores, Licenses d.frame κ := by
+  decide +kernel
+
+/-! ### Local selection -/
+
+/-- A terminal of a word above its root is a categorial functor, projecting a category over a
+complement of one of the categories it takes, a segment of an extended projection, or the head
+that an item is born with. -/
+inductive Terminal
+  | functor (proj : CatFamily) (takes : List CatFamily)
+  | segment (e : CatFamily)
+  | born (c : CatFamily)
+  deriving DecidableEq, Repr
+
+/-- The category a terminal projects. -/
+def Terminal.proj : Terminal → CatFamily
+  | .functor p _ | .segment p | .born p => p
+
+/-- The category of what the terminal at position `i` attaches to, the bare root for the first
+terminal and otherwise the category of the terminal below. -/
+def complement (ts : List Terminal) : ℕ → Option CatFamily
+  | 0 => none
+  | i + 1 => ts[i]?.map Terminal.proj
+
+/-- A terminal takes a complement of category `κ` under the licensing `L` when it is a functor
+and `L` licenses `κ` in one of the categories it takes, a segment whose extended projection `L`
+licenses `κ` in, or a born head on its root. -/
+def Terminal.Takes (L : CatFamily → Option CatFamily → Prop) : Terminal → Option CatFamily → Prop
+  | .functor _ cs, κ => ∃ c ∈ cs, L c κ
+  | .segment e, κ => L e κ
+  | .born _, κ => κ = none
+
+instance (t : Terminal) (κ : Option CatFamily) : Decidable (t.Takes Licenses κ) :=
+  match t with
+  | .functor _ cs => inferInstanceAs (Decidable (∃ c ∈ cs, Licenses c κ))
+  | .segment e => inferInstanceAs (Decidable (Licenses e κ))
+  | .born _ => inferInstanceAs (Decidable (κ = none))
+
+/-- A word is well formed under `L` when each of its terminals takes what it attaches to. -/
+def WellFormed (L : CatFamily → Option CatFamily → Prop) (ts : List Terminal) : Prop :=
+  ∀ i (h : i < ts.length), ts[i].Takes L (complement ts i)
+
+instance (ts : List Terminal) : Decidable (WellFormed Licenses ts) :=
+  Nat.decidableBallLT _ _
+
+/-- Whether a terminal has its default realization or one that its root selects. -/
+inductive Choice
+  | default
+  | rootSelected
+  deriving DecidableEq, Repr
+
+/-- A word records its terminals, innermost first, the terminal whose realization is at issue,
+and the choice of that realization. -/
+structure Word where
+  terminals : List Terminal
+  target : ℕ
+  choice : Choice
+  deriving DecidableEq, Repr
+
+/-- The terminals as named in the rows. -/
+def terminalTable : List (String × Terminal) :=
+  [("T-PST", .segment .verbal), ("CL-PL", .segment .nominal), ("CMPR", .segment .adjectival),
+    ("SUPL", .segment .adjectival), ("CV[N]", .functor .verbal [.nominal]),
+    ("CV[A]", .functor .verbal [.adjectival]),
+    ("CV[A/N]", .functor .verbal [.adjectival, .nominal]), ("CN[V]", .functor .nominal [.verbal]),
+    ("CN[N]", .functor .nominal [.nominal]), ("CN[A]", .functor .nominal [.adjectival]),
+    ("ING", .functor .nominal [.verbal]), ("SHIP", .functor .nominal [.nominal]),
+    ("ER", .functor .nominal [.verbal]), ("A", .born .adjectival)]
+
+/-- The choices as named in the rows. -/
+def choiceTable : List (String × Choice) := [("default", .default), ("rootSelected", .rootSelected)]
+
+/-- The word of an example in the book's own representation, its target counted from one. -/
+def Word.ofDatum (d : Datum) : Option Word := do
+  guard (d.feature? "representation" = some "xsm")
+  let ts ← ["h1", "h2", "h3"].filterMap (d.feature? ·) |>.mapM (terminalTable.lookup ·)
+  let t ← d.nat? "target"
+  guard (0 < t ∧ t ≤ ts.length)
+  pure ⟨ts, t - 1, ← d.parse? "choice" choiceTable⟩
+
+/-- The words of the chapter's structures. -/
+def words : List Word := Examples.all.filterMap Word.ofDatum
+
+/-- A word as Distributed Morphology represents it, with the inflection whose realization is at
+issue. -/
+structure DMWord where
+  spine : DistributedMorphology.Spine Embick2010.Morpheme
+  target : Fin spine.heads.length
+  choice : Choice
+
+/-- The word of an example in Distributed Morphology's representation. -/
+def DMWord.ofDatum (d : Datum) : Option DMWord := do
+  guard (d.feature? "representation" = some "dm")
+  let hs := Embick2010.heads d
+  let t ← d.nat? "target"
+  let c ← d.parse? "choice" choiceTable
+  if h : t - 1 < hs.length then pure ⟨⟨⟨0⟩, hs⟩, ⟨t - 1, h⟩, c⟩ else none
+
+/-- The words of the renderings of Distributed Morphology. -/
+def dmWords : List DMWord := Examples.all.filterMap DMWord.ofDatum
+
+/-- Every example is a judgment of the paradigm or a word in one of the two representations. -/
+theorem isSome_ofDatum : ∀ d ∈ Examples.all,
+    (Row.ofDatum d).isSome || (Word.ofDatum d).isSome || (DMWord.ofDatum d).isSome := by
+  decide +kernel
+
+/-- A root selects only the realization of what attaches to it directly, since selection is local
+and every exceptional realization is listed with a root: *-ate*, *-ify* and *-ment* attach to
+their roots, while the past tense of *instantiated* and the plural of *formations* attach to a
+derivative and take their defaults. -/
+theorem complement_eq_none_of_rootSelected :
+    ∀ w ∈ words, w.choice = .rootSelected → complement w.terminals w.target = none := by
+  decide +kernel
+
+/-- In a word well formed under the resolution, a segment of the adjectival extended projection
+or a functor taking adjectives attaches to a categorized core, never to a bare root, so its
+realization is never selected by a root: adjectives take only the regular *-er* and *-est*, and
+only the default nominalizers. -/
+theorem complement_ne_none_of_wellFormed {ts : List Terminal} (hw : WellFormed Licenses ts)
+    {i : ℕ} (hi : i < ts.length)
+    (ht : ts[i] = .segment .adjectival ∨ ∃ p, ts[i] = .functor p [.adjectival]) :
+    complement ts i ≠ none := by
+  intro h
+  have := hw i hi
+  rw [h] at this
+  rcases ht with ht | ⟨p, ht⟩ <;> simp [ht, Terminal.Takes] at this
+
+/-- The words that the resolution rules out are those that put a functor taking adjectives
+directly on a root: the verbs of *fattened* and of the problem cases *clarify* and *enlarge*,
+which do select their realizations, and *abilities* and *weaknesses*, which the section on zero
+categorizers brackets so before the section on adjectives treats their bases as born
+adjectives. -/
+theorem not_wellFormed_iff :
+    ∀ w ∈ words, ¬ WellFormed Licenses w.terminals ↔
+      ∃ p ∈ [CatFamily.verbal, .nominal], w.terminals.head? = some (.functor p [.adjectival]) := by
+  decide +kernel
+
+/-- **The puzzle of the adjective.** No licensing condition on the category of a complement both
+derives the judgments of the paradigm and lets the verbalizers of the problem cases take what
+their selection requires. *Too dance* shows that a bare root is not adjectival, while the
+root-selected *-ify* of *clarify* takes an adjectival complement that, selection being local,
+must be its root. -/
+theorem not_exists_licensing :
+    ¬ ∃ L : CatFamily → Option CatFamily → Prop,
+      (∀ d ∈ data, d.judgment = .acceptable ↔ ∃ κ ∈ d.cores, L d.frame κ) ∧
+      ∀ w ∈ words, w.choice = .rootSelected →
+        ∀ t ∈ w.terminals[w.target]?, t.Takes L (complement w.terminals w.target) := by
+  rintro ⟨L, hdata, hwords⟩
+  have hdance : (⟨.adjectival, [none], .ungrammatical⟩ : Row) ∈ data := by decide +kernel
+  have hclarify : (⟨[.functor .verbal [.adjectival]], 0, .rootSelected⟩ : Word) ∈ words := by
+    decide +kernel
+  obtain ⟨c, hc, hL⟩ := hwords _ hclarify rfl _ rfl
+  obtain rfl : c = .adjectival := by simpa using hc
+  exact absurd ((hdata _ hdance).mpr ⟨none, List.mem_singleton_self _, hL⟩) (by decide)
+
+/-- In Distributed Morphology every stem is categorized by a head, so without ∅-Transparency no
+inflection sees the root, and the past of *run* is no closer to its root than the past of
+*instantiate*. With Embick's ∅-Transparency every root-selected inflection does see it. -/
+theorem dm_seesRoot :
+    ∀ w ∈ dmWords, ¬ w.spine.SeesRoot Embick2010.cyclic (fun _ ↦ False) w.target ∧
+      (w.choice = .rootSelected →
+        w.spine.SeesRoot Embick2010.cyclic Embick2010.phonNull w.target) := by
   decide +kernel
 
 end Borer2013
