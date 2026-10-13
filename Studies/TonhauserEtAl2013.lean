@@ -1,60 +1,54 @@
 module
 
 public import Linglib.Semantics.Presupposition.Context
+public import Linglib.Semantics.Presupposition.Environment
 public import Linglib.Data.Examples.TonhauserEtAl2013
 
 /-!
 # Tonhauser, Beaver, Roberts and Simons (2013): Toward a Taxonomy of Projective Content
 
-This file formalizes the two properties by which [tonhauser-beaver-roberts-simons-2013] sort
-projective contents, contents that survive embedding under entailment-cancelling operators,
-(1), and the argument that the resulting classes cross-cut the theories of projection. A
-trigger imposes a strong contextual felicity constraint with respect to its content `m` when
-it is acceptable only in `m`-positive contexts, (11), a context being `m`-positive when it
-entails `m` and `m`-neutral when it entails neither `m` nor its negation, (10), so
-acceptability in an `m`-neutral context refutes the constraint, (12i),
-`not_scf_of_acceptable_neutral`. Under a belief predicate `m` has local effect when it is part
-of the attitude holder's belief state, (38), and obligatory local effect when it always is,
-(40), so acceptability with the holder explicitly ignorant of `m`, (41i), or believing its
-negation, (41ii), refutes it, `not_ole_of_acceptable_ignorant` and
-`not_ole_of_acceptable_negated`. The two properties yield the four classes of Table 1,
-`ProjectiveClass`, and the diagnostics applied to English and Paraguayan Guaraní, Table 2,
-populate all four: the existence implications of pronouns and *too* in class A, [potts-2005]'s
-conventional implicatures with the descriptive contents of pronouns and demonstratives in
-class B, the classical presuppositions of *know* and *stop* with the prejacent of *only* and
-the polar implication of *almost* in class C, and the salience and indication implications of
-*too*, focus and demonstratives in class D. Theories on which a presupposition is acceptable
-iff its local context entails it, [karttunen-1974-presupposition], [heim-1983],
-[van-der-sandt-1992] and [schlenker-2009], make every projective content impose the constraint
-and have obligatory local effect, `scf_of_satisfaction` and `ole_of_satisfaction`, and so
-place it in class A, while classes B, C and D are populated.
+A content projects when it survives the embedding of its trigger under negation, in a question,
+under a possibility modal or in the antecedent of a conditional, the family of sentences.
+Tonhauser, Beaver, Roberts and Simons sort projective contents by two properties, stated here
+for a context, a set of worlds, and a content `m`, a proposition. A trigger imposes a strong
+contextual felicity constraint when its sentence is acceptable only in contexts that entail
+`m`. The content has obligatory local effect when a belief report with the trigger in its
+complement is acceptable only where the holder's epistemic state, the local context of the
+complement, entails `m`. The two properties cross to give four classes, and the diagnostics
+applied to Paraguayan Guaraní and English find contents in all four.
+
+## Main statements
+
+* `TonhauserEtAl2013.excludes_matrix_iff`, `TonhauserEtAl2013.excludes_belief_iff`: a class
+  rules out an utterance in a context that does not entail the content exactly when it has the
+  constraint, and a belief report whose holder does not believe the content exactly when it has
+  obligatory local effect.
+* `TonhauserEtAl2013.judgment_rows`: each of the paper's examples is unacceptable exactly when
+  the class of its content rules it out.
+* `TonhauserEtAl2013.eq_of_excludes_iff`: a judgment in a neutral context and a judgment of a
+  belief report separate the four classes.
+* `TonhauserEtAl2013.acceptable_rows_of_ne_A`: local satisfaction gives every content both
+  properties, and each of the other three classes has an acceptable example that this rules out.
 
 ## Implementation notes
 
-A context is a set of worlds and a content a proposition, the paper's own characterization, and
-acceptability is a predicate on contexts that the diagnostics take as given. Local satisfaction
-is the substrate's `PartialProp.Admits`, at the matrix in the context and under belief in
-`beliefContext`, [karttunen-1974-presupposition]'s local context of an attitude verb's
-complement. Projection, (21), and its family-of-sentences diagnostic, (24), which tests
-acceptability across contexts for triggers with the constraint, after [matthewson-2004], and
-implication in `m`-neutral contexts for the others, are recorded in the rows rather than
-defined, since they quantify over sentence variants. The Guaraní consultants' judgments, and the
-objection that two-dimensional theories after [karttunen-peters-1979] and [potts-2005] make
-projectivity conventional where [simons-tonhauser-beaver-roberts-2010] find it
-context-dependent, are reported in prose. The examples are the rows of
-`Data.Examples.TonhauserEtAl2013`.
+* Acceptability is taken as given, as the contexts in which consultants accept a sentence. The
+  context is the utterance context before any accommodation, so the argument against local
+  satisfaction leaves the reply by accommodation open, as the paper notes.
+* A content with the constraint projects when the constraint holds in every member of the family
+  of sentences. Projection of the other contents is diagnosed by implication judgments, which
+  are not modelled; the rows of (1) record such judgments.
+* A stance to the negation of a content requires a consistent state, since the diagnostics need
+  a belief predicate that enforces consistency.
 
 ## References
 
 * [tonhauser-beaver-roberts-simons-2013]
+* [chierchia-mcconnell-ginet-1990]
+* [matthewson-2004]
 * [karttunen-1974-presupposition]
 * [heim-1983]
-* [van-der-sandt-1992]
 * [schlenker-2009]
-* [potts-2005]
-* [karttunen-peters-1979]
-* [simons-tonhauser-beaver-roberts-2010]
-* [matthewson-2004]
 -/
 
 @[expose] public section
@@ -63,99 +57,195 @@ namespace TonhauserEtAl2013
 
 open Presupposition
 
-/-! ### The taxonomy (Table 1) -/
+variable {W : Type*}
 
-/-- The four classes of projective content, by whether the trigger imposes the strong
-contextual felicity constraint and whether the content has obligatory local effect. -/
-inductive ProjectiveClass where
-  | classA
-  | classB
-  | classC
-  | classD
+/-! ### Contexts and contents -/
+
+/-- The stance of a body of information to a content `m`, which it entails, or leaves open
+together with its negation, or contradicts while being consistent, (10). -/
+inductive Stance
+  | positive
+  | neutral
+  | negative
+  deriving DecidableEq, Repr, Fintype
+
+/-- The information `c` has the stance to the content `m`. -/
+def Stance.Holds (c m : Set W) : Stance → Prop
+  | positive => c ⊆ m
+  | neutral => ¬ c ⊆ m ∧ ¬ c ⊆ mᶜ
+  | negative => c.Nonempty ∧ c ⊆ mᶜ
+
+theorem Stance.Holds.not_subset {s : Stance} {c m : Set W} (h : s.Holds c m)
+    (hs : s ≠ .positive) : ¬ c ⊆ m := by
+  cases s
+  · exact absurd rfl hs
+  · exact h.1
+  · exact fun hm ↦ let ⟨_, hw⟩ := h.1; h.2 hw (hm hw)
+
+private theorem Stance.exists_holds (s : Stance) : ∃ c m : Set Bool, s.Holds c m := by
+  cases s
+  · exact ⟨.univ, .univ, subset_rfl⟩
+  · exact ⟨.univ, {true}, fun h ↦ Bool.false_ne_true (h trivial), fun h ↦ h trivial rfl⟩
+  · exact ⟨{false}, {true}, ⟨false, rfl⟩, by rintro _ rfl; exact Bool.false_ne_true⟩
+
+/-! ### The two properties -/
+
+/-- The trigger's sentence, acceptable in the contexts `Acc`, is acceptable only in contexts
+that entail `m`, (11). -/
+def StrongContextualFelicity (m : Set W) (Acc : Set W → Prop) : Prop := ∀ c, Acc c → c ⊆ m
+
+/-- A belief report with the trigger in its complement, acceptable in the contexts `Acc`, is
+acceptable only where the local context of the complement, the holder's epistemic state, entails
+`m`, (40). -/
+def ObligatoryLocalEffect (Dox : W → Set W) (m : Set W) (Acc : Set W → Prop) : Prop :=
+  ∀ c, Acc c → beliefContext Dox c ⊆ m
+
+/-! ### The four classes -/
+
+/-- The classes of projective content, Table 1. -/
+inductive ProjectiveClass
+  | A
+  | B
+  | C
+  | D
+  deriving DecidableEq, Repr, Fintype
+
+namespace ProjectiveClass
+
+/-- The triggers of the class impose the strong contextual felicity constraint. -/
+def StrongContextualFelicity (k : ProjectiveClass) : Prop := k = A ∨ k = D
+
+/-- The contents of the class have obligatory local effect. -/
+def ObligatoryLocalEffect (k : ProjectiveClass) : Prop := k = A ∨ k = C
+
+instance : DecidablePred StrongContextualFelicity := fun _ ↦ inferInstanceAs (Decidable (_ ∨ _))
+
+instance : DecidablePred ObligatoryLocalEffect := fun _ ↦ inferInstanceAs (Decidable (_ ∨ _))
+
+/-- The two properties determine the class. -/
+theorem eq_of_iff {k k' : ProjectiveClass}
+    (hs : k.StrongContextualFelicity ↔ k'.StrongContextualFelicity)
+    (ho : k.ObligatoryLocalEffect ↔ k'.ObligatoryLocalEffect) : k = k' := by
+  revert hs ho; cases k <;> cases k' <;> decide
+
+end ProjectiveClass
+
+/-! ### The diagnostics -/
+
+/-- A diagnostic configuration. A member of the family of sentences of the trigger's sentence is
+uttered in a context with a given stance to the content, (12) and (24), or the sentence is the
+complement of a belief report whose holder's epistemic state has a given stance, (41). -/
+inductive Test
+  | matrix (e : Environment) (s : Stance)
+  | belief (s : Stance)
   deriving DecidableEq, Repr
 
-/-- Whether a class's triggers impose the strong contextual felicity constraint. -/
-def ProjectiveClass.scf : ProjectiveClass → Bool
-  | .classA | .classD => true
-  | .classB | .classC => false
+/-- An instance of the test is acceptable, where `Acc e` holds of the contexts in which the
+family member `e` is acceptable and `AccB` of those in which the belief report is. -/
+def Test.Accepted (m : Set W) (Dox : W → Set W) (Acc : Environment → Set W → Prop)
+    (AccB : Set W → Prop) : Test → Prop
+  | matrix e s => ∃ c, s.Holds c m ∧ Acc e c
+  | belief s => ∃ c, ∃ w ∈ c, s.Holds (Dox w) m ∧ AccB c
 
-/-- Whether a class's contents have obligatory local effect. -/
-def ProjectiveClass.ole : ProjectiveClass → Bool
-  | .classA | .classC => true
-  | .classB | .classD => false
+/-- A class excludes a test when no content with the properties of the class has an acceptable
+instance of it. A content with the constraint is projective, so the constraint holds in every
+member of the family of sentences, (24). -/
+def Excludes (k : ProjectiveClass) (t : Test) : Prop :=
+  ∀ (W : Type) (m : Set W) (Dox : W → Set W) (Acc : Environment → Set W → Prop)
+    (AccB : Set W → Prop), (k.StrongContextualFelicity → ∀ e, StrongContextualFelicity m (Acc e)) →
+    (k.ObligatoryLocalEffect → ObligatoryLocalEffect Dox m AccB) → ¬ t.Accepted m Dox Acc AccB
 
-/-- Table 1: the class of a content with the given properties. -/
-def ProjectiveClass.ofProperties : Bool → Bool → ProjectiveClass
-  | true, true => .classA
-  | false, false => .classB
-  | false, true => .classC
-  | true, false => .classD
+variable {k : ProjectiveClass} {e : Environment} {s : Stance}
 
-/-- The two properties determine the class, and every combination is a class. -/
-def ProjectiveClass.equivProd : ProjectiveClass ≃ Bool × Bool where
-  toFun c := (c.scf, c.ole)
-  invFun p := ofProperties p.1 p.2
-  left_inv c := by cases c <;> rfl
-  right_inv p := by rcases p with ⟨_ | _, _ | _⟩ <;> rfl
+/-- A class excludes an utterance in a context exactly when its triggers impose the constraint
+and the context does not entail the content, (12). -/
+theorem excludes_matrix_iff :
+    Excludes k (.matrix e s) ↔ k.StrongContextualFelicity ∧ s ≠ .positive := by
+  refine ⟨fun h ↦ ?_, fun ⟨hk, hs⟩ W m Dox Acc AccB hA _ ⟨c, hc, hacc⟩ ↦
+    hc.not_subset hs (hA hk e c hacc)⟩
+  by_contra hks
+  obtain ⟨c, m, hc⟩ := s.exists_holds
+  refine h Bool m (fun _ ↦ ∅) (fun _ c' ↦ k.StrongContextualFelicity → c' ⊆ m) (fun _ ↦ False)
+    (fun hk _ _ h ↦ h hk) (fun _ _ h ↦ h.elim) ⟨c, hc, fun hk ↦ ?_⟩
+  obtain rfl : s = .positive := by_contra fun hs ↦ hks ⟨hk, hs⟩
+  exact hc
 
-/-! ### Strong contextual felicity (section 3) -/
+/-- A class excludes a belief report exactly when its contents have obligatory local effect and
+the holder's epistemic state does not entail the content, (41). -/
+theorem excludes_belief_iff :
+    Excludes k (.belief s) ↔ k.ObligatoryLocalEffect ∧ s ≠ .positive := by
+  refine ⟨fun h ↦ ?_, fun ⟨hk, hs⟩ W m Dox Acc AccB _ hB ⟨c, w, hw, hd, hacc⟩ ↦
+    hd.not_subset hs (beliefContext_subset_iff.1 (hB hk c hacc) hw)⟩
+  by_contra hks
+  obtain ⟨d, m, hd⟩ := s.exists_holds
+  refine h Bool m (fun _ ↦ d) (fun _ _ ↦ False)
+    (fun c ↦ k.ObligatoryLocalEffect → beliefContext (fun _ ↦ d) c ⊆ m)
+    (fun _ _ _ h ↦ h.elim) (fun hk _ h ↦ h hk) ⟨.univ, true, trivial, hd, fun hk ↦ ?_⟩
+  obtain rfl : s = .positive := by_contra fun hs ↦ hks ⟨hk, hs⟩
+  exact beliefContext_subset_iff.2 fun _ _ ↦ hd
 
-variable {W E : Type*} (m c : Set W)
+instance (k : ProjectiveClass) : DecidablePred (Excludes k)
+  | .matrix _ _ => decidable_of_iff' _ excludes_matrix_iff
+  | .belief _ => decidable_of_iff' _ excludes_belief_iff
 
-/-- (10): the context entails `m`. -/
-def MPositive : Prop := c ⊆ m
+/-- The two diagnostics separate the four classes, in that classes excluding the same utterances
+in a neutral context and the same belief reports are one class. -/
+theorem eq_of_excludes_iff {k' : ProjectiveClass} (hs : s ≠ .positive)
+    (hm : Excludes k (.matrix e .neutral) ↔ Excludes k' (.matrix e .neutral))
+    (hb : Excludes k (.belief s) ↔ Excludes k' (.belief s)) : k = k' :=
+  ProjectiveClass.eq_of_iff (by simpa [excludes_matrix_iff] using hm)
+    (by simpa [excludes_belief_iff, hs] using hb)
 
-/-- (10): the context entails neither `m` nor `¬m`. -/
-def MNeutral : Prop := ¬ c ⊆ m ∧ ¬ c ⊆ mᶜ
+/-! ### Local satisfaction -/
 
-/-- (11): uttering the trigger's sentence, acceptable in the contexts `Acc`, is acceptable
-only in `m`-positive contexts. -/
-def StrongContextualFelicity (Acc : Set W → Prop) : Prop := ∀ c, Acc c → MPositive m c
-
-/-- (12i): acceptability in an `m`-neutral context refutes the constraint. -/
-theorem not_scf_of_acceptable_neutral {Acc : Set W → Prop} (h : Acc c) (hn : MNeutral m c) :
-    ¬ StrongContextualFelicity m Acc :=
-  fun hs ↦ hn.1 (hs c h)
-
-/-! ### Obligatory local effect (section 5) -/
-
-/-- (38): under `a believes S` at `w`, `m` has local effect when it is part of `a`'s belief
+/-- If a sentence is acceptable exactly where its local context entails its presupposition, as
+for Karttunen, Heim and Schlenker, the presupposition has the two properties of class A, so no
+instance of a test that class A excludes is acceptable. The local context of a family member is
+the utterance context, and that of the complement of a belief report is the holder's epistemic
 state. -/
-def LocalEffect (Dox : E → W → W → Prop) (a : E) (w : W) : Prop := {v | Dox a w v} ⊆ m
+theorem Excludes.not_accepted_admits {W : Type} {t : Test} (h : Excludes .A t) (p : PartialProp W)
+    (Dox : W → Set W) :
+    ¬ t.Accepted p.presup Dox (fun _ ↦ p.Admits) (fun c ↦ p.Admits (beliefContext Dox c)) :=
+  h W _ _ _ _ (fun _ _ _ h ↦ h) (fun _ _ h ↦ h)
 
-/-- (40): wherever the belief report is acceptable, `m` has local effect. -/
-def ObligatoryLocalEffect (Dox : E → W → W → Prop) (a : E) (Acc : Set W → Prop) : Prop :=
-  ∀ c, Acc c → ∀ w ∈ c, LocalEffect m Dox a w
+/-! ### The rows -/
 
-/-- (41i): acceptability of the report with the holder ignorant of `m` refutes obligatory
-local effect. -/
-theorem not_ole_of_acceptable_ignorant {Dox : E → W → W → Prop} {a : E} {Acc : Set W → Prop}
-    (h : Acc c) {w : W} (hw : w ∈ c) (hig : MNeutral m (Dox a w)) :
-    ¬ ObligatoryLocalEffect m Dox a Acc :=
-  fun ho ↦ hig.1 (ho c h w hw)
+/-- The names of the stances as example rows record them. -/
+def Stance.table : List (String × Stance) :=
+  [("m-positive", .positive), ("m-neutral", .neutral), ("m-negative", .negative)]
 
-/-- (41ii): a consistent belief state cannot give both `m` and its negation local effect, so
-acceptability of the report with `¬m` attributed to the holder refutes obligatory local
-effect. -/
-theorem not_ole_of_acceptable_negated {Dox : E → W → W → Prop} {a : E} {Acc : Set W → Prop}
-    (h : Acc c) {w : W} (hw : w ∈ c) (hcons : ∃ v, Dox a w v)
-    (hneg : LocalEffect mᶜ Dox a w) :
-    ¬ ObligatoryLocalEffect m Dox a Acc :=
-  fun ho ↦ hcons.elim fun _ hv ↦ hneg hv (ho c h w hw hv)
+/-- The class that Table 2 assigns to the content of a row. -/
+def class? (r : Datum) : Option ProjectiveClass :=
+  r.parse? "class" [("A", .A), ("B", .B), ("C", .C), ("D", .D)]
 
-/-! ### Against local satisfaction (section 8) -/
+/-- The diagnostic configuration of a row, a belief report when the row records the stance of
+the holder's epistemic state and otherwise a family member in its utterance context. -/
+def test? (r : Datum) : Option Test :=
+  (r.parse? "holder" Stance.table).map .belief <|>
+    r.environment?.bind fun e ↦ (r.parse? "context" Stance.table).map (.matrix e)
 
-variable (p : PartialProp W) (Dox : E → W → W → Prop) (a : E)
+/-- Each example of a content in Table 2 is unacceptable exactly when the class of the content
+excludes its configuration. -/
+theorem judgment_rows :
+    ∀ r ∈ Examples.all, ∀ k ∈ class? r, ∃ t ∈ test? r,
+      (r.judgment = .unacceptable ↔ Excludes k t) := by
+  decide
 
-/-- A trigger acceptable exactly where its local context entails its presupposition imposes
-the strong contextual felicity constraint. -/
-theorem scf_of_satisfaction : StrongContextualFelicity p.presup (p.Admits ·) :=
-  fun _ h ↦ h
+/-- Each of the four classes has an example in a neutral context and an example of a belief
+report whose holder does not believe the content, the two judgments that fix a class. -/
+theorem exists_rows_of_class :
+    ∀ k : ProjectiveClass,
+      (∃ r ∈ Examples.all, class? r = some k ∧ ∃ e, test? r = some (.matrix e .neutral)) ∧
+        ∃ r ∈ Examples.all, class? r = some k ∧ ∃ s ≠ Stance.positive,
+          test? r = some (.belief s) := by
+  decide
 
-/-- Under belief, local satisfaction is satisfaction in the holder's belief state, so the
-presupposition has obligatory local effect. -/
-theorem ole_of_satisfaction :
-    ObligatoryLocalEffect p.presup Dox a (p.Admits <| beliefContext (Dox a) ·) :=
-  fun _ h ↦ beliefContext_subset_iff.1 h
+/-- Each class other than A has an acceptable example in a configuration that class A excludes,
+so a theory of projection on which every projective content must be satisfied in its local
+context does not extend to it (section 8). -/
+theorem acceptable_rows_of_ne_A :
+    ∀ k ≠ ProjectiveClass.A, ∃ r ∈ Examples.all, class? r = some k ∧ r.judgment = .acceptable ∧
+      ∃ t ∈ test? r, Excludes .A t := by
+  decide
 
 end TonhauserEtAl2013

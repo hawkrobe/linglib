@@ -1,11 +1,8 @@
 [
   {
     "id": "tonhauseretal2013_1a",
-    "source": {
-      "bibkey": "tonhauser-beaver-roberts-simons-2013",
-      "paperLabel": "(1a)"
-    },
-    "reportedIn": null,
+    "source": {"bibkey": "chierchia-mcconnell-ginet-1990", "paperLabel": "p. 28"},
+    "reportedIn": {"bibkey": "tonhauser-beaver-roberts-simons-2013", "paperLabel": "(1a)"},
     "language": "stan1293",
     "primaryText": "The present queen of France lives in Ithaca.",
     "discourseSegments": [],
@@ -16,29 +13,17 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "environment",
-        "atomic"
-      ],
-      [
-        "trigger",
-        "definite"
-      ],
-      [
-        "content",
-        "existence of a unique queen of France"
-      ]
+      ["trigger", "definite"],
+      ["content", "existence of a unique queen of France"],
+      ["environment", "atomic"]
     ],
-    "comment": "The family-of-sentences diagnostic of Chierchia and McConnell-Ginet (1990: 28), from whom the paper takes (1): the existence implication survives in (1b)-(1d).",
+    "comment": "The family of sentences: the implication that France has a unique queen survives in (1b)-(1d). An implication judgment, not an acceptability contrast.",
     "verified": "page-image"
   },
   {
     "id": "tonhauseretal2013_1b",
-    "source": {
-      "bibkey": "tonhauser-beaver-roberts-simons-2013",
-      "paperLabel": "(1b)"
-    },
-    "reportedIn": null,
+    "source": {"bibkey": "chierchia-mcconnell-ginet-1990", "paperLabel": "p. 28"},
+    "reportedIn": {"bibkey": "tonhauser-beaver-roberts-simons-2013", "paperLabel": "(1b)"},
     "language": "stan1293",
     "primaryText": "It is not the case that the present queen of France lives in Ithaca.",
     "discourseSegments": [],
@@ -49,29 +34,17 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "environment",
-        "negation"
-      ],
-      [
-        "trigger",
-        "definite"
-      ],
-      [
-        "content",
-        "existence of a unique queen of France"
-      ]
+      ["trigger", "definite"],
+      ["content", "existence of a unique queen of France"],
+      ["environment", "negation"]
     ],
     "comment": "",
     "verified": "page-image"
   },
   {
     "id": "tonhauseretal2013_1c",
-    "source": {
-      "bibkey": "tonhauser-beaver-roberts-simons-2013",
-      "paperLabel": "(1c)"
-    },
-    "reportedIn": null,
+    "source": {"bibkey": "chierchia-mcconnell-ginet-1990", "paperLabel": "p. 28"},
+    "reportedIn": {"bibkey": "tonhauser-beaver-roberts-simons-2013", "paperLabel": "(1c)"},
     "language": "stan1293",
     "primaryText": "Does the present queen of France live in Ithaca?",
     "discourseSegments": [],
@@ -82,29 +55,17 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "environment",
-        "question"
-      ],
-      [
-        "trigger",
-        "definite"
-      ],
-      [
-        "content",
-        "existence of a unique queen of France"
-      ]
+      ["trigger", "definite"],
+      ["content", "existence of a unique queen of France"],
+      ["environment", "question"]
     ],
     "comment": "",
     "verified": "page-image"
   },
   {
     "id": "tonhauseretal2013_1d",
-    "source": {
-      "bibkey": "tonhauser-beaver-roberts-simons-2013",
-      "paperLabel": "(1d)"
-    },
-    "reportedIn": null,
+    "source": {"bibkey": "chierchia-mcconnell-ginet-1990", "paperLabel": "p. 28"},
+    "reportedIn": {"bibkey": "tonhauser-beaver-roberts-simons-2013", "paperLabel": "(1d)"},
     "language": "stan1293",
     "primaryText": "If the present queen of France lives in Ithaca, she has probably met Nelly.",
     "discourseSegments": [],
@@ -115,576 +76,726 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "environment",
-        "conditional antecedent"
-      ],
-      [
-        "trigger",
-        "definite"
-      ],
-      [
-        "content",
-        "existence of a unique queen of France"
-      ]
+      ["trigger", "definite"],
+      ["content", "existence of a unique queen of France"],
+      ["environment", "conditional antecedent"]
     ],
     "comment": "",
     "verified": "page-image"
   },
   {
     "id": "tonhauseretal2013_13",
-    "source": {
-      "bibkey": "tonhauser-beaver-roberts-simons-2013",
-      "paperLabel": "(13)"
-    },
+    "source": {"bibkey": "tonhauser-beaver-roberts-simons-2013", "paperLabel": "(13)"},
     "reportedIn": null,
     "language": "para1311",
-    "primaryText": "Pe aña memby Márko ko'ãga oipota amba'apo iñhermáno karniseríape.",
+    "primaryText": "Pe aña memby Márko ko’ãga oi-pota a-mba’apo iñ-hermáno karnisería-pe.",
     "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "That bastard Marko now wants me to work in his brother's butcher shop.",
-    "context": "Julia and Maria work in a bakery; their boss Marko is strict but fair. He calls Julia into his office; when she emerges she says this to Maria.",
+    "glossedTokens": [
+      ["Pe", "that"], ["aña", "devil"], ["memby", "child"], ["Márko", "Marko"], ["ko’ãga", "now"],
+      ["oi-pota", "A3-want"], ["a-mba’apo", "A1SG-work"], ["iñ-hermáno", "B3-brother"],
+      ["karnisería-pe", "butcher.shop-in"]
+    ],
+    "translation": "That bastard Marko now wants me to work in his brother’s butcher shop.",
+    "context": "Julia and Maria work in a bakery; their boss, who is generally strict but fair, is called Marko. One day, he calls Julia into his office; when she emerges, she says to Maria:",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "trigger",
-        "expressive"
-      ],
-      [
-        "content",
-        "negative evaluation"
-      ],
-      [
-        "context",
-        "m-neutral"
-      ],
-      [
-        "diagnostic",
-        "strong contextual felicity"
-      ],
-      [
-        "scf",
-        "no"
-      ]
+      ["trigger", "expressive"],
+      ["content", "negative evaluation"],
+      ["class", "B"],
+      ["diagnostic", "strong contextual felicity"],
+      ["environment", "atomic"],
+      ["context", "m-neutral"]
     ],
-    "comment": "Acceptable in a context neutral about the speaker's low opinion: the expressive imposes no strong contextual felicity constraint, (12i).",
+    "comment": "The addressee has no low opinion of the referent and did not know that the speaker has one.",
     "verified": "page-image"
   },
   {
     "id": "tonhauseretal2013_14a",
-    "source": {
-      "bibkey": "tonhauser-beaver-roberts-simons-2013",
-      "paperLabel": "(14a)"
-    },
+    "source": {"bibkey": "tonhauser-beaver-roberts-simons-2013", "paperLabel": "(14a)"},
     "reportedIn": null,
     "language": "para1311",
-    "primaryText": "Simon, chekichihakue, oñe'ẽ Aleman.",
+    "primaryText": "Simon, che-kichiha-kue, o-ñe’ẽ Aleman.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      ["Simon", "Simon"], ["che-kichiha-kue", "B1SG-boyfriend-NOM.TERM"], ["o-ñe’ẽ", "A3-speak"],
+      ["Aleman", "German"]
+    ],
     "translation": "Simon, my ex-boyfriend, speaks German.",
-    "context": "Raul is new in town. His neighbour Simon invites him to a party and introduces him to Maria; when Simon has walked away, Maria tells Raul.",
+    "context": "Raul is new in town. His neighbor Simon invites him to his house for a party and introduces him to Maria. When Simon has walked away, Maria tells Raul:",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "trigger",
-        "appositive"
-      ],
-      [
-        "content",
-        "descriptive content"
-      ],
-      [
-        "context",
-        "m-neutral"
-      ],
-      [
-        "diagnostic",
-        "strong contextual felicity"
-      ],
-      [
-        "scf",
-        "no"
-      ]
+      ["trigger", "appositive"],
+      ["content", "descriptive content"],
+      ["class", "B"],
+      ["diagnostic", "strong contextual felicity"],
+      ["environment", "atomic"],
+      ["context", "m-neutral"]
     ],
-    "comment": "Raul need not already know that Simon is Maria's ex-boyfriend.",
+    "comment": "Raul need not already know that Simon is Maria’s ex-boyfriend.",
     "verified": "page-image"
   },
   {
     "id": "tonhauseretal2013_14b",
-    "source": {
-      "bibkey": "tonhauser-beaver-roberts-simons-2013",
-      "paperLabel": "(14b)"
-    },
+    "source": {"bibkey": "tonhauser-beaver-roberts-simons-2013", "paperLabel": "(14b)"},
     "reportedIn": null,
     "language": "para1311",
-    "primaryText": "Papa Benedícto 16, onasẽva'ekue Alemániape, oiko Rómape.",
+    "primaryText": "Papa Benedícto 16, o-nasẽ-va’e-kue Alemánia-pe, oi-ko Róma-pe.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      ["Papa", "Pope"], ["Benedícto", "Benedict"], ["16", "16"],
+      ["o-nasẽ-va’e-kue", "A3-born-RC-NOM.TERM"], ["Alemánia-pe", "Germany-in"],
+      ["oi-ko", "A3-live"], ["Róma-pe", "Rome-in"]
+    ],
     "translation": "Pope Benedict the 16th, who was born in Germany, lives in Rome.",
-    "context": "The children in a history class give presentations about famous people; Malena has to talk about the pope and starts with this.",
+    "context": "The children in a history class have to give presentations about famous people. Malena has to talk about the pope. She starts with:",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "trigger",
-        "NRRC"
-      ],
-      [
-        "content",
-        "descriptive content"
-      ],
-      [
-        "context",
-        "m-neutral"
-      ],
-      [
-        "diagnostic",
-        "strong contextual felicity"
-      ],
-      [
-        "scf",
-        "no"
-      ]
+      ["trigger", "NRRC"],
+      ["content", "descriptive content"],
+      ["class", "B"],
+      ["diagnostic", "strong contextual felicity"],
+      ["environment", "atomic"],
+      ["context", "m-neutral"]
     ],
     "comment": "",
     "verified": "page-image"
   },
   {
     "id": "tonhauseretal2013_15a",
-    "source": {
-      "bibkey": "tonhauser-beaver-roberts-simons-2013",
-      "paperLabel": "(15a)"
-    },
+    "source": {"bibkey": "tonhauser-beaver-roberts-simons-2013", "paperLabel": "(15a)"},
     "reportedIn": null,
     "language": "para1311",
-    "primaryText": "Maléna hasy ra'e. Aimete ogue'ẽ.",
-    "discourseSegments": [],
-    "glossedTokens": [],
+    "primaryText": "Maléna hasy ra’e. Aimete o-gue’ẽ.",
+    "discourseSegments": [
+      "Maléna hasy ra’e.",
+      "Aimete o-gue’ẽ."
+    ],
+    "glossedTokens": [
+      ["Maléna", "Malena"], ["hasy", "B3.sick"], ["ra’e", "it.seems"], ["Aimete", "almost"],
+      ["o-gue’ẽ", "A3-vomit"]
+    ],
     "translation": "It seems that Malena is sick. She almost threw up.",
-    "context": "A mother goes upstairs to check on her daughter, who did not come down for dinner, and reports to her husband.",
+    "context": "A mother calls for her daughter to come down for dinner. Her daughter doesn’t appear so she goes upstairs to check on her. When she comes back down, she says to her husband:",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "trigger",
-        "aimete 'almost'"
-      ],
-      [
-        "content",
-        "polar implication"
-      ],
-      [
-        "context",
-        "m-neutral"
-      ],
-      [
-        "diagnostic",
-        "strong contextual felicity"
-      ],
-      [
-        "scf",
-        "no"
-      ]
+      ["trigger", "aimete ‘almost’"],
+      ["content", "polar implication"],
+      ["class", "C"],
+      ["diagnostic", "strong contextual felicity"],
+      ["environment", "atomic"],
+      ["context", "m-neutral"]
     ],
-    "comment": "The context is neutral about whether Malena threw up.",
+    "comment": "The context is neutral about the polar implication, that Malena did not throw up.",
     "verified": "page-image"
   },
   {
     "id": "tonhauseretal2013_15b",
-    "source": {
-      "bibkey": "tonhauser-beaver-roberts-simons-2013",
-      "paperLabel": "(15b)"
-    },
+    "source": {"bibkey": "tonhauser-beaver-roberts-simons-2013", "paperLabel": "(15b)"},
     "reportedIn": null,
     "language": "para1311",
-    "primaryText": "Chénte amopotĩ ñanderóga!",
+    "primaryText": "Ché-nte a-mo-potĩ ñande-róga!",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      ["Ché-nte", "PRON.S.1SG-only"], ["a-mo-potĩ", "A1SG-CAUS-clean"],
+      ["ñande-róga", "B1PL.INCL-house"]
+    ],
     "translation": "Only I clean our house!",
-    "context": "Carla, a mother of three teenage daughters, has been in hospital for a week when her daughters visit for the first time; asked how they are doing, the youngest blurts this out.",
+    "context": "Carla, a mother of three teenage daughters, falls on the way to the supermarket and breaks her leg. She’s been in the hospital for a week when her daughters come to visit her for the first time. When she asks them how they are doing, her youngest daughter blurts out:",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "trigger",
-        "-nte 'only'"
-      ],
-      [
-        "content",
-        "prejacent"
-      ],
-      [
-        "context",
-        "m-neutral"
-      ],
-      [
-        "diagnostic",
-        "strong contextual felicity"
-      ],
-      [
-        "scf",
-        "no"
-      ]
+      ["trigger", "-nte ‘only’"],
+      ["content", "prejacent implication"],
+      ["class", "C"],
+      ["diagnostic", "strong contextual felicity"],
+      ["environment", "atomic"],
+      ["context", "m-neutral"]
     ],
-    "comment": "The mother did not previously know that the youngest daughter cleans the house.",
+    "comment": "The prejacent, that the youngest daughter cleans the house, is not previously known to the mother.",
     "verified": "page-image"
   },
   {
     "id": "tonhauseretal2013_16a",
-    "source": {
-      "bibkey": "tonhauser-beaver-roberts-simons-2013",
-      "paperLabel": "(16a)"
-    },
+    "source": {"bibkey": "tonhauser-beaver-roberts-simons-2013", "paperLabel": "(16a)"},
     "reportedIn": null,
     "language": "para1311",
-    "primaryText": "Pe kuimba'e nderu.",
+    "primaryText": "Pe kuimba’e nde-ru.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      ["Pe", "that"], ["kuimba’e", "man"], ["nde-ru", "B2SG-father"]
+    ],
     "translation": "That man is your father.",
-    "context": "You and Maria walk across a meadow and both see something lying in the grass that neither can identify; with better vision, you recognize it as you approach and tell Maria.",
+    "context": "You and your friend Maria are walking across a meadow. Both of you can see something ahead, lying in the grass, but you can’t identify what it is, even whether it’s an object, an animal, or a person. You have much better vision than Maria (who can generally only recognize people when they stand right in front of her). As you approach, you recognize what is lying ahead and tell Maria:",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "trigger",
-        "demonstrative NP"
-      ],
-      [
-        "content",
-        "descriptive content"
-      ],
-      [
-        "context",
-        "m-neutral, n-positive"
-      ],
-      [
-        "diagnostic",
-        "strong contextual felicity"
-      ],
-      [
-        "scf",
-        "no"
-      ]
+      ["trigger", "demonstrative NP"],
+      ["content", "property attribution"],
+      ["class", "B"],
+      ["diagnostic", "strong contextual felicity"],
+      ["environment", "atomic"],
+      ["context", "m-neutral"]
     ],
-    "comment": "Neutral about the demonstratum being a man, positive about the speaker indicating something; the descriptive content imposes no constraint while the indication implication does, (18).",
+    "comment": "Neutral about the demonstratum being a man, and positive about the implication that the speaker indicates a suitable entity, which does impose the constraint, (18).",
     "verified": "page-image"
   },
   {
     "id": "tonhauseretal2013_16b",
-    "source": {
-      "bibkey": "tonhauser-beaver-roberts-simons-2013",
-      "paperLabel": "(16b)"
-    },
+    "source": {"bibkey": "tonhauser-beaver-roberts-simons-2013", "paperLabel": "(16b)"},
     "reportedIn": null,
     "language": "para1311",
-    "primaryText": "Ha'e peteĩ kuimba'e.",
+    "primaryText": "Ha’e peteĩ kuimba’e.",
     "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "He's a man.",
-    "context": "As for (16a).",
+    "glossedTokens": [
+      ["Ha’e", "PRON.S.3"], ["peteĩ", "one"], ["kuimba’e", "man"]
+    ],
+    "translation": "He’s a man.",
+    "context": "You and your friend Maria are walking across a meadow. Both of you can see something ahead, lying in the grass, but you can’t identify what it is, even whether it’s an object, an animal, or a person. You have much better vision than Maria (who can generally only recognize people when they stand right in front of her). As you approach, you recognize what is lying ahead and tell Maria:",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "trigger",
-        "ha'e '3rd'"
-      ],
-      [
-        "content",
-        "human referent"
-      ],
-      [
-        "context",
-        "m-neutral, n-positive"
-      ],
-      [
-        "diagnostic",
-        "strong contextual felicity"
-      ],
-      [
-        "scf",
-        "no"
-      ]
+      ["trigger", "ha’e ‘3rd’"],
+      ["content", "human referent"],
+      ["class", "B"],
+      ["diagnostic", "strong contextual felicity"],
+      ["environment", "atomic"],
+      ["context", "m-neutral"]
     ],
-    "comment": "The human implication of the pronoun imposes no constraint; its existence implication does, (19).",
+    "comment": "Neutral about the referent being human, and positive about the existence of a referent, which does impose the constraint, (19).",
     "verified": "page-image"
   },
   {
     "id": "tonhauseretal2013_17a",
-    "source": {
-      "bibkey": "tonhauser-beaver-roberts-simons-2013",
-      "paperLabel": "(17a)"
-    },
+    "source": {"bibkey": "tonhauser-beaver-roberts-simons-2013", "paperLabel": "(17a)"},
     "reportedIn": null,
     "language": "para1311",
-    "primaryText": "Ñandechofeur okaru empanáda avei.",
+    "primaryText": "Ñande-chofeur o-karu empanáda avei.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      ["Ñande-chofeur", "A1PL.INCL-driver"], ["o-karu", "A3-eat"], ["empanáda", "empanada"],
+      ["avei", "too"]
+    ],
     "translation": "Our bus driver is eating empanadas, too.",
-    "context": "Malena is eating a hamburger on the bus into town; a woman she does not know sits down next to her and says this.",
+    "context": "Malena is eating her lunch, a hamburger, on the bus going into town. A woman who she doesn’t know sits down next to her and says:",
     "judgment": "unacceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "trigger",
-        "avei 'too'"
-      ],
-      [
-        "content",
-        "existence of an alternative"
-      ],
-      [
-        "context",
-        "m-neutral"
-      ],
-      [
-        "diagnostic",
-        "strong contextual felicity"
-      ],
-      [
-        "scf",
-        "yes"
-      ]
+      ["trigger", "avei ‘too’"],
+      ["content", "existence of alternative"],
+      ["class", "A"],
+      ["diagnostic", "strong contextual felicity"],
+      ["environment", "atomic"],
+      ["context", "m-neutral"]
     ],
-    "comment": "Unacceptable when nobody else is known to be eating empanadas, and acceptable in the minimally different context of (17b) where Malena is eating empanadas: the constraint, (12ii).",
+    "comment": "Nobody besides the bus driver is known to be eating empanadas.",
+    "verified": "page-image"
+  },
+  {
+    "id": "tonhauseretal2013_17b",
+    "source": {"bibkey": "tonhauser-beaver-roberts-simons-2013", "paperLabel": "(17b)"},
+    "reportedIn": null,
+    "language": "para1311",
+    "primaryText": "Ñande-chofeur o-karu empanáda avei.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Ñande-chofeur", "A1PL.INCL-driver"], ["o-karu", "A3-eat"], ["empanáda", "empanada"],
+      ["avei", "too"]
+    ],
+    "translation": "Our bus driver is eating empanadas, too.",
+    "context": "Same as in (17a), except that Malena is eating empanadas.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["trigger", "avei ‘too’"],
+      ["content", "existence of alternative"],
+      ["class", "A"],
+      ["diagnostic", "strong contextual felicity"],
+      ["environment", "atomic"],
+      ["context", "m-positive"]
+    ],
+    "comment": "The utterance of (17a) in the minimally different context of (17b).",
+    "verified": "page-image"
+  },
+  {
+    "id": "tonhauseretal2013_18a",
+    "source": {"bibkey": "tonhauser-beaver-roberts-simons-2013", "paperLabel": "(18a)"},
+    "reportedIn": null,
+    "language": "para1311",
+    "primaryText": "Pe mitã-’i che-ryvy.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Pe", "that"], ["mitã-’i", "child-DIM"], ["che-ryvy", "B1SG-younger.brother"]
+    ],
+    "translation": "That little boy is my younger brother.",
+    "context": "The children in a sociology class have to give presentations about their families. Marko is up first and he starts with:",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["trigger", "demonstrative NP"],
+      ["content", "speaker indicates suitable entity"],
+      ["class", "D"],
+      ["diagnostic", "strong contextual felicity"],
+      ["environment", "atomic"],
+      ["context", "m-neutral"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "tonhauseretal2013_18b",
+    "source": {"bibkey": "tonhauser-beaver-roberts-simons-2013", "paperLabel": "(18b)"},
+    "reportedIn": null,
+    "language": "para1311",
+    "primaryText": "Pe mitã-’i che-ryvy.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Pe", "that"], ["mitã-’i", "child-DIM"], ["che-ryvy", "B1SG-younger.brother"]
+    ],
+    "translation": "That little boy is my younger brother.",
+    "context": "As in (18a), but now Marko also brings to the presentation a picture of a person that he shows to the class.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["trigger", "demonstrative NP"],
+      ["content", "speaker indicates suitable entity"],
+      ["class", "D"],
+      ["diagnostic", "strong contextual felicity"],
+      ["environment", "atomic"],
+      ["context", "m-positive"]
+    ],
+    "comment": "The utterance of (18a) in the context of (18b).",
+    "verified": "page-image"
+  },
+  {
+    "id": "tonhauseretal2013_19a",
+    "source": {"bibkey": "tonhauser-beaver-roberts-simons-2013", "paperLabel": "(19a)"},
+    "reportedIn": null,
+    "language": "para1311",
+    "primaryText": "Ha’e chokokue.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Ha’e", "PRON.S.3"], ["chokokue", "farmer"]
+    ],
+    "translation": "S/he is a farmer.",
+    "context": "The children in a sociology class have to give presentations about their families. Marko is up first and he starts with:",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["trigger", "ha’e ‘3rd’"],
+      ["content", "existence of referent"],
+      ["class", "A"],
+      ["diagnostic", "strong contextual felicity"],
+      ["environment", "atomic"],
+      ["context", "m-neutral"]
+    ],
+    "comment": "No referent is available in the context of utterance or in Marko’s utterance.",
+    "verified": "page-image"
+  },
+  {
+    "id": "tonhauseretal2013_19b",
+    "source": {"bibkey": "tonhauser-beaver-roberts-simons-2013", "paperLabel": "(19b)"},
+    "reportedIn": null,
+    "language": "para1311",
+    "primaryText": "Che-ru réra Juan. Ha’e chokokue.",
+    "discourseSegments": [
+      "Che-ru réra Juan.",
+      "Ha’e chokokue."
+    ],
+    "glossedTokens": [
+      ["Che-ru", "B1SG-father"], ["réra", "name"], ["Juan", "Juan"], ["Ha’e", "PRON.S.3"],
+      ["chokokue", "farmer"]
+    ],
+    "translation": "My father’s name is Juan. He is a farmer.",
+    "context": "The children in a sociology class have to give presentations about their families. Marko is up first and he starts with:",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["trigger", "ha’e ‘3rd’"],
+      ["content", "existence of referent"],
+      ["class", "A"],
+      ["diagnostic", "strong contextual felicity"],
+      ["environment", "atomic"],
+      ["context", "m-positive"]
+    ],
+    "comment": "The first utterance introduces a third person, so the second is interpreted in a positive context.",
+    "verified": "page-image"
+  },
+  {
+    "id": "tonhauseretal2013_20a",
+    "source": {"bibkey": "tonhauser-beaver-roberts-simons-2013", "paperLabel": "(20a)"},
+    "reportedIn": null,
+    "language": "para1311",
+    "primaryText": "A-ha-va’erã a-me’ẽ-ha-guã che-rymba jaguá-pe hembi’u-rã.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["A-ha-va’erã", "A1SG-go-MUST"], ["a-me’ẽ-ha-guã", "A1SG-give-NOM-PURP"],
+      ["che-rymba", "B1SG-domesticated.animal"], ["jaguá-pe", "dog-at"],
+      ["hembi’u-rã", "3.food-NOM.PROSP"]
+    ],
+    "translation": "I have to go now to feed my dog.",
+    "context": "A woman who is being interviewed by a school director for a job as a teacher suddenly interrupts and says:",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["trigger", "possessive NP"],
+      ["content", "possessive relation"],
+      ["class", "B"],
+      ["diagnostic", "strong contextual felicity"],
+      ["environment", "atomic"],
+      ["context", "m-neutral"]
+    ],
+    "comment": "The context is neutral about the woman having a dog.",
+    "verified": "page-image"
+  },
+  {
+    "id": "tonhauseretal2013_20b",
+    "source": {"bibkey": "tonhauser-beaver-roberts-simons-2013", "paperLabel": "(20b)"},
+    "reportedIn": null,
+    "language": "para1311",
+    "primaryText": "Nd-a-je-droga-vé-i-ma.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Nd-a-je-droga-vé-i-ma", "NEG-A1SG-JE-drug-more-NEG-already"]
+    ],
+    "translation": "I’ve stopped doing drugs.",
+    "context": "Laura, who doesn’t live with her parents, visits them and asks them to sit down with her because she has to tell them something:",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["trigger", "n(d)(a)-…-vé-i-ma ‘not anymore’"],
+      ["content", "prestate holds"],
+      ["class", "C"],
+      ["diagnostic", "strong contextual felicity"],
+      ["environment", "atomic"],
+      ["context", "m-neutral"]
+    ],
+    "comment": "The context is neutral about Laura having done drugs.",
+    "verified": "page-image"
+  },
+  {
+    "id": "tonhauseretal2013_20c",
+    "source": {"bibkey": "tonhauser-beaver-roberts-simons-2013", "paperLabel": "(20c)"},
+    "reportedIn": null,
+    "language": "para1311",
+    "primaryText": "Ha’e oi-kuaa o-moĩ-va’erã-ha i-lénte o-maneja-ha-guã.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Ha’e", "PRON.S.3"], ["oi-kuaa", "A3-know"], ["o-moĩ-va’erã-ha", "A3-put-MUST-NOM"],
+      ["i-lénte", "3-glasses"], ["o-maneja-ha-guã", "A3-drive-NOM-PURP"]
+    ],
+    "translation": "She knows that she has to use her glasses to drive.",
+    "context": "A girl backs out of a driveway and hits Susi’s car. A woman comes running out of the house, apologizes that her daughter hit Susi’s car, and says:",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["trigger", "(oi)kuaa ‘know’"],
+      ["content", "content of complement"],
+      ["class", "C"],
+      ["diagnostic", "strong contextual felicity"],
+      ["environment", "atomic"],
+      ["context", "m-neutral"]
+    ],
+    "comment": "The addressee cannot be expected to know the content of the complement already.",
     "verified": "page-image"
   },
   {
     "id": "tonhauseretal2013_22a",
-    "source": {
-      "bibkey": "tonhauser-beaver-roberts-simons-2013",
-      "paperLabel": "(22a)"
-    },
+    "source": {"bibkey": "tonhauser-beaver-roberts-simons-2013", "paperLabel": "(22a)"},
     "reportedIn": null,
     "language": "para1311",
-    "primaryText": "Ko mburuvicha Fransiagua oiko Lóndrepe.",
+    "primaryText": "Ko mburuvicha Fransia-gua oi-ko Lóndre-pe.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      ["Ko", "this"], ["mburuvicha", "boss"], ["Fransia-gua", "France-from"], ["oi-ko", "A3-live"],
+      ["Lóndre-pe", "London-in"]
+    ],
     "translation": "This boss from France lives in London.",
-    "context": "Out of context.",
+    "context": "",
     "judgment": "unacceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "trigger",
-        "demonstrative NP"
-      ],
-      [
-        "content",
-        "indication"
-      ],
-      [
-        "context",
-        "m-neutral"
-      ],
-      [
-        "diagnostic",
-        "projection"
-      ]
+      ["trigger", "demonstrative NP"],
+      ["content", "speaker indicates suitable entity"],
+      ["class", "D"],
+      ["diagnostic", "projection"],
+      ["environment", "atomic"],
+      ["context", "m-neutral"]
     ],
-    "comment": "A decontextualized utterance of a trigger with the constraint is unacceptable, so implication judgments cannot diagnose its projection; the family-of-sentences diagnostic (24i) tests acceptability across contexts instead, after Matthewson (2004).",
+    "comment": "Decontextualized. A trigger with the constraint is unacceptable out of context, so implication judgments cannot diagnose its projection.",
+    "verified": "page-image"
+  },
+  {
+    "id": "tonhauseretal2013_22b",
+    "source": {"bibkey": "tonhauser-beaver-roberts-simons-2013", "paperLabel": "(22b)"},
+    "reportedIn": null,
+    "language": "para1311",
+    "primaryText": "Ko mburuvicha Fransia-gua nd-oi-kó-i Lóndre-pe.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Ko", "this"], ["mburuvicha", "boss"], ["Fransia-gua", "France-from"],
+      ["nd-oi-kó-i", "NEG-A3-live-NEG"], ["Lóndre-pe", "London-in"]
+    ],
+    "translation": "This boss from France does not live in London.",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["trigger", "demonstrative NP"],
+      ["content", "speaker indicates suitable entity"],
+      ["class", "D"],
+      ["diagnostic", "projection"],
+      ["environment", "negation"],
+      ["context", "m-neutral"]
+    ],
+    "comment": "",
     "verified": "page-image"
   },
   {
     "id": "tonhauseretal2013_30a",
-    "source": {
-      "bibkey": "tonhauser-beaver-roberts-simons-2013",
-      "paperLabel": "(30a)"
-    },
+    "source": {"bibkey": "tonhauser-beaver-roberts-simons-2013", "paperLabel": "(30a)"},
     "reportedIn": null,
     "language": "para1311",
-    "primaryText": "Ñandechofeur okaru empanáda avei.",
+    "primaryText": "Ñande-chofeur o-karu empanáda avei.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      ["Ñande-chofeur", "A1PL.INCL-driver"], ["o-karu", "A3-eat"], ["empanáda", "empanada"],
+      ["avei", "too"]
+    ],
     "translation": "Our bus driver is eating empanadas, too.",
-    "context": "As for (17a): Malena is eating a hamburger.",
+    "context": "Malena is eating her lunch, a hamburger, on the bus going into town. A woman who she doesn’t know sits down next to her and says:",
     "judgment": "unacceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "environment",
-        "atomic"
-      ],
-      [
-        "trigger",
-        "avei 'too'"
-      ],
-      [
-        "content",
-        "existence of an alternative"
-      ],
-      [
-        "context",
-        "m-neutral"
-      ],
-      [
-        "diagnostic",
-        "projection"
-      ],
-      [
-        "projective",
-        "yes"
-      ]
+      ["trigger", "avei ‘too’"],
+      ["content", "existence of alternative"],
+      ["class", "A"],
+      ["diagnostic", "projection"],
+      ["environment", "atomic"],
+      ["context", "m-neutral"]
     ],
-    "comment": "The atomic sentence and its modal, conditional and question variants (30b)-(30d) are unacceptable in the neutral context and acceptable in the positive context of (31): the existence implication is projective, (24i).",
+    "comment": "",
     "verified": "page-image"
   },
   {
     "id": "tonhauseretal2013_30b",
-    "source": {
-      "bibkey": "tonhauser-beaver-roberts-simons-2013",
-      "paperLabel": "(30b)"
-    },
+    "source": {"bibkey": "tonhauser-beaver-roberts-simons-2013", "paperLabel": "(30b)"},
     "reportedIn": null,
     "language": "para1311",
-    "primaryText": "Ikatu okaru empanáda avei ñandechofeur.",
+    "primaryText": "I-katu o-karu empanáda avei ñande-chofeur.",
     "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "It's possible that our bus driver is eating empanadas, too.",
-    "context": "As for (30a).",
+    "glossedTokens": [
+      ["I-katu", "B3-possible"], ["o-karu", "A3-eat"], ["empanáda", "empanada"], ["avei", "too"],
+      ["ñande-chofeur", "A1PL.INCL-driver"]
+    ],
+    "translation": "It’s possible that our bus driver is eating empanadas, too.",
+    "context": "Malena is eating her lunch, a hamburger, on the bus going into town. A woman who she doesn’t know sits down next to her and says:",
     "judgment": "unacceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "environment",
-        "epistemic modal"
-      ],
-      [
-        "trigger",
-        "avei 'too'"
-      ],
-      [
-        "content",
-        "existence of an alternative"
-      ],
-      [
-        "context",
-        "m-neutral"
-      ],
-      [
-        "diagnostic",
-        "projection"
-      ],
-      [
-        "projective",
-        "yes"
-      ]
+      ["trigger", "avei ‘too’"],
+      ["content", "existence of alternative"],
+      ["class", "A"],
+      ["diagnostic", "projection"],
+      ["environment", "epistemic modal"],
+      ["context", "m-neutral"]
     ],
     "comment": "",
     "verified": "page-image"
   },
   {
     "id": "tonhauseretal2013_30c",
-    "source": {
-      "bibkey": "tonhauser-beaver-roberts-simons-2013",
-      "paperLabel": "(30c)"
-    },
+    "source": {"bibkey": "tonhauser-beaver-roberts-simons-2013", "paperLabel": "(30c)"},
     "reportedIn": null,
     "language": "para1311",
-    "primaryText": "Okarúramo empanáda avei ñandechofeur, asẽta kolektívogui.",
+    "primaryText": "O-karú-ramo empanáda avei ñande-chofeur, a-sẽ-ta kolektívo-gui.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      ["O-karú-ramo", "A3-eat-if"], ["empanáda", "empanada"], ["avei", "too"],
+      ["ñande-chofeur", "A1PL.INCL-driver"], ["a-sẽ-ta", "A1SG-leave-PROSP"],
+      ["kolektívo-gui", "bus-from"]
+    ],
     "translation": "If our bus driver is also eating empanadas, I am going to leave the bus.",
-    "context": "As for (30a).",
+    "context": "Malena is eating her lunch, a hamburger, on the bus going into town. A woman who she doesn’t know sits down next to her and says:",
     "judgment": "unacceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "environment",
-        "conditional antecedent"
-      ],
-      [
-        "trigger",
-        "avei 'too'"
-      ],
-      [
-        "content",
-        "existence of an alternative"
-      ],
-      [
-        "context",
-        "m-neutral"
-      ],
-      [
-        "diagnostic",
-        "projection"
-      ],
-      [
-        "projective",
-        "yes"
-      ]
+      ["trigger", "avei ‘too’"],
+      ["content", "existence of alternative"],
+      ["class", "A"],
+      ["diagnostic", "projection"],
+      ["environment", "conditional antecedent"],
+      ["context", "m-neutral"]
     ],
     "comment": "",
     "verified": "page-image"
   },
   {
     "id": "tonhauseretal2013_30d",
-    "source": {
-      "bibkey": "tonhauser-beaver-roberts-simons-2013",
-      "paperLabel": "(30d)"
-    },
+    "source": {"bibkey": "tonhauser-beaver-roberts-simons-2013", "paperLabel": "(30d)"},
     "reportedIn": null,
     "language": "para1311",
-    "primaryText": "Okarúpa empanada avei ñandechofeur?",
+    "primaryText": "O-karú-pa empanada avei ñande-chofeur?",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      ["O-karú-pa", "A3-eat-Q"], ["empanada", "empanada"], ["avei", "too"],
+      ["ñande-chofeur", "A1PL.INCL-driver"]
+    ],
     "translation": "Is our driver eating empanadas, too?",
-    "context": "As for (30a).",
+    "context": "Malena is eating her lunch, a hamburger, on the bus going into town. A woman who she doesn’t know sits down next to her and says:",
     "judgment": "unacceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "environment",
-        "question"
-      ],
-      [
-        "trigger",
-        "avei 'too'"
-      ],
-      [
-        "content",
-        "existence of an alternative"
-      ],
-      [
-        "context",
-        "m-neutral"
-      ],
-      [
-        "diagnostic",
-        "projection"
-      ],
-      [
-        "projective",
-        "yes"
-      ]
+      ["trigger", "avei ‘too’"],
+      ["content", "existence of alternative"],
+      ["class", "A"],
+      ["diagnostic", "projection"],
+      ["environment", "question"],
+      ["context", "m-neutral"]
     ],
-    "comment": "The negative variant is excluded since avei cannot occur inside the negation circumfix (footnote 17).",
+    "comment": "The negative variant is not a test, since avei cannot occur inside the negation circumfix (fn. 17).",
+    "verified": "page-image"
+  },
+  {
+    "id": "tonhauseretal2013_31_30a",
+    "source": {"bibkey": "tonhauser-beaver-roberts-simons-2013", "paperLabel": "(31)"},
+    "reportedIn": null,
+    "language": "para1311",
+    "primaryText": "Ñande-chofeur o-karu empanáda avei.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Ñande-chofeur", "A1PL.INCL-driver"], ["o-karu", "A3-eat"], ["empanáda", "empanada"],
+      ["avei", "too"]
+    ],
+    "translation": "Our bus driver is eating empanadas, too.",
+    "context": "Same as in (30), except that Malena is eating empanadas.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["trigger", "avei ‘too’"],
+      ["content", "existence of alternative"],
+      ["class", "A"],
+      ["diagnostic", "projection"],
+      ["environment", "atomic"],
+      ["context", "m-positive"]
+    ],
+    "comment": "The utterance of (30a) in the context of (31).",
+    "verified": "page-image"
+  },
+  {
+    "id": "tonhauseretal2013_31_30b",
+    "source": {"bibkey": "tonhauser-beaver-roberts-simons-2013", "paperLabel": "(31)"},
+    "reportedIn": null,
+    "language": "para1311",
+    "primaryText": "I-katu o-karu empanáda avei ñande-chofeur.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["I-katu", "B3-possible"], ["o-karu", "A3-eat"], ["empanáda", "empanada"], ["avei", "too"],
+      ["ñande-chofeur", "A1PL.INCL-driver"]
+    ],
+    "translation": "It’s possible that our bus driver is eating empanadas, too.",
+    "context": "Same as in (30), except that Malena is eating empanadas.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["trigger", "avei ‘too’"],
+      ["content", "existence of alternative"],
+      ["class", "A"],
+      ["diagnostic", "projection"],
+      ["environment", "epistemic modal"],
+      ["context", "m-positive"]
+    ],
+    "comment": "The utterance of (30b) in the context of (31).",
+    "verified": "page-image"
+  },
+  {
+    "id": "tonhauseretal2013_31_30c",
+    "source": {"bibkey": "tonhauser-beaver-roberts-simons-2013", "paperLabel": "(31)"},
+    "reportedIn": null,
+    "language": "para1311",
+    "primaryText": "O-karú-ramo empanáda avei ñande-chofeur, a-sẽ-ta kolektívo-gui.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["O-karú-ramo", "A3-eat-if"], ["empanáda", "empanada"], ["avei", "too"],
+      ["ñande-chofeur", "A1PL.INCL-driver"], ["a-sẽ-ta", "A1SG-leave-PROSP"],
+      ["kolektívo-gui", "bus-from"]
+    ],
+    "translation": "If our bus driver is also eating empanadas, I am going to leave the bus.",
+    "context": "Same as in (30), except that Malena is eating empanadas.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["trigger", "avei ‘too’"],
+      ["content", "existence of alternative"],
+      ["class", "A"],
+      ["diagnostic", "projection"],
+      ["environment", "conditional antecedent"],
+      ["context", "m-positive"]
+    ],
+    "comment": "The utterance of (30c) in the context of (31).",
+    "verified": "page-image"
+  },
+  {
+    "id": "tonhauseretal2013_31_30d",
+    "source": {"bibkey": "tonhauser-beaver-roberts-simons-2013", "paperLabel": "(31)"},
+    "reportedIn": null,
+    "language": "para1311",
+    "primaryText": "O-karú-pa empanada avei ñande-chofeur?",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["O-karú-pa", "A3-eat-Q"], ["empanada", "empanada"], ["avei", "too"],
+      ["ñande-chofeur", "A1PL.INCL-driver"]
+    ],
+    "translation": "Is our driver eating empanadas, too?",
+    "context": "Same as in (30), except that Malena is eating empanadas.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["trigger", "avei ‘too’"],
+      ["content", "existence of alternative"],
+      ["class", "A"],
+      ["diagnostic", "projection"],
+      ["environment", "question"],
+      ["context", "m-positive"]
+    ],
+    "comment": "The utterance of (30d) in the context of (31).",
     "verified": "page-image"
   },
   {
     "id": "tonhauseretal2013_38a",
-    "source": {
-      "bibkey": "tonhauser-beaver-roberts-simons-2013",
-      "paperLabel": "(38a)"
-    },
+    "source": {"bibkey": "tonhauser-beaver-roberts-simons-2013", "paperLabel": "(38a)"},
     "reportedIn": null,
     "language": "stan1293",
-    "primaryText": "Jane believes that Bill has stopped smoking (although he's actually never been a smoker).",
+    "primaryText": "Jane believes that Bill has stopped smoking (although he’s actually never been a smoker).",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
@@ -693,69 +804,45 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "trigger",
-        "stop"
-      ],
-      [
-        "content",
-        "prestate"
-      ],
-      [
-        "diagnostic",
-        "obligatory local effect"
-      ],
-      [
-        "localEffect",
-        "yes"
-      ]
+      ["trigger", "stop"],
+      ["content", "prestate holds"],
+      ["class", "C"],
+      ["diagnostic", "obligatory local effect"],
+      ["holder", "m-positive"]
     ],
-    "comment": "The report attributes to Jane the belief that Bill has been a smoker: the prestate has local effect, and always does, (39a).",
+    "comment": "The report attributes to Jane the belief that Bill has been a smoker.",
     "verified": "page-image"
   },
   {
     "id": "tonhauseretal2013_38b",
-    "source": {
-      "bibkey": "tonhauser-beaver-roberts-simons-2013",
-      "paperLabel": "(38b)"
-    },
-    "reportedIn": null,
+    "source": {"bibkey": "amaral-roberts-smith-2007", "paperLabel": "pp. 735f."},
+    "reportedIn": {"bibkey": "tonhauser-beaver-roberts-simons-2013", "paperLabel": "(38b)"},
     "language": "stan1293",
-    "primaryText": "Joan believes that her chip, which she had installed last month, has a twelve year guarantee.",
-    "discourseSegments": [],
+    "primaryText": "Joan is crazy. She’s hallucinating that some geniuses in Silicon Valley have invented a new brain chip that’s been installed in her left temporal lobe and permits her to speak any of a number of languages she’s never studied. Joan believes that her chip, which she had installed last month, has a twelve year guarantee.",
+    "discourseSegments": [
+      "Joan is crazy.",
+      "She’s hallucinating that some geniuses in Silicon Valley have invented a new brain chip that’s been installed in her left temporal lobe and permits her to speak any of a number of languages she’s never studied.",
+      "Joan believes that her chip, which she had installed last month, has a twelve year guarantee."
+    ],
     "glossedTokens": [],
     "translation": "",
-    "context": "Joan is hallucinating that Silicon Valley geniuses have installed a brain chip in her left temporal lobe that lets her speak languages she has never studied.",
+    "context": "",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "trigger",
-        "NRRC"
-      ],
-      [
-        "content",
-        "descriptive content"
-      ],
-      [
-        "diagnostic",
-        "obligatory local effect"
-      ],
-      [
-        "localEffect",
-        "yes"
-      ]
+      ["trigger", "NRRC"],
+      ["content", "descriptive content"],
+      ["class", "B"],
+      ["diagnostic", "obligatory local effect"],
+      ["holder", "m-positive"]
     ],
-    "comment": "From Amaral, Roberts and Smith (2007). Here the NRRC's content is part of Joan's belief state, but it need not be, (39b).",
+    "comment": "The report attributes to Joan the belief that the chip was installed last month.",
     "verified": "page-image"
   },
   {
     "id": "tonhauseretal2013_39a",
-    "source": {
-      "bibkey": "tonhauser-beaver-roberts-simons-2013",
-      "paperLabel": "(39a)"
-    },
+    "source": {"bibkey": "tonhauser-beaver-roberts-simons-2013", "paperLabel": "(39a)"},
     "reportedIn": null,
     "language": "stan1293",
     "primaryText": "Jane believes that Bill has stopped smoking and that he has never been a smoker.",
@@ -767,35 +854,21 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "trigger",
-        "stop"
-      ],
-      [
-        "content",
-        "prestate"
-      ],
-      [
-        "diagnostic",
-        "obligatory local effect"
-      ],
-      [
-        "ole",
-        "yes"
-      ]
+      ["trigger", "stop"],
+      ["content", "prestate holds"],
+      ["class", "C"],
+      ["diagnostic", "obligatory local effect"],
+      ["holder", "m-negative"]
     ],
-    "comment": "The conjoined complements attribute inconsistent beliefs to Jane: the prestate of *stop* has obligatory local effect, (41iia).",
+    "comment": "The conjoined complements attribute inconsistent beliefs to Jane.",
     "verified": "page-image"
   },
   {
     "id": "tonhauseretal2013_39b",
-    "source": {
-      "bibkey": "tonhauser-beaver-roberts-simons-2013",
-      "paperLabel": "(39b)"
-    },
+    "source": {"bibkey": "tonhauser-beaver-roberts-simons-2013", "paperLabel": "(39b)"},
     "reportedIn": null,
     "language": "stan1293",
-    "primaryText": "Jane believes that Bill, who is Sue's cousin, is Sue's brother.",
+    "primaryText": "Jane believes that Bill, who is Sue’s cousin, is Sue’s brother.",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
@@ -804,233 +877,409 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "trigger",
-        "NRRC"
-      ],
-      [
-        "content",
-        "descriptive content"
-      ],
-      [
-        "diagnostic",
-        "obligatory local effect"
-      ],
-      [
-        "ole",
-        "no"
-      ]
+      ["trigger", "NRRC"],
+      ["content", "descriptive content"],
+      ["class", "B"],
+      ["diagnostic", "obligatory local effect"],
+      ["holder", "m-negative"]
     ],
-    "comment": "The speaker attributes to Jane only the belief that Bill is Sue's brother, not that he is her cousin: no obligatory local effect, (41iic).",
+    "comment": "The speaker attributes to Jane only the belief that Bill is Sue’s brother.",
     "verified": "page-image"
   },
   {
     "id": "tonhauseretal2013_46a",
-    "source": {
-      "bibkey": "tonhauser-beaver-roberts-simons-2013",
-      "paperLabel": "(46a)"
-    },
+    "source": {"bibkey": "tonhauser-beaver-roberts-simons-2013", "paperLabel": "(46a)"},
     "reportedIn": null,
     "language": "para1311",
-    "primaryText": "Raul ova Buénos Áirespe, hákatu Juan ndoikuáai. Ha'e oimo'ã Maléna avei ovaha Buénos Áirespe.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "Raul moved to Buenos Aires, but Juan doesn't know that. He thinks that Malena, too, moved to Buenos Aires.",
+    "primaryText": "Raul o-va Buénos Áires-pe, há=katu Juan nd-oi-kuáa-i. Ha’e oi-mo’ã Maléna avei o-va-ha Buénos Áires-pe.",
+    "discourseSegments": [
+      "Raul o-va Buénos Áires-pe, há=katu Juan nd-oi-kuáa-i.",
+      "Ha’e oi-mo’ã Maléna avei o-va-ha Buénos Áires-pe."
+    ],
+    "glossedTokens": [
+      ["Raul", "Raul"], ["o-va", "A3-move"], ["Buénos", "Buenos"], ["Áires-pe", "Aires-to"],
+      ["há=katu", "and=CONTR"], ["Juan", "Juan"], ["nd-oi-kuáa-i", "NEG-A3-know-NEG"],
+      ["Ha’e", "PRON.S.3"], ["oi-mo’ã", "A3-think"], ["Maléna", "Malena"], ["avei", "too"],
+      ["o-va-ha", "A3-move-NOM"], ["Buénos", "Buenos"], ["Áires-pe", "Aires-to"]
+    ],
+    "translation": "Raul moved to Buenos Aires, but Juan doesn’t know that. He thinks that Malena, too, moved to Buenos Aires.",
     "context": "",
     "judgment": "unacceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "trigger",
-        "avei 'too'"
-      ],
-      [
-        "content",
-        "existence of an alternative"
-      ],
-      [
-        "context",
-        "globally m-positive, locally m-neutral"
-      ],
-      [
-        "diagnostic",
-        "obligatory local effect"
-      ],
-      [
-        "ole",
-        "yes"
-      ]
+      ["trigger", "avei ‘too’"],
+      ["content", "existence of alternative"],
+      ["class", "A"],
+      ["diagnostic", "obligatory local effect"],
+      ["context", "m-positive"],
+      ["holder", "m-neutral"]
     ],
-    "comment": "The global context entails that someone moved to Buenos Aires while the attitude holder is explicitly ignorant of it: unacceptability shows the constraint must be met in the local context, (41i).",
+    "comment": "Raul is known to have moved to Buenos Aires, and the attitude holder is not aware of it.",
     "verified": "page-image"
   },
   {
     "id": "tonhauseretal2013_46b",
-    "source": {
-      "bibkey": "tonhauser-beaver-roberts-simons-2013",
-      "paperLabel": "(46b)"
-    },
+    "source": {"bibkey": "tonhauser-beaver-roberts-simons-2013", "paperLabel": "(46b)"},
     "reportedIn": null,
     "language": "para1311",
-    "primaryText": "Ema'ẽmi! Upépe oĩ peteĩ kuimba'e. Maléna ndohechái. Ha'e oimo'ã ha'e hasyha.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "Look! There's a man. Malena doesn't see him. She thinks he is sick.",
-    "context": "The speaker, Ricardo and Malena are lost in an unfamiliar city; the speaker, a bit ahead of Malena with Ricardo, says this.",
+    "primaryText": "E-ma’ẽ-mi! Upépe o-ĩ peteĩ kuimba’e. Maléna nd-o-hechá-i. Ha’e oi-mo’ã ha’e hasy-ha.",
+    "discourseSegments": [
+      "E-ma’ẽ-mi!",
+      "Upépe o-ĩ peteĩ kuimba’e.",
+      "Maléna nd-o-hechá-i.",
+      "Ha’e oi-mo’ã ha’e hasy-ha."
+    ],
+    "glossedTokens": [
+      ["E-ma’ẽ-mi", "A2SG-look-DIM"], ["Upépe", "there"], ["o-ĩ", "A3-be"], ["peteĩ", "one"],
+      ["kuimba’e", "man"], ["Maléna", "Malena"], ["nd-o-hechá-i", "NEG-A3-see-NEG"],
+      ["Ha’e", "PRON.S.3"], ["oi-mo’ã", "A3-think"], ["ha’e", "PRON.S.3"],
+      ["hasy-ha", "B3.sick-NOM"]
+    ],
+    "translation": "Look! There’s a man. Malena doesn’t see him. She thinks he is sick.",
+    "context": "The speaker, Ricardo, and Malena are lost in a city they’ve never visited before. The speaker, who, together with Ricardo, is a bit ahead of Malena, says:",
     "judgment": "unacceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "trigger",
-        "ha'e '3rd'"
-      ],
-      [
-        "content",
-        "existence of referent"
-      ],
-      [
-        "context",
-        "globally m-positive, locally m-neutral"
-      ],
-      [
-        "diagnostic",
-        "obligatory local effect"
-      ],
-      [
-        "ole",
-        "yes"
-      ]
+      ["trigger", "ha’e ‘3rd’"],
+      ["content", "existence of referent"],
+      ["class", "A"],
+      ["diagnostic", "obligatory local effect"],
+      ["context", "m-positive"],
+      ["holder", "m-neutral"]
     ],
-    "comment": "One of three consultants accepted this example (footnote 24).",
+    "comment": "One of the three consultants accepted the example, taking the referent to exist in Malena’s epistemic state (fn. 24).",
+    "verified": "page-image"
+  },
+  {
+    "id": "tonhauseretal2013_47a",
+    "source": {"bibkey": "tonhauser-beaver-roberts-simons-2013", "paperLabel": "(47a)"},
+    "reportedIn": null,
+    "language": "para1311",
+    "primaryText": "Juan oi-mo’ã Maléna aimete o-pe-ha hetyma ha oi-mo’ã avei Maléna o-pe-ha hetyma.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Juan", "Juan"], ["oi-mo’ã", "A3-think"], ["Maléna", "Malena"], ["aimete", "almost"],
+      ["o-pe-ha", "A3-break-NOM"], ["hetyma", "B3.leg"], ["ha", "and"], ["oi-mo’ã", "A3-think"],
+      ["avei", "also"], ["Maléna", "Malena"], ["o-pe-ha", "A3-break-NOM"], ["hetyma", "B3.leg"]
+    ],
+    "translation": "Juan thinks that Malena almost broke her leg and that Malena broke her leg.",
+    "context": "Juan is a doctor at the scene of an accident. His friend says about him:",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["trigger", "aimete ‘almost’"],
+      ["content", "polar implication"],
+      ["class", "C"],
+      ["diagnostic", "obligatory local effect"],
+      ["holder", "m-negative"]
+    ],
+    "comment": "The source glosses the second oi-mo’ã as B3-think.",
+    "verified": "page-image"
+  },
+  {
+    "id": "tonhauseretal2013_47b",
+    "source": {"bibkey": "tonhauser-beaver-roberts-simons-2013", "paperLabel": "(47b)"},
+    "reportedIn": null,
+    "language": "para1311",
+    "primaryText": "Juan oi-mo’ã Maléna-nte o-pe-ha hetyma ha oi-mo’ã avei Maléna nd-o-pe-i-ha hetyma.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Juan", "Juan"], ["oi-mo’ã", "A3-think"], ["Maléna-nte", "Malena-only"],
+      ["o-pe-ha", "A3-break-NOM"], ["hetyma", "B3.leg"], ["ha", "and"], ["oi-mo’ã", "A3-think"],
+      ["avei", "too"], ["Maléna", "Malena"], ["nd-o-pe-i-ha", "NEG-A3-break-NEG-NOM"],
+      ["hetyma", "B3.leg"]
+    ],
+    "translation": "Juan thinks that only Malena broke her leg and that Malena didn’t break her leg.",
+    "context": "Juan is a doctor at the scene of an accident. His friend says about him:",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["trigger", "-nte ‘only’"],
+      ["content", "prejacent implication"],
+      ["class", "C"],
+      ["diagnostic", "obligatory local effect"],
+      ["holder", "m-negative"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "tonhauseretal2013_48",
+    "source": {"bibkey": "tonhauser-beaver-roberts-simons-2013", "paperLabel": "(48)"},
+    "reportedIn": null,
+    "language": "para1311",
+    "primaryText": "Ángel oi-mo’ã i-túva oi-kuaa-ha iñ-ermána o-guereko kichiha ha Ángel oi-mo’ã avei iñ-ermána nd-o-guerekó-i-ha kichiha.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Ángel", "Angel"], ["oi-mo’ã", "A3-think"], ["i-túva", "B3-father"],
+      ["oi-kuaa-ha", "A3-know-NOM"], ["iñ-ermána", "B3-sister"], ["o-guereko", "A3-have"],
+      ["kichiha", "boyfriend"], ["ha", "and"], ["Ángel", "Angel"], ["oi-mo’ã", "A3-think"],
+      ["avei", "too"], ["iñ-ermána", "B3-sister"], ["nd-o-guerekó-i-ha", "NEG-A3-have-NEG-NOM"],
+      ["kichiha", "boyfriend"]
+    ],
+    "translation": "Angel thinks that his father knows that his sister has a boyfriend and Angel also thinks that his sister doesn’t have a boyfriend.",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["trigger", "(oi)kuaa ‘know’"],
+      ["content", "content of complement"],
+      ["class", "C"],
+      ["diagnostic", "obligatory local effect"],
+      ["holder", "m-negative"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "tonhauseretal2013_49",
+    "source": {"bibkey": "tonhauser-beaver-roberts-simons-2013", "paperLabel": "(49)"},
+    "reportedIn": null,
+    "language": "para1311",
+    "primaryText": "Juan oi-mo’ã Angéla Mérkel, Alemánia mburuvicha, ha’e-ha Argentína mburuvicha.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Juan", "Juan"], ["oi-mo’ã", "A3-think"], ["Angéla", "Angela"], ["Mérkel", "Merkel"],
+      ["Alemánia", "Germany"], ["mburuvicha", "boss"], ["ha’e-ha", "PRON.S.3-NOM"],
+      ["Argentína", "Argentina"], ["mburuvicha", "boss"]
+    ],
+    "translation": "Juan thinks that Angela Merkel, the German chancellor, is the Argentinian president.",
+    "context": "Sabine is from Germany and knows the politicians there very well. Angela Merkel, the chancellor of Germany, is currently visiting farmers in Paraguay, among them Juan. Sabine says:",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["trigger", "appositive"],
+      ["content", "descriptive content"],
+      ["class", "B"],
+      ["diagnostic", "obligatory local effect"],
+      ["holder", "m-negative"]
+    ],
+    "comment": "The context makes Sabine an expert on German politics and Juan not; without it some such utterances were judged unacceptable (fn. 25).",
+    "verified": "page-image"
+  },
+  {
+    "id": "tonhauseretal2013_50a",
+    "source": {"bibkey": "tonhauser-beaver-roberts-simons-2013", "paperLabel": "(50a)"},
+    "reportedIn": null,
+    "language": "para1311",
+    "primaryText": "E-ma’ẽ-mi! Upépe o-ĩ peteĩ kuimba’e, há=katu Maléna nd-oi-kuáa-i. Ha’e oi-mo’ã ha’e-ha peteĩ ta’anga ita-guí-gua.",
+    "discourseSegments": [
+      "E-ma’ẽ-mi!",
+      "Upépe o-ĩ peteĩ kuimba’e, há=katu Maléna nd-oi-kuáa-i.",
+      "Ha’e oi-mo’ã ha’e-ha peteĩ ta’anga ita-guí-gua."
+    ],
+    "glossedTokens": [
+      ["E-ma’ẽ-mi", "A2SG-look-DIM"], ["Upépe", "there"], ["o-ĩ", "A3-be"], ["peteĩ", "one"],
+      ["kuimba’e", "man"], ["há=katu", "and=CONTR"], ["Maléna", "Malena"],
+      ["nd-oi-kuáa-i", "NEG-A3-know-NEG"], ["Ha’e", "PRON.S.3"], ["oi-mo’ã", "A3-think"],
+      ["ha’e-ha", "PRON.S.3-NOM"], ["peteĩ", "one"], ["ta’anga", "figure"],
+      ["ita-guí-gua", "stone-of-from"]
+    ],
+    "translation": "Look! There’s a man over there, but Malena doesn’t know that (it’s a man). She thinks he is a stone sculpture.",
+    "context": "The speaker, Ricardo, and Malena are lost and looking for somebody to ask for directions. The speaker, who is walking ahead with Ricardo, says:",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["trigger", "ha’e ‘3rd’"],
+      ["content", "human referent"],
+      ["class", "B"],
+      ["diagnostic", "obligatory local effect"],
+      ["holder", "m-negative"]
+    ],
+    "comment": "The entity is inanimate in Malena’s epistemic state; the existence of a referent is entailed there and in the utterance context.",
+    "verified": "page-image"
+  },
+  {
+    "id": "tonhauseretal2013_51",
+    "source": {"bibkey": "tonhauser-beaver-roberts-simons-2013", "paperLabel": "(51)"},
+    "reportedIn": null,
+    "language": "para1311",
+    "primaryText": "Brian oi-mo’ã Carmen jagua i-ñaro-ha.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Brian", "Brian"], ["oi-mo’ã", "A3-think"], ["Carmen", "Carmen"], ["jagua", "dog"],
+      ["i-ñaro-ha", "B3-fierce-NOM"]
+    ],
+    "translation": "Brian thinks that Carmen’s dog is fierce.",
+    "context": "Brian and Pedro are strolling down the street. They see a dog chasing a cat. Brian comments to Pedro that the dog looks fierce. Pedro knows that the dog is Carmen’s, but Brian doesn’t know that. Pedro later says to his wife:",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["trigger", "possessive NP"],
+      ["content", "possessive relation"],
+      ["class", "B"],
+      ["diagnostic", "obligatory local effect"],
+      ["holder", "m-neutral"]
+    ],
+    "comment": "Consultants rejected such examples when the context did not support a de re interpretation of the possessive noun phrase (fn. 27).",
+    "verified": "page-image"
+  },
+  {
+    "id": "tonhauseretal2013_52_property",
+    "source": {"bibkey": "tonhauser-beaver-roberts-simons-2013", "paperLabel": "(52)"},
+    "reportedIn": null,
+    "language": "para1311",
+    "primaryText": "Raul mburuvicha há=katu Maléna nd-oi-kuáa-i. Ha’e oi-mo’ã ko mburuvicha pa’i-ha.",
+    "discourseSegments": [
+      "Raul mburuvicha há=katu Maléna nd-oi-kuáa-i.",
+      "Ha’e oi-mo’ã ko mburuvicha pa’i-ha."
+    ],
+    "glossedTokens": [
+      ["Raul", "Raul"], ["mburuvicha", "boss"], ["há=katu", "and=CONTR"], ["Maléna", "Malena"],
+      ["nd-oi-kuáa-i", "NEG-A3-know-NEG"], ["Ha’e", "PRON.S.3"], ["oi-mo’ã", "A3-think"],
+      ["ko", "this"], ["mburuvicha", "boss"], ["pa’i-ha", "priest-NOM"]
+    ],
+    "translation": "Raul is a (company) boss, but Malena doesn’t know that. She thinks this boss is a priest.",
+    "context": "The speaker and her addressee are at a reception, with Raul standing at the next table. Malena is not present.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["trigger", "demonstrative NP"],
+      ["content", "property attribution"],
+      ["class", "B"],
+      ["diagnostic", "obligatory local effect"],
+      ["holder", "m-neutral"]
+    ],
+    "comment": "One of the three consultants did not consistently accept such examples.",
+    "verified": "page-image"
+  },
+  {
+    "id": "tonhauseretal2013_52_indication",
+    "source": {"bibkey": "tonhauser-beaver-roberts-simons-2013", "paperLabel": "(52)"},
+    "reportedIn": null,
+    "language": "para1311",
+    "primaryText": "Raul mburuvicha há=katu Maléna nd-oi-kuáa-i. Ha’e oi-mo’ã ko mburuvicha pa’i-ha.",
+    "discourseSegments": [
+      "Raul mburuvicha há=katu Maléna nd-oi-kuáa-i.",
+      "Ha’e oi-mo’ã ko mburuvicha pa’i-ha."
+    ],
+    "glossedTokens": [
+      ["Raul", "Raul"], ["mburuvicha", "boss"], ["há=katu", "and=CONTR"], ["Maléna", "Malena"],
+      ["nd-oi-kuáa-i", "NEG-A3-know-NEG"], ["Ha’e", "PRON.S.3"], ["oi-mo’ã", "A3-think"],
+      ["ko", "this"], ["mburuvicha", "boss"], ["pa’i-ha", "priest-NOM"]
+    ],
+    "translation": "Raul is a (company) boss, but Malena doesn’t know that. She thinks this boss is a priest.",
+    "context": "The speaker and her addressee are at a reception, with Raul standing at the next table. Malena is not present.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["trigger", "demonstrative NP"],
+      ["content", "speaker indicates suitable entity"],
+      ["class", "D"],
+      ["diagnostic", "obligatory local effect"],
+      ["context", "m-positive"],
+      ["holder", "m-neutral"]
+    ],
+    "comment": "Malena need not think that the speaker is indicating something.",
+    "verified": "page-image"
+  },
+  {
+    "id": "tonhauseretal2013_53",
+    "source": {"bibkey": "tonhauser-beaver-roberts-simons-2013", "paperLabel": "(53)"},
+    "reportedIn": null,
+    "language": "para1311",
+    "primaryText": "Sabína oi-mo’ã ai-ko-ha pe óga-pe.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Sabína", "Sabina"], ["oi-mo’ã", "A3-think"], ["ai-ko-ha", "A1SG-live-NOM"], ["pe", "that"],
+      ["óga-pe", "house-in"]
+    ],
+    "translation": "Sabina thinks that I live in that house.",
+    "context": "Marko and Maria are walking down the street together when Marko points at a house; their school friend Sabina is not with them.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["trigger", "demonstrative NP"],
+      ["content", "speaker indicates suitable entity"],
+      ["class", "D"],
+      ["diagnostic", "obligatory local effect"],
+      ["context", "m-positive"],
+      ["holder", "m-neutral"]
+    ],
+    "comment": "Sabina need not think that the speaker is indicating something.",
     "verified": "page-image"
   },
   {
     "id": "tonhauseretal2013_54a",
-    "source": {
-      "bibkey": "tonhauser-beaver-roberts-simons-2013",
-      "paperLabel": "(54a)"
-    },
+    "source": {"bibkey": "tonhauser-beaver-roberts-simons-2013", "paperLabel": "(54a)"},
     "reportedIn": null,
     "language": "stan1293",
     "primaryText": "Wilma likes that car.",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
-    "context": "Barney and Fred walk down the street without having discussed cars; Barney does not point to or otherwise indicate any of the parked cars.",
+    "context": "Barney and Fred are walking down the street. They haven’t been discussing cars. Barney does not point to or otherwise indicate any of the cars parked in the street. Barney says:",
     "judgment": "unacceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "trigger",
-        "demonstrative NP"
-      ],
-      [
-        "content",
-        "indication"
-      ],
-      [
-        "context",
-        "m-neutral"
-      ],
-      [
-        "diagnostic",
-        "strong contextual felicity"
-      ],
-      [
-        "scf",
-        "yes"
-      ]
+      ["trigger", "that N"],
+      ["content", "speaker indicates suitable entity"],
+      ["class", "D"],
+      ["diagnostic", "strong contextual felicity"],
+      ["environment", "atomic"],
+      ["context", "m-neutral"]
     ],
-    "comment": "The indication implication, that the speaker is indicating something, imposes the constraint.",
+    "comment": "",
     "verified": "page-image"
   },
   {
     "id": "tonhauseretal2013_54b",
-    "source": {
-      "bibkey": "tonhauser-beaver-roberts-simons-2013",
-      "paperLabel": "(54b)"
-    },
+    "source": {"bibkey": "tonhauser-beaver-roberts-simons-2013", "paperLabel": "(54b)"},
     "reportedIn": null,
     "language": "stan1293",
     "primaryText": "If Wilma likes that car, she has good taste.",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
-    "context": "As for (54a).",
+    "context": "Barney and Fred are walking down the street. They haven’t been discussing cars. Barney does not point to or otherwise indicate any of the cars parked in the street. Barney says:",
     "judgment": "unacceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "environment",
-        "conditional antecedent"
-      ],
-      [
-        "trigger",
-        "demonstrative NP"
-      ],
-      [
-        "content",
-        "indication"
-      ],
-      [
-        "context",
-        "m-neutral"
-      ],
-      [
-        "diagnostic",
-        "projection"
-      ],
-      [
-        "projective",
-        "yes"
-      ]
+      ["trigger", "that N"],
+      ["content", "speaker indicates suitable entity"],
+      ["class", "D"],
+      ["diagnostic", "projection"],
+      ["environment", "conditional antecedent"],
+      ["context", "m-neutral"]
     ],
-    "comment": "The constraint survives embedding in the antecedent: the indication implication is projective.",
+    "comment": "",
     "verified": "page-image"
   },
   {
     "id": "tonhauseretal2013_54c",
-    "source": {
-      "bibkey": "tonhauser-beaver-roberts-simons-2013",
-      "paperLabel": "(54c)"
-    },
+    "source": {"bibkey": "tonhauser-beaver-roberts-simons-2013", "paperLabel": "(54c)"},
     "reportedIn": null,
     "language": "stan1293",
-    "primaryText": "Pebbles thinks Wilma likes that car, but of course Pebbles has no idea that I'm pointing to it.",
+    "primaryText": "Pebbles thinks Wilma likes that car, but of course Pebbles has no idea that I’m pointing to it.",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
-    "context": "Barney points at a car and says this.",
+    "context": "Barney points at a car and says:",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "trigger",
-        "demonstrative NP"
-      ],
-      [
-        "content",
-        "indication"
-      ],
-      [
-        "context",
-        "globally m-positive, locally m-neutral"
-      ],
-      [
-        "diagnostic",
-        "obligatory local effect"
-      ],
-      [
-        "ole",
-        "no"
-      ]
+      ["trigger", "that N"],
+      ["content", "speaker indicates suitable entity"],
+      ["class", "D"],
+      ["diagnostic", "obligatory local effect"],
+      ["context", "m-positive"],
+      ["holder", "m-neutral"]
     ],
-    "comment": "Acceptable with the attitude holder ignorant of the indication: no obligatory local effect, so the indication implication is in class D.",
+    "comment": "",
     "verified": "page-image"
   }
 ]
