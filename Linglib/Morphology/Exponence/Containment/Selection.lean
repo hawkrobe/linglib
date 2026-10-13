@@ -28,11 +28,13 @@ threshold.
 * `realize_eq_of_threshold_le`: the rule selected at a grade is realized at every lower grade it
   applies at.
 * `spellout_eq_none_of_le`: spellout gaps propagate upward.
+* `spellout_eq_some_of_filter_of_le`: the loss of entries extends a form downward only.
 * `pattern_toDecomposition`: Elsewhere insertion is decomposition exponence over the chain.
 
 ## References
 
 * [bobaljik-2012]
+* [bubnov-2026]
 * [caha-2009]
 * [dekier-2021]
 * [halle-1997]
@@ -78,7 +80,7 @@ abbrev spellout (v : RuleSet (SupersetRule n F)) : Paradigm n (Option F) :=
 
 section Spellout
 
-variable {v : RuleSet (SupersetRule n F)}
+variable {v : RuleSet (SupersetRule n F)} {e : SupersetRule n F}
 
 theorem spellout_realizes (h : spellout v g = some φ) : v.Realizes g φ :=
   RuleSet.realize_realizes (SupersetRule.spans_strictMono.dual_right.strictAntiOn _) h
@@ -88,6 +90,24 @@ too, [dekier-2021]'s paradigm-gap monotonicity for indefinites. -/
 theorem spellout_eq_none_of_le (h : spellout v g = none) (hg : g ≤ g') : spellout v g' = none :=
   Option.map_eq_none_iff.mpr <| RuleSet.selectBy_eq_none_of_applies
     (fun _ _ hs ↦ le_trans hg hs) (Option.map_eq_none_iff.mp h)
+
+/-- The entry selected at a grade is selected at every higher grade its constituent contains, so
+Superset spellout plateaus up to the stored grade. -/
+theorem spellout_eq_of_le_spans (h : v.selectBy (fun e ↦ OrderDual.toDual e.spans) g = some e)
+    (hg : g ≤ g') (he : g' ≤ e.spans) : spellout v g' = spellout v g :=
+  congrArg (Option.map _) <|
+    (RuleSet.selectBy_eq_some_of_applies (fun _ _ hs ↦ le_trans hg hs) h he).trans h.symm
+
+/-- The loss of entries extends a form downward only. If an antihomophonous lexicon spells out a
+form at a grade and, after losing entries, still spells it out at a higher grade, it spelled it
+out there before ([bubnov-2026]). -/
+theorem spellout_eq_some_of_filter_of_le (hv : v.Antihomophonous) {p : SupersetRule n F → Bool}
+    (h : spellout v g = some φ) (h' : spellout (v.filter p) g' = some φ) (hg : g ≤ g') :
+    spellout v g' = some φ := by
+  obtain ⟨e, he, rfl⟩ := Option.map_eq_some_iff.mp h
+  obtain ⟨e', he', hφ⟩ := Option.map_eq_some_iff.mp h'
+  obtain rfl := hv (List.mem_filter.mp (RuleSet.selectBy_mem he')).1 (RuleSet.selectBy_mem he) hφ
+  rw [spellout_eq_of_le_spans he hg (RuleSet.selectBy_applies he'), h]
 
 end Spellout
 

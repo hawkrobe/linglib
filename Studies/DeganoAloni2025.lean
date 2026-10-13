@@ -25,7 +25,7 @@ two. The unattested type requires constancy across the team or variation within 
 atoms that exclude each other, and that disjunction is the one requirement that is not convex:
 a team between two teams meeting it need not meet it. The single atoms are closed under
 subteams or under superteams and their conjunction is an intersection of the two kinds, so the
-attested requirements are all convex.
+attested requirements are all convex, the conjunction being closed under neither.
 
 German *irgend-*, Russian *koe-* and *-nibud'*, Kannada *-oo*, Italian *qualche-* and Georgian
 *-γac* instantiate the six attested types: the uses are the three specificity functions of
@@ -36,9 +36,6 @@ whose functions lie in the region the book draws for it.
 
 * `exists_renders`, `renders_unique`: the three uses partition the teams.
 * `IndefiniteType.requires_iff`: a requirement is the disjunction of the uses of the profile.
-* `forall_renders_imp_requires_iff`: a use entails a requirement exactly when the profile
-  lists it.
-* `forall_requires_imp_requires_iff`: semantic weakening is inclusion of profiles.
 * `IndefiniteType.ordConnected_requires_iff`: the attested requirements are convex and the
   unattested one is not.
 * `connected_profile_iff`, `sample_instantiates_attested`: the convex types are the connected
@@ -93,6 +90,9 @@ theorem profile_injective : Function.Injective profile := by decide
 theorem exists_profile_eq {s : Finset SpecificityFunction} (hs : s.Nonempty) :
     ∃ t, profile t = s := by
   revert s; decide
+
+theorem profile_nonempty (t : IndefiniteType) : t.profile.Nonempty := by
+  cases t <;> decide
 
 end IndefiniteType
 
@@ -158,57 +158,58 @@ theorem IndefiniteType.requires_iff :
       exists_eq_left, Renders, ← not_dep] <;>
     tauto
 
+/-- On a team rendering a use, a type's requirement is met exactly when its profile lists the
+use. -/
+theorem IndefiniteType.requires_iff_mem_profile (hu : Renders T v x u) :
+    t.Requires T v x ↔ u ∈ t.profile :=
+  ⟨fun h ↦ let ⟨_, hu', hT⟩ := requires_iff.1 h; renders_unique hu hT ▸ hu',
+    fun h ↦ requires_iff.2 ⟨u, h, hu⟩⟩
+
 /-! ### Witnesses
 
 Over a domain with two individuals `a` and `b` each use has a team: one assignment for the
-specific known use, the two constant assignments for the specific unknown use, and a constant
-assignment with its variant at the individual variable for the non-specific use. -/
+specific known use, the two constant assignments for the specific unknown use, and those two
+with a variant of the first at the individual variable for the non-specific use. -/
 
-section Witnesses
-
-variable [DecidableEq (V → E)] {a b : E}
-
-private theorem renders_unknown (hab : a ≠ b) :
-    Renders ({fun _ ↦ a, fun _ ↦ b} : Finset (V → E)) v x .specificUnknown := by
-  refine ⟨dep_iff.2 ?_, var_iff.2 ⟨fun _ ↦ a, by simp, fun _ ↦ b, by simp, by simp, hab⟩⟩
+/-- A specific known team lies below a specific unknown team, which lies below a non-specific
+one, given two individuals and distinct world and individual variables. -/
+theorem exists_subset_renders [Nontrivial E] (hvx : v ≠ x) :
+    ∃ T₁ T₂ T₃ : Finset (V → E), T₁ ⊆ T₂ ∧ T₂ ⊆ T₃ ∧ Renders T₁ v x .specificKnown ∧
+      Renders T₂ v x .specificUnknown ∧ Renders T₃ v x .nonSpecific := by
+  classical
+  obtain ⟨a, b, hab⟩ := exists_pair_ne E
+  refine ⟨{fun _ ↦ a}, {fun _ ↦ a, fun _ ↦ b},
+    {fun _ ↦ a, fun _ ↦ b, Function.update (fun _ ↦ a) x b}, by simp,
+    Finset.insert_subset_insert _ (by simp), dep_singleton _,
+    ⟨dep_iff.2 ?_, var_iff.2 ⟨fun _ ↦ a, by simp, fun _ ↦ b, by simp, by simp, hab⟩⟩,
+    var_iff.2 ⟨fun _ ↦ a, by simp, Function.update (fun _ ↦ a) x b, by simp, by simp [hvx],
+      by simpa using hab⟩⟩
   simp [hab, hab.symm]
-
-private theorem renders_nonSpecific [DecidableEq V] (hab : a ≠ b) (hvx : v ≠ x) :
-    Renders ({fun _ ↦ a, Function.update (fun _ ↦ a) x b} : Finset (V → E)) v x
-      .nonSpecific :=
-  var_iff.2 ⟨fun _ ↦ a, by simp, Function.update (fun _ ↦ a) x b, by simp, by simp [hvx],
-    by simpa using hab⟩
-
-end Witnesses
 
 /-- Each use has a team, given two individuals and distinct world and individual variables. -/
 theorem exists_team_renders [Nontrivial E] (hvx : v ≠ x) (u : SpecificityFunction) :
     ∃ T : Finset (V → E), Renders T v x u := by
-  classical
-  obtain ⟨a, b, hab⟩ := exists_pair_ne E
-  cases u
-  · exact ⟨{fun _ ↦ a}, dep_singleton _⟩
-  · exact ⟨_, renders_unknown hab⟩
-  · exact ⟨_, renders_nonSpecific hab hvx⟩
+  obtain ⟨T₁, T₂, T₃, -, -, h₁, h₂, h₃⟩ := exists_subset_renders (E := E) hvx
+  cases u <;> exact ⟨_, ‹_›⟩
 
 /-- A use entails a type's requirement exactly when the type's profile lists it, so the
 requirements reproduce the profiles. -/
 theorem forall_renders_imp_requires_iff [Nontrivial E] (hvx : v ≠ x) :
-    (∀ T : Finset (V → E), Renders T v x u → t.Requires T v x) ↔ u ∈ t.profile := by
-  refine ⟨fun h ↦ ?_, fun hu T hT ↦ IndefiniteType.requires_iff.2 ⟨u, hu, hT⟩⟩
-  obtain ⟨T, hT⟩ := exists_team_renders (E := E) hvx u
-  obtain ⟨u', hu', hT'⟩ := IndefiniteType.requires_iff.1 (h T hT)
-  exact renders_unique hT hT' ▸ hu'
+    (∀ T : Finset (V → E), Renders T v x u → t.Requires T v x) ↔ u ∈ t.profile :=
+  ⟨fun h ↦ let ⟨T, hT⟩ := exists_team_renders (E := E) hvx u
+    (IndefiniteType.requires_iff_mem_profile hT).1 (h T hT),
+    fun hu _ hT ↦ (IndefiniteType.requires_iff_mem_profile hT).2 hu⟩
 
 /-- One requirement entails another exactly when every use of the first type is a use of the
 second, so semantic weakening is inclusion of profiles. -/
 theorem forall_requires_imp_requires_iff [Nontrivial E] (hvx : v ≠ x) {t t' : IndefiniteType} :
     (∀ T : Finset (V → E), t.Requires T v x → t'.Requires T v x) ↔ t.profile ⊆ t'.profile := by
-  simp only [IndefiniteType.requires_iff]
-  refine ⟨fun h u hu ↦ ?_, fun h T ⟨u, hu, hT⟩ ↦ ⟨u, h hu, hT⟩⟩
-  obtain ⟨T, hT⟩ := exists_team_renders (E := E) hvx u
-  obtain ⟨u', hu', hT'⟩ := h T ⟨u, hu, hT⟩
-  exact renders_unique hT hT' ▸ hu'
+  refine ⟨fun h u hu ↦ ?_, fun h T ↦ ?_⟩
+  · obtain ⟨T, hT⟩ := exists_team_renders (E := E) hvx u
+    exact (IndefiniteType.requires_iff_mem_profile hT).1
+      (h T ((IndefiniteType.requires_iff_mem_profile hT).2 hu))
+  · simp only [IndefiniteType.requires_iff]
+    exact fun ⟨u, hu, hT⟩ ↦ ⟨u, h hu, hT⟩
 
 /-! ### Convexity -/
 
@@ -229,22 +230,31 @@ theorem IndefiniteType.ordConnected_requires (ht : t ≠ .skPlusNS) (v x : V) :
 unknown team, which lies below a non-specific one. -/
 theorem IndefiniteType.not_ordConnected_skPlusNS [Nontrivial E] (hvx : v ≠ x) :
     ¬ {T : Finset (V → E) | skPlusNS.Requires T v x}.OrdConnected := fun h ↦ by
-  classical
-  obtain ⟨a, b, hab⟩ := exists_pair_ne E
-  have hmid : skPlusNS.Requires ({fun _ ↦ a, fun _ ↦ b} : Finset (V → E)) v x :=
-    h.out (x := {fun _ ↦ a}) (.inl (dep_singleton _))
-      (y := {fun _ ↦ a, fun _ ↦ b, Function.update (fun _ ↦ a) x b})
-      (.inr ((renders_nonSpecific hab hvx).superset (by
-        simp only [Finset.insert_subset_iff, Finset.mem_insert, Finset.mem_singleton,
-          Finset.singleton_subset_iff, true_or, or_true, and_self])))
-      ⟨by simp, Finset.insert_subset_insert _ (by simp)⟩
-  obtain ⟨u, hu, hT⟩ := requires_iff.1 hmid
-  exact absurd (renders_unique (renders_unknown hab) hT ▸ hu) (by decide)
+  obtain ⟨T₁, T₂, T₃, h₁₂, h₂₃, h₁, h₂, h₃⟩ := exists_subset_renders (E := E) hvx
+  have hT₂ : skPlusNS.Requires T₂ v x := h.out (x := T₁) (.inl h₁) (y := T₃) (.inr h₃) ⟨h₁₂, h₂₃⟩
+  exact absurd ((requires_iff_mem_profile h₂).1 hT₂) (by decide)
 
 /-- Convexity separates the attested types from the unattested one. -/
 theorem IndefiniteType.ordConnected_requires_iff [Nontrivial E] (hvx : v ≠ x) :
     {T : Finset (V → E) | t.Requires T v x}.OrdConnected ↔ t ≠ .skPlusNS :=
   ⟨by rintro h rfl; exact not_ordConnected_skPlusNS hvx h, fun ht ↦ ordConnected_requires ht v x⟩
+
+/-! ### Monotonicity
+
+A constancy atom is closed under subteams and a variation atom under superteams. The specific
+unknown requirement, the conjunction of one of each, is convex and closed under neither. -/
+
+theorem IndefiniteType.not_isLowerSet_specificUnknown [Nontrivial E] (hvx : v ≠ x) :
+    ¬ IsLowerSet {T : Finset (V → E) | specificUnknown.Requires T v x} := fun h ↦ by
+  obtain ⟨T₁, T₂, -, h₁₂, -, h₁, h₂, -⟩ := exists_subset_renders (E := E) hvx
+  have hT₁ : specificUnknown.Requires T₁ v x := h h₁₂ h₂
+  exact absurd ((requires_iff_mem_profile h₁).1 hT₁) (by decide)
+
+theorem IndefiniteType.not_isUpperSet_specificUnknown [Nontrivial E] (hvx : v ≠ x) :
+    ¬ IsUpperSet {T : Finset (V → E) | specificUnknown.Requires T v x} := fun h ↦ by
+  obtain ⟨-, T₂, T₃, -, h₂₃, -, h₂, h₃⟩ := exists_subset_renders (E := E) hvx
+  have hT₃ : specificUnknown.Requires T₃ v x := h h₂₃ h₂
+  exact absurd ((requires_iff_mem_profile h₃).1 hT₃) (by decide)
 
 end Teams
 
