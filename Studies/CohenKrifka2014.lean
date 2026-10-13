@@ -1,6 +1,7 @@
 module
 
 public import Linglib.Discourse.Commitment.Space
+public import Linglib.Discourse.Role
 public import Linglib.Semantics.Degree.Comparison
 
 /-!
@@ -86,20 +87,21 @@ theorem mem_grant : d ∈ grant C a φ ↔ d = C.root ∨ d ∈ C ∧ commit a �
   rw [grant, mem_denegate, SetLike.mem_coe, mem_assert]
   refine or_congr_right (and_congr_right fun hd ↦ ⟨fun h hk ↦ h (Or.inr ⟨hd, hk⟩), fun h ↦ ?_⟩)
   rintro (rfl | ⟨-, hk⟩)
-  exacts [h (Set.mem_insert _ _), h hk]
+  exacts [h (C.commit_mem_root_assert a φᶜ _), h hk]
 
 /-- On a space whose states never carry both a commitment and its denial, every state reached
 by asserting `φ` survives granting `φ`, so the grant includes the assertion ((39)). -/
-theorem assert_le_grant (hmem : insert (commit a φ) C.root ∈ C)
+theorem assert_le_grant (hmem : (C.assert a φ).root ∈ C)
     (hcons : ∀ d ∈ C, commit a φ ∈ d → commit a φᶜ ∉ d) : C.assert a φ ≤ grant C a φ := by
   intro d hd
   rw [mem_grant]
   rcases (C.mem_assert a φ _).1 hd with rfl | hd
-  exacts [Or.inr ⟨hmem, hcons _ hmem (Set.mem_insert _ _)⟩, Or.inr ⟨hd.1, hcons d hd.1 hd.2⟩]
+  exacts [Or.inr ⟨hmem, hcons _ hmem (C.commit_mem_root_assert a φ _)⟩,
+    Or.inr ⟨hd.1, hcons d hd.1 hd.2⟩]
 
-/-- Denegating the GRANT of `φ` is asserting `¬φ` ((40)), for a projected assertion that is not
-redundant. -/
-theorem sdiff_coe_grant (hmem : insert (commit a φᶜ) C.root ∈ C) (h : commit a φᶜ ∉ C.root) :
+/-- Denegating the GRANT of `φ` is asserting `¬φ` ((40)), for an assertion the space admits
+that is not redundant. -/
+theorem sdiff_coe_grant (hmem : (C.assert a φᶜ).root ∈ C) (h : commit a φᶜ ∉ C.root) :
     (C : Set (State A W)) \ ↑(grant C a φ) = C.assert a φᶜ :=
   C.sdiff_coe_denegate (C.update_le hmem) (mt (C.root_mem_assert_iff a φᶜ _).1 h)
 
@@ -118,17 +120,25 @@ def denials : State A W := (fun m ↦ commit a (φ m)ᶜ) '' s
 `m ∈ s` at once ((46), (51)). -/
 def exclude : Space (State A W) := C.update (denials a φ s)
 
-@[simp] theorem root_exclude : (exclude C a φ s).root = denials a φ s ∪ C.root := rfl
+/-- When the space projects the root with the denials, that state is the root of the
+exclusion. -/
+theorem root_exclude (hK : denials a φ s ∪ C.root ∈ C) :
+    (exclude C a φ s).root = denials a φ s ∪ C.root :=
+  C.root_update_of_mem hK
+
+theorem root_exclude_mem (hK : denials a φ s ∪ C.root ∈ C) : (exclude C a φ s).root ∈ C :=
+  (root_exclude C a φ s hK).symm ▸ hK
 
 theorem denials_eq_sSup :
     denials a φ s = sSup ((fun m ↦ ({commit a (φ m)ᶜ} : State A W)) '' s) := by
   rw [Set.sSup_eq_sUnion, Set.sUnion_image, denials, Set.image_eq_iUnion]
 
 /-- The exclusion denies `φ(m)` exactly for the excluded values. -/
-theorem commit_mem_root_exclude_iff (hroot : ∀ m, commit a (φ m)ᶜ ∉ C.root)
-    (hinj : Function.Injective φ) {m : ι} :
-    commit a (φ m)ᶜ ∈ (exclude C a φ s).root ↔ m ∈ s :=
-  (or_iff_left (hroot m)).trans <|
+theorem commit_mem_root_exclude_iff (hK : denials a φ s ∪ C.root ∈ C)
+    (hroot : ∀ m, commit a (φ m)ᶜ ∉ C.root) (hinj : Function.Injective φ) {m : ι} :
+    commit a (φ m)ᶜ ∈ (exclude C a φ s).root ↔ m ∈ s := by
+  rw [root_exclude C a φ s hK]
+  exact (or_iff_left (hroot m)).trans <|
     Function.Injective.mem_set_image fun _ _ e ↦ hinj (compl_injective (congrArg content e))
 
 /-- The exclusion moves the root, so its denegation keeps the root and commits the speaker to
@@ -142,8 +152,9 @@ theorem root_notMem_exclude (hne : s.Nonempty) (hroot : ∀ m ∈ s, commit a (�
 denials ((46), (51)). -/
 theorem coe_exclude (hne : s.Nonempty) (hK : denials a φ s ∪ C.root ∈ C) :
     (exclude C a φ s : Set (State A W)) = ⋂ m ∈ s, ↑(C.assert a (φ m)ᶜ) := by
-  rw [denials_eq_sSup] at hK
-  rw [exclude, denials_eq_sSup, C.coe_update_sSup (hne.image _) hK, Set.biInter_image]
+  have h := root_exclude_mem C a φ s hK
+  rw [exclude, denials_eq_sSup] at h ⊢
+  rw [C.coe_update_sSup (hne.image _) h, Set.biInter_image]
   rfl
 
 /-- In (44) and (49) each conjunct is the denegation of the GRANT of `φ(m)`, which is the
@@ -153,7 +164,8 @@ theorem coe_exclude_eq_iInter_sdiff_grant (hne : s.Nonempty)
     (hmem : ∀ m ∈ s, insert (commit a (φ m)ᶜ) C.root ∈ C) :
     (exclude C a φ s : Set (State A W)) = ⋂ m ∈ s, ↑C \ ↑(grant C a (φ m)) := by
   rw [coe_exclude C a φ s hne hK]
-  exact Set.iInter₂_congr fun m hm ↦ (sdiff_coe_grant C a (φ m) (hmem m hm) (hroot m hm)).symm
+  exact Set.iInter₂_congr fun m hm ↦ (sdiff_coe_grant C a (φ m)
+    ((C.root_assert_of_mem a _ _ (hmem m hm)).symm ▸ hmem m hm) (hroot m hm)).symm
 
 /-- The denegation of the superlative is the disjunction of the GRANTs it denied
 ((97)–(98), by (34)). -/
@@ -168,13 +180,13 @@ theorem sdiff_coe_exclude (hne : s.Nonempty) (hroot : ∀ m ∈ s, commit a (φ 
 weaker one's. -/
 theorem exclude_anti {s t : Set ι} (hst : s ⊆ t) (hK : denials a φ t ∪ C.root ∈ C) :
     exclude C a φ t ≤ exclude C a φ s :=
-  C.update_le_update (Set.image_mono hst) hK
+  C.update_le_update (Set.image_mono hst) (root_exclude_mem C a φ t hK)
 
 /-- On the derived truth conditions (§3.2), what the exclusion asserts is the intersection of
 the asserted denials ((52)). -/
-theorem contextSet_root_exclude :
+theorem contextSet_root_exclude (hK : denials a φ s ∪ C.root ∈ C) :
     contextSet (exclude C a φ s).root = (⋂ m ∈ s, (φ m)ᶜ) ∩ contextSet C.root := by
-  rw [root_exclude, contextSet_union, contextSet, denials, contents_image_commit,
+  rw [root_exclude C a φ s hK, contextSet_union, contextSet, denials, contents_image_commit,
     Set.sInter_image]
 
 end Scale
@@ -203,22 +215,22 @@ theorem atLeast_anti {n n' : ι} (hnn : n ≤ n') (hK : denials a φ (Set.Iio n'
   exclude_anti C a φ (Set.Iio_subset_Iio hnn) hK
 
 /-- The value `n` is the greatest whose GRANT *at most `n`* leaves performable ((43), (60b)). -/
-theorem atMost_isGreatest (hroot : ∀ m, commit a (φ m)ᶜ ∉ C.root)
-    (hinj : Function.Injective φ) :
+theorem atMost_isGreatest (hK : denials a φ (Set.Ioi n) ∪ C.root ∈ C)
+    (hroot : ∀ m, commit a (φ m)ᶜ ∉ C.root) (hinj : Function.Injective φ) :
     IsGreatest {m | commit a (φ m)ᶜ ∉ (atMost C a φ n).root} n := by
   have hs : {m | commit a (φ m)ᶜ ∉ (atMost C a φ n).root} = Set.Iic n := by
     ext m
-    rw [Set.mem_ofPred_eq, atMost, commit_mem_root_exclude_iff C a φ _ hroot hinj,
+    rw [Set.mem_ofPred_eq, atMost, commit_mem_root_exclude_iff C a φ _ hK hroot hinj,
       Set.mem_Ioi, not_lt, Set.mem_Iic]
   exact hs ▸ isGreatest_Iic
 
 /-- The value `n` is the least whose GRANT *at least `n`* leaves performable ((48), (60a)). -/
-theorem atLeast_isLeast (hroot : ∀ m, commit a (φ m)ᶜ ∉ C.root)
-    (hinj : Function.Injective φ) :
+theorem atLeast_isLeast (hK : denials a φ (Set.Iio n) ∪ C.root ∈ C)
+    (hroot : ∀ m, commit a (φ m)ᶜ ∉ C.root) (hinj : Function.Injective φ) :
     IsLeast {m | commit a (φ m)ᶜ ∉ (atLeast C a φ n).root} n := by
   have hs : {m | commit a (φ m)ᶜ ∉ (atLeast C a φ n).root} = Set.Ici n := by
     ext m
-    rw [Set.mem_ofPred_eq, atLeast, commit_mem_root_exclude_iff C a φ _ hroot hinj,
+    rw [Set.mem_ofPred_eq, atLeast, commit_mem_root_exclude_iff C a φ _ hK hroot hinj,
       Set.mem_Iio, not_lt, Set.mem_Ici]
   exact hs ▸ isLeast_Ici
 
@@ -238,10 +250,11 @@ def exactly (f : W → ℕ) : ℕ → Set W := (fun n ↦ f ⁻¹' {n})
 
 /-- The derived truth conditions of *at most `n`* are the classical Keenan and Stavi
 meaning of the quantifier ((82)). -/
-theorem contextSet_atMost_exactly (f : W → ℕ) :
+theorem contextSet_atMost_exactly (f : W → ℕ)
+    (hK : denials a (exactly f) (Set.Ioi n) ∪ C.root ∈ C) :
     contextSet (atMost C a (exactly f) n).root
       = f ⁻¹' Set.Iic n ∩ contextSet C.root := by
-  rw [atMost, contextSet_root_exclude]
+  rw [atMost, contextSet_root_exclude _ _ _ _ hK]
   congr 1
   ext w
   simp only [Set.mem_iInter, Set.mem_compl_iff, exactly, Set.mem_preimage, Set.mem_singleton_iff,
@@ -251,10 +264,11 @@ theorem contextSet_atMost_exactly (f : W → ℕ) :
 
 /-- The derived truth conditions of *at least `n`* are the classical Keenan and Stavi
 meaning of the quantifier ((82)). -/
-theorem contextSet_atLeast_exactly (f : W → ℕ) :
+theorem contextSet_atLeast_exactly (f : W → ℕ)
+    (hK : denials a (exactly f) (Set.Iio n) ∪ C.root ∈ C) :
     contextSet (atLeast C a (exactly f) n).root
       = f ⁻¹' Set.Ici n ∩ contextSet C.root := by
-  rw [atLeast, contextSet_root_exclude]
+  rw [atLeast, contextSet_root_exclude _ _ _ _ hK]
   congr 1
   ext w
   simp only [Set.mem_iInter, Set.mem_compl_iff, exactly, Set.mem_preimage, Set.mem_singleton_iff,
@@ -264,18 +278,22 @@ theorem contextSet_atLeast_exactly (f : W → ℕ) :
 
 /-- A pointwise larger count strengthens *at most* on derived truth conditions, so denying
 counts of visitors ever entails denying counts last year ((84b), (87)). -/
-theorem contextSet_atMost_exactly_anti {f g : W → ℕ} (hfg : ∀ w, g w ≤ f w) :
+theorem contextSet_atMost_exactly_anti {f g : W → ℕ} (hfg : ∀ w, g w ≤ f w)
+    (hf : denials a (exactly f) (Set.Ioi n) ∪ C.root ∈ C)
+    (hg : denials a (exactly g) (Set.Ioi n) ∪ C.root ∈ C) :
     contextSet (atMost C a (exactly f) n).root ⊆
       contextSet (atMost C a (exactly g) n).root := by
-  rw [contextSet_atMost_exactly, contextSet_atMost_exactly]
+  rw [contextSet_atMost_exactly C a n f hf, contextSet_atMost_exactly C a n g hg]
   exact Set.inter_subset_inter_left _ fun w hw ↦ le_trans (hfg w) hw
 
 /-- A pointwise larger count weakens *at least*, the asymmetry behind NPI licensing ((84a),
 (88)). -/
-theorem contextSet_atLeast_exactly_mono {f g : W → ℕ} (hfg : ∀ w, g w ≤ f w) :
+theorem contextSet_atLeast_exactly_mono {f g : W → ℕ} (hfg : ∀ w, g w ≤ f w)
+    (hf : denials a (exactly f) (Set.Iio n) ∪ C.root ∈ C)
+    (hg : denials a (exactly g) (Set.Iio n) ∪ C.root ∈ C) :
     contextSet (atLeast C a (exactly g) n).root ⊆
       contextSet (atLeast C a (exactly f) n).root := by
-  rw [contextSet_atLeast_exactly, contextSet_atLeast_exactly]
+  rw [contextSet_atLeast_exactly C a n g hg, contextSet_atLeast_exactly C a n f hf]
   exact Set.inter_subset_inter_left _ fun w hw ↦ le_trans hw (hfg w)
 
 end Numeral
@@ -307,7 +325,7 @@ theorem rabbits_root_fresh (m : ℕ) :
 /-- The derived truth conditions of (1a) are the classical *at least three* ((82)). -/
 theorem rabbits_atLeast_contextSet :
     contextSet (atLeast rabbits .speaker (exactly id) 3).root = Comparison.ge.interval 3 := by
-  rw [contextSet_atLeast_exactly]
+  rw [contextSet_atLeast_exactly _ _ _ _ (Set.empty_subset _)]
   simp [rabbits]
 
 /-- Petting four rabbits verifies (1a), since every asserted denial holds ((52)). -/
@@ -325,15 +343,16 @@ four is implicature, not entailment. -/
 theorem rabbits_atLeast_grant_four :
     commit Discourse.Role.speaker (exactly id 4)ᶜ ∉
       (atLeast rabbits .speaker (exactly id) 3).root := by
-  rw [atLeast, commit_mem_root_exclude_iff rabbits .speaker (exactly id) _ rabbits_root_fresh
-    exactly_id_injective]
+  rw [atLeast, commit_mem_root_exclude_iff rabbits .speaker (exactly id) _ (Set.empty_subset _)
+    rabbits_root_fresh exactly_id_injective]
   decide
 
 /-- Three is the least value the speaker leaves grantable ((48), (60a)). -/
 theorem rabbits_atLeast_isLeast :
     IsLeast {m | commit Discourse.Role.speaker (exactly id m)ᶜ ∉
       (atLeast rabbits .speaker (exactly id) 3).root} 3 :=
-  atLeast_isLeast rabbits .speaker (exactly id) 3 rabbits_root_fresh exactly_id_injective
+  atLeast_isLeast rabbits .speaker (exactly id) 3 (Set.empty_subset _) rabbits_root_fresh
+    exactly_id_injective
 
 /-- Denegating (1a) leaves the disjunction of the three GRANTs ((89b), (97)–(98)). -/
 theorem rabbits_sdiff_atLeast :
@@ -382,7 +401,8 @@ the assertion leaves behind, so the grant does not enforce the assertion ((39), 
 theorem granting_assert_lt_grant :
     granting.assert .speaker raining < grant granting .speaker raining :=
   SetLike.lt_iff_le_and_exists.2
-    ⟨assert_le_grant granting .speaker raining (Or.inr rfl) granting_consistent,
+    ⟨assert_le_grant granting .speaker raining
+        ((granting.root_assert_of_mem _ _ _ (Or.inr rfl)).symm ▸ Or.inr rfl) granting_consistent,
       granting.root, Space.root_mem _,
       mt (granting.root_mem_assert_iff .speaker raining _).1 (Set.notMem_empty _)⟩
 

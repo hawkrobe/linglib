@@ -3,51 +3,52 @@ module
 public import Mathlib.Data.SetLike.Basic
 public import Mathlib.Order.Interval.Set.Basic
 public import Mathlib.Order.CompleteLattice.Basic
+public import Mathlib.Order.ConditionallyCompleteLattice.Basic
 public import Linglib.Discourse.Commitment.Basic
-public import Linglib.Semantics.Questions.Basic
-public import Linglib.Discourse.QUD.Issue
-public import Linglib.Discourse.Role
 
 /-!
 # Commitment spaces
 
 A commitment space is a set of discourse states with a least member, its root: the current state
 together with the continuations it projects. Speech acts transform spaces in two ways. A basic
-act adds commitments to the root and keeps the projected states that carry them. A meta-speech
-act keeps the root and prunes the continuations: a question restricts them to the answers it
-proposes, a denegation removes the states an act would reach. Conjunction and disjunction of
-acts are intersection and union of the sets of states they reach, which need not be rooted, so
-the laws relating the acts are stated on those sets.
+act keeps the projected states that carry its commitments, and the least of them is the new
+root. A meta-speech act keeps the root and prunes the continuations: a question restricts them
+to the answers it proposes, a denegation removes the states an act would reach. Conjunction and
+disjunction of acts are intersection and union of the sets of states they reach, which need not
+be rooted, so the laws relating the acts are stated on those sets.
 
 Commitment Space Semantics is the instance over commitment states, sets of `Commitment`s ordered
 by inclusion, where a basic act adds a set of commitments and an assertion adds the speaker's
-commitment to a proposition. The issue a space raises is settled by the information states
-inside some continuation's context set.
+commitment to a proposition.
 
 ## Main definitions
 
 * `Commitment.Space S`: rooted sets of states, ordered by inclusion, with the free space
   `Space.Ici`.
-* `Space.update`: the basic act adding `k` to the root.
 * `Space.restrict`, `Space.denegate`: the meta-speech acts.
+* `Space.update`: the basic act adding `k`.
 * `Space.assert`: assertion in Commitment Space Semantics.
-* `Space.toIssue`: the issue projection.
 
 ## Main results
 
-* `Space.coe_update_of_mem`: a projected update is the restriction `{c ∈ C | √C + A ⊆ c}`.
+* `Space.root_update_mem_iff`, `Space.coe_update_of_root_mem`: a space admits an update iff its
+  states above `k` have a least member, and the update is then the restriction
+  `{c ∈ C | √C + A ⊆ c}`.
 * `Space.coe_update_sSup`: the update by a join is the conjunction of the updates.
 * `Space.sdiff_coe_denegate`, `Space.coe_denegate_inter`: two denegations cancel, and de
   Morgan's laws hold for them.
 
 ## Implementation notes
 
-* The operations are total. `update` adjoins the new root whether or not the space projects
-  it, and `restrict` and `denegate` always keep the root. The papers' set equations hold when
-  the act is projected, `k ⊔ C.root ∈ C`, and not redundant, `¬ k ≤ C.root`; these are
-  hypotheses of the theorems, not arguments of the operations.
-* The root is a field, so that roots of updates compute; it is determined by the states, which
-  makes `Space S` a `SetLike`.
+* The operations are total. `restrict` and `denegate` always keep the root, and `update` roots
+  at the meet of the states above `k`, adjoining it when it is not one of them. The space
+  admits the update when that root is one of its states, `(C.update k).root ∈ C`; this and
+  "not redundant", `¬ k ≤ C.root`, are hypotheses of the theorems, not arguments of the
+  operations.
+* The root of an update is `k ⊔ C.root` only when the space projects that state
+  (`Space.root_update_of_mem`). After a question it carries the proposal as well, so an
+  assertion on a space need not add exactly its content to the common ground.
+* The root is a field; it is determined by the states, which makes `Space S` a `SetLike`.
 
 ## References
 
@@ -102,9 +103,6 @@ protected theorem isLeast : IsLeast (C : Set S) C.root := C.isLeast'
 theorem root_mem : C.root ∈ C := C.isLeast.1
 
 theorem root_le (hc : c ∈ C) : C.root ≤ c := C.isLeast.2 hc
-
-/-- The continuations of a space are its members other than the root. -/
-def continuations : Set S := ↑C \ {C.root}
 
 /-- The space with only its root. -/
 instance : Singleton S (Space S) := ⟨fun c ↦ ⟨{c}, c, isLeast_singleton⟩⟩
@@ -186,80 +184,107 @@ end PartialOrder
 
 /-! ### Basic speech acts -/
 
-section SemilatticeSup
+section CompleteLattice
 
-variable {S : Type*} [SemilatticeSup S] (C : Space S) {k l d : S}
+variable {S : Type*} [CompleteLattice S] (C : Space S) {D : Set S} {k l d : S}
 
-/-- The update `C + k` is rooted at `k` joined with the root and keeps the members of `C` above
-`k` ([cohen-krifka-2014] (23), [krifka-2015] (3)). -/
+/-- The update `C + k` has the states of `C` above `k`, rooted at their meet
+([cohen-krifka-2014] (23), [krifka-2015] (2), (3)). -/
 def update (k : S) : Space S :=
-  ⟨insert (k ⊔ C.root) (↑C ∩ Set.Ici k), k ⊔ C.root, Set.mem_insert _ _,
-    Set.forall_mem_insert.2 ⟨le_rfl, fun _ hd ↦ sup_le hd.2 (C.root_le hd.1)⟩⟩
+  ⟨insert (sInf (↑C ∩ Set.Ici k)) (↑C ∩ Set.Ici k), sInf (↑C ∩ Set.Ici k), Set.mem_insert _ _,
+    Set.forall_mem_insert.2 ⟨le_rfl, fun _ hd ↦ sInf_le hd⟩⟩
 
-@[simp] theorem root_update (k : S) : (C.update k).root = k ⊔ C.root := rfl
+theorem root_update (k : S) : (C.update k).root = sInf (↑C ∩ Set.Ici k) := rfl
 
-@[simp] theorem mem_update : d ∈ C.update k ↔ d = k ⊔ C.root ∨ d ∈ C ∧ k ≤ d := Iff.rfl
+@[simp] theorem mem_update : d ∈ C.update k ↔ d = (C.update k).root ∨ d ∈ C ∧ k ≤ d := Iff.rfl
 
-/-- A projected update is the restriction to the states above `k`. -/
-theorem coe_update_of_mem (h : k ⊔ C.root ∈ C) : (C.update k : Set S) = ↑C ∩ Set.Ici k :=
-  Set.insert_eq_of_mem ⟨h, le_sup_left⟩
+theorem le_root_update (k : S) : k ≤ (C.update k).root := le_sInf fun _ hd ↦ hd.2
 
-theorem update_le (h : k ⊔ C.root ∈ C) : C.update k ≤ C := by
+theorem root_le_root_update (k : S) : C.root ≤ (C.update k).root :=
+  le_sInf fun _ hd ↦ C.root_le hd.1
+
+/-- The space admits an update, in that the new root is one of its states, iff its states above
+`k` have a least member. -/
+theorem root_update_mem_iff : (C.update k).root ∈ C ↔ ∃ r, IsLeast (↑C ∩ Set.Ici k) r := by
+  refine ⟨fun h ↦ ⟨_, ⟨h, C.le_root_update k⟩, fun _ hd ↦ sInf_le hd⟩, fun ⟨r, hr⟩ ↦ ?_⟩
+  rw [root_update, hr.csInf_eq]
+  exact hr.1.1
+
+/-- When the space projects the root joined with `k`, that state is the root of the update. -/
+theorem root_update_of_mem (h : k ⊔ C.root ∈ C) : (C.update k).root = k ⊔ C.root :=
+  IsLeast.csInf_eq ⟨⟨h, le_sup_left⟩, fun _ hd ↦ sup_le hd.2 (C.root_le hd.1)⟩
+
+/-- An update the space admits is its restriction to the states above `k`. -/
+theorem coe_update_of_root_mem (h : (C.update k).root ∈ C) :
+    (C.update k : Set S) = ↑C ∩ Set.Ici k :=
+  Set.insert_eq_of_mem ⟨h, C.le_root_update k⟩
+
+theorem update_le (h : (C.update k).root ∈ C) : C.update k ≤ C := by
   rintro d (rfl | hd)
   exacts [h, hd.1]
 
 /-- The root survives an update iff the update is redundant. -/
 theorem root_mem_update_iff : C.root ∈ C.update k ↔ k ≤ C.root :=
-  ⟨fun h ↦ h.elim right_eq_sup.1 And.right, fun h ↦ Or.inr ⟨C.root_mem, h⟩⟩
+  ⟨fun h ↦ h.elim (fun e ↦ e ▸ C.le_root_update k) And.right, fun h ↦ Or.inr ⟨C.root_mem, h⟩⟩
 
 /-- Adding more is the stronger act ([cohen-krifka-2014] (86)). -/
-theorem update_le_update (hkl : k ≤ l) (h : l ⊔ C.root ∈ C) : C.update l ≤ C.update k := by
+theorem update_le_update (hkl : k ≤ l) (h : (C.update l).root ∈ C) :
+    C.update l ≤ C.update k := by
   rintro d (rfl | hd)
-  exacts [Or.inr ⟨h, hkl.trans le_sup_left⟩, Or.inr ⟨hd.1, hkl.trans hd.2⟩]
+  exacts [Or.inr ⟨h, hkl.trans (C.le_root_update l)⟩, Or.inr ⟨hd.1, hkl.trans hd.2⟩]
 
-/-- Consecutive updates are the update by the join. -/
-theorem update_update (k l : S) : (C.update k).update l = C.update (l ⊔ k) := by
-  ext d
-  simp only [mem_update, root_update, sup_assoc, sup_le_iff]
-  constructor
-  · rintro (rfl | ⟨rfl | hd, hl⟩)
-    · exact Or.inl rfl
-    · exact Or.inl (sup_eq_right.2 hl).symm
-    · exact Or.inr ⟨hd.1, hl, hd.2⟩
-  · rintro (rfl | ⟨hd, hl, hk⟩)
-    · exact Or.inl rfl
-    · exact Or.inr ⟨Or.inr ⟨hd, hk⟩, hl⟩
+/-- Updates agree when the same states carry them. -/
+theorem update_congr {C' : Space S} (h : (↑C ∩ Set.Ici k : Set S) = ↑C' ∩ Set.Ici l) :
+    C.update k = C'.update l :=
+  SetLike.coe_injective (congrArg (fun R ↦ insert (sInf R) R) h)
 
-/-- Consecutive updates commute ([cohen-krifka-2014] (31), [krifka-2015] (6)). -/
-theorem update_comm (k l : S) : (C.update k).update l = (C.update l).update k := by
-  rw [update_update, update_update, sup_comm]
+/-- Consecutive updates are the update by the join, when the space admits the first. -/
+theorem update_update (h : (C.update k).root ∈ C) (l : S) :
+    (C.update k).update l = C.update (l ⊔ k) :=
+  update_congr _ <| by
+    rw [C.coe_update_of_root_mem h, Set.inter_assoc, Set.Ici_inter_Ici, sup_comm]
 
-/-- Restricting to an update keeps the members above `k`, projected or not. -/
+/-- Admitted updates commute ([cohen-krifka-2014] (31), [krifka-2015] (6)). -/
+theorem update_comm (hk : (C.update k).root ∈ C) (hl : (C.update l).root ∈ C) :
+    (C.update k).update l = (C.update l).update k := by
+  rw [C.update_update hk, C.update_update hl, sup_comm]
+
+/-- Restricting to an update keeps the members above `k`, admitted or not. -/
 theorem restrict_coe_update (k : S) : C.restrict (C.update k) = C.restrict (Set.Ici k) := by
   ext d
   simp only [mem_restrict, SetLike.mem_coe, mem_update, Set.mem_Ici]
   refine or_congr_right (and_congr_right fun hd ↦ ⟨fun h ↦ ?_, fun h ↦ Or.inr ⟨hd, h⟩⟩)
-  exact h.elim (fun e ↦ e ▸ le_sup_left) And.right
+  exact h.elim (fun e ↦ e ▸ C.le_root_update k) And.right
 
-end SemilatticeSup
+/-- A restriction that keeps the states above `k` leaves the update by `k` as it was. -/
+theorem update_restrict_of_subset (h : ↑C ∩ Set.Ici k ⊆ D) :
+    (C.restrict D).update k = C.update k :=
+  update_congr _ <| Set.ext fun _ ↦
+    ⟨fun ⟨hd, hk⟩ ↦ ⟨hd.elim (fun e ↦ e ▸ C.root_mem) And.left, hk⟩,
+      fun hd ↦ ⟨Or.inr ⟨hd.1, h hd⟩, hd.2⟩⟩
 
 /-- The update by a join is the conjunction of the updates ([cohen-krifka-2014] (31)), when the
-space projects it. -/
-theorem coe_update_sSup {S : Type*} [CompleteLattice S] (C : Space S) {K : Set S}
-    (hK : K.Nonempty) (h : sSup K ⊔ C.root ∈ C) :
+space admits it. -/
+theorem coe_update_sSup {K : Set S} (hK : K.Nonempty) (h : (C.update (sSup K)).root ∈ C) :
     (C.update (sSup K) : Set S) = ⋂ k ∈ K, (C.update k : Set S) := by
+  rw [C.coe_update_of_root_mem h]
   ext d
-  simp only [SetLike.mem_coe, mem_update, Set.mem_iInter]
-  refine ⟨fun hd k hk ↦ Or.inr ?_, fun hd ↦ ?_⟩
-  · rcases hd with rfl | hd
-    exacts [⟨h, (le_sSup hk).trans le_sup_left⟩, ⟨hd.1, (le_sSup hk).trans hd.2⟩]
-  · have hle : sSup K ≤ d :=
-      sSup_le fun k hk ↦ (hd k hk).elim (fun e ↦ e ▸ le_sup_left) And.right
-    by_cases hC : d ∈ C
-    · exact Or.inr ⟨hC, hle⟩
-    · obtain ⟨k, hk⟩ := hK
-      obtain rfl := (hd k hk).resolve_right fun h' ↦ hC h'.1
-      exact Or.inl (le_antisymm (sup_le_sup_right (le_sSup hk) _) (sup_le hle le_sup_right))
+  simp only [Set.mem_inter_iff, SetLike.mem_coe, Set.mem_Ici, sSup_le_iff, Set.mem_iInter,
+    mem_update]
+  refine ⟨fun hd k hk ↦ Or.inr ⟨hd.1, hd.2 k hk⟩, fun hd ↦ ?_⟩
+  have hle : ∀ k ∈ K, k ≤ d := fun k hk ↦
+    (hd k hk).elim (fun e ↦ e ▸ C.le_root_update k) And.right
+  refine ⟨?_, hle⟩
+  by_contra hC
+  obtain ⟨k, hk⟩ := hK
+  have e : d = (C.update k).root := (hd k hk).resolve_right fun h' ↦ hC h'.1
+  have hk' : C.update k = C.update (sSup K) :=
+    update_congr _ <| Set.ext fun x ↦ and_congr_right fun hx ↦
+      ⟨fun hkx ↦ sSup_le fun k' hk' ↦ (hle k' hk').trans (e.le.trans (sInf_le ⟨hx, hkx⟩)),
+        (le_sSup hk).trans⟩
+  exact hC (by rw [e, hk']; exact h)
+
+end CompleteLattice
 
 /-! ### Commitment space semantics -/
 
@@ -271,46 +296,23 @@ variable {A W : Type*} (C : Space (State A W)) (a : A) (φ : Set W) (force : For
 def assert (force : Force := .doxastic) : Space (State A W) :=
   C.update {commit a φ force}
 
-@[simp] theorem root_assert : (C.assert a φ force).root = insert (commit a φ force) C.root :=
-  rfl
-
 theorem mem_assert :
     d ∈ C.assert a φ force ↔
-      d = insert (commit a φ force) C.root ∨ d ∈ C ∧ commit a φ force ∈ d :=
+      d = (C.assert a φ force).root ∨ d ∈ C ∧ commit a φ force ∈ d :=
   or_congr_right (and_congr_right fun _ ↦ Set.singleton_subset_iff)
+
+theorem commit_mem_root_assert : commit a φ force ∈ (C.assert a φ force).root :=
+  Set.singleton_subset_iff.1 (C.le_root_update _)
+
+/-- When the space projects the root with the new commitment, that state is the root of the
+assertion. -/
+theorem root_assert_of_mem (h : insert (commit a φ force) C.root ∈ C) :
+    (C.assert a φ force).root = insert (commit a φ force) C.root :=
+  C.root_update_of_mem h
 
 /-- The root survives an assertion iff the assertion is redundant. -/
 theorem root_mem_assert_iff : C.root ∈ C.assert a φ force ↔ commit a φ force ∈ C.root :=
   C.root_mem_update_iff.trans Set.singleton_subset_iff
-
-open scoped Classical in
-/-- The issue a space raises is settled by the information states inside some continuation's
-context set, or inside the root's when the space has no continuations. -/
-noncomputable def toIssue : Question W :=
-  if C.continuations = ∅ then Question.ofSet (contextSet C.root)
-  else ⨆ c ∈ C.continuations, Question.ofSet (contextSet c)
-
-noncomputable instance : Discourse.HasIssue (Space (State A W)) W := ⟨toIssue⟩
-
-theorem mem_toIssue_iff {i : Set W} :
-    i ∈ C.toIssue ↔
-      (C.continuations = ∅ ∧ i ⊆ contextSet C.root) ∨ ∃ c ∈ C.continuations, i ⊆ contextSet c := by
-  unfold toIssue
-  split_ifs with h
-  · simp [h, Question.mem_ofSet]
-  · simp only [h, false_and, false_or, Question.mem_biSup_iff, Question.mem_ofSet]
-    refine ⟨fun h' ↦ h'.elim (fun e ↦ ?_) id, Or.inr⟩
-    obtain ⟨c, hc⟩ := Set.nonempty_iff_ne_empty.2 h
-    exact ⟨c, hc, e ▸ Set.empty_subset _⟩
-
-/-- The common ground of a space is what its root entails; the speaker's assertion is
-Stalnakerian on it. -/
-instance : HasAssertion (Space (State Discourse.Role W)) W where
-  commonGround C := slate C.root
-  initial := Space.Ici ∅
-  assert C φ := C.assert .speaker φ
-  commonGround_initial := slate_empty
-  commonGround_assert _ _ := slate_insert_of_commit rfl
 
 end Space
 
