@@ -25,8 +25,8 @@ where tree spellout is also the spellout of the containment engine.
   Condition.
 * `foot`, `FootConditionMet`: the Foot Condition.
 * `Matching`: Taraldsen's matching relation.
-* `chainTree`, `LexicalEntry.ofSupersetRule`: right-branching chains, and the containment
-  engine's entries read as chain entries.
+* `chainTree`, `phrase`, `LexicalEntry.ofSupersetRule`: right-branching chains, and the
+  containment engine's entries read as chain entries.
 
 ## Main results
 
@@ -41,20 +41,19 @@ where tree spellout is also the spellout of the containment engine.
 
 ## Implementation notes
 
-* Matching is the rigid Superset Principle of Caha's (6), identity of a subtree; his later Match
-  (27), which also ignores traces and spelled-out constituents, needs movement and cyclic
-  spellout, which the engine does not represent.
-* A node's daughters are ordered with its complement last, so the foot is the last leaf.
-
-## TODO
-
-* The cyclic lexicalization algorithm of later nanosyntax, with spellout-driven movement,
-  backtracking and complex specifiers, together with Cyclic Override and Caha's relaxed Match.
+* A node is a phrase labelled by its head feature, with its complement as last daughter and the
+  constituents evacuated to its edge before it. A bare head merged as a complement is not told
+  apart from a phrase of one feature, so a stored tree does not record whether its foot is unary
+  or binary, the difference Starke draws between suffixes and prefixes.
+* Matching is the rigid Superset Principle of Caha's (6), identity of a subtree. The
+  lexicalization algorithm (`Nanosyntax/Lexicalization.lean`) follows the later formulation in
+  which evacuation leaves no trace, so it needs no matching that ignores traces.
 
 ## References
 
 * [starke-2009]
 * [caha-2009]
+* [starke-2018]
 * [taraldsen-2018]
 * [taraldsen-et-al-2018]
 -/
@@ -136,6 +135,19 @@ theorem treeSpellout_isElsewhereWinner {entries : RuleSet (LexicalEntry F α)} {
   obtain ⟨e, he, rfl⟩ := Option.map_eq_some_iff.mp h
   exact ⟨e, RuleSet.selectBy_mem he, rfl, treeSelect_isElsewhereWinner he⟩
 
+/-- A tree is spelled out exactly when some entry matches it. -/
+theorem treeSpellout_eq_none_iff {entries : RuleSet (LexicalEntry F α)} {t : RoseTree F} :
+    treeSpellout entries t = none ↔ ∀ e ∈ entries, ¬ e.Matches t := by
+  simp [treeSpellout, treeSelect, RuleSet.selectBy_eq_none_iff, RuleSet.applicable,
+    List.filter_eq_nil_iff, Applies]
+
+/-- Spellout gaps propagate to containing trees, since an entry matching a tree matches its
+subtrees. -/
+theorem treeSpellout_eq_none_of_isSubtree {entries : RuleSet (LexicalEntry F α)}
+    {s t : RoseTree F} (hst : IsSubtree s t) (h : treeSpellout entries s = none) :
+    treeSpellout entries t = none :=
+  treeSpellout_eq_none_iff.2 fun e he ht ↦ treeSpellout_eq_none_iff.1 h e he (hst.trans ht)
+
 end
 
 /-! ### The Foot Condition -/
@@ -203,6 +215,23 @@ theorem eq_chainTree_of_isSubtree {feat : ℕ → F} {k : ℕ} {t : RoseTree F}
     · obtain ⟨r, hr, rfl⟩ := ih (List.mem_singleton.1 hc ▸ hsub)
       exact ⟨r, hr.trans k.le_succ, rfl⟩
 
+/-- The right-branching phrase a feature sequence builds on its first feature, each feature
+taking what is below it as its complement. -/
+def phrase (f₀ : F) (fs : List F) : RoseTree F := fs.foldl (fun t f ↦ node f [t]) (leaf f₀)
+
+@[simp] theorem phrase_nil (f₀ : F) : phrase f₀ [] = leaf f₀ := rfl
+
+@[simp] theorem phrase_concat (f₀ : F) (fs : List F) (f : F) :
+    phrase f₀ (fs ++ [f]) = node f [phrase f₀ fs] := by simp [phrase]
+
+theorem chainTree_eq_phrase (feat : ℕ → F) (k : ℕ) :
+    chainTree feat k = phrase (feat 0) ((List.range k).map (feat ∘ Nat.succ)) := by
+  induction k with
+  | zero => rfl
+  | succ k ih =>
+    rw [List.range_succ, List.map_append, List.map_singleton, phrase_concat, ← ih, chainTree]
+    rfl
+
 /-- An entry storing a chain meets the Foot Condition wherever it matches. -/
 theorem footConditionMet_of_matches_chainTree {e : LexicalEntry F α} {feat : ℕ → F} {k : ℕ}
     (he : e.tree = chainTree feat k) {t : RoseTree F} (h : e.Matches t) :
@@ -213,8 +242,8 @@ theorem footConditionMet_of_matches_chainTree {e : LexicalEntry F α} {feat : �
 /-! ### Taraldsen's matching relation -/
 
 /-- `MatchesRoot s u` holds when the roots of `s` and `u` carry the same feature and every
-daughter of each root-matches some daughter of the other, clauses (a) and (b) of
-[taraldsen-2018] (3). -/
+daughter of each root-matches some daughter of the other, the two clauses of [taraldsen-2018]
+(3) and [taraldsen-et-al-2018] (35). -/
 def MatchesRoot : RoseTree F → RoseTree F → Prop
   | node f cs, node g ds =>
       f = g ∧ (∀ c ∈ cs, ∃ d ∈ ds, MatchesRoot c d) ∧ ∀ d ∈ ds, ∃ c, ∃ _ : c ∈ cs, MatchesRoot c d
@@ -233,11 +262,12 @@ theorem MatchesRoot.refl : ∀ t : RoseTree F, MatchesRoot t t
 termination_by t => sizeOf t
 decreasing_by all_goals exact sizeOf_lt_of_mem (by assumption)
 
-/-- A syntactic tree `s` matches a stored tree `t` ([taraldsen-2018] (3)) when the root of `s`
-root-matches some node of `t`. -/
+/-- A syntactic tree `s` matches a stored tree `t` when the root of `s` root-matches some node of
+`t`. -/
 def Matching (s t : RoseTree F) : Prop := ∃ u, IsSubtree u t ∧ MatchesRoot s u
 
-/-- A subtree matches, so Taraldsen's matching includes the Superset Principle. -/
+/-- A subtree matches, so the Superset Principle follows from Taraldsen's matching
+([taraldsen-et-al-2018] (36)). -/
 theorem Matching.of_isSubtree {s t : RoseTree F} (h : IsSubtree s t) : Matching s t :=
   ⟨s, h, .refl s⟩
 
