@@ -1,37 +1,46 @@
 module
 
-public import Linglib.Morphology.Realization
-public import Mathlib.Tactic.DeriveFintype
+public import Linglib.Data.Examples.Borer2013
+public import Linglib.Syntax.Minimalist.Category.FunctionalSequence
 
 /-!
-# Borer 2013: categorizing roots and the adjective asymmetry
+# Borer (2013): Structuring Sense: Volume III: Taking Form
 
-This file formalizes the categorial paradigm of [borer-2013]'s chapter on categorizing roots. A
-root is a phonological index that a categorial frame realizes; the frame does the categorizing, so
-nothing is added to the form when a root occurs as a noun rather than a verb. On
-`Morphology.Realization` that fixes `Ctx` as the frame itself, with no head in it, where a
-Distributed Morphology instance would put a categorizer there.
+A category-less root takes its category from the extended projection above it, so *dance* is a noun
+under a determiner and a verb under infinitival *to*, with nothing added to it. Such roots never
+occur as adjectives (*too dance*), and the words that occur as adjectives occur neither as nouns nor
+as verbs (*a green*, *to green*). Distributed Morphology categorizes a root by a head *n*, *v* or
+*a* that may be null, so it has to rule each pairing of a root with a head in or out. Borer's
+resolution is that adjectives are not roots. Like derivatives they are born categorized, and a
+categorized core fits only the extended projection of its own category, while the adjectival
+extended projection cannot categorize a root. This file formalizes the resolution and derives from
+it every judgment of the paradigm that poses the puzzle.
 
-The paradigm is Borer's (120)–(121): √DANCE and √CHAIR are licensed in the verbal and nominal
-frames but not the adjectival one, √GREEN and √BIG only in the adjectival frame. Her point is that
-the asymmetry survives the question of zero categorizers — a theory that mediates categorization
-through possibly-null category heads still has to rule these cells in and out one by one. Footnote
-39 adds the residue: *thin* and *yellow*, but not *red* and *fat*, occur as verbs too, and since
-nothing about their adjectival behaviour predicts which, the verbal uses must be listed.
+## Main statements
 
-## Main definitions
+* `licenses_nominal_and_verbal_iff`: roots, and roots alone, occur both as nouns and as verbs.
+* `Licenses.eq_adjectival`: a core that occurs as an adjective occurs in no other extended
+  projection.
+* `acceptable_iff_licensed`: the lexicon and the licensing condition derive every judgment of the
+  paradigm.
+* `exists_ne_of_verbal_of_adjectival`: a word that is both a verb and an adjective is listed
+  twice, as *thin* and *yellow* are.
 
-* `Root`, `Frame`, `licensed` — the roots and frames of (120)–(121) and footnote 39
-* `english` — the frames as a `Realization`, each licensed root realized by its own index
+## Implementation notes
 
-## Main results
+* The category of a core is an `Option CatFamily`, `none` for a root, and an example's frame is
+  the family of the extended projection it builds: nominal under *a* and *the*, verbal under *to*,
+  adjectival under *too*. The adpositional extended projection is taken not to categorize roots,
+  which the paradigm does not test.
+* The verbal *thin* and *yellow* are listed as categorized verbs, since as roots they would be
+  nouns as well.
 
-* `english_invariant` — no root has more than one exponent: the frame categorizes and adds nothing
-* `adjectival_roots_are_rigid` — no root of the adjectival frame is licensed in the nominal one
-* `nv_flexibility_systematic` — outside the adjectival roots, the nominal and verbal frames license
-  exactly the same roots
-* `verbal_use_unpredictable` — two adjectival roots agree everywhere but the verbal frame, so that
-  cell is not a function of the rest of the paradigm and must be listed
+## TODO
+
+The chapter supports the resolution with inflection and affixation: adjectives show none of the
+stem allomorphy or root-selected affixes that roots allow, taking only the regular *-er* and
+*-est* and the default nominalizers *-ness* and *-ity*. The verbs *clarify* and *enlarge*, built
+on underived adjectives, are left as a problem for it. Neither is formalized.
 
 ## References
 
@@ -42,83 +51,92 @@ nothing about their adjectival behaviour predicts which, the verbal uses must be
 
 namespace Borer2013
 
-open Morphology
+open Minimalist
 
-/-- The categorial frames a root may be realized in. -/
-inductive Frame | nFrame | vFrame | aFrame
-  deriving DecidableEq, Fintype, Repr
+/-! ### Categorization by the extended projection -/
 
-/-- The roots of (120)–(121) and footnote 39. -/
-inductive Root | dance | chair | green | big | thin | yellow | red | fat
-  deriving DecidableEq, Fintype, Repr
+/-- `Licenses e κ` says that the extended projection of family `e` takes a core of category `κ`,
+where `none` is a category-less root. A categorized core fits only the extended projection of its
+own category, and a root becomes a noun or a verb in its extended projection, but the adjectival
+one cannot make it an adjective. -/
+def Licenses (e : CatFamily) : Option CatFamily → Prop
+  | some c => c = e
+  | none => e = .nominal ∨ e = .verbal
 
-/-- Which frames license which root: (120) for √DANCE and √CHAIR, (121) for √GREEN and √BIG, and
-footnote 39 for the four property roots, of which only *thin* and *yellow* also occur as verbs. -/
-def licensed : Root → Frame → Bool
-  | .dance, .nFrame  | .dance, .vFrame  => true
-  | .chair, .nFrame  | .chair, .vFrame  => true
-  | .green, .aFrame  | .big, .aFrame    => true
-  | .red, .aFrame    | .fat, .aFrame    => true
-  | .thin, .aFrame   | .thin, .vFrame   => true
-  | .yellow, .aFrame | .yellow, .vFrame => true
-  | _, _ => false
+instance (e : CatFamily) : DecidablePred (Licenses e)
+  | some c => inferInstanceAs (Decidable (c = e))
+  | none => inferInstanceAs (Decidable (e = .nominal ∨ e = .verbal))
 
-/-- The exoskeletal system: where a frame licenses a root, the root is realized by its own
-phonological index. Categorization is the frame's doing, so the form is the same in every frame
-that licenses it. -/
-def english : Realization Root Frame Root where
-  realize r c := if licensed r c then {r} else ∅
+variable {e : CatFamily} {κ : Option CatFamily}
 
-@[simp] theorem isLicensed_iff (r : Root) (c : Frame) :
-    english.IsLicensed r c ↔ licensed r c = true := by
-  cases h : licensed r c <;> simp [Realization.IsLicensed, english, h]
+@[simp] theorem licenses_some {c : CatFamily} : Licenses e (some c) ↔ c = e := Iff.rfl
 
-instance (r : Root) (c : Frame) : Decidable (english.IsLicensed r c) :=
-  decidable_of_iff _ (isLicensed_iff r c).symm
+@[simp] theorem licenses_none : Licenses e none ↔ e = .nominal ∨ e = .verbal := Iff.rfl
 
-/-- No root has more than one exponent: a root occurring in two frames is spelled the same in both,
-since the frame categorizes and no morphology is added. This is what distinguishes the exoskeletal
-instance from one whose `Ctx` carries a categorizer. -/
-theorem english_invariant (r : Root) : english.IsInvariant r := by
-  intro c c' x hx x' hx'
-  simp only [english] at hx hx'
-  split at hx
-  · split at hx' <;> simp_all
-  · simp at hx
+/-- Roots, and roots alone, occur both as nouns and as verbs. -/
+theorem licenses_nominal_and_verbal_iff :
+    Licenses .nominal κ ∧ Licenses .verbal κ ↔ κ = none := by
+  cases κ <;> grind [Licenses]
 
-/-- (121b–c): a root licensed in the adjectival frame is licensed in neither of the others, save
-for the listed verbal uses of footnote 39 — no adjectival root at all is licensed in the nominal
-frame. -/
-theorem adjectival_roots_are_rigid (r : Root) (h : english.IsLicensed r .aFrame) :
-    ¬ english.IsLicensed r .nFrame := by
-  revert h; cases r <;> decide
+/-- A core that occurs as an adjective occurs in no other extended projection, since the
+adjectival extended projection takes no root and an adjective is categorized. -/
+theorem Licenses.eq_adjectival (hA : Licenses .adjectival κ) (h : Licenses e κ) :
+    e = .adjectival := by
+  cases κ <;> simp_all
 
-/-- (120b–c): outside the adjectival roots, noun-verb flexibility is systematic — the nominal and
-verbal frames license exactly the same roots. -/
-theorem nv_flexibility_systematic (r : Root) (h : ¬ english.IsLicensed r .aFrame) :
-    english.IsLicensed r .nFrame ↔ english.IsLicensed r .vFrame := by
-  revert h; cases r <;> decide
+/-- A word that is both a verb and an adjective is listed under two categories, since no core is
+licensed in both extended projections. The verbal uses of *thin* and *yellow* cannot be predicted
+from their adjectival ones and must be listed (fn. 39). -/
+theorem exists_ne_of_verbal_of_adjectival {l : List (Option CatFamily)}
+    (hV : ∃ κ ∈ l, Licenses .verbal κ) (hA : ∃ κ ∈ l, Licenses .adjectival κ) :
+    ∃ κ ∈ l, ∃ κ' ∈ l, κ ≠ κ' := by
+  obtain ⟨κ, hκ, hV⟩ := hV
+  obtain ⟨κ', hκ', hA⟩ := hA
+  exact ⟨κ, hκ, κ', hκ', by rintro rfl; cases hA.eq_adjectival hV⟩
 
-/-- (120a) and (121b): no root is licensed in all three frames — the categorial systems do not
-fully overlap. -/
-theorem no_root_in_all_frames (r : Root) :
-    ¬ (english.IsLicensed r .nFrame ∧ english.IsLicensed r .vFrame ∧
-        english.IsLicensed r .aFrame) := by
-  cases r <;> decide
+/-! ### The paradigm -/
 
-/-- Footnote 39: *thin* and *red* are alike in every frame but the verbal one, so a root's verbal
-cell is not a function of the rest of its paradigm. The verbal uses of *to thin* and *to yellow*
-cannot be predicted and must be listed. -/
-theorem verbal_use_unpredictable :
-    english.IsLicensed .thin .aFrame ∧ english.IsLicensed .red .aFrame ∧
-      (english.IsLicensed .thin .nFrame ↔ english.IsLicensed .red .nFrame) ∧
-      english.IsLicensed .thin .vFrame ∧ ¬ english.IsLicensed .red .vFrame := by
-  refine ⟨by decide, by decide, by decide, by decide, by decide⟩
+/-- The words of the paradigm, each with the category of a core it is listed as. The roots are
+category-less, the adjectives are born categorized, and *thin* and *yellow* are listed again as
+verbs. -/
+def lexicon : List (String × Option CatFamily) :=
+  [("dance", none), ("jump", none), ("walk", none), ("table", none), ("chair", none),
+    ("wardrobe", none), ("question", none), ("mean", some .adjectival),
+    ("green", some .adjectival), ("fat", some .adjectival), ("tall", some .adjectival),
+    ("smart", some .adjectival), ("wide", some .adjectival), ("big", some .adjectival),
+    ("thin", some .adjectival), ("thin", some .verbal), ("yellow", some .adjectival),
+    ("yellow", some .verbal)]
 
-/-- The same holds of *yellow* against *fat*: the pair of listed verbs is not a class the paradigm
-picks out. -/
-theorem yellow_fat_unpredictable :
-    english.IsLicensed .yellow .vFrame ∧ ¬ english.IsLicensed .fat .vFrame := by
-  refine ⟨by decide, by decide⟩
+/-- The categories a word is listed under. -/
+def categories (w : String) : List (Option CatFamily) :=
+  lexicon.filterMap fun p ↦ if p.1 = w then some p.2 else none
+
+/-- A row records the extended projection an example puts its word in, the categories of the
+cores the word is listed as, and the judgment. -/
+structure Row where
+  frame : CatFamily
+  cores : List (Option CatFamily)
+  judgment : Judgment
+
+/-- The row of an example whose word is listed. -/
+def Row.ofDatum (d : Datum) : Option Row := do
+  let frame ← d.parse? "frame"
+    [("nominal", CatFamily.nominal), ("verbal", .verbal), ("adjectival", .adjectival)]
+  let cats := categories (← d.feature? "item")
+  guard (cats ≠ [])
+  pure ⟨frame, cats, d.judgment⟩
+
+/-- The examples. -/
+def data : List Row := Examples.all.filterMap Row.ofDatum
+
+/-- Every example has its row, so every word of the paradigm is listed. -/
+theorem data_length : data.length = Examples.all.length := by decide +kernel
+
+/-- An example is acceptable exactly when its word is listed as a core that fits the extended
+projection the example puts it in: *a dance*, *to dance* and *too green* are acceptable, and
+*too dance*, *a green* and *to green* are not. -/
+theorem acceptable_iff_licensed :
+    ∀ d ∈ data, d.judgment = .acceptable ↔ ∃ κ ∈ d.cores, Licenses d.frame κ := by
+  decide +kernel
 
 end Borer2013

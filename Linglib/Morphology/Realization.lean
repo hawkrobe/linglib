@@ -11,62 +11,67 @@ public import Mathlib.Data.Finset.Union
 /-!
 # Root realizations: indices realized in context
 
-Every realizational/separationist framework that adopts late insertion or a
-separate lexemic index factors a root into an opaque individuator plus
-context-sensitive form and (optionally) meaning maps: DM's √ individuated by
-arbitrary indices, form at Vocabulary Insertion ([harley-2014],
-[marantz-1997], [embick-2021]); [borer-2013]'s phonological indices (her form
-individuation `R ↪ F` is her instance's axiom, not the interface's); PFM's
-opaque lexeme realized at a cell ([stump-2001], [bonami-stump-2016]);
-[spencer-2013]'s lexemic index. [beard-1995]'s Separation Hypothesis grounds
-the form-side separation; the meaning-side separation is DM's List-3 move.
-`Realization` fixes that object; sign-based lexicalism, Construction
-Morphology, and [haspelmath-2025b]'s morph-based comparative root are
-rival ontologies its parameters measure, not instances of it (survey:
-[lohndal-2020]). The interface is agnostic about whether indices are listed
-or constructed ([blevins-2016]).
+A realization assigns to an index `r` and a context `c` the finite set `realize r c` of forms
+that realize `r` in `c`. The index is opaque, and the frameworks that separate an item from its
+form choose it differently: a root of Distributed Morphology, given its form at Vocabulary
+Insertion; one of Borer's roots, a phonological index whose form its categorial context selects,
+as *grow* and *growth*; a lexeme of Paradigm Function Morphology, realized at a cell; Spencer's
+lexemic index. An empty set says that `r` is not licensed in `c`, and a set of two forms is an
+overabundant cell. An interpreted realization adds a second contextual map, to readings, which
+is Marantz's separation of the forms of List 2 from the meanings of List 3.
 
-`realize` is `Finset`-valued: the empty fiber is non-licensing, a
-non-singleton an overabundant cell, matching `Paradigm/Linkage.lean`; the
-univalent and total strata are `IsUnivalent` and `IsTotal`. Frameworks
-diverge along parameters — what `R` individuates (√, lexeme, morph), what
-`Ctx` is (categorizer configuration vs paradigm cell — vs [borer-2013]'s
-headless categorial frames, a Ctx-instantiation contrast; [lohndal-2020]),
-what `F` is (`ConsonantalRoot α` is a choice of `F`), whether interpretation
-is present (`Realization.Interpreted`) — never along the core.
+A homomorphism of realizations merges indices and translates contexts so that realization is
+preserved. The strict homomorphisms of interpreted realizations translate contexts independently
+of the index and preserve readings too, so the indices they merge have the same forms and
+readings in every context, and passing to these profiles, `Interpreted.reduce`, merges as much
+as any strict homomorphism can. The disputes over individuation, such as fat roots against sister
+roots, are mergers at the lax tier, which include forms and readings rather than preserving them.
 
-`Hom` merges indices with a context translation that may consult the source
-index; `Realization.Interpreted.Hom` is the strict tier — root-independent context
-translation, interpretation-preserving — on which individuation disputes are
-stated: merged indices must share their whole profile
-(`Hom.profileEq_of_onRoot_eq`), so strict mergers collapse only exact
-profile-duplicates and `Interpreted.reduce` is terminal among them. The
-individuation rivalries live at the lax tier, where fat-root and sister-root
-presentations subsume each other's data: extensional profiles underdetermine
-individuation, and the discriminators the literature actually uses —
-first-categorization locality ([arad-2005]), the denial that indices are
-linguistic objects, processing evidence — are extra structure on admissible
-mergers that studies supply. The interface localizes the dispute precisely
-because it cannot resolve it. One mild theory-ladenness to note: the strict
-tier's root-independent context translation forces categorial information
-into `Ctx`, quietly encoding the Categorization Assumption.
+## Main definitions
 
-## Main declarations
+* `Morphology.Realization`: indices realized in context, with `IsLicensed`, `Realizes`,
+  `exponents`, `IsTotal` and `IsUnivalent`.
+* `Morphology.IsConstantIn`, `Morphology.IsVariantIn`: constancy and variance of a contextual map
+  at an index, which give `IsInvariant` and `IsSuppletive` for forms and `IsIntrinsic` and
+  `IsAllosemous` for readings.
+* `Morphology.Realization.Hom`, `Morphology.Realization.Interpreted.Hom`,
+  `Morphology.Realization.Interpreted.LaxHom`: mergers of indices, the strict ones preserving
+  readings.
+* `Morphology.Realization.comp`: realization through an intermediate inventory.
+* `Morphology.Realization.Interpreted.reduce`: the realization on profiles.
 
-* `Realization` — indices with contextual realization; `IsLicensed`, `Realizes`,
-  `exponents`, `IsTotal`, `IsUnivalent`.
-* `IsConstantIn` / `IsVariantIn` — the constancy pair over any
-  contextual map; instantiated as `IsInvariant`/`IsSuppletive` (form) and
-  `IsIntrinsic`/`IsAllosemous` (meaning).
-* `Realization.RealizeEq`, `Realization.IsHomophonous` — form identity vs index
-  identity.
-* `Realization.Hom` — index mergers with realization tracking; `Interpreted.Hom` —
-  the strict, interpretation-preserving tier;
-  `Realization.Interpreted.Hom.interp_eq_of_onRoot_eq`.
-* `Realization.Interpreted` — the two-map extension ([marantz-1997]'s List 2 / List 3).
-* `Realization.comp` — Kleisli pipelining; `Interpreted.ProfileEq`,
-  `Interpreted.reduce`, `Hom.profileEq_of_onRoot_eq` — the reduced
-  presentation and the strict-merger bound.
+## Main statements
+
+* `Morphology.Realization.isSuppletive_iff`: form variance at an index is overabundance in one
+  cell or suppletion across cells.
+* `Morphology.Realization.Interpreted.Hom.profileEq_of_onRoot_eq`: indices that a strict
+  homomorphism merges have the same profile.
+
+## Implementation notes
+
+* Sign-based lexicalism, Construction Morphology and Haspelmath's morph-based comparative root
+  are rival ontologies that the parameters of a realization measure, not instances of it. The
+  interface does not say whether indices are listed or constructed.
+* A strict homomorphism cannot consult the index when it translates contexts, so categorial
+  information has to sit in the context, which quietly encodes the Categorization Assumption.
+* Extensional profiles underdetermine individuation. The criteria the literature uses, such as
+  locality of first categorization, are further structure on admissible mergers that studies
+  supply.
+
+## References
+
+* [harley-2014]
+* [marantz-1997]
+* [embick-2021]
+* [borer-2013]
+* [stump-2001]
+* [bonami-stump-2016]
+* [spencer-2013]
+* [beard-1995]
+* [haspelmath-2025b]
+* [lohndal-2020]
+* [blevins-2016]
+* [arad-2005]
 -/
 
 @[expose] public section

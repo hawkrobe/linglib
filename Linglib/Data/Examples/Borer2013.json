@@ -1,0 +1,838 @@
+[
+  {
+    "id": "borer2013_118a_dance",
+    "source": {"bibkey": "borer-2013", "paperLabel": "ch. 7 (118a)"},
+    "language": "stan1293",
+    "primaryText": "a dance",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["frame", "nominal"],
+      ["item", "dance"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "borer2013_118a_jump",
+    "source": {"bibkey": "borer-2013", "paperLabel": "ch. 7 (118a)"},
+    "language": "stan1293",
+    "primaryText": "a jump",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["frame", "nominal"],
+      ["item", "jump"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "borer2013_118a_walk",
+    "source": {"bibkey": "borer-2013", "paperLabel": "ch. 7 (118a)"},
+    "language": "stan1293",
+    "primaryText": "a walk",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["frame", "nominal"],
+      ["item", "walk"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "borer2013_118a_table",
+    "source": {"bibkey": "borer-2013", "paperLabel": "ch. 7 (118a)"},
+    "language": "stan1293",
+    "primaryText": "a table",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["frame", "nominal"],
+      ["item", "table"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "borer2013_118a_chair",
+    "source": {"bibkey": "borer-2013", "paperLabel": "ch. 7 (118a)"},
+    "language": "stan1293",
+    "primaryText": "a chair",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["frame", "nominal"],
+      ["item", "chair"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "borer2013_118a_wardrobe",
+    "source": {"bibkey": "borer-2013", "paperLabel": "ch. 7 (118a)"},
+    "language": "stan1293",
+    "primaryText": "a wardrobe",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["frame", "nominal"],
+      ["item", "wardrobe"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "borer2013_118a_question",
+    "source": {"bibkey": "borer-2013", "paperLabel": "ch. 7 (118a)"},
+    "language": "stan1293",
+    "primaryText": "a question",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["frame", "nominal"],
+      ["item", "question"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "borer2013_118b_dance",
+    "source": {"bibkey": "borer-2013", "paperLabel": "ch. 7 (118b)"},
+    "language": "stan1293",
+    "primaryText": "to dance",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["frame", "verbal"],
+      ["item", "dance"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "borer2013_118b_jump",
+    "source": {"bibkey": "borer-2013", "paperLabel": "ch. 7 (118b)"},
+    "language": "stan1293",
+    "primaryText": "to jump",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["frame", "verbal"],
+      ["item", "jump"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "borer2013_118b_walk",
+    "source": {"bibkey": "borer-2013", "paperLabel": "ch. 7 (118b)"},
+    "language": "stan1293",
+    "primaryText": "to walk",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["frame", "verbal"],
+      ["item", "walk"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "borer2013_118b_table",
+    "source": {"bibkey": "borer-2013", "paperLabel": "ch. 7 (118b)"},
+    "language": "stan1293",
+    "primaryText": "to table",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["frame", "verbal"],
+      ["item", "table"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "borer2013_118b_chair",
+    "source": {"bibkey": "borer-2013", "paperLabel": "ch. 7 (118b)"},
+    "language": "stan1293",
+    "primaryText": "to chair",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["frame", "verbal"],
+      ["item", "chair"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "borer2013_118b_wardrobe",
+    "source": {"bibkey": "borer-2013", "paperLabel": "ch. 7 (118b)"},
+    "language": "stan1293",
+    "primaryText": "to wardrobe",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["frame", "verbal"],
+      ["item", "wardrobe"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "borer2013_118b_question",
+    "source": {"bibkey": "borer-2013", "paperLabel": "ch. 7 (118b)"},
+    "language": "stan1293",
+    "primaryText": "to question",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["frame", "verbal"],
+      ["item", "question"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "borer2013_118c_dance",
+    "source": {"bibkey": "borer-2013", "paperLabel": "ch. 7 (118c)"},
+    "language": "stan1293",
+    "primaryText": "too dance",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["frame", "adjectival"],
+      ["item", "dance"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "borer2013_118c_jump",
+    "source": {"bibkey": "borer-2013", "paperLabel": "ch. 7 (118c)"},
+    "language": "stan1293",
+    "primaryText": "too jump",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["frame", "adjectival"],
+      ["item", "jump"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "borer2013_118c_walk",
+    "source": {"bibkey": "borer-2013", "paperLabel": "ch. 7 (118c)"},
+    "language": "stan1293",
+    "primaryText": "too walk",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["frame", "adjectival"],
+      ["item", "walk"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "borer2013_118c_table",
+    "source": {"bibkey": "borer-2013", "paperLabel": "ch. 7 (118c)"},
+    "language": "stan1293",
+    "primaryText": "too table",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["frame", "adjectival"],
+      ["item", "table"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "borer2013_118c_chair",
+    "source": {"bibkey": "borer-2013", "paperLabel": "ch. 7 (118c)"},
+    "language": "stan1293",
+    "primaryText": "too chair",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["frame", "adjectival"],
+      ["item", "chair"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "borer2013_118c_wardrobe",
+    "source": {"bibkey": "borer-2013", "paperLabel": "ch. 7 (118c)"},
+    "language": "stan1293",
+    "primaryText": "too wardrobe",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["frame", "adjectival"],
+      ["item", "wardrobe"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "borer2013_118c_question",
+    "source": {"bibkey": "borer-2013", "paperLabel": "ch. 7 (118c)"},
+    "language": "stan1293",
+    "primaryText": "too question",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["frame", "adjectival"],
+      ["item", "question"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "borer2013_119a_mean",
+    "source": {"bibkey": "borer-2013", "paperLabel": "ch. 7 (119a)"},
+    "language": "stan1293",
+    "primaryText": "a mean",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["frame", "nominal"],
+      ["item", "mean"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "borer2013_119a_green",
+    "source": {"bibkey": "borer-2013", "paperLabel": "ch. 7 (119a)"},
+    "language": "stan1293",
+    "primaryText": "a green",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["frame", "nominal"],
+      ["item", "green"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "borer2013_119a_fat",
+    "source": {"bibkey": "borer-2013", "paperLabel": "ch. 7 (119a)"},
+    "language": "stan1293",
+    "primaryText": "a fat",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["frame", "nominal"],
+      ["item", "fat"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "borer2013_119a_tall",
+    "source": {"bibkey": "borer-2013", "paperLabel": "ch. 7 (119a)"},
+    "language": "stan1293",
+    "primaryText": "the tall",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["frame", "nominal"],
+      ["item", "tall"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "borer2013_119a_smart",
+    "source": {"bibkey": "borer-2013", "paperLabel": "ch. 7 (119a)"},
+    "language": "stan1293",
+    "primaryText": "a smart",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["frame", "nominal"],
+      ["item", "smart"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "borer2013_119a_wide",
+    "source": {"bibkey": "borer-2013", "paperLabel": "ch. 7 (119a)"},
+    "language": "stan1293",
+    "primaryText": "a wide",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["frame", "nominal"],
+      ["item", "wide"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "borer2013_119a_big",
+    "source": {"bibkey": "borer-2013", "paperLabel": "ch. 7 (119a)"},
+    "language": "stan1293",
+    "primaryText": "a big",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["frame", "nominal"],
+      ["item", "big"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "borer2013_119b_mean",
+    "source": {"bibkey": "borer-2013", "paperLabel": "ch. 7 (119b)"},
+    "language": "stan1293",
+    "primaryText": "to mean",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["frame", "verbal"],
+      ["item", "mean"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "borer2013_119b_green",
+    "source": {"bibkey": "borer-2013", "paperLabel": "ch. 7 (119b)"},
+    "language": "stan1293",
+    "primaryText": "to green",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["frame", "verbal"],
+      ["item", "green"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "borer2013_119b_fat",
+    "source": {"bibkey": "borer-2013", "paperLabel": "ch. 7 (119b)"},
+    "language": "stan1293",
+    "primaryText": "to fat",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["frame", "verbal"],
+      ["item", "fat"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "borer2013_119b_tall",
+    "source": {"bibkey": "borer-2013", "paperLabel": "ch. 7 (119b)"},
+    "language": "stan1293",
+    "primaryText": "to tall",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["frame", "verbal"],
+      ["item", "tall"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "borer2013_119b_smart",
+    "source": {"bibkey": "borer-2013", "paperLabel": "ch. 7 (119b)"},
+    "language": "stan1293",
+    "primaryText": "to smart",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["frame", "verbal"],
+      ["item", "smart"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "borer2013_119b_wide",
+    "source": {"bibkey": "borer-2013", "paperLabel": "ch. 7 (119b)"},
+    "language": "stan1293",
+    "primaryText": "to wide",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["frame", "verbal"],
+      ["item", "wide"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "borer2013_119b_big",
+    "source": {"bibkey": "borer-2013", "paperLabel": "ch. 7 (119b)"},
+    "language": "stan1293",
+    "primaryText": "to big",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["frame", "verbal"],
+      ["item", "big"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "borer2013_119c_mean",
+    "source": {"bibkey": "borer-2013", "paperLabel": "ch. 7 (119c)"},
+    "language": "stan1293",
+    "primaryText": "too mean",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["frame", "adjectival"],
+      ["item", "mean"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "borer2013_119c_green",
+    "source": {"bibkey": "borer-2013", "paperLabel": "ch. 7 (119c)"},
+    "language": "stan1293",
+    "primaryText": "too green",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["frame", "adjectival"],
+      ["item", "green"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "borer2013_119c_fat",
+    "source": {"bibkey": "borer-2013", "paperLabel": "ch. 7 (119c)"},
+    "language": "stan1293",
+    "primaryText": "too fat",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["frame", "adjectival"],
+      ["item", "fat"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "borer2013_119c_tall",
+    "source": {"bibkey": "borer-2013", "paperLabel": "ch. 7 (119c)"},
+    "language": "stan1293",
+    "primaryText": "too tall",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["frame", "adjectival"],
+      ["item", "tall"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "borer2013_119c_smart",
+    "source": {"bibkey": "borer-2013", "paperLabel": "ch. 7 (119c)"},
+    "language": "stan1293",
+    "primaryText": "too smart",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["frame", "adjectival"],
+      ["item", "smart"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "borer2013_119c_wide",
+    "source": {"bibkey": "borer-2013", "paperLabel": "ch. 7 (119c)"},
+    "language": "stan1293",
+    "primaryText": "too wide",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["frame", "adjectival"],
+      ["item", "wide"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "borer2013_119c_big",
+    "source": {"bibkey": "borer-2013", "paperLabel": "ch. 7 (119c)"},
+    "language": "stan1293",
+    "primaryText": "too big",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["frame", "adjectival"],
+      ["item", "big"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "borer2013_fn39_thin",
+    "source": {"bibkey": "borer-2013", "paperLabel": "ch. 7 fn. 39"},
+    "language": "stan1293",
+    "primaryText": "to thin",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["frame", "verbal"],
+      ["item", "thin"]
+    ],
+    "comment": "Printed in running text; the footnote adds that red and fat, unlike thin and yellow, do not occur as verbs.",
+    "verified": "page-image"
+  },
+  {
+    "id": "borer2013_fn39_yellow",
+    "source": {"bibkey": "borer-2013", "paperLabel": "ch. 7 fn. 39"},
+    "language": "stan1293",
+    "primaryText": "to yellow",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["frame", "verbal"],
+      ["item", "yellow"]
+    ],
+    "comment": "Printed in running text; the footnote adds that red and fat, unlike thin and yellow, do not occur as verbs.",
+    "verified": "page-image"
+  }
+]
