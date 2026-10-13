@@ -17,7 +17,7 @@ namespace HendersonCoon2018.Examples
 
 def ex_1 : Datum :=
   { id := "hendersoncoon2018_1"
-    source := ⟨"henderson-coon-2018", "(1), preprint numbering"⟩
+    source := ⟨"henderson-coon-2018", "(1)"⟩
     reportedIn := none
     language := "kaqc1270"
     primaryText := "Achike x-Ø-u-löq' ri äk'?"
@@ -30,7 +30,7 @@ def ex_1 : Datum :=
 
 def ex_2 : Datum :=
   { id := "hendersoncoon2018_2"
-    source := ⟨"henderson-coon-2018", "(2), preprint numbering"⟩
+    source := ⟨"henderson-coon-2018", "(2)"⟩
     reportedIn := none
     language := "kaqc1270"
     primaryText := "Achike x-Ø-loq'-o ri äk'?"
@@ -43,7 +43,7 @@ def ex_2 : Datum :=
 
 def ex_12a : Datum :=
   { id := "hendersoncoon2018_12a"
-    source := ⟨"henderson-coon-2018", "(12a), preprint numbering"⟩
+    source := ⟨"henderson-coon-2018", "(12a)"⟩
     reportedIn := none
     language := "kaqc1270"
     primaryText := "Achike x-Ø-u-löq' ri tijonel?"
@@ -56,7 +56,7 @@ def ex_12a : Datum :=
 
 def ex_18a : Datum :=
   { id := "hendersoncoon2018_18a"
-    source := ⟨"henderson-coon-2018", "(18a), preprint numbering"⟩
+    source := ⟨"henderson-coon-2018", "(18a)"⟩
     reportedIn := none
     language := "kaqc1270"
     primaryText := "Ja ri ixoq x-Ø-u-ch'ëy r-i'."
@@ -69,7 +69,7 @@ def ex_18a : Datum :=
 
 def ex_18b : Datum :=
   { id := "hendersoncoon2018_18b"
-    source := ⟨"henderson-coon-2018", "(18b), preprint numbering"⟩
+    source := ⟨"henderson-coon-2018", "(18b)"⟩
     reportedIn := none
     language := "kaqc1270"
     primaryText := "Achike x-Ø-u-k'äm pe r-ixayil pa nimaq'ij"
@@ -82,7 +82,7 @@ def ex_18b : Datum :=
 
 def ex_19 : Datum :=
   { id := "hendersoncoon2018_19"
-    source := ⟨"henderson-coon-2018", "(19), preprint numbering"⟩
+    source := ⟨"henderson-coon-2018", "(19)"⟩
     reportedIn := none
     language := "kaqc1270"
     primaryText := "... ri nik'aj chïk winäq ri ni-Ø-ki-b'ij chi ni-Ø-ki-b'än jun kosa y..."
@@ -95,7 +95,7 @@ def ex_19 : Datum :=
 
 def ex_20 : Datum :=
   { id := "hendersoncoon2018_20"
-    source := ⟨"henderson-coon-2018", "(20), preprint numbering"⟩
+    source := ⟨"henderson-coon-2018", "(20)"⟩
     reportedIn := none
     language := "kaqc1270"
     primaryText := "Achike x-Ø-u-b'än manifestar pa b'ey?"
@@ -108,7 +108,7 @@ def ex_20 : Datum :=
 
 def ex_4 : Datum :=
   { id := "hendersoncoon2018_4"
-    source := ⟨"henderson-coon-2018", "(4), preprint numbering"⟩
+    source := ⟨"henderson-coon-2018", "(4)"⟩
     reportedIn := none
     language := "kaqc1270"
     primaryText := "Achike kan qitzij x-Ø-u-tij ri wäy?"
@@ -121,7 +121,7 @@ def ex_4 : Datum :=
 
 def ex_5 : Datum :=
   { id := "hendersoncoon2018_5"
-    source := ⟨"henderson-coon-2018", "(5), preprint numbering"⟩
+    source := ⟨"henderson-coon-2018", "(5)"⟩
     reportedIn := none
     language := "kaqc1270"
     primaryText := "Ri kan qitzij y-e-ya'-on ru-q'ij k'o chi e ütz chuqa'."
@@ -134,7 +134,7 @@ def ex_5 : Datum :=
 
 def ex_6 : Datum :=
   { id := "hendersoncoon2018_6"
-    source := ⟨"henderson-coon-2018", "(6), preprint numbering"⟩
+    source := ⟨"henderson-coon-2018", "(6)"⟩
     reportedIn := none
     language := "kaqc1270"
     primaryText := "... roma ri winäq ri kan qitzij n-Ø-u-ya' ru-q'ij ri Dios..."
@@ -147,7 +147,7 @@ def ex_6 : Datum :=
 
 def ex_24 : Datum :=
   { id := "hendersoncoon2018_24"
-    source := ⟨"henderson-coon-2018", "(24), preprint numbering"⟩
+    source := ⟨"henderson-coon-2018", "(24)"⟩
     reportedIn := none
     language := "kaqc1270"
     primaryText := "... ri pastores ri kan x-Ø-ki-tzijoj ri ru-ch'ab'äl ri Dios ch-iw-e."
@@ -160,7 +160,7 @@ def ex_24 : Datum :=
 
 def ex_25 : Datum :=
   { id := "hendersoncoon2018_25"
-    source := ⟨"henderson-coon-2018", "(25), preprint numbering"⟩
+    source := ⟨"henderson-coon-2018", "(25)"⟩
     reportedIn := none
     language := "kaqc1270"
     primaryText := "Rija' kan jun achi ri kan x-Ø-u-q'alaj-saj ri nu-ch'ab'äl."
@@ -173,7 +173,7 @@ def ex_25 : Datum :=
 
 def ex_27 : Datum :=
   { id := "hendersoncoon2018_27"
-    source := ⟨"henderson-coon-2018", "(27), preprint numbering"⟩
+    source := ⟨"henderson-coon-2018", "(27)"⟩
     reportedIn := none
     language := "kaqc1270"
     primaryText := "Ri kan xti-Ø-b'an-o k'a ri nu-samäj, xti-Ø-ya'-ox k'a ru-q'ij r-oma ri Nata'."
@@ -186,7 +186,7 @@ def ex_27 : Datum :=
 
 def ex_28 : Datum :=
   { id := "hendersoncoon2018_28"
-    source := ⟨"henderson-coon-2018", "(28), preprint numbering"⟩
+    source := ⟨"henderson-coon-2018", "(28)"⟩
     reportedIn := none
     language := "kaqc1270"
     primaryText := "Achike k'a ri n-Ø-u-k'üt re tzij re' ch-qa-wäch?"
@@ -199,7 +199,7 @@ def ex_28 : Datum :=
 
 def ex_29 : Datum :=
   { id := "hendersoncoon2018_29"
-    source := ⟨"henderson-coon-2018", "(29), preprint numbering"⟩
+    source := ⟨"henderson-coon-2018", "(29)"⟩
     reportedIn := none
     language := "kaqc1270"
     primaryText := "Ri achike k'a ri n-Ø-r-ak'axaj ri ru-ch'ab'äl ri Nata' Dios y n-Ø-r-etamaj..."
@@ -212,7 +212,7 @@ def ex_29 : Datum :=
 
 def ex_30 : Datum :=
   { id := "hendersoncoon2018_30"
-    source := ⟨"henderson-coon-2018", "(30), preprint numbering"⟩
+    source := ⟨"henderson-coon-2018", "(30)"⟩
     reportedIn := none
     language := "kaqc1270"
     primaryText := "Achike k'a ri x-a-ch'ey-o?"
@@ -225,7 +225,7 @@ def ex_30 : Datum :=
 
 def ex_31 : Datum :=
   { id := "hendersoncoon2018_31"
-    source := ⟨"henderson-coon-2018", "(31), preprint numbering"⟩
+    source := ⟨"henderson-coon-2018", "(31)"⟩
     reportedIn := none
     language := "kaqc1270"
     primaryText := "Xab'achike k'a ri xti-Ø-nima-n ri Jesús kan xt-Ø-r-il wi k'a jun k'aslen ri..."
@@ -238,7 +238,7 @@ def ex_31 : Datum :=
 
 def ex_32 : Datum :=
   { id := "hendersoncoon2018_32"
-    source := ⟨"henderson-coon-2018", "(32), preprint numbering"⟩
+    source := ⟨"henderson-coon-2018", "(32)"⟩
     reportedIn := none
     language := "kaqc1270"
     primaryText := "Achike chi-k-e man x-Ø-tij-o ta ri takamal"
@@ -251,7 +251,7 @@ def ex_32 : Datum :=
 
 def ex_33 : Datum :=
   { id := "hendersoncoon2018_33"
-    source := ⟨"henderson-coon-2018", "(33), preprint numbering"⟩
+    source := ⟨"henderson-coon-2018", "(33)"⟩
     reportedIn := none
     language := "kaqc1270"
     primaryText := "Achike chi-k-e man x-Ø-u-tij ta ri takamal"
@@ -264,7 +264,7 @@ def ex_33 : Datum :=
 
 def ex_45 : Datum :=
   { id := "hendersoncoon2018_45"
-    source := ⟨"henderson-coon-2018", "(45), preprint numbering"⟩
+    source := ⟨"henderson-coon-2018", "(45)"⟩
     reportedIn := none
     language := "kaqc1270"
     primaryText := "K'o q-ach'alal ri kan qitzij chi rije' y-e-ya'-o ru-q'ij."
@@ -277,7 +277,7 @@ def ex_45 : Datum :=
 
 def ex_46 : Datum :=
   { id := "hendersoncoon2018_46"
-    source := ⟨"henderson-coon-2018", "(46), preprint numbering"⟩
+    source := ⟨"henderson-coon-2018", "(46)"⟩
     reportedIn := none
     language := "kaqc1270"
     primaryText := "K'o q-ach'alal ri kan qitzij chi rije' y-e-loq'-o ru-wäy."
@@ -290,7 +290,7 @@ def ex_46 : Datum :=
 
 def ex_49 : Datum :=
   { id := "hendersoncoon2018_49"
-    source := ⟨"henderson-coon-2018", "(49), preprint numbering"⟩
+    source := ⟨"henderson-coon-2018", "(49)"⟩
     reportedIn := none
     language := "kaqc1270"
     primaryText := "K'o q-ach'alal ri kan qitzij chi rije' n-Ø-ki-ya' ru-q'ij."
@@ -303,7 +303,7 @@ def ex_49 : Datum :=
 
 def ex_50 : Datum :=
   { id := "hendersoncoon2018_50"
-    source := ⟨"henderson-coon-2018", "(50), preprint numbering"⟩
+    source := ⟨"henderson-coon-2018", "(50)"⟩
     reportedIn := none
     language := "kaqc1270"
     primaryText := "K'o q-ach'alal ri kan qitzij chi rije' n-Ø-ki-loq' ru-wäy."
@@ -316,7 +316,7 @@ def ex_50 : Datum :=
 
 def ex_51 : Datum :=
   { id := "hendersoncoon2018_51"
-    source := ⟨"henderson-coon-2018", "(51), preprint numbering"⟩
+    source := ⟨"henderson-coon-2018", "(51)"⟩
     reportedIn := none
     language := "kaqc1270"
     primaryText := "K'o q-ach'alal ri kan qitzij chi ja rije' y-e-ya-o ru-q'ij."
@@ -329,7 +329,7 @@ def ex_51 : Datum :=
 
 def ex_56 : Datum :=
   { id := "hendersoncoon2018_56"
-    source := ⟨"henderson-coon-2018", "(56), preprint numbering"⟩
+    source := ⟨"henderson-coon-2018", "(56)"⟩
     reportedIn := none
     language := "kaqc1270"
     primaryText := "Achike kan qitzij x-Ø-tij-o ri wäy?"
@@ -342,7 +342,7 @@ def ex_56 : Datum :=
 
 def ex_60a : Datum :=
   { id := "hendersoncoon2018_60a"
-    source := ⟨"henderson-coon-2018", "(60a), preprint numbering"⟩
+    source := ⟨"henderson-coon-2018", "(60a)"⟩
     reportedIn := none
     language := "kaqc1270"
     primaryText := "Achike jantäq n-Ø-tij-o ri äk'."
@@ -355,7 +355,7 @@ def ex_60a : Datum :=
 
 def ex_60b : Datum :=
   { id := "hendersoncoon2018_60b"
-    source := ⟨"henderson-coon-2018", "(60b), preprint numbering"⟩
+    source := ⟨"henderson-coon-2018", "(60b)"⟩
     reportedIn := none
     language := "kaqc1270"
     primaryText := "Achike jantäq n-Ø-u-tij ri äk'."
@@ -368,7 +368,7 @@ def ex_60b : Datum :=
 
 def ex_61a : Datum :=
   { id := "hendersoncoon2018_61a"
-    source := ⟨"henderson-coon-2018", "(61a), preprint numbering"⟩
+    source := ⟨"henderson-coon-2018", "(61a)"⟩
     reportedIn := none
     language := "kaqc1270"
     primaryText := "Achike jumul n-Ø-tij-o ri äk'."
@@ -381,7 +381,7 @@ def ex_61a : Datum :=
 
 def ex_61b : Datum :=
   { id := "hendersoncoon2018_61b"
-    source := ⟨"henderson-coon-2018", "(61b), preprint numbering"⟩
+    source := ⟨"henderson-coon-2018", "(61b)"⟩
     reportedIn := none
     language := "kaqc1270"
     primaryText := "Achike jumul n-Ø-u-tij ri äk'."
@@ -394,7 +394,7 @@ def ex_61b : Datum :=
 
 def ex_38 : Datum :=
   { id := "hendersoncoon2018_38"
-    source := ⟨"henderson-coon-2018", "(38), preprint numbering"⟩
+    source := ⟨"henderson-coon-2018", "(38)"⟩
     reportedIn := none
     language := "kaqc1270"
     primaryText := "K'a ri chi xi-Ø-k'achoj r-uma."
@@ -407,7 +407,7 @@ def ex_38 : Datum :=
 
 def ex_40 : Datum :=
   { id := "hendersoncoon2018_40"
-    source := ⟨"henderson-coon-2018", "(40), preprint numbering"⟩
+    source := ⟨"henderson-coon-2018", "(40)"⟩
     reportedIn := none
     language := "kaqc1270"
     primaryText := "... ma x-Ø-in-kusaj ta chuqa' ch'ab'el ri kan janipe' na ru-b'an-ik..."
@@ -420,7 +420,7 @@ def ex_40 : Datum :=
 
 def ex_57 : Datum :=
   { id := "hendersoncoon2018_57"
-    source := ⟨"henderson-coon-2018", "(57), preprint numbering"⟩
+    source := ⟨"henderson-coon-2018", "(57)"⟩
     reportedIn := none
     language := "kaqc1270"
     primaryText := "Kan qitzij chi x-a-samäj."
@@ -433,7 +433,7 @@ def ex_57 : Datum :=
 
 def ex_58 : Datum :=
   { id := "hendersoncoon2018_58"
-    source := ⟨"henderson-coon-2018", "(58), preprint numbering"⟩
+    source := ⟨"henderson-coon-2018", "(58)"⟩
     reportedIn := none
     language := "kaqc1270"
     primaryText := "Jantäq chi x-a-samäj."
@@ -446,7 +446,7 @@ def ex_58 : Datum :=
 
 def ex_59 : Datum :=
   { id := "hendersoncoon2018_59"
-    source := ⟨"henderson-coon-2018", "(59), preprint numbering"⟩
+    source := ⟨"henderson-coon-2018", "(59)"⟩
     reportedIn := none
     language := "kaqc1270"
     primaryText := "Jumul chi x-a-samäj."
