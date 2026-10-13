@@ -182,6 +182,29 @@ theorem isContiguous_realize_of_antitone (hv : v.Antihomophonous)
 
 end Contiguity
 
+/-! ### Loss of rules -/
+
+theorem applicable_filter (p : R → Bool) :
+    applicable (v.filter p) c = (v.applicable c).filter p := by
+  simp only [applicable, List.filter_filter, Bool.and_comm]
+
+/-- The selected rule is selected from any filtering of the rule set that keeps it. -/
+theorem selectBy_filter_of_mem {p : R → Bool} (h : v.selectBy f c = some r) (hp : p r) :
+    selectBy (v.filter p) f c = some r := by
+  rw [selectBy, applicable_filter]
+  exact List.argmax_filter_of_mem h hp
+
+/-- An antihomophonous rule set that loses rules keeps realizing an exponent wherever it did, as
+long as it still realizes the exponent somewhere. -/
+theorem realize_filter_eq_some (hv : v.Antihomophonous) {p : R → Bool}
+    (h : v.realize f c = some φ) (h' : realize (v.filter p) f c' = some φ) :
+    realize (v.filter p) f c = some φ := by
+  obtain ⟨r, hr, rfl⟩ := Option.map_eq_some_iff.mp h
+  obtain ⟨r', hr', he⟩ := Option.map_eq_some_iff.mp h'
+  have hm := List.mem_filter.mp (selectBy_mem hr')
+  obtain rfl := hv hm.1 (selectBy_mem hr) he
+  rw [realize, selectBy_filter_of_mem hr hm.2, Option.map_some]
+
 /-! ### Transport -/
 
 section Map

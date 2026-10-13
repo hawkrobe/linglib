@@ -5,36 +5,44 @@ public import Studies.Dekier2021
 public import Studies.Haspelmath1997
 
 /-!
-# Bubnov (2026): Not all coexpressions are syncretisms
+# Bubnov (2026): Not all coexpressions are syncretisms: Limiting Nanosyntax
 
 Indefinite pronouns coexpress the specific known, specific unknown and non-specific functions in
-the four patterns AAA, ABB, AAB and ABC, never in the pattern ABA. Dekier's nanosyntactic
-account derives that gap from a containment hierarchy whose most complex layer is the specific
-known one. Bubnov argues that the hierarchy is the wrong explanation and the semantic account of
-Degano and Aloni the right one.
+the patterns AAA, ABB, AAB and ABC and never in the pattern ABA. Dekier derives the gap from a
+containment hierarchy whose most complex layer is the specific known one. Bubnov argues that the
+semantic account of Degano and Aloni explains it better. There a form carries one restriction on
+the variation and constancy of the indefinite's value and is used wherever the restriction is
+met, so coexpression is underspecification rather than syncretism, the unattested pattern is the
+type whose two restrictions exclude each other and can only be disjoined, and the complex type
+is the specific unknown one, which no single restriction states.
 
-Two objections are formalized. The first is that a hierarchy spelled out by distinct exponents
-predicts morphological containment — under the spellout the three Russian markers realize properly
-nested structures — while no such containment is attested in any indefinite paradigm. The second
-concerns diachrony: the attested changes extend a form's coverage in both directions along the
-map, whereas the loss of a lexical entry never lets a surviving entry spell out a layer above the
-one it stores, so the hierarchy predicts change in one direction only.
-
-The semantic alternative replaces containment with restrictions on the variation and constancy of
-the indefinite's value: a form is used wherever its restriction is met, so coexpression is
-underspecification rather than syncretism. On that account the unattested pattern is the one whose
-two restrictions exclude each other, constancy across all epistemic alternatives and variation
-inside one of them, so that it can be stated only as a disjunction, and every attested diachronic
-change is a weakening of a restriction, whichever direction it takes along the map.
+The accounts come apart on diachrony. Semantically a change weakens a restriction, and every
+attested change does. On a hierarchy the change the theory is known to allow is the loss of a
+lexical entry, after which a surviving entry also spells out layers the lost one took from it,
+all of them below the layers it had. A specific unknown form has become epistemic by gaining the
+non-specific function and a non-specific form has become epistemic by gaining the specific
+unknown one, so entry loss derives at most one of the two changes, whichever way the hierarchy
+is ordered.
 
 ## Main results
 
-* `russian_spans_properly_nested`: the containment the nanosyntactic analysis predicts.
-* `attested_changes_are_weakenings`, `attested_changes_gain_opposite_functions`: the attested
-  changes weaken a restriction while moving in opposite directions along the hierarchy.
-* `entry_loss_extends_downward_only`: losing entries extends coverage only downwards.
+* `no_hierarchy_derives_both_changes`: on no hierarchy does entry loss derive both attested
+  changes to the epistemic type.
+* `entry_loss_is_weakening`: a change entry loss derives is a semantic weakening.
+* `specificUnknown_not_atomic`: no single restriction states the specific unknown type.
 * `coexpression_is_underspecification`: each form of the four coexpression patterns is a single
   type.
+
+## TODO
+
+Bubnov's first objection is that a hierarchy whose higher features had exponents of their own
+would show morphological containment, the marker of one function built on the marker of another,
+and no indefinite paradigm does. Stating it needs the spellout of one structure by several
+entries, which the containment engine does not model.
+
+The paper calls the change from a specific to an unmarked form attested in one sentence of its
+comparison and unattested in the next, in the discussion of entry loss and in a footnote on the
+reversed hierarchy. It is taken as unattested here.
 
 ## References
 
@@ -49,31 +57,26 @@ change is a weakening of a restriction, whichever direction it takes along the m
 
 namespace Bubnov2026
 
-open DeganoAloni2025 Dekier2021 Indefinite Morphology.Containment Morphology.Exponence
+open DeganoAloni2025 Dekier2021 Indefinite Team Morphology.Containment Morphology.Exponence
 open Haspelmath1997 hiding russian
 
-/-! ### The containment the hierarchy predicts -/
+/-! ### Complexity -/
 
-/-- Under the nanosyntactic analysis the three Russian markers spell out properly nested
-structures, *-nibud'* the bare non-specific layer, *-to* that layer with the specific-unknown one
-above it, and *koe-* all three. Distinct exponents for nested structures are what morphological
-containment consists in, and none is attested in any indefinite paradigm. -/
-theorem russian_spans_properly_nested :
-    ∀ g, ∃ e ∈ lexicon russian, e.spans = g ∧ spellout (lexicon russian) g = some e.exponent := by
-  decide
+/-- No single atom states the specific unknown requirement, whatever its variables, since a
+constancy atom is closed under subteams, a variation atom under superteams, and the requirement
+under neither. On the semantic account the specific unknown type is thus the complex one, the
+specific known and the non-specific type each being a single atom, where the hierarchy makes
+the specific known layer the most complex. -/
+theorem specificUnknown_not_atomic {V E : Type*} [Nontrivial E] {v x : V} (hvx : v ≠ x)
+    (Z : Finset V) (u : V) :
+    (¬ ∀ T : Finset (V → E), IndefiniteType.specificUnknown.Requires T v x ↔ Dep T Z u) ∧
+      ¬ ∀ T : Finset (V → E), IndefiniteType.specificUnknown.Requires T v x ↔ Var T Z u :=
+  ⟨fun h ↦ IndefiniteType.not_isLowerSet_specificUnknown (E := E) hvx
+      fun _ _ hT ht ↦ (h _).2 (((h _).1 ht).subset hT),
+    fun h ↦ IndefiniteType.not_isUpperSet_specificUnknown (E := E) hvx
+      fun _ _ hT ht ↦ (h _).2 (((h _).1 ht).superset hT)⟩
 
-/-! ### The unattested type
-
-The unattested type would have to require constancy of the value across all epistemic
-alternatives and variation of it within one of them at once, which cannot be met
-(`DeganoAloni2025.not_var_of_dep_empty`), so the type can be stated only as a disjunction, and
-the disjunction is the one requirement that is not convex
-(`DeganoAloni2025.IndefiniteType.not_ordConnected_skPlusNS`). It is also the pattern ABA: its
-profile is the one no connected region of the map covers
-(`DeganoAloni2025.specificityFunctions_ne_skPlusNS_profile`), and the convex requirements are
-exactly the connected profiles (`DeganoAloni2025.connected_profile_iff`). -/
-
-/-! ### Diachrony -/
+/-! ### Diachrony as weakening -/
 
 /-- The attested changes weaken the restriction, so the form comes to cover more of the map. A
 specific unknown form becomes epistemic, a non-specific form becomes epistemic, as German
@@ -84,40 +87,100 @@ theorem attested_changes_are_weakenings {V E : Type*} (T : Finset (V → E)) (v 
       (IndefiniteType.epistemic.Requires T v x → IndefiniteType.unmarked.Requires T v x) :=
   ⟨And.right, Team.Var.anti (Finset.empty_subset _), fun _ ↦ trivial⟩
 
-/-- The two changes move in opposite directions along the hierarchy, one form gaining the
-non-specific function, at the bottom, and the other the specific-unknown function above it.
-No rule that extends coverage in a single direction produces both. -/
-theorem attested_changes_gain_opposite_functions :
-    SpecificityFunction.nonSpecific ∈
-        IndefiniteType.epistemic.profile \ IndefiniteType.specificUnknown.profile ∧
-      SpecificityFunction.specificUnknown ∈
-        IndefiniteType.epistemic.profile \ IndefiniteType.nonSpecific.profile := by
-  decide
+/-! ### Diachrony as the loss of an entry
 
-/-- The narrow entry of a language with a non-specific and a specific-unknown marker. -/
-def nonSpecificRule : SupersetRule 3 String := ⟨"A", 0⟩
+A hierarchy assigns each function a layer, and a lexicon then gives a form the functions at
+whose layers it spells the form out. -/
 
-/-- Its wider entry, spelling out the specific-unknown structure. -/
-def specificUnknownRule : SupersetRule 3 String := ⟨"B", 1⟩
+section EntryLoss
 
-/-- Losing the narrow entry lets the wider one spell out both structures, the change from a
-specific unknown form to an epistemic one, while losing the wider entry leaves the narrow one
-unable to spell out the higher structure. -/
-theorem entry_loss_example :
-    spellout [nonSpecificRule, specificUnknownRule] = ![some "A", some "B", none] ∧
-      spellout [specificUnknownRule] = ![some "B", some "B", none] ∧
-      spellout [nonSpecificRule] = ![some "A", none, none] := by decide
+variable {n : ℕ} {ℓ : SpecificityFunction → Fin n} {L : RuleSet (SupersetRule n String)}
+  {φ : String} {t t' : IndefiniteType} {u u' : SpecificityFunction}
 
-/-- Whatever entries a lexicon loses, a form it spells out at a layer is that of an entry
-storing the layer. The loss of an entry extends coverage downwards and never upwards, so it
-derives the change from a specific unknown form to an epistemic one and never the change from a
-non-specific form to an epistemic one, although both are attested. -/
-theorem entry_loss_extends_downward_only {n : ℕ} {v v' : RuleSet (SupersetRule n String)}
-    (hv : v'.Sublist v) {g : Fin n} {φ : String} (h : spellout v' g = some φ) :
-    ∃ e ∈ v, e.exponent = φ ∧ g ≤ e.spans := by
-  obtain ⟨e, he, rfl⟩ := Option.map_eq_some_iff.mp h
-  exact ⟨e, hv.subset (RuleSet.selectBy_mem he), rfl,
-    RuleSet.selectBy_applies he⟩
+/-- The functions at which a lexicon spells out a form. -/
+def coverage (ℓ : SpecificityFunction → Fin n) (L : RuleSet (SupersetRule n String))
+    (φ : String) : Finset SpecificityFunction :=
+  Finset.univ.filter fun u ↦ spellout L (ℓ u) = some φ
+
+@[simp]
+theorem mem_coverage : u ∈ coverage ℓ L φ ↔ spellout L (ℓ u) = some φ := by simp [coverage]
+
+/-- Entry loss derives the change from one type to another on a hierarchy when some lexicon
+gives a form the first type and, with some of its entries lost, the second. -/
+def LossDerives (ℓ : SpecificityFunction → Fin n) (t t' : IndefiniteType) : Prop :=
+  ∃ (L : RuleSet (SupersetRule n String)) (lost : Finset (SupersetRule n String)) (φ : String),
+    L.Antihomophonous ∧ coverage ℓ L φ = t.profile ∧
+      coverage ℓ (L.filter (· ∉ lost)) φ = t'.profile
+
+namespace LossDerives
+
+/-- A form keeps its functions when other entries are lost. -/
+theorem profile_subset (h : LossDerives ℓ t t') : t.profile ⊆ t'.profile := by
+  obtain ⟨L, lost, φ, hL, ht, ht'⟩ := h
+  obtain ⟨u', hu'⟩ := t'.profile_nonempty
+  intro u hu
+  rw [← ht'] at hu' ⊢
+  rw [← ht] at hu
+  exact mem_coverage.2 (RuleSet.realize_filter_eq_some hL (mem_coverage.1 hu) (mem_coverage.1 hu'))
+
+/-- A function gained through entry loss lies below every function the form had. -/
+theorem lt_of_mem_sdiff (h : LossDerives ℓ t t') (hu' : u' ∈ t'.profile \ t.profile)
+    (hu : u ∈ t.profile) : ℓ u' < ℓ u := by
+  obtain ⟨L, lost, φ, hL, ht, ht'⟩ := h
+  rw [← ht, ← ht', Finset.mem_sdiff] at hu'
+  rw [← ht] at hu
+  exact lt_of_not_ge fun hle ↦ hu'.2 <| mem_coverage.2 <|
+    spellout_eq_some_of_filter_of_le hL (mem_coverage.1 hu) (mem_coverage.1 hu'.1) hle
+
+end LossDerives
+
+/-- A change entry loss derives is a semantic weakening, so the hierarchy predicts a part of
+what the semantic account predicts. -/
+theorem entry_loss_is_weakening (h : LossDerives ℓ t t') {V E : Type*} (T : Finset (V → E))
+    (v x : V) : t.Requires T v x → t'.Requires T v x := by
+  simp only [IndefiniteType.requires_iff]
+  exact fun ⟨u, hu, hT⟩ ↦ ⟨u, h.profile_subset hu, hT⟩
+
+/-- On no hierarchy does entry loss derive both attested changes to the epistemic type. A
+specific unknown form gains the non-specific function and a non-specific form the specific
+unknown one, and each gain would put the gained function's layer below the other's. This holds
+of Dekier's hierarchy and of its reverse alike. -/
+theorem no_hierarchy_derives_both_changes (ℓ : SpecificityFunction → Fin n) :
+    ¬ (LossDerives ℓ .specificUnknown .epistemic ∧ LossDerives ℓ .nonSpecific .epistemic) :=
+  fun ⟨h, h'⟩ ↦ lt_asymm
+    (h.lt_of_mem_sdiff (u' := .nonSpecific) (u := .specificUnknown) (by decide) (by decide))
+    (h'.lt_of_mem_sdiff (u' := .specificUnknown) (u := .nonSpecific) (by decide) (by decide))
+
+end EntryLoss
+
+/-- On Dekier's hierarchy the loss of an entry `A` storing the non-specific layer makes the
+specific unknown form `B` epistemic, (3) and (4). Entry loss also derives two unattested
+changes there, a specific known form becoming specific and a specific form unmarked. -/
+theorem entry_loss_derives_downward_changes :
+    LossDerives layer .specificUnknown .epistemic ∧ LossDerives layer .specificKnown .specific ∧
+      LossDerives layer .specific .unmarked :=
+  ⟨⟨[⟨"A", 0⟩, ⟨"B", 1⟩], {⟨"A", 0⟩}, "B", by decide, by decide, by decide⟩,
+    ⟨[⟨"A", 0⟩, ⟨"B", 1⟩, ⟨"C", 2⟩], {⟨"B", 1⟩}, "C", by decide, by decide, by decide⟩,
+    ⟨[⟨"A", 0⟩, ⟨"C", 2⟩], {⟨"A", 0⟩}, "C", by decide, by decide, by decide⟩⟩
+
+/-- It derives neither of the attested changes that extend a form up the hierarchy, a
+non-specific form becoming epistemic and an epistemic form unmarked. -/
+theorem entry_loss_misses_upward_changes :
+    ¬ LossDerives layer .nonSpecific .epistemic ∧ ¬ LossDerives layer .epistemic .unmarked :=
+  ⟨fun h ↦ no_hierarchy_derives_both_changes _ ⟨entry_loss_derives_downward_changes.1, h⟩,
+    fun h ↦ absurd (h.lt_of_mem_sdiff (u' := .specificKnown) (u := .nonSpecific)
+      (by decide) (by decide)) (by decide)⟩
+
+/-- The reversed hierarchy, with the non-specific layer on top, derives those two changes and
+loses the change from a specific unknown form to an epistemic one. -/
+theorem entry_loss_on_reversed_hierarchy :
+    LossDerives (Fin.rev ∘ layer) .nonSpecific .epistemic ∧
+      LossDerives (Fin.rev ∘ layer) .epistemic .unmarked ∧
+      ¬ LossDerives (Fin.rev ∘ layer) .specificUnknown .epistemic :=
+  have h : LossDerives (Fin.rev ∘ layer) .nonSpecific .epistemic :=
+    ⟨[⟨"A", 0⟩, ⟨"B", 1⟩, ⟨"C", 2⟩], {⟨"B", 1⟩}, "C", by decide, by decide, by decide⟩
+  ⟨h, ⟨[⟨"A", 0⟩, ⟨"C", 2⟩], {⟨"A", 0⟩}, "C", by decide, by decide, by decide⟩,
+    fun h' ↦ no_hierarchy_derives_both_changes _ ⟨h', h⟩⟩
 
 /-! ### Coexpression as underspecification -/
 
@@ -125,7 +188,7 @@ theorem entry_loss_extends_downward_only {n : ℕ} {v v' : RuleSet (SupersetRule
 restriction (AAA), Yakut *-eme* requires variation within an epistemic alternative and *-ere*
 constancy within one (ABB), Latin *ali-* requires variation across the alternatives and *-dam*
 constancy across them (AAB), and Russian *-nibud'*, *-to* and *koe-* require variation within an
-alternative, variation across them and constancy across them (ABC). -/
+alternative, variation across them and constancy across them, the entries (6) and (7). -/
 theorem coexpression_is_underspecification :
     (∃ s ∈ english, s.pronoun = English.Indefinites.someEntry ∧ Instantiates s .unmarked) ∧
       (∃ s ∈ yakut, s.pronoun = Yakut.Indefinites.emeEntry ∧ Instantiates s .nonSpecific) ∧
@@ -137,13 +200,13 @@ theorem coexpression_is_underspecification :
       ∃ s ∈ russian, s.pronoun = Russian.Indefinites.koeKto ∧ Instantiates s .specificKnown := by
   decide
 
-/-- Russian *-to* is the epistemic type on the region [haspelmath-1997] draws for it, which
-covers the specific-unknown and the non-specific function, while the nanosyntactic lexicon
-leaves it the specific-unknown layer alone, since *-nibud'* is the non-specific form of the same
-paradigm and takes that layer by the Elsewhere Principle. What a form may express and what it
-spells out under paradigmatic competition come apart. -/
-theorem to_is_epistemic_under_competition :
-    (∃ s ∈ russian, s.pronoun = Russian.Indefinites.ktoTo ∧ Instantiates s .epistemic) ∧
-      spellout (lexicon russian) 0 = some "kto-nibud'" := by decide
+/-- The nanosyntactic lexicon gives Russian *-to* the profile of the specific unknown type,
+where the map makes it epistemic. The form shares the non-specific function with *-nibud'*, and
+spellout, which gives a layer one form, hands that layer to *-nibud'* by the Elsewhere
+Principle. -/
+theorem to_is_specificUnknown_under_spellout :
+    coverage layer (lexicon russian) Russian.Indefinites.ktoTo.form =
+      IndefiniteType.specificUnknown.profile := by
+  decide
 
 end Bubnov2026
