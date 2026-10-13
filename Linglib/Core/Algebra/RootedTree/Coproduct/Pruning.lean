@@ -19,22 +19,20 @@ the cut subtrees, with the Hochschild 1-cocycle property of grafting and the cou
 
 ## Main definitions
 
-* `ConnesKreimer.comulTreeN`, `ConnesKreimer.comulForestN`,
-  `ConnesKreimer.comulAlgHomN` — the Δ^ρ coproduct, as the generic
-  admissible-cut coproduct (`Coproduct/WithCuts.lean`) at the
+* `ConnesKreimer.comulTreeN`, `ConnesKreimer.comulForestN`, `ConnesKreimer.comulAlgHomN`: the
+  Δ^ρ coproduct, as the generic admissible-cut coproduct (`Coproduct/WithCuts.lean`) at the
   enumeration `cutSummandsN`.
-* `ConnesKreimer.bPlusLin` — grafting `B+_a` as a linear map.
+* `ConnesKreimer.bPlusLin`: grafting `B+_a` as a linear map.
 
 ## Main results
 
-* `ConnesKreimer.comulAlgHomN_bPlusLin_cocycle` — the Hochschild
-  1-cocycle law `Δ^ρ ∘ B+_a = B+_a ⊗ 1 + (id ⊗ B+_a) ∘ Δ^ρ`.
-* `ConnesKreimer.counit_rTensor_comulAlgHomN`,
-  `ConnesKreimer.counit_lTensor_comulAlgHomN` — the counit laws.
-* `ConnesKreimer.comulAlgHomN_coassoc_algHom`, `comulRhoN_coassoc` —
-  coassociativity, by Foissy's subalgebra argument
-  ([foissy-introduction-hopf-algebras-trees]; [grinberg-reiner-2020]).
-* `ConnesKreimer.instBialgebraRho` — the Δ^ρ `Bialgebra`, over any `CommSemiring`.
+* `ConnesKreimer.comulAlgHomN_bPlusLin_cocycle`: the Hochschild 1-cocycle law
+  `Δ^ρ ∘ B+_a = B+_a ⊗ 1 + (id ⊗ B+_a) ∘ Δ^ρ`.
+* `ConnesKreimer.counit_rTensor_comulAlgHomN`, `ConnesKreimer.counit_lTensor_comulAlgHomN`: the
+  counit laws.
+* `ConnesKreimer.comulAlgHomN_coassoc_algHom`, `comulRhoN_coassoc`: coassociativity, by Foissy's
+  subalgebra argument.
+* `ConnesKreimer.instBialgebraRho`: the Δ^ρ `Bialgebra`, over any `CommSemiring`.
 
 ## Implementation notes
 
@@ -68,8 +66,7 @@ variable {R : Type*} [CommSemiring R] {α : Type*}
 Definitional instantiations of the generic admissible-cut coproduct
 (`Coproduct/WithCuts.lean`) at the Δ^ρ enumeration `cutSummandsN`. -/
 
-/-- The **nonplanar tree-level Δ^ρ**: `comulTreeNG` at
-    `cuts := cutSummandsN`. -/
+/-- The pruning coproduct Δ^ρ of a tree, which is `comulTreeNG` at the pruning cuts. -/
 noncomputable def comulTreeN :
     UnorderedTree α →
       ConnesKreimer R (UnorderedTree α) ⊗[R] ConnesKreimer R (UnorderedTree α) :=
@@ -96,8 +93,8 @@ noncomputable def comulForestN :
       comulTreeN (R := R) T * comulForestN (R := R) F :=
   comulForestNG_cons _ T F
 
-/-- The **Δ^ρ coproduct on `ConnesKreimer R (UnorderedTree α)`** as an
-    algebra hom: `comulAlgHomNG` at `cuts := cutSummandsN`. -/
+/-- The pruning coproduct Δ^ρ as an algebra homomorphism, which is `comulAlgHomNG` at the
+pruning cuts. -/
 noncomputable def comulAlgHomN :
     ConnesKreimer R (UnorderedTree α) →ₐ[R]
       ConnesKreimer R (UnorderedTree α) ⊗[R] ConnesKreimer R (UnorderedTree α) :=
@@ -150,27 +147,18 @@ noncomputable def bPlusLin (a : α) :
   show ofTree (UnorderedTree.node a 0) = ofTree (UnorderedTree.leaf a)
   rfl
 
-/-! ### `comulForestN` as a sum over forest cuts
+/-! ### `comulForestN` as a sum over forest cuts -/
 
-Together with `cutSummandsN_node` (`Combinatorics/RootedTree/Cut.lean`),
-the expansion `comulForestN_eq_sum` drives the cocycle: cuts of a node
-decompose along the per-tree decisions of `cutForestSummandsN`, and
-`comulForestN` expands as the matching multiset sum. -/
-
-/-- The forest coproduct `comulForestN F` expands as a multiset sum of
-    `of' cf ⊗ of' rem` over `(cf, rem) ∈ cutForestSummandsN F`: the generic
-    `comulForestNG_eq_sum` at `cuts := cutSummandsN`, transported along
-    `cutForestSummandsN_eq_forestCutsG`. -/
+/-- The forest coproduct is the sum of `of' cf ⊗ of' rem` over the cuts `(cf, rem)` of the
+    forest. -/
 theorem comulForestN_eq_sum (F : Forest (UnorderedTree α)) :
-    comulForestN (R := R) F = ((cutForestSummandsN F).map
-      (fun pf => of' (R := R) pf.1 ⊗ₜ[R] of' (R := R) pf.2)).sum := by
-  rw [cutForestSummandsN_eq_forestCutsG]
-  exact comulForestNG_eq_sum cutSummandsN F
+    comulForestN (R := R) F = ((forestCutsG cutSummandsN F).map
+      (fun pf => of' (R := R) pf.1 ⊗ₜ[R] of' (R := R) pf.2)).sum :=
+  comulForestNG_eq_sum cutSummandsN F
 
 /-! ### The cocycle theorem (basis-level) -/
 
-/-- The tree-level coproduct on a leaf:
-    `comulTreeN (leaf a) = ofTree (leaf a) ⊗ 1 + 1 ⊗ ofTree (leaf a)`. -/
+/-- A leaf is primitive for the pruning coproduct. -/
 theorem comulTreeN_leaf (a : α) :
     comulTreeN (R := R) (UnorderedTree.leaf a) =
       ofTree (UnorderedTree.leaf a) ⊗ₜ[R] (1 : ConnesKreimer R (UnorderedTree α)) +
@@ -178,15 +166,9 @@ theorem comulTreeN_leaf (a : α) :
   unfold comulTreeN comulTreeNG
   rw [cutSummandsN_leaf, Multiset.map_singleton, Multiset.sum_singleton, of'_zero]
 
-/-- The **Hochschild 1-cocycle property of B+_a**, on basis elements:
-    for every forest `F`, the coproduct of the grafted tree
-    `UnorderedTree.node a F` decomposes as the explicit primitive term plus
-    the right-channel B+ application of `comulForestN F`. Proven via
-    the substrate `cutSummandsN_node` (cuts of a node decompose along
-    `cutForestSummandsN F`) and `comulForestN_eq_sum` (forest coproduct
-    expands as the matching multiset sum); the `LinearMap.lTensor`
-    distributes over the sum via `map_multiset_sum`, and the per-summand
-    check reduces to `LinearMap.lTensor_tmul` + `bPlusLin_of'`. -/
+/-- The Hochschild 1-cocycle property of `B+_a` on basis elements. The coproduct of the grafted
+tree `UnorderedTree.node a F` is the primitive term plus `B+_a` applied on the right channel of
+`comulForestN F`. -/
 theorem comulTreeN_node_cocycle (a : α) (F : Forest (UnorderedTree α)) :
     comulTreeN (R := R) (UnorderedTree.node a F) =
       ofTree (UnorderedTree.node a F) ⊗ₜ[R] (1 : ConnesKreimer R (UnorderedTree α)) +
@@ -443,8 +425,8 @@ under `B+_a` by the Hochschild cocycle, and contains every `ofTree T` by
 height induction — hence `A = ⊤`. Works over any `CommSemiring`, with no
 pairing or nondegeneracy input. -/
 
-/-- The "compute coassociativity left-hand side" algebra hom:
-    `x ↦ assoc((Δ ⊗ id)(Δ x))`. -/
+/-- The left-hand side of coassociativity, `x ↦ assoc ((Δ ⊗ id) (Δ x))`, as an algebra
+homomorphism. -/
 noncomputable def coassocLHS :
     ConnesKreimer R (UnorderedTree α) →ₐ[R]
       ConnesKreimer R (UnorderedTree α) ⊗[R]
@@ -453,8 +435,7 @@ noncomputable def coassocLHS :
     ((Algebra.TensorProduct.map (comulAlgHomN (R := R) (α := α))
       (AlgHom.id R _)).comp comulAlgHomN)
 
-/-- The "compute coassociativity right-hand side" algebra hom:
-    `x ↦ (id ⊗ Δ)(Δ x)`. -/
+/-- The right-hand side of coassociativity, `x ↦ (id ⊗ Δ) (Δ x)`, as an algebra homomorphism. -/
 noncomputable def coassocRHS :
     ConnesKreimer R (UnorderedTree α) →ₐ[R]
       ConnesKreimer R (UnorderedTree α) ⊗[R]
@@ -710,10 +691,8 @@ private theorem of'_mem_coassocSubalg_of_trees (F : Forest (UnorderedTree α))
     rw [show ((T ::ₘ F') : Forest (UnorderedTree α)) = ({T} + F') from rfl, of'_add, of'_singleton]
     exact mul_mem hT ih'
 
-/-- Every UnorderedTree tree's `ofTree` lies in `coassocSubalg`. By strong
-    induction on tree height: leaves are `B+_a 1` (closed under `B+_a` from `1`);
-    nodes are `B+_a (of' F)` where `of' F` is a product of `ofTree` of smaller-height
-    trees. -/
+/-- Every tree generator lies in `coassocSubalg`, by strong induction on height. A leaf is
+`B+_a 1`, and a node is `B+_a (of' F)` with `of' F` a product of generators of smaller height. -/
 theorem ofTree_mem_coassocSubalg (T : UnorderedTree α) :
     ofTree T ∈ coassocSubalg (R := R) (α := α) := by
   -- Strong induction on T.height.
