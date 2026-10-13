@@ -11,15 +11,12 @@ public import Mathlib.Order.SetNotation
 `[UPSTREAM]` supplements to `Mathlib/Basic/Rel.lean`. The core and the preimage of a relation
 are dual under complement (`SetRel.core_compl`, `SetRel.preimage_compl`), the core is antitone
 in the relation (`SetRel.core_subset_core_left`) and sends unions to intersections
-(`SetRel.core_iUnion`), the core along a reflexive relation is contained in the set
-(`SetRel.core_subset_self`), and the transitive closure of a relation
+(`SetRel.core_iUnion`), and the transitive closure of a relation
 (`SetRel.transGen`) has as core the intersection of the iterated cores
 (`SetRel.core_transGen`).
 
 ## Main definitions
 
-* `SetRel.ofSet`: the identity relation restricted to a set, whose image is intersection with
-  the set (`SetRel.image_ofSet`) and whose core is implication from it (`SetRel.core_ofSet`).
 * `SetRel.ofSuccessors`: a set-valued function `α → Set β` as a relation, whose core at `a` is
   inclusion of `f a` (`SetRel.mem_core_ofSuccessors`) and whose image is the union of the values
   (`SetRel.image_ofSuccessors`).
@@ -51,49 +48,7 @@ theorem core_iUnion {ι : Sort*} (R : ι → SetRel α β) (t : Set β) :
 theorem core_subset_core_left (h : R₁ ⊆ R₂) : R₂.core t ⊆ R₁.core t :=
   fun _ ha _ hb ↦ ha (h hb)
 
-@[simp] theorem core_empty_left (t : Set β) : (∅ : SetRel α β).core t = Set.univ := by
-  ext; simp [core]
-
-/-! ### Reflexive relations -/
-
 instance isRefl_id : (SetRel.id : SetRel α α).IsRefl := ⟨fun _ ↦ rfl⟩
-
-theorem core_subset_self (R : SetRel α α) [R.IsRefl] (s : Set α) : R.core s ⊆ s :=
-  fun _ h ↦ h R.rfl
-
-/-! ### The identity restricted to a set -/
-
-/-- The identity relation restricted to a set, relating each member of `s` to itself. -/
-def ofSet (s : Set α) : SetRel α α := {p | p.1 = p.2 ∧ p.1 ∈ s}
-
-section ofSet
-
-variable {s u : Set α}
-
-@[simp] theorem mem_ofSet : a ~[ofSet s] b ↔ a = b ∧ a ∈ s := .rfl
-
-theorem ofSet_subset_id (s : Set α) : ofSet s ⊆ .id := fun _ h ↦ h.1
-
-@[simp] theorem ofSet_univ : ofSet (Set.univ : Set α) = .id := by
-  ext ⟨a, b⟩; simp [ofSet, SetRel.id]
-
-@[simp] theorem image_ofSet (s u : Set α) : (ofSet s).image u = u ∩ s := by
-  ext b
-  constructor
-  · rintro ⟨a, ha, h, hs⟩
-    obtain rfl : a = b := h
-    exact ⟨ha, hs⟩
-  · exact fun ⟨hu, hs⟩ ↦ ⟨b, hu, rfl, hs⟩
-
-theorem mem_core_ofSet : a ∈ (ofSet s).core u ↔ (a ∈ s → a ∈ u) := by
-  refine ⟨fun h hs ↦ h (b := a) ⟨rfl, hs⟩, fun h b ⟨hb, hs⟩ ↦ ?_⟩
-  obtain rfl : a = b := hb
-  exact h hs
-
-@[simp] theorem core_ofSet (s u : Set α) : (ofSet s).core u = sᶜ ∪ u := by
-  ext a; rw [mem_core_ofSet, Set.mem_union, Set.mem_compl_iff, imp_iff_not_or]
-
-end ofSet
 
 /-! ### Decidability over finite codomains -/
 

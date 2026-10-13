@@ -97,20 +97,20 @@ that entail `m`, (11). -/
 def StrongContextualFelicity (m : Set W) (Acc : Set W → Prop) : Prop := ∀ c, Acc c → c ⊆ m
 
 /-- A belief report with the trigger in its complement, acceptable in the contexts `Acc`, is
-acceptable only where the local context of the complement entails `m`, (40). The local context is
-the image of the context under the holder's doxastic accessibility `R`. -/
+acceptable only in contexts that entail that the holder believes `m`, (40). The belief is the
+core of `m` along the holder's doxastic accessibility `R`. -/
 def ObligatoryLocalEffect (R : SetRel W W) (m : Set W) (Acc : Set W → Prop) : Prop :=
-  ∀ c, Acc c → R.image c ⊆ m
+  StrongContextualFelicity (R.core m) Acc
 
 section
 
 variable {R : SetRel W W} {m : Set W} {Acc Acc' : Set W → Prop}
 
-/-- Obligatory local effect is strong contextual felicity of the holder's belief in the
-content. -/
+/-- A content has obligatory local effect when the local context of the complement, the image
+of the context under the holder's doxastic accessibility, entails it. -/
 theorem obligatoryLocalEffect_iff :
-    ObligatoryLocalEffect R m Acc ↔ StrongContextualFelicity (R.core m) Acc :=
-  forall₂_congr fun _ _ ↦ SetRel.image_subset_iff
+    ObligatoryLocalEffect R m Acc ↔ ∀ c, Acc c → R.image c ⊆ m :=
+  forall₂_congr fun _ _ ↦ SetRel.image_subset_iff.symm
 
 /-- A constraint on the local context of an embedded sentence is a constraint on the context of
 the embedding one when the embedding is along a reflexive relation, as in the family of
@@ -123,7 +123,7 @@ theorem StrongContextualFelicity.of_image [R.IsRefl] (h : StrongContextualFelici
 obligatory local effect, (41). -/
 theorem StrongContextualFelicity.obligatoryLocalEffect (h : StrongContextualFelicity m Acc)
     (hloc : ∀ c, Acc' c → Acc (R.image c)) : ObligatoryLocalEffect R m Acc' :=
-  fun c hc ↦ h _ (hloc c hc)
+  obligatoryLocalEffect_iff.2 fun c hc ↦ h _ (hloc c hc)
 
 end
 
@@ -208,12 +208,12 @@ the holder's epistemic state does not entail the content, (41). -/
 theorem excludes_belief_iff :
     Excludes k (.belief s) ↔ k.ObligatoryLocalEffect ∧ s ≠ .positive := by
   refine ⟨fun h ↦ ?_, fun ⟨hk, hs⟩ W m M R _ Acc₀ Acc AccB _ _ hB ⟨c, w, hw, hd, hacc⟩ ↦
-    hd.not_subset hs <| (SetRel.image_mono (Set.singleton_subset_iff.2 hw)).trans (hB hk c hacc)⟩
+    hd.not_subset hs <| SetRel.image_subset_iff.2 <| Set.singleton_subset_iff.2 (hB hk c hacc hw)⟩
   by_contra hks
   obtain ⟨d, m, hd⟩ := s.exists_holds
   refine h Bool m .id (.ofSuccessors fun _ ↦ d) (fun _ ↦ False) (fun _ _ ↦ False)
     (fun c ↦ k.ObligatoryLocalEffect → (SetRel.ofSuccessors fun _ ↦ d).image c ⊆ m)
-    (fun _ _ h ↦ h.elim) (fun _ _ h ↦ h.elim) (fun hk _ h ↦ h hk)
+    (fun _ _ h ↦ h.elim) (fun _ _ h ↦ h.elim) (fun hk ↦ obligatoryLocalEffect_iff.2 fun _ h ↦ h hk)
     ⟨.univ, true, trivial, by simpa [SetRel.image_ofSuccessors] using hd, fun hk ↦ ?_⟩
   obtain rfl : s = .positive := by_contra fun hs ↦ hks ⟨hk, hs⟩
   exact fun v ⟨_, _, hv⟩ ↦ hd hv
@@ -241,7 +241,7 @@ theorem Excludes.not_accepted_admits {W : Type} {t : Test} (h : Excludes .A t) (
     (M R : SetRel W W) [M.IsRefl] :
     ¬ t.Accepted p.presup R (fun e c ↦ p.Admits ((e.rel M).image c))
       (fun c ↦ p.Admits (R.image c)) :=
-  h W _ M R p.Admits _ _ (fun _ _ h ↦ h) (fun _ _ h ↦ h) (fun _ _ h ↦ h)
+  h W _ M R p.Admits _ _ (fun _ _ h ↦ h) (fun _ _ h ↦ h) (fun _ _ h ↦ p.admits_image_iff.1 h)
 
 /-! ### The rows -/
 
