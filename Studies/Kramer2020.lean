@@ -2,7 +2,7 @@ module
 
 public import Mathlib.Data.Finset.Card
 public import Studies.Corbett1991
-public import Linglib.Morphology.DistributedMorphology.Categorizer.Gender
+public import Linglib.Morphology.DistributedMorphology.Gender
 public import Linglib.Morphology.DistributedMorphology.VocabularyInsertion.Basic
 public import Linglib.Fragments.Romance.Spanish.Gender
 public import Linglib.Fragments.Slavic.Russian.Gender

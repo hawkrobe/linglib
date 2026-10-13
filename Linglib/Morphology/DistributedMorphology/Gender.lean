@@ -1,6 +1,5 @@
 module
 
-public import Linglib.Morphology.DistributedMorphology.Categorizer.Basic
 public import Linglib.Morphology.DistributedMorphology.Locality
 public import Linglib.Syntax.Minimalist.Feature.Basic
 public import Linglib.Syntax.Minimalist.Probe.Basic
@@ -84,8 +83,8 @@ structure GenderFeature where
 
 /-! ### Categorizing heads -/
 
-/-- A categorizing head with its gender feature and the selectional feature {D}. These are the
-head leaves of `WordStructure Categorizer.Head`. -/
+/-- A categorizing head with its gender feature and the selectional feature {D}, a head of a
+`ComplexHead`. -/
 structure Categorizer.Head where
   /-- The categorizer n, v or a. -/
   categorizer : Categorizer
@@ -126,7 +125,7 @@ section HighestGender
 
 open Minimalist
 
-variable {H G : Type*} (gender : H → Option G) (default : G)
+variable {R H G : Type*} (gender : H → Option G) (default : G)
 
 /-- The probe for gender, relativized to the heads that bear one. -/
 def genderProbe : Probe H := Probe.relativized fun h ↦ (gender h).isSome
@@ -165,19 +164,20 @@ variable {cyclic : H → Prop} [DecidablePred cyclic]
 
 /-- The Highest Gender Hypothesis. A probe above a word whose highest cyclic head is `h`, with only
 noncyclic heads bearing no gender over it, agrees in the gender `h` gives alone. -/
-theorem agreeingGender_lastCycle {r : Root} {above : List H} (hc : cyclic h)
+theorem agreeingGender_lastCycle {r : R} {above : List H} (hc : cyclic h)
     (ha : ∀ a ∈ above, ¬ cyclic a ∧ gender a = none) :
-    agreeingGender gender default ((⟨r, hs ++ h :: above⟩ : Spine H).lastCycle cyclic) =
+    agreeingGender gender default ((⟨r, hs ++ h :: above⟩ : ComplexHead R H).lastCycle cyclic) =
       (gender h).getD default := by
-  rw [Spine.lastCycle_mk_append hc fun a ha' ↦ (ha a ha').1,
+  rw [ComplexHead.lastCycle_mk_append hc fun a ha' ↦ (ha a ha').1,
     agreeingGender_append_of_forall_eq_none fun a ha' ↦ (ha a (by simpa using ha')).2,
     agreeingGender_singleton]
 
 /-- A plain highest n over an n of gender `g` gives the default, where a probe searching every
 head would find `g`. -/
-theorem agreeingGender_lastCycle_plain {r : Root} (hc : cyclic h) (hh : gender h = none)
+theorem agreeingGender_lastCycle_plain {r : R} (hc : cyclic h) (hh : gender h = none)
     (hg : gender h' = some g) :
-    agreeingGender gender default ((⟨r, hs ++ [h', h]⟩ : Spine H).lastCycle cyclic) = default ∧
+    agreeingGender gender default ((⟨r, hs ++ [h', h]⟩ : ComplexHead R H).lastCycle cyclic) =
+        default ∧
       agreeingGender gender default (hs ++ [h', h]).reverse = g := by
   constructor
   · rw [show hs ++ [h', h] = (hs ++ [h']) ++ h :: [] by simp,

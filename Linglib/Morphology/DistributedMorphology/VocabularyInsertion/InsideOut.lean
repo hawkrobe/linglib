@@ -1,38 +1,29 @@
 module
 
-public import Linglib.Morphology.DistributedMorphology.Locality
+public import Linglib.Morphology.DistributedMorphology.Basic
 public import Linglib.Morphology.DistributedMorphology.VocabularyInsertion.Basic
 
 /-!
-# Complex heads and Vocabulary Insertion from the inside out
+# Vocabulary Insertion from the inside out
 
-A morpheme at PF is a bundle of features together with a variable Q that
-Vocabulary Insertion substitutes with a phonological exponent, the features
-persisting; a root carries its form from the start. The complex head that
-successive adjunction builds — the M-Word, its terminals the morphemes — is
-the root with the morphemes above it, innermost first, each linearized on
-one side, so that linearization respects No Tangling: prefixes outermost
-first, the root, then suffixes innermost first. Vocabulary Insertion targets
-morphemes only, once each, and proceeds from the inside out; at each
-morpheme the context an item sees is the complex head as it then stands,
-the inner morphemes realized — their features and the morphophonological
-features of their exponents — and the outer ones still bare. Which
-morphemes count as context is a locality regime: the concatenated
-neighbors after null exponents are pruned, or every morpheme by
-hierarchical distance. What insertion does to a morpheme's features is a
-second parameter: they persist, or insertion rewrites the morpheme as its
-exponent and they are gone.
+Vocabulary Insertion targets the morphemes of a complex head, once each, from the inside out. At
+each morpheme the context an item sees is the complex head as it then stands: the inner morphemes
+realized, with their features and the morphophonological features of their exponents, and the
+outer ones still bare. Which morphemes count as context is a locality regime, either the
+concatenated neighbors after null exponents are pruned or every morpheme by hierarchical
+distance. What insertion does to a morpheme's features is a second parameter: they persist, or
+insertion rewrites the morpheme as its exponent and they are gone. The root is a morpheme whose
+exponent is present from the start, and insertion targets the heads above it.
 
 ## Main definitions
 
-* `Morpheme`, `ComplexHead`: the morpheme with its Q variable, and the
-  complex head.
-* `ComplexHead.order`, `ComplexHead.exponents`: linearization and the
-  surface exponents.
-* `Locality`, `Discharge`: the two regimes and the two fates of features.
-* `ComplexHead.contextAt`, `ComplexHead.insertAt`, `ComplexHead.insertAll`:
-  the context a morpheme presents, insertion at one morpheme, and insertion
-  from the inside out.
+* `DistributedMorphology.ComplexHead.order`, `DistributedMorphology.ComplexHead.exponents`: the
+  positions of a complex head of morphemes in linear order, and its surface exponents.
+* `DistributedMorphology.ComplexHead.Locality`, `DistributedMorphology.ComplexHead.Discharge`: the
+  two regimes of context and the two fates of features.
+* `DistributedMorphology.ComplexHead.contextAt`, `DistributedMorphology.ComplexHead.insertAt`,
+  `DistributedMorphology.ComplexHead.insertAll`: the context a morpheme presents, insertion at one
+  morpheme, and insertion from the inside out.
 
 ## Main results
 
@@ -52,11 +43,10 @@ exponent and they are gone.
 
 ## References
 
-* [D. Embick, *The morpheme: A theoretical introduction*][embick-2015]
-* [D. Embick and R. Noyer, *Distributed Morphology and the
-  syntax/morphology interface*][embick-noyer-2007]
-* [J. D. Bobaljik, *The ins and outs of contextual allomorphy*][bobaljik-2000]
-* [M. Halle, *Distributed Morphology: Impoverishment and Fission*][halle-1997]
+* [embick-2015]
+* [embick-noyer-2007]
+* [bobaljik-2000]
+* [halle-1997]
 -/
 
 @[expose] public section
@@ -65,44 +55,9 @@ namespace DistributedMorphology
 
 open Morphology (Morph)
 
-/-- A morpheme at PF carries its features, the value of its Q variable
-(`none` before Vocabulary Insertion, the exponent after), and the side on
-which it is linearized. -/
-structure Morpheme (F E : Type*) where
-  /-- The synsem and diacritic features. -/
-  feats : List F
-  /-- The Q variable is `none` until an exponent is substituted for it. -/
-  exp : Option E := none
-  /-- The side of its host the morpheme is linearized on. -/
-  side : Morph.Side := .after
-  deriving DecidableEq, Repr
-
-/-- A complex head is the root, whose form is present from the start, with
-the morphemes adjoined above it, innermost first. -/
-structure ComplexHead (F E : Type*) where
-  /-- The root, with its underlying form. -/
-  root : Morpheme F E
-  /-- The morphemes above the root, innermost first. -/
-  heads : List (Morpheme F E)
-  deriving DecidableEq, Repr
-
-namespace Morpheme
-
-variable {F E : Type*}
-
-/-- The morpheme has been realized. -/
-def IsRealized (s : Morpheme F E) : Prop := s.exp.isSome
-
-instance (s : Morpheme F E) : Decidable s.IsRealized := inferInstanceAs (Decidable (_ = true))
-
-/-- Substitute the exponent for Q. -/
-def realize (s : Morpheme F E) (e : E) : Morpheme F E := { s with exp := some e }
-
-end Morpheme
-
 namespace ComplexHead
 
-variable {F E : Type*} (w : ComplexHead F E)
+variable {F E : Type*} (w : ComplexHead (Morpheme F E) (Morpheme F E))
 
 /-! ### Linearization -/
 
@@ -224,7 +179,7 @@ variable [DecidableEq F] (vocab : List (VocabularyItem F E)) (loc : Locality)
 /-- Vocabulary Insertion at head `i` substitutes the Subset Principle's
 winner for Q, once only; under rewriting it deletes the morpheme's
 features. -/
-def insertAt (i : ℕ) : ComplexHead F E :=
+def insertAt (i : ℕ) : ComplexHead (Morpheme F E) (Morpheme F E) :=
   match w.heads[i]? with
   | none => w
   | some s =>
@@ -240,11 +195,12 @@ def insertAt (i : ℕ) : ComplexHead F E :=
         { w with heads := w.heads.set i s' }
 
 /-- Insertion at the first `n` heads, from the inside out. -/
-def insertUpTo (n : ℕ) : ComplexHead F E :=
+def insertUpTo (n : ℕ) : ComplexHead (Morpheme F E) (Morpheme F E) :=
   (List.range n).foldl (fun w i => w.insertAt isNull vocab loc expFeatures dis i) w
 
 /-- Vocabulary Insertion from the inside out reaches every head in turn. -/
-def insertAll : ComplexHead F E := w.insertUpTo isNull vocab loc expFeatures dis w.heads.length
+def insertAll : ComplexHead (Morpheme F E) (Morpheme F E) :=
+  w.insertUpTo isNull vocab loc expFeatures dis w.heads.length
 
 /-! ### Uniqueness and terminal insertion -/
 

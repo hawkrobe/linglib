@@ -26,10 +26,10 @@ two cycles down (§3.2.2).
 ## Implementation notes
 
 * Cycles, coactivity, the root's domain and adjacency across pruned heads are the substrate's
-  `Spine` API; this file contributes the heads of the case studies, the rows, and the predictions
-  checked over them. A row records a word's heads innermost first with their exponents, the head
-  whose realization is at issue, its conditioner, the root or another head, and whether the book
-  attests or excludes the conditioning.
+  `ComplexHead` API; this file contributes the heads of the case studies, the rows, and the
+  predictions checked over them. A row records a word's heads innermost first with their
+  exponents, the head whose realization is at issue, its conditioner, the root or another head,
+  and whether the book attests or excludes the conditioning.
 * The examples are `Data.Examples.Embick2010`.
 
 ## References
@@ -86,7 +86,7 @@ inductive Claim
 /-- A conditioning relation records the word's heads, the head whose realization is at issue, its
 conditioner, `none` for the root, and the book's verdict. -/
 structure Row where
-  spine : Spine Morpheme
+  spine : ComplexHead Root Morpheme
   target : Fin spine.heads.length
   conditioner : Option (Fin spine.heads.length)
   claim : Claim

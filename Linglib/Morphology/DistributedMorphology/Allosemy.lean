@@ -2,7 +2,7 @@ module
 
 public import Mathlib.Algebra.Group.WithOne.Defs
 public import Linglib.Morphology.DistributedMorphology.VocabularyInsertion.Basic
-public import Linglib.Morphology.DistributedMorphology.Categorizer.Basic
+public import Linglib.Morphology.DistributedMorphology.Basic
 public import Linglib.Morphology.Exponence.Select
 public import Linglib.Morphology.Realization
 public import Linglib.Semantics.Root.Kinds
@@ -139,7 +139,7 @@ head's — and conditions on the neighbors: the complement below, toward the
 root, and the embedding head above — allosemy is conditioned by the
 interpreted domain below and the features of the next head above. The
 locality of the conditioning — the first category head's
-spell-out domain, across semantically null heads only — is `Spine.Visible`
+spell-out domain, across semantically null heads only — is `ComplexHead.Sees`
 (`Locality.lean`). -/
 
 /-- A condition an alloseme places on a neighbouring terminal, on its category or on whether it

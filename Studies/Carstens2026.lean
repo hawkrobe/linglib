@@ -4,7 +4,7 @@ public import Linglib.Data.Examples.Carstens2026
 public import Linglib.Fragments.Xhosa.Nouns
 public import Linglib.Fragments.Shona.Nouns
 public import Linglib.Syntax.Minimalist.Agree.Coordination
-public import Linglib.Morphology.DistributedMorphology.Categorizer.Gender
+public import Linglib.Morphology.DistributedMorphology.Gender
 public import Studies.TaraldsenEtAl2018
 public import Mathlib.Data.Fintype.Inv
 
@@ -88,7 +88,8 @@ open DistributedMorphology in
 finds in the last cycle of the nominal; since every n bears a gender, a probe searching every n
 finds it too. -/
 theorem visible_eq_agreeingGender (r : Root) (d : G) :
-    n.visible = agreeingGender some d ((⟨r, n.genders⟩ : Spine G).lastCycle fun _ ↦ True) ∧
+    n.visible =
+        agreeingGender some d ((⟨r, n.genders⟩ : ComplexHead Root G).lastCycle fun _ ↦ True) ∧
       n.visible = agreeingGender some d n.genders.reverse := by
   rcases h : n.outer with _ | o
   · have := agreeingGender_lastCycle (gender := some) (default := d) (r := r) (hs := [])

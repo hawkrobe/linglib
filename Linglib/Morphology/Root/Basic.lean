@@ -20,7 +20,7 @@ free form as a proper part. The definition is deliberately inclusive
 [haspelmath-2025b]'s contentfulness-gated alternative is
 `Studies/Haspelmath2025b.lean`. Consonantal skeletons are
 `ConsonantalRoot`; DM's acategorial root is `DistributedMorphology.Root`
-(`Morphology/DistributedMorphology/Defs.lean`).
+(`Morphology/DistributedMorphology/Basic.lean`).
 
 ## Main declarations
 

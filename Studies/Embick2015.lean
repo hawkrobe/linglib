@@ -2,7 +2,7 @@ module
 
 public import Linglib.Data.Examples.Embick2015
 public import Linglib.Fragments.Korean.Phonology
-public import Linglib.Morphology.DistributedMorphology.ComplexHead
+public import Linglib.Morphology.DistributedMorphology.VocabularyInsertion.InsideOut
 
 /-!
 # Embick (2015): The Morpheme: A Theoretical Introduction
@@ -111,14 +111,16 @@ def Tense.heads : Tense → List (Morpheme Feature String)
   | .pluperfect => [⟨[asp, perf], none, .after⟩, ⟨[tense, past], none, .after⟩]
 
 /-- ROOT-v-(Asp)-T-Agr, (35). -/
-def word (t : Tense) (p₁ p₂ pl : Bool) : ComplexHead Feature String :=
+def word (t : Tense) (p₁ p₂ pl : Bool) :
+    ComplexHead (Morpheme Feature String) (Morpheme Feature String) :=
   ⟨⟨[laud, conjI], some "laud", .after⟩,
    ⟨[v], none, .after⟩ :: t.heads ++
      [⟨[agr, first p₁, second p₂, Feature.pl pl], none, .after⟩]⟩
 
 /-- The surface morphs after inside-out insertion with the given discharge, the pruned T[−past]
 dropped. -/
-def morphs (dis : ComplexHead.Discharge) (w : ComplexHead Feature String) : List String :=
+def morphs (dis : ComplexHead.Discharge)
+    (w : ComplexHead (Morpheme Feature String) (Morpheme Feature String)) : List String :=
   (w.insertAll (· = "") vocab .concatenation (fun _ ↦ []) dis).exponents.filter (· ≠ "")
 
 /-- The tenses as named in the rows. -/
@@ -134,7 +136,8 @@ def personTable : List (String × (Bool × Bool)) :=
 def numberTable : List (String × Bool) := [("sg", false), ("pl", true)]
 
 /-- A row of (40) as its complex head and its morphs. -/
-def ofRow (ex : Datum) : Option (ComplexHead Feature String × List String) := do
+def ofRow (ex : Datum) :
+    Option (ComplexHead (Morpheme Feature String) (Morpheme Feature String) × List String) := do
   let t ← ex.parse? "tense" tenseTable
   let (p₁, p₂) ← ex.parse? "person" personTable
   let pl ← ex.parse? "number" numberTable
@@ -144,7 +147,7 @@ theorem ofRow_isSome : ∀ ex ∈ Examples.all, ex.language = "lati1261" → (of
   decide
 
 /-- The twenty-four forms of (40). -/
-def rows : List (ComplexHead Feature String × List String) :=
+def rows : List (ComplexHead (Morpheme Feature String) (Morpheme Feature String) × List String) :=
   (Examples.all.filter (·.language = "lati1261")).filterMap ofRow
 
 /-- In (40) the four tenses derive with T[−past] pruned, so that Agr is concatenated with Asp[perf]
@@ -179,26 +182,28 @@ def vocab : List (VocabularyItem Feature String) :=
   [⟨⟨[pl], [], [[poss]]⟩, "ai"⟩, [pl] ⟷ "k", [poss] ⟷ "m"]
 
 /-- Noun-[+pl], or Noun-[+pl]-[+poss] when possessed. -/
-def word (r : String) (possessed : Bool) : ComplexHead Feature String :=
+def word (r : String) (possessed : Bool) :
+    ComplexHead (Morpheme Feature String) (Morpheme Feature String) :=
   ⟨⟨[], some r, .after⟩,
    ⟨[pl], none, .after⟩ :: if possessed then [⟨[poss], none, .after⟩] else []⟩
 
 /-- The exponent of the plural after inside-out insertion. -/
-def plural (w : ComplexHead Feature String) : Option String :=
+def plural (w : ComplexHead (Morpheme Feature String) (Morpheme Feature String)) : Option String :=
   (w.insertAll (· = "") vocab .concatenation (fun _ ↦ []) .nondeletion).heads[0]? >>= (·.exp)
 
 /-- Possession as named in the rows. -/
 def possTable : List (String × Bool) := [("yes", true), ("no", false)]
 
 /-- A row of (7) as its complex head and the exponent of its plural. -/
-def ofRow (ex : Datum) : Option (ComplexHead Feature String × String) := do
+def ofRow (ex : Datum) :
+    Option (ComplexHead (Morpheme Feature String) (Morpheme Feature String) × String) := do
   pure (word (← ex.feature? "root") (← ex.parse? "poss" possTable), ← ex.feature? "plExponent")
 
 theorem ofRow_isSome : ∀ ex ∈ Examples.all, ex.language = "hung1274" → (ofRow ex).isSome := by
   decide
 
 /-- The plural and possessed plural of the three nouns of (7). -/
-def rows : List (ComplexHead Feature String × String) :=
+def rows : List (ComplexHead (Morpheme Feature String) (Morpheme Feature String) × String) :=
   (Examples.all.filter (·.language = "hung1274")).filterMap ofRow
 
 /-- The rows of (7) show outward conditioning by the possessive's feature. -/
@@ -242,22 +247,24 @@ def shape (e : String) : List Feature :=
   | none => []
 
 /-- Noun-[nom]. -/
-def word (r : String) : ComplexHead Feature String :=
+def word (r : String) : ComplexHead (Morpheme Feature String) (Morpheme Feature String) :=
   ⟨⟨[], some r, .after⟩, [⟨[nom], none, .after⟩]⟩
 
 /-- The exponent of the nominative after inside-out insertion. -/
-def nominative (w : ComplexHead Feature String) : Option String :=
+def nominative (w : ComplexHead (Morpheme Feature String) (Morpheme Feature String)) :
+    Option String :=
   (w.insertAll (· = "") vocab .concatenation shape .nondeletion).heads[0]? >>= (·.exp)
 
 /-- A row of (10) as its complex head and the exponent of its nominative. -/
-def ofRow (ex : Datum) : Option (ComplexHead Feature String × String) := do
+def ofRow (ex : Datum) :
+    Option (ComplexHead (Morpheme Feature String) (Morpheme Feature String) × String) := do
   pure (word (← ex.feature? "root"), ← ex.feature? "nomExponent")
 
 theorem ofRow_isSome : ∀ ex ∈ Examples.all, ex.language = "kore1280" → (ofRow ex).isSome := by
   decide
 
 /-- The two hosts of (10). -/
-def rows : List (ComplexHead Feature String × String) :=
+def rows : List (ComplexHead (Morpheme Feature String) (Morpheme Feature String) × String) :=
   (Examples.all.filter (·.language = "kore1280")).filterMap ofRow
 
 /-- The rows of (10) show the inward conditioning of (43d), by the host's phonology as visible

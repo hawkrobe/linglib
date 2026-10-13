@@ -238,7 +238,7 @@ def words : List Word := Examples.all.filterMap Word.ofDatum
 /-- A word as Distributed Morphology represents it, with the inflection whose realization is at
 issue. -/
 structure DMWord where
-  spine : DistributedMorphology.Spine Embick2010.Morpheme
+  spine : DistributedMorphology.ComplexHead DistributedMorphology.Root Embick2010.Morpheme
   target : Fin spine.heads.length
   choice : Choice
 

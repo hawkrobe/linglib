@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Syntax.Gender.Basic
-public import Linglib.Morphology.DistributedMorphology.Categorizer.Gender
+public import Linglib.Morphology.DistributedMorphology.Gender
 
 /-!
 # Kramer (2015): The Morphosyntax of Gender
@@ -64,7 +64,7 @@ def Head.gender : Head → Option Gender
 /-- The agreeing gender of a nominal over the root `r` with the heads `hs`, innermost first, in a
 language whose default gender is `default`. -/
 def agreeing (default : Gender) (r : Root) (hs : List Head) : Gender :=
-  agreeingGender Head.gender default ((⟨r, hs⟩ : Spine Head).lastCycle Head.Cyclic)
+  agreeingGender Head.gender default ((⟨r, hs⟩ : ComplexHead Root Head).lastCycle Head.Cyclic)
 
 /-- The Highest Gender Hypothesis (32). A nominal agrees as its highest n would over a bare
 root. -/
