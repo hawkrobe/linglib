@@ -313,7 +313,7 @@ private theorem combinerProjG_nat
     (A B : Multiset (Forest (RoseTree (α ⊕ β)) × Forest (RoseTree (α ⊕ β)))) :
     ((A.map projPair) ×ˢ (B.map projPair)).map ConnesKreimer.combinerProjG
       = ((A ×ˢ B).map (fun pq => (pq.1.1 + pq.2.1, pq.1.2 + pq.2.2))).map projPair := by
-  rw [← ConnesKreimer.map_prodMap_product_G, Multiset.map_map, Multiset.map_map]
+  rw [← Multiset.prodMap_map_product, Multiset.map_map, Multiset.map_map]
   apply Multiset.map_congr rfl; rintro ⟨⟨F1, m1⟩, ⟨F2, m2⟩⟩ _
   show ConnesKreimer.combinerProjG
       ((F1.map UnorderedTree.mk, m1.map UnorderedTree.mk), (F2.map UnorderedTree.mk,

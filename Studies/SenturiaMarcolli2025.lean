@@ -2,6 +2,7 @@ module
 
 public import Linglib.Core.Data.UnorderedTree.Leaves
 public import Mathlib.Logic.Relation
+public import Linglib.Core.Algebra.Order.Group.Multiset
 public import Linglib.Core.Data.UnorderedTree.FilterMap
 public import Linglib.Core.Data.UnorderedTree.DecEq
 public import Mathlib.Data.Finset.Basic
@@ -121,23 +122,17 @@ omit [DecidableEq F] in
 theorem bundle_eq_toFinset_features (S : UnorderedTree (F ⊕ Unit)) :
     bundle S = (features S).toFinset := rfl
 
+omit [DecidableEq F] in
 /-- A structural vertex contributes nothing to the bundle: the leaf
 features of a structural node are the concatenation of its children's,
 whether or not children remain. -/
-private theorem filterMap_list_sum {α β : Type*} (g : α → Option β)
-    (l : List (Multiset α)) :
-    Multiset.filterMap g l.sum = (l.map (Multiset.filterMap g)).sum := by
-  induction l with
-  | nil => rfl
-  | cons m l ih => simp [Multiset.filterMap_add, ih]
-
-omit [DecidableEq F] in
 theorem leafFeatures_node_inr (cs : List (RoseTree (F ⊕ Unit))) :
     leafFeatures (.node (.inr ()) cs) = (cs.map leafFeatures).sum := by
   cases cs with
   | nil => rfl
   | cons c cs =>
-    rw [leafFeatures, leaves_node_cons, filterMap_list_sum, List.map_map]
+    rw [leafFeatures, leaves_node_cons, ← Multiset.coe_filterMapAddMonoidHom, map_list_sum,
+      List.map_map]
     rfl
 
 /-! ### Fusion
@@ -157,7 +152,7 @@ noncomputable def fuse (S₁ S₂ : UnorderedTree (F ⊕ Unit)) : UnorderedTree 
 law itself, so fusion needs nothing beyond the magma. -/
 theorem bundle_fuse (S₁ S₂ : UnorderedTree (F ⊕ Unit)) :
     bundle (fuse S₁ S₂) = bundle S₁ ∪ bundle S₂ := by
-  refine Quotient.inductionOn₂ S₁ S₂ λp q => ?_
+  refine Quotient.inductionOn₂ S₁ S₂ fun p q ↦ ?_
   show bundle (UnorderedTree.node (.inr ()) {UnorderedTree.mk p, UnorderedTree.mk q}) = _
   rw [UnorderedTree.node_pair_mk]
   simp only [bundle_mk, leafFeatures_node_inr, List.map_cons, List.map_nil,
@@ -169,7 +164,7 @@ omit [DecidableEq F] in
 duplicated, or created. -/
 theorem features_fuse (S₁ S₂ : UnorderedTree (F ⊕ Unit)) :
     features (fuse S₁ S₂) = features S₁ + features S₂ := by
-  refine Quotient.inductionOn₂ S₁ S₂ λp q => ?_
+  refine Quotient.inductionOn₂ S₁ S₂ fun p q ↦ ?_
   show features (UnorderedTree.node (.inr ()) {UnorderedTree.mk p, UnorderedTree.mk q}) = _
   rw [UnorderedTree.node_pair_mk]
   simp only [features_mk, leafFeatures_node_inr, List.map_cons, List.map_nil,
@@ -212,7 +207,7 @@ private theorem sum_leafFeatures_filterMap (C : Finset F)
   | nil => simp
   | cons c cs ihcs =>
     have hc := ih c (List.mem_cons_self ..)
-    have hrest := ihcs λd hd => ih d (List.mem_cons_of_mem _ hd)
+    have hrest := ihcs fun d hd ↦ ih d (List.mem_cons_of_mem _ hd)
     cases hcc : RoseTree.filterMap (keep C) c with
     | none =>
       rw [hcc, Option.elim_none] at hc
@@ -241,10 +236,8 @@ private theorem leafFeatures_filterMap_keep (C : Finset F)
           = (0 : Multiset F) := rfl
       simp [keep, leafFeatures, e]
   | @node cs hne h ih =>
-    have hstep : RoseTree.filterMap (keep C) (.node (.inr ()) cs)
-        = some (.node (.inr ()) (RoseTree.filterMapList (keep C) cs)) := rfl
-    rw [hstep, Option.elim_some, leafFeatures_node_inr, leafFeatures_node_inr,
-      RoseTree.filterMapList_eq_filterMap]
+    rw [RoseTree.filterMap_node, keep, Option.map_some, Option.elim_some, leafFeatures_node_inr,
+      leafFeatures_node_inr]
     exact sum_leafFeatures_filterMap C cs ih
 
 /-- The bundle of a fission output is the input bundle restricted to the
@@ -434,7 +427,7 @@ theorem matched_insertion_iff (Γ : FeatureCorrespondence F Λ) (lex : Λ)
     (S : UnorderedTree (F ⊕ Unit)) :
     Matched Γ (insertion lex (some S)) ↔ Γ.matching (bundle S) lex := by
   constructor
-  · exact λh => h lex S (by simp [insertion])
+  · exact fun h ↦ h lex S (by simp [insertion])
   · intro h lex' S' hmem
     simp only [insertion, UnorderedTree.leaves_leaf, Multiset.mem_singleton,
       Sum.inl.injEq, Prod.mk.injEq, Option.some.injEq] at hmem
@@ -529,13 +522,13 @@ theorem msFeatures_fission_partition (lex₁ lex₂ : Λ) {C₁ C₂ : Finset F}
     msFeatures (fissionSite lex₁ lex₂ C₁ C₂ (UnorderedTree.mk t))
       = features (UnorderedTree.mk t) := by
   rw [msFeatures_fissionSite _ _ _ _ ht, Multiset.filter_add_filter]
-  have h₁ : (features (UnorderedTree.mk t)).filter (λf => f ∈ C₁ ∨ f ∈ C₂)
+  have h₁ : (features (UnorderedTree.mk t)).filter (fun f ↦ f ∈ C₁ ∨ f ∈ C₂)
       = features (UnorderedTree.mk t) :=
-    Multiset.filter_eq_self.mpr λf hf => by
+    Multiset.filter_eq_self.mpr fun f hf ↦ by
       simpa [Finset.mem_union] using hcover f hf
-  have h₂ : (features (UnorderedTree.mk t)).filter (λf => f ∈ C₁ ∧ f ∈ C₂)
+  have h₂ : (features (UnorderedTree.mk t)).filter (fun f ↦ f ∈ C₁ ∧ f ∈ C₂)
       = 0 :=
-    Multiset.filter_eq_nil.mpr λf _ hf =>
+    Multiset.filter_eq_nil.mpr fun f _ hf ↦
       Finset.disjoint_left.mp hdisj hf.1 hf.2
   rw [h₁, h₂, add_zero]
 
@@ -630,22 +623,22 @@ theorem msFeatures_fissionSite_copy (lex₁ lex₂ : Λ) {A B₁ B₂ : Finset F
       = features (UnorderedTree.mk t)
         + (features (UnorderedTree.mk t)).filter (· ∈ A) := by
   rw [msFeatures_fissionSite _ _ _ _ ht]
-  refine Multiset.ext.mpr λf => ?_
+  refine Multiset.ext.mpr fun f ↦ ?_
   have hcnt : f ∉ A → f ∉ B₁ → f ∉ B₂ →
       Multiset.count f (features (UnorderedTree.mk t)) = 0 := by
     intro nA nB₁ nB₂
-    refine Multiset.count_eq_zero.mpr λhf => ?_
+    refine Multiset.count_eq_zero.mpr fun hf ↦ ?_
     rcases Finset.mem_union.mp (hcover f hf) with h | h
     · rcases Finset.mem_union.mp h with h | h
       exacts [nA h, nB₁ h]
     · exact nB₂ h
   simp only [Multiset.count_add, Multiset.count_filter, Finset.mem_union]
   by_cases hfA : f ∈ A
-  · have nB₁ : f ∉ B₁ := λhf => Finset.disjoint_left.mp h₁ hfA hf
-    have nB₂ : f ∉ B₂ := λhf => Finset.disjoint_left.mp h₂ hfA hf
+  · have nB₁ : f ∉ B₁ := fun hf ↦ Finset.disjoint_left.mp h₁ hfA hf
+    have nB₂ : f ∉ B₂ := fun hf ↦ Finset.disjoint_left.mp h₂ hfA hf
     simp [hfA, nB₁, nB₂]
   · by_cases hfB₁ : f ∈ B₁
-    · have nB₂ : f ∉ B₂ := λhf => Finset.disjoint_left.mp h₁₂ hfB₁ hf
+    · have nB₂ : f ∉ B₂ := fun hf ↦ Finset.disjoint_left.mp h₁₂ hfB₁ hf
       simp [hfA, hfB₁, nB₂]
     · by_cases hfB₂ : f ∈ B₂
       · simp [hfA, hfB₁, hfB₂]
@@ -769,13 +762,13 @@ theorem Step.numLeaves_fiss {T T' : Morphosyntactic F Λ}
 /-- The post-syntactic semigroup: compositions of fusion and fission
 steps ([senturia-marcolli-2025] Definition 6.1). -/
 def PostSyntactic : Morphosyntactic F Λ → Morphosyntactic F Λ → Prop :=
-  Relation.ReflTransGen λT T' => Step FuseAt T T' ∨ Step FissAt T T'
+  Relation.ReflTransGen fun T T' ↦ Step FuseAt T T' ∨ Step FissAt T T'
 
 /-- A derivation of the full Distributed Morphology semigroup:
 post-syntactic steps together with impoverishment and obliteration
 ([senturia-marcolli-2025] Definition 6.1). -/
 def Derivation : Morphosyntactic F Λ → Morphosyntactic F Λ → Prop :=
-  Relation.ReflTransGen λT T' =>
+  Relation.ReflTransGen fun T T' ↦
     (Step FuseAt T T' ∨ Step FissAt T T') ∨
       (Step ImpovAt T T' ∨ Step OblitAt T T')
 
@@ -790,8 +783,8 @@ theorem PostSyntactic.toFinset_msFeatures_eq {T T' : Morphosyntactic F Λ}
   | refl => rfl
   | tail _ step ih =>
     rcases step with hf | hs
-    · rw [Step.msFeatures_eq (λh => h.msFeatures_eq) hf, ih]
-    · rw [Step.toFinset_msFeatures_eq (λh => h.toFinset_msFeatures_eq) hs, ih]
+    · rw [Step.msFeatures_eq (fun h ↦ h.msFeatures_eq) hf, ih]
+    · rw [Step.toFinset_msFeatures_eq (fun h ↦ h.toFinset_msFeatures_eq) hs, ih]
 
 /-- Along the full Distributed Morphology semigroup the feature set can
 only shrink: fusion and fission preserve it, impoverishment and
@@ -804,12 +797,12 @@ theorem Derivation.toFinset_msFeatures_subset {T T' : Morphosyntactic F Λ}
   | tail _ step ih =>
     refine Finset.Subset.trans ?_ ih
     rcases step with (hf | hs) | (hi | ho)
-    · rw [Step.msFeatures_eq (λh => h.msFeatures_eq) hf]
-    · rw [Step.toFinset_msFeatures_eq (λh => h.toFinset_msFeatures_eq) hs]
+    · rw [Step.msFeatures_eq (fun h ↦ h.msFeatures_eq) hf]
+    · rw [Step.toFinset_msFeatures_eq (fun h ↦ h.toFinset_msFeatures_eq) hs]
     · exact Multiset.toFinset_subset.mpr
-        (Multiset.subset_of_le (Step.msFeatures_le (λh => h.msFeatures_le) hi))
+        (Multiset.subset_of_le (Step.msFeatures_le (fun h ↦ h.msFeatures_le) hi))
     · exact Multiset.toFinset_subset.mpr
-        (Multiset.subset_of_le (Step.msFeatures_le (λh => h.msFeatures_le) ho))
+        (Multiset.subset_of_le (Step.msFeatures_le (fun h ↦ h.msFeatures_le) ho))
 
 /-! ### The economy of bivalent features
 

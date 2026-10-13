@@ -455,23 +455,6 @@ private theorem augActionP_proj_eq_of_step_data
     -- = ((cutSummandsP old).map projSummand).map g = ((cutSummandsP new).map projSummand).map g
     rw [← Multiset.map_map, ← Multiset.map_map, h_proj]
 
-/-! ### Cartesian-product distributivity
-
-The pair-componentwise `Prod.map` distributes over `Multiset.product`
-(`×ˢ`). Mathlib has the bind-side analogues but not this exact form for
-multiset products; the proof is one inductive line via `cons_product`. -/
-
-private theorem map_prodMap_product {α β γ δ : Type*}
-    (f : α → γ) (g : β → δ)
-    (s : Multiset α) (t : Multiset β) :
-    (s ×ˢ t).map (Prod.map f g) = s.map f ×ˢ t.map g := by
-  induction s using Multiset.induction with
-  | empty => simp
-  | cons a s ih =>
-    simp only [Multiset.cons_product, Multiset.map_add, Multiset.map_map,
-               Multiset.map_cons, ih]
-    rfl
-
 /-! ### Headline factoring: cons case of projected `cutListSummandsP` -/
 
 /-- The projected `cutListSummandsP` on a cons list factors as a clean
@@ -481,7 +464,7 @@ theorem cutListSummandsP_cons_proj (t : RoseTree α) (ts : List (RoseTree α)) :
     (cutListSummandsP (t :: ts)).map projForest =
       ((augActionP t).map projAugAction ×ˢ
        (cutListSummandsP ts).map projForest).map innerCombinerProj := by
-  rw [cutListSummandsP_cons, Multiset.map_map, ← map_prodMap_product,
+  rw [cutListSummandsP_cons, Multiset.map_map, ← Multiset.prodMap_map_product,
       Multiset.map_map]
   apply Multiset.map_congr rfl
   intro p _
@@ -881,19 +864,6 @@ private theorem projForestG_combine_apply
   rw [List.map_append]
   rfl
 
-/-! ### Cartesian-product distributivity (G-form copy) -/
-
-theorem map_prodMap_product_G {α' β' γ δ : Type*}
-    (f : α' → γ) (g : β' → δ)
-    (s : Multiset α') (t : Multiset β') :
-    (s ×ˢ t).map (Prod.map f g) = s.map f ×ˢ t.map g := by
-  induction s using Multiset.induction with
-  | empty => simp
-  | cons a s ih =>
-    simp only [Multiset.cons_product, Multiset.map_add, Multiset.map_map,
-               Multiset.map_cons, ih]
-    rfl
-
 /-! ### Headline factoring: cons case of projected `cutListSummandsG` -/
 
 /-- The projected `cutListSummandsG` on a cons list factors as a clean
@@ -904,7 +874,7 @@ private theorem cutListSummandsG_cons_proj
     (cutListSummandsG extract (t :: ts)).map projForestG =
       ((augActionG extract t).map projForestG ×ˢ
        (cutListSummandsG extract ts).map projForestG).map combinerProjG := by
-  rw [cutListSummandsG_cons, Multiset.map_map, ← map_prodMap_product_G,
+  rw [cutListSummandsG_cons, Multiset.map_map, ← Multiset.prodMap_map_product,
       Multiset.map_map]
   apply Multiset.map_congr rfl
   intro p _
@@ -1217,7 +1187,7 @@ private theorem map_map_product_left {α' β' γ δ : Type*}
     (f : α' → γ) (g : γ × β' → δ) (s : Multiset α') (t : Multiset β') :
     ((s.map f) ×ˢ t).map g = (s ×ˢ t).map (fun p => g (f p.1, p.2)) := by
   conv_lhs => rw [show s.map f ×ˢ t = (s ×ˢ t).map (Prod.map f id) from by
-    rw [map_prodMap_product_G, Multiset.map_id]]
+    rw [Multiset.prodMap_map_product, Multiset.map_id]]
   rw [Multiset.map_map]
   rfl
 

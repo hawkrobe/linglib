@@ -11,102 +11,49 @@ public import Linglib.Core.Data.UnorderedTree.Basic
 /-!
 # Partial label maps on unordered trees
 
-`RoseTree.filterMap f ∘ UnorderedTree.mk` is well defined modulo `Perm`: `Perm` permutes
-children, `filterMapList` commutes with permutations up to `List.Perm`, and child-list order
-collapses under `UnorderedTree.mk`. So `RoseTree.filterMap` descends to the quotient.
+`UnorderedTree.filterMap f` relabels an unordered tree along `f : α → Option β`, dropping every
+subtree whose root `f` sends to `none`. It is the `UnorderedTree.fold` with the same algebra as
+`RoseTree.filterMap`, read on multisets of children.
 
 ## Main definitions
 
-* `UnorderedTree.filterMap`: the descent through the `Perm` quotient.
+* `UnorderedTree.filterMap`: the partial map.
+
+## Main results
+
+* `UnorderedTree.filterMap_node`: at a node, the surviving children are the `Multiset.filterMap`
+  of the children.
+* `UnorderedTree.filterMap_mk`: the map commutes with the projection from rose trees.
 -/
 
 @[expose] public section
 
+namespace UnorderedTree
+
 variable {α β : Type*}
 
-/-- The Perm-invariant filterMap-then-mk composition, lifted through the
-    quotient by `UnorderedTree.filterMap`. -/
-def filterMapQuotient (f : α → Option β) (t : RoseTree α) :
-    Option (UnorderedTree β) :=
-  (RoseTree.filterMap f t).map UnorderedTree.mk
+/-- `filterMap f t` relabels `t` along `f`, dropping the subtrees whose root `f` sends to `none`.
+It is `none` when the root itself is dropped. -/
+def filterMap (f : α → Option β) : UnorderedTree α → Option (UnorderedTree β) :=
+  fold fun a cs ↦ (f a).map fun b ↦ node b (cs.filterMap id)
 
-mutual
+@[simp] theorem filterMap_node (f : α → Option β) (a : α) (F : Multiset (UnorderedTree α)) :
+    filterMap f (node a F) = (f a).map fun b ↦ node b (F.filterMap (filterMap f)) := by
+  rw [filterMap, fold_node, Multiset.filterMap_map, Function.id_comp]
 
-/-- **Perm invariance** of the filterMap-then-mk composition. -/
-theorem filterMapQuotient_perm (f : α → Option β) :
-    ∀ {t t' : RoseTree α}, RoseTree.Perm t t' →
-      filterMapQuotient f t = filterMapQuotient f t'
-  | _, _, @RoseTree.Perm.node _ a cs ds h => by
-    show ((RoseTree.filterMap f (.node a cs)).map UnorderedTree.mk) =
-         ((RoseTree.filterMap f (.node a ds)).map UnorderedTree.mk)
-    rw [RoseTree.filterMap_node, RoseTree.filterMap_node]
-    cases f a with
-    | none => rfl
-    | some b =>
-      simp only [Option.map_some]
-      congr 1
-      exact UnorderedTree.mk_eq_mk_iff.mpr
-        (RoseTree.Perm.node (filterMapList_permList f h))
-  | _, _, .trans h₁ h₂ =>
-    (filterMapQuotient_perm f h₁).trans (filterMapQuotient_perm f h₂)
+@[simp] theorem filterMap_mk (f : α → Option β) (t : RoseTree α) :
+    filterMap f (mk t) = (t.filterMap f).map mk := by
+  induction t with
+  | node a cs ih =>
+    rw [← node_mk_tree_list, filterMap_node, RoseTree.filterMap_node, Option.map_map,
+      Multiset.filterMap_coe, List.filterMap_map, List.filterMap_congr (f := filterMap f ∘ mk) ih]
+    refine congrArg (Option.map · (f a)) (funext fun b ↦ ?_)
+    rw [Function.comp_apply, ← node_mk_tree_list, List.map_filterMap]
 
-/-- Companion: `filterMapList` sends `PermList`-related children to
-    `PermList`-related partial-map images. -/
-private theorem filterMapList_permList (f : α → Option β) :
-    ∀ {cs ds : List (RoseTree α)}, RoseTree.PermList cs ds →
-      RoseTree.PermList (RoseTree.filterMapList f cs)
-        (RoseTree.filterMapList f ds)
-  | _, _, .nil => .nil
-  | _, _, @RoseTree.PermList.cons _ c d cs' ds' hcd hs => by
-    have hq : (RoseTree.filterMap f c).map UnorderedTree.mk =
-              (RoseTree.filterMap f d).map UnorderedTree.mk :=
-      filterMapQuotient_perm f hcd
-    rw [RoseTree.filterMapList_eq_filterMap, RoseTree.filterMapList_eq_filterMap]
-    cases hc : RoseTree.filterMap f c with
-    | none =>
-      have hd : RoseTree.filterMap f d = none := by
-        have h2 := hq.symm; rw [hc] at h2; simpa using h2
-      rw [List.filterMap_cons_none hc, List.filterMap_cons_none hd,
-          ← RoseTree.filterMapList_eq_filterMap,
-          ← RoseTree.filterMapList_eq_filterMap]
-      exact filterMapList_permList f hs
-    | some t_c =>
-      cases hd : RoseTree.filterMap f d with
-      | none => rw [hc, hd] at hq; simp at hq
-      | some t_d =>
-        rw [hc, hd] at hq
-        simp only [Option.map_some, Option.some.injEq] at hq
-        rw [List.filterMap_cons_some hc, List.filterMap_cons_some hd,
-            ← RoseTree.filterMapList_eq_filterMap,
-            ← RoseTree.filterMapList_eq_filterMap]
-        exact RoseTree.PermList.cons (UnorderedTree.mk_eq_mk_iff.mp hq)
-          (filterMapList_permList f hs)
-  | _, _, .swap c d cs => by
-    rw [RoseTree.filterMapList_eq_filterMap, RoseTree.filterMapList_eq_filterMap]
-    exact RoseTree.PermList.of_perm
-      (List.Perm.filterMap (RoseTree.filterMap f) (List.Perm.swap c d cs))
-  | _, _, .trans h₁ h₂ =>
-    (filterMapList_permList f h₁).trans (filterMapList_permList f h₂)
+/-- Injecting on the left and then keeping the left labels is the identity. -/
+@[simp] theorem filterMap_getLeft?_map_inl (t : UnorderedTree α) :
+    filterMap Sum.getLeft? (map (Sum.inl : α → α ⊕ β) t) = some t :=
+  Quotient.inductionOn t fun t ↦ by
+    rw [quot_mk_eq_mk, map_mk, filterMap_mk, RoseTree.filterMap_getLeft?_map_inl, Option.map_some]
 
-end
-
-/-- Partially relabel a `UnorderedTree` tree, dropping subtrees whose root
-    label maps to `none`. -/
-def UnorderedTree.filterMap (f : α → Option β) :
-    UnorderedTree α → Option (UnorderedTree β) :=
-  Quotient.lift (filterMapQuotient f) (fun _ _ h => filterMapQuotient_perm f h)
-
-@[simp] theorem UnorderedTree.filterMap_mk (f : α → Option β)
-    (t : RoseTree α) :
-    UnorderedTree.filterMap f (UnorderedTree.mk t) =
-      (RoseTree.filterMap f t).map UnorderedTree.mk := rfl
-
-/-- `UnorderedTree` version of `RoseTree.filterMap_getLeft?_map_inl`. -/
-@[simp] theorem UnorderedTree.filterMap_getLeft?_map_inl (T : UnorderedTree α) :
-    UnorderedTree.filterMap Sum.getLeft?
-        (UnorderedTree.map (Sum.inl : α → α ⊕ β) T) = some T := by
-  refine Quotient.inductionOn T fun t => ?_
-  show UnorderedTree.filterMap Sum.getLeft?
-      (UnorderedTree.map Sum.inl (UnorderedTree.mk t)) = some (UnorderedTree.mk t)
-  rw [UnorderedTree.map_mk, UnorderedTree.filterMap_mk, RoseTree.filterMap_getLeft?_map_inl]
-  rfl
+end UnorderedTree

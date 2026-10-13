@@ -182,22 +182,12 @@ theorem forestCutsP_add (τ : RoseTree (α ⊕ β) → β) (F G : FP (α ⊕ β)
 
 abbrev Triple (α : Type*) := FP α × FP α × FP α
 
-private theorem map_prodMap_product {α' β' γ δ : Type*}
-    (f : α' → γ) (g : β' → δ) (s : Multiset α') (t : Multiset β') :
-    (s ×ˢ t).map (Prod.map f g) = s.map f ×ˢ t.map g := by
-  induction s using Multiset.induction with
-  | empty => simp
-  | cons a s ih =>
-    simp only [Multiset.cons_product, Multiset.map_add, Multiset.map_map,
-               Multiset.map_cons, ih]
-    rfl
-
 /-- `mconv` commutes with a map whose combination splits as `g (x+y) = f x + f' y`. -/
 theorem mconv_map_hom2 {M N : Type*} [AddCommMonoid M] [Add N]
     (f f' g : M → N) (hg : ∀ x y, g (x + y) = f x + f' y) (X Y : Multiset M) :
     (mconv X Y).map g = mconv (X.map f) (Y.map f') := by
   unfold mconv
-  rw [Multiset.map_map, ← map_prodMap_product, Multiset.map_map]
+  rw [Multiset.map_map, ← Multiset.prodMap_map_product, Multiset.map_map]
   apply Multiset.map_congr rfl; rintro ⟨x, y⟩ _
   exact hg x y
 
@@ -539,7 +529,7 @@ private theorem hΦr (τ : RoseTree (α ⊕ β) → β) (s t : FP (α ⊕ β) ×
   unfold clconv
   rw [Multiset.map_map]
   unfold mconv
-  rw [← map_prodMap_product, Multiset.map_map]
+  rw [← Multiset.prodMap_map_product, Multiset.map_map]
   apply Multiset.map_congr rfl; rintro ⟨qs, qt⟩ _
   exact proj3L_add s.1 t.1 qs.1 qt.1 qs.2 qt.2
 
