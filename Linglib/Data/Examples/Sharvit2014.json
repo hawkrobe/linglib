@@ -1,0 +1,407 @@
+[
+  {
+    "id": "sharvit2014_1",
+    "source": {"bibkey": "sharvit-2014", "paperLabel": "(1)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "John left the meeting before Mary arrived.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "before"],
+      ["embedded", "past"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "sharvit2014_2",
+    "source": {"bibkey": "sharvit-2014", "paperLabel": "(2)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "John left the meeting before Mary arrives.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "before"],
+      ["embedded", "present"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "sharvit2014_3",
+    "source": {"bibkey": "sharvit-2014", "paperLabel": "(3)"},
+    "reportedIn": null,
+    "language": "nucl1643",
+    "primaryText": "Taroo-wa Hanako-ni at-ta mae-ni denwa-o si-ta.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Taroo-wa", "Taro-TOP"], ["Hanako-ni", "Hanako-DAT"], ["at-ta", "meet-PAST"],
+      ["mae-ni", "before"], ["denwa-o", "phone-ACC"], ["si-ta", "do-PAST"]
+    ],
+    "translation": "Taro phoned before (he) met Hanako",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "before"],
+      ["embedded", "past"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "sharvit2014_4",
+    "source": {"bibkey": "sharvit-2014", "paperLabel": "(4)"},
+    "reportedIn": null,
+    "language": "nucl1643",
+    "primaryText": "Taroo-wa Hanako-ni au mae-ni denwa-o si-ta.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Taroo-wa", "Taro-TOP"], ["Hanako-ni", "Hanako-DAT"], ["au", "meet-PRES"],
+      ["mae-ni", "before"], ["denwa-o", "phone-ACC"], ["si-ta", "do-PAST"]
+    ],
+    "translation": "Taro phoned before (he) meets Hanako",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "before"],
+      ["embedded", "present"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "sharvit2014_5",
+    "source": {"bibkey": "sharvit-2014", "paperLabel": "(5)"},
+    "reportedIn": null,
+    "language": "poli1260",
+    "primaryText": "Ania przyszła na przyjęcie zanim Marcin przyszedł.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Ania", "Ania"], ["przyszła", "PRF-come-PAST"], ["na", "to"], ["przyjęcie", "party"],
+      ["zanim", "before"], ["Marcin", "Marcin"], ["przyszedł", "PRF-come PAST"]
+    ],
+    "translation": "Ania came to the party before Marcin came",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "before"],
+      ["embedded", "past"]
+    ],
+    "comment": "The source prints przyszia, przyjecie and przysedi.",
+    "verified": "page-image"
+  },
+  {
+    "id": "sharvit2014_6",
+    "source": {"bibkey": "sharvit-2014", "paperLabel": "(6)"},
+    "reportedIn": null,
+    "language": "poli1260",
+    "primaryText": "Ania przyszła na przyjęcie zanim Marcin przychodzi.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Ania", "Ania"], ["przyszła", "PRF-come-PAST"], ["na", "to"], ["przyjęcie", "party"],
+      ["zanim", "before"], ["Marcin", "Marcin"], ["przychodzi", "PRF-come PRES"]
+    ],
+    "translation": "Ania came to the party before Marcin comes",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "before"],
+      ["embedded", "present"]
+    ],
+    "comment": "The source prints przyszia and przyjecie.",
+    "verified": "page-image"
+  },
+  {
+    "id": "sharvit2014_7",
+    "source": {"bibkey": "sharvit-2014", "paperLabel": "(7)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "John said that Mary was sick.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "simultaneous", "judgment": "acceptable"},
+      {"name": "back-shifted", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["construction", "attitude"],
+      ["embedded", "past"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "sharvit2014_8a",
+    "source": {"bibkey": "sharvit-2014", "paperLabel": "(8a)"},
+    "reportedIn": null,
+    "language": "nucl1643",
+    "primaryText": "Taroo-wa Hanako-ga byooki-da-to it-ta.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Taroo-wa", "Taro-TOP"], ["Hanako-ga", "Hanako-NOM"], ["byooki-da", "be-sick-PRES"],
+      ["-to", "that"], ["it-ta", "say-PAST"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "simultaneous", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["construction", "attitude"],
+      ["embedded", "present"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "sharvit2014_8b",
+    "source": {"bibkey": "sharvit-2014", "paperLabel": "(8b)"},
+    "reportedIn": null,
+    "language": "nucl1643",
+    "primaryText": "Taroo-wa Hanako-ga byooki-datta-to it-ta.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Taroo-wa", "Taro-TOP"], ["Hanako-ga", "Hanako-NOM"], ["byooki-datta", "be-sick-PAST"],
+      ["-to", "that"], ["it-ta", "say-PAST"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "simultaneous", "judgment": "unacceptable"},
+      {"name": "back-shifted", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["construction", "attitude"],
+      ["embedded", "past"]
+    ],
+    "comment": "The source marks only the back-shifted reading, and the text says that in Japanese and Polish the simultaneous reading must be expressed with an embedded present.",
+    "verified": "page-image"
+  },
+  {
+    "id": "sharvit2014_9a",
+    "source": {"bibkey": "sharvit-2014", "paperLabel": "(9a)"},
+    "reportedIn": null,
+    "language": "poli1260",
+    "primaryText": "Ania powiedziała że Marcin jest chory.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Ania", "Ania"], ["powiedziała", "say-PRF-PAST"], ["że", "that"], ["Marcin", "Marcin"],
+      ["jest", "be-PRES"], ["chory", "sick"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "simultaneous", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["construction", "attitude"],
+      ["embedded", "present"]
+    ],
+    "comment": "The source prints powiedziala ze.",
+    "verified": "page-image"
+  },
+  {
+    "id": "sharvit2014_9b",
+    "source": {"bibkey": "sharvit-2014", "paperLabel": "(9b)"},
+    "reportedIn": null,
+    "language": "poli1260",
+    "primaryText": "Ania powiedziała że Marcin był chory.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Ania", "Ania"], ["powiedziała", "say-PRF-PAST"], ["że", "that"], ["Marcin", "Marcin"],
+      ["był", "be-PAST"], ["chory", "sick"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "simultaneous", "judgment": "unacceptable"},
+      {"name": "back-shifted", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["construction", "attitude"],
+      ["embedded", "past"]
+    ],
+    "comment": "The source prints powiedziala ze and byl. It marks only the back-shifted reading, and the text says that in Japanese and Polish the simultaneous reading must be expressed with an embedded present.",
+    "verified": "page-image"
+  },
+  {
+    "id": "sharvit2014_46",
+    "source": {"bibkey": "sharvit-2014", "paperLabel": "(46)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "John found out that Mary is sick.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "simultaneous", "judgment": "unacceptable"},
+      {"name": "double access", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["construction", "attitude"],
+      ["embedded", "present"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "sharvit2014_50b_did",
+    "source": {"bibkey": "sharvit-2014", "paperLabel": "(50b)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "John left before Sally arrived, which she did this morning.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "John's leaving and Sally's arrival are independent of each other.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "before"],
+      ["embedded", "past"],
+      ["clauseTime", "before speech"]
+    ],
+    "comment": "The first variant of Fred's answer to Bill's question, When did John leave? Did Sally already arrive?",
+    "verified": "page-image"
+  },
+  {
+    "id": "sharvit2014_50b_will",
+    "source": {"bibkey": "sharvit-2014", "paperLabel": "(50b)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "John left before Sally arrived, which she will tomorrow.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "John's leaving and Sally's arrival are independent of each other.",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "before"],
+      ["embedded", "past"],
+      ["clauseTime", "after speech"]
+    ],
+    "comment": "The second variant of Fred's answer, which sounds contradictory.",
+    "verified": "page-image"
+  },
+  {
+    "id": "sharvit2014_51",
+    "source": {"bibkey": "sharvit-2014", "paperLabel": "(51)"},
+    "reportedIn": null,
+    "language": "nucl1643",
+    "primaryText": "Mary-wa asu toochakusu-ru koto-ni nat-te i-ru. dakara, John-ga Mary-ga toochakusu-ru maeni syuppatsusi-ta to iu koto-wa hontoo-da.",
+    "discourseSegments": [
+      "Mary-wa asu toochakusu-ru koto-ni nat-te i-ru.",
+      "dakara, John-ga Mary-ga toochakusu-ru maeni syuppatsusi-ta to iu koto-wa hontoo-da."
+    ],
+    "glossedTokens": [
+      ["Mary-wa", "Mary-TOP"], ["asu", "tomorrow"], ["toochakusu-ru", "arrive-PRES"],
+      ["koto-ni", "fact-DAT"], ["nat-te", "become-GER"], ["i-ru", "be-PRES"], ["dakara,", "So"],
+      ["John-ga", "John-NOM"], ["Mary-ga", "Mary-NOM"], ["toochakusu-ru", "arrive-PRES"],
+      ["maeni", "before"], ["syuppatsusi-ta", "depart-PAST"], ["to iu", "say"],
+      ["koto-wa", "fact-TOP"], ["hontoo-da", "true"]
+    ],
+    "translation": "Mary is scheduled to arrive tomorrow; so it is true that John departed before Mary's arrival",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "before"],
+      ["embedded", "present"],
+      ["clauseTime", "after speech"]
+    ],
+    "comment": "The source's gloss line has one word, say, for to iu.",
+    "verified": "page-image"
+  },
+  {
+    "id": "sharvit2014_103",
+    "source": {"bibkey": "sharvit-2014", "paperLabel": "(103)"},
+    "reportedIn": null,
+    "language": "mode1248",
+    "primaryText": "O Janis efige prin efige i Maria.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["O", "the"], ["Janis", "John"], ["efige", "leave-PAST-PERF"], ["prin", "before"],
+      ["efige", "leave-PAST-PERF"], ["i", "the"], ["Maria", "Mary"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [
+      {"form": "O Janis efige prin na efige i Maria.", "judgment": "ungrammatical"},
+      {"form": "O Janis efige prin efevge i Maria.", "judgment": "ungrammatical"},
+      {"form": "O Janis efige prin na efevge i Maria.", "judgment": "ungrammatical"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "before"],
+      ["embedded", "past"]
+    ],
+    "comment": "The source prints one starred line, prin (na) efige/efevge, with na glossed SUBJ and efevge the imperfective.",
+    "verified": "page-image"
+  },
+  {
+    "id": "sharvit2014_104",
+    "source": {"bibkey": "sharvit-2014", "paperLabel": "(104)"},
+    "reportedIn": null,
+    "language": "mode1248",
+    "primaryText": "To 1963 o Kostas mas ipe oti i Maria itan eggios.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["To", "the"], ["1963", "1963"], ["o", "the"], ["Kostas", "Kostas"], ["mas", "us"],
+      ["ipe", "tell-PAST"], ["oti", "that"], ["i", "the"], ["Maria", "Maria"], ["itan", "be-PAST"],
+      ["eggios", "pregnant"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "simultaneous", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["construction", "attitude"],
+      ["embedded", "past"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  }
+]

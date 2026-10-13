@@ -139,7 +139,7 @@ nonpast reading of present under past is the binding of the present morpheme. -/
 /-- The morpheme embedded under the past attitude verb. -/
 inductive Embedded
   | past | present
-  deriving DecidableEq, Repr
+  deriving DecidableEq, Repr, Fintype
 
 /-- The nonpast reading is available for an embedded past exactly when the SOT rule licenses
 the simultaneous reading (`Tense.pastUnderPast`), and for an embedded present exactly when the
