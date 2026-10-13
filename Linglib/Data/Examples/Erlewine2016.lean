@@ -17,7 +17,7 @@ namespace Erlewine2016.Examples
 
 def ex_8 : Datum :=
   { id := "erlewine2016_8"
-    source := ⟨"erlewine-2016", "(8), preprint numbering"⟩
+    source := ⟨"erlewine-2016", "(8)"⟩
     reportedIn := none
     language := "kaqc1270"
     primaryText := "X-at-ki-tz'ët."
@@ -30,7 +30,7 @@ def ex_8 : Datum :=
 
 def ex_9 : Datum :=
   { id := "erlewine2016_9"
-    source := ⟨"erlewine-2016", "(9), preprint numbering"⟩
+    source := ⟨"erlewine-2016", "(9)"⟩
     reportedIn := none
     language := "kaqc1270"
     primaryText := "X-a-wär."
@@ -43,7 +43,7 @@ def ex_9 : Datum :=
 
 def ex_14a : Datum :=
   { id := "erlewine2016_14a"
-    source := ⟨"erlewine-2016", "(14a), preprint numbering"⟩
+    source := ⟨"erlewine-2016", "(14a)"⟩
     reportedIn := none
     language := "kaqc1270"
     primaryText := "Achike x-∅-tj-ö ri wäy?"
@@ -56,7 +56,7 @@ def ex_14a : Datum :=
 
 def ex_14b : Datum :=
   { id := "erlewine2016_14b"
-    source := ⟨"erlewine-2016", "(14b), preprint numbering"⟩
+    source := ⟨"erlewine-2016", "(14b)"⟩
     reportedIn := none
     language := "kaqc1270"
     primaryText := "Achike x-∅-u-tëj ri a Juan?"
@@ -69,7 +69,7 @@ def ex_14b : Datum :=
 
 def ex_18a_emb : Datum :=
   { id := "erlewine2016_18a_emb"
-    source := ⟨"erlewine-2016", "(18a), embedded clause, preprint numbering"⟩
+    source := ⟨"erlewine-2016", "(18a), embedded clause"⟩
     reportedIn := none
     language := "kaqc1270"
     primaryText := "Achike n-∅-a-b'ij rat chin x-oj-tz'et-ö roj?"
@@ -82,7 +82,7 @@ def ex_18a_emb : Datum :=
 
 def ex_18a_mat : Datum :=
   { id := "erlewine2016_18a_mat"
-    source := ⟨"erlewine-2016", "(18a), matrix clause, preprint numbering"⟩
+    source := ⟨"erlewine-2016", "(18a), matrix clause"⟩
     reportedIn := none
     language := "kaqc1270"
     primaryText := "Achike n-∅-a-b'ij rat chin x-oj-tz'et-ö roj?"
@@ -95,7 +95,7 @@ def ex_18a_mat : Datum :=
 
 def ex_18b : Datum :=
   { id := "erlewine2016_18b"
-    source := ⟨"erlewine-2016", "(18b), matrix clause, preprint numbering"⟩
+    source := ⟨"erlewine-2016", "(18b), matrix clause"⟩
     reportedIn := none
     language := "kaqc1270"
     primaryText := "Achike n-a-b'i-n rat chin x-oj-tz'et-ö roj?"
@@ -108,7 +108,7 @@ def ex_18b : Datum :=
 
 def ex_18c : Datum :=
   { id := "erlewine2016_18c"
-    source := ⟨"erlewine-2016", "(18c), embedded clause, preprint numbering"⟩
+    source := ⟨"erlewine-2016", "(18c), embedded clause"⟩
     reportedIn := none
     language := "kaqc1270"
     primaryText := "Achike n-∅-a-b'ij rat chin x-oj-r-tz'ët roj?"
@@ -121,7 +121,7 @@ def ex_18c : Datum :=
 
 def ex_27b : Datum :=
   { id := "erlewine2016_27b"
-    source := ⟨"erlewine-2016", "(27b), preprint numbering"⟩
+    source := ⟨"erlewine-2016", "(27b)"⟩
     reportedIn := none
     language := "kaqc1270"
     primaryText := "Achike kanqtzij x-∅-u-tëj ri wäy?"
@@ -134,7 +134,7 @@ def ex_27b : Datum :=
 
 def ex_27c : Datum :=
   { id := "erlewine2016_27c"
-    source := ⟨"erlewine-2016", "(27c), preprint numbering"⟩
+    source := ⟨"erlewine-2016", "(27c)"⟩
     reportedIn := none
     language := "kaqc1270"
     primaryText := "Achike kanqtzij x-∅-tj-ö ri wäy?"
@@ -147,7 +147,7 @@ def ex_27c : Datum :=
 
 def ex_28a : Datum :=
   { id := "erlewine2016_28a"
-    source := ⟨"erlewine-2016", "(28a), preprint numbering"⟩
+    source := ⟨"erlewine-2016", "(28a)"⟩
     reportedIn := none
     language := "kaqc1270"
     primaryText := "ri achin ri n-∅-tj-ö wäy"
@@ -160,7 +160,7 @@ def ex_28a : Datum :=
 
 def ex_28a_full : Datum :=
   { id := "erlewine2016_28a_full"
-    source := ⟨"erlewine-2016", "(28a), full agreement, preprint numbering"⟩
+    source := ⟨"erlewine-2016", "(28a), full agreement"⟩
     reportedIn := none
     language := "kaqc1270"
     primaryText := "ri achin ri n-∅-u-tëj wäy"
@@ -173,7 +173,7 @@ def ex_28a_full : Datum :=
 
 def ex_28b : Datum :=
   { id := "erlewine2016_28b"
-    source := ⟨"erlewine-2016", "(28b), preprint numbering"⟩
+    source := ⟨"erlewine-2016", "(28b)"⟩
     reportedIn := none
     language := "kaqc1270"
     primaryText := "ri achin ri nojel mul n-∅-u-tëj wäy"
@@ -186,7 +186,7 @@ def ex_28b : Datum :=
 
 def ex_28b_af : Datum :=
   { id := "erlewine2016_28b_af"
-    source := ⟨"erlewine-2016", "(28b), AF, preprint numbering"⟩
+    source := ⟨"erlewine-2016", "(28b), AF"⟩
     reportedIn := none
     language := "kaqc1270"
     primaryText := "ri achin ri nojel mul n-∅-tj-ö wäy"
@@ -199,7 +199,7 @@ def ex_28b_af : Datum :=
 
 def ex_29a : Datum :=
   { id := "erlewine2016_29a"
-    source := ⟨"erlewine-2016", "(29a), preprint numbering"⟩
+    source := ⟨"erlewine-2016", "(29a)"⟩
     reportedIn := none
     language := "kaqc1270"
     primaryText := "Achike k'o x-∅-tz'et-ö?"
@@ -212,7 +212,7 @@ def ex_29a : Datum :=
 
 def ex_29a_other : Datum :=
   { id := "erlewine2016_29a_other"
-    source := ⟨"erlewine-2016", "(29a), other reading, preprint numbering"⟩
+    source := ⟨"erlewine-2016", "(29a), other reading"⟩
     reportedIn := none
     language := "kaqc1270"
     primaryText := "Achike k'o x-∅-tz'et-ö?"
@@ -225,7 +225,7 @@ def ex_29a_other : Datum :=
 
 def ex_29b : Datum :=
   { id := "erlewine2016_29b"
-    source := ⟨"erlewine-2016", "(29b), preprint numbering"⟩
+    source := ⟨"erlewine-2016", "(29b)"⟩
     reportedIn := none
     language := "kaqc1270"
     primaryText := "Achike k'o x-∅-u-tz'ët?"
@@ -238,7 +238,7 @@ def ex_29b : Datum :=
 
 def ex_29b_other : Datum :=
   { id := "erlewine2016_29b_other"
-    source := ⟨"erlewine-2016", "(29b), other reading, preprint numbering"⟩
+    source := ⟨"erlewine-2016", "(29b), other reading"⟩
     reportedIn := none
     language := "kaqc1270"
     primaryText := "Achike k'o x-∅-u-tz'ët?"
@@ -251,7 +251,7 @@ def ex_29b_other : Datum :=
 
 def ex_53 : Datum :=
   { id := "erlewine2016_53"
-    source := ⟨"erlewine-2016", "(53), preprint numbering"⟩
+    source := ⟨"erlewine-2016", "(53)"⟩
     reportedIn := none
     language := "kaqc1270"
     primaryText := "Achike x-∅-a-tz'ët rat?"
@@ -264,7 +264,7 @@ def ex_53 : Datum :=
 
 def ex_64a : Datum :=
   { id := "erlewine2016_64a"
-    source := ⟨"erlewine-2016", "(64a), preprint numbering"⟩
+    source := ⟨"erlewine-2016", "(64a)"⟩
     reportedIn := none
     language := "kaqc1270"
     primaryText := "Ri a Pedro x-∅-u-ch'äk ri premio."
@@ -277,7 +277,7 @@ def ex_64a : Datum :=
 
 def ex_64b : Datum :=
   { id := "erlewine2016_64b"
-    source := ⟨"erlewine-2016", "(64b), preprint numbering"⟩
+    source := ⟨"erlewine-2016", "(64b)"⟩
     reportedIn := none
     language := "kaqc1270"
     primaryText := "(Ja) ri a Pedro x-∅-ch'ak-ö ri premio."
@@ -290,7 +290,7 @@ def ex_64b : Datum :=
 
 def ex_72a : Datum :=
   { id := "erlewine2016_72a"
-    source := ⟨"erlewine-2016", "(72a), preprint numbering"⟩
+    source := ⟨"erlewine-2016", "(72a)"⟩
     reportedIn := none
     language := "kaqc1270"
     primaryText := "Ja rat x-at-axa-n ri achin."
@@ -303,7 +303,7 @@ def ex_72a : Datum :=
 
 def ex_72b : Datum :=
   { id := "erlewine2016_72b"
-    source := ⟨"erlewine-2016", "(72b), preprint numbering"⟩
+    source := ⟨"erlewine-2016", "(72b)"⟩
     reportedIn := none
     language := "kaqc1270"
     primaryText := "Ja ri achin x-at-axa-n rat."
@@ -316,7 +316,7 @@ def ex_72b : Datum :=
 
 def ex_77a : Datum :=
   { id := "erlewine2016_77a"
-    source := ⟨"erlewine-2016", "(77a), preprint numbering"⟩
+    source := ⟨"erlewine-2016", "(77a)"⟩
     reportedIn := none
     language := "kaqc1270"
     primaryText := "Ja yïn x-at-in-tz'ët rat."
@@ -329,7 +329,7 @@ def ex_77a : Datum :=
 
 def ex_77b : Datum :=
   { id := "erlewine2016_77b"
-    source := ⟨"erlewine-2016", "(77b), preprint numbering"⟩
+    source := ⟨"erlewine-2016", "(77b)"⟩
     reportedIn := none
     language := "kaqc1270"
     primaryText := "Ja yïn x-i-tz'et-ö rat."
@@ -342,7 +342,7 @@ def ex_77b : Datum :=
 
 def ex_78a : Datum :=
   { id := "erlewine2016_78a"
-    source := ⟨"erlewine-2016", "(78a), preprint numbering"⟩
+    source := ⟨"erlewine-2016", "(78a)"⟩
     reportedIn := none
     language := "kaqc1270"
     primaryText := "Ja ri a Juan x-a-tz'et-ö rat."
@@ -355,7 +355,7 @@ def ex_78a : Datum :=
 
 def ex_78b : Datum :=
   { id := "erlewine2016_78b"
-    source := ⟨"erlewine-2016", "(78b), preprint numbering"⟩
+    source := ⟨"erlewine-2016", "(78b)"⟩
     reportedIn := none
     language := "kaqc1270"
     primaryText := "Ja ri a Juan x-a-r-tz'ët rat."
@@ -368,7 +368,7 @@ def ex_78b : Datum :=
 
 def ex_79a : Datum :=
   { id := "erlewine2016_79a"
-    source := ⟨"erlewine-2016", "(79a), preprint numbering"⟩
+    source := ⟨"erlewine-2016", "(79a)"⟩
     reportedIn := none
     language := "kaqc1270"
     primaryText := "Ja yïn x-i-tz'et-ö ri a Juan."
@@ -381,7 +381,7 @@ def ex_79a : Datum :=
 
 def ex_79b : Datum :=
   { id := "erlewine2016_79b"
-    source := ⟨"erlewine-2016", "(79b), preprint numbering"⟩
+    source := ⟨"erlewine-2016", "(79b)"⟩
     reportedIn := none
     language := "kaqc1270"
     primaryText := "Ja yïn x-∅-in-tz'ët ri a Juan."
@@ -394,7 +394,7 @@ def ex_79b : Datum :=
 
 def ex_87b : Datum :=
   { id := "erlewine2016_87b"
-    source := ⟨"erlewine-2016", "(87b), preprint numbering"⟩
+    source := ⟨"erlewine-2016", "(87b)"⟩
     reportedIn := none
     language := "popt1235"
     primaryText := "Mac xc-ach 7il-ni?"
@@ -407,7 +407,7 @@ def ex_87b : Datum :=
 
 def ex_88b : Datum :=
   { id := "erlewine2016_88b"
-    source := ⟨"erlewine-2016", "(88b), preprint numbering"⟩
+    source := ⟨"erlewine-2016", "(88b)"⟩
     reportedIn := none
     language := "popt1235"
     primaryText := "Ha-ch x-∅-7il-ni naj."
@@ -420,7 +420,7 @@ def ex_88b : Datum :=
 
 def ex_88c : Datum :=
   { id := "erlewine2016_88c"
-    source := ⟨"erlewine-2016", "(88c), preprint numbering"⟩
+    source := ⟨"erlewine-2016", "(88c)"⟩
     reportedIn := none
     language := "popt1235"
     primaryText := "Ha-ch x-∅-aw-(7)il naj."
@@ -433,7 +433,7 @@ def ex_88c : Datum :=
 
 def ex_91a : Datum :=
   { id := "erlewine2016_91a"
-    source := ⟨"erlewine-2016", "(91a), preprint numbering"⟩
+    source := ⟨"erlewine-2016", "(91a)"⟩
     reportedIn := none
     language := "west2635"
     primaryText := "Ja'-in ∅-ij-on-toj naj unin."
@@ -446,7 +446,7 @@ def ex_91a : Datum :=
 
 def ex_91b : Datum :=
   { id := "erlewine2016_91b"
-    source := ⟨"erlewine-2016", "(91b), preprint numbering"⟩
+    source := ⟨"erlewine-2016", "(91b)"⟩
     reportedIn := none
     language := "west2635"
     primaryText := "Ja'-in ∅-w-ij-toj naj unin."
@@ -459,7 +459,7 @@ def ex_91b : Datum :=
 
 def ex_93 : Datum :=
   { id := "erlewine2016_93"
-    source := ⟨"erlewine-2016", "(93), preprint numbering"⟩
+    source := ⟨"erlewine-2016", "(93)"⟩
     reportedIn := none
     language := "chol1282"
     primaryText := "Maxki tyi y-il-ä-yety?"

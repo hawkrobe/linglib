@@ -1,7 +1,7 @@
 [
   {
     "id": "erlewine2016_8",
-    "source": {"bibkey": "erlewine-2016", "paperLabel": "(8), preprint numbering"},
+    "source": {"bibkey": "erlewine-2016", "paperLabel": "(8)"},
     "language": "kaqc1270",
     "primaryText": "X-at-ki-tz'ët.",
     "discourseSegments": [],
@@ -26,7 +26,7 @@
   },
   {
     "id": "erlewine2016_9",
-    "source": {"bibkey": "erlewine-2016", "paperLabel": "(9), preprint numbering"},
+    "source": {"bibkey": "erlewine-2016", "paperLabel": "(9)"},
     "language": "kaqc1270",
     "primaryText": "X-a-wär.",
     "discourseSegments": [],
@@ -50,7 +50,7 @@
   },
   {
     "id": "erlewine2016_14a",
-    "source": {"bibkey": "erlewine-2016", "paperLabel": "(14a), preprint numbering"},
+    "source": {"bibkey": "erlewine-2016", "paperLabel": "(14a)"},
     "language": "kaqc1270",
     "primaryText": "Achike x-∅-tj-ö ri wäy?",
     "discourseSegments": [],
@@ -76,7 +76,7 @@
   },
   {
     "id": "erlewine2016_14b",
-    "source": {"bibkey": "erlewine-2016", "paperLabel": "(14b), preprint numbering"},
+    "source": {"bibkey": "erlewine-2016", "paperLabel": "(14b)"},
     "language": "kaqc1270",
     "primaryText": "Achike x-∅-u-tëj ri a Juan?",
     "discourseSegments": [],
@@ -102,7 +102,7 @@
   },
   {
     "id": "erlewine2016_18a_emb",
-    "source": {"bibkey": "erlewine-2016", "paperLabel": "(18a), embedded clause, preprint numbering"},
+    "source": {"bibkey": "erlewine-2016", "paperLabel": "(18a), embedded clause"},
     "language": "kaqc1270",
     "primaryText": "Achike n-∅-a-b'ij rat chin x-oj-tz'et-ö roj?",
     "discourseSegments": [],
@@ -129,7 +129,7 @@
   },
   {
     "id": "erlewine2016_18a_mat",
-    "source": {"bibkey": "erlewine-2016", "paperLabel": "(18a), matrix clause, preprint numbering"},
+    "source": {"bibkey": "erlewine-2016", "paperLabel": "(18a), matrix clause"},
     "language": "kaqc1270",
     "primaryText": "Achike n-∅-a-b'ij rat chin x-oj-tz'et-ö roj?",
     "discourseSegments": [],
@@ -155,7 +155,7 @@
   },
   {
     "id": "erlewine2016_18b",
-    "source": {"bibkey": "erlewine-2016", "paperLabel": "(18b), matrix clause, preprint numbering"},
+    "source": {"bibkey": "erlewine-2016", "paperLabel": "(18b), matrix clause"},
     "language": "kaqc1270",
     "primaryText": "Achike n-a-b'i-n rat chin x-oj-tz'et-ö roj?",
     "discourseSegments": [],
@@ -181,7 +181,7 @@
   },
   {
     "id": "erlewine2016_18c",
-    "source": {"bibkey": "erlewine-2016", "paperLabel": "(18c), embedded clause, preprint numbering"},
+    "source": {"bibkey": "erlewine-2016", "paperLabel": "(18c), embedded clause"},
     "language": "kaqc1270",
     "primaryText": "Achike n-∅-a-b'ij rat chin x-oj-r-tz'ët roj?",
     "discourseSegments": [],
@@ -208,7 +208,7 @@
   },
   {
     "id": "erlewine2016_27b",
-    "source": {"bibkey": "erlewine-2016", "paperLabel": "(27b), preprint numbering"},
+    "source": {"bibkey": "erlewine-2016", "paperLabel": "(27b)"},
     "language": "kaqc1270",
     "primaryText": "Achike kanqtzij x-∅-u-tëj ri wäy?",
     "discourseSegments": [],
@@ -235,7 +235,7 @@
   },
   {
     "id": "erlewine2016_27c",
-    "source": {"bibkey": "erlewine-2016", "paperLabel": "(27c), preprint numbering"},
+    "source": {"bibkey": "erlewine-2016", "paperLabel": "(27c)"},
     "language": "kaqc1270",
     "primaryText": "Achike kanqtzij x-∅-tj-ö ri wäy?",
     "discourseSegments": [],
@@ -262,7 +262,7 @@
   },
   {
     "id": "erlewine2016_28a",
-    "source": {"bibkey": "erlewine-2016", "paperLabel": "(28a), preprint numbering"},
+    "source": {"bibkey": "erlewine-2016", "paperLabel": "(28a)"},
     "language": "kaqc1270",
     "primaryText": "ri achin ri n-∅-tj-ö wäy",
     "discourseSegments": [],
@@ -289,7 +289,7 @@
   },
   {
     "id": "erlewine2016_28a_full",
-    "source": {"bibkey": "erlewine-2016", "paperLabel": "(28a), full agreement, preprint numbering"},
+    "source": {"bibkey": "erlewine-2016", "paperLabel": "(28a), full agreement"},
     "language": "kaqc1270",
     "primaryText": "ri achin ri n-∅-u-tëj wäy",
     "discourseSegments": [],
@@ -316,7 +316,7 @@
   },
   {
     "id": "erlewine2016_28b",
-    "source": {"bibkey": "erlewine-2016", "paperLabel": "(28b), preprint numbering"},
+    "source": {"bibkey": "erlewine-2016", "paperLabel": "(28b)"},
     "language": "kaqc1270",
     "primaryText": "ri achin ri nojel mul n-∅-u-tëj wäy",
     "discourseSegments": [],
@@ -343,7 +343,7 @@
   },
   {
     "id": "erlewine2016_28b_af",
-    "source": {"bibkey": "erlewine-2016", "paperLabel": "(28b), AF, preprint numbering"},
+    "source": {"bibkey": "erlewine-2016", "paperLabel": "(28b), AF"},
     "language": "kaqc1270",
     "primaryText": "ri achin ri nojel mul n-∅-tj-ö wäy",
     "discourseSegments": [],
@@ -370,7 +370,7 @@
   },
   {
     "id": "erlewine2016_29a",
-    "source": {"bibkey": "erlewine-2016", "paperLabel": "(29a), preprint numbering"},
+    "source": {"bibkey": "erlewine-2016", "paperLabel": "(29a)"},
     "language": "kaqc1270",
     "primaryText": "Achike k'o x-∅-tz'et-ö?",
     "discourseSegments": [],
@@ -396,7 +396,7 @@
   },
   {
     "id": "erlewine2016_29a_other",
-    "source": {"bibkey": "erlewine-2016", "paperLabel": "(29a), other reading, preprint numbering"},
+    "source": {"bibkey": "erlewine-2016", "paperLabel": "(29a), other reading"},
     "language": "kaqc1270",
     "primaryText": "Achike k'o x-∅-tz'et-ö?",
     "discourseSegments": [],
@@ -422,7 +422,7 @@
   },
   {
     "id": "erlewine2016_29b",
-    "source": {"bibkey": "erlewine-2016", "paperLabel": "(29b), preprint numbering"},
+    "source": {"bibkey": "erlewine-2016", "paperLabel": "(29b)"},
     "language": "kaqc1270",
     "primaryText": "Achike k'o x-∅-u-tz'ët?",
     "discourseSegments": [],
@@ -448,7 +448,7 @@
   },
   {
     "id": "erlewine2016_29b_other",
-    "source": {"bibkey": "erlewine-2016", "paperLabel": "(29b), other reading, preprint numbering"},
+    "source": {"bibkey": "erlewine-2016", "paperLabel": "(29b), other reading"},
     "language": "kaqc1270",
     "primaryText": "Achike k'o x-∅-u-tz'ët?",
     "discourseSegments": [],
@@ -474,7 +474,7 @@
   },
   {
     "id": "erlewine2016_53",
-    "source": {"bibkey": "erlewine-2016", "paperLabel": "(53), preprint numbering"},
+    "source": {"bibkey": "erlewine-2016", "paperLabel": "(53)"},
     "language": "kaqc1270",
     "primaryText": "Achike x-∅-a-tz'ët rat?",
     "discourseSegments": [],
@@ -500,7 +500,7 @@
   },
   {
     "id": "erlewine2016_64a",
-    "source": {"bibkey": "erlewine-2016", "paperLabel": "(64a), preprint numbering"},
+    "source": {"bibkey": "erlewine-2016", "paperLabel": "(64a)"},
     "language": "kaqc1270",
     "primaryText": "Ri a Pedro x-∅-u-ch'äk ri premio.",
     "discourseSegments": [],
@@ -527,7 +527,7 @@
   },
   {
     "id": "erlewine2016_64b",
-    "source": {"bibkey": "erlewine-2016", "paperLabel": "(64b), preprint numbering"},
+    "source": {"bibkey": "erlewine-2016", "paperLabel": "(64b)"},
     "language": "kaqc1270",
     "primaryText": "(Ja) ri a Pedro x-∅-ch'ak-ö ri premio.",
     "discourseSegments": [],
@@ -554,7 +554,7 @@
   },
   {
     "id": "erlewine2016_72a",
-    "source": {"bibkey": "erlewine-2016", "paperLabel": "(72a), preprint numbering"},
+    "source": {"bibkey": "erlewine-2016", "paperLabel": "(72a)"},
     "language": "kaqc1270",
     "primaryText": "Ja rat x-at-axa-n ri achin.",
     "discourseSegments": [],
@@ -583,7 +583,7 @@
   },
   {
     "id": "erlewine2016_72b",
-    "source": {"bibkey": "erlewine-2016", "paperLabel": "(72b), preprint numbering"},
+    "source": {"bibkey": "erlewine-2016", "paperLabel": "(72b)"},
     "language": "kaqc1270",
     "primaryText": "Ja ri achin x-at-axa-n rat.",
     "discourseSegments": [],
@@ -611,7 +611,7 @@
   },
   {
     "id": "erlewine2016_77a",
-    "source": {"bibkey": "erlewine-2016", "paperLabel": "(77a), preprint numbering"},
+    "source": {"bibkey": "erlewine-2016", "paperLabel": "(77a)"},
     "language": "kaqc1270",
     "primaryText": "Ja yïn x-at-in-tz'ët rat.",
     "discourseSegments": [],
@@ -637,7 +637,7 @@
   },
   {
     "id": "erlewine2016_77b",
-    "source": {"bibkey": "erlewine-2016", "paperLabel": "(77b), preprint numbering"},
+    "source": {"bibkey": "erlewine-2016", "paperLabel": "(77b)"},
     "language": "kaqc1270",
     "primaryText": "Ja yïn x-i-tz'et-ö rat.",
     "discourseSegments": [],
@@ -663,7 +663,7 @@
   },
   {
     "id": "erlewine2016_78a",
-    "source": {"bibkey": "erlewine-2016", "paperLabel": "(78a), preprint numbering"},
+    "source": {"bibkey": "erlewine-2016", "paperLabel": "(78a)"},
     "language": "kaqc1270",
     "primaryText": "Ja ri a Juan x-a-tz'et-ö rat.",
     "discourseSegments": [],
@@ -689,7 +689,7 @@
   },
   {
     "id": "erlewine2016_78b",
-    "source": {"bibkey": "erlewine-2016", "paperLabel": "(78b), preprint numbering"},
+    "source": {"bibkey": "erlewine-2016", "paperLabel": "(78b)"},
     "language": "kaqc1270",
     "primaryText": "Ja ri a Juan x-a-r-tz'ët rat.",
     "discourseSegments": [],
@@ -715,7 +715,7 @@
   },
   {
     "id": "erlewine2016_79a",
-    "source": {"bibkey": "erlewine-2016", "paperLabel": "(79a), preprint numbering"},
+    "source": {"bibkey": "erlewine-2016", "paperLabel": "(79a)"},
     "language": "kaqc1270",
     "primaryText": "Ja yïn x-i-tz'et-ö ri a Juan.",
     "discourseSegments": [],
@@ -741,7 +741,7 @@
   },
   {
     "id": "erlewine2016_79b",
-    "source": {"bibkey": "erlewine-2016", "paperLabel": "(79b), preprint numbering"},
+    "source": {"bibkey": "erlewine-2016", "paperLabel": "(79b)"},
     "language": "kaqc1270",
     "primaryText": "Ja yïn x-∅-in-tz'ët ri a Juan.",
     "discourseSegments": [],
@@ -767,7 +767,7 @@
   },
   {
     "id": "erlewine2016_87b",
-    "source": {"bibkey": "erlewine-2016", "paperLabel": "(87b), preprint numbering"},
+    "source": {"bibkey": "erlewine-2016", "paperLabel": "(87b)"},
     "language": "popt1235",
     "primaryText": "Mac xc-ach 7il-ni?",
     "discourseSegments": [],
@@ -793,7 +793,7 @@
   },
   {
     "id": "erlewine2016_88b",
-    "source": {"bibkey": "erlewine-2016", "paperLabel": "(88b), preprint numbering"},
+    "source": {"bibkey": "erlewine-2016", "paperLabel": "(88b)"},
     "language": "popt1235",
     "primaryText": "Ha-ch x-∅-7il-ni naj.",
     "discourseSegments": [],
@@ -819,7 +819,7 @@
   },
   {
     "id": "erlewine2016_88c",
-    "source": {"bibkey": "erlewine-2016", "paperLabel": "(88c), preprint numbering"},
+    "source": {"bibkey": "erlewine-2016", "paperLabel": "(88c)"},
     "language": "popt1235",
     "primaryText": "Ha-ch x-∅-aw-(7)il naj.",
     "discourseSegments": [],
@@ -845,7 +845,7 @@
   },
   {
     "id": "erlewine2016_91a",
-    "source": {"bibkey": "erlewine-2016", "paperLabel": "(91a), preprint numbering"},
+    "source": {"bibkey": "erlewine-2016", "paperLabel": "(91a)"},
     "language": "west2635",
     "primaryText": "Ja'-in ∅-ij-on-toj naj unin.",
     "discourseSegments": [],
@@ -871,7 +871,7 @@
   },
   {
     "id": "erlewine2016_91b",
-    "source": {"bibkey": "erlewine-2016", "paperLabel": "(91b), preprint numbering"},
+    "source": {"bibkey": "erlewine-2016", "paperLabel": "(91b)"},
     "language": "west2635",
     "primaryText": "Ja'-in ∅-w-ij-toj naj unin.",
     "discourseSegments": [],
@@ -897,7 +897,7 @@
   },
   {
     "id": "erlewine2016_93",
-    "source": {"bibkey": "erlewine-2016", "paperLabel": "(93), preprint numbering"},
+    "source": {"bibkey": "erlewine-2016", "paperLabel": "(93)"},
     "language": "chol1282",
     "primaryText": "Maxki tyi y-il-ä-yety?",
     "discourseSegments": [],

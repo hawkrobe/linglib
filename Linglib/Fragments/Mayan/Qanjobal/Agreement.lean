@@ -15,7 +15,7 @@ subject. Set B follows the aspect marker and precedes the stem, so Q'anjob'al is
 high-absolutive language. The aspect markers are clitics, completive *(ma)x-*, incompletive
 *chi-* and irrealis *(ho)q-*, unlike the auxiliaries of Chol. The alignment is ergative in every
 clause with a preverbal aspect marker, the incompletive included, and Set A marks every subject
-in a clause without one, such as the progressive with *lanan*. Mateo-Toledo's grammar and
+in a clause without one, such as the progressive with *lanan*. Mateo-Toledo's dissertation and
 Imanishi's comparison of the splits are the sources, and Coon, Mateo Pedro and Preminger give
 the paradigms.
 
@@ -81,9 +81,9 @@ def setAExponent : Phonology.Segment.Class → ExponentTable
      (.personNumber .second .plural, [.pref "hey"]),
      (.personNumber .third .plural, [.pref "y", .free "heb'"])]
 
-/-- The Set B (absolutive) markers are suffixes ([coon-mateo-pedro-preminger-2014] table (13)). The
-3pl cell is the free plural word *heb'* alone (zero person exponence plus the plural particle); 1pl
-*-on* is the table's ASCII for *-on̈* [-oŋ]. -/
+/-- The Set B (absolutive) markers, suffixed to the aspect marker
+([coon-mateo-pedro-preminger-2014] (13)), with a zero third person singular; the third person
+plural is the free plural word *heb'* alone. -/
 def setBExponent : ExponentTable :=
   [(.personNumber .first .singular, [.suff "in"]), (.personNumber .second .singular, [.suff "ach"]),
    (.personNumber .third .singular, []), (.personNumber .first .plural, [.suff "on"]),

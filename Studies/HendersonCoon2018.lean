@@ -38,7 +38,7 @@ Focus then appears only when the pronoun is focused inside the lower clause.
 * The biclausal parse is available when the intervener is an adverb that takes a clause, the
   monoclausal parse when no overt complementizer or resumptive pronoun marks a lower clause.
   Erlewine's grammar reads any intervener, negation included, as one projection above TP.
-* Example numbers follow the lingbuzz preprint. The examples are `Data.Examples.HendersonCoon2018`;
+* Example numbers are the published version's. The examples are `Data.Examples.HendersonCoon2018`;
   the attested (26), whose object may be a clause, and (44), whose verb is a perfect, are left out.
 
 ## References

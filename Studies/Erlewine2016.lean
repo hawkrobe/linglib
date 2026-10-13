@@ -46,8 +46,9 @@ Popti', Akatek and Ch'ol.
 * The last-resort model is the one formalized in `Studies/CoonMateoPedroPreminger2014.lean`, run
   on each Kaqchikel example with Infl licensing the object, the Voice of the attested form and
   the extracted argument's role; its authors propose it for Q'anjob'al only, as the paper's
-  fn. 45 notes.
-* Example numbers follow the lingbuzz preprint; the examples are `Data.Examples.Erlewine2016`.
+  fn. 46 notes.
+* Example and footnote numbers are the published version's; the examples are
+  `Data.Examples.Erlewine2016`.
 
 ## References
 
@@ -385,7 +386,7 @@ instance : DecidablePred Row.TwoParticipants := fun _ ↦ inferInstanceAs (Decid
 /-- The last-resort model merges the Case-assigning AF Voice only where the regular derivation
 would crash, so it sees neither person nor what lies between the extracted subject and the verb.
 It judges a Kaqchikel example correctly exactly when the subject is not extracted past an
-intervening layer, the locality such Case-based accounts miss (fn. 46), and the arguments are not
+intervening layer, the locality such Case-based accounts miss (fn. 47), and the arguments are not
 both participants, the exception for which a last resort would need a last resort of its own
 (§5.3, (81)); the optimality grammar fits every example (`rows_optimal`). -/
 theorem lastResort_matches_iff : ∀ r ∈ kaqchikelRows,
