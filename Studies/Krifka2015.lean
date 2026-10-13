@@ -7,23 +7,25 @@ public import Studies.BuringGunlogson2000
 /-!
 # Krifka (2015): Bias in Commitment Space Semantics
 
-This file formalizes [krifka-2015]'s commitment space semantics of biased questions. A
-conversation is a commitment space, the current commitment state with its projected
-continuations (`Commitment.Space`), and speech acts are its updates. An assertion re-roots the
-space at the state recording the speaker's commitment (14), so the root narrows at once, where
-[farkas-bruce-2010], whom the paper credits for its rejection operator, leave the common ground
-untouched until acceptance. A question keeps the root and restricts the continuations to
-assertions by the addressee. A monopolar question projects only the addressee's assertion of
-`φ` (27), so *yes* is a projected continuation and *no* requires a prior rejection (28), while a
-bipolar question is the disjunction of the two monopolar questions ((23), (31)) and projects
-both answers (24); the issue projection of the library sees the bipolar question but not the
-monopolar one (`monopolar_not_inquisitive`). Low negation is a monopolar question about `¬φ`
-(29); high negation projects the addressee's refusal `¬S₂⊢φ` (39), weaker than `S₂⊢¬φ`, since
-a consistent commitment to `¬φ` already excludes a commitment to `φ`. The licensing of the
-three question types by the contextual evidence of [buring-gunlogson-2000] then reproduces the
-paper's Table 1 (`table1`). A matching tag conjoins an assertion with the monopolar question of
-the same content (44), and a reverse tag disjoins the assertion with the monopolar question of
-the negation (`reverseTag`, (45)).
+Krifka models a conversation as a commitment space, the current commitment state with the
+continuations it projects. An assertion moves the root to the state recording the speaker's
+commitment, so the root narrows at once, where the Table of Farkas and Bruce leaves the common
+ground untouched until acceptance. A question keeps the root and proposes continuations in which
+the addressee asserts. A monopolar question proposes one assertion, so *yes* is a projected
+continuation and *no* needs a prior rejection; a bipolar question is the disjunction of the two
+monopolar questions and projects both answers. A question with low negation is a monopolar
+question about `¬φ`, and one with high negation proposes the addressee's refusal to commit to
+`φ`, which is weaker. A matching question tag conjoins an assertion with the monopolar question
+of the same content, and a reverse tag disjoins it with the monopolar question of the negation.
+
+## Main statements
+
+* `monopolar_not_inquisitive`, `bipolar_inquisitive`: a bipolar question raises an issue and a
+  monopolar question does not, its bias being invisible to the issue projection.
+* `table1`: licensing the three question types by the contextual evidence of Büring and
+  Gunlogson reproduces the paper's table of acceptable uses.
+* `matchingTag_eq`, `isLeast_reverseTag`: after a matching tag both participants are committed
+  unless the addressee reacts, while a reverse tag keeps the root.
 
 ## Implementation notes
 
@@ -32,26 +34,61 @@ the negation (`reverseTag`, (45)).
   complement. A monopolar question is licensed by evidence for its proposed assertion, a
   bipolar question by neutral evidence, and the high-negation question wherever the evidence
   is not for `φ`; the low-negation question has only the monopolar reading, its bipolar reading
-  being blocked by the question without negation.
+  being blocked by the question without negation. These conditions are stated on the evidence
+  and are not derived from the spaces.
 
 ## References
 
-* [krifka-2015]
-* [farkas-bruce-2010] — the Table and the rejection operator
-* [buring-gunlogson-2000] — contextual evidence and the three question types
+* [M. Krifka, *Bias in Commitment Space Semantics: Declarative Questions, Negated Questions,
+  and Question Tags* (2015)][krifka-2015]
+* [D. F. Farkas and K. B. Bruce, *On Reacting to Assertions and Polar Questions*
+  (2010)][farkas-bruce-2010]
+* [D. Büring and C. Gunlogson, *Aren't Positive and Negative Polar Questions the Same?*
+  (2000)][buring-gunlogson-2000]
 -/
 
 @[expose] public section
 
 namespace Krifka2015
 
-open Commitment
-open Commitment.Space
-open Question
+open Commitment Space Question
+
+/-! ### Questions as meta-speech acts -/
+
+section Questions
+
+variable {A W : Type*} (C : Space (State A W)) (a : A) (φ : Set W) {d : State A W}
+
+/-- A monopolar question keeps the root and proposes `a`'s assertion of `φ` (27). -/
+def monopolarQuestion : Space (State A W) := C.restrict (C.assert a φ)
+
+/-- A bipolar question keeps the root and proposes `a`'s assertion of `φ` or of `¬φ` (23). -/
+def bipolarQuestion : Space (State A W) := C.restrict (↑(C.assert a φ) ∪ ↑(C.assert a φᶜ))
+
+/-- A high-negation question keeps the root and proposes `a`'s refusal `¬S⊢φ` (39). -/
+def highNegationQuestion : Space (State A W) := C.restrict (C.update {refuse a φ})
+
+theorem mem_monopolarQuestion :
+    d ∈ monopolarQuestion C a φ ↔ d = C.root ∨ d ∈ C ∧ commit a φ ∈ d := by
+  rw [monopolarQuestion, assert, restrict_coe_update, mem_restrict, Set.mem_Ici]
+  exact or_congr_right (and_congr_right fun _ ↦ Set.singleton_subset_iff)
+
+theorem mem_highNegationQuestion :
+    d ∈ highNegationQuestion C a φ ↔ d = C.root ∨ d ∈ C ∧ refuse a φ ∈ d := by
+  rw [highNegationQuestion, restrict_coe_update, mem_restrict, Set.mem_Ici]
+  exact or_congr_right (and_congr_right fun _ ↦ Set.singleton_subset_iff)
+
+/-- A bipolar question is the disjunction of the two monopolar questions (31). -/
+theorem coe_bipolarQuestion :
+    (bipolarQuestion C a φ : Set (State A W)) =
+      ↑(monopolarQuestion C a φ) ∪ ↑(monopolarQuestion C a φᶜ) :=
+  C.coe_restrict_union _ _
+
+end Questions
 
 /-! ### The fixture -/
 
-/-- There are two worlds: it is raining or it is not. -/
+/-- In one world it is raining and in the other it is not. -/
 inductive Weather
   | rain
   | noRain
@@ -60,14 +97,19 @@ inductive Weather
 /-- It is raining. -/
 def raining : Set Weather := {.rain}
 
-theorem raining_ne_compl : raining ≠ rainingᶜ := λ h =>
+theorem raining_ne_compl : raining ≠ rainingᶜ := fun h ↦
   (Set.ext_iff.1 h .rain).1 rfl rfl
 
 /-- The initial commitment space has no commitments and leaves every development licit. -/
-def C₀ : Space (State Discourse.Role Weather) := full ∅
+def C₀ : Space (State Discourse.Role Weather) := Space.Ici ∅
 
 theorem mem_insert_empty_iff {x y : Commitment Discourse.Role Weather} :
     x ∈ insert y (∅ : State Discourse.Role Weather) ↔ x = y := by simp
+
+theorem contextSet_insert_commit_empty (a : Discourse.Role) (φ : Set Weather) :
+    contextSet (insert (commit a φ) (∅ : State Discourse.Role Weather)) = φ := by
+  rw [contextSet_insert_of_commit rfl, contextSet_empty, Set.inter_univ]
+  rfl
 
 /-! ### Assertion (14) -/
 
@@ -80,45 +122,48 @@ it was (p. 331). -/
 theorem assert_contextSet_vs_farkasBruce_cg :
     contextSet (C₀.assert .speaker raining).root = raining ∧
       ((Table.empty : Table Discourse.Role Weather).assert .speaker raining).commonGround = ⊤ :=
-  ⟨by rw [contextSet_assert_root, show C₀.root = ∅ from rfl, contextSet_empty, Set.inter_univ],
-    rfl⟩
+  ⟨contextSet_insert_commit_empty _ _, rfl⟩
 
 /-! ### Questions (23)–(28) -/
 
 /-- A monopolar question keeps the root (27). -/
-theorem monopolar_root : (C₀.monopolarQuestion .addressee raining).root = ∅ := rfl
+theorem monopolar_root : (monopolarQuestion C₀ .addressee raining).root = ∅ := rfl
+
+theorem insert_commit_mem_monopolarQuestion (φ : Set Weather) :
+    insert (commit .addressee φ) ∅ ∈ monopolarQuestion C₀ .addressee φ :=
+  (mem_monopolarQuestion ..).2 (Or.inr ⟨Set.empty_subset _, Set.mem_insert _ _⟩)
 
 /-- *Yes* is a projected continuation of the monopolar question (28a). -/
 theorem monopolar_yes_mem :
-    insert (commit .addressee raining) ∅ ∈ (C₀.monopolarQuestion .addressee raining).states :=
-  Or.inr (Or.inl rfl)
+    insert (commit .addressee raining) ∅ ∈ monopolarQuestion C₀ .addressee raining :=
+  insert_commit_mem_monopolarQuestion raining
 
 /-- *No* is not a projected continuation, since it requires a prior rejection (28b). -/
 theorem monopolar_no_not_mem :
-    insert (commit .addressee rainingᶜ) ∅ ∉ (C₀.monopolarQuestion .addressee raining).states := by
-  rintro (h | h | ⟨-, h⟩)
+    insert (commit .addressee rainingᶜ) ∅ ∉ monopolarQuestion C₀ .addressee raining := by
+  rw [mem_monopolarQuestion]
+  rintro (h | ⟨-, h⟩)
   · exact (Set.insert_nonempty _ _).ne_empty h
-  · exact raining_ne_compl (congrArg content (mem_insert_empty_iff.1 (h ▸ Set.mem_insert _ _))).symm
-  · exact raining_ne_compl (congrArg content (mem_insert_empty_iff.1 (h (Set.mem_insert _ _))))
+  · exact raining_ne_compl (congrArg content (mem_insert_empty_iff.1 h))
 
 /-- Both answers are projected continuations of the bipolar question (24). -/
 theorem bipolar_yes_mem :
-    insert (commit .addressee raining) ∅ ∈ (C₀.bipolarQuestion .addressee raining).states :=
-  Or.inl monopolar_yes_mem
+    insert (commit .addressee raining) ∅ ∈ bipolarQuestion C₀ .addressee raining :=
+  (coe_bipolarQuestion ..).ge (Or.inl monopolar_yes_mem)
 
 theorem bipolar_no_mem :
-    insert (commit .addressee rainingᶜ) ∅ ∈ (C₀.bipolarQuestion .addressee raining).states :=
-  Or.inr (Or.inr (Or.inl rfl))
+    insert (commit .addressee rainingᶜ) ∅ ∈ bipolarQuestion C₀ .addressee raining :=
+  (coe_bipolarQuestion ..).ge (Or.inr (insert_commit_mem_monopolarQuestion rainingᶜ))
 
 /-! ### Negated questions (29), (39) -/
 
 /-- High negation projects the addressee's refusal (39). -/
 theorem highNegation_refusal_mem :
-    insert (refuse .addressee raining) ∅ ∈ (C₀.highNegationQuestion .addressee raining).states :=
-  Or.inr (Or.inl rfl)
+    insert (refuse .addressee raining) ∅ ∈ highNegationQuestion C₀ .addressee raining :=
+  (mem_highNegationQuestion ..).2 (Or.inr ⟨Set.empty_subset _, Set.mem_insert _ _⟩)
 
-/-- `¬S₂⊢φ` is weaker than `S₂⊢¬φ` (p. 340): a consistent commitment to `¬φ` already excludes
-a commitment to `φ`. -/
+/-- `¬S₂⊢φ` is weaker than `S₂⊢¬φ` (p. 340), since a consistent commitment to `¬φ` already
+excludes a commitment to `φ`. -/
 theorem not_mem_slate_of_commit_compl (K : State Discourse.Role Weather)
     (h : commit .addressee rainingᶜ ∈ K) (hne : (contextSet (ofCommitter K .addressee)).Nonempty) :
     raining ∉ slate (ofCommitter K .addressee) :=
@@ -126,38 +171,31 @@ theorem not_mem_slate_of_commit_compl (K : State Discourse.Role Weather)
 
 /-! ### The issue projection -/
 
-theorem contextSet_insert_commit_empty (a : Discourse.Role) (φ : Set Weather) :
-    contextSet (insert (commit a φ) (∅ : State Discourse.Role Weather)) = φ := by
-  rw [contextSet_insert_of_commit rfl, contextSet_empty, Set.inter_univ]
-  rfl
-
 /-- Every continuation of the monopolar question records the addressee's commitment, so its
-context set lies inside `raining`. -/
-theorem monopolar_continuation_subset {c : State Discourse.Role Weather}
-    (hc : c ∈ (C₀.monopolarQuestion .addressee raining).continuations) :
-    contextSet c ⊆ raining := by
+context set lies inside the proposed proposition. -/
+theorem monopolar_continuation_subset {φ : Set Weather} {c : State Discourse.Role Weather}
+    (hc : c ∈ (monopolarQuestion C₀ .addressee φ).continuations) : contextSet c ⊆ φ := by
   obtain ⟨hc, hne⟩ := hc
-  rcases hc with rfl | rfl | ⟨-, hc⟩
+  rcases (mem_monopolarQuestion ..).1 hc with rfl | ⟨-, hc⟩
   · exact absurd rfl hne
-  · exact (contextSet_insert_commit_empty _ _).le
-  · exact contextSet_subset_of_mem_contents _ ⟨_, ⟨hc (Set.mem_insert _ _), rfl⟩, rfl⟩
+  · exact contextSet_subset_of_mem_contents _ ⟨_, ⟨hc, rfl⟩, rfl⟩
 
 theorem monopolar_continuation_mem :
     insert (commit .addressee raining) ∅ ∈
-      (C₀.monopolarQuestion .addressee raining).continuations :=
+      (monopolarQuestion C₀ .addressee raining).continuations :=
   ⟨monopolar_yes_mem, (Set.insert_nonempty _ _).ne_empty⟩
 
-/-- A monopolar question raises no inquisitive issue: its bias is invisible to the issue
+/-- A monopolar question raises no inquisitive issue, so its bias is invisible to the issue
 observable. -/
 theorem monopolar_not_inquisitive :
-    ¬ (C₀.monopolarQuestion .addressee raining).toIssue.IsInquisitive := by
+    ¬ (monopolarQuestion C₀ .addressee raining).toIssue.IsInquisitive := by
   intro h
-  have hmem : raining ∈ (C₀.monopolarQuestion .addressee raining).toIssue :=
+  have hmem : raining ∈ (monopolarQuestion C₀ .addressee raining).toIssue :=
     (mem_toIssue_iff _).2 (Or.inr ⟨_, monopolar_continuation_mem,
       (contextSet_insert_commit_empty _ _).ge⟩)
   refine h ?_
-  have : (C₀.monopolarQuestion .addressee raining).toIssue.info = raining := by
-    refine Set.Subset.antisymm (Set.sUnion_subset λ i hi => ?_) (Set.subset_sUnion_of_mem hmem)
+  have : (monopolarQuestion C₀ .addressee raining).toIssue.info = raining := by
+    refine Set.Subset.antisymm (Set.sUnion_subset fun i hi ↦ ?_) (Set.subset_sUnion_of_mem hmem)
     rcases (mem_toIssue_iff _).1 hi with ⟨h0, -⟩ | ⟨c, hc, hic⟩
     · exact absurd monopolar_continuation_mem (h0 ▸ Set.notMem_empty _)
     · exact hic.trans (monopolar_continuation_subset hc)
@@ -166,33 +204,28 @@ theorem monopolar_not_inquisitive :
 
 /-- Every continuation of the bipolar question records one of the two answers. -/
 theorem bipolar_continuation_subset {c : State Discourse.Role Weather}
-    (hc : c ∈ (C₀.bipolarQuestion .addressee raining).continuations) :
-    contextSet c ⊆ raining ∨ contextSet c ⊆ rainingᶜ := by
-  obtain ⟨hc, hne⟩ := hc
-  rcases hc with (rfl | rfl | ⟨-, hc⟩) | (rfl | rfl | ⟨-, hc⟩)
-  · exact absurd rfl hne
-  · exact Or.inl (contextSet_insert_commit_empty _ _).le
-  · exact Or.inl (contextSet_subset_of_mem_contents _ ⟨_, ⟨hc (Set.mem_insert _ _), rfl⟩, rfl⟩)
-  · exact absurd rfl hne
-  · exact Or.inr (contextSet_insert_commit_empty _ _).le
-  · exact Or.inr (contextSet_subset_of_mem_contents _ ⟨_, ⟨hc (Set.mem_insert _ _), rfl⟩, rfl⟩)
+    (hc : c ∈ (bipolarQuestion C₀ .addressee raining).continuations) :
+    contextSet c ⊆ raining ∨ contextSet c ⊆ rainingᶜ :=
+  ((coe_bipolarQuestion ..).le hc.1).imp
+    (fun h ↦ monopolar_continuation_subset ⟨h, hc.2⟩)
+    (fun h ↦ monopolar_continuation_subset ⟨h, hc.2⟩)
 
 /-- A bipolar question raises a genuine issue. -/
-theorem bipolar_inquisitive : (C₀.bipolarQuestion .addressee raining).toIssue.IsInquisitive := by
+theorem bipolar_inquisitive : (bipolarQuestion C₀ .addressee raining).toIssue.IsInquisitive := by
   intro hinfo
-  have hyes : raining ∈ (C₀.bipolarQuestion .addressee raining).toIssue :=
+  have hyes : raining ∈ (bipolarQuestion C₀ .addressee raining).toIssue :=
     (mem_toIssue_iff _).2 (Or.inr ⟨_, ⟨bipolar_yes_mem, (Set.insert_nonempty _ _).ne_empty⟩,
       (contextSet_insert_commit_empty _ _).ge⟩)
-  have hno : rainingᶜ ∈ (C₀.bipolarQuestion .addressee raining).toIssue :=
+  have hno : rainingᶜ ∈ (bipolarQuestion C₀ .addressee raining).toIssue :=
     (mem_toIssue_iff _).2 (Or.inr ⟨_, ⟨bipolar_no_mem, (Set.insert_nonempty _ _).ne_empty⟩,
       (contextSet_insert_commit_empty _ _).ge⟩)
-  have hrain : Weather.rain ∈ (C₀.bipolarQuestion .addressee raining).toIssue.info :=
+  have hrain : Weather.rain ∈ (bipolarQuestion C₀ .addressee raining).toIssue.info :=
     Set.subset_sUnion_of_mem hyes rfl
-  have hnoRain : Weather.noRain ∈ (C₀.bipolarQuestion .addressee raining).toIssue.info :=
-    Set.subset_sUnion_of_mem hno λ h => Weather.noConfusion h
+  have hnoRain : Weather.noRain ∈ (bipolarQuestion C₀ .addressee raining).toIssue.info :=
+    Set.subset_sUnion_of_mem hno fun h ↦ Weather.noConfusion h
   rcases (mem_toIssue_iff _).1 hinfo with ⟨h0, -⟩ | ⟨c, hc, hsub⟩
   · have hmem : insert (commit .addressee raining) ∅ ∈
-        (C₀.bipolarQuestion .addressee raining).continuations :=
+        (bipolarQuestion C₀ .addressee raining).continuations :=
       ⟨bipolar_yes_mem, (Set.insert_nonempty _ _).ne_empty⟩
     rw [h0] at hmem
     exact hmem
@@ -219,7 +252,7 @@ def BipolarLicensed (E φ : Set Weather) : Prop := ¬ E ⊆ φ ∧ ¬ E ⊆ φ�
 evidence is not for `φ`. -/
 def HighNegationLicensed (E φ : Set Weather) : Prop := ¬ E ⊆ φ
 
-/-- Each question is licensed on particular readings: the question without negation, `none`, is
+/-- Each question is licensed on particular readings. The question without negation, `none`, is
 licensed on either of its readings; the question with low negation, about `¬φ`
 (`some .negative`), only on the monopolar reading of `¬φ`; the question with high negation,
 about `φ` (`some .positive`), as such. -/
@@ -230,10 +263,10 @@ def Licensed (E φ : Set Weather) : Option Polarity → Prop
 
 theorem raining_ne_empty : raining ≠ ∅ := (Set.singleton_nonempty _).ne_empty
 
-theorem raining_ne_univ : raining ≠ Set.univ := λ h =>
+theorem raining_ne_univ : raining ≠ Set.univ := fun h ↦
   Weather.noConfusion (Set.eq_univ_iff_forall.1 h .noRain)
 
-/-- Licensing reproduces Table 1: with evidence for `φ` only the question without negation is
+/-- Licensing reproduces Table 1. With evidence for `φ` only the question without negation is
 licensed, read monopolar; with neutral evidence the question without negation, read bipolar, and
 the high-negation question; with evidence against `φ` both negated questions and not the
 question without negation. -/
@@ -256,34 +289,60 @@ theorem licensed_iff_felicitous (r : Option Polarity) (e : SignType) :
 
 /-! ### Question tags (44), (45) -/
 
-variable (C : Space (State Discourse.Role Weather)) (φ : Set Weather)
+section Tags
 
-/-- A matching tag (44) conjoins the assertion with the monopolar question of the same content,
-and its result is the state in which both participants are committed. -/
-def matchingTag : Space (State Discourse.Role Weather) :=
-  (C.assert .speaker φ).assert .addressee φ
+variable {W : Type*} (C : Space (State Discourse.Role W)) (φ : Set W)
 
-/-- A reverse tag (45) disjoins the assertion with the monopolar question of the negation, rooted
-at the current state. -/
-def reverseTag : Space (State Discourse.Role Weather) :=
-  C.propose ((C.assert .speaker φ).states ∪ (C.monopolarQuestion .addressee φᶜ).states) <| by
-    rintro d (hd | rfl | hd)
-    · exact C.root_mem_lowerBounds_reroot (Set.subset_insert _ _) hd
-    · exact le_rfl
-    · exact C.root_mem_lowerBounds_reroot (Set.subset_insert _ _) hd
+/-- A matching tag (44) conjoins the assertion with the monopolar question of the same
+content. -/
+def matchingTag : Set (State Discourse.Role W) :=
+  ↑(C.assert .speaker φ) ∩ ↑(monopolarQuestion C .addressee φ)
 
-/-- After a matching tag the proposed commitments obtain unless the addressee reacts. -/
-theorem matchingTag_root :
-    (matchingTag C₀ raining).root =
-      insert (commit .addressee raining) (insert (commit .speaker raining) ∅) := rfl
+/-- A reverse tag (45) disjoins the assertion with the monopolar question of the negation. -/
+def reverseTag : Set (State Discourse.Role W) :=
+  ↑(C.assert .speaker φ) ∪ ↑(monopolarQuestion C .addressee φᶜ)
 
-/-- A reverse tag keeps the root: the speaker's commitment is only one branch. -/
-theorem reverseTag_root : (reverseTag C₀ raining).root = ∅ := rfl
+/-- A matching tag is the speaker's assertion followed by the addressee's, so the proposed
+commitments obtain unless the addressee reacts. -/
+theorem matchingTag_eq (hk : commit .speaker φ ∉ C.root)
+    (h : insert (commit .addressee φ) (insert (commit .speaker φ) C.root) ∈ C) :
+    matchingTag C φ = ↑((C.assert .speaker φ).assert .addressee φ) := by
+  ext d
+  simp only [matchingTag, Set.mem_inter_iff, SetLike.mem_coe, mem_assert, mem_monopolarQuestion,
+    root_assert]
+  constructor
+  · rintro ⟨hs, rfl | ⟨-, ha⟩⟩
+    · exact absurd ((C.root_mem_assert_iff _ _ _).1 ((C.mem_assert _ _ _).2 hs)) hk
+    · exact Or.inr ⟨hs, ha⟩
+  · rintro (rfl | ⟨hs, ha⟩)
+    · exact ⟨Or.inr ⟨h, Set.mem_insert_of_mem _ (Set.mem_insert _ _)⟩,
+        Or.inr ⟨h, Set.mem_insert _ _⟩⟩
+    · refine ⟨hs, Or.inr ⟨?_, ha⟩⟩
+      rcases hs with rfl | hs
+      · rwa [Set.insert_eq_of_mem ha] at h
+      · exact hs.1
 
-/-- Its branches are the speaker's assertion and the addressee's assertion of the negation. -/
+/-- A reverse tag keeps the root, the speaker's commitment being only one branch. -/
+theorem isLeast_reverseTag : IsLeast (reverseTag C φ) C.root :=
+  ⟨Or.inr (Space.root_mem _), by
+    rintro d (hd | hd)
+    · exact (Set.subset_insert _ _).trans ((C.assert .speaker φ).root_le hd)
+    · exact (monopolarQuestion C .addressee φᶜ).root_le hd⟩
+
+end Tags
+
+/-- After a matching tag both participants are committed at the root. -/
+theorem isLeast_matchingTag :
+    IsLeast (matchingTag C₀ raining)
+      (insert (commit .addressee raining) (insert (commit .speaker raining) ∅)) := by
+  rw [matchingTag_eq C₀ raining (Set.notMem_empty _) (Set.empty_subset _)]
+  exact Space.isLeast _
+
+/-- The branches of a reverse tag are the speaker's assertion and the addressee's assertion of
+the negation. -/
 theorem reverseTag_branches :
-    insert (commit .speaker raining) ∅ ∈ (reverseTag C₀ raining).states ∧
-      insert (commit .addressee rainingᶜ) ∅ ∈ (reverseTag C₀ raining).states :=
-  ⟨Or.inr (Or.inl (Or.inl rfl)), Or.inr (Or.inr (Or.inr (Or.inl rfl)))⟩
+    insert (commit .speaker raining) ∅ ∈ reverseTag C₀ raining ∧
+      insert (commit .addressee rainingᶜ) ∅ ∈ reverseTag C₀ raining :=
+  ⟨Or.inl (Space.root_mem _), Or.inr (insert_commit_mem_monopolarQuestion rainingᶜ)⟩
 
 end Krifka2015

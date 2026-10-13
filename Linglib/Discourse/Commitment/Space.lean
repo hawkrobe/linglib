@@ -1,6 +1,8 @@
 module
 
+public import Mathlib.Data.SetLike.Basic
 public import Mathlib.Order.Interval.Set.Basic
+public import Mathlib.Order.CompleteLattice.Basic
 public import Linglib.Discourse.Commitment.Basic
 public import Linglib.Semantics.Questions.Basic
 public import Linglib.Discourse.QUD.Issue
@@ -9,41 +11,43 @@ public import Linglib.Discourse.Role
 /-!
 # Commitment spaces
 
-A commitment space is a set of discourse states with a least member, its root: the current
-state together with its projected continuations ([cohen-krifka-2014] (22), [krifka-2015] (2),
-[van-der-leer-2026] Definition 8). Over any preorder of states the operations are the same:
-a basic speech act re-roots the space at the updated root and keeps the states above it, which
-on a projected continuation is Cohen and Krifka's restriction `C + A = {c ∈ C | √C + A ⊆ c}`;
-a question keeps the root and proposes continuations; a denegation removes the states an act
-would reach, which is a rooted space exactly when the act is not redundant, so that two
-denegations cancel and de Morgan's laws hold for them ([cohen-krifka-2014] (28), (34)).
+A commitment space is a set of discourse states with a least member, its root: the current state
+together with the continuations it projects. Speech acts transform spaces in two ways. A basic
+act adds commitments to the root and keeps the projected states that carry them. A meta-speech
+act keeps the root and prunes the continuations: a question restricts them to the answers it
+proposes, a denegation removes the states an act would reach. Conjunction and disjunction of
+acts are intersection and union of the sets of states they reach, which need not be rooted, so
+the laws relating the acts are stated on those sets.
 
-Commitment Space Semantics is the instance over commitment states (`Commitment.State`, sets of
-`Commitment`s ordered by inclusion), where the root is the intersection of the space: assertion
-`S⊢φ`, refusal `¬S⊢φ`, monopolar, bipolar and high-negation questions ([krifka-2015] (14), (27),
-(23), (39)), and `GRANT φ` as the
-denegation of asserting `¬φ` ([cohen-krifka-2014] (38)). The issue a space raises, its
-`Discourse.HasIssue` projection, is settled by the information states inside some
-continuation's context set.
+Commitment Space Semantics is the instance over commitment states, sets of `Commitment`s ordered
+by inclusion, where a basic act adds a set of commitments and an assertion adds the speaker's
+commitment to a proposition. The issue a space raises is settled by the information states
+inside some continuation's context set.
 
 ## Main definitions
 
-* `Commitment.Space S` — rooted sets of states, with `restrict`, `reroot`, `propose`, `sdiff`,
-  `union`, `denegate`, and the free space `full`.
-* `Space.assert`, `Space.refuse`, `Space.monopolarQuestion`, `Space.bipolarQuestion`,
-  `Space.highNegationQuestion`, `Space.grant` — Commitment Space Semantics.
-* `Space.toIssue` — the issue projection.
+* `Commitment.Space S`: rooted sets of states, ordered by inclusion, with the free space
+  `Space.Ici`.
+* `Space.update`: the basic act adding `k` to the root.
+* `Space.restrict`, `Space.denegate`: the meta-speech acts.
+* `Space.assert`: assertion in Commitment Space Semantics.
+* `Space.toIssue`: the issue projection.
 
 ## Main results
 
-* `Space.reroot_eq_restrict`, `Space.assert_states_of_mem` — a projected assertion is Cohen and
-  Krifka's restriction.
-* `Space.sdiff_sdiff_states`, `Space.union_sdiff_sdiff`, `Space.sdiff_grant_states` — (28), (34)
-  and (40) of [cohen-krifka-2014].
-* `Space.root_mem_grant`, `Space.assert_states_subset_grant` — a grant includes but does not
-  enforce the assertion ((39) of [cohen-krifka-2014]).
-* `Space.assert_assert_comm`, `Space.full_assert` — assertions commute, and on the free space
-  assertion is the free space of the extended root.
+* `Space.coe_update_of_mem`: a projected update is the restriction `{c ∈ C | √C + A ⊆ c}`.
+* `Space.coe_update_sSup`: the update by a join is the conjunction of the updates.
+* `Space.sdiff_coe_denegate`, `Space.coe_denegate_inter`: two denegations cancel, and de
+  Morgan's laws hold for them.
+
+## Implementation notes
+
+* The operations are total. `update` adjoins the new root whether or not the space projects
+  it, and `restrict` and `denegate` always keep the root. The papers' set equations hold when
+  the act is projected, `k ⊔ C.root ∈ C`, and not redundant, `¬ k ≤ C.root`; these are
+  hypotheses of the theorems, not arguments of the operations.
+* The root is a field, so that roots of updates compute; it is determined by the states, which
+  makes `Space S` a `SetLike`.
 
 ## References
 
@@ -59,281 +63,229 @@ continuation's context set.
 
 namespace Commitment
 
-
-/-- A commitment space: a set of states with a least member, its root. -/
-@[ext]
-structure Space (S : Type*) [Preorder S] where
-  states : Set S
+/-- A commitment space is a set of states with a least member, its root. -/
+structure Space (S : Type*) [LE S] where
+  /-- The states the space projects. -/
+  carrier : Set S
+  /-- The current state. -/
   root : S
-  isLeast : IsLeast states root
+  /-- The root is the least state. -/
+  isLeast' : IsLeast carrier root
 
 namespace Space
-
-section Preorder
-
-variable {S : Type*} [Preorder S] (C : Space S) {c d : S}
-
-theorem root_mem : C.root ∈ C.states := C.isLeast.1
-theorem root_le (hc : c ∈ C.states) : C.root ≤ c := C.isLeast.2 hc
-
-/-- The continuations: the members other than the root. -/
-def continuations : Set S := C.states \ {C.root}
-
-/-- The space with only its root. -/
-def singleton (c : S) : Space S := ⟨{c}, c, isLeast_singleton⟩
-
-/-- The free space on `c`: every state above `c`. -/
-def full (c : S) : Space S := ⟨Set.Ici c, c, isLeast_Ici⟩
-
-/-- `C` restricted to the members above `c`, re-rooted at `c`. -/
-def restrict (hc : c ∈ C.states) : Space S :=
-  ⟨{d ∈ C.states | c ≤ d}, c, ⟨⟨hc, le_rfl⟩, fun _ h => h.2⟩⟩
-
-/-- Re-root `C` at `c`, keeping the members above `c`. -/
-def reroot (c : S) : Space S :=
-  ⟨insert c {d ∈ C.states | c ≤ d}, c, ⟨Set.mem_insert _ _, by
-    rintro d (rfl | ⟨-, hd⟩)
-    · exact le_rfl
-    · exact hd⟩⟩
-
-/-- Keep the root and adjoin the states of `D`, all above the root. -/
-def propose (D : Set S) (h : C.root ∈ lowerBounds D) : Space S :=
-  ⟨insert C.root D, C.root, ⟨Set.mem_insert _ _, by
-    rintro d (rfl | hd)
-    · exact le_rfl
-    · exact h hd⟩⟩
-
-/-- Remove the members of `D`, which must miss the root. -/
-def sdiff (D : Set S) (h : C.root ∉ D) : Space S :=
-  ⟨C.states \ D, C.root, ⟨⟨C.root_mem, h⟩, fun _ hd => C.root_le hd.1⟩⟩
-
-/-- The union of two spaces with the same root. -/
-def union (C D : Space S) (h : C.root = D.root) : Space S :=
-  ⟨C.states ∪ D.states, C.root, ⟨Or.inl C.root_mem, by
-    rintro x (hx | hx)
-    · exact C.root_le hx
-    · exact h ▸ D.root_le hx⟩⟩
-
-@[simp] theorem singleton_states (c : S) : (singleton c).states = {c} := rfl
-@[simp] theorem singleton_root (c : S) : (singleton c).root = c := rfl
-@[simp] theorem full_states (c : S) : (full c).states = Set.Ici c := rfl
-@[simp] theorem full_root (c : S) : (full c).root = c := rfl
-@[simp] theorem restrict_states (hc : c ∈ C.states) :
-    (C.restrict hc).states = {d ∈ C.states | c ≤ d} := rfl
-@[simp] theorem restrict_root (hc : c ∈ C.states) : (C.restrict hc).root = c := rfl
-@[simp] theorem reroot_states (c : S) :
-    (C.reroot c).states = insert c {d ∈ C.states | c ≤ d} := rfl
-@[simp] theorem reroot_root (c : S) : (C.reroot c).root = c := rfl
-@[simp] theorem propose_states (D : Set S) (h : C.root ∈ lowerBounds D) :
-    (C.propose D h).states = insert C.root D := rfl
-@[simp] theorem propose_root (D : Set S) (h : C.root ∈ lowerBounds D) :
-    (C.propose D h).root = C.root := rfl
-@[simp] theorem sdiff_states (D : Set S) (h : C.root ∉ D) : (C.sdiff D h).states = C.states \ D :=
-  rfl
-@[simp] theorem sdiff_root (D : Set S) (h : C.root ∉ D) : (C.sdiff D h).root = C.root := rfl
-@[simp] theorem union_states (C D : Space S) (h : C.root = D.root) :
-    (C.union D h).states = C.states ∪ D.states := rfl
-@[simp] theorem union_root (C D : Space S) (h : C.root = D.root) : (C.union D h).root = C.root :=
-  rfl
-
-theorem root_mem_lowerBounds_reroot (h : C.root ≤ c) :
-    C.root ∈ lowerBounds (C.reroot c).states := by
-  rintro d (rfl | ⟨-, hd⟩)
-  · exact h
-  · exact h.trans hd
-
-/-- Re-rooting at a member is restriction. -/
-theorem reroot_eq_restrict (hc : c ∈ C.states) : C.reroot c = C.restrict hc := by
-  ext x
-  · simp only [reroot_states, restrict_states, Set.mem_insert_iff, Set.mem_ofPred_eq]
-    refine ⟨fun h => ?_, Or.inr⟩
-    rcases h with rfl | h
-    exacts [⟨hc, le_rfl⟩, h]
-  · rfl
-
-/-- Restriction is transitive. -/
-theorem restrict_restrict (hc : c ∈ C.states) (hd : d ∈ (C.restrict hc).states) :
-    (C.restrict hc).restrict hd = C.restrict hd.1 := by
-  ext x
-  · simp only [restrict_states, Set.mem_ofPred_eq]
-    exact ⟨fun ⟨⟨hx, _⟩, hdx⟩ => ⟨hx, hdx⟩, fun ⟨hx, hdx⟩ => ⟨⟨hx, hd.2.trans hdx⟩, hdx⟩⟩
-  · rfl
-
-/-- On the free space, re-rooting above the root is the free space of the new root. -/
-theorem reroot_full (h : c ≤ d) : (full c).reroot d = full d := by
-  ext x
-  · simp only [reroot_states, full_states, Set.mem_insert_iff, Set.mem_ofPred_eq, Set.mem_Ici]
-    refine ⟨fun hx => ?_, fun hx => Or.inr ⟨h.trans hx, hx⟩⟩
-    rcases hx with rfl | hx
-    exacts [le_rfl, hx.2]
-  · rfl
-
-/-- Two denegations cancel ([cohen-krifka-2014] (28)). -/
-theorem sdiff_sdiff_states {D : Set S} (hD : D ⊆ C.states) (h : C.root ∉ D) :
-    C.states \ (C.sdiff D h).states = D :=
-  Set.sdiff_sdiff_cancel_left hD
-
-/-- De Morgan for denegations ([cohen-krifka-2014] (34)): `∼A ∨ ∼B = ∼[A & B]`. -/
-theorem union_sdiff_sdiff (D E : Set S) (hD : C.root ∉ D) (hE : C.root ∉ E) :
-    (C.sdiff D hD).union (C.sdiff E hE) rfl = C.sdiff (D ∩ E) fun h => hD h.1 :=
-  Space.ext Set.sdiff_inter.symm rfl
-
-end Preorder
 
 section PartialOrder
 
-variable {S : Type*} [PartialOrder S] (C : Space S) {c d : S}
+variable {S : Type*} [PartialOrder S] (C : Space S) {D E : Set S} {c d : S}
 
-/-- The root is the unique least member. -/
-theorem eq_root (h : IsLeast C.states c) : c = C.root := h.unique C.isLeast
+instance : SetLike (Space S) S where
+  coe := carrier
+  coe_injective := by
+    rintro ⟨s, r, h⟩ ⟨_, r', h'⟩ (rfl : s = _)
+    obtain rfl := h.unique h'
+    rfl
 
-/-- Re-rooting twice upward is re-rooting once. -/
-theorem reroot_reroot (h : c ≤ d) : (C.reroot c).reroot d = C.reroot d := by
-  ext x
-  · simp only [reroot_states, Set.mem_insert_iff, Set.mem_ofPred_eq]
-    constructor
-    · rintro (rfl | ⟨rfl | ⟨hx, -⟩, hdx⟩)
-      · exact Or.inl rfl
-      · exact Or.inl (le_antisymm h hdx)
-      · exact Or.inr ⟨hx, hdx⟩
-    · rintro (rfl | ⟨hx, hdx⟩)
-      · exact Or.inl rfl
-      · exact Or.inr ⟨Or.inr ⟨hx, h.trans hdx⟩, hdx⟩
-  · rfl
+/-- Spaces are ordered by inclusion, and the smaller space is the stronger act. -/
+instance : PartialOrder (Space S) := .ofSetLike (Space S) S
+
+@[ext] theorem ext {C D : Space S} (h : ∀ c, c ∈ C ↔ c ∈ D) : C = D := SetLike.ext h
+
+@[simp] theorem mem_carrier : c ∈ C.carrier ↔ c ∈ C := Iff.rfl
+
+@[simp] theorem mem_mk {s : Set S} {r : S} (h : IsLeast s r) : c ∈ mk s r h ↔ c ∈ s := Iff.rfl
+
+@[simp, norm_cast] theorem coe_mk {s : Set S} {r : S} (h : IsLeast s r) :
+    (mk s r h : Set S) = s := rfl
+
+protected theorem isLeast : IsLeast (C : Set S) C.root := C.isLeast'
+
+theorem root_mem : C.root ∈ C := C.isLeast.1
+
+theorem root_le (hc : c ∈ C) : C.root ≤ c := C.isLeast.2 hc
+
+/-- The continuations of a space are its members other than the root. -/
+def continuations : Set S := ↑C \ {C.root}
+
+/-- The space with only its root. -/
+instance : Singleton S (Space S) := ⟨fun c ↦ ⟨{c}, c, isLeast_singleton⟩⟩
+
+@[simp, norm_cast] theorem coe_singleton (c : S) : (({c} : Space S) : Set S) = {c} := rfl
+
+@[simp] theorem mem_singleton : d ∈ ({c} : Space S) ↔ d = c := Iff.rfl
+
+@[simp] theorem root_singleton (c : S) : ({c} : Space S).root = c := rfl
+
+/-- The free space on `c` has every state above `c`. -/
+protected def Ici (c : S) : Space S := ⟨Set.Ici c, c, isLeast_Ici⟩
+
+@[simp, norm_cast] theorem coe_Ici (c : S) : (Space.Ici c : Set S) = Set.Ici c := rfl
+
+@[simp] theorem mem_Ici : d ∈ Space.Ici c ↔ c ≤ d := Iff.rfl
+
+@[simp] theorem root_Ici (c : S) : (Space.Ici c).root = c := rfl
+
+/-! ### Meta-speech acts -/
+
+/-- `C.restrict D` has the root and the members of `C` in `D`. A meta-speech act is such a
+restriction, which keeps the root and prunes the continuations. -/
+def restrict (D : Set S) : Space S :=
+  ⟨insert C.root (↑C ∩ D), C.root, Set.mem_insert _ _,
+    Set.forall_mem_insert.2 ⟨le_rfl, fun _ hd ↦ C.root_le hd.1⟩⟩
+
+@[simp] theorem root_restrict (D : Set S) : (C.restrict D).root = C.root := rfl
+
+@[simp, norm_cast] theorem coe_restrict (D : Set S) :
+    (C.restrict D : Set S) = insert C.root (↑C ∩ D) := rfl
+
+@[simp] theorem mem_restrict : d ∈ C.restrict D ↔ d = C.root ∨ d ∈ C ∧ d ∈ D := Iff.rfl
+
+theorem coe_restrict_of_root_mem (h : C.root ∈ D) : (C.restrict D : Set S) = ↑C ∩ D :=
+  Set.insert_eq_of_mem ⟨C.root_mem, h⟩
+
+/-- Restricting to a union is the disjunction of the restrictions. -/
+theorem coe_restrict_union (D E : Set S) :
+    (C.restrict (D ∪ E) : Set S) = ↑(C.restrict D) ∪ ↑(C.restrict E) := by
+  rw [coe_restrict, coe_restrict, coe_restrict, Set.inter_union_distrib_left,
+    Set.insert_union_distrib]
+
+/-- Restricting to an intersection is the conjunction of the restrictions. -/
+theorem coe_restrict_inter (D E : Set S) :
+    (C.restrict (D ∩ E) : Set S) = ↑(C.restrict D) ∩ ↑(C.restrict E) := by
+  rw [coe_restrict, coe_restrict, coe_restrict, Set.inter_inter_distrib_left,
+    Set.insert_inter_distrib]
+
+/-- The denegation `C − D` has the root and the members of `C` outside `D`
+([cohen-krifka-2014] (26), [krifka-2015] (5), [van-der-leer-2026] Definition 22). -/
+def denegate (D : Set S) : Space S := C.restrict Dᶜ
+
+@[simp] theorem root_denegate (D : Set S) : (C.denegate D).root = C.root := rfl
+
+@[simp] theorem mem_denegate : d ∈ C.denegate D ↔ d = C.root ∨ d ∈ C ∧ d ∉ D := Iff.rfl
+
+/-- Denegating an act that moves the root leaves the relative complement. -/
+theorem coe_denegate_of_root_notMem (h : C.root ∉ D) : (C.denegate D : Set S) = ↑C \ D :=
+  C.coe_restrict_of_root_mem h
+
+/-- Two denegations cancel ([cohen-krifka-2014] (28)). -/
+theorem sdiff_coe_denegate (hD : D ⊆ C) (h : C.root ∉ D) :
+    (C : Set S) \ ↑(C.denegate D) = D := by
+  rw [C.coe_denegate_of_root_notMem h, Set.sdiff_sdiff_cancel_left hD]
+
+/-- De Morgan's law `∼[A & B] = ∼A ∨ ∼B` for denegations ([cohen-krifka-2014] (34)). -/
+theorem coe_denegate_inter (D E : Set S) :
+    (C.denegate (D ∩ E) : Set S) = ↑(C.denegate D) ∪ ↑(C.denegate E) := by
+  rw [denegate, Set.compl_inter, coe_restrict_union]; rfl
+
+/-- De Morgan's law `∼[A ∨ B] = ∼A & ∼B` for denegations ([cohen-krifka-2014] (35)), whose two
+sides are rooted though the disjunction is not. -/
+theorem coe_denegate_union (D E : Set S) :
+    (C.denegate (D ∪ E) : Set S) = ↑(C.denegate D) ∩ ↑(C.denegate E) := by
+  rw [denegate, Set.compl_union, coe_restrict_inter]; rfl
 
 end PartialOrder
 
-end Space
+/-! ### Basic speech acts -/
 
+section SemilatticeSup
+
+variable {S : Type*} [SemilatticeSup S] (C : Space S) {k l d : S}
+
+/-- The update `C + k` is rooted at `k` joined with the root and keeps the members of `C` above
+`k` ([cohen-krifka-2014] (23), [krifka-2015] (3)). -/
+def update (k : S) : Space S :=
+  ⟨insert (k ⊔ C.root) (↑C ∩ Set.Ici k), k ⊔ C.root, Set.mem_insert _ _,
+    Set.forall_mem_insert.2 ⟨le_rfl, fun _ hd ↦ sup_le hd.2 (C.root_le hd.1)⟩⟩
+
+@[simp] theorem root_update (k : S) : (C.update k).root = k ⊔ C.root := rfl
+
+@[simp] theorem mem_update : d ∈ C.update k ↔ d = k ⊔ C.root ∨ d ∈ C ∧ k ≤ d := Iff.rfl
+
+/-- A projected update is the restriction to the states above `k`. -/
+theorem coe_update_of_mem (h : k ⊔ C.root ∈ C) : (C.update k : Set S) = ↑C ∩ Set.Ici k :=
+  Set.insert_eq_of_mem ⟨h, le_sup_left⟩
+
+theorem update_le (h : k ⊔ C.root ∈ C) : C.update k ≤ C := by
+  rintro d (rfl | hd)
+  exacts [h, hd.1]
+
+/-- The root survives an update iff the update is redundant. -/
+theorem root_mem_update_iff : C.root ∈ C.update k ↔ k ≤ C.root :=
+  ⟨fun h ↦ h.elim right_eq_sup.1 And.right, fun h ↦ Or.inr ⟨C.root_mem, h⟩⟩
+
+/-- Adding more is the stronger act ([cohen-krifka-2014] (86)). -/
+theorem update_le_update (hkl : k ≤ l) (h : l ⊔ C.root ∈ C) : C.update l ≤ C.update k := by
+  rintro d (rfl | hd)
+  exacts [Or.inr ⟨h, hkl.trans le_sup_left⟩, Or.inr ⟨hd.1, hkl.trans hd.2⟩]
+
+/-- Consecutive updates are the update by the join. -/
+theorem update_update (k l : S) : (C.update k).update l = C.update (l ⊔ k) := by
+  ext d
+  simp only [mem_update, root_update, sup_assoc, sup_le_iff]
+  constructor
+  · rintro (rfl | ⟨rfl | hd, hl⟩)
+    · exact Or.inl rfl
+    · exact Or.inl (sup_eq_right.2 hl).symm
+    · exact Or.inr ⟨hd.1, hl, hd.2⟩
+  · rintro (rfl | ⟨hd, hl, hk⟩)
+    · exact Or.inl rfl
+    · exact Or.inr ⟨Or.inr ⟨hd, hk⟩, hl⟩
+
+/-- Consecutive updates commute ([cohen-krifka-2014] (31), [krifka-2015] (6)). -/
+theorem update_comm (k l : S) : (C.update k).update l = (C.update l).update k := by
+  rw [update_update, update_update, sup_comm]
+
+/-- Restricting to an update keeps the members above `k`, projected or not. -/
+theorem restrict_coe_update (k : S) : C.restrict (C.update k) = C.restrict (Set.Ici k) := by
+  ext d
+  simp only [mem_restrict, SetLike.mem_coe, mem_update, Set.mem_Ici]
+  refine or_congr_right (and_congr_right fun hd ↦ ⟨fun h ↦ ?_, fun h ↦ Or.inr ⟨hd, h⟩⟩)
+  exact h.elim (fun e ↦ e ▸ le_sup_left) And.right
+
+end SemilatticeSup
+
+/-- The update by a join is the conjunction of the updates ([cohen-krifka-2014] (31)), when the
+space projects it. -/
+theorem coe_update_sSup {S : Type*} [CompleteLattice S] (C : Space S) {K : Set S}
+    (hK : K.Nonempty) (h : sSup K ⊔ C.root ∈ C) :
+    (C.update (sSup K) : Set S) = ⋂ k ∈ K, (C.update k : Set S) := by
+  ext d
+  simp only [SetLike.mem_coe, mem_update, Set.mem_iInter]
+  refine ⟨fun hd k hk ↦ Or.inr ?_, fun hd ↦ ?_⟩
+  · rcases hd with rfl | hd
+    exacts [⟨h, (le_sSup hk).trans le_sup_left⟩, ⟨hd.1, (le_sSup hk).trans hd.2⟩]
+  · have hle : sSup K ≤ d :=
+      sSup_le fun k hk ↦ (hd k hk).elim (fun e ↦ e ▸ le_sup_left) And.right
+    by_cases hC : d ∈ C
+    · exact Or.inr ⟨hC, hle⟩
+    · obtain ⟨k, hk⟩ := hK
+      obtain rfl := (hd k hk).resolve_right fun h' ↦ hC h'.1
+      exact Or.inl (le_antisymm (sup_le_sup_right (le_sSup hk) _) (sup_le hle le_sup_right))
 
 /-! ### Commitment space semantics -/
 
-namespace Space
+variable {A W : Type*} (C : Space (State A W)) (a : A) (φ : Set W) (force : Force)
+  {d : State A W}
 
-variable {A W : Type*} (C : Space (State A W)) (a : A) (φ : Set W)
-  (force : Commitment.Force)
+/-- In the assertion `C + S⊢φ`, `a` commits to `φ` ([cohen-krifka-2014] (37), [krifka-2015]
+(14)). -/
+def assert (force : Force := .doxastic) : Space (State A W) :=
+  C.update {commit a φ force}
 
-/-- `C + S⊢φ` ([cohen-krifka-2014] (23), [krifka-2015] (3), (14)): re-root at the root
-extended by `a`'s commitment to `φ`. -/
-def assert (force : Commitment.Force := .doxastic) : Space (State A W) :=
-  C.reroot (insert ⟨a, φ, .commit, force, .selfGenerated⟩ C.root)
+@[simp] theorem root_assert : (C.assert a φ force).root = insert (commit a φ force) C.root :=
+  rfl
 
-/-- `C + ¬S⊢φ` ([krifka-2015] (39)): re-root at the root extended by `a`'s refusal to commit
-to `φ`. -/
-def refuse (force : Commitment.Force := .doxastic) : Space (State A W) :=
-  C.reroot (insert ⟨a, φ, .refuse, force, .selfGenerated⟩ C.root)
+theorem mem_assert :
+    d ∈ C.assert a φ force ↔
+      d = insert (commit a φ force) C.root ∨ d ∈ C ∧ commit a φ force ∈ d :=
+  or_congr_right (and_congr_right fun _ ↦ Set.singleton_subset_iff)
 
-/-- A monopolar question ([krifka-2015] (27)): keep the root and propose the addressee's
-assertion of `φ`. -/
-def monopolarQuestion : Space (State A W) :=
-  C.propose (C.assert a φ).states (C.root_mem_lowerBounds_reroot (Set.subset_insert _ _))
-
-/-- A bipolar question ([krifka-2015] (23), (31)): the disjunction of the two monopolar
-questions. -/
-def bipolarQuestion : Space (State A W) :=
-  (C.monopolarQuestion a φ).union (C.monopolarQuestion a φᶜ) rfl
-
-/-- A high-negation question ([krifka-2015] (39)): propose the addressee's refusal. -/
-def highNegationQuestion : Space (State A W) :=
-  C.propose (C.refuse a φ).states (C.root_mem_lowerBounds_reroot (Set.subset_insert _ _))
-
-/-- Denegation `C + ∼A` ([cohen-krifka-2014] (26), [krifka-2015] (5)): the states not reached by
-`A`, for a non-redundant `A`. -/
-def denegate {S : Type*} [Preorder S] (C : Space S) (act : Space S → Space S)
-    (h : C.root ∉ (act C).states) : Space S :=
-  C.sdiff (act C).states h
-
-@[simp] theorem assert_root :
-    (C.assert a φ force).root = insert ⟨a, φ, .commit, force, .selfGenerated⟩ C.root := rfl
-@[simp] theorem refuse_root :
-    (C.refuse a φ force).root = insert ⟨a, φ, .refuse, force, .selfGenerated⟩ C.root := rfl
-@[simp] theorem monopolarQuestion_root : (C.monopolarQuestion a φ).root = C.root := rfl
-@[simp] theorem bipolarQuestion_root : (C.bipolarQuestion a φ).root = C.root := rfl
-@[simp] theorem highNegationQuestion_root : (C.highNegationQuestion a φ).root = C.root := rfl
-@[simp] theorem denegate_root {S : Type*} [Preorder S] (C : Space S) (act) (h) :
-    (C.denegate act h).root = C.root := rfl
-
-/-- The root is in the result of an assertion iff the assertion is redundant. -/
-theorem root_mem_assert_iff :
-    C.root ∈ (C.assert a φ force).states ↔
-      (⟨a, φ, .commit, force, .selfGenerated⟩ : Commitment A W) ∈ C.root := by
-  simp only [assert, reroot_states, Set.mem_insert_iff, Set.mem_ofPred_eq, Set.insert_subset_iff,
-    Set.Subset.rfl, and_true]
-  constructor
-  · rintro (h | ⟨-, h⟩)
-    · exact Set.insert_eq_self.1 h.symm
-    · exact h
-  · exact fun h => Or.inr ⟨C.root_mem, h⟩
-
-/-- `GRANT φ = ∼ASSERT ¬φ` ([cohen-krifka-2014] (38)), for a non-redundant `ASSERT ¬φ`. -/
-def grant (h : (⟨a, φᶜ, .commit, .doxastic, .selfGenerated⟩ : Commitment A W) ∉ C.root) :
-    Space (State A W) :=
-  C.denegate (·.assert a φᶜ) (mt (C.root_mem_assert_iff a φᶜ .doxastic).1 h)
-
-@[simp] theorem grant_root (h) : (C.grant a φ h).root = C.root := rfl
-
-/-- The grant keeps the root: it does not enforce the assertion ([cohen-krifka-2014] (39)). -/
-theorem root_mem_grant (h) : C.root ∈ (C.grant a φ h).states :=
-  ⟨C.root_mem, mt (C.root_mem_assert_iff a φᶜ .doxastic).1 h⟩
-
-/-- On a space whose states never carry both a commitment and its denial, every state reached
-by asserting `φ` survives granting `φ`: the grant includes the assertion ([cohen-krifka-2014]
-(39), p. 54). -/
-theorem assert_states_subset_grant
-    (hmem : insert ⟨a, φ, .commit, .doxastic, .selfGenerated⟩ C.root ∈ C.states)
-    (hcons : ∀ d ∈ C.states, ¬((⟨a, φ, .commit, .doxastic, .selfGenerated⟩ : Commitment A W) ∈ d ∧
-      (⟨a, φᶜ, .commit, .doxastic, .selfGenerated⟩ : Commitment A W) ∈ d))
-    (h : (⟨a, φᶜ, .commit, .doxastic, .selfGenerated⟩ : Commitment A W) ∉ C.root) :
-    (C.assert a φ).states ⊆ (C.grant a φ h).states := by
-  have key : ∀ d ∈ C.states,
-      (⟨a, φ, .commit, .doxastic, .selfGenerated⟩ : Commitment A W) ∈ d →
-        d ∉ (C.assert a φᶜ).states := by
-    rintro d hd hφ (heq | ⟨-, hsub⟩)
-    · exact hcons d hd ⟨hφ, heq ▸ Set.mem_insert _ _⟩
-    · exact hcons d hd ⟨hφ, hsub (Set.mem_insert _ _)⟩
-  rintro d (rfl | ⟨hd, hsub⟩)
-  · exact ⟨hmem, key _ hmem (Set.mem_insert _ _)⟩
-  · exact ⟨hd, key _ hd (hsub (Set.mem_insert _ _))⟩
-
-/-- The performative update: the root commits `a` to `φ`. -/
-theorem mem_contents_assert_root : φ ∈ contents (C.assert a φ force).root :=
-  ⟨_, ⟨Set.mem_insert _ _, rfl⟩, rfl⟩
-
-/-- The context set narrows by exactly `φ`. -/
-theorem contextSet_assert_root : contextSet (C.assert a φ force).root = φ ∩ contextSet C.root :=
-  contextSet_insert_of_commit rfl
-
-/-- Consecutive assertions commute ([cohen-krifka-2014] (31), [krifka-2015] (6)). -/
-theorem assert_assert_comm (b : A) (ψ : Set W) (g : Commitment.Force) :
-    (C.assert a φ force).assert b ψ g = (C.assert b ψ g).assert a φ force := by
-  simp only [assert, reroot_root]
-  rw [reroot_reroot _ (Set.subset_insert _ _), reroot_reroot _ (Set.subset_insert _ _),
-    Set.insert_comm]
-
-/-- On the free space, assertion is the free space of the extended root. -/
-theorem full_assert (c : State A W) :
-    (full c).assert a φ force = full (insert ⟨a, φ, .commit, force, .selfGenerated⟩ c) :=
-  reroot_full (Set.subset_insert _ _)
-
-/-- A projected assertion is a restriction ([cohen-krifka-2014] (23)). -/
-theorem assert_states_of_mem (h : insert ⟨a, φ, .commit, force, .selfGenerated⟩ C.root ∈ C.states) :
-    (C.assert a φ force).states =
-      {d ∈ C.states | insert ⟨a, φ, .commit, force, .selfGenerated⟩ C.root ⊆ d} := by
-  rw [assert, reroot_eq_restrict _ h, restrict_states]
-
-/-- `ASSERT φ = ∼GRANT ¬φ` ([cohen-krifka-2014] (40)), for a projected, non-redundant assertion. -/
-theorem sdiff_grant_states
-    (hmem : insert ⟨a, φ, .commit, .doxastic, .selfGenerated⟩ C.root ∈ C.states)
-    (h : (⟨a, φ, .commit, .doxastic, .selfGenerated⟩ : Commitment A W) ∉ C.root) :
-    C.states \ (C.grant a φᶜ (by simpa using h)).states = (C.assert a φ).states := by
-  have : (C.assert a φ).states ⊆ C.states := by
-    rw [assert_states_of_mem _ _ _ _ hmem]; exact fun _ hd => hd.1
-  simp only [grant, denegate, compl_compl]
-  exact C.sdiff_sdiff_states this _
+/-- The root survives an assertion iff the assertion is redundant. -/
+theorem root_mem_assert_iff : C.root ∈ C.assert a φ force ↔ commit a φ force ∈ C.root :=
+  C.root_mem_update_iff.trans Set.singleton_subset_iff
 
 open scoped Classical in
-/-- The issue a space raises: with no continuations, the trivial issue over the root's context
-set; otherwise an information state settles it iff it lies inside some continuation's. -/
+/-- The issue a space raises is settled by the information states inside some continuation's
+context set, or inside the root's when the space has no continuations. -/
 noncomputable def toIssue : Question W :=
   if C.continuations = ∅ then Question.ofSet (contextSet C.root)
   else ⨆ c ∈ C.continuations, Question.ofSet (contextSet c)
@@ -347,7 +299,7 @@ theorem mem_toIssue_iff {i : Set W} :
   split_ifs with h
   · simp [h, Question.mem_ofSet]
   · simp only [h, false_and, false_or, Question.mem_biSup_iff, Question.mem_ofSet]
-    refine ⟨fun h' => h'.elim (fun e => ?_) id, Or.inr⟩
+    refine ⟨fun h' ↦ h'.elim (fun e ↦ ?_) id, Or.inr⟩
     obtain ⟨c, hc⟩ := Set.nonempty_iff_ne_empty.2 h
     exact ⟨c, hc, e ▸ Set.empty_subset _⟩
 
@@ -355,13 +307,11 @@ theorem mem_toIssue_iff {i : Set W} :
 Stalnakerian on it. -/
 instance : HasAssertion (Space (State Discourse.Role W)) W where
   commonGround C := slate C.root
-  initial := full ∅
+  initial := Space.Ici ∅
   assert C φ := C.assert .speaker φ
   commonGround_initial := slate_empty
   commonGround_assert _ _ := slate_insert_of_commit rfl
 
 end Space
-
-
 
 end Commitment
