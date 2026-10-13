@@ -10,16 +10,15 @@ public import Mathlib.ModelTheory.Semantics
 A formula of `DPL/Syntax.lean` has two interpretations in a structure `M`. The dynamic one,
 `Formula.eval`, is Groenendijk and Stokhof's, a relation between assignments, built from the
 update algebra of `Update.lean`, with conjunction as composition, the existential as a random
-reset followed by its scope, and everything else a test. The static one, `Formula.static`, is
-the usual satisfaction set, built in the cylindric set algebra of assignments, with the
-existential as cylindrification. A formula is true at an assignment under the dynamic
-interpretation when it has an output there, `(φ.eval M).dom`; the two notions of truth agree on
-the scope-bound formulas and differ where a quantifier binds outside its scope.
+reset followed by its scope, and everything else a test. The static one is that of predicate
+logic, mathlib's satisfaction of the formula read as a first-order formula,
+`φ.toFormula.Realize`. A formula is true at an assignment under the dynamic interpretation when
+it has an output there, `(φ.eval M).dom`; the two notions of truth agree on the scope-bound
+formulas (`DPL/Context.lean`) and differ where a quantifier binds outside its scope.
 
 ## Main definitions
 
 * `DPL.Formula.eval`: the dynamic interpretation.
-* `DPL.Formula.static`: the static interpretation.
 
 ## Main results
 
@@ -35,13 +34,11 @@ quantifier variable.
 ## References
 
 * [groenendijk-stokhof-1991]
-* [henkin-monk-tarski-1971]
 -/
 
 @[expose] public section
 
 open FirstOrder FirstOrder.Language DynamicSemantics Update SetRel
-  CylindricAlgebra
 
 namespace DPL.Formula
 
@@ -60,19 +57,6 @@ def eval : Formula L V → Update (V → M)
   | imp φ ψ => test (impl (eval φ) (eval ψ))
   | ex x φ => dexists x (eval φ)
   | all x φ => test (dforall x (eval φ))
-
-/-- The static interpretation is the set of assignments that satisfy the formula in predicate
-logic. -/
-def static : Formula L V → Set (V → M)
-  | top => Set.univ
-  | rel R ts => {g | Structure.RelMap R fun i => (ts i).realize g}
-  | equal t₁ t₂ => {g | t₁.realize g = t₂.realize g}
-  | neg φ => (static φ)ᶜ
-  | conj φ ψ => static φ ∩ static ψ
-  | disj φ ψ => static φ ∪ static ψ
-  | imp φ ψ => (static φ)ᶜ ∪ static ψ
-  | ex x φ => cyl x (static φ)
-  | all x φ => (cyl x (static φ)ᶜ)ᶜ
 
 variable (φ ψ : Formula L V) (x : V)
 
