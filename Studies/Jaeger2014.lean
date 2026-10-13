@@ -11,6 +11,7 @@ public import Mathlib.Tactic.FinCases
 public import Mathlib.Tactic.Linarith
 public import Mathlib.Tactic.Positivity
 public import Linglib.Core.Order.Argmax
+public import Linglib.Core.Probability.Decision.Admissible
 public import Linglib.Data.Examples.Jaeger2014
 public import Studies.Franke2011
 
@@ -38,12 +39,14 @@ response.
   which prints `s` for `r` in its receiver half.
 * A signal or an action that some alternative weakly dominates against every strategy the other
   player might play is never a cautious response (`senderCR_subset`, `receiverCR_subset`). This is
-  the sound half of the note on computing the sequence, which goes on to compute cautious
-  responses separately at each context and world. Since one belief serves all of them, that
-  computation can overcount: with one context, receivers `f ↦ a₁, f' ↦ a₂` and `f ↦ a₂, f' ↦ a₁`,
-  the sender wanting `a₁` in `w₁` and `a₂` in `w₂`, and `f'` costing `0.2`, sending `f'` is optimal
-  in `w₁` only if the first receiver has weight at most `0.4` and in `w₂` only if it has weight at
-  least `0.6`. The stages displayed for Example 5 overcount in this way.
+  the sound half of the note on computing the sequence, which goes on to compute cautious responses
+  separately at each context and world. Since one belief serves all of them, that computation can
+  overcount: with one context, receivers `f ↦ a₁, f' ↦ a₂` and `f ↦ a₂, f' ↦ a₁`, the sender wanting
+  `a₁` in `w₁` and `a₂` in `w₂`, and `f'` costing `0.2`, sending `f'` is optimal in `w₁` only if the
+  first receiver has weight at most `0.4` and in `w₂` only if it has weight at least `0.6`. The
+  stages displayed for Example 5 overcount in this way. With one context, a sender strategy that no
+  mixture weakly dominates in ex-ante payoff is a cautious response
+  (`mem_senderCR_of_not_weaklyDominated`), by Pearce's lemma.
 * The examples are set in `Fin n`, the `k`-th world, signal or action of the paper being
   `k - 1`; each example's docstring names its signals.
 * Section 3 asserts that under the right panel of Table 4 alone Sally would use "some but not
@@ -68,9 +71,6 @@ response.
 * Examples 1, 3, 5 and 7, the uniform-prior variant of Example 6 in Section 6, and the notions of
   credibility of Section 7. Example 7 contrasts the model with weak bidirectional optimality,
   which the library has in `Pragmatics/Bidirectional.lean`.
-* The converse dominance direction: a pure strategy that no mixture weakly dominates is a
-  cautious response, with one context, via the Farkas alternative in
-  `Core/LinearAlgebra/Matrix/Farkas.lean`.
 
 ## References
 
@@ -555,6 +555,90 @@ theorem mem_senderCR [Nonempty C] {R : Set (C → F → A)} (hR : R.Nonempty) {s
   refine ⟨ρ, q, hρ, by simpa using hq, g.mem_senderBR_iff.2 fun c w ↦ Finset.mem_argmax.2
     ⟨Finset.mem_univ _, fun f' _ ↦ g.senderEU_le fun r hr c' _ ↦ h c w f' r ?_ c'⟩⟩
   rw [← hρ]; exact hr
+
+/-- The ex-ante payoff of a sender strategy against a receiver strategy in a context is the
+sender's utility at each world, weighted by the prior. -/
+def senderPayoff (c : C) (s : C → W → F) (r : C → F → A) : ℝ :=
+  ∑ w, g.prior.weights w * g.uS c w (s c w) (r c (s c w))
+
+open MeasureTheory ProbabilityTheory in
+/-- With one context, a sender strategy that no mixture of strategies weakly dominates in ex-ante
+payoff against a nonempty set of receiver strategies responds cautiously to it, the converse of
+`senderCR_subset`. Pearce's lemma for weak dominance gives a belief of full support on the set
+under which the strategy is optimal, and the objectives separate across worlds. -/
+theorem mem_senderCR_of_not_weaklyDominated [Unique C] {R : Set (C → F → A)} (hR : R.Nonempty)
+    {s : C → W → F}
+    (h : ∀ μ : StdSimplex ℝ (C → W → F),
+      (∀ r ∈ R, g.senderPayoff default s r ≤ ∑ s', μ.weights s' * g.senderPayoff default s' r) →
+        ∀ r ∈ R, ∑ s', μ.weights s' * g.senderPayoff default s' r = g.senderPayoff default s r) :
+    s ∈ g.senderCR R := by
+  classical
+  let : MeasurableSpace (C → W → F) := ⊤
+  let : MeasurableSpace R := ⊤
+  have : Nonempty R := hR.to_subtype
+  let U : (C → W → F) → R → ℝ := fun s' r ↦ g.senderPayoff default s' r
+  have hdirac (x : C → W → F) (r : R) : mixedPayoff U (Measure.dirac x) r = U x r := by
+    simp [mixedPayoff]
+  have hnd : ¬ IsWeaklyPayoffDominated U (Measure.dirac s) := by
+    rintro ⟨ν, hν, hle, r₀, hlt⟩
+    obtain ⟨μ, hμ⟩ := exists_weights_eq (p := fun x ↦ ν.real {x}) (fun _ ↦ measureReal_nonneg)
+      (sum_measureReal_singleton_eq_one ν)
+    have hmix (r : R) : mixedPayoff U ν r = ∑ x, μ.weights x * g.senderPayoff default x r := by
+      rw [mixedPayoff_eq_sum, hμ]
+    have heq := h μ (fun r hr ↦ by simpa only [hdirac, hmix] using hle ⟨r, hr⟩) r₀ r₀.2
+    rw [hdirac, hmix] at hlt
+    exact absurd heq (ne_of_gt hlt)
+  obtain ⟨P, hP, hP0, hmax⟩ :=
+    (not_isWeaklyPayoffDominated_iff_exists_maximizesPayoff U (Measure.dirac s)).1 hnd
+  have hsum (X : (C → F → A) → ℝ) :
+      ∑ r, (if hr : r ∈ R then P.real {⟨r, hr⟩} else 0) * X r = ∑ r : R, P.real {r} * X r := by
+    rw [← Fintype.sum_subtype_add_sum_subtype (· ∈ R)]
+    simp [fun x : {r // r ∉ R} ↦ x.2]
+  obtain ⟨ρ, hρ⟩ := exists_weights_eq (p := fun r ↦ if hr : r ∈ R then P.real {⟨r, hr⟩} else 0)
+    (fun r ↦ by split_ifs <;> simp [measureReal_nonneg]) (by
+      have := hsum fun _ ↦ 1
+      simp only [mul_one] at this
+      rw [this, sum_measureReal_singleton_eq_one])
+  refine ⟨ρ, .single default, Set.ext fun r ↦ ?_, ?_, g.mem_senderBR_iff.2 fun c w ↦ ?_⟩
+  · rw [Finset.mem_coe, Finsupp.mem_support_iff, hρ]
+    by_cases hr : r ∈ R
+    · simp only [hr, dite_true, ne_eq, iff_true]
+      exact (ENNReal.toReal_pos (hP0 _) (measure_ne_top _ _)).ne'
+    · simp [hr]
+  · ext c; simp [Unique.eq_default c]
+  obtain rfl : c = default := Unique.eq_default c
+  refine Finset.mem_argmax.2 ⟨Finset.mem_univ _, fun f _ ↦ ?_⟩
+  by_contra hlt
+  have hEU (f' : F) : g.senderEU ρ (.single default) default w f' =
+      ∑ r : R, P.real {r} * g.uS default w f' ((r : C → F → A) default f') := by
+    simp only [senderEU, sum_single_mul, hρ]
+    exact hsum _
+  have hle := hmax (Measure.dirac (Function.update s default (Function.update (s default) w f)))
+    inferInstance
+  rw [expectedPayoff_eq_sum, expectedPayoff_eq_sum] at hle
+  have hupd (r : C → F → A) :
+      g.senderPayoff default (Function.update s default (Function.update (s default) w f)) r =
+        g.senderPayoff default s r + g.prior.weights w * (g.uS default w f (r default f) -
+          g.uS default w (s default w) (r default (s default w))) := by
+    simp only [senderPayoff, Function.update_self]
+    rw [← Finset.add_sum_erase _ _ (Finset.mem_univ w),
+      ← Finset.add_sum_erase _ _ (Finset.mem_univ w), Function.update_self,
+      Finset.sum_congr rfl fun w' hw' ↦ by rw [Function.update_of_ne (Finset.ne_of_mem_erase hw')]]
+    ring
+  simp only [hdirac, U, hupd, mul_add, Finset.sum_add_distrib] at hle
+  have hpos : 0 < g.prior.weights w :=
+    lt_of_le_of_ne (g.prior.weights_nonneg w) (Ne.symm (Finsupp.mem_support_iff.1
+      (g.prior_support ▸ Finset.mem_univ w)))
+  have key : ∑ r : R, P.real {r} * (g.prior.weights w *
+      (g.uS default w f ((r : C → F → A) default f) -
+        g.uS default w (s default w) ((r : C → F → A) default (s default w)))) =
+      g.prior.weights w * (g.senderEU ρ (.single default) default w f -
+        g.senderEU ρ (.single default) default w (s default w)) := by
+    rw [hEU, hEU, ← Finset.sum_sub_distrib, Finset.mul_sum]
+    exact Finset.sum_congr rfl fun r _ ↦ by ring
+  rw [key] at hle
+  have := mul_pos hpos (sub_pos.2 (not_le.1 hlt))
+  linarith
 
 /-- An action outside `T c f` that some action weakly dominates at the worlds where `f` is sent,
 strictly at one, is never a cautious response there. -/

@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Core.LinearAlgebra.Matrix.Farkas
+public import Linglib.Core.Probability.Decision.Admissible
 public import Linglib.Logic.ComparativeProbability.Completeness
 public import Linglib.Core.MeasureTheory.Measure.Dirac
 public import Linglib.Core.MeasureTheory.Measure.Real
@@ -20,7 +20,7 @@ preferences faces a canonical decision problem against nature, in which the acts
 the likelier side of every strict comparison cost `c`. Theorem 1 says the uniform mixture `Q★`
 of those acts avoids strict dominance for some cost iff the judgments are representable
 (`representable_iff_exists_not_dominated`), through the Main Lemma (`represents_iff_maximizes`)
-and Pearce's lemma (`neverBest_iff_strictlyDominated`), here from Gordan's alternative.
+and Pearce's lemma (`neverBest_iff_strictlyDominated`).
 
 A measure represents the judgments when the order it induces agrees with them (`Agree`), so each
 of the paper's examples fails an axiom of comparative probability. The explorer's cyclic
@@ -81,14 +81,6 @@ variable {A : Type*} [Fintype A] [MeasurableSpace A] [MeasurableSingletonClass A
 
 variable (U : A → Ω → ℝ)
 
-/-- The payoff of the mixed act `μ` in state `ω`, for the payoff table `U`. -/
-noncomputable def mixedPayoff (μ : Measure A) (ω : Ω) : ℝ := ∫ a, U a ω ∂μ
-
-omit [Fintype Ω] [MeasurableSpace Ω] [MeasurableSingletonClass Ω] in
-theorem mixedPayoff_eq_sum (μ : Measure A) [IsFiniteMeasure μ] (ω : Ω) :
-    mixedPayoff U μ ω = ∑ a, μ.real {a} * U a ω := by
-  rw [mixedPayoff, integral_fintype .of_finite]; simp [smul_eq_mul]
-
 omit [Fintype Ω] [MeasurableSpace Ω] [MeasurableSingletonClass Ω] [Fintype A] in
 @[simp] theorem mixedPayoff_dirac (a : A) (ω : Ω) :
     mixedPayoff U (Measure.dirac a) ω = U a ω := by
@@ -103,110 +95,23 @@ theorem mixedPayoff_uniformOn [DecidableEq A] (s : Finset A) (ω : Ω) :
     ite_mul, zero_mul, Finset.sum_ite_mem, Finset.univ_inter, Finset.sum_div]
   exact Finset.sum_congr rfl fun a _ ↦ by ring
 
-omit [Fintype Ω] [MeasurableSingletonClass Ω] [Fintype A] [MeasurableSingletonClass A] in
-/-- The expected utility of the mixed act `μ` under the belief `P`, the `μ`-average of the pure
-acts' expected utilities `𝔼U(Q) = ∑_σ Q(σ) 𝔼U(σ)` of the appendix. -/
-noncomputable def expectedUtility (P : Measure Ω) (μ : Measure A) : ℝ := ∫ a, ∫ ω, U a ω ∂P ∂μ
-
-theorem expectedUtility_eq_sum (P : Measure Ω) [IsFiniteMeasure P] (μ : Measure A)
-    [IsFiniteMeasure μ] : expectedUtility U P μ = ∑ a, μ.real {a} * ∑ ω, P.real {ω} * U a ω := by
-  simp only [expectedUtility, integral_fintype Integrable.of_finite, smul_eq_mul]
-
-/-- Expected utility is the belief-average of the state payoffs. -/
-theorem expectedUtility_eq (P : Measure Ω) [IsFiniteMeasure P] (μ : Measure A)
-    [IsFiniteMeasure μ] : expectedUtility U P μ = ∑ ω, P.real {ω} * mixedPayoff U μ ω := by
-  simp only [expectedUtility_eq_sum, mixedPayoff_eq_sum, Finset.mul_sum]
+/-- The expected payoff of the mixed act `μ` is the `μ`-average of the pure acts' expected
+payoffs, `𝔼U(Q) = ∑_σ Q(σ) 𝔼U(σ)` of the appendix. -/
+theorem expectedPayoff_eq_sum_sum (P : Measure Ω) [IsFiniteMeasure P] (μ : Measure A)
+    [IsFiniteMeasure μ] : expectedPayoff U P μ = ∑ a, μ.real {a} * ∑ ω, P.real {ω} * U a ω := by
+  simp only [expectedPayoff_eq_sum, mixedPayoff_eq_sum, Finset.mul_sum]
   rw [Finset.sum_comm]
   exact Finset.sum_congr rfl fun a _ ↦ Finset.sum_congr rfl fun ω _ ↦ by ring
 
-omit [Fintype Ω] [MeasurableSingletonClass Ω] [Fintype A] [MeasurableSingletonClass A] in
-/-- `μ` maximizes `P`-expected utility among the mixed acts. Since expected utility is affine in
-the mixed act, this is the appendix's check against the pure acts. -/
-def MaximizesEU (P : Measure Ω) (μ : Measure A) : Prop :=
-  ∀ ν, IsProbabilityMeasure ν → expectedUtility U P ν ≤ expectedUtility U P μ
-
-omit [Fintype Ω] [MeasurableSpace Ω] [MeasurableSingletonClass Ω] [Fintype A]
-  [MeasurableSingletonClass A] in
-/-- `μ` is strictly dominated when some mixed act pays more in every state. -/
-def StrictlyDominated (μ : Measure A) : Prop :=
-  ∃ ν : Measure A, IsProbabilityMeasure ν ∧ ∀ ω, mixedPayoff U μ ω < mixedPayoff U ν ω
-
-/-- A strictly dominated act has smaller expected utility under every belief. -/
-theorem expectedUtility_lt_of_forall_lt (P : Measure Ω) [IsProbabilityMeasure P]
-    {μ ν : Measure A} [IsFiniteMeasure μ] [IsFiniteMeasure ν]
-    (h : ∀ ω, mixedPayoff U μ ω < mixedPayoff U ν ω) :
-    expectedUtility U P μ < expectedUtility U P ν := by
-  rw [expectedUtility_eq, expectedUtility_eq]
-  obtain ⟨ω₀, -, hω₀⟩ := Finset.exists_lt_of_sum_lt (s := Finset.univ) (f := fun _ ↦ (0 : ℝ))
-    (by rw [sum_measureReal_singleton_eq_one P]; simp)
-  exact Finset.sum_lt_sum (fun ω _ ↦ mul_le_mul_of_nonneg_left (h ω).le measureReal_nonneg)
-    ⟨ω₀, Finset.mem_univ _, mul_lt_mul_of_pos_left (h ω₀) hω₀⟩
-
 /-- **Pearce's lemma**, the paper's Lemma 2 (p. 361), which it calls folklore in game theory and
 cites as [pearce-1984]'s Lemma 3. In a finite decision problem against nature, a mixed act is a
-best response to no belief iff it is strictly dominated by a mixed act. The dominating mixture
-comes from Gordan's alternative applied to the excess payoffs of the pure acts over `σ`. -/
+best response to no belief iff it is strictly dominated by a mixed act. -/
 theorem neverBest_iff_strictlyDominated (σ : Measure A) [IsProbabilityMeasure σ] :
     (∀ P : Measure Ω, IsProbabilityMeasure P →
-        ∃ ν : Measure A, IsProbabilityMeasure ν ∧ expectedUtility U P σ < expectedUtility U P ν) ↔
-      StrictlyDominated U σ := by
-  constructor
-  · intro hnb
-    let D : Matrix A Ω ℝ := .of fun a ω ↦ U a ω - mixedPayoff U σ ω
-    rcases Matrix.gordan D with ⟨y, hy, hpos⟩ | ⟨x, hx, hx1, hxM⟩
-    · rcases isEmpty_or_nonempty Ω with hΩ | hne
-      · exact ⟨σ, inferInstance, fun ω ↦ (IsEmpty.false ω).elim⟩
-      obtain ⟨ω₁⟩ := hne
-      have hs : 0 < ∑ a, y a := by
-        by_contra hle
-        have hzero : ∀ a, y a = 0 := fun a ↦ le_antisymm
-          (by linarith [Finset.single_le_sum (fun a _ ↦ hy a) (Finset.mem_univ a)]) (hy a)
-        have := hpos ω₁
-        simp [Matrix.vecMul, dotProduct, hzero] at this
-      have hw (a : A) : 0 ≤ y a * (∑ a, y a)⁻¹ := mul_nonneg (hy a) (inv_nonneg.2 hs.le)
-      let ν : Measure A := ∑ a, ENNReal.ofReal (y a * (∑ a, y a)⁻¹) • Measure.dirac a
-      have := Measure.isProbabilityMeasure_sum_ofReal_smul_dirac hw
-        (by rw [← Finset.sum_mul, mul_inv_cancel₀ hs.ne'])
-      have hν (a : A) : ν.real {a} = y a * (∑ a, y a)⁻¹ := by
-        classical
-        simp [ν, Measure.sum_ofReal_smul_dirac_real_apply hw, Set.indicator_apply]
-      refine ⟨ν, this, fun ω ↦ ?_⟩
-      have key : mixedPayoff U ν ω - mixedPayoff U σ ω = (∑ a, y a)⁻¹ * (y ᵥ* D) ω := by
-        have h1 : mixedPayoff U σ ω = ∑ a, ν.real {a} * mixedPayoff U σ ω := by
-          rw [← Finset.sum_mul, sum_measureReal_singleton_eq_one, one_mul]
-        rw [mixedPayoff_eq_sum, h1, ← Finset.sum_sub_distrib, Matrix.vecMul, dotProduct,
-          Finset.mul_sum]
-        refine Finset.sum_congr rfl fun a _ ↦ ?_
-        simp only [hν, D, Matrix.of_apply]
-        ring
-      rw [← sub_pos, key]
-      exact mul_pos (inv_pos.2 hs) (hpos ω)
-    · let P : Measure Ω := ∑ ω, ENNReal.ofReal (x ω) • Measure.dirac ω
-      have hP1 := Measure.isProbabilityMeasure_sum_ofReal_smul_dirac hx hx1
-      obtain ⟨ν, hν1, hν⟩ := hnb P hP1
-      refine absurd hν (not_lt.2 ?_)
-      have hP (ω : Ω) : P.real {ω} = x ω := by
-        classical
-        simp [P, Measure.sum_ofReal_smul_dirac_real_apply hx, Set.indicator_apply]
-      have hexp : ∀ a, ∑ ω, P.real {ω} * D a ω ≤ 0 := fun a ↦
-        calc ∑ ω, P.real {ω} * D a ω = (D *ᵥ x) a :=
-              Finset.sum_congr rfl fun ω _ ↦ by rw [hP, mul_comm]
-          _ ≤ 0 := hxM a
-      rw [← sub_nonpos]
-      calc expectedUtility U P ν - expectedUtility U P σ
-          = ∑ a, ν.real {a} * ∑ ω, P.real {ω} * D a ω := by
-            rw [expectedUtility_eq_sum, show expectedUtility U P σ =
-              ∑ a, ν.real {a} * expectedUtility U P σ by
-                rw [← Finset.sum_mul, sum_measureReal_singleton_eq_one, one_mul],
-              ← Finset.sum_sub_distrib]
-            refine Finset.sum_congr rfl fun a _ ↦ ?_
-            rw [← mul_sub, expectedUtility_eq, ← Finset.sum_sub_distrib]
-            congr 1
-            exact Finset.sum_congr rfl fun ω _ ↦ by simp only [D, Matrix.of_apply]; ring
-        _ ≤ 0 := Finset.sum_nonpos fun a _ ↦
-            mul_nonpos_iff.2 (Or.inl ⟨measureReal_nonneg, hexp a⟩)
-  · rintro ⟨ν, hν1, hν⟩ P hP
-    exact ⟨ν, hν1, expectedUtility_lt_of_forall_lt U P hν⟩
+        ∃ ν : Measure A, IsProbabilityMeasure ν ∧ expectedPayoff U P σ < expectedPayoff U P ν) ↔
+      IsStrictlyPayoffDominated U σ := by
+  rw [← not_iff_not, ← exists_maximizesPayoff_iff_not_isStrictlyPayoffDominated]
+  simp [MaximizesPayoff]
 
 end Game
 
@@ -400,10 +305,10 @@ theorem sum_mu_utility (c : ℝ) (φ : Act ι) :
   · rw [← Finset.sum_mul, sum_measureReal_singleton_eq_one, one_mul]
 
 theorem expectedUtility_eq_sum_sideValue (c : ℝ) (μ : Measure (Act ι)) [IsFiniteMeasure μ] :
-    expectedUtility (J.utility s c) P μ =
+    expectedPayoff (J.utility s c) P μ =
       ∑ φ, μ.real {φ} *
         (∑ i, s.weight i * J.sideValue s P i (φ i) - if J.Preferred φ then c else 0) := by
-  rw [expectedUtility_eq_sum]
+  rw [expectedPayoff_eq_sum_sum]
   exact Finset.sum_congr rfl fun φ _ ↦ by rw [J.sum_mu_utility]
 
 omit [Fintype Ω] [MeasurableSingletonClass Ω] [DecidableEq ι] [IsProbabilityMeasure P] in
@@ -488,7 +393,7 @@ theorem pureValue_le_of_not_preferred (hP : J.Represents P) (hX : J.strict.Nonem
 value less the cost, with equality on `Q★`. -/
 theorem expectedUtility_le_of_represents (hP : J.Represents P) (hX : J.strict.Nonempty)
     {c : ℝ} (hcm : c ≤ J.margin s P hX) (μ : Measure (Act ι)) [IsProbabilityMeasure μ] :
-    expectedUtility (J.utility s c) P μ ≤ J.preferredValue s P - c := by
+    expectedPayoff (J.utility s c) P μ ≤ J.preferredValue s P - c := by
   rw [J.expectedUtility_eq_sum_sideValue]
   calc ∑ φ, μ.real {φ} *
         (∑ i, s.weight i * J.sideValue s P i (φ i) - if J.Preferred φ then c else 0)
@@ -502,7 +407,7 @@ theorem expectedUtility_le_of_represents (hP : J.Represents P) (hX : J.strict.No
         rw [← Finset.sum_mul, sum_measureReal_singleton_eq_one, one_mul]
 
 theorem expectedUtility_uniformPreferred_of_represents (hP : J.Represents P) (c : ℝ) :
-    expectedUtility (J.utility s c) P J.uniformPreferred = J.preferredValue s P - c := by
+    expectedPayoff (J.utility s c) P J.uniformPreferred = J.preferredValue s P - c := by
   rw [J.expectedUtility_eq_sum_sideValue]
   have hN : (J.preferredCard : ℝ) ≠ 0 := by exact_mod_cast J.preferredCard_pos.ne'
   calc ∑ φ, J.uniformPreferred.real {φ} *
@@ -526,12 +431,12 @@ theorem expectedUtility_map_gt {c : ℝ} (f : Act ι → Act ι)
       ∑ ω, P.real {ω} * J.utility s c φ ω ≤ ∑ ω, P.real {ω} * J.utility s c (f φ) ω)
     (hlt : ∃ φ, J.Preferred φ ∧
       ∑ ω, P.real {ω} * J.utility s c φ ω < ∑ ω, P.real {ω} * J.utility s c (f φ) ω) :
-    expectedUtility (J.utility s c) P J.uniformPreferred <
-      expectedUtility (J.utility s c) P (J.uniformPreferred.map f) := by
+    expectedPayoff (J.utility s c) P J.uniformPreferred <
+      expectedPayoff (J.utility s c) P (J.uniformPreferred.map f) := by
   classical
-  have hmap : expectedUtility (J.utility s c) P (J.uniformPreferred.map f) =
+  have hmap : expectedPayoff (J.utility s c) P (J.uniformPreferred.map f) =
       ∑ φ, J.uniformPreferred.real {φ} * ∑ ω, P.real {ω} * J.utility s c (f φ) ω := by
-    rw [expectedUtility_eq_sum]
+    rw [expectedPayoff_eq_sum_sum]
     have : ∀ ψ, (J.uniformPreferred.map f).real {ψ} =
         ∑ φ ∈ Finset.univ.filter (fun φ ↦ f φ = ψ), J.uniformPreferred.real {φ} := fun ψ ↦ by
       rw [map_measureReal_apply .of_discrete (.singleton ψ), sum_measureReal_singleton]
@@ -541,7 +446,7 @@ theorem expectedUtility_map_gt {c : ℝ} (f : Act ι → Act ι)
     conv_rhs => rw [← Finset.sum_fiberwise Finset.univ f]
     refine Finset.sum_congr rfl fun ψ _ ↦ Finset.sum_congr rfl fun φ hφ ↦ ?_
     rw [(Finset.mem_filter.1 hφ).2]
-  rw [hmap, expectedUtility_eq_sum]
+  rw [hmap, expectedPayoff_eq_sum_sum]
   obtain ⟨φ₀, hφ₀, hlt₀⟩ := hlt
   refine Finset.sum_lt_sum (fun φ _ ↦ ?_) ⟨φ₀, Finset.mem_univ _, ?_⟩
   · by_cases hφ : J.Preferred φ
@@ -555,7 +460,7 @@ theorem expectedUtility_map_gt {c : ℝ} (f : Act ι → Act ι)
 /-- **Main Lemma** (Lemma 1). A measure represents the judgments iff, for some cost, the
 uniform preferred act maximizes its expected utility in the canonical decision problem. -/
 theorem represents_iff_maximizes (hX : J.strict.Nonempty) :
-    J.Represents P ↔ ∃ c, 0 < c ∧ MaximizesEU (J.utility s c) P J.uniformPreferred := by
+    J.Represents P ↔ ∃ c, 0 < c ∧ MaximizesPayoff (J.utility s c) P J.uniformPreferred := by
   constructor
   · intro hP
     refine ⟨J.margin s P hX, J.margin_pos s P hP hX, fun ν _ ↦ ?_⟩
@@ -647,12 +552,13 @@ end MainLemma
 uniform preferred act `Q★` is not strictly dominated in the canonical decision problem. -/
 theorem representable_iff_exists_not_dominated [MeasurableSingletonClass Ω] (s : Stakes ι)
     (hX : J.strict.Nonempty) :
-    J.Representable ↔ ∃ c, 0 < c ∧ ¬StrictlyDominated (J.utility s c) J.uniformPreferred := by
+    J.Representable ↔
+      ∃ c, 0 < c ∧ ¬IsStrictlyPayoffDominated (J.utility s c) J.uniformPreferred := by
   constructor
   · rintro ⟨P, hP1, hP⟩
     obtain ⟨c, hc, hmax⟩ := (J.represents_iff_maximizes s P hX).1 hP
     refine ⟨c, hc, fun ⟨ν, hν1, hν⟩ ↦ ?_⟩
-    exact absurd (hmax ν hν1) (not_le.2 (expectedUtility_lt_of_forall_lt _ P hν))
+    exact absurd (hmax ν hν1) (not_le.2 (expectedPayoff_lt_of_forall_lt _ P hν))
   · rintro ⟨c, hc, hnd⟩
     rw [← neverBest_iff_strictlyDominated] at hnd
     push Not at hnd
@@ -696,7 +602,7 @@ omit [Fintype Ω] [MeasurableSpace Ω] in
 act that gambles on every right side and pays no cost. -/
 theorem dominated_of_balanced [Nonempty ι] (hJ : J.Balanced) (hX : J.strict = Finset.univ)
     {w g b : ℝ} (hw : 0 < w) (hgb : b < g) {c : ℝ} (hc : 0 < c) :
-    StrictlyDominated (J.utility (Stakes.const w g b hw hgb) c) J.uniformPreferred := by
+    IsStrictlyPayoffDominated (J.utility (Stakes.const w g b hw hgb) c) J.uniformPreferred := by
   refine ⟨Measure.dirac fun _ ↦ false, inferInstance, fun ω ↦ ?_⟩
   rw [J.uniformPreferred_eq_dirac_of_strict_eq_univ hX, mixedPayoff_dirac, mixedPayoff_dirac]
   simp only [utility, ite_eq_left J.preferred_const_true,
@@ -777,16 +683,16 @@ end Judgments
 
 open scoped Classical in
 /-- With every pair judged by a qualitative probability, Scott's cancellation holds exactly when
-`Q★` avoids strict dominance for some cost: Theorem 1 joined with Scott's theorem. This makes
+`Q★` avoids strict dominance for some cost, by Theorem 1 joined with Scott's theorem. This makes
 precise the paper's remark (p. 350) that the argument justifies the axioms of the representation
-theorems "insofar as they are shown to be extensionally equivalent to representability": it
+theorems "insofar as they are shown to be extensionally equivalent to representability". It
 reaches Scott's cancellation, which is equivalent to representability, and not de Finetti's
 axioms, which are hypotheses here and fall short of it from five states on. -/
 theorem cancellation_iff_exists_not_dominated [MeasurableSpace Ω] [DiscreteMeasurableSpace Ω]
     (r : Set Ω → Set Ω → Prop) [IsQualitativeProbability r]
     (s : Stakes {p : Set Ω × Set Ω // r p.1 p.2}) :
     Cancellation r ↔ ∃ c, 0 < c ∧
-      ¬StrictlyDominated ((Judgments.ofRel r).utility s c)
+      ¬IsStrictlyPayoffDominated ((Judgments.ofRel r).utility s c)
         (Judgments.ofRel r).uniformPreferred := by
   rw [← representable_iff_cancellation, ← Judgments.ofRel_representable_iff]
   exact Judgments.representable_iff_exists_not_dominated _ _ (Judgments.ofRel_strict_nonempty r)
@@ -830,7 +736,8 @@ theorem explorer_mixture_payoff (c : ℝ) (ω : Fin 3) :
 /-- In §7 the explorer's preferred act `A1` pays `1 − c` on every island and is strictly
 dominated by the uniform mixture of `A2`, `A3`, `A4`, which pays `1`. -/
 theorem explorer_dominated {c : ℝ} (hc : 0 < c) :
-    StrictlyDominated (explorer.utility (unitStakes (Fin 3)) c) explorer.uniformPreferred := by
+    IsStrictlyPayoffDominated (explorer.utility (unitStakes (Fin 3)) c)
+      explorer.uniformPreferred := by
   refine ⟨uniformOn ↑explorerMixture,
     isProbabilityMeasure_uniformOn (Finset.finite_toSet _)
       ⟨![false, false, true], by simp [explorerMixture]⟩,
@@ -873,15 +780,15 @@ tails, over option 2, gambles 2 and 3, although "for both options, the objective
 receiving the payoff of 100 is one-half" (p. 355). With the coin's weights the preferred act pays
 `50 − c` whatever the ball and option 2 pays `50`. -/
 theorem ellsberg_dominated {c : ℝ} (hc : 0 < c) :
-    StrictlyDominated (ellsberg.utility coinStakes c) ellsberg.uniformPreferred :=
+    IsStrictlyPayoffDominated (ellsberg.utility coinStakes c) ellsberg.uniformPreferred :=
   ellsberg.dominated_of_balanced ellsberg_balanced rfl _ _ hc
 
 /-! #### Kraft, Pratt and Seidenberg's World Cup (§4) -/
 
 /-- The World Cup judgments of §4, with Argentina, Brazil, China, Denmark and England as the
-worlds `0`–`4`: Denmark over Argentina or China, Argentina or England over China or Denmark,
-Brazil or China over Argentina or Denmark, and Argentina, China or Denmark over Brazil or
-England. -/
+worlds `0`–`4`. Denmark is judged likelier than Argentina or China, Argentina or England than
+China or Denmark, Brazil or China than Argentina or Denmark, and Argentina, China or Denmark than
+Brazil or England. -/
 def worldCup : Judgments (Fin 5) (Fin 4) :=
   ⟨![{3}, {0, 4}, {1, 2}, {0, 2, 3}], ![{0, 2}, {2, 3}, {0, 3}, {1, 4}], Finset.univ⟩
 
@@ -897,11 +804,11 @@ theorem worldCup_not_representable : ¬worldCup.Representable :=
 four others changes nothing whichever team wins, so paying for the trade is strict dominance.
 (The paper's `G2` reads "Argentina or Chile", a slip for China.) -/
 theorem worldCup_dominated {c : ℝ} (hc : 0 < c) :
-    StrictlyDominated (worldCup.utility (unitStakes (Fin 4)) c) worldCup.uniformPreferred :=
+    IsStrictlyPayoffDominated (worldCup.utility (unitStakes (Fin 4)) c) worldCup.uniformPreferred :=
   worldCup.dominated_of_balanced worldCup_balanced rfl _ _ hc
 
-/-- The World Cup teams as Kraft, Pratt and Seidenberg's atoms `p, q, r, s, t` (`0`–`4`):
-Argentina `q`, Brazil `r`, China `s`, Denmark `p`, England `t`. -/
+/-- The World Cup teams as Kraft, Pratt and Seidenberg's atoms `p, q, r, s, t` (`0`–`4`), with
+Argentina `q`, Brazil `r`, China `s`, Denmark `p` and England `t`. -/
 def worldCupToKps : Fin 5 ≃ Fin 5 := ⟨![1, 2, 3, 0, 4], ![3, 0, 1, 2, 4], by decide, by decide⟩
 
 private theorem preimage_worldCupToKps_symm (s : Finset (Fin 5)) :
