@@ -1,0 +1,40 @@
+[
+  {
+    "id": "alexiadoulohndal2017_56a",
+    "source": {"bibkey": "alexiadou-lohndal-2017", "paperLabel": "(56a)"},
+    "language": "stan1293",
+    "primaryText": "colored dark",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["root", "color"],
+      ["rootClass", "manner"]
+    ],
+    "comment": "The class is the paper's: roots of (56a) can be modifiers of v and roots of (56b) cannot.",
+    "verified": "page-image"
+  },
+  {
+    "id": "alexiadoulohndal2017_56b",
+    "source": {"bibkey": "alexiadou-lohndal-2017", "paperLabel": "(56b)"},
+    "language": "stan1293",
+    "primaryText": "blackened dark",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["root", "black"],
+      ["rootClass", "result"]
+    ],
+    "comment": "The class is the paper's: roots of (56a) can be modifiers of v and roots of (56b) cannot.",
+    "verified": "page-image"
+  }
+]
