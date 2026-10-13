@@ -40,10 +40,10 @@ The operations on complex heads are in their own files: Vocabulary Items and the
 `VocabularyInsertion/Basic.lean`, insertion from the inside out in
 `VocabularyInsertion/InsideOut.lean`, the contexts rules read in `Neighborhood.lean`, the locality
 of allomorphy and allosemy within words in `Locality.lean` and across phrases in
-`PhrasalLocality.lean`, the configurations in which a Root is categorized in
-`RootCategorization.lean`, the rules that change terminals before insertion in
-`Impoverishment.lean`, `Fission.lean`, `Fusion.lean` and `Spellout.lean`, gender on *n* in
-`Gender.lean`, and contextual meaning in `Allosemy.lean`.
+`PhrasalLocality.lean`, the configurations in which a Root is categorized and the diagnostics
+that can tell them apart in `RootCategorization.lean`, the rules that change terminals before
+insertion in `Impoverishment.lean`, `Fission.lean`, `Fusion.lean` and `Spellout.lean`, gender on
+*n* in `Gender.lean`, and contextual meaning in `Allosemy.lean`.
 
 ## References
 

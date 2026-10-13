@@ -14,6 +14,10 @@ the material of its complex head and to its complement. The boundaries crossed g
 target to the trigger are the nodes that dominate the target but not the trigger. The
 word-internal domains of cycles and pruning are in `Locality.lean`.
 
+A proform stands for a phrase of its category, so it strands one node from another when a phrase
+of its category separates them. The refined formulation is the absence of every such phrase: a
+trigger may condition a head exactly when no proform strands it from the head.
+
 Embedding a phrase in a larger tree leaves the locality of its heads unchanged when the phrase's
 root is phrasal: everything outside the phrase is separated from its heads by that root, and
 everything inside is related to them as it was.
@@ -22,12 +26,15 @@ everything inside is related to them as it was.
 
 * `DistributedMorphology.MayCondition`, `DistributedMorphology.MayCondition'`: the two
   formulations of locality.
+* `DistributedMorphology.Strands`: a proform of a category strands one node from another.
 * `DistributedMorphology.localSet`, `DistributedMorphology.localLabels`: the labels of the
   terminals that may condition a head under the refined formulation, as a set and as a list.
 * `DistributedMorphology.x0At`: the complex head containing a node.
 
 ## Main statements
 
+* `DistributedMorphology.mayCondition'_iff_forall_not_strands`: a trigger may condition a head
+  under the refined formulation exactly when no proform strands it from the head.
 * `DistributedMorphology.localSet_replaceAt`, `DistributedMorphology.x0At_replaceAt`: embedding a
   phrase leaves the complex heads of its nodes and the labels local to them unchanged.
 
@@ -35,6 +42,8 @@ everything inside is related to them as it was.
 
 * [bobaljik-2012]
 * [bobaljik-harley-2017]
+* [harley-2014]
+* [van-craenenbroeck-2014]
 -/
 
 @[expose] public section
@@ -79,6 +88,39 @@ theorem mayCondition'_iff {t : Tree C W} {α β : TreePath} :
     MayCondition' t α β ↔ ∀ p, p ≤ α → ¬ p ≤ β → IsHeadAt t p :=
   ⟨fun h p hα hβ ↦ h p (mem_crossed.mpr ⟨hα, hβ⟩),
     fun h p hp ↦ h p (mem_crossed.mp hp).1 (mem_crossed.mp hp).2⟩
+
+/-! ### Pronominal stranding -/
+
+/-- A proform of category `X` may stand for the node at `p` when it is a phrase of category `X`. -/
+def Replaceable (X : C) (t : Tree C W) (p : TreePath) : Prop :=
+  ∃ s ∈ t.subtreeAt p.toList, isHead s = false ∧ s.value.cat = X
+
+/-- A proform of category `X` strands the node at `β` from the node at `α` when it may stand for a
+phrase that contains `α` and not `β`. -/
+def Strands (X : C) (t : Tree C W) (α β : TreePath) : Prop :=
+  ∃ p ∈ crossed α β, Replaceable X t p
+
+instance [DecidableEq C] (X : C) (t : Tree C W) (p : TreePath) : Decidable (Replaceable X t p) :=
+  inferInstanceAs (Decidable (∃ s ∈ _, _))
+
+instance [DecidableEq C] (X : C) (t : Tree C W) (α β : TreePath) :
+    Decidable (Strands X t α β) :=
+  List.decidableBEx _ _
+
+theorem not_replaceable_of_isHeadAt {X : C} {t : Tree C W} {p : TreePath} (h : IsHeadAt t p) :
+    ¬ Replaceable X t p := by
+  rintro ⟨s, hs, hh, -⟩
+  simp [IsHeadAt, Option.mem_def.mp hs, hh] at h
+
+/-- **Locality is the absence of stranding.** A trigger may condition a head under the refined
+formulation exactly when no proform strands it from the head. -/
+theorem mayCondition'_iff_forall_not_strands {t : Tree C W} {α β : TreePath} :
+    MayCondition' t α β ↔ ∀ X, ¬ Strands X t α β := by
+  refine ⟨fun h X ⟨p, hp, hr⟩ ↦ not_replaceable_of_isHeadAt (h p hp) hr, fun h p hp ↦ ?_⟩
+  by_contra hh
+  obtain ⟨s, hs⟩ : ∃ s, t.subtreeAt p.toList = some s := by
+    cases h' : t.subtreeAt p.toList <;> simp_all [IsHeadAt]
+  exact h s.value.cat ⟨p, hp, s, hs, by simpa [IsHeadAt, hs] using hh, rfl⟩
 
 /-! ### Local labels and complex heads -/
 
@@ -188,6 +230,47 @@ theorem x0At_replaceAt (hE : (E.subtreeAt h).isSome) (ht : isHead t = false) (α
   have h0 : ((t.subtreeAt []).all isHead) = false := by simp [ht]
   simp only [h0, List.tail_cons, Function.comp_def, RoseTree.subtreeAt_replaceAt_append hE,
     Option.bind_map]
+
+private theorem replaceable_iff {X : C} {t : Tree C W} {p : TreePath} :
+    Replaceable X t p ↔
+      (t.subtreeAt p.toList).map (fun s ↦ (isHead s, s.value.cat)) = some (false, X) := by
+  simp [Replaceable]
+
+private theorem sig_replaceAt_of_prefix {t₁ t₂ : Tree C W} (hE : (E.subtreeAt h).isSome)
+    (h₁ : isHead t₁ = false) (h₂ : isHead t₂ = false) (hv : t₁.value = t₂.value) {r : List ℕ}
+    (hr : r <+: h) :
+    ((E.replaceAt h t₁).subtreeAt r).map (fun s ↦ (isHead s, s.value.cat)) =
+      ((E.replaceAt h t₂).subtreeAt r).map (fun s ↦ (isHead s, s.value.cat)) := by
+  obtain ⟨d, rfl⟩ := hr
+  rw [RoseTree.subtreeAt_replaceAt_of_prefix (List.prefix_append r d),
+    RoseTree.subtreeAt_replaceAt_of_prefix (List.prefix_append r d)]
+  rw [RoseTree.subtreeAt_append] at hE
+  obtain ⟨s, hs⟩ : ∃ s, E.subtreeAt r = some s := Option.isSome_iff_exists.mp
+    (by cases h' : E.subtreeAt r <;> simp_all)
+  have hsd : (s.subtreeAt d).isSome := by simpa [hs] using hE
+  simp only [hs, Option.map_some, List.drop_left, Option.some.injEq, Prod.mk.injEq]
+  have hh (t : Tree C W) (ht : isHead t = false) : isHead (s.replaceAt d t) = false := by
+    cases hh : isHead (s.replaceAt d t)
+    · rfl
+    · exact absurd (isHead_of_isHead_replaceAt s d t hsd hh) (by simp [ht])
+  refine ⟨by rw [hh _ h₁, hh _ h₂], ?_⟩
+  cases d with
+  | nil => simp [hv]
+  | cons i d => simp
+
+/-- Two phrases with phrasal roots of one label and the same nodes along the path to `α` are
+stranded alike from `α`, wherever they are embedded. -/
+theorem strands_replaceAt_congr {t₁ t₂ : Tree C W} (hE : (E.subtreeAt h).isSome)
+    (h₁ : isHead t₁ = false) (h₂ : isHead t₂ = false) (hv : t₁.value = t₂.value) {α : List ℕ}
+    (hα : ∀ p, p <+: α → p ≠ [] → t₁.subtreeAt p = t₂.subtreeAt p) (X : C) (β : TreePath) :
+    Strands X (E.replaceAt h t₁) ⟨h ++ α⟩ β ↔ Strands X (E.replaceAt h t₂) ⟨h ++ α⟩ β := by
+  refine exists_congr fun ⟨r⟩ ↦ and_congr_right fun hr ↦ ?_
+  rw [replaceable_iff, replaceable_iff]
+  rcases prefix_append_cases (TreePath.le_def.mp (mem_crossed.mp hr).1) with hr | ⟨p, hp, rfl⟩
+  · rw [sig_replaceAt_of_prefix hE h₁ h₂ hv hr]
+  · rcases eq_or_ne p [] with rfl | hp0
+    · rw [List.append_nil, sig_replaceAt_of_prefix hE h₁ h₂ hv (List.prefix_refl h)]
+    · simp only [RoseTree.subtreeAt_replaceAt_append hE, hα p hp hp0]
 
 end Embedding
 

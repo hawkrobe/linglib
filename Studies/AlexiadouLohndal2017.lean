@@ -3,6 +3,7 @@ module
 public import Linglib.Data.Examples.AlexiadouLohndal2017
 public import Studies.BobaljikHarley2017
 public import Studies.Embick2004
+public import Studies.VanCraenenbroeck2014
 
 /-!
 # Alexiadou and Lohndal (2017): The structural configurations of root categorization
@@ -13,17 +14,22 @@ either according to its class, or inserted after syntax into a position of its o
 weighs the evidence for each view and finds none conclusive. Hiaki suppletion, offered for Roots
 that take their internal argument as a complement, survives on a derivation in which the Root never
 takes one: the Root moves into a low head, and the argument merges with the complex head they form,
-local enough under the refined locality condition. Without a secondary resultative predicate,
-Direct Merge of a Root and its merger as a complement are practically indistinguishable. What does
-favor letting Roots merge in either way is a contrast in resultatives: *colored dark* is possible
-and *blackened dark* is not, since only a Root that can modify v leaves v's complement free for an
-aP.
+local enough under the refined locality condition. One-replacement and the selection of objects
+across categories fail to decide too: a noun with arguments is derived from a verb, its nP
+embedding the verbal structure, so whatever the configuration of the Root and its argument, *one*
+strands adjuncts and not arguments and the noun's argument is selected as the verb's. Without a
+secondary resultative predicate, Direct Merge of a Root and its merger as a complement are
+practically indistinguishable. What does favor letting Roots merge in either way is a contrast in
+resultatives: *colored dark* is possible and *blackened dark* is not, since only a Root that can
+modify v leaves v's complement free for an aP.
 
 ## Main statements
 
 * `mayCondition'_tree27`: in the derivation of (27) the internal argument may condition the Root
   under the refined locality condition, though the Root takes no complement, while in the
   representation (26) it may not.
+* `deverbal_derives`: in a deverbal noun every configuration of the Root and its argument derives
+  the one-replacement contrast of (8) and selects the argument as the verb does.
 * `derives_iff`: of the four views only the one that merges some Roots as modifiers and others as
   complements derives the contrast of (56).
 
@@ -37,13 +43,15 @@ aP.
 * A view's licensing of a resultative aP is read off how it attaches a Root of each class: a v
   with a Root as its complement has no room for an aP, as Embick's analysis of v[FIENT] requires
   (`interpretable_aP_iff`).
+* *one* stands for the nP over the verbal structure, with the adjunct adjoined to it; the chapter
+  places both at ClP, which is above the verbal structure too.
 
 ## TODO
 
-The arguments from *one*-replacement, verb–object idioms and nominalizations against Roots taking
-complements, the endocentricity argument for Roots as modifiers, and the post-syntactic insertion
-of Roots into an empty position, with the Dutch functional vocabulary in Root position, are not
-formalized.
+The discussion of verb–object idioms, the generalization that only nouns derived from verbs have
+argument structure, the endocentricity argument for Roots as modifiers, and the post-syntactic
+insertion of Roots into an empty position, with the Dutch functional vocabulary in Root position,
+are not formalized.
 
 ## References
 
@@ -127,7 +135,7 @@ def classTable : List (String × RootClass) := [("manner", .manner), ("result", 
 def data : List (RootClass × Judgment) :=
   Examples.all.filterMap fun d ↦ (d.parse? "rootClass" classTable).map (·, d.judgment)
 
-theorem data_length : data.length = Examples.all.length := by decide +kernel
+theorem data_length : data.length = 2 := by decide +kernel
 
 /-- **Only the mixed view derives (56).** A view derives the contrast when the resultative of each
 example is acceptable exactly where the view licenses it. The views that attach every Root in the
@@ -136,5 +144,48 @@ manner Roots as modifiers and result Roots as complements tells them apart. -/
 theorem derives_iff (v : View) :
     (∀ p ∈ data, p.2 = .acceptable ↔ v.LicensesResultative p.1) ↔ v = .mixed := by
   cases v <;> decide +kernel
+
+/-! ### One-replacement and selection in deverbal nouns -/
+
+section Deverbal
+
+open VanCraenenbroeck2014 (Config)
+open DistributedMorphology (Strands)
+open DistributedMorphology.RootCategorization (selector)
+
+/-- A deverbal noun with an adjunct, the nP of a nominalizer over the phrase of a Root and its
+argument under v, with a PP adjoined to it. -/
+def deverbal (c : Config) : Tree DistributedMorphology.RootCategorization.Cat Unit :=
+  .adjoin (.cat .n) [.node (.cat .n) [.terminal (.cat .n) (), c.tree .v], .terminal .p ()]
+
+/-- The position of a dependent in `deverbal`. -/
+def position (c : Config) : Harley2014.Dependent → Core.Order.TreePath
+  | .argument => ⟨0 :: 1 :: c.argPos.toList⟩
+  | .adjunct => ⟨[1]⟩
+
+/-- *one*, a proform of the category of the noun, strands the dependent from the Root. -/
+def OneStrands (c : Config) (d : Harley2014.Dependent) : Prop :=
+  Strands (.cat .n) (deverbal c) ⟨0 :: 1 :: c.rootPos.toList⟩ (position c d)
+
+instance (c : Config) (d : Harley2014.Dependent) : Decidable (OneStrands c d) :=
+  inferInstanceAs (Decidable (Strands _ _ _ _))
+
+/-- The examples of (8), the dependent each strands with its judgment. -/
+def oneData : List (Harley2014.Dependent × Judgment) :=
+  Examples.all.filterMap fun d ↦
+    (d.parse? "stranded" Harley2014.dependentTable).map (·, d.judgment)
+
+theorem oneData_length : oneData.length = 2 := by decide +kernel
+
+/-- **One-replacement and selection cannot decide.** In a deverbal noun, whatever the
+configuration of the Root and its argument, *one* strands exactly the dependents (8) accepts
+stranded, and the argument is merged with the head the verb merges it with, unlike in a noun that
+categorizes the Root itself (`Harley2014.selector_eq_iff`). -/
+theorem deverbal_derives (c : Config) :
+    (∀ p ∈ oneData, p.2 = .acceptable ↔ OneStrands c p.1) ∧
+      selector (deverbal c) (position c .argument) = selector (c.tree .v) c.argPos := by
+  cases c <;> decide +kernel
+
+end Deverbal
 
 end AlexiadouLohndal2017

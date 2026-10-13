@@ -132,6 +132,32 @@ def ex6b : Datum :=
     readings := []
     paperFeatures := [("section", "2.1"), ("phenomenon", "rootSuppletion"), ("subjectNumber", "plural")] }
 
+def ex18a : Datum :=
+  { id := "harley2014_ex18a"
+    source := ⟨"harley-2014", "(18a)"⟩
+    reportedIn := none
+    language := "stan1293"
+    primaryText := "This student of chemistry and that one of physics sit together"
+    glossedTokens := []
+    context := ""
+    judgment := .ungrammatical
+    alternatives := []
+    readings := []
+    paperFeatures := [("section", "3.1"), ("phenomenon", "oneReplacement"), ("stranded", "argument")] }
+
+def ex18b : Datum :=
+  { id := "harley2014_ex18b"
+    source := ⟨"harley-2014", "(18b)"⟩
+    reportedIn := none
+    language := "stan1293"
+    primaryText := "That student with short hair and this one with long hair sit together"
+    glossedTokens := []
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("section", "3.1"), ("phenomenon", "oneReplacement"), ("stranded", "adjunct")] }
+
 def ex26a : Datum :=
   { id := "harley2014_ex26a"
     source := ⟨"harley-2014", "(26a)"⟩
@@ -288,6 +314,6 @@ def exfn33_i : Datum :=
     readings := []
     paperFeatures := [("section", "3.3"), ("phenomenon", "applicative"), ("verbClass", "suppletiveTransitive"), ("applicative", "suffixed")] }
 
-def all : List Datum := [ex3a, ex3b, ex3c, ex3d, ex3e, ex3f, ex3g, ex6a, ex6b, ex26a, ex26b, ex27a, ex27b, ex29a, ex29b, ex30a, ex30b, ex31, ex32a, ex32b, exfn33_i]
+def all : List Datum := [ex3a, ex3b, ex3c, ex3d, ex3e, ex3f, ex3g, ex6a, ex6b, ex18a, ex18b, ex26a, ex26b, ex27a, ex27b, ex29a, ex29b, ex30a, ex30b, ex31, ex32a, ex32b, exfn33_i]
 
 end Harley2014.Examples

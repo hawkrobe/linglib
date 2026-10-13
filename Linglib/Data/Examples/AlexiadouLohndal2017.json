@@ -1,5 +1,43 @@
 [
   {
+    "id": "alexiadoulohndal2017_8a",
+    "source": {"bibkey": "alexiadou-lohndal-2017", "paperLabel": "(8a)"},
+    "language": "stan1293",
+    "primaryText": "the student of chemistry and the one of physics.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "3.1"],
+      ["stranded", "argument"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "alexiadoulohndal2017_8b",
+    "source": {"bibkey": "alexiadou-lohndal-2017", "paperLabel": "(8b)"},
+    "language": "stan1293",
+    "primaryText": "the student with long hair and the one with short hair",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "3.1"],
+      ["stranded", "adjunct"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
     "id": "alexiadoulohndal2017_56a",
     "source": {"bibkey": "alexiadou-lohndal-2017", "paperLabel": "(56a)"},
     "language": "stan1293",

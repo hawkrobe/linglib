@@ -10,6 +10,8 @@ public import Linglib.Morphology.DistributedMorphology.Allosemy
 public import Linglib.Morphology.Root.Certificates
 public import Linglib.Syntax.Number.Basic
 public import Linglib.Syntax.Clause.Arguments
+public import Linglib.Data.Examples.Harley2014
+public import Linglib.Morphology.DistributedMorphology.RootCategorization
 public import Studies.Bobaljik2008
 
 /-!
@@ -28,6 +30,13 @@ are the two flanks. `suppletion_not_agreement` is §3.3's argument that conditio
 internal argument, an ergative–absolutive pattern in a nominative–accusative language, is
 Vocabulary-Item competition rather than agreement, and `unergative_elsewhere` its prediction
 that the suppletive intransitives are unaccusative.
+
+The syntactic evidence of §3.1 that roots take complements is formalized on the configurations of
+`DistributedMorphology.RootCategorization`. With the argument the sister of the root and adjuncts
+adjoined to nP, *one*, an nP anaphor, strands an adjunct and not the argument (`oneStrands_iff`),
+and if a selection restriction relates an argument to the head it is merged with, the noun and
+the verb of one root share their restriction on the object exactly when the root takes the
+object as its complement (`selector_eq_iff`).
 
 ## Implementation notes
 
@@ -83,7 +92,7 @@ inductive SiteFeature where
 internal argument is the terminal below; the external argument is not in the
 local environment (§3.3). -/
 def site (c : Arguments Number) (r : Root) : Neighborhood (List SiteFeature) :=
-  ⟨[.root r], ((c .internal).map λ n => ([.internal n] : List SiteFeature)).toList, []⟩
+  ⟨[.root r], ((c .internal).map fun n ↦ ([.internal n] : List SiteFeature)).toList, []⟩
 
 /-! ### List 2: the suppletive Vocabulary Items -/
 
@@ -200,7 +209,7 @@ List-3 map. -/
 /-- List 2 as a `Realization`: a root's Elsewhere-selected exponent as a
 singleton fiber, `∅` at an index with no item. -/
 def realization : Morphology.Realization Root (Arguments Number) String :=
-  ⟨λ r c => (spellout c r).elim ∅ ({·})⟩
+  ⟨fun r c ↦ (spellout c r).elim ∅ ({·})⟩
 
 /-- √322 realizes two nonempty, distinct fibers across two licensed clauses —
 the *go*/*went* case the predicate names (§2.2). -/
@@ -218,7 +227,7 @@ theorem run_isProperlySuppletive : realization.IsProperlySuppletive run := by
 /-- Under the identity core-extraction, *vuite*/*tenne* alternate at the core
 itself — `Morphology.Root.HasSuppletiveCore`, suppletion proper rather than
 affixal inflection. -/
-theorem run_hasSuppletiveCore : Morphology.Root.HasSuppletiveCore realization (λ s => {s}) run :=
+theorem run_hasSuppletiveCore : Morphology.Root.HasSuppletiveCore realization (fun s ↦ {s}) run :=
   (Morphology.Root.hasSuppletiveCore_singleton realization run).mpr
     (realization.isSuppletive_iff.mpr (Or.inr run_isProperlySuppletive))
 
@@ -234,5 +243,65 @@ theorem cahoot_interp_gap :
     cahootHead.interp () (embedding [.cat .n]) = {"a conspiracy"} ∧
       cahootHead.interp () ∅ = ∅ := by
   refine ⟨?_, ?_⟩ <;> decide
+
+/-! ### One-replacement and the selection of objects -/
+
+section OneReplacement
+
+open RootCategorization (Cat Lexicon Attachment rootPos selector)
+
+/-- The root √STUD of *student*, nominalized by *-ent*, with the argument *chemistry*. -/
+def student : Lexicon String := ⟨.n, "stud", "ent", "chemistry"⟩
+
+/-- *student of chemistry with long hair*, the nP of (22) with the adjunct of (23) adjoined to
+it. -/
+def studentWithHair (a : Attachment) : PhraseStructure.Tree Cat String :=
+  .adjoin (.cat .n) [a.tree student, .terminal .p "with long hair"]
+
+/-- The dependents of a noun that *one* replaces. -/
+inductive Dependent
+  | argument | adjunct
+  deriving DecidableEq, Repr
+
+/-- The position of a dependent in `studentWithHair`. -/
+def Dependent.pos (a : Attachment) : Dependent → Core.Order.TreePath
+  | .argument => ⟨0 :: a.argPos.toList⟩
+  | .adjunct => ⟨[1]⟩
+
+/-- *one*, an nP anaphor, strands the dependent from the root. -/
+def OneStrands (a : Attachment) (d : Dependent) : Prop :=
+  Strands (.cat .n) (studentWithHair a) ⟨0 :: rootPos.toList⟩ (d.pos a)
+
+instance (a : Attachment) (d : Dependent) : Decidable (OneStrands a d) :=
+  inferInstanceAs (Decidable (Strands _ _ _ _))
+
+/-- The dependents as named in the rows. -/
+def dependentTable : List (String × Dependent) :=
+  [("argument", .argument), ("adjunct", .adjunct)]
+
+/-- The examples of (18), the dependent each strands with its judgment. -/
+def oneData : List (Dependent × Judgment) :=
+  Examples.all.filterMap fun d ↦ (d.parse? "stranded" dependentTable).map (·, d.judgment)
+
+theorem oneData_length : oneData.length = 2 := by decide +kernel
+
+/-- **One-replacement.** *one* strands exactly the dependents that (18) accepts stranded. -/
+theorem oneStrands_iff : ∀ p ∈ oneData, p.2 = .acceptable ↔ OneStrands .complement p.1 := by
+  decide +kernel
+
+/-- The verb *study* of (21a), with the object *physics*. -/
+def study : Lexicon String := ⟨.v, "stud", "y", "physics"⟩
+
+/-- The noun *student* of (21b), with the object *physics*. -/
+def studentOfPhysics : Lexicon String := ⟨.n, "stud", "ent", "physics"⟩
+
+/-- **Selection across categories.** The verb and the noun of (21) have their object merged with
+one head exactly when the root takes the object as its complement. -/
+theorem selector_eq_iff (a : Attachment) :
+    selector (a.tree study) a.argPos = selector (a.tree studentOfPhysics) a.argPos ↔
+      a = .complement := by
+  cases a <;> decide
+
+end OneReplacement
 
 end Harley2014
