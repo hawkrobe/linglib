@@ -173,7 +173,6 @@ import Linglib.Core.Probability.Gumbel
 import Linglib.Core.Probability.Kernel.Composition.Lemmas
 import Linglib.Core.Probability.Kernel.OfWeights
 import Linglib.Core.Probability.Kernel.Posterior
-import Linglib.Core.Probability.Uniform
 import Linglib.Core.Probability.UniformOn
 import Linglib.Core.Probability.PolyaUrn
 import Linglib.Core.Relation.ReflTransGen
@@ -789,8 +788,6 @@ import Linglib.Pragmatics.RSA.Basic
 import Linglib.Pragmatics.RSA.Uniform
 import Linglib.Pragmatics.RSA.Incremental
 import Linglib.Pragmatics.RSA.QUD
-import Linglib.Pragmatics.SignalingGame.Basic
-import Linglib.Pragmatics.SignalingGame.Interpretation
 import Linglib.Pragmatics.SocialMeaning.IndexicalField
 import Linglib.Processing.DiscriminativeLexicon.Coding
 import Linglib.Processing.DiscriminativeLexicon.Defs

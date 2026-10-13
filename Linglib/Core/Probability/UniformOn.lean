@@ -32,6 +32,12 @@ theorem uniformOn_finset_apply_singleton [DecidableEq W] (A : Finset W) (w : W) 
   by_cases h : w ∈ A <;> simp [Finset.inter_singleton_of_mem, Finset.inter_singleton_of_notMem, h,
     div_eq_mul_inv]
 
+/-- On reals, the uniform measure on a finset gives a singleton `1 / #A` on `A` and `0` off it. -/
+theorem uniformOn_finset_real_singleton [DecidableEq W] (A : Finset W) (w : W) :
+    (uniformOn (A : Set W)).real {w} = if w ∈ A then (A.card : ℝ)⁻¹ else 0 := by
+  rw [measureReal_def, uniformOn_finset_apply_singleton]
+  split_ifs <;> simp
+
 /-- The uniform measure on a set gives a set, on reals, the proportion of the atoms of `s` lying
 in `e`, with `0 / 0 = 0` when `s` is empty. -/
 theorem uniformOn_real_apply [Finite W] (s e : Set W) :
