@@ -14,13 +14,13 @@ asymmetric.
 ## Main declarations
 
 * `Negation.Marker`: a standard negation marker, as the morphs exponing it.
-* `Negation.Pair`: an affirmative and the negative a marker forms from it, as morphs.
 
 ## Implementation notes
 
-A typology of markers or of pairs is one author's classification and lives in that author's
-study, such as Miestamo's symmetry in `Studies/Miestamo2005.lean`. An inflecting negative verb is
-cited by its stem, and its endings form an `Agreement.Paradigm` in the language's fragment.
+A typology of markers or of negative constructions is one author's classification and lives in that
+author's study, such as Miestamo's symmetry in `Studies/Miestamo2005.lean`, whose
+affirmative–negative pairs are its example rows. An inflecting negative verb is cited by its stem,
+and its endings form an `Agreement.Paradigm` in the language's fragment.
 
 ## References
 
@@ -46,18 +46,5 @@ def Marker.form (m : Marker) : String := String.intercalate "…" (m.pieces.map 
 
 /-- The morphs of a marker, across its pieces. -/
 def Marker.morphs (m : Marker) : List Morph := m.pieces.flatten
-
-/-- An affirmative clause or verb form paired with the negative a marker forms from it, each as
-its morphs in surface order. Morphs are cited in one form across the pair, so that a
-phonologically conditioned alternation, such as the buffer glide of Turkish *gel-me-yecek* beside
-*gel-ecek*, does not distinguish them. -/
-structure Pair where
-  /-- The marker of the negative. -/
-  marker : Marker
-  /-- The affirmative. -/
-  affirmative : List Morph
-  /-- The negative. -/
-  negative : List Morph
-  deriving DecidableEq, Repr
 
 end Negation

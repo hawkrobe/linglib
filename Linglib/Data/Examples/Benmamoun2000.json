@@ -1,0 +1,122 @@
+[
+  {
+    "id": "benmamoun2000_1a",
+    "source": {"bibkey": "benmamoun-2000", "paperLabel": "p. 94, (1a)"},
+    "reportedIn": null,
+    "language": "stan1318",
+    "primaryText": "ṭ-ṭullaab-u ya-drus-uu-n",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["ṭ-ṭullaab-u", "the-students"], ["ya-drus-uu-n", "3m-study.mp-ind"]
+    ],
+    "translation": "The students study.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "benmamoun2000_1b",
+    "source": {"bibkey": "benmamoun-2000", "paperLabel": "p. 95, (1b)"},
+    "reportedIn": null,
+    "language": "stan1318",
+    "primaryText": "ṭ-ṭullaab-u laa ya-drus-uu-n",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["ṭ-ṭullaab-u", "the-students"], ["laa", "neg"], ["ya-drus-uu-n", "3m-study-mp-ind"]
+    ],
+    "translation": "The students do not study.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["affirmative", "benmamoun2000_1a"]
+    ],
+    "comment": "The source prints ṭ-ṭullab-u laa ya-drus--uu-n.",
+    "verified": "page-image"
+  },
+  {
+    "id": "benmamoun2000_2a",
+    "source": {"bibkey": "benmamoun-2000", "paperLabel": "p. 95, (2a)"},
+    "reportedIn": null,
+    "language": "stan1318",
+    "primaryText": "ṭ-ṭullaab-u ðahab-uu",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["ṭ-ṭullaab-u", "the-students-nom"], ["ðahab-uu", "go.past-3mp"]
+    ],
+    "translation": "The students left.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "benmamoun2000_2b",
+    "source": {"bibkey": "benmamoun-2000", "paperLabel": "p. 95, (2b)"},
+    "reportedIn": null,
+    "language": "stan1318",
+    "primaryText": "ṭ-ṭullaab-u lam ya-ðhab-uu",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["ṭ-ṭullaab-u", "the-students-nom"], ["lam", "neg.past"], ["ya-ðhab-uu", "3m-go-mp"]
+    ],
+    "translation": "The students did not go",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["affirmative", "benmamoun2000_2a"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "benmamoun2000_3a",
+    "source": {"bibkey": "benmamoun-2000", "paperLabel": "p. 95, (3a)"},
+    "reportedIn": null,
+    "language": "stan1318",
+    "primaryText": "ṭ-ṭullaab-u sa-ya-ðhab-uun",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["ṭ-ṭullaab-u", "the-students"], ["sa-ya-ðhab-uun", "fut-3m-go-mp"]
+    ],
+    "translation": "The students will go.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "The source prints the subject ṭ-ṭullabu.",
+    "verified": "page-image"
+  },
+  {
+    "id": "benmamoun2000_3b",
+    "source": {"bibkey": "benmamoun-2000", "paperLabel": "p. 95, (3b)"},
+    "reportedIn": null,
+    "language": "stan1318",
+    "primaryText": "ṭ-ṭullaab-u lan ya-ðhab-uu",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["ṭ-ṭullaab-u", "the-students"], ["lan", "neg.fut"], ["ya-ðhab-uu", "3m-go-mp"]
+    ],
+    "translation": "The students will not go.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["affirmative", "benmamoun2000_3a"]
+    ],
+    "comment": "The source prints the subject ṭ-ṭullabu.",
+    "verified": "page-image"
+  }
+]

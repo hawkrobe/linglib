@@ -1,0 +1,1430 @@
+[
+  {
+    "id": "miestamo2005_p3_2a",
+    "source": {"bibkey": "miestamo-2005", "paperLabel": "p. 3, (2a)"},
+    "reportedIn": null,
+    "language": "finn1318",
+    "primaryText": "nuku-n",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["nuku-n", "sleep-1SG"]
+    ],
+    "translation": "I am sleeping.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "",
+    "verified": "text-layer"
+  },
+  {
+    "id": "miestamo2005_p3_2b",
+    "source": {"bibkey": "miestamo-2005", "paperLabel": "p. 3, (2b)"},
+    "reportedIn": null,
+    "language": "finn1318",
+    "primaryText": "e-n nuku",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["e-n", "NEG-1SG"], ["nuku", "sleep.CNG"]
+    ],
+    "translation": "I am not sleeping.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["affirmative", "miestamo2005_p3_2a"]
+    ],
+    "comment": "",
+    "verified": "text-layer"
+  },
+  {
+    "id": "miestamo2005_p43_1a",
+    "source": {"bibkey": "miestamo-2005", "paperLabel": "p. 43, (1a)"},
+    "reportedIn": null,
+    "language": "stan1288",
+    "primaryText": "canta-s",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["canta-s", "sing-2SG"]
+    ],
+    "translation": "You sing.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "",
+    "verified": "text-layer"
+  },
+  {
+    "id": "miestamo2005_p43_1b",
+    "source": {"bibkey": "miestamo-2005", "paperLabel": "p. 43, (1b)"},
+    "reportedIn": null,
+    "language": "stan1288",
+    "primaryText": "no canta-s",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["no", "NEG"], ["canta-s", "sing-2SG"]
+    ],
+    "translation": "You do not sing.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["affirmative", "miestamo2005_p43_1a"]
+    ],
+    "comment": "",
+    "verified": "text-layer"
+  },
+  {
+    "id": "miestamo2005_p43_2a",
+    "source": {"bibkey": "miestamo-2005", "paperLabel": "p. 43, (2a)"},
+    "reportedIn": null,
+    "language": "finn1318",
+    "primaryText": "juokse-n",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["juokse-n", "run-1SG"]
+    ],
+    "translation": "I run. / I am running.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "",
+    "verified": "text-layer"
+  },
+  {
+    "id": "miestamo2005_p43_2b",
+    "source": {"bibkey": "miestamo-2005", "paperLabel": "p. 43, (2b)"},
+    "reportedIn": null,
+    "language": "finn1318",
+    "primaryText": "e-n juokse",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["e-n", "NEG-1SG"], ["juokse", "run.CNG"]
+    ],
+    "translation": "I do not run. / I am not running.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["affirmative", "miestamo2005_p43_2a"]
+    ],
+    "comment": "(2c,d), with the object's case change, are set aside: Miestamo states the case changes are not part of the Finnish SN construction.",
+    "verified": "text-layer"
+  },
+  {
+    "id": "miestamo2005_p53_3a_1sg_aff",
+    "source": {"bibkey": "miestamo-2005", "paperLabel": "p. 53, (3a) 1SG AFFIRMATIVE"},
+    "reportedIn": null,
+    "language": "stan1295",
+    "primaryText": "ich singe",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "",
+    "verified": "text-layer"
+  },
+  {
+    "id": "miestamo2005_p53_3a_1sg_neg",
+    "source": {"bibkey": "miestamo-2005", "paperLabel": "p. 53, (3a) 1SG NEGATIVE"},
+    "reportedIn": null,
+    "language": "stan1295",
+    "primaryText": "ich singe nicht",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["affirmative", "miestamo2005_p53_3a_1sg_aff"]
+    ],
+    "comment": "The first person singular of the paradigm, whose other cells are alike.",
+    "verified": "text-layer"
+  },
+  {
+    "id": "miestamo2005_p53_3b_1sg_aff",
+    "source": {"bibkey": "miestamo-2005", "paperLabel": "p. 53, (3b) 1SG AFFIRMATIVE"},
+    "reportedIn": null,
+    "language": "stan1295",
+    "primaryText": "ich sang",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "",
+    "verified": "text-layer"
+  },
+  {
+    "id": "miestamo2005_p53_3b_1sg_neg",
+    "source": {"bibkey": "miestamo-2005", "paperLabel": "p. 53, (3b) 1SG NEGATIVE"},
+    "reportedIn": null,
+    "language": "stan1295",
+    "primaryText": "ich sang nicht",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["affirmative", "miestamo2005_p53_3b_1sg_aff"]
+    ],
+    "comment": "The first person singular of the paradigm, whose other cells are alike.",
+    "verified": "text-layer"
+  },
+  {
+    "id": "miestamo2005_p54_5a",
+    "source": {"bibkey": "haas-1940", "paperLabel": "p. 55"},
+    "reportedIn": {"bibkey": "miestamo-2005", "paperLabel": "p. 54, (5a)"},
+    "language": "tuni1252",
+    "primaryText": "lɔ'ta-wi",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["lɔ'ta-wi", "run-3SG.M.SMLF"]
+    ],
+    "translation": "He ran.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "miestamo2005_p54_5b",
+    "source": {"bibkey": "haas-1940", "paperLabel": "p. 55"},
+    "reportedIn": {"bibkey": "miestamo-2005", "paperLabel": "p. 54, (5b)"},
+    "language": "tuni1252",
+    "primaryText": "lɔ'ta-w-ɛhɛ",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["lɔ'ta-w-ɛhɛ", "run-3SG.M.SMLF-NEG"]
+    ],
+    "translation": "He did not run (semelfactive).",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["affirmative", "miestamo2005_p54_5a"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "miestamo2005_p55_5c",
+    "source": {"bibkey": "haas-1940", "paperLabel": "p. 55"},
+    "reportedIn": {"bibkey": "miestamo-2005", "paperLabel": "p. 55, (5c)"},
+    "language": "tuni1252",
+    "primaryText": "lɔ'ta-ku",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["lɔ'ta-ku", "run-3SG.M.HAB"]
+    ],
+    "translation": "He runs.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "miestamo2005_p55_5d",
+    "source": {"bibkey": "haas-1940", "paperLabel": "p. 55"},
+    "reportedIn": {"bibkey": "miestamo-2005", "paperLabel": "p. 55, (5d)"},
+    "language": "tuni1252",
+    "primaryText": "lɔ'ta-wi-kʔaha",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["lɔ'ta-wi-kʔaha", "run-3SG.M.SMLF-NEG"]
+    ],
+    "translation": "He does not run. (habitual)",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["affirmative", "miestamo2005_p55_5c"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "miestamo2005_p58_6a",
+    "source": {"bibkey": "van-schaaik-1994", "paperLabel": "pp. 38–39"},
+    "reportedIn": {"bibkey": "miestamo-2005", "paperLabel": "p. 58, (6a)"},
+    "language": "nucl1301",
+    "primaryText": "gel-di",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["gel-di", "come-PST"]
+    ],
+    "translation": "(S)he came.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "Miestamo cites van Schaaik 1994: 38, 39 and Halman 1981: 64 for (6).",
+    "verified": "page-image"
+  },
+  {
+    "id": "miestamo2005_p58_6b",
+    "source": {"bibkey": "van-schaaik-1994", "paperLabel": "pp. 38–39"},
+    "reportedIn": {"bibkey": "miestamo-2005", "paperLabel": "p. 58, (6b)"},
+    "language": "nucl1301",
+    "primaryText": "gel-me-di",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["gel-me-di", "come-NEG-PST"]
+    ],
+    "translation": "(S)he did not come.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["affirmative", "miestamo2005_p58_6a"]
+    ],
+    "comment": "Miestamo cites van Schaaik 1994: 38, 39 and Halman 1981: 64 for (6).",
+    "verified": "page-image"
+  },
+  {
+    "id": "miestamo2005_p58_6c",
+    "source": {"bibkey": "van-schaaik-1994", "paperLabel": "pp. 38–39"},
+    "reportedIn": {"bibkey": "miestamo-2005", "paperLabel": "p. 58, (6c)"},
+    "language": "nucl1301",
+    "primaryText": "gel-ecek",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["gel-ecek", "come-FUT"]
+    ],
+    "translation": "(S)he will come.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "Miestamo cites van Schaaik 1994: 38, 39 and Halman 1981: 64 for (6).",
+    "verified": "page-image"
+  },
+  {
+    "id": "miestamo2005_p58_6d",
+    "source": {"bibkey": "van-schaaik-1994", "paperLabel": "pp. 38–39"},
+    "reportedIn": {"bibkey": "miestamo-2005", "paperLabel": "p. 58, (6d)"},
+    "language": "nucl1301",
+    "primaryText": "gel-me-yecek",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["gel-me-yecek", "come-NEG-FUT"]
+    ],
+    "translation": "(S)he will not come.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["affirmative", "miestamo2005_p58_6c"]
+    ],
+    "comment": "Miestamo cites van Schaaik 1994: 38, 39 and Halman 1981: 64 for (6).",
+    "verified": "page-image"
+  },
+  {
+    "id": "miestamo2005_p62_13a",
+    "source": {"bibkey": "miestamo-2005", "paperLabel": "p. 62, (13a)"},
+    "reportedIn": null,
+    "language": "stan1290",
+    "primaryText": "jean vient",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["jean", "Jean"], ["vient", "come.3SG"]
+    ],
+    "translation": "Jean comes / is coming.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "miestamo2005_p62_13b",
+    "source": {"bibkey": "miestamo-2005", "paperLabel": "p. 62, (13b)"},
+    "reportedIn": null,
+    "language": "stan1290",
+    "primaryText": "jean ne vient pas",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["jean", "Jean"], ["ne", "NEG"], ["vient", "come.3SG"], ["pas", "NEG"]
+    ],
+    "translation": "Jean does not come / is not coming.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["affirmative", "miestamo2005_p62_13a"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "miestamo2005_p62_13c",
+    "source": {"bibkey": "miestamo-2005", "paperLabel": "p. 62, (13c)"},
+    "reportedIn": null,
+    "language": "stan1290",
+    "primaryText": "jean est ven-u",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["jean", "Jean"], ["est", "is"], ["ven-u", "come-PTCP"]
+    ],
+    "translation": "Jean came / has come.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "miestamo2005_p62_13d",
+    "source": {"bibkey": "miestamo-2005", "paperLabel": "p. 62, (13d)"},
+    "reportedIn": null,
+    "language": "stan1290",
+    "primaryText": "jean n'-est pas ven-u",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["jean", "Jean"], ["n'-est", "NEG-is"], ["pas", "NEG"], ["ven-u", "come-PTCP"]
+    ],
+    "translation": "Jean didn't/hasn't come.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["affirmative", "miestamo2005_p62_13c"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "miestamo2005_p64_15a_1sg_aff",
+    "source": {"bibkey": "miestamo-2005", "paperLabel": "p. 64, (15a) 1SG AFFIRMATIVE"},
+    "reportedIn": null,
+    "language": "ital1282",
+    "primaryText": "canto",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "",
+    "verified": "text-layer"
+  },
+  {
+    "id": "miestamo2005_p64_15a_1sg_neg",
+    "source": {"bibkey": "miestamo-2005", "paperLabel": "p. 64, (15a) 1SG NEGATIVE"},
+    "reportedIn": null,
+    "language": "ital1282",
+    "primaryText": "non canto",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["affirmative", "miestamo2005_p64_15a_1sg_aff"]
+    ],
+    "comment": "The first person singular of the paradigm, whose other cells are alike.",
+    "verified": "text-layer"
+  },
+  {
+    "id": "miestamo2005_p64_15b_1sg_aff",
+    "source": {"bibkey": "miestamo-2005", "paperLabel": "p. 64, (15b) 1SG AFFIRMATIVE"},
+    "reportedIn": null,
+    "language": "ital1282",
+    "primaryText": "canterò",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "",
+    "verified": "text-layer"
+  },
+  {
+    "id": "miestamo2005_p64_15b_1sg_neg",
+    "source": {"bibkey": "miestamo-2005", "paperLabel": "p. 64, (15b) 1SG NEGATIVE"},
+    "reportedIn": null,
+    "language": "ital1282",
+    "primaryText": "non canterò",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["affirmative", "miestamo2005_p64_15b_1sg_aff"]
+    ],
+    "comment": "The first person singular of the paradigm, whose other cells are alike.",
+    "verified": "text-layer"
+  },
+  {
+    "id": "miestamo2005_p64_15c_1sg_aff",
+    "source": {"bibkey": "miestamo-2005", "paperLabel": "p. 64, (15c) 1SG AFFIRMATIVE"},
+    "reportedIn": null,
+    "language": "ital1282",
+    "primaryText": "cantai",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "",
+    "verified": "text-layer"
+  },
+  {
+    "id": "miestamo2005_p64_15c_1sg_neg",
+    "source": {"bibkey": "miestamo-2005", "paperLabel": "p. 64, (15c) 1SG NEGATIVE"},
+    "reportedIn": null,
+    "language": "ital1282",
+    "primaryText": "non cantai",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["affirmative", "miestamo2005_p64_15c_1sg_aff"]
+    ],
+    "comment": "The first person singular of the paradigm, whose other cells are alike.",
+    "verified": "text-layer"
+  },
+  {
+    "id": "miestamo2005_p64_15d_1sg_aff",
+    "source": {"bibkey": "miestamo-2005", "paperLabel": "p. 64, (15d) 1SG AFFIRMATIVE"},
+    "reportedIn": null,
+    "language": "ital1282",
+    "primaryText": "ho cantato",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "",
+    "verified": "text-layer"
+  },
+  {
+    "id": "miestamo2005_p64_15d_1sg_neg",
+    "source": {"bibkey": "miestamo-2005", "paperLabel": "p. 64, (15d) 1SG NEGATIVE"},
+    "reportedIn": null,
+    "language": "ital1282",
+    "primaryText": "non ho cantato",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["affirmative", "miestamo2005_p64_15d_1sg_aff"]
+    ],
+    "comment": "The first person singular of the paradigm, whose other cells are alike.",
+    "verified": "text-layer"
+  },
+  {
+    "id": "miestamo2005_p76_28a",
+    "source": {"bibkey": "derbyshire-1979", "paperLabel": "p. 48"},
+    "reportedIn": {"bibkey": "miestamo-2005", "paperLabel": "p. 76, (28a)"},
+    "language": "hixk1239",
+    "primaryText": "kɨ-amryekɨ-no",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["kɨ-amryekɨ-no", "1SUBJ-hunt-IMPST"]
+    ],
+    "translation": "I went hunting.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "miestamo2005_p76_28b",
+    "source": {"bibkey": "derbyshire-1979", "paperLabel": "p. 48"},
+    "reportedIn": {"bibkey": "miestamo-2005", "paperLabel": "p. 76, (28b)"},
+    "language": "hixk1239",
+    "primaryText": "amryekɨ-hɨra w-ah-ko",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["amryekɨ-hɨra", "hunt-NEG"], ["w-ah-ko", "1SUBJ-be-IMPST"]
+    ],
+    "translation": "I did not go hunting.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["affirmative", "miestamo2005_p76_28a"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "miestamo2005_p76_28c",
+    "source": {"bibkey": "derbyshire-1979", "paperLabel": "p. 48"},
+    "reportedIn": {"bibkey": "miestamo-2005", "paperLabel": "p. 76, (28c)"},
+    "language": "hixk1239",
+    "primaryText": "koso w-ono-ye",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["koso", "deer"], ["w-ono-ye", "1SUBJ.3OBJ-eat-RMPST.CMPL"]
+    ],
+    "translation": "I ate the deer.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "miestamo2005_p76_28d",
+    "source": {"bibkey": "derbyshire-1979", "paperLabel": "p. 48"},
+    "reportedIn": {"bibkey": "miestamo-2005", "paperLabel": "p. 76, (28d)"},
+    "language": "hixk1239",
+    "primaryText": "koso y-ono-hra w-exe-ye",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["koso", "deer"], ["y-ono-hra", "3-eat-NEG"], ["w-exe-ye", "1SUBJ-be-RMPST.CMPL"]
+    ],
+    "translation": "I didn't eat the deer.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["affirmative", "miestamo2005_p76_28c"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "miestamo2005_p110_77a",
+    "source": {"bibkey": "miestamo-2005", "paperLabel": "p. 110, (77a)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "chris is dancing",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "",
+    "verified": "text-layer"
+  },
+  {
+    "id": "miestamo2005_p110_77b",
+    "source": {"bibkey": "miestamo-2005", "paperLabel": "p. 110, (77b)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "chris is not dancing",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["affirmative", "miestamo2005_p110_77a"]
+    ],
+    "comment": "",
+    "verified": "text-layer"
+  },
+  {
+    "id": "miestamo2005_p110_77c",
+    "source": {"bibkey": "miestamo-2005", "paperLabel": "p. 110, (77c)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "chris will dance",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "",
+    "verified": "text-layer"
+  },
+  {
+    "id": "miestamo2005_p110_77d",
+    "source": {"bibkey": "miestamo-2005", "paperLabel": "p. 110, (77d)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "chris will not dance",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["affirmative", "miestamo2005_p110_77c"]
+    ],
+    "comment": "",
+    "verified": "text-layer"
+  },
+  {
+    "id": "miestamo2005_p110_77e",
+    "source": {"bibkey": "miestamo-2005", "paperLabel": "p. 110, (77e)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "chris has danced",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "",
+    "verified": "text-layer"
+  },
+  {
+    "id": "miestamo2005_p110_77f",
+    "source": {"bibkey": "miestamo-2005", "paperLabel": "p. 110, (77f)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "chris has not danced",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["affirmative", "miestamo2005_p110_77e"]
+    ],
+    "comment": "",
+    "verified": "text-layer"
+  },
+  {
+    "id": "miestamo2005_p110_77g",
+    "source": {"bibkey": "miestamo-2005", "paperLabel": "p. 110, (77g)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "chris had danced",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "",
+    "verified": "text-layer"
+  },
+  {
+    "id": "miestamo2005_p110_77h",
+    "source": {"bibkey": "miestamo-2005", "paperLabel": "p. 110, (77h)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "chris had not danced",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["affirmative", "miestamo2005_p110_77g"]
+    ],
+    "comment": "",
+    "verified": "text-layer"
+  },
+  {
+    "id": "miestamo2005_p110_77i",
+    "source": {"bibkey": "miestamo-2005", "paperLabel": "p. 110, (77i)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "chris dances",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "",
+    "verified": "text-layer"
+  },
+  {
+    "id": "miestamo2005_p110_77j",
+    "source": {"bibkey": "miestamo-2005", "paperLabel": "p. 110, (77j)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "chris does dance",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "",
+    "verified": "text-layer"
+  },
+  {
+    "id": "miestamo2005_p110_77k",
+    "source": {"bibkey": "miestamo-2005", "paperLabel": "p. 110, (77k)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "chris does not dance",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["affirmative", "miestamo2005_p110_77i"],
+      ["affirmative", "miestamo2005_p110_77j"]
+    ],
+    "comment": "",
+    "verified": "text-layer"
+  },
+  {
+    "id": "miestamo2005_p110_77l",
+    "source": {"bibkey": "miestamo-2005", "paperLabel": "p. 110, (77l)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "chris danced",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "",
+    "verified": "text-layer"
+  },
+  {
+    "id": "miestamo2005_p110_77m",
+    "source": {"bibkey": "miestamo-2005", "paperLabel": "p. 110, (77m)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "chris did dance",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "",
+    "verified": "text-layer"
+  },
+  {
+    "id": "miestamo2005_p110_77n",
+    "source": {"bibkey": "miestamo-2005", "paperLabel": "p. 110, (77n)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "chris did not dance",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["affirmative", "miestamo2005_p110_77l"],
+      ["affirmative", "miestamo2005_p110_77m"]
+    ],
+    "comment": "",
+    "verified": "text-layer"
+  },
+  {
+    "id": "miestamo2005_p123_89a",
+    "source": {"bibkey": "cornyn-1944", "paperLabel": "pp. 12–13"},
+    "reportedIn": {"bibkey": "miestamo-2005", "paperLabel": "p. 123, (89a)"},
+    "language": "nucl1310",
+    "primaryText": "θwâ-dé",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["θwâ-dé", "go-ACT"]
+    ],
+    "translation": "(he) goes, went",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "miestamo2005_p123_89b",
+    "source": {"bibkey": "cornyn-1944", "paperLabel": "pp. 12–13"},
+    "reportedIn": {"bibkey": "miestamo-2005", "paperLabel": "p. 123, (89b)"},
+    "language": "nucl1310",
+    "primaryText": "θwâ-mé",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["θwâ-mé", "go-POT"]
+    ],
+    "translation": "(he) will go",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "miestamo2005_p123_89c",
+    "source": {"bibkey": "cornyn-1944", "paperLabel": "pp. 12–13"},
+    "reportedIn": {"bibkey": "miestamo-2005", "paperLabel": "p. 123, (89c)"},
+    "language": "nucl1310",
+    "primaryText": "θwâ-bí",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["θwâ-bí", "go-PERF"]
+    ],
+    "translation": "(he) has gone",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "miestamo2005_p123_89d",
+    "source": {"bibkey": "cornyn-1944", "paperLabel": "pp. 12–13"},
+    "reportedIn": {"bibkey": "miestamo-2005", "paperLabel": "p. 123, (89d)"},
+    "language": "nucl1310",
+    "primaryText": "ma-θwâ-bû",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["ma-θwâ-bû", "NEG-go-NEG"]
+    ],
+    "translation": "(he) does/did/will not go, has not gone",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["affirmative", "miestamo2005_p123_89a"],
+      ["affirmative", "miestamo2005_p123_89b"],
+      ["affirmative", "miestamo2005_p123_89c"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "miestamo2005_p294_112a",
+    "source": {"bibkey": "hinds-1988", "paperLabel": "pp. 99–100"},
+    "reportedIn": {"bibkey": "miestamo-2005", "paperLabel": "p. 294, (112a)"},
+    "language": "nucl1643",
+    "primaryText": "tabe-mas-u",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["tabe-mas-u", "eat-POL-NPST"]
+    ],
+    "translation": "I/you/[...] eat(s).",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "miestamo2005_p294_112b",
+    "source": {"bibkey": "hinds-1988", "paperLabel": "pp. 99–100"},
+    "reportedIn": {"bibkey": "miestamo-2005", "paperLabel": "p. 294, (112b)"},
+    "language": "nucl1643",
+    "primaryText": "tabe-mas-en",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["tabe-mas-en", "eat-POL-NEG"]
+    ],
+    "translation": "I/you/[...] do(es) not eat.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["affirmative", "miestamo2005_p294_112a"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "miestamo2005_p294_112c",
+    "source": {"bibkey": "hinds-1988", "paperLabel": "pp. 99–100"},
+    "reportedIn": {"bibkey": "miestamo-2005", "paperLabel": "p. 294, (112c)"},
+    "language": "nucl1643",
+    "primaryText": "tabe-mashi-ta",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["tabe-mashi-ta", "eat-POL-PST"]
+    ],
+    "translation": "I/you/[...] ate.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "miestamo2005_p294_112d",
+    "source": {"bibkey": "hinds-1988", "paperLabel": "pp. 99–100"},
+    "reportedIn": {"bibkey": "miestamo-2005", "paperLabel": "p. 294, (112d)"},
+    "language": "nucl1643",
+    "primaryText": "tabe-mas-en deshita",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["tabe-mas-en", "eat-POL-NEG"], ["deshita", "AUX.POL.PST"]
+    ],
+    "translation": "I/you/[...] did not eat.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["affirmative", "miestamo2005_p294_112c"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "miestamo2005_p294_112e",
+    "source": {"bibkey": "hinds-1988", "paperLabel": "pp. 99–100"},
+    "reportedIn": {"bibkey": "miestamo-2005", "paperLabel": "p. 294, (112e)"},
+    "language": "nucl1643",
+    "primaryText": "tabe-ru",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["tabe-ru", "eat-NPST"]
+    ],
+    "translation": "I/you/[...] eat(s).",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "miestamo2005_p294_112f",
+    "source": {"bibkey": "hinds-1988", "paperLabel": "pp. 99–100"},
+    "reportedIn": {"bibkey": "miestamo-2005", "paperLabel": "p. 294, (112f)"},
+    "language": "nucl1643",
+    "primaryText": "tabe-na-i",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["tabe-na-i", "eat-NEG-NPST"]
+    ],
+    "translation": "I/you/[...] do(es) not eat.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["affirmative", "miestamo2005_p294_112e"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "miestamo2005_p294_112g",
+    "source": {"bibkey": "hinds-1988", "paperLabel": "pp. 99–100"},
+    "reportedIn": {"bibkey": "miestamo-2005", "paperLabel": "p. 294, (112g)"},
+    "language": "nucl1643",
+    "primaryText": "tabe-ta",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["tabe-ta", "eat-PST"]
+    ],
+    "translation": "I/you/[...] ate.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "miestamo2005_p294_112h",
+    "source": {"bibkey": "hinds-1988", "paperLabel": "pp. 99–100"},
+    "reportedIn": {"bibkey": "miestamo-2005", "paperLabel": "p. 294, (112h)"},
+    "language": "nucl1643",
+    "primaryText": "tabe-na-katta",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["tabe-na-katta", "eat-NEG-PST"]
+    ],
+    "translation": "I/you/[...] did not eat.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["affirmative", "miestamo2005_p294_112g"]
+    ],
+    "comment": "The source glosses tabe-na-katta eat-NEG-NPST, evidently for eat-NEG-PST.",
+    "verified": "page-image"
+  },
+  {
+    "id": "miestamo2005_p318_170a",
+    "source": {"bibkey": "harlow-1996", "paperLabel": "p. 25"},
+    "reportedIn": {"bibkey": "miestamo-2005", "paperLabel": "p. 318, (170a)"},
+    "language": "maor1246",
+    "primaryText": "e haere ana ia",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["e", "PROG"], ["haere", "go"], ["ana", "PROG"], ["ia", "3SG"]
+    ],
+    "translation": "He is going.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "miestamo2005_p318_170b",
+    "source": {"bibkey": "harlow-1996", "paperLabel": "p. 25"},
+    "reportedIn": {"bibkey": "miestamo-2005", "paperLabel": "p. 318, (170b)"},
+    "language": "maor1246",
+    "primaryText": "kāore ia e haere ana",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["kāore", "NEG"], ["ia", "3SG"], ["e", "PROG"], ["haere", "go"], ["ana", "PROG"]
+    ],
+    "translation": "He is not going.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["affirmative", "miestamo2005_p318_170a"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "miestamo2005_p318_170c",
+    "source": {"bibkey": "harlow-1996", "paperLabel": "p. 25"},
+    "reportedIn": {"bibkey": "miestamo-2005", "paperLabel": "p. 318, (170c)"},
+    "language": "maor1246",
+    "primaryText": "i haere ia",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["i", "PST"], ["haere", "go"], ["ia", "3SG"]
+    ],
+    "translation": "He went.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "miestamo2005_p318_170d",
+    "source": {"bibkey": "harlow-1996", "paperLabel": "p. 25"},
+    "reportedIn": {"bibkey": "miestamo-2005", "paperLabel": "p. 318, (170d)"},
+    "language": "maor1246",
+    "primaryText": "kāore ia i haere",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["kāore", "NEG"], ["ia", "3SG"], ["i", "PST"], ["haere", "go"]
+    ],
+    "translation": "He did not go.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["affirmative", "miestamo2005_p318_170c"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "miestamo2005_p318_170e",
+    "source": {"bibkey": "harlow-1996", "paperLabel": "p. 25"},
+    "reportedIn": {"bibkey": "miestamo-2005", "paperLabel": "p. 318, (170e)"},
+    "language": "maor1246",
+    "primaryText": "kua haere ia",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["kua", "PERF"], ["haere", "go"], ["ia", "3SG"]
+    ],
+    "translation": "He has gone.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "miestamo2005_p318_170f",
+    "source": {"bibkey": "harlow-1996", "paperLabel": "p. 25"},
+    "reportedIn": {"bibkey": "miestamo-2005", "paperLabel": "p. 318, (170f)"},
+    "language": "maor1246",
+    "primaryText": "kāore anō ia kia haere",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["kāore", "NEG"], ["anō", "yet"], ["ia", "3SG"], ["kia", "PERF"], ["haere", "go"]
+    ],
+    "translation": "He has not gone (yet).",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["affirmative", "miestamo2005_p318_170e"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "miestamo2005_p341_224a",
+    "source": {"bibkey": "miestamo-2005", "paperLabel": "p. 341, (224a)"},
+    "reportedIn": null,
+    "language": "russ1263",
+    "primaryText": "ja govor-ju po-russkij",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["ja", "I"], ["govor-ju", "speak-1SG"], ["po-russkij", "in-Russian"]
+    ],
+    "translation": "I speak Russian.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "",
+    "verified": "text-layer"
+  },
+  {
+    "id": "miestamo2005_p341_224b",
+    "source": {"bibkey": "miestamo-2005", "paperLabel": "p. 341, (224b)"},
+    "reportedIn": null,
+    "language": "russ1263",
+    "primaryText": "ja ne govor-ju po-russkij",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["ja", "I"], ["ne", "NEG"], ["govor-ju", "speak-1SG"], ["po-russkij", "in-Russian"]
+    ],
+    "translation": "I don't speak Russian.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["affirmative", "miestamo2005_p341_224a"]
+    ],
+    "comment": "",
+    "verified": "text-layer"
+  },
+  {
+    "id": "miestamo2005_p353_260a",
+    "source": {"bibkey": "lewis-1967", "paperLabel": "pp. 118, 121"},
+    "reportedIn": {"bibkey": "miestamo-2005", "paperLabel": "p. 353, (260a)"},
+    "language": "nucl1301",
+    "primaryText": "gel-ir",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["gel-ir", "come-AOR"]
+    ],
+    "translation": "(S)he comes.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "miestamo2005_p353_260b",
+    "source": {"bibkey": "lewis-1967", "paperLabel": "pp. 118, 121"},
+    "reportedIn": {"bibkey": "miestamo-2005", "paperLabel": "p. 353, (260b)"},
+    "language": "nucl1301",
+    "primaryText": "gel-ir-im",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["gel-ir-im", "come-AOR-1SG"]
+    ],
+    "translation": "I come.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "miestamo2005_p353_260c",
+    "source": {"bibkey": "lewis-1967", "paperLabel": "pp. 118, 121"},
+    "reportedIn": {"bibkey": "miestamo-2005", "paperLabel": "p. 353, (260c)"},
+    "language": "nucl1301",
+    "primaryText": "gel-ir-ler",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["gel-ir-ler", "come-AOR-3PL"]
+    ],
+    "translation": "They come.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "miestamo2005_p353_260d",
+    "source": {"bibkey": "lewis-1967", "paperLabel": "pp. 118, 121"},
+    "reportedIn": {"bibkey": "miestamo-2005", "paperLabel": "p. 353, (260d)"},
+    "language": "nucl1301",
+    "primaryText": "gel-me-z",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["gel-me-z", "come-NEG-AOR"]
+    ],
+    "translation": "(S)he does not come.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["affirmative", "miestamo2005_p353_260a"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "miestamo2005_p353_260e",
+    "source": {"bibkey": "lewis-1967", "paperLabel": "pp. 118, 121"},
+    "reportedIn": {"bibkey": "miestamo-2005", "paperLabel": "p. 353, (260e)"},
+    "language": "nucl1301",
+    "primaryText": "gel-me-m",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["gel-me-m", "come-NEG-1SG"]
+    ],
+    "translation": "I do not come.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["affirmative", "miestamo2005_p353_260b"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "miestamo2005_p353_260f",
+    "source": {"bibkey": "lewis-1967", "paperLabel": "pp. 118, 121"},
+    "reportedIn": {"bibkey": "miestamo-2005", "paperLabel": "p. 353, (260f)"},
+    "language": "nucl1301",
+    "primaryText": "gel-me-z-ler",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["gel-me-z-ler", "come-NEG-AOR-3PL"]
+    ],
+    "translation": "They do not come.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["affirmative", "miestamo2005_p353_260c"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  }
+]

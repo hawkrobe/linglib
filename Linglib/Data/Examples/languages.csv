@@ -110,6 +110,7 @@ hebr1245,Modern Hebrew,hebr1245,heb,language,Eurasia,31.1056,35.0179
 hemb1242,Hemba-Yazi,hemb1242,hem,language,Africa,-7.77459,27.5913
 high1276,Highland Popoluca,high1276,poi,language,North America,18.198,-94.9109
 hind1269,Hindi,hind1269,hin,language,Eurasia,25.0,77.0
+hixk1239,Hixkaryána,hixk1239,hix,language,South America,-0.16265,-58.80153
 hoch1243,Ho-Chunk,hoch1243,win,language,North America,43.5,-88.5
 homs1234,Western Armenian,homs1234,hyw,language,Eurasia,40.1897,44.4839
 hopi1249,Hopi,hopi1249,hop,language,North America,35.7653,-110.535
@@ -119,6 +120,7 @@ huic1243,Huichol,huic1243,hch,language,North America,21.954,-104.062
 hung1274,Hungarian,hung1274,hun,language,Eurasia,46.9068585714,19.6555271429
 icel1247,Icelandic,icel1247,isl,language,Eurasia,63.4837,-19.0212
 ilok1237,Iloko,ilok1237,ilo,language,Papunesia,15.9361,120.993
+imba1240,Imbabura Highland Quichua,imba1240,qvi,language,South America,0.31776,-78.3729
 indo1316,Standard Indonesian,indo1316,ind,language,Papunesia,-7.33458,109.716
 iris1253,Irish,iris1253,gle,language,Eurasia,53.2186,-7.61509
 ishk1246,Ishkashimi,ishk1246,isk,language,Eurasia,36.67,71.55
@@ -190,6 +192,7 @@ mand1415,Mandarin Chinese,mand1415,cmn,language,Eurasia,40.0209,116.228
 mand1436,Mandinka,mand1436,mnk,language,Africa,12.8165233333,-15.6539466667
 mand1446,Mandan,mand1446,mhq,language,North America,46.83,-101.0
 mang1381,Mangarrayi,mang1381,mpc,language,Australia,-14.8,133.5
+maor1246,Maori,maor1246,mri,language,Papunesia,-38.2881,176.541
 mara1378,Marathi,mara1378,mar,language,Eurasia,17.9344,76.6665
 mara1404,Maranao,mara1404,mrw,language,Papunesia,7.79414,124.175
 mari1440,Maricopa,mari1440,mrc,language,North America,33.5123,-111.749
@@ -230,6 +233,7 @@ nucl1235,Eastern Armenian,nucl1235,hye,language,Eurasia,40.0,45.0
 nucl1301,Turkish,nucl1301,tur,language,Eurasia,39.8667,32.8667
 nucl1302,Georgian,nucl1302,kat,language,Eurasia,41.850397,43.78613
 nucl1305,Kannada,nucl1305,kan,language,Eurasia,13.5878,76.1198
+nucl1310,Burmese,nucl1310,mya,language,Eurasia,20.7926,93.9665
 nucl1347,Wolof,nucl1347,wol,language,Africa,15.2534,-15.383
 nucl1460,Madurese,nucl1460,mad,language,Papunesia,-7.0,113.0
 nucl1484,Nuclear Numee,nucl1484,,dialect,Papunesia,-22.2689,166.705
@@ -340,6 +344,7 @@ tojo1241,Tojolabal,tojo1241,toj,language,North America,16.2572,-91.7825
 tomm1242,Tommo So Dogon,tomm1242,dto,language,Africa,14.756,-3.28
 tonk1249,Tonkawa,tonk1249,tqw,language,North America,30.25,-96.75
 tswa1253,Tswana,tswa1253,tsn,language,Africa,-24.368,24.7587
+tuni1252,Tunica,tuni1252,tun,language,North America,30.9888,-92.5403
 tuni1259,Tunisian Arabic,tuni1259,aeb,language,Africa;Eurasia,33.7966,9.56156
 tupi1276,Tupi-Guarani,tupi1276,,family,South America,-9.37966500327941,-54.52997405616621
 turk1308,Turkana,turk1308,tuv,language,Africa,4.30688,35.7101

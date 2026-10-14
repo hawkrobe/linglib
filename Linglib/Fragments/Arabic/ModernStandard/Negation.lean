@@ -1,7 +1,6 @@
 module
 
 public import Linglib.Syntax.Negation
-public import Linglib.Fragments.Arabic.ModernStandard.Case
 public import Linglib.Fragments.Arabic.ModernStandard.Verbs
 
 /-!
@@ -18,25 +17,21 @@ clause a finite verb whose predicate is in the accusative.
 * `laa`, `lam`, `lan`, `maa`: the negative particles.
 * `laysa`, `laysaForms`: the negative verb *lays-a* and its forms by person, number and
   gender.
-* `verbal`, `equational`: affirmative clauses with their negatives.
 
 ## Implementation notes
 
-The verbal pairs are Benmamoun's, in his transliteration and hyphenation, except that the subject
-*ṭ-ṭullaab-u* 'the students' is left out and the future *sa-ya-ðhab-uun* is cut *-uu-n* like the
-present *ya-drus-uu-n*. The equational pairs are Ryding's; the article, pronounced *l-* after
-*lays-a*, is cited as *al-* in both members.
-
-Ryding gives *maa* only with a past-tense verb and finds it rare in writing. Benmamoun also gives
-it with a present-tense verb, and gives *lays-a* negating a present-tense verbal clause in free
-variation with *laa*.
+Benmamoun's verbal pairs and Ryding's equational pairs are rows of `Data.Examples.Benmamoun2000` and
+`Data.Examples.Ryding2005`. Ryding gives *maa* only with a past-tense verb and finds it rare in
+writing. Benmamoun also gives it with a present-tense verb, and gives *lays-a* negating a
+present-tense verbal clause in free variation with *laa*.
 
 ## TODO
 
 Benmamoun derives the distribution of the negatives from a single negative head: *lam* and *lan*
 are *laa* carrying past and future tense, and *lays-a* is *laa* carrying agreement. That analysis
-belongs in a study. An imperfective paradigm with its moods would let the moods the particles
-govern be read off the verb forms.
+belongs in a study, which would also check that each negative equational row of Ryding's begins
+with a form of `laysaForms`. An imperfective paradigm with its moods would let the moods the
+particles govern be read off the verb forms.
 
 ## References
 
@@ -93,31 +88,6 @@ example :
        [.root "las", .suff "tum"], [.root "las", .suff "tunna"], [.root "lays", .suff "uu"],
        [.root "las", .suff "na"]] ∧
     laysaForms.realize (.personNumber .first .dual) = none := by
-  decide
-
-/-- The pairs are the third person masculine plural of 'study' in the present and of 'go' in the
-past and the future, with their negatives ([benmamoun-2000] (1)–(3), pp. 94–95). -/
-def verbal : List Pair :=
-  [⟨laa, [.pref "ya", .root "drus", .suff "uu", .suff "n"],
-    laa.morphs ++ [.pref "ya", .root "drus", .suff "uu", .suff "n"]⟩,
-   ⟨lam, [.root "ðahab", .suff "uu"], lam.morphs ++ [.pref "ya", .root "ðhab", .suff "uu"]⟩,
-   ⟨lan, [.pref "sa", .pref "ya", .root "ðhab", .suff "uu", .suff "n"],
-    lan.morphs ++ [.pref "ya", .root "ðhab", .suff "uu"]⟩]
-
-/-- The verbless clauses *al-ʾustaadh-u muʾarrix-un* 'the professor is a historian' and *ʾanaa
-lubnaaniyyat-un* 'I am Lebanese (f.)' pair with negatives whose predicate is in the accusative
-([ryding-2005] pp. 642–643). -/
-def equational : List Pair :=
-  [⟨laysa, [.pref "al", .root "ʾustaadh", .suff (Declension.triptote .definite .nom),
-      .root "muʾarrix", .suff (Declension.triptote .indefinite .nom)],
-    [.root "lays", .suff "a",
-      .pref "al", .root "ʾustaadh", .suff (Declension.triptote .definite .nom),
-      .root "muʾarrix", .suff (Declension.triptote .indefinite .acc)]⟩,
-   ⟨laysa, [.free "ʾanaa", .root "lubnaaniyyat", .suff (Declension.triptote .indefinite .nom)],
-    [.root "las", .suff "tu", .root "lubnaaniyyat", .suff (Declension.triptote .indefinite .acc)]⟩]
-
-/-- Each negative of an equational pair begins with a form of *lays-a*. -/
-example : ∀ q ∈ equational, ∃ f ∈ laysaForms, q.negative.take 2 = f.2 := by
   decide
 
 end Arabic.ModernStandard.Negation

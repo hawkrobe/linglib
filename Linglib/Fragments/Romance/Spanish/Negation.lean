@@ -5,10 +5,11 @@ public import Linglib.Syntax.Negation
 /-!
 # Spanish negation
 
-Spanish negates a clause with the preverbal particle *no*, and nothing else in the clause
-changes: *canta-s* 'you sing', *no canta-s* 'you do not sing'. A preverbal n-word excludes *no*
-and a postverbal one requires it; the n-words are entered in
-`Fragments/Romance/Spanish/PolarityItems.lean`. The example is that of [miestamo-2005].
+Spanish negates a clause with the preverbal particle *no*, and nothing else in the clause changes:
+*canta-s* 'you sing', *no canta-s* 'you do not sing'. A preverbal n-word excludes *no* and a
+postverbal one requires it; the n-words are entered in
+`Fragments/Romance/Spanish/PolarityItems.lean`. Miestamo's examples are rows of
+`Data.Examples.Miestamo2005`.
 
 ## References
 
@@ -17,15 +18,14 @@ and a postverbal one requires it; the n-words are entered in
 
 @[expose] public section
 
-open Negation Morphology
+open Negation
 
 namespace Spanish.Negation
 
 /-- *no*, the standard negator. -/
 def no : Marker := { pieces := [[.free "no"]] }
 
-/-- *canta-s* 'you sing' and its negative. -/
-def pairs : List Pair :=
-  [⟨no, [.root "canta", .suff "s"], [.free "no", .root "canta", .suff "s"]⟩]
+/-- The standard negators. -/
+def standard : List Marker := [no]
 
 end Spanish.Negation
