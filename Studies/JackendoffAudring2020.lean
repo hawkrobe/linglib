@@ -87,10 +87,10 @@ variable and the feature type a closed one, whose fillers are learned pattern by
 
 /-- The pattern (18a) puts the name before the feature, with the name open and the feature
 closed. -/
-def toponymA : Schema (Fin 2) (Flat String) := ⟨λ _ => ⊥, {0}⟩
+def toponymA : Schema (Fin 2) (Flat String) := ⟨fun _ ↦ ⊥, {0}⟩
 
 /-- The pattern (18b) puts the feature before the name. -/
-def toponymB : Schema (Fin 2) (Flat String) := ⟨λ _ => ⊥, {1}⟩
+def toponymB : Schema (Fin 2) (Flat String) := ⟨fun _ ↦ ⊥, {1}⟩
 
 /-- The pattern (18d), *the* feature *of* name, has two constants, a closed feature and an
 open name. -/
@@ -113,16 +113,16 @@ def toponymsD : Set (Fin 4 → Flat String) :=
 /-- *Morris Mountain* is licensed by (18a), since the name is open and *Mountain* is
 attested. -/
 theorem morrisMountain_generates : toponymA.Generates toponymsA Forms.morrisMountain.slots :=
-  ⟨λ i => bot_le, λ i _ hi => by
+  ⟨fun i ↦ bot_le, fun i _ hi ↦ by
     fin_cases i
     · exact absurd (Set.mem_singleton _) hi
-    · exact ⟨Forms.loonMountain.slots, ⟨by simp [toponymsA], λ _ => bot_le⟩, by decide⟩⟩
+    · exact ⟨Forms.loonMountain.slots, ⟨by simp [toponymsA], fun _ ↦ bot_le⟩, by decide⟩⟩
 
 /-- *Mount Morris* is licensed by (18b) likewise. -/
 theorem mountMorris_generates : toponymB.Generates toponymsB Forms.mountMorris.slots :=
-  ⟨λ i => bot_le, λ i _ hi => by
+  ⟨fun i ↦ bot_le, fun i _ hi ↦ by
     fin_cases i
-    · exact ⟨Forms.mountEverest.slots, ⟨by simp [toponymsB], λ _ => bot_le⟩, by decide⟩
+    · exact ⟨Forms.mountEverest.slots, ⟨by simp [toponymsB], fun _ ↦ bot_le⟩, by decide⟩
     · exact absurd (Set.mem_singleton _) hi⟩
 
 /-- *Mountain Morris* is not licensed, since *Mountain* is not an attested feature of the
@@ -221,8 +221,8 @@ inductive AssassinateSlot
 /-- `assassinPair` presents the entries (41a) and (41b) with their coindices as one fully
 specified description over the shared variables. -/
 def assassinPair : Schema AssassinVar (Flat Part) :=
-  ⟨λ | .phon => ↑Part.asasin | .murder => ↑Part.murder | .person => ↑Part.person
-     | .ate => ↑Part.ate, ∅⟩
+  ⟨fun | .phon => ↑Part.asasin | .murder => ↑Part.murder | .person => ↑Part.person
+       | .ate => ↑Part.ate, ∅⟩
 
 /-- `assassinSub` subscripts the slots of *assassin* by the variables of (41). -/
 def assassinSub : AssassinSlot → AssassinVar
@@ -247,7 +247,7 @@ the predicate through their coindices. -/
 theorem assassin_pairs :
     assassinPair.InstantiatesAt (Sum.elim assassinSub assassinateSub)
       (Sum.elim assassin.body assassinate.body) :=
-  ⟨assassinPair.body, le_rfl, funext λ p => by rcases p with p | p <;> cases p <;> rfl⟩
+  ⟨assassinPair.body, le_rfl, funext fun p ↦ by rcases p with p | p <;> cases p <;> rfl⟩
 
 /-- The link is nondirectional, since the two entries paired in the opposite order also
 instantiate (41). -/
@@ -310,8 +310,8 @@ variable {B I : Type*}
 /-- `ismist` presents the *-ism* and *-ist* schemas of (47) with their coindices as one
 description, with the affixes and ADHERENT pinned and the base and the ideology open. -/
 def ismist : Schema IsmIstVar (Flat (Atom B I)) :=
-  ⟨λ | .ism => ↑(Atom.ism : Atom B I) | .ist => ↑(Atom.ist : Atom B I)
-     | .adherent => ↑(Atom.adherent : Atom B I) | _ => ⊥, {.base, .ideology}⟩
+  ⟨fun | .ism => ↑(Atom.ism : Atom B I) | .ist => ↑(Atom.ist : Atom B I)
+       | .adherent => ↑(Atom.adherent : Atom B I) | _ => ⊥, {.base, .ideology}⟩
 
 /-- `ismSub` subscripts the slots of the *-ism* schema by the variables of (47). -/
 def ismSub : IsmSlot → IsmIstVar
@@ -358,8 +358,8 @@ def ismistWord (b : B) (i : I) : IsmIstVar → Flat (Atom B I)
 paired instantiation of the sister schemas, *Trumpism* and *Trumpist* included. -/
 theorem ismist_pairs (b : B) (i : I) :
     ismist.InstantiatesAt (Sum.elim ismSub istSub) (Sum.elim (ismWord b i) (istWord b i)) :=
-  ⟨ismistWord b i, λ v => by cases v <;> first | exact bot_le | exact le_rfl,
-    funext λ p => by rcases p with p | p <;> cases p <;> rfl⟩
+  ⟨ismistWord b i, fun v ↦ by cases v <;> first | exact bot_le | exact le_rfl,
+    funext fun p ↦ by rcases p with p | p <;> cases p <;> rfl⟩
 
 /-! ### Ablaut as a link off the nucleus -/
 
@@ -383,7 +383,7 @@ def pastSub : Fin 3 → NucleusVar := ![.onset, .past, .coda]
 nuclei `v` and `w`, with `⊥` for an open nucleus. It is the shape of the ablaut schemas (25)
 and (26) and of the German present-tense schema (45). -/
 def nucleusPair (v w : Flat String) : Schema NucleusVar (Flat String) :=
-  ⟨λ | .stem => v | .past => w | _ => ⊥, {.onset, .coda}⟩
+  ⟨fun | .stem => v | .past => w | _ => ⊥, {.onset, .coda}⟩
 
 /-- The general ablaut schema (25) leaves both nuclei open. -/
 def ablaut : Schema NucleusVar (Flat String) := nucleusPair ⊥ ⊥
@@ -398,11 +398,11 @@ def stringStrung : Schema NucleusVar (Flat String) := nucleusPair ↑"ɪ" ↑"ʌ
 one. -/
 theorem comap_stemSub_instantiates_iff {v w : Flat String} {s : Fin 3 → Flat String} :
     ((nucleusPair v w).comap stemSub).Instantiates s ↔ v ≤ s 1 :=
-  ⟨λ h => h 1, λ h i => by fin_cases i <;> first | exact bot_le | exact h⟩
+  ⟨fun h ↦ h 1, fun h i ↦ by fin_cases i <;> first | exact bot_le | exact h⟩
 
 theorem comap_pastSub_instantiates_iff {v w : Flat String} {p : Fin 3 → Flat String} :
     ((nucleusPair v w).comap pastSub).Instantiates p ↔ w ≤ p 1 :=
-  ⟨λ h => h 1, λ h i => by fin_cases i <;> first | exact bot_le | exact h⟩
+  ⟨fun h ↦ h 1, fun h i ↦ by fin_cases i <;> first | exact bot_le | exact h⟩
 
 /-- A paired instantiation of a nucleus pair is a stem and a past that are the same except at
 the nucleus, with the pinned nuclei. -/
@@ -431,12 +431,12 @@ theorem contrast_of_nucleusPair {v w : String} (hvw : v ≠ w) {s p : Fin 3 → 
     Contrast s p {1} := by
   obtain ⟨hv, hw, hs⟩ := nucleusPair_iff.1 h
   rw [Flat.coe_le_iff] at hv hw
-  rw [contrast_iff_of_forall_isMax λ _ => Flat.isMax_of_ne_bot]
-  refine ⟨hs, λ q hq => ?_⟩
+  rw [contrast_iff_of_forall_isMax fun _ ↦ Flat.isMax_of_ne_bot]
+  refine ⟨hs, fun q hq ↦ ?_⟩
   rw [Set.mem_singleton_iff] at hq
   subst hq
   rw [hv, hw]
-  exact ⟨Flat.coe_ne_bot, Flat.coe_ne_bot, λ h => hvw (Flat.coe_injective h)⟩
+  exact ⟨Flat.coe_ne_bot, Flat.coe_ne_bot, fun h ↦ hvw (Flat.coe_injective h)⟩
 
 /-- Two syllables differing only in their nucleus are a paired instantiation of the subschema
 pinning those nuclei. -/
@@ -444,7 +444,7 @@ theorem syllable_pairs (o v w c : String) :
     (nucleusPair ↑v ↑w).InstantiatesAt (Sum.elim stemSub pastSub)
       (Sum.elim ![↑o, ↑v, ↑c] ![↑o, ↑w, ↑c]) := by
   rw [nucleusPair_iff]
-  refine ⟨le_rfl, le_rfl, λ q hq => ?_⟩
+  refine ⟨le_rfl, le_rfl, fun q hq ↦ ?_⟩
   fin_cases q <;> first | rfl | exact (hq rfl).elim
 
 /-- The pair *sing*/*sang*, (24), instantiates (26), *string*/*strung* instantiates its
@@ -568,7 +568,7 @@ as under the relational coindex 23 of (60), a shared morphosyntax and phonology 
 shared semantics. -/
 def SameVerb (l₁ l₂ : Lexeme) : Prop := ∀ σ, linkage.corr l₁ σ = linkage.corr l₂ σ
 
-instance : DecidableRel SameVerb := λ l₁ l₂ =>
+instance : DecidableRel SameVerb := fun l₁ l₂ ↦
   inferInstanceAs (Decidable (∀ σ, linkage.corr l₁ σ = linkage.corr l₂ σ))
 
 /-- Same verbs inflect alike at every cell, whatever their semantics, as in (57) to (61). -/
@@ -579,7 +579,7 @@ theorem realize_eq_of_sameVerb {W : Type*} [DecidableEq W] (rf : Pivot → Tense
 
 /-- Sameness of verb is nondirectional, so no use is the basic one, Section 3.6. -/
 theorem SameVerb.symm {l₁ l₂ : Lexeme} (h : SameVerb l₁ l₂) : SameVerb l₂ l₁ :=
-  λ σ => (h σ).symm
+  fun σ ↦ (h σ).symm
 
 /-- The two *draw*s, (60), *take* with *take part*, (58), and *withdraw* with *draw*, (62), are
 the same verb; the homophones *ring*, *wring* and *ring* 'encircle' are not. -/
@@ -643,7 +643,7 @@ theorem instantiates_ishSchema_iff {s : Schema (Fin 2) (Flat String)} :
   rw [ishSchema_body_eq_inf, Schema.instantiates_inf_iff, Schema.instantiates_inf_iff,
     and_assoc]
 
-theorem ishSchema_le_foolish : ishSchema.body ≤ Forms.foolish.slots := λ i => by
+theorem ishSchema_le_foolish : ishSchema.body ≤ Forms.foolish.slots := fun i ↦ by
   fin_cases i <;> decide
 
 /-- A newly encountered sister intersected with the schema yields the schema again, the
