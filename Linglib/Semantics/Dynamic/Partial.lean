@@ -53,6 +53,9 @@ dynamic conjunction, conditional, and disjunction
   (`supports_iff_isFixedPt`); `φ` entails `ψ` when every defined update with
   `φ` supports `ψ`, which is `Entails` of the extensions and holds exactly when
   sequencing `ψ` after `φ` changes nothing (`entails_bind_iff_seq_eq`)
+- `PartialUpdate.Presupposes` — `φ` presupposes `ψ` when every state admitting `φ` supports
+  `ψ`; negation, conjunction and the conditional project it, the second argument
+  conditionalised on the first (`PartialUpdate.Presupposes.seq_right`)
 - `CCP.Partial`, `ofPartialProp`, `neg`, `cond`, `disj` — Heim's partial CCPs
   ([heim-1983] gives CCPs for *not/and/if*; the disjunction clause with
   ¬φ local context follows [beaver-2001])
@@ -169,6 +172,23 @@ theorem entails_bind_iff : Entails [(· >>= φ)] (· >>= ψ) ↔ ∀ s, ∀ s' �
     refine ⟨fun ⟨s', hs', ht⟩ ↦ ?_, fun ht ↦ ⟨t, ht, h s t ht⟩⟩
     rw [supports_iff_eq_some.1 (h s s' hs'), Part.mem_some_iff] at ht
     exact ht ▸ hs'
+
+/-! ### Presupposition -/
+
+/-- `φ` presupposes `ψ` when every state admitting `φ` supports `ψ`. This is [heim-1983]'s
+presupposition when `ψ` is the update of a plain proposition (`presupposes_ofProp_iff`), and
+[beaver-2001]'s presupposition between sentences. -/
+def Presupposes (φ ψ : PartialUpdate α) : Prop := ∀ s, φ.Admits s → supports s ψ
+
+theorem supports.admits (h : supports s φ) : φ.Admits s := Part.dom_iff_mem.2 ⟨s, h⟩
+
+/-- Presupposition composes. -/
+theorem Presupposes.trans (h₁ : Presupposes φ ψ) (h₂ : Presupposes ψ χ) : Presupposes φ χ :=
+  fun s hs ↦ h₂ s (h₁ s hs).admits
+
+/-- A sequence presupposes what its first update presupposes. -/
+theorem Presupposes.seq_left (h : Presupposes φ ψ) : Presupposes (seq φ χ) ψ :=
+  fun s ⟨hs, _⟩ ↦ h s hs
 
 /-! ### The satisfaction law -/
 
@@ -301,6 +321,14 @@ def cond (φ ψ : CCP.Partial P) : CCP.Partial P :=
 def disj (φ ψ : CCP.Partial P) : CCP.Partial P :=
   fun s => (φ s).bind fun sφ => (ψ (s \ sφ)).map fun sψ => sφ ∪ sψ
 
+/-- The Heim conditional `if φ, ψ` is `not (φ and not ψ)`, the equivalence by which
+[beaver-2001] defines *implies*. -/
+theorem cond_eq_neg_seq_neg (φ ψ : CCP.Partial P) :
+    cond φ ψ = neg (PartialUpdate.seq φ (neg ψ)) := by
+  funext s
+  simp only [cond, neg, PartialUpdate.seq, PFun.comp_apply, Part.map_bind, Part.map_map]
+  rfl
+
 /-! ### Eliminativity -/
 
 theorem isEliminative_ofPartialProp (p : PartialProp W) :
@@ -411,6 +439,46 @@ theorem admits_neg_ofPartialProp (p : PartialProp W) (s : Set W) :
     (neg (ofPartialProp p)).Admits s ↔ ∀ w ∈ s, p.presup w :=
   Iff.rfl
 
+/-! ### Presupposition -/
+
+/-- An update presupposes a plain proposition iff every context admitting it entails the
+proposition, [heim-1983]'s definition of presupposition. -/
+theorem presupposes_ofProp_iff (φ : CCP.Partial W) (p : W → Prop) :
+    PartialUpdate.Presupposes φ (ofPartialProp (.ofProp p)) ↔ ∀ c, φ.Admits c → ∀ w ∈ c, p w :=
+  forall₂_congr fun c _ ↦ (mem_ofPartialProp_self _ c).trans
+    ⟨fun h ↦ h.2, fun h ↦ ⟨fun _ _ ↦ trivial, h⟩⟩
+
+/-- An atomic update presupposes its presupposition. -/
+theorem presupposes_ofPartialProp (p : PartialProp W) :
+    PartialUpdate.Presupposes (ofPartialProp p) (ofPartialProp (.ofProp p.presup)) :=
+  (presupposes_ofProp_iff _ _).2 fun _ h ↦ h
+
 end CCP.Partial
+
+/-! ### Projection
+
+Negation and the first argument of the conjunction and the conditional pass a presupposition
+on unchanged; the second argument passes it on conditionalised on the first. -/
+
+namespace PartialUpdate.Presupposes
+
+variable {P : Type*} {φ ψ χ : CCP.Partial P}
+
+theorem neg (h : Presupposes φ ψ) : Presupposes (CCP.Partial.neg φ) ψ := h
+
+theorem cond_left (h : Presupposes φ ψ) : Presupposes (CCP.Partial.cond φ χ) ψ :=
+  fun s ⟨hs, _⟩ ↦ h s hs
+
+/-- A presupposition of the second conjunct projects conditionalised on the first. -/
+theorem seq_right (h : Presupposes φ ψ) : Presupposes (seq χ φ) (CCP.Partial.cond χ ψ) := by
+  rintro s ⟨hχ, hφ⟩
+  exact Part.mem_bind_iff.2 ⟨_, Part.get_mem hχ, (Part.mem_map_iff _).2 ⟨_, h _ hφ, by simp⟩⟩
+
+/-- A presupposition of the consequent projects conditionalised on the antecedent. -/
+theorem cond_right (h : Presupposes φ ψ) :
+    Presupposes (CCP.Partial.cond χ φ) (CCP.Partial.cond χ ψ) :=
+  fun s hs ↦ h.seq_right s hs
+
+end PartialUpdate.Presupposes
 
 end DynamicSemantics
