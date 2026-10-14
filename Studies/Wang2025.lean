@@ -4,6 +4,7 @@ public import Linglib.Fragments.Mandarin.Adverbs
 public import Linglib.Fragments.Mandarin.Verbs
 public import Linglib.Semantics.Presupposition.Verb
 public import Linglib.Semantics.Presupposition.Iterative
+public import Linglib.Semantics.Aspect.Phasal
 public import Mathlib.Data.Finset.Powerset
 public import Mathlib.Data.Set.Lattice.Bounded
 public import Mathlib.Data.Fintype.Prod
@@ -19,9 +20,9 @@ alternative, a sentence with the same assertion that is obtained by deleting or 
 trigger. Three constraints decide the competition, ranked in this order. Internal Coherence
 requires the utterance to be consistent with the common ground, Felicity Presupposition requires
 a presupposition to be entailed by it, and Maximize Presupposition, after Heim, bars a form
-where a presuppositionally stronger alternative is usable. An utterance commits the speaker to a
-set of information states and a context admits a set of them, so coherence is overlap, and the
-context entails a proposition when every state it admits believes the proposition.
+that has a presuppositionally stronger alternative. An utterance commits the speaker to a set of
+information states and a context admits a set of them, so coherence is overlap, and the context
+entails a proposition when every state it admits believes the proposition.
 
 ## Main statements
 
@@ -30,19 +31,26 @@ context entails a proposition when every state it admits believes the propositio
 * `obligatory_of_positive_evidence`, `omitted_of_denied`, `omitted_of_ignorance`: against the
   exhaustified alternative the trigger is obligatory under positive evidence for the
   presupposition, and dropped where the context denies it or the speaker is ignorant of it.
-* `exhIE_eq_exhMx_of_unique`, `disjunction_two_maxima`: exhaustification by a maximal consistent
-  subset of the alternatives agrees with innocent exclusion when that subset is unique, and a
-  disjunction has two, the source of the optionality of the change-of-state triggers.
+* `presup_beats_of_mp_over_fp`: were Maximize Presupposition ranked above Felicity
+  Presupposition, every trigger with an alternative would be obligatory.
+* `notNow_two_maxima`, `optional_of_two_readings`: the alternative of *buzai* 'no longer' has two
+  exhaustified readings, and the trigger is optional because it loses on one and wins on the
+  other.
 
 ## Implementation notes
 
 * Information states are nonempty sets of worlds; the belief operator `K p` is the set of
   states included in `p`, and possibility and ignorance are the corresponding overlap
   conditions.
-* The experiments of Chapters 3 and 5 and the de re and postsupposition analyses of Chapters
-  5 and 6 are not represented.
-* `Trigger` lists the lexical rows of Table 4.1; its cleft row is a construction without a
-  lexical entry and is not represented.
+* Maximize Presupposition is blocking, `Alternatives.Blocked`. A sentence without a
+  presupposition violates it in every context, as in the dissertation's tableaux, and its rank
+  below Felicity Presupposition confines its effect to contexts that entail the presupposition.
+* The aspectual triggers take their meanings from `Presupposition.again` and
+  `Aspect.Phasal.denote`, with the earlier time, a free variable of the dissertation's entries,
+  existentially closed.
+* `Trigger` lists the lexical rows of Table 4.1 without its cleft row. The experiments of
+  Chapters 3 and 5 and the de re and postsupposition analyses of Chapters 5 and 6 are not
+  represented.
 
 ## References
 
@@ -122,25 +130,22 @@ theorem Candidate.admits_ssubset_univ {c : Candidate W} {p : Set W} (h : c.presu
   have hmem : ({∅} : Set (Set W)) ∈ {ctx | ctx ⊆ K p} := by rw [huniv]; trivial
   exact (hmem (Set.mem_singleton _)).1.ne_empty rfl
 
-/-- Maximize Presupposition is violated by a candidate without a presupposition at a context
-where its rival blocks it, (3c). -/
-def ViolMP (ctx : Set (Set W)) (rival c : Candidate W) : Prop :=
-  c.presup = none ∧ ctx ∉ Alternatives.unblocked (fun _ ↦ {rival}) Candidate.admits c
+/-- Maximize Presupposition is violated by a candidate that its rival blocks, the rival being
+presuppositionally stronger, admitted by strictly fewer contexts, (3c). -/
+def ViolMP (rival c : Candidate W) : Prop :=
+  Alternatives.Blocked (fun _ ↦ {rival}) Candidate.admits c
 
-/-- A plain candidate violates Maximize Presupposition exactly when the context entails its
-rival's presupposition. -/
-theorem violMP_iff {ctx : Set (Set W)} {rival c : Candidate W} :
-    ViolMP ctx rival c ↔ c.presup = none ∧ ∃ p, rival.presup = some p ∧ ctx ⊆ K p := by
-  refine and_congr_right fun hc ↦ ?_
-  rw [Alternatives.mem_unblocked_iff, Candidate.admits_of_presup_none hc]
-  simp only [Set.mem_univ, true_and, Set.mem_singleton_iff, forall_eq, not_forall, not_not]
-  constructor
-  · rintro ⟨hctx, hss⟩
-    rcases hr : rival.presup with _ | p
-    · rw [Candidate.admits_of_presup_none hr] at hss; exact absurd rfl hss.ne
-    · exact ⟨p, rfl, by rwa [Candidate.admits_of_presup_some hr] at hctx⟩
-  · rintro ⟨p, hp, hctx⟩
-    exact ⟨(Candidate.admits_of_presup_some hp).symm ▸ hctx, Candidate.admits_ssubset_univ hp⟩
+theorem violMP_iff {rival c : Candidate W} : ViolMP rival c ↔ rival.admits ⊂ c.admits :=
+  ⟨fun ⟨_, h, hss⟩ ↦ h ▸ hss, fun h ↦ ⟨rival, rfl, h⟩⟩
+
+/-- A candidate without a presupposition violates Maximize Presupposition against a
+presuppositional rival, whatever the context. -/
+theorem violMP_of_presup_none {rival c : Candidate W} {p : Set W} (hc : c.presup = none)
+    (hr : rival.presup = some p) : ViolMP rival c :=
+  violMP_iff.2 (Candidate.admits_of_presup_none hc ▸ Candidate.admits_ssubset_univ hr)
+
+theorem not_violMP_self (c : Candidate W) : ¬ ViolMP c c :=
+  fun h ↦ (violMP_iff.1 h).ne rfl
 
 /-- `Beats cs a b` compares two candidates by strict domination along the list `cs` of violation
 predicates, `a` beating `b` at the first constraint on which they differ. -/
@@ -151,7 +156,7 @@ def Beats : List (Candidate W → Prop) → Candidate W → Candidate W → Prop
 /-- The ranking Internal Coherence ≫ Felicity Presupposition ≫ Maximize Presupposition,
 evaluated for the competition between `sp` and its alternative. -/
 def ranking (ctx : Set (Set W)) (sp : Candidate W) : List (Candidate W → Prop) :=
-  [ViolIC ctx, ViolFP ctx, ViolMP ctx sp]
+  [ViolIC ctx, ViolFP ctx, ViolMP sp]
 
 /-- A presuppositional sentence violates Felicity Presupposition exactly when the context does
 not entail its presupposition. A trigger without an alternative, such as *jiu* 'only', enters no
@@ -186,12 +191,20 @@ theorem presup_beats_of_entailed {ctx : Set (Set W)} {p a : Set W} {c : Candidat
   Or.inr ⟨⟨fun h ↦ absurd h hsp, fun h ↦ absurd h hc⟩,
     Or.inr ⟨⟨fun ⟨q, hq, hnq⟩ ↦ absurd hp (Option.some.inj hq ▸ hnq), fun ⟨q, hq, _⟩ ↦ by
       simp [hc0] at hq⟩,
-      Or.inl ⟨fun h ↦ absurd h.1 (by simp [presupSentence]), violMP_iff.2 ⟨hc0, p, rfl, hp⟩⟩⟩⟩
+      Or.inl ⟨not_violMP_self _, violMP_of_presup_none hc0 rfl⟩⟩⟩
+
+/-! ### Felicity Presupposition above Maximize Presupposition -/
+
+/-- Were Maximize Presupposition ranked above Felicity Presupposition, a coherent
+presuppositional sentence would beat a coherent alternative whatever the context entails, so
+every trigger with an alternative would be obligatory. -/
+theorem presup_beats_of_mp_over_fp {ctx : Set (Set W)} {p a : Set W} {c : Candidate W}
+    (hc0 : c.presup = none) (hsp : ¬ Disjoint ctx (K (p ∩ a))) (hc : ¬ Disjoint ctx c.commitment) :
+    Beats [ViolIC ctx, ViolMP (presupSentence p a), ViolFP ctx] (presupSentence p a) c :=
+  Or.inr ⟨⟨fun h ↦ absurd h hsp, fun h ↦ absurd h hc⟩,
+    Or.inl ⟨not_violMP_self _, violMP_of_presup_none hc0 rfl⟩⟩
 
 /-! ### The tableaux -/
-
-private theorem K_inter_subset {p a : Set W} : K (p ∩ a) ⊆ K p :=
-  fun _ ⟨hne, hs⟩ ↦ ⟨hne, hs.trans Set.inter_subset_left⟩
 
 /-- In Table 4.2 the context entails the presupposition, so the trigger is obligatory. -/
 theorem obligatory_of_entailed {ctx : Set (Set W)} {p a : Set W} (hp : ctx ⊆ K p)
@@ -255,81 +268,33 @@ theorem omitted_of_ignorance {ctx : Set (Set W)} {p a : Set W} (hign : ctx ⊆ I
     obtain ⟨-, ⟨u, hu, hup⟩⟩ := hign ht
     exact hup (htp hu).1
 
-/-! ### The repetitive adverbs
+/-- In Tables 4.7 and 4.9 the context gives positive evidence for the presupposition without
+entailing it, and the alternative has two exhaustified readings. Exhaustified against the
+failure of the presupposition, so that it conveys that the presupposition holds, the alternative
+wins. Exhaustified against the presupposition, it loses, so the trigger is optional. -/
+theorem optional_of_two_readings {ctx : Set (Set W)} {p a : Set W} (hposs : ctx ⊆ Poss p)
+    (hp : ¬ ctx ⊆ K p) (hwit : ∃ s ∈ ctx, s.Nonempty ∧ s ⊆ p ∩ a) :
+    Beats (ranking ctx (presupSentence p a)) (plainExhBelowK a pᶜ) (presupSentence p a) ∧
+      Beats (ranking ctx (presupSentence p a)) (presupSentence p a) (plainExhBelowK a p) := by
+  refine ⟨?_, obligatory_of_positive_evidence hposs hwit⟩
+  obtain ⟨s, hs, hne, hsa⟩ := hwit
+  refine plain_beats_of_not_entailed rfl (Set.not_disjoint_iff.mpr ⟨s, hs, hne, hsa⟩) ?_ hp
+  exact Set.not_disjoint_iff.mpr ⟨s, hs, hne, fun w hw ↦ ⟨(hsa hw).2, not_not_intro (hsa hw).1⟩⟩
 
-*You* and *zai* 'again' assert their prejacent, so deleting the adverb leaves a sentence with the
-same assertion, the alternative that (1) requires. The tableaux for the presuppositional sentence
-and its deletion alternative are then those of Tables 4.2 and 4.3, with the presupposition that
-the prejacent held of an earlier eventuality. -/
-
-section Again
-
-open Presupposition ModalLogic
-
-/-- The candidate for a sentence with the partial meaning `φ` commits the speaker to its
-presupposition and its assertion. -/
-def Candidate.ofPartialProp (φ : PartialProp W) : Candidate W :=
-  presupSentence {w | φ.presup w} {w | φ.assertion w}
-
-variable {R : SetRel W W} {P : W → Prop} {ctx : Set (Set W)}
-
-/-- A sentence with *again* is obligatory, against the sentence without it, when the context
-entails that its prejacent held before. -/
-theorem again_obligatory_of_entailed (hp : ctx ⊆ K {e | ◇[R] P e})
-    (hwit : ∃ s ∈ ctx, s ⊆ {e | P e}) :
-    Beats (ranking ctx (.ofPartialProp (again R P))) (.ofPartialProp (again R P))
-      (plain {e | P e}) :=
-  obligatory_of_entailed hp hwit
-
-/-- A sentence with *again* loses to the sentence without it when the context does not entail
-that its prejacent held before. -/
-theorem again_omitted_of_not_entailed (hp : ¬ ctx ⊆ K {e | ◇[R] P e})
-    (hwit : ∃ s ∈ ctx, s.Nonempty ∧ s ⊆ {e | ◇[R] P e} ∩ {e | P e}) :
-    Beats (ranking ctx (.ofPartialProp (again R P))) (plain {e | P e})
-      (.ofPartialProp (again R P)) :=
-  omitted_of_not_entailed hp hwit
-
-end Again
-
-/-! ### Exhaustification by maximal consistent subsets, (20) and (24) -/
-
-variable [DecidableEq W]
-
-/-- The reading of (24) for the maximal subset `M` is `φ` with every member of `M` negated. -/
-def exhMx (φ : Finset W) (M : Finset (Finset W)) : Finset W :=
-  φ.filter (fun w ↦ ∀ q ∈ M, w ∉ q)
-
-open Exhaustification in
-/-- When the maximal consistent subset is unique, innocent exclusion, the operator of (20), and
-the operator of (24) agree, (25). -/
-theorem exhIE_eq_exhMx_of_unique {φ : Finset W} {alts M₀ : Finset (Finset W)}
-    (h₀ : IsMaximalExclusion alts φ M₀) (huniq : ∀ M, IsMaximalExclusion alts φ M → M = M₀) :
-    exhIE (asSetOfSets alts) ↑φ = ↑(exhMx φ M₀) := by
-  rw [exhIE_eq_sdiff_of_maximal_unique _ _ (isMaximalExclusion_iff.1 h₀) fun X hX ↦ ?_]
-  · ext w
-    simp [exhMx, mem_asSetOfSets]
-  · obtain ⟨M, -, rfl⟩ := exists_asSetOfSets_eq hX.prop.1
-    rw [huniq M (isMaximalExclusion_iff.2 hX)]
-
-/-- The worlds of the disjunction example (26) are the pairs of truth values of `p` and `q`. -/
-abbrev PQ := Bool × Bool
-
-/-- The alternative `p` of (26). -/
-def pAlt : Finset PQ := Finset.univ.filter (·.1 = true)
-
-/-- The alternative `q` of (26). -/
-def qAlt : Finset PQ := Finset.univ.filter (·.2 = true)
-
-/-- The disjunction `p ∨ q` with the alternatives `p`, `q` and `p ∧ q`, (26), has two maximal
-consistent subsets, yielding the readings `q ∧ ¬p` and `p ∧ ¬q`. -/
-theorem disjunction_two_maxima :
-    Exhaustification.IsMaximalExclusion {pAlt, qAlt, pAlt ∩ qAlt} (pAlt ∪ qAlt)
-        {pAlt, pAlt ∩ qAlt} ∧
-      Exhaustification.IsMaximalExclusion {pAlt, qAlt, pAlt ∩ qAlt} (pAlt ∪ qAlt)
-        {qAlt, pAlt ∩ qAlt} ∧
-      exhMx (pAlt ∪ qAlt) {pAlt, pAlt ∩ qAlt} = qAlt \ pAlt ∧
-      exhMx (pAlt ∪ qAlt) {qAlt, pAlt ∩ qAlt} = pAlt \ qAlt := by
-  decide
+/-- In Tables 4.8 and 4.10 the context entails the presupposition, and the trigger wins on both
+readings of the alternative. -/
+theorem obligatory_of_entailed_of_two_readings {ctx : Set (Set W)} {p a : Set W}
+    (hp : ctx ⊆ K p) (hwit : ∃ s ∈ ctx, s ⊆ a) :
+    Beats (ranking ctx (presupSentence p a)) (presupSentence p a) (plainExhBelowK a pᶜ) ∧
+      Beats (ranking ctx (presupSentence p a)) (presupSentence p a) (plainExhBelowK a p) := by
+  obtain ⟨s, hs, hsa⟩ := hwit
+  obtain ⟨hne, hsp⟩ := hp hs
+  have hspa : s ⊆ p ∩ a := Set.subset_inter hsp hsa
+  refine ⟨presup_beats_of_entailed rfl (Set.not_disjoint_iff.mpr ⟨s, hs, hne, hspa⟩) ?_ hp,
+    obligatory_of_positive_evidence (fun t ht ↦ ?_) ⟨s, hs, hne, hspa⟩⟩
+  · exact Set.not_disjoint_iff.mpr ⟨s, hs, hne, fun w hw ↦ ⟨hsa hw, not_not_intro (hsp hw)⟩⟩
+  · obtain ⟨⟨w, hw⟩, htp⟩ := hp ht
+    exact ⟨w, hw, htp hw⟩
 
 /-! ### The alternative structure of the triggers, Table 4.1 -/
 
@@ -387,5 +352,132 @@ theorem isTrigger_of_entry {t : Trigger} {v : Mandarin.Verb} (h : t.entry = .inr
 /-- The replacement for *zhidao* is non-presuppositional, as (1) requires, since *renwei*
 'believe' is not a trigger. -/
 theorem not_isTrigger_renwei : ¬ Mandarin.renwei.IsTrigger := by decide
+
+/-! ### The aspectual triggers
+
+The repetitive *you* and *zai*, (12), the continuative *reng*, (24), the inchoative *kaishi*,
+(38), and the cessative *buzai*, (19), relate their prejacent at the index of evaluation to the
+prejacent at an earlier index, presupposing that it held or failed then and asserting that it
+holds or fails now. -/
+
+section Aspectual
+
+open Presupposition ModalLogic Aspect
+
+/-- The candidate for a sentence with the partial meaning `φ` commits the speaker to its
+presupposition and its assertion. -/
+def Candidate.ofPartialProp (φ : PartialProp W) : Candidate W :=
+  presupSentence {w | φ.presup w} {w | φ.assertion w}
+
+variable {R S : SetRel W W} {P : W → Prop} {ctx : Set (Set W)} {t : Trigger} {φ : PartialProp W}
+
+/-- The meaning of an aspectual trigger with the prejacent `P`. `R` relates an index to the
+earlier ones, the `<` of (12), and `S` relates an index to the earlier index of (19), (24) and
+(38), a relation the dissertation writes `∞`. The meaning of *kaishi* is that of the phasal class
+of its fragment entry, and the other triggers of Table 4.1 are not aspectual. -/
+def Trigger.aspectual (R S : SetRel W W) (P : W → Prop) : Trigger → Option (PartialProp W)
+  | .you | .zai => some (again R P)
+  | .reng => some (Phasal.continuation.denote S P)
+  | .buzai => some (Phasal.cessation.denote S P)
+  | .kaishi => Mandarin.kaishi.phasal.map (·.denote S P)
+  | _ => none
+
+/-- An aspectual trigger whose alternative is obtained by deletion asserts its prejacent, so the
+sentence without the trigger makes the same assertion, as (1) requires of the alternative. -/
+theorem assertion_eq_of_altStructure_deletion (h : t.aspectual R S P = some φ)
+    (ht : t.altStructure = .deletion) : φ.assertion = P := by
+  cases t <;> first | (cases h; rfl) | (cases h; done) | cases ht
+
+/-- *Buzai* asserts the negation of its prejacent, so its alternative replaces it by negation. -/
+theorem assertion_buzai (h : Trigger.buzai.aspectual R S P = some φ) :
+    φ.assertion = fun w ↦ ¬ P w := by
+  cases h; rfl
+
+/-- A sentence with an aspectual trigger that asserts its prejacent is obligatory, against the
+sentence without the trigger, when the context entails its presupposition, as in Table 4.2. -/
+theorem aspectual_obligatory_of_entailed (h : t.aspectual R S P = some φ)
+    (ht : t.altStructure = .deletion) (hp : ctx ⊆ K {w | φ.presup w})
+    (hwit : ∃ s ∈ ctx, s ⊆ {w | P w}) :
+    Beats (ranking ctx (.ofPartialProp φ)) (.ofPartialProp φ) (plain {w | P w}) := by
+  obtain rfl := assertion_eq_of_altStructure_deletion h ht
+  exact obligatory_of_entailed hp hwit
+
+/-- A sentence with an aspectual trigger that asserts its prejacent loses to the sentence without
+the trigger when the context does not entail its presupposition, as in Table 4.3. -/
+theorem aspectual_omitted_of_not_entailed (h : t.aspectual R S P = some φ)
+    (ht : t.altStructure = .deletion) (hp : ¬ ctx ⊆ K {w | φ.presup w})
+    (hwit : ∃ s ∈ ctx, s.Nonempty ∧ s ⊆ {w | φ.presup w} ∩ {w | P w}) :
+    Beats (ranking ctx (.ofPartialProp φ)) (plain {w | P w}) (.ofPartialProp φ) := by
+  obtain rfl := assertion_eq_of_altStructure_deletion h ht
+  exact omitted_of_not_entailed hp hwit
+
+end Aspectual
+
+/-! ### Exhaustification by maximal consistent subsets, (20) and (24) -/
+
+section Exhaustification
+
+variable [DecidableEq W]
+
+/-- The reading of (24) for the maximal subset `M` is `φ` with every member of `M` negated. -/
+def exhMx (φ : Finset W) (M : Finset (Finset W)) : Finset W :=
+  φ.filter (fun w ↦ ∀ q ∈ M, w ∉ q)
+
+open Exhaustification in
+/-- When the maximal consistent subset is unique, innocent exclusion, the operator of (20), and
+the operator of (24) agree, (25). -/
+theorem exhIE_eq_exhMx_of_unique {φ : Finset W} {alts M₀ : Finset (Finset W)}
+    (h₀ : IsMaximalExclusion alts φ M₀) (huniq : ∀ M, IsMaximalExclusion alts φ M → M = M₀) :
+    exhIE (asSetOfSets alts) ↑φ = ↑(exhMx φ M₀) := by
+  rw [exhIE_eq_sdiff_of_maximal_unique _ _ (isMaximalExclusion_iff.1 h₀) fun X hX ↦ ?_]
+  · ext w
+    simp [exhMx, mem_asSetOfSets]
+  · obtain ⟨M, -, rfl⟩ := exists_asSetOfSets_eq hX.prop.1
+    rw [huniq M (isMaximalExclusion_iff.2 hX)]
+
+/-- The worlds of the disjunction example (26) are the pairs of truth values of `p` and `q`. -/
+abbrev PQ := Bool × Bool
+
+/-- The alternative `p` of (26). -/
+def pAlt : Finset PQ := Finset.univ.filter (·.1 = true)
+
+/-- The alternative `q` of (26). -/
+def qAlt : Finset PQ := Finset.univ.filter (·.2 = true)
+
+/-- The disjunction `p ∨ q` with the alternatives `p`, `q` and `p ∧ q`, (26), has two maximal
+consistent subsets, yielding the readings `q ∧ ¬p` and `p ∧ ¬q`. -/
+theorem disjunction_two_maxima :
+    Exhaustification.IsMaximalExclusion {pAlt, qAlt, pAlt ∩ qAlt} (pAlt ∪ qAlt)
+        {pAlt, pAlt ∩ qAlt} ∧
+      Exhaustification.IsMaximalExclusion {pAlt, qAlt, pAlt ∩ qAlt} (pAlt ∪ qAlt)
+        {qAlt, pAlt ∩ qAlt} ∧
+      exhMx (pAlt ∪ qAlt) {pAlt, pAlt ∩ qAlt} = qAlt \ pAlt ∧
+      exhMx (pAlt ∪ qAlt) {qAlt, pAlt ∩ qAlt} = pAlt \ qAlt := by
+  decide
+
+/-- The cell of (48) in which the state held in the past iff `past` and holds now iff `now`, a
+world being the pair of the two truth values. -/
+def cell (past now : Bool) : Finset PQ := {(past, now)}
+
+/-- The alternatives of (48), the four cells. -/
+def cells : Finset (Finset PQ) :=
+  {cell false true, cell true false, cell true true, cell false false}
+
+/-- The prejacent of (46), that the state does not hold now, the alternative of a sentence with
+*buzai* 'no longer'. -/
+def notNow : Finset PQ := Finset.univ.filter (·.2 = false)
+
+/-- The alternative of *buzai* has the two maximal consistent subsets of (49), on which it means
+that the state held in the past and that it did not. -/
+theorem notNow_two_maxima :
+    Exhaustification.IsMaximalExclusion cells notNow
+        {cell false true, cell true true, cell false false} ∧
+      Exhaustification.IsMaximalExclusion cells notNow
+        {cell false true, cell true false, cell true true} ∧
+      exhMx notNow {cell false true, cell true true, cell false false} = cell true false ∧
+      exhMx notNow {cell false true, cell true false, cell true true} = cell false false := by
+  decide
+
+end Exhaustification
 
 end Wang2025
