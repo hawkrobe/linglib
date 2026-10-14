@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Core.ModelTheory.Factor
-public import Linglib.Phonology.Subregular.StrictlyLocal
+public import Linglib.Phonology.Subregular.TierStrictlyLocal
 public import Linglib.Phonology.Subregular.StrictlyPiecewise
 public import Mathlib.Data.Finset.Sort
 public import Mathlib.Data.List.NodupEquivFin
@@ -19,7 +19,10 @@ occurs in the subsequence its occurrence picks out, and a subsequence is itself 
 positive diagram, so the strictly local sets are the strictly piecewise stringsets. Under
 successor, the covering relation of the positions, an occurrence of a `k`-factor spans fewer than
 `k` steps, so it misses one side of any `k - 1` symbols, and the strictly local sets of words
-between their edges are the strictly local stringsets.
+between their edges are the strictly local stringsets. Relativizing successor to a tier, by
+restricting a word to its tier positions and taking successor there, gives the successor model of
+the word's projection, so the strictly local sets of relativized models are the tier-based
+strictly local stringsets.
 
 ## Main definitions
 
@@ -34,6 +37,9 @@ between their edges are the strictly local stringsets.
   exactly when it is a strictly `k`-local set of words between their edges under successor.
 * `Language.isStrictlyPiecewise_iff_wordModel`: a stringset is strictly `k`-piecewise exactly when
   it is a strictly `k`-local set of words under precedence.
+* `Language.isTierStrictlyLocal_iff_wordModel`: for `2 ≤ k`, a stringset is tier-based strictly
+  `k`-local exactly when for some tier it is a strictly `k`-local set of words under the
+  relativized successor.
 
 ## Implementation notes
 
@@ -48,6 +54,7 @@ between their edges are the strictly local stringsets.
 * [rogers-lambert-2019]
 * [rogers-pullum-2011]
 * [rogers-heinz-et-al-2010]
+* [lambert-2023]
 -/
 
 @[expose] public section
@@ -508,5 +515,22 @@ theorem isStrictlyLocal_iff_wordModel (hk : 2 ≤ k) :
   refine ⟨fun hL w hw ↦ mem_of_factors_subset_biUnion hL hk hw, fun hS u₁ v₁ u₂ v₂ x hx h₁ h₂ ↦ ?_⟩
   exact (FirstOrder.Language.isStrictlyLocal_iff.2 hS).mem_of_factors_subset_union h₁ h₂
     (factors_crossover_subset hx)
+
+/-- A stringset is tier-based strictly `k`-local, for `2 ≤ k`, exactly when for some tier it is a
+strictly `k`-local set of words under successor relativized to the tier. Restricting a word to
+its tier positions and taking successor there gives the successor model of its projection, so
+the relativized models are those of the projections. -/
+theorem isTierStrictlyLocal_iff_wordModel (hk : 2 ≤ k) :
+    IsTierStrictlyLocal k L ↔ ∃ (T : α → Prop) (_ : DecidablePred T),
+      (wordLanguage (α ⊕ Edge)).IsStrictlyLocal
+        (fun w ↦ WordModel (anchor (w.filter (T ·))) (· ⋖ ·)) k L := by
+  constructor
+  · rintro ⟨G, rfl⟩
+    exact ⟨G.tier, inferInstance,
+      ((isStrictlyLocal_iff_wordModel hk).1 ⟨G.permitted, rfl⟩).comap
+        fun w : List α ↦ w.filter (G.tier ·)⟩
+  · rintro ⟨T, _, G', rfl⟩
+    obtain ⟨G₀, hG₀⟩ := (isStrictlyLocal_iff_wordModel hk).2 ⟨G', rfl⟩
+    exact ⟨⟨T, G₀⟩, Set.ext fun w ↦ Set.ext_iff.1 hG₀ (w.filter (T ·))⟩
 
 end Language
