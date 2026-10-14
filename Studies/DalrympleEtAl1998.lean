@@ -2,6 +2,10 @@ module
 
 public import Linglib.Semantics.Plurality.Reciprocal
 public import Linglib.Data.Examples.DalrympleEtAl1998
+public import Linglib.Semantics.Quantification.Defs
+public import Mathlib.Algebra.Group.Fin.Basic
+public import Mathlib.Tactic.FinCases
+public import Mathlib.Tactic.Abel
 public import Mathlib.Data.Fintype.Card
 public import Mathlib.Data.Finset.Prod
 public import Mathlib.Order.Bounds.Defs
@@ -10,7 +14,10 @@ public import Mathlib.Order.Bounds.Defs
 # Dalrymple, Kanazawa, Kim, Mchombo and Peters (1998): Reciprocal Expressions and the Concept of Reciprocity
 
 The reciprocal has one meaning that varies with context. It ranges over six quantifiers, the
-settings of two parameters (`Reciprocal.Recip`). By the Strongest Meaning Hypothesis a reciprocal
+settings of two parameters (`Reciprocal.Recip`), which are genuinely polyadic: an iteration of
+two type `⟨1,1⟩` quantifiers whose inner one is permutation invariant cannot tell a cycle of six
+from two cycles of three, so it is not Intermediate Reciprocity
+(`intermediateReciprocity_not_iterateOthers`). By the Strongest Meaning Hypothesis a reciprocal
 sentence is felicitous in a context when, among its interpretations consistent with the
 non-linguistic information, one entails all the others, and the sentence then expresses that
 one. Since the quantifiers are ordered by entailment as the product of the parameters, the
@@ -51,6 +58,107 @@ theorem recip_alternative_iff [Std.Symm R] (c : Coverage) :
     Recip (c, .alternative) R X ↔ Recip (c, .plain) R X := by
   have : SymmGen R = R := funext₂ fun x y ↦ propext ⟨fun h ↦ h.elim id (symm_of R), .inl⟩
   cases c <;> simp only [Recip, Direction.rel, this]
+
+/-! ### Intermediate Reciprocity is not an iteration (footnote 8)
+
+On a symmetric relation, the reading obtained by iterating two type `⟨1,1⟩` quantifiers, `Q₁`
+members of the antecedent bearing `R` to `Q₂` of the other members, cannot be Intermediate Reciprocity once
+`Q₂` is permutation invariant. A cycle of six individuals and two cycles of three give every
+individual two neighbours, so the iteration cannot tell them apart, while only the cycle of six
+is connected. -/
+
+section Iteration
+
+open Quantifier
+
+/-- The iteration (i) of footnote 8, in which `Q₁` members of `P` bear `R` to `Q₂` of the other
+members of `P`. -/
+def iterateOthers (Q₁ Q₂ : GQ A) (P : A → Prop) (R : A → A → Prop) : Prop :=
+  Q₁ P fun x ↦ Q₂ (fun y ↦ P y ∧ x ≠ y) (R x)
+
+open Fin.NatCast in
+/-- A relation containing the successor step joins any two elements of `Fin n`. -/
+theorem intermediate_of_succ {n : ℕ} [NeZero n] (hn : 2 ≤ n) {R : Fin n → Fin n → Prop}
+    (hR : ∀ x, R x (x + 1)) : IntermediateReciprocity R Finset.univ := by
+  have step (x : Fin n) :
+      TransGen (fun a b ↦ a ∈ Finset.univ ∧ b ∈ Finset.univ ∧ R a b) x (x + 1) :=
+    .single ⟨Finset.mem_univ _, Finset.mem_univ _, hR x⟩
+  have chain (x : Fin n) (k : ℕ) :
+      TransGen (fun a b ↦ a ∈ Finset.univ ∧ b ∈ Finset.univ ∧ R a b) x
+        (x + ((k + 1 : ℕ) : Fin n)) := by
+    induction k with
+    | zero => simpa using step x
+    | succ k ih =>
+      have e : x + ((k + 1 + 1 : ℕ) : Fin n) = x + ((k + 1 : ℕ) : Fin n) + 1 := by
+        push_cast
+        abel
+      exact e ▸ ih.trans (step _)
+  refine intermediateReciprocity_iff.2
+    ⟨Finset.univ_nontrivial_iff.2 (Fin.nontrivial_iff_two_le.2 hn), fun x _ y _ hxy ↦ ?_⟩
+  obtain ⟨k, hk⟩ := Nat.exists_eq_add_one_of_ne_zero
+    (Fin.val_ne_zero_iff.2 (sub_ne_zero.2 (Ne.symm hxy)) : (y - x).val ≠ 0)
+  have := chain x k
+  rwa [← hk, Fin.cast_val_eq_self, add_sub_cancel] at this
+
+/-- Six individuals in a cycle, each beside two neighbours, the model (ii). -/
+def hexagon (x y : Fin 6) : Prop := y = x + 1 ∨ x = y + 1
+
+/-- Six individuals in two cycles of three, the model (iii). -/
+def twoTriangles (x y : Fin 6) : Prop := x ≠ y ∧ x.val / 3 = y.val / 3
+
+instance : DecidableRel hexagon := fun _ _ ↦ inferInstanceAs (Decidable (_ ∨ _))
+
+instance : DecidableRel twoTriangles := fun _ _ ↦ inferInstanceAs (Decidable (_ ∧ _))
+
+theorem intermediate_hexagon : IntermediateReciprocity hexagon Finset.univ :=
+  intermediate_of_succ (by omega) fun _ ↦ .inl rfl
+
+theorem not_intermediate_twoTriangles : ¬ IntermediateReciprocity twoTriangles Finset.univ := by
+  intro h
+  have hblock {a b : Fin 6}
+      (hab : TransGen (fun a b ↦ a ∈ Finset.univ ∧ b ∈ Finset.univ ∧ twoTriangles a b) a b) :
+      a.val / 3 = b.val / 3 := by
+    induction hab with
+    | single h => exact h.2.2.2
+    | tail _ h ih => exact ih.trans h.2.2.2
+  exact absurd (hblock ((intermediateReciprocity_iff.1 h).2 (Finset.mem_univ 0)
+    (Finset.mem_univ 3) (by decide))) (by decide)
+
+/-- With a permutation-invariant inner quantifier the iteration has the same value on both
+models, since a bijection fixing each individual carries its neighbours in the cycle of six to
+its neighbours in its cycle of three. -/
+theorem iterateOthers_hexagon_iff (Q₁ Q₂ : GQ (Fin 6)) (hQ₂ : Q₂.QuantityInvariant) :
+    iterateOthers Q₁ Q₂ (fun _ ↦ True) hexagon ↔
+      iterateOthers Q₁ Q₂ (fun _ ↦ True) twoTriangles := by
+  have key (x : Fin 6) : ∃ e : Equiv.Perm (Fin 6),
+      (∀ y, (True ∧ x ≠ e y) ↔ (True ∧ x ≠ y)) ∧ ∀ y, hexagon x (e y) ↔ twoTriangles x y := by
+    fin_cases x
+    · exact ⟨Equiv.swap 2 5, by decide, by decide⟩
+    · exact ⟨Equiv.refl _, by decide, by decide⟩
+    · exact ⟨Equiv.swap 0 3, by decide, by decide⟩
+    · exact ⟨Equiv.swap 2 5, by decide, by decide⟩
+    · exact ⟨Equiv.refl _, by decide, by decide⟩
+    · exact ⟨Equiv.swap 0 3, by decide, by decide⟩
+  have h (x : Fin 6) :
+      Q₂ (fun y ↦ True ∧ x ≠ y) (hexagon x) ↔ Q₂ (fun y ↦ True ∧ x ≠ y) (twoTriangles x) :=
+    let ⟨e, hA, hB⟩ := key x
+    hQ₂ _ _ _ _ e e.bijective hA hB
+  simp only [iterateOthers, h]
+
+/-- No iteration with a permutation-invariant inner quantifier is Intermediate Reciprocity on
+every symmetric relation (footnote 8). The paper assumes both quantifiers permutation invariant;
+the outer one needs no assumption. -/
+theorem intermediateReciprocity_not_iterateOthers (Q₁ Q₂ : GQ (Fin 6))
+    (hQ₂ : Q₂.QuantityInvariant) :
+    ¬ ∀ R : Fin 6 → Fin 6 → Prop, Std.Symm R →
+      (iterateOthers Q₁ Q₂ (fun _ ↦ True) R ↔ IntermediateReciprocity R Finset.univ) := by
+  intro h
+  have h₁ := h hexagon ⟨fun _ _ h ↦ h.symm⟩
+  have h₂ := h twoTriangles ⟨fun _ _ h ↦ ⟨h.1.symm, h.2.symm⟩⟩
+  exact not_intermediate_twoTriangles
+    (h₂.1 ((iterateOthers_hexagon_iff Q₁ Q₂ hQ₂).1 (h₁.2 intermediate_hexagon)))
+
+end Iteration
 
 /-! ### The Strongest Meaning Hypothesis (§6.2) -/
 
@@ -295,16 +403,8 @@ def stareBack (x y : Fin 4) : Prop := x ≠ y ∧ x.val / 2 = y.val / 2
 
 instance : DecidableRel stareBack := fun _ _ ↦ inferInstanceAs (Decidable (_ ∧ _))
 
-theorem stareRound_intermediate : IntermediateReciprocity stareRound Finset.univ := by
-  have step (x : Fin 4) :
-      TransGen (fun a b ↦ a ∈ Finset.univ ∧ b ∈ Finset.univ ∧ stareRound a b) x (x + 1) :=
-    .single ⟨Finset.mem_univ _, Finset.mem_univ _, rfl⟩
-  refine intermediateReciprocity_iff.2 ⟨by decide, fun x _ y _ hxy ↦ ?_⟩
-  obtain rfl | rfl | rfl : y = x + 1 ∨ y = x + 1 + 1 ∨ y = x + 1 + 1 + 1 := by
-    revert x y; decide
-  · exact step x
-  · exact (step x).trans (step _)
-  · exact ((step x).trans (step _)).trans (step _)
+theorem stareRound_intermediate : IntermediateReciprocity stareRound Finset.univ :=
+  intermediate_of_succ (by omega) fun _ ↦ rfl
 
 /-- With four pirates, the fewest for which the paper's argument excludes both quantifiers built
 on `FUL`, *staring at each other* expresses Intermediate Reciprocity (110). -/

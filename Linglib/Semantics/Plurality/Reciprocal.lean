@@ -86,20 +86,20 @@ private theorem exists_rel_ne_of_transGen {M : Type*} {r : M → M → Prop} {x 
 
 /-- `FUL` holds when there are two or more elements and any two distinct elements are related. -/
 def ful : LindstromQuantifier.{0, 0, u} Language.graph :=
-  .ofRelProp (fun {M} r ↦ Nontrivial M ∧ Pairwise r) fun e s ↦
+  .ofGraphProperty (fun {M} r ↦ Nontrivial M ∧ Pairwise r) fun e s ↦
     and_congr e.nontrivial_congr (EquivLike.pairwise_comp_iff e s)
 
 /-- `LIN` holds when there are two or more elements and any two distinct elements are joined by
 a chain. -/
 def lin : LindstromQuantifier.{0, 0, u} Language.graph :=
-  .ofRelProp (fun {M} r ↦ Nontrivial M ∧ Pairwise (TransGen r)) fun e s ↦
+  .ofGraphProperty (fun {M} r ↦ Nontrivial M ∧ Pairwise (TransGen r)) fun e s ↦
     and_congr e.nontrivial_congr <| by
       rw [transGen_comp_equiv]
       exact EquivLike.pairwise_comp_iff e (TransGen s)
 
 /-- `TOT` holds when there are two or more elements and each is related to another. -/
 def tot : LindstromQuantifier.{0, 0, u} Language.graph :=
-  .ofRelProp (fun {M} r ↦ Nontrivial M ∧ ∀ x, ∃ y, x ≠ y ∧ r x y) fun e s ↦
+  .ofGraphProperty (fun {M} r ↦ Nontrivial M ∧ ∀ x, ∃ y, x ≠ y ∧ r x y) fun e s ↦
     and_congr e.nontrivial_congr
       ⟨fun h x ↦ let ⟨y, hne, hs⟩ := h (e.symm x)
         ⟨e y, fun hx ↦ hne (e.symm_apply_eq.2 hx), by simpa using hs⟩,

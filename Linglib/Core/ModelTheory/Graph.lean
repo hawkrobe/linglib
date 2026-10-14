@@ -10,10 +10,11 @@ public import Linglib.Core.ModelTheory.Lindstrom
 
 `[UPSTREAM]` candidate. Mathlib makes a simple graph a structure in the language of graphs; any
 binary relation is one as well, with its pairs as the adjacency relation (`graphStructure`). A
-Lindström quantifier over the language of graphs, a quantifier of type `⟨2⟩`, is then an
-isomorphism-invariant class of binary relations, built from any property of relations that
-relabelling along a bijection preserves (`LindstromQuantifier.ofRelProp`). Its relativization to
-a set `A` asks it of `A` with the relation restricted to `A` (`inducedGraph`).
+Lindström quantifier over the language of graphs, a quantifier of type `⟨2⟩`, is then a graph
+property, an isomorphism-invariant class of binary relations, built from any property of
+relations that relabelling along a bijection preserves (`LindstromQuantifier.ofGraphProperty`).
+Its relativization to a set `A` asks it of `A` with the relation restricted to `A`
+(`inducedGraph`).
 
 ## Main definitions
 
@@ -22,8 +23,8 @@ a set `A` asks it of `A` with the relation restricted to `A` (`inducedGraph`).
 * `FirstOrder.Language.graphStructureEquiv`: a bijection carrying one relation to another is an
   isomorphism of these structures.
 * `FirstOrder.Language.inducedGraph r A`: the set `A` with `r` restricted to it.
-* `FirstOrder.Language.LindstromQuantifier.ofRelProp`: the type `⟨2⟩` quantifier of a property of
-  relations invariant under relabelling.
+* `FirstOrder.Language.LindstromQuantifier.ofGraphProperty`: the type `⟨2⟩` quantifier of a
+  graph property, a property of relations invariant under relabelling.
 
 ## References
 
@@ -62,9 +63,9 @@ abbrev inducedGraph (r : M → M → Prop) (A : Set M) :
 
 namespace LindstromQuantifier
 
-/-- The type `⟨2⟩` quantifier holding of a structure whose adjacency relation has the property
-`P`, which relabelling along a bijection preserves. -/
-def ofRelProp (P : ∀ {M : Type u}, (M → M → Prop) → Prop)
+/-- The type `⟨2⟩` quantifier of a graph property `P`, holding of a structure whose adjacency
+relation has `P`; relabelling along a bijection preserves `P`. -/
+def ofGraphProperty (P : ∀ {M : Type u}, (M → M → Prop) → Prop)
     (hP : ∀ {M N : Type u} (e : M ≃ N) (s : N → N → Prop), P (fun x y ↦ s (e x) (e y)) ↔ P s) :
     LindstromQuantifier.{0, 0, u} Language.graph where
   holds := {M | P fun x y : M ↦ RelMap adj ![x, y]}
@@ -78,9 +79,9 @@ def ofRelProp (P : ∀ {M : Type u}, (M → M → Prop) → Prop)
     rw [this]
     exact hP e.toEquiv fun x y : N ↦ RelMap adj ![x, y]
 
-theorem mem_holds_ofRelProp {P : ∀ {M : Type u}, (M → M → Prop) → Prop} {hP}
+theorem mem_holds_ofGraphProperty {P : ∀ {M : Type u}, (M → M → Prop) → Prop} {hP}
     {M : CategoryTheory.Bundled.{u} Language.graph.Structure} :
-    M ∈ (ofRelProp P hP).holds ↔ P fun x y : M ↦ RelMap adj ![x, y] := Iff.rfl
+    M ∈ (ofGraphProperty P hP).holds ↔ P fun x y : M ↦ RelMap adj ![x, y] := Iff.rfl
 
 end LindstromQuantifier
 
