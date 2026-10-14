@@ -1,143 +1,239 @@
 module
 
-public import Linglib.Phonology.Tone.Basic
 public import Linglib.Phonology.Tone.Grammatical
 
 /-!
 # Mwaghavul
 
 Mwaghavul (A3 West Chadic, Plateau State, Nigeria; Glottocode mwag1236) contrasts H, M, and
-L level tones and an LH rise on syllable TBUs. Verbs are derived from ideophones by two
-segmentally null verbalisers whose sole exponents are tone: `verbM` overwrites every TBU
-with M, `verbMH` every nonfinal TBU with M and the final one with H; pluractional verbs
-reduplicate the ideophone and bear M on every TBU of the reduplicant and H on every TBU of
-the base. Data from [akinbo-fwangwar-2026] (7)–(10) and [fwangwar-2018].
+L level tones and an LH rise, and its tone-bearing unit is the syllable. Verbs are derived
+from ideophones by tone alone. This file records the ideophones of Akinbo and Rabo Fwangwar's
+dataset: each one's syllables with their lexical tones, and the tones of the singular and
+pluractional verbs derived from it, as printed.
 
 ## Main definitions
 
-* `Ideophone` — an ideophonic base with its lexical tones and, if it has one, the verbaliser
-  of its singular verb.
-* `ideophones` — the paper's dataset.
-* `deriveVerb` / `derivePluractional` / `intensity` — the singular verb, the pluractional
-  verb, and tone-preserving reduplication.
+* `Syl`: a syllable, written without tone.
+* `Ideophone`: an ideophone with its syllables and the tones of its derived verbs.
+* `ideophones`: the dataset.
+
+## References
+
+* [akinbo-fwangwar-2026]
+* [fwangwar-2018]
 -/
 
 @[expose] public section
 
 namespace Mwaghavul
 
-open Tone (TRN TBU Tune)
+open Tone (TRN TBU)
 
 /-- Mwaghavul's tone-bearing unit is the syllable. -/
 def tbuKind : Tone.TBUKind := .syllable
 
-/-! ### Verbalisers -/
-
-/-- The two lexically specific suppletive allomorphs of the verbaliser ((17)). -/
-inductive Verbalizer where
-  | m
-  | mh
-  deriving DecidableEq, Repr
-
-/-- VBZ₁: M on every TBU of the host. -/
-def verbM : Tune := ⟨[.M], .left⟩
-
-/-- VBZ₂ on a single host: its M-H tune anchored at the right edge, H on the final TBU and M
-on every nonfinal one. -/
-def verbMH : Tune := ⟨[.M, .H], .right⟩
-
-/-- The H of VBZ₂ on its own host, as in pluractional verbs. -/
-def verbMHBase : Tune := ⟨[.H], .left⟩
-
-/-! ### Ideophones -/
-
-/-- An ideophonic base: its form, gloss, the lexical tones of one copy, and the verbaliser of
-its singular verb — `none` when only the reduplicated form is verbalised ((9), (10)). -/
-structure Ideophone where
-  form : String
-  gloss : String
-  tones : List TRN
-  singular : Option Verbalizer
-  /-- Inherently reduplicated ((10)): `form` shows both copies, `tones` one. -/
-  frozen : Bool := false
-  deriving DecidableEq, Repr
-
-/-- A toned Mwaghavul syllable. -/
+/-- A Mwaghavul syllable, its segments written without tone. -/
 structure Syl where
   ipa : String
   deriving DecidableEq, Repr
 
-/-- The host of an ideophone as toned TBUs. -/
-def Ideophone.host (i : Ideophone) : List (TBU Syl) := i.tones.map fun t => ⟨⟨i.form⟩, t⟩
+/-- An ideophone, with the tones of the verbs derived from it. -/
+structure Ideophone where
+  /-- The citation form, both copies of an inherently reduplicated ideophone. -/
+  form : String
+  gloss : String
+  /-- The syllables of one copy, each with its lexical tone. -/
+  syllables : List (TBU Syl)
+  /-- The tones of the singular verb, `none` when only the reduplicated form is verbalised. -/
+  verb : Option (List TRN)
+  /-- The tones of the pluractional verb, reduplicant then base. -/
+  pluractional : List TRN
+  /-- Inherently reduplicated: the reduplicant and base are synchronically frozen. -/
+  frozen : Bool
+  deriving DecidableEq, Repr
 
-/-- The singular verb's tones, if the ideophone has a singular verb. -/
-def deriveVerb (i : Ideophone) : Option (List TRN) :=
-  i.singular.map fun v =>
-    (Tone.overwrite i.host (match v with | .m => verbM | .mh => verbMH)).map (·.tone)
+/-- The lexical tones of one copy of an ideophone. -/
+def Ideophone.tones (i : Ideophone) : List TRN := i.syllables.map TBU.tone
 
-/-- The pluractional verb's tones: the M of VBZ₂ on every TBU of the reduplicant and its H
-on every TBU of the base. -/
-def derivePluractional (i : Ideophone) : List TRN :=
-  (Tone.overwrite i.host verbM ++ Tone.overwrite i.host verbMHBase).map (·.tone)
+/-! ### The dataset -/
 
-/-- Reduplication without a tonal alternation, expressing intensity ((9)). -/
-def intensity (i : Ideophone) : List TRN := i.tones ++ i.tones
+/-- *zùt* ‘how solid substance ejects’ (7a). -/
+def zut : Ideophone :=
+  ⟨"zùt", "how solid substance ejects", [⟨⟨"zut"⟩, .L⟩], some [.M], [.M, .H], false⟩
 
-theorem derivePluractional_eq (i : Ideophone) :
-    derivePluractional i = i.tones.map (fun _ => .M) ++ i.tones.map (fun _ => .H) := by
-  simp [derivePluractional, Ideophone.host, verbM, verbMHBase]
+/-- *ɗìːs* ‘sound of blood sucking’ (7a). -/
+def diis : Ideophone :=
+  ⟨"ɗìːs", "sound of blood sucking", [⟨⟨"ɗiːs"⟩, .L⟩], some [.M], [.M, .H], false⟩
 
-/-! ### The dataset
-[akinbo-fwangwar-2026] (7)–(10). -/
+/-- *kwàj* ‘sound of bubbling hot water’ (7a). -/
+def kwaj : Ideophone :=
+  ⟨"kwàj", "sound of bubbling hot water", [⟨⟨"kwaj"⟩, .L⟩], some [.M], [.M, .H], false⟩
 
-def zut : Ideophone := ⟨"zùt", "how solid substance ejects", [.L], some .m, false⟩
-def diis : Ideophone := ⟨"ɗìːs", "sound of blood sucking", [.L], some .m, false⟩
-def kwaj : Ideophone := ⟨"kwàj", "sound of bubbling hot water", [.L], some .m, false⟩
-def vjar : Ideophone := ⟨"vjàr", "pouring of urine", [.L], some .m, false⟩
-def shwer : Ideophone := ⟨"ʃwɛ̀r", "how water falls", [.L], some .m, false⟩
-def shoghop : Ideophone := ⟨"ʃɔ̀ɣɔ̀p", "oily", [.L, .L], some .m, false⟩
-def vjaghap : Ideophone := ⟨"vjàɣàp", "how liquid ejects from a fruit", [.L, .L], some .m, false⟩
-def wulash : Ideophone := ⟨"wùlàʃ", "wide open", [.L, .L], some .m, false⟩
-def lubuk : Ideophone := ⟨"lúɓúk", "smooth and soft", [.H, .H], some .m, false⟩
-def wulashSmall : Ideophone := ⟨"wúláʃ", "wide open of small thing", [.H, .H], some .m, false⟩
+/-- *vjàr* ‘pouring of urine’ (7a). -/
+def vjar : Ideophone := ⟨"vjàr", "pouring of urine", [⟨⟨"vjar"⟩, .L⟩], some [.M], [.M, .H], false⟩
 
-def bishol : Ideophone := ⟨"bɨ̀ʃɔ̀l", "shabbily dressed", [.L, .L], some .mh, false⟩
-def kitish : Ideophone := ⟨"kɨ̀tìʃ", "untidy", [.L, .L], some .mh, false⟩
-def kodong : Ideophone := ⟨"kɔ̀ɗɔ̀ŋ", "walking effortfully", [.L, .L], some .mh, false⟩
-def kitshor : Ideophone := ⟨"kɨ̀tʃɔ̀r", "old-sounding vehicle", [.L, .L], some .mh, false⟩
-def korjong : Ideophone := ⟨"kɔ̀rjɔ̀ŋ", "crooked", [.L, .L], some .mh, false⟩
-def mondos : Ideophone := ⟨"mɔ̀ndɔ̀s", "big nose", [.L, .L], some .mh, false⟩
-def vwaplas : Ideophone := ⟨"vwàplàs", "oversized", [.L, .L], some .mh, false⟩
-def jalpat : Ideophone := ⟨"jàlpàt", "hanging loose", [.L, .L], some .mh, false⟩
-def hanlaghap : Ideophone := ⟨"háŋláɣáp", "light-weighted", [.H, .H, .H], some .mh, false⟩
+/-- *ʃwɛ̀r* ‘how water falls’ (7a). -/
+def shwer : Ideophone := ⟨"ʃwɛ̀r", "how water falls", [⟨⟨"ʃwɛr"⟩, .L⟩], some [.M], [.M, .H], false⟩
+
+/-- *ʃɔ̀ɣɔ̀p* ‘oily’ (7b). -/
+def shoghop : Ideophone :=
+  ⟨"ʃɔ̀ɣɔ̀p", "oily", [⟨⟨"ʃɔ"⟩, .L⟩, ⟨⟨"ɣɔp"⟩, .L⟩], some [.M, .M], [.M, .M, .H, .H], false⟩
+
+/-- *vjàɣàp* ‘how liquid ejects from a fruit’ (7b). -/
+def vjaghap : Ideophone :=
+  ⟨"vjàɣàp", "how liquid ejects from a fruit", [⟨⟨"vja"⟩, .L⟩, ⟨⟨"ɣap"⟩, .L⟩],
+    some [.M, .M], [.M, .M, .H, .H], false⟩
+
+/-- *wùlàʃ* ‘wide open’ (7b). -/
+def wulash : Ideophone :=
+  ⟨"wùlàʃ", "wide open", [⟨⟨"wu"⟩, .L⟩, ⟨⟨"laʃ"⟩, .L⟩], some [.M, .M], [.M, .M, .H, .H], false⟩
+
+/-- *lúɓúk* ‘smooth and soft’ (7c). -/
+def lubuk : Ideophone :=
+  ⟨"lúɓúk", "smooth and soft", [⟨⟨"lu"⟩, .H⟩, ⟨⟨"ɓuk"⟩, .H⟩],
+    some [.M, .M], [.M, .M, .H, .H], false⟩
+
+/-- *wúláʃ* ‘wide open of small thing’ (7c). -/
+def wulashSmall : Ideophone :=
+  ⟨"wúláʃ", "wide open of small thing", [⟨⟨"wu"⟩, .H⟩, ⟨⟨"laʃ"⟩, .H⟩],
+    some [.M, .M], [.M, .M, .H, .H], false⟩
+
+/-- *bɨ̀ʃɔ̀l* ‘shabbily dressed’ (8a). -/
+def bishol : Ideophone :=
+  ⟨"bɨ̀ʃɔ̀l", "shabbily dressed", [⟨⟨"bɨ"⟩, .L⟩, ⟨⟨"ʃɔl"⟩, .L⟩],
+    some [.M, .H], [.M, .M, .H, .H], false⟩
+
+/-- *kɨ̀tìʃ* ‘untidy’ (8a). -/
+def kitish : Ideophone :=
+  ⟨"kɨ̀tìʃ", "untidy", [⟨⟨"kɨ"⟩, .L⟩, ⟨⟨"tiʃ"⟩, .L⟩], some [.M, .H], [.M, .M, .H, .H], false⟩
+
+/-- *kɔ̀ɗɔ̀ŋ* ‘walking effortfully’ (8a). -/
+def kodong : Ideophone :=
+  ⟨"kɔ̀ɗɔ̀ŋ", "walking effortfully", [⟨⟨"kɔ"⟩, .L⟩, ⟨⟨"ɗɔŋ"⟩, .L⟩],
+    some [.M, .H], [.M, .M, .H, .H], false⟩
+
+/-- *kɨ̀tʃɔ̀r* ‘old-sounding vehicle’ (8a). -/
+def kitshor : Ideophone :=
+  ⟨"kɨ̀tʃɔ̀r", "old-sounding vehicle", [⟨⟨"kɨ"⟩, .L⟩, ⟨⟨"tʃɔr"⟩, .L⟩],
+    some [.M, .H], [.M, .M, .H, .H], false⟩
+
+/-- *kɔ̀rjɔ̀ŋ* ‘crooked’ (8b). -/
+def korjong : Ideophone :=
+  ⟨"kɔ̀rjɔ̀ŋ", "crooked", [⟨⟨"kɔr"⟩, .L⟩, ⟨⟨"jɔŋ"⟩, .L⟩], some [.M, .H], [.M, .M, .H, .H], false⟩
+
+/-- *mɔ̀ndɔ̀s* ‘big nose’ (8b). -/
+def mondos : Ideophone :=
+  ⟨"mɔ̀ndɔ̀s", "big nose", [⟨⟨"mɔn"⟩, .L⟩, ⟨⟨"dɔs"⟩, .L⟩], some [.M, .H], [.M, .M, .H, .H], false⟩
+
+/-- *vwàplàs* ‘oversized’ (8b). -/
+def vwaplas : Ideophone :=
+  ⟨"vwàplàs", "oversized", [⟨⟨"vwap"⟩, .L⟩, ⟨⟨"las"⟩, .L⟩], some [.M, .H], [.M, .M, .H, .H], false⟩
+
+/-- *jàlpàt* ‘hanging loose’ (8b). -/
+def jalpat : Ideophone :=
+  ⟨"jàlpàt", "hanging loose", [⟨⟨"jal"⟩, .L⟩, ⟨⟨"pat"⟩, .L⟩],
+    some [.M, .H], [.M, .M, .H, .H], false⟩
+
+/-- *háŋláɣáp* ‘light-weighted’ (8c). -/
+def hanlaghap : Ideophone :=
+  ⟨"háŋláɣáp", "light-weighted", [⟨⟨"haŋ"⟩, .H⟩, ⟨⟨"la"⟩, .H⟩, ⟨⟨"ɣap"⟩, .H⟩],
+    some [.M, .M, .H], [.M, .M, .M, .H, .H, .H], false⟩
+
+/-- *hámhɔ́ɣɔ́ʃ* ‘dryness of cracked feet’ (8c). -/
 def hamhoghosh : Ideophone :=
-  ⟨"hámhɔ́ɣɔ́ʃ", "dryness of cracked feet", [.H, .H, .H], some .mh, false⟩
-def jegherek : Ideophone := ⟨"dʒɛ́ɣɛ́rɛ́k", "thin, fragile", [.H, .H, .H], some .mh, false⟩
-def gokshirok : Ideophone := ⟨"gɔ̀kʃìrɔ̀k", "old or abnormal", [.L, .L, .L], some .mh, false⟩
-def zongilong : Ideophone := ⟨"zɔ̀ngɨ̀lɔ̀ŋ", "long and thin", [.L, .L, .L], some .mh, false⟩
-def salmutat : Ideophone := ⟨"sàlmùtàt", "sluggish", [.L, .L, .L], some .mh, false⟩
-def dighirik : Ideophone := ⟨"dɨ̀ɣɨ̀rɨ̀k", "being big and lazy", [.L, .L, .L], some .mh, false⟩
+  ⟨"hámhɔ́ɣɔ́ʃ", "dryness of cracked feet", [⟨⟨"ham"⟩, .H⟩, ⟨⟨"hɔ"⟩, .H⟩, ⟨⟨"ɣɔʃ"⟩, .H⟩],
+    some [.M, .M, .H], [.M, .M, .M, .H, .H, .H], false⟩
 
-def jumHeavy : Ideophone := ⟨"dʒùm", "heavy water plop", [.L], none, false⟩
-def kurashSlow : Ideophone := ⟨"kùràʃ", "slow scratching sound", [.L, .L], none, false⟩
-def kwaasSlow : Ideophone := ⟨"kwàːs", "slow foot-dragging sound", [.L], none, false⟩
-def tirat : Ideophone := ⟨"tɨ̀ràt", "sound of sipping", [.L, .L], none, false⟩
-def jumLight : Ideophone := ⟨"dʒúm", "light water plop", [.H], none, false⟩
-def kurashFast : Ideophone := ⟨"kúráʃ", "fast scratching sound", [.H, .H], none, false⟩
-def kwaasFast : Ideophone := ⟨"kwáːs", "fast foot-dragging sound", [.H], none, false⟩
-def weng : Ideophone := ⟨"wɛ́ŋ", "sound of buzzing", [.H], none, false⟩
+/-- *dʒɛ́ɣɛ́rɛ́k* ‘thin/fragile’ (8c). -/
+def jegherek : Ideophone :=
+  ⟨"dʒɛ́ɣɛ́rɛ́k", "thin/fragile", [⟨⟨"dʒɛ"⟩, .H⟩, ⟨⟨"ɣɛ"⟩, .H⟩, ⟨⟨"rɛk"⟩, .H⟩],
+    some [.M, .M, .H], [.M, .M, .M, .H, .H, .H], false⟩
 
-def girgir : Ideophone := ⟨"gɨ̀r-gɨ̀r", "sound of a moving truck", [.L], none, true⟩
-def wurwur : Ideophone := ⟨"wùr-wùr", "in a rush", [.L], none, true⟩
-def tengteng : Ideophone := ⟨"tɛ̀ŋ-tɛ̀ŋ", "zigzag", [.L], none, true⟩
-def zetzet : Ideophone := ⟨"zɛ̀t-zɛ̀t", "hurried walk", [.L], none, true⟩
-def wuretwuret : Ideophone := ⟨"wùrɛ̀t-wùrɛ̀t", "fast walk", [.L, .L], none, true⟩
-def shuretshuret : Ideophone := ⟨"ʃùrɛ̀t-ʃùrɛ̀t", "profusely crying", [.L, .L], none, true⟩
-def kipetkipet : Ideophone := ⟨"kɨ́pɛ́t-kɨ́pɛ́t", "flip-flop sound", [.H, .H], none, true⟩
-def wulengwuleng : Ideophone := ⟨"wúlɛ́ŋ-wúlɛ́ŋ", "smart look", [.H, .H], none, true⟩
-def zonzon : Ideophone := ⟨"zɔ́n-zɔ́n", "aimless movement", [.H], none, true⟩
+/-- *gɔ̀kʃìrɔ̀k* ‘old or abnormal’ (8d). -/
+def gokshirok : Ideophone :=
+  ⟨"gɔ̀kʃìrɔ̀k", "old or abnormal", [⟨⟨"gɔk"⟩, .L⟩, ⟨⟨"ʃi"⟩, .L⟩, ⟨⟨"rɔk"⟩, .L⟩],
+    some [.M, .M, .H], [.M, .M, .M, .H, .H, .H], false⟩
 
-/-- The paper's dataset ((7)–(10)); (10c) *ram-ram*, printed without tone marks, is omitted. -/
+/-- *zɔ̀ngɨ̀lɔ̀ŋ* ‘long and thin’ (8d). -/
+def zongilong : Ideophone :=
+  ⟨"zɔ̀ngɨ̀lɔ̀ŋ", "long and thin", [⟨⟨"zɔn"⟩, .L⟩, ⟨⟨"gɨ"⟩, .L⟩, ⟨⟨"lɔŋ"⟩, .L⟩],
+    some [.M, .M, .H], [.M, .M, .M, .H, .H, .H], false⟩
+
+/-- *sàlmùtàt* ‘sluggish’ (8d). -/
+def salmutat : Ideophone :=
+  ⟨"sàlmùtàt", "sluggish", [⟨⟨"sal"⟩, .L⟩, ⟨⟨"mu"⟩, .L⟩, ⟨⟨"tat"⟩, .L⟩],
+    some [.M, .M, .H], [.M, .M, .M, .H, .H, .H], false⟩
+
+/-- *dɨ̀ɣɨ̀rɨ̀k* ‘being big and lazy’ (8d). -/
+def dighirik : Ideophone :=
+  ⟨"dɨ̀ɣɨ̀rɨ̀k", "being big and lazy", [⟨⟨"dɨ"⟩, .L⟩, ⟨⟨"ɣɨ"⟩, .L⟩, ⟨⟨"rɨk"⟩, .L⟩],
+    some [.M, .M, .H], [.M, .M, .M, .H, .H, .H], false⟩
+
+/-- *dʒùm* ‘heavy water plop’ (9a). -/
+def jumHeavy : Ideophone := ⟨"dʒùm", "heavy water plop", [⟨⟨"dʒum"⟩, .L⟩], none, [.M, .H], false⟩
+
+/-- *kùràʃ* ‘slow scratching sound’ (9a). -/
+def kurashSlow : Ideophone :=
+  ⟨"kùràʃ", "slow scratching sound", [⟨⟨"ku"⟩, .L⟩, ⟨⟨"raʃ"⟩, .L⟩], none, [.M, .M, .H, .H], false⟩
+
+/-- *kwàːs* ‘slow foot-dragging sound’ (9a). -/
+def kwaasSlow : Ideophone :=
+  ⟨"kwàːs", "slow foot-dragging sound", [⟨⟨"kwaːs"⟩, .L⟩], none, [.M, .H], false⟩
+
+/-- *tɨ̀ràt* ‘sound of sipping’ (9a). -/
+def tirat : Ideophone :=
+  ⟨"tɨ̀ràt", "sound of sipping", [⟨⟨"tɨ"⟩, .L⟩, ⟨⟨"rat"⟩, .L⟩], none, [.M, .M, .H, .H], false⟩
+
+/-- *dʒúm* ‘light water plop’ (9b). -/
+def jumLight : Ideophone := ⟨"dʒúm", "light water plop", [⟨⟨"dʒum"⟩, .H⟩], none, [.M, .H], false⟩
+
+/-- *kúráʃ* ‘fast scratching sound’ (9b). -/
+def kurashFast : Ideophone :=
+  ⟨"kúráʃ", "fast scratching sound", [⟨⟨"ku"⟩, .H⟩, ⟨⟨"raʃ"⟩, .H⟩], none, [.M, .M, .H, .H], false⟩
+
+/-- *kwáːs* ‘fast foot-dragging sound’ (9b). -/
+def kwaasFast : Ideophone :=
+  ⟨"kwáːs", "fast foot-dragging sound", [⟨⟨"kwaːs"⟩, .H⟩], none, [.M, .H], false⟩
+
+/-- *wɛ́ŋ* ‘sound of buzzing’ (9b). -/
+def weng : Ideophone := ⟨"wɛ́ŋ", "sound of buzzing", [⟨⟨"wɛŋ"⟩, .H⟩], none, [.M, .H], false⟩
+
+/-- *gɨ̀r-gɨ̀r* ‘sound of a moving truck’ (10a). -/
+def girgir : Ideophone :=
+  ⟨"gɨ̀r-gɨ̀r", "sound of a moving truck", [⟨⟨"gɨr"⟩, .L⟩], none, [.M, .H], true⟩
+
+/-- *wùr-wùr* ‘in a rush’ (10a). -/
+def wurwur : Ideophone := ⟨"wùr-wùr", "in a rush", [⟨⟨"wur"⟩, .L⟩], none, [.M, .H], true⟩
+
+/-- *tɛ̀ŋ-tɛ̀ŋ* ‘zigzag’ (10a). -/
+def tengteng : Ideophone := ⟨"tɛ̀ŋ-tɛ̀ŋ", "zigzag", [⟨⟨"tɛŋ"⟩, .L⟩], none, [.M, .H], true⟩
+
+/-- *zɛ̀t-zɛ̀t* ‘hurried walk’ (10a). -/
+def zetzet : Ideophone := ⟨"zɛ̀t-zɛ̀t", "hurried walk", [⟨⟨"zɛt"⟩, .L⟩], none, [.M, .H], true⟩
+
+/-- *wùrɛ̀t-wùrɛ̀t* ‘fast walk’ (10a). -/
+def wuretwuret : Ideophone :=
+  ⟨"wùrɛ̀t-wùrɛ̀t", "fast walk", [⟨⟨"wu"⟩, .L⟩, ⟨⟨"rɛt"⟩, .L⟩], none, [.M, .M, .H, .H], true⟩
+
+/-- *ʃùrɛ̀t-ʃùrɛ̀t* ‘profusely crying’ (10a). -/
+def shuretshuret : Ideophone :=
+  ⟨"ʃùrɛ̀t-ʃùrɛ̀t", "profusely crying", [⟨⟨"ʃu"⟩, .L⟩, ⟨⟨"rɛt"⟩, .L⟩], none, [.M, .M, .H, .H], true⟩
+
+/-- *kɨ́pɛ́t-kɨ́pɛ́t* ‘flip-flop sound’ (10b). -/
+def kipetkipet : Ideophone :=
+  ⟨"kɨ́pɛ́t-kɨ́pɛ́t", "flip-flop sound", [⟨⟨"kɨ"⟩, .H⟩, ⟨⟨"pɛt"⟩, .H⟩],
+    none, [.M, .M, .H, .H], true⟩
+
+/-- *wúlɛ́ŋ-wúlɛ́ŋ* ‘smart look’ (10b). -/
+def wulengwuleng : Ideophone :=
+  ⟨"wúlɛ́ŋ-wúlɛ́ŋ", "smart look", [⟨⟨"wu"⟩, .H⟩, ⟨⟨"lɛŋ"⟩, .H⟩], none, [.M, .M, .H, .H], true⟩
+
+/-- *zɔ́n-zɔ́n* ‘describe aimless movement’ (10b). -/
+def zonzon : Ideophone :=
+  ⟨"zɔ́n-zɔ́n", "describe aimless movement", [⟨⟨"zɔn"⟩, .H⟩], none, [.M, .H], true⟩
+
+/-- The dataset; *ram-ram* ‘describes something exciting’ (10c), printed without tone marks, is
+omitted. -/
 def ideophones : List Ideophone :=
   [zut, diis, kwaj, vjar, shwer, shoghop, vjaghap, wulash, lubuk, wulashSmall,
     bishol, kitish, kodong, kitshor, korjong, mondos, vwaplas, jalpat, hanlaghap, hamhoghosh,

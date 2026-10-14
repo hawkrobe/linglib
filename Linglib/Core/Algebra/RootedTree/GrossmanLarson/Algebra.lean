@@ -60,7 +60,7 @@ variable {α : Type*}
 /-- Associativity over `ℤ`, from the pairing duality and the separation of points. -/
 private theorem product_assoc_int [DecidableEq α] (x y z : ConnesKreimer ℤ (UnorderedTree α)) :
     product (product x y) z = product x (product y z) :=
-  (ext_pairing_right fun w ↦ pairing_product_assoc x y z w).symm
+  ext_pairing_right fun w ↦ congr($(pairing_product_assoc x y z) w)
 
 variable {R : Type*} [CommSemiring R]
 
@@ -122,7 +122,7 @@ noncomputable instance instSemiring : Semiring (GrossmanLarson R α) where
 noncomputable instance instAlgebra : Algebra R (GrossmanLarson R α) :=
   Algebra.ofModule smul_mul_assoc mul_smul_comm
 
-/-- The counit: the coefficient of the empty forest. -/
+/-- The counit takes the coefficient of the empty forest. -/
 noncomputable def counit : GrossmanLarson R α →ₐ[R] R :=
   .ofLinearMap (ConnesKreimer.counit.toLinearMap ∘ₗ linearEquiv.toLinearMap)
     (by simp) fun x y ↦ counit_product _ _

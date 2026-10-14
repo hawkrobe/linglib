@@ -1,41 +1,59 @@
 module
 
+public import Mathlib.Order.UpperLower.Closure
 public import Linglib.Discourse.Commitment.Space
 public import Linglib.Discourse.Commitment.Table
+public import Linglib.Discourse.QUD.Issue
+public import Linglib.Discourse.Role
 public import Studies.BuringGunlogson2000
 
 /-!
 # Krifka (2015): Bias in Commitment Space Semantics
 
 Krifka models a conversation as a commitment space, the current commitment state with the
-continuations it projects. An assertion moves the root to the state recording the speaker's
-commitment, so the root narrows at once, where the Table of Farkas and Bruce leaves the common
-ground untouched until acceptance. A question keeps the root and proposes continuations in which
-the addressee asserts. A monopolar question proposes one assertion, so *yes* is a projected
-continuation and *no* needs a prior rejection; a bipolar question is the disjunction of the two
-monopolar questions and projects both answers. A question with low negation is a monopolar
-question about `¬φ`, and one with high negation proposes the addressee's refusal to commit to
-`φ`, which is weaker. A matching question tag conjoins an assertion with the monopolar question
-of the same content, and a reverse tag disjoins it with the monopolar question of the negation.
+continuations it projects, all of them coherent. An assertion keeps the states that carry the
+speaker's commitment. A question keeps the root and proposes continuations: a monopolar
+question the addressee's assertion of `φ`, a bipolar question that assertion or the one of
+`¬φ`, a question with high negation the addressee's refusal to commit to `φ`; a question with
+low negation is a monopolar question about `¬φ`. An answer is performed in the space the
+question left, so it lands on a state that also carries what the question proposed, and an
+answer that no such state carries needs a prior rejection, which returns to the space before
+the question. This is the bias of a question. A matching question tag conjoins an assertion
+with the monopolar question of the same content, and a reverse tag disjoins it with the
+monopolar question of the negation.
 
 ## Main statements
 
-* `monopolar_not_inquisitive`, `bipolar_inquisitive`: a bipolar question raises an issue and a
-  monopolar question does not, its bias being invisible to the issue projection.
-* `table1`: licensing the three question types by the contextual evidence of Büring and
-  Gunlogson reproduces the paper's table of acceptable uses.
-* `matchingTag_eq`, `isLeast_reverseTag`: after a matching tag both participants are committed
-  unless the addressee reacts, while a reverse tag keeps the root.
+* `not_admits_monopolarQuestion_no`, `admits_bipolarQuestion_no`: *no* needs a prior rejection
+  after a monopolar question and none after a bipolar one.
+* `root_highNegationQuestion_update_no`, `not_admits_highNegationQuestion_yes`: after a question
+  with high negation *no* is admitted and keeps the refusal, while *yes* needs a rejection.
+* `root_reject_matchingTag_no`, `commit_speaker_mem_root_assert_assert`: rejecting an assertion
+  with a matching tag removes the speaker's commitment, which a plain assertion keeps when the
+  addressee contradicts it.
+* `root_reverseTag_update_yes`: after a reverse tag, the addressee's commitment to `φ` brings
+  the speaker's with it.
 
 ## Implementation notes
 
-* The fixture is a two-world space, raining or not, rooted at the empty commitment state.
-* Contextual evidence is the set of worlds it leaves open: the proposition, everything, or its
-  complement. A monopolar question is licensed by evidence for its proposed assertion, a
-  bipolar question by neutral evidence, and the high-negation question wherever the evidence
-  is not for `φ`; the low-negation question has only the monopolar reading, its bipolar reading
-  being blocked by the question without negation. These conditions are stated on the evidence
-  and are not derived from the spaces.
+* Coherence is the paper's ban on blatant inconsistency: nobody is committed to a proposition
+  while committed to its negation or refusing to commit to it. The initial space has every
+  coherent state.
+* Developments record the spaces passed through and not who acted, since no statement here
+  depends on the actor of a stage.
+* The licensing conditions behind the table of acceptable uses are stated on the evidence and
+  are not derived from the spaces. Contextual evidence is the set of worlds it leaves open: the
+  proposition, everything, or its complement.
+
+## TODO
+
+* The second update of an assertion, by the proposition itself, is not modelled, so
+  contradicting a plain assertion needs no rejection here; in the paper the rejection undoes
+  only that update, and the speaker's commitment stays, as here.
+* The reaction *I don't know* is left out: its clash with either answer is a fact about
+  knowledge that coherence does not see.
+* The paper prints the addressee's commitment to `φ` in the last stage of (28b); since *no*
+  asserts the negation, it is the commitment to `¬φ` here.
 
 ## References
 
@@ -57,36 +75,299 @@ open Commitment Space Question
 
 section Questions
 
-variable {A W : Type*} (C : Space (State A W)) (a : A) (φ : Set W) {d : State A W}
+variable {A W : Type*} (C : Space (State A W)) (a : A) (φ : Set W) {P : Set (State A W)}
+  {k l p d : State A W}
 
-/-- A monopolar question keeps the root and proposes `a`'s assertion of `φ` (27). -/
-def monopolarQuestion : Space (State A W) := C.restrict (C.assert a φ)
+/-- A question keeps the root and proposes the continuations that carry one of the acts in
+`P`. -/
+def question (P : Set (State A W)) : Space (State A W) := C.restrict (upperClosure P)
 
-/-- A bipolar question keeps the root and proposes `a`'s assertion of `φ` or of `¬φ` (23). -/
-def bipolarQuestion : Space (State A W) := C.restrict (↑(C.assert a φ) ∪ ↑(C.assert a φᶜ))
+theorem mem_question : d ∈ question C P ↔ d = C.root ∨ d ∈ C ∧ ∃ p ∈ P, p ⊆ d := Iff.rfl
 
-/-- A high-negation question keeps the root and proposes `a`'s refusal `¬S⊢φ` (39). -/
-def highNegationQuestion : Space (State A W) := C.restrict (C.update {refuse a φ})
+/-- A question proposing one act is the root together with the update by that act (27). -/
+theorem question_singleton (p : State A W) : question C {p} = C.restrict (C.update p) := by
+  rw [question, restrict_coe_update, upperClosure_singleton, UpperSet.coe_Ici]
+
+/-- A question is the disjunction of the questions proposing its acts (31), (34). -/
+theorem coe_question_union (P Q : Set (State A W)) :
+    (question C (P ∪ Q) : Set (State A W)) = ↑(question C P) ∪ ↑(question C Q) := by
+  rw [question, upperClosure_union, UpperSet.coe_inf, coe_restrict_union]
+  rfl
+
+/-- A monopolar question proposes `a`'s assertion of `φ` (27). -/
+def monopolarQuestion : Space (State A W) := question C {{commit a φ}}
+
+/-- A bipolar question proposes `a`'s assertion of `φ` or of `¬φ` (23). -/
+def bipolarQuestion : Space (State A W) := question C {{commit a φ}, {commit a φᶜ}}
+
+/-- A question with high negation proposes `a`'s refusal `¬S⊢φ` (39). -/
+def highNegationQuestion : Space (State A W) := question C {{refuse a φ}}
 
 theorem mem_monopolarQuestion :
     d ∈ monopolarQuestion C a φ ↔ d = C.root ∨ d ∈ C ∧ commit a φ ∈ d := by
-  rw [monopolarQuestion, assert, restrict_coe_update, mem_restrict, Set.mem_Ici]
-  exact or_congr_right (and_congr_right fun _ ↦ Set.singleton_subset_iff)
-
-theorem mem_highNegationQuestion :
-    d ∈ highNegationQuestion C a φ ↔ d = C.root ∨ d ∈ C ∧ refuse a φ ∈ d := by
-  rw [highNegationQuestion, restrict_coe_update, mem_restrict, Set.mem_Ici]
-  exact or_congr_right (and_congr_right fun _ ↦ Set.singleton_subset_iff)
+  simp [monopolarQuestion, mem_question]
 
 /-- A bipolar question is the disjunction of the two monopolar questions (31). -/
 theorem coe_bipolarQuestion :
     (bipolarQuestion C a φ : Set (State A W)) =
-      ↑(monopolarQuestion C a φ) ∪ ↑(monopolarQuestion C a φᶜ) :=
-  C.coe_restrict_union _ _
+      ↑(monopolarQuestion C a φ) ∪ ↑(monopolarQuestion C a φᶜ) := by
+  rw [bipolarQuestion, Set.insert_eq, coe_question_union]
+  rfl
+
+/-! ### Answers -/
+
+/-- A proposed act is performed as it would have been before the question (24), (28). -/
+theorem question_update_of_mem (hp : p ∈ P) : (question C P).update p = C.update p :=
+  C.update_restrict_of_subset fun _ hd ↦ ⟨p, hp, hd.2⟩
+
+/-- An act that moves the root and that, among the proposals, only `p` can accompany in a state
+of `C` is performed together with `p`. -/
+theorem question_update_of_forall (hk : ¬ k ⊆ C.root) (hp : p ∈ P)
+    (h : ∀ q ∈ P, q ≠ p → ∀ d ∈ C, ¬ k ∪ q ⊆ d) :
+    (question C P).update k = C.update (k ∪ p) :=
+  update_congr _ <| Set.ext fun d ↦ by
+    constructor
+    · rintro ⟨rfl | ⟨hd, q, hq, hqd⟩, hkd⟩
+      · exact absurd hkd hk
+      · by_cases e : q = p
+        · exact ⟨hd, Set.union_subset hkd (e ▸ hqd)⟩
+        · exact absurd (Set.union_subset hkd hqd) (h q hq e d hd)
+    · exact fun hd ↦ ⟨Or.inr ⟨hd.1, p, hp, Set.subset_union_right.trans hd.2⟩,
+        Set.subset_union_left.trans hd.2⟩
+
+/-- A space admits an act when the states that carry it have a least member, so that the update
+is again a commitment space (2), (3). An act the space does not admit needs a prior
+rejection. -/
+def Admits (C : Space (State A W)) (k : State A W) : Prop := (C.update k).root ∈ C
+
+/-- A proposed answer is admitted after the question iff it was admitted before. -/
+theorem admits_question_iff_of_mem (hp : p ∈ P) : Admits (question C P) p ↔ Admits C p := by
+  rw [Admits, question_update_of_mem C hp]
+  exact ⟨fun h ↦ show _ ∈ C from h.elim (fun e ↦ e ▸ C.root_mem) And.left,
+    fun h ↦ Or.inr ⟨h, p, hp, C.le_root_update p⟩⟩
+
+/-- An act that only the proposal `p` can accompany is admitted after the question iff the
+space before it admits the two together. -/
+theorem admits_question_iff_of_forall (hk : ¬ k ⊆ C.root) (hp : p ∈ P)
+    (h : ∀ q ∈ P, q ≠ p → ∀ d ∈ C, ¬ k ∪ q ⊆ d) :
+    Admits (question C P) k ↔ Admits C (k ∪ p) := by
+  rw [Admits, question_update_of_forall C hk hp h]
+  exact ⟨fun h' ↦ show _ ∈ C from h'.elim (fun e ↦ e ▸ C.root_mem) And.left,
+    fun h' ↦ Or.inr ⟨h', p, hp, Set.subset_union_right.trans (C.le_root_update _)⟩⟩
+
+/-- After a question proposing only `p`, an act that moves the root is performed together with
+`p`. -/
+theorem question_singleton_update (hk : ¬ k ⊆ C.root) (p : State A W) :
+    (question C {p}).update k = C.update (k ∪ p) :=
+  question_update_of_forall C hk (P := {p}) rfl fun _ hq hne ↦ absurd hq hne
+
+/-- After a question proposing only `p`, an act that moves the root is admitted iff the space
+before it admits the act together with `p`. -/
+theorem admits_question_singleton_iff (hk : ¬ k ⊆ C.root) (p : State A W) :
+    Admits (question C {p}) k ↔ Admits C (k ∪ p) :=
+  admits_question_iff_of_forall C hk (P := {p}) rfl fun _ hq hne ↦ absurd hq hne
+
+/-- After an admitted act, a further act is admitted iff the space admits the two together. -/
+theorem admits_update_iff (h : Admits C k) : Admits (C.update k) l ↔ Admits C (l ∪ k) := by
+  rw [Admits, C.update_update h]
+  exact ⟨fun h' ↦ C.update_le h h',
+    fun h' ↦ Or.inr ⟨h', Set.subset_union_right.trans (C.le_root_update _)⟩⟩
 
 end Questions
 
-/-! ### The fixture -/
+/-! ### Coherent states -/
+
+section Coherent
+
+variable {A W : Type*} {a b : A} {φ : Set W} {c d k : State A W}
+
+/-- A commitment state is coherent when nobody is committed to a proposition while committed to
+its negation or refusing to commit to it (pp. 329, 340). -/
+def Coherent (c : State A W) : Prop :=
+  ∀ a φ, commit a φ ∈ c → commit a φᶜ ∉ c ∧ refuse a φ ∉ c
+
+theorem Coherent.mono (h : c ⊆ d) (hd : Coherent d) : Coherent c := fun a φ hc ↦
+  ⟨fun h' ↦ (hd a φ (h hc)).1 (h h'), fun h' ↦ (hd a φ (h hc)).2 (h h')⟩
+
+variable (A W) in
+/-- The space of coherent states, with no commitments at the root. -/
+def coherent : Space (State A W) :=
+  ⟨{c | Coherent c}, ∅, fun _ _ h ↦ (Set.notMem_empty _ h).elim, fun _ _ ↦ Set.empty_subset _⟩
+
+/-- A coherent act is performed as it is. -/
+theorem root_update_coherent (h : Coherent k) : ((coherent A W).update k).root = k :=
+  IsLeast.csInf_eq ⟨⟨h, Set.Subset.rfl⟩, fun _ hd ↦ hd.2⟩
+
+/-- The coherent space admits exactly the coherent acts. -/
+theorem admits_coherent_iff : Admits (coherent A W) k ↔ Coherent k :=
+  ⟨fun h ↦ Coherent.mono ((coherent A W).le_root_update k) h,
+    fun h ↦ by rw [Admits, root_update_coherent h]; exact h⟩
+
+theorem not_subset_root_coherent (x : Commitment A W) :
+    ¬ ({x} : State A W) ⊆ (coherent A W).root := fun h ↦ h rfl
+
+theorem coherent_commit [Nonempty W] : Coherent ({commit a φ} : State A W) := by
+  simp [Coherent, commit, refuse, compl_ne_self]
+
+theorem coherent_commit_compl_refuse [Nonempty W] :
+    Coherent ({commit a φᶜ, refuse a φ} : State A W) := by
+  simp [Coherent, commit, refuse, compl_ne_self]
+
+theorem coherent_commit_commit [Nonempty W] :
+    Coherent ({commit a φ, commit b φ} : State A W) := by
+  simp only [Coherent, commit, refuse, Set.mem_insert_iff, Set.mem_singleton_iff,
+    Commitment.mk.injEq, and_true, reduceCtorEq, and_false, or_self, not_false_eq_true]
+  rintro _ _ (⟨rfl, rfl⟩ | ⟨rfl, rfl⟩) <;> simp [compl_ne_self]
+
+theorem coherent_commit_compl_commit [Nonempty W] (hab : a ≠ b) :
+    Coherent ({commit a φᶜ, commit b φ} : State A W) := by
+  simp only [Coherent, commit, refuse, Set.mem_insert_iff, Set.mem_singleton_iff,
+    Commitment.mk.injEq, and_true, reduceCtorEq, and_false, or_self, not_false_eq_true]
+  rintro _ _ (⟨rfl, rfl⟩ | ⟨rfl, rfl⟩) <;> simp [compl_ne_self, hab, hab.symm]
+
+theorem contextSet_singleton_commit (a : A) (φ : Set W) :
+    contextSet ({commit a φ} : State A W) = φ := by
+  rw [show ({commit a φ} : State A W) = insert (commit a φ) ∅ from (Set.union_empty _).symm,
+    contextSet_insert_of_commit rfl, contextSet_empty, Set.inter_univ]
+  rfl
+
+end Coherent
+
+/-! ### Which answers a question admits -/
+
+section Predictions
+
+variable {A W : Type*} (C : Space (State A W)) (a : A) (φ : Set W)
+
+/-- Answering *yes* to a monopolar question is asserting `φ` (28a). -/
+theorem monopolarQuestion_update_yes :
+    (monopolarQuestion C a φ).update {commit a φ} = C.assert a φ :=
+  question_update_of_mem C (P := {{commit a φ}}) rfl
+
+variable (A W)
+
+/-- *Yes* to a monopolar question is admitted (28a). -/
+theorem admits_monopolarQuestion_yes [Nonempty W] :
+    Admits (monopolarQuestion (coherent A W) a φ) {commit a φ} :=
+  (admits_question_iff_of_mem (coherent A W) (P := {{commit a φ}}) rfl).2
+    (admits_coherent_iff.2 coherent_commit)
+
+/-- *No* to a monopolar question is not admitted, so it needs a prior rejection (28b). -/
+theorem not_admits_monopolarQuestion_no :
+    ¬ Admits (monopolarQuestion (coherent A W) a φ) {commit a φᶜ} := fun h ↦
+  have hc := admits_coherent_iff.1 <|
+    (admits_question_singleton_iff _ (not_subset_root_coherent _) {commit a φ}).1 h
+  (hc a φ (Or.inr rfl)).1 (Or.inl rfl)
+
+/-- *Yes* to a bipolar question is admitted (24). -/
+theorem admits_bipolarQuestion_yes [Nonempty W] :
+    Admits (bipolarQuestion (coherent A W) a φ) {commit a φ} :=
+  (admits_question_iff_of_mem (coherent A W) (P := {{commit a φ}, {commit a φᶜ}})
+    (Or.inl rfl)).2 (admits_coherent_iff.2 coherent_commit)
+
+/-- *No* to a bipolar question is admitted (24). -/
+theorem admits_bipolarQuestion_no [Nonempty W] :
+    Admits (bipolarQuestion (coherent A W) a φ) {commit a φᶜ} :=
+  (admits_question_iff_of_mem (coherent A W) (P := {{commit a φ}, {commit a φᶜ}})
+    (Or.inr rfl)).2 (admits_coherent_iff.2 coherent_commit)
+
+/-- Answering *no* to a question with high negation is committing to `¬φ` while refusing to
+commit to `φ` (p. 340). -/
+theorem highNegationQuestion_update_no :
+    (highNegationQuestion (coherent A W) a φ).update {commit a φᶜ} =
+      (coherent A W).update {commit a φᶜ, refuse a φ} :=
+  question_singleton_update _ (not_subset_root_coherent _) {refuse a φ}
+
+/-- *No* to a question with high negation lands on the state that keeps the refusal. -/
+theorem root_highNegationQuestion_update_no [Nonempty W] :
+    ((highNegationQuestion (coherent A W) a φ).update {commit a φᶜ}).root =
+      {commit a φᶜ, refuse a φ} := by
+  rw [highNegationQuestion_update_no, root_update_coherent coherent_commit_compl_refuse]
+
+/-- *No* to a question with high negation is admitted (p. 340). -/
+theorem admits_highNegationQuestion_no [Nonempty W] :
+    Admits (highNegationQuestion (coherent A W) a φ) {commit a φᶜ} :=
+  (admits_question_singleton_iff _ (not_subset_root_coherent _) {refuse a φ}).2
+    (admits_coherent_iff.2 coherent_commit_compl_refuse)
+
+/-- *Yes* to a question with high negation needs a prior rejection (p. 340). -/
+theorem not_admits_highNegationQuestion_yes :
+    ¬ Admits (highNegationQuestion (coherent A W) a φ) {commit a φ} := fun h ↦
+  have hc := admits_coherent_iff.1 <|
+    (admits_question_singleton_iff _ (not_subset_root_coherent _) {refuse a φ}).1 h
+  (hc a φ (Or.inl rfl)).2 (Or.inr rfl)
+
+end Predictions
+
+/-! ### Developments and rejection -/
+
+/-- A commitment space development (8) is the current space with the spaces the conversation
+has passed through, the latest first. -/
+structure Development (S : Type*) [LE S] where
+  current : Space S
+  past : List (Space S) := []
+
+namespace Development
+
+variable {S : Type*} [LE S] (D : Development S)
+
+/-- Performing an act extends the development by its result (8). -/
+def perform (act : Space S → Space S) : Development S := ⟨act D.current, D.current :: D.past⟩
+
+/-- Rejecting the last act returns to the space before it and keeps the record (10). -/
+def reject : Development S := ⟨D.past.headD D.current, D.current :: D.past⟩
+
+@[simp] theorem current_perform (act : Space S → Space S) :
+    (D.perform act).current = act D.current := rfl
+
+/-- Rejecting an act restores the space it was performed on. -/
+@[simp] theorem current_reject_perform (act : Space S → Space S) :
+    (D.perform act).reject.current = D.current := rfl
+
+end Development
+
+/-- A conversation starting from the coherent space. -/
+def start (A W : Type*) : Development (State A W) := ⟨coherent A W, []⟩
+
+/-- Rejecting a monopolar question and answering *no* leaves the addressee committed to `¬φ`
+and to nothing else (28b). -/
+theorem root_reject_monopolarQuestion_no {A W : Type*} [Nonempty W] (a : A) (φ : Set W) :
+    (((start A W).perform (monopolarQuestion · a φ)).reject.perform
+      (·.assert a φᶜ)).current.root = {commit a φᶜ} :=
+  root_update_coherent coherent_commit
+
+/-! ### The issue a space raises -/
+
+section Issue
+
+variable {A W : Type*} (C : Space (State A W))
+
+/-- The continuations of a space are its states other than the root. -/
+def continuations : Set (State A W) := ↑C \ {C.root}
+
+open scoped Classical in
+/-- The issue a space raises is settled by the information states inside some continuation's
+context set, or inside the root's when the space has no continuations. -/
+noncomputable def toIssue : Question W :=
+  if continuations C = ∅ then Question.ofSet (contextSet C.root)
+  else ⨆ c ∈ continuations C, Question.ofSet (contextSet c)
+
+noncomputable instance : Discourse.HasIssue (Space (State A W)) W := ⟨toIssue⟩
+
+theorem mem_toIssue_iff {i : Set W} :
+    i ∈ toIssue C ↔
+      (continuations C = ∅ ∧ i ⊆ contextSet C.root) ∨ ∃ c ∈ continuations C, i ⊆ contextSet c := by
+  unfold toIssue
+  split_ifs with h
+  · simp [h, Question.mem_ofSet]
+  · simp only [h, false_and, false_or, Question.mem_biSup_iff, Question.mem_ofSet]
+    refine ⟨fun h' ↦ h'.elim (fun e ↦ ?_) id, Or.inr⟩
+    obtain ⟨c, hc⟩ := Set.nonempty_iff_ne_empty.2 h
+    exact ⟨c, hc, e ▸ Set.empty_subset _⟩
+
+end Issue
+
+/-! ### A two-world model -/
 
 /-- In one world it is raining and in the other it is not. -/
 inductive Weather
@@ -94,141 +375,83 @@ inductive Weather
   | noRain
   deriving DecidableEq
 
+instance : Nonempty Weather := ⟨.rain⟩
+
 /-- It is raining. -/
 def raining : Set Weather := {.rain}
 
-theorem raining_ne_compl : raining ≠ rainingᶜ := fun h ↦
-  (Set.ext_iff.1 h .rain).1 rfl rfl
+/-- The initial commitment space has every coherent state. -/
+def C₀ : Space (State Discourse.Role Weather) := coherent _ _
 
-/-- The initial commitment space has no commitments and leaves every development licit. -/
-def C₀ : Space (State Discourse.Role Weather) := Space.Ici ∅
-
-theorem mem_insert_empty_iff {x y : Commitment Discourse.Role Weather} :
-    x ∈ insert y (∅ : State Discourse.Role Weather) ↔ x = y := by simp
-
-theorem contextSet_insert_commit_empty (a : Discourse.Role) (φ : Set Weather) :
-    contextSet (insert (commit a φ) (∅ : State Discourse.Role Weather)) = φ := by
-  rw [contextSet_insert_of_commit rfl, contextSet_empty, Set.inter_univ]
-  rfl
-
-/-! ### Assertion (14) -/
-
-/-- An assertion re-roots the space at the state recording the speaker's commitment. -/
-theorem assert_root :
-    (C₀.assert .speaker raining).root = insert (commit .speaker raining) ∅ := rfl
-
-/-- Krifka's root narrows at once; the Table of [farkas-bruce-2010] leaves the common ground as
-it was (p. 331). -/
+/-- An assertion narrows the root at once, while the Table of [farkas-bruce-2010] leaves the
+common ground as it was until the proposal is accepted. -/
 theorem assert_contextSet_vs_farkasBruce_cg :
     contextSet (C₀.assert .speaker raining).root = raining ∧
       ((Table.empty : Table Discourse.Role Weather).assert .speaker raining).commonGround = ⊤ :=
-  ⟨contextSet_insert_commit_empty _ _, rfl⟩
-
-/-! ### Questions (23)–(28) -/
-
-/-- A monopolar question keeps the root (27). -/
-theorem monopolar_root : (monopolarQuestion C₀ .addressee raining).root = ∅ := rfl
-
-theorem insert_commit_mem_monopolarQuestion (φ : Set Weather) :
-    insert (commit .addressee φ) ∅ ∈ monopolarQuestion C₀ .addressee φ :=
-  (mem_monopolarQuestion ..).2 (Or.inr ⟨Set.empty_subset _, Set.mem_insert _ _⟩)
-
-/-- *Yes* is a projected continuation of the monopolar question (28a). -/
-theorem monopolar_yes_mem :
-    insert (commit .addressee raining) ∅ ∈ monopolarQuestion C₀ .addressee raining :=
-  insert_commit_mem_monopolarQuestion raining
-
-/-- *No* is not a projected continuation, since it requires a prior rejection (28b). -/
-theorem monopolar_no_not_mem :
-    insert (commit .addressee rainingᶜ) ∅ ∉ monopolarQuestion C₀ .addressee raining := by
-  rw [mem_monopolarQuestion]
-  rintro (h | ⟨-, h⟩)
-  · exact (Set.insert_nonempty _ _).ne_empty h
-  · exact raining_ne_compl (congrArg content (mem_insert_empty_iff.1 h))
-
-/-- Both answers are projected continuations of the bipolar question (24). -/
-theorem bipolar_yes_mem :
-    insert (commit .addressee raining) ∅ ∈ bipolarQuestion C₀ .addressee raining :=
-  (coe_bipolarQuestion ..).ge (Or.inl monopolar_yes_mem)
-
-theorem bipolar_no_mem :
-    insert (commit .addressee rainingᶜ) ∅ ∈ bipolarQuestion C₀ .addressee raining :=
-  (coe_bipolarQuestion ..).ge (Or.inr (insert_commit_mem_monopolarQuestion rainingᶜ))
-
-/-! ### Negated questions (29), (39) -/
-
-/-- High negation projects the addressee's refusal (39). -/
-theorem highNegation_refusal_mem :
-    insert (refuse .addressee raining) ∅ ∈ highNegationQuestion C₀ .addressee raining :=
-  (mem_highNegationQuestion ..).2 (Or.inr ⟨Set.empty_subset _, Set.mem_insert _ _⟩)
-
-/-- `¬S₂⊢φ` is weaker than `S₂⊢¬φ` (p. 340), since a consistent commitment to `¬φ` already
-excludes a commitment to `φ`. -/
-theorem not_mem_slate_of_commit_compl (K : State Discourse.Role Weather)
-    (h : commit .addressee rainingᶜ ∈ K) (hne : (contextSet (ofCommitter K .addressee)).Nonempty) :
-    raining ∉ slate (ofCommitter K .addressee) :=
-  not_mem_slate_of_compl_mem _ ⟨_, ⟨⟨h, rfl⟩, rfl⟩, rfl⟩ hne
-
-/-! ### The issue projection -/
+  ⟨(congrArg contextSet (root_update_coherent coherent_commit)).trans
+    (contextSet_singleton_commit _ _), rfl⟩
 
 /-- Every continuation of the monopolar question records the addressee's commitment, so its
 context set lies inside the proposed proposition. -/
 theorem monopolar_continuation_subset {φ : Set Weather} {c : State Discourse.Role Weather}
-    (hc : c ∈ (monopolarQuestion C₀ .addressee φ).continuations) : contextSet c ⊆ φ := by
+    (hc : c ∈ continuations (monopolarQuestion C₀ .addressee φ)) : contextSet c ⊆ φ := by
   obtain ⟨hc, hne⟩ := hc
   rcases (mem_monopolarQuestion ..).1 hc with rfl | ⟨-, hc⟩
   · exact absurd rfl hne
   · exact contextSet_subset_of_mem_contents _ ⟨_, ⟨hc, rfl⟩, rfl⟩
 
-theorem monopolar_continuation_mem :
-    insert (commit .addressee raining) ∅ ∈
-      (monopolarQuestion C₀ .addressee raining).continuations :=
-  ⟨monopolar_yes_mem, (Set.insert_nonempty _ _).ne_empty⟩
+theorem singleton_commit_mem_continuations (φ : Set Weather) :
+    {commit .addressee φ} ∈ continuations (monopolarQuestion C₀ .addressee φ) :=
+  ⟨(mem_monopolarQuestion ..).2 (Or.inr ⟨coherent_commit, rfl⟩),
+    (Set.singleton_nonempty _).ne_empty⟩
 
 /-- A monopolar question raises no inquisitive issue, so its bias is invisible to the issue
 observable. -/
 theorem monopolar_not_inquisitive :
-    ¬ (monopolarQuestion C₀ .addressee raining).toIssue.IsInquisitive := by
+    ¬ (toIssue (monopolarQuestion C₀ .addressee raining)).IsInquisitive := by
   intro h
-  have hmem : raining ∈ (monopolarQuestion C₀ .addressee raining).toIssue :=
-    (mem_toIssue_iff _).2 (Or.inr ⟨_, monopolar_continuation_mem,
-      (contextSet_insert_commit_empty _ _).ge⟩)
+  have hmem : raining ∈ toIssue (monopolarQuestion C₀ .addressee raining) :=
+    (mem_toIssue_iff _).2 (Or.inr ⟨_, singleton_commit_mem_continuations raining,
+      (contextSet_singleton_commit _ _).ge⟩)
   refine h ?_
-  have : (monopolarQuestion C₀ .addressee raining).toIssue.info = raining := by
+  have : (toIssue (monopolarQuestion C₀ .addressee raining)).info = raining := by
     refine Set.Subset.antisymm (Set.sUnion_subset fun i hi ↦ ?_) (Set.subset_sUnion_of_mem hmem)
     rcases (mem_toIssue_iff _).1 hi with ⟨h0, -⟩ | ⟨c, hc, hic⟩
-    · exact absurd monopolar_continuation_mem (h0 ▸ Set.notMem_empty _)
+    · exact absurd (singleton_commit_mem_continuations raining) (h0 ▸ Set.notMem_empty _)
     · exact hic.trans (monopolar_continuation_subset hc)
   rw [this]
   exact hmem
 
 /-- Every continuation of the bipolar question records one of the two answers. -/
 theorem bipolar_continuation_subset {c : State Discourse.Role Weather}
-    (hc : c ∈ (bipolarQuestion C₀ .addressee raining).continuations) :
+    (hc : c ∈ continuations (bipolarQuestion C₀ .addressee raining)) :
     contextSet c ⊆ raining ∨ contextSet c ⊆ rainingᶜ :=
   ((coe_bipolarQuestion ..).le hc.1).imp
     (fun h ↦ monopolar_continuation_subset ⟨h, hc.2⟩)
     (fun h ↦ monopolar_continuation_subset ⟨h, hc.2⟩)
 
 /-- A bipolar question raises a genuine issue. -/
-theorem bipolar_inquisitive : (bipolarQuestion C₀ .addressee raining).toIssue.IsInquisitive := by
+theorem bipolar_inquisitive :
+    (toIssue (bipolarQuestion C₀ .addressee raining)).IsInquisitive := by
   intro hinfo
-  have hyes : raining ∈ (bipolarQuestion C₀ .addressee raining).toIssue :=
-    (mem_toIssue_iff _).2 (Or.inr ⟨_, ⟨bipolar_yes_mem, (Set.insert_nonempty _ _).ne_empty⟩,
-      (contextSet_insert_commit_empty _ _).ge⟩)
-  have hno : rainingᶜ ∈ (bipolarQuestion C₀ .addressee raining).toIssue :=
-    (mem_toIssue_iff _).2 (Or.inr ⟨_, ⟨bipolar_no_mem, (Set.insert_nonempty _ _).ne_empty⟩,
-      (contextSet_insert_commit_empty _ _).ge⟩)
-  have hrain : Weather.rain ∈ (bipolarQuestion C₀ .addressee raining).toIssue.info :=
+  have hy : {commit .addressee raining} ∈
+      continuations (bipolarQuestion C₀ .addressee raining) :=
+    ⟨(coe_bipolarQuestion ..).ge (Or.inl (singleton_commit_mem_continuations raining).1),
+      (Set.singleton_nonempty _).ne_empty⟩
+  have hn : {commit .addressee rainingᶜ} ∈
+      continuations (bipolarQuestion C₀ .addressee raining) :=
+    ⟨(coe_bipolarQuestion ..).ge (Or.inr (singleton_commit_mem_continuations rainingᶜ).1),
+      (Set.singleton_nonempty _).ne_empty⟩
+  have hyes : raining ∈ toIssue (bipolarQuestion C₀ .addressee raining) :=
+    (mem_toIssue_iff _).2 (Or.inr ⟨_, hy, (contextSet_singleton_commit _ _).ge⟩)
+  have hno : rainingᶜ ∈ toIssue (bipolarQuestion C₀ .addressee raining) :=
+    (mem_toIssue_iff _).2 (Or.inr ⟨_, hn, (contextSet_singleton_commit _ _).ge⟩)
+  have hrain : Weather.rain ∈ (toIssue (bipolarQuestion C₀ .addressee raining)).info :=
     Set.subset_sUnion_of_mem hyes rfl
-  have hnoRain : Weather.noRain ∈ (bipolarQuestion C₀ .addressee raining).toIssue.info :=
+  have hnoRain : Weather.noRain ∈ (toIssue (bipolarQuestion C₀ .addressee raining)).info :=
     Set.subset_sUnion_of_mem hno fun h ↦ Weather.noConfusion h
   rcases (mem_toIssue_iff _).1 hinfo with ⟨h0, -⟩ | ⟨c, hc, hsub⟩
-  · have hmem : insert (commit .addressee raining) ∅ ∈
-        (bipolarQuestion C₀ .addressee raining).continuations :=
-      ⟨bipolar_yes_mem, (Set.insert_nonempty _ _).ne_empty⟩
-    rw [h0] at hmem
-    exact hmem
+  · exact absurd hy (h0 ▸ Set.notMem_empty _)
   · rcases bipolar_continuation_subset hc with h | h
     · exact Weather.noConfusion (h (hsub hnoRain))
     · exact h (hsub hrain) rfl
@@ -293,56 +516,116 @@ section Tags
 
 variable {W : Type*} (C : Space (State Discourse.Role W)) (φ : Set W)
 
-/-- A matching tag (44) conjoins the assertion with the monopolar question of the same
-content. -/
+/-- A matching tag conjoins the assertion with the monopolar question of the same content
+(44). -/
 def matchingTag : Set (State Discourse.Role W) :=
   ↑(C.assert .speaker φ) ∩ ↑(monopolarQuestion C .addressee φ)
 
-/-- A reverse tag (45) disjoins the assertion with the monopolar question of the negation. -/
+/-- A reverse tag disjoins the assertion with the monopolar question of the negation (45). -/
 def reverseTag : Set (State Discourse.Role W) :=
   ↑(C.assert .speaker φ) ∪ ↑(monopolarQuestion C .addressee φᶜ)
 
-/-- A matching tag is the speaker's assertion followed by the addressee's, so the proposed
-commitments obtain unless the addressee reacts. -/
+/-- A matching tag is the single act committing both participants (p. 342). -/
 theorem matchingTag_eq (hk : commit .speaker φ ∉ C.root)
-    (h : insert (commit .addressee φ) (insert (commit .speaker φ) C.root) ∈ C) :
-    matchingTag C φ = ↑((C.assert .speaker φ).assert .addressee φ) := by
+    (h : Admits C {commit .addressee φ, commit .speaker φ}) :
+    matchingTag C φ = ↑(C.update {commit .addressee φ, commit .speaker φ}) := by
+  rw [C.coe_update_of_root_mem h]
   ext d
-  simp only [matchingTag, Set.mem_inter_iff, SetLike.mem_coe, mem_assert, mem_monopolarQuestion,
-    root_assert]
+  simp only [matchingTag, Set.mem_inter_iff, SetLike.mem_coe, mem_monopolarQuestion, Set.mem_Ici]
   constructor
-  · rintro ⟨hs, rfl | ⟨-, ha⟩⟩
-    · exact absurd ((C.root_mem_assert_iff _ _ _).1 ((C.mem_assert _ _ _).2 hs)) hk
-    · exact Or.inr ⟨hs, ha⟩
-  · rintro (rfl | ⟨hs, ha⟩)
-    · exact ⟨Or.inr ⟨h, Set.mem_insert_of_mem _ (Set.mem_insert _ _)⟩,
-        Or.inr ⟨h, Set.mem_insert _ _⟩⟩
-    · refine ⟨hs, Or.inr ⟨?_, ha⟩⟩
-      rcases hs with rfl | hs
-      · rwa [Set.insert_eq_of_mem ha] at h
-      · exact hs.1
+  · rintro ⟨hs, rfl | ⟨hd, ha⟩⟩
+    · exact absurd ((C.root_mem_assert_iff _ _ _).1 hs) hk
+    · have hks : commit .speaker φ ∈ d :=
+        ((C.mem_assert _ _ _).1 hs).elim (fun e ↦ e ▸ C.commit_mem_root_assert _ _ _) And.right
+      exact ⟨hd, Set.insert_subset ha (Set.singleton_subset_iff.2 hks)⟩
+  · rintro ⟨hd, hsub⟩
+    exact ⟨(C.mem_assert _ _ _).2 (Or.inr ⟨hd, hsub (Or.inr rfl)⟩),
+      Or.inr ⟨hd, hsub (Or.inl rfl)⟩⟩
+
+/-- A reverse tag is the question proposing the speaker's assertion or the addressee's
+assertion of the negation, when the space admits the former. -/
+theorem reverseTag_eq (h : Admits C {commit .speaker φ}) :
+    reverseTag C φ = ↑(question C {{commit .speaker φ}, {commit .addressee φᶜ}}) := by
+  ext d
+  constructor
+  · rintro (hd | hd)
+    · exact Or.inr ⟨C.update_le h hd, _, Or.inl rfl, Set.singleton_subset_iff.2 <|
+        ((C.mem_assert _ _ _).1 hd).elim (fun e ↦ e ▸ C.commit_mem_root_assert _ _ _) And.right⟩
+    · exact ((mem_monopolarQuestion ..).1 hd).imp id fun hd ↦
+        ⟨hd.1, _, Or.inr rfl, Set.singleton_subset_iff.2 hd.2⟩
+  · rintro (rfl | ⟨hd, q, (rfl | rfl), hq⟩)
+    · exact Or.inr (Space.root_mem _)
+    · exact Or.inl ((C.mem_assert _ _ _).2 (Or.inr ⟨hd, hq rfl⟩))
+    · exact Or.inr ((mem_monopolarQuestion ..).2 (Or.inr ⟨hd, hq rfl⟩))
 
 /-- A reverse tag keeps the root, the speaker's commitment being only one branch. -/
 theorem isLeast_reverseTag : IsLeast (reverseTag C φ) C.root :=
   ⟨Or.inr (Space.root_mem _), by
     rintro d (hd | hd)
-    · exact (Set.subset_insert _ _).trans ((C.assert .speaker φ).root_le hd)
+    · exact (C.root_le_root_update _).trans ((C.assert .speaker φ).root_le hd)
     · exact (monopolarQuestion C .addressee φᶜ).root_le hd⟩
 
-end Tags
+/-- When the addressee contradicts a plain assertion, the speaker is still committed
+(p. 342). -/
+theorem commit_speaker_mem_root_assert_assert (ψ : Set W) :
+    commit .speaker φ ∈ ((C.assert .speaker φ).assert .addressee ψ).root :=
+  (C.assert .speaker φ).root_le_root_update _ (C.commit_mem_root_assert _ _ _)
+
+variable (W)
 
 /-- After a matching tag both participants are committed at the root. -/
-theorem isLeast_matchingTag :
-    IsLeast (matchingTag C₀ raining)
-      (insert (commit .addressee raining) (insert (commit .speaker raining) ∅)) := by
-  rw [matchingTag_eq C₀ raining (Set.notMem_empty _) (Set.empty_subset _)]
-  exact Space.isLeast _
+theorem isLeast_matchingTag [Nonempty W] :
+    IsLeast (matchingTag (coherent Discourse.Role W) φ)
+      {commit .addressee φ, commit .speaker φ} := by
+  rw [matchingTag_eq _ φ (Set.notMem_empty _) (admits_coherent_iff.2 coherent_commit_commit)]
+  have h := ((coherent Discourse.Role W).update {commit .addressee φ, commit .speaker φ}).isLeast
+  rwa [root_update_coherent coherent_commit_commit] at h
 
-/-- The branches of a reverse tag are the speaker's assertion and the addressee's assertion of
-the negation. -/
-theorem reverseTag_branches :
-    insert (commit .speaker raining) ∅ ∈ reverseTag C₀ raining ∧
-      insert (commit .addressee rainingᶜ) ∅ ∈ reverseTag C₀ raining :=
-  ⟨Or.inl (Space.root_mem _), Or.inr (insert_commit_mem_monopolarQuestion rainingᶜ)⟩
+/-- After a matching tag *no* needs a prior rejection (p. 342). -/
+theorem not_admits_matchingTag_no [Nonempty W] :
+    ¬ Admits ((coherent Discourse.Role W).update {commit .addressee φ, commit .speaker φ})
+      {commit .addressee φᶜ} := fun h ↦
+  have hc := admits_coherent_iff.1 <|
+    (admits_update_iff _ (admits_coherent_iff.2 coherent_commit_commit)).1 h
+  (hc .addressee φ (Or.inr (Or.inl rfl))).1 (Or.inl rfl)
+
+/-- Rejecting an assertion with a matching tag and answering *no* leaves only the addressee's
+commitment, the speaker's being rejected with the tag (p. 342). -/
+theorem root_reject_matchingTag_no [Nonempty W] :
+    (((start Discourse.Role W).perform
+        (·.update {commit .addressee φ, commit .speaker φ})).reject.perform
+      (·.assert .addressee φᶜ)).current.root = {commit .addressee φᶜ} :=
+  root_update_coherent coherent_commit
+
+/-- A plain assertion admits the addressee's *no* without a rejection. -/
+theorem admits_assert_no [Nonempty W] :
+    Admits ((coherent Discourse.Role W).assert .speaker φ) {commit .addressee φᶜ} :=
+  (admits_update_iff _ (admits_coherent_iff.2 coherent_commit)).2
+    (admits_coherent_iff.2 (coherent_commit_compl_commit (by decide)))
+
+/-- After a reverse tag, the addressee's commitment to `φ` brings the speaker's with it
+(p. 343). -/
+theorem root_reverseTag_update_yes [Nonempty W] :
+    ((question (coherent Discourse.Role W)
+        {{commit .speaker φ}, {commit .addressee φᶜ}}).update {commit .addressee φ}).root =
+      {commit .addressee φ, commit .speaker φ} := by
+  have h : ∀ q ∈ ({{commit .speaker φ}, {commit .addressee φᶜ}} : Set (State Discourse.Role W)),
+      q ≠ {commit .speaker φ} → ∀ d ∈ coherent Discourse.Role W,
+        ¬ {commit .addressee φ} ∪ q ⊆ d := by
+    rintro q (rfl | rfl) hne d hd hsub
+    exacts [absurd rfl hne, (hd .addressee φ (hsub (Or.inl rfl))).1 (hsub (Or.inr rfl))]
+  rw [question_update_of_forall _ (not_subset_root_coherent _) (Or.inl rfl) h]
+  exact root_update_coherent coherent_commit_commit
+
+/-- After a reverse tag, the addressee's *no* leaves the speaker uncommitted (p. 343). -/
+theorem root_reverseTag_update_no [Nonempty W] :
+    ((question (coherent Discourse.Role W)
+        {{commit .speaker φ}, {commit .addressee φᶜ}}).update {commit .addressee φᶜ}).root =
+      {commit .addressee φᶜ} := by
+  rw [question_update_of_mem (coherent Discourse.Role W)
+    (P := {{commit .speaker φ}, {commit .addressee φᶜ}}) (Or.inr rfl)]
+  exact root_update_coherent coherent_commit
+
+end Tags
 
 end Krifka2015

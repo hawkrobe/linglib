@@ -12,8 +12,8 @@ public import Mathlib.MeasureTheory.Measure.WithDensity
 # Conditional probability
 
 Lemmas on mathlib's conditional measure `μ[|s]` that mathlib does not state: monotonicity in
-the conditioning event, real-valued forms, pushforwards, invariance under scaling with the
-composition of two Bayesian updates, and conditioning on nested events up to null sets.
+the conditioning event, real-valued forms, pushforwards and products, invariance under scaling
+with the composition of two Bayesian updates, and conditioning on nested events up to null sets.
 `[UPSTREAM]` candidates for `Mathlib/Probability/ConditionalProbability.lean`.
 -/
 
@@ -32,8 +32,7 @@ variable {Ω : Type*} [MeasurableSpace Ω] (μ : Measure Ω) {s : Set Ω}
 probability of `e`. -/
 theorem cond_le_cond_of_subset {u₁ u₂ e : Set Ω} (hu₁ : MeasurableSet u₁)
     (hu₂ : MeasurableSet u₂) (hsub : u₂ ⊆ u₁) (hent : e ∩ u₁ ⊆ u₂) : μ[|u₁] e ≤ μ[|u₂] e := by
-  have h : e ∩ u₁ = e ∩ u₂ :=
-    Set.Subset.antisymm (fun w hw ↦ ⟨hw.1, hent hw⟩) (Set.inter_subset_inter_right _ hsub)
+  have h : e ∩ u₁ = e ∩ u₂ := Set.inter_congr_left (fun _ hw ↦ hsub hw.2) hent
   rw [cond_apply hu₁, cond_apply hu₂, Set.inter_comm u₁, Set.inter_comm u₂, h]
   exact mul_le_mul_left (ENNReal.inv_le_inv.mpr (measure_mono hsub)) _
 
@@ -44,7 +43,7 @@ theorem cond_real_apply (hs : MeasurableSet s) (e : Set Ω) :
 
 end ProbabilityTheory
 
-/-! ### Pushforwards -/
+/-! ### Pushforwards and products -/
 
 namespace ProbabilityTheory
 
@@ -55,6 +54,13 @@ theorem cond_map {f : Ω → Ω'} (hf : AEMeasurable f μ) {s : Set Ω'} (hs : M
     (μ.map f)[|s] = (μ[|f ⁻¹' s]).map f := by
   rw [cond, cond, Measure.map_smul _ hf.restrict, Measure.restrict_map_of_aemeasurable hf hs,
     Measure.map_apply_of_aemeasurable hf hs]
+
+variable (μ) in
+/-- Conditioning a product on an event of its first coordinate conditions the first factor. -/
+theorem cond_prod_preimage_fst [SFinite μ] (ν : Measure Ω') [IsProbabilityMeasure ν]
+    (s : Set Ω) : (μ.prod ν)[|Prod.fst ⁻¹' s] = μ[|s].prod ν := by
+  rw [cond, cond, Measure.prod_smul_left, Measure.restrict_prod_eq_prod_univ, ← Set.prod_univ,
+    Measure.prod_prod, measure_univ, mul_one]
 
 end ProbabilityTheory
 

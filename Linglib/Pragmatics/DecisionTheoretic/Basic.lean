@@ -125,6 +125,10 @@ noncomputable def bayesFactor (ctx : Context W) (e : Set W) : ℝ≥0∞ :=
 theorem bayesFactor_def (ctx : Context W) (e : Set W) :
     bayesFactor ctx e = ctx.prior[|ctx.topic] e / ctx.prior[|ctx.topicᶜ] e := rfl
 
+theorem toReal_bayesFactor (ctx : Context W) (e : Set W) :
+    (bayesFactor ctx e).toReal = (ctx.prior[|ctx.topic]).real e / (ctx.prior[|ctx.topicᶜ]).real e :=
+  ENNReal.toReal_div _ _
+
 /-- Merin's relevance of E to H (Definition 4) is the log Bayes factor, real-valued through
 `ENNReal.toReal`. The boundary cases `0` and `∞` both land at `Real.log 0 = 0`,
 so sign and order facts are read off `bayesFactor` itself
@@ -149,7 +153,7 @@ theorem relevance_lt_relevance {ctx : Context W} {e₁ e₂ : Set W} (h₁ : bay
   Real.log_lt_log (ENNReal.toReal_pos h₁ (ne_top_of_lt h))
     ((ENNReal.toReal_lt_toReal (ne_top_of_lt h) h₂).mpr h)
 
-/-- E is positively relevant to H, BF > 1 (Definition 5): E confirms H. -/
+/-- E is positively relevant to H, and so confirms it, when BF > 1 (Definition 5). -/
 def posRelevant (ctx : Context W) (e : Set W) : Prop :=
   1 < bayesFactor ctx e
 
@@ -157,7 +161,7 @@ theorem posRelevant_iff_one_lt_toReal {ctx : Context W} {e : Set W}
     (ht : bayesFactor ctx e ≠ ⊤) : posRelevant ctx e ↔ 1 < (bayesFactor ctx e).toReal := by
   rw [posRelevant, ← ENNReal.toReal_lt_toReal ENNReal.one_ne_top ht, ENNReal.toReal_one]
 
-/-- E is negatively relevant to H, BF < 1 (Definition 5): E disconfirms H. -/
+/-- E is negatively relevant to H, and so disconfirms it, when BF < 1 (Definition 5). -/
 def negRelevant (ctx : Context W) (e : Set W) : Prop :=
   bayesFactor ctx e < 1
 
@@ -165,7 +169,7 @@ theorem negRelevant_iff_toReal_lt_one {ctx : Context W} {e : Set W}
     (ht : bayesFactor ctx e ≠ ⊤) : negRelevant ctx e ↔ (bayesFactor ctx e).toReal < 1 := by
   rw [negRelevant, ← ENNReal.toReal_lt_toReal ht ENNReal.one_ne_top, ENNReal.toReal_one]
 
-/-- E is irrelevant to H, BF = 1 (Definition 5): E neither confirms nor disconfirms H. -/
+/-- E is irrelevant to H, neither confirming nor disconfirming it, when BF = 1 (Definition 5). -/
 def irrelevant (ctx : Context W) (e : Set W) : Prop :=
   bayesFactor ctx e = 1
 
@@ -210,8 +214,7 @@ as relevant to H as `u₁`. -/
 theorem bayesFactor_le_of_subset (ctx : Context W) {u₁ u₂ : Set W}
     (hsub : u₂ ⊆ u₁) (hent : ctx.topic ∩ u₁ ⊆ u₂) :
     bayesFactor ctx u₁ ≤ bayesFactor ctx u₂ := by
-  have h : ctx.topic ∩ u₁ = ctx.topic ∩ u₂ :=
-    Set.Subset.antisymm (fun w hw ↦ ⟨hw.1, hent hw⟩) (Set.inter_subset_inter_right _ hsub)
+  have h : ctx.topic ∩ u₁ = ctx.topic ∩ u₂ := Set.inter_congr_left (fun _ hw ↦ hsub hw.2) hent
   rw [bayesFactor_def, bayesFactor_def, cond_apply ctx.topicMeasurable,
     cond_apply ctx.topicMeasurable, h]
   exact ENNReal.div_le_div_left (measure_mono hsub) _
@@ -221,8 +224,7 @@ theorem bayesFactor_lt_of_subset (ctx : Context W) [IsFiniteMeasure ctx.prior]
     {u₁ u₂ : Set W} (hu₂ : MeasurableSet u₂) (hsub : u₂ ⊆ u₁) (hent : ctx.topic ∩ u₁ ⊆ u₂)
     (hpos : ctx.prior (ctx.topic ∩ u₂) ≠ 0) (hgap : ctx.prior (u₁ \ u₂) ≠ 0) :
     bayesFactor ctx u₁ < bayesFactor ctx u₂ := by
-  have h : ctx.topic ∩ u₁ = ctx.topic ∩ u₂ :=
-    Set.Subset.antisymm (fun w hw ↦ ⟨hw.1, hent hw⟩) (Set.inter_subset_inter_right _ hsub)
+  have h : ctx.topic ∩ u₁ = ctx.topic ∩ u₂ := Set.inter_congr_left (fun _ hw ↦ hsub hw.2) hent
   have hgap' : u₁ \ u₂ ⊆ ctx.topicᶜ := fun w hw h ↦ hw.2 (hent ⟨h, hw.1⟩)
   have hd : ctx.prior[|ctx.topicᶜ] u₂ < ctx.prior[|ctx.topicᶜ] u₁ := by
     rw [cond_apply ctx.topicMeasurable.compl, cond_apply ctx.topicMeasurable.compl,
@@ -251,7 +253,7 @@ variable [Fintype W] [MeasurableSingletonClass W] (topic e : Set W)
 theorem toReal_bayesFactor_count :
     (bayesFactor ⟨topic, .of_discrete, .count⟩ e).toReal =
       ((topic ∩ e).ncard / topic.ncard) / ((topicᶜ ∩ e).ncard / topicᶜ.ncard) := by
-  rw [bayesFactor_def, ENNReal.toReal_div, ← measureReal_def, ← measureReal_def]
+  rw [toReal_bayesFactor]
   exact congrArg₂ (· / ·) (uniformOn_real_apply topic e) (uniformOn_real_apply topicᶜ e)
 
 theorem relevance_count :
@@ -325,8 +327,8 @@ end Cross
 
 /-! ### Issue-conditional independence -/
 
-/-- A and B are independent conditionally on H and on ¬H (Definition 9): mathlib's `IndepSet` at
-both conditionals. Merin's Conditional Independence Presumption (Hypothesis 2) is that
+/-- A and B are independent conditionally on H and on ¬H (Definition 9) when mathlib's `IndepSet`
+holds at both conditionals. Merin's Conditional Independence Presumption (Hypothesis 2) is that
 interpretation assumes this of coordinated sisters unless something suggests otherwise. -/
 def CondIndepIssue (ctx : Context W) (a b : Set W) : Prop :=
   ∀ θ, IndepSet a b (ctx.conditional θ)
@@ -441,9 +443,8 @@ theorem CondIndepIssue.max_bayesFactor_lt_inter {ctx : Context W} {a b : Set W}
   · simpa using ENNReal.mul_lt_mul_left (zero_lt_one.trans hPosB).ne' (bayesFactor_ne_top hNb)
       hPosA
 
-/-- Arithmetic core of the union bounds: with the four masses in position,
-the inclusion-exclusion ratio sits strictly between one and the larger
-single-event ratio. -/
+/-- With the four masses in position, the inclusion-exclusion ratio sits strictly between one
+and the larger single-event ratio, the arithmetic core of the union bounds. -/
 private lemma max_div_gt_or_div (pAH pBH pAnH pBnH : ℝ)
     (h1 : 0 < pAnH) (h2 : 0 < pBnH)
     (h3 : pAnH < pAH) (h4 : pBnH < pBH)
@@ -524,8 +525,8 @@ theorem CondIndepIssue.one_lt_bayesFactor_union {ctx : Context W}
 
 /-! ### The Bayesian bridge -/
 
-/-- Over a live issue, E confirms H iff H makes E more probable than it is a priori: the
-Bayes-theorem bridge between P(E∣H) > P(E) and BF_H(E) > 1. -/
+/-- Over a live issue, E confirms H iff H makes E more probable than it is a priori, so Bayes'
+theorem links P(E∣H) > P(E) with BF_H(E) > 1. -/
 theorem posRelevant_iff_lt_cond (ctx : Context W) [IsProbabilityMeasure ctx.prior]
     [ctx.Nondegenerate] (e : Set W) :
     posRelevant ctx e ↔ ctx.prior e < ctx.prior[|ctx.topic] e := by

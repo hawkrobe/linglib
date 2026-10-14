@@ -5,163 +5,141 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Core.RingTheory.Coalgebra.Basic
-public import Linglib.Core.RingTheory.Coalgebra.Convolution
-public import Linglib.Core.RingTheory.Bialgebra.Basic
 public import Mathlib.Algebra.Lie.OfAssociative
 public import Mathlib.Algebra.Lie.Subalgebra
+public import Mathlib.RingTheory.Bialgebra.TensorProduct
+public import Mathlib.RingTheory.Coalgebra.Convolution
 
 /-!
 # Dual-primitive functionals on a bialgebra
 
-A linear functional `L : H →ₗ[R] R` on a bialgebra is **primitive in the
-dual** if `L 1 = 0` and `L (x * y) = L x * ε y + ε x * L y`. This is the
-pairing form of `Bialgebra.IsPrimitiveElem` (mathlib4#39841) for the dual of
-`H`: the unit of the convolution algebra is `ε`, and the coproduct of the dual
-is dual to the product on `H`, so the two conditions read `ε_∨ L = 0` and
-`Δ_∨ L = 1 ⊗ L + L ⊗ 1` after pairing against `x ⊗ y`. The full linear dual
-carries no coproduct, so the predicate is stated in pairing form; on the
-finite dual it coincides with `IsPrimitiveElem`.
+A linear functional `f` on a bialgebra `A` is primitive in the dual if `f 1 = 0` and
+`f (a * b) = f a * ε b + ε a * f b`, where `ε` is the counit. The product of `A` transposes to a
+comultiplication on functionals, for which `ε` is the unit, and the two conditions say that `f`
+is a primitive element for it. Radford calls such an `f` an `ε:ε`-derivation of `A` and
+identifies these with the primitive elements of the finite dual. Under the commutator of the
+convolution product they form a Lie algebra, which Connes and Kreimer attach to the Hopf algebra
+of rooted trees.
 
-## Main declarations
+## Main definitions
 
-* `Bialgebra.IsDualPrimitive`: the predicate, with `L 1 = 0` as a field
-  (mirroring `IsSkewPrimitiveElem.counit_eq_zero`, and for the same reason:
-  over a semiring it is not derivable from the product rule).
-* `Bialgebra.IsDualPrimitive.lie`: closure under the convolution commutator
-  bracket — the dual form of `IsPrimitiveElem.commutator`.
-* `Bialgebra.dualPrimitives`: the dual primitives as a Lie subalgebra of the
-  convolution algebra `WithConv (H →ₗ[R] R)`.
+* `Bialgebra.IsDualPrimitive R f`: the functional `f` is primitive in the dual.
+* `Bialgebra.dualPrimitives R A`: the dual primitives, as a Lie subalgebra of the convolution
+  algebra `WithConv (A →ₗ[R] R)`.
 
-`[UPSTREAM]` target: `Mathlib.RingTheory.Bialgebra.Primitive` (created by
-mathlib4#39841), as the dual companion of `IsPrimitiveElem`.
+## Main results
+
+* `Bialgebra.IsDualPrimitive.convMul_apply_mul`: the convolution product of two dual primitives
+  obeys a second-order product rule, whose cross terms are symmetric in the two functionals.
+* `Bialgebra.IsDualPrimitive.lie`: the commutator of two dual primitives is a dual primitive.
+
+## Implementation notes
+
+`f 1 = 0` is a field, as in `Derivation` and as the counit condition is in
+`Coalgebra.IsSkewPrimitiveElem`. It follows from the product rule when addition on `R` cancels
+(`Bialgebra.isDualPrimitive_iff_leibniz`), but not over every semiring.
+
+[UPSTREAM] Belongs beside `Mathlib/RingTheory/Bialgebra/Primitive.lean`, as the dual of
+`Bialgebra.IsPrimitiveElem`.
+
+## References
+
+* [radford-2012]
+* [connes-kreimer-1998]
 -/
 
 @[expose] public section
 
+open Coalgebra WithConv
+
 namespace Bialgebra
 
-open Coalgebra
+variable {R A : Type*}
 
 section CommSemiring
 
-variable {R : Type*} [CommSemiring R] {H : Type*} [Semiring H] [Bialgebra R H]
-  {L L₁ L₂ : H →ₗ[R] R} {x y : H}
+variable [CommSemiring R] [Semiring A] [Bialgebra R A] {f g : A →ₗ[R] R} {a b : A}
 
 variable (R) in
-/-- A linear functional `L : H →ₗ[R] R` is **primitive in the dual** of a
-bialgebra `H` if `L 1 = 0` and `L (x * y) = L x * ε y + ε x * L y` — the
-pairing form of `Bialgebra.IsPrimitiveElem` for the dual of `H`. -/
+/-- A linear functional `f` on a bialgebra is primitive in the dual if `f 1 = 0` and
+`f (a * b) = f a * ε b + ε a * f b`, where `ε` is the counit. -/
 @[mk_iff]
-structure IsDualPrimitive (L : H →ₗ[R] R) : Prop where
-  /-- A dual primitive vanishes at `1` (the counit of the dual is
-  evaluation at `1`). -/
-  map_one_eq_zero : L 1 = 0
-  /-- The derivation-like product rule (the dual comultiplication
-  condition). -/
-  map_mul : ∀ x y : H, L (x * y) = L x * counit y + counit x * L y
+structure IsDualPrimitive (f : A →ₗ[R] R) : Prop where
+  /-- A dual primitive vanishes at `1`. -/
+  map_one_eq_zero : f 1 = 0
+  /-- A dual primitive obeys the product rule of a derivation at the counit. -/
+  leibniz (a b : A) : f (a * b) = f a * counit b + counit a * f b
 
 namespace IsDualPrimitive
 
-theorem zero : IsDualPrimitive R (0 : H →ₗ[R] R) where
-  map_one_eq_zero := rfl
-  map_mul x y := by simp
+@[simp] theorem zero : IsDualPrimitive R (0 : A →ₗ[R] R) := by simp [isDualPrimitive_iff]
 
-theorem add (h₁ : IsDualPrimitive R L₁) (h₂ : IsDualPrimitive R L₂) :
-    IsDualPrimitive R (L₁ + L₂) where
-  map_one_eq_zero := by
-    simp [h₁.map_one_eq_zero, h₂.map_one_eq_zero]
-  map_mul x y := by
-    simp only [LinearMap.add_apply, h₁.map_mul x y, h₂.map_mul x y]; ring
+theorem add (hf : IsDualPrimitive R f) (hg : IsDualPrimitive R g) : IsDualPrimitive R (f + g) where
+  map_one_eq_zero := by simp [hf.map_one_eq_zero, hg.map_one_eq_zero]
+  leibniz a b := by simp [hf.leibniz, hg.leibniz, add_mul, mul_add, add_add_add_comm]
 
-theorem smul (hL : IsDualPrimitive R L) (c : R) : IsDualPrimitive R (c • L) where
-  map_one_eq_zero := by simp [hL.map_one_eq_zero]
-  map_mul x y := by
-    simp only [LinearMap.smul_apply, smul_eq_mul, hL.map_mul x y]; ring
+theorem smul (hf : IsDualPrimitive R f) (r : R) : IsDualPrimitive R (r • f) where
+  map_one_eq_zero := by simp [hf.map_one_eq_zero]
+  leibniz a b := by simp [hf.leibniz, mul_add, mul_assoc, mul_left_comm]
 
-/-- A dual primitive vanishes on products of counit-less elements; in
-particular on decomposable basis elements of a graded bialgebra. -/
-theorem map_mul_eq_zero (hL : IsDualPrimitive R L)
-    (hx : counit (R := R) x = 0) (hy : counit (R := R) y = 0) : L (x * y) = 0 := by
-  rw [hL.map_mul, hx, hy, mul_zero, zero_mul, add_zero]
+/-- A dual primitive vanishes on the product of two elements of counit zero. -/
+theorem map_mul_eq_zero (hf : IsDualPrimitive R f) (ha : counit (R := R) a = 0)
+    (hb : counit (R := R) b = 0) : f (a * b) = 0 := by
+  simp [hf.leibniz, ha, hb]
+
+/-- The convolution product of two dual primitives obeys a second-order product rule. Its cross
+terms `f a * g b + g a * f b` are symmetric in `f` and `g`, so they cancel in the commutator. -/
+theorem convMul_apply_mul (hf : IsDualPrimitive R f) (hg : IsDualPrimitive R g) (a b : A) :
+    (toConv f * toConv g) (a * b) =
+      (toConv f * toConv g) a * counit b + f a * g b + g a * f b +
+        counit a * (toConv f * toConv g) b := by
+  trans (toConv f * toConv g) a * (1 * 1 : WithConv (A →ₗ[R] R)) b +
+      (toConv f * 1) a * (1 * toConv g) b + (1 * toConv g) a * (toConv f * 1) b +
+        (1 * 1 : WithConv (A →ₗ[R] R)) a * (toConv f * toConv g) b
+  · simp only [((ℛ R a).mul (ℛ R b)).convMul_apply, (ℛ R a).convMul_apply, (ℛ R b).convMul_apply,
+      Finset.sum_mul_sum, ← Finset.sum_add_distrib, Repr.mul_index, Repr.mul_left, Repr.mul_right,
+      Finset.sum_product, hf.leibniz, hg.leibniz, LinearMap.convOne_apply,
+      Algebra.algebraMap_self, RingHom.id_apply]
+    exact Finset.sum_congr rfl fun i _ ↦ Finset.sum_congr rfl fun j _ ↦ by ring
+  · simp
 
 end IsDualPrimitive
 
+/-- When addition on `R` cancels, the product rule alone makes a functional a dual primitive. -/
+theorem isDualPrimitive_iff_leibniz [IsCancelAdd R] :
+    IsDualPrimitive R f ↔ ∀ a b, f (a * b) = f a * counit b + counit a * f b :=
+  ⟨fun hf ↦ hf.leibniz, fun h ↦ ⟨by simpa using h 1 1, h⟩⟩
+
 end CommSemiring
-
-/-! ### The Lie subalgebra of dual primitives -/
-
-attribute [local instance 100] LieRing.ofAssociativeRing
 
 section CommRing
 
-open WithConv
+variable [CommRing R] [Semiring A] [Bialgebra R A] {f g : A →ₗ[R] R}
 
-variable {R : Type*} [CommRing R] {H : Type*} [Semiring H] [Bialgebra R H]
-  {L L₁ L₂ : H →ₗ[R] R} {x y : H}
+attribute [local instance 100] LieRing.ofAssociativeRing
 
-private theorem sum_mul_expand {ιx ιy : Type*} (𝓡x : Coalgebra.Repr R x ιx)
-    (𝓡y : Coalgebra.Repr R y ιy) {M N : H →ₗ[R] R}
-    (hM : IsDualPrimitive R M) (hN : IsDualPrimitive R N) :
-    ∑ p ∈ 𝓡x.index ×ˢ 𝓡y.index,
-        M (𝓡x.left p.1 * 𝓡y.left p.2) * N (𝓡x.right p.1 * 𝓡y.right p.2) =
-      (∑ i ∈ 𝓡x.index, M (𝓡x.left i) * N (𝓡x.right i)) * counit y +
-        M x * N y + N x * M y +
-        counit x * ∑ j ∈ 𝓡y.index, M (𝓡y.left j) * N (𝓡y.right j) :=
-  calc
-    ∑ p ∈ 𝓡x.index ×ˢ 𝓡y.index,
-        M (𝓡x.left p.1 * 𝓡y.left p.2) * N (𝓡x.right p.1 * 𝓡y.right p.2) =
-        ∑ i ∈ 𝓡x.index, ∑ j ∈ 𝓡y.index,
-          ((M (𝓡x.left i) * N (𝓡x.right i)) * (counit (𝓡y.left j) * counit (𝓡y.right j)) +
-            ((M (𝓡x.left i) * counit (𝓡x.right i)) * (counit (𝓡y.left j) * N (𝓡y.right j)) +
-              ((counit (𝓡x.left i) * N (𝓡x.right i)) * (M (𝓡y.left j) * counit (𝓡y.right j)) +
-                (counit (𝓡x.left i) * counit (𝓡x.right i)) *
-                  (M (𝓡y.left j) * N (𝓡y.right j))))) := by
-      rw [Finset.sum_product]
-      exact Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => by
-        rw [hM.map_mul, hN.map_mul]; ring
-    _ = _ := by
-      simp only [Finset.sum_add_distrib, ← Finset.sum_mul, ← Finset.mul_sum]
-      rw [𝓡y.sum_apply_mul_counit counit, 𝓡x.sum_apply_mul_counit M,
-        𝓡y.sum_counit_mul_apply N, 𝓡x.sum_counit_mul_apply N,
-        𝓡y.sum_apply_mul_counit M, 𝓡x.sum_apply_mul_counit counit]
-      ring
-
-/-- Dual primitives are closed under the convolution commutator bracket: the
-Sweedler expansion of `⁅L₁, L₂⁆ (x * y)` produces cross terms symmetric in
-`(L₁, L₂)`, which cancel in the commutator. The dual form of
-`IsPrimitiveElem.commutator`. -/
-theorem IsDualPrimitive.lie (h₁ : IsDualPrimitive R L₁) (h₂ : IsDualPrimitive R L₂) :
-    IsDualPrimitive R (⁅toConv L₁, toConv L₂⁆ : WithConv (H →ₗ[R] R)).ofConv where
+/-- The commutator of two dual primitives under the convolution product is a dual primitive. -/
+theorem IsDualPrimitive.lie (hf : IsDualPrimitive R f) (hg : IsDualPrimitive R g) :
+    IsDualPrimitive R (⁅toConv f, toConv g⁆ : WithConv (A →ₗ[R] R)).ofConv where
   map_one_eq_zero := by
-    have key : ∀ M N : H →ₗ[R] R, IsDualPrimitive R M →
-        (toConv M * toConv N : WithConv (H →ₗ[R] R)) 1 = 0 := fun M N hM => by
-      rw [LinearMap.convMul_apply, Bialgebra.comul_one, Algebra.TensorProduct.one_def,
-        TensorProduct.map_tmul, LinearMap.mul'_apply, hM.map_one_eq_zero, zero_mul]
-    rw [Ring.lie_def]
-    show (toConv L₁ * toConv L₂ : WithConv (H →ₗ[R] R)) 1 -
-        (toConv L₂ * toConv L₁ : WithConv (H →ₗ[R] R)) 1 = 0
-    rw [key _ _ h₁, key _ _ h₂, sub_zero]
-  map_mul x y := by
-    rw [((ℛ R x).mul (ℛ R y)).lie_apply, (ℛ R x).lie_apply, (ℛ R y).lie_apply]
-    simp only [Coalgebra.Repr.mul_index, Coalgebra.Repr.mul_left, Coalgebra.Repr.mul_right,
-      Finset.sum_sub_distrib]
-    rw [sum_mul_expand _ _ h₁ h₂, sum_mul_expand _ _ h₂ h₁]
+    simp [Ring.lie_def, Algebra.TensorProduct.one_def, hf.map_one_eq_zero, hg.map_one_eq_zero]
+  leibniz a b := by
+    simp only [Ring.lie_def, ofConv_sub, LinearMap.sub_apply]
+    rw [hf.convMul_apply_mul hg, hg.convMul_apply_mul hf]
     ring
 
-variable (R H) in
-/-- The dual primitives of a bialgebra `H`, as a Lie subalgebra of the
-convolution algebra `WithConv (H →ₗ[R] R)` under the ring commutator bracket —
-the dual-side form of the Lie algebra of primitive elements. -/
-def dualPrimitives : LieSubalgebra R (WithConv (H →ₗ[R] R)) where
-  carrier := {L | IsDualPrimitive R L.ofConv}
+variable (R A) in
+/-- The dual primitives of a bialgebra, as a Lie subalgebra of its convolution algebra of linear
+functionals under the commutator bracket. -/
+def dualPrimitives : LieSubalgebra R (WithConv (A →ₗ[R] R)) where
+  carrier := {f | IsDualPrimitive R f.ofConv}
   zero_mem' := .zero
-  add_mem' h₁ h₂ := h₁.add h₂
-  smul_mem' c _ hL := hL.smul c
-  lie_mem' h₁ h₂ := h₁.lie h₂
+  add_mem' hf hg := hf.add hg
+  smul_mem' r _ hf := hf.smul r
+  lie_mem' hf hg := hf.lie hg
 
-@[simp] theorem mem_dualPrimitives {L : WithConv (H →ₗ[R] R)} :
-    L ∈ dualPrimitives R H ↔ IsDualPrimitive R L.ofConv := Iff.rfl
+@[simp] theorem mem_dualPrimitives {f : WithConv (A →ₗ[R] R)} :
+    f ∈ dualPrimitives R A ↔ IsDualPrimitive R f.ofConv := .rfl
 
 end CommRing
 

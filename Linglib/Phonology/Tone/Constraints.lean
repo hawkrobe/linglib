@@ -12,42 +12,39 @@ public import Linglib.Phonology.OptimalityTheory.Constraint.Defs
 /-!
 # Tonal constraints
 
-OT/HS constraint constructors over the candidates `Candidate u` of an autosegmental form
-`u : Form S TRN M` (`Phonology/Autosegmental/Floating.lean`), generic over the segment type
-`S` and the opaque sponsor type `M`. Each is a canonical `OptimalityTheory.Constraint`, a scalar
-`· → ℕ` violation count. Equation numbers below are [mcpherson-lamont-2026]'s.
+OT and harmonic-serialism constraints over the candidates `Candidate u` of an autosegmental form
+`u : Form S TRN M`, generic over the segment type `S` and the opaque sponsor type `M`. Each is
+an `OptimalityTheory.Constraint`, a violation count. Equation numbers are McPherson and
+Lamont's.
 
 ## Main definitions
 
 * `starFloatBlock` / `starFloatBlockRev` / `starFloatCount` — `*FLOAT` (eq. 16):
   directional block (L→R / R→L) vs. count variant
-* `starTautDock` — `*TAUTDOCK` (eq. 15, after [wolf-2007])
+* `starTautDock` — `*TAUTDOCK` (eq. 15)
 * `starCrowd` — `*CROWD` (eq. 5): per-morpheme tone-count ceiling
 * `starFall` — `*FALL` (eq. 23): falling-contour ban
 * `starMlessL` — `*M<L` (eq. 29): M immediately before L on the tier
 * `maxTone` / `depLinkTone` / `maxLinkTone` — `MAX(T)` / `DEP(link)/T` / `MAX(link)/T` (eq. 7)
 * `haveTone` — `HAVETONE` (eq. 17)
-* `integrityTone` — `INTEGRITY` ([akinbo-fwangwar-2026]; [mccarthy-prince-1995])
-* `leftAnchorTone` / `rightAnchorTone` — morpheme-specific `ANCHOR` ([finley-2009];
-  [akinbo-fwangwar-2026])
 
 ## Implementation notes
 
-Faithfulness (`maxTone`, `maxLinkTone`, `depLinkTone`) compares a candidate's surface state
-with its form, which the candidate carries as a parameter. Without that underlying-form
-tracking, faithfulness can't fire and the [mcpherson-lamont-2026] LR-vs-RL multi-step
-asymmetry collapses.
+* Faithfulness (`maxTone`, `maxLinkTone`, `depLinkTone`) compares a candidate's surface state
+  with its form, which the candidate carries as a parameter; without it the left-to-right versus
+  right-to-left asymmetry of multi-step derivations collapses.
+* Directionality is a property of EVAL, not a kind of constraint: `*FLOAT` is a
+  position-indexed block of float flags (`starFloatBlock`), and splicing the block into a
+  ranking under the lexicographic profile order recovers directional evaluation
+  (`List.ofFn_le_ofFn_iff`). `starFloatCount` is its count collapse, which agrees with the
+  block on at most one floating tone and cannot tell deleting the leftmost from deleting the
+  rightmost.
 
-Directionality is **not** a separate kind of constraint. Following [lamont-2022b]
-(directionality is a property of EVAL), `*FLOAT` is a position-indexed *block* of
-scalar float-flag constraints (`starFloatBlock`), whose coordinate `i` flags whether
-autosegment `i` is floating, so splicing the block into a ranking and comparing under the
-canonical lexicographic profile order recovers the directional EVAL exactly
-(`List.ofFn_le_ofFn_iff`). The block is laid out left-to-right for
-`*FLOAT^→` (`starFloatBlock`) or right-to-left for `*FLOAT^←` (`starFloatBlockRev`);
-`starFloatCount` is the count collapse (parallel `*FLOAT`). They agree on at most one
-floating tone but diverge as the set grows — a single count cannot tell "delete
-leftmost" from "delete rightmost" ([mcpherson-lamont-2026]'s eq. (62) divergent tie).
+## References
+
+* [mcpherson-lamont-2026]
+* [lamont-2022b]
+* [wolf-2007]
 -/
 
 @[expose] public section
@@ -166,43 +163,5 @@ def depLinkTone (t : TRN) : Constraint (Candidate u) :=
     deleted by GEN. -/
 def maxLinkTone (t : TRN) : Constraint (Candidate u) :=
   fun c ↦ (c.deletedLinks.filter fun l ↦ ToneHasValue l.1 t).card
-
-/-- `INTEGRITY` ([mccarthy-prince-1995]; [akinbo-fwangwar-2026]) forbids an input tone from
-    having several output correspondents. It counts the alive tier entries sharing tone value
-    `t` and morpheme `m` beyond the first, so spreading by one multi-linked entry costs
-    nothing and copying into `n` entries costs `n - 1`. -/
-def integrityTone (m : M) (t : TRN) : Constraint (Candidate u) :=
-  fun c ↦
-    (Finset.univ.filter fun k ↦
-      k ∉ c.deleted ∧ u.upper[k].morpheme = m ∧ ToneHasValue k t).card - 1
-
-/-! ### Morpheme-specific anchoring
-[finley-2009]
-
-A grammatical tone sponsored by morpheme `m` must correspond to an edge of a host root. With
-several hosts the constraint counts the host it is realised on that is closest to satisfying
-it; unrealised anywhere, it counts every TBU of every host ([akinbo-fwangwar-2026] (22),
-(26)). -/
-
-/-- Backbone position `i` bears an upper-tier element of value `t` sponsored by `m`. -/
-def bearsTone (c : Candidate u) (m : M) (t : TRN) (i : Fin u.lower.length) : Bool :=
-  (c.linksTo i).any fun k ↦ decide (u.upper[k].value = t ∧ u.upper[k].morpheme = m)
-
-/-- `LEFT-ANCHOR-T_m` counts the TBUs between a host's left edge and the leftmost TBU
-bearing `t` from `m`, the fewest over the hosts bearing it, or every TBU of every host if none
-does. -/
-def leftAnchorTone (m : M) (t : TRN) (hosts : List M) : Constraint (Candidate u) :=
-  fun c ↦
-    match (hosts.filterMap fun h ↦ (u.lowerOfMorpheme h).findIdx? (bearsTone c m t)).min? with
-    | some d => d
-    | none => (hosts.map fun h ↦ (u.lowerOfMorpheme h).length).sum
-
-/-- `RIGHT-ANCHOR-T_m` counts as `leftAnchorTone` does, from the host's right edge. -/
-def rightAnchorTone (m : M) (t : TRN) (hosts : List M) : Constraint (Candidate u) :=
-  fun c ↦
-    match (hosts.filterMap fun h ↦
-        (u.lowerOfMorpheme h).reverse.findIdx? (bearsTone c m t)).min? with
-    | some d => d
-    | none => (hosts.map fun h ↦ (u.lowerOfMorpheme h).length).sum
 
 end Tone
