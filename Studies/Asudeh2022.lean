@@ -9,6 +9,10 @@ public import Linglib.Data.Examples.Asudeh2022
 public import Linglib.Semantics.Quantification.Polyadic
 public import Studies.HeimKratzer1998
 public import Studies.BresnanEtAl1982
+public import Mathlib.Combinatorics.SimpleGraph.Acyclic
+public import Mathlib.Data.Fintype.Sigma
+public import Mathlib.Data.Fintype.Perm
+public import Mathlib.Algebra.BigOperators.Fin
 
 /-!
 # Asudeh (2022): Glue Semantics
@@ -32,18 +36,25 @@ and Zaenen bear out.
   of every atom, and a Dutch clause's premises have a proof exactly when its f-structure is
   complete and coherent.
 * `finnish_english`: the Finnish and English sentences instantiate the same premises.
-* `surface_eval`, `inverse_eval`, `interp_qr_eq_eval`: the two proofs of *Everybody loves
-  somebody* mean its surface and inverse readings, which Heim and Kratzer derive from two
-  Quantifier Raising trees.
+* `card_correct_loves`, `surface_eval`, `inverse_eval`, `interp_qr_eq_eval`: *Everybody loves
+  somebody* has exactly two correct proof nets, and its two proofs mean its surface and inverse
+  readings, which Heim and Kratzer derive from two Quantifier Raising trees.
 
 ## Implementation notes
 
-* A proof is an intrinsically typed λ-term over a list of premises, whose positions its
-  variables name; `Term.Linear` counts the uses of each premise and hypothesis, and the
-  structural rules are renamings of positions.
+* Proofs are intrinsically typed λ-terms over a list of premises; the structural rules rename
+  premise positions, and `Term.Linear` counts uses.
 * The quantifiers' scope variable `∀S` is instantiated to the clause, as in the paper's proofs.
-* A Dutch control verb takes its complement as a property of its object, so the object shared by
-  functional control is consumed once in the logic and used twice only in the meaning.
+* A Dutch control verb takes its complement as a property, so the object it shares is used twice
+  only in the meaning.
+* Proof nets use Danos and Regnier's criterion on mathlib's `SimpleGraph.IsTree`.
+
+## TODO
+
+* Prove `derivable_iff_exists_correct`, by desequentialization and sequentialization, and
+  define the net of a linear term, so that `card_correct_loves` counts proofs up to βη.
+* Planarity of linkings characterizes the Lambek calculus, but stating it needs directional
+  types, which Glue's `⊸` lacks.
 
 ## References
 
@@ -51,6 +62,7 @@ and Zaenen bear out.
 * [girard-1987]
 * [klein-sag-1985]
 * [kaplan-bresnan-1982]
+* [danos-regnier-1989]
 * [bresnan-etal-1982]
 * [heim-kratzer-1998]
 -/
@@ -411,6 +423,353 @@ theorem Derivable.count_eq {M : Multiset (GlueTy α)} {C : GlueTy α} (h : Deriv
 
 end Count
 
+/-! ### Proof nets
+
+A proof net forgets the order in which a proof applies its rules. The sequent `Γ ⊢ C` is read
+with its premises negative and its conclusion positive, so that a negative implication is a
+tensor and a positive one a par, and a net links every negative atom occurrence to a positive
+occurrence of the same atom. By Danos and Regnier's criterion, a linking is a proof when every
+switching, which keeps one of the two edges at each par, leaves a tree. -/
+
+namespace GlueTy
+
+/-- The subformula occurrences of a formula, as paths from its root. -/
+inductive Node : GlueTy α → Type _
+  | root {A : GlueTy α} : Node A
+  | left {A B : GlueTy α} : Node A → Node (A ⊸ B)
+  | right {A B : GlueTy α} : Node B → Node (A ⊸ B)
+
+/-- The path to a node, `false` for each step into an antecedent and `true` for each step into a
+    consequent. -/
+def Node.path : {A : GlueTy α} → A.Node → List Bool
+  | _, .root => []
+  | _, .left n => false :: n.path
+  | _, .right n => true :: n.path
+
+theorem Node.path_injective : ∀ {A : GlueTy α}, Function.Injective (Node.path (A := A))
+  | _, .root, .root, _ => rfl
+  | _, .left _, .left _, h => by rw [path_injective (List.cons_injective h)]
+  | _, .right _, .right _, h => by rw [path_injective (List.cons_injective h)]
+  | _, .root, .left _, h | _, .root, .right _, h | _, .left _, .root, h
+  | _, .right _, .root, h | _, .left _, .right _, h | _, .right _, .left _, h => by
+    simp [path] at h
+
+instance (A : GlueTy α) : DecidableEq A.Node :=
+  fun _ _ ↦ decidable_of_iff _ Node.path_injective.eq_iff
+
+/-- The subformula occurrences of a formula, root first. -/
+def Node.all : (A : GlueTy α) → List A.Node
+  | .atom _ => [.root]
+  | .lolli A B => .root :: ((Node.all A).map .left ++ (Node.all B).map .right)
+
+theorem Node.mem_all : ∀ {A : GlueTy α} (n : A.Node), n ∈ Node.all A
+  | .atom _, .root => List.mem_singleton_self _
+  | .lolli _ _, .root => List.mem_cons_self
+  | .lolli _ _, .left n =>
+    List.mem_cons_of_mem _ (List.mem_append_left _ (List.mem_map_of_mem (mem_all n)))
+  | .lolli _ _, .right n =>
+    List.mem_cons_of_mem _ (List.mem_append_right _ (List.mem_map_of_mem (mem_all n)))
+
+theorem Node.nodup_all : ∀ A : GlueTy α, (Node.all A).Nodup
+  | .atom _ => List.nodup_singleton _
+  | .lolli A B => by
+    refine List.nodup_cons.2 ⟨by simp, List.nodup_append.2 ⟨
+      (nodup_all A).map fun _ _ h ↦ by cases h; rfl,
+      (nodup_all B).map fun _ _ h ↦ by cases h; rfl, ?_⟩⟩
+    simp
+
+instance (A : GlueTy α) : Fintype A.Node := ⟨⟨Node.all A, Node.nodup_all A⟩, Node.mem_all⟩
+
+/-- The subformula at a node. -/
+def Node.sub : {A : GlueTy α} → A.Node → GlueTy α
+  | A, .root => A
+  | _, .left n => n.sub
+  | _, .right n => n.sub
+
+/-- Whether a node lies under an odd number of antecedents. -/
+def Node.flip : {A : GlueTy α} → A.Node → Bool
+  | _, .root => false
+  | _, .left n => !n.flip
+  | _, .right n => n.flip
+
+/-- Whether `c` is the antecedent (`false`) or the consequent (`true`) child of `p`. -/
+def Node.childDir : {A : GlueTy α} → A.Node → A.Node → Option Bool
+  | _, .root, .left .root => some false
+  | _, .root, .right .root => some true
+  | _, .left p, .left c => p.childDir c
+  | _, .right p, .right c => p.childDir c
+  | _, _, _ => none
+
+/-- The atom a formula is, if it is one. -/
+def label? : GlueTy α → Option α
+  | .atom a => some a
+  | .lolli _ _ => none
+
+end GlueTy
+
+section Reach
+
+variable {V : Type*} [Fintype V] [DecidableEq V] (G : SimpleGraph V) [DecidableRel G.Adj]
+
+/-- The vertices reachable from `v` in at most `k` steps. -/
+def reachWithin (v : V) : ℕ → Finset V
+  | 0 => {v}
+  | k + 1 => (reachWithin v k).biUnion fun u ↦ insert u (Finset.univ.filter (G.Adj u))
+
+variable {G}
+
+theorem mem_reachWithin_succ {v w : V} {k : ℕ} :
+    w ∈ reachWithin G v (k + 1) ↔ ∃ u ∈ reachWithin G v k, w = u ∨ G.Adj u w := by
+  simp [reachWithin]
+
+theorem reachWithin_mono (v : V) {k m : ℕ} (h : k ≤ m) :
+    reachWithin G v k ⊆ reachWithin G v m := by
+  induction h with
+  | refl => exact subset_rfl
+  | step _ ih => exact ih.trans fun w hw ↦ mem_reachWithin_succ.2 ⟨w, hw, .inl rfl⟩
+
+theorem reachable_of_mem_reachWithin {v w : V} :
+    ∀ {k}, w ∈ reachWithin G v k → G.Reachable v w
+  | 0, h => by rw [Finset.mem_singleton.1 h]
+  | _ + 1, h => by
+    obtain ⟨u, hu, rfl | huw⟩ := mem_reachWithin_succ.1 h
+    · exact reachable_of_mem_reachWithin hu
+    · exact (reachable_of_mem_reachWithin hu).trans huw.reachable
+
+theorem reachWithin_subset_of_adj {v u : V} (h : G.Adj v u) :
+    ∀ k, reachWithin G u k ⊆ reachWithin G v (k + 1)
+  | 0 => fun w hw ↦ mem_reachWithin_succ.2 ⟨v, by simp [reachWithin], .inr (by
+      rw [Finset.mem_singleton.1 hw]; exact h)⟩
+  | k + 1 => fun w hw ↦ by
+    obtain ⟨x, hx, hxw⟩ := mem_reachWithin_succ.1 hw
+    exact mem_reachWithin_succ.2 ⟨x, reachWithin_subset_of_adj h k hx, hxw⟩
+
+theorem mem_reachWithin_length {v w : V} : ∀ p : G.Walk v w, w ∈ reachWithin G v p.length
+  | .nil => Finset.mem_singleton_self _
+  | .cons h p => reachWithin_subset_of_adj h _ (mem_reachWithin_length p)
+
+theorem connected_iff_reachWithin (v : V) :
+    G.Connected ↔ reachWithin G v (Fintype.card V) = Finset.univ := by
+  refine ⟨fun hG ↦ Finset.eq_univ_of_forall fun w ↦ ?_, fun h ↦ ?_⟩
+  · obtain ⟨p, hp⟩ := (hG v w).exists_isPath
+    exact reachWithin_mono v hp.length_lt.le (mem_reachWithin_length p)
+  · have hr (w : V) : G.Reachable v w := reachable_of_mem_reachWithin (h ▸ Finset.mem_univ w)
+    have : Nonempty V := ⟨v⟩
+    exact ⟨fun u w ↦ (hr u).symm.trans (hr w)⟩
+
+/-- A finite graph is a tree when everything is reachable from one vertex and it has one edge
+    fewer than vertices. -/
+theorem isTree_iff_reachWithin (v : V) :
+    G.IsTree ↔ reachWithin G v (Fintype.card V) = Finset.univ ∧
+      ∑ w, G.degree w + 2 = 2 * Fintype.card V := by
+  simp only [SimpleGraph.isTree_iff_connected_and_card, connected_iff_reachWithin v,
+    SimpleGraph.sum_degrees_eq_twice_card_edges, Nat.card_eq_fintype_card,
+    ← SimpleGraph.edgeFinset_card]
+  exact and_congr Iff.rfl (by omega)
+
+end Reach
+
+/-- A one-sided sequent lists formulas with their polarities. -/
+abbrev Sequent (α : Type*) := List (Bool × GlueTy α)
+
+/-- The sequent of premises `Γ` and conclusion `C`, the premises negative. -/
+def Sequent.of (Γ : List (GlueTy α)) (C : GlueTy α) : Sequent α :=
+  Γ.map (false, ·) ++ [(true, C)]
+
+namespace Sequent
+
+variable (S : Sequent α)
+
+/-- The subformula occurrences of a sequent. -/
+abbrev Vert := Σ i : Fin S.length, (S[i]).2.Node
+
+instance (priority := high) : DecidableEq S.Vert := fun u v ↦
+  decidable_of_iff ((u.1 : ℕ) = v.1 ∧ u.2.path = v.2.path) <| by
+    obtain ⟨⟨i, hi⟩, a⟩ := u
+    obtain ⟨⟨j, hj⟩, b⟩ := v
+    constructor
+    · rintro ⟨rfl, h⟩
+      exact Sigma.ext rfl (heq_of_eq (GlueTy.Node.path_injective h))
+    · rintro h
+      cases h
+      exact ⟨rfl, rfl⟩
+
+/-- The polarity of an occurrence. -/
+def pol (v : S.Vert) : Bool := (S[v.1]).1 != v.2.flip
+
+/-- The atom an occurrence is, if it is one. -/
+def label? (v : S.Vert) : Option α := v.2.sub.label?
+
+/-- The negative atom occurrences. -/
+abbrev Neg := {v : S.Vert // (S.label? v).isSome ∧ S.pol v = false}
+
+/-- The positive atom occurrences. -/
+abbrev Pos := {v : S.Vert // (S.label? v).isSome ∧ S.pol v = true}
+
+/-- A par is a positive implication; a switching keeps one of its two edges. -/
+def IsPar (v : S.Vert) : Prop := (S.label? v).isNone ∧ S.pol v = true
+
+instance : DecidablePred S.IsPar := fun _ ↦ inferInstanceAs (Decidable (_ ∧ _))
+
+/-- A switching chooses an edge at each par. -/
+abbrev Switching := {v : S.Vert // S.IsPar v} → Bool
+
+/-- The direction of the formula-tree edge from `p` down to `c`, if there is one. -/
+def edgeDir : S.Vert → S.Vert → Option Bool
+  | ⟨i, p⟩, ⟨j, c⟩ => if h : i = j then (h ▸ p).childDir c else none
+
+/-- The switching keeps the formula-tree edge from `p` down to `c`. -/
+def kept (σ : S.Switching) (p c : S.Vert) : Bool :=
+  match S.edgeDir p c with
+  | some b => if h : S.IsPar p then σ ⟨p, h⟩ == b else true
+  | none => false
+
+variable [DecidableEq α]
+
+/-- A linking pairs each negative atom occurrence with a positive occurrence of the same atom. -/
+abbrev Linking := {e : S.Neg ≃ S.Pos // ∀ v, S.label? (e v).1 = S.label? v.1}
+
+variable {S}
+
+/-- The axiom link from a negative occurrence `u` to `v`. -/
+def Linking.ax (L : S.Linking) (u v : S.Vert) : Bool :=
+  if h : (S.label? u).isSome ∧ S.pol u = false then (L.1 ⟨u, h⟩).1 == v else false
+
+/-- The switching graph keeps the chosen formula-tree edges and every axiom link. -/
+def Linking.graph (L : S.Linking) (σ : S.Switching) : SimpleGraph S.Vert :=
+  SimpleGraph.fromRel fun u v ↦ S.kept σ u v ∨ L.ax u v
+
+instance (L : S.Linking) (σ : S.Switching) : DecidableRel (L.graph σ).Adj :=
+  fun _ _ ↦ inferInstanceAs (Decidable (_ ∧ _))
+
+/-- A linking is correct if every switching graph is a tree. -/
+def Linking.Correct (L : S.Linking) : Prop := ∀ σ, (L.graph σ).IsTree
+
+/-- The root of the last formula. -/
+def lastRoot (h : 0 < S.length) : S.Vert := ⟨⟨S.length - 1, by omega⟩, .root⟩
+
+instance (L : S.Linking) (σ : S.Switching) : Decidable (L.graph σ).IsTree :=
+  if h : 0 < S.length then decidable_of_iff _ (isTree_iff_reachWithin (lastRoot h)).symm
+  else isFalse fun hT ↦ by
+    obtain ⟨v⟩ := hT.connected.nonempty
+    exact absurd v.1.2 (by omega)
+
+instance (L : S.Linking) : Decidable L.Correct := inferInstanceAs (Decidable (∀ _, _))
+
+end Sequent
+
+/-- A sequent is derivable exactly when it has a correct proof net. -/
+theorem derivable_iff_exists_correct [DecidableEq α] (Γ : List (GlueTy α)) (C : GlueTy α) :
+    Derivable (Γ : Multiset (GlueTy α)) C ↔ ∃ L : (Sequent.of Γ C).Linking, L.Correct := by
+  -- TODO: Desequentialization: by induction on a linear term, with a variable linking its
+  -- formula to itself, an application joining two nets through a tensor and an abstraction
+  -- adding a par. Sequentialization: split a correct net at a splitting tensor or a terminal par.
+  sorry
+
+namespace GlueTy
+
+private theorem card_node_subtype (A : GlueTy α) (P : A.Node → Prop) [DecidablePred P] :
+    Fintype.card {n : A.Node // P n} = (Node.all A).countP fun n ↦ P n := by
+  rw [Fintype.card_subtype, List.countP_eq_length_filter]
+  rfl
+
+variable [DecidableEq α]
+
+/-- The occurrences of `x` under an even (`false`) or odd (`true`) number of antecedents. -/
+def leafCount (A : GlueTy α) (x : α) (b : Bool) : ℕ :=
+  (Node.all A).countP fun n ↦ n.sub.label? = some x ∧ n.flip = b
+
+theorem count_eq_leafCount : ∀ (A : GlueTy α) (x : α),
+    A.count x = (A.leafCount x false : ℤ) - A.leafCount x true
+  | .atom a, x => by
+    by_cases h : a = x <;> simp [leafCount, Node.all, count, Node.sub, Node.flip, label?, h]
+  | .lolli A B, x => by
+    have hl (b : Bool) : ((Node.all A).map (Node.left (B := B))).countP
+        (fun n ↦ n.sub.label? = some x ∧ n.flip = b) = A.leafCount x (!b) := by
+      rw [List.countP_map, leafCount]
+      refine List.countP_congr fun n _ ↦ ?_
+      cases b <;> simp only [Function.comp_apply, Node.sub, Node.flip, decide_eq_true_iff,
+        Bool.not_false, Bool.not_true, Bool.not_eq_true', Bool.not_eq_false']
+    have hr (b : Bool) : ((Node.all B).map (Node.right (A := A))).countP
+        (fun n ↦ n.sub.label? = some x ∧ n.flip = b) = B.leafCount x b := by
+      rw [List.countP_map, leafCount]
+      rfl
+    have h0 (b : Bool) : decide ((Node.root : (A ⊸ B).Node).sub.label? = some x ∧
+        (Node.root : (A ⊸ B).Node).flip = b) = false := by
+      simp [Node.sub, label?]
+    have e (b : Bool) : (A ⊸ B).leafCount x b = ((Node.all A).map (Node.left (B := B)) ++
+        (Node.all B).map (Node.right (A := A))).countP
+          (fun n : (A ⊸ B).Node ↦ n.sub.label? = some x ∧ n.flip = b) +
+          if decide ((Node.root : (A ⊸ B).Node).sub.label? = some x ∧
+            (Node.root : (A ⊸ B).Node).flip = b) then 1 else 0 :=
+      List.countP_cons
+    rw [count, count_eq_leafCount A x, count_eq_leafCount B x, e, e, List.countP_append,
+      List.countP_append, hl, hl, hr, hr, h0, h0, Bool.not_false, Bool.not_true]
+    push_cast
+    ring
+
+end GlueTy
+
+private theorem card_subtype_sigma {ι : Type*} [Fintype ι] {β : ι → Type*} [∀ i, Fintype (β i)]
+    (P : (Σ i, β i) → Prop) [DecidablePred P] :
+    Fintype.card {v // P v} = ∑ i, Fintype.card {n : β i // P ⟨i, n⟩} := by
+  rw [← Fintype.card_sigma]
+  exact Fintype.card_congr ⟨fun v ↦ ⟨v.1.1, v.1.2, v.2⟩, fun w ↦ ⟨⟨w.1, w.2.1⟩, w.2.2⟩,
+    fun _ ↦ rfl, fun _ ↦ rfl⟩
+
+namespace Sequent
+
+variable [DecidableEq α]
+
+/-- The number of occurrences of `x` of polarity `p` in a sequent. -/
+def occCount (S : Sequent α) (x : α) (p : Bool) : ℕ :=
+  Fintype.card {v : S.Vert // S.label? v = some x ∧ S.pol v = p}
+
+theorem occCount_eq (S : Sequent α) (x : α) (p : Bool) :
+    S.occCount x p = (S.map fun F ↦ F.2.leafCount x (F.1 != p)).sum := by
+  rw [occCount, card_subtype_sigma, ← Fin.sum_univ_fun_getElem]
+  refine Finset.sum_congr rfl fun i _ ↦ ?_
+  rw [GlueTy.card_node_subtype, GlueTy.leafCount]
+  have key : ∀ a f q : Bool, ((a != f) = q) = (f = (a != q)) := by decide
+  simp only [label?, pol, key]
+  rfl
+
+private theorem sum_map_count (x : α) : ∀ Γ : List (GlueTy α),
+    (Γ.map (GlueTy.count x)).sum =
+      (((Γ.map fun A ↦ A.leafCount x false).sum : ℕ) : ℤ) -
+        (((Γ.map fun A ↦ A.leafCount x true).sum : ℕ) : ℤ)
+  | [] => by simp
+  | A :: Γ => by
+    simp only [List.map_cons, List.sum_cons, sum_map_count x Γ, GlueTy.count_eq_leafCount A x]
+    push_cast; ring
+
+variable {S : Sequent α}
+
+/-- A linking pairs the negative and the positive occurrences of each atom one to one. -/
+def Linking.equivLabel (L : S.Linking) (x : α) :
+    {v : S.Vert // S.label? v = some x ∧ S.pol v = false} ≃
+      {v : S.Vert // S.label? v = some x ∧ S.pol v = true} where
+  toFun v := ⟨(L.1 ⟨v.1, by simp [v.2.1], v.2.2⟩).1, by rw [L.2]; exact ⟨v.2.1, (L.1 _).2.2⟩⟩
+  invFun v := ⟨(L.1.symm ⟨v.1, by simp [v.2.1], v.2.2⟩).1, by
+    have := L.2 (L.1.symm ⟨v.1, by simp [v.2.1], v.2.2⟩)
+    rw [Equiv.apply_symm_apply] at this
+    exact ⟨this ▸ v.2.1, (L.1.symm _).2.2⟩⟩
+  left_inv v := by simp
+  right_inv v := by simp
+
+/-- A sequent with a linking has a conclusion with its premises' total count of every atom. -/
+theorem Linking.count_eq {Γ : List (GlueTy α)} {C : GlueTy α} (L : (Sequent.of Γ C).Linking)
+    (x : α) : C.count x = (Γ.map (GlueTy.count x)).sum := by
+  have h := Fintype.card_congr (L.equivLabel x)
+  rw [← occCount, ← occCount, occCount_eq, occCount_eq] at h
+  simp only [Sequent.of, List.map_append, List.map_map, List.sum_append, Function.comp_def,
+    List.map_singleton, List.sum_singleton, bne_self_eq_false, Bool.bne_false,
+    Bool.false_bne] at h
+  rw [GlueTy.count_eq_leafCount, sum_map_count]
+  omega
+
+end Sequent
+
 /-! ### The substructural hierarchy
 
 A logic is characterized by the structural rules it admits, and admitting more rules makes it
@@ -541,6 +900,29 @@ theorem surface_linear : surface.Linear := by decide
 
 theorem inverse_linear : inverse.Linear := by decide
 
+/-- *Everybody loves somebody* has exactly two correct proof nets, the two normal-form proofs
+    the paper finds for it. -/
+theorem card_correct_loves :
+    Fintype.card {L : (Sequent.of everybodyLovesSomebody.flatten (atom Label.l)).Linking //
+      L.Correct} = 2 := by
+  decide +kernel
+
+/-- The occurrence of the clause the sentence proves. -/
+def lovesGoal : (Sequent.of everybodyLovesSomebody.flatten (atom Label.l)).Pos :=
+  ⟨⟨⟨3, by decide⟩, .root⟩, by decide⟩
+
+private theorem not_correct_of_clause_from_loves :
+    ∀ L : (Sequent.of everybodyLovesSomebody.flatten (atom Label.l)).Linking,
+      ((L.1.symm lovesGoal).1.1 : ℕ) = 1 → ¬ L.Correct := by
+  decide +kernel
+
+/-- In a correct net the clause is the result of a quantifier, never of *loves* itself, so one of
+    the two quantifiers takes widest scope. -/
+theorem clause_from_quantifier
+    {L : (Sequent.of everybodyLovesSomebody.flatten (atom Label.l)).Linking} (hL : L.Correct) :
+    ((L.1.symm lovesGoal).1.1 : ℕ) ≠ 1 :=
+  fun h ↦ not_correct_of_clause_from_loves L h hL
+
 /-- Clause atoms denote propositions and argument atoms entities. -/
 def Label.ty : Label → Montague.Ty
   | .l | .c | .d => .t
@@ -622,28 +1004,50 @@ private theorem count_verbPremise (s : Spine) (i j : ℕ) :
   unfold verbPremise
   split_ifs <;> simp_all [GlueTy.count, subjOfVerb_eq, npOfObj]
 
+private theorem sum_count_obj (s : Spine) (i j : ℕ) :
+    ((if i < s.objects then [atom (DutchAtom.np (npOfObj i))] else []).map
+      (GlueTy.count (.np j))).sum = if i < s.objects ∧ i + 1 = j then 1 else 0 := by
+  by_cases h : i < s.objects <;> simp [h, GlueTy.count, npOfObj]
+
+private theorem sum_count_verb (s : Spine) (i j : ℕ) :
+    ((if i < s.verbs then [verbPremise s i] else []).map (GlueTy.count (.np j))).sum =
+      -(if i < s.verbs ∧ i = j then 1 else 0) := by
+  by_cases h : i < s.verbs <;> simp [h, count_verbPremise]
+
 private theorem sum_count_premisesFrom (s : Spine) (j : ℕ) : ∀ d i,
     ((premisesFrom s d i).map (GlueTy.count (.np j))).sum =
       (if i < j ∧ j ≤ i + d ∧ j ≤ s.objects then 1 else 0) -
         (if i ≤ j ∧ j < i + d ∧ j < s.verbs then 1 else 0)
   | 0, i => by simp only [premisesFrom, List.map_nil, List.sum_nil]; split_ifs <;> omega
   | d + 1, i => by
-    simp only [premisesFrom, List.map_append, List.sum_append, sum_count_premisesFrom s j d]
-    split_ifs <;> simp_all [GlueTy.count, count_verbPremise, npOfObj] <;> (try split_ifs) <;>
-      omega
+    simp only [premisesFrom, List.map_append, List.sum_append]
+    rw [sum_count_obj, sum_count_verb, sum_count_premisesFrom s j d]
+    have hp : (if i < s.objects ∧ i + 1 = j then 1 else 0 : ℤ) +
+        (if i + 1 < j ∧ j ≤ i + 1 + d ∧ j ≤ s.objects then 1 else 0) =
+          if i < j ∧ j ≤ i + (d + 1) ∧ j ≤ s.objects then 1 else 0 := by
+      split_ifs <;> omega
+    have hn : (if i < s.verbs ∧ i = j then 1 else 0 : ℤ) +
+        (if i + 1 ≤ j ∧ j < i + 1 + d ∧ j < s.verbs then 1 else 0) =
+          if i ≤ j ∧ j < i + (d + 1) ∧ j < s.verbs then 1 else 0 := by
+      split_ifs <;> omega
+    linarith
+
+private theorem sum_count_premises (s : Spine) (j : ℕ) :
+    ((premises s).map (GlueTy.count (.np j))).sum =
+      (if j ≤ s.objects then 1 else 0) - (if j < s.verbs then 1 else 0) := by
+  simp only [premises, Multiset.map_coe, Multiset.sum_coe, List.map_append, List.sum_append,
+    sum_count_premisesFrom, List.map_singleton, List.sum_singleton, GlueTy.count,
+    DutchAtom.np.injEq]
+  have := le_max_left s.objects s.verbs
+  have := le_max_right s.objects s.verbs
+  split_ifs <;> omega
 
 /-- Premises with a linear proof of the clause come from a complete and coherent spine. -/
 theorem complete_coherent_of_derivable {s : Spine} (hv : 1 ≤ s.verbs)
     (h : Derivable (premises s) (atom (.clause 0))) : s.Complete ∧ s.Coherent := by
   rw [Spine.complete_and_coherent_iff s hv]
-  have key (j : ℕ) : (if j ≤ s.objects then 1 else 0 : ℤ) = if j < s.verbs then 1 else 0 := by
-    have := h.count_eq (.np j)
-    simp only [premises, Multiset.map_coe, Multiset.sum_coe, List.map_append, List.sum_append,
-      sum_count_premisesFrom, List.map_singleton, List.sum_singleton, GlueTy.count,
-      reduceCtorEq, ↓reduceIte] at this
-    have := le_max_left s.objects s.verbs
-    have := le_max_right s.objects s.verbs
-    split_ifs at * <;> (simp_all; try omega)
+  have key (j : ℕ) := h.count_eq (.np j)
+  simp only [sum_count_premises, GlueTy.count, reduceCtorEq, ↓reduceIte] at key
   have h₁ := key s.objects
   have h₂ := key (s.verbs - 1)
   split_ifs at h₁ h₂ <;> omega
