@@ -16,7 +16,8 @@ freddo* 'It's not cold'. It is felicitous only when the positive counterpart of 
 assumed in the discourse, a presuppositional negative marker in Zanuttini's analysis, and before the
 verb only when that expectation is the addressee's, as Maiden and Robustelli note; it also occurs in
 polar questions, as Frana and Rawlins discuss. N-words and the other polarity-sensitive items are
-entered in `Fragments/Romance/Italian/PolarityItems.lean`. The *cantare* pairs are Miestamo's.
+entered in `Fragments/Romance/Italian/PolarityItems.lean`. Miestamo's *cantare* paradigms are rows
+of `Data.Examples.Miestamo2005`.
 
 ## References
 
@@ -36,9 +37,7 @@ namespace Italian.Negation
 /-- *non*, the standard negator. -/
 def non : Marker := { pieces := [[.free "non"]] }
 
-/-- The first person singular present and future of *cantare* 'sing'. -/
-def pairs : List Pair :=
-  [⟨non, ["canto"].map .free, ["non", "canto"].map .free⟩,
-   ⟨non, ["canterò"].map .free, ["non", "canterò"].map .free⟩]
+/-- The standard negators. -/
+def standard : List Marker := [non]
 
 end Italian.Negation

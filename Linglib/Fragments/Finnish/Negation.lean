@@ -10,7 +10,7 @@ Finnish negates a clause with the negative auxiliary *e-*, cited in the third pe
 as *ei*. The auxiliary takes the person and number endings of the finite verb, and the lexical
 verb stands in the connegative, a form without them: *nuku-n* 'I am sleeping', *e-n nuku* 'I am
 not sleeping'. In the past the lexical verb is a participle, *en laulanut* 'I did not sing'.
-The examples are those of [miestamo-2005].
+Miestamo's examples are rows of `Data.Examples.Miestamo2005`.
 
 ## References
 
@@ -33,9 +33,7 @@ def ending : Agreement.Paradigm Morph :=
    (.personNumber .third .singular, .suff "i"), (.personNumber .first .plural, .suff "mme"),
    (.personNumber .second .plural, .suff "tte"), (.personNumber .third .plural, .suff "ivät")]
 
-/-- First person singular presents with their negatives. -/
-def present : List Pair :=
-  [⟨e, [.root "nuku", .suff "n"], [.root "e", .suff "n", .root "nuku"]⟩,
-   ⟨e, [.root "juokse", .suff "n"], [.root "e", .suff "n", .root "juokse"]⟩]
+/-- The standard negators. -/
+def standard : List Marker := [e]
 
 end Finnish.Negation

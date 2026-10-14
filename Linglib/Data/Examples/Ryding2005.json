@@ -1,0 +1,74 @@
+[
+  {
+    "id": "ryding2005_642a",
+    "source": {"bibkey": "ryding-2005", "paperLabel": "p. 642"},
+    "reportedIn": null,
+    "language": "stan1318",
+    "primaryText": "lays-a l-ʾustaadh-u muʾarrix-an.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "The professor is not a historian.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["affirmative", "ryding2005_642b"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "ryding2005_642b",
+    "source": {"bibkey": "ryding-2005", "paperLabel": "p. 642"},
+    "reportedIn": null,
+    "language": "stan1318",
+    "primaryText": "al-ʾustaadh-u muʾarrix-un.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "The professor is a historian.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "ryding2005_642c",
+    "source": {"bibkey": "ryding-2005", "paperLabel": "p. 642"},
+    "reportedIn": null,
+    "language": "stan1318",
+    "primaryText": "las-tu lubnaaniyyat-an.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "I am not Lebanese.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["affirmative", "ryding2005_643a"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "ryding2005_643a",
+    "source": {"bibkey": "ryding-2005", "paperLabel": "p. 643"},
+    "reportedIn": null,
+    "language": "stan1318",
+    "primaryText": "ʾanaa lubnaaniyyat-un.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "I [am] Lebanese (f.).",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "",
+    "verified": "page-image"
+  }
+]

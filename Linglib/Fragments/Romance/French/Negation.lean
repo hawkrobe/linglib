@@ -10,7 +10,7 @@ vient* 'Jean comes', *jean ne vient pas* 'Jean does not come'. Nothing else in t
 *Ne* is regularly dropped in colloquial speech, leaving *pas* as the only negator. On its own,
 without *pas*, *ne* occurs expletively under *avoir peur* 'fear', *avant que* 'before', *à moins
 que* 'unless' and other triggers; the examples of Jin and Koenig are the rows of
-`Data.Examples.JinKoenig2021`. The pairs below are Miestamo's.
+`Data.Examples.JinKoenig2021`. Miestamo's examples are rows of `Data.Examples.Miestamo2005`.
 
 ## References
 
@@ -20,7 +20,7 @@ que* 'unless' and other triggers; the examples of Jin and Koenig are the rows of
 
 @[expose] public section
 
-open Negation Morphology
+open Negation
 
 namespace French.Negation
 
@@ -32,11 +32,5 @@ def ne : Marker := { pieces := [[.procl "ne"]] }
 
 /-- The standard negators. -/
 def standard : List Marker := [nePas]
-
-/-- The present and the compound past of *venir* 'come'. -/
-def pairs : List Pair :=
-  [⟨nePas, [.free "jean", .free "vient"], [.free "jean", .procl "ne", .free "vient", .free "pas"]⟩,
-   ⟨nePas, [.free "jean", .free "est", .root "ven", .suff "u"],
-    [.free "jean", .procl "ne", .free "est", .free "pas", .root "ven", .suff "u"]⟩]
 
 end French.Negation

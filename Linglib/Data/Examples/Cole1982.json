@@ -1,0 +1,167 @@
+[
+  {
+    "id": "cole1982_89b",
+    "source": {
+      "bibkey": "cole-1982",
+      "paperLabel": "p. 30, (89b)"
+    },
+    "reportedIn": null,
+    "language": "imba1240",
+    "primaryText": "ari, jatun wasi-ta chari-ni-mi",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "ari",
+        "yes"
+      ],
+      [
+        "jatun",
+        "big"
+      ],
+      [
+        "wasi-ta",
+        "house-acc"
+      ],
+      [
+        "chari-ni-mi",
+        "have-1-validator"
+      ]
+    ],
+    "translation": "Yes, I have a big house.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "Speaker B's reply to (89a) jatun wasi-ta chari-ngui-chu 'Do you have a big house?'.",
+    "verified": "page-image"
+  },
+  {
+    "id": "cole1982_90",
+    "source": {
+      "bibkey": "cole-1982",
+      "paperLabel": "p. 30, (90)"
+    },
+    "reportedIn": null,
+    "language": "imba1240",
+    "primaryText": "mana jatun wasi-ta chari-ni-chu",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "mana",
+        "not"
+      ],
+      [
+        "jatun",
+        "big"
+      ],
+      [
+        "wasi-ta",
+        "house-acc"
+      ],
+      [
+        "chari-ni-chu",
+        "have-1-neg"
+      ]
+    ],
+    "translation": "I don't have a big house.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "affirmative",
+        "cole1982_89b"
+      ]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "cole1982_332",
+    "source": {
+      "bibkey": "cole-1982",
+      "paperLabel": "p. 83, (332)"
+    },
+    "reportedIn": null,
+    "language": "imba1240",
+    "primaryText": "ñuka wawki mana jatun wasi-ta chari-n-chu",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "ñuka",
+        "my"
+      ],
+      [
+        "wawki",
+        "brother"
+      ],
+      [
+        "mana",
+        "not"
+      ],
+      [
+        "jatun",
+        "big"
+      ],
+      [
+        "wasi-ta",
+        "house-acc"
+      ],
+      [
+        "chari-n-chu",
+        "have-3-neg"
+      ]
+    ],
+    "translation": "My brother does not have a big house.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "Miestamo's (63c).",
+    "verified": "page-image"
+  },
+  {
+    "id": "cole1982_333",
+    "source": {
+      "bibkey": "cole-1982",
+      "paperLabel": "p. 83, (333)"
+    },
+    "reportedIn": null,
+    "language": "imba1240",
+    "primaryText": "kan-paj wawki jatun wasi-ta chari-n-chu",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "kan-paj",
+        "you-possessive"
+      ],
+      [
+        "wawki",
+        "brother"
+      ],
+      [
+        "jatun",
+        "big"
+      ],
+      [
+        "wasi-ta",
+        "house-acc"
+      ],
+      [
+        "chari-n-chu",
+        "have-3-inter"
+      ]
+    ],
+    "translation": "Does your brother have a big house?",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "Miestamo's (63d).",
+    "verified": "page-image"
+  }
+]

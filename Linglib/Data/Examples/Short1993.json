@@ -1,0 +1,74 @@
+[
+  {
+    "id": "short1993_musi",
+    "source": {"bibkey": "short-1993-czech", "paperLabel": "p. 510"},
+    "reportedIn": null,
+    "language": "czec1258",
+    "primaryText": "Petr se musí učit.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Peter must (has to) study.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "short1993_nemusi",
+    "source": {"bibkey": "short-1993-czech", "paperLabel": "p. 510"},
+    "reportedIn": null,
+    "language": "czec1258",
+    "primaryText": "Petr se nemusí učit.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Peter needn't (doesn't have to) study.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["affirmative", "short1993_musi"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "short1993_smi",
+    "source": {"bibkey": "short-1993-czech", "paperLabel": "p. 510"},
+    "reportedIn": null,
+    "language": "czec1258",
+    "primaryText": "Petr smí přijít.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Peter may (is allowed to) come.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "short1993_nesmi",
+    "source": {"bibkey": "short-1993-czech", "paperLabel": "p. 510"},
+    "reportedIn": null,
+    "language": "czec1258",
+    "primaryText": "Petr nesmí přijít.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Peter must not (is not allowed to) come.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["affirmative", "short1993_smi"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  }
+]

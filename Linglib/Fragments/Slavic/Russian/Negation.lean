@@ -7,9 +7,9 @@ public import Linglib.Syntax.Negation
 
 Russian negates a clause with the preverbal particle *ne* (не), and nothing else in the clause
 changes: *ja govor-ju po-russkij* 'I speak Russian', *ja ne govor-ju po-russkij* 'I do not speak
-Russian'. Negative concord is obligatory, every item of the *ni-* series co-occurring with
-*ne*; the items are entered in `Fragments/Slavic/Russian/PolarityItems.lean`. The example is
-that of [miestamo-2005].
+Russian'. Negative concord is obligatory, every item of the *ni-* series co-occurring with *ne*; the
+items are entered in `Fragments/Slavic/Russian/PolarityItems.lean`. Miestamo's examples are rows of
+`Data.Examples.Miestamo2005`.
 
 ## References
 
@@ -18,16 +18,14 @@ that of [miestamo-2005].
 
 @[expose] public section
 
-open Negation Morphology
+open Negation
 
 namespace Russian.Negation
 
 /-- *ne* (не), the standard negator. -/
 def ne : Marker := { pieces := [[.free "ne"]] }
 
-/-- *ja govor-ju po-russkij* 'I speak Russian' and its negative. -/
-def pairs : List Pair :=
-  [⟨ne, [.free "ja", .root "govor", .suff "ju", .free "po-russkij"],
-    [.free "ja", .free "ne", .root "govor", .suff "ju", .free "po-russkij"]⟩]
+/-- The standard negators. -/
+def standard : List Marker := [ne]
 
 end Russian.Negation
