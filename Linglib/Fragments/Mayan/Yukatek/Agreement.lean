@@ -2,7 +2,6 @@ module
 
 public import Linglib.Syntax.Case.Basic
 public import Linglib.Phonology.Segmental.Defs
-public import Linglib.Semantics.Reference.Prominence
 public import Linglib.Fragments.Mayan.Agreement
 public import Linglib.Syntax.Clause.ArgumentRole
 

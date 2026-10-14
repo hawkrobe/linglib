@@ -3,6 +3,7 @@ module
 public import Mathlib.Data.Finset.Card
 public import Linglib.Data.Examples.Comrie1989
 public import Linglib.Semantics.Reference.Animacy
+public import Linglib.Semantics.Reference.Definiteness
 public import Linglib.Syntax.Person.Class
 public import Linglib.Semantics.Causation.Morphological
 
@@ -91,7 +92,7 @@ correlation through the substrate's monotonicity, and `bias_rows`, `coordination
 namespace Comrie1989
 
 open Causation.Morphological
-open Reference (Animacy)
+open Reference (Animacy DefinitenessDegree)
 
 /-! ### The discriminatory function of case (§6.1) -/
 
@@ -183,23 +184,6 @@ def Marked.toNat : Marked → ℕ
 
 instance : LinearOrder Marked :=
   LinearOrder.lift' Marked.toNat (fun a b h ↦ by cases a <;> cases b <;> simp_all [Marked.toNat])
-
-/-- The continuum of definiteness, or specificity, of §6.2 ranks a definite referent, which the
-hearer can identify, above a specific indefinite, whose reference matters to the discourse,
-above a non-specific indefinite. -/
-inductive DefinitenessDegree
-  | nonSpecific | specific | definite
-  deriving DecidableEq, Repr
-
-/-- The rank on the continuum. -/
-def DefinitenessDegree.rank : DefinitenessDegree → ℕ
-  | .nonSpecific => 0
-  | .specific => 1
-  | .definite => 2
-
-instance : LinearOrder DefinitenessDegree :=
-  LinearOrder.lift' DefinitenessDegree.rank fun a b h ↦ by
-    cases a <;> cases b <;> simp_all [DefinitenessDegree.rank]
 
 /-- One argument's marking in a row records its role, the parameters the book invokes for the
 language, and the marking its position takes. -/

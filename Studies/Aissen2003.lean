@@ -1,6 +1,8 @@
 module
 
-public import Linglib.Semantics.Reference.Prominence
+public import Linglib.Semantics.Reference.Animacy
+public import Linglib.Semantics.Reference.Nominality
+public import Mathlib.Data.Prod.Lex
 public import Linglib.Fragments.Turkish.ObjectMarking
 public import Linglib.Syntax.Case.Alignment
 public import Linglib.Phonology.OptimalityTheory.Constraint.ForbiddenPairs
@@ -49,9 +51,59 @@ Boersma's sense) are noted in docstrings but not represented.
 
 namespace Aissen2003
 
-open Reference.Prominence
-open Reference (Animacy)
+open Reference (Animacy Nominality DefinitenessDegree Definiteness)
 open OptimalityTheory
+
+/-! ### The definiteness scale -/
+
+/-- A position on the Definiteness Scale (13), Pronoun > Name > Definite > Indefinite Specific >
+NonSpecific, which extends the familiar hierarchy definite > specific > non-specific to proper
+names and personal pronouns. -/
+inductive DefinitenessScale where
+  | nonSpecific
+  | indefiniteSpecific
+  | definite
+  | properName
+  | personalPronoun
+  deriving DecidableEq, Repr, Fintype
+
+namespace DefinitenessScale
+
+/-- A position is a nominality and a degree of definiteness, pronouns and names counting as the
+high end of the definites. -/
+def dimensions : DefinitenessScale → Nominality × DefinitenessDegree
+  | .personalPronoun => (.pronoun, .definite)
+  | .properName => (.properName, .definite)
+  | .definite => (.commonNoun, .definite)
+  | .indefiniteSpecific => (.commonNoun, .specific)
+  | .nonSpecific => (.commonNoun, .nonSpecific)
+
+/-- The scale is ordered by nominality first and then by degree of definiteness. -/
+instance : LinearOrder DefinitenessScale := LinearOrder.lift' (toLex ∘ dimensions) (by decide)
+
+/-- The positions, most prominent first. -/
+def all : List DefinitenessScale :=
+  [.personalPronoun, .properName, .definite, .indefiniteSpecific, .nonSpecific]
+
+/-- The nominality of a position. -/
+def nominality (d : DefinitenessScale) : Nominality := d.dimensions.1
+
+/-- The degree of definiteness of a position, pronouns and names being definite. -/
+def degree (d : DefinitenessScale) : DefinitenessDegree := d.dimensions.2
+
+/-- The definiteness of a position, definite for pronouns, names and definite NPs. -/
+def definiteness (d : DefinitenessScale) : Definiteness := d.degree.definiteness
+
+theorem nominality_monotone : Monotone nominality := by
+  intro a b; revert a b; decide
+
+theorem degree_monotone : Monotone degree := by
+  intro a b; revert a b; decide
+
+theorem definiteness_monotone : Monotone definiteness := by
+  intro a b; revert a b; decide
+
+end DefinitenessScale
 
 /-! ### The DOM systems of the paper
 
@@ -69,6 +121,13 @@ abbrev catalanDOM : Set (Animacy × DefinitenessScale) := Set.Ici (.inanimate, .
 /-- Pitjantjatjara case-marks only pronoun and proper-name objects (Figure 2). -/
 abbrev pitjantjatjaraDOM : Set (Animacy × DefinitenessScale) := Set.Ici (.inanimate, .properName)
 
+/-- Catalan's and Pitjantjatjara's cuts lie in the nominality the scale puts above the
+definites: Catalan marks exactly the pronouns, and Pitjantjatjara the pronouns and names. -/
+theorem catalan_pitjantjatjara_nominality (a : Animacy) (d : DefinitenessScale) :
+    ((a, d) ∈ catalanDOM ↔ d.nominality = .pronoun) ∧
+      ((a, d) ∈ pitjantjatjaraDOM ↔ .properName ≤ d.nominality) := by
+  revert a d; decide
+
 /-- Hebrew has *ʔet* obligatorily on pronoun, proper-name and definite objects (Figure 2,
 §4.1). -/
 abbrev hebrewDOM : Set (Animacy × DefinitenessScale) := Set.Ici (.inanimate, .definite)
@@ -80,9 +139,10 @@ theorem hebrew_marks_definites (a : Animacy) (d : DefinitenessScale) :
   revert a d; decide
 
 /-- Turkish marks every object but the non-specific ones, so unlike Hebrew it marks specific
-indefinites obligatorily (Figure 2, Tableaux 1–2); the zone is the fragment's. -/
+indefinites obligatorily (Figure 2, Tableaux 1–2); the zone is the fragment's, read through the
+degree of definiteness. -/
 abbrev turkishDOM : Set (Animacy × DefinitenessScale) :=
-  {c | c.2 ∈ Turkish.ObjectMarking.accusative}
+  {c | c.2.degree ∈ Turkish.ObjectMarking.accusative}
 
 /-- Persian has *-rā* obligatorily on all definites regardless of animacy and, exactly as in
 Turkish, on specific indefinites (§5.3). Animacy enters only in the optional zone, the
@@ -161,7 +221,7 @@ theorem dom_obligatory_zone_upperSet : ∀ z ∈ allDOMZones, IsUpperSet z := by
     | exact isUpperSet_univ
     | exact isUpperSet_empty
     | exact (isUpperSet_Ici _).union (isUpperSet_Ici _)
-    | exact (isUpperSet_Ici _).preimage monotone_snd
+    | exact (isUpperSet_Ici _).preimage (DefinitenessScale.degree_monotone.comp monotone_snd)
 
 /-- Every attested system fits the prominence order, so no language obligatorily marks a less
 prominent object while leaving a more prominent one unmarked. -/
