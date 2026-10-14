@@ -2,7 +2,7 @@ module
 
 public import Mathlib.Data.List.Lex
 public import Mathlib.Order.FixedPoints
-public import Mathlib.Order.Preorder.Finite
+public import Linglib.Core.Order.WellFoundedSet
 
 /-!
 # Bidirectional Optimality Theory
@@ -26,8 +26,9 @@ is super-optimal when no super-optimal pair blocks it, a fixed point of the bloc
 
 ## Main results
 
-* `mem_superoptimalSet`: on a finite generator a pair is super-optimal iff it lies in the
-  generator and no super-optimal pair blocks it, and `superoptimalSet` is the only such set.
+* `mem_superoptimalSet`: when the harmonies of the generator are well-founded, a pair is
+  super-optimal iff it lies in the generator and no super-optimal pair blocks it, and
+  `superoptimalSet` is the only such set.
 * `strongOptimalSet_subset_superoptimalSet`: optimal pairs are super-optimal.
 * `superoptimalSet_eq_graphOn`: the division of pragmatic labour. On a generator containing the
   graph of an isomorphism between the markedness orders of forms and of meanings, the
@@ -40,8 +41,9 @@ is super-optimal when no super-optimal pair blocks it, a fixed point of the bloc
   order on `List ℕ`. The principles' "other pair" clause is dropped, since `f q < f p` already
   forces `q ≠ p`.
 * The step is antitone, so its square has a greatest fixed point without further hypotheses, and
-  the step exchanges it with the least one. On a finite generator the two coincide by descent
-  along a minimal pair of their difference, where Jäger assumes well-foundedness.
+  the step exchanges it with the least one. The two coincide by descent along a minimal pair of
+  their difference when the harmonies of the generator are well-founded, Jäger's hypothesis,
+  which every finite generator meets (`Set.Finite.isWF`).
 * The `Finset` form iterates the squared step from `pairs` with `pairs.card` as fuel and an early
   exit, so it needs no convergence hypothesis and `decide` stays shallow.
 * Jäger's uniqueness of weak solutions and their agreement with `superoptimalSet` are proved in
@@ -159,8 +161,8 @@ def unblockedSq : Set (F × M) →o Set (F × M) :=
 @[simp] theorem unblockedSq_apply (S : Set (F × M)) :
     unblockedSq pairs f S = unblockedSet pairs f (unblockedSet pairs f S) := rfl
 
-/-- The super-optimal pairs, the greatest fixed point of the squared blocking step. On a
-finite generator it is the unique fixed point of the step itself
+/-- The super-optimal pairs, the greatest fixed point of the squared blocking step. When the
+harmonies of the generator are well-founded it is the unique fixed point of the step itself
 (`isFixedPt_superoptimalSet`, `eq_superoptimalSet_of_isFixedPt`), Jäger's reformulation. -/
 noncomputable def superoptimalSet : Set (F × M) := (unblockedSq pairs f).gfp
 
@@ -187,35 +189,37 @@ theorem unblockedSet_superoptimalSet :
         unblockedSet_antitone pairs f (le_gfp _ (hfix _ (unblockedSq pairs f).map_lfp).ge)
     _ = (unblockedSq pairs f).lfp := (unblockedSq pairs f).map_lfp
 
-/-- On a finite generator the least and greatest fixed points of the squared step coincide:
-a profile-minimal pair of their difference would be blocked by a still smaller one. -/
-theorem lfp_eq_superoptimalSet (h : pairs.Finite) :
+/-- When the harmonies of the generator are well-founded, the least and greatest fixed points of
+the squared step coincide, since a minimal pair of their difference would be blocked by a still
+smaller one. -/
+theorem lfp_eq_superoptimalSet (h : (f '' pairs).IsWF) :
     (unblockedSq pairs f).lfp = superoptimalSet pairs f := by
   set G := superoptimalSet pairs f
   set L := (unblockedSq pairs f).lfp
   have hGL : unblockedSet pairs f G = L := unblockedSet_superoptimalSet pairs f
   have hLG : unblockedSet pairs f L = G := by rw [← hGL]; exact (unblockedSq pairs f).map_gfp
   refine le_antisymm (lfp_le_gfp _) (not_not.1 fun hne ↦ ?_)
-  obtain ⟨p, ⟨hpG, hpL⟩, hmin⟩ := (h.subset fun x hx ↦ superoptimalSet_subset pairs f hx.1)
-    |>.exists_minimalFor f (G \ L) (Set.not_subset.1 hne)
+  obtain ⟨p, ⟨hpG, hpL⟩, hmin⟩ := (h.mono (Set.image_mono fun x hx ↦
+    superoptimalSet_subset pairs f hx.1)).exists_minimalFor f (G \ L) (Set.not_subset.1 hne)
   have hp : p ∈ unblockedSet pairs f L := hLG.symm ▸ hpG
   obtain ⟨q, hqG, hadj, hlt⟩ : Blocks f G p :=
     not_not.1 fun hb ↦ hpL (hGL ▸ (⟨hp.1, hb⟩ : p ∈ unblockedSet pairs f G))
   exact hlt.not_ge (hmin ⟨hqG, fun hqL ↦ hp.2 ⟨q, hqL, hadj, hlt⟩⟩ hlt.le)
 
-theorem isFixedPt_superoptimalSet (h : pairs.Finite) :
+theorem isFixedPt_superoptimalSet (h : (f '' pairs).IsWF) :
     IsFixedPt (unblockedSet pairs f) (superoptimalSet pairs f) := by
   rw [IsFixedPt, unblockedSet_superoptimalSet, lfp_eq_superoptimalSet pairs f h]
 
 /-- A pair is super-optimal iff it lies in the generator and no super-optimal pair blocks it,
 Jäger's reformulation of super-optimality. -/
-theorem mem_superoptimalSet (h : pairs.Finite) :
+theorem mem_superoptimalSet (h : (f '' pairs).IsWF) :
     p ∈ superoptimalSet pairs f ↔ p ∈ pairs ∧ ¬ Blocks f (superoptimalSet pairs f) p := by
   conv_lhs => rw [← (isFixedPt_superoptimalSet pairs f h).eq]
   exact Iff.rfl
 
-/-- On a finite generator the blocking step has no fixed point but the super-optimal set. -/
-theorem eq_superoptimalSet_of_isFixedPt (h : pairs.Finite)
+/-- When the harmonies of the generator are well-founded, the blocking step has no fixed point
+but the super-optimal set. -/
+theorem eq_superoptimalSet_of_isFixedPt (h : (f '' pairs).IsWF)
     (hS : IsFixedPt (unblockedSet pairs f) S) : S = superoptimalSet pairs f := by
   have hsq : unblockedSq pairs f S = S := by
     change unblockedSet pairs f (unblockedSet pairs f S) = S
@@ -313,13 +317,14 @@ theorem superoptimalSet_eq_of_strictMono (hf : StrictMono f) :
     simp only [unblockedSq_apply, unblockedSet_eq_of_strictMono pairs hf]
   rw [superoptimalSet, superoptimalSet, this]
 
-/-- On a finite generator containing the graph of an isomorphism `e` between the markedness
-orders of forms and of meanings, the super-optimal pairs are exactly that graph, under every
-harmony strictly monotone in markedness. This is the division of pragmatic labour. -/
-theorem superoptimalSet_eq_graphOn (e : F ≃o M) (hf : StrictMono f) (h : pairs.Finite)
+/-- On a generator well-founded in markedness and containing the graph of an isomorphism `e`
+between the markedness orders of forms and of meanings, the super-optimal pairs are exactly that
+graph, under every harmony strictly monotone in markedness. This is the division of pragmatic
+labour. -/
+theorem superoptimalSet_eq_graphOn (e : F ≃o M) (hf : StrictMono f) (h : pairs.IsWF)
     (he : univ.graphOn e ⊆ pairs) : superoptimalSet pairs f = univ.graphOn e := by
   rw [superoptimalSet_eq_of_strictMono pairs hf]
-  refine (eq_superoptimalSet_of_isFixedPt pairs id h ?_).symm
+  refine (eq_superoptimalSet_of_isFixedPt pairs id (by rwa [Set.image_id]) ?_).symm
   ext ⟨a, b⟩
   change (a, b) ∈ pairs ∧ ¬ Blocks id (univ.graphOn e) (a, b) ↔ (a, b) ∈ univ.graphOn e
   refine ⟨fun ⟨_, hb⟩ ↦ mem_graphOn.2 ⟨trivial, ?_⟩, fun hab ↦ ⟨he hab, ?_⟩⟩
@@ -452,8 +457,8 @@ theorem coe_superoptimal : (↑(superoptimal pairs f) : Set (F × M)) = superopt
 /-- The footnote's recursion, computably. -/
 theorem mem_superoptimal :
     p ∈ superoptimal pairs f ↔ p ∈ pairs ∧ ¬ Blocks f ↑(superoptimal pairs f) p := by
-  rw [← Finset.mem_coe, coe_superoptimal, mem_superoptimalSet _ _ pairs.finite_toSet,
-    Finset.mem_coe]
+  rw [← Finset.mem_coe, coe_superoptimal,
+    mem_superoptimalSet _ _ (pairs.finite_toSet.image f).isWF, Finset.mem_coe]
 
 theorem superoptimal_subset : superoptimal pairs f ⊆ pairs :=
   fun _ hp ↦ ((mem_superoptimal pairs f).1 hp).1

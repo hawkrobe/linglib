@@ -161,7 +161,7 @@ the stereotypical situation and the marked form with the marked one. The paper c
 general proof to Jäger; it is `superoptimalSet_eq_graphOn`. -/
 theorem weak_division_of_labour (hf : StrictMono f) :
     superoptimalSet univ f = {(.unmarked, .stereotypical), (.marked, .marked)} := by
-  rw [superoptimalSet_eq_graphOn _ iconicity hf finite_univ (subset_univ _)]
+  rw [superoptimalSet_eq_graphOn _ iconicity hf finite_univ.isWF (subset_univ _)]
   ext ⟨a, b⟩
   simp only [mem_graphOn, mem_univ, true_and, mem_insert_iff, mem_singleton_iff, Prod.mk.injEq]
   revert a b
