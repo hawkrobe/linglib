@@ -33,7 +33,7 @@ corono-dorsal analysis adds.
 
 ## Main results
 
-* `Akan.exists_mem_aka`: each vowel is the segment of a phoneme of PHOIBLE's Akan inventory.
+* `Akan.subset_aka`: the vowels are those of PHOIBLE's Akan inventory.
 * `Akan.vowel_apply`: a vowel has the chart's values off [ATR] and [tense].
 * `Akan.hasValue_atr_iff`: the advanced vowels are /i e o u/.
 * `Akan.restrict_tcCurl_eq_k`: the affricate has the stop's values off the four features
@@ -61,12 +61,12 @@ namespace Akan
 no [tense]. The low vowel, which the chart leaves without [tense], keeps the chart's
 [−ATR]. -/
 def vowel (m : FeatureMatrix) : Segment :=
-  .ofChart m (fun f ↦ if f = .atr then m.toSegment .tense else ⊥) {.tense}ᶜ
+  .ofChart m (Function.update ⊥ .atr (m.toSegment .tense)) {.tense}ᶜ
 
 /-- A vowel has the chart's values off [ATR] and [tense]. -/
 theorem vowel_apply (m : FeatureMatrix) {f : Phonology.Feature} (ha : f ≠ .atr)
     (ht : f ≠ .tense) : vowel m f = m.toSegment f :=
-  Segment.ofChart_apply (by simpa using ht) (ite_eq_right ha)
+  Segment.ofChart_apply (by simpa using ht) (Function.update_of_ne ha ..)
 
 /-- The advanced high front vowel /i/. -/
 def i : Segment := vowel .«i»
@@ -99,10 +99,9 @@ def upsilon : Segment := vowel .«ʊ»
 def vowels : Finset Segment :=
   ⟨↑[i, e, o, u, smallCapitalI, epsilon, a, openO, upsilon], by decide⟩
 
-/-- Each vowel is the segment of a phoneme of PHOIBLE's Akan inventory. -/
-theorem exists_mem_aka :
-    ∀ x ∈ vowels, ∃ y ∈ Inventories.Akan.aka.phonemes, x = vowel y.features := by
-  decide
+/-- The vowels are those of PHOIBLE's Akan inventory. -/
+theorem subset_aka : vowels ⊆ Inventories.Akan.aka.featureMatrices.image vowel :=
+  Inventory.subset_image_featureMatrices_iff.2 (by decide)
 
 /-- Dolphyne's advanced set is /i e o u/. -/
 theorem hasValue_atr_iff :

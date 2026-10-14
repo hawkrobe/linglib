@@ -28,7 +28,7 @@ and fusion only at the left edge of the root.
 
 ## Main results
 
-* `exists_mem_ind`: the phonemes are those of PHOIBLE's Standard Indonesian inventory.
+* `subset_ind`: the phonemes are those of PHOIBLE's Standard Indonesian inventory.
 * `voicelessObstruents_sdiff_substituting`: the voiceless obstruents that do not fuse are *c*
   and the fricatives of loans.
 * `juncture_of_sonorant`, `juncture_of_vowel_or_h`, `juncture_of_obstruent`: the juncture for
@@ -151,12 +151,10 @@ def consonants : Finset Segment :=
 /-- The vowels, pairwise distinct. -/
 def vowels : Finset Segment := ⟨↑[i, u, é, e, o, a], by decide⟩
 
-/-- Every phoneme but the palatal glide is the segment of a phoneme of PHOIBLE's Standard
-Indonesian inventory. -/
-theorem exists_mem_ind :
-    ∀ x ∈ consonants ∪ vowels, x ≠ y →
-      ∃ ph ∈ Inventories.Indonesian.ind.phonemes, x = .ofChart ph.features := by
-  decide
+/-- Every phoneme but the palatal glide is a segment of PHOIBLE's Standard Indonesian
+inventory. -/
+theorem subset_ind : (consonants ∪ vowels).erase y ⊆ Inventories.Indonesian.ind.segments :=
+  Inventory.subset_segments_iff.2 (by decide)
 
 /-! ### Natural classes -/
 

@@ -20,7 +20,7 @@ chart, and its segment is the segment of that chart entry.
 
 ## Main results
 
-* `Farsi.exists_mem_pes`: each phoneme is the segment of one in PHOIBLE's Persian inventory.
+* `Farsi.subset_pes`: the phonemes are segments of PHOIBLE's Persian inventory.
 * `Farsi.isVowel_iff`: the six vowels are the vowels.
 
 ## Implementation notes
@@ -81,10 +81,9 @@ def glottalStop : Segment := .ofChart .«ʔ»
 /-- The Persian phonemes of the hiatus data, pairwise distinct. -/
 def inventory : Finset Segment := ⟨↑[i, e, æ, u, o, scriptA, h, tesh, m, n, glottalStop], by decide⟩
 
-/-- Each phoneme is the segment of a phoneme of PHOIBLE's Persian inventory. -/
-theorem exists_mem_pes :
-    ∀ x ∈ inventory, ∃ y ∈ Inventories.Persian.pes.phonemes, x = .ofChart y.features := by
-  decide
+/-- The phonemes are segments of PHOIBLE's Persian inventory. -/
+theorem subset_pes : inventory ⊆ Inventories.Persian.pes.segments :=
+  Inventory.subset_segments_iff.2 (by decide)
 
 theorem isVowel_iff :
     ∀ x ∈ inventory, x.IsVowel ↔ x ∈ ({i, e, æ, u, o, scriptA} : Finset Segment) := by

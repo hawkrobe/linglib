@@ -53,8 +53,7 @@ with two, and only a short vowel stands between the stop and the ending, so that
 
 ## Main results
 
-* `Finnish.exists_mem_fin`: each vowel is the segment of a phoneme of PHOIBLE's Finnish
-  inventory.
+* `Finnish.subset_fin`: the vowels are those of PHOIBLE's Finnish inventory.
 * `Finnish.isNeutral_iff`, `Finnish.isBackVowel_iff`: the neutral vowels are /e i/ and the
   back vowels /ɑ o u/.
 * `Finnish.naturalClass_A`: the natural class of the suffix vowel is /ɑ æ/.
@@ -186,10 +185,9 @@ def vowels : Finset Segment := ⟨↑[a, o, u, ä, ö, y, e, i], by decide⟩
 /-- The consonants of the example forms, pairwise distinct. -/
 def consonants : Finset Segment := ⟨↑[p, t, k, d, s, n, v, l, j, m, h, r], by decide⟩
 
-/-- Each vowel is the segment of a phoneme of PHOIBLE's Finnish inventory. -/
-theorem exists_mem_fin :
-    ∀ x ∈ vowels, ∃ y ∈ Inventories.Finnish.fin.phonemes, x = vowel y.features := by
-  decide
+/-- The vowels are those of PHOIBLE's Finnish inventory. -/
+theorem subset_fin : vowels ⊆ Inventories.Finnish.fin.featureMatrices.image vowel :=
+  Inventory.subset_image_featureMatrices_iff.2 (by decide)
 
 /-- `A` is the vowel of the alternating suffixes such as the essive -nA and the partitive -A.
 It is what `a` and `ä` share. -/
@@ -255,8 +253,8 @@ theorem hasValue_syllabic_consonants : ∀ x ∈ consonants, x.HasValue .syllabi
 def vowelCopy (w : List Segment) : List Segment :=
   [Phonology.Feature.back, .high, .low, .round].foldl (fun w f ↦ (copyToV f).searchCopy.apply w) w
 
-/-- The surface form of a word: `V` copies its vowel, and then palatal harmony fills the
-suffix vowels. -/
+/-- The surface form of a word is reached by copying a vowel into `V` and then letting palatal
+harmony fill the suffix vowels. -/
 def surface (w : List Segment) : List Segment := palatalHarmony.searchCopy.apply (vowelCopy w)
 
 /-- The natural class of the suffix vowel among the vowels is its two alternants. -/
