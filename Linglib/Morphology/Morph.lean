@@ -33,6 +33,8 @@ side of Haspelmath's form–content pairing, never zero and never discontinuous.
 * `Morph.wordsAt`, `Morph.surface`: the words of a sequence of morphs at an
   attachment, read off the positions of adjacent morphs, and its surface form in
   boundary notation.
+* `Morph.IsBoundary`, `Morph.wordsOf`: the morph boundaries of that notation, and the words of a
+  text in it as their morph forms.
 
 ## Main results
 
@@ -371,6 +373,25 @@ def surface (ms : List Morph) : String :=
 
 /-- A single morph surfaces as itself, so an unanalysed form is the surface form of its root. -/
 @[simp] theorem surface_singleton (m : Morph) : surface [m] = toString m := by simp [surface]
+
+/-- The boundaries between the morphs of a word in the notation `surface` writes are the affix
+boundary `-`, the clitic boundary `=` and the brackets of an infix. -/
+def IsBoundary (c : Char) : Prop := c = '-' ∨ c = '=' ∨ c = '<' ∨ c = '>'
+
+instance : DecidablePred IsBoundary := fun c ↦
+  inferInstanceAs (Decidable (c = '-' ∨ c = '=' ∨ c = '<' ∨ c = '>'))
+
+/-- The words of a text in the notation `surface` writes, each as the characters of its morph
+forms: words are separated by spaces, and the morphs of a word by boundaries. -/
+def wordsOf (s : String) : List (List (List Char)) :=
+  ((split (· = ' ') [] s.toList).filter (· ≠ [])).map fun w ↦
+    (split IsBoundary [] w).filter (· ≠ [])
+where
+  /-- The pieces of a list of characters between those satisfying `p`, the piece in progress
+  being `acc` reversed; each piece is complete as soon as its boundary is read. -/
+  split (p : Char → Prop) [DecidablePred p] (acc : List Char) : List Char → List (List Char)
+    | [] => [acc.reverse]
+    | c :: cs => if p c then acc.reverse :: split p [] cs else split p (c :: acc) cs
 
 end Morph
 

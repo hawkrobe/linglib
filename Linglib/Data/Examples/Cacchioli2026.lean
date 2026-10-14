@@ -26,7 +26,7 @@ def ex_5b : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("clause", "root"), ("neg_suffix", "present")] }
+    paperFeatures := [("clause", "root")] }
 
 def ex_12a : Datum :=
   { id := "cacchioli2026_12a"
@@ -39,7 +39,7 @@ def ex_12a : Datum :=
     judgment := .acceptable
     alternatives := [("ʔɨt-om ʔanɛ z-ɨ-nbɨb-om-n mɛts'ħafti ʔab-t-i ʔarmadyo ʔall-ɛwo", .ungrammatical), ("ʔɨt-om ʔanɛ z-ɛj-nbɨb-om-n mɛts'ħafti ʔab-t-i ʔarmadyo ʔall-ɛwo", .ungrammatical)]
     readings := []
-    paperFeatures := [("clause", "relative"), ("neg_suffix", "absent")] }
+    paperFeatures := [("clause", "relative")] }
 
 def ex_14 : Datum :=
   { id := "cacchioli2026_14"
@@ -52,7 +52,7 @@ def ex_14 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("clause", "seem"), ("neg_suffix", "absent")] }
+    paperFeatures := [("clause", "seem")] }
 
 def ex_15 : Datum :=
   { id := "cacchioli2026_15"
@@ -65,7 +65,7 @@ def ex_15 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("clause", "conditional"), ("neg_suffix", "absent")] }
+    paperFeatures := [("clause", "conditional")] }
 
 def ex_16 : Datum :=
   { id := "cacchioli2026_16"
@@ -78,7 +78,7 @@ def ex_16 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("clause", "complement"), ("neg_suffix", "absent"), ("verb_class", "utterance"), ("typer", "kemzi"), ("matrix_verb", "ask")] }
+    paperFeatures := [("clause", "complement"), ("verb_class", "utterance"), ("typer", "kemzi"), ("matrix_verb", "ask")] }
 
 def ex_20 : Datum :=
   { id := "cacchioli2026_20"
@@ -91,7 +91,7 @@ def ex_20 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("clause", "subjunctive"), ("neg_suffix", "absent"), ("verb_class", "control"), ("typer", "ki"), ("matrix_verb", "try")] }
+    paperFeatures := [("clause", "subjunctive"), ("verb_class", "control"), ("typer", "ki"), ("matrix_verb", "try")] }
 
 def ex_21 : Datum :=
   { id := "cacchioli2026_21"
@@ -104,7 +104,7 @@ def ex_21 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("clause", "subjunctive"), ("neg_suffix", "absent"), ("verb_class", "directive"), ("typer", "ki"), ("matrix_verb", "order")] }
+    paperFeatures := [("clause", "subjunctive"), ("verb_class", "directive"), ("typer", "ki"), ("matrix_verb", "order")] }
 
 def ex_22 : Datum :=
   { id := "cacchioli2026_22"
@@ -117,7 +117,7 @@ def ex_22 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("clause", "subjunctive"), ("neg_suffix", "absent"), ("verb_class", "desire"), ("typer", "ki"), ("matrix_verb", "want")] }
+    paperFeatures := [("clause", "subjunctive"), ("verb_class", "desire"), ("typer", "ki"), ("matrix_verb", "want")] }
 
 def ex_23 : Datum :=
   { id := "cacchioli2026_23"
@@ -130,7 +130,7 @@ def ex_23 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("clause", "purpose"), ("neg_suffix", "absent")] }
+    paperFeatures := [("clause", "purpose")] }
 
 def ex_24 : Datum :=
   { id := "cacchioli2026_24"
@@ -143,7 +143,7 @@ def ex_24 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("clause", "future"), ("neg_suffix", "present")] }
+    paperFeatures := [("clause", "future")] }
 
 def ex_25 : Datum :=
   { id := "cacchioli2026_25"
@@ -156,7 +156,7 @@ def ex_25 : Datum :=
     judgment := .acceptable
     alternatives := [("dɛrho ʔaj-nɨfɨrɨ ʔɨl-ɛ gɛlits'-ɛ", .ungrammatical)]
     readings := []
-    paperFeatures := [("clause", "ilu"), ("neg_suffix", "present"), ("verb_class", "utterance"), ("typer", "ilu"), ("matrix_verb", "explain")] }
+    paperFeatures := [("clause", "ilu"), ("verb_class", "utterance"), ("typer", "ilu"), ("matrix_verb", "explain")] }
 
 def ex_29 : Datum :=
   { id := "cacchioli2026_29"
