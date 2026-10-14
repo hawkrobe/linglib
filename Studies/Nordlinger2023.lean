@@ -18,35 +18,27 @@ public import Linglib.Fragments.Wambaya.Reciprocals
 /-!
 # Nordlinger (2023): The Typology of Reciprocal Constructions
 
-This file formalizes the generalizations of the review of reciprocal constructions in
-[nordlinger-2023], which organizes the classificatory work of [nedjalkov-2007a],
-[maslova-2008], [evans-2008], and [siloni-2012] around two correlations. Nominal and
-argument strategies tend to preserve the valency of the base verb while verb-marking
-strategies tend to reduce it: wherever the review's valency indicators agree, they agree
-with the strategy's default, derived in the substrate from the coding-frame effect of
-reciprocalization (`valency_follows_default`), so no nominal strategy reads monovalent and
-every monovalent reading is verb-marked (`nominal_strategy_bivalent`,
-`monovalent_implies_verbal`). The tendency is not absolute: Tonga's verb-marked reciprocal
-keeps both argument NPs (`tonga_counterexample`), and in the Australian cases of
-[evans-et-al-2007] the indicators disagree, an ergative subject beside an obligatorily
-absent object in Kuuk Thaayorre and intransitive agreement beside an incorporated patient in
-Dalabon (`kuukThaayorre_mixed`, `dalabon_mixed`).
-Discontinuous reciprocals, with the reciprocants split across the subject and a comitative
-phrase, are licensed exactly for lexically formed reciprocal verbs on the typology of
-[siloni-2012], which the review's Greek, Swahili, Hungarian, French, and Czech judgments
-confirm (`siloni_discontinuity_prediction`). The review's semantic typology after
-[evans-et-al-2011b] and [dalrymple-et-al-1998], six shapes of mutual relation from strong
-reciprocity to the ring, is realized as the relation shapes of `Semantics/Plurality/Reciprocal`
-(`ReciprocityType.Realizes`), and the polysemies of the reciprocal marker beyond the
-reflexive are exhibited by the Yakut collective and the East Futunan iterative readings.
+Nordlinger's review of reciprocal constructions organizes the classificatory work of Nedjalkov,
+Maslova, Evans and Siloni around two correlations. Nominal and argument strategies tend to
+preserve the valency of the base verb while verb-marking strategies tend to reduce it: wherever
+the review's valency indicators agree, they agree with the strategy's default, derived in the
+substrate from the coding-frame effect of reciprocalization (`valency_follows_default`). The
+tendency is not absolute: Tonga's verb-marked reciprocal keeps both argument NPs
+(`tonga_counterexample`), and in the Australian cases of Evans and colleagues the indicators
+disagree (`kuukThaayorre_mixed`, `dalabon_mixed`). Discontinuous reciprocals are licensed exactly
+for lexically formed reciprocal verbs on Siloni's typology, which the review's judgments confirm
+(`siloni_discontinuity_prediction`). The review's semantic typology, six configurations of a
+mutual event from strong reciprocity to the ring, is stated as conditions on the relation
+(`ReciprocityType.Realizes`): only the strong and pairwise configurations are symmetric, and all
+but the melee involve every participant.
 
 ## Implementation notes
 
 Each language's construction takes its marker from the language's fragment, or from the
 review's example where no fragment exists (Warlpiri, Kuuk Thaayorre, Dalabon, Tonga), and
-records the valency indicators the review reports. The formation locus is [siloni-2012]'s own
+records the valency indicators the review reports. The formation locus is Siloni's own
 classification where it covers the language and the review's extension otherwise. Malagasy,
-bivalent at f-structure and monovalent at c-structure on [hurst-2012]'s analysis, splits
+bivalent at f-structure and monovalent at c-structure on Hurst's analysis, splits
 levels rather than indicators and is not represented.
 
 ## References
@@ -221,7 +213,174 @@ theorem siloni_discontinuity_prediction :
       (Siloni2012.Property.discontinuous.Holds f ↔ d = true) := by
   decide
 
-/-! ### Semantic reciprocity types (§4) -/
+/-! ### Semantic reciprocity types (§4)
+
+The review presents the semantic typology of Evans and colleagues, who start from the relations
+Dalrymple and colleagues identify and distinguish six configurations of a mutual event. Each is
+stated here, after the extensional schemas of Majid and colleagues, as a condition fixing the
+extension of `R` on the participants `X`; adjacency in a chain or ring is a pair of consecutive
+positions in a duplicate-free list. -/
+
+section Configurations
+
+variable {A : Type*} {R : A → A → Prop} {X : Finset A}
+
+/-- `y` immediately follows `x` in `l`. -/
+def Consecutive (l : List A) (x y : A) : Prop := ∃ i, l[i]? = some x ∧ l[i + 1]? = some y
+
+theorem Consecutive.mem_left {l : List A} {x y : A} (h : Consecutive l x y) : x ∈ l :=
+  let ⟨_, hx, _⟩ := h
+  List.mem_of_getElem? hx
+
+theorem Consecutive.mem_right {l : List A} {x y : A} (h : Consecutive l x y) : y ∈ l :=
+  let ⟨_, _, hy⟩ := h
+  List.mem_of_getElem? hy
+
+theorem Consecutive.ne {l : List A} (hnd : l.Nodup) {x y : A} (h : Consecutive l x y) :
+    x ≠ y := by
+  obtain ⟨i, hx, hy⟩ := h
+  rintro rfl
+  have := (List.Nodup.getElem?_inj (List.getElem?_eq_some_iff.1 hx).1 hnd).1 (hx.trans hy.symm)
+  omega
+
+theorem Consecutive.asymm {l : List A} (hnd : l.Nodup) {x y : A} (hxy : Consecutive l x y) :
+    ¬ Consecutive l y x := by
+  rintro ⟨j, hy', hx'⟩
+  obtain ⟨i, hx, hy⟩ := hxy
+  have h₁ := (List.Nodup.getElem?_inj (List.getElem?_eq_some_iff.1 hx).1 hnd).1
+    (hx.trans hx'.symm)
+  have h₂ := (List.Nodup.getElem?_inj (List.getElem?_eq_some_iff.1 hy).1 hnd).1
+    (hy.trans hy'.symm)
+  omega
+
+theorem exists_consecutive_or_getLast {l : List A} {x : A} (hx : x ∈ l) :
+    (∃ y, Consecutive l x y) ∨ l.getLast? = some x := by
+  obtain ⟨i, hi⟩ := List.mem_iff_getElem?.1 hx
+  by_cases h : i + 1 < l.length
+  · exact .inl ⟨l[i + 1], i, hi, List.getElem?_eq_getElem h⟩
+  · right
+    rw [List.getLast?_eq_getElem?]
+    convert hi using 2
+    have := (List.getElem?_eq_some_iff.1 hi).1
+    omega
+
+theorem exists_consecutive_of_getLast {l : List A} (hlen : 2 ≤ l.length) {x : A}
+    (hx : l.getLast? = some x) : ∃ y, Consecutive l y x := by
+  rw [List.getLast?_eq_getElem?] at hx
+  refine ⟨l[l.length - 2], l.length - 2, List.getElem?_eq_getElem (by omega), ?_⟩
+  convert hx using 2
+  omega
+
+/-- `R` is symmetric within `X`: every realized pair is mutual. -/
+def PairSymmetricOn (R : A → A → Prop) (X : Finset A) : Prop :=
+  (X : Set A).Pairwise fun x y ↦ R x y → R y x
+
+/-- In the pairwise configuration the participants split into two-member cells and `R` holds
+exactly within cells. -/
+def PairwiseConfig [DecidableEq A] (R : A → A → Prop) (X : Finset A) : Prop :=
+  ∃ P : Finpartition X, (∀ c ∈ P.parts, c.card = 2) ∧
+    ∀ x y, R x y ↔ ∃ c ∈ P.parts, x ∈ c ∧ y ∈ c ∧ x ≠ y
+
+/-- In the chain configuration the participants form a line and `R` holds exactly from each
+member to the next. -/
+def ChainConfig [DecidableEq A] (R : A → A → Prop) (X : Finset A) : Prop :=
+  ∃ l : List A, l.Nodup ∧ l.toFinset = X ∧ 2 ≤ l.length ∧ ∀ x y, R x y ↔ Consecutive l x y
+
+/-- The ring configuration is a chain whose last member also acts on the first. -/
+def RingConfig [DecidableEq A] (R : A → A → Prop) (X : Finset A) : Prop :=
+  ∃ l : List A, l.Nodup ∧ l.toFinset = X ∧ 3 ≤ l.length ∧
+    ∀ x y, R x y ↔ Consecutive l x y ∨ (l.getLast? = some x ∧ l.head? = some y)
+
+/-- In the radial configuration one central participant acts on each of the others. -/
+def RadialConfig (R : A → A → Prop) (X : Finset A) : Prop :=
+  ∃ c ∈ X, 2 ≤ X.card ∧ ∀ x y, R x y ↔ x = c ∧ y ∈ X ∧ y ≠ c
+
+/-- In the melee configuration there is some interaction, but participation is not
+exhaustive. -/
+def MeleeConfig (R : A → A → Prop) (X : Finset A) : Prop :=
+  (∃ x ∈ X, ∃ y ∈ X, x ≠ y ∧ R x y) ∧ ¬ InclusiveAlternativeOrdering R X
+
+theorem pairSymmetricOn_of_strongReciprocity (h : StrongReciprocity R X) :
+    PairSymmetricOn R X :=
+  fun _ hx _ hy hxy _ ↦ h hy hx hxy.symm
+
+theorem RadialConfig.not_pairSymmetricOn (h : RadialConfig R X) : ¬ PairSymmetricOn R X := by
+  obtain ⟨c, hc, hcard, hiff⟩ := h
+  obtain ⟨y, hy, hyc⟩ := X.exists_mem_ne hcard c
+  intro hsym
+  exact hyc ((hiff y c).1 (hsym hc hy hyc.symm ((hiff c y).2 ⟨rfl, hy, hyc⟩))).1
+
+theorem RadialConfig.inclusiveAlternativeOrdering (h : RadialConfig R X) :
+    InclusiveAlternativeOrdering R X := by
+  obtain ⟨c, hc, hcard, hiff⟩ := h
+  intro x hx
+  by_cases hxc : x = c
+  · subst hxc
+    obtain ⟨y, hy, hyx⟩ := X.exists_mem_ne hcard x
+    exact ⟨y, hy, .of_rel ((hiff x y).2 ⟨rfl, hy, hyx⟩), hyx.symm⟩
+  · exact ⟨c, hc, .of_rel_symm ((hiff c x).2 ⟨rfl, hx, hxc⟩), hxc⟩
+
+variable [DecidableEq A]
+
+theorem PairwiseConfig.pairSymmetricOn (h : PairwiseConfig R X) : PairSymmetricOn R X := by
+  obtain ⟨P, -, hiff⟩ := h
+  intro x _ y _ _ hR
+  obtain ⟨c, hc, hxc, hyc, hne⟩ := (hiff x y).1 hR
+  exact (hiff y x).2 ⟨c, hc, hyc, hxc, hne.symm⟩
+
+theorem ChainConfig.not_pairSymmetricOn (h : ChainConfig R X) : ¬ PairSymmetricOn R X := by
+  obtain ⟨l, hnd, rfl, hlen, hiff⟩ := h
+  obtain ⟨b, hb⟩ := exists_consecutive_of_getLast hlen
+    (List.getLast?_eq_getElem?.trans (List.getElem?_eq_getElem (by omega)))
+  intro hsym
+  exact hb.asymm hnd ((hiff _ _).1 (hsym (List.mem_toFinset.2 hb.mem_left)
+    (List.mem_toFinset.2 hb.mem_right) (hb.ne hnd) ((hiff _ _).2 hb)))
+
+theorem RingConfig.not_pairSymmetricOn (h : RingConfig R X) : ¬ PairSymmetricOn R X := by
+  obtain ⟨l, hnd, rfl, hlen, hiff⟩ := h
+  obtain ⟨b, hb⟩ := exists_consecutive_of_getLast (by omega : 2 ≤ l.length)
+    (List.getLast?_eq_getElem?.trans (List.getElem?_eq_getElem (by omega)))
+  intro hsym
+  rcases (hiff _ _).1 (hsym (List.mem_toFinset.2 hb.mem_left) (List.mem_toFinset.2 hb.mem_right)
+      (hb.ne hnd) ((hiff _ _).2 (.inl hb))) with hba | ⟨-, hhead⟩
+  · exact hb.asymm hnd hba
+  · obtain ⟨i, hi, hi'⟩ := hb
+    have hi₁ : i + 1 < l.length := (List.getElem?_eq_some_iff.1 hi').1
+    have e₁ := (List.Nodup.getElem?_inj hi₁ hnd).1
+      (hi'.trans (List.getElem?_eq_getElem (by omega)).symm)
+    rw [List.head?_eq_getElem?] at hhead
+    have e₂ := (List.Nodup.getElem?_inj (by omega : 0 < l.length) hnd).1 (hhead.trans hi.symm)
+    omega
+
+theorem PairwiseConfig.partitionedStrong (h : PairwiseConfig R X) :
+    PartitionedStrongReciprocity R X :=
+  let ⟨P, hcells, hiff⟩ := h
+  ⟨P, fun c hc ↦ ⟨(hcells c hc).ge, fun x hx y hy hne ↦ (hiff x y).2 ⟨c, hc, hx, hy, hne⟩⟩⟩
+
+theorem ChainConfig.inclusiveAlternativeOrdering (h : ChainConfig R X) :
+    InclusiveAlternativeOrdering R X := by
+  obtain ⟨l, hnd, rfl, hlen, hiff⟩ := h
+  intro x hx
+  rcases exists_consecutive_or_getLast (List.mem_toFinset.1 hx) with ⟨y, hy⟩ | hlast
+  · exact ⟨y, List.mem_toFinset.2 hy.mem_right, .of_rel ((hiff x y).2 hy), hy.ne hnd⟩
+  · obtain ⟨y, hy⟩ := exists_consecutive_of_getLast hlen hlast
+    exact ⟨y, List.mem_toFinset.2 hy.mem_left, .of_rel_symm ((hiff y x).2 hy), (hy.ne hnd).symm⟩
+
+theorem RingConfig.oneWayWeak (h : RingConfig R X) : OneWayWeakReciprocity R X := by
+  obtain ⟨l, hnd, rfl, hlen, hiff⟩ := h
+  intro x hx
+  rcases exists_consecutive_or_getLast (List.mem_toFinset.1 hx) with ⟨y, hy⟩ | hlast
+  · exact ⟨y, List.mem_toFinset.2 hy.mem_right, (hiff x y).2 (.inl hy), hy.ne hnd⟩
+  · have hhead : l.head? = some l[0] :=
+      List.head?_eq_getElem?.trans (List.getElem?_eq_getElem (by omega))
+    refine ⟨l[0], List.mem_toFinset.2 (List.getElem_mem _),
+      (hiff x _).2 (.inr ⟨hlast, hhead⟩), fun hx0 ↦ ?_⟩
+    rw [List.getLast?_eq_getElem?, hx0] at hlast
+    have := (List.Nodup.getElem?_inj (by omega : l.length - 1 < l.length) hnd).1
+      (hlast.trans (List.getElem?_eq_getElem (by omega)).symm)
+    omega
+
+end Configurations
 
 /-- Semantic type of reciprocal relation.
 
@@ -252,22 +411,47 @@ inductive ReciprocityType where
   | ring
   deriving DecidableEq, Repr
 
-/-- The relation shape each configurational label denotes over a
-    participant plurality — [majid-et-al-2011]'s extensional schemas as
-    the exact-extension conditions of `Reciprocal`.
-    Symmetry and participant-exhaustiveness are theorems there
-    (`ChainConfig.not_pairSymmetricOn`,
-    `RadialConfig.inclusiveAlternativeOrdering`, melee failing
-    `InclusiveAlternativeOrdering` by definition, …), not stipulated
-    features of the labels. -/
+/-- The relation shape each type denotes over a participant plurality. -/
 def ReciprocityType.Realizes {A : Type*} [DecidableEq A] :
     ReciprocityType → (A → A → Prop) → Finset A → Prop
-  | .strong,   R, X => Reciprocal.StrongReciprocity R X
-  | .pairwise, R, X => Reciprocal.PairwiseConfig R X
-  | .chain,    R, X => Reciprocal.ChainConfig R X
-  | .radial,   R, X => Reciprocal.RadialConfig R X
-  | .melee,    R, X => Reciprocal.MeleeConfig R X
-  | .ring,     R, X => Reciprocal.RingConfig R X
+  | .strong,   R, X => StrongReciprocity R X
+  | .pairwise, R, X => PairwiseConfig R X
+  | .chain,    R, X => ChainConfig R X
+  | .radial,   R, X => RadialConfig R X
+  | .melee,    R, X => MeleeConfig R X
+  | .ring,     R, X => RingConfig R X
+
+section Realizes
+
+variable {A : Type*} [DecidableEq A] {R : A → A → Prop} {X : Finset A} {t : ReciprocityType}
+
+/-- Of the configurations that involve every participant, only the strong and the pairwise
+ones are mutual on every realized pair. -/
+theorem ReciprocityType.Realizes.pairSymmetricOn_iff (h : t.Realizes R X) (ht : t ≠ .melee) :
+    PairSymmetricOn R X ↔ t = .strong ∨ t = .pairwise := by
+  cases t with
+  | strong => exact iff_of_true (pairSymmetricOn_of_strongReciprocity h) (.inl rfl)
+  | pairwise => exact iff_of_true (PairwiseConfig.pairSymmetricOn h) (.inr rfl)
+  | chain => exact iff_of_false (ChainConfig.not_pairSymmetricOn h) (by decide)
+  | radial => exact iff_of_false (RadialConfig.not_pairSymmetricOn h) (by decide)
+  | ring => exact iff_of_false (RingConfig.not_pairSymmetricOn h) (by decide)
+  | melee => exact absurd rfl ht
+
+/-- Every configuration but the melee involves each of two or more participants, as agent or as
+patient: it satisfies the weakest scheme, Inclusive Alternative Ordering. -/
+theorem ReciprocityType.Realizes.inclusiveAlternativeOrdering (h : t.Realizes R X)
+    (ht : t ≠ .melee) (hX : 2 ≤ X.card) : InclusiveAlternativeOrdering R X := by
+  cases t with
+  | strong =>
+    exact (StrongReciprocity.intermediate h).intermediateAlternative.inclusiveAlternativeOrdering hX
+  | pairwise =>
+    exact (PairwiseConfig.partitionedStrong h).weak.oneWayWeak.inclusiveAlternativeOrdering
+  | chain => exact ChainConfig.inclusiveAlternativeOrdering h
+  | radial => exact RadialConfig.inclusiveAlternativeOrdering h
+  | ring => exact (RingConfig.oneWayWeak h).inclusiveAlternativeOrdering
+  | melee => exact absurd rfl ht
+
+end Realizes
 
 /-! ### Polysemous markers beyond the sample
 

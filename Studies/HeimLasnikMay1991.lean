@@ -88,16 +88,14 @@ def eachOtherLF (np : Finset A) (R : A → A → Prop) : Prop :=
 
 /-- The compositional each∘other analysis derives Strong Reciprocity:
     HLM's truth conditions "coincide with those of the standard semantic
-    analyses". Through the entailment lattice of
-    `Reciprocal`, the weaker schemes follow
-    (`strong_imp_weak`, …). -/
+    analyses". -/
 theorem eachOtherLF_iff_strongReciprocity (np : Finset A) (R : A → A → Prop) :
     eachOtherLF np R ↔ StrongReciprocity R np := by
   constructor
-  · intro h x hx y hy hyx
-    exact h x hx y ⟨hy, hyx⟩
+  · intro h x hx y hy hxy
+    exact h x hx y ⟨hy, hxy.symm⟩
   · intro h x hx z hz
-    exact h x hx z hz.1 hz.2
+    exact h hx hz.1 hz.2.symm
 
 /-- Distribution over a singleton yields a vacuously true reciprocal —
     no reciprocal content at all. HLM derive the plural-antecedent

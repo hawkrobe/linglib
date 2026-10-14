@@ -98,9 +98,9 @@ theorem strongReciprocity_iff_otherOnes (R : α → α → Prop) (A : Finset α)
   constructor
   · intro h x hx y hy
     obtain ⟨hyx, hyA⟩ := Finset.mem_erase.mp hy
-    exact h x hx y hyA hyx
-  · intro h x hx y hy hyx
-    exact h x hx y (Finset.mem_erase.mpr ⟨hyx, hy⟩)
+    exact h hx hyA hyx.symm
+  · intro h x hx y hy hxy
+    exact h x hx y (Finset.mem_erase.mpr ⟨hxy.symm, hy⟩)
 
 /-- The collective reading ((84)): the relation holds of each member and the
     reciprocal group itself, with no distribution over that group — "the forks are
