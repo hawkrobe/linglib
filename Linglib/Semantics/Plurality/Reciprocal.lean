@@ -1,5 +1,6 @@
 module
 
+public import Mathlib.Data.Finset.Pairwise
 public import Mathlib.Logic.Relation
 public import Mathlib.Order.Partition.Finpartition
 public import Linglib.Core.Data.Set.Functor
@@ -7,42 +8,44 @@ public import Linglib.Core.Data.Set.Functor
 /-!
 # Reciprocal predicates
 
-This file defines the interpretation schemes of reciprocal sentences. A scheme is a predicate on
-a relation `R : A → A → Prop` and a finite set `X : Finset A` saying how much of `R` must hold
-among the members of `X` for *the Xs R each other* to be true, from every distinct pair down to
-one link in either direction. It also defines the configurations a mutual event can take, as
-conditions fixing the extension of `R` on `X`, and locates each in the lattice of schemes.
+A reciprocal scheme is a predicate on a relation `R : A → A → Prop` and a finite set
+`X : Finset A`, saying how much of `R` must hold among the members of `X` for *the Xs R each
+other* to be true. Dalrymple, Kanazawa, Kim, Mchombo and Peters vary the schemes along two
+parameters: how `R` must cover `X` (every two distinct members related directly, every two
+joined by an `R`-chain, or every member related to some other), and whether `R` is taken as it
+is or with its direction ignored, as `Relation.SymmGen R`. Their six schemes are ordered by
+entailment as the product of the two parameters. Weak Reciprocity and Partitioned Strong
+Reciprocity lie outside the parameterization; with them the file covers the six readings that
+Beck orders by entailment.
 
-## Definitions
+## Main definitions
 
 * `Reciprocal.StrongReciprocity R X`: any two distinct members of `X` are `R`-related.
-* `Reciprocal.PartitionedStrongReciprocity R X`: `X` has a `Finpartition` into cells of two or
-  more members, each strongly reciprocal.
-* `Reciprocal.IntermediateReciprocity R X`: any two distinct members are joined by an `R`-chain
-  within `X`.
-* `Reciprocal.WeakReciprocity R X`: every member is `R`-related to a distinct member as subject
-  and as object. `Reciprocal.OneWayWeakReciprocity R X` asks for the subject direction only,
-  `Reciprocal.InclusiveAlternativeOrdering R X` for either.
-* `Reciprocal.PairwiseConfig`, `Reciprocal.ChainConfig`, `Reciprocal.RingConfig`,
-  `Reciprocal.RadialConfig`, `Reciprocal.MeleeConfig`: `R` pairs the members of `X` off, lines
-  them up, closes the line into a cycle, radiates from one member, or leaves a member out.
+* `Reciprocal.IntermediateReciprocity R X`: any two distinct members of `X` are joined by an
+  `R`-chain within `X`.
+* `Reciprocal.OneWayWeakReciprocity R X`: every member of `X` is `R`-related to another member.
+* `Reciprocal.StrongAlternativeReciprocity`, `Reciprocal.IntermediateAlternativeReciprocity`,
+  `Reciprocal.InclusiveAlternativeOrdering`: the three schemes at `Relation.SymmGen R`.
+* `Reciprocal.WeakReciprocity R X`: every member of `X` is `R`-related to another member, and
+  another member is `R`-related to it.
+* `Reciprocal.PartitionedStrongReciprocity R X`: `X` has a `Finpartition` into strongly
+  reciprocal cells of two or more members.
 
 ## Main results
 
-* `Reciprocal.strong_imp_weak`, `Reciprocal.intermediate_imp_weak`,
-  `Reciprocal.partitionedStrong_imp_weak`, `Reciprocal.oneWay_imp_inclusiveAlternative`: the
-  schemes are ordered by entailment on sets of two or more members.
-* `Reciprocal.weakReciprocity_iff_liftRel`: weak reciprocity is the cumulation of `R` with
-  non-identity conjoined in, the relation lifting `Set.LiftRel` of that relation.
-* `Reciprocal.PairwiseConfig.partitionedStrong`, `Reciprocal.RingConfig.oneWayWeak`,
-  `Reciprocal.ChainConfig.inclusiveAlternativeOrdering`: the place of each configuration in the
-  lattice. The chain, ring and radial configurations are not symmetric.
+* `Reciprocal.StrongReciprocity.intermediate`, `Reciprocal.IntermediateReciprocity.oneWayWeak`
+  and the monotonicity of the schemes in `R`: the entailments among the six parameterized
+  schemes, as the dot lemmas leaving each scheme.
+* `Reciprocal.IntermediateReciprocity.weak`, `Reciprocal.PartitionedStrongReciprocity.weak`:
+  Weak Reciprocity follows from the intermediate and the partitioned schemes.
+* `Reciprocal.weakReciprocity_iff_liftRel`: Weak Reciprocity is the cumulation `Set.LiftRel` of
+  `R` with non-identity conjoined in.
 
 ## Implementation notes
 
-Adjacency in a chain or ring is a pair of consecutive positions in a duplicate-free list
-(`Reciprocal.Consecutive`). The two-member condition that [dalrymple-et-al-1998] build into each
-scheme is a hypothesis of the entailments rather than a conjunct of the definitions.
+Every scheme of Dalrymple and colleagues also requires `X` to have two or more members. Here
+that requirement is a hypothesis of the entailments that need it rather than a conjunct of the
+definitions, so that a scheme is a condition on `R` alone.
 
 ## References
 
@@ -54,92 +57,122 @@ scheme is a hypothesis of the entailments rather than a conjunct of the definiti
   the concept of reciprocity* (1998)][dalrymple-et-al-1998]
 * [S. Beck, *Reciprocals are definites* (2001)][beck-2001]
 * [W. Sternefeld, *Reciprocity and cumulative predication* (1998)][sternefeld-1998]
-* [N. Evans, S. C. Levinson, A. Gaby and A. Majid, *Introduction: Reciprocals and semantic
-  typology* (2011)][evans-et-al-2011b]
-* [A. Majid, N. Evans, A. Gaby and S. C. Levinson, *The semantics of reciprocal constructions
-  across languages: An extensional approach* (2011)][majid-et-al-2011]
 -/
 
 @[expose] public section
 
 namespace Reciprocal
 
-variable {A : Type*} {R : A → A → Prop} {X : Finset A}
+open Relation
 
-/-! ### The interpretation schemes -/
+variable {A : Type*} {R S : A → A → Prop} {X : Finset A}
 
-/-- Strong Reciprocity: every distinct pair in `X` satisfies `R`. -/
+/-! ### The parameterized schemes -/
+
+/-- Strong Reciprocity ([langendoen-1978]) holds when any two distinct members of `X` are
+`R`-related. -/
 def StrongReciprocity (R : A → A → Prop) (X : Finset A) : Prop :=
-  ∀ x ∈ X, ∀ y ∈ X, y ≠ x → R x y
+  (X : Set A).Pairwise R
 
-instance [DecidableEq A] (R : A → A → Prop) [DecidableRel R] (X : Finset A) :
-    Decidable (StrongReciprocity R X) := by
-  unfold StrongReciprocity; infer_instance
-
-theorem strongReciprocity_iff_pairwise : StrongReciprocity R X ↔ (X : Set A).Pairwise R :=
-  ⟨λ h _ hx _ hy hxy => h _ hx _ hy hxy.symm, λ h _ hx _ hy hyx => h hx hy hyx.symm⟩
-
-/-- Partitioned Strong Reciprocity ([fiengo-lasnik-1973]): `X` splits into disjoint cells of two
-or more within each of which Strong Reciprocity holds. -/
-def PartitionedStrongReciprocity [DecidableEq A] (R : A → A → Prop) (X : Finset A) : Prop :=
-  ∃ P : Finpartition X, ∀ c ∈ P.parts, 2 ≤ c.card ∧ StrongReciprocity R c
-
-/-- Intermediate Reciprocity ([langendoen-1978]): any two distinct members of `X` are
-connected by an `R`-chain through `X`. -/
+/-- Intermediate Reciprocity ([langendoen-1978]) is Strong Reciprocity of the transitive closure
+of `R` within `X`: any two distinct members are joined by a chain of `R`-steps through `X`. -/
 def IntermediateReciprocity (R : A → A → Prop) (X : Finset A) : Prop :=
-  ∀ x ∈ X, ∀ y ∈ X, y ≠ x → Relation.TransGen (λ a b => a ∈ X ∧ b ∈ X ∧ R a b) x y
+  StrongReciprocity (TransGen fun a b ↦ a ∈ X ∧ b ∈ X ∧ R a b) X
 
-/-- Weak Reciprocity ([langendoen-1978]): every member of `X` is `R`-related to a distinct
-other member in both directions, as subject and as object. -/
-def WeakReciprocity (R : A → A → Prop) (X : Finset A) : Prop :=
-  (∀ x ∈ X, ∃ y ∈ X, R x y ∧ x ≠ y) ∧ (∀ y ∈ X, ∃ x ∈ X, R x y ∧ x ≠ y)
-
-instance [DecidableEq A] (R : A → A → Prop) [DecidableRel R] (X : Finset A) :
-    Decidable (WeakReciprocity R X) := by
-  unfold WeakReciprocity; infer_instance
-
-/-- One-way Weak Reciprocity ([dalrymple-et-al-1998]): the first direction of Weak
-Reciprocity. -/
+/-- One-way Weak Reciprocity ([dalrymple-et-al-1998]) holds when every member of `X` is
+`R`-related to another member. -/
 def OneWayWeakReciprocity (R : A → A → Prop) (X : Finset A) : Prop :=
   ∀ x ∈ X, ∃ y ∈ X, R x y ∧ x ≠ y
 
-instance [DecidableEq A] (R : A → A → Prop) [DecidableRel R] (X : Finset A) :
-    Decidable (OneWayWeakReciprocity R X) := by
-  unfold OneWayWeakReciprocity; infer_instance
+/-- Strong Alternative Reciprocity ([dalrymple-et-al-1998]) is Strong Reciprocity with the
+direction of `R` ignored. -/
+def StrongAlternativeReciprocity (R : A → A → Prop) (X : Finset A) : Prop :=
+  StrongReciprocity (SymmGen R) X
 
-/-- Inclusive Alternative Ordering ([kanski-1987]): each member of `X` is `R`-related to a
-distinct other member in one direction or the other. -/
+/-- Intermediate Alternative Reciprocity ([dalrymple-et-al-1998]) is Intermediate Reciprocity
+with the direction of `R` ignored: `X` is connected by `R`. -/
+def IntermediateAlternativeReciprocity (R : A → A → Prop) (X : Finset A) : Prop :=
+  IntermediateReciprocity (SymmGen R) X
+
+/-- Inclusive Alternative Ordering ([kanski-1987]) is One-way Weak Reciprocity with the direction
+of `R` ignored: every member of `X` is `R`-related to another member in one direction or the
+other. -/
 def InclusiveAlternativeOrdering (R : A → A → Prop) (X : Finset A) : Prop :=
-  ∀ x ∈ X, ∃ y ∈ X, x ≠ y ∧ (R x y ∨ R y x)
+  OneWayWeakReciprocity (SymmGen R) X
+
+section Decidable
+
+variable [DecidableEq A] (R : A → A → Prop) [DecidableRel R] (X : Finset A)
+
+instance : Decidable (StrongReciprocity R X) :=
+  inferInstanceAs (Decidable ((X : Set A).Pairwise R))
+
+instance : Decidable (OneWayWeakReciprocity R X) :=
+  inferInstanceAs (Decidable (∀ x ∈ X, ∃ y ∈ X, R x y ∧ x ≠ y))
+
+instance : Decidable (StrongAlternativeReciprocity R X) :=
+  inferInstanceAs (Decidable (StrongReciprocity (SymmGen R) X))
+
+instance : Decidable (InclusiveAlternativeOrdering R X) :=
+  inferInstanceAs (Decidable (OneWayWeakReciprocity (SymmGen R) X))
+
+end Decidable
+
+/-! ### Entailments among the parameterized schemes -/
+
+theorem StrongReciprocity.mono (h : StrongReciprocity R X) (hRS : R ≤ S) :
+    StrongReciprocity S X :=
+  Set.Pairwise.mono' hRS h
+
+theorem IntermediateReciprocity.mono (h : IntermediateReciprocity R X) (hRS : R ≤ S) :
+    IntermediateReciprocity S X :=
+  StrongReciprocity.mono h <| TransGen.mono fun a b ⟨ha, hb, hab⟩ ↦ ⟨ha, hb, hRS a b hab⟩
+
+theorem OneWayWeakReciprocity.mono (h : OneWayWeakReciprocity R X) (hRS : R ≤ S) :
+    OneWayWeakReciprocity S X :=
+  fun x hx ↦ (h x hx).imp fun y ⟨hy, hxy, hne⟩ ↦ ⟨hy, hRS x y hxy, hne⟩
+
+theorem StrongReciprocity.intermediate (h : StrongReciprocity R X) :
+    IntermediateReciprocity R X :=
+  fun _ hx _ hy hxy ↦ .single ⟨hx, hy, h hx hy hxy⟩
+
+theorem StrongReciprocity.strongAlternative (h : StrongReciprocity R X) :
+    StrongAlternativeReciprocity R X :=
+  h.mono fun _ _ ↦ .of_rel
+
+theorem IntermediateReciprocity.intermediateAlternative (h : IntermediateReciprocity R X) :
+    IntermediateAlternativeReciprocity R X :=
+  h.mono fun _ _ ↦ .of_rel
+
+theorem StrongAlternativeReciprocity.intermediateAlternative
+    (h : StrongAlternativeReciprocity R X) : IntermediateAlternativeReciprocity R X :=
+  StrongReciprocity.intermediate h
+
+theorem OneWayWeakReciprocity.inclusiveAlternativeOrdering (h : OneWayWeakReciprocity R X) :
+    InclusiveAlternativeOrdering R X :=
+  h.mono fun _ _ ↦ .of_rel
+
+/-! ### Weak Reciprocity -/
+
+/-- Weak Reciprocity ([langendoen-1978]) holds when every member of `X` is `R`-related to another
+member, and another member is `R`-related to it. -/
+def WeakReciprocity (R : A → A → Prop) (X : Finset A) : Prop :=
+  (∀ x ∈ X, ∃ y ∈ X, R x y ∧ x ≠ y) ∧ ∀ y ∈ X, ∃ x ∈ X, R x y ∧ x ≠ y
 
 instance [DecidableEq A] (R : A → A → Prop) [DecidableRel R] (X : Finset A) :
-    Decidable (InclusiveAlternativeOrdering R X) := by
-  unfold InclusiveAlternativeOrdering; infer_instance
+    Decidable (WeakReciprocity R X) :=
+  inferInstanceAs (Decidable (_ ∧ _))
 
-/-! ### The entailment lattice -/
+/-- Weak Reciprocity is `**` of the relation with non-identity conjoined into it, in the coverage
+form `Set.LiftRel`: the bivalent common ground of [beck-2001] and [sternefeld-1998]. -/
+theorem weakReciprocity_iff_liftRel (R : A → A → Prop) (X : Finset A) :
+    WeakReciprocity R X ↔ Set.LiftRel (fun a b ↦ R a b ∧ a ≠ b) ↑X ↑X := Iff.rfl
 
-theorem strong_imp_partitionedStrong [DecidableEq A] (hcard : 2 ≤ X.card)
-    (hSR : StrongReciprocity R X) : PartitionedStrongReciprocity R X :=
-  ⟨Finpartition.indiscrete (Finset.card_pos.1 (by omega)).ne_empty, λ c hc => by
-    rw [Finpartition.indiscrete, Finset.mem_singleton] at hc
-    exact hc ▸ ⟨hcard, hSR⟩⟩
-
-theorem partitionedStrong_imp_weak [DecidableEq A] (h : PartitionedStrongReciprocity R X) :
-    WeakReciprocity R X := by
-  obtain ⟨P, hP⟩ := h
-  refine ⟨λ x hx => ?_, λ x hx => ?_⟩ <;>
-  · obtain ⟨c, hc, hxc⟩ := P.exists_mem hx
-    obtain ⟨hcard, hSR⟩ := hP c hc
-    obtain ⟨y, hy, hyx⟩ := c.exists_mem_ne hcard x
-    first
-      | exact ⟨y, P.le hc hy, hSR x hxc y hy hyx, hyx.symm⟩
-      | exact ⟨y, P.le hc hy, hSR y hy x hxc hyx.symm, hyx⟩
-
-theorem strong_imp_intermediate (hSR : StrongReciprocity R X) : IntermediateReciprocity R X :=
-  λ x hx y hy hyx => .single ⟨hx, hy, hSR x hx y hy hyx⟩
+theorem WeakReciprocity.oneWayWeak (h : WeakReciprocity R X) : OneWayWeakReciprocity R X :=
+  h.1
 
 private theorem exists_rel_ne_of_transGen {r : A → A → Prop} {x y : A}
-    (h : Relation.TransGen r x y) (hyx : y ≠ x) : ∃ z, z ≠ x ∧ r x z := by
+    (h : TransGen r x y) (hyx : y ≠ x) : ∃ z, z ≠ x ∧ r x z := by
   induction h with
   | single h => exact ⟨_, hyx, h⟩
   | @tail b c _ hbc ih =>
@@ -147,215 +180,49 @@ private theorem exists_rel_ne_of_transGen {r : A → A → Prop} {x y : A}
     · exact ⟨c, hyx, hbx ▸ hbc⟩
     · exact ih hbx
 
-theorem intermediate_imp_weak [DecidableEq A] (hcard : 2 ≤ X.card)
-    (h : IntermediateReciprocity R X) : WeakReciprocity R X := by
-  refine ⟨λ x hx => ?_, λ x hx => ?_⟩
-  · obtain ⟨y, hy, hyx⟩ := X.exists_mem_ne hcard x
-    obtain ⟨z, hzx, -, hz, hR⟩ := exists_rel_ne_of_transGen (h x hx y hy hyx) hyx
+theorem IntermediateReciprocity.weak (h : IntermediateReciprocity R X) (hX : 2 ≤ X.card) :
+    WeakReciprocity R X := by
+  refine ⟨fun x hx ↦ ?_, fun x hx ↦ ?_⟩ <;> obtain ⟨y, hy, hyx⟩ := X.exists_mem_ne hX x
+  · obtain ⟨z, hzx, -, hz, hR⟩ := exists_rel_ne_of_transGen (h hx hy hyx.symm) hyx
     exact ⟨z, hz, hR, hzx.symm⟩
-  · obtain ⟨y, hy, hyx⟩ := X.exists_mem_ne hcard x
-    have := (h y hy x hx hyx.symm).swap
-    obtain ⟨z, hzx, hz, -, hR⟩ := exists_rel_ne_of_transGen this hyx
+  · obtain ⟨z, hzx, hz, -, hR⟩ :=
+      exists_rel_ne_of_transGen (transGen_swap.2 (h hy hx hyx)) hyx
     exact ⟨z, hz, hR, hzx⟩
 
-theorem strong_imp_weak [DecidableEq A] (hcard : 2 ≤ X.card) (hSR : StrongReciprocity R X) :
-    WeakReciprocity R X :=
-  intermediate_imp_weak hcard (strong_imp_intermediate hSR)
+theorem IntermediateReciprocity.oneWayWeak (h : IntermediateReciprocity R X) (hX : 2 ≤ X.card) :
+    OneWayWeakReciprocity R X :=
+  (h.weak hX).oneWayWeak
 
-theorem weak_imp_oneWay (hWR : WeakReciprocity R X) : OneWayWeakReciprocity R X :=
-  hWR.1
+theorem IntermediateAlternativeReciprocity.inclusiveAlternativeOrdering
+    (h : IntermediateAlternativeReciprocity R X) (hX : 2 ≤ X.card) :
+    InclusiveAlternativeOrdering R X :=
+  IntermediateReciprocity.oneWayWeak h hX
 
-theorem oneWay_imp_inclusiveAlternative (hOWR : OneWayWeakReciprocity R X) :
-    InclusiveAlternativeOrdering R X := λ x hx =>
-  let ⟨y, hy, hRxy, hxy⟩ := hOWR x hx
-  ⟨y, hy, hxy, Or.inl hRxy⟩
+/-! ### Partitioned Strong Reciprocity -/
 
-/-! ### Cumulation -/
+/-- Partitioned Strong Reciprocity ([fiengo-lasnik-1973]) holds when `X` splits into disjoint
+cells of two or more members, within each of which Strong Reciprocity holds. -/
+def PartitionedStrongReciprocity [DecidableEq A] (R : A → A → Prop) (X : Finset A) : Prop :=
+  ∃ P : Finpartition X, ∀ c ∈ P.parts, 2 ≤ c.card ∧ StrongReciprocity R c
 
-/-- Weak Reciprocity is `**` of the relation with non-identity conjoined into it, in the coverage
-form `Set.LiftRel`: the bivalent common ground of [beck-2001] and [sternefeld-1998]. -/
-theorem weakReciprocity_iff_liftRel (R : A → A → Prop) (X : Finset A) :
-    WeakReciprocity R X ↔ Set.LiftRel (fun a b ↦ R a b ∧ a ≠ b) ↑X ↑X := Iff.rfl
+variable [DecidableEq A]
 
-theorem WeakReciprocity.liftRel (hWR : WeakReciprocity R X) : Set.LiftRel R ↑X ↑X :=
-  ((weakReciprocity_iff_liftRel R X).1 hWR).imp And.left
-
-/-! ### Configurations
-
-The event configurations of [evans-et-al-2011b] and [majid-et-al-2011], as conditions fixing the
-extension of `R` on `X`. -/
-
-/-- `y` immediately follows `x` in `l`. -/
-def Consecutive (l : List A) (x y : A) : Prop := ∃ i, l[i]? = some x ∧ l[i + 1]? = some y
-
-theorem Consecutive.mem_left {l : List A} {x y : A} (h : Consecutive l x y) : x ∈ l :=
-  let ⟨_, hx, _⟩ := h
-  List.mem_of_getElem? hx
-
-theorem Consecutive.mem_right {l : List A} {x y : A} (h : Consecutive l x y) : y ∈ l :=
-  let ⟨_, _, hy⟩ := h
-  List.mem_of_getElem? hy
-
-theorem Consecutive.ne {l : List A} (hnd : l.Nodup) {x y : A} (h : Consecutive l x y) :
-    x ≠ y := by
-  obtain ⟨i, hx, hy⟩ := h
-  rintro rfl
-  have hi : i < l.length := (List.getElem?_eq_some_iff.1 hx).1
-  have := (List.Nodup.getElem?_inj hi hnd).1 (hx.trans hy.symm)
-  omega
-
-theorem Consecutive.asymm {l : List A} (hnd : l.Nodup) {x y : A} (hxy : Consecutive l x y) :
-    ¬ Consecutive l y x := by
-  rintro ⟨j, hy', hx'⟩
-  obtain ⟨i, hx, hy⟩ := hxy
-  have hi : i < l.length := (List.getElem?_eq_some_iff.1 hx).1
-  have h₁ := (List.Nodup.getElem?_inj hi hnd).1 (hx.trans hx'.symm)
-  have h₂ := (List.Nodup.getElem?_inj (List.getElem?_eq_some_iff.1 hy).1 hnd).1 (hy.trans hy'.symm)
-  omega
-
-theorem exists_consecutive_or_getLast {l : List A} {x : A} (hx : x ∈ l) :
-    (∃ y, Consecutive l x y) ∨ l.getLast? = some x := by
-  obtain ⟨i, hi⟩ := List.mem_iff_getElem?.1 hx
-  have hlt : i < l.length := (List.getElem?_eq_some_iff.1 hi).1
-  by_cases h : i + 1 < l.length
-  · exact Or.inl ⟨l[i + 1], i, hi, List.getElem?_eq_getElem h⟩
-  · right
-    rw [List.getLast?_eq_getElem?]
-    convert hi using 2
-    omega
-
-theorem exists_consecutive_of_getLast {l : List A} (hlen : 2 ≤ l.length) {x : A}
-    (hx : l.getLast? = some x) : ∃ y, Consecutive l y x := by
-  rw [List.getLast?_eq_getElem?] at hx
-  refine ⟨l[l.length - 2], l.length - 2, List.getElem?_eq_getElem (by omega), ?_⟩
-  convert hx using 2
-  omega
-
-/-- `R` is symmetric within `X`: every realized pair is mutual. -/
-def PairSymmetricOn (R : A → A → Prop) (X : Finset A) : Prop :=
-  (X : Set A).Pairwise λ x y => R x y → R y x
-
-/-- Pairwise configuration ([majid-et-al-2011]): the participants split into two-member cells
-and `R` holds exactly within cells. -/
-def PairwiseConfig [DecidableEq A] (R : A → A → Prop) (X : Finset A) : Prop :=
-  ∃ P : Finpartition X, (∀ c ∈ P.parts, c.card = 2) ∧
-    ∀ x y, R x y ↔ ∃ c ∈ P.parts, x ∈ c ∧ y ∈ c ∧ x ≠ y
-
-/-- Chain configuration ([majid-et-al-2011]): the participants form a line and `R` holds
-exactly from each member to the next. -/
-def ChainConfig [DecidableEq A] (R : A → A → Prop) (X : Finset A) : Prop :=
-  ∃ l : List A, l.Nodup ∧ l.toFinset = X ∧ 2 ≤ l.length ∧ ∀ x y, R x y ↔ Consecutive l x y
-
-/-- Ring configuration ([majid-et-al-2011]): a chain whose last member acts on the first. -/
-def RingConfig [DecidableEq A] (R : A → A → Prop) (X : Finset A) : Prop :=
-  ∃ l : List A, l.Nodup ∧ l.toFinset = X ∧ 3 ≤ l.length ∧
-    ∀ x y, R x y ↔ Consecutive l x y ∨ (l.getLast? = some x ∧ l.head? = some y)
-
-/-- Radial configuration ([majid-et-al-2011]): one central participant acts on each of the
-others. -/
-def RadialConfig (R : A → A → Prop) (X : Finset A) : Prop :=
-  ∃ c ∈ X, 2 ≤ X.card ∧ ∀ x y, R x y ↔ x = c ∧ y ∈ X ∧ y ≠ c
-
-/-- Melee configuration ([majid-et-al-2011]): some interaction, but participation is not
-exhaustive. -/
-def MeleeConfig (R : A → A → Prop) (X : Finset A) : Prop :=
-  (∃ x ∈ X, ∃ y ∈ X, x ≠ y ∧ R x y) ∧ ¬ InclusiveAlternativeOrdering R X
-
-/-! #### Symmetry -/
-
-theorem StrongReciprocity.pairSymmetricOn (h : StrongReciprocity R X) : PairSymmetricOn R X :=
-  λ _ hx _ hy hxy _ => h _ hy _ hx hxy
-
-theorem PairwiseConfig.pairSymmetricOn [DecidableEq A] (h : PairwiseConfig R X) :
-    PairSymmetricOn R X := by
-  obtain ⟨P, -, hiff⟩ := h
-  intro x _ y _ _ hR
-  obtain ⟨c, hc, hxc, hyc, hne⟩ := (hiff x y).1 hR
-  exact (hiff y x).2 ⟨c, hc, hyc, hxc, hne.symm⟩
-
-theorem ChainConfig.not_pairSymmetricOn [DecidableEq A] (h : ChainConfig R X) :
-    ¬ PairSymmetricOn R X := by
-  obtain ⟨l, hnd, rfl, hlen, hiff⟩ := h
-  obtain ⟨b, hb⟩ := exists_consecutive_of_getLast hlen
-    (List.getLast?_eq_getElem?.trans (List.getElem?_eq_getElem (by omega)))
-  intro hsym
-  exact hb.asymm hnd ((hiff _ _).1 (hsym (List.mem_toFinset.2 hb.mem_left)
-    (List.mem_toFinset.2 hb.mem_right) (hb.ne hnd) ((hiff _ _).2 hb)))
-
-theorem RingConfig.not_pairSymmetricOn [DecidableEq A] (h : RingConfig R X) :
-    ¬ PairSymmetricOn R X := by
-  obtain ⟨l, hnd, rfl, hlen, hiff⟩ := h
-  obtain ⟨b, hb⟩ := exists_consecutive_of_getLast (by omega : 2 ≤ l.length)
-    (List.getLast?_eq_getElem?.trans (List.getElem?_eq_getElem (by omega)))
-  intro hsym
-  rcases (hiff _ _).1 (hsym (List.mem_toFinset.2 hb.mem_left) (List.mem_toFinset.2 hb.mem_right)
-      (hb.ne hnd) ((hiff _ _).2 (Or.inl hb))) with hba | ⟨-, hhead⟩
-  · exact hb.asymm hnd hba
-  · obtain ⟨i, hi, hi'⟩ := hb
-    have hi₁ : i + 1 < l.length := (List.getElem?_eq_some_iff.1 hi').1
-    have e₁ := (List.Nodup.getElem?_inj hi₁ hnd).1
-      (hi'.trans (List.getElem?_eq_getElem (by omega)).symm)
-    rw [List.head?_eq_getElem?] at hhead
-    have e₂ := (List.Nodup.getElem?_inj (by omega : 0 < l.length) hnd).1 (hhead.trans hi.symm)
-    omega
-
-theorem RadialConfig.not_pairSymmetricOn [DecidableEq A] (h : RadialConfig R X) :
-    ¬ PairSymmetricOn R X := by
-  obtain ⟨c, hc, hcard, hiff⟩ := h
-  obtain ⟨y, hy, hyc⟩ := X.exists_mem_ne hcard c
-  intro hsym
-  exact hyc ((hiff y c).1 (hsym hc hy hyc.symm ((hiff c y).2 ⟨rfl, hy, hyc⟩))).1
-
-/-! #### Exhaustiveness
-
-Participant-exhaustiveness is Inclusive Alternative Ordering, the weakest scheme; every
-configuration but melee entails it, and melee denies it by definition. -/
-
-theorem PairwiseConfig.partitionedStrong [DecidableEq A] (h : PairwiseConfig R X) :
+theorem StrongReciprocity.partitionedStrong (h : StrongReciprocity R X) (hX : 2 ≤ X.card) :
     PartitionedStrongReciprocity R X :=
-  let ⟨P, hcells, hiff⟩ := h
-  ⟨P, λ c hc => ⟨(hcells c hc).ge, λ x hx y hy hne => (hiff x y).2 ⟨c, hc, hx, hy, hne.symm⟩⟩⟩
+  ⟨.indiscrete (Finset.card_pos.1 (by omega)).ne_empty, fun c hc ↦ by
+    rw [Finpartition.indiscrete_parts, Finset.mem_singleton] at hc
+    exact hc ▸ ⟨hX, h⟩⟩
 
-theorem PairwiseConfig.inclusiveAlternativeOrdering [DecidableEq A] (h : PairwiseConfig R X) :
-    InclusiveAlternativeOrdering R X :=
-  oneWay_imp_inclusiveAlternative (partitionedStrong_imp_weak h.partitionedStrong).1
-
-theorem ChainConfig.inclusiveAlternativeOrdering [DecidableEq A] (h : ChainConfig R X) :
-    InclusiveAlternativeOrdering R X := by
-  obtain ⟨l, hnd, rfl, hlen, hiff⟩ := h
-  intro x hx
-  rcases exists_consecutive_or_getLast (List.mem_toFinset.1 hx) with ⟨y, hy⟩ | hlast
-  · exact ⟨y, List.mem_toFinset.2 hy.mem_right, hy.ne hnd, Or.inl ((hiff x y).2 hy)⟩
-  · obtain ⟨y, hy⟩ := exists_consecutive_of_getLast hlen hlast
-    exact ⟨y, List.mem_toFinset.2 hy.mem_left, (hy.ne hnd).symm, Or.inr ((hiff y x).2 hy)⟩
-
-theorem RingConfig.oneWayWeak [DecidableEq A] (h : RingConfig R X) :
-    OneWayWeakReciprocity R X := by
-  obtain ⟨l, hnd, rfl, hlen, hiff⟩ := h
-  intro x hx
-  rcases exists_consecutive_or_getLast (List.mem_toFinset.1 hx) with ⟨y, hy⟩ | hlast
-  · exact ⟨y, List.mem_toFinset.2 hy.mem_right, (hiff x y).2 (Or.inl hy), hy.ne hnd⟩
-  · have hhead : l.head? = some l[0] :=
-      List.head?_eq_getElem?.trans (List.getElem?_eq_getElem (by omega))
-    refine ⟨l[0], List.mem_toFinset.2 (List.getElem_mem _),
-      (hiff x _).2 (Or.inr ⟨hlast, hhead⟩), λ hx0 => ?_⟩
-    rw [List.getLast?_eq_getElem?, hx0] at hlast
-    have := (List.Nodup.getElem?_inj (by omega : l.length - 1 < l.length) hnd).1
-      (hlast.trans (List.getElem?_eq_getElem (by omega)).symm)
-    omega
-
-theorem RingConfig.inclusiveAlternativeOrdering [DecidableEq A] (h : RingConfig R X) :
-    InclusiveAlternativeOrdering R X :=
-  oneWay_imp_inclusiveAlternative h.oneWayWeak
-
-theorem RadialConfig.inclusiveAlternativeOrdering [DecidableEq A] (h : RadialConfig R X) :
-    InclusiveAlternativeOrdering R X := by
-  obtain ⟨c, hc, hcard, hiff⟩ := h
-  intro x hx
-  by_cases hxc : x = c
-  · subst hxc
-    obtain ⟨y, hy, hyx⟩ := X.exists_mem_ne hcard x
-    exact ⟨y, hy, hyx.symm, Or.inl ((hiff x y).2 ⟨rfl, hy, hyx⟩)⟩
-  · exact ⟨c, hc, hxc, Or.inr ((hiff c x).2 ⟨rfl, hx, hxc⟩)⟩
+theorem PartitionedStrongReciprocity.weak (h : PartitionedStrongReciprocity R X) :
+    WeakReciprocity R X := by
+  obtain ⟨P, hP⟩ := h
+  have hW {x} (hx : x ∈ X) : ∃ c ∈ P.parts, x ∈ c ∧ WeakReciprocity R c :=
+    let ⟨c, hc, hxc⟩ := P.exists_mem hx
+    ⟨c, hc, hxc, (hP c hc).2.intermediate.weak (hP c hc).1⟩
+  refine ⟨fun x hx ↦ ?_, fun x hx ↦ ?_⟩ <;> obtain ⟨c, hc, hxc, hWc⟩ := hW hx
+  · obtain ⟨y, hy, hR⟩ := hWc.1 x hxc
+    exact ⟨y, P.le hc hy, hR⟩
+  · obtain ⟨y, hy, hR⟩ := hWc.2 x hxc
+    exact ⟨y, P.le hc hy, hR⟩
 
 end Reciprocal

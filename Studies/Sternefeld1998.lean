@@ -176,9 +176,9 @@ theorem sr_iff (R : α → α → Prop) {A : Finset α} :
   · rintro ⟨⟨a, ha⟩, h⟩
     obtain ⟨⟨b, hb, hba⟩, -⟩ := h a ha
     exact ⟨Finset.one_lt_card.2 ⟨a, ha, b, hb, Ne.symm hba⟩,
-      fun x hx y hy hyx ↦ (h x hx).2 y ⟨hy, hyx⟩⟩
+      fun x hx y hy hxy ↦ (h x hx).2 y ⟨hy, hxy.symm⟩⟩
   · rintro ⟨hcard, h⟩
-    refine ⟨Finset.card_pos.1 (by omega), fun a ha ↦ ⟨?_, fun b ⟨hb, hba⟩ ↦ h a ha b hb hba⟩⟩
+    refine ⟨Finset.card_pos.1 (by omega), fun a ha ↦ ⟨?_, fun b ⟨hb, hba⟩ ↦ h ha hb (Ne.symm hba)⟩⟩
     obtain ⟨b, hb, hba⟩ := A.exists_mem_ne hcard a
     exact ⟨b, hb, hba⟩
 

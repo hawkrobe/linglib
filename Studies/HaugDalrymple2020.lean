@@ -743,7 +743,7 @@ theorem refSet_subset_participants {Y : Finset D} (h : IsRefSet R A Y) (h2 : 2 �
   obtain ⟨b, hb, hab⟩ := Finset.exists_mem_ne h2 a
   exact Finset.mem_filter.2
     ⟨Finset.mem_powerset.1 h.1 ha, b, Finset.mem_powerset.1 h.1 hb, hab,
-      h.2.1 a ha b hb hab⟩
+      h.2.1 ha hb hab.symm⟩
 
 /-- By §5.2, for a determiner upward monotone in its scope, the reciprocal relation holds over
 the maximal set if it holds over a reference set of at least two members, so the
@@ -867,7 +867,7 @@ theorem strongReciprocity_dep_iff (h : u ≠ u') {X : Finset E}
     StrongReciprocity (fun a b ↦ (a, b) ∈ dep u' u S) X ↔ StrongReciprocity P X := by
   rw [((maximizesAnaphora_iff h).1 hS).2]
   exact forall₂_congr fun a ha ↦ forall₂_congr fun b hb ↦ imp_congr_right fun hba ↦
-    ⟨fun h ↦ h.2.2.1, fun h ↦ ⟨ha, hb, h, hba.symm⟩⟩
+    ⟨fun h ↦ h.2.2.1, fun h ↦ ⟨ha, hb, h, hba⟩⟩
 
 end Maximize
 

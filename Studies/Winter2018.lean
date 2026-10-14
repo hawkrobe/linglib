@@ -1,7 +1,6 @@
 module
 
 public import Mathlib.Algebra.BigOperators.Group.Finset.Sigma
-public import Linglib.Semantics.Plurality.Reciprocal
 public import Linglib.Data.Examples.Winter2018
 
 /-!
@@ -67,7 +66,7 @@ def RSG (P : Finset A → Prop) (R : A → A → Prop) : Prop :=
 
 /-- The symmetric image of a collective predicate (22): the binary predicate holding of two
 entities when the collective holds of their sum. -/
-def symmetricImage (P : Finset A → Prop) : A → A → Prop := λ x y => P {x, y}
+def symmetricImage (P : Finset A → Prop) : A → A → Prop := fun x y ↦ P {x, y}
 
 /-- The symmetric image is symmetric, by the commutativity of sum formation. -/
 theorem symmetricImage_tcSymmetric (P : Finset A → Prop) : TCSymmetric (symmetricImage P) := by
@@ -79,8 +78,8 @@ theorem plainReciprocity_symmetricImage (P : Finset A → Prop) :
     PlainReciprocity P (symmetricImage P) := by
   intro x y _
   constructor
-  · exact λ h => ⟨h, by simpa [symmetricImage, Finset.pair_comm] using h⟩
-  · exact λ h => h.1
+  · exact fun h ↦ ⟨h, by simpa [symmetricImage, Finset.pair_comm] using h⟩
+  · exact fun h ↦ h.1
 
 /-- A collective predicate with its symmetric image satisfies the generalization: this is
 how the paper derives it for plain reciprocals. -/
@@ -92,7 +91,7 @@ empty collective is vacuously plain. -/
 theorem exists_plainReciprocity_not_tcSymmetric :
     ∃ (R : Bool → Bool → Prop) (P : Finset Bool → Prop),
       PlainReciprocity P R ∧ ¬ TCSymmetric R := by
-  refine ⟨λ x y => x = true ∧ y = false, λ _ => False, ?_, ?_⟩
+  refine ⟨fun x y ↦ x = true ∧ y = false, fun _ ↦ False, ?_, ?_⟩
   · intro x y hxy
     constructor
     · exact False.elim
@@ -129,21 +128,21 @@ theorem Pr2.both (h : Pr2 P R) {x y : A} (hxy : x ≠ y) (hP : P {x, y}) : R x y
   ⟨h x y hxy hP, h y x hxy.symm (Finset.pair_comm x y ▸ hP)⟩
 
 /-- (Pr₄) is stronger than (Pr₁). -/
-theorem Pr4.pr1 (h : Pr4 P R) : Pr1 P R := λ x y hxy hR _ => h x y hxy hR
+theorem Pr4.pr1 (h : Pr4 P R) : Pr1 P R := fun x y hxy hR _ ↦ h x y hxy hR
 
 /-- (Pr₂) is stronger than (Pr₅). -/
-theorem Pr2.pr5 (h : Pr2 P R) : Pr5 P R := λ x y hxy hP => Or.inl (h x y hxy hP)
+theorem Pr2.pr5 (h : Pr2 P R) : Pr5 P R := fun x y hxy hP ↦ Or.inl (h x y hxy hP)
 
 theorem PlainReciprocity.pr5 (h : PlainReciprocity P R) : Pr5 P R :=
-  λ x y hxy hP => Or.inl ((h x y hxy).mp hP).1
+  fun x y hxy hP ↦ Or.inl ((h x y hxy).mp hP).1
 
 /-- Plain reciprocity is (Pr₁) together with (Pr₂). -/
 theorem plainReciprocity_iff_pr1_pr2 : PlainReciprocity P R ↔ Pr1 P R ∧ Pr2 P R := by
   constructor
-  · exact λ h => ⟨λ x y hxy hR hR' => (h x y hxy).mpr ⟨hR, hR'⟩,
-      λ x y hxy hP => ((h x y hxy).mp hP).1⟩
+  · exact fun h ↦ ⟨fun x y hxy hR hR' ↦ (h x y hxy).mpr ⟨hR, hR'⟩,
+      fun x y hxy hP ↦ ((h x y hxy).mp hP).1⟩
   · rintro ⟨h1, h2⟩ x y hxy
-    exact ⟨λ hP => h2.both hxy hP, λ h => h1 x y hxy h.1 h.2⟩
+    exact ⟨fun hP ↦ h2.both hxy hP, fun h ↦ h1 x y hxy h.1 h.2⟩
 
 /-! ### Events: Dimitriadis's rule and preferential reciprocity -/
 
@@ -166,8 +165,8 @@ theorem exists_dimitriadis_not_pr1 :
       Dimitriadis spec R P ∧ (∃ e₁ e₂, R e₁ true false ∧ R e₂ false true) ∧
         ∀ e, ¬ P e {true, false} := by
   refine ⟨(· = ·),
-    λ e x y => (e = true ∧ x = true ∧ y = false) ∨ (e = false ∧ x = false ∧ y = true),
-    λ _ _ => False, ?_, ⟨true, false, by decide, by decide⟩, λ _ h => h⟩
+    fun e x y ↦ (e = true ∧ x = true ∧ y = false) ∨ (e = false ∧ x = false ∧ y = true),
+    fun _ _ ↦ False, ?_, ⟨true, false, by decide, by decide⟩, fun _ h ↦ h⟩
   intro e x y hxy
   refine iff_of_false id ?_
   rintro ⟨e₁, e₂, rfl, rfl, h₁, h₂⟩
@@ -177,12 +176,12 @@ variable (R : E → A → A → Prop) [∀ e, DecidableRel (R e)]
 
 /-- The typicality of an event as a collective event of a group (58): the number of ordered
 pairs of distinct members the binary predicate relates in it. -/
-def typ (e : E) (s : Finset A) : ℕ := ((s ×ˢ s).filter λ p => p.1 ≠ p.2 ∧ R e p.1 p.2).card
+def typ (e : E) (s : Finset A) : ℕ := ((s ×ˢ s).filter fun p ↦ p.1 ≠ p.2 ∧ R e p.1 p.2).card
 
 /-- (57): an event with more directed relations is at least as typical. -/
 theorem typ_mono {R' : E → A → A → Prop} [∀ e, DecidableRel (R' e)] {e : E}
     (h : ∀ x y, R e x y → R' e x y) (s : Finset A) : typ R e s ≤ typ R' e s :=
-  Finset.card_le_card λ p hp => by
+  Finset.card_le_card fun p hp ↦ by
     simp only [Finset.mem_filter] at hp ⊢
     exact ⟨hp.1, hp.2.1, h _ _ hp.2.2⟩
 
@@ -196,7 +195,7 @@ theorem typ_pair {x y : A} (hxy : x ≠ y) (e : E) :
 /-- A preferential reciprocal with a positive threshold satisfies (Pr₅): the collective
 needs some directed relation. -/
 theorem Pr5_of_preferential {θ : ℕ} (hθ : 0 < θ) (e : E) :
-    Pr5 (λ s => θ ≤ typ R e s) (R e) := by
+    Pr5 (fun s ↦ θ ≤ typ R e s) (R e) := by
   intro x y hxy h
   rw [typ_pair R hxy] at h
   by_contra hn
