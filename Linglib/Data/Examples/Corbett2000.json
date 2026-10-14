@@ -775,7 +775,7 @@
     "paperFeatures": [
       [
         "position",
-        "higherAnimal"
+        "higherAnimate"
       ],
       [
         "marking",
@@ -863,7 +863,7 @@
     "paperFeatures": [
       [
         "position",
-        "higherAnimal"
+        "higherAnimate"
       ],
       [
         "agreement",
@@ -1585,7 +1585,7 @@
     "paperFeatures": [
       [
         "position",
-        "discreteInanimate"
+        "inanimate"
       ],
       [
         "agreement",
@@ -1627,7 +1627,7 @@
     "paperFeatures": [
       [
         "position",
-        "lowerAnimal"
+        "lowerAnimate"
       ],
       [
         "agreement",
@@ -1713,7 +1713,7 @@
     "paperFeatures": [
       [
         "position",
-        "discreteInanimate"
+        "inanimate"
       ],
       [
         "marking",
@@ -1789,7 +1789,7 @@
     "paperFeatures": [
       [
         "position",
-        "discreteInanimate"
+        "inanimate"
       ],
       [
         "agreement",
@@ -1827,7 +1827,7 @@
     "paperFeatures": [
       [
         "position",
-        "discreteInanimate"
+        "inanimate"
       ],
       [
         "agreement",

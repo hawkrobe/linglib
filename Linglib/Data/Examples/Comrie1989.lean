@@ -273,7 +273,7 @@ def ch6_ex11_hippopotamus : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("construction", "marking"), ("P.animacy", "higherAnimal"), ("P.marked", "marked")] }
+    paperFeatures := [("construction", "marking"), ("P.animacy", "animal"), ("P.marked", "marked")] }
 
 def ch6_ex11_oak : Datum :=
   { id := "comrie1989_ch6_ex11_oak"
@@ -286,7 +286,7 @@ def ch6_ex11_oak : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("construction", "marking"), ("P.animacy", "discreteInanimate"), ("P.marked", "unmarked")] }
+    paperFeatures := [("construction", "marking"), ("P.animacy", "inanimate"), ("P.marked", "unmarked")] }
 
 def ch6_ex11_table : Datum :=
   { id := "comrie1989_ch6_ex11_table"
@@ -299,7 +299,7 @@ def ch6_ex11_table : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("construction", "marking"), ("P.animacy", "discreteInanimate"), ("P.marked", "unmarked")] }
+    paperFeatures := [("construction", "marking"), ("P.animacy", "inanimate"), ("P.marked", "unmarked")] }
 
 def ch6_ex12_boys : Datum :=
   { id := "comrie1989_ch6_ex12_boys"
@@ -338,7 +338,7 @@ def ch6_ex12_dogs : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("construction", "marking"), ("P.animacy", "higherAnimal"), ("P.marked", "unmarked")] }
+    paperFeatures := [("construction", "marking"), ("P.animacy", "animal"), ("P.marked", "unmarked")] }
 
 def ch6_ex12_tables : Datum :=
   { id := "comrie1989_ch6_ex12_tables"
@@ -351,7 +351,7 @@ def ch6_ex12_tables : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("construction", "marking"), ("P.animacy", "discreteInanimate"), ("P.marked", "unmarked")] }
+    paperFeatures := [("construction", "marking"), ("P.animacy", "inanimate"), ("P.marked", "unmarked")] }
 
 def ch6_ex13 : Datum :=
   { id := "comrie1989_ch6_ex13"
@@ -442,7 +442,7 @@ def ch6_ex19 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("construction", "marking"), ("P.animacy", "discreteInanimate"), ("P.definiteness", "definite"), ("P.marked", "optional")] }
+    paperFeatures := [("construction", "marking"), ("P.animacy", "inanimate"), ("P.definiteness", "definite"), ("P.marked", "optional")] }
 
 def ch6_ex20 : Datum :=
   { id := "comrie1989_ch6_ex20"
@@ -455,7 +455,7 @@ def ch6_ex20 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("construction", "marking"), ("P.animacy", "discreteInanimate"), ("P.definiteness", "definite"), ("P.marked", "optional")] }
+    paperFeatures := [("construction", "marking"), ("P.animacy", "inanimate"), ("P.definiteness", "definite"), ("P.marked", "optional")] }
 
 def ch6_ex21 : Datum :=
   { id := "comrie1989_ch6_ex21"
@@ -468,7 +468,7 @@ def ch6_ex21 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("construction", "marking"), ("P.animacy", "discreteInanimate"), ("P.definiteness", "nonSpecific"), ("P.marked", "unmarked")] }
+    paperFeatures := [("construction", "marking"), ("P.animacy", "inanimate"), ("P.definiteness", "nonSpecific"), ("P.marked", "unmarked")] }
 
 def ch6_ex22_car : Datum :=
   { id := "comrie1989_ch6_ex22_car"
@@ -481,7 +481,7 @@ def ch6_ex22_car : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("construction", "marking"), ("P.animacy", "discreteInanimate"), ("P.definiteness", "definite"), ("P.marked", "unmarked")] }
+    paperFeatures := [("construction", "marking"), ("P.animacy", "inanimate"), ("P.definiteness", "definite"), ("P.marked", "unmarked")] }
 
 def ch6_ex22_the_clerk : Datum :=
   { id := "comrie1989_ch6_ex22_the_clerk"

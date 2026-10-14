@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Semantics.Reference.Prominence
+public import Studies.Corbett2000
 public import Mathlib.Order.Interval.Set.OrdConnected
 
 /-!
@@ -43,6 +43,7 @@ formalized.
 ## References
 
 * [grimm-2018]
+* [corbett-2000]
 * [grimm-2012]
 * [smith-stark-1974]
 * [aissen-2003]
@@ -324,10 +325,12 @@ inductive CollectiveLang where
   deriving DecidableEq, Repr, Fintype
 
 /-- Each language's collective/singulative class reaches up to a position on the animacy
-hierarchy (Fig. 4) and covers everything from inanimate aggregates up to it. -/
-def collectiveCeiling : CollectiveLang → Reference.Prominence.AnimacyHierarchy
-  | .maltese => .lowerAnimal
-  | .welsh => .higherAnimal
+hierarchy (Fig. 4) and covers everything from inanimate aggregates up to it. The positions are
+Corbett's, with the split of the animates into higher and lower that Grimm takes from
+Haspelmath. -/
+def collectiveCeiling : CollectiveLang → Corbett2000.AnimacyHierarchy
+  | .maltese => .lowerAnimate
+  | .welsh => .higherAnimate
   | .turkana => .human
 
 /-- The collective regions nest, Maltese within Welsh within Turkana, each the down-set of its

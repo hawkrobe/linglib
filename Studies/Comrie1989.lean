@@ -2,7 +2,8 @@ module
 
 public import Mathlib.Data.Finset.Card
 public import Linglib.Data.Examples.Comrie1989
-public import Linglib.Semantics.Reference.Prominence
+public import Linglib.Semantics.Reference.Animacy
+public import Linglib.Syntax.Person.Class
 public import Linglib.Semantics.Causation.Morphological
 
 /-!
@@ -48,14 +49,12 @@ correlation through the substrate's monotonicity, and `bias_rows`, `coordination
 
 ## Implementation notes
 
-* A marking row records, for each argument the book discusses, the scales the book invokes
-  for that language and the marking its position takes, obligatory, optional or none;
-  monotonicity is read over pairs of acceptable rows of one language and role in the product
-  order of the substrate's fine-grained animacy hierarchy, which places the first and second
-  person pronouns above other humans as the book does, and its definiteness scale, a scale the
-  row does not cite constraining nothing. A row whose marking the book attributes to a
-  parameter beside the hierarchies, Polish's male-human cut, carries a `parameter` feature and
-  has no marking.
+* A marking row records, for each argument the book discusses, the scales the book invokes for that
+  language and the marking its position takes, obligatory, optional or none; monotonicity is read
+  over pairs of acceptable rows of one language and role in the product order of the parameters §9.4
+  separates, person, animacy proper and the degree of definiteness, a parameter the row does not
+  cite constraining nothing. A row whose marking the book attributes to a parameter beside the
+  hierarchies, Polish's male-human cut, carries a `parameter` feature and has no marking.
 * The departures from the paradigm case are per-language parameters: which positions a
   language doubles, whether it demotes further than required, and whether it has a passive,
   the last consulted only by the rival analysis and stated by the book for Turkish, French and
@@ -91,7 +90,8 @@ correlation through the substrate's monotonicity, and `bias_rows`, `coordination
 
 namespace Comrie1989
 
-open Reference.Prominence Causation.Morphological
+open Causation.Morphological
+open Reference (Animacy)
 
 /-! ### The discriminatory function of case (§6.1) -/
 
@@ -184,17 +184,43 @@ def Marked.toNat : Marked → ℕ
 instance : LinearOrder Marked :=
   LinearOrder.lift' Marked.toNat (fun a b h ↦ by cases a <;> cases b <;> simp_all [Marked.toNat])
 
-/-- One argument's marking in a row records its role, its place on the scales the book invokes
-for the language, and the marking its position takes. -/
+/-- The continuum of definiteness, or specificity, of §6.2 ranks a definite referent, which the
+hearer can identify, above a specific indefinite, whose reference matters to the discourse,
+above a non-specific indefinite. -/
+inductive DefinitenessDegree
+  | nonSpecific | specific | definite
+  deriving DecidableEq, Repr
+
+/-- The rank on the continuum. -/
+def DefinitenessDegree.rank : DefinitenessDegree → ℕ
+  | .nonSpecific => 0
+  | .specific => 1
+  | .definite => 2
+
+instance : LinearOrder DefinitenessDegree :=
+  LinearOrder.lift' DefinitenessDegree.rank fun a b h ↦ by
+    cases a <;> cases b <;> simp_all [DefinitenessDegree.rank]
+
+/-- One argument's marking in a row records its role, the parameters the book invokes for the
+language, and the marking its position takes. -/
 structure Marking where
   /-- A or P; S, taking the unmarked case, has no row. -/
   role : Primitive
-  /-- The argument's animacy, where the language's marking consults it. -/
-  animacy : Option AnimacyHierarchy
-  /-- The argument's definiteness, where the language's marking consults it. -/
-  definiteness : Option DefinitenessScale
+  /-- Whether the argument is a speech-act participant, where the marking consults it. -/
+  person : Option Person.Class
+  /-- The argument's animacy, where the marking consults it. -/
+  animacy : Option Animacy
+  /-- The argument's degree of definiteness, where the marking consults it. -/
+  definiteness : Option DefinitenessDegree
   /-- The marking the position takes. -/
   marked : Marked
+
+/-- The animacy labels of the rows, read as person and animacy apart, the parameters §9.4
+separates: the speech-act participants are human, and the nouns are third person. -/
+def animacyNames : List (String × (Person.Class × Animacy)) :=
+  [("speaker", (.participant, .human)), ("addressee", (.participant, .human)),
+    ("human", (.nonParticipant, .human)), ("animal", (.nonParticipant, .animate)),
+    ("inanimate", (.nonParticipant, .inanimate))]
 
 /-- The markings a row records, one per argument whose marking it gives, under the key
 prefixes `A.` and `P.`; a row whose marking the book attributes to a parameter beside the
@@ -202,20 +228,19 @@ hierarchies has none. -/
 def Marking.ofRow (row : Datum) : List Marking :=
   if row.feature? "construction" = some "marking" ∧ row.feature? "parameter" = none then
     [(Primitive.A, "A."), (.P, "P.")].filterMap fun (role, p) ↦ do
-      return ⟨role,
-        row.parse? (p ++ "animacy") [("speaker", AnimacyHierarchy.speaker),
-          ("addressee", .addressee), ("human", .human), ("higherAnimal", .higherAnimal),
-          ("discreteInanimate", .discreteInanimate)],
-        row.parse? (p ++ "definiteness") [("personalPronoun", DefinitenessScale.personalPronoun),
-          ("properName", .properName), ("definite", .definite),
-          ("indefiniteSpecific", .indefiniteSpecific), ("nonSpecific", .nonSpecific)],
+      let a := row.parse? (p ++ "animacy") animacyNames
+      return ⟨role, a.map Prod.fst, a.map Prod.snd,
+        row.parse? (p ++ "definiteness") [("definite", DefinitenessDegree.definite),
+          ("indefiniteSpecific", .specific), ("nonSpecific", .nonSpecific)],
         ← row.parse? (p ++ "marked")
           [("marked", Marked.marked), ("optional", .optional), ("unmarked", .unmarked)]⟩
   else []
 
-/-- `m₁` marks the same role as `m₂` and is at most as prominent on every scale both cite. -/
+/-- `m₁` marks the same role as `m₂` and is at most as prominent on every parameter both
+cite. -/
 def Marking.AtMost (m₁ m₂ : Marking) : Prop :=
-  m₁.role = m₂.role ∧ (∀ a₁ ∈ m₁.animacy, ∀ a₂ ∈ m₂.animacy, a₁ ≤ a₂) ∧
+  m₁.role = m₂.role ∧ (∀ p₁ ∈ m₁.person, ∀ p₂ ∈ m₂.person, p₁ ≤ p₂) ∧
+    (∀ a₁ ∈ m₁.animacy, ∀ a₂ ∈ m₂.animacy, a₁ ≤ a₂) ∧
     ∀ d₁ ∈ m₁.definiteness, ∀ d₂ ∈ m₂.definiteness, d₁ ≤ d₂
 
 instance (m₁ m₂ : Marking) : Decidable (m₁.AtMost m₂) := inferInstanceAs (Decidable (_ ∧ _))

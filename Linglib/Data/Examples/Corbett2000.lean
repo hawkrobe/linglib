@@ -260,7 +260,7 @@ def ex_3_4 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("position", "higherAnimal"), ("marking", "optional")] }
+    paperFeatures := [("position", "higherAnimate"), ("marking", "optional")] }
 
 def ex_3_5 : Datum :=
   { id := "corbett2000_3_5"
@@ -286,7 +286,7 @@ def ex_3_6 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("position", "higherAnimal"), ("agreement", "excluded")] }
+    paperFeatures := [("position", "higherAnimate"), ("agreement", "excluded")] }
 
 def ex_3_7 : Datum :=
   { id := "corbett2000_3_7"
@@ -481,7 +481,7 @@ def ex_3_22 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("position", "discreteInanimate"), ("agreement", "excluded")] }
+    paperFeatures := [("position", "inanimate"), ("agreement", "excluded")] }
 
 def ex_3_23 : Datum :=
   { id := "corbett2000_3_23"
@@ -494,7 +494,7 @@ def ex_3_23 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("position", "lowerAnimal"), ("agreement", "optional")] }
+    paperFeatures := [("position", "lowerAnimate"), ("agreement", "optional")] }
 
 def ex_3_24 : Datum :=
   { id := "corbett2000_3_24"
@@ -520,7 +520,7 @@ def ex_3_25 : Datum :=
     judgment := .acceptable
     alternatives := [("zə́kiy vaatlə", .acceptable)]
     readings := []
-    paperFeatures := [("position", "discreteInanimate"), ("marking", "optional")] }
+    paperFeatures := [("position", "inanimate"), ("marking", "optional")] }
 
 def ex_3_26 : Datum :=
   { id := "corbett2000_3_26"
@@ -546,7 +546,7 @@ def ex_3_27 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("position", "discreteInanimate"), ("agreement", "excluded")] }
+    paperFeatures := [("position", "inanimate"), ("agreement", "excluded")] }
 
 def ex_3_28 : Datum :=
   { id := "corbett2000_3_28"
@@ -559,7 +559,7 @@ def ex_3_28 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("position", "discreteInanimate"), ("agreement", "excluded")] }
+    paperFeatures := [("position", "inanimate"), ("agreement", "excluded")] }
 
 def ex_4_1 : Datum :=
   { id := "corbett2000_4_1"
