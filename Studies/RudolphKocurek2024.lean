@@ -12,35 +12,46 @@ public import Linglib.Semantics.Degree.Delineation
 /-!
 # Rudolph and Kocurek (2024): Metalinguistic Gradability
 
-This file formalizes the paper's semantic expressivism for metalinguistic comparatives, equatives,
-degree modifiers and conditionals. Truth is relative to a semantic ordering, a total preorder
-ranking interpretations by the strength of a speaker's commitment to them, together with an
-interpretation and a world. *A more than B* holds when some interpretation ranked no higher than
-the index makes A true and B false and outranks every one that makes B true and A false
-(`ComparativeFormula.Realize`), and the equative is the failure of both comparatives. The
-comparative is irreflexive, asymmetric and transitive, contraposes, and distributes over
-disjunction and conjunction (`comp_trans` and its neighbours). That a sentence together with its
-negated rival entails the comparative holds not for truth but for acceptance, truth at every
-top-ranked interpretation (`accepted_comp_of_accepted`), a nonclassical entailment on which proof
-by cases fails. A distance function grounds *much more*, *very*, *sorta* and *mostly*: *very A* is
-truth at every reasonably close interpretation (`evalVery_iff`). The metalinguistic conditional
-restricts the ordering to the antecedent's interpretations and so conveys weak comparatives. Under
-No Reversal the comparative reduces to the delineation comparative of Klein, and the supplement's
-revised semantics and degree theory make metalinguistic degrees a bounded linear order on which
-the comparative is the comparative of degree semantics (`mc_iff_formulaDeg_lt`).
+Truth is relative to a semantic ordering, a total preorder ranking interpretations by the strength
+of a speaker's commitment to them, together with an interpretation and a world. *A more than B*
+holds when some interpretation ranked no higher than the index makes A true and B false and
+outranks every one that makes B true and A false, and the equative is the failure of both
+comparatives. Degree modifiers come from a distance function on interpretations, the conditional
+restricts the ordering to the antecedent's interpretations, and under No Reversal the comparative
+is Klein's delineation comparative.
+
+The supplement strengthens the comparative so that the equative becomes transitive, and shows that
+metalinguistic degrees, the classes of sets of interpretations under the revised equative, form a
+bounded linear order on which the revised comparative is the comparative of degree semantics.
+
+## Main results
+
+* `comp_trans`, `accepted_comp_of_accepted`: the comparative is transitive, and a sentence with
+  its negated rival entails it for acceptance but not for truth.
+* `evalVery_iff`: *very A* is truth at every reasonably close interpretation.
+* `evalRevised_equi_trans`: the revised equative is transitive, unlike the basic one.
+* `mc_iff_formulaDeg_lt`: the revised comparative compares metalinguistic degrees.
 
 ## Implementation notes
 
-An interpretation is a world-indexed family of first-order structures, and the language embeds
-classical formulas under the boolean connectives and the comparative. The comparative clause is
-the strict domination lift of Holliday and Icard applied, within the cone below the index, to the
-two difference sets, which is how the modifier *much more* and the comparative share one template.
-Orderings are total, as in the paper, and `SemanticOrdering` bundles a total preorder as a
-structure, because a common ground is a set of pairs of an ordering and a world. The revised
-semantics and the degree theory follow the supplement: metalinguistic degrees are the classes of
-interpretation sets under the revised equative, ordered by the revised comparative, and the finite
-models decide the paper's non-entailments and the supplement's counterexample to equative
-transitivity.
+* An interpretation is a world-indexed family of first-order structures. The comparative is the
+  strict domination lift of Holliday and Icard on the cone below the index, which *much more*
+  shares with a coarser dominance relation.
+* `SemanticOrdering` bundles a total preorder as data, since a common ground is a set of pairs of
+  an ordering and a world.
+* The supplement's revised comparative and equative are clauses on predicates over the cone
+  (`RevisedComp`, `RevisedEqui`). The revised semantics applies them to truth sets and the degree
+  theory to sets of interpretations, the two uses the supplement says mirror each other. Degrees
+  are classes of arbitrary sets, which the clauses read only on the cone.
+* Finite models rank interpretations by a map into `ℕ` and list each predicate's extension.
+
+## TODO
+
+* The paper states *if A then more A than not* (its Observation M1) for every `A`, but the
+  consequent evaluates `A` under the restricted ordering; `mcond_comp_not` proves it for `A` free
+  of the comparative.
+* The supplement's semantics for nontotal orderings and its quantifiers for metalinguistic
+  superlatives are not formalized.
 
 ## References
 
@@ -107,24 +118,11 @@ theorem le_of_not_lt {a b : I} (h : ¬ ord.lt a b) : ord.le b a :=
   Classical.byContradiction fun hba ↦ h ⟨(ord.le_total a b).resolve_right hba, hba⟩
 
 /-- Every nonempty finite set of interpretations has a top-ranked member. -/
-theorem exists_le_max (S : Finset I) (hS : S.Nonempty) : ∃ m ∈ S, ∀ s ∈ S, ord.le s m := by
-  induction S using Finset.cons_induction with
-  | empty => exact absurd hS (by simp)
-  | cons x S' hx ih =>
-    by_cases hS' : S'.Nonempty
-    · obtain ⟨m, hm, hle⟩ := ih hS'
-      rcases ord.le_total x m with h | h
-      · exact ⟨m, Finset.mem_cons.mpr (Or.inr hm), fun s hs ↦ by
-          rcases Finset.mem_cons.mp hs with rfl | hs'
-          · exact h
-          · exact hle s hs'⟩
-      · exact ⟨x, Finset.mem_cons_self x S', fun s hs ↦ by
-          rcases Finset.mem_cons.mp hs with rfl | hs'
-          · exact ord.le_refl _
-          · exact ord.le_trans s m x (hle s hs') h⟩
-    · rw [Finset.not_nonempty_iff_eq_empty] at hS'
-      exact ⟨x, Finset.mem_cons_self x S', fun s hs ↦ by
-        simp [hS'] at hs; exact hs ▸ ord.le_refl _⟩
+theorem exists_le_max {S : Set I} (hS : S.Finite) (hne : S.Nonempty) :
+    ∃ m ∈ S, ∀ s ∈ S, ord.le s m := by
+  let : Preorder I := { le := ord.le, le_refl := ord.le_refl, le_trans := ord.le_trans }
+  obtain ⟨m, hm, hmax⟩ := hS.exists_maximal hne
+  exact ⟨m, hm, fun s hs ↦ (ord.le_total s m).elim id (hmax hs)⟩
 
 /-- Two interpretations are equivalent when each is ranked no higher than the other. -/
 abbrev equiv (a b : I) : Prop := AntisymmRel ord.le a b
@@ -132,18 +130,15 @@ abbrev equiv (a b : I) : Prop := AntisymmRel ord.le a b
 instance decRelEquiv [DecidableRel ord.le] : DecidableRel ord.equiv := fun _ _ ↦
   inferInstanceAs (Decidable (_ ∧ _))
 
-/-- The semantic ordering given by a Boolean table, the convenient form for a concrete finite
-model. -/
-def ofBool {I : Type*} (f : I → I → Bool) (h_refl : ∀ a, f a a = true)
-    (h_trans : ∀ a b c, f a b = true → f b c = true → f a c = true)
-    (h_total : ∀ a b, f a b = true ∨ f b a = true) : SemanticOrdering I where
-  le a b := f a b = true
-  isPreorder := { refl := h_refl, trans := h_trans }
-  total := ⟨h_total⟩
+/-- The semantic ordering that ranks interpretations by a map into a linear order, the convenient
+form for a concrete finite model. -/
+def ofRank {α : Type*} [LinearOrder α] (r : I → α) : SemanticOrdering I where
+  le a b := r a ≤ r b
+  isPreorder := { refl := fun a ↦ _root_.le_refl (r a), trans := fun _ _ _ ↦ _root_.le_trans }
+  total := ⟨fun a b ↦ _root_.le_total (r a) (r b)⟩
 
-instance decidableLE_ofBool {I : Type*} (f : I → I → Bool) (h₁ h₂ h₃) :
-    DecidableRel (ofBool f h₁ h₂ h₃).le := fun _ _ ↦
-  inferInstanceAs (Decidable (_ = true))
+instance {α : Type*} [LinearOrder α] (r : I → α) : DecidableRel (ofRank r).le := fun a b ↦
+  inferInstanceAs (Decidable (r a ≤ r b))
 
 /-- An interpretation is top-ranked when none is ranked strictly above it. -/
 def IsMaximal (x : I) : Prop := ∀ y, ¬ ord.lt x y
@@ -170,13 +165,13 @@ variable {W : Type*} {ge_w : W → W → Prop}
 comparing difference sets, which is the shape of Kratzer's revised lifting. The dominance relation
 is a parameter, so that the comparative is the clause at the strict ordering and *much more* is the
 clause at "far below". -/
-def coneStrictLift (le below : W → W → Prop) (P Q : W → Prop) (i : W) : Prop :=
+def ConeStrictLift (le below : W → W → Prop) (P Q : W → Prop) (i : W) : Prop :=
   ∃ a, le a i ∧ P a ∧ ¬ Q a ∧ ∀ b, le b i → Q b → ¬ P b → below b a
 
 instance (le below : W → W → Prop) (P Q : W → Prop) (i : W) [Fintype W]
     [DecidableRel le] [DecidableRel below] [DecidablePred P] [DecidablePred Q] :
-    Decidable (coneStrictLift le below P Q i) := by
-  unfold coneStrictLift; infer_instance
+    Decidable (ConeStrictLift le below P Q i) := by
+  unfold ConeStrictLift; infer_instance
 
 /-- The cone difference set at `i` consists of the members of the cone where `P` holds and `Q`
 fails. -/
@@ -197,11 +192,245 @@ strict domination lift on the cone difference sets. -/
 theorem coneStrictLift_iff_strict_lewisLift {le below : W → W → Prop}
     (hTotal : ∀ a b, ge_w a b ∨ ge_w b a)
     (hBelow : ∀ a b, below a b ↔ ge_w b a ∧ ¬ ge_w a b) (P Q : W → Prop) (i : W) :
-    coneStrictLift le below P Q i ↔
+    ConeStrictLift le below P Q i ↔
       Strict (LewisLift ge_w) (coneDiff le P Q i) (coneDiff le Q P i) := by
   rw [strict_lewisLift_iff_below hTotal hBelow]
-  unfold coneStrictLift coneDiff
+  unfold ConeStrictLift coneDiff
   simp only [Set.mem_ofPred_eq, and_imp, and_assoc]
+
+variable (le : W → W → Prop) (P Q : W → Prop) (i : W)
+
+/-- The revised comparative clause of the supplement. Some member of the cone below `i` makes `P`
+true and `Q` false, ranks strictly above every member making `Q` true and `P` false, and ranks
+strictly above either every member making both true or every member making both false. -/
+def RevisedComp : Prop :=
+  ∃ a, le a i ∧ P a ∧ ¬ Q a ∧ (∀ b, le b i → Q b → ¬ P b → Strict le b a) ∧
+    ((∀ b, le b i → P b → Q b → Strict le b a) ∨ (∀ b, le b i → ¬ P b → ¬ Q b → Strict le b a))
+
+/-- The revised equative clause of the supplement. Either every member of the cone below `i` making
+exactly one of `P` and `Q` true is matched, at least as high, by one making only the other true, or
+every such member is matched, at least as high, both by one making both true and by one making
+both false. -/
+def RevisedEqui : Prop :=
+  ((∀ a, le a i → P a → ¬ Q a → ∃ b, le b i ∧ Q b ∧ ¬ P b ∧ le a b) ∧
+    (∀ a, le a i → Q a → ¬ P a → ∃ b, le b i ∧ P b ∧ ¬ Q b ∧ le a b)) ∨
+  ∀ a, le a i → (P a ↔ ¬ Q a) →
+    (∃ b, le b i ∧ P b ∧ Q b ∧ le a b) ∧ ∃ b, le b i ∧ ¬ P b ∧ ¬ Q b ∧ le a b
+
+instance [Fintype W] [DecidableRel le] [DecidablePred P] [DecidablePred Q] :
+    Decidable (RevisedComp le P Q i) := by
+  unfold RevisedComp; infer_instance
+
+variable {le P Q i}
+
+/-- The revised comparative simplifies: its witness ranks strictly above every member making `Q`
+true or above every member making `P` false. -/
+theorem revisedComp_iff : RevisedComp le P Q i ↔ ∃ a, le a i ∧ P a ∧ ¬ Q a ∧
+    ((∀ b, le b i → Q b → Strict le b a) ∨ (∀ b, le b i → ¬ P b → Strict le b a)) := by
+  refine exists_congr fun a ↦ and_congr_right fun _ ↦ and_congr_right fun _ ↦
+    and_congr_right fun _ ↦ ⟨?_, ?_⟩
+  · rintro ⟨hd, hc | hc⟩
+    · exact .inl fun b hb hQ ↦ (em (P b)).elim (hc b hb · hQ) (hd b hb hQ)
+    · exact .inr fun b hb hP ↦ (em (Q b)).elim (hd b hb · hP) (hc b hb hP)
+  · rintro (h | h)
+    · exact ⟨fun b hb hQ _ ↦ h b hb hQ, .inl fun b hb _ hQ ↦ h b hb hQ⟩
+    · exact ⟨fun b hb _ hP ↦ h b hb hP, .inr fun b hb hP _ ↦ h b hb hP⟩
+
+/-- The basic comparative is the revised comparative of the two difference sets. -/
+theorem coneStrictLift_iff_revisedComp :
+    ConeStrictLift le (Strict le) P Q i ↔
+      RevisedComp le (fun a ↦ P a ∧ ¬ Q a) (fun a ↦ Q a ∧ ¬ P a) i :=
+  exists_congr fun _ ↦ and_congr_right fun _ ↦
+    ⟨fun ⟨hP, hQ, hd⟩ ↦ ⟨⟨hP, hQ⟩, fun h ↦ hQ h.1, fun b hb h _ ↦ hd b hb h.1 h.2,
+        .inl fun _ _ h h' ↦ (h'.2 h.1).elim⟩,
+      fun ⟨⟨hP, hQ⟩, _, hd, _⟩ ↦ ⟨hP, hQ, fun b hb hQ hP ↦ hd b hb ⟨hQ, hP⟩ fun h ↦ hP h.1⟩⟩
+
+/-- The revised comparative is a disjunction of two basic comparatives, with the difference set
+`P ∧ ¬Q` compared against `¬P` and against `Q`. -/
+theorem revisedComp_iff_coneStrictLift :
+    RevisedComp le P Q i ↔
+      ConeStrictLift le (Strict le) (fun a ↦ P a ∧ ¬ Q a) (fun a ↦ ¬ P a) i ∨
+        ConeStrictLift le (Strict le) (fun a ↦ P a ∧ ¬ Q a) Q i := by
+  rw [revisedComp_iff]
+  refine ⟨fun ⟨a, ha, hP, hQ, h⟩ ↦ h.elim (fun h ↦ .inr ?_) (fun h ↦ .inl ?_),
+    fun h ↦ h.elim (fun ⟨a, ha, ⟨hP, hQ⟩, _, h⟩ ↦ ⟨a, ha, hP, hQ, .inr fun b hb hP ↦ ?_⟩)
+      (fun ⟨a, ha, ⟨hP, hQ⟩, _, h⟩ ↦ ⟨a, ha, hP, hQ, .inl fun b hb hQ ↦ ?_⟩)⟩
+  · exact ⟨a, ha, ⟨hP, hQ⟩, hQ, fun b hb hQ _ ↦ h b hb hQ⟩
+  · exact ⟨a, ha, ⟨hP, hQ⟩, not_not.2 hP, fun b hb hP _ ↦ h b hb hP⟩
+  · exact h b hb hP fun h ↦ hP h.1
+  · exact h b hb hQ fun h ↦ h.2 hQ
+
+/-- The revised clauses at `i` read their arguments only on the cone below `i`. -/
+theorem RevisedComp.congr {P' Q' : W → Prop} (hP : ∀ a, le a i → (P a ↔ P' a))
+    (hQ : ∀ a, le a i → (Q a ↔ Q' a)) : RevisedComp le P Q i ↔ RevisedComp le P' Q' i :=
+  exists_congr fun a ↦ and_congr_right fun ha ↦ by simp +contextual only [hP, hQ, ha]
+
+theorem RevisedEqui.congr {P' Q' : W → Prop} (hP : ∀ a, le a i → (P a ↔ P' a))
+    (hQ : ∀ a, le a i → (Q a ↔ Q' a)) : RevisedEqui le P Q i ↔ RevisedEqui le P' Q' i := by
+  have hE (X X' : W → Prop) (h : ∀ b, le b i → (X b ↔ X' b)) :
+      (∃ b, le b i ∧ X b) ↔ ∃ b, le b i ∧ X' b :=
+    exists_congr fun b ↦ and_congr_right (h b)
+  unfold RevisedEqui
+  refine or_congr (and_congr (forall₂_congr fun a ha ↦ ?_) (forall₂_congr fun a ha ↦ ?_))
+    (forall₂_congr fun a ha ↦ ?_) <;> rw [hP a ha, hQ a ha]
+  · exact imp_congr_right fun _ ↦ imp_congr_right fun _ ↦
+      hE _ _ fun b hb ↦ by simp only [hP b hb, hQ b hb]
+  · exact imp_congr_right fun _ ↦ imp_congr_right fun _ ↦
+      hE _ _ fun b hb ↦ by simp only [hP b hb, hQ b hb]
+  · exact imp_congr_right fun _ ↦ and_congr (hE _ _ fun b hb ↦ by simp only [hP b hb, hQ b hb])
+      (hE _ _ fun b hb ↦ by simp only [hP b hb, hQ b hb])
+
+
+theorem not_revisedComp_self : ¬ RevisedComp le P P i := fun ⟨_, _, hP, hnP, _⟩ ↦ hnP hP
+
+theorem RevisedEqui.refl : RevisedEqui le P P i :=
+  .inl ⟨fun _ _ hP hnP ↦ (hnP hP).elim, fun _ _ hP hnP ↦ (hnP hP).elim⟩
+
+theorem RevisedEqui.symm (h : RevisedEqui le P Q i) : RevisedEqui le Q P i := by
+  refine h.imp And.symm fun h a ha hQP ↦ ?_
+  obtain ⟨⟨b, hb, hPb, hQb, hab⟩, c, hc, hPc, hQc, hac⟩ := h a ha (by tauto)
+  exact ⟨⟨b, hb, hQb, hPb, hab⟩, c, hc, hQc, hPc, hac⟩
+
+/-- The revised equative excludes the revised comparative. -/
+theorem RevisedEqui.not_revisedComp (h : RevisedEqui le P Q i) : ¬ RevisedComp le P Q i := by
+  rintro ⟨a, ha, hPa, hQa, hd, he⟩
+  rcases h with ⟨h, -⟩ | h
+  · obtain ⟨b, hb, hQb, hPb, hab⟩ := h a ha hPa hQa
+    exact (hd b hb hQb hPb).2 hab
+  · obtain ⟨⟨b, hb, hPb, hQb, hab⟩, c, hc, hPc, hQc, hac⟩ := h a ha (iff_of_true hPa hQa)
+    exact he.elim (fun he ↦ (he b hb hPb hQb).2 hab) fun he ↦ (he c hc hPc hQc).2 hac
+
+section SemanticOrdering
+
+variable {ord : SemanticOrdering W} {R : W → Prop}
+
+/-- The revised comparative is transitive, the supplement's Fact 4: whichever witness ranks higher
+witnesses the composite. -/
+theorem RevisedComp.trans (h₁ : RevisedComp ord.le P Q i) (h₂ : RevisedComp ord.le Q R i) :
+    RevisedComp ord.le P R i := by
+  obtain ⟨m₁, hm₁, hP₁, hQ₁, hd₁, he₁⟩ := h₁
+  obtain ⟨m₂, hm₂, hQ₂, hR₂, hd₂, he₂⟩ := h₂
+  rcases ord.le_total m₂ m₁ with hle | hle
+  · have hR₁ : ¬ R m₁ := fun hR ↦ ord.lt_irrefl m₁ (ord.lt_of_lt_of_le (hd₂ m₁ hm₁ hR hQ₁) hle)
+    refine ⟨m₁, hm₁, hP₁, hR₁, fun b hb hR hP ↦ ?_,
+      he₁.imp (fun h b hb hP hR ↦ ?_) fun h b hb hP hR ↦ ?_⟩ <;> by_cases hQ : Q b
+    exacts [hd₁ b hb hQ hP, ord.lt_of_lt_of_le (hd₂ b hb hR hQ) hle, h b hb hP hQ,
+      ord.lt_of_lt_of_le (hd₂ b hb hR hQ) hle, hd₁ b hb hQ hP, h b hb hP hQ]
+  · have hP₂ : P m₂ := of_not_not fun hP ↦
+      ord.lt_irrefl m₂ (ord.lt_of_lt_of_le (hd₁ m₂ hm₂ hQ₂ hP) hle)
+    refine ⟨m₂, hm₂, hP₂, hR₂, fun b hb hR hP ↦ ?_,
+      he₂.imp (fun h b hb hP hR ↦ ?_) fun h b hb hP hR ↦ ?_⟩ <;> by_cases hQ : Q b
+    exacts [ord.lt_of_lt_of_le (hd₁ b hb hQ hP) hle, hd₂ b hb hR hQ, h b hb hQ hR,
+      hd₂ b hb hR hQ, ord.lt_of_lt_of_le (hd₁ b hb hQ hP) hle, h b hb hQ hR]
+
+/-- The revised comparative respects the revised equative on the right, the supplement's Fact 11. -/
+theorem RevisedComp.of_revisedEqui_right (h : RevisedComp ord.le P Q i)
+    (hQR : RevisedEqui ord.le Q R i) : RevisedComp ord.le P R i := by
+  obtain ⟨m, hm, hP, hQ, hd, he | he⟩ := h
+  · have hQlt (b) (hb : ord.le b i) (hQb : Q b) : ord.lt b m :=
+      (em (P b)).elim (he b hb · hQb) (hd b hb hQb)
+    have hlt (b) (hb : ord.le b i) (hR : R b) : ord.lt b m := by
+      refine (em (Q b)).elim (hQlt b hb) fun hQb ↦ ?_
+      rcases hQR with ⟨-, h⟩ | h
+      · obtain ⟨c, hc, hQc, -, hbc⟩ := h b hb hR hQb
+        exact ord.lt_of_le_of_lt hbc (hQlt c hc hQc)
+      · obtain ⟨⟨c, hc, hQc, -, hbc⟩, -⟩ := h b hb (iff_of_false hQb (not_not.2 hR))
+        exact ord.lt_of_le_of_lt hbc (hQlt c hc hQc)
+    exact ⟨m, hm, hP, fun hR ↦ ord.lt_irrefl m (hlt m hm hR), fun b hb hR _ ↦ hlt b hb hR,
+      .inl fun b hb _ hR ↦ hlt b hb hR⟩
+  · have hlt (b) (hb : ord.le b i) (hPb : ¬ P b) : ord.lt b m :=
+      (em (Q b)).elim (hd b hb · hPb) (he b hb hPb)
+    suffices ∃ a, ord.le a i ∧ ¬ R a ∧ ord.le m a by
+      obtain ⟨a, ha, hR, hma⟩ := this
+      exact ⟨a, ha, of_not_not fun hPa ↦ (hlt a ha hPa).2 hma, hR,
+        fun b hb _ hPb ↦ ord.lt_of_lt_of_le (hlt b hb hPb) hma,
+        .inr fun b hb hPb _ ↦ ord.lt_of_lt_of_le (hlt b hb hPb) hma⟩
+    by_cases hR : R m
+    · rcases hQR with ⟨-, h⟩ | h
+      · obtain ⟨c, hc, -, hRc, hmc⟩ := h m hm hR hQ
+        exact ⟨c, hc, hRc, hmc⟩
+      · obtain ⟨-, c, hc, -, hRc, hmc⟩ := h m hm (iff_of_false hQ (not_not.2 hR))
+        exact ⟨c, hc, hRc, hmc⟩
+    · exact ⟨m, hm, hR, ord.le_refl m⟩
+
+theorem RevisedComp.of_revisedEqui_left (h : RevisedComp ord.le P Q i)
+    (hPR : RevisedEqui ord.le P R i) : RevisedComp ord.le R Q i := by
+  obtain ⟨m, hm, hP, hQ, hd, he | he⟩ := h
+  · have hQlt (b) (hb : ord.le b i) (hQb : Q b) : ord.lt b m :=
+      (em (P b)).elim (he b hb · hQb) (hd b hb hQb)
+    suffices ∃ a, ord.le a i ∧ R a ∧ ord.le m a by
+      obtain ⟨a, ha, hR, hma⟩ := this
+      have hlt (b) (hb : ord.le b i) (hQb : Q b) : ord.lt b a :=
+        ord.lt_of_lt_of_le (hQlt b hb hQb) hma
+      exact ⟨a, ha, hR, fun hQa ↦ ord.lt_irrefl a (hlt a ha hQa), fun b hb hQb _ ↦ hlt b hb hQb,
+        .inl fun b hb _ hQb ↦ hlt b hb hQb⟩
+    by_cases hR : R m
+    · exact ⟨m, hm, hR, ord.le_refl m⟩
+    · rcases hPR with ⟨h, -⟩ | h
+      · obtain ⟨c, hc, hRc, -, hmc⟩ := h m hm hP hR
+        exact ⟨c, hc, hRc, hmc⟩
+      · obtain ⟨⟨c, hc, -, hRc, hmc⟩, -⟩ := h m hm (iff_of_true hP hR)
+        exact ⟨c, hc, hRc, hmc⟩
+  · have hnP (b) (hb : ord.le b i) (hPb : ¬ P b) : ord.lt b m :=
+      (em (Q b)).elim (hd b hb · hPb) (he b hb hPb)
+    have hPlt (b) (hb : ord.le b i) (hPb : P b) (hRb : ¬ R b) : ord.lt b m := by
+      rcases hPR with ⟨h, -⟩ | h
+      · obtain ⟨c, hc, -, hPc, hbc⟩ := h b hb hPb hRb
+        exact ord.lt_of_le_of_lt hbc (hnP c hc hPc)
+      · obtain ⟨-, c, hc, hPc, -, hbc⟩ := h b hb (iff_of_true hPb hRb)
+        exact ord.lt_of_le_of_lt hbc (hnP c hc hPc)
+    have hR : R m := of_not_not fun hR ↦ ord.lt_irrefl m (hPlt m hm hP hR)
+    refine ⟨m, hm, hR, hQ, fun b hb _ hRb ↦ ?_, .inr fun b hb hRb _ ↦ ?_⟩ <;>
+      exact (em (P b)).elim (hPlt b hb · hRb) (hnP b hb)
+
+/-- The case of trichotomy where a top-ranked member of the cone's symmetric difference makes `P`
+true. -/
+private theorem revisedEqui_or_revisedComp_of_max {m : W} (hm : ord.le m i) (hP : P m)
+    (hQ : ¬ Q m) (hmax : ∀ a, ord.le a i → (P a ↔ ¬ Q a) → ord.le a m) :
+    RevisedEqui ord.le P Q i ∨ RevisedComp ord.le P Q i := by
+  by_cases hd : ∀ b, ord.le b i → Q b → ¬ P b → ord.lt b m
+  · by_cases hc₁ : ∀ b, ord.le b i → P b → Q b → ord.lt b m
+    · exact .inr ⟨m, hm, hP, hQ, hd, .inl hc₁⟩
+    by_cases hc₂ : ∀ b, ord.le b i → ¬ P b → ¬ Q b → ord.lt b m
+    · exact .inr ⟨m, hm, hP, hQ, hd, .inr hc₂⟩
+    push Not at hc₁ hc₂
+    obtain ⟨c₁, hc₁, hPc₁, hQc₁, hlt₁⟩ := hc₁
+    obtain ⟨c₂, hc₂, hPc₂, hQc₂, hlt₂⟩ := hc₂
+    exact .inl (.inr fun a ha hPQ ↦
+      ⟨⟨c₁, hc₁, hPc₁, hQc₁, ord.le_trans _ _ _ (hmax a ha hPQ) (ord.le_of_not_lt hlt₁)⟩,
+        c₂, hc₂, hPc₂, hQc₂, ord.le_trans _ _ _ (hmax a ha hPQ) (ord.le_of_not_lt hlt₂)⟩)
+  · push Not at hd
+    obtain ⟨c, hc, hQc, hPc, hlt⟩ := hd
+    exact .inl (.inl ⟨fun a ha hPa hQa ↦ ⟨c, hc, hQc, hPc,
+        ord.le_trans _ _ _ (hmax a ha (iff_of_true hPa hQa)) (ord.le_of_not_lt hlt)⟩,
+      fun a ha hQa hPa ↦ ⟨m, hm, hP, hQ, hmax a ha (iff_of_false hPa (not_not.2 hQa))⟩⟩)
+
+/-- Over finitely many interpretations, two predicates are revised-equal or one is revised-more
+than the other. -/
+theorem revisedEqui_or_revisedComp_or_revisedComp [Finite W] (ord : SemanticOrdering W)
+    (P Q : W → Prop) (i : W) :
+    RevisedEqui ord.le P Q i ∨ RevisedComp ord.le P Q i ∨ RevisedComp ord.le Q P i := by
+  rcases {a | ord.le a i ∧ (P a ↔ ¬ Q a)}.eq_empty_or_nonempty with hS | hS
+  · have h (a) (ha : ord.le a i) (h : P a ↔ ¬ Q a) : False :=
+      Set.notMem_empty a (hS.subset ⟨ha, h⟩)
+    exact .inl (.inl ⟨fun a ha hP hQ ↦ (h a ha (iff_of_true hP hQ)).elim,
+      fun a ha hQ hP ↦ (h a ha (iff_of_false hP (not_not.2 hQ))).elim⟩)
+  obtain ⟨m, ⟨hm, hPQ⟩, hmax⟩ := ord.exists_le_max (Set.toFinite _) hS
+  by_cases hP : P m
+  · exact (revisedEqui_or_revisedComp_of_max hm hP (hPQ.1 hP)
+      fun a ha h ↦ hmax a ⟨ha, h⟩).imp_right .inl
+  · exact (revisedEqui_or_revisedComp_of_max hm (not_not.1 (mt hPQ.2 hP)) hP
+      fun a ha h ↦ hmax a ⟨ha, by tauto⟩).imp RevisedEqui.symm .inr
+
+/-- The revised equative is transitive, the supplement's Fact 6. -/
+theorem RevisedEqui.trans [Finite W] (h₁ : RevisedEqui ord.le P Q i)
+    (h₂ : RevisedEqui ord.le Q R i) : RevisedEqui ord.le P R i := by
+  rcases revisedEqui_or_revisedComp_or_revisedComp ord P R i with h | h | h
+  · exact h
+  · exact (h₁.not_revisedComp (h.of_revisedEqui_right h₂.symm)).elim
+  · exact (h₂.symm.not_revisedComp (h.of_revisedEqui_right h₁)).elim
+
+end SemanticOrdering
 
 variable {L : Language} {I E : Type*}
 
@@ -262,7 +491,7 @@ def Realize : ComparativeFormula L E → (I → I → Prop) → I → W → Prop
   | .inf A B, le, i, w => Realize A le i w ∧ Realize B le i w
   | .sup A B, le, i, w => Realize A le i w ∨ Realize B le i w
   | .comp A B, le, i, w =>
-      coneStrictLift le (Strict le) (Realize A le · w) (Realize B le · w) i
+      ConeStrictLift le (Strict le) (Realize A le · w) (Realize B le · w) i
 
 instance instDec [Fintype I] [Fintype E] [DecidableEq E]
     [hA : DecidableAtoms interp] (le : I → I → Prop) [DecidableRel le] :
@@ -275,7 +504,7 @@ instance instDec [Fintype I] [Fintype E] [DecidableEq E]
   | .comp A B, i, w =>
       haveI : DecidablePred (Realize interp A le · w) := fun j ↦ instDec le A j w
       haveI : DecidablePred (Realize interp B le · w) := fun j ↦ instDec le B j w
-      inferInstanceAs (Decidable (coneStrictLift le (Strict le)
+      inferInstanceAs (Decidable (ConeStrictLift le (Strict le)
         (Realize interp A le · w) (Realize interp B le · w) i))
 
 variable {interp} {A B : ComparativeFormula L E} {le : I → I → Prop}
@@ -423,6 +652,16 @@ theorem eval_comp_or_equi :
     Eval interp (.sup (.sup (.comp A B) (.comp B A)) (A.equi B)) ord i w :=
   (em _).elim (Or.inl ∘ Or.inl) fun h₁ ↦ (em _).elim (Or.inl ∘ Or.inr) fun h₂ ↦ Or.inr ⟨h₁, h₂⟩
 
+/-- *More `A` than not*, the supplement's `⊟A`, holds at an index iff `A` holds at every
+interpretation tied with it (the supplement's Fact 1), so at a top-ranked index it says that `A` is
+accepted. -/
+theorem eval_comp_not_iff :
+    Eval interp (.comp A (.not A)) ord i w ↔ ∀ j, ord.equiv j i → Eval interp A ord j w :=
+  ⟨fun ⟨a, ha, _, _, hd⟩ j hj ↦ of_not_not fun hA ↦
+      (hd j hj.1 hA hA).2 (ord.le_trans a i j ha hj.2),
+    fun h ↦ ⟨i, ord.le_refl i, h i (AntisymmRel.refl _ _), not_not.2 (h i (AntisymmRel.refl _ _)),
+      fun b hb _ hA ↦ ⟨hb, fun hib ↦ hA (h b ⟨hb, hib⟩)⟩⟩⟩
+
 variable [Fintype I]
 
 /-- Truth preservation implies acceptance preservation. -/
@@ -491,11 +730,11 @@ section Modifiers
 variable (φ ψ : ComparativeFormula L E) (ord : SemanticOrdering I)
   (below : I → I → Prop) (d : DistanceFunction I ord) (i : I) (w : W)
 
-/-- The paper's comparative template is `coneStrictLift` at the truth sets of the formulas. It is
+/-- The paper's comparative template is `ConeStrictLift` at the truth sets of the formulas. It is
 the clause of ≻ with an arbitrary dominance relation in place of < (`eval_comp_iff_compWith`), and ≫
 is the instance at ≪. -/
 abbrev EvalCompWith : Prop :=
-  coneStrictLift ord.le below
+  ConeStrictLift ord.le below
     (fun j ↦ Eval interp φ ord j w) (fun j ↦ Eval interp ψ ord j w) i
 
 /-- ≻ is the template at <. -/
@@ -682,22 +921,15 @@ end Delineation
 
 section Revised
 
-/-- Truth under the revised semantics of the metalinguistic comparative, from the supplement. The
-basic semantics fails transitivity of the equative. The revision strengthens the comparative by
-requiring the witness for `A ∧ ¬B` to dominate either all `B`-interpretations or all
-`¬A`-interpretations, which blocks vacuous comparatives. The supplement shows that the basic
-entailment patterns are preserved, that transitivity of the equative is validated, and that the two
-semantics are interdefinable. -/
+/-- Truth under the revised semantics of the supplement, whose comparative is `RevisedComp`. The
+basic equative fails transitivity, and the revision strengthens the comparative so that the
+equative it defines is transitive. -/
 def EvalRevised : ComparativeFormula L E → SemanticOrdering I → I → W → Prop
   | .ofFormula ψ, _, i, w => ψ.RealizeAt (interp i) w id
   | .not A, ord, i, w => ¬ EvalRevised A ord i w
   | .inf A B, ord, i, w => EvalRevised A ord i w ∧ EvalRevised B ord i w
   | .sup A B, ord, i, w => EvalRevised A ord i w ∨ EvalRevised B ord i w
-  | .comp A B, ord, i, w =>
-      ∃ i', ord.le i' i ∧ EvalRevised A ord i' w ∧
-        ¬ EvalRevised B ord i' w ∧
-        ((∀ i'', ord.le i'' i → EvalRevised B ord i'' w → ord.lt i'' i') ∨
-         (∀ i'', ord.le i'' i → ¬ EvalRevised A ord i'' w → ord.lt i'' i'))
+  | .comp A B, ord, i, w => RevisedComp ord.le (EvalRevised A ord · w) (EvalRevised B ord · w) i
 
 instance EvalRevised.instDec [Fintype I] [Fintype E] [DecidableEq E]
     [hA : DecidableAtoms interp] (ord : SemanticOrdering I) [DecidableRel ord.le] :
@@ -711,25 +943,34 @@ instance EvalRevised.instDec [Fintype I] [Fintype E] [DecidableEq E]
   | .sup A B, i, w =>
       @instDecidableOr _ _ (EvalRevised.instDec ord A i w) (EvalRevised.instDec ord B i w)
   | .comp A B, i, w =>
-      haveI : ∀ j, Decidable (EvalRevised interp A ord j w) :=
-        (EvalRevised.instDec ord A · w)
-      haveI : ∀ j, Decidable (EvalRevised interp B ord j w) :=
-        (EvalRevised.instDec ord B · w)
-      inferInstanceAs (Decidable (∃ i', ord.le i' i ∧
-        EvalRevised interp A ord i' w ∧ ¬ EvalRevised interp B ord i' w ∧
-        ((∀ i'', ord.le i'' i → EvalRevised interp B ord i'' w → ord.lt i'' i') ∨
-         (∀ i'', ord.le i'' i → ¬ EvalRevised interp A ord i'' w → ord.lt i'' i'))))
+      haveI : DecidablePred (EvalRevised interp A ord · w) := (EvalRevised.instDec ord A · w)
+      haveI : DecidablePred (EvalRevised interp B ord · w) := (EvalRevised.instDec ord B · w)
+      inferInstanceAs (Decidable (RevisedComp ord.le
+        (EvalRevised interp A ord · w) (EvalRevised interp B ord · w) i))
 
-variable (A B : ComparativeFormula L E) (ord : SemanticOrdering I) (i : I) (w : W)
+variable {A B C : ComparativeFormula L E} {ord : SemanticOrdering I} {i : I} {w : W}
 
-/-- The revised clause for the comparative unfolds to its definition. -/
-theorem evalRevised_mc_iff :
-    EvalRevised interp (.comp A B) ord i w ↔
-    ∃ i', ord.le i' i ∧ EvalRevised interp A ord i' w ∧
-      ¬ EvalRevised interp B ord i' w ∧
-      ((∀ i'', ord.le i'' i → EvalRevised interp B ord i'' w → ord.lt i'' i') ∨
-       (∀ i'', ord.le i'' i → ¬ EvalRevised interp A ord i'' w → ord.lt i'' i')) :=
-  Iff.rfl
+/-- The revised comparative is transitive. -/
+theorem evalRevised_comp_trans (h₁ : EvalRevised interp (.comp A B) ord i w)
+    (h₂ : EvalRevised interp (.comp B C) ord i w) : EvalRevised interp (.comp A C) ord i w :=
+  RevisedComp.trans h₁ h₂
+
+variable [Finite I]
+
+/-- The equative `¬(A ≻ B) ∧ ¬(B ≻ A)` of the revised semantics is the supplement's revised
+equative clause. -/
+theorem evalRevised_equi_iff : EvalRevised interp (A.equi B) ord i w ↔
+    RevisedEqui ord.le (EvalRevised interp A ord · w) (EvalRevised interp B ord · w) i := by
+  refine ⟨fun ⟨h₁, h₂⟩ ↦ ?_, fun h ↦ ⟨h.not_revisedComp, h.symm.not_revisedComp⟩⟩
+  rcases revisedEqui_or_revisedComp_or_revisedComp ord
+    (EvalRevised interp A ord · w) (EvalRevised interp B ord · w) i with h | h | h
+  exacts [h, (h₁ h).elim, (h₂ h).elim]
+
+/-- The revised equative is transitive, unlike the basic one (`equi_not_trans`). -/
+theorem evalRevised_equi_trans (h₁ : EvalRevised interp (A.equi B) ord i w)
+    (h₂ : EvalRevised interp (B.equi C) ord i w) : EvalRevised interp (A.equi C) ord i w :=
+  (evalRevised_equi_iff interp).2
+    (((evalRevised_equi_iff interp).1 h₁).trans ((evalRevised_equi_iff interp).1 h₂))
 
 end Revised
 /-! ### The metalinguistic conditional -/
@@ -824,720 +1065,118 @@ def assertoricProp (φ : ComparativeFormula L E) : Set (SemanticOrdering I × W)
 
 end CommonGround
 
-noncomputable section DegreeTheory
+/-! ### Metalinguistic degrees
 
-variable {L : Language} {I W E : Type*} (interp : I → W → L.Structure E)
-  (ord : SemanticOrdering I) (i : I)
+The supplement's degree theory. Its equivalence `X ∼ Y` and ordering `X ⊐ Y` of sets of
+interpretations are the revised equative and comparative of their membership predicates, so the
+degree of a formula is the `∼`-class of its denotation and the comparative compares degrees. -/
 
-open Classical
+section DegreeTheory
 
-/-! ### Fields and denotations -/
+variable {I : Type*} (ord : SemanticOrdering I) (i : I)
 
-section Field
+section Degrees
 
-variable [Fintype I]
+variable [Finite I]
 
-/-- The field `I_i` is the set of interpretations ranked at or below `i`. It is classical, since the
-degree theory proves structure and never computes. -/
-def field : Finset I :=
-  Finset.univ.filter (fun j ↦ ord.le j i)
+/-- The equivalence `X ∼ Y` of sets of interpretations ranked no higher than `i`, an equivalence
+relation by the supplement's Fact 8. -/
+def metalinguisticSetoid : Setoid (Set I) where
+  r X Y := RevisedEqui ord.le (· ∈ X) (· ∈ Y) i
+  iseqv := ⟨fun _ ↦ .refl, .symm, .trans⟩
 
-/-- The denotation of a formula is the set of interpretations in `I_i` where the formula is true
-under the revised semantics. -/
-def denotation (φ : ComparativeFormula L E) (w : W) : Finset I :=
-  (field ord i).filter (fun j ↦ EvalRevised interp φ ord j w)
+/-- Metalinguistic degrees at `i` are the `∼`-classes of sets of interpretations. -/
+def MetaDegree : Type _ := Quotient (metalinguisticSetoid ord i)
 
-theorem denotation_subset_field (φ : ComparativeFormula L E) (w : W) :
-    denotation interp ord i φ w ⊆ field ord i :=
-  Finset.filter_subset _ _
+/-- The metalinguistic degree of a set of interpretations. -/
+def deg (X : Set I) : MetaDegree ord i := Quotient.mk _ X
 
-end Field
+theorem deg_eq_deg_iff {X Y : Set I} :
+    deg ord i X = deg ord i Y ↔ RevisedEqui ord.le (· ∈ X) (· ∈ Y) i :=
+  ⟨fun h ↦ Quotient.exact h, fun h ↦ Quotient.sound h⟩
 
-/-! ### Set differences -/
+/-- `deg X ≤ deg Y` iff `X ⊐ Y` fails, well defined since `⊐` respects `∼` on both sides. -/
+protected def MetaDegree.le (d₁ d₂ : MetaDegree ord i) : Prop :=
+  Quotient.lift₂ (fun X Y ↦ ¬ RevisedComp ord.le (· ∈ X) (· ∈ Y) i)
+    (fun _ _ _ _ (hX : RevisedEqui ord.le _ _ i) (hY : RevisedEqui ord.le _ _ i) ↦
+      propext (not_congr ⟨fun h ↦ (h.of_revisedEqui_left hX).of_revisedEqui_right hY,
+        fun h ↦ (h.of_revisedEqui_left hX.symm).of_revisedEqui_right hY.symm⟩)) d₁ d₂
 
-variable [DecidableEq I]
-
-/-- If m dominates X ∩ Y and Y \ X, it dominates all of Y. -/
-private lemma dom_all_of_inter_sdiff (m : I) (X Y : Finset I)
-    (h_cap : ∀ c ∈ X ∩ Y, ord.lt c m)
-    (h_sdiff : ∀ y ∈ Y \ X, ord.lt y m) :
-    ∀ y ∈ Y, ord.lt y m := by
-  intro y hy
-  by_cases hyx : y ∈ X
-  · exact h_cap y (Finset.mem_inter.mpr ⟨hyx, hy⟩)
-  · exact h_sdiff y (Finset.mem_sdiff.mpr ⟨hy, hyx⟩)
-
-/-- (X ∪ Y) \ (X ∩ Y) = (X \ Y) ∪ (Y \ X). -/
-private lemma mem_symdiff_iff (X Y : Finset I) (s : I) :
-    s ∈ (X ∪ Y) \ (X ∩ Y) ↔ s ∈ (X \ Y) ∪ (Y \ X) := by
-  rw [← Finset.sup_eq_union, ← Finset.inf_eq_inter, ← symmDiff_eq_sup_sdiff_inf]
-  rfl
-
-/-- X ≠ Y → (X \ Y) ∪ (Y \ X) is nonempty. -/
-private lemma symdiff_nonempty (X Y : Finset I) (h : X ≠ Y) : ((X \ Y) ∪ (Y \ X)).Nonempty :=
-  Finset.symmDiff_nonempty.2 h
-
-variable [Fintype I]
-
-/-! ### Degree equivalence -/
-
-/-- The first condition of ∼ says that each element of `X \ Y` is matched by one of `Y \ X` at least
-as high, and conversely. -/
-def equivCond1 (X Y : Finset I) : Prop :=
-  (∀ i' ∈ X \ Y, ∃ i'' ∈ Y \ X, ord.le i' i'') ∧
-  (∀ i' ∈ Y \ X, ∃ i'' ∈ X \ Y, ord.le i' i'')
-
-/-- The second condition of ∼ says that each element of the symmetric difference is dominated both
-by an element of `X ∩ Y` and by one of the field outside `X ∪ Y`. -/
-def equivCond2 (X Y : Finset I) : Prop :=
-  ∀ i' ∈ (X ∪ Y) \ (X ∩ Y),
-    (∃ i'' ∈ X ∩ Y, ord.le i' i'') ∧
-    (∃ i'' ∈ field ord i \ (X ∪ Y), ord.le i' i'')
-
-/-- Metalinguistic degree equivalence `X ∼_i Y` is the revised truth condition of the equative
-applied to sets of interpretations. -/
-def degreeEquiv (X Y : Finset I) : Prop :=
-  equivCond1 ord X Y ∨ equivCond2 ord i X Y
-
-/-! ### Reflexivity and symmetry -/
-
-/-- ∼ is reflexive. -/
-theorem degreeEquiv_refl (X : Finset I) :
-    degreeEquiv ord i X X := by
-  left
-  constructor <;> intro i' h <;> simp at h
-
-/-- ∼ is symmetric. -/
-theorem degreeEquiv_symm (X Y : Finset I) :
-    degreeEquiv ord i X Y → degreeEquiv ord i Y X := by
-  intro h
-  rcases h with h1 | h2
-  · left; exact ⟨h1.2, h1.1⟩
-  · right
-    intro i' hi'
-    have hi'swap : i' ∈ (X ∪ Y) \ (X ∩ Y) := by
-      simp only [Finset.mem_sdiff, Finset.mem_union, Finset.mem_inter] at hi' ⊢
-      exact ⟨Or.symm hi'.1, fun ⟨h1, h2⟩ ↦ hi'.2 ⟨h2, h1⟩⟩
-    obtain ⟨h2a, h2b⟩ := h2 i' hi'swap
-    constructor
-    · obtain ⟨i'', hi''mem, hi''le⟩ := h2a
-      exact ⟨i'', by rwa [Finset.inter_comm] at hi''mem, hi''le⟩
-    · obtain ⟨i'', hi''mem, hi''le⟩ := h2b
-      exact ⟨i'', by rwa [Finset.union_comm] at hi''mem, hi''le⟩
-
-/-! ### The ordering on interpretation sets -/
-
-/-- `X ⊐ Y` holds when some witness in `X \ Y` inside the field dominates all of `Y \ X` and also
-all of `X ∩ Y` or all of the field outside `X ∪ Y`. It is the revised truth condition of the
-comparative applied to sets of interpretations. -/
-def strictlyBetter (X Y : Finset I) : Prop :=
-  ∃ i' ∈ X \ Y,
-    i' ∈ field ord i ∧
-    (∀ i'' ∈ Y \ X, ord.lt i'' i') ∧
-    ((∀ i'' ∈ X ∩ Y, ord.lt i'' i') ∨
-     (∀ i'' ∈ field ord i \ (X ∪ Y), ord.lt i'' i'))
-
-/-- If m dominates Y \ X and field ord i \ (X ∪ Y), it dominates field ord i \ X. -/
-private lemma dom_fX_of_sdiff_comp (m : I) (X Y : Finset I)
-    (h_yx : ∀ y ∈ Y \ X, ord.lt y m)
-    (h_comp : ∀ c ∈ field ord i \ (X ∪ Y), ord.lt c m) :
-    ∀ c ∈ field ord i \ X, ord.lt c m := by
-  intro c hc
-  by_cases hc_y : c ∈ Y
-  · exact h_yx c (Finset.mem_sdiff.mpr ⟨hc_y, (Finset.mem_sdiff.mp hc).2⟩)
-  · exact h_comp c (Finset.mem_sdiff.mpr ⟨(Finset.mem_sdiff.mp hc).1,
-      fun h ↦ Finset.mem_union.mp h |>.elim (Finset.mem_sdiff.mp hc).2 hc_y⟩)
-
-/-! ### The ordering respects equivalence -/
-
-/-- ⊐ is irreflexive. -/
-theorem strictlyBetter_irrefl (X : Finset I) :
-    ¬ strictlyBetter ord i X X := by
-  intro ⟨i', hi', _, _, _⟩
-  simp at hi'
-
-/-- Equivalence refutes strict ordering, since equivalent sets are incomparable. -/
-theorem degreeEquiv_not_strictlyBetter (X Y : Finset I) :
-    degreeEquiv ord i X Y → ¬ strictlyBetter ord i X Y := by
-  intro h_eq ⟨i', h_sdiff, _, h_ymx, h_inner⟩
-  rcases h_eq with ⟨h_match, _⟩ | h2
-  · -- equivCond1: i' ∈ X\Y is matched by i'' ∈ Y\X with i' ≤ i''
-    obtain ⟨i'', h_i''_sdiff, h_le⟩ := h_match i' h_sdiff
-    exact (h_ymx i'' h_i''_sdiff).2 h_le
-  · -- equivCond2: i' ∈ (X ∪ Y) \ (X ∩ Y), dominated by X∩Y and field\(X∪Y)
-    have h_symdiff : i' ∈ (X ∪ Y) \ (X ∩ Y) :=
-      Finset.mem_sdiff.mpr
-        ⟨Finset.mem_union.mpr (Or.inl (Finset.mem_sdiff.mp h_sdiff).1),
-         fun h ↦ (Finset.mem_sdiff.mp h_sdiff).2 (Finset.mem_inter.mp h).2⟩
-    obtain ⟨⟨i₁, h_i₁_mem, h_le₁⟩, ⟨i₂, h_i₂_mem, h_le₂⟩⟩ := h2 i' h_symdiff
-    rcases h_inner with h_cap | h_comp
-    · exact (h_cap i₁ h_i₁_mem).2 h_le₁
-    · exact (h_comp i₂ h_i₂_mem).2 h_le₂
-
-/-- ⊐ respects ∼ on the right, so `X ⊐ Y` and `Y ∼ Z` give `X ⊐ Z`. -/
-theorem strictlyBetter_respects_right (X Y Z : Finset I)
-    (_hXf : X ⊆ field ord i) (hYf : Y ⊆ field ord i) (hZf : Z ⊆ field ord i) :
-    strictlyBetter ord i X Y → degreeEquiv ord i Y Z →
-    strictlyBetter ord i X Z := by
-  rintro ⟨m, hm_sd, hm_f, hm_yx, hm_inner⟩ hyz
-  have hm_x := (Finset.mem_sdiff.mp hm_sd).1
-  have hm_ny := (Finset.mem_sdiff.mp hm_sd).2
-  rcases hm_inner with h_left | h_right
-  · -- LEFT INNER: m dominates all of Y
-    have m_dom_Y := dom_all_of_inter_sdiff ord m X Y h_left hm_yx
-    -- z ∈ Z, z ∉ Y → lt z m (via Y∼Z matching + m_dom_Y)
-    have z_ny_lt : ∀ z, z ∈ Z → z ∉ Y → ord.lt z m := by
-      intro z hz hny
-      rcases hyz with ⟨_, hyz_b⟩ | hyz2
-      · obtain ⟨y', hy', hle⟩ := hyz_b z (Finset.mem_sdiff.mpr ⟨hz, hny⟩)
-        exact ord.lt_of_le_of_lt hle (m_dom_Y y' (Finset.mem_sdiff.mp hy').1)
-      · obtain ⟨⟨c, hc, hle⟩, _⟩ := hyz2 z
-          (Finset.mem_sdiff.mpr ⟨Finset.mem_union.mpr (Or.inr hz),
-            fun h ↦ hny (Finset.mem_inter.mp h).1⟩)
-        exact ord.lt_of_le_of_lt hle (m_dom_Y c (Finset.mem_inter.mp hc).1)
-    -- m ∉ Z forced
-    have hm_nz : m ∉ Z :=
-      fun hm_z ↦ absurd (z_ny_lt m hm_z hm_ny) (ord.lt_irrefl m)
-    refine ⟨m, Finset.mem_sdiff.mpr ⟨hm_x, hm_nz⟩, hm_f, ?_, Or.inl ?_⟩
-    · intro z hz
-      by_cases hz_y : z ∈ Y
-      · exact hm_yx z (Finset.mem_sdiff.mpr ⟨hz_y, (Finset.mem_sdiff.mp hz).2⟩)
-      · exact z_ny_lt z (Finset.mem_sdiff.mp hz).1 hz_y
-    · intro c hc
-      by_cases hc_y : c ∈ Y
-      · exact m_dom_Y c hc_y
-      · exact z_ny_lt c (Finset.mem_inter.mp hc).2 hc_y
-  · -- RIGHT INNER: m dominates field ord i \ X
-    have m_dom_fX := dom_fX_of_sdiff_comp ord i m X Y hm_yx h_right
-    -- Helper: w ∈ X forced when m_dom_fX w gives lt w m, contradicting le m w
-    have forced_in_X (w : I) (hw_f : w ∈ field ord i) (hle : ord.le m w) :
-        w ∈ X := by
-      by_contra h
-      exact (m_dom_fX w (Finset.mem_sdiff.mpr ⟨hw_f, h⟩)).2 hle
-    by_cases hm_z : m ∈ Z
-    · -- m ∈ Z ∩ X: find alternative witness via Y∼Z
-      -- Helper: once we have witness w ∈ X\Z with le m w, build the ⊐ proof
-      suffices ∃ w, w ∈ X \ Z ∧ w ∈ field ord i ∧ ord.le m w from by
-        obtain ⟨w, hw_sd, hw_f, hle⟩ := this
-        refine ⟨w, hw_sd, hw_f, ?_, Or.inr ?_⟩
-        · intro z hz; exact ord.lt_of_lt_of_le
-            (m_dom_fX z (Finset.mem_sdiff.mpr ⟨hZf (Finset.mem_sdiff.mp hz).1,
-              (Finset.mem_sdiff.mp hz).2⟩)) hle
-        · intro c hc; exact ord.lt_of_lt_of_le
-            (m_dom_fX c (Finset.mem_sdiff.mpr ⟨(Finset.mem_sdiff.mp hc).1,
-              fun h ↦ (Finset.mem_sdiff.mp hc).2 (Finset.mem_union.mpr (Or.inl h))⟩)) hle
-      rcases hyz with ⟨_, hyz_b⟩ | hyz2
-      · -- cond1: m ∈ Z\Y → ∃ y₀ ∈ Y\Z, le m y₀; y₀ ∈ X forced
-        obtain ⟨y₀, hy₀, hle⟩ := hyz_b m (Finset.mem_sdiff.mpr ⟨hm_z, hm_ny⟩)
-        exact ⟨y₀, Finset.mem_sdiff.mpr ⟨forced_in_X y₀ (hYf (Finset.mem_sdiff.mp hy₀).1) hle,
-          (Finset.mem_sdiff.mp hy₀).2⟩, hYf (Finset.mem_sdiff.mp hy₀).1, hle⟩
-      · -- cond2: ∃ c₂ ∈ field ord i\(Y∪Z), le m c₂; c₂ ∈ X forced
-        obtain ⟨_, ⟨c₂, hc₂, hle⟩⟩ := hyz2 m
-          (Finset.mem_sdiff.mpr ⟨Finset.mem_union.mpr (Or.inr hm_z),
-            fun h ↦ hm_ny (Finset.mem_inter.mp h).1⟩)
-        exact ⟨c₂, Finset.mem_sdiff.mpr ⟨forced_in_X c₂ (Finset.mem_sdiff.mp hc₂).1 hle,
-          fun h ↦ (Finset.mem_sdiff.mp hc₂).2 (Finset.mem_union.mpr (Or.inr h))⟩,
-          (Finset.mem_sdiff.mp hc₂).1, hle⟩
-    · -- m ∉ Z: witness = m ∈ X\Z
-      refine ⟨m, Finset.mem_sdiff.mpr ⟨hm_x, hm_z⟩, hm_f, ?_, Or.inr ?_⟩
-      · intro z hz; exact m_dom_fX z (Finset.mem_sdiff.mpr
-          ⟨hZf (Finset.mem_sdiff.mp hz).1, (Finset.mem_sdiff.mp hz).2⟩)
-      · intro c hc; exact m_dom_fX c (Finset.mem_sdiff.mpr
-          ⟨(Finset.mem_sdiff.mp hc).1,
-           fun h ↦ (Finset.mem_sdiff.mp hc).2 (Finset.mem_union.mpr (Or.inl h))⟩)
-
-/-- ⊐ respects ∼ on the left, so `X ⊐ Y` and `X ∼ Z` give `Z ⊐ Y`. -/
-theorem strictlyBetter_respects_left (X Y Z : Finset I)
-    (hXf : X ⊆ field ord i) (_hYf : Y ⊆ field ord i) (hZf : Z ⊆ field ord i) :
-    strictlyBetter ord i X Y → degreeEquiv ord i X Z →
-    strictlyBetter ord i Z Y := by
-  rintro ⟨m, hm_sd, hm_f, hm_yx, hm_inner⟩ hxz
-  have hm_x := (Finset.mem_sdiff.mp hm_sd).1
-  have hm_ny := (Finset.mem_sdiff.mp hm_sd).2
-  rcases hm_inner with h_left | h_right
-  · -- LEFT INNER: m dominates all of Y
-    have m_dom_Y := dom_all_of_inter_sdiff ord m X Y h_left hm_yx
-    by_cases hm_z : m ∈ Z
-    · -- m ∈ Z: witness m ∈ Z\Y
-      refine ⟨m, Finset.mem_sdiff.mpr ⟨hm_z, hm_ny⟩, hm_f, ?_, Or.inl ?_⟩
-      · intro y hy; exact m_dom_Y y (Finset.mem_sdiff.mp hy).1
-      · intro c hc; exact m_dom_Y c (Finset.mem_inter.mp hc).2
-    · -- m ∉ Z: use X∼Z to find w ∈ Z with le m w, w ∉ Y forced
-      -- Once we have w, the proof is uniform
-      suffices ∃ w, w ∈ Z \ Y ∧ w ∈ field ord i ∧ ord.le m w from by
-        obtain ⟨w, hw_sd, hw_f, hle⟩ := this
-        refine ⟨w, hw_sd, hw_f, ?_, Or.inl ?_⟩
-        · intro y hy; exact ord.lt_of_lt_of_le
-            (m_dom_Y y (Finset.mem_sdiff.mp hy).1) hle
-        · intro c hc; exact ord.lt_of_lt_of_le
-            (m_dom_Y c (Finset.mem_inter.mp hc).2) hle
-      -- Helper: w ∉ Y when m_dom_Y w and le m w (lt w m contradicts le m w)
-      have not_in_Y (w : I) (hle : ord.le m w) : w ∉ Y :=
-        fun h ↦ (m_dom_Y w h).2 hle
-      rcases hxz with ⟨hxz_a, _⟩ | hxz2
-      · obtain ⟨z₀, hz₀, hle⟩ := hxz_a m (Finset.mem_sdiff.mpr ⟨hm_x, hm_z⟩)
-        exact ⟨z₀, Finset.mem_sdiff.mpr ⟨(Finset.mem_sdiff.mp hz₀).1, not_in_Y z₀ hle⟩,
-          hZf (Finset.mem_sdiff.mp hz₀).1, hle⟩
-      · obtain ⟨⟨z₁, hz₁, hle⟩, _⟩ := hxz2 m
-          (Finset.mem_sdiff.mpr ⟨Finset.mem_union.mpr (Or.inl hm_x),
-            fun h ↦ hm_z (Finset.mem_inter.mp h).2⟩)
-        exact ⟨z₁, Finset.mem_sdiff.mpr ⟨(Finset.mem_inter.mp hz₁).2, not_in_Y z₁ hle⟩,
-          hXf (Finset.mem_inter.mp hz₁).1, hle⟩
-  · -- RIGHT INNER: m dominates field ord i \ X
-    have m_dom_fX := dom_fX_of_sdiff_comp ord i m X Y hm_yx h_right
-    -- c ∈ X\Z → lt c m (via X∼Z matching to field\X, then m_dom_fX)
-    have lt_via_xz : ∀ c, c ∈ X → c ∉ Z → ord.lt c m := by
-      intro c hc_x hc_nz
-      rcases hxz with ⟨hxz_a, _⟩ | hxz2
-      · obtain ⟨z', hz', hle⟩ := hxz_a c (Finset.mem_sdiff.mpr ⟨hc_x, hc_nz⟩)
-        exact ord.lt_of_le_of_lt hle (m_dom_fX z'
-          (Finset.mem_sdiff.mpr ⟨hZf (Finset.mem_sdiff.mp hz').1,
-            (Finset.mem_sdiff.mp hz').2⟩))
-      · obtain ⟨_, ⟨c', hc', hle⟩⟩ := hxz2 c
-          (Finset.mem_sdiff.mpr ⟨Finset.mem_union.mpr (Or.inl hc_x),
-            fun h ↦ hc_nz (Finset.mem_inter.mp h).2⟩)
-        exact ord.lt_of_le_of_lt hle (m_dom_fX c'
-          (Finset.mem_sdiff.mpr ⟨(Finset.mem_sdiff.mp hc').1,
-            fun h ↦ (Finset.mem_sdiff.mp hc').2 (Finset.mem_union.mpr (Or.inl h))⟩))
-    -- m ∈ Z forced
-    have hm_z : m ∈ Z := by
-      by_contra hm_nz; exact absurd (lt_via_xz m hm_x hm_nz) (ord.lt_irrefl m)
-    -- Witness m ∈ Z\Y
-    refine ⟨m, Finset.mem_sdiff.mpr ⟨hm_z, hm_ny⟩, hm_f, ?_, Or.inr ?_⟩
-    · intro y hy
-      by_cases hy_x : y ∈ X
-      · exact lt_via_xz y hy_x (Finset.mem_sdiff.mp hy).2
-      · exact hm_yx y (Finset.mem_sdiff.mpr ⟨(Finset.mem_sdiff.mp hy).1, hy_x⟩)
-    · intro c hc
-      by_cases hc_x : c ∈ X
-      · exact lt_via_xz c hc_x
-          (fun h ↦ (Finset.mem_sdiff.mp hc).2 (Finset.mem_union.mpr (Or.inl h)))
-      · exact m_dom_fX c (Finset.mem_sdiff.mpr ⟨(Finset.mem_sdiff.mp hc).1, hc_x⟩)
-
-/-- ⊐ is transitive. -/
-theorem strictlyBetter_trans (X Y Z : Finset I) :
-    strictlyBetter ord i X Y → strictlyBetter ord i Y Z →
-    strictlyBetter ord i X Z := by
-  rintro ⟨m₁, hm₁_sd, hm₁_f, hm₁_yx, hm₁_inner⟩
-         ⟨m₂, hm₂_sd, hm₂_f, hm₂_zy, hm₂_inner⟩
-  have hm₁_x := (Finset.mem_sdiff.mp hm₁_sd).1
-  have hm₁_ny := (Finset.mem_sdiff.mp hm₁_sd).2
-  have hm₂_y := (Finset.mem_sdiff.mp hm₂_sd).1
-  have hm₂_nz := (Finset.mem_sdiff.mp hm₂_sd).2
-  -- Key helper: z ∈ Z\X → lt z m₁ (when m₂ ≤ m₁)
-  have zx_lt_m1 (hle : ord.le m₂ m₁) (z : I) (hz : z ∈ Z \ X) : ord.lt z m₁ := by
-    have hz_z := (Finset.mem_sdiff.mp hz).1
-    have hz_nx := (Finset.mem_sdiff.mp hz).2
-    by_cases hz_y : z ∈ Y
-    · exact hm₁_yx z (Finset.mem_sdiff.mpr ⟨hz_y, hz_nx⟩)
-    · exact ord.lt_of_lt_of_le (hm₂_zy z (Finset.mem_sdiff.mpr ⟨hz_z, hz_y⟩)) hle
-  -- Key helper: z ∈ Z\X → lt z m₂ (when m₁ ≤ m₂)
-  have zx_lt_m2 (hle : ord.le m₁ m₂) (z : I) (hz : z ∈ Z \ X) : ord.lt z m₂ := by
-    have hz_z := (Finset.mem_sdiff.mp hz).1
-    have hz_nx := (Finset.mem_sdiff.mp hz).2
-    by_cases hz_y : z ∈ Y
-    · exact ord.lt_of_lt_of_le
-        (hm₁_yx z (Finset.mem_sdiff.mpr ⟨hz_y, hz_nx⟩)) hle
-    · exact hm₂_zy z (Finset.mem_sdiff.mpr ⟨hz_z, hz_y⟩)
-  rcases ord.le_total m₂ m₁ with hle | hle
-  · -- Case: m₂ ≤ m₁. Witness = m₁.
-    -- m₁ ∉ Z: lt m₁ m₂ ∧ le m₂ m₁ → lt m₁ m₁
-    have hm₁_nz : m₁ ∉ Z := fun h ↦
-      absurd (ord.lt_of_lt_of_le
-        (hm₂_zy m₁ (Finset.mem_sdiff.mpr ⟨h, hm₁_ny⟩)) hle) (ord.lt_irrefl m₁)
-    refine ⟨m₁, Finset.mem_sdiff.mpr ⟨hm₁_x, hm₁_nz⟩, hm₁_f, zx_lt_m1 hle, ?_⟩
-    -- Inner disjunct: follows from X⊐Y's inner
-    rcases hm₁_inner with h_cap | h_comp
-    · -- Left: ∀ X∩Y < m₁ → ∀ X∩Z < m₁
-      left; intro c hc
-      have hc_x := (Finset.mem_inter.mp hc).1
-      have hc_z := (Finset.mem_inter.mp hc).2
-      by_cases hc_y : c ∈ Y
-      · exact h_cap c (Finset.mem_inter.mpr ⟨hc_x, hc_y⟩)
-      · exact ord.lt_of_lt_of_le
-          (hm₂_zy c (Finset.mem_sdiff.mpr ⟨hc_z, hc_y⟩)) hle
-    · -- Right: ∀ field\(X∪Y) < m₁ → ∀ field\(X∪Z) < m₁
-      right; intro c hc
-      have hc_f := (Finset.mem_sdiff.mp hc).1
-      have hc_nxz := (Finset.mem_sdiff.mp hc).2
-      have hc_nx : c ∉ X := fun h ↦ hc_nxz (Finset.mem_union.mpr (Or.inl h))
-      have hc_nz : c ∉ Z := fun h ↦ hc_nxz (Finset.mem_union.mpr (Or.inr h))
-      by_cases hc_y : c ∈ Y
-      · exact hm₁_yx c (Finset.mem_sdiff.mpr ⟨hc_y, hc_nx⟩)
-      · exact h_comp c (Finset.mem_sdiff.mpr
-          ⟨hc_f, fun h ↦ Finset.mem_union.mp h |>.elim hc_nx hc_y⟩)
-  · -- Case: m₁ ≤ m₂. Witness = m₂.
-    -- m₂ ∈ X: lt m₂ m₁ ∧ le m₁ m₂ → lt m₂ m₂
-    have hm₂_x : m₂ ∈ X := by
-      by_contra h; exact absurd (ord.lt_of_lt_of_le
-        (hm₁_yx m₂ (Finset.mem_sdiff.mpr ⟨hm₂_y, h⟩)) hle) (ord.lt_irrefl m₂)
-    refine ⟨m₂, Finset.mem_sdiff.mpr ⟨hm₂_x, hm₂_nz⟩, hm₂_f, zx_lt_m2 hle, ?_⟩
-    -- Inner disjunct: follows from Y⊐Z's inner
-    rcases hm₂_inner with h_cap | h_comp
-    · -- Left: ∀ Y∩Z < m₂ → ∀ X∩Z < m₂
-      left; intro c hc
-      have hc_x := (Finset.mem_inter.mp hc).1
-      have hc_z := (Finset.mem_inter.mp hc).2
-      by_cases hc_y : c ∈ Y
-      · exact h_cap c (Finset.mem_inter.mpr ⟨hc_y, hc_z⟩)
-      · exact hm₂_zy c (Finset.mem_sdiff.mpr ⟨hc_z, hc_y⟩)
-    · -- Right: ∀ field\(Y∪Z) < m₂ → ∀ field\(X∪Z) < m₂
-      right; intro c hc
-      have hc_f := (Finset.mem_sdiff.mp hc).1
-      have hc_nxz := (Finset.mem_sdiff.mp hc).2
-      have hc_nx : c ∉ X := fun h ↦ hc_nxz (Finset.mem_union.mpr (Or.inl h))
-      have hc_nz : c ∉ Z := fun h ↦ hc_nxz (Finset.mem_union.mpr (Or.inr h))
-      by_cases hc_y : c ∈ Y
-      · exact ord.lt_of_lt_of_le
-          (hm₁_yx c (Finset.mem_sdiff.mpr ⟨hc_y, hc_nx⟩)) hle
-      · exact h_comp c (Finset.mem_sdiff.mpr
-          ⟨hc_f, fun h ↦ Finset.mem_union.mp h |>.elim hc_y hc_nz⟩)
-
-/-- Trichotomy holds, so `X ∼ Y`, `X ⊐ Y` or `Y ⊐ X`. -/
-theorem strictlyBetter_total (X Y : Finset I)
-    (hX : X ⊆ field ord i) (hY : Y ⊆ field ord i) :
-    degreeEquiv ord i X Y ∨ strictlyBetter ord i X Y ∨
-    strictlyBetter ord i Y X := by
-  by_cases h_eq : X = Y
-  · exact Or.inl (h_eq ▸ degreeEquiv_refl ord i X)
-  · obtain ⟨m, hm, hm_max⟩ := ord.exists_le_max _ (symdiff_nonempty X Y h_eq)
-    -- Helper: any element of the symdiff ≤ m
-    have hm_max' : ∀ s ∈ (X \ Y) ∪ (Y \ X), ord.le s m := hm_max
-    rcases Finset.mem_union.mp hm with hm_xy | hm_yx
-    · -- m ∈ X\Y: either equivCond1, or strictlyBetter X Y
-      have hm_field : m ∈ field ord i := hX (Finset.mem_sdiff.mp hm_xy).1
-      by_cases h_all_yx : ∀ y ∈ Y \ X, ord.lt y m
-      · -- All Y\X < m: check inner disjunct
-        by_cases h_cap : ∀ c ∈ X ∩ Y, ord.lt c m
-        · exact Or.inr (Or.inl ⟨m, hm_xy, hm_field, h_all_yx, Or.inl h_cap⟩)
-        · by_cases h_comp : ∀ c ∈ field ord i \ (X ∪ Y), ord.lt c m
-          · exact Or.inr (Or.inl ⟨m, hm_xy, hm_field, h_all_yx, Or.inr h_comp⟩)
-          · -- Neither inner holds: equivCond2
-            push Not at h_cap h_comp
-            obtain ⟨c₁, hc₁_mem, hc₁_nlt⟩ := h_cap
-            obtain ⟨c₂, hc₂_mem, hc₂_nlt⟩ := h_comp
-            have hc₁_ge := ord.le_of_not_lt hc₁_nlt
-            have hc₂_ge := ord.le_of_not_lt hc₂_nlt
-            exact Or.inl (Or.inr (fun s hs ↦ by
-              have h_le_sm := hm_max' s ((mem_symdiff_iff X Y s).mp hs)
-              exact ⟨⟨c₁, hc₁_mem, ord.le_trans s m c₁ h_le_sm hc₁_ge⟩,
-                     ⟨c₂, hc₂_mem, ord.le_trans s m c₂ h_le_sm hc₂_ge⟩⟩))
-      · -- ∃ y₀ ∈ Y\X with ¬(lt y₀ m): equivCond1
-        push Not at h_all_yx
-        obtain ⟨y₀, hy₀_mem, hy₀_nlt⟩ := h_all_yx
-        have hy₀_ge := ord.le_of_not_lt hy₀_nlt
-        exact Or.inl (Or.inl
-          ⟨fun x hx ↦ ⟨y₀, hy₀_mem,
-              ord.le_trans x m y₀
-                (hm_max' x (Finset.mem_union.mpr (Or.inl hx))) hy₀_ge⟩,
-           fun y hy ↦ ⟨m, hm_xy,
-              hm_max' y (Finset.mem_union.mpr (Or.inr hy))⟩⟩)
-    · -- m ∈ Y\X: symmetric case — either equivCond1, or strictlyBetter Y X
-      have hm_field : m ∈ field ord i := hY (Finset.mem_sdiff.mp hm_yx).1
-      by_cases h_all_xy : ∀ x ∈ X \ Y, ord.lt x m
-      · -- All X\Y < m: check inner disjunct
-        by_cases h_cap : ∀ c ∈ Y ∩ X, ord.lt c m
-        · exact Or.inr (Or.inr ⟨m, hm_yx, hm_field, h_all_xy, Or.inl h_cap⟩)
-        · by_cases h_comp : ∀ c ∈ field ord i \ (Y ∪ X), ord.lt c m
-          · exact Or.inr (Or.inr ⟨m, hm_yx, hm_field, h_all_xy, Or.inr h_comp⟩)
-          · -- Neither inner holds: equivCond2
-            push Not at h_cap h_comp
-            obtain ⟨c₁, hc₁_mem, hc₁_nlt⟩ := h_cap
-            obtain ⟨c₂, hc₂_mem, hc₂_nlt⟩ := h_comp
-            have hc₁_ge := ord.le_of_not_lt hc₁_nlt
-            have hc₂_ge := ord.le_of_not_lt hc₂_nlt
-            exact Or.inl (Or.inr (fun s hs ↦ by
-              have h_le_sm := hm_max' s ((mem_symdiff_iff X Y s).mp hs)
-              exact ⟨⟨c₁, by rw [Finset.inter_comm]; exact hc₁_mem,
-                      ord.le_trans s m c₁ h_le_sm hc₁_ge⟩,
-                     ⟨c₂, by rw [Finset.union_comm]; exact hc₂_mem,
-                      ord.le_trans s m c₂ h_le_sm hc₂_ge⟩⟩))
-      · -- ∃ x₀ ∈ X\Y with ¬(lt x₀ m): equivCond1
-        push Not at h_all_xy
-        obtain ⟨x₀, hx₀_mem, hx₀_nlt⟩ := h_all_xy
-        have hx₀_ge := ord.le_of_not_lt hx₀_nlt
-        exact Or.inl (Or.inl
-          ⟨fun x hx ↦ ⟨m, hm_yx,
-              hm_max' x (Finset.mem_union.mpr (Or.inl hx))⟩,
-           fun y hy ↦ ⟨x₀, hx₀_mem,
-              ord.le_trans y m x₀
-                (hm_max' y (Finset.mem_union.mpr (Or.inr hy))) hx₀_ge⟩⟩)
-
-/-! ### Transitivity -/
-
-/-- ∼ is transitive on field-subsets, via trichotomy and respect for equivalence. -/
-theorem degreeEquiv_trans (X Y Z : Finset I)
-    (hXf : X ⊆ field ord i) (hYf : Y ⊆ field ord i) (hZf : Z ⊆ field ord i) :
-    degreeEquiv ord i X Y → degreeEquiv ord i Y Z →
-    degreeEquiv ord i X Z := by
-  intro hxy hyz
-  by_contra h_neq
-  rcases strictlyBetter_total ord i X Z hXf hZf with h | h | h
-  · exact h_neq h
-  · -- X ⊐ Z, Z ∼ Y → X ⊐ Y, contradicts X ∼ Y
-    exact degreeEquiv_not_strictlyBetter ord i X Y hxy
-      (strictlyBetter_respects_right ord i X Z Y hXf hZf hYf h
-        (degreeEquiv_symm ord i Y Z hyz))
-  · -- Z ⊐ X, X ∼ Y → Z ⊐ Y, contradicts Y ∼ Z
-    exact degreeEquiv_not_strictlyBetter ord i Z Y
-      (degreeEquiv_symm ord i Y Z hyz)
-      (strictlyBetter_respects_right ord i Z X Y hZf hXf hYf h hxy)
-
-/-- ∼ as a `Setoid` on field-subsets (transitivity needs the field bound). -/
-def metalinguisticSetoid :
-    Setoid {X : Finset I // X ⊆ field ord i} where
-  r X Y := degreeEquiv ord i X.1 Y.1
-  iseqv := {
-    refl := fun X ↦ degreeEquiv_refl ord i X.1
-    symm := fun {X Y} h ↦ degreeEquiv_symm ord i X.1 Y.1 h
-    trans := fun {X Y Z} hxy hyz ↦
-      degreeEquiv_trans ord i X.1 Y.1 Z.1 X.2 Y.2 Z.2 hxy hyz
-  }
-
-end DegreeTheory
-
-/-! ### Metalinguistic degrees -/
-
-/-- Metalinguistic degrees are the ∼-classes of sets of interpretations. The degree of a sentence is
-`deg` of its denotation (`formulaDeg`). -/
-def MetaDegree (I : Type*) [Fintype I] [DecidableEq I]
-    (ord : SemanticOrdering I) (i : I) :=
-  Quotient (metalinguisticSetoid ord i)
-
-/-- The metalinguistic degree of an interpretation set. -/
-def deg {I : Type*} [Fintype I] [DecidableEq I]
-    (ord : SemanticOrdering I) (i : I)
-    (X : Finset I) (hX : X ⊆ field ord i) :
-    MetaDegree I ord i :=
-  Quotient.mk (metalinguisticSetoid ord i) ⟨X, hX⟩
-/-! ### The comparative and the equative on degrees -/
-
-/-- `j` is in the field `I_i` iff `j ≤ i`. -/
-private theorem mem_field_iff {I : Type*} [Fintype I] [DecidableEq I]
-    {ord : SemanticOrdering I} {i j : I} :
-    j ∈ field ord i ↔ ord.le j i := by
-  simp [field]
-
-/-- `j` is in the denotation of `φ` at `i` iff `j ≤ i` and `φ` is true at `j`. -/
-private theorem mem_denotation_iff {L : Language} {I W E : Type*}
-    [Fintype I] [DecidableEq I]
-    {interp : I → W → L.Structure E}
-    {φ : ComparativeFormula L E}
-    {ord : SemanticOrdering I} {i j : I} {w : W} :
-    j ∈ denotation interp ord i φ w ↔
-    ord.le j i ∧ EvalRevised interp φ ord j w := by
-  simp [denotation, field]
-
-noncomputable section DegreeBridges
-
-variable {L : Language} {I W E : Type*} [Fintype I] [DecidableEq I]
-  (interp : I → W → L.Structure E) (ord : SemanticOrdering I) (i : I)
-
-/-- The metalinguistic degree of a formula's denotation. -/
-def formulaDeg (φ : ComparativeFormula L E) (w : W) : MetaDegree I ord i :=
-  deg ord i (denotation interp ord i φ w) (denotation_subset_field interp ord i φ w)
-
-variable (A B : ComparativeFormula L E) (w : W)
-
-/-- revised MC holds iff denotation of A ⊐ denotation of B. -/
-theorem mc_iff_degree_gt :
-    EvalRevised interp (.comp A B) ord i w ↔
-    strictlyBetter ord i (denotation interp ord i A w)
-      (denotation interp ord i B w) := by
-  rw [evalRevised_mc_iff]
-  constructor
-  · rintro ⟨i', h_le, h_A, h_B, h_dom⟩
-    refine ⟨i', Finset.mem_sdiff.mpr
-        ⟨mem_denotation_iff.mpr ⟨h_le, h_A⟩,
-         fun h ↦ h_B (mem_denotation_iff.mp h).2⟩,
-      mem_field_iff.mpr h_le, ?_, ?_⟩
-    · intro i'' h_mem
-      obtain ⟨h_inY, h_ninX⟩ := Finset.mem_sdiff.mp h_mem
-      obtain ⟨h_le'', h_B''⟩ := mem_denotation_iff.mp h_inY
-      rcases h_dom with h1 | h2
-      · exact h1 i'' h_le'' h_B''
-      · exact h2 i'' h_le'' fun h_A'' ↦ h_ninX (mem_denotation_iff.mpr ⟨h_le'', h_A''⟩)
-    · rcases h_dom with h1 | h2
-      · exact Or.inl fun i'' h_mem ↦
-          h1 i'' (mem_denotation_iff.mp (Finset.mem_inter.mp h_mem).2).1
-            (mem_denotation_iff.mp (Finset.mem_inter.mp h_mem).2).2
-      · refine Or.inr fun i'' h_mem ↦ ?_
-        have h_sd := Finset.mem_sdiff.mp h_mem
-        exact h2 i'' (mem_field_iff.mp h_sd.1) fun h_A'' ↦
-          h_sd.2 (Finset.mem_union.mpr
-            (Or.inl (mem_denotation_iff.mpr ⟨mem_field_iff.mp h_sd.1, h_A''⟩)))
-  · rintro ⟨i', h_sdiff, h_field, h_ymx, h_inner⟩
-    obtain ⟨h_inX, h_ninY⟩ := Finset.mem_sdiff.mp h_sdiff
-    obtain ⟨h_le, h_A⟩ := mem_denotation_iff.mp h_inX
-    have h_B : ¬ EvalRevised interp B ord i' w :=
-      fun h ↦ h_ninY (mem_denotation_iff.mpr ⟨h_le, h⟩)
-    refine ⟨i', h_le, h_A, h_B, ?_⟩
-    rcases h_inner with h1 | h2
-    · left; intro i'' h_le'' h_B''
-      by_cases h_A'' : EvalRevised interp A ord i'' w
-      · exact h1 i'' (Finset.mem_inter.mpr
-          ⟨mem_denotation_iff.mpr ⟨h_le'', h_A''⟩,
-           mem_denotation_iff.mpr ⟨h_le'', h_B''⟩⟩)
-      · exact h_ymx i'' (Finset.mem_sdiff.mpr
-          ⟨mem_denotation_iff.mpr ⟨h_le'', h_B''⟩,
-           fun h ↦ h_A'' (mem_denotation_iff.mp h).2⟩)
-    · right; intro i'' h_le'' h_A''
-      by_cases h_B'' : EvalRevised interp B ord i'' w
-      · exact h_ymx i'' (Finset.mem_sdiff.mpr
-          ⟨mem_denotation_iff.mpr ⟨h_le'', h_B''⟩,
-           fun h ↦ h_A'' (mem_denotation_iff.mp h).2⟩)
-      · exact h2 i'' (Finset.mem_sdiff.mpr
-          ⟨mem_field_iff.mpr h_le'',
-           fun h ↦ (Finset.mem_union.mp h).elim
-             (fun h ↦ h_A'' (mem_denotation_iff.mp h).2)
-             (fun h ↦ h_B'' (mem_denotation_iff.mp h).2)⟩)
-
-/-- The equative holds iff the denotations have the same degree, which connects `EvalRevised` to the
-algebraic structure of degrees. The forward direction uses `strictlyBetter_total`. -/
-theorem me_iff_same_degree :
-    EvalRevised interp (A.equi B) ord i w ↔
-    degreeEquiv ord i (denotation interp ord i A w)
-      (denotation interp ord i B w) := by
-  have hX := denotation_subset_field interp ord i A w
-  have hY := denotation_subset_field interp ord i B w
-  constructor
-  · intro h
-    obtain ⟨h1, h2⟩ : ¬ EvalRevised interp (.comp A B) ord i w ∧
-        ¬ EvalRevised interp (.comp B A) ord i w := h
-    rcases strictlyBetter_total ord i _ _ hX hY with h | h | h
-    · exact h
-    · exact absurd ((mc_iff_degree_gt interp ord i A B w).mpr h) h1
-    · exact absurd ((mc_iff_degree_gt interp ord i B A w).mpr h) h2
-  · intro h_eq
-    exact show ¬ EvalRevised interp (.comp A B) ord i w ∧
-        ¬ EvalRevised interp (.comp B A) ord i w from
-      ⟨fun h ↦ degreeEquiv_not_strictlyBetter ord i _ _ h_eq
-          ((mc_iff_degree_gt interp ord i A B w).mp h),
-       fun h ↦ degreeEquiv_not_strictlyBetter ord i _ _
-          (degreeEquiv_symm ord i _ _ h_eq)
-          ((mc_iff_degree_gt interp ord i B A w).mp h)⟩
-
-end DegreeBridges
-/-! ### The metalinguistic degree scale
-
-The results above make `MetaDegree` a bounded linear order, a scale in the degree
-substrate's sense. The instances below package that, and
-`mc_iff_formulaDeg_lt` cashes it out: the revised MC is the point-standard
-comparative of degree semantics over the measure function `formulaDeg`. -/
-
-noncomputable section Scale
-
-variable {L : Language} {I W E : Type*} [Fintype I] [DecidableEq I]
-  (interp : I → W → L.Structure E) (ord : SemanticOrdering I) (i : I)
-
-instance [DecidableRel ord.le] (X Y : Finset I) : Decidable (equivCond1 ord X Y) := by
-  unfold equivCond1; infer_instance
-
-instance [DecidableRel ord.le] (X Y : Finset I) : Decidable (equivCond2 ord i X Y) := by
-  unfold equivCond2; infer_instance
-
-instance [DecidableRel ord.le] (X Y : Finset I) : Decidable (degreeEquiv ord i X Y) := by
-  unfold degreeEquiv; infer_instance
-
-instance [DecidableRel ord.le] (X Y : Finset I) : Decidable (strictlyBetter ord i X Y) := by
-  unfold strictlyBetter; infer_instance
-
-/-- nothing is strictly better than the full field `I_i`
-(packaged as `OrderTop` below). -/
-theorem not_strictlyBetter_field (X : Finset I) (hX : X ⊆ field ord i) :
-    ¬ strictlyBetter ord i X (field ord i) := by
-  rintro ⟨i', hi', -⟩
-  exact (Finset.mem_sdiff.mp hi').2 (hX (Finset.mem_sdiff.mp hi').1)
-
-/-- the empty set is strictly better than nothing
-(packaged as `OrderBot` below). -/
-theorem not_strictlyBetter_empty (X : Finset I) :
-    ¬ strictlyBetter ord i (∅ : Finset I) X := by
-  rintro ⟨i', hi', -⟩
-  simp at hi'
-
-/-- ⊐ is invariant under ∼ on both sides, stated as a congruence. -/
-theorem strictlyBetter_congr {X X' Y Y' : Finset I}
-    (hXf : X ⊆ field ord i) (hX'f : X' ⊆ field ord i)
-    (hYf : Y ⊆ field ord i) (hY'f : Y' ⊆ field ord i)
-    (hX : degreeEquiv ord i X X') (hY : degreeEquiv ord i Y Y') :
-    strictlyBetter ord i X Y ↔ strictlyBetter ord i X' Y' :=
-  ⟨fun h ↦ strictlyBetter_respects_right ord i X' Y Y' hX'f hYf hY'f
-      (strictlyBetter_respects_left ord i X Y X' hXf hYf hX'f h hX) hY,
-   fun h ↦ strictlyBetter_respects_right ord i X Y' Y hXf hY'f hYf
-      (strictlyBetter_respects_left ord i X' Y' X hX'f hY'f hXf h
-        (degreeEquiv_symm ord i X X' hX)) (degreeEquiv_symm ord i Y Y' hY)⟩
-
-instance [DecidableRel ord.le] : DecidableEq (MetaDegree I ord i) := fun d₁ d₂ ↦
-  Quotient.recOnSubsingleton₂ d₁ d₂ fun X Y ↦
-    decidable_of_iff (degreeEquiv ord i X.1 Y.1)
-      ⟨fun h ↦ Quotient.sound h, fun h ↦ Quotient.exact h⟩
-
-/-- In the scale order `deg X ≤ deg Y` iff `X` is not strictly better than `Y`, which is well
-defined on ∼-classes by `strictlyBetter_congr`. -/
-protected def MetaDegree.le (d₁ d₂ : MetaDegree I ord i) : Prop :=
-  Quotient.lift₂ (fun X Y ↦ ¬ strictlyBetter ord i X.1 Y.1)
-    (fun a₁ b₁ a₂ b₂ h₁ h₂ ↦ propext (not_congr
-      (strictlyBetter_congr ord i a₁.2 a₂.2 b₁.2 b₂.2 h₁ h₂))) d₁ d₂
-
-/-- `MetaDegree` is a linear order. Irreflexivity, transitivity and totality of ⊐ become the order
-axioms on the quotient. -/
-instance : LinearOrder (MetaDegree I ord i) where
+/-- The degrees form a linear order, the supplement's Fact 12: irreflexivity, transitivity and
+trichotomy of `⊐` become the order axioms on the quotient. -/
+noncomputable instance : LinearOrder (MetaDegree ord i) where
   le := MetaDegree.le ord i
-  le_refl d := Quotient.inductionOn d fun X ↦ strictlyBetter_irrefl ord i X.1
-  le_trans d₁ d₂ d₃ := Quotient.inductionOn₃ d₁ d₂ d₃ fun X Y Z h₁ h₂ hXZ ↦ by
-    rcases strictlyBetter_total ord i X.1 Y.1 X.2 Y.2 with heq | hXY | hYX
-    · exact h₂ (strictlyBetter_respects_left ord i X.1 Z.1 Y.1 X.2 Z.2 Y.2 hXZ heq)
-    · exact h₁ hXY
-    · exact h₂ (strictlyBetter_trans ord i Y.1 X.1 Z.1 hYX hXZ)
+  le_refl d := Quotient.inductionOn d fun _ ↦ not_revisedComp_self
+  le_trans d₁ d₂ d₃ := Quotient.inductionOn₃ d₁ d₂ d₃ fun X Y _ h₁ h₂ hXZ ↦ by
+    rcases revisedEqui_or_revisedComp_or_revisedComp ord (· ∈ X) (· ∈ Y) i with h | h | h
+    exacts [h₂ (hXZ.of_revisedEqui_left h), h₁ h, h₂ (h.trans hXZ)]
   le_antisymm d₁ d₂ := Quotient.inductionOn₂ d₁ d₂ fun X Y h₁ h₂ ↦ by
-    rcases strictlyBetter_total ord i X.1 Y.1 X.2 Y.2 with heq | hXY | hYX
-    · exact Quotient.sound heq
-    · exact absurd hXY h₁
-    · exact absurd hYX h₂
-  le_total d₁ d₂ := Quotient.inductionOn₂ d₁ d₂ fun X Y ↦ by
-    by_cases h : strictlyBetter ord i X.1 Y.1
-    · exact Or.inr fun hYX ↦ strictlyBetter_irrefl ord i X.1
-        (strictlyBetter_trans ord i X.1 Y.1 X.1 h hYX)
-    · exact Or.inl h
+    rcases revisedEqui_or_revisedComp_or_revisedComp ord (· ∈ X) (· ∈ Y) i with h | h | h
+    exacts [Quotient.sound h, (h₁ h).elim, (h₂ h).elim]
+  le_total d₁ d₂ := Quotient.inductionOn₂ d₁ d₂ fun _ _ ↦ (em _).elim
+    (fun h ↦ .inr fun h' ↦ not_revisedComp_self (h.trans h')) .inl
   toDecidableLE := Classical.decRel _
 
-/-- The degree of the tautology is ⊤ and that of the contradiction is ⊥. -/
-instance : BoundedOrder (MetaDegree I ord i) where
-  top := deg ord i (field ord i) (Finset.Subset.refl _)
-  le_top d := Quotient.inductionOn d fun X ↦ not_strictlyBetter_field ord i X.1 X.2
-  bot := deg ord i ∅ (Finset.empty_subset _)
-  bot_le d := Quotient.inductionOn d fun X ↦ not_strictlyBetter_empty ord i X.1
+/-- The top degree is that of the cone `I_i` and the bottom degree that of `∅`, the supplement's
+Fact 13. -/
+noncomputable instance : BoundedOrder (MetaDegree ord i) where
+  top := deg ord i {j | ord.le j i}
+  le_top d := Quotient.inductionOn d fun _ ⟨_, ha, _, hn, _⟩ ↦ hn ha
+  bot := deg ord i ∅
+  bot_le d := Quotient.inductionOn d fun _ ⟨a, _, h, _⟩ ↦ Set.notMem_empty a h
 
-@[simp] theorem deg_le_deg_iff {X Y : Finset I}
-    (hX : X ⊆ field ord i) (hY : Y ⊆ field ord i) :
-    deg ord i X hX ≤ deg ord i Y hY ↔ ¬ strictlyBetter ord i X Y := Iff.rfl
+@[simp] theorem deg_le_deg_iff {X Y : Set I} :
+    deg ord i X ≤ deg ord i Y ↔ ¬ RevisedComp ord.le (· ∈ X) (· ∈ Y) i :=
+  Iff.rfl
 
-/-- The strict order on metalinguistic degrees is exactly ⊐ with the arguments flipped, so the
-degree of `Y` lies below that of `X` iff `X` is strictly better. -/
-theorem deg_lt_deg_iff {X Y : Finset I}
-    (hX : X ⊆ field ord i) (hY : Y ⊆ field ord i) :
-    deg ord i Y hY < deg ord i X hX ↔ strictlyBetter ord i X Y := by
-  rw [lt_iff_le_not_ge]
-  constructor
-  · rintro ⟨-, h⟩
-    exact not_not.mp h
-  · intro h
-    exact ⟨fun hYX ↦ strictlyBetter_irrefl ord i Y
-        (strictlyBetter_trans ord i Y X Y hYX h), not_not.mpr h⟩
+theorem deg_lt_deg_iff {X Y : Set I} :
+    deg ord i Y < deg ord i X ↔ RevisedComp ord.le (· ∈ X) (· ∈ Y) i := by
+  rw [lt_iff_le_not_ge, deg_le_deg_iff, deg_le_deg_iff, not_not]
+  exact ⟨And.right, fun h ↦ ⟨fun h' ↦ not_revisedComp_self (h'.trans h), h⟩⟩
+
+end Degrees
+
+variable {L : Language} {W E : Type*} (interp : I → W → L.Structure E)
+
+/-- The denotation `⟦φ⟧ᵢ` of a formula, the interpretations ranked no higher than `i` at which it
+is true under the revised semantics. -/
+def denotation (φ : ComparativeFormula L E) (w : W) : Set I :=
+  {j | ord.le j i ∧ EvalRevised interp φ ord j w}
+
+/-- The metalinguistic degree of a formula is the degree of its denotation. -/
+noncomputable def formulaDeg [Finite I] (φ : ComparativeFormula L E) (w : W) : MetaDegree ord i :=
+  deg ord i (denotation ord i interp φ w)
+
+variable {interp ord i} {A B : ComparativeFormula L E} {w : W}
+
+private theorem mem_denotation_iff {φ : ComparativeFormula L E} {j : I} (hj : ord.le j i) :
+    EvalRevised interp φ ord j w ↔ j ∈ denotation ord i interp φ w :=
+  (and_iff_right hj).symm
+
+/-- The revised comparative compares the denotations, the supplement's Fact 10. -/
+theorem evalRevised_comp_iff_denotation : EvalRevised interp (.comp A B) ord i w ↔
+    RevisedComp ord.le (· ∈ denotation ord i interp A w) (· ∈ denotation ord i interp B w) i :=
+  RevisedComp.congr (fun _ ↦ mem_denotation_iff) fun _ ↦ mem_denotation_iff
+
+variable [Finite I]
+
+/-- The revised equative holds iff the two formulas have the same degree, the supplement's
+Fact 9. -/
+theorem evalRevised_equi_iff_formulaDeg_eq :
+    EvalRevised interp (A.equi B) ord i w ↔
+      formulaDeg ord i interp A w = formulaDeg ord i interp B w := by
+  rw [evalRevised_equi_iff interp, formulaDeg, formulaDeg, deg_eq_deg_iff]
+  exact RevisedEqui.congr (fun _ ↦ mem_denotation_iff) fun _ ↦ mem_denotation_iff
 
 /-- The revised metalinguistic comparative is the point-standard comparative of degree semantics
 over the metalinguistic measure function `formulaDeg`, which is the paper's (59). Metagradability
 thereby instantiates the central object of degree semantics, a measure `μ : E → D` into a bounded
 linear scale, with the formulas as `E` and the `MetaDegree` scale as `D`. -/
-theorem mc_iff_formulaDeg_lt (A B : ComparativeFormula L E) (w : W) :
-    EvalRevised interp (.comp A B) ord i w ↔
-    formulaDeg interp ord i B w < formulaDeg interp ord i A w := by
-  rw [mc_iff_degree_gt]
-  exact (deg_lt_deg_iff ord i (denotation_subset_field interp ord i A w)
-    (denotation_subset_field interp ord i B w)).symm
+theorem mc_iff_formulaDeg_lt : EvalRevised interp (.comp A B) ord i w ↔
+    formulaDeg ord i interp B w < formulaDeg ord i interp A w := by
+  rw [evalRevised_comp_iff_denotation, formulaDeg, formulaDeg, deg_lt_deg_iff]
 
-end Scale
+end DegreeTheory
 
 /-! ### Finite models -/
 
@@ -1553,27 +1192,25 @@ inductive Entity | ann
 inductive I3 | i0 | i1 | i2
   deriving DecidableEq, Repr, Fintype
 
+/-- The rank of each of the three interpretations. -/
+def rank₃ : I3 → ℕ
+  | .i0 => 0
+  | .i1 => 1
+  | .i2 => 2
+
 /-- The linear ordering `i0 < i1 < i2`. -/
-def ord₃ : SemanticOrdering I3 :=
-  .ofBool
-    (fun i j ↦ match i, j with
-      | .i0, _ => true
-      | .i1, .i0 => false
-      | .i1, _ => true
-      | .i2, .i2 => true
-      | .i2, _ => false)
-    (by intro i; cases i <;> rfl)
-    (by intro i j k hij hjk; cases i <;> cases j <;> cases k <;> simp_all)
-    (by intro i j; cases i <;> cases j <;> simp)
+def ord₃ : SemanticOrdering I3 := .ofRank rank₃
 
-instance : DecidableRel ord₃.le := fun _ _ ↦ inferInstanceAs (Decidable (_ = true))
+instance : DecidableRel ord₃.le := inferInstanceAs (DecidableRel (SemanticOrdering.ofRank rank₃).le)
 
-/-- An interpretation family over a monadic language from a truth table. -/
-@[instance_reducible] def interpOf {Sym I E : Type*} (f : I → Sym → E → Bool) :
+/-- An interpretation family over a monadic language, from the extension of each predicate at each
+interpretation. -/
+@[instance_reducible] def interpOf {Sym I E : Type*} (ext : I → Sym → Finset E) :
     I → W → (Language.monadic Sym).Structure E :=
-  fun i _ ↦ monadic.structure fun P e ↦ f i P e = true
+  fun i _ ↦ monadic.structure fun P e ↦ e ∈ ext i P
 
-instance {Sym I E : Type*} (f : I → Sym → E → Bool) : DecidableAtoms (interpOf f) :=
+instance {Sym I E : Type*} [DecidableEq E] (ext : I → Sym → Finset E) :
+    DecidableAtoms (interpOf ext) :=
   inferInstance
 
 /-- The predicates *linguist* and *philosopher*. -/
@@ -1588,19 +1225,15 @@ abbrev Pa : ComparativeFormula (Language.monadic Pred) Entity := .matom Pred.phi
 
 /-- Ann is a philosopher at `i0`, a linguist at `i1`, both at `i2`. -/
 @[instance_reducible] def both : I3 → W → (Language.monadic Pred).Structure Entity :=
-  interpOf fun i P _ ↦ match i, P with
-    | .i0, .philosopher => true
-    | .i0, .linguist => false
-    | .i1, .linguist => true
-    | .i1, .philosopher => false
-    | .i2, _ => true
+  interpOf fun i P ↦ match i, P with
+    | .i0, .philosopher | .i1, .linguist | .i2, _ => {.ann}
+    | _, _ => ∅
 
 /-- Ann is a philosopher at `i0`, a linguist at `i1`, neither at `i2`. -/
 @[instance_reducible] def neither : I3 → W → (Language.monadic Pred).Structure Entity :=
-  interpOf fun i P _ ↦ match i, P with
-    | .i0, .philosopher => true
-    | .i1, .linguist => true
-    | _, _ => false
+  interpOf fun i P ↦ match i, P with
+    | .i0, .philosopher | .i1, .linguist => {.ann}
+    | _, _ => ∅
 
 /-- *Ann is more a linguist than a philosopher* is consistent with her being both and with her being
 neither, Observation 1. -/
@@ -1616,19 +1249,16 @@ inductive I2 | j0 | j1
   deriving DecidableEq, Repr, Fintype
 
 /-- The ordering with `j0` and `j1` tied at the top. -/
-def tiedOrd : SemanticOrdering I2 :=
-  .ofBool (fun _ _ ↦ true) (by intro i; cases i <;> rfl)
-    (by intro i j k _ _; cases i <;> cases j <;> cases k <;> rfl)
-    (by intro i j; left; cases i <;> cases j <;> rfl)
+def tiedOrd : SemanticOrdering I2 := .ofRank fun _ ↦ (0 : ℕ)
 
-instance : DecidableRel tiedOrd.le := fun _ _ ↦ inferInstanceAs (Decidable (_ = true))
+instance : DecidableRel tiedOrd.le :=
+  inferInstanceAs (DecidableRel (SemanticOrdering.ofRank fun _ : I2 ↦ (0 : ℕ)).le)
 
 /-- Ann is a linguist at `j0` and a philosopher at `j1`. -/
 @[instance_reducible] def tied : I2 → W → (Language.monadic Pred).Structure Entity :=
-  interpOf fun i P _ ↦ match i, P with
-    | .j0, .linguist => true
-    | .j1, .philosopher => true
-    | _, _ => false
+  interpOf fun i P ↦ match i, P with
+    | .j0, .linguist | .j1, .philosopher => {.ann}
+    | _, _ => ∅
 
 /-- *Ann is as much a linguist as not* is consistent, a borderline case, Observation 5. -/
 theorem equi_not_consistent : Eval tied (La.equi (.not La)) tiedOrd .j0 .w0 := by decide
@@ -1650,19 +1280,13 @@ theorem modus_tollens_not_accepted :
 
 /-- The distance function on `ord₃` whose thresholds reach one level down. -/
 def dist₃ : DistanceFunction I3 ord₃ where
-  close i i' := (match i, i' with
-    | .i0, .i0 => true
-    | .i1, .i0 => true
-    | .i1, .i1 => true
-    | .i2, .i1 => true
-    | .i2, .i2 => true
-    | _, _ => false : Bool) = true
+  close i i' := rank₃ i' ≤ rank₃ i ∧ rank₃ i ≤ rank₃ i' + 1
   centered := by decide
   topBounded := by decide
   convex := by decide
   noncontractive := by decide
 
-instance : DecidableRel dist₃.close := fun _ _ ↦ inferInstanceAs (Decidable (_ = true))
+instance : DecidableRel dist₃.close := fun _ _ ↦ inferInstanceAs (Decidable (_ ∧ _))
 
 /-- *sorta A* and *mostly A* are consistent with `¬A`, since at the top of the model where Ann is
 neither, a close lower level makes her a linguist. -/
@@ -1697,11 +1321,10 @@ abbrev Tb : ComparativeFormula (Language.monadic Pred1) Entity2 := .matom Pred1.
 
 /-- The nested extensions of *tall* have nobody at `i0`, Ann at `i1` and both at `i2`. -/
 @[instance_reducible] def nested : I3 → W → (Language.monadic Pred1).Structure Entity2 :=
-  interpOf fun i _ e ↦ match i, e with
-    | .i0, _ => false
-    | .i1, .ann => true
-    | .i1, .ben => false
-    | .i2, _ => true
+  interpOf fun i _ ↦ match i with
+    | .i0 => ∅
+    | .i1 => {.ann}
+    | .i2 => {.ann, .ben}
 
 /-- No Reversal holds for the nested extensions, in the direction the bridge consumes. -/
 theorem noReversal_nested : NoReversal nested ord₃ Pred1.tall .w0 .ben .ann := by decide
@@ -1713,12 +1336,10 @@ theorem ann_taller_nested :
 
 /-- The reversing extensions of *tall* have Ann at `i0`, Ben at `i1` and both at `i2`. -/
 @[instance_reducible] def reversing : I3 → W → (Language.monadic Pred1).Structure Entity2 :=
-  interpOf fun i _ e ↦ match i, e with
-    | .i0, .ann => true
-    | .i0, .ben => false
-    | .i1, .ann => false
-    | .i1, .ben => true
-    | .i2, _ => true
+  interpOf fun i _ ↦ match i with
+    | .i0 => {.ann}
+    | .i1 => {.ben}
+    | .i2 => {.ann, .ben}
 
 /-- Without No Reversal the comparative and the delineation comparative come apart, since the
 reversing model violates it, the comparative fails at the top, and the delineation comparative holds
@@ -1742,52 +1363,43 @@ inductive Pred3 | linguist | philosopher | psychologist
 inductive I4 | i | j | k | l
   deriving DecidableEq, Repr, Fintype
 
-/-- The ordering `l < j ≡ k < i`; the tie in the middle is what makes both equatives hold. -/
-def ord₄ : SemanticOrdering I4 :=
-  .ofBool
-    (fun x y ↦ match x, y with
-      | .l, _ => true
-      | .j, .l => false
-      | .j, _ => true
-      | .k, .l => false
-      | .k, _ => true
-      | .i, .i => true
-      | .i, _ => false)
-    (by intro x; cases x <;> rfl)
-    (by intro x y z hxy hyz; cases x <;> cases y <;> cases z <;> simp_all)
-    (by intro x y; cases x <;> cases y <;> simp)
+/-- The ranks of the supplement's Figure 1, with `i`, `j` and `k` tied above `l`. -/
+def rank₄ : I4 → ℕ
+  | .l => 0
+  | _ => 1
 
-instance : DecidableRel ord₄.le := fun _ _ ↦ inferInstanceAs (Decidable (_ = true))
+/-- The ordering of the supplement's Figure 1. -/
+def ord₄ : SemanticOrdering I4 := .ofRank rank₄
 
-/-- In the counterexample of the supplement Ann is all three at `i`, a linguist and psychologist at
-`j`, a philosopher at `k`, and a linguist and philosopher at `l`. -/
+instance : DecidableRel ord₄.le := inferInstanceAs (DecidableRel (SemanticOrdering.ofRank rank₄).le)
+
+/-- The model of the supplement's Figure 1. Ann is a linguist and a philosopher at `i`, only a
+philosopher at `j`, a linguist and a psychologist at `k`, and a philosopher and a psychologist at
+`l`. -/
 @[instance_reducible] def counterexample : I4 → W → (Language.monadic Pred3).Structure Entity :=
-  interpOf fun idx P _ ↦ match idx, P with
-    | .i, _ => true
-    | .j, .philosopher => false
-    | .j, _ => true
-    | .k, .philosopher => true
-    | .k, _ => false
-    | .l, .psychologist => false
-    | .l, _ => true
+  interpOf fun x P ↦ match x, P with
+    | .i, .linguist | .i, .philosopher | .j, .philosopher | .k, .linguist | .k, .psychologist
+    | .l, .philosopher | .l, .psychologist => {.ann}
+    | _, _ => ∅
 
 /-- *Ann is a linguist*, *a philosopher*, *a psychologist*. -/
 abbrev La₄ : ComparativeFormula (Language.monadic Pred3) Entity := .matom Pred3.linguist .ann
 abbrev Pa₄ : ComparativeFormula (Language.monadic Pred3) Entity := .matom Pred3.philosopher .ann
 abbrev Ca₄ : ComparativeFormula (Language.monadic Pred3) Entity := .matom Pred3.psychologist .ann
 
-/-- The basic equative is not transitive. Ann is as much a linguist as a philosopher and as much a
-philosopher as a psychologist, but she is more a linguist than a psychologist, vacuously, since no
-ranked interpretation makes her a psychologist and not a linguist. -/
+/-- The basic equative is not transitive. At the top of Figure 1 Ann is as much a linguist as a
+philosopher and as much a philosopher as a psychologist, but she is more a linguist than a
+psychologist, since the one interpretation making her a psychologist and not a linguist lies below
+`i`, which makes her a linguist and not a psychologist. -/
 theorem equi_not_trans :
     Eval counterexample (La₄.equi Pa₄) ord₄ .i .w0 ∧
       Eval counterexample (Pa₄.equi Ca₄) ord₄ .i .w0 ∧
       Eval counterexample (.comp La₄ Ca₄) ord₄ .i .w0 := by
   decide
 
-/-- The revised semantics blocks the vacuous witness and restores transitivity on the same
-model. -/
-theorem equiRevised_trans :
+/-- The revised semantics makes Ann as much a linguist as a psychologist at the top of Figure 1,
+since `i` is tied with `k`, which makes her both, and with `j`, which makes her neither. -/
+theorem evalRevised_equi_counterexample :
     EvalRevised counterexample (La₄.equi Pa₄) ord₄ .i .w0 ∧
       EvalRevised counterexample (Pa₄.equi Ca₄) ord₄ .i .w0 ∧
       EvalRevised counterexample (La₄.equi Ca₄) ord₄ .i .w0 := by
