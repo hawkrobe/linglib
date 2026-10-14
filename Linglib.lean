@@ -24,7 +24,6 @@ import Linglib.Core.Algebra.RootedTree.Coproduct.Pruning
 import Linglib.Core.Algebra.RootedTree.Coproduct.PruningDuality
 import Linglib.Core.Algebra.RootedTree.GrossmanLarson.Basic
 import Linglib.Core.Algebra.RootedTree.GrossmanLarson.Pairing
-import Linglib.Core.Algebra.RootedTree.GrossmanLarson.PairingMul
 import Linglib.Core.Algebra.RootedTree.HopfAlgebra
 import Linglib.Core.Algebra.RootedTree.PreLie.Graft
 import Linglib.Core.Algebra.RootedTree.PreLie.InsertSum

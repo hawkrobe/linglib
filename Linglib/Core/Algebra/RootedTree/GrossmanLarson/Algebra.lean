@@ -21,7 +21,6 @@ This file proves that the Grossman–Larson product is associative, makes `Gross
 * `UnorderedTree.productMultiset_assoc`: the product is associative on basis forests.
 * `GrossmanLarson.product_assoc`: `(x ⋆ y) ⋆ z = x ⋆ (y ⋆ z)`.
 * `GrossmanLarson.instSemiring`, `GrossmanLarson.instAlgebra`, `GrossmanLarson.instRing`.
-* `GrossmanLarson.counit`: the counit, as an algebra map to `R`.
 * `GrossmanLarson.ιLie`: the one-tree forests as a map of Lie algebras from the commutator of the
   grafting product to the commutator of the Grossman–Larson product. It extends to the map
   `UniversalEnvelopingAlgebra.lift R ιLie` from the enveloping algebra.
@@ -38,7 +37,6 @@ every commutative semiring.
 
 * `UniversalEnvelopingAlgebra.lift R ιLie` is an isomorphism: Oudom and Guin's identification of
   their product with the enveloping algebra. Injectivity needs the Poincaré–Birkhoff–Witt theorem.
-* The deshuffle coproduct makes `GrossmanLarson R α` a Hopf algebra.
 
 ## References
 
@@ -121,14 +119,6 @@ noncomputable instance instSemiring : Semiring (GrossmanLarson R α) where
 
 noncomputable instance instAlgebra : Algebra R (GrossmanLarson R α) :=
   Algebra.ofModule smul_mul_assoc mul_smul_comm
-
-/-- The counit takes the coefficient of the empty forest. -/
-noncomputable def counit : GrossmanLarson R α →ₐ[R] R :=
-  .ofLinearMap (ConnesKreimer.counit.toLinearMap ∘ₗ linearEquiv.toLinearMap)
-    (by simp) fun x y ↦ counit_product _ _
-
-@[simp] theorem counit_apply (x : GrossmanLarson R α) :
-    counit x = ConnesKreimer.counit x.toConnesKreimer := rfl
 
 section Ring
 

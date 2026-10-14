@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Core.Algebra.RootedTree.GrossmanLarson.Algebra
+public import Linglib.Core.Algebra.RootedTree.GrossmanLarson.Bialgebra
 public import Linglib.Core.RingTheory.Bialgebra.Primitive
 
 /-!
@@ -14,9 +14,10 @@ public import Linglib.Core.RingTheory.Bialgebra.Primitive
 A linear functional on the Connes–Kreimer bialgebra is a dual primitive exactly when it vanishes
 on every forest that is not a single tree. The delta functionals `δ_T = lcoeff R {T}` of the trees
 are dual primitives, and the commutator of two of them counts single cuts. The symmetry-weighted
-pairing sends a tree `T` to a multiple of `δ_T`, and the bracket of the pre-Lie algebra of rooted
-trees to the bracket of dual primitives, in the opposite order. Chapoton and Livernet observe this
-identification with the Lie algebra that Connes and Kreimer find dual to their Hopf algebra.
+pairing sends the primitive elements of the Grossman–Larson bialgebra to dual primitives, and the
+bracket of the pre-Lie algebra of rooted trees to the bracket of dual primitives, in the opposite
+order. Chapoton and Livernet observe this identification with the Lie algebra that Connes and
+Kreimer find dual to their Hopf algebra.
 
 ## Main results
 
@@ -29,8 +30,9 @@ identification with the Lie algebra that Connes and Kreimer find dual to their H
 * `ConnesKreimer.autCard_mul_autCard_mul_countSingleCutsRho`: Hoffman's relation between the
   single cuts of `T` with crown `T₁` and trunk `T₂` and the graftings of `T₁` onto `T₂` that give
   `T`, each weighted by numbers of symmetries.
-* `GrossmanLarson.lie_toConv_pairing_ι`: the pairing takes the bracket of two elements of the
-  pre-Lie algebra of trees to the bracket of their images, in the opposite order.
+* `GrossmanLarson.isDualPrimitive_pairing`, `GrossmanLarson.lie_toConv_pairing_ι`: pairing with a
+  primitive element is a dual primitive, and on the pre-Lie algebra of trees the pairing takes
+  brackets to brackets, in the opposite order.
 
 ## Implementation notes
 
@@ -173,21 +175,25 @@ section CommSemiring
 
 variable [CommSemiring R]
 
-/-- Pairing with a tree is a dual primitive, a multiple of the delta functional of the tree. -/
-theorem isDualPrimitive_pairing_ofTree (T : UnorderedTree α) :
-    IsDualPrimitive R (pairing (R := R) (ofTree T)) := by
-  rw [← of'_singleton, pairing_of']
-  exact (isDualPrimitive_lcoeff_singleton T).smul _
+/-- Pairing with a primitive element of the Grossman–Larson bialgebra is a dual primitive of the
+Connes–Kreimer bialgebra. -/
+theorem isDualPrimitive_pairing {x : GrossmanLarson R α} (hx : IsPrimitiveElem R x) :
+    IsDualPrimitive R (pairing (R := R) x.toConnesKreimer) := by
+  have h (z : ConnesKreimer R (UnorderedTree α)) :
+      (pairing (R := R) ∘ₗ linearEquiv.toLinearMap).flip z = pairing z ∘ₗ linearEquiv.toLinearMap :=
+    LinearMap.ext fun _ ↦ pairing_symm _ _
+  exact hx.isDualPrimitive (p := pairing ∘ₗ linearEquiv.toLinearMap)
+    (fun a ↦ (pairing_symm 1 a).trans (pairing_one_right a)) (fun _ ↦ pairing_one_right _)
+    fun z w ↦ by simp only [h, toConv_pairing_mul]
 
-/-- Pairing with an element of the pre-Lie algebra of trees is a dual primitive. -/
-theorem isDualPrimitive_pairing_ι (x : ChapotonLivernet R α) :
-    IsDualPrimitive R (pairing (R := R) (ι x).toConnesKreimer) := by
-  induction x using ChapotonLivernet.induction_linear with
-  | zero => simp
-  | add x y hx hy => simpa using hx.add hy
-  | single T a =>
-    rw [ChapotonLivernet.single_eq_smul_of]
-    simpa using (isDualPrimitive_pairing_ofTree (R := R) T).smul a
+/-- Among the basis forests of the Grossman–Larson bialgebra, the primitive ones are the single
+trees. -/
+theorem isPrimitiveElem_of_iff [CharZero R] {F : Forest (UnorderedTree α)} :
+    IsPrimitiveElem R (of F : GrossmanLarson R α) ↔ F.card = 1 := by
+  refine ⟨fun h ↦ by_contra fun hF ↦ (forestAutCard_pos F).ne' ?_, fun hF ↦ ?_⟩
+  · simpa using isDualPrimitive_iff.1 (isDualPrimitive_pairing h) F hF
+  · obtain ⟨T, rfl⟩ := Multiset.card_eq_one.1 hF
+    exact isPrimitiveElem_of_singleton T
 
 end CommSemiring
 
