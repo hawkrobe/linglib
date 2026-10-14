@@ -6,14 +6,10 @@ public import Linglib.Phonology.OptimalityTheory.Constraint.ForbiddenPairs
 public import Linglib.Phonology.OptimalityTheory.Tableau
 
 /-!
-# Aissen 2003: Differential Object Marking
-[aissen-2003]
-
-Differential Object Marking: Iconicity vs. Economy. Natural Language &
-Linguistic Theory 21(3), 435–483.
+# Aissen (2003): Differential Object Marking: Iconicity vs. Economy
 
 The higher in prominence a direct object, the more likely it is to be overtly
-case-marked. [aissen-2003] derives this in OT: harmonic alignment of the
+case-marked. Aissen derives this in OT: harmonic alignment of the
 animacy and definiteness scales with the relational scale, locally conjoined
 with \*Ø_C, yields a fixed subhierarchy of iconicity constraints \*Oj/X & \*Ø_C
 ("penalize a zero-marked object at prominence X"), and a single economy
@@ -35,7 +31,6 @@ Boersma's sense) are noted in docstrings but not represented.
 - `dom_monotonicity_universal`, `dom_obligatory_zone_upperSet` — the paper's
   (33b): every attested obligatory-marking zone is an upper set in Figure 4's
   product prominence order.
-- `tableaux_1_2` — the Hebrew/Turkish minimal pair on specific indefinites.
 - `figure2_typology` / `figure2_languages` — the six interpolation points on
   the definiteness subhierarchy generate exactly the six cutoff systems,
   matched type-for-type to Kalkatungu, Catalan, Pitjantjatjara, Hebrew,
@@ -43,6 +38,10 @@ Boersma's sense) are noted in docstrings but not represented.
 - `figure3_typology` / `figure3_languages` — likewise for the animacy scale.
 - `two_dimensional_systems` — Hindi and both stages of Spanish need both
   scales.
+
+## References
+
+* [aissen-2003]
 -/
 
 @[expose] public section
@@ -72,6 +71,12 @@ def pitjantjatjaraDOM : MarkingPattern := .definitenessAtLeast .properName
 /-- Hebrew has *ʔet* obligatorily on pronoun, proper-name and definite objects (Figure 2,
 §4.1). -/
 def hebrewDOM : MarkingPattern := .definitenessAtLeast .definite
+
+/-- Hebrew's DOM distinguishes definites from indefinites, marking an object just when it is
+definite, pronouns and names included. -/
+theorem hebrew_marks_definites (a : Animacy) (d : DefinitenessScale) :
+    hebrewDOM a d = true ↔ d.definiteness = .definite := by
+  revert a d; decide
 
 /-- Turkish marks every object but the non-specific ones, so unlike Hebrew it marks specific
 indefinites obligatorily (Figure 2, Tableaux 1–2); the pattern is the fragment's. -/
@@ -104,15 +109,15 @@ optional on human non-specifics, animate definites and below, and inanimate defi
 excluded on other inanimates. -/
 def hindiDOM : MarkingPattern := fun a d ↦
   match a with
-  | .human     => decide (DefinitenessLevel.indefiniteSpecific ≤ d)
-  | .animate   => decide (DefinitenessLevel.properName ≤ d)
+  | .human     => decide (DefinitenessScale.indefiniteSpecific ≤ d)
+  | .animate   => decide (DefinitenessScale.properName ≤ d)
   | .inanimate => false
 
 /-- The Spanish of the Cantar de Mio Cid has *a* obligatorily on exactly the personal pronouns
 and proper names of humans and animals (§5.1, Figure 5), and optionally on human common
 NPs and geographic proper names. -/
 def cmcSpanishDOM : MarkingPattern := fun a d ↦
-  decide (Animacy.animate ≤ a) && decide (DefinitenessLevel.properName ≤ d)
+  decide (Animacy.animate ≤ a) && decide (DefinitenessScale.properName ≤ d)
 
 /-- Modern Spanish is the CMC system with \*STRUC_C demoted below the human-definite and
 human-specific constraints, so *a* is now also obligatory with definite and specific human
@@ -120,8 +125,8 @@ objects (§5.4, Figure 9). The obligatory grid coincides with Hindi's; the two d
 optional zones (Figure 7 against Figure 9). -/
 def spanishDOM : MarkingPattern := fun a d ↦
   match a with
-  | .human     => decide (DefinitenessLevel.indefiniteSpecific ≤ d)
-  | .animate   => decide (DefinitenessLevel.properName ≤ d)
+  | .human     => decide (DefinitenessScale.indefiniteSpecific ≤ d)
+  | .animate   => decide (DefinitenessScale.properName ≤ d)
   | .inanimate => false
 
 end DOMLanguages
@@ -143,7 +148,7 @@ theorem dom_monotonicity_universal :
 prominence order of Figure 4, which is (33b) order-theoretically. -/
 theorem dom_obligatory_zone_upperSet :
     ∀ p ∈ allDOMPatterns,
-      IsUpperSet {c : Animacy × DefinitenessLevel | p c.1 c.2 = true} :=
+      IsUpperSet {c : Animacy × DefinitenessScale | p c.1 c.2 = true} :=
   fun p hp ↦ p.monotoneP_iff_isUpperSet.mp (dom_monotonicity_universal p hp)
 
 /-- The Figure 2 and §5.3 systems are animacy-blind. -/
@@ -194,15 +199,15 @@ def markedWins (ranking : List (Constraint (L × Bool))) (ℓ : L) : Bool :=
 \*Oj/Spec & \*Ø_C and the zero parse wins; in Turkish the ranking is reversed and the marked
 parse wins. -/
 theorem tableaux_1_2 :
-    markedWins (interpolation DefinitenessLevel.all 3) .indefiniteSpecific = false ∧
-    markedWins (interpolation DefinitenessLevel.all 4) .indefiniteSpecific = true := by
+    markedWins (interpolation DefinitenessScale.all 3) .indefiniteSpecific = false ∧
+    markedWins (interpolation DefinitenessScale.all 4) .indefiniteSpecific = true := by
   constructor <;> decide
 
 /-- The six interpolation points on the definiteness subhierarchy of Figure 2 generate exactly
 the six cutoff systems, and no non-monotone pattern arises. -/
 theorem figure2_typology :
     (List.range 6).map
-        (fun k ↦ DefinitenessLevel.all.map (markedWins (interpolation DefinitenessLevel.all k)))
+        (fun k ↦ DefinitenessScale.all.map (markedWins (interpolation DefinitenessScale.all k)))
       = [[false, false, false, false, false],
          [true,  false, false, false, false],
          [true,  true,  false, false, false],
@@ -213,12 +218,12 @@ theorem figure2_typology :
 /-- Figure 2 cites "one language for each of the possible DOM types", and each cited
 language's obligatory grid is its interpolation type's predicted pattern. -/
 theorem figure2_languages :
-    (∀ a d, noDOM a d = markedWins (interpolation DefinitenessLevel.all 0) d) ∧
-    (∀ a d, catalanDOM a d = markedWins (interpolation DefinitenessLevel.all 1) d) ∧
-    (∀ a d, pitjantjatjaraDOM a d = markedWins (interpolation DefinitenessLevel.all 2) d) ∧
-    (∀ a d, hebrewDOM a d = markedWins (interpolation DefinitenessLevel.all 3) d) ∧
-    (∀ a d, turkishDOM a d = markedWins (interpolation DefinitenessLevel.all 4) d) ∧
-    (∀ a d, writtenJapaneseDOM a d = markedWins (interpolation DefinitenessLevel.all 5) d) := by
+    (∀ a d, noDOM a d = markedWins (interpolation DefinitenessScale.all 0) d) ∧
+    (∀ a d, catalanDOM a d = markedWins (interpolation DefinitenessScale.all 1) d) ∧
+    (∀ a d, pitjantjatjaraDOM a d = markedWins (interpolation DefinitenessScale.all 2) d) ∧
+    (∀ a d, hebrewDOM a d = markedWins (interpolation DefinitenessScale.all 3) d) ∧
+    (∀ a d, turkishDOM a d = markedWins (interpolation DefinitenessScale.all 4) d) ∧
+    (∀ a d, writtenJapaneseDOM a d = markedWins (interpolation DefinitenessScale.all 5) d) := by
   refine ⟨?_, ?_, ?_, ?_, ?_, ?_⟩ <;> decide
 
 /-- Persian's obligatory grid realizes the same interpolation type as Turkish's, since specific

@@ -6,7 +6,7 @@ public import Linglib.Semantics.Reference.Prominence
 public import Linglib.Semantics.Causation.Morphological
 
 /-!
-# Comrie 1989: Language Universals and Linguistic Typology
+# Comrie (1989): Language Universals and Linguistic Typology
 
 Three of the book's chapters make claims sharp enough to state. Case marking (chapter 6) serves
 first to discriminate the two arguments of a transitive clause: of the five ways the primitives
@@ -192,7 +192,7 @@ structure Marking where
   /-- The argument's animacy, where the language's marking consults it. -/
   animacy : Option AnimacyHierarchy
   /-- The argument's definiteness, where the language's marking consults it. -/
-  definiteness : Option DefinitenessLevel
+  definiteness : Option DefinitenessScale
   /-- The marking the position takes. -/
   marked : Marked
 
@@ -206,7 +206,7 @@ def Marking.ofRow (row : Datum) : List Marking :=
         row.parse? (p ++ "animacy") [("speaker", AnimacyHierarchy.speaker),
           ("addressee", .addressee), ("human", .human), ("higherAnimal", .higherAnimal),
           ("discreteInanimate", .discreteInanimate)],
-        row.parse? (p ++ "definiteness") [("personalPronoun", DefinitenessLevel.personalPronoun),
+        row.parse? (p ++ "definiteness") [("personalPronoun", DefinitenessScale.personalPronoun),
           ("properName", .properName), ("definite", .definite),
           ("indefiniteSpecific", .indefiniteSpecific), ("nonSpecific", .nonSpecific)],
         ← row.parse? (p ++ "marked")
