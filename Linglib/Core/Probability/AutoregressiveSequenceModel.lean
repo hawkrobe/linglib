@@ -46,7 +46,8 @@ by a divergent series suffices.
   ([du-etal-2023], Proposition 4.3).
 * `survival_le_pow`: a constant lower bound makes survival decay geometrically.
 * `isTight_iff_of_next_none_eq`: the criterion when the end probability depends only on length.
-* `tsum_length_mul_stringProb_le`: expected length is at most total survival.
+* `tsum_length_mul_stringProb_le`, `tsum_length_mul_stringProb_le_div`: expected length is at
+  most total survival, and at most `(1 - c) / c` under an end probability of at least `c`.
 * `stringProb_append`, `IsTight.after`, `IsTight.stringMeasure_setOf_prefix`: a string's
   probability factors through the model after its prefix, which inherits tightness, so in a tight
   model the strings extending a prefix have total probability its prefix probability.
@@ -400,6 +401,18 @@ theorem tsum_length_mul_stringProb_le :
   have hpos (k : ℕ) : j < k + (j + 1) := by omega
   simp only [hpos, ite_true]
   exact M.tsum_stopProb_add_le (j + 1)
+
+/-- An end probability of at least `c` after every prefix bounds the expected length by
+`(1 - c) / c`. -/
+theorem tsum_length_mul_stringProb_le_div {c : ℝ≥0∞} (hc : ∀ x : List α, c ≤ M.next x {none}) :
+    ∑' x, (x.length : ℝ≥0∞) * M.stringProb x ≤ (1 - c) / c := by
+  have hc1 : c ≤ 1 := (hc []).trans prob_le_one
+  calc ∑' x, (x.length : ℝ≥0∞) * M.stringProb x
+      ≤ ∑' n, M.survival (n + 1) := M.tsum_length_mul_stringProb_le
+    _ ≤ ∑' n, (1 - c) ^ (n + 1) := ENNReal.tsum_le_tsum fun n ↦ M.survival_le_pow hc (n + 1)
+    _ = (1 - c) / c := by
+        simp_rw [pow_succ', ENNReal.tsum_mul_left, ENNReal.tsum_geometric,
+          ENNReal.sub_sub_cancel ENNReal.one_ne_top hc1, div_eq_mul_inv]
 
 /-- The string probabilities of any model sum to at most one. -/
 theorem tsum_stringProb_le_one : ∑' x, M.stringProb x ≤ 1 := by

@@ -1,6 +1,7 @@
 module
 
 public import Linglib.Core.Analysis.SpecialFunctions.Sigmoid
+public import Linglib.Core.Analysis.SpecialFunctions.Softmax
 public import Linglib.Core.Probability.GibbsVariational
 public import Linglib.Core.Probability.Kernel.OfWeights
 public import Mathlib.Analysis.SpecialFunctions.Log.ENNRealLogExp
@@ -18,6 +19,8 @@ both ranks the points and says which of them are available.
 
 ## Main results
 
+* `ProbabilityTheory.Kernel.softmax_coe_real_singleton`: a real score gives each row
+  `Real.softmax` of the score.
 * `ProbabilityTheory.Kernel.softmax_real_singleton_lt_iff`: row preference is score comparison.
 * `ProbabilityTheory.Kernel.softmax_real_singleton_of_pair`: with two available points the share
   of one is the logistic function of the score difference.
@@ -97,12 +100,19 @@ theorem softmax_real_singleton_lt_iff {w : α} (htop : ∀ u, score w u ≠ ⊤)
       (ENNReal.sum_ne_top.mpr fun u _ ↦ mt EReal.exp_eq_top_iff.mp (htop u)),
     EReal.exp_lt_exp_iff]
 
+/-- A real-valued score gives each row the softmax of the score. -/
+theorem softmax_coe_real_singleton (f : α → β → ℝ) (w : α) (u : β) :
+    (softmax (fun w u ↦ (f w u : EReal)) w).real {u} = Real.softmax (f w) u := by
+  rw [softmax, ofWeights_real_singleton _ w fun u ↦ mt EReal.exp_eq_top_iff.mp (EReal.coe_ne_top _),
+    Real.softmax_def]
+  simp only [EReal.exp_coe, ENNReal.toReal_ofReal (Real.exp_pos _).le]
+
 /-- A real-valued score excludes no point, so row preference is comparison of reals. -/
 theorem softmax_coe_real_singleton_lt_iff (f : α → β → ℝ) (w : α) {u u' : β} :
     (softmax (fun w u ↦ (f w u : EReal)) w).real {u} <
         (softmax (fun w u ↦ (f w u : EReal)) w).real {u'} ↔ f w u < f w u' := by
-  rw [softmax_real_singleton_lt_iff (score := fun w u ↦ (f w u : EReal))
-    (fun _ ↦ EReal.coe_ne_top _) ⟨u, EReal.coe_ne_bot _⟩, EReal.coe_lt_coe_iff]
+  have : Nonempty β := ⟨u⟩
+  rw [softmax_coe_real_singleton, softmax_coe_real_singleton, Real.softmax_lt_softmax_iff]
 
 /-- When exactly two points of a row have score above `⊥`, the share of one is the logistic
 function of the score difference. -/
