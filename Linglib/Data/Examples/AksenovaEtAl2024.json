@@ -180,6 +180,25 @@
     "verified": "page-image"
   },
   {
+    "id": "aksenovaetal2024_fig34_3",
+    "source": {"bibkey": "aksenova-rawski-graf-heinz-2024", "paperLabel": "Figure 34.3"},
+    "language": "kirg1245",
+    "primaryText": "üjdö",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "üjde", "judgment": "ungrammatical"},
+      {"form": "üjdo", "judgment": "ungrammatical"}
+    ],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "The form of (5c), unsegmented.",
+    "verified": "page-image"
+  },
+  {
     "id": "aksenovaetal2024_9a",
     "source": {"bibkey": "aksenova-rawski-graf-heinz-2024", "paperLabel": "(9a)"},
     "language": "russ1264",
@@ -709,6 +728,25 @@
     "readings": [],
     "paperFeatures": [],
     "comment": "Ao (1991).",
+    "verified": "page-image"
+  },
+  {
+    "id": "aksenovaetal2024_fig34_6",
+    "source": {"bibkey": "aksenova-rawski-graf-heinz-2024", "paperLabel": "Figure 34.6"},
+    "language": "koon1247",
+    "primaryText": "nikunu",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "nikono", "judgment": "ungrammatical"},
+      {"form": "nikulo", "judgment": "ungrammatical"}
+    ],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "The form of (18e), unsegmented.",
     "verified": "page-image"
   }
 ]

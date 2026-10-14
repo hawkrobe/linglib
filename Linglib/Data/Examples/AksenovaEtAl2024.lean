@@ -145,6 +145,19 @@ def ex_5f : Datum :=
     readings := []
     paperFeatures := [] }
 
+def fig34_3 : Datum :=
+  { id := "aksenovaetal2024_fig34_3"
+    source := ⟨"aksenova-rawski-graf-heinz-2024", "Figure 34.3"⟩
+    reportedIn := none
+    language := "kirg1245"
+    primaryText := "üjdö"
+    glossedTokens := []
+    context := ""
+    judgment := .acceptable
+    alternatives := [("üjde", .ungrammatical), ("üjdo", .ungrammatical)]
+    readings := []
+    paperFeatures := [] }
+
 def ex_9a : Datum :=
   { id := "aksenovaetal2024_9a"
     source := ⟨"aksenova-rawski-graf-heinz-2024", "(9a)"⟩
@@ -509,6 +522,19 @@ def ex_18f : Datum :=
     readings := []
     paperFeatures := [] }
 
-def all : List Datum := [ex_3a, ex_3b, ex_3c, ex_3d, ex_5a, ex_5b, ex_5c, ex_5d, ex_5e, ex_5f, ex_9a, ex_9b, ex_9c, ex_9d, ex_9e, ex_9f, ex_14a, ex_14b, ex_14c, ex_14d, ex_14e, ex_14f, ex_14g, ex_14h, ex_16a, ex_16b, ex_16c, ex_16d, ex_16e, ex_16f, ex_16g, ex_16h, ex_18a, ex_18b, ex_18c, ex_18d, ex_18e, ex_18f]
+def fig34_6 : Datum :=
+  { id := "aksenovaetal2024_fig34_6"
+    source := ⟨"aksenova-rawski-graf-heinz-2024", "Figure 34.6"⟩
+    reportedIn := none
+    language := "koon1247"
+    primaryText := "nikunu"
+    glossedTokens := []
+    context := ""
+    judgment := .acceptable
+    alternatives := [("nikono", .ungrammatical), ("nikulo", .ungrammatical)]
+    readings := []
+    paperFeatures := [] }
+
+def all : List Datum := [ex_3a, ex_3b, ex_3c, ex_3d, ex_5a, ex_5b, ex_5c, ex_5d, ex_5e, ex_5f, fig34_3, ex_9a, ex_9b, ex_9c, ex_9d, ex_9e, ex_9f, ex_14a, ex_14b, ex_14c, ex_14d, ex_14e, ex_14f, ex_14g, ex_14h, ex_16a, ex_16b, ex_16c, ex_16d, ex_16e, ex_16f, ex_16g, ex_16h, ex_18a, ex_18b, ex_18c, ex_18d, ex_18e, ex_18f, fig34_6]
 
 end AksenovaEtAl2024.Examples

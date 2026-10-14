@@ -110,6 +110,19 @@ lemma mem_ofForbiddenPairs_language_iff_filter_isChain (p : α → Prop) [Decida
       CleanPair.isBoundaryVacuous.isChain_boundary_two_iff, List.isChain_map]
   rfl
 
+variable {R} in
+/-- The language depends only on which symbols project and on `R` between on-tier symbols. -/
+lemma ofForbiddenPairs_language_congr {R' : α → α → Prop} {p p' : α → Prop} [DecidablePred p]
+    [DecidablePred p'] (hp : ∀ a, p a ↔ p' a) (hR : ∀ a b, p a → p b → (R a b ↔ R' a b)) :
+    (TierStrictlyLocalGrammar.ofForbiddenPairs R p).language =
+      (TierStrictlyLocalGrammar.ofForbiddenPairs R' p').language := by
+  ext w
+  simp only [mem_ofForbiddenPairs_language_iff_filter_isChain]
+  rw [List.filter_congr fun a _ ↦ decide_eq_decide.2 (hp a)]
+  have h (a) (ha : a ∈ w.filter (p' ·)) : p a :=
+    (hp a).2 (of_decide_eq_true (List.mem_filter.1 ha).2)
+  exact List.IsChain.iff_of_mem_imp fun a b ha hb ↦ (hR a b (h a ha) (h b hb)).not
+
 /-! ### Adjacent-pair counting
 
 `countAdjacent` is the violation-count companion of the membership view; the
@@ -157,8 +170,8 @@ instance decidableMemOfForbiddenPairsLang [DecidableRel R] (p : α → Prop) [De
     ([] : List α) ∈ (TierStrictlyLocalGrammar.ofForbiddenPairs R p).language :=
   (mem_ofForbiddenPairs_language_iff_filter_isChain R p []).mpr List.isChain_nil
 
-/-- Forbidding more pairs shrinks the language: `R ≤ R'` gives
-`language R' ≤ lang R`. -/
+/-- Forbidding more pairs shrinks the language, so `R ≤ R'` gives
+`language R' ≤ language R`. -/
 lemma language_antitone_R {R R' : α → α → Prop} (h : ∀ a b, R a b → R' a b)
     (p : α → Prop) [DecidablePred p] :
     (TierStrictlyLocalGrammar.ofForbiddenPairs R' p).language ≤
@@ -185,9 +198,8 @@ lemma language_antitone_R {R R' : α → α → Prop} (h : ∀ a b, R a b → R'
           simp only [decide_false, Bool.false_eq_true] at h)]
   exact List.isChain_nil
 
-/-- With no tier filtering (`p = ⊤`) the language is the SL_2 case: no two
-adjacent symbols of the raw string are `R`-related. (Not `@[simp]`, as the RHS is
-no simpler than the LHS.) -/
+/-- With no tier filtering (`p = ⊤`) the language is the SL_2 case, in which no two
+adjacent symbols of the raw string are `R`-related. -/
 lemma lang_p_top :
     (TierStrictlyLocalGrammar.ofForbiddenPairs R (fun _ : α => True)).language =
       { w | w.IsChain (fun a b => ¬ R a b) } := by
@@ -230,18 +242,18 @@ private instance : DecidablePred Pₛ
   | .t => isFalse not_false
 private instance : DecidablePred Pₛₜ := fun _ => isTrue trivial
 
-/-- `(ofForbiddenPairs R p).language` is not monotone in `p`: for `Pₛ ≤ Pₛₜ`,
-`[s, t, t] ∈ lang Pₛ` (tier filter `[s]` is a chain) but `∉ lang Pₛₜ` (filter
-`[s, t, t]` has the OCP-violating `t, t`). -/
+/-- The language is not monotone in `p`. For `Pₛ ≤ Pₛₜ`, `[s, t, t]` is in the language at
+`Pₛ`, whose tier filter `[s]` is a chain, but not at `Pₛₜ`, whose filter `[s, t, t]` has the
+OCP-violating `t, t`. -/
 private theorem lang_p_not_monotone :
     (∀ a, Pₛ a → Pₛₜ a) ∧
       [TwoSym.s, .t, .t] ∈ (TierStrictlyLocalGrammar.ofForbiddenPairs (· = ·) Pₛ).language ∧
       [TwoSym.s, .t, .t] ∉ (TierStrictlyLocalGrammar.ofForbiddenPairs (· = ·) Pₛₜ).language :=
   ⟨fun _ _ => trivial, by decide, by decide⟩
 
-/-- `(ofForbiddenPairs R p).language` is not antitone in `p`: for `Pₛ ≤ Pₛₜ`,
-`[s, t, s] ∉ lang Pₛ` (tier filter `[s, s]` violates OCP) but `∈ lang Pₛₜ`
-(filter `[s, t, s]` is a chain — the `t` separates the `s`s). -/
+/-- The language is not antitone in `p`. For `Pₛ ≤ Pₛₜ`, `[s, t, s]` is not in the language
+at `Pₛ`, whose tier filter `[s, s]` violates the OCP, but is at `Pₛₜ`, where the `t` separates
+the two `s`s. -/
 private theorem lang_p_not_antitone :
     (∀ a, Pₛ a → Pₛₜ a) ∧
       [TwoSym.s, .t, .s] ∉ (TierStrictlyLocalGrammar.ofForbiddenPairs (· = ·) Pₛ).language ∧
