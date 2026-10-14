@@ -914,7 +914,6 @@ import Linglib.Semantics.Polarity.ExpletiveNegation
 import Linglib.Semantics.Polarity.Strength
 import Linglib.Semantics.Polarity.Item
 import Linglib.Semantics.Polarity.Licensing
-import Linglib.Semantics.Possession.Basic
 import Linglib.Semantics.Possession.Defs
 import Linglib.Semantics.Possession.Quantifier
 import Linglib.Semantics.Possession.Relationalizer

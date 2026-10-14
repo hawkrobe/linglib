@@ -42,11 +42,6 @@ open Quantifier Quantifier.GQ Quantifier.NP Possession
 
 /-! ### Decidability for the toy models -/
 
-instance {α : Type*} [Fintype α] {A : α → Prop} {R : α → α → Prop}
-    [DecidablePred A] [∀ x, DecidablePred (R x)] (x : α) :
-    Decidable (dom A R x) :=
-  decidable_of_iff (∃ b, A b ∧ R x b) Iff.rfl
-
 instance {α : Type*} [Fintype α] {R S : α → Prop}
     [DecidablePred R] [DecidablePred S] :
     Decidable (GQ.some R S) :=
@@ -169,38 +164,21 @@ theorem favorite_color_symmetric :
 
 /-! ### Definiteness (Ch. 2)
 
-A definite possessive presupposes a unique possessee: *the boy's cat* in a model where the
-boy `0` owns exactly the cat `1` (entities: boy, cat, dog; one situation). -/
+A definite possessive presupposes a unique possessee: in a model where the boy `0` owns exactly
+the cat `1`, the possessee predicate of *the boy's cat* has one satisfier. -/
 
-/-- In *the boy's cat* the boy `0` owns the cat `1`. -/
-def theBoysCat : Possession.Description (Fin 3) Unit where
-  possessor := 0
-  relation := fun x y _ ↦ x = 0 ∧ y = 1
-  restrictor := fun y _ ↦ y = 1
-
-/-- The description has a unique possessee. -/
-theorem theBoysCat_unique (s : Unit) : ∃! y, theBoysCat.possesseePred y s :=
+theorem theBoysCat_unique :
+    ∃! y : Fin 3, π (· = 1) (fun x y : Fin 3 ↦ x = 0 ∧ y = 1) 0 y :=
   ⟨1, ⟨rfl, rfl, rfl⟩, fun _ h ↦ h.1⟩
 
-/-! ### Narrowing through a description
+/-! ### Narrowing with a single possessor
 
-For a single possessor, narrowing surfaces as existential import: *Mercury's
-rings are icy* fails because Mercury (planet `3`) has no ring. -/
+For a single possessor, narrowing surfaces as existential import: *Mercury's rings are icy* fails
+because Mercury (planet `3`) has no ring. -/
 
-/-- "Mercury's rings": possessor `3`, with `hasRing` as the possession
-relation. -/
-def mercurysRings : Possession.Description (Fin 12) Unit where
-  possessor := 3
-  relation := fun x y _ ↦ hasRing x y
-  restrictor := fun y _ ↦ isRing y
-
-/-- *Mercury's rings are icy* is false: the description denotation carries
-existential import, and Mercury has no ring. -/
-theorem mercurysRings_not_icy :
-    ¬ mercurysRings.toGQ GQ.some () isRing isIcy := by
+theorem mercurysRings_not_icy : ¬ PossNP (individual 3) GQ.some hasRing isRing isIcy := by
   intro h
-  obtain ⟨b, -, hr⟩ := mercurysRings.toGQ_existential_import GQ.some () h
-  have hb : hasRing 3 b := hr
-  rcases hb with ⟨h3, -⟩ | ⟨h3, -⟩ | ⟨h3, -⟩ <;> exact absurd h3 (by decide)
+  obtain ⟨b, -, ⟨h3, -⟩ | ⟨h3, -⟩ | ⟨h3, -⟩⟩ := possNP_individual_existential_import h <;>
+    exact absurd h3 (by decide)
 
 end Barker1995

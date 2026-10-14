@@ -313,7 +313,7 @@ the eventive component from v — and the choice is immaterial for what the
 nominal describes (`Benz2025.result_options_pred_agree`,
 `Benz2025.content_options_agree`); content needs no verbal source at all.
 The non-deverbal allosemes yield no nominalization reading: their
-semantics is the relationalizer and its possessor-closing `ExPossessor`. -/
+semantics is the relationalizer and the closure of its possessor slot. -/
 def readingFromAllosemes : Verbalizer.Alloseme → Nominalizer.Alloseme → Option NominalizationReading
   | .eventive, .zero        => some .complexEvent
   | .eventive, .result      => some .result   -- both-heads-interpreted option

@@ -9,25 +9,25 @@ public import Linglib.Data.Examples.HaninkKoontzGarboden2025
 /-!
 # Hanink and Koontz-Garboden (2025): Variation in the Lexical Semantics of Property Concept Roots
 
-This file formalizes [hanink-koontz-garboden-2025]'s argument, from Washo, that property concept
-roots vary in meaning within a language, against [menon-pancheva-2014]'s universal
-quality-denoting root. Washo property concepts are verbs of three shapes (Table 1): a bare root
-inflected like any intransitive, a bound root with the suffix *-iʔ*, and a reduplicated bound
-root flanked by *ʔil-* and *-iʔ*, `Washo.Shape`. The paper reads the morphology
-at face value: *-iʔ* is the possessive light verb of ordinary possession (31), the existential
-closure of Barker's relationalizer at the possessum type, `vHave`, which takes a predicate of
-states (34); so a root that needs it denotes a quality, a predicate of states (33), while a bare
-root denotes a relation between individuals and states (27). The reduplicated roots denote
+Hanink and Koontz-Garboden argue from Washo that property concept roots vary in meaning within
+a language, against Menon and Pancheva's universal quality-denoting root. Washo property
+concepts are verbs of three shapes (Table 1): a bare root inflected like any intransitive, a
+bound root with the suffix *-iʔ*, and a reduplicated bound root flanked by *ʔil-* and *-iʔ*,
+`Washo.Shape`. The paper reads the morphology at face value: *-iʔ* is the possessive light verb
+of ordinary possession (31), true of the possessors of something satisfying its argument,
+`vHave`, which takes a predicate of states (34); so a root that needs it denotes a quality, a
+predicate of states (33), while a bare root denotes a relation between individuals and states
+(27). The reduplicated roots denote
 relations too, since they alone serve as bare finals of resultative bipartite verbs (38), whose
 change-of-state head takes a relation (43a); being bound, they reach *-iʔ* through *ʔil-*, which
 returns the range of a relation (57), `nabla`, a Duke-of-York derivation that gives back the
-root's own predication when possessing a state is holding it, `vHave_nabla_iff`. One assignment
+root's own predication when possessing a state is holding it, `vHave_nabla_self`. One assignment
 of types to shapes, `RootType.ofShape`, then derives the morphology of each shape as its shortest
 well-typed verbalization, `derivation_minimal`, and the bipartite gap for the suffixed roots
-(49), `wellTyped_become_iff`. The change-of-state head is [beavers-koontz-garboden-2020]'s
+(49), `wellTyped_become_iff`. The change-of-state head is Beavers and Koontz-Garboden's
 inchoative operator, and the resultative entails the result state of its theme (46). The
-seventy stems of the appendix are the rows of `Washo.propertyConcepts`, on which
-[dixon-1982]'s categories predict the shape only for color; the examples are the rows of
+seventy stems of the appendix are the rows of `Washo.propertyConcepts`, on which Dixon's
+categories predict the shape only for color; the examples are the rows of
 `Data.Examples.HaninkKoontzGarboden2025`.
 
 ## Implementation notes
@@ -172,34 +172,21 @@ theorem derivation_minimal (sh : Shape) (hs : List Head) (h : Verbalizes sh hs) 
 
 /-! ### The operators -/
 
-variable {E Y St S : Type*}
+variable {E Y St : Type*}
 
-/-- The possessive light verb *-iʔ* is the existential closure of Barker's relationalizer. The
-possessor `x` stands in `R` to some possessum satisfying `P`, which is ordinary possession when
-the possessum is an entity and the possession of a state when it is a quality. -/
-def vHave (P : Y → S → Prop) (R : E → Y → S → Prop) : E → S → Prop :=
-  Ex (π P R)
+/-- The possessive light verb *-iʔ* (34) holds of the possessors of a `P`, which is ordinary
+possession when the possessum is an entity and the possession of a state when it is a quality. -/
+def vHave (P : Y → Prop) (R : E → Y → Prop) : E → Prop := dom P R
 
-theorem vHave_apply (P : Y → S → Prop) (R : E → Y → S → Prop) (x : E) (s : S) :
-    vHave P R x s ↔ ∃ y, P y s ∧ R x y s :=
-  Iff.rfl
+/-- The prefix *ʔil-* (57) takes the range of a relation, the states some individual bears it
+to. -/
+def nabla (P : E → St → Prop) : St → Prop := ⨆ x, P x
 
-/-- The prefix *ʔil-* takes the range of a relation, the states some individual bears it to. -/
-def nabla (P : E → St → Prop) : St → Prop := fun s ↦ ∃ x, P x s
-
-/-- The prefixed root under *-iʔ* is the possession of a state in the relation's range. -/
-theorem vHave_nabla_apply (P : E → St → Prop) (R : E → St → S → Prop) (x : E) (s : S) :
-    vHave (fun y _ ↦ nabla P y) R x s ↔ ∃ y, (∃ x', P x' y) ∧ R x y s :=
-  Iff.rfl
-
-/-- The Duke-of-York derivation of section 5.2: when possessing a state is holding it, the
-prefixed root under *ʔil-* and *-iʔ* predicates what the bare relation does (28), the meaning
-its bipartite uses show it to have. -/
-theorem vHave_nabla_iff (P : E → St → Prop) (R : E → St → S → Prop)
-    (h : ∀ x y s, R x y s ↔ P x y) (x : E) (s : S) :
-    vHave (fun y _ ↦ nabla P y) R x s ↔ ∃ y, P x y := by
-  simp only [vHave_nabla_apply, h]
-  exact ⟨fun ⟨y, _, hxy⟩ ↦ ⟨y, hxy⟩, fun ⟨y, hy⟩ ↦ ⟨y, ⟨x, hy⟩, hy⟩⟩
+/-- The Duke-of-York derivation of section 5.2: when possessing a state of the root is bearing
+the root's relation to it, the prefixed root under *ʔil-* and *-iʔ* predicates what the bare
+relation does (28), the meaning its bipartite uses show it to have. -/
+theorem vHave_nabla_self (P : E → St → Prop) (x : E) : vHave (nabla P) P x ↔ ∃ s, P x s :=
+  dom_iSup_self P x
 
 /-! ### Resultative bipartite verbs, section 5.1 -/
 
