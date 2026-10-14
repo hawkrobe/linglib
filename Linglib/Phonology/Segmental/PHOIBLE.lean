@@ -17,6 +17,11 @@ The two systems differ in one convention. PHOIBLE specifies [round] only on labi
 and marks it not applicable elsewhere, where Hayes's charts give every other segment
 [−round]. The segment of a matrix therefore takes [−round] as its default.
 
+PHOIBLE also codes the tongue-root contrast of plain vowel glyphs by [tense], /i e o u/
+against /ɪ ɛ ɔ ʊ/, and gives every plain vowel [−ATR]; only glyphs with the diacritic ◌̘ are
+[+ATR]. A language whose vowels contrast in [ATR] reads a chart entry through its tongue-root
+reading, which carries the [tense] value as the [ATR] value.
+
 A fragment gives each phoneme by `Segment.ofChart`. It reads a chart entry, merges over it
 the values on which a grammar departs from the chart, and keeps the result on the features
 the grammar treats as contrastive. A phoneme is then a segment, named by its symbol, and an
@@ -27,6 +32,7 @@ PHOIBLE inventory.
 
 * `Phonology.Feature.toPHOIBLE`: the PHOIBLE column of each feature.
 * `Data.PHOIBLE.FeatureMatrix.toSegment`: the segment of a feature matrix.
+* `Data.PHOIBLE.FeatureMatrix.tenseAsATR`: the tongue-root reading of a feature matrix.
 * `Data.PHOIBLE.Inventory.segments`: the segments of an inventory's phonemes.
 * `Phonology.Segment.ofChart`: the segment of a chart entry, a departure and a contrastive
   feature set.
@@ -122,6 +128,34 @@ theorem range_toSegment : Set.range toSegment = {s : Segment | s .round ≠ ⊥}
     rw [toSegment_round, he, hb, Flat.unbotD_coe]
   · rw [toSegment_apply_of_ne_round _ hf, he]
 
+/-! ### The tongue-root reading -/
+
+/-- The tongue-root reading of a matrix carries its [tense] value as its tongue-root value,
+keeping its own tongue-root value where it has no [tense], and has no [tense]. -/
+def tenseAsATR (m : FeatureMatrix) : FeatureMatrix :=
+  Function.update (Function.update m .advancedTongueRoot ((m .tense).or (m .advancedTongueRoot)))
+    .tense ⊥
+
+@[simp] theorem toSegment_tenseAsATR_atr (m : FeatureMatrix) :
+    m.tenseAsATR.toSegment .atr = (m .tense).or (m .advancedTongueRoot) := by
+  rw [toSegment_apply_of_ne_round _ (by decide), Phonology.Feature.toPHOIBLE, tenseAsATR,
+    Function.update_of_ne (by decide), Function.update_self]
+
+@[simp] theorem toSegment_tenseAsATR_tense (m : FeatureMatrix) :
+    m.tenseAsATR.toSegment .tense = ⊥ := by
+  rw [toSegment_apply_of_ne_round _ (by decide), Phonology.Feature.toPHOIBLE, tenseAsATR,
+    Function.update_self]
+
+/-- Off [ATR] and [tense], the tongue-root reading has the matrix's values. -/
+theorem toSegment_tenseAsATR_of_ne (m : FeatureMatrix) {f : Phonology.Feature} (ha : f ≠ .atr)
+    (ht : f ≠ .tense) : m.tenseAsATR.toSegment f = m.toSegment f := by
+  have ht' : f.toPHOIBLE ≠ .tense := Phonology.Feature.toPHOIBLE_injective.ne ht
+  have ha' : f.toPHOIBLE ≠ .advancedTongueRoot := Phonology.Feature.toPHOIBLE_injective.ne ha
+  obtain rfl | hr := eq_or_ne f .round
+  · simp [tenseAsATR]
+  · rw [toSegment_apply_of_ne_round _ hr, toSegment_apply_of_ne_round _ hr, tenseAsATR,
+      Function.update_of_ne ht', Function.update_of_ne ha']
+
 /-! ### Witnesses from the chart -/
 
 /-- Chart segments fall into the sonority classes of their glyphs, the nasal by its
@@ -139,6 +173,13 @@ example : «k».toSegment.HasValue .back false := by decide
 /-- A long vowel differs from its short counterpart only in [long], which `Phonology.Feature`
 lacks, so the two have one segment. -/
 example : «aː».toSegment = «a».toSegment ∧ «aː» ≠ «a» := by decide
+
+/-- The chart makes /i/ [−ATR]. Its tongue-root reading makes /i/ [+ATR] and /ɪ/ [−ATR], and
+leaves the low vowel, which has no [tense], at the chart's [−ATR]. -/
+example : «i».toSegment.HasValue .atr false ∧ «i».tenseAsATR.toSegment.HasValue .atr true ∧
+    «ɪ».tenseAsATR.toSegment.HasValue .atr false ∧
+    «a».tenseAsATR.toSegment.HasValue .atr false := by
+  decide
 
 end Data.PHOIBLE.FeatureMatrix
 
@@ -175,5 +216,9 @@ theorem ofChart_apply {m : FeatureMatrix} {departure : Segment} {contrastive : F
     {f : Feature} (hf : f ∈ contrastive) (hd : departure f = ⊥) :
     ofChart m departure contrastive f = m.toSegment f := by
   rw [ofChart, Segment.restrict, Finset.piecewise_eq_of_mem _ _ _ hf, hd, Flat.bot_or]
+
+/-- With no departure and every feature contrastive, a chart entry's segment is its matrix's. -/
+@[simp] theorem ofChart_eq_toSegment (m : FeatureMatrix) : ofChart m = m.toSegment :=
+  funext fun f ↦ ofChart_apply (Finset.mem_univ f) rfl
 
 end Phonology.Segment

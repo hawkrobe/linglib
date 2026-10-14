@@ -14,8 +14,8 @@ public import Linglib.Core.Order.Flat
 # Segmental representation: definitions
 
 The distinctive feature and the segment built over it. A **feature** is one of the
-26 binary distinctive features of [hayes-2009]'s chart, or one of the tongue-root features
-[ATR] and [RTR] ([halle-vaux-wolfe-2000]); a **segment** is a partial
+26 binary distinctive features of Hayes's chart, or one of the tongue-root features
+[ATR] and [RTR] of Halle, Vaux and Wolfe; a **segment** is a partial
 specification of those features — each `+`, `−`, or unspecified — ordered by
 specificity (the unification-grammar subsumption order, inherited as a feature
 bundle), with the unspecified archisegment least and natural-class generalization
@@ -28,6 +28,7 @@ scales. The theorems about them live in `Phonology/Segmental/Basic.lean`.
 ## References
 
 * [hayes-2009]
+* [halle-vaux-wolfe-2000]
 * [chomsky-halle-1968]
 * [clements-1990]
 * [parker-2002]
@@ -144,28 +145,6 @@ instance (f : Feature) : Decidable (s.Unspecified f) := inferInstanceAs (Decidab
     `ofSpecs [(continuant, false)]` lies below every [−cont] segment. -/
 def ofSpecs (specs : List (Feature × Bool)) : Segment := fun f ↦ specs.lookup f
 
-/-- Vowel height — the (±high, ±low) tongue-body axis, with the contradictory
-[+high, +low] combination unrepresentable. -/
-inductive Height where
-  | high | mid | low
-  deriving DecidableEq, Repr
-
-/-- Vowel backness — the (±front, ±back) axis, with [+front, +back]
-unrepresentable. -/
-inductive Backness where
-  | front | central | back
-  deriving DecidableEq, Repr
-
-/-- The vowel of the given height and backness: the class features
-[+syll, −cons, +son, +cont, +voice, +dor] plus the decoded tongue-body
-position. Rounding and tenseness are left unspecified; refine with
-`setFeature`, e.g. `(Segment.vowel .high .back).setFeature .round true` = /u/. -/
-def vowel (ht : Height) (bk : Backness) : Segment :=
-  ofSpecs [(.syllabic, true), (.consonantal, false), (.sonorant, true),
-    (.continuant, true), (.voice, true), (.dorsal, true),
-    (.high, ht == .high), (.low, ht == .low),
-    (.front, bk == .front), (.back, bk == .back)]
-
 /-! ### Natural-class predicates
 
 Language-neutral natural-class membership predicates, by the SPE feature
@@ -223,8 +202,8 @@ example. -/
     semantics that only assign when `f` is currently unspecified, use `fillFromContext`. -/
 def setFeature (f : Feature) (v : Bool) : Segment := Function.update s f (some v)
 
-/-- Categorical feature spreading from context: the target `s`, when unspecified
-    for `f`, takes the `f`-value of `ctx`; already-specified targets and features
+/-- In categorical feature spreading from context, the target `s`, when unspecified
+    for `f`, takes the `f`-value of `ctx`, and already-specified targets and features
     other than `f` are untouched. When `ctx` is itself unspecified for `f`, the
     target stays unspecified.
 
@@ -251,8 +230,7 @@ inductive Segment.Class where
   | vowel
   deriving DecidableEq, Repr, Fintype
 
-/-- A segment's coarse class: vowels are [+syllabic]; everything else classes
-as a consonant. -/
+/-- A segment's coarse class is vowel when it is [+syllabic] and consonant otherwise. -/
 def Segment.toClass (s : Segment) : Segment.Class :=
   if s.IsVowel then .vowel else .consonant
 
@@ -338,8 +316,8 @@ instance : DecidablePred Class.Voiceless := fun c =>
   | .vls | .vlf => isTrue trivial
   | .vds | .vdf | .nasal | .liquid | .glide | .vowel => isFalse fun h => h
 
-/-- Classify a segment on the Parker 8-level scale: as `Sonority.ofSegment`, but
-    additionally splitting obstruents by [±voice] ([parker-2002]). -/
+/-- A segment's class on the Parker eight-level scale refines `Sonority.ofSegment` by
+    splitting the obstruents by [±voice] ([parker-2002]). -/
 def Class.ofSegment (s : Segment) : Class :=
   if s.HasValue .sonorant false then
     if s.HasValue .continuant true then

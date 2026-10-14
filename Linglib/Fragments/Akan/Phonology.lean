@@ -19,10 +19,10 @@ Akan reduplication turns on.
 
 The feature values come from the PHOIBLE chart. The chart codes the two vowel sets by
 [tense] and marks every plain vowel [−ATR], where the Akan literature has [ATR] carry the
-contrast, so a vowel departs from the chart by taking the chart's [tense] value as its [ATR]
-value, and [tense] is not contrastive. The chart omits the palatal affricate, whose values
-are contours, and its segment is the velar stop's with the features McCarthy and Prince's
-corono-dorsal analysis adds.
+contrast, so a vowel is the segment of its chart entry's tongue-root reading, which takes the
+[tense] value as the [ATR] value and drops [tense]. The chart omits the palatal affricate,
+whose values are contours, and its segment is the velar stop's with the features McCarthy and
+Prince's corono-dorsal analysis adds.
 
 ## Main definitions
 
@@ -57,16 +57,14 @@ namespace Akan
 
 /-! ### Vowels -/
 
-/-- A vowel is its chart entry's segment with the chart's [tense] value as its [ATR] value and
-no [tense]. The low vowel, which the chart leaves without [tense], keeps the chart's
-[−ATR]. -/
-def vowel (m : FeatureMatrix) : Segment :=
-  .ofChart m (Function.update ⊥ .atr (m.toSegment .tense)) {.tense}ᶜ
+/-- A vowel is the segment of its chart entry's tongue-root reading. The low vowel, which the
+chart leaves without [tense], keeps the chart's [−ATR]. -/
+def vowel (m : FeatureMatrix) : Segment := .ofChart m.tenseAsATR
 
 /-- A vowel has the chart's values off [ATR] and [tense]. -/
 theorem vowel_apply (m : FeatureMatrix) {f : Phonology.Feature} (ha : f ≠ .atr)
-    (ht : f ≠ .tense) : vowel m f = m.toSegment f :=
-  Segment.ofChart_apply (by simpa using ht) (Function.update_of_ne ha ..)
+    (ht : f ≠ .tense) : vowel m f = m.toSegment f := by
+  rw [vowel, Segment.ofChart_eq_toSegment, m.toSegment_tenseAsATR_of_ne ha ht]
 
 /-- The advanced high front vowel /i/. -/
 def i : Segment := vowel .«i»
