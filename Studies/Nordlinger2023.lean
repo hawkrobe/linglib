@@ -271,10 +271,6 @@ theorem exists_consecutive_of_getLast {l : List A} (hlen : 2 ≤ l.length) {x : 
   convert hx using 2
   omega
 
-/-- `R` is symmetric within `X` when every realized pair is mutual. -/
-def PairSymmetricOn (R : A → A → Prop) (X : Finset A) : Prop :=
-  (X : Set A).Pairwise fun x y ↦ R x y → R y x
-
 /-- In the pairwise configuration the participants split into two-member cells and `R` holds
 exactly within cells. -/
 def PairwiseConfig [DecidableEq A] (R : A → A → Prop) (X : Finset A) : Prop :=
@@ -300,49 +296,55 @@ exhaustive. -/
 def MeleeConfig (R : A → A → Prop) (X : Finset A) : Prop :=
   (∃ x ∈ X, ∃ y ∈ X, x ≠ y ∧ R x y) ∧ ¬ InclusiveAlternativeOrdering R X
 
-theorem pairSymmetricOn_of_strongReciprocity (h : StrongReciprocity R X) :
-    PairSymmetricOn R X :=
-  fun _ hx _ hy hxy _ ↦ h hy hx hxy.symm
+theorem symm_of_strongReciprocity (h : StrongReciprocity R X) :
+    Std.Symm fun a b : (X : Set A) ↦ R a b :=
+  ⟨fun a b hab ↦ by
+    by_cases hba : b = a
+    · exact hba ▸ hab
+    · exact h.2 hba⟩
 
-theorem RadialConfig.not_pairSymmetricOn (h : RadialConfig R X) : ¬ PairSymmetricOn R X := by
+theorem RadialConfig.not_symm (h : RadialConfig R X) :
+    ¬ Std.Symm fun a b : (X : Set A) ↦ R a b := by
   obtain ⟨c, hc, hcard, hiff⟩ := h
   obtain ⟨y, hy, hyc⟩ := X.exists_mem_ne hcard c
   intro hsym
-  exact hyc ((hiff y c).1 (hsym hc hy hyc.symm ((hiff c y).2 ⟨rfl, hy, hyc⟩))).1
+  exact hyc ((hiff y c).1 (hsym.symm ⟨c, hc⟩ ⟨y, hy⟩ ((hiff c y).2 ⟨rfl, hy, hyc⟩))).1
 
 theorem RadialConfig.inclusiveAlternativeOrdering (h : RadialConfig R X) :
     InclusiveAlternativeOrdering R X := by
   obtain ⟨c, hc, hcard, hiff⟩ := h
-  intro x hx
+  refine oneWayWeakReciprocity_iff.2 ⟨Finset.one_lt_card_iff_nontrivial.1 hcard, fun x hx ↦ ?_⟩
   by_cases hxc : x = c
   · subst hxc
     obtain ⟨y, hy, hyx⟩ := X.exists_mem_ne hcard x
-    exact ⟨y, hy, .of_rel ((hiff x y).2 ⟨rfl, hy, hyx⟩), hyx.symm⟩
-  · exact ⟨c, hc, .of_rel_symm ((hiff c x).2 ⟨rfl, hx, hxc⟩), hxc⟩
+    exact ⟨y, hy, hyx.symm, .of_rel ((hiff x y).2 ⟨rfl, hy, hyx⟩)⟩
+  · exact ⟨c, hc, hxc, .of_rel_symm ((hiff c x).2 ⟨rfl, hx, hxc⟩)⟩
 
 variable [DecidableEq A]
 
-theorem PairwiseConfig.pairSymmetricOn (h : PairwiseConfig R X) : PairSymmetricOn R X := by
+theorem PairwiseConfig.symm (h : PairwiseConfig R X) : Std.Symm fun a b : (X : Set A) ↦ R a b := by
   obtain ⟨P, -, hiff⟩ := h
-  intro x _ y _ _ hR
+  refine ⟨fun x y hR ↦ ?_⟩
   obtain ⟨c, hc, hxc, hyc, hne⟩ := (hiff x y).1 hR
   exact (hiff y x).2 ⟨c, hc, hyc, hxc, hne.symm⟩
 
-theorem ChainConfig.not_pairSymmetricOn (h : ChainConfig R X) : ¬ PairSymmetricOn R X := by
+theorem ChainConfig.not_symm (h : ChainConfig R X) :
+    ¬ Std.Symm fun a b : (X : Set A) ↦ R a b := by
   obtain ⟨l, hnd, rfl, hlen, hiff⟩ := h
   obtain ⟨b, hb⟩ := exists_consecutive_of_getLast hlen
     (List.getLast?_eq_getElem?.trans (List.getElem?_eq_getElem (by omega)))
   intro hsym
-  exact hb.asymm hnd ((hiff _ _).1 (hsym (List.mem_toFinset.2 hb.mem_left)
-    (List.mem_toFinset.2 hb.mem_right) (hb.ne hnd) ((hiff _ _).2 hb)))
+  exact hb.asymm hnd ((hiff _ _).1 (hsym.symm ⟨_, List.mem_toFinset.2 hb.mem_left⟩
+    ⟨_, List.mem_toFinset.2 hb.mem_right⟩ ((hiff _ _).2 hb)))
 
-theorem RingConfig.not_pairSymmetricOn (h : RingConfig R X) : ¬ PairSymmetricOn R X := by
+theorem RingConfig.not_symm (h : RingConfig R X) :
+    ¬ Std.Symm fun a b : (X : Set A) ↦ R a b := by
   obtain ⟨l, hnd, rfl, hlen, hiff⟩ := h
   obtain ⟨b, hb⟩ := exists_consecutive_of_getLast (by omega : 2 ≤ l.length)
     (List.getLast?_eq_getElem?.trans (List.getElem?_eq_getElem (by omega)))
   intro hsym
-  rcases (hiff _ _).1 (hsym (List.mem_toFinset.2 hb.mem_left) (List.mem_toFinset.2 hb.mem_right)
-      (hb.ne hnd) ((hiff _ _).2 (.inl hb))) with hba | ⟨-, hhead⟩
+  rcases (hiff _ _).1 (hsym.symm ⟨_, List.mem_toFinset.2 hb.mem_left⟩
+      ⟨_, List.mem_toFinset.2 hb.mem_right⟩ ((hiff _ _).2 (.inl hb))) with hba | ⟨-, hhead⟩
   · exact hb.asymm hnd hba
   · obtain ⟨i, hi, hi'⟩ := hb
     have hi₁ : i + 1 < l.length := (List.getElem?_eq_some_iff.1 hi').1
@@ -355,26 +357,29 @@ theorem RingConfig.not_pairSymmetricOn (h : RingConfig R X) : ¬ PairSymmetricOn
 theorem PairwiseConfig.partitionedStrong (h : PairwiseConfig R X) :
     PartitionedStrongReciprocity R X :=
   let ⟨P, hcells, hiff⟩ := h
-  ⟨P, fun c hc ↦ ⟨(hcells c hc).ge, fun x hx y hy hne ↦ (hiff x y).2 ⟨c, hc, hx, hy, hne⟩⟩⟩
+  ⟨P, fun c hc ↦ strongReciprocity_iff.2 ⟨Finset.one_lt_card_iff_nontrivial.1 (by
+    rw [hcells c hc]; omega), fun x hx y hy hne ↦ (hiff x y).2 ⟨c, hc, hx, hy, hne⟩⟩⟩
 
 theorem ChainConfig.inclusiveAlternativeOrdering (h : ChainConfig R X) :
     InclusiveAlternativeOrdering R X := by
   obtain ⟨l, hnd, rfl, hlen, hiff⟩ := h
-  intro x hx
+  refine oneWayWeakReciprocity_iff.2 ⟨Finset.one_lt_card_iff_nontrivial.1 (by
+    rw [List.toFinset_card_of_nodup hnd]; omega), fun x hx ↦ ?_⟩
   rcases exists_consecutive_or_getLast (List.mem_toFinset.1 hx) with ⟨y, hy⟩ | hlast
-  · exact ⟨y, List.mem_toFinset.2 hy.mem_right, .of_rel ((hiff x y).2 hy), hy.ne hnd⟩
+  · exact ⟨y, List.mem_toFinset.2 hy.mem_right, hy.ne hnd, .of_rel ((hiff x y).2 hy)⟩
   · obtain ⟨y, hy⟩ := exists_consecutive_of_getLast hlen hlast
-    exact ⟨y, List.mem_toFinset.2 hy.mem_left, .of_rel_symm ((hiff y x).2 hy), (hy.ne hnd).symm⟩
+    exact ⟨y, List.mem_toFinset.2 hy.mem_left, (hy.ne hnd).symm, .of_rel_symm ((hiff y x).2 hy)⟩
 
 theorem RingConfig.oneWayWeak (h : RingConfig R X) : OneWayWeakReciprocity R X := by
   obtain ⟨l, hnd, rfl, hlen, hiff⟩ := h
-  intro x hx
+  refine oneWayWeakReciprocity_iff.2 ⟨Finset.one_lt_card_iff_nontrivial.1 (by
+    rw [List.toFinset_card_of_nodup hnd]; omega), fun x hx ↦ ?_⟩
   rcases exists_consecutive_or_getLast (List.mem_toFinset.1 hx) with ⟨y, hy⟩ | hlast
-  · exact ⟨y, List.mem_toFinset.2 hy.mem_right, (hiff x y).2 (.inl hy), hy.ne hnd⟩
+  · exact ⟨y, List.mem_toFinset.2 hy.mem_right, hy.ne hnd, (hiff x y).2 (.inl hy)⟩
   · have hhead : l.head? = some l[0] :=
       List.head?_eq_getElem?.trans (List.getElem?_eq_getElem (by omega))
-    refine ⟨l[0], List.mem_toFinset.2 (List.getElem_mem _),
-      (hiff x _).2 (.inr ⟨hlast, hhead⟩), fun hx0 ↦ ?_⟩
+    refine ⟨l[0], List.mem_toFinset.2 (List.getElem_mem _), fun hx0 ↦ ?_,
+      (hiff x _).2 (.inr ⟨hlast, hhead⟩)⟩
     rw [List.getLast?_eq_getElem?, hx0] at hlast
     have := (List.Nodup.getElem?_inj (by omega : l.length - 1 < l.length) hnd).1
       (hlast.trans (List.getElem?_eq_getElem (by omega)).symm)
@@ -427,14 +432,14 @@ variable {A : Type*} [DecidableEq A] {R : A → A → Prop} {X : Finset A} {t : 
 
 /-- Of the configurations that involve every participant, only the strong and the pairwise
 ones are mutual on every realized pair. -/
-theorem ReciprocityType.Realizes.pairSymmetricOn_iff (h : t.Realizes R X) (ht : t ≠ .melee) :
-    PairSymmetricOn R X ↔ t = .strong ∨ t = .pairwise := by
+theorem ReciprocityType.Realizes.symm_iff (h : t.Realizes R X) (ht : t ≠ .melee) :
+    (Std.Symm fun a b : (X : Set A) ↦ R a b) ↔ t = .strong ∨ t = .pairwise := by
   cases t with
-  | strong => exact iff_of_true (pairSymmetricOn_of_strongReciprocity h) (.inl rfl)
-  | pairwise => exact iff_of_true (PairwiseConfig.pairSymmetricOn h) (.inr rfl)
-  | chain => exact iff_of_false (ChainConfig.not_pairSymmetricOn h) (by decide)
-  | radial => exact iff_of_false (RadialConfig.not_pairSymmetricOn h) (by decide)
-  | ring => exact iff_of_false (RingConfig.not_pairSymmetricOn h) (by decide)
+  | strong => exact iff_of_true (symm_of_strongReciprocity h) (.inl rfl)
+  | pairwise => exact iff_of_true (PairwiseConfig.symm h) (.inr rfl)
+  | chain => exact iff_of_false (ChainConfig.not_symm h) (by decide)
+  | radial => exact iff_of_false (RadialConfig.not_symm h) (by decide)
+  | ring => exact iff_of_false (RingConfig.not_symm h) (by decide)
   | melee => exact absurd rfl ht
 
 /-- Every configuration but the melee involves each of two or more participants, as agent or as
@@ -443,9 +448,10 @@ theorem ReciprocityType.Realizes.inclusiveAlternativeOrdering (h : t.Realizes R 
     (ht : t ≠ .melee) (hX : 2 ≤ X.card) : InclusiveAlternativeOrdering R X := by
   cases t with
   | strong =>
-    exact ((StrongReciprocity.intermediate h).oneWayWeak hX).inclusiveAlternativeOrdering
+    exact (StrongReciprocity.intermediate h).oneWayWeak.inclusiveAlternativeOrdering
   | pairwise =>
-    exact (PairwiseConfig.partitionedStrong h).weak.oneWayWeak.inclusiveAlternativeOrdering
+    exact ((PairwiseConfig.partitionedStrong h).weak.oneWayWeak
+      (Finset.card_pos.1 (by omega))).inclusiveAlternativeOrdering
   | chain => exact ChainConfig.inclusiveAlternativeOrdering h
   | radial => exact RadialConfig.inclusiveAlternativeOrdering h
   | ring => exact (RingConfig.oneWayWeak h).inclusiveAlternativeOrdering

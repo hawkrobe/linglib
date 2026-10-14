@@ -11,8 +11,9 @@ Heim, Lasnik and May analyze reciprocals quantificationally: *each other* decomp
 distributor, *each*, which moves to the antecedent NP, and a reciprocator, *e other*, each keeping
 the semantics of its non-reciprocal use, so that "the men saw each other" is `[[the men]₁ each₂] saw
 [e₂ other]₃` ((8), (20)). The pieces `other` (16), `reciprocator` (18), and `distributor` (19)/(28)
-compose to `eachOtherLF`, which is Strong Reciprocity (`eachOtherLF_iff_strongReciprocity`), is
-vacuous on a singleton, and is contradictory over an asymmetric relation ((68)). The grain problem
+compose to `eachOtherLF`, which on a plural antecedent is Strong Reciprocity
+(`eachOtherLF_iff_strongReciprocity`), is vacuously true on a singleton, where Strong Reciprocity
+fails, and is contradictory over an asymmetric relation ((68)). The grain problem
 of §3, that (43) is three-ways ambiguous under a single indexing, is resolved by the range and
 distribution indices of plural NPs: the four construals of an embedded pronoun (49) yield the four
 readings, with the *I* and *you* readings bound variables and the *we* readings coreference, which a
@@ -86,11 +87,12 @@ def eachOtherLF (np : Finset A) (R : A → A → Prop) : Prop :=
 
 /-! ### The keystone (21) -/
 
-/-- The compositional each∘other analysis derives Strong Reciprocity:
-    HLM's truth conditions "coincide with those of the standard semantic
+/-- On a plural antecedent the compositional each∘other analysis derives Strong
+    Reciprocity: HLM's truth conditions "coincide with those of the standard semantic
     analyses". -/
-theorem eachOtherLF_iff_strongReciprocity (np : Finset A) (R : A → A → Prop) :
-    eachOtherLF np R ↔ StrongReciprocity R np := by
+theorem eachOtherLF_iff_strongReciprocity {np : Finset A} (hnp : 1 < np.card)
+    (R : A → A → Prop) : eachOtherLF np R ↔ StrongReciprocity R np := by
+  rw [strongReciprocity_iff, and_iff_right (Finset.one_lt_card_iff_nontrivial.1 hnp)]
   constructor
   · intro h x hx y hy hxy
     exact h x hx y ⟨hy, hxy.symm⟩

@@ -16,8 +16,7 @@ individuals, `*` reduces to distribution over members.
 * `Plurality.Algebra.properPlural P`: the non-atomic elements of `*P`.
 * `Plurality.Algebra.IsDistr P`: `P` holds of atoms only.
 * `Plurality.Algebra.Inv h P`: `P` does not distinguish `h`-equivalent individuals.
-* `Plurality.Algebra.D P x`, `Plurality.Algebra.DJR R x`: Link's 1987 distributive and
-  reciprocal operators.
+* `Plurality.Algebra.D P x`: Link's 1987 distributive operator.
 * `Plurality.Algebra.Materialization E M`: a `SupHom E M`, with `Plurality.Algebra.mPart` and
   `Plurality.Algebra.mEquiv` the preorder and equivalence it induces on `E`.
 * `Plurality.Algebra.AtomJoinPrime E`: an atom below a sum lies below a summand.
@@ -42,8 +41,7 @@ and `Mereology.Atom` are used here. The plural closure `*P` is `Mereology.AlgClo
 `supClosure` of the extension of `P`. The complete atomic Boolean algebra of Landman and Champollion
 is a stronger assumption, which enters only through `AtomJoinPrime`. Schwarzschild's set-based
 ontology, where an individual is its singleton and sum is union, is the `Finset α` instance; Link's
-own model of nonempty sets of atoms has no bottom (`Individual`). On finite sets, `DJR` is
-`Reciprocal.StrongReciprocity`.
+own model of nonempty sets of atoms has no bottom (`Individual`).
 
 ## References
 
@@ -89,18 +87,6 @@ theorem D_of_atom (hx : Atom x) (hP : P x) : D P x :=
 
 theorem D_mono (h : ∀ x, P x → Q x) (hD : D P x) : D Q x :=
   fun y hle hy ↦ h y (hD y hle hy)
-
-/-- The reciprocal operator `DJR R` holds of `x` when every two distinct atomic parts of `x` are
-`R`-related. -/
-def DJR (R : E → E → Prop) (x : E) : Prop :=
-  ∀ y ≤ x, ∀ z ≤ x, Atom y → Atom z → y ≠ z → R y z
-
-theorem DJR_mono {R S : E → E → Prop} (h : ∀ y z, R y z → S y z) (hR : DJR R x) : DJR S x :=
-  fun y hy z hz ha hb hne ↦ h y z (hR y hy z hz ha hb hne)
-
-theorem DJR_and {R S : E → E → Prop} :
-    DJR (fun y z ↦ R y z ∧ S y z) x ↔ DJR R x ∧ DJR S x := by
-  simp only [DJR, imp_and, forall_and]
 
 /-! ### Materialization -/
 

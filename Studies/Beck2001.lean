@@ -91,10 +91,11 @@ theorem otherOnesAmongThem_nonempty (A : Finset α) (x : α) (hne : 1 < A.card) 
 
 /-! ### The semantic readings, read off the definite -/
 
-/-- SR is double distribution over the definite ((81)): distribute over the
-    antecedent, then over "the other ones among them". -/
-theorem strongReciprocity_iff_otherOnes (R : α → α → Prop) (A : Finset α) :
+/-- On a plural antecedent, SR is double distribution over the definite ((81)): distribute
+    over the antecedent, then over "the other ones among them". -/
+theorem strongReciprocity_iff_otherOnes (R : α → α → Prop) {A : Finset α} (hA : 1 < A.card) :
     StrongReciprocity R A ↔ ∀ x ∈ A, ∀ y ∈ otherOnesAmongThem A x, R x y := by
+  rw [strongReciprocity_iff, and_iff_right (Finset.one_lt_card_iff_nontrivial.1 hA)]
   constructor
   · intro h x hx y hy
     obtain ⟨hyx, hyA⟩ := Finset.mem_erase.mp hy
@@ -108,11 +109,11 @@ theorem strongReciprocity_iff_otherOnes (R : α → α → Prop) (A : Finset α)
 def CollectiveReading (R : α → Finset α → Prop) (A : Finset α) : Prop :=
   ∀ x ∈ A, R x (otherOnesAmongThem A x)
 
-/-- With a relation that distributes to members, the collective schema is exactly SR:
-    (81) and (84) differ only in distribution over the definite. -/
-theorem collectiveReading_iff_strong (R : α → α → Prop) (A : Finset α) :
+/-- On a plural antecedent and with a relation that distributes to members, the collective
+    schema is exactly SR: (81) and (84) differ only in distribution over the definite. -/
+theorem collectiveReading_iff_strong (R : α → α → Prop) {A : Finset α} (hA : 1 < A.card) :
     CollectiveReading (fun x Y => ∀ y ∈ Y, R x y) A ↔ StrongReciprocity R A := by
-  rw [strongReciprocity_iff_otherOnes]
+  rw [strongReciprocity_iff_otherOnes R hA]
   rfl
 
 end
