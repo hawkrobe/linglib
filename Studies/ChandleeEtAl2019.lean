@@ -47,9 +47,10 @@ def strident : Segment := .ofSpecs [(.strident, true)]
 /-- A one-position subfactor occurs exactly where a segment of its natural class does, so the
 [+strident] subfactor occurs in the words with a sibilant. -/
 theorem strident_occurs_iff (w : List Segment) :
-    (featureDiagram [strident] (k := 1) le_rfl).Occurs (WordModel w (· < ·)) ↔
-      ∃ x ∈ w, x.IsSibilant := by
-  simp only [featureDiagram_singleton_occurs_iff, strident, ← Segment.isSibilant_iff_le]
+    (diagram (Phonology.Feature × Bool) [strident] (k := 1) le_rfl).Occurs
+      (WordModel w (· < ·)) ↔ ∃ x ∈ w, x.IsSibilant := by
+  simp only [diagram_singleton_occurs_iff, labels_subset_labels_iff, strident,
+    ← Segment.isSibilant_iff_le]
 
 /-! ### The grammar of section 5.2 -/
 
@@ -60,10 +61,10 @@ def alveolar : Segment := .ofSpecs [(.strident, true), (.anterior, true)]
 def postalveolar : Segment := .ofSpecs [(.strident, true), (.anterior, false)]
 
 /-- The forbidden subfactor of section 5.2 is an alveolar sibilant before a postalveolar one. -/
-def antPost : featureLanguage.Factor 2 := featureDiagram [alveolar, postalveolar] le_rfl
+def antPost : featureLanguage.Factor 2 := diagram _ [alveolar, postalveolar] le_rfl
 
 /-- The mirror image is a postalveolar sibilant before an alveolar one. -/
-def postAnt : featureLanguage.Factor 2 := featureDiagram [postalveolar, alveolar] le_rfl
+def postAnt : featureLanguage.Factor 2 := diagram _ [postalveolar, alveolar] le_rfl
 
 /-- The language of the grammar, Definition 8, holds the words whose subfactors avoid the
 forbidden one. -/
@@ -81,10 +82,10 @@ theorem mem_language_iff (w : List Segment) :
   exact ⟨fun h ho ↦ h _ ho rfl, fun h _ hx hxe ↦ h (hxe ▸ hx)⟩
 
 /-- A two-position diagram occurs exactly where a subsequence of two segments lies above it. -/
-theorem featureDiagram_pair_occurs_iff (d e : Segment) (w : List Segment) :
-    (featureDiagram [d, e] (k := 2) le_rfl).Occurs (WordModel w (· < ·)) ↔
+theorem diagram_pair_occurs_iff (d e : Segment) (w : List Segment) :
+    (diagram (Phonology.Feature × Bool) [d, e] (k := 2) le_rfl).Occurs (WordModel w (· < ·)) ↔
       ∃ a b, [a, b] <+ w ∧ d ≤ a ∧ e ≤ b := by
-  rw [featureDiagram_occurs_iff]
+  rw [diagram_occurs_iff_forall₂_le]
   constructor
   · rintro ⟨t, htw, hdt⟩
     cases hdt with
@@ -112,7 +113,7 @@ theorem postalveolar_le_iff (x : Segment) : postalveolar ≤ x ↔ sibilantClass
 theorem antPost_occurs_sibilant_pairs :
     ∀ x ∈ [s, z], ∀ y ∈ [esh, ezh], antPost.Occurs (WordModel [x, y] (· < ·)) := by
   intro x hx y hy
-  refine (featureDiagram_pair_occurs_iff _ _ _).2 ⟨x, y, .refl _, ?_, ?_⟩
+  refine (diagram_pair_occurs_iff _ _ _).2 ⟨x, y, .refl _, ?_, ?_⟩
   · rw [alveolar_le_iff]; simp only [List.mem_cons, List.mem_nil_iff, or_false] at hx
     rcases hx with rfl | rfl <;> decide
   · rw [postalveolar_le_iff]; simp only [List.mem_cons, List.mem_nil_iff, or_false] at hy
@@ -129,7 +130,7 @@ theorem mem_navajoSibilantHarmony_iff (w : List Segment) :
       ¬ a .anterior ≠ b .anterior → ¬ b .anterior ≠ c .anterior → ¬ a .anterior ≠ c .anterior :=
     fun _ _ _ _ _ _ hab hbc ↦ not_ne_iff.2 ((not_ne_iff.1 hab).trans (not_ne_iff.1 hbc))
   rw [mem_ofForbiddenPairs_language_iff_forall_sublist_pair htrans, antPost, postAnt,
-    featureDiagram_pair_occurs_iff, featureDiagram_pair_occurs_iff]
+    diagram_pair_occurs_iff, diagram_pair_occurs_iff]
   simp only [alveolar_le_iff, postalveolar_le_iff, not_exists, not_and, ne_eq, not_not]
   refine ⟨fun h ↦ ⟨fun a b hab ha hb ↦ ?_, fun a b hab ha hb ↦ ?_⟩, fun h a b hab hoa hob ↦ ?_⟩
   · have hoa : OnTier a := by simp [OnTier, ha]
@@ -156,11 +157,11 @@ theorem mem_navajoSibilantHarmony_iff (w : List Segment) :
 Navajo's symmetric harmony bans. -/
 theorem esh_s_mem_language : [esh, s] ∈ language ∧ [esh, s] ∉ navajoSibilantHarmony.language := by
   refine ⟨(mem_language_iff _).2 fun h ↦ ?_, fun h ↦ ?_⟩
-  · obtain ⟨a, b, hab, ha, -⟩ := (featureDiagram_pair_occurs_iff _ _ _).1 h
+  · obtain ⟨a, b, hab, ha, -⟩ := (diagram_pair_occurs_iff _ _ _).1 h
     obtain ⟨rfl, -⟩ := List.cons_eq_cons.1 (hab.eq_of_length rfl)
     exact absurd ((alveolar_le_iff _).1 ha) (by decide)
   · exact ((mem_navajoSibilantHarmony_iff _).1 h).2
-      ((featureDiagram_pair_occurs_iff _ _ _).2 ⟨esh, s, .refl _, by
+      ((diagram_pair_occurs_iff _ _ _).2 ⟨esh, s, .refl _, by
         rw [postalveolar_le_iff]; decide, by rw [alveolar_le_iff]; decide⟩)
 
 end ChandleeEtAl2019
