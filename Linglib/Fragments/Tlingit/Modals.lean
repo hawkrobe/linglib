@@ -5,26 +5,23 @@ public import Linglib.Semantics.Modality.Basic
 /-!
 # Tlingit modals
 
-The modal expressions of Tlingit (Athabaskan-Eyak-Tlingit, ISO 639-3 `tli`) that Cable
-describes, as coded in the modal typology database of Guo, Imel and Steinert-Threlkeld. Three
-expressions, *gwál*, *giwe* and *shákdé*, express epistemic possibility; the future mode of the
-verb expresses circumstantial necessity and the potential mode circumstantial possibility.
+The Tlingit (Athabaskan-Eyak-Tlingit, ISO 639-3 `tli`) expressions with a dedicated modal
+meaning, as Cable describes them: the dubitative particles *gwál*, *gíwé* and *shákdé*,
+expressing epistemic possibility, and two inflectional modes of the verb, the potential mode,
+expressing circumstantial possibility, and the future mode, expressing circumstantial necessity.
+Each mode is realized by a combination of prefixes and a stem suffix.
 
 ## Implementation notes
 
-* The database records whether each expression can express each combination of weak or strong
-  force with epistemic, deontic or circumstantial flavor, in positive and in negative clauses.
-  An entry's meaning is its positive-clause combinations marked expressible, weak force entered
-  as possibility and strong as necessity. Combinations marked unknown are left out, and so are
-  the prohibitive mode and *tlél aadé … yé*, which the database records only under negation.
-* The future and potential modes are inflectional categories of the verb, each realized by a
-  combination of prefixes and suffixes, and their entries carry the mode's name as form.
+* An entry's meaning is the categories Cable finds positive evidence that it expresses. The
+  *tlél aadé … yé* construction, which expresses the negation of circumstantial possibility,
+  has no entry, nor do the expressions speakers use to convey deontic modality without
+  encoding it.
+* The modes' entries carry the mode's name as form.
 
 ## References
 
 * [cable-2017]
-* [guo-imel-steinert-threlkeld-2022]
-* [cable-2022]
 -/
 
 @[expose] public section
@@ -33,13 +30,15 @@ namespace Tlingit
 
 open Modality
 
-/-- The dubitative *gwál*, expressing epistemic possibility. -/
+/-- The dubitative particle *gwál* 'perhaps', expressing epistemic possibility. -/
 def gwál : ModalItem := { form := "gwál", meaning := {(.possibility, .epistemic)} }
 
-/-- *giwe*, expressing epistemic possibility. -/
-def giwe : ModalItem := { form := "giwe", meaning := {(.possibility, .epistemic)} }
+/-- The dubitative particle *gíwé* 'perhaps, I guess', which does not imply likelihood,
+expressing epistemic possibility. -/
+def gíwé : ModalItem := { form := "gíwé", meaning := {(.possibility, .epistemic)} }
 
-/-- *shákdé*, expressing epistemic possibility. -/
+/-- The dubitative particle *shákdé* 'perhaps, probably', which implies likelihood, expressing
+epistemic possibility. -/
 def shákdé : ModalItem := { form := "shákdé", meaning := {(.possibility, .epistemic)} }
 
 /-- The future mode of the verb, expressing circumstantial necessity. -/
@@ -50,7 +49,7 @@ def futureMode : ModalItem :=
 def potentialMode : ModalItem :=
   { form := "potential mode", meaning := {(.possibility, .circumstantial)} }
 
-/-- The modal inventory: the expressions with a meaning in positive clauses. -/
-def modals : List ModalItem := [gwál, giwe, shákdé, futureMode, potentialMode]
+/-- The expressions with a dedicated modal meaning. -/
+def modals : List ModalItem := [gwál, gíwé, shákdé, futureMode, potentialMode]
 
 end Tlingit
