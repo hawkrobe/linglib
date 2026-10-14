@@ -131,10 +131,6 @@ instance decidableRel_atLeastAsGoodAs_insert (p : W → Prop) [DecidablePred p]
   fun w z ↦ decidable_of_iff ((p z → p w) ∧ w ≤[A] z) <| by
     simp only [atLeastAsGoodAs_iff, Set.forall_mem_insert]
 
-/-- An empty ordering source induces the preorder relating every two worlds. -/
-@[simp] theorem premisePreorder_empty : premisePreorder (∅ : Set (W → Prop)) = ⊤ :=
-  top_unique fun _ _ _ ↦ atLeastAsGoodAs_empty _ _
-
 /-- `w` is strictly better than `z` when it is at least as good and not conversely. -/
 def strictlyBetter (A : Set (W → Prop)) (w z : W) : Prop := (premisePreorder A).lt w z
 

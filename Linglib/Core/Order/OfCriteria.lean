@@ -1,7 +1,6 @@
 module
 
-public import Mathlib.Data.Set.Basic
-public import Mathlib.Order.Defs.PartialOrder
+public import Linglib.Core.Order.PreorderLattice
 public import Mathlib.Order.Concept
 
 /-!
@@ -16,7 +15,8 @@ along the map sending an element to the set of criteria it satisfies
 ## Main declarations
 
 * `Preorder.ofCriteria`: the criteria-derived preorder.
-* `Preorder.ofCriteria_le_of_subset`: fewer criteria give a coarser order.
+* `Preorder.ofCriteria_antitone`, `Preorder.ofCriteria_empty`: fewer criteria give a coarser
+  order, and no criteria give the total one.
 * `Preorder.satisfied`, `Preorder.maximalFor_satisfied_iff`: the criteria that an element
   satisfies, and the minimal elements of the order as the elements satisfying a maximal set.
 * `Preorder.satisfied_eq_inter_upperPolar`: the criteria an element satisfies are its intent in
@@ -48,21 +48,16 @@ criteria it satisfies, with target `(Set C)ᵒᵈ`. -/
 theorem ofCriteria_le_iff_subset (sat : α → C → Prop) (criteria : Set C)
     (a b : α) :
     (ofCriteria sat criteria).le a b ↔
-      {c ∈ criteria | sat b c} ⊆ {c ∈ criteria | sat a c} := by
-  constructor
-  · intro h c hc
-    obtain ⟨hcrit, hsat⟩ := Set.mem_sep_iff.mp hc
-    exact Set.mem_sep_iff.mpr ⟨hcrit, h c hcrit hsat⟩
-  · intro h c hc hsat
-    exact (Set.mem_sep_iff.mp (h (Set.mem_sep_iff.mpr ⟨hc, hsat⟩))).2
+      {c ∈ criteria | sat b c} ⊆ {c ∈ criteria | sat a c} :=
+  ⟨fun h _ hc ↦ ⟨hc.1, h _ hc.1 hc.2⟩, fun h _ hc hb ↦ (h ⟨hc, hb⟩).2⟩
 
-/-- Fewer criteria give a coarser order, so dominance over a set of criteria transfers to any
-subset. -/
-theorem ofCriteria_le_of_subset {sat : α → C → Prop}
-    {criteria criteria' : Set C} (hsub : criteria ⊆ criteria') {a b : α}
-    (h : (ofCriteria sat criteria').le a b) :
-    (ofCriteria sat criteria).le a b :=
-  fun c hc ↦ h c (hsub hc)
+/-- Fewer criteria give a coarser order. -/
+theorem ofCriteria_antitone (sat : α → C → Prop) : Antitone (ofCriteria sat) :=
+  fun _ _ hsub _ _ h c hc ↦ h c (hsub hc)
+
+/-- No criteria give the order relating every two elements. -/
+@[simp] theorem ofCriteria_empty (sat : α → C → Prop) : ofCriteria sat ∅ = ⊤ :=
+  top_unique fun _ _ _ _ h ↦ h.elim
 
 /-! ### The satisfied criteria as a valuation -/
 

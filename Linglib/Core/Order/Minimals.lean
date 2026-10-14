@@ -1,7 +1,6 @@
 module
 
 public import Linglib.Core.Order.OfCriteria
-public import Linglib.Core.Order.PreorderLattice
 public import Mathlib.Order.Minimal
 public import Mathlib.Data.Fintype.Card
 public import Mathlib.Order.Preorder.Finite

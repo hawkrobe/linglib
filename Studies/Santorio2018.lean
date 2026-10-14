@@ -214,9 +214,10 @@ end Spain
 /-- Closeness for the party puts the Anna-only world closest to the actual world, then the
 world where both came, then Otto's. -/
 abbrev partySim (_ : Party) : Preorder Party := Preorder.ofLE
-  (fun w₁ w₂ ↦ (w₁ == w₂ || (w₁ == .annaOnly && w₂ != .neither) ||
-    (w₁ == .both && w₂ == .ottoOnly)) = true)
+  (fun w₁ w₂ ↦ w₁ = w₂ ∨ w₁ = .annaOnly ∧ w₂ ≠ .neither ∨ w₁ = .both ∧ w₂ = .ottoOnly)
   (by decide) (by decide)
+
+instance (w : Party) : DecidableRel (partySim w).le := fun _ _ ↦ inferInstanceAs (Decidable (_ ∨ _))
 
 /-- *The party was fun* holds only when Anna came alone. -/
 abbrev partyFun : Finset Party := {.annaOnly}
