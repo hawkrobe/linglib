@@ -437,7 +437,7 @@
     "readings": [],
     "paperFeatures": [
       ["construction", "marking"],
-      ["P.animacy", "higherAnimal"],
+      ["P.animacy", "animal"],
       ["P.marked", "marked"]
     ],
     "comment": "",
@@ -457,7 +457,7 @@
     "readings": [],
     "paperFeatures": [
       ["construction", "marking"],
-      ["P.animacy", "discreteInanimate"],
+      ["P.animacy", "inanimate"],
       ["P.marked", "unmarked"]
     ],
     "comment": "",
@@ -477,7 +477,7 @@
     "readings": [],
     "paperFeatures": [
       ["construction", "marking"],
-      ["P.animacy", "discreteInanimate"],
+      ["P.animacy", "inanimate"],
       ["P.marked", "unmarked"]
     ],
     "comment": "",
@@ -538,7 +538,7 @@
     "readings": [],
     "paperFeatures": [
       ["construction", "marking"],
-      ["P.animacy", "higherAnimal"],
+      ["P.animacy", "animal"],
       ["P.marked", "unmarked"]
     ],
     "comment": "A different cut-off point on the animacy hierarchy from Russian's.",
@@ -558,7 +558,7 @@
     "readings": [],
     "paperFeatures": [
       ["construction", "marking"],
-      ["P.animacy", "discreteInanimate"],
+      ["P.animacy", "inanimate"],
       ["P.marked", "unmarked"]
     ],
     "comment": "",
@@ -712,7 +712,7 @@
     "readings": [],
     "paperFeatures": [
       ["construction", "marking"],
-      ["P.animacy", "discreteInanimate"],
+      ["P.animacy", "inanimate"],
       ["P.definiteness", "definite"],
       ["P.marked", "optional"]
     ],
@@ -735,7 +735,7 @@
     "readings": [],
     "paperFeatures": [
       ["construction", "marking"],
-      ["P.animacy", "discreteInanimate"],
+      ["P.animacy", "inanimate"],
       ["P.definiteness", "definite"],
       ["P.marked", "optional"]
     ],
@@ -758,7 +758,7 @@
     "readings": [],
     "paperFeatures": [
       ["construction", "marking"],
-      ["P.animacy", "discreteInanimate"],
+      ["P.animacy", "inanimate"],
       ["P.definiteness", "nonSpecific"],
       ["P.marked", "unmarked"]
     ],
@@ -779,7 +779,7 @@
     "readings": [],
     "paperFeatures": [
       ["construction", "marking"],
-      ["P.animacy", "discreteInanimate"],
+      ["P.animacy", "inanimate"],
       ["P.definiteness", "definite"],
       ["P.marked", "unmarked"]
     ],

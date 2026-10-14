@@ -7,7 +7,6 @@ public import Mathlib.Tactic.FinCases
 public import Mathlib.Tactic.NormNum
 public import Linglib.Syntax.Agreement.Classes
 public import Linglib.Syntax.Number.Resolve
-public import Linglib.Semantics.Reference.Prominence
 public import Linglib.Fragments.Bayso.Number
 public import Linglib.Fragments.Teop.Nouns
 public import Studies.Corbett1991
@@ -49,9 +48,8 @@ is a category apart. The book's examples are the rows of `Data/Examples/Corbett2
   general number and how many final choices are facultative. The substrate's system, its
   values and its facultative list, is derived from the choices, and the substrate's
   implicational universals hold of every system by enumeration of the finite type of shapes.
-* A range is a function from the positions of the substrate's animacy hierarchy, Haspelmath's,
-  which puts the speaker at the top, splits the book's animate position as Miya needs, and
-  whose discrete inanimates are the book's inanimate position, to a three-way
+* A range is a function from the positions of the Animacy Hierarchy, with the animate position
+  split as Miya needs, to a three-way
   marking; constraint III of chapter 3 is monotonicity, the top-segment constraint I a
   theorem of it, and constraints I–III of chapter 4 are read as a pointwise order between
   successive choices, which is stronger than their letter. The optional marking of chapter 3,
@@ -93,7 +91,7 @@ is a category apart. The book's examples are the rows of `Data/Examples/Corbett2
 
 namespace Corbett2000
 
-open Agreement Corbett1991 Reference.Prominence
+open Agreement Corbett1991
 
 /-- Singular, dual and plural. -/
 def sgDuPl : List Number := [.singular, .dual, .plural]
@@ -279,6 +277,33 @@ instance : OrderBot Marking where
 
 end Marking
 
+/-- The Animacy Hierarchy of Figure 3.1, speaker > addressee > third person > kin >
+human > animate > inanimate, with the animate position split into higher and lower animates
+where Miya splits it (Table 3.6). -/
+inductive AnimacyHierarchy where
+  | inanimate
+  | lowerAnimate
+  | higherAnimate
+  | human
+  | kin
+  | thirdPerson
+  | addressee
+  | speaker
+  deriving DecidableEq, Repr, Fintype
+
+/-- The rank on the hierarchy, 0 for the inanimates up to 7 for the speaker. -/
+def AnimacyHierarchy.rank : AnimacyHierarchy → ℕ
+  | .inanimate => 0
+  | .lowerAnimate => 1
+  | .higherAnimate => 2
+  | .human => 3
+  | .kin => 4
+  | .thirdPerson => 5
+  | .addressee => 6
+  | .speaker => 7
+
+instance : LinearOrder AnimacyHierarchy := LinearOrder.lift' AnimacyHierarchy.rank (by decide)
+
 /-- The range of a number value gives its marking at each position of the hierarchy. -/
 abbrev Range := AnimacyHierarchy → Marking
 
@@ -324,12 +349,12 @@ instance (p : Profile) : Decidable p.Respects := by unfold Profile.Respects; inf
 /-- The plural and the dual over the same nominals, Figure 4.2. -/
 def mansi : Profile :=
   ⟨"Mansi", sanskrit,
-    fun | .plural | .dual => .downTo .discreteInanimate .discreteInanimate | _ => ⊥⟩
+    fun | .plural | .dual => .downTo .inanimate .inanimate | _ => ⊥⟩
 
 /-- The dual in the first person only, Figure 4.3. -/
 def arapesh : Profile :=
   ⟨"Arapesh", sanskrit,
-    fun | .plural => .downTo .discreteInanimate .discreteInanimate
+    fun | .plural => .downTo .inanimate .inanimate
         | .dual => .downTo .speaker .speaker | _ => ⊥⟩
 
 /-- Pronouns with three numbers, nine nouns, mainly kin, with two, Figure 4.4. -/
@@ -340,24 +365,24 @@ def maori : Profile :=
 /-- The paucal on pronouns only, Figure 4.6. -/
 def yimasProfile : Profile :=
   ⟨"Yimas", yimas,
-    fun | .plural | .dual => .downTo .discreteInanimate .discreteInanimate
+    fun | .plural | .dual => .downTo .inanimate .inanimate
         | .paucal => .downTo .thirdPerson .thirdPerson | _ => ⊥⟩
 
 /-- The dual and the paucal for humans and higher animals, Figure 4.7. -/
 def manam : Profile :=
   ⟨"Manam", yimas,
-    fun | .plural => .downTo .discreteInanimate .discreteInanimate
-        | .dual | .paucal => .downTo .higherAnimal .higherAnimal | _ => ⊥⟩
+    fun | .plural => .downTo .inanimate .inanimate
+        | .dual | .paucal => .downTo .higherAnimate .higherAnimate | _ => ⊥⟩
 
 /-- The dual obligatory for pronouns and facultative for nouns, Figure 4.8. -/
 def sloveneProfile : Profile :=
   ⟨"Slovene", slovene,
-    fun | .plural => .downTo .discreteInanimate .discreteInanimate
-        | .dual => .downTo .thirdPerson .discreteInanimate | _ => ⊥⟩
+    fun | .plural => .downTo .inanimate .inanimate
+        | .dual => .downTo .thirdPerson .inanimate | _ => ⊥⟩
 
 /-- The plural obligatory down to humans and optional below. -/
 def kannada : Profile :=
-  ⟨"Kannada", russian, fun | .plural => .downTo .human .discreteInanimate | _ => ⊥⟩
+  ⟨"Kannada", russian, fun | .plural => .downTo .human .inanimate | _ => ⊥⟩
 
 /-- Pronouns obligatory; the plural suffix optional for humans, and for dogs as a lexical
 exception the book declines to make a position. -/
@@ -366,7 +391,7 @@ def slave : Profile :=
 
 /-- Dual and plural obligatory for humans, optional for animates, seldom for inanimates. -/
 def comanche : Profile :=
-  ⟨"Comanche", sanskrit, fun | .plural | .dual => .downTo .human .discreteInanimate | _ => ⊥⟩
+  ⟨"Comanche", sanskrit, fun | .plural | .dual => .downTo .human .inanimate | _ => ⊥⟩
 
 /-- The profiles of chapters 3 and 4. -/
 def profiles : List Profile :=
@@ -378,7 +403,7 @@ theorem profiles_respect : ∀ p ∈ profiles, p.Respects := by decide
 theorem not_respects_dual_wider :
     ¬ Profile.Respects ⟨"", sanskrit,
       fun | .plural => .downTo .speaker .speaker
-          | .dual => .downTo .discreteInanimate .discreteInanimate | _ => ⊥⟩ := by
+          | .dual => .downTo .inanimate .inanimate | _ => ⊥⟩ := by
   decide
 
 /-- A facultative value is optional somewhere in its range, but optional marking is not thereby
@@ -394,15 +419,15 @@ def mayaliAgreement : Range := .downTo .human .human
 
 /-- In Miya, Table 3.6, number marking is obligatory for humans and higher animals and
 optional below. -/
-def miyaMarking : Range := .downTo .higherAnimal .discreteInanimate
+def miyaMarking : Range := .downTo .higherAnimate .inanimate
 
 /-- In Miya, Table 3.6, number agreement is obligatory for humans and higher animals and
 excluded below. -/
-def miyaAgreement : Range := .downTo .higherAnimal .higherAnimal
+def miyaAgreement : Range := .downTo .higherAnimate .higherAnimate
 
 /-- In Muna plural agreement is obligatory for humans, optional for animates and excluded for
 inanimates, which may carry a plural marker. -/
-def munaAgreement : Range := .downTo .human .lowerAnimal
+def munaAgreement : Range := .downTo .human .lowerAnimate
 
 /-- Marking and agreement may split at different points, each in accord with the
 hierarchy. -/
@@ -434,12 +459,12 @@ theorem mangarayi_dispensable : Dispensable dualTrial [.trial] := by decide
 theorem not_dispensable_dual_of_trial : ¬ Dispensable dualTrial [.dual] := by decide
 
 /-- The Hebrew dual, on a few nouns for measures of time and facultative there. -/
-def hebrewDual : Range := fun p ↦ if p = .discreteInanimate then .optional else ⊥
+def hebrewDual : Range := fun p ↦ if p = .inanimate then .optional else ⊥
 
 /-- A minor number is not a top segment, constraint V placing it within the plural's range. -/
 theorem hebrewDual_not_respects :
     ¬ hebrewDual.Respects ∧
-      ∀ p, hebrewDual p ≤ Range.downTo .discreteInanimate .discreteInanimate p := by
+      ∀ p, hebrewDual p ≤ Range.downTo .inanimate .inanimate p := by
   decide
 
 /-! ### Top and second systems (§4.5) -/
@@ -832,9 +857,8 @@ def numberNames : List (String × Number) :=
 /-- The positions of the hierarchy by name. -/
 def rankNames : List (String × AnimacyHierarchy) :=
   [("speaker", .speaker), ("addressee", .addressee), ("thirdPerson", .thirdPerson),
-    ("kin", .kin), ("human", .human), ("higherAnimal", .higherAnimal),
-    ("lowerAnimal", .lowerAnimal), ("discreteInanimate", .discreteInanimate),
-    ("nondiscreteInanimate", .nondiscreteInanimate)]
+    ("kin", .kin), ("human", .human), ("higherAnimate", .higherAnimate),
+    ("lowerAnimate", .lowerAnimate), ("inanimate", .inanimate)]
 
 /-- The markings by name. -/
 def markingNames : List (String × Marking) :=
@@ -858,7 +882,7 @@ theorem agreement_rows : ∀ row ∈ Examples.all, ∀ p ∈ row.parse? "positio
 /-- In Slave, (2) to (4), the plural suffix is optional, for dogs as a lexical exception. -/
 theorem slave_rows : ∀ row ∈ Examples.all, row.language = "slav1253" →
     ∀ p ∈ row.parse? "position" rankNames, ∀ m ∈ row.parse? "marking" markingNames,
-      m = slave.range .plural p ∨ p = .higherAnimal := by
+      m = slave.range .plural p ∨ p = .higherAnimate := by
   decide +kernel
 
 /-- In Hebrew, (1) to (3) of chapter 4, the verb's number is the value its singular–plural
