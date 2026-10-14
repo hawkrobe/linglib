@@ -133,6 +133,12 @@ theorem IsStrictlyLocal.mem_of_factors_subset (hS : L.IsStrictlyLocal M k S) {i 
     (hi : i ∈ S) (h : L.factors k (M j) ⊆ L.factors k (M i)) : j ∈ S :=
   hS.mem_of_factors_subset_union hi hi (h.trans Set.subset_union_left)
 
+/-- Strictly local sets pull back along any reindexing of the family. -/
+theorem IsStrictlyLocal.comap {κ : Type*} (hS : L.IsStrictlyLocal M k S) (π : κ → ι) :
+    L.IsStrictlyLocal (fun j ↦ M (π j)) k (π ⁻¹' S) := by
+  obtain ⟨G, rfl⟩ := hS
+  exact ⟨G, rfl⟩
+
 theorem IsStrictlyLocal.inter (hS : L.IsStrictlyLocal M k S) (hT : L.IsStrictlyLocal M k T) :
     L.IsStrictlyLocal M k (S ∩ T) := by
   obtain ⟨G, rfl⟩ := hS

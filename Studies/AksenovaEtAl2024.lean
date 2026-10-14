@@ -50,6 +50,7 @@ harmony.
 * [aksenova-rawski-graf-heinz-2024]
 * [heinz-2010]
 * [rogers-pullum-2011]
+* [lambert-2023]
 -/
 
 @[expose] public section
@@ -422,18 +423,21 @@ private theorem mem_kikongo_window (x y : KikongoSeg) (hx : x.isVowel = false)
   have he : KikongoSeg.e.isVowel = true := rfl
   simp [List.filter_append, hx, hy, he, List.isChain_replicate_of_rel]
 
-/-- **No single tier carries Kikongo's two harmonies** (§34.3.3). Every symbol is visible, so a
-single tier would have to hold them all, and then a nasal and an `l` with vowels between them
-are not adjacent on it. -/
+/-- **No single tier carries Kikongo's two harmonies** (§34.3.3), by [lambert-2023]'s method.
+Deleting `e` from `ie` changes membership, so a tier must hold `e`, and then suffix substitution
+across a stretch of `e`s carries `n … n` and `l … l` to the ill-formed `n … l`. -/
 theorem kikongo_not_isTierStrictlyLocal (k : ℕ) : ¬ Language.IsTierStrictlyLocal k kikongo :=
   fun h ↦ by
-    have hvis : ∀ a, ∃ u v, ¬ (u ++ a :: v ∈ kikongo ↔ u ++ v ∈ kikongo) := by
-      intro a; cases a
-      exacts [⟨[.i], [], by decide⟩, ⟨[.i], [], by decide⟩, ⟨[.e], [], by decide⟩,
-        ⟨[.e], [], by decide⟩, ⟨[], [.l], by decide⟩, ⟨[], [.l], by decide⟩,
-        ⟨[.n], [], by decide⟩, ⟨[.n], [], by decide⟩]
-    exact (mem_kikongo_window .n .l rfl rfl _).1 ((h.isStrictlyLocal hvis).suffixSubstitutionClosed
-      [.n] [.n] [.l] [.l] _ (List.length_replicate ..) ((mem_kikongo_window _ _ rfl rfl _).2
-        (by decide)) ((mem_kikongo_window _ _ rfl rfl _).2 (by decide))) (by decide)
+    obtain ⟨T, _, hinv, hL⟩ := h.exists_tier
+    have hT (a : KikongoSeg) (u v : List KikongoSeg)
+        (h : ¬ (u ++ a :: v ∈ kikongo ↔ u ++ v ∈ kikongo)) : T a :=
+      by_contra fun ha ↦ h (hinv u v a ha)
+    have he := hT .e [.i] [] (by decide)
+    have hx : (List.replicate (k - 1) KikongoSeg.e).filter (T ·) = List.replicate (k - 1) .e := by
+      simp [he]
+    exact (mem_kikongo_window .n .l rfl rfl (k - 1)).1
+      (hL [.n] _ [.n] [.l] _ [.l] rfl (by rw [hx, List.length_replicate])
+        ((mem_kikongo_window _ _ rfl rfl _).2 (by decide))
+        ((mem_kikongo_window _ _ rfl rfl _).2 (by decide))) (by decide)
 
 end AksenovaEtAl2024
