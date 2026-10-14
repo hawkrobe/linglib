@@ -863,7 +863,7 @@ namespace Icelandic
 /-- By §9.4, homogeneous masculines or feminines keep their gender and any mixture takes the
 neuter, the semantically justified gender for beings of both sexes; the rules read the
 fragment's nouns by their gender alone. -/
-def rules : List (ResolutionRule _root_.Icelandic.Nouns.Noun _root_.Gender) :=
+def rules : List (ResolutionRule (GenderedNoun _root_.Gender) _root_.Gender) :=
   [⟨.all, (·.gender = .masculine), .masculine⟩, ⟨.all, (·.gender = .feminine), .feminine⟩,
     otherwise .neuter]
 

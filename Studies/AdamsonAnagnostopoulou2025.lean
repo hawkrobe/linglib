@@ -12,26 +12,30 @@ public import Studies.Corbett1991
 public import Mathlib.Tactic.DeriveFintype
 
 /-!
-# Gender features and coordination resolution
+# Adamson and Anagnostopoulou (2025): Gender Features and Coordination Resolution in Greek and Other Three-Gendered Languages
 
 Adamson and Anagnostopoulou derive the resolution of gender on coordinated nominals in Greek,
 Icelandic, and Bosnian/Croatian/Serbian from three components and no default insertion: a
 language-particular geometry of privative gender features, a dual-feature system in which
 interpretable features go to LF and uninterpretable ones to PF, and the universal mechanism of
 percolation and conversion (`Minimalist.Coordination.resolve`). A system (`System`) fixes the
-geometry, the node each referent type and each grammatical gender contributes, and the vocabulary
-of inflectional exponents; every derivation is then a computation. In Greek, where FEM entails
-MASC, mismatched humans keep MASC and resolve masculine while inanimates, whose only
-interpretable feature is CLASS, resolve neuter (`Greek.human_mismatch`, `Greek.inanimate_mismatch`),
-and the fixed-gender nouns *megalofiia* and *thima* resolve by their referents
-(`Greek.genius_sister`, `Greek.victim_mother`). Uninterpretable features are realized set by set:
-uniform inanimates converge on their shared exponent (`Greek.inanimate_uniform`), mismatched
-ones do not (`Greek.inanimate_clash`), and a human coordinated with an inanimate is grammatical
-exactly when the human's interpretable features and the inanimate's uninterpretable ones receive
-the same exponent (`Greek.human_inanimate_match`, `Greek.human_inanimate_crash`,
-`Greek.victim_painting`). Neuter is the least specified gender, so it realizes clausal subjects
-(`Greek.clausal`), and the vocabulary's containment rules out a neuter–feminine syncretism that
-excludes the masculine (`Greek.no_aba`, from `RuleSet.Realizes.of_realizes`).
+geometry, the node each referent type and each grammatical gender contributes, and the vocabulary of
+inflectional exponents; every derivation is then a computation. A nominal (`System.nominal`) bears
+the interpretable features of its referent and, unless its noun's gender is its referents', the
+uninterpretable features of that gender, and conversion reads the referents alone
+(`System.converted_nominal`). In Greek, where FEM entails MASC, mismatched humans keep MASC and
+resolve masculine while inanimates, whose only interpretable feature is CLASS, resolve neuter
+(`Greek.human_mismatch`, `Greek.inanimate_mismatch`), and the fixed-gender nouns *koritsi*,
+*megalofiia* and *thima* resolve by their referents while their determiners agree with their gender
+(`Greek.woman_girl`, `Greek.genius_sister`, `Greek.victim_mother`). Uninterpretable features are
+realized set by set: uniform inanimates converge on their shared exponent
+(`Greek.inanimate_uniform`), mismatched ones do not (`Greek.inanimate_clash`), and a human
+coordinated with an inanimate is grammatical exactly when the human's interpretable features and the
+inanimate's uninterpretable ones receive the same exponent (`Greek.human_inanimate_match`,
+`Greek.human_inanimate_crash`, `Greek.victim_painting`). Neuter is the least specified gender, so it
+realizes clausal subjects (`Greek.clausal`), and the vocabulary's containment rules out a
+neuter–feminine syncretism that excludes the masculine (`Greek.no_aba`, from
+`RuleSet.Realizes.of_realizes`).
 
 Icelandic differs only in its geometry, with MASC meaning male and FEM independent of it, so
 mismatched humans resolve neuter (`Icelandic.human_mismatch`) while fixed-gender *skáld* still
@@ -49,6 +53,11 @@ resolution (`mismatchResolution`), and Table 2 follows from the geometries alone
 
 A geometry is given by its parent map on the six gender nodes, rooted in CLASS; the nodes a
 language does not use hang from CLASS and are never contributed.
+
+A nominal pairs a fragment noun with the referent the paper's example gives it, the man, woman or
+inanimate its margin notation marks. Each theorem names the derivation it computes, so the paper's
+percolation generalization, that humans percolate interpretable features and inanimates either
+kind, is respected in the choice of derivation rather than derived.
 
 ## References
 
@@ -96,7 +105,7 @@ uninterpretable gender, the features a plural coordination adds, and a vocabular
 structure System where
   parent : Node → Node
   iNode : Referent → Node
-  uNode : Gender → Bool → Node
+  uNode : Gender → Node
   plural : Finset Node := ∅
   vocabulary : RuleSet (VocabularyItem Node Gender)
 
@@ -111,12 +120,20 @@ def entailments (n : Node) : Finset Node := (List.iterate L.parent n (Fintype.ca
 def conceptual (r : Referent) : Bundle Node := .ofInterp (L.entailments (L.iNode r))
 
 /-- The uninterpretable features of a nominal of grammatical gender `g`. -/
-def arbitrary (g : Gender) (human : Bool := false) : Bundle Node :=
-  .ofUninterp (L.entailments (L.uNode g human))
+def arbitrary (g : Gender) : Bundle Node := .ofUninterp (L.entailments (L.uNode g))
+
+/-- A nominal headed by `n` and referring to `r` bears the interpretable features of `r` and,
+unless the gender of `n` is its referents', the uninterpretable features of that gender. -/
+def nominal (n : GenderedNoun Gender) (r : Referent) : Bundle Node :=
+  if n.IsNaturalGender id then L.conceptual r else L.conceptual r ∪ L.arbitrary n.gender
 
 /-- The exponent of a feature set under the Subset Principle. -/
 def realize (fs : Finset Node) : Option Gender :=
   subsetPrinciple L.vocabulary (Node.all.filter (· ∈ fs))
+
+/-- The exponent of a nominal's own gender, as on its determiner, its features at PF
+realized. -/
+def exponent (b : Bundle Node) : Option Gender := L.realize b.toPF
 
 /-- Resolution through conversion, the percolated interpretable features intersected and the
 result, with the coordination's plural features, realized; the intersection is nonempty by
@@ -130,10 +147,20 @@ def resolved (r₁ r₂ : Referent) : Option Gender := L.converted (L.conceptual
 one exponent or crashing. -/
 def formal (a b : Bundle Node) : Option Gender := realizeAll L.realize [a.uninterp, b.uninterp]
 
-/-- A human's interpretable features beside an inanimate's uninterpretable ones. The former fill
-the empty uninterpretable slot at Transfer, and both sets are realized. -/
+/-- A human's percolated interpretable features beside an inanimate's uninterpretable ones. The
+redundancy rule copies the former to PF, and both sets are realized. -/
 def mixed (human inan : Bundle Node) : Option Gender :=
-  realizeAll L.realize [human.toPF, inan.uninterp]
+  realizeAll L.realize [human.interp, inan.uninterp]
+
+@[simp] theorem interp_nominal (n : GenderedNoun Gender) (r : Referent) :
+    (L.nominal n r).interp = (L.conceptual r).interp := by
+  unfold nominal; split_ifs <;> simp [conceptual, arbitrary]
+
+/-- Conversion reads the referents alone, so two nominals resolve as their referents do whatever
+their nouns' genders. -/
+theorem converted_nominal (n₁ n₂ : GenderedNoun Gender) (r₁ r₂ : Referent) :
+    L.converted (L.nominal n₁ r₁) (L.nominal n₂ r₂) = L.resolved r₁ r₂ := by
+  simp only [converted, resolved, resolve, interp_nominal]
 
 end System
 
@@ -156,99 +183,126 @@ def system : System where
     | .man => .masc
     | .woman => .fem
     | _ => .cls
-  uNode g _ :=
-    match g with
+  uNode
     | .masculine => .masc
     | .feminine => .fem
     | _ => .cls
   vocabulary := threeWay
 
-/-- An inanimate's bundle, interpretable CLASS beside its arbitrary gender. -/
-def inanimate (n : Greek.StandardModern.Gender.Noun) : Bundle Node :=
-  system.conceptual .thing ∪ system.arbitrary n.gender
-
 theorem masc_mem_entailments_fem : .masc ∈ system.entailments .fem := by decide
 
-/-- Uniform humans resolve to their shared gender. -/
+/-- Uniform humans resolve to their shared gender, as in *i Maria ke i Giota* and *o Petros ke o
+Kostas*. -/
 theorem human_uniform :
-    system.resolved .woman .woman = some .feminine ∧
-      system.resolved .man .man = some .masculine := by
+    system.converted (system.nominal maria .woman) (system.nominal giota .woman) =
+        some .feminine ∧
+      system.converted (system.nominal petros .man) (system.nominal kostas .man) =
+        some .masculine := by
   decide
 
 /-- In *o andras ke i gineka ine eksipni* FEM is lost and MASC kept. -/
-theorem human_mismatch : system.resolved .man .woman = some .masculine := by decide
+theorem human_mismatch :
+    system.converted (system.nominal andras .man) (system.nominal gineka .woman) =
+      some .masculine := by
+  decide
 
-/-- *I gineka ke to koritsi ine eksipnes*, where the neuter *koritsi* resolves by its referent. -/
-theorem woman_girl : koritsi.gender = .neuter ∧ system.resolved .woman .woman = some .feminine := by
+/-- *I gineka ke to koritsi ine eksipnes*, where the neuter *koritsi* resolves by its female
+referent. -/
+theorem woman_girl :
+    system.exponent (system.nominal koritsi .woman) = some .neuter ∧
+      system.converted (system.nominal gineka .woman) (system.nominal koritsi .woman) =
+        some .feminine := by
   decide
 
 /-- *I megalofiia ke i adherfi tu ine charumeni*, where two grammatically feminine nouns resolve
 masculine because the genius is a man. -/
 theorem genius_sister :
-    megalofiia.gender = .feminine ∧ system.resolved .man .woman = some .masculine := by
+    system.exponent (system.nominal megalofiia .man) = some .feminine ∧
+      system.exponent (system.nominal adherfi .woman) = some .feminine ∧
+      system.converted (system.nominal megalofiia .man) (system.nominal adherfi .woman) =
+        some .masculine := by
   decide
 
 /-- *To thima ke i mitera tis ine charumenes*, where the neuter *thima* resolves feminine for a
 woman. -/
 theorem victim_mother :
-    thima.gender = .neuter ∧ system.resolved .woman .woman = some .feminine := by
+    system.exponent (system.nominal thima .woman) = some .neuter ∧
+      system.converted (system.nominal thima .woman) (system.nominal mitera .woman) =
+        some .feminine := by
   decide
 
 /-- Uniform inanimates realize their shared arbitrary gender. -/
 theorem inanimate_uniform :
-    system.formal (inanimate fusta) (inanimate bluza) = some .feminine ∧
-      system.formal (inanimate anaptiras) (inanimate fakos) = some .masculine ∧
-      system.formal (inanimate piruni) (inanimate kutali) = some .neuter := by
+    system.formal (system.nominal fusta .thing) (system.nominal bluza .thing) = some .feminine ∧
+      system.formal (system.nominal anaptiras .thing) (system.nominal fakos .thing) =
+        some .masculine ∧
+      system.formal (system.nominal piruni .thing) (system.nominal kutali .thing) =
+        some .neuter := by
   decide
 
 /-- Mismatched inanimates resolve neuter through their interpretable CLASS. -/
 theorem inanimate_mismatch :
-    system.converted (inanimate pinakas) (inanimate karekla) = some .neuter ∧
-      system.converted (inanimate scholio) (inanimate ekklisia) = some .neuter ∧
-      system.converted (inanimate balkoni) (inanimate dhiadhromos) = some .neuter := by
+    system.converted (system.nominal pinakas .thing) (system.nominal karekla .thing) =
+        some .neuter ∧
+      system.converted (system.nominal scholio .thing) (system.nominal ekklisia .thing) =
+        some .neuter ∧
+      system.converted (system.nominal balkoni .thing) (system.nominal dhiadhromos .thing) =
+        some .neuter := by
   decide
 
 /-- Percolating their uninterpretable features instead clashes at PF. -/
 theorem inanimate_clash :
-    system.formal (inanimate pinakas) (inanimate karekla) = none ∧
-      system.formal (inanimate scholio) (inanimate ekklisia) = none := by
+    system.formal (system.nominal pinakas .thing) (system.nominal karekla .thing) = none ∧
+      system.formal (system.nominal scholio .thing) (system.nominal ekklisia .thing) = none := by
   decide
 
 /-- Uniform inanimates may also percolate CLASS and resolve neuter. -/
 theorem inanimate_uniform_neuter :
-    system.converted (inanimate fusta) (inanimate bluza) = some .neuter := by
+    system.converted (system.nominal fusta .thing) (system.nominal bluza .thing) =
+      some .neuter := by
   decide
 
-/-- Closest conjunct agreement is with the uninterpretable features of the conjunct next to the
-predicate, which precedes the subject, so it is feminine for *i megalofiia ke o filos tu* whatever
-the genius's referent ((45)) and masculine for *o pinakas ke i karekla* ((46)). -/
+/-- Closest conjunct agreement is with the PF features of the conjunct next to the predicate,
+which precedes the subject, so it is feminine for *i megalofiia ke o filos tu* whatever the
+genius's referent ((45)) and masculine, not the neuter of CLASS, for *o pinakas ke i karekla*
+((46)). -/
 theorem closest_conjunct :
     (HeadDirection.headInitial.nearest
-        [system.arbitrary megalofiia.gender, system.conceptual .man]).bind
-      (system.realize ·.uninterp) = some .feminine ∧
-    (HeadDirection.headInitial.nearest [inanimate pinakas, inanimate karekla]).bind
-      (system.realize ·.uninterp) = some .masculine := by
+        [system.nominal megalofiia .man, system.nominal filos .man]).bind system.exponent =
+      some .feminine ∧
+    (HeadDirection.headInitial.nearest
+        [system.nominal pinakas .thing, system.nominal karekla .thing]).bind system.exponent =
+      some .masculine := by
   decide
 
-/-- *O kleftis ke to daxtilidi*, where the thief's MASC and the ring's CLASS clash at PF; the
-paper excludes the remaining, all-interpretable option at LF. -/
+/-- *O kleftis ke to daxtilidi* and *o Giorgos ke to pukamiso tu*, where the man's MASC and the
+neuter's CLASS clash at PF; the paper excludes the remaining, all-interpretable option at LF. -/
 theorem human_inanimate_crash :
-    system.mixed (system.conceptual .man) (inanimate daxtilidi) = none ∧
-      resolve (system.conceptual .man) (inanimate daxtilidi) = {.cls} := by
+    system.mixed (system.nominal kleftis .man) (system.nominal daxtilidi .thing) = none ∧
+      system.mixed (system.nominal giorgos .man) (system.nominal pukamiso .thing) = none ∧
+      resolve (system.nominal kleftis .man) (system.nominal daxtilidi .thing) = {.cls} := by
   decide
 
 /-- Matched humans and inanimates converge, as in *o kleftis ke o pinakas* and *i gineka ke i
 ombrela*. -/
 theorem human_inanimate_match :
-    system.mixed (system.conceptual .man) (inanimate pinakas) = some .masculine ∧
-      system.mixed (system.conceptual .woman) (inanimate ombrela) = some .feminine := by
+    system.mixed (system.nominal kleftis .man) (system.nominal pinakas .thing) =
+        some .masculine ∧
+      system.mixed (system.nominal gineka .woman) (system.nominal ombrela .thing) =
+        some .feminine := by
   decide
 
-/-- The fixed-gender *thima* and *megalofiia* match an inanimate by their referents. -/
+/-- The fixed-gender *megalofiia* and *thima* match an inanimate by their referents, as in
+*i megalofiia ke o pinakas tu*, *to thima ke o pinakas tu* and *to thima ke i fotografia tis*,
+and a victim who is a man does not match a feminine inanimate. -/
 theorem victim_painting :
-    system.mixed (system.conceptual .man) (inanimate pinakas) = some .masculine ∧
-      system.mixed (system.conceptual .woman) (inanimate fotografia) = some .feminine ∧
-      system.mixed (system.conceptual .man) (inanimate fotografia) = none := by
+    system.mixed (system.nominal megalofiia .man) (system.nominal pinakas .thing) =
+        some .masculine ∧
+      system.mixed (system.nominal thima .man) (system.nominal pinakas .thing) =
+        some .masculine ∧
+      system.mixed (system.nominal thima .woman) (system.nominal fotografia .thing) =
+        some .feminine ∧
+      system.mixed (system.nominal thima .man) (system.nominal fotografia .thing) = none := by
   decide
 
 /-- Clausal subjects bear no gender features and are realized neuter. -/
@@ -278,29 +332,32 @@ def system : System where
     | .man => .masc
     | .woman => .fem
     | _ => .cls
-  uNode g _ :=
-    match g with
+  uNode
     | .masculine => .masc
     | .feminine => .fem
     | _ => .cls
   vocabulary := threeWay
 
-def inanimate (n : Icelandic.Nouns.Noun) : Bundle Node :=
-  system.conceptual .thing ∪ system.arbitrary n.gender
-
 theorem masc_not_mem_entailments_fem : .masc ∉ system.entailments .fem := by decide
 
 /-- *Maðurinn og konan eru þreytt*, where only CLASS survives. -/
-theorem human_mismatch : system.resolved .man .woman = some .neuter := by decide
+theorem human_mismatch :
+    system.converted (system.nominal madur .man) (system.nominal kona .woman) =
+      some .neuter := by
+  decide
 
 /-- *Skáldið og Jón eru frægir*, where the neuter *skáld* resolves masculine for a man. -/
-theorem poet_jon : skald.gender = .neuter ∧ system.resolved .man .man = some .masculine := by
+theorem poet_jon :
+    system.exponent (system.nominal skald .man) = some .neuter ∧
+      system.converted (system.nominal skald .man) (system.nominal jon .man) =
+        some .masculine := by
   decide
 
 /-- *Frægð og frami eru tvíeggjuð*. -/
 theorem inanimate_mismatch :
-    system.converted (inanimate fraegd) (inanimate frami) = some .neuter ∧
-      system.formal (inanimate fraegd) (inanimate frami) = none := by
+    system.converted (system.nominal fraegd .thing) (system.nominal frami .thing) =
+        some .neuter ∧
+      system.formal (system.nominal fraegd .thing) (system.nominal frami .thing) = none := by
   decide
 
 /-! #### Corbett's rule
@@ -316,16 +373,19 @@ paper's inanimates do, resolve neuter through it. -/
 theorem corbett_rows :
     Agreement.ResolutionRule.resolve Corbett1991.Icelandic.rules [drengur, telpa] =
         some .neuter ∧
-      system.resolved .man .woman = some .neuter ∧
+      system.converted (system.nominal drengur .man) (system.nominal telpa .woman) =
+        some .neuter ∧
       Agreement.ResolutionRule.resolve Corbett1991.Icelandic.rules [aer, lamb] = some .neuter ∧
-      system.converted (inanimate aer) (inanimate lamb) = some .neuter := by
+      system.converted (system.nominal aer .thing) (system.nominal lamb .thing) =
+        some .neuter := by
   decide
 
 /-- In *skáldið og Jón eru frægir* the rule resolves the neuter *skáld* and the masculine *Jón*
 to the neuter, and the geometry to the masculine of the two men. -/
 theorem corbett_skald_jon :
     Agreement.ResolutionRule.resolve Corbett1991.Icelandic.rules [skald, jon] = some .neuter ∧
-      system.resolved .man .man = some .masculine := by
+      system.converted (system.nominal skald .man) (system.nominal jon .man) =
+        some .masculine := by
   decide
 
 end Icelandic
@@ -349,22 +409,25 @@ def system : System where
     | .woman => .fem
     | .thing => .masc
     | .mass => .cls
-  uNode g human :=
-    match g, human with
-    | .masculine, true => .anim
-    | .masculine, false => .masc
-    | .feminine, _ => .fem
-    | _, _ => .cls
+  uNode
+    | .masculine => .masc
+    | .feminine => .fem
+    | _ => .cls
   plural := {.grp, .indiv, .cls}
   vocabulary :=
     [[.fem, .anim, .masc, .indiv] ⟷ .feminine, [.anim, .masc, .indiv] ⟷ .masculine,
       [.indiv] ⟷ .masculine, [] ⟷ .neuter]
 
-def inanimate (n : Serbian.Gender.Noun) : Bundle Node :=
-  system.conceptual (if n.gender = .neuter then .mass else .thing) ∪ system.arbitrary n.gender
+/-- An inanimate refers as a mass when it is neuter, the neuter being the mass gender, and as an
+individuated thing otherwise. -/
+def inanimate (n : GenderedNoun Gender) : Bundle Node :=
+  system.nominal n (if n.gender = .neuter then .mass else .thing)
 
 /-- *Muškarac i žena su sretni*. -/
-theorem human_mismatch : system.resolved .man .woman = some .masculine := by decide
+theorem human_mismatch :
+    system.converted (system.nominal muskarac .man) (system.nominal zena .woman) =
+      some .masculine := by
+  decide
 
 /-- Uniform women still resolve feminine. -/
 theorem women : system.resolved .woman .woman = some .feminine := by decide
@@ -402,7 +465,7 @@ theorem mismatchResolution :
 Bosnian/Croatian/Serbian (Table 2). -/
 theorem table2 :
     [Greek.system, Icelandic.system, BCS.system].map
-        (fun L => (L.resolved .man .woman, L.resolved .thing .thing)) =
+        (fun L ↦ (L.resolved .man .woman, L.resolved .thing .thing)) =
       [(some .masculine, some .neuter), (some .neuter, some .neuter),
         (some .masculine, some .masculine)] := by
   decide
