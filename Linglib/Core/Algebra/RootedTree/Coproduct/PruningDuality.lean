@@ -9,7 +9,6 @@ public import Linglib.Core.Algebra.BigOperators.Multiset
 public import Linglib.Core.Algebra.RootedTree.BMinus
 public import Linglib.Core.Algebra.RootedTree.Coproduct.WithCuts
 public import Linglib.Core.Algebra.RootedTree.GrossmanLarson.Basic
-public import Linglib.Core.Algebra.RootedTree.GrossmanLarson.PairingMul
 public import Mathlib.Algebra.Order.BigOperators.Group.Multiset
 public import Mathlib.RingTheory.Coalgebra.Convolution
 

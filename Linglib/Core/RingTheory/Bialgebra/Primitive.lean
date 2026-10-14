@@ -7,6 +7,7 @@ module
 
 public import Mathlib.Algebra.Lie.OfAssociative
 public import Mathlib.Algebra.Lie.Subalgebra
+public import Mathlib.RingTheory.Bialgebra.Primitive
 public import Mathlib.RingTheory.Bialgebra.TensorProduct
 public import Mathlib.RingTheory.Coalgebra.Convolution
 
@@ -32,6 +33,8 @@ of rooted trees.
 * `Bialgebra.IsDualPrimitive.convMul_apply_mul`: the convolution product of two dual primitives
   obeys a second-order product rule, whose cross terms are symmetric in the two functionals.
 * `Bialgebra.IsDualPrimitive.lie`: the commutator of two dual primitives is a dual primitive.
+* `Bialgebra.IsPrimitiveElem.isDualPrimitive`: a pairing of bialgebras sends primitive elements to
+  dual primitives.
 
 ## Implementation notes
 
@@ -109,6 +112,17 @@ end IsDualPrimitive
 theorem isDualPrimitive_iff_leibniz [IsCancelAdd R] :
     IsDualPrimitive R f ↔ ∀ a b, f (a * b) = f a * counit b + counit a * f b :=
   ⟨fun hf ↦ hf.leibniz, fun h ↦ ⟨by simpa using h 1 1, h⟩⟩
+
+/-- A pairing of bialgebras that transposes the product of `A` to the comultiplication of `B`, and
+the units to the counits, sends the primitive elements of `B` to dual primitives of `A`. -/
+theorem IsPrimitiveElem.isDualPrimitive {B : Type*} [Semiring B] [Bialgebra R B] {b : B}
+    (hb : IsPrimitiveElem R b) {p : B →ₗ[R] A →ₗ[R] R} (h_one : ∀ a, p 1 a = counit a)
+    (h_counit : ∀ b, p b 1 = counit b)
+    (h_mul : ∀ a a', toConv (p.flip (a * a')) = toConv (p.flip a) * toConv (p.flip a')) :
+    IsDualPrimitive R (p b) where
+  map_one_eq_zero := (h_counit b).trans hb.counit_eq_zero
+  leibniz a a' := by
+    simpa [hb.comul_eq_tmul_add_tmul, h_one, add_comm] using congr($(h_mul a a') b)
 
 end CommSemiring
 

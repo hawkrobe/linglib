@@ -31,13 +31,15 @@ the pruning coproduct (`Coproduct/PruningDuality.lean`).
   times its number of symmetries.
 * `GrossmanLarson.pairing_nondegenerate`: the pairing is nondegenerate over a ring of
   characteristic zero without zero divisors.
-* `GrossmanLarson.pairing_of'_mul`: pairing against a Connes–Kreimer product splits the basis
-  forest over its antidiagonal.
+* `GrossmanLarson.pairing_of'_mul`, `GrossmanLarson.pairing_product_of'_mul_of'`: pairing against
+  a Connes–Kreimer product splits a basis forest over its antidiagonal, and splits both factors of
+  a Grossman–Larson product.
 
 ## References
 
 * [foissy-2021]
 * [grossman-larson-1989]
+* [oudom-guin-2008]
 -/
 
 @[expose] public section
@@ -421,6 +423,27 @@ theorem pairing_of'_mul (W : Forest (UnorderedTree α))
            pairing (R := R) (ConnesKreimer.of' p.2) z₂))) from
       Multiset.map_congr rfl fun p _ => by rw [map_smul, smul_eq_mul]; ring]
     rw [Multiset.sum_map_mul_left]
+
+/-- Pairing a Grossman–Larson product against a Connes–Kreimer product splits both of its
+factors, `⟨A ⋆ B, C₁ · C₂⟩ = Σ_{A = A₁ + A₂} Σ_{B = B₁ + B₂} ⟨A₁ ⋆ B₁, C₁⟩ ⟨A₂ ⋆ B₂, C₂⟩`. -/
+theorem pairing_product_of'_mul_of' (A B C₁ C₂ : Forest (UnorderedTree α)) :
+    pairing (R := R) (product (ConnesKreimer.of' A) (ConnesKreimer.of' B))
+        (ConnesKreimer.of' C₁ * ConnesKreimer.of' C₂) =
+      ((A.antidiagonal ×ˢ B.antidiagonal).map fun pq ↦
+        pairing (R := R) (product (ConnesKreimer.of' pq.1.1) (ConnesKreimer.of' pq.2.1))
+            (ConnesKreimer.of' C₁) *
+          pairing (R := R) (product (ConnesKreimer.of' pq.1.2) (ConnesKreimer.of' pq.2.2))
+            (ConnesKreimer.of' C₂)).sum := by
+  have h (A B : Forest (UnorderedTree α)) (z : ConnesKreimer R (UnorderedTree α)) :
+      pairing (R := R) (product (ConnesKreimer.of' A) (ConnesKreimer.of' B)) z =
+        ((productMultiset A B).map fun W ↦ pairing (R := R) (ConnesKreimer.of' W) z).sum := by
+    change pairing.flip z _ = _
+    rw [product_of'_of', map_multiset_sum, Multiset.map_map]
+    rfl
+  rw [h, Multiset.map_congr rfl fun W _ ↦ pairing_of'_mul W _ _, ← Multiset.sum_bind,
+    ← Multiset.map_bind, productMultiset_bind_antidiagonal, Multiset.map_bind, Multiset.sum_bind]
+  refine congrArg Multiset.sum (Multiset.map_congr rfl fun pq _ ↦ ?_)
+  rw [h, h, ← Multiset.sum_map_product_mul]
 
 open scoped TensorProduct
 
