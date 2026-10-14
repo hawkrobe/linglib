@@ -521,8 +521,8 @@ variable {D E : Type*} [SemilatticeSup E] [DecidableEq D] {V : Set E} {ag th : E
 reciprocity at two members. -/
 theorem eachOtherLF_pair (R : D → D → Prop) (hne : d₁ ≠ d₂) :
     HeimLasnikMay1991.eachOtherLF {d₁, d₂} R ↔ R d₁ d₂ ∧ R d₂ d₁ := by
-  rw [HeimLasnikMay1991.eachOtherLF_iff_strongReciprocity, StrongReciprocity, Finset.coe_pair,
-    Set.pairwise_pair, imp_iff_right hne]
+  rw [HeimLasnikMay1991.eachOtherLF_iff_strongReciprocity (by simp [Finset.card_pair hne]),
+    strongReciprocity_pair, and_iff_right hne]
 
 /-- The periphrastic construction has the accumulation reading: the LF's two directional
 relations, read off the base verb's events, sum to a plural reciprocal event (sections 2.1 to

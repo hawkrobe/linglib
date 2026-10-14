@@ -13,7 +13,7 @@ directions (7) (`PlainReciprocity`), and the Reciprocity-Symmetry Generalization
 an alternation is plain if and only if the binary predicate is truth-conditionally symmetric
 (18) (`RSG`). The generalization is not a matter of logic, since a one-way binary predicate
 paired with an empty collective is vacuously plain
-(`exists_plainReciprocity_not_tcSymmetric`); it follows from taking the collective meaning
+(`exists_plainReciprocity_not_symm`); it follows from taking the collective meaning
 as basic and the binary predicate as its symmetric image (22), which is symmetric and plain
 by the commutativity of sum formation (`rsg_symmetricImage`). Non-symmetric predicates like
 *hug* show weaker patterns (`Pr1`, `Pr2`, `Pr4`), of which only the disjunctive entailment
@@ -56,22 +56,18 @@ if the binary predicate holds between them in both directions. -/
 def PlainReciprocity (P : Finset A → Prop) (R : A → A → Prop) : Prop :=
   ∀ x y : A, x ≠ y → (P {x, y} ↔ R x y ∧ R y x)
 
-/-- Truth-conditional symmetry of a binary predicate. -/
-def TCSymmetric (R : A → A → Prop) : Prop := ∀ x y, R x y ↔ R y x
-
 /-- The Reciprocity-Symmetry Generalization (18) for one alternation: it is plain exactly if
-its binary predicate is symmetric. -/
+its binary predicate is truth-conditionally symmetric. -/
 def RSG (P : Finset A → Prop) (R : A → A → Prop) : Prop :=
-  PlainReciprocity P R ↔ TCSymmetric R
+  PlainReciprocity P R ↔ Std.Symm R
 
 /-- The symmetric image of a collective predicate (22): the binary predicate holding of two
 entities when the collective holds of their sum. -/
 def symmetricImage (P : Finset A → Prop) : A → A → Prop := fun x y ↦ P {x, y}
 
 /-- The symmetric image is symmetric, by the commutativity of sum formation. -/
-theorem symmetricImage_tcSymmetric (P : Finset A → Prop) : TCSymmetric (symmetricImage P) := by
-  intro x y
-  simp [symmetricImage, Finset.pair_comm]
+theorem symmetricImage_symm (P : Finset A → Prop) : Std.Symm (symmetricImage P) :=
+  ⟨fun x y h ↦ by simpa [symmetricImage, Finset.pair_comm] using h⟩
 
 /-- The symmetric image is in plain reciprocity with its collective. -/
 theorem plainReciprocity_symmetricImage (P : Finset A → Prop) :
@@ -84,13 +80,13 @@ theorem plainReciprocity_symmetricImage (P : Finset A → Prop) :
 /-- A collective predicate with its symmetric image satisfies the generalization: this is
 how the paper derives it for plain reciprocals. -/
 theorem rsg_symmetricImage (P : Finset A → Prop) : RSG P (symmetricImage P) :=
-  iff_of_true (plainReciprocity_symmetricImage P) (symmetricImage_tcSymmetric P)
+  iff_of_true (plainReciprocity_symmetricImage P) (symmetricImage_symm P)
 
 /-- The generalization is not logically forced: a one-way binary predicate paired with the
 empty collective is vacuously plain. -/
-theorem exists_plainReciprocity_not_tcSymmetric :
+theorem exists_plainReciprocity_not_symm :
     ∃ (R : Bool → Bool → Prop) (P : Finset Bool → Prop),
-      PlainReciprocity P R ∧ ¬ TCSymmetric R := by
+      PlainReciprocity P R ∧ ¬ Std.Symm R := by
   refine ⟨fun x y ↦ x = true ∧ y = false, fun _ ↦ False, ?_, ?_⟩
   · intro x y hxy
     constructor
@@ -98,7 +94,7 @@ theorem exists_plainReciprocity_not_tcSymmetric :
     · rintro ⟨⟨rfl, rfl⟩, h₂, -⟩
       exact Bool.noConfusion h₂
   · intro h
-    have := (h true false).mp ⟨rfl, rfl⟩
+    have := h.symm true false ⟨rfl, rfl⟩
     exact Bool.noConfusion this.1
 
 /-! ### The patterns of non-plain alternations (§3.3) -/

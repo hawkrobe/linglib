@@ -1,6 +1,7 @@
 module
 
 public import Linglib.Syntax.Reciprocal
+public import Linglib.Semantics.Plurality.Reciprocal
 public import Studies.Siloni2012
 public import Studies.Winter2018
 public import Linglib.Fragments.Romance.Portuguese.Reciprocals
@@ -31,8 +32,8 @@ verb with some construction in which a reciprocal interpretation emerges without
 chapter's definition (44), which is having a lexical entry, in every language
 (`lexicalReciprocalIn_iff`). Grammatical reciprocity is plain in the sense of [winter-2018]
 for any relation, *x and y kissed each other* being *x kissed y and y kissed x* (50)
-(`eachOther_plainReciprocity`), whereas the collective predicate of a lexical entry is not so
-constrained, 'divorce' and 'kiss' failing one direction each (53), (54). The reciprocal
+(`strongReciprocity_plainReciprocity`), whereas the collective predicate of a lexical entry is
+not so constrained, 'divorce' and 'kiss' failing one direction each (53), (54). The reciprocal
 'with'-construction tracks the lexical entry, the generalization of [kemmer-1993], including
 non-symmetric members and the *si*-retaining Italian cases that refine the French-based
 restriction of [siloni-2012] (`withConstruction_iff_lexical`).
@@ -85,10 +86,10 @@ lexical entry. -/
 def VerbClass.ReciprocityByItself (c : VerbClass) : Prop := Formation.lexical ∈ c.formations
 
 instance : DecidablePred VerbClass.CombinesWithSe :=
-  λ c => inferInstanceAs (Decidable (Formation.syntactic ∈ c.formations))
+  fun c ↦ inferInstanceAs (Decidable (Formation.syntactic ∈ c.formations))
 
 instance : DecidablePred VerbClass.ReciprocityByItself :=
-  λ c => inferInstanceAs (Decidable (Formation.lexical ∈ c.formations))
+  fun c ↦ inferInstanceAs (Decidable (Formation.lexical ∈ c.formations))
 
 /-- Table 2.1 as printed: the intransitives express reciprocity by themselves and reject
 *se*, the plain transitives the reverse, and the third class both. -/
@@ -216,34 +217,24 @@ def LexicalReciprocalIn (l : Language) (c : VerbClass) : Prop :=
 /-- Lexical reciprocity in the sense of (44) is having a lexical entry, in every language. -/
 theorem lexicalReciprocalIn_iff (l : Language) (c : VerbClass) :
     LexicalReciprocalIn l c ↔ c.ReciprocityByItself :=
-  ⟨λ ⟨_, _, h⟩ => (pseudo_without_se_iff c).1 h,
-    λ h => ⟨.analyticCausative, every_language_diagnosable l, (pseudo_without_se_iff c).2 h⟩⟩
+  ⟨fun ⟨_, _, h⟩ ↦ (pseudo_without_se_iff c).1 h,
+    fun h ↦ ⟨.analyticCausative, every_language_diagnosable l, (pseudo_without_se_iff c).2 h⟩⟩
 
 /-! ### Pseudo-reciprocity against plain reciprocity (§4.3) -/
 
-/-- Grammatical reciprocity over a set of participants, *each other*: the relation holds
-between every two distinct members. -/
-def eachOther {A : Type*} (R : A → A → Prop) : Finset A → Prop :=
-  λ s => ∀ x ∈ s, ∀ y ∈ s, x ≠ y → R x y
-
-/-- (50): grammatical reciprocity is plain in the sense of [winter-2018] for every relation,
-symmetric or not: *x and y kissed each other* iff *x kissed y and y kissed x*. -/
-theorem eachOther_plainReciprocity {A : Type*} [DecidableEq A] (R : A → A → Prop) :
-    Winter2018.PlainReciprocity (eachOther R) R := by
-  intro x y hxy
-  simp only [eachOther, Finset.mem_insert, Finset.mem_singleton, forall_eq_or_imp, forall_eq]
-  constructor
-  · rintro ⟨⟨-, h₁⟩, h₂, -⟩
-    exact ⟨h₁ hxy, h₂ hxy.symm⟩
-  · rintro ⟨h₁, h₂⟩
-    exact ⟨⟨λ h => (h rfl).elim, λ _ => h₁⟩, λ _ => h₂, λ h => (h rfl).elim⟩
+/-- (50): grammatical reciprocity, Strong Reciprocity over the participants, is plain in the
+sense of [winter-2018] for every relation, symmetric or not, since *x and y kissed each other*
+holds iff *x kissed y and y kissed x*. -/
+theorem strongReciprocity_plainReciprocity {A : Type*} [DecidableEq A] (R : A → A → Prop) :
+    Winter2018.PlainReciprocity (StrongReciprocity R) R :=
+  fun _ _ hxy ↦ strongReciprocity_pair.trans (and_iff_right hxy)
 
 /-- A lexical entry's collective predicate is not so constrained: for any relation some
 collective predicate fails plain reciprocity for it, the room in which 'divorce' fails the
 collective-to-unidirectional direction (53) and 'kiss' the converse (54). -/
 theorem exists_collective_not_plain (R : Bool → Bool → Prop) :
     ∃ P : Finset Bool → Prop, ¬ Winter2018.PlainReciprocity P R :=
-  ⟨λ _ => ¬ (R true false ∧ R false true), λ h => iff_not_self (h true false (by decide)).symm⟩
+  ⟨fun _ ↦ ¬ (R true false ∧ R false true), fun h ↦ iff_not_self (h true false (by decide)).symm⟩
 
 /-! ### The reciprocal 'with'-construction (§4.4) -/
 

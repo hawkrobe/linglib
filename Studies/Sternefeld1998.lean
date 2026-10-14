@@ -24,9 +24,9 @@ jointly.
   formation, `Relation.Map R ({·}) ({·})`; this is the paper's D-based case (§2.3), and
   Langendoen's formulae are the substrate schemes `Reciprocal.WeakReciprocity` and
   `Reciprocal.StrongReciprocity` of `R` itself.
-* Denotations are nonempty, so the equivalences carry the nonemptiness, or for strong
-  reciprocity the two-member, hypothesis that `*` and `**` build in and Langendoen's formulae
-  leave vacuous.
+* Denotations are nonempty, so the weak equivalences carry the nonemptiness hypothesis that `*`
+  and `**` build in and Langendoen's formulae leave vacuous. Strong reciprocity requires two or
+  more members, as iterated `*` does.
 * The n-ary `***` (§3.1), dependent plurals (§3.2–3.3), LF movement (§3.4), the Geach–Kaplan
   sentence (§3.6) and the cover pragmatics of §4 are not formalized.
 
@@ -166,12 +166,12 @@ theorem sd_iff (R : α → β → Prop) {A : Finset α} {B : Finset β} (hA : A.
     and_iff_right hA]
   exact forall₂_congr fun a _ ↦ (algClosure_map_iff R a B).trans (and_iff_right hB)
 
-/-- (48b) is Langendoen's strong reciprocity (3a) on a plurality of two or more. -/
-theorem sr_iff (R : α → α → Prop) {A : Finset α} :
-    SR R A ↔ 2 ≤ A.card ∧ StrongReciprocity R A := by
-  rw [SR, algClosure_iff_of_subset_range_singleton (algClosure_map_subset_range R _)]
+/-- (48b) is strong reciprocity, Langendoen's (3a) on a plurality of two or more. -/
+theorem sr_iff (R : α → α → Prop) {A : Finset α} : SR R A ↔ StrongReciprocity R A := by
+  rw [SR, algClosure_iff_of_subset_range_singleton (algClosure_map_subset_range R _),
+    strongReciprocity_iff, ← Finset.one_lt_card_iff_nontrivial]
   simp only [algClosure_map_iff, Finset.mem_filter, ne_eq, Finset.singleton_inj,
-    Finset.filter_nonempty_iff, StrongReciprocity]
+    Finset.filter_nonempty_iff]
   constructor
   · rintro ⟨⟨a, ha⟩, h⟩
     obtain ⟨⟨b, hb, hba⟩, -⟩ := h a ha

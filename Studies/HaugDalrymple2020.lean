@@ -677,7 +677,8 @@ theorem forks_weak :
     rw [reciprocityCond_ofRows mem_empty]; decide
   refine ⟨hr, weakReciprocity_dep_of_reciprocityCond (by simp only [mem_ofRows]; decide)
     (by rw [value_ofRows]; exact Finset.coe_inj.2 (by decide)) hr, ?_⟩
-  simp only [StrongReciprocity, mem_dep_ofRows]
+  rw [strongReciprocity_iff]
+  simp only [mem_dep_ofRows]
   decide
 
 /-- The sailors worked together on each other's ships (96c). -/
@@ -736,23 +737,22 @@ def reading (Q : Finset D → Finset D → Prop) (R : D → D → Prop) [Decidab
 
 variable (Q : Finset D → Finset D → Prop) (R : D → D → Prop) [DecidableRel R] (A : Finset D)
 
-/-- Each member of a reference set with at least two members participates. -/
-theorem refSet_subset_participants {Y : Finset D} (h : IsRefSet R A Y) (h2 : 2 ≤ Y.card) :
+/-- Each member of a reference set participates. -/
+theorem refSet_subset_participants {Y : Finset D} (h : IsRefSet R A Y) :
     Y ⊆ participants R A := by
+  obtain ⟨hY, hR⟩ := strongReciprocity_iff.1 h.2.1
   intro a ha
-  obtain ⟨b, hb, hab⟩ := Finset.exists_mem_ne h2 a
+  obtain ⟨b, hb, hab⟩ := Finset.exists_mem_ne (Finset.one_lt_card_iff_nontrivial.2 hY) a
   exact Finset.mem_filter.2
-    ⟨Finset.mem_powerset.1 h.1 ha, b, Finset.mem_powerset.1 h.1 hb, hab,
-      h.2.1 ha hb hab.symm⟩
+    ⟨Finset.mem_powerset.1 h.1 ha, b, Finset.mem_powerset.1 h.1 hb, hab, hR ha hb hab.symm⟩
 
 /-- By §5.2, for a determiner upward monotone in its scope, the reciprocal relation holds over
-the maximal set if it holds over a reference set of at least two members, so the
-reference-set reading determines truth and the maximal-set reading falsity. -/
-theorem maxSetReading_of_refSetReading (hQ : Monotone (Q A))
-    (h2 : ∀ Y, IsRefSet R A Y → 2 ≤ Y.card) (h : RefSetReading Q R A) :
+the maximal set if it holds over a reference set, so the reference-set reading determines truth
+and the maximal-set reading falsity. -/
+theorem maxSetReading_of_refSetReading (hQ : Monotone (Q A)) (h : RefSetReading Q R A) :
     MaxSetReading Q R A := by
   obtain ⟨Y, -, hY, hQY⟩ := h
-  exact hQ (refSet_subset_participants R A hY (h2 Y hY)) hQY
+  exact hQ (refSet_subset_participants R A hY) hQY
 
 variable [DecidableRel Q]
 
@@ -772,17 +772,15 @@ theorem truthValue_false_iff :
     truthValue Q R A = .false ↔ ¬ RefSetReading Q R A ∧ ¬ MaxSetReading Q R A := by
   unfold truthValue; rw [Trivalent.supervaluation_eq_false_iff]; simp [reading]
 
-theorem truthValue_true_iff_of_monotone (hQ : Monotone (Q A))
-    (h2 : ∀ Y, IsRefSet R A Y → 2 ≤ Y.card) :
+theorem truthValue_true_iff_of_monotone (hQ : Monotone (Q A)) :
     truthValue Q R A = .true ↔ RefSetReading Q R A :=
   (truthValue_true_iff Q R A).trans
-    ⟨And.left, fun h ↦ ⟨h, maxSetReading_of_refSetReading Q R A hQ h2 h⟩⟩
+    ⟨And.left, fun h ↦ ⟨h, maxSetReading_of_refSetReading Q R A hQ h⟩⟩
 
-theorem truthValue_false_iff_of_monotone (hQ : Monotone (Q A))
-    (h2 : ∀ Y, IsRefSet R A Y → 2 ≤ Y.card) :
+theorem truthValue_false_iff_of_monotone (hQ : Monotone (Q A)) :
     truthValue Q R A = .false ↔ ¬ MaxSetReading Q R A :=
   (truthValue_false_iff Q R A).trans
-    ⟨And.right, fun h ↦ ⟨fun hr ↦ h (maxSetReading_of_refSetReading Q R A hQ h2 hr), h⟩⟩
+    ⟨And.right, fun h ↦ ⟨fun hr ↦ h (maxSetReading_of_refSetReading Q R A hQ hr), h⟩⟩
 
 end Quantified
 
@@ -865,9 +863,9 @@ makes `X` strongly reciprocal exactly when `P` relates any two distinct members 
 theorem strongReciprocity_dep_iff (h : u ≠ u') {X : Finset E}
     (hS : MaximizesAnaphora (ReciprocalDRS P ↑X u u') u u' S) :
     StrongReciprocity (fun a b ↦ (a, b) ∈ dep u' u S) X ↔ StrongReciprocity P X := by
-  rw [((maximizesAnaphora_iff h).1 hS).2]
-  exact forall₂_congr fun a ha ↦ forall₂_congr fun b hb ↦ imp_congr_right fun hba ↦
-    ⟨fun h ↦ h.2.2.1, fun h ↦ ⟨ha, hb, h, hba⟩⟩
+  rw [((maximizesAnaphora_iff h).1 hS).2, strongReciprocity_iff, strongReciprocity_iff]
+  exact and_congr_right fun _ ↦ forall₂_congr fun a ha ↦ forall₂_congr fun b hb ↦
+    imp_congr_right fun hba ↦ ⟨fun h ↦ h.2.2.1, fun h ↦ ⟨ha, hb, h, hba⟩⟩
 
 end Maximize
 
@@ -911,8 +909,8 @@ theorem maximize_strong :
       simp only [Set.mem_ofPred_eq, Finset.mem_coe, true_and]
       revert a b
       decide⟩
-  refine ⟨hmin, fun hm ↦ ?_, hMA, (strongReciprocity_dep_iff (by decide) hMA).2 fun _ _ _ _ _ ↦
-    trivial⟩
+  refine ⟨hmin, fun hm ↦ ?_, hMA, (strongReciprocity_dep_iff (by decide) hMA).2
+    (strongReciprocity_iff.2 ⟨by decide, fun _ _ _ _ _ ↦ trivial⟩)⟩
   have hmem : (Ind.boy1, Ind.boy3) ∈ dep u₁ u₂ (ofRows boysMinimal) := by
     rw [((maximizesAnaphora_iff (by decide)).1 hm).2]
     exact ⟨by decide, by decide, trivial, by decide⟩
@@ -933,15 +931,15 @@ def classmates : List (PartialAssign ℕ Ind) :=
 /-- The three classmates. -/
 def trio : Finset Ind := {.tracy, .chris, .matty}
 
-/-- By §6.2, both reciprocal relations of (134) are maximal, every ordered pair of distinct
+/-- By §6.2, both reciprocal relations of (134) are maximal, strongly reciprocal on the
 classmates, without any all-triples row, in which a classmate gives a picture of a third
 classmate. -/
 theorem classmates_pairwise :
-    (∀ a ∈ trio, ∀ b ∈ trio, a ≠ b → (a, b) ∈ dep u₁ u₂ (ofRows classmates) ∧
-      (a, b) ∈ dep u₂ u₄ (ofRows classmates)) ∧
+    StrongReciprocity (fun a b ↦ (a, b) ∈ dep u₁ u₂ (ofRows classmates)) trio ∧
+      StrongReciprocity (fun a b ↦ (a, b) ∈ dep u₂ u₄ (ofRows classmates)) trio ∧
       ¬ ∃ s ∈ classmates,
         s u₁ = ↑Ind.tracy ∧ s u₂ = ↑Ind.chris ∧ s u₄ = ↑Ind.matty := by
-  simp only [mem_dep_ofRows]
+  simp only [strongReciprocity_iff, mem_dep_ofRows]
   decide
 
 /-- In the wide construal of (135), each of Tracy, Matty and Chris believes that she praised the
