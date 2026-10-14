@@ -8,6 +8,7 @@ public import Mathlib.Data.List.NodupEquivFin
 public import Mathlib.Data.Nat.SuccPred
 public import Mathlib.Tactic.FinCases
 public import Linglib.Core.Computability.Edge
+public import Linglib.Core.Order.Flat
 
 /-!
 # Word models
@@ -33,6 +34,8 @@ subsequences of at most `k` symbols.
   ordering.
 * `Subregular.WordModel`: a word under an ordering of its positions.
 * `Subregular.anchor`: a word between its edges.
+* `Subregular.WordModel.featureDiagram`: the diagram of a word of partial valuations, such as
+  segments, under precedence, a factor of the feature values.
 
 ## Main statements
 
@@ -43,6 +46,8 @@ subsequences of at most `k` symbols.
   strictly piecewise and piecewise testable stringsets are those of words under precedence.
 * `Language.isTierStrictlyLocal_iff_wordModel`: the tier-based strictly local stringsets are the
   strictly local sets of words under successor relativized to a tier.
+* `Subregular.WordModel.featureDiagram_occurs_iff`: under feature-labelled precedence models a
+  word's diagram occurs exactly in the words with a subsequence lying above it.
 
 ## Implementation notes
 
@@ -59,6 +64,7 @@ subsequences of at most `k` symbols.
 * [rogers-pullum-2011]
 * [rogers-heinz-et-al-2010]
 * [lambert-2023]
+* [chandlee-eyraud-heinz-jardine-rawski-2019]
 -/
 
 @[expose] public section
@@ -203,6 +209,104 @@ theorem factors_eq_iff_subseqSet {k : ℕ} :
   · exact (diagram_occurs_iff hs).1 (h.symm.subset ((diagram_occurs_iff hs).2 hsw))
 
 end Precedence
+
+/-! ### Feature-labelled models
+
+A position may carry several properties, the values of features, as in Chandlee, Eyraud,
+Heinz, Jardine and Rawski's unconventional models. A word of partial valuations `ι → Flat V`,
+such as a word of segments, has a unary relation for each feature value, holding at the
+positions with that value, so a position never has two values of one feature and may have none.
+Under precedence the diagram of such a word occurs exactly in the words with a subsequence lying
+above it position by position, and a natural class is a one-position factor. -/
+
+section Features
+
+variable {ι V : Type*} {u u' : List (ι → Flat V)} {R : Fin u.length → Fin u.length → Prop}
+  {R' : Fin u'.length → Fin u'.length → Prop}
+
+/-- A word of partial valuations is a structure for the feature values, in which a position
+satisfies the value `v` of `i` when its valuation gives `i` the value `v`. -/
+instance : (wordLanguage (ι × V)).Structure (WordModel u R) where
+  RelMap
+    | .label p, x => (x 0).label p.1 = p.2
+    | .ord, x => R (x 0) (x 1)
+
+/-- An assignment realizes the feature atoms another does when its valuations lie above the
+other's and it keeps the ordering between its variables. -/
+theorem mem_realizers_of_le {n : ℕ} {T : Set ((wordLanguage (ι × V)).Atom (Fin n))}
+    {v : Fin n → WordModel u R} {v' : Fin n → WordModel u' R'}
+    (hlabel : ∀ x, (v x).label ≤ (v' x).label) (hord : ∀ x y, R (v x) (v y) → R' (v' x) (v' y))
+    (hv : v ∈ Atom.realizers (WordModel u R) T) : v' ∈ Atom.realizers (WordModel u' R') T := by
+  refine Atom.mem_realizers.2 fun ⟨r, args⟩ ha ↦ ?_
+  have h := Atom.mem_realizers.1 hv _ ha
+  cases r with
+  | label p =>
+    have hle : ((p.2 : V) : Flat V) ≤ (v' (args 0)).label p.1 := (show (v (args 0)).label p.1 = p.2
+      from h) ▸ hlabel (args 0) p.1
+    exact Flat.coe_le_iff.1 hle
+  | ord => exact hord _ _ h
+
+/-- The positive diagram of a word of at most `k` partial valuations under precedence, as a
+`k`-factor of the feature values. -/
+def featureDiagram (s : List (ι → Flat V)) {k : ℕ} (hs : s.length ≤ k) :
+    (wordLanguage (ι × V)).Factor k where
+  n := s.length
+  le := hs
+  atoms := {a | a.Realize (M := WordModel s (· < ·)) id}
+  preconnected x y := by
+    rcases lt_trichotomy x y with h | rfl | h
+    · exact SimpleGraph.Adj.reachable
+        ⟨h.ne, .inl ⟨⟨.ord, ![x, y]⟩, by exact h, ⟨0, rfl⟩, ⟨1, rfl⟩⟩⟩
+    · rfl
+    · exact SimpleGraph.Adj.reachable
+        ⟨h.ne', .inr ⟨⟨.ord, ![y, x]⟩, by exact h, ⟨0, rfl⟩, ⟨1, rfl⟩⟩⟩
+
+/-- The feature diagram of a word occurs exactly in the words with a subsequence lying above it
+position by position, the subfactor order of feature-labelled precedence models. -/
+theorem featureDiagram_occurs_iff {s w : List (ι → Flat V)} {k : ℕ} (hs : s.length ≤ k) :
+    (featureDiagram s hs).Occurs (WordModel w (· < ·)) ↔
+      ∃ t, t <+ w ∧ List.Forall₂ (· ≤ ·) s t := by
+  constructor
+  · rintro ⟨v, hv⟩
+    have hle (i : Fin s.length) : s.get i ≤ WordModel.label (v i) := fun j ↦ by
+      rcases hj : s.get i j with _ | a
+      · exact bot_le
+      · exact (Flat.coe_le_iff.2 (Atom.mem_realizers.1 hv ⟨.label (j, a), ![i]⟩ hj)).trans_eq rfl
+    have hmono : StrictMono fun i ↦ show Fin w.length from v i := fun i j hij ↦
+      Atom.mem_realizers.1 hv ⟨.ord, ![i, j]⟩ hij
+    refine ⟨List.ofFn fun i ↦ w.get (v i), List.sublist_iff_exists_fin_orderEmbedding_get_eq.2
+      ⟨(Fin.castOrderIso List.length_ofFn).toOrderEmbedding.trans
+        (OrderEmbedding.ofStrictMono _ hmono), fun i ↦ by simp only [List.get_ofFn]; rfl⟩, ?_⟩
+    rw [List.forall₂_iff_get]
+    refine ⟨List.length_ofFn.symm, fun i h₁ _ ↦ ?_⟩
+    simp only [List.get_ofFn]
+    exact hle ⟨i, h₁⟩
+  · rintro ⟨t, htw, hst⟩
+    obtain ⟨e, he⟩ := List.sublist_iff_exists_fin_orderEmbedding_get_eq.1 htw
+    obtain ⟨hlen, hget⟩ := List.forall₂_iff_get.1 hst
+    refine ⟨fun i ↦ show WordModel w (· < ·) from e (Fin.cast hlen i),
+      mem_realizers_of_le (fun i ↦ ?_) (fun i j h ↦ e.lt_iff_lt.2 (by exact h))
+        (u' := w) (R := (· < ·)) (v := id) (fun _ ha ↦ ha)⟩
+    show s.get i ≤ w.get (e (Fin.cast hlen i))
+    rw [← he]
+    exact hget i i.2 (hlen ▸ i.2)
+
+/-- A one-position diagram, a natural class, occurs exactly in the words with a segment above
+it. -/
+theorem featureDiagram_singleton_occurs_iff {d : ι → Flat V} {w : List (ι → Flat V)} {k : ℕ}
+    (hk : [d].length ≤ k) :
+    (featureDiagram [d] hk).Occurs (WordModel w (· < ·)) ↔ ∃ x ∈ w, d ≤ x := by
+  rw [featureDiagram_occurs_iff]
+  constructor
+  · rintro ⟨t, htw, hdt⟩
+    obtain ⟨x, rfl⟩ : ∃ x, t = [x] := by
+      cases hdt with
+      | cons h hnil => cases hnil; exact ⟨_, rfl⟩
+    exact ⟨x, htw.subset (List.mem_singleton_self x), by simpa using hdt⟩
+  · rintro ⟨x, hx, hdx⟩
+    exact ⟨[x], List.singleton_sublist.2 hx, by simpa using hdx⟩
+
+end Features
 
 /-! ### Orderings with unit steps -/
 
