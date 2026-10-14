@@ -13,44 +13,26 @@ public import Linglib.Semantics.Exhaustification.Finite
 /-!
 # Wang (2025): Presupposition, Competition, and Coherence
 
-This file formalizes the alternative-competition account of Wang's dissertation on the
-partial resolution of presuppositions in Mandarin. A presuppositional sentence competes with
-its non-presuppositional structural alternative, an alternative in Katzir's sense with the same
-assertion, (1)–(2), which exists by deletion of the trigger for the additive, repetitive and
-continuative particles, by replacement for the change-of-state and factive triggers, and not
-at all for *jiu* 'only' (Table 4.1, `Trigger.altStructure`). Three ranked constraints decide the
-competition, (3): Internal Coherence, that the utterance is consistent with the common ground;
-Felicity Presupposition, that a presupposition is entailed by the common ground; and Maximize
-Presupposition, after Heim, that a form is not used when a presuppositionally stronger
-alternative is, so that it is used only where its rival does not block it
-(`violMP_iff`). Coherence outranks felicity, which outranks Maximize Presupposition (`Beats`,
-`ranking`). Utterances and contexts are modelled by the speaker's information
-states: an utterance commits the speaker to a set of states (`Candidate`), and a context
-admits a set of states, so that coherence is overlap and entailment is inclusion in the
-belief set `K`.
+Wang's dissertation explains when a presupposition trigger of Mandarin is obligatory and when it
+is dropped by a competition between the presuppositional sentence and its non-presuppositional
+alternative, a sentence with the same assertion that is obtained by deleting or replacing the
+trigger. Three constraints decide the competition, ranked in this order. Internal Coherence
+requires the utterance to be consistent with the common ground, Felicity Presupposition requires
+a presupposition to be entailed by it, and Maximize Presupposition, after Heim, bars a form
+where a presuppositionally stronger alternative is usable. An utterance commits the speaker to a
+set of information states and a context admits a set of them, so coherence is overlap, and the
+context entails a proposition when every state it admits believes the proposition.
 
-Three general facts drive every tableau: a coherent presuppositional sentence beats an
-incoherent alternative (`presup_beats_of_incoherent`), a coherent alternative beats a
-presuppositional sentence whose presupposition is not entailed (`plain_beats_of_not_entailed`),
-and when the presupposition is entailed the presuppositional sentence beats a coherent
-alternative (`presup_beats_of_entailed`). The tableaux follow: with the presupposition entailed
-the trigger is obligatory, Table 4.2 (`obligatory_of_entailed`); with the context silent the
-trigger is dropped, Table 4.3 (`omitted_of_not_entailed`); with positive evidence for the
-presupposition and the alternative exhaustified below the speaker's belief operator, the
-exhaustive implicature contradicts the context, so the trigger is obligatory, Table 4.4
-(`obligatory_of_positive_evidence`); with the presupposition denied the trigger is
-incoherent, Table 4.5 (`omitted_of_denied`); and in an ignorance context, with exhaustification
-above the belief operator, the presuppositional sentence contradicts the speaker's ignorance,
-Table 4.6 (`omitted_of_ignorance`). For *you* and *zai* 'again' the first two tableaux are
-stated on the adverb's meaning, `Presupposition.again` (`again_obligatory_of_entailed`,
-`again_omitted_of_not_entailed`). The exhaustification operator of (24) negates a maximal
-consistent subset of the alternatives, and where several maximal subsets exist it yields
-several readings (`Exhaustification.IsMaximalExclusion`, `exhMx`); the operator of (20) is
-innocent exclusion, which negates only the alternatives common to all of them, so the two coincide
-when the maximal subset is unique (`exhIE_eq_exhMx_of_unique`), and a disjunction has two maximal
-subsets, (26)
-(`disjunction_two_maxima`), which is how the optionality of the change-of-state triggers
-arises, Tables 4.7 and 4.9.
+## Main statements
+
+* `obligatory_of_entailed`, `omitted_of_not_entailed`: the trigger is obligatory where the
+  context entails its presupposition and dropped where the context is silent about it.
+* `obligatory_of_positive_evidence`, `omitted_of_denied`, `omitted_of_ignorance`: against the
+  exhaustified alternative the trigger is obligatory under positive evidence for the
+  presupposition, and dropped where the context denies it or the speaker is ignorant of it.
+* `exhIE_eq_exhMx_of_unique`, `disjunction_two_maxima`: exhaustification by a maximal consistent
+  subset of the alternatives agrees with innocent exclusion when that subset is unique, and a
+  disjunction has two, the source of the optionality of the change-of-state triggers.
 
 ## Implementation notes
 
@@ -160,8 +142,8 @@ theorem violMP_iff {ctx : Set (Set W)} {rival c : Candidate W} :
   · rintro ⟨p, hp, hctx⟩
     exact ⟨(Candidate.admits_of_presup_some hp).symm ▸ hctx, Candidate.admits_ssubset_univ hp⟩
 
-/-- Strict-domination comparison along a list of violation predicates: `a` beats `b` at the
-first constraint on which they differ. -/
+/-- `Beats cs a b` compares two candidates by strict domination along the list `cs` of violation
+predicates, `a` beating `b` at the first constraint on which they differ. -/
 def Beats : List (Candidate W → Prop) → Candidate W → Candidate W → Prop
   | [], _, _ => False
   | C :: cs, a, b => (¬ C a ∧ C b) ∨ ((C a ↔ C b) ∧ Beats cs a b)
@@ -282,29 +264,29 @@ the prejacent held of an earlier eventuality. -/
 
 section Again
 
-open Presupposition
+open Presupposition ModalLogic
 
 /-- The candidate for a sentence with the partial meaning `φ` commits the speaker to its
 presupposition and its assertion. -/
 def Candidate.ofPartialProp (φ : PartialProp W) : Candidate W :=
   presupSentence {w | φ.presup w} {w | φ.assertion w}
 
-variable {r : W → W → Prop} {P : W → Prop} {ctx : Set (Set W)}
+variable {R : SetRel W W} {P : W → Prop} {ctx : Set (Set W)}
 
 /-- A sentence with *again* is obligatory, against the sentence without it, when the context
 entails that its prejacent held before. -/
-theorem again_obligatory_of_entailed (hp : ctx ⊆ K {e | ∃ e', r e' e ∧ P e'})
+theorem again_obligatory_of_entailed (hp : ctx ⊆ K {e | ◇[R] P e})
     (hwit : ∃ s ∈ ctx, s ⊆ {e | P e}) :
-    Beats (ranking ctx (.ofPartialProp (again r P))) (.ofPartialProp (again r P))
+    Beats (ranking ctx (.ofPartialProp (again R P))) (.ofPartialProp (again R P))
       (plain {e | P e}) :=
   obligatory_of_entailed hp hwit
 
 /-- A sentence with *again* loses to the sentence without it when the context does not entail
 that its prejacent held before. -/
-theorem again_omitted_of_not_entailed (hp : ¬ ctx ⊆ K {e | ∃ e', r e' e ∧ P e'})
-    (hwit : ∃ s ∈ ctx, s.Nonempty ∧ s ⊆ {e | ∃ e', r e' e ∧ P e'} ∩ {e | P e}) :
-    Beats (ranking ctx (.ofPartialProp (again r P))) (plain {e | P e})
-      (.ofPartialProp (again r P)) :=
+theorem again_omitted_of_not_entailed (hp : ¬ ctx ⊆ K {e | ◇[R] P e})
+    (hwit : ∃ s ∈ ctx, s.Nonempty ∧ s ⊆ {e | ◇[R] P e} ∩ {e | P e}) :
+    Beats (ranking ctx (.ofPartialProp (again R P))) (plain {e | P e})
+      (.ofPartialProp (again R P)) :=
   omitted_of_not_entailed hp hwit
 
 end Again
@@ -351,7 +333,7 @@ theorem disjunction_two_maxima :
 
 /-! ### The alternative structure of the triggers, Table 4.1 -/
 
-/-- How a trigger's non-presuppositional alternative is obtained: by deleting the trigger, by
+/-- A trigger's non-presuppositional alternative is obtained by deleting the trigger, by
 replacing it, or not at all. -/
 inductive AltStructure
   | deletion
@@ -402,8 +384,8 @@ theorem isTrigger_of_entry {t : Trigger} {v : Mandarin.Verb} (h : t.entry = .inr
     v.IsTrigger := by
   cases t <;> simp only [Trigger.entry, Sum.inr.injEq, reduceCtorEq] at h <;> subst h <;> decide
 
-/-- The replacement for *zhidao* is non-presuppositional, as (1) requires: *renwei* 'believe' is
-not a trigger. -/
+/-- The replacement for *zhidao* is non-presuppositional, as (1) requires, since *renwei*
+'believe' is not a trigger. -/
 theorem not_isTrigger_renwei : ¬ Mandarin.renwei.IsTrigger := by decide
 
 end Wang2025

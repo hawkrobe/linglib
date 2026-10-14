@@ -7,7 +7,7 @@ public import Linglib.Core.Order.UpperLower.Finset
 public import Mathlib.Tactic.DeriveFintype
 
 /-!
-# Krejci (2012): Causativization as Antireflexivization
+# Krejci (2012): Causativization as Antireflexivization: A Study of Middle and Ingestive Verbs
 
 Krejci explains why middle and ingestive verbs (*wash*, *dress*; *eat*, *learn*) causativize
 like intransitives in languages that mark causatives morphologically. The report orders verb
@@ -20,13 +20,7 @@ reflexivization read in the opposite direction. On a model of *eat*, *feed* and 
 entailments of the simple form split between causer and causee of the lexical causative but
 stay with the causee of the periphrastic one.
 
-## Main definitions
-
-* `eat`: the simple form, the lexical causative on its diagonal.
-* `makeEat`: the periphrastic causative.
-* `Causative.RespectsHierarchy`: a causative process reaches a lower set of tiers.
-
-## Main results
+## Main statements
 
 * `feed_not_makeEat`: feeding is not making eat.
 * `not_eat_and_feed`: denying the simple form while asserting the lexical causative is
@@ -88,21 +82,21 @@ simple form is an activity `ingest` with no causing subevent and the causative a
 def causerAddition (ingest : Entity → E → Prop) (y x : Entity) (e : E) : Prop :=
   ∃ w, M.effector y w ∧ M.cause w e ∧ ingest x e
 
-/-- An event precedes another when its run time is before the other's. -/
-abbrev Before (e' e : E) : Prop := (τ e').isBefore (τ e)
+/-- `earlier` relates an event to the events whose run time is before its own. -/
+def earlier : SetRel E E := {(e, e') | (τ e').isBefore (τ e)}
 
-/-- On the restitutive reading *again* modifies only the result state ((66a)): the state predicate
-holds of a state that an earlier state of it preceded, whether or not a change brought that
-earlier state about ((65a)). The restitutive reading of a verb is the verb over this
-predicate. -/
-def againState (ltS : State → State → Prop) (S : Entity → State → Prop) (x : Entity)
+/-- On the restitutive reading *again* modifies only the result state ((66a)), so the state
+predicate holds of a state that an earlier state of it preceded, whether or not a change brought
+that earlier state about ((65a)). `R` relates a state to the earlier states. The restitutive
+reading of a verb is the verb over this predicate. -/
+def againState (R : SetRel State State) (S : Entity → State → Prop) (x : Entity)
     (s : State) : Prop :=
-  (Presupposition.again ltS (S x)).holds s
+  (Presupposition.again R (S x)).holds s
 
 /-- On the repetitive reading *again* modifies the whole predicate ((66b)), so the sentence
 presupposes that the whole event happened before. -/
 def Repetitive (P : Entity → E → Prop) (x : Entity) (e : E) : Prop :=
-  (Presupposition.again Before (P x)).holds e
+  (Presupposition.again earlier (P x)).holds e
 
 variable {M manip S} {x y z : Entity} {e : E}
 
@@ -232,11 +226,11 @@ theorem not_licensesBySelf_inchoative :
   Participant.noConfusion hw.1
 
 /-- *John ate again* said after Mary had fed him, a second causer bringing about the result
-state as in the context of (70): the restitutive reading holds, *again* on the state of
+state as in the context of (70). The restitutive reading holds, *again* on the state of
 potential digestion ((66a)), which John had been in before, and the repetitive reading fails,
 since John had not eaten before. -/
 theorem restitutive_not_repetitive :
-    eat twoMeals twoManip (againState (· < ·) digesting) .john e₁ ∧
+    eat twoMeals twoManip (againState {p | p.2 < p.1} digesting) .john e₁ ∧
       ¬ Repetitive (eat twoMeals twoManip digesting) .john e₁ :=
   ⟨⟨w₂, Or.inr ⟨rfl, rfl⟩, Or.inr ⟨rfl, rfl⟩, 5, ⟨⟨w₂, Or.inr ⟨rfl, rfl⟩⟩, rfl⟩,
       ⟨2, by decide, rfl, .inl rfl⟩, rfl, .inr rfl⟩,
