@@ -34,8 +34,8 @@ The worlds are the number of giraffes fed, so the readings are sets of natural n
 negation is complementation. The implicature approach is the innocent-exclusion exhaustifier
 of `Semantics.Exhaustification.InnocentExclusion` with the singular alternative; the paper's
 versions differ in how they derive that alternative, footnote 4, and agree on the result. The
-Strongest Meaning Hypothesis is the entailment-least reading, which is unique. Homogeneity is
-a trivalent predicate whose negation is `Trivalent.neg`. The experiments are not formalized:
+Strongest Meaning Hypothesis picks the least reading under entailment, `IsLeast`. Homogeneity
+is a trivalent predicate whose negation is `Trivalent.neg`. The experiments are not formalized:
 in Experiment 1, a truth-value judgment task, adults rejected positive plural sentences after a
 story with one animal fed far more often than four- and five-year-olds did, and accepted the
 negative ones only moderately; in Experiment 2 children computed fewer multiplicity inferences
@@ -107,30 +107,25 @@ theorem exhIE_some {k : ℕ} (hk : 2 ≤ k) :
   ext n
   simp
 
-/-! ### The ambiguity approach (section 1.2.1) -/
+/-! ### The ambiguity approach (section 1.2.1)
 
-/-- The Strongest Meaning Hypothesis (7) prefers, among the readings of a plural sentence, the
-one entailing all the others. -/
-def IsPreferred (R : Set (Set ℕ)) (r : Set ℕ) : Prop := r ∈ R ∧ ∀ r' ∈ R, r ⊆ r'
-
-theorem IsPreferred.unique {R : Set (Set ℕ)} {r r' : Set ℕ} (h : IsPreferred R r)
-    (h' : IsPreferred R r') : r = r' :=
-  (h.2 r' h'.1).antisymm (h'.2 r h.1)
+The Strongest Meaning Hypothesis (7) prefers, among the readings of a plural sentence, the one
+entailing all the others: the least reading under inclusion, `IsLeast`. -/
 
 /-- In a positive sentence the strong reading is preferred, (5). -/
-theorem isPreferred_strong : IsPreferred {weak, strong} strong :=
+theorem isLeast_strong : IsLeast {weak, strong} strong :=
   ⟨by simp, by
     rintro r (rfl | rfl)
     · intro n hn
       simp only [weak, strong, Set.mem_ofPred_eq] at hn ⊢
       omega
-    · exact subset_rfl⟩
+    · exact le_rfl⟩
 
 /-- Under negation the negated weak reading is preferred, (6). -/
-theorem isPreferred_compl_weak : IsPreferred {weakᶜ, strongᶜ} weakᶜ :=
+theorem isLeast_compl_weak : IsLeast {weakᶜ, strongᶜ} weakᶜ :=
   ⟨by simp, by
     rintro r (rfl | rfl)
-    · exact subset_rfl
+    · exact le_rfl
     · intro n hn
       simp only [weak, strong, Set.mem_compl_iff, Set.mem_ofPred_eq, not_le] at hn ⊢
       omega⟩
@@ -154,15 +149,15 @@ theorem neg_homogeneous_eq_true_iff {n : ℕ} : (homogeneous n).neg = .true ↔ 
 
 /-- All three approaches derive the multiplicity inference of a positive plural sentence. -/
 theorem readings_positive :
-    exhIE {weak, singular} weak = strong ∧ IsPreferred {weak, strong} strong ∧
+    exhIE {weak, singular} weak = strong ∧ IsLeast {weak, strong} strong ∧
       {n | homogeneous n = .true} = strong :=
-  ⟨exhIE_weak, isPreferred_strong, Set.ext fun _ ↦ homogeneous_eq_true_iff⟩
+  ⟨exhIE_weak, isLeast_strong, Set.ext fun _ ↦ homogeneous_eq_true_iff⟩
 
 /-- All three approaches make a negated plural sentence convey that none was fed. -/
 theorem readings_negative :
-    exhIE {weakᶜ, singularᶜ} weakᶜ = weakᶜ ∧ IsPreferred {weakᶜ, strongᶜ} weakᶜ ∧
+    exhIE {weakᶜ, singularᶜ} weakᶜ = weakᶜ ∧ IsLeast {weakᶜ, strongᶜ} weakᶜ ∧
       {n | (homogeneous n).neg = .true} = weakᶜ := by
-  refine ⟨exhIE_compl_weak, isPreferred_compl_weak, Set.ext fun n ↦ ?_⟩
+  refine ⟨exhIE_compl_weak, isLeast_compl_weak, Set.ext fun n ↦ ?_⟩
   rw [Set.mem_ofPred_eq, neg_homogeneous_eq_true_iff]
   simp [weak]
 
