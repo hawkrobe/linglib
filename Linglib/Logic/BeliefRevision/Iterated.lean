@@ -581,16 +581,16 @@ theorem spohnRevision_c4 [Finite W] : (spohnRevision W).C4 :=
 /-- On a ranking function, Spohn's revision by `A` is conditionalization on `A` at the firmness
 `κ(Aᶜ) + 1`. -/
 theorem spohn_eq_conditionα (κ : RankingFunction W) {A : Set W} (hA : A.Nonempty) :
-    spohn κ A = κ.conditionα A hA ((κ.rankSet Aᶜ).toNat + 1) := by
+    spohn κ A = κ.conditionα A hA ((κ.rank Aᶜ).toNat + 1) := by
   funext w
   by_cases hw : w ∈ A
   · obtain ⟨u, hu, e⟩ := exists_rank_eq κ A hA
-    obtain ⟨v, hv, e'⟩ := κ.exists_rank_eq_rankSet hA
-    have hrank : (κ.rankSet A).toNat = rank κ A := by
+    obtain ⟨v, hv, e'⟩ := κ.exists_apply_eq_rank hA
+    have hrank : (κ.rank A).toNat = rank κ A := by
       rw [← e', ENat.toNat_natCast, ← e]
-      exact le_antisymm (by exact_mod_cast e' ▸ κ.rankSet_le hu) (e ▸ rank_le κ A hv)
+      exact le_antisymm (by exact_mod_cast e' ▸ κ.rank_le hu) (e ▸ rank_le κ A hv)
     rw [κ.conditionα_of_mem _ _ hw, spohn_of_mem κ A hw, RankingFunction.aPart, hrank]
-  · have := κ.toNat_rankSet_le (A := Aᶜ) hw
+  · have := κ.toNat_rank_le (A := Aᶜ) hw
     rw [κ.conditionα_of_notMem _ _ hw, spohn_of_notMem κ A hw, RankingFunction.aPart]
     omega
 
