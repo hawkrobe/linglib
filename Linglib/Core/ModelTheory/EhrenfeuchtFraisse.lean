@@ -10,27 +10,28 @@ public import Mathlib.ModelTheory.Bundled
 # Ehrenfeucht–Fraïssé games and finite-rank elementary equivalence
 
 `[UPSTREAM]` candidate. Two structures are `n`-equivalent when they satisfy the same sentences of
-quantifier rank `≤ n`, and elementarily equivalent when they are `n`-equivalent for every `n`. The
-rank-`k` back-and-forth relation between tuples says that duplicator wins the `k`-round
-Ehrenfeucht–Fraïssé game started from them. Related tuples satisfy the same formulas of
-quantifier rank `≤ k`, and over a finite relational signature the converse holds, witnessed by
-Hintikka formulas. This is the rank-bounded counterpart of mathlib's `IsExtensionPair`.
+quantifier rank `≤ n`, and elementarily equivalent when they are `n`-equivalent for every `n`.
+Duplicator wins the `k`-round Ehrenfeucht–Fraïssé game from a pair of tuples when she can answer
+every move for `k` rounds, back and forth, keeping the tuples alike. Such tuples satisfy the
+same formulas of quantifier rank `≤ k`, and over a finite relational signature the converse
+holds, witnessed by Hintikka formulas. This is the rank-bounded counterpart of mathlib's
+`IsExtensionPair`.
 
 ## Main definitions
 
 * `FirstOrder.Language.ElementarilyEquivalentUpTo`: `n`-equivalence of structures.
 * `FirstOrder.Language.FODefinable`: definability of a class of structures within a class.
-* `FirstOrder.Language.BackForth`: the rank-`k` back-and-forth relation on tuples.
+* `FirstOrder.Language.DuplicatorWins`: duplicator wins the `k`-round game from a pair of tuples.
 * `FirstOrder.Language.hintikka`: the rank-`k` Hintikka formula of a tuple.
 
 ## Main results
 
 * `FirstOrder.Language.not_foDefinable_of_elementarilyEquivalentUpTo`: the Ehrenfeucht–Fraïssé
   method for undefinability.
-* `FirstOrder.Language.BackForth.realize_iff`: back-and-forth implies agreement on formulas of
+* `FirstOrder.Language.DuplicatorWins.realize_iff`: a winning position agrees on formulas of
   quantifier rank `≤ k`.
-* `FirstOrder.Language.backForth_iff_realize_iff`,
-  `FirstOrder.Language.elementarilyEquivalentUpTo_iff_backForth`: the converse over a finite
+* `FirstOrder.Language.duplicatorWins_iff_realize_iff`,
+  `FirstOrder.Language.elementarilyEquivalentUpTo_iff_duplicatorWins`: the converse over a finite
   relational signature.
 * `FirstOrder.Language.foDefinable_iff_exists_elementarilyEquivalentUpTo`: over a finite relational
   signature, a class is definable within `K` iff it is closed under `n`-equivalence within `K` for
@@ -41,7 +42,7 @@ Hintikka formulas. This is the rank-bounded counterpart of mathlib's `IsExtensio
 Tuples are the bound variables of `L.BoundedFormula Empty n`, so the `Fin.snoc` in `realize_all`
 is a round of the game and sentences are the case `n = 0`. As in Hodges's back-and-forth systems,
 the atomic condition holds at every rank; Libkin states it at rank `0` only, which agrees on
-nonempty structures (`backForth_succ_iff`) but makes soundness fail on empty ones.
+nonempty structures (`duplicatorWins_succ_iff`) but makes soundness fail on empty ones.
 
 ## References
 
@@ -110,55 +111,57 @@ theorem not_foDefinable_of_elementarilyEquivalentUpTo {K P : Set (Bundled.{w} L.
   obtain ⟨M, hM, N, hN, hMN, hP, hnP⟩ := h φ.qr
   exact hnP ((hφ N hN).2 ((hMN φ le_rfl).1 ((hφ M hM).1 hP)))
 
-/-! ### The back-and-forth relations -/
+/-! ### The Ehrenfeucht–Fraïssé game -/
 
 variable (L) in
-/-- The rank-`k` Ehrenfeucht–Fraïssé back-and-forth relation holds between an `n`-tuple `v` of
-`M` and an `n`-tuple `w` of `N` when the tuples satisfy the same atomic formulas and, at rank
-`k + 1`, every element of either structure (*forth*, *back*) has an answer in the other extending
-them to a pair related at rank `k`. -/
-def BackForth : ℕ → ∀ {n : ℕ}, (Fin n → M) → (Fin n → N) → Prop
+/-- Duplicator wins the `k`-round Ehrenfeucht–Fraïssé game from an `n`-tuple `v` of `M` and an
+`n`-tuple `w` of `N` when the tuples satisfy the same atomic formulas and, with `k + 1` rounds
+left, every element of either structure (*forth*, *back*) has an answer in the other extending
+them to a position she wins with `k` rounds left. -/
+def DuplicatorWins : ℕ → ∀ {n : ℕ}, (Fin n → M) → (Fin n → N) → Prop
   | 0, _, v, w => ∀ φ : L.BoundedFormula Empty _, φ.IsAtomic →
       (φ.Realize default v ↔ φ.Realize default w)
   | k + 1, _, v, w => (∀ φ : L.BoundedFormula Empty _, φ.IsAtomic →
       (φ.Realize default v ↔ φ.Realize default w)) ∧
-      (∀ a, ∃ b, BackForth k (Fin.snoc v a) (Fin.snoc w b)) ∧
-      ∀ b, ∃ a, BackForth k (Fin.snoc v a) (Fin.snoc w b)
+      (∀ a, ∃ b, DuplicatorWins k (Fin.snoc v a) (Fin.snoc w b)) ∧
+      ∀ b, ∃ a, DuplicatorWins k (Fin.snoc v a) (Fin.snoc w b)
 
 variable {v : Fin n → M} {w : Fin n → N}
 
-namespace BackForth
+namespace DuplicatorWins
 
-theorem zero : ∀ {k n} {v : Fin n → M} {w : Fin n → N}, L.BackForth k v w → L.BackForth 0 v w
+theorem zero : ∀ {k n} {v : Fin n → M} {w : Fin n → N},
+    L.DuplicatorWins k v w → L.DuplicatorWins 0 v w
   | 0, _, _, _, h => h
   | _ + 1, _, _, _, h => h.1
 
-theorem realize_iff_of_isAtomic (h : L.BackForth k v w) {φ : L.BoundedFormula Empty n}
+theorem realize_iff_of_isAtomic (h : L.DuplicatorWins k v w) {φ : L.BoundedFormula Empty n}
     (hφ : φ.IsAtomic) : φ.Realize default v ↔ φ.Realize default w :=
   h.zero φ hφ
 
-theorem forth (h : L.BackForth (k + 1) v w) (a : M) :
-    ∃ b, L.BackForth k (Fin.snoc v a) (Fin.snoc w b) := h.2.1 a
+theorem forth (h : L.DuplicatorWins (k + 1) v w) (a : M) :
+    ∃ b, L.DuplicatorWins k (Fin.snoc v a) (Fin.snoc w b) := h.2.1 a
 
-theorem back (h : L.BackForth (k + 1) v w) (b : N) :
-    ∃ a, L.BackForth k (Fin.snoc v a) (Fin.snoc w b) := h.2.2 b
+theorem back (h : L.DuplicatorWins (k + 1) v w) (b : N) :
+    ∃ a, L.DuplicatorWins k (Fin.snoc v a) (Fin.snoc w b) := h.2.2 b
 
 theorem of_succ : ∀ {k n} {v : Fin n → M} {w : Fin n → N},
-    L.BackForth (k + 1) v w → L.BackForth k v w
+    L.DuplicatorWins (k + 1) v w → L.DuplicatorWins k v w
   | 0, _, _, _, h => h.1
   | _ + 1, _, _, _, h => ⟨h.1, fun a => (h.forth a).imp fun _ => of_succ,
       fun b => (h.back b).imp fun _ => of_succ⟩
 
-theorem antitone (v : Fin n → M) (w : Fin n → N) : Antitone (L.BackForth · v w) :=
+theorem antitone (v : Fin n → M) (w : Fin n → N) : Antitone (L.DuplicatorWins · v w) :=
   antitone_nat_of_succ_le fun _ => of_succ
 
-theorem mono (hkl : k ≤ l) (h : L.BackForth l v w) : L.BackForth k v w :=
-  BackForth.antitone v w hkl h
+theorem mono (hkl : k ≤ l) (h : L.DuplicatorWins l v w) : L.DuplicatorWins k v w :=
+  DuplicatorWins.antitone v w hkl h
 
-/-- Back-and-forth related tuples satisfy the same formulas of quantifier rank `≤ k`. Atomic
-formulas agree by the atomic condition, and quantified ones by the *back* and *forth* moves. -/
+/-- Tuples from which duplicator wins `k` rounds satisfy the same formulas of quantifier rank
+`≤ k`. Atomic formulas agree by the atomic condition, and quantified ones by the *back* and
+*forth* moves. -/
 theorem realize_iff : ∀ {n} {φ : L.BoundedFormula Empty n} {k} {v : Fin n → M} {w : Fin n → N},
-    L.BackForth k v w → φ.qr ≤ k → (φ.Realize default v ↔ φ.Realize default w)
+    L.DuplicatorWins k v w → φ.qr ≤ k → (φ.Realize default v ↔ φ.Realize default w)
   | _, .falsum, _, _, _, _, _ => Iff.rfl
   | _, .equal _ _, _, _, _, h, _ => h.realize_iff_of_isAtomic (.equal _ _)
   | _, .rel _ _, _, _, _, h, _ => h.realize_iff_of_isAtomic (.rel _ _)
@@ -172,43 +175,47 @@ theorem realize_iff : ∀ {n} {φ : L.BoundedFormula Empty n} {k} {v : Fin n →
         fun hw a => (h.forth a).elim fun b hab => (realize_iff hab hφ).2 (hw b)⟩
 
 /-- On the empty tuples, the rank-`k` relation gives `k`-equivalence. -/
-theorem elementarilyEquivalentUpTo (h : L.BackForth k (default : Fin 0 → M) (default : Fin 0 → N)) :
+theorem elementarilyEquivalentUpTo
+    (h : L.DuplicatorWins k (default : Fin 0 → M) (default : Fin 0 → N)) :
     M ≅[L, k] N :=
   fun _ hφ => h.realize_iff hφ
 
-theorem symm : ∀ {k n} {v : Fin n → M} {w : Fin n → N}, L.BackForth k v w → L.BackForth k w v
+theorem symm : ∀ {k n} {v : Fin n → M} {w : Fin n → N},
+    L.DuplicatorWins k v w → L.DuplicatorWins k w v
   | 0, _, _, _, h => fun φ hφ => (h φ hφ).symm
   | _ + 1, _, _, _, h => ⟨fun φ hφ => (h.1 φ hφ).symm, fun b => (h.back b).imp fun _ => symm,
       fun a => (h.forth a).imp fun _ => symm⟩
 
 theorem trans : ∀ {k n} {u : Fin n → M} {v : Fin n → N} {w : Fin n → P},
-    L.BackForth k u v → L.BackForth k v w → L.BackForth k u w
+    L.DuplicatorWins k u v → L.DuplicatorWins k v w → L.DuplicatorWins k u w
   | 0, _, _, _, _, h₁, h₂ => fun φ hφ => (h₁ φ hφ).trans (h₂ φ hφ)
   | _ + 1, _, _, _, _, h₁, h₂ => ⟨fun φ hφ => (h₁.1 φ hφ).trans (h₂.1 φ hφ),
       fun a => let ⟨_, hb⟩ := h₁.forth a; let ⟨c, hc⟩ := h₂.forth _; ⟨c, hb.trans hc⟩,
       fun c => let ⟨_, hb⟩ := h₂.back c; let ⟨a, ha⟩ := h₁.back _; ⟨a, ha.trans hb⟩⟩
 
-end BackForth
+end DuplicatorWins
 
 /-- An isomorphism is a winning strategy at every rank, answering `a` by `f a` and `b` by
 `f.symm b`. -/
-theorem Equiv.backForth (f : M ≃[L] N) : ∀ (k : ℕ) {n} (v : Fin n → M), L.BackForth k v (f ∘ v)
+theorem Equiv.duplicatorWins (f : M ≃[L] N) :
+    ∀ (k : ℕ) {n} (v : Fin n → M), L.DuplicatorWins k v (f ∘ v)
   | 0, _, v => fun φ _ => by
       rw [← StrongHomClass.realize_boundedFormula f φ (v := default) (xs := v),
         Subsingleton.elim (f ∘ default) default]
-  | k + 1, _, v => ⟨f.backForth 0 v,
-      fun a => ⟨f a, by simpa [Fin.comp_snoc] using f.backForth k (Fin.snoc v a)⟩,
-      fun b => ⟨f.symm b, by simpa [Fin.comp_snoc] using f.backForth k (Fin.snoc v (f.symm b))⟩⟩
+  | k + 1, _, v => ⟨f.duplicatorWins 0 v,
+      fun a => ⟨f a, by simpa [Fin.comp_snoc] using f.duplicatorWins k (Fin.snoc v a)⟩,
+      fun b => ⟨f.symm b, by
+        simpa [Fin.comp_snoc] using f.duplicatorWins k (Fin.snoc v (f.symm b))⟩⟩
 
-theorem BackForth.refl (k : ℕ) (v : Fin n → M) : L.BackForth k v v :=
-  (Equiv.refl L M).backForth k v
+theorem DuplicatorWins.refl (k : ℕ) (v : Fin n → M) : L.DuplicatorWins k v v :=
+  (Equiv.refl L M).duplicatorWins k v
 
 /-- On a nonempty structure the atomic condition at rank `k + 1` follows from *forth*, so the
 relation is [libkin-2004]'s `≃ₖ₊₁` (p. 36) and [hodges-1993] Lemma 3.3.1. -/
-theorem backForth_succ_iff [Nonempty M] :
-    L.BackForth (k + 1) v w ↔
-      (∀ a, ∃ b, L.BackForth k (Fin.snoc v a) (Fin.snoc w b)) ∧
-        ∀ b, ∃ a, L.BackForth k (Fin.snoc v a) (Fin.snoc w b) := by
+theorem duplicatorWins_succ_iff [Nonempty M] :
+    L.DuplicatorWins (k + 1) v w ↔
+      (∀ a, ∃ b, L.DuplicatorWins k (Fin.snoc v a) (Fin.snoc w b)) ∧
+        ∀ b, ∃ a, L.DuplicatorWins k (Fin.snoc v a) (Fin.snoc w b) := by
   refine ⟨fun h => h.2, fun h => ⟨fun φ hφ => ?_, h.1, h.2⟩⟩
   obtain ⟨b, hb⟩ := h.1 (Classical.arbitrary M)
   simpa [realize_liftAt_one_self, Fin.snoc_comp_castSucc] using
@@ -292,7 +299,7 @@ noncomputable def hintikka : (k : ℕ) → {n : ℕ} → (Fin n → M) →
 variable {L}
 
 theorem realize_atomicType_iff [L.IsRelational] (v : Fin n → M) (w : Fin n → N) :
-    (L.atomicType v).Realize default w ↔ L.BackForth 0 v w := by
+    (L.atomicType v).Realize default w ↔ L.DuplicatorWins 0 v w := by
   classical
   simp only [atomicType, realize_iInf]
   refine ⟨fun h φ hφ => ?_, fun h i => ?_⟩
@@ -377,7 +384,7 @@ theorem eq_hintikka_of_realize : ∀ {k n} {θ : L.BoundedFormula Empty n} (u : 
 variable [L.IsRelational]
 
 theorem realize_hintikka_self : ∀ (k : ℕ) {n} (v : Fin n → M), (L.hintikka k v).Realize default v
-  | 0, _, v => (realize_atomicType_iff v v).2 (BackForth.refl 0 v)
+  | 0, _, v => (realize_atomicType_iff v v).2 (DuplicatorWins.refl 0 v)
   | k + 1, n, v => by
       classical
       simp only [hintikka, realize_inf, realize_iInf, realize_iSup, realize_all, realize_ex,
@@ -385,15 +392,15 @@ theorem realize_hintikka_self : ∀ (k : ℕ) {n} (v : Fin n → M), (L.hintikka
       exact ⟨⟨realize_hintikka_self 0 v, fun θ ⟨_, a, ha⟩ => ⟨a, ha⟩⟩,
         fun a => ⟨_, ⟨hintikka_mem k _, a, realize_hintikka_self k _⟩, realize_hintikka_self k _⟩⟩
 
-/-- The Hintikka formula of `v` holds of `w` iff the tuples are rank-`k` back-and-forth related
+/-- The Hintikka formula of `v` holds of `w` iff duplicator wins `k` rounds from the tuples
 ([hodges-1993] Theorem 3.3.2 (b)). -/
 theorem realize_hintikka_iff : ∀ {k n} (v : Fin n → M) (w : Fin n → N),
-    (L.hintikka k v).Realize default w ↔ L.BackForth k v w
+    (L.hintikka k v).Realize default w ↔ L.DuplicatorWins k v w
   | 0, _, v, w => realize_atomicType_iff v w
   | k + 1, n, v, w => by
       classical
       simp only [hintikka, realize_inf, realize_atomicType_iff, realize_iInf, realize_iSup,
-        realize_all, realize_ex, Subtype.forall, Subtype.exists, Finset.mem_filter, BackForth,
+        realize_all, realize_ex, Subtype.forall, Subtype.exists, Finset.mem_filter, DuplicatorWins,
         and_assoc]
       refine and_congr_right fun _ => ⟨fun ⟨h₁, h₂⟩ => ⟨fun a => ?_, fun b => ?_⟩,
         fun ⟨h₁, h₂⟩ => ⟨fun θ ⟨hθ, a, ha⟩ => ?_, fun b => ?_⟩⟩
@@ -410,18 +417,18 @@ theorem realize_hintikka_iff : ∀ {k n} (v : Fin n → M) (w : Fin n → N),
 termination_by k _ => k
 decreasing_by all_goals omega
 
-/-- Over a finite relational signature, tuples are rank-`k` back-and-forth related iff they
+/-- Over a finite relational signature, duplicator wins `k` rounds from two tuples iff they
 satisfy the same formulas of quantifier rank `≤ k` ([libkin-2004] Theorem 3.18). -/
-theorem backForth_iff_realize_iff (v : Fin n → M) (w : Fin n → N) :
-    L.BackForth k v w ↔
+theorem duplicatorWins_iff_realize_iff (v : Fin n → M) (w : Fin n → N) :
+    L.DuplicatorWins k v w ↔
       ∀ φ : L.BoundedFormula Empty n, φ.qr ≤ k → (φ.Realize default v ↔ φ.Realize default w) :=
   ⟨fun h _ hφ => h.realize_iff hφ, fun h => (realize_hintikka_iff v w).1
     ((h _ (qr_hintikka_le k v)).1 (realize_hintikka_self k v))⟩
 
-theorem elementarilyEquivalentUpTo_iff_backForth :
-    (M ≅[L, k] N) ↔ L.BackForth k (default : Fin 0 → M) (default : Fin 0 → N) :=
-  ⟨fun h => (backForth_iff_realize_iff _ _).2 fun φ hφ => h φ hφ,
-    BackForth.elementarilyEquivalentUpTo⟩
+theorem elementarilyEquivalentUpTo_iff_duplicatorWins :
+    (M ≅[L, k] N) ↔ L.DuplicatorWins k (default : Fin 0 → M) (default : Fin 0 → N) :=
+  ⟨fun h => (duplicatorWins_iff_realize_iff _ _).2 fun φ hφ => h φ hφ,
+    DuplicatorWins.elementarilyEquivalentUpTo⟩
 
 /-- Over a finite relational signature, a class is first-order definable within `K` iff, for some
 `k`, it is closed under `k`-equivalence within `K` ([libkin-2004] Corollary 3.17). The defining

@@ -28,8 +28,8 @@ van Benthem's characterization of the first-order definable determiners.
 
 ## Main results
 
-* `FirstOrder.Language.MonadicMatch.backForth`: the counting strategy wins the game.
-* `FirstOrder.Language.BackForth.min_encard_eq`: conversely, any winning position satisfies the
+* `FirstOrder.Language.MonadicMatch.duplicatorWins`: the counting strategy wins the game.
+* `FirstOrder.Language.DuplicatorWins.min_encard_eq`: conversely, any winning position satisfies the
   counting condition.
 * `FirstOrder.Language.elementarilyEquivalentUpTo_iff_min_encard_eq`,
   `FirstOrder.Language.elementarilyEquivalentUpTo_monadicStructure_iff`: the `t`-equivalence
@@ -213,16 +213,16 @@ theorem realize_iff_of_isAtomic (h : L.MonadicMatch v w) {φ : L.BoundedFormula 
 /-- In a monadic language the counting strategy wins `j` rounds from matched tuples when, for
 every unary type, the unplayed elements of that type are equinumerous on the two sides or both at
 least `j`. -/
-theorem backForth : ∀ {j n : ℕ} {v : Fin n → M} {w : Fin n → N}, L.MonadicMatch v w →
+theorem duplicatorWins : ∀ {j n : ℕ} {v : Fin n → M} {w : Fin n → N}, L.MonadicMatch v w →
     (∀ S, min (j : ℕ∞) (L.unaryType ⁻¹' {S} \ Set.range v).encard =
       min (j : ℕ∞) (L.unaryType ⁻¹' {S} \ Set.range w).encard) →
-    L.BackForth j v w
+    L.DuplicatorWins j v w
   | 0, _, _, _, h, _ => fun _ hφ => h.realize_iff_of_isAtomic hφ
   | _ + 1, _, _, _, h, hc =>
     ⟨fun _ hφ => h.realize_iff_of_isAtomic hφ,
-      fun a => let ⟨b, hb, hbc⟩ := h.exists_snoc hc a; ⟨b, backForth hb hbc⟩,
+      fun a => let ⟨b, hb, hbc⟩ := h.exists_snoc hc a; ⟨b, duplicatorWins hb hbc⟩,
       fun b => let ⟨a, ha, hac⟩ := h.symm.exists_snoc (fun S => (hc S).symm) b
-        ⟨a, backForth ha.symm fun S => (hac S).symm⟩⟩
+        ⟨a, duplicatorWins ha.symm fun S => (hac S).symm⟩⟩
 
 end MonadicMatch
 
@@ -233,23 +233,23 @@ theorem elementarilyEquivalentUpTo_of_min_encard_eq [L.IsMonadic] {t : ℕ}
     (h : ∀ S, min (t : ℕ∞) (L.unaryType ⁻¹' {S} : Set M).encard =
       min (t : ℕ∞) (L.unaryType ⁻¹' {S} : Set N).encard) :
     M ≅[L, t] N :=
-  BackForth.elementarilyEquivalentUpTo <|
-    MonadicMatch.backForth ⟨fun i => i.elim0, fun i => i.elim0⟩ fun S => by
+  DuplicatorWins.elementarilyEquivalentUpTo <|
+    MonadicMatch.duplicatorWins ⟨fun i => i.elim0, fun i => i.elim0⟩ fun S => by
       simpa [Set.range_eq_empty] using h S
 
-namespace BackForth
+namespace DuplicatorWins
 
-/-- Back-and-forth related tuples match, since equalities and unary predications of variables are
-atomic formulas. -/
-theorem monadicMatch {k : ℕ} (h : L.BackForth k v w) : L.MonadicMatch v w where
+/-- Tuples from which duplicator wins match, since equalities and unary predications of variables
+are atomic formulas. -/
+theorem monadicMatch {k : ℕ} (h : L.DuplicatorWins k v w) : L.MonadicMatch v w where
   eq_iff i j := h.realize_iff_of_isAtomic (φ := (&i).bdEqual &j) (.equal _ _)
   unaryType_eq i := funext fun R => propext <| by
     simpa [unaryType] using h.realize_iff_of_isAtomic (φ := R.boundedFormula₁ &i) (.rel _ _)
 
 /-- A *forth* move answers a fresh element of type `S` by a fresh element of type `S`. -/
-theorem exists_mem_sdiff_range {k : ℕ} (h : L.BackForth (k + 1) v w) {S : L.Relations 1 → Prop}
+theorem exists_mem_sdiff_range {k : ℕ} (h : L.DuplicatorWins (k + 1) v w) {S : L.Relations 1 → Prop}
     {a : M} (ha : a ∈ L.unaryType ⁻¹' {S} \ Set.range v) :
-    ∃ b ∈ L.unaryType ⁻¹' {S} \ Set.range w, L.BackForth k (Fin.snoc v a) (Fin.snoc w b) := by
+    ∃ b ∈ L.unaryType ⁻¹' {S} \ Set.range w, L.DuplicatorWins k (Fin.snoc v a) (Fin.snoc w b) := by
   obtain ⟨b, hb⟩ := h.forth a
   have hm := hb.monadicMatch
   refine ⟨b, ⟨?_, fun ⟨i, hi⟩ => ha.2 ⟨i, ?_⟩⟩, hb⟩
@@ -260,7 +260,7 @@ theorem exists_mem_sdiff_range {k : ℕ} (h : L.BackForth (k + 1) v w) {S : L.Re
 
 /-- At a winning position for `j` rounds, the unplayed elements of each unary type are
 equinumerous on the two sides or both at least `j`. -/
-theorem min_encard_eq : ∀ {j n : ℕ} {v : Fin n → M} {w : Fin n → N}, L.BackForth j v w →
+theorem min_encard_eq : ∀ {j n : ℕ} {v : Fin n → M} {w : Fin n → N}, L.DuplicatorWins j v w →
     ∀ S, min (j : ℕ∞) (L.unaryType ⁻¹' {S} \ Set.range v).encard =
       min (j : ℕ∞) (L.unaryType ⁻¹' {S} \ Set.range w).encard
   | 0, _, _, _, _, _ => by simp
@@ -277,7 +277,7 @@ theorem min_encard_eq : ∀ {j n : ℕ} {v : Fin n → M} {w : Fin n → N}, L.B
       push_cast
       rw [min_add_add_right, min_add_add_right, this]
 
-end BackForth
+end DuplicatorWins
 
 /-- Two structures for a finite monadic signature are `t`-equivalent iff, for every unary type,
 their elements of that type are equinumerous or both at least `t` ([peters-westerstahl-2006]
@@ -286,7 +286,8 @@ theorem elementarilyEquivalentUpTo_iff_min_encard_eq [L.IsMonadic] [Finite L.Sym
     (M ≅[L, t] N) ↔ ∀ S, min (t : ℕ∞) (L.unaryType ⁻¹' {S} : Set M).encard =
       min (t : ℕ∞) (L.unaryType ⁻¹' {S} : Set N).encard :=
   ⟨fun h S => by
-    simpa [Set.range_eq_empty] using (elementarilyEquivalentUpTo_iff_backForth.1 h).min_encard_eq S,
+    simpa [Set.range_eq_empty] using
+      (elementarilyEquivalentUpTo_iff_duplicatorWins.1 h).min_encard_eq S,
     elementarilyEquivalentUpTo_of_min_encard_eq⟩
 
 /-- A class of structures for a finite monadic signature is first-order definable within `K` iff,
