@@ -75,19 +75,19 @@ structure FOWords where
 /-- The logical vocabulary's lexicon gives the quantifier words their denotations from
 `Quantification` and the connectives their truth functions, with arguments flipped so that
 `[t₁ [and t₂]]` composes to `⟦t₁⟧ ∧ ⟦t₂⟧`. -/
-def FOWords.lexicon (fw : FOWords) (E W : Type) : Lexicon E W := fun s =>
+def FOWords.lexicon (fw : FOWords) (E W : Type) : Lexicon E W := fun s ↦
   if s = fw.every then some ⟨(.e ⇒ .t) ⇒ (.e ⇒ .t) ⇒ .t, Quantifier.GQ.every⟩
   else if s = fw.some_ then some ⟨(.e ⇒ .t) ⇒ (.e ⇒ .t) ⇒ .t, Quantifier.GQ.some⟩
   else if s = fw.no then some ⟨(.e ⇒ .t) ⇒ (.e ⇒ .t) ⇒ .t, Quantifier.GQ.no⟩
   else if s = fw.not_ then some ⟨.t ⇒ .t, Not⟩
-  else if s = fw.and_ then some ⟨.t ⇒ .t ⇒ .t, fun q p => p ∧ q⟩
-  else if s = fw.or_ then some ⟨.t ⇒ .t ⇒ .t, fun q p => p ∨ q⟩
+  else if s = fw.and_ then some ⟨.t ⇒ .t ⇒ .t, fun q p ↦ p ∧ q⟩
+  else if s = fw.or_ then some ⟨.t ⇒ .t ⇒ .t, fun q p ↦ p ∨ q⟩
   else none
 
 /-- A naming-map lexicon extended with the logical vocabulary. Content words
 take priority; `FOWords.FreshFor` rules out collisions. -/
 def Model.lexiconFO (m : Model L) (fw : FOWords) (nm : LexNaming L) (w : m.W) :
-    Lexicon m.E m.W := fun s =>
+    Lexicon m.E m.W := fun s ↦
   m.lexiconAt nm w s <|> fw.lexicon m.E m.W s
 
 /-- The logical word forms are fresh for the naming maps. -/
@@ -120,10 +120,10 @@ def compileTerm (nm : LexNaming L) : Tree Unit String → Option (L.Term ℕ)
 intransitive verb or a transitive verb with a name or trace as object. -/
 def compilePred (nm : LexNaming L) (τ : L.Term ℕ) :
     Tree Unit String → Option (L.Formula ℕ)
-  | .terminal _ v => (nm.preds₁ v).map fun R => R.formula₁ τ
+  | .terminal _ v => (nm.preds₁ v).map fun R ↦ R.formula₁ τ
   | .node _ [.terminal _ v, obj] =>
-      (nm.preds₂ v).bind fun R =>
-        (compileTerm nm obj).map fun τₒ => R.formula₂ τ τₒ
+      (nm.preds₂ v).bind fun R ↦
+        (compileTerm nm obj).map fun τₒ ↦ R.formula₂ τ τₒ
   | _ => none
 
 /-- `compileFO` compiles the first-order fragment of a tree to a formula with trace indices as
@@ -132,11 +132,11 @@ def compileFO (fw : FOWords) (nm : LexNaming L) :
     Tree Unit String → Option (L.Formula ℕ)
   | .node _ [.terminal _ s, r] =>
       if s = fw.not_ then (compileFO fw nm r).map BoundedFormula.not
-      else (nm.names s).bind fun c => compilePred nm (Constants.term c) r
+      else (nm.names s).bind fun c ↦ compilePred nm (Constants.term c) r
   | .node _ [.trace k _, r] => compilePred nm (Term.var k) r
   | .node _ [.node _ [.terminal _ q, .terminal _ nw], .bind k _ body] =>
-      (nm.preds₁ nw).bind fun R =>
-        (compileFO fw nm body).bind fun ψ =>
+      (nm.preds₁ nw).bind fun R ↦
+        (compileFO fw nm body).bind fun ψ ↦
           if q = fw.every then some (all₁ k ((R.formula₁ (Term.var k)).imp ψ))
           else if q = fw.some_ then some (ex₁ k (R.formula₁ (Term.var k) ⊓ ψ))
           else if q = fw.no then
@@ -144,11 +144,11 @@ def compileFO (fw : FOWords) (nm : LexNaming L) :
           else none
   | .node _ [l, .node _ [.terminal _ s, t₂] ] =>
       if s = fw.and_ then
-        (compileFO fw nm l).bind fun φ₁ =>
-          (compileFO fw nm t₂).map fun φ₂ => φ₁ ⊓ φ₂
+        (compileFO fw nm l).bind fun φ₁ ↦
+          (compileFO fw nm t₂).map fun φ₂ ↦ φ₁ ⊓ φ₂
       else if s = fw.or_ then
-        (compileFO fw nm l).bind fun φ₁ =>
-          (compileFO fw nm t₂).map fun φ₂ => φ₁ ⊔ φ₂
+        (compileFO fw nm l).bind fun φ₁ ↦
+          (compileFO fw nm t₂).map fun φ₂ ↦ φ₁ ⊔ φ₂
       else none
   | _ => none
 
@@ -233,13 +233,13 @@ theorem lexicon_not (hnd : fw.Nodup) :
 
 theorem lexicon_and (hnd : fw.Nodup) :
     fw.lexicon E W fw.and_
-      = some ⟨.t ⇒ .t ⇒ .t, fun q p => p ∧ q⟩ := by
+      = some ⟨.t ⇒ .t ⇒ .t, fun q p ↦ p ∧ q⟩ := by
   obtain ⟨_, _, _, ⟨h1, h2, h3, h4⟩, _⟩ := nodup_ne hnd
   simp [FOWords.lexicon, h1, h2, h3, h4]
 
 theorem lexicon_or (hnd : fw.Nodup) :
     fw.lexicon E W fw.or_
-      = some ⟨.t ⇒ .t ⇒ .t, fun q p => p ∨ q⟩ := by
+      = some ⟨.t ⇒ .t ⇒ .t, fun q p ↦ p ∨ q⟩ := by
   obtain ⟨_, _, _, _, ⟨h1, h2, h3, h4, h5⟩⟩ := nodup_ne hnd
   simp [FOWords.lexicon, h1, h2, h3, h4, h5]
 
@@ -251,81 +251,25 @@ theorem FreshFor.at {nm : LexNaming L} (h : fw.FreshFor nm) {s : String}
 
 end FOWords
 
-/-! ### Realization at a model's world
-
-`Model` carries structures as terms, so `Realize` needs the instance fixed
-per world; `realizeAt`/`termAt` package that. -/
-
-/-- Realize a formula over the model's structure at world `w`. -/
-def Model.realizeAt (m : Model L) (w : m.W) (φ : L.Formula ℕ)
-    (g : Assignment m.E) : Prop :=
-  letI := m.interp w
-  φ.Realize g
-
-/-- Realize a term over the model's structure at world `w`. -/
-def Model.termAt (m : Model L) (w : m.W) (τ : L.Term ℕ)
-    (g : Assignment m.E) : m.E :=
-  letI := m.interp w
-  τ.realize g
+/-! ### Atoms at a model's world -/
 
 section RealizeAt
 
 variable (m : Model L) (w : m.W) (g : Assignment m.E)
 
-theorem Model.termAt_var (k : ℕ) : m.termAt w (Term.var k) g = g k := rfl
-
-theorem Model.termAt_const (c : L.Constants) :
-    m.termAt w (Constants.term c) g = m.const c w := by
-  let := m.interp w
-  exact Term.realize_constants
-
-theorem Model.realizeAt_not (φ : L.Formula ℕ) :
-    m.realizeAt w φ.not g ↔ ¬ m.realizeAt w φ g := by
-  let := m.interp w
-  exact Formula.realize_not
-
-theorem Model.realizeAt_inf (φ ψ : L.Formula ℕ) :
-    m.realizeAt w (φ ⊓ ψ) g ↔ m.realizeAt w φ g ∧ m.realizeAt w ψ g := by
-  let := m.interp w
-  exact Formula.realize_inf
-
-theorem Model.realizeAt_sup (φ ψ : L.Formula ℕ) :
-    m.realizeAt w (φ ⊔ ψ) g ↔ m.realizeAt w φ g ∨ m.realizeAt w ψ g := by
-  let := m.interp w
-  exact Formula.realize_sup
-
-theorem Model.realizeAt_imp (φ ψ : L.Formula ℕ) :
-    m.realizeAt w (φ.imp ψ) g ↔ (m.realizeAt w φ g → m.realizeAt w ψ g) := by
-  let := m.interp w
-  exact Formula.realize_imp
-
-theorem Model.realizeAt_all₁ (k : ℕ) (φ : L.Formula ℕ) :
-    m.realizeAt w (all₁ k φ) g ↔
-      ∀ x : m.E, m.realizeAt w φ (Function.update g k x) := by
-  let := m.interp w
-  exact FirstOrder.Language.Formula.realize_all₁
-
-theorem Model.realizeAt_ex₁ (k : ℕ) (φ : L.Formula ℕ) :
-    m.realizeAt w (ex₁ k φ) g ↔
-      ∃ x : m.E, m.realizeAt w φ (Function.update g k x) := by
-  let := m.interp w
-  exact FirstOrder.Language.Formula.realize_ex₁
-
 /-- The realization of a unary atom `R(τ)` is the extension of `R` at the term's value. -/
-theorem Model.realizeAt_formula₁ (R : L.Relations 1) (τ : L.Term ℕ) :
-    m.realizeAt w (R.formula₁ τ) g ↔ m.pred₁ext R w (m.termAt w τ g) := by
-  let := m.interp w
-  rw [Model.realizeAt, Formula.realize_rel₁]
-  exact iff_of_eq (congrArg _ (funext fun i => by fin_cases i; rfl))
+theorem Model.realizeAt_rel₁ (R : L.Relations 1) (τ : L.Term ℕ) :
+    (R.formula₁ τ).RealizeAt m.interp w g ↔ m.pred₁ext R w (τ.realizeAt m.interp w g) := by
+  rw [Formula.realizeAt_rel₁, Matrix.cons_fin_one]
+  rfl
 
 /-- The realization of a binary atom `R(τ₁, τ₂)`, subject first, is the object-first extension
 of `R` at the terms' values. -/
-theorem Model.realizeAt_formula₂ (R : L.Relations 2) (τ₁ τ₂ : L.Term ℕ) :
-    m.realizeAt w (R.formula₂ τ₁ τ₂) g ↔
-      m.pred₂ext R w (m.termAt w τ₂ g) (m.termAt w τ₁ g) := by
-  let := m.interp w
-  rw [Model.realizeAt, Formula.realize_rel₂]
-  exact iff_of_eq (congrArg _ (funext fun i => by fin_cases i <;> rfl))
+theorem Model.realizeAt_rel₂ (R : L.Relations 2) (τ₁ τ₂ : L.Term ℕ) :
+    (R.formula₂ τ₁ τ₂).RealizeAt m.interp w g ↔
+      m.pred₂ext R w (τ₂.realizeAt m.interp w g) (τ₁.realizeAt m.interp w g) := by
+  rw [Formula.realizeAt_rel₂]
+  exact iff_of_eq (congrArg _ (funext fun i ↦ by fin_cases i <;> rfl))
 
 end RealizeAt
 
@@ -350,12 +294,12 @@ private theorem interpBinary_t_tt (p : Ty.Domain E W .t) (F : Ty.Domain E W (.t 
     interpBinary (M := Id) ⟨.t, p⟩ ⟨.t ⇒ .t, F⟩ = some ⟨.t, F p⟩ := rfl
 
 private theorem predAbs_id_dist :
-    PredAbs.dist? (M := Id) (E := E) (W := W) (D := ℝ) = some (fun _ f => f) := rfl
+    PredAbs.dist? (M := Id) (E := E) (W := W) (D := ℝ) = some (fun _ f ↦ f) := rfl
 
 /-- An `Iff` between truth values lifts through `some ⟨.t, ·⟩`. -/
 private theorem some_t_congr {p q : Ty.Domain E W .t} (h : p ↔ q) :
     (some ⟨.t, p⟩ : Option (Denotation E W)) = some ⟨.t, q⟩ :=
-  congrArg (fun r => (some ⟨.t, r⟩ : Option (Denotation E W))) (propext h)
+  congrArg (fun r ↦ (some ⟨.t, r⟩ : Option (Denotation E W))) (propext h)
 
 /-- Given the body's interpretation at the outer assignment, a `.bind` node at `Id` denotes an
 entity predicate that agrees pointwise with the body at the updated assignments. -/
@@ -388,12 +332,12 @@ variable (m : Model L) (fw : FOWords) (nm : LexNaming L) (w : m.W)
 theorem interp_compileTerm (g : Assignment m.E) :
     ∀ {t : Tree Unit String} {τ : L.Term ℕ}, compileTerm nm t = some τ →
       Tree.interp (m.lexiconFO fw nm w) g t
-        = some ⟨.e, m.termAt w τ g⟩
+        = some ⟨.e, τ.realizeAt m.interp w g⟩
   | .terminal _ s, τ, h => by
       simp only [compileTerm, Option.map_eq_some_iff] at h
       obtain ⟨c, hc, rfl⟩ := h
-      rw [interp_terminal, m.lexiconFO_names fw nm w hc,
-        m.termAt_const]
+      rw [interp_terminal, m.lexiconFO_names fw nm w hc, Term.realizeAt_constants]
+      rfl
   | .trace k _, τ, h => by
       simp only [compileTerm, Option.some.injEq] at h
       subst h
@@ -407,7 +351,7 @@ theorem interp_compilePred (hdj : nm.Disjoint) (g : Assignment m.E)
     ∀ {r : Tree Unit String} {φ : L.Formula ℕ}, compilePred nm τ r = some φ →
       ∀ c : Unit,
         Tree.interp (m.lexiconFO fw nm w) g (.node c [subj, r])
-          = some ⟨.t, m.realizeAt w φ g⟩
+          = some ⟨.t, φ.RealizeAt m.interp w g⟩
   | .terminal _ v, φ, h, c => by
       simp only [compilePred, Option.map_eq_some_iff] at h
       obtain ⟨R, hR, rfl⟩ := h
@@ -415,7 +359,7 @@ theorem interp_compilePred (hdj : nm.Disjoint) (g : Assignment m.E)
         interp_terminal,
         m.lexiconFO_preds₁ fw nm w hR (hdj.names_of_preds₁ v R hR),
         Option.bind_some, interpBinary_e_et]
-      exact some_t_congr (m.realizeAt_formula₁ w g R τ).symm
+      exact some_t_congr (m.realizeAt_rel₁ w g R τ).symm
   | .node _ [.terminal _ v, obj], φ, h, c => by
       simp only [compilePred, Option.bind_eq_some_iff, Option.map_eq_some_iff] at h
       obtain ⟨R, hR, τₒ, hobj, rfl⟩ := h
@@ -426,7 +370,7 @@ theorem interp_compilePred (hdj : nm.Disjoint) (g : Assignment m.E)
         Option.bind_some,
         interp_compileTerm m fw nm w g hobj, Option.bind_some,
         interpBinary_fa, Option.bind_some, interpBinary_e_et]
-      exact some_t_congr (m.realizeAt_formula₂ w g R τ τₒ).symm
+      exact some_t_congr (m.realizeAt_rel₂ w g R τ τₒ).symm
 
 /-- Composition of a quantified clause `[[Q N] [bind k body]]` from the
 lexicon lookups of the quantifier and restrictor words and the `.bind`
@@ -453,7 +397,7 @@ theorem interp_compileFO (hnd : fw.Nodup) (hfr : fw.FreshFor nm)
     (hdj : nm.Disjoint) (t : Tree Unit String) :
     ∀ {φ : L.Formula ℕ} (g : Assignment m.E), compileFO fw nm t = some φ →
       Tree.interp (m.lexiconFO fw nm w) g t
-        = some ⟨.t, m.realizeAt w φ g⟩ := by
+        = some ⟨.t, φ.RealizeAt m.interp w g⟩ := by
   induction t using compileFO.induct fw with
   | case1 a a₁ r ih =>
     -- negation [not r]
@@ -486,13 +430,13 @@ theorem interp_compileFO (hnd : fw.Nodup) (hfr : fw.FreshFor nm)
     obtain ⟨F, hbind, hF⟩ :=
       interp_bind_exists (m.lexiconFO fw nm w) g k a₄ body (ih g hψ)
     have hquant : ∀ x : m.E,
-        F x = m.realizeAt w ψ (Function.update g k x) := fun x =>
+        F x = ψ.RealizeAt m.interp w (Function.update g k x) := fun x ↦
       hF x _ (ih (Function.update g k x) hψ)
     have hrestr : ∀ x : m.E,
-        m.realizeAt w (Relations.formula₁ R (Term.var k)) (Function.update g k x)
+        (Relations.formula₁ R (Term.var k)).RealizeAt m.interp w (Function.update g k x)
           ↔ m.pred₁ext R w x := by
       intro x
-      rw [m.realizeAt_formula₁, m.termAt_var, Function.update_self]
+      rw [m.realizeAt_rel₁, Term.realizeAt_var, Function.update_self]
     have hN := m.lexiconFO_preds₁ fw nm w hR (hdj.names_of_preds₁ _ _ hR)
     by_cases hq1 : q = fw.every
     · rw [ite_eq_left hq1] at hq
@@ -503,9 +447,9 @@ theorem interp_compileFO (hnd : fw.Nodup) (hfr : fw.FreshFor nm)
         ((m.lexiconFO_fresh fw nm w hfr₁.1 hfr₁.2.1 hfr₁.2.2).trans
           (FOWords.lexicon_every m.E m.W)) hN hbind]
       refine some_t_congr ?_
-      rw [m.realizeAt_all₁ w g]
-      simp only [Quantifier.GQ.every, m.realizeAt_imp]
-      exact forall_congr' fun x =>
+      rw [Formula.realizeAt_all₁]
+      simp only [Quantifier.GQ.every, Formula.realizeAt_imp]
+      exact forall_congr' fun x ↦
         imp_congr (hrestr x).symm (by rw [hquant x])
     · rw [ite_eq_right hq1] at hq
       by_cases hq2 : q = fw.some_
@@ -517,9 +461,9 @@ theorem interp_compileFO (hnd : fw.Nodup) (hfr : fw.FreshFor nm)
           ((m.lexiconFO_fresh fw nm w hfr₁.1 hfr₁.2.1 hfr₁.2.2).trans
             (FOWords.lexicon_some m.E m.W hnd)) hN hbind]
         refine some_t_congr ?_
-        rw [m.realizeAt_ex₁ w g]
-        simp only [Quantifier.GQ.some, m.realizeAt_inf]
-        exact exists_congr fun x =>
+        rw [Formula.realizeAt_ex₁]
+        simp only [Quantifier.GQ.some, Formula.realizeAt_inf]
+        exact exists_congr fun x ↦
           and_congr (hrestr x).symm (by rw [hquant x])
       · rw [ite_eq_right hq2] at hq
         by_cases hq3 : q = fw.no
@@ -531,10 +475,10 @@ theorem interp_compileFO (hnd : fw.Nodup) (hfr : fw.FreshFor nm)
             ((m.lexiconFO_fresh fw nm w hfr₁.1 hfr₁.2.1 hfr₁.2.2).trans
               (FOWords.lexicon_no m.E m.W hnd)) hN hbind]
           refine some_t_congr ?_
-          rw [m.realizeAt_all₁ w g]
-          simp only [Quantifier.GQ.no, m.realizeAt_imp,
-            m.realizeAt_not]
-          exact forall_congr' fun x =>
+          rw [Formula.realizeAt_all₁]
+          simp only [Quantifier.GQ.no, Formula.realizeAt_imp,
+            Formula.realizeAt_not]
+          exact forall_congr' fun x ↦
             imp_congr (hrestr x).symm (by rw [hquant x])
         · rw [ite_eq_right hq3] at hq
           simp at hq
@@ -552,7 +496,7 @@ theorem interp_compileFO (hnd : fw.Nodup) (hfr : fw.FreshFor nm)
       iht g h₂, Option.bind_some, interpBinary_fa, Option.bind_some,
       interpBinary_t_tt]
     refine some_t_congr ?_
-    rw [m.realizeAt_inf w g]
+    rw [Formula.realizeAt_inf]
   | case6 a l a₁ a₂ t₂ hl₁ hl₂ hne ihl iht =>
     -- coordination [l [or t₂]]
     intro φ g h
@@ -567,7 +511,7 @@ theorem interp_compileFO (hnd : fw.Nodup) (hfr : fw.FreshFor nm)
       iht g h₂, Option.bind_some, interpBinary_fa, Option.bind_some,
       interpBinary_t_tt]
     refine some_t_congr ?_
-    rw [m.realizeAt_sup w g]
+    rw [Formula.realizeAt_sup]
   | case7 a l a₁ a₂ s t₂ hl₁ hl₂ hs₁ hs₂ =>
     intro φ g h
     simp only [compileFO, ite_eq_right hs₁, ite_eq_right hs₂] at h
@@ -601,7 +545,7 @@ def HoldsAt (lex : Lexicon m.E m.W) (g : Assignment m.E)
 theorem holdsAt_iff_realize (hnd : fw.Nodup) (hfr : fw.FreshFor nm)
     (hdj : nm.Disjoint) {t : Tree Unit String} {φ : L.Formula ℕ}
     (h : compileFO fw nm t = some φ) (g : Assignment m.E) :
-    HoldsAt m (m.lexiconFO fw nm w) g t ↔ m.realizeAt w φ g := by
+    HoldsAt m (m.lexiconFO fw nm w) g t ↔ φ.RealizeAt m.interp w g := by
   constructor
   · rintro ⟨p, hp, htrue⟩
     have := (interp_compileFO m fw nm w hnd hfr hdj t g h).symm.trans hp
@@ -658,10 +602,10 @@ variable {L₀ : Language.{0, 0}} (fw : FOWords) (nm : LexNaming L₀)
 
 /-- A first-order structure as a one-world composition model. -/
 def Model.ofStructure (M : Type) (S : L₀.Structure M) : Model L₀ :=
-  ⟨M, Unit, fun _ => S⟩
+  ⟨M, Unit, fun _ ↦ S⟩
 
 private theorem modelEmpty (M : Type) [L₀.Structure M] : M ⊨ (∅ : L₀.Theory) :=
-  ⟨fun _φ hφ => absurd hφ (by simp)⟩
+  ⟨fun _φ hφ ↦ absurd hφ (by simp)⟩
 
 /-- Over composition models with nonempty domains, entailment between compiled trees coincides
 with mathlib's `⊨ᵇ` over the empty theory. -/
@@ -682,7 +626,7 @@ theorem models_imp_iff_entails (hnd : fw.Nodup) (hfr : fw.FreshFor nm)
     have h := hmod ⟨m.E⟩ g default
     exact BoundedFormula.realize_imp.mp h
   · intro hent M v xs
-    have hxs : xs = default := funext fun i => i.elim0
+    have hxs : xs = default := funext fun i ↦ i.elim0
     subst hxs
     rw [BoundedFormula.realize_imp]
     have := hent (Model.ofStructure M M.struc) M.nonempty' () v
@@ -709,19 +653,19 @@ theorem holdsAt_compactness (hnd : fw.Nodup) (hfr : fw.FreshFor nm)
           ∀ i ∈ s, HoldsAt m (m.lexiconFO fw nm w) g (trees i) := by
   constructor
   · rintro ⟨m, hne, w, g, hall⟩ s
-    exact ⟨m, hne, w, g, fun i _ => hall i⟩
+    exact ⟨m, hne, w, g, fun i _ ↦ hall i⟩
   · intro hfin
     have hsat : Theory.IsSatisfiable
-        (L := L₀) (Set.range fun i => (φs i).toSentence (hcl i)) := by
+        (L := L₀) (Set.range fun i ↦ (φs i).toSentence (hcl i)) := by
       rw [Theory.isSatisfiable_iff_isFinitelySatisfiable]
       intro T₀ hT₀
       classical
-      choose f hf using fun (x : T₀) => hT₀ x.2
+      choose f hf using fun (x : T₀) ↦ hT₀ x.2
       obtain ⟨m, hne, w, g, hs⟩ := hfin (Finset.univ.image f)
       let := m.interp w
       have : Nonempty m.E := hne
       have : m.E ⊨ (T₀ : L₀.Theory) := by
-        refine ⟨fun ψ hψ => ?_⟩
+        refine ⟨fun ψ hψ ↦ ?_⟩
         obtain ⟨x, rfl⟩ : ∃ x : T₀, (φs (f x)).toSentence (hcl (f x)) = ψ :=
           ⟨⟨ψ, hψ⟩, hf ⟨ψ, hψ⟩⟩
         rw [Formula.realize_toSentence (v := g)]
@@ -733,13 +677,13 @@ theorem holdsAt_compactness (hnd : fw.Nodup) (hfr : fw.FreshFor nm)
     let := N.struc
     have := N.nonempty'
     refine ⟨Model.ofStructure N N.struc, N.nonempty', (),
-      fun _ => Classical.arbitrary N, fun i => ?_⟩
+      fun _ ↦ Classical.arbitrary N, fun i ↦ ?_⟩
     rw [holdsAt_iff_realize (Model.ofStructure N N.struc) fw nm ()
       hnd hfr hdj (hc i) _]
     have : (N : Type) ⊨ (φs i).toSentence (hcl i) :=
       N.is_model.realize_of_mem _ (Set.mem_range_self i)
     exact (Formula.realize_toSentence (M := (N : Type)) (φs i) (hcl i)
-      (fun _ => Classical.arbitrary N)).mp this
+      (fun _ ↦ Classical.arbitrary N)).mp this
 
 end TheoryBridge
 

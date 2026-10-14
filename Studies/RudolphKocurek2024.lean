@@ -234,7 +234,7 @@ namespace ComparativeFormula
 
 /-- Ground unary predication `R(e)`, as an embedded formula. -/
 abbrev matom (R : L.Relations 1) (e : E) : ComparativeFormula L E :=
-  .ofFormula (R.formula ![Term.var e])
+  .ofFormula (R.formula₁ (Term.var e))
 
 /-- The equative `A ≈ B := ¬(A ≻ B) ∧ ¬(B ≻ A)`. -/
 def equi (A B : ComparativeFormula L E) : ComparativeFormula L E :=
@@ -257,7 +257,7 @@ variable (interp : I → W → L.Structure E)
 since restricted orderings need not be total. The comparative holds when some interpretation in the
 cone making `A` true and `B` false strictly dominates every one making `B` true and `A` false. -/
 def Realize : ComparativeFormula L E → (I → I → Prop) → I → W → Prop
-  | .ofFormula ψ, _, i, w => letI := interp i w; ψ.Realize id
+  | .ofFormula ψ, _, i, w => ψ.RealizeAt (interp i) w id
   | .not A, le, i, w => ¬ Realize A le i w
   | .inf A B, le, i, w => Realize A le i w ∧ Realize B le i w
   | .sup A B, le, i, w => Realize A le i w ∨ Realize B le i w
@@ -293,12 +293,8 @@ theorem realize_comp_iff :
 
 /-- Realization of a ground unary atom. -/
 @[simp] theorem realize_matom (R : L.Relations 1) (e : E) :
-    Realize interp (.matom R e) le i w ↔ (interp i w).RelMap R ![e] := by
-  let _S : L.Structure E := interp i w
-  show @Formula.Realize L E (interp i w) E (R.formula ![Term.var e]) id ↔ _
-  have hv : (fun j ↦ ((![Term.var e] : Fin 1 → L.Term E) j).realize (M := E) id)
-      = ![e] := funext fun j ↦ by rw [Subsingleton.elim j 0]; simp
-  rw [Formula.realize_rel, hv]
+    Realize interp (.matom R e) le i w ↔ (interp i w).RelMap R ![e] :=
+  Formula.realizeAt_rel₁ (interp i) w id R (Term.var e)
 
 /-- Comparative-free formulas are ordering-invariant. -/
 theorem ComparativeFree.realize_congr :
@@ -492,7 +488,7 @@ theorem not_farBelow_total {I : Type*} {ord : SemanticOrdering I}
 
 section Modifiers
 
-variable [Fintype I] (φ ψ : ComparativeFormula L E) (ord : SemanticOrdering I)
+variable (φ ψ : ComparativeFormula L E) (ord : SemanticOrdering I)
   (below : I → I → Prop) (d : DistanceFunction I ord) (i : I) (w : W)
 
 /-- The paper's comparative template is `coneStrictLift` at the truth sets of the formulas. It is
@@ -502,7 +498,6 @@ abbrev EvalCompWith : Prop :=
   coneStrictLift ord.le below
     (fun j ↦ Eval interp φ ord j w) (fun j ↦ Eval interp ψ ord j w) i
 
-omit [Fintype I] in
 /-- ≻ is the template at <. -/
 theorem eval_comp_iff_compWith :
     Eval interp (.comp φ ψ) ord i w ↔ EvalCompWith interp φ ψ ord ord.lt i w :=
@@ -529,7 +524,7 @@ def EvalMostly : Prop :=
     ∀ i'', ord.lt i'' i → (∀ j, ord.equiv j i'' → ¬ Eval interp φ ord j w) →
       ord.lt i'' i'
 
-instance [Fintype E] [DecidableEq E] [DecidableAtoms interp]
+instance [Fintype I] [Fintype E] [DecidableEq E] [DecidableAtoms interp]
     [DecidableRel ord.le] [DecidableRel d.close] :
     Decidable (EvalMostly interp φ ord d i w) := by
   unfold EvalMostly
@@ -694,7 +689,7 @@ requiring the witness for `A ∧ ¬B` to dominate either all `B`-interpretations
 entailment patterns are preserved, that transitivity of the equative is validated, and that the two
 semantics are interdefinable. -/
 def EvalRevised : ComparativeFormula L E → SemanticOrdering I → I → W → Prop
-  | .ofFormula ψ, _, i, w => letI := interp i w; ψ.Realize id
+  | .ofFormula ψ, _, i, w => ψ.RealizeAt (interp i) w id
   | .not A, ord, i, w => ¬ EvalRevised A ord i w
   | .inf A B, ord, i, w => EvalRevised A ord i w ∧ EvalRevised B ord i w
   | .sup A B, ord, i, w => EvalRevised A ord i w ∨ EvalRevised B ord i w
@@ -741,7 +736,7 @@ end Revised
 
 section MCond
 
-variable [Fintype I] (A B : ComparativeFormula L E)
+variable (A B : ComparativeFormula L E)
 
 /-- The restriction of an ordering relation to the `A`-interpretations drops the other
 interpretations. The result is reflexive at `A`-interpretations and transitive but not total, which
@@ -750,7 +745,7 @@ def restrictLE (le : I → I → Prop) (w : W) : I → I → Prop :=
   fun i j ↦ le i j ∧ ComparativeFormula.Realize interp A le i w ∧
     ComparativeFormula.Realize interp A le j w
 
-instance [Fintype E] [DecidableEq E] [DecidableAtoms interp]
+instance [Fintype I] [Fintype E] [DecidableEq E] [DecidableAtoms interp]
     (le : I → I → Prop) [DecidableRel le] (w : W) :
     DecidableRel (restrictLE interp A le w) := fun _ _ ↦ by
   unfold restrictLE; infer_instance
@@ -765,12 +760,11 @@ def EvalMCond : Prop :=
   ∀ i', ord.le i' i → ComparativeFormula.Realize interp A ord.le i' w →
     ComparativeFormula.Realize interp B (restrictLE interp A ord.le w) i' w
 
-instance [Fintype E] [DecidableEq E] [DecidableAtoms interp]
+instance [Fintype I] [Fintype E] [DecidableEq E] [DecidableAtoms interp]
     [DecidableRel ord.le] :
     Decidable (EvalMCond interp A B ord i w) := by
   unfold EvalMCond; infer_instance
 
-omit [Fintype I] in
 /-- For a consequent free of the comparative, the metalinguistic conditional is Stalnakerian
 entailment (`⊆`) of the consequent by the ranked cone of the antecedent. This is strictly weaker
 than the paper's reduction, which also assumes the antecedent free of the comparative. The
@@ -786,7 +780,6 @@ theorem evalMCond_iff_entails (hB : B.ComparativeFree) :
   · intro h x hx hAx
     exact hB.realize_congr.mpr (h ⟨hx, hAx⟩)
 
-omit [Fintype I] in
 /-- A conditional with a consequent free of the comparative conveys the weak comparative, since
 every ranked interpretation of the antecedent makes the consequent true, so none witnesses `A ≻ B`.
 -/
@@ -794,7 +787,6 @@ theorem weak_of_mcond (hB : B.ComparativeFree) (h : EvalMCond interp A B ord i w
     Eval interp (B.weak A) ord i w :=
   (eval_weak_iff interp).2 fun ⟨i', hi', hA, hnB, _⟩ ↦ hnB (hB.realize_congr.1 (h i' hi' hA))
 
-omit [Fintype I] in
 /-- *If A or B, then A*, but not *if A or B, then B*, conveys the strict comparative `A ≻ B` for
 constituents free of the comparative. The failure of the second conditional is a ranked witness for
 `A` and against `B`, and the first leaves it no rival. -/
@@ -806,7 +798,6 @@ theorem comp_of_mcond_sup (hA : A.ComparativeFree) (hB : B.ComparativeFree)
   obtain ⟨x, ⟨hx, hAB⟩, hnB⟩ := h₂
   exact ⟨x, hx, hAB.resolve_right hnB, hnB, fun j hj hB' hnA ↦ absurd (h₁ ⟨hj, Or.inr hB'⟩) hnA⟩
 
-omit [Fintype I] in
 /-- *If A, then more A than not* is valid for `A` free of the comparative, since under the
 restricted ordering every ranked interpretation makes `A` true, so the rival set of the consequent
 is empty. -/
@@ -835,12 +826,16 @@ end CommonGround
 
 noncomputable section DegreeTheory
 
-variable {L : Language} {I W E : Type*} [Fintype I] [DecidableEq I]
-  (interp : I → W → L.Structure E) (ord : SemanticOrdering I) (i : I)
+variable {L : Language} {I W E : Type*} (interp : I → W → L.Structure E)
+  (ord : SemanticOrdering I) (i : I)
 
 open Classical
 
 /-! ### Fields and denotations -/
+
+section Field
+
+variable [Fintype I]
 
 /-- The field `I_i` is the set of interpretations ranked at or below `i`. It is classical, since the
 degree theory proves structure and never computes. -/
@@ -852,10 +847,37 @@ under the revised semantics. -/
 def denotation (φ : ComparativeFormula L E) (w : W) : Finset I :=
   (field ord i).filter (fun j ↦ EvalRevised interp φ ord j w)
 
-omit [DecidableEq I] in
 theorem denotation_subset_field (φ : ComparativeFormula L E) (w : W) :
     denotation interp ord i φ w ⊆ field ord i :=
   Finset.filter_subset _ _
+
+end Field
+
+/-! ### Set differences -/
+
+variable [DecidableEq I]
+
+/-- If m dominates X ∩ Y and Y \ X, it dominates all of Y. -/
+private lemma dom_all_of_inter_sdiff (m : I) (X Y : Finset I)
+    (h_cap : ∀ c ∈ X ∩ Y, ord.lt c m)
+    (h_sdiff : ∀ y ∈ Y \ X, ord.lt y m) :
+    ∀ y ∈ Y, ord.lt y m := by
+  intro y hy
+  by_cases hyx : y ∈ X
+  · exact h_cap y (Finset.mem_inter.mpr ⟨hyx, hy⟩)
+  · exact h_sdiff y (Finset.mem_sdiff.mpr ⟨hy, hyx⟩)
+
+/-- (X ∪ Y) \ (X ∩ Y) = (X \ Y) ∪ (Y \ X). -/
+private lemma mem_symdiff_iff (X Y : Finset I) (s : I) :
+    s ∈ (X ∪ Y) \ (X ∩ Y) ↔ s ∈ (X \ Y) ∪ (Y \ X) := by
+  rw [← Finset.sup_eq_union, ← Finset.inf_eq_inter, ← symmDiff_eq_sup_sdiff_inf]
+  rfl
+
+/-- X ≠ Y → (X \ Y) ∪ (Y \ X) is nonempty. -/
+private lemma symdiff_nonempty (X Y : Finset I) (h : X ≠ Y) : ((X \ Y) ∪ (Y \ X)).Nonempty :=
+  Finset.symmDiff_nonempty.2 h
+
+variable [Fintype I]
 
 /-! ### Degree equivalence -/
 
@@ -915,17 +937,6 @@ def strictlyBetter (X Y : Finset I) : Prop :=
     ((∀ i'' ∈ X ∩ Y, ord.lt i'' i') ∨
      (∀ i'' ∈ field ord i \ (X ∪ Y), ord.lt i'' i'))
 
-omit [Fintype I] in
-/-- If m dominates X ∩ Y and Y \ X, it dominates all of Y. -/
-private lemma dom_all_of_inter_sdiff (m : I) (X Y : Finset I)
-    (h_cap : ∀ c ∈ X ∩ Y, ord.lt c m)
-    (h_sdiff : ∀ y ∈ Y \ X, ord.lt y m) :
-    ∀ y ∈ Y, ord.lt y m := by
-  intro y hy
-  by_cases hyx : y ∈ X
-  · exact h_cap y (Finset.mem_inter.mpr ⟨hyx, hy⟩)
-  · exact h_sdiff y (Finset.mem_sdiff.mpr ⟨hy, hyx⟩)
-
 /-- If m dominates Y \ X and field ord i \ (X ∪ Y), it dominates field ord i \ X. -/
 private lemma dom_fX_of_sdiff_comp (m : I) (X Y : Finset I)
     (h_yx : ∀ y ∈ Y \ X, ord.lt y m)
@@ -936,37 +947,6 @@ private lemma dom_fX_of_sdiff_comp (m : I) (X Y : Finset I)
   · exact h_yx c (Finset.mem_sdiff.mpr ⟨hc_y, (Finset.mem_sdiff.mp hc).2⟩)
   · exact h_comp c (Finset.mem_sdiff.mpr ⟨(Finset.mem_sdiff.mp hc).1,
       fun h ↦ Finset.mem_union.mp h |>.elim (Finset.mem_sdiff.mp hc).2 hc_y⟩)
-
-omit [Fintype I] in
-/-- (X ∪ Y) \ (X ∩ Y) = (X \ Y) ∪ (Y \ X). -/
-private lemma mem_symdiff_iff (X Y : Finset I) (s : I) :
-    s ∈ (X ∪ Y) \ (X ∩ Y) ↔ s ∈ (X \ Y) ∪ (Y \ X) := by
-  simp only [Finset.mem_sdiff, Finset.mem_union, Finset.mem_inter]
-  constructor
-  · rintro ⟨hx | hy, hni⟩
-    · exact Or.inl ⟨hx, fun hy ↦ hni ⟨hx, hy⟩⟩
-    · exact Or.inr ⟨hy, fun hx ↦ hni ⟨hx, hy⟩⟩
-  · rintro (⟨hx, hny⟩ | ⟨hy, hnx⟩)
-    · exact ⟨Or.inl hx, fun ⟨_, hy⟩ ↦ hny hy⟩
-    · exact ⟨Or.inr hy, fun ⟨hx, _⟩ ↦ hnx hx⟩
-
-omit [Fintype I] in
-/-- X ≠ Y → (X \ Y) ∪ (Y \ X) is nonempty. -/
-private lemma symdiff_nonempty (X Y : Finset I) (h : X ≠ Y) : ((X \ Y) ∪ (Y \ X)).Nonempty := by
-  by_contra h_empty
-  rw [Finset.not_nonempty_iff_eq_empty] at h_empty
-  apply h; ext x
-  constructor
-  · intro hx
-    by_contra hy
-    have : x ∈ (X \ Y) ∪ (Y \ X) :=
-      Finset.mem_union.mpr (Or.inl (Finset.mem_sdiff.mpr ⟨hx, hy⟩))
-    rw [h_empty] at this; simp at this
-  · intro hy
-    by_contra hx
-    have : x ∈ (X \ Y) ∪ (Y \ X) :=
-      Finset.mem_union.mpr (Or.inr (Finset.mem_sdiff.mpr ⟨hy, hx⟩))
-    rw [h_empty] at this; simp at this
 
 /-! ### The ordering respects equivalence -/
 
