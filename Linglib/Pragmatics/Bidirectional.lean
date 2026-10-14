@@ -7,92 +7,87 @@ public import Mathlib.Order.Preorder.Finite
 /-!
 # Bidirectional Optimality Theory
 
-[blutner-2000]'s bidirectional OT evaluates a form-meaning pair from both the speaker's and
-the hearer's side. A pair `⟨A, τ⟩` of the generator `Gen` competes along two axes of a
-harmony ordering `<`: the **Q-principle** (production, [horn-1984]'s Q) rejects it when another
-form expresses `τ` more harmonically, and the **I-principle** (comprehension, Horn's R) rejects
-it when `A` has a more harmonic interpretation. Two versions differ in what a competitor must
-be:
-
-* **Strong** bidirection: a pair is optimal iff no pair of `Gen` at all Q- or I-blocks it.
-  Here `strongOptimalSet`.
-* **Weak** bidirection: the Q-competitors are only the pairs satisfying the I-principle and
-  vice versa, a mutual recursion whose solutions are `IsWeakSolution`; a pair satisfying both
-  principles is *super-optimal*. The paper's footnote credits Jäger (a 1999 handout, published
-  as [jaeger-2002]) with the transparent reformulation that a pair is super-optimal iff it lies
-  in `Gen` and no super-optimal pair blocks it, a fixed point of the blocking step
-  `unblockedSet`; that fixed point is `superoptimalSet`.
-
-The weak version derives Horn's division of pragmatic labour (unmarked forms take unmarked
-meanings, marked forms marked meanings), which the strong version cannot: it blocks a marked
-form in every interpretation.
+Bidirectional optimality theory evaluates a form-meaning pair of a generator from the speaker's
+and the hearer's side at once. Another pair blocks it when it is more harmonic and shares its
+meaning (the Q-principle, production) or its form (the I-principle, comprehension). Under strong
+bidirection a pair is optimal when no pair of the generator blocks it; under weak bidirection it
+is super-optimal when no super-optimal pair blocks it, a fixed point of the blocking step.
 
 ## Main definitions
 
 * `profile`: the violation profile of a ranking, compared lexicographically.
-* `QBlocks`, `IBlocks`, `Blocks`: a witness set blocks a pair along the meaning axis, the form
+* `QBlocks`, `IBlocks`, `Blocks`: a set of pairs blocks a pair along the meaning axis, the form
   axis, or either.
-* `unblockedSet pairs f S`: the pairs of `pairs` that `S` does not block, the antitone blocking
-  step; `strongOptimalSet` is its value at `pairs`.
+* `unblockedSet pairs f S`: the pairs of `pairs` that `S` does not block, an antitone step;
+  `strongOptimalSet` is its value at `pairs`.
 * `superoptimalSet`: the greatest fixed point of the square of the step.
-* `IsWeakSolution`: a solution `(Q, I)` of the paper's mutual recursion.
-* `unblocked`, `strongOptimal`, `superoptimal`: the `Finset` forms, computable and closed by
-  `decide` on literal generators.
+* `IsWeakSolution`: a solution of Blutner's mutual recursion of the two principles.
+* `unblocked`, `strongOptimal`, `superoptimal`: the computable `Finset` forms.
 
 ## Main results
 
-* `lfp_eq_superoptimalSet`: for a finite generator the least and greatest fixed points of the
-  squared step coincide, so `superoptimalSet` is a fixed point of the step itself
-  (`isFixedPt_superoptimalSet`), the unique one (`eq_superoptimalSet_of_isFixedPt`), and
-  membership is the footnote's recursion (`mem_superoptimalSet`).
-* `strongOptimalSet_subset_inter`: the paper's remark that optimal pairs are super-optimal,
-  for every weak solution; `strongOptimalSet_subset_superoptimalSet` is its fixed-point
-  companion by coinduction. Neither needs finiteness.
-* `exists_isWeakSolution`: the mutual recursion has a solution.
-* `coe_superoptimal`: the `Finset` iteration computes `superoptimalSet` on every finite
-  generator.
+* `mem_superoptimalSet`: on a finite generator a pair is super-optimal iff it lies in the
+  generator and no super-optimal pair blocks it, and `superoptimalSet` is the only such set.
+* `strongOptimalSet_subset_superoptimalSet`: optimal pairs are super-optimal.
+* `superoptimalSet_eq_graphOn`: the division of pragmatic labour. On a generator containing the
+  graph of an isomorphism between the markedness orders of forms and of meanings, the
+  super-optimal pairs are that graph, under every harmony strictly monotone in markedness.
+* `coe_superoptimal`: the `Finset` iteration computes `superoptimalSet`.
 
 ## Implementation notes
 
-The harmony ordering is any preorder `α` reached through a profile `f`, so `profile` (the
-lexicographic order on `List ℕ`) and the linear order `Lex (Fin n → ℕ)` both serve. The
-paper's "other pair" clause in the principles is dropped: `f q < f p` already forces `q ≠ p`.
-
-The step `unblockedSet pairs f` is antitone, so its square is monotone and mathlib's
-`OrderHom.gfp` applies without further hypotheses. The step maps that greatest fixed point to
-the least one; for a finite generator the two coincide by descent along a profile-minimal
-element of their difference, which is where the well-foundedness of [jaeger-2002]'s Theorem 2
-enters. Structurally, `superoptimalSet` is then the kernel of the acyclic digraph whose arcs run
-from a pair to the pairs it blocks: no member blocks another, and every other pair of the
-generator is blocked by a member.
-
-The `Finset` form iterates the squared step from `pairs` until it is fixed, with `pairs.card`
-as the fuel: the descending chain has stabilised by then, so the iteration needs no
-convergence hypothesis, and the early exit keeps `decide` shallow. The pair
-`(gfp (qUnblockedSet ∘ iUnblockedSet), iUnblockedSet (gfp …))` is a weak solution by
-`OrderHom.map_gfp` alone; its uniqueness ([jaeger-2002]'s Lemma 1) and the equality of
-`Q ∩ I` with `superoptimalSet` (Theorem 2) are that paper's results, in
-`Studies/Jaeger2002.lean`.
+* The harmony is any preorder reached through `f`, such as `profile` into the lexicographic
+  order on `List ℕ`. The principles' "other pair" clause is dropped, since `f q < f p` already
+  forces `q ≠ p`.
+* The step is antitone, so its square has a greatest fixed point without further hypotheses, and
+  the step exchanges it with the least one. On a finite generator the two coincide by descent
+  along a minimal pair of their difference, where Jäger assumes well-foundedness.
+* The `Finset` form iterates the squared step from `pairs` with `pairs.card` as fuel and an early
+  exit, so it needs no convergence hypothesis and `decide` stays shallow.
+* Jäger's uniqueness of weak solutions and their agreement with `superoptimalSet` are proved in
+  `Studies/Jaeger2002.lean`.
 
 ## References
 
-* [blutner-2000] — strong and weak bidirection, super-optimality, the division of labour.
-* [jaeger-2002] — the fixed-point reformulation, well-definedness and its equivalence with
-  the mutual recursion.
-* [horn-1984], [atlas-levinson-1981] — the Q- and I-principles.
+* [blutner-2000]
+* [jaeger-2002]
+* [horn-1984]
+* [atlas-levinson-1981]
 -/
 
 @[expose] public section
 
 namespace BidirectionalOT
 
-open Function OrderHom
+open Function
+open OrderHom hiding id
 
 variable {F M α : Type*} [Preorder α]
 
-/-- The violation profile of a ranking: a pair's violations listed from the dominant constraint
-down, compared lexicographically. -/
+/-- The violation profile of a ranking lists a pair's violations from the dominant constraint
+down, to be compared lexicographically. -/
 def profile (ranking : List (F × M → ℕ)) (p : F × M) : List ℕ := ranking.map (· p)
+
+private theorem map_lt_map {β : Type*} {ranking : List (β → ℕ)} {p q : β}
+    (hle : ∀ c ∈ ranking, c p ≤ c q) (hlt : ∃ c ∈ ranking, c p < c q) :
+    ranking.map (· p) < ranking.map (· q) := by
+  induction ranking with
+  | nil => simp at hlt
+  | cons d ds ih =>
+    rw [List.map_cons, List.map_cons, List.cons_lt_cons_iff]
+    refine (hle d List.mem_cons_self).lt_or_eq.imp id fun h ↦
+      ⟨h, ih (fun c hc ↦ hle c (List.mem_cons_of_mem _ hc)) ?_⟩
+    obtain ⟨c, hc, hlt⟩ := hlt
+    rcases List.mem_cons.1 hc with rfl | hc
+    · exact absurd h hlt.ne
+    · exact ⟨c, hc, hlt⟩
+
+/-- A ranking of constraints that each penalize the more marked pair gives a strictly monotone
+profile once every strictly less marked pair does strictly better on some constraint. -/
+theorem strictMono_profile [Preorder F] [Preorder M] {ranking : List (F × M → ℕ)}
+    (hmono : ∀ c ∈ ranking, Monotone c) (hsep : ∀ ⦃p q⦄, p < q → ∃ c ∈ ranking, c p < c q) :
+    StrictMono (profile ranking) :=
+  fun _ _ hpq ↦ map_lt_map (fun c hc ↦ hmono c hc hpq.le) (hsep hpq)
 
 /-! ### Blocking -/
 
@@ -100,13 +95,13 @@ section Blocks
 
 variable (f : F × M → α) (S : Set (F × M)) (p : F × M)
 
-/-- `QBlocks f S p`: a more harmonic pair of `S` expresses `p`'s meaning. -/
+/-- `QBlocks f S p` holds when a more harmonic pair of `S` expresses `p`'s meaning. -/
 def QBlocks : Prop := ∃ q ∈ S, q.2 = p.2 ∧ f q < f p
 
-/-- `IBlocks f S p`: a more harmonic pair of `S` interprets `p`'s form. -/
+/-- `IBlocks f S p` holds when a more harmonic pair of `S` interprets `p`'s form. -/
 def IBlocks : Prop := ∃ q ∈ S, q.1 = p.1 ∧ f q < f p
 
-/-- `Blocks f S p`: a more harmonic pair of `S` shares `p`'s form or meaning. -/
+/-- `Blocks f S p` holds when a more harmonic pair of `S` shares `p`'s form or meaning. -/
 def Blocks : Prop := ∃ q ∈ S, (q.1 = p.1 ∨ q.2 = p.2) ∧ f q < f p
 
 theorem blocks_iff : Blocks f S p ↔ IBlocks f S p ∨ QBlocks f S p := by
@@ -153,7 +148,7 @@ theorem unblockedSet_subset : unblockedSet pairs f S ⊆ pairs := fun _ hp ↦ h
 theorem unblockedSet_antitone : Antitone (unblockedSet pairs f) :=
   fun _ _ hST _ hp ↦ ⟨hp.1, fun hb ↦ hp.2 (hb.mono hST)⟩
 
-/-- Strong bidirection: the pairs that no pair of `pairs` blocks. -/
+/-- Strong bidirection keeps the pairs that no pair of `pairs` blocks. -/
 def strongOptimalSet : Set (F × M) := unblockedSet pairs f pairs
 
 /-- The square of the blocking step, monotone as the composite of two antitone maps. -/
@@ -164,16 +159,16 @@ def unblockedSq : Set (F × M) →o Set (F × M) :=
 @[simp] theorem unblockedSq_apply (S : Set (F × M)) :
     unblockedSq pairs f S = unblockedSet pairs f (unblockedSet pairs f S) := rfl
 
-/-- The super-optimal pairs: the greatest fixed point of the squared blocking step. On a
+/-- The super-optimal pairs, the greatest fixed point of the squared blocking step. On a
 finite generator it is the unique fixed point of the step itself
-(`isFixedPt_superoptimalSet`, `eq_superoptimalSet_of_isFixedPt`), the paper's footnote. -/
+(`isFixedPt_superoptimalSet`, `eq_superoptimalSet_of_isFixedPt`), Jäger's reformulation. -/
 noncomputable def superoptimalSet : Set (F × M) := (unblockedSq pairs f).gfp
 
 theorem superoptimalSet_subset : superoptimalSet pairs f ⊆ pairs := by
   rw [superoptimalSet, ← (unblockedSq pairs f).map_gfp]
   exact unblockedSet_subset _ _
 
-/-- An optimal pair is a fixed point's member: `strongOptimalSet` is a post-fixed point of the
+/-- Optimal pairs are super-optimal, since `strongOptimalSet` is a post-fixed point of the
 squared step, since the step is antitone and lands in `pairs`. -/
 theorem strongOptimalSet_subset_superoptimalSet :
     strongOptimalSet pairs f ⊆ superoptimalSet pairs f :=
@@ -212,8 +207,8 @@ theorem isFixedPt_superoptimalSet (h : pairs.Finite) :
     IsFixedPt (unblockedSet pairs f) (superoptimalSet pairs f) := by
   rw [IsFixedPt, unblockedSet_superoptimalSet, lfp_eq_superoptimalSet pairs f h]
 
-/-- The footnote's recursion: a pair is super-optimal iff it lies in the generator and no
-super-optimal pair blocks it. -/
+/-- A pair is super-optimal iff it lies in the generator and no super-optimal pair blocks it,
+Jäger's reformulation of super-optimality. -/
 theorem mem_superoptimalSet (h : pairs.Finite) :
     p ∈ superoptimalSet pairs f ↔ p ∈ pairs ∧ ¬ Blocks f (superoptimalSet pairs f) p := by
   conv_lhs => rw [← (isFixedPt_superoptimalSet pairs f h).eq]
@@ -230,7 +225,7 @@ theorem eq_superoptimalSet_of_isFixedPt (h : pairs.Finite)
 
 end Step
 
-/-! ### The paper's mutual recursion -/
+/-! ### Blutner's mutual recursion -/
 
 section Weak
 
@@ -255,12 +250,12 @@ theorem unblockedSet_eq_inter (S : Set (F × M)) :
     Set.mem_sep_iff, not_or]
   tauto
 
-/-- The weak version of bidirection: `Q` collects the pairs no pair of `I` Q-blocks and `I`
+/-- In the weak version of bidirection `Q` collects the pairs no pair of `I` Q-blocks and `I`
 the pairs no pair of `Q` I-blocks. A pair of both is super-optimal. -/
 def IsWeakSolution (Q I : Set (F × M)) : Prop :=
   qUnblockedSet pairs f I = Q ∧ iUnblockedSet pairs f Q = I
 
-/-- The mutual recursion has a solution: the greatest fixed point of the monotone composite
+/-- The mutual recursion has a solution, the greatest fixed point of the monotone composite
 `qUnblockedSet ∘ iUnblockedSet` together with its image under `iUnblockedSet`. -/
 theorem exists_isWeakSolution : ∃ Q I, IsWeakSolution pairs f Q I :=
   let Φ : Set (F × M) →o Set (F × M) :=
@@ -268,8 +263,8 @@ theorem exists_isWeakSolution : ∃ Q I, IsWeakSolution pairs f Q I :=
       (qUnblockedSet_antitone pairs f).comp (iUnblockedSet_antitone pairs f)⟩
   ⟨Φ.gfp, iUnblockedSet pairs f Φ.gfp, Φ.map_gfp, rfl⟩
 
-/-- The paper's remark that an optimal pair is super-optimal: a pair no pair of `pairs`
-blocks is blocked by no pair of `I` or of `Q`, both subsets of `pairs`. -/
+/-- Optimal pairs satisfy both principles of every weak solution, since a pair no pair of
+`pairs` blocks is blocked by no pair of `I` or of `Q`, both subsets of `pairs`. -/
 theorem strongOptimalSet_subset_inter {Q I : Set (F × M)} (h : IsWeakSolution pairs f Q I) :
     strongOptimalSet pairs f ⊆ Q ∩ I := fun p hp ↦ by
   obtain ⟨hQ, hI⟩ := h
@@ -282,6 +277,64 @@ theorem strongOptimalSet_subset_inter {Q I : Set (F × M)} (h : IsWeakSolution p
   exact ⟨hQ ▸ hpQ, hI ▸ hpI⟩
 
 end Weak
+
+/-! ### Markedness and the division of labour -/
+
+section Markedness
+
+open Set (univ mem_graphOn)
+
+variable [LinearOrder F] [LinearOrder M] (pairs : Set (F × M)) {f : F × M → α}
+  {S : Set (F × M)} {p : F × M}
+
+/-- A harmony strictly monotone in the markedness of forms and of meanings blocks as markedness
+itself does: of two pairs sharing a form or a meaning, the less marked one is more harmonic. -/
+theorem blocks_iff_of_strictMono (hf : StrictMono f) : Blocks f S p ↔ Blocks id S p := by
+  refine exists_congr fun q ↦ and_congr_right fun _ ↦ and_congr_right fun hqp ↦
+    ⟨fun hlt ↦ ?_, @hf _ _⟩
+  have hcomp : q ≤ p ∨ p ≤ q := by
+    obtain ⟨a, b⟩ := q; obtain ⟨c, d⟩ := p
+    rcases hqp with rfl | rfl
+    · exact (le_total b d).imp Prod.mk_le_mk_iff_right.2 Prod.mk_le_mk_iff_right.2
+    · exact (le_total a c).imp Prod.mk_le_mk_iff_left.2 Prod.mk_le_mk_iff_left.2
+  exact hcomp.elim (fun h ↦ h.lt_of_ne (by rintro rfl; exact lt_irrefl _ hlt))
+    fun h ↦ absurd (hf.monotone h) hlt.not_ge
+
+theorem unblockedSet_eq_of_strictMono (hf : StrictMono f) :
+    unblockedSet pairs f = unblockedSet pairs id := by
+  ext S p
+  simp only [mem_unblockedSet, blocks_iff_of_strictMono hf]
+
+/-- Weak bidirection does not depend on how a strictly monotone harmony weighs the markedness of
+forms against that of meanings. -/
+theorem superoptimalSet_eq_of_strictMono (hf : StrictMono f) :
+    superoptimalSet pairs f = superoptimalSet pairs id := by
+  have : unblockedSq pairs f = unblockedSq pairs id := OrderHom.ext _ _ <| funext fun S ↦ by
+    simp only [unblockedSq_apply, unblockedSet_eq_of_strictMono pairs hf]
+  rw [superoptimalSet, superoptimalSet, this]
+
+/-- On a finite generator containing the graph of an isomorphism `e` between the markedness
+orders of forms and of meanings, the super-optimal pairs are exactly that graph, under every
+harmony strictly monotone in markedness. This is the division of pragmatic labour. -/
+theorem superoptimalSet_eq_graphOn (e : F ≃o M) (hf : StrictMono f) (h : pairs.Finite)
+    (he : univ.graphOn e ⊆ pairs) : superoptimalSet pairs f = univ.graphOn e := by
+  rw [superoptimalSet_eq_of_strictMono pairs hf]
+  refine (eq_superoptimalSet_of_isFixedPt pairs id h ?_).symm
+  ext ⟨a, b⟩
+  change (a, b) ∈ pairs ∧ ¬ Blocks id (univ.graphOn e) (a, b) ↔ (a, b) ∈ univ.graphOn e
+  refine ⟨fun ⟨_, hb⟩ ↦ mem_graphOn.2 ⟨trivial, ?_⟩, fun hab ↦ ⟨he hab, ?_⟩⟩
+  · refine not_not.1 fun hne ↦ (lt_or_gt_of_ne hne).elim (fun hlt ↦ ?_) fun hlt ↦ ?_
+    · exact hb ⟨(a, e a), ⟨a, trivial, rfl⟩, .inl rfl, Prod.mk_lt_mk_iff_right.2 hlt⟩
+    · exact hb ⟨(e.symm b, b), ⟨e.symm b, trivial, by simp⟩, .inr rfl,
+        Prod.mk_lt_mk_iff_left.2 (e.symm_apply_lt.2 hlt)⟩
+  · obtain ⟨-, rfl⟩ : a ∈ univ ∧ e a = b := mem_graphOn.1 hab
+    rintro ⟨_, ⟨c, -, rfl⟩, hc | hc, hlt⟩
+    · obtain rfl : c = a := hc
+      exact lt_irrefl _ hlt
+    · obtain rfl : c = a := e.injective hc
+      exact lt_irrefl _ hlt
+
+end Markedness
 
 /-! ### Computable forms -/
 

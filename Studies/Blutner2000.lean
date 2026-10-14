@@ -2,150 +2,191 @@ module
 
 public import Linglib.Pragmatics.Bidirectional
 public import Mathlib.Data.Fintype.Pi
+public import Mathlib.Data.Fintype.Prod
+public import Mathlib.Data.Prod.Lex
 public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # Blutner (2000): Some aspects of optimality in natural language interpretation
 
-[blutner-2000] evaluates form-meaning pairs bidirectionally (`Pragmatics/Bidirectional.lean`)
-and argues from blocking that the two directions must constrain each other. The paper's
-schematic tableaux set the strong and weak versions against each other: an unmarked and a
-marked form, a stereotypical and a marked situation, with the constraints F (against marked
-forms) and C (against marked situations). Under strong bidirection the marked form is blocked
-in every interpretation, total blocking; restricting the generator does not help; only the
-weak version yields [horn-1984]'s division of pragmatic labour, with the marked form taking
-the marked situation. The presupposition section reconstructs the [van-der-sandt-1992] and
-[geurts-1995] projection mechanism: the I-principle selects the projection site under
-AvoidA ≫ BeStrong, and the Q-principle blocks accommodation whenever a simpler expression
-alternative exists, Zeevat's generalization.
+Blutner evaluates form-meaning pairs from the speaker's and the hearer's side at once
+(`Pragmatics/Bidirectional.lean`). His schematic tableaux pit an unmarked against a marked form
+and a stereotypical against a marked situation, under a constraint F against marked forms and a
+constraint C against marked situations. The results below hold for every harmony strictly
+monotone in the two markedness orders, so for either ranking of F and C, which the paper leaves
+open. Strong bidirection blocks the marked form in every interpretation and yields Horn's division
+of pragmatic labour only when the generator stipulates it; weak bidirection derives it.
 
-## Main definitions
+For presupposition projection, AvoidA counts accommodated markers and BeStrong prefers stronger
+outcomes. Ranked in that order they select global accommodation when no binder is available,
+binding when the antecedent supplies one, and, where global accommodation is unavailable, the
+stronger local reading over the higher intermediate site that van der Sandt's and Geurts's
+preference would choose. The Q-principle blocks accommodation when a non-triggering alternative
+expresses the same outcome.
 
-* `Form`, `Situation`, `formMarkedness`, `situationMarkedness`, `tableau` — the schematic
-  tableaux and their two constraints F and C.
-* `ProjectionSite` — local, intermediate, global, following [van-der-sandt-1992].
-* `ProjectionSite.projection`, `beStrong` — the projections as propositions over worlds and
-  the strength grade derived from entailment among them; `dogAvoidA`, `catAvoidA`,
-  `accidentAvoidA` the paper's binding data.
+## Main statements
 
-## Main results
+* `strong_total_blocking`: strong bidirection blocks the marked form in every interpretation on
+  any generator in which both forms can express the stereotypical situation.
+* `marked_marked_mem_strongOptimalSet_iff`: strong bidirection pairs the marked form with the
+  marked situation only if the generator excludes both mixed pairs.
+* `weak_division_of_labour`: weak bidirection pairs the unmarked form with the stereotypical
+  situation and the marked form with the marked one.
+* `strength_local_height_intermediate`: without global accommodation, BeStrong selects the local
+  reading where the higher-site preference selects the intermediate one.
 
-* `strong_total_blocking`, `strong_restricted_gen` — the strong version blocks the marked
-  form entirely, on the full generator and on the generator without the unmarked form's
-  marked reading.
-* `weak_division_of_labour` — the weak version pairs marked with marked; the strong version's
-  optimal pairs are a proper subset (`strong_ssubset_weak`).
-* `dog_global_accommodation` — every site accommodates, so BeStrong decides and global
-  accommodation wins.
-* `cat_intermediate_binding` — only the intermediate site binds, so AvoidA decides.
-* `accommodation_blocked`, `accommodation_blocked_is_Q` — "??The car hit him" is blocked by
-  the alternative "A car hit him" through the Q-principle.
+## Implementation notes
+
+* The markedness orders on forms and situations are pulled back from the violations of F and C.
+* BeStrong compares outcomes by entailment, as sets of worlds, so the harmony of a resolution is
+  its AvoidA count followed lexicographically by its outcome.
+* The quantified sentences of the paper's (19) and (20) are read through the conditional schema
+  for one individual; global accommodation is left out of their generator because it would
+  leave the bound marker free.
 
 ## TODO
 
-* The paper's dog tableau grades the intermediate projection above the local one, while its
-  own discussion of the car case, and entailment, put the local projection (r ∧ p) ⇒ q
-  below p ⇒ (q ∧ r); `beStrong` follows entailment. The winner is the same either way.
+* The generalization (23), that a trigger does not accommodate iff it has a simple
+  non-triggering alternative, as a theorem over generators in which AvoidA ranks first.
 
 ## References
 
-* [blutner-2000] — the paper.
-* [horn-1984] — the division of pragmatic labour.
-* [van-der-sandt-1992], [geurts-1995] — the projection mechanism and its preferences.
-* [asher-lascarides-1998] — the car-accident blocking datum.
+* [blutner-2000]
+* [horn-1984]
+* [van-der-sandt-1992]
+* [geurts-1995]
+* [asher-lascarides-1998]
 -/
 
 @[expose] public section
 
 namespace Blutner2000
 
-open BidirectionalOT
+open BidirectionalOT Set
 
 /-! ### Total blocking and the division of pragmatic labour
 
-The paper's schematic tableau: forms `A₁` (unmarked) and `A₂` (marked, e.g. *cause to die*
-beside *kill*), situations `τ₁` (stereotypical) and `τ₂` (marked), the constraint F violated
-by the marked form and C by the marked situation. -/
+The schematic tableaux (7), (9), (10) and (12): an unmarked and a marked form, such as *kill* and
+*cause to die*, and a stereotypical and a marked situation. -/
 
 /-- The unmarked and the marked form. -/
 inductive Form where
   | unmarked
   | marked
-  deriving DecidableEq, Repr
+  deriving DecidableEq, Fintype, Repr
 
 /-- The stereotypical and the marked situation. -/
 inductive Situation where
   | stereotypical
   | marked
-  deriving DecidableEq, Repr
+  deriving DecidableEq, Fintype, Repr
 
-/-- The constraint F: the marked form violates it. -/
-def formMarkedness : Form × Situation → ℕ
-  | (.marked, _) => 1
-  | (.unmarked, _) => 0
+/-- The violations of F, the constraint against marked forms. -/
+def Form.markedness : Form → ℕ
+  | .unmarked => 0
+  | .marked => 1
 
-/-- The constraint C: the marked situation violates it. -/
-def situationMarkedness : Form × Situation → ℕ
-  | (_, .marked) => 1
-  | (_, .stereotypical) => 0
+/-- The violations of C, the constraint against marked situations. -/
+def Situation.markedness : Situation → ℕ
+  | .stereotypical => 0
+  | .marked => 1
 
-/-- The tableau's ranking, F over C. -/
-def tableau : Form × Situation → List ℕ := profile [formMarkedness, situationMarkedness]
+instance : LinearOrder Form := LinearOrder.lift' Form.markedness (by decide)
 
-/-- The full generator: both forms express both situations. -/
-def fullGen : Finset (Form × Situation) :=
-  {(.unmarked, .stereotypical), (.unmarked, .marked), (.marked, .stereotypical),
-    (.marked, .marked)}
+instance : LinearOrder Situation := LinearOrder.lift' Situation.markedness (by decide)
 
-/-- The generator with the unmarked form restricted to the stereotypical situation, the
-paper's first attempt to avoid total blocking. -/
-def restrictedGen : Finset (Form × Situation) :=
-  {(.unmarked, .stereotypical), (.marked, .stereotypical), (.marked, .marked)}
+/-- The paper introduces no ranking between F and C, and none is needed, since the tableau under
+either ranking is strictly monotone in markedness, which is all the results below assume. -/
+theorem strictMono_profile_markedness :
+    StrictMono (profile [(·.1.markedness), (·.2.markedness)] : Form × Situation → List ℕ) ∧
+      StrictMono (profile [(·.2.markedness), (·.1.markedness)] : Form × Situation → List ℕ) := by
+  refine ⟨strictMono_profile ?_ fun p q h ↦ ?_, strictMono_profile ?_ fun p q h ↦ ?_⟩ <;>
+    simp only [List.mem_cons, List.not_mem_nil, or_false, forall_eq_or_imp, forall_eq,
+      exists_eq_or_imp, exists_eq_left]
+  · exact ⟨fun _ _ h ↦ h.1, fun _ _ h ↦ h.2⟩
+  · exact (Prod.lt_iff.1 h).imp And.left And.right
+  · exact ⟨fun _ _ h ↦ h.2, fun _ _ h ↦ h.1⟩
+  · exact (Prod.lt_iff.1 h).symm.imp And.right And.left
 
-/-- Total blocking: under strong bidirection only the unmarked form survives, in its
-stereotypical reading, and the marked form is blocked in every interpretation. -/
-theorem strong_total_blocking :
-    strongOptimal fullGen tableau = {(.unmarked, .stereotypical)} := by decide
+/-- The iconic pairing matches the unmarked form with the stereotypical situation and the marked
+form with the marked one, an isomorphism of the two markedness orders. -/
+def iconicity : Form ≃o Situation where
+  toFun | .unmarked => .stereotypical | .marked => .marked
+  invFun | .stereotypical => .unmarked | .marked => .marked
+  left_inv a := by cases a <;> rfl
+  right_inv b := by cases b <;> rfl
+  map_rel_iff' {a b} := by cases a <;> cases b <;> decide
 
-/-- Restricting the generator does not help the strong version: the marked form's marked
-reading is still I-blocked by its stereotypical reading, so the marked form stays blocked. -/
-theorem strong_restricted_gen :
-    strongOptimal restrictedGen tableau = {(.unmarked, .stereotypical)} := by decide
+variable {α : Type*} [Preorder α] {f : Form × Situation → α} {G : Set (Form × Situation)}
 
-/-- The division of pragmatic labour: under weak bidirection the unmarked form takes the
-stereotypical situation and the marked form the marked one. -/
-theorem weak_division_of_labour :
-    superoptimal fullGen tableau = {(.unmarked, .stereotypical), (.marked, .marked)} := by decide
+/-- Strong bidirection blocks the marked form in every interpretation on any generator in which
+both forms can express the stereotypical situation, keeping only the unmarked form in its
+stereotypical reading. This covers the full generator (7) and the one that restricts the
+unmarked form to the stereotypical situation (9). -/
+theorem strong_total_blocking (hf : StrictMono f) (hu : (.unmarked, .stereotypical) ∈ G)
+    (hm : (.marked, .stereotypical) ∈ G) :
+    strongOptimalSet G f = {(.unmarked, .stereotypical)} := by
+  ext ⟨a, b⟩
+  rw [strongOptimalSet, mem_unblockedSet, blocks_iff_of_strictMono hf, mem_singleton_iff]
+  refine ⟨fun ⟨_, hb⟩ ↦ ?_, ?_⟩
+  · cases a <;> cases b
+    · rfl
+    · exact (hb ⟨_, hu, .inl rfl, Prod.mk_lt_mk_iff_right.2 (by decide)⟩).elim
+    · exact (hb ⟨_, hu, .inr rfl, Prod.mk_lt_mk_iff_left.2 (by decide)⟩).elim
+    · exact (hb ⟨_, hm, .inl rfl, Prod.mk_lt_mk_iff_right.2 (by decide)⟩).elim
+  · rintro ⟨⟩
+    refine ⟨hu, fun ⟨⟨c, d⟩, _, _, hlt⟩ ↦ ?_⟩
+    rcases Prod.lt_iff.1 hlt with ⟨h, -⟩ | ⟨-, h⟩
+    · exact Nat.not_lt_zero _ h
+    · exact Nat.not_lt_zero _ h
 
-/-- The weak version admits strictly more pairs than the strong one on the full generator. -/
-theorem strong_ssubset_weak : strongOptimal fullGen tableau ⊂ superoptimal fullGen tableau := by
+/-- Strong bidirection pairs the marked form with the marked situation iff the generator excludes
+both mixed pairs: the only way to the division of labour under the strong version is to stipulate
+it in the generator, as in (10). -/
+theorem marked_marked_mem_strongOptimalSet_iff (hf : StrictMono f) :
+    (.marked, .marked) ∈ strongOptimalSet G f ↔
+      (.marked, .marked) ∈ G ∧ (.marked, .stereotypical) ∉ G ∧ (.unmarked, .marked) ∉ G := by
+  rw [strongOptimalSet, mem_unblockedSet, blocks_iff_of_strictMono hf]
+  refine ⟨fun ⟨hG, hb⟩ ↦ ⟨hG, fun h ↦ hb ⟨_, h, .inl rfl, Prod.mk_lt_mk_iff_right.2 (by decide)⟩,
+    fun h ↦ hb ⟨_, h, .inr rfl, Prod.mk_lt_mk_iff_left.2 (by decide)⟩⟩, fun ⟨hG, hs, hu⟩ ↦
+      ⟨hG, fun ⟨⟨c, d⟩, hq, hshare, hlt⟩ ↦ ?_⟩⟩
+  cases c <;> cases d
+  · rcases hshare with h | h <;> cases h
+  · exact hu hq
+  · exact hs hq
+  · exact lt_irrefl _ hlt
+
+/-- Weak bidirection derives the division of pragmatic labour (12), pairing the unmarked form with
+the stereotypical situation and the marked form with the marked one. The paper credits the
+general proof to Jäger; it is `superoptimalSet_eq_graphOn`. -/
+theorem weak_division_of_labour (hf : StrictMono f) :
+    superoptimalSet univ f = {(.unmarked, .stereotypical), (.marked, .marked)} := by
+  rw [superoptimalSet_eq_graphOn _ iconicity hf finite_univ (subset_univ _)]
+  ext ⟨a, b⟩
+  simp only [mem_graphOn, mem_univ, true_and, mem_insert_iff, mem_singleton_iff, Prod.mk.injEq]
+  revert a b
   decide
 
-/-- The paper introduces no ranking between F and C, and none is needed: every blocking
-comparison differs in exactly one constraint, so the reverse ranking gives the same result. -/
-theorem weak_division_of_labour_ranking_free :
-    superoptimal fullGen (profile [situationMarkedness, formMarkedness]) =
-      superoptimal fullGen tableau := by
-  decide
+/-- The weak version admits the marked pair the strong version blocks. -/
+theorem strongOptimalSet_ssubset_superoptimalSet (hf : StrictMono f) :
+    strongOptimalSet univ f ⊂ superoptimalSet univ f := by
+  rw [strong_total_blocking hf (mem_univ _) (mem_univ _), weak_division_of_labour hf, pair_comm]
+  exact ssubset_insert (by simp)
 
-/-! ### Projection sites
+/-! ### Presupposition projection
 
-The presupposition section reconstructs [van-der-sandt-1992]'s projection mechanism for a
-conditional "if p then q" whose consequent presupposes r. Each site yields a projection, a
-proposition over the worlds fixing p, q and r, and BeStrong is derived from entailment among
-the three projections rather than read off the paper's tableau (`## TODO`). The competitions
-hold the form fixed, so they are I-principle competitions; `SentenceForm` has one constructor
-and `superoptimal` reduces to the I-optimal site. -/
+A conditional "if p then q" whose consequent presupposes r, with the presupposition resolved
+locally, at the antecedent or globally (15), (16). The form is fixed, so each competition is an
+I-principle competition among the resolutions. -/
 
-/-- Presupposition projection sites, following [van-der-sandt-1992]. -/
+/-- The sites at which the presupposition can be resolved. -/
 inductive ProjectionSite where
-  | local
+  | «local»
   | intermediate
   | global
   deriving DecidableEq, Fintype, Repr
 
-/-- The atomic propositions: the antecedent `p`, the consequent `q` and the presupposition
-`r`. -/
+/-- The antecedent `p`, the consequent `q` and the presupposition `r`. -/
 inductive Atom where
   | p
   | q
@@ -155,7 +196,7 @@ inductive Atom where
 /-- A world fixes the truth of the three atoms. -/
 abbrev World := Atom → Bool
 
-/-- The projection of "if p then q", q presupposing r, with r accommodated at the site. -/
+/-- The proposition expressed with the presupposition resolved at the site. -/
 def ProjectionSite.projection : ProjectionSite → World → Prop
   | .global => fun w ↦ w .r ∧ (w .p → w .q)
   | .intermediate => fun w ↦ w .r ∧ w .p → w .q
@@ -164,113 +205,101 @@ def ProjectionSite.projection : ProjectionSite → World → Prop
 instance (s : ProjectionSite) (w : World) : Decidable (s.projection w) := by
   cases s <;> dsimp only [ProjectionSite.projection] <;> infer_instance
 
-/-- BeStrong: the number of sites whose projection a site's projection fails to entail, so the
-strongest projection scores `0`. `worlds` restricts the worlds, letting the antecedent bind
-the presupposition. -/
-def beStrong (worlds : Finset World) (s : ProjectionSite) : ℕ :=
-  (Finset.univ.filter fun t : ProjectionSite ↦
-    ¬ ∀ w ∈ worlds, s.projection w → t.projection w).card
+/-- The outcome of resolving at the site, the worlds of the context where its projection holds. -/
+def ProjectionSite.outcome (worlds : Finset World) (s : ProjectionSite) : Finset World :=
+  worlds.filter s.projection
 
-/-- The single presuppositional sentence of each interpretation competition: the form is
-held fixed and the projection sites race. -/
-inductive SentenceForm where
-  | sentence
-  deriving DecidableEq, Repr
+/-- The harmony of AvoidA ≫ BeStrong compares the number of accommodated markers, then the
+outcome, a stronger outcome being more harmonic. -/
+def harmony (avoidA : ProjectionSite → ℕ) (worlds : Finset World) (p : Unit × ProjectionSite) :
+    ℕ ×ₗ Finset World :=
+  toLex (avoidA p.2, p.2.outcome worlds)
 
-/-- The generator of the interpretation competitions: the sentence with each site. -/
-def sites : Finset (SentenceForm × ProjectionSite) :=
-  {(.sentence, .local), (.sentence, .intermediate), (.sentence, .global)}
+local instance : DecidableLT (ℕ ×ₗ Finset World) := Prod.Lex.decidable _ _
 
-/-! ### "If Peter has a dog, then his cat is gray"
+/-! #### "If Peter has a dog, then his cat is gray" (15), (17)
 
-The presupposition (Peter has a cat) finds no binder, so every site accommodates its marker
-and AvoidA is tied; BeStrong decides. The global projection r ∧ (p ⇒ q) entails both others
-and the local p ⇒ (q ∧ r) entails the intermediate (r ∧ p) ⇒ q, so global wins. -/
+No binder is available, so every site accommodates Peter's cat and BeStrong decides. -/
 
-/-- AvoidA for the dog conditional: every site accommodates. -/
-def dogAvoidA : SentenceForm × ProjectionSite → ℕ := fun _ ↦ 1
-
-/-- BeStrong for the dog conditional: p, q and r vary independently. -/
-def dogBeStrong (p : SentenceForm × ProjectionSite) : ℕ := beStrong Finset.univ p.2
-
-/-- The derived grades: global strongest, then local, then intermediate. -/
-theorem dogBeStrong_eq :
-    dogBeStrong (.sentence, .global) = 0 ∧ dogBeStrong (.sentence, .local) = 1 ∧
-      dogBeStrong (.sentence, .intermediate) = 2 := by
+/-- In (17) the global outcome is the strongest and the intermediate one the weakest. -/
+theorem dog_outcome_ssubset :
+    ProjectionSite.global.outcome .univ ⊂ ProjectionSite.local.outcome .univ ∧
+      ProjectionSite.local.outcome .univ ⊂ ProjectionSite.intermediate.outcome .univ := by
   decide
 
-/-- AvoidA is tied, so BeStrong decides: global accommodation wins. -/
 theorem dog_global_accommodation :
-    superoptimal sites (profile [dogAvoidA, dogBeStrong]) = {(.sentence, .global)} := by decide
+    superoptimal .univ (harmony (fun _ ↦ 1) .univ) = {((), .global)} := by
+  decide
 
-/-! ### "If Peter has a cat, then his cat is gray"
+/-! #### "If Peter has a cat, then his cat is gray" (16), (18)
 
-The antecedent is the presupposition, so the intermediate site binds rather than accommodates
-and AvoidA ≫ BeStrong makes it the winner. With p = r the global projection p ∧ (p ⇒ q) is
-strongest and the local and intermediate projections coincide, as the paper's footnote
-notes. -/
+The antecedent is the presupposition, so the intermediate site binds Peter's cat. -/
 
-/-- AvoidA for the cat conditional: only the intermediate site binds. -/
-def catAvoidA : SentenceForm × ProjectionSite → ℕ
-  | (.sentence, .intermediate) => 0
-  | _ => 1
-
-/-- The worlds of the cat conditional: the antecedent is the presupposition. -/
+/-- The worlds of the cat conditional, where the antecedent is the presupposition. -/
 def catWorlds : Finset World := Finset.univ.filter fun w ↦ w .p = w .r
 
-/-- BeStrong for the cat conditional. -/
-def catBeStrong (p : SentenceForm × ProjectionSite) : ℕ := beStrong catWorlds p.2
+/-- Only the intermediate site binds the presupposition. -/
+def catAvoidA : ProjectionSite → ℕ
+  | .intermediate => 0
+  | _ => 1
 
-/-- The derived grades: global strongest, local and intermediate tied. -/
-theorem catBeStrong_eq :
-    catBeStrong (.sentence, .global) = 0 ∧ catBeStrong (.sentence, .local) = 1 ∧
-      catBeStrong (.sentence, .intermediate) = 1 := by
+/-- In (18) the global outcome is stronger than the intermediate one, and the local and
+intermediate outcomes coincide, as the paper's footnote notes. -/
+theorem cat_outcome :
+    ProjectionSite.global.outcome catWorlds ⊂ ProjectionSite.intermediate.outcome catWorlds ∧
+      ProjectionSite.local.outcome catWorlds = ProjectionSite.intermediate.outcome catWorlds := by
   decide
 
-/-- AvoidA decides: the bound intermediate projection wins. -/
 theorem cat_intermediate_binding :
-    superoptimal sites (profile [catAvoidA, catBeStrong]) = {(.sentence, .intermediate)} := by
+    superoptimal .univ (harmony catAvoidA catWorlds) = {((), .intermediate)} := by
   decide
 
-/-! ### Accommodation blocked by the Q-principle
+/-! #### "Every team member will come to the match in her car" (19), (20)
 
-"He had an accident. ??The car hit him." vs. "He had an accident. A car hit him." (the
-paper's datum, attributed there to [asher-lascarides-1998]). From a car-neutral context both
-continuations effect the same context change, but the definite requires accommodation; the
-indefinite alternative blocks it. Zeevat's generalization: a presupposition trigger does not
-accommodate iff any occurrence of it has a simple non-triggering expression alternative. -/
+Global accommodation would leave the bound marker free, so only the local and intermediate
+sites compete, and both accommodate. Strength selects the local reading, "every team member owns
+a car and will come in it", where a preference for the higher site selects the intermediate
+reading, "every team member who owns a car will come in it". -/
+
+/-- The resolutions of a presupposition with a bound marker. -/
+def boundSites : Finset (Unit × ProjectionSite) := {((), .local), ((), .intermediate)}
+
+/-- The depth of a site below the main context, which the higher-site preference minimizes. -/
+def ProjectionSite.depth : ProjectionSite → ℕ
+  | .global => 0
+  | .intermediate => 1
+  | .local => 2
+
+theorem strength_local_height_intermediate :
+    superoptimal boundSites (harmony (fun _ ↦ 1) .univ) = {((), .local)} ∧
+      superoptimal boundSites (profile [fun _ ↦ 1, (·.2.depth)]) = {((), .intermediate)} := by
+  decide
+
+/-! ### Accommodation blocked by the Q-principle (22)
+
+"He had an accident. A car hit him." against "He had an accident. ??The car hit him.": from a
+context neutral about cars both continuations have the same outcome, but only the definite
+accommodates. -/
 
 /-- The presuppositional definite and its non-triggering indefinite alternative. -/
-inductive DefForm where
+inductive Article where
   | definite
   | indefinite
-  deriving DecidableEq, Repr
+  deriving DecidableEq, Fintype, Repr
 
-/-- The shared context-change result. -/
-inductive AccidentMeaning where
-  | carHitHim
-  deriving DecidableEq, Repr
-
-def genAccident : Finset (DefForm × AccidentMeaning) :=
-  {(.definite, .carHitHim), (.indefinite, .carHitHim)}
-
-/-- AvoidA: the definite accommodates the car, the indefinite introduces it. -/
-def accidentAvoidA : DefForm × AccidentMeaning → ℕ
+/-- AvoidA penalizes the definite, which accommodates the car, and not the indefinite, which
+introduces it. -/
+def accidentAvoidA : Article × Unit → ℕ
   | (.definite, _) => 1
   | (.indefinite, _) => 0
 
-/-- The indefinite blocks the definite: same meaning, no accommodation, so the definite is
-pragmatically anomalous in car-neutral contexts. -/
 theorem accommodation_blocked :
-    superoptimal genAccident (profile [accidentAvoidA]) = {(.indefinite, .carHitHim)} := by
+    superoptimal (Finset.univ : Finset (Article × Unit)) accidentAvoidA = {(.indefinite, ())} := by
   decide
 
-/-- The blocking is a Q-principle effect: a competing form with the same meaning is better. -/
+/-- The blocking is a Q-principle effect: a form with the same outcome needs no accommodation. -/
 theorem accommodation_blocked_is_Q :
-    QBlocks (profile [accidentAvoidA]) ↑genAccident (.definite, .carHitHim) := by decide
-
-/-- The indefinite satisfies both principles against the whole generator. -/
-theorem indefinite_unblocked :
-    ¬ Blocks (profile [accidentAvoidA]) ↑genAccident (.indefinite, .carHitHim) := by decide
+    QBlocks accidentAvoidA ↑(Finset.univ : Finset (Article × Unit)) (.definite, ()) := by
+  decide
 
 end Blutner2000

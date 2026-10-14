@@ -1,19 +1,20 @@
 module
 
 public import Linglib.Pragmatics.Bidirectional
+public import Mathlib.Basic.Finite.Prod
 
 /-!
-# Jäger (2002): Some notes on the formal properties of bidirectional OT
+# Jäger (2002): Some notes on the formal properties of bidirectional optimality theory
 
-[jaeger-2002] asks when [blutner-2000]'s weak bidirection is well defined. The paper's
-Definition 1 is Blutner's mutual recursion between the Q- and the I-principle
-(`BidirectionalOT.IsWeakSolution`), which it calls z-optimality after the zigzag of its
-evaluation; Lemma 1 shows by the recursion theorem that a well-founded harmony ordering
-makes the solution unique. Definition 3 is the paper's own x-optimality: a pair is x-optimal
-iff it lies in the generator and no x-optimal pair blocks it along either axis, the fixed
-point of `BidirectionalOT.unblockedSet`. Theorem 2 shows that for a transitive well-founded
-ordering the x-optimality relation is unique and coincides with z-optimality. Lemma 2 notes
-that ranked constraints induce such an ordering.
+Jäger asks when Blutner's weak bidirection is well defined. The paper's Definition 1 is
+Blutner's mutual recursion between the Q- and the I-principle (`BidirectionalOT.IsWeakSolution`),
+which it calls z-optimality after the zigzag of its evaluation; Lemma 1 shows by the recursion
+theorem that a well-founded harmony ordering makes the solution unique. Definition 3 is the
+paper's own x-optimality: a pair is x-optimal iff it lies in the generator and no x-optimal pair
+blocks it along either axis, the fixed point of `BidirectionalOT.unblockedSet`. Theorem 2 shows
+that for a transitive well-founded ordering the x-optimality relation is unique and coincides
+with z-optimality. The worked example opening the paper's transducer construction shows that
+bidirectional optimality predicts iconicity.
 
 This file proves Lemma 1 and Theorem 2 for a finite generator, where the ordering restricted
 to the generator is well founded, taking the transitivity from the preorder of profiles. The
@@ -23,26 +24,26 @@ uniqueness needs the descent. The first part of Theorem 2 uses minimality alone;
 part uses transitivity, as the paper does, where a form-axis blocker of a blocker is turned
 into a blocker.
 
-## Main results
+## Main statements
 
-* `isWeakSolution_unique` — Lemma 1: the weak version has at most one solution.
-* `existsUnique_isFixedPt` — Theorem 2, first part: x-optimality is unique, and it is the
-  substrate's `superoptimalSet`.
-* `inter_eq_superoptimalSet` — Theorem 2, second part: the pairs satisfying both principles of
-  a weak solution are exactly the x-optimal pairs.
+* `isWeakSolution_unique`: the weak version has at most one solution.
+* `existsUnique_isFixedPt`: x-optimality is unique, and it is the substrate's
+  `superoptimalSet`.
+* `inter_eq_superoptimalSet`: the pairs satisfying both principles of a weak solution are
+  exactly the x-optimal pairs.
 
 ## TODO
 
 * The paper's hypotheses are well-foundedness and transitivity of the ordering on an
   arbitrary generator; the finite generator is the case every consumer uses. Generalize to
   `pairs.WellFoundedOn (f · < f ·)`.
-* The paper's second part, bidirectional optimization by finite-state transducers, is not
-  formalized.
+* The paper's second part, bidirectional optimization by finite-state transducers, is
+  formalized only in its opening example.
 
 ## References
 
-* [jaeger-2002] — the paper.
-* [blutner-2000] — the definitions under study.
+* [jaeger-2002]
+* [blutner-2000]
 -/
 
 public section
@@ -71,7 +72,7 @@ private theorem exists_lt_of_iUnblocked {Q Q' : Set (F × M)} {p : F × M}
   obtain ⟨q, hqQ', hq, hlt⟩ : IBlocks f Q' p := not_not.1 fun hb ↦ hp' ⟨hp.1, hb⟩
   exact ⟨q, ⟨hqQ', fun hqQ ↦ hp.2 ⟨q, hqQ, hq, hlt⟩⟩, hlt⟩
 
-/-- Lemma 1: on a finite generator the weak version has at most one solution. A
+/-- On a finite generator the weak version has at most one solution (Lemma 1). A
 profile-minimal pair on which two solutions disagree would have a blocker on which they
 also disagree. -/
 theorem isWeakSolution_unique (h : pairs.Finite) {Q I Q' I' : Set (F × M)}
@@ -105,8 +106,8 @@ theorem isWeakSolution_unique (h : pairs.Finite) {Q I Q' I' : Set (F × M)}
 
 /-! ### Theorem 2: x-optimality is unique and is z-optimality -/
 
-/-- Theorem 2, first part: on a finite generator there is exactly one x-optimality relation,
-the substrate's `superoptimalSet`. -/
+/-- On a finite generator there is exactly one x-optimality relation, the substrate's
+`superoptimalSet` (Theorem 2, first part). -/
 theorem existsUnique_isFixedPt (h : pairs.Finite) :
     ∃! S : Set (F × M), IsFixedPt (unblockedSet pairs f) S :=
   ⟨superoptimalSet pairs f, (isFixedPt_superoptimalSet pairs f h).eq,
@@ -156,8 +157,8 @@ private theorem superoptimalSet_subset_left (h : pairs.Finite) {Q I : Set (F × 
       (hmin ⟨hrX, fun hrQ ↦ hqI.2 ⟨r, hrQ, hr, hrq⟩⟩ (hrq.trans hqp).le)
   · exact hp.2 ⟨r, hrX, .inr (hr.trans hq), hrq.trans hqp⟩
 
-/-- Theorem 2, second part: the pairs satisfying both principles of a weak solution are the
-x-optimal pairs. -/
+/-- The pairs satisfying both principles of a weak solution are the x-optimal pairs (Theorem 2,
+second part). -/
 theorem inter_eq_superoptimalSet (h : pairs.Finite) {Q I : Set (F × M)}
     (hQI : IsWeakSolution pairs f Q I) : Q ∩ I = superoptimalSet pairs f := by
   refine Set.Subset.antisymm (fun p ⟨hpQ, hpI⟩ ↦ not_not.1 fun hpX ↦ ?_) (Set.subset_inter
@@ -171,5 +172,20 @@ theorem inter_eq_superoptimalSet (h : pairs.Finite) {Q I : Set (F × M)}
   rcases hq with hq | hq
   · exact hpI.2 ⟨q, superoptimalSet_subset_left h ⟨hQ, hI⟩ hqX, hq, hqp⟩
   · exact hpQ.2 ⟨q, superoptimalSet_subset_right h ⟨hQ, hI⟩ hqX, hq, hqp⟩
+
+/-! ### Iconicity
+
+The worked example opening the paper's transducer construction: three inputs and three outputs
+ordered by cost, with the constraint "be small" on each side. -/
+
+/-- With "be small" on inputs and on outputs, the bidirectionally optimal pairs are the
+diagonal: cheap inputs go with cheap outputs and expensive inputs with expensive outputs. This
+holds for the paper's ordering, the product order (`strictMono_id`), and for every other harmony
+strictly monotone in cost. -/
+theorem superoptimalSet_eq_diagonal {g : Fin 3 × Fin 3 → α} (hg : StrictMono g) :
+    superoptimalSet Set.univ g = Set.diagonal (Fin 3) := by
+  rw [superoptimalSet_eq_graphOn _ (OrderIso.refl _) hg Set.finite_univ (Set.subset_univ _)]
+  ext ⟨a, b⟩
+  simp [Set.mem_graphOn]
 
 end Jaeger2002
