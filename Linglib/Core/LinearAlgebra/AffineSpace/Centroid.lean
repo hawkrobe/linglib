@@ -7,7 +7,7 @@ public import Mathlib.LinearAlgebra.AffineSpace.Centroid
 
 `[UPSTREAM]` Affine maps commute with the centroids of nonempty finite families of points, the
 centroid case of `Finset.map_affineCombination`; so do linear maps, a module being an affine space
-over itself; and in a module the centroid is the average of the points.
+over itself.
 -/
 
 @[expose] public section
@@ -29,14 +29,6 @@ theorem map_centroid_of_cast_card_ne_zero (p : ι → P) (f : P →ᵃ[k] P₂) 
 theorem map_centroid_of_nonempty [CharZero k] (p : ι → P) (f : P →ᵃ[k] P₂) (h : s.Nonempty) :
     f (s.centroid k p) = s.centroid k (f ∘ p) :=
   s.map_centroid_of_cast_card_ne_zero p f (Nat.cast_ne_zero.2 (card_pos.2 h).ne')
-
-/-- The centroid of points of a module is their average, if the number of points, converted to
-`k`, is not zero. -/
-theorem centroid_eq_smul_sum (p : ι → V) (h : (#s : k) ≠ 0) :
-    s.centroid k p = (#s : k)⁻¹ • ∑ i ∈ s, p i := by
-  rw [centroid_def, s.affineCombination_eq_linear_combination p _
-    (s.sum_centroidWeights_eq_one_of_cast_card_ne_zero h), smul_sum]
-  simp only [centroidWeights_apply]
 
 end Finset
 
