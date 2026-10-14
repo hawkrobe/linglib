@@ -159,6 +159,9 @@ def voeren : Verb := simplex "voeren" "gevoerd"
 /-- *halen* 'fetch', *gehaald*. -/
 def halen : Verb := simplex "halen" "gehaald"
 
+/-- *lezen* 'read', *gelezen*. -/
+def lezen : Verb := simplex "lezen" "gelezen"
+
 /-- *dekken* 'cover', *gedekt*. -/
 def dekken : Verb := simplex "dekken" "gedekt"
 
@@ -259,6 +262,13 @@ def blazen : Verb :=
     valency := .ofFrame ArgumentFrame.intransitive [some activitySubjectProfile],
       vendlerClass := some .activity }
 
+/-- *werken* 'work', *gewerkt*, an intransitive activity with an agentive subject. -/
+def werken : Verb :=
+  { simplex "werken" "gewerkt" with
+    perfectAuxiliaries := {.have},
+    valency := .ofFrame ArgumentFrame.intransitive [some activitySubjectProfile],
+    vendlerClass := some .activity }
+
 /-- *lopen* 'walk, run', *loop - liep - gelopen*, an agentive verb of manner of motion, intransitive
 ([levin-hovav-1995] p. 148). -/
 def lopen : Verb :=
@@ -326,10 +336,10 @@ example : perfectAuxiliary wandelen .intransitive = .have ∧
 
 /-- `inventory` lists the entries. -/
 def inventory : List Verb :=
-  [straffen, kussen, bellen, voeren, halen, dekken, dienen,
+  [straffen, kussen, bellen, voeren, halen, lezen, dekken, dienen,
    opbellen, uitvoeren, afhalen, ontdekken, bedekken, verdienen, herhalen,
-   komen, sterven, groeien, stijgen, blijven, overblijven, duren, staan, bestaan, blazen, lopen,
-   wandelen, rollen]
+   komen, sterven, groeien, stijgen, blijven, overblijven, duren, staan, bestaan, blazen, werken,
+   lopen, wandelen, rollen]
 
 /-- The rule gives every entry on its basic frame an auxiliary its perfect takes. -/
 theorem perfectAuxiliary_mem : ∀ v ∈ inventory, v.perfectAuxiliaries.Nonempty →

@@ -102,7 +102,7 @@ def Instantiates (s : Schema V α) (w : V → α) : Prop := s.body ≤ w
 
 instance decidablePredInstantiates [DecidableLE (V → α)] (s : Schema V α) :
     DecidablePred s.Instantiates :=
-  λ w => inferInstanceAs (Decidable (s.body ≤ w))
+  fun w ↦ inferInstanceAs (Decidable (s.body ≤ w))
 
 /-- A schema instantiates its own description. -/
 theorem instantiates_body (s : Schema V α) : s.Instantiates s.body := le_rfl
@@ -115,12 +115,12 @@ theorem Instantiates.trans_le (h : s.Instantiates w₁) (hw : w₁ ≤ w₂) :
 /-- A fully specified description, every slot maximal, is instantiated by itself alone. -/
 theorem instantiates_iff_eq_of_forall_isMax (h : ∀ v, IsMax (s.body v)) :
     s.Instantiates w ↔ w = s.body :=
-  ⟨λ hw => funext λ v => le_antisymm (h v (hw v)) (hw v), λ hw => hw ▸ le_rfl⟩
+  ⟨fun hw ↦ funext fun v ↦ le_antisymm (h v (hw v)) (hw v), fun hw ↦ hw ▸ le_rfl⟩
 
 /-- A schema lies below another exactly when it is instantiated by everything the other is. -/
 theorem body_le_body_iff :
     t.body ≤ s.body ↔ ∀ ⦃w⦄, s.Instantiates w → t.Instantiates w :=
-  ⟨λ h _ hw => h.trans hw, λ h => h s.instantiates_body⟩
+  ⟨fun h _ hw ↦ h.trans hw, fun h ↦ h s.instantiates_body⟩
 
 /-- An item instantiates a schema exactly when unifying it with the description returns the
 item. -/
@@ -175,7 +175,7 @@ theorem Instantiates.instantiatesAt {u : V → α} (h : s.Instantiates u) (pos :
   ⟨u, h, rfl⟩
 
 @[simp] theorem instantiatesAt_id {w : V → α} : s.InstantiatesAt id w ↔ s.Instantiates w :=
-  ⟨λ ⟨_, hu, hw⟩ => hw ▸ hu, λ h => ⟨w, h, rfl⟩⟩
+  ⟨fun ⟨_, hu, hw⟩ ↦ hw ▸ hu, fun h ↦ ⟨w, h, rfl⟩⟩
 
 /-- An item instantiates a schema through a subscripting exactly when it instantiates the
 pulled-back description and fills coindexed positions alike. -/
@@ -183,9 +183,9 @@ theorem instantiatesAt_iff :
     s.InstantiatesAt pos w ↔ (s.comap pos).Instantiates w ∧ w.FactorsThrough pos := by
   constructor
   · rintro ⟨u, hu, rfl⟩
-    exact ⟨λ p => hu (pos p), λ _ _ h => congrArg u h⟩
+    exact ⟨fun p ↦ hu (pos p), fun _ _ h ↦ congrArg u h⟩
   · rintro ⟨hc, hf⟩
-    refine ⟨Function.extend pos w s.body, λ v => ?_, (hf.extend_comp _).symm⟩
+    refine ⟨Function.extend pos w s.body, fun v ↦ ?_, (hf.extend_comp _).symm⟩
     by_cases hv : ∃ p, pos p = v
     · obtain ⟨p, rfl⟩ := hv
       rw [hf.extend_apply]
@@ -197,7 +197,7 @@ theorem instantiatesAt_comp_equiv (e : Q ≃ P) :
     s.InstantiatesAt (pos ∘ e) (w ∘ e) ↔ s.InstantiatesAt pos w := by
   constructor
   · rintro ⟨u, hu, hw⟩
-    refine ⟨u, hu, funext λ p => ?_⟩
+    refine ⟨u, hu, funext fun p ↦ ?_⟩
     simpa using congrFun hw (e.symm p)
   · rintro ⟨u, hu, rfl⟩
     exact ⟨u, hu, rfl⟩
@@ -224,9 +224,9 @@ theorem instantiatesAt_elim_swap :
       s.InstantiatesAt (Sum.elim pos₁ pos₂) (Sum.elim w₁ w₂) := by
   rw [← instantiatesAt_comp_equiv (Equiv.sumComm P₁ P₂)]
   have h₁ : Sum.elim pos₂ pos₁ ∘ ⇑(Equiv.sumComm P₁ P₂) = Sum.elim pos₁ pos₂ :=
-    funext λ p => by cases p <;> rfl
+    funext fun p ↦ by cases p <;> rfl
   have h₂ : Sum.elim w₂ w₁ ∘ ⇑(Equiv.sumComm P₁ P₂) = Sum.elim w₁ w₂ :=
-    funext λ p => by cases p <;> rfl
+    funext fun p ↦ by cases p <;> rfl
   rw [h₁, h₂]
 
 /-- Through injective subscriptings that coincide exactly off `S`, a paired instantiation is
@@ -238,9 +238,9 @@ theorem instantiatesAt_elim_iff_eqOn {pos₁ pos₂ : P → V} {w₁ w₂ : P �
       (s.comap pos₁).Instantiates w₁ ∧ (s.comap pos₂).Instantiates w₂ ∧
         Set.EqOn w₁ w₂ Sᶜ := by
   rw [instantiatesAt_elim_iff]
-  refine and_congr_right λ _ => and_congr_right λ _ => ⟨λ hc a ha => ?_, λ he => ?_⟩
+  refine and_congr_right fun _ ↦ and_congr_right fun _ ↦ ⟨fun hc a ha ↦ ?_, fun he ↦ ?_⟩
   · exact hc.2.2 a a ((h a a).2 ⟨rfl, ha⟩)
-  · refine ⟨h₁.factorsThrough _, h₂.factorsThrough _, λ a b hab => ?_⟩
+  · refine ⟨h₁.factorsThrough _, h₂.factorsThrough _, fun a b hab ↦ ?_⟩
     obtain ⟨rfl, ha⟩ := (h a b).1 hab
     exact he ha
 
@@ -319,7 +319,7 @@ def fillers (s : Schema V α) (Λ : Set (V → α)) (v : V) : Set α :=
 /-- The items a schema generates are the product of its slotwise filler sets. -/
 theorem generates_iff_mem_pi : s.Generates Λ w ↔ w ∈ Set.pi Set.univ (s.fillers Λ) := by
   simp only [Generates, Set.mem_univ_pi, fillers, Set.mem_ofPred_eq, Instantiates, Pi.le_def]
-  exact ⟨λ h v => ⟨h.1 v, h.2 v⟩, λ h => ⟨λ v => (h v).1, λ v => (h v).2⟩⟩
+  exact ⟨fun h v ↦ ⟨h.1 v, h.2 v⟩, fun h ↦ ⟨fun v ↦ (h v).1, fun v ↦ (h v).2⟩⟩
 
 /-- Where every value other than `⊥` is maximal, a constant admits only itself. -/
 theorem fillers_eq_singleton_of_forall_isMax (hα : ∀ a : α, a ≠ ⊥ → IsMax a)
@@ -327,11 +327,12 @@ theorem fillers_eq_singleton_of_forall_isMax (hα : ∀ a : α, a ≠ ⊥ → Is
     s.fillers Λ v = {s.body v} := by
   ext a
   simp only [fillers, Set.mem_ofPred_eq, Set.mem_singleton_iff]
-  exact ⟨λ h => (le_antisymm (hα _ hv h.1) h.1), λ h => ⟨h.ge, λ h' => absurd h' hv⟩⟩
+  exact ⟨fun h ↦ le_antisymm (hα _ hv h.1) h.1,
+    fun h ↦ ⟨h.ge, fun h' ↦ absurd h' hv⟩⟩
 
 /-- A related item is generated, attesting its own fillers. -/
 theorem Relates.generates (h : s.Relates Λ w) : s.Generates Λ w :=
-  ⟨h.2, λ v _ _ => h.apply_mem_attested v⟩
+  ⟨h.2, fun v _ _ ↦ h.apply_mem_attested v⟩
 
 /-- A generated item, once stored, is related by the schema. -/
 theorem Generates.relates_insert (h : s.Generates Λ w) : s.Relates (insert w Λ) w :=
@@ -339,22 +340,22 @@ theorem Generates.relates_insert (h : s.Generates Λ w) : s.Relates (insert w Λ
 
 /-- Generation is monotone in the lexicon. -/
 theorem Generates.mono (h : Λ ⊆ Λ') (hw : s.Generates Λ w) : s.Generates Λ' w :=
-  ⟨hw.1, λ v hv hvo => attested_mono h v (hw.2 v hv hvo)⟩
+  ⟨hw.1, fun v hv hvo ↦ attested_mono h v (hw.2 v hv hvo)⟩
 
 /-- A schema is productive if every variable, every slot at `⊥`, is open. -/
 def IsProductive (s : Schema V α) : Prop := ∀ v, s.body v = ⊥ → v ∈ s.opens
 
-theorem isProductive_productive (body : V → α) : (productive body).IsProductive := λ _ h => h
+theorem isProductive_productive (body : V → α) : (productive body).IsProductive := fun _ h ↦ h
 
 /-- A productive schema generates exactly its instances. -/
 theorem IsProductive.generates_iff (hs : s.IsProductive) :
     s.Generates Λ w ↔ s.Instantiates w :=
-  ⟨Generates.instantiates, λ h => ⟨h, λ v hv hvo => absurd (hs v hv) hvo⟩⟩
+  ⟨Generates.instantiates, fun h ↦ ⟨h, fun v hv hvo ↦ absurd (hs v hv) hvo⟩⟩
 
 /-- A schema is productive exactly when it generates its own description over the empty
 lexicon. -/
 theorem isProductive_iff_generates_empty : s.IsProductive ↔ s.Generates ∅ s.body := by
-  refine ⟨λ hs => ⟨le_rfl, λ v hv hvo => absurd (hs v hv) hvo⟩, λ h v hv => ?_⟩
+  refine ⟨fun hs ↦ ⟨le_rfl, fun v hv hvo ↦ absurd (hs v hv) hvo⟩, fun h v hv ↦ ?_⟩
   by_contra hvo
   obtain ⟨w, ⟨hw, -⟩, -⟩ := h.2 v hv hvo
   exact hw
@@ -363,8 +364,8 @@ theorem isProductive_iff_generates_empty : s.IsProductive ↔ s.Generates ∅ s.
 theorem isProductive_iff_forall_generates_iff :
     s.IsProductive ↔
       ∀ (Λ : Set (V → α)) (w : V → α), s.Generates Λ w ↔ s.Instantiates w :=
-  ⟨λ hs _ _ => hs.generates_iff,
-    λ h => isProductive_iff_generates_empty.2 ((h ∅ _).2 s.instantiates_body)⟩
+  ⟨fun hs _ _ ↦ hs.generates_iff,
+    fun h ↦ isProductive_iff_generates_empty.2 ((h ∅ _).2 s.instantiates_body)⟩
 
 end OrderBot
 
@@ -392,7 +393,7 @@ def Contrast (f g : P → α) (S : Set P) : Prop :=
   Set.EqOn f g Sᶜ ∧ ∀ p ∈ S, ¬ Compat (f p) (g p)
 
 theorem Contrast.symm (h : Contrast f g S) : Contrast g f S :=
-  ⟨h.1.symm, λ p hp hc => h.2 p hp hc.symm⟩
+  ⟨h.1.symm, fun p hp hc ↦ h.2 p hp hc.symm⟩
 
 /-- An instantiation of a schema's description instantiates the schema. -/
 theorem Instantiation.instantiates {s : Schema P α} {w : P → α}
@@ -412,7 +413,7 @@ values. -/
 theorem contrast_iff_of_forall_isMax (hα : ∀ a : α, a ≠ ⊥ → IsMax a) :
     Contrast f g S ↔
       Set.EqOn f g Sᶜ ∧ ∀ p ∈ S, f p ≠ ⊥ ∧ g p ≠ ⊥ ∧ f p ≠ g p :=
-  and_congr_right' (forall₂_congr λ _ _ => not_compat_iff_of_forall_isMax hα)
+  and_congr_right' (forall₂_congr fun _ _ ↦ not_compat_iff_of_forall_isMax hα)
 
 namespace Schema
 
@@ -422,7 +423,7 @@ theorem instantiates_iff_instantiation_of_forall_isMax
     (hα : ∀ a : α, a ≠ ⊥ → IsMax a) {s : Schema P α} {w : P → α}
     (hw : ∀ p, w p ≠ ⊥) :
     s.Instantiates w ↔ Instantiation s.body w {p | s.body p = ⊥} := by
-  refine ⟨λ h => ⟨λ p hp => ?_, λ p => ?_⟩, Instantiation.instantiates⟩
+  refine ⟨fun h ↦ ⟨fun p hp ↦ ?_, fun p ↦ ?_⟩, Instantiation.instantiates⟩
   · simp only [Set.mem_compl_iff, Set.mem_ofPred_eq] at hp
     exact le_antisymm (h p) (hα _ hp (h p))
   · have hp : s.body p = ⊥ := p.2
