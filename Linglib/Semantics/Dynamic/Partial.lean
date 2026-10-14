@@ -105,10 +105,10 @@ def ofTotal (φ : α → α) : PartialUpdate α := fun s => Part.some (φ s)
     composition law of partial functions. -/
 def seq (φ ψ : PartialUpdate α) : PartialUpdate α := ψ.comp φ
 
-/-- Sequencing is Kleisli composition for the `Part` monad: a partial update
-    is a Kleisli arrow `α → Part α`, definitionally — the partiality column
-    of the effect view of dynamic semantics, beside the powerset column in
-    `Collapse.lean` ([moggi-1991], [shan-2001]). -/
+/-- Sequencing is Kleisli composition for the `Part` monad, since a partial update is
+    definitionally a Kleisli arrow `α → Part α`. This is the partiality column of the effect
+    view of dynamic semantics, beside the powerset column in `Collapse.lean` ([moggi-1991],
+    [shan-2001]). -/
 theorem seq_eq_kleisliComp (φ ψ : α → Part α) :
     (seq φ ψ : α → Part α) = φ >=> ψ := rfl
 
@@ -140,16 +140,16 @@ theorem supports_iff_eq_some : supports s φ ↔ φ s = Part.some s := Part.eq_s
 theorem supports.seq_apply (h : supports s φ) (ψ : PartialUpdate α) : seq φ ψ s = ψ s := by
   rw [seq, PFun.comp_apply, supports_iff_eq_some.1 h, Part.bind_some]
 
-/-- Support is acceptance: `s` supports `φ` exactly when `s` is a fixed point of the extension
-of `φ` along `Part.bind`. -/
+/-- Support is acceptance, `s` supporting `φ` exactly when `s` is a fixed point of the
+extension of `φ` along `Part.bind`. -/
 theorem supports_iff_isFixedPt :
     supports s φ ↔ Function.IsFixedPt (· >>= φ) (pure s : Part α) :=
   supports_iff_eq_some.trans isFixedPt_bind_pure_iff.symm
 
 /-- Dynamic entailment between partial updates, every defined update with `φ` supporting `ψ`
 ([veltman-1996]'s acceptance consequence; [heim-1982]'s entailment between file change
-potentials), is `Entails` of their extensions along `Part.bind`, and it is absorption: sequencing
-`ψ` after `φ` changes nothing. -/
+potentials), is `Entails` of their extensions along `Part.bind`. It is absorption, sequencing
+`ψ` after `φ` changing nothing. -/
 theorem entails_bind_iff_seq_eq : Entails [(· >>= φ)] (· >>= ψ) ↔ seq φ ψ = φ := by
   rw [entails_singleton_iff, seq_eq_kleisliComp]
   refine ⟨fun h ↦ funext fun s ↦ ?_, fun h ↦ funext fun x ↦ ?_⟩
@@ -172,9 +172,9 @@ theorem entails_bind_iff : Entails [(· >>= φ)] (· >>= ψ) ↔ ∀ s, ∀ s' �
 
 /-! ### The satisfaction law -/
 
-/-- **The Karttunen satisfaction law** ([karttunen-1974-presupposition]) holds by
-    construction: `s` admits `φ ∧ ψ` iff `s` admits `φ` and `s[φ]` admits `ψ`. The
-    statement is the domain condition of `Part.bind`. -/
+/-- The Karttunen satisfaction law ([karttunen-1974-presupposition]), that `s` admits `φ ∧ ψ`
+    iff `s` admits `φ` and `s[φ]` admits `ψ`, holds by construction as the domain condition of
+    `Part.bind`. -/
 theorem admits_seq (φ ψ : PartialUpdate α) (s : α) :
     (seq φ ψ).Admits s ↔ ∃ h : φ.Admits s, ψ.Admits ((φ s).get h) :=
   Iff.rfl
@@ -185,8 +185,8 @@ theorem admits_seq_iff (φ ψ : PartialUpdate α) (s : α)
     (seq φ ψ).Admits s ↔ ψ.Admits ((φ s).get h) :=
   ⟨fun ⟨_, hb⟩ => hb, fun hb => ⟨h, hb⟩⟩
 
-/-- Images along a composite of partial functions compute in stages. [UPSTREAM]
-candidate: mathlib has `PFun.preimage_comp` but no image counterpart. -/
+/-- Images along a composite of partial functions compute in stages. [UPSTREAM] candidate, as
+mathlib has `PFun.preimage_comp` but no image counterpart. -/
 theorem _root_.PFun.image_comp {α β γ : Type*} (f : α →. β) (g : β →. γ) (s : Set α) :
     (g.comp f).image s = g.image (f.image s) := by
   ext c
@@ -198,7 +198,7 @@ theorem _root_.PFun.image_comp {α β γ : Type*} (f : α →. β) (g : β →. 
     exact ⟨a, ha, b, hb, hc⟩
 
 /-- The states reachable after two updates in sequence are the image under the second of
-the image under the first: [beaver-krahmer-2001]'s §5.3 monologue composes this way. -/
+the image under the first, which is how [beaver-krahmer-2001]'s §5.3 monologue composes. -/
 theorem image_seq (φ ψ : PartialUpdate α) (s : Set α) :
     (seq φ ψ).image s = ψ.image (φ.image s) :=
   PFun.image_comp φ ψ s
@@ -223,7 +223,7 @@ variable {P W : Type*} {φ ψ χ : CCP.Partial P} {s : Set P}
     assertion.
 
     The whole-state domain condition is what separates admittance from
-    per-world filtering (the static update `CCP.up`): a context containing a single
+    per-world filtering (the static update `CCP.up`). A context containing a single
     presupposition-failing world admits nothing, rather than silently
     discarding the world. -/
 def ofPartialProp (p : PartialProp W) : CCP.Partial W :=
@@ -243,8 +243,8 @@ theorem mem_ofPartialProp_self (p : PartialProp W) (s : Set W) :
 /-! ### Trivalent propositions -/
 
 /-- The Heimian update of a trivalent proposition is `ofPartialProp` of its
-total-representative reading: defined iff the proposition is classical throughout the
-context, keeping the worlds where it is true. This is the `update` relation of
+total-representative reading, defined iff the proposition is classical throughout the
+context and keeping the worlds where it is true. This is the `update` relation of
 [beaver-krahmer-2001] §5.3 read as a partial function (`mem_ofTrivalent`), and the context
 update of [coppock-beaver-2015]. -/
 def ofTrivalent (p : (W → Trivalent)) : CCP.Partial W := ofPartialProp (PartialProp.ofTrivalent p)
@@ -270,6 +270,13 @@ its positive extension within `s`. -/
 theorem mem_ofTrivalent (p : (W → Trivalent)) (s t : Set W) :
     t ∈ ofTrivalent p s ↔ (∀ w ∈ s, p w ≠ .indet) ∧ t = {w ∈ s | p w = .true} :=
   ⟨fun ⟨h, e⟩ => ⟨h, e.symm⟩, fun ⟨h, e⟩ => ⟨h, e.symm⟩⟩
+
+/-- A context is a fixed point of the update of a trivalent proposition iff the proposition is
+true throughout it. -/
+theorem mem_ofTrivalent_self (p : (W → Trivalent)) (s : Set W) :
+    s ∈ ofTrivalent p s ↔ ∀ w ∈ s, p w = .true :=
+  (mem_ofPartialProp_self _ s).trans
+    ⟨fun h w hw ↦ h.2 hw, fun h ↦ ⟨fun w hw ↦ show p w ≠ .indet by rw [h w hw]; decide, h⟩⟩
 
 /-- Propositions that agree on the context update it alike. -/
 theorem ofTrivalent_congr {p q : (W → Trivalent)} {s : Set W} (h : ∀ w ∈ s, p w = q w) :
@@ -308,7 +315,7 @@ theorem isEliminative_cond (φ ψ : CCP.Partial P) : (cond φ ψ).IsEliminative 
   obtain ⟨_, -, rfl⟩ := (Part.mem_map_iff _).mp h
   exact Set.sdiff_subset
 
-/-- Negation projects: `s` admits `¬φ` iff `s` admits `φ`. -/
+/-- Negation projects, `s` admitting `¬φ` iff it admits `φ`. -/
 @[simp] theorem admits_neg (φ : CCP.Partial P) (s : Set P) :
     (neg φ).Admits s ↔ φ.Admits s :=
   Iff.rfl
@@ -329,7 +336,7 @@ theorem admits_disj (φ ψ : CCP.Partial P) (s : Set P) :
 /-! ### The Stalnaker bridge -/
 
 /-- Admittance of an atomic update is the static layer's
-    `PartialProp.Admits`, by construction: the dynamic definedness
+    `PartialProp.Admits` by construction, so the dynamic definedness
     condition and the satisfaction-theoretic context condition are one
     notion. -/
 theorem admits_ofPartialProp (p : PartialProp W) (s : Set W) :
@@ -392,7 +399,7 @@ theorem admits_cond_ofPartialProp (p q : PartialProp W) (s : Set W) :
   admits_seq_ofPartialProp p q s
 
 /-- Dynamic disjunction admits `s` iff `s` satisfies `orFilter`'s
-    presupposition pointwise: the ¬φ local context is Karttunen's
+    presupposition pointwise, the ¬φ local context being Karttunen's
     negative-antecedent filtering. -/
 theorem admits_disj_ofPartialProp (p q : PartialProp W) (s : Set W) :
     (disj (ofPartialProp p) (ofPartialProp q)).Admits s ↔
