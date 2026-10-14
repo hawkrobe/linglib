@@ -12,11 +12,11 @@ public import Linglib.Phonology.Autosegmental.NormalForm
 /-!
 # Realization of strings as representations
 
-[jardine-2019]'s mapping `g`: each symbol denotes a representation primitive and
-a string denotes their iterated tensor. The monoid-homomorphism content lives on
-the skeleton of the precedence-preserving wide subcategory `PrecAR`, where
-concatenation is strictly associative; broad categorical isomorphism forgets the
-arcs and is too coarse to preserve tier words.
+Each symbol denotes a representation primitive, and a string denotes the iterated tensor of its
+symbols' primitives. This is Jardine's mapping `g` without the melody merge, which
+`AR.mergeRealize` adds. The monoid-homomorphism content lives on the skeleton of the
+precedence-preserving wide subcategory `PrecAR`, where concatenation is strictly associative;
+broad categorical isomorphism forgets the arcs and is too coarse to preserve tier words.
 
 ## Main definitions
 
@@ -31,8 +31,7 @@ arcs and is too coarse to preserve tier words.
 * `AR.tierWord_realize`, `AR.link_realize`: tier content and links of a realization are
   compositional — each link lives inside one symbol's primitive at that symbol's tier
   offsets (`AR.tierOffset`).
-* `AR.noCrossing_realize`: realization preserves the NCC of its primitives ([jardine-2016b]
-  Theorem 4).
+* `AR.noCrossing_realize`: realization preserves the NCC of its primitives.
 
 ## References
 
@@ -82,8 +81,7 @@ theorem cls_normalize {X : TieredAR ι τ} [Finite X.obj.V] :
 
 /-! ### Realization of strings -/
 
-/-- The realization of a string is the iterated tensor of its symbols' primitives
-([jardine-2019]'s `g`). -/
+/-- The realization of a string is the iterated tensor of its symbols' primitives, unmerged. -/
 noncomputable def realize (w : List S) : TieredAR ι τ :=
   (w.map g₀).foldr (· ⊗ ·) (𝟙_ _)
 

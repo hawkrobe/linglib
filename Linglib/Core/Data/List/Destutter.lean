@@ -24,8 +24,8 @@ that file.
 * `List.destutter_append_left`, `List.destutter_append_right`: absorbing a `destutter` of either
   operand, so `List.destutter_append_destutter` makes `destutter` a congruence for `++`.
 * `List.destutter_replicate`: a constant run fuses to one element.
-* `List.IsChain.length_destutter_ne_append`: two `(· ≠ ·)`-chains concatenated and destuttered
-  lose one element exactly when the seam matches.
+* `List.IsChain.destutter_ne_append`: two `(· ≠ ·)`-chains concatenated and destuttered merge
+  only at the seam.
 -/
 
 @[expose] public section
@@ -134,35 +134,29 @@ end IsEquiv
 
 variable [DecidableEq α]
 
-private theorem length_tail_destutter'_ne_of_isChain {z : α} (h2 : m.IsChain (· ≠ ·)) :
-    ((m.destutter' (· ≠ ·) z).tail).length = m.length - (if some z = m.head? then 1 else 0) := by
+private theorem tail_destutter'_ne_of_isChain {z : α} (h : m.IsChain (· ≠ ·)) :
+    (m.destutter' (· ≠ ·) z).tail = if some z = m.head? then m.tail else m := by
   cases m with
-  | nil => simp [destutter'_nil]
+  | nil => simp
   | cons b m =>
-    have hbm : m.destutter' (· ≠ ·) b = b :: m := destutter'_of_isChain_cons _ _ h2
-    by_cases hzb : z ≠ b
+    have hbm : m.destutter' (· ≠ ·) b = b :: m := destutter'_of_isChain_cons _ _ h
+    by_cases hzb : z = b
+    · subst hzb
+      rw [destutter'_cons_neg (h := by simp), hbm]
+      simp
     · rw [destutter'_cons_pos (h := hzb), hbm]
-      simp [ite_eq_right hzb]
-    · obtain rfl : z = b := not_not.mp hzb
-      rw [destutter'_cons_neg (h := by simp), hbm]; simp
+      simp [hzb]
 
-/-- Destuttering two concatenated chains merges at most the seam, so the length drops by one
-exactly when the last element of `l` equals the first of `m`. -/
-theorem IsChain.length_destutter_ne_append (h1 : l.IsChain (· ≠ ·)) (h2 : m.IsChain (· ≠ ·)) :
-    ((l ++ m).destutter (· ≠ ·)).length =
-      l.length + m.length - (if l.getLast? = m.head? then 1 else 0) := by
+/-- Destuttering two concatenated chains merges at most the seam, dropping the head of `m`
+exactly when it repeats the last element of `l`. -/
+theorem IsChain.destutter_ne_append (h1 : l.IsChain (· ≠ ·)) (h2 : m.IsChain (· ≠ ·)) :
+    (l ++ m).destutter (· ≠ ·) = if l.getLast? = m.head? then l ++ m.tail else l ++ m := by
   cases l with
-  | nil =>
-    cases m with
-    | nil => simp
-    | cons b m => simp [destutter_of_isChain _ _ h2]
+  | nil => cases m <;> simp [destutter_of_isChain _ _ h2]
   | cons a l =>
     rw [cons_append, destutter_cons', destutter'_append, destutter'_of_isChain_cons _ _ h1,
-      length_append, length_cons, length_tail_destutter'_ne_of_isChain h2,
-      getLastD_eq_getLast?, getLast?_eq_some_getLast (cons_ne_nil a l), Option.getD_some]
-    split_ifs with h
-    · have := length_pos_of_ne_nil (l := m) (by rintro rfl; simp at h)
-      omega
-    · omega
+      tail_destutter'_ne_of_isChain h2, getLastD_eq_getLast?,
+      getLast?_eq_some_getLast (cons_ne_nil a l), Option.getD_some]
+    split_ifs <;> simp
 
 end List

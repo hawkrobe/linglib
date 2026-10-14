@@ -14,43 +14,39 @@ public import Mathlib.Combinatorics.SimpleGraph.Sum
 /-!
 # Labeled mixed graphs
 
-A labeled mixed graph `⟨V, E, A, ℓ⟩` has labeled vertices, undirected
-association edges, and directed order arcs — the autosegmental representation
-of [jardine-2019], with no further structure. `Graph S` carries the quadruple
-as fields: a vertex type, a `SimpleGraph` of association edges, a `Digraph` of
-order arcs, and a labeling `ℓ : V → S`. Tiers are
-not part of the object: a tier assignment `t : S → ι` on the labels induces a
-vertex coloring `X.tier t`, and the §4.2 well-formedness axioms (`AR.lean`)
-carve the representations out of the raw graphs relative to it.
+A labeled mixed graph `⟨V, E, A, ℓ⟩` has labeled vertices, undirected association edges, and
+directed order arcs; it is Jardine's autosegmental representation with no further structure.
+`Graph S` carries the quadruple as fields: a vertex type, a `SimpleGraph` of association edges, a
+`Digraph` of order arcs, and a labeling `ℓ : V → S`. Tiers are not part of the object: a tier
+assignment `t : S → ι` on the labels induces a vertex coloring `X.tier t`, and the
+well-formedness axioms (`AR.lean`) carve the representations out of the raw graphs relative to
+it.
 
 ## Main definitions
 
-* `Graph S`: the labeled mixed graph ([jardine-2019]'s `GR(Γ)`) and the
-  category thereof, with `HasInitial` and `HasBinaryCoproducts`;
-  `Graph.Hom` are label- and association-preserving maps, `precPreserving`
-  marks the full-structure homomorphisms, `Graph.Iso` the full-structure
+* `Graph S`: the labeled mixed graph (Jardine's `GR(Γ)`) and the category of them, with
+  `HasInitial` and `HasBinaryCoproducts`; `Graph.Hom` are label- and association-preserving
+  maps, `precPreserving` marks the full-structure homomorphisms, `Graph.Iso` the full-structure
   equivalences.
-* `Graph.concat t`: concatenation — the vertex sum with a same-tier
-  bridge, [jardine-heinz-2015] Definition 2 in the order signature, minus its
-  `R_ID` merge (`OCP.collapse`); `Graph.sum` is the bridge-free coproduct.
+* `Graph.concat t`: concatenation, the vertex sum with a same-tier bridge. It is Jardine and
+  Heinz's concatenation in the order signature without its melody merge, which `AR.mergeConcat`
+  adds; `Graph.sum` is the bridge-free coproduct.
 
 ## Main results
 
-* `concatEmptyIso`, `emptyConcatIso`, `concatAssocIso`:
-  [jardine-heinz-2015] Theorems 1 and 3 up to `Iso`, unconditional in the
-  order signature.
+* `concatEmptyIso`, `emptyConcatIso`, `concatAssocIso`: the unit and associativity laws up to
+  `Iso`, unconditional in the order signature.
 
 ## Implementation notes
 
-`concat` bridges *every* same-tier pair, so its arcs are order-closed
-representatives: [jardine-2019]'s operative concatenation bridges one partial
-`(last, first)` pair per tier, and the two forms are interconvertible as Hasse
-diagram ↔ transitive closure on the finite per-tier strict orders. The complete
-bridge is total and functorial where `first`/`last` are partial and not
-hom-preserved, and its monoid laws are unconditional where the successor form's
-associativity requires string-graph tier classes (the remark before [jardine-heinz-2015]'s
-Lemma 1). The choice is not free elsewhere: subgraph-based notions such as the forbidden
-factors of `Factors.lean` are signature-sensitive ([jardine-2017-complexity]).
+`concat` bridges *every* same-tier pair, so its arcs are order-closed representatives: Jardine's
+operative concatenation bridges one partial `(last, first)` pair per tier, and the two forms are
+interconvertible as Hasse diagram ↔ transitive closure on the finite per-tier strict orders. The
+complete bridge is total and functorial where `first`/`last` are partial and not hom-preserved,
+and its monoid laws are unconditional where the successor form's associativity requires
+string-graph tier classes (the remark before Jardine and Heinz's Lemma 1). The choice is not
+free elsewhere: subgraph-based notions such as the forbidden factors of `Factors.lean` are
+signature-sensitive (Jardine 2017).
 
 Morphisms deliberately do not preserve precedence — reassociation analyses move
 material across the order — so `Hom` is the broad class where the coproduct and the
@@ -157,7 +153,7 @@ complete bridge over [jardine-2019]'s partial `(last, first)` pair, see the
 implementation notes above. -/
 
 /-- The concatenation of two labeled mixed graphs, the disjoint edge sum with per-tier
-    ordinal-sum arcs ([jardine-heinz-2015] Definition 2 minus its `R_ID` melody merge). -/
+    ordinal-sum arcs ([jardine-heinz-2015] Definition 2 without its melody merge). -/
 def concat (X Y : Graph S) : Graph S where
   V := X.V ⊕ Y.V
   edges := X.edges ⊕g Y.edges
@@ -188,7 +184,7 @@ def concat (X Y : Graph S) : Graph S where
 @[simp] theorem not_concat_arcs_inr_inl {v : Y.V} {w : X.V} :
     ¬ (concat t X Y).arcs.Adj (.inr v) (.inl w) := fun h => h
 
-/-! ### Unit laws ([jardine-heinz-2015] Theorem 1) -/
+/-! ### Unit laws -/
 
 /-- Concatenation with the empty graph on the right, up to isomorphism. -/
 def concatEmptyIso (X : Graph S) : Iso (concat t X (empty S)) X where
@@ -244,7 +240,7 @@ def Iso.concatCongr (e₁ : Iso X₁ Y₁) (e₂ : Iso X₂ Y₂) :
       Iff.rfl, e₂.arcs_iff v w]
   label_comp := Sum.rec e₁.label_comp e₂.label_comp
 
-/-! #### Associativity up to isomorphism ([jardine-heinz-2015] Theorem 3) -/
+/-! #### Associativity up to isomorphism -/
 
 /-- Concatenation is associative up to isomorphism. -/
 def concatAssocIso (X Y Z : Graph S) :

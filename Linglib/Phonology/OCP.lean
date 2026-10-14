@@ -15,9 +15,10 @@ The Obligatory Contour Principle (OCP) bans two identical adjacent autosegments 
 Here it is categorical and bans strict identity, either on the tier itself (`IsClean`, after
 Leben and McCarthy) or on a projection of it (`IsCleanOn`, after Chandlee and Jardine). Fusion,
 `collapse`, repairs a violation by merging each run of identical elements into one; it is
-`List.destutter (· ≠ ·)`, a retraction onto the clean tiers. Blocking, `block`, is McCarthy's
-antigemination: a rule that would create a violation does not apply. The run index `runIdx`
-tracks where each position lands under fusion. `Phonology/Subregular/OCP.lean` shows that the
+`List.destutter (· ≠ ·)`, a retraction onto the clean tiers. `mergeAppend` concatenates two
+words and merges identical elements at the seam only; the collapse of a concatenation is the
+merging append of the collapses. The run index `runIdx` tracks where each position lands under
+fusion. `Phonology/Subregular/OCP.lean` shows that the
 constraint is tier-based strictly local and that fusion is input strictly local.
 
 The gradient OCP of Frisch, Pierrehumbert and Broe, which scales with the similarity of the two
@@ -28,15 +29,15 @@ consonants, is a different object and lives in that paper's study.
 * `OCP.IsClean`, `OCP.IsCleanOn`: no two identical adjacent elements, on the tier or on a
   projection of it.
 * `OCP.collapse`: the fusion repair.
-* `OCP.block`: the blocking repair.
+* `OCP.mergeAppend`: concatenation that merges identical elements at the seam.
 * `OCP.runIdx`: the index of the run containing a position.
 
 ## Main statements
 
 * `OCP.collapse_eq_self_iff`: `collapse` fixes exactly the clean tiers.
-* `OCP.collapse_append`: `collapse` is a congruence for `++`.
-* `OCP.runIdx_append_collapse_left`, `OCP.runIdx_append_collapse_right`: run indices commute
-  with collapsing the two halves of a concatenation.
+* `OCP.collapse_append`: the collapse of a concatenation is the merging append of the
+  collapses.
+* `OCP.runIdx_append_left`, `OCP.runIdx_append_right`: the run indices of a concatenation.
 
 ## References
 
@@ -135,53 +136,134 @@ theorem collapse_length_le (xs : List α) : (collapse xs).length ≤ xs.length :
 theorem mem_collapse {a : α} {xs : List α} (ha : a ∈ collapse xs) : a ∈ xs :=
   (collapse_sublist xs).mem ha
 
-/-! ### The OCP congruence
+/-! ### Merging at a seam
 
-Collapsing either operand before appending changes nothing, so `collapse` is a congruence
-for `++`. -/
+Appending with the seam merged drops the head of the second word when it repeats the last
+element of the first; this is Jardine and Heinz's concatenation on a single tier. On clean words
+it is the collapse of the concatenation, and the collapse of any concatenation is the merging
+append of the collapses. -/
 
-/-- Collapsing the left operand before appending does not change the result. -/
-theorem collapse_append_left (x y : List α) :
-    collapse (collapse x ++ y) = collapse (x ++ y) :=
-  List.destutter_append_left x y
+/-- Append `ys` to `xs`, dropping the head of `ys` when it repeats the last element of `xs`. -/
+def mergeAppend (xs ys : List α) : List α :=
+  if xs.getLast? = ys.head? then xs ++ ys.tail else xs ++ ys
 
-/-- Collapsing the right operand before appending does not change the result. -/
-theorem collapse_append_right (x y : List α) :
-    collapse (x ++ collapse y) = collapse (x ++ y) :=
-  List.destutter_append_right x y
+/-- The position at which `ys` starts in `mergeAppend xs ys`. -/
+def mergeOffset (xs ys : List α) : ℕ :=
+  if xs.getLast? = ys.head? then xs.length - 1 else xs.length
 
-/-- Collapsing each operand before appending changes nothing. -/
-theorem collapse_append (x y : List α) :
-    collapse (x ++ y) = collapse (collapse x ++ collapse y) :=
-  (List.destutter_append_destutter x y).symm
+/-- The position in `mergeAppend xs ys` of position `p` of `xs ++ ys`. -/
+def mergeIdx (xs ys : List α) (p : ℕ) : ℕ :=
+  if p < xs.length then p else mergeOffset xs ys + (p - xs.length)
 
-/-! ### The blocking repair
+variable {xs ys zs : List α}
 
-A rule that would create an OCP violation fails to apply, leaving its input unrepaired. -/
+@[simp] theorem nil_mergeAppend (ys : List α) : mergeAppend [] ys = ys := by
+  cases ys <;> simp [mergeAppend]
 
-variable (rule : List α → List α)
+@[simp] theorem mergeAppend_nil (xs : List α) : mergeAppend xs [] = xs := by
+  unfold mergeAppend
+  split_ifs with h <;> simp_all
 
-/-- **Blocking** applies `rule` only when its output is OCP-clean and otherwise leaves the input
-untouched. Unlike `collapse`, it prevents a process rather than repairing its output. -/
-def block (xs : List α) : List α :=
-  if IsClean (rule xs) then rule xs else xs
+@[simp] theorem mergeOffset_nil_left (ys : List α) : mergeOffset [] ys = 0 := by
+  unfold mergeOffset
+  split_ifs <;> rfl
 
-theorem block_eq_rule {xs : List α} (hc : IsClean (rule xs)) : block rule xs = rule xs := ite_eq_left hc
+theorem length_mergeAppend (xs ys : List α) :
+    (mergeAppend xs ys).length = mergeOffset xs ys + ys.length := by
+  unfold mergeAppend mergeOffset
+  split_ifs with h
+  · rcases xs with _ | ⟨x, xs⟩ <;> rcases ys with _ | ⟨y, ys⟩ <;> simp_all
+    omega
+  · simp
 
-/-- Under antigemination a rule that would create an OCP violation does not apply, and the
-input is left unrepaired. -/
-theorem block_eq_self {xs : List α} (hc : ¬ IsClean (rule xs)) : block rule xs = xs := ite_eq_right hc
+theorem getLast?_mergeAppend (hys : ys ≠ []) : (mergeAppend xs ys).getLast? = ys.getLast? := by
+  obtain ⟨y, t, rfl⟩ := List.exists_cons_of_ne_nil hys
+  unfold mergeAppend
+  split_ifs with h
+  · rcases t with _ | ⟨z, t⟩
+    · simpa using h
+    · exact List.getLast?_append_of_ne_nil _ (List.cons_ne_nil z t)
+  · exact List.getLast?_append_of_ne_nil _ (List.cons_ne_nil y t)
 
-/-- Blocking never worsens a clean tier. -/
-theorem block_isClean {xs : List α} (hx : IsClean xs) : IsClean (block rule xs) := by
-  unfold block; split <;> assumption
+theorem head?_mergeAppend (hxs : xs ≠ []) : (mergeAppend xs ys).head? = xs.head? := by
+  unfold mergeAppend
+  split_ifs <;> exact List.head?_append_of_ne_nil _ hxs
+
+theorem mergeAppend_assoc (xs ys zs : List α) :
+    mergeAppend (mergeAppend xs ys) zs = mergeAppend xs (mergeAppend ys zs) := by
+  rcases eq_or_ne ys [] with rfl | hys
+  · simp
+  have hl := getLast?_mergeAppend (xs := xs) hys
+  have hh := head?_mergeAppend (ys := zs) hys
+  conv_lhs => rw [mergeAppend, hl]
+  conv_rhs => rw [mergeAppend, hh]
+  obtain ⟨y, t, rfl⟩ := List.exists_cons_of_ne_nil hys
+  unfold mergeAppend
+  split_ifs <;> simp
+
+theorem mergeOffset_congr_right (h : ys.head? = zs.head?) :
+    mergeOffset xs ys = mergeOffset xs zs := by
+  simp [mergeOffset, h]
+
+theorem mergeOffset_mergeAppend_right (hys : ys ≠ []) :
+    mergeOffset xs (mergeAppend ys zs) = mergeOffset xs ys :=
+  mergeOffset_congr_right (head?_mergeAppend hys)
+
+theorem mergeOffset_mergeAppend_left (xs ys zs : List α) :
+    mergeOffset (mergeAppend xs ys) zs = mergeOffset xs (mergeAppend ys zs) + mergeOffset ys zs := by
+  rcases eq_or_ne ys [] with rfl | hys
+  · simp
+  have hpos := List.length_pos_iff.mpr hys
+  rw [mergeOffset_mergeAppend_right hys]
+  conv_lhs => rw [mergeOffset, getLast?_mergeAppend hys, length_mergeAppend]
+  conv_rhs => arg 2; rw [mergeOffset]
+  split_ifs <;> omega
+
+theorem mergeIdx_of_lt {p : ℕ} (h : p < xs.length) : mergeIdx xs ys p = p := by
+  simp [mergeIdx, h]
+
+@[simp] theorem mergeIdx_length_add (a : ℕ) :
+    mergeIdx xs ys (xs.length + a) = mergeOffset xs ys + a := by
+  simp [mergeIdx]
+
+theorem mergeIdx_monotone : Monotone (mergeIdx xs ys) := by
+  intro p q hpq
+  have : xs.length - 1 ≤ mergeOffset xs ys := by unfold mergeOffset; split_ifs <;> omega
+  unfold mergeIdx
+  split_ifs <;> omega
+
+theorem mergeIdx_lt {p : ℕ} (h : p < xs.length + ys.length) :
+    mergeIdx xs ys p < (mergeAppend xs ys).length := by
+  rw [length_mergeAppend]
+  unfold mergeIdx mergeOffset
+  split_ifs with hp hc
+  · have : ys ≠ [] := by rintro rfl; rcases xs with _ | ⟨x, xs⟩ <;> simp_all
+    have := List.length_pos_iff.mpr this
+    omega
+  all_goals omega
+
+/-- On clean words, merging at the seam is collapsing the concatenation. -/
+theorem collapse_append_of_isClean (hx : IsClean xs) (hy : IsClean ys) :
+    collapse (xs ++ ys) = mergeAppend xs ys :=
+  List.IsChain.destutter_ne_append hx hy
+
+/-- **The OCP congruence.** The collapse of a concatenation is the merging append of the
+collapses. -/
+theorem collapse_append (xs ys : List α) :
+    collapse (xs ++ ys) = mergeAppend (collapse xs) (collapse ys) := by
+  rw [← collapse_append_of_isClean (collapse_clean xs) (collapse_clean ys)]
+  exact (List.destutter_append_destutter xs ys).symm
+
+/-- Merging at the seam keeps clean words clean. -/
+theorem isClean_mergeAppend (hx : IsClean xs) (hy : IsClean ys) : IsClean (mergeAppend xs ys) :=
+  collapse_append_of_isClean hx hy ▸ collapse_clean _
 
 end
 
 /-! ### The run-index map -/
 
 section RunIndex
-variable {α : Type*} [DecidableEq α]
+variable {α : Type*} [DecidableEq α] {xs ys : List α}
 
 /-- The **run index** of position `k` in `xs` is the 0-based index of the run of identical
 elements containing it, one less than the number of runs in `xs.take (k + 1)`. -/
@@ -197,23 +279,23 @@ theorem runIdx_monotone (xs : List α) : Monotone (runIdx xs) := by
   simp only [collapse_eq_destutter] at hlen ⊢
   omega
 
+/-- The collapse of a nonempty prefix has its top run index plus one elements. -/
+private theorem length_collapse_take_succ {m : ℕ} (hm : m < xs.length) :
+    (collapse (xs.take (m + 1))).length = runIdx xs m + 1 := by
+  have hpos : 0 < (collapse (xs.take (m + 1))).length := by
+    rw [List.length_pos_iff, Ne, collapse_eq_nil, ← List.length_eq_zero_iff,
+      List.length_take_of_le (by omega)]
+    omega
+  unfold runIdx
+  omega
+
 /-- An in-bounds position has an in-bounds run index in the collapsed tier. -/
 theorem runIdx_lt_collapse_length (xs : List α) {k : ℕ} (hk : k < xs.length) :
     runIdx xs k < (collapse xs).length := by
-  unfold runIdx
-  have hne : xs.take (k + 1) ≠ [] := by
-    intro h
-    have hlen : (xs.take (k + 1)).length = k + 1 := List.length_take_of_le (by omega)
-    rw [h] at hlen; simp at hlen
   have hsub : (collapse (xs.take (k + 1))).Sublist xs :=
     (collapse_sublist _).trans (List.take_sublist _ _)
   have hlen := List.IsChain.length_le_length_destutter_ne hsub (collapse_clean _)
-  simp only [collapse_eq_destutter] at hlen ⊢
-  have hpos : 0 < ((xs.take (k + 1)).destutter (· ≠ ·)).length := by
-    rw [List.length_pos_iff]
-    intro h
-    rw [← collapse_eq_destutter, collapse_eq_nil] at h
-    exact hne h
+  rw [← collapse_eq_destutter, length_collapse_take_succ hk] at hlen
   omega
 
 /-- On a constant tier every position lies in the single run. -/
@@ -225,75 +307,36 @@ theorem runIdx_lt_collapse_length (xs : List α) {k : ℕ} (hk : k < xs.length) 
   | zero => simp
   | succ m => rw [collapse_replicate, List.length_singleton]
 
-/-! ### Run-index and concatenation
-
-`runIdx` commutes with the collapse-collapse seam (`runIdx_append_collapse_left/right`). On
-the left block the prefix run index is untouched (`runIdx_append_left`, with `runIdx_clean`
-reading a clean tier as the identity); on the right block the seam merges exactly when
-`collapse xs` ends in the element heading `ys` (`runIdx_append_right`, from
-`List.IsChain.length_destutter_ne_append`). -/
-
-/-- The prefix run-index is unaffected by a right append. -/
-theorem runIdx_append_left {xs ys : List α} {k : ℕ} (h : k < xs.length) :
-    runIdx (xs ++ ys) k = runIdx xs k := by
-  unfold runIdx; rw [List.take_append_of_le_length (by omega)]
-
-/-- On a clean tier `runIdx` is the identity (no runs to merge). -/
-theorem runIdx_clean {xs : List α} (hc : IsClean xs) {k : ℕ} (h : k < xs.length) :
-    runIdx xs k = k := by
+/-- On a clean tier `runIdx` is the identity. -/
+theorem runIdx_clean (hc : IsClean xs) {k : ℕ} (h : k < xs.length) : runIdx xs k = k := by
   unfold runIdx
   rw [collapse_idempotent_on_clean (hc.take (k + 1)), List.length_take_of_le (by omega)]
   omega
 
-/-- The length of the collapse of a nonempty prefix is its top run-index plus one. -/
-theorem collapse_take_succ_length {xs : List α} {m : ℕ} (hm : m < xs.length) :
-    (collapse (xs.take (m + 1))).length = runIdx xs m + 1 := by
+/-! ### Run indices of a concatenation
+
+A position of `xs ++ ys` keeps its run index in `xs` when it lies in `xs`; a position in `ys`
+moves to its run index in `ys`, offset by where `collapse ys` starts in the merging append of
+the collapses. -/
+
+/-- The run index of a prefix position is unaffected by a right append. -/
+theorem runIdx_append_left {k : ℕ} (h : k < xs.length) : runIdx (xs ++ ys) k = runIdx xs k := by
   unfold runIdx
-  have hpos : 0 < (collapse (xs.take (m + 1))).length := by
-    rw [List.length_pos_iff]
-    refine fun h ↦ ?_
-    have hne : xs.take (m + 1) ≠ [] := by
-      intro h'
-      have : (xs.take (m + 1)).length = m + 1 := List.length_take_of_le (by omega)
-      rw [h'] at this; simp at this
-    exact hne (collapse_eq_nil.mp h)
-  omega
+  rw [List.take_append_of_le_length (by omega)]
 
-/-- The collapse of a prefix has the same head as the whole tier. -/
-theorem collapse_take_head? {xs : List α} {m : ℕ} :
-    (collapse (xs.take (m + 1))).head? = xs.head? := by
-  rw [collapse, List.head?_destutter]
-  cases xs <;> simp
-
-/-- The run index of a suffix position is the length of the collapsed prefix plus its run
-index in the suffix, minus one exactly when the seam merges. -/
-theorem runIdx_append_right {xs ys : List α} {a : ℕ} (ha : a < ys.length) :
+/-- The run index of a suffix position is its run index in the suffix, offset by where the
+collapsed suffix starts in the merging append of the collapses. -/
+theorem runIdx_append_right {a : ℕ} (ha : a < ys.length) :
     runIdx (xs ++ ys) (xs.length + a) =
-      (collapse xs).length + runIdx ys a -
-        (if (collapse xs).getLast? = ys.head? then 1 else 0) := by
-  unfold runIdx
+      mergeOffset (collapse xs) (collapse ys) + runIdx ys a := by
+  have h := length_collapse_take_succ (xs := xs ++ ys) (m := xs.length + a) (by simp; omega)
+  have hhead : (collapse (ys.take (a + 1))).head? = (collapse ys).head? := by
+    rw [collapse, collapse, List.head?_destutter, List.head?_destutter]
+    cases ys <;> simp_all
   rw [show xs.length + a + 1 = xs.length + (a + 1) by omega, List.take_length_add_append,
-    collapse_append, collapse_eq_destutter,
-    (collapse_clean _).length_destutter_ne_append (collapse_clean _),
-    collapse_take_succ_length ha, collapse_take_head?]
-  split_ifs with h
-  · have : 0 < (collapse ys).length := Nat.zero_lt_of_lt (runIdx_lt_collapse_length ys ha)
-    omega
-  · omega
-
-/-- The run index of a prefix position commutes with collapsing both halves. -/
-theorem runIdx_append_collapse_left {xs ys : List α} {k : ℕ} (h : k < xs.length) :
-    runIdx (xs ++ ys) k = runIdx (collapse xs ++ collapse ys) (runIdx xs k) := by
-  rw [runIdx_append_left h, runIdx_append_left (runIdx_lt_collapse_length xs h),
-    runIdx_clean (collapse_clean _) (runIdx_lt_collapse_length xs h)]
-
-/-- The run index of a suffix position commutes with collapsing both halves. -/
-theorem runIdx_append_collapse_right {xs ys : List α} {a : ℕ} (ha : a < ys.length) :
-    runIdx (xs ++ ys) (xs.length + a) =
-      runIdx (collapse xs ++ collapse ys) ((collapse xs).length + runIdx ys a) := by
-  rw [runIdx_append_right ha, runIdx_append_right (runIdx_lt_collapse_length ys ha),
-    collapse_idempotent, runIdx_clean (collapse_clean _) (runIdx_lt_collapse_length ys ha),
-    collapse_eq_destutter ys, List.head?_destutter]
+    collapse_append, length_mergeAppend, length_collapse_take_succ ha,
+    mergeOffset_congr_right hhead] at h
+  omega
 
 end RunIndex
 

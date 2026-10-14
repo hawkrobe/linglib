@@ -39,7 +39,7 @@ definitional: `normalize` pulls the graph back along the enumeration equivalence
   recovered as a theorem.
 * `AR.tierWord_tensor`, `AR.link_tensor`: concatenation appends tier words and
   shifts links blockwise.
-* `AR.isoOfReaderEq`: `(tierWord, link)` is a complete isomorphism invariant.
+* `AR.nonempty_fullIso_iff`: `(tierWord, link)` is a complete isomorphism invariant.
 * `AR.noCrossing_iff`: the NCC is the monovariance of each tier pair's link set, the
   coordinate No-Crossing Constraint of `IsNonCrossing`.
 -/
@@ -86,8 +86,8 @@ instance fiber.instFinite [Finite X.obj.V] (i : ι) : Finite (X.fiber i) :=
 
 /-- The arcs restricted to a tier fiber form a strict total order. -/
 instance fiber.instIsStrictTotalOrder (i : ι) :
-    IsStrictTotalOrder (X.fiber i) (fun a b => X.obj.arcs.Adj a.val b.val) where
-  trichotomous a b hab hba := Subtype.ext <| of_not_not fun hne =>
+    IsStrictTotalOrder (X.fiber i) (fun a b ↦ X.obj.arcs.Adj a.val b.val) where
+  trichotomous a b hab hba := Subtype.ext <| of_not_not fun hne ↦
     (X.property.1.total hne (a.2.trans b.2.symm)).elim hab hba
   irrefl a := X.property.1.irrefl a.1
   trans _ _ _ hab hbc := X.property.1.trans _ _ _ hab hbc
@@ -97,7 +97,7 @@ instance fiber.instIsStrictTotalOrder (i : ι) :
 noncomputable instance fiber.instLinearOrder (i : ι) :
     LinearOrder (X.fiber i) := by
   classical
-  exact linearOrderOfSTO (fun a b : X.fiber i => X.obj.arcs.Adj a.val b.val)
+  exact linearOrderOfSTO (fun a b : X.fiber i ↦ X.obj.arcs.Adj a.val b.val)
 
 /-- The number of tier-`i` vertices. -/
 noncomputable def tierLength (X : TieredAR ι τ)
@@ -115,14 +115,14 @@ noncomputable def fiberEnum [Finite X.obj.V] (i : ι) :
 fibers in ascending precedence order, assembled over the tier index. -/
 noncomputable def vertexEquiv [Finite X.obj.V] :
     ((i : ι) × Fin (X.tierLength i)) ≃ X.obj.V :=
-  letI : ∀ i : ι, Fintype (X.fiber i) := fun _ => Fintype.ofFinite _
-  (Equiv.sigmaCongrRight (fun i : ι => (X.fiberEnum i).toEquiv)).trans
-    (Equiv.sigmaFiberEquiv (fun v : X.obj.V => (X.obj.label v).1))
+  letI : ∀ i : ι, Fintype (X.fiber i) := fun _ ↦ Fintype.ofFinite _
+  (Equiv.sigmaCongrRight (fun i : ι ↦ (X.fiberEnum i).toEquiv)).trans
+    (Equiv.sigmaFiberEquiv (fun v : X.obj.V ↦ (X.obj.label v).1))
 
 /-- The tier-`i` label word reads off the fiber's labels in ascending precedence order. -/
 noncomputable def tierWord [Finite X.obj.V] (i : ι) : List (τ i) :=
   letI := Fintype.ofFinite (X.fiber i)
-  List.ofFn fun p : Fin (X.tierLength i) => X.fiberLabel (X.fiberEnum i p)
+  List.ofFn fun p : Fin (X.tierLength i) ↦ X.fiberLabel (X.fiberEnum i p)
 
 @[simp] theorem length_tierWord [Finite X.obj.V] (i : ι) :
     (X.tierWord i).length = X.tierLength i := by
@@ -147,15 +147,15 @@ noncomputable def normalize
   obj :=
     { V := (i : ι) × Fin (X.tierLength i)
       edges := X.obj.edges.comap X.vertexEquiv
-      arcs := ⟨fun v w => X.obj.arcs.Adj (X.vertexEquiv v) (X.vertexEquiv w)⟩
-      label := fun v => X.obj.label (X.vertexEquiv v) }
+      arcs := ⟨fun v w ↦ X.obj.arcs.Adj (X.vertexEquiv v) (X.vertexEquiv w)⟩
+      label := fun v ↦ X.obj.label (X.vertexEquiv v) }
   property :=
-    ⟨{ irrefl := fun _ h => X.property.1.irrefl _ h,
-       trans := fun _ _ _ huv hvw => X.property.1.trans _ _ _ huv hvw,
-       tier_eq := fun _ _ h => X.property.1.tier_eq h,
-       total := fun _ _ hne htier =>
-         X.property.1.total (fun hv => hne (X.vertexEquiv.injective hv)) htier },
-     fun _ _ hadj harc => X.property.2 hadj harc⟩
+    ⟨{ irrefl := fun _ h ↦ X.property.1.irrefl _ h,
+       trans := fun _ _ _ huv hvw ↦ X.property.1.trans _ _ _ huv hvw,
+       tier_eq := fun _ _ h ↦ X.property.1.tier_eq h,
+       total := fun _ _ hne htier ↦
+         X.property.1.total (fun hv ↦ hne (X.vertexEquiv.injective hv)) htier },
+     fun _ _ hadj harc ↦ X.property.2 hadj harc⟩
 
 /-- The normal form is fully isomorphic to the original. -/
 noncomputable def normalizeFullIso [Finite X.obj.V] :
@@ -205,9 +205,17 @@ def fiberTensorEquiv (i : ι) :
   toFun v := match v with
     | ⟨.inl w, h⟩ => .inl ⟨w, h⟩
     | ⟨.inr w, h⟩ => .inr ⟨w, h⟩
-  invFun := Sum.elim (fun w => ⟨.inl w.val, w.property⟩) (fun w => ⟨.inr w.val, w.property⟩)
+  invFun := Sum.elim (fun w ↦ ⟨.inl w.val, w.property⟩) (fun w ↦ ⟨.inr w.val, w.property⟩)
   left_inv := by rintro ⟨w | w, h⟩ <;> rfl
   right_inv := by rintro (w | w) <;> rfl
+
+theorem fiberLabel_symm_inl {i : ι} (w : X.fiber i) :
+    fiberLabel ((fiberTensorEquiv (X := X) (Y := Y) i).symm
+      (.inl w)) = X.fiberLabel w := rfl
+
+theorem fiberLabel_symm_inr {i : ι} (w : Y.fiber i) :
+    fiberLabel ((fiberTensorEquiv (X := X) (Y := Y) i).symm
+      (.inr w)) = Y.fiberLabel w := rfl
 
 variable [Finite X.obj.V] [Finite Y.obj.V]
 
@@ -269,20 +277,10 @@ theorem tensorEnum_apply_natAdd (i : ι) (p : Fin (Y.tierLength i)) :
         (.inr (Y.fiberEnum i p)) := by
   simp [tensorEnum, finSumFinEquiv_symm_apply_natAdd]
 
-omit [Finite X.obj.V] [Finite Y.obj.V] in
-theorem fiberLabel_symm_inl {i : ι} (w : X.fiber i) :
-    fiberLabel ((fiberTensorEquiv (X := X) (Y := Y) i).symm
-      (.inl w)) = X.fiberLabel w := rfl
-
-omit [Finite X.obj.V] [Finite Y.obj.V] in
-theorem fiberLabel_symm_inr {i : ι} (w : Y.fiber i) :
-    fiberLabel ((fiberTensorEquiv (X := X) (Y := Y) i).symm
-      (.inr w)) = Y.fiberLabel w := rfl
-
 /-- Any monotone enumeration computes the tier word. -/
 theorem tierWord_eq_ofFn {Z : TieredAR ι τ}
     [Finite Z.obj.V] {i : ι} {n : ℕ} (e : Fin n ≃o Z.fiber i) :
-    Z.tierWord i = List.ofFn fun p => Z.fiberLabel (e p) := by
+    Z.tierWord i = List.ofFn fun p ↦ Z.fiberLabel (e p) := by
   have hn : Z.tierLength i = n := by
     simpa [tierLength] using (Fintype.card_congr e.toEquiv).symm
   subst hn
@@ -295,11 +293,11 @@ theorem tierWord_eq_ofFn {Z : TieredAR ι τ}
   rw [tierWord_eq_ofFn (tensorEnum i), List.ofFn_add]
   congr 1
   · rw [tierWord_eq_ofFn (X.fiberEnum i)]
-    exact congrArg List.ofFn (funext fun p =>
+    exact congrArg List.ofFn (funext fun p ↦
       (congrArg fiberLabel (tensorEnum_apply_castAdd i p)).trans
         (fiberLabel_symm_inl _))
   · rw [tierWord_eq_ofFn (Y.fiberEnum i)]
-    exact congrArg List.ofFn (funext fun p =>
+    exact congrArg List.ofFn (funext fun p ↦
       (congrArg fiberLabel (tensorEnum_apply_natAdd i p)).trans
         (fiberLabel_symm_inr _))
 
@@ -345,7 +343,7 @@ instance : Finite ((𝟙_ (TieredAR ι τ)).obj.V) :=
 @[simp] theorem tierWord_unit (i : ι) :
     (𝟙_ (TieredAR ι τ)).tierWord i = [] := by
   have : IsEmpty ((𝟙_ (TieredAR ι τ)).fiber i) :=
-    ⟨fun v => v.val.elim⟩
+    ⟨fun v ↦ v.val.elim⟩
   rw [tierWord_eq_ofFn (OrderIso.ofIsEmpty (Fin 0) _)]
   exact List.ofFn_zero
 
@@ -372,15 +370,15 @@ def link [Finite X.obj.V] (i j : ι) (p q : ℕ) : Prop :=
 
 open scoped MonoidalCategory in
 @[simp] theorem not_link_unit (i j : ι) (p q : ℕ) : ¬ (𝟙_ (TieredAR ι τ)).link i j p q :=
-  fun ⟨hp, _, _⟩ => by simp at hp
+  fun ⟨hp, _, _⟩ ↦ by simp at hp
 
 open scoped Classical in
 /-- The two-tier reading of tiers `i` over `j`: each tier-`j` position's label
     paired with its linked tier-`i` labels in ascending order. -/
 noncomputable def linearize [Finite X.obj.V] (i j : ι) :
     List (τ j × List (τ i)) :=
-  (X.tierWord j).zipIdx.map fun bq =>
-    (bq.1, ((X.tierWord i).zipIdx.filter fun ap => X.link i j ap.2 bq.2).map (·.1))
+  (X.tierWord j).zipIdx.map fun bq ↦
+    (bq.1, ((X.tierWord i).zipIdx.filter fun ap ↦ X.link i j ap.2 bq.2).map (·.1))
 
 /-- Link conditions are supported on the factor's tier ranges. -/
 theorem forall_link_iff_bounded
@@ -389,7 +387,7 @@ theorem forall_link_iff_bounded
     (∀ i j p q, F.link i j p q → C i j p q) ↔
       ∀ i j, ∀ p < F.tierLength i, ∀ q < F.tierLength j,
         F.link i j p q → C i j p q := by
-  refine ⟨fun h i j p _ q _ hl => h i j p q hl, fun h i j p q hl => ?_⟩
+  refine ⟨fun h i j p _ q _ hl ↦ h i j p q hl, fun h i j p q hl ↦ ?_⟩
   obtain ⟨hp, hq, -⟩ := id hl
   exact h i j p hp q hq hl
 
@@ -457,7 +455,7 @@ theorem label_vertexEquiv [Finite X.obj.V] (i : ι)
 theorem linkRel_iff_link [Finite X.obj.V] {i j : ι}
     {p : Fin (X.tierLength i)} {q : Fin (X.tierLength j)} :
     X.linkRel i j p q ↔ X.link i j (p : ℕ) (q : ℕ) :=
-  ⟨fun h => ⟨p.isLt, q.isLt, h⟩, fun ⟨_, _, h⟩ => by convert h⟩
+  ⟨fun h ↦ ⟨p.isLt, q.isLt, h⟩, fun ⟨_, _, h⟩ ↦ by convert h⟩
 
 theorem tierWord_getElem [Finite X.obj.V] {i : ι}
     (p : Fin (X.tierLength i)) :
@@ -471,7 +469,7 @@ theorem label_normalize [Finite X.obj.V] {i : ι}
 
 theorem arcs_normalize_ne [Finite X.obj.V] {i j : ι} (h : i ≠ j)
     (p : Fin (X.tierLength i)) (q : Fin (X.tierLength j)) :
-    ¬ (X.normalize).obj.arcs.Adj ⟨i, p⟩ ⟨j, q⟩ := fun ha => by
+    ¬ (X.normalize).obj.arcs.Adj ⟨i, p⟩ ⟨j, q⟩ := fun ha ↦ by
   have h2 := X.property.1.tier_eq ha
   rw [show Graph.tier Sigma.fst X.obj (X.vertexEquiv ⟨i, p⟩) = i from
       X.label_vertexEquiv i p,
@@ -503,14 +501,14 @@ noncomputable def fullIsoOfReaderEq
     (hw : ∀ i, A.tierWord i = B.tierWord i)
     (hl : ∀ i j p q, A.link i j p q ↔ B.link i j p q) :
     Graph.Iso A.obj B.obj := by
-  have hlen : ∀ i, A.tierLength i = B.tierLength i := fun i => by
+  have hlen : ∀ i, A.tierLength i = B.tierLength i := fun i ↦ by
     rw [← length_tierWord, hw, length_tierWord]
   refine A.normalizeFullIso.symm.trans (Graph.Iso.trans ?_ B.normalizeFullIso)
   refine
-    { toEquiv := Equiv.sigmaCongrRight fun i => finCongr (hlen i)
-      edges_iff := fun v w => ?_
-      arcs_iff := fun v w => ?_
-      label_comp := fun v => ?_ }
+    { toEquiv := Equiv.sigmaCongrRight fun i ↦ finCongr (hlen i)
+      edges_iff := fun v w ↦ ?_
+      arcs_iff := fun v w ↦ ?_
+      label_comp := fun v ↦ ?_ }
   · obtain ⟨i, p⟩ := v
     obtain ⟨j, q⟩ := w
     show B.normalize.obj.edges.Adj ⟨i, Fin.cast (hlen i) p⟩ ⟨j, Fin.cast (hlen j) q⟩
@@ -543,6 +541,66 @@ noncomputable def isoOfReaderEq
     (hl : ∀ i j p q, A.link i j p q ↔ B.link i j p q) : A ≅ B :=
   mkIso (fullIsoOfReaderEq hw hl)
 
+/-! #### The readers are invariant -/
+
+/-- A full isomorphism restricts to an order isomorphism of tier fibers. -/
+noncomputable def fiberOrderIso {A B : TieredAR ι τ} (e : Graph.Iso A.obj B.obj) (i : ι) :
+    A.fiber i ≃o B.fiber i :=
+  StrictMono.orderIsoOfSurjective
+    (fun v ↦ ⟨e.toEquiv v.1, (congrArg Sigma.fst (e.label_comp v.1)).trans v.2⟩)
+    (fun _ _ h ↦ (e.arcs_iff _ _).mpr h)
+    fun w ↦ ⟨⟨e.toEquiv.symm w.1, by
+      rw [← e.label_comp, e.toEquiv.apply_symm_apply]; exact w.2⟩,
+      Subtype.ext (e.toEquiv.apply_symm_apply w.1)⟩
+
+theorem fiberLabel_fiberOrderIso {A B : TieredAR ι τ} (e : Graph.Iso A.obj B.obj) {i : ι}
+    (v : A.fiber i) : B.fiberLabel (fiberOrderIso e i v) = A.fiberLabel v := by
+  have h := (B.label_fiber (fiberOrderIso e i v)).symm.trans
+    ((e.label_comp v.1).trans (A.label_fiber v))
+  exact eq_of_heq (Sigma.mk.inj_iff.mp h).2
+
+variable {A B : TieredAR ι τ} [Finite A.obj.V] [Finite B.obj.V]
+
+theorem tierLength_eq_of_iso (e : Graph.Iso A.obj B.obj) (i : ι) :
+    A.tierLength i = B.tierLength i := by
+  unfold tierLength
+  exact @Fintype.card_congr _ _ (Fintype.ofFinite _) (Fintype.ofFinite _)
+    (fiberOrderIso e i).toEquiv
+
+theorem vertexEquiv_of_iso (e : Graph.Iso A.obj B.obj) {i : ι} (p : Fin (A.tierLength i)) :
+    e.toEquiv (A.vertexEquiv ⟨i, p⟩) =
+      B.vertexEquiv ⟨i, Fin.cast (tierLength_eq_of_iso e i) p⟩ :=
+  congrArg (fun φ : Fin (A.tierLength i) ≃o B.fiber i ↦ (φ p).val)
+    (Subsingleton.elim ((A.fiberEnum i).trans (fiberOrderIso e i))
+      ((Fin.castOrderIso (tierLength_eq_of_iso e i)).trans (B.fiberEnum i)))
+
+/-- Fully isomorphic representations have the same tier words. -/
+theorem tierWord_eq_of_iso (e : Graph.Iso A.obj B.obj) (i : ι) :
+    A.tierWord i = B.tierWord i := by
+  rw [tierWord_eq_ofFn (Z := B) ((A.fiberEnum i).trans (fiberOrderIso e i))]
+  simp only [OrderIso.trans_apply, fiberLabel_fiberOrderIso]
+  rfl
+
+private theorem link_of_iso (e : Graph.Iso A.obj B.obj) {i j : ι} {p q : ℕ}
+    (h : A.link i j p q) : B.link i j p q := by
+  obtain ⟨hp, hq, hl⟩ := h
+  refine ⟨tierLength_eq_of_iso e i ▸ hp, tierLength_eq_of_iso e j ▸ hq, ?_⟩
+  have := (e.edges_iff _ _).mpr hl
+  rw [vertexEquiv_of_iso, vertexEquiv_of_iso] at this
+  exact this
+
+/-- Fully isomorphic representations have the same links. -/
+theorem link_iff_of_iso (e : Graph.Iso A.obj B.obj) (i j : ι) (p q : ℕ) :
+    A.link i j p q ↔ B.link i j p q :=
+  ⟨link_of_iso e, link_of_iso e.symm⟩
+
+/-- Finite representations are fully isomorphic exactly when they have the same tier words and
+the same links. -/
+theorem nonempty_fullIso_iff :
+    Nonempty (Graph.Iso A.obj B.obj) ↔
+      (∀ i, A.tierWord i = B.tierWord i) ∧ ∀ i j p q, A.link i j p q ↔ B.link i j p q :=
+  ⟨fun ⟨e⟩ ↦ ⟨tierWord_eq_of_iso e, link_iff_of_iso e⟩, fun ⟨hw, hl⟩ ↦ ⟨fullIsoOfReaderEq hw hl⟩⟩
+
 end Classification
 
 /-! ### The No-Crossing Constraint in coordinates -/
@@ -555,8 +613,8 @@ variable {ι : Type*} {τ : ι → Type*} (X : TieredAR ι τ) [Finite X.obj.V]
 theorem arcs_normalize_iff {i j : ι} (p : Fin (X.tierLength i)) (q : Fin (X.tierLength j)) :
     (X.normalize).obj.arcs.Adj ⟨i, p⟩ ⟨j, q⟩ ↔ i = j ∧ (p : ℕ) < q := by
   rcases eq_or_ne i j with rfl | h
-  · exact (arcs_normalize (X := X) i p q).trans ⟨fun h => ⟨rfl, h⟩, fun h => h.2⟩
-  · exact iff_of_false (arcs_normalize_ne h p q) fun h' => h h'.1
+  · exact (arcs_normalize (X := X) i p q).trans ⟨fun h ↦ ⟨rfl, h⟩, fun h ↦ h.2⟩
+  · exact iff_of_false (arcs_normalize_ne h p q) fun h' ↦ h h'.1
 
 /-- A finite representation obeys the NCC iff the link set of each tier pair monovaries, that
 is, its links respect the position order on both tiers. -/
@@ -598,18 +656,18 @@ def ofData (ws : ∀ i, List (τ i)) (L : ι → ι → ℕ → ℕ → Prop) :
   obj :=
     { V := (i : ι) × Fin (ws i).length
       edges :=
-        { Adj := fun v w => v.1 ≠ w.1 ∧
+        { Adj := fun v w ↦ v.1 ≠ w.1 ∧
             (L v.1 w.1 v.2 w.2 ∨ L w.1 v.1 w.2 v.2)
-          symm := ⟨fun _ _ h => ⟨h.1.symm, h.2.symm⟩⟩
-          loopless := ⟨fun _ h => h.1 rfl⟩ }
-      arcs := ⟨fun v w => v.1 = w.1 ∧ (v.2 : ℕ) < (w.2 : ℕ)⟩
-      label := fun v => ⟨v.1, (ws v.1)[v.2]⟩ }
+          symm := ⟨fun _ _ h ↦ ⟨h.1.symm, h.2.symm⟩⟩
+          loopless := ⟨fun _ h ↦ h.1 rfl⟩ }
+      arcs := ⟨fun v w ↦ v.1 = w.1 ∧ (v.2 : ℕ) < (w.2 : ℕ)⟩
+      label := fun v ↦ ⟨v.1, (ws v.1)[v.2]⟩ }
   property := by
-    refine ⟨{ irrefl := fun v h => lt_irrefl _ h.2,
-              trans := fun u v w huv hvw => ⟨huv.1.trans hvw.1, huv.2.trans hvw.2⟩,
-              tier_eq := fun v w h => h.1,
-              total := fun v w hne htier => ?_ },
-      fun v w hadj harc => hadj.1 harc.1⟩
+    refine ⟨{ irrefl := fun v h ↦ lt_irrefl _ h.2,
+              trans := fun u v w huv hvw ↦ ⟨huv.1.trans hvw.1, huv.2.trans hvw.2⟩,
+              tier_eq := fun v w h ↦ h.1,
+              total := fun v w hne htier ↦ ?_ },
+      fun v w hadj harc ↦ hadj.1 harc.1⟩
     obtain ⟨i, p⟩ := v
     obtain ⟨j, q⟩ := w
     obtain rfl : i = j := htier
@@ -626,8 +684,8 @@ instance : Finite (ofData ws L).obj.V :=
 /-- The canonical carrier's fiber at `i` is its position range. -/
 noncomputable def ofDataFiberEnum (i : ι) :
     Fin ((ws i).length) ≃o (ofData ws L).fiber i := by
-  refine StrictMono.orderIsoOfSurjective (fun p => ⟨⟨i, p⟩, rfl⟩) (fun p q h => ⟨rfl, h⟩)
-    fun v => ?_
+  refine StrictMono.orderIsoOfSurjective (fun p ↦ ⟨⟨i, p⟩, rfl⟩) (fun p q h ↦ ⟨rfl, h⟩)
+    fun v ↦ ?_
   obtain ⟨⟨j, q⟩, hp⟩ := v
   obtain rfl : j = i := hp
   exact ⟨q, rfl⟩

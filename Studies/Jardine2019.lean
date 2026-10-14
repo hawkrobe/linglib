@@ -6,7 +6,7 @@ Authors: Robert Hawkins
 module
 
 public import Mathlib.Computability.Language
-public import Linglib.Phonology.Autosegmental.OCP
+public import Linglib.Phonology.Autosegmental.MergeConcat
 public import Linglib.Phonology.Subregular.AutosegmentalStrictlyLocal
 public import Linglib.Phonology.Subregular.TierStrictlyLocal
 public import Linglib.Phonology.Tone.Basic
@@ -32,7 +32,7 @@ tier-based strictly local at any width: with `x = L^(k-1)`, `H L x` and `x H` ar
 
 ## Main results
 
-* `isCleanAt_and_noCrossing_realizeMerged`: graphs in `gT(Σ*)` obey the OCP and the NCC.
+* `isCleanAt_and_noCrossing_mergeRealize`: graphs in `gT(Σ*)` obey the OCP and the NCC.
 * `rows_agree`: the grammars decide the paper's example strings.
 * `not_mem_ASL_HF_of_not_mem_ASL_HL`: a grammar excluding `HL` excludes `HF`.
 * `not_isStrictlyLocal_ASL_utp`, `not_isTierStrictlyLocal_ASL_utp`: `L_UTP` is neither strictly
@@ -44,6 +44,10 @@ tier-based strictly local at any width: with `x = L^(k-1)`, `H L x` and `x H` ar
   file omits. The grammars here mention no border.
 * Banned subgraphs need not be connected (`Autosegmental/Factors.lean`), so the class here
   contains the paper's.
+* `gT` extends to strings by Definition 2, the left fold of merging concatenation
+  (`AR.mergeRealize`). Its primitives are OCP-clean, so it agrees with collapsing the bridged
+  concatenation (`AR.nonempty_fullIso_realizeMerged`), whose presentation `merged` the proofs
+  compute with.
 * The unmerged `AR.realize` is kept for the contrast merging makes.
 
 ## TODO
@@ -94,14 +98,28 @@ abbrev unmerged (w : List Sym) :=
   AR.ofWords (w.map Sym.melody).flatten (w.map fun _ => [μ]).flatten
     (BlockLinks Sym.melody (fun _ => [μ]) (fun _ _ _ => True) w)
 
+/-- The primitives of `gT` are OCP-clean. -/
+theorem isCleanAt_gT (s : Sym) : (gT s).IsCleanAt true := by
+  cases s <;> simp [AR.IsCleanAt, gT, Sym.melody, show H ≠ L by decide]
+
+theorem tierWord_mergeRealize_gT (w : List Sym) (i : Bool) :
+    (AR.mergeRealize true gT w).tierWord i = (merged w).tierWord i :=
+  (AR.tierWord_mergeRealize true gT isCleanAt_gT w i).trans
+    (AR.tierWord_realizeMerged_eq_tierWord_ofWords _ _ _ w i)
+
+theorem link_mergeRealize_gT (w : List Sym) (i j : Bool) (p q : ℕ) :
+    (AR.mergeRealize true gT w).link i j p q ↔ (merged w).link i j p q :=
+  (AR.link_mergeRealize true gT isCleanAt_gT w i j p q).trans
+    (AR.link_realizeMerged_iff_link_ofWords _ _ _ w i j p q)
+
 /-- `L(B^{gT})` (§5.3) is the set of strings whose merged realization avoids the grammar. -/
 def ASL (B : List {F : TieredAR Bool (TwoTier TRN TBUKind) // Finite F.obj.V}) :
     Language Sym :=
-  Language.bannedSubgraph (realizeMerged true gT) B
+  Language.bannedSubgraph (AR.mergeRealize true gT) B
 
 theorem mem_ASL_iff {B : List {F : TieredAR Bool (TwoTier TRN TBUKind) // Finite F.obj.V}}
     {w : List Sym} : w ∈ ASL B ↔ (merged w).Free B :=
-  AR.free_realizeMerged_ofWords_iff _ _ _ B w
+  AR.free_congr (tierWord_mergeRealize_gT w) (link_mergeRealize_gT w) B
 
 theorem free_realize_iff (B : List {F : TieredAR Bool (TwoTier TRN TBUKind) // Finite F.obj.V})
     (w : List Sym) : (AR.realize gT w).Free B ↔ (unmerged w).Free B :=
@@ -109,11 +127,11 @@ theorem free_realize_iff (B : List {F : TieredAR Bool (TwoTier TRN TBUKind) // F
 
 /-- Every graph in `gT(Σ*)` obeys the OCP and the NCC, as they are preserved from the
 primitives (§5.2.2). -/
-theorem isCleanAt_and_noCrossing_realizeMerged (w : List Sym) :
-    (realizeMerged true gT w).IsCleanAt true ∧
-      NoCrossing (realizeMerged true gT w).obj.edges (realizeMerged true gT w).obj.arcs :=
-  ⟨AR.isCleanAt_collapse _ _, AR.noCrossing_collapse _ _
-    (AR.noCrossing_realize gT (fun _ => AR.noCrossing_primitive _ _) w)⟩
+theorem isCleanAt_and_noCrossing_mergeRealize (w : List Sym) :
+    (AR.mergeRealize true gT w).IsCleanAt true ∧
+      NoCrossing (AR.mergeRealize true gT w).obj.edges (AR.mergeRealize true gT w).obj.arcs :=
+  ⟨AR.isCleanAt_mergeRealize true gT isCleanAt_gT w,
+    AR.noCrossing_mergeRealize true gT (fun _ ↦ AR.noCrossing_primitive _ _) w⟩
 
 /-! ### The grammars of (26) and (33) -/
 
@@ -215,20 +233,17 @@ theorem HHLLHH_free_realize : (AR.realize gT [.H, .H, .L, .L, .H, .H]).Free utpG
 
 /-- `gT(HL)` is a subgraph of `gT(HF)`, since the falling contour on the second mora contains
 the `L` on it. -/
-theorem realizeMerged_HL_embeds_HF :
-    (realizeMerged true gT [.H, .L]).FactorEmbeds (realizeMerged true gT [.H, .F]) :=
-  (AR.factorEmbeds_congr
-    (AR.tierWord_realizeMerged_eq_tierWord_ofWords _ _ _ _)
-    (AR.link_realizeMerged_iff_link_ofWords _ _ _ _)
-    (AR.tierWord_realizeMerged_eq_tierWord_ofWords _ _ _ _)
-    (AR.link_realizeMerged_iff_link_ofWords _ _ _ _)).mpr (by decide)
+theorem mergeRealize_HL_embeds_HF :
+    (AR.mergeRealize true gT [.H, .L]).FactorEmbeds (AR.mergeRealize true gT [.H, .F]) :=
+  (AR.factorEmbeds_congr (tierWord_mergeRealize_gT _) (link_mergeRealize_gT _)
+    (tierWord_mergeRealize_gT _) (link_mergeRealize_gT _)).mpr (by decide)
 
 /-- No forbidden-subgraph grammar excludes `HL` without excluding `HF` (Theorem 3), since a
 subgraph of `gT(HL)` is a subgraph of `gT(HF)`. -/
 theorem not_mem_ASL_HF_of_not_mem_ASL_HL
     (B : List {F : TieredAR Bool (TwoTier TRN TBUKind) // Finite F.obj.V})
     (h : [.H, .L] ∉ ASL B) : [.H, .F] ∉ ASL B :=
-  fun hHF => h (Language.mem_bannedSubgraph_of_factorEmbeds realizeMerged_HL_embeds_HF hHF)
+  fun hHF => h (Language.mem_bannedSubgraph_of_factorEmbeds mergeRealize_HL_embeds_HF hHF)
 
 /-! ### The link-free fragment of the unmerged class is star-free -/
 
@@ -319,7 +334,7 @@ theorem mem_ASL_utp_replicate_H (m : ℕ) :
     rcases m with _ | m
     · decide
     · rw [OCP.collapse_append, OCP.collapse_replicate]
-      exact not_infix_HLH_of_length (by simp [OCP.collapse]; decide)
+      exact not_infix_HLH_of_length (by decide)
   · grind
 
 theorem not_mem_ASL_utp_HL_replicate_H (m : ℕ) :

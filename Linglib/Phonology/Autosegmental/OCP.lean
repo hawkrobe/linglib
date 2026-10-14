@@ -12,25 +12,28 @@ public import Linglib.Phonology.Autosegmental.TwoTier
 /-!
 # OCP-merging collapse of autosegmental representations
 
-A merging realization fuses adjacent identical melody nodes, so that a melody `Hⁿ` realizes as
-one `H` linked to `n` timing slots, as in Jardine's merging realization and the melody merge of
-Jardine and Heinz. `AR.collapse m` performs the merge on melody tier `m`. It destutters the tier
-word (`OCP.collapse`), repoints each link through the run index `runIdx`, and leaves the other
-tiers untouched, so a merged node keeps every slot its run was linked to. `realizeMerged` is the
-realization followed by the collapse.
+Merging melody nodes moves the positions of the melody tier along a monotone map.
+`X.repoint m w f` reads melody tier `m` as the word `w`, moves each of its positions `p` to
+`f p`, and carries the links along, so a merged node keeps every line of the nodes merged into
+it. `AR.collapse m` is the repointing that destutters the tier word (`OCP.collapse`) through the
+run index `runIdx`, merging every run of identical melody nodes; a melody `Hⁿ` collapses to one
+`H` linked to `n` timing slots. `realizeMerged` is the realization of a string followed by the
+collapse. Jardine and Heinz instead merge only at the seam of each concatenation
+(`Autosegmental/MergeConcat.lean`), and the two agree when the primitives are OCP-clean, as in
+Jardine's tonal realization.
 
 ## Main definitions
 
+* `AR.repoint`: a representation with one tier moved along a map of its positions.
 * `AR.collapse`: the OCP merge of melody tier `m`.
-* `realizeMerged`: the merging realization of a string.
 * `AR.IsCleanAt`: no adjacent repeats on melody tier `m`.
+* `realizeMerged`: the realization of a string, collapsed.
 * `MergedLinks`: the lines of the merged realization of a string of two-tier presentations.
 
 ## Main results
 
-* `AR.link_collapse`: the links of a collapse are the repointed links.
-* `AR.cls_collapse_tensor`: collapsing a concatenation equals collapsing the concatenation of
-  the collapses, up to isomorphism.
+* `AR.link_repoint`, `AR.noCrossing_repoint`: repointing carries the links, and a monotone
+  repointing preserves the NCC.
 * `AR.isCleanAt_collapse`, `AR.noCrossing_collapse`: the collapse is OCP-clean and preserves
   the NCC.
 * `AR.isCleanAt_iff_isOCPClean`: tier-word cleanliness is Axiom 6 on the normal form.
@@ -50,306 +53,167 @@ namespace Autosegmental
 
 open OCP
 
-variable {α β : Type*} [DecidableEq α]
+/-! ### Repointing a tier -/
 
-/-! ### The collapse in coordinates
+section Repoint
+variable {ι : Type*} [DecidableEq ι] {τ : ι → Type*} (m : ι)
 
-The OCP merge on the graph foundation: destutter melody tier `m`'s word and
-repoint its links through `runIdx`. Like `normalize` the result is a
-`AR` on a sigma-`Fin` carrier, but the merge is not a pullback —
-`runIdx` is monotone, not bijective — so the structural axioms are proved
-directly on the merged carrier. -/
+/-- Positions on tier `m` move along `f`; positions on the other tiers stay. -/
+def repointIdx (f : ℕ → ℕ) (i : ι) (p : ℕ) : ℕ := if i = m then f p else p
 
-section CoordinateCollapse
-open CategoryTheory
-open scoped MonoidalCategory
+variable {m} {f : ℕ → ℕ}
 
-variable {ι : Type*} [DecidableEq ι] {τ : ι → Type*}
-variable (X : TieredAR ι τ)
-variable (m : ι) [DecidableEq (τ m)]
+@[simp] theorem repointIdx_self (p : ℕ) : repointIdx m f m p = f p := by simp [repointIdx]
 
-/-- The tier words after collapsing melody tier `m` are destuttered at `m` and untouched
-elsewhere. -/
-noncomputable def AR.collapsedWord [Finite X.obj.V] : ∀ i, List (τ i) :=
-  Function.update (fun i ↦ X.tierWord i) m (OCP.collapse (X.tierWord m))
+@[simp] theorem repointIdx_of_ne {i : ι} (h : i ≠ m) (p : ℕ) : repointIdx m f i p = p := by
+  simp [repointIdx, h]
 
-@[simp] theorem AR.collapsedWord_self [Finite X.obj.V] :
-    X.collapsedWord m m = OCP.collapse (X.tierWord m) :=
-  Function.update_self ..
+theorem repointIdx_monotone (hf : Monotone f) (i : ι) : Monotone (repointIdx m f i) := by
+  unfold repointIdx
+  split_ifs
+  exacts [hf, monotone_id]
 
-@[simp] theorem AR.collapsedWord_of_ne [Finite X.obj.V] {i : ι} (h : i ≠ m) :
-    X.collapsedWord m i = X.tierWord i :=
-  Function.update_of_ne h ..
+variable [Finite ι] (X : TieredAR ι τ) [Finite X.obj.V] (m)
 
-theorem AR.collapsedWord_length_le [Finite X.obj.V] (i : ι) :
-    (X.collapsedWord m i).length ≤ X.tierLength i := by
-  rcases eq_or_ne i m with rfl | h
-  · simpa using OCP.collapse_length_le (X.tierWord i)
-  · simp [h]
+/-- `X` with tier `m` read as the word `w` and its positions moved along `f`, the links
+following the positions they join. -/
+noncomputable def AR.repoint (w : List (τ m)) (f : ℕ → ℕ) : TieredAR ι τ :=
+  AR.ofData (Function.update X.tierWord m w) fun i j r s ↦
+    ∃ p q, X.link i j p q ∧ repointIdx m f i p = r ∧ repointIdx m f j q = s
 
-/-- Positions are repointed by `runIdx` on the melody tier and fixed elsewhere. -/
-noncomputable def AR.collapseIdx [Finite X.obj.V] (i : ι) (p : ℕ) : ℕ :=
-  if i = m then runIdx (X.tierWord m) p else p
+variable {X m} {w : List (τ m)}
 
-@[simp] theorem AR.collapseIdx_self [Finite X.obj.V] (p : ℕ) :
-    X.collapseIdx m m p = runIdx (X.tierWord m) p :=
-  ite_eq_left rfl
+instance : Finite (X.repoint m w f).obj.V := inferInstanceAs (Finite (AR.ofData _ _).obj.V)
 
-@[simp] theorem AR.collapseIdx_of_ne [Finite X.obj.V] {i : ι} (h : i ≠ m) (p : ℕ) :
-    X.collapseIdx m i p = p :=
-  ite_eq_right h
+@[simp] theorem AR.tierWord_repoint_self : (X.repoint m w f).tierWord m = w := by
+  simp [AR.repoint]
 
-/-- The OCP-merging collapse destutters melody tier `m`, repoints links through `runIdx`, and
-leaves the other tiers untouched. -/
-noncomputable def AR.collapse [Finite X.obj.V] :
-    TieredAR ι τ where
-  obj :=
-    { V := (i : ι) × Fin (X.collapsedWord m i).length
-      edges :=
-        { Adj := fun v w ↦ v ≠ w ∧ ∃ p q, X.link v.1 w.1 p q ∧
-            X.collapseIdx m v.1 p = v.2 ∧ X.collapseIdx m w.1 q = w.2
-          symm := ⟨fun v w h ↦ ⟨h.1.symm, by
-            obtain ⟨p, q, hl, hp, hq⟩ := h.2
-            exact ⟨q, p, X.link_symm hl, hq, hp⟩⟩⟩
-          loopless := ⟨fun v h ↦ h.1 rfl⟩ }
-      arcs := ⟨fun v w ↦ v.1 = w.1 ∧ (v.2 : ℕ) < (w.2 : ℕ)⟩
-      label := fun v ↦ ⟨v.1, (X.collapsedWord m v.1)[v.2]⟩ }
-  property := by
-    refine ⟨{ irrefl := fun v h ↦ lt_irrefl _ h.2,
-              trans := fun u v w huv hvw ↦ ⟨huv.1.trans hvw.1, huv.2.trans hvw.2⟩,
-              tier_eq := fun v w h ↦ h.1,
-              total := fun v w hne htier ↦ ?_ },
-      fun v w hadj harc ↦ ?_⟩
-    · obtain ⟨i, p⟩ := v
-      obtain ⟨j, q⟩ := w
-      obtain rfl : i = j := htier
-      rcases Nat.lt_trichotomy (p : ℕ) (q : ℕ) with h | h | h
-      · exact Or.inl ⟨rfl, h⟩
-      · exact absurd (by rw [Fin.ext h]) hne
-      · exact Or.inr ⟨rfl, h⟩
-    · obtain ⟨hne, p, q, ⟨hp, hq, hl⟩, -, -⟩ := hadj
-      obtain ⟨i, pv⟩ := v
-      obtain ⟨j, qw⟩ := w
-      obtain rfl : i = j := harc.1
-      have hlab : X.obj.tier Sigma.fst (X.vertexEquiv ⟨i, ⟨p, hp⟩⟩)
-          = X.obj.tier Sigma.fst (X.vertexEquiv ⟨i, ⟨q, hq⟩⟩) := by
-        show (X.obj.label _).1 = (X.obj.label _).1
-        rw [X.label_vertexEquiv, X.label_vertexEquiv]
-      exact (X.property.1.total hl.ne hlab).elim (X.property.2 hl) (X.property.2 hl.symm)
+@[simp] theorem AR.tierWord_repoint_of_ne {i : ι} (h : i ≠ m) :
+    (X.repoint m w f).tierWord i = X.tierWord i := by
+  simp [AR.repoint, h]
 
-instance [Finite X.obj.V] : Finite (X.collapse m).obj.V :=
-  haveI : Finite ((i : ι) × Fin (X.tierLength i)) := Finite.of_equiv _ X.vertexEquiv.symm
-  Finite.of_injective
-    (fun v : (i : ι) × Fin (X.collapsedWord m i).length ↦
-      (⟨v.1, v.2.castLE (X.collapsedWord_length_le m v.1)⟩ : (i : ι) × Fin (X.tierLength i)))
-    fun v w h ↦ by
-      obtain ⟨i, p⟩ := v
-      obtain ⟨j, q⟩ := w
-      obtain ⟨rfl, h2⟩ := Sigma.mk.inj_iff.mp h
-      exact congrArg _ (Fin.castLE_injective _ (eq_of_heq h2))
+@[simp] theorem AR.tierLength_repoint_self : (X.repoint m w f).tierLength m = w.length := by
+  rw [← AR.length_tierWord, AR.tierWord_repoint_self]
 
-/-- The collapsed fiber at `i` is enumerated by its position range. -/
-noncomputable def AR.collapseFiberEnum [Finite X.obj.V] (i : ι) :
-    Fin ((X.collapsedWord m i).length) ≃o (X.collapse m).fiber i := by
-  refine StrictMono.orderIsoOfSurjective (fun p ↦ ⟨⟨i, p⟩, rfl⟩) (fun p q h ↦ ⟨rfl, h⟩)
-    fun v ↦ ?_
-  obtain ⟨⟨j, q⟩, hp⟩ := v
-  obtain rfl : j = i := hp
-  exact ⟨q, rfl⟩
+@[simp] theorem AR.tierLength_repoint_of_ne {i : ι} (h : i ≠ m) :
+    (X.repoint m w f).tierLength i = X.tierLength i := by
+  rw [← AR.length_tierWord, AR.tierWord_repoint_of_ne h, AR.length_tierWord]
 
-/-- The tier words of the collapse are the collapsed words. -/
-@[simp] theorem AR.tierWord_collapse [Finite X.obj.V] (i : ι) :
-    (X.collapse m).tierWord i = X.collapsedWord m i := by
-  rw [AR.tierWord_eq_ofFn (X.collapseFiberEnum m i)]
-  exact List.ofFn_getElem
-
-/-- Collapsing a tensor computes the same tier words as collapsing the tensor of the
-collapsed factors, the word half of the OCP congruence. -/
-theorem AR.collapsedWord_tensor
-    {Y : TieredAR ι τ}
-    [Finite X.obj.V] [Finite Y.obj.V] (i : ι) :
-    (X ⊗ Y).collapsedWord m i = (X.collapse m ⊗ Y.collapse m).collapsedWord m i := by
-  rcases eq_or_ne i m with rfl | h
-  · simp only [AR.collapsedWord, Function.update_self,
-      AR.tierWord_tensor, AR.tierWord_collapse]
-    exact OCP.collapse_append _ _
-  · simp [AR.collapsedWord, Function.update_of_ne h]
-
-theorem AR.fiberEnum_collapse [Finite X.obj.V] (i : ι) :
-    (X.collapse m).fiberEnum i =
-      (Fin.castOrderIso (by rw [← AR.length_tierWord,
-        AR.tierWord_collapse])).trans (X.collapseFiberEnum m i) :=
-  Subsingleton.elim _ _
-
-theorem AR.vertexEquiv_collapse [Finite X.obj.V] {i : ι}
-    (r : Fin ((X.collapse m).tierLength i)) :
-    (X.collapse m).vertexEquiv ⟨i, r⟩
-      = ⟨i, Fin.cast (by rw [← AR.length_tierWord,
-          AR.tierWord_collapse]) r⟩ := by
-  show ((X.collapse m).fiberEnum i r).val = _
-  rw [AR.fiberEnum_collapse]
-  rfl
-
-/-- The links of the collapse are the images of the original links under the repointing, as
-in `AR.edges_normalize`. -/
-theorem AR.link_collapse [Finite X.obj.V] (i j : ι) (r s : ℕ) :
-    (X.collapse m).link i j r s ↔
-      ∃ p q, X.link i j p q ∧ X.collapseIdx m i p = r ∧ X.collapseIdx m j q = s := by
+/-- The links of a repointing are the repointed links, when `f` keeps tier `m` in bounds. -/
+theorem AR.link_repoint (hf : ∀ p < X.tierLength m, f p < w.length) (i j : ι) (r s : ℕ) :
+    (X.repoint m w f).link i j r s ↔
+      ∃ p q, X.link i j p q ∧ repointIdx m f i p = r ∧ repointIdx m f j q = s := by
+  have hlt {i : ι} {p : ℕ} (hp : p < X.tierLength i) :
+      repointIdx m f i p < (Function.update X.tierWord m w i).length := by
+    rcases eq_or_ne i m with rfl | h
+    · simpa using hf p hp
+    · simpa [h] using hp
+  show (AR.ofData _ _).link i j r s ↔ _
+  rw [AR.link_ofData]
   constructor
-  · rintro ⟨hr, hs, hl⟩
-    rw [AR.linkRel_def, AR.vertexEquiv_collapse,
-      AR.vertexEquiv_collapse] at hl
-    obtain ⟨-, p, q, hpq, hp, hq⟩ := hl
-    exact ⟨p, q, hpq, hp, hq⟩
-  · rintro ⟨p, q, hpq, hp, hq⟩
-    have hbr : r < (X.collapse m).tierLength i := by
-      rw [← AR.length_tierWord, AR.tierWord_collapse]
-      subst hp
-      unfold AR.collapseIdx
-      split_ifs with h
-      · subst h
-        simpa [AR.collapsedWord] using
-          runIdx_lt_collapse_length _ (by simpa using hpq.1)
-      · simpa [AR.collapsedWord, Function.update_of_ne h] using hpq.1
-    have hbs : s < (X.collapse m).tierLength j := by
-      rw [← AR.length_tierWord, AR.tierWord_collapse]
-      subst hq
-      unfold AR.collapseIdx
-      split_ifs with h
-      · subst h
-        simpa [AR.collapsedWord] using
-          runIdx_lt_collapse_length _ (by simpa using hpq.2.1)
-      · simpa [AR.collapsedWord, Function.update_of_ne h] using hpq.2.1
-    refine ⟨hbr, hbs, ?_⟩
-    rw [AR.linkRel_def, AR.vertexEquiv_collapse,
-      AR.vertexEquiv_collapse]
-    refine ⟨?_, p, q, hpq, hp, hq⟩
-    intro heq
-    obtain ⟨hij, -⟩ := Sigma.mk.inj_iff.mp heq
+  · rintro ⟨-, -, -, h | ⟨p, q, hl, rfl, rfl⟩⟩
+    exacts [h, ⟨q, p, AR.link_symm hl, rfl, rfl⟩]
+  · rintro ⟨p, q, hl, rfl, rfl⟩
+    obtain ⟨hp, hq, -⟩ := id hl
+    refine ⟨fun hij ↦ ?_, hlt hp, hlt hq, Or.inl ⟨p, q, hl, rfl, rfl⟩⟩
     subst hij
-    exact X.not_link_self_tier i p q hpq
+    exact AR.not_link_self_tier i p q hl
 
-@[simp] theorem AR.tierLength_collapse [Finite X.obj.V] (i : ι) :
-    (X.collapse m).tierLength i = (X.collapsedWord m i).length := by
-  rw [← AR.length_tierWord, AR.tierWord_collapse]
-
-section Congruence
-variable {Y : TieredAR ι τ}
-variable [Finite X.obj.V] [Finite Y.obj.V]
-
-/-- Left-block positions commute with the collapse-collapse seam. -/
-theorem AR.collapseIdx_left (i : ι) {p : ℕ} (hp : p < X.tierLength i) :
-    (X.collapse m ⊗ Y.collapse m).collapseIdx m i (X.collapseIdx m i p)
-      = (X ⊗ Y).collapseIdx m i p := by
-  unfold AR.collapseIdx
-  split_ifs with h
-  · subst h
-    simp only [AR.tierWord_tensor, AR.tierWord_collapse,
-      AR.collapsedWord, Function.update_self]
-    exact (runIdx_append_collapse_left (xs := X.tierWord i) (ys := Y.tierWord i)
-      (by simpa using hp)).symm
-  · rfl
-
-/-- Right-block positions commute with the collapse-collapse seam. -/
-theorem AR.collapseIdx_right (i : ι) {p : ℕ} (hp : p < Y.tierLength i) :
-    (X.collapse m ⊗ Y.collapse m).collapseIdx m i
-        ((X.collapse m).tierLength i + Y.collapseIdx m i p)
-      = (X ⊗ Y).collapseIdx m i (X.tierLength i + p) := by
-  unfold AR.collapseIdx
-  split_ifs with h
-  · subst h
-    simp only [AR.tierWord_tensor, AR.tierWord_collapse,
-      AR.collapsedWord, Function.update_self,
-      ← AR.length_tierWord]
-    exact (runIdx_append_collapse_right (xs := X.tierWord i) (ys := Y.tierWord i)
-      (by simpa using hp)).symm
-  · simp [AR.tierLength_collapse, AR.collapsedWord,
-      Function.update_of_ne h]
-
-/-- The link half of the OCP congruence, in ℕ coordinates. -/
-theorem AR.link_collapse_tensor (i j : ι) (r s : ℕ) :
-    ((X ⊗ Y).collapse m).link i j r s ↔
-      ((X.collapse m ⊗ Y.collapse m).collapse m).link i j r s := by
-  rw [AR.link_collapse, AR.link_collapse]
-  constructor
-  · rintro ⟨p, q, hpq, hr, hs⟩
-    rcases (AR.link_tensor i j p q).mp hpq with hX | ⟨hpi, hqj, hY⟩
-    · refine ⟨X.collapseIdx m i p, X.collapseIdx m j q,
-        (AR.link_tensor i j _ _).mpr
-          (Or.inl ((X.link_collapse m i j _ _).mpr ⟨p, q, hX, rfl, rfl⟩)), ?_, ?_⟩
-      · rw [X.collapseIdx_left m i hX.1, hr]
-      · rw [X.collapseIdx_left m j hX.2.1, hs]
-    · refine ⟨(X.collapse m).tierLength i + Y.collapseIdx m i (p - X.tierLength i),
-        (X.collapse m).tierLength j + Y.collapseIdx m j (q - X.tierLength j),
-        (AR.link_tensor i j _ _).mpr (Or.inr ⟨by omega, by omega, ?_⟩), ?_, ?_⟩
-      · rw [Nat.add_sub_cancel_left, Nat.add_sub_cancel_left]
-        exact (Y.link_collapse m i j _ _).mpr ⟨_, _, hY, rfl, rfl⟩
-      · rw [X.collapseIdx_right m i hY.1, Nat.add_sub_cancel' hpi, hr]
-      · rw [X.collapseIdx_right m j hY.2.1, Nat.add_sub_cancel' hqj, hs]
-  · rintro ⟨p', q', hpq', hr, hs⟩
-    rcases (AR.link_tensor i j p' q').mp hpq' with hX | ⟨hpi', hqj', hY'⟩
-    · obtain ⟨p, q, hX₀, hcp, hcq⟩ := (X.link_collapse m i j p' q').mp hX
-      refine ⟨p, q, (AR.link_tensor i j p q).mpr (Or.inl hX₀), ?_, ?_⟩
-      · rw [← X.collapseIdx_left m i hX₀.1, hcp, hr]
-      · rw [← X.collapseIdx_left m j hX₀.2.1, hcq, hs]
-    · obtain ⟨a, b, hY₀, hca, hcb⟩ :=
-        (Y.link_collapse m i j (p' - (X.collapse m).tierLength i)
-          (q' - (X.collapse m).tierLength j)).mp hY'
-      refine ⟨X.tierLength i + a, X.tierLength j + b,
-        (AR.link_tensor i j _ _).mpr (Or.inr ⟨by omega, by omega, ?_⟩), ?_, ?_⟩
-      · rw [Nat.add_sub_cancel_left, Nat.add_sub_cancel_left]
-        exact hY₀
-      · rw [← X.collapseIdx_right m i hY₀.1, hca, Nat.add_sub_cancel' hpi', hr]
-      · rw [← X.collapseIdx_right m j hY₀.2.1, hcb, Nat.add_sub_cancel' hqj', hs]
-
-/-- Collapsing a concatenation is isomorphic to collapsing the concatenation of the
-collapses. -/
-noncomputable def AR.collapseTensorFullIso :
-    Graph.Iso ((X ⊗ Y).collapse m).obj
-      ((X.collapse m ⊗ Y.collapse m).collapse m).obj :=
-  AR.fullIsoOfReaderEq
-    (fun i ↦ ((X ⊗ Y).tierWord_collapse m i).trans ((X.collapsedWord_tensor m i).trans
-      ((X.collapse m ⊗ Y.collapse m).tierWord_collapse m i).symm))
-    (fun i j r s ↦ AR.link_collapse_tensor X m i j r s)
-
-/-- The OCP congruence holds in the class monoid, so `collapse` descends to it. -/
-theorem AR.cls_collapse_tensor :
-    AR.cls ((X ⊗ Y).collapse m)
-      = AR.cls ((X.collapse m ⊗ Y.collapse m).collapse m) :=
-  Quotient.sound ⟨AR.fullIsoToWideIso (AR.collapseTensorFullIso X m)⟩
-
-end Congruence
-
-/-- An AR is **OCP-clean** at melody tier `m` when that tier word has no adjacent repeats. -/
-def AR.IsCleanAt [Finite X.obj.V] : Prop := IsClean (X.tierWord m)
-
-/-- The collapse is OCP-clean at the collapsed tier. -/
-theorem AR.isCleanAt_collapse [Finite X.obj.V] :
-    (X.collapse m).IsCleanAt m := by
-  unfold AR.IsCleanAt
-  rw [AR.tierWord_collapse]
-  simpa [AR.collapsedWord] using collapse_clean (X.tierWord m)
-
-/-- The collapse preserves the NCC, since it repoints links monotonically. -/
-theorem AR.noCrossing_collapse [Finite X.obj.V] (h : NoCrossing X.obj.edges X.obj.arcs) :
-    NoCrossing (X.collapse m).obj.edges (X.collapse m).obj.arcs := by
-  have hmono (i : ι) : Monotone (X.collapseIdx m i) := fun p q hpq ↦ by
-    rcases eq_or_ne i m with rfl | hi
-    · rw [AR.collapseIdx_self, AR.collapseIdx_self]
-      exact runIdx_monotone _ hpq
-    · rwa [AR.collapseIdx_of_ne X m hi, AR.collapseIdx_of_ne X m hi]
+/-- A monotone repointing preserves the NCC. -/
+theorem AR.noCrossing_repoint (hf : ∀ p < X.tierLength m, f p < w.length) (hmono : Monotone f)
+    (h : NoCrossing X.obj.edges X.obj.arcs) :
+    NoCrossing (X.repoint m w f).obj.edges (X.repoint m w f).obj.arcs := by
   rw [AR.noCrossing_iff] at h ⊢
   intro i j ⟨r, s⟩ hl ⟨r', s'⟩ hl' hrr'
-  obtain ⟨p, q, hpq, rfl, rfl⟩ := (AR.link_collapse X m i j r s).mp hl
-  obtain ⟨p', q', hpq', rfl, rfl⟩ := (AR.link_collapse X m i j r' s').mp hl'
-  exact hmono j (h i j (show (p, q) ∈ _ from hpq) (show (p', q') ∈ _ from hpq')
-    ((hmono i).reflect_lt hrr'))
+  obtain ⟨p, q, hpq, rfl, rfl⟩ := (AR.link_repoint hf i j r s).mp hl
+  obtain ⟨p', q', hpq', rfl, rfl⟩ := (AR.link_repoint hf i j r' s').mp hl'
+  exact repointIdx_monotone hmono j (h i j (show (p, q) ∈ _ from hpq)
+    (show (p', q') ∈ _ from hpq') ((repointIdx_monotone hmono i).reflect_lt hrr'))
+
+end Repoint
+
+/-! ### The collapse -/
+
+section Collapse
+variable {ι : Type*} {τ : ι → Type*} (X : TieredAR ι τ) [Finite X.obj.V] (m : ι)
+
+/-- `X` is **OCP-clean** at melody tier `m` when that tier word has no adjacent repeats. -/
+def AR.IsCleanAt : Prop := IsClean (X.tierWord m)
+
+variable {X m} [DecidableEq ι] [DecidableEq (τ m)] in
+theorem AR.IsCleanAt.repointIdx_runIdx (h : X.IsCleanAt m) {i : ι} {p : ℕ}
+    (hp : p < X.tierLength i) : repointIdx m (runIdx (X.tierWord m)) i p = p := by
+  rcases eq_or_ne i m with rfl | hi
+  · exact (repointIdx_self p).trans (runIdx_clean h (by simpa using hp))
+  · exact repointIdx_of_ne hi p
+
+variable [DecidableEq ι] [Finite ι] [DecidableEq (τ m)]
+
+/-- The **OCP-merging collapse** of melody tier `m` merges every run of identical melody nodes,
+repointing the tier through its run index. -/
+noncomputable def AR.collapse : TieredAR ι τ :=
+  X.repoint m (OCP.collapse (X.tierWord m)) (runIdx (X.tierWord m))
+
+instance : Finite (X.collapse m).obj.V := inferInstanceAs (Finite (X.repoint m _ _).obj.V)
+
+@[simp] theorem AR.tierWord_collapse_self :
+    (X.collapse m).tierWord m = OCP.collapse (X.tierWord m) :=
+  AR.tierWord_repoint_self
+
+@[simp] theorem AR.tierWord_collapse_of_ne {i : ι} (h : i ≠ m) :
+    (X.collapse m).tierWord i = X.tierWord i :=
+  AR.tierWord_repoint_of_ne h
+
+@[simp] theorem AR.tierLength_collapse_of_ne {i : ι} (h : i ≠ m) :
+    (X.collapse m).tierLength i = X.tierLength i :=
+  AR.tierLength_repoint_of_ne h
+
+/-- The links of a collapse are the links repointed through the run index. -/
+theorem AR.link_collapse (i j : ι) (r s : ℕ) :
+    (X.collapse m).link i j r s ↔
+      ∃ p q, X.link i j p q ∧ repointIdx m (runIdx (X.tierWord m)) i p = r ∧
+        repointIdx m (runIdx (X.tierWord m)) j q = s :=
+  AR.link_repoint (fun _ hp ↦ runIdx_lt_collapse_length _ (by simpa using hp)) i j r s
+
+/-- The collapse is OCP-clean at the collapsed tier. -/
+theorem AR.isCleanAt_collapse : (X.collapse m).IsCleanAt m := by
+  simpa [AR.IsCleanAt] using collapse_clean (X.tierWord m)
+
+/-- The collapse preserves the NCC, since it repoints links monotonically. -/
+theorem AR.noCrossing_collapse (h : NoCrossing X.obj.edges X.obj.arcs) :
+    NoCrossing (X.collapse m).obj.edges (X.collapse m).obj.arcs :=
+  AR.noCrossing_repoint (fun _ hp ↦ runIdx_lt_collapse_length _ (by simpa using hp))
+    (runIdx_monotone _) h
+
+variable {X m}
+
+/-- Collapsing a representation that is clean at `m` changes nothing. -/
+noncomputable def AR.IsCleanAt.collapseFullIso (h : X.IsCleanAt m) :
+    Graph.Iso (X.collapse m).obj X.obj :=
+  AR.fullIsoOfReaderEq
+    (fun i ↦ by
+      rcases eq_or_ne i m with rfl | hi
+      · simpa using collapse_idempotent_on_clean h
+      · simp [hi])
+    fun i j r s ↦ by
+      rw [AR.link_collapse]
+      constructor
+      · rintro ⟨p, q, hl, rfl, rfl⟩
+        obtain ⟨hp, hq, -⟩ := id hl
+        rwa [h.repointIdx_runIdx hp, h.repointIdx_runIdx hq]
+      · intro hl
+        obtain ⟨hp, hq, -⟩ := id hl
+        exact ⟨r, s, hl, h.repointIdx_runIdx hp, h.repointIdx_runIdx hq⟩
+
+end Collapse
 
 section RealizeMerged
+variable {ι : Type*} [DecidableEq ι] [Finite ι] {τ : ι → Type*} (m : ι) [DecidableEq (τ m)]
 variable {S : Type*}
 
-/-- The OCP-merging realization at melody tier `m` realizes a string and then merges the
-melody runs, Jardine's merging `g_T`. -/
+/-- The collapsed realization at melody tier `m` realizes a string and then merges every run of
+its melody. Over OCP-clean primitives it is the realization by merging concatenation
+(`AR.nonempty_fullIso_realizeMerged`). -/
 noncomputable def realizeMerged (g₀ : S → TieredAR ι τ)
     [∀ s, Finite (g₀ s).obj.V] (w : List S) :
     TieredAR ι τ :=
@@ -387,7 +251,7 @@ theorem AR.link_collapse_true_false (X : TieredAR Bool (TwoTier α β)) [Finite 
     (X.collapse true).link true false r s ↔
       ∃ p < X.tierLength true, X.link true false p s ∧ runIdx (X.tierWord true) p = r := by
   rw [AR.link_collapse]
-  simp only [AR.collapseIdx_self, AR.collapseIdx_of_ne _ true (by decide : false ≠ true)]
+  simp only [repointIdx_self, repointIdx_of_ne (by decide : false ≠ true)]
   constructor
   · rintro ⟨p, q, hl, rfl, rfl⟩
     obtain ⟨hp, -, -⟩ := id hl
@@ -448,8 +312,7 @@ theorem AR.free_realizeMerged_ofWords_iff
 end MergedOfWords
 
 section Axiom6Bridge
-
-omit [DecidableEq ι] [DecidableEq (τ m)]
+variable {ι : Type*} {τ : ι → Type*} (X : TieredAR ι τ) (m : ι)
 
 /-- On a normal form, one position covers another in the arc order iff it is its immediate
 successor. -/
@@ -521,7 +384,5 @@ theorem AR.isCleanAt_iff_isOCPClean [Finite X.obj.V] :
       ((X.label_normalize_succ m hlen hplt).mpr heq)
 
 end Axiom6Bridge
-
-end CoordinateCollapse
 
 end Autosegmental
