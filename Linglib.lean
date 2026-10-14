@@ -908,7 +908,6 @@ import Linglib.Semantics.Plurality.Cumulativity
 import Linglib.Semantics.Plurality.Groups
 import Linglib.Semantics.Plurality.Reciprocal
 import Linglib.Semantics.Plurality.Reciprocal.Scope
-import Linglib.Semantics.Polarity.ExpletiveNegation
 import Linglib.Semantics.Polarity.Strength
 import Linglib.Semantics.Polarity.Item
 import Linglib.Semantics.Polarity.Licensing

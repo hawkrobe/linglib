@@ -10,7 +10,7 @@ after the first auxiliary: *chris is not dancing*. A clause in a simple tense ha
 and its negative is built on *do*, which carries the tense and agreement while the lexical verb
 is bare: *chris does not dance*. The same periphrasis serves in the affirmative for emphasis,
 *chris does dance*, so a simple tense has two affirmatives, plain and emphatic, and one negative.
-The examples are those of [miestamo-2005].
+The examples are Miestamo's.
 
 ## References
 
@@ -19,7 +19,7 @@ The examples are those of [miestamo-2005].
 
 @[expose] public section
 
-open Negation Morphology
+open Negation
 
 namespace English.Negation
 
@@ -29,23 +29,21 @@ def not : Marker := { pieces := [[.free "not"]] }
 /-- *n't*, the contracted negator, an enclitic on the auxiliary. -/
 def nt : Marker := { pieces := [[.encl "n't"]] }
 
-def words (ws : List String) : List Morph := ws.map .free
-
 /-- The compound tenses, whose negative places *not* after the auxiliary. -/
 def compoundTenses : List Pair :=
-  [⟨not, words ["chris", "is", "dancing"], words ["chris", "is", "not", "dancing"]⟩,
-   ⟨not, words ["chris", "will", "dance"], words ["chris", "will", "not", "dance"]⟩,
-   ⟨not, words ["chris", "has", "danced"], words ["chris", "has", "not", "danced"]⟩,
-   ⟨not, words ["chris", "had", "danced"], words ["chris", "had", "not", "danced"]⟩]
+  [⟨not, ["chris", "is", "dancing"].map .free, ["chris", "is", "not", "dancing"].map .free⟩,
+   ⟨not, ["chris", "will", "dance"].map .free, ["chris", "will", "not", "dance"].map .free⟩,
+   ⟨not, ["chris", "has", "danced"].map .free, ["chris", "has", "not", "danced"].map .free⟩,
+   ⟨not, ["chris", "had", "danced"].map .free, ["chris", "had", "not", "danced"].map .free⟩]
 
 /-- The plain simple tenses with their negatives, built on *do*. -/
 def simpleTenses : List Pair :=
-  [⟨not, words ["chris", "dances"], words ["chris", "does", "not", "dance"]⟩,
-   ⟨not, words ["chris", "danced"], words ["chris", "did", "not", "dance"]⟩]
+  [⟨not, ["chris", "dances"].map .free, ["chris", "does", "not", "dance"].map .free⟩,
+   ⟨not, ["chris", "danced"].map .free, ["chris", "did", "not", "dance"].map .free⟩]
 
 /-- The emphatic simple tenses, built on *do* like their negatives. -/
 def emphaticTenses : List Pair :=
-  [⟨not, words ["chris", "does", "dance"], words ["chris", "does", "not", "dance"]⟩,
-   ⟨not, words ["chris", "did", "dance"], words ["chris", "did", "not", "dance"]⟩]
+  [⟨not, ["chris", "does", "dance"].map .free, ["chris", "does", "not", "dance"].map .free⟩,
+   ⟨not, ["chris", "did", "dance"].map .free, ["chris", "did", "not", "dance"].map .free⟩]
 
 end English.Negation

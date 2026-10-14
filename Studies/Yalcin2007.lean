@@ -6,7 +6,7 @@ public import Linglib.Data.Examples.Yalcin2007
 /-!
 # Yalcin (2007): Epistemic Modals
 
-This file formalizes [yalcin-2007]'s domain semantics for epistemic modals and the puzzle of
+This file formalizes Yalcin's domain semantics for epistemic modals and the puzzle of
 epistemic contradictions, sentences of the form *it is raining and it might not be raining*
 or *it is not raining and it might be raining*. Unlike Moore-paradoxical sentences, which are
 unassertable but embed happily under *suppose* and in conditional antecedents, epistemic
@@ -17,7 +17,7 @@ epistemic possibility modal quantifying existentially over the parameter (`Sente
 Attitude verbs shift the parameter to the attitude state and quantify over it (`supposes`),
 so the universal quantifier of *suppose* is trumped by an embedded modal
 (`supposes_might_iff`), an attitude with an embedded possibility modal is the attitude's dual
-(`supposes_might_iff_not_supposes_neg`), and no state of supposition accepts an epistemic
+(`supposes_might_iff_not_supposes_compl`), and no state of supposition accepts an epistemic
 contradiction (`not_supposes_contra`). An indicative conditional shifts the parameter to the
 largest nonempty substate accepting its antecedent and quantifies over it (`ifThen`), so
 conditionals with an epistemic contradiction as antecedent are never true
@@ -36,7 +36,8 @@ classical (`factual_classical`). The dual necessity modal yields the same result
 ## Implementation notes
 
 The context coordinate is fixed throughout, so a sentence is a function of the index alone.
-The largest nonempty substate accepting the antecedent is characterized rather than
+Sentences form a Boolean algebra pointwise: negation is the complement `φᶜ` and conjunction the meet
+`φ ⊓ ψ`. The largest nonempty substate accepting the antecedent is characterized rather than
 constructed, and a conditional is true only if it exists. The probabilistic extension of the
 information parameter in the paper's seventh section is not modelled.
 
@@ -63,17 +64,13 @@ namespace Sentence
 variable (φ ψ : Sentence W)
 
 /-- A nonepistemic sentence places a condition on the world alone. -/
-def ofProp (p : Set W) : Sentence W := λ _ w => w ∈ p
-
-def neg : Sentence W := λ s w => ¬ φ s w
-
-def conj : Sentence W := λ s w => φ s w ∧ ψ s w
+def ofProp (p : Set W) : Sentence W := fun _ w ↦ w ∈ p
 
 /-- Epistemic possibility: existential quantification over the information parameter. -/
-def might : Sentence W := λ s _ => ∃ w' ∈ s, φ s w'
+def might : Sentence W := fun s _ ↦ ∃ w' ∈ s, φ s w'
 
 /-- Epistemic necessity: universal quantification over the information parameter. -/
-def must : Sentence W := λ s _ => ∀ w' ∈ s, φ s w'
+def must : Sentence W := fun s _ ↦ ∀ w' ∈ s, φ s w'
 
 /-- A sentence is accepted in a state when it is true at every world of the state, relative
 to that state. -/
@@ -87,18 +84,18 @@ theorem might_might : φ.might.might = φ.might := by
   · rintro ⟨w', hw', h⟩; exact ⟨w', hw', w', hw', h⟩
 
 /-- Necessity is the dual of possibility. -/
-theorem must_eq_neg_might_neg : φ.must = φ.neg.might.neg := by
-  ext s w; simp [must, might, neg]
+theorem must_eq_compl_might_compl : φ.must = φᶜ.mightᶜ := by
+  ext s w; simp [must, might]
 
 end Sentence
 
 open Sentence
 
 /-- The epistemic contradiction *not p and it might be that p*. -/
-def contra (p : Set W) : Sentence W := (ofProp p).neg.conj (ofProp p).might
+def contra (p : Set W) : Sentence W := (ofProp p)ᶜ ⊓ (ofProp p).might
 
 /-- The epistemic contradiction *p and it might be that not p*. -/
-def contra' (p : Set W) : Sentence W := (ofProp p).conj (ofProp p).neg.might
+def contra' (p : Set W) : Sentence W := ofProp p ⊓ (ofProp p)ᶜ.might
 
 /-- No nonempty state accepts an epistemic contradiction. -/
 theorem not_accepted_contra {p s : Set W} (hs : s.Nonempty) : ¬ (contra p).AcceptedIn s := by
@@ -122,7 +119,7 @@ def relMight (R : W → W → Prop) (p : Set W) : Set W := {w | ∃ w', R w w' �
 explain why the contradiction cannot be supposed. -/
 theorem exists_relational_contra :
     ∃ (R : Bool → Bool → Prop) (p : Set Bool) (w : Bool), w ∉ p ∧ w ∈ relMight R p :=
-  ⟨λ _ _ => True, {true}, false, by simp, ⟨true, trivial, rfl⟩⟩
+  ⟨fun _ _ ↦ True, {true}, false, by simp, ⟨true, trivial, rfl⟩⟩
 
 /-! ### Attitudes -/
 
@@ -131,7 +128,7 @@ variable {φ ψ : Sentence W} {s : Set W} {w : W}
 /-- *x supposes φ*: φ holds at every world compatible with the supposition, relative to the
 state of supposition, which the verb makes the information parameter. -/
 def supposes (S : W → Set W) (φ : Sentence W) : Sentence W :=
-  λ _ w => ∀ w' ∈ S w, φ (S w) w'
+  fun _ w ↦ ∀ w' ∈ S w, φ (S w) w'
 
 theorem supposes_iff_accepted {S : W → Set W} : supposes S φ s w ↔ φ.AcceptedIn (S w) :=
   Iff.rfl
@@ -144,10 +141,10 @@ theorem supposes_might_iff {S : W → Set W} (hne : (S w).Nonempty) :
   · intro h _ _; exact h
 
 /-- Attitude plus epistemic possibility is the attitude's dual. -/
-theorem supposes_might_iff_not_supposes_neg {S : W → Set W} (hne : (S w).Nonempty) :
-    supposes S φ.might s w ↔ ¬ supposes S φ.neg s w := by
+theorem supposes_might_iff_not_supposes_compl {S : W → Set W} (hne : (S w).Nonempty) :
+    supposes S φ.might s w ↔ ¬ supposes S φᶜ s w := by
   rw [supposes_might_iff hne]
-  simp [supposes, neg]
+  simp [supposes]
 
 /-- No state of supposition satisfies an epistemic contradiction. -/
 theorem not_supposes_contra {S : W → Set W} {p : Set W} (hne : (S w).Nonempty) :
@@ -164,12 +161,12 @@ def IsMaxAccepting (s : Set W) (α : Sentence W) (s' : Set W) : Prop :=
 /-- The indicative conditional: the consequent holds throughout the largest nonempty substate
 accepting the antecedent, relative to that substate. -/
 def ifThen (α ψ : Sentence W) : Sentence W :=
-  λ s _ => ∃ s', IsMaxAccepting s α s' ∧ ψ.AcceptedIn s'
+  fun s _ ↦ ∃ s', IsMaxAccepting s α s' ∧ ψ.AcceptedIn s'
 
 /-- For a factual antecedent the shifted state is the intersection, when nonempty. -/
 theorem isMaxAccepting_ofProp (p : Set W) (hne : (s ∩ p).Nonempty) :
     IsMaxAccepting s (ofProp p) (s ∩ p) :=
-  ⟨Set.inter_subset_left, hne, λ _ hw => hw.2, λ _ ht _ hacc w hw => ⟨ht hw, hacc w hw⟩⟩
+  ⟨Set.inter_subset_left, hne, fun _ hw ↦ hw.2, fun _ ht _ hacc w hw ↦ ⟨ht hw, hacc w hw⟩⟩
 
 /-- A conditional whose antecedent is an epistemic contradiction is never true. -/
 theorem ifThen_contra_false {p : Set W} : ¬ ifThen (contra p) ψ s w := by
@@ -184,7 +181,7 @@ theorem ifThen_must_iff {α : Sentence W} : ifThen α ψ.must s w ↔ ifThen α 
     obtain ⟨v, hv⟩ := hmax.2.1
     exact ⟨s', hmax, h v hv⟩
   · rintro ⟨s', hmax, h⟩
-    exact ⟨s', hmax, λ _ _ => h⟩
+    exact ⟨s', hmax, fun _ _ ↦ h⟩
 
 /-! ### Consequence -/
 
@@ -206,10 +203,10 @@ def bot : Sentence W := ofProp ∅
 
 theorem DiagonalConsequence.of_standard {Γ : List (Sentence W)}
     (h : StandardConsequence Γ φ) : DiagonalConsequence Γ φ :=
-  λ s w _ hΓ => h s w hΓ
+  fun s w _ hΓ ↦ h s w hΓ
 
 /-- Łukasiewicz's principle: from *not p*, *it is not possible that p*. -/
-theorem lukasiewicz (p : Set W) : InfoConsequence [(ofProp p).neg] (ofProp p).might.neg := by
+theorem lukasiewicz (p : Set W) : InfoConsequence [(ofProp p)ᶜ] (ofProp p).mightᶜ := by
   intro s h w hw ⟨w', hw', hp⟩
   exact h _ List.mem_cons_self w' hw' hp
 
@@ -234,7 +231,7 @@ theorem not_diagonal_epistemic_contradiction :
   intro h
   have := h Set.univ false trivial (by
     simp only [List.mem_singleton, forall_eq]
-    exact ⟨by simp [ofProp, neg], true, trivial, rfl⟩)
+    exact ⟨by simp [ofProp], true, trivial, rfl⟩)
   simp [bot, ofProp] at this
 
 /-- Diagonal consequence is nonfactive as well. -/
@@ -249,7 +246,7 @@ theorem not_diagonal_factivity :
 /-- On factual sentences informational consequence is classical: a conjunction with a negated
 sentence is absurd exactly when the other conjunct entails that sentence. -/
 theorem factual_classical (p q : Set W) :
-    InfoConsequence [(ofProp p).neg.conj (ofProp q)] bot ↔
+    InfoConsequence [(ofProp p)ᶜ ⊓ ofProp q] bot ↔
       InfoConsequence [ofProp q] (ofProp p) := by
   constructor
   · intro h s hq w hw
@@ -264,7 +261,7 @@ theorem factual_classical (p q : Set W) :
     have hc := hs _ List.mem_cons_self
     refine absurd (h s ?_ w hw) (hc w hw).1
     simp only [List.mem_singleton, forall_eq]
-    exact λ v hv => (hc v hv).2
+    exact fun v hv ↦ (hc v hv).2
 
 /-- Informational consequence is nonclassical: epistemic contradiction and nonfactivity, which
 no classical consequence relation admits together. -/
@@ -277,7 +274,7 @@ theorem not_classical :
 
 /-- *Not p and it must be that p* is accepted by no nonempty state. -/
 theorem not_accepted_neg_must {p : Set W} (hs : s.Nonempty) :
-    ¬ ((ofProp p).neg.conj (ofProp p).must).AcceptedIn s := by
+    ¬ ((ofProp p)ᶜ ⊓ (ofProp p).must).AcceptedIn s := by
   intro h
   obtain ⟨w, hw⟩ := hs
   exact (h w hw).1 ((h w hw).2 w hw)

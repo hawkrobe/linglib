@@ -8,7 +8,7 @@ public import Linglib.Morphology.Morph
 A language negates a declarative verbal main clause with a marker: an affix on the verb, a free
 particle, an inflecting negative verb, or two morphemes at once (French *ne … pas*). A negative
 may differ from its affirmative only by the marker, or the clause may also change, taking a
-nonfinite verb form or losing tense distinctions, the divide [miestamo-2005] calls symmetric and
+nonfinite verb form or losing tense distinctions, the divide Miestamo calls symmetric and
 asymmetric.
 
 ## Main declarations
@@ -20,13 +20,10 @@ asymmetric.
 
 A typology of markers or of pairs is one author's classification and lives in that author's
 study, such as Miestamo's symmetry in `Studies/Miestamo2005.lean`. An inflecting negative verb is
-cited by its stem, and its endings form an `Agreement.Paradigm` in the language's fragment. The
-root `Negation` namespace is shared with the classification of expletive negation in
-`Semantics/Polarity/ExpletiveNegation.lean` ([jin-koenig-2021]).
+cited by its stem, and its endings form an `Agreement.Paradigm` in the language's fragment.
 
 ## References
 
-* [jin-koenig-2021]
 * [miestamo-2005]
 -/
 
