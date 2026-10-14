@@ -6,6 +6,7 @@ public import Linglib.Semantics.ArgumentStructure.EventStructure.Interpretation
 public import Linglib.Semantics.ArgumentStructure.EventStructure.Basic
 public import Linglib.Semantics.ArgumentStructure.LevinClass.RootEntailment
 public import Linglib.Semantics.ArgumentStructure.LevinClass.Properties
+public import Linglib.Logic.Modal.Basic
 public import Linglib.Semantics.Presupposition.Iterative
 public import Linglib.Data.Examples.BeaversKoontzGarboden2020
 
@@ -158,7 +159,8 @@ namespace BeaversKoontzGarboden2020
 
 section Again
 
-open Presupposition ArgumentStructure EventStructure Template
+open Presupposition ModalLogic ArgumentStructure EventStructure Template
+open scoped SetRel
 
 /-! ### Sublexical *again* and the hierarchy of its readings
 
@@ -182,36 +184,37 @@ variable {Entity : Type*} {State Event : Type u} (M : Interpretation Entity Stat
 def causative : Template .event := .cause .effector .achievement
 
 /-- *Again* attached at the subterm `t` of the causative template of a root with state predicate
-`P`, with `r` the precedence on the sort of `t`: the restitutive reading at `state`, the
-repetitive reading over the change at `achievement`, and over the causation at `causative`. -/
-def againAt (t : Template σ) (r : σ.Carrier State Event → σ.Carrier State Event → Prop)
+`P`, with `R` relating an eventuality of the sort of `t` to the earlier ones. The attachment at
+`state` gives the restitutive reading, at `achievement` the repetitive reading over the change,
+and at `causative` the repetitive reading over the causation. -/
+def againAt (t : Template σ) (R : SetRel (σ.Carrier State Event) (σ.Carrier State Event))
     (P : Entity → State → Prop) (y x : Entity) : PartialProp (σ.Carrier State Event) :=
-  again r (t.denote M P ⊤ y x)
+  again R (t.denote M P ⊤ y x)
 
 variable {M}
 
-/-- The hierarchy of the readings: *again* attached at a template presupposes an earlier
-eventuality of the template, and so the realization of each of its subterms, with the same
-undergoer. -/
+/-- *Again* attached at a template presupposes an earlier eventuality of the template, and so the
+realization of each of its subterms, with the same undergoer, which is the hierarchy of the
+readings. -/
 theorem exists_denote_of_againAt_presup {t : Template σ} {u : Template τ} (hu : u.IsSubterm t)
-    {r : σ.Carrier State Event → σ.Carrier State Event → Prop} {w : σ.Carrier State Event}
-    (h : (againAt M t r P y x).presup w) : ∃ w', r w' w ∧ ∃ y' v, u.denote M P ⊤ y' x v :=
-  again_presup_mono (fun _ ↦ exists_denote_of_isSubterm hu) w h
+    {R : SetRel (σ.Carrier State Event) (σ.Carrier State Event)} {w : σ.Carrier State Event}
+    (h : (againAt M t R P y x).presup w) : ∃ w', w ~[R] w' ∧ ∃ y' v, u.denote M P ⊤ y' x v :=
+  diamond_mono R (fun _ ↦ exists_denote_of_isSubterm hu) w h
 
 /-- End to end, the repetitive reading over the causation presupposes an earlier causing
 eventuality and a change to the root's state. -/
-theorem exists_become_of_againAt_causative_presup {r : Event → Event → Prop} {w : Event}
-    (h : (againAt M causative r P y x).presup w) :
-    ∃ w', r w' w ∧ ∃ e s, M.become s e ∧ P x s :=
+theorem exists_become_of_againAt_causative_presup {R : SetRel Event Event} {w : Event}
+    (h : (againAt M causative R P y x).presup w) :
+    ∃ w', w ~[R] w' ∧ ∃ e s, M.become s e ∧ P x s :=
   let ⟨w', hw, _, e, s, hb, hs⟩ := exists_denote_of_againAt_presup (.caused (.refl _)) h
   ⟨w', hw, e, s, hb, hs⟩
 
 /-- For a state predicate that entails change, even the restitutive attachment of *again*
 presupposes a change, so result roots never admit a truly restitutive reading. -/
-theorem exists_become_of_againAt_state_presup {r : State → State → Prop} {s : State}
-    (hres : M.EntailsChange P) (h : (againAt M .state r P y x).presup s) :
-    ∃ s', r s' s ∧ ∃ e, M.become s' e :=
-  again_presup_mono (Q := fun s' ↦ ∃ e, M.become s' e) (hres x) s h
+theorem exists_become_of_againAt_state_presup {R : SetRel State State} {s : State}
+    (hres : M.EntailsChange P) (h : (againAt M .state R P y x).presup s) :
+    ∃ s', s ~[R] s' ∧ ∃ e, M.become s' e :=
+  diamond_mono R (hres x) s h
 
 end Again
 

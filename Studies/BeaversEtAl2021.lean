@@ -44,6 +44,7 @@ attested types (`Exponence.trichotomy`).
 namespace BeaversEtAl2021
 
 open Semantics Presupposition
+open scoped SetRel
 
 /-! ### State predicates that entail change -/
 
@@ -54,8 +55,8 @@ open ArgumentStructure BeaversKoontzGarboden2020
 universe u
 
 variable {Entity : Type*} {State Event : Type u}
-  (M : EventStructure.Interpretation Entity State Event) {ltS : State → State → Prop}
-  {ltE : Event → Event → Prop} {P : Entity → State → Prop} {y x : Entity} {s : State}
+  (M : EventStructure.Interpretation Entity State Event)
+  {R : SetRel Event Event} {P : Entity → State → Prop} {y x : Entity} {s : State}
 
 /-- The deverbal stative of `P` holds of the states of which `P` holds and that a change gave
 rise to. -/
@@ -81,8 +82,8 @@ theorem resultStative_iff (h : M.EntailsChange P) : resultStative M P x s ↔ P 
 
 /-- *Again* attached to `vbecome` presupposes an earlier change with every root. -/
 theorem exists_become_of_againAt_achievement_presup {e : Event}
-    (hp : (againAt M .achievement ltE P y x).presup e) :
-    ∃ e', ltE e' e ∧ ∃ s, M.become s e' :=
+    (hp : (againAt M .achievement R P y x).presup e) :
+    ∃ e', e ~[R] e' ∧ ∃ s, M.become s e' :=
   let ⟨e', hlt, s, hb, _⟩ := hp; ⟨e', hlt, s, hb⟩
 
 end Model
@@ -110,7 +111,7 @@ theorem not_entailsChange_sharp : ¬ forged.EntailsChange sharp :=
 /-- The restitutive presupposition holds at the later state of the knife although no change gave
 rise to an earlier one. -/
 theorem forged_restitutive :
-    (BeaversKoontzGarboden2020.againAt forged .state (· < ·) sharp () ()).presup true ∧
+    (BeaversKoontzGarboden2020.againAt forged .state {p | p.2 < p.1} sharp () ()).presup true ∧
       ¬ ∃ s', s' < true ∧ ∃ e, forged.become s' e :=
   ⟨⟨false, Bool.false_lt_true, trivial⟩, fun ⟨_, hlt, _, h⟩ ↦ absurd (h ▸ hlt) (lt_irrefl _)⟩
 
