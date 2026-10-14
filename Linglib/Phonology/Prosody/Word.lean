@@ -75,6 +75,32 @@ def noRec : Constraint Tree := fun t => go t where
     | [] => 0
     | c :: cs => go c + goList cs
 
+/-- Under No-Recursion no daughter shares its mother's level. -/
+theorem level_ne_of_noRec {a : Constituent} {cs : List Tree} (hr : noRec (.node a cs) = 0)
+    {c : Tree} (hc : c ∈ cs) : c.value.level ≠ a.level := by
+  intro h
+  have e : noRec (.node a cs)
+      = (cs.filter (fun c => c.value.level = a.level)).length + noRec.goList cs := rfl
+  have := List.length_pos_of_mem (List.mem_filter.2 ⟨hc, by simp [h]⟩ :
+    c ∈ cs.filter (fun c => c.value.level = a.level))
+  omega
+
+/-- No-Recursion passes to the daughters. -/
+theorem noRec_eq_zero_of_mem {a : Constituent} {cs : List Tree} (hr : noRec (.node a cs) = 0)
+    {c : Tree} (hc : c ∈ cs) : noRec c = 0 := by
+  have e : noRec (.node a cs)
+      = (cs.filter (fun c => c.value.level = a.level)).length + noRec.goList cs := rfl
+  have hlist : ∀ cs : List Tree, noRec.goList cs = 0 → ∀ c ∈ cs, noRec c = 0 := by
+    intro cs h c hc
+    induction cs with
+    | nil => exact absurd hc List.not_mem_nil
+    | cons d ds ih =>
+      have e' : noRec.goList (d :: ds) = noRec d + noRec.goList ds := rfl
+      rcases List.mem_cons.mp hc with rfl | hc
+      · omega
+      · exact ih (by omega) hc
+  exact hlist cs (by omega) c hc
+
 /-! #### Maximal and minimal projections
 
 The **projections** of a level `ℓ` ([ito-mester-2009]) are its extremal nodes under dominance.
@@ -171,13 +197,7 @@ theorem isWord_children {a : Constituent} {cs : List Tree}
   have hle : c.value.level ≤ a.level := by
     obtain ⟨hd, rfl⟩ : ∃ hd, a = .om hd := by cases a <;> simp_all [Constituent.level]
     exact (RoseTree.licensed_node_iff.mp hl).1 c.value (List.mem_map_of_mem hc)
-  have hne : c.value.level ≠ a.level := by
-    intro h
-    have e : noRec (.node a cs)
-        = (cs.filter (fun c => c.value.level = a.level)).length + noRec.goList cs := rfl
-    have := List.length_pos_of_mem (List.mem_filter.2 ⟨hc, by simp [h]⟩ :
-      c ∈ cs.filter (fun c => c.value.level = a.level))
-    omega
+  have hne := level_ne_of_noRec hr hc
   rw [ha] at hle hne
   rcases c with ⟨cl, ccs⟩
   simp only [RoseTree.value_node] at hle hne ⊢
@@ -255,9 +275,10 @@ example : IsWord recursiveW := by decide
 example : ¬ IsWord (.om [.node .ph []] : Tree) := by decide
 
 -- `noRec` reads the No-Recursion cost off the carrier: the recursive word scores
--- one ω-over-ω, the flat one zero.
+-- one ω-over-ω, the flat one zero, and an internally layered foot one f-over-f.
 example : noRec recursiveW = 1 := by decide
 example : noRec perfectW = 0 := by decide
+example : noRec (.ft false [.ft false [.σ 1, .σ 1], .σ 1]) = 1 := by decide
 
 -- The ω-over-ω word has the outer ω as its sole maximal projection and the inner ω as its
 -- sole minimal projection; the perfect (flat) word is both at once.

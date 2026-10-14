@@ -462,14 +462,16 @@ stress" — the peak sits atop a foot head. -/
 
 /-- Non-recursive word children (feet and stray σ) have height at most `2` — the ω→f→σ hierarchy. -/
 private theorem height_word_child_le {ch : Tree}
-    (h : IsFoot ch ∨ (ch.value.level = .syl ∧ ch.children = [])) : ch.height ≤ 2 := by
+    (h : IsFoot ch ∨ (ch.value.level = .syl ∧ ch.children = [])) (hr : noRec ch = 0) :
+    ch.height ≤ 2 := by
   rcases h with hfoot | ⟨_, hcs⟩
   · obtain ⟨chl, chcs⟩ := ch
     rw [RoseTree.height_node]
     have : (chcs.map RoseTree.height).foldr max 0 ≤ 1 :=
       List.max_le_of_forall_le _ _ fun x hx => by
         obtain ⟨⟨cl, ccs⟩, hc, rfl⟩ := List.mem_map.mp hx
-        obtain ⟨-, hcs⟩ := hfoot.syl_leaf hc
+        obtain ⟨-, hcs⟩ := hfoot.syl_leaf
+          (fun c hc ↦ by rw [← show chl.level = .ft from hfoot.1]; exact level_ne_of_noRec hr hc) hc
         simp only [RoseTree.children_node] at hcs
         subst hcs
         exact le_of_eq rfl
@@ -538,7 +540,8 @@ theorem col_le_two_or_head {t : Tree} (hw : IsWord t) (hr : noRec t = 0) :
   rw [columns_node, ite_eq_right (by simp [hσ]), List.mem_flatMap] at hc
   obtain ⟨ch, hch, hc⟩ := hc
   rcases mem_toGrid_edge hc with hcol | hhead
-  · exact .inl (le_trans (toGrid_bounds c hcol).2 (height_word_child_le (hchild ch hch)))
+  · exact .inl (le_trans (toGrid_bounds c hcol).2
+      (height_word_child_le (hchild ch hch) (noRec_eq_zero_of_mem hr hch)))
   · refine .inr ?_
     rw [headHeights_node, ite_eq_right (by simp [hσ]), List.mem_flatMap]
     exact ⟨ch, hch, by rwa [headHeights_edge] at hhead⟩

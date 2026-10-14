@@ -258,20 +258,18 @@ def weight? : Constituent → Option Syllable.Weight
 def level : Constituent → Level
   | .syl .. => .syl | .ft _ => .ft | .om _ => .om | .ph _ => .ph | .iota => .iota
 
-/-- Under **Layeredness** ([selkirk-1996]) a node dominates only nodes of its own level or below:
-    σ is the terminal, a foot a non-empty string of σs (foot recursion, contested, is excluded
-    with it), and ω, φ and ι dominate anything at or below their level. Recursion at ω, φ and ι
-    and level skipping, a σ or a foot directly under a φ, are thereby admitted: Nonrecursivity
-    and Exhaustivity are the violable constraints `noRec` and `parseInto`. `Licenses a ks` says
-    that `a` may dominate daughters labelled `ks`. -/
+/-- Under **Layeredness** ([selkirk-1996]) a node dominates only nodes of its own level or below,
+    and the bottom level σ is terminal. Recursion at every level and level skipping, a σ or a
+    foot directly under a φ, are thereby admitted: Nonrecursivity and Exhaustivity are the
+    violable constraints `noRec` and `parseInto`. `Licenses a ks` says that `a` may dominate
+    daughters labelled `ks`. -/
 def Licenses : Constituent → List Constituent → Prop
   | .syl .., ks => ks = []
-  | .ft _, ks => ks ≠ [] ∧ ∀ k ∈ ks, k.level = .syl
   | a, ks => ∀ k ∈ ks, k.level ≤ a.level
 
 instance : ∀ (a : Constituent) (ks : List Constituent), Decidable (Licenses a ks)
   | .syl .., ks => inferInstanceAs (Decidable (ks = []))
-  | .ft _, ks => inferInstanceAs (Decidable (ks ≠ [] ∧ ∀ k ∈ ks, k.level = .syl))
+  | .ft _, ks => inferInstanceAs (Decidable (∀ k ∈ ks, k.level ≤ (Constituent.ft _).level))
   | .om _, ks => inferInstanceAs (Decidable (∀ k ∈ ks, k.level ≤ (Constituent.om _).level))
   | .ph _, ks => inferInstanceAs (Decidable (∀ k ∈ ks, k.level ≤ (Constituent.ph _).level))
   | .iota, ks => inferInstanceAs (Decidable (∀ k ∈ ks, k.level ≤ Constituent.iota.level))

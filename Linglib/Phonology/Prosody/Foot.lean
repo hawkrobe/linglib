@@ -17,7 +17,8 @@ prosodic tree (`Prosody.Tree`) and the metrical grid are functions that recover 
 
 * `IsConstituent` — well-formedness at a prosodic level on the prosodic-tree carrier: a tree
   rooted at that level and licensed by the Layeredness relation `Constituent.Licenses`;
-  `IsFoot` is the `f` level, an `f`-node over a non-empty list of σ-leaves.
+  `IsFoot` is the `f` level, and `IsFoot.syl_leaf` says that a foot with no foot daughter is
+  flat, an `f`-node over σ-leaves.
 * `Foot` — a headed constituent over syllable positions (`head : Fin _`, so non-empty).
 * `Foot.IsTrochaic` / `IsIambic` / `IsBinary` / `IsDegenerate` — derived shape predicates.
 * `Foot.moraCount` — mora count under a weight reading (the quantity axis).
@@ -66,28 +67,37 @@ def IsConstituent (ℓ : Level) (t : Tree) : Prop :=
 instance (ℓ : Level) (t : Tree) : Decidable (IsConstituent ℓ t) :=
   inferInstanceAs (Decidable (_ ∧ _))
 
-/-- A well-formed foot is a licensed tree rooted in an `f`-node, so an `f`-node dominating a
-    non-empty list of σ-leaves, the inviolable Layeredness and σ-Headedness core
-    ([selkirk-1980]; [hayes-1995]). Foot binarity (FtBin) and recursive internally-layered feet
-    (contested, Golston 2021 against [martinez-paricio-kager-2015]) are violable and deferred;
-    these are flat feet, the sibling of `IsWord`'s Layeredness. -/
+/-- A well-formed foot is a licensed tree rooted in an `f`-node ([selkirk-1980]; [hayes-1995]).
+    Layeredness lets a foot dominate σs and feet, so the internally layered foot of
+    [martinez-paricio-kager-2015] (contested, Golston 2021) is admitted by the carrier and
+    scored by the violable `noRec`, like recursion at every other level; foot binarity (FtBin)
+    is violable too. The flat foot is the `noRec = 0` case, `IsFoot.syl_leaf`. -/
 abbrev IsFoot : Tree → Prop := IsConstituent .ft
 
-/-- The daughters of a well-formed foot are σ-leaves. -/
-theorem IsFoot.syl_leaf {t : Tree} (h : IsFoot t) {c : Tree} (hc : c ∈ t.children) :
-    c.value.level = .syl ∧ c.children = [] := by
+/-- The daughters of a foot with no foot daughter are σ-leaves. -/
+theorem IsFoot.syl_leaf {t : Tree} (h : IsFoot t) (hr : ∀ c ∈ t.children, c.value.level ≠ .ft)
+    {c : Tree} (hc : c ∈ t.children) : c.value.level = .syl ∧ c.children = [] := by
   rcases t with ⟨a, cs⟩
   obtain ⟨hft, hl⟩ := h
-  obtain ⟨b, rfl⟩ : ∃ b, a = .ft b := by cases a <;> simp_all [Constituent.level]
-  have hsyl := (RoseTree.licensed_node_iff.mp hl).1.2 c.value (List.mem_map_of_mem hc)
-  refine ⟨hsyl, ?_⟩
+  have hle : c.value.level ≤ a.level := by
+    obtain ⟨b, rfl⟩ : ∃ b, a = .ft b := by cases a <;> simp_all [Constituent.level]
+    exact (RoseTree.licensed_node_iff.mp hl).1 c.value (List.mem_map_of_mem hc)
+  have hne := hr c hc
+  rw [show a.level = .ft from hft] at hle
   rcases c with ⟨cl, ccs⟩
+  simp only [RoseTree.value_node] at hle hne ⊢
+  have hsyl : cl.level = .syl := by
+    cases hlv : cl.level <;> rw [hlv] at hle hne <;>
+      first | rfl | exact absurd hle (by decide) | exact absurd rfl hne
+  refine ⟨hsyl, ?_⟩
   obtain ⟨w, h', rfl⟩ : ∃ w h', cl = .syl w h' := by cases cl <;> simp_all [Constituent.level]
   simpa [Constituent.Licenses] using (RoseTree.licensed_node_iff.mp (hl.of_mem hc)).1
 
--- A σ-leaf is a non-`f` node, so not a foot; a flat `f`-node over a σ-leaf is one.
+-- A σ-leaf is a non-`f` node, so not a foot; a flat `f`-node over a σ-leaf is one, and so is an
+-- internally layered foot.
 example : ¬ IsFoot (.node (.syl 2) []) := by decide
 example : IsFoot (.node .ft [.node (.syl 2) []]) := by decide
+example : IsFoot (.ft false [.ft false [.σ 1, .σ 1], .σ 1]) := by decide
 
 /-! ### The canonical foot -/
 
@@ -210,10 +220,11 @@ theorem headFlags_toProsTree (w : S → Syllable.Weight) (f : Foot S) :
     embedding that bridges footing-on-`Foot` to OT-on-`Tree`. -/
 theorem isFoot_toProsTree (w : S → Syllable.Weight) (f : Foot S) :
     IsFoot (f.toProsTree w) := by
-  have hpos : 0 < f.syllables.length := f.head.pos
-  refine ⟨rfl, RoseTree.licensed_node_iff.mpr ⟨⟨?_, ?_⟩, ?_⟩⟩
-  · simpa [List.finRange_eq_nil_iff] using hpos.ne'
-  · simp [Constituent.level]
+  refine ⟨rfl, RoseTree.licensed_node_iff.mpr ⟨fun k hk ↦ ?_, ?_⟩⟩
+  · obtain ⟨c, hc, rfl⟩ := List.mem_map.mp hk
+    obtain ⟨i, -, rfl⟩ := List.mem_map.mp hc
+    show Level.syl ≤ Level.ft
+    decide
   · simp [Constituent.Licenses]
 
 end Foot
