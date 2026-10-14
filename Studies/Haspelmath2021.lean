@@ -6,7 +6,8 @@ public import Linglib.Data.Examples.Haspelmath2021
 public import Linglib.Discourse.Givenness
 public import Linglib.Semantics.Reference.Definiteness
 public import Linglib.Semantics.Focus.Marking
-public import Linglib.Semantics.Reference.Prominence
+public import Linglib.Semantics.Reference.Animacy
+public import Linglib.Semantics.Reference.Nominality
 public import Studies.BejarRezac2009
 public import Linglib.Syntax.Clause.ArgumentRole
 public import Linglib.Syntax.Clause.Scenario
@@ -40,7 +41,7 @@ with the anti-efficient language of §11.3 that the universals exclude.
   is constant (`ScenarioUniversal.comp_high_le`), since a balanced scenario of two low
   values is coded no longer than an upstream one and no shorter than a downstream one. The
   ternary scales appear only where the paper's rule refers to them: `PersonRank` for
-  Kashmiri, `Animacy` for Sardinian, Spanish, Fore and Awtuw, `NominalType` for Baule;
+  Kashmiri, `Animacy` for Sardinian, Spanish, Fore and Awtuw, `Nominality` for Baule;
   Kolyma Yukaghir's and Greek's rules on the ternary person scale violate Universal 5
   (`yukaghirP_ternary_violates`, `greekT_ternary_violates`).
 * Universal 1's qualification to asymmetric coding is dropped: with coding lengths as the
@@ -87,7 +88,7 @@ with the anti-efficient language of §11.3 that the universals exclude.
 
 namespace Haspelmath2021
 
-open Discourse Reference Reference.Prominence
+open Discourse Reference
 open Focus (Mark)
 open OrderDual (toDual)
 
@@ -132,27 +133,28 @@ theorem ofPerson_le_ofPerson {p q : Person} :
 
 end PersonRank
 
-/-- The nominality scale of (8a) ranks person forms, independent or index, above full nominals. -/
-inductive Nominality where
+/-- The nominality scale of (8a) ranks person forms, independent or index, above full nominals;
+the ternary scale of (49a) is `Reference.Nominality`. -/
+inductive BinaryNominality where
   | fullNominal
   | personForm
   deriving DecidableEq, Fintype, Repr
 
 /-- Rank on the nominality scale. -/
-def Nominality.rank : Nominality → ℕ
+def BinaryNominality.rank : BinaryNominality → ℕ
   | .fullNominal => 0
   | .personForm => 1
 
-instance : LinearOrder Nominality := LinearOrder.lift' Nominality.rank (by decide)
+instance : LinearOrder BinaryNominality := LinearOrder.lift' BinaryNominality.rank (by decide)
 
 /-- `⊥ = fullNominal`, `⊤ = personForm`. -/
-instance : BoundedOrder Nominality where
+instance : BoundedOrder BinaryNominality where
   top := .personForm
   le_top := by decide
   bot := .fullNominal
   bot_le := by decide
 
-instance : IsSimpleOrder Nominality where
+instance : IsSimpleOrder BinaryNominality where
   exists_pair_ne := ⟨.fullNominal, .personForm, by decide⟩
   eq_bot_or_eq_top := by decide
 
@@ -188,21 +190,32 @@ def BinaryAnimacy.ofAnimacy (a : Animacy) : BinaryAnimacy :=
 theorem BinaryAnimacy.ofAnimacy_monotone : Monotone BinaryAnimacy.ofAnimacy := by
   intro a b; revert a b; decide
 
-/-- The scale of (49a), which conditions Baule's ditransitive construction, ranks personal pronouns
-above proper names above common nouns. -/
-inductive NominalType where
-  | commonNoun
-  | properName
-  | pronoun
-  deriving DecidableEq, Fintype, Repr
+/-! ### Cutoff splits
 
-/-- Rank on the scale of (49a). -/
-def NominalType.rank : NominalType → ℕ
-  | .commonNoun => 0
-  | .properName => 1
-  | .pronoun => 2
+A coding split codes the values of a scale on one side of a cutoff specially, the coding length
+`1` there and `0` elsewhere. -/
 
-instance : LinearOrder NominalType := LinearOrder.lift' NominalType.rank (by decide)
+section Cutoff
+
+variable {α : Type*} [LinearOrder α]
+
+/-- The split that codes the values from `x` up specially is `1` at and above the cutoff and
+`0` below it. -/
+def atLeast (x y : α) : ℕ := if x ≤ y then 1 else 0
+
+/-- The split that codes the values below `x` specially is `1` below the cutoff and `0` at and
+above it. -/
+def below (x y : α) : ℕ := if y < x then 1 else 0
+
+theorem atLeast_monotone (x : α) : Monotone (atLeast x) := fun _ _ h ↦ by
+  unfold atLeast
+  split_ifs with h₁ h₂ <;> first | rfl | omega | exact absurd (h₁.trans h) h₂
+
+theorem below_antitone (x : α) : Antitone (below x) := fun _ _ h ↦ by
+  unfold below
+  split_ifs with h₁ h₂ <;> first | rfl | omega | exact absurd (h.trans_lt h₁) h₂
+
+end Cutoff
 
 /-! ### Scenarios (10), (11) -/
 
@@ -447,13 +460,13 @@ def abruzzeseP : Person.Class → ℕ := atLeast .participant
 
 /-- English distinguishes P from A only on person forms (*he* ~ *him*, §4.1.3), a split in indexes
 rather than flags, which fn. 12 allows may have a different explanation. -/
-def englishP : Nominality → ℕ := atLeast .personForm
+def englishP : BinaryNominality → ℕ := atLeast .personForm
 
 /-- Godoberi has an ergative form only for aliophoric A, as in (22); Kham (1) is alike. -/
 def godoberiA : Person.Class → ℕ := below .participant
 
 /-- Warrgamay flags a full-nominal A with the ergative, as in (23). -/
-def warrgamayA : Nominality → ℕ := below .personForm
+def warrgamayA : BinaryNominality → ℕ := below .personForm
 
 /-- Mangarrayi flags an inanimate (neuter) A with the ergative, as in (24). -/
 def mangarrayiA : BinaryAnimacy → ℕ := below .animate
@@ -473,7 +486,7 @@ proper. -/
 def frenchR : Person.Class → ℕ := below .participant
 
 /-- Telkepe Neo-Aramaic flags a full-nominal R with `ta`, as in (29). -/
-def neoAramaicR : Nominality → ℕ := below .personForm
+def neoAramaicR : BinaryNominality → ℕ := below .personForm
 
 /-- Yakkha puts an inanimate R in the locative, as in (30). -/
 def yakkhaR : BinaryAnimacy → ℕ := below .animate
@@ -482,7 +495,7 @@ def yakkhaR : BinaryAnimacy → ℕ := below .animate
 def wolofR : Definiteness → ℕ := below .definite
 
 /-- Ewe flags a person-form T with the serial verb `tsɔ́`, as in (32). -/
-def eweT : Nominality → ℕ := atLeast .personForm
+def eweT : BinaryNominality → ℕ := atLeast .personForm
 
 /-- Akan flags a definite T with the serial verb `de`, as in (33). -/
 def akanT : Definiteness → ℕ := atLeast .definite
@@ -547,10 +560,10 @@ def bulgarianR : Scenario Person.Class → ℕ := atLeast .participant ∘ Scena
 def shambalaR : Scenario Person.Class → ℕ := atLeast .participant ∘ Scenario.low
 
 /-- English requires `to` on R in the N > pers scenario, as in (4). -/
-def englishR (s : Scenario Nominality) : ℕ := if s = ⟨.fullNominal, .personForm⟩ then 1 else 0
+def englishR (s : Scenario BinaryNominality) : ℕ := if s = ⟨.fullNominal, .personForm⟩ then 1 else 0
 
 /-- The American varieties of English require `to` on R whenever T is a person form, as in (44). -/
-def americanEnglishR : Scenario Nominality → ℕ := atLeast .personForm ∘ Scenario.low
+def americanEnglishR : Scenario BinaryNominality → ℕ := atLeast .personForm ∘ Scenario.low
 
 /-- Modern Greek has the T proclitic in downstream and aliophoric balanced scenarios and the
 independent pronoun otherwise, so whenever T is locuphoric, as in (45). -/
@@ -620,7 +633,7 @@ def awtuwP : Scenario Animacy → ℕ := below .downstream ∘ Scenario.kind
 
 /-- Baule flags T with the serial verb `fà` unless R outranks T on the scale of (49a), as in
 (49). -/
-def bauleT : Scenario NominalType → ℕ := below .downstream ∘ Scenario.kind
+def bauleT : Scenario Nominality → ℕ := below .downstream ∘ Scenario.kind
 
 /-- Kashmiri's dative P of (47) falls on the scenarios that the cyclic Agree of [bejar-rezac-2009]
 makes inverse, where their Table 11 puts the internal argument in R-Case, so the relative split and
@@ -658,7 +671,7 @@ theorem universal11_itonama : InverseUniversal itonamaV :=
 def makassarV : Definiteness → ℕ := atLeast .definite
 
 /-- Makassarese requires the applicative `-ang` on the verb for a person-form T, as in (56c). -/
-def makassarVNominality : Nominality → ℕ := atLeast .personForm
+def makassarVNominality : BinaryNominality → ℕ := atLeast .personForm
 
 /-- Makassarese's verb coding is shaped like a split obeying Universal 8 (§9). -/
 theorem makassar_universal8 :
@@ -669,26 +682,26 @@ theorem makassar_universal8 :
 
 /-- Lummi's active construction is available unless the scenario is upstream, as (64) and (65)
 show. -/
-def lummiActive (s : Scenario Nominality) : Prop := s.kind ≠ .upstream
+def lummiActive (s : Scenario BinaryNominality) : Prop := s.kind ≠ .upstream
 
 instance : DecidablePred lummiActive := fun s ↦ inferInstanceAs (Decidable (s.kind ≠ _))
 
 /-- Lummi's passive construction of (64) and (65) is available when A is a full nominal, the common
 condition of the obligatory (64c) and optional (65b) passives. -/
-def lummiPassive (s : Scenario Nominality) : Prop := s.high = .fullNominal
+def lummiPassive (s : Scenario BinaryNominality) : Prop := s.high = .fullNominal
 
 instance : DecidablePred lummiPassive := fun s ↦ inferInstanceAs (Decidable (s.high = _))
 
 /-- Koyra Chiini's double object construction is available only in downstream scenarios, as (66) and
 (67) show; the postpositional dative construction is always available. -/
-def koyraChiiniDoubleObject (s : Scenario Nominality) : Prop := s.kind = .downstream
+def koyraChiiniDoubleObject (s : Scenario BinaryNominality) : Prop := s.kind = .downstream
 
 instance : DecidablePred koyraChiiniDoubleObject :=
   fun s ↦ inferInstanceAs (Decidable (s.kind = _))
 
 /-- The English double object construction is available except in the N > pers scenario, as (4) and
 (60) show; the prepositional dative construction is always available. -/
-def englishDoubleObject (s : Scenario Nominality) : Prop := s ≠ ⟨.fullNominal, .personForm⟩
+def englishDoubleObject (s : Scenario BinaryNominality) : Prop := s ≠ ⟨.fullNominal, .personForm⟩
 
 instance : DecidablePred englishDoubleObject := fun s ↦ inferInstanceAs (Decidable (s ≠ _))
 
@@ -795,7 +808,7 @@ def Person.Class.table : List (String × Person.Class) :=
 def PersonRank.table : List (String × PersonRank) := [("1", .first), ("2", .second), ("3", .third)]
 
 /-- The nominality tags of the rows. -/
-def Nominality.table : List (String × Nominality) :=
+def BinaryNominality.table : List (String × BinaryNominality) :=
   [("personForm", .personForm), ("fullNominal", .fullNominal), ("pers", .personForm),
     ("N", .fullNominal)]
 
@@ -820,7 +833,7 @@ def focusTable : List (String × Markᵒᵈ) :=
   [("background", toDual .nonFocused), ("focus", toDual .focused)]
 
 /-- The nominal-type tags of the rows. -/
-def NominalType.table : List (String × NominalType) :=
+def Nominality.table : List (String × Nominality) :=
   [("pers", .pronoun), ("prop", .properName), ("common", .commonNoun)]
 
 /-- The single-argument P and A splits of §4.1 and §4.2 reproduce the paper's examples, the Punjabi
@@ -832,7 +845,7 @@ theorem rows_splitP_splitA :
       Reproduces (rows "west2369" "P" "givenness") (prominence? BinaryGivenness.table) persianP ∧
       Reproduces (rows "neap1235" "P" "person") (prominence? Person.Class.table) abruzzeseP ∧
       Reproduces (rows "taka1261" "A" "person") (prominence? Person.Class.table) godoberiA ∧
-      Reproduces (rows "warr1255" "A" "nominality") (prominence? Nominality.table) warrgamayA ∧
+      Reproduces (rows "warr1255" "A" "nominality") (prominence? BinaryNominality.table) warrgamayA ∧
       Reproduces (rows "mang1381" "A" "animacy") (prominence? BinaryAnimacy.table) mangarrayiA ∧
       Reproduces (rows "cent2346" "A" "focus") (prominence? focusTable) tibetanA := by
   decide
@@ -840,14 +853,14 @@ theorem rows_splitP_splitA :
 /-- The single-argument R and T splits of §5 and Makassarese's verb coding of §9 reproduce the
 paper's examples. -/
 theorem rows_splitR_splitT :
-    Reproduces (rows "telk1238" "R" "nominality") (prominence? Nominality.table) neoAramaicR ∧
+    Reproduces (rows "telk1238" "R" "nominality") (prominence? BinaryNominality.table) neoAramaicR ∧
       Reproduces (rows "yakk1236" "R" "animacy") (prominence? BinaryAnimacy.table) yakkhaR ∧
       Reproduces (rows "nucl1347" "R" "definiteness") (prominence? Definiteness.table) wolofR ∧
-      Reproduces (rows "ewee1241" "T" "nominality") (prominence? Nominality.table) eweT ∧
+      Reproduces (rows "ewee1241" "T" "nominality") (prominence? BinaryNominality.table) eweT ∧
       Reproduces (rows "akan1250" "T" "definiteness") (prominence? Definiteness.table) akanT ∧
       Reproduces (rows "nucl1302" "T" "person") (prominence? Person.Class.table) georgianT ∧
       Reproduces (rows "maka1311" "T" "definiteness") (prominence? Definiteness.table) makassarV ∧
-      Reproduces (rows "maka1311" "T" "nominality") (prominence? Nominality.table)
+      Reproduces (rows "maka1311" "T" "nominality") (prominence? BinaryNominality.table)
         makassarVNominality := by
   decide
 
@@ -863,26 +876,26 @@ theorem rows_scenario :
       Reproduces (rows "bulg1262" "R" "person") (scenario? Person.Class.table) bulgarianR ∧
       Reproduces (rows "sham1280" "R" "person") (scenario? Person.Class.table) shambalaR ∧
       Reproduces ((rows "stan1293" "R" "nominality").filter (·.feature? "variety" = none))
-        (scenario? Nominality.table) englishR ∧
+        (scenario? BinaryNominality.table) englishR ∧
       Reproduces ((rows "stan1293" "R" "nominality").filter
           (·.feature? "variety" = some "American"))
-        (scenario? Nominality.table) americanEnglishR ∧
+        (scenario? BinaryNominality.table) americanEnglishR ∧
       Reproduces (rows "mode1248" "T" "person") (scenario? Person.Class.table) greekT ∧
       Reproduces (rows "icel1247" "R" "animacy") (scenario? BinaryAnimacy.table) icelandicR ∧
       Reproduces (rows "kash1277" "P" "person") (scenario? PersonRank.table) kashmiriP ∧
-      Reproduces (rows "baou1238" "T" "nominal type") (scenario? NominalType.table) bauleT ∧
+      Reproduces (rows "baou1238" "T" "nominal type") (scenario? Nominality.table) bauleT ∧
       Reproduces (rows "iton1250" "verb" "person") (scenario? Person.Class.table) itonamaV := by
   decide
 
 /-- The splitting alternations of §10.2 and (4) reproduce the paper's examples. -/
 theorem rows_alternations :
-    ReproducesAlternation (rows "lumm1243" "A" "nominality") (scenario? Nominality.table)
+    ReproducesAlternation (rows "lumm1243" "A" "nominality") (scenario? BinaryNominality.table)
         lummiActive lummiPassive ∧
-      ReproducesAlternation (rows "koyr1240" "R" "nominality") (scenario? Nominality.table)
+      ReproducesAlternation (rows "koyr1240" "R" "nominality") (scenario? BinaryNominality.table)
         koyraChiiniDoubleObject (fun _ ↦ True) ∧
       ReproducesAlternation ((rows "stan1293" "R" "nominality").filter
           (·.feature? "variety" = none))
-        (scenario? Nominality.table) englishDoubleObject (fun _ ↦ True) := by
+        (scenario? BinaryNominality.table) englishDoubleObject (fun _ ↦ True) := by
   decide
 
 end Examples

@@ -4,6 +4,7 @@ public import Mathlib.Tactic.DeriveFintype
 public import Linglib.Syntax.Case.Alignment
 public import Linglib.Fragments.HindiUrdu.Case
 public import Linglib.Semantics.Reference.Animacy
+public import Linglib.Semantics.Reference.Nominality
 public import Linglib.Data.Examples.Dixon1994
 
 /-!
@@ -115,6 +116,17 @@ def Nominal.rank : Nominal → ℕ
   | .common a => a.rank
 
 instance : LinearOrder Nominal := LinearOrder.lift' Nominal.rank (by decide)
+
+/-- The pronoun positions of the Nominal Hierarchy are pronouns, the proper-name position names,
+and the rest common nouns. -/
+def Nominal.nominality : Nominal → Reference.Nominality
+  | .firstPerson | .secondPerson | .thirdPerson => .pronoun
+  | .properName => .properName
+  | .common _ => .commonNoun
+
+/-- The Nominal Hierarchy refines nominality. -/
+theorem Nominal.nominality_monotone : Monotone Nominal.nominality := by
+  intro a b; revert a b; decide
 
 variable {H : Type*}
 

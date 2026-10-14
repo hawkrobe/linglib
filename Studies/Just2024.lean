@@ -3,7 +3,7 @@ module
 public import Mathlib.Data.Fintype.Pi
 public import Mathlib.Tactic.DeriveFintype
 public import Linglib.Data.Examples.Just2024
-public import Linglib.Semantics.Reference.Prominence
+public import Studies.Haspelmath2021
 public import Linglib.Syntax.Clause.ArgumentRole
 public import Linglib.Syntax.Clause.Scenario
 public import Linglib.Syntax.Person.Basic
@@ -19,7 +19,7 @@ mirror images because the roles differ in default prominence: A referents are ty
 prominent, so a non-prominent or focused A loses an otherwise present index, while P referents
 typically are not, so a topical, definite, or animate P gains one. The principle is
 `Indexed`, prominence at or above the threshold, whose coding length is the cutoff split
-`Reference.Prominence.atLeast`, and `deviation_coding` derives the mirror
+`Haspelmath2021.atLeast`, and `deviation_coding` derives the mirror
 image and its consequence for coding asymmetries: a referent that deviates from its role's
 default receives longer coding exactly when the default is unindexed, so the generalization
 of [haspelmath-2021] that deviations from role-reference associations are coded by longer
@@ -54,7 +54,7 @@ argument the scenario's kind under that ranking favours, as the paper argues aft
 namespace Just2024
 
 open Clause (Scenario)
-open Reference.Prominence (atLeast)
+open Haspelmath2021 (atLeast)
 
 /-! ### Indexing and referential prominence -/
 

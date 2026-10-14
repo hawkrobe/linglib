@@ -24,8 +24,6 @@ fits them when its marked zones are upper or lower sets (`Alignment.Fits`).
   `DefinitenessScale.definiteness` at the definites.
 * `AnimacyHierarchy`: the hierarchy of plural marking, from the speaker down to the nondiscrete
   inanimates.
-* `atLeast`, `below`: the coding lengths of a cutoff split on a scale, the special coding on
-  the values from a cutoff up, as P and T splits have it, or below it, as A and R splits do.
 
 What is specific to a paper lives with that paper: the scenario universals in
 `Studies/Haspelmath2021.lean`, the OT typology in `Studies/Aissen2003.lean`, and the prominence
@@ -118,29 +116,5 @@ theorem definiteness_monotone : Monotone definiteness := by
   intro a b; revert a b; decide
 
 end DefinitenessScale
-
-/-! ### Cutoff splits -/
-
-section Cutoff
-
-variable {α : Type*} [LinearOrder α]
-
-/-- The split that codes the values from `x` up specially is `1` at and above the cutoff and
-`0` below it. -/
-def atLeast (x y : α) : ℕ := if x ≤ y then 1 else 0
-
-/-- The split that codes the values below `x` specially is `1` below the cutoff and `0` at and
-above it. -/
-def below (x y : α) : ℕ := if y < x then 1 else 0
-
-theorem atLeast_monotone (x : α) : Monotone (atLeast x) := fun _ _ h ↦ by
-  unfold atLeast
-  split_ifs with h₁ h₂ <;> first | rfl | omega | exact absurd (h₁.trans h) h₂
-
-theorem below_antitone (x : α) : Antitone (below x) := fun _ _ h ↦ by
-  unfold below
-  split_ifs with h₁ h₂ <;> first | rfl | omega | exact absurd (h.trans_lt h₁) h₂
-
-end Cutoff
 
 end Reference.Prominence
