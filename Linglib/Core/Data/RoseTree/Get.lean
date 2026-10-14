@@ -393,6 +393,15 @@ theorem mem_positionedSubtrees {t s : RoseTree α} {p : TreePath} :
   refine ⟨fun ⟨_, _, _, hs, rfl, rfl⟩ ↦ hs, fun hs ↦ ?_⟩
   exact ⟨p.toList, mem_vertices.mpr (by rw [hs]; rfl), s, hs, rfl, rfl⟩
 
+theorem nodup_map_fst_positionedSubtrees (t : RoseTree α) :
+    (t.positionedSubtrees.map Prod.fst).Nodup := by
+  rw [positionedSubtrees, List.map_filterMap]
+  refine (nodup_vertices t).filterMap fun p q r hp hq ↦ ?_
+  simp only [Option.map_map, Function.comp_def, Option.mem_def, Option.map_eq_some_iff] at hp hq
+  obtain ⟨-, -, rfl⟩ := hp
+  obtain ⟨-, -, h⟩ := hq
+  exact congrArg TreePath.toList h.symm
+
 /-! ### The leaves with their addresses -/
 
 /-- `positionedLeaves t` lists the leaves of `t` from left to right, each with its address. -/
