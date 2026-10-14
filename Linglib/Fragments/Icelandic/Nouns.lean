@@ -11,12 +11,12 @@ public import Linglib.Syntax.Category.Noun.Basic
 /-!
 # Icelandic nouns
 
-Icelandic has three genders, the masculine, the feminine and the neuter, and the gender of a
-noun is only indirectly related to the sex of its referents: most nouns for women are feminine,
-but *skáld* 'poet' is neuter whoever the poet, as Thráinsson's overview of the nominal
-inflection notes. The gendered nouns are those of [adamson-anagnostopoulou-2025]'s Icelandic
-examples and of the coordinations [corbett-1991] resolves, each with its grammatical gender,
-the gender of its referents where they have one, and whether it denotes a human.
+Icelandic has three genders, the masculine, the feminine and the neuter, and the gender of a noun is
+only indirectly related to the sex of its referents: most nouns for women are feminine, but *skáld*
+'poet' is neuter whoever the poet, as Thráinsson's overview of the nominal inflection notes. The
+gendered nouns are those of Adamson and Anagnostopoulou's Icelandic examples and of the
+coordinations Corbett resolves, each with its grammatical gender and the gender of its referents
+where they have one.
 
 The deverbal nouns are each segmented into their morphs: an optional prefixed preposition,
 the root, an optional overt verbalizer, and a nominalizing suffix. The nominalizers are many
@@ -27,13 +27,12 @@ separate word are prefixed to its noun: *gera við* 'repair', *við-ger-ð*.
 
 ## Main definitions
 
-* `Icelandic.Nouns.Noun`: a noun with its gender and whether it denotes a human.
 * `Icelandic.Nouns.Deverbal`, `Icelandic.Nouns.Deverbal.morphs`, `Icelandic.Nouns.deverbals`: a
   deverbal noun segmented, its morphs in linear order, and the entries.
 
 ## Implementation notes
 
-Morphs are given in their surface forms, as segmented in [wood-2023]: the roots of *söfn-un*,
+Morphs are given in their surface forms, as segmented by Wood: the roots of *söfn-un*,
 *vönt-un*, *við-vör-un* and *um-önn-un* show the regular u-umlaut of *safna*, *vanta*, *vara*
 and *annast*.
 
@@ -53,63 +52,52 @@ open Morphology (Morph)
 
 /-! ### Gendered nouns -/
 
-/-- A noun with its grammatical gender and whether it denotes a human. -/
-structure Noun extends GenderedNoun _root_.Gender where
-  /-- Whether the noun denotes a human; the natural-gender flag marks the humans whose gender
-  is not fixed. -/
-  human : Bool
-  deriving DecidableEq, Repr
-
 /-- *maður* 'man', masculine. -/
-def madur : Noun :=
-  { form := "maður", gloss := "man", gender := .masculine,
-    naturalGender := some .masculine, human := true }
+def madur : GenderedNoun _root_.Gender :=
+  { form := "maður", gloss := "man", gender := .masculine, naturalGender := some .masculine }
 
 /-- *kona* 'woman', feminine. -/
-def kona : Noun :=
-  { form := "kona", gloss := "woman", gender := .feminine,
-    naturalGender := some .feminine, human := true }
+def kona : GenderedNoun _root_.Gender :=
+  { form := "kona", gloss := "woman", gender := .feminine, naturalGender := some .feminine }
 
 /-- *Jón*, a man's name, masculine. -/
-def jon : Noun :=
-  { form := "Jón", gloss := "Jón", gender := .masculine,
-    naturalGender := some .masculine, human := true }
+def jon : GenderedNoun _root_.Gender :=
+  { form := "Jón", gloss := "Jón", gender := .masculine, naturalGender := some .masculine }
 
 /-- *skáld* 'poet', neuter whatever the sex of the poet. -/
-def skald : Noun := { form := "skáld", gloss := "poet", gender := .neuter, human := true }
+def skald : GenderedNoun _root_.Gender := { form := "skáld", gloss := "poet", gender := .neuter }
 
 /-- *frægð* 'fame', feminine. -/
-def fraegd : Noun := { form := "frægð", gloss := "fame", gender := .feminine, human := false }
+def fraegd : GenderedNoun _root_.Gender := { form := "frægð", gloss := "fame", gender := .feminine }
 
 /-- *frami* 'success', masculine. -/
-def frami : Noun := { form := "frami", gloss := "success", gender := .masculine, human := false }
+def frami : GenderedNoun _root_.Gender :=
+  { form := "frami", gloss := "success", gender := .masculine }
 
 /-- *skeið* 'spoon', feminine. -/
-def skeid : Noun := { form := "skeið", gloss := "spoon", gender := .feminine, human := false }
+def skeid : GenderedNoun _root_.Gender := { form := "skeið", gloss := "spoon", gender := .feminine }
 
 /-- *stóll* 'chair', masculine. -/
-def stoll : Noun := { form := "stóll", gloss := "chair", gender := .masculine, human := false }
+def stoll : GenderedNoun _root_.Gender :=
+  { form := "stóll", gloss := "chair", gender := .masculine }
 
 /-- *epli* 'apple', neuter. -/
-def epli : Noun := { form := "epli", gloss := "apple", gender := .neuter, human := false }
+def epli : GenderedNoun _root_.Gender := { form := "epli", gloss := "apple", gender := .neuter }
 
 /-- *drengur* 'boy', masculine. -/
-def drengur : Noun :=
-  { form := "drengur", gloss := "boy", gender := .masculine,
-    naturalGender := some .masculine, human := true }
+def drengur : GenderedNoun _root_.Gender :=
+  { form := "drengur", gloss := "boy", gender := .masculine, naturalGender := some .masculine }
 
 /-- *telpa* 'girl', feminine. -/
-def telpa : Noun :=
-  { form := "telpa", gloss := "girl", gender := .feminine,
-    naturalGender := some .feminine, human := true }
+def telpa : GenderedNoun _root_.Gender :=
+  { form := "telpa", gloss := "girl", gender := .feminine, naturalGender := some .feminine }
 
 /-- *ær* 'ewe', feminine, the *á* of [corbett-1991]'s ch. 9 (57) its accusative. -/
-def aer : Noun :=
-  { form := "ær", gloss := "ewe", gender := .feminine, naturalGender := some .feminine,
-    human := false }
+def aer : GenderedNoun _root_.Gender :=
+  { form := "ær", gloss := "ewe", gender := .feminine, naturalGender := some .feminine }
 
 /-- *lamb* 'lamb', neuter. -/
-def lamb : Noun := { form := "lamb", gloss := "lamb", gender := .neuter, human := false }
+def lamb : GenderedNoun _root_.Gender := { form := "lamb", gloss := "lamb", gender := .neuter }
 
 /-! ### Deverbal nouns -/
 

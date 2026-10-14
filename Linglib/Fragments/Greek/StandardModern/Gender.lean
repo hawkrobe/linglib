@@ -3,11 +3,13 @@ module
 public import Linglib.Syntax.Category.Noun.Basic
 
 /-!
-# Modern Greek nouns by gender and humanness
+# Modern Greek nouns by gender
 
-The nouns of [adamson-anagnostopoulou-2025]'s Greek examples with their grammatical gender and
-whether they denote humans: conceptually gendered humans, fixed-gender humans such as
-*megalofiia* 'genius' and *thima* 'victim', and inanimates of all three genders.
+The nouns of Adamson and Anagnostopoulou's Greek examples, each with its grammatical gender and the
+gender of its referents where they have one. The gender of *andras* 'man' and *gineka* 'woman' is
+natural, the gender of their referents. *Koritsi* 'girl' is neuter though its referents are female,
+and *megalofiia* 'genius' and *thima* 'victim' are feminine and neuter whoever they refer to. The
+inanimates are of all three genders.
 
 ## References
 
@@ -18,64 +20,121 @@ whether they denote humans: conceptually gendered humans, fixed-gender humans su
 
 namespace Greek.StandardModern.Gender
 
-/-- A noun with its grammatical gender and whether it denotes a human. -/
-structure Noun extends GenderedNoun _root_.Gender where
-  /-- Whether the noun denotes a human; the natural-gender flag marks the humans whose gender
-  is not fixed. -/
-  human : Bool
-  deriving DecidableEq, Repr
+/-- *andras* 'man'. -/
+def andras : GenderedNoun _root_.Gender :=
+  { form := "andras", gloss := "man", gender := .masculine, naturalGender := some .masculine }
 
-def andras : Noun :=
-  { form := "andras", gloss := "man", gender := .masculine,
-    naturalGender := some .masculine, human := true }
-def gineka : Noun :=
-  { form := "gineka", gloss := "woman", gender := .feminine,
-    naturalGender := some .feminine, human := true }
-def petros : Noun :=
-  { form := "Petros", gloss := "Petros", gender := .masculine,
-    naturalGender := some .masculine, human := true }
-def maria : Noun :=
-  { form := "Maria", gloss := "Maria", gender := .feminine,
-    naturalGender := some .feminine, human := true }
-def kleftis : Noun :=
-  { form := "kleftis", gloss := "thief", gender := .masculine,
-    naturalGender := some .masculine, human := true }
-def giorgos : Noun :=
+/-- *gineka* 'woman'. -/
+def gineka : GenderedNoun _root_.Gender :=
+  { form := "gineka", gloss := "woman", gender := .feminine, naturalGender := some .feminine }
+
+/-- *Petros*. -/
+def petros : GenderedNoun _root_.Gender :=
+  { form := "Petros", gloss := "Petros", gender := .masculine, naturalGender := some .masculine }
+
+/-- *Kostas*. -/
+def kostas : GenderedNoun _root_.Gender :=
+  { form := "Kostas", gloss := "Kostas", gender := .masculine, naturalGender := some .masculine }
+
+/-- *Giorgos*. -/
+def giorgos : GenderedNoun _root_.Gender :=
   { form := "Giorgos", gloss := "Giorgos", gender := .masculine,
-    naturalGender := some .masculine, human := true }
-def adherfi : Noun :=
-  { form := "adherfi", gloss := "sister", gender := .feminine,
-    naturalGender := some .feminine, human := true }
-def mitera : Noun :=
-  { form := "mitera", gloss := "mother", gender := .feminine,
-    naturalGender := some .feminine, human := true }
-/-- Fixed-gender human: feminine whatever the referent. -/
-def megalofiia : Noun :=
-  { form := "megalofiia", gloss := "genius", gender := .feminine, human := true }
-/-- Fixed-gender human: neuter whatever the referent. -/
-def thima : Noun := { form := "thima", gloss := "victim", gender := .neuter, human := true }
-def koritsi : Noun := { form := "koritsi", gloss := "girl", gender := .neuter, human := true }
-def pinakas : Noun :=
-  { form := "pinakas", gloss := "blackboard, painting", gender := .masculine, human := false }
-def karekla : Noun := { form := "karekla", gloss := "chair", gender := .feminine, human := false }
-def piruni : Noun := { form := "piruni", gloss := "fork", gender := .neuter, human := false }
-def kutali : Noun := { form := "kutali", gloss := "spoon", gender := .neuter, human := false }
-def fusta : Noun := { form := "fusta", gloss := "skirt", gender := .feminine, human := false }
-def bluza : Noun := { form := "bluza", gloss := "T-shirt", gender := .feminine, human := false }
-def anaptiras : Noun :=
-  { form := "anaptiras", gloss := "lighter", gender := .masculine, human := false }
-def fakos : Noun := { form := "fakos", gloss := "torch", gender := .masculine, human := false }
-def scholio : Noun := { form := "scholio", gloss := "school", gender := .neuter, human := false }
-def ekklisia : Noun :=
-  { form := "ekklisia", gloss := "church", gender := .feminine, human := false }
-def balkoni : Noun := { form := "balkoni", gloss := "balcony", gender := .neuter, human := false }
-def dhiadhromos : Noun :=
-  { form := "dhiadhromos", gloss := "corridor", gender := .masculine, human := false }
-def daxtilidi : Noun := { form := "daxtilidi", gloss := "ring", gender := .neuter, human := false }
-def ombrela : Noun :=
-  { form := "ombrela", gloss := "umbrella", gender := .feminine, human := false }
-def fotografia : Noun :=
-  { form := "fotografia", gloss := "picture", gender := .feminine, human := false }
-def pukamiso : Noun := { form := "pukamiso", gloss := "shirt", gender := .neuter, human := false }
+    naturalGender := some .masculine }
+
+/-- *Maria*. -/
+def maria : GenderedNoun _root_.Gender :=
+  { form := "Maria", gloss := "Maria", gender := .feminine, naturalGender := some .feminine }
+
+/-- *Giota*. -/
+def giota : GenderedNoun _root_.Gender :=
+  { form := "Giota", gloss := "Giota", gender := .feminine, naturalGender := some .feminine }
+
+/-- *kleftis* 'thief'. -/
+def kleftis : GenderedNoun _root_.Gender :=
+  { form := "kleftis", gloss := "thief", gender := .masculine, naturalGender := some .masculine }
+
+/-- *filos* 'friend'. -/
+def filos : GenderedNoun _root_.Gender :=
+  { form := "filos", gloss := "friend", gender := .masculine, naturalGender := some .masculine }
+
+/-- *adherfi* 'sister'. -/
+def adherfi : GenderedNoun _root_.Gender :=
+  { form := "adherfi", gloss := "sister", gender := .feminine, naturalGender := some .feminine }
+
+/-- *mitera* 'mother'. -/
+def mitera : GenderedNoun _root_.Gender :=
+  { form := "mitera", gloss := "mother", gender := .feminine, naturalGender := some .feminine }
+
+/-- *koritsi* 'girl', neuter though its referents are female. -/
+def koritsi : GenderedNoun _root_.Gender :=
+  { form := "koritsi", gloss := "girl", gender := .neuter, naturalGender := some .feminine }
+
+/-- *megalofiia* 'genius', feminine whoever the genius. -/
+def megalofiia : GenderedNoun _root_.Gender :=
+  { form := "megalofiia", gloss := "genius", gender := .feminine }
+
+/-- *thima* 'victim', neuter whoever the victim. -/
+def thima : GenderedNoun _root_.Gender := { form := "thima", gloss := "victim", gender := .neuter }
+
+/-- *pinakas* 'blackboard, painting'. -/
+def pinakas : GenderedNoun _root_.Gender :=
+  { form := "pinakas", gloss := "blackboard, painting", gender := .masculine }
+
+/-- *karekla* 'chair'. -/
+def karekla : GenderedNoun _root_.Gender :=
+  { form := "karekla", gloss := "chair", gender := .feminine }
+
+/-- *piruni* 'fork'. -/
+def piruni : GenderedNoun _root_.Gender := { form := "piruni", gloss := "fork", gender := .neuter }
+
+/-- *kutali* 'spoon'. -/
+def kutali : GenderedNoun _root_.Gender := { form := "kutali", gloss := "spoon", gender := .neuter }
+
+/-- *fusta* 'skirt'. -/
+def fusta : GenderedNoun _root_.Gender := { form := "fusta", gloss := "skirt", gender := .feminine }
+
+/-- *bluza* 'T-shirt'. -/
+def bluza : GenderedNoun _root_.Gender :=
+  { form := "bluza", gloss := "T-shirt", gender := .feminine }
+
+/-- *anaptiras* 'lighter'. -/
+def anaptiras : GenderedNoun _root_.Gender :=
+  { form := "anaptiras", gloss := "lighter", gender := .masculine }
+
+/-- *fakos* 'torch'. -/
+def fakos : GenderedNoun _root_.Gender :=
+  { form := "fakos", gloss := "torch", gender := .masculine }
+
+/-- *scholio* 'school'. -/
+def scholio : GenderedNoun _root_.Gender :=
+  { form := "scholio", gloss := "school", gender := .neuter }
+
+/-- *ekklisia* 'church'. -/
+def ekklisia : GenderedNoun _root_.Gender :=
+  { form := "ekklisia", gloss := "church", gender := .feminine }
+
+/-- *balkoni* 'balcony'. -/
+def balkoni : GenderedNoun _root_.Gender :=
+  { form := "balkoni", gloss := "balcony", gender := .neuter }
+
+/-- *dhiadhromos* 'corridor'. -/
+def dhiadhromos : GenderedNoun _root_.Gender :=
+  { form := "dhiadhromos", gloss := "corridor", gender := .masculine }
+
+/-- *daxtilidi* 'ring'. -/
+def daxtilidi : GenderedNoun _root_.Gender :=
+  { form := "daxtilidi", gloss := "ring", gender := .neuter }
+
+/-- *ombrela* 'umbrella'. -/
+def ombrela : GenderedNoun _root_.Gender :=
+  { form := "ombrela", gloss := "umbrella", gender := .feminine }
+
+/-- *fotografia* 'picture'. -/
+def fotografia : GenderedNoun _root_.Gender :=
+  { form := "fotografia", gloss := "picture", gender := .feminine }
+
+/-- *pukamiso* 'shirt'. -/
+def pukamiso : GenderedNoun _root_.Gender :=
+  { form := "pukamiso", gloss := "shirt", gender := .neuter }
 
 end Greek.StandardModern.Gender
