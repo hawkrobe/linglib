@@ -253,6 +253,12 @@ def ofPartialProp (p : PartialProp W) : CCP.Partial W :=
     (h : ((ofPartialProp p) s).Dom) :
     ((ofPartialProp p) s).get h = { w ∈ s | p.assertion w } := rfl
 
+/-- `t` is the update of `s` exactly when `s` admits the proposition and `t` is the part of `s`
+where the assertion holds. -/
+theorem mem_ofPartialProp (p : PartialProp W) (s t : Set W) :
+    t ∈ ofPartialProp p s ↔ p.Admits s ∧ {w ∈ s | p.assertion w} = t :=
+  ⟨fun ⟨h, e⟩ => ⟨h, e⟩, fun ⟨h, e⟩ => ⟨h, e⟩⟩
+
 /-- A context is a fixed point of an atomic update iff the presupposition and the assertion
 hold throughout it ([heim-1992]'s `c + φ = same`). -/
 theorem mem_ofPartialProp_self (p : PartialProp W) (s : Set W) :

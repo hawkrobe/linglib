@@ -1,46 +1,50 @@
 module
 
 public import Mathlib.Tactic.FinCases
-public import Mathlib.Data.Fintype.Basic
 public import Linglib.Semantics.Presupposition.Trivalent
-public import Linglib.Logic.Trivalent.Pointwise
-public import Linglib.Data.Examples.Yagi2025
+public import Linglib.Semantics.Dynamic.Partial
 
 /-!
 # Yagi (2025): Conflicting Presuppositions in Disjunction
 
-This file formalizes [yagi-2025]'s survey of disjunctions whose disjuncts carry contradictory
+This file formalizes Yagi's survey of disjunctions whose disjuncts carry contradictory
 presuppositions (`Conflict`), *Either the King of Buganda is opening parliament or the
 President of Buganda is conducting the ceremony*. Such a disjunction presupposes the
 disjunction of the two presuppositions and is false when that holds and both disjuncts are
 false. Four theories fail the second observation. Under Strong Kleene disjunction the sentence
 is true whenever defined, so it is never false and its negation never true
-(`orStrong_ne_false`, `neg_orStrong_ne_true`); the symmetric two-dimensional definition of
-[karttunen-peters-1979] has a presupposition that entails the assertion
+(`orStrong_ne_false`, `neg_orStrong_ne_true`); the symmetric two-dimensional disjunction in the
+tradition of Karttunen and Peters has a presupposition that entails the assertion
 (`orKPSymmetric_ne_false`), and replacing it by the disjunction of the presuppositions
-(`orSeven`) fixes the case but predicts a tautologous presupposition for *either baldness is
-not hereditary or all of Bill's children are bald* (`orSeven_presup_of_left`); the update
-of [heim-1982] and [beaver-2001], with failure as a designated state, is defined only when the
+(`orPresupOr`) fixes the case but predicts a tautologous presupposition for *either baldness is
+not hereditary or all of Bill's children are bald* (`orPresupOr_presup_of_left`); the update
+semantics of Heim and Beaver, with failure as a designated state, is defined only when the
 first disjunct already holds throughout the input, so it is uninformative wherever defined
-(`disjS_eq_some_iff`); and the local contexts of [schlenker-2009] admit only worlds where one
-disjunct is defined and true (`local_contexts_force_truth`). Of the two reactions, the
-meta-assertion operator of [beaver-krahmer-2001] makes the disjunction false, but also where
-neither presupposition holds, and leaves it presuppositionless (`or_assertMeta_false_iff`,
-`or_assertMeta_presup`); inserting it on one disjunct under Strong Kleene yields only a
-conditional presupposition (`orStrong_assertMeta_presup_iff`). Flexible accommodation splits
-the input by two accommodated propositions (`flexS`). With the default tautologies it is
-never defined under conflict (`flexS_top_eq_none`) and violates genuineness when a
-presupposition contradicts the other disjunct (`not_genuine_top`); accommodating each
-disjunct's negated rival presupposition derives both observations (`flexS_split_eq_some_iff`,
-`negOf_flexS_split`), at the cost of demanding accommodation where the standard update
-filters the presupposition away (`exists_disjS_some_flexS_top_none`).
+(`mem_disj_iff`); and Schlenker's local contexts admit only worlds where one disjunct is
+defined and true (`local_contexts_force_truth`). Of the two reactions, Beaver and Krahmer's
+meta-assertion operator makes the disjunction false, but also where neither presupposition
+holds, and leaves it presuppositionless (`or_assertMeta_false_iff`, `or_assertMeta_presup`);
+inserting it on one disjunct under Strong Kleene yields only a conditional presupposition
+(`orStrong_assertMeta_presup_iff`).
+
+Flexible accommodation evaluates each disjunct in the input restricted by an accommodated
+proposition (`flex`). The standard update is the case where the second disjunct's
+proposition is the negation of the first (`flex_univ_eq_disj`), which gives the conditional
+presupposition of *Either Bill has no child or all of Bill's children are bald*
+(`admits_flex_univ_iff`, `bill`). With tautologies accommodated the update is never defined
+under conflict (`not_admits_flex_univ_univ`) and is not genuine when a presupposition
+contradicts the other disjunct (`not_genuine_flex_univ_univ`); accommodating each disjunct's
+negated rival presupposition derives both observations (`mem_flex_rival_iff`,
+`neg_flex_rival`, `buganda`), at the cost of demanding accommodation where the standard update
+filters the presupposition away (`exists_admits_disj_not_admits_flex_univ_univ`).
 
 ## Implementation notes
 
-The designated undefined state of the update semantics is `none` on `Option (Set W)`, with
-union and subtraction absorbing it. The meta-assertion operator is stated on partial
-propositions and agrees with the pointwise trivalent meta-assertion (`eval_assertMeta`). The
-licensing constraint on the operator is not modelled.
+The designated undefined state of the update semantics is the undefined value of `Part`, the
+updates being the substrate's partial context change potentials. The meta-assertion operator
+is the trivalent one lifted to partial propositions. The licensing constraint on the operator is
+not modelled. The paper's examples are the rows of `Data.Examples.Yagi2025`; (1c) and (4) are
+modelled by the Buganda input and (15a) by the Bill input.
 
 ## References
 
@@ -50,6 +54,7 @@ licensing constraint on the operator is not modelled.
 * [geurts-2005]
 * [heim-1982]
 * [karttunen-peters-1979]
+* [katzir-singh-2012]
 * [schlenker-2009]
 * [zimmermann-2000]
 -/
@@ -58,7 +63,7 @@ licensing constraint on the operator is not modelled.
 
 namespace Yagi2025
 
-open Presupposition Trivalent Classical
+open Presupposition DynamicSemantics CCP.Partial
 
 variable {W : Type*}
 
@@ -68,16 +73,12 @@ def Conflict (φ ψ : PartialProp W) : Prop := ∀ w, ¬ (φ.presup w ∧ ψ.pre
 /-- A partial proposition whose presupposition entails its assertion is never false. -/
 theorem eval_ne_false_of_imp {d : PartialProp W} {w : W} (h : d.presup w → d.assertion w) :
     d.eval w ≠ .false := by
-  by_cases hp : d.presup w
-  · simp [PartialProp.eval, hp, h hp]
-  · simp [PartialProp.eval, hp]
+  simpa using h
 
 /-- Its negation is never true. -/
 theorem eval_neg_ne_true_of_imp {d : PartialProp W} {w : W}
     (h : d.presup w → d.assertion w) : (PartialProp.neg d).eval w ≠ .true := by
-  by_cases hp : d.presup w
-  · simp [PartialProp.eval, PartialProp.neg, hp, h hp]
-  · simp [PartialProp.eval, PartialProp.neg, hp]
+  simpa [PartialProp.neg] using h
 
 /-! ### Strong Kleene and two-dimensional disjunction -/
 
@@ -106,108 +107,45 @@ theorem orKPSymmetric_ne_false (h : Conflict φ ψ) (w : W) :
     (PartialProp.orKPSymmetric φ ψ).eval w ≠ .false :=
   eval_ne_false_of_imp (PartialProp.orKPSymmetric_presup_entails_when_conflicting φ ψ w (h w))
 
-/-- The modified two-dimensional disjunction whose presupposition is the disjunction of the
-presuppositions. -/
-def orSeven (φ ψ : PartialProp W) : PartialProp W where
+/-- The two-dimensional disjunction whose presupposition is the disjunction of the
+presuppositions, (7). -/
+def orPresupOr (φ ψ : PartialProp W) : PartialProp W where
   presup w := φ.presup w ∨ ψ.presup w
   assertion w := φ.assertion w ∨ ψ.assertion w
 
-/-- The modification is false exactly where a presupposition holds and both assertions fail. -/
-theorem orSeven_eval_false_iff (w : W) :
-    (orSeven φ ψ).eval w = .false ↔
+/-- It is false exactly where a presupposition holds and both assertions fail. -/
+theorem orPresupOr_eval_false_iff (w : W) :
+    (orPresupOr φ ψ).eval w = .false ↔
       (φ.presup w ∨ ψ.presup w) ∧ ¬ φ.assertion w ∧ ¬ ψ.assertion w := by
-  by_cases hp : φ.presup w ∨ ψ.presup w <;> simp [PartialProp.eval, orSeven, hp]
+  simp [orPresupOr]
 
-/-- With a presuppositionless first disjunct the modification presupposes nothing. -/
-theorem orSeven_presup_of_left (h : ∀ w, φ.presup w) (w : W) : (orSeven φ ψ).presup w :=
+/-- With a presuppositionless first disjunct it presupposes nothing, (8). -/
+theorem orPresupOr_presup_of_left (h : ∀ w, φ.presup w) (w : W) : (orPresupOr φ ψ).presup w :=
   Or.inl (h w)
 
 /-! ### Update semantics with a designated undefined state -/
 
-/-- Union with the undefined state absorbing. -/
-def unionU : Option (Set W) → Option (Set W) → Option (Set W)
-  | some a, some b => some (a ∪ b)
-  | _, _ => none
-
-@[simp] theorem unionU_some_some (a b : Set W) : unionU (some a) (some b) = some (a ∪ b) :=
-  rfl
-
-@[simp] theorem unionU_none_left (b : Option (Set W)) : unionU none b = none := by
-  cases b <;> rfl
-
-@[simp] theorem unionU_none_right (a : Option (Set W)) : unionU a none = none := by
-  cases a <;> rfl
-
-/-- Update by a partial proposition is undefined unless the presupposition holds throughout. -/
-noncomputable def updateS (φ : PartialProp W) (s : Set W) : Option (Set W) :=
-  if ∀ w ∈ s, φ.presup w then some {w ∈ s | φ.assertion w} else none
-
-/-- Negation of an update returns the input minus the result. -/
-def negOf (upd : Set W → Option (Set W)) (s : Set W) : Option (Set W) :=
-  (upd s).map (s \ ·)
-
-/-- Disjunction is the first update, joined with the second in the negation of the first. -/
-noncomputable def disjS (φ ψ : PartialProp W) (s : Set W) : Option (Set W) :=
-  unionU (updateS φ s) ((negOf (updateS φ) s).bind (updateS ψ))
-
-theorem updateS_eq_some_iff {s t : Set W} :
-    updateS φ s = some t ↔ (∀ w ∈ s, φ.presup w) ∧ t = {w ∈ s | φ.assertion w} := by
-  unfold updateS
-  split_ifs with h
-  · exact ⟨λ e => ⟨h, (Option.some_inj.mp e).symm⟩, λ e => by rw [e.2]⟩
-  · exact iff_of_false (by simp) (λ e => h e.1)
-
-theorem updateS_eq_none_iff {s : Set W} :
-    updateS φ s = none ↔ ¬ ∀ w ∈ s, φ.presup w := by
-  unfold updateS
-  split_ifs with h
-  · exact iff_of_false (by simp) (not_not.2 h)
-  · exact iff_of_true rfl h
-
-/-- The disjunction is defined exactly when the first presupposition holds throughout the
-input and the second holds wherever the first disjunct fails. -/
-theorem disjS_isSome_iff (s : Set W) :
-    (disjS φ ψ s).isSome ↔
-      (∀ w ∈ s, φ.presup w) ∧ ∀ w ∈ s, ¬ φ.assertion w → ψ.presup w := by
-  unfold disjS negOf
-  by_cases hp : ∀ w ∈ s, φ.presup w
-  · rw [updateS_eq_some_iff.2 ⟨hp, rfl⟩, Option.map_some, Option.bind_some]
-    have hiff : (∀ w ∈ s \ {w ∈ s | φ.assertion w}, ψ.presup w) ↔
-        ∀ w ∈ s, ¬ φ.assertion w → ψ.presup w := by
-      constructor
-      · intro hq w hw hφ; exact hq w ⟨hw, λ h => hφ h.2⟩
-      · intro hq w hw; exact hq w hw.1 (λ h => hw.2 ⟨hw.1, h⟩)
-    by_cases hq : ∀ w ∈ s \ {w ∈ s | φ.assertion w}, ψ.presup w
-    · rw [updateS_eq_some_iff.2 ⟨hq, rfl⟩, unionU_some_some]
-      exact iff_of_true rfl ⟨hp, hiff.1 hq⟩
-    · rw [updateS_eq_none_iff.2 hq, unionU_none_right]
-      exact iff_of_false (by simp) (λ h => hq (hiff.2 h.2))
-  · rw [updateS_eq_none_iff.2 hp, unionU_none_left]
-    exact iff_of_false (by simp) (λ h => hp h.1)
-
-/-- Under conflict the disjunction is defined only when the first disjunct already holds
-throughout the input, and then it returns the input: defined only if uninformative. -/
-theorem disjS_eq_some_iff (h : Conflict φ ψ) (s t : Set W) :
-    disjS φ ψ s = some t ↔
+/-- Under conflict the update by the disjunction is defined only when the first disjunct
+already holds throughout the input, and then it returns the input: defined only if
+uninformative. -/
+theorem mem_disj_iff (h : Conflict φ ψ) (s t : Set W) :
+    t ∈ disj (ofPartialProp φ) (ofPartialProp ψ) s ↔
       (∀ w ∈ s, φ.presup w) ∧ (∀ w ∈ s, φ.assertion w) ∧ t = s := by
-  have hempty : updateS ψ (s \ s) = some ∅ :=
-    updateS_eq_some_iff.2 ⟨by simp, by ext w; simp⟩
+  simp only [disj, Part.mem_bind_iff, Part.mem_map_iff, mem_ofPartialProp]
   constructor
-  · intro ht
-    have hs := (disjS_isSome_iff s).1 (by rw [ht]; rfl)
-    have hφ : ∀ w ∈ s, φ.assertion w := λ w hw =>
-      by_contra λ hn => h w ⟨hs.1 w hw, hs.2 w hw hn⟩
-    refine ⟨hs.1, hφ, ?_⟩
-    have hprop : {w ∈ s | φ.assertion w} = s :=
-      Set.ext λ w => ⟨λ h => h.1, λ hw => ⟨hw, hφ w hw⟩⟩
-    rw [disjS, negOf, updateS_eq_some_iff.2 ⟨hs.1, rfl⟩, hprop, Option.map_some,
-      Option.bind_some, hempty, unionU_some_some, Set.union_empty] at ht
-    exact (Option.some_inj.mp ht).symm
-  · rintro ⟨hp, hφ, ht⟩
-    have hprop : {w ∈ s | φ.assertion w} = s :=
-      Set.ext λ w => ⟨λ h => h.1, λ hw => ⟨hw, hφ w hw⟩⟩
-    rw [disjS, negOf, updateS_eq_some_iff.2 ⟨hp, rfl⟩, hprop, Option.map_some, Option.bind_some,
-      hempty, unionU_some_some, Set.union_empty, ht]
+  · rintro ⟨a, ⟨hp, rfl⟩, b, ⟨hq, rfl⟩, rfl⟩
+    have hφ : ∀ w ∈ s, φ.assertion w := fun w hw ↦
+      by_contra fun hn ↦ h w ⟨hp hw, hq ⟨hw, fun ha ↦ hn ha.2⟩⟩
+    refine ⟨hp, hφ, ?_⟩
+    ext w
+    simp only [Set.mem_union, Set.mem_sep_iff, Set.mem_sdiff]
+    exact ⟨fun h ↦ h.elim (·.1) (·.1.1), fun hw ↦ .inl ⟨hw, hφ w hw⟩⟩
+  · rintro ⟨hp, hφ, rfl⟩
+    refine ⟨_, ⟨hp, rfl⟩, ∅, ⟨fun w hw ↦ absurd (hφ w hw.1) fun ha ↦ hw.2 ⟨hw.1, ha⟩, ?_⟩, ?_⟩
+    · ext w; simp only [Set.mem_sep_iff, Set.mem_sdiff, Set.mem_empty_iff_false, iff_false]
+      exact fun ⟨⟨hw, hn⟩, _⟩ ↦ hn ⟨hw, hφ w hw⟩
+    · ext w; simp only [Set.union_empty, Set.mem_sep_iff]
+      exact ⟨(·.1), fun hw ↦ ⟨hw, hφ w hw⟩⟩
 
 /-! ### Local contexts -/
 
@@ -220,229 +158,242 @@ theorem local_contexts_force_truth (h : Conflict φ ψ) (s : Set W)
     ∀ w ∈ s, (φ.presup w ∧ φ.assertion w) ∨ (ψ.presup w ∧ ψ.assertion w) := by
   intro w hw
   by_cases hp : φ.presup w
-  · exact Or.inl (by_contra λ hn => h w ⟨hp, h₁ w hw hn⟩)
-  · exact Or.inr (by_contra λ hn => hp (h₂ w hw hn))
+  · exact Or.inl (by_contra fun hn ↦ h w ⟨hp, h₁ w hw hn⟩)
+  · exact Or.inr (by_contra fun hn ↦ hp (h₂ w hw hn))
 
 /-! ### The meta-assertion operator -/
 
-/-- The meta-assertion operator is always defined, true where the proposition is defined and
-true. -/
-def assertMeta (φ : PartialProp W) : PartialProp W where
-  presup _ := True
-  assertion w := φ.presup w ∧ φ.assertion w
+/-- The meta-assertion operator, the trivalent 𝒜 lifted to partial propositions: always
+defined, true where the proposition is defined and true. -/
+noncomputable def assertMeta (φ : PartialProp W) : PartialProp W :=
+  .ofTrivalent (Trivalent.metaAssert ∘ φ.eval)
 
-/-- It agrees with the trivalent operator. -/
-theorem eval_assertMeta (w : W) : (assertMeta φ).eval w = Trivalent.metaAssert (φ.eval w) := by
-  by_cases hp : φ.presup w <;> by_cases ha : φ.assertion w <;>
-    simp [PartialProp.eval, assertMeta, hp, ha, Trivalent.metaAssert]
+@[simp] theorem assertMeta_presup (w : W) : (assertMeta φ).presup w := by
+  cases h : φ.eval w <;> simp [assertMeta, h]
+
+@[simp] theorem assertMeta_assertion (w : W) :
+    (assertMeta φ).assertion w ↔ φ.presup w ∧ φ.assertion w := by
+  simp [assertMeta]
 
 /-- The disjunction of two meta-asserted disjuncts has no presupposition. -/
 theorem or_assertMeta_presup (w : W) :
     (PartialProp.or (assertMeta φ) (assertMeta ψ)).presup w :=
-  ⟨trivial, trivial⟩
+  ⟨assertMeta_presup w, assertMeta_presup w⟩
 
 /-- It is false whenever neither disjunct is defined and true, so also where neither
 presupposition holds. -/
 theorem or_assertMeta_false_iff (w : W) :
     (PartialProp.or (assertMeta φ) (assertMeta ψ)).eval w = .false ↔
       ¬ (φ.presup w ∧ φ.assertion w) ∧ ¬ (ψ.presup w ∧ ψ.assertion w) := by
-  simp [PartialProp.eval, PartialProp.or, assertMeta, not_or]
+  simp [PartialProp.or, not_or]
 
 /-- Meta-asserting one disjunct under Strong Kleene yields the conditional presupposition
 that the first presupposition holds unless the second disjunct is defined and true. -/
 theorem orStrong_assertMeta_presup_iff (w : W) :
     (PartialProp.orStrong φ (assertMeta ψ)).presup w ↔
       (¬ (ψ.presup w ∧ ψ.assertion w) → φ.presup w) := by
-  simp only [PartialProp.orStrong, assertMeta, and_true, true_and]
-  constructor
-  · rintro (hp | ⟨hp, -⟩ | hψ) <;> intro hn
-    · exact hp
-    · exact hp
-    · exact absurd hψ hn
-  · intro hc
-    by_cases hψ : ψ.presup w ∧ ψ.assertion w
-    · exact Or.inr (Or.inr hψ)
-    · exact Or.inl (hc hψ)
+  simp only [PartialProp.orStrong, assertMeta_presup, assertMeta_assertion, and_true, true_and]
+  tauto
 
 /-! ### Flexible accommodation -/
 
-/-- The update by a disjunction whose disjuncts are evaluated in the input restricted by the
-accommodated propositions `χ` and `ω`. -/
-noncomputable def flexS (χ ω : W → Prop) (φ ψ : PartialProp W) (s : Set W) :
-    Option (Set W) :=
-  unionU (updateS φ {w ∈ s | χ w}) (updateS ψ {w ∈ s | ω w})
+/-- Under flexible accommodation, (13), each disjunct updates the input restricted by its
+accommodated proposition, and the results join. -/
+def flex (χ ω : Set W) (φ ψ : CCP.Partial W) : CCP.Partial W :=
+  fun s ↦ (φ (s ∩ χ)).bind fun a ↦ (ψ (s ∩ ω)).map (a ∪ ·)
 
-/-- The accommodated propositions split the input. -/
-def Splits (χ ω : W → Prop) (s : Set W) : Prop := {w ∈ s | χ w} ∪ {w ∈ s | ω w} = s
+/-- (13) requires that the accommodated propositions cover the input. Under conflict each
+disjunct's negated rival presupposition covers every input. -/
+theorem compl_union_compl_of_conflict (h : Conflict φ ψ) :
+    {w | ¬ ψ.presup w} ∪ {w | ¬ φ.presup w} = Set.univ :=
+  Set.eq_univ_of_forall fun w ↦ (not_and_or.1 (h w)).symm
 
-theorem splits_top (s : Set W) : Splits (λ _ => True) (λ _ => True) s := by
-  ext w; simp
+/-- Genuineness, Definition 8, requires each disjunct to be true at some world of the input
+that survives the update. -/
+def Genuine (u φ ψ : CCP.Partial W) (s : Set W) : Prop :=
+  (∃ w ∈ s, {w} ∈ φ {w} ∧ ∃ t ∈ u s, w ∈ t) ∧ ∃ w ∈ s, {w} ∈ ψ {w} ∧ ∃ t ∈ u s, w ∈ t
 
-/-- Each disjunct's negated rival presupposition splits any input under conflict. -/
-theorem splits_of_conflict (h : Conflict φ ψ) (s : Set W) :
-    Splits (λ w => ¬ ψ.presup w) (λ w => ¬ φ.presup w) s := by
-  ext w
-  simp only [Set.mem_union, Set.mem_sep_iff]
-  constructor
-  · rintro (⟨hw, -⟩ | ⟨hw, -⟩) <;> exact hw
-  · intro hw
-    by_cases hp : φ.presup w
-    · exact Or.inl ⟨hw, λ hq => h w ⟨hp, hq⟩⟩
-    · exact Or.inr ⟨hw, hp⟩
+/-- The standard update is flexible accommodation of the negation of the first disjunct for
+the second. -/
+theorem flex_univ_eq_disj (ψ : CCP.Partial W) :
+    flex Set.univ {w | ¬ φ.assertion w} (ofPartialProp φ) ψ = disj (ofPartialProp φ) ψ := by
+  funext s
+  refine Part.ext fun t ↦ ?_
+  simp only [flex, disj, Set.inter_univ, Part.mem_bind_iff, mem_ofPartialProp]
+  refine exists_congr fun a ↦ and_congr_right fun ⟨_, ha⟩ ↦ ?_
+  subst ha
+  rw [show s \ {w ∈ s | φ.assertion w} = s ∩ {w | ¬ φ.assertion w} by
+    ext w; simp only [Set.mem_sdiff, Set.mem_inter_iff, Set.mem_ofPred_eq]; tauto]
 
-/-- With the default tautologies the update is defined exactly when both presuppositions
-hold throughout, and then returns the worlds verifying either assertion. -/
-theorem flexS_top_eq_some_iff (s t : Set W) :
-    flexS (λ _ => True) (λ _ => True) φ ψ s = some t ↔
+/-- Accommodating the negation of the first disjunct for the second, (15), the update
+presupposes the first presupposition and, where the first disjunct fails, the second: the
+conditional presupposition Katzir and Singh observe, fn. 6. -/
+theorem admits_flex_univ_iff (s : Set W) :
+    (flex Set.univ {w | ¬ φ.assertion w} (ofPartialProp φ) (ofPartialProp ψ)).Admits s ↔
+      ∀ w ∈ s, φ.presup w ∧ (¬ φ.assertion w → ψ.presup w) := by
+  rw [flex_univ_eq_disj]
+  exact admits_disj_ofPartialProp φ ψ s
+
+/-- With tautologies accommodated the update is defined exactly when both presuppositions hold
+throughout, and returns the worlds verifying either assertion. -/
+theorem mem_flex_univ_univ_iff (s t : Set W) :
+    t ∈ flex Set.univ Set.univ (ofPartialProp φ) (ofPartialProp ψ) s ↔
       (∀ w ∈ s, φ.presup w) ∧ (∀ w ∈ s, ψ.presup w) ∧
         t = {w ∈ s | φ.assertion w} ∪ {w ∈ s | ψ.assertion w} := by
-  simp only [flexS, Set.sep_true]
-  by_cases hp : ∀ w ∈ s, φ.presup w
-  · by_cases hq : ∀ w ∈ s, ψ.presup w
-    · rw [updateS_eq_some_iff.2 ⟨hp, rfl⟩, updateS_eq_some_iff.2 ⟨hq, rfl⟩, unionU_some_some]
-      exact ⟨λ e => ⟨hp, hq, (Option.some_inj.mp e).symm⟩, λ e => by rw [e.2.2]⟩
-    · rw [updateS_eq_none_iff.2 hq, unionU_none_right]
-      exact iff_of_false (by simp) (λ e => hq e.2.1)
-  · rw [updateS_eq_none_iff.2 hp, unionU_none_left]
-    exact iff_of_false (by simp) (λ e => hp e.1)
+  simp only [flex, Set.inter_univ, Part.mem_bind_iff, Part.mem_map_iff, mem_ofPartialProp]
+  constructor
+  · rintro ⟨_, ⟨hp, rfl⟩, _, ⟨hq, rfl⟩, rfl⟩
+    exact ⟨hp, hq, rfl⟩
+  · rintro ⟨hp, hq, rfl⟩
+    exact ⟨_, ⟨hp, rfl⟩, _, ⟨hq, rfl⟩, rfl⟩
 
-/-- Under conflict the default is never defined on a nonempty input. -/
-theorem flexS_top_eq_none (h : Conflict φ ψ) {s : Set W} (hs : s.Nonempty) :
-    flexS (λ _ => True) (λ _ => True) φ ψ s = none := by
+/-- Under conflict that update is never defined on a nonempty input, (16). -/
+theorem not_admits_flex_univ_univ (h : Conflict φ ψ) {s : Set W} (hs : s.Nonempty) :
+    ¬ (flex Set.univ Set.univ (ofPartialProp φ) (ofPartialProp ψ)).Admits s := fun hd ↦ by
   obtain ⟨w, hw⟩ := hs
-  cases ht : flexS (λ _ => True) (λ _ => True) φ ψ s with
-  | none => rfl
-  | some t =>
-    obtain ⟨hp, hq, -⟩ := (flexS_top_eq_some_iff s t).1 ht
-    exact absurd ⟨hp w hw, hq w hw⟩ (h w)
+  obtain ⟨hp, hq, -⟩ := (mem_flex_univ_univ_iff s _).1 (Part.get_mem hd)
+  exact h w ⟨hp w hw, hq w hw⟩
 
-/-- Accommodating each disjunct's negated rival presupposition, the update is defined exactly
-when some presupposition holds at every world of the input, and returns the worlds where a
-disjunct is defined and true. -/
-theorem flexS_split_eq_some_iff (h : Conflict φ ψ) (s t : Set W) :
-    flexS (λ w => ¬ ψ.presup w) (λ w => ¬ φ.presup w) φ ψ s = some t ↔
+/-- When the first assertion contradicts the second presupposition, (15), the update with
+tautologies accommodated is not genuine: where defined it presupposes the second
+presupposition throughout, which leaves the first disjunct no world. -/
+theorem not_genuine_flex_univ_univ (h : ∀ w, ¬ (φ.assertion w ∧ ψ.presup w)) (s : Set W) :
+    ¬ Genuine (flex Set.univ Set.univ (ofPartialProp φ) (ofPartialProp ψ))
+      (ofPartialProp φ) (ofPartialProp ψ) s := by
+  rintro ⟨⟨w, hw, hφ, t, ht, -⟩, -⟩
+  exact h w ⟨((mem_ofPartialProp_self _ _).1 hφ).2 rfl,
+    ((mem_flex_univ_univ_iff s t).1 ht).2.1 w hw⟩
+
+/-- Accommodating each disjunct's negated rival presupposition, (17), the update is defined
+exactly when some presupposition holds at every world of the input, and returns the worlds
+where a disjunct is defined and true. -/
+theorem mem_flex_rival_iff (h : Conflict φ ψ) (s t : Set W) :
+    t ∈ flex {w | ¬ ψ.presup w} {w | ¬ φ.presup w} (ofPartialProp φ) (ofPartialProp ψ) s ↔
       (∀ w ∈ s, φ.presup w ∨ ψ.presup w) ∧
         t = {w ∈ s | (φ.presup w ∧ φ.assertion w) ∨ (ψ.presup w ∧ ψ.assertion w)} := by
-  have key : (∀ w ∈ {w ∈ s | ¬ ψ.presup w}, φ.presup w) ∧
-      (∀ w ∈ {w ∈ s | ¬ φ.presup w}, ψ.presup w) ↔
-        ∀ w ∈ s, φ.presup w ∨ ψ.presup w := by
-    constructor
-    · rintro ⟨h₁, h₂⟩ w hw
-      by_cases hq : ψ.presup w
-      · exact Or.inr hq
-      · exact Or.inl (h₁ w ⟨hw, hq⟩)
-    · intro hor
-      exact ⟨λ w hw => (hor w hw.1).resolve_right hw.2,
-        λ w hw => (hor w hw.1).resolve_left hw.2⟩
-  have hset : ∀ (h₁ : ∀ w ∈ {w ∈ s | ¬ ψ.presup w}, φ.presup w)
-      (h₂ : ∀ w ∈ {w ∈ s | ¬ φ.presup w}, ψ.presup w),
-      {w ∈ {w ∈ s | ¬ ψ.presup w} | φ.assertion w} ∪
-        {w ∈ {w ∈ s | ¬ φ.presup w} | ψ.assertion w} =
-      {w ∈ s | (φ.presup w ∧ φ.assertion w) ∨ (ψ.presup w ∧ ψ.assertion w)} := by
-    intro h₁ h₂
+  have hset (hs : ∀ w ∈ s, φ.presup w ∨ ψ.presup w) :
+      {w ∈ s ∩ {w | ¬ ψ.presup w} | φ.assertion w} ∪
+          {w ∈ s ∩ {w | ¬ φ.presup w} | ψ.assertion w} =
+        {w ∈ s | (φ.presup w ∧ φ.assertion w) ∨ (ψ.presup w ∧ ψ.assertion w)} := by
     ext w
-    simp only [Set.mem_union, Set.mem_ofPred_eq]
-    constructor
-    · rintro (⟨⟨hw, hq⟩, hφ⟩ | ⟨⟨hw, hp⟩, hψ⟩)
-      · exact ⟨hw, Or.inl ⟨h₁ w ⟨hw, hq⟩, hφ⟩⟩
-      · exact ⟨hw, Or.inr ⟨h₂ w ⟨hw, hp⟩, hψ⟩⟩
-    · rintro ⟨hw, ⟨hp, hφ⟩ | ⟨hq, hψ⟩⟩
-      · exact Or.inl ⟨⟨hw, λ hq => h w ⟨hp, hq⟩⟩, hφ⟩
-      · exact Or.inr ⟨⟨hw, λ hp => h w ⟨hp, hq⟩⟩, hψ⟩
-  simp only [flexS]
-  by_cases h₁ : ∀ w ∈ {w ∈ s | ¬ ψ.presup w}, φ.presup w
-  · by_cases h₂ : ∀ w ∈ {w ∈ s | ¬ φ.presup w}, ψ.presup w
-    · rw [updateS_eq_some_iff.2 ⟨h₁, rfl⟩, updateS_eq_some_iff.2 ⟨h₂, rfl⟩,
-        unionU_some_some, hset h₁ h₂]
-      exact ⟨λ e => ⟨key.1 ⟨h₁, h₂⟩, (Option.some_inj.mp e).symm⟩,
-        λ e => by rw [e.2]⟩
-    · rw [updateS_eq_none_iff.2 h₂, unionU_none_right]
-      exact iff_of_false (by simp) (λ e => h₂ (key.2 e.1).2)
-  · rw [updateS_eq_none_iff.2 h₁, unionU_none_left]
-    exact iff_of_false (by simp) (λ e => h₁ (key.2 e.1).1)
+    simp only [Set.mem_union, Set.mem_inter_iff, Set.mem_ofPred_eq]
+    exact ⟨fun h' ↦ h'.elim (fun ⟨⟨hw, hq⟩, ha⟩ ↦ ⟨hw, .inl ⟨(hs w hw).resolve_right hq, ha⟩⟩)
+        fun ⟨⟨hw, hp⟩, ha⟩ ↦ ⟨hw, .inr ⟨(hs w hw).resolve_left hp, ha⟩⟩,
+      fun ⟨hw, h'⟩ ↦ h'.elim (fun ⟨hp, ha⟩ ↦ .inl ⟨⟨hw, fun hq ↦ h w ⟨hp, hq⟩⟩, ha⟩)
+        fun ⟨hq, ha⟩ ↦ .inr ⟨⟨hw, fun hp ↦ h w ⟨hp, hq⟩⟩, ha⟩⟩
+  simp only [flex, Part.mem_bind_iff, Part.mem_map_iff, mem_ofPartialProp]
+  constructor
+  · rintro ⟨_, ⟨h₁, rfl⟩, _, ⟨-, rfl⟩, rfl⟩
+    have hs : ∀ w ∈ s, φ.presup w ∨ ψ.presup w := fun w hw ↦
+      (em (ψ.presup w)).elim .inr fun hq ↦ .inl (h₁ ⟨hw, hq⟩)
+    exact ⟨hs, hset hs⟩
+  · rintro ⟨hs, rfl⟩
+    exact ⟨_, ⟨fun w hw ↦ (hs w hw.1).resolve_right hw.2, rfl⟩, _,
+      ⟨fun w hw ↦ (hs w hw.1).resolve_left hw.2, rfl⟩, hset hs⟩
 
-/-- The negation of the split update removes exactly the worlds where both disjuncts are
-false: the disjunction can be false. -/
-theorem negOf_flexS_split (h : Conflict φ ψ) {s : Set W}
-    (hs : ∀ w ∈ s, φ.presup w ∨ ψ.presup w) :
-    negOf (flexS (λ w => ¬ ψ.presup w) (λ w => ¬ φ.presup w) φ ψ) s =
-      some {w ∈ s |
-        ¬ (φ.presup w ∧ φ.assertion w) ∧ ¬ (ψ.presup w ∧ ψ.assertion w)} := by
-  rw [negOf, (flexS_split_eq_some_iff h s _).2 ⟨hs, rfl⟩, Option.map_some]
-  congr 1
+/-- The negation of that update removes exactly the worlds where both disjuncts are false: the
+disjunction can be false. -/
+theorem neg_flex_rival (h : Conflict φ ψ) {s : Set W} (hs : ∀ w ∈ s, φ.presup w ∨ ψ.presup w) :
+    neg (flex {w | ¬ ψ.presup w} {w | ¬ φ.presup w} (ofPartialProp φ) (ofPartialProp ψ)) s =
+      Part.some {w ∈ s | ¬ (φ.presup w ∧ φ.assertion w) ∧ ¬ (ψ.presup w ∧ ψ.assertion w)} := by
+  rw [CCP.Partial.neg, Part.eq_some_iff, Part.mem_map_iff]
+  refine ⟨_, (mem_flex_rival_iff h s _).2 ⟨hs, rfl⟩, ?_⟩
   ext w
-  simp only [Set.mem_sdiff, Set.mem_ofPred_eq, not_and, not_or]
+  simp only [Set.mem_sdiff, Set.mem_sep_iff]
   tauto
 
-/-- Genuineness demands that each disjunct is defined and true at some world of the input
-that survives the update. -/
-def Genuine (upd : Set W → Option (Set W)) (φ ψ : PartialProp W) (s : Set W) : Prop :=
-  (∃ w ∈ s, φ.presup w ∧ φ.assertion w ∧ ∃ t, upd s = some t ∧ w ∈ t) ∧
-    (∃ w ∈ s, ψ.presup w ∧ ψ.assertion w ∧ ∃ t, upd s = some t ∧ w ∈ t)
+/-- The standard update filters a presupposition entailed by the negation of the first disjunct,
+(18), where accommodating tautologies still demands it: at a world where the first disjunct holds
+and the second presupposition fails. -/
+theorem exists_admits_disj_not_admits_flex_univ_univ (hφ : ∀ w, φ.presup w)
+    (hf : ∀ w, ¬ φ.assertion w → ψ.presup w) {w : W} (hq : ¬ ψ.presup w) :
+    (disj (ofPartialProp φ) (ofPartialProp ψ)).Admits {w} ∧
+      ¬ (flex Set.univ Set.univ (ofPartialProp φ) (ofPartialProp ψ)).Admits {w} := by
+  refine ⟨(admits_disj_ofPartialProp φ ψ _).2 fun v _ ↦ ⟨hφ v, hf v⟩, fun hd ↦ ?_⟩
+  exact hq (((mem_flex_univ_univ_iff _ _).1 (Part.get_mem hd)).2.1 w rfl)
 
-/-- When the first assertion contradicts the second presupposition, the default update, where
-defined, violates genuineness: it presupposes the second presupposition throughout, which
-empties the first disjunct. -/
-theorem not_genuine_top (h : ∀ w, ¬ (φ.assertion w ∧ ψ.presup w)) {s t : Set W}
-    (ht : flexS (λ _ => True) (λ _ => True) φ ψ s = some t) :
-    ¬ Genuine (flexS (λ _ => True) (λ _ => True) φ ψ) φ ψ s := by
-  rintro ⟨⟨w, hw, -, hφ, -⟩, -⟩
-  exact h w ⟨hφ, ((flexS_top_eq_some_iff s t).1 ht).2.1 w hw⟩
+/-! ### The ideal inputs -/
 
-/-- The standard update filters a presupposition entailed by the negation of the first
-disjunct, where the default accommodation still demands it: a singleton input where the
-first disjunct holds and the second presupposition fails. -/
-theorem exists_disjS_some_flexS_top_none (hφ : ∀ w, φ.presup w) {w : W}
-    (hw : φ.assertion w) (hq : ¬ ψ.presup w) :
-    (disjS φ ψ {w}).isSome ∧ flexS (λ _ => True) (λ _ => True) φ ψ {w} = none := by
-  refine ⟨(disjS_isSome_iff _).2 ⟨λ _ _ => hφ _, ?_⟩, ?_⟩
-  · rintro v rfl hv
-    exact absurd hw hv
-  · cases ht : flexS (λ _ => True) (λ _ => True) φ ψ {w} with
-    | none => rfl
-    | some t => exact absurd (((flexS_top_eq_some_iff _ t).1 ht).2.1 w rfl) hq
-
-/-! ### The ideal input -/
-
-/-- The four worlds of the ideal input are king opening, king not opening, president conducting,
-president not conducting. -/
-abbrev IW := Fin 4
+/-- The Buganda input of (1c) has four worlds: the king opening parliament, the king not opening
+it, the president conducting the ceremony, the president not conducting it. -/
+abbrev Buganda := Fin 4
 
 /-- *The King of Buganda is opening parliament*. -/
-def kingOpens : PartialProp IW where
+def kingOpens : PartialProp Buganda where
   presup w := w < 2
   assertion w := w = 0
 
 /-- *The President of Buganda is conducting the ceremony*. -/
-def presidentConducts : PartialProp IW where
+def presidentConducts : PartialProp Buganda where
   presup w := 2 ≤ w
   assertion w := w = 2
 
 theorem conflict_buganda : Conflict kingOpens presidentConducts := by
   unfold Conflict kingOpens presidentConducts; decide
 
-/-- On the ideal input the split update keeps the worlds where the head of state performs
-the duty, and its negation the others. -/
-theorem buganda_split :
-    flexS (λ w => ¬ presidentConducts.presup w) (λ w => ¬ kingOpens.presup w) kingOpens
-      presidentConducts Set.univ = some {0, 2} ∧
-    negOf (flexS (λ w => ¬ presidentConducts.presup w) (λ w => ¬ kingOpens.presup w)
-      kingOpens presidentConducts) Set.univ = some {1, 3} := by
-  have hs : ∀ w ∈ (Set.univ : Set IW), kingOpens.presup w ∨ presidentConducts.presup w := by
+/-- On the Buganda input the update with the rival presuppositions accommodated keeps the
+worlds where the head of state performs the duty, and its negation, (4), the others. -/
+theorem buganda :
+    flex {w | ¬ presidentConducts.presup w} {w | ¬ kingOpens.presup w}
+        (ofPartialProp kingOpens) (ofPartialProp presidentConducts) Set.univ = Part.some {0, 2} ∧
+      neg (flex {w | ¬ presidentConducts.presup w} {w | ¬ kingOpens.presup w}
+        (ofPartialProp kingOpens) (ofPartialProp presidentConducts)) Set.univ =
+        Part.some {1, 3} := by
+  have hs : ∀ w ∈ (Set.univ : Set Buganda), kingOpens.presup w ∨ presidentConducts.presup w := by
     unfold kingOpens presidentConducts
     intro w _; fin_cases w <;> decide
-  constructor
-  · rw [flexS_split_eq_some_iff conflict_buganda]
-    refine ⟨hs, ?_⟩
-    ext w
-    simp only [Set.mem_insert_iff, Set.mem_singleton_iff, Set.mem_ofPred_eq, Set.mem_univ,
+  refine ⟨Part.eq_some_iff.2 ((mem_flex_rival_iff conflict_buganda _ _).2 ⟨hs, ?_⟩), ?_⟩
+  · ext w
+    simp only [Set.mem_insert_iff, Set.mem_singleton_iff, Set.mem_univ,
       true_and, kingOpens, presidentConducts]
     fin_cases w <;> decide
-  · rw [negOf_flexS_split conflict_buganda hs]
+  · rw [neg_flex_rival conflict_buganda hs]
     congr 1
     ext w
-    simp only [Set.mem_insert_iff, Set.mem_singleton_iff, Set.mem_ofPred_eq, Set.mem_univ,
+    simp only [Set.mem_insert_iff, Set.mem_singleton_iff, Set.mem_univ,
       true_and, kingOpens, presidentConducts]
     fin_cases w <;> decide
+
+/-- The Bill input of (15a) has three worlds: Bill has no child, Bill has children who are all
+bald, Bill has children who are not all bald. -/
+abbrev Bill := Fin 3
+
+/-- *Bill has no child*. -/
+def noChild : PartialProp Bill := .ofProp (· = 0)
+
+/-- *All of Bill's children are bald*, presupposing that Bill has children. -/
+def allBald : PartialProp Bill where
+  presup w := w ≠ 0
+  assertion w := w = 1
+
+/-- On the Bill input the update with tautologies accommodated is undefined, while
+accommodating the negation of the first disjunct for the second, (15), is defined and genuine,
+keeping the worlds where Bill has no child or his children are all bald. -/
+theorem bill :
+    ¬ (flex Set.univ Set.univ (ofPartialProp noChild) (ofPartialProp allBald)).Admits
+        Set.univ ∧
+      {0, 1} ∈ flex Set.univ {w | ¬ noChild.assertion w} (ofPartialProp noChild)
+        (ofPartialProp allBald) Set.univ ∧
+      Genuine (flex Set.univ {w | ¬ noChild.assertion w} (ofPartialProp noChild)
+        (ofPartialProp allBald)) (ofPartialProp noChild) (ofPartialProp allBald) Set.univ := by
+  have hd : {0, 1} ∈ flex Set.univ {w | ¬ noChild.assertion w} (ofPartialProp noChild)
+      (ofPartialProp allBald) Set.univ := by
+    simp only [flex, Set.inter_univ, Part.mem_bind_iff, Part.mem_map_iff, mem_ofPartialProp,
+      PartialProp.Admits]
+    refine ⟨_, ⟨fun _ _ ↦ trivial, rfl⟩, _, ⟨fun w hw ↦ ?_, rfl⟩, ?_⟩
+    · simp only [Set.mem_inter_iff, Set.mem_ofPred_eq, noChild, PartialProp.ofProp_assertion]
+        at hw
+      exact hw.2
+    · ext w
+      simp only [Set.mem_union, Set.mem_inter_iff, Set.mem_univ, true_and,
+        Set.mem_ofPred_eq, Set.mem_insert_iff, Set.mem_singleton_iff, noChild,
+        PartialProp.ofProp_assertion, allBald]
+      fin_cases w <;> decide
+  refine ⟨fun h ↦ ?_, hd, ⟨0, trivial, ?_, _, hd, by simp⟩, ⟨1, trivial, ?_, _, hd, by simp⟩⟩
+  · exact (((mem_flex_univ_univ_iff _ _).1 (Part.get_mem h)).2.1 0 trivial) rfl
+  · exact (mem_ofPartialProp_self _ _).2 ⟨fun _ _ ↦ trivial, fun _ hw ↦ hw⟩
+  · refine (mem_ofPartialProp_self _ _).2 ⟨fun v hv ↦ ?_, fun v hv ↦ ?_⟩ <;>
+      rw [Set.mem_singleton_iff.1 hv]
+    exacts [(by decide : (1 : Fin 3) ≠ 0), rfl]
 
 end Yagi2025
