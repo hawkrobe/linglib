@@ -99,35 +99,31 @@ def inventoryType? : Option InventoryType :=
     if HasContrastAmong I IsMid then some .fiveHeight else some .fourHeightHigh
   else if HasContrastAmong I IsMid then some .fourHeightMid else none
 
-/-- A vowel of the given height and backness, rounded or not, with its [ATR] value. -/
-def vowel (ht : Segment.Height) (bk : Segment.Backness) (round atr : Bool) :
-    Segment :=
-  ((Segment.vowel ht bk).setFeature .round round).setFeature .atr atr
+/-- A vowel of a schematic inventory is the segment of its chart entry's tongue-root
+reading, as in the fragments. -/
+def vowel (m : Data.PHOIBLE.FeatureMatrix) : Segment := .ofChart m.tenseAsATR
 
 /-- The nine-vowel 5Ht system /i ɪ e ɛ a ɔ o ʊ u/ of (1a), Akan's. -/
 def nineVowel : Finset Segment :=
-  {vowel .high .front false true, vowel .high .front false false,
-    vowel .mid .front false true, vowel .mid .front false false,
-    vowel .low .central false false,
-    vowel .mid .back true false, vowel .mid .back true true,
-    vowel .high .back true false, vowel .high .back true true}
+  {vowel .«i», vowel .«ɪ», vowel .«e», vowel .«ɛ», vowel .«a», vowel .«ɔ», vowel .«o», vowel .«ʊ»,
+    vowel .«u»}
 
 /-- The seven-vowel 4Ht(M) system /i e ɛ a ɔ o u/ of (1b), Yoruba's. -/
 def sevenVowelMid : Finset Segment :=
-  {vowel .high .front false true, vowel .mid .front false true, vowel .mid .front false false,
-    vowel .low .central false false,
-    vowel .mid .back true false, vowel .mid .back true true, vowel .high .back true true}
+  {vowel .«i», vowel .«e», vowel .«ɛ», vowel .«a», vowel .«ɔ», vowel .«o», vowel .«u»}
 
 /-- The seven-vowel 4Ht(H) system /i ɪ ɛ a ɔ ʊ u/ of (1c). -/
 def sevenVowelHigh : Finset Segment :=
-  {vowel .high .front false true, vowel .high .front false false, vowel .mid .front false false,
-    vowel .low .central false false,
-    vowel .mid .back true false, vowel .high .back true false, vowel .high .back true true}
+  {vowel .«i», vowel .«ɪ», vowel .«ɛ», vowel .«a», vowel .«ɔ», vowel .«ʊ», vowel .«u»}
 
 /-- The five-vowel system /i e a o u/, outside the typology. -/
-def fiveVowel : Finset Segment :=
-  {vowel .high .front false true, vowel .mid .front false true, vowel .low .central false false,
-    vowel .mid .back true true, vowel .high .back true true}
+def fiveVowel : Finset Segment := {vowel .«i», vowel .«e», vowel .«a», vowel .«o», vowel .«u»}
+
+/-- The 5Ht system (1a) is Akan's vowel inventory. -/
+theorem nineVowel_eq : nineVowel = Akan.vowels := by decide
+
+/-- The 4Ht(M) system (1b) is Yoruba's vowel inventory. -/
+theorem sevenVowelMid_eq : sevenVowelMid = Yoruba.vowels := by decide
 
 /-- The schematic inventories of (1) receive their types, and the five-vowel system none. -/
 theorem inventoryType?_schematic :
@@ -166,13 +162,13 @@ theorem akan_conforms :
 /-- Standard Yoruba's seven vowels form a 4Ht(M) system, and its [−ATR] dominance
 (Table 4) conforms to (20). -/
 theorem yoruba_conforms :
-    inventoryType? Yoruba.inventory = some .fourHeightMid ∧
-      SystemDependent Yoruba.inventory false := by
+    inventoryType? Yoruba.vowels = some .fourHeightMid ∧
+      SystemDependent Yoruba.vowels false := by
   decide
 
 /-- Yoruba⁺, a 4Ht(M) language with [+ATR] dominance, would violate (20), the typological
 gap the survey finds nearly empty. -/
-theorem yoruba_plus_violates : ¬ SystemDependent Yoruba.inventory true := by decide
+theorem yoruba_plus_violates : ¬ SystemDependent Yoruba.vowels true := by decide
 
 /-! ### Section 7: dominance from inventory-dependent specification
 
@@ -255,7 +251,7 @@ theorem isolatedDominant_optimal : (isolatedDominant s a).optimal = {a} := by
 /-! ### Dominance reversal (23) -/
 
 /-- An output for the input /tol-a/ of (23), a [+ATR] root with a [−ATR] low suffix in a
-5Ht language: the root's value and the suffix's [ATR] and [low] values. -/
+5Ht language, records the root's value and the suffix's [ATR] and [low] values. -/
 structure LowSuffixCand where
   root      : Bool
   suffixAtr : Bool
