@@ -5,6 +5,8 @@ public import Mathlib.Data.Fintype.Card
 public import Mathlib.Order.Concept
 public import Linglib.Core.Order.OfCriteria
 public import Mathlib.Algebra.Group.Subgroup.ZPowers.Lemmas
+public import Mathlib.Algebra.Order.Ring.Abs
+public import Mathlib.Algebra.Ring.Divisibility.Basic
 public import Mathlib.Data.Finset.Max
 public import Mathlib.Tactic.Ring
 public import Mathlib.Tactic.DeriveFintype
@@ -41,6 +43,8 @@ multiples the closure is again a scale, the multiples of the lcm of the widths t
   multiples of `scaleLcm W d`.
 * `Numerals.Roundness.atLeastAsRound_onScale_iff_dvd`: roundness on scales of multiples is
   divisibility of these lcms.
+* `Numerals.Roundness.isLeast_atLeastAsRound_onScale`: the least number above `d` at least as
+  round as `d` is `d + scaleLcm W d`, the next point of that scale.
 
 ## Implementation notes
 
@@ -165,6 +169,27 @@ theorem scaleLcm_pos (hW : 0 ∉ W) (d : ℤ) : 0 < scaleLcm W d := by
   refine lt_of_le_of_ne (Int.nonneg_of_normalize_eq_self Finset.normalize_lcm) fun h ↦ hW ?_
   obtain ⟨w, hw, hw0⟩ := Finset.lcm_eq_zero_iff.1 h.symm
   exact hw0 ▸ (Finset.mem_filter.1 hw).1
+
+theorem AtLeastAsRound.scaleLcm_dvd_sub (h : AtLeastAsRound (OnScale W) d e) :
+    scaleLcm W d ∣ e - d :=
+  dvd_sub (atLeastAsRound_onScale_iff_scaleLcm_dvd.1 h) (scaleLcm_dvd W d)
+
+/-- A number other than `d` at least as round as `d` lies at least the lcm of the widths through
+`d` away from it. -/
+theorem AtLeastAsRound.scaleLcm_le_abs_sub (h : AtLeastAsRound (OnScale W) d e) (hne : e ≠ d) :
+    scaleLcm W d ≤ |e - d| :=
+  Int.le_of_dvd (abs_pos.2 (sub_ne_zero.2 hne)) ((dvd_abs _ _).2 h.scaleLcm_dvd_sub)
+
+theorem atLeastAsRound_add_scaleLcm (W : Finset ℤ) (d : ℤ) :
+    AtLeastAsRound (OnScale W) d (d + scaleLcm W d) :=
+  atLeastAsRound_onScale_iff_scaleLcm_dvd.2 (dvd_add (scaleLcm_dvd W d) dvd_rfl)
+
+/-- On scales of multiples, the least number above `d` at least as round as `d` is the next point
+of the scale of multiples of `scaleLcm W d`. -/
+theorem isLeast_atLeastAsRound_onScale (hW : 0 ∉ W) (d : ℤ) :
+    IsLeast {e | d < e ∧ AtLeastAsRound (OnScale W) d e} (d + scaleLcm W d) :=
+  ⟨⟨lt_add_of_pos_right d (scaleLcm_pos hW d), atLeastAsRound_add_scaleLcm W d⟩,
+    fun _ ⟨hde, he⟩ ↦ by have := Int.le_of_dvd (sub_pos.2 hde) he.scaleLcm_dvd_sub; omega⟩
 
 /-- On positive aligned widths, each pair comparable by divisibility, the lcm of the widths
 through `d` is the widest width dividing `d` ([krifka-2007]'s aligned granularity levels). -/
