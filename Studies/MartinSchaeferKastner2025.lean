@@ -3,6 +3,7 @@ module
 public import Linglib.Syntax.Minimalist.Verbal.Voice
 public import Linglib.Semantics.ArgumentStructure.Unaccusativity
 public import Linglib.Fragments.Romance.French.Verbs
+public import Linglib.Semantics.Reference.Animacy
 
 /-!
 # Martin, Schäfer and Kastner (2025): The Lexical Pragmatics of Reflexive Marking
@@ -46,6 +47,7 @@ experiments' rating means are described in the paper and not represented.
 namespace MartinSchaeferKastner2025
 
 open Minimalist.Voice ArgumentStructure French.Verbs
+open Reference (Animacy)
 
 /-! ### The classes -/
 
@@ -74,11 +76,6 @@ inductive ControlLevel where
   | inControl
   deriving DecidableEq
 
-/-- The animacy of the sole argument. -/
-inductive Animacy where
-  | human
-  | nonhuman
-  deriving DecidableEq
 
 /-- Whether the speaker means to present the entity as responsible for the change. -/
 inductive ResponsibilityGoal where
@@ -137,9 +134,7 @@ theorem se_ambiguous :
 /-! ### Managing the ambiguity (§2) -/
 
 /-- The agent bias makes the reflexive parse of the *se* form salient for a human argument. -/
-def ReflexiveSalient : Animacy → Prop
-  | .human => True
-  | .nonhuman => False
+def ReflexiveSalient (a : Animacy) : Prop := a = .human
 
 /-- The reflexive parse clashes with shared assumptions for a limited-control verb, whose
 change is not under the undergoer's control, and aligns with them for an in-control verb. -/
@@ -147,8 +142,7 @@ def ReflexiveClashes : ControlLevel → Prop
   | .limitedControl => True
   | .inControl => False
 
-instance : DecidablePred ReflexiveSalient := fun a ↦ by
-  cases a <;> unfold ReflexiveSalient <;> infer_instance
+instance : DecidablePred ReflexiveSalient := fun a ↦ inferInstanceAs (Decidable (a = .human))
 
 instance : DecidablePred ReflexiveClashes := fun c ↦ by
   cases c <;> unfold ReflexiveClashes <;> infer_instance
@@ -175,12 +169,13 @@ def preference (ctrl : ControlLevel) (anim : Animacy) (goal : ResponsibilityGoal
 unmarked form and the in-control verbs the marked one, with a nonhuman argument the marked
 form is preferred to convey responsibility, and otherwise a nonhuman argument yields no
 preference. -/
-theorem generalizations (g : ResponsibilityGoal) (c : ControlLevel) :
+theorem generalizations (g : ResponsibilityGoal) (c : ControlLevel) {a : Animacy}
+    (ha : a ≠ .human) :
     preference .limitedControl .human g = some .unmarked ∧
       preference .inControl .human g = some .marked ∧
-      preference c .nonhuman .conveyResponsibility = some .marked ∧
-      preference c .nonhuman .neutral = none := by
-  cases g <;> cases c <;> decide
+      preference c a .conveyResponsibility = some .marked ∧
+      preference c a .neutral = none := by
+  cases g <;> cases c <;> cases a <;> simp_all <;> decide
 
 /-- Against the causation claim of [labelle-1992] and [labelle-doron-2010], the same class of
 verbs with a choice shows opposite preferences by control level, which no uniform semantic

@@ -47,7 +47,7 @@ definiteness scale, whatever its animacy. -/
 def accusative : MarkingPattern := .definitenessAtLeast .indefiniteSpecific
 
 /-- An object is marked exactly when it is at least a specific indefinite. -/
-theorem accusative_iff (a : AnimacyLevel) (d : DefinitenessLevel) :
+theorem accusative_iff (a : Reference.Animacy) (d : DefinitenessLevel) :
     accusative a d = true ↔ .indefiniteSpecific ≤ d := by
   simp [accusative, MarkingPattern.definitenessAtLeast]
 

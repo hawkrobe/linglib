@@ -50,6 +50,7 @@ Boersma's sense) are noted in docstrings but not represented.
 namespace Aissen2003
 
 open Reference.Prominence
+open Reference (Animacy)
 open OptimalityTheory
 
 /-! ### The DOM systems of the paper
@@ -111,7 +112,7 @@ def hindiDOM : MarkingPattern := fun a d ↦
 and proper names of humans and animals (§5.1, Figure 5), and optionally on human common
 NPs and geographic proper names. -/
 def cmcSpanishDOM : MarkingPattern := fun a d ↦
-  decide (AnimacyLevel.animate ≤ a) && decide (DefinitenessLevel.properName ≤ d)
+  decide (Animacy.animate ≤ a) && decide (DefinitenessLevel.properName ≤ d)
 
 /-- Modern Spanish is the CMC system with \*STRUC_C demoted below the human-definite and
 human-specific constraints, so *a* is now also obligatory with definite and specific human
@@ -142,7 +143,7 @@ theorem dom_monotonicity_universal :
 prominence order of Figure 4, which is (33b) order-theoretically. -/
 theorem dom_obligatory_zone_upperSet :
     ∀ p ∈ allDOMPatterns,
-      IsUpperSet {c : AnimacyLevel × DefinitenessLevel | p c.1 c.2 = true} :=
+      IsUpperSet {c : Animacy × DefinitenessLevel | p c.1 c.2 = true} :=
   fun p hp ↦ p.monotoneP_iff_isUpperSet.mp (dom_monotonicity_universal p hp)
 
 /-- The Figure 2 and §5.3 systems are animacy-blind. -/
@@ -230,7 +231,7 @@ theorem persian_same_type_as_turkish :
 four cutoff systems. -/
 theorem figure3_typology :
     (List.range 4).map
-        (fun k ↦ AnimacyLevel.all.map (markedWins (interpolation AnimacyLevel.all k)))
+        (fun k ↦ Animacy.all.map (markedWins (interpolation Animacy.all k)))
       = [[false, false, false],
          [true,  false, false],
          [true,  true,  false],
@@ -239,18 +240,18 @@ theorem figure3_typology :
 /-- Figure 3's cleanly cutoff languages match their types, Kalkatungu with none, Ritharngu
 with the humans, Dhargari with the animates, and Written Japanese and Dhalandji with all. -/
 theorem figure3_languages :
-    (∀ a d, noDOM a d = markedWins (interpolation AnimacyLevel.all 0) a) ∧
-    (∀ a d, ritharnguDOM a d = markedWins (interpolation AnimacyLevel.all 1) a) ∧
-    (∀ a d, dhargariDOM a d = markedWins (interpolation AnimacyLevel.all 2) a) ∧
-    (∀ a d, writtenJapaneseDOM a d = markedWins (interpolation AnimacyLevel.all 3) a) := by
+    (∀ a d, noDOM a d = markedWins (interpolation Animacy.all 0) a) ∧
+    (∀ a d, ritharnguDOM a d = markedWins (interpolation Animacy.all 1) a) ∧
+    (∀ a d, dhargariDOM a d = markedWins (interpolation Animacy.all 2) a) ∧
+    (∀ a d, writtenJapaneseDOM a d = markedWins (interpolation Animacy.all 3) a) := by
   refine ⟨?_, ?_, ?_, ?_⟩ <;> decide
 
 /-- "This account predicts that the reverse is not found, e.g., languages in which only
 inanimates are case-marked", since every interpolation grammar marks an upward-closed
 segment of the scale. -/
 theorem no_reversed_system :
-    ∀ k < 4, ∀ a a' : AnimacyLevel, a ≤ a' →
-      markedWins (interpolation AnimacyLevel.all k) a = true →
-      markedWins (interpolation AnimacyLevel.all k) a' = true := by decide
+    ∀ k < 4, ∀ a a' : Animacy, a ≤ a' →
+      markedWins (interpolation Animacy.all k) a = true →
+      markedWins (interpolation Animacy.all k) a' = true := by decide
 
 end Aissen2003

@@ -272,19 +272,18 @@ namespace Swahili
 open _root_.Swahili
 
 /-- The semantic rules read evaluative derivation and animacy. -/
-def sem (n : Swahili.Noun) : Option Evaluative × Bool := (n.evaluative, n.animate)
+def sem (n : Swahili.Noun) : Option Evaluative × Reference.Animacy := (n.evaluative, n.animacy)
 
 /-- The rules of §3.1.2 send augmentatives to 5/6, diminutives to 7/8 and remaining animates
 to 1/2, then each morphological class to its own gender, over the fragment's five genders (the
 book's 11/10 and 15 are not among them). The formal rule is total, so the residue gender is
 never reached. -/
-def system : Gender.AssignmentSystem (Option Evaluative × Bool) _root_.Swahili.Gender
+def system : Gender.AssignmentSystem (Option Evaluative × Reference.Animacy) _root_.Swahili.Gender
     _root_.Swahili.Gender where
   semantic
     | (some .augmentative, _) => some .genderC
     | (some .diminutive, _) => some .genderD
-    | (none, true) => some .genderA
-    | (none, false) => none
+    | (none, a) => if .animate ≤ a then some .genderA else none
   formal := some
   residue := .genderE
 
@@ -873,13 +872,13 @@ namespace Latin
 
 open _root_.Latin.Gender
 
-/-- A conjunct is described by its gender and whether it denotes a human. -/
-abbrev Conjunct := Value × Bool
+/-- A conjunct is described by its gender and the animacy of its referent. -/
+abbrev Conjunct := Value × Reference.Animacy
 
 /-- §9.5 has two syntactic rules for homogeneous genders, a semantic rule for humans, and the
 neuter otherwise. -/
 def rules : List (ResolutionRule Conjunct Value) :=
-  [⟨.all, (·.1 = .masc), .masc⟩, ⟨.all, (·.1 = .fem), .fem⟩, ⟨.all, (·.2 = true), .masc⟩,
+  [⟨.all, (·.1 = .masc), .masc⟩, ⟨.all, (·.1 = .fem), .fem⟩, ⟨.all, (·.2 = .human), .masc⟩,
     otherwise .neut]
 
 end Latin
@@ -906,7 +905,7 @@ open _root_.Romanian.Gender
 
 /-- Whether a noun denotes a male animate. -/
 def MaleAnimate (n : Romanian.Gender.Noun) : Prop :=
-  n.animate ∧ n.naturalGender = some .masculine
+  .animate ≤ n.animacy ∧ n.naturalGender = some .masculine
 
 instance : DecidablePred MaleAnimate := fun _ ↦ by unfold MaleAnimate; infer_instance
 
@@ -1034,8 +1033,8 @@ theorem polish_rows : ∀ row ∈ Examples.all, row.language = "poli1260" →
 
 theorem latin_rows : ∀ row ∈ Examples.all, row.language = "lati1261" →
     ∀ cs ∈ row.parse? "conjuncts" [("masc.human+fem.human",
-      [((Latin.Gender.Value.masc, true) : Latin.Conjunct), (.fem, true)]),
-      ("masc.inanimate+fem.inanimate", [(.masc, false), (.fem, false)])],
+      [((Latin.Gender.Value.masc, .human) : Latin.Conjunct), (.fem, .human)]),
+      ("masc.inanimate+fem.inanimate", [(.masc, .inanimate), (.fem, .inanimate)])],
       ∀ g ∈ row.parse? "resolved" [("masc", Latin.Gender.Value.masc), ("neut", .neut)],
         (row.judgment = .acceptable ↔ resolve Latin.rules cs = some g) := by
   decide +kernel

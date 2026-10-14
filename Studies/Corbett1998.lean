@@ -252,7 +252,7 @@ def sharedFormRules : List (ResolutionRule Chichewa.Gender.Noun SubjPrefix) :=
 /-- The regular rule, by which humans take the plural of gender 1/2 and the rest the plural of
 7/8. -/
 def semanticRules : List (ResolutionRule Chichewa.Gender.Noun SubjPrefix) :=
-  [⟨.all, (·.human = true), .a⟩, otherwise .zi]
+  [⟨.all, (·.animacy = .human), .a⟩, otherwise .zi]
 
 /-- The shared form is preferred; the regular rule applies where there is none. -/
 def rules : List (ResolutionRule Chichewa.Gender.Noun SubjPrefix) :=
@@ -280,7 +280,7 @@ theorem resolve_of_ne {cs : List Chichewa.Gender.Noun} (ha : ∃ c ∈ cs, c.gen
 
 /-- The regular rule on its own, gender 1/2 for humans and 7/8 for the rest. -/
 theorem resolve_semanticRules (cs : List Chichewa.Gender.Noun) :
-    resolve semanticRules cs = some (if ∀ c ∈ cs, c.human = true then .a else .zi) := by
+    resolve semanticRules cs = some (if ∀ c ∈ cs, c.animacy = .human then .a else .zi) := by
   unfold semanticRules
   split_ifs with hh
   · exact resolve_cons_of_applies _ _ _ hh
