@@ -62,7 +62,7 @@ section Principle
 
 variable {Prominence : Type*} [LinearOrder Prominence] (θ : Prominence)
 
-/-- The principle: a referent is indexed when its prominence reaches the language's
+/-- By the principle, a referent is indexed when its prominence reaches the language's
 threshold. -/
 def Indexed (p : Prominence) : Prop := θ ≤ p
 
@@ -77,7 +77,7 @@ def Deviates (r : ρ) (p : Prominence) : Prop := Indexed θ p ↔ ¬ Indexed θ 
 instance (r : ρ) (p : Prominence) : Decidable (Deviates θ dflt r p) :=
   inferInstanceAs (Decidable (_ ↔ _))
 
-/-- The mirror image and the coding asymmetry: a deviating referent is coded longer than
+/-- The mirror image yields the coding asymmetry, a deviating referent being coded longer than
 its role's default exactly when the default is unindexed. Differential P indexing, with a
 default below the threshold, codes the deviation by adding an index; differential A
 indexing, with a default above it, codes the deviation by dropping one. -/
@@ -115,7 +115,7 @@ theorem transitive_mirror :
 
 /-! ### The survey -/
 
-/-- The condition under which the paper reports a referent indexed or not: the factor named
+/-- The condition under which the paper reports a referent indexed or not, the factor named
 for the example. `focus` is focus on the referent, `otherFocus` focus on another constituent
 of a language whose index requires predicate focus. -/
 inductive Condition where
@@ -131,10 +131,10 @@ inductive Condition where
   | predicateFocus
   deriving DecidableEq, Repr
 
-/-- Whether a condition puts the referent at the prominence the language demands: topical,
-animate, definite, and pronominal referents, and predicate focus, which leaves the arguments
-unfocused; a focused, inanimate, indefinite, or lexical referent falls short, as does an
-argument in a clause whose focus lies elsewhere than the predicate. -/
+/-- Whether a condition puts the referent at the prominence the language demands. Topical,
+animate, definite, and pronominal referents do, and so does predicate focus, which leaves the
+arguments unfocused; a focused, inanimate, indefinite, or lexical referent falls short, as does
+an argument in a clause whose focus lies elsewhere than the predicate. -/
 def Condition.Prominent : Condition → Prop
   | .topical | .animate | .definite | .pronominal | .predicateFocus => True
   | .focus | .otherFocus | .inanimate | .indefinite | .lexical => False
@@ -143,7 +143,7 @@ instance : DecidablePred Condition.Prominent
   | .topical | .animate | .definite | .pronominal | .predicateFocus => isTrue trivial
   | .focus | .otherFocus | .inanimate | .indefinite | .lexical => isFalse id
 
-/-- A grammatical row of the survey: the role, whether it is indexed, and the paper's
+/-- A grammatical row of the survey gives the role, whether it is indexed, and the paper's
 condition. -/
 def datum (r : Datum) : Option (ArgumentRole × Bool × Condition) := do
   if r.judgment ≠ .acceptable then none
@@ -163,8 +163,8 @@ named condition, for A and for P. -/
 theorem indexed_iff_prominent : ∀ d ∈ data, d.2.1 = true ↔ d.2.2.Prominent := by
   decide +kernel
 
-/-- Both roles are attested in both directions: an indexed and an unindexed A, an indexed
-and an unindexed P. -/
+/-- Both roles are attested in both directions, with an indexed and an unindexed A and an
+indexed and an unindexed P. -/
 theorem both_roles_both_ways :
     ∀ role ∈ [ArgumentRole.A, .P], ∀ b ∈ [true, false],
       ∃ d ∈ data, d.1 = role ∧ d.2.1 = b := by
@@ -190,8 +190,8 @@ def scenario (r : Datum) : Option (Scenario Person × IndexedArgs) := do
 /-- The Reyesano table. -/
 def reyesano : List (Scenario Person × IndexedArgs) := Examples.all.filterMap scenario
 
-/-- Indexing by a ranking of persons: the higher-ranked argument, the A in a downstream
-scenario and the P in an upstream one, both when balanced. -/
+/-- Indexing by a ranking of persons indexes the higher-ranked argument, the A in a downstream
+scenario and the P in an upstream one, and both when balanced. -/
 def byRanking (rank : Person → Fin 3) (s : Scenario Person) : IndexedArgs :=
   match s.kindBy rank with
   | .downstream => .a

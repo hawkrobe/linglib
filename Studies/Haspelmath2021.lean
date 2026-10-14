@@ -845,7 +845,8 @@ theorem rows_splitP_splitA :
       Reproduces (rows "west2369" "P" "givenness") (prominence? BinaryGivenness.table) persianP ∧
       Reproduces (rows "neap1235" "P" "person") (prominence? Person.Class.table) abruzzeseP ∧
       Reproduces (rows "taka1261" "A" "person") (prominence? Person.Class.table) godoberiA ∧
-      Reproduces (rows "warr1255" "A" "nominality") (prominence? BinaryNominality.table) warrgamayA ∧
+      Reproduces (rows "warr1255" "A" "nominality") (prominence? BinaryNominality.table)
+        warrgamayA ∧
       Reproduces (rows "mang1381" "A" "animacy") (prominence? BinaryAnimacy.table) mangarrayiA ∧
       Reproduces (rows "cent2346" "A" "focus") (prominence? focusTable) tibetanA := by
   decide
