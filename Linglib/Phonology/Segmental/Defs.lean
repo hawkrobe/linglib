@@ -185,6 +185,11 @@ def IsLiquid : Prop :=
     (s.HasValue .lateral true ∨ s.HasValue .trill true ∨ s.HasValue .tap true)
 instance : Decidable s.IsLiquid := by unfold IsLiquid; infer_instance
 
+/-- A segment is a sibilant iff it is [+strident]. [strident] is a coronal feature, so the
+    sibilants are the strident coronal fricatives and affricates. -/
+def IsSibilant : Prop := s.HasValue .strident true
+instance : Decidable s.IsSibilant := inferInstanceAs (Decidable (s.HasValue _ _))
+
 /-- A segment is a glide iff it is [-cons, -syllabic, +approximant]. -/
 def IsGlide : Prop :=
   s.HasValue .consonantal false ∧ s.HasValue .syllabic false ∧ s.HasValue .approximant true

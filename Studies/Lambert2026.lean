@@ -4,9 +4,9 @@ public import Linglib.Core.Computability.Definite
 public import Linglib.Core.Data.List.Sublist
 public import Linglib.Phonology.Subregular.Multitier
 public import Linglib.Phonology.Subregular.ForbiddenPairs
-public import Linglib.Phonology.Subregular.Sibilant
 public import Linglib.Phonology.Subregular.Agree
 public import Linglib.Phonology.Tone.Plateauing
+public import Studies.Hansson2010
 
 /-!
 # Lambert (2026): Multitier phonotactics with logic and algebra
@@ -30,7 +30,8 @@ exactly the outputs of Hyman and Katamba's plateauing map (`plateauing_iff_mem_r
 ## Implementation notes
 
 Patterns are string languages over the paper's alphabets: syllables by stress, and by weight
-and stress for unbounded stress; the sibilant classes; segment classes for Uyghur, with suffix
+and stress for unbounded stress; the sibilant classes, which are the classes Hansson's segments
+project to, `none` off the tier; segment classes for Uyghur, with suffix
 material marked as such following the paper; and two tones, without tone associations. A
 pattern is defined by one of the paper's formulae, and where the paper gives an order-based and
 a tier-based formula for the same pattern both are classified but their equivalence is proved
@@ -51,7 +52,7 @@ not formalized.
 * [lambert-2026]
 * [omar-1969], [thurston-1966], [suomi-toivanen-ylitalo-2008]
 * [hayes-1995], [roberts-1987], [bunn-bunn-1970], [grubb-1969], [krueger-1961]
-* [heinz-2010], [sapir-hoijer-1967], [cook-1978], [mayer-major-2018]
+* [heinz-2010], [sapir-hoijer-1967], [cook-1978], [mayer-major-2018], [hansson-2010]
 * [hyman-katamba-2010], [ding-2006], [donohue-1997], [odden-1984], [jardine-2020]
 -/
 
@@ -274,104 +275,109 @@ theorem chuvash_isBTLI : IsBTLI 2 chuvash :=
 
 Navajo's symmetric sibilant harmony ([sapir-hoijer-1967]) is multitier co/finite, one of the
 two sibilant tiers being empty, and coincides with the tier-based agreement grammar, which the
-library already identifies with [heinz-2010]'s forbidden subsequences. Tsuut'ina's asymmetric
+library already identifies with [heinz-2010]'s forbidden subsequences; read through the
+sibilant classes of segments, it is [hansson-2010]'s agreement in [anterior]
+(`map_sibilantClass_mem_navajo_iff`). Tsuut'ina's asymmetric
 harmony ([cook-1978]) is tier-based strictly local but not multitier generalized definite: an
 internal factor is needed. Uyghur backness harmony ([mayer-major-2018]) is multitier definite,
 lying between the two. -/
 
-/-- The anterior tier. -/
-def Sibilant.isAnterior : Sibilant → Bool
-  | .anterior => true
-  | _ => false
+/-- The alveolar tier of the sibilant classes. -/
+def isAnterior (c : Option Bool) : Bool := c == some true
 
-/-- The posterior tier. -/
-def Sibilant.isPosterior : Sibilant → Bool
-  | .posterior => true
-  | _ => false
+/-- The postalveolar tier of the sibilant classes. -/
+def isPosterior (c : Option Bool) : Bool := c == some false
 
 /-- In Navajo ((30)) the sibilants agree, `[⋊⋉]_s ∨ [⋊⋉]_ʃ`. -/
-def navajo : Language Sibilant :=
-  tierWord Sibilant.isAnterior [] ⊔ tierWord Sibilant.isPosterior []
+def navajo : Language (Option Bool) :=
+  tierWord isAnterior [] ⊔ tierWord isPosterior []
 
 theorem navajo_isBTN : IsBTN navajo := IsBTC.union (isBTN_tierWord _ _) (isBTN_tierWord _ _)
 
 /-- The tier formula for Navajo describes the agreement grammar on the sibilant tier, which is
 tier-based strictly local and strictly piecewise. -/
 theorem navajo_eq_agree :
-    navajo = (TierStrictlyLocalGrammar.agree Sibilant.onTier).language := by
+    navajo = (TierStrictlyLocalGrammar.agree (·.isSome)).language := by
   ext w
   rw [mem_agree_lang_iff_forall_sublist_pair]
-  show (w.filter Sibilant.isAnterior = [] ∨ w.filter Sibilant.isPosterior = []) ↔ _
+  show (w.filter isAnterior = [] ∨ w.filter isPosterior = []) ↔ _
   simp only [filter_eq_nil_iff]
   constructor
   · rintro (h | h) a b hab ha hb
     · have ha' := h a (hab.subset (mem_cons_self))
       have hb' := h b (hab.subset (mem_cons_of_mem _ mem_cons_self))
-      cases a <;> cases b <;> simp_all [Sibilant.isAnterior, Sibilant.onTier]
+      rcases a with _ | _ | _ <;> rcases b with _ | _ | _ <;> simp_all [isAnterior]
     · have ha' := h a (hab.subset (mem_cons_self))
       have hb' := h b (hab.subset (mem_cons_of_mem _ mem_cons_self))
-      cases a <;> cases b <;> simp_all [Sibilant.isPosterior, Sibilant.onTier]
+      rcases a with _ | _ | _ <;> rcases b with _ | _ | _ <;> simp_all [isPosterior]
   · intro h
     by_contra hne
     push Not at hne
     obtain ⟨⟨x, hx, hx'⟩, ⟨y, hy, hy'⟩⟩ := hne
-    have hx : x = .anterior := by cases x <;> simp_all [Sibilant.isAnterior]
-    have hy : y = .posterior := by cases y <;> simp_all [Sibilant.isPosterior]
+    have hx : x = some true := by rcases x with _ | _ | _ <;> simp_all [isAnterior]
+    have hy : y = some false := by rcases y with _ | _ | _ <;> simp_all [isPosterior]
     subst hx hy
-    rcases sublist_pair_of_mem ‹Sibilant.anterior ∈ w› ‹Sibilant.posterior ∈ w› with
-      h' | h' | h'
-    · exact Sibilant.noConfusion h'
-    · exact Sibilant.noConfusion (h _ _ h' trivial trivial)
-    · exact Sibilant.noConfusion (h _ _ h' trivial trivial)
+    rcases sublist_pair_of_mem ‹some true ∈ w› ‹some false ∈ w› with h' | h' | h'
+    · exact absurd h' (by decide)
+    · exact absurd (h _ _ h' rfl rfl) (by decide)
+    · exact absurd (h _ _ h' rfl rfl) (by decide)
 
-/-- Anterior immediately before posterior on the sibilant tier, the adjacency Tsuut'ina
+/-- The sibilant classes are the classes of Hansson's segments, and Navajo's tier formula holds
+of a word's classes exactly when its sibilants agree in [anterior]. -/
+theorem map_sibilantClass_mem_navajo_iff (w : List Phonology.Segment) :
+    w.map Hansson2010.sibilantClass ∈ navajo ↔
+      w ∈ Hansson2010.navajoSibilantHarmony.language := by
+  rw [navajo_eq_agree, TierStrictlyLocalGrammar.agree,
+    mem_ofForbiddenPairs_language_iff_filter_isChain,
+    mem_ofForbiddenPairs_language_iff_filter_isChain, List.filter_map]
+  have : (w.filter ((fun c : Option Bool ↦ decide (c.isSome = true)) ∘
+      Hansson2010.sibilantClass)).map Hansson2010.sibilantClass =
+        (Hansson2010.sibilants w).map fun x ↦ (x .anterior : Option Bool) :=
+    List.map_congr_left fun x hx ↦
+      Hansson2010.sibilantClass_of_onTier (Hansson2010.onTier_of_mem_sibilants hx)
+  rw [this, List.isChain_map]
+
+/-- Alveolar immediately before postalveolar on the sibilant tier, the adjacency Tsuut'ina
 forbids ((31)). -/
-def antPostForbidden : Sibilant → Sibilant → Prop
-  | .anterior, .posterior => True
-  | _, _ => False
+def antPostForbidden (a b : Option Bool) : Prop := a = some true ∧ b = some false
 
-instance : DecidableRel antPostForbidden
-  | .anterior, .posterior => isTrue trivial
-  | .anterior, .anterior => isFalse not_false
-  | .anterior, .neutral => isFalse not_false
-  | .posterior, _ => isFalse not_false
-  | .neutral, _ => isFalse not_false
+instance : DecidableRel antPostForbidden := fun _ _ ↦ inferInstanceAs (Decidable (_ ∧ _))
 
-/-- In Tsuut'ina asymmetric harmony ([cook-1978]) an anterior sibilant is not followed on the
-tier by a posterior one, `¬[sʃ]_{s,ʃ}`. -/
-def tsuutinaGrammar : TierStrictlyLocalGrammar 2 Sibilant :=
-  TierStrictlyLocalGrammar.ofForbiddenPairs antPostForbidden Sibilant.onTier
+/-- In Tsuut'ina asymmetric harmony ([cook-1978]) an alveolar sibilant is not followed on the
+tier by a postalveolar one, `¬[sʃ]_{s,ʃ}`. -/
+def tsuutinaGrammar : TierStrictlyLocalGrammar 2 (Option Bool) :=
+  TierStrictlyLocalGrammar.ofForbiddenPairs antPostForbidden (·.isSome)
 
 /-- The Tsuut'ina language. -/
-def tsuutina : Language Sibilant := tsuutinaGrammar.language
+def tsuutina : Language (Option Bool) := tsuutinaGrammar.language
 
 theorem tsuutina_isTierStrictlyLocal : IsTierStrictlyLocal 2 tsuutina := ⟨tsuutinaGrammar, rfl⟩
 
 /-- The accepted witness `ʃᵏ⁺¹sᵏ⁺¹`. -/
-private abbrev tsuutinaIn (k : ℕ) : List Sibilant :=
-  sandwich (k + 1) .posterior [] (k + 1) .anterior
+private abbrev tsuutinaIn (k : ℕ) : List (Option Bool) :=
+  sandwich (k + 1) (some false) [] (k + 1) (some true)
 
 /-- The rejected witness `ʃᵏsʃsᵏ`. -/
-private abbrev tsuutinaOut (k : ℕ) : List Sibilant :=
-  sandwich k .posterior [.anterior, .posterior] k .anterior
+private abbrev tsuutinaOut (k : ℕ) : List (Option Bool) :=
+  sandwich k (some false) [some true, some false] k (some true)
 
 /-- The two witnesses share their affixes of length `k` on every tier. -/
-private lemma tsuutina_tierAffixes (k : ℕ) (T : Sibilant → Bool) :
+private lemma tsuutina_tierAffixes (k : ℕ) (T : Option Bool → Bool) :
     Edge.left.takeAt k ((tsuutinaIn k).filter T) = Edge.left.takeAt k ((tsuutinaOut k).filter T) ∧
     Edge.right.takeAt k ((tsuutinaIn k).filter T) =
       Edge.right.takeAt k ((tsuutinaOut k).filter T) := by
-  cases h_post : T .posterior <;> cases h_ant : T .anterior <;>
+  cases h_post : T (some false) <;> cases h_ant : T (some true) <;>
     simp [rtake_eq_reverse_take_reverse, h_post, h_ant, ← replicate_succ, take_append_of_le_length]
 
 private lemma tsuutinaIn_mem (k : ℕ) : tsuutinaIn k ∈ tsuutina := by
   show tsuutinaIn k ∈ (TierStrictlyLocalGrammar.ofForbiddenPairs antPostForbidden
-    Sibilant.onTier).language
+    (·.isSome)).language
   rw [mem_ofForbiddenPairs_language_iff_filter_isChain]
-  have h_filter : (tsuutinaIn k).filter (fun x ↦ decide (Sibilant.onTier x)) = tsuutinaIn k := by
+  have h_filter : (tsuutinaIn k).filter (fun x ↦ decide (x.isSome = true)) = tsuutinaIn k := by
     unfold tsuutinaIn sandwich
     simp
   rw [h_filter]
-  show (sandwich (k + 1) Sibilant.posterior [] (k + 1) Sibilant.anterior).IsChain
+  show (sandwich (k + 1) (some false) [] (k + 1) (some true)).IsChain
     (fun a b ↦ ¬ antPostForbidden a b)
   unfold sandwich
   rw [append_nil, isChain_append]
@@ -386,23 +392,21 @@ private lemma tsuutinaIn_mem (k : ℕ) : tsuutinaIn k ∈ tsuutina := by
 
 private lemma tsuutinaOut_notMem (k : ℕ) : tsuutinaOut k ∉ tsuutina := by
   show ¬ (tsuutinaOut k ∈ (TierStrictlyLocalGrammar.ofForbiddenPairs antPostForbidden
-    Sibilant.onTier).language)
+    (·.isSome)).language)
   rw [mem_ofForbiddenPairs_language_iff_filter_isChain]
-  have h_filter : (tsuutinaOut k).filter (fun x ↦ decide (Sibilant.onTier x)) = tsuutinaOut k := by
+  have h_filter : (tsuutinaOut k).filter (fun x ↦ decide (x.isSome = true)) = tsuutinaOut k := by
     unfold tsuutinaOut sandwich
     simp
   rw [h_filter]
-  show ¬ (sandwich k Sibilant.posterior [Sibilant.anterior, .posterior] k Sibilant.anterior).IsChain
+  show ¬ (sandwich k (some false) [some true, some false] k (some true)).IsChain
     (fun a b ↦ ¬ antPostForbidden a b)
   unfold sandwich
   intro hchain
-  rw [show replicate k Sibilant.posterior ++ [Sibilant.anterior, Sibilant.posterior] ++
-      replicate k Sibilant.anterior =
-      replicate k Sibilant.posterior ++
-        (Sibilant.anterior :: Sibilant.posterior :: replicate k Sibilant.anterior) by
+  rw [show replicate k (some false) ++ [some true, some false] ++ replicate k (some true) =
+      replicate k (some false) ++ (some true :: some false :: replicate k (some true)) by
       simp [append_assoc]] at hchain
   rw [isChain_append_cons_cons] at hchain
-  exact hchain.2.1 (by decide : antPostForbidden Sibilant.anterior Sibilant.posterior)
+  exact hchain.2.1 (by decide : antPostForbidden (some true) (some false))
 
 /-- Tsuut'ina is not multitier generalized definite (§4.2), since `ʃᵏ⁺¹sᵏ⁺¹` is in and `ʃᵏsʃsᵏ`
 is out with the same affixes of length `k` on every tier. -/

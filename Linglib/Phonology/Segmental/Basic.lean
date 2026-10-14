@@ -26,7 +26,7 @@ sonority rise between two classes, and the Parker sonority ranking.
 * `Segment.ofSpecs_le_iff`: a specification list lies below a segment iff the segment has
   every listed value.
 * `Segment.isVowel_iff_le`: a natural class is the segments above its specification, and
-  likewise for consonants, stops, fricatives, nasals and glides.
+  likewise for consonants, stops, fricatives, nasals, sibilants and glides.
 * `Segment.setFeature_hasValue`: the feature-change operations act as specified.
 * `IsDistinctive`: a feature set on which no two segments of an inventory agree, with
   `Segment.restrict_eq_restrict_iff` relating restriction to agreement on the set.
@@ -120,6 +120,10 @@ theorem isFricative_iff_le :
 /-- The nasals are the segments above `[+nasal]`. -/
 theorem isNasal_iff_le : s.IsNasal ↔ ofSpecs [(.nasal, true)] ≤ s := by
   rw [ofSpecs_le_iff_forall_mem s (by decide)]; simp [IsNasal]
+
+/-- The sibilants are the segments above `[+strident]`. -/
+theorem isSibilant_iff_le : s.IsSibilant ↔ ofSpecs [(.strident, true)] ≤ s :=
+  hasValue_iff_ofSpecs_le s _ _
 
 /-- The glides are the segments above `[−cons, −syll, +approx]`. -/
 theorem isGlide_iff_le :

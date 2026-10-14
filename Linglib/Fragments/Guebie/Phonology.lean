@@ -21,14 +21,19 @@ is [−tense], and Guébie's /ə/ departs from it in being [+ATR].
 
 ## Main definitions
 
-* `Guebie.Vowel`, `Guebie.Vowel.segment`, `Guebie.inventory`: the ten vowels, their
-  segments from the chart, and the inventory.
-* `Guebie.Vowel.atr`: the ±ATR split, read off the segment.
-* `Guebie.Vowel.withATR`: the member of a vowel's pair with a given [ATR] value.
+* `Guebie.i`, `Guebie.schwa` and the like: the ten vowels, and `Guebie.vowels` the set of them.
+* `Guebie.atr`: a segment's [ATR] value.
+* `Guebie.withATR`: the member of a vowel's pair with a given [ATR] value.
+
+## Main results
+
+* `Guebie.withATR_atr`: a segment's own [ATR] value leaves it unchanged.
+* `Guebie.atr_withATR`: the member of a vowel's pair with a value has that value.
 
 ## References
 
 * [sande-2022]
+* [moran-mccloy-2019]
 -/
 
 @[expose] public section
@@ -37,52 +42,73 @@ namespace Guebie
 
 open Phonology
 
-/-- The ten Guébie vowels. Constructor names ASCII-ize the IPA, a capital being the [−ATR]
-counterpart, so that `schwa` is ə, `I` is ɪ, `E` is ɛ, `O` is ɔ and `U` is ʊ. -/
-inductive Vowel where
-  | i | e | schwa | o | u
-  | I | E | a | O | U
-  deriving DecidableEq, Repr, Fintype
-
 /-- A vowel is the segment of its chart entry's tongue-root reading, with its departure. -/
 def vowel (m : Data.PHOIBLE.FeatureMatrix) (departure : Segment := ⊥) : Segment :=
   .ofChart m.tenseAsATR departure
 
-/-- Each vowel has its segment, the ±ATR pairs being /i ɪ/, /e ɛ/, /o ɔ/, /u ʊ/ and /ə a/. -/
-def Vowel.segment : Vowel → Segment
-  | .i => vowel .«i»
-  | .e => vowel .«e»
-  | .schwa => vowel .«ə» (.ofSpecs [(.atr, true)])
-  | .o => vowel .«o»
-  | .u => vowel .«u»
-  | .I => vowel .«ɪ»
-  | .E => vowel .«ɛ»
-  | .a => vowel .«a»
-  | .O => vowel .«ɔ»
-  | .U => vowel .«ʊ»
+/-- The advanced high front vowel /i/. -/
+def i : Segment := vowel .«i»
 
-/-- The ten vowels have ten segments. -/
-theorem Vowel.segment_injective : Function.Injective Vowel.segment := by decide
+/-- The advanced mid front vowel /e/. -/
+def e : Segment := vowel .«e»
 
-/-- The vowel inventory. -/
-def inventory : Finset Segment := Finset.univ.image Vowel.segment
+/-- The advanced mid central vowel /ə/. -/
+def schwa : Segment := vowel .«ə» (.ofSpecs [(.atr, true)])
 
-/-- The ±ATR split, read off the segment. -/
-def Vowel.atr (v : Vowel) : Bool := decide (v.segment.HasValue .atr true)
+/-- The advanced mid back vowel /o/. -/
+def o : Segment := vowel .«o»
+
+/-- The advanced high back vowel /u/. -/
+def u : Segment := vowel .«u»
+
+/-- The unadvanced high front vowel /ɪ/. -/
+def smallCapitalI : Segment := vowel .«ɪ»
+
+/-- The unadvanced mid front vowel /ɛ/. -/
+def epsilon : Segment := vowel .«ɛ»
+
+/-- The unadvanced low vowel /a/. -/
+def a : Segment := vowel .«a»
+
+/-- The unadvanced mid back vowel /ɔ/. -/
+def openO : Segment := vowel .«ɔ»
+
+/-- The unadvanced high back vowel /ʊ/. -/
+def upsilon : Segment := vowel .«ʊ»
+
+/-- The ten vowels, pairwise distinct. -/
+def vowels : Finset Segment :=
+  ⟨↑[i, e, schwa, o, u, smallCapitalI, epsilon, a, openO, upsilon], by decide⟩
+
+/-- A segment's [ATR] value, `true` for [+ATR]. -/
+def atr (x : Segment) : Bool := decide (x.HasValue .atr true)
+
+/-- The advanced vowels are /i e ə o u/. -/
+theorem atr_iff : ∀ x ∈ vowels, atr x = true ↔ x ∈ ({i, e, schwa, o, u} : Finset Segment) := by
+  decide
+
+/-- The ±ATR pairs, the [+ATR] member first, are /i ɪ/, /e ɛ/, /ə a/, /o ɔ/ and /u ʊ/. -/
+def pairs : List (Segment × Segment) :=
+  [(i, smallCapitalI), (e, epsilon), (schwa, a), (o, openO), (u, upsilon)]
 
 /-- The member of a vowel's pair with the given [ATR] value. The pair /ə a/ differs in height
-too, so this is not `Segment.setFeature .atr` on the segment. -/
-def Vowel.withATR : Vowel → Bool → Vowel
-  | .i, b | .I, b => if b then .i else .I
-  | .e, b | .E, b => if b then .e else .E
-  | .schwa, b | .a, b => if b then .schwa else .a
-  | .o, b | .O, b => if b then .o else .O
-  | .u, b | .U, b => if b then .u else .U
+too, so this is not `Segment.setFeature .atr`. A segment in no pair is left unchanged. -/
+def withATR (x : Segment) (b : Bool) : Segment :=
+  match pairs.find? fun p ↦ p.1 = x ∨ p.2 = x with
+  | some p => if b then p.1 else p.2
+  | none => x
 
-@[simp] theorem Vowel.atr_withATR (v : Vowel) (b : Bool) : (v.withATR b).atr = b := by
-  cases v <;> cases b <;> decide
+@[simp] theorem withATR_atr (x : Segment) : withATR x (atr x) = x := by
+  unfold withATR
+  split
+  · next p hp =>
+    have hx := List.find?_some hp
+    simp only [decide_eq_true_eq] at hx
+    have hmem := List.mem_of_find?_eq_some hp
+    simp only [pairs, List.mem_cons, List.mem_nil_iff, or_false] at hmem
+    rcases hmem with rfl | rfl | rfl | rfl | rfl <;> rcases hx with rfl | rfl <;> decide
+  · rfl
 
-@[simp] theorem Vowel.withATR_atr (v : Vowel) : v.withATR v.atr = v := by
-  cases v <;> decide
+theorem atr_withATR : ∀ x ∈ vowels, ∀ b, atr (withATR x b) = b := by decide
 
 end Guebie
