@@ -29,7 +29,7 @@ phonemes differ in that feature alone.
 
 ## Main results
 
-* `Korean.exists_mem_kor`: each phoneme is the segment of one in PHOIBLE's Korean inventory.
+* `Korean.subset_kor`: the phonemes are segments of PHOIBLE's Korean inventory.
 * `Korean.pak_paŋ_neutralized`: *pak* and *paŋ* before *n* derive the same string, the one
   with the velar nasal on every feature but [delayed release]; *pak* alone is unchanged.
 * `Korean.derive_pak_ne_paŋ`: the derived string is not literally the one with the velar
@@ -85,10 +85,9 @@ def l : Segment := .ofChart .«l»
 lateral, and they are pairwise distinct. -/
 def inventory : Finset Segment := ⟨↑[p, t, k, m, n, ŋ, a, i, u, l], by decide⟩
 
-/-- Each phoneme is the segment of a phoneme of PHOIBLE's Korean inventory. -/
-theorem exists_mem_kor :
-    ∀ x ∈ inventory, ∃ y ∈ Inventories.Korean.kor.phonemes, x = .ofChart y.features := by
-  decide
+/-- The phonemes are segments of PHOIBLE's Korean inventory. -/
+theorem subset_kor : inventory ⊆ Inventories.Korean.kor.segments :=
+  Inventory.subset_segments_iff.2 (by decide)
 
 /-! ### The rule -/
 

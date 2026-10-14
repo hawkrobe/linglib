@@ -18,7 +18,7 @@ phoneme names its glyph in the PHOIBLE chart, and its segment is the segment of 
 
 ## Main results
 
-* `Ndebele.exists_mem_nde`: each phoneme is the segment of one in PHOIBLE's Ndebele inventory.
+* `Ndebele.subset_nde`: the phonemes are segments of PHOIBLE's Ndebele inventory.
 * `Ndebele.isVowel_iff`: the five vowels are the vowels.
 
 ## Implementation notes
@@ -66,10 +66,9 @@ def l : Segment := .ofChart .«l»
 /-- The Ndebele phonemes of the agreement prefixes, pairwise distinct. -/
 def inventory : Finset Segment := ⟨↑[i, e, a, o, u, s, l], by decide⟩
 
-/-- Each phoneme is the segment of a phoneme of PHOIBLE's Ndebele inventory. -/
-theorem exists_mem_nde :
-    ∀ x ∈ inventory, ∃ y ∈ Inventories.Ndebele.nde.phonemes, x = .ofChart y.features := by
-  decide
+/-- The phonemes are segments of PHOIBLE's Ndebele inventory. -/
+theorem subset_nde : inventory ⊆ Inventories.Ndebele.nde.segments :=
+  Inventory.subset_segments_iff.2 (by decide)
 
 theorem isVowel_iff :
     ∀ x ∈ inventory, x.IsVowel ↔ x ∈ ({i, e, a, o, u} : Finset Segment) := by

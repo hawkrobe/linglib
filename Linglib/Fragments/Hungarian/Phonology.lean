@@ -31,7 +31,7 @@ rounding being a matter of phonetic implementation, so it departs from the chart
 
 ## Main results
 
-* `Hungarian.exists_mem_hun`: each vowel's chart entry is in PHOIBLE's Hungarian inventory.
+* `Hungarian.subset_hun`: each vowel's chart entry is in PHOIBLE's Hungarian inventory.
 * `Hungarian.isNeutral_iff`, `Hungarian.isFrontHarmonic_iff`, `Hungarian.isBackHarmonic_iff`:
   the neutral vowels are /i/ and /ɛ/, the front harmonic ones /y/ and /ø/, and the rest are
   back harmonic.
@@ -89,13 +89,13 @@ def turnedScriptA : Segment := vowel .«ɒ» (Segment.ofSpecs [(.round, false)])
 /-- The seven short vowels, pairwise distinct. -/
 def vowels : Finset Segment := ⟨↑[i, y, u, epsilon, ø, o, turnedScriptA], by decide⟩
 
-/-- Each vowel but the low one, which departs from the chart, is the segment of a phoneme of
-PHOIBLE's Hungarian inventory, and the low vowel's chart entry is in that inventory. -/
-theorem exists_mem_hun :
-    (∀ x ∈ vowels, x ≠ turnedScriptA →
-        ∃ y ∈ Inventories.Hungarian.hun.phonemes, x = vowel y.features) ∧
-      FeatureMatrix.«ɒ» ∈ Inventories.Hungarian.hun.phonemes.map (·.features) := by
-  decide
+/-- The vowels but the low one, which departs from the chart, are those of PHOIBLE's
+Hungarian inventory, and the low vowel's chart entry is in that inventory. -/
+theorem subset_hun :
+    vowels.erase turnedScriptA ⊆ Inventories.Hungarian.hun.featureMatrices.image vowel ∧
+      FeatureMatrix.«ɒ» ∈ Inventories.Hungarian.hun.featureMatrices :=
+  ⟨Inventory.subset_image_featureMatrices_iff.2 (by decide),
+    Inventory.mem_featureMatrices.2 (by decide)⟩
 
 /-- The vowel written by an orthographic vowel letter, long and short alike. -/
 def ofLetter : String → Option Segment

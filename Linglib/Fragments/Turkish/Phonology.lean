@@ -55,8 +55,8 @@ writing one segment.
 
 ## Main results
 
-* `exists_mem_tur`: every phoneme but `a` and the two laterals is the segment of a phoneme of
-  PHOIBLE's Turkish inventory.
+* `subset_tur`: every phoneme but `a` and the two laterals is a segment of PHOIBLE's Turkish
+  inventory.
 * `unspecified_back_iff`, `not_unspecified_voice`: a consonant lacks [back] unless it is the
   palatal lateral, and every phoneme has a value for [voice], which the tier tests of fronting
   and voicing rely on.
@@ -186,15 +186,15 @@ def vowels : Finset Segment := ⟨↑[a, e, ı, i, o, ö, u, ü], by decide⟩
 def consonants : Finset Segment :=
   ⟨↑[p, b, t, d, k, g, c, s, z, ş, v, h, m, n, l, l', r, y], by decide⟩
 
-/-- Every phoneme but `a` and the two laterals is the segment of a phoneme of PHOIBLE's
-Turkish inventory, and the chart entry of `a` is in that inventory. -/
-theorem exists_mem_tur :
-    (∀ x ∈ vowels, x ≠ a →
-      ∃ y ∈ Inventories.Turkish.tur.phonemes, x = vowel y.features) ∧
-      (∀ x ∈ consonants, x ≠ l → x ≠ l' →
-        ∃ y ∈ Inventories.Turkish.tur.phonemes, x = consonant y.features) ∧
-      FeatureMatrix.«a» ∈ Inventories.Turkish.tur.phonemes.map (·.features) := by
-  decide
+/-- Every phoneme but `a` and the two laterals is a segment of PHOIBLE's Turkish inventory,
+and the chart entry of `a` is in that inventory. -/
+theorem subset_tur :
+    vowels.erase a ⊆ Inventories.Turkish.tur.featureMatrices.image vowel ∧
+      consonants \ {l, l'} ⊆ Inventories.Turkish.tur.featureMatrices.image consonant ∧
+      FeatureMatrix.«a» ∈ Inventories.Turkish.tur.featureMatrices :=
+  ⟨Inventory.subset_image_featureMatrices_iff.2 (by decide),
+    Inventory.subset_image_featureMatrices_iff.2 (by decide),
+    Inventory.mem_featureMatrices.2 (by decide)⟩
 
 /-- `A` is the vowel of A-type suffixes such as -lAr and -mA. It is what `a` and `e` share,
 unrounded and non-high, and fronting harmony supplies its backness (§3.2.2). -/

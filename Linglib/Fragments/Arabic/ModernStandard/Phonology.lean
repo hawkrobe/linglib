@@ -25,8 +25,8 @@ lˤ is not a phoneme of the standard language. The values /dʒ/ for ج and /ðˤ
 
 ## Main results
 
-* `exists_mem_arb`: every consonant but `t`, `k`, `χ` and `ʁ` is the segment of a phoneme of
-  PHOIBLE's inventory 2157.
+* `subset_arb`: every consonant but `t`, `k`, `χ` and `ʁ` is a segment of PHOIBLE's
+  inventory 2157.
 
 ## References
 
@@ -141,10 +141,8 @@ def u : Segment := .ofChart .«u»
 /-- The vowels of Modern Standard Arabic. -/
 def vowels : Finset Segment := ⟨↑[a, i, u], by decide +kernel⟩
 
-/-- Every consonant but `t`, `k`, `χ` and `ʁ` is the segment of a phoneme of PHOIBLE's
-inventory 2157. -/
-theorem exists_mem_arb : ∀ x ∈ consonants, x ∉ ({t, k, χ, «ʁ»} : Finset Segment) →
-    ∃ y ∈ Inventories.Arabic.arb.phonemes, x = .ofChart y.features := by
-  decide +kernel
+/-- Every consonant but `t`, `k`, `χ` and `ʁ` is a segment of PHOIBLE's inventory 2157. -/
+theorem subset_arb : consonants \ {t, k, χ, «ʁ»} ⊆ Inventories.Arabic.arb.segments :=
+  Inventory.subset_segments_iff.2 (by decide +kernel)
 
 end Arabic.ModernStandard.Phonology

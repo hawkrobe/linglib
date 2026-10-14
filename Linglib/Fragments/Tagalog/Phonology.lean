@@ -26,7 +26,7 @@ and Hayes and of Magri.
 
 ## Main results
 
-* `exists_mem_tgl`: the phonemes are those of PHOIBLE's Tagalog inventory.
+* `subset_tgl`: the phonemes are those of PHOIBLE's Tagalog inventory.
 * `substitute_eq`: each obstruent substitutes to the nasal of its place, and the glottal stop
   to the velar nasal.
 * `cluster_of_not_trigger`: the prefix nasal is unchanged before a nasal, a glide or *h*.
@@ -118,11 +118,9 @@ def consonants : Finset Segment :=
 /-- The vowels, pairwise distinct. -/
 def vowels : Finset Segment := ⟨↑[i, e, a, o, u], by decide⟩
 
-/-- Each phoneme is the segment of a phoneme of PHOIBLE's Tagalog inventory. -/
-theorem exists_mem_tgl :
-    ∀ x ∈ consonants ∪ vowels,
-      ∃ y ∈ Inventories.Tagalog.tgl.phonemes, x = .ofChart y.features := by
-  decide
+/-- The phonemes are segments of PHOIBLE's Tagalog inventory. -/
+theorem subset_tgl : consonants ∪ vowels ⊆ Inventories.Tagalog.tgl.segments :=
+  Inventory.subset_segments_iff.2 (by decide)
 
 /-! ### The prefix nasal -/
 
