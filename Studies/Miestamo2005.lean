@@ -109,15 +109,6 @@ structure Pair where
 /-- The forms of a marker's morphs. -/
 def Pair.markerForms (p : Pair) : List Form := p.marker.morphs.map (toForm ·.form)
 
-/-- The segments of a text between spaces, morph boundaries `-` and `=`, and punctuation. -/
-def segments : Form → List Form
-  | [] => [[]]
-  | b :: bs =>
-    if b = ' ' ∨ b = '-' ∨ b = '=' ∨ b = ',' ∨ b = '.' then [] :: segments bs
-    else match segments bs with
-      | [] => [[b]]
-      | w :: ws => (b :: w) :: ws
-
 /-- The forms set aside as phonological, by language, with the shape they are cited in. -/
 def citations : List (Glottocode × String × String) :=
   [("nucl1301", "me", "mA"), ("nucl1301", "yecek", "ecek"), ("tuni1252", "w", "wi"),
@@ -129,9 +120,9 @@ def cite (l : Glottocode) (f : Form) : Form :=
   | some c => toForm c.2.2
   | none => f
 
-/-- The cited forms of a row's morphs. -/
+/-- The cited forms of the morphs of a row's text. -/
 def forms (e : Datum) : List Form :=
-  ((segments (toForm e.primaryText)).filter (· ≠ [])).map (cite e.language)
+  (Morphology.Morph.wordsOf e.primaryText).flatten.map (cite e.language)
 
 /-- The standard negators of a language, from its fragment. -/
 def standard : Glottocode → List Marker

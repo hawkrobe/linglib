@@ -1,10 +1,11 @@
 module
 
 public import Linglib.Fragments.Tigrinya.Complementizers
+public import Linglib.Fragments.Tigrinya.Negation
 public import Linglib.Data.Examples.Cacchioli2026
 
 /-!
-# Cacchioli 2026: the clausal prefixes of Tigrinya
+# Cacchioli (2026): The Syntax of Clausal Prefixes in Tigrinya
 
 Tigrinya is head-final and yet marks its subordinate clauses with prefixes. This file formalizes
 the two descriptive generalizations of a thesis arguing that the position is syntactic rather than
@@ -32,8 +33,10 @@ thesis's own examples, and both are attested on each side, so neither check is v
   overlap on the fiction and perception verbs alone
 * `selects_covers_data`, `each_typer_attested` — the table admits every attested pairing, and each
   typer is attested
-* `suffix_iff_polP`, `polP_clauses_attested` — the suffix appears exactly in the clauses carrying
-  the polarity projection, and every such clause type is attested with it
+* `suffix_iff_polP`, `polP_clauses_attested` — the suffix of the Tigrinya fragment's circumfix,
+  read off each example's negative word, appears exactly in the clauses carrying the polarity
+  projection, and every such clause type is attested with it
+* `variants_ungrammatical` — the starred variants are those that break the generalization
 
 ## References
 
@@ -151,35 +154,65 @@ def parseClauseKind : String → Option ClauseKind
   | "purpose" => some .purpose
   | _ => none
 
-/-- Whether an example is coded as carrying the negative suffix. -/
-def parseSuffix : String → Option Bool
-  | "present" => some true
-  | "absent" => some false
-  | _ => none
-
-/-- A negated clause: its kind and whether the suffix *-(ɨ)n* appears. -/
+/-- A negated clause, with its kind and its negative word as the forms of its morphs. -/
 structure NegationDatum where
   clause : ClauseKind
-  suffix : Bool
+  word : List String
   deriving DecidableEq, Repr
+
+/-- The negative word ends in the fragment's suffix *-(ɨ)n*. -/
+def NegationDatum.HasSuffix (d : NegationDatum) : Prop :=
+  d.word.getLast? = some Tigrinya.Negation.n.form
+
+instance : DecidablePred NegationDatum.HasSuffix := fun d ↦
+  inferInstanceAs (Decidable (d.word.getLast? = some Tigrinya.Negation.n.form))
+
+/-- The negative word among the words of a sentence is the one bearing the fragment's negative
+prefix, *ʔaj-* or its allomorph *ɛj-*, given as the forms of its morphs. -/
+def negativeWord (ws : List (List (List Char))) : Option (List String) :=
+  (ws.find? fun w ↦
+    Tigrinya.Negation.aj.form.toList ∈ w ∨ Tigrinya.Negation.ej.form.toList ∈ w).map
+    (·.map String.ofList)
 
 /-- The negated clause an example records, where it records one. -/
 def negationDatum (e : Datum) : Option NegationDatum := do
   let c ← parseClauseKind (← e.paperFeatures.lookup "clause")
-  let s ← parseSuffix (← e.paperFeatures.lookup "neg_suffix")
-  some ⟨c, s⟩
+  let w ← negativeWord (e.surfaceTokens.flatMap Morphology.Morph.wordsOf)
+  some ⟨c, w⟩
 
 /-- The negated clauses of the thesis's examples. -/
 def negationData : List NegationDatum := Examples.all.filterMap negationDatum
 
-/-- The suffix appears exactly in the clauses that carry PolP. -/
-theorem suffix_iff_polP : ∀ d ∈ negationData, d.suffix = true ↔ HasPolP d.clause := by
-  decide
+/-- The suffix appears exactly in the clauses that carry PolP, every example classified by its
+clause having a negative word, so that none drops out of `negationData`. -/
+theorem suffix_iff_polP :
+    (∀ e ∈ Examples.all, (e.paperFeatures.lookup "clause").isSome → (negationDatum e).isSome) ∧
+      ∀ d ∈ negationData, d.HasSuffix ↔ HasPolP d.clause := by
+  decide +kernel
 
-/-- Every clause type the analysis gives a polarity projection is attested with the suffix, so the
-generalization is confirmed on both sides rather than by the absence of counterexamples. -/
+/-- The negated variants the thesis judges beside its examples, in the same clause. -/
+def variantData : List (NegationDatum × Judgment) :=
+  Examples.all.flatMap fun e ↦ e.alternatives.filterMap fun (f, j) ↦ do
+    let c ← parseClauseKind (← e.paperFeatures.lookup "clause")
+    let w ← negativeWord (Morphology.Morph.wordsOf f)
+    some (⟨c, w⟩, j)
+
+/-- The negated variants the thesis stars are those that break the generalization: in the
+*ʔɨlu*-complement of (25) the negative without the suffix, in the relative clause of (12a) the
+negative with it. -/
+theorem variants_ungrammatical :
+    variantData ≠ [] ∧
+      ∀ v ∈ variantData, v.2 = .ungrammatical ∧ (v.1.HasSuffix ↔ ¬ HasPolP v.1.clause) := by
+  decide +kernel
+
+/-- Every clause type the analysis gives a polarity projection is attested with the suffix, and a
+clause without the projection is attested without it, so the generalization is confirmed on both
+sides rather than by the absence of counterexamples. -/
 theorem polP_clauses_attested :
-    ⟨.root, true⟩ ∈ negationData ∧ ⟨.ilu, true⟩ ∈ negationData ∧
-      ⟨.future, true⟩ ∈ negationData := by decide
+    (∃ d ∈ negationData, d.clause = .root ∧ d.HasSuffix) ∧
+    (∃ d ∈ negationData, d.clause = .ilu ∧ d.HasSuffix) ∧
+    (∃ d ∈ negationData, d.clause = .future ∧ d.HasSuffix) ∧
+    ∃ d ∈ negationData, ¬ d.HasSuffix := by
+  decide +kernel
 
 end Cacchioli2026

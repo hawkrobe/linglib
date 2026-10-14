@@ -15,8 +15,7 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["clause", "root"],
-      ["neg_suffix", "present"]
+      ["clause", "root"]
     ],
     "comment": "Negative counterpart of (5a) mɨs dɨm-ay jɨ-ts'awɛt 'I play with my cat'.",
     "verified": "page-image"
@@ -42,8 +41,7 @@
     ],
     "readings": [],
     "paperFeatures": [
-      ["clause", "relative"],
-      ["neg_suffix", "absent"]
+      ["clause", "relative"]
     ],
     "comment": "(12b) suffix alone and (12c) prefix plus suffix are both ungrammatical in a relative clause; ʔaj- surfaces as ɛj- after zɨ-.",
     "verified": "page-image"
@@ -65,8 +63,7 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["clause", "seem"],
-      ["neg_suffix", "absent"]
+      ["clause", "seem"]
     ],
     "comment": "",
     "verified": "page-image"
@@ -88,8 +85,7 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["clause", "conditional"],
-      ["neg_suffix", "absent"]
+      ["clause", "conditional"]
     ],
     "comment": "",
     "verified": "page-image"
@@ -112,7 +108,6 @@
     "readings": [],
     "paperFeatures": [
       ["clause", "complement"],
-      ["neg_suffix", "absent"],
       ["verb_class", "utterance"],
       ["typer", "kemzi"],
       ["matrix_verb", "ask"]
@@ -137,7 +132,6 @@
     "readings": [],
     "paperFeatures": [
       ["clause", "subjunctive"],
-      ["neg_suffix", "absent"],
       ["verb_class", "control"],
       ["typer", "ki"],
       ["matrix_verb", "try"]
@@ -163,7 +157,6 @@
     "readings": [],
     "paperFeatures": [
       ["clause", "subjunctive"],
-      ["neg_suffix", "absent"],
       ["verb_class", "directive"],
       ["typer", "ki"],
       ["matrix_verb", "order"]
@@ -189,7 +182,6 @@
     "readings": [],
     "paperFeatures": [
       ["clause", "subjunctive"],
-      ["neg_suffix", "absent"],
       ["verb_class", "desire"],
       ["typer", "ki"],
       ["matrix_verb", "want"]
@@ -215,8 +207,7 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["clause", "purpose"],
-      ["neg_suffix", "absent"]
+      ["clause", "purpose"]
     ],
     "comment": "",
     "verified": "page-image"
@@ -238,8 +229,7 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["clause", "future"],
-      ["neg_suffix", "present"]
+      ["clause", "future"]
     ],
     "comment": "The negative future: ʔaj- precedes kɨ- and the suffix is present.",
     "verified": "page-image"
@@ -259,15 +249,11 @@
     "context": "",
     "judgment": "acceptable",
     "alternatives": [
-      {
-        "form": "dɛrho ʔaj-nɨfɨrɨ ʔɨl-ɛ gɛlits'-ɛ",
-        "judgment": "ungrammatical"
-      }
+      {"form": "dɛrho ʔaj-nɨfɨrɨ ʔɨl-ɛ gɛlits'-ɛ", "judgment": "ungrammatical"}
     ],
     "readings": [],
     "paperFeatures": [
       ["clause", "ilu"],
-      ["neg_suffix", "present"],
       ["verb_class", "utterance"],
       ["typer", "ilu"],
       ["matrix_verb", "explain"]
@@ -481,10 +467,7 @@
     "context": "",
     "judgment": "acceptable",
     "alternatives": [
-      {
-        "form": "nɨsatom kɛm-zɨ-tɛmɛrʕa-wu ʔɨl-ɛ rɨʔɛy-ɛ",
-        "judgment": "ungrammatical"
-      }
+      {"form": "nɨsatom kɛm-zɨ-tɛmɛrʕa-wu ʔɨl-ɛ rɨʔɛy-ɛ", "judgment": "ungrammatical"}
     ],
     "readings": [],
     "paperFeatures": [

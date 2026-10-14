@@ -6,6 +6,7 @@ public import Linglib.Fragments.Finnish.Phonology
 public import Linglib.Fragments.Turkish.Phonology
 public import Studies.Yang2016
 public import Linglib.Data.Examples.Belth2026
+public import Linglib.Morphology.Morph
 
 /-!
 # Belth (2026): A Learning-Based Account of Phonological Tiers
@@ -460,15 +461,6 @@ theorem lunaris_mispredicted :
 /-- The forms of a row listing several, its glossed tokens. -/
 def forms (e : Datum) : List String := e.glossedTokens.map (·.1)
 
-/-- The morphemes of a transcription, split at the boundaries. -/
-def morphemes : List Char → List (List Char)
-  | [] => [[]]
-  | '-' :: cs => [] :: morphemes cs
-  | c :: cs =>
-    match morphemes cs with
-    | w :: ws => (c :: w) :: ws
-    | [] => [[c]]
-
 namespace Finnish
 
 open _root_.Finnish Phonology
@@ -517,7 +509,7 @@ def segments (s : String) : List Segment := s.toList.filterMap ofChar
 
 /-- The underlying form of a stem with its affixes, whose vowels are archiphonemes. -/
 def ur (form : String) : List Segment :=
-  match morphemes form.toList with
+  match (Morphology.Morph.wordsOf form).flatten with
   | [] => []
   | stem :: affixes => stem.filterMap ofChar ++ affixes.flatMap (·.filterMap ofAffixChar)
 
@@ -525,7 +517,7 @@ def ur (form : String) : List Segment :=
 harmonies applied in turn; its surface forms derive the forms of (46) and (47). -/
 theorem rows : ∀ e ∈ [Examples.ex_46, Examples.ex_47], ∀ f ∈ forms e,
     surface (ur f) = segments f := by
-  decide
+  decide +kernel
 
 end Turkish
 
