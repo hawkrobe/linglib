@@ -1,148 +1,203 @@
 module
 
 public import Linglib.Semantics.Dynamic.Partial
-public import Linglib.Semantics.Presupposition.Trivalent
 public import Linglib.Data.Examples.Beaver2001
 
 /-!
 # Beaver (2001): Presupposition and Assertion in Dynamic Semantics
 
-The book reviews the linguistic theories of presupposition (Part I) and then
-builds a dynamic one (Part II). Sentences update information states — sets of
-worlds — as in [veltman-1996], and the presupposition operator `∂` blocks an
-update unless the context already establishes its argument. This file
-formalizes the propositional core, partial update logic. `Formula.eval` sends
-a sentence to a partial update. A state *satisfies* a sentence when updating
-with it changes nothing (D29), and *admits* it when the update is defined at
-all (D30). One sentence *presupposes* another when it cannot update any
-context that does not already satisfy the other (D31, D46); it *entails* the
-other when updating with it always produces a state satisfying the other
-(D26, D45). Determiners, discourse markers and accommodation (Chs. 7–9) lie
-outside the propositional fragment.
+The book reviews the linguistic theories of presupposition (Part I) and then builds a dynamic
+one (Part II). This file formalizes the propositional core of Part II, the partial update logic
+PUL of Chapter 6, and its trivalent counterpart of Chapter 10. A sentence denotes an update of
+information states, sets of worlds, and the presupposition operator `∂φ` passes a state through
+only if updating it with `φ` changes nothing. A state satisfies a sentence it is a fixed point
+of and admits a sentence it can be updated with. A sentence presupposes what every state
+admitting it satisfies, and entails what every output of an update with it satisfies. From
+Part I, the file states Strawsonian presupposition and its Strong Kleene projection (Fact 2.1).
 
 ## Main statements
 
-* `andStrong_presup_iff`, `orStrong_presup_iff`: Strong Kleene conditionalises
-  presuppositions (Fact 2.1).
-* `eval_must`: *must* is the dual of *might* (Fact 6.1); `eval_eliminative`:
-  every update is eliminative (Facts 7.1, A.1).
-* `Presupposes.not`/`.and_left`/`.implies_left`/`.might`/`.must`/`.trans` and
-  conditionalised `.and_right`/`.implies_right`: projection (Facts 8.1–8.3,
-  8.8); `e154` is the Spaceman Spiff conditional (E154).
-* `satisfies_might_iff`, `satisfies_must_iff`: *might* is a consistency test,
-  *must* a satisfaction test (D61, Facts 8.5–8.7).
-* `trueAt_iff`, `mem_eval_iff`, `entails_iff_tval`, `presupposes_iff`: on the
-  non-modal fragment the updates agree world by world with the trivalent
-  semantics of [peters-1979] (D70–D77, Lemma 10.1), are distributive (Fact A.2), the two
-  entailment notions coincide (Lemma 10.2, Fact 10.3), and presupposition is
-  entailment by the sentence and by its negation.
+* `Formula.Presupposes.and_right`, `Formula.Presupposes.implies_right`: a presupposition of
+  the second conjunct or of the consequent projects conditionalised on the first.
+* `Formula.satisfies_might_iff`, `Formula.satisfies_must_iff`: *might* is a consistency test
+  and *must* a satisfaction test.
+* `Formula.eval_eq_ofTrivalent`: on the non-modal sentences an update is the Heimian update of
+  the sentence's value under Peters' connectives, so the dynamic and trivalent entailments
+  coincide (`Formula.entails_iff_tval`, Fact 10.3).
+* `entailed_rows`, `unentailed_rows`: the entailments and non-entailments the book prints for
+  its translations of the *realise* examples.
+
+## Implementation notes
+
+* The book's updates are relations between states. Every PUL relation is a partial function,
+  so a sentence denotes a `CCP.Partial`.
+* Facts 7.1, 8.1–8.3 and 8.5–8.8, with the tests of D61, are stated for ABLE, the first-order
+  system of Chapters 7 and 8. Their proofs use only the propositional clauses, which ABLE shares
+  with PUL, and they are proved here for PUL.
+* Presupposition and its projection through negation, conjunction and *implies* are the
+  substrate's `PartialUpdate.Presupposes` and its lemmas; the study adds *might*, *must* and
+  `∂`.
+* `Formula.tval` gives the modal sentences the junk value `indet`; every theorem about it
+  assumes the sentence non-modal.
+
+## TODO
+
+* The remark after Fact 2.1, that for bivalent `ψ` the presuppositions listed are maximal.
+* Fact 10.4: the trivalent correspondence extends to Bochvar's assertion operator (D79).
+* The hide-and-seek examples E178–E183, which motivate the order sensitivity of *might*.
 
 ## References
 
-* [beaver-2001]: Presupposition and Assertion in Dynamic Semantics. CSLI.
-* [veltman-1996]: Defaults in update semantics.
-* [peters-1979]: A truth-conditional formulation of Karttunen's account of
-  presupposition. *Synthese* 40.
+* [beaver-2001]
+* [kleene-1952]
+* [peters-1979]
+* [veltman-1996]
 -/
 
 @[expose] public section
 
 namespace Beaver2001
 
-open Presupposition DynamicSemantics Classical
+open DynamicSemantics Classical
 
-variable {W : Type*}
+variable {P W : Type*}
 
-/-! ### Strong Kleene conditionalises presuppositions (Fact 2.1) -/
+/-! ### Strawsonian presupposition under Strong Kleene (Fact 2.1) -/
 
-/-- Under Strong Kleene conjunction, if `φ` presupposes `π` then `φ ∧ ψ` presupposes
-`ψ → π`, and when `ψ` is bivalent this is its presupposition. -/
-theorem andStrong_presup_iff (p q : PartialProp W) {w : W} (hq : q.presup w) :
-    (PartialProp.andStrong p q).presup w ↔ (q.assertion w → p.presup w) := by
-  constructor
-  · rintro (⟨hp, _⟩ | ⟨hp, _⟩ | ⟨_, hnq⟩) ha
-    exacts [hp, hp, absurd ha hnq]
-  · intro h
-    by_cases ha : q.assertion w
-    · exact Or.inl ⟨h ha, hq⟩
-    · exact Or.inr (Or.inr ⟨hq, ha⟩)
+/-- `φ` presupposes `π` in Strawson's sense (D1) when `π` is true wherever `φ` is
+classical. -/
+def StrawsonPresupposes (φ π : W → Trivalent) : Prop := ∀ w, φ w ≠ .indet → π w = .true
 
-/-- Under Strong Kleene disjunction, if `φ` presupposes `π` then `φ ∨ ψ` presupposes
-`¬ψ → π`, and when `ψ` is bivalent this is its presupposition. -/
-theorem orStrong_presup_iff (p q : PartialProp W) {w : W} (hq : q.presup w) :
-    (PartialProp.orStrong p q).presup w ↔ (¬q.assertion w → p.presup w) := by
-  constructor
-  · rintro (⟨hp, _⟩ | ⟨hp, _⟩ | ⟨_, ha⟩) hna
-    exacts [hp, hp, absurd ha hna]
-  · intro h
-    by_cases ha : q.assertion w
-    · exact Or.inr (Or.inr ⟨hq, ha⟩)
-    · exact Or.inl ⟨h ha, hq⟩
+namespace StrawsonPresupposes
+
+variable {φ ψ π : W → Trivalent}
+
+private theorem of_table (f g : Trivalent → Trivalent → Trivalent)
+    (t : ∀ a b c, (a ≠ .indet → c = .true) → f a b ≠ .indet → g b c = .true)
+    (h : StrawsonPresupposes φ π) :
+    StrawsonPresupposes (fun w ↦ f (φ w) (ψ w)) fun w ↦ g (ψ w) (π w) :=
+  fun w ↦ t _ _ _ (h w)
+
+/-! The rows of Fact 2.1, with the Strong Kleene connectives `⊓`, `⊔` and `Trivalent.neg`, and
+`φ → ψ` read as `¬φ ∨ ψ`. -/
+
+theorem neg (h : StrawsonPresupposes φ π) : StrawsonPresupposes (fun w ↦ (φ w).neg) π :=
+  fun w hw ↦ h w (mt Trivalent.neg_eq_indet_iff.2 hw)
+
+theorem and_left (h : StrawsonPresupposes φ π) :
+    StrawsonPresupposes (fun w ↦ φ w ⊓ ψ w) fun w ↦ (ψ w).neg ⊔ π w :=
+  h.of_table (· ⊓ ·) (fun b c ↦ b.neg ⊔ c) (by decide)
+
+theorem and_right (h : StrawsonPresupposes φ π) :
+    StrawsonPresupposes (fun w ↦ ψ w ⊓ φ w) fun w ↦ (ψ w).neg ⊔ π w :=
+  h.of_table (fun a b ↦ b ⊓ a) (fun b c ↦ b.neg ⊔ c) (by decide)
+
+/-- `φ → ψ` presupposes `(¬ψ) → π`, which is `ψ ∨ π`. -/
+theorem imp_left (h : StrawsonPresupposes φ π) :
+    StrawsonPresupposes (fun w ↦ (φ w).neg ⊔ ψ w) fun w ↦ ψ w ⊔ π w :=
+  h.of_table (fun a b ↦ a.neg ⊔ b) (· ⊔ ·) (by decide)
+
+theorem imp_right (h : StrawsonPresupposes φ π) :
+    StrawsonPresupposes (fun w ↦ (ψ w).neg ⊔ φ w) fun w ↦ (ψ w).neg ⊔ π w :=
+  h.of_table (fun a b ↦ b.neg ⊔ a) (fun b c ↦ b.neg ⊔ c) (by decide)
+
+/-- `φ ∨ ψ` presupposes `(¬ψ) → π`, which is `ψ ∨ π`. -/
+theorem or_left (h : StrawsonPresupposes φ π) :
+    StrawsonPresupposes (fun w ↦ φ w ⊔ ψ w) fun w ↦ ψ w ⊔ π w :=
+  h.of_table (· ⊔ ·) (· ⊔ ·) (by decide)
+
+theorem or_right (h : StrawsonPresupposes φ π) :
+    StrawsonPresupposes (fun w ↦ ψ w ⊔ φ w) fun w ↦ ψ w ⊔ π w :=
+  h.of_table (fun a b ↦ b ⊔ a) (· ⊔ ·) (by decide)
+
+end StrawsonPresupposes
 
 /-! ### Partial update logic (Ch. 6) -/
 
-/-- The sentences of partial update logic (D22, D34), with atoms interpreted directly as
-sets of worlds. -/
-inductive Formula (W : Type*) where
-  | atom (p : Set W)
-  | not (φ : Formula W)
-  | and (φ ψ : Formula W)
-  | might (φ : Formula W)
-  | must (φ : Formula W)
-  | presup (φ : Formula W)
+/-- The sentences of PUL over the atomic formulae `P` (D22, D34). -/
+inductive Formula (P : Type*) where
+  | atom (p : P)
+  | not (φ : Formula P)
+  | and (φ ψ : Formula P)
+  | might (φ : Formula P)
+  | must (φ : Formula P)
+  | presup (φ : Formula P)
+  deriving DecidableEq
 
 namespace Formula
 
 /-- `φ implies ψ` is `not (φ and not ψ)` (D25). -/
-def implies (φ ψ : Formula W) : Formula W := not (and φ (not ψ))
+def implies (φ ψ : Formula P) : Formula P := not (and φ (not ψ))
 
-/-- `φ or ψ` is `not (not φ and not ψ)` (D52). -/
-def or (φ ψ : Formula W) : Formula W := not (and (not φ) (not ψ))
+section Model
 
-/-- The update a sentence denotes (D25, D35): a partial function on information states,
-defined for `∂φ` only at states that are fixed points of `φ`. -/
-noncomputable def eval : Formula W → CCP.Partial W
-  | atom p => fun σ => Part.some {w ∈ σ | w ∈ p}
-  | not φ => CCP.Partial.neg φ.eval
-  | and φ ψ => PartialUpdate.seq φ.eval ψ.eval
-  | might φ => fun σ => (φ.eval σ).map fun υ => if υ.Nonempty then σ else ∅
-  | must φ => fun σ => (φ.eval σ).map fun υ => if υ = σ then σ else ∅
-  | presup φ => fun σ => ⟨σ ∈ φ.eval σ, fun _ => σ⟩
+variable (F : P → Set W)
 
-variable {φ ψ χ : Formula W} {σ τ : Set W} {w : W}
+/-- The update a sentence denotes in the model interpreting each atom `p` as `F p` (D25, D35),
+a partial function on information states that is defined for `∂φ` only at the fixed points of
+`φ`. -/
+noncomputable def eval : Formula P → CCP.Partial W
+  | atom p => fun σ ↦ Part.some {w ∈ σ | w ∈ F p}
+  | not φ => CCP.Partial.neg (eval φ)
+  | and φ ψ => PartialUpdate.seq (eval φ) (eval ψ)
+  | might φ => fun σ ↦ (eval φ σ).map fun υ ↦ if υ.Nonempty then σ else ∅
+  | must φ => fun σ ↦ (eval φ σ).map fun υ ↦ if υ = σ then σ else ∅
+  | presup φ => fun σ ↦ ⟨σ ∈ eval φ σ, fun _ ↦ σ⟩
 
-theorem mem_eval_atom {p : Set W} : τ ∈ (atom p).eval σ ↔ τ = {w ∈ σ | w ∈ p} :=
+/-- `σ` satisfies `φ` (D29) when `σ[φ]σ`. -/
+def Satisfies (σ : Set W) (φ : Formula P) : Prop := PartialUpdate.supports σ (φ.eval F)
+
+/-- `φ` presupposes `ψ` (D31) when every state admitting `φ` (D30) satisfies `ψ`. -/
+def Presupposes (φ ψ : Formula P) : Prop := PartialUpdate.Presupposes (φ.eval F) (ψ.eval F)
+
+/-- `φ` entails `ψ` (D26, with one premise) when every update with `φ` yields a state
+satisfying `ψ` (`entails_iff_forall`), which is dynamic entailment between the two updates. -/
+def Entails (φ ψ : Formula P) : Prop :=
+  DynamicSemantics.Entails [(· >>= φ.eval F)] (· >>= ψ.eval F)
+
+/-- `σ` is consistent with `φ` (Fact 8.5) when updating it does not reach the absurd state. -/
+def ConsistentWith (σ : Set W) (φ : Formula P) : Prop := ∃ τ ∈ φ.eval F σ, τ.Nonempty
+
+/-- A test (D61) has only the input and the absurd state as outputs. -/
+def IsTest (φ : Formula P) : Prop := ∀ σ τ, τ ∈ φ.eval F σ → τ = σ ∨ τ = ∅
+
+end Model
+
+variable {F : P → Set W} {φ ψ χ : Formula P} {σ τ : Set W} {w : W}
+
+theorem mem_eval_atom {p : P} : τ ∈ (atom p).eval F σ ↔ τ = {w ∈ σ | w ∈ F p} :=
   Part.mem_some_iff
 
-theorem mem_eval_not : τ ∈ (not φ).eval σ ↔ ∃ υ ∈ φ.eval σ, σ \ υ = τ :=
+theorem mem_eval_not : τ ∈ (not φ).eval F σ ↔ ∃ υ ∈ φ.eval F σ, σ \ υ = τ :=
   Part.mem_map_iff _
 
-theorem mem_eval_and : τ ∈ (and φ ψ).eval σ ↔ ∃ υ ∈ φ.eval σ, τ ∈ ψ.eval υ :=
+theorem mem_eval_and : τ ∈ (and φ ψ).eval F σ ↔ ∃ υ ∈ φ.eval F σ, τ ∈ ψ.eval F υ :=
   Part.mem_bind_iff
 
 theorem mem_eval_might :
-    τ ∈ (might φ).eval σ ↔ ∃ υ ∈ φ.eval σ, (if υ.Nonempty then σ else ∅) = τ :=
+    τ ∈ (might φ).eval F σ ↔ ∃ υ ∈ φ.eval F σ, (if υ.Nonempty then σ else ∅) = τ :=
   Part.mem_map_iff _
 
-theorem mem_eval_must : τ ∈ (must φ).eval σ ↔ ∃ υ ∈ φ.eval σ, (if υ = σ then σ else ∅) = τ :=
+theorem mem_eval_must :
+    τ ∈ (must φ).eval F σ ↔ ∃ υ ∈ φ.eval F σ, (if υ = σ then σ else ∅) = τ :=
   Part.mem_map_iff _
 
-theorem mem_eval_presup : τ ∈ (presup φ).eval σ ↔ σ ∈ φ.eval σ ∧ τ = σ :=
-  Part.mem_mk_iff.trans ⟨fun ⟨h, e⟩ => ⟨h, e.symm⟩, fun ⟨h, e⟩ => ⟨h, e.symm⟩⟩
+theorem mem_eval_presup : τ ∈ (presup φ).eval F σ ↔ σ ∈ φ.eval F σ ∧ τ = σ :=
+  Part.mem_mk_iff.trans ⟨fun ⟨h, e⟩ ↦ ⟨h, e.symm⟩, fun ⟨h, e⟩ ↦ ⟨h, e.symm⟩⟩
 
-/-- Every update is eliminative (Fact 7.1, Fact A.1): outputs are subsets of the input. -/
-theorem eval_eliminative : ∀ (φ : Formula W) {σ τ : Set W}, τ ∈ φ.eval σ → τ ⊆ σ
+/-- Every update is eliminative, never adding a world to its input (Fact 7.1). -/
+theorem eval_eliminative : ∀ (φ : Formula P) {σ τ : Set W}, τ ∈ φ.eval F σ → τ ⊆ σ
   | atom _, _, _, h => mem_eval_atom.1 h ▸ Set.sep_subset _ _
   | not _, _, _, h => CCP.Partial.isEliminative_neg _ _ _ h
   | and φ ψ, _, _, h =>
-    PartialUpdate.IsEliminative.seq (fun _ _ => eval_eliminative φ) (fun _ _ => eval_eliminative ψ)
+    PartialUpdate.IsEliminative.seq (fun _ _ ↦ eval_eliminative φ) (fun _ _ ↦ eval_eliminative ψ)
       _ _ h
   | might _, _, _, h => by obtain ⟨_, -, rfl⟩ := mem_eval_might.1 h; split_ifs <;> simp
   | must _, _, _, h => by obtain ⟨_, -, rfl⟩ := mem_eval_must.1 h; split_ifs <;> simp
   | presup _, _, _, h => (mem_eval_presup.1 h).2 ▸ le_rfl
 
 /-- The absurd state admits every sentence and is its own update. -/
-theorem empty_mem_eval_empty : ∀ φ : Formula W, ∅ ∈ φ.eval ∅
+theorem empty_mem_eval_empty : ∀ φ : Formula P, (∅ : Set W) ∈ φ.eval F ∅
   | atom _ => mem_eval_atom.2 (by ext; simp)
   | not φ => mem_eval_not.2 ⟨∅, empty_mem_eval_empty φ, Set.empty_sdiff _⟩
   | and φ ψ => mem_eval_and.2 ⟨∅, empty_mem_eval_empty φ, empty_mem_eval_empty ψ⟩
@@ -150,123 +205,93 @@ theorem empty_mem_eval_empty : ∀ φ : Formula W, ∅ ∈ φ.eval ∅
   | must φ => mem_eval_must.2 ⟨∅, empty_mem_eval_empty φ, by simp⟩
   | presup φ => mem_eval_presup.2 ⟨empty_mem_eval_empty φ, rfl⟩
 
-/-- `σ` satisfies `φ` (D29): `σ[φ]σ`, that is, `σ` supports the update. -/
-def Satisfies (σ : Set W) (φ : Formula W) : Prop := PartialUpdate.supports σ φ.eval
+theorem admits_of_mem (h : τ ∈ φ.eval F σ) : (φ.eval F).Admits σ := Part.dom_iff_mem.2 ⟨τ, h⟩
 
-/-- `φ` presupposes `ψ` (D31, D46): every state admitting `φ` satisfies `ψ`. -/
-def Presupposes (φ ψ : Formula W) : Prop := ∀ σ, φ.eval.Admits σ → Satisfies σ ψ
+theorem presupposes_iff_forall :
+    Presupposes F φ ψ ↔ ∀ σ, (φ.eval F).Admits σ → Satisfies F σ ψ := Iff.rfl
 
-/-- `φ` entails `ψ` (D26, D45): dynamic entailment between the two updates, which holds when
-every update with `φ` yields a state satisfying `ψ` (`entails_iff_forall`). -/
-def Entails (φ ψ : Formula W) : Prop := DynamicSemantics.Entails [(· >>= φ.eval)] (· >>= ψ.eval)
-
-/-- `σ` is consistent with `φ` (MP7): updating does not reach the absurd state. -/
-def ConsistentWith (σ : Set W) (φ : Formula W) : Prop := ∃ τ ∈ φ.eval σ, τ.Nonempty
-
-/-- A test (D61): its only outputs are the input and the absurd state. -/
-def IsTest (φ : Formula W) : Prop := ∀ σ τ, τ ∈ φ.eval σ → τ = σ ∨ τ = ∅
-
-theorem admits_of_mem (h : τ ∈ φ.eval σ) : φ.eval.Admits σ := Part.dom_iff_mem.2 ⟨τ, h⟩
-
-theorem Satisfies.Admits (h : Satisfies σ φ) : φ.eval.Admits σ := admits_of_mem h
-
-theorem entails_iff_forall : Entails φ ψ ↔ ∀ σ τ, τ ∈ φ.eval σ → Satisfies τ ψ :=
+theorem entails_iff_forall : Entails F φ ψ ↔ ∀ σ τ, τ ∈ φ.eval F σ → Satisfies F τ ψ :=
   PartialUpdate.entails_bind_iff
 
+/-- *implies* denotes Heim's conditional. -/
+theorem eval_implies : (implies φ ψ).eval F = CCP.Partial.cond (φ.eval F) (ψ.eval F) :=
+  (CCP.Partial.cond_eq_neg_seq_neg _ _).symm
+
 /-- *must* is the dual of *might* (Fact 6.1). -/
-theorem eval_must (φ : Formula W) : (must φ).eval = (not (might (not φ))).eval := by
+theorem eval_must (φ : Formula P) : (must φ).eval F = (not (might (not φ))).eval F := by
   funext σ
-  refine Part.ext fun τ => ?_
-  rw [mem_eval_must, mem_eval_not]
-  constructor
-  · rintro ⟨υ, hυ, rfl⟩
-    refine ⟨_, mem_eval_might.2 ⟨σ \ υ, mem_eval_not.2 ⟨υ, hυ, rfl⟩, rfl⟩, ?_⟩
-    by_cases h : υ = σ
-    · subst h; simp
-    · rw [ite_eq_right h, ite_eq_left (Set.sdiff_nonempty.2 fun hσ => h ((eval_eliminative φ hυ).antisymm hσ)),
-        Set.sdiff_self]
-  · rintro ⟨_, hτ', rfl⟩
-    obtain ⟨_, hυ', rfl⟩ := mem_eval_might.1 hτ'
-    obtain ⟨υ, hυ, rfl⟩ := mem_eval_not.1 hυ'
-    refine ⟨υ, hυ, ?_⟩
-    by_cases h : υ = σ
-    · subst h; simp
-    · rw [ite_eq_right h, ite_eq_left (Set.sdiff_nonempty.2 fun hσ => h ((eval_eliminative φ hυ).antisymm hσ)),
-        Set.sdiff_self]
+  change (φ.eval F σ).map _ = (((φ.eval F σ).map (σ \ ·)).map _).map (σ \ ·)
+  rw [Part.map_map, Part.map_map]
+  refine Part.ext fun τ ↦ ?_
+  simp only [Part.mem_map_iff]
+  refine exists_congr fun υ ↦ and_congr_right fun hυ ↦ ?_
+  by_cases h : υ = σ
+  · subst h; simp
+  · have hne : (σ \ υ).Nonempty :=
+      Set.sdiff_nonempty.2 fun hσ ↦ h ((eval_eliminative φ hυ).antisymm hσ)
+    simp [h, hne]
 
 /-! ### Projection (Facts 8.1–8.3, 8.8) -/
 
-theorem Presupposes.not (h : Presupposes φ ψ) : Presupposes (not φ) ψ := fun σ hσ => h σ hσ
+theorem Presupposes.not (h : Presupposes F φ ψ) : Presupposes F (not φ) ψ :=
+  PartialUpdate.Presupposes.neg h
 
-theorem Presupposes.and_left (h : Presupposes φ ψ) : Presupposes (and φ χ) ψ :=
-  fun σ ⟨hσ, _⟩ => h σ hσ
+theorem Presupposes.and_left (h : Presupposes F φ ψ) : Presupposes F (and φ χ) ψ :=
+  PartialUpdate.Presupposes.seq_left h
 
-theorem Presupposes.implies_left (h : Presupposes φ ψ) : Presupposes (implies φ χ) ψ :=
-  fun σ ⟨hσ, _⟩ => h σ hσ
+theorem Presupposes.implies_left (h : Presupposes F φ ψ) : Presupposes F (implies φ χ) ψ :=
+  h.and_left.not
 
-theorem Presupposes.might (h : Presupposes φ ψ) : Presupposes (might φ) ψ := fun σ hσ => h σ hσ
+theorem Presupposes.might (h : Presupposes F φ ψ) : Presupposes F (might φ) ψ :=
+  fun σ hσ ↦ h σ hσ
 
-theorem Presupposes.must (h : Presupposes φ ψ) : Presupposes (must φ) ψ := fun σ hσ => h σ hσ
+theorem Presupposes.must (h : Presupposes F φ ψ) : Presupposes F (must φ) ψ :=
+  fun σ hσ ↦ h σ hσ
 
 /-- Presupposition composes (Fact 8.2). -/
-theorem Presupposes.trans (h₁ : Presupposes φ ψ) (h₂ : Presupposes ψ χ) : Presupposes φ χ :=
-  fun σ hσ => h₂ σ (h₁ σ hσ).Admits
+theorem Presupposes.trans (h₁ : Presupposes F φ ψ) (h₂ : Presupposes F ψ χ) :
+    Presupposes F φ χ :=
+  PartialUpdate.Presupposes.trans h₁ h₂
 
 /-- `∂ψ and χ` presupposes `ψ`. -/
-theorem presup_and_presupposes (ψ χ : Formula W) : Presupposes (and (presup ψ) χ) ψ :=
-  fun _ ⟨hσ, _⟩ => hσ
+theorem presup_and_presupposes (ψ χ : Formula P) : Presupposes F (and (presup ψ) χ) ψ :=
+  fun _ ⟨hσ, _⟩ ↦ hσ
 
-/-- A presupposition of the second conjunct projects conditionalised on the first
-(Fact 8.3). -/
-theorem Presupposes.and_right (h : Presupposes φ ψ) : Presupposes (and χ φ) (implies χ ψ) := by
-  rintro σ ⟨hχ, hφ⟩
-  refine mem_eval_not.2
-    ⟨_, mem_eval_and.2 ⟨_, Part.get_mem hχ, mem_eval_not.2 ⟨_, h _ hφ, rfl⟩⟩, ?_⟩
-  simp
+/-- A presupposition of the second conjunct projects conditionalised on the first (Fact 8.3). -/
+theorem Presupposes.and_right (h : Presupposes F φ ψ) :
+    Presupposes F (and χ φ) (implies χ ψ) := by
+  rw [Presupposes, eval_implies]
+  exact PartialUpdate.Presupposes.seq_right h
 
-/-- A presupposition of the consequent projects conditionalised on the antecedent
-(Fact 8.3). -/
-theorem Presupposes.implies_right (h : Presupposes φ ψ) :
-    Presupposes (implies χ φ) (implies χ ψ) := by
-  rintro σ ⟨hχ, hφ⟩
-  refine mem_eval_not.2
-    ⟨_, mem_eval_and.2 ⟨_, Part.get_mem hχ, mem_eval_not.2 ⟨_, h _ hφ, rfl⟩⟩, ?_⟩
-  simp
+/-- A presupposition of the consequent projects conditionalised on the antecedent (Fact 8.3). -/
+theorem Presupposes.implies_right (h : Presupposes F φ ψ) :
+    Presupposes F (implies χ φ) (implies χ ψ) := by
+  rw [Presupposes, eval_implies, eval_implies]
+  exact PartialUpdate.Presupposes.cond_right h
 
-/-- E154: the conditional presupposes that if Spiff lands on Planet X his weight is greater
-than on Earth. -/
-theorem e154 (lands weight bothered : Set W) :
-    Presupposes (implies (atom lands) (and (presup (atom weight)) (atom bothered)))
-      (implies (atom lands) (atom weight)) :=
-  (presup_and_presupposes _ _).implies_right
+/-! ### Epistemic modality (Facts 8.5–8.7) -/
 
-/-- E154 does not presuppose that Spiff's weight is greater than on Earth: a state in which he
-may be weightless in space admits it. -/
-theorem e154_not_unconditional :
-    ∃ lands weight bothered : Set Bool,
-      ¬Presupposes (implies (atom lands) (and (presup (atom weight)) (atom bothered)))
-        (atom weight) := by
-  refine ⟨{true}, {true}, Set.univ, fun h => ?_⟩
-  have hadm : (implies (atom {true}) (and (presup (atom {true})) (atom Set.univ))).eval.Admits
-      Set.univ :=
-    Part.dom_iff_mem.2 ⟨_, mem_eval_not.2 ⟨_, mem_eval_and.2 ⟨_, mem_eval_atom.2 rfl,
-      mem_eval_not.2 ⟨_, mem_eval_and.2 ⟨_, mem_eval_presup.2 ⟨mem_eval_atom.2 (by ext; simp), rfl⟩,
-        mem_eval_atom.2 rfl⟩, rfl⟩⟩, rfl⟩⟩
-  simpa using congrArg (false ∈ ·) (mem_eval_atom.1 (h _ hadm))
-
-/-! ### Epistemic modality (D61, Facts 8.5–8.7) -/
-
-theorem might_isTest (φ : Formula W) : IsTest (might φ) := fun _ _ h => by
+theorem might_isTest (φ : Formula P) : IsTest F (might φ) := fun _ _ h ↦ by
   obtain ⟨_, -, rfl⟩ := mem_eval_might.1 h
   split_ifs <;> simp
 
-theorem must_isTest (φ : Formula W) : IsTest (must φ) := fun _ _ h => by
+theorem must_isTest (φ : Formula P) : IsTest F (must φ) := fun _ _ h ↦ by
   obtain ⟨_, -, rfl⟩ := mem_eval_must.1 h
   split_ifs <;> simp
 
-/-- *might* is a consistency test (Fact 8.5): a non-absurd state is a fixed point of
-`might φ` iff it is consistent with `φ`. -/
-theorem satisfies_might_iff (hσ : σ.Nonempty) : Satisfies σ (might φ) ↔ ConsistentWith σ φ := by
+/-- A test admitted by a non-absurd state crashes it exactly when the state does not satisfy
+the test. -/
+theorem IsTest.empty_mem_iff (ht : IsTest F φ) (hσ : σ.Nonempty) (h : (φ.eval F).Admits σ) :
+    ∅ ∈ φ.eval F σ ↔ ¬Satisfies F σ φ := by
+  have hget := Part.get_mem h
+  rcases ht _ _ hget with e | e <;> rw [e] at hget
+  · exact ⟨fun h₀ ↦ absurd (Part.mem_unique h₀ hget) hσ.ne_empty.symm, fun hn ↦ absurd hget hn⟩
+  · exact ⟨fun _ hs ↦ hσ.ne_empty (Part.mem_unique hs hget), fun _ ↦ hget⟩
+
+/-- *might* is a consistency test (Fact 8.5), passing a non-absurd state iff the state is
+consistent with `φ`. -/
+theorem satisfies_might_iff (hσ : σ.Nonempty) :
+    Satisfies F σ (might φ) ↔ ConsistentWith F σ φ := by
   constructor
   · intro hs
     obtain ⟨υ, hυ, hif⟩ := mem_eval_might.1 hs
@@ -277,24 +302,29 @@ theorem satisfies_might_iff (hσ : σ.Nonempty) : Satisfies σ (might φ) ↔ Co
   · rintro ⟨υ, hυ, hne⟩
     exact mem_eval_might.2 ⟨υ, hυ, ite_eq_left hne⟩
 
+/-- Otherwise *might* crashes the state (Fact 8.5). -/
+theorem empty_mem_eval_might_iff (hσ : σ.Nonempty) (h : (φ.eval F).Admits σ) :
+    ∅ ∈ (might φ).eval F σ ↔ ¬ConsistentWith F σ φ := by
+  rw [(might_isTest φ).empty_mem_iff hσ h, satisfies_might_iff hσ]
+
 /-- A state admitting `φ` satisfies it iff it is inconsistent with `not φ` (Lemma 8.6). -/
-theorem satisfies_iff_not_consistentWith_not (h : φ.eval.Admits σ) :
-    Satisfies σ φ ↔ ¬ConsistentWith σ (not φ) := by
+theorem satisfies_iff_not_consistentWith_not (h : (φ.eval F).Admits σ) :
+    Satisfies F σ φ ↔ ¬ConsistentWith F σ (not φ) := by
   constructor
   · rintro hs ⟨_, hτ, hne⟩
     obtain ⟨υ, hυ, rfl⟩ := mem_eval_not.1 hτ
     rw [Part.mem_unique hυ hs, Set.sdiff_self] at hne
     exact Set.not_nonempty_empty hne
   · intro hc
-    have hsub : σ ⊆ (φ.eval σ).get h := fun w hw => by_contra fun hw' =>
+    have hsub : σ ⊆ (φ.eval F σ).get h := fun w hw ↦ by_contra fun hw' ↦
       hc ⟨_, mem_eval_not.2 ⟨_, Part.get_mem h, rfl⟩, w, hw, hw'⟩
     have hget := Part.get_mem h
     rw [(eval_eliminative φ hget).antisymm hsub] at hget
     exact hget
 
-/-- *must* is a satisfaction test (Fact 8.7): a non-absurd state is a fixed point of `must φ`
-iff it satisfies `φ`. -/
-theorem satisfies_must_iff (hσ : σ.Nonempty) : Satisfies σ (must φ) ↔ Satisfies σ φ := by
+/-- *must* is a satisfaction test (Fact 8.7), passing a non-absurd state iff the state
+satisfies `φ`. -/
+theorem satisfies_must_iff (hσ : σ.Nonempty) : Satisfies F σ (must φ) ↔ Satisfies F σ φ := by
   constructor
   · intro hs
     obtain ⟨υ, hυ, hif⟩ := mem_eval_must.1 hs
@@ -302,243 +332,306 @@ theorem satisfies_must_iff (hσ : σ.Nonempty) : Satisfies σ (must φ) ↔ Sati
     · exact h ▸ hυ
     · rw [ite_eq_right h] at hif
       exact absurd hif.symm hσ.ne_empty
-  · exact fun hs => mem_eval_must.2 ⟨σ, hs, ite_eq_left rfl⟩
+  · exact fun hs ↦ mem_eval_must.2 ⟨σ, hs, ite_eq_left rfl⟩
 
-/-! ### The trivalent connection (Ch. 10) -/
+/-- Otherwise *must* crashes the state (Fact 8.7). -/
+theorem empty_mem_eval_must_iff (hσ : σ.Nonempty) (h : (φ.eval F).Admits σ) :
+    ∅ ∈ (must φ).eval F σ ↔ ¬Satisfies F σ φ := by
+  rw [(must_isTest φ).empty_mem_iff hσ h, satisfies_must_iff hσ]
 
-/-- The non-modal sentences, PL+∂. -/
-inductive NonModal : Formula W → Prop
-  | atom (p : Set W) : NonModal (atom p)
-  | not {φ : Formula W} : NonModal φ → NonModal (not φ)
-  | and {φ ψ : Formula W} : NonModal φ → NonModal ψ → NonModal (and φ ψ)
-  | presup {φ : Formula W} : NonModal φ → NonModal (presup φ)
+/-! ### The trivalent counterpart (Ch. 10) -/
 
-/-- Peters' trivalent semantics (D70–D71): bivalent atoms, the middle Kleene connectives,
-and `∂φ` true when `φ` is and undefined otherwise. Modal sentences are not covered. -/
-noncomputable def tval : Formula W → W → Trivalent
-  | atom p, w => if w ∈ p then .true else .false
+/-- The non-modal sentences, the language PL+∂. -/
+inductive NonModal : Formula P → Prop
+  | atom (p : P) : NonModal (atom p)
+  | not {φ : Formula P} : NonModal φ → NonModal (not φ)
+  | and {φ ψ : Formula P} : NonModal φ → NonModal ψ → NonModal (and φ ψ)
+  | presup {φ : Formula P} : NonModal φ → NonModal (presup φ)
+
+theorem NonModal.implies (hφ : NonModal φ) (hψ : NonModal ψ) : NonModal (implies φ ψ) :=
+  .not (.and hφ (.not hψ))
+
+section Model
+
+variable (F : P → Set W)
+
+/-- The value of a sentence of PL+∂ at a world under Peters' trivalent semantics (D70, D71),
+with bivalent atoms, the Peters connectives, and `∂φ` true where `φ` is true and undefined
+elsewhere. -/
+noncomputable def tval : Formula P → W → Trivalent
+  | atom p, w => .ofProp (w ∈ F p)
   | not φ, w => (tval φ w).neg
-  | and φ ψ, w => Trivalent.meetMiddle (tval φ w) (tval ψ w)
-  | presup φ, w => if tval φ w = .true then .true else .indet
+  | and φ ψ, w => (tval φ w).meetMiddle (tval ψ w)
+  | presup φ, w => (tval φ w).presuppose
   | might _, _ => .indet
   | must _, _ => .indet
 
-/-- Update truth in a world (D76): `{w}[φ]{w}`. -/
-def TrueAt (w : W) (φ : Formula W) : Prop := {w} ∈ φ.eval {w}
+/-- `φ` is true at `w` in the update semantics (D76) when `{w}[φ]{w}`. -/
+def TrueAt (w : W) (φ : Formula P) : Prop := {w} ∈ φ.eval F {w}
 
-/-- Update falsity in a world (D77): `{w}[φ]∅`. -/
-def FalseAt (w : W) (φ : Formula W) : Prop := ∅ ∈ φ.eval {w}
+/-- `φ` is false at `w` in the update semantics (D77) when `{w}[φ]∅`. -/
+def FalseAt (w : W) (φ : Formula P) : Prop := ∅ ∈ φ.eval F {w}
 
-theorem eq_singleton_or_eq_empty (h : τ ∈ φ.eval {w}) : τ = {w} ∨ τ = ∅ :=
-  (Set.subset_singleton_iff_eq.1 (eval_eliminative φ h)).symm
+end Model
 
-theorem trueAt_atom {p : Set W} : TrueAt w (atom p) ↔ w ∈ p := by
-  rw [TrueAt, mem_eval_atom, Set.sep_mem_eq, eq_comm, Set.inter_eq_left, Set.singleton_subset_iff]
+private theorem meetMiddle_ne_indet_iff {a b : Trivalent} :
+    a.meetMiddle b ≠ .indet ↔ a ≠ .indet ∧ (a = .true → b ≠ .indet) := by
+  cases a <;> cases b <;> decide
 
-theorem falseAt_atom {p : Set W} : FalseAt w (atom p) ↔ w ∉ p := by
-  rw [FalseAt, mem_eval_atom, Set.sep_mem_eq, eq_comm, Set.singleton_inter_eq_empty]
-
-theorem trueAt_not : TrueAt w (not φ) ↔ FalseAt w φ := by
-  rw [TrueAt, FalseAt, mem_eval_not]
-  constructor
-  · rintro ⟨υ, hυ, h⟩
-    rcases eq_singleton_or_eq_empty hυ with rfl | rfl
-    · exact absurd h (by simp)
-    · exact hυ
-  · exact fun h => ⟨∅, h, Set.sdiff_empty⟩
-
-theorem falseAt_not : FalseAt w (not φ) ↔ TrueAt w φ := by
-  rw [TrueAt, FalseAt, mem_eval_not]
-  constructor
-  · rintro ⟨υ, hυ, h⟩
-    rcases eq_singleton_or_eq_empty hυ with rfl | rfl
-    · exact hυ
-    · exact absurd h (by simp)
-  · exact fun h => ⟨{w}, h, Set.sdiff_self⟩
-
-theorem trueAt_and : TrueAt w (and φ ψ) ↔ TrueAt w φ ∧ TrueAt w ψ := by
-  rw [TrueAt, mem_eval_and]
-  constructor
-  · rintro ⟨υ, hυ, h⟩
-    rcases eq_singleton_or_eq_empty hυ with rfl | rfl
-    · exact ⟨hυ, h⟩
-    · exact absurd (eval_eliminative ψ h) (by simp)
-  · exact fun ⟨h₁, h₂⟩ => ⟨{w}, h₁, h₂⟩
-
-theorem falseAt_and : FalseAt w (and φ ψ) ↔ FalseAt w φ ∨ (TrueAt w φ ∧ FalseAt w ψ) := by
-  rw [FalseAt, mem_eval_and]
-  constructor
-  · rintro ⟨υ, hυ, h⟩
-    rcases eq_singleton_or_eq_empty hυ with rfl | rfl
-    · exact Or.inr ⟨hυ, h⟩
-    · exact Or.inl hυ
-  · rintro (h | ⟨h₁, h₂⟩)
-    · exact ⟨∅, h, empty_mem_eval_empty ψ⟩
-    · exact ⟨{w}, h₁, h₂⟩
-
-theorem trueAt_presup : TrueAt w (presup φ) ↔ TrueAt w φ :=
-  mem_eval_presup.trans (and_iff_left rfl)
-
-theorem not_falseAt_presup : ¬FalseAt w (presup φ) := fun h =>
-  Set.singleton_ne_empty w (mem_eval_presup.1 h).2.symm
-
-/-- A world admitting `φ` makes it true or false. -/
-theorem trueAt_or_falseAt (h : φ.eval.Admits {w}) : TrueAt w φ ∨ FalseAt w φ := by
-  have hget := Part.get_mem h
-  rcases eq_singleton_or_eq_empty hget with e | e <;> rw [e] at hget
-  · exact Or.inl hget
-  · exact Or.inr hget
-
-theorem admits_presup_singleton : (presup φ).eval.Admits {w} ↔ TrueAt w φ := Iff.rfl
-
-theorem not_trueAt_of_falseAt (h : FalseAt w φ) : ¬TrueAt w φ := fun h' =>
-  Set.singleton_ne_empty w (Part.mem_unique h' h)
-
-/-- At an admitting world, falsity is the negation of truth. -/
-theorem falseAt_iff_not_trueAt (h : φ.eval.Admits {w}) : FalseAt w φ ↔ ¬TrueAt w φ :=
-  ⟨not_trueAt_of_falseAt, fun hn => (trueAt_or_falseAt h).resolve_left hn⟩
-
-private theorem sep_trueAt_not (hadm : ∀ w ∈ σ, φ.eval.Admits {w}) :
-    {w ∈ σ | TrueAt w (not φ)} = σ \ {w ∈ σ | TrueAt w φ} :=
-  Set.ext fun w => by
-    by_cases hw : w ∈ σ
-    · simp [hw, trueAt_not, falseAt_iff_not_trueAt (hadm w hw)]
-    · simp [hw]
-
-private theorem sep_trueAt_and {ψ : Formula W} :
-    {w ∈ σ | TrueAt w (and φ ψ)} = {w ∈ {w ∈ σ | TrueAt w φ} | TrueAt w ψ} :=
-  Set.ext fun w => by simp [trueAt_and, and_assoc]
-
-private theorem sep_trueAt_presup :
-    {w ∈ σ | TrueAt w (presup φ)} = {w ∈ σ | TrueAt w φ} :=
-  Set.ext fun w => by simp [trueAt_presup]
-
-/-- Trivalent and update truth and falsity coincide world by world (Lemma 10.1). -/
-theorem trueAt_falseAt_iff (hφ : NonModal φ) (w : W) :
-    (TrueAt w φ ↔ tval φ w = .true) ∧ (FalseAt w φ ↔ tval φ w = .false) := by
+/-- On PL+∂ an update is the Heimian update of the sentence's trivalent value, defined iff the
+sentence is classical at every world of the state and keeping the worlds where it is true.
+This combines Lemma 10.1 with the distributivity of non-modal updates used to prove
+Lemma 10.2. -/
+theorem eval_eq_ofTrivalent (hφ : NonModal φ) :
+    φ.eval F = CCP.Partial.ofTrivalent (φ.tval F) := by
   induction hφ with
-  | atom p => rw [trueAt_atom, falseAt_atom, tval]; split_ifs with h <;> simp [h]
-  | not _ ih =>
-    rw [trueAt_not, falseAt_not, tval, ih.2, ih.1]
-    cases tval _ w <;> decide
-  | and _ _ ihφ ihψ =>
-    rw [trueAt_and, falseAt_and, tval, ihφ.1, ihφ.2, ihψ.1, ihψ.2]
-    cases tval _ w <;> cases tval _ w <;> decide
-  | presup _ ih =>
-    rw [trueAt_presup, tval, ih.1]
-    refine ⟨by split_ifs with h <;> simp [h], ⟨fun h => (not_falseAt_presup h).elim, ?_⟩⟩
-    split_ifs <;> simp
-
-theorem trueAt_iff (hφ : NonModal φ) : TrueAt w φ ↔ tval φ w = .true :=
-  (trueAt_falseAt_iff hφ w).1
-
-theorem falseAt_iff (hφ : NonModal φ) : FalseAt w φ ↔ tval φ w = .false :=
-  (trueAt_falseAt_iff hφ w).2
-
-/-- Admittance of a conjunction at a world. -/
-theorem admits_and_singleton :
-    (and φ ψ).eval.Admits {w} ↔ φ.eval.Admits {w} ∧ (TrueAt w φ → ψ.eval.Admits {w}) := by
-  constructor
-  · rintro ⟨hφ, hψ⟩
-    refine ⟨hφ, fun ht => ?_⟩
-    have hψ' : (ψ.eval ((φ.eval {w}).get hφ)).Dom := hψ
-    rwa [Part.get_eq_of_mem ht] at hψ'
-  · rintro ⟨hφ, hψ⟩
-    refine ⟨hφ, ?_⟩
-    show (ψ.eval ((φ.eval {w}).get hφ)).Dom
-    have hget := Part.get_mem hφ
-    rcases eq_singleton_or_eq_empty hget with h | h <;> rw [h] at hget ⊢
-    · exact hψ hget
-    · exact admits_of_mem (empty_mem_eval_empty ψ)
-
-/-- Non-modal updates are distributive (Fact A.2): an update is defined iff it is defined at
-every world of the state, and keeps exactly the worlds at which the sentence is true. -/
-theorem mem_eval_iff (hφ : NonModal φ) (σ τ : Set W) :
-    τ ∈ φ.eval σ ↔ (∀ w ∈ σ, φ.eval.Admits {w}) ∧ τ = {w ∈ σ | TrueAt w φ} := by
-  induction hφ generalizing σ τ with
-  | atom p => simp [trueAt_atom, PartialUpdate.Admits, eval]
-  | @not φ' hφ ih =>
-    rw [mem_eval_not]
+  | atom p =>
+    funext σ; refine Part.ext fun τ ↦ ?_
+    simp [eval, tval, CCP.Partial.mem_ofTrivalent]
+  | @not φ _ ih =>
+    funext σ; refine Part.ext fun τ ↦ ?_
+    rw [mem_eval_not, ih]
+    simp only [CCP.Partial.mem_ofTrivalent, tval, ne_eq, Trivalent.neg_eq_indet_iff,
+      Trivalent.neg_eq_true_iff]
+    have e : ∀ t : W → Trivalent, (∀ w ∈ σ, t w ≠ .indet) →
+        σ \ {w ∈ σ | t w = .true} = {w ∈ σ | t w = .false} := fun t h ↦ Set.ext fun w ↦ by
+      by_cases hw : w ∈ σ
+      · have := h w hw; simp only [Set.mem_sdiff, Set.mem_ofPred_eq, hw, true_and]; revert this
+        cases t w <;> decide
+      · simp [hw]
+    exact ⟨fun ⟨_, ⟨h, e'⟩, he⟩ ↦ ⟨h, by rw [← he, e', e _ h]⟩,
+      fun ⟨h, he⟩ ↦ ⟨_, ⟨h, rfl⟩, by rw [he, e _ h]⟩⟩
+  | @and φ ψ _ _ ihφ ihψ =>
+    funext σ; refine Part.ext fun τ ↦ ?_
+    rw [mem_eval_and, ihφ, ihψ]
+    simp only [CCP.Partial.mem_ofTrivalent, tval, meetMiddle_ne_indet_iff,
+      Trivalent.meetMiddle_eq_true_iff]
     constructor
-    · rintro ⟨υ, hυ, rfl⟩
-      obtain ⟨hadm, rfl⟩ := (ih _ _).1 hυ
-      exact ⟨hadm, (sep_trueAt_not hadm).symm⟩
-    · rintro ⟨hadm, rfl⟩
-      exact ⟨_, (ih _ _).2 ⟨hadm, rfl⟩, (sep_trueAt_not (φ := φ') hadm).symm⟩
-  | @and φ' ψ' hφ hψ ihφ ihψ =>
-    rw [mem_eval_and]
-    constructor
-    · rintro ⟨υ, hυ, hτ⟩
-      obtain ⟨hadmφ, rfl⟩ := (ihφ _ _).1 hυ
-      obtain ⟨hadmψ, rfl⟩ := (ihψ _ _).1 hτ
-      exact ⟨fun w hw => admits_and_singleton.2 ⟨hadmφ w hw, fun ht => hadmψ w ⟨hw, ht⟩⟩,
-        sep_trueAt_and.symm⟩
-    · rintro ⟨hadm, rfl⟩
-      exact ⟨_, (ihφ _ _).2 ⟨fun w hw => (admits_and_singleton.1 (hadm w hw)).1, rfl⟩,
-        (ihψ _ _).2 ⟨fun w hw => (admits_and_singleton.1 (hadm w hw.1)).2 hw.2,
-          sep_trueAt_and⟩⟩
-  | @presup φ' hφ ih =>
-    rw [mem_eval_presup]
-    constructor
-    · rintro ⟨hs, rfl⟩
-      obtain ⟨hadm, hσ⟩ := (ih _ _).1 hs
-      have ht : ∀ w ∈ τ, TrueAt w φ' := fun w hw => ((Set.ext_iff.1 hσ w).1 hw).2
-      exact ⟨fun w hw => admits_presup_singleton.2 (ht w hw),
-        hσ.trans (Set.ext fun w => by simp [trueAt_presup])⟩
-    · rintro ⟨hadm, rfl⟩
-      have ht : ∀ w ∈ σ, TrueAt w φ' := fun w hw => admits_presup_singleton.1 (hadm w hw)
-      have hσ : {w ∈ σ | TrueAt w φ'} = σ := Set.sep_eq_self_iff_mem_true.2 ht
-      exact ⟨(ih _ _).2 ⟨fun w hw => admits_of_mem (ht w hw), hσ.symm⟩,
-        sep_trueAt_presup.trans hσ⟩
+    · rintro ⟨_, ⟨h₁, rfl⟩, h₂, rfl⟩
+      exact ⟨fun w hw ↦ ⟨h₁ w hw, fun ht ↦ h₂ w ⟨hw, ht⟩⟩, by ext; simp [and_assoc]⟩
+    · rintro ⟨h, rfl⟩
+      exact ⟨_, ⟨fun w hw ↦ (h w hw).1, rfl⟩, fun w hw ↦ (h w hw.1).2 hw.2,
+        by ext; simp [and_assoc]⟩
+  | @presup φ _ ih =>
+    funext σ; refine Part.ext fun τ ↦ ?_
+    rw [mem_eval_presup, ih, CCP.Partial.mem_ofTrivalent_self]
+    simp only [CCP.Partial.mem_ofTrivalent, tval, ne_eq, Trivalent.presuppose_eq_indet_iff,
+      not_not, Trivalent.presuppose_eq_true_iff]
+    exact and_congr_right fun h ↦ by rw [Set.sep_eq_self_iff_mem_true.2 h]
 
-/-- A non-modal sentence is satisfied iff it is true at every world of the state. -/
-theorem satisfies_iff (hφ : NonModal φ) : Satisfies σ φ ↔ ∀ w ∈ σ, TrueAt w φ := by
-  rw [Satisfies, PartialUpdate.supports_iff_mem, mem_eval_iff hφ]
-  constructor
-  · rintro ⟨_, hσ⟩ w hw
-    exact ((Set.ext_iff.1 hσ w).1 hw).2
-  · exact fun h => ⟨fun w hw => admits_of_mem (h w hw), (Set.sep_eq_self_iff_mem_true.2 h).symm⟩
+theorem admits_iff (hφ : NonModal φ) :
+    (φ.eval F).Admits σ ↔ ∀ w ∈ σ, φ.tval F w ≠ .indet := by
+  rw [eval_eq_ofTrivalent hφ]; rfl
 
-/-- A non-modal sentence is admitted iff it is admitted at every world of the state. -/
-theorem admits_iff (hφ : NonModal φ) : φ.eval.Admits σ ↔ ∀ w ∈ σ, φ.eval.Admits {w} :=
-  ⟨fun h => ((mem_eval_iff hφ _ _).1 (Part.get_mem h)).1,
-   fun h => Part.dom_iff_mem.2 ⟨_, (mem_eval_iff hφ _ _).2 ⟨h, rfl⟩⟩⟩
+/-- Update truth is trivalent truth (Lemma 10.1). -/
+theorem trueAt_iff (hφ : NonModal φ) : TrueAt F w φ ↔ φ.tval F w = .true := by
+  rw [TrueAt, eval_eq_ofTrivalent hφ, CCP.Partial.mem_ofTrivalent_self]; simp
+
+/-- Update falsity is trivalent falsity (Lemma 10.1). -/
+theorem falseAt_iff (hφ : NonModal φ) : FalseAt F w φ ↔ φ.tval F w = .false := by
+  rw [FalseAt, eval_eq_ofTrivalent hφ, CCP.Partial.mem_ofTrivalent]
+  simp only [Set.mem_singleton_iff, forall_eq, eq_comm (a := (∅ : Set W))]
+  cases hv : φ.tval F w <;> simp [Set.eq_empty_iff_forall_notMem, hv]
+
+/-- A state satisfies a non-modal sentence iff the sentence is true at each of its worlds, the
+distributivity used to prove Lemma 10.2. -/
+theorem satisfies_iff (hφ : NonModal φ) : Satisfies F σ φ ↔ ∀ w ∈ σ, TrueAt F w φ := by
+  simp_rw [trueAt_iff hφ]
+  rw [Satisfies, PartialUpdate.supports_iff_mem, eval_eq_ofTrivalent hφ,
+    CCP.Partial.mem_ofTrivalent_self]
 
 /-- For non-modal sentences, entailment is entailment at every world (Lemma 10.2). -/
 theorem entails_iff (hφ : NonModal φ) (hψ : NonModal ψ) :
-    Entails φ ψ ↔ ∀ w, TrueAt w φ → TrueAt w ψ :=
-  entails_iff_forall.trans ⟨fun h w hw => h {w} {w} hw,
-    fun h σ τ hτ => (satisfies_iff hψ).2 fun w hw =>
-      h w ((Set.ext_iff.1 ((mem_eval_iff hφ σ τ).1 hτ).2 w).1 hw).2⟩
+    Entails F φ ψ ↔ ∀ w, TrueAt F w φ → TrueAt F w ψ := by
+  refine entails_iff_forall.trans ⟨fun h w hw ↦ h {w} {w} hw, fun h σ _ hτ ↦ ?_⟩
+  rw [eval_eq_ofTrivalent hφ, CCP.Partial.mem_ofTrivalent] at hτ
+  obtain ⟨-, rfl⟩ := hτ
+  exact (satisfies_iff hψ).2 fun w hw ↦ h w ((trueAt_iff hφ).2 hw.2)
 
 /-- For non-modal sentences, entailment is preservation of fixed points (D73). -/
 theorem entails_iff_satisfies (hφ : NonModal φ) (hψ : NonModal ψ) :
-    Entails φ ψ ↔ ∀ σ, Satisfies σ φ → Satisfies σ ψ :=
-  ⟨fun h σ hs => entails_iff_forall.1 h σ σ hs, fun h => (entails_iff hφ hψ).2 fun w hw => h {w} hw⟩
+    Entails F φ ψ ↔ ∀ σ, Satisfies F σ φ → Satisfies F σ ψ :=
+  ⟨fun h σ hs ↦ entails_iff_forall.1 h σ σ hs,
+   fun h ↦ (entails_iff hφ hψ).2 fun w hw ↦ h {w} hw⟩
 
-/-- The update and trivalent entailment notions coincide on PL+∂ (Fact 10.3). -/
+/-- The update and trivalent entailments coincide on PL+∂ (Fact 10.3). -/
 theorem entails_iff_tval (hφ : NonModal φ) (hψ : NonModal ψ) :
-    Entails φ ψ ↔ ∀ w, tval φ w = .true → tval ψ w = .true := by
+    Entails F φ ψ ↔ ∀ w, φ.tval F w = .true → ψ.tval F w = .true := by
   rw [entails_iff hφ hψ]
-  exact forall_congr' fun w => imp_congr (trueAt_iff hφ) (trueAt_iff hψ)
+  exact forall_congr' fun w ↦ imp_congr (trueAt_iff hφ) (trueAt_iff hψ)
 
-/-- A non-modal sentence presupposes exactly what both it and its negation entail, Peters'
-characterisation of trivalent presupposition. -/
+/-- A sentence entails what it presupposes, when that is non-modal. -/
+theorem Presupposes.entails (h : Presupposes F φ ψ) (hψ : NonModal ψ) : Entails F φ ψ :=
+  entails_iff_forall.2 fun σ _ hτ ↦ (satisfies_iff hψ).2 fun w hw ↦
+    (satisfies_iff hψ).1 (h σ (admits_of_mem hτ)) w (eval_eliminative φ hτ hw)
+
+/-- On PL+∂ the dynamic presupposition of D31 is the Strawsonian presupposition of D1 under
+Peters' semantics, which is Peters' result. -/
+theorem presupposes_iff_strawsonPresupposes (hφ : NonModal φ) (hψ : NonModal ψ) :
+    Presupposes F φ ψ ↔ StrawsonPresupposes (φ.tval F) (ψ.tval F) := by
+  rw [presupposes_iff_forall]
+  simp only [StrawsonPresupposes, admits_iff hφ, satisfies_iff hψ, trueAt_iff hψ]
+  exact ⟨fun h w hw ↦ h {w} (by simpa using hw) w rfl, fun h σ hσ w hw ↦ h w (hσ w hw)⟩
+
+/-- A non-modal sentence presupposes exactly what both it and its negation entail. -/
 theorem presupposes_iff (hφ : NonModal φ) (hψ : NonModal ψ) :
-    Presupposes φ ψ ↔ Entails φ ψ ∧ Entails (not φ) ψ := by
-  constructor
-  · refine fun h => ⟨entails_iff_forall.2 fun σ τ hτ => ?_, entails_iff_forall.2 fun σ τ hτ => ?_⟩
-    · have hs := (satisfies_iff hψ).1 (h σ (admits_of_mem hτ))
-      exact (satisfies_iff hψ).2 fun w hw => hs w (eval_eliminative φ hτ hw)
-    · have ha : (not φ).eval.Admits σ := admits_of_mem hτ
-      have hs := (satisfies_iff hψ).1 (h σ ha)
-      exact (satisfies_iff hψ).2 fun w hw => hs w (eval_eliminative (not φ) hτ hw)
-  · rintro ⟨h₁, h₂⟩ σ hσ
-    refine (satisfies_iff hψ).2 fun w hw => ?_
-    rcases trueAt_or_falseAt ((admits_iff hφ).1 hσ w hw) with ht | hf
-    · exact entails_iff_forall.1 h₁ {w} {w} ht
-    · exact entails_iff_forall.1 h₂ {w} {w} (trueAt_not.2 hf)
+    Presupposes F φ ψ ↔ Entails F φ ψ ∧ Entails F (not φ) ψ := by
+  refine ⟨fun h ↦ ⟨h.entails hψ, h.not.entails hψ⟩, fun ⟨h₁, h₂⟩ ↦ ?_⟩
+  rw [entails_iff_tval hφ hψ] at h₁
+  rw [entails_iff_tval hφ.not hψ] at h₂
+  rw [presupposes_iff_strawsonPresupposes hφ hψ]
+  intro w hw
+  cases hv : φ.tval F w with
+  | true => exact h₁ w hv
+  | false => exact h₂ w (show (φ.tval F w).neg = .true by rw [hv]; rfl)
+  | indet => exact absurd hv hw
 
 end Formula
+
+/-! ### The book's examples -/
+
+open Formula
+
+/-- The atomic formulae of the examples, with the book's names where it prints a translation. -/
+inductive Atom
+  /-- Bertha is hiding, the book's `bih`. -/
+  | hiding
+  /-- Anna has come to believe that Bertha is hiding, `cb_a_bih`. -/
+  | believesHiding
+  /-- Anna will find Bertha, `awfb`. -/
+  | findsHer
+  /-- Bertha has negative vibes arising from her belief that Anna realises she is hiding,
+  `NVB_B_(∂_bih&cb_a_bih)`. -/
+  | regrets
+  /-- Bertha is in the kitchen, which E175 writes `bc`. -/
+  | inKitchen
+  /-- Bertha is in the attic, `ba`. -/
+  | inAttic
+  /-- Anna has come to believe that Bertha is in the attic, `cb_a_ba`. -/
+  | believesInAttic
+  /-- Spaceman Spiff lands on Planet X. -/
+  | lands
+  /-- Spiff's weight is greater than it would be on Earth. -/
+  | heavier
+  /-- Spiff is bothered by it. -/
+  | bothered
+  /-- Spiff won't stay long. -/
+  | leaves
+  deriving DecidableEq
+
+/-- The term model over the atomic formulae `P` (D23), whose worlds are sets of atoms, an atom
+holding at the worlds containing it. -/
+def termModel (P : Type*) : P → Set (Set P) := fun p ↦ {w | p ∈ w}
+
+/-- E154, *if Spaceman Spiff lands on Planet X, he will be bothered by the fact that his weight
+is greater than it would be on Earth*, presupposes that if he lands there his weight is
+greater. -/
+theorem e154 (F : Atom → Set W) :
+    Presupposes F (implies (atom .lands) (and (presup (atom .heavier)) (atom .bothered)))
+      (implies (atom .lands) (atom .heavier)) :=
+  (presup_and_presupposes _ _).implies_right
+
+/-- E154 does not presuppose that Spiff's weight is greater, since a world where he does not
+land makes the sentence true. -/
+theorem e154_not_unconditional :
+    ¬Presupposes (termModel Atom)
+      (implies (atom .lands) (and (presup (atom .heavier)) (atom .bothered))) (atom .heavier) := by
+  rw [presupposes_iff_strawsonPresupposes
+    ((NonModal.atom _).implies ((NonModal.atom _).presup.and (.atom _))) (.atom _)]
+  intro h
+  have := h ∅ (by simp [tval, implies, termModel]; decide)
+  simp [tval, termModel] at this
+
+/-- E156, *if Spaceman Spiff lands on Planet X and is bothered by the fact that his weight is
+greater than it would be on Earth, he won't stay long*, carries the same conditional
+presupposition. -/
+theorem e156 (F : Atom → Set W) :
+    Presupposes F
+      (implies (and (atom .lands) (and (presup (atom .heavier)) (atom .bothered))) (atom .leaves))
+      (implies (atom .lands) (atom .heavier)) :=
+  (presup_and_presupposes _ _).and_right.implies_left
+
+/-- The translations of §6.5, keyed by their printed form. -/
+def translations : List (String × Formula Atom) :=
+  let realises := and (presup (atom .hiding)) (atom .believesHiding)
+  [("bih", atom .hiding),
+   ("bih AND cb_a_bih", and (atom .hiding) (atom .believesHiding)),
+   ("ba", atom .inAttic),
+   ("(NOT bc) IMPLIES ba", implies (not (atom .inKitchen)) (atom .inAttic)),
+   ("∂bih AND cb_a_bih", realises),
+   ("NOT (∂bih AND cb_a_bih)", not realises),
+   ("(∂bih AND cb_a_bih) IMPLIES awfb", implies realises (atom .findsHer)),
+   ("MIGHT(∂bih AND cb_a_bih)", might realises),
+   ("∂(∂bih AND cb_a_bih) AND NVB_B_(∂_bih&cb_a_bih)", and (presup realises) (atom .regrets)),
+   ("(NOT bc) IMPLIES (∂ba AND cb_a_ba)",
+     implies (not (atom .inKitchen)) (and (presup (atom .inAttic)) (atom .believesInAttic))),
+   ("bih IMPLIES (∂bih AND cb_a_bih)", implies (atom .hiding) realises),
+   ("MIGHT(bih AND ∂bih AND cb_a_bih)", might (and (atom .hiding) realises))]
+
+/-- The entailments the book prints for its translations (E168c, E169c, E172c, E173c, E174c,
+E175d) hold in every model, each translation presupposing what it entails. -/
+theorem entailed_rows (F : Atom → Set W) : ∀ row ∈ Examples.all,
+    ∀ φ ∈ row.parse? "translation" translations, ∀ ψ ∈ row.parse? "entails" translations,
+      Entails F φ ψ := by
+  have hR := (NonModal.atom Atom.hiding).presup.and (.atom .believesHiding)
+  simp only [Examples.all, List.forall_mem_cons, List.not_mem_nil, IsEmpty.forall_iff,
+    implies_true, and_true]
+  and_intros <;> simp [Datum.parse?, Datum.feature?, translations, List.lookup, Examples.e52,
+    Examples.e154, Examples.e155, Examples.e156, Examples.e168, Examples.e169, Examples.e172,
+    Examples.e173, Examples.e174, Examples.e175, Examples.e176, Examples.e177, Examples.e206,
+    Examples.e207]
+  exacts [(presup_and_presupposes _ _).entails (.atom _),
+    (presup_and_presupposes _ _).not.entails (.atom _),
+    (presup_and_presupposes _ _).implies_left.entails (.atom _),
+    (presup_and_presupposes _ _).might.entails (.atom _),
+    DynamicSemantics.Entails.trans ((presup_and_presupposes _ _).entails hR)
+      ((entails_iff_tval hR ((NonModal.atom _).and (.atom _))).2 fun w ↦ by
+        simp [tval, Trivalent.meetMiddle_eq_true_iff]),
+    (presup_and_presupposes _ _).implies_right.entails
+      ((NonModal.atom _).not.implies (.atom _))]
+
+/-- The non-entailments it prints (E175c, E176c, E177c) fail in the term model. -/
+theorem unentailed_rows : ∀ row ∈ Examples.all,
+    ∀ φ ∈ row.parse? "translation" translations, ∀ ψ ∈ row.parse? "doesNotEntail" translations,
+      ¬Entails (termModel Atom) φ ψ := by
+  have hR := (NonModal.atom Atom.hiding).presup.and (.atom .believesHiding)
+  simp only [Examples.all, List.forall_mem_cons, List.not_mem_nil, IsEmpty.forall_iff,
+    implies_true, and_true]
+  and_intros <;> simp [Datum.parse?, Datum.feature?, translations, List.lookup, Examples.e52,
+    Examples.e154, Examples.e155, Examples.e156, Examples.e168, Examples.e169, Examples.e172,
+    Examples.e173, Examples.e174, Examples.e175, Examples.e176, Examples.e177, Examples.e206,
+    Examples.e207]
+  · rw [entails_iff_tval ((NonModal.atom _).not.implies ((NonModal.atom _).presup.and (.atom _)))
+      (.atom _)]
+    intro h
+    have := h {.inKitchen} (by simp [tval, implies, termModel]; decide)
+    simp [tval, termModel] at this
+  · rw [entails_iff_tval ((NonModal.atom _).implies hR) (.atom _)]
+    intro h
+    have := h ∅ (by simp [tval, implies, termModel]; decide)
+    simp [tval, termModel] at this
+  · rw [entails_iff_forall]
+    intro h
+    obtain ⟨σ, hσ⟩ : ∃ σ : Set (Set Atom), σ = {∅, {.hiding, .believesHiding}} := ⟨_, rfl⟩
+    have hs : Satisfies (termModel Atom) σ (atom .hiding) := by
+      refine h σ σ ((satisfies_might_iff ⟨∅, by simp [hσ]⟩).2 ?_)
+      rw [ConsistentWith, eval_eq_ofTrivalent ((NonModal.atom _).and hR)]
+      simp only [CCP.Partial.mem_ofTrivalent]
+      refine ⟨_, ⟨?_, rfl⟩, {.hiding, .believesHiding}, ?_⟩ <;>
+        simp [hσ, tval, termModel, Trivalent.meetMiddle_true_left, Trivalent.meetMiddle_false_left]
+    have := (satisfies_iff (.atom _)).1 hs ∅ (by simp [hσ])
+    simp [trueAt_iff (NonModal.atom _), tval, termModel] at this
+
+/-- Every information state admits the translation of E177, so the sentence carries no
+presupposition. -/
+theorem e177_admits (F : Atom → Set W) (σ : Set W) :
+    ∀ φ ∈ Examples.e177.parse? "translation" translations, (φ.eval F).Admits σ := by
+  intro φ hφ
+  simp [Datum.parse?, Datum.feature?, translations, List.lookup, Examples.e177] at hφ
+  subst hφ
+  refine (admits_iff ((NonModal.atom _).and ((NonModal.atom _).presup.and (.atom _)))).2
+    fun w _ ↦ ?_
+  by_cases hw : w ∈ F .hiding <;>
+    simp [tval, hw, Trivalent.meetMiddle_true_left, Trivalent.meetMiddle_false_left]
 
 end Beaver2001

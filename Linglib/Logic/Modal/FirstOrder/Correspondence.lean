@@ -1,5 +1,6 @@
 module
 
+public import Linglib.Core.ModelTheory.Binders
 public import Linglib.Logic.Modal.FirstOrder.Semantics
 
 /-!
@@ -44,10 +45,10 @@ variable {W M Var : Type*}
     each `n`-ary `L`-symbol — the new first argument the world — together
     with an individual-sort predicate and an accessibility relation. -/
 def correspondence (L : Language) : Language where
-  Functions := fun n => match n with
+  Functions := fun n ↦ match n with
     | 0 => PEmpty
     | n + 1 => L.Functions n
-  Relations := fun n => match n with
+  Relations := fun n ↦ match n with
     | 0 => PEmpty
     | n + 1 => L.Relations n ⊕ (match n with | 0 | 1 => PUnit | _ => PEmpty)
 
@@ -101,7 +102,7 @@ theorem stVal_update_world [DecidableEq Var] (v : Var → M) (u : ℕ → W) (j 
 def stTerm (k : ℕ) : L.Term Var → L.correspondence.Term (Var ⊕ ℕ)
   | .var x => corrIndivVar x
   | .func f args =>
-      Term.func (corrFunc f) (Fin.cons (corrWorldVar k) fun i => stTerm k (args i))
+      Term.func (corrFunc f) (Fin.cons (corrWorldVar k) fun i ↦ stTerm k (args i))
 
 /-- The standard translation `ST_k` of [blackburn-derijke-venema-2001].
     The current world is the free variable `Sum.inr k`; atoms
@@ -112,7 +113,7 @@ def ModalFormula.st [DecidableEq Var] (k : ℕ) :
     ModalFormula L Var → L.correspondence.Formula (Var ⊕ ℕ)
   | .equal t₁ t₂ => Term.equal (stTerm k t₁) (stTerm k t₂)
   | .rel R ts =>
-      (corrRel R).formula (Fin.cons (corrWorldVar k) fun i => stTerm k (ts i))
+      (corrRel R).formula (Fin.cons (corrWorldVar k) fun i ↦ stTerm k (ts i))
   | .falsum => ⊥
   | .imp φ ψ => φ.st k ⟹ ψ.st k
   | .box φ => Formula.all₁ (Sum.inr (k + 1))
@@ -154,17 +155,17 @@ variable [Inhabited M] (K : ModalStructure L W M)
     arguments default. -/
 @[instance_reducible] def ModalStructure.correspondence :
     L.correspondence.Structure (W ⊕ M) where
-  funMap := fun {n} f z => match n, f with
+  funMap := fun {n} f z ↦ match n, f with
     | 0, f => f.elim
     | _ + 1, f => Sum.inr <| (z 0).elim
-        (fun w => K.funInterp f w fun i => (z i.succ).getRight?.getD default) id
-  RelMap := fun {n} r z => match n, r with
+        (fun w ↦ K.funInterp f w fun i ↦ (z i.succ).getRight?.getD default) id
+  RelMap := fun {n} r z ↦ match n, r with
     | 0, r => r.elim
     | n + 1, r => r.elim
-        (fun R => ∃ (w : W) (ds : Fin n → M),
+        (fun R ↦ ∃ (w : W) (ds : Fin n → M),
           z 0 = Sum.inl w ∧ (∀ i, z i.succ = Sum.inr (ds i)) ∧
             K.relInterp R w ds)
-        (fun u => match n, z, u with
+        (fun u ↦ match n, z, u with
           | 0, z, _ => ∃ d : M, z 0 = Sum.inr d
           | 1, z, _ =>
               ∃ w₁ w₂, z 0 = Sum.inl w₁ ∧ z 1 = Sum.inl w₂ ∧ w₂ ∈ K.access w₁
@@ -191,8 +192,8 @@ theorem correspondence_funMap_inl (f : L.Functions n) (w : W) (z : Fin (n + 1) �
     (ds : Fin n → M) (hz : z 0 = Sum.inl w)
     (hds : ∀ i, z i.succ = Sum.inr (ds i)) :
     K.correspondence.funMap (corrFunc f) z = Sum.inr (K.funInterp f w ds) := by
-  obtain rfl : z = Fin.cons (Sum.inl w) (fun i => Sum.inr (ds i)) :=
-    funext fun j => Fin.cases hz hds j
+  obtain rfl : z = Fin.cons (Sum.inl w) (fun i ↦ Sum.inr (ds i)) :=
+    funext fun j ↦ Fin.cases hz hds j
   rfl
 
 /-! ### Satisfaction preservation -/
@@ -202,25 +203,24 @@ theorem correspondence_funMap_inl (f : L.Functions n) (w : W) (z : Fin (n + 1) �
 private theorem realize_stTerm {k : ℕ} {v : Var → M} {u : ℕ → W} :
     ∀ t : L.Term Var,
       (letI := K.correspondence; (stTerm k t).realize (stVal v u)) =
-        Sum.inr (letI := K.interp (u k); t.realize v)
+        Sum.inr (t.realizeAt K.interp (u k) v)
   | .var x => rfl
   | .func f args => by
     let _S := K.correspondence
     let _I := K.interp (u k)
     rw [show stTerm k (.func f args) = Term.func (corrFunc f)
-        (Fin.cons (corrWorldVar k) fun i => stTerm k (args i)) from rfl,
+        (Fin.cons (corrWorldVar k) fun i ↦ stTerm k (args i)) from rfl,
       Term.realize_func,
       correspondence_funMap_inl K f (u k) _
-        (fun i => (letI := K.interp (u k); (args i).realize v))
+        (fun i ↦ (args i).realizeAt K.interp (u k) v)
         rfl
-        (fun i => by simpa [Fin.cons_succ] using realize_stTerm (args i))]
+        (fun i ↦ by simpa [Fin.cons_succ] using realize_stTerm (args i))]
     rfl
 
-/-- **Satisfaction preservation for the standard translation**: Kripke
-    satisfaction at the world pinned at index `k` is first-order
-    realization over `K.correspondence` at the sorted valuation. Off-sort
-    quantifier instances are discharged by the relational guards, and
-    `box`'s fresh world variable `k + 1` leaves index `k` untouched. -/
+/-- The standard translation preserves satisfaction. Kripke satisfaction at the world pinned at
+    index `k` is first-order realization over `K.correspondence` at the sorted valuation. Off-sort
+    quantifier instances are discharged by the relational guards, and `box`'s fresh world variable
+    `k + 1` leaves index `k` untouched. -/
 theorem realize_st [DecidableEq Var] {φ : ModalFormula L Var} {k : ℕ}
     {v : Var → M} {u : ℕ → W} :
     φ.Realize K (u k) v ↔

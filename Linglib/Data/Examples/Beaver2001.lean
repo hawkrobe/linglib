@@ -67,22 +67,9 @@ def e156 : Datum :=
     readings := []
     paperFeatures := [("trigger", "the fact that + factive bothered by"), ("embedding", "second conjunct of conditional antecedent")] }
 
-def e198 : Datum :=
-  { id := "beaver2001_e198"
-    source := ⟨"beaver-2001", "E198"⟩
-    reportedIn := none
-    language := "stan1293"
-    primaryText := "Bertha is hiding."
-    glossedTokens := []
-    context := ""
-    judgment := .acceptable
-    alternatives := []
-    readings := []
-    paperFeatures := [("role", "presupposed content for E168'-E173")] }
-
-def e168prime : Datum :=
-  { id := "beaver2001_e168prime"
-    source := ⟨"beaver-2001", "E168'"⟩
+def e168 : Datum :=
+  { id := "beaver2001_e168"
+    source := ⟨"beaver-2001", "E168"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "Anna realises that Bertha is hiding."
@@ -91,11 +78,11 @@ def e168prime : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("trigger", "factive realise"), ("embedding", "none")] }
+    paperFeatures := [("trigger", "factive realise"), ("embedding", "none"), ("translation", "∂bih AND cb_a_bih"), ("entails", "bih")] }
 
-def e169prime : Datum :=
-  { id := "beaver2001_e169prime"
-    source := ⟨"beaver-2001", "E169'"⟩
+def e169 : Datum :=
+  { id := "beaver2001_e169"
+    source := ⟨"beaver-2001", "E169"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "Anna does not realise that Bertha is hiding."
@@ -104,11 +91,11 @@ def e169prime : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("trigger", "factive realise"), ("embedding", "negation")] }
+    paperFeatures := [("trigger", "factive realise"), ("embedding", "negation"), ("translation", "NOT (∂bih AND cb_a_bih)"), ("entails", "bih")] }
 
-def e172prime : Datum :=
-  { id := "beaver2001_e172prime"
-    source := ⟨"beaver-2001", "E172'"⟩
+def e172 : Datum :=
+  { id := "beaver2001_e172"
+    source := ⟨"beaver-2001", "E172"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "If Anna realises that Bertha is hiding, then she will find her."
@@ -117,7 +104,7 @@ def e172prime : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("trigger", "factive realise"), ("embedding", "antecedent of conditional")] }
+    paperFeatures := [("trigger", "factive realise"), ("embedding", "antecedent of conditional"), ("translation", "(∂bih AND cb_a_bih) IMPLIES awfb"), ("entails", "bih")] }
 
 def e173 : Datum :=
   { id := "beaver2001_e173"
@@ -130,7 +117,20 @@ def e173 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("trigger", "factive realise"), ("embedding", "might")] }
+    paperFeatures := [("trigger", "factive realise"), ("embedding", "might"), ("translation", "MIGHT(∂bih AND cb_a_bih)"), ("entails", "bih")] }
+
+def e174 : Datum :=
+  { id := "beaver2001_e174"
+    source := ⟨"beaver-2001", "E174"⟩
+    reportedIn := none
+    language := "stan1293"
+    primaryText := "Bertha regrets that Anna realises that she is hiding."
+    glossedTokens := []
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("trigger", "factive regret over factive realise"), ("embedding", "complement of a factive"), ("translation", "∂(∂bih AND cb_a_bih) AND NVB_B_(∂_bih&cb_a_bih)"), ("entails", "bih AND cb_a_bih")] }
 
 def e175 : Datum :=
   { id := "beaver2001_e175"
@@ -143,7 +143,33 @@ def e175 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("trigger", "factive realise"), ("embedding", "consequent of conditional")] }
+    paperFeatures := [("trigger", "factive realise"), ("embedding", "consequent of conditional"), ("translation", "(NOT bc) IMPLIES (∂ba AND cb_a_ba)"), ("doesNotEntail", "ba"), ("entails", "(NOT bc) IMPLIES ba")] }
+
+def e176 : Datum :=
+  { id := "beaver2001_e176"
+    source := ⟨"beaver-2001", "E176"⟩
+    reportedIn := none
+    language := "stan1293"
+    primaryText := "If Bertha is hiding, then Anna realises that Bertha is hiding."
+    glossedTokens := []
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("trigger", "factive realise"), ("embedding", "consequent of conditional"), ("translation", "bih IMPLIES (∂bih AND cb_a_bih)"), ("doesNotEntail", "bih")] }
+
+def e177 : Datum :=
+  { id := "beaver2001_e177"
+    source := ⟨"beaver-2001", "E177"⟩
+    reportedIn := none
+    language := "stan1293"
+    primaryText := "Perhaps Bertha is hiding and Anna realises that Bertha is hiding."
+    glossedTokens := []
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("trigger", "factive realise"), ("embedding", "second conjunct under might"), ("translation", "MIGHT(bih AND ∂bih AND cb_a_bih)"), ("doesNotEntail", "bih")] }
 
 def e206 : Datum :=
   { id := "beaver2001_e206"
@@ -171,6 +197,6 @@ def e207 : Datum :=
     readings := []
     paperFeatures := [("construction", "plain assertion")] }
 
-def all : List Datum := [e52, e154, e155, e156, e198, e168prime, e169prime, e172prime, e173, e175, e206, e207]
+def all : List Datum := [e52, e154, e155, e156, e168, e169, e172, e173, e174, e175, e176, e177, e206, e207]
 
 end Beaver2001.Examples

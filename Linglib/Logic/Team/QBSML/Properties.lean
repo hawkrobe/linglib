@@ -65,7 +65,7 @@ variable [DecidableEq W] [DecidableEq Var] [Fintype Var] [DecidableEq Domain] [F
 
 /-! ### Empty-team property for NE-free formulas -/
 
-/-- Joint empty-team property of NE-free formulas, both polarities: each case is the
+/-- NE-free formulas are supported and anti-supported by the empty team. Each case is the
     empty-team lemma of its connective (`Team/Operations.lean`, `State.empty_mem_univ`,
     `State.empty_mem_exi`). -/
 private theorem support_and_antiSupport_empty_of_neFree
@@ -141,8 +141,8 @@ theorem supClosed_support_of_neFree {φ : Formula Var Const Pred}
 
 /-! ### Flatness corollary -/
 
-/-- **[anttila-2021] Proposition 2.2.16 (QBSML specialisation)**: NE-free
-    QBSML formulas are flat. Derived from [anttila-2021] Proposition 2.2.2
+/-- NE-free QBSML formulas are flat, the QBSML case of [anttila-2021] Proposition 2.2.16.
+    It follows from [anttila-2021] Proposition 2.2.2
     (`Team.isFlat_iff`) applied to the three closure properties
     above. -/
 theorem isFlat_support_of_neFree {φ : Formula Var Const Pred}
@@ -155,7 +155,7 @@ theorem isFlat_support_of_neFree {φ : Formula Var Const Pred}
 
 /-! ### Soundness for the flat cell (Definability bridge) -/
 
-/-- **The NE-free fragment of QBSML is sound for the flat cell**: every team
+/-- The NE-free fragment of QBSML is sound for the flat cell, since every team
     property definable by an NE-free QBSML formula is flat (downward-closed,
     union-closed, empty-team). This restates [aloni-vanormondt-2023]'s
     observation that NE-free QBSML reduces to classical first-order modal
@@ -192,32 +192,32 @@ variable (M : Model W Domain Const Pred) (φ ψ : Formula Var Const Pred)
 theorem support_neg_neg : support M (.neg (.neg φ)) s ↔ support M φ s :=
   Iff.rfl
 
-/-- De Morgan: `¬(φ ∨ ψ) ≡ ¬φ ∧ ¬ψ` ([aloni-vanormondt-2023] Fact 1). -/
+/-- The De Morgan law `¬(φ ∨ ψ) ≡ ¬φ ∧ ¬ψ` ([aloni-vanormondt-2023] Fact 1). -/
 theorem support_neg_disj :
     support M (.neg (.disj φ ψ)) s ↔ support M (.conj (.neg φ) (.neg ψ)) s :=
   Iff.rfl
 
-/-- De Morgan: `¬(φ ∧ ψ) ≡ ¬φ ∨ ¬ψ` ([aloni-vanormondt-2023] Fact 1). -/
+/-- The De Morgan law `¬(φ ∧ ψ) ≡ ¬φ ∨ ¬ψ` ([aloni-vanormondt-2023] Fact 1). -/
 theorem support_neg_conj :
     support M (.neg (.conj φ ψ)) s ↔ support M (.disj (.neg φ) (.neg ψ)) s :=
   Iff.rfl
 
-/-- Modal duality: `¬□φ ≡ ◇¬φ` ([aloni-vanormondt-2023] Fact 1). -/
+/-- The modal duality `¬□φ ≡ ◇¬φ` ([aloni-vanormondt-2023] Fact 1). -/
 theorem support_neg_nec :
     support M (.neg φ.nec) s ↔ support M (.poss (.neg φ)) s :=
   Iff.rfl
 
-/-- Modal duality: `¬◇φ ≡ □¬φ` ([aloni-vanormondt-2023] Fact 1). -/
+/-- The modal duality `¬◇φ ≡ □¬φ` ([aloni-vanormondt-2023] Fact 1). -/
 theorem support_neg_poss :
     support M (.neg (.poss φ)) s ↔ support M (Formula.neg φ).nec s :=
   Iff.rfl
 
-/-- Quantifier duality: `¬∀xφ ≡ ∃x¬φ` ([aloni-vanormondt-2023] Fact 1). -/
+/-- The quantifier duality `¬∀xφ ≡ ∃x¬φ` ([aloni-vanormondt-2023] Fact 1). -/
 theorem support_neg_univ :
     support M (.neg (.univ x φ)) s ↔ support M (.exi x (.neg φ)) s :=
   Iff.rfl
 
-/-- Quantifier duality: `¬∃xφ ≡ ∀x¬φ` ([aloni-vanormondt-2023] Fact 1). -/
+/-- The quantifier duality `¬∃xφ ≡ ∀x¬φ` ([aloni-vanormondt-2023] Fact 1). -/
 theorem support_neg_exi :
     support M (.neg (.exi x φ)) s ↔ support M (.univ x (.neg φ)) s :=
   Iff.rfl
@@ -248,12 +248,11 @@ theorem antiSupport_iff_forall_singleton {φ : Formula Var Const Pred}
 
 /-! ### Atom substitution salva veritate -/
 
-/-- **Atom-substitution congruence**: an atom map whose images are
-    bilaterally equivalent to the atoms they replace is *salva veritate* —
-    `φ.mapAtoms fp fc` and `φ` are supported and anti-supported by exactly
-    the same states. Atom-rewriting operations (e.g. [yan-2023]'s
-    reinterpretation function, `Studies/Yan2023.lean`) get truth-conditional
-    harmlessness for the price of their two atom lemmas. -/
+/-- An atom map whose images are bilaterally equivalent to the atoms they replace is *salva
+    veritate*: `φ.mapAtoms fp fc` and `φ` are supported and anti-supported by exactly the same
+    states. Atom-rewriting operations (e.g. [yan-2023]'s reinterpretation function,
+    `Studies/Yan2023.lean`) get truth-conditional harmlessness for the price of their two atom
+    lemmas. -/
 theorem eval_mapAtoms_iff (M : Model W Domain Const Pred)
     {fp : Pred → Var → Formula Var Const Pred}
     {fc : Pred → Const → Formula Var Const Pred}
@@ -269,7 +268,7 @@ theorem eval_mapAtoms_iff (M : Model W Domain Const Pred)
   induction φ with
   | pred P x => exact hfp P x
   | predc P c => exact hfc P c
-  | ne => exact fun _ _ => Iff.rfl
+  | ne => exact fun _ _ ↦ Iff.rfl
   | neg ψ ih =>
     intro b s
     cases b with
@@ -308,8 +307,8 @@ theorem eval_mapAtoms_iff (M : Model W Domain Const Pred)
         exact ⟨X, hX, hne, (ih true _).mpr hsupp⟩
     | false =>
       constructor
-      · exact fun h i hi => (ih false _).mp (h i hi)
-      · exact fun h i hi => (ih false _).mpr (h i hi)
+      · exact fun h i hi ↦ (ih false _).mp (h i hi)
+      · exact fun h i hi ↦ (ih false _).mpr (h i hi)
   | exi x ψ ih =>
     intro b s
     cases b with
@@ -321,15 +320,15 @@ theorem eval_mapAtoms_iff (M : Model W Domain Const Pred)
         exact ⟨hf, hne, (ih true _).mpr hsupp⟩
     | false =>
       constructor
-      · exact fun h => (ih false _).mp h
-      · exact fun h => (ih false _).mpr h
+      · exact fun h ↦ (ih false _).mp h
+      · exact fun h ↦ (ih false _).mpr h
   | univ x ψ ih =>
     intro b s
     cases b with
     | true =>
       constructor
-      · exact fun h => (ih true _).mp h
-      · exact fun h => (ih true _).mpr h
+      · exact fun h ↦ (ih true _).mp h
+      · exact fun h ↦ (ih true _).mpr h
     | false =>
       constructor
       · rintro ⟨hf, hne, hsupp⟩
@@ -363,7 +362,7 @@ theorem support_nec_mono (M : Model W Domain Const Pred)
     (h : ∀ t : Finset (Index W Var Domain), support M α t → support M β t)
     {s : Finset (Index W Var Domain)} (hα : support M α.nec s) :
     support M β.nec s :=
-  fun i hi => h _ (hα i hi)
+  fun i hi ↦ h _ (hα i hi)
 
 /-! ### Existential introduction via witness reconstruction -/
 
@@ -380,7 +379,7 @@ theorem support_exi_of_update_closure (M : Model W Domain Const Pred)
     (hcov : ∀ i ∈ s, ∃ d, i.update x d ∈ t)
     (hsupp : support M γ t) :
     support M (.exi x γ) s := by
-  refine ⟨fun i => Finset.univ.filter (fun d => i.update x d ∈ t), ?_, ?_⟩
+  refine ⟨fun i ↦ Finset.univ.filter (fun d ↦ i.update x d ∈ t), ?_, ?_⟩
   · intro i hi
     obtain ⟨d, hd⟩ := hcov i hi
     exact ⟨d, Finset.mem_filter.mpr ⟨Finset.mem_univ d, hd⟩⟩
@@ -405,28 +404,6 @@ bridge: their right-hand side is classical *modal* logic, which mathlib's
 
 open FirstOrder Language
 
-@[simp] theorem _root_.FirstOrder.Language.ModalStructure.realizeAt_rel₁
-    (M : Model W Domain Const Pred)
-    (P : Pred) (x : Var) (w : W) (v : Var → Domain) :
-    ((predSymb P).formula₁ (Term.var x)).RealizeAt M.interp w v ↔
-      M.relInterp₁ (predSymb P) w (v x) := by
-  let _S := M.interp w
-  show ((predSymb P).formula₁ (Term.var x)).Realize v ↔ _
-  rw [Formula.realize_rel₁, Term.realize_var, Matrix.cons_fin_one]
-  exact Iff.rfl
-
-@[simp] theorem _root_.FirstOrder.Language.ModalStructure.realizeAt_rel₁_const
-    (M : Model W Domain Const Pred) (P : Pred) (c : Const) (w : W)
-    (v : Var → Domain) :
-    ((predSymb P).formula₁
-      (((Language.monadic Pred).con c).term)).RealizeAt M.interp w v ↔
-      M.relInterp₁ (predSymb P) w (M.constInterp ((Language.monadic Pred).con c) w) := by
-  let _S := M.interp w
-  show ((predSymb P).formula₁ (((Language.monadic Pred).con c).term)).Realize v
-    ↔ _
-  rw [Formula.realize_rel₁, Term.realize_constants, Matrix.cons_fin_one]
-  exact Iff.rfl
-
 /-- Translate the modal-free fragment of QBSML into mathlib first-order
     formulas over the monadic signature: quantifiers via the computable named
     binders `Formula.all₁` / `Formula.ex₁` (`none` on `NE` and modal
@@ -436,8 +413,8 @@ def Formula.toFormula? [DecidableEq Var] :
   | .pred P x => some ((predSymb P).formula₁ (Term.var x))
   | .predc P c => some ((predSymb P).formula₁ (((Language.monadic Pred).con c).term))
   | .neg φ => φ.toFormula?.map (·.not)
-  | .conj φ ψ => φ.toFormula?.bind fun α => ψ.toFormula?.map (α ⊓ ·)
-  | .disj φ ψ => φ.toFormula?.bind fun α => ψ.toFormula?.map (α ⊔ ·)
+  | .conj φ ψ => φ.toFormula?.bind fun α ↦ ψ.toFormula?.map (α ⊓ ·)
+  | .disj φ ψ => φ.toFormula?.bind fun α ↦ ψ.toFormula?.map (α ⊔ ·)
   | .exi x φ => φ.toFormula?.map (Formula.ex₁ x ·)
   | .univ x φ => φ.toFormula?.map (Formula.all₁ x ·)
   | _ => none
@@ -448,8 +425,8 @@ theorem neFree_of_toFormula? [DecidableEq Var] :
       φ.toFormula? = some ψ → φ.NEFree := by
   intro φ
   induction φ with
-  | pred P x => exact fun _ => .pred P x
-  | predc P c => exact fun _ => .predc P c
+  | pred P x => exact fun _ ↦ .pred P x
+  | predc P c => exact fun _ ↦ .predc P c
   | neg φ ih =>
     intro ψ hψ
     cases hφ : φ.toFormula? with
@@ -500,13 +477,11 @@ section RealizeAt
 
 variable [DecidableEq W] [DecidableEq Var] [Fintype Var] [DecidableEq Domain] [Fintype Domain]
 
-/-- Joint singleton bridge: support of a translatable formula at `{i}` is
-    classical satisfaction at `i.world`, and anti-support its negation. The
-    bilateral induction interleaves the two through negation; the split cases
-    use that every subset of a singleton is `∅` or the singleton, plus the
-    empty-team property; the quantifier cases decompose the extended states
-    pointwise via flatness and apply the IH at the updated index and
-    valuation. -/
+/-- Support of a translatable formula at `{i}` is classical satisfaction at `i.world`, and
+    anti-support its negation. The bilateral induction interleaves the two through negation; the
+    split cases use that every subset of a singleton is `∅` or the singleton, plus the empty-team
+    property; the quantifier cases decompose the extended states pointwise via flatness and apply
+    the IH at the updated index and valuation. -/
 private theorem support_and_antiSupport_singleton_realizeAt
     (M : Model W Domain Const Pred) :
     ∀ {φ : Formula Var Const Pred} {ψ : ((Language.monadic Pred)[[Const]]).Formula Var},
@@ -523,7 +498,7 @@ private theorem support_and_antiSupport_singleton_realizeAt
         some ((predSymb P).formula₁ (Term.var x)) from rfl,
       Option.some.injEq] at hψ
     subst hψ
-    rw [ModalStructure.realizeAt_rel₁]
+    rw [ModalStructure.realizeAt_rel₁, Term.realizeAt_var]
     constructor
     · constructor
       · intro h
@@ -551,7 +526,7 @@ private theorem support_and_antiSupport_singleton_realizeAt
         from rfl,
       Option.some.injEq] at hψ
     subst hψ
-    rw [ModalStructure.realizeAt_rel₁_const]
+    rw [ModalStructure.realizeAt_rel₁, ModalStructure.realizeAt_constants]
     constructor
     · constructor
       · intro h
@@ -666,7 +641,7 @@ private theorem support_and_antiSupport_singleton_realizeAt
             (hsupp' (i.update x d) (State.mem_extendFunctional.mpr
               ⟨i, Finset.mem_singleton_self i, d, hd, rfl⟩))⟩
         · rintro ⟨d, hd⟩
-          refine ⟨fun _ => {d}, fun j _ => Finset.singleton_nonempty d,
+          refine ⟨fun _ ↦ {d}, fun j _ ↦ Finset.singleton_nonempty d,
             (support_iff_forall_singleton hNE M _).mpr ?_⟩
           intro j hj
           obtain ⟨i', hi', d', hd', hupd⟩ := State.mem_extendFunctional.mp hj
@@ -722,7 +697,7 @@ private theorem support_and_antiSupport_singleton_realizeAt
             (hanti' (i.update x d) (State.mem_extendFunctional.mpr
               ⟨i, Finset.mem_singleton_self i, d, hd, rfl⟩))⟩
         · rintro ⟨d, hd⟩
-          refine ⟨fun _ => {d}, fun j _ => Finset.singleton_nonempty d,
+          refine ⟨fun _ ↦ {d}, fun j _ ↦ Finset.singleton_nonempty d,
             (antiSupport_iff_forall_singleton hNE M _).mpr ?_⟩
           intro j hj
           obtain ⟨i', hi', d', hd', hupd⟩ := State.mem_extendFunctional.mp hj
@@ -754,10 +729,9 @@ theorem antiSupport_singleton_iff_realizeAt (M : Model W Domain Const Pred)
     antiSupport M φ {i} ↔ ¬ ψ.RealizeAt M.interp i.world v :=
   (support_and_antiSupport_singleton_realizeAt M hψ hv).2
 
-/-- **[aloni-vanormondt-2023] Proposition 4.1** (modal-free fragment): a
-    translatable formula is supported by a state iff it is classically
-    satisfied at every index — `M, s ⊨ φ(x̄)` iff `M, w ⊨_g φ(x̄)` for all
-    `⟨w, g⟩ ∈ s`, with the right-hand side mathlib's `Formula.Realize`. -/
+/-- A translatable formula is supported by a state iff it is classically satisfied at every index,
+    [aloni-vanormondt-2023] Proposition 4.1 for the modal-free fragment: `M, s ⊨ φ(x̄)` iff `M, w
+    ⊨_g φ(x̄)` for all `⟨w, g⟩ ∈ s`, with the right-hand side mathlib's `Formula.Realize`. -/
 theorem support_iff_forall_realizeAt (M : Model W Domain Const Pred)
     {φ : Formula Var Const Pred} {ψ : ((Language.monadic Pred)[[Const]]).Formula Var}
     (hψ : φ.toFormula? = some ψ) (s : Finset (Index W Var Domain))
@@ -765,7 +739,7 @@ theorem support_iff_forall_realizeAt (M : Model W Domain Const Pred)
     (hv : ∀ i ∈ s, ∀ y, i.assign y = ↑(v i y)) :
     support M φ s ↔ ∀ i ∈ s, ψ.RealizeAt M.interp i.world (v i) := by
   rw [support_iff_forall_singleton (neFree_of_toFormula? hψ)]
-  exact forall₂_congr fun i hi =>
+  exact forall₂_congr fun i hi ↦
     support_singleton_iff_realizeAt M hψ (hv i hi)
 
 end RealizeAt
@@ -790,9 +764,9 @@ def Formula.toModal? [DecidableEq Var] :
   | .ne => none
   | .neg φ => φ.toModal?.map .not
   | .conj φ ψ =>
-      φ.toModal?.bind fun α => ψ.toModal?.map (α ⊓ ·)
+      φ.toModal?.bind fun α ↦ ψ.toModal?.map (α ⊓ ·)
   | .disj φ ψ =>
-      φ.toModal?.bind fun α => ψ.toModal?.map (α ⊔ ·)
+      φ.toModal?.bind fun α ↦ ψ.toModal?.map (α ⊔ ·)
   | .poss φ => φ.toModal?.map ModalFormula.diamond
   | .exi x φ => φ.toModal?.map (ModalFormula.ex x ·)
   | .univ x φ => φ.toModal?.map (ModalFormula.all x ·)
@@ -804,8 +778,8 @@ theorem neFree_of_toModal? [DecidableEq Var] :
       φ.toModal? = some τ → φ.NEFree := by
   intro φ
   induction φ with
-  | pred P x => exact fun _ => .pred P x
-  | predc P c => exact fun _ => .predc P c
+  | pred P x => exact fun _ ↦ .pred P x
+  | predc P c => exact fun _ ↦ .predc P c
   | neg φ ih =>
     intro τ hτ
     cases hφ : φ.toModal? with
@@ -879,11 +853,10 @@ section Realize
 
 variable [DecidableEq W] [DecidableEq Var] [Fintype Var] [DecidableEq Domain] [Fintype Domain]
 
-/-- Joint singleton bridge for the **full** NE-free fragment: support of a
-    modally translatable formula at `{i}` is Kripke satisfaction at
-    `i.world`, and anti-support its negation. The modal case decomposes the
-    accessible lift pointwise via flatness: a nonempty witnessing subteam
-    collapses to a single accessible world. -/
+/-- For the full NE-free fragment, support of a modally translatable formula at `{i}` is Kripke
+    satisfaction at `i.world`, and anti-support its negation. The modal case decomposes the
+    accessible lift pointwise via flatness: a nonempty witnessing subteam collapses to a single
+    accessible world. -/
 private theorem support_and_antiSupport_singleton_realize
     (M : Model W Domain Const Pred) :
     ∀ {φ : Formula Var Const Pred}
@@ -901,8 +874,7 @@ private theorem support_and_antiSupport_singleton_realize
         some ((predSymb P).modalFormula₁ (Term.var x)) from rfl,
       Option.some.injEq] at hτ
     subst hτ
-    let _I := M.interp i.world
-    rw [ModalFormula.realize_rel₁, Term.realize_var]
+    rw [ModalFormula.realize_rel₁, Term.realizeAt_var]
     constructor
     · constructor
       · intro h
@@ -930,7 +902,7 @@ private theorem support_and_antiSupport_singleton_realize
           (((Language.monadic Pred).con c).term)) from rfl,
       Option.some.injEq] at hτ
     subst hτ
-    rw [ModalFormula.realize_rel₁, ModalStructure.realize_constants]
+    rw [ModalFormula.realize_rel₁, ModalStructure.realizeAt_constants]
     constructor
     · constructor
       · intro h
@@ -1067,7 +1039,7 @@ private theorem support_and_antiSupport_singleton_realize
           refine (antiSupport_iff_forall_singleton hNE M _).mpr ?_
           intro k hk
           obtain ⟨hkw, hka⟩ := State.mem_modalLift.mp hk
-          refine ((ih hφ (i := k) fun y => by rw [hka]; exact hv y).2).mpr ?_
+          refine ((ih hφ (i := k) fun y ↦ by rw [hka]; exact hv y).2).mpr ?_
           intro hreal
           exact h ((ModalFormula.realize_diamond M j.world v α).mpr
             ⟨k.world, hkw, hreal⟩)
@@ -1090,7 +1062,7 @@ private theorem support_and_antiSupport_singleton_realize
             (hsupp' (i.update x d) (State.mem_extendFunctional.mpr
               ⟨i, Finset.mem_singleton_self i, d, hd, rfl⟩))⟩
         · rintro ⟨d, hd⟩
-          refine ⟨fun _ => {d}, fun j _ => Finset.singleton_nonempty d,
+          refine ⟨fun _ ↦ {d}, fun j _ ↦ Finset.singleton_nonempty d,
             (support_iff_forall_singleton hNE M _).mpr ?_⟩
           intro j hj
           obtain ⟨i', hi', d', hd', hupd⟩ := State.mem_extendFunctional.mp hj
@@ -1146,7 +1118,7 @@ private theorem support_and_antiSupport_singleton_realize
             (hanti' (i.update x d) (State.mem_extendFunctional.mpr
               ⟨i, Finset.mem_singleton_self i, d, hd, rfl⟩))⟩
         · rintro ⟨d, hd⟩
-          refine ⟨fun _ => {d}, fun j _ => Finset.singleton_nonempty d,
+          refine ⟨fun _ ↦ {d}, fun j _ ↦ Finset.singleton_nonempty d,
             (antiSupport_iff_forall_singleton hNE M _).mpr ?_⟩
           intro j hj
           obtain ⟨i', hi', d', hd', hupd⟩ := State.mem_extendFunctional.mp hj
@@ -1191,7 +1163,7 @@ theorem support_iff_forall_realize (M : Model W Domain Const Pred)
     (hv : ∀ i ∈ s, ∀ y, i.assign y = ↑(v i y)) :
     support M φ s ↔ ∀ i ∈ s, τ.Realize M i.world (v i) := by
   rw [support_iff_forall_singleton (neFree_of_toModal? hτ)]
-  exact forall₂_congr fun i hi =>
+  exact forall₂_congr fun i hi ↦
     support_singleton_iff_realize M hτ (hv i hi)
 
 end Realize

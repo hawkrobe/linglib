@@ -68,24 +68,8 @@
     "verified": "page-image"
   },
   {
-    "id": "beaver2001_e198",
-    "source": {"bibkey": "beaver-2001", "paperLabel": "E198"},
-    "language": "stan1293",
-    "primaryText": "Bertha is hiding.",
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "readings": [],
-    "paperFeatures": [
-      ["role", "presupposed content for E168'-E173"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "beaver2001_e168prime",
-    "source": {"bibkey": "beaver-2001", "paperLabel": "E168'"},
+    "id": "beaver2001_e168",
+    "source": {"bibkey": "beaver-2001", "paperLabel": "E168"},
     "language": "stan1293",
     "primaryText": "Anna realises that Bertha is hiding.",
     "glossedTokens": [],
@@ -95,14 +79,16 @@
     "readings": [],
     "paperFeatures": [
       ["trigger", "factive realise"],
-      ["embedding", "none"]
+      ["embedding", "none"],
+      ["translation", "∂bih AND cb_a_bih"],
+      ["entails", "bih"]
     ],
-    "comment": "Presupposes (and entails) that Bertha is hiding.",
+    "comment": "§6.5 translation: the presupposition that Bertha is hiding conjoined with the assertion that Anna has come to believe it.",
     "verified": "page-image"
   },
   {
-    "id": "beaver2001_e169prime",
-    "source": {"bibkey": "beaver-2001", "paperLabel": "E169'"},
+    "id": "beaver2001_e169",
+    "source": {"bibkey": "beaver-2001", "paperLabel": "E169"},
     "language": "stan1293",
     "primaryText": "Anna does not realise that Bertha is hiding.",
     "glossedTokens": [],
@@ -112,14 +98,16 @@
     "readings": [],
     "paperFeatures": [
       ["trigger", "factive realise"],
-      ["embedding", "negation"]
+      ["embedding", "negation"],
+      ["translation", "NOT (∂bih AND cb_a_bih)"],
+      ["entails", "bih"]
     ],
-    "comment": "Projection through negation (Fact 8.1).",
+    "comment": "A negated formula carries the same presuppositions as its positive counterpart.",
     "verified": "page-image"
   },
   {
-    "id": "beaver2001_e172prime",
-    "source": {"bibkey": "beaver-2001", "paperLabel": "E172'"},
+    "id": "beaver2001_e172",
+    "source": {"bibkey": "beaver-2001", "paperLabel": "E172"},
     "language": "stan1293",
     "primaryText": "If Anna realises that Bertha is hiding, then she will find her.",
     "glossedTokens": [],
@@ -129,9 +117,11 @@
     "readings": [],
     "paperFeatures": [
       ["trigger", "factive realise"],
-      ["embedding", "antecedent of conditional"]
+      ["embedding", "antecedent of conditional"],
+      ["translation", "(∂bih AND cb_a_bih) IMPLIES awfb"],
+      ["entails", "bih"]
     ],
-    "comment": "Projection from the antecedent (Fact 8.1).",
+    "comment": "",
     "verified": "page-image"
   },
   {
@@ -146,9 +136,30 @@
     "readings": [],
     "paperFeatures": [
       ["trigger", "factive realise"],
-      ["embedding", "might"]
+      ["embedding", "might"],
+      ["translation", "MIGHT(∂bih AND cb_a_bih)"],
+      ["entails", "bih"]
     ],
-    "comment": "Projection through the epistemic modals (Fact 8.8).",
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "beaver2001_e174",
+    "source": {"bibkey": "beaver-2001", "paperLabel": "E174"},
+    "language": "stan1293",
+    "primaryText": "Bertha regrets that Anna realises that she is hiding.",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["trigger", "factive regret over factive realise"],
+      ["embedding", "complement of a factive"],
+      ["translation", "∂(∂bih AND cb_a_bih) AND NVB_B_(∂_bih&cb_a_bih)"],
+      ["entails", "bih AND cb_a_bih"]
+    ],
+    "comment": "NVB_B_(∂_bih&cb_a_bih) is the atom that Bertha has negative vibes arising from her belief that Anna realises she is hiding.",
     "verified": "page-image"
   },
   {
@@ -163,9 +174,50 @@
     "readings": [],
     "paperFeatures": [
       ["trigger", "factive realise"],
-      ["embedding", "consequent of conditional"]
+      ["embedding", "consequent of conditional"],
+      ["translation", "(NOT bc) IMPLIES (∂ba AND cb_a_ba)"],
+      ["doesNotEntail", "ba"],
+      ["entails", "(NOT bc) IMPLIES ba"]
     ],
-    "comment": "Presupposes the conditionalised E175c: if Bertha is not in the kitchen, she is in the attic (Fact 8.3) — the paradigmatically CCP behaviour.",
+    "comment": "The book's translation writes bc for 'Bertha is in the kitchen'. Only the conditionalised presupposition is entailed (E175d), the standard weak CCP prediction.",
+    "verified": "page-image"
+  },
+  {
+    "id": "beaver2001_e176",
+    "source": {"bibkey": "beaver-2001", "paperLabel": "E176"},
+    "language": "stan1293",
+    "primaryText": "If Bertha is hiding, then Anna realises that Bertha is hiding.",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["trigger", "factive realise"],
+      ["embedding", "consequent of conditional"],
+      ["translation", "bih IMPLIES (∂bih AND cb_a_bih)"],
+      ["doesNotEntail", "bih"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "beaver2001_e177",
+    "source": {"bibkey": "beaver-2001", "paperLabel": "E177"},
+    "language": "stan1293",
+    "primaryText": "Perhaps Bertha is hiding and Anna realises that Bertha is hiding.",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["trigger", "factive realise"],
+      ["embedding", "second conjunct under might"],
+      ["translation", "MIGHT(bih AND ∂bih AND cb_a_bih)"],
+      ["doesNotEntail", "bih"]
+    ],
+    "comment": "Every information state admits the translation, so the sentence carries no presupposition.",
     "verified": "page-image"
   },
   {
