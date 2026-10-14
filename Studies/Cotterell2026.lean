@@ -30,7 +30,7 @@ difficulty is the surprisal of the unit under that language model up to a contex
 baseline (`surprisal_nextWord_softmaxModel`), the tautology
 (`exists_isTight_difficulty_eq_surprisal`). A constant bound `C` also bounds the expected
 length by `(1 - η) / η` for `η = exp (-C)` over the size of the extended alphabet
-(`tsum_length_mul_stringProb_softmaxModel_le`). Without the bound the construction can fail: an
+(`lintegral_length_softmaxModel_le`). Without the bound the construction can fail: an
 end difficulty growing linearly in the length of the prefix leaves the softmax model non-tight
 (`not_isTight_softmaxModel_length`).
 
@@ -163,22 +163,22 @@ theorem exists_isTight_difficulty_eq_surprisal (hd : ∀ o u, 0 ≤ d o u) {f : 
 
 /-- Proposition 1(b): a constant bound `C` on the end difficulty bounds the expected length of
 the softmax model by `(1 - η) / η`, for `η = exp (-C)` over the size of the extended alphabet. -/
-theorem tsum_length_mul_stringProb_softmaxModel_le (hd : ∀ o u, 0 ≤ d o u) {C : ℝ}
+theorem lintegral_length_softmaxModel_le (hd : ∀ o u, 0 ≤ d o u) {C : ℝ}
     (hC : ∀ u, d none u ≤ C) :
-    ∑' x, (x.length : ℝ≥0∞) * (softmaxModel d).stringProb x ≤
+    ∫⁻ x, (x.length : ℝ≥0∞) ∂(softmaxModel d).stringMeasure ≤
       (1 - ENNReal.ofReal (exp (-C)) / Fintype.card (Option α)) /
         (ENNReal.ofReal (exp (-C)) / Fintype.card (Option α)) :=
-  (softmaxModel d).tsum_length_mul_stringProb_le_div fun u ↦ by
+  (softmaxModel d).lintegral_length_le_div fun u ↦ by
     refine le_trans ?_ (le_next_softmaxModel hd u none)
     gcongr
     exact hC u
 
 /-- The softmax model of a bounded end difficulty has finite expected length. -/
-theorem tsum_length_mul_stringProb_softmaxModel_ne_top (hd : ∀ o u, 0 ≤ d o u) {C : ℝ}
+theorem lintegral_length_softmaxModel_ne_top (hd : ∀ o u, 0 ≤ d o u) {C : ℝ}
     (hC : ∀ u, d none u ≤ C) :
-    ∑' x, (x.length : ℝ≥0∞) * (softmaxModel d).stringProb x ≠ ∞ :=
+    ∫⁻ x, (x.length : ℝ≥0∞) ∂(softmaxModel d).stringMeasure ≠ ∞ :=
   ne_top_of_le_ne_top (ENNReal.div_ne_top (ENNReal.sub_ne_top ENNReal.one_ne_top)
     (ENNReal.div_ne_zero.2 ⟨(ENNReal.ofReal_pos.2 (exp_pos _)).ne', ENNReal.natCast_ne_top _⟩))
-    (tsum_length_mul_stringProb_softmaxModel_le hd hC)
+    (lintegral_length_softmaxModel_le hd hC)
 
 end Cotterell2026

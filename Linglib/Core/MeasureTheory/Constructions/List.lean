@@ -5,6 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
+public import Linglib.Core.MeasureTheory.Integral.Layercake
 public import Linglib.Core.MeasureTheory.Measure.GiryMonad
 public import Mathlib.MeasureTheory.Measure.WithDensity
 
@@ -16,6 +17,10 @@ a countable type, every measure on lists is s-finite. `Measure.listProd` is the 
 independent draws, one from each measure in a list of measures: the `List`-indexed product
 measure, built from the binary product.
 
+The prefix sets `{y | x <+: y}` of a measure on lists are counted two ways. The lists of length
+at least `n` are partitioned by their prefix of length `n`, and a list has one prefix more than
+its length, so the total measure of the prefix sets is the integral of the length plus one.
+
 ## Main definitions
 
 * `MeasureTheory.Measure.listProd`: the product of a list of measures.
@@ -26,6 +31,9 @@ measure, built from the binary product.
   the product of the singleton measures.
 * `MeasureTheory.Measure.ωScottContinuous_listProd`: the product is ω-Scott-continuous in each
   factor.
+* `MeasureTheory.Measure.tsum_measure_setOf_prefix_length`,
+  `MeasureTheory.Measure.tsum_measure_setOf_prefix`: the prefix sets counted by length, and in
+  total.
 
 ## Implementation notes
 
@@ -42,6 +50,41 @@ open scoped ENNReal
 instance {α : Type*} : MeasurableSpace (List α) := ⊤
 
 namespace MeasureTheory.Measure
+
+/-! ### Prefix sets -/
+
+section Prefixes
+
+variable {α : Type*} [Countable α] (μ : Measure (List α))
+
+/-- The lists of length at least `n` are partitioned by their prefix of length `n`. -/
+theorem tsum_measure_setOf_prefix_length (n : ℕ) :
+    ∑' x : {x : List α // x.length = n}, μ {y | x.1 <+: y} = μ {y | n ≤ y.length} := by
+  have h (x : {x : List α // x.length = n}) : {y | x.1 <+: y} = List.take n ⁻¹' {x.1} := by
+    ext y
+    simp [List.prefix_iff_eq_take, x.2, eq_comm]
+  have hs : {y : List α | n ≤ y.length} = List.take n ⁻¹' {x | x.length = n} := by
+    ext y
+    simp
+  simp_rw [h]
+  rw [hs, ← tsum_measure_preimage_singleton (Set.to_countable _) fun _ _ ↦ .of_discrete]
+  rfl
+
+/-- The total measure of the prefix sets is the integral of the number of prefixes, the length
+plus one. -/
+theorem tsum_measure_setOf_prefix :
+    ∑' x, μ {y | x <+: y} = ∫⁻ y, (y.length : ℝ≥0∞) + 1 ∂μ := by
+  simp_rw [← Nat.cast_add_one]
+  rw [← (Equiv.sigmaFiberEquiv List.length).tsum_eq, ENNReal.tsum_sigma',
+    lintegral_natCast_eq_tsum_measure_lt (f := fun y : List α ↦ y.length + 1) .of_discrete]
+  show ∑' n, ∑' x : {x : List α // x.length = n}, μ {y | x.1 <+: y} = _
+  exact tsum_congr fun n ↦ (tsum_measure_setOf_prefix_length μ n).trans (by simp)
+
+end Prefixes
+
+/-! ### Products of lists of measures -/
+
+section ListProd
 
 variable {α : Type*} [MeasurableSpace α]
 
@@ -106,5 +149,7 @@ theorem ωScottContinuous_listProd {ι : Type*} {F : ι → γ → Measure α} {
     simp only [List.map_cons, listProd_cons]
     exact ωScottContinuous_map (ωScottContinuous_prod (hF i (List.mem_cons_self ..))
       (ih fun j hj => hF j (List.mem_cons_of_mem _ hj))) .of_discrete
+
+end ListProd
 
 end MeasureTheory.Measure
