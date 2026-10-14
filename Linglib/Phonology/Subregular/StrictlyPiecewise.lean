@@ -6,6 +6,7 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Core.Computability.ShuffleIdeal
+public import Linglib.Core.Computability.Language
 public import Linglib.Core.Computability.PiecewiseTestable
 
 /-!
@@ -33,6 +34,8 @@ it is sublist-closed.
 ## Main results
 
 * `Language.IsStrictlyPiecewise.mem_of_sublist`: SP languages are subsequence-closed.
+* `Language.IsStrictlyPiecewise.comap`: SP languages are closed under inverse images of
+  letter-to-letter maps.
 * `Language.IsStrictlyPiecewise.succ`: `SP_k ⊆ SP_(k+1)`.
 * `Language.IsStrictlyPiecewise.toIsPiecewiseTestable`: `SP_k ⊆ PT_k`.
 * `Language.IsStrictlyPiecewise.isStarFree`: `SP_k ⊆ SF` over a finite alphabet.
@@ -87,6 +90,15 @@ theorem language_inter (k : ℕ) (G₁ G₂ : StrictlyPiecewiseGrammar α) :
   exact ⟨fun h ↦ ⟨fun s hl hs ↦ (h s hl hs).1, fun s hl hs ↦ (h s hl hs).2⟩,
     fun h s hl hs ↦ ⟨h.1 s hl hs, h.2 s hl hs⟩⟩
 
+/-- The grammar of the subsequences whose images are permitted generates the preimage of the
+language under a letter-to-letter map. -/
+theorem language_comap {β : Type*} (k : ℕ) (G : StrictlyPiecewiseGrammar α) (f : β → α) :
+    language k (List.map f ⁻¹' G) = (G.language k).comap f := by
+  ext w
+  simp only [mem_language, Language.mem_comap, Set.mem_preimage, List.sublist_map_iff]
+  refine ⟨fun h t ht ⟨s, hs, e⟩ ↦ e ▸ h s (by simpa [e] using ht) hs,
+    fun h s hs hsw ↦ h _ (by simpa using hs) ⟨s, hsw, rfl⟩⟩
+
 /-- SP membership reduces to a check against `List.sublistsLen` — a `decide`-friendly
 characterisation used by the decidable-membership instance below. -/
 theorem mem_language_iff_forall_mem_sublistsLen (k : ℕ) (G : StrictlyPiecewiseGrammar α)
@@ -123,6 +135,12 @@ theorem isStrictlyPiecewise_iff :
   show StrictlyPiecewiseGrammar.language k _ = _
   exact le_antisymm (fun w hw s hlen hs ↦ hw s hlen hs s hlen (Sublist.refl s))
     fun w hw s hlen hs ↦ StrictlyPiecewiseGrammar.mem_language_of_sublist hs hw
+
+/-- Strictly piecewise languages are closed under inverse images of letter-to-letter maps. -/
+theorem IsStrictlyPiecewise.comap {β : Type*} (h : L.IsStrictlyPiecewise k) (f : β → α) :
+    (L.comap f).IsStrictlyPiecewise k := by
+  obtain ⟨G, rfl⟩ := isStrictlyPiecewise_iff.1 h
+  exact isStrictlyPiecewise_iff.2 ⟨_, StrictlyPiecewiseGrammar.language_comap k G f⟩
 
 /-- SP languages are subsequence-closed. -/
 theorem IsStrictlyPiecewise.mem_of_sublist (h : L.IsStrictlyPiecewise k) {v w : List α}

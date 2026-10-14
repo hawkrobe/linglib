@@ -6,6 +6,7 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Core.Computability.Definite
+public import Linglib.Core.Computability.Language
 public import Linglib.Core.Computability.StarFree
 public import Linglib.Core.Data.List.Factors
 public import Mathlib.Data.Fintype.Powerset
@@ -30,7 +31,7 @@ locally testable events of McNaughton and Papert.
 * `Language.IsLocallyTestable.isStarFree`: over a finite alphabet, locally testable languages are
   star-free, and with them the generalized definite and the finite or cofinite languages.
 * `Language.IsLocallyTestable.leftQuotient`, `Language.IsLocallyTestable.rightQuotient`,
-  `Language.IsLocallyTestable.preimage_map`: closure under quotients and under inverse images of
+  `Language.IsLocallyTestable.comap`: closure under quotients and under inverse images of
   letter-to-letter maps.
 * `Language.isStarFree_setOf_infix`: the words containing a given factor form a star-free
   language, over any alphabet.
@@ -147,8 +148,8 @@ theorem IsLocallyTestable.rightQuotient (h : L.IsLocallyTestable k) (u : List α
   fun _ _ e ↦ h (List.kTestVector_append_congr e rfl)
 
 /-- Locally testable languages are closed under inverse images of letter-to-letter maps. -/
-theorem IsLocallyTestable.preimage_map {L : Language β} (h : L.IsLocallyTestable k) (g : α → β) :
-    IsLocallyTestable {w : List α | w.map g ∈ L} k :=
+theorem IsLocallyTestable.comap {L : Language β} (h : L.IsLocallyTestable k) (g : α → β) :
+    (L.comap g).IsLocallyTestable k :=
   fun _ _ e ↦ h (by rw [List.kTestVector_map, List.kTestVector_map, e])
 
 /-- Over a finite alphabet locally testable languages are star-free. -/

@@ -403,7 +403,7 @@ theorem IsStrictlyLocal.toIsLocallyTestable {L : Language α} {k : ℕ} (h : L.I
     L.IsLocallyTestable k := by
   obtain ⟨G, rfl⟩ := h
   exact (((isLocallyTestable_setOf_kFactors k {S | S ⊆ G}).rightQuotient
-    (List.replicate (k - 1) none)).leftQuotient (List.replicate (k - 1) none)).preimage_map some
+    (List.replicate (k - 1) none)).leftQuotient (List.replicate (k - 1) none)).comap some
 
 /-- Over a finite alphabet strictly local languages are star-free. -/
 theorem IsStrictlyLocal.isStarFree [Finite α] {L : Language α} {k : ℕ}

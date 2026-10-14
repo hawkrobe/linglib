@@ -27,6 +27,7 @@ forbidden-pairs machinery.
 * `Pattern`: valuation, participation, descriptors; `Pattern.Harmonic` is the
   surface semantics — tier-adjacent compatibility with blocker imposition and
   icy absorption.
+* `Pattern.project`: the tier value of a segment, nothing off the tier.
 
 ## Main results
 
@@ -35,6 +36,8 @@ forbidden-pairs machinery.
   and pairwise formulations coincide.
 * `Pattern.harmonic_iff_mem_tsl`: surface harmonicity is membership in a TSL₂
   language.
+* `Pattern.harmonic_iff_mem_comap`: when every tier segment participates, the harmonic words
+  are the inverse image of agreement under the tier projection.
 
 ## References
 
@@ -222,5 +225,25 @@ theorem Pattern.harmonic_iff_mem_tsl (p : Pattern α V) (w : List α) :
     p.Harmonic w ↔ w ∈ (ofForbiddenPairs (¬ p.Compatible · ·) p.OnTier).language := by
   simp only [mem_ofForbiddenPairs_language_iff_filter_isChain, Pattern.Harmonic, Pattern.tier,
     not_not]
+
+/-- The tier value of a segment is its harmonic value on the tier and nothing off it. -/
+def Pattern.project (p : Pattern α V) (s : α) : Option V :=
+  if p.OnTier s then p.value s else none
+
+open Subregular TierStrictlyLocalGrammar in
+/-- When every segment on the tier participates with a value, the harmonic words are the inverse
+image, under the tier projection, of agreement among the values. -/
+theorem Pattern.harmonic_iff_mem_comap [DecidableEq V] (p : Pattern α V)
+    (hp : ∀ s, p.OnTier s → p.participation s = .participating ∧ (p.value s).isSome)
+    (w : List α) :
+    p.Harmonic w ↔ w ∈ (ofForbiddenPairs (· ≠ ·) (·.isSome)).language.comap p.project := by
+  have hproj : ∀ s, p.OnTier s → p.project s = p.value s := fun s hs ↦ ite_eq_left hs
+  rw [harmonic_iff_mem_tsl, ← ofForbiddenPairs_language_comap]
+  refine Eq.to_iff (congrArg (w ∈ ·) (ofForbiddenPairs_language_congr (fun s ↦ ?_)
+    fun s t hs ht ↦ ?_))
+  · by_cases hs : p.OnTier s
+    · simp [hproj s hs, (hp s hs).2, hs]
+    · simp [Pattern.project, hs]
+  · simp [Pattern.Compatible, (hp s hs).1, (hp t ht).1, hproj s hs, hproj t ht]
 
 end Phonology.Harmony

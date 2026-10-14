@@ -8,6 +8,7 @@ module
 public import Linglib.Phonology.Subregular.TierStrictlyLocal
 public import Linglib.Core.Data.List.Factors
 public import Linglib.Core.Data.List.Chain
+public import Linglib.Core.Computability.Language
 
 /-!
 # Forbidden-pair TSL_2 grammars
@@ -28,6 +29,8 @@ blocking/transparency) are other choices of `R`.
 
 * `Subregular.mem_ofForbiddenPairs_language_iff_filter_isChain`: membership reduces
   to an `IsChain (¬ R · ·)` check on the tier-projected string.
+* `Subregular.ofForbiddenPairs_language_comap`: the grammar pulled back along a letter map
+  generates the preimage of the language.
 
 ## Implementation notes
 
@@ -122,6 +125,18 @@ lemma ofForbiddenPairs_language_congr {R' : α → α → Prop} {p p' : α → P
   have h (a) (ha : a ∈ w.filter (p' ·)) : p a :=
     (hp a).2 (of_decide_eq_true (List.mem_filter.1 ha).2)
   exact List.IsChain.iff_of_mem_imp fun a b ha hb ↦ (hR a b (h a ha) (h b hb)).not
+
+variable {R} in
+/-- A forbidden-pair grammar pulled back along a letter-to-letter map, with the pulled-back
+relation and tier, generates the preimage of the language. -/
+lemma ofForbiddenPairs_language_comap {β : Type*} (f : β → α) (p : α → Prop) [DecidablePred p] :
+    (TierStrictlyLocalGrammar.ofForbiddenPairs (fun x y ↦ R (f x) (f y))
+      (fun x ↦ p (f x))).language =
+      (TierStrictlyLocalGrammar.ofForbiddenPairs R p).language.comap f := by
+  ext w
+  simp only [Language.mem_comap, mem_ofForbiddenPairs_language_iff_filter_isChain,
+    List.filter_map, List.isChain_map]
+  rfl
 
 /-! ### Adjacent-pair counting
 

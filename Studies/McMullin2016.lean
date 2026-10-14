@@ -43,38 +43,31 @@ open Subregular Hansson2010
 
 /-! ### Transparent harmony: Navajo is SP_2 as well as TSL_2 -/
 
-/-- Agreement in [anterior] is transitive, so the permitted pairs on the sibilant tier are. -/
-private theorem anterior_agree_trans (a b c : Phonology.Segment) (_ : OnTier a) (_ : OnTier b)
-    (_ : OnTier c) (hab : ¬ a .anterior ≠ b .anterior) (hbc : ¬ b .anterior ≠ c .anterior) :
-    ¬ a .anterior ≠ c .anterior :=
-  not_ne_iff.2 ((not_ne_iff.1 hab).trans (not_ne_iff.1 hbc))
-
 /-- **Navajo sibilant harmony is strictly 2-piecewise.** The subject is the very language
-`Studies/Hansson2010.lean` builds as TSL_2, not a parallel SP stipulation, so the two
-classifications are of one stringset by construction. -/
+`Studies/Hansson2010.lean` builds as TSL_2, the inverse image of agreement among the sibilant
+classes, and agreement is strictly 2-piecewise. -/
 theorem navajoSibilantHarmony_lang_isSP2 :
-    navajoSibilantHarmony.language.IsStrictlyPiecewise 2 :=
-  TierStrictlyLocalGrammar.ofForbiddenPairs_language_isStrictlyPiecewise anterior_agree_trans
+    navajoSibilantHarmony.language.IsStrictlyPiecewise 2 := by
+  rw [language_eq_comap]
+  exact (TierStrictlyLocalGrammar.agree_language_isStrictlyPiecewise _).comap _
 
-/-- The tier-based and subsequence-based grammars for Navajo generate the same language, the
-grammars forbidding a pair of sibilants that disagree in [anterior] adjacent on the tier and
-however far apart. -/
-theorem navajoSibilantHarmony_language_eq_sp :
-    navajoSibilantHarmony.language = (StrictlyPiecewiseGrammar.ofForbiddenPairs
-      (fun x y ↦ x .anterior ≠ y .anterior) OnTier).language 2 :=
-  TierStrictlyLocalGrammar.ofForbiddenPairs_language_eq_sp anterior_agree_trans
+/-- The tier-based and subsequence-based grammars for Navajo generate the same language, read
+through the sibilant classes. -/
+theorem navajoSibilantHarmony_language_eq_sp : navajoSibilantHarmony.language =
+    ((StrictlyPiecewiseGrammar.agree (·.isSome)).language 2).comap sibilantClass := by
+  rw [language_eq_comap, TierStrictlyLocalGrammar.agree_language_eq_sp]
 
 /-- Under the SP_2 description Hansson's minimal pair comes out as before, the pre-harmony
-/si-dʒéːʔ/ rejected and the surface [ʃidʒéːʔ] accepted. Both transfer along the equality of languages rather than
-being recomputed. -/
+/si-dʒéːʔ/ rejected and the surface [ʃidʒéːʔ] accepted. Both transfer along the equality of
+languages rather than being recomputed. -/
 theorem ur_ex6a_ii_violates_sp :
-    ur Examples.ex6a_ii ∉ (StrictlyPiecewiseGrammar.ofForbiddenPairs
-      (fun x y ↦ x .anterior ≠ y .anterior) OnTier).language 2 :=
+    ur Examples.ex6a_ii ∉ ((StrictlyPiecewiseGrammar.agree (·.isSome)).language 2).comap
+      sibilantClass :=
   navajoSibilantHarmony_language_eq_sp ▸ ur_ex6a_ii_violates
 
 theorem sr_ex6a_ii_legal_sp :
-    sr Examples.ex6a_ii ∈ (StrictlyPiecewiseGrammar.ofForbiddenPairs
-      (fun x y ↦ x .anterior ≠ y .anterior) OnTier).language 2 :=
+    sr Examples.ex6a_ii ∈ ((StrictlyPiecewiseGrammar.agree (·.isSome)).language 2).comap
+      sibilantClass :=
   navajoSibilantHarmony_language_eq_sp ▸ sr_ex6a_ii_legal
 
 /-! ### Opaque harmony: blocking is strictly piecewise at no width -/
