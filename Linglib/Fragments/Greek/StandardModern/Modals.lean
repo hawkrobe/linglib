@@ -5,11 +5,9 @@ public import Linglib.Semantics.Modality.Basic
 /-!
 # Modern Greek modals
 
-The Modern Greek modal expressions of Uegaki and Hannon's elicited dataset of force-flavour
-combinations, distributed with the modal typology database of [guo-imel-steinert-threlkeld-2022].
-Under the projection below, neither *prepei* nor *mporei* has independent force and flavor: *prepei*
-expresses necessity of every flavor but only epistemic possibility, and *mporei* possibility of
-every flavor but not deontic necessity.
+The Modern Greek modal expressions of Uegaki and Hannon's elicited dataset of force-flavor
+combinations, as distributed with the modal typology database of Guo, Imel and
+Steinert-Threlkeld.
 
 ## Implementation notes
 
@@ -18,8 +16,7 @@ necessity, weak necessity and possibility, and five flavors, epistemic, deontic,
 circumstantial and bouletic, with and without negation. An entry's meaning is its
 positive-polarity cells judged felicitous, with weak necessity entered as necessity and
 teleological as circumstantial; bouletic cells are left out, and so are the expressions with no
-other felicitous cell. Whether a meaning has independent force and flavor depends on this
-projection.
+other felicitous cell.
 
 ## References
 
@@ -31,22 +28,25 @@ projection.
 
 namespace Greek.StandardModern
 
-open Modality (ForceFlavor ModalItem)
+open Modality
 
-abbrev ne : ForceFlavor := (.necessity, .epistemic)
-abbrev pe : ForceFlavor := (.possibility, .epistemic)
-abbrev nd : ForceFlavor := (.necessity, .deontic)
-abbrev nc : ForceFlavor := (.necessity, .circumstantial)
-abbrev pd : ForceFlavor := (.possibility, .deontic)
-abbrev pc : ForceFlavor := (.possibility, .circumstantial)
+/-- *prepei* 'must' expresses necessity of every flavor, and epistemic possibility. -/
+def prepei : ModalItem :=
+  { form := "Prepei",
+    meaning := {(.necessity, .epistemic), (.possibility, .epistemic), (.necessity, .deontic),
+      (.necessity, .circumstantial)} }
 
-/-- NOT IFF: forces={nec,poss}, flavors={e,d,c} but missing (poss,d) and (poss,c). -/
-def prepei : ModalItem := { form := "Prepei", meaning := {ne, pe, nd, nc} }
-/-- NOT IFF: missing (nec,d). -/
-def mporei : ModalItem := { form := "Mporei", meaning := {ne, pe, pd, nc, pc} }
-def isos : ModalItem := { form := "Isos", meaning := {pe} }
+/-- *mporei* 'can' expresses possibility of every flavor, and epistemic and circumstantial
+necessity. -/
+def mporei : ModalItem :=
+  { form := "Mporei",
+    meaning := {(.necessity, .epistemic), (.possibility, .epistemic), (.possibility, .deontic),
+      (.necessity, .circumstantial), (.possibility, .circumstantial)} }
 
-def modals : List ModalItem :=
-  [prepei, mporei, isos]
+/-- *isos* 'perhaps' expresses epistemic possibility. -/
+def isos : ModalItem := { form := "Isos", meaning := {(.possibility, .epistemic)} }
+
+/-- The modal inventory. -/
+def modals : List ModalItem := [prepei, mporei, isos]
 
 end Greek.StandardModern

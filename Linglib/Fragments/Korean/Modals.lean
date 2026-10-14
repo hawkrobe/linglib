@@ -5,22 +5,20 @@ public import Linglib.Semantics.Modality.Basic
 /-!
 # Korean modals
 
-The Korean modal expressions of Uegaki and Hannon's elicited dataset of force-flavour combinations,
-distributed with the modal typology database of [guo-imel-steinert-threlkeld-2022], with the forces
-and flavours each expresses: the epistemic necessity suffixes *-napo-*, *-keyss-*, *ke-* and
-*they-*, the deontic and circumstantial necessity of *-ya ha-*, the deontic necessity of *-ya
-keyss-*, the circumstantial *kes.i coh-*, and the possibility expressions *ci(-to) molun-*,
-*swu(-to) iss-* and *-to toy-*.
+The Korean modal expressions of Uegaki and Hannon's elicited dataset of force-flavor
+combinations, as distributed with the modal typology database of Guo, Imel and
+Steinert-Threlkeld.
 
 ## Implementation notes
 
-The dataset records whether each expression is felicitous in contexts of three forces,
-necessity, weak necessity and possibility, and five flavors, epistemic, deontic, teleological,
-circumstantial and bouletic, with and without negation. An entry's meaning is its
-positive-polarity cells judged felicitous, with weak necessity entered as necessity and
-teleological as circumstantial; bouletic cells are left out, and so are the expressions with no
-other felicitous cell. Whether a meaning has independent force and flavor depends on this
-projection.
+* The dataset records whether each expression is felicitous in contexts of three forces,
+  necessity, weak necessity and possibility, and five flavors, epistemic, deontic, teleological,
+  circumstantial and bouletic, with and without negation. An entry's meaning is its
+  positive-polarity cells judged felicitous, with weak necessity entered as necessity and
+  teleological as circumstantial; bouletic cells are left out, and so are the expressions with
+  no other felicitous cell.
+* The doubly negated *an -myeon an-toy-* is recorded in positive clauses and has an entry; the
+  singly negated expressions are recorded only under negation.
 
 ## References
 
@@ -32,27 +30,47 @@ projection.
 
 namespace Korean
 
-open Modality (ForceFlavor ModalItem)
+open Modality
 
-abbrev ne : ForceFlavor := (.necessity, .epistemic)
-abbrev pe : ForceFlavor := (.possibility, .epistemic)
-abbrev nd : ForceFlavor := (.necessity, .deontic)
-abbrev nc : ForceFlavor := (.necessity, .circumstantial)
-abbrev pd : ForceFlavor := (.possibility, .deontic)
-abbrev pc : ForceFlavor := (.possibility, .circumstantial)
+/-- *-napo-* expresses epistemic necessity. -/
+def napo : ModalItem := { form := "-napo-", meaning := {(.necessity, .epistemic)} }
 
-def napo : ModalItem := { form := "-napo-", meaning := {ne} }
-def keyss : ModalItem := { form := "-keyss-", meaning := {ne} }
-def yaHa : ModalItem := { form := "-ya + ha-", meaning := {nd, nc} }
-def ke : ModalItem := { form := "ke-", meaning := {ne} }
-def they : ModalItem := { form := "they-", meaning := {ne} }
-def yaKeyss : ModalItem := { form := "-ya + keyss-", meaning := {nd} }
-def kesiCoh : ModalItem := { form := "kes.i-coh-", meaning := {nc} }
-def ciMolun : ModalItem := { form := "ci(-to) molun-", meaning := {pe} }
-def swuIss : ModalItem := { form := "swu(-to) iss-", meaning := {pe, pc} }
-def toToy : ModalItem := { form := "-to + toy-", meaning := {pd, pc} }
+/-- *-keyss-* expresses epistemic necessity. -/
+def keyss : ModalItem := { form := "-keyss-", meaning := {(.necessity, .epistemic)} }
 
+/-- *-ya ha-* expresses deontic and circumstantial necessity. -/
+def yaHa : ModalItem :=
+  { form := "-ya + ha-", meaning := {.necessity} ×ˢ {.deontic, .circumstantial} }
+
+/-- *ke-* expresses epistemic necessity. -/
+def ke : ModalItem := { form := "ke-", meaning := {(.necessity, .epistemic)} }
+
+/-- *they-* expresses epistemic necessity. -/
+def they : ModalItem := { form := "they-", meaning := {(.necessity, .epistemic)} }
+
+/-- *-ya keyss-* expresses deontic necessity. -/
+def yaKeyss : ModalItem := { form := "-ya + keyss-", meaning := {(.necessity, .deontic)} }
+
+/-- *kes.i-coh-* 'would be good' expresses circumstantial necessity. -/
+def kesiCoh : ModalItem := { form := "kes.i-coh-", meaning := {(.necessity, .circumstantial)} }
+
+/-- *ci(-to) molun-* 'not known' expresses epistemic possibility. -/
+def ciMolun : ModalItem := { form := "ci(-to) molun-", meaning := {(.possibility, .epistemic)} }
+
+/-- *swu(-to) iss-* 'is a possibility' expresses epistemic and circumstantial possibility. -/
+def swuIss : ModalItem :=
+  { form := "swu(-to) iss-", meaning := {.possibility} ×ˢ {.epistemic, .circumstantial} }
+
+/-- *-to toy-* expresses deontic and circumstantial possibility. -/
+def toToy : ModalItem :=
+  { form := "-to + toy-", meaning := {.possibility} ×ˢ {.deontic, .circumstantial} }
+
+/-- The doubly negated *an -myeon an-toy-* expresses deontic necessity. -/
+def anMyeonAnToy : ModalItem :=
+  { form := "an -myeon an-toy-", meaning := {(.necessity, .deontic)} }
+
+/-- The modal inventory. -/
 def modals : List ModalItem :=
-  [napo, keyss, yaHa, ke, they, yaKeyss, kesiCoh, ciMolun, swuIss, toToy]
+  [napo, keyss, yaHa, ke, they, yaKeyss, kesiCoh, ciMolun, swuIss, toToy, anMyeonAnToy]
 
 end Korean
