@@ -1,7 +1,6 @@
 module
 
-public import Mathlib.ModelTheory.Semantics
-public import Linglib.Core.ModelTheory.StructureFamily
+public import Linglib.Core.ModelTheory.Semantics
 public import Linglib.Logic.Modal.FirstOrder.Syntax
 
 /-!
@@ -17,8 +16,8 @@ Kripke satisfaction `K, w ⊨_v φ`.
 ## Main declarations
 
 * `ModalStructure` — accessibility plus a world-indexed family of
-  first-order structures on a constant domain (classical satisfaction at an
-  index is `Core/ModelTheory/StructureFamily.lean`'s `Formula.RealizeAt`).
+  first-order structures on a constant domain, so that terms and plain formulas
+  realize at a world by `Term.realizeAt` and `Formula.RealizeAt`.
 * `ModalFormula.Realize` — Kripke satisfaction for the modal language of
   `Syntax.lean`, with the `realize_*` simp set and the Barcan laws.
 
@@ -73,16 +72,25 @@ def funInterp {n : ℕ} (f : L.Functions n) (w : W) : (Fin n → M) → M :=
 
 /-- The relation a unary relation symbol denotes at a world, curried. -/
 def relInterp₁ (R : L.Relations 1) (w : W) (d : M) : Prop :=
-  K.relInterp R w (fun _ => d)
+  K.relInterp R w (fun _ ↦ d)
 
 /-- The element a constant denotes at a world. -/
 def constInterp (c : L.Constants) (w : W) : M :=
   K.funInterp c w default
 
+variable {α : Type*} (w : W) (v : α → M)
+
 /-- A constant term's value at a world is its `constInterp` denotation. -/
-theorem realize_constants {α : Type*} (w : W) (v : α → M) (c : L.Constants) :
-    (letI := K.interp w; (Constants.term c).realize v) = K.constInterp c w :=
-  congrArg _ (funext fun i => i.elim0)
+theorem realizeAt_constants (c : L.Constants) :
+    c.term.realizeAt K.interp w v = K.constInterp c w :=
+  Term.realizeAt_constants ..
+
+/-- A unary atom of a plain formula holds at a world when the symbol's denotation there holds
+of the term's value. -/
+theorem realizeAt_rel₁ (R : L.Relations 1) (t : L.Term α) :
+    (R.formula₁ t).RealizeAt K.interp w v ↔ K.relInterp₁ R w (t.realizeAt K.interp w v) := by
+  rw [Formula.realizeAt_rel₁, Matrix.cons_fin_one]
+  rfl
 
 end ModalStructure
 
@@ -90,14 +98,12 @@ namespace ModalFormula
 
 variable [DecidableEq α]
 
-/-- Kripke satisfaction `K, w ⊨_v φ`: atoms evaluate at the world's
-    structure, `□` quantifies over accessible worlds, and named
-    quantifiers update the valuation. -/
+/-- Kripke satisfaction `K, w ⊨_v φ`, under which atoms evaluate at the world's structure,
+    `□` quantifies over accessible worlds, and named quantifiers update the valuation. -/
 def Realize (K : ModalStructure L W M) :
     W → ModalFormula L α → (α → M) → Prop
-  | w, .equal t₁ t₂, v => letI := K.interp w; t₁.realize v = t₂.realize v
-  | w, .rel R ts, v =>
-      letI := K.interp w; Structure.RelMap R fun i => (ts i).realize v
+  | w, .equal t₁ t₂, v => t₁.realizeAt K.interp w v = t₂.realizeAt K.interp w v
+  | w, .rel R ts, v => K.relInterp R w fun i ↦ (ts i).realizeAt K.interp w v
   | _, .falsum, _ => False
   | w, .imp φ ψ, v => Realize K w φ v → Realize K w ψ v
   | w, .box φ, v => ∀ w' ∈ K.access w, Realize K w' φ v
@@ -106,13 +112,11 @@ def Realize (K : ModalStructure L W M) :
 variable (K : ModalStructure L W M) (w : W) (v : α → M)
 
 @[simp] theorem realize_equal (t₁ t₂ : L.Term α) :
-    (equal t₁ t₂).Realize K w v ↔
-      (letI := K.interp w; t₁.realize v = t₂.realize v) :=
+    (equal t₁ t₂).Realize K w v ↔ t₁.realizeAt K.interp w v = t₂.realizeAt K.interp w v :=
   Iff.rfl
 
 @[simp] theorem realize_rel {n : ℕ} (R : L.Relations n) (ts : Fin n → L.Term α) :
-    (rel R ts).Realize K w v ↔
-      (letI := K.interp w; Structure.RelMap R fun i => (ts i).realize v) :=
+    (rel R ts).Realize K w v ↔ K.relInterp R w fun i ↦ (ts i).realizeAt K.interp w v :=
   Iff.rfl
 
 @[simp] theorem realize_bot :
@@ -157,14 +161,14 @@ variable (K : ModalStructure L W M) (w : W) (v : α → M)
     (diamond φ).Realize K w v ↔ ∃ w' ∈ K.access w, φ.Realize K w' v := by
   simp [diamond, not_forall]
 
-/-- Realization of a unary atom: the symbol's denotation at the world, of
-    the term's value. -/
+/-- A unary atom holds at a world when the symbol's denotation there holds of the term's
+    value. -/
 @[simp] theorem realize_rel₁ (R : L.Relations 1) (t : L.Term α) :
     ((R.modalFormula₁ t).Realize K w v) ↔
-      K.relInterp₁ R w (letI := K.interp w; t.realize v) := by
+      K.relInterp₁ R w (t.realizeAt K.interp w v) := by
   rw [Relations.modalFormula₁, ModalFormula.realize_rel]
   exact iff_of_eq (congrArg _
-    (funext fun i => by rw [Subsingleton.elim i 0, Matrix.cons_val_zero]))
+    (funext fun i ↦ by rw [Subsingleton.elim i 0, Matrix.cons_val_zero]))
 
 /-! ### The Barcan laws
 
@@ -174,12 +178,12 @@ are both world-independent universal quantifiers, so they commute. -/
 /-- The Barcan formula `∀x □φ → □ ∀x φ`. -/
 theorem realize_barcan (x : α) (φ : ModalFormula L α) :
     (all x (box φ)).Realize K w v → (box (all x φ)).Realize K w v :=
-  fun h w' hw' d => h d w' hw'
+  fun h w' hw' d ↦ h d w' hw'
 
 /-- The converse Barcan formula `□ ∀x φ → ∀x □φ`. -/
 theorem realize_converseBarcan (x : α) (φ : ModalFormula L α) :
     (box (all x φ)).Realize K w v → (all x (box φ)).Realize K w v :=
-  fun h d w' hw' => h w' hw' d
+  fun h d w' hw' ↦ h w' hw' d
 
 end ModalFormula
 

@@ -28,8 +28,8 @@ composes a lexicon read off a model without change.
 ## Implementation notes
 
 `interp : W → L.Structure E` carries structures as terms rather than instances, since a
-world-indexed family of structures on one carrier cannot be instance-based. Instance-based
-mathlib API such as `Formula.Realize` then needs `letI := m.interp w`. The concrete model in
+world-indexed family of structures on one carrier cannot be instance-based; formulas are
+realized at a world by `Formula.RealizeAt m.interp w`. The concrete model in
 `Semantics/Composition/Toy.lean` follows mathlib's concrete-language idiom.
 
 ## References

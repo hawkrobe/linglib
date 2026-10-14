@@ -1,6 +1,6 @@
 module
 
-public import Mathlib.ModelTheory.Semantics
+public import Linglib.Core.ModelTheory.Semantics
 
 /-!
 # Named-variable binders for first-order formulas
@@ -19,7 +19,8 @@ upstream candidates.
 ## Main results
 
 * `FirstOrder.Language.Formula.realize_all₁`, `FirstOrder.Language.Formula.realize_ex₁`: a
-  closure is realized when its body is at every, or some, update of the valuation.
+  closure is realized when its body is at every, or some, update of the valuation; `realizeAt_all₁`
+  and `realizeAt_ex₁` are the same at an index of a family of structures.
 -/
 
 @[expose] public section
@@ -41,6 +42,8 @@ def all₁ (n : α) (φ : L.Formula α) : L.Formula α :=
 `Formula.iExs`. -/
 def ex₁ (n : α) (φ : L.Formula α) : L.Formula α :=
   (BoundedFormula.relabel (Function.update Sum.inl n (Sum.inr (0 : Fin 1))) φ).ex
+
+section Realize
 
 variable {M : Type*} [L.Structure M]
 
@@ -65,11 +68,27 @@ theorem realize_ex₁ {n : α} {φ : L.Formula α} {v : α → M} :
 
 /-- A formula with no occurring free variables, as a sentence. -/
 def toSentence (φ : L.Formula α) (h : φ.freeVarFinset = ∅) : L.Sentence :=
-  φ.restrictFreeVar fun x => absurd x.2 (by simp [h])
+  φ.restrictFreeVar fun x ↦ absurd x.2 (by simp [h])
 
 theorem realize_toSentence (φ : L.Formula α) (h : φ.freeVarFinset = ∅)
     (v : α → M) :
     (M ⊨ φ.toSentence h) ↔ φ.Realize v :=
-  BoundedFormula.realize_restrictFreeVar v (fun a => absurd a.2 (by simp [h]))
+  BoundedFormula.realize_restrictFreeVar v (fun a ↦ absurd a.2 (by simp [h]))
+
+end Realize
+
+section RealizeAt
+
+variable {W M : Type*} (interp : W → L.Structure M) (w : W) (v : α → M)
+
+@[simp] theorem realizeAt_all₁ (n : α) (φ : L.Formula α) :
+    (all₁ n φ).RealizeAt interp w v ↔ ∀ x : M, φ.RealizeAt interp w (Function.update v n x) :=
+  letI := interp w; realize_all₁
+
+@[simp] theorem realizeAt_ex₁ (n : α) (φ : L.Formula α) :
+    (ex₁ n φ).RealizeAt interp w v ↔ ∃ x : M, φ.RealizeAt interp w (Function.update v n x) :=
+  letI := interp w; realize_ex₁
+
+end RealizeAt
 
 end FirstOrder.Language.Formula
