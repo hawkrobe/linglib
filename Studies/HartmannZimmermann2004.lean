@@ -165,7 +165,7 @@ def separated : Prosody.Tree :=
 /-- `phSpans t` lists the spans of the φ nodes of `t` in preorder, each as the number of leaves
 to its left and the number of its own leaves. -/
 def phSpans (t : Prosody.Tree) : List (ℕ × ℕ) :=
-  (t.positionedSubtrees.filter (·.2.value.isPh)).map fun x ↦
+  (t.positionedSubtrees.filter (·.2.value.level = .ph)).map fun x ↦
     (t.leafIndex x.1.toList, x.2.numLeaves)
 
 /-- ALIGN-Focus is violated when no φ-edge sits at the focus's left edge (leaf offset 1, the

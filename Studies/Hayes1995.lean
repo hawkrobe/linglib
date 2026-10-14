@@ -64,13 +64,13 @@ theorem parseCells_heavy {w : Syllable.Weight} (hw : Syllable.Weight.heavy ≤ w
 
 /-- Is this ω-daughter an `f`-level foot? -/
 def isFootChild : Tree → Bool
-  | .node a _ => a.isFt
+  | .node a _ => decide (a.level = .ft)
 
 /-- By End Rule Right (16), the first foot with no foot to its right is promoted to head foot. -/
 def markHeadFoot : List Tree → List Tree
   | [] => []
   | .node a ds :: rest =>
-      if a.isFt && !rest.any isFootChild then
+      if a.level = .ft ∧ !rest.any isFootChild then
         .ft true ds :: rest
       else
         .node a ds :: markHeadFoot rest

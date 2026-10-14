@@ -70,7 +70,7 @@ open OptimalityTheory Core.Order
     parsed into the same category twice. -/
 def noRec : Constraint Tree := fun t => go t where
   go : Tree → Nat
-    | .node a cs => (cs.filter (fun c => Constituent.sameLevel c.value a)).length + goList cs
+    | .node a cs => (cs.filter (fun c => c.value.level = a.level)).length + goList cs
   goList : List Tree → Nat
     | [] => 0
     | c :: cs => go c + goList cs
@@ -87,34 +87,34 @@ intervening foot, has `noRec = 0` while its maximal and minimal ω-projections d
 intonational utterance υ is the maximal ι-projection. -/
 
 /-- The positions of `t` at the level `ℓ`. -/
-abbrev levelPositions (ℓ : Constituent → Bool) (t : Tree) : Set TreePath :=
-  RoseTree.positionsWhere (fun s ↦ ℓ s.value) t
+abbrev levelPositions (ℓ : Level) (t : Tree) : Set TreePath :=
+  RoseTree.positionsWhere (fun s ↦ s.value.level = ℓ) t
 
 /-- The maximal `ℓ`-projections of `t`, its topmost `ℓ`-nodes. -/
-abbrev maximalProjections (ℓ : Constituent → Bool) (t : Tree) : Set TreePath :=
+abbrev maximalProjections (ℓ : Level) (t : Tree) : Set TreePath :=
   {p | Minimal (· ∈ levelPositions ℓ t) p}
 
 /-- The minimal `ℓ`-projections of `t`, its bottommost `ℓ`-nodes. -/
-abbrev minimalProjections (ℓ : Constituent → Bool) (t : Tree) : Set TreePath :=
+abbrev minimalProjections (ℓ : Level) (t : Tree) : Set TreePath :=
   {p | Maximal (· ∈ levelPositions ℓ t) p}
 
 /-- Transitive No-Recursion at `ℓ`: no `ℓ`-node of `t` properly dominates another. -/
-abbrev NoLevelRecursion (ℓ : Constituent → Bool) (t : Tree) : Prop :=
+abbrev NoLevelRecursion (ℓ : Level) (t : Tree) : Prop :=
   IsAntichain (· ≤ ·) (levelPositions ℓ t)
 
 /-- **No-Recursion collapses the projections**: under transitive No-Recursion at `ℓ`, every
 `ℓ`-node is at once topmost and bottommost. -/
-theorem maximalProjections_eq_minimalProjections {ℓ : Constituent → Bool} {t : Tree}
+theorem maximalProjections_eq_minimalProjections {ℓ : Level} {t : Tree}
     (h : NoLevelRecursion ℓ t) : maximalProjections ℓ t = minimalProjections ℓ t := by
   ext p
   exact h.minimal_mem_iff.trans h.maximal_mem_iff.symm
 
-/-- **Parse-into-`p`** ([ito-mester-2003]) counts σ-leaves dominated by no `p`-node. -/
-def parseInto (p : Constituent → Bool) : Constraint Tree := fun t => go false t where
+/-- **Parse-into-`ℓ`** ([ito-mester-2003]) counts σ-leaves dominated by no `ℓ`-node. -/
+def parseInto (ℓ : Level) : Constraint Tree := fun t => go false t where
   go (under : Bool) : Tree → Nat
     | .node a cs =>
-        let u := under || p a
-        (if a.isSyl && cs.isEmpty && !u then 1 else 0) + goList u cs
+        let u := under || decide (a.level = ℓ)
+        (if a.level = .syl ∧ cs = [] ∧ u = false then 1 else 0) + goList u cs
   goList (under : Bool) : List Tree → Nat
     | [] => 0
     | c :: cs => go under c + goList under cs
@@ -128,13 +128,13 @@ def footContent (cs : List Tree) : List Syllable.Weight :=
 /-- The feet of a prosodic tree are the σ-weight contents of its `f`-nodes. -/
 def feet : Tree → List (List Syllable.Weight) := fun t => go t where
   go : Tree → List (List Syllable.Weight)
-    | .node a cs => (if a.isFt then [footContent cs] else []) ++ goList cs
+    | .node a cs => (if a.level = .ft then [footContent cs] else []) ++ goList cs
   goList : List Tree → List (List Syllable.Weight)
     | [] => []
     | t :: ts => go t ++ goList ts
 
-/-- Syllables parsed into no foot — `parseInto (·.isFt)`. -/
-def unfootedCount (t : Tree) : Nat := parseInto (·.isFt) t
+/-- Syllables parsed into no foot — `parseInto .ft`. -/
+def unfootedCount (t : Tree) : Nat := parseInto .ft t
 
 /-- The total mora count is the sum of the tree's σ-weights. -/
 def moraCount : Tree → Nat := fun t => go t where
@@ -157,44 +157,40 @@ can be certified `IsWord` by `decide`. -/
     per [dolatian-2020]) and the OT recursion candidates abstract the foot level. Exhaustivity (a
     stray σ) and Nonrecursivity (ω-over-ω) are violable OT constraints, so both are admitted
     here. -/
-abbrev IsWord : Tree → Prop := IsConstituent Constituent.isOm
+abbrev IsWord : Tree → Prop := IsConstituent .om
 
 /-- A non-recursive word is an ω over well-formed feet and stray σ-leaves, the structural content
     of `IsWord ∧ noRec = 0`, used to read the grid off a word. -/
 theorem isWord_children {a : Constituent} {cs : List Tree}
     (hw : IsWord (.node a cs)) (hr : noRec (.node a cs) = 0) :
-    a.isOm = true ∧ ∀ c ∈ cs, IsFoot c ∨ (c.value.isSyl = true ∧ c.children = []) := by
+    a.level = .om ∧ ∀ c ∈ cs, IsFoot c ∨ (c.value.level = .syl ∧ c.children = []) := by
   obtain ⟨ha, hl⟩ := hw
-  obtain ⟨hd, rfl⟩ : ∃ b, a = .om b := by
-    cases a <;> first | exact ⟨_, rfl⟩ | simp_all [Constituent.isOm]
-  have hr' : (cs.filter (fun c => Constituent.sameLevel c.value (.om hd))).length = 0 := by
-    have e : noRec (.node (Constituent.om hd) cs)
-        = (cs.filter (fun c => Constituent.sameLevel c.value (.om hd))).length
-          + noRec.goList cs := rfl
-    rw [hr] at e; omega
-  have hnoω : ∀ c ∈ cs, Constituent.sameLevel c.value (.om hd) = false := by
-    intro c hc
-    by_contra h
-    rw [Bool.not_eq_false] at h
-    have hmem : c ∈ cs.filter (fun c => Constituent.sameLevel c.value (.om hd)) := by
-      rw [List.mem_filter]; exact ⟨hc, h⟩
-    rw [List.length_eq_zero_iff] at hr'
-    rw [hr'] at hmem; exact List.not_mem_nil hmem
-  refine ⟨ha, fun c hc => ?_⟩
+  have ha : a.level = .om := ha
+  refine ⟨ha, fun c hc ↦ ?_⟩
   have hcl := hl.of_mem hc
-  have hlab := (RoseTree.licensed_node_iff.mp hl).1 c.value (List.mem_map_of_mem hc)
-  have hsl := hnoω c hc
+  have hle : c.value.level ≤ a.level := by
+    obtain ⟨hd, rfl⟩ : ∃ hd, a = .om hd := by cases a <;> simp_all [Constituent.level]
+    exact (RoseTree.licensed_node_iff.mp hl).1 c.value (List.mem_map_of_mem hc)
+  have hne : c.value.level ≠ a.level := by
+    intro h
+    have e : noRec (.node a cs)
+        = (cs.filter (fun c => c.value.level = a.level)).length + noRec.goList cs := rfl
+    have := List.length_pos_of_mem (List.mem_filter.2 ⟨hc, by simp [h]⟩ :
+      c ∈ cs.filter (fun c => c.value.level = a.level))
+    omega
+  rw [ha] at hle hne
   rcases c with ⟨cl, ccs⟩
-  simp only [RoseTree.value_node] at hsl hlab
-  have hcω : cl.isOm = false := by
-    cases cl <;> simp_all [Constituent.sameLevel, Constituent.isOm]
-  rcases hlab with hft | hom | hsyl
-  · exact Or.inl ⟨hft, hcl⟩
-  · simp [hcω] at hom
-  · refine Or.inr ⟨hsyl, ?_⟩
-    obtain ⟨w, h', rfl⟩ : ∃ w h', cl = .syl w h' := by
-      cases cl <;> simp_all [Constituent.isSyl]
+  simp only [RoseTree.value_node] at hle hne ⊢
+  have hcases : cl.level = .syl ∨ cl.level = .ft ∨ cl.level = .om ∨ cl.level = .ph ∨
+      cl.level = .iota := by cases cl.level <;> simp
+  rcases hcases with hlv | hlv | hlv | hlv | hlv
+  · refine Or.inr ⟨hlv, ?_⟩
+    obtain ⟨w, h', rfl⟩ : ∃ w h', cl = .syl w h' := by cases cl <;> simp_all [Constituent.level]
     simpa [Constituent.Licenses] using (RoseTree.licensed_node_iff.mp hcl).1
+  · exact Or.inl ⟨hlv, hcl⟩
+  · exact absurd hlv hne
+  · rw [hlv] at hle; exact absurd hle (by decide)
+  · rw [hlv] at hle; exact absurd hle (by decide)
 
 /-! ### Word-size predicates -/
 
@@ -265,13 +261,13 @@ example : noRec perfectW = 0 := by decide
 
 -- The ω-over-ω word has the outer ω as its sole maximal projection and the inner ω as its
 -- sole minimal projection; the perfect (flat) word is both at once.
-example : recursiveW.vertices.filter (⟨·⟩ ∈ maximalProjections (·.isOm) recursiveW) = [[]] := by
+example : recursiveW.vertices.filter (⟨·⟩ ∈ maximalProjections .om recursiveW) = [[]] := by
   decide
-example : recursiveW.vertices.filter (⟨·⟩ ∈ minimalProjections (·.isOm) recursiveW) = [[1]] := by
+example : recursiveW.vertices.filter (⟨·⟩ ∈ minimalProjections .om recursiveW) = [[1]] := by
   decide
-example : perfectW.vertices.filter (⟨·⟩ ∈ maximalProjections (·.isOm) perfectW) = [[]] := by
+example : perfectW.vertices.filter (⟨·⟩ ∈ maximalProjections .om perfectW) = [[]] := by
   decide
-example : perfectW.vertices.filter (⟨·⟩ ∈ minimalProjections (·.isOm) perfectW) = [[]] := by
+example : perfectW.vertices.filter (⟨·⟩ ∈ minimalProjections .om perfectW) = [[]] := by
   decide
 
 end Prosody

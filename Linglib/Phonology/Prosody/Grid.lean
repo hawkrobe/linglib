@@ -318,7 +318,7 @@ open MarkedGrid Grid
     each child. -/
 def projectStep (a : Constituent) (ps : List (Constituent × MarkedGrid Tree)) :
     Constituent × MarkedGrid Tree :=
-  (a, if a.isSyl ∧ ps = [] then cell (.node a [])
+  (a, if a.level = .syl ∧ ps = [] then cell (.node a [])
       else juxtapose (ps.map fun p => edge p.1.isHead p.2))
 
 /-- The **Relative Prominence Projection Rule** ([liberman-prince-1977]) is a homomorphism
@@ -331,7 +331,7 @@ private theorem fold_projectStep (t : Tree) :
   cases t with | node a cs => rfl
 
 @[simp] theorem project_node (a : Constituent) (cs : List Tree) :
-    project (.node a cs) = if a.isSyl ∧ cs = [] then cell (.node a [])
+    project (.node a cs) = if a.level = .syl ∧ cs = [] then cell (.node a [])
       else juxtapose (cs.map fun c => edge c.value.isHead (project c)) := by
   conv_lhs => rw [project, RoseTree.fold_node]
   simp only [fold_projectStep, projectStep, List.map_eq_nil_iff, List.map_map,
@@ -376,15 +376,15 @@ once, so the downstream proofs never re-walk the fold. -/
 
 variable (a : Constituent) (cs : List Tree)
 
-theorem columns_node : columns (.node a cs) = if a.isSyl ∧ cs = [] then [1]
+theorem columns_node : columns (.node a cs) = if a.level = .syl ∧ cs = [] then [1]
     else cs.flatMap fun c => (edge c.value.isHead (project c)).toGrid := by
   simp [columns, apply_ite MarkedGrid.toGrid, List.flatMap_map]
 
-theorem headHeights_node : headHeights (.node a cs) = if a.isSyl ∧ cs = [] then [1]
+theorem headHeights_node : headHeights (.node a cs) = if a.level = .syl ∧ cs = [] then [1]
     else cs.flatMap fun c => if c.value.isHead then (headHeights c).map (· + 1) else [] := by
   simp [headHeights, apply_ite MarkedGrid.headHeights, List.flatMap_map]
 
-theorem headTerminals_node : headTerminals (.node a cs) = if a.isSyl ∧ cs = [] then [.node a []]
+theorem headTerminals_node : headTerminals (.node a cs) = if a.level = .syl ∧ cs = [] then [.node a []]
     else cs.flatMap fun c => if c.value.isHead then headTerminals c else [] := by
   simp [headTerminals, apply_ite MarkedGrid.headTerminals, List.flatMap_map]
 
@@ -392,7 +392,7 @@ theorem headTerminals_node : headTerminals (.node a cs) = if a.isSyl ∧ cs = []
 
 /-- `leaf` is a head terminal of `t`, reached from the root by an all-head descent. -/
 inductive IsHeadTerminal : Tree → Tree → Prop
-  | leaf {a : Constituent} (ha : a.isSyl = true) : IsHeadTerminal (.node a []) (.node a [])
+  | leaf {a : Constituent} (ha : a.level = .syl) : IsHeadTerminal (.node a []) (.node a [])
   | head {a cs c leaf} : c ∈ cs → c.value.isHead →
       IsHeadTerminal c leaf → IsHeadTerminal (.node a cs) leaf
 
@@ -421,11 +421,11 @@ heights are `2` at the head σ and `1` elsewhere, so the grid peaks at `2`. -/
     tree recovers its metrical grid, the commuting square `columns ∘ toProsTree = toGrid`. -/
 theorem columns_toProsTree {S : Type*} (w : S → Syllable.Weight) (f : Foot S) :
     columns (f.toProsTree w) = Foot.toGrid f := by
-  rw [Foot.toProsTree, columns_node, ite_eq_right (by simp [Constituent.isSyl]),
+  rw [Foot.toProsTree, columns_node, ite_eq_right (by simp [Constituent.level]),
       List.flatMap_map, Foot.toGrid, List.map_eq_flatMap]
   refine List.flatMap_congr fun i _ => ?_
   by_cases hi : i = f.head <;>
-    simp [project_node, Constituent.isSyl, Constituent.isHead, edge,
+    simp [project_node, Constituent.level, Constituent.isHead, edge,
       promote, clear, toGrid, cell, hi]
 
 /-- A foot's grid peaks at `2` — its head σ carries the primary mark ([liberman-prince-1977]). -/
@@ -462,14 +462,14 @@ stress" — the peak sits atop a foot head. -/
 
 /-- Non-recursive word children (feet and stray σ) have height at most `2` — the ω→f→σ hierarchy. -/
 private theorem height_word_child_le {ch : Tree}
-    (h : IsFoot ch ∨ (ch.value.isSyl = true ∧ ch.children = [])) : ch.height ≤ 2 := by
+    (h : IsFoot ch ∨ (ch.value.level = .syl ∧ ch.children = [])) : ch.height ≤ 2 := by
   rcases h with hfoot | ⟨_, hcs⟩
   · obtain ⟨chl, chcs⟩ := ch
     rw [RoseTree.height_node]
     have : (chcs.map RoseTree.height).foldr max 0 ≤ 1 :=
       List.max_le_of_forall_le _ _ fun x hx => by
         obtain ⟨⟨cl, ccs⟩, hc, rfl⟩ := List.mem_map.mp hx
-        obtain ⟨-, hcs⟩ := hfoot.isSyl_leaf hc
+        obtain ⟨-, hcs⟩ := hfoot.syl_leaf hc
         simp only [RoseTree.children_node] at hcs
         subst hcs
         exact le_of_eq rfl
@@ -533,7 +533,7 @@ theorem col_le_two_or_head {t : Tree} (hw : IsWord t) (hr : noRec t = 0) :
     ∀ c ∈ columns t, c ≤ 2 ∨ c ∈ headHeights t := by
   obtain ⟨a, cs⟩ := t
   obtain ⟨ha, hchild⟩ := isWord_children hw hr
-  have hσ : a.isSyl = false := Constituent.isSyl_eq_false_of_isOm ha
+  have hσ : a.level ≠ .syl := by rw [ha]; decide
   intro c hc
   rw [columns_node, ite_eq_right (by simp [hσ]), List.mem_flatMap] at hc
   obtain ⟨ch, hch, hc⟩ := hc
@@ -548,7 +548,7 @@ theorem two_le_head {t : Tree} (hw : IsWord t) (hr : noRec t = 0)
     {h : ℕ} (hh : h ∈ headHeights t) : 2 ≤ h := by
   obtain ⟨a, cs⟩ := t
   obtain ⟨ha, _⟩ := isWord_children hw hr
-  have hσ : a.isSyl = false := Constituent.isSyl_eq_false_of_isOm ha
+  have hσ : a.level ≠ .syl := by rw [ha]; decide
   rw [headHeights_node, ite_eq_right (by simp [hσ]), List.mem_flatMap] at hh
   obtain ⟨ch, hch, hh⟩ := hh
   split at hh
