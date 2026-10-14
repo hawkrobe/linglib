@@ -1,0 +1,558 @@
+{
+  "FormTable": [
+    {
+      "ID": "aksenovaetal2024_3a",
+      "Language_ID": "loka1252",
+      "Parameter_ID": "smoke",
+      "Form": "èsìsòn",
+      "Segments": ["è", "s", "ì", "s", "ò", "n"],
+      "Comment": "Akinlabi (2009).",
+      "Source": ["aksenova-rawski-graf-heinz-2024[(3a)]", "aksenova-rawski-graf-heinz-2024[Figure 34.1]"],
+      "Ill_Formed": "èsìsɔ̀n"
+    },
+    {
+      "ID": "aksenovaetal2024_3b",
+      "Language_ID": "loka1252",
+      "Parameter_ID": "housefly",
+      "Form": "ɛ̀sísɔ̀n",
+      "Segments": ["ɛ̀", "s", "í", "s", "ɔ̀", "n"],
+      "Comment": "Akinlabi (2009).",
+      "Source": ["aksenova-rawski-graf-heinz-2024[(3b)]"],
+      "Ill_Formed": "ɛ̀sísòn"
+    },
+    {
+      "ID": "aksenovaetal2024_3c",
+      "Language_ID": "loka1252",
+      "Parameter_ID": "matriclan",
+      "Form": "lèjìmə̀",
+      "Segments": ["l", "è", "j", "ì", "m", "ə̀"],
+      "Comment": "Akinlabi (2009).",
+      "Source": ["aksenova-rawski-graf-heinz-2024[(3c)]"],
+      "Ill_Formed": "lèjìmà"
+    },
+    {
+      "ID": "aksenovaetal2024_3d",
+      "Language_ID": "loka1252",
+      "Parameter_ID": "kind_of_plant",
+      "Form": "ɛ́kílìkà",
+      "Segments": ["ɛ́", "k", "í", "l", "ì", "k", "à"],
+      "Comment": "Akinlabi (2009).",
+      "Source": ["aksenova-rawski-graf-heinz-2024[(3d)]"],
+      "Ill_Formed": "ékílìkà"
+    },
+    {
+      "ID": "aksenovaetal2024_5a",
+      "Language_ID": "kirg1245",
+      "Parameter_ID": "fire_loc",
+      "Form": "ot-to",
+      "Segments": ["o", "t", "t", "o"],
+      "Comment": "Nanayev (1950).",
+      "Source": ["aksenova-rawski-graf-heinz-2024[(5a)]"]
+    },
+    {
+      "ID": "aksenovaetal2024_5b",
+      "Language_ID": "kirg1245",
+      "Parameter_ID": "who_loc",
+      "Form": "kim-de",
+      "Segments": ["k", "i", "m", "d", "e"],
+      "Comment": "Nanayev (1950).",
+      "Source": ["aksenova-rawski-graf-heinz-2024[(5b)]"]
+    },
+    {
+      "ID": "aksenovaetal2024_5c",
+      "Language_ID": "kirg1245",
+      "Parameter_ID": "house_loc",
+      "Form": "üj-dö",
+      "Segments": ["ü", "j", "d", "ö"],
+      "Comment": "Nanayev (1950). The example line prints uj-do; the prose and Figure 34.3 give the front-vowel form. The ill-formed forms are Figure 34.3's.",
+      "Source": ["aksenova-rawski-graf-heinz-2024[(5c)]", "aksenova-rawski-graf-heinz-2024[Figure 34.3]"],
+      "Ill_Formed": "üjde üjdo"
+    },
+    {
+      "ID": "aksenovaetal2024_5d",
+      "Language_ID": "kirg1245",
+      "Parameter_ID": "fire_gen",
+      "Form": "ot-tun",
+      "Segments": ["o", "t", "t", "u", "n"],
+      "Comment": "Nanayev (1950).",
+      "Source": ["aksenova-rawski-graf-heinz-2024[(5d)]"]
+    },
+    {
+      "ID": "aksenovaetal2024_5e",
+      "Language_ID": "kirg1245",
+      "Parameter_ID": "who_gen",
+      "Form": "kim-din",
+      "Segments": ["k", "i", "m", "d", "i", "n"],
+      "Comment": "Nanayev (1950).",
+      "Source": ["aksenova-rawski-graf-heinz-2024[(5e)]"]
+    },
+    {
+      "ID": "aksenovaetal2024_5f",
+      "Language_ID": "kirg1245",
+      "Parameter_ID": "house_gen",
+      "Form": "üj-dün",
+      "Segments": ["ü", "j", "d", "ü", "n"],
+      "Comment": "Nanayev (1950). The example line prints uj-dun; the prose and Figure 34.3 give the front-vowel form.",
+      "Source": ["aksenova-rawski-graf-heinz-2024[(5f)]"]
+    },
+    {
+      "ID": "aksenovaetal2024_9a",
+      "Language_ID": "russ1264",
+      "Parameter_ID": "enter_perf",
+      "Form": "ɔr-ɔːd",
+      "Segments": ["ɔ", "r", "ɔː", "d"],
+      "Comment": "",
+      "Source": ["aksenova-rawski-graf-heinz-2024[(9a)]"],
+      "Ill_Formed": "ɔr-aːd"
+    },
+    {
+      "ID": "aksenovaetal2024_9b",
+      "Language_ID": "russ1264",
+      "Parameter_ID": "enter_caus_perf",
+      "Form": "ɔr-ʊːl-aːd",
+      "Segments": ["ɔ", "r", "ʊː", "l", "aː", "d"],
+      "Comment": "",
+      "Source": ["aksenova-rawski-graf-heinz-2024[(9b)]"],
+      "Ill_Formed": "ɔr-ʊːl-ɔːd"
+    },
+    {
+      "ID": "aksenovaetal2024_9c",
+      "Language_ID": "russ1264",
+      "Parameter_ID": "wander_perf",
+      "Form": "toːr-oːd",
+      "Segments": ["t", "oː", "r", "oː", "d"],
+      "Comment": "",
+      "Source": ["aksenova-rawski-graf-heinz-2024[(9c)]", "aksenova-rawski-graf-heinz-2024[Figure 34.4]"],
+      "Ill_Formed": "toːr-eːd"
+    },
+    {
+      "ID": "aksenovaetal2024_9d",
+      "Language_ID": "russ1264",
+      "Parameter_ID": "wander_caus_perf",
+      "Form": "toːr-uːl-eːd",
+      "Segments": ["t", "oː", "r", "uː", "l", "eː", "d"],
+      "Comment": "",
+      "Source": ["aksenova-rawski-graf-heinz-2024[(9d)]", "aksenova-rawski-graf-heinz-2024[Figure 34.4]"],
+      "Ill_Formed": "toːr-uːl-oːd"
+    },
+    {
+      "ID": "aksenovaetal2024_9e",
+      "Language_ID": "russ1264",
+      "Parameter_ID": "horse_poss",
+      "Form": "mɔrin-ɔː",
+      "Segments": ["m", "ɔ", "r", "i", "n", "ɔː"],
+      "Comment": "",
+      "Source": ["aksenova-rawski-graf-heinz-2024[(9e)]"],
+      "Ill_Formed": "mɔrin-aː"
+    },
+    {
+      "ID": "aksenovaetal2024_9f",
+      "Language_ID": "russ1264",
+      "Parameter_ID": "group_poss",
+      "Form": "oːrin-goː",
+      "Segments": ["oː", "r", "i", "n", "g", "oː"],
+      "Comment": "",
+      "Source": ["aksenova-rawski-graf-heinz-2024[(9f)]"],
+      "Ill_Formed": "oːrin-geː"
+    },
+    {
+      "ID": "aksenovaetal2024_14a",
+      "Language_ID": "yaku1245",
+      "Parameter_ID": "child_pl",
+      "Form": "oɣo-lor",
+      "Segments": ["o", "ɣ", "o", "l", "o", "r"],
+      "Comment": "Kaun (1995).",
+      "Source": ["aksenova-rawski-graf-heinz-2024[(14a)]"],
+      "Ill_Formed": "oɣo-lar"
+    },
+    {
+      "ID": "aksenovaetal2024_14b",
+      "Language_ID": "yaku1245",
+      "Parameter_ID": "wolf_pl",
+      "Form": "börö-lör",
+      "Segments": ["b", "ö", "r", "ö", "l", "ö", "r"],
+      "Comment": "Kaun (1995).",
+      "Source": ["aksenova-rawski-graf-heinz-2024[(14b)]"],
+      "Ill_Formed": "börö-ler"
+    },
+    {
+      "ID": "aksenovaetal2024_14c",
+      "Language_ID": "yaku1245",
+      "Parameter_ID": "child_acc",
+      "Form": "oɣo-nu",
+      "Segments": ["o", "ɣ", "o", "n", "u"],
+      "Comment": "Kaun (1995).",
+      "Source": ["aksenova-rawski-graf-heinz-2024[(14c)]"],
+      "Ill_Formed": "oɣo-nɨ"
+    },
+    {
+      "ID": "aksenovaetal2024_14d",
+      "Language_ID": "yaku1245",
+      "Parameter_ID": "wolf_acc",
+      "Form": "börö-nü",
+      "Segments": ["b", "ö", "r", "ö", "n", "ü"],
+      "Comment": "Kaun (1995).",
+      "Source": ["aksenova-rawski-graf-heinz-2024[(14d)]"],
+      "Ill_Formed": "börö-ni"
+    },
+    {
+      "ID": "aksenovaetal2024_14e",
+      "Language_ID": "yaku1245",
+      "Parameter_ID": "nose_acc",
+      "Form": "murum-u",
+      "Segments": ["m", "u", "r", "u", "m", "u"],
+      "Comment": "Kaun (1995).",
+      "Source": ["aksenova-rawski-graf-heinz-2024[(14e)]", "aksenova-rawski-graf-heinz-2024[Figure 34.5]"],
+      "Ill_Formed": "murum-ɨ"
+    },
+    {
+      "ID": "aksenovaetal2024_14f",
+      "Language_ID": "yaku1245",
+      "Parameter_ID": "window_acc",
+      "Form": "tünnük-ü",
+      "Segments": ["t", "ü", "n", "n", "ü", "k", "ü"],
+      "Comment": "Kaun (1995).",
+      "Source": ["aksenova-rawski-graf-heinz-2024[(14f)]"],
+      "Ill_Formed": "tünnük-i"
+    },
+    {
+      "ID": "aksenovaetal2024_14g",
+      "Language_ID": "yaku1245",
+      "Parameter_ID": "shaman_pl",
+      "Form": "ojum-lar",
+      "Segments": ["o", "j", "u", "m", "l", "a", "r"],
+      "Comment": "Kaun (1995).",
+      "Source": ["aksenova-rawski-graf-heinz-2024[(14g)]", "aksenova-rawski-graf-heinz-2024[Figure 34.5]"],
+      "Ill_Formed": "ojum-lor"
+    },
+    {
+      "ID": "aksenovaetal2024_14h",
+      "Language_ID": "yaku1245",
+      "Parameter_ID": "window_pl",
+      "Form": "tünnük-ler",
+      "Segments": ["t", "ü", "n", "n", "ü", "k", "l", "e", "r"],
+      "Comment": "Kaun (1995).",
+      "Source": ["aksenova-rawski-graf-heinz-2024[(14h)]"],
+      "Ill_Formed": "tünnük-lör"
+    },
+    {
+      "ID": "aksenovaetal2024_16a",
+      "Language_ID": "koon1247",
+      "Parameter_ID": "attach_appl",
+      "Form": "-somp-el-",
+      "Segments": ["s", "o", "mp", "e", "l"],
+      "Comment": "Hyman (1998).",
+      "Source": ["aksenova-rawski-graf-heinz-2024[(16a)]"]
+    },
+    {
+      "ID": "aksenovaetal2024_16b",
+      "Language_ID": "koon1247",
+      "Parameter_ID": "languish_appl",
+      "Form": "-leng-el-",
+      "Segments": ["l", "e", "ng", "e", "l"],
+      "Comment": "Hyman (1998).",
+      "Source": ["aksenova-rawski-graf-heinz-2024[(16b)]"]
+    },
+    {
+      "ID": "aksenovaetal2024_16c",
+      "Language_ID": "koon1247",
+      "Parameter_ID": "support_appl",
+      "Form": "-sik-il-",
+      "Segments": ["s", "i", "k", "i", "l"],
+      "Comment": "Hyman (1998).",
+      "Source": ["aksenova-rawski-graf-heinz-2024[(16c)]"]
+    },
+    {
+      "ID": "aksenovaetal2024_16d",
+      "Language_ID": "koon1247",
+      "Parameter_ID": "surpass_appl",
+      "Form": "-vur-il-",
+      "Segments": ["v", "u", "r", "i", "l"],
+      "Comment": "Hyman (1998).",
+      "Source": ["aksenova-rawski-graf-heinz-2024[(16d)]"]
+    },
+    {
+      "ID": "aksenovaetal2024_16e",
+      "Language_ID": "koon1247",
+      "Parameter_ID": "do_trans",
+      "Form": "-tomb-ol-",
+      "Segments": ["t", "o", "mb", "o", "l"],
+      "Comment": "Hyman (1998).",
+      "Source": ["aksenova-rawski-graf-heinz-2024[(16e)]"]
+    },
+    {
+      "ID": "aksenovaetal2024_16f",
+      "Language_ID": "koon1247",
+      "Parameter_ID": "broom_trans",
+      "Form": "-lemb-ol-",
+      "Segments": ["l", "e", "mb", "o", "l"],
+      "Comment": "Hyman (1998).",
+      "Source": ["aksenova-rawski-graf-heinz-2024[(16f)]"]
+    },
+    {
+      "ID": "aksenovaetal2024_16g",
+      "Language_ID": "koon1247",
+      "Parameter_ID": "move_trans",
+      "Form": "-vil-ul-",
+      "Segments": ["v", "i", "l", "u", "l"],
+      "Comment": "Hyman (1998).",
+      "Source": ["aksenova-rawski-graf-heinz-2024[(16g)]"]
+    },
+    {
+      "ID": "aksenovaetal2024_16h",
+      "Language_ID": "koon1247",
+      "Parameter_ID": "bribe_trans",
+      "Form": "-bub-ul-",
+      "Segments": ["b", "u", "b", "u", "l"],
+      "Comment": "Hyman (1998).",
+      "Source": ["aksenova-rawski-graf-heinz-2024[(16h)]"]
+    },
+    {
+      "ID": "aksenovaetal2024_18a",
+      "Language_ID": "koon1247",
+      "Parameter_ID": "wash_perf_act",
+      "Form": "-suk-idi-",
+      "Segments": ["s", "u", "k", "i", "d", "i"],
+      "Comment": "Ao (1991).",
+      "Source": ["aksenova-rawski-graf-heinz-2024[(18a)]"]
+    },
+    {
+      "ID": "aksenovaetal2024_18b",
+      "Language_ID": "koon1247",
+      "Parameter_ID": "ground_perf_act",
+      "Form": "-nik-ini-",
+      "Segments": ["n", "i", "k", "i", "n", "i"],
+      "Comment": "Ao (1991).",
+      "Source": ["aksenova-rawski-graf-heinz-2024[(18b)]"]
+    },
+    {
+      "ID": "aksenovaetal2024_18c",
+      "Language_ID": "koon1247",
+      "Parameter_ID": "hate_perf_act",
+      "Form": "-meng-ene-",
+      "Segments": ["m", "e", "ng", "e", "n", "e"],
+      "Comment": "Ao (1991).",
+      "Source": ["aksenova-rawski-graf-heinz-2024[(18c)]"]
+    },
+    {
+      "ID": "aksenovaetal2024_18d",
+      "Language_ID": "koon1247",
+      "Parameter_ID": "wash_perf_pass",
+      "Form": "-suk-ulu-",
+      "Segments": ["s", "u", "k", "u", "l", "u"],
+      "Comment": "Ao (1991).",
+      "Source": ["aksenova-rawski-graf-heinz-2024[(18d)]"]
+    },
+    {
+      "ID": "aksenovaetal2024_18e",
+      "Language_ID": "koon1247",
+      "Parameter_ID": "ground_perf_pass",
+      "Form": "-nik-unu-",
+      "Segments": ["n", "i", "k", "u", "n", "u"],
+      "Comment": "Ao (1991). The ill-formed forms are Figure 34.6's.",
+      "Source": ["aksenova-rawski-graf-heinz-2024[(18e)]", "aksenova-rawski-graf-heinz-2024[Figure 34.6]"],
+      "Ill_Formed": "nikono nikulo"
+    },
+    {
+      "ID": "aksenovaetal2024_18f",
+      "Language_ID": "koon1247",
+      "Parameter_ID": "hate_perf_pass",
+      "Form": "-meng-ono-",
+      "Segments": ["m", "e", "ng", "o", "n", "o"],
+      "Comment": "Ao (1991).",
+      "Source": ["aksenova-rawski-graf-heinz-2024[(18f)]"]
+    }
+  ],
+  "ParameterTable": [
+    {
+      "ID": "smoke",
+      "Name": "smoke",
+      "Description": ""
+    },
+    {
+      "ID": "housefly",
+      "Name": "housefly",
+      "Description": ""
+    },
+    {
+      "ID": "matriclan",
+      "Name": "matriclan",
+      "Description": ""
+    },
+    {
+      "ID": "kind_of_plant",
+      "Name": "kind of plant",
+      "Description": ""
+    },
+    {
+      "ID": "fire_loc",
+      "Name": "fire-LOC",
+      "Description": ""
+    },
+    {
+      "ID": "who_loc",
+      "Name": "who-LOC",
+      "Description": ""
+    },
+    {
+      "ID": "house_loc",
+      "Name": "house-LOC",
+      "Description": ""
+    },
+    {
+      "ID": "fire_gen",
+      "Name": "fire-GEN",
+      "Description": ""
+    },
+    {
+      "ID": "who_gen",
+      "Name": "who-GEN",
+      "Description": ""
+    },
+    {
+      "ID": "house_gen",
+      "Name": "house-GEN",
+      "Description": ""
+    },
+    {
+      "ID": "enter_perf",
+      "Name": "enter-PERF",
+      "Description": ""
+    },
+    {
+      "ID": "enter_caus_perf",
+      "Name": "enter-CAUS-PERF",
+      "Description": ""
+    },
+    {
+      "ID": "wander_perf",
+      "Name": "wander-PERF",
+      "Description": ""
+    },
+    {
+      "ID": "wander_caus_perf",
+      "Name": "wander-CAUS-PERF",
+      "Description": ""
+    },
+    {
+      "ID": "horse_poss",
+      "Name": "horse-POSS",
+      "Description": ""
+    },
+    {
+      "ID": "group_poss",
+      "Name": "group-POSS",
+      "Description": ""
+    },
+    {
+      "ID": "child_pl",
+      "Name": "child-PL",
+      "Description": ""
+    },
+    {
+      "ID": "wolf_pl",
+      "Name": "wolf-PL",
+      "Description": ""
+    },
+    {
+      "ID": "child_acc",
+      "Name": "child-ACC",
+      "Description": ""
+    },
+    {
+      "ID": "wolf_acc",
+      "Name": "wolf-ACC",
+      "Description": ""
+    },
+    {
+      "ID": "nose_acc",
+      "Name": "nose-ACC",
+      "Description": ""
+    },
+    {
+      "ID": "window_acc",
+      "Name": "window-ACC",
+      "Description": ""
+    },
+    {
+      "ID": "shaman_pl",
+      "Name": "shaman-PL",
+      "Description": ""
+    },
+    {
+      "ID": "window_pl",
+      "Name": "window-PL",
+      "Description": ""
+    },
+    {
+      "ID": "attach_appl",
+      "Name": "attach-APPL",
+      "Description": ""
+    },
+    {
+      "ID": "languish_appl",
+      "Name": "languish-APPL",
+      "Description": ""
+    },
+    {
+      "ID": "support_appl",
+      "Name": "support-APPL",
+      "Description": ""
+    },
+    {
+      "ID": "surpass_appl",
+      "Name": "surpass-APPL",
+      "Description": ""
+    },
+    {
+      "ID": "do_trans",
+      "Name": "do-TRANS",
+      "Description": ""
+    },
+    {
+      "ID": "broom_trans",
+      "Name": "broom-TRANS",
+      "Description": ""
+    },
+    {
+      "ID": "move_trans",
+      "Name": "move-TRANS",
+      "Description": ""
+    },
+    {
+      "ID": "bribe_trans",
+      "Name": "bribe-TRANS",
+      "Description": ""
+    },
+    {
+      "ID": "wash_perf_act",
+      "Name": "wash-PERF.ACT",
+      "Description": ""
+    },
+    {
+      "ID": "ground_perf_act",
+      "Name": "ground-PERF.ACT",
+      "Description": ""
+    },
+    {
+      "ID": "hate_perf_act",
+      "Name": "hate-PERF.ACT",
+      "Description": ""
+    },
+    {
+      "ID": "wash_perf_pass",
+      "Name": "wash-PERF.PASS",
+      "Description": ""
+    },
+    {
+      "ID": "ground_perf_pass",
+      "Name": "ground-PERF.PASS",
+      "Description": ""
+    },
+    {
+      "ID": "hate_perf_pass",
+      "Name": "hate-PERF.PASS",
+      "Description": ""
+    }
+  ]
+}
