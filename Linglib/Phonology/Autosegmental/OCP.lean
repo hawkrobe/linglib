@@ -5,7 +5,6 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Core.Algebra.FreeMonoid.Destutter
 public import Linglib.Phonology.OCP
 public import Linglib.Phonology.Autosegmental.Realization
 public import Linglib.Phonology.Autosegmental.TwoTier
@@ -13,11 +12,11 @@ public import Linglib.Phonology.Autosegmental.TwoTier
 /-!
 # OCP-merging collapse of autosegmental representations
 
-A merging realization ([jardine-2019]; the melody merge of [jardine-heinz-2015]) fuses adjacent
-identical melody nodes, so that a melody `Hⁿ` realizes as one `H` linked to `n` timing slots.
-`AR.collapse m` performs the merge on melody tier `m`: the tier word is destuttered
-(`OCP.collapse`), each link is repointed through the run index `runIdx`, and the other tiers are
-untouched, so a merged node keeps every slot its run was linked to. `realizeMerged` is the
+A merging realization fuses adjacent identical melody nodes, so that a melody `Hⁿ` realizes as
+one `H` linked to `n` timing slots, as in Jardine's merging realization and the melody merge of
+Jardine and Heinz. `AR.collapse m` performs the merge on melody tier `m`. It destutters the tier
+word (`OCP.collapse`), repoints each link through the run index `runIdx`, and leaves the other
+tiers untouched, so a merged node keeps every slot its run was linked to. `realizeMerged` is the
 realization followed by the collapse.
 
 ## Main definitions
@@ -72,7 +71,7 @@ variable (m : ι) [DecidableEq (τ m)]
 /-- The tier words after collapsing melody tier `m` are destuttered at `m` and untouched
 elsewhere. -/
 noncomputable def AR.collapsedWord [Finite X.obj.V] : ∀ i, List (τ i) :=
-  Function.update (fun i => X.tierWord i) m (OCP.collapse (X.tierWord m))
+  Function.update (fun i ↦ X.tierWord i) m (OCP.collapse (X.tierWord m))
 
 @[simp] theorem AR.collapsedWord_self [Finite X.obj.V] :
     X.collapsedWord m m = OCP.collapse (X.tierWord m) :=
@@ -107,20 +106,20 @@ noncomputable def AR.collapse [Finite X.obj.V] :
   obj :=
     { V := (i : ι) × Fin (X.collapsedWord m i).length
       edges :=
-        { Adj := fun v w => v ≠ w ∧ ∃ p q, X.link v.1 w.1 p q ∧
+        { Adj := fun v w ↦ v ≠ w ∧ ∃ p q, X.link v.1 w.1 p q ∧
             X.collapseIdx m v.1 p = v.2 ∧ X.collapseIdx m w.1 q = w.2
-          symm := ⟨fun v w h => ⟨h.1.symm, by
+          symm := ⟨fun v w h ↦ ⟨h.1.symm, by
             obtain ⟨p, q, hl, hp, hq⟩ := h.2
             exact ⟨q, p, X.link_symm hl, hq, hp⟩⟩⟩
-          loopless := ⟨fun v h => h.1 rfl⟩ }
-      arcs := ⟨fun v w => v.1 = w.1 ∧ (v.2 : ℕ) < (w.2 : ℕ)⟩
-      label := fun v => ⟨v.1, (X.collapsedWord m v.1)[v.2]⟩ }
+          loopless := ⟨fun v h ↦ h.1 rfl⟩ }
+      arcs := ⟨fun v w ↦ v.1 = w.1 ∧ (v.2 : ℕ) < (w.2 : ℕ)⟩
+      label := fun v ↦ ⟨v.1, (X.collapsedWord m v.1)[v.2]⟩ }
   property := by
-    refine ⟨{ irrefl := fun v h => lt_irrefl _ h.2,
-              trans := fun u v w huv hvw => ⟨huv.1.trans hvw.1, huv.2.trans hvw.2⟩,
-              tier_eq := fun v w h => h.1,
-              total := fun v w hne htier => ?_ },
-      fun v w hadj harc => ?_⟩
+    refine ⟨{ irrefl := fun v h ↦ lt_irrefl _ h.2,
+              trans := fun u v w huv hvw ↦ ⟨huv.1.trans hvw.1, huv.2.trans hvw.2⟩,
+              tier_eq := fun v w h ↦ h.1,
+              total := fun v w hne htier ↦ ?_ },
+      fun v w hadj harc ↦ ?_⟩
     · obtain ⟨i, p⟩ := v
       obtain ⟨j, q⟩ := w
       obtain rfl : i = j := htier
@@ -141,9 +140,9 @@ noncomputable def AR.collapse [Finite X.obj.V] :
 instance [Finite X.obj.V] : Finite (X.collapse m).obj.V :=
   haveI : Finite ((i : ι) × Fin (X.tierLength i)) := Finite.of_equiv _ X.vertexEquiv.symm
   Finite.of_injective
-    (fun v : (i : ι) × Fin (X.collapsedWord m i).length =>
+    (fun v : (i : ι) × Fin (X.collapsedWord m i).length ↦
       (⟨v.1, v.2.castLE (X.collapsedWord_length_le m v.1)⟩ : (i : ι) × Fin (X.tierLength i)))
-    fun v w h => by
+    fun v w h ↦ by
       obtain ⟨i, p⟩ := v
       obtain ⟨j, q⟩ := w
       obtain ⟨rfl, h2⟩ := Sigma.mk.inj_iff.mp h
@@ -152,8 +151,8 @@ instance [Finite X.obj.V] : Finite (X.collapse m).obj.V :=
 /-- The collapsed fiber at `i` is enumerated by its position range. -/
 noncomputable def AR.collapseFiberEnum [Finite X.obj.V] (i : ι) :
     Fin ((X.collapsedWord m i).length) ≃o (X.collapse m).fiber i := by
-  refine StrictMono.orderIsoOfSurjective (fun p => ⟨⟨i, p⟩, rfl⟩) (fun p q h => ⟨rfl, h⟩)
-    fun v => ?_
+  refine StrictMono.orderIsoOfSurjective (fun p ↦ ⟨⟨i, p⟩, rfl⟩) (fun p q h ↦ ⟨rfl, h⟩)
+    fun v ↦ ?_
   obtain ⟨⟨j, q⟩, hp⟩ := v
   obtain rfl : j = i := hp
   exact ⟨q, rfl⟩
@@ -191,8 +190,8 @@ theorem AR.vertexEquiv_collapse [Finite X.obj.V] {i : ι}
   rw [AR.fiberEnum_collapse]
   rfl
 
-/-- The collapse's links are the image of the original links under the
-    repointing — `edges_normalize`'s analogue for the merge. -/
+/-- The links of the collapse are the images of the original links under the repointing, as
+in `AR.edges_normalize`. -/
 theorem AR.link_collapse [Finite X.obj.V] (i j : ι) (r s : ℕ) :
     (X.collapse m).link i j r s ↔
       ∃ p q, X.link i j p q ∧ X.collapseIdx m i p = r ∧ X.collapseIdx m j q = s := by
@@ -309,9 +308,9 @@ noncomputable def AR.collapseTensorFullIso :
     Graph.Iso ((X ⊗ Y).collapse m).obj
       ((X.collapse m ⊗ Y.collapse m).collapse m).obj :=
   AR.fullIsoOfReaderEq
-    (fun i => ((X ⊗ Y).tierWord_collapse m i).trans ((X.collapsedWord_tensor m i).trans
+    (fun i ↦ ((X ⊗ Y).tierWord_collapse m i).trans ((X.collapsedWord_tensor m i).trans
       ((X.collapse m ⊗ Y.collapse m).tierWord_collapse m i).symm))
-    (fun i j r s => AR.link_collapse_tensor X m i j r s)
+    (fun i j r s ↦ AR.link_collapse_tensor X m i j r s)
 
 /-- The OCP congruence holds in the class monoid, so `collapse` descends to it. -/
 theorem AR.cls_collapse_tensor :
@@ -321,8 +320,7 @@ theorem AR.cls_collapse_tensor :
 
 end Congruence
 
-/-- OCP-cleanliness at melody tier `m`: the tier word has no adjacent
-    repeats. -/
+/-- An AR is **OCP-clean** at melody tier `m` when that tier word has no adjacent repeats. -/
 def AR.IsCleanAt [Finite X.obj.V] : Prop := IsClean (X.tierWord m)
 
 /-- The collapse is OCP-clean at the collapsed tier. -/
@@ -335,7 +333,7 @@ theorem AR.isCleanAt_collapse [Finite X.obj.V] :
 /-- The collapse preserves the NCC, since it repoints links monotonically. -/
 theorem AR.noCrossing_collapse [Finite X.obj.V] (h : NoCrossing X.obj.edges X.obj.arcs) :
     NoCrossing (X.collapse m).obj.edges (X.collapse m).obj.arcs := by
-  have hmono (i : ι) : Monotone (X.collapseIdx m i) := fun p q hpq => by
+  have hmono (i : ι) : Monotone (X.collapseIdx m i) := fun p q hpq ↦ by
     rcases eq_or_ne i m with rfl | hi
     · rw [AR.collapseIdx_self, AR.collapseIdx_self]
       exact runIdx_monotone _ hpq
@@ -350,8 +348,8 @@ theorem AR.noCrossing_collapse [Finite X.obj.V] (h : NoCrossing X.obj.edges X.ob
 section RealizeMerged
 variable {S : Type*}
 
-/-- The OCP-merging realization at melody tier `m` — [jardine-2019]'s merging
-    `g_T`: AR.realize, then merge the melody runs. -/
+/-- The OCP-merging realization at melody tier `m` realizes a string and then merges the
+melody runs, Jardine's merging `g_T`. -/
 noncomputable def realizeMerged (g₀ : S → TieredAR ι τ)
     [∀ s, Finite (g₀ s).obj.V] (w : List S) :
     TieredAR ι τ :=
@@ -381,7 +379,7 @@ def MergedLinks (melody : List α) (Lk : ℕ → ℕ → Prop) (r s : ℕ) : Pro
 
 instance (melody : List α) (Lk : ℕ → ℕ → Prop) [DecidableRel Lk] :
     DecidableRel (MergedLinks melody Lk) :=
-  fun _ _ => by unfold MergedLinks; infer_instance
+  fun _ _ ↦ by unfold MergedLinks; infer_instance
 
 /-- Melody-to-timing lines of a two-tier collapse at the melody tier. -/
 theorem AR.link_collapse_true_false (X : TieredAR Bool (TwoTier α β)) [Finite X.obj.V]
@@ -400,17 +398,17 @@ theorem AR.link_collapse_true_false (X : TieredAR Bool (TwoTier α β)) [Finite 
 variable (as : S → List α) (bs : S → List β) (L : S → ℕ → ℕ → Prop)
 
 theorem AR.tierWord_realizeMerged_ofWords_true (w : List S) :
-    (realizeMerged true (fun s => AR.ofWords (as s) (bs s) (L s)) w).tierWord true =
+    (realizeMerged true (fun s ↦ AR.ofWords (as s) (bs s) (L s)) w).tierWord true =
       OCP.collapse (w.map as).flatten := by
   simp [realizeMerged, AR.tierWord_realize_ofWords_true]
 
 theorem AR.tierWord_realizeMerged_ofWords_false (w : List S) :
-    (realizeMerged true (fun s => AR.ofWords (as s) (bs s) (L s)) w).tierWord false =
+    (realizeMerged true (fun s ↦ AR.ofWords (as s) (bs s) (L s)) w).tierWord false =
       (w.map bs).flatten := by
   simp [realizeMerged, AR.tierWord_realize_ofWords_false]
 
 theorem AR.link_realizeMerged_ofWords (w : List S) (r s : ℕ) :
-    (realizeMerged true (fun s => AR.ofWords (as s) (bs s) (L s)) w).link true false r s ↔
+    (realizeMerged true (fun s ↦ AR.ofWords (as s) (bs s) (L s)) w).link true false r s ↔
       MergedLinks (w.map as).flatten (BlockLinks as bs L w) r s := by
   show ((AR.realize _ w).collapse true).link true false r s ↔ _
   rw [AR.link_collapse_true_false]
@@ -420,7 +418,7 @@ theorem AR.link_realizeMerged_ofWords (w : List S) (r s : ℕ) :
 
 /-- The tier words of the merged realization are those of its presentation. -/
 theorem AR.tierWord_realizeMerged_eq_tierWord_ofWords (w : List S) (i : Bool) :
-    (realizeMerged true (fun s => AR.ofWords (as s) (bs s) (L s)) w).tierWord i =
+    (realizeMerged true (fun s ↦ AR.ofWords (as s) (bs s) (L s)) w).tierWord i =
       (AR.ofWords (OCP.collapse (w.map as).flatten) (w.map bs).flatten
         (MergedLinks (w.map as).flatten (BlockLinks as bs L w))).tierWord i := by
   cases i
@@ -429,19 +427,19 @@ theorem AR.tierWord_realizeMerged_eq_tierWord_ofWords (w : List S) (i : Bool) :
 
 /-- The lines of the merged realization are those of its presentation. -/
 theorem AR.link_realizeMerged_iff_link_ofWords (w : List S) (i j : Bool) (p q : ℕ) :
-    (realizeMerged true (fun s => AR.ofWords (as s) (bs s) (L s)) w).link i j p q ↔
+    (realizeMerged true (fun s ↦ AR.ofWords (as s) (bs s) (L s)) w).link i j p q ↔
       (AR.ofWords (OCP.collapse (w.map as).flatten) (w.map bs).flatten
         (MergedLinks (w.map as).flatten (BlockLinks as bs L w))).link i j p q :=
-  AR.link_iff_of_true_false (fun r s => by
+  AR.link_iff_of_true_false (fun r s ↦ by
     rw [AR.link_realizeMerged_ofWords, AR.link_ofWords]
     constructor
     · rintro ⟨p, hp, hl, rfl⟩
       exact ⟨runIdx_lt_collapse_length _ hp, (hl.lt as bs L).2, p, hp, hl, rfl⟩
-    · exact fun h => h.2.2) i j p q
+    · exact fun h ↦ h.2.2) i j p q
 
 theorem AR.free_realizeMerged_ofWords_iff
     (B : List {F : TieredAR Bool (TwoTier α β) // Finite F.obj.V}) (w : List S) :
-    (realizeMerged true (fun s => AR.ofWords (as s) (bs s) (L s)) w).Free B ↔
+    (realizeMerged true (fun s ↦ AR.ofWords (as s) (bs s) (L s)) w).Free B ↔
       (AR.ofWords (OCP.collapse (w.map as).flatten) (w.map bs).flatten
         (MergedLinks (w.map as).flatten (BlockLinks as bs L w))).Free B :=
   AR.free_congr (AR.tierWord_realizeMerged_eq_tierWord_ofWords as bs L w)
@@ -453,8 +451,8 @@ section Axiom6Bridge
 
 omit [DecidableEq ι] [DecidableEq (τ m)]
 
-/-- On a normal form, one position covers another in the arc order iff it is
-    its immediate successor. -/
+/-- On a normal form, one position covers another in the arc order iff it is its immediate
+successor. -/
 theorem AR.covering_normalize [Finite X.obj.V] {i : ι}
     {p q : Fin (X.tierLength i)} :
     ((X.normalize).obj.arcs.Adj ⟨i, p⟩ ⟨i, q⟩ ∧
@@ -492,7 +490,7 @@ private theorem AR.label_normalize_succ [Finite X.obj.V]
   rw [AR.label_normalize, AR.label_normalize,
     ← AR.tierWord_getElem (p := ⟨p, hp⟩),
     ← AR.tierWord_getElem (p := ⟨p + 1, hp1⟩)]
-  exact ⟨fun h => eq_of_heq (Sigma.mk.inj_iff.mp h).2, fun h => congrArg (Sigma.mk m) h⟩
+  exact ⟨fun h ↦ eq_of_heq (Sigma.mk.inj_iff.mp h).2, fun h ↦ congrArg (Sigma.mk m) h⟩
 
 /-- Tier-word cleanliness is Axiom 6 of [jardine-2016b] on the normal form. -/
 theorem AR.isCleanAt_iff_isOCPClean [Finite X.obj.V] :
@@ -513,7 +511,7 @@ theorem AR.isCleanAt_iff_isOCPClean [Finite X.obj.V] :
         ((X.label_normalize_succ m hq1 p.isLt).mp heq)
     · exact AR.arcs_normalize_ne hij p q hpq
   · intro h
-    refine List.isChain_iff_getElem.mpr fun p hp heq => ?_
+    refine List.isChain_iff_getElem.mpr fun p hp heq ↦ ?_
     have hlen : p + 1 < X.tierLength m := by
       simpa only [AR.length_tierWord] using hp
     have hplt : p < X.tierLength m := by omega
