@@ -2,8 +2,13 @@ module
 
 public import Mathlib.Data.Finset.Insert
 public import Mathlib.Data.List.Count
+public import Mathlib.Algebra.BigOperators.Group.Multiset.Defs
+public import Mathlib.Tactic.Ring
 public import Mathlib.Logic.Equiv.Defs
 public import Linglib.Data.Examples.Asudeh2022
+public import Linglib.Semantics.Quantification.Polyadic
+public import Studies.HeimKratzer1998
+public import Studies.BresnanEtAl1982
 
 /-!
 # Asudeh (2022): Glue Semantics
@@ -15,17 +20,21 @@ introduction abstraction. Linear logic lacks weakening and contraction, so a pro
 premise exactly once, but keeps commutativity, so word order does not constrain composition.
 Asudeh's examples follow: Finnish *Join vettä* and English *I drank water* spread the same three
 premises over two and three words, and *Everybody loves somebody* has one syntactic structure
-but two proofs, one per scope reading.
+but two proofs, one per scope reading. Asudeh also takes resource sensitivity to do the work of
+LFG's Completeness and Coherence, which the Dutch cross-serial clauses of Bresnan, Kaplan, Peters
+and Zaenen bear out.
 
 ## Main statements
 
-* `Term.Linear.rename_perm`, `Term.eval_rename`: reordering the premises of a linear proof keeps
-  it linear and keeps its meaning.
-* `Term.not_linear_weaken`, `Term.Linear.not_linear_contract`: a proof that leaves a premise
-  unused, or lets one premise stand for two, is not linear.
+* `Term.Linear.rename_perm`, `Term.not_linear_weaken`, `Term.Linear.not_linear_contract`:
+  reordering premises keeps a proof linear, while weakening and contraction never do.
+* `Term.Linear.count_eq`, `derivable_iff_complete_coherent`: linear proofs preserve the count
+  of every atom, and a Dutch clause's premises have a proof exactly when its f-structure is
+  complete and coherent.
 * `finnish_english`: the Finnish and English sentences instantiate the same premises.
-* `surface_eval`, `inverse_eval`, `readings_differ`: the two proofs of *Everybody loves
-  somebody* mean its two scope readings, which come apart.
+* `surface_eval`, `inverse_eval`, `interp_qr_eq_eval`: the two proofs of *Everybody loves
+  somebody* mean its surface and inverse readings, which Heim and Kratzer derive from two
+  Quantifier Raising trees.
 
 ## Implementation notes
 
@@ -33,6 +42,8 @@ but two proofs, one per scope reading.
   variables name; `Term.Linear` counts the uses of each premise and hypothesis, and the
   structural rules are renamings of positions.
 * The quantifiers' scope variable `∀S` is instantiated to the clause, as in the paper's proofs.
+* A Dutch control verb takes its complement as a property of its object, so the object shared by
+  functional control is consumed once in the logic and used twice only in the meaning.
 
 ## References
 
@@ -40,11 +51,17 @@ but two proofs, one per scope reading.
 * [girard-1987]
 * [klein-sag-1985]
 * [kaplan-bresnan-1982]
+* [bresnan-etal-1982]
+* [heim-kratzer-1998]
 -/
 
 @[expose] public section
 
 namespace Asudeh2022
+
+open Quantifier
+open Quantifier.GQ (every)
+open Quantifier.Polyadic (surfaceScope inverseScope)
 
 /-! ### Proofs as linear terms -/
 
@@ -242,7 +259,7 @@ theorem Term.eval_rename (f : ℕ → ℕ) (hf : ∀ n B, Γ[n]? = some B → Γ
     · have h₁ : Γ[n]? = some C := by rwa [List.getElem?_append_left hn] at h
       have h₂ : (Γ' ++ [A])[f n]? = some C := by
         rw [List.getElem?_append_left (lt_length_of_rename hf hn)]; exact hf n C h₁
-      rw [Env.get_congr _ (by simp [liftPos, hn]) _ h₂,
+      rw [Env.get_congr _ (by simp only [liftPos, hn, ↓reduceIte]) _ h₂,
         Env.get_snoc_of_lt _ _ (lt_length_of_rename hf hn) h₂ (hf n C h₁),
         Env.get_snoc_of_lt _ _ hn h h₁, hρ]
     · have h₁ := h
@@ -305,6 +322,94 @@ theorem Term.Linear.not_linear_contract {A T : GlueTy α} {t : Term (Γ ++ [A, A
     List.length_nil] at h₁
   rw [count_map_contract, h₂, h₃] at h₁
   omega
+
+/-! ### Count invariance
+
+The count of an atom in a formula is its positive occurrences less its negative ones. A linear
+proof preserves counts, so a premise multiset whose counts differ from its conclusion's has no
+linear proof at all. -/
+
+/-- A formula is derivable from a multiset of premises if some ordering of them has a linear
+    proof of it. -/
+def Derivable (M : Multiset (GlueTy α)) (C : GlueTy α) : Prop :=
+  ∃ Γ : List (GlueTy α), (Γ : Multiset (GlueTy α)) = M ∧ ∃ t : Term Γ C, t.Linear
+
+section Count
+
+variable [DecidableEq α]
+
+/-- The count of an atom in a formula, its positive occurrences less its negative ones. -/
+def GlueTy.count (x : α) : GlueTy α → ℤ
+  | .atom a => if a = x then 1 else 0
+  | .lolli A B => B.count x - A.count x
+
+/-- The count of an atom in the formula at a position of a list, zero past its end. -/
+def countAt (x : α) (Γ : List (GlueTy α)) (i : ℕ) : ℤ := ((Γ[i]?).map (GlueTy.count x)).getD 0
+
+private theorem countAt_append (x : α) (Γ : List (GlueTy α)) (A : GlueTy α) (u : ℕ) :
+    countAt x (Γ ++ [A]) u = countAt x Γ u + if u = Γ.length then A.count x else 0 := by
+  unfold countAt
+  rcases lt_trichotomy u Γ.length with h | rfl | h
+  · simp [List.getElem?_append_left h, h.ne]
+  · simp
+  · rw [List.getElem?_eq_none (by simp; omega), List.getElem?_eq_none h.le]
+    simp [h.ne']
+
+private theorem sum_countAt_append (x : α) (Γ : List (GlueTy α)) (A : GlueTy α) :
+    ∀ l : List ℕ, (l.map (countAt x (Γ ++ [A]))).sum =
+      (l.map (countAt x Γ)).sum + l.count Γ.length * A.count x
+  | [] => by simp
+  | u :: l => by
+    simp only [List.map_cons, List.sum_cons, List.count_cons, sum_countAt_append x Γ A l,
+      countAt_append, beq_iff_eq]
+    split_ifs <;> push_cast <;> ring
+
+theorem Term.count_eq_sum (x : α) {T : GlueTy α} (t : Term Γ T) (ht : t.HypLinear) :
+    T.count x = (t.uses.map (countAt x Γ)).sum := by
+  induction t with
+  | var n h => simp [uses, countAt, h]
+  | app f a ihf iha =>
+    simp only [uses, List.map_append, List.sum_append, ← ihf ht.1, ← iha ht.2, GlueTy.count]
+    ring
+  | @lam Γ A B b ih =>
+    have h := ih ht.2
+    rw [sum_countAt_append, ht.1] at h
+    simp only [uses, GlueTy.count, h]
+    push_cast; ring
+
+/-- The conclusion of a linear proof has the total count of its premises, which is count
+    invariance. -/
+theorem Term.Linear.count_eq (x : α) {T : GlueTy α} {t : Term Γ T} (ht : t.Linear) :
+    T.count x = (Γ.map (GlueTy.count x)).sum := by
+  rw [t.count_eq_sum x ht.2]
+  have hzero : ∀ l : List ℕ, (l.map (countAt x Γ)).sum =
+      ((l.filter (· < Γ.length)).map (countAt x Γ)).sum := by
+    intro l
+    induction l with
+    | nil => rfl
+    | cons u l ih =>
+      by_cases hu : u < Γ.length
+      · simp [hu, ih]
+      · simp [hu, ih, countAt]
+  have hperm : (t.uses.filter (· < Γ.length)).Perm (List.range Γ.length) := by
+    rw [List.perm_iff_count]
+    intro a
+    by_cases ha : a < Γ.length
+    · rw [List.count_filter (by simpa using ha), ht.1 a ha, List.count_eq_one_of_mem
+        List.nodup_range (List.mem_range.2 ha)]
+    · rw [List.count_eq_zero.2 (by simp [ha]), List.count_eq_zero.2 (by simp [ha])]
+  rw [hzero, (hperm.map _).sum_eq]
+  congr 1
+  refine List.ext_getElem (by simp) fun i _ h ↦ ?_
+  simp [countAt, List.getElem?_eq_getElem (by simpa using h : i < Γ.length)]
+
+/-- A formula derivable from a multiset has the multiset's total count of every atom. -/
+theorem Derivable.count_eq {M : Multiset (GlueTy α)} {C : GlueTy α} (h : Derivable M C)
+    (x : α) : C.count x = (M.map (GlueTy.count x)).sum := by
+  obtain ⟨Γ, rfl, t, ht⟩ := h
+  rw [ht.count_eq x, Multiset.map_coe, Multiset.sum_coe]
+
+end Count
 
 /-! ### The substructural hierarchy
 
@@ -436,34 +541,215 @@ theorem surface_linear : surface.Linear := by decide
 
 theorem inverse_linear : inverse.Linear := by decide
 
-/-- Meanings for the scope example, with entities for the two arguments and propositions for
-    the clause. -/
-def scopeDomain (E : Type) : Label → Type
-  | .l | .c | .d => Prop
-  | _ => E
+/-- Clause atoms denote propositions and argument atoms entities. -/
+def Label.ty : Label → Montague.Ty
+  | .l | .c | .d => .t
+  | _ => .e
 
-/-- The premises' meanings are the two generalized quantifiers over persons and *love*. -/
+/-- The premises mean *every person*, *love* and *some person*, the two quantifiers being the
+    generalized quantifiers of the determiners. -/
 def scopeEnv {E : Type} (person : E → Prop) (love : E → E → Prop) :
-    Env (scopeDomain E) everybodyLovesSomebody.flatten :=
-  .cons (fun Q ↦ ∀ x, person x → Q x) (.cons love (.cons (fun Q ↦ ∃ y, person y ∧ Q y) .nil))
+    Env (fun x ↦ Montague.Ty.Domain E Unit x.ty) everybodyLovesSomebody.flatten :=
+  .cons (every person) (.cons love (.cons (GQ.some person) .nil))
 
-/-- The surface proof means that every person loves some person. -/
+/-- The surface proof means the surface-scope reading, every person loving some person. -/
 theorem surface_eval {E : Type} (person : E → Prop) (love : E → E → Prop) :
-    surface.eval (scopeEnv person love) = ∀ x, person x → ∃ y, person y ∧ love y x :=
+    surface.eval (scopeEnv person love) =
+      surfaceScope every GQ.some person person fun x y ↦ love y x :=
   rfl
 
-/-- The inverse proof means that some person is loved by every person. -/
+/-- The inverse proof means the inverse-scope reading, some person loved by every person. -/
 theorem inverse_eval {E : Type} (person : E → Prop) (love : E → E → Prop) :
-    inverse.eval (scopeEnv person love) = ∃ y, person y ∧ ∀ x, person x → love y x :=
+    inverse.eval (scopeEnv person love) =
+      inverseScope every GQ.some person person fun x y ↦ love y x :=
   rfl
 
-/-- The two proofs are two readings. Where each of two persons loves only the other, the
-    surface reading holds and the inverse one fails. -/
+open HeimKratzer.Toy (person sees) in
+open HeimKratzer.Tree (interp) in
+/-- One set of premises yields, by its two proofs, what Heim and Kratzer's engine computes from
+    their two Quantifier Raising trees. -/
+theorem interp_qr_eq_eval :
+    interp HeimKratzer1998.lex HeimKratzer1998.g₀ HeimKratzer1998.tree_surface =
+        some ⟨.t, surface.eval (scopeEnv person sees)⟩ ∧
+      interp HeimKratzer1998.lex HeimKratzer1998.g₀ HeimKratzer1998.tree_inverse =
+        some ⟨.t, inverse.eval (scopeEnv person sees)⟩ :=
+  ⟨HeimKratzer1998.interp_computes_surface, HeimKratzer1998.interp_computes_inverse⟩
+
+open HeimKratzer.Toy (person sees) in
+/-- The two proofs are two readings, since in Heim and Kratzer's model the surface reading holds
+    and the inverse one fails. -/
 theorem readings_differ :
-    surface.eval (scopeEnv (fun _ : Bool ↦ True) (· ≠ ·)) ∧
-      ¬ inverse.eval (scopeEnv (fun _ : Bool ↦ True) (· ≠ ·)) := by
-  rw [surface_eval, inverse_eval]
-  exact ⟨fun x _ ↦ ⟨!x, trivial, Bool.not_ne_self x⟩, fun ⟨y, _, h⟩ ↦ h y trivial rfl⟩
+    surface.eval (scopeEnv person sees) ∧ ¬ inverse.eval (scopeEnv person sees) :=
+  ⟨HeimKratzer1998.surface_scope_true, HeimKratzer1998.inverse_scope_false⟩
+
+/-! ### Completeness and Coherence
+
+Asudeh takes resource sensitivity to do the work of Completeness and Coherence. The Dutch
+cross-serial clauses of Bresnan, Kaplan, Peters and Zaenen test the claim: their f-structure
+spine is complete and coherent exactly when its objects match its non-final verbs, and exactly
+then do the meaning constructors it instantiates have a linear proof of the clause. -/
+
+open BresnanEtAl1982 (Spine subjOfVerb npOfObj subjOfVerb_eq)
+
+/-- The atoms of a Dutch clause's semantic structure, for its noun phrases and for the clause
+    each verb heads. -/
+inductive DutchAtom
+  | np (j : ℕ)
+  | clause (i : ℕ)
+  deriving DecidableEq
+
+/-- The meaning constructor of the verb at depth `i`. A non-final verb takes its complement as a
+    property of the complement's subject, which functional control identifies with the verb's
+    object, then the object and its own subject; the final verb takes its subject alone. -/
+def verbPremise (s : Spine) (i : ℕ) : GlueTy DutchAtom :=
+  if i + 1 < s.verbs then
+    (atom (.np (subjOfVerb (i + 1))) ⊸ atom (.clause (i + 1))) ⊸ atom (.np (npOfObj i)) ⊸
+      atom (.np (subjOfVerb i)) ⊸ atom (.clause i)
+  else atom (.np (subjOfVerb i)) ⊸ atom (.clause i)
+
+/-- The premises at the `d` depths from `i`, the object and the verb at each. -/
+def premisesFrom (s : Spine) : ℕ → ℕ → List (GlueTy DutchAtom)
+  | 0, _ => []
+  | d + 1, i => (if i < s.objects then [atom (.np (npOfObj i))] else []) ++
+      (if i < s.verbs then [verbPremise s i] else []) ++ premisesFrom s d (i + 1)
+
+/-- The premises of a spine are the objects and verbs at every depth and the subject. -/
+def premises (s : Spine) : Multiset (GlueTy DutchAtom) :=
+  ↑(premisesFrom s (max s.objects s.verbs) 0 ++ [atom (DutchAtom.np 0)])
+
+private theorem count_verbPremise (s : Spine) (i j : ℕ) :
+    (verbPremise s i).count (.np j) = -(if i = j then 1 else 0) := by
+  unfold verbPremise
+  split_ifs <;> simp_all [GlueTy.count, subjOfVerb_eq, npOfObj]
+
+private theorem sum_count_premisesFrom (s : Spine) (j : ℕ) : ∀ d i,
+    ((premisesFrom s d i).map (GlueTy.count (.np j))).sum =
+      (if i < j ∧ j ≤ i + d ∧ j ≤ s.objects then 1 else 0) -
+        (if i ≤ j ∧ j < i + d ∧ j < s.verbs then 1 else 0)
+  | 0, i => by simp only [premisesFrom, List.map_nil, List.sum_nil]; split_ifs <;> omega
+  | d + 1, i => by
+    simp only [premisesFrom, List.map_append, List.sum_append, sum_count_premisesFrom s j d]
+    split_ifs <;> simp_all [GlueTy.count, count_verbPremise, npOfObj] <;> (try split_ifs) <;>
+      omega
+
+/-- Premises with a linear proof of the clause come from a complete and coherent spine. -/
+theorem complete_coherent_of_derivable {s : Spine} (hv : 1 ≤ s.verbs)
+    (h : Derivable (premises s) (atom (.clause 0))) : s.Complete ∧ s.Coherent := by
+  rw [Spine.complete_and_coherent_iff s hv]
+  have key (j : ℕ) : (if j ≤ s.objects then 1 else 0 : ℤ) = if j < s.verbs then 1 else 0 := by
+    have := h.count_eq (.np j)
+    simp only [premises, Multiset.map_coe, Multiset.sum_coe, List.map_append, List.sum_append,
+      sum_count_premisesFrom, List.map_singleton, List.sum_singleton, GlueTy.count,
+      reduceCtorEq, ↓reduceIte] at this
+    have := le_max_left s.objects s.verbs
+    have := le_max_right s.objects s.verbs
+    split_ifs at * <;> (simp_all; try omega)
+  have h₁ := key s.objects
+  have h₂ := key (s.verbs - 1)
+  split_ifs at h₁ h₂ <;> omega
+
+private theorem verbPremise_of_lt {n i : ℕ} (h : i < n) :
+    verbPremise ⟨n, n + 1⟩ i = ((atom (.np (subjOfVerb (i + 1))) ⊸ atom (.clause (i + 1))) ⊸
+      atom (.np (npOfObj i)) ⊸ atom (.np (subjOfVerb i)) ⊸ atom (.clause i)) := by
+  simp [verbPremise, h]
+
+private theorem premisesFrom_of_lt {n d i : ℕ} (h : i < n) :
+    premisesFrom ⟨n, n + 1⟩ (d + 1) i =
+      atom (.np (npOfObj i)) :: verbPremise ⟨n, n + 1⟩ i :: premisesFrom ⟨n, n + 1⟩ d (i + 1) := by
+  simp [premisesFrom, h, show i < n + 1 by omega]
+
+private theorem premisesFrom_last (n : ℕ) :
+    premisesFrom ⟨n, n + 1⟩ 1 n = [atom (DutchAtom.np (subjOfVerb n)) ⊸ atom (.clause n)] := by
+  simp [premisesFrom, verbPremise]
+
+open DutchAtom in
+/-- The proof from the premises at the depths from `i` and the subject of the verb at `i`
+    applies that verb to the property its complement proves, its object and its subject. -/
+def build (n : ℕ) : (d i : ℕ) → i + d = n →
+    Term (premisesFrom ⟨n, n + 1⟩ (d + 1) i ++ [atom (np (subjOfVerb i))]) (atom (clause i))
+  | 0, i, h =>
+    .app (.var 0 (T := atom (np (subjOfVerb i)) ⊸ atom (clause i))
+        (by obtain rfl : i = n := (by omega); simp [premisesFrom_last]))
+      (.var 1 (by obtain rfl : i = n := (by omega); simp [premisesFrom_last]))
+  | d + 1, i, h =>
+    .app (.app (.app
+          (.var 1 (T := (atom (np (subjOfVerb (i + 1))) ⊸ atom (clause (i + 1))) ⊸
+            atom (np (npOfObj i)) ⊸ atom (np (subjOfVerb i)) ⊸ atom (clause i))
+          (by rw [premisesFrom_of_lt (by omega), verbPremise_of_lt (by omega)]; rfl))
+          ((Term.lam (atom (np (subjOfVerb (i + 1)))) (build n d (i + 1) (by omega))).rename
+            (· + 2)
+            fun k B hk ↦ by
+              rw [premisesFrom_of_lt (by omega)]
+              simpa [List.getElem?_append_left (List.getElem?_eq_some_iff.1 hk).1] using hk))
+        (.var 0 (T := atom (np (npOfObj i)))
+          (by rw [premisesFrom_of_lt (by omega)]; rfl)))
+      (.var ((premisesFrom ⟨n, n + 1⟩ (d + 1) (i + 1)).length + 2)
+        (T := atom (np (subjOfVerb i))) (by rw [premisesFrom_of_lt (by omega)]; simp))
+
+open DutchAtom in
+theorem build_linear (n : ℕ) : ∀ d i (h : i + d = n), (build n d i h).Linear
+  | 0, i, h => by
+    obtain rfl : i = n := by omega
+    refine ⟨fun k hk ↦ ?_, by simp [build, Term.HypLinear]⟩
+    simp only [Nat.zero_add, premisesFrom_last, List.length_append, List.length_singleton] at hk
+    obtain rfl | rfl : k = 0 ∨ k = 1 := by omega
+    all_goals simp [build, Term.uses]
+  | d + 1, i, h => by
+    have ih := build_linear n d (i + 1) (by omega)
+    set L := (premisesFrom ⟨n, n + 1⟩ (d + 1) (i + 1)).length with hL
+    have hlen : (premisesFrom ⟨n, n + 1⟩ (d + 2) i ++ [atom (np (subjOfVerb i))]).length =
+        L + 3 := by
+      rw [premisesFrom_of_lt (by omega)]; simp [L]
+    have hg : Function.Injective (liftPos L (L + 3) (· + 2)) := fun u v huv ↦ by
+      simp only [liftPos] at huv; split_ifs at huv <;> omega
+    have hlam :
+        (Term.lam (atom (np (subjOfVerb (i + 1)))) (build n d (i + 1) (by omega))).HypLinear :=
+      ⟨ih.1 L (by simp [L]), ih.2⟩
+    refine ⟨fun k hk ↦ ?_, by
+      simp only [build, Term.HypLinear]; exact ⟨⟨⟨trivial, hlam.rename _⟩, trivial⟩, trivial⟩⟩
+    rw [hlen] at hk
+    simp only [build, Term.uses, Term.uses_rename, hlen, ← hL]
+    have hmap : ((build n d (i + 1) (by omega)).uses.map (liftPos L (L + 3) (· + 2))).count k =
+        if 2 ≤ k ∧ k < L + 2 then 1 else 0 := by
+      split_ifs with hk2
+      · obtain ⟨u, rfl⟩ : ∃ u, k = u + 2 := ⟨k - 2, by omega⟩
+        rw [show u + 2 = liftPos L (L + 3) (· + 2) u by simp [liftPos, show u < L by omega],
+          List.count_map_of_injective _ _ hg]
+        exact ih.1 u (by simp [← hL]; omega)
+      · refine List.count_eq_zero.2 fun hmem ↦ ?_
+        obtain ⟨u, _, hu⟩ := List.mem_map.1 hmem
+        simp only [liftPos] at hu; split_ifs at hu <;> omega
+    simp only [List.count_append, hmap, List.count_cons, List.count_nil, beq_iff_eq]
+    split_ifs <;> omega
+
+/-- A complete and coherent spine instantiates premises with a linear proof of its clause. -/
+theorem derivable_of_complete_coherent {s : Spine} (hv : 1 ≤ s.verbs)
+    (h : s.Complete ∧ s.Coherent) : Derivable (premises s) (atom (.clause 0)) := by
+  obtain ⟨n, m⟩ := s
+  obtain rfl : m = n + 1 := ((Spine.complete_and_coherent_iff _ hv).1 h).symm
+  refine ⟨_, ?_, build n n 0 (by omega), build_linear n n 0 _⟩
+  simp [premises, subjOfVerb]
+
+/-- The meaning constructors of a spine have a linear proof of its clause exactly when the
+    spine is complete and coherent. -/
+theorem derivable_iff_complete_coherent (s : Spine) (hv : 1 ≤ s.verbs) :
+    Derivable (premises s) (atom (.clause 0)) ↔ s.Complete ∧ s.Coherent :=
+  ⟨complete_coherent_of_derivable hv, derivable_of_complete_coherent hv⟩
+
+open BresnanEtAl1982 (dutch tree)
+
+/-- Every clause with its objects matching its non-final verbs composes. -/
+theorem derivable_dutch (n : ℕ) :
+    Derivable (premises (Spine.ofTree (dutch n))) (atom (.clause 0)) :=
+  derivable_of_complete_coherent (by simp [dutch]) (BresnanEtAl1982.dutch_wellFormed n)
+
+/-- *dat Jan Piet Marie zag helpen laten zwemmen*, with a verb too many, and *dat Jan Piet
+    Marie Hans zag helpen zwemmen*, with a noun phrase too many, do not compose. -/
+theorem not_derivable_extra_verb_or_np :
+    ¬ Derivable (premises (Spine.ofTree (tree 1 3))) (atom (.clause 0)) ∧
+      ¬ Derivable (premises (Spine.ofTree (tree 2 2))) (atom (.clause 0)) :=
+  ⟨fun h ↦ BresnanEtAl1982.extra_verb_incomplete (complete_coherent_of_derivable (by simp) h).1,
+    fun h ↦ BresnanEtAl1982.extra_np_incoherent (complete_coherent_of_derivable (by simp) h).2⟩
 
 /-! ### The paper's examples -/
 
