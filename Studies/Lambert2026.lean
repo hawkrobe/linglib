@@ -277,7 +277,7 @@ Navajo's symmetric sibilant harmony ([sapir-hoijer-1967]) is multitier co/finite
 two sibilant tiers being empty, and coincides with the tier-based agreement grammar, which the
 library already identifies with [heinz-2010]'s forbidden subsequences; read through the
 sibilant classes of segments, it is [hansson-2010]'s agreement in [anterior]
-(`map_sibilantClass_mem_navajo_iff`). Tsuut'ina's asymmetric
+(`preimage_sibilantClass_navajo`). Tsuut'ina's asymmetric
 harmony ([cook-1978]) is tier-based strictly local but not multitier generalized definite: an
 internal factor is needed. Uyghur backness harmony ([mayer-major-2018]) is multitier definite,
 lying between the two. -/
@@ -322,20 +322,12 @@ theorem navajo_eq_agree :
     · exact absurd (h _ _ h' rfl rfl) (by decide)
     · exact absurd (h _ _ h' rfl rfl) (by decide)
 
-/-- The sibilant classes are the classes of Hansson's segments, and Navajo's tier formula holds
-of a word's classes exactly when its sibilants agree in [anterior]. -/
-theorem map_sibilantClass_mem_navajo_iff (w : List Phonology.Segment) :
-    w.map Hansson2010.sibilantClass ∈ navajo ↔
-      w ∈ Hansson2010.navajoSibilantHarmony.language := by
-  rw [navajo_eq_agree, TierStrictlyLocalGrammar.agree,
-    mem_ofForbiddenPairs_language_iff_filter_isChain,
-    mem_ofForbiddenPairs_language_iff_filter_isChain, List.filter_map]
-  have : (w.filter ((fun c : Option Bool ↦ decide (c.isSome = true)) ∘
-      Hansson2010.sibilantClass)).map Hansson2010.sibilantClass =
-        (Hansson2010.sibilants w).map fun x ↦ (x .anterior : Option Bool) :=
-    List.map_congr_left fun x hx ↦
-      Hansson2010.sibilantClass_of_onTier (Hansson2010.onTier_of_mem_sibilants hx)
-  rw [this, List.isChain_map]
+/-- The sibilant classes are the classes of Hansson's segments, and Hansson's language is the
+inverse image of Navajo's tier formula under the class map. -/
+theorem preimage_sibilantClass_navajo :
+    List.map Hansson2010.sibilantClass ⁻¹' navajo =
+      Hansson2010.navajoSibilantHarmony.language := by
+  rw [navajo_eq_agree, Hansson2010.language_eq_preimage]
 
 /-- Alveolar immediately before postalveolar on the sibilant tier, the adjacency Tsuut'ina
 forbids ((31)). -/

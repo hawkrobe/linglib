@@ -28,6 +28,8 @@ blocking/transparency) are other choices of `R`.
 
 * `Subregular.mem_ofForbiddenPairs_language_iff_filter_isChain`: membership reduces
   to an `IsChain (¬ R · ·)` check on the tier-projected string.
+* `Subregular.mem_ofForbiddenPairs_language_map_iff`: a word's image under a letter map is in
+  the language exactly when the word is in the language of the pulled-back grammar.
 
 ## Implementation notes
 
@@ -122,6 +124,17 @@ lemma ofForbiddenPairs_language_congr {R' : α → α → Prop} {p p' : α → P
   have h (a) (ha : a ∈ w.filter (p' ·)) : p a :=
     (hp a).2 (of_decide_eq_true (List.mem_filter.1 ha).2)
   exact List.IsChain.iff_of_mem_imp fun a b ha hb ↦ (hR a b (h a ha) (h b hb)).not
+
+variable {R} in
+/-- A word's image under a letter-to-letter map is in a forbidden-pair language exactly when
+the word is in the language of the grammar with the pulled-back relation and tier. -/
+lemma mem_ofForbiddenPairs_language_map_iff {β : Type*} (f : β → α) (p : α → Prop)
+    [DecidablePred p] (w : List β) :
+    w.map f ∈ (TierStrictlyLocalGrammar.ofForbiddenPairs R p).language ↔
+      w ∈ (TierStrictlyLocalGrammar.ofForbiddenPairs (fun x y ↦ R (f x) (f y))
+        (fun x ↦ p (f x))).language := by
+  simp only [mem_ofForbiddenPairs_language_iff_filter_isChain, List.filter_map, List.isChain_map]
+  rfl
 
 /-! ### Adjacent-pair counting
 

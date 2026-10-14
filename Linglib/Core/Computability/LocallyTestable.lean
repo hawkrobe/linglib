@@ -148,7 +148,7 @@ theorem IsLocallyTestable.rightQuotient (h : L.IsLocallyTestable k) (u : List α
 
 /-- Locally testable languages are closed under inverse images of letter-to-letter maps. -/
 theorem IsLocallyTestable.preimage_map {L : Language β} (h : L.IsLocallyTestable k) (g : α → β) :
-    IsLocallyTestable {w : List α | w.map g ∈ L} k :=
+    IsLocallyTestable (List.map g ⁻¹' L) k :=
   fun _ _ e ↦ h (by rw [List.kTestVector_map, List.kTestVector_map, e])
 
 /-- Over a finite alphabet locally testable languages are star-free. -/

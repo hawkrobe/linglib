@@ -169,6 +169,16 @@ theorem mem_language_iff (w : List Segment) :
   exact ⟨fun h ↦ h.pairwise.forall_of_forall fun _ _ ↦ rfl,
     fun h ↦ (List.pairwise_of_forall_mem_list h).isChain⟩
 
+/-- The language is the inverse image, under the sibilant class, of agreement among the
+classes. -/
+theorem language_eq_preimage : navajoSibilantHarmony.language =
+    List.map sibilantClass ⁻¹' (TierStrictlyLocalGrammar.agree (·.isSome)).language := by
+  ext w
+  show _ ↔ w.map sibilantClass ∈ (TierStrictlyLocalGrammar.agree (·.isSome)).language
+  rw [TierStrictlyLocalGrammar.agree, mem_ofForbiddenPairs_language_map_iff]
+  exact Eq.to_iff (congrArg (w ∈ ·) (ofForbiddenPairs_language_congr (fun _ ↦ Iff.rfl)
+    fun x y hx hy ↦ by rw [sibilantClass_of_onTier hx, sibilantClass_of_onTier hy]))
+
 /-! ### Anticipatory harmony, section 1.1 -/
 
 /-- The trigger is the class of the rightmost sibilant of a word. -/
@@ -244,7 +254,8 @@ theorem anticipatory_eq_self_of_mem {w : List Segment}
   refine (List.map_congr_left fun x hx ↦ ?_).trans (List.map_id w)
   by_cases hon : OnTier x
   · have hxs : x ∈ sibilants w := List.mem_filter.mpr ⟨hx, decide_eq_true hon⟩
-    obtain ⟨y, hy⟩ := Option.isSome_iff_exists.mp (List.getLast?_isSome.mpr (List.ne_nil_of_mem hxs))
+    obtain ⟨y, hy⟩ :=
+      Option.isSome_iff_exists.mp (List.getLast?_isSome.mpr (List.ne_nil_of_mem hxs))
     have hys := List.mem_of_getLast? hy
     obtain ⟨v, hv⟩ := Option.isSome_iff_exists.mp (onTier_of_mem_sibilants hys)
     have htr : trigger w = some v := by rw [trigger, hy, Option.bind_some, hv]
@@ -335,6 +346,22 @@ theorem saturated : navajo.Saturated := fun x hx ↦ by
 theorem tierClosed : navajo.searchCopy.TierClosed := fun v x hx ↦ by
   rw [System.searchCopy_tier, pattern_onTier_iff] at hx ⊢
   exact onTier_setFeature hx v
+
+/-- The sibilant class is the system's tier projection. -/
+theorem pattern_project : navajo.pattern.project = sibilantClass := by
+  funext x
+  by_cases h : OnTier x
+  · rw [Pattern.project, ite_eq_left ((pattern_onTier_iff x).2 h), sibilantClass_of_onTier h]
+    rfl
+  · rw [Pattern.project, ite_eq_right (mt (pattern_onTier_iff x).1 h)]
+    exact (Option.not_isSome_iff_eq_none.mp h).symm
+
+/-- The system's surface harmonicity is the tier-based language. -/
+theorem harmonic_iff_mem_language (w : List Segment) :
+    navajo.pattern.Harmonic w ↔ w ∈ navajoSibilantHarmony.language := by
+  rw [navajo.pattern.harmonic_iff_map_project_mem (fun x hx ↦ (saturated x hx).2) w,
+    pattern_project, language_eq_preimage]
+  rfl
 
 /-- The class of the leftmost sibilant of a word. -/
 def first (w : List Segment) : Option Bool := (sibilants w).head?.bind sibilantClass
