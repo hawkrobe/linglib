@@ -13,7 +13,14 @@ public import Mathlib.Order.WellFoundedSet
 The finite-basis property of well-quasi-orders — every upward-closed set is the union of
 finitely many principal filters — stated relation-style, and Higman's lemma: over a finite
 alphabet the sublist order on `List α` is a well-quasi-order, specialising mathlib's
-`Set.PartiallyWellOrderedOn.partiallyWellOrderedOn_sublistForall₂` to equality.
+`Set.PartiallyWellOrderedOn.partiallyWellOrderedOn_sublistForall₂` to equality. The file also
+supplies `Set.IsWF.exists_minimalFor`, the well-founded companion of mathlib's
+`Set.IsPWO.exists_minimalFor`: if the image of a nonempty set under `f` is well-founded, some
+element of the set is minimal for `f`.
+
+## References
+
+* [higman-1952]
 -/
 
 @[expose] public section
@@ -55,3 +62,15 @@ theorem wellQuasiOrdered_sublist [Finite α] :
   exact ⟨m, n, hmn, by simpa [sublistForall₂_iff, forall₂_eq_eq_eq] using h⟩
 
 end List
+
+namespace Set
+
+variable {ι β : Type*} [Preorder β]
+
+theorem IsWF.exists_minimalFor (f : ι → β) (s : Set ι) (h : (f '' s).IsWF) (hs : s.Nonempty) :
+    ∃ i, MinimalFor (· ∈ s) f i := by
+  obtain ⟨i, hi, hfi⟩ := h.min_mem (hs.image f)
+  refine ⟨i, hi, fun j hj hle ↦ not_lt_iff_le_imp_ge.1 ?_ hle⟩
+  exact hfi ▸ h.not_lt_min (hs.image f) (mem_image_of_mem f hj)
+
+end Set
