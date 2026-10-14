@@ -1,6 +1,5 @@
 module
 
-public import Linglib.Semantics.Reference.Prominence
 public import Mathlib.Data.Finset.Basic
 public import Mathlib.Data.Fintype.Powerset
 public import Mathlib.Tactic.DeriveFintype
@@ -11,18 +10,16 @@ public import Linglib.Syntax.Clause.ArgumentRole
 
 The two core-argument positions of a verbal clause — the internal
 argument (complement of the lexical core) and the external argument
-(specifier of Voice, [kratzer-1996]) — and **valency**: the set of
+(specifier of Voice, after Kratzer) — and **valency**: the set of
 positions an argument-introducing locus (root, functional head,
 derivational operator) contributes. Valencies form the Boolean lattice
 `Finset ArgPosition`; introducers compose by `∪`, and valency-changing
-operations ([creissels-2024]) are maps on the lattice.
+operations, after Creissels, are maps on the lattice.
 
-[coon-2019]'s division of labor is stated as predicates over valencies
+Coon's division of labor is stated as predicates over valencies
 (`IsRootValency`, `IsVoiceValency`), not baked into a type: roots
 introduce at most the internal argument, v ~ Voice at most the
-external. The former two-case enum `Root.Arity` (`selectsTheme` ~
-valency `{.internal}`, `noTheme` ~ valency `∅`) was this lattice
-restricted by the thesis.
+external.
 
 `label` maps a valency to the comparative core-term labels of
 `ArgumentRole`: a lone position — internal or
@@ -36,6 +33,12 @@ alignment typology needs S as its own comparative concept.
 * `ArgPosition`, `Valency`
 * `Valency.IsRootValency`, `IsVoiceValency`, `IsTransitive`
 * `Valency.label` — valencies to comparative core-term labels
+
+## References
+
+* [coon-2019]
+* [creissels-2024]
+* [kratzer-1996]
 -/
 
 @[expose] public section
@@ -118,8 +121,8 @@ theorem s_mem_label_iff :
     ∀ v : Valency, .S ∈ label v ↔
       v = {.internal} ∨ v = {.external} := by decide
 
-/-- Labels are relational, not positional: adding a co-argument
-    relabels S to A or P, so `label` is not monotone in the lattice. -/
+/-- Labels are relational, not positional, since adding a co-argument relabels S to A or P, so
+`label` is not monotone in the lattice. -/
 theorem label_not_monotone : ¬ Monotone label := by decide
 
 end Valency

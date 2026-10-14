@@ -1,7 +1,6 @@
 module
 
 public import Linglib.Semantics.Plurality.NumberFeatures
-public import Linglib.Semantics.Reference.Prominence
 public import Linglib.Syntax.Agreement.Bundle
 public import Linglib.Syntax.Minimalist.Feature.Slot
 public import Linglib.Syntax.Person.Features
@@ -44,7 +43,6 @@ its host as well as its dimension.
 
 namespace Minimalist
 
-open Reference.Prominence
 
 /-- The inflectional feature `[Infl]` ([bjorkman-2011]) is valued on the verb by the higher temporal
 or aspectual head that selects it, `perf` for a participle under Perf/Asp and `impf` under
