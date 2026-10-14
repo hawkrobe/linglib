@@ -27,7 +27,9 @@ course of the update (§3.3).
 The propositional part (§2) uses the substrate's partial context change potentials over a
 type of worlds: `ofPartialProp` for a sentence with a presupposition and an assertion,
 `cond` for (14), `neg` for (15), and `Admits` for definedness, so that the heritage
-properties are the substrate's `admits_cond` and `admits_neg`. The file part (§3) uses the
+properties are the substrate's `admits_cond` and `admits_neg`. Presupposing a proposition
+`p` (12) is the substrate's `Presupposes` of the update `ofPartialProp (.ofProp p)`
+(`presupposes_ofProp_iff`). The file part (§3) uses the
 same potentials over pairs of a sequence `ℕ → M` and a world, with `atom`, `atomP`, and
 `every` stated here as (19)–(21) and entailment by a context read as inclusion. The paper
 gives no potential for *no* (24), so that sentence is a row only.
@@ -63,14 +65,11 @@ section Propositional
 
 variable {W : Type*}
 
-/-- (12): `S` presupposes `p` iff every context that admits `S` entails `p`. -/
-def Presupposes (φ : CCP.Partial W) (p : W → Prop) : Prop := ∀ c, φ.Admits c → ∀ w ∈ c, p w
-
-/-- (13): `S` is true in `w` with respect to `c` iff the context `c` updated by `S` is true
-    in `w`; defined only when `c` admits `S`. -/
+/-- `S` is true in `w` with respect to `c` (13) iff `c` admits `S` and the context `c` updated
+    by `S` is true in `w`. -/
 def TrueWrt (φ : CCP.Partial W) (c : Set W) (w : W) : Prop := ∃ h : φ.Admits c, w ∈ (φ c).get h
 
-/-- The content property is derivable from the potential: with respect to a context that is
+/-- The content property is derivable from the potential. With respect to a context that is
     true in `w` and admits it, an atomic sentence is true in `w` iff its assertion holds. -/
 theorem trueWrt_ofPartialProp {p : PartialProp W} {c : Set W} {w : W} (hw : w ∈ c)
     (h : (ofPartialProp p).Admits c) : TrueWrt (ofPartialProp p) c w ↔ p.assertion w :=
@@ -78,10 +77,10 @@ theorem trueWrt_ofPartialProp {p : PartialProp W} {c : Set W} {w : W} (hw : w �
 
 variable (king son bald : W → Prop)
 
-/-- (1) "The king has a son": presupposes a king, asserts that he has a son. -/
+/-- *The king has a son* (1) presupposes a king and asserts that he has a son. -/
 def kingHasSon : PartialProp W := ⟨king, son⟩
 
-/-- (2) "The king's son is bald": presupposes a king with a son. -/
+/-- *The king's son is bald* (2) presupposes a king with a son. -/
 def kingsSonBald : PartialProp W := ⟨fun w => king w ∧ son w, bald⟩
 
 /-- (3) "If the king has a son, the king's son is bald", by (14). -/
@@ -90,8 +89,8 @@ def ifKingHasSon : CCP.Partial W :=
 
 variable {king son bald}
 
-/-- §2.1: a context admits (3) iff it entails that there is a king: it must admit (1), and
-    its update by (1) then admits (2) automatically. -/
+/-- A context admits (3) iff it entails that there is a king (§2.1), since it must admit (1),
+    and its update by (1) then admits (2) automatically. -/
 theorem king_admits_iff (c : Set W) :
     (ifKingHasSon king son bald).Admits c ↔ ∀ w ∈ c, king w := by
   constructor
@@ -100,14 +99,16 @@ theorem king_admits_iff (c : Set W) :
   · intro h
     exact ⟨h, fun w hw => ⟨h w hw.1, hw.2⟩⟩
 
-/-- (3) presupposes that there is a king. -/
-theorem king_presupposes : Presupposes (ifKingHasSon king son bald) king :=
-  fun _ h => (king_admits_iff _).1 h
+/-- (3) presupposes that there is a king, which (1) presupposes in its antecedent. -/
+theorem king_presupposes :
+    Presupposes (ifKingHasSon king son bald) (ofPartialProp (.ofProp king)) :=
+  (presupposes_ofPartialProp _).cond_left
 
 /-- (3) does not presuppose that the king has a son, as soon as some world has a sonless
     king. -/
 theorem not_presupposes_son (h : ∃ w, king w ∧ ¬ son w) :
-    ¬ Presupposes (ifKingHasSon king son bald) son := by
+    ¬ Presupposes (ifKingHasSon king son bald) (ofPartialProp (.ofProp son)) := by
+  rw [presupposes_ofProp_iff]
   obtain ⟨w, hk, hs⟩ := h
   intro hp
   exact hs (hp {w} ((king_admits_iff _).2 fun _ hv => hv ▸ hk) w rfl)
@@ -116,12 +117,12 @@ theorem not_presupposes_son (h : ∃ w, king w ∧ ¬ son w) :
 
 variable (φ : CCP.Partial W) (p : Set W)
 
-/-- (A) The global option: to evaluate "Not S" in a context that does not admit `S`, amend the
-    context to `c ∩ p` and compute `(c ∩ p) + Not S`. -/
+/-- The global option (A) evaluates *Not S* in a context that does not admit `S` by amending
+    the context to `c ∩ p` and computing `(c ∩ p) + Not S`. -/
 def globalNeg : CCP.Partial W := fun c => neg φ (c ∩ p)
 
-/-- (B) The local option: amend the context to `c ∩ p` only to compute `(c ∩ p) + S`, and
-    subtract that from `c` itself. -/
+/-- The local option (B) amends the context to `c ∩ p` only to compute `(c ∩ p) + S`, and
+    subtracts that from `c` itself. -/
 def localNeg : CCP.Partial W := fun c => (φ (c ∩ p)).map (c \ ·)
 
 variable {φ p}
@@ -131,14 +132,14 @@ theorem globalNeg_admits {c : Set W} (h : φ.Admits (c ∩ p)) : (globalNeg φ p
 
 theorem localNeg_admits {c : Set W} (h : φ.Admits (c ∩ p)) : (localNeg φ p).Admits c := h
 
-/-- The global option's result entails the accommodated presupposition: (16) read in
+/-- The global option's result entails the accommodated presupposition, so (16) read in
     isolation has France with a king. -/
 theorem globalNeg_entails {c c' : Set W} (h : c' ∈ globalNeg φ p c) : c' ⊆ p :=
   fun _ hw ↦ (isEliminative_neg φ _ _ h hw).2
 
-/-- The local option's result is the context minus the amended update: (16) continued with
-    "because France doesn't have a king" entails only that either France has no king or he
-    did not come. -/
+/-- The local option's result is the context minus the amended update, so (16) continued
+    with *because France doesn't have a king* entails only that either France has no king or
+    he did not come. -/
 theorem localNeg_entails {came : W → Prop} {c c' : Set W}
     (h : c' ∈ localNeg (ofPartialProp ⟨(· ∈ p), came⟩) p c) :
     c' = {w ∈ c | w ∉ p ∨ ¬ came w} := by
@@ -149,33 +150,33 @@ theorem localNeg_entails {came : W → Prop} {c c' : Set W}
   simp only [Set.mem_sdiff, Set.mem_ofPred_eq, Set.mem_inter_iff]
   tauto
 
-/-- The local option is what a continuation denying the presupposition needs: the global
-    result cannot contain a world without the presupposition, the local one can. -/
+/-- The local option is what a continuation denying the presupposition needs, since the
+    global result cannot contain a world without the presupposition and the local one can. -/
 theorem globalNeg_disjoint {c c' : Set W} (h : c' ∈ globalNeg φ p c) : c' ∩ pᶜ = ∅ :=
   Set.eq_empty_of_forall_notMem fun _ ⟨hw, hn⟩ => hn (globalNeg_entails h hw)
 
 open scoped Classical in
-/-- The paper's ceteris paribus preference for global over local accommodation: the global
-    result `g` continued by `k`, unless `k` is inconsistent with it, and otherwise the local
-    result `l` continued by `k`. -/
+/-- The paper's ceteris paribus preference for global over local accommodation takes the
+    global result `g` continued by `k`, unless `k` is inconsistent with it, and otherwise the
+    local result `l` continued by `k`. -/
 noncomputable def preferGlobal (k g l : Set W) : Set W :=
   if (g ∩ k).Nonempty then g ∩ k else l ∩ k
 
-/-- (16) in isolation: nothing contradicts the global result, so the preferred reading entails
-    that France has a king. -/
+/-- In (16) in isolation nothing contradicts the global result, so the preferred reading
+    entails that France has a king. -/
 theorem preferGlobal_univ_subset {c g : Set W} (l : Set W) (hg : g ∈ globalNeg φ p c)
     (hne : g.Nonempty) : preferGlobal Set.univ g l ⊆ p := by
   rw [preferGlobal, Set.inter_univ, ite_eq_left hne]
   exact globalNeg_entails hg
 
-/-- (16) continued with "because France doesn't have a king": the continuation is inconsistent
-    with the global result, so the preferred reading is the local one. -/
+/-- When (16) is continued with *because France doesn't have a king*, the continuation is
+    inconsistent with the global result, so the preferred reading is the local one. -/
 theorem preferGlobal_compl {c g : Set W} (l : Set W) (hg : g ∈ globalNeg φ p c) :
     preferGlobal pᶜ g l = l ∩ pᶜ := by
   rw [preferGlobal, globalNeg_disjoint hg, ite_eq_right Set.not_nonempty_empty]
 
 /-- The preference recaptures [gazdar-1979]'s assumption that presupposition cancellation
-    occurs only under the threat of inconsistency: a preferred reading that does not entail
+    occurs only under the threat of inconsistency. A preferred reading that does not entail
     the presupposition comes from a global result inconsistent with the continuation. -/
 theorem cancellation_only_under_inconsistency {c g l k : Set W} (hg : g ∈ globalNeg φ p c)
     (h : ¬ preferGlobal k g l ⊆ p) : g ∩ k = ∅ := by
@@ -192,35 +193,35 @@ section Files
 
 variable {M W : Type*}
 
-/-- A file: a set of pairs of a sequence of individuals and a world (§3.1). -/
+/-- A file is a set of pairs of a sequence of individuals and a world (§3.1). -/
 abbrev File (M W : Type*) := Set ((ℕ → M) × W)
 
-/-- (17): the proposition a file determines. -/
+/-- The proposition a file determines (17). -/
 def File.prop (c : File M W) : Set W := {w | ∃ g, (g, w) ∈ c}
 
-/-- (18): a file is true in a world when some sequence fits it there. -/
+/-- A file is true in a world when some sequence fits it there (18). -/
 def File.TrueIn (c : File M W) (w : W) : Prop := ∃ g, (g, w) ∈ c
 
-/-- (19): the update by an open sentence `P xᵢ` without presupposition. -/
+/-- The update by an open sentence `P xᵢ` without presupposition (19). -/
 def atom (P : M → W → Prop) (i : ℕ) : CCP.Partial ((ℕ → M) × W) :=
   ofTotal fun c => {gw ∈ c | P (gw.1 i) gw.2}
 
-/-- (20): an open sentence `P xᵢ` presupposing `pre xᵢ` is admitted by a file iff every pair
-    in it satisfies the presupposition at the `i`-th member. -/
+/-- An open sentence `P xᵢ` presupposing `pre xᵢ` is admitted by a file iff every pair in it
+    satisfies the presupposition at the `i`-th member (20). -/
 def atomP (pre P : M → W → Prop) (i : ℕ) : CCP.Partial ((ℕ → M) × W) :=
   fun c => ⟨∀ gw ∈ c, pre (gw.1 i) gw.2, fun _ => {gw ∈ c | P (gw.1 i) gw.2}⟩
 
-/-- The clause of (21): the pairs of `c` each of whose `i`-variants in `cA` survives in
+/-- The clause of (21) keeps the pairs of `c` each of whose `i`-variants in `cA` survives in
     `cAB`. -/
 def File.everyClause (i : ℕ) (c cA cAB : File M W) : File M W :=
   {gw ∈ c | ∀ a, (Function.update gw.1 i a, gw.2) ∈ cA → (Function.update gw.1 i a, gw.2) ∈ cAB}
 
-/-- (21): `c + Every xᵢ, A, B` keeps the pairs of `c` each of whose `i`-variants in `c + A`
-    survives in `c + A + B`; defined iff `c + A` and `c + A + B` are. -/
+/-- `c + Every xᵢ, A, B` (21) keeps the pairs of `c` each of whose `i`-variants in `c + A`
+    survives in `c + A + B`, and is defined iff `c + A` and `c + A + B` are. -/
 def every (i : ℕ) (A B : CCP.Partial ((ℕ → M) × W)) : CCP.Partial ((ℕ → M) × W) :=
   fun c ↦ (A c).bind fun cA ↦ (B cA).map fun cAB ↦ File.everyClause i c cA cAB
 
-/-- (22): the file does not yet distinguish the `i`-th member of a sequence, the lexical
+/-- The file does not yet distinguish the `i`-th member of a sequence (22), the lexical
     novelty requirement of *every* and of an indefinite indexed `i`. -/
 def File.NovelIn (c : File M W) (i : ℕ) : Prop :=
   ∀ g w a, (g, w) ∈ c ↔ (Function.update g i a, w) ∈ c
@@ -230,21 +231,21 @@ theorem atom_admits (P : M → W → Prop) (i : ℕ) (c : File M W) : (atom P i)
 theorem atomP_admits_iff (pre P : M → W → Prop) (i : ℕ) (c : File M W) :
     (atomP pre P i).Admits c ↔ ∀ gw ∈ c, pre (gw.1 i) gw.2 := Iff.rfl
 
-/-- The heritage of *every*: `c` admits `Every xᵢ, A, B` iff it admits `A` and `c + A` admits
-    `B`. -/
+/-- The heritage of *every* is that `c` admits `Every xᵢ, A, B` iff it admits `A` and `c + A`
+    admits `B`. -/
 theorem every_admits_iff (i : ℕ) (A B : CCP.Partial ((ℕ → M) × W)) (c : File M W) :
     (every i A B).Admits c ↔ ∃ h : A.Admits c, B.Admits ((A c).get h) :=
   Iff.rfl
 
-/-- (ii) of §3.2: with a presupposition-free restrictor `A xᵢ` and a nuclear scope
-    presupposing `pre xᵢ`, the file must satisfy `pre` at the `i`-th member of every pair
-    that survives `A`. -/
+/-- With a presupposition-free restrictor `A xᵢ` and a nuclear scope presupposing `pre xᵢ`,
+    the file must satisfy `pre` at the `i`-th member of every pair that survives `A`
+    ((ii) of §3.2). -/
 theorem every_atom_admits_iff (i : ℕ) (A pre B : M → W → Prop) (c : File M W) :
     (every i (atom A i) (atomP pre B i)).Admits c ↔
       ∀ gw ∈ c, A (gw.1 i) gw.2 → pre (gw.1 i) gw.2 :=
   ⟨fun ⟨_, h⟩ gw hgw hA => h gw ⟨hgw, hA⟩, fun h => ⟨trivial, fun gw hgw => h gw hgw.1 hgw.2⟩⟩
 
-/-- **(7) presupposes that every nation has a king.** Under (22) the condition of
+/-- (7) presupposes that every nation has a king. Under (22) the condition of
     `every_atom_admits_iff` holds iff, in every world of the file's proposition, every
     individual satisfying the restrictor satisfies the presupposition: the novelty
     stipulation is what makes the universal presupposition necessary, not only sufficient. -/
@@ -261,8 +262,8 @@ theorem every_nation_presupposes (i : ℕ) (nation hasKing cherishes : M → W �
   · rintro h ⟨g, w⟩ hgw hn
     exact h w ⟨g, hgw⟩ _ hn
 
-/-- (23): a presupposition in the restrictor projects universally too: "Everyone who serves
-    his king will be rewarded" presupposes that everyone has a king, where
+/-- A presupposition in the restrictor projects universally too (23). *Everyone who serves
+    his king will be rewarded* presupposes that everyone has a king, where
     [karttunen-peters-1979] predict no presupposition. -/
 theorem every_restrictor_presupposes (i : ℕ) (hasKing serves rewarded : M → W → Prop)
     {c : File M W} (hc : c.NovelIn i) :
@@ -280,7 +281,7 @@ A file whose membership depends only on the cards in `X` is, restricted to `X`, 
 information state uniform at `X`, and on such files the clauses (19), (15) and (21) are the
 file change potentials of [heim-1982] on that stratum. -/
 
-/-- The point of a sequence–world pair at the cards `X`: the sequence restricted to `X`. -/
+/-- The point of a sequence–world pair at the cards `X` restricts the sequence to `X`. -/
 noncomputable def File.pointAt (X : Set ℕ) (gw : (ℕ → M) × W) : Possibility W ℕ (Flat M) :=
   ((Possibility.domainEquiv X).symm (gw.2, fun i ↦ gw.1 i.1)).1
 
@@ -348,7 +349,7 @@ def File.DeterminedBy (X : Set ℕ) (c : File M W) : Prop :=
 theorem File.DeterminedBy.mono (h : X ⊆ Y) (hc : c.DeterminedBy X) : c.DeterminedBy Y :=
   fun _ _ _ heq ↦ hc (heq.mono h)
 
-/-- (22) is independence of the card: the file does not distinguish `i` iff it is determined
+/-- (22) is independence of the card, the file not distinguishing `i` iff it is determined
     by the other cards. -/
 theorem File.novelIn_iff_determinedBy : c.NovelIn i ↔ c.DeterminedBy {i}ᶜ := by
   constructor
@@ -370,8 +371,8 @@ theorem File.pointAt_mem_toState (hc : c.DeterminedBy X) (gw : (ℕ → M) × W)
   obtain ⟨rfl, heq'⟩ := File.pointAt_eq_pointAt.mp heq
   exact hc heq' h
 
-/-- Extension along cards is the state of the file at more cards: the file, being determined
-    by `X`, already ranges over every value at the new cards. -/
+/-- Extension along cards is the state of the file at more cards, since the file, being
+    determined by `X`, already ranges over every value at the new cards. -/
 theorem File.toState_mul_stratum (hc : c.DeterminedBy X) :
     c.toState X * State.stratum Y = c.toState (X ∪ Y) := by
   ext r
@@ -410,9 +411,9 @@ theorem File.toState_sep (hi : i ∈ X) (P : M → W → Prop) :
     obtain ⟨-, rfl⟩ := File.pointAt_assignment_eq_coe_iff.mp hm
     exact ⟨(g, w), ⟨hg, hP⟩, rfl⟩
 
-/-- **(19) is the atomic rule of [heim-1982]**: the update of a file by an open sentence,
-    read at the cards of the file together with the sentence's, is the merge of the file's
-    state with the atom's proposition state. -/
+/-- (19) is the atomic rule of [heim-1982]. The update of a file by an open sentence, read at
+    the cards of the file together with the sentence's, is the merge of the file's state with
+    the atom's proposition state. -/
 theorem File.toState_atom (hc : c.DeterminedBy X) (P : M → W → Prop) :
     File.toState (insert i X) {gw ∈ c | P (gw.1 i) gw.2} =
       c.toState X * State.atomAt i fun w m ↦ P m w := by
@@ -428,9 +429,9 @@ theorem File.toState_sdiff (hc' : c'.DeterminedBy X) :
   · rintro ⟨⟨gw, h₁, rfl⟩, h₂⟩
     exact ⟨gw, ⟨h₁, fun h ↦ h₂ ((File.pointAt_mem_toState hc' gw).mpr h)⟩, rfl⟩
 
-/-- **(15) is non-subsistence negation**: on the stratum, a potential that sends the file's
-    state to a determined file's state negates, in the sense of [heim-1982], to the set
-    difference of the files. -/
+/-- (15) is non-subsistence negation. On the stratum, a potential that sends the file's state
+    to a determined file's state negates, in the sense of [heim-1982], to the set difference of
+    the files. -/
 theorem File.neg_toState {φ : FCP W ℕ M} (hφ : φ (c.toState X) = Part.some (c'.toState X))
     (hc' : c'.DeterminedBy X) :
     FCP.neg φ (c.toState X) = Part.some ((c \ c').toState X) := by
@@ -438,9 +439,9 @@ theorem File.neg_toState {φ : FCP W ℕ M} (hφ : φ (c.toState X) = Part.some 
   refine congrArg Part.some (Set.ext fun p ↦ and_congr_right fun hp ↦ ?_)
   exact not_congr (File.uniformAt_toState (c := c').mem_lowerClosure (File.uniformAt_toState p hp))
 
-/-- **(21) is rule (III) of [heim-1982]**: on files determined by their cards, the clause
-    keeping the pairs each of whose `i`-variants surviving `A` survives `B` is the clause
-    keeping the points each of whose extensions in `F + A` extends into `(F + A) + B`. -/
+/-- (21) is rule (III) of [heim-1982]. On files determined by their cards, the clause keeping
+    the pairs each of whose `i`-variants surviving `A` survives `B` is the clause keeping the
+    points each of whose extensions in `F + A` extends into `(F + A) + B`. -/
 theorem File.toState_everyClause (hi : i ∉ X) (hA : cA.DeterminedBy (insert i X))
     (hB : cAB.DeterminedBy (insert i X)) :
     (File.everyClause i c cA cAB).toState X =
@@ -467,14 +468,14 @@ theorem File.toState_everyClause (hi : i ∉ X) (hA : cA.DeterminedBy (insert i 
 
 /-! ### Indefinites (§3.3) -/
 
-/-- (26)–(27): "A fat man was pushing his bicycle" is the sequence of two open sentences,
-    the second presupposing that `xᵢ` has a bicycle. -/
+/-- *A fat man was pushing his bicycle* (26)–(27) is the sequence of two open sentences, the
+    second presupposing that `xᵢ` has a bicycle. -/
 def fatManBicycle (i : ℕ) (fatMan hasBicycle pushing : M → W → Prop) :
     CCP.Partial ((ℕ → M) × W) :=
   seq (atom fatMan i) (atomP hasBicycle pushing i)
 
 /-- Without accommodation, (25) carries the universal presupposition that every fat man had
-    a bicycle, by (22): prima facie too strong. -/
+    a bicycle by (22), which is prima facie too strong. -/
 theorem fatManBicycle_admits_iff (i : ℕ) (fatMan hasBicycle pushing : M → W → Prop)
     {c : File M W} (hc : c.NovelIn i) :
     (fatManBicycle i fatMan hasBicycle pushing).Admits c ↔
@@ -486,8 +487,8 @@ theorem fatManBicycle_admits_iff (i : ℕ) (fatMan hasBicycle pushing : M → W 
   · rintro h
     exact ⟨trivial, fun gw hgw => h gw.2 ⟨gw.1, hgw.1⟩ _ hgw.2⟩
 
-/-- Accommodation in the course of the update: `c + "xᵢ is a fat man"` is amended with
-    "xᵢ has a bicycle" before the second sentence is evaluated. -/
+/-- Accommodation in the course of the update amends `c + "xᵢ is a fat man"` with
+    *xᵢ has a bicycle* before the second sentence is evaluated. -/
 def fatManBicycleAcc (i : ℕ) (fatMan hasBicycle pushing : M → W → Prop) :
     CCP.Partial ((ℕ → M) × W) :=
   fun c => atomP hasBicycle pushing i {gw ∈ c | fatMan (gw.1 i) gw.2 ∧ hasBicycle (gw.1 i) gw.2}
@@ -505,7 +506,7 @@ theorem fatManBicycleAcc_entails (i : ℕ) (fatMan hasBicycle pushing : M → W 
   obtain ⟨-, rfl⟩ := h
   exact fun gw hgw => ⟨hgw.1.2.1, hgw.1.2.2, hgw.2⟩
 
-/-- The accommodated result entails nothing about fat men in general: in a two-individual
+/-- The accommodated result entails nothing about fat men in general. In a two-individual
     model where only one fat man has a bicycle, the update is defined and non-empty. -/
 theorem fatManBicycleAcc_not_universal :
     ∃ (c' : File Bool Unit), c' ∈ fatManBicycleAcc 0 (fun _ _ => True) (fun a _ => a = true)
@@ -521,7 +522,7 @@ end Files
 /-! ### The conjunction filter of Karttunen (1973) -/
 
 /-- Admittance of the sequenced update is [karttunen-1974-presupposition]'s satisfaction
-    condition for conjunction: the context satisfies the presuppositions of the first conjunct,
+    condition for conjunction, that the context satisfies the presuppositions of the first conjunct,
     and the context incremented with the first conjunct those of the second. [karttunen-1973]'s
     filter for conjunction, relativized to the context as its assumed facts, requires the same of
     the context, the equivalence [karttunen-1974-presupposition] proves for the conditional,

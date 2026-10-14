@@ -34,6 +34,9 @@ Part I, the file states Strawsonian presupposition and its Strong Kleene project
 * Facts 7.1, 8.1–8.3 and 8.5–8.8, with the tests of D61, are stated for ABLE, the first-order
   system of Chapters 7 and 8. Their proofs use only the propositional clauses, which ABLE shares
   with PUL, and they are proved here for PUL.
+* Presupposition and its projection through negation, conjunction and *implies* are the
+  substrate's `PartialUpdate.Presupposes` and its lemmas; the study adds *might*, *must* and
+  `∂`.
 * `Formula.tval` gives the modal sentences the junk value `indet`; every theorem about it
   assumes the sentence non-modal.
 
@@ -145,7 +148,7 @@ noncomputable def eval : Formula P → CCP.Partial W
 def Satisfies (σ : Set W) (φ : Formula P) : Prop := PartialUpdate.supports σ (φ.eval F)
 
 /-- `φ` presupposes `ψ` (D31) when every state admitting `φ` (D30) satisfies `ψ`. -/
-def Presupposes (φ ψ : Formula P) : Prop := ∀ σ, (φ.eval F).Admits σ → Satisfies F σ ψ
+def Presupposes (φ ψ : Formula P) : Prop := PartialUpdate.Presupposes (φ.eval F) (ψ.eval F)
 
 /-- `φ` entails `ψ` (D26, with one premise) when every update with `φ` yields a state
 satisfying `ψ` (`entails_iff_forall`), which is dynamic entailment between the two updates. -/
@@ -204,10 +207,15 @@ theorem empty_mem_eval_empty : ∀ φ : Formula P, (∅ : Set W) ∈ φ.eval F �
 
 theorem admits_of_mem (h : τ ∈ φ.eval F σ) : (φ.eval F).Admits σ := Part.dom_iff_mem.2 ⟨τ, h⟩
 
-theorem Satisfies.admits (h : Satisfies F σ φ) : (φ.eval F).Admits σ := admits_of_mem h
+theorem presupposes_iff_forall :
+    Presupposes F φ ψ ↔ ∀ σ, (φ.eval F).Admits σ → Satisfies F σ ψ := Iff.rfl
 
 theorem entails_iff_forall : Entails F φ ψ ↔ ∀ σ τ, τ ∈ φ.eval F σ → Satisfies F τ ψ :=
   PartialUpdate.entails_bind_iff
+
+/-- *implies* denotes Heim's conditional. -/
+theorem eval_implies : (implies φ ψ).eval F = CCP.Partial.cond (φ.eval F) (ψ.eval F) :=
+  (CCP.Partial.cond_eq_neg_seq_neg _ _).symm
 
 /-- *must* is the dual of *might* (Fact 6.1). -/
 theorem eval_must (φ : Formula P) : (must φ).eval F = (not (might (not φ))).eval F := by
@@ -225,10 +233,11 @@ theorem eval_must (φ : Formula P) : (must φ).eval F = (not (might (not φ))).e
 
 /-! ### Projection (Facts 8.1–8.3, 8.8) -/
 
-theorem Presupposes.not (h : Presupposes F φ ψ) : Presupposes F (not φ) ψ := fun σ hσ ↦ h σ hσ
+theorem Presupposes.not (h : Presupposes F φ ψ) : Presupposes F (not φ) ψ :=
+  PartialUpdate.Presupposes.neg h
 
 theorem Presupposes.and_left (h : Presupposes F φ ψ) : Presupposes F (and φ χ) ψ :=
-  fun σ ⟨hσ, _⟩ ↦ h σ hσ
+  PartialUpdate.Presupposes.seq_left h
 
 theorem Presupposes.implies_left (h : Presupposes F φ ψ) : Presupposes F (implies φ χ) ψ :=
   h.and_left.not
@@ -242,7 +251,7 @@ theorem Presupposes.must (h : Presupposes F φ ψ) : Presupposes F (must φ) ψ 
 /-- Presupposition composes (Fact 8.2). -/
 theorem Presupposes.trans (h₁ : Presupposes F φ ψ) (h₂ : Presupposes F ψ χ) :
     Presupposes F φ χ :=
-  fun σ hσ ↦ h₂ σ (h₁ σ hσ).admits
+  PartialUpdate.Presupposes.trans h₁ h₂
 
 /-- `∂ψ and χ` presupposes `ψ`. -/
 theorem presup_and_presupposes (ψ χ : Formula P) : Presupposes F (and (presup ψ) χ) ψ :=
@@ -251,15 +260,14 @@ theorem presup_and_presupposes (ψ χ : Formula P) : Presupposes F (and (presup 
 /-- A presupposition of the second conjunct projects conditionalised on the first (Fact 8.3). -/
 theorem Presupposes.and_right (h : Presupposes F φ ψ) :
     Presupposes F (and χ φ) (implies χ ψ) := by
-  rintro σ ⟨hχ, hφ⟩
-  refine mem_eval_not.2
-    ⟨_, mem_eval_and.2 ⟨_, Part.get_mem hχ, mem_eval_not.2 ⟨_, h _ hφ, rfl⟩⟩, ?_⟩
-  simp
+  rw [Presupposes, eval_implies]
+  exact PartialUpdate.Presupposes.seq_right h
 
 /-- A presupposition of the consequent projects conditionalised on the antecedent (Fact 8.3). -/
 theorem Presupposes.implies_right (h : Presupposes F φ ψ) :
-    Presupposes F (implies χ φ) (implies χ ψ) :=
-  h.not.and_right.not
+    Presupposes F (implies χ φ) (implies χ ψ) := by
+  rw [Presupposes, eval_implies, eval_implies]
+  exact PartialUpdate.Presupposes.cond_right h
 
 /-! ### Epistemic modality (Facts 8.5–8.7) -/
 
@@ -461,7 +469,8 @@ theorem Presupposes.entails (h : Presupposes F φ ψ) (hψ : NonModal ψ) : Enta
 Peters' semantics, which is Peters' result. -/
 theorem presupposes_iff_strawsonPresupposes (hφ : NonModal φ) (hψ : NonModal ψ) :
     Presupposes F φ ψ ↔ StrawsonPresupposes (φ.tval F) (ψ.tval F) := by
-  simp only [Presupposes, StrawsonPresupposes, admits_iff hφ, satisfies_iff hψ, trueAt_iff hψ]
+  rw [presupposes_iff_forall]
+  simp only [StrawsonPresupposes, admits_iff hφ, satisfies_iff hψ, trueAt_iff hψ]
   exact ⟨fun h w hw ↦ h {w} (by simpa using hw) w rfl, fun h σ hσ w hw ↦ h w (hσ w hw)⟩
 
 /-- A non-modal sentence presupposes exactly what both it and its negation entail. -/
