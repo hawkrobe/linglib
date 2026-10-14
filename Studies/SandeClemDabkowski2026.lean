@@ -13,7 +13,7 @@ public import Mathlib.Data.List.Sections
 /-!
 # Sande, Clem and Dąbkowski (2026): Discontinuous vowel harmony in Guébie: Cyclic interleaving of syntax and phonology
 
-This file formalizes the account of discontinuous harmony in [sande-clem-dabkowski-2026]. In
+This file formalizes Sande, Clem and Dąbkowski's account of discontinuous harmony. In
 Guébie verb focus the particle of a particle verb fronts, yet it agrees in [ATR] with the
 clause-final verb across the subject, the auxiliary and the object. The paper derives this from
 local harmony followed by movement. The vP is spelled out when C merges, and it then holds the
@@ -174,30 +174,31 @@ theorem discontinuous_partSAuxOV :
 /-! ### Harmony within the vP Spell-out -/
 
 /-- Every vowel takes part in [ATR] harmony (§5.1). -/
-def atrPattern : Phonology.Harmony.Pattern Vowel Bool where
-  value v := some v.atr
+def atrPattern : Phonology.Harmony.Pattern Phonology.Segment Bool where
+  value v := some (atr v)
   participation _ := .participating
 
 /-- ATRHARM (47) is an Agreement by Projection constraint, violated once by an output in which a
 vowel precedes a vowel of the other [ATR] value on the tier of vowels. -/
-def atrHarm : Constraint (List Vowel) := .binary fun out ↦ ¬ atrPattern.Harmonic out
+def atrHarm : Constraint (List Phonology.Segment) := .binary fun out ↦ ¬ atrPattern.Harmonic out
 
 /-- IDENT-IO(ATR) (46) is violated once by each vowel whose [ATR] value departs from its
 input. -/
-def identIO (input : List Vowel) : Constraint (List Vowel) := fun out ↦
-  (Correspondence.parallel input out).identViolFeature Vowel.atr .lhs .rhs
+def identIO (input : List Phonology.Segment) : Constraint (List Phonology.Segment) := fun out ↦
+  (Correspondence.parallel input out).identViolFeature atr .lhs .rhs
 
 /-- A revaluation of a string of vowels gives each vowel either [ATR] value. -/
-def revaluations (l : List Vowel) : List (List Vowel) :=
-  (l.map fun v ↦ [v.withATR true, v.withATR false]).sections
+def revaluations (l : List Phonology.Segment) : List (List Phonology.Segment) :=
+  (l.map fun v ↦ [withATR v true, withATR v false]).sections
 
-theorem revaluations_ne_nil (l : List Vowel) : revaluations l ≠ [] :=
-  ne_nil_of_mem (a := l.map (·.withATR true)) <| mem_sections.2 <| by
+theorem revaluations_ne_nil (l : List Phonology.Segment) : revaluations l ≠ [] :=
+  ne_nil_of_mem (a := l.map (withATR · true)) <| mem_sections.2 <| by
     simp [forall₂_map_left_iff, forall₂_map_right_iff, forall₂_same]
 
 /-- The vP tableau ranks ATRHARM above IDENT-IO(ATR) over every revaluation of the particle,
 followed by the root vowels the vP Spell-out holds. -/
-def vPTableau (part : Morpheme) (root : List Vowel) : Tableau (List Vowel) 2 :=
+def vPTableau (part : Morpheme) (root : List Phonology.Segment) :
+    Tableau (List Phonology.Segment) 2 :=
   Tableau.ofRanking ((revaluations part.vowels).map (· ++ root))
     [atrHarm, identIO (part.vowels ++ root)] (by simpa using revaluations_ne_nil part.vowels)
 
@@ -205,7 +206,7 @@ def vPTableau (part : Morpheme) (root : List Vowel) : Tableau (List Vowel) 2 :=
 root's value when the root is in the vP Spell-out, and keeps it faithful when it is not. -/
 theorem vPTableau_optimal : ∀ pv ∈ particleVerbs,
     (vPTableau pv.particle pv.verb.vowels).optimal =
-        {pv.particle.vowels.map (·.withATR pv.verb.atr) ++ pv.verb.vowels} ∧
+        {pv.particle.vowels.map (withATR · pv.verb.atr) ++ pv.verb.vowels} ∧
       (vPTableau pv.particle []).optimal = {pv.particle.vowels} := by
   decide +kernel
 
@@ -214,7 +215,7 @@ namespace Clause
 variable (c : Clause) (part verb : Morpheme)
 
 /-- The vP Spell-out holds the verb's vowels under harmony and no root vowels otherwise. -/
-def rootVowels : List Vowel := if c.Harmony then verb.vowels else []
+def rootVowels : List Phonology.Segment := if c.Harmony then verb.vowels else []
 
 /-- The particle surfaces with the root's [ATR] value under harmony and with its own otherwise
 ((12), (13)). -/
@@ -223,7 +224,7 @@ def particleATR : Bool := if c.Harmony then verb.atr else part.atr
 /-- In every clause the vP tableau gives each particle vowel the value harmony assigns. -/
 theorem vPTableau_optimal {pv : ParticleVerb} (hpv : pv ∈ particleVerbs) :
     (vPTableau pv.particle (c.rootVowels pv.verb)).optimal =
-      {pv.particle.vowels.map (·.withATR (c.particleATR pv.particle pv.verb)) ++
+      {pv.particle.vowels.map (withATR · (c.particleATR pv.particle pv.verb)) ++
         c.rootVowels pv.verb} := by
   obtain ⟨h₁, h₂⟩ := SandeClemDabkowski2026.vPTableau_optimal pv hpv
   unfold rootVowels particleATR
@@ -235,14 +236,14 @@ end Clause
 
 /-- This tableau ranks ATRHARM above IDENT-IO(ATR) over every revaluation of an input, the root's
 vowels included. -/
-def rootFreeTableau (input : List Vowel) : Tableau (List Vowel) 2 :=
+def rootFreeTableau (input : List Phonology.Segment) : Tableau (List Phonology.Segment) 2 :=
   Tableau.ofRanking (revaluations input) [atrHarm, identIO input] (revaluations_ne_nil input)
 
 /-- With the root free, the two constraints alone repair /jɔkʊ-ni/ at the root, against (12a),
 since one changed vowel beats two, and they leave /mɛ-nu/ undecided, against (10e). -/
 theorem optimal_rootFree :
-    (rootFreeTableau (jOkU.vowels ++ ni.vowels)).optimal = {[.O, .U, .I]} ∧
-      (rootFreeTableau (mE.vowels ++ nu.vowels)).optimal = {[.e, .u], [.E, .U]} := by
+    (rootFreeTableau (jOkU.vowels ++ ni.vowels)).optimal = {[openO, upsilon, smallCapitalI]} ∧
+      (rootFreeTableau (mE.vowels ++ nu.vowels)).optimal = {[e, u], [epsilon, upsilon]} := by
   decide
 
 /-! ### The derivations -/
