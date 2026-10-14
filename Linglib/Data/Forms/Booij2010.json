@@ -15,8 +15,35 @@
       "Parameter_ID": "baldness",
       "Form": "baldness",
       "Segments": ["bald", "ness"],
-      "Comment": "a stored deadjectival noun of the opening word set",
-      "Source": ["booij-2010-compass"]
+      "Comment": "a stored deadjectival noun of the opening word set (1b)",
+      "Source": ["booij-2010-compass[(1)]"]
+    },
+    {
+      "ID": "booij2010_bigness",
+      "Language_ID": "stan1293",
+      "Parameter_ID": "bigness",
+      "Form": "bigness",
+      "Segments": ["big", "ness"],
+      "Comment": "a stored deadjectival noun of the opening word set (1b)",
+      "Source": ["booij-2010-compass[(1)]"]
+    },
+    {
+      "ID": "booij2010_blackness",
+      "Language_ID": "stan1293",
+      "Parameter_ID": "blackness",
+      "Form": "blackness",
+      "Segments": ["black", "ness"],
+      "Comment": "a stored deadjectival noun of the opening word set (1b)",
+      "Source": ["booij-2010-compass[(1)]"]
+    },
+    {
+      "ID": "booij2010_britishness",
+      "Language_ID": "stan1293",
+      "Parameter_ID": "britishness",
+      "Form": "Britishness",
+      "Segments": ["British", "ness"],
+      "Comment": "a stored deadjectival noun of the opening word set (1b)",
+      "Source": ["booij-2010-compass[(1)]"]
     },
     {
       "ID": "booij2010_awareness",
@@ -24,26 +51,47 @@
       "Parameter_ID": "awareness",
       "Form": "awareness",
       "Segments": ["aware", "ness"],
-      "Comment": "the paper's example of an existing deadjectival noun",
+      "Comment": "the paper's example of an existing deadjectival noun (2)",
+      "Source": ["booij-2010-compass[(2)]"]
+    },
+    {
+      "ID": "booij2010_leesbaar",
+      "Language_ID": "dutc1256",
+      "Parameter_ID": "readable",
+      "Form": "leesbaar",
+      "Segments": ["lees", "baar"],
+      "Comment": "a regular -baar adjective on the transitive verb lezen",
       "Source": ["booij-2010-compass"]
+    },
+    {
+      "ID": "booij2010_werkbaar",
+      "Language_ID": "dutc1256",
+      "Parameter_ID": "workable",
+      "Form": "werkbaar",
+      "Segments": ["werk", "baar"],
+      "Comment": "a -baar adjective on the intransitive verb werken, overriding the schema's transitive base",
+      "Source": ["booij-2010-compass"]
+    },
+    {
+      "ID": "booij2010_onbedwingbaar",
+      "Language_ID": "dutc1256",
+      "Parameter_ID": "unsuppressable",
+      "Form": "onbedwingbaar",
+      "Segments": ["on", "bedwing", "baar"],
+      "Comment": "coined directly from the verb bedwingen by the unified schema (16), with no listed bedwingbaar",
+      "Source": ["booij-2010-compass[(15)]"]
     }
   ],
   "ParameterTable": [
-    {
-      "ID": "carlessness",
-      "Name": "the state of being without a car",
-      "Description": ""
-    },
-    {
-      "ID": "baldness",
-      "Name": "baldness",
-      "Description": ""
-    },
-    {
-      "ID": "awareness",
-      "Name": "awareness",
-      "Description": ""
-    }
+    { "ID": "carlessness", "Name": "the state of being without a car", "Description": "" },
+    { "ID": "baldness", "Name": "baldness", "Description": "" },
+    { "ID": "bigness", "Name": "bigness", "Description": "" },
+    { "ID": "blackness", "Name": "blackness", "Description": "" },
+    { "ID": "britishness", "Name": "Britishness", "Description": "" },
+    { "ID": "awareness", "Name": "awareness", "Description": "" },
+    { "ID": "readable", "Name": "readable", "Description": "" },
+    { "ID": "workable", "Name": "workable", "Description": "" },
+    { "ID": "unsuppressable", "Name": "unsuppressable", "Description": "" }
   ],
   "FormRelationTable": []
 }

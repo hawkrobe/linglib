@@ -198,7 +198,7 @@ theorem coe_le_iff : (a : Flat α) ≤ y ↔ y = ↑a :=
   ⟨fun h => by cases h; rfl, fun h => h ▸ .refl a⟩
 
 /-- A value is maximal: nothing lies above it but itself. -/
-theorem isMax_coe (a : α) : IsMax (a : Flat α) := λ _ hy => (coe_le_iff.1 hy).le
+theorem isMax_coe (a : α) : IsMax (a : Flat α) := fun _ hy ↦ (coe_le_iff.1 hy).le
 
 /-- Every value other than `⊥` is maximal. -/
 theorem isMax_of_ne_bot (hx : x ≠ ⊥) : IsMax x := by

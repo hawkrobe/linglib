@@ -5,63 +5,91 @@ Authors: Robert Hawkins
 -/
 module
 
+public import Linglib.Core.Logic.Function.FactorsThrough
 public import Linglib.Data.Forms.Booij2010
+public import Linglib.Fragments.Dutch.Verbs
+public import Linglib.Logic.Nonmonotonic.Inheritance
 public import Linglib.Morphology.ConstructionMorphology.Schema
+public import Linglib.Syntax.Cat
 public import Mathlib.Data.Fin.VecNotation
 public import Mathlib.Tactic.DeriveFintype
 public import Mathlib.Tactic.FinCases
-public import Linglib.Logic.Nonmonotonic.Inheritance
-public import Linglib.Core.Relation.ReflTransGen
-public import Linglib.Core.Order.Flat
 
 /-!
-# Construction Morphology: the constructional-schema engine [booij-2010-compass]
+# Booij (2010): Construction Morphology
 
-[booij-2010-compass] analyzes complex words as constructions — pairings of form
-and meaning — licensed by constructional schemas in a hierarchical lexicon. This
-file instantiates the `Morphology/ConstructionMorphology/` substrate as that CxM engine
-over small `Flat` carriers: the deadjectival `-ness` schema and its
-unification-instantiation (`carless` unified with the schema is `carlessness`),
-generation of a novel `-ness` noun, the compound hierarchy with right-headed
-subschemas, the default-inheritance override (`werkbaar`), and schema
-unification (`on-` prefixation composed with `V-baar`).
+This file formalizes the constructional schemas of Booij's programmatic article: a complex
+word is a construction licensed by a schema in a hierarchical lexicon, and a schema both
+motivates the words stored below it and coins new ones. The deadjectival *-ness* schema is
+the abstraction over the stored nouns of the opening word set, the meet of their descriptions
+(`nessSchema_body_eq_inf`), and coining is unification: unifying *carless* with the schema
+returns *carlessness* (`carlessness_unifies`), the novel coin the schema generates over the
+stored nouns while relating the listed *awareness* (`carlessness_generates`,
+`awareness_related`). The English compound schemas form a hierarchy ordered by generality,
+the right-headed schema over the nominal schema over its four subcases (`nominal_covBy_general`,
+`covBy_nominal`); right-headedness is the coindexation of head and whole, shared by every
+schema of the family without a Right-hand Head Rule (`compound_right_headed`), while the AN
+subschema overrides the recursive-modifier default that the NN subschema inherits
+(`compound_inheritance`). Dutch *-baar* is the paper's demand for default inheritance: the
+hierarchy of the schema and its words is derived from their descriptions, the regular
+*leesbaar* inherits the schema's transitive base (`leesbaar_inherits`), and *werkbaar*, whose
+base the Dutch verb fragment records as intransitive, overrides it (`werkbaar_overrides`).
+Schema unification composes *on-* prefixation with *-baar* suffixation into one schema whose
+instances are exactly their common instances (`onbaar_unifies`,
+`onbaarSchema_instantiates_iff`), so *onbedwingbaar* is generated over the empty lexicon, with
+no intermediate *bedwingbaar* listed (`onbedwingbaar_generates`).
 
-## Main results
+## Implementation notes
 
-* `carlessness_unifies` — instantiation is unification of an adjective with the
-  `-ness` schema ([booij-2010-compass]'s worked example)
-* `carlessness_generates`, `awareness_related` — the schema's two roles on one
-  lexicon: coining the paper's novel noun, relating its stored one
-* `covBy_compound`, `compound_right_headed`, `compound_inheritance` — the
-  compound hierarchy derived from its schemas: right-headedness is the shared
-  coindexation, inherited without a Right-hand Head Rule, while the AN subschema
-  overrides the recursive-modifier default
-* `werkbaar_overrides` — the CxM default-inheritance demand site: `werkbaar`
-  overrides the `-baar` schema's transitivity default
-* `onbaar_unifies`, `onbaarSchema_instantiates_iff` — two word-formation schemas
-  unify into `on-V-baar`, whose instances are exactly their common instances, no
-  listed intermediate required
+* The words are the CLDF forms of `Data/Forms/Booij2010.json`, read as slot-indexed segments
+  on the flat carrier by `Data.Forms.Form.slots`. The *-ness* and *-baar* schemas are over the
+  two slots base and affix, and the *on-V-baar* schema over prefix, base and suffix, so the
+  embedding `[on [V baar]]` of the paper's display is the concatenation of three slots; the
+  two-slot *-baar* schema is the three-slot one read at base and suffix
+  (`baarSchema_eq_comap`).
+* The compound schemas are over the category tier alone, valued in `PhraseStructure.Cat`; the
+  phonological variables and the semantic relation of the paper's display are not modelled.
+* A defeasible specification is an attribute beside the description: the description is
+  matched monotonically by unification, the attribute inherited by default
+  (`DefaultInheritance.inherited`). A regular word stores no value of its own, since the paper
+  counts all its information as redundant, and the exceptional word stores the transitivity
+  of its base as the Dutch verb fragment records it.
+* The holistic constructions (Malay reduplication, Romance VN compounds, the intensifying
+  compounds, Maale *nayi*), the phrasal constructional idioms and the inflectional schemas
+  are not formalized.
+
+## References
+
+* [booij-2010-compass]
+* [booij-2010]
 -/
 
 @[expose] public section
 
 namespace Booij2010
 
-open ConstructionMorphology DefaultInheritance
+open ConstructionMorphology DefaultInheritance PhraseStructure
 
-/-! ### The deadjectival `-ness` schema
+/-! ### The deadjectival *-ness* schema -/
 
-The schema `[[x]A ness]N` of [booij-2010-compass]: a two-slot construction whose
-affix slot is lexically fixed as `-ness` and whose base slot is an open
-(deadjectival) variable. A concrete adjective unified into the base slot yields a
-`-ness` noun. -/
-
-/-- The `-ness` schema over the two slots of a `-ness` noun, base and affix: the affix slot
-pinned to `-ness`, the base slot an open deadjectival variable (`⊥`). -/
+/-- The schema `[[x]A ness]N` of (3) over the slots base and affix: the base an open variable,
+the affix pinned to *-ness*. -/
 def nessSchema : Schema (Fin 2) (Flat String) := Schema.productive ![⊥, ↑"ness"]
 
-/-- Any filling whose affix slot is `-ness` instantiates the schema: the base slot
-is open, the affix slot's constraint is met. -/
+/-- The stored nouns in *-ness*: the opening word set (1b) and *awareness* (2). -/
+def nessLexicon : Set (Fin 2 → Flat String) :=
+  {Forms.baldness.slots, Forms.bigness.slots, Forms.blackness.slots, Forms.britishness.slots,
+    Forms.awareness.slots}
+
+/-- The schema is the abstraction over the stored nouns of (1b): the meet of their descriptions
+keeps the shared affix and leaves a variable where the bases differ. -/
+theorem nessSchema_body_eq_inf :
+    nessSchema.body = Forms.baldness.slots ⊓ Forms.bigness.slots ⊓ Forms.blackness.slots ⊓
+      Forms.britishness.slots := by
+  funext i
+  fin_cases i <;> decide
+
+/-- Any word whose affix is *-ness* instantiates the schema. -/
 theorem ness_instantiates {w : Fin 2 → Flat String} (h : w 1 = ↑"ness") :
     nessSchema.Instantiates w := by
   intro i
@@ -69,77 +97,64 @@ theorem ness_instantiates {w : Fin 2 → Flat String} (h : w 1 = ↑"ness") :
   · exact bot_le
   · exact h.ge
 
-/-- `carlessness`, the paper's novel coin (Time, October 5, 2009), instantiates the
-`-ness` schema. -/
 theorem carlessness_instantiates : nessSchema.Instantiates Forms.carlessness.slots :=
   ness_instantiates (by decide)
 
-/-- Instantiation as unification: unifying the schema description with
-`carlessness` returns `carlessness` — [booij-2010-compass]'s worked example. -/
+/-- Coining is unification: unifying the adjective *carless* with the schema returns the
+construct *carlessness*. -/
 theorem carlessness_unifies :
     PartialUnify.unify nessSchema.body Forms.carlessness.slots =
       WithTop.some Forms.carlessness.slots :=
   nessSchema.instantiates_iff_unify.mp carlessness_instantiates
 
-/-- The stored `-ness` nouns of the paper's opening word set, feeding the schema's two
-roles. -/
-def nessLexicon : Set (Fin 2 → Flat String) :=
-  {Forms.baldness.slots, Forms.awareness.slots}
-
-/-- The `-ness` schema is productive: its one variable, the base slot, is open. -/
 theorem nessSchema_isProductive : nessSchema.IsProductive := Schema.isProductive_productive _
 
-/-- The schema licenses the novel coin `carlessness` over the stored nouns: the
-open base slot takes the unlisted adjective, and the affix slot is a constant.
-Being productive, the schema generates every instance whatever is stored. -/
+/-- The schema's generative role: it coins the novel *carlessness* over the stored nouns, its
+open base taking an unlisted adjective. -/
 theorem carlessness_generates :
     nessSchema.Generates nessLexicon Forms.carlessness.slots :=
   nessSchema_isProductive.generates_iff.2 carlessness_instantiates
 
-/-- The relational role over the same schema: `awareness` is listed and
-instantiates it — the paper's two functions of a schema, expressing the
-predictable properties of existing words and coining new ones, on one
-schema and one lexicon. -/
+/-- The schema's relational role: it motivates the listed *awareness*. -/
 theorem awareness_related : nessSchema.Relates nessLexicon Forms.awareness.slots :=
-  ⟨Set.mem_insert_of_mem _ rfl, ness_instantiates (by decide)⟩
+  ⟨by simp [nessLexicon], ness_instantiates (by decide)⟩
 
 /-! ### The compound hierarchy
 
-The compound schema `(6)`, `[[a]X [b]Y]Y`, dominates the NN/VN/AN/PN subcases `(7)`. The
-hierarchy is derived from the schemas, each subschema's parent being the nearest more general
-schema of the family. Right-headedness is the schema's coindexation of the head with the
-whole, so every subschema inherits it and no Right-hand Head Rule is needed. A subschema still
-legislates locally: an NN modifier may itself be a compound, an AN modifier may not `(8)`. -/
+The right-headed schema for all English compounds dominates the nominal schema (6), which
+dominates the NN, VN, AN and PN subcases (7). The hierarchy is derived from the schemas by
+generality, and each schema is read at the positions modifier, head and whole through one
+subscripting, which coindexes the head with the whole. -/
 
-/-- The variables of the compound schema `(6)`: the modifier's category `X` and the head's `Y`. -/
+/-- The category variables of a compound schema: the modifier's `X` and the head's `Y`. -/
 inductive CompoundVar | x | y
   deriving DecidableEq, Fintype
 
-/-- The positions of a compound, modifier, head and whole, subscripted by `(6)`: the whole
-shares the head's category, right-headedness. -/
+/-- The positions modifier, head and whole, subscripted as in (6): the whole shares the head's
+category. -/
 def compoundSub : Fin 3 → CompoundVar := ![.x, .y, .y]
 
-/-- The general compound schema `(6)`: both categories open. -/
-def compoundSchema : Schema CompoundVar (Flat String) := ⟨fun _ ↦ ⊥, {.x, .y}⟩
+/-- The compound schema with the modifier's category `x` and the head's `y`, each a variable
+at `⊥`. -/
+def compoundSchema (x y : Flat Cat) : Schema CompoundVar (Flat Cat) :=
+  Schema.productive fun | .x => x | .y => y
 
-/-- A subschema of `(7)`: the modifier's category pinned to `x`, the head's to N. -/
-def compoundSubschema (x : String) : Schema CompoundVar (Flat String) :=
-  ⟨fun | .x => ↑x | .y => ↑"N", ∅⟩
-
-/-- The compound schema and its four subcases. -/
-inductive CompoundNode | compound | nn | vn | an | pn
+/-- The nodes of the hierarchy: the right-headed schema for all compounds, the nominal schema
+(6) and its four subcases (7). -/
+inductive CompoundNode | general | nominal | nn | vn | an | pn
   deriving DecidableEq, Fintype
 
-/-- The family `(6)` and `(7)`. -/
-def compoundFamily : CompoundNode → Schema CompoundVar (Flat String)
-  | .compound => compoundSchema
-  | .nn => compoundSubschema "N"
-  | .vn => compoundSubschema "V"
-  | .an => compoundSubschema "A"
-  | .pn => compoundSubschema "P"
+/-- The schema at each node: the general schema leaves both categories open, the nominal
+schema pins the head to N, and a subcase pins the modifier too. -/
+def compoundFamily : CompoundNode → Schema CompoundVar (Flat Cat)
+  | .general => compoundSchema ⊥ ⊥
+  | .nominal => compoundSchema ⊥ ↑Cat.N
+  | .nn => compoundSchema ↑Cat.N ↑Cat.N
+  | .vn => compoundSchema ↑Cat.V ↑Cat.N
+  | .an => compoundSchema ↑Cat.Adj ↑Cat.N
+  | .pn => compoundSchema ↑Cat.P ↑Cat.N
 
-/-- The hierarchical constructicon of English compounds, ordered by the generality of the
-schemas. -/
+/-- The hierarchical lexicon of English compounds, ordered by the generality of the schemas. -/
 instance : PartialOrder CompoundNode := Schema.generalityOrder compoundFamily (by decide)
 
 instance : DecidableLE CompoundNode := fun a b ↦
@@ -147,133 +162,130 @@ instance : DecidableLE CompoundNode := fun a b ↦
 
 instance : DecidableLT CompoundNode := decidableLTOfDecidableLE
 
-/-- The general schema is each subschema's nearest more general schema. -/
-theorem covBy_compound (n : CompoundNode) (hn : n ≠ .compound) : n ⋖ .compound := by
-  have h : ∀ n : CompoundNode, n ≠ .compound →
-      n < .compound ∧ ∀ c, n < c → ¬ c < .compound := by decide
-  exact ⟨(h n hn).1, fun c ↦ (h n hn).2 c⟩
+/-- The nominal schema (6) lies immediately below the general right-headed schema. -/
+theorem nominal_covBy_general : CompoundNode.nominal ⋖ .general := by
+  unfold CovBy
+  decide
 
-/-- Right-headedness is inherited by every subschema without a rule: in any instance of any
-schema of the family through the subscripting of `(6)`, the whole's category is the head's. -/
-theorem compound_right_headed (n : CompoundNode) {w : Fin 3 → Flat String}
+/-- Each subcase of (7) lies immediately below the nominal schema (6). -/
+theorem covBy_nominal :
+    ∀ n : CompoundNode, n ≠ .general → n ≠ .nominal → n ⋖ .nominal := by
+  unfold CovBy
+  decide
+
+/-- Right-headedness needs no rule: in any instance of any schema of the family read through
+the subscripting of (6), the whole's category is the head's. -/
+theorem compound_right_headed (n : CompoundNode) {w : Fin 3 → Flat Cat}
     (h : (compoundFamily n).InstantiatesAt compoundSub w) : w 2 = w 1 :=
   (Schema.instantiatesAt_iff.1 h).2 (by decide)
 
-/-- Whether the modifier may itself be a compound: allowed by default, overridden
-at the AN subschema `(8)`. -/
+/-- *blackbird*, an adjective and a noun making a noun, instantiates the AN subschema and not
+the NN subschema. -/
+theorem blackbird_instantiatesAt :
+    (compoundFamily .an).InstantiatesAt compoundSub ![↑Cat.Adj, ↑Cat.N, ↑Cat.N] ∧
+      ¬ (compoundFamily .nn).InstantiatesAt compoundSub ![↑Cat.Adj, ↑Cat.N, ↑Cat.N] := by
+  simp only [Schema.instantiatesAt_iff]
+  decide
+
+/-- Whether the modifier may itself be a compound (8): allowed by the general schema, forbidden
+at the AN subschema. -/
 def recursiveModifier : CompoundNode → Option Bool
-  | .compound => some true
+  | .general => some true
   | .an => some false
   | _ => none
 
-/-- The AN subschema overrides the default recursive-modifier option, which the NN subschema
-inherits: an NN modifier may be a compound, an AN modifier may not. -/
+/-- The NN subschema inherits the recursive modifier through the nominal schema, and the AN
+subschema overrides it. -/
 theorem compound_inheritance :
     inherited recursiveModifier .nn = {true} ∧ inherited recursiveModifier .an = {false} :=
-  ⟨inherited_eq_singleton_of_isLeast (m := .compound) (by decide) rfl,
+  ⟨inherited_eq_singleton_of_isLeast (m := .general) (by decide) rfl,
     inherited_eq_singleton_of_eq_some rfl⟩
 
-/-! ### Default inheritance and override: `werkbaar`
+/-! ### Default inheritance: *-baar* and *werkbaar*
 
-[booij-2010-compass]'s own demand site for default inheritance: `-baar` attaches
-to transitive verbs, but `werkbaar` (from intransitive `werk`) overrides the
-inherited transitivity specification. "By default, complex words inherit the
-information specified in a schema, but a particular piece of information may be
-overruled by an individual lexical item." A minimal two-level hierarchy: the
-schema node and the `werkbaar` leaf. -/
+The suffix *-baar* attaches to transitive verbs, *leesbaar* from *lezen*, yet *werkbaar* is
+formed on the intransitive *werken*. The words lie below the schema in the hierarchy because
+they instantiate it, and the transitivity of the base is a defeasible specification that the
+exceptional word overrides. -/
 
-/-- The `-baar` schema node and the `werkbaar` lexical item. -/
-inductive BaarNode | baarSchema | werkbaar
+/-- The nodes of the *-baar* hierarchy: the schema `[V baar]A`, the regular *leesbaar* and the
+exceptional *werkbaar*. -/
+inductive BaarNode | schema | leesbaar | werkbaar
   deriving DecidableEq, Fintype
 
-/-- `werkbaar` is an instance of the `-baar` schema. -/
-def BaarNode.parents : BaarNode → List BaarNode
-  | .baarSchema => []
-  | .werkbaar => [.baarSchema]
+/-- The *-baar* schema over the slots base and affix, the base open. -/
+def baarSchema : Schema (Fin 2) (Flat String) := Schema.productive ![⊥, ↑"baar"]
 
-instance : PartialOrder BaarNode :=
-  partialOrderOfCovers (fun a b : BaarNode ↦ b ∈ a.parents)
-    (fun | .baarSchema => 0 | .werkbaar => 1) (by decide)
+/-- The description at each node: the schema, or a word with no variable. -/
+def baarFamily : BaarNode → Schema (Fin 2) (Flat String)
+  | .schema => baarSchema
+  | .leesbaar => ⟨Forms.leesbaar.slots, ∅⟩
+  | .werkbaar => ⟨Forms.werkbaar.slots, ∅⟩
 
-/-- Transitivity of the base verb. -/
-inductive Transitivity | trans | intrans
-  deriving DecidableEq
+/-- The *-baar* hierarchy, ordered by the generality of the descriptions. -/
+instance : PartialOrder BaarNode := Schema.generalityOrder baarFamily (by decide)
 
-/-- The `-baar` schema requires a transitive base by default; `werkbaar`
-overrides to intransitive. -/
-def baseTransitivity : BaarNode → Option Transitivity
-  | .baarSchema => some .trans
-  | .werkbaar => some .intrans
+instance : DecidableLE BaarNode := fun a b ↦
+  inferInstanceAs (Decidable ((baarFamily b).body ≤ (baarFamily a).body))
 
-/-- The default-override flagship: `werkbaar` overrides the inherited transitivity
-specification, while the schema keeps its default. -/
-theorem werkbaar_overrides :
-    inherited baseTransitivity .werkbaar = {.intrans} ∧
-      inherited baseTransitivity .baarSchema = {.trans} :=
-  ⟨inherited_eq_singleton_of_eq_some rfl, inherited_eq_singleton_of_eq_some rfl⟩
+/-- Both words instantiate the schema, so the schema dominates them. -/
+theorem le_schema : ∀ n : BaarNode, n ≤ .schema := by decide
 
-/-! ### Schema unification: `on-` composed with `V-baar`
+/-- Whether the base verb is transitive: the schema's default is transitive, the regular
+*leesbaar* stores nothing, and *werkbaar* stores the transitivity of *werken* as the Dutch verb
+fragment records its basic frame. -/
+def baseTransitive : BaarNode → Option Bool
+  | .schema => some true
+  | .leesbaar => none
+  | .werkbaar => Dutch.Verbs.werken.valency.frames.head?.map fun fr ↦ decide fr.IsTransitive
 
-The two productive schemas — negative `on-` prefixation and deverbal `-baar`
-suffixation — unify into a single complex schema `[on [V baar]A]A` `(16)`, so
-`onbedwingbaar` is coined directly from the verb without the intermediate
-`bedwingbaar` needing to be listed. The join is taken on the schema bodies over a
-shared slot space; the intermediate positive adjective is not required to exist,
-which is exactly the content the join without a listed intermediate expresses. -/
+/-- The regular word inherits the schema's transitive base. -/
+theorem leesbaar_inherits : inherited baseTransitive .leesbaar = {true} :=
+  inherited_eq_singleton_of_isLeast (m := .schema) (by decide) rfl
 
-/-- The affixal morphs of the `on-V-baar` complex. -/
-inductive BaarAtom | on | baar
-  deriving DecidableEq, Fintype
+/-- The exceptional word overrides the inherited transitivity of its base. -/
+theorem werkbaar_overrides : inherited baseTransitive .werkbaar = {false} :=
+  inherited_eq_singleton_of_eq_some (by decide)
 
-/-- The three slots of the `on-V-baar` complex schema. -/
-inductive OnbaarSlot | pre | base | suf
-  deriving DecidableEq, Fintype
+/-- The default fits the regular word: the fragment's *lezen* is transitive. -/
+theorem lezen_isTransitive : ∃ fr ∈ Dutch.Verbs.lezen.valency.frames, fr.IsTransitive := by
+  decide
 
-/-- The `on-A` schema: prefix pinned to `on-`, base open. -/
-def onSchema : Schema OnbaarSlot (Flat BaarAtom) where
-  body
-    | .pre => ↑BaarAtom.on
-    | .base => ⊥
-    | .suf => ⊥
-  opens := {.base}
+/-! ### Schema unification: *on-* with *-baar*
 
-/-- The `V-baar` schema: suffix pinned to `-baar`, base open. -/
-def baarSchema : Schema OnbaarSlot (Flat BaarAtom) where
-  body
-    | .pre => ⊥
-    | .base => ⊥
-    | .suf => ↑BaarAtom.baar
-  opens := {.base}
+Negative *on-* prefixation and deverbal *-baar* suffixation unify into one schema
+`[on [V baar]A]A` (16), so *onbedwingbaar* is coined directly from the verb without the
+intermediate *bedwingbaar* being listed. The unification is over the three slots prefix, base
+and suffix. -/
 
-/-- The unified `on-V-baar` schema: both affixes pinned, base open. -/
-def onbaarSchema : Schema OnbaarSlot (Flat BaarAtom) where
-  body
-    | .pre => ↑BaarAtom.on
-    | .base => ⊥
-    | .suf => ↑BaarAtom.baar
-  opens := {.base}
+/-- The *on-* schema `[on A]A` over prefix, base and suffix: the prefix pinned, the rest open. -/
+def onSchema : Schema (Fin 3) (Flat String) := Schema.productive ![↑"on", ⊥, ⊥]
 
-/-- The `on-` and `V-baar` descriptions unify into the `on-V-baar` description — the
-schema unification `(16)`, with no intermediate `V-baar` word required. -/
+/-- The *-baar* schema over prefix, base and suffix: the suffix pinned, the rest open. -/
+def baarSchema₃ : Schema (Fin 3) (Flat String) := Schema.productive ![⊥, ⊥, ↑"baar"]
+
+/-- The unified schema `[on [V baar]A]A`: both affixes pinned, the base open. -/
+def onbaarSchema : Schema (Fin 3) (Flat String) := Schema.productive ![↑"on", ⊥, ↑"baar"]
+
+/-- The two-slot *-baar* schema of the hierarchy is the three-slot one read at base and
+suffix. -/
+theorem baarSchema_eq_comap : baarSchema₃.comap ![1, 2] = baarSchema :=
+  Schema.ext (funext fun i ↦ by fin_cases i <;> rfl)
+    (Set.ext fun i ↦ by fin_cases i <;> simp [baarSchema₃, baarSchema])
+
+/-- The *on-* and *-baar* descriptions unify into the *on-V-baar* description (16). -/
 theorem onbaar_unifies :
-    PartialUnify.unify onSchema.body baarSchema.body = ↑onbaarSchema.body := by decide
+    PartialUnify.unify onSchema.body baarSchema₃.body = ↑onbaarSchema.body := by decide
 
-/-- The unified schema's instances are exactly the words that are at once `on-`
-prefixed and `-baar` suffixed: the content of coining `onbedwingbaar` directly. -/
-theorem onbaarSchema_instantiates_iff {w : OnbaarSlot → Flat BaarAtom} :
-    onbaarSchema.Instantiates w ↔ onSchema.Instantiates w ∧ baarSchema.Instantiates w :=
+/-- The unified schema's instances are exactly the words at once *on-* prefixed and *-baar*
+suffixed. -/
+theorem onbaarSchema_instantiates_iff {w : Fin 3 → Flat String} :
+    onbaarSchema.Instantiates w ↔ onSchema.Instantiates w ∧ baarSchema₃.Instantiates w :=
   Schema.instantiates_iff_of_unify_eq_coe onbaar_unifies
 
-/-! ### Further constructional phenomena (prose)
-
-[booij-2010-compass] extends the constructional analysis in three directions this
-file records but does not formalize. **Holistic VN exocentrics**: Romance `VN`
-compounds (`lava-piatti` 'dishwasher') carry an agent/instrument meaning that is
-a property of the construction as a whole, with no head constituent and no
-zero-affix to bear it. **Constructional inflection**: the Russian declension
-paradigm treats each cell's morpho-syntactic value as a holistic property of the
-word form, with thematic material that is morphomic ([aronoff-1994]). **Periphrasis**:
-`have` plus past participle is a constructional idiom whose perfect meaning is
-holistic — the natural home for a dedicated periphrasis carrier. -/
+/-- The unified schema coins *onbedwingbaar* over the empty lexicon: no intermediate
+*bedwingbaar* need be listed. -/
+theorem onbedwingbaar_generates : onbaarSchema.Generates ∅ Forms.onbedwingbaar.slots :=
+  (Schema.isProductive_productive _).generates_iff.2 (by decide)
 
 end Booij2010
