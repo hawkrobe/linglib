@@ -1,47 +1,40 @@
 module
 
-public import Linglib.Semantics.Possession.Basic
+public import Linglib.Semantics.Possession.Relationalizer
 public import Linglib.Semantics.Quantification.Basic
 
 /-!
 # Possessive quantifiers
 
-The possessive determiner as a generalized quantifier, after [peters-westerstahl-2006] Chapter 7.
+The possessive determiner as a generalized quantifier, after Peters and Westerståhl.
 `Poss Q₁ C Q₂ R` composes a possessor quantifier `Q₁` restricted by `C` (*every student's*), a
-possessee quantifier `Q₂` (implicit in *John's bikes*, explicit in *several of John's CDs*), and a
-possession relation `R`, narrowing the possessor domain by `dom A R` to those who possess an
-`A`-thing ([barker-1995]'s narrowing). `PossNP` is the variant whose possessor is a type ⟨1⟩ NP
-taken whole (*John's*, their Poss_w), with the narrowing conjunct inside the scope. Which `Q₂` a
-bare possessive carries — the universal reading, the definite `allei` of the "definiteness
-account", an existential — is the parameter the definiteness debate turns on
-([peters-westerstahl-2006] §7.8.2, [coppock-beaver-2015] §4); nothing here fixes it.
+possessee quantifier `Q₂` (implicit in *John's bikes*, explicit in *several of John's CDs*) and a
+possession relation `R`, narrowing the possessor domain to `dom A R`, those who possess an
+`A`-thing. `PossNP` is the variant whose possessor is a type ⟨1⟩ noun phrase taken whole
+(*John's*), with the narrowing conjunct inside the scope. Which `Q₂` a bare possessive carries,
+universal, definite or existential, is the parameter the definiteness debate turns on, and
+nothing here fixes it.
 
-## Main declarations
+## Main definitions
 
-* `dom`, `Poss`, `PossNP` — their (7.27), (7.30), (7.45).
-* `Description.toGQ` — a description's possessor and relation, frozen at a situation, fed to
-  `PossNP`.
+* `Possession.Poss`: the possessive quantifier over a quantified possessor.
+* `Possession.PossNP`: the possessive quantifier over a whole possessor noun phrase.
 
 ## Main statements
 
-* `poss_conservative`, `possNP_conservative` — conservativity inherits from `Q₂` alone (the CONSERV
-  half of their (7.29), with no hypothesis on `Q₁`).
-* `poss_scopeUpMono_of_up_up` and its three sign variants — Proposition 5 (§7.13): the right
-  monotonicity of `Poss` is the product of the signs of `Q₁` and `Q₂`.
-* `poss_eq_possNP_restrict` — Fact 1 (§7.8.1): for a symmetric conservative `Q₁`, narrowing is
-  vacuous.
-* `possNP_individual_existential_import`, `Description.toGQ_existential_import` — *John's A B*
-  entails that John possesses an `A`-thing: the `dom` conjunct of (7.45).
-* `asNPQ_iff_possNP` — [barker-2011]'s type ⟨1⟩ possessive is `PossNP` at a Montagovian individual
-  with existential `Q₂`.
-* `poss_not_quantityInvariant` — with `C` and `R` fixed, `Poss Q₁ C Q₂ R` is "almost never Isom"
-  (p. 256).
+* `Possession.poss_conservative`: conservativity is inherited from `Q₂` alone.
+* `Possession.poss_scopeUpMono_of_up_up` and its three sign variants: the scope monotonicity of
+  `Poss` is the product of the signs of `Q₁` and `Q₂`.
+* `Possession.poss_eq_possNP_restrict`: for a symmetric conservative `Q₁` narrowing is vacuous.
+* `Possession.poss_not_quantityInvariant`: with `C` and `R` fixed, `Poss` is not
+  isomorphism-invariant.
 
 ## References
 
-* [peters-westerstahl-2006], Chapter 7; [peters-westerstahl-2013] is the article-length
-  treatment.
-* [barker-1995], [barker-2011], [coppock-beaver-2015].
+* [peters-westerstahl-2006]
+* [peters-westerstahl-2013]
+* [barker-1995]
+* [coppock-beaver-2015]
 -/
 
 @[expose] public section
@@ -52,30 +45,23 @@ open Quantifier Quantifier.GQ Quantifier.NP
 
 variable {α : Type*}
 
-/-! ### Domain narrowing -/
-
-/-- `dom A R = {a | ∃ b ∈ A, R a b}`, the possessors of at least one `A`-thing — their (7.27),
-p. 254; `Ex (π A R)` at a fixed situation. -/
-def dom (A : α → Prop) (R : α → α → Prop) : α → Prop :=
-  fun a => ∃ b, A b ∧ R a b
-
 /-! ### Possessive operators -/
 
-/-- Possessive quantifier built from a type ⟨1,1⟩ possessor quantifier:
-`Poss Q₁ C Q₂ R A B = Q₁ (C ∩ dom A R) (fun x => Q₂ (A ∩ Rₓ) B)` with `Rₓ y = R x y`; narrowing
-restricts the possessor domain to members of `C` who possess some `A`-thing. Their (7.30), p. 255 —
-the form of (7.28) for conservative, extensional `Q₁` and `Q₂`, where the universe-extension clause
-is moot. -/
+/-- The possessive quantifier of a type ⟨1,1⟩ possessor quantifier is
+`Poss Q₁ C Q₂ R A B = Q₁ (C ∩ dom A R) {x | Q₂ (A ∩ Rₓ) B}` with `Rₓ y = R x y`, where narrowing to
+`dom A R`, their (7.27), restricts the possessor domain to members of `C` who possess some
+`A`-thing. Their (7.30), p. 255, the form of (7.28) for conservative, extensional `Q₁` and `Q₂`,
+where the universe-extension clause is moot. -/
 def Poss (Q₁ : GQ α) (C : α → Prop) (Q₂ : GQ α) (R : α → α → Prop) : GQ α :=
-  fun A B => Q₁ (fun x => C x ∧ dom A R x) (fun x => Q₂ (fun y => A y ∧ R x y) B)
+  fun A B ↦ Q₁ (fun x ↦ C x ∧ dom A R x) (fun x ↦ Q₂ (fun y ↦ A y ∧ R x y) B)
 
-/-- Possessive quantifier built from a type ⟨1⟩ possessor NP taken whole (*John's*, *most
-students'*, where the restrictor is not recoverable from `Q`):
+/-- The possessive quantifier of a type ⟨1⟩ possessor noun phrase taken whole (*John's*, *most
+students'*, where the restrictor is not recoverable from `Q`) is
 `PossNP Q Q₂ R A B = Q (dom A R ∩ {a | Q₂ (A ∩ Rₐ) B})`. The narrowing conjunct sits in the scope,
-so *John's dogs bark* requires John to own a dog. Their (7.45), p. 260 — the form of (7.44) for
+so *John's dogs bark* requires John to own a dog. Their (7.45), p. 260, the form of (7.44) for
 extensional `Q` and conservative, extensional `Q₂`. -/
 def PossNP (Q : NP α) (Q₂ : GQ α) (R : α → α → Prop) : GQ α :=
-  fun A B => Q (fun a => dom A R a ∧ Q₂ (fun y => A y ∧ R a y) B)
+  fun A B ↦ Q (fun a ↦ dom A R a ∧ Q₂ (fun y ↦ A y ∧ R a y) B)
 
 /-! ### Conservativity -/
 
@@ -83,15 +69,15 @@ def PossNP (Q : NP α) (Q₂ : GQ α) (R : α → α → Prop) : GQ α :=
 refines `A`, so a conservative `Q₂` cannot tell `B` from `A ∩ B` in the scope (the CONSERV half
 of their (7.29), p. 255). -/
 theorem poss_conservative {Q₁ Q₂ : GQ α} (C : α → Prop) (R : α → α → Prop)
-    (h₂ : Conservative Q₂) : Conservative (Poss Q₁ C Q₂ R) := fun _ _ =>
-  iff_of_eq (congrArg (Q₁ _) (funext fun _ => propext
-    (Conservative.congr_scope h₂ fun _ hy => (and_iff_right hy.1).symm)))
+    (h₂ : Conservative Q₂) : Conservative (Poss Q₁ C Q₂ R) := fun _ _ ↦
+  iff_of_eq (congrArg (Q₁ _) (funext fun _ ↦ propext
+    (Conservative.congr_scope h₂ fun _ hy ↦ (and_iff_right hy.1).symm)))
 
 /-- Conservativity inheritance for the type ⟨1⟩ variant (their remark after (7.44)). -/
 theorem possNP_conservative {Q : NP α} {Q₂ : GQ α} (R : α → α → Prop)
-    (h₂ : Conservative Q₂) : Conservative (PossNP Q Q₂ R) := fun _ _ =>
-  iff_of_eq (congrArg Q (funext fun _ => propext (and_congr_right fun _ =>
-    Conservative.congr_scope h₂ fun _ hy => (and_iff_right hy.1).symm)))
+    (h₂ : Conservative Q₂) : Conservative (PossNP Q Q₂ R) := fun _ _ ↦
+  iff_of_eq (congrArg Q (funext fun _ ↦ propext (and_congr_right fun _ ↦
+    Conservative.congr_scope h₂ fun _ hy ↦ (and_iff_right hy.1).symm)))
 
 /-! ### Scope monotonicity (Proposition 5, §7.13, p. 288)
 
@@ -102,25 +88,25 @@ give Mon↓. -/
 theorem poss_scopeUpMono_of_up_up {Q₁ Q₂ : GQ α} (C : α → Prop)
     (R : α → α → Prop) (h₁ : ScopeMonotone Q₁) (h₂ : ScopeMonotone Q₂) :
     ScopeMonotone (Poss Q₁ C Q₂ R) :=
-  fun _ _ _ hBB' => h₁ _ fun _ => h₂ _ hBB'
+  fun _ _ _ hBB' ↦ h₁ _ fun _ ↦ h₂ _ hBB'
 
 /-- `Q₁` Mon↑, `Q₂` Mon↓ ⇒ `Poss` Mon↓ in scope. -/
 theorem poss_scopeDownMono_of_up_down {Q₁ Q₂ : GQ α} (C : α → Prop)
     (R : α → α → Prop) (h₁ : ScopeMonotone Q₁) (h₂ : ScopeAntitone Q₂) :
     ScopeAntitone (Poss Q₁ C Q₂ R) :=
-  fun _ _ _ hBB' => h₁ _ fun _ => h₂ _ hBB'
+  fun _ _ _ hBB' ↦ h₁ _ fun _ ↦ h₂ _ hBB'
 
 /-- `Q₁` Mon↓, `Q₂` Mon↓ ⇒ `Poss` Mon↑ in scope. -/
 theorem poss_scopeUpMono_of_down_down {Q₁ Q₂ : GQ α} (C : α → Prop)
     (R : α → α → Prop) (h₁ : ScopeAntitone Q₁) (h₂ : ScopeAntitone Q₂) :
     ScopeMonotone (Poss Q₁ C Q₂ R) :=
-  fun _ _ _ hBB' => h₁ _ fun _ => h₂ _ hBB'
+  fun _ _ _ hBB' ↦ h₁ _ fun _ ↦ h₂ _ hBB'
 
 /-- `Q₁` Mon↓, `Q₂` Mon↑ ⇒ `Poss` Mon↓ in scope. -/
 theorem poss_scopeDownMono_of_down_up {Q₁ Q₂ : GQ α} (C : α → Prop)
     (R : α → α → Prop) (h₁ : ScopeAntitone Q₁) (h₂ : ScopeMonotone Q₂) :
     ScopeAntitone (Poss Q₁ C Q₂ R) :=
-  fun _ _ _ hBB' => h₁ _ fun _ => h₂ _ hBB'
+  fun _ _ _ hBB' ↦ h₁ _ fun _ ↦ h₂ _ hBB'
 
 /-! ### Narrowing vacuity (Fact 1, §7.8.1, p. 260) -/
 
@@ -130,41 +116,16 @@ theorem poss_scopeDownMono_of_down_up {Q₁ Q₂ : GQ α} (C : α → Prop)
 theorem poss_eq_possNP_restrict {Q₁ : GQ α} (hSym : Std.Symm Q₁) (hCons : Conservative Q₁)
     (C : α → Prop) (Q₂ : GQ α) (R : α → α → Prop) :
     Poss Q₁ C Q₂ R = PossNP (restrict Q₁ C) Q₂ R :=
-  funext fun _ => funext fun _ =>
-    propext ((conserv_symm_iff_int Q₁ hCons).mp hSym _ _ _ _ fun _ => and_assoc)
+  funext fun _ ↦ funext fun _ ↦
+    propext ((conserv_symm_iff_int Q₁ hCons).mp hSym _ _ _ _ fun _ ↦ and_assoc)
 
 /-! ### Existential import -/
 
 /-- *John's A B* carries existential import, since whatever `Q₂` is it entails that John
 possesses an `A`-thing, the `dom` conjunct of (7.45). -/
 theorem possNP_individual_existential_import {Q₂ : GQ α} {R : α → α → Prop}
-    {a : α} {A B : α → Prop} (h : PossNP (individual a) Q₂ R A B) :
-    ∃ b, A b ∧ R a b :=
+    {a : α} {A B : α → Prop} (h : PossNP (individual a) Q₂ R A B) : dom A R a :=
   h.1
-
-/-! ### Denoting a description -/
-
-/-- The quantificational denotation of a possessive description at a situation `s` feeds its
-possessor, as an individual NP, and its relation frozen at `s` to `PossNP`; `Q₂` is the usually
-covert possessee quantifier. -/
-def Description.toGQ {E S : Type*} (d : Description E S) (Q₂ : GQ E) (s : S) : GQ E :=
-  PossNP (individual d.possessor) Q₂ (fun x y => d.relation x y s)
-
-/-- A description's denotation carries existential import, since if it holds of possessee class
-`A` and scope `B`, the possessor stands in the relation to some `A`-thing. -/
-theorem Description.toGQ_existential_import {E S : Type*} (d : Description E S) (Q₂ : GQ E)
-    (s : S) {A B : E → Prop} (h : d.toGQ Q₂ s A B) : ∃ b, A b ∧ d.relation d.possessor b s :=
-  possNP_individual_existential_import h
-
-/-! ### Barker's type ⟨1⟩ possessive -/
-
-/-- [barker-2011]'s possessive quantifier `asNPQ` (`⟦John's⟧ = fun P => ∃ y, R j y ∧ P y`) is
-`PossNP` at a Montagovian individual with existential `Q₂` and trivial possessee restrictor — the
-possessee class is folded into `R` by Barker's `π` shift. -/
-theorem asNPQ_iff_possNP (a : α) (R : α → α → Prop) (P : α → Prop) :
-    asNPQ a R P ↔ PossNP (individual a) GQ.some R (fun _ => True) P := by
-  simp only [asNPQ, PossNP, dom, individual, GQ.some, true_and]
-  exact ⟨fun ⟨y, hR, hP⟩ => ⟨⟨y, hR⟩, y, hR, hP⟩, fun ⟨_, y, hR, hP⟩ => ⟨y, hR, hP⟩⟩
 
 /-! ### Non-logicality -/
 
@@ -175,15 +136,15 @@ Poss(Q₁, C, Q₂, R) is almost never Isom" (p. 256); an operation closely rela
 is Isom (their Chapter 9.2). -/
 theorem poss_not_quantityInvariant :
     ¬ QuantityInvariant
-        (Poss (GQ.some (α := Bool)) (fun _ => True) GQ.some
-          (fun x y => x = true ∧ y = true)) := by
+        (Poss (GQ.some (α := Bool)) (fun _ ↦ True) GQ.some
+          (fun x y ↦ x = true ∧ y = true)) := by
   intro h
-  have hiff := h (fun x => x = true) (fun _ => True) (fun x => x = false)
-    (fun _ => True) Bool.not
-    ((Function.Involutive.bijective fun b => Bool.not_not b))
-    (fun x => by cases x <;> simp) (fun _ => Iff.rfl)
-  have hpos : Poss (GQ.some (α := Bool)) (fun _ => True) GQ.some
-      (fun x y => x = true ∧ y = true) (fun x => x = true) (fun _ => True) :=
+  have hiff := h (fun x ↦ x = true) (fun _ ↦ True) (fun x ↦ x = false)
+    (fun _ ↦ True) Bool.not
+    ((Function.Involutive.bijective fun b ↦ Bool.not_not b))
+    (fun x ↦ by cases x <;> simp) (fun _ ↦ Iff.rfl)
+  have hpos : Poss (GQ.some (α := Bool)) (fun _ ↦ True) GQ.some
+      (fun x y ↦ x = true ∧ y = true) (fun x ↦ x = true) (fun _ ↦ True) :=
     ⟨true, ⟨trivial, true, rfl, rfl, rfl⟩, true, ⟨rfl, rfl, rfl⟩, trivial⟩
   obtain ⟨x, ⟨-, b, hb, -, hb'⟩, -⟩ := hiff.mp hpos
   exact absurd (hb' ▸ hb) (by simp)

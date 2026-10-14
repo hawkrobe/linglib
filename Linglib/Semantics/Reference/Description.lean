@@ -4,6 +4,7 @@ public import Linglib.Semantics.Composition.Assignment
 public import Linglib.Semantics.Reference.Definiteness
 public import Linglib.Semantics.Reference.Iota
 public import Linglib.Semantics.Denotation
+public import Linglib.Semantics.Possession.Relationalizer
 
 /-!
 # Nominal descriptions
@@ -16,7 +17,8 @@ presupposition fails. Every constructor is a Russellian iota over a restrictor a
 strong article and the demonstrative are the iota over the restrictor conjoined with identity to the
 indexed entity, so the anaphoric index selects the referent while the situation only decides
 definedness (`denote_anaphoric_eq_some_iff`, `denote_anaphoric_rigid`), whereas the weak article's
-referent covaries with the situation.
+referent covaries with the situation. The possessive is the iota over the restrictor relationalized
+by the possession relation, Barker's `Possession.π`, at the possessor.
 
 ## Main definitions
 
@@ -50,6 +52,7 @@ demonstrative's deictic content and the presupposition it imposes belong to the 
 * [moroney-2021]
 * [russell-1905]
 * [sharvy-1980]
+* [barker-2011]
 -/
 
 @[expose] public section
@@ -110,14 +113,14 @@ def ofStrength (p : Strength) (R : Restrictor E W) (idx : ℕ) : Description E W
 
 /-- The partial individual a description picks out at an assignment and a resource situation:
 the Russellian iota over its restrictor at the situation, conjoined for the strong article and
-the demonstrative with identity to the indexed entity ([schwarz-2009]) and for the possessive
-with the possession relation to the possessor. -/
+the demonstrative with identity to the indexed entity ([schwarz-2009]) and relationalized for
+the possessive by the possession relation to the possessor. -/
 noncomputable def denote : Description E W → Assignment E → W → Option E
   | .bare R, g, s | .unique R, g, s => iota (R g s)
   | .anaphoric R d, g, s | .demonstrative R d, g, s =>
       iota fun x ↦ R g s x ∧ x = g d
   | .possessive R possessor rel, g, s =>
-      iota fun x ↦ R g s x ∧ rel g s (possessor g s) x
+      iota (Possession.π (R g s) (rel g s) (possessor g s))
 
 noncomputable instance : Denotes (Description E W) (Assignment E → W → Option E) := ⟨denote⟩
 
@@ -132,7 +135,7 @@ noncomputable instance : Denotes (Description E W) (Assignment E → W → Optio
     ⟦demonstrative R d⟧ g s = iota fun x ↦ R g s x ∧ x = g d := rfl
 
 @[simp] theorem denote_possessive :
-    ⟦possessive R possessor rel⟧ g s = iota fun x ↦ R g s x ∧ rel g s (possessor g s) x :=
+    ⟦possessive R possessor rel⟧ g s = iota (Possession.π (R g s) (rel g s) (possessor g s)) :=
   rfl
 
 /-- The covert iota of a bare noun is the weak article; the two differ in form, not meaning. -/

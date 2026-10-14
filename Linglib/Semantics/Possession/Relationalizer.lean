@@ -1,79 +1,81 @@
 module
 
-public import Mathlib.Order.Lattice
-public import Mathlib.Order.PropInstances
-public import Mathlib.Order.BoundedOrder.Basic
+public import Mathlib.Data.Fintype.Defs
+public import Mathlib.Order.CompleteBooleanAlgebra
 
 /-!
-# Relational nouns: the relationalizer and its closures
+# Relational nouns and the relationalizer
 
-Type shifters for relational nouns and possessive constructions, following [barker-2011]. A noun
-with a relatum slot denotes a situation-indexed relation `E → Y → S → Prop`, possessor first,
-over a possessum type `Y` that is the entity type for ordinary possession and the state type when
-the possessum is a quality ([hanink-koontz-garboden-2025]); a sortal noun denotes `Y → S → Prop`.
-The relationalizer `π P R` opens a slot on a sortal `P` with a free relation `R`, and applied to a
-possessor `x` it is the modifier genitive `λy. P y ∧ R x y`, the noun conjoined with the bare
-predicate possessive `R x` (`pi_apply`). The argument genitive is application itself: a relational
-noun `R` applied to its possessor is `R x`. `Ex` and `ExPossessor` close the relatum and the
-possessor slot, the domain and codomain of the relation at each situation.
+A relational noun denotes a family `R : ι → α` of properties indexed by possessors, `R x` being
+the property of standing in the noun's relation to `x`, and a sortal noun denotes one property
+`P : α`. The properties form a lattice, such as `κ → Prop` or the situation-indexed
+`κ → σ → Prop`, and the type-shifters between the two kinds of noun are its operations. Barker's
+relationalizer `π` opens a possessor slot on a sortal noun by meeting it with a free relation.
+The possessor slot of a relational noun is closed by the supremum `⨆ x, R x`, the property of
+standing in the relation to something: this is Barker's detransitivizer `Ex`, Adamson's
+alienator, Partee and Borschev's first projection, and the range operator of Hanink and
+Koontz-Garboden.
 
-## Main declarations
+## Main definitions
 
-* `π P R`: Barker's relationalizer, `π P R x y s ↔ P y s ∧ R x y s`.
-* `Ex R`, `ExPossessor R`: existential closure of the relatum (`Ex R x s ↔ ∃ y, R x y s`) and of
-  the possessor (`ExPossessor R y s ↔ ∃ x, R x y s`), the alienator of [adamson-2024].
+* `Possession.π`: the relationalizer, `π P R x = P ⊓ R x`.
+* `Possession.dom`: the possessors of a `P`, `dom P R x ↔ ∃ y, P y ∧ R x y`.
 
 ## Main statements
 
-* `pi_apply`: `π P R x = P ⊓ R x`, the modifier genitive as intersective modification by the
-  predicate possessive ([partee-borschev-2001]).
-* `pi_top`: `π ⊤ R = R`.
-* `exPossessor_pi`: the alienator over a relationalized noun keeps the sortal core.
+* `Possession.π_iSup_self`: a relational noun whose possessor slot is closed and then reopened
+  by its own relation is the noun itself, so the lexical reading of a possessive is one
+  resolution of the free relation.
+* `Possession.iSup_π`: closing the possessor slot of a relationalized noun keeps the sortal noun.
 
 ## References
 
 * [barker-2011]
 * [adamson-2024]
-* [partee-borschev-2001]
+* [partee-borschev-2003]
 * [hanink-koontz-garboden-2025]
+* [peters-westerstahl-2006]
 -/
 
 @[expose] public section
 
 namespace Possession
-variable {E Y S : Type*}
+
+variable {ι κ α : Type*}
 
 /-! ### The relationalizer -/
 
-/-- Barker's relationalizer: `π P R x y s ↔ P y s ∧ R x y s`. Applied to a possessor `x` it is the
-modifier genitive `λy. P y ∧ R x y`; coercing the sortal to a relation and taking the possessor as
-its argument ([jensen-vikner-1994]) and modifying the sortal by the possessor's free relation
-([partee-1997]) assemble the same term `π P R x`. -/
-def π (P : Y → S → Prop) (R : E → Y → S → Prop) : E → Y → S → Prop :=
-  λ x y s => P y s ∧ R x y s
+/-- The relationalizer opens a possessor slot on a sortal noun `P` through a relation `R`, so
+that `π P R x` is the property of being a `P` that stands in `R` to `x`. -/
+def π [Min α] (P : α) (R : ι → α) : ι → α := fun x ↦ P ⊓ R x
 
-/-- The modifier genitive is the noun conjoined with the bare predicate possessive `R x`. -/
-theorem pi_apply (P : Y → S → Prop) (R : E → Y → S → Prop) (x : E) : π P R x = P ⊓ R x := rfl
+theorem π_apply [Min α] (P : α) (R : ι → α) (x : ι) : π P R x = P ⊓ R x := rfl
 
-/-- Over the trivial restrictor the relationalizer is the relation itself. -/
-@[simp] theorem pi_top (R : E → Y → S → Prop) : π ⊤ R = R := by
-  funext x; rw [pi_apply, top_inf_eq]
+@[simp] theorem π_top [SemilatticeInf α] [OrderTop α] (R : ι → α) : π ⊤ R = R :=
+  funext fun _ ↦ top_inf_eq _
 
-/-! ### Existential closures -/
+/-- Closing the possessor slot of a relationalized noun keeps the sortal noun and closes the
+relation. -/
+theorem iSup_π [Order.Frame α] (P : α) (R : ι → α) : ⨆ x, π P R x = P ⊓ ⨆ x, R x :=
+  (inf_iSup_eq P R).symm
 
-/-- Existential closure of the relatum, `Ex R x s ↔ ∃ y, R x y s`: the domain of `R` at `s`. -/
-def Ex (R : E → Y → S → Prop) : E → S → Prop :=
-  λ x s => ∃ y, R x y s
+/-- A relational noun whose possessor slot is closed and then reopened by its own relation is the
+noun itself. -/
+@[simp] theorem π_iSup_self [CompleteLattice α] (R : ι → α) : π (⨆ x, R x) R = R :=
+  funext fun x ↦ inf_eq_right.2 (le_iSup R x)
 
-/-- Existential closure of the possessor, `ExPossessor R y s ↔ ∃ x, R x y s`: the codomain of `R`
-at `s`, the alienator nominalizer of [adamson-2024] that closes a relational noun's possessor
-slot. -/
-def ExPossessor (R : E → Y → S → Prop) : Y → S → Prop :=
-  λ y s => ∃ x, R x y s
+/-! ### Possessors -/
 
-/-- The alienator over a relationalized noun keeps the sortal core and closes the relation. -/
-theorem exPossessor_pi (P : Y → S → Prop) (R : E → Y → S → Prop) (y : Y) (s : S) :
-    ExPossessor (π P R) y s ↔ P y s ∧ ∃ x, R x y s := by
-  simp only [ExPossessor, π, exists_and_left]
+/-- The possessors of a `P` are the individuals that stand in `R` to something satisfying `P`. -/
+def dom (P : κ → Prop) (R : ι → κ → Prop) (x : ι) : Prop := ∃ y, P y ∧ R x y
+
+instance [Fintype κ] {P : κ → Prop} {R : ι → κ → Prop} [DecidablePred P]
+    [∀ x, DecidablePred (R x)] : DecidablePred (dom P R) :=
+  fun x ↦ inferInstanceAs (Decidable (∃ y, P y ∧ R x y))
+
+/-- The possessors of something in a relation's range, when possessing is the relation itself,
+are the individuals that bear the relation to something. -/
+theorem dom_iSup_self (R : ι → κ → Prop) (x : ι) : dom (⨆ x, R x) R x ↔ ∃ y, R x y :=
+  iff_of_eq (congrArg (fun S : ι → κ → Prop ↦ ∃ y, S x y) (π_iSup_self R))
 
 end Possession

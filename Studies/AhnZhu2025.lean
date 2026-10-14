@@ -1,11 +1,11 @@
 module
 
-public import Linglib.Semantics.Possession.Basic
+public import Linglib.Semantics.Possession.Relationalizer
 public import Studies.Jenks2018
 public import Linglib.Data.Examples.AhnZhu2025
 
 /-!
-# Bridging with Mandarin bare nouns and demonstratives
+# Ahn and Zhu (2025): A Bridge to Definiteness: Identifying Unique and Relational Definites through Bridging
 
 Mandarin marks definiteness with bare nouns and with *na*-CL-N demonstrative descriptions. Ahn
 and Zhu probe which mechanism each form carries through bridging, a definite whose referent was
@@ -60,8 +60,8 @@ variable {E S : Type*} (P : E → S → Prop) (R : E → E → S → Prop) (z : 
 
 /-! ### Bare nouns and *na* -/
 
-/-- The *na* restrictor `na P R z x s ↔ P x s ∧ R z x s`: the noun relationalized by `π` with
-the index `z` in the relatum slot; the definite `ιx[P(x)(sᵣ) ∧ R(z,x)(sᵣ)]` is its `∃!`
+/-- The *na* restrictor `na P R z x s ↔ P x s ∧ R z x s` is the noun relationalized by `π` with
+the index `z` in the relatum slot, and the definite `ιx[P(x)(sᵣ) ∧ R(z,x)(sᵣ)]` is its `∃!`
 witness. -/
 abbrev na : E → S → Prop := π P R z
 
@@ -69,17 +69,17 @@ abbrev na : E → S → Prop := π P R z
 the index can restore it. -/
 theorem na_of_two_satisfiers (h : ∃ a b, a ≠ b ∧ P a s ∧ P b s) (hR : ∃! x, P x s ∧ R z x s) :
     ¬ (∃! x, P x s) ∧ ∃! x, na P R z x s :=
-  ⟨fun ⟨_, _, hu⟩ => let ⟨_, _, hab, ha, hb⟩ := h; hab ((hu _ ha).trans (hu _ hb).symm), hR⟩
+  ⟨fun ⟨_, _, hu⟩ ↦ let ⟨_, _, hab, ha, hb⟩ := h; hab ((hu _ ha).trans (hu _ hb).symm), hR⟩
 
-/-- With the identity relation *na* is the strong article: felicitous iff the indexed entity is
+/-- With the identity relation *na* is the strong article, felicitous iff the indexed entity is
 `P`. -/
-theorem na_identity_iff : (∃! x, na P (fun a b _ => a = b) z x s) ↔ P z s :=
-  ⟨fun ⟨_, ⟨h, hz⟩, _⟩ => hz ▸ h, fun h => ⟨z, ⟨h, rfl⟩, fun _ hy => hy.2.symm⟩⟩
+theorem na_identity_iff : (∃! x, na P (fun a b _ ↦ a = b) z x s) ↔ P z s :=
+  ⟨fun ⟨_, ⟨h, hz⟩, _⟩ ↦ hz ▸ h, fun h ↦ ⟨z, ⟨h, rfl⟩, fun _ hy ↦ hy.2.symm⟩⟩
 
-/-- When every `P` in `s` bears `R` to the index, the relation is redundant: *na* and the bare
-noun have the same extension. -/
+/-- When every `P` in `s` bears `R` to the index, the relation is redundant, and *na* and the
+bare noun have the same extension. -/
 theorem na_iff_bare_of_related (h : ∀ x, P x s → R z x s) (x : E) : na P R z x s ↔ P x s :=
-  ⟨And.left, fun hx => ⟨hx, h x hx⟩⟩
+  ⟨And.left, fun hx ↦ ⟨hx, h x hx⟩⟩
 
 theorem existsUnique_na_iff (h : ∀ x, P x s → R z x s) :
     (∃! x, na P R z x s) ↔ ∃! x, P x s :=
@@ -92,18 +92,18 @@ inductive Thing | bike | seat
   deriving DecidableEq
 
 /-- *chezuo* 'seat'. -/
-def seat : Thing → Unit → Prop := fun x _ => x = .seat
+def seat : Thing → Unit → Prop := fun x _ ↦ x = .seat
 
-/-- `partOf z x`: `x` is a part of `z`. -/
-def partOf : Thing → Thing → Unit → Prop := fun z x _ => z = .bike ∧ x = .seat
+/-- `partOf z x` holds when `x` is a part of `z`. -/
+def partOf : Thing → Thing → Unit → Prop := fun z x _ ↦ z = .bike ∧ x = .seat
 
 /-- The bare *chezuo* picks the unique seat of the situation. -/
-theorem bare_seat : ∃! x, seat x () := ⟨.seat, rfl, fun _ h => h⟩
+theorem bare_seat : ∃! x, seat x () := ⟨.seat, rfl, fun _ h ↦ h⟩
 
 /-- *na ge chezuo* with `R` resolved to part-of has the same extension as the bare noun, so the
 demonstrative's restriction is redundant and economy prefers the bare noun. -/
 theorem na_seat_redundant (x : Thing) : na seat partOf .bike x () ↔ seat x () :=
-  na_iff_bare_of_related seat partOf .bike () (fun _ h => ⟨rfl, h⟩) x
+  na_iff_bare_of_related seat partOf .bike () (fun _ h ↦ ⟨rfl, h⟩) x
 
 /-! ### Relational bridging: the novel, its author, and another novelist -/
 
@@ -112,10 +112,10 @@ inductive Ind | theNovel | itsAuthor | anotherNovelist
   deriving DecidableEq
 
 /-- *xiaoshuo-jia* 'novelist', a sortal noun true of both novelists. -/
-def novelist : Ind → Unit → Prop := fun x _ => x = .itsAuthor ∨ x = .anotherNovelist
+def novelist : Ind → Unit → Prop := fun x _ ↦ x = .itsAuthor ∨ x = .anotherNovelist
 
-/-- *zuozhe* 'author': `author z x` holds when `x` is an author of `z`. -/
-def author : Ind → Ind → Unit → Prop := fun z x _ => z = .theNovel ∧ x = .itsAuthor
+/-- *zuozhe* 'author', where `author z x` holds when `x` is an author of `z`. -/
+def author : Ind → Ind → Unit → Prop := fun z x _ ↦ z = .theNovel ∧ x = .itsAuthor
 
 /-- The bare non-relational noun has no relatum slot, and situational uniqueness fails with two
 novelists. -/
@@ -126,15 +126,16 @@ theorem bare_novelist_fails : ¬ ∃! x, novelist x () := by
 /-- *na wei xiaoshuo-jia*: the demonstrative supplies the relatum, and `R` resolved to authorship
 picks the author. -/
 theorem na_novelist : ∃! x, na novelist author .theNovel x () :=
-  ⟨.itsAuthor, ⟨Or.inl rfl, rfl, rfl⟩, fun _ hy => hy.2.2⟩
+  ⟨.itsAuthor, ⟨Or.inl rfl, rfl, rfl⟩, fun _ hy ↦ hy.2.2⟩
 
 /-- The bare *zuozhe* with its relatum argument covertly filled by the novel. -/
 theorem bare_author : ∃! x, author .theNovel x () :=
-  ⟨.itsAuthor, ⟨rfl, rfl⟩, fun _ hy => hy.2⟩
+  ⟨.itsAuthor, ⟨rfl, rfl⟩, fun _ hy ↦ hy.2⟩
 
-/-- *na wei zuozhe*: the relational noun detransitivized by `Ex` and re-relationalized by *na*. -/
-theorem na_ex_author : ∃! x, na (ExPossessor author) author .theNovel x () :=
-  ⟨.itsAuthor, ⟨⟨.theNovel, rfl, rfl⟩, rfl, rfl⟩, fun _ hy => hy.2.2⟩
+/-- *na wei zuozhe* (53) is *na* over the relational noun with its relatum slot closed, and with
+`R` resolved to the noun's own relation it is the bare relational reading. -/
+theorem na_ex_author : ∃! x, na (⨆ z, author z) author .theNovel x () := by
+  simpa only [na, π_iSup_self] using bare_author
 
 /-! ### The Studies' rows -/
 

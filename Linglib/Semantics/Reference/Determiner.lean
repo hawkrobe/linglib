@@ -5,7 +5,6 @@ public import Linglib.Semantics.Reference.Description
 public import Linglib.Semantics.Presupposition.PhiFeatures
 public import Linglib.Syntax.Category.Determiner.Basic
 public import Linglib.Semantics.Reference.Nominal
-public import Linglib.Semantics.Possession.Basic
 
 /-!
 # The denotation of a determiner
@@ -37,9 +36,6 @@ of the demonstrative's participant sets: the χ-image of the preimage of those s
   weak and the strong description.
 * `PossessiveDeterminer.denote`: the possessive determiner's `Nominal`, the unique satisfier of
   the possessee restrictor that stands in the possession relation to the possessor.
-* `Description.denote_possessive_eq_pi`, `PossessiveDeterminer.denote_isSome_iff_existsUnique`:
-  the possessive determiner's denotation is Barker's `π` applied to the possessor, with
-  definedness as its presupposition.
 
 ## Implementation notes
 
@@ -230,36 +226,5 @@ denotational pipeline and the inventory pipeline agree, parallel to
 theorem _root_.PossessiveDeterminer.denote_realized (p : PossessiveDeterminer) :
     Determiner.Inventory.Realizes [.possessive p] (Description.possessive R possessor rel).kind :=
   ⟨.possessive p, List.mem_singleton_self _, rfl⟩
-
-/-! ### Unification with the possessive description
-
-The possessive determiner's denotation (`Description.possessive`/`iota`) and the
-`Possession` description are not two analyses — they are the same construction. The
-determiner's restrictor *is* Barker's `Possession.π` of the noun predicate and the possession
-relation, applied to the possessor, and its definedness presupposition *is* the description's
-Russellian uniqueness condition. -/
-
-section DescriptionUnification
-
-variable (g : Assignment E) (s : W)
-
-/-- The possessive determiner's restrictor *is* Barker's `π` of the noun predicate `R`
-and the possession relation `rel` at the situation, applied to the possessor: the
-`Reference` and `Possession` encodings select through the same construction, by
-construction. -/
-theorem Description.denote_possessive_eq_pi :
-    ⟦Description.possessive R possessor rel⟧ g s
-      = iota fun x ↦ Possession.π (fun y s' ↦ R g s' y) (fun a b s' ↦ rel g s' a b)
-          (possessor g s) x s :=
-  rfl
-
-/-- The possessive determiner's definedness presupposition *is* the description's Russellian
-uniqueness condition. -/
-theorem _root_.PossessiveDeterminer.denote_isSome_iff_existsUnique (p : PossessiveDeterminer) :
-    ((p.denote R possessor rel).selector g s).isSome
-      ↔ ∃! x, R g s x ∧ rel g s (possessor g s) x :=
-  Description.denote_possessive_isSome_iff R possessor rel g s
-
-end DescriptionUnification
 
 end Reference

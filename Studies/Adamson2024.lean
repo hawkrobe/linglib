@@ -246,13 +246,13 @@ variable {E S : Type*} (isSpleen : E → S → Prop) (bodyPartOf : E → E → S
 def ipossessedDenot : E → E → S → Prop := π isSpleen bodyPartOf
 
 /-- The unpossessed body-part noun, whose possessor slot the alienator closes. -/
-def freeDenot : E → S → Prop := ExPossessor (π isSpleen bodyPartOf)
+def freeDenot : E → S → Prop := ⨆ x, ipossessedDenot isSpleen bodyPartOf x
 
 /-- The possessor slot is open under the {D} nominalizer and existentially closed under the
 alienator. -/
 theorem freeDenot_iff (y : E) (s : S) :
-    freeDenot isSpleen bodyPartOf y s ↔ isSpleen y s ∧ ∃ x, bodyPartOf x y s :=
-  exPossessor_pi ..
+    freeDenot isSpleen bodyPartOf y s ↔ isSpleen y s ∧ ∃ x, bodyPartOf x y s := by
+  rw [freeDenot, ipossessedDenot, iSup_π]; simp
 
 end Denotation
 
