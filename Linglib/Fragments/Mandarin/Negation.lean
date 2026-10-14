@@ -14,9 +14,9 @@ possessive verb *yǒu* 'have', which may follow it in the long form *méi-yǒu*.
 particle *le* does not occur under it, while the experiential *guò* does: *Nézha chuī le chángdí*
 'Nezha played the flute' is negated as *Nézha méi-yǒu chuī chángdí*. Prohibitions use neither
 negator but the negative imperatives *bié* and *búyào*, literally 'not want'. The description
-follows [miestamo-2005], [zhao-2025] and [jin-koenig-2021]; [miestamo-2005]'s classification of the
-constructions as symmetric and asymmetric lives in `Studies/Miestamo2005.lean`, and the negators
-that appear expletively under *fear* and *regret* are the rows of `Data.Examples.JinKoenig2021`.
+follows Miestamo, Zhao, and Jin and Koenig; Miestamo's classification of the constructions as
+symmetric and asymmetric lives in `Studies/Miestamo2005.lean`, and the negators that appear
+expletively under *fear* and *regret* are the rows of `Data.Examples.JinKoenig2021`.
 
 ## References
 
@@ -63,5 +63,8 @@ def bie : Marker := { pieces := [[.free "bié"]] }
 
 /-- *búyào* 不要, literally 'not want', the periphrastic negative imperative. -/
 def buyao : Marker := { pieces := [[.free "bú", .free "yào"]] }
+
+/-- *bùgāi* 不该, literally 'not should', the deontic negative 'should not'. -/
+def bugai : Marker := { pieces := [[.free "bù", .free "gāi"]] }
 
 end Mandarin.Negation

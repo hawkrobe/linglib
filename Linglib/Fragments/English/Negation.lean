@@ -29,6 +29,9 @@ def not : Marker := { pieces := [[.free "not"]] }
 /-- *n't*, the contracted negator, an enclitic on the auxiliary. -/
 def nt : Marker := { pieces := [[.encl "n't"]] }
 
+/-- The standard negators. -/
+def standard : List Marker := [not, nt]
+
 /-- The compound tenses, whose negative places *not* after the auxiliary. -/
 def compoundTenses : List Pair :=
   [⟨not, ["chris", "is", "dancing"].map .free, ["chris", "is", "not", "dancing"].map .free⟩,

@@ -5,20 +5,26 @@ public import Studies.Karttunen1974
 public import Linglib.Semantics.Modality.Necessity
 public import Linglib.Semantics.Conditionals.Basic
 public import Linglib.Fragments.English.Verbs.Inventory
+public import Linglib.Fragments.English.Negation
+public import Linglib.Fragments.Romance.French.Negation
+public import Linglib.Fragments.Januubi.Negation
+public import Linglib.Fragments.Mandarin.Negation
+public import Linglib.Fragments.ZarmaSonrai.Negation
 
 /-!
 # Jin and Koenig (2021): A Cross-Linguistic Study of Expletive Negation
 
-Jin and Koenig give a typology of expletive negation, a negator in the dependent of a lexical
-item, triggered by the item's meaning, that contributes no negation to the dependent's
-proposition. English, French, Januubi, Mandarin and Zarma-Sonrai share its trigger classes
-(`ENTriggerClass`). A trigger's meaning activates both its argument and the argument's
-negation, at distinct worlds, times or entities or within the meaning itself,
-(13); the substrate's operators deliver this dual inference for *before*,
-*impossible* and comparatives (`before_dual`, `impossible_dual`, `comparative_dual`), and the
-verbal triggers are the negative-valence attitudes and the verbs whose affirmation implies the
-negation of their complement (`english_triggers`). The paper's examples are rows carrying its
-negator facts (`mandarin_negators`, `french_ne_of_entrenched`, `januubi_standard`).
+Jin and Koenig give a typology of expletive negation, a negator in the dependent of a lexical item,
+triggered by the item's meaning, that contributes no negation to the dependent's proposition.
+English, French, Januubi, Mandarin and Zarma-Sonrai share its trigger classes (`ENTriggerClass`). A
+trigger's meaning activates both its argument and the argument's negation, at distinct worlds, times
+or entities or within the meaning itself, (13); the substrate's operators deliver this dual
+inference for *before*, *impossible* and comparatives (`before_dual`, `impossible_dual`,
+`comparative_dual`), and the verbal triggers are the negative-valence attitudes and the verbs whose
+affirmation implies the negation of their complement (`english_triggers`). The paper's examples are
+rows whose negators are the markers of the languages' fragments, the negators the paper calls
+standard being the fragments' standard negators (`kind_eq_standard_iff`), and they carry its negator
+facts (`mandarin_negators`, `french_ne_of_entrenched`, `januubi_maa`).
 
 ## Implementation notes
 
@@ -199,6 +205,28 @@ inductive Language
   | zarmaSonrai
   deriving DecidableEq, Repr
 
+open Negation in
+/-- The standard negators of a language, from its fragment. -/
+def Language.standard : Language → List Marker
+  | .english => English.Negation.standard
+  | .french => French.Negation.standard
+  | .januubi => Januubi.Negation.standard
+  | .mandarin => Mandarin.Negation.negators.map (·.marker)
+  | .zarmaSonrai => ZarmaSonrai.Negation.standard
+
+open Negation in
+/-- The negators of a language's fragment, under the forms the rows cite them by. -/
+def Language.negators : Language → List (String × Marker)
+  | .english => [("not", English.Negation.not)]
+  | .french => [("ne pas", French.Negation.nePas), ("ne", French.Negation.ne)]
+  | .januubi => [("maa", Januubi.Negation.maa), ("laa", Januubi.Negation.laa)]
+  | .mandarin =>
+    [("bù", Mandarin.Negation.bu.marker), ("méi", Mandarin.Negation.mei.marker),
+      ("bié", Mandarin.Negation.bie), ("bùgāi", Mandarin.Negation.bugai)]
+  | .zarmaSonrai =>
+    [("si", ZarmaSonrai.Negation.si), ("mana", ZarmaSonrai.Negation.mana),
+      ("sinda", ZarmaSonrai.Negation.sinda)]
+
 /-- An example uses the standard negator, a dedicated expletive negator (French *ne* alone), an
 imperative negator (Mandarin *bié*), a deontic one (Mandarin *bùgāi*) or a copular one
 (Zarma-Sonrai *sinda*). -/
@@ -215,7 +243,7 @@ whether the paper reports the use as entrenched. -/
 structure Row where
   language : Language
   concept : ENConcept
-  negator : String
+  negator : Negation.Marker
   kind : NegatorKind
   entrenched : Option Bool
   deriving DecidableEq
@@ -258,12 +286,22 @@ def kindOf : String → Option NegatorKind
 def Row.ofDatum (e : Datum) : Option Row := do
   let l ← languageOf e.language
   let c ← (e.feature? "concept").bind conceptOf
-  let n ← e.feature? "negator"
+  let n ← e.parse? "negator" l.negators
   let k ← (e.feature? "negator_kind").bind kindOf
   some ⟨l, c, n, k, (e.feature? "entrenched").map (· == "high")⟩
 
 /-- The examples of Sections 1, 2 and 6. -/
 def rows : List Row := Examples.all.filterMap Row.ofDatum
+
+/-- Every example citing a negator is a row: its negator is one of its language's fragment. -/
+theorem isSome_ofDatum : ∀ e ∈ Examples.all, (e.feature? "negator").isSome →
+    (Row.ofDatum e).isSome := by
+  decide
+
+/-- The negators the paper calls standard are the standard negators of the fragments. -/
+theorem kind_eq_standard_iff :
+    ∀ r ∈ rows, r.kind = .standard ↔ r.negator ∈ r.language.standard := by
+  decide
 
 /-- Mandarin's negator tracks the trigger, Sections 6.1.1 and 6.1.2. The imperative negator appears
 exactly under *fear* and the deontic negator exactly under the *regret* class. -/
@@ -275,11 +313,13 @@ theorem mandarin_negators :
 
 /-- French marks its entrenched uses with *ne* alone, Section 5.5. -/
 theorem french_ne_of_entrenched :
-    ∀ r ∈ rows, r.language = .french → r.entrenched = some true → r.negator = "ne" := by
+    ∀ r ∈ rows, r.language = .french → r.entrenched = some true →
+      r.negator = French.Negation.ne := by
   decide
 
 /-- Januubi's exemplified triggers, *barely* and *before*, take its standard negator *maa*. -/
-theorem januubi_standard : ∀ r ∈ rows, r.language = .januubi → r.kind = .standard := by decide
+theorem januubi_maa : ∀ r ∈ rows, r.language = .januubi → r.negator = Januubi.Negation.maa := by
+  decide
 
 /-! ### Blocked classes (Sections 6.4 and 7) -/
 
