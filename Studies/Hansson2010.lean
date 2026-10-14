@@ -171,11 +171,13 @@ theorem mem_language_iff (w : List Segment) :
 
 /-- The language is the inverse image, under the sibilant class, of agreement among the
 classes. -/
-theorem language_eq_comap : navajoSibilantHarmony.language =
-    (TierStrictlyLocalGrammar.agree (·.isSome)).language.comap sibilantClass := by
-  rw [TierStrictlyLocalGrammar.agree, ← ofForbiddenPairs_language_comap]
-  exact ofForbiddenPairs_language_congr (fun _ ↦ Iff.rfl) fun x y hx hy ↦ by
-    rw [sibilantClass_of_onTier hx, sibilantClass_of_onTier hy]
+theorem language_eq_preimage : navajoSibilantHarmony.language =
+    List.map sibilantClass ⁻¹' (TierStrictlyLocalGrammar.agree (·.isSome)).language := by
+  ext w
+  show _ ↔ w.map sibilantClass ∈ (TierStrictlyLocalGrammar.agree (·.isSome)).language
+  rw [TierStrictlyLocalGrammar.agree, mem_ofForbiddenPairs_language_map_iff]
+  exact Eq.to_iff (congrArg (w ∈ ·) (ofForbiddenPairs_language_congr (fun _ ↦ Iff.rfl)
+    fun x y hx hy ↦ by rw [sibilantClass_of_onTier hx, sibilantClass_of_onTier hy]))
 
 /-! ### Anticipatory harmony, section 1.1 -/
 
@@ -357,8 +359,8 @@ theorem pattern_project : navajo.pattern.project = sibilantClass := by
 /-- The system's surface harmonicity is the tier-based language. -/
 theorem harmonic_iff_mem_language (w : List Segment) :
     navajo.pattern.Harmonic w ↔ w ∈ navajoSibilantHarmony.language := by
-  rw [navajo.pattern.harmonic_iff_mem_comap (fun x hx ↦ (saturated x hx).2) w, pattern_project,
-    language_eq_comap]
+  rw [navajo.pattern.harmonic_iff_map_project_mem (fun x hx ↦ (saturated x hx).2) w,
+    pattern_project, language_eq_preimage]
   rfl
 
 /-- The class of the leftmost sibilant of a word. -/

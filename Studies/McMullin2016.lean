@@ -48,26 +48,26 @@ open Subregular Hansson2010
 classes, and agreement is strictly 2-piecewise. -/
 theorem navajoSibilantHarmony_lang_isSP2 :
     navajoSibilantHarmony.language.IsStrictlyPiecewise 2 := by
-  rw [language_eq_comap]
-  exact (TierStrictlyLocalGrammar.agree_language_isStrictlyPiecewise _).comap _
+  rw [language_eq_preimage]
+  exact (TierStrictlyLocalGrammar.agree_language_isStrictlyPiecewise _).preimage_map _
 
 /-- The tier-based and subsequence-based grammars for Navajo generate the same language, read
 through the sibilant classes. -/
 theorem navajoSibilantHarmony_language_eq_sp : navajoSibilantHarmony.language =
-    ((StrictlyPiecewiseGrammar.agree (·.isSome)).language 2).comap sibilantClass := by
-  rw [language_eq_comap, TierStrictlyLocalGrammar.agree_language_eq_sp]
+    List.map sibilantClass ⁻¹' (StrictlyPiecewiseGrammar.agree (·.isSome)).language 2 := by
+  rw [language_eq_preimage, TierStrictlyLocalGrammar.agree_language_eq_sp]
 
 /-- Under the SP_2 description Hansson's minimal pair comes out as before, the pre-harmony
 /si-dʒéːʔ/ rejected and the surface [ʃidʒéːʔ] accepted. Both transfer along the equality of
 languages rather than being recomputed. -/
 theorem ur_ex6a_ii_violates_sp :
-    ur Examples.ex6a_ii ∉ ((StrictlyPiecewiseGrammar.agree (·.isSome)).language 2).comap
-      sibilantClass :=
+    ur Examples.ex6a_ii ∉
+      List.map sibilantClass ⁻¹' (StrictlyPiecewiseGrammar.agree (·.isSome)).language 2 :=
   navajoSibilantHarmony_language_eq_sp ▸ ur_ex6a_ii_violates
 
 theorem sr_ex6a_ii_legal_sp :
-    sr Examples.ex6a_ii ∈ ((StrictlyPiecewiseGrammar.agree (·.isSome)).language 2).comap
-      sibilantClass :=
+    sr Examples.ex6a_ii ∈
+      List.map sibilantClass ⁻¹' (StrictlyPiecewiseGrammar.agree (·.isSome)).language 2 :=
   navajoSibilantHarmony_language_eq_sp ▸ sr_ex6a_ii_legal
 
 /-! ### Opaque harmony: blocking is strictly piecewise at no width -/

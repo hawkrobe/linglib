@@ -36,8 +36,8 @@ forbidden-pairs machinery.
   and pairwise formulations coincide.
 * `Pattern.harmonic_iff_mem_tsl`: surface harmonicity is membership in a TSL₂
   language.
-* `Pattern.harmonic_iff_mem_comap`: when every tier segment participates, the harmonic words
-  are the inverse image of agreement under the tier projection.
+* `Pattern.harmonic_iff_map_project_mem`: when every tier segment participates, a word is
+  harmonic exactly when its tier projection is in the agreement language.
 
 ## References
 
@@ -233,12 +233,12 @@ def Pattern.project (p : Pattern α V) (s : α) : Option V :=
 open Subregular TierStrictlyLocalGrammar in
 /-- When every segment on the tier participates with a value, the harmonic words are the inverse
 image, under the tier projection, of agreement among the values. -/
-theorem Pattern.harmonic_iff_mem_comap [DecidableEq V] (p : Pattern α V)
+theorem Pattern.harmonic_iff_map_project_mem [DecidableEq V] (p : Pattern α V)
     (hp : ∀ s, p.OnTier s → p.participation s = .participating ∧ (p.value s).isSome)
     (w : List α) :
-    p.Harmonic w ↔ w ∈ (ofForbiddenPairs (· ≠ ·) (·.isSome)).language.comap p.project := by
+    p.Harmonic w ↔ w.map p.project ∈ (ofForbiddenPairs (· ≠ ·) (·.isSome)).language := by
   have hproj : ∀ s, p.OnTier s → p.project s = p.value s := fun s hs ↦ ite_eq_left hs
-  rw [harmonic_iff_mem_tsl, ← ofForbiddenPairs_language_comap]
+  rw [harmonic_iff_mem_tsl, mem_ofForbiddenPairs_language_map_iff]
   refine Eq.to_iff (congrArg (w ∈ ·) (ofForbiddenPairs_language_congr (fun s ↦ ?_)
     fun s t hs ht ↦ ?_))
   · by_cases hs : p.OnTier s
