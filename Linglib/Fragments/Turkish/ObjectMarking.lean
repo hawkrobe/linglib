@@ -16,17 +16,13 @@ dimension.
 
 ## Main definitions
 
-* `Turkish.ObjectMarking.accusative`: the marking pattern, the definiteness scale from the
+* `Turkish.ObjectMarking.accusative`: the marked objects, the definiteness scale from the
   specific indefinites up
 * `Turkish.ObjectMarking.MustBePreverbal`: the positions on the definiteness scale whose
   objects, being unmarked, stand immediately before the verb
 
 ## Main results
 
-* `Turkish.ObjectMarking.accusative_iff`: an object is marked exactly when it is at least a
-  specific indefinite
-* `Turkish.ObjectMarking.accusative_monotoneP`: the marked cells are an upper set of the
-  prominence order
 * `Turkish.ObjectMarking.mustBePreverbal_iff`: only a non-specific indefinite is confined to
   the preverbal position
 
@@ -44,21 +40,15 @@ open Reference.Prominence
 
 /-- The accusative marks a direct object at or above the specific indefinite on the
 definiteness scale, whatever its animacy. -/
-def accusative : MarkingPattern := .definitenessAtLeast .indefiniteSpecific
+def accusative : Set DefinitenessScale := Set.Ici .indefiniteSpecific
 
-/-- An object is marked exactly when it is at least a specific indefinite. -/
-theorem accusative_iff (a : Reference.Animacy) (d : DefinitenessScale) :
-    accusative a d = true ↔ .indefiniteSpecific ≤ d := by
-  simp [accusative, MarkingPattern.definitenessAtLeast]
+instance : DecidablePred (· ∈ accusative) := fun d ↦
+  inferInstanceAs (Decidable (d ∈ Set.Ici _))
 
-/-- The marked cells are an upper set of the prominence order. -/
-theorem accusative_monotoneP : accusative.MonotoneP := by decide
+/-- An object must stand immediately before the verb when it is unmarked. -/
+def MustBePreverbal (d : DefinitenessScale) : Prop := d ∉ accusative
 
-/-- An object of a definiteness level must stand immediately before the verb when it is
-unmarked. -/
-def MustBePreverbal (d : DefinitenessScale) : Prop := ∀ a, accusative a d = false
-
-instance : DecidablePred MustBePreverbal := fun _ ↦ inferInstanceAs (Decidable (∀ _, _))
+instance : DecidablePred MustBePreverbal := fun d ↦ inferInstanceAs (Decidable (d ∉ accusative))
 
 /-- Only a non-specific indefinite is confined to the preverbal position. -/
 theorem mustBePreverbal_iff (d : DefinitenessScale) : MustBePreverbal d ↔ d = .nonSpecific := by

@@ -3,22 +3,20 @@ module
 public import Linglib.Semantics.Reference.Animacy
 public import Linglib.Semantics.Reference.Definiteness
 public import Mathlib.Order.Nat
-public import Mathlib.Order.UpperLower.Basic
 public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # Referential prominence
 
 This file defines the scales of referential prominence that condition differential argument
-marking, and the marking grids over them.
+marking and number marking.
 
 The animacy scale is `Reference.Animacy`. The definiteness scale is Aissen's, which extends the
 definiteness hierarchy to proper names and personal pronouns and whose cut at the definites is
 `Reference.Definiteness`. The animacy hierarchy that conditions nominal plural marking is
 Haspelmath's, which refines Corbett's version of Smith-Stark's by splitting the animals into higher
-and lower and the inanimates into discrete and nondiscrete. A marking pattern says which cells of
-the grid of animacy and definiteness are marked, and Aissen's staircase generalization says that the
-marked zone is an upper set in the product of the two scales.
+and lower and the inanimates into discrete and nondiscrete. A marking conditioned by these scales
+fits them when its marked zones are upper or lower sets (`Alignment.Fits`).
 
 ## Main declarations
 
@@ -28,8 +26,6 @@ marked zone is an upper set in the product of the two scales.
   inanimates.
 * `atLeast`, `below`: the coding lengths of a cutoff split on a scale, the special coding on
   the values from a cutoff up, as P and T splits have it, or below it, as A and R splits do.
-* `MarkingPattern`: which cells of the grid of animacy and definiteness are marked, with the
-  `MonotoneP` staircase, the cutoff constructors, and `monotoneP_iff_isUpperSet`.
 
 What is specific to a paper lives with that paper: the scenario universals in
 `Studies/Haspelmath2021.lean`, the OT typology in `Studies/Aissen2003.lean`, and the prominence
@@ -113,8 +109,8 @@ instance : LinearOrder DefinitenessScale := LinearOrder.lift' rank (by decide)
 def all : List DefinitenessScale :=
   [.personalPronoun, .properName, .definite, .indefiniteSpecific, .nonSpecific]
 
-/-- The definiteness of a position: pronouns, names and definite NPs are definite, and the
-indefinites, specific or not, indefinite. -/
+/-- A position is definite when it is a pronoun, a name or a definite NP, and indefinite when
+it is an indefinite, specific or not. -/
 def definiteness (d : DefinitenessScale) : Definiteness :=
   if .definite ≤ d then .definite else .indefinite
 
@@ -146,53 +142,5 @@ theorem below_antitone (x : α) : Antitone (below x) := fun _ _ h ↦ by
   split_ifs with h₁ h₂ <;> first | rfl | omega | exact absurd (h.trans_lt h₁) h₂
 
 end Cutoff
-
-/-! ### Differential marking patterns -/
-
-/-- A differential-marking pattern says which cells in the grid of animacy and definiteness receive
-overt differential marking, for whatever argument role and channel a consumer pairs the pattern
-with. It is a `def` and not an `abbrev`, so that the checkers below are accessible by dot notation.
--/
-def MarkingPattern := Animacy → DefinitenessScale → Bool
-
-namespace MarkingPattern
-
-/-- Marking is closed under moving up both scales, the upper-set staircase appropriate to P/T
-marking. -/
-def MonotoneP (p : MarkingPattern) : Prop :=
-  ∀ a a' d d', a ≤ a' → d ≤ d' → p a d = true → p a' d' = true
-
-/-- The pattern depends only on animacy. -/
-def AnimacyOnly (p : MarkingPattern) : Prop :=
-  ∀ a d d', p a d = p a d'
-
-/-- The pattern depends only on definiteness. -/
-def DefinitenessOnly (p : MarkingPattern) : Prop :=
-  ∀ a a' d, p a d = p a' d
-
-instance : DecidablePred MonotoneP := fun p ↦ by unfold MonotoneP; infer_instance
-instance : DecidablePred AnimacyOnly := fun p ↦ by unfold AnimacyOnly; infer_instance
-instance : DecidablePred DefinitenessOnly := fun p ↦ by
-  unfold DefinitenessOnly; infer_instance
-
-/-- `MonotoneP` is upper-set closure of the marked zone in the product prominence order. -/
-theorem monotoneP_iff_isUpperSet (p : MarkingPattern) :
-    p.MonotoneP ↔
-      IsUpperSet {c : Animacy × DefinitenessScale | p c.1 c.2 = true} :=
-  ⟨fun h _ _ hle hm ↦ h _ _ _ _ hle.1 hle.2 hm,
-    fun h _ _ _ _ ha hd hm ↦ h (Prod.mk_le_mk.mpr ⟨ha, hd⟩) hm⟩
-
-/-! ### One-dimensional cutoff patterns -/
-
-/-- The pattern that marks the cells at or above an animacy cutoff, as in P/T-type marking. Its
-marked zone is `Set.Ici cutoff` on the animacy axis. -/
-def animacyAtLeast (cutoff : Animacy) : MarkingPattern :=
-  fun a _ ↦ decide (cutoff ≤ a)
-
-/-- Mark the cells at or above a definiteness cutoff (P/T-type marking). -/
-def definitenessAtLeast (cutoff : DefinitenessScale) : MarkingPattern :=
-  fun _ d ↦ decide (cutoff ≤ d)
-
-end MarkingPattern
 
 end Reference.Prominence
