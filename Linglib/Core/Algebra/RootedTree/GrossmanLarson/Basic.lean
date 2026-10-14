@@ -331,6 +331,12 @@ noncomputable def ι : ChapotonLivernet R α →ₗ[R] GrossmanLarson R α :=
   ext; simp [ι, ChapotonLivernet.coeffLinearEquiv, ChapotonLivernet.coeffAddEquiv,
     ChapotonLivernet.coeffEquiv]
 
+theorem ι_injective : Function.Injective (ι : ChapotonLivernet R α → GrossmanLarson R α) := by
+  have h : LinearIndependent R (ofTree : UnorderedTree α → ConnesKreimer R (UnorderedTree α)) :=
+    (basisSingleOne (R := R)).linearIndependent.comp _ fun _ _ ↦ Multiset.singleton_inj.1
+  exact fun x y hxy ↦
+    ChapotonLivernet.coeffLinearEquiv.injective (h (linearEquiv.symm.injective hxy))
+
 /-- The grafting product of trees is the insertion of their one-tree forests. -/
 theorem toConnesKreimer_ι_mul (x y : ChapotonLivernet R α) :
     (ι (x * y)).toConnesKreimer = insertion (ι x).toConnesKreimer (ι y).toConnesKreimer := by
