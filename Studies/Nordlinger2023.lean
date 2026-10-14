@@ -72,19 +72,19 @@ inductive Language where
   | wambaya | icelandic | chichewa | czech | warlpiri | kuukThaayorre | dalabon | tonga
   deriving DecidableEq, Fintype
 
-/-- Warlpiri *-nyanu*: the reflexive–reciprocal bound pronoun in the object slot of the
+/-- Warlpiri *-nyanu* is the reflexive–reciprocal bound pronoun in the object slot of the
 pronominal complex ([nordlinger-2023] ex. 18b, 48). -/
 def warlpiriNyanu : Marker :=
   { morphs := [.suff "nyanu"], strategy := .boundPronoun, readings := {.reciprocal, .reflexive} }
 
-/-- Kuuk Thaayorre *-rr*: the reciprocal verbal suffix ([nordlinger-2023] ex. 25). -/
+/-- Kuuk Thaayorre *-rr* is the reciprocal verbal suffix ([nordlinger-2023] ex. 25). -/
 def kuukThaayorreRr : Marker := { morphs := [.suff "rr"], strategy := .verbalAffix }
 
-/-- Dalabon *-rr*: the reflexive–reciprocal verbal suffix ([nordlinger-2023] ex. 26b). -/
+/-- Dalabon *-rr* is the reflexive–reciprocal verbal suffix ([nordlinger-2023] ex. 26b). -/
 def dalabonRr : Marker :=
   { morphs := [.suff "rr"], strategy := .verbalAffix, readings := {.reciprocal, .reflexive} }
 
-/-- Tonga *-an*: the reciprocal verbal suffix ([nordlinger-2023] ex. 21, from
+/-- Tonga *-an* is the reciprocal verbal suffix ([nordlinger-2023] ex. 21, from
 [maslova-2008]). -/
 def tongaAn : Marker := { morphs := [.suff "an"], strategy := .verbalAffix }
 
@@ -271,7 +271,7 @@ theorem exists_consecutive_of_getLast {l : List A} (hlen : 2 ≤ l.length) {x : 
   convert hx using 2
   omega
 
-/-- `R` is symmetric within `X`: every realized pair is mutual. -/
+/-- `R` is symmetric within `X` when every realized pair is mutual. -/
 def PairSymmetricOn (R : A → A → Prop) (X : Finset A) : Prop :=
   (X : Set A).Pairwise fun x y ↦ R x y → R y x
 
@@ -438,12 +438,12 @@ theorem ReciprocityType.Realizes.pairSymmetricOn_iff (h : t.Realizes R X) (ht : 
   | melee => exact absurd rfl ht
 
 /-- Every configuration but the melee involves each of two or more participants, as agent or as
-patient: it satisfies the weakest scheme, Inclusive Alternative Ordering. -/
+patient, so it satisfies the weakest scheme, Inclusive Alternative Ordering. -/
 theorem ReciprocityType.Realizes.inclusiveAlternativeOrdering (h : t.Realizes R X)
     (ht : t ≠ .melee) (hX : 2 ≤ X.card) : InclusiveAlternativeOrdering R X := by
   cases t with
   | strong =>
-    exact (StrongReciprocity.intermediate h).intermediateAlternative.inclusiveAlternativeOrdering hX
+    exact ((StrongReciprocity.intermediate h).oneWayWeak hX).inclusiveAlternativeOrdering
   | pairwise =>
     exact (PairwiseConfig.partitionedStrong h).weak.oneWayWeak.inclusiveAlternativeOrdering
   | chain => exact ChainConfig.inclusiveAlternativeOrdering h
@@ -459,14 +459,14 @@ Reflexive polysemy is carried by the markers above glossed RR (French *se*, Wamb
 Warlpiri *-nyanu*, Dalabon *-rr*). The review's further polysemy types are attested by markers
 of languages outside `Language`. -/
 
-/-- Yakut *-üs*: reciprocal + collective/sociative — *ölör-üs* 'kill
+/-- Yakut *-üs* marks reciprocal and collective or sociative readings, *ölör-üs* 'kill
     each other' or 'kill somebody together' ([nordlinger-2023] ex. 49,
     citing [nedjalkov-2007b]). -/
 def yakutUs : Marker :=
   { morphs := [.suff "üs"], strategy := .verbalAffix
   , readings := {.reciprocal, .collective, .sociative} }
 
-/-- East Futunan *fe-...-ʼaki*: reciprocal + iterative — *fe-tapa-ʼaki*
+/-- East Futunan *fe-...-ʼaki* marks reciprocal and iterative readings, *fe-tapa-ʼaki*
     'sparkle again and again' ([nordlinger-2023] ex. 50, citing
     [nedjalkov-2007b]). -/
 def eastFutunanFeAki : Marker :=

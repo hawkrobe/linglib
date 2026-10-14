@@ -1,0 +1,92 @@
+[
+  {
+    "id": "dalrympleetal1998_ex95",
+    "source": {"bibkey": "dalrymple-et-al-1998", "paperLabel": "(95), (2)"},
+    "language": "stan1293",
+    "primaryText": "House of Commons legislators refer to each other indirectly.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "6.1"]
+    ],
+    "comment": "Interpreted as Strong Reciprocity, the strongest candidate, consistent with the context.",
+    "verified": "page-image"
+  },
+  {
+    "id": "dalrympleetal1998_ex98",
+    "source": {"bibkey": "dalrymple-et-al-1998", "paperLabel": "(98), (8)"},
+    "language": "stan1293",
+    "primaryText": "The third-grade students in Mrs. Smith's class gave each other measles.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "6.1"]
+    ],
+    "comment": "Giving measles is asymmetric and a person has measles only once, which excludes SR, OWR and, with three or more students, SAR; the sentence means IAR.",
+    "verified": "page-image"
+  },
+  {
+    "id": "dalrympleetal1998_ex108",
+    "source": {"bibkey": "dalrymple-et-al-1998", "paperLabel": "(108)"},
+    "language": "stan1293",
+    "primaryText": "Their bunk beds are on top of one another.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "6.3"]
+    ],
+    "comment": "Discussed by Kański; the SMH correctly predicts IAO rather than SR, though the group has only two members.",
+    "verified": "page-image"
+  },
+  {
+    "id": "dalrympleetal1998_ex109",
+    "source": {"bibkey": "dalrymple-et-al-1998", "paperLabel": "(109)"},
+    "language": "stan1293",
+    "primaryText": "John and Bill are taller than each other.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "6.3"]
+    ],
+    "comment": "The SMH wrongly predicts the weakest meaning, that one of them is taller than the other.",
+    "verified": "page-image"
+  },
+  {
+    "id": "dalrympleetal1998_ex110",
+    "source": {"bibkey": "dalrymple-et-al-1998", "paperLabel": "(110), (6), (43)"},
+    "language": "stan1293",
+    "primaryText": "\"The captain!\" said the pirates, staring at each other in surprise.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "6.3"]
+    ],
+    "comment": "Means OWR; the SMH wrongly predicts IR, which a single-valued relation like stare satisfies only without eye contact.",
+    "verified": "page-image"
+  }
+]
