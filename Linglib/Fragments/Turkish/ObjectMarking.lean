@@ -18,8 +18,8 @@ dimension.
 
 * `Turkish.ObjectMarking.accusative`: the marking pattern, the definiteness scale from the
   specific indefinites up
-* `Turkish.ObjectMarking.MustBePreverbal`: the definiteness levels whose objects, being
-  unmarked, stand immediately before the verb
+* `Turkish.ObjectMarking.MustBePreverbal`: the positions on the definiteness scale whose
+  objects, being unmarked, stand immediately before the verb
 
 ## Main results
 
@@ -47,7 +47,7 @@ definiteness scale, whatever its animacy. -/
 def accusative : MarkingPattern := .definitenessAtLeast .indefiniteSpecific
 
 /-- An object is marked exactly when it is at least a specific indefinite. -/
-theorem accusative_iff (a : AnimacyLevel) (d : DefinitenessLevel) :
+theorem accusative_iff (a : Reference.Animacy) (d : DefinitenessScale) :
     accusative a d = true ↔ .indefiniteSpecific ≤ d := by
   simp [accusative, MarkingPattern.definitenessAtLeast]
 
@@ -56,12 +56,12 @@ theorem accusative_monotoneP : accusative.MonotoneP := by decide
 
 /-- An object of a definiteness level must stand immediately before the verb when it is
 unmarked. -/
-def MustBePreverbal (d : DefinitenessLevel) : Prop := ∀ a, accusative a d = false
+def MustBePreverbal (d : DefinitenessScale) : Prop := ∀ a, accusative a d = false
 
 instance : DecidablePred MustBePreverbal := fun _ ↦ inferInstanceAs (Decidable (∀ _, _))
 
 /-- Only a non-specific indefinite is confined to the preverbal position. -/
-theorem mustBePreverbal_iff (d : DefinitenessLevel) : MustBePreverbal d ↔ d = .nonSpecific := by
+theorem mustBePreverbal_iff (d : DefinitenessScale) : MustBePreverbal d ↔ d = .nonSpecific := by
   cases d <;> decide
 
 end Turkish.ObjectMarking

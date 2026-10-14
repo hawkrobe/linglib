@@ -6,7 +6,7 @@ public import Linglib.Semantics.Reference.Prominence
 public import Linglib.Semantics.Causation.Morphological
 
 /-!
-# Comrie 1989: Language Universals and Linguistic Typology
+# Comrie (1989): Language Universals and Linguistic Typology
 
 Three of the book's chapters make claims sharp enough to state. Case marking (chapter 6) serves
 first to discriminate the two arguments of a transitive clause: of the five ways the primitives
@@ -95,13 +95,13 @@ open Reference.Prominence Causation.Morphological
 
 /-! ### The discriminatory function of case (§6.1) -/
 
-/-- The three primitives of case marking: the intransitive subject, and the agent and patient
+/-- The three primitives of case marking are the intransitive subject and the agent and patient
 of the transitive clause. -/
 inductive Primitive
   | S | A | P
   deriving DecidableEq, Repr, Fintype
 
-/-- The five logically possible case systems: which primitives share a case. -/
+/-- The five logically possible case systems, by which primitives share a case. -/
 inductive CaseSystem
   | neutral | nominativeAccusative | ergativeAbsolutive | tripartite | apAgainstS
   deriving DecidableEq, Repr, Fintype
@@ -143,11 +143,11 @@ private theorem exhaustive_bool : ∀ sa sp ap : Bool, (sa → sp → ap) → (s
 theorem caseSystem_of_equivalence (r : Primitive → Primitive → Prop) (h : Equivalence r) :
     ∃ c : CaseSystem, ∀ x y, r x y ↔ c.Same x y := by
   classical
-  have hs : ∀ x y, r x y ↔ r y x := λ _ _ => ⟨h.symm, h.symm⟩
+  have hs : ∀ x y, r x y ↔ r y x := fun _ _ ↦ ⟨h.symm, h.symm⟩
   obtain ⟨c, hc⟩ := exhaustive_bool (decide (r .S .A)) (decide (r .S .P)) (decide (r .A .P))
-    (by simpa using λ h₁ h₂ => h.trans (h.symm h₁) h₂) (by simpa using λ h₁ => h.trans h₁)
-    (by simpa using λ h₁ h₂ => h.trans h₁ (h.symm h₂))
-  refine ⟨c, λ x y => (?_ : r x y ↔ _).trans (hc x y)⟩
+    (by simpa using fun h₁ h₂ ↦ h.trans (h.symm h₁) h₂) (by simpa using fun h₁ ↦ h.trans h₁)
+    (by simpa using fun h₁ h₂ ↦ h.trans h₁ (h.symm h₂))
+  refine ⟨c, fun x y ↦ (?_ : r x y ↔ _).trans (hc x y)⟩
   cases x <;> cases y <;> simp [rel, h.refl _, hs .A .S, hs .P .S, hs .P .A]
 
 /-- The systems that discriminate A from P are all but the neutral and the A/P-against-S
@@ -170,7 +170,7 @@ def acceptable : List Datum := Examples.all.filter (·.judgment = .acceptable)
 
 /-! ### Differential marking and the natural information flow (§6.2) -/
 
-/-- The marking an argument's position takes: none, optional, or obligatory. -/
+/-- The marking an argument's position takes is none, optional, or obligatory. -/
 inductive Marked
   | unmarked | optional | marked
   deriving DecidableEq, Repr
@@ -182,17 +182,17 @@ def Marked.toNat : Marked → ℕ
   | .marked => 2
 
 instance : LinearOrder Marked :=
-  LinearOrder.lift' Marked.toNat (λ a b h => by cases a <;> cases b <;> simp_all [Marked.toNat])
+  LinearOrder.lift' Marked.toNat (fun a b h ↦ by cases a <;> cases b <;> simp_all [Marked.toNat])
 
-/-- One argument's marking in a row: its role, its place on the scales the book invokes for
-the language, and the marking its position takes. -/
+/-- One argument's marking in a row records its role, its place on the scales the book invokes
+for the language, and the marking its position takes. -/
 structure Marking where
   /-- A or P; S, taking the unmarked case, has no row. -/
   role : Primitive
   /-- The argument's animacy, where the language's marking consults it. -/
-  animacy : Option AnimacyRank
+  animacy : Option AnimacyHierarchy
   /-- The argument's definiteness, where the language's marking consults it. -/
-  definiteness : Option DefinitenessLevel
+  definiteness : Option DefinitenessScale
   /-- The marking the position takes. -/
   marked : Marked
 
@@ -201,12 +201,12 @@ prefixes `A.` and `P.`; a row whose marking the book attributes to a parameter b
 hierarchies has none. -/
 def Marking.ofRow (row : Datum) : List Marking :=
   if row.feature? "construction" = some "marking" ∧ row.feature? "parameter" = none then
-    [(Primitive.A, "A."), (.P, "P.")].filterMap λ (role, p) => do
+    [(Primitive.A, "A."), (.P, "P.")].filterMap fun (role, p) ↦ do
       return ⟨role,
-        row.parse? (p ++ "animacy") [("speaker", AnimacyRank.speaker), ("addressee", .addressee),
-          ("human", .human), ("higherAnimal", .higherAnimal),
+        row.parse? (p ++ "animacy") [("speaker", AnimacyHierarchy.speaker),
+          ("addressee", .addressee), ("human", .human), ("higherAnimal", .higherAnimal),
           ("discreteInanimate", .discreteInanimate)],
-        row.parse? (p ++ "definiteness") [("personalPronoun", DefinitenessLevel.personalPronoun),
+        row.parse? (p ++ "definiteness") [("personalPronoun", DefinitenessScale.personalPronoun),
           ("properName", .properName), ("definite", .definite),
           ("indefiniteSpecific", .indefiniteSpecific), ("nonSpecific", .nonSpecific)],
         ← row.parse? (p ++ "marked")
@@ -231,7 +231,7 @@ theorem marking_monotone : ∀ r₁ ∈ acceptable, ∀ m₁ ∈ Marking.ofRow r
         (m₁.role = .P → m₁.marked ≤ m₂.marked) ∧ (m₁.role = .A → m₂.marked ≤ m₁.marked) := by
   decide
 
-/-- The prediction has content in both directions: some P is outranked by another of its
+/-- The prediction has content in both directions, since some P is outranked by another of its
 language and carries less marking, and some A is outranked and carries more. -/
 theorem marking_contrast : ∀ role : Primitive, role ≠ .S →
     ∃ r₁ ∈ acceptable, ∃ r₂ ∈ acceptable, r₁.language = r₂.language ∧
@@ -251,7 +251,7 @@ structure Parameters where
   causee, which the rival analysis consults. -/
   passive : Bool
 
-/-- The parameters of the languages with causative rows: Turkish doubles indirect objects and
+/-- Among the languages with causative rows, Turkish doubles indirect objects and
 never demotes further, Sanskrit doubles direct objects and demotes to the instrumental,
 French, Hungarian, Japanese and Kannada demote further, and Hungarian has no passive. -/
 def parameters : List (String × Parameters) :=
@@ -262,7 +262,7 @@ def parameters : List (String × Parameters) :=
     ("nucl1643", { doubles := [], extended := true, passive := true }),
     ("nucl1305", { doubles := [], extended := true, passive := true })]
 
-/-- A causative row's configuration: the base verb's valency, the causee's position, and the
+/-- A causative row's configuration is the base verb's valency, the causee's position, and the
 language's parameters. -/
 structure Causative where
   /-- The base verb's valency. -/
@@ -280,7 +280,7 @@ def Causative.ofRow (row : Datum) : Option Causative := do
       ("oblique", .oblique)],
     ← parameters.lookup row.language⟩
 
-/-- The paradigm position: the highest the base verb's arguments leave free. -/
+/-- The paradigm position is the highest the base verb's arguments leave free. -/
 def Causative.paradigm (c : Causative) : CauseeSlot := causeeDemotion c.valency
 
 /-- The causee doubles a filled position the language permits. -/
@@ -288,15 +288,15 @@ def Causative.Doubles (c : Causative) : Prop := c.causee ∈ c.params.doubles �
 
 instance (c : Causative) : Decidable c.Doubles := inferInstanceAs (Decidable (_ ∧ _))
 
-/-- The hierarchy analysis admits the causee's position: the paradigm case, a doubled
-position, or a lower one where the language demotes further. -/
+/-- The hierarchy analysis admits the causee's position in the paradigm case, in a doubled
+position, or in a lower one where the language demotes further. -/
 def Causative.HierarchyAdmits (c : Causative) : Prop :=
   c.causee = c.paradigm ∨ c.Doubles ∨ (c.params.extended ∧ c.causee < c.paradigm)
 
 instance (c : Causative) : Decidable c.HierarchyAdmits := inferInstanceAs (Decidable (_ ∨ _))
 
-/-- The rival analysis of the oblique causee as a passive agent: the paradigm case, a doubled
-position, or the oblique of a transitive base wherever the language has a passive. -/
+/-- The rival analysis takes the oblique causee as a passive agent, admitting the paradigm case,
+a doubled position, or the oblique of a transitive base wherever the language has a passive. -/
 def Causative.PassiveAdmits (c : Causative) : Prop :=
   c.causee = c.paradigm ∨ c.Doubles ∨ (c.params.passive ∧ 2 ≤ c.valency ∧ c.causee = .oblique)
 
@@ -325,7 +325,7 @@ inductive Control
   | less | more
   deriving DecidableEq, Repr
 
-/-- A control row's configuration: the control the causee retains and its position. -/
+/-- A control row's configuration is the control the causee retains and its position. -/
 structure Controlled where
   /-- The control the causee retains. -/
   control : Control
@@ -339,8 +339,8 @@ def Controlled.ofRow (row : Datum) : Option Controlled := do
     ← row.parse? "causee" [("directObject", .directObject), ("indirectObject", .indirectObject),
       ("oblique", .oblique)]⟩
 
-/-- The control hierarchy, (8)–(9) and (23)–(28): within a language, the causee retaining more
-control takes the position lower on the hierarchy, and a language offers the pair. -/
+/-- By the control hierarchy, (8)–(9) and (23)–(28), the causee retaining more control takes the
+position lower on the hierarchy within a language, and a language offers the pair. -/
 theorem control_rows :
     (∀ r₁ ∈ Examples.all, ∀ c₁ ∈ Controlled.ofRow r₁,
       ∀ r₂ ∈ Examples.all.filter (·.language = r₁.language), ∀ c₂ ∈ Controlled.ofRow r₂,
@@ -352,7 +352,7 @@ theorem control_rows :
 
 /-! ### Compactness and directness (§8.1) -/
 
-/-- The causative construction a row records: its formal complexity and its mediation. -/
+/-- The causative construction a row records, its formal complexity and its mediation. -/
 def CausativeConstruction.ofRow (row : Datum) : Option CausativeConstruction := do
   guard (row.feature? "construction" = some "compactness")
   return ⟨← row.parse? "complexity"
@@ -374,7 +374,7 @@ theorem compactness_rows :
 
 /-! ### Subject as a prototype (chapter 5) -/
 
-/-- Which argument of a transitive clause a construction groups with S: A, P, or neither,
+/-- The argument of a transitive clause a construction groups with S is A, P, or neither,
 where either may be omitted. -/
 inductive Grouping
   | withA | withP | neither
@@ -385,7 +385,7 @@ inductive Test
   | coordination | imperative | indirectCommand | resultative | infinitive
   deriving DecidableEq, Repr, Fintype
 
-/-- The prototype's prediction: a construction tied to agents, the deletion of an imperative's
+/-- The prototype predicts that a construction tied to agents, the deletion of an imperative's
 addressee or of the recipient of an indirect command, and a control complement such as the
 Chukchi infinitive construction, favour S with A; one tied to affected participants, the
 resultative, favours S with P; coordination, tied to neither, is free to vary (§5.3–§5.4). -/
@@ -421,13 +421,13 @@ theorem bias_rows :
         g.test.bias = some b ∧ g.grouping ≠ b := by
   decide
 
-/-- Coordination, tied to neither prototype property, realizes every grouping: S with A in
-English, S with P in Dyirbal, neither in Chukchi. -/
+/-- Coordination, tied to neither prototype property, realizes every grouping, S with A in
+English, S with P in Dyirbal, and neither in Chukchi. -/
 theorem coordination_rows : ∀ gr : Grouping, ∃ row ∈ Examples.all, ∃ g ∈ Grouped.ofRow row,
     g.test = .coordination ∧ g.grouping = gr := by
   decide
 
-/-- A language can be mixed: Chukchi's coordination restricts nothing while its infinitive
+/-- A language can be mixed, as Chukchi's coordination restricts nothing while its infinitive
 construction groups S with A. -/
 theorem mixed_rows : ∃ r₁ ∈ Examples.all, ∃ r₂ ∈ Examples.all, r₁.language = r₂.language ∧
     ∃ g₁ ∈ Grouped.ofRow r₁, ∃ g₂ ∈ Grouped.ofRow r₂, g₁.grouping ≠ g₂.grouping := by

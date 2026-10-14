@@ -1,16 +1,15 @@
 module
 
-public import Linglib.Semantics.Reference.Prominence
+public import Linglib.Semantics.Reference.Animacy
 public import Linglib.Syntax.Category.Noun.Basic
 public import Linglib.Fragments.Shona.Basic
 
 /-!
 # Shona nouns
 
-Nouns of the class system, each with its gender and the kind of entity it denotes: the
-lexicon behind the conjoined-subject agreement data of [carstens-2026]. The class 12
-diminutives *ka-sikana* 'small girl', *ka-mba* 'small house' are nouns of their own, of the
-diminutive gender 12/13.
+Nouns of the class system, each with its gender and the kind of entity it denotes: the lexicon
+behind the conjoined-subject agreement data of Carstens. The class 12 diminutives *ka-sikana* 'small
+girl', *ka-mba* 'small house' are nouns of their own, of the diminutive gender 12/13.
 
 ## References
 
@@ -25,7 +24,7 @@ namespace Shona
 plural class, together with the animacy of what it denotes. -/
 structure Noun extends GenderedNoun Gender where
   /-- The animacy of what the noun denotes. -/
-  animacy : Reference.Prominence.AnimacyLevel
+  animacy : Reference.Animacy
   deriving DecidableEq, Repr
 
 namespace Nouns

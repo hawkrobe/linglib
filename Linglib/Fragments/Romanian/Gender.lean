@@ -2,6 +2,7 @@ module
 
 public import Mathlib.Tactic.DeriveFintype
 public import Linglib.Syntax.Category.Noun.Basic
+public import Linglib.Semantics.Reference.Animacy
 
 /-!
 # Romanian noun gender
@@ -10,7 +11,7 @@ Agreeing adjectives such as *bun* 'good' show two forms in the singular, *-Ø* a
 two in the plural, *-i* and *-e*, but nouns fall into three sets by the forms they take
 across the two numbers: *bărbat* 'man' (*-Ø*, *-i*), *fată* 'girl' (*-ă*, *-e*) and *scaun*
 'chair' (*-Ø*, *-e*), the last the disputed neuter or ambigeneric gender
-([mallinson-1984]; [corbett-1991]).
+(Mallinson; Corbett).
 
 ## References
 
@@ -36,24 +37,24 @@ def Value.toLabel : Value → Gender
   | .neut => .neuter
 
 /-- A Romanian noun with its controller gender, the gender of its referents where it has one,
-and whether it denotes an animate. -/
+and their animacy. -/
 structure Noun extends GenderedNoun Value where
-  /-- Whether the noun denotes an animate. -/
-  animate : Bool
+  /-- The animacy of the noun's referents. -/
+  animacy : Reference.Animacy
   deriving DecidableEq, Repr
 
-def barbat : Noun := ⟨⟨⟨"bărbat", "man"⟩, .masc, some .masculine⟩, true⟩
-def fata : Noun := ⟨⟨⟨"fată", "girl"⟩, .fem, some .feminine⟩, true⟩
-def scaun : Noun := ⟨⟨⟨"scaun", "chair"⟩, .neut, none⟩, false⟩
-def femeie : Noun := ⟨⟨⟨"femeie", "woman"⟩, .fem, some .feminine⟩, true⟩
-def baiat : Noun := ⟨⟨⟨"băiat", "boy"⟩, .masc, some .masculine⟩, true⟩
-def usa : Noun := ⟨⟨⟨"uşă", "door"⟩, .fem, none⟩, false⟩
-def perete : Noun := ⟨⟨⟨"perete", "wall"⟩, .masc, none⟩, false⟩
-def masa : Noun := ⟨⟨⟨"masă", "table"⟩, .fem, none⟩, false⟩
-def nuc : Noun := ⟨⟨⟨"nuc", "walnut tree"⟩, .masc, none⟩, false⟩
-def prun : Noun := ⟨⟨⟨"prun", "plum tree"⟩, .masc, none⟩, false⟩
-def frigider : Noun := ⟨⟨⟨"frigider", "refrigerator"⟩, .neut, none⟩, false⟩
-def televizor : Noun := ⟨⟨⟨"televizor", "television"⟩, .neut, none⟩, false⟩
+def barbat : Noun := ⟨⟨⟨"bărbat", "man"⟩, .masc, some .masculine⟩, .human⟩
+def fata : Noun := ⟨⟨⟨"fată", "girl"⟩, .fem, some .feminine⟩, .human⟩
+def scaun : Noun := ⟨⟨⟨"scaun", "chair"⟩, .neut, none⟩, .inanimate⟩
+def femeie : Noun := ⟨⟨⟨"femeie", "woman"⟩, .fem, some .feminine⟩, .human⟩
+def baiat : Noun := ⟨⟨⟨"băiat", "boy"⟩, .masc, some .masculine⟩, .human⟩
+def usa : Noun := ⟨⟨⟨"uşă", "door"⟩, .fem, none⟩, .inanimate⟩
+def perete : Noun := ⟨⟨⟨"perete", "wall"⟩, .masc, none⟩, .inanimate⟩
+def masa : Noun := ⟨⟨⟨"masă", "table"⟩, .fem, none⟩, .inanimate⟩
+def nuc : Noun := ⟨⟨⟨"nuc", "walnut tree"⟩, .masc, none⟩, .inanimate⟩
+def prun : Noun := ⟨⟨⟨"prun", "plum tree"⟩, .masc, none⟩, .inanimate⟩
+def frigider : Noun := ⟨⟨⟨"frigider", "refrigerator"⟩, .neut, none⟩, .inanimate⟩
+def televizor : Noun := ⟨⟨⟨"televizor", "television"⟩, .neut, none⟩, .inanimate⟩
 
 def allNouns : List Noun :=
   [barbat, fata, scaun, femeie, baiat, usa, perete, masa, nuc, prun, frigider, televizor]

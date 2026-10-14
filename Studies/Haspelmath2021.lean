@@ -40,7 +40,7 @@ with the anti-efficient language of §11.3 that the universals exclude.
   is constant (`ScenarioUniversal.comp_high_le`), since a balanced scenario of two low
   values is coded no longer than an upstream one and no shorter than a downstream one. The
   ternary scales appear only where the paper's rule refers to them: `PersonRank` for
-  Kashmiri, `AnimacyLevel` for Sardinian, Spanish, Fore and Awtuw, `NominalType` for Baule;
+  Kashmiri, `Animacy` for Sardinian, Spanish, Fore and Awtuw, `NominalType` for Baule;
   Kolyma Yukaghir's and Greek's rules on the ternary person scale violate Universal 5
   (`yukaghirP_ternary_violates`, `greekT_ternary_violates`).
 * Universal 1's qualification to asymmetric coding is dropped: with coding lengths as the
@@ -156,30 +156,37 @@ instance : IsSimpleOrder Nominality where
   exists_pair_ne := ⟨.fullNominal, .personForm, by decide⟩
   eq_bot_or_eq_top := by decide
 
-/-- The animacy scale of (8a) without its optional animal level; the ternary version is
-`AnimacyLevel`. -/
-inductive Animacy where
+/-- The animacy scale of (8a) without its optional animal level, the ternary `Animacy` cut at the
+animates. -/
+inductive BinaryAnimacy where
   | inanimate
   | animate
   deriving DecidableEq, Fintype, Repr
 
 /-- Rank on the binary animacy scale. -/
-def Animacy.rank : Animacy → ℕ
+def BinaryAnimacy.rank : BinaryAnimacy → ℕ
   | .inanimate => 0
   | .animate => 1
 
-instance : LinearOrder Animacy := LinearOrder.lift' Animacy.rank (by decide)
+instance : LinearOrder BinaryAnimacy := LinearOrder.lift' BinaryAnimacy.rank (by decide)
 
 /-- `⊥ = inanimate`, `⊤ = animate`. -/
-instance : BoundedOrder Animacy where
+instance : BoundedOrder BinaryAnimacy where
   top := .animate
   le_top := by decide
   bot := .inanimate
   bot_le := by decide
 
-instance : IsSimpleOrder Animacy where
+instance : IsSimpleOrder BinaryAnimacy where
   exists_pair_ne := ⟨.inanimate, .animate, by decide⟩
   eq_bot_or_eq_top := by decide
+
+/-- The cut of the ternary scale at the animates. -/
+def BinaryAnimacy.ofAnimacy (a : Animacy) : BinaryAnimacy :=
+  if .animate ≤ a then .animate else .inanimate
+
+theorem BinaryAnimacy.ofAnimacy_monotone : Monotone BinaryAnimacy.ofAnimacy := by
+  intro a b; revert a b; decide
 
 /-- The scale of (49a), which conditions Baule's ditransitive construction, ranks personal pronouns
 above proper names above common nouns. -/
@@ -430,7 +437,7 @@ end Universals
 def sakhaP : Definiteness → ℕ := atLeast .definite
 
 /-- Nuorese Sardinian flags a human P with `a`, as in (17). -/
-def sardinianP : AnimacyLevel → ℕ := atLeast .human
+def sardinianP : Animacy → ℕ := atLeast .human
 
 /-- Persian flags a topical P with `-râ`, as in (19). -/
 def persianP : BinaryGivenness → ℕ := atLeast .given
@@ -449,7 +456,13 @@ def godoberiA : Person.Class → ℕ := below .participant
 def warrgamayA : Nominality → ℕ := below .personForm
 
 /-- Mangarrayi flags an inanimate (neuter) A with the ergative, as in (24). -/
-def mangarrayiA : Animacy → ℕ := below .animate
+def mangarrayiA : BinaryAnimacy → ℕ := below .animate
+
+/-- Read through the cut, Mangarrayi's split is the split below the animates of the ternary
+scale, humans and animals alike escaping the ergative. -/
+theorem mangarrayiA_comp_ofAnimacy :
+    mangarrayiA ∘ BinaryAnimacy.ofAnimacy = below (.animate : Animacy) := by
+  funext a; cases a <;> rfl
 
 /-- Central Tibetan flags a focused A with the ergative `-ki'`, as in (25). -/
 def tibetanA : Markᵒᵈ → ℕ := below (toDual .nonFocused)
@@ -463,7 +476,7 @@ def frenchR : Person.Class → ℕ := below .participant
 def neoAramaicR : Nominality → ℕ := below .personForm
 
 /-- Yakkha puts an inanimate R in the locative, as in (30). -/
-def yakkhaR : Animacy → ℕ := below .animate
+def yakkhaR : BinaryAnimacy → ℕ := below .animate
 
 /-- Wolof flags an indefinite R with `ci`, as in (31). -/
 def wolofR : Definiteness → ℕ := below .definite
@@ -525,7 +538,7 @@ def khantyA : Scenario Definiteness → ℕ := atLeast .definite ∘ Scenario.lo
 
 /-- Spanish flags P with `a` when the construction is not animacy-downstream, as in (38), which
 subsumes the human P of §4.1.1. -/
-def spanishP : Scenario AnimacyLevel → ℕ := below .downstream ∘ Scenario.kind
+def spanishP : Scenario Animacy → ℕ := below .downstream ∘ Scenario.kind
 
 /-- Bulgarian flags R with `na` when T is a locuphoric clitic, as in (39). -/
 def bulgarianR : Scenario Person.Class → ℕ := atLeast .participant ∘ Scenario.low
@@ -544,7 +557,7 @@ independent pronoun otherwise, so whenever T is locuphoric, as in (45). -/
 def greekT : Scenario Person.Class → ℕ := atLeast .participant ∘ Scenario.low
 
 /-- Icelandic flags R with `fyrir` when T is animate, as in (46). -/
-def icelandicR : Scenario Animacy → ℕ := atLeast .animate ∘ Scenario.low
+def icelandicR : Scenario BinaryAnimacy → ℕ := atLeast .animate ∘ Scenario.low
 
 /-- The monotransitive scenario splits obey Universal 5 (§6); the monadic ones by fn. 18 on a binary
 scale, Spanish as a relative split, the dyadic Yurok by inspection. -/
@@ -600,10 +613,10 @@ theorem greekT_ternary_violates :
 def kashmiriP : Scenario PersonRank → ℕ := below .downstream ∘ Scenario.kind
 
 /-- Fore flags A with the ergative only when P outranks A in animacy (§8). -/
-def foreA : Scenario AnimacyLevel → ℕ := below .balanced ∘ Scenario.kind
+def foreA : Scenario Animacy → ℕ := below .balanced ∘ Scenario.kind
 
 /-- Awtuw flags P with the accusative only when P is not lower than A in animacy (§8). -/
-def awtuwP : Scenario AnimacyLevel → ℕ := below .downstream ∘ Scenario.kind
+def awtuwP : Scenario Animacy → ℕ := below .downstream ∘ Scenario.kind
 
 /-- Baule flags T with the serial verb `fà` unless R outranks T on the scale of (49a), as in
 (49). -/
@@ -787,10 +800,11 @@ def Nominality.table : List (String × Nominality) :=
     ("N", .fullNominal)]
 
 /-- The animacy tags of the rows, as the binary scale. -/
-def Animacy.table : List (String × Animacy) := [("animate", .animate), ("inanimate", .inanimate)]
+def BinaryAnimacy.table : List (String × BinaryAnimacy) :=
+  [("animate", .animate), ("inanimate", .inanimate)]
 
 /-- The animacy tags of the rows, as the ternary scale. -/
-def AnimacyLevel.table : List (String × AnimacyLevel) :=
+def Animacy.table : List (String × Animacy) :=
   [("human", .human), ("animate", .animate), ("inanimate", .inanimate)]
 
 /-- The definiteness tags of the rows. -/
@@ -813,13 +827,13 @@ def NominalType.table : List (String × NominalType) :=
 and Kham rows those of the Sakha and Godoberi rules they share. -/
 theorem rows_splitP_splitA :
     Reproduces (rows "yaku1245" "P" "definiteness") (prominence? Definiteness.table) sakhaP ∧
-      Reproduces (rows "nuor1238" "P" "animacy") (prominence? AnimacyLevel.table) sardinianP ∧
+      Reproduces (rows "nuor1238" "P" "animacy") (prominence? Animacy.table) sardinianP ∧
       Reproduces (rows "panj1256" "P" "definiteness") (prominence? Definiteness.table) sakhaP ∧
       Reproduces (rows "west2369" "P" "givenness") (prominence? BinaryGivenness.table) persianP ∧
       Reproduces (rows "neap1235" "P" "person") (prominence? Person.Class.table) abruzzeseP ∧
       Reproduces (rows "taka1261" "A" "person") (prominence? Person.Class.table) godoberiA ∧
       Reproduces (rows "warr1255" "A" "nominality") (prominence? Nominality.table) warrgamayA ∧
-      Reproduces (rows "mang1381" "A" "animacy") (prominence? Animacy.table) mangarrayiA ∧
+      Reproduces (rows "mang1381" "A" "animacy") (prominence? BinaryAnimacy.table) mangarrayiA ∧
       Reproduces (rows "cent2346" "A" "focus") (prominence? focusTable) tibetanA := by
   decide
 
@@ -827,7 +841,7 @@ theorem rows_splitP_splitA :
 paper's examples. -/
 theorem rows_splitR_splitT :
     Reproduces (rows "telk1238" "R" "nominality") (prominence? Nominality.table) neoAramaicR ∧
-      Reproduces (rows "yakk1236" "R" "animacy") (prominence? Animacy.table) yakkhaR ∧
+      Reproduces (rows "yakk1236" "R" "animacy") (prominence? BinaryAnimacy.table) yakkhaR ∧
       Reproduces (rows "nucl1347" "R" "definiteness") (prominence? Definiteness.table) wolofR ∧
       Reproduces (rows "ewee1241" "T" "nominality") (prominence? Nominality.table) eweT ∧
       Reproduces (rows "akan1250" "T" "definiteness") (prominence? Definiteness.table) akanT ∧
@@ -845,7 +859,7 @@ theorem rows_scenario :
       Reproduces (rows "sout2750" "P" "person") (scenario? Person.Class.table) yukaghirP ∧
       Reproduces (rows "saha1240" "A" "person") (scenario? Person.Class.table) sahaptinA ∧
       Reproduces (rows "east2774" "A" "definiteness") (scenario? Definiteness.table) khantyA ∧
-      Reproduces (rows "stan1288" "P" "animacy") (scenario? AnimacyLevel.table) spanishP ∧
+      Reproduces (rows "stan1288" "P" "animacy") (scenario? Animacy.table) spanishP ∧
       Reproduces (rows "bulg1262" "R" "person") (scenario? Person.Class.table) bulgarianR ∧
       Reproduces (rows "sham1280" "R" "person") (scenario? Person.Class.table) shambalaR ∧
       Reproduces ((rows "stan1293" "R" "nominality").filter (·.feature? "variety" = none))
@@ -854,7 +868,7 @@ theorem rows_scenario :
           (·.feature? "variety" = some "American"))
         (scenario? Nominality.table) americanEnglishR ∧
       Reproduces (rows "mode1248" "T" "person") (scenario? Person.Class.table) greekT ∧
-      Reproduces (rows "icel1247" "R" "animacy") (scenario? Animacy.table) icelandicR ∧
+      Reproduces (rows "icel1247" "R" "animacy") (scenario? BinaryAnimacy.table) icelandicR ∧
       Reproduces (rows "kash1277" "P" "person") (scenario? PersonRank.table) kashmiriP ∧
       Reproduces (rows "baou1238" "T" "nominal type") (scenario? NominalType.table) bauleT ∧
       Reproduces (rows "iton1250" "verb" "person") (scenario? Person.Class.table) itonamaV := by

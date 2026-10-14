@@ -1,5 +1,7 @@
 module
 
+public import Linglib.Semantics.Reference.Animacy
+public import Linglib.Semantics.Reference.Definiteness
 public import Mathlib.Order.Nat
 public import Mathlib.Order.UpperLower.Basic
 public import Mathlib.Tactic.DeriveFintype
@@ -10,17 +12,20 @@ public import Mathlib.Tactic.DeriveFintype
 This file defines the scales of referential prominence that condition differential argument
 marking, and the marking grids over them.
 
-The animacy and definiteness scales are those of Aissen. The fine-grained animacy hierarchy that
-conditions nominal plural marking is that of Smith-Stark, as presented by Corbett. A marking
-pattern says which cells of the grid of animacy and definiteness are marked, and Aissen's
-staircase generalization says that the marked zone is an upper set in the product of the two
-scales.
+The animacy scale is `Reference.Animacy`. The definiteness scale is Aissen's, which extends the
+definiteness hierarchy to proper names and personal pronouns and whose cut at the definites is
+`Reference.Definiteness`. The animacy hierarchy that conditions nominal plural marking is
+Haspelmath's, which refines Corbett's version of Smith-Stark's by splitting the animals into higher
+and lower and the inanimates into discrete and nondiscrete. A marking pattern says which cells of
+the grid of animacy and definiteness are marked, and Aissen's staircase generalization says that the
+marked zone is an upper set in the product of the two scales.
 
 ## Main declarations
 
-* `AnimacyLevel`, `DefinitenessLevel`: the animacy and definiteness scales, as linear orders.
-* `AnimacyRank`: the fine-grained hierarchy for plural marking, with the coarsening
-  `AnimacyRank.toAnimacyLevel`.
+* `DefinitenessScale`: Aissen's definiteness scale, as a linear order, with its cut
+  `DefinitenessScale.definiteness` at the definites.
+* `AnimacyHierarchy`: the hierarchy of plural marking, from the speaker down to the nondiscrete
+  inanimates.
 * `atLeast`, `below`: the coding lengths of a cutoff split on a scale, the special coding on
   the values from a cutoff up, as P and T splits have it, or below it, as A and R splits do.
 * `MarkingPattern`: which cells of the grid of animacy and definiteness are marked, with the
@@ -34,6 +39,7 @@ principle of differential indexing in `Studies/Just2024.lean`.
 
 * [J. Aissen, *Differential Object Marking: Iconicity vs. Economy* (2003)][aissen-2003]
 * [G. G. Corbett, *Number* (2000)][corbett-2000]
+* [M. Haspelmath, *Occurrence of Nominal Plurality* (2013)][haspelmath-2013b]
 * [M. Haspelmath, *Role-Reference Associations and the Explanation of Argument Coding Splits*
   (2021)][haspelmath-2021]
 * [T. C. Smith-Stark, *The Plurality Split* (1974)][smith-stark-1974]
@@ -43,39 +49,14 @@ principle of differential indexing in `Studies/Just2024.lean`.
 
 namespace Reference.Prominence
 
-/-! ### The animacy scale -/
+/-! ### The animacy hierarchy -/
 
-/-- The animacy prominence scale is Human > Animate > Inanimate. -/
-inductive AnimacyLevel where
-  /-- Human referents are the most prominent. -/
-  | human
-  /-- Non-human animates -/
-  | animate
-  /-- Inanimate referents are the least prominent. -/
-  | inanimate
-  deriving DecidableEq, Repr, Inhabited, Fintype
-
-/-- The numeric rank on the animacy scale is 2 for Human, 1 for Animate and 0 for Inanimate. -/
-def AnimacyLevel.rank : AnimacyLevel → Nat
-  | .human     => 2
-  | .animate   => 1
-  | .inanimate => 0
-
-/-- Inanimate < Animate < Human (ordered by prominence rank). -/
-instance : LinearOrder AnimacyLevel :=
-  LinearOrder.lift' AnimacyLevel.rank
-    (fun a b h ↦ by cases a <;> cases b <;> simp_all [AnimacyLevel.rank])
-
-/-- All animacy levels, most prominent first. -/
-def AnimacyLevel.all : List AnimacyLevel := [.human, .animate, .inanimate]
-
-/-! ### The fine-grained animacy hierarchy -/
-
-/-- The fine-grained animacy hierarchy that conditions nominal plural marking is speaker > addressee
-> 3rd person > kin > human > higher animals > lower animals > discrete inanimates > nondiscrete
-inanimates. A language marking plural at a point on the scale marks it at all higher points. The
-hierarchy refines the coarser `AnimacyLevel` through `toAnimacyLevel`. -/
-inductive AnimacyRank where
+/-- Haspelmath's animacy hierarchy of nominal plural marking runs speaker > addressee > third
+person > kinship terms > other humans > higher animals > lower animals > discrete inanimates >
+nondiscrete inanimates. Corbett's has one animate and one inanimate position, and splits the
+animate one where Miya needs it. A language marking plural at a point on the hierarchy marks it
+at all higher points. -/
+inductive AnimacyHierarchy where
   | speaker
   | addressee
   | thirdPerson
@@ -87,8 +68,8 @@ inductive AnimacyRank where
   | nondiscreteInanimate
   deriving DecidableEq, Repr, Inhabited, Fintype
 
-/-- Numeric rank (higher = more likely to be plural-marked). -/
-def AnimacyRank.toNat : AnimacyRank → Nat
+/-- The rank on the hierarchy, 8 for the speaker down to 0 for the nondiscrete inanimates. -/
+def AnimacyHierarchy.rank : AnimacyHierarchy → ℕ
   | .speaker => 8
   | .addressee => 7
   | .thirdPerson => 6
@@ -99,64 +80,48 @@ def AnimacyRank.toNat : AnimacyRank → Nat
   | .discreteInanimate => 1
   | .nondiscreteInanimate => 0
 
-/-- Nondiscrete inanimate < ... < speaker (ordered by rank). -/
-instance : LinearOrder AnimacyRank :=
-  LinearOrder.lift' AnimacyRank.toNat
-    (fun a b h ↦ by cases a <;> cases b <;> simp_all [AnimacyRank.toNat])
-
-/-- All fine-grained ranks, most prominent first. -/
-def AnimacyRank.all : List AnimacyRank :=
-  [.speaker, .addressee, .thirdPerson, .kin, .human, .higherAnimal,
-   .lowerAnimal, .discreteInanimate, .nondiscreteInanimate]
-
-/-- Coarsen the fine-grained hierarchy to the three-level scale:
-    speaker through human → `.human`, the animal ranks → `.animate`,
-    the inanimate ranks → `.inanimate`. -/
-def AnimacyRank.toAnimacyLevel : AnimacyRank → AnimacyLevel
-  | .speaker | .addressee | .thirdPerson | .kin | .human => .human
-  | .higherAnimal | .lowerAnimal => .animate
-  | .discreteInanimate | .nondiscreteInanimate => .inanimate
-
-/-- Coarsening preserves the scale order. -/
-theorem AnimacyRank.toAnimacyLevel_monotone : Monotone AnimacyRank.toAnimacyLevel :=
-  fun a b h ↦
-    (by decide : ∀ a b : AnimacyRank, a ≤ b → a.toAnimacyLevel ≤ b.toAnimacyLevel) a b h
+/-- The hierarchy is ordered by rank, the speaker at the top. -/
+instance : LinearOrder AnimacyHierarchy := LinearOrder.lift' AnimacyHierarchy.rank (by decide)
 
 /-! ### The definiteness scale -/
 
-/-- The definiteness prominence scale is Personal Pronoun > Proper Name > Definite NP > Indefinite
-Specific > Non-specific. -/
-inductive DefinitenessLevel where
-  /-- Personal pronouns are the most prominent. -/
-  | personalPronoun
-  /-- Proper names -/
-  | properName
-  /-- Definite NPs (with article or demonstrative) -/
-  | definite
-  /-- Indefinite but specific NPs -/
-  | indefiniteSpecific
-  /-- Non-specific indefinites are the least prominent. -/
+/-- A position on Aissen's definiteness scale, Pronoun > Name > Definite > Indefinite Specific >
+NonSpecific, which extends the hierarchy definite > specific > non-specific to proper names and
+personal pronouns. -/
+inductive DefinitenessScale where
   | nonSpecific
+  | indefiniteSpecific
+  | definite
+  | properName
+  | personalPronoun
   deriving DecidableEq, Repr, Inhabited, Fintype
 
-/-- Numeric rank on the definiteness scale:
-    Pronoun (4) > Proper (3) > Definite (2) > IndSp (1) > NonSp (0). -/
-def DefinitenessLevel.rank : DefinitenessLevel → Nat
-  | .personalPronoun    => 4
-  | .properName         => 3
-  | .definite           => 2
+namespace DefinitenessScale
+
+/-- The rank on the scale, 0 for the non-specific indefinites up to 4 for the personal
+pronouns. -/
+def rank : DefinitenessScale → ℕ
+  | .nonSpecific => 0
   | .indefiniteSpecific => 1
-  | .nonSpecific        => 0
+  | .definite => 2
+  | .properName => 3
+  | .personalPronoun => 4
 
-/-- NonSpecific < IndefiniteSpecific < Definite < ProperName < PersonalPronoun
-    (ordered by prominence rank). -/
-instance : LinearOrder DefinitenessLevel :=
-  LinearOrder.lift' DefinitenessLevel.rank
-    (fun a b h ↦ by cases a <;> cases b <;> simp_all [DefinitenessLevel.rank])
+instance : LinearOrder DefinitenessScale := LinearOrder.lift' rank (by decide)
 
-/-- All definiteness levels, most prominent first. -/
-def DefinitenessLevel.all : List DefinitenessLevel :=
+/-- The positions, most prominent first. -/
+def all : List DefinitenessScale :=
   [.personalPronoun, .properName, .definite, .indefiniteSpecific, .nonSpecific]
+
+/-- The definiteness of a position: pronouns, names and definite NPs are definite, and the
+indefinites, specific or not, indefinite. -/
+def definiteness (d : DefinitenessScale) : Definiteness :=
+  if .definite ≤ d then .definite else .indefinite
+
+theorem definiteness_monotone : Monotone definiteness := by
+  intro a b; revert a b; decide
+
+end DefinitenessScale
 
 /-! ### Cutoff splits -/
 
@@ -164,11 +129,11 @@ section Cutoff
 
 variable {α : Type*} [LinearOrder α]
 
-/-- The split that codes the values from `x` up specially: `1` at and above the cutoff,
+/-- The split that codes the values from `x` up specially is `1` at and above the cutoff and
 `0` below it. -/
 def atLeast (x y : α) : ℕ := if x ≤ y then 1 else 0
 
-/-- The split that codes the values below `x` specially: `1` below the cutoff, `0` at and
+/-- The split that codes the values below `x` specially is `1` below the cutoff and `0` at and
 above it. -/
 def below (x y : α) : ℕ := if y < x then 1 else 0
 
@@ -188,7 +153,7 @@ end Cutoff
 overt differential marking, for whatever argument role and channel a consumer pairs the pattern
 with. It is a `def` and not an `abbrev`, so that the checkers below are accessible by dot notation.
 -/
-def MarkingPattern := AnimacyLevel → DefinitenessLevel → Bool
+def MarkingPattern := Animacy → DefinitenessScale → Bool
 
 namespace MarkingPattern
 
@@ -213,7 +178,7 @@ instance : DecidablePred DefinitenessOnly := fun p ↦ by
 /-- `MonotoneP` is upper-set closure of the marked zone in the product prominence order. -/
 theorem monotoneP_iff_isUpperSet (p : MarkingPattern) :
     p.MonotoneP ↔
-      IsUpperSet {c : AnimacyLevel × DefinitenessLevel | p c.1 c.2 = true} :=
+      IsUpperSet {c : Animacy × DefinitenessScale | p c.1 c.2 = true} :=
   ⟨fun h _ _ hle hm ↦ h _ _ _ _ hle.1 hle.2 hm,
     fun h _ _ _ _ ha hd hm ↦ h (Prod.mk_le_mk.mpr ⟨ha, hd⟩) hm⟩
 
@@ -221,11 +186,11 @@ theorem monotoneP_iff_isUpperSet (p : MarkingPattern) :
 
 /-- The pattern that marks the cells at or above an animacy cutoff, as in P/T-type marking. Its
 marked zone is `Set.Ici cutoff` on the animacy axis. -/
-def animacyAtLeast (cutoff : AnimacyLevel) : MarkingPattern :=
+def animacyAtLeast (cutoff : Animacy) : MarkingPattern :=
   fun a _ ↦ decide (cutoff ≤ a)
 
 /-- Mark the cells at or above a definiteness cutoff (P/T-type marking). -/
-def definitenessAtLeast (cutoff : DefinitenessLevel) : MarkingPattern :=
+def definitenessAtLeast (cutoff : DefinitenessScale) : MarkingPattern :=
   fun _ d ↦ decide (cutoff ≤ d)
 
 end MarkingPattern

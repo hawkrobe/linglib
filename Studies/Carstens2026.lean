@@ -50,7 +50,8 @@ agreement is the exception.
 
 namespace Carstens2026
 
-open Bantu Reference.Prominence Minimalist.Coordination
+open Bantu Minimalist.Coordination
+open Reference (Animacy)
 
 /-- Whether the n of a gender carries a feature that percolates to &P, (13) and (77b). -/
 def interpretability : GenderStatus → Minimalist.Interpretability
@@ -192,18 +193,18 @@ end Mechanism
 /-! ### Xhosa (71)–(73) -/
 
 /-- The flavor of what a Xhosa noun denotes, [human], [animal] or [inanimate] (71). -/
-def xhosaFlavor : AnimacyLevel → SemanticCore
+def xhosaFlavor : Animacy → SemanticCore
   | .human => .human
   | .animate => .animal
   | .inanimate => .inanimate
 
 /-- Each flavor is borne by exactly one gender, A [human], E [animal] and D [inanimate] (71). -/
-theorem xhosaFlavor_existsUnique (a : AnimacyLevel) :
+theorem xhosaFlavor_existsUnique (a : Animacy) :
     ∃! g : Xhosa.Gender, g.status = .interpretable (xhosaFlavor a) := by
   revert a; unfold ExistsUnique; decide
 
 /-- The core of a noun, the gender whose n bears the flavor of what it denotes. -/
-def xhosaCore (a : AnimacyLevel) : Xhosa.Gender := Fintype.choose _ (xhosaFlavor_existsUnique a)
+def xhosaCore (a : Animacy) : Xhosa.Gender := Fintype.choose _ (xhosaFlavor_existsUnique a)
 
 /-- A noun's nominal, its core from what it denotes and its gender stacked above, (72)–(73). -/
 def xhosaNominal (n : Xhosa.Noun) : Nominal Xhosa.Gender := .stack (xhosaCore n.animacy) n.gender
@@ -211,17 +212,17 @@ def xhosaNominal (n : Xhosa.Noun) : Nominal Xhosa.Gender := .stack (xhosaCore n.
 /-! ### Shona (§3.5, §5.2) -/
 
 /-- The flavor of what a Shona noun denotes, [human] or [non-human] (§5.2). -/
-def shonaFlavor : AnimacyLevel → SemanticCore
+def shonaFlavor : Animacy → SemanticCore
   | .human => .human
   | _ => .nonhuman
 
 /-- Each flavor is borne by exactly one gender, A [human] and D [non-human]. -/
-theorem shonaFlavor_existsUnique (a : AnimacyLevel) :
+theorem shonaFlavor_existsUnique (a : Animacy) :
     ∃! g : Shona.Gender, g.status = .interpretable (shonaFlavor a) := by
   revert a; unfold ExistsUnique; decide
 
 /-- The core of a noun, the gender whose n bears the flavor of what it denotes. -/
-def shonaCore (a : AnimacyLevel) : Shona.Gender := Fintype.choose _ (shonaFlavor_existsUnique a)
+def shonaCore (a : Animacy) : Shona.Gender := Fintype.choose _ (shonaFlavor_existsUnique a)
 
 /-- A Shona noun's nominal, where a diminutive's u-gender 12/13 stacks above its core (98). -/
 def shonaNominal (n : Shona.Noun) : Nominal Shona.Gender := .stack (shonaCore n.animacy) n.gender

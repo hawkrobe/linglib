@@ -3,6 +3,7 @@ module
 public import Mathlib.Tactic.DeriveFintype
 public import Linglib.Syntax.Case.Alignment
 public import Linglib.Fragments.HindiUrdu.Case
+public import Linglib.Semantics.Reference.Animacy
 public import Linglib.Data.Examples.Dixon1994
 
 /-!
@@ -89,16 +90,19 @@ theorem marking_sa_so {m : ArgumentRole → κ} (h : m .A ≠ m .P) :
 /-- The Nominal Hierarchy (Figure 4.5) orders NPs by their likelihood of being in A rather than
 in O function, from first person pronouns, second person pronouns, demonstratives and third
 person pronouns, and proper names down to common nouns with human, animate and inanimate
-reference. -/
+reference, the common nouns ordered by the animacy of their referents. -/
 inductive Nominal
   | firstPerson
   | secondPerson
   | thirdPerson
   | properName
-  | human
-  | animate
-  | inanimate
-  deriving DecidableEq, Repr, Fintype
+  | common (a : Reference.Animacy)
+  deriving DecidableEq, Repr
+
+instance : Fintype Nominal where
+  elems := {.firstPerson, .secondPerson, .thirdPerson, .properName, .common .human,
+    .common .animate, .common .inanimate}
+  complete := by rintro (_ | _ | _ | _ | (_ | _ | _)) <;> decide
 
 /-- Position on the hierarchy, higher to the left. -/
 def Nominal.rank : Nominal → ℕ
@@ -106,12 +110,9 @@ def Nominal.rank : Nominal → ℕ
   | .secondPerson => 5
   | .thirdPerson => 4
   | .properName => 3
-  | .human => 2
-  | .animate => 1
-  | .inanimate => 0
+  | .common a => a.rank
 
-instance : LinearOrder Nominal :=
-  LinearOrder.lift' Nominal.rank fun a b h ↦ by cases a <;> cases b <;> simp_all [Nominal.rank]
+instance : LinearOrder Nominal := LinearOrder.lift' Nominal.rank (by decide)
 
 variable {H : Type*} [LinearOrder H]
 
@@ -206,7 +207,7 @@ def yidiny : HierarchySplit Nominal := .ofCutoffs .properName .thirdPerson
 /-- Latin, of type (a), marks pronouns and masculine and feminine nouns accusatively and has no
 ergative, so that neuter nouns have one form for S, A and O. -/
 def latin : HierarchySplit Nominal where
-  accusative p := decide (.human ≤ p)
+  accusative p := decide (.common .human ≤ p)
   ergative _ := false
   accusative_mono _ _ hpq h := by simpa using le_trans (by simpa using h) hpq
   ergative_anti _ _ _ h := h
@@ -214,7 +215,7 @@ def latin : HierarchySplit Nominal where
 /-- Waga-Waga, of type (f) (fn. 14), marks every NP constituent ergatively and NPs down to human
 common nouns accusatively, so that the left and middle of the hierarchy are tripartite. -/
 def wagaWaga : HierarchySplit Nominal where
-  accusative p := decide (.human ≤ p)
+  accusative p := decide (.common .human ≤ p)
   ergative _ := true
   accusative_mono _ _ hpq h := by simpa using le_trans (by simpa using h) hpq
   ergative_anti _ _ _ h := h
@@ -228,8 +229,9 @@ theorem patterns :
       dyirbal.pattern .secondPerson = .accusative ∧ dyirbal.pattern .thirdPerson = .ergative ∧
       cashinawa.pattern .thirdPerson = .tripartite ∧ cashinawa.pattern .properName = .ergative ∧
       yidiny.pattern .thirdPerson = .tripartite ∧ yidiny.pattern .properName = .tripartite ∧
-      yidiny.pattern .human = .ergative ∧ latin.pattern .animate = .neutral ∧
-      wagaWaga.pattern .human = .tripartite ∧ wagaWaga.pattern .animate = .ergative := by
+      yidiny.pattern (.common .human) = .ergative ∧ latin.pattern (.common .animate) = .neutral ∧
+      wagaWaga.pattern (.common .human) = .tripartite ∧
+      wagaWaga.pattern (.common .animate) = .ergative := by
   decide
 
 /-! ### Splits conditioned by tense, aspect or mood, §4.3 -/

@@ -2,6 +2,7 @@ module
 
 public import Linglib.Fragments.Swahili.Basic
 public import Linglib.Syntax.Category.Noun.Basic
+public import Linglib.Semantics.Reference.Animacy
 
 /-!
 # Swahili nouns
@@ -43,8 +44,8 @@ carries, the gender whose agreements it controls, and its animacy. -/
 structure Noun extends GenderedNoun Gender where
   /-- The pair of classes whose prefixes the noun carries. -/
   morphClass : Gender
-  /-- Whether the noun denotes an animate. -/
-  animate : Bool
+  /-- The animacy of the noun's referents. -/
+  animacy : Reference.Animacy
   /-- Augmentative or diminutive derivation, if any. -/
   evaluative : Option Evaluative := none
   deriving DecidableEq, Repr
@@ -52,107 +53,107 @@ structure Noun extends GenderedNoun Gender where
 /-- *kikapu* 'basket'. -/
 def kikapu : Noun :=
   { form := "kikapu", gloss := "basket", morphClass := .genderD, gender := .genderD,
-    animate := false }
+    animacy := .inanimate }
 
 /-- *kiti* 'stool'. -/
 def kiti : Noun :=
   { form := "kiti", gloss := "stool", morphClass := .genderD, gender := .genderD,
-    animate := false }
+    animacy := .inanimate }
 
 /-- *mti* 'tree'. -/
 def mti : Noun :=
   { form := "mti", gloss := "tree", morphClass := .genderB, gender := .genderB,
-    animate := false }
+    animacy := .inanimate }
 
 /-- *mguu* 'leg'. -/
 def mguu : Noun :=
   { form := "mguu", gloss := "leg", morphClass := .genderB, gender := .genderB,
-    animate := false }
+    animacy := .inanimate }
 
 /-- *nyumba* 'house'. -/
 def nyumba : Noun :=
   { form := "nyumba", gloss := "house", morphClass := .genderE, gender := .genderE,
-    animate := false }
+    animacy := .inanimate }
 
 /-- *mtu* 'person'. -/
 def mtu : Noun :=
   { form := "mtu", gloss := "person", morphClass := .genderA, gender := .genderA,
-    animate := true }
+    animacy := .human }
 
 /-- *mwalimu* 'teacher'. -/
 def mwalimu : Noun :=
   { form := "mwalimu", gloss := "teacher", morphClass := .genderA, gender := .genderA,
-    animate := true }
+    animacy := .human }
 
 /-- *mnyama* 'animal'. -/
 def mnyama : Noun :=
   { form := "mnyama", gloss := "animal", morphClass := .genderA, gender := .genderA,
-    animate := true }
+    animacy := .animate }
 
 /-- *mdudu* 'insect'. -/
 def mdudu : Noun :=
   { form := "mdudu", gloss := "insect", morphClass := .genderA, gender := .genderA,
-    animate := true }
+    animacy := .animate }
 
 /-- *kifaru* 'rhinoceros', with the prefix of class 7 and the agreements of classes 1/2. -/
 def kifaru : Noun :=
   { form := "kifaru", gloss := "rhinoceros", morphClass := .genderD, gender := .genderA,
-    animate := true }
+    animacy := .animate }
 
 /-- *kiboko* 'hippopotamus', with the prefix of class 7 and the agreements of classes 1/2. -/
 def kiboko : Noun :=
   { form := "kiboko", gloss := "hippopotamus", morphClass := .genderD, gender := .genderA,
-    animate := true }
+    animacy := .animate }
 
 /-- *mjusi* 'lizard', with the prefix of class 3. -/
 def mjusi : Noun :=
   { form := "mjusi", gloss := "lizard", morphClass := .genderB, gender := .genderA,
-    animate := true }
+    animacy := .animate }
 
 /-- *jogoo* 'rooster', of morphological class 5/6. -/
 def jogoo : Noun :=
   { form := "jogoo", gloss := "rooster", morphClass := .genderC, gender := .genderA,
-    animate := true }
+    animacy := .animate }
 
 /-- *kipofu* 'blind person', with the prefix of class 7. -/
 def kipofu : Noun :=
   { form := "kipofu", gloss := "blind person", morphClass := .genderD, gender := .genderA,
-    animate := true }
+    animacy := .human }
 
 /-- *tembo* 'elephant', of morphological class 9/10. -/
 def tembo : Noun :=
   { form := "tembo", gloss := "elephant", morphClass := .genderE, gender := .genderA,
-    animate := true }
+    animacy := .animate }
 
 /-- *nyoka* 'snake', of morphological class 9/10. -/
 def nyoka : Noun :=
   { form := "nyoka", gloss := "snake", morphClass := .genderE, gender := .genderA,
-    animate := true }
+    animacy := .animate }
 
 /-- *rafiki* 'friend', of morphological class 9/10. -/
 def rafiki : Noun :=
   { form := "rafiki", gloss := "friend", morphClass := .genderE, gender := .genderA,
-    animate := true }
+    animacy := .human }
 
 /-- *ng'ombe* 'cow', of morphological class 9/10. -/
 def ngombe : Noun :=
   { form := "ng'ombe", gloss := "cow", morphClass := .genderE, gender := .genderA,
-    animate := true }
+    animacy := .animate }
 
 /-- *joka* 'giant snake', the augmentative of *nyoka*. -/
 def joka : Noun :=
   { form := "joka", gloss := "giant snake", morphClass := .genderC, gender := .genderC,
-    animate := true, evaluative := some .augmentative }
+    animacy := .animate, evaluative := some .augmentative }
 
 /-- *kitoto* 'baby', the diminutive of *mtoto* 'child'. -/
 def kitoto : Noun :=
   { form := "kitoto", gloss := "baby", morphClass := .genderD, gender := .genderD,
-    animate := true, evaluative := some .diminutive }
+    animacy := .human, evaluative := some .diminutive }
 
 /-- *kijoka* 'tiny snake', the diminutive of *joka*. -/
 def kijoka : Noun :=
   { form := "kijoka", gloss := "tiny snake", morphClass := .genderD, gender := .genderD,
-    animate := true, evaluative := some .diminutive }
+    animacy := .animate, evaluative := some .diminutive }
 
 /-- The nouns of Corbett's examples and rules. -/
 def allNouns : List Noun :=

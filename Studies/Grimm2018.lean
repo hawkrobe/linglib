@@ -36,7 +36,7 @@ classification of the four individuation types is the language's row of Table 20
 Turkana and Maltese share Welsh's partition and differ in agreement and animacy reach, Yudja
 shares English's and differs in restricting the contrast to humans; the classification does not
 record these. The animacy tiers of Fig. 3, inanimates below Haspelmath's lower and higher
-animates below humans, are ranks of the library's `AnimacyRank`; the full animacy–individuation
+animates below humans, are ranks of the library's `AnimacyHierarchy`; the full animacy–individuation
 lattice, an Aissen product, and the connected region constraint (28) over it are not
 formalized.
 
@@ -46,7 +46,7 @@ formalized.
 * [grimm-2012]
 * [smith-stark-1974]
 * [aissen-2003]
-* [haspelmath-2005]
+* [haspelmath-2013b]
 -/
 
 @[expose] public section
@@ -323,9 +323,9 @@ inductive CollectiveLang where
   | turkana
   deriving DecidableEq, Repr, Fintype
 
-/-- Each language's collective/singulative class reaches up to an animacy rank (Fig. 4) and
-covers everything from inanimate aggregates up to it. -/
-def collectiveCeiling : CollectiveLang → Reference.Prominence.AnimacyRank
+/-- Each language's collective/singulative class reaches up to a position on the animacy
+hierarchy (Fig. 4) and covers everything from inanimate aggregates up to it. -/
+def collectiveCeiling : CollectiveLang → Reference.Prominence.AnimacyHierarchy
   | .maltese => .lowerAnimal
   | .welsh => .higherAnimal
   | .turkana => .human

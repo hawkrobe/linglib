@@ -49,8 +49,9 @@ is a category apart. The book's examples are the rows of `Data/Examples/Corbett2
   general number and how many final choices are facultative. The substrate's system, its
   values and its facultative list, is derived from the choices, and the substrate's
   implicational universals hold of every system by enumeration of the finite type of shapes.
-* A range is a function from the substrate's animacy ranks, whose order puts the speaker at
-  the top and whose discrete inanimates are the book's inanimate position, to a three-way
+* A range is a function from the positions of the substrate's animacy hierarchy, Haspelmath's,
+  which puts the speaker at the top, splits the book's animate position as Miya needs, and
+  whose discrete inanimates are the book's inanimate position, to a three-way
   marking; constraint III of chapter 3 is monotonicity, the top-segment constraint I a
   theorem of it, and constraints I–III of chapter 4 are read as a pointwise order between
   successive choices, which is stronger than their letter. The optional marking of chapter 3,
@@ -279,7 +280,7 @@ instance : OrderBot Marking where
 end Marking
 
 /-- The range of a number value gives its marking at each position of the hierarchy. -/
-abbrev Range := AnimacyRank → Marking
+abbrev Range := AnimacyHierarchy → Marking
 
 namespace Range
 
@@ -293,11 +294,11 @@ theorem Respects.isUpperSet {r : Range} (h : r.Respects) : IsUpperSet {p | ⊥ <
   (isUpperSet_Ioi _).preimage h
 
 /-- The range obligatory down to `o`, optional down to `f`, excluded below. -/
-def downTo (o f : AnimacyRank) : Range :=
+def downTo (o f : AnimacyHierarchy) : Range :=
   fun p ↦ if o ≤ p then .obligatory else if f ≤ p then .optional else ⊥
 
 /-- Every such range respects the hierarchy. -/
-theorem downTo_respects (o f : AnimacyRank) : (downTo o f).Respects := by
+theorem downTo_respects (o f : AnimacyHierarchy) : (downTo o f).Respects := by
   revert o f; decide
 
 end Range
@@ -829,7 +830,7 @@ def numberNames : List (String × Number) :=
     ("paucal", .paucal), ("plural", .plural)]
 
 /-- The positions of the hierarchy by name. -/
-def rankNames : List (String × AnimacyRank) :=
+def rankNames : List (String × AnimacyHierarchy) :=
   [("speaker", .speaker), ("addressee", .addressee), ("thirdPerson", .thirdPerson),
     ("kin", .kin), ("human", .human), ("higherAnimal", .higherAnimal),
     ("lowerAnimal", .lowerAnimal), ("discreteInanimate", .discreteInanimate),

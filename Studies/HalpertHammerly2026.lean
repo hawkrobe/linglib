@@ -201,7 +201,7 @@ theorem category_spec_inanimate : category inanimate.1.spec = Set.Ioi .animal :=
   decide
 
 /-- The core class of a referent of a given animacy. -/
-def ofAnimacyLevel : Reference.Prominence.AnimacyLevel → Core
+def ofAnimacy : Reference.Animacy → Core
   | .human => human
   | .animate => animal
   | .inanimate => inanimate
@@ -295,7 +295,7 @@ def prefixGender (n : Nominal Core) : Xhosa.Gender := n.visible.gender
 bearing the features of the noun's gender when that is a core class other than the core's. It
 is undefined for the genders whose features the paper leaves open. -/
 def ofEntry (e : Xhosa.Noun) : Option (Nominal Core) :=
-  (Core.ofGender e.gender).map (.stack (Core.ofAnimacyLevel e.animacy))
+  (Core.ofGender e.gender).map (.stack (Core.ofAnimacy e.animacy))
 
 /-- The prefix class of a nominal is the noun's gender. -/
 theorem prefixGender_eq_gender {e : Xhosa.Noun} {n : Nominal Core} (h : ofEntry e = some n) :

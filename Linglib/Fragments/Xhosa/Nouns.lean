@@ -1,18 +1,17 @@
 module
 
-public import Linglib.Semantics.Reference.Prominence
+public import Linglib.Semantics.Reference.Animacy
 public import Linglib.Syntax.Category.Noun.Basic
 public import Linglib.Fragments.Xhosa.Basic
 
 /-!
 # Xhosa nouns
 
-Nouns of the class system, each with its gender and the kind of entity it denotes: the
-lexicon behind the conjoined-subject agreement data of [carstens-2026] and
-[taraldsen-et-al-2018], and the deverbal nouns in the nominalizing final vowels -i and -o of
-[mletshe-2019] behind [halpert-hammerly-2026]'s stacked class prefixes. Forms are cited with
-the augment. Class 1a nouns, *u-L*, *u-loliwe* 'train', *u-nonkala* 'crab', are entered in
-gender 1/2, differing from class 1 only in the nominal prefix.
+Nouns of the class system, each with its gender and the kind of entity it denotes: the lexicon
+behind the conjoined-subject agreement data of Carstens and of Taraldsen and colleagues, and the
+deverbal nouns in the nominalizing final vowels -i and -o of Mletshe behind Halpert and Hammerly's
+stacked class prefixes. Forms are cited with the augment. Class 1a nouns, *u-L*, *u-loliwe* 'train',
+*u-nonkala* 'crab', are entered in gender 1/2, differing from class 1 only in the nominal prefix.
 
 ## References
 
@@ -30,7 +29,7 @@ namespace Xhosa
 plural class, together with the animacy of what it denotes. -/
 structure Noun extends GenderedNoun Gender where
   /-- The animacy of what the noun denotes. -/
-  animacy : Reference.Prominence.AnimacyLevel
+  animacy : Reference.Animacy
   deriving DecidableEq, Repr
 
 namespace Nouns
