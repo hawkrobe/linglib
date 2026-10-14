@@ -21,8 +21,8 @@ strictly piecewise ones.
 * `FirstOrder.Language.Factor`: connected sets of atoms on at most `k` variables.
 * `FirstOrder.Language.Factor.Occurs`, `FirstOrder.Language.factors`: occurrence, and the
   `k`-factors of a structure.
-* `FirstOrder.Language.IsStrictlyLocal`: the strictly local sets of members of a family of
-  structures.
+* `FirstOrder.Language.IsStrictlyLocal`, `FirstOrder.Language.IsLocallyTestable`: the strictly
+  local and the locally testable sets of members of a family of structures.
 
 ## Main statements
 
@@ -110,6 +110,12 @@ members all of whose `k`-factors a fixed set of factors permits. -/
 def IsStrictlyLocal (S : Set ι) : Prop :=
   ∃ G : Set (L.Factor k), S = {i | L.factors k (M i) ⊆ G}
 
+variable (L) in
+/-- A set of members of a family of structures is locally `k`-testable when membership depends
+only on the set of `k`-factors. -/
+def IsLocallyTestable (S : Set ι) : Prop :=
+  Function.FactorsThrough (· ∈ S) fun i ↦ L.factors k (M i)
+
 variable {M k} {S T : Set ι}
 
 /-- A set is strictly local exactly when it contains every member whose factors all occur in its
@@ -144,6 +150,25 @@ theorem IsStrictlyLocal.inter (hS : L.IsStrictlyLocal M k S) (hT : L.IsStrictlyL
   obtain ⟨G, rfl⟩ := hS
   obtain ⟨H, rfl⟩ := hT
   exact ⟨G ∩ H, Set.ext fun _ ↦ Set.subset_inter_iff.symm⟩
+
+/-! ### Locally testable sets -/
+
+theorem IsStrictlyLocal.isLocallyTestable (hS : L.IsStrictlyLocal M k S) :
+    L.IsLocallyTestable M k S := by
+  obtain ⟨G, rfl⟩ := hS
+  exact fun _ _ h ↦ congrArg (· ⊆ G) h
+
+theorem IsLocallyTestable.compl (hS : L.IsLocallyTestable M k S) :
+    L.IsLocallyTestable M k Sᶜ :=
+  fun _ _ h ↦ congrArg Not (hS h)
+
+theorem IsLocallyTestable.inter (hS : L.IsLocallyTestable M k S)
+    (hT : L.IsLocallyTestable M k T) : L.IsLocallyTestable M k (S ∩ T) :=
+  fun _ _ h ↦ congrArg₂ And (hS h) (hT h)
+
+theorem IsLocallyTestable.union (hS : L.IsLocallyTestable M k S)
+    (hT : L.IsLocallyTestable M k T) : L.IsLocallyTestable M k (S ∪ T) :=
+  fun _ _ h ↦ congrArg₂ Or (hS h) (hT h)
 
 end Family
 
