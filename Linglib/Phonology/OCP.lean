@@ -11,34 +11,43 @@ public import Linglib.Core.Data.List.Destutter
 /-!
 # The Obligatory Contour Principle
 
-The categorical, strict-identity, single-tier OCP: the ban on two *identical* adjacent
-autosegments on one tier ([leben-1973], [mccarthy-1986]), on a projected tier for `IsCleanOn`
-([chandlee-jardine-2019]). As a stringset the constraint is tier-based strictly local
-(TSL₂, [heinz-rawal-tanner-2011]), characterised in `OCP`. The
-fusion repair `collapse` is mathlib's
-`List.destutter (· ≠ ·)` ([goldsmith-1976], [mccarthy-prince-1995]) — a retraction onto
-cleanness, input-strictly-local ([chandlee-heinz-2018]); the blocking repair `block` is
-antigemination, a guard rather than a retraction ([mccarthy-1986]).
+The Obligatory Contour Principle (OCP) bans two identical adjacent autosegments on one tier.
+Here it is categorical and bans strict identity, either on the tier itself (`IsClean`, after
+Leben and McCarthy) or on a projection of it (`IsCleanOn`, after Chandlee and Jardine). Fusion,
+`collapse`, repairs a violation by merging each run of identical elements into one; it is
+`List.destutter (· ≠ ·)`, a retraction onto the clean tiers. Blocking, `block`, is McCarthy's
+antigemination: a rule that would create a violation does not apply. The run index `runIdx`
+tracks where each position lands under fusion. `Phonology/Subregular/OCP.lean` shows that the
+constraint is tier-based strictly local and that fusion is input strictly local.
 
-Gradient, similarity-scaled OCP ([frisch-pierrehumbert-broe-2004]), a decreasing function of the
-similarity of the two consonants, is a different object, in that paper's study.
+The gradient OCP of Frisch, Pierrehumbert and Broe, which scales with the similarity of the two
+consonants, is a different object and lives in that paper's study.
 
 ## Main definitions
 
-* `OCP.IsClean` / `OCP.IsCleanOn` — OCP-cleanness, flat and on a projected tier.
-* `OCP.collapse` — the fusion repair (OCP-merger normal form).
-* `OCP.block` — the blocking repair (antigemination guard).
+* `OCP.IsClean`, `OCP.IsCleanOn`: no two identical adjacent elements, on the tier or on a
+  projection of it.
+* `OCP.collapse`: the fusion repair.
+* `OCP.block`: the blocking repair.
+* `OCP.runIdx`: the index of the run containing a position.
 
-## Main results
+## Main statements
 
-* `collapse_eq_destutter` — the fusion repair is `List.destutter`.
-* `collapse_clean` / `collapse_eq_self_iff` — `collapse` is the retraction onto `IsClean`.
-* `collapse_sublist` — fusion never adds material.
-* `collapse_append` — `collapse` is the OCP congruence: collapsing each operand before `++`
-  is harmless, so `collapse` descends to the OCP quotient of `(List α, ++)` (the quotient
-  monoid and its presentation `⟨α | a · a = a⟩` live on the `Core.Algebra.FreeMonoid.Destutter`
-  substrate; the autosegmental reading is in `Autosegmental.Collapse`).
-* `block_eq_self` — antigemination: a rule is blocked when it would violate the OCP.
+* `OCP.collapse_eq_self_iff`: `collapse` fixes exactly the clean tiers.
+* `OCP.collapse_append`: `collapse` is a congruence for `++`.
+* `OCP.runIdx_append_collapse_left`, `OCP.runIdx_append_collapse_right`: run indices commute
+  with collapsing the two halves of a concatenation.
+
+## References
+
+* [leben-1973]
+* [goldsmith-1976]
+* [mccarthy-1986]
+* [mccarthy-prince-1995]
+* [frisch-pierrehumbert-broe-2004]
+* [heinz-rawal-tanner-2011]
+* [chandlee-heinz-2018]
+* [chandlee-jardine-2019]
 -/
 
 @[expose] public section
@@ -49,10 +58,9 @@ variable {α β : Type*}
 
 /-! ### The constraint -/
 
-/-- A tier is **OCP-clean** when no adjacent pair is identical. Adjacency-only, so
-weaker than `List.Nodup` (`[1, 2, 1]` is clean). A reducible alias of the substrate
-predicate `List.IsChain (· ≠ ·)`, so the substrate's `Monoid {l // l.IsChain (· ≠ ·)}`
-applies to OCP-clean tiers downstream. -/
+/-- A tier is **OCP-clean** when no two adjacent elements are identical. This is weaker than
+`List.Nodup`, since `[1, 2, 1]` is clean. It is a reducible alias of `List.IsChain (· ≠ ·)`, so
+that API applies. -/
 abbrev IsClean (xs : List α) : Prop :=
   List.IsChain (· ≠ ·) xs
 
@@ -64,26 +72,24 @@ abbrev IsClean (xs : List α) : Prop :=
     IsClean (x :: y :: rs) ↔ x ≠ y ∧ IsClean (y :: rs) := by
   simp only [IsClean, List.isChain_cons_cons]
 
-/-- OCP on the tier projected from `xs` by keeping `p`-elements and reading `proj`
-(tier-relativity, [chandlee-jardine-2019]); flat `IsClean` is the `p = ⊤`, `proj = id` case. -/
+/-- The OCP on the tier projected from `xs` by keeping the `p`-elements and reading them
+through `proj`. Flat `IsClean` is the case `p = ⊤`, `proj = id`. -/
 def IsCleanOn (p : α → Prop) [DecidablePred p] (proj : α → β) (xs : List α) : Prop :=
-  IsClean ((xs.filter (fun a => decide (p a))).map proj)
+  IsClean ((xs.filter (fun a ↦ decide (p a))).map proj)
 
 instance decidableIsClean [DecidableEq α] : DecidablePred (IsClean (α := α)) :=
-  fun xs => inferInstanceAs (Decidable (List.IsChain (· ≠ ·) xs))
+  fun xs ↦ inferInstanceAs (Decidable (List.IsChain (· ≠ ·) xs))
 
 instance decidableIsCleanOn [DecidableEq β] (p : α → Prop)
     [DecidablePred p] (proj : α → β) : DecidablePred (IsCleanOn p proj) :=
-  fun _ => inferInstanceAs (Decidable (IsClean _))
+  fun _ ↦ inferInstanceAs (Decidable (IsClean _))
 
 section
 variable [DecidableEq α]
 
 /-! ### The fusion repair -/
 
-/-- **OCP-merger normal form** (the fusion repair): collapse each maximal run of
-identical adjacent elements into one. Fusing identical autosegments returns that same
-autosegment, so the payload is unchanged. -/
+/-- The **fusion repair** merges each maximal run of identical adjacent elements into one. -/
 def collapse (xs : List α) : List α := xs.destutter (· ≠ ·)
 
 theorem collapse_eq_destutter (xs : List α) : collapse xs = xs.destutter (· ≠ ·) := rfl
@@ -95,7 +101,7 @@ theorem collapse_eq_destutter (xs : List α) : collapse xs = xs.destutter (· �
 /-- `collapse` fuses a constant run into its single autosegment. -/
 @[simp] theorem collapse_replicate (n : ℕ) (a : α) :
     collapse (List.replicate (n + 1) a) = [a] :=
-  List.destutter_replicate (fun h => h rfl) n
+  List.destutter_replicate (fun h ↦ h rfl) n
 
 /-- `collapse` lands in the OCP-clean set. -/
 theorem collapse_clean (xs : List α) : IsClean (collapse xs) :=
@@ -105,8 +111,8 @@ theorem collapse_clean (xs : List α) : IsClean (collapse xs) :=
 theorem collapse_idempotent_on_clean {xs : List α} (h : IsClean xs) : collapse xs = xs :=
   List.destutter_of_isChain _ xs h
 
-/-- `collapse` fixes a tier iff it is OCP-clean; with `collapse_clean`, the retraction
-onto `IsClean`. -/
+/-- `collapse` fixes exactly the OCP-clean tiers, so with `collapse_clean` it is a retraction
+onto them. -/
 @[simp] theorem collapse_eq_self_iff (xs : List α) : collapse xs = xs ↔ IsClean xs :=
   List.destutter_eq_self_iff _ xs
 
@@ -119,7 +125,7 @@ theorem collapse_idempotent (xs : List α) : collapse (collapse xs) = collapse x
 @[simp] theorem collapse_eq_nil {xs : List α} : collapse xs = [] ↔ xs = [] :=
   List.destutter_eq_nil _
 
-/-- Fusion never adds material: the repair output is a sublist of the input. -/
+/-- The output of the fusion repair is a sublist of its input. -/
 theorem collapse_sublist (xs : List α) : (collapse xs).Sublist xs :=
   List.destutter_sublist _ xs
 
@@ -129,12 +135,10 @@ theorem collapse_length_le (xs : List α) : (collapse xs).length ≤ xs.length :
 theorem mem_collapse {a : α} {xs : List α} (ha : a ∈ collapse xs) : a ∈ xs :=
   (collapse_sublist xs).mem ha
 
-/-! ### The OCP congruence: `collapse` as a quotient homomorphism
+/-! ### The OCP congruence
 
-`collapse` descends to a homomorphism on the OCP quotient of `(List α, ++)`: collapsing
-each operand before appending is harmless. This is what makes the OCP-clean tiers under
-fusion-concatenation (append-then-destutter) the quotient `(List α, ++)/OCP` — bundled on
-the `Core.Algebra.FreeMonoid.Destutter` substrate as `FreeMonoid.destutterHom`. -/
+Collapsing either operand before appending changes nothing, so `collapse` is a congruence
+for `++`. -/
 
 /-- Collapsing the left operand before appending does not change the result. -/
 theorem collapse_append_left (x y : List α) :
@@ -144,37 +148,28 @@ theorem collapse_append_left (x y : List α) :
 /-- Collapsing the right operand before appending does not change the result. -/
 theorem collapse_append_right (x y : List α) :
     collapse (x ++ collapse y) = collapse (x ++ y) :=
-  List.destutter_append_right_ne x y
+  List.destutter_append_right x y
 
-/-- **The OCP congruence.** `collapse` is a `++`→quotient homomorphism: collapsing each
-operand first is harmless. Thus `collapse` descends to the OCP quotient of `(List α, ++)`. -/
+/-- Collapsing each operand before appending changes nothing. -/
 theorem collapse_append (x y : List α) :
     collapse (x ++ y) = collapse (collapse x ++ collapse y) :=
-  List.destutter_append_destutter_ne x y
+  (List.destutter_append_destutter x y).symm
 
 /-! ### The blocking repair
 
-The substrate provides the OCP quotient monoid (OCP-clean tiers under fusion-concatenation,
-append-then-destutter) and its identification with the monoid presented by idempotent
-autosegments `⟨α | a · a = a⟩`
-(`Core.Algebra.FreeMonoid.Destutter`). The autosegmental reading of that quotient — the
-decategorification square against the categorical representation, contrasting the OCP (a
-monoidal quotient) with the No-Crossing Constraint (a monoidal subcategory) — lives
-downstream in `Autosegmental.Collapse`, which can see both `Autosegmental.ncc_isMonoidal` and
-`Autosegmental.ocp_not_isMonoidal`. -/
+A rule that would create an OCP violation fails to apply, leaving its input unrepaired. -/
 
 variable (rule : List α → List α)
 
-/-- **Blocking** ([mccarthy-1986]'s antigemination): apply `rule` only when it would not
-create an OCP violation, else leave the input untouched — a guard preventing a process,
-not a retraction repairing its output. -/
+/-- **Blocking** applies `rule` only when its output is OCP-clean and otherwise leaves the input
+untouched. Unlike `collapse`, it prevents a process rather than repairing its output. -/
 def block (xs : List α) : List α :=
   if IsClean (rule xs) then rule xs else xs
 
 theorem block_eq_rule {xs : List α} (hc : IsClean (rule xs)) : block rule xs = rule xs := ite_eq_left hc
 
-/-- Antigemination: the rule fails to apply exactly when it would create an OCP
-violation, leaving the input unrepaired (contrast `collapse`). -/
+/-- Under antigemination a rule that would create an OCP violation does not apply, and the
+input is left unrepaired. -/
 theorem block_eq_self {xs : List α} (hc : ¬ IsClean (rule xs)) : block rule xs = xs := ite_eq_right hc
 
 /-- Blocking never worsens a clean tier. -/
@@ -188,12 +183,11 @@ end
 section RunIndex
 variable {α : Type*} [DecidableEq α]
 
-/-- **Run index** of upper position `k` in `xs`: the index (0-based) of the
-    OCP-run containing `k`, i.e. one less than the number of runs in the prefix
-    `xs[0..k]`. Concretely `(OCP.collapse (xs.take (k+1))).length - 1`. -/
+/-- The **run index** of position `k` in `xs` is the 0-based index of the run of identical
+elements containing it, one less than the number of runs in `xs.take (k + 1)`. -/
 def runIdx (xs : List α) (k : ℕ) : ℕ := (collapse (xs.take (k + 1))).length - 1
 
-/-- `runIdx` is monotone: later positions sit in later (or the same) runs. -/
+/-- Later positions sit in the same or later runs. -/
 theorem runIdx_monotone (xs : List α) : Monotone (runIdx xs) := by
   intro a b hab
   unfold runIdx
@@ -203,8 +197,7 @@ theorem runIdx_monotone (xs : List α) : Monotone (runIdx xs) := by
   simp only [collapse_eq_destutter] at hlen ⊢
   omega
 
-/-- `runIdx` lands inside the collapsed tier: an in-bounds position maps to an
-    in-bounds run index. The upper half of `collapseAR`'s in-bounds proof. -/
+/-- An in-bounds position has an in-bounds run index in the collapsed tier. -/
 theorem runIdx_lt_collapse_length (xs : List α) {k : ℕ} (hk : k < xs.length) :
     runIdx xs k < (collapse xs).length := by
   unfold runIdx
@@ -223,7 +216,7 @@ theorem runIdx_lt_collapse_length (xs : List α) {k : ℕ} (hk : k < xs.length) 
     exact hne h
   omega
 
-/-- On a constant tier every position lies in the single run: `runIdx` is `0`. -/
+/-- On a constant tier every position lies in the single run. -/
 @[simp] theorem runIdx_replicate (n : ℕ) (a : α) (k : ℕ) :
     runIdx (List.replicate n a) k = 0 := by
   unfold runIdx
@@ -234,11 +227,10 @@ theorem runIdx_lt_collapse_length (xs : List α) {k : ℕ} (hk : k < xs.length) 
 
 /-! ### Run-index and concatenation
 
-The defining property of `concat` for the OCP quotient: `runIdx` commutes with the
-collapse-collapse seam (`runIdx_append_collapse_left/right`). On the A-block the prefix
-run-index is untouched (`runIdx_append_left`, plus `runIdx_clean` re-reading a clean tier
-as the identity); on the B-block the seam merges exactly when `collapse xs` ends in the
-element heading `ys` (`runIdx_append_right`, the AR shadow of
+`runIdx` commutes with the collapse-collapse seam (`runIdx_append_collapse_left/right`). On
+the left block the prefix run index is untouched (`runIdx_append_left`, with `runIdx_clean`
+reading a clean tier as the identity); on the right block the seam merges exactly when
+`collapse xs` ends in the element heading `ys` (`runIdx_append_right`, from
 `List.IsChain.length_destutter_ne_append`). -/
 
 /-- The prefix run-index is unaffected by a right append. -/
@@ -259,7 +251,7 @@ theorem collapse_take_succ_length {xs : List α} {m : ℕ} (hm : m < xs.length) 
   unfold runIdx
   have hpos : 0 < (collapse (xs.take (m + 1))).length := by
     rw [List.length_pos_iff]
-    refine fun h => ?_
+    refine fun h ↦ ?_
     have hne : xs.take (m + 1) ≠ [] := by
       intro h'
       have : (xs.take (m + 1)).length = m + 1 := List.length_take_of_le (by omega)
@@ -273,9 +265,8 @@ theorem collapse_take_head? {xs : List α} {m : ℕ} :
   rw [collapse, List.head?_destutter]
   cases xs <;> simp
 
-/-- **The B-part seam identity.** Reading a suffix position through the collapse of an
-append: the run-index is the left collapse's length plus the suffix's own run-index, minus
-one exactly when the seam merges (`List.IsChain.length_destutter_ne_append`). -/
+/-- The run index of a suffix position is the length of the collapsed prefix plus its run
+index in the suffix, minus one exactly when the seam merges. -/
 theorem runIdx_append_right {xs ys : List α} {a : ℕ} (ha : a < ys.length) :
     runIdx (xs ++ ys) (xs.length + a) =
       (collapse xs).length + runIdx ys a -
@@ -290,13 +281,13 @@ theorem runIdx_append_right {xs ys : List α} {a : ℕ} (ha : a < ys.length) :
     omega
   · omega
 
-/-- A-block: a prefix index commutes with the collapse-collapse seam. -/
+/-- The run index of a prefix position commutes with collapsing both halves. -/
 theorem runIdx_append_collapse_left {xs ys : List α} {k : ℕ} (h : k < xs.length) :
     runIdx (xs ++ ys) k = runIdx (collapse xs ++ collapse ys) (runIdx xs k) := by
   rw [runIdx_append_left h, runIdx_append_left (runIdx_lt_collapse_length xs h),
     runIdx_clean (collapse_clean _) (runIdx_lt_collapse_length xs h)]
 
-/-- B-block: a suffix index commutes with the collapse-collapse seam. -/
+/-- The run index of a suffix position commutes with collapsing both halves. -/
 theorem runIdx_append_collapse_right {xs ys : List α} {a : ℕ} (ha : a < ys.length) :
     runIdx (xs ++ ys) (xs.length + a) =
       runIdx (collapse xs ++ collapse ys) ((collapse xs).length + runIdx ys a) := by
