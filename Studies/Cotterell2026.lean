@@ -8,7 +8,7 @@ module
 public import Linglib.Core.Analysis.SpecialFunctions.Softmax
 public import Linglib.Core.InformationTheory.Surprisal
 public import Linglib.Core.Probability.AutoregressiveSequenceModel
-public import Linglib.Core.Probability.Kernel.OfWeights
+public import Linglib.Core.Probability.Kernel.Softmax
 public import Linglib.Processing.Surprisal.PrefixProbability
 
 /-!
@@ -16,27 +16,29 @@ public import Linglib.Processing.Surprisal.PrefixProbability
 
 Surprisal theory holds that the processing difficulty of a unit in context is an affine function
 of its surprisal under some language model, with a positive slope and a baseline that may depend
-on the context. [cotterell-2026] argues that the claim is a tautology unless the language model is
+on the context. The paper argues that the claim is a tautology unless the language model is
 constrained: any nonnegative difficulty measure `d` over the next unit, or the end of the string,
 given a prefix, defines the model whose next-unit distribution is the softmax of `-d`, and its
 surprisal is `d` plus the log partition function of the prefix (`surprisal_softmaxModel`), so
 the claim holds with slope one and the negative log partition function as baseline. The one
 condition is that the model be a language model, i.e. tight. When the end difficulty is bounded
 along a series whose exponentials diverge, the softmax model ends with probability at least those
-exponentials over the size of the extended alphabet, and it is tight by [du-etal-2023]'s
+exponentials over the size of the extended alphabet, and it is tight by Du and colleagues'
 sufficient condition (`isTight_softmaxModel`). A tight model's next-unit distributions are the
 next-unit laws of the language model it defines (`Surprisal.nextWord_stringMeasure`), so the
 difficulty is the surprisal of the unit under that language model up to a context-dependent
 baseline (`surprisal_nextWord_softmaxModel`), the tautology
-(`exists_isTight_difficulty_eq_surprisal`); a constant bound also gives it finite expected length
-(`tsum_length_mul_stringProb_softmaxModel_ne_top`). Without the bound the construction can fail:
-an end difficulty growing linearly in the length of the prefix leaves the softmax model non-tight
+(`exists_isTight_difficulty_eq_surprisal`). A constant bound `C` also bounds the expected
+length by `(1 - η) / η` for `η = exp (-C)` over the size of the extended alphabet
+(`tsum_length_mul_stringProb_softmaxModel_le`). Without the bound the construction can fail: an
+end difficulty growing linearly in the length of the prefix leaves the softmax model non-tight
 (`not_isTight_softmaxModel_length`).
 
 ## Implementation notes
 
 * The difficulty measure takes the next unit before the prefix, `d o u` for `d(o | u)`, with
-  `none` for the end of the string.
+  `none` for the end of the string, and the model's next-unit kernel is the softmax kernel
+  `ProbabilityTheory.Kernel.softmax` of the real score `-d`.
 * The divergence hypothesis is stated in `ℝ≥0∞`, where a sum of nonnegative terms equals `∞`
   exactly when the series diverges; the paper states it for real series.
 * The paper's bound `f` is nonnegative and its constant bound positive; neither sign condition is
@@ -61,19 +63,17 @@ open scoped ENNReal
 
 variable {α : Type*} [Fintype α] [MeasurableSpace α] [MeasurableSingletonClass α]
 
-/-- The model whose next-unit distribution after `u` is proportional to `exp (-d o u)`. -/
+/-- The model whose next-unit distribution after `u` is the softmax of `-d (· | u)`. -/
 noncomputable def softmaxModel (d : Option α → List α → ℝ) : AutoregressiveSequenceModel α where
-  next := Kernel.ofWeights fun u o ↦ ENNReal.ofReal (exp (-d o u))
-  isMarkovKernel_next := Kernel.isMarkovKernel_ofWeights
-    (fun _ ↦ ⟨none, (ENNReal.ofReal_pos.2 (exp_pos _)).ne'⟩) fun _ _ ↦ ENNReal.ofReal_ne_top
+  next := Kernel.softmax fun u o ↦ ((-d o u : ℝ) : EReal)
+  isMarkovKernel_next := Kernel.isMarkovKernel_softmax (fun _ ↦ ⟨none, EReal.coe_ne_bot _⟩)
+    fun _ _ ↦ EReal.coe_ne_top _
 
 variable (d : Option α → List α → ℝ)
 
 theorem real_next_softmaxModel (u : List α) (o : Option α) :
-    ((softmaxModel d).next u).real {o} = softmax (fun o ↦ -d o u) o := by
-  rw [softmaxModel, Kernel.ofWeights_real_singleton _ _ fun _ ↦ ENNReal.ofReal_ne_top,
-    softmax_def]
-  simp only [ENNReal.toReal_ofReal (exp_pos _).le]
+    ((softmaxModel d).next u).real {o} = softmax (fun o ↦ -d o u) o :=
+  Kernel.softmax_coe_real_singleton (fun u o ↦ -d o u) u o
 
 /-- The surprisal of the softmax model is the difficulty plus the log partition function of the
 prefix. -/
@@ -84,12 +84,12 @@ theorem surprisal_softmaxModel (u : List α) (o : Option α) :
 
 variable {d}
 
-/-- A nonnegative difficulty measure makes the softmax model end with probability at least
-`exp (-d none u)` over the size of the extended alphabet. -/
-theorem le_next_none_softmaxModel (hd : ∀ o u, 0 ≤ d o u) (u : List α) :
-    ENNReal.ofReal (exp (-d none u)) / Fintype.card (Option α) ≤
-      (softmaxModel d).next u {none} := by
-  rw [softmaxModel, Kernel.ofWeights_apply_singleton]
+/-- A nonnegative difficulty measure gives every next unit probability at least `exp (-d o u)`
+over the size of the extended alphabet. -/
+theorem le_next_softmaxModel (hd : ∀ o u, 0 ≤ d o u) (u : List α) (o : Option α) :
+    ENNReal.ofReal (exp (-d o u)) / Fintype.card (Option α) ≤ (softmaxModel d).next u {o} := by
+  rw [softmaxModel, Kernel.softmax_apply_singleton]
+  simp only [EReal.exp_coe]
   refine ENNReal.div_le_div le_rfl ?_
   calc ∑ o, ENNReal.ofReal (exp (-d o u)) ≤ ∑ _o : Option α, (1 : ℝ≥0∞) :=
         Finset.sum_le_sum fun o _ ↦
@@ -103,7 +103,7 @@ theorem isTight_softmaxModel (hd : ∀ o u, 0 ≤ d o u) {f : ℕ → ℝ}
     (softmaxModel d).IsTight := by
   refine (softmaxModel d).isTight_of_le_next_none
     (f := fun t ↦ ENNReal.ofReal (exp (-f t)) / Fintype.card (Option α)) (fun u ↦ ?_) ?_
-  · refine le_trans ?_ (le_next_none_softmaxModel hd u)
+  · refine le_trans ?_ (le_next_softmaxModel hd u none)
     gcongr
     exact hf u
   · simp only [div_eq_mul_inv, ENNReal.tsum_mul_right, hdiv]
@@ -117,7 +117,9 @@ theorem not_isTight_softmaxModel_length [Nonempty α] :
   have hk : (Fintype.card α : ℝ≥0∞) ≠ 0 := by simp [Fintype.card_ne_zero]
   have hw (n : ℕ) : w n ≠ ∞ := ENNReal.ofReal_ne_top
   rw [(softmaxModel _).isTight_iff_of_next_none_eq (e := fun n ↦ w n / (w n + Fintype.card α))
-    (fun x ↦ by simp [softmaxModel, Kernel.ofWeights_apply_singleton, Fintype.sum_option, w])
+    (fun x ↦ by
+      simp only [softmaxModel, Kernel.softmax_apply_singleton, Option.elim, EReal.exp_coe]
+      simp [Fintype.sum_option, w])
     fun n ↦ ENNReal.div_le_of_le_mul (by rw [one_mul]; exact le_self_add)]
   rintro (⟨n, hn⟩ | hsum)
   · rw [ENNReal.div_eq_one_iff (by simp [hk]) (by simp [hw n])] at hn
@@ -144,8 +146,8 @@ theorem surprisal_nextWord_softmaxModel (hd : ∀ o u, 0 ≤ d o u) {f : ℕ →
     surprisal (Surprisal.nextWord (softmaxModel d).stringMeasure id u) o =
       d o u + log (∑ o', exp (-d o' u)) := by
   have hpos : (softmaxModel d).prefixProb u ≠ 0 :=
-    (softmaxModel d).condPrefixProb_ne_zero (fun _ _ ↦ Kernel.ofWeights_apply_singleton_ne_zero
-      (ENNReal.ofReal_pos.2 (exp_pos _)).ne' fun _ ↦ ENNReal.ofReal_ne_top) [] u
+    (softmaxModel d).condPrefixProb_ne_zero (fun _ _ ↦ Kernel.softmax_apply_singleton_ne_zero
+      (EReal.coe_ne_bot _) fun _ ↦ EReal.coe_ne_top _) [] u
   rw [Surprisal.nextWord_stringMeasure _ (isTight_softmaxModel hd hf hdiv) hpos,
     surprisal_softmaxModel]
 
@@ -159,24 +161,24 @@ theorem exists_isTight_difficulty_eq_surprisal (hd : ∀ o u, 0 ≤ d o u) {f : 
   ⟨softmaxModel d, isTight_softmaxModel hd hf hdiv, fun u ↦ -log (∑ o', exp (-d o' u)),
     fun o u ↦ by rw [surprisal_nextWord_softmaxModel hd hf hdiv]; ring⟩
 
-/-- Proposition 1(b): a constant bound on the end difficulty gives the softmax model finite
-expected length. -/
-theorem tsum_length_mul_stringProb_softmaxModel_ne_top (hd : ∀ o u, 0 ≤ d o u) {C : ℝ}
+/-- Proposition 1(b): a constant bound `C` on the end difficulty bounds the expected length of
+the softmax model by `(1 - η) / η`, for `η = exp (-C)` over the size of the extended alphabet. -/
+theorem tsum_length_mul_stringProb_softmaxModel_le (hd : ∀ o u, 0 ≤ d o u) {C : ℝ}
     (hC : ∀ u, d none u ≤ C) :
-    ∑' x, (x.length : ℝ≥0∞) * (softmaxModel d).stringProb x ≠ ∞ := by
-  set c : ℝ≥0∞ := ENNReal.ofReal (exp (-C)) / Fintype.card (Option α)
-  have hc (u : List α) : c ≤ (softmaxModel d).next u {none} := by
-    refine le_trans ?_ (le_next_none_softmaxModel hd u)
-    simp only [c]
+    ∑' x, (x.length : ℝ≥0∞) * (softmaxModel d).stringProb x ≤
+      (1 - ENNReal.ofReal (exp (-C)) / Fintype.card (Option α)) /
+        (ENNReal.ofReal (exp (-C)) / Fintype.card (Option α)) :=
+  (softmaxModel d).tsum_length_mul_stringProb_le_div fun u ↦ by
+    refine le_trans ?_ (le_next_softmaxModel hd u none)
     gcongr
     exact hC u
-  have hc0 : c ≠ 0 := ENNReal.div_ne_zero.2 ⟨(ENNReal.ofReal_pos.2 (exp_pos _)).ne',
-    ENNReal.natCast_ne_top _⟩
-  have hc1 : c ≤ 1 := (hc []).trans prob_le_one
-  refine ne_top_of_le_ne_top ?_ ((softmaxModel d).tsum_length_mul_stringProb_le.trans
-    (ENNReal.tsum_le_tsum fun n ↦ ((softmaxModel d).survival_le_pow hc (n + 1)).trans
-      (pow_le_pow_of_le_one bot_le tsub_le_self n.le_succ)))
-  rw [ENNReal.tsum_geometric, ENNReal.sub_sub_cancel ENNReal.one_ne_top hc1]
-  exact ENNReal.inv_ne_top.2 hc0
+
+/-- The softmax model of a bounded end difficulty has finite expected length. -/
+theorem tsum_length_mul_stringProb_softmaxModel_ne_top (hd : ∀ o u, 0 ≤ d o u) {C : ℝ}
+    (hC : ∀ u, d none u ≤ C) :
+    ∑' x, (x.length : ℝ≥0∞) * (softmaxModel d).stringProb x ≠ ∞ :=
+  ne_top_of_le_ne_top (ENNReal.div_ne_top (ENNReal.sub_ne_top ENNReal.one_ne_top)
+    (ENNReal.div_ne_zero.2 ⟨(ENNReal.ofReal_pos.2 (exp_pos _)).ne', ENNReal.natCast_ne_top _⟩))
+    (tsum_length_mul_stringProb_softmaxModel_le hd hC)
 
 end Cotterell2026
