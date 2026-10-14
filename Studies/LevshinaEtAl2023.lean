@@ -84,20 +84,18 @@ theorem orderEntropy_eq_binEntropy : orderEntropy r = binEntropy (proportion r) 
 /-- A fixed order has entropy `0`. -/
 theorem orderEntropy_of_fixed (h : r.subjectFirst = 0 ∨ r.objectFirst = 0) :
     orderEntropy r = 0 := by
-  rw [orderEntropy_eq_binEntropy, div_eq_zero_iff, binEntropy_eq_zero]
-  left
+  rw [orderEntropy_eq_binEntropy, binEntropy_eq_zero.2, zero_div]
   rcases h with h | h
-  · exact .inl (by simp [proportion, h])
-  · obtain h0 | h0 := eq_or_ne r.subjectFirst 0
-    · exact .inl (by simp [proportion, h0])
-    · exact .inr (by rw [proportion, h, Nat.cast_zero, add_zero, div_self (Nat.cast_ne_zero.2 h0)])
+  · simp [proportion, h]
+  · by_cases h0 : r.subjectFirst = 0 <;> simp [proportion, h, h0]
 
 /-- An even split of the two orders has entropy `1`. -/
 theorem orderEntropy_of_even (h : r.subjectFirst = r.objectFirst) (h0 : r.subjectFirst ≠ 0) :
     orderEntropy r = 1 := by
   have : proportion r = 2⁻¹ := by
-    have : (r.subjectFirst : ℝ) ≠ 0 := Nat.cast_ne_zero.2 h0
-    rw [proportion, ← h, ← two_mul, mul_comm, div_mul_eq_div_div, div_self this, one_div]
+    rw [proportion, ← h]
+    field_simp
+    ring
   rw [orderEntropy_eq_binEntropy, this, binEntropy_two_inv, div_self (log_pos one_lt_two).ne']
 
 /-- Among languages that put the subject first at least half the time, entropy ranks them in

@@ -42,27 +42,12 @@ Entropies are invariant under injective recodings and depend only on laws.
 
 ## Main results
 
-* `measureEntropy_le_log_card`: entropy is at most the log of the cardinality;
-  `measureEntropy_uniformOn`: the uniform measure attains it.
-* `toReal_klDiv_add_measureEntropy`: divergence plus entropy is cross-entropy;
-  `toReal_klDiv_ofWeights_add_measureEntropy`: Gibbs' variational identity for a weight kernel.
-* `measureMutualInfo_eq_toReal_klDiv`, `measureMutualInfo_nonneg`, `measureMutualInfo_prod`,
-  `measureMutualInfo_map_swap`, `measureMutualInfo_parallelComp_id_comp_le` (data processing).
-* `measureEntropy_map_of_injective`, `entropy_comp_of_injective`, `entropy_comm`,
-  `IdentDistrib.entropy_eq`, `IdentDistrib.condEntropy_eq`.
-* `measureEntropy_eq_zero_iff`, `entropy_const`, `entropy_eq_zero_iff`,
-  `condEntropy_eq_zero_iff`: zero entropy means a Dirac law, an almost surely constant
-  variable, or an almost sure function of the conditioning variable.
-* `entropy_comp_le`, `entropy_le_measureEntropy`: a function of a random variable has at most
-  its entropy, which is at most the entropy of the sample-space measure.
-* `chain_rule`, `mutualInfo_eq_entropy_sub_condEntropy`, `condEntropy_le_entropy`,
-  `condEntropy_eq_sum_negLog`, `condEntropy_fst_snd`, `measureMutualInfo_le_measureEntropy_snd`.
-* `mutualInfo_comp_le` (data processing), `condEntropy_le_condEntropy_comp`,
-  `condEntropy_of_injective`, `condEntropy_comp_self`.
-* `mutualInfo_comm`; `mutualInfo_eq_zero_iff`: mutual information vanishes exactly on independent
-  random variables; `IndepFun.entropy_pair_eq_add`, `IndepFun.condEntropy_eq_entropy`.
-* `condEntropy_uniformOn_univ`: on a finite population under the uniform measure, conditional
-  entropy is a formula in counts.
+* `measureEntropy_le_log_card`: entropy is at most the log of the cardinality, which the uniform
+  measure attains.
+* `measureMutualInfo_eq_toReal_klDiv`: on a finite product, mutual information is the divergence
+  of the joint from the product of its marginals.
+* `chain_rule`: `H[X, Y] = H[Y] + H[X | Y]`.
+* `mutualInfo_eq_zero_iff`: mutual information vanishes exactly on independent random variables.
 
 ## References
 
@@ -104,6 +89,13 @@ theorem measureEntropy_eq_sum [Fintype S] (μ : Measure S) [IsZeroOrProbabilityM
     Hm[μ] = ∑ s, negMulLog (μ.real {s}) := by
   rw [measureEntropy_of_isProbabilityMeasure, tsum_fintype]
 
+/-- The entropy of a probability measure carried by a finite set is a sum over that set. -/
+theorem measureEntropy_of_isProbabilityMeasure_finite {A : Finset S} (hA : μ (↑A)ᶜ = 0)
+    [IsZeroOrProbabilityMeasure μ] : Hm[μ] = ∑ s ∈ A, negMulLog (μ.real {s}) := by
+  rw [measureEntropy_of_isProbabilityMeasure, tsum_eq_sum fun s hs ↦ ?_]
+  rw [measureReal_def, measure_mono_null (by simpa using hs) hA, ENNReal.toReal_zero,
+    negMulLog_zero]
+
 /-- Entropy is expected surprisal. -/
 theorem measureEntropy_eq_tsum_mul_surprisal (μ : Measure S) [IsZeroOrProbabilityMeasure μ] :
     Hm[μ] = ∑' s, μ.real {s} * surprisal μ s := by
@@ -120,7 +112,7 @@ theorem measureEntropy_univ_smul : Hm[(μ Set.univ)⁻¹ • μ] = Hm[μ] := by
 
 theorem measureEntropy_nonneg (μ : Measure S) : 0 ≤ Hm[μ] := by
   by_cases hμ : IsFiniteMeasure μ
-  · refine tsum_nonneg fun s => negMulLog_nonneg (by positivity) ?_
+  · refine tsum_nonneg fun s ↦ negMulLog_nonneg (by positivity) ?_
     rcases eq_zero_or_neZero μ with rfl | _
     · simp
     · exact measureReal_le_one
@@ -145,10 +137,8 @@ theorem measureEntropy_map_of_injective {U : Type*} [MeasurableSpace U]
 variable [MeasurableSingletonClass S]
 
 @[simp] theorem measureEntropy_dirac (x : S) : Hm[Measure.dirac x] = 0 := by
-  rw [measureEntropy_of_isProbabilityMeasure, tsum_eq_single x]
-  · simp [measureReal_def]
-  · intro y hy
-    simp [measureReal_def, hy.symm]
+  rw [measureEntropy_of_isProbabilityMeasure_finite (A := {x}) (by simp), Finset.sum_singleton]
+  simp
 
 private theorem measureEntropy_le_log_card_of_isProbabilityMeasure [Fintype S] (μ : Measure S)
     [IsProbabilityMeasure μ] : Hm[μ] ≤ log (Fintype.card S) := by
@@ -179,23 +169,23 @@ theorem measureEntropy_le_log_card [Fintype S] (μ : Measure S) :
     exact log_natCast_nonneg _
 
 /-- The entropy of the uniform measure on a finite set is the logarithm of its cardinality. -/
-theorem measureEntropy_uniformOn [Fintype S] [DecidableEq S] {A : Finset S} (hA : A.Nonempty) :
+theorem measureEntropy_uniformOn {A : Finset S} (hA : A.Nonempty) :
     Hm[uniformOn (A : Set S)] = log A.card := by
+  classical
   have := isProbabilityMeasure_uniformOn A.finite_toSet (by simpa using hA)
-  have hcard : (A.card : ℝ) ≠ 0 := by exact_mod_cast hA.card_pos.ne'
-  rw [measureEntropy_eq_sum]
-  simp_rw [measureReal_def, uniformOn_finset_apply_singleton, apply_ite ENNReal.toReal,
-    apply_ite negMulLog, ENNReal.toReal_zero, negMulLog_zero, Finset.sum_ite_mem,
-    Finset.univ_inter, Finset.sum_const, nsmul_eq_mul, ENNReal.toReal_inv, ENNReal.toReal_natCast,
-    negMulLog, log_inv]
-  field_simp
+  rw [measureEntropy_of_isProbabilityMeasure_finite (A := A)
+      ((uniformOn_eq_zero_iff A.finite_toSet).2 (Set.inter_compl_self _)),
+    Finset.sum_congr rfl (g := fun _ ↦ negMulLog (A.card : ℝ)⁻¹) fun s hs ↦ by
+      simp [uniformOn_finset_real_singleton, hs],
+    Finset.sum_const, nsmul_eq_mul, negMulLog, log_inv]
+  field_simp [hA.card_pos.ne']
 
 /-- A probability measure on a finite type has zero entropy iff it is a Dirac mass. -/
 theorem measureEntropy_eq_zero_iff [Fintype S] (μ : Measure S) [IsProbabilityMeasure μ] :
     Hm[μ] = 0 ↔ ∃ x, μ = Measure.dirac x := by
-  refine ⟨fun h => ?_, fun ⟨x, hx⟩ => hx ▸ measureEntropy_dirac x⟩
+  refine ⟨fun h ↦ ?_, fun ⟨x, hx⟩ ↦ hx ▸ measureEntropy_dirac x⟩
   rw [measureEntropy_eq_sum] at h
-  have hzero := (Finset.sum_eq_zero_iff_of_nonneg fun s _ =>
+  have hzero := (Finset.sum_eq_zero_iff_of_nonneg fun s _ ↦
     negMulLog_nonneg measureReal_nonneg measureReal_le_one).1 h
   have hmass : ∀ s : S, μ.real {s} = 0 ∨ μ.real {s} = 1 := by
     intro s
@@ -211,10 +201,10 @@ theorem measureEntropy_eq_zero_iff [Fintype S] (μ : Measure S) [IsProbabilityMe
     by_contra hno
     refine zero_ne_one (α := ℝ) ?_
     rw [← sum_measureReal_singleton_eq_one μ]
-    exact (Finset.sum_eq_zero fun s _ =>
-      (hmass s).resolve_right fun h1 => hno ⟨s, h1⟩).symm
+    exact (Finset.sum_eq_zero fun s _ ↦
+      (hmass s).resolve_right fun h1 ↦ hno ⟨s, h1⟩).symm
   have hμx : μ {x} = 1 := by rwa [measureReal_def, ENNReal.toReal_eq_one_iff] at hx
-  refine ⟨x, Measure.ext_iff_singleton.2 fun a => ?_⟩
+  refine ⟨x, Measure.ext_iff_singleton.2 fun a ↦ ?_⟩
   rcases eq_or_ne a x with rfl | ha
   · rw [hμx, Measure.dirac_apply_of_mem (Set.mem_singleton a)]
   · rw [Measure.dirac_apply, Set.indicator_of_notMem (by simpa using ha.symm)]
@@ -305,11 +295,11 @@ theorem measureMutualInfo_eq_toReal_klDiv : Im[μ] = (klDiv μ (μ.fst.prod μ.s
     · have hpos : 0 < μ.real {(a, b)} := lt_of_le_of_ne measureReal_nonneg hp.symm
       have ha : μ.real {(a, b)} ≤ μ.fst.real {a} := by
         rw [Measure.fst_real_singleton_eq_sum]
-        exact Finset.single_le_sum (f := fun b => μ.real {(a, b)}) (fun _ _ => measureReal_nonneg)
+        exact Finset.single_le_sum (f := fun b ↦ μ.real {(a, b)}) (fun _ _ ↦ measureReal_nonneg)
           (Finset.mem_univ b)
       have hb : μ.real {(a, b)} ≤ μ.snd.real {b} := by
         rw [Measure.snd_real_singleton_eq_sum]
-        exact Finset.single_le_sum (f := fun a => μ.real {(a, b)}) (fun _ _ => measureReal_nonneg)
+        exact Finset.single_le_sum (f := fun a ↦ μ.real {(a, b)}) (fun _ _ ↦ measureReal_nonneg)
           (Finset.mem_univ a)
       rw [log_div hp (mul_ne_zero (hpos.trans_le ha).ne' (hpos.trans_le hb).ne'),
         log_mul (hpos.trans_le ha).ne' (hpos.trans_le hb).ne', negMulLog]
@@ -395,14 +385,14 @@ theorem entropy_eq_zero_iff [Fintype S] [MeasurableSingletonClass S] (hX : Measu
   have : IsProbabilityMeasure (μ.map X) :=
     (Measure.isProbabilityMeasure_map_iff hX.aemeasurable).2 ‹_›
   rw [entropy_def, measureEntropy_eq_zero_iff]
-  refine exists_congr fun x => ⟨fun h => ?_, fun h => ?_⟩
+  refine exists_congr fun x ↦ ⟨fun h ↦ ?_, fun h ↦ ?_⟩
   · have h1 : μ (X ⁻¹' {x}) = 1 := by
       have := congrArg (· {x}) h
       simpa [Measure.map_apply hX (.singleton x), Measure.dirac_apply_of_mem] using this
     rw [ae_iff, show {ω | ¬ X ω = x} = (X ⁻¹' {x})ᶜ from rfl,
       prob_compl_eq_zero_iff (hX (.singleton x))]
     exact h1
-  · rw [Measure.map_congr (h.mono fun ω hω => hω : X =ᵐ[μ] fun _ => x), Measure.map_const,
+  · rw [Measure.map_congr (h.mono fun ω hω ↦ hω : X =ᵐ[μ] fun _ ↦ x), Measure.map_const,
       measure_univ, one_smul]
 
 /-- Entropy is invariant under an injective recoding of the values. -/
@@ -430,7 +420,7 @@ noncomputable def condEntropy (X : Ω → S) (Y : Ω → T) (μ : Measure Ω) : 
 scoped notation3:max "H[" X " | " Y " ; " μ "]" => condEntropy X Y μ
 
 theorem condEntropy_nonneg (X : Ω → S) (Y : Ω → T) (μ : Measure Ω) : 0 ≤ H[X | Y ; μ] :=
-  integral_nonneg fun _ => entropy_nonneg _ _
+  integral_nonneg fun _ ↦ entropy_nonneg _ _
 
 theorem condEntropy_eq_sum [Fintype T] [MeasurableSingletonClass T] (X : Ω → S)
     (hY : Measurable Y) (μ : Measure Ω) [IsFiniteMeasure μ] :
@@ -440,17 +430,17 @@ theorem condEntropy_eq_sum [Fintype T] [MeasurableSingletonClass T] (X : Ω → 
 
 /-- Mutual information of two random variables. -/
 noncomputable def mutualInfo (X : Ω → S) (Y : Ω → T) (μ : Measure Ω) : ℝ :=
-  H[X ; μ] + H[Y ; μ] - H[fun ω => (X ω, Y ω) ; μ]
+  H[X ; μ] + H[Y ; μ] - H[fun ω ↦ (X ω, Y ω) ; μ]
 
 @[inherit_doc mutualInfo]
 scoped notation3:max "I[" X " : " Y " ; " μ "]" => mutualInfo X Y μ
 
 theorem mutualInfo_def (X : Ω → S) (Y : Ω → T) (μ : Measure Ω) :
-    I[X : Y ; μ] = H[X ; μ] + H[Y ; μ] - H[fun ω => (X ω, Y ω) ; μ] := rfl
+    I[X : Y ; μ] = H[X ; μ] + H[Y ; μ] - H[fun ω ↦ (X ω, Y ω) ; μ] := rfl
 
 /-- The mutual information of two random variables is that of their joint law. -/
 theorem mutualInfo_eq_measureMutualInfo (hX : Measurable X) (hY : Measurable Y)
-    (μ : Measure Ω) : I[X : Y ; μ] = Im[μ.map fun ω => (X ω, Y ω)] := by
+    (μ : Measure Ω) : I[X : Y ; μ] = Im[μ.map fun ω ↦ (X ω, Y ω)] := by
   rw [mutualInfo, measureMutualInfo, Measure.fst_map_prodMk hX hY, Measure.snd_map_prodMk hX hY]
   rfl
 
@@ -464,41 +454,41 @@ variable [Fintype S] [Fintype T] [MeasurableSingletonClass S] [MeasurableSinglet
   (hX : Measurable X) (hY : Measurable Y) (μ : Measure Ω) [IsProbabilityMeasure μ]
 
 theorem mutualInfo_nonneg (hX : Measurable X) (hY : Measurable Y) : 0 ≤ I[X : Y ; μ] := by
-  have : IsProbabilityMeasure (μ.map fun ω => (X ω, Y ω)) :=
+  have : IsProbabilityMeasure (μ.map fun ω ↦ (X ω, Y ω)) :=
     ⟨by rw [Measure.map_apply (hX.prodMk hY) .univ, Set.preimage_univ, measure_univ]⟩
   rw [mutualInfo_eq_measureMutualInfo hX hY]
   exact measureMutualInfo_nonneg _
 
 /-- **Chain rule.** The entropy of a pair is `H[X, Y] = H[Y] + H[X | Y]`. -/
 theorem chain_rule (hX : Measurable X) (hY : Measurable Y) :
-    H[fun ω => (X ω, Y ω) ; μ] = H[Y ; μ] + H[X | Y ; μ] := by
+    H[fun ω ↦ (X ω, Y ω) ; μ] = H[Y ; μ] + H[X | Y ; μ] := by
   have hfib (x : S) (y : T) :
-      Y ⁻¹' {y} ∩ X ⁻¹' {x} = (fun ω => (X ω, Y ω)) ⁻¹' {(x, y)} := by
+      Y ⁻¹' {y} ∩ X ⁻¹' {x} = (fun ω ↦ (X ω, Y ω)) ⁻¹' {(x, y)} := by
     ext ω; simp [and_comm]
   have hcond (x : S) (y : T) : (μ[|Y ⁻¹' {y}]).real (X ⁻¹' {x})
-      = μ.real ((fun ω => (X ω, Y ω)) ⁻¹' {(x, y)}) / μ.real (Y ⁻¹' {y}) := by
+      = μ.real ((fun ω ↦ (X ω, Y ω)) ⁻¹' {(x, y)}) / μ.real (Y ⁻¹' {y}) := by
     rw [measureReal_def, cond_apply (hY (.singleton y)), ENNReal.toReal_mul,
       ENNReal.toReal_inv, hfib, div_eq_inv_mul]
     rfl
   have hsum (y : T) :
-      ∑ x, μ.real ((fun ω => (X ω, Y ω)) ⁻¹' {(x, y)}) = μ.real (Y ⁻¹' {y}) := by
+      ∑ x, μ.real ((fun ω ↦ (X ω, Y ω)) ⁻¹' {(x, y)}) = μ.real (Y ⁻¹' {y}) := by
     simp_rw [← map_measureReal_apply (hX.prodMk hY) (.singleton _),
       ← Measure.snd_real_singleton_eq_sum, Measure.snd_map_prodMk hX hY,
       map_measureReal_apply hY (.singleton _)]
   have key (y : T) : μ.real (Y ⁻¹' {y}) * H[X ; μ[|Y ⁻¹' {y}]]
-      = ∑ x, negMulLog (μ.real ((fun ω => (X ω, Y ω)) ⁻¹' {(x, y)}))
+      = ∑ x, negMulLog (μ.real ((fun ω ↦ (X ω, Y ω)) ⁻¹' {(x, y)}))
         - negMulLog (μ.real (Y ⁻¹' {y})) := by
     obtain hy | hy := eq_or_ne (μ (Y ⁻¹' {y})) 0
-    · have h0 (x : S) : μ ((fun ω => (X ω, Y ω)) ⁻¹' {(x, y)}) = 0 :=
+    · have h0 (x : S) : μ ((fun ω ↦ (X ω, Y ω)) ⁻¹' {(x, y)}) = 0 :=
         measure_mono_null (hfib x y ▸ Set.inter_subset_left) hy
       simp [cond_eq_zero_of_meas_eq_zero hy, measureReal_def, hy, h0]
     · have := cond_isProbabilityMeasure (μ := μ) hy
       have hq : μ.real (Y ⁻¹' {y}) ≠ 0 :=
         (measureReal_eq_zero_iff (measure_ne_top _ _)).not.mpr hy
       have h (x : S) : μ.real (Y ⁻¹' {y})
-            * negMulLog (μ.real ((fun ω => (X ω, Y ω)) ⁻¹' {(x, y)}) / μ.real (Y ⁻¹' {y}))
-          = negMulLog (μ.real ((fun ω => (X ω, Y ω)) ⁻¹' {(x, y)}))
-            - μ.real ((fun ω => (X ω, Y ω)) ⁻¹' {(x, y)}) / μ.real (Y ⁻¹' {y})
+            * negMulLog (μ.real ((fun ω ↦ (X ω, Y ω)) ⁻¹' {(x, y)}) / μ.real (Y ⁻¹' {y}))
+          = negMulLog (μ.real ((fun ω ↦ (X ω, Y ω)) ⁻¹' {(x, y)}))
+            - μ.real ((fun ω ↦ (X ω, Y ω)) ⁻¹' {(x, y)}) / μ.real (Y ⁻¹' {y})
               * negMulLog (μ.real (Y ⁻¹' {y})) := by
         rw [eq_sub_iff_add_eq, add_comm, ← negMulLog_mul]
         congr 1
@@ -662,9 +652,9 @@ of `Y`. -/
 theorem condEntropy_eq_zero_iff [Nonempty S] (hX : Measurable X) (hY : Measurable Y) :
     H[X | Y ; μ] = 0 ↔ ∃ f : T → S, ∀ᵐ ω ∂μ, X ω = f (Y ω) := by
   classical
-  refine ⟨fun h => ?_, fun ⟨f, hf⟩ => ?_⟩
+  refine ⟨fun h ↦ ?_, fun ⟨f, hf⟩ ↦ ?_⟩
   · rw [condEntropy_eq_sum X hY μ] at h
-    have hzero := (Finset.sum_eq_zero_iff_of_nonneg fun y _ =>
+    have hzero := (Finset.sum_eq_zero_iff_of_nonneg fun y _ ↦
       mul_nonneg measureReal_nonneg (entropy_nonneg _ _)).1 h
     have key : ∀ y : T, μ (Y ⁻¹' {y}) ≠ 0 → ∃ x : S, ∀ᵐ ω ∂μ[|Y ⁻¹' {y}], X ω = x := by
       intro y hy
@@ -674,10 +664,10 @@ theorem condEntropy_eq_zero_iff [Nonempty S] (hX : Measurable X) (hY : Measurabl
       · exact absurd ((measureReal_eq_zero_iff (measure_ne_top _ _)).1 h0) hy
       · exact h0
     choose g hg using key
-    refine ⟨fun y => if hy : μ (Y ⁻¹' {y}) ≠ 0 then g y hy else Classical.arbitrary S, ?_⟩
+    refine ⟨fun y ↦ if hy : μ (Y ⁻¹' {y}) ≠ 0 then g y hy else Classical.arbitrary S, ?_⟩
     rw [ae_iff]
-    refine measure_mono_null (fun ω hω => ?_)
-      (measure_iUnion_null fun y : T => ?_ :
+    refine measure_mono_null (fun ω hω ↦ ?_)
+      (measure_iUnion_null fun y : T ↦ ?_ :
         μ (⋃ y : T, Y ⁻¹' {y} ∩ {ω | X ω ≠
           if hy : μ (Y ⁻¹' {y}) ≠ 0 then g y hy else Classical.arbitrary S}) = 0)
     · exact Set.mem_iUnion.2 ⟨Y ω, rfl, hω⟩
@@ -688,10 +678,10 @@ theorem condEntropy_eq_zero_iff [Nonempty S] (hX : Measurable X) (hY : Measurabl
         rcases mul_eq_zero.1 hae with h0 | h0
         · exact absurd (ENNReal.inv_eq_zero.1 h0) (measure_ne_top _ _)
         · simpa [dite_eq_left hy] using h0
-  · have hfY : Measurable fun ω => f (Y ω) := (measurable_of_finite f).comp hY
-    have hpair : (fun ω => (X ω, Y ω)) =ᵐ[μ] fun ω => (f (Y ω), Y ω) :=
-      hf.mono fun ω hω => by simp [hω]
-    have hid : IdentDistrib (fun ω => (X ω, Y ω)) (fun ω => (f (Y ω), Y ω)) μ μ :=
+  · have hfY : Measurable fun ω ↦ f (Y ω) := (measurable_of_finite f).comp hY
+    have hpair : (fun ω ↦ (X ω, Y ω)) =ᵐ[μ] fun ω ↦ (f (Y ω), Y ω) :=
+      hf.mono fun ω hω ↦ by simp [hω]
+    have hid : IdentDistrib (fun ω ↦ (X ω, Y ω)) (fun ω ↦ (f (Y ω), Y ω)) μ μ :=
       ⟨(hX.prodMk hY).aemeasurable, (hfY.prodMk hY).aemeasurable, Measure.map_congr hpair⟩
     rw [hid.condEntropy_eq hX hY hfY hY]
     exact condEntropy_comp_self μ hY f
@@ -702,7 +692,7 @@ theorem condEntropy_fst_snd (ρ : Measure (S × T)) [IsProbabilityMeasure ρ] :
     H[Prod.fst | Prod.snd ; ρ] = Hm[ρ.fst] - Im[ρ] := by
   have h := mutualInfo_eq_entropy_sub_condEntropy ρ measurable_fst measurable_snd
   rw [mutualInfo_eq_measureMutualInfo measurable_fst measurable_snd,
-    show (fun p : S × T => (p.1, p.2)) = id from rfl, Measure.map_id] at h
+    show (fun p : S × T ↦ (p.1, p.2)) = id from rfl, Measure.map_id] at h
   show _ = H[Prod.fst ; ρ] - Im[ρ]
   linarith
 
@@ -712,7 +702,7 @@ theorem measureMutualInfo_le_measureEntropy_snd (ρ : Measure (S × T)) [IsProba
   have h := mutualInfo_eq_entropy_sub_condEntropy ρ measurable_snd measurable_fst
   rw [mutualInfo_comm ρ measurable_snd measurable_fst,
     mutualInfo_eq_measureMutualInfo measurable_fst measurable_snd,
-    show (fun p : S × T => (p.1, p.2)) = id from rfl, Measure.map_id] at h
+    show (fun p : S × T ↦ (p.1, p.2)) = id from rfl, Measure.map_id] at h
   rw [h]
   exact sub_le_self _ (condEntropy_nonneg _ _ _)
 
