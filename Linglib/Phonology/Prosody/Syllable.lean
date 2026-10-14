@@ -28,15 +28,20 @@ licenses its daughters.
 * `Syllable.yield` / `toOnsetRime` — re-representations; `toOnsetRime_weight` is the
   weight-correspondence between the moraic and onset-rime theories.
 * `Syllable.Weight` — `Nat` (the mora count), with `.light`/`.heavy`/`.superheavy`.
+* `Level`, `Constituent.level` — the levels of the prosodic hierarchy, linearly ordered
+  σ < f < ω < φ < ι, and the level of a node.
 * `Constituent`, `Tree` — the prosodic constituents and the prosodic tree over them.
-* `Constituent.Licenses` — Layeredness: the daughters each constituent may dominate.
+* `Constituent.Licenses` — Layeredness: a node dominates only its own level or below.
 
 ## References
 
 * [hayes-1989]
 * [hyman-1985]
 * [clements-1990]
+* [selkirk-1980]
 * [selkirk-1982]
+* [selkirk-1996]
+* [nespor-vogel-1986]
 * [mccarthy-prince-1993]
 * [dolatian-2020]
 * [ito-mester-2003]
@@ -200,6 +205,25 @@ carrier** for ω/φ/… structures, including the ill-formed ones (a footless ω
 `Constituent.weight`/`.syl` need `Syllable.Weight`; it inherits `DecidableEq`/`map` from
 `RoseTree`. -/
 
+/-- The levels of the prosodic hierarchy ([selkirk-1980]; [nespor-vogel-1986]), linearly ordered
+σ < f < ω < φ < ι. -/
+inductive Level
+  | syl | ft | om | ph | iota
+  deriving DecidableEq, Repr
+
+namespace Level
+
+/-- The rank of a level, σ lowest. -/
+def toNat : Level → ℕ
+  | syl => 0 | ft => 1 | om => 2 | ph => 3 | iota => 4
+
+theorem toNat_injective : Function.Injective toNat := by
+  intro a b h; cases a <;> cases b <;> first | rfl | exact absurd h (by decide)
+
+instance : LinearOrder Level := LinearOrder.lift' toNat toNat_injective
+
+end Level
+
 /-- In a prosodic node the **level is the constructor**. A σ carries its mora `weight` and
     `isHead`, and every non-root level carries `isHead` (whether it heads its parent).
     Constructor defaults match the former smart constructors, so node literals are unchanged;
@@ -230,48 +254,27 @@ def isHead : Constituent → Bool
 def weight? : Constituent → Option Syllable.Weight
   | .syl w _ => some w | _ => none
 
-/-- A syllable (σ) node. -/
-def isSyl : Constituent → Bool | .syl .. => true | _ => false
-/-- A foot (f) node. -/
-def isFt : Constituent → Bool | .ft _ => true | _ => false
-/-- A prosodic-word (ω) node. -/
-def isOm : Constituent → Bool | .om _ => true | _ => false
-/-- A phonological-phrase (φ) node. -/
-def isPh : Constituent → Bool | .ph _ => true | _ => false
-/-- An intonational-phrase (ι) node. -/
-def isIota : Constituent → Bool | .iota => true | _ => false
+/-- The level of a node, the constructor without its weight and head mark. -/
+def level : Constituent → Level
+  | .syl .. => .syl | .ft _ => .ft | .om _ => .om | .ph _ => .ph | .iota => .iota
 
-/-- Two nodes at the same prosodic level (the same constructor, ignoring weight/head) — the
-    same-category test the No-Recursion family reads off the carrier. -/
-def sameLevel : Constituent → Constituent → Bool
-  | .syl .., .syl .. | .ft _, .ft _ | .om _, .om _ | .ph _, .ph _
-  | .iota, .iota => true
-  | _, _ => false
-
-/-- Under Layeredness a σ dominates nothing, a foot a non-empty string of σs, an ω feet, ωs and
-    σs, a φ ωs, and an ι φs; `Licenses a ks` says that `a` may dominate daughters labelled `ks`. -/
+/-- Under **Layeredness** ([selkirk-1996]) a node dominates only nodes of its own level or below:
+    σ is the terminal, a foot a non-empty string of σs (foot recursion, contested, is excluded
+    with it), and ω, φ and ι dominate anything at or below their level. Recursion at ω, φ and ι
+    and level skipping, a σ or a foot directly under a φ, are thereby admitted: Nonrecursivity
+    and Exhaustivity are the violable constraints `noRec` and `parseInto`. `Licenses a ks` says
+    that `a` may dominate daughters labelled `ks`. -/
 def Licenses : Constituent → List Constituent → Prop
   | .syl .., ks => ks = []
-  | .ft _, ks => ks ≠ [] ∧ ∀ k ∈ ks, k.isSyl = true
-  | .om _, ks => ∀ k ∈ ks, k.isFt = true ∨ k.isOm = true ∨ k.isSyl = true
-  | .ph _, ks => ∀ k ∈ ks, k.isOm = true
-  | .iota, ks => ∀ k ∈ ks, k.isPh = true
+  | .ft _, ks => ks ≠ [] ∧ ∀ k ∈ ks, k.level = .syl
+  | a, ks => ∀ k ∈ ks, k.level ≤ a.level
 
 instance : ∀ (a : Constituent) (ks : List Constituent), Decidable (Licenses a ks)
   | .syl .., ks => inferInstanceAs (Decidable (ks = []))
-  | .ft _, ks => inferInstanceAs (Decidable (ks ≠ [] ∧ ∀ k ∈ ks, k.isSyl = true))
-  | .om _, ks =>
-    inferInstanceAs (Decidable (∀ k ∈ ks, k.isFt = true ∨ k.isOm = true ∨ k.isSyl = true))
-  | .ph _, ks => inferInstanceAs (Decidable (∀ k ∈ ks, k.isOm = true))
-  | .iota, ks => inferInstanceAs (Decidable (∀ k ∈ ks, k.isPh = true))
-
-/-- The levels are exclusive, so a foot is not a syllable. -/
-theorem isSyl_eq_false_of_isFt {x : Constituent} (h : x.isFt = true) : x.isSyl = false := by
-  cases x <;> simp_all [isFt, isSyl]
-
-/-- The levels are exclusive, so a prosodic word is not a syllable. -/
-theorem isSyl_eq_false_of_isOm {x : Constituent} (h : x.isOm = true) : x.isSyl = false := by
-  cases x <;> simp_all [isOm, isSyl]
+  | .ft _, ks => inferInstanceAs (Decidable (ks ≠ [] ∧ ∀ k ∈ ks, k.level = .syl))
+  | .om _, ks => inferInstanceAs (Decidable (∀ k ∈ ks, k.level ≤ (Constituent.om _).level))
+  | .ph _, ks => inferInstanceAs (Decidable (∀ k ∈ ks, k.level ≤ (Constituent.ph _).level))
+  | .iota, ks => inferInstanceAs (Decidable (∀ k ∈ ks, k.level ≤ Constituent.iota.level))
 
 end Constituent
 
@@ -288,7 +291,7 @@ abbrev Tree.ft (h : Bool) (cs : List Tree) : Tree := .node (.ft h) cs
 /-- A prosodic-word (ω) node over `cs`. -/
 abbrev Tree.om (cs : List Tree) : Tree := .node .om cs
 
-/-- A phonological-phrase (φ) node over `cs` — interim, until `Prosody.Phrase` lands. -/
+/-- A phonological-phrase (φ) node over `cs`. -/
 abbrev Tree.ph (cs : List Tree) : Tree := .node .ph cs
 
 /-- **Leaf/branch induction on a prosodic tree.** A σ-leaf is a base case; every other node — a
@@ -298,12 +301,12 @@ abbrev Tree.ph (cs : List Tree) : Tree := .node .ph cs
     `ite_eq_right hne`) instead of `split`ting it. -/
 @[elab_as_elim]
 theorem Tree.recLeafBranch {motive : Tree → Prop}
-    (leaf : ∀ a, a.isSyl → motive (.node a []))
-    (branch : ∀ a cs, ¬(a.isSyl ∧ cs = []) → (∀ c ∈ cs, motive c) → motive (.node a cs))
+    (leaf : ∀ a, a.level = .syl → motive (.node a []))
+    (branch : ∀ a cs, ¬(a.level = .syl ∧ cs = []) → (∀ c ∈ cs, motive c) → motive (.node a cs))
     (t : Tree) : motive t := by
   induction t using RoseTree.rec' with
   | node a cs ih =>
-    by_cases h : a.isSyl ∧ cs = []
+    by_cases h : a.level = .syl ∧ cs = []
     · obtain ⟨ha, rfl⟩ := h; exact leaf a ha
     · exact branch a cs h ih
 

@@ -147,13 +147,13 @@ def FootingCand.toTree : FootingCand → Tree
 
 /-- **Parse-σ** ([becker-etal-2025] (1)): one mark per unparsed (stray) σ — a σ-leaf under ω. -/
 def cParse : Constraint FootingCand := fun c => match c.toTree with
-  | .node _ cs => (cs.filter (fun d => d.value.isSyl)).length
+  | .node _ cs => (cs.filter (fun d => d.value.level = .syl)).length
 
 /-- **Iamb** ([becker-etal-2025] (2)): one mark per foot that is not right-headed (head σ ≠ final).
     -/
 def cIamb : Constraint FootingCand := fun c => match c.toTree with
   | .node _ cs => (cs.filter (fun d => match d with
-      | .node a ds => a.isFt && !((ds.getLast?.map (·.value.isHead)).getD false))).length
+      | .node a ds => decide (a.level = .ft) && !((ds.getLast?.map (·.value.isHead)).getD false))).length
 
 /-- **`*V:]φ`** ([becker-etal-2025] (3)): one mark for a long vowel in the **phrase**-final σ (for a
     one-word phrase, the word-final σ). -/
