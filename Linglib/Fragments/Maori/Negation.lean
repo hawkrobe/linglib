@@ -9,7 +9,7 @@ Maori negates a clause with the negative verb *kāore*, which stands first and t
 clause as its complement; the subject usually follows *kāore* directly, ahead of the tense
 particle and the verb: *e haere ana ia* 'he is going', *kāore ia e haere ana* 'he is not going'.
 The perfect particle *kua* of the affirmative is *kia* under *kāore*, as in complement clauses
-generally. The examples are those of [miestamo-2005], from Harlow's grammar.
+generally. The examples are Miestamo's, from Harlow's grammar.
 
 ## References
 
@@ -18,18 +18,17 @@ generally. The examples are those of [miestamo-2005], from Harlow's grammar.
 
 @[expose] public section
 
-open Negation Morphology
+open Negation
 
 namespace Maori.Negation
 
 /-- The negative verb *kāore*. -/
 def kaore : Marker := { pieces := [[.free "kāore"]] }
 
-def words (ws : List String) : List Morph := ws.map .free
-
 /-- The progressive and the past of *haere* 'go'. -/
 def pairs : List Pair :=
-  [⟨kaore, words ["e", "haere", "ana", "ia"], words ["kāore", "ia", "e", "haere", "ana"]⟩,
-   ⟨kaore, words ["i", "haere", "ia"], words ["kāore", "ia", "i", "haere"]⟩]
+  [⟨kaore, ["e", "haere", "ana", "ia"].map .free,
+    ["kāore", "ia", "e", "haere", "ana"].map .free⟩,
+   ⟨kaore, ["i", "haere", "ia"].map .free, ["kāore", "ia", "i", "haere"].map .free⟩]
 
 end Maori.Negation

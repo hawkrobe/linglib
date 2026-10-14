@@ -131,9 +131,6 @@ def p : World → Prop := (·.1 = true)
 /-- The second issue holds. -/
 def q : World → Prop := (·.2 = true)
 
-/-- The negation of a proposition. -/
-def neg (r : World → Prop) : World → Prop := fun w ↦ ¬ r w
-
 /-- A world verifying a subset of `A` still does after the coordinate `π` ignores is changed,
 when every member of `A` other than `r` looks only at `π`, provided the new world verifies `r`. -/
 private theorem forall_mem_of_eq {A B : Set (World → Prop)} {r : World → Prop}
@@ -147,19 +144,19 @@ private theorem forall_mem_of_eq {A B : Set (World → Prop)} {r : World → Pro
 /-! ### The New Zealand judgments (§2.1–§2.2)
 
 `p` is that murder is a crime, the judgment (10); `q` that deer are personally responsible for
-damage they inflict on young trees, the Auckland judgment (11); and `neg q` the Wellington
+damage they inflict on young trees, the Auckland judgment (11); and `qᶜ` the Wellington
 judgment (12). -/
 
 /-- What the New Zealand judgments provide. -/
-def judgments : Set (World → Prop) := {p, q, neg q}
+def judgments : Set (World → Prop) := {p, q, qᶜ}
 
 theorem judgments_inconsistent : sInf judgments = ⊥ := by
-  funext w; simp [judgments, neg]
+  funext w; simp [judgments]
 
 /-- Under Definition 5 the inconsistent judgments make (7) true: it must be that murder is
 not a crime, by ex falso quodlibet. -/
 theorem simpleNecessity_neg_p (w : World) :
-    simpleNecessity (Function.const World judgments) (neg p) w := by
+    simpleNecessity (Function.const World judgments) pᶜ w := by
   rw [simpleNecessity_iff_sInf_le, Function.const_apply, judgments_inconsistent]; exact bot_le
 
 /-- Under Definition 6 nothing is compatible with the judgments, so (8) is false: deer cannot
@@ -173,7 +170,7 @@ theorem not_simplePossibility_q (w : World) :
 private theorem judgments_snd : ∀ x ∈ judgments, x ≠ p → ∀ u v : World, u.2 = v.2 →
     (x u ↔ x v) := by
   simp only [judgments, Set.mem_insert_iff, Set.mem_singleton_iff]
-  rintro x (rfl | rfl | rfl) h u v huv <;> first | exact absurd rfl h | simp [q, neg, huv]
+  rintro x (rfl | rfl | rfl) h u v huv <;> first | exact absurd rfl h | simp [q, huv]
 
 /-- Definition 7 makes (6) true, murder must be a crime: `p` is compatible with every
 consistent subset of the judgments, since making murder a crime at a world of the subset keeps
@@ -187,7 +184,7 @@ theorem must_p (w : World) : MustInView (Function.const World judgments) p w := 
 /-- Definition 7 makes (7) false: no consistent subset of the judgments entails that murder
 is not a crime, since any of its worlds can be moved to one where murder is a crime. -/
 theorem not_must_neg_p (w : World) :
-    ¬ MustInView (Function.const World judgments) (neg p) w := fun h ↦ by
+    ¬ MustInView (Function.const World judgments) pᶜ w := fun h ↦ by
   obtain ⟨C, hC, -, hle⟩ := h ∅ ⟨Set.empty_subset _, by simp⟩
   obtain ⟨w₀, hw₀⟩ := sInf_ne_bot_iff.1 hC.2
   have hv := forall_mem_of_eq judgments_snd hC.1 hw₀ (v := (true, w₀.2)) rfl fun _ ↦ rfl
@@ -200,14 +197,14 @@ theorem can_q (w : World) : CanInView (Function.const World judgments) q w :=
     ⟨by simp [judgments], sInf_ne_bot_iff.2 ⟨(true, true), by simp [q]⟩⟩ rfl
 
 /-- Definition 8 makes (9) true, symmetrically. -/
-theorem can_neg_q (w : World) : CanInView (Function.const World judgments) (neg q) w :=
-  canInView_of_mem (B := {neg q})
-    ⟨by simp [judgments], sInf_ne_bot_iff.2 ⟨(true, false), by simp [q, neg]⟩⟩ rfl
+theorem can_neg_q (w : World) : CanInView (Function.const World judgments) qᶜ w :=
+  canInView_of_mem (B := {qᶜ})
+    ⟨by simp [judgments], sInf_ne_bot_iff.2 ⟨(true, false), by simp [q]⟩⟩ rfl
 
 /-- Definition 8 makes (13) false, it cannot be that murder is not a crime: the dual of
 (6). -/
 theorem not_can_neg_p (w : World) :
-    ¬ CanInView (Function.const World judgments) (neg p) w :=
+    ¬ CanInView (Function.const World judgments) pᶜ w :=
   (mustInView_iff_not_canInView_not _ _ _).mp (must_p w)
 
 /-! ### The Whare Wananga recommendations (§2.3)
@@ -217,31 +214,31 @@ recommendation is read once as the single proposition (14), that they do both, a
 two recommendations; Te Kini's is (15), that they do not stride. -/
 
 /-- Te Miti's recommendation as one proposition, with Te Kini's. -/
-def recommendations : Set (World → Prop) := {fun w ↦ p w ∧ q w, neg p}
+def recommendations : Set (World → Prop) := {fun w ↦ p w ∧ q w, pᶜ}
 
 /-- Te Miti's recommendation as two propositions, with Te Kini's. -/
-def recommendations' : Set (World → Prop) := {q, p, neg p}
+def recommendations' : Set (World → Prop) := {q, p, pᶜ}
 
 /-- On the first reading (16) is false: Te Kini's ban is a consistent subset whose only
 consistent extension is itself, and flying does not follow from it. -/
 theorem not_must_q (w : World) :
     ¬ MustInView (Function.const World recommendations) q w := fun h ↦ by
-  obtain ⟨C, hC, hBC, hle⟩ := h {neg p}
-    ⟨by simp [recommendations], sInf_ne_bot_iff.2 ⟨(false, false), by simp [p, neg]⟩⟩
+  obtain ⟨C, hC, hBC, hle⟩ := h {pᶜ}
+    ⟨by simp [recommendations], sInf_ne_bot_iff.2 ⟨(false, false), by simp [p]⟩⟩
   obtain ⟨w₀, hw₀⟩ := sInf_ne_bot_iff.1 hC.2
-  have hnp : neg p w₀ := hw₀ _ (hBC rfl)
-  have hC' : ∀ x ∈ C, x = neg p := fun x hx ↦ by
+  have hnp : pᶜ w₀ := hw₀ _ (hBC rfl)
+  have hC' : ∀ x ∈ C, x = pᶜ := fun x hx ↦ by
     rcases hC.1 hx with rfl | rfl
     · exact absurd (hw₀ _ hx).1 hnp
     · rfl
-  exact absurd (hle (false, false) (by simpa using fun x hx ↦ hC' x hx ▸ by simp [p, neg]))
+  exact absurd (hle (false, false) (by simpa using fun x hx ↦ hC' x hx ▸ by simp [p]))
     (by simp [q])
 
 /-- Every recommendation but `q` looks only at the first issue. -/
 private theorem recommendations'_fst : ∀ x ∈ recommendations', x ≠ q → ∀ u v : World,
     u.1 = v.1 → (x u ↔ x v) := by
   simp only [recommendations', Set.mem_insert_iff, Set.mem_singleton_iff]
-  rintro x (rfl | rfl | rfl) h u v huv <;> first | exact absurd rfl h | simp [p, neg, huv]
+  rintro x (rfl | rfl | rfl) h u v huv <;> first | exact absurd rfl h | simp [p, huv]
 
 /-- On the second reading (16) is true: flying is compatible with every consistent subset. -/
 theorem must_q (w : World) : MustInView (Function.const World recommendations') q w := by

@@ -1,7 +1,6 @@
 module
 
 public import Linglib.Data.Examples.JinKoenig2021
-public import Linglib.Semantics.Polarity.ExpletiveNegation
 public import Studies.Karttunen1974
 public import Linglib.Semantics.Modality.Necessity
 public import Linglib.Semantics.Conditionals.Basic
@@ -13,9 +12,9 @@ public import Linglib.Fragments.English.Verbs.Inventory
 Jin and Koenig give a typology of expletive negation, a negator in the dependent of a lexical
 item, triggered by the item's meaning, that contributes no negation to the dependent's
 proposition. English, French, Januubi, Mandarin and Zarma-Sonrai share its trigger classes
-(`Negation.ENTriggerClass`). A trigger's meaning activates both its argument and the argument's
-negation, at distinct worlds, times or entities or within the meaning itself
-(`Negation.ENLicensing`); the substrate's operators deliver this dual inference for *before*,
+(`ENTriggerClass`). A trigger's meaning activates both its argument and the argument's
+negation, at distinct worlds, times or entities or within the meaning itself,
+(13); the substrate's operators deliver this dual inference for *before*,
 *impossible* and comparatives (`before_dual`, `impossible_dual`, `comparative_dual`), and the
 verbal triggers are the negative-valence attitudes and the verbs whose affirmation implies the
 negation of their complement (`english_triggers`). The paper's examples are rows carrying its
@@ -41,8 +40,6 @@ negator facts (`mandarin_negators`, `french_ne_of_entrenched`, `januubi_standard
 @[expose] public section
 
 namespace JinKoenig2021
-
-open Negation
 
 /-! ### The dual inference (Section 5.5) -/
 
@@ -121,6 +118,75 @@ theorem english_triggers :
       IsExpletiveNegationTrigger worry.toVerb ∧ IsExpletiveNegationTrigger forget.toVerb ∧
       IsExpletiveNegationTrigger prevent.toVerb :=
   ⟨.inl rfl, .inl rfl, .inl rfl, .inr rfl, .inr rfl⟩
+
+/-! ### Trigger classes (Tables 5 and 6) -/
+
+/-- The trigger classes of Table 5, each named by a representative concept. -/
+inductive ENTriggerClass where
+  | fear
+  | regret
+  | deny
+  | forget
+  | before
+  | cannotWait
+  | since
+  | rarely
+  | impossible
+  | without
+  | unless
+  | moreThan
+  | differentThan
+  | tooTo
+  deriving DecidableEq, Repr, Fintype
+
+/-- The trigger concepts of Table 6, one representative per subclass. -/
+inductive ENConcept where
+  | fear
+  | avoid
+  | regret
+  | complain
+  | adviseAgainst
+  | deny
+  | hide
+  | despair
+  | forget
+  | delay
+  | refuse
+  | stop
+  | prevent
+  | almost
+  | barely
+  | before
+  | cannotWait
+  | since
+  | rarely
+  | impossible
+  | difficult
+  | without
+  | unless
+  | onlyDependsOn
+  | moreThan
+  | lessThan
+  | differentThan
+  | tooTo
+  deriving DecidableEq, Repr, Fintype
+
+/-- The class of a concept. -/
+def ENConcept.cls : ENConcept → ENTriggerClass
+  | .fear | .avoid => .fear
+  | .regret | .complain | .adviseAgainst => .regret
+  | .deny | .hide | .despair => .deny
+  | .forget | .delay | .refuse | .stop | .prevent | .almost | .barely => .forget
+  | .before => .before
+  | .cannotWait => .cannotWait
+  | .since => .since
+  | .rarely => .rarely
+  | .impossible | .difficult => .impossible
+  | .without => .without
+  | .unless | .onlyDependsOn => .unless
+  | .moreThan | .lessThan => .moreThan
+  | .differentThan => .differentThan
+  | .tooTo => .tooTo
 
 /-! ### The examples -/
 
@@ -216,6 +282,16 @@ theorem french_ne_of_entrenched :
 theorem januubi_standard : ∀ r ∈ rows, r.language = .januubi → r.kind = .standard := by decide
 
 /-! ### Blocked classes (Sections 6.4 and 7) -/
+
+/-- Why a trigger class fails to license expletive negation in a language, Section 7. -/
+inductive ENBlockingReason where
+  /-- The language disprefers modal operators in complement clauses. -/
+  | modalRestriction
+  /-- Comparative complements admit only noun phrases. -/
+  | npOnlyComplement
+  /-- The concept is expressed analytically with a necessary negation. -/
+  | analyticNegation
+  deriving DecidableEq, Repr
 
 /-- A concept can fail to trigger expletive negation in a language for three reasons. Januubi admits
 only noun phrases as complements of comparatives and disprefers the modal that the *regret* class

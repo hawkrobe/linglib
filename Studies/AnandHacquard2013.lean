@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Semantics.Presupposition.Defs
+public import Linglib.Semantics.Presupposition.Basic
 public import Linglib.Data.Examples.AnandHacquard2013
 public import Mathlib.Data.Set.Basic
 public import Mathlib.Basic.Nontrivial.Defs
@@ -69,7 +69,7 @@ def might (p : Set W) : SProp W := fun S => ⟨fun _ => S.Nonempty, fun _ => (S 
 def must (p : Set W) : SProp W := fun S => ⟨fun _ => S.Nonempty, fun _ => S ⊆ p⟩
 
 /-- Negation of a complement, keeping its presupposition. -/
-def neg (φ : SProp W) : SProp W := fun S => ⟨(φ S).presup, fun w => ¬ (φ S).assertion w⟩
+def neg (φ : SProp W) : SProp W := fun S ↦ (φ S).neg
 
 /-- Conjunction of complements. -/
 def conj (φ ψ : SProp W) : SProp W := fun S =>

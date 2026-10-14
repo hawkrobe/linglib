@@ -1,13 +1,13 @@
 module
 
 public import Linglib.Syntax.Minimalist.SyntacticObject.Phase
-public import Linglib.Semantics.Polarity.ExpletiveNegation
+public import Mathlib.Data.Finset.Insert
 public import Linglib.Data.Examples.Greco2020
 
 /-!
 # Greco (2020): On the Syntax of Surprise Negation Sentences
 
-This file formalizes [greco-2020]'s analysis of Italian surprise negation sentences (Snegs) such
+This file formalizes Greco's analysis of Italian surprise negation sentences (Snegs) such
 as *E non mi è scesa dal treno Maria?!* 'Mary got off the train!', affirmative sentences carrying
 the negative marker *non*. The paper places Snegs in the strong class of expletive negation, the
 class licensing no polarity-sensitive element (Tables 1 and 2), separates them from negative
@@ -47,7 +47,32 @@ constituent.
 
 namespace Greco2020
 
-open Minimalist Negation
+open Minimalist
+
+/-! ### Polarity-sensitive elements -/
+
+/-- The four classes of polarity-sensitive element that Table 1 tests in each EN environment:
+weak NPIs (*alzare un dito* 'lift a finger'), strong NPIs (*affatto* 'at all'), not-also
+conjunctions (*e neanche*), and n-words (*nessuno* 'nobody'). -/
+inductive PolarityClass where
+  | weakNPI
+  | strongNPI
+  | notAlsoConj
+  | nWord
+  deriving DecidableEq, Repr, Fintype
+
+/-- The two classes of EN environment. Weak EN keeps some of the licensing of standard
+negation, and strong EN keeps none. -/
+inductive ENStrength where
+  | weak
+  | strong
+  deriving DecidableEq, Repr
+
+/-- The polarity classes an EN environment of each strength licenses (Table 1, whose rows are
+uniform within each class): weak EN licenses weak NPIs and n-words. -/
+def ENStrength.licensed : ENStrength → Finset PolarityClass
+  | .weak => {.weakNPI, .nWord}
+  | .strong => ∅
 
 /-! ### Tables 1 and 2: the Italian expletive negation environments -/
 
@@ -88,21 +113,24 @@ inductive Construction where
 
 /-- What the construction tested in a row needs of the clause it occurs in. -/
 inductive Requirement where
-  /-- Negation binding into the v*P: negative-scope elements, NEG-raising, Aux-to-Comp. -/
+  /-- Negation binding into the v*P, as negative-scope elements, NEG-raising and Aux-to-Comp
+  need. -/
   | negScope
-  /-- The v*P outside the negation's scope: positive polarity items. -/
+  /-- The v*P outside the negation's scope, as positive polarity items need. -/
   | noNegScope
-  /-- An empty focus position: foci, wh-elements, quantifier raising, entity answers. -/
+  /-- An empty focus position, as foci, wh-elements, quantifier raising and entity answers
+  need. -/
   | freeFocP
-  /-- A filled focus position: expletive *e*, answers to propositional questions. -/
+  /-- A filled focus position, as expletive *e* and answers to propositional questions need. -/
   | activeFocP
   /-- Embedding, which admits the focalization of a part of TP only, (83) to (85). -/
   | embedded
-  /-- A structure without TP: past participle clauses and Absolute Constructions. -/
+  /-- A structure without TP, as in past participle clauses and Absolute Constructions. -/
   | noTP
   /-- A negator with maximal-projection status, *no*. -/
   | phrasalNegator
-  /-- Nothing: topics of every kind, presuppositional *mica*, either subject position. -/
+  /-- Nothing, as for topics of every kind, presuppositional *mica* and either subject
+  position. -/
   | any
   deriving DecidableEq, Repr, Fintype
 
@@ -114,8 +142,9 @@ inductive Diagnostic where
   | factiveEmbedding
   deriving DecidableEq, Repr
 
-/-- The judgment a row tests: of the reading it names under `reading`, as (72b), which is
-acceptable on its affirmative reading and tests the negative one; otherwise of the sentence. -/
+/-- A row tests the judgment of the reading it names under `reading`, as (72b) does, being
+acceptable on its affirmative reading and testing the negative one, and otherwise the judgment of
+the sentence. -/
 def testedJudgment (ex : Datum) : Judgment :=
   ((ex.feature? "reading").bind (ex.readings.lookup ·)).getD ex.judgment
 
@@ -174,7 +203,7 @@ theorem sneg_not_ene :
 
 /-! ### The representation: (59), (65), (68), and (73) -/
 
-/-- The negative marker *non* of (59): a head selecting the focus phrase. -/
+/-- The negative marker *non* of (59), a head selecting the focus phrase. -/
 def non : LexicalItem.Token := ⟨.of .Neg [.Foc] "non", 0⟩
 
 /-- Force°, the highest head of the CP field in (68). -/
@@ -268,7 +297,7 @@ the representation meets the requirement of the construction it tests. -/
 theorem rows_sneg {p : LexicalItem.Token} (hp : Closed p) :
     ∀ r ∈ rows, r.construction = .sneg → ∀ q, r.requirement = some q →
       (r.judgment = .acceptable ↔ Allows p q) :=
-  λ r hr hc q hq => (rows_sneg_fin r hr hc q hq).trans (allows_of_closed phase_heads.1 hp q)
+  fun r hr hc q hq ↦ (rows_sneg_fin r hr hc q hq).trans (allows_of_closed phase_heads.1 hp q)
 
 /-- Section 4.2.5's premise, (83) to (85): an embedded clause admits the focalization of a
 constituent of TP, never of the whole TP. -/

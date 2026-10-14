@@ -16,19 +16,16 @@ clause changes, in any person or tense. The examples are Miestamo's.
 
 @[expose] public section
 
-open Negation Morphology
+open Negation
 
 namespace German.Negation
 
 /-- *Nicht* is the standard negator. -/
 def nicht : Marker := { pieces := [[.free "nicht"]] }
 
-/-- `words ws` is the sentence `ws` as a list of free words. -/
-def words (ws : List String) : List Morph := ws.map .free
-
 /-- The first person singular present and past of *singen* 'sing' pair with their negations. -/
 def pairs : List Pair :=
-  [⟨nicht, words ["ich", "singe"], words ["ich", "singe", "nicht"]⟩,
-   ⟨nicht, words ["ich", "sang"], words ["ich", "sang", "nicht"]⟩]
+  [⟨nicht, ["ich", "singe"].map .free, ["ich", "singe", "nicht"].map .free⟩,
+   ⟨nicht, ["ich", "sang"].map .free, ["ich", "sang", "nicht"].map .free⟩]
 
 end German.Negation
