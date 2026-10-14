@@ -92,7 +92,7 @@ The book's algebra lives in `Core/` and in `Syntax/Minimalist/{Workspace,Merge,E
   (`ConnesKreimer.isDualPrimitive_iff`).
 * Lemma 1.7.3, for `Δ^ρ` and grafting at vertices: `ConnesKreimer.isDualPrimitive_lcoeff_iff`,
   `lie_lcoeff_singleton_apply_ofTree`, `lie_lcoeff_singleton_apply_of'`, and
-  `GrossmanLarson.lie_toConv_pairing_ι` for the bracket of the grafting product.
+  `GrossmanLarson.pairingLie` for the bracket of the grafting product.
 * Definitions 3.1.1 and 3.1.2: `RotaBaxter`, `RotaBaxterSemiring`; Remark 3.2.2: `RotaBaxter.id`.
 * Definitions 3.1.3, 3.1.5 and 3.1.6, Proposition 3.1.7, Remark 3.1.8:
   `ConnesKreimer.birkhoffMinus`, `birkhoffPrepTree`, `birkhoffPlus`, `birkhoffPlus_eq_convMul`,

@@ -14,10 +14,15 @@ public import Linglib.Core.RingTheory.Bialgebra.Primitive
 A linear functional on the Connes–Kreimer bialgebra is a dual primitive exactly when it vanishes
 on every forest that is not a single tree. The delta functionals `δ_T = lcoeff R {T}` of the trees
 are dual primitives, and the commutator of two of them counts single cuts. The symmetry-weighted
-pairing sends the primitive elements of the Grossman–Larson bialgebra to dual primitives, and the
-bracket of the pre-Lie algebra of rooted trees to the bracket of dual primitives, in the opposite
-order. Chapoton and Livernet observe this identification with the Lie algebra that Connes and
-Kreimer find dual to their Hopf algebra.
+pairing sends the primitive elements of the Grossman–Larson bialgebra to dual primitives, and it
+maps the pre-Lie algebra of rooted trees to the Lie algebra of dual primitives. Chapoton and
+Livernet observe this identification with the Lie algebra that Connes and Kreimer find dual to
+their Hopf algebra.
+
+## Main definitions
+
+* `GrossmanLarson.pairingLie`: the pairing as a map of Lie algebras from the pre-Lie algebra of
+  rooted trees to `Bialgebra.dualPrimitives`.
 
 ## Main results
 
@@ -30,9 +35,9 @@ Kreimer find dual to their Hopf algebra.
 * `ConnesKreimer.autCard_mul_autCard_mul_countSingleCutsRho`: Hoffman's relation between the
   single cuts of `T` with crown `T₁` and trunk `T₂` and the graftings of `T₁` onto `T₂` that give
   `T`, each weighted by numbers of symmetries.
-* `GrossmanLarson.isDualPrimitive_pairing`, `GrossmanLarson.lie_toConv_pairing_ι`: pairing with a
-  primitive element is a dual primitive, and on the pre-Lie algebra of trees the pairing takes
-  brackets to brackets, in the opposite order.
+* `GrossmanLarson.isDualPrimitive_pairing`, `GrossmanLarson.pairingLie_injective`: pairing with a
+  primitive element is a dual primitive, and in characteristic zero the pre-Lie algebra of trees
+  embeds in the dual primitives.
 
 ## Implementation notes
 
@@ -41,7 +46,9 @@ the value `1`, or `2` when the trees are equal (`ConnesKreimer.convMul_lcoeff_si
 Only the commutator is a dual primitive.
 
 The grafting product puts the host first and the pruning coproduct puts the crown first, so the
-pairing reverses products and brackets.
+pairing reverses products. `GrossmanLarson.pairingLie` is therefore defined on the opposite
+pre-Lie algebra `(ChapotonLivernet R α)ᵐᵒᵖ`, whose product grafts the first factor onto the
+second, as Connes and Kreimer's does.
 
 ## References
 
@@ -167,7 +174,7 @@ end ConnesKreimer
 
 namespace GrossmanLarson
 
-open ConnesKreimer Bialgebra WithConv
+open ConnesKreimer Bialgebra WithConv MulOpposite
 
 variable {R α : Type*} [DecidableEq α]
 
@@ -230,13 +237,37 @@ variable [CommRing R]
 
 attribute [local instance 100] LieRing.ofAssociativeRing
 
-/-- The pairing takes the bracket of two elements of the pre-Lie algebra of trees to the
-convolution bracket of their images, in the opposite order. -/
-theorem lie_toConv_pairing_ι (x y : ChapotonLivernet R α) :
-    ⁅toConv (pairing (R := R) (ι x).toConnesKreimer), toConv (pairing (ι y).toConnesKreimer)⁆ =
-      toConv (pairing (R := R) (ι ⁅y, x⁆).toConnesKreimer) := by
-  rw [← ιLie_apply ⁅y, x⁆, LieHom.map_lie, Ring.lie_def, Ring.lie_def]
-  simp [← toConv_pairing_product]
+/-- The pairing as a map of Lie algebras from the left pre-Lie algebra of rooted trees, in which
+the first factor is grafted onto the second, to the dual primitives of the Connes–Kreimer
+bialgebra. It sends a tree `T` to `|Aut T| • δ_T`. -/
+noncomputable def pairingLie :
+    (ChapotonLivernet R α)ᵐᵒᵖ →ₗ⁅R⁆ dualPrimitives R (ConnesKreimer R (UnorderedTree α)) where
+  toFun x := ⟨toConv (pairing (R := R) (ι x.unop).toConnesKreimer),
+    isDualPrimitive_pairing (isPrimitiveElem_ι _)⟩
+  map_add' x y := Subtype.ext <| by simp
+  map_smul' r x := Subtype.ext <| by simp
+  map_lie' {x y} := Subtype.ext <| by
+    change toConv (pairing (R := R) (ι ⁅y.unop, x.unop⁆).toConnesKreimer) =
+      ⁅toConv (pairing (ι x.unop).toConnesKreimer), toConv (pairing (ι y.unop).toConnesKreimer)⁆
+    rw [← ιLie_apply ⁅y.unop, x.unop⁆, LieHom.map_lie, Ring.lie_def, Ring.lie_def]
+    simp [← toConv_pairing_product]
+
+@[simp] theorem coe_pairingLie (x : (ChapotonLivernet R α)ᵐᵒᵖ) :
+    (pairingLie x : WithConv (ConnesKreimer R (UnorderedTree α) →ₗ[R] R)) =
+      toConv (pairing (ι x.unop).toConnesKreimer) := rfl
+
+theorem coe_pairingLie_op_of (T : UnorderedTree α) :
+    (pairingLie (R := R) (op (.of T)) : WithConv (ConnesKreimer R (UnorderedTree α) →ₗ[R] R)) =
+      (autCard T : R) • toConv (lcoeff R {T}) := by
+  rw [coe_pairingLie, unop_op, ι_of, toConnesKreimer_of, pairing_of', forestAutCard_singleton,
+    toConv_smul]
+
+/-- Over a ring of characteristic zero without zero divisors, the pre-Lie algebra of rooted trees
+embeds in the dual primitives. -/
+theorem pairingLie_injective [CharZero R] [NoZeroDivisors R] :
+    Function.Injective (pairingLie (R := R) (α := α)) := fun _ _ h ↦
+  unop_injective <| ι_injective <| GrossmanLarson.ext <|
+    ext_pairing_right fun z ↦ congr($(congrArg Subtype.val h) z)
 
 end CommRing
 
