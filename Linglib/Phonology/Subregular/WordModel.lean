@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Core.ModelTheory.Factor
+public import Linglib.Phonology.Subregular.Local
 public import Linglib.Phonology.Subregular.TierStrictlyLocal
 public import Linglib.Phonology.Subregular.StrictlyPiecewise
 public import Mathlib.Data.Finset.Sort
