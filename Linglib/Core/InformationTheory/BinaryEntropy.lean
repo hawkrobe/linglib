@@ -12,10 +12,17 @@ public import Mathlib.Probability.Distributions.Bernoulli
 /-!
 # Entropy of a Bernoulli measure
 
-The entropy of the Bernoulli measure `Ber(x, y, p)` on two distinct points is the binary
-entropy function `binEntropy p` of `Mathlib/Analysis/SpecialFunctions/BinaryEntropy.lean`, so
-the monotonicity and concavity of `binEntropy` transfer to the entropy of a two-point law.
-`[UPSTREAM]` candidate for that file.
+The Bernoulli measure `Ber(x, y, p)` on two distinct points has entropy `binEntropy p`, the
+binary entropy function. Its zeros, its maximum `log 2` at `p = 1/2` and its monotonicity on
+either side of `1/2` are therefore facts about the entropy of any two-point law.
+
+## Main statements
+
+* `measureEntropy_bernoulliMeasure`: `Hm[Ber(x, y, p)] = binEntropy p` for `x ≠ y`.
+
+## References
+
+* [cover-thomas-2006]
 -/
 
 @[expose] public section
@@ -26,22 +33,14 @@ namespace InformationTheory
 
 variable {S : Type*} [MeasurableSpace S] [MeasurableSingletonClass S]
 
-/-- The entropy of a Bernoulli measure on two distinct points is the binary entropy of its
-parameter. -/
+/-- A Bernoulli measure on two distinct points has the binary entropy of its parameter. -/
 theorem measureEntropy_bernoulliMeasure {x y : S} (h : x ≠ y) (p : I) :
     Hm[Ber(x, y, p)] = binEntropy p := by
   classical
-  have hx : Ber(x, y, p).real {x} = p :=
-    bernoulliMeasure_real_apply_of_mem_of_notMem p (measurableSet_singleton x) rfl
-      (by simpa using h.symm)
-  have hy : Ber(x, y, p).real {y} = 1 - p :=
-    bernoulliMeasure_real_apply_of_notMem_of_mem p (measurableSet_singleton y) (by simpa using h)
-      rfl
-  rw [measureEntropy_of_isProbabilityMeasure, binEntropy_eq_negMulLog_add_negMulLog_one_sub,
-    tsum_eq_sum (s := {x, y}), Finset.sum_pair h, hx, hy]
-  intro s hs
-  simp only [Finset.mem_insert, Finset.mem_singleton, not_or] at hs
-  rw [bernoulliMeasure_real_apply_of_notMem_of_notMem p (measurableSet_singleton s)
-    (by simpa using Ne.symm hs.1) (by simpa using Ne.symm hs.2), negMulLog_zero]
+  rw [measureEntropy_of_isProbabilityMeasure_finite (A := {x, y})
+      (bernoulliMeasure_apply_of_notMem_of_notMem p (Finset.measurableSet _).compl (by simp)
+        (by simp)),
+    Finset.sum_pair h, binEntropy_eq_negMulLog_add_negMulLog_one_sub]
+  simp [h, h.symm]
 
 end InformationTheory

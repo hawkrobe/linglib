@@ -4,7 +4,6 @@ public import Mathlib.Analysis.SpecialFunctions.BinaryEntropy
 public import Linglib.Pragmatics.RSA.Basic
 public import Linglib.Core.Probability.Kernel.Composition.Lemmas
 public import Linglib.Data.Examples.BergenGoodman2015
-import all Mathlib.Analysis.SpecialFunctions.BinaryEntropy  -- for unfolding `binEntropy`
 
 /-!
 # Bergen & Goodman (2015): The strategic use of noise in pragmatic reasoning
@@ -523,7 +522,7 @@ theorem rpow_mul_rpow_eq_exp_neg_binEntropy {r : ℝ} (hr₀ : 0 < r) (hr₁ : r
     ← exp_add, log_div (sub_ne_zero.mpr hr₁.ne') two_ne_zero, log_div hr₀.ne' two_ne_zero,
     show exp (-binEntropy r) / 2 = exp (-binEntropy r - log 2) by
       rw [exp_sub, exp_log two_pos],
-    binEntropy, log_inv, log_inv]
+    binEntropy_eq_negMulLog_add_negMulLog_one_sub, negMulLog, negMulLog]
   congr 1; ring
 
 /-- The knowledgeable speaker's channel-mixed listener for the two forms of "Bob went" is the
