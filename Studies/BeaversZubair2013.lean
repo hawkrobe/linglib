@@ -5,7 +5,7 @@ public import Linglib.Syntax.Case.Basic
 public import Linglib.Syntax.Voice.Basic
 public import Linglib.Fragments.Sinhala.Verbs
 public import Studies.KoontzGarboden2009
-public import Mathlib.Order.Cover
+public import Linglib.Core.Order.Cover
 public import Mathlib.Tactic.DeriveFintype
 
 /-!
@@ -111,7 +111,6 @@ instance : DecidableLT CauserSort := decidableLTOfDecidableLE
 /-- The typology (81) is a tree whose leaves are the events, the states and the individuals. -/
 theorem covBy_tree :
     event ⋖ eventuality ∧ state ⋖ eventuality ∧ eventuality ⋖ any ∧ individual ⋖ any := by
-  unfold CovBy
   decide
 
 /-- Causer suppression (77) applies to the roots whose causer sort includes the individuals,

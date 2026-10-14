@@ -6,6 +6,7 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Core.Logic.Function.FactorsThrough
+public import Linglib.Core.Order.Cover
 public import Linglib.Data.Forms.Booij2010
 public import Linglib.Fragments.Dutch.Verbs
 public import Linglib.Logic.Nonmonotonic.Inheritance
@@ -163,14 +164,11 @@ instance : DecidableLE CompoundNode := fun a b ↦
 instance : DecidableLT CompoundNode := decidableLTOfDecidableLE
 
 /-- The nominal schema (6) lies immediately below the general right-headed schema. -/
-theorem nominal_covBy_general : CompoundNode.nominal ⋖ .general := by
-  unfold CovBy
-  decide
+theorem nominal_covBy_general : CompoundNode.nominal ⋖ .general := by decide
 
 /-- Each subcase of (7) lies immediately below the nominal schema (6). -/
 theorem covBy_nominal :
     ∀ n : CompoundNode, n ≠ .general → n ≠ .nominal → n ⋖ .nominal := by
-  unfold CovBy
   decide
 
 /-- Right-headedness needs no rule: in any instance of any schema of the family read through

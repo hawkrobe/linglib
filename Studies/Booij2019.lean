@@ -58,7 +58,7 @@ inductive OccPart
 
 /-- The occupation schema (2): the vowels pinned, the root consonants open. -/
 def occupation : Schema OccPart (Flat String) :=
-  ⟨λ | .a => ↑"a" | .aa => ↑"aa" | _ => ⊥, {.c1, .c2, .c3}⟩
+  ⟨fun | .a => ↑"a" | .aa => ↑"aa" | _ => ⊥, {.c1, .c2, .c3}⟩
 
 /-- The six slots of `C₁aC₂C₂aaC₃` subscripted by parts: the second consonant occupies
 two. -/
@@ -75,7 +75,7 @@ theorem occupation_instantiatesAt_iff {w : Fin 6 → Flat String} :
   · rintro ⟨hc, hf⟩
     exact ⟨Flat.coe_le_iff.1 (hc 1), Flat.coe_le_iff.1 (hc 4), hf (by decide)⟩
   · rintro ⟨h1, h4, h23⟩
-    refine ⟨λ i => ?_, λ i j hij => ?_⟩
+    refine ⟨fun i ↦ ?_, fun i j hij ↦ ?_⟩
     · fin_cases i <;> first | exact bot_le | exact h1.ge | exact h4.ge
     · fin_cases i <;> fin_cases j <;>
         first | rfl | exact h23 | exact h23.symm | exact absurd hij (by decide)
@@ -113,7 +113,7 @@ def xabbaazMatch : TemplateMatch String where
 
 /-- The melody element a slot is associated to. -/
 def xabbaazAssoc (i : Fin 6) : Option (AssocSource × Nat) :=
-  (xabbaazMatch.associations.find? (·.slotIndex == i.val)).map λ a => (a.source, a.melodyIndex)
+  (xabbaazMatch.associations.find? (·.slotIndex == i.val)).map fun a ↦ (a.source, a.melodyIndex)
 
 /-- The association lines spell out *xabbaaz*. -/
 theorem xabbaazMatch_spellout :
@@ -136,7 +136,7 @@ inductive RedPart
 
 /-- The reduplication schema (13): the schwa pinned, the consonant and the residue open. -/
 def reduplication : Schema RedPart (Flat String) :=
-  ⟨λ | .schwa => ↑"ə" | _ => ⊥, {.c1, .y}⟩
+  ⟨fun | .schwa => ↑"ə" | _ => ⊥, {.c1, .y}⟩
 
 /-- The reduplicant `C₁əC₁y`: the initial consonant occupies two slots. -/
 def redSub : Fin 4 → RedPart := ![.c1, .schwa, .c1, .y]
@@ -154,7 +154,7 @@ theorem reduplication_pairs_iff {r : Fin 4 → Flat String} {b : Fin 2 → Flat 
   · rintro ⟨hr, -, hf, -, h⟩
     exact ⟨Flat.coe_le_iff.1 (hr 1), hf (by decide), h 0 0 (by decide), h 3 1 (by decide)⟩
   · rintro ⟨h1, h02, h0, h3⟩
-    refine ⟨λ i => ?_, λ i => ?_, λ i j hij => ?_, λ i j hij => ?_, λ i j hij => ?_⟩
+    refine ⟨fun i ↦ ?_, fun i ↦ ?_, fun i j hij ↦ ?_, fun i j hij ↦ ?_, fun i j hij ↦ ?_⟩
     · fin_cases i <;> first | exact bot_le | exact h1.ge
     · fin_cases i <;> exact bot_le
     · fin_cases i <;> fin_cases j <;>
@@ -184,7 +184,7 @@ inductive CmpPart
 
 /-- The comparative schema (16): the comparative vowel pinned, all else open. -/
 def comparative : Schema CmpPart (Flat String) :=
-  ⟨λ | .a => ↑"a" | _ => ⊥, {.c1, .c2, .c3, .v1, .v2}⟩
+  ⟨fun | .a => ↑"a" | _ => ⊥, {.c1, .c2, .c3, .v1, .v2}⟩
 
 /-- The adjective template `C₁VC₂VC₃`. -/
 def adjSub : Fin 5 → CmpPart := ![.c1, .v1, .c2, .v2, .c3]
@@ -203,7 +203,7 @@ theorem comparative_pairs_iff {p q : Fin 5 → Flat String} :
     exact ⟨Flat.coe_le_iff.1 (hq 0), Flat.coe_le_iff.1 (hq 3), h 0 1 (by decide),
       h 2 2 (by decide), h 4 4 (by decide)⟩
   · rintro ⟨h0, h3, h01, h22, h44⟩
-    refine ⟨λ i => ?_, λ i => ?_, λ i j hij => ?_, λ i j hij => ?_, λ i j hij => ?_⟩
+    refine ⟨fun i ↦ ?_, fun i ↦ ?_, fun i j hij ↦ ?_, fun i j hij ↦ ?_, fun i j hij ↦ ?_⟩
     · fin_cases i <;> exact bot_le
     · fin_cases i <;> first | exact bot_le | exact h0.ge | exact h3.ge
     · fin_cases i <;> fin_cases j <;> first | rfl | exact absurd hij (by decide)
