@@ -5,6 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
+public import Mathlib.Order.UpperLower.Basic
 public import Mathlib.Tactic.DeriveFintype
 public import Linglib.Syntax.Case.Basic
 public import Linglib.Syntax.Clause.ArgumentRole
@@ -13,13 +14,13 @@ public import Linglib.Syntax.Clause.ArgumentRole
 # Alignment
 
 A marking of the argument roles, by case, agreement or constituent order, is a function out of
-`ArgumentRole`, and its alignment is which of the three core roles S, A and P it identifies,
-the kernel of the marking on the core roles ([comrie-1978], [dixon-1994]). A three-element set
-has five partitions, so a marking has one of five alignments: neutral, accusative, with S
-marked like A, ergative, with S marked like P, horizontal, with A marked like P, and tripartite.
-The case labels a marking uses are a further dimension: the Mayan non-perfective pattern with
-Set A on every subject and the Kaqchikel progressive with Set A on the object are accusative
-alignments in genitive rather than nominative clothing.
+`ArgumentRole`, and its alignment is which of the three core roles S, A and P it identifies, the
+kernel of the marking on the core roles, as Comrie and Dixon define it. A three-element set has five
+partitions, so a marking has one of five alignments: neutral, accusative, with S marked like A,
+ergative, with S marked like P, horizontal, with A marked like P, and tripartite. The case labels a
+marking uses are a further dimension: the Mayan non-perfective pattern with Set A on every subject
+and the Kaqchikel progressive with Set A on the object are accusative alignments in genitive rather
+than nominative clothing.
 
 ## Main declarations
 
@@ -28,11 +29,12 @@ alignments in genitive rather than nominative clothing.
   which every marking has (`Alignment.marking_cases`).
 * `Alignment.accusative`, `Alignment.ergative`, `Alignment.tripartite`,
   `Alignment.extendedErgative`, `Alignment.invertedErgative`: the canonical case markings.
-* `Alignment.AlignmentType`: the observational classification of WALS chapters 98 to 100
-  ([comrie-2013]), with `AlignmentType.MarksAgent` and `AlignmentType.MarksPatient`; a split
-  conditioned by tense, aspect or a nominal hierarchy is a function into it.
+* `Alignment.AlignmentType`: Comrie's observational classification of WALS chapters 98 to
+  100, with `AlignmentType.MarksAgent` and `AlignmentType.MarksPatient`.
 * `Alignment.AlignmentType.Classifies`: the alignment a type names, as a property of a
   marking.
+* `Alignment.overt`, `Alignment.Fits`: the conditions under which a role of a conditioned
+  marking is overtly coded, and the fit of a conditioned marking to an order on its conditions.
 
 ## Implementation notes
 
@@ -44,6 +46,7 @@ alignment of a single marking.
 
 ## References
 
+* [bickel-et-al-2015]
 * [comrie-1978]
 * [comrie-2013]
 * [coon-2013]
@@ -103,19 +106,19 @@ theorem IsErgative.not_isAccusative (h : IsErgative m) : ¬ IsAccusative m := fu
 
 /-! ### Canonical case markings -/
 
-/-- The accusative marking: S and A nominative, P accusative. -/
+/-- The accusative marking makes S and A nominative and P accusative. -/
 def accusative : ArgumentRole → Case
   | .S | .A => .nom
   | .P | .T => .acc
   | .R => .dat
 
-/-- The ergative marking: A ergative, S and P absolutive. -/
+/-- The ergative marking makes A ergative and S and P absolutive. -/
 def ergative : ArgumentRole → Case
   | .A => .erg
   | .S | .P | .R | .T => .abs
 
-/-- The tripartite marking: A ergative, P accusative, S absolutive, as in San Juan Atitán Mam
-([scott-2023]) and several Australian languages ([dixon-1994]). -/
+/-- The tripartite marking makes A ergative, P accusative and S absolutive, as in San Juan
+Atitán Mam ([scott-2023]) and several Australian languages ([dixon-1994]). -/
 def tripartite : ArgumentRole → Case
   | .A => .erg
   | .S => .abs
@@ -174,7 +177,7 @@ def AlignmentType.MarksPatient (a : AlignmentType) : Prop := a = .accusative ∨
 
 instance (a : AlignmentType) : Decidable a.MarksPatient := inferInstanceAs (Decidable (_ ∨ _))
 
-/-- The alignment a type names, as a property of a marking: the split-S type names none, since
+/-- The alignment a type names, as a property of a marking. The split-S type names none, since
 it identifies no fixed pair of roles. -/
 def AlignmentType.Classifies {κ : Type*} (a : AlignmentType) (m : ArgumentRole → κ) : Prop :=
   match a with
@@ -191,5 +194,30 @@ instance {κ : Type*} [DecidableEq κ] (m : ArgumentRole → κ) :
   | .ergative => inferInstanceAs (Decidable (IsErgative m))
   | .tripartite => inferInstanceAs (Decidable (IsTripartite m))
   | .active => inferInstanceAs (Decidable False)
+
+/-! ### Conditioned marking
+
+A marking may depend on a condition besides the role, such as the referential properties of the
+argument or of its co-argument, or the tense of the clause. A conditioned marking
+`m : ArgumentRole → C → Option κ` codes role `r` under condition `c` by the marker `m r c`, or by
+none, and its alignment under `c` is that of `(m · c)`. Bickel, Witzlack-Makarevich and Zakharko
+represent a case as a relation between roles and conditions, and test hierarchy effects as the
+fit of a marking to an order on the conditions: A overtly coded on a lower set of them, P on an
+upper set. The papers that posit a scale assert fit; the papers that test it count it. -/
+
+section Conditioned
+
+variable {C : Type*} (m : ArgumentRole → C → Option κ)
+
+/-- The conditions under which role `r` is overtly coded. -/
+def overt (r : ArgumentRole) : Set C := {c | m r c ≠ none}
+
+@[simp] theorem mem_overt {r : ArgumentRole} {c : C} : c ∈ overt m r ↔ m r c ≠ none := Iff.rfl
+
+/-- A conditioned marking fits an order on its conditions when A is overtly coded on a lower set
+of them and P on an upper set. -/
+def Fits [Preorder C] : Prop := IsLowerSet (overt m .A) ∧ IsUpperSet (overt m .P)
+
+end Conditioned
 
 end Alignment

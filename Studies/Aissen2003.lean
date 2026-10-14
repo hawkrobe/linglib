@@ -2,6 +2,7 @@ module
 
 public import Linglib.Semantics.Reference.Prominence
 public import Linglib.Fragments.Turkish.ObjectMarking
+public import Linglib.Syntax.Case.Alignment
 public import Linglib.Phonology.OptimalityTheory.Constraint.ForbiddenPairs
 public import Linglib.Phonology.OptimalityTheory.Tableau
 
@@ -21,16 +22,16 @@ segment of the scale. The subhierarchies' derivation by harmonic alignment
 (the paper's §§2–3) is taken as given; the constraint lists below are written
 directly in their derived ranking.
 
-Language grids (`Reference.Prominence.MarkingPattern`) record *obligatory*
+A language's zone, a set of cells of the grid of animacy and definiteness, records *obligatory*
 marking — the zone whose constraints strictly dominate \*STRUC_C. The paper's
 optional zones (constraints that rerank with \*STRUC_C, stochastically in
 Boersma's sense) are noted in docstrings but not represented.
 
 ## Main results
 
-- `dom_monotonicity_universal`, `dom_obligatory_zone_upperSet` — the paper's
-  (33b): every attested obligatory-marking zone is an upper set in Figure 4's
-  product prominence order.
+- `dom_fits`, `dom_obligatory_zone_upperSet` — the paper's (33b): every attested
+  system fits Figure 4's product prominence order (`Alignment.Fits`), its
+  obligatory zone an upper set.
 - `figure2_typology` / `figure2_languages` — the six interpolation points on
   the definiteness subhierarchy generate exactly the six cutoff systems,
   matched type-for-type to Kalkatungu, Catalan, Pitjantjatjara, Hebrew,
@@ -63,108 +64,152 @@ two-dimensional systems of §5. -/
 section DOMLanguages
 
 /-- Catalan marks only strong personal-pronoun objects, with *a* (Figure 2, §4.1). -/
-def catalanDOM : MarkingPattern := .definitenessAtLeast .personalPronoun
+abbrev catalanDOM : Set (Animacy × DefinitenessScale) := Set.Ici (.inanimate, .personalPronoun)
 
 /-- Pitjantjatjara case-marks only pronoun and proper-name objects (Figure 2). -/
-def pitjantjatjaraDOM : MarkingPattern := .definitenessAtLeast .properName
+abbrev pitjantjatjaraDOM : Set (Animacy × DefinitenessScale) := Set.Ici (.inanimate, .properName)
 
 /-- Hebrew has *ʔet* obligatorily on pronoun, proper-name and definite objects (Figure 2,
 §4.1). -/
-def hebrewDOM : MarkingPattern := .definitenessAtLeast .definite
+abbrev hebrewDOM : Set (Animacy × DefinitenessScale) := Set.Ici (.inanimate, .definite)
 
 /-- Hebrew's DOM distinguishes definites from indefinites, marking an object just when it is
 definite, pronouns and names included. -/
 theorem hebrew_marks_definites (a : Animacy) (d : DefinitenessScale) :
-    hebrewDOM a d = true ↔ d.definiteness = .definite := by
+    (a, d) ∈ hebrewDOM ↔ d.definiteness = .definite := by
   revert a d; decide
 
 /-- Turkish marks every object but the non-specific ones, so unlike Hebrew it marks specific
-indefinites obligatorily (Figure 2, Tableaux 1–2); the pattern is the fragment's. -/
-def turkishDOM : MarkingPattern := Turkish.ObjectMarking.accusative
+indefinites obligatorily (Figure 2, Tableaux 1–2); the zone is the fragment's. -/
+abbrev turkishDOM : Set (Animacy × DefinitenessScale) :=
+  {c | c.2 ∈ Turkish.ObjectMarking.accusative}
 
 /-- Persian has *-rā* obligatorily on all definites regardless of animacy and, exactly as in
 Turkish, on specific indefinites (§5.3). Animacy enters only in the optional zone, the
-non-specific indefinites, so the obligatory grid is one-dimensional. -/
-def persianDOM : MarkingPattern := .definitenessAtLeast .indefiniteSpecific
+non-specific indefinites, so the obligatory zone is one-dimensional. -/
+abbrev persianDOM : Set (Animacy × DefinitenessScale) := Set.Ici (.inanimate, .indefiniteSpecific)
 
 /-- Written Japanese case-marks all objects, DOM extended to the whole scale, "thereby
 ceasing to be differential" (Figures 2–3, fn. 33). -/
-def writtenJapaneseDOM : MarkingPattern := .definitenessAtLeast .nonSpecific
+abbrev writtenJapaneseDOM : Set (Animacy × DefinitenessScale) := Set.univ
 
 /-- Ritharngu case-marks all human objects obligatorily; the "some animates" spillover the
 paper reports is in the optional zone (Figure 3). -/
-def ritharnguDOM : MarkingPattern := .animacyAtLeast .human
+abbrev ritharnguDOM : Set (Animacy × DefinitenessScale) := Set.Ici (.human, .nonSpecific)
 
 /-- Dhargari case-marks all animate objects (Figure 3). -/
-def dhargariDOM : MarkingPattern := .animacyAtLeast .animate
+abbrev dhargariDOM : Set (Animacy × DefinitenessScale) := Set.Ici (.animate, .nonSpecific)
 
-/-- The pattern with no DOM marks no object, Kalkatungu in Figures 2–3, where \*STRUC_C
-dominates the whole subhierarchy. It is the neutral no-marking baseline other studies
-consume. -/
-def noDOM : MarkingPattern := fun _ _ ↦ false
+/-- The system with no DOM marks no object, Kalkatungu in Figures 2–3, where \*STRUC_C
+dominates the whole subhierarchy. -/
+abbrev noDOM : Set (Animacy × DefinitenessScale) := ∅
 
 /-- Hindi marks with *-ko* (§5.2, Figure 7). It is obligatory on human objects down to specific
 indefinites and on animate pronouns and proper names, which "assimilate to the human class";
 optional on human non-specifics, animate definites and below, and inanimate definites; and
 excluded on other inanimates. -/
-def hindiDOM : MarkingPattern := fun a d ↦
-  match a with
-  | .human     => decide (DefinitenessScale.indefiniteSpecific ≤ d)
-  | .animate   => decide (DefinitenessScale.properName ≤ d)
-  | .inanimate => false
+abbrev hindiDOM : Set (Animacy × DefinitenessScale) :=
+  Set.Ici (.human, .indefiniteSpecific) ∪ Set.Ici (.animate, .properName)
 
 /-- The Spanish of the Cantar de Mio Cid has *a* obligatorily on exactly the personal pronouns
 and proper names of humans and animals (§5.1, Figure 5), and optionally on human common
 NPs and geographic proper names. -/
-def cmcSpanishDOM : MarkingPattern := fun a d ↦
-  decide (Animacy.animate ≤ a) && decide (DefinitenessScale.properName ≤ d)
+abbrev cmcSpanishDOM : Set (Animacy × DefinitenessScale) := Set.Ici (.animate, .properName)
 
 /-- Modern Spanish is the CMC system with \*STRUC_C demoted below the human-definite and
 human-specific constraints, so *a* is now also obligatory with definite and specific human
-objects (§5.4, Figure 9). The obligatory grid coincides with Hindi's; the two differ in their
+objects (§5.4, Figure 9). The obligatory zone coincides with Hindi's; the two differ in their
 optional zones (Figure 7 against Figure 9). -/
-def spanishDOM : MarkingPattern := fun a d ↦
-  match a with
-  | .human     => decide (DefinitenessScale.indefiniteSpecific ≤ d)
-  | .animate   => decide (DefinitenessScale.properName ≤ d)
-  | .inanimate => false
+abbrev spanishDOM : Set (Animacy × DefinitenessScale) :=
+  Set.Ici (.human, .indefiniteSpecific) ∪ Set.Ici (.animate, .properName)
 
 end DOMLanguages
 
 /-- The DOM systems cited in the paper. -/
-def allDOMPatterns : List MarkingPattern :=
+def allDOMZones : List (Set (Animacy × DefinitenessScale)) :=
   [catalanDOM, pitjantjatjaraDOM, hebrewDOM, turkishDOM, persianDOM,
    writtenJapaneseDOM, ritharnguDOM, dhargariDOM, hindiDOM, cmcSpanishDOM,
    spanishDOM, noDOM]
 
 /-! ### Monotonicity: the (33b) universal -/
 
-/-- Every attested DOM system is monotone, since no language obligatorily marks a less
-prominent object while leaving a more prominent one unmarked. -/
-theorem dom_monotonicity_universal :
-    ∀ p ∈ allDOMPatterns, p.MonotoneP := by decide
+open Alignment
+
+open Classical in
+/-- The marking of a DOM system, the object overtly marked on its zone and no other role
+marked. -/
+noncomputable def marking (z : Set (Animacy × DefinitenessScale)) :
+    ArgumentRole → Animacy × DefinitenessScale → Option Unit
+  | .P, c => if c ∈ z then some () else none
+  | _, _ => none
+
+/-- A DOM system fits the prominence order of Figure 4 exactly when its zone is an upper
+set. -/
+theorem fits_marking_iff (z : Set (Animacy × DefinitenessScale)) :
+    Fits (marking z) ↔ IsUpperSet z := by
+  have hA : overt (marking z) .A = ∅ := by ext; simp [marking]
+  have hP : overt (marking z) .P = z := by ext; simp [marking]
+  simp [Fits, hA, hP, isLowerSet_empty]
 
 /-- In every attested system the obligatorily marked cells form an upper set in the product
 prominence order of Figure 4, which is (33b) order-theoretically. -/
-theorem dom_obligatory_zone_upperSet :
-    ∀ p ∈ allDOMPatterns,
-      IsUpperSet {c : Animacy × DefinitenessScale | p c.1 c.2 = true} :=
-  fun p hp ↦ p.monotoneP_iff_isUpperSet.mp (dom_monotonicity_universal p hp)
+theorem dom_obligatory_zone_upperSet : ∀ z ∈ allDOMZones, IsUpperSet z := by
+  simp only [allDOMZones, List.mem_cons, List.not_mem_nil, or_false]
+  rintro z (rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl)
+  all_goals first
+    | exact isUpperSet_Ici _
+    | exact isUpperSet_univ
+    | exact isUpperSet_empty
+    | exact (isUpperSet_Ici _).union (isUpperSet_Ici _)
+    | exact (isUpperSet_Ici _).preimage monotone_snd
+
+/-- Every attested system fits the prominence order, so no language obligatorily marks a less
+prominent object while leaving a more prominent one unmarked. -/
+theorem dom_fits : ∀ z ∈ allDOMZones, Fits (marking z) :=
+  fun z hz ↦ (fits_marking_iff z).2 (dom_obligatory_zone_upperSet z hz)
+
+/-- On a finite scale the upper sets are the empty set and the cones above each position, so
+each of the n + 1 interpolation points of an n-level subhierarchy is a cutoff type. -/
+theorem isUpperSet_iff_eq_empty_or_Ici {α : Type*} [LinearOrder α] [WellFoundedLT α]
+    {s : Set α} : IsUpperSet s ↔ s = ∅ ∨ ∃ a, s = Set.Ici a :=
+  ⟨IsUpperSet.eq_empty_or_Ici, by
+    rintro (rfl | ⟨a, rfl⟩)
+    exacts [isUpperSet_empty, isUpperSet_Ici a]⟩
+
+/-- A zone depends on animacy alone. -/
+def AnimacyOnly (z : Set (Animacy × DefinitenessScale)) : Prop :=
+  ∀ a d d', (a, d) ∈ z ↔ (a, d') ∈ z
+
+/-- A zone depends on definiteness alone. -/
+def DefinitenessOnly (z : Set (Animacy × DefinitenessScale)) : Prop :=
+  ∀ a a' d, (a, d) ∈ z ↔ (a', d) ∈ z
+
+instance (z : Set (Animacy × DefinitenessScale)) [DecidablePred (· ∈ z)] :
+    Decidable (AnimacyOnly z) :=
+  inferInstanceAs (Decidable (∀ _ _ _, _))
+
+instance (z : Set (Animacy × DefinitenessScale)) [DecidablePred (· ∈ z)] :
+    Decidable (DefinitenessOnly z) :=
+  inferInstanceAs (Decidable (∀ _ _ _, _))
 
 /-- The Figure 2 and §5.3 systems are animacy-blind. -/
 theorem definiteness_systems_one_dimensional :
-    ∀ p ∈ [catalanDOM, pitjantjatjaraDOM, hebrewDOM, turkishDOM, persianDOM,
-      writtenJapaneseDOM], p.DefinitenessOnly := by decide
+    DefinitenessOnly catalanDOM ∧ DefinitenessOnly pitjantjatjaraDOM ∧
+      DefinitenessOnly hebrewDOM ∧ DefinitenessOnly turkishDOM ∧
+      DefinitenessOnly persianDOM ∧ DefinitenessOnly writtenJapaneseDOM := by
+  decide
 
 /-- The Figure 3 systems are definiteness-blind. -/
-theorem animacy_systems_one_dimensional :
-    ∀ p ∈ [ritharnguDOM, dhargariDOM], p.AnimacyOnly := by decide
+theorem animacy_systems_one_dimensional : AnimacyOnly ritharnguDOM ∧ AnimacyOnly dhargariDOM := by
+  decide
 
 /-- Hindi and both stages of Spanish are genuinely two-dimensional (§5), since neither scale
 alone determines the obligatory zone. -/
 theorem two_dimensional_systems :
-    ∀ p ∈ [hindiDOM, cmcSpanishDOM, spanishDOM],
-      ¬ p.AnimacyOnly ∧ ¬ p.DefinitenessOnly := by decide
+    (¬ AnimacyOnly hindiDOM ∧ ¬ DefinitenessOnly hindiDOM) ∧
+      (¬ AnimacyOnly cmcSpanishDOM ∧ ¬ DefinitenessOnly cmcSpanishDOM) ∧
+      (¬ AnimacyOnly spanishDOM ∧ ¬ DefinitenessOnly spanishDOM) := by
+  decide
 
 /-! ### The interpolation engine
 
@@ -218,19 +263,20 @@ theorem figure2_typology :
 /-- Figure 2 cites "one language for each of the possible DOM types", and each cited
 language's obligatory grid is its interpolation type's predicted pattern. -/
 theorem figure2_languages :
-    (∀ a d, noDOM a d = markedWins (interpolation DefinitenessScale.all 0) d) ∧
-    (∀ a d, catalanDOM a d = markedWins (interpolation DefinitenessScale.all 1) d) ∧
-    (∀ a d, pitjantjatjaraDOM a d = markedWins (interpolation DefinitenessScale.all 2) d) ∧
-    (∀ a d, hebrewDOM a d = markedWins (interpolation DefinitenessScale.all 3) d) ∧
-    (∀ a d, turkishDOM a d = markedWins (interpolation DefinitenessScale.all 4) d) ∧
-    (∀ a d, writtenJapaneseDOM a d = markedWins (interpolation DefinitenessScale.all 5) d) := by
+    (∀ a d, (a, d) ∈ noDOM ↔ markedWins (interpolation DefinitenessScale.all 0) d) ∧
+    (∀ a d, (a, d) ∈ catalanDOM ↔ markedWins (interpolation DefinitenessScale.all 1) d) ∧
+    (∀ a d, (a, d) ∈ pitjantjatjaraDOM ↔ markedWins (interpolation DefinitenessScale.all 2) d) ∧
+    (∀ a d, (a, d) ∈ hebrewDOM ↔ markedWins (interpolation DefinitenessScale.all 3) d) ∧
+    (∀ a d, (a, d) ∈ turkishDOM ↔ markedWins (interpolation DefinitenessScale.all 4) d) ∧
+    (∀ a d, (a, d) ∈ writtenJapaneseDOM ↔
+      markedWins (interpolation DefinitenessScale.all 5) d) := by
   refine ⟨?_, ?_, ?_, ?_, ?_, ?_⟩ <;> decide
 
 /-- Persian's obligatory grid realizes the same interpolation type as Turkish's, since specific
 indefinites "require the suffix -rā, exactly as ... the accusative suffix in Turkish"
 (§5.3). -/
 theorem persian_same_type_as_turkish :
-    ∀ a d, persianDOM a d = turkishDOM a d := by decide
+    ∀ c, c ∈ persianDOM ↔ c ∈ turkishDOM := by decide
 
 /-- The four interpolation points on the animacy subhierarchy of Figure 3 generate exactly the
 four cutoff systems. -/
@@ -245,10 +291,10 @@ theorem figure3_typology :
 /-- Figure 3's cleanly cutoff languages match their types, Kalkatungu with none, Ritharngu
 with the humans, Dhargari with the animates, and Written Japanese and Dhalandji with all. -/
 theorem figure3_languages :
-    (∀ a d, noDOM a d = markedWins (interpolation Animacy.all 0) a) ∧
-    (∀ a d, ritharnguDOM a d = markedWins (interpolation Animacy.all 1) a) ∧
-    (∀ a d, dhargariDOM a d = markedWins (interpolation Animacy.all 2) a) ∧
-    (∀ a d, writtenJapaneseDOM a d = markedWins (interpolation Animacy.all 3) a) := by
+    (∀ a d, (a, d) ∈ noDOM ↔ markedWins (interpolation Animacy.all 0) a) ∧
+    (∀ a d, (a, d) ∈ ritharnguDOM ↔ markedWins (interpolation Animacy.all 1) a) ∧
+    (∀ a d, (a, d) ∈ dhargariDOM ↔ markedWins (interpolation Animacy.all 2) a) ∧
+    (∀ a d, (a, d) ∈ writtenJapaneseDOM ↔ markedWins (interpolation Animacy.all 3) a) := by
   refine ⟨?_, ?_, ?_, ?_⟩ <;> decide
 
 /-- "This account predicts that the reverse is not found, e.g., languages in which only

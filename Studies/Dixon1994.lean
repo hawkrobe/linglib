@@ -31,8 +31,10 @@ a marking of the core relations is any function out of `ArgumentRole`, so that e
 accusativity are the identifications of S the marking makes, `Alignment.IsErgative` and
 `Alignment.IsAccusative`. The
 Nominal Hierarchy is a linear order with first person at the top; an NP-conditioned split is
-a pair of monotone marking functions, accusative marking an upper set and ergative a lower set,
-and the pattern at a position is the `AlignmentType` the two markings induce. The tables of
+a marking conditioned by the position, O accusative and A ergative on two sets of positions,
+and its alignment at a position is the substrate's. That the accusative marking is an upper set
+and the ergative a lower set is the fit of the split to the hierarchy (`Alignment.Fits`),
+proved for each table rather than built into the type. The tables of
 §4.2 are given as cutoffs, with the optional accusative of Yidiny's proper names and kin terms
 counted as marking; Latin and Waga-Waga, the types with one marking absent or total, are given
 directly. Pivots and derivations are the framework of §6.2.1 over core functions, with the
@@ -114,124 +116,120 @@ def Nominal.rank : Nominal → ℕ
 
 instance : LinearOrder Nominal := LinearOrder.lift' Nominal.rank (by decide)
 
-variable {H : Type*} [LinearOrder H]
+variable {H : Type*}
 
-/-- In an NP-conditioned split (§4.2), accusative marking of O extends in from the left of the
-hierarchy over an upper set of positions, and ergative marking of A extends in from the right
-over a lower set. -/
-structure HierarchySplit (H : Type*) [LinearOrder H] where
-  /-- The positions whose O is marked accusative. -/
-  accusative : H → Bool
-  /-- The positions whose A is marked ergative. -/
-  ergative : H → Bool
-  accusative_mono : ∀ p q, p ≤ q → accusative p → accusative q
-  ergative_anti : ∀ p q, p ≤ q → ergative q → ergative p
+/-- In an NP-conditioned split (§4.2), O is marked accusative at the positions of the hierarchy
+where `acc` holds and A ergative where `erg` holds, and S is unmarked. -/
+def split (acc erg : H → Prop) [DecidablePred acc] [DecidablePred erg] :
+    ArgumentRole → H → Option Case
+  | .A, p => if erg p then some .erg else none
+  | .P, p => if acc p then some .acc else none
+  | _, _ => none
 
-namespace HierarchySplit
+section Split
 
-variable (s : HierarchySplit H) (p q : H)
+variable (acc erg : H → Prop) [DecidablePred acc] [DecidablePred erg] (p : H)
 
-/-- The pattern at a position is accusative where only O is marked, ergative where only A is,
-tripartite where both are, and neutral, all three functions alike, where neither is. -/
-def pattern : AlignmentType :=
-  if s.accusative p then (if s.ergative p then .tripartite else .accusative)
-  else (if s.ergative p then .ergative else .neutral)
+@[simp] theorem overt_split_A : overt (split acc erg) .A = {p | erg p} := by
+  ext; simp [split]
 
-/-- The two markings must at least meet (§4.2), since A and O are distinguished at a position
-exactly when one of them applies there. -/
-theorem marks_iff :
-    (s.pattern p).MarksAgent ∨ (s.pattern p).MarksPatient ↔ s.accusative p ∨ s.ergative p := by
-  unfold pattern
-  split_ifs <;> simp_all [AlignmentType.MarksAgent, AlignmentType.MarksPatient]
+@[simp] theorem overt_split_P : overt (split acc erg) .P = {p | acc p} := by
+  ext; simp [split]
 
-theorem pattern_eq_accusative_iff :
-    s.pattern p = .accusative ↔ s.accusative p ∧ ¬ s.ergative p := by
-  unfold pattern; split_ifs <;> simp_all
+/-- A split fits the hierarchy exactly when its accusative marking is an upper set and its
+ergative marking a lower set. -/
+theorem fits_split_iff [Preorder H] :
+    Fits (split acc erg) ↔ IsUpperSet {p | acc p} ∧ IsLowerSet {p | erg p} := by
+  simp [Fits, and_comm]
 
-theorem pattern_eq_ergative_iff : s.pattern p = .ergative ↔ ¬ s.accusative p ∧ s.ergative p := by
-  unfold pattern; split_ifs <;> simp_all
+theorem isAccusative_split_iff : IsAccusative (split acc erg · p) ↔ acc p ∧ ¬ erg p := by
+  by_cases ha : acc p <;> by_cases he : erg p <;> simp [IsAccusative, split, ha, he]
 
-theorem pattern_eq_tripartite_iff :
-    s.pattern p = .tripartite ↔ s.accusative p ∧ s.ergative p := by
-  unfold pattern; split_ifs <;> simp_all
+theorem isErgative_split_iff : IsErgative (split acc erg · p) ↔ ¬ acc p ∧ erg p := by
+  by_cases ha : acc p <;> by_cases he : erg p <;> simp [IsErgative, split, ha, he]
 
-theorem pattern_eq_neutral_iff : s.pattern p = .neutral ↔ ¬ s.accusative p ∧ ¬ s.ergative p := by
-  unfold pattern; split_ifs <;> simp_all
+theorem isTripartite_split_iff : IsTripartite (split acc erg · p) ↔ acc p ∧ erg p := by
+  by_cases ha : acc p <;> by_cases he : erg p <;> simp [IsTripartite, split, ha, he]
 
-variable {s p q}
+theorem isNeutral_split_iff : IsNeutral (split acc erg · p) ↔ ¬ acc p ∧ ¬ erg p := by
+  by_cases ha : acc p <;> by_cases he : erg p <;> simp [IsNeutral, split, ha, he]
 
-/-- Above an accusative position the pattern stays accusative. -/
-theorem pattern_eq_accusative (h : s.pattern p = .accusative) (hpq : p ≤ q) :
-    s.pattern q = .accusative := by
-  rw [pattern_eq_accusative_iff] at *
-  exact ⟨s.accusative_mono p q hpq h.1, fun hq ↦ h.2 (s.ergative_anti p q hpq hq)⟩
+variable {acc erg p} {q : H}
 
-/-- Below an ergative position the pattern stays ergative. -/
-theorem pattern_eq_ergative (h : s.pattern q = .ergative) (hpq : p ≤ q) :
-    s.pattern p = .ergative := by
-  rw [pattern_eq_ergative_iff] at *
-  exact ⟨fun hp ↦ h.1 (s.accusative_mono p q hpq hp), s.ergative_anti p q hpq h.2⟩
+/-- In a split that fits, the pattern stays accusative above an accusative position. -/
+theorem IsAccusative.of_le [Preorder H] (h : Fits (split acc erg))
+    (hp : IsAccusative (split acc erg · p)) (hpq : p ≤ q) : IsAccusative (split acc erg · q) := by
+  rw [fits_split_iff] at h
+  rw [isAccusative_split_iff] at *
+  exact ⟨h.1 hpq hp.1, fun hq ↦ hp.2 (h.2 hpq hq)⟩
 
-/-- The overlap of the two markings and a gap between them exclude each other, so a split is of
-type (d) of the Appendix to Chapter 4 or of the unattested type (g), never both. -/
-theorem not_tripartite_and_neutral (ht : s.pattern p = .tripartite)
-    (hn : s.pattern q = .neutral) : False := by
-  rw [pattern_eq_tripartite_iff] at ht
-  rw [pattern_eq_neutral_iff] at hn
+/-- In a split that fits, the pattern stays ergative below an ergative position. -/
+theorem IsErgative.of_le [Preorder H] (h : Fits (split acc erg))
+    (hq : IsErgative (split acc erg · q)) (hpq : p ≤ q) : IsErgative (split acc erg · p) := by
+  rw [fits_split_iff] at h
+  rw [isErgative_split_iff] at *
+  exact ⟨fun hp ↦ hq.1 (h.1 hpq hp), h.2 hpq hq.2⟩
+
+/-- In a split that fits, an overlap of the two markings and a gap between them exclude each
+other, so a split is of type (d) of the Appendix to Chapter 4 or of the unattested type (g),
+never both. -/
+theorem not_isTripartite_and_isNeutral [LinearOrder H] (h : Fits (split acc erg))
+    (ht : IsTripartite (split acc erg · p)) (hn : IsNeutral (split acc erg · q)) : False := by
+  rw [fits_split_iff] at h
+  rw [isTripartite_split_iff] at ht
+  rw [isNeutral_split_iff] at hn
   rcases le_total p q with hpq | hqp
-  · exact hn.1 (s.accusative_mono p q hpq ht.1)
-  · exact hn.2 (s.ergative_anti q p hqp ht.2)
+  · exact hn.1 (h.1 hpq ht.1)
+  · exact hn.2 (h.2 hqp ht.2)
 
-/-- The split with accusative marking from the left down to `a` and ergative marking from the
-right up to `e`. -/
-def ofCutoffs (a e : H) : HierarchySplit H where
-  accusative p := decide (a ≤ p)
-  ergative p := decide (p ≤ e)
-  accusative_mono _ _ hpq h := by simpa using le_trans (by simpa using h) hpq
-  ergative_anti _ _ hpq h := by simpa using le_trans hpq (by simpa using h)
+end Split
 
-end HierarchySplit
+/-- The split with accusative marking from the top of the hierarchy down to `a` and ergative
+marking from the bottom up to `e`. -/
+def ofCutoffs [Preorder H] [DecidableLE H] (a e : H) : ArgumentRole → H → Option Case :=
+  split (a ≤ ·) (· ≤ e)
+
+theorem fits_ofCutoffs [Preorder H] [DecidableLE H] (a e : H) : Fits (ofCutoffs a e) :=
+  (fits_split_iff _ _).2 ⟨isUpperSet_Ici a, isLowerSet_Iic e⟩
 
 /-- Dyirbal (Table 4.1) marks first and second person pronouns accusatively and NPs from third
 person pronouns rightwards ergatively, the two meeting without overlap. -/
-def dyirbal : HierarchySplit Nominal := .ofCutoffs .secondPerson .thirdPerson
+def dyirbal : ArgumentRole → Nominal → Option Case := ofCutoffs .secondPerson .thirdPerson
 
 /-- Cashinawa (Table 4.2) marks NPs down to third person pronouns accusatively and from third
 person pronouns rightwards ergatively, the two overlapping there. -/
-def cashinawa : HierarchySplit Nominal := .ofCutoffs .thirdPerson .thirdPerson
+def cashinawa : ArgumentRole → Nominal → Option Case := ofCutoffs .thirdPerson .thirdPerson
 
 /-- Yidiny (Table 4.3) marks NPs down to proper names and kin terms accusatively and from human
 deictics rightwards ergatively, the two overlapping over the middle of the hierarchy. -/
-def yidiny : HierarchySplit Nominal := .ofCutoffs .properName .thirdPerson
+def yidiny : ArgumentRole → Nominal → Option Case := ofCutoffs .properName .thirdPerson
 
 /-- Latin, of type (a), marks pronouns and masculine and feminine nouns accusatively and has no
 ergative, so that neuter nouns have one form for S, A and O. -/
-def latin : HierarchySplit Nominal where
-  accusative p := decide (.common .human ≤ p)
-  ergative _ := false
-  accusative_mono _ _ hpq h := by simpa using le_trans (by simpa using h) hpq
-  ergative_anti _ _ _ h := h
+def latin : ArgumentRole → Nominal → Option Case := split (.common .human ≤ ·) (fun _ ↦ False)
 
 /-- Waga-Waga, of type (f) (fn. 14), marks every NP constituent ergatively and NPs down to human
 common nouns accusatively, so that the left and middle of the hierarchy are tripartite. -/
-def wagaWaga : HierarchySplit Nominal where
-  accusative p := decide (.common .human ≤ p)
-  ergative _ := true
-  accusative_mono _ _ hpq h := by simpa using le_trans (by simpa using h) hpq
-  ergative_anti _ _ _ h := h
+def wagaWaga : ArgumentRole → Nominal → Option Case := split (.common .human ≤ ·) (fun _ ↦ True)
 
-/-- The cutoffs induce the patterns of the types. Dyirbal's markings meet at third person
+/-- Every split of §4.2 fits the Nominal Hierarchy. -/
+theorem splits_fit : Fits dyirbal ∧ Fits cashinawa ∧ Fits yidiny ∧ Fits latin ∧ Fits wagaWaga :=
+  ⟨fits_ofCutoffs _ _, fits_ofCutoffs _ _, fits_ofCutoffs _ _,
+    (fits_split_iff _ _).2 ⟨isUpperSet_Ici _, isLowerSet_empty⟩,
+    (fits_split_iff _ _).2 ⟨isUpperSet_Ici _, isLowerSet_univ⟩⟩
+
+/-- The cutoffs induce the alignments of the types. Dyirbal's markings meet at third person
 pronouns, type (c); Cashinawa and Yidiny overlap in tripartite zones, type (d); Latin leaves
 neuter nouns neutral, type (a); and Waga-Waga is tripartite down to human nouns and ergative
 below, type (f). -/
 theorem patterns :
-    (∀ p, dyirbal.pattern p ≠ .tripartite ∧ dyirbal.pattern p ≠ .neutral) ∧
-      dyirbal.pattern .secondPerson = .accusative ∧ dyirbal.pattern .thirdPerson = .ergative ∧
-      cashinawa.pattern .thirdPerson = .tripartite ∧ cashinawa.pattern .properName = .ergative ∧
-      yidiny.pattern .thirdPerson = .tripartite ∧ yidiny.pattern .properName = .tripartite ∧
-      yidiny.pattern (.common .human) = .ergative ∧ latin.pattern (.common .animate) = .neutral ∧
-      wagaWaga.pattern (.common .human) = .tripartite ∧
-      wagaWaga.pattern (.common .animate) = .ergative := by
+    (∀ p, ¬ IsTripartite (dyirbal · p) ∧ ¬ IsNeutral (dyirbal · p)) ∧
+      IsAccusative (dyirbal · .secondPerson) ∧ IsErgative (dyirbal · .thirdPerson) ∧
+      IsTripartite (cashinawa · .thirdPerson) ∧ IsErgative (cashinawa · .properName) ∧
+      IsTripartite (yidiny · .thirdPerson) ∧ IsTripartite (yidiny · .properName) ∧
+      IsErgative (yidiny · (.common .human)) ∧ IsNeutral (latin · (.common .animate)) ∧
+      IsTripartite (wagaWaga · (.common .human)) ∧
+      IsErgative (wagaWaga · (.common .animate)) := by
   decide
 
 /-! ### Splits conditioned by tense, aspect or mood, §4.3 -/
