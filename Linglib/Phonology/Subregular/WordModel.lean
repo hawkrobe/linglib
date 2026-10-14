@@ -22,7 +22,10 @@ successor, the covering relation of the positions, an occurrence of a `k`-factor
 between their edges are the strictly local stringsets. Relativizing successor to a tier, by
 restricting a word to its tier positions and taking successor there, gives the successor model of
 the word's projection, so the strictly local sets of relativized models are the tier-based
-strictly local stringsets.
+strictly local stringsets. A set is locally testable when membership depends only on the set of
+factors; under successor the factors of a word are fixed by the infixes of at most `k` symbols of
+the word between its edges, and these by its `k`-test vector, and under precedence by its
+subsequences of at most `k` symbols.
 
 ## Main definitions
 
@@ -33,13 +36,13 @@ strictly local stringsets.
 
 ## Main statements
 
-* `Language.isStrictlyLocal_iff_wordModel`: for `2 ≤ k`, a stringset is strictly `k`-local
-  exactly when it is a strictly `k`-local set of words between their edges under successor.
-* `Language.isStrictlyPiecewise_iff_wordModel`: a stringset is strictly `k`-piecewise exactly when
-  it is a strictly `k`-local set of words under precedence.
-* `Language.isTierStrictlyLocal_iff_wordModel`: for `2 ≤ k`, a stringset is tier-based strictly
-  `k`-local exactly when for some tier it is a strictly `k`-local set of words under the
-  relativized successor.
+* `Language.isStrictlyLocal_iff_wordModel`, `Language.isLocallyTestable_iff_wordModel`: the
+  strictly local and locally testable stringsets are the strictly local and locally testable sets
+  of words between their edges under successor.
+* `Language.isStrictlyPiecewise_iff_wordModel`, `Language.isPiecewiseTestable_iff_wordModel`: the
+  strictly piecewise and piecewise testable stringsets are those of words under precedence.
+* `Language.isTierStrictlyLocal_iff_wordModel`: the tier-based strictly local stringsets are the
+  strictly local sets of words under successor relativized to a tier.
 
 ## Implementation notes
 
@@ -47,7 +50,8 @@ strictly local stringsets.
   `WordModel w (· < ·)` and successor `WordModel (anchor w) (· ⋖ ·)`.
 * As in Rogers and Lambert's word models, the edges carry their own labels and are not related to
   themselves. The strictly local stringsets pad a word with `k - 1` boundary symbols instead, and
-  the two classes differ only at `k = 1`, where the word models also forbid every word.
+  the two classes differ only at `k = 1`, where the word models also forbid every word; the
+  locally testable classes agree at every `k`.
 
 ## References
 
@@ -178,6 +182,26 @@ theorem diagram_occurs_iff {s : List α} {k : ℕ} (hs : s.length ≤ k) :
   exact List.sublist_iff_exists_fin_orderEmbedding_get_eq.2
     ⟨OrderEmbedding.ofStrictMono _ hmono, fun i ↦ (hlabel i).symm⟩
 
+/-- The factors of a word under precedence are those of its subsequences of at most `k`
+symbols. -/
+theorem factors_subset_of_subseqSet_subset {k : ℕ} (h : subseqSet k w ⊆ subseqSet k w') :
+    (wordLanguage α).factors k (WordModel w (· < ·)) ⊆
+      (wordLanguage α).factors k (WordModel w' (· < ·)) := fun _ hf ↦
+  let ⟨_, hsw, hs, hfs⟩ := exists_sublist_of_occurs hf
+  factors_subset_of_sublist (h ⟨hsw, hs⟩).1 hfs
+
+/-- Two words have the same factors under precedence exactly when they have the same
+subsequences of at most `k` symbols. -/
+theorem factors_eq_iff_subseqSet {k : ℕ} :
+    (wordLanguage α).factors k (WordModel w (· < ·)) =
+        (wordLanguage α).factors k (WordModel w' (· < ·)) ↔
+      subseqSet k w = subseqSet k w' := by
+  refine ⟨fun h ↦ Set.ext fun s ↦ ⟨fun ⟨hsw, hs⟩ ↦ ⟨?_, hs⟩, fun ⟨hsw, hs⟩ ↦ ⟨?_, hs⟩⟩,
+    fun h ↦ (factors_subset_of_subseqSet_subset h.subset).antisymm
+      (factors_subset_of_subseqSet_subset h.symm.subset)⟩
+  · exact (diagram_occurs_iff hs).1 (h.subset ((diagram_occurs_iff hs).2 hsw))
+  · exact (diagram_occurs_iff hs).1 (h.symm.subset ((diagram_occurs_iff hs).2 hsw))
+
 end Precedence
 
 /-! ### Orderings with unit steps -/
@@ -235,6 +259,59 @@ theorem covBy_unit {m : ℕ} (a b : Fin m) (h : a ⋖ b) : (a : ℕ) ≤ b + 1 �
   rw [Fin.covBy_iff, Nat.covBy_iff_add_one_eq] at h
   omega
 
+/-- The factors of an infix occur in the word under successor. -/
+theorem factors_subset_of_infix {k : ℕ} {c u : List β} (h : c <:+: u) :
+    (wordLanguage β).factors k (WordModel c (· ⋖ ·)) ⊆
+      (wordLanguage β).factors k (WordModel u (· ⋖ ·)) := by
+  obtain ⟨t, hlen, ht⟩ := List.infix_iff_getElem?.1 h
+  have hlt (i : Fin c.length) : (i : ℕ) + t < u.length := by omega
+  rintro f ⟨r, hr⟩
+  refine ⟨fun a ↦ show WordModel u (· ⋖ ·) from ⟨(r a).toFin + t, hlt _⟩,
+    mem_realizers_of (fun a ↦ ?_) (fun a b hab ↦ ?_) hr⟩
+  · have := ht _ (r a).toFin.2
+    rw [List.getElem?_eq_getElem (hlt _)] at this
+    exact Option.some_injective _ this
+  · change (r a).toFin ⋖ (r b).toFin at hab
+    change (⟨_, hlt _⟩ : Fin u.length) ⋖ ⟨_, hlt _⟩
+    simp only [Fin.covBy_iff, Nat.covBy_iff_add_one_eq] at hab ⊢
+    omega
+
+/-- An occurrence of a `k`-factor under successor lies in an infix of at most `k` symbols, the
+window it spans. -/
+theorem exists_infix_of_occurs {k : ℕ} {u : List β} {f : (wordLanguage β).Factor k}
+    (hf : f.Occurs (WordModel u (· ⋖ ·))) :
+    ∃ c, c <:+: u ∧ c.length ≤ k ∧ f.Occurs (WordModel c (· ⋖ ·)) := by
+  obtain ⟨r, hr⟩ := hf
+  rcases Nat.eq_zero_or_pos f.n with h0 | hpos
+  · refine ⟨[], List.nil_infix, by simp, fun x ↦ absurd x.2 (by omega),
+      Atom.mem_realizers.2 fun ⟨rel, args⟩ _ ↦ ?_⟩
+    cases rel <;> exact absurd (args 0).2 (by omega)
+  have hne : (Finset.univ : Finset (Fin f.n)).Nonempty := ⟨⟨0, hpos⟩, Finset.mem_univ _⟩
+  obtain ⟨a₀, -, ha₀⟩ := Finset.exists_mem_eq_inf' hne fun a ↦ ((r a).toFin : ℕ)
+  have hm (a) : ((r a₀).toFin : ℕ) ≤ (r a).toFin := ha₀ ▸ Finset.inf'_le _ (Finset.mem_univ a)
+  have hspan := le_add_of_occurs covBy_unit hr
+  set m := ((r a₀).toFin : ℕ)
+  have hk : 1 ≤ k := hpos.trans_le f.le
+  have hlt (a) : ((r a).toFin : ℕ) - m < ((u.drop m).take k).length := by
+    have := hspan a a₀
+    have := (r a).toFin.2
+    simp only [List.length_take, List.length_drop]
+    omega
+  refine ⟨(u.drop m).take k, (List.take_prefix _ _).isInfix.trans (List.drop_suffix _ _).isInfix,
+    List.length_take_le _ _, fun a ↦ show WordModel ((u.drop m).take k) (· ⋖ ·) from
+      ⟨(r a).toFin - m, hlt a⟩, mem_realizers_of (fun a ↦ ?_) (fun a b hab ↦ ?_) hr⟩
+  · change ((u.drop m).take k)[((r a).toFin : ℕ) - m]'(hlt a) =
+      u[((r a).toFin : ℕ)]'(r a).toFin.2
+    simp only [List.getElem_take, List.getElem_drop]
+    congr 1
+    have := hm a
+    omega
+  · change (r a).toFin ⋖ (r b).toFin at hab
+    change (⟨_, hlt a⟩ : Fin _) ⋖ ⟨_, hlt b⟩
+    have := hm a
+    simp only [Fin.covBy_iff, Nat.covBy_iff_add_one_eq] at hab ⊢
+    omega
+
 /-- The diagram of a word under successor, as a `k`-factor: the path of its positions, each
 labelled by its symbol. -/
 def succDiagram (c : List β) {k : ℕ} (hc : c.length ≤ k) : (wordLanguage β).Factor k where
@@ -287,18 +364,24 @@ theorem succDiagram_occurs_iff {c u : List β} {k : ℕ} (hc : c.length ≤ k) :
     · have hidx : i + ((r ⟨0, hpos⟩).toFin : ℕ) = (r ⟨i, hi⟩).toFin := by rw [hoff i hi]; omega
       rw [hidx, List.getElem?_eq_getElem (r ⟨i, hi⟩).toFin.2]
       exact congrArg some (hlabel ⟨i, hi⟩)
-  · intro h
-    obtain ⟨t, hlen, ht⟩ := List.infix_iff_getElem?.1 h
-    have hlt (i : Fin c.length) : (i : ℕ) + t < u.length := by omega
-    refine ⟨fun i ↦ show WordModel u (· ⋖ ·) from ⟨i + t, hlt i⟩,
-      mem_realizers_of (v := id) (fun i ↦ ?_) (fun i j hij ↦ ?_) fun _ ha ↦ ha⟩
-    · have := ht i i.2
-      rw [List.getElem?_eq_getElem (hlt i)] at this
-      exact Option.some_injective _ this
-    · change i ⋖ j at hij
-      change (⟨i + t, hlt i⟩ : Fin u.length) ⋖ ⟨j + t, hlt j⟩
-      simp only [Fin.covBy_iff, Nat.covBy_iff_add_one_eq] at hij ⊢
-      omega
+  · exact fun h ↦ factors_subset_of_infix h ⟨id, fun _ ha ↦ ha⟩
+
+/-- Two words have the same factors under successor exactly when they have the same infixes of at
+most `k` symbols. -/
+theorem factors_eq_iff_infix {k : ℕ} {u u' : List β} :
+    (wordLanguage β).factors k (WordModel u (· ⋖ ·)) =
+        (wordLanguage β).factors k (WordModel u' (· ⋖ ·)) ↔
+      {c | c <:+: u ∧ c.length ≤ k} = {c | c <:+: u' ∧ c.length ≤ k} := by
+  have sub (u u' : List β)
+      (h : {c | c <:+: u ∧ c.length ≤ k} ⊆ {c | c <:+: u' ∧ c.length ≤ k}) :
+      (wordLanguage β).factors k (WordModel u (· ⋖ ·)) ⊆
+        (wordLanguage β).factors k (WordModel u' (· ⋖ ·)) := fun _ hf ↦
+    let ⟨_, hc, hlen, hfc⟩ := exists_infix_of_occurs hf
+    factors_subset_of_infix (h ⟨hc, hlen⟩).1 hfc
+  refine ⟨fun h ↦ Set.ext fun c ↦ ⟨fun ⟨hc, hlen⟩ ↦ ⟨?_, hlen⟩, fun ⟨hc, hlen⟩ ↦ ⟨?_, hlen⟩⟩,
+    fun h ↦ (sub _ _ h.subset).antisymm (sub _ _ h.symm.subset)⟩
+  · exact (succDiagram_occurs_iff hlen).1 (h.subset ((succDiagram_occurs_iff hlen).2 hc))
+  · exact (succDiagram_occurs_iff hlen).1 (h.symm.subset ((succDiagram_occurs_iff hlen).2 hc))
 
 end WordModel
 
@@ -379,7 +462,150 @@ theorem getElem_anchor_append_of_ge {l l' p p' q : List α} (hl : l = p ++ q)
     simp only [List.length_map, Nat.add_sub_cancel_left]
   rw [key, key]
 
+theorem map_inl_infix_anchor_iff : s.map .inl <:+: anchor v ↔ s <:+: v :=
+  ⟨infix_of_map_inl_infix_anchor,
+    fun h ↦ (h.map _).trans ⟨[.inr .left], [.inr .right], by simp [anchor]⟩⟩
+
+theorem cons_infix_anchor_iff : .inr .left :: s.map .inl <:+: anchor v ↔ s <+: v :=
+  ⟨prefix_of_infix_anchor, fun h ↦
+    (List.cons_prefix_cons.2 ⟨rfl, (h.map _).trans (List.prefix_append _ _)⟩).isInfix⟩
+
+theorem append_infix_anchor_iff : s.map .inl ++ [.inr .right] <:+: anchor v ↔ s <:+ v := by
+  refine ⟨suffix_of_infix_anchor, fun h ↦ ?_⟩
+  obtain ⟨t, ht⟩ := h.map (Sum.inl : α → α ⊕ Edge)
+  exact List.IsSuffix.isInfix ⟨.inr .left :: t, by rw [anchor, ← ht]; simp⟩
+
+/-- A list of left summands is the image of its left components. -/
+private theorem eq_map_inl_filterMap {c : List (α ⊕ Edge)} (h : ∀ x ∈ c, x.isLeft) :
+    c = (c.filterMap Sum.getLeft?).map .inl := by
+  induction c with
+  | nil => rfl
+  | cons x c ih =>
+    obtain ⟨a, rfl⟩ : ∃ a, x = .inl a := Sum.isLeft_iff.1 (h x (by simp))
+    simp [← ih fun y hy ↦ h y (by simp [hy])]
+
+/-- Every infix of an anchored word is the image of an infix of the word, possibly preceded by
+the left edge and followed by the right edge. -/
+theorem infix_anchor_cases {c : List (α ⊕ Edge)} (h : c <:+: anchor v) :
+    ∃ s : List α, c = s.map .inl ∨ c = .inr .left :: s.map .inl ∨
+      c = s.map .inl ++ [.inr .right] ∨ c = anchor s := by
+  have hmap (d : List (α ⊕ Edge)) (hd : d <:+: v.map .inl) :
+      d = (d.filterMap Sum.getLeft?).map .inl :=
+    eq_map_inl_filterMap fun x hx ↦ by obtain ⟨a, -, rfl⟩ := List.mem_map.1 (hd.subset hx); rfl
+  rw [anchor, List.infix_cons_iff] at h
+  rcases h with h | h
+  · rcases List.prefix_cons_iff.1 h with rfl | ⟨t, rfl, ht⟩
+    · exact ⟨[], .inl rfl⟩
+    · rcases List.prefix_concat_iff.1 ht with rfl | ht
+      · exact ⟨v, .inr (.inr (.inr rfl))⟩
+      · exact ⟨_, .inr (.inl (congrArg _ (hmap t ht.isInfix)))⟩
+  · rcases List.infix_concat_iff.1 h with h | h
+    · rcases List.suffix_concat_iff.1 h with rfl | ⟨t, rfl, ht⟩
+      · exact ⟨[], .inl rfl⟩
+      · exact ⟨_, .inr (.inr (.inl (congrArg (· ++ _) (hmap t ht.isInfix))))⟩
+    · exact ⟨_, .inl (hmap c h)⟩
+
 end Anchor
+
+/-! ### Locally testable stringsets -/
+
+section LocallyTestable
+
+variable {w v : List α} {k : ℕ}
+
+private theorem suffix_rtake_iff {s : List α} {n : ℕ} :
+    s <:+ w.rtake n ↔ s <:+ w ∧ s.length ≤ n := by
+  rw [List.rtake_eq_reverse_take_reverse, ← List.reverse_prefix, List.reverse_reverse,
+    List.prefix_take_iff, List.reverse_prefix, List.length_reverse]
+
+/-- An infix of at most `k` symbols of a word of at least `k` symbols lies in a factor of exactly
+`k` symbols. -/
+private theorem exists_infix_length_eq {s : List α} (h : s <:+: w) (hs : s.length ≤ k)
+    (hk : k ≤ w.length) : ∃ f, f <:+: w ∧ f.length = k ∧ s <:+: f := by
+  obtain ⟨t, ht, hget⟩ := List.infix_iff_getElem?.1 h
+  refine ⟨(w.drop (min t (w.length - k))).take k,
+    (List.take_prefix _ _).isInfix.trans (List.drop_suffix _ _).isInfix, by simp; omega,
+    List.infix_iff_getElem?.2 ⟨t - min t (w.length - k), by simp; omega, fun i hi ↦ ?_⟩⟩
+  rw [List.getElem?_take_of_lt (by omega), List.getElem?_drop, ← hget i hi]
+  congr 1
+  omega
+
+/-- A word shorter than `k` is determined by its `k`-test vector. -/
+private theorem eq_of_kTestVector_eq (h : w.kTestVector k = v.kTestVector k) (hw : w.length < k) :
+    w = v := by
+  simp only [List.kTestVector, Prod.mk.injEq, Edge.takeAt_left, Edge.takeAt_right] at h
+  obtain ⟨hP, hK, -⟩ := h
+  have hv : v.length < k := by
+    by_contra hv
+    have hmem : v.take k ∈ v.kFactors k :=
+      List.mem_kFactors.2 ⟨(List.take_prefix _ _).isInfix, by simp; omega⟩
+    have := ((List.mem_kFactors.1 ((Set.ext_iff.1 hK _).2 hmem)).1).length_le
+    simp at this
+    omega
+  rwa [List.take_of_length_le (by omega), List.take_of_length_le (by omega)] at hP
+
+/-- Two words have the same `k`-test vector exactly when their anchored words have the same
+infixes of at most `k` symbols. -/
+theorem kTestVector_eq_iff :
+    w.kTestVector k = v.kTestVector k ↔
+      {c | c <:+: anchor w ∧ c.length ≤ k} = {c | c <:+: anchor v ∧ c.length ≤ k} := by
+  constructor
+  · have sub (w v : List α) (h : w.kTestVector k = v.kTestVector k) :
+        {c | c <:+: anchor w ∧ c.length ≤ k} ⊆ {c | c <:+: anchor v ∧ c.length ≤ k} := by
+      rintro c ⟨hc, hck⟩
+      refine ⟨?_, hck⟩
+      by_cases hw : w.length < k
+      · rwa [← eq_of_kTestVector_eq h hw]
+      have h' := h
+      simp only [List.kTestVector, Prod.mk.injEq, Edge.takeAt_left, Edge.takeAt_right] at h'
+      obtain ⟨hP, hK, hQ⟩ := h'
+      obtain ⟨s, rfl | rfl | rfl | rfl⟩ := infix_anchor_cases hc
+      · rw [map_inl_infix_anchor_iff] at hc ⊢
+        obtain ⟨f, hfw, hfk, hsf⟩ := exists_infix_length_eq hc (by simpa using hck) (by omega)
+        exact hsf.trans (List.mem_kFactors.1
+          ((Set.ext_iff.1 hK f).1 (List.mem_kFactors.2 ⟨hfw, hfk⟩))).1
+      · rw [cons_infix_anchor_iff] at hc ⊢
+        have : s <+: w.take (k - 1) := List.prefix_take_iff.2 ⟨hc, by simp at hck; omega⟩
+        rw [hP] at this
+        exact this.trans (List.take_prefix _ _)
+      · rw [append_infix_anchor_iff] at hc ⊢
+        have : s <:+ w.rtake (k - 1) := suffix_rtake_iff.2 ⟨hc, by simp at hck; omega⟩
+        rw [hQ] at this
+        exact this.trans (List.rtake_suffix _ _)
+      · obtain rfl := eq_of_anchor_infix_anchor hc
+        simp at hck
+        omega
+    exact fun h ↦ (sub w v h).antisymm (sub v w h.symm)
+  · intro hA
+    have mem (c : List (α ⊕ Edge)) (hc : c.length ≤ k) : c <:+: anchor w ↔ c <:+: anchor v := by
+      simpa [hc] using Set.ext_iff.1 hA c
+    simp only [List.kTestVector, Prod.mk.injEq, Edge.takeAt_left, Edge.takeAt_right]
+    rcases Nat.eq_zero_or_pos k with rfl | hk
+    · refine ⟨by simp, Set.ext fun f ↦ ?_, by simp [List.rtake]⟩
+      simp only [Set.mem_ofPred_eq, List.mem_kFactors, List.length_eq_zero_iff]
+      constructor <;> rintro ⟨-, rfl⟩ <;> exact ⟨List.nil_infix, rfl⟩
+    have pre (w v : List α) (mem : ∀ c : List (α ⊕ Edge), c.length ≤ k →
+        c <:+: anchor w → c <:+: anchor v) : w.take (k - 1) <+: v.take (k - 1) :=
+      List.prefix_take_iff.2 ⟨cons_infix_anchor_iff.1 (mem _ (by simp; omega)
+        (cons_infix_anchor_iff.2 (List.take_prefix _ _))), by simp⟩
+    have suf (w v : List α) (mem : ∀ c : List (α ⊕ Edge), c.length ≤ k →
+        c <:+: anchor w → c <:+: anchor v) : w.rtake (k - 1) <:+ v.rtake (k - 1) :=
+      suffix_rtake_iff.2 ⟨append_infix_anchor_iff.1 (mem _ (by simp [List.rtake]; omega)
+        (append_infix_anchor_iff.2 (List.rtake_suffix _ _))), by simp [List.rtake]; omega⟩
+    refine ⟨(pre w v fun c hc ↦ (mem c hc).1).eq_of_length
+        (le_antisymm (pre w v fun c hc ↦ (mem c hc).1).length_le
+          (pre v w fun c hc ↦ (mem c hc).2).length_le), Set.ext fun f ↦ ?_,
+      (suf w v fun c hc ↦ (mem c hc).1).eq_of_length
+        (le_antisymm (suf w v fun c hc ↦ (mem c hc).1).length_le
+          (suf v w fun c hc ↦ (mem c hc).2).length_le)⟩
+    simp only [Set.mem_ofPred_eq, List.mem_kFactors]
+    constructor
+    · rintro ⟨hf, rfl⟩
+      exact ⟨map_inl_infix_anchor_iff.1 ((mem _ (by simp)).1 (map_inl_infix_anchor_iff.2 hf)), rfl⟩
+    · rintro ⟨hf, rfl⟩
+      exact ⟨map_inl_infix_anchor_iff.1 ((mem _ (by simp)).2 (map_inl_infix_anchor_iff.2 hf)), rfl⟩
+
+end LocallyTestable
 
 /-! ### Strictly local stringsets -/
 
@@ -532,5 +758,23 @@ theorem isTierStrictlyLocal_iff_wordModel (hk : 2 ≤ k) :
   · rintro ⟨T, _, G', rfl⟩
     obtain ⟨G₀, hG₀⟩ := (isStrictlyLocal_iff_wordModel hk).2 ⟨G', rfl⟩
     exact ⟨⟨T, G₀⟩, Set.ext fun w ↦ Set.ext_iff.1 hG₀ (w.filter (T ·))⟩
+
+/-- A stringset is piecewise `k`-testable exactly when it is a locally `k`-testable set of words
+under precedence. -/
+theorem isPiecewiseTestable_iff_wordModel :
+    L.IsPiecewiseTestable k ↔ (wordLanguage α).IsLocallyTestable (WordModel · (· < ·)) k L :=
+  ⟨fun h _ _ e ↦ h (WordModel.factors_eq_iff_subseqSet.1 e),
+    fun h _ _ e ↦ h (WordModel.factors_eq_iff_subseqSet.2 e)⟩
+
+/-- A stringset is locally `k`-testable exactly when it is a locally `k`-testable set of words
+between their edges under successor. -/
+theorem isLocallyTestable_iff_wordModel :
+    L.IsLocallyTestable k ↔
+      (wordLanguage (α ⊕ Edge)).IsLocallyTestable (fun w ↦ WordModel (anchor w) (· ⋖ ·)) k L := by
+  have key (w v : List α) : w.kTestVector k = v.kTestVector k ↔
+      (wordLanguage (α ⊕ Edge)).factors k (WordModel (anchor w) (· ⋖ ·)) =
+        (wordLanguage (α ⊕ Edge)).factors k (WordModel (anchor v) (· ⋖ ·)) :=
+    kTestVector_eq_iff.trans WordModel.factors_eq_iff_infix.symm
+  exact ⟨fun h _ _ e ↦ h ((key _ _).2 e), fun h _ _ e ↦ h ((key _ _).1 e)⟩
 
 end Language
