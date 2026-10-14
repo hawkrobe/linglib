@@ -38,14 +38,19 @@ theorem uniformOn_finset_real_singleton [DecidableEq W] (A : Finset W) (w : W) :
   rw [measureReal_def, uniformOn_finset_apply_singleton]
   split_ifs <;> simp
 
-/-- The uniform measure on a set gives a set, on reals, the proportion of the atoms of `s` lying
-in `e`, with `0 / 0 = 0` when `s` is empty. -/
-theorem uniformOn_real_apply [Finite W] (s e : Set W) :
+/-- The uniform measure on a finite set gives a set, on reals, the proportion of the atoms of `s`
+lying in `e`, with `0 / 0 = 0` when `s` is empty. -/
+theorem uniformOn_real_apply_of_finite {s : Set W} (hs : s.Finite) (e : Set W) :
     (uniformOn s).real e = (s ∩ e).ncard / s.ncard := by
-  rw [measureReal_def, uniformOn, cond_apply (Set.toFinite s).measurableSet,
-    Measure.count_apply_finite _ (Set.toFinite _), Measure.count_apply_finite _ (Set.toFinite _),
-    ← Set.ncard_eq_toFinset_card, ← Set.ncard_eq_toFinset_card, ENNReal.toReal_mul,
+  rw [measureReal_def, uniformOn, cond_apply hs.measurableSet,
+    Measure.count_apply_finite _ (hs.inter_of_left _), Measure.count_apply_finite _ hs,
+    ← Set.ncard_eq_toFinset_card _ (hs.inter_of_left _), ← Set.ncard_eq_toFinset_card _ hs,
+    ENNReal.toReal_mul,
     ENNReal.toReal_inv, ENNReal.toReal_natCast, ENNReal.toReal_natCast, inv_mul_eq_div]
+
+theorem uniformOn_real_apply [Finite W] (s e : Set W) :
+    (uniformOn s).real e = (s ∩ e).ncard / s.ncard :=
+  uniformOn_real_apply_of_finite s.toFinite e
 
 /-- The uniform measure on a finset gives a predicate, on reals, the proportion of the finset
 satisfying it. -/

@@ -233,19 +233,15 @@ theorem forall_not_violates_iff (hW : 0 ∉ W) {m : ℚ} :
   constructor
   · intro h
     by_contra hle
-    refine h (n + scaleLcm W n) (by omega) ?_ (numeral_violates_of_le (by omega) ?_)
-    · exact atLeastAsRound_onScale_iff_scaleLcm_dvd.2
-        (dvd_add (scaleLcm_dvd W n) dvd_rfl)
-    · push_cast
-      rw [sub_add_cancel_left, abs_neg, abs_of_pos (by exact_mod_cast hL)]
-      linarith
+    refine h (n + scaleLcm W n) (by omega) (atLeastAsRound_add_scaleLcm W n)
+      (numeral_violates_of_le (by omega) ?_)
+    push_cast
+    rw [sub_add_cancel_left, abs_neg, abs_of_pos (by exact_mod_cast hL)]
+    linarith
   · intro hm n' hne h
     refine not_numeral_violates_of_lt hne.symm (lt_of_lt_of_le hm ?_)
-    obtain ⟨k, hk⟩ := (dvd_sub (atLeastAsRound_onScale_iff_scaleLcm_dvd.1 h)
-      (scaleLcm_dvd W n))
-    have hk0 : k ≠ 0 := by rintro rfl; exact hne (by simpa [sub_eq_zero] using hk)
-    rw [abs_sub_comm, ← Int.cast_sub, hk, ← Int.cast_abs, Int.cast_le, abs_mul, abs_of_pos hL]
-    exact le_mul_of_one_le_right hL.le (Int.one_le_abs hk0)
+    rw [abs_sub_comm, ← Int.cast_sub, ← Int.cast_abs, Int.cast_le]
+    exact h.scaleLcm_le_abs_sub hne
 
 /-- *99* lies only on the scale of units, so its imprecise reading is blocked from half a unit of
 deviation; *100* lies on every cardinal scale, so its alternatives are the multiples of fifty and

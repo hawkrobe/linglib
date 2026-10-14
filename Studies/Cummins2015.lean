@@ -414,16 +414,23 @@ theorem about100_notMem_optimal_of_exact (r : Ranking (Fin 3) 3) :
     about 100 ∉ (Tableau.ofPerm (approx (.exact 100)) r [bare 100, about 100]).optimal := by
   revert r; decide
 
-/-- *More than m* bounds *more than n* for `n < m` below the speaker's bound when `m` is at
-least as salient, at the same granularity level if the context sets one, and `n` is not
-primed, so *more than n* implicates that *more than m* was not assertable, the
+/-- In a context, *more than m* is a stronger alternative to *more than n* when `n < m` and `m`
+is at least as salient as `n` and at its granularity level, if the context sets one. -/
+def StrongerAlternative (ctx : Context) (n m : ℕ) : Prop :=
+  n < m ∧ roundness n ≤ roundness m ∧
+    (ctx.granularity = none ∨ granularityLevel m = granularityLevel n)
+
+instance (ctx : Context) (n m : ℕ) : Decidable (StrongerAlternative ctx n m) :=
+  inferInstanceAs (Decidable (_ ∧ _ ∧ _))
+
+/-- A stronger alternative *more than m* below the speaker's bound bounds *more than n* when `n`
+is not primed, so *more than n* implicates that *more than m* was not assertable, the
 granularity-scale implicature of [cummins-sauerland-solt-2012]. -/
 theorem moreThan_notMem_optimal {ctx : Context} {L n m : ℕ} (hlo : ctx.lo = some L)
-    (hnm : n < m) (hm : m < L) (hsal : roundness n ≤ roundness m)
-    (hgran : ctx.granularity = none ∨ granularityLevel m = granularityLevel n)
-    (hp : ctx.primedNumeral ≠ some n) (r : Ranking (Fin 6) 6) {cands : List Candidate}
-    (hc : moreThan m ∈ cands) (h : cands ≠ []) :
+    (halt : StrongerAlternative ctx n m) (hm : m < L) (hp : ctx.primedNumeral ≠ some n)
+    (r : Ranking (Fin 6) 6) {cands : List Candidate} (hc : moreThan m ∈ cands) (h : cands ≠ []) :
     moreThan n ∉ (Tableau.ofPerm (con ctx) r cands h).optimal := by
+  obtain ⟨hnm, hsal, hgran⟩ := halt
   refine Tableau.ofPerm_notMem_optimal_of_lt hc (Pi.lt_def.2 ⟨fun i ↦ ?_, 0, ?_⟩)
   · match i with
     | 0 =>
@@ -453,11 +460,11 @@ priming dominates informativeness and, when `m` is the rounder, numeral salience
 condition, priming above informativeness (§5.4), suffices only for equally salient pairs;
 on its own *more than 70* ~ *more than 80*, 80 is the rounder. -/
 theorem moreThan_optimal_iff_of_primed {ctx : Context} {L n m : ℕ} (hlo : ctx.lo = some L)
-    (hnm : n < m) (hm : m < L) (hsal : roundness n ≤ roundness m)
-    (hgran : ctx.granularity = none ∨ granularityLevel m = granularityLevel n)
-    (hp : ctx.primedNumeral = some n) (r : Ranking (Fin 6) 6) :
+    (halt : StrongerAlternative ctx n m) (hm : m < L) (hp : ctx.primedNumeral = some n)
+    (r : Ranking (Fin 6) 6) :
     (Tableau.ofPerm (con ctx) r [moreThan n, moreThan m]).optimal = {moreThan n} ↔
       r.Dominates 4 0 ∧ (roundness n < roundness m → r.Dominates 4 3) := by
+  obtain ⟨hnm, hsal, hgran⟩ := halt
   have h0 : con ctx 0 (moreThan m) < con ctx 0 (moreThan n) := by
     show info ctx (moreThan m) < info ctx (moreThan n); simp only [info, moreThan, hlo]; omega
   have h1 : con ctx 1 (moreThan n) = con ctx 1 (moreThan m) := by
