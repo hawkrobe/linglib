@@ -15,6 +15,19 @@ this module; declarations live in `namespace Anderson2006b.Examples`.
 
 namespace Anderson2006b.Examples
 
+def ex_3 : Datum :=
+  { id := "anderson2006b_3"
+    source := ⟨"anderson-2006b", "ch. 6 (3)"⟩
+    reportedIn := none
+    language := "stan1290"
+    primaryText := "Il va/est à Toulouse"
+    glossedTokens := []
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("neutralized", "loc{goal}"), ("neutralized", "loc")] }
+
 def ex_39a : Datum :=
   { id := "anderson2006b_39a"
     source := ⟨"anderson-2006b", "ch. 6 (39a)"⟩
@@ -39,7 +52,7 @@ def ex_39b : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("arg", "abs"), ("arg", "loc"), ("subject", "abs")] }
+    paperFeatures := [("arg", "abs"), ("arg", "loc{goal}"), ("subject", "abs")] }
 
 def ex_39c : Datum :=
   { id := "anderson2006b_39c"
@@ -52,7 +65,7 @@ def ex_39c : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("arg", "abs,erg"), ("arg", "loc"), ("subject", "abs,erg")] }
+    paperFeatures := [("arg", "abs,erg"), ("arg", "loc{goal}"), ("subject", "abs,erg")] }
 
 def ex_39h : Datum :=
   { id := "anderson2006b_39h"
@@ -78,7 +91,7 @@ def ex_39i : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("arg", "erg,loc"), ("arg", "abs"), ("subject", "erg,loc")] }
+    paperFeatures := [("arg", "erg,loc{goal}"), ("arg", "abs"), ("subject", "erg,loc{goal}")] }
 
 def ex_39j : Datum :=
   { id := "anderson2006b_39j"
@@ -91,7 +104,7 @@ def ex_39j : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("arg", "abs,erg,loc"), ("arg", "loc"), ("subject", "abs,erg,loc")] }
+    paperFeatures := [("arg", "abs,erg,loc{goal}"), ("arg", "loc{src}"), ("subject", "abs,erg,loc{goal}")] }
 
 def ex_34 : Datum :=
   { id := "anderson2006b_34"
@@ -104,7 +117,7 @@ def ex_34 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("arg", "abs,erg,loc"), ("arg", "loc"), ("subject", "abs,erg,loc")] }
+    paperFeatures := [("arg", "abs,erg,loc{goal}"), ("arg", "loc{src}"), ("subject", "abs,erg,loc{goal}")] }
 
 def ex_4_8a : Datum :=
   { id := "anderson2006b_4_8a"
@@ -145,6 +158,6 @@ def ex_23a : Datum :=
     readings := []
     paperFeatures := [("arg", "erg"), ("arg", "abs"), ("subject", "erg")] }
 
-def all : List Datum := [ex_39a, ex_39b, ex_39c, ex_39h, ex_39i, ex_39j, ex_34, ex_4_8a, ex_4_8b, ex_23a]
+def all : List Datum := [ex_3, ex_39a, ex_39b, ex_39c, ex_39h, ex_39i, ex_39j, ex_34, ex_4_8a, ex_4_8b, ex_23a]
 
 end Anderson2006b.Examples

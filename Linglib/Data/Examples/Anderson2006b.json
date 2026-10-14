@@ -1,5 +1,25 @@
 [
   {
+    "id": "anderson2006b_3",
+    "source": {"bibkey": "anderson-2006b", "paperLabel": "ch. 6 (3)"},
+    "reportedIn": null,
+    "language": "stan1290",
+    "primaryText": "Il va/est à Toulouse",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "he goes/is to/at Toulouse",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["neutralized", "loc{goal}"],
+      ["neutralized", "loc"]
+    ],
+    "comment": "A lexical neutralization of spatial goal and simple location; the residue is 'locative but not source'.",
+    "verified": "page-image"
+  },
+  {
     "id": "anderson2006b_39a",
     "source": {"bibkey": "anderson-2006b", "paperLabel": "ch. 6 (39a)"},
     "reportedIn": null,
@@ -35,10 +55,10 @@
     "readings": [],
     "paperFeatures": [
       ["arg", "abs"],
-      ["arg", "loc"],
+      ["arg", "loc{goal}"],
       ["subject", "abs"]
     ],
-    "comment": "The locative carries the second-order feature {goal}; the subject is not inherently ergative.",
+    "comment": "The subject is not inherently ergative.",
     "verified": "page-image"
   },
   {
@@ -56,10 +76,10 @@
     "readings": [],
     "paperFeatures": [
       ["arg", "abs,erg"],
-      ["arg", "loc"],
+      ["arg", "loc{goal}"],
       ["subject", "abs,erg"]
     ],
-    "comment": "The locative carries {goal}.",
+    "comment": "",
     "verified": "page-image"
   },
   {
@@ -97,11 +117,11 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["arg", "erg,loc"],
+      ["arg", "erg,loc{goal}"],
       ["arg", "abs"],
-      ["subject", "erg,loc"]
+      ["subject", "erg,loc{goal}"]
     ],
-    "comment": "Experiencer with {goal} on its locative component: erg,loc{goal} + abs. Also 'a new outlook'.",
+    "comment": "An Experiencer whose locative is a goal. Also 'a new outlook'.",
     "verified": "page-image"
   },
   {
@@ -118,11 +138,11 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["arg", "abs,erg,loc"],
-      ["arg", "loc"],
-      ["subject", "abs,erg,loc"]
+      ["arg", "abs,erg,loc{goal}"],
+      ["arg", "loc{src}"],
+      ["subject", "abs,erg,loc{goal}"]
     ],
-    "comment": "E + abl = abs,erg,loc{goal} + loc{src}. Also 'from delusions'.",
+    "comment": "An Experiencer with an ablative. Also 'from delusions'.",
     "verified": "page-image"
   },
   {
@@ -139,11 +159,11 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["arg", "abs,erg,loc"],
-      ["arg", "loc"],
-      ["subject", "abs,erg,loc"]
+      ["arg", "abs,erg,loc{goal}"],
+      ["arg", "loc{src}"],
+      ["subject", "abs,erg,loc{goal}"]
     ],
-    "comment": "A patient that is at once Experiencer and contactive: all three first-order features combine on one argument; the ablative is loc{src}.",
+    "comment": "A patient that is at once Experiencer and contactive: all three first-order features combine on one argument.",
     "verified": "page-image"
   },
   {
