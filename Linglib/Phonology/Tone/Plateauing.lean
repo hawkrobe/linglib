@@ -168,7 +168,7 @@ the H-toned slots. -/
 theorem link_collapse_realize_toAR (w : List TBU) (k j : ℕ) :
     ((AR.realize toAR w).collapse true).link true false k j ↔ k = 0 ∧ w[j]? = some .H := by
   rw [AR.link_collapse]
-  simp only [AR.collapseIdx_self, AR.collapseIdx_of_ne _ true (by decide : false ≠ true),
+  simp only [repointIdx_self, repointIdx_of_ne (by decide : false ≠ true),
     link_realize_toAR, tierWord_realize_toAR_true, OCP.runIdx_replicate]
   constructor
   · rintro ⟨p, q, ⟨-, h⟩, rfl, rfl⟩
