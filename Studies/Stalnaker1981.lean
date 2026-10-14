@@ -132,16 +132,15 @@ inductive BVWorld
 
 /-- Similarity to `w₀` puts `w₀` strictly closest, and from the actual world the two compatriot
 worlds tie. -/
-def bvCloser (w₀ w₁ w₂ : BVWorld) : Bool :=
-  w₁ == w₀ || w₁ == w₂ || (w₀ == .actual && w₁ != .actual && w₂ != .actual)
-
-/-- The similarity preorders of `bvCloser`. -/
 abbrev bvSim (w₀ : BVWorld) : Preorder BVWorld :=
-  Preorder.ofLE (bvCloser w₀ · · = true) (by revert w₀; decide) (by revert w₀; decide)
+  Preorder.ofLE (fun w₁ w₂ ↦ w₁ = w₀ ∨ w₁ = w₂ ∨ w₀ = .actual ∧ w₁ ≠ .actual ∧ w₂ ≠ .actual)
+    (by revert w₀; decide) (by revert w₀; decide)
 
-theorem isCentered_bvSim : IsCentered bvSim := fun w w' h ↦ by
-  change bvCloser w w w' = true ∧ ¬ bvCloser w w' w = true
-  revert w w' h; decide
+instance (w₀ : BVWorld) : DecidableRel (bvSim w₀).le :=
+  fun _ _ ↦ inferInstanceAs (Decidable (_ ∨ _))
+
+theorem isCentered_bvSim : IsCentered bvSim := fun w w' h ↦
+  ⟨.inl rfl, by revert w w' h; decide⟩
 
 /-- Bizet and Verdi are compatriots. -/
 abbrev compatriots : Set BVWorld := {.bothItalian, .bothFrench}
@@ -212,16 +211,15 @@ inductive CourtWorld
 
 /-- Similarity to `w₀` puts `w₀` strictly closest, and from the actual world the two vacancy
 worlds tie. -/
-def courtCloser (w₀ w₁ w₂ : CourtWorld) : Bool :=
-  w₁ == w₀ || w₁ == w₂ || (w₀ == .actual && w₁ != .actual && w₂ != .actual)
-
-/-- The similarity preorders of `courtCloser`. -/
 abbrev courtSim (w₀ : CourtWorld) : Preorder CourtWorld :=
-  Preorder.ofLE (courtCloser w₀ · · = true) (by revert w₀; decide) (by revert w₀; decide)
+  Preorder.ofLE (fun w₁ w₂ ↦ w₁ = w₀ ∨ w₁ = w₂ ∨ w₀ = .actual ∧ w₁ ≠ .actual ∧ w₂ ≠ .actual)
+    (by revert w₀; decide) (by revert w₀; decide)
 
-theorem isCentered_courtSim : IsCentered courtSim := fun w w' h ↦ by
-  change courtCloser w w w' = true ∧ ¬ courtCloser w w' w = true
-  revert w w' h; decide
+instance (w₀ : CourtWorld) : DecidableRel (courtSim w₀).le :=
+  fun _ _ ↦ inferInstanceAs (Decidable (_ ∨ _))
+
+theorem isCentered_courtSim : IsCentered courtSim := fun w w' h ↦
+  ⟨.inl rfl, by revert w w' h; decide⟩
 
 /-- A vacancy occurs. -/
 abbrev vacancy : Set CourtWorld := {.w1, .w2}
