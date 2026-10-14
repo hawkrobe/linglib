@@ -10,6 +10,7 @@ congruence.
 module
 
 public import Mathlib.Computability.MyhillNerode
+public import Mathlib.GroupTheory.Congruence.Basic
 public import Mathlib.Data.Set.Finite.Range
 public import Linglib.Core.Computability.TransitionMonoid
 public import Linglib.Core.GroupTheory.Congruence.Hom
@@ -41,8 +42,8 @@ monoid structure rather than a bare set of states.
 
 * `Language.recognizes_iff_ker_le`: a homomorphism recognizes `L` exactly when its kernel refines
   the syntactic congruence.
-* `Language.syntacticCon_eq_ker_transitionHom`: the syntactic congruence is the kernel of the
-  transition action of `L.toDFA`.
+* `Language.syntacticMonoidEquivTransitionMonoid`: the syntactic monoid is the transition monoid
+  of the minimal DFA `L.toDFA`.
 * `Language.isRegular_iff_finite_syntacticMonoid`: a language is regular exactly when its
   syntactic monoid is finite.
 
@@ -194,16 +195,11 @@ theorem Recognizes.comap {β : Type*} (hrec : Recognizes φ L) (ψ : FreeMonoid 
 /-- The syntactic monoid divides every monoid recognizing `L`, since the image of `φ` surjects
 onto the syntactic quotient through the first isomorphism theorem. -/
 theorem Recognizes.syntacticMonoid_isSubquotient (hrec : Recognizes φ L) :
-    Monoid.IsSubquotient L.SyntacticMonoid M := by
-  refine ⟨MonoidHom.mrange φ, (Con.map (Con.ker φ) (syntacticCon L)
-    (ker_le_syntacticCon_of_recognizes hrec)).comp
-    (Con.quotientKerEquivRange φ).symm.toMonoidHom, ?_⟩
-  have hmap : Function.Surjective (Con.map (Con.ker φ) (syntacticCon L)
-      (ker_le_syntacticCon_of_recognizes hrec)) := by
-    intro x
-    induction x using Con.induction_on with
-    | H w => exact ⟨(Con.ker φ).mk' w, rfl⟩
-  exact hmap.comp (Con.quotientKerEquivRange φ).symm.surjective
+    Monoid.IsSubquotient L.SyntacticMonoid M :=
+  ((Monoid.IsSubquotient.of_surjective _ <| Con.lift_surjective_of_surjective
+      ((ker_le_syntacticCon_of_recognizes hrec).trans L.ker_toSyntacticMonoid.ge)
+      L.syntacticCon.mk'_surjective).trans (Con.quotientKerEquivRange φ).isSubquotient).trans
+    (Submonoid.isSubquotient _)
 
 end
 
@@ -232,13 +228,16 @@ theorem ker_transitionHom_toDFA_iff {u v : FreeMonoid α} :
 theorem syntacticCon_eq_ker_transitionHom : L.syntacticCon = Con.ker L.toDFA.transitionHom :=
   Con.ext fun _ _ ↦ syntacticCon_iff_leftQuotient.trans ker_transitionHom_toDFA_iff.symm
 
+/-- The syntactic monoid of `L` is the transition monoid of its minimal DFA. -/
+noncomputable def syntacticMonoidEquivTransitionMonoid (L : Language α) :
+    L.SyntacticMonoid ≃* L.toDFA.transitionMonoid :=
+  (Con.congr (.refl _) syntacticCon_eq_ker_transitionHom).trans (Con.quotientKerEquivRange _)
+
 /-! ### Myhill–Nerode -/
 
-theorem IsRegular.finite_syntacticMonoid (h : L.IsRegular) : Finite L.SyntacticMonoid := by
+theorem IsRegular.finite_syntacticMonoid (h : L.IsRegular) : Finite L.SyntacticMonoid :=
   have := h.finite_range_leftQuotient.to_subtype
-  show Finite (syntacticCon L).Quotient
-  rw [syntacticCon_eq_ker_transitionHom]
-  exact Finite.of_equiv _ (DFA.transitionMonoidEquiv L.toDFA).symm.toEquiv
+  .of_equiv _ L.syntacticMonoidEquivTransitionMonoid.symm.toEquiv
 
 theorem IsRegular.of_finite_syntacticMonoid (h : Finite L.SyntacticMonoid) : L.IsRegular :=
   .of_finite_range_leftQuotient <| Function.FactorsThrough.finite_range

@@ -10,49 +10,48 @@ module
 public import Linglib.Core.Algebra.Group.End
 public import Linglib.Core.Algebra.Opposites
 public import Mathlib.Algebra.FreeMonoid.Basic
+public import Mathlib.Algebra.Group.Submonoid.Operations
 public import Mathlib.Computability.DFA
-public import Mathlib.GroupTheory.Congruence.Basic
-public import Mathlib.GroupTheory.Congruence.Hom
 
 /-!
 # The transition monoid of a DFA
 
 Each word induces a transformation of the states of a DFA, and reading one word after another
 composes these transformations. The monoid they generate is the *transition monoid*, the basic
-algebraic invariant of an automaton [pin-mfa].
+algebraic invariant of an automaton. It is finite when the automaton is.
 
 ## Main definitions
 
 - `DFA.transitionHom`: the monoid homomorphism sending a word to the transformation it induces
 - `DFA.transitionMonoid`: the transition monoid, the range of `DFA.transitionHom`
-- `DFA.transitionMonoidEquiv`: the transition monoid as a quotient of `FreeMonoid α`
 
 ## Implementation notes
 
 A word `w` acts on a state `s` by `s ↦ M.evalFrom s w`, and `evalFrom_of_append` makes this a
 *right* action, written `q · u` in the literature. Since `Function.End` composes on the left, that
 is an anti-homomorphism, so the target of `DFA.transitionHom` is the opposite monoid
-`(Function.End σ)ᵐᵒᵖ`.
+`(Function.End σ)ᵐᵒᵖ`. Its domain stays `FreeMonoid α`, so that its kernel is a congruence on
+words, comparable with the syntactic congruence.
 
-[pin-mfa] takes automata to be partial, so its transition monoid sits in the monoid of *partial*
-transformations. `DFA` has a total `step`, so the transformations here are total and the target is
-`Function.End σ`.
+Pin's deterministic automata are partial, so the transition monoid there sits in the monoid of
+*partial* transformations. `DFA` has a total `step`, so the transformations here are total.
+
+## References
+
+* [pin-mfa]
 -/
 
 @[expose] public section
 
-universe u v
-
 namespace DFA
 
-variable {α : Type u} {σ : Type v} (M : DFA α σ)
+variable {α σ : Type*} (M : DFA α σ)
 
 /-- `M.transitionHom w` is the transformation of states induced by the word `w`. -/
 def transitionHom : FreeMonoid α →* (Function.End σ)ᵐᵒᵖ where
-  toFun w := MulOpposite.op fun s ↦ M.evalFrom s w.toList
+  toFun w := .op fun s ↦ M.evalFrom s w.toList
   map_one' := rfl
-  map_mul' u v := MulOpposite.unop_injective <|
-    funext fun s ↦ M.evalFrom_of_append s u.toList v.toList
+  map_mul' _ _ := MulOpposite.unop_injective <| funext fun s ↦ M.evalFrom_of_append s _ _
 
 @[simp]
 theorem unop_transitionHom_apply (w : FreeMonoid α) (s : σ) :
@@ -64,14 +63,5 @@ theorem transitionHom_eq_iff {u v : FreeMonoid α} : M.transitionHom u = M.trans
 
 /-- `M.transitionMonoid` is the monoid of transformations of the states of `M` induced by words. -/
 def transitionMonoid : Submonoid (Function.End σ)ᵐᵒᵖ := MonoidHom.mrange M.transitionHom
-
-/-- `M.transitionMonoidEquiv` presents the transition monoid as a quotient of `FreeMonoid α`, by
-the first isomorphism theorem. -/
-noncomputable def transitionMonoidEquiv :
-    (Con.ker M.transitionHom).Quotient ≃* M.transitionMonoid :=
-  Con.quotientKerEquivRange _
-
-instance instFiniteTransitionMonoid [Finite σ] : Finite M.transitionMonoid :=
-  inferInstanceAs (Finite (MonoidHom.mrange M.transitionHom))
 
 end DFA
