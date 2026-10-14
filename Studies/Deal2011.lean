@@ -183,6 +183,12 @@ instance (lex : ModalItem → ModalForce) (L : List ModalItem) (m : ModalItem) :
     Decidable (HasScalemate lex L m) :=
   inferInstanceAs (Decidable (∃ _ ∈ _, _))
 
+/-- A modal of the inventory `L` serves in a context of polarity `π` for the force `g`, given its
+lexical force and whether it has a scalemate in `L`. -/
+def ServesIn (lex : ModalItem → ModalForce) (L : List ModalItem) (π : Polarity) (m : ModalItem)
+    (g : ModalForce) : Prop :=
+  ServesFor π (lex m) (HasScalemate lex L m) g
+
 /-- The Nez Perce modals are possibility modals (§2): *o'qa*, the participial construction,
 which appears to express possibility, *'ax̂*, which speakers judge equivalent to *o'qa*, and the
 epistemic particles 'maybe'. -/
@@ -193,11 +199,9 @@ theorem oqa_scaleFree : ¬ HasScalemate lexicalForce NezPerce.modals NezPerce.oq
 
 /-- *O'qa* is flexible in an upward-entailing context and not under negation. -/
 theorem oqa_flexible :
-    (∀ g, ServesFor .positive (lexicalForce NezPerce.oqa)
-      (HasScalemate lexicalForce NezPerce.modals NezPerce.oqa) g) ∧
-    ¬ ∀ g, ServesFor .negative (lexicalForce NezPerce.oqa)
-      (HasScalemate lexicalForce NezPerce.modals NezPerce.oqa) g := by
-  simp only [flexible_iff]
+    (∀ g, ServesIn lexicalForce NezPerce.modals .positive NezPerce.oqa g) ∧
+      ¬ ∀ g, ServesIn lexicalForce NezPerce.modals .negative NezPerce.oqa g := by
+  simp only [ServesIn, flexible_iff]
   decide
 
 /-- The fragment records *o'qa*'s upward-entailing uses: the forces it serves for. -/
