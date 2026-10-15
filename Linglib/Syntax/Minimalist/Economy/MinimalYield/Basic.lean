@@ -409,19 +409,6 @@ private theorem extraction_accessibleCount (hF : ∀ T ∈ F, ∃ a, T.value = S
       (p.1.map UnorderedTree.accessibleCount).sum + p.2.accessibleCount + Multiset.card p.1 :=
   fun T hT _ hp ↦ cutSummandsCN_accessibleCount τ (hF T hT).choose_spec hp
 
-/-- A tree in the crown of a choice of trace cuts of lexical-rooted trees is not a trace. -/
-private theorem traceLeafCount_lt_of_mem_crown (hs : s ∈ forestCutChoicesG (cutSummandsCN τ) F)
-    (hF : ∀ T ∈ F, ∃ a, T.value = Sum.inl a) {S : UnorderedTree (α ⊕ β)}
-    (hS : S ∈ (s.map Prod.snd).sum.1) : S.traceLeafCount < S.numNodes := by
-  obtain ⟨x, hx, hSx⟩ := mem_fst_sum_map_snd_iff.mp hS
-  rcases mem_treeCutsG.mp (mem_treeCutsG_of_mem_forestCutChoicesG hs hx) with h | ⟨p, hp, h⟩
-  · rw [h, Multiset.mem_singleton] at hSx
-    obtain ⟨a, ha⟩ := hF x.1 (map_fst_of_mem_forestCutChoicesG hs ▸
-      Multiset.mem_map_of_mem Prod.fst hx)
-    exact hSx ▸ UnorderedTree.traceLeafCount_lt_numNodes_of_rootInl _ a ha
-  · rw [← h] at hSx
-    exact cutSummandsCN_crown_traceLeafCount_lt_numNodes τ x.1 p hp S hSx
-
 variable [DecidableEq (UnorderedTree (α ⊕ β))]
 
 /-- Under trace counting a term of Merge gains one accessible term for each object it takes whole
@@ -433,8 +420,8 @@ theorem accessibleCount_merge_term (a : α) (hs : s ∈ forestCutChoicesG (cutSu
       Forest.accessibleCount F + s.countP (·.2.2 = 0) := by
   have h := sum_map_merge_term_add (k := 1) hs (by simpa using extraction_accessibleCount hF) hK
     (UnorderedTree.accessibleCount_merge a S S'
-      (traceLeafCount_lt_of_mem_crown hs hF (hK ▸ Multiset.mem_cons_self _ _))
-      (traceLeafCount_lt_of_mem_crown hs hF
+      (traceLeafCount_lt_numNodes_of_mem_crown hs hF (hK ▸ Multiset.mem_cons_self _ _))
+      (traceLeafCount_lt_numNodes_of_mem_crown hs hF
         (hK ▸ Multiset.mem_cons_of_mem (Multiset.mem_singleton_self _))))
   simp only [Forest.accessibleCount] at h ⊢
   omega
@@ -461,8 +448,8 @@ theorem MinimalYield.merge_term_accessibleCount_iff (a : α)
       s.countP (·.2.2 = 0) ≠ 0 :=
   MinimalYield.merge_term_iff_of_extraction_one hs (extraction_accessibleCount hF) hK
     (UnorderedTree.accessibleCount_merge a S S'
-      (traceLeafCount_lt_of_mem_crown hs hF (hK ▸ Multiset.mem_cons_self _ _))
-      (traceLeafCount_lt_of_mem_crown hs hF
+      (traceLeafCount_lt_numNodes_of_mem_crown hs hF (hK ▸ Multiset.mem_cons_self _ _))
+      (traceLeafCount_lt_numNodes_of_mem_crown hs hF
         (hK ▸ Multiset.mem_cons_of_mem (Multiset.mem_singleton_self _))))
 
 /-- Under trace counting a term of the unit stage loses one accessible term unless it takes `β`
