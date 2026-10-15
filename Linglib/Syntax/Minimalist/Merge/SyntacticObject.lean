@@ -19,8 +19,10 @@ Merge on the carrier is the bare binary node `SyntacticObject.merge` with root l
 `Vertex.bare`. External Merge of two objects is the algebraic Merge operator on the two-object
 workspace, at the pruning cuts (`mergeOp_node`) and at the trace cuts (`mergeOpC_node`).
 
-Internal Merge goes through the trace cuts. A moved object leaves the trace of its head
-(`headTrace`), so the trace encoder is the head by selection (`traceEncoder`). A uniquely
+Internal Merge goes through the trace cuts. The trace of an extracted term is a label of the leaf
+it contracts to ([marcolli-chomsky-berwick-2025] Definition 1.2.4), here compressed to a token by a
+trace encoder: a moved object leaves the trace of its head under the encoder (`headTrace`), by
+default the head by selection (`traceEncoder`). A uniquely
 accessible mover is extracted by exactly one trace cut, whose trunk is the remainder
 `deleteAccessible mover current` (`cutSummandsCN_filter_mover`), and Internal Merge is the
 composition `M_{T/β,β} ∘ M_{β,1}` of [marcolli-chomsky-berwick-2025] Proposition 1.4.2
@@ -80,26 +82,29 @@ theorem mergeOpC_node (τ : UnorderedTree Vertex → Option LexicalItem.Token)
 /-- The trace encoder of derivations sends a tree to its head by selection. -/
 def traceEncoder (t : UnorderedTree Vertex) : Option LexicalItem.Token := (selCheckN t).head
 
-/-- A moved object leaves the trace of its head by selection, or the bare trace when it has
-    none. -/
-def headTrace (s : SyntacticObject) : SyntacticObject := s.selHead.elim trace traceOf
+/-- A moved object leaves the trace of its head under the encoder `τ`, by default the head by
+    selection, or the bare trace when it has none. -/
+def headTrace (s : SyntacticObject) (τ : SyntacticObject → Option LexicalItem.Token := selHead) :
+    SyntacticObject :=
+  (τ s).elim trace traceOf
 
 /-- The trace a moved object leaves is the trace leaf its encoder labels. -/
-theorem headTrace_val (s : SyntacticObject) :
-    s.headTrace.val = UnorderedTree.leaf (Sum.inr (traceEncoder s.val)) := by
-  show (s.selHead.elim trace traceOf).val = UnorderedTree.leaf (Sum.inr s.selHead)
-  cases s.selHead <;> rfl
+theorem headTrace_val (s : SyntacticObject) (τ : SyntacticObject → Option LexicalItem.Token) :
+    (s.headTrace τ).val = UnorderedTree.leaf (Sum.inr (τ s)) := by
+  unfold headTrace; cases τ s <;> rfl
 
 /-- The remainder `T/mover` is the current object with the mover's occurrences replaced by the
-    trace of its head. For a uniquely accessible mover it is the trunk of the trace cut that
-    extracts the mover (`cutSummandsCN_filter_mover`); `replace` extends it to a chain of
+    trace of its head under `τ`. For a uniquely accessible mover it is the trunk of the trace cut
+    that extracts the mover (`cutSummandsCN_filter_mover`); `replace` extends it to a chain of
     occurrences. -/
-noncomputable def deleteAccessible (mover current : SyntacticObject) : SyntacticObject :=
-  current.replace mover mover.headTrace
+noncomputable def deleteAccessible (mover current : SyntacticObject)
+    (τ : SyntacticObject → Option LexicalItem.Token := selHead) : SyntacticObject :=
+  current.replace mover (mover.headTrace τ)
 
-@[simp] theorem deleteAccessible_val (mover current : SyntacticObject) :
-    (deleteAccessible mover current).val
-      = UnorderedTree.replace mover.val mover.headTrace.val current.val := rfl
+@[simp] theorem deleteAccessible_val (mover current : SyntacticObject)
+    (τ : SyntacticObject → Option LexicalItem.Token) :
+    (deleteAccessible mover current τ).val
+      = UnorderedTree.replace mover.val (mover.headTrace τ).val current.val := rfl
 
 variable {mover current : SyntacticObject}
 
