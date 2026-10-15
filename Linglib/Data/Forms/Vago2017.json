@@ -1,0 +1,176 @@
+{
+  "FormTable": [
+    {
+      "ID": "vago2017_hordonk",
+      "Language_ID": "hung1274",
+      "Parameter_ID": "our_barrel",
+      "Form": "hordónk",
+      "Segments": ["h", "o", "r", "d", "ó", "n", "k"],
+      "Comment": "",
+      "Source": ["vago-2017[Table 1]"],
+      "Left": "hordó",
+      "LeftKind": "root",
+      "Right": "unk",
+      "RightKind": "suffix",
+      "Deleted": "second",
+      "Hierarchy": "regular"
+    },
+    {
+      "ID": "vago2017_erdesz",
+      "Language_ID": "hung1274",
+      "Parameter_ID": "forester",
+      "Form": "erdész",
+      "Segments": ["e", "r", "d", "é", "sz"],
+      "Comment": "",
+      "Source": ["vago-2017[(7a), Table 2]"],
+      "Left": "erdő",
+      "LeftKind": "root",
+      "Right": "ész",
+      "RightKind": "suffix",
+      "Deleted": "first",
+      "Hierarchy": "v1Deletion"
+    },
+    {
+      "ID": "vago2017_eszperantoul",
+      "Language_ID": "hung1274",
+      "Parameter_ID": "in_esperanto",
+      "Form": "eszperantóul",
+      "Segments": ["e", "sz", "p", "e", "r", "a", "n", "t", "ó", "u", "l"],
+      "Comment": "",
+      "Source": ["vago-2017[Table 3]"],
+      "Left": "eszperantó",
+      "LeftKind": "root",
+      "Right": "ul",
+      "RightKind": "suffix",
+      "Deleted": "none",
+      "Hierarchy": "noDeletion"
+    },
+    {
+      "ID": "vago2017_tanulnunk",
+      "Language_ID": "hung1274",
+      "Parameter_ID": "we_have_to_study",
+      "Form": "tanulnunk",
+      "Segments": ["t", "a", "n", "u", "l", "n", "u", "n", "k"],
+      "Comment": "",
+      "Source": ["vago-2017[(20c), Table 4]"],
+      "Before": "tanul",
+      "BeforeKind": "root",
+      "Left": "ni",
+      "LeftKind": "suffix",
+      "Right": "unk",
+      "RightKind": "suffix",
+      "Deleted": "first",
+      "Hierarchy": "v1Deletion"
+    },
+    {
+      "ID": "vago2017_hoznank",
+      "Language_ID": "hung1274",
+      "Parameter_ID": "we_would_bring",
+      "Form": "hoznánk",
+      "Segments": ["h", "o", "z", "n", "á", "n", "k"],
+      "Comment": "",
+      "Source": ["vago-2017[(17), (21a)]"],
+      "Before": "hoz",
+      "BeforeKind": "root",
+      "Left": "ná",
+      "LeftKind": "suffix",
+      "Right": "unk",
+      "RightKind": "suffix",
+      "Deleted": "second",
+      "Hierarchy": "regular"
+    },
+    {
+      "ID": "vago2017_kapujan",
+      "Language_ID": "hung1274",
+      "Parameter_ID": "on_his_gate",
+      "Form": "kapuján",
+      "Segments": ["k", "a", "p", "u", "j", "á", "n"],
+      "Comment": "",
+      "Source": ["vago-2017[(18a), (21b)]"],
+      "Before": "kapu",
+      "BeforeKind": "root",
+      "Left": "já",
+      "LeftKind": "suffix",
+      "Right": "on",
+      "RightKind": "suffix",
+      "Deleted": "second",
+      "Hierarchy": "regular"
+    },
+    {
+      "ID": "vago2017_kapuink",
+      "Language_ID": "hung1274",
+      "Parameter_ID": "our_gates",
+      "Form": "kapuink",
+      "Segments": ["k", "a", "p", "u", "i", "n", "k"],
+      "Comment": "",
+      "Source": ["vago-2017[(18b), (23a)]"],
+      "Before": "kapu",
+      "BeforeKind": "root",
+      "Left": "i",
+      "LeftKind": "suffix",
+      "Right": "unk",
+      "RightKind": "suffix",
+      "Deleted": "second",
+      "Hierarchy": "regular"
+    },
+    {
+      "ID": "vago2017_nyomozonk",
+      "Language_ID": "hung1274",
+      "Parameter_ID": "our_detective",
+      "Form": "nyomozónk",
+      "Segments": ["ny", "o", "m", "o", "z", "ó", "n", "k"],
+      "Comment": "",
+      "Source": ["vago-2017[(19), (23b)]"],
+      "Before": "nyomoz",
+      "BeforeKind": "root",
+      "Left": "ó",
+      "LeftKind": "suffix",
+      "Right": "unk",
+      "RightKind": "suffix",
+      "Deleted": "second",
+      "Hierarchy": "regular"
+    }
+  ],
+  "ParameterTable": [
+    {
+      "ID": "our_barrel",
+      "Name": "our barrel",
+      "Description": "1pl possessive of hordó 'barrel'"
+    },
+    {
+      "ID": "forester",
+      "Name": "forester",
+      "Description": "erdő 'forest' with the profession suffix -ész"
+    },
+    {
+      "ID": "in_esperanto",
+      "Name": "in Esperanto",
+      "Description": "eszperantó 'Esperanto' with the adverbial suffix -ul"
+    },
+    {
+      "ID": "we_have_to_study",
+      "Name": "we (have to) study",
+      "Description": "inflected infinitive of tanul 'study', 1pl"
+    },
+    {
+      "ID": "we_would_bring",
+      "Name": "we would bring",
+      "Description": "conditional of hoz 'bring', 1pl"
+    },
+    {
+      "ID": "on_his_gate",
+      "Name": "on his/her gate",
+      "Description": "superessive of the 3sg possessive of kapu 'gate'"
+    },
+    {
+      "ID": "our_gates",
+      "Name": "our gates",
+      "Description": "1pl possessive of the plural possessed kapu 'gate'"
+    },
+    {
+      "ID": "our_detective",
+      "Name": "our detective",
+      "Description": "1pl possessive of nyomozó 'detective'"
+    }
+  ]
+}
