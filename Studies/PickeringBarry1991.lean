@@ -53,8 +53,8 @@ open scoped CCG
 
 /-! ### Associations and their patterns -/
 
-/-- A dependency of an annotated sentence: the positions of its filler, of the empty category
-the trace analysis posits, and of its subcategoriser. -/
+/-- A dependency of an annotated sentence records the positions of its filler, of the empty
+category the trace analysis posits, and of its subcategoriser. -/
 structure Dependency where
   filler : ℕ
   gap : ℕ
@@ -79,8 +79,8 @@ def gapVerb (d : Dependency) : NonemptyInterval ℕ := span d.gap d.verb
 /-- The filler–verb association of the gap-free analysis. -/
 def fillerVerb (d : Dependency) : NonemptyInterval ℕ := span d.filler d.verb
 
-/-- The filler–verb association does not depend on where an empty category would sit: heavy
-shift, extraposition, and word-order freedom relocate the gap and leave it unchanged. -/
+/-- The filler–verb association does not depend on where an empty category would sit, so heavy
+shift, extraposition and word-order freedom relocate the gap and leave it unchanged. -/
 theorem fillerVerb_gap (f g g' v : ℕ) :
     (⟨f, g, v⟩ : Dependency).fillerVerb = (⟨f, g', v⟩ : Dependency).fillerVerb := rfl
 
@@ -101,11 +101,11 @@ instance (L : List (NonemptyInterval ℕ)) : Decidable (Disjoint L) :=
 
 /-- A disjoint pattern is not nested. -/
 theorem Disjoint.not_nested {L : List (NonemptyInterval ℕ)} (h : Disjoint L) : ¬ Nested L :=
-  λ ⟨a, ha, b, hb, hab⟩ => (h a ha b hb λ e => NonemptyInterval.during_irrefl b (e ▸ hab)).elim
+  fun ⟨a, ha, b, hb, hab⟩ ↦ (h a ha b hb fun e ↦ NonemptyInterval.during_irrefl b (e ▸ hab)).elim
     (NonemptyInterval.not_precedes_of_during hab).1 (NonemptyInterval.not_precedes_of_during hab).2
 
-/-- An annotated sentence: its dependencies, and the spans of its relative clauses over the
-lexical positions. -/
+/-- An annotated sentence records its dependencies and the spans of its relative clauses over
+the lexical positions. -/
 structure Analysis where
   deps : List Dependency
   clauses : List (NonemptyInterval ℕ)
@@ -121,7 +121,7 @@ def gapVerb (A : Analysis) : List (NonemptyInterval ℕ) := A.deps.map Dependenc
 /-- The filler–verb associations. -/
 def fillerVerb (A : Analysis) : List (NonemptyInterval ℕ) := A.deps.map Dependency.fillerVerb
 
-/-- A nested construction in Chomsky's sense: a clause lying inside another with lexical
+/-- A construction is nested in Chomsky's sense when a clause lies inside another with lexical
 material on both sides of it. -/
 def IsNestedConstruction (A : Analysis) : Prop := Nested A.clauses
 
@@ -131,35 +131,35 @@ end Analysis
 
 /-! ### The four sentence types (Tables 1 and 2) -/
 
-/-- The multiple subject relative (44), annotated as (46) and (56): *I saw the farmer [who]ₐ Ø
-[owned]ₐ the dog [which]ᵦ Ø [chased]ᵦ the cat*. -/
+/-- The multiple subject relative (44), *I saw the farmer [who]ₐ Ø [owned]ₐ the dog [which]ᵦ Ø
+[chased]ᵦ the cat*, annotated as (46) and (56). -/
 def subjectRelative : Analysis := ⟨[⟨4, 5, 6⟩, ⟨9, 10, 11⟩], [span 4 13, span 9 13]⟩
 
-/-- The multiple object relative (45), annotated as (47) and (57): *The cat [which]ₐ the dog
-[which]ᵦ the farmer [owned]ᵦ Ø [chased]ₐ Ø fled*. -/
+/-- The multiple object relative (45), *The cat [which]ₐ the dog [which]ᵦ the farmer [owned]ᵦ Ø
+[chased]ₐ Ø fled*, annotated as (47) and (57). -/
 def objectRelative : Analysis := ⟨[⟨2, 11, 10⟩, ⟨5, 9, 8⟩], [span 2 10, span 5 8]⟩
 
-/-- The German multiple subject relative (48), annotated as (49) and (58): *Der Bauer [der]ₐ Ø
-das Mädchen [das]ᵦ Ø den Jungen [küßte]ᵦ [schlug]ₐ ging*. -/
+/-- The German multiple subject relative (48), *Der Bauer [der]ₐ Ø das Mädchen [das]ᵦ Ø den
+Jungen [küßte]ᵦ [schlug]ₐ ging*, annotated as (49) and (58). -/
 def germanSubjectRelative : Analysis := ⟨[⟨2, 3, 11⟩, ⟨6, 7, 10⟩], [span 2 11, span 6 10]⟩
 
-/-- The multiple pied-piping sentence (42), annotated as (50) and (59): *John found the saucer
-[on which]ₐ Mary [put]ₐ the cup [into which]ᵦ I [poured]ᵦ the tea Ø Ø*. -/
+/-- The multiple pied-piping sentence (42), *John found the saucer [on which]ₐ Mary [put]ₐ the
+cup [into which]ᵦ I [poured]ᵦ the tea Ø Ø*, annotated as (50) and (59). -/
 def piedPiping : Analysis := ⟨[⟨4, 15, 6⟩, ⟨9, 14, 11⟩], [span 4 13, span 9 13]⟩
 
 /-- The four sentence types of Tables 1 and 2. -/
 def sentenceTypes : List Analysis :=
   [subjectRelative, objectRelative, germanSubjectRelative, piedPiping]
 
-/-- Table 1: with empty categories, neither the filler–gap pattern nor the gap–verb pattern
-tracks the construction type. -/
+/-- With empty categories, neither the filler–gap pattern nor the gap–verb pattern tracks the
+construction type (Table 1). -/
 theorem table1 :
     ¬ (∀ A ∈ sentenceTypes, Nested A.fillerGap ↔ A.IsNestedConstruction) ∧
       ¬ (∀ A ∈ sentenceTypes, Nested A.gapVerb ↔ A.IsNestedConstruction) := by
   decide
 
-/-- Table 2: without empty categories, the filler–verb pattern is nested exactly in the nested
-constructions. -/
+/-- Without empty categories, the filler–verb pattern is nested exactly in the nested
+constructions (Table 2). -/
 theorem table2 : ∀ A ∈ sentenceTypes, Nested A.fillerVerb ↔ A.IsNestedConstruction := by
   decide
 
@@ -185,9 +185,8 @@ theorem trace_prediction_fails :
     Nested piedPiping.fillerGap ∧ Nested piedPiping.gapVerb ∧ ¬ Hard ex42 := by
   decide
 
-/-- Pied piping against preposition stranding, (15) and (16): the filler associates with the
-verb in one and with the stranded preposition at the end in the other, a longer association
-for a harder sentence. -/
+/-- Under pied piping (15) the filler associates with the verb, and under preposition stranding
+(16) with the stranded preposition at the end, a longer association for a harder sentence. -/
 theorem stranding :
     ¬ Hard ex15 ∧ Hard ex16 ∧
       ((⟨0, 15, 3⟩ : Dependency).fillerVerb).snd
@@ -201,26 +200,26 @@ verb, while the trace analysis sites all `n` gaps at the end of the sentence: mu
 piping from position 4, (42), (54), (55), and the recursive passive from position 0, (93)–(95).
 -/
 def peripheralGaps (a n : ℕ) : List Dependency :=
-  (List.range n).map λ k => ⟨a + 5 * k, a + 5 * n + (n - 1 - k), a + 5 * k + 2⟩
+  (List.range n).map fun k ↦ ⟨a + 5 * k, a + 5 * n + (n - 1 - k), a + 5 * k + 2⟩
 
-/-- The constructions whose `n` relative clauses each place a filler, its gap, and its verb in
-succession: the multiple subject relative (44), (51). -/
+/-- The multiple subject relative with `n` clauses, (44), (51), each of which places a filler,
+its gap and its verb in succession. -/
 def localGaps (n : ℕ) : List Dependency :=
-  (List.range n).map λ k => ⟨4 + 5 * k, 5 + 5 * k, 6 + 5 * k⟩
+  (List.range n).map fun k ↦ ⟨4 + 5 * k, 5 + 5 * k, 6 + 5 * k⟩
 
-/-- The multiple object relative with `n` clauses, (45), (52): fillers in succession, then the
-verbs in reverse order each followed by its gap. -/
+/-- The multiple object relative with `n` clauses, (45), (52), which places the fillers in
+succession and then the verbs in reverse order, each followed by its gap. -/
 def centreEmbedded (n : ℕ) : List Dependency :=
-  (List.range n).map λ k =>
+  (List.range n).map fun k ↦
     ⟨2 + 3 * k, 2 + 3 * n + 2 * (n - 1 - k) + 1, 2 + 3 * n + 2 * (n - 1 - k)⟩
 
-/-- The German multiple subject relative with `n` clauses, (48), (53): each filler followed by
-its gap, then the verbs in reverse order. -/
+/-- The German multiple subject relative with `n` clauses, (48), (53), which places each filler
+before its gap and then the verbs in reverse order. -/
 def verbFinal (n : ℕ) : List Dependency :=
-  (List.range n).map λ k => ⟨2 + 4 * k, 3 + 4 * k, 2 + 4 * n + (n - 1 - k)⟩
+  (List.range n).map fun k ↦ ⟨2 + 4 * k, 3 + 4 * k, 2 + 4 * n + (n - 1 - k)⟩
 
 /-- Without empty categories, extending the pied-piping or the passive construction keeps the
-pattern disjoint: there is never an unfinished association to remember. -/
+pattern disjoint, so there is never an unfinished association to remember. -/
 theorem peripheralGaps_fillerVerb_disjoint (a n : ℕ) :
     Disjoint ((peripheralGaps a n).map Dependency.fillerVerb) := by
   simp only [Disjoint, peripheralGaps, List.map_map, List.mem_map, List.mem_range,
@@ -299,8 +298,8 @@ theorem verbFinal_common (n : ℕ) :
 
 /-! ### Unbounded dependencies in categorial grammar -/
 
-/-- The basic categories of the fragment: declarative sentence, embedded question, noun phrase,
-and prepositional phrase. -/
+/-- The basic categories of the fragment are declarative sentence, embedded question, noun
+phrase and prepositional phrase. -/
 inductive Basic where
   | S
   | Q
@@ -320,7 +319,7 @@ def np : CCG.Cat Basic := .atom .NP
 /-- The prepositional-phrase category. -/
 def pp : CCG.Cat Basic := .atom .PP
 
-/-- The lexicon of (82)–(85): the subject pronoun *who* takes a sentence missing its subject,
+/-- The lexicon of (82)–(85). The subject pronoun *who* takes a sentence missing its subject,
 the object pronoun *whom* a sentence missing an object, and *John* carries the raised category
 through which rule (80a) combines it with a verb before the verb's object. -/
 def lexicon : List (String × CCG.Cat Basic) :=
@@ -328,34 +327,36 @@ def lexicon : List (String × CCG.Cat Basic) :=
    ("saw", (sent \ np) / np), ("talked", (sent \ np) / pp), ("to", pp / np),
    ("wonders", (sent \ np) / quest), ("who", quest / (sent \ np)), ("whom", quest / (sent / np))]
 
-/-- (83): *who saw Mary* — the subject pronoun applies to a sentence missing its subject. -/
-def der83 : CCG.Derivation Basic quest :=
+/-- The derivation (83) of *who saw Mary*, in which the subject pronoun applies to a sentence
+missing its subject. -/
+def der83 : CCG.Derivation String Basic quest :=
   .fapp (.lex "who" (quest / (sent \ np))) (.fapp (.lex "saw" ((sent \ np) / np)) (.lex "Mary" np))
 
-/-- (84): *whom John saw* — the raised subject composes with the verb into a sentence missing
-its object, which the object pronoun takes. -/
-def der84 : CCG.Derivation Basic quest :=
+/-- The derivation (84) of *whom John saw*, in which the raised subject composes with the verb
+into a sentence missing its object, which the object pronoun takes. -/
+def der84 : CCG.Derivation String Basic quest :=
   .fapp (.lex "whom" (quest / (sent / np)))
     (.fcomp bot_le (.lex "John" (sent / (sent \ np))) (.lex "saw" ((sent \ np) / np)))
 
-/-- (85): *whom John talked to* — two compositions leave the preposition's object missing. -/
-def der85 : CCG.Derivation Basic quest :=
+/-- The derivation (85) of *whom John talked to*, in which two compositions leave the
+preposition's object missing. -/
+def der85 : CCG.Derivation String Basic quest :=
   .fapp (.lex "whom" (quest / (sent / np)))
     (.fcomp bot_le (.fcomp bot_le (.lex "John" (sent / (sent \ np)))
       (.lex "talked" ((sent \ np) / pp))) (.lex "to" (pp / np)))
 
 /-- *Sue wonders* applied to an embedded question. -/
-def wonders (d : CCG.Derivation Basic quest) : CCG.Derivation Basic sent :=
+def wonders (d : CCG.Derivation String Basic quest) : CCG.Derivation String Basic sent :=
   .bapp (.lex "Sue" np) (.fapp (.lex "wonders" ((sent \ np) / quest)) d)
 
 /-- (82a). -/
-def der82a : CCG.Derivation Basic sent := wonders der83
+def der82a : CCG.Derivation String Basic sent := wonders der83
 
 /-- (82b). -/
-def der82b : CCG.Derivation Basic sent := wonders der84
+def der82b : CCG.Derivation String Basic sent := wonders der84
 
 /-- (82c). -/
-def der82c : CCG.Derivation Basic sent := wonders der85
+def der82c : CCG.Derivation String Basic sent := wonders der85
 
 /-- The embedded questions (82a–c) are derived from the lexicon, with no empty category. -/
 theorem embedded_questions :
@@ -365,17 +366,17 @@ theorem embedded_questions :
         der82c.yield = ["Sue", "wonders", "whom", "John", "talked", "to"]) := by
   decide
 
-/-- The noun phrases each word of the fragment contributes, in the sense of the count invariant:
-a verb consumes its arguments, a pronoun supplies the one it fills. -/
+/-- The noun phrases each word of the fragment contributes to the count invariant. A verb
+consumes its arguments and a pronoun supplies the one it fills. -/
 def npCount : String → ℤ
   | "saw" => -2
   | "talked" | "to" | "wonders" => -1
   | _ => 1
 
-/-- (82d): *Sue wonders who John saw Mary* has no derivation, with *who* or with *whom*, because
+/-- *Sue wonders who John saw Mary* (82d) has no derivation, with *who* or with *whom*, because
 the pronoun supplies a noun phrase no verb consumes. -/
 theorem no_der82d (w : String) (hw : w = "who" ∨ w = "whom") :
-    ¬ ∃ d : CCG.Derivation Basic sent,
+    ¬ ∃ d : CCG.Derivation String Basic sent,
       d.LexIn lexicon ∧ d.yield = ["Sue", "wonders", w, "John", "saw", "Mary"] := by
   rintro ⟨d, hd, hy⟩
   have h := d.count_eq_sum .NP (f := npCount) (by decide) hd

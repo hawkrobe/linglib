@@ -42,7 +42,7 @@ namespace CCG
 
 open Montague
 
-variable {α : Type*}
+variable {T α : Type*}
 
 /-! ### Type correspondence -/
 
@@ -64,11 +64,12 @@ counterpart. -/
 
 /-! ### Derivation interpretation -/
 
+variable (T) in
 /-- A semantic lexicon gives a word an optional meaning at each category, of that category's
 type under the atom typing `τ`. Type-raised and coordinating entries carry the meanings of
 type-raising and coordination. -/
 def SemLexicon (τ : α → Ty) (E W : Type) :=
-  String → (c : Cat α) → Option (Ty.Domain E W (c.toTy τ))
+  T → (c : Cat α) → Option (Ty.Domain E W (c.toTy τ))
 
 /-- `r.sem τ` is the meaning of the rule `r` as an operation on its daughters' meanings.
 Application applies the function to the argument, composition composes the two meanings, and
@@ -89,8 +90,8 @@ def Rule.sem (τ : α → Ty) {E W : Type} : {l r c : Cat α} → Rule α l r c 
 /-- `d.interp lex` is the meaning of the derivation `d`. A leaf takes its meaning from `lex`
 and a rule node combines its daughters' meanings by `Rule.sem`, so the result is `none` only
 when a word is missing from the lexicon. -/
-def Derivation.interp {τ : α → Ty} {E W : Type} (lex : SemLexicon τ E W) :
-    {c : Cat α} → Derivation α c → Option (Ty.Domain E W (c.toTy τ))
+def Derivation.interp {τ : α → Ty} {E W : Type} (lex : SemLexicon T τ E W) :
+    {c : Cat α} → Derivation T α c → Option (Ty.Domain E W (c.toTy τ))
   | _, .lex f c => lex f c
   | _, .node ru d₁ d₂ => do some (ru.sem τ (← d₁.interp lex) (← d₂.interp lex))
 
@@ -105,14 +106,14 @@ nodes cannot change what a constituent means, and the matching-entry tests of
 
 section SpuriousAmbiguity
 
-variable {τ : α → Ty} {E W : Type} (lex : SemLexicon τ E W)
+variable {τ : α → Ty} {E W : Type} (lex : SemLexicon T τ E W)
 
 /-- Reassociating a forward-composition chain preserves its interpretation, since composition
 is associative. -/
 theorem Derivation.interp_fcomp_assoc {x y z w : Cat α} {m n p : Modality}
     (hm : m ≤ Modality.diamond) (hn : n ≤ Modality.diamond)
-    (d₁ : Derivation α (.rslash x m y)) (d₂ : Derivation α (.rslash y n z))
-    (d₃ : Derivation α (.rslash z p w)) :
+    (d₁ : Derivation T α (.rslash x m y)) (d₂ : Derivation T α (.rslash y n z))
+    (d₃ : Derivation T α (.rslash z p w)) :
     (Derivation.fcomp hn (.fcomp hm d₁ d₂) d₃).interp lex
       = (Derivation.fcomp hm d₁ (.fcomp hn d₂ d₃)).interp lex := by
   simp only [Derivation.interp]
@@ -122,8 +123,8 @@ theorem Derivation.interp_fcomp_assoc {x y z w : Cat α} {m n p : Modality}
 /-- Composing and then applying has the interpretation of applying twice, since
 `(f ∘ g) x = f (g x)`. -/
 theorem Derivation.interp_fapp_fcomp {x y z : Cat α} {m n : Modality}
-    (hm : m ≤ Modality.diamond) (d₁ : Derivation α (.rslash x m y))
-    (d₂ : Derivation α (.rslash y n z)) (d₃ : Derivation α z) :
+    (hm : m ≤ Modality.diamond) (d₁ : Derivation T α (.rslash x m y))
+    (d₂ : Derivation T α (.rslash y n z)) (d₃ : Derivation T α z) :
     (Derivation.fapp (.fcomp hm d₁ d₂) d₃).interp lex
       = (Derivation.fapp d₁ (.fapp d₂ d₃)).interp lex := by
   simp only [Derivation.interp]
@@ -133,8 +134,8 @@ theorem Derivation.interp_fapp_fcomp {x y z : Cat α} {m n : Modality}
 /-- Reassociating a backward-composition chain preserves its interpretation. -/
 theorem Derivation.interp_bcomp_assoc {x y z w : Cat α} {m n p : Modality}
     (hm : m ≤ Modality.diamond) (hn : n ≤ Modality.diamond)
-    (d₁ : Derivation α (.lslash y p z)) (d₂ : Derivation α (.lslash x n y))
-    (d₃ : Derivation α (.lslash w m x)) :
+    (d₁ : Derivation T α (.lslash y p z)) (d₂ : Derivation T α (.lslash x n y))
+    (d₃ : Derivation T α (.lslash w m x)) :
     (Derivation.bcomp hm (.bcomp hn d₁ d₂) d₃).interp lex
       = (Derivation.bcomp hn d₁ (.bcomp hm d₂ d₃)).interp lex := by
   simp only [Derivation.interp]
@@ -143,8 +144,8 @@ theorem Derivation.interp_bcomp_assoc {x y z w : Cat α} {m n p : Modality}
 
 /-- Applying twice has the interpretation of backward-composing first and then applying. -/
 theorem Derivation.interp_bapp_bcomp {x y w : Cat α} {m n : Modality}
-    (hm : m ≤ Modality.diamond) (d₁ : Derivation α y) (d₂ : Derivation α (.lslash x n y))
-    (d₃ : Derivation α (.lslash w m x)) :
+    (hm : m ≤ Modality.diamond) (d₁ : Derivation T α y) (d₂ : Derivation T α (.lslash x n y))
+    (d₃ : Derivation T α (.lslash w m x)) :
     (Derivation.bapp (.bapp d₁ d₂) d₃).interp lex
       = (Derivation.bapp d₁ (.bcomp hm d₂ d₃)).interp lex := by
   simp only [Derivation.interp]

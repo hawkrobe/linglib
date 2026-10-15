@@ -9,16 +9,17 @@ Steedman's Combinatory Projection Principle makes every syntactic combinatory ru
 linearly ordered and type-dependent, applying to string-adjacent categories. `Rule` is the modern
 inventory of such rules, application and first- and second-order composition in harmonic and
 crossing variants, each gated on the modality of the primary functor's slash. A `Derivation` is a
-tree of lexical leaves and binary `Rule` nodes indexed by its category, so a value of
-`Derivation α c` is a derivation of `c`. Type-raising and coordination are lexical, as in
-Steedman's morpholexical treatment: raised categories enter as leaves, and a conjunction is an
-entry of category `(X \⋆ X) /⋆ X` whose `star` slashes confine it to application. The
-substitution rules and the morphemic slash are not modeled.
+tree of lexical leaves, tokens of an alphabet `T`, and binary `Rule` nodes, indexed by its
+category over the atoms `α`, so a value of `Derivation T α c` is a derivation of `c`.
+Type-raising and coordination are lexical, as in Steedman's morpholexical treatment: raised
+categories enter as leaves, and a conjunction is an entry of category `(X \⋆ X) /⋆ X` whose
+`star` slashes confine it to application. The substitution rules and the morphemic slash are
+not modeled.
 
 ## Main definitions
 
 * `CCG.Rule`: the binary combinatory rules, indexed by left input, right input and result.
-* `CCG.Derivation`: derivations, with `yield` the surface string, `opCount` the number of rule
+* `CCG.Derivation`: derivations, with `yield` the token string, `opCount` the number of rule
   applications, `HasComp` whether composition occurs, and `LexIn` whether every leaf is drawn
   from a lexicon.
 
@@ -36,7 +37,7 @@ substitution rules and the morphemic slash are not modeled.
 
 namespace CCG
 
-variable {α : Type*}
+variable {T α : Type*}
 
 /-- A `Rule α l r c` is a binary combinatory rule instance combining a left constituent of
 category `l` with a right constituent of category `r` to give `c`. Harmonic rules require the
@@ -92,87 +93,87 @@ instance {l r c : Cat α} : ∀ ru : Rule α l r c, Decidable ru.IsComp
 
 /-- A CCG derivation of category `c` is a lexical leaf or a binary `Rule` node over two
 derivations, which states the binarity of the Combinatory Projection Principle once. A value of
-`Derivation α c` is a well-formed derivation, so "derives `c`" is typechecking. -/
-inductive Derivation (α : Type*) : Cat α → Type _ where
-  /-- A lexical leaf, a surface form at category `c`. -/
-  | lex (form : String) (c : Cat α) : Derivation α c
+`Derivation T α c` is a well-formed derivation, so "derives `c`" is typechecking. -/
+inductive Derivation (T α : Type*) : Cat α → Type _ where
+  /-- A lexical leaf, a token at category `c`. -/
+  | lex (t : T) (c : Cat α) : Derivation T α c
   /-- A binary rule application. -/
   | node {l r c : Cat α} :
-      Rule α l r c → Derivation α l → Derivation α r → Derivation α c
+      Rule α l r c → Derivation T α l → Derivation T α r → Derivation T α c
 
 namespace Derivation
 
 variable {x y z w : Cat α} {m n p : Modality}
 
 /-- Forward application `>`. -/
-abbrev fapp (d₁ : Derivation α (.rslash x m y)) (d₂ : Derivation α y) :
-    Derivation α x := .node .fapp d₁ d₂
+abbrev fapp (d₁ : Derivation T α (.rslash x m y)) (d₂ : Derivation T α y) :
+    Derivation T α x := .node .fapp d₁ d₂
 
 /-- Backward application `<`. -/
-abbrev bapp (d₁ : Derivation α y) (d₂ : Derivation α (.lslash x m y)) :
-    Derivation α x := .node .bapp d₁ d₂
+abbrev bapp (d₁ : Derivation T α y) (d₂ : Derivation T α (.lslash x m y)) :
+    Derivation T α x := .node .bapp d₁ d₂
 
 /-- Forward harmonic composition `>B`. -/
-abbrev fcomp (h : m ≤ Modality.diamond) (d₁ : Derivation α (.rslash x m y))
-    (d₂ : Derivation α (.rslash y n z)) : Derivation α (.rslash x n z) :=
+abbrev fcomp (h : m ≤ Modality.diamond) (d₁ : Derivation T α (.rslash x m y))
+    (d₂ : Derivation T α (.rslash y n z)) : Derivation T α (.rslash x n z) :=
   .node (.fcomp h) d₁ d₂
 
 /-- Backward harmonic composition `<B`. -/
-abbrev bcomp (h : m ≤ Modality.diamond) (d₁ : Derivation α (.lslash y n z))
-    (d₂ : Derivation α (.lslash x m y)) : Derivation α (.lslash x n z) :=
+abbrev bcomp (h : m ≤ Modality.diamond) (d₁ : Derivation T α (.lslash y n z))
+    (d₂ : Derivation T α (.lslash x m y)) : Derivation T α (.lslash x n z) :=
   .node (.bcomp h) d₁ d₂
 
 /-- Forward crossing composition `>B×`. -/
-abbrev fcompx (h : m ≤ Modality.cross) (d₁ : Derivation α (.rslash x m y))
-    (d₂ : Derivation α (.lslash y n z)) : Derivation α (.lslash x n z) :=
+abbrev fcompx (h : m ≤ Modality.cross) (d₁ : Derivation T α (.rslash x m y))
+    (d₂ : Derivation T α (.lslash y n z)) : Derivation T α (.lslash x n z) :=
   .node (.fcompx h) d₁ d₂
 
 /-- Backward crossing composition `<B×`. -/
-abbrev bcompx (h : m ≤ Modality.cross) (d₁ : Derivation α (.rslash y n z))
-    (d₂ : Derivation α (.lslash x m y)) : Derivation α (.rslash x n z) :=
+abbrev bcompx (h : m ≤ Modality.cross) (d₁ : Derivation T α (.rslash y n z))
+    (d₂ : Derivation T α (.lslash x m y)) : Derivation T α (.rslash x n z) :=
   .node (.bcompx h) d₁ d₂
 
 /-- Forward second-order composition `>B²`. -/
-abbrev fcomp2 (h : m ≤ Modality.diamond) (d₁ : Derivation α (.rslash x m y))
-    (d₂ : Derivation α (.rslash (.rslash y n z) p w)) :
-    Derivation α (.rslash (.rslash x n z) p w) := .node (.fcomp2 h) d₁ d₂
+abbrev fcomp2 (h : m ≤ Modality.diamond) (d₁ : Derivation T α (.rslash x m y))
+    (d₂ : Derivation T α (.rslash (.rslash y n z) p w)) :
+    Derivation T α (.rslash (.rslash x n z) p w) := .node (.fcomp2 h) d₁ d₂
 
 /-- Backward second-order composition `<B²`. -/
 abbrev bcomp2 (h : m ≤ Modality.diamond)
-    (d₁ : Derivation α (.lslash (.lslash y n z) p w))
-    (d₂ : Derivation α (.lslash x m y)) :
-    Derivation α (.lslash (.lslash x n z) p w) := .node (.bcomp2 h) d₁ d₂
+    (d₁ : Derivation T α (.lslash (.lslash y n z) p w))
+    (d₂ : Derivation T α (.lslash x m y)) :
+    Derivation T α (.lslash (.lslash x n z) p w) := .node (.bcomp2 h) d₁ d₂
 
 /-- Forward crossing second-order composition `>B²×`. -/
-abbrev fcompx2 (h : m ≤ Modality.cross) (d₁ : Derivation α (.rslash x m y))
-    (d₂ : Derivation α (.lslash (.lslash y n z) p w)) :
-    Derivation α (.lslash (.lslash x n z) p w) := .node (.fcompx2 h) d₁ d₂
+abbrev fcompx2 (h : m ≤ Modality.cross) (d₁ : Derivation T α (.rslash x m y))
+    (d₂ : Derivation T α (.lslash (.lslash y n z) p w)) :
+    Derivation T α (.lslash (.lslash x n z) p w) := .node (.fcompx2 h) d₁ d₂
 
 /-- Backward crossing second-order composition `<B²×`. -/
 abbrev bcompx2 (h : m ≤ Modality.cross)
-    (d₁ : Derivation α (.rslash (.rslash y n z) p w))
-    (d₂ : Derivation α (.lslash x m y)) :
-    Derivation α (.rslash (.rslash x n z) p w) := .node (.bcompx2 h) d₁ d₂
+    (d₁ : Derivation T α (.rslash (.rslash y n z) p w))
+    (d₂ : Derivation T α (.lslash x m y)) :
+    Derivation T α (.rslash (.rslash x n z) p w) := .node (.bcompx2 h) d₁ d₂
 
-/-- The surface string a derivation spells out, its leaf forms from left to right. Rule nodes
+/-- The token string a derivation spells out, its leaves from left to right. Rule nodes
 concatenate their daughters, so the yield is independent of the derivation's combinatory
 structure. -/
-def yield {c : Cat α} : Derivation α c → List String
+def yield {c : Cat α} : Derivation T α c → List T
   | .lex f _ => [f]
   | .node _ d₁ d₂ => d₁.yield ++ d₂.yield
 
 /-- The number of combinatory rule applications in a derivation. -/
-def opCount {c : Cat α} : Derivation α c → Nat
+def opCount {c : Cat α} : Derivation T α c → Nat
   | .lex _ _ => 0
   | .node _ d₁ d₂ => 1 + d₁.opCount + d₂.opCount
 
 /-- Every lexical leaf of the derivation is an entry of the lexicon `L`. -/
-def LexIn (L : List (String × Cat α)) {c : Cat α} : Derivation α c → Prop
+def LexIn (L : List (T × Cat α)) {c : Cat α} : Derivation T α c → Prop
   | .lex f c => (f, c) ∈ L
   | .node _ d₁ d₂ => d₁.LexIn L ∧ d₂.LexIn L
 
-instance LexIn.decidable [DecidableEq α] (L : List (String × Cat α)) {c : Cat α} :
-    ∀ d : Derivation α c, Decidable (d.LexIn L)
+instance LexIn.decidable [DecidableEq T] [DecidableEq α] (L : List (T × Cat α)) {c : Cat α} :
+    ∀ d : Derivation T α c, Decidable (d.LexIn L)
   | .lex f c => inferInstanceAs (Decidable ((f, c) ∈ L))
   | .node _ d₁ d₂ =>
       @instDecidableAnd _ _ (decidable L d₁) (decidable L d₂)
@@ -187,9 +188,9 @@ theorem _root_.CCG.Rule.count_eq [DecidableEq α] (a : α) {l r c : Cat α}
 /-- The count invariant of [van-benthem-1986]. A derivation's category has the count of its
 leaves, so a string whose lexical counts do not sum to the count of a category has no derivation
 of that category from the lexicon. -/
-theorem count_eq_sum [DecidableEq α] (a : α) {L : List (String × Cat α)} {f : String → ℤ}
+theorem count_eq_sum [DecidableEq α] (a : α) {L : List (T × Cat α)} {f : T → ℤ}
     (hL : ∀ p ∈ L, p.2.count a = f p.1) {c : Cat α} :
-    ∀ d : Derivation α c, d.LexIn L → c.count a = (d.yield.map f).sum
+    ∀ d : Derivation T α c, d.LexIn L → c.count a = (d.yield.map f).sum
   | .lex w c, h => by simpa [yield] using hL (w, c) h
   | .node ru d₁ d₂, h => by
     rw [ru.count_eq a, count_eq_sum a hL d₁ (show d₁.LexIn L ∧ d₂.LexIn L from h).1,
@@ -197,11 +198,11 @@ theorem count_eq_sum [DecidableEq α] (a : α) {L : List (String × Cat α)} {f 
       List.sum_append]
 
 /-- The derivation contains a composition node (of any order or direction). -/
-def HasComp {c : Cat α} : Derivation α c → Prop
+def HasComp {c : Cat α} : Derivation T α c → Prop
   | .lex _ _ => False
   | .node ru d₁ d₂ => ru.IsComp ∨ d₁.HasComp ∨ d₂.HasComp
 
-instance HasComp.decidable {c : Cat α} : ∀ d : Derivation α c, Decidable d.HasComp
+instance HasComp.decidable {c : Cat α} : ∀ d : Derivation T α c, Decidable d.HasComp
   | .lex _ _ => isFalse fun h => h
   | .node _ d₁ d₂ =>
       @instDecidableOr _ _ inferInstance

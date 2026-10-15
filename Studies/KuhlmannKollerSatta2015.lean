@@ -11,10 +11,10 @@ public import Mathlib.Data.List.Basic
 This file formalizes Example 2 of [kuhlmann-koller-satta-2015], the grammar `G₁` in the
 formalism of [vijay-shanker-weir-1994] and [weir-joshi-1988] whose rules of application and
 of composition of degree at most 2 are restricted to primary inputs with target `S`, and
-proves that its language is exactly `aⁿbⁿcⁿ` (`language_eq_anbnc`). The completeness half
-follows the paper's derivation: the `b`s are composed into a cluster `S/C/…/C`
-(`cluster_derives`), and each `C` argument is peeled off by crossed-composing a `c` and
-backward-applying an `a` (`peel_derives`). The soundness half is an induction on
+proves that its language is `aⁿbⁿcⁿ` without the empty word (`language_eq_anbncn_sub_one`).
+The completeness half follows the paper's derivation: the `b`s are composed into a cluster
+`S/C/…/C` (`cluster_derives`), and each `C` argument is peeled off by crossed-composing a `c`
+and backward-applying an `a` (`peel_derives`). The soundness half is an induction on
 derivability showing that every derivable pair has one of the shapes that construction
 produces (`reachable_of_derives`). The language is therefore not context-free
 (`not_isContextFree_language`), the fact the proof of Theorem 3 invokes.
@@ -29,11 +29,10 @@ without them they cannot generate `aⁿbⁿcⁿ`.
 
 ## Implementation notes
 
-The atoms `A`, `B`, `C`, `S` are the study's own type, since `CCG.Cat` is parameterized over
-its atoms. The lexical entry for `c` is `C\A`, the direction the paper's derivation of
-`aⁿbⁿcⁿ` requires. Strings are token lists over `"a"`, `"b"`, `"c"`, and the non-context-freeness
-of the language is the general result for any three distinct letters
-(`Language.not_isContextFree_of_replicate_mem_of_count_eq`), instantiated at these tokens.
+The atoms `A`, `B`, `C`, `S` and the letters `a`, `b`, `c` are the study's own types, since
+`CCG.Grammar` is parameterized over both. The lexical entry for `c` is `C\A`, the direction the
+paper's derivation of `aⁿbⁿcⁿ` requires. The language is stated against `Language.anbncn`, and
+the empty word drops out because no CCG grammar derives it (`CCG.Grammar.Derives.ne_nil`).
 
 ## TODO
 
@@ -68,14 +67,21 @@ abbrev Bcat : Cat Atom := .atom .B
 abbrev Ccat : Cat Atom := .atom .C
 abbrev Scat : Cat Atom := .atom .S
 
+/-- The terminal letters of the paper's Example 2 grammar. -/
+inductive Letter where
+  | a
+  | b
+  | c
+  deriving Repr, DecidableEq
+
 /-- The grammar `G₁` of Example 2 has six lexical entries, its target restriction and start
 at `S`, and degree bound 2, an instance of the ε-free degree-2 normal form of
 [schiffer-maletti-2021]. -/
-def exampleGrammar : Grammar Atom :=
+def exampleGrammar : Grammar Letter Atom :=
   .targetRestricted
-    [("a", Acat), ("c", Ccat \ Acat),
-     ("b", (Scat / Ccat) / Bcat), ("b", (Bcat / Ccat) / Bcat),
-     ("b", Scat / Ccat), ("b", Bcat / Ccat)]
+    [(.a, Acat), (.c, Ccat \ Acat),
+     (.b, (Scat / Ccat) / Bcat), (.b, (Bcat / Ccat) / Bcat),
+     (.b, Scat / Ccat), (.b, Bcat / Ccat)]
     .S 2
 
 /-- The cluster category `S/C/…/C` with `n` forward `C`-arguments. -/
@@ -95,23 +101,23 @@ def clusterCat : Nat → Cat Atom
 `S/Cʲ⁺¹/B`. -/
 theorem fc2Chain_derives (j : Nat) :
     exampleGrammar.Derives ((clusterCat (j + 1)).rslash .dot Bcat)
-      (List.replicate (j + 1) "b") := by
+      (List.replicate (j + 1) .b) := by
   induction j with
   | zero => exact .lex (by decide)
   | succ j ih =>
       have h : exampleGrammar.Derives ((clusterCat (j + 2)).rslash .dot Bcat)
-          (List.replicate (j + 1) "b" ++ ["b"]) :=
+          (List.replicate (j + 1) .b ++ [.b]) :=
         .fc 2 ih (.lex (c := (Bcat / Ccat) / Bcat) (by decide))
           ⟨by decide, by simp [target_clusterCat]⟩ rfl
       simpa [List.replicate_succ'] using h
 
 /-- `G₁` derives the `b`-cluster `bⁿ` at category `clusterCat n`, for `n ≥ 1`. -/
 theorem cluster_derives : ∀ {n : Nat}, 1 ≤ n →
-    exampleGrammar.Derives (clusterCat n) (List.replicate n "b")
+    exampleGrammar.Derives (clusterCat n) (List.replicate n .b)
   | 1, _ => .lex (by decide)
   | n + 2, _ => by
       have h : exampleGrammar.Derives (clusterCat (n + 2))
-          (List.replicate (n + 1) "b" ++ ["b"]) :=
+          (List.replicate (n + 1) .b ++ [.b]) :=
         .fc 1 (fc2Chain_derives n) (.lex (c := Bcat / Ccat) (by decide))
           ⟨by decide, by simp [target_clusterCat]⟩ rfl
       simpa [List.replicate_succ'] using h
@@ -124,13 +130,13 @@ private theorem replicate_cons_comm {α : Type*} (k : Nat) (a : α) (X : List α
 
 /-- From a derivation of `w` at `clusterCat k`, crossed-composing a `c` and backward-applying
 an `a` `k` times derives `aᵏ w cᵏ` at `S`. -/
-theorem peel_derives : ∀ (k : Nat) {w : List String},
+theorem peel_derives : ∀ (k : Nat) {w : List Letter},
     exampleGrammar.Derives (clusterCat k) w →
     exampleGrammar.Derives Scat
-      (List.replicate k "a" ++ w ++ List.replicate k "c")
+      (List.replicate k .a ++ w ++ List.replicate k .c)
   | 0, w, h => by simpa [clusterCat] using h
   | k + 1, w, h => by
-      have hstep : exampleGrammar.Derives (clusterCat k) ("a" :: (w ++ ["c"])) :=
+      have hstep : exampleGrammar.Derives (clusterCat k) (.a :: (w ++ [.c])) :=
         .bc 0 (.lex (c := Acat) (by decide))
           (.fc 1 h (.lex (c := Ccat \ Acat) (by decide))
             ⟨by decide, by simp [target_clusterCat]⟩ rfl)
@@ -146,24 +152,24 @@ completeness construction, so the language contains nothing beyond `aⁿbⁿcⁿ
 
 /-- The category/string pairs that `G₁` derives, namely the six lexical shapes, the degree-2
 chain categories, the clusters wrapped by `i` peels, and the peel intermediates. -/
-def Reachable : Cat Atom → List String → Prop := fun c w ↦
-  (c = Acat ∧ w = ["a"]) ∨
-  (c = (Ccat \ Acat) ∧ w = ["c"]) ∨
-  (c = ((Bcat / Ccat) / Bcat) ∧ w = ["b"]) ∨
-  (c = (Bcat / Ccat) ∧ w = ["b"]) ∨
+def Reachable : Cat Atom → List Letter → Prop := fun c w ↦
+  (c = Acat ∧ w = [.a]) ∨
+  (c = (Ccat \ Acat) ∧ w = [.c]) ∨
+  (c = ((Bcat / Ccat) / Bcat) ∧ w = [.b]) ∨
+  (c = (Bcat / Ccat) ∧ w = [.b]) ∨
   (∃ j : Nat, c = (clusterCat (j + 1)).rslash .dot Bcat ∧
-    w = List.replicate (j + 1) "b") ∨
-  (∃ k i : Nat, 1 ≤ k + i ∧ c = clusterCat k ∧
-    w = List.replicate i "a" ++ List.replicate (k + i) "b" ++ List.replicate i "c") ∨
+    w = List.replicate (j + 1) .b) ∨
+  (∃ k i : Nat, c = clusterCat k ∧
+    w = List.replicate i .a ++ List.replicate (k + i) .b ++ List.replicate i .c) ∨
   (∃ k i : Nat, c = (clusterCat k).lslash .dot Acat ∧
-    w = List.replicate i "a" ++ List.replicate (k + 1 + i) "b" ++
-      List.replicate (i + 1) "c")
+    w = List.replicate i .a ++ List.replicate (k + 1 + i) .b ++
+      List.replicate (i + 1) .c)
 
 /-- Every pair `G₁` derives is `Reachable`, by rule induction. The target gate admits only
 primaries with target `S`, and a secondary `Yβ` over an atom `Y` has `Y` as its target and `β` as
 its arguments, so each rule step is one of the four instances of the completeness
 construction. -/
-theorem reachable_of_derives {c : Cat Atom} {w : List String}
+theorem reachable_of_derives {c : Cat Atom} {w : List Letter}
     (h : exampleGrammar.Derives c w) : Reachable c w := by
   induction h with
   | @lex w' c' hmem =>
@@ -176,12 +182,12 @@ theorem reachable_of_derives {c : Cat Atom} {w : List String}
     · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inl ⟨0, rfl, rfl⟩))))
     · exact Or.inr (Or.inr (Or.inl ⟨rfl, rfl⟩))
     · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inl
-        ⟨1, 0, by omega, rfl, rfl⟩)))))
+        ⟨1, 0, rfl, rfl⟩)))))
     · exact Or.inr (Or.inr (Or.inr (Or.inl ⟨rfl, rfl⟩)))
   | @fc n a b c u v _ _ hgate hc iha ihb =>
     obtain ⟨x, m, y, β, rfl, rfl, rfl, rfl⟩ := Cat.generalizedForwardComp_eq_some_iff.mp hc
     obtain ⟨-, hx⟩ : _ ∧ x.target = .S := hgate
-    rcases iha with ⟨h, -⟩ | ⟨h, -⟩ | ⟨h, -⟩ | ⟨h, -⟩ | ⟨j, h, rfl⟩ | ⟨_ | k, i, -, h, rfl⟩ |
+    rcases iha with ⟨h, -⟩ | ⟨h, -⟩ | ⟨h, -⟩ | ⟨h, -⟩ | ⟨j, h, rfl⟩ | ⟨_ | k, i, h, rfl⟩ |
       ⟨_, _, h, -⟩
     · cases h
     · cases h
@@ -189,16 +195,16 @@ theorem reachable_of_derives {c : Cat Atom} {w : List String}
     · cases h; simp at hx
     · -- the chain `(S/Cʲ⁺¹)/B` composes with `(B/C)/B` into the next chain, or with `B/C`
       cases h
-      rcases ihb with ⟨h, -⟩ | ⟨h, -⟩ | ⟨h, rfl⟩ | ⟨h, rfl⟩ | ⟨_, h, -⟩ | ⟨_, _, -, h, -⟩ |
+      rcases ihb with ⟨h, -⟩ | ⟨h, -⟩ | ⟨h, rfl⟩ | ⟨h, rfl⟩ | ⟨_, h, -⟩ | ⟨_, _, h, -⟩ |
         ⟨_, _, h, -⟩ <;> simp [Cat.atom_pushArgs_eq_iff] at h <;> subst h
       · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inl
           ⟨j + 1, rfl, by simp [List.replicate_succ']⟩))))
       · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inl
-          ⟨j + 2, 0, by omega, rfl, by simp [List.replicate_succ']⟩)))))
+          ⟨j + 2, 0, rfl, by simp [List.replicate_succ']⟩)))))
     · cases h
     · -- the cluster `S/Cᵏ⁺¹` crossed-composes with `C\A` into a peel intermediate
       cases h
-      rcases ihb with ⟨h, -⟩ | ⟨h, rfl⟩ | ⟨h, -⟩ | ⟨h, -⟩ | ⟨_, h, -⟩ | ⟨_, _, -, h, -⟩ |
+      rcases ihb with ⟨h, -⟩ | ⟨h, rfl⟩ | ⟨h, -⟩ | ⟨h, -⟩ | ⟨_, h, -⟩ | ⟨_, _, h, -⟩ |
         ⟨_, _, h, -⟩ <;> simp [Cat.atom_pushArgs_eq_iff] at h
       subst h
       refine Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr ⟨k, i, rfl, ?_⟩)))))
@@ -207,7 +213,7 @@ theorem reachable_of_derives {c : Cat Atom} {w : List String}
   | @bc n a b c u v _ _ hgate hc iha ihb =>
     obtain ⟨x, m, y, β, rfl, rfl, rfl, rfl⟩ := Cat.generalizedBackwardComp_eq_some_iff.mp hc
     obtain ⟨-, hx⟩ : _ ∧ x.target = .S := hgate
-    rcases ihb with ⟨h, -⟩ | ⟨h, -⟩ | ⟨h, -⟩ | ⟨h, -⟩ | ⟨_, h, -⟩ | ⟨_ | _, _, -, h, -⟩ |
+    rcases ihb with ⟨h, -⟩ | ⟨h, -⟩ | ⟨h, -⟩ | ⟨h, -⟩ | ⟨_, h, -⟩ | ⟨_ | _, _, h, -⟩ |
       ⟨k, i, h, rfl⟩
     · cases h
     · cases h; simp at hx
@@ -218,10 +224,10 @@ theorem reachable_of_derives {c : Cat Atom} {w : List String}
     · cases h
     · -- an `a` backward-applies to a peel intermediate, giving the next cluster
       cases h
-      rcases iha with ⟨h, rfl⟩ | ⟨h, -⟩ | ⟨h, -⟩ | ⟨h, -⟩ | ⟨_, h, -⟩ | ⟨_, _, -, h, -⟩ |
+      rcases iha with ⟨h, rfl⟩ | ⟨h, -⟩ | ⟨h, -⟩ | ⟨h, -⟩ | ⟨_, h, -⟩ | ⟨_, _, h, -⟩ |
         ⟨_, _, h, -⟩ <;> simp [Cat.atom_pushArgs_eq_iff] at h
       subst h
-      refine Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inl ⟨k, i + 1, by omega, rfl, ?_⟩)))))
+      refine Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inl ⟨k, i + 1, rfl, ?_⟩)))))
       simp [show k + (i + 1) = k + 1 + i by omega, List.replicate_succ]
 
 /-! ### Rule restrictions (§3.1, §3.3) -/
@@ -229,7 +235,7 @@ theorem reachable_of_derives {c : Cat Atom} {w : List String}
 /-- A grammar is prefix-closed (Definition 2) when every permitted instance `X/Y Yβ ⇒ Xβ` of
 composition stays permitted for every prefix `β'` of the argument sequence `β`, that is, with the
 outermost arguments of the secondary input already consumed, at the lowered degree. -/
-def PrefixClosed {α : Type*} (G : Grammar α) : Prop :=
+def PrefixClosed {T α : Type*} (G : Grammar T α) : Prop :=
   (∀ x m y (β β' : List (Cat.Arg α)), β' <+: β →
     G.allowsFwd β.length (.rslash x m y) (y.pushArgs β) →
       G.allowsFwd β'.length (.rslash x m y) (y.pushArgs β')) ∧
@@ -239,7 +245,7 @@ def PrefixClosed {α : Type*} (G : Grammar α) : Prop :=
 
 /-- A grammar is without target restrictions (Definition 3) when every permitted instance
 `X/Y Yβ ⇒ Xβ` stays permitted under any change of the primary input's result category `X`. -/
-def WithoutTargetRestrictions {α : Type*} (G : Grammar α) : Prop :=
+def WithoutTargetRestrictions {T α : Type*} (G : Grammar T α) : Prop :=
   (∀ x x' m y (β : List (Cat.Arg α)), G.allowsFwd β.length (.rslash x m y) (y.pushArgs β) →
     G.allowsFwd β.length (.rslash x' m y) (y.pushArgs β)) ∧
   (∀ x x' m y (β : List (Cat.Arg α)), G.allowsBwd β.length (y.pushArgs β) (.lslash x m y) →
@@ -247,7 +253,7 @@ def WithoutTargetRestrictions {α : Type*} (G : Grammar α) : Prop :=
 
 /-- A target-restricted grammar is prefix-closed: its gates look only at the degree and the
 primary input's target. -/
-theorem targetRestricted_prefixClosed {α : Type*} (L : List (String × Cat α)) (s : α)
+theorem targetRestricted_prefixClosed {T α : Type*} (L : List (T × Cat α)) (s : α)
     (d : ℕ) : PrefixClosed (Grammar.targetRestricted L s d) :=
   ⟨fun _ _ _ _ _ hβ h ↦ ⟨hβ.length_le.trans h.1, h.2⟩,
    fun _ _ _ _ _ hβ h ↦ ⟨hβ.length_le.trans h.1, h.2⟩⟩
@@ -264,44 +270,47 @@ theorem exampleGrammar_not_withoutTargetRestrictions :
 
 /-! ### Generative-capacity result -/
 
-/-- The string language `aⁿbⁿcⁿ` (`n ≥ 1`) over `{"a","b","c"}`. -/
-def anbncStrings : Set (List String) :=
-  {w | ∃ n, 1 ≤ n ∧ w = List.replicate n "a" ++ List.replicate n "b" ++ List.replicate n "c"}
-
-/-- `G₁` generates every string of `aⁿbⁿcⁿ` ([kuhlmann-koller-satta-2015], Example 2), the
-completeness half of the example. -/
-theorem ccg_generates_anbnc : anbncStrings ⊆ exampleGrammar.language := by
-  rintro w ⟨n, hn, rfl⟩
-  exact peel_derives n (cluster_derives hn)
+/-- `G₁` generates every nonempty word of `aⁿbⁿcⁿ` ([kuhlmann-koller-satta-2015], Example 2),
+the completeness half of the example. -/
+theorem anbncn_sub_one_subset_language :
+    Language.anbncn Letter.a .b .c - 1 ≤ exampleGrammar.language := by
+  rintro _ ⟨⟨n, rfl⟩, hn⟩
+  refine peel_derives n (cluster_derives (Nat.one_le_iff_ne_zero.2 ?_))
+  rintro rfl
+  exact hn rfl
 
 /-- `G₁` derives nothing beyond `aⁿbⁿcⁿ`. -/
-theorem language_subset_anbnc : exampleGrammar.language ⊆ anbncStrings := by
+theorem language_subset_anbncn : exampleGrammar.language ≤ Language.anbncn .a .b .c := by
   rintro w hw
   rcases reachable_of_derives hw with ⟨h, _⟩ | ⟨h, _⟩ | ⟨h, _⟩ | ⟨h, _⟩ |
-    ⟨j, h, _⟩ | ⟨k, i, hki, h, rfl⟩ | ⟨k, i, h, _⟩
+    ⟨j, h, _⟩ | ⟨_ | k, i, h, rfl⟩ | ⟨k, i, h, _⟩
   · exact absurd h (by decide)
   · exact absurd h (by decide)
   · exact absurd h (by decide)
   · exact absurd h (by decide)
   · exact absurd h (by simp [clusterCat])
-  · rcases k with _ | k
-    · exact ⟨i, by omega, by simp⟩
-    · exact absurd h (by simp [clusterCat])
+  · exact ⟨i, by simp⟩
+  · exact absurd h (by simp [clusterCat])
   · exact absurd h (by simp)
 
-/-- The language of `G₁` is exactly `aⁿbⁿcⁿ` ([kuhlmann-koller-satta-2015], Example 2). -/
-theorem language_eq_anbnc : exampleGrammar.language = anbncStrings :=
-  Set.Subset.antisymm language_subset_anbnc ccg_generates_anbnc
+/-- The language of `G₁` is `aⁿbⁿcⁿ` without the empty word ([kuhlmann-koller-satta-2015],
+Example 2). -/
+theorem language_eq_anbncn_sub_one :
+    exampleGrammar.language = Language.anbncn .a .b .c - 1 :=
+  le_antisymm
+    (fun _ hw ↦ ⟨language_subset_anbncn hw, mt (Language.mem_one _).1 (Grammar.Derives.ne_nil hw)⟩)
+    anbncn_sub_one_subset_language
 
 /-- The language of `G₁` is not context-free, since it contains `aⁿbⁿcⁿ` for every `n ≥ 1` and
 each of its words has as many `a` as `b` as `c`. The proof of Theorem 3 of
 [kuhlmann-koller-satta-2015] invokes this standard fact (p. 202) without proving it. -/
-theorem not_isContextFree_language :
-    ¬ Language.IsContextFree (exampleGrammar.language : Language String) := by
-  rw [language_eq_anbnc]
-  refine Language.not_isContextFree_of_replicate_mem_of_count_eq (by decide : ["a", "b", "c"].Nodup)
-    (Filter.frequently_atTop.2 fun m ↦ ⟨m + 1, by omega, m + 1, by omega, rfl⟩) ?_
-  rintro _ ⟨n, -, rfl⟩
+theorem not_isContextFree_language : ¬ exampleGrammar.language.IsContextFree := by
+  refine Language.not_isContextFree_of_replicate_mem_of_count_eq (a := Letter.a) (b := .b)
+    (c := .c) (by decide) (Filter.frequently_atTop.2 fun m ↦
+      ⟨m + 1, by omega, anbncn_sub_one_subset_language
+        ((Language.mem_sub _ _ _).2 ⟨⟨m + 1, rfl⟩, by simp⟩)⟩) ?_
+  intro w hw
+  obtain ⟨n, rfl⟩ := language_subset_anbncn hw
   simp [List.count_replicate]
 
 end KuhlmannKollerSatta2015
