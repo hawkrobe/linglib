@@ -161,8 +161,8 @@ theorem bestOf_starstar (g : Background W) (p : W → Prop) (w : W) (D : Set W) 
     bestOf (starstar g p w D) D =
       (premisePreorder {p}).minimals ((premisePreorder (g w)).minimals D) := by
   ext u
-  simp only [bestOf, starstar, strictlyBetter_iff, Preorder.mem_minimals_iff,
-    Preorder.ofCriteria_le_iff, atLeastAsGoodAs_iff, Set.mem_singleton_iff, forall_eq,
+  simp only [bestOf, starstar, Preorder.ofCriteria_lt_iff, Preorder.mem_minimals_iff,
+    Preorder.ofCriteria_le_iff, Set.mem_singleton_iff, forall_eq,
     Set.mem_ofPred_eq]
   grind
 
@@ -183,8 +183,8 @@ theorem domainIndependent_starstar_iff (g : Background W) (p : W → Prop) (w : 
   · rintro ⟨R, hR⟩ D D' hD u v hu hv hbu hbv
     rcases (hR D' u v (hD hbu.1) (hD hbv.1)).1
       ((hR D u v hbu.1 hbv.1).2 (Or.inr ⟨hu, hv, hbu, hbv⟩)) with h | ⟨-, -, h⟩
-    · exact absurd (hbv.2 hbu.1 ((strictlyBetter_iff _ _ _).1 h).1)
-        ((strictlyBetter_iff _ _ _).1 h).2
+    · exact absurd (hbv.2 hbu.1 (((premisePreorder _).lt_iff_le_not_ge _ _).1 h).1)
+        (((premisePreorder _).lt_iff_le_not_ge _ _).1 h).2
     · exact h
   · intro h
     refine ⟨fun u v ↦ starstar g p w {u, v} u v, fun D u v hu hv ↦ ?_⟩
@@ -334,7 +334,7 @@ private theorem minimals_singleton (a : W) (A : Set (W → Prop)) :
     (premisePreorder A).minimals {a} = {a} :=
   Set.ext fun _ ↦ ⟨fun h ↦ h.1, fun h ↦ ⟨h, fun _ hv _ ↦ by
     rw [Set.mem_singleton_iff.mp hv, Set.mem_singleton_iff.mp h]
-    exact atLeastAsGoodAs_refl _ _⟩⟩
+    exact (premisePreorder _).le_refl _⟩⟩
 
 private theorem minimals_eq_singleton {S : Set W} {b : W} (hb : b ∈ S) :
     (premisePreorder {(· = b)}).minimals S = {b} := by
@@ -389,7 +389,7 @@ private theorem M2_mem :
       true := by
   rw [accessibleWorlds_revise, M2_acc]
   exact Or.inr ⟨false, rfl, rfl, fun v hv _ ↦ by
-    rw [show v = true from hv]; exact atLeastAsGoodAs_refl _ _⟩
+    rw [show v = true from hv]; exact (premisePreorder _).le_refl _⟩
 
 private theorem M2_iff (v : Vertex) :
     v.necessity simB (fun _ ↦ {(· = false)}) (fun _ ↦ {(· = true)}) (· = true) (· = true) true ↔

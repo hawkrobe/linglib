@@ -28,6 +28,12 @@ modal base at `w` fix the worlds accessible from `w`, and those of an ordering s
 * `premisePreorder A`, `w ≤[A] z`, `w <[A] z`: the ordering a premise set induces.
 * `bestWorlds f g w`: the minimal worlds accessible under `f` ranked by `g`.
 
+## Implementation notes
+
+* `w ≤[A] z` and `w <[A] z` are notation for the order of `premisePreorder A`. A `DecidableRel`
+  instance on that order would be keyed on every `≤`-goal downstream, so a study that decides a
+  premise ordering supplies a local instance for its own ordering source.
+
 ## References
 
 * [kratzer-1977]
@@ -103,49 +109,12 @@ true at `z` is true at `w`. It is the criteria-derived preorder with truth as sa
 abbrev premisePreorder (A : Set (W → Prop)) : Preorder W :=
   Preorder.ofCriteria (fun w p ↦ p w) A
 
-/-- `w` is at least as good as `z` with respect to the ordering source `A`. -/
-def atLeastAsGoodAs (A : Set (W → Prop)) (w z : W) : Prop := (premisePreorder A).le w z
+/-- `w ≤[A] z` says that `w` is at least as good as `z` under the ordering source `A`, verifying
+every premise of `A` that `z` verifies. -/
+notation:50 w " ≤[" A "] " z => @LE.le _ (@Preorder.toLE _ (premisePreorder A)) w z
 
-@[inherit_doc]
-notation:50 w " ≤[" A "] " z => atLeastAsGoodAs A w z
-
-theorem atLeastAsGoodAs_iff (A : Set (W → Prop)) (w z : W) :
-    (w ≤[A] z) ↔ ∀ p ∈ A, p z → p w :=
-  Iff.rfl
-
-theorem atLeastAsGoodAs_refl (A : Set (W → Prop)) (w : W) : w ≤[A] w :=
-  (premisePreorder A).le_refl w
-
-theorem atLeastAsGoodAs_trans {A : Set (W → Prop)} {u v w : W} (huv : u ≤[A] v)
-    (hvw : v ≤[A] w) : u ≤[A] w :=
-  (premisePreorder A).le_trans u v w huv hvw
-
-/-- With an empty ordering source every world is at least as good as every other. -/
-theorem atLeastAsGoodAs_empty (w z : W) : w ≤[(∅ : Set (W → Prop))] z := fun _ h ↦ h.elim
-
-instance decidableRel_atLeastAsGoodAs_empty :
-    DecidableRel (atLeastAsGoodAs (∅ : Set (W → Prop))) :=
-  fun w z ↦ isTrue (atLeastAsGoodAs_empty w z)
-
-instance decidableRel_atLeastAsGoodAs_singleton (p : W → Prop) [DecidablePred p] :
-    DecidableRel (atLeastAsGoodAs ({p} : Set (W → Prop))) :=
-  fun w z ↦ decidable_of_iff (p z → p w) <| by simp [atLeastAsGoodAs_iff]
-
-instance decidableRel_atLeastAsGoodAs_insert (p : W → Prop) [DecidablePred p]
-    (A : Set (W → Prop)) [DecidableRel (atLeastAsGoodAs A)] :
-    DecidableRel (atLeastAsGoodAs (insert p A)) :=
-  fun w z ↦ decidable_of_iff ((p z → p w) ∧ w ≤[A] z) <| by
-    simp only [atLeastAsGoodAs_iff, Set.forall_mem_insert]
-
-/-- `w` is strictly better than `z` when it is at least as good and not conversely. -/
-def strictlyBetter (A : Set (W → Prop)) (w z : W) : Prop := (premisePreorder A).lt w z
-
-@[inherit_doc]
-notation:50 w " <[" A "] " z => strictlyBetter A w z
-
-theorem strictlyBetter_iff (A : Set (W → Prop)) (w z : W) :
-    (w <[A] z) ↔ (w ≤[A] z) ∧ ¬ (z ≤[A] w) :=
-  Iff.rfl
+/-- `w <[A] z` says that `w` is strictly better than `z` under the ordering source `A`. -/
+notation:50 w " <[" A "] " z => @LT.lt _ (@Preorder.toLT _ (premisePreorder A)) w z
 
 /-! ### Best worlds -/
 

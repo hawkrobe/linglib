@@ -154,7 +154,7 @@ theorem best_not_probably_of_ncard_lt [Finite W] (r : W → W → Prop) {A : Set
 def bestFirst : Set (Fin 3 → Prop) := {(· = 0)}
 
 theorem bestFirst_le (v u : Fin 3) : (v ≤[bestFirst] u) ↔ (u = 0 → v = 0) := by
-  simp [bestFirst, atLeastAsGoodAs_iff]
+  simp [bestFirst, Preorder.ofCriteria_le_iff]
 
 /-- Kratzer's *must* of the sole best world holds. -/
 theorem must_best : Yalcin2010.must bestFirst {0} 0 :=
@@ -165,7 +165,8 @@ theorem must_best : Yalcin2010.must bestFirst {0} 0 :=
 necessary but not likelier than its complement, since one world matches no injection from
 two. -/
 theorem mLift_refutes_V6 :
-    ¬MustToProbably (MatchingLift (atLeastAsGoodAs bestFirst)) (Yalcin2010.must bestFirst · 0) :=
+    ¬MustToProbably (MatchingLift (premisePreorder bestFirst).le)
+      (Yalcin2010.must bestFirst · 0) :=
   fun h ↦ best_not_probably_of_ncard_lt _ (by
     have : ({0} : Set (Fin 3))ᶜ = {1, 2} := by ext x; fin_cases x <;> simp
     rw [this, Set.ncard_singleton, Set.ncard_pair (by decide)]; decide) (h _ must_best)
@@ -313,7 +314,7 @@ end Bridges
 Kratzer's *must* V6 fails, since the necessary best world is less likely than its
 complement. -/
 theorem bridge2_refutes_V6 :
-    Bridge2 (atLeastAsGoodAs bestFirst) skewed ∧
+    Bridge2 (premisePreorder bestFirst).le skewed ∧
       ¬MustToProbably skewed.inducedGe (Yalcin2010.must bestFirst · 0) := by
   refine ⟨fun u v huv ↦ (Measure.inducedGe_iff_real skewed).2 ?_, fun hV6 ↦ ?_⟩
   · rw [bestFirst_le] at huv
@@ -326,7 +327,7 @@ theorem bridge2_refutes_V6 :
 /-- The same model satisfies BR3, since the order agrees with the measure on singletons, so
 BR3 too allows a necessary proposition to be less likely than its negation. -/
 theorem bridge3_refutes_V6 :
-    Bridge3 (atLeastAsGoodAs bestFirst) skewed ∧
+    Bridge3 (premisePreorder bestFirst).le skewed ∧
       ¬MustToProbably skewed.inducedGe (Yalcin2010.must bestFirst · 0) :=
   ⟨bridge3_of_agree _ _ fun v u ↦ by
       rw [bestFirst_le, ← Measure.inducedGe, Measure.inducedGe_iff_real, skewed_real,
@@ -356,10 +357,10 @@ def bestFirst₂ : Set (Fin 2 → Prop) := {(· = 0)}
 /-- In `thin` BR1 holds and the sole best world is necessary, yet it is only barely likelier
 than its negation, so BR1 cannot deliver *much more likely*. -/
 theorem bridge1_thin_margin :
-    Bridge1 (atLeastAsGoodAs bestFirst₂) thin ∧ Yalcin2010.must bestFirst₂ {0} 0 ∧
+    Bridge1 (premisePreorder bestFirst₂).le thin ∧ Yalcin2010.must bestFirst₂ {0} 0 ∧
       thin.real {0} < 5002 / 10000 := by
   have hle : ∀ v u : Fin 2, (v ≤[bestFirst₂] u) ↔ (u = 0 → v = 0) := fun v u ↦ by
-    simp [bestFirst₂, atLeastAsGoodAs_iff]
+    simp [bestFirst₂, Preorder.ofCriteria_le_iff]
   have hsets : ∀ A : Set (Fin 2), A = ∅ ∨ A = {0} ∨ A = {1} ∨ A = Set.univ := fun A ↦ by
     by_cases h0 : 0 ∈ A <;> by_cases h1 : 1 ∈ A
     · right; right; right; ext x; fin_cases x <;> simp [h0, h1]

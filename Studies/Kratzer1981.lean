@@ -85,23 +85,23 @@ def desires : Background World :=
 
 /-- Decide a claim about the backgrounds and the ordering over the four worlds. -/
 scoped macro "decide_worlds" : tactic =>
-  `(tactic| (simp only [Background.mem_accessibleWorlds, atLeastAsGoodAs_iff,
+  `(tactic| (simp only [Background.mem_accessibleWorlds, Preorder.ofCriteria_le_iff,
       circumstances, desires, Function.const_apply, Set.mem_insert_iff, Set.mem_singleton_iff,
       forall_eq_or_imp, forall_eq, false_implies, implies_true, and_true]; decide))
 
 /-- By the paper's clause (c), the world of going to the pub and becoming mayor and the world of
 staying home are incomparable, so the ordering is not connected. -/
 theorem mayor_pub_incomparable :
-    ¬ atLeastAsGoodAs (desires w₀) (true, true) (false, false) ∧
-      ¬ atLeastAsGoodAs (desires w₀) (false, false) (true, true) := by
+    ¬ ((true, true) ≤[desires w₀] (false, false)) ∧
+      ¬ ((false, false) ≤[desires w₀] (true, true)) := by
   decide_worlds
 
 /-- By clause (f), the accessible world where the speaker goes to the pub and still fails to
 become mayor is strictly worse than either ideal-realizing world. -/
 theorem pub_no_mayor_worst :
     ∀ v ∈ ({(true, true), (false, false)} : Set World),
-      atLeastAsGoodAs (desires w₀) v (false, true) ∧
-        ¬ atLeastAsGoodAs (desires w₀) (false, true) v := by
+      (v ≤[desires w₀] (false, true)) ∧
+        ¬ ((false, true) ≤[desires w₀] v) := by
   simp only [Set.mem_insert_iff, Set.mem_singleton_iff, forall_eq_or_imp, forall_eq]
   decide_worlds
 
@@ -109,7 +109,7 @@ theorem pub_no_mayor_worst :
 reading of "best" the example would have no best world at all. -/
 theorem no_dominant_world :
     ¬ ∃ w ∈ circumstances.accessibleWorlds w₀,
-      ∀ v ∈ circumstances.accessibleWorlds w₀, atLeastAsGoodAs (desires w₀) w v := by
+      ∀ v ∈ circumstances.accessibleWorlds w₀, (w ≤[desires w₀] v) := by
   decide_worlds
 
 /-- The best worlds are the two ideal-realizing ones. -/
@@ -217,7 +217,7 @@ def morallyAccessible : Background Situation := Function.const Situation {fun s 
 scoped macro "decide_situations" : tactic =>
   `(tactic| (simp only [Background.mem_accessibleWorlds,
       Background.mem_accessibleWorlds_restrict, Background.accessibleWorlds_bot,
-      Set.mem_univ, true_and, atLeastAsGoodAs_iff, morallyGood, morallyAccessible,
+      Set.mem_univ, true_and, Preorder.ofCriteria_le_iff, morallyGood, morallyAccessible,
       Function.const_apply, Set.mem_insert_iff, Set.mem_singleton_iff, forall_eq_or_imp,
       forall_eq, false_implies, implies_true, and_true, injustice, amended, rewarded,
       Background.restrict, Pi.bot_apply, Set.bot_eq_empty, Set.mem_empty_iff_false,
