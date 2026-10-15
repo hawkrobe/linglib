@@ -75,7 +75,7 @@ The book's algebra lives in `Core/` and in `Syntax/Minimalist/{Workspace,Merge,E
   `antipodeTreeN`.
 * The projections `Π_{ρ,c}` and `Π_{d,ρ}` and the relations `Δ^d = (id ⊗ Π_{d,ρ}) ∘ Δ^ρ =
   (id ⊗ Π_{d,c}) ∘ Δ^c` displayed before (1.3.10): `ConnesKreimer.eraseTraces`,
-  `UnorderedTree.contractUnary`, `ConnesKreimer.comulDAlgHomN`,
+  `UnorderedTree.contractUnary`, `ConnesKreimer.cutSummandsDN`, `ConnesKreimer.comulDAlgHomN`,
   `ConnesKreimer.eraseTraces_comulCAlgHomN`, `contractUnary_eraseTraces_comulCAlgHomN`.
 * Definition 1.3.4: `Minimalist.Merge.mergeOpG` over a cut enumeration, with `mergeOp` at `Δ^ρ`
   and `mergeOpC` at `Δ^c`; (1.3.11): `Minimalist.Merge.mergeOpG_apply_of'`.
@@ -97,8 +97,10 @@ The book's algebra lives in `Core/` and in `Syntax/Minimalist/{Workspace,Merge,E
   Remark 1.6.7, on the terms of Merge (`Minimalist.Merge.mergeOpG_apply_of'_eq_sum`):
   `Minimalist.card_singleton_add_trunk_add_countP`, `accessibleCount_merge_term`,
   `accessibleSize_merge_term`, `MinimalYield.merge_term_accessibleCount_iff`,
-  `accessibleCount_unit_term` for `Δ^c`, and `MinimalYield.merge_term_iff_of_extraction_two` for
-  `Δ^d`.
+  `accessibleCount_unit_term` for `Δ^c`, and `MinimalYield.merge_term_numEdges_iff` for `Δ^d`.
+* Lemma 1.6.3 (1.6.7): `ConnesKreimer.cutSummandsDN_numEdges`, from the unary vertices a cut
+  leaves (`ConnesKreimer.cutSummandsN_numUnary`); for Internal Merge,
+  `Minimalist.im_pair_size_deltas_deletion_of_cut`.
 * Definition 1.6.2 and Proposition 1.6.10: `Minimalist.NoComplexityLoss`, met by every admissible
   derivation step (`Minimalist.Step.noComplexityLoss`); along the induced map of a term of Merge
   (`Minimalist.componentMap`, `NoComplexityLoss.of_componentMap`),
@@ -160,6 +162,11 @@ stated.
 Lemma 1.16.5 extends the coproducts `Δ^ω` to extended workspaces by excluding the cuts of edges at
 a root of valence at least three, so that Merge does not undo the grouping FormSet builds
 (§1.16.2). It is not formalized.
+
+Proposition 1.6.8's row for the Sideward case 3(a) under `Δ^d` lowers `α` by two, counting two
+contracted edges. When the two terms are sisters, as *the* and *apple* are in *the apple*, the
+deletion leaves their parent a leaf and contracts nothing, so `α` is unchanged. The term still
+diverges, so the proposition's conclusion stands.
 
 The book's section locators (§1.12.1, §1.13, §1.13.2) are transcribed from an earlier
 version of this file and are UNVERIFIED against the published text.
@@ -453,6 +460,59 @@ example (acc : UnorderedTree Vertex → ℕ) (X : UnorderedTree Vertex) :
         by rw [cutSummandsN_theApple]; exact Multiset.mem_cons_self _ _)),
       Multiset.mem_map.mpr ⟨0, Multiset.mem_singleton_self _, rfl⟩⟩
   exact MinimalYieldWeak.not_of_forall_notMem acc hs (by simp [sideward3a]; decide) X
+
+/-- Under deletion counting the 3(a) term keeps the number of accessible terms, where the book's
+    table lowers it by two (Proposition 1.6.8): *the* and *apple* are sisters, so deleting both
+    leaves their parent a leaf with nothing to contract. -/
+example : sideward3a ∈ forestCutChoicesG cutSummandsDN {theApple.val} ∧
+    (({(merge theD appleN).val} + (sideward3a.map Prod.snd).sum.2).map
+      UnorderedTree.numEdges).sum =
+    (({theApple.val} : Forest (UnorderedTree Vertex)).map UnorderedTree.numEdges).sum := by
+  refine ⟨?_, by decide⟩
+  rw [← Multiset.cons_zero, forestCutChoicesG_cons, forestCutChoicesG_zero]
+  exact Multiset.mem_bind.mpr ⟨_, Multiset.mem_cons_of_mem (Multiset.mem_map_of_mem
+    (fun p ↦ (p.1, {p.2}))
+    (show ({theD.val, appleN.val}, UnorderedTree.leaf Vertex.bare) ∈ cutSummandsDN theApple.val
+      from Multiset.mem_map.mpr ⟨_, by
+        rw [cutSummandsN_theApple]; exact Multiset.mem_cons_self _ _, rfl⟩)),
+    Multiset.mem_map.mpr ⟨0, Multiset.mem_singleton_self _, rfl⟩⟩
+
+/-- The 2(b) term at the deletion cuts, which contract the trunk `{apple}` to *apple*. -/
+private def sidewardTermD : Multiset (UnorderedTree Vertex ×
+    (Forest (UnorderedTree Vertex) × Forest (UnorderedTree Vertex))) :=
+  {(eaten.val, ({eaten.val}, 0)), (theApple.val, ({theD.val}, {appleN.val}))}
+
+private theorem sidewardTermD_mem :
+    sidewardTermD ∈ forestCutChoicesG cutSummandsDN {eaten.val, theApple.val} := by
+  rw [Multiset.insert_eq_cons, forestCutChoicesG_cons, ← Multiset.cons_zero, forestCutChoicesG_cons,
+    forestCutChoicesG_zero]
+  exact Multiset.mem_bind.mpr ⟨({eaten.val}, 0), Multiset.mem_cons_self _ _,
+    Multiset.mem_map.mpr ⟨_, Multiset.mem_bind.mpr ⟨_,
+      Multiset.mem_cons_of_mem (Multiset.mem_map_of_mem (fun p ↦ (p.1, {p.2}))
+        (Multiset.mem_map.mpr ⟨({theD.val}, UnorderedTree.node Vertex.bare {appleN.val}),
+          by rw [cutSummandsN_theApple]; simp, Prod.ext rfl (by decide)⟩)),
+      Multiset.mem_map.mpr ⟨0, Multiset.mem_singleton_self _, rfl⟩⟩, rfl⟩⟩
+
+/-- Under deletion counting the 2(b) term satisfies the weak form of Minimal Yield but not the
+    strong one, since it takes only *eaten* whole (Proposition 1.6.8). -/
+example : MinimalYieldWeak UnorderedTree.numEdges {eaten.val, theApple.val}
+      {(merge eaten theD).val, appleN.val} ∧
+    ¬ MinimalYield UnorderedTree.numEdges {eaten.val, theApple.val}
+      {(merge eaten theD).val, appleN.val} := by
+  have hF : ∀ T ∈ ({eaten.val, theApple.val} : Forest (UnorderedTree Vertex)),
+      T.Licensed fun _ ks ↦ Multiset.card ks = 0 ∨ Multiset.card ks = 2 := by
+    simp only [Multiset.insert_eq_cons, Multiset.mem_cons, Multiset.mem_singleton]
+    rintro _ (rfl | rfl)
+    exacts [eaten.2.licensed_card, theApple.2.licensed_card]
+  have hK : (sidewardTermD.map Prod.snd).sum.1 = {eaten.val, theD.val} := by simp [sidewardTermD]
+  have hX : (merge eaten theD).val.numEdges = eaten.val.numEdges + theD.val.numEdges + 2 := by
+    rw [merge_val]; exact UnorderedTree.numEdges_node_pair _ _ _
+  rw [show ({(merge eaten theD).val, appleN.val} : Forest (UnorderedTree Vertex)) =
+      {(merge eaten theD).val} + (sidewardTermD.map Prod.snd).sum.2 by simp [sidewardTermD],
+    MinimalYieldWeak.merge_term_numEdges_iff hF sidewardTermD_mem hK hX,
+    MinimalYield.merge_term_numEdges_iff hF sidewardTermD_mem hK hX,
+    show sidewardTermD.countP (·.2.2 = 0) = 1 by decide]
+  decide
 
 /-! ### The core computational structure of Merge (§1.10) -/
 

@@ -480,6 +480,31 @@ theorem card_add_countP_of_mem_forestCutChoicesG [DecidableEq (UnorderedTree α)
     have := ih hs'
     rcases mem_treeCutsG.mp ha with rfl | ⟨p, -, rfl⟩ <;> simp <;> omega
 
+/-- The crown of a tree that is cut lies in the crown of the choice beside the trees taken
+    whole. -/
+theorem card_fst_add_countP_le_of_mem_forestCutChoicesG [DecidableEq (UnorderedTree α)]
+    {F : Multiset (UnorderedTree α)} {s x} (hs : s ∈ forestCutChoicesG cuts F) (hx : x ∈ s)
+    (h : x.2.2 ≠ 0) :
+    Multiset.card x.2.1 + s.countP (·.2.2 = 0) ≤ Multiset.card (s.map Prod.snd).sum.1 := by
+  obtain ⟨t, rfl⟩ := Multiset.exists_cons_of_mem hx
+  have ht : ∀ y ∈ t, y.2.2 = 0 → y.2 = ({y.1}, 0) := fun y hy ↦
+    snd_eq_of_mem_forestCutChoicesG hs (Multiset.mem_cons_of_mem hy)
+  simp only [Multiset.countP_cons, h, ite_false, add_zero, Multiset.map_cons, Multiset.sum_cons,
+    Prod.fst_add, Multiset.card_add, add_le_add_iff_left]
+  clear hs hx
+  induction t using Multiset.induction with
+  | empty => simp
+  | cons y t ih =>
+    have := ih fun z hz ↦ ht z (Multiset.mem_cons_of_mem hz)
+    by_cases hy : y.2.2 = 0
+    · simp only [Multiset.countP_cons, ite_true, Multiset.map_cons, Multiset.sum_cons,
+        Prod.fst_add, Multiset.card_add, ht y (Multiset.mem_cons_self _ _) hy,
+        Multiset.card_singleton]
+      omega
+    · simp only [Multiset.countP_cons, hy, ite_false, Multiset.map_cons, Multiset.sum_cons,
+        Prod.fst_add, Multiset.card_add]
+      omega
+
 /-- Choices of cuts for two forests combine to a choice for their sum. -/
 theorem add_mem_forestCutChoicesG {F G : Multiset (UnorderedTree α)} {s t}
     (hs : s ∈ forestCutChoicesG cuts F) (ht : t ∈ forestCutChoicesG cuts G) :

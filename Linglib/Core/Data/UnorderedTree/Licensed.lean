@@ -37,6 +37,11 @@ def Licensed (R : α → Multiset α → Prop) (u : UnorderedTree α) : Prop :=
     (mk t).Licensed R ↔ t.Licensed fun a ks ↦ R a (ks : Multiset α) :=
   Iff.rfl
 
+theorem Licensed.mono {R R' : α → Multiset α → Prop} (h : ∀ a ks, R a ks → R' a ks)
+    {u : UnorderedTree α} (hu : u.Licensed R) : u.Licensed R' := by
+  induction u using Quotient.inductionOn
+  exact RoseTree.Licensed.mono (fun a ks ↦ h a ks) hu
+
 instance (R : α → Multiset α → Prop) [∀ a ks, Decidable (R a ks)] (u : UnorderedTree α) :
     Decidable (u.Licensed R) :=
   Quotient.recOnSubsingleton u fun t ↦
