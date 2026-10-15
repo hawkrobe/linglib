@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Core.Order.Interval
+public import Linglib.Core.Order.Interval.Basic
 
 /-!
 # Run times

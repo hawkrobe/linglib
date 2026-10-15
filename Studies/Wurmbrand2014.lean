@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Core.Order.Interval
+public import Linglib.Core.Order.Interval.Basic
 public import Linglib.Semantics.Tense.Defs
 public import Linglib.Syntax.Minimalist.Clause.Size
 public import Linglib.Data.Examples.Wurmbrand2014

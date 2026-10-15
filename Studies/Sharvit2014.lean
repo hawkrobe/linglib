@@ -215,7 +215,7 @@ def Fails (r : Reading) : Prop :=
 does, so that the order of the two events follows from the tenses alone. -/
 def StumpEffect (r : Reading) : Prop :=
   ∀ (M : Type) [LinearOrder M] (SP t d : NonemptyInterval M) (q : Set (NonemptyInterval M)),
-    t.precedes SP → d ∈ r.denote SP q → t.snd < d.snd
+    t.Precedes SP → d ∈ r.denote SP q → t.snd < d.snd
 
 /-- A reading has no p-shiftability when the earliest time of the clause precedes the speech
 time. -/

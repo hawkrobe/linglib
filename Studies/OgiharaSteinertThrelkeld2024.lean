@@ -2,7 +2,6 @@ module
 
 public import Studies.Anscombe1964
 public import Studies.BeaverCondoravdi2003
-public import Linglib.Core.Order.AllenRelation
 public import Linglib.Semantics.Events.Basic
 public import Linglib.Semantics.Tense.RunTimes
 public import Linglib.Data.Examples.OgiharaSteinertThrelkeld2024
@@ -68,27 +67,17 @@ open Tense Anscombe1964 BeaverCondoravdi2003
 /-! The connectives over event predicates: *after* is doubly existential — both events
 exist and the complement's run-time wholly precedes the main event's — while *before* is
 existential over the main clause and universal over the complement, so it is vacuously
-satisfied when no complement event exists. The precedence is Allen's `precedes` atom. -/
+satisfied when no complement event exists. -/
 
 variable {T E : Type*} [LinearOrder T] [Event.TemporalTrace E T]
 
 /-- *P after Q* holds when some `Q`-event's run time wholly precedes some `P`-event's. -/
 def eventAfter (P Q : E → Prop) : Prop :=
-  ∃ e₁ e₂ : E, P e₁ ∧ Q e₂ ∧ (τ e₂).precedes (τ e₁)
+  ∃ e₁ e₂ : E, P e₁ ∧ Q e₂ ∧ (τ e₂).Precedes (τ e₁)
 
 /-- *P before Q* holds when some `P`-event's run time wholly precedes every `Q`-event's. -/
 def eventBefore (P Q : E → Prop) : Prop :=
-  ∃ e₁ : E, P e₁ ∧ ∀ e₂ : E, Q e₂ → (τ e₁).precedes (τ e₂)
-
-theorem eventAfter_iff_allen (P Q : E → Prop) :
-    eventAfter P Q ↔ ∃ e₁ e₂ : E, P e₁ ∧ Q e₂ ∧
-      AllenRelation.precedes.holds (τ e₂) (τ e₁) :=
-  Iff.rfl
-
-theorem eventBefore_iff_allen (P Q : E → Prop) :
-    eventBefore P Q ↔ ∃ e₁ : E, P e₁ ∧ ∀ e₂ : E, Q e₂ →
-      AllenRelation.precedes.holds (τ e₁) (τ e₂) :=
-  Iff.rfl
+  ∃ e₁ : E, P e₁ ∧ ∀ e₂ : E, Q e₂ → (τ e₁).Precedes (τ e₂)
 
 /-- *After*'s veridicality follows from its double existential. -/
 theorem after_veridicality_derived {P Q : E → Prop} (h : eventAfter P Q) :
@@ -142,15 +131,15 @@ theorem not_eventBefore_of_anscombe :
       simp only [Event.τ_nonemptyInterval, eQ] at hlo; omega
   obtain ⟨e₁, rfl, hall⟩ := h _ _ hansc
   have := hall eQ rfl
-  simp [NonemptyInterval.precedes, eP, eQ] at this
+  simp [NonemptyInterval.Precedes, eP, eQ] at this
 
 /-- An event at `1` is after an event at `0`. -/
 example : eventAfter (· = (.pure 1 : NonemptyInterval ℤ)) (· = .pure 0) :=
-  ⟨_, _, rfl, rfl, by simp [NonemptyInterval.precedes]⟩
+  ⟨_, _, rfl, rfl, by simp [NonemptyInterval.Precedes]⟩
 
 /-- An event at `1` is before an event at `3`. -/
 example : eventBefore (· = (.pure 1 : NonemptyInterval ℤ)) (· = .pure 3) :=
-  ⟨_, rfl, fun _ h ↦ by subst h; simp [NonemptyInterval.precedes]⟩
+  ⟨_, rfl, fun _ h ↦ by subst h; simp [NonemptyInterval.Precedes]⟩
 
 /-- *Mozart died before he finished the Requiem* holds vacuously when he never finished it. -/
 example : eventBefore (· = (.pure 5 : NonemptyInterval ℤ)) fun _ ↦ False :=
@@ -159,12 +148,12 @@ example : eventBefore (· = (.pure 5 : NonemptyInterval ℤ)) fun _ ↦ False :=
 /-- The punctual *after* scenario projects to [anscombe-1964]'s *after* on run times. -/
 example : Anscombe.after (τ '' {e | e = (.pure 1 : NonemptyInterval ℤ)})
     (τ '' {e | e = (.pure 0 : NonemptyInterval ℤ)}) :=
-  anscombe_after_of_eventAfter ⟨_, _, rfl, rfl, by simp [NonemptyInterval.precedes]⟩
+  anscombe_after_of_eventAfter ⟨_, _, rfl, rfl, by simp [NonemptyInterval.Precedes]⟩
 
 /-- The punctual *before* scenario projects to [anscombe-1964]'s *before* on run times. -/
 example : Tense.beforeEver (τ '' {e | e = (.pure 1 : NonemptyInterval ℤ)})
     (τ '' {e | e = (.pure 3 : NonemptyInterval ℤ)}) :=
-  anscombe_before_of_eventBefore ⟨_, rfl, fun _ h ↦ by subst h; simp [NonemptyInterval.precedes]⟩
+  anscombe_before_of_eventBefore ⟨_, rfl, fun _ h ↦ by subst h; simp [NonemptyInterval.Precedes]⟩
 
 /-- A counterexample to Beaver and Condoravdi's branching-time analysis has a complement bounded to
 an interval that ends at or before the A-time, where alternatives branching only after that time

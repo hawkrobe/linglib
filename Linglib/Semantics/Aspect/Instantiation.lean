@@ -90,12 +90,12 @@ theorem At.mono (hQ : Q.IsEventuality) (h : r ≤ r') (hr : At r w Q) : At r' w 
 
 /-- An event is instantiated at the ray from `t` when it starts no earlier than `t`. -/
 @[simp] theorem at_Ici_eventive_iff {t : T} :
-    At (Interval.Ici t) w (.eventive P) ↔ ∃ e, P w e ∧ t ≤ (τ e).fst := by
+    At (Interval.Ici ↑t) w (.eventive P) ↔ ∃ e, P w e ∧ t ≤ (τ e).fst := by
   simp [At, Interval.withTop_le_Ici]
 
 /-- A state is instantiated at the ray from `t` when it persists at or past `t`. -/
 @[simp] theorem at_Ici_stative_iff {t : T} :
-    At (Interval.Ici t) w (.stative P) ↔ ∃ e, P w e ∧ t ≤ (τ e).snd := by
+    At (Interval.Ici ↑t) w (.stative P) ↔ ∃ e, P w e ∧ t ≤ (τ e).snd := by
   simp [At, Interval.not_disjoint_withTop_Ici]
 
 /-- On a bounded interval, eventive instantiation is the perfective viewpoint. -/

@@ -3,7 +3,7 @@ module
 public import Mathlib.Order.UpperLower.Closure
 public import Linglib.Semantics.Aspect.Defs
 public import Linglib.Semantics.Reference.Context.Index
-public import Linglib.Core.Order.Interval
+public import Linglib.Core.Order.Interval.Basic
 public import Linglib.Semantics.Events.Basic
 
 /-!
@@ -72,15 +72,16 @@ namespace Aspect
 
 /-- `v.ttTSitRelation tt tsit` is the relation the viewpoint `v` imposes between the topic time and
 the situation time, which is inclusion in the situation, containment of the situation,
-posteriority, anteriority, and initial overlap for the neutral viewpoint. -/
+posteriority, anteriority, and, for the neutral viewpoint, containment of the situation's
+start. -/
 def ViewpointType.ttTSitRelation {T : Type*} [LinearOrder T]
     (v : ViewpointType) (tt tsit : NonemptyInterval T) : Prop :=
   match v with
   | .imperfective => tt < tsit
   | .perfective => tsit ≤ tt
-  | .perfect => tt.isAfter tsit
-  | .prospective => tt.isBefore tsit
-  | .neutral => tt.initialOverlap tsit
+  | .perfect => tsit.IsBefore tt
+  | .prospective => tt.IsBefore tsit
+  | .neutral => tsit.fst ∈ tt
 
 instance {T : Type*} [LinearOrder T] (v : ViewpointType) (tt tsit : NonemptyInterval T) :
     Decidable (v.ttTSitRelation tt tsit) := by
@@ -136,7 +137,7 @@ theorem mem_impf : t ∈ IMPF P w ↔ ∃ e : E, t < τ e ∧ P w e := Iff.rfl
 
 theorem mem_prfv : t ∈ PRFV P w ↔ ∃ e : E, τ e ≤ t ∧ P w e := Iff.rfl
 
-theorem mem_prosp : t ∈ PROSP P w ↔ ∃ e : E, t.isBefore (τ e) ∧ P w e := Iff.rfl
+theorem mem_prosp : t ∈ PROSP P w ↔ ∃ e : E, t.IsBefore (τ e) ∧ P w e := Iff.rfl
 
 theorem mem_unbounded : t ∈ UNBOUNDED P w ↔ ∃ e : E, t ≤ τ e ∧ P w e := Iff.rfl
 
@@ -179,7 +180,7 @@ def atPoint (p : W → Set (NonemptyInterval T)) : Set (Reference.Index W T) :=
 /-- `perfect p` holds at a reference interval that is a final subinterval of some perfect time
 span belonging to `p`, the perfect as an operator on interval properties. -/
 def perfect (p : W → Set (NonemptyInterval T)) : W → Set (NonemptyInterval T) :=
-  fun w ↦ {i | ∃ pts ∈ p w, i.finalSubinterval pts}
+  fun w ↦ {i | ∃ pts ∈ p w, i.FinalSubinterval pts}
 
 /-- The perfect at a point is the perfect at the degenerate reference interval of that point. -/
 theorem perf_eq_atPoint_perfect (p : W → Set (NonemptyInterval T)) :

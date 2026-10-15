@@ -112,7 +112,7 @@ theorem restricted_present_sejchas (r : NonemptyInterval T) :
 
 /-- (36): with pronominal anchors, PRES and ⌈then⌉ could be anchored to different times and
 the clause would be coherent, which is why the anchor is a parameter. -/
-theorem exists_split_anchor {π₁ π₂ : NonemptyInterval T} (h : ¬ π₁.overlaps π₂) :
+theorem exists_split_anchor {π₁ π₂ : NonemptyInterval T} (h : ¬ π₁.Overlaps π₂) :
     ∃ r th, Presup ⟦present⟧ π₁ r ∧ r ≤ th ∧ Presup ⟦present⟧ᶜ π₂ th :=
   ⟨π₁, π₁, presup_present.2 (NonemptyInterval.overlaps_refl π₁), le_rfl,
     presup_compl_present.2 h⟩
@@ -126,7 +126,7 @@ theorem restricted_past_self (hC : .lt ∈ C) (h : Presup ⟦past⟧ π r) : Res
 
 /-- (32): *tooji* is used only of past times, so unlike English *then* it cannot refer to a time
 after the perspective. -/
-theorem presup_then_not_tooji_of_precedes (h : π.precedes th) :
+theorem presup_then_not_tooji_of_precedes (h : π.Precedes th) :
     Presup English.TemporalDeictic.then_.cell π th ∧
       ¬ Presup Japanese.TemporalDeictic.tooji.cell π th :=
   ⟨(presup_future.2 h).mono (by decide),
@@ -138,7 +138,7 @@ theorem restricted_top_iff : Restricted ⊤ C r th π ↔ r ≤ th ∧ Presup C 
 
 /-- (89a): with no OP_π the perspective stays the utterance time, from which the reported
 meeting is disjoint, and ⌈then⌉ restricts the deleted past. -/
-theorem restricted_top_of_not_overlaps (h : ¬ r.overlaps π) : Restricted ⊤ ⟦present⟧ᶜ r r π :=
+theorem restricted_top_of_not_overlaps (h : ¬ r.Overlaps π) : Restricted ⊤ ⟦present⟧ᶜ r r π :=
   restricted_top_iff.2 ⟨le_rfl, presup_compl_present.2 h⟩
 
 /-- (89b): with OP_π shifting the perspective onto the time of the reported speech, within

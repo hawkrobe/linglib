@@ -78,13 +78,13 @@ def PERF (Q : SortedProperty W E T) : SortedProperty W E T :=
 reference interval, throughout the interval expanded forward to the end of time. -/
 def MAY (MB : W → T → Set W) (Q : SortedProperty W E T) : SortedProperty W E T :=
   .temporal λ w t => ∃ t₀ : T, IsLeast (t : Set (WithTop T)) ↑t₀ ∧
-    ∃ w' ∈ MB w t₀, At (Interval.Ici t₀) w' Q
+    ∃ w' ∈ MB w t₀, At (Interval.Ici ↑t₀) w' Q
 
 /-- WOLL, the untensed modal of *will* and *would*, instantiates the property in every world of the
 modal base at the start of the reference interval, throughout the forward interval. -/
 def WOLL (MB : W → T → Set W) (Q : SortedProperty W E T) : SortedProperty W E T :=
   .temporal λ w t => ∃ t₀ : T, IsLeast (t : Set (WithTop T)) ↑t₀ ∧
-    ∀ w' ∈ MB w t₀, At (Interval.Ici t₀) w' Q
+    ∀ w' ∈ MB w t₀, At (Interval.Ici ↑t₀) w' Q
 
 /-- A frame adverbial such as *yesterday* instantiates a property of eventualities within
 the intersection of the reference interval with the period named. The paper leaves it undefined
@@ -104,14 +104,14 @@ variable {MB : W → T → Set W} {now : T}
 
 /-- At a nonempty interval, MAY takes its modal base at the interval's start. -/
 theorem at_coe_may_iff {i : NonemptyInterval (WithTop T)} :
-    At ↑i w (MAY MB Q) ↔ ∃ t₀ : T, i.fst = ↑t₀ ∧ ∃ w' ∈ MB w t₀, At (Interval.Ici t₀) w' Q :=
+    At ↑i w (MAY MB Q) ↔ ∃ t₀ : T, i.fst = ↑t₀ ∧ ∃ w' ∈ MB w t₀, At (Interval.Ici ↑t₀) w' Q :=
   exists_congr λ _ => and_congr_left λ _ =>
     ⟨λ h => (h.unique Interval.isLeast_coe_fst).symm, λ h => h ▸ Interval.isLeast_coe_fst⟩
 
 /-- At the present, MAY holds when some world of the base at the present has the property throughout
 the forward interval. -/
 @[simp] theorem pres_may_iff :
-    PRES now (MAY MB Q) w ↔ ∃ w' ∈ MB w now, At (Interval.Ici now) w' Q := by
+    PRES now (MAY MB Q) w ↔ ∃ w' ∈ MB w now, At (Interval.Ici ↑now) w' Q := by
   rw [PRES, Interval.pure, at_coe_may_iff]
   constructor
   · rintro ⟨t₀, ht₀, h⟩
@@ -121,7 +121,7 @@ the forward interval. -/
 
 /-- The perfect of an event holds at a ray when the event ended before the ray starts. -/
 @[simp] theorem at_Ici_perf_eventive_iff {t : T} :
-    At (Interval.Ici t) w (PERF (.eventive P)) ↔ ∃ e, P w e ∧ (τ e).snd < t := by
+    At (Interval.Ici ↑t) w (PERF (.eventive P)) ↔ ∃ e, P w e ∧ (τ e).snd < t := by
   constructor
   · rintro ⟨t', ht', e, he, hle⟩
     exact ⟨e, he, WithTop.coe_lt_coe.1
@@ -132,7 +132,7 @@ the forward interval. -/
 /-- At the present, the perfect over MAY holds when some past time has, in some world of the base at
 that time, the property throughout that time's forward interval. -/
 @[simp] theorem pres_perf_may_iff :
-    PRES now (PERF (MAY MB Q)) w ↔ ∃ t' < now, ∃ w' ∈ MB w t', At (Interval.Ici t') w' Q := by
+    PRES now (PERF (MAY MB Q)) w ↔ ∃ t' < now, ∃ w' ∈ MB w t', At (Interval.Ici ↑t') w' Q := by
   constructor
   · rintro ⟨i, hi, hat⟩
     obtain ⟨t', hfst, w', hw', h⟩ := at_coe_may_iff.1 hat
@@ -179,7 +179,7 @@ theorem pres_perf_may_eventive_iff :
 /-- A modal for the present rejects a period wholly before the present, *he may win yesterday*,
 since the forward interval meets it in the null interval. -/
 theorem frame_modal_past (hQ : Q.IsEventuality) {period : Interval (WithTop T)}
-    (hp : period.Precedes (Interval.Ici now)) : ¬ PRES now (MAY MB (frame period Q)) w := by
+    (hp : period.Precedes (Interval.Ici ↑now)) : ¬ PRES now (MAY MB (frame period Q)) w := by
   simp only [pres_may_iff]
   rintro ⟨w', -, h⟩
   obtain ⟨x, hx⟩ := exists_mem_of_at hQ h
@@ -190,7 +190,7 @@ theorem frame_modal_past (hQ : Q.IsEventuality) {period : Interval (WithTop T)}
 available next month* and *it must have been raining now*, since the interval the perfect supplies
 precedes the present, and so the period. -/
 theorem frame_modalPerf_nonpast (hQ : Q.IsEventuality) {period : Interval (WithTop T)}
-    (hp : period ≤ Interval.Ici now) : ¬ PRES now (MAY MB (PERF (frame period Q))) w := by
+    (hp : period ≤ Interval.Ici ↑now) : ¬ PRES now (MAY MB (PERF (frame period Q))) w := by
   simp only [pres_may_iff]
   rintro ⟨w', -, t', ht', h⟩
   obtain ⟨x, hx⟩ := exists_mem_of_at hQ h
@@ -210,7 +210,7 @@ theorem may_antitone {history : HistoricalAlternatives W T}
     Antitone λ t : T => PRES t (MAY (metaphysicalBase history) Q) w := by
   simp only [pres_may_iff]
   rintro t' t h ⟨w', hw', hat⟩
-  exact ⟨w', hBC w h hw', hat.mono hQ (Interval.antitone_Ici h)⟩
+  exact ⟨w', hBC w h hw', hat.mono hQ (Interval.antitone_Ici (WithTop.coe_le_coe.2 h))⟩
 
 /-- The prior-phase half of Löbner's presupposition of *already* requires a prior negative phase. -/
 def AlreadyPresup (Q : SortedProperty W E T) (w : W) (now : T) : Prop := ∃ t' < now, ¬ PRES t' Q w
@@ -268,7 +268,7 @@ theorem fixesPast_stative :
 /-- Instantiation in the past of the perspective, the modal over the perfect, is settled in
 every common ground. -/
 theorem settled_perf {history : HistoricalAlternatives W T} (h : FixesPast history Q)
-    (cg : Set W) (t : T) : settled history cg t (λ w => At (Interval.Ici t) w (PERF Q)) := by
+    (cg : Set W) (t : T) : settled history cg t (λ w => At (Interval.Ici ↑t) w (PERF Q)) := by
   intro w _ w' hw'
   refine exists_congr λ r => and_congr_right λ hr => h t w w' hw' r λ x hx => ?_
   exact (hr hx (Interval.mem_Ici.2 le_rfl)).le
@@ -277,7 +277,7 @@ theorem settled_perf {history : HistoricalAlternatives W T} (h : FixesPast histo
 forward interval restricted to the present is the present. -/
 theorem settled_present {history : HistoricalAlternatives W T} (h : FixesPast history Q)
     (cg : Set W) (t : T) :
-    settled history cg t (λ w => At (Interval.Ici t) w (frame (Interval.pure ↑t) Q)) :=
+    settled history cg t (λ w => At (Interval.Ici ↑t) w (frame (Interval.pure ↑t) Q)) :=
   λ w _ w' hw' => h t w w' hw' _ λ _ hx => (Interval.mem_pure.1 (Interval.mem_inf.1 hx).2).le
 
 omit [LinearOrder T] in
@@ -303,8 +303,8 @@ backtracking to a past perspective signals. -/
 theorem counterfactual_outside_cg {history : HistoricalAlternatives W T} {cg : Set W} {t₀ : T}
     (h : PastAlternativesOutside history cg t₀) (hw : w ∈ cg)
     (hcf : PRES t₀ (PERF (MAY (metaphysicalBase history) Q)) w)
-    (hnow : ∀ t' < t₀, ∀ w' ∈ metaphysicalBase history w t₀, ¬ At (Interval.Ici t') w' Q) :
-    ∃ t' < t₀, ∃ w' ∉ cg, w' ∈ metaphysicalBase history w t' ∧ At (Interval.Ici t') w' Q := by
+    (hnow : ∀ t' < t₀, ∀ w' ∈ metaphysicalBase history w t₀, ¬ At (Interval.Ici ↑t') w' Q) :
+    ∃ t' < t₀, ∃ w' ∉ cg, w' ∈ metaphysicalBase history w t' ∧ At (Interval.Ici ↑t') w' Q := by
   obtain ⟨t', hlt, w', hw', hat⟩ := pres_perf_may_iff.1 hcf
   exact ⟨t', hlt, w', h w hw t' hlt.le w' hw' (λ hmem => hnow t' hlt w' hmem hat), hw', hat⟩
 

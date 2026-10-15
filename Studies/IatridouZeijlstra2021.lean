@@ -359,7 +359,7 @@ theorem mem_exh_not_unbounded_iff (hP : Function.Surjective P)
 /-- Where overlapping events sum to an event and the span has an interior point, a predicate
 holding throughout every proper subinterval holds throughout the span. -/
 theorem unbounded_of_forall_lt {v : V}
-    (hsum : ∀ e₁ e₂, P v e₁ → P v e₂ → (Event.τ e₁).overlaps (Event.τ e₂) →
+    (hsum : ∀ e₁ e₂, P v e₁ → P v e₂ → (Event.τ e₁).Overlaps (Event.τ e₂) →
       ∃ e, P v e ∧ Event.τ e₁ ≤ Event.τ e ∧ Event.τ e₂ ≤ Event.τ e)
     {m : T} (hm₁ : τ.fst < m) (hm₂ : m < τ.snd) (h : ∀ τ' < τ, τ' ∈ UNBOUNDED P v) :
     τ ∈ UNBOUNDED P v := by
@@ -377,7 +377,7 @@ theorem unbounded_of_forall_lt {v : V}
 contradictory, (142). -/
 theorem not_throughout_exh_contradictory (hP : Function.Surjective P)
     (hrich : Function.Surjective (Event.τ : E → NonemptyInterval T)) {v : V}
-    (hsum : ∀ e₁ e₂, P v e₁ → P v e₂ → (Event.τ e₁).overlaps (Event.τ e₂) →
+    (hsum : ∀ e₁ e₂, P v e₁ → P v e₂ → (Event.τ e₁).Overlaps (Event.τ e₂) →
       ∃ e, P v e ∧ Event.τ e₁ ≤ Event.τ e ∧ Event.τ e₂ ≤ Event.τ e)
     {m : T} (hm₁ : τ.fst < m) (hm₂ : m < τ.snd) :
     v ∉ exh (domainAlternatives (fun v ↦ (UNBOUNDED P v)ᶜ) τ) {v | τ ∉ UNBOUNDED P v} :=

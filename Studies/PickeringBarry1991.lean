@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Core.Order.Interval
+public import Linglib.Core.Order.Interval.Basic
 public import Linglib.Syntax.CCG.Derivation
 public import Linglib.Data.Examples.PickeringBarry1991
 
@@ -87,14 +87,14 @@ theorem fillerVerb_gap (f g g' v : ℕ) :
 end Dependency
 
 /-- A pattern of associations is nested when one association lies strictly inside another. -/
-def Nested (L : List (NonemptyInterval ℕ)) : Prop := ∃ a ∈ L, ∃ b ∈ L, a.during b
+def Nested (L : List (NonemptyInterval ℕ)) : Prop := ∃ a ∈ L, ∃ b ∈ L, a.During b
 
 instance (L : List (NonemptyInterval ℕ)) : Decidable (Nested L) :=
   inferInstanceAs (Decidable (∃ _ ∈ L, _))
 
 /-- A pattern of associations is disjoint when any two of them are one before the other. -/
 def Disjoint (L : List (NonemptyInterval ℕ)) : Prop :=
-  ∀ a ∈ L, ∀ b ∈ L, a ≠ b → a.precedes b ∨ b.precedes a
+  ∀ a ∈ L, ∀ b ∈ L, a ≠ b → a.Precedes b ∨ b.Precedes a
 
 instance (L : List (NonemptyInterval ℕ)) : Decidable (Disjoint L) :=
   inferInstanceAs (Decidable (∀ _ ∈ L, ∀ _ ∈ L, _ → _))
@@ -226,9 +226,9 @@ theorem peripheralGaps_fillerVerb_disjoint (a n : ℕ) :
     Function.comp, forall_exists_index, and_imp, forall_apply_eq_imp_iff₂]
   intro i hi j hj hne
   rcases Nat.lt_trichotomy i j with h | rfl | h
-  · exact Or.inl (by simp [NonemptyInterval.precedes, Dependency.fillerVerb]; omega)
+  · exact Or.inl (by simp [NonemptyInterval.Precedes, Dependency.fillerVerb]; omega)
   · exact absurd rfl hne
-  · exact Or.inr (by simp [NonemptyInterval.precedes, Dependency.fillerVerb]; omega)
+  · exact Or.inr (by simp [NonemptyInterval.Precedes, Dependency.fillerVerb]; omega)
 
 /-- With empty categories, every filler of the extended construction is held until the first
 gap, the position `a + 5n` common to all `n` filler–gap associations. -/
@@ -245,7 +245,7 @@ theorem peripheralGaps_nested (a n : ℕ) (hn : 2 ≤ n) :
     Nested ((peripheralGaps a n).map Dependency.fillerGap) ∧
       Nested ((peripheralGaps a n).map Dependency.gapVerb) := by
   simp only [Nested, peripheralGaps, List.map_map, List.mem_map, List.mem_range, Function.comp,
-    exists_exists_and_eq_and, Dependency.fillerGap, Dependency.gapVerb, NonemptyInterval.during,
+    exists_exists_and_eq_and, Dependency.fillerGap, Dependency.gapVerb, NonemptyInterval.During,
     span_fst, span_snd]
   exact ⟨⟨1, by omega, 0, by omega, by omega⟩, ⟨1, by omega, 0, by omega, by omega⟩⟩
 
@@ -260,10 +260,10 @@ theorem localGaps_disjoint (n : ℕ) :
       forall_exists_index, and_imp, forall_apply_eq_imp_iff₂]
     intro i hi j hj hne
     rcases Nat.lt_trichotomy i j with h | rfl | h
-    · exact Or.inl (by simp [NonemptyInterval.precedes, Dependency.fillerGap, Dependency.gapVerb,
+    · exact Or.inl (by simp [NonemptyInterval.Precedes, Dependency.fillerGap, Dependency.gapVerb,
         Dependency.fillerVerb]; omega)
     · exact absurd rfl hne
-    · exact Or.inr (by simp [NonemptyInterval.precedes, Dependency.fillerGap, Dependency.gapVerb,
+    · exact Or.inr (by simp [NonemptyInterval.Precedes, Dependency.fillerGap, Dependency.gapVerb,
         Dependency.fillerVerb]; omega)
 
 /-- In the multiple object relative every filler is held until the innermost verb, on either
@@ -292,9 +292,9 @@ theorem verbFinal_common (n : ℕ) :
       forall_exists_index, and_imp, forall_apply_eq_imp_iff₂]
     intro i hi j hj hne
     rcases Nat.lt_trichotomy i j with h | rfl | h
-    · exact Or.inl (by simp [NonemptyInterval.precedes, Dependency.fillerGap]; omega)
+    · exact Or.inl (by simp [NonemptyInterval.Precedes, Dependency.fillerGap]; omega)
     · exact absurd rfl hne
-    · exact Or.inr (by simp [NonemptyInterval.precedes, Dependency.fillerGap]; omega)
+    · exact Or.inr (by simp [NonemptyInterval.Precedes, Dependency.fillerGap]; omega)
 
 /-! ### Unbounded dependencies in categorial grammar -/
 

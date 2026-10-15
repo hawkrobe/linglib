@@ -1,7 +1,7 @@
 module
 
 public import Mathlib.Order.UpperLower.Basic
-public import Linglib.Core.Order.Interval
+public import Linglib.Core.Order.Interval.Basic
 public import Linglib.Semantics.ArgumentStructure.LevinClass.Properties
 public import Linglib.Semantics.ArgumentStructure.LevinClass.Members
 public import Linglib.Syntax.Voice.Basic

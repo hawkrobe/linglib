@@ -34,7 +34,7 @@ complement holds, while a plain infinitive contradicts it and needs the modal.
   equality with the embedded event in (28b), so a complement here is the predicate of events itself
   (`Complement`), and closure binds its event (`Complement.closure`).
 * mathlib orders intervals by inclusion: the paper's `τ(e) ⊆ t` is `(τ e) ≤ t`, its `t' < t` in
-  (30a) and (30b) is `t'.precedes t`, the `t ≤ t'` of (37) is `t.isBefore t'`, and `LB` is `.fst`.
+  (30a) and (30b) is `t'.Precedes t`, the `t ≤ t'` of (37) is `t.IsBefore t'`, and `LB` is `.fst`.
 * Pre-existence is `Event.PreExists` of `Semantics/Events/PreExistence.lean`, shared with
   `Studies/Bondarenko2020`. (28b) as printed binds the complement's time existentially, and so bound
   it cannot tell the plain infinitive from the anterior complements (`exists_anterior_iff`). The
@@ -99,13 +99,13 @@ theorem closure_aspP (P : W → E → Prop) : (aspP P).closure = Aspect.PRFV P :
 /-- Under the past tense of the gerund, (30a), and the perfect, (30b), the complement holds at a
 reference time preceding `t`. -/
 def anterior (C : Complement W E T) : Complement W E T :=
-  fun w t e ↦ ∃ t', t'.precedes t ∧ C w t' e
+  fun w t e ↦ ∃ t', t'.Precedes t ∧ C w t' e
 
 /-- Under the plan modal, (37), the plan state `s` is the complement's event, and in every world of
 its plan the complement holds at a time from `t` on. -/
 def mod (plan : E → NonemptyInterval T → W → Set W) (C : Complement W E T) :
     Complement W E T :=
-  fun w t s ↦ ∀ w' ∈ plan s t w, ∃ t', t.isBefore t' ∧ C.closure w' t'
+  fun w t s ↦ ∀ w' ∈ plan s t w, ∃ t', t.IsBefore t' ∧ C.closure w' t'
 
 /-! ### Pre-existence -/
 
@@ -139,7 +139,7 @@ theorem exists_anterior_iff [NoMaxOrder T] {p : E → Prop} :
 
 /-- Under the anterior shift the embedded event precedes the reference time, (32)(iii),
 (34)(iii). -/
-theorem precedes_of_anterior_aspP (h : anterior (aspP P) w t e) : (τ e).precedes t :=
+theorem precedes_of_anterior_aspP (h : anterior (aspP P) w t e) : (τ e).Precedes t :=
   let ⟨_, ht, hle, _⟩ := h
   hle.2.trans_lt ht
 
@@ -167,7 +167,7 @@ theorem needsMod_aspP (P : W → E → Prop) : NeedsMod (aspP P) :=
 
 /-- The gerund and the perfect infinitive do not need the modal once the predicate has an event
 that precedes a forgetting `f`, (15b). -/
-theorem not_needsMod_anterior_aspP {f : E} (h : P w e) (hf : (τ e).precedes (τ f)) :
+theorem not_needsMod_anterior_aspP {f : E} (h : P w e) (hf : (τ e).Precedes (τ f)) :
     ¬ NeedsMod (anterior (aspP P)) :=
   fun hn ↦ hn f w ⟨e, ⟨τ e, hf, le_rfl, h⟩, (τ e).fst_le_snd.trans_lt hf⟩
 
@@ -183,7 +183,7 @@ theorem not_needsMod_mod {f s : E} (hs : mod plan C w (τ f) s) (hlt : (τ s).fs
 factive one alike, but the infinitive frame hosts the plain infinitive, which needs the modal,
 and the perfect infinitive, which like the gerund does not, so whether the modal heads a
 complement is not a matter of its frame. -/
-theorem mca_overgenerates {f : E} (h : P w e) (hf : (τ e).precedes (τ f)) :
+theorem mca_overgenerates {f : E} (h : P w e) (hf : (τ e).Precedes (τ f)) :
     (∀ fr ∈ English.Verbs.forget.valency.frames, White2014.Modalized fr) ∧
       (∃ fr ∈ English.Verbs.forget_rog.valency.frames, White2014.Modalized fr) ∧
       NeedsMod (aspP P) ∧ ¬ NeedsMod (anterior (aspP P)) :=

@@ -168,7 +168,7 @@ def unSem (k : StateFunction Entity State T) (vro : VerbOutcomes E Entity State)
     (e : E) (x : Entity) : Prop :=
   ∃ e' : E,
     vro.verb e' x ∧
-    (τ e').precedes (τ e) ∧
+    (τ e').Precedes (τ e) ∧
     resState k e' x = preState k e x ∧
     vro.outcomes.Nontrivial ∧
     resState k e x = preState k e' x
@@ -181,7 +181,7 @@ def reSem (k : StateFunction Entity State T) (vro : VerbOutcomes E Entity State)
     (e : E) (x : Entity) : Prop :=
   (∃ e' : E,
     vro.verb e' x ∧
-    (τ e').precedes (τ e) ∧
+    (τ e').Precedes (τ e) ∧
     resState k e x = resState k e' x ∧
     resState k e' x ∈ vro.thresholds) ∧
   vro.verb e x
@@ -228,7 +228,7 @@ def ev₁ : NonemptyInterval ℤ := ⟨⟨0, 5⟩, by omega⟩
 /-- `ev₂` is the prefixed event of the scenario, over `[10, 15]`. -/
 def ev₂ : NonemptyInterval ℤ := ⟨⟨10, 15⟩, by omega⟩
 
-private theorem ev₁_precedes_ev₂ : (τ ev₁).precedes (τ ev₂) := by
+private theorem ev₁_precedes_ev₂ : (τ ev₁).Precedes (τ ev₂) := by
   show (5 : ℤ) < 10; omega
 
 /-- The base predicate of every worked root holds of the scenario's two events. -/

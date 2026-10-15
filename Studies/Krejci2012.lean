@@ -83,7 +83,7 @@ def causerAddition (ingest : Entity → E → Prop) (y x : Entity) (e : E) : Pro
   ∃ w, M.effector y w ∧ M.cause w e ∧ ingest x e
 
 /-- `earlier` relates an event to the events whose run time is before its own. -/
-def earlier : SetRel E E := {(e, e') | (τ e').isBefore (τ e)}
+def earlier : SetRel E E := {(e, e') | (τ e').IsBefore (τ e)}
 
 /-- On the restitutive reading *again* modifies only the result state ((66a)), so the state
 predicate holds of a state that an earlier state of it preceded, whether or not a change brought

@@ -124,7 +124,7 @@ theorem showsInitialPoint_iff (v : ViewpointType) :
     · intro _ _ tt tsit h
       exact ⟨h.1, le_trans tsit.fst_le_snd h.2⟩
     · intro _ _ _ _ h
-      exact h.2
+      exact h
 
 /-- The final point: only the perfective asserts it. -/
 theorem showsFinalPoint_iff (v : ViewpointType) : ShowsFinalPoint v ↔ v = .perfective := by

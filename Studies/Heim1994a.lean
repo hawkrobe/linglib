@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Core.Order.Interval
+public import Linglib.Core.Order.Interval.Basic
 public import Linglib.Semantics.Reference.Context.Index
 public import Linglib.Semantics.Tense.Embedding
 public import Linglib.Semantics.Tense.Perspective
@@ -25,8 +25,8 @@ Licensing Condition `TLC` with the definition (67) of "in the domain of" license
 
 ## Implementation notes
 
-* Times are nonempty intervals, so that `<` is `NonemptyInterval.precedes`, `o` is
-  `NonemptyInterval.overlaps` and "does not follow" is `NotAfter`, the library's
+* Times are nonempty intervals, so that `<` is `NonemptyInterval.Precedes`, `o` is
+  `NonemptyInterval.Overlaps` and "does not follow" is `NotAfter`, the library's
   `Tense.upperLimitConstraint` as a perspectival presupposition on intervals.
 * Predicates carry their subjects, de dicto descriptions are atomic and always defined, and
   the presuppositions of the nuclear scopes of `woll` and of res-moved `believe` project
@@ -53,7 +53,7 @@ variable {T : Type*} [LinearOrder T]
 /-! ### Times -/
 
 /-- `t` does not follow `t₀`, the relation `¬>` of (16). -/
-def NotAfter (t t₀ : NonemptyInterval T) : Prop := ¬ t₀.precedes t
+def NotAfter (t t₀ : NonemptyInterval T) : Prop := ¬ t₀.Precedes t
 
 /-- Not following is the library's Upper Limit Constraint as a perspectival presupposition: the
 interval a tense denotes stands to the local evaluation time in the constraint's cell. -/
@@ -63,10 +63,10 @@ theorem notAfter_iff_presup (t t₀ : NonemptyInterval T) :
 
 theorem notAfter_self (t : NonemptyInterval T) : NotAfter t t := precedes_irrefl t
 
-theorem notAfter_of_precedes {t t₀ : NonemptyInterval T} (h : t.precedes t₀) : NotAfter t t₀ :=
+theorem notAfter_of_precedes {t t₀ : NonemptyInterval T} (h : t.Precedes t₀) : NotAfter t t₀ :=
   precedes_asymm h
 
-theorem notAfter_of_overlaps {t t₀ : NonemptyInterval T} (h : t.overlaps t₀) : NotAfter t t₀ :=
+theorem notAfter_of_overlaps {t t₀ : NonemptyInterval T} (h : t.Overlaps t₀) : NotAfter t t₀ :=
   λ h' => precedes_not_overlaps h' (overlaps_symm h)
 
 /-! ### Logical forms -/
@@ -127,8 +127,8 @@ variable {V D A W : Type*} (M : Model V D A W T) (c : Context W T)
 /-- The lexical presuppositions (4) of the tense morphemes, precedence of and overlap with
 the utterance time, together with the Upper Limit Constraint (18) on every tense position. -/
 def TenseNode.Def (c : Context W T) (g : Assignment T) : TenseNode → Prop
-  | PAST i => (g i).precedes c.time ∧ NotAfter (g i) (g 0)
-  | PRES i => (g i).overlaps c.time ∧ NotAfter (g i) (g 0)
+  | PAST i => (g i).Precedes c.time ∧ NotAfter (g i) (g 0)
+  | PRES i => (g i).Overlaps c.time ∧ NotAfter (g i) (g 0)
   | INF i => NotAfter (g i) (g 0)
   | trace i => NotAfter (g i) (g 0)
 
@@ -145,7 +145,7 @@ def Def : LF V D A → Assignment T → W → Prop
     τ.Def c g ∧ res.Def c g ∧ c.concept ⟨w, g τ.var⟩ = g res.var ∧
       ∀ s ∈ M.dox x w (g τ.var),
         Def φ (Function.update (Function.update g 0 s.time) j (c.concept s)) s.world
-  | .woll τ _ φ, g, w => τ.Def c g ∧ ∀ t, (g τ.var).precedes t → Def φ (Function.update g 0 t) w
+  | .woll τ _ φ, g, w => τ.Def c g ∧ ∀ t, (g τ.var).Precedes t → Def φ (Function.update g 0 t) w
 
 /-- Truth: (3), (9), (26) and (33). -/
 def Sat : LF V D A → Assignment T → W → Prop
@@ -155,7 +155,7 @@ def Sat : LF V D A → Assignment T → W → Prop
   | .believeRes x τ _ _ j φ, g, w =>
     ∀ s ∈ M.dox x w (g τ.var),
       Sat φ (Function.update (Function.update g 0 s.time) j (c.concept s)) s.world
-  | .woll τ _ φ, g, w => ∃ t, (g τ.var).precedes t ∧ Sat φ (Function.update g 0 t) w
+  | .woll τ _ φ, g, w => ∃ t, (g τ.var).Precedes t ∧ Sat φ (Function.update g 0 t) w
 
 variable (x : A) (v : V) (d : D) (g : Assignment T) (w : W)
 
@@ -165,7 +165,7 @@ alternative's time, (ii). -/
 theorem def_bind_past :
     Def M c (.believe x (.PAST 1) .past (.bind d 2 (.pred v (.PAST 2) .nonpast))) g w ↔
       (TenseNode.PAST 1).Def c g ∧ ∀ s ∈ M.dox x w (g 1),
-        (M.desc d s.world).precedes c.time ∧ NotAfter (M.desc d s.world) s.time := by
+        (M.desc d s.world).Precedes c.time ∧ NotAfter (M.desc d s.world) s.time := by
   simp [Def, TenseNode.Def, TenseNode.var, Function.update_of_ne]
 
 /-- (29): with the lower past bound from Comp, the Upper Limit Constraint is innocuous and
@@ -173,7 +173,7 @@ only the lexical presupposition of PAST remains, that every doxastic alternative
 the utterance time, footnote 23. -/
 theorem def_simultaneous :
     Def M c (.believe x (.PAST 1) .past (.pred v (.PAST 0) .nonpast)) g w ↔
-      (TenseNode.PAST 1).Def c g ∧ ∀ s ∈ M.dox x w (g 1), s.time.precedes c.time := by
+      (TenseNode.PAST 1).Def c g ∧ ∀ s ∈ M.dox x w (g 1), s.time.Precedes c.time := by
   simp [Def, TenseNode.Def, TenseNode.var, NotAfter, precedes_irrefl]
 
 /-- (30): with the lower past free and coindexed with the matrix tense, the Upper Limit
@@ -182,7 +182,7 @@ time. -/
 theorem def_free_coindexed :
     Def M c (.believe x (.PAST 1) .past (.pred v (.PAST 1) .nonpast)) g w ↔
       (TenseNode.PAST 1).Def c g ∧
-        ∀ s ∈ M.dox x w (g 1), (g 1).precedes c.time ∧ NotAfter (g 1) s.time := by
+        ∀ s ∈ M.dox x w (g 1), (g 1).Precedes c.time ∧ NotAfter (g 1) s.time := by
   simp [Def, TenseNode.Def, TenseNode.var, Function.update_of_ne]
 
 /-- (32): res-movement of the lower past. The context's concept yields the res at the
@@ -198,7 +198,7 @@ theorem def_res :
 out" does, fails the presupposition of (32). -/
 theorem not_def_res_of_precedes {s : Reference.Index W (NonemptyInterval T)}
     (hs : s ∈ M.dox x w (g 1))
-    (h : s.time.precedes (c.concept s)) :
+    (h : s.time.Precedes (c.concept s)) :
     ¬ Def M c (.believeRes x (.PAST 1) .past (.PAST 2) 3 (.pred v (.trace 3) .nonpast)) g w :=
   λ hd => ((def_res M c x v g w).1 hd).2.2.2 s hs h
 
@@ -211,7 +211,7 @@ def doubleAccess : LF V D A :=
 doxastic alternative, and (iv) the concept yields the res at the holder's world and time. -/
 theorem def_doubleAccess (h0 : g 0 = c.time) :
     Def M c (doubleAccess x v) g w ↔
-      (g 1).precedes c.time ∧ (g 2).overlaps c.time ∧
+      (g 1).Precedes c.time ∧ (g 2).Overlaps c.time ∧
         (∀ s ∈ M.dox x w (g 1), NotAfter (c.concept s) s.time) ∧ c.concept ⟨w, g 1⟩ = g 2 := by
   simp only [doubleAccess, Def, TenseNode.Def, TenseNode.var, h0,
     Function.update_of_ne (show (0 : ℕ) ≠ 3 by decide), Function.update_self]
@@ -221,7 +221,7 @@ theorem def_doubleAccess (h0 : g 0 = c.time) :
 /-- (ii) and (iv) together: the concept, at the holder's actual world and time, overlaps the
 utterance time, so that "she is pregnant today" is reportable by (38) on the same day only. -/
 theorem overlaps_of_def_doubleAccess (h0 : g 0 = c.time) (h : Def M c (doubleAccess x v) g w) :
-    (c.concept ⟨w, g 1⟩).overlaps c.time := by
+    (c.concept ⟨w, g 1⟩).Overlaps c.time := by
   obtain ⟨_, h₂, _, h₄⟩ := (def_doubleAccess M c x v g w h0).1 h
   exact h₄ ▸ h₂
 
@@ -235,7 +235,7 @@ theorem snd_lt_of_def_doubleAccess (h0 : g 0 = c.time) (h : Def M c (doubleAcces
 /-- A backshifting concept, one whose value precedes its argument as "a year ago" does,
 cannot satisfy (i), (ii) and (iv): (38) can never report such a belief. -/
 theorem not_def_doubleAccess_of_backshifting (h0 : g 0 = c.time)
-    (hf : ∀ s, (c.concept s).precedes s.time) : ¬ Def M c (doubleAccess x v) g w := λ h =>
+    (hf : ∀ s, (c.concept s).Precedes s.time) : ¬ Def M c (doubleAccess x v) g w := λ h =>
   precedes_not_overlaps (precedes_trans (hf ⟨w, g 1⟩) ((def_doubleAccess M c x v g w h0).1 h).1)
     (overlaps_of_def_doubleAccess M c x v g w h0 h)
 
@@ -244,14 +244,14 @@ theorem not_def_doubleAccess_of_backshifting (h0 : g 0 = c.time)
 /-- The presuppositions of the affixed predicates (46)–(48): the event time precedes, or does
 not precede, the evaluation time. -/
 def Affix.Def (g : Assignment T) (t : NonemptyInterval T) : Affix → Prop
-  | past => t.precedes (g 0)
-  | nonpast => ¬ t.precedes (g 0)
+  | past => t.Precedes (g 0)
+  | nonpast => ¬ t.Precedes (g 0)
 
 /-- The tense entries of Section 3: PAST a bare variable (1a), PRES with the presupposition
 (64) of overlapping the evaluation time, and the Upper Limit Constraint on every position. -/
 def TenseNode.Def' (g : Assignment T) : TenseNode → Prop
   | PAST i => NotAfter (g i) (g 0)
-  | PRES i => (g i).overlaps (g 0) ∧ NotAfter (g i) (g 0)
+  | PRES i => (g i).Overlaps (g 0) ∧ NotAfter (g i) (g 0)
   | INF i => NotAfter (g i) (g 0)
   | trace i => NotAfter (g i) (g 0)
 
@@ -267,7 +267,7 @@ def Def' : LF V D A → Assignment T → W → Prop
       ∀ s ∈ M.dox x w (g τ.var),
         Def' φ (Function.update (Function.update g 0 s.time) j (c.concept s)) s.world
   | .woll τ a φ, g, w =>
-    τ.Def' g ∧ a.Def g (g τ.var) ∧ ∀ t, (g τ.var).precedes t → Def' φ (Function.update g 0 t) w
+    τ.Def' g ∧ a.Def g (g τ.var) ∧ ∀ t, (g τ.var).Precedes t → Def' φ (Function.update g 0 t) w
 
 /-- Whether a tense is licensed at a position, (49) with (67): a PAST must have its host
 predicate `<`-affixed or sit inside an intensional argument of a `<`-affixed predicate
@@ -307,7 +307,7 @@ def TLC : Bool → LF V D A → Prop
 /-- An unembedded PAST conveys anteriority: the condition forces the `<`-affix, whose
 presupposition is that the event time precedes the utterance time. -/
 theorem precedes_of_tlc {i : Var} {a : Affix} (h : TLC false (.pred v (.PAST i) a : LF V D A))
-    (hd : Def' M c (.pred v (.PAST i) a) g w) : (g i).precedes (g 0) := by
+    (hd : Def' M c (.pred v (.PAST i) a) g w) : (g i).Precedes (g 0) := by
   rcases h with h | h
   · subst h; exact hd.2
   · exact absurd h Bool.false_ne_true
@@ -339,7 +339,7 @@ theorem tlc_simultaneous :
 the utterance time: the presupposition of footnote 23 is gone. -/
 theorem def'_simultaneous (h0 : g 0 = c.time) :
     Def' M c (.believe x (.PAST 1) .past (.pred v (.PAST 0) .nonpast)) g w ↔
-      (g 1).precedes c.time := by
+      (g 1).Precedes c.time := by
   simp only [Def', TenseNode.Def', TenseNode.var, Affix.Def, h0, Function.update_self]
   exact ⟨λ h => h.2.1,
     λ h => ⟨notAfter_of_precedes h, h, λ _ _ => ⟨notAfter_self _, precedes_irrefl _⟩⟩⟩
@@ -382,9 +382,9 @@ theorem not_tlc_66 : ¬ TLC false (resMoved x v (.PAST 2) .nonpast : LF V D A) :
 the alternative's time. -/
 theorem def'_63 (h0 : g 0 = c.time) :
     Def' M c (resMoved x v (.PRES 2) .nonpast) g w ↔
-      (g 1).precedes c.time ∧ (g 2).overlaps c.time ∧ c.concept ⟨w, g 1⟩ = g 2 ∧
+      (g 1).Precedes c.time ∧ (g 2).Overlaps c.time ∧ c.concept ⟨w, g 1⟩ = g 2 ∧
         ∀ s ∈ M.dox x w (g 1),
-          NotAfter (c.concept s) s.time ∧ ¬ (c.concept s).precedes s.time := by
+          NotAfter (c.concept s) s.time ∧ ¬ (c.concept s).Precedes s.time := by
   simp only [resMoved, Def', TenseNode.Def', TenseNode.var, Affix.Def, h0,
     Function.update_of_ne (show (0 : ℕ) ≠ 3 by decide), Function.update_self]
   exact ⟨λ ⟨_, h₁, ⟨h₂, _⟩, h₄, h₆⟩ => ⟨h₁, h₂, h₄, h₆⟩,

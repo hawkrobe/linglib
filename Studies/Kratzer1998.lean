@@ -140,7 +140,7 @@ time in the reference time, and the perfect has the event over by the reference 
 def AspectHead.rel : AspectHead → NonemptyInterval T → NonemptyInterval T → Prop
   | .imperfective, r, s => r ≤ s
   | .perfective, r, s => s ≤ r
-  | .perfect, r, s => s.precedes r
+  | .perfect, r, s => s.Precedes r
 
 /-- An aspect maps a property of events to the property of times that stand in the aspect's
 relation to the time of some such event. -/
@@ -161,7 +161,7 @@ theorem perfect_viewpointType {P : W → E → Prop} {w : W} {r : NonemptyInterv
 variable (T) in
 /-- An anterior aspect places the event time before the reference time. -/
 def AspectHead.IsAnterior (a : AspectHead) : Prop :=
-  ∀ r s : NonemptyInterval T, a.rel r s → s.precedes r
+  ∀ r s : NonemptyInterval T, a.rel r s → s.Precedes r
 
 /-- Only the perfect is anterior, since the imperfective and the perfective relate a time to
 itself. -/
@@ -177,7 +177,7 @@ theorem AspectHead.isAnterior_iff [Nonempty T] (a : AspectHead) :
 /-- An anterior aspect describes an event that is over by the reference time. -/
 theorem AspectHead.IsAnterior.precedes {a : AspectHead} (ha : a.IsAnterior T)
     {P : W → E → Prop} {w : W} {r : NonemptyInterval T} (h : r ∈ a.denote P w) :
-    ∃ e : E, (τ e).precedes r ∧ P w e :=
+    ∃ e : E, (τ e).Precedes r ∧ P w e :=
   let ⟨e, he, hP⟩ := h
   ⟨e, ha _ _ he, hP⟩
 
@@ -199,7 +199,7 @@ event can be described with no past tense. -/
 theorem denote_present_perfect_outOfTheBlue_iff (n : ℕ) (P : W → E → Prop) (t₀ : T)
     (w : W) :
     denote ⟦present⟧ .perfect n P (outOfTheBlue t₀) w ↔ ∃ e : E, (τ e).snd < t₀ ∧ P w e := by
-  simp [denote_outOfTheBlue_iff, AspectHead.denote, AspectHead.rel, NonemptyInterval.precedes,
+  simp [denote_outOfTheBlue_iff, AspectHead.denote, AspectHead.rel, NonemptyInterval.Precedes,
     denote_present]
 
 end Aspects

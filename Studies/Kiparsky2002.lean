@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Core.Order.Interval
+public import Linglib.Core.Order.Interval.Basic
 
 /-!
 # Kiparsky (2002): Event Structure and the Perfect
@@ -34,7 +34,7 @@ activity be presupposed and the change of state asserted, the source of the Wh-p
 
 ## Implementation notes
 
-* E, R and P are intervals, [2], and precedence is the strict `NonemptyInterval.precedes`, so
+* E, R and P are intervals, [2], and precedence is the strict `NonemptyInterval.Precedes`, so
   the event of the universal reading ends before R; the inclusive boundaries remarked on for
   [10] are not represented.
 * The anchoring rule [16a] is read at its tightest, the subordinate perspective time being the
@@ -96,7 +96,7 @@ structure Perfect (T : Type*) [LinearOrder T] where
   E : NonemptyInterval T
   R : NonemptyInterval T
   P : NonemptyInterval T
-  perfect : E.precedes R
+  perfect : E.Precedes R
 
 namespace Perfect
 
@@ -106,7 +106,7 @@ variable (s : Perfect T)
 def Present : Prop := s.P ≤ s.R
 
 /-- In the past perfect, [4], R precedes P. -/
-def Past : Prop := s.R.precedes s.P
+def Past : Prop := s.R.Precedes s.P
 
 end Perfect
 
@@ -145,7 +145,7 @@ theorem isComplex_of_presentState (h : presentState.mapping s d) : d.isComplex :
   | complex _ _ _ _ => trivial
 
 /-- Under the existential reading the event precedes R, [6]. -/
-theorem precedes_of_existential (h : existential.mapping s d) : d.runtime.precedes s.R :=
+theorem precedes_of_existential (h : existential.mapping s d) : d.runtime.Precedes s.R :=
   lt_of_le_of_lt (NonemptyInterval.le_def.mp h).2 s.perfect
 
 /-- Under the present state reading the result state, and with it the event, extends through
@@ -168,14 +168,14 @@ theorem not_existential_of_presentState (h : presentState.mapping s d) :
 precedes R, so a subordinate perspective time anchored to it, [16a], precedes the main one in
 the present and past perfects: sequence of tense, [16c], applies, [27]. -/
 theorem sequenceOfTense_of_existential (h : existential.mapping s d)
-    (hRP : s.R.fst ≤ s.P.fst) : d.runtime.precedes s.P :=
+    (hRP : s.R.fst ≤ s.P.fst) : d.runtime.Precedes s.P :=
   lt_of_lt_of_le (precedes_of_existential h) hRP
 
 /-- Under the resultative reading the result state holds through R, which includes P in the
 present perfect, so the subordinate perspective time includes the main one and [16c] is
 inapplicable, [26]. -/
 theorem no_sequenceOfTense_of_resultative (h : resultative.mapping s d) (hP : s.Present) :
-    s.P ≤ d.runtime ∧ ¬ d.runtime.precedes s.P :=
+    s.P ≤ d.runtime ∧ ¬ d.runtime.Precedes s.P :=
   have hPd : s.P ≤ d.runtime :=
     le_trans hP (le_runtime_of_presentState (presentState_of_resultative h))
   ⟨hPd, λ hlt => precedes_not_overlaps hlt (overlaps_symm (overlaps_of_le hPd))⟩

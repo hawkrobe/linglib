@@ -4,7 +4,6 @@ public import Linglib.Phonology.OptimalityTheory.Constraint.Defs
 public import Linglib.Phonology.OptimalityTheory.Tableau
 public import Mathlib.Data.Finset.Union
 public import Mathlib.Dynamics.FixedPoints.Basic
-public import Linglib.Core.Order.IterateFixedPoint
 
 /-!
 # Harmonic Serialism
@@ -155,13 +154,20 @@ private theorem hsStep_descends {lt : C → C → Prop}
 /-- **HS terminates under a well-founded harmony order.** If every genuine step
 descends a well-founded `lt` (`sound`), the search is eventually constant: some `N`
 past which further fuel doesn't change the result. Derivations cannot loop while each
-step makes measurable progress, so the explicit `Nat` bound is harmless. The proof is
-`WellFounded.iterate_eventually_constant` over the harmony order lifted to `Option`. -/
+step makes measurable progress, so the explicit `Nat` bound is harmless: the orbit cannot
+descend the harmony order lifted to `Option` forever, so some iterate is a fixed point. -/
 theorem iterateGen_eventually_constant {lt : C → C → Prop} (wf : WellFounded lt)
     (sound : ∀ c c', step c ≠ {c} → pick (step c) = some c' → c' ≠ c → lt c' c)
     (c : C) :
-    ∃ N, ∀ m, N ≤ m → iterateGen step pick m c = iterateGen step pick N c :=
-  (optionRel_wf wf).iterate_eventually_constant (hsStep_descends sound) (some c)
+    ∃ N, ∀ m, N ≤ m → iterateGen step pick m c = iterateGen step pick N c := by
+  obtain ⟨N, hN⟩ := WellFounded.not_rel_apply_succ (h := optionRel_wf wf)
+    fun n ↦ iterateGen step pick n c
+  have hfix : Function.IsFixedPt (hsStep step pick) (iterateGen step pick N c) := by_contra fun h ↦
+    hN <| by rw [iterateGen, Function.iterate_succ_apply']; exact hsStep_descends sound _ h
+  refine ⟨N, fun m hm ↦ ?_⟩
+  obtain ⟨k, rfl⟩ := Nat.exists_eq_add_of_le hm
+  rw [iterateGen, add_comm, Function.iterate_add_apply]
+  exact hfix.iterate k
 
 end Iteration
 
