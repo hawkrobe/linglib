@@ -12,7 +12,7 @@ house and a car', and often before the first as well, *dà Bellò dà Mūsā* 'b
 
 ## Main definitions
 
-* `Hausa.da`: the conjunctive coordinator.
+* `Hausa.Coordination.da`: the conjunctive coordinator.
 
 ## References
 
@@ -23,7 +23,7 @@ house and a car', and often before the first as well, *dà Bellò dà Mūsā* 'b
 
 @[expose] public section
 
-namespace Hausa
+namespace Hausa.Coordination
 
 /-- *dà* 'and', also the comitative preposition 'with', `Hausa.Adpositions.da`. -/
 def da : Coordinator :=
@@ -32,4 +32,4 @@ def da : Coordinator :=
 /-- The coordinators. -/
 def allEntries : List Coordinator := [da]
 
-end Hausa
+end Hausa.Coordination

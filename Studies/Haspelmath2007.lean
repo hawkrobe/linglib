@@ -176,13 +176,13 @@ def co (morph : Morphology.Morph) : Coordinator := { morph, gloss := "and", role
 
 /-- The constructions of (5), (6), (12), (20)–(37), (59), (77)–(79) and (85). -/
 def attestations : List Attestation :=
-  [ { language := "Kannada", coordinator := Kannada.Coordination.u, pattern := (.post, .post),
+  [ { language := "Kannada", coordinator := Kannada.Coordination.uu, pattern := (.post, .post),
       emphatic := some false },
     { language := "English", coordinator := English.Coordination.and_, pattern := (.bare, .pre),
       emphatic := some false },
     { language := "English", coordinator := co (.free "both"),
       second := some English.Coordination.and_, pattern := (.pre, .pre), emphatic := some true },
-    { language := "Hausa", coordinator := Hausa.da, pattern := (.bare, .pre),
+    { language := "Hausa", coordinator := Hausa.Coordination.da, pattern := (.bare, .pre),
       emphatic := some false, source := some .comitative },
     { language := "Lango", coordinator := Lango.Coordination.kede, pattern := (.bare, .pre),
       emphatic := some false, source := some .comitative },
@@ -264,7 +264,8 @@ theorem comitative_patterns :
 /-- The comitative-sourced coordinators with Fragment entries, Hausa *dà* and Lango *kèdè*, are
 still the comitative prepositions of their languages. -/
 theorem comitative_source_isAlsoComitative :
-    Hausa.da.IsAlsoComitative Hausa.Adpositions.da.morphs Hausa.Adpositions.da.functions ∧
+    Hausa.Coordination.da.IsAlsoComitative Hausa.Adpositions.da.morphs
+        Hausa.Adpositions.da.functions ∧
       Lango.Coordination.kede.IsAlsoComitative Lango.Adpositions.kede.morphs
         Lango.Adpositions.kede.functions := by
   decide

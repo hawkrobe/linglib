@@ -171,7 +171,8 @@ theorem english_and_not_isAlsoComitative :
 
 /-- Hausa *dà* 'and' is the comitative preposition *dà* 'with', (109). -/
 theorem hausa_da_isAlsoComitative :
-    Hausa.da.IsAlsoComitative Hausa.Adpositions.da.morphs Hausa.Adpositions.da.functions := by
+    Hausa.Coordination.da.IsAlsoComitative Hausa.Adpositions.da.morphs
+      Hausa.Adpositions.da.functions := by
   decide
 
 /-- Japanese, one of the verb-final WITH-languages of the paper, links its noun phrases by the
