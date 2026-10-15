@@ -145,6 +145,19 @@ def ch454 : Datum :=
     readings := []
     paperFeatures := [("configuration", "clausal pied-piping")] }
 
+def ch51b : Datum :=
+  { id := "adger2025_ch51b"
+    source := ⟨"adger-2025", "ch. 5 (1b)"⟩
+    reportedIn := none
+    language := "stan1293"
+    primaryText := "(Guess) what you asked who bought?"
+    glossedTokens := []
+    context := ""
+    judgment := .ungrammatical
+    alternatives := []
+    readings := []
+    paperFeatures := [("configuration", "wh-island"), ("mover", "what"), ("C 2-part", "who")] }
+
 def ch630 : Datum :=
   { id := "adger2025_ch630"
     source := ⟨"adger-2025", "ch. 6 (30)"⟩
@@ -509,6 +522,6 @@ def ch759g : Datum :=
     readings := []
     paperFeatures := [("subject", "indefinite or weak definite"), ("D 2-part", "free")] }
 
-def all : List Datum := [ch433, ch436a, ch436b, ch437a, ch437b, ch443, ch448a, ch448b, ch448c, ch454, ch630, ch631, ch634, ch635a, ch635b, ch635c, ch636a, ch636b, ch636c, ch636d, ch640a, ch640b, ch640c, ch641a, ch641b, ch642a, ch642b, ch643a, ch643b, ch644a, ch644b, ch759a, ch759b, ch759c, ch759d, ch759e, ch759f, ch759g]
+def all : List Datum := [ch433, ch436a, ch436b, ch437a, ch437b, ch443, ch448a, ch448b, ch448c, ch454, ch51b, ch630, ch631, ch634, ch635a, ch635b, ch635c, ch636a, ch636b, ch636c, ch636d, ch640a, ch640b, ch640c, ch641a, ch641b, ch642a, ch642b, ch643a, ch643b, ch644a, ch644b, ch759a, ch759b, ch759c, ch759d, ch759e, ch759f, ch759g]
 
 end Adger2025.Examples

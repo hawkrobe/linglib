@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Syntax.Mereological.AngularLocality
+public import Linglib.Syntax.Mereological.Derivation
 
 /-!
 # Wang and Sun (2026): Detaching Mandarin Classifiers from Nouns
@@ -25,11 +25,11 @@ noun and Q is the 2-part of Deg, off the complementation line of the predicate, 
 Extraction runs by Angular Locality, (40), on the clausal structure of (41): the object D is
 the 2-part of O, and O, v and Asp are the 1-part chain of C. A wh-numeral first subjoins to D
 and from there to C, (41) (`wh_numeral`); with a *de*-modifier in D's 2-part the numeral can
-neither subjoin to D nor reach C directly, (39b), (42) (`wh_numeral_modifier`). Topicalisation
-of the whole D reaches C at once, (43c) (`topic_d`); the noun must subjoin to D first, stranding
-the numeral and classifier, (43d) (`topic_n`), which a modifier as the classifier's 2-part
-permits, (44a) (`topic_n_modifier_cl`), and a modifier as D's 2-part blocks, (44b)
-(`topic_n_modifier_d`).
+neither subjoin to D nor, in any derivation, reach C, (39b), (42) (`wh_numeral_modifier`).
+Topicalisation of the whole D reaches C at once, (43c) (`topic_d`); the noun must subjoin to D
+first, stranding the numeral and classifier, (43d) (`topic_n`), which a modifier as the
+classifier's 2-part permits, (44a) (`topic_n_modifier_cl`), and a modifier as D's 2-part blocks
+for good, (44b) (`topic_n_modifier_d`).
 
 ## Implementation notes
 
@@ -165,60 +165,62 @@ def clause : Parthood Node where
     | .Asp => some .Agent | .v => some .Agent | .O => some .D | .Q => some .Num | _ => none
 
 /-- `clause` with a modifier as the classifier's 2-part, (39a), (44a). -/
-def clauseModCl : Parthood Node :=
-  { clause with twoPart := Function.update clause.twoPart .Cl (some .Mod) }
+def clauseModCl : Parthood Node := clause.addPart .two .Mod .Cl
 
 /-- `clause` with a modifier as D's 2-part, (39b), (44b). -/
-def clauseModD : Parthood Node :=
-  { clause with twoPart := Function.update clause.twoPart .D (some .Mod) }
+def clauseModD : Parthood Node := clause.addPart .two .Mod .D
 
 /-- `clauseModCl` after the wh-numeral subjoins to D, (41). -/
-def clauseModClNum : Parthood Node :=
-  { clauseModCl with twoPart := Function.update clauseModCl.twoPart .D (some .Num) }
+def clauseModClNum : Parthood Node := clauseModCl.addPart .two .Num .D
 
 /-- `clause` after the noun subjoins to D, (43d). -/
-def clauseN : Parthood Node :=
-  { clause with twoPart := Function.update clause.twoPart .D (some .N) }
+def clauseN : Parthood Node := clause.addPart .two .N .D
 
 /-- `clauseModCl` after the noun subjoins to D, (44a). -/
-def clauseModClN : Parthood Node :=
-  { clauseModCl with twoPart := Function.update clauseModCl.twoPart .D (some .N) }
+def clauseModClN : Parthood Node := clauseModCl.addPart .two .N .D
+
+/-- The objects inside D in the clause of (41), other than a modifier in D's 2-part. -/
+abbrev inD : Set Node := {.D, .Q, .Cl, .N, .Num}
 
 /-- A wh-numeral is the 2-part of Q, the 1-part of D, so it subjoins to D; as D's 2-part it is
 part of O, the 1-part of C, and subjoins to C, (41). It cannot reach C directly. -/
 theorem wh_numeral :
-    ¬ clauseModCl.CanSubjoin .Num .C ∧ clauseModCl.CanSubjoin .Num .D ∧
-      clauseModCl.subjoin .Num .D = some clauseModClNum ∧
-      clauseModClNum.CanSubjoin .Num .C := by
+    ¬ clauseModCl.CanSubjoin .Num .C ∧ clauseModCl.Subjoins .Num .D clauseModClNum ∧
+      clauseModClNum.Subjoins .Num .C (clauseModClNum.addPart .two .Num .C) := by
   decide +kernel
 
 /-- With a modifier as D's 2-part, Angular Locality still admits the wh-numeral at D but
-Dimensionality refuses it, and C is out of reach, (42). -/
+Dimensionality refuses it, and no derivation makes the numeral a part of C, (42). -/
 theorem wh_numeral_modifier :
     clauseModD.CanSubjoin .Num .D ∧ clauseModD.subjoin .Num .D = none ∧
-      ¬ clauseModD.CanSubjoin .Num .C := by
-  decide +kernel
+      ¬ clauseModD.Reaches .Num .C :=
+  ⟨by decide +kernel, subjoin_eq_none_of_full rfl rfl,
+    IsDomain.not_reaches (S := inD) (b := .D) (c := .Mod) (by decide +kernel) rfl (by decide)
+      (by decide) (by decide) (by decide +kernel) (by decide)⟩
 
 /-- The whole D, the 2-part of O, subjoins to C, (43c). -/
 theorem topic_d : clause.CanSubjoin .D .C := by decide +kernel
 
 /-- The noun, in D's first dimension, is no part of O and cannot reach C; it subjoins to D as
-D's 2-part, becomes part of O, and reaches C, stranding the numeral and classifier, (43d). -/
+D's 2-part, becomes part of O, and subjoins to C, stranding the numeral and classifier, (43d). -/
 theorem topic_n :
-    ¬ clause.CanSubjoin .N .C ∧ clause.CanSubjoin .N .D ∧
-      clause.subjoin .N .D = some clauseN ∧ clauseN.CanSubjoin .N .C := by
+    ¬ clause.CanSubjoin .N .C ∧ clause.Subjoins .N .D clauseN ∧
+      clauseN.Subjoins .N .C (clauseN.addPart .two .N .C) := by
   decide +kernel
 
 /-- A modifier as the classifier's 2-part leaves D's 2-part free, and the noun topicalises,
 (44a). -/
 theorem topic_n_modifier_cl :
-    clauseModCl.subjoin .N .D = some clauseModClN ∧ clauseModClN.CanSubjoin .N .C := by
+    clauseModCl.Subjoins .N .D clauseModClN ∧
+      clauseModClN.Subjoins .N .C (clauseModClN.addPart .two .N .C) := by
   decide +kernel
 
-/-- A modifier as D's 2-part fills D, and the noun can neither subjoin to it nor reach C,
-(44b). -/
+/-- A modifier as D's 2-part fills D: the noun cannot subjoin to it, and no derivation makes the
+noun a part of C, (44b). -/
 theorem topic_n_modifier_d :
-    clauseModD.subjoin .N .D = none ∧ ¬ clauseModD.CanSubjoin .N .C := by
-  decide +kernel
+    clauseModD.subjoin .N .D = none ∧ ¬ clauseModD.Reaches .N .C :=
+  ⟨subjoin_eq_none_of_full rfl rfl,
+    IsDomain.not_reaches (S := inD) (b := .D) (c := .Mod) (by decide +kernel) rfl (by decide)
+      (by decide) (by decide) (by decide +kernel) (by decide)⟩
 
 end WangSun2026

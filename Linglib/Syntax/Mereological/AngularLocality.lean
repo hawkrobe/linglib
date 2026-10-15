@@ -12,22 +12,21 @@ dimension `n` into dimension 1. Everything the classical theory stipulates about
 and their escape hatches follows: 2-parts are the locality domains, and an object leaves a 2-part
 just when it is a 2-part of it.
 
-This file defines `Parthood.CanSubjoin`, decidable on a finite structure, and proves the
-consequences that hold in every structure: the target must contain the mover, so lowering,
-sideward, and parallel subjunction are ruled out; an immediate 1-part cannot resubjoin to its
-whole (antilocality); and an object inside a 2-part reaches an object outside it exactly when it
-lies on the 2-part's own 2-part chain.
+A domain of a 2-part `b` is a set of parts that parthood leaves only through 2-edges from `b` or
+from a 2-part of `b`, the edge of `b`. The material inside a 2-part is such a domain, and it stays
+one while its edge moves out.
 
 ## Main definitions
 
-* `Parthood.CanSubjoin γ β` — Angular Locality for subjunction of `γ` to `β`.
+* `Parthood.CanSubjoin γ β`: Angular Locality for subjunction of `γ` to `β`.
+* `Parthood.IsDomain P S b`: `S` is a locality domain of `b`.
 
 ## Main statements
 
-* `Parthood.descendant_of_canSubjoin` — the target contains the mover.
-* `Parthood.not_canSubjoin_of_imm_one` — antilocality, from irreflexivity of parthood.
-* `Parthood.canSubjoin_iff_nPart_two` — locality domains are 2-parts, with escape along the
-  2-part chain.
+* `Parthood.descendant_of_canSubjoin`: the target contains the mover.
+* `Parthood.not_canSubjoin_of_imm_one`: antilocality, from irreflexivity of parthood.
+* `Parthood.IsDomain.canSubjoin_iff_nPart_two`: an object inside a domain reaches an object
+  outside it exactly when it lies on the edge of `b`.
 
 ## References
 
@@ -40,7 +39,7 @@ namespace MereologicalSyntax.Parthood
 
 open Relation
 
-variable {α : Type*} {P : Parthood α}
+variable {α : Type*} {P Q : Parthood α} {n : Dim} {γ β : α}
 
 /-- Angular Locality allows `γ` to subjoin to `β` only if `γ` is an `n`-part of some 1-part of
 `β`. -/
@@ -51,57 +50,91 @@ instance [Fintype α] [DecidableEq α] : DecidableRel P.CanSubjoin := fun γ β 
   decidable_of_iff (∃ a, P.NPart .one a β ∧ ∃ n, P.NPart n γ a)
     ⟨fun ⟨a, ha, n, hn⟩ ↦ ⟨n, a, hn, ha⟩, fun ⟨n, a, hn, ha⟩ ↦ ⟨a, ha, n, hn⟩⟩
 
-/-! ### The target contains the mover -/
+theorem CanSubjoin.mono (h : P ≤ Q) (hγβ : P.CanSubjoin γ β) : Q.CanSubjoin γ β :=
+  let ⟨n, a, h₁, h₂⟩ := hγβ
+  ⟨n, a, h₁.mono h, h₂.mono h⟩
 
 /-- Lowering, sideward, and parallel subjunction are ruled out, since the target must contain the
 mover. -/
-theorem descendant_of_canSubjoin {γ β : α} (h : P.CanSubjoin γ β) : P.Descendant γ β :=
+theorem descendant_of_canSubjoin (h : P.CanSubjoin γ β) : P.Descendant γ β :=
   let ⟨_, _, h₁, h₂⟩ := h
   (descendant_of_nPart h₁).trans (descendant_of_nPart h₂)
+
+/-- The target of a subjunction already has a 1-part. -/
+theorem isSome_onePart_of_canSubjoin (h : P.CanSubjoin γ β) : (P.onePart β).isSome :=
+  let ⟨_, _, _, h₂⟩ := h
+  let ⟨c, _, hc⟩ := TransGen.tail'_iff.1 h₂
+  Option.isSome_iff_exists.2 ⟨c, hc⟩
 
 /-! ### Antilocality -/
 
 /-- An immediate 1-part cannot resubjoin to its whole, since the only object it is a part of is
 the whole, which is not a 1-part of itself. -/
-theorem not_canSubjoin_of_imm_one (hacyc : ∀ x, ¬ P.Descendant x x) {γ β : α}
-    (h : P.Imm .one γ β) : ¬ P.CanSubjoin γ β := by
+theorem not_canSubjoin_of_imm_one (hP : P.Acyclic) (h : P.Imm .one γ β) :
+    ¬ P.CanSubjoin γ β := by
   rintro ⟨_, a, hγa, haβ⟩
   obtain ⟨c, hac, hcβ⟩ := TransGen.tail'_iff.1 haβ
   obtain rfl : c = γ := Option.some_injective _ (hcβ.symm.trans h)
   rcases reflTransGen_iff_eq_or_transGen.1 hac with rfl | hac
-  · exact hacyc _ (descendant_of_nPart hγa)
-  · exact hacyc _ ((descendant_of_nPart hγa).trans (descendant_of_nPart hac))
+  · exact hP _ (descendant_of_nPart hγa)
+  · exact hP _ ((descendant_of_nPart hγa).trans (descendant_of_nPart hac))
 
-/-! ### Locality domains are 2-parts -/
+/-! ### Locality domains -/
 
-section Domain
+/-- `S` is a domain of `b` when its objects are parts and every parthood edge leaving `S` is a
+2-edge from `b` or from a 2-part of `b`. -/
+structure IsDomain (P : Parthood α) (S : Set α) (b : α) : Prop where
+  /-- The objects of the domain are parts. -/
+  isPart : ∀ x ∈ S, P.IsPart x
+  /-- Parthood leaves the domain only in the second dimension, from `b` or from a 2-part of
+  `b`. -/
+  exit : ∀ x ∈ S, ∀ n y, P.Imm n x y → y ∉ S → n = .two ∧ (x = b ∨ P.NPart .two x b)
 
-variable {S : Set α} {b : α}
+instance [Fintype α] [DecidableEq α] {S : Set α} [DecidablePred (· ∈ S)] {b : α} :
+    Decidable (P.IsDomain S b) :=
+  decidable_of_iff ((∀ x ∈ S, P.IsPart x) ∧
+      ∀ x ∈ S, ∀ n y, P.Imm n x y → y ∉ S → n = .two ∧ (x = b ∨ P.NPart .two x b))
+    ⟨fun ⟨h₁, h₂⟩ ↦ ⟨h₁, h₂⟩, fun ⟨h₁, h₂⟩ ↦ ⟨h₁, h₂⟩⟩
 
-/-- Nothing inside the 2-part `b` other than its own 2-parts subjoins outside `b`. -/
-theorem not_canSubjoin_of_not_nPart_two (hS : ∀ x ∈ S, x ≠ b → ∀ n y, P.Imm n x y → y ∈ S)
-    (hb : ∀ n y, P.Imm n b y → n = .two) {γ β : α} (hγ : γ ∈ S) (hγb : γ ≠ b) (hβ : β ∉ S)
-    (hn : ¬ P.NPart .two γ b) : ¬ P.CanSubjoin γ β := by
-  rintro ⟨_, a, hγa, haβ⟩
+namespace IsDomain
+
+variable {S : Set α} {b x y : α}
+
+/-- An `n`-part chain from inside a domain to outside it runs in the second dimension and starts
+on the edge of `b`. -/
+theorem exit_of_nPart (hD : P.IsDomain S b) (h : P.NPart n x y) (hx : x ∈ S) (hy : y ∉ S) :
+    n = .two ∧ (x = b ∨ P.NPart .two x b) := by
+  revert hx
+  induction h using TransGen.head_induction_on with
+  | @single a h => exact fun hx ↦ hD.exit a hx _ _ h hy
+  | @head a c h' _ ih =>
+    intro hx
+    by_cases hc : c ∈ S
+    · obtain ⟨rfl, hcb⟩ := ih hc
+      exact ⟨rfl, .inr (hcb.elim (fun e ↦ e ▸ .single h') (.head h'))⟩
+    · exact hD.exit a hx _ _ h' hc
+
+/-- An object inside a domain subjoins outside it only from the edge of `b`. -/
+theorem eq_or_nPart_two_of_canSubjoin (hD : P.IsDomain S b) (hγ : γ ∈ S) (hβ : β ∉ S)
+    (h : P.CanSubjoin γ β) : γ = b ∨ P.NPart .two γ b := by
+  obtain ⟨_, a, hγa, haβ⟩ := h
   by_cases ha : a ∈ S
-  · exact absurd (exit_of_nPart hS hb haβ ha hβ).1 (by decide)
-  · obtain ⟨rfl, h⟩ := exit_of_nPart hS hb hγa hγ ha
-    exact h.elim hγb hn
+  · exact absurd (hD.exit_of_nPart haβ ha hβ).1 (by decide)
+  · exact (hD.exit_of_nPart hγa hγ ha).2
+
+end IsDomain
 
 /-- A 2-part of the 2-part `b` of `d` subjoins to anything `d` is a 1-part of. -/
-theorem canSubjoin_of_nPart_two {γ b d β : α} (hγ : P.NPart .two γ b) (hbd : P.Imm .two b d)
+theorem canSubjoin_of_nPart_two {b d : α} (hγ : P.NPart .two γ b) (hbd : P.Imm .two b d)
     (hd : P.NPart .one d β) : P.CanSubjoin γ β :=
   ⟨.two, d, hγ.tail hbd, hd⟩
 
-/-- From inside the 2-part `b` of `d`, an object reaches an object above `d` in `d`'s extended
-projection exactly when it is a 2-part of `b`, which is the escape hatch. -/
-theorem canSubjoin_iff_nPart_two (hS : ∀ x ∈ S, x ≠ b → ∀ n y, P.Imm n x y → y ∈ S)
-    (hb : ∀ n y, P.Imm n b y → n = .two) {γ β d : α} (hbd : P.Imm .two b d)
-    (hd : P.NPart .one d β) (hγ : γ ∈ S) (hγb : γ ≠ b) (hβ : β ∉ S) :
+/-- From inside a domain of the 2-part `b` of `d`, an object reaches an object above `d` in `d`'s
+extended projection exactly when it is a 2-part of `b`, which is the escape hatch. -/
+theorem IsDomain.canSubjoin_iff_nPart_two {S : Set α} {b d : α} (hD : P.IsDomain S b)
+    (hbd : P.Imm .two b d) (hd : P.NPart .one d β) (hγ : γ ∈ S) (hγb : γ ≠ b) (hβ : β ∉ S) :
     P.CanSubjoin γ β ↔ P.NPart .two γ b :=
-  ⟨fun h ↦ by_contra fun hn ↦ not_canSubjoin_of_not_nPart_two hS hb hγ hγb hβ hn h,
+  ⟨fun h ↦ (hD.eq_or_nPart_two_of_canSubjoin hγ hβ h).resolve_left hγb,
     fun h ↦ canSubjoin_of_nPart_two h hbd hd⟩
-
-end Domain
 
 end MereologicalSyntax.Parthood
