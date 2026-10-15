@@ -78,7 +78,6 @@ import Linglib.Core.Data.Multiset.Antidiagonal
 import Linglib.Core.Data.Multiset.Dominates
 import Linglib.Core.Data.Multiset.Powerset
 import Linglib.Core.Data.Multiset.Rel
-import Linglib.Core.Data.Part
 import Linglib.Core.Data.RoseTree.Basic
 import Linglib.Core.Data.RoseTree.Get
 import Linglib.Core.Data.RoseTree.Leaves
@@ -156,7 +155,6 @@ import Linglib.Core.Order.Ortholattice
 import Linglib.Core.Order.PartialUnify
 import Linglib.Core.Order.PreorderLattice
 import Linglib.Core.Order.StrictBounds
-import Linglib.Core.Order.Valuation
 import Linglib.Core.Order.TreePath
 import Linglib.Core.Order.UpperLower.Closure
 import Linglib.Core.Order.UpperLower.Finset

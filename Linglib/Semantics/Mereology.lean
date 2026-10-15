@@ -7,7 +7,6 @@ public import Mathlib.Order.SupClosed
 public import Mathlib.Order.Zorn
 public import Linglib.Core.Data.Fintype.Order
 public import Linglib.Core.Order.Antichain
-public import Linglib.Core.Order.Valuation
 
 /-!
 # Algebraic mereology
@@ -619,22 +618,10 @@ theorem IsExtensiveMeasure.strictMono [HasRemainders α] [AddLeftStrictMono M] (
 
 end ExtensiveMeasure
 
-section Valuation
-
-variable {M : Type*} [Lattice α] [OrderBot α] [AddCommMonoid M] [PartialOrder M]
-
-/-- A positive lattice valuation vanishing at `⊥` is an extensive measure. -/
-theorem IsExtensiveMeasure.ofPositiveValuation (v : α → M) [IsPositiveValuation v]
-    (h0 : v ⊥ = 0) : IsExtensiveMeasure v where
+instance [DecidableEq β] : IsExtensiveMeasure (Finset.card : Finset β → ℕ) where
   additive _ _ h :=
-    IsLatticeValuation.map_sup_of_disjoint v h0 (not_not.mp (overlap_iff_not_disjoint.not.mp h))
-  positive _ hx :=
-    h0 ▸ IsPositiveValuation.strictMono (bot_lt_iff_ne_bot.mpr (mt isBot_iff_eq_bot.2 hx))
-
-instance [DecidableEq β] : IsExtensiveMeasure (Finset.card : Finset β → ℕ) :=
-  IsExtensiveMeasure.ofPositiveValuation _ Finset.card_empty
-
-end Valuation
+    Finset.card_union_of_disjoint (not_not.mp (overlap_iff_not_disjoint.not.mp h))
+  positive _ hx := Finset.card_pos.2 (Finset.nonempty_iff_ne_empty.2 (mt isBot_iff_eq_bot.2 hx))
 
 /-! ### Individuation perspectives
 
