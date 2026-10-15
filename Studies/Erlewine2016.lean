@@ -2,7 +2,7 @@ module
 
 public import Linglib.Data.Examples.Erlewine2016
 public import Linglib.Syntax.Person.Basic
-public import Linglib.Fragments.Mayan.Extraction
+public import Linglib.Fragments.Mayan.Kaqchikel.Extraction
 public import Linglib.Phonology.OptimalityTheory.Tableau
 public import Mathlib.Order.Interval.Finset.Nat
 public import Studies.CoonMateoPedroPreminger2014
@@ -28,6 +28,8 @@ Popti', Akatek and Ch'ol.
   verb form.
 * `af_iff_immediately_preverbal`: with at most one participant argument, Kaqchikel AF is optimal
   exactly when the subject moves to the layer immediately above TP.
+* `exists_optimal_agentFocus_iff`: the grammar derives the Kaqchikel fragment's Agent Focus
+  reflex for arguments of every person.
 * `lastResort_matches_iff`: the last-resort model of Coon, Mateo Pedro and Preminger, run on the
   Kaqchikel examples, judges an example correctly exactly when its subject is not extracted past
   an intervening layer and its arguments are not both participants.
@@ -252,19 +254,18 @@ def extractedTable : List (String × Option Arg) :=
 /-- The persons as named in the rows. -/
 def personTable : List (String × Person) := [("1", .first), ("2", .second), ("3", .third)]
 
-/-- The verb forms as named in the rows, by whether the AF suffix appears. -/
-def verbTable : List (String × Bool) := [("AF", true), ("full", false)]
+/-- The verb forms as named in the rows. -/
+def verbTable : List (String × Mayan.VerbForm) := [("AF", .agentFocus), ("full", .transitive)]
 
 /-- The grammars by glottocode. -/
 def grammarTable : List (String × Grammar) :=
   [("kaqc1270", kaqchikel), ("popt1235", popti), ("west2635", akatek), ("chol1282", chol)]
 
-/-- A row, with the clause, its language's grammar, whether the attested form bears the AF suffix,
-and the judgment. -/
+/-- A row, with the clause, its language's grammar, the attested form and the judgment. -/
 structure Row where
   input : Input
   grammar : Grammar
-  af : Bool
+  form : Mayan.VerbForm
   judgment : Judgment
 
 /-- A row from an example; landing layers count from one in the rows. -/
@@ -276,9 +277,9 @@ def Row.ofDatum (ex : Datum) : Option Row := do
     | some a => do pure (some (a, (← ex.nat? "landing") - 1))
   let subj ← ex.parse? "subject" personTable
   let grammar ← List.lookup ex.language grammarTable
-  let af ← ex.parse? "verb" verbTable
+  let form ← ex.parse? "verb" verbTable
   pure ⟨⟨transitive, layers, extracted, subj, (ex.parse? "object" personTable).getD .third⟩,
-    grammar, af, ex.judgment⟩
+    grammar, form, ex.judgment⟩
 
 theorem row_ofDatum_isSome : ∀ ex ∈ Examples.all, (Row.ofDatum ex).isSome := by decide
 
@@ -293,7 +294,7 @@ def kaqchikelRows : List Row :=
 it. -/
 theorem rows_optimal :
     ∀ r ∈ rows, r.judgment = .acceptable ↔
-      ∃ c ∈ (r.grammar.tableau r.input).optimal, (c.AFSuffix r.input.args ↔ r.af = true) := by
+      ∃ c ∈ (r.grammar.tableau r.input).optimal, c.form r.input.args = r.form := by
   decide
 
 /-- The generalization of §3. With at most one participant argument, AF is optimal in Kaqchikel
@@ -335,6 +336,18 @@ theorem participant_exception :
     (kaqchikel.tableau (subjectExtraction .first .second)).optimal = {⟨true, .obj⟩} := by
   decide
 
+/-- Subject extraction to Spec,CP has an optimal AF derivation exactly when the arguments are not
+both participants, which is when the Kaqchikel fragment records the Agent Focus reflex. -/
+theorem exists_optimal_agentFocus_iff (c : Mayan.VerbClass) (s o : Person) :
+    (∃ d ∈ (kaqchikel.tableau (subjectExtraction s o)).optimal,
+        d.form (argsOf true) = .agentFocus) ↔
+      (Kaqchikel.Extraction.realize c s o (.core .A)).Nonempty := by
+  have h : (Kaqchikel.Extraction.realize c s o (.core .A)).Nonempty ↔ ¬ (s.IsSAP ∧ o.IsSAP) := by
+    simp only [Kaqchikel.Extraction.realize]
+    split_ifs with h <;> simp [h]
+  rw [h]
+  cases s <;> cases o <;> decide
+
 /-- Object extraction and intransitive subject extraction cross enough structure (§4.2), and no
 optimal derivation bears the AF suffix. -/
 theorem no_af_without_short_step :
@@ -367,8 +380,7 @@ attested form, and the extracted argument by its role. -/
 def Row.lastResortClause (r : Row) : CoonMateoPedroPreminger2014.Clause :=
   ⟨CoonMateoPedroPreminger2014.Language.kaqchikel.licenser, true,
     if r.input.transitive then
-      .transitive (CoonMateoPedroPreminger2014.voiceOf (if r.af then .agentFocus else .transitive))
-        .dp
+      .transitive (CoonMateoPedroPreminger2014.voiceOf r.form) .dp
     else .intransitive .setB,
     r.input.extracted.map fun e ↦ e.1.role r.input.transitive, false⟩
 

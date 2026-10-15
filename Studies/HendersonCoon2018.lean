@@ -98,12 +98,12 @@ inductive Resumption
   | focused
   deriving DecidableEq, Repr
 
-/-- An extraction example, with the argument that seems extracted, whether the verb has its Agent
-Focus form, the object, what intervenes, whether a complementizer is overt, what stands at the
-subject position, and the persons of the arguments. -/
+/-- An extraction example, with the argument that seems extracted, the form of the verb, the
+object, what intervenes, whether a complementizer is overt, what stands at the subject position,
+and the persons of the arguments. -/
 structure Example where
   extracted : Erlewine2016.Arg
-  af : Bool
+  form : Mayan.VerbForm
   object : ObjectKind
   intervener : Option Intervener
   complementizer : Bool
@@ -142,7 +142,7 @@ def extractedRole : Parse → Option ArgumentRole
 Voice of the attested form and the object's Case needs. -/
 def clause (p : Parse) : Clause :=
   ⟨CoonMateoPedroPreminger2014.Language.kaqchikel.licenser, true,
-    .transitive (voiceOf (if e.af then .agentFocus else .transitive)) e.object.toObject,
+    .transitive (voiceOf e.form) e.object.toObject,
     e.extractedRole p, false⟩
 
 /-- Erlewine's input for the string as one clause, any intervener a projection above TP below
@@ -154,7 +154,7 @@ def erlewineInput : Erlewine2016.Input :=
 /-- Erlewine's grammar realizes the attested form in an optimal derivation. -/
 def AntiLocality : Prop :=
   ∃ c ∈ (Erlewine2016.kaqchikel.tableau e.erlewineInput).optimal,
-    (c.AFSuffix e.erlewineInput.args ↔ e.af = true)
+    c.form e.erlewineInput.args = e.form
 
 instance : Decidable e.AntiLocality :=
   inferInstanceAs (Decidable (∃ c ∈ (Erlewine2016.kaqchikel.tableau e.erlewineInput).optimal, _))
@@ -176,13 +176,13 @@ def objectTable : List (String × ObjectKind) :=
 /-- The example an extraction row describes. -/
 def Example.ofDatum (d : Datum) : Option Example := do
   let extracted ← d.parse? "extracted" [("subject", Erlewine2016.Arg.subj), ("object", .obj)]
-  let af ← d.parse? "verb" [("AF", true), ("TV", false)]
+  let form ← d.parse? "verb" [("AF", Mayan.VerbForm.agentFocus), ("TV", .transitive)]
   let object ← d.parse? "objectKind" objectTable
   let subject ← d.parse? "subject" Erlewine2016.personTable
   let objectPerson ← d.parse? "object" Erlewine2016.personTable
   let resumption :=
     (d.parse? "resumptive" [("overt", Resumption.pronoun), ("focused", .focused)]).getD .gap
-  pure ⟨extracted, af, object, d.parse? "intervener" intervenerTable,
+  pure ⟨extracted, form, object, d.parse? "intervener" intervenerTable,
     (d.feature? "complementizer").isSome, resumption, subject, objectPerson⟩
 
 /-- An extraction row. -/
@@ -204,7 +204,7 @@ the examples with an overt complementizer or pronoun have no other parse. -/
 theorem monoclausal_fits_iff : ∀ d ∈ Examples.all, IsExtraction d →
     ∃ e ∈ Example.ofDatum d, e.Parses .monoclausal →
       ((d.judgment = .acceptable ↔ Converges (e.clause .monoclausal)) ↔
-        ¬ (e.af = false ∧ e.extracted = .subj ∧ ∃ i ∈ e.intervener, i.TakesClause)) := by
+        ¬ (e.form = .transitive ∧ e.extracted = .subj ∧ ∃ i ∈ e.intervener, i.TakesClause)) := by
   decide
 
 /-- Erlewine's grammar fits an example read as one clause exactly when its object is a full DP and
@@ -216,7 +216,7 @@ theorem antiLocality_fits_iff : ∀ d ∈ Examples.all, IsExtraction d →
     ∃ e ∈ Example.ofDatum d, e.Parses .monoclausal →
       ((d.judgment = .acceptable ↔ e.AntiLocality) ↔
         e.object = .dp ∧
-          (e.intervener = none ∨ (e.af = false ∧ ∃ i ∈ e.intervener, i.TakesClause))) := by
+          (e.intervener = none ∨ (e.form = .transitive ∧ ∃ i ∈ e.intervener, i.TakesClause))) := by
   decide +kernel
 
 /-- The adverbs that take a clause in the embedding examples are those `Intervener.TakesClause`

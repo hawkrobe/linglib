@@ -33,19 +33,12 @@ which they note varies by variety between datives and benefactives.
 
 namespace Kiche.Extraction
 
-/-- A K'iche' extraction reflex is hosted by the verb stem or by the verbal complex the
-particle *wi* attaches to. -/
-inductive Host where
-  | verb
-  | verbalComplex
-  deriving DecidableEq, Repr
-
 /-- The fronting particle *wi*. -/
 def wi : Morphology.Morph := .free "wi"
 
 /-- Transitive-subject extraction takes the Agent Focus marker of the verb's class on the verb;
 low-adjunct extraction adds *wi* to the verbal complex; everything else is unmarked. -/
-def realize (c : Mayan.VerbClass) : Mayan.ExtractionSite → Finset (Reflex Host)
+def realize (c : Mayan.VerbClass) : Mayan.ExtractionSite → Finset (Reflex Mayan.Host)
   | .core .A => {.morpheme .verb (agentFocus c).marker}
   | .adjunct .instrument | .adjunct .benefactive | .adjunct .dative | .adjunct .locative =>
       {.morpheme .verbalComplex [wi]}

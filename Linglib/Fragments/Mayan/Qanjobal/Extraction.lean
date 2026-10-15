@@ -1,6 +1,7 @@
 module
 
 public import Linglib.Syntax.Reflex
+public import Linglib.Syntax.Voice.Basic
 public import Linglib.Syntax.Person.Basic
 public import Linglib.Fragments.Mayan.Extraction
 
@@ -19,9 +20,10 @@ Antipassive and which is found in the Q'anjob'alan branch alone.
 ## Main declarations
 
 * `Qanjobal.StatusSuffix`: the intransitive and transitive status suffixes, each a morph.
-* `Qanjobal.agentFocusSuffix`: the suffix *-on*.
-* `Qanjobal.VerbForm.statusSuffix`, `Qanjobal.VerbForm.marker`: the status suffix and the
-  suffixes of each `Mayan.VerbForm`.
+* `Qanjobal.agentFocus`, `Qanjobal.voice`: the Agent Focus voice, and the voice of each
+  `Mayan.VerbForm`.
+* `Qanjobal.StatusSuffix.ofVerbForm`, `Qanjobal.suffixes`: the status suffix and the suffixes of
+  each form.
 * `Qanjobal.verbForm`: the form of a transitive verb by the finiteness of its clause, the
   argument extracted from it and the person of its agent.
 * `Qanjobal.Extraction.realize`: the reflexes extraction from each argument role licenses
@@ -29,7 +31,7 @@ Antipassive and which is found in the Q'anjob'alan branch alone.
 
 ## Main results
 
-* `Qanjobal.VerbForm.statusSuffix_eq_itv_iff`: the intransitive status suffix goes with the
+* `Qanjobal.StatusSuffix.ofVerbForm_eq_itv_iff`: the intransitive status suffix goes with the
   absence of Set A.
 * `Qanjobal.verbForm_eq_agentFocus_iff`: Agent Focus is the form of every non-finite
   transitive and of a finite one whose third-person subject is extracted.
@@ -52,33 +54,37 @@ inductive StatusSuffix where
   | tv
   deriving DecidableEq, Repr
 
-/-- The status suffix as a morph: *-i* intransitive, *-V'* transitive. -/
+/-- The intransitive status suffix is *-i* and the transitive one *-V'*. -/
 def StatusSuffix.morph : StatusSuffix → Morphology.Morph
   | .itv => .suff "i"
   | .tv => .suff "V'"
 
-/-- The Agent Focus suffix *-on*. -/
-def agentFocusSuffix : Morphology.Morph := .suff "on"
+/-- Agent Focus keeps both core terms, as the active does, and is coded by *-on*. -/
+def agentFocus : Voice := Voice.agentVoice.marked [.suff "on"]
+
+/-- The voice of each form, the uncoded active for the regular transitive and Agent Focus for
+the Agent Focus form. -/
+def voice : Mayan.VerbForm → Voice
+  | .transitive => Voice.active
+  | .agentFocus => agentFocus
 
 /-- The regular transitive takes the transitive status suffix and the Agent Focus form the
 intransitive one. -/
-def VerbForm.statusSuffix : Mayan.VerbForm → StatusSuffix
+def StatusSuffix.ofVerbForm : Mayan.VerbForm → StatusSuffix
   | .transitive => .tv
   | .agentFocus => .itv
 
-/-- The suffixes of a form: the status suffix alone on the regular transitive, *-on* before
-it on the Agent Focus form. -/
-def VerbForm.marker : Mayan.VerbForm → List Morphology.Morph
-  | .transitive => [StatusSuffix.tv.morph]
-  | .agentFocus => [agentFocusSuffix, StatusSuffix.itv.morph]
-
 /-- A form takes the intransitive status suffix exactly when it lacks Set A. -/
-theorem VerbForm.statusSuffix_eq_itv_iff (f : Mayan.VerbForm) :
-    VerbForm.statusSuffix f = .itv ↔ ¬ f.HasSetA := by
+theorem StatusSuffix.ofVerbForm_eq_itv_iff (f : Mayan.VerbForm) :
+    ofVerbForm f = .itv ↔ ¬ f.HasSetA := by
   decide +revert
 
-/-- The form of a transitive verb: Agent Focus in a non-finite clause and in a finite clause
-whose third-person subject is extracted, the regular transitive otherwise. -/
+/-- The suffixes of a form, the marker of its voice before its status suffix. -/
+def suffixes (f : Mayan.VerbForm) : List Morphology.Morph :=
+  (voice f).marker ++ [(StatusSuffix.ofVerbForm f).morph]
+
+/-- A transitive verb takes the Agent Focus form in a non-finite clause and in a finite clause
+whose third-person subject is extracted, and the regular transitive form otherwise. -/
 def verbForm (finite : Bool) (extracted : Option ArgumentRole) (agent : Person) :
     Mayan.VerbForm :=
   if finite = false ∨ (extracted = some .A ∧ ¬ agent.IsSAP) then .agentFocus else .transitive
@@ -101,22 +107,17 @@ theorem verbForm_true_of_isSAP {agent : Person} (h : agent.IsSAP)
 
 namespace Extraction
 
-/-- The one host of the Q'anjob'al extraction reflex is the verb. -/
-inductive Host where
-  | verb
-  deriving DecidableEq, Repr
-
 /-- Extraction is marked when it changes the form of a finite verb, by the suffixes of the
 form it selects; with an agent of the given person, only a third-person transitive subject
 switches the verb to Agent Focus. -/
-def realize (agent : Person) (r : ArgumentRole) : Finset (Reflex Host) :=
+def realize (agent : Person) (r : ArgumentRole) : Finset (Reflex Mayan.Host) :=
   if verbForm true (some r) agent = verbForm true none agent then ∅
-  else {.morpheme .verb (VerbForm.marker (verbForm true (some r) agent))}
+  else {.morpheme .verb (suffixes (verbForm true (some r) agent))}
 
 /-- The Agent Focus reflex appears exactly under the extraction of a third-person transitive
 subject. -/
 theorem mem_realize_iff (agent : Person) (r : ArgumentRole) :
-    Reflex.morpheme Host.verb (VerbForm.marker .agentFocus) ∈ realize agent r ↔
+    Reflex.morpheme .verb (suffixes .agentFocus) ∈ realize agent r ↔
       r = .A ∧ ¬ agent.IsSAP := by
   decide +revert
 

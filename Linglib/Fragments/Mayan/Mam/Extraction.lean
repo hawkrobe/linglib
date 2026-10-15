@@ -48,22 +48,13 @@ The distribution of the enclitic across clause sizes and movement paths is forma
 
 namespace Mam.Extraction
 
-/-- A Mam extraction reflex is hosted by the verb stem, which the antipassive suffix alters, by
-the verbal complex, the word the enclitic =(y)a' closes after the stem's suffixes, or by a
-directional auxiliary. -/
-inductive Host where
-  | verb
-  | verbalComplex
-  | directional
-  deriving DecidableEq, Repr
-
 /-- The movement enclitic =(y)a'. -/
 def movementEnclitic : Morphology.Morph := .encl "(y)a'"
 
 /-- Transitive-subject extraction antipassivizes the verb; extraction of an adjunct of any class
 but the temporals licenses =(y)a' on the verbal complex and on a directional, each optional and
 independent of the other; absolutive and temporal extraction are unmarked. -/
-def realize : Mayan.ExtractionSite → Finset (Reflex Host)
+def realize : Mayan.ExtractionSite → Finset (Reflex Mayan.Host)
   | .core .A => {.morpheme .verb antipassive.marker}
   | .adjunct .temporal => ∅
   | .adjunct _ =>
@@ -74,7 +65,7 @@ def realize : Mayan.ExtractionSite → Finset (Reflex Host)
 
 @[simp] theorem realize_adjunct_temporal : realize (.adjunct .temporal) = ∅ := rfl
 
-/-- Absolutive extraction is unmarked. -/
+/-- The extraction of a core argument other than the transitive subject is unmarked. -/
 theorem realize_core_of_ne_A {r : ArgumentRole} (h : r ≠ .A) : realize (.core r) = ∅ := by
   decide +revert
 
@@ -90,18 +81,18 @@ theorem realize_adjunct_nonempty_iff (a : Mayan.Adjunct) :
 
 /-- The antipassive is the reflex of transitive-subject extraction alone. -/
 theorem antipassive_mem_realize_iff (s : Mayan.ExtractionSite) :
-    Reflex.morpheme Host.verb antipassive.marker ∈ realize s ↔ s = .core .A := by
+    Reflex.morpheme .verb antipassive.marker ∈ realize s ↔ s = .core .A := by
   decide +revert
 
 /-- No core-argument extraction licenses the enclitic. -/
 theorem enclitic_notMem_realize_core (r : ArgumentRole) :
-    Reflex.morpheme Host.verbalComplex [movementEnclitic] ∉ realize (.core r) := by
+    Reflex.morpheme .verbalComplex [movementEnclitic] ∉ realize (.core r) := by
   decide +revert
 
 /-- The directional hosts the enclitic at exactly the sites the verbal complex does. -/
 theorem enclitic_directional_mem_realize_iff (s : Mayan.ExtractionSite) :
-    Reflex.morpheme Host.directional [movementEnclitic] ∈ realize s ↔
-      Reflex.morpheme Host.verbalComplex [movementEnclitic] ∈ realize s := by
+    Reflex.morpheme .directional [movementEnclitic] ∈ realize s ↔
+      Reflex.morpheme .verbalComplex [movementEnclitic] ∈ realize s := by
   decide +revert
 
 /-- Every Mam reflex is overt. -/

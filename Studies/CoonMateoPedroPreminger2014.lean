@@ -9,6 +9,7 @@ public import Linglib.Fragments.Mayan.Kaqchikel.Agreement
 public import Linglib.Fragments.Mayan.Kaqchikel.Extraction
 public import Linglib.Fragments.Mayan.Tseltal.Agreement
 public import Linglib.Fragments.Mayan.Tsotsil.Agreement
+public import Linglib.Fragments.Mayan.Tsotsil.Extraction
 public import Linglib.Fragments.Mayan.Mam.Agreement
 public import Linglib.Fragments.Mayan.Mam.Extraction
 public import Linglib.Fragments.Mayan.Kiche.Agreement
@@ -347,7 +348,7 @@ theorem formallyTransitive_iff_hasSetA (f : VerbForm) (o : Object) :
 formally transitive, intransitive *-i* under Agent Focus. -/
 theorem formallyTransitive_iff_statusSuffix (f : VerbForm) (o : Object) :
     (Predicate.transitive (voiceOf f) o).FormallyTransitive ↔
-      Qanjobal.VerbForm.statusSuffix f = .tv := by
+      Qanjobal.StatusSuffix.ofVerbForm f = .tv := by
   decide +revert
 
 /-! ### The Mayan fragments -/
@@ -415,13 +416,13 @@ def IsErgativePerfective (L : Language) : Prop := Alignment.IsErgative (L.assign
 instance : DecidablePred IsErgativePerfective := fun _ ↦
   inferInstanceAs (Decidable (Alignment.IsErgative _))
 
-/-- The fragment marks the extraction of an argument on some verb, with a third-person agent
-where the marking depends on its person. The Yukatek fragment records no extraction reflexes,
+/-- The fragment marks the extraction of an argument on some verb, with third-person arguments
+where the marking depends on their person. The Yukatek fragment records no extraction reflexes,
 and its value is a junk `False`. -/
 def MarksExtraction : Language → ArgumentRole → Prop
   | .chol, r => (Chol.Extraction.realize r).Nonempty
   | .qanjobal, r => (Qanjobal.Extraction.realize .third r).Nonempty
-  | .kaqchikel, r => ∃ c, (Kaqchikel.Extraction.realize c (.core r)).Nonempty
+  | .kaqchikel, r => ∃ c, (Kaqchikel.Extraction.realize c .third .third (.core r)).Nonempty
   | .tseltal, r => (Tseltal.Extraction.realize r).Nonempty
   | .tsotsil, r => (Tsotsil.Extraction.realize r).Nonempty
   | .mam, r => (Mam.Extraction.realize (.core r)).Nonempty
