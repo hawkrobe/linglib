@@ -72,7 +72,7 @@ variable {A : Set (W → Prop)} {dom p q : Set W}
 theorem want_iff : Want A dom p ↔ ∀ w ∈ dom, (∀ z ∈ dom, (z ≤[A] w) → (w ≤[A] z)) → w ∈ p :=
   ⟨fun h _ hw hb ↦ h ⟨hw, hb⟩, fun h w hw ↦ h w hw.1 hw.2⟩
 
-instance [Fintype W] [DecidableRel (atLeastAsGoodAs A)] [DecidablePred (· ∈ dom)]
+instance [Fintype W] [DecidableRel (premisePreorder A).le] [DecidablePred (· ∈ dom)]
     [DecidablePred (· ∈ p)] : Decidable (Want A dom p) :=
   decidable_of_iff _ want_iff.symm
 

@@ -98,7 +98,7 @@ theorem not_gladBetter_of_want :
     simp only [want, Want, Set.subset_def, Preorder.mem_minimals_iff, Preorder.ofCriteria_le_iff,
       Set.mem_singleton_iff, forall_eq, Set.mem_univ, Set.mem_insert_iff]
     decide, by
-    simp only [gladBetter, Better, strictlyBetter_iff, atLeastAsGoodAs_iff,
+    simp only [gladBetter, Better, Preorder.ofCriteria_lt_iff, Preorder.ofCriteria_le_iff,
       Set.mem_singleton_iff, forall_eq, Set.mem_sdiff, Set.mem_univ,
       Set.mem_insert_iff]
     decide⟩
@@ -122,7 +122,7 @@ theorem not_isStrawsonDE_regretBetter :
     have := h (p := {0}) (q := {0, 1}) (by simp) 0
       ⟨by simp, Set.subset_univ _, ⟨0, by simp⟩, ⟨2, by simp⟩⟩
       ⟨subset_rfl, Set.subset_univ _, ⟨0, by simp⟩, ⟨1, by simp⟩⟩
-    simp only [regretBetter, Better, strictlyBetter_iff, atLeastAsGoodAs_iff,
+    simp only [regretBetter, Better, Preorder.ofCriteria_lt_iff, Preorder.ofCriteria_le_iff,
       Set.mem_singleton_iff, forall_eq, Set.mem_sdiff, Set.mem_univ, Set.mem_insert_iff,
       true_and] at this
     revert this

@@ -139,7 +139,7 @@ def humanNecessity (f g : Background W) (p : W → Prop) (w : W) : Prop :=
 
 theorem humanNecessity_iff {f g : Background W} {p : W → Prop} {w : W} :
     humanNecessity f g p w ↔ ∀ u ∈ f.accessibleWorlds w, ∃ v ∈ f.accessibleWorlds w,
-      atLeastAsGoodAs (g w) v u ∧ ∀ z ∈ f.accessibleWorlds w, atLeastAsGoodAs (g w) z v → p z :=
+      (v ≤[g w] u) ∧ ∀ z ∈ f.accessibleWorlds w, (z ≤[g w] v) → p z :=
   Iff.rfl
 
 /-- Human necessity implies best-worlds necessity, unconditionally. -/
@@ -150,7 +150,7 @@ theorem necessity_of_humanNecessity {f g : Background W} {p : W → Prop}
 /-- The Limit Assumption holds at `w` when every accessible world sees a best world at least as
 good. -/
 def LimitAssumption (f g : Background W) (w : W) : Prop :=
-  ∀ u ∈ f.accessibleWorlds w, ∃ v ∈ bestWorlds f g w, atLeastAsGoodAs (g w) v u
+  ∀ u ∈ f.accessibleWorlds w, ∃ v ∈ bestWorlds f g w, (v ≤[g w] u)
 
 /-- The Limit Assumption holds on a finite frame, where every accessible world lies above a best
 one. -/
@@ -191,9 +191,9 @@ theorem humanNecessity_bot_iff (f : Background W) (p : W → Prop) (w : W) :
   constructor
   · intro h u hu
     obtain ⟨v, _, _, hall⟩ := h u hu
-    exact hall u hu (atLeastAsGoodAs_empty u v)
+    exact hall u hu fun _ h ↦ h.elim
   · intro h u hu
-    exact ⟨u, hu, atLeastAsGoodAs_empty u u, fun z hz _ ↦ h z hz⟩
+    exact ⟨u, hu, fun _ h ↦ h.elim, fun z hz _ ↦ h z hz⟩
 
 /-! ### Good possibility -/
 
@@ -207,7 +207,7 @@ def goodPossibility (f g : Background W) (p : W → Prop) (w : W) : Prop :=
   OrderingSemantics.IsGoodPossibility (premisePreorder (g w)) (f.accessibleWorlds w) {v | p v}
 
 theorem goodPossibility_iff : goodPossibility f g p w ↔
-    ∃ u ∈ f.accessibleWorlds w, ∀ v ∈ f.accessibleWorlds w, atLeastAsGoodAs (g w) v u → p v :=
+    ∃ u ∈ f.accessibleWorlds w, ∀ v ∈ f.accessibleWorlds w, (v ≤[g w] u) → p v :=
   Iff.rfl
 
 theorem goodPossibility_mono (h : ∀ v, p v → q v) :
@@ -223,7 +223,7 @@ theorem goodPossibility_of_humanNecessity (hne : (f.accessibleWorlds w).Nonempty
 an accessible world. -/
 theorem goodPossibility_bot_iff (f : Background W) (p : W → Prop) (w : W) :
     goodPossibility f ⊥ p w ↔ (f.accessibleWorlds w).Nonempty ∧ simpleNecessity f p w :=
-  ⟨fun ⟨u, hu, h⟩ ↦ ⟨⟨u, hu⟩, fun v hv ↦ h v hv (atLeastAsGoodAs_empty v u)⟩,
+  ⟨fun ⟨u, hu, h⟩ ↦ ⟨⟨u, hu⟩, fun v hv ↦ h v hv fun _ h ↦ h.elim⟩,
     fun ⟨⟨u, hu⟩, h⟩ ↦ ⟨u, hu, fun v hv _ ↦ h v hv⟩⟩
 
 /-! ### Unified backgrounds
@@ -240,7 +240,7 @@ theorem simpleNecessity_sup_of_goodPossibility (h : goodPossibility f g p w) :
   show ∀ v ∈ (f ⊔ g).accessibleWorlds w, p v
   intro v hv
   rw [Background.accessibleWorlds_sup] at hv
-  exact hp v hv.1 ((atLeastAsGoodAs_iff _ _ _).2 fun r hr _ ↦ hv.2 r hr)
+  exact hp v hv.1 ((Preorder.ofCriteria_le_iff _ _ _ _).2 fun r hr _ ↦ hv.2 r hr)
 
 /-- Human necessity implies simple necessity over the unified backgrounds. -/
 theorem simpleNecessity_sup_of_humanNecessity (h : humanNecessity f g p w) :
@@ -249,7 +249,7 @@ theorem simpleNecessity_sup_of_humanNecessity (h : humanNecessity f g p w) :
   intro v hv
   rw [Background.accessibleWorlds_sup] at hv
   obtain ⟨_, -, -, hall⟩ := h v hv.1
-  exact hall v hv.1 ((atLeastAsGoodAs_iff _ _ _).2 fun r hr _ ↦ hv.2 r hr)
+  exact hall v hv.1 ((Preorder.ofCriteria_le_iff _ _ _ _).2 fun r hr _ ↦ hv.2 r hr)
 
 section Unified
 
@@ -259,12 +259,12 @@ include hb
 private theorem mem_of_mem_sup : b ∈ f.accessibleWorlds w :=
   ((Background.accessibleWorlds_sup f g w).subset hb).1
 
-private theorem le_of_mem_sup (v : W) : atLeastAsGoodAs (g w) b v :=
+private theorem le_of_mem_sup (v : W) : (b ≤[g w] v) :=
   fun r hr _ ↦ ((Background.accessibleWorlds_sup f g w).subset hb).2 r hr
 
 private theorem simpleNecessity_sup_iff_of_mem :
     simpleNecessity (f ⊔ g) p w ↔
-      ∀ v ∈ f.accessibleWorlds w, atLeastAsGoodAs (g w) v b → v ∈ {v | p v} := by
+      ∀ v ∈ f.accessibleWorlds w, (v ≤[g w] b) → v ∈ {v | p v} := by
   have hb' := (Background.accessibleWorlds_sup f g w).subset hb
   show (∀ v ∈ (f ⊔ g).accessibleWorlds w, p v) ↔ _
   rw [Background.accessibleWorlds_sup]
@@ -408,6 +408,6 @@ theorem Background.IsTotallyRealistic.necessity_le_id {f : Background W}
   refine hNec w ⟨by rw [hacc]; exact Set.mem_singleton w, fun v hv _ ↦ ?_⟩
   rw [hacc, Set.mem_singleton_iff] at hv
   subst hv
-  exact atLeastAsGoodAs_refl _ _
+  exact (premisePreorder _).le_refl _
 
 end Modality

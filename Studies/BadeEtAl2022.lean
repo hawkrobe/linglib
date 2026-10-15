@@ -145,7 +145,7 @@ theorem exists_not_possibility :
     fun ⟨v, hvb, hv⟩ ↦ by
       obtain ⟨_, hbest⟩ := mem_bestWorlds.1 (mem_bestAccessible.1 hvb)
       have h := hbest true (accessible_bot _ _)
-      simp_all [atLeastAsGoodAs_iff]⟩
+      simp_all [Preorder.ofCriteria_le_iff]⟩
 
 end Relational
 

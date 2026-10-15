@@ -241,8 +241,8 @@ theorem not_bestWorlds_want_alice (w : Marriage) :
   intro h
   have hbest : Marriage.sue ∈ (premisePreorder (bul w)).minimals (doxPlus.accessibleWorlds w) := by
     refine ⟨by simp [doxPlus], fun v _ hvs ↦ ?_⟩
-    have hv : v = .sue := (atLeastAsGoodAs_iff _ _ _).1 hvs marriesSue (by simp [bul]) rfl
-    exact hv ▸ atLeastAsGoodAs_refl _ _
+    have hv : v = .sue := (Preorder.ofCriteria_le_iff _ _ _ _).1 hvs marriesSue (by simp [bul]) rfl
+    exact hv ▸ (premisePreorder _).le_refl _
   exact Marriage.noConfusion (h hbest : marriesAlice .sue)
 
 /-- No one hopes for each of two outcomes their beliefs rule out together. -/

@@ -62,20 +62,20 @@ open ComparativeProbability Modality MeasureTheory ProbabilityTheory
 
 /-! ### §3: the relative likelihood approach
 
-The ordering source `O` induces the preorder `v ≤[O] u`, `v` at least as high as `u`
-(`Modality.atLeastAsGoodAs`); the comparative is Lewis's lift of it. -/
+The ordering source `O` induces the preorder `v ≤[O] u`, `v` at least as high as `u`; the
+comparative is Lewis's lift of it. -/
 
 section Kratzer
 
 variable {W : Type*} (O : Set (W → Prop))
 
-instance : IsPreorder W (atLeastAsGoodAs O) where
-  refl := atLeastAsGoodAs_refl O
-  trans _ _ _ := atLeastAsGoodAs_trans
+instance : IsPreorder W (premisePreorder O).le where
+  refl := (premisePreorder O).le_refl
+  trans _ _ _ := (premisePreorder _).le_trans _ _ _
 
 /-- On Kratzer's account `A` is at least as likely as `B` when every world of `B` is matched by
 an at least as high world of `A`. -/
-abbrev likelihood : Set W → Set W → Prop := LewisLift (atLeastAsGoodAs O)
+abbrev likelihood : Set W → Set W → Prop := LewisLift (premisePreorder O).le
 
 /-- Epistemic *must* at `w` is Kratzer's human necessity over the whole space. -/
 def must (A : Set W) (w : W) : Prop :=
@@ -113,10 +113,10 @@ theorem kratzer_V6 [Nonempty W] (w : W) : MustToProbably (likelihood O) (must O 
   rw [must_iff] at hA
   refine ⟨fun u _ ↦ ?_, fun h ↦ ?_⟩
   · obtain ⟨v, hvu, hv⟩ := hA u
-    exact ⟨v, hv v (atLeastAsGoodAs_refl O v), hvu⟩
+    exact ⟨v, hv v ((premisePreorder O).le_refl v), hvu⟩
   · obtain ⟨w₀⟩ := ‹Nonempty W›
     obtain ⟨v, -, hv⟩ := hA w₀
-    obtain ⟨u, hu, huv⟩ := h (hv v (atLeastAsGoodAs_refl O v))
+    obtain ⟨u, hu, huv⟩ := h (hv v ((premisePreorder O).le_refl v))
     exact hu (hv u huv)
 
 /-- V7 holds for Kratzer's modals, by V6 and V1. -/
@@ -128,7 +128,7 @@ witnesses, which are consequent worlds. -/
 theorem kratzer_V10 (w : W) : ConditionalToComparative (likelihood O) (ifThen O · · w) := by
   intro A B hAB u hu
   obtain ⟨v, hvA, hvu, hall⟩ := (ifThen_iff O A B w).1 hAB u hu
-  exact ⟨v, hall v hvA (atLeastAsGoodAs_refl O v), hvu⟩
+  exact ⟨v, hall v hvA ((premisePreorder O).le_refl v), hvu⟩
 
 /-- V8 holds for the restricted necessity. A world outside the consequent is dominated through
 the antecedent, and a consequent world undominated by the complement is found above the
@@ -139,10 +139,11 @@ theorem kratzer_V8 (w : W) : ChancyModusPonens (likelihood O) (ifThen O · · w)
   refine ⟨fun u hu ↦ ?_, fun h ↦ ?_⟩
   · by_cases huA : u ∈ A
     · obtain ⟨v, hvA, hvu, hall⟩ := hAB u huA
-      exact ⟨v, hall v hvA (atLeastAsGoodAs_refl O v), hvu⟩
+      exact ⟨v, hall v hvA ((premisePreorder O).le_refl v), hvu⟩
     · obtain ⟨a, ha, hau⟩ := hA huA
       obtain ⟨v, hvA, hva, hall⟩ := hAB a ha
-      exact ⟨v, hall v hvA (atLeastAsGoodAs_refl O v), atLeastAsGoodAs_trans hva hau⟩
+      exact ⟨v, hall v hvA ((premisePreorder O).le_refl v),
+        (premisePreorder _).le_trans _ _ _ hva hau⟩
   · apply hAnot
     by_contra hcon
     have hex : ∃ a ∈ A, ∀ u ∈ Aᶜ, ¬(u ≤[O] a) := by
@@ -151,10 +152,10 @@ theorem kratzer_V8 (w : W) : ChancyModusPonens (likelihood O) (ifThen O · · w)
       exact hcon fun a ha ↦ hall a ha
     obtain ⟨a, ha, hnone⟩ := hex
     obtain ⟨v, hvA, hva, hall⟩ := hAB a ha
-    obtain ⟨u, hu, huv⟩ := h (hall v hvA (atLeastAsGoodAs_refl O v))
+    obtain ⟨u, hu, huv⟩ := h (hall v hvA ((premisePreorder O).le_refl v))
     have huA : u ∈ A := by
       by_contra huA
-      exact hnone u huA (atLeastAsGoodAs_trans huv hva)
+      exact hnone u huA ((premisePreorder _).le_trans _ _ _ huv hva)
     exact hu (hall u huA huv)
 
 /-- V9 holds for the restricted necessity, as the contrapositive of V8. -/
@@ -181,8 +182,8 @@ ordering source, `p` the whole space and `q` one world, `p` is probable and `q` 
 `p`, but `q` is not probable, since its complement is as high as it. -/
 theorem kratzer_refutes_V11 : ¬PositiveFormTransfer (likelihood (∅ : Set (Fin 2 → Prop))) := by
   intro h
-  exact (h Set.univ {0} (fun _ _ ↦ ⟨0, rfl, atLeastAsGoodAs_empty _ _⟩) probably_top).2
-    fun _ _ ↦ ⟨1, by simp, atLeastAsGoodAs_empty _ _⟩
+  exact (h Set.univ {0} (fun _ _ ↦ ⟨0, rfl, (fun _ h ↦ h.elim)⟩) probably_top).2
+    fun _ _ ↦ ⟨1, by simp, (fun _ h ↦ h.elim)⟩
 
 /-- Two incomparable tied pairs of worlds refute Conjunctivitis for Kratzer's account, as the
 paper says. `{0, 2, 3}` and `{1, 2, 3}` are each probable, since the one world each lacks is
@@ -194,7 +195,7 @@ theorem kratzer_refutes_E1 :
   have hle : ∀ v u : Fin 4, (v ≤[{(· ∈ ({0, 1} : Set (Fin 4))), (· ∈ ({2, 3} : Set (Fin 4)))}] u)
       ↔ (u ∈ ({0, 1} : Set (Fin 4)) → v ∈ ({0, 1} : Set (Fin 4))) ∧
         (u ∈ ({2, 3} : Set (Fin 4)) → v ∈ ({2, 3} : Set (Fin 4))) := fun v u ↦ by
-    simp [atLeastAsGoodAs_iff]
+    simp [Preorder.ofCriteria_le_iff]
   have hφ : Probably (likelihood {(· ∈ ({0, 1} : Set (Fin 4))), (· ∈ ({2, 3} : Set (Fin 4)))})
       {0, 2, 3} := by
     refine ⟨fun u hu ↦ ⟨0, by simp, ?_⟩, fun hc ↦ ?_⟩

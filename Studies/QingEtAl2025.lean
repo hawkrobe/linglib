@@ -308,7 +308,8 @@ def HopefulGoals (φ Bφ : V → Prop) (G : Set (V → Prop)) : Prop := ∀ g �
 they come to believe `p` is strictly better than the one in which they do not, so the
 wondering meets Tabatowski's convention on asking whether `p`. -/
 theorem hopes_radical (h₁ : Bp v₁) (h₂ : ¬ Bp v₂) : v₁ <[{Bp}] v₂ := by
-  simp only [strictlyBetter_iff, atLeastAsGoodAs_iff, Set.mem_singleton_iff, forall_eq]
+  simp only [Preorder.ofCriteria_lt_iff, Preorder.ofCriteria_le_iff,
+    Set.mem_singleton_iff, forall_eq]
   exact ⟨fun h ↦ (h₂ h).elim, fun h ↦ h₂ (h h₁)⟩
 
 /-- When the agent hopes for the negation, whichever goal (89) allows, an outcome in which `p`
@@ -317,7 +318,7 @@ to believe `p` is no better than not, and the wondering cannot be hopeful. -/
 theorem hopes_negation {G : Set (V → Prop)} (hG : HopefulGoals (fun v ↦ ¬ p v) Bnp G)
     (hp₁ : p v₁) (hn₁ : ¬ Bnp v₁) : ¬ v₁ <[G] v₂ := by
   rintro ⟨-, h⟩
-  refine h ((atLeastAsGoodAs_iff G v₂ v₁).2 fun g hg hg₁ ↦ ?_)
+  refine h fun g hg hg₁ ↦ ?_
   rcases hG g hg with rfl | rfl
   · exact absurd hp₁ hg₁
   · exact absurd hg₁ hn₁
@@ -326,7 +327,8 @@ theorem hopes_negation {G : Set (V → Prop)} (hG : HopefulGoals (fun v ↦ ¬ p
 to believe `p` strictly better than remaining undecided, whichever answer is feared. -/
 theorem fears (h₁ : Bp v₁) (h₂ : ¬ Bp v₂) (hn₂ : ¬ Bnp v₂) :
     v₁ <[{fun v ↦ Bp v ∨ Bnp v}] v₂ := by
-  simp only [strictlyBetter_iff, atLeastAsGoodAs_iff, Set.mem_singleton_iff, forall_eq]
+  simp only [Preorder.ofCriteria_lt_iff, Preorder.ofCriteria_le_iff,
+    Set.mem_singleton_iff, forall_eq]
   exact ⟨fun h ↦ (h.elim h₂ hn₂).elim, fun h ↦ (h (Or.inl h₁)).elim h₂ hn₂⟩
 
 end Asymmetry

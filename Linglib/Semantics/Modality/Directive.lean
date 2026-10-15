@@ -58,7 +58,7 @@ theorem weak_not_entails_strong :
   let g' : Background Bool := fun _ ↦ {fun w ↦ w = true}
   let p : Bool → Prop := fun w ↦ w = true
   have hAcc : ∀ w' : Bool, w' ∈ f.accessibleWorlds true := by simp [f]
-  have hTriv : ∀ a b : Bool, atLeastAsGoodAs (g true) a b := by simp [g, atLeastAsGoodAs_iff]
+  have hTriv : ∀ a b : Bool, (a ≤[g true] b) := by simp [g, Preorder.ofCriteria_le_iff]
   have hBestAll : ∀ w' : Bool, w' ∈ bestWorlds f g true := by
     intro w'
     refine ⟨hAcc w', ?_⟩
@@ -69,7 +69,7 @@ theorem weak_not_entails_strong :
     cases w' with
     | true => rfl
     | false =>
-      have hTF : atLeastAsGoodAs (g' true) true false := by simp [g', atLeastAsGoodAs_iff]
+      have hTF : (true ≤[g' true] false) := by simp [g', Preorder.ofCriteria_le_iff]
       have hFT := hmin (hBestAll true) hTF
       exact absurd (hFT (fun w ↦ w = true) (Set.mem_singleton _) rfl) Bool.false_ne_true
   have hNot : ¬ strongNecessity f g p true := fun hStrong ↦

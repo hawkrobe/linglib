@@ -156,7 +156,7 @@ theorem toPartialProp_strawsonEntails (hpq : p ⊆ q) :
 /-- On the finest question, question-based *want* is best-worlds *want* (§3.4). -/
 theorem want_bot_iff :
     Want G ⊥ bel p ↔ BestWorlds.Want ((fun s w ↦ w ∈ s) '' {s | s ∈ G}) bel p := by
-  simp only [Want, BestWorlds.want_iff, Modality.atLeastAsGoodAs_iff, Set.forall_mem_image,
+  simp only [Want, BestWorlds.want_iff, Preorder.ofCriteria_le_iff, Set.forall_mem_image,
     MaximalFor, Live,
     entailed, Preorder.satisfied, Setoid.cell_bot, Set.mem_singleton_iff, exists_eq_left,
     Set.singleton_subset_iff, Set.ofPred_subset_ofPred, Finset.mem_coe, and_imp]
@@ -214,6 +214,10 @@ the act is wanting the cost, *Nap* entailing *Fail*, the closure under doxastic 
 theorem closure_under_doxastic_equivalence (A : Set (World → Prop))
     (h : BestWorlds.Want A bel ↑act) : BestWorlds.Want A bel ↑cost :=
   h.mono_on (by decide +kernel)
+
+local instance :
+    DecidableRel (Modality.premisePreorder ({(· ∈ benefit)} : Set (World → Prop))).le :=
+  fun w z ↦ decidable_of_iff (z ∈ benefit → w ∈ benefit) (by simp [Preorder.ofCriteria_le_iff])
 
 /-- A context-sensitive preference relation overgenerates (§2.2), since the value of feeling
 rested makes *Nap* true, and with it *Fail*. -/

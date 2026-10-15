@@ -101,7 +101,7 @@ theorem profile_le_of_atLeastAsGoodAs {G : List (Index W T → Prop)} {c c' : In
 /-- Goal-relative preference refines Kratzer's strict ordering: a circumstance realizing
 strictly more goals than another has a strictly better profile. -/
 theorem profile_lt_of_strictlyBetter {G : List (Index W T → Prop)} {c c' : Index W T}
-    (h : strictlyBetter {p | p ∈ G} c c') : profile G c' < profile G c :=
+    (h : (c <[{p | p ∈ G}] c')) : profile G c' < profile G c :=
   List.Forall₂.lt_of_ne
     (List.forall₂_map_left_iff.2 <| List.forall₂_map_right_iff.2 <| List.forall₂_same.2 h.1)
     fun heq ↦ h.2 fun p hp ↦ (List.map_inj_left.1 heq p hp).mpr
@@ -173,7 +173,7 @@ futures some non-realizer is strictly better than a realizer by the goals held t
 applicable. -/
 theorem not_mem_applic_of_strictlyBetter {c c' c₁ c₂ : Index W T}
     (h₁ : c₁ ∈ timelyFut history g c') (h₂ : c₂ ∈ timelyFut history g c') (hP : P c₁ a)
-    (hnP : ¬ P c₂ a) (hlt : strictlyBetter {p | p ∈ g c'} c₂ c₁) : c' ∉ applic history g f P a c :=
+    (hnP : ¬ P c₂ a) (hlt : (c₂ <[{p | p ∈ g c'}] c₁)) : c' ∉ applic history g f P a c :=
   not_mem_applic h₁ h₂ hP hnP (profile_lt_of_strictlyBetter hlt)
 
 /-- An if-clause adds its proposition to the modal base, which shrinks the applicable

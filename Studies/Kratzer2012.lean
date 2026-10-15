@@ -231,7 +231,7 @@ def ideal : Background World := fun _ ↦ {(3 ≤ ·), (2 ≤ ·), (1 ≤ ·)}
 /-- The ranking `w₃ < w₂ < w₁ < w₀` is connected and has no ties, one world being at least as
 good as another exactly when its index is at least the other's. -/
 theorem atLeastAsGoodAs_ideal_iff (v w z : World) : (w ≤[ideal v] z) ↔ z ≤ w := by
-  simp only [atLeastAsGoodAs_iff, ideal, Set.mem_insert_iff, Set.mem_singleton_iff,
+  simp only [Preorder.ofCriteria_le_iff, ideal, Set.mem_insert_iff, Set.mem_singleton_iff,
       forall_eq_or_imp,
     forall_eq]
   fin_omega
@@ -239,7 +239,7 @@ theorem atLeastAsGoodAs_ideal_iff (v w z : World) : (w ≤[ideal v] z) ↔ z ≤
 /-- `p` is a better possibility than `q` when it is at least as good a possibility, in the
 revised sense of §2.4, and not conversely. -/
 def BetterPossibility (p q : Set World) : Prop :=
-  KratzerLift (atLeastAsGoodAs (ideal 0)) p q ∧ ¬ KratzerLift (atLeastAsGoodAs (ideal 0)) q p
+  KratzerLift (premisePreorder (ideal 0)).le p q ∧ ¬ KratzerLift (premisePreorder (ideal 0)).le q p
 
 /-- Kratzer's probability measure gives `wᵢ` the probability `2ⁱ/15`. -/
 noncomputable def prob : Measure World :=
@@ -267,7 +267,7 @@ theorem superincreasing_prob : Superincreasing prob := by
 /-- One proposition is a better possibility than another exactly when it is more probable, so
 the measure preserves comparative possibility (p. 43). -/
 theorem betterPossibility_iff (p q : Set World) : BetterPossibility p q ↔ prob q < prob p := by
-  have hr : atLeastAsGoodAs (ideal 0) = (· ≥ ·) :=
+  have hr : (premisePreorder (ideal 0)).le = (· ≥ ·) :=
     funext₂ fun w z ↦ propext (atLeastAsGoodAs_ideal_iff 0 w z)
   have h := kratzerLift_iff_measure_le_iff.2 superincreasing_prob
   rw [BetterPossibility, hr, h, h, lt_iff_le_not_ge]
@@ -294,7 +294,7 @@ theorem bestWorlds_ideal : bestWorlds ⊥ ideal 0 = {3} := by
 theorem bestWorlds_swapped : bestWorlds ⊥ swapped 0 = {2} := by
   ext x
   simp only [mem_bestWorlds, Background.accessibleWorlds_bot, Set.mem_univ, true_and,
-    forall_const, atLeastAsGoodAs_iff, swapped, Set.mem_insert_iff, Set.mem_singleton_iff,
+    forall_const, Preorder.ofCriteria_le_iff, swapped, Set.mem_insert_iff, Set.mem_singleton_iff,
     forall_eq_or_imp,
     forall_eq]
   revert x
@@ -304,7 +304,7 @@ theorem bestWorlds_swapped : bestWorlds ⊥ swapped 0 = {2} := by
 theorem bestWorlds_tied : bestWorlds ⊥ tied 0 = {2, 3} := by
   ext x
   simp only [mem_bestWorlds, Background.accessibleWorlds_bot, Set.mem_univ, true_and,
-    forall_const, atLeastAsGoodAs_iff, tied, Set.mem_insert_iff, Set.mem_singleton_iff,
+    forall_const, Preorder.ofCriteria_le_iff, tied, Set.mem_insert_iff, Set.mem_singleton_iff,
     forall_eq_or_imp,
     forall_eq]
   revert x
@@ -414,10 +414,10 @@ theorem humanPossibility_tied_iff_probTied (p : World → Prop) :
 /-- No measure giving `w₁` weight, the measure of p. 46 among them, preserves the comparative
 possibility of `O₃`, under which `{w₂}` and `{w₁, w₃}` are equally good possibilities. -/
 theorem not_kratzerLift_tied_iff (μ : Measure World) [IsFiniteMeasure μ] (h : μ {1} ≠ 0) :
-    ¬ ∀ A B : Set World, KratzerLift (atLeastAsGoodAs (tied 0)) A B ↔ μ B ≤ μ A := by
+    ¬ ∀ A B : Set World, KratzerLift (premisePreorder (tied 0)).le A B ↔ μ B ≤ μ A := by
   refine not_kratzerLift_iff_measure_le (a := 2) (b := 3) (c := 1) (by decide) (by decide)
     (by decide) ?_ ?_ ?_ h <;>
-  simp [atLeastAsGoodAs_iff, tied]
+  simp [Preorder.ofCriteria_le_iff, tied]
 
 end Grades
 
