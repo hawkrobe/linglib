@@ -12,8 +12,9 @@ the paper records per language, and its table of order types with the languages 
 Generated rows live in `Data/WordOrder/<Paper>.lean`, emitted from the canonical
 `<Paper>.json` by `scripts/gen_word_order.py`.
 
-This is data: it imports nothing from `Linglib/` and states no theorems. A property the paper
-does not record for a language is `none`.
+This is data: it imports nothing from `Linglib/` and states no theorems. A property is `none`
+for a language when the paper records no value for it: the language lacks the element, the paper
+excludes it, or the paper has no data.
 
 ## References
 
@@ -24,8 +25,8 @@ does not record for a language is `none`.
 
 namespace Data.WordOrder
 
-/-- The dominant order of verb, nominal subject, and nominal object, by the verb's position:
-verb-subject-object, subject-verb-object, subject-object-verb. -/
+/-- The dominant order of verb, nominal subject, and nominal object, by the verb's position, for
+verb-subject-object, subject-verb-object, and subject-object-verb. -/
 inductive VerbPosition where
   | initial
   | medial
@@ -38,7 +39,7 @@ inductive Adposition where
   | postpositions
   deriving DecidableEq, Repr, Fintype
 
-/-- The order of a noun and one of its dependents: the noun first, the dependent first, or both
+/-- The order of a noun and one of its dependents, the noun first, the dependent first, or both
 orders found. -/
 inductive NounOrder where
   | nounFirst
@@ -78,10 +79,11 @@ inductive Apposition where
   | properCommon
   deriving DecidableEq, Repr, Fintype
 
-/-- A language whose affixes are all suffixes, or all prefixes. -/
+/-- Whether a language's affixes are all suffixes, all prefixes, or of both kinds. -/
 inductive Affixing where
   | suffixingOnly
   | prefixingOnly
+  | both
   deriving DecidableEq, Repr, Fintype
 
 /-- One language of the sample. -/
@@ -112,7 +114,7 @@ structure SampleRow where
   apposition : Option Apposition
   /-- The nominal antecedent and its relative expression. -/
   relative : Option NounOrder
-  affixing : Option Affixing
+  affixing : Affixing
   deriving DecidableEq, Repr
 
 /-- One of the paper's order types, with the languages the paper lists as attesting it. -/

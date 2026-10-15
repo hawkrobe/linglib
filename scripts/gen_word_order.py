@@ -27,7 +27,7 @@ SAMPLE_FIELDS = [
     ("questionParticleWord", "Option Placement"), ("questionWordFirst", "Bool"),
     ("auxiliary", "Option Placement"), ("adverbAdjective", "Option AdverbOrder"),
     ("comparison", "Option ComparisonOrder"), ("apposition", "Option Apposition"),
-    ("relative", "Option NounOrder"), ("affixing", "Option Affixing"),
+    ("relative", "Option NounOrder"), ("affixing", "Affixing"),
 ]
 TYPE_FIELDS = [
     ("verbPosition", "VerbPosition"), ("adposition", "Adposition"), ("genitive", "NounOrder"),
