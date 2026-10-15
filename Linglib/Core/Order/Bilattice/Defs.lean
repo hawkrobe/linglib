@@ -67,30 +67,6 @@ def kSup (x y : B) : B := ofKnow (toKnow x ⊔ toKnow y)
 @[simp] theorem toKnow_kInf (x y : B) : toKnow (x ⊓ₖ y) = toKnow x ⊓ toKnow y := rfl
 @[simp] theorem toKnow_kSup (x y : B) : toKnow (x ⊔ₖ y) = toKnow x ⊔ toKnow y := rfl
 
-/-- Knowledge meet is idempotent. -/
-theorem kInf_self (x : B) : x ⊓ₖ x = x :=
-  toKnow.injective (by simp only [toKnow_kInf, inf_idem])
-
-/-- Knowledge join is idempotent. -/
-theorem kSup_self (x : B) : x ⊔ₖ x = x :=
-  toKnow.injective (by simp only [toKnow_kSup, sup_idem])
-
-/-- Knowledge meet is commutative. -/
-theorem kInf_comm (x y : B) : x ⊓ₖ y = y ⊓ₖ x :=
-  toKnow.injective (by simp only [toKnow_kInf, inf_comm])
-
-/-- Knowledge join is commutative. -/
-theorem kSup_comm (x y : B) : x ⊔ₖ y = y ⊔ₖ x :=
-  toKnow.injective (by simp only [toKnow_kSup, sup_comm])
-
-/-- Knowledge absorption: `x ⊔ₖ (x ⊓ₖ y) = x`. -/
-theorem kSup_kInf_self (x y : B) : x ⊔ₖ (x ⊓ₖ y) = x :=
-  toKnow.injective (by simp only [toKnow_kSup, toKnow_kInf, sup_inf_self])
-
-/-- Knowledge absorption: `x ⊓ₖ (x ⊔ₖ y) = x`. -/
-theorem kInf_kSup_self (x y : B) : x ⊓ₖ (x ⊔ₖ y) = x :=
-  toKnow.injective (by simp only [toKnow_kInf, toKnow_kSup, inf_sup_self])
-
 end Defs
 
 section KLE

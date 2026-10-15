@@ -1,17 +1,15 @@
 module
 
 public import Linglib.Core.Order.Concept
-public import Mathlib.Order.Irreducible
 
 /-!
 # Representation of ortholattices by orthogonality relations
 
-This file proves that every complete ortholattice is isomorphic to the ortholattice of concepts of
-an orthogonality relation, and every finite one to that of the orthogonality relation on its
-join-irreducibles. For a join-dense subset `V` of an ortholattice `L`, the points are the nonzero
-elements of `V`, two points are orthogonal when one lies below the complement of the other, and
-`a` is represented by the points below it. This is the converse of the construction of an
-ortholattice from an orthogonality relation in `Core/Order/Concept.lean`.
+This file embeds an ortholattice with a join-dense subset `V` into the ortholattice of concepts of
+an orthogonality relation. The points are the nonzero elements of `V`, two points are orthogonal
+when one lies below the complement of the other, and `a` is represented by the points below it.
+This is the converse of the construction of an ortholattice from an orthogonality relation in
+`Core/Order/Concept.lean`.
 
 ## Main definitions
 
@@ -24,13 +22,10 @@ ortholattice from an orthogonality relation in `Core/Order/Concept.lean`.
 
 * `InvolutiveCompl.represent_le_iff`, `represent_inf`, `represent_compl`,
   `represent_sup`: `represent V` is an ortholattice embedding for any join-dense `V`.
-* `InvolutiveCompl.representation`: for a complete ortholattice it is an isomorphism.
-* `InvolutiveCompl.representationFinite`: a well-founded ortholattice is represented on
-  its join-irreducibles.
 
 ## Implementation notes
 
-The embedding and the isomorphism use only the order-reversing involution. The ortholattice laws
+The embedding uses only the order-reversing involution. The ortholattice laws
 are needed only for orthogonality to be irreflexive, which makes the concepts an ortholattice.
 
 ## References
@@ -46,16 +41,6 @@ open Order Set
     of `V` below it. -/
 def JoinDense {L : Type*} [Preorder L] (V : Set L) : Prop :=
   ∀ a : L, IsLUB (V ∩ Set.Iic a) a
-
-/-- The join-irreducibles are join-dense in a well-founded lattice, in particular a finite one,
-    since every element is the join of the join-irreducibles below it. -/
-theorem joinDense_supIrred {L : Type*} [SemilatticeSup L] [OrderBot L] [WellFoundedLT L] :
-    JoinDense {a : L | SupIrred a} := by
-  intro a
-  refine ⟨fun b hb ↦ hb.2, fun u hu ↦ ?_⟩
-  obtain ⟨s, hs, hsIrred⟩ := exists_supIrred_decomposition a
-  rw [← hs]
-  exact Finset.sup_le fun b hb ↦ hu ⟨hsIrred hb, hs ▸ Finset.le_sup hb⟩
 
 namespace InvolutiveCompl
 
@@ -170,65 +155,5 @@ theorem represent_sup (hV : JoinDense V) (a a' : L) :
       represent_compl hV, represent_inf hV, represent_compl hV, represent_compl hV,
       InvolutiveCompl.compl_inf, InvolutiveCompl.compl_compl,
       InvolutiveCompl.compl_compl]
-
-/-! ### The representation isomorphism (complete case, Theorem 4.13) -/
-
-section Iso
-
-variable {L : Type*} [CompleteLattice L] [InvolutiveCompl L]
-  {V : Set L}
-
-/-- Every concept is `represent V a` for `a` the join of the elements of its extent, the
-    surjectivity half of Theorem 4.13. -/
-theorem represent_surjective (hV : JoinDense V) (c : Concept (Point V) (Point V) (Orthogonal V)) :
-    represent V (sSup (Subtype.val '' c.extent)) = c := by
-  apply Concept.ext
-  rw [represent_extent hV]
-  ext b
-  simp only [Set.mem_ofPred_eq]
-  constructor
-  · intro hb
-    rw [← (Concept.isExtent_extent c).eq]
-    intro d hd
-    show b.1 ≤ d.1ᶜ
-    refine hb.trans (sSup_le ?_)
-    rintro x ⟨e, he, rfl⟩
-    exact hd he
-  · intro hb
-    exact le_sSup ⟨b, hb, rfl⟩
-
-/-- The join of `represent V a`'s extent recovers `a` (the `→` of Theorem 4.13). -/
-theorem sSup_represent_extent (hV : JoinDense V) (a : L) :
-    sSup (Subtype.val '' (represent V a).extent) = a := by
-  rw [represent_extent hV]
-  refine (isLUB_sSup _).unique ⟨?_, ?_⟩
-  · rintro x ⟨b, hb, rfl⟩; exact hb
-  · intro u hu
-    refine (isLUB_le_iff (hV a)).mpr ?_
-    rintro c ⟨hcV, hca⟩
-    rcases eq_or_ne c ⊥ with rfl | hc0
-    · exact bot_le
-    · exact hu ⟨⟨c, hcV, hc0⟩, hca, rfl⟩
-
-/-- A complete ortholattice is order-isomorphic to the concepts of the orthogonality relation on
-    any join-dense subset ([holliday-mandelkern-2024] Theorem 4.13). -/
-def representation (hV : JoinDense V) : L ≃o Concept (Point V) (Point V) (Orthogonal V) where
-  toFun := represent V
-  invFun c := sSup (Subtype.val '' c.extent)
-  left_inv := sSup_represent_extent hV
-  right_inv := represent_surjective hV
-  map_rel_iff' := represent_le_iff hV
-
-/-! ### Corollary 4.14 — the finite case via join-irreducibles -/
-
-/-- A finite, or more generally well-founded, ortholattice is order-isomorphic to the concepts of
-    the orthogonality relation on its join-irreducibles ([holliday-mandelkern-2024]
-    Corollary 4.14). -/
-def representationFinite [WellFoundedLT L] :
-    L ≃o Concept (Point {a : L | SupIrred a}) (Point {a : L | SupIrred a})
-      (Orthogonal {a : L | SupIrred a}) :=
-  representation joinDense_supIrred
-
-end Iso
 
 end InvolutiveCompl

@@ -19,8 +19,7 @@ non-contradiction, `a ⊓ aᶜ = ⊥`, and so, by De Morgan, excluded middle, `a
 Heyting algebras and ortholattices weaken Boolean algebras in opposite directions. A Heyting
 algebra keeps distributivity and the pseudocomplement law `a ⊓ b = ⊥ → b ≤ aᶜ` but gives up the
 involution; an ortholattice keeps the involution and the complement laws but gives up
-distributivity. Holliday and Mandelkern show that in an ortholattice distributivity and the
-pseudocomplement law are equivalent, and that either makes it a Boolean algebra.
+distributivity.
 
 An ortholattice is *orthomodular* when `a ≤ b` implies `b = a ⊔ (aᶜ ⊓ b)`. Every modular
 ortholattice, and so every Boolean algebra, is orthomodular. The motivating example is the lattice
@@ -34,15 +33,10 @@ form an ortholattice that is not orthomodular.
   (the involutive antitone `ᶜ` of `Core/Order/InvolutiveCompl.lean`) adding
   non-contradiction.
 * `IsOrthomodularLattice α`: an ortholattice satisfying the orthomodular law.
-* `DistribLattice.booleanAlgebraOfOrthocomplemented`: a distributive ortholattice is a Boolean
-  algebra with `ᶜ` as its complement.
 
 ## Main results
 
-* `IsOrtholattice.inf_sup_le_iff_le_compl_of_disjoint`: an ortholattice is distributive iff its
-  orthocomplement is a pseudocomplement.
 * `IsModularLattice.toIsOrthomodularLattice`: a modular ortholattice is orthomodular.
-* `isOrthomodularLattice_iff_sup_compl_inf_sup`: the equational form of the orthomodular law.
 
 ## TODO
 
@@ -98,41 +92,9 @@ protected theorem disjoint_compl_right (a : α) : Disjoint a aᶜ :=
   (IsOrtholattice.isCompl_compl a).disjoint
 
 /-- Orthogonal elements are disjoint. The converse is the pseudocomplement law, which holds only
-in Boolean algebras (`IsOrtholattice.inf_sup_le_iff_le_compl_of_disjoint`). -/
+in Boolean algebras ([holliday-mandelkern-2024] Proposition 3.7). -/
 protected theorem disjoint_of_le_compl (h : a ≤ bᶜ) : Disjoint a b :=
   (IsOrtholattice.disjoint_compl_right b).symm.mono_left h
-
-/-! ### Distributivity and pseudocomplementation -/
-
-/-- Under the pseudocomplement law disjunctive syllogism holds, the first step of the proof of
-[holliday-mandelkern-2024] Proposition 3.7. -/
-private theorem sup_inf_compl_le (h : ∀ a b : α, Disjoint a b → b ≤ aᶜ) (a b : α) :
-    (a ⊔ b) ⊓ aᶜ ≤ b := by
-  have : Disjoint bᶜ ((a ⊔ b) ⊓ aᶜ) := by
-    rw [disjoint_iff, inf_comm bᶜ, inf_assoc, ← InvolutiveCompl.compl_sup,
-      IsOrtholattice.inf_compl_eq_bot]
-  simpa only [InvolutiveCompl.compl_compl] using h _ _ this
-
-/-- An ortholattice is distributive iff its orthocomplement is a pseudocomplement, that is, iff
-`a ⊓ b = ⊥` implies `b ≤ aᶜ` ([holliday-mandelkern-2024] Proposition 3.7). -/
-theorem inf_sup_le_iff_le_compl_of_disjoint :
-    (∀ a b c : α, a ⊓ (b ⊔ c) ≤ a ⊓ b ⊔ a ⊓ c) ↔ ∀ a b : α, Disjoint a b → b ≤ aᶜ := by
-  refine ⟨fun hd a b h ↦ ?_, fun h a b c ↦ ?_⟩
-  · calc b = b ⊓ (a ⊔ aᶜ) := by rw [IsOrtholattice.sup_compl_eq_top, inf_top_eq]
-      _ ≤ b ⊓ a ⊔ b ⊓ aᶜ := hd b a aᶜ
-      _ ≤ aᶜ := sup_le (h.symm.eq_bot.le.trans bot_le) inf_le_right
-  · have hb : a ⊓ (b ⊔ c) ⊓ (a ⊓ b)ᶜ ≤ bᶜ := by
-      have := sup_inf_compl_le h aᶜ bᶜ
-      rw [InvolutiveCompl.compl_compl] at this
-      rw [InvolutiveCompl.compl_inf]
-      exact (le_inf inf_le_right (inf_le_left.trans inf_le_left)).trans this
-    have hc : a ⊓ (b ⊔ c) ⊓ (a ⊓ b)ᶜ ≤ a ⊓ c := le_inf (inf_le_left.trans inf_le_left)
-      ((le_inf (inf_le_left.trans inf_le_right) hb).trans (sup_inf_compl_le h b c))
-    have := h ((a ⊓ b)ᶜ ⊓ (a ⊓ c)ᶜ) (a ⊓ (b ⊔ c)) <| disjoint_iff.2 <| le_bot_iff.1 <| by
-      rw [inf_comm ((a ⊓ b)ᶜ ⊓ (a ⊓ c)ᶜ), ← inf_assoc]
-      exact (inf_le_inf_right _ hc).trans (IsOrtholattice.inf_compl_eq_bot _).le
-    rwa [InvolutiveCompl.compl_inf, InvolutiveCompl.compl_compl, InvolutiveCompl.compl_compl]
-      at this
 
 end IsOrtholattice
 
@@ -144,18 +106,6 @@ instance (priority := 100) IsOrtholattice.toComplementedLattice [Lattice α] [Bo
 /-- Every Boolean algebra is orthocomplemented. -/
 instance (priority := 100) BooleanAlgebra.toIsOrtholattice [BooleanAlgebra α] : IsOrtholattice α :=
   ⟨BooleanAlgebra.inf_compl_le_bot⟩
-
-/-- A distributive ortholattice is a Boolean algebra with `ᶜ` as its complement
-([holliday-mandelkern-2024] Proposition 3.7). Unlike `DistribLattice.booleanAlgebraOfComplemented`
-it uses no choice; it is not an instance, since a Boolean algebra would get a second structure. -/
-@[instance_reducible]
-def DistribLattice.booleanAlgebraOfOrthocomplemented [DistribLattice α] [BoundedOrder α]
-    [InvolutiveCompl α] [IsOrtholattice α] : BooleanAlgebra α where
-  __ := ‹DistribLattice α›
-  __ := ‹BoundedOrder α›
-  compl := compl
-  inf_compl_le_bot := IsOrtholattice.inf_compl_le_bot
-  top_le_sup_compl := IsOrtholattice.top_le_sup_compl
 
 /-! ### Orthomodular lattices -/
 
@@ -179,24 +129,9 @@ instance (priority := 100) IsModularLattice.toIsOrthomodularLattice [IsOrtholatt
     simpa only [IsOrtholattice.sup_compl_eq_top, top_inf_eq] using
       IsModularLattice.sup_inf_le_assoc_of_le aᶜ h
 
-/-- The orthomodular law in the equational form of [holliday-mandelkern-2024] Definition 3.5. -/
-theorem isOrthomodularLattice_iff_sup_compl_inf_sup [IsOrtholattice α] :
-    IsOrthomodularLattice α ↔ ∀ a b : α, a ⊔ aᶜ ⊓ (a ⊔ b) = a ⊔ b := by
-  refine ⟨fun _ a b ↦ ?_, fun h ↦ { le_sup_compl_inf_of_le := fun {a b} hab ↦ ?_ }⟩
-  · exact le_antisymm (sup_le le_sup_left inf_le_right)
-      (IsOrthomodularLattice.le_sup_compl_inf_of_le le_sup_left)
-  · simpa only [sup_of_le_right hab] using (h a b).ge
-
 variable [IsOrthomodularLattice α] {a b : α}
 
 theorem sup_compl_inf_of_le (h : a ≤ b) : a ⊔ aᶜ ⊓ b = b :=
   le_antisymm (sup_le h inf_le_right) (IsOrthomodularLattice.le_sup_compl_inf_of_le h)
-
-theorem sup_compl_inf_sup (a b : α) : a ⊔ aᶜ ⊓ (a ⊔ b) = a ⊔ b :=
-  sup_compl_inf_of_le le_sup_left
-
-/-- In an orthomodular lattice `a ≤ b` is an equality as soon as `b` is disjoint from `aᶜ`. -/
-theorem eq_of_le_of_disjoint_compl (h : a ≤ b) (hd : Disjoint aᶜ b) : a = b := by
-  rw [← sup_compl_inf_of_le h, hd.eq_bot, sup_bot_eq]
 
 end IsOrthomodularLattice

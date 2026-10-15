@@ -29,9 +29,8 @@ holds in `L ⊙ L` for a linear `L` iff it holds in `FOUR` (Theorem 10.5, `equiv
   Kleene's values with the consistent part of `FOUR` is `Trivalent.orderIsoConsistent`, and the
   closure clauses of Theorems 9.2 and 9.3 are `IsExact.inf`, `IsConsistent.compl` and their kin;
   the study keeps what the substrate lacks.
-* The representation theorems of §8 are `Bilattice.decompose` ([avron-1996]); their
-  negation- and conflation-preserving refinements (Theorems 8.2 and 8.3) and the tableau system
-  of §4 are not formalized.
+* The representation theorems of §8, with their negation- and conflation-preserving refinements
+  (Theorems 8.2 and 8.3), and the tableau system of §4 are not formalized.
 * Theorem 10.5 is stated for products of linear bounded lattices; `ofFour` embeds `FOUR` by
   sending the Boolean coordinates to the bounds, and `θ_⊤` reads it back.
 
