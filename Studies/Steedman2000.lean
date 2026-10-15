@@ -73,6 +73,33 @@ namespace Steedman2000
 
 open CCG
 
+/-! ### Categories -/
+
+/-- The atomic categories of the toy English fragment, without the book's features. -/
+inductive Atom where
+  /-- Sentence. -/
+  | S
+  /-- Noun phrase. -/
+  | NP
+  deriving Repr, DecidableEq
+
+def S : Cat Atom := .atom .S
+
+def NP : Cat Atom := .atom .NP
+
+/-- The intransitive verb category `S\NP`. -/
+def IV : Cat Atom := S \ NP
+
+/-- The transitive verb category `(S\NP)/NP`. -/
+def TV : Cat Atom := (S \ NP) / NP
+
+/-- The semantic type of an atom, truth values for sentences and entities for noun phrases. -/
+def atomTy : Atom → Montague.Ty
+  | .S => .t
+  | .NP => .e
+
+example : TV.toTy atomTy = (.e ⇒ .e ⇒ .t) := rfl
+
 /-! ### Word order
 
 Slash direction encodes word order: `TV = (S\NP)/NP` looks right for the object and the
@@ -123,7 +150,7 @@ theorem john_sees_and_mary_eats_pizza_yield :
 
 /-- `semLexicon` interprets the toy English fragment. It gives meanings to names, type-raised
 names, verbs, and conjunctions at `S` and at `S/NP`. -/
-def semLexicon : SemLexicon ToyEntity Unit := fun word cat ↦
+def semLexicon : SemLexicon atomTy ToyEntity Unit := fun word cat ↦
   match word, cat with
   | "John", .atom .NP => some ToyEntity.john
   | "Mary", .atom .NP => some ToyEntity.mary
@@ -179,7 +206,7 @@ theorem nonConstituentCoord_eq_spelledOut :
 
 /-- A lexicon in which sentence `p` is true and `q` false, with the English coordinators
 interpreted by the Boolean operation of their role. -/
-def pqLex : SemLexicon Unit Unit := fun w c ↦
+def pqLex : SemLexicon atomTy Unit Unit := fun w c ↦
   match w, c with
   | "p", .atom .S => some True
   | "q", .atom .S => some False
@@ -271,15 +298,17 @@ def gappedConjunct : Derivation Atom (S \ irishTV) :=
 
 theorem gappedConjunct_yield : gappedConjunct.yield = ["Warren", "potatoes"] := rfl
 
-/-- `RightwardInto t c` holds when `c` is a rightward function into `t`, the book's `t/$`. -/
+/-- `RightwardInto t c` holds when `c` is `t` or a rightward function into `t`, a member of the
+book's `t/$`. -/
 def RightwardInto (t : Cat Atom) : Cat Atom → Prop
-  | .rslash x _ _ => RightwardInto t x
-  | .lslash x m y => Cat.lslash x m y = t
-  | .atom a => Cat.atom a = t
+  | .rslash x m y => Cat.rslash x m y = t ∨ RightwardInto t x
+  | c => c = t
 
 /-- `RightwardInto t` is decided by recursion on the category. -/
 def RightwardInto.decidable (t : Cat Atom) : ∀ c, Decidable (RightwardInto t c)
-  | .rslash x _ _ => RightwardInto.decidable t x
+  | .rslash x m y =>
+    have := RightwardInto.decidable t x
+    inferInstanceAs (Decidable (Cat.rslash x m y = t ∨ RightwardInto t x))
   | .lslash x m y => inferInstanceAs (Decidable (Cat.lslash x m y = t))
   | .atom a => inferInstanceAs (Decidable (Cat.atom a = t))
 
@@ -503,7 +532,7 @@ theorem theme_rheme_clash :
       = none := rfl
 
 /-- The utterance consists of two tune-marked phrases. -/
-def annaMannyUtterance : List ProsodicPhrase :=
+def annaMannyUtterance : List (ProsodicPhrase Atom) :=
   [⟨_, anna_married, themeTune⟩, ⟨_, .lex "Manny" NP, rhemeTune⟩]
 
 /-- The information structure extracted from the utterance has the `S/NP` constituent

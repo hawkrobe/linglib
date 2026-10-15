@@ -74,18 +74,18 @@ def tok (i : ℕ) : String := toString i
 
 theorem tok_injective : Function.Injective tok := Nat.repr_injective
 
-/-- The forward realization of chain position `i`: `Xᵢ/Xᵢ₊₁`. -/
+/-- The forward realization `Xᵢ/Xᵢ₊₁` of chain position `i`. -/
 def fwd (i : ℕ) : Cat ℕ := .rslash (.atom i) .dot (.atom (i + 1))
 
-/-- The backward realization of chain position `i`: `Xᵢ\Xᵢ₊₁`. -/
+/-- The backward realization `Xᵢ\Xᵢ₊₁` of chain position `i`. -/
 def bwd (i : ℕ) : Cat ℕ := .lslash (.atom i) .dot (.atom (i + 1))
 
-/-- The natural-order-of-dominance lexicon over `n` words: each position carries both slash
+/-- The natural-order-of-dominance lexicon over `n` words gives each position both slash
 realizations of its chain category, the paper's order-free `|`. -/
 def nodLexicon (n : ℕ) : List (String × Cat ℕ) :=
-  (List.range n).flatMap λ i => [(tok (i + 1), fwd (i + 1)), (tok (i + 1), bwd (i + 1))]
+  (List.range n).flatMap fun i ↦ [(tok (i + 1), fwd (i + 1)), (tok (i + 1), bwd (i + 1))]
 
-/-- The NOD grammar: the multimodal grammar over the chain lexicon. The start atom plays no
+/-- The NOD grammar is the multimodal grammar over the chain lexicon. The start atom plays no
 role in the span-level claims. -/
 def nodGrammar (n : ℕ) : Grammar ℕ := .multimodal (nodLexicon n) 1
 
@@ -98,8 +98,8 @@ theorem mem_nodLexicon {n m : ℕ} (h1 : 1 ≤ m) (hn : m ≤ n) :
 
 /-! ### Separable permutations -/
 
-/-- The separable permutations of the span `i…j`, by separating trees: a singleton, or two
-contiguous parts of the span concatenated in canonical (`pos`) or inverted (`neg`) order. -/
+/-- The separable permutations of the span `i…j`, by separating trees. Each is a singleton, or
+two contiguous parts of the span concatenated in canonical (`pos`) or inverted (`neg`) order. -/
 inductive SepPerm : ℕ → ℕ → List ℕ → Prop where
   /-- A single word is a separable permutation of its own span. -/
   | single (i : ℕ) : SepPerm i i [i]
@@ -144,9 +144,9 @@ def sepPermsAux : ℕ → ℕ → ℕ → Finset (List ℕ)
   | 0, _, _ => ∅
   | fuel + 1, i, j =>
     if j < i then ∅ else if i = j then {[i]} else
-      (Finset.Ico i j).biUnion λ k =>
-        (sepPermsAux fuel i k ×ˢ sepPermsAux fuel (k + 1) j).image (λ p => p.1 ++ p.2) ∪
-        (sepPermsAux fuel i k ×ˢ sepPermsAux fuel (k + 1) j).image (λ p => p.2 ++ p.1)
+      (Finset.Ico i j).biUnion fun k ↦
+        (sepPermsAux fuel i k ×ˢ sepPermsAux fuel (k + 1) j).image (fun p ↦ p.1 ++ p.2) ∪
+        (sepPermsAux fuel i k ×ˢ sepPermsAux fuel (k + 1) j).image (fun p ↦ p.2 ++ p.1)
 
 /-- The separable permutations of the span `i…j`. -/
 def sepPerms (i j : ℕ) : Finset (List ℕ) := sepPermsAux (j + 1 - i) i j
@@ -164,7 +164,7 @@ theorem mem_sepPermsAux {fuel i j : ℕ} (hf : j + 1 - i ≤ fuel) {l : List ℕ
       intro h; have := h.le; omega
     · subst heq
       simp only [Finset.mem_singleton]
-      exact ⟨λ h => h ▸ .single _, SepPerm.eq_single⟩
+      exact ⟨fun h ↦ h ▸ .single _, SepPerm.eq_single⟩
     · simp only [Finset.mem_biUnion, Finset.mem_Ico, Finset.mem_union, Finset.mem_image,
         Finset.mem_product, Prod.exists]
       constructor
@@ -189,8 +189,8 @@ theorem mem_sepPerms {i j : ℕ} {l : List ℕ} : l ∈ sepPerms i j ↔ SepPerm
 instance (i j : ℕ) (l : List ℕ) : Decidable (SepPerm i j l) :=
   decidable_of_iff _ mem_sepPerms
 
-/-- Theorem 3 at four elements: the separable permutations of `1…4` number the third large
-Schröder number, twenty-two of the twenty-four orders. -/
+/-- The separable permutations of `1…4` number the third large Schröder number, twenty-two of
+the twenty-four orders, which is Theorem 3 at four elements. -/
 theorem card_sepPerms_four : (sepPerms 1 4).card = Nat.largeSchroder 3 := by
   rw [show Nat.largeSchroder 3 = 22 by
     simp [Nat.largeSchroder_succ, ← Finset.Iio_add_one_eq_Iic, Nat.Iio_eq_range,
@@ -249,50 +249,27 @@ theorem sepPerm_of_derives {n : ℕ} {c : Cat ℕ} {w : List String}
     rcases hentry with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩
     · exact ⟨m + 1, m + 1, [m + 1], by omega, by omega, .single _, rfl, Or.inl rfl⟩
     · exact ⟨m + 1, m + 1, [m + 1], by omega, by omega, .single _, rfl, Or.inr rfl⟩
-  | @fc nn a b c u v _ _ hgate hc iha ihb =>
+  | @fc _ _ _ _ _ _ _ _ _ hc iha ihb =>
+    obtain ⟨x, m, y, β, -, rfl, rfl, rfl⟩ := Cat.generalizedForwardComp_eq_some_iff.mp hc
     obtain ⟨i, j, l, hi, hj, hsep, rfl, hcat⟩ := iha
     obtain ⟨i', j', l', hi', hj', hsep', rfl, hcat'⟩ := ihb
-    rcases hcat with rfl | rfl
-    · rcases nn with _ | _ | _ | nn
-      · rcases hcat' with rfl | rfl <;> simp [Cat.generalizedForwardComp] at hc
-      · rcases hcat' with rfl | rfl <;>
-          simp only [Cat.generalizedForwardComp, Option.map_eq_some_iff] at hc
-        · obtain ⟨x, hx, rfl⟩ := hc
-          rw [Option.ite_none_right_eq_some, Option.some.injEq] at hx
-          obtain ⟨hij, rfl⟩ := hx
-          obtain rfl : i' = j + 1 := by
-            injection hij with hij; omega
-          exact ⟨i, j', l ++ l', hi, hj', .pos hsep hsep', by simp, Or.inl rfl⟩
-        · obtain ⟨x, hx, rfl⟩ := hc
-          rw [Option.ite_none_right_eq_some, Option.some.injEq] at hx
-          obtain ⟨hij, rfl⟩ := hx
-          obtain rfl : i' = j + 1 := by
-            injection hij with hij; omega
-          exact ⟨i, j', l ++ l', hi, hj', .pos hsep hsep', by simp, Or.inr rfl⟩
-      · rcases hcat' with rfl | rfl <;> exact hgate.elim
-      · exact hgate.elim
-    · simp at hc
-  | @bc nn a b c u v _ _ hgate hc iha ihb =>
+    obtain ⟨rfl, rfl, rfl⟩ : x = .atom i ∧ m = .dot ∧ y = .atom (j + 1) := by simpa using hcat
+    obtain ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ : (j + 1 = i' ∧ β = [⟨.right, .dot, .atom (j' + 1)⟩]) ∨
+        (j + 1 = i' ∧ β = [⟨.left, .dot, .atom (j' + 1)⟩]) := by
+      simpa [Cat.atom_pushArgs_eq_iff] using hcat'
+    · exact ⟨i, j', l ++ l', hi, hj', .pos hsep hsep', by simp, Or.inl rfl⟩
+    · exact ⟨i, j', l ++ l', hi, hj', .pos hsep hsep', by simp, Or.inr rfl⟩
+  | @bc _ _ _ _ _ _ _ _ _ hc iha ihb =>
+    obtain ⟨x, m, y, β, -, rfl, rfl, rfl⟩ := Cat.generalizedBackwardComp_eq_some_iff.mp hc
     obtain ⟨i, j, l, hi, hj, hsep, rfl, hcat⟩ := iha
     obtain ⟨i', j', l', hi', hj', hsep', rfl, hcat'⟩ := ihb
-    rcases hcat' with rfl | rfl
-    · simp at hc
-    · rcases nn with _ | _ | _ | nn
-      · rcases hcat with rfl | rfl <;> simp [Cat.generalizedBackwardComp] at hc
-      · rcases hcat with rfl | rfl <;>
-          simp only [Cat.generalizedBackwardComp, Option.map_eq_some_iff] at hc
-        · obtain ⟨x, hx, rfl⟩ := hc
-          rw [Option.ite_none_right_eq_some, Option.some.injEq] at hx
-          obtain ⟨hij, rfl⟩ := hx
-          obtain rfl : i = j' + 1 := by injection hij with hij; omega
-          exact ⟨i', j, l ++ l', hi', hj, .neg hsep' hsep, by simp, Or.inl rfl⟩
-        · obtain ⟨x, hx, rfl⟩ := hc
-          rw [Option.ite_none_right_eq_some, Option.some.injEq] at hx
-          obtain ⟨hij, rfl⟩ := hx
-          obtain rfl : i = j' + 1 := by injection hij with hij; omega
-          exact ⟨i', j, l ++ l', hi', hj, .neg hsep' hsep, by simp, Or.inr rfl⟩
-      · rcases hcat with rfl | rfl <;> exact hgate.elim
-      · exact hgate.elim
+    obtain ⟨rfl, rfl, rfl⟩ : x = .atom i' ∧ m = .dot ∧ y = .atom (j' + 1) := by
+      simpa using hcat'
+    obtain ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ : (j' + 1 = i ∧ β = [⟨.right, .dot, .atom (j + 1)⟩]) ∨
+        (j' + 1 = i ∧ β = [⟨.left, .dot, .atom (j + 1)⟩]) := by
+      simpa [Cat.atom_pushArgs_eq_iff] using hcat
+    · exact ⟨i', j, l ++ l', hi', hj, .neg hsep' hsep, by simp, Or.inl rfl⟩
+    · exact ⟨i', j, l ++ l', hi', hj, .neg hsep' hsep, by simp, Or.inr rfl⟩
 
 /-! ### The universal -/
 
@@ -356,8 +333,8 @@ theorem not_derives_3142 :
 
 /-! ### The typological record -/
 
-/-- The position of a nominal category in the natural order of dominance, the paper's (1):
-demonstrative, numeral, adjective, noun. -/
+/-- The position of a nominal category in the natural order of dominance of the paper's (1),
+which orders demonstrative, numeral, adjective and noun. -/
 def nominalRank : Minimalist.Cat → ℕ
   | .Dem => 1
   | .Num => 2
