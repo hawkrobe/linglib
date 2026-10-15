@@ -2,7 +2,7 @@ module
 
 public import Mathlib.Data.Fintype.Powerset
 public import Mathlib.Order.Hom.BoundedLattice
-public import Linglib.Core.Order.Sups
+public import Linglib.Core.Data.Set.Sups
 public import Mathlib.Data.Finset.Lattice.Union
 public import Linglib.Logic.Team.Closure
 public import Linglib.Logic.Team.Definability
@@ -20,7 +20,7 @@ flat `poss` and `nec` over successor sets, Väänänen's single-witness `possWit
 
 The operations are mathlib's where mathlib has them. Tensor disjunction is the pointwise sup
 `P ⊻ Q` (`Set.sups`) of the lattice `Finset α`, so its closure lemmas are the lattice-general
-ones of `Core/Order/Sups.lean`; conjunction is intersection; the image modality is the preimage
+ones of `Core/Data/Set/Sups.lean`; conjunction is intersection; the image modality is the preimage
 of a property along the bundled `SupBotHom` `biUnionHom R`, so its closure lemmas are
 `IsLowerSet.preimage` and `SupClosed.preimage`. Following Anttila, `flat` properties and the flat
 modalities are flat outright, and `flat` commutes with conjunction, tensor disjunction and the
@@ -287,7 +287,7 @@ theorem _root_.SupClosed.necImage (hP : SupClosed P) : SupClosed (necImage R P) 
   hP.preimage (biUnionHom R)
 
 theorem empty_mem_necImage (hP : ∅ ∈ P) : ∅ ∈ necImage R P :=
-  bot_mem_preimage (biUnionHom R) hP
+  show biUnionHom R ⊥ ∈ P from (map_bot (biUnionHom R)).symm ▸ hP
 
 theorem _root_.IsLowerSet.possLax (hP : IsLowerSet P) : IsLowerSet (possLax R P) := by
   rintro s t hts ⟨S, -, hS, hSP⟩

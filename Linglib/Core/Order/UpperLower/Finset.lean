@@ -31,9 +31,8 @@ are order-isomorphic to `WithBot α` by their maximum, and a finite chain of `n`
 ## Main results
 
 * `IsLowerSet.mem_iff_le_max`: a lower finset of a linear order is `Iic` of its maximum.
-* `isLowerSet_coe_iff`: a finset of a linear order is a lower set iff it is empty or an `Iic`.
+* `IsLowerSet.eq_empty_or_eq_Iic`: a lower finset of a linear order is empty or an `Iic`.
 * `Fintype.card_subtype_isLowerSet`: a finite chain has one more lower finset than elements.
-* `IsLowerSet.subset_iff_card_le`: lower finsets of a linear order are nested by size.
 -/
 
 @[expose] public section
@@ -50,12 +49,6 @@ theorem IsLowerSet.mem_iff_le_max (h : IsLowerSet (↑s : Set α)) : a ∈ s ↔
   obtain ⟨m, hm⟩ := WithBot.ne_bot_iff_exists.1 (ne_bot_of_le_ne_bot WithBot.coe_ne_bot ha)
   exact h (WithBot.coe_le_coe.1 (hm ▸ ha)) (mem_of_max hm.symm)
 
-/-- An upper finset of a linear order is the final segment from its minimum. [UPSTREAM] -/
-theorem IsUpperSet.mem_iff_min_le (h : IsUpperSet (↑s : Set α)) : a ∈ s ↔ s.min ≤ ↑a := by
-  refine ⟨min_le, fun ha ↦ ?_⟩
-  obtain ⟨m, hm⟩ := WithTop.ne_top_iff_exists.1 (ne_top_of_le_ne_top WithTop.coe_ne_top ha)
-  exact h (WithTop.coe_le_coe.1 (hm ▸ ha)) (mem_of_min hm.symm)
-
 variable {t : Finset α}
 
 /-- Lower finsets of a linear order are nested. [UPSTREAM] -/
@@ -63,37 +56,13 @@ theorem IsLowerSet.subset_or_subset (hs : IsLowerSet (↑s : Set α))
     (ht : IsLowerSet (↑t : Set α)) : s ⊆ t ∨ t ⊆ s := by
   simpa using hs.total ht
 
-/-- Among lower finsets of a linear order, inclusion is comparison of sizes. [UPSTREAM] -/
-theorem IsLowerSet.subset_iff_card_le (hs : IsLowerSet (↑s : Set α))
-    (ht : IsLowerSet (↑t : Set α)) : s ⊆ t ↔ s.card ≤ t.card :=
-  ⟨card_le_card, fun h ↦ (hs.subset_or_subset ht).elim id fun hts ↦ by
-    rw [eq_of_subset_of_card_le hts h]⟩
-
-/-- Lower finsets of a linear order are determined by their sizes. [UPSTREAM] -/
-theorem IsLowerSet.eq_iff_card_eq (hs : IsLowerSet (↑s : Set α))
-    (ht : IsLowerSet (↑t : Set α)) : s = t ↔ s.card = t.card :=
-  ⟨congrArg _, fun h ↦ Subset.antisymm ((hs.subset_iff_card_le ht).2 h.le)
-    ((ht.subset_iff_card_le hs).2 h.ge)⟩
-
-/-- The lower finsets of a linear order form a chain under inclusion, the order of their
-sizes. [UPSTREAM] -/
+/-- The lower finsets of a linear order form a chain under inclusion. [UPSTREAM] -/
 instance : LinearOrder {s : Finset α // IsLowerSet (↑s : Set α)} where
   __ := (inferInstance : PartialOrder {s : Finset α // IsLowerSet (↑s : Set α)})
   le_total s t := s.2.subset_or_subset t.2
   toDecidableLE s t := inferInstanceAs (Decidable (s.1 ⊆ t.1))
   toDecidableEq := inferInstance
   toDecidableLT s t := inferInstanceAs (Decidable (s.1 ⊂ t.1))
-
-/-- Over lower finsets of a linear order, the infimum of a family is antitone in size, a bigger
-lower finset meeting more. [UPSTREAM] -/
-theorem IsLowerSet.inf_le_inf_of_card_le {β : Type*} [SemilatticeInf β] [OrderTop β] (f : α → β)
-    (hs : IsLowerSet (↑s : Set α)) (ht : IsLowerSet (↑t : Set α)) (h : t.card ≤ s.card) :
-    s.inf f ≤ t.inf f :=
-  Finset.inf_mono ((ht.subset_iff_card_le hs).2 h)
-
-theorem IsLowerSet.subtype_le_iff_card_le {s t : {s : Finset α // IsLowerSet (↑s : Set α)}} :
-    s ≤ t ↔ s.1.card ≤ t.1.card :=
-  s.2.subset_iff_card_le t.2
 
 end LinearOrder
 
@@ -131,12 +100,6 @@ theorem IsLowerSet.eq_empty_or_eq_Iic (h : IsLowerSet (↑s : Set α)) :
   rcases hm : s.max with _ | a
   · exact .inl (max_eq_bot.1 hm)
   · exact .inr ⟨a, h.eq_Iic_of_max_eq hm⟩
-
-theorem isLowerSet_coe_iff : IsLowerSet (↑s : Set α) ↔ s = ∅ ∨ ∃ a, s = Iic a :=
-  ⟨IsLowerSet.eq_empty_or_eq_Iic, by
-    rintro (rfl | ⟨a, rfl⟩)
-    · exact isLowerSet_coe_empty
-    · exact isLowerSet_coe_Iic a⟩
 
 /-- The lower finsets of a linear order are `WithBot α` by their maximum, `∅` going to `⊥` and
 `Iic a` to `a`. [UPSTREAM] -/

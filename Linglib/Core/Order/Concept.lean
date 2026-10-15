@@ -39,8 +39,8 @@ variable {S : Type*} (r : S → S → Prop)
 
 /-- For a symmetric relation the upper and lower polars coincide. -/
 theorem upperPolar_eq_lowerPolar [Std.Symm r] (s : Set S) :
-    upperPolar r s = lowerPolar r s :=
-  Set.ext fun _ ↦ ⟨fun h _ ha ↦ Std.Symm.symm _ _ (h ha), fun h _ ha ↦ Std.Symm.symm _ _ (h ha)⟩
+    upperPolar r s = lowerPolar r s := by
+  rw [← upperPolar_swap, Std.Symm.swap_eq]
 
 /-- For a symmetric relation the upper polar of any set is an extent. -/
 theorem isExtent_upperPolar [Std.Symm r] (s : Set S) : IsExtent r (upperPolar r s) := by
