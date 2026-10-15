@@ -39,6 +39,9 @@ information of Veltman's expectation states.
   is good possibility.
 * `OrderingSemantics.isGoodPossibility_iff_isNecessity_of_least`: when the domain has a closest
   world the two coincide.
+* `OrderingSemantics.exists_not_isGoodPossibility_inter`: the good possibilities are not closed
+  under intersection; `OrderingSemantics/Topology.lean` reads both forces in the lower-set
+  topology.
 
 ## References
 
@@ -86,6 +89,17 @@ theorem IsGoodPossibility.mono (h : IsGoodPossibility p s t) (htt' : t ⊆ t') :
     IsGoodPossibility p s t' :=
   let ⟨v, hv, hvt⟩ := h
   ⟨v, hv, fun w hw hwv ↦ htt' (hvt w hw hwv)⟩
+
+/-- The good possibilities are not closed under intersection. Under the identity order on `Bool`
+each world is a branch of its own, so `{true}` and `{false}` are good possibilities and their empty
+intersection is not. -/
+theorem exists_not_isGoodPossibility_inter :
+    ∃ (p : Preorder Bool) (t t' : Set Bool), IsGoodPossibility p .univ t ∧
+      IsGoodPossibility p .univ t' ∧ ¬ IsGoodPossibility p .univ (t ∩ t') :=
+  ⟨⊥, {true}, {false}, ⟨true, trivial, fun _ _ h ↦ h⟩, ⟨false, trivial, fun _ _ h ↦ h⟩,
+    fun ⟨v, _, h⟩ ↦
+      let ⟨h₁, h₂⟩ := h v trivial rfl
+      Bool.noConfusion ((show v = true from h₁).symm.trans (show v = false from h₂))⟩
 
 /-! ### Necessity and the minimal worlds -/
 
