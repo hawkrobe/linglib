@@ -23,8 +23,9 @@ The verbs of the dative survey are those whose dative arguments Cuervo classifie
 frames the survey uses.
 
 The attitude and causative verbs record the mood of the finite complement each selects in an
-affirmative declarative clause, the data of Grano's survey of mood choice; a subjunctive licensed
-by matrix negation or a question is not a frame of the verb.
+affirmative declarative clause, the data of Grano's survey of mood choice and of Portner and
+Rubinstein's study of desire verbs; a subjunctive licensed by matrix negation or a question is
+not a frame of the verb.
 
 ## References
 
@@ -37,6 +38,7 @@ by matrix negation or a question is not a frame of the verb.
 * [T. Grano, *Intention Reports and Eventuality Abstraction in a Theory of Mood Choice*
   (2024)][grano-2024]
 * [M. C. Cuervo, *Datives at Large* (2003)][cuervo-2003]
+* [portner-rubinstein-2020]
 -/
 
 @[expose] public section
@@ -341,6 +343,13 @@ def encontrar : Verb where
   valency := .ofFrame ArgumentFrame.np
 
 /-! ### Attitude and causative verbs -/
+
+/-- *creer* 'believe' takes a *que* clause in the indicative. -/
+def creer : Verb where
+  morphs := [.root "creer"]
+  valency := .of [(ArgumentFrame.finiteClause, [0, 1])]
+  opaqueContext := true
+  attitude := some (.doxastic .nonVeridical)
 
 /-- *querer* 'want' takes a *que* clause in the subjunctive, with disjoint reference, and an
 infinitive under subject control. -/
