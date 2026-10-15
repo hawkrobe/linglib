@@ -260,7 +260,7 @@ def ex30 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("section", "1.4"), ("pattern", "co'a_co'b"), ("type", "disjunction"), ("coordinands", "3")] }
+    paperFeatures := [("section", "1.4"), ("pattern", "co'a_co'b"), ("type", "disjunction"), ("coordinands", "3"), ("emphatic", "yes")] }
 
 def ex31 : Datum :=
   { id := "haspelmath2007_ex31"
@@ -273,7 +273,7 @@ def ex31 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("section", "1.4"), ("pattern", "a_co_b"), ("coordinands", "3")] }
+    paperFeatures := [("section", "1.4"), ("pattern", "a_co_b"), ("coordinands", "3"), ("emphatic", "yes")] }
 
 def ex32 : Datum :=
   { id := "haspelmath2007_ex32"
@@ -637,7 +637,7 @@ def ex81 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("section", "5.1"), ("pattern", "a'co_b"), ("source", "comitative")] }
+    paperFeatures := [("section", "5.1"), ("pattern", "a_b'co"), ("source", "comitative")] }
 
 def ex85a : Datum :=
   { id := "haspelmath2007_ex85a"
@@ -676,7 +676,7 @@ def ex86 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("section", "5.1"), ("pattern", "a'co_b"), ("source", "comitative")] }
+    paperFeatures := [("section", "5.1"), ("pattern", "a_b'co"), ("source", "comitative")] }
 
 def ex87a : Datum :=
   { id := "haspelmath2007_ex87a"

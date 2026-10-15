@@ -574,9 +574,13 @@
       [
         "coordinands",
         "3"
+      ],
+      [
+        "emphatic",
+        "yes"
       ]
     ],
-    "comment": "",
+    "comment": "Translated with either ... or, the emphatic coordination of Section 2.1; keeping the coordinators on all coordinands has an emphatic value in European languages (p. 12).",
     "verified": "page-image"
   },
   {
@@ -606,9 +610,13 @@
       [
         "coordinands",
         "3"
+      ],
+      [
+        "emphatic",
+        "yes"
       ]
     ],
-    "comment": "",
+    "comment": "Keeping the coordinators on all coordinands has an emphatic value in European languages (p. 12).",
     "verified": "page-image"
   },
   {
@@ -1489,14 +1497,14 @@
       ],
       [
         "pattern",
-        "a'co_b"
+        "a_b'co"
       ],
       [
         "source",
         "comitative"
       ]
     ],
-    "comment": "The possessive modifier has scope over both conjuncts.",
+    "comment": "ca follows the second conjunct. The possessive modifier has scope over both conjuncts.",
     "verified": "page-image"
   },
   {
@@ -1581,14 +1589,14 @@
       ],
       [
         "pattern",
-        "a'co_b"
+        "a_b'co"
       ],
       [
         "source",
         "comitative"
       ]
     ],
-    "comment": "The ex-comitative -wan outside the genitive case suffix.",
+    "comment": "-wan on the second conjunct, outside the genitive case suffix.",
     "verified": "page-image"
   },
   {
