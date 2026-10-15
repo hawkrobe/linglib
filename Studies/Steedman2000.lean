@@ -105,13 +105,13 @@ example : TV.toTy atomTy = (.e ⇒ .e ⇒ .t) := rfl
 Slash direction encodes word order: `TV = (S\NP)/NP` looks right for the object and the
 resulting `S\NP` left for the subject, which enforces SVO. -/
 
-def mary_eats_pizza : Derivation String Atom S :=
+def mary_eats_pizza : Derivation String .multimodal S :=
   .bapp (.lex "Mary" NP) (.fapp (.lex "eats" TV) (.lex "pizza" NP))
 
-def john_sleeps : Derivation String Atom S :=
+def john_sleeps : Derivation String .multimodal S :=
   .bapp (.lex "John" NP) (.lex "sleeps" IV)
 
-def john_sees_mary : Derivation String Atom S :=
+def john_sees_mary : Derivation String .multimodal S :=
   .bapp (.lex "John" NP) (.fapp (.lex "sees" TV) (.lex "Mary" NP))
 
 /-! ### Non-constituent coordination -/
@@ -121,15 +121,15 @@ section Coordination
 open HeimKratzer
 
 /-- The type-raised subject "John" is a lexical leaf of category `S/(S\NP)`. -/
-def john_tr : Derivation String Atom (S / (S \ NP)) := .lex "John" (S / (S \ NP))
+def john_tr : Derivation String .multimodal (S / (S \ NP)) := .lex "John" (S / (S \ NP))
 
-def mary_tr : Derivation String Atom (S / (S \ NP)) := .lex "Mary" (S / (S \ NP))
+def mary_tr : Derivation String .multimodal (S / (S \ NP)) := .lex "Mary" (S / (S \ NP))
 
 /-- "John sees" is the type-raised subject composed with the transitive verb, a constituent of
 category `S/NP`. -/
-def john_sees : Derivation String Atom (S / NP) := .fcomp (by decide) john_tr (.lex "sees" TV)
+def john_sees : Derivation String .multimodal (S / NP) := .fcomp john_tr (.lex "sees" TV)
 
-def mary_eats : Derivation String Atom (S / NP) := .fcomp (by decide) mary_tr (.lex "eats" TV)
+def mary_eats : Derivation String .multimodal (S / NP) := .fcomp mary_tr (.lex "eats" TV)
 
 /-- `conj c` is the category `(c \⋆ c) /⋆ c` of a conjunction coordinating constituents of
 category `c`. Its `star` slashes confine it to application. -/
@@ -137,10 +137,10 @@ def conj (c : Cat Atom) : Cat Atom := (c \⋆ c) /⋆ c
 
 /-- "John sees and Mary eats" coordinates two `S/NP` constituents through the lexical
 conjunction, as in the book's "Anna married, and I detest". -/
-def john_sees_and_mary_eats : Derivation String Atom (S / NP) :=
+def john_sees_and_mary_eats : Derivation String .multimodal (S / NP) :=
   .bapp john_sees (.fapp (.lex "and" (conj (S / NP))) mary_eats)
 
-def john_sees_and_mary_eats_pizza : Derivation String Atom S :=
+def john_sees_and_mary_eats_pizza : Derivation String .multimodal S :=
   .fapp john_sees_and_mary_eats (.lex "pizza" NP)
 
 /-- The derivation spells out the full surface string, coordinator included. -/
@@ -177,7 +177,7 @@ def semLexicon : SemLexicon String atomTy ToyEntity Unit := fun word cat ↦
 
 /-- "John sees Mary" with a type-raised subject produces the same truth value as the
 canonical derivation. -/
-def john_sees_mary_via_tr : Derivation String Atom S :=
+def john_sees_mary_via_tr : Derivation String .multimodal S :=
   .fapp john_tr (.fapp (.lex "sees" TV) (.lex "Mary" NP))
 
 theorem interp_john_sees_mary_via_tr :
@@ -192,7 +192,7 @@ theorem coord_interp_pointwise (e : ToyEntity) :
         | _, _ => none) := rfl
 
 /-- The spelled-out paraphrase is "John sees pizza and Mary eats pizza". -/
-def john_sees_pizza_and_mary_eats_pizza : Derivation String Atom S :=
+def john_sees_pizza_and_mary_eats_pizza : Derivation String .multimodal S :=
   .bapp (.bapp (.lex "John" NP) (.fapp (.lex "sees" TV) (.lex "pizza" NP)))
     (.fapp (.lex "and" (conj S))
       (.bapp (.lex "Mary" NP) (.fapp (.lex "eats" TV) (.lex "pizza" NP))))
@@ -218,8 +218,8 @@ def pqLex : SemLexicon String atomTy Unit Unit := fun w c ↦
         fun q p ↦ English.Coordination.or_.denote {p, q})
   | _, _ => none
 
-def dp : Derivation String Atom S := .lex "p" S
-def dq : Derivation String Atom S := .lex "q" S
+def dp : Derivation String .multimodal S := .lex "p" S
+def dq : Derivation String .multimodal S := .lex "q" S
 
 /-- With a true and a false conjunct, coordination by `and` and by `or` receive different
 truth values, so the coordinator is part of a derivation's truth conditions. -/
@@ -284,8 +284,8 @@ theorem cluster_svo : cluster TV = none := by decide
 
 /-- The backward-gapped conjunct "Ken-ga Naomi-o" is derived by forward raising and forward
 composition. -/
-def backwardGappedConjunct : Derivation String Atom (S / japaneseTV) :=
-  .fcomp (by decide) (.lex "Ken-ga" (S / (S \ NP)))
+def backwardGappedConjunct : Derivation String .multimodal (S / japaneseTV) :=
+  .fcomp (.lex "Ken-ga" (S / (S \ NP)))
     (.lex "Naomi-o" ((S \ NP) / japaneseTV))
 
 theorem backwardGappedConjunct_yield :
@@ -293,8 +293,8 @@ theorem backwardGappedConjunct_yield :
 
 /-- The forward-gapped conjunct "Warren, potatoes" is derived by backward raising and backward
 composition over a verb-initial verb. -/
-def gappedConjunct : Derivation String Atom (S \ irishTV) :=
-  .bcomp (by decide) (.lex "Warren" ((S / NP) \ irishTV)) (.lex "potatoes" (S \ (S / NP)))
+def gappedConjunct : Derivation String .multimodal (S \ irishTV) :=
+  .bcomp (.lex "Warren" ((S / NP) \ irishTV)) (.lex "potatoes" (S \ (S / NP)))
 
 theorem gappedConjunct_yield : gappedConjunct.yield = ["Warren", "potatoes"] := rfl
 
@@ -339,7 +339,7 @@ theorem dutch_sub_cluster : cluster ((S \ NP) \ NP) = some (S / ((S \ NP) \ NP))
 
 /-- A stripped conjunct is a single remnant, one backward-raised subject of category
 `S\(S/NP)`. -/
-def strippedConjunct : Derivation String Atom (S \ (S / NP)) := .lex "Warren" (S \ (S / NP))
+def strippedConjunct : Derivation String .multimodal (S \ (S / NP)) := .lex "Warren" (S \ (S / NP))
 
 /-- `EllipsisType` enumerates the book's elliptical constructions. -/
 inductive EllipsisType
@@ -402,26 +402,26 @@ theorem zwemmen_derives : dutchGrammar.Derives VP ["zwemmen"] := .lex (by decide
 /-- The crossed cluster "zag helpen zwemmen" is a leftward-seeking three-place predicate. -/
 theorem crossed_cluster_derives :
     dutchGrammar.Derives (((S \ NP) \ NP) \ NP) ["zag", "helpen", "zwemmen"] :=
-  .fc 1 zag_derives (.fc 0 helpen_derives zwemmen_derives ⟨by decide, rfl⟩ rfl)
-    ⟨by decide, rfl⟩ rfl
+  .forward [⟨.left, .dot, NP⟩] zag_derives
+    (.forward [] helpen_derives zwemmen_derives ⟨by decide, rfl⟩) ⟨by decide, rfl⟩
 
 /-- In "(dat) Jan Piet zag zwemmen" the two-verb cluster needs no composition and the NPs
 attach leftward. -/
 theorem two_np_sub_derives : dutchGrammar.Derives S ["Jan", "Piet", "zag", "zwemmen"] :=
-  .bc 0 jan_derives
-    (.bc 0 piet_derives (.fc 0 zag_derives zwemmen_derives ⟨by decide, rfl⟩ rfl)
-      ⟨by decide, rfl⟩ rfl)
-    ⟨by decide, rfl⟩ rfl
+  .backward [] jan_derives
+    (.backward [] piet_derives (.forward [] zag_derives zwemmen_derives ⟨by decide, rfl⟩)
+      ⟨by decide, rfl⟩)
+    ⟨by decide, rfl⟩
 
 /-- In "(dat) Jan Piet Marie zag helpen zwemmen" the three NPs attach leftward to the crossed
 cluster, Marie to the slot of "helpen", Piet to the object slot of "zag", Jan as subject, the
 cross-serial binding in the attested order. -/
 theorem three_np_sub_derives :
     dutchGrammar.Derives S ["Jan", "Piet", "Marie", "zag", "helpen", "zwemmen"] :=
-  .bc 0 jan_derives
-    (.bc 0 piet_derives (.bc 0 marie_derives crossed_cluster_derives ⟨by decide, rfl⟩ rfl)
-      ⟨by decide, rfl⟩ rfl)
-    ⟨by decide, rfl⟩ rfl
+  .backward [] jan_derives
+    (.backward [] piet_derives
+      (.backward [] marie_derives crossed_cluster_derives ⟨by decide, rfl⟩) ⟨by decide, rfl⟩)
+    ⟨by decide, rfl⟩
 
 end CrossSerial
 
@@ -444,19 +444,19 @@ inductive VerbOrder
 
 /-- In the Dutch verb-raising order (99a) the cluster "probeert te zingen" forms by crossed
 composition before taking the object to its left. -/
-def verbRaisingDeriv : Derivation String Atom IV :=
+def verbRaisingDeriv : Derivation String .multimodal IV :=
   .bapp (.lex "veel liederen" NP)
-    (.fcompx (by decide) (.lex "probeert" (IV / IV)) (.lex "te zingen" (IV \ NP)))
+    (.fcompx (.lex "probeert" (IV / IV)) (.lex "te zingen" (IV \ NP)))
 
 /-- In the Dutch verb-projection-raising order (99b) the matrix verb applies to a saturated
 embedded VP, so the quantified object never combines with a function containing the tensed
 verb. -/
-def verbProjectionRaisingDeriv : Derivation String Atom IV :=
+def verbProjectionRaisingDeriv : Derivation String .multimodal IV :=
   .fapp (.lex "probeert" (IV / IV))
     (.bapp (.lex "veel liederen" NP) (.lex "te zingen" (IV \ NP)))
 
 /-- `schematicDeriv o` is the derivation shape that the verb order `o` forces. -/
-def schematicDeriv : VerbOrder → Derivation String Atom IV
+def schematicDeriv : VerbOrder → Derivation String .multimodal IV
   | .verbRaising => verbRaisingDeriv
   | .verbProjectionRaising => verbProjectionRaisingDeriv
 
@@ -513,8 +513,8 @@ def annaMannyAccents : AccentAssignment String := fun w ↦
   | _ => none
 
 /-- "ANNA married" is the composed theme constituent, of category `S/NP`. -/
-def anna_married : Derivation String Atom (S / NP) :=
-  .fcomp (by decide) (.lex "Anna" (S / (S \ NP))) (.lex "married" TV)
+def anna_married : Derivation String .multimodal (S / NP) :=
+  .fcomp (.lex "Anna" (S / (S \ NP))) (.lex "married" TV)
 
 /-- The theme constituent projects `θ`, since the theme accent on "Anna" unifies with
 unaccented "married". -/
@@ -523,7 +523,8 @@ theorem anna_married_theme :
 
 /-- The rheme "MANNY" projects `ρ`. -/
 theorem manny_rheme :
-    (Derivation.lex "Manny" NP).infoFeature annaMannyAccents = some .ρ := rfl
+    (Derivation.lex (R := .multimodal) "Manny" NP).infoFeature annaMannyAccents = some .ρ :=
+  rfl
 
 /-- Folding the rheme into the theme's constituent clashes. The whole sentence projects no
 single marking, so the tune forces the phrasing "[Anna married][Manny]". -/
@@ -532,7 +533,7 @@ theorem theme_rheme_clash :
       = none := rfl
 
 /-- The utterance consists of two tune-marked phrases. -/
-def annaMannyUtterance : List (ProsodicPhrase String Atom) :=
+def annaMannyUtterance : List (ProsodicPhrase String (RuleSystem.multimodal (α := Atom))) :=
   [⟨_, anna_married, themeTune⟩, ⟨_, .lex "Manny" NP, rhemeTune⟩]
 
 /-- The information structure extracted from the utterance has the `S/NP` constituent
@@ -549,7 +550,7 @@ Derivations interpreted compositionally over the toy model: a true sentence and 
 
 section TruthConditions
 
-def mary_sleeps : Derivation String Atom S := .bapp (.lex "Mary" NP) (.lex "sleeps" IV)
+def mary_sleeps : Derivation String .multimodal S := .bapp (.lex "Mary" NP) (.lex "sleeps" IV)
 
 theorem ccg_predicts_john_sleeps : ∃ p, john_sleeps.interp semLexicon = some p ∧ p :=
   ⟨_, rfl, rfl⟩

@@ -24,9 +24,9 @@ sense (Table 2) and with the reported difficulty (`table1`, `table2`, `difficult
 passive are extended, where the empty-category analysis holds every filler to the end of the
 sentence (`peripheralGaps_fillerVerb_disjoint`, `peripheralGaps_fillerGap_common`). The
 categorial grammar of the paper's later sections derives the embedded questions (82a–c) with no
-empty category (`der82a`, `der82b`, `der82c`), and (82d) has no derivation because the pronoun
-must fill an argument role of the embedded verb, which is the count invariant of
-[van-benthem-1986] (`no_der82d`).
+empty category (`der82a`, `der82b`, `der82c`), and (82d) has no derivation in any rule system
+because the pronoun must fill an argument role of the embedded verb, which is the count
+invariant of van Benthem (`no_der82d`).
 
 ## Implementation notes
 
@@ -329,34 +329,35 @@ def lexicon : List (String × CCG.Cat Basic) :=
 
 /-- The derivation (83) of *who saw Mary*, in which the subject pronoun applies to a sentence
 missing its subject. -/
-def der83 : CCG.Derivation String Basic quest :=
+def der83 : CCG.Derivation String .multimodal quest :=
   .fapp (.lex "who" (quest / (sent \ np))) (.fapp (.lex "saw" ((sent \ np) / np)) (.lex "Mary" np))
 
 /-- The derivation (84) of *whom John saw*, in which the raised subject composes with the verb
 into a sentence missing its object, which the object pronoun takes. -/
-def der84 : CCG.Derivation String Basic quest :=
+def der84 : CCG.Derivation String .multimodal quest :=
   .fapp (.lex "whom" (quest / (sent / np)))
-    (.fcomp bot_le (.lex "John" (sent / (sent \ np))) (.lex "saw" ((sent \ np) / np)))
+    (.fcomp (.lex "John" (sent / (sent \ np))) (.lex "saw" ((sent \ np) / np)))
 
 /-- The derivation (85) of *whom John talked to*, in which two compositions leave the
 preposition's object missing. -/
-def der85 : CCG.Derivation String Basic quest :=
+def der85 : CCG.Derivation String .multimodal quest :=
   .fapp (.lex "whom" (quest / (sent / np)))
-    (.fcomp bot_le (.fcomp bot_le (.lex "John" (sent / (sent \ np)))
+    (.fcomp (.fcomp (.lex "John" (sent / (sent \ np)))
       (.lex "talked" ((sent \ np) / pp))) (.lex "to" (pp / np)))
 
 /-- *Sue wonders* applied to an embedded question. -/
-def wonders (d : CCG.Derivation String Basic quest) : CCG.Derivation String Basic sent :=
+def wonders (d : CCG.Derivation String .multimodal quest) :
+    CCG.Derivation String .multimodal sent :=
   .bapp (.lex "Sue" np) (.fapp (.lex "wonders" ((sent \ np) / quest)) d)
 
 /-- (82a). -/
-def der82a : CCG.Derivation String Basic sent := wonders der83
+def der82a : CCG.Derivation String .multimodal sent := wonders der83
 
 /-- (82b). -/
-def der82b : CCG.Derivation String Basic sent := wonders der84
+def der82b : CCG.Derivation String .multimodal sent := wonders der84
 
 /-- (82c). -/
-def der82c : CCG.Derivation String Basic sent := wonders der85
+def der82c : CCG.Derivation String .multimodal sent := wonders der85
 
 /-- The embedded questions (82a–c) are derived from the lexicon, with no empty category. -/
 theorem embedded_questions :
@@ -373,10 +374,10 @@ def npCount : String → ℤ
   | "talked" | "to" | "wonders" => -1
   | _ => 1
 
-/-- *Sue wonders who John saw Mary* (82d) has no derivation, with *who* or with *whom*, because
-the pronoun supplies a noun phrase no verb consumes. -/
-theorem no_der82d (w : String) (hw : w = "who" ∨ w = "whom") :
-    ¬ ∃ d : CCG.Derivation String Basic sent,
+/-- *Sue wonders who John saw Mary* (82d) has no derivation, with *who* or with *whom*, in any
+rule system, because the pronoun supplies a noun phrase no verb consumes. -/
+theorem no_der82d (R : CCG.RuleSystem Basic) (w : String) (hw : w = "who" ∨ w = "whom") :
+    ¬ ∃ d : CCG.Derivation String R sent,
       d.LexIn lexicon ∧ d.yield = ["Sue", "wonders", w, "John", "saw", "Mary"] := by
   rintro ⟨d, hd, hy⟩
   have h := d.count_eq_sum .NP (f := npCount) (by decide) hd

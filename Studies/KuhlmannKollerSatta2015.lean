@@ -20,12 +20,12 @@ produces (`reachable_of_derives`). The language is therefore not context-free
 (`not_isContextFree_language`), the fact the proof of Theorem 3 invokes.
 
 The paper's results turn on two properties of rule restrictions, which are stated here for
-the substrate's grammars as permission gates: prefix-closedness (Definition 2) and the
-absence of target restrictions (Definition 3). Every target-restricted grammar is
-prefix-closed, so `G₁` is (Example 6), while `G₁` is not without target restrictions
-(Example 8). This is the configuration the paper's Theorems 2 and 3 separate: prefix-closed
-grammars with target restrictions are weakly equivalent to tree-adjoining grammar, and
-without them they cannot generate `aⁿbⁿcⁿ`.
+the substrate's rule systems: prefix-closedness (Definition 2) and the absence of target
+restrictions (Definition 3). Every target-restricted rule system is prefix-closed, so the rule
+system of `G₁` is (Example 6), but it is not without target restrictions (Example 8). This is
+the configuration the paper's Theorems 2 and 3 separate: prefix-closed grammars with target
+restrictions are weakly equivalent to tree-adjoining grammar, and without them they cannot
+generate `aⁿbⁿcⁿ`.
 
 ## Implementation notes
 
@@ -107,8 +107,8 @@ theorem fc2Chain_derives (j : Nat) :
   | succ j ih =>
       have h : exampleGrammar.Derives ((clusterCat (j + 2)).rslash .dot Bcat)
           (List.replicate (j + 1) .b ++ [.b]) :=
-        .fc 2 ih (.lex (c := (Bcat / Ccat) / Bcat) (by decide))
-          ⟨by decide, by simp [target_clusterCat]⟩ rfl
+        .forward [⟨.right, .dot, Ccat⟩, ⟨.right, .dot, Bcat⟩] ih (.lex (by decide))
+          ⟨by decide, by simp⟩
       simpa [List.replicate_succ'] using h
 
 /-- `G₁` derives the `b`-cluster `bⁿ` at category `clusterCat n`, for `n ≥ 1`. -/
@@ -118,8 +118,8 @@ theorem cluster_derives : ∀ {n : Nat}, 1 ≤ n →
   | n + 2, _ => by
       have h : exampleGrammar.Derives (clusterCat (n + 2))
           (List.replicate (n + 1) .b ++ [.b]) :=
-        .fc 1 (fc2Chain_derives n) (.lex (c := Bcat / Ccat) (by decide))
-          ⟨by decide, by simp [target_clusterCat]⟩ rfl
+        .forward [⟨.right, .dot, Ccat⟩] (fc2Chain_derives n) (.lex (by decide))
+          ⟨by decide, by simp⟩
       simpa [List.replicate_succ'] using h
 
 private theorem replicate_cons_comm {α : Type*} (k : Nat) (a : α) (X : List α) :
@@ -137,10 +137,9 @@ theorem peel_derives : ∀ (k : Nat) {w : List Letter},
   | 0, w, h => by simpa [clusterCat] using h
   | k + 1, w, h => by
       have hstep : exampleGrammar.Derives (clusterCat k) (.a :: (w ++ [.c])) :=
-        .bc 0 (.lex (c := Acat) (by decide))
-          (.fc 1 h (.lex (c := Ccat \ Acat) (by decide))
-            ⟨by decide, by simp [target_clusterCat]⟩ rfl)
-          ⟨by decide, by simp [target_clusterCat]⟩ rfl
+        .backward [] (.lex (c := Acat) (by decide))
+          (.forward [⟨.left, .dot, Acat⟩] h (.lex (by decide)) ⟨by decide, by simp⟩)
+          ⟨by decide, by simp⟩
       have hrec := peel_derives k hstep
       simpa [List.replicate_succ, List.cons_append, List.append_assoc,
         replicate_cons_comm] using hrec
@@ -184,8 +183,7 @@ theorem reachable_of_derives {c : Cat Atom} {w : List Letter}
     · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inl
         ⟨1, 0, rfl, rfl⟩)))))
     · exact Or.inr (Or.inr (Or.inr (Or.inl ⟨rfl, rfl⟩)))
-  | @fc n a b c u v _ _ hgate hc iha ihb =>
-    obtain ⟨x, m, y, β, rfl, rfl, rfl, rfl⟩ := Cat.generalizedForwardComp_eq_some_iff.mp hc
+  | @forward x y m β u v _ _ hgate iha ihb =>
     obtain ⟨-, hx⟩ : _ ∧ x.target = .S := hgate
     rcases iha with ⟨h, -⟩ | ⟨h, -⟩ | ⟨h, -⟩ | ⟨h, -⟩ | ⟨j, h, rfl⟩ | ⟨_ | k, i, h, rfl⟩ |
       ⟨_, _, h, -⟩
@@ -210,8 +208,7 @@ theorem reachable_of_derives {c : Cat Atom} {w : List Letter}
       refine Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr ⟨k, i, rfl, ?_⟩)))))
       simp [show k + 1 + i = k + i + 1 by omega, List.replicate_succ']
     · cases h
-  | @bc n a b c u v _ _ hgate hc iha ihb =>
-    obtain ⟨x, m, y, β, rfl, rfl, rfl, rfl⟩ := Cat.generalizedBackwardComp_eq_some_iff.mp hc
+  | @backward x y m β u v _ _ hgate iha ihb =>
     obtain ⟨-, hx⟩ : _ ∧ x.target = .S := hgate
     rcases ihb with ⟨h, -⟩ | ⟨h, -⟩ | ⟨h, -⟩ | ⟨h, -⟩ | ⟨_, h, -⟩ | ⟨_ | _, _, h, -⟩ |
       ⟨k, i, h, rfl⟩
@@ -232,41 +229,32 @@ theorem reachable_of_derives {c : Cat Atom} {w : List Letter}
 
 /-! ### Rule restrictions (§3.1, §3.3) -/
 
-/-- A grammar is prefix-closed (Definition 2) when every permitted instance `X/Y Yβ ⇒ Xβ` of
-composition stays permitted for every prefix `β'` of the argument sequence `β`, that is, with the
-outermost arguments of the secondary input already consumed, at the lowered degree. -/
-def PrefixClosed {T α : Type*} (G : Grammar T α) : Prop :=
-  (∀ x m y (β β' : List (Cat.Arg α)), β' <+: β →
-    G.allowsFwd β.length (.rslash x m y) (y.pushArgs β) →
-      G.allowsFwd β'.length (.rslash x m y) (y.pushArgs β')) ∧
-  (∀ x m y (β β' : List (Cat.Arg α)), β' <+: β →
-    G.allowsBwd β.length (y.pushArgs β) (.lslash x m y) →
-      G.allowsBwd β'.length (y.pushArgs β') (.lslash x m y))
+/-- A rule system is prefix-closed (Definition 2) when every permitted instance `X/Y Yβ ⇒ Xβ`
+of composition stays permitted for every prefix `β'` of the argument sequence `β`, that is, with
+the outermost arguments of the secondary input already consumed, at the lowered degree. -/
+def PrefixClosed {α : Type*} (R : RuleSystem α) : Prop :=
+  ∀ x a (β β' : List (Cat.Arg α)), β' <+: β → R x a β → R x a β'
 
-/-- A grammar is without target restrictions (Definition 3) when every permitted instance
+/-- A rule system is without target restrictions (Definition 3) when every permitted instance
 `X/Y Yβ ⇒ Xβ` stays permitted under any change of the primary input's result category `X`. -/
-def WithoutTargetRestrictions {T α : Type*} (G : Grammar T α) : Prop :=
-  (∀ x x' m y (β : List (Cat.Arg α)), G.allowsFwd β.length (.rslash x m y) (y.pushArgs β) →
-    G.allowsFwd β.length (.rslash x' m y) (y.pushArgs β)) ∧
-  (∀ x x' m y (β : List (Cat.Arg α)), G.allowsBwd β.length (y.pushArgs β) (.lslash x m y) →
-    G.allowsBwd β.length (y.pushArgs β) (.lslash x' m y))
+def WithoutTargetRestrictions {α : Type*} (R : RuleSystem α) : Prop :=
+  ∀ x x' a (β : List (Cat.Arg α)), R x a β → R x' a β
 
-/-- A target-restricted grammar is prefix-closed: its gates look only at the degree and the
+/-- A target-restricted rule system is prefix-closed: it looks only at the degree and the
 primary input's target. -/
-theorem targetRestricted_prefixClosed {T α : Type*} (L : List (T × Cat α)) (s : α)
-    (d : ℕ) : PrefixClosed (Grammar.targetRestricted L s d) :=
-  ⟨fun _ _ _ _ _ hβ h ↦ ⟨hβ.length_le.trans h.1, h.2⟩,
-   fun _ _ _ _ _ hβ h ↦ ⟨hβ.length_le.trans h.1, h.2⟩⟩
+theorem targetRestricted_prefixClosed {α : Type*} (s : α) (d : ℕ) :
+    PrefixClosed (RuleSystem.targetRestricted s d) :=
+  fun _ _ _ _ hβ h ↦ ⟨hβ.length_le.trans h.1, h.2⟩
 
 /-- `G₁` is prefix-closed (Example 6). -/
-theorem exampleGrammar_prefixClosed : PrefixClosed exampleGrammar :=
-  targetRestricted_prefixClosed _ _ _
+theorem exampleGrammar_prefixClosed : PrefixClosed exampleGrammar.rules :=
+  targetRestricted_prefixClosed _ _
 
 /-- `G₁` is not without target restrictions (Example 8), since application of `S/C` to `C`
 is permitted but application of `B/C` to `C` is not. -/
 theorem exampleGrammar_not_withoutTargetRestrictions :
-    ¬ WithoutTargetRestrictions exampleGrammar :=
-  fun h ↦ absurd (h.1 Scat Bcat .dot Ccat [] ⟨Nat.zero_le _, rfl⟩).2 (by decide)
+    ¬ WithoutTargetRestrictions exampleGrammar.rules :=
+  fun h ↦ absurd (h Scat Bcat ⟨.right, .dot, Ccat⟩ [] ⟨Nat.zero_le _, rfl⟩).2 (by decide)
 
 /-! ### Generative-capacity result -/
 

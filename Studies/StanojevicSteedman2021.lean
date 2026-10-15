@@ -213,15 +213,13 @@ theorem derives_of_sepPerm {n i j : ℕ} {l : List ℕ} (h1 : 1 ≤ i) (hn : j �
   | @pos i j k u v hu hv ihu ihv =>
     obtain ⟨huf, hub⟩ := ihu h1 (by have := hv.le; omega)
     obtain ⟨hvf, hvb⟩ := ihv (by omega) hn
-    refine ⟨?_, ?_⟩
-    · exact .fc 1 huf hvf (Or.inl rfl) (by simp [Cat.generalizedForwardComp])
-    · exact .fc 1 huf hvb (Or.inl rfl) (by simp [Cat.generalizedForwardComp])
+    exact ⟨.forward [⟨.right, .dot, .atom (k + 1)⟩] huf hvf (by simp [nodGrammar]),
+      .forward [⟨.left, .dot, .atom (k + 1)⟩] huf hvb (by simp [nodGrammar])⟩
   | @neg i j k u v hu hv ihu ihv =>
     obtain ⟨huf, hub⟩ := ihu h1 (by have := hv.le; omega)
     obtain ⟨hvf, hvb⟩ := ihv (by omega) hn
-    refine ⟨?_, ?_⟩
-    · exact .bc 1 hvf hub (Or.inl rfl) (by simp [Cat.generalizedBackwardComp])
-    · exact .bc 1 hvb hub (Or.inl rfl) (by simp [Cat.generalizedBackwardComp])
+    exact ⟨.backward [⟨.right, .dot, .atom (k + 1)⟩] hvf hub (by simp [nodGrammar]),
+      .backward [⟨.left, .dot, .atom (k + 1)⟩] hvb hub (by simp [nodGrammar])⟩
 
 /-! ### Soundness
 
@@ -243,8 +241,7 @@ theorem sepPerm_of_derives {n : ℕ} {c : Cat ℕ} {w : List ℕ}
     rcases hentry with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩
     · exact ⟨m + 1, m + 1, by omega, by omega, .single _, Or.inl rfl⟩
     · exact ⟨m + 1, m + 1, by omega, by omega, .single _, Or.inr rfl⟩
-  | @fc _ _ _ _ _ _ _ _ _ hc iha ihb =>
-    obtain ⟨x, m, y, β, -, rfl, rfl, rfl⟩ := Cat.generalizedForwardComp_eq_some_iff.mp hc
+  | @forward x y m β _ _ _ _ _ iha ihb =>
     obtain ⟨i, j, hi, hj, hsep, hcat⟩ := iha
     obtain ⟨i', j', hi', hj', hsep', hcat'⟩ := ihb
     obtain ⟨rfl, rfl, rfl⟩ : x = .atom i ∧ m = .dot ∧ y = .atom (j + 1) := by simpa using hcat
@@ -253,8 +250,7 @@ theorem sepPerm_of_derives {n : ℕ} {c : Cat ℕ} {w : List ℕ}
       simpa [Cat.atom_pushArgs_eq_iff] using hcat'
     · exact ⟨i, j', hi, hj', .pos hsep hsep', Or.inl rfl⟩
     · exact ⟨i, j', hi, hj', .pos hsep hsep', Or.inr rfl⟩
-  | @bc _ _ _ _ _ _ _ _ _ hc iha ihb =>
-    obtain ⟨x, m, y, β, -, rfl, rfl, rfl⟩ := Cat.generalizedBackwardComp_eq_some_iff.mp hc
+  | @backward x y m β _ _ _ _ _ iha ihb =>
     obtain ⟨i, j, hi, hj, hsep, hcat⟩ := iha
     obtain ⟨i', j', hi', hj', hsep', hcat'⟩ := ihb
     obtain ⟨rfl, rfl, rfl⟩ : x = .atom i' ∧ m = .dot ∧ y = .atom (j' + 1) := by
