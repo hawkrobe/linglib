@@ -286,6 +286,13 @@ theorem cutSummandsCN_filter_empty
   rw [Multiset.map_zero]
   rfl
 
+/-- The empty cut is a trace cut. -/
+theorem zero_mem_cutSummandsCN (τ : UnorderedTree (α ⊕ β) → β) (T : UnorderedTree (α ⊕ β)) :
+    ((0 : Multiset (UnorderedTree (α ⊕ β))), T) ∈ cutSummandsCN τ T :=
+  Multiset.mem_of_mem_filter (p := fun p ↦ Multiset.card p.1 = 0) <| by
+    rw [cutSummandsCN_filter_empty]
+    exact Multiset.mem_singleton_self _
+
 /-- Every crown component of a Δ^c cut of `T` is a subtree of `T`. -/
 theorem cutSummandsCN_mem_subtrees_of_mem_crown (τ : UnorderedTree (α ⊕ β) → β)
     {T : UnorderedTree (α ⊕ β)} {p : Multiset (UnorderedTree (α ⊕ β)) × UnorderedTree (α ⊕ β)}

@@ -459,6 +459,14 @@ theorem mem_fst_sum_map_snd_iff
   | empty => simp
   | cons x s ih => simp [ih]
 
+/-- A tree is in the trunk of a choice of cuts when it is in the trunk chosen for one tree. -/
+theorem mem_snd_sum_map_snd_iff
+    {s : Multiset (UnorderedTree α × (Multiset (UnorderedTree α) × Multiset (UnorderedTree α)))}
+    {T : UnorderedTree α} : T ∈ (s.map Prod.snd).sum.2 ↔ ∃ x ∈ s, T ∈ x.2.2 := by
+  induction s using Multiset.induction with
+  | empty => simp
+  | cons x s ih => simp [ih]
+
 /-- Every tree of a forest leaves one trunk, except the trees taken whole into the crown. -/
 theorem card_add_countP_of_mem_forestCutChoicesG [DecidableEq (UnorderedTree α)]
     {F : Multiset (UnorderedTree α)} {s} (hs : s ∈ forestCutChoicesG cuts F) :
@@ -471,6 +479,54 @@ theorem card_add_countP_of_mem_forestCutChoicesG [DecidableEq (UnorderedTree α)
     obtain ⟨s', hs', rfl⟩ := Multiset.mem_map.mp hs
     have := ih hs'
     rcases mem_treeCutsG.mp ha with rfl | ⟨p, -, rfl⟩ <;> simp <;> omega
+
+/-- Choices of cuts for two forests combine to a choice for their sum. -/
+theorem add_mem_forestCutChoicesG {F G : Multiset (UnorderedTree α)} {s t}
+    (hs : s ∈ forestCutChoicesG cuts F) (ht : t ∈ forestCutChoicesG cuts G) :
+    s + t ∈ forestCutChoicesG cuts (F + G) := by
+  rw [forestCutChoicesG, Multiset.map_add, Multiset.sections_add]
+  exact Multiset.mem_bind.mpr ⟨s, hs, Multiset.mem_map.mpr ⟨t, ht, rfl⟩⟩
+
+/-- Every tree of a forest can be taken whole. -/
+theorem map_whole_mem_forestCutChoicesG (F : Multiset (UnorderedTree α)) :
+    F.map (fun T ↦ (T, ({T}, 0))) ∈ forestCutChoicesG cuts F := by
+  induction F using Multiset.induction with
+  | empty => simp [forestCutChoicesG_zero]
+  | cons T F ih =>
+    rw [forestCutChoicesG_cons, Multiset.map_cons]
+    exact Multiset.mem_bind.mpr ⟨_, Multiset.mem_cons_self _ _, Multiset.mem_map.mpr ⟨_, ih, rfl⟩⟩
+
+/-- Taking every tree of a forest whole puts the forest in the crown and leaves no trunk. -/
+theorem sum_map_snd_map_whole (F : Multiset (UnorderedTree α)) :
+    ((F.map fun T ↦ (T, (({T} : Multiset (UnorderedTree α)), (0 : Multiset (UnorderedTree α)))))
+      |>.map Prod.snd).sum = (F, 0) := by
+  induction F using Multiset.induction with
+  | empty => rfl
+  | cons T F ih =>
+    rw [Multiset.map_cons, Multiset.map_cons, Multiset.sum_cons, ih]
+    exact Prod.ext (Multiset.singleton_add _ _) (add_zero _)
+
+/-- Leaving every tree of a forest uncut puts nothing in the crown and the forest in the trunk. -/
+theorem sum_map_snd_map_uncut (F : Multiset (UnorderedTree α)) :
+    ((F.map fun T ↦ (T, ((0 : Multiset (UnorderedTree α)), ({T} : Multiset (UnorderedTree α)))))
+      |>.map Prod.snd).sum = (0, F) := by
+  induction F using Multiset.induction with
+  | empty => rfl
+  | cons T F ih =>
+    rw [Multiset.map_cons, Multiset.map_cons, Multiset.sum_cons, ih]
+    exact Prod.ext (add_zero _) (Multiset.singleton_add _ _)
+
+/-- Every tree of a forest can be left uncut, when the empty cut is among its cuts. -/
+theorem map_uncut_mem_forestCutChoicesG {F : Multiset (UnorderedTree α)}
+    (h : ∀ T ∈ F, ((0 : Multiset (UnorderedTree α)), T) ∈ cuts T) :
+    F.map (fun T ↦ (T, (0, {T}))) ∈ forestCutChoicesG cuts F := by
+  induction F using Multiset.induction with
+  | empty => simp [forestCutChoicesG_zero]
+  | cons T F ih =>
+    rw [forestCutChoicesG_cons, Multiset.map_cons]
+    exact Multiset.mem_bind.mpr ⟨_, Multiset.mem_cons_of_mem
+      (Multiset.mem_map_of_mem (fun p ↦ (p.1, {p.2})) (h T (Multiset.mem_cons_self _ _))),
+      Multiset.mem_map.mpr ⟨_, ih fun U hU ↦ h U (Multiset.mem_cons_of_mem hU), rfl⟩⟩
 
 end CutChoices
 
