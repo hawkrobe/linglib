@@ -1,7 +1,7 @@
 module
 
-public import Mathlib.Logic.Relation
-public import Mathlib.Logic.Function.Basic
+public import Linglib.Core.Relation.ReflTransGen
+public import Mathlib.Data.Finset.Option
 public import Mathlib.Tactic.DeriveFintype
 public import Mathlib.Data.Fintype.Pi
 
@@ -15,25 +15,30 @@ specifier, and there is no third (Dimensionality). Parthood is transitive within
 but not across dimensions, which is what makes 2-parts locality domains.
 
 This file defines the parthood structure `Parthood α` on a type of objects, its immediate and
-transitive parthood relations, the Subjoin operation, rank functions as certificates of
-acyclicity, and how parthood chains leave a domain closed under parenthood.
+transitive parthood relations, and the Subjoin operation, decides the parthood relations of a
+finite structure, and shows how parthood chains leave a domain closed under parenthood.
 
 ## Main definitions
 
-* `MereologicalSyntax.Parthood` — the 1-part and 2-part functions.
+* `MereologicalSyntax.Parthood` — the 1-part and 2-part functions, indexed by the dimensions
+  `Parthood.Dim`.
 * `Parthood.Imm n x y` — `x` is the immediate `n`-part of `y`; `Parthood.NPart n` is its
-  transitive closure, the `n`-part relation; `Parthood.WithinDim` — an `n`-part for some `n`;
-  `Parthood.Descendant` — parthood through both dimensions.
+  transitive closure, the `n`-part relation; `Parthood.Descendant` — parthood through both
+  dimensions.
 * `Parthood.subjoin` — Subjoin, filling the next free dimension of the target.
 
 ## Main statements
 
-* `Parthood.lt_of_descendant` — a rank increasing along immediate parthood increases along
-  `Descendant`; hence `Parthood.not_descendant_of_le` and `Parthood.acyclic_of_rank`.
-* `Parthood.nPart_iff_of_unique` — an `n`-part chain from an object with a unique parent passes
-  through that parent.
 * `Parthood.exit_of_nPart` — an `n`-part chain leaving a domain closed under parenthood except
   at `b` leaves in `b`'s own dimension of attachment, and reaches `b` first.
+
+## Implementation notes
+
+* An object has at most one `n`-part, so its `n`-parts form a chain, and `NPart n` is decided by
+  following it (`Relation.ReflTransGen.decidable_TransGen_of_option`). `Descendant` branches,
+  and is decided by closing a set.
+* Irreflexivity is not part of `Parthood`, and `subjoin` does not check it: theorems that need it
+  take `∀ x, ¬ P.Descendant x x`, which `decide` checks on a finite structure.
 
 ## References
 
@@ -44,14 +49,7 @@ acyclicity, and how parthood chains leave a domain closed under parenthood.
 
 namespace MereologicalSyntax
 
-/-- The two dimensions of parthood: 1-parts are extended-projection complements, 2-parts are
-specifiers. -/
-inductive Dim
-  | one
-  | two
-  deriving DecidableEq, Repr, Fintype
-
-/-- A dimensioned parthood structure on `α`: each object has at most one 1-part and at most one
+/-- A dimensioned parthood structure on `α` gives each object at most one 1-part and at most one
 2-part (Dimensionality). -/
 @[ext]
 structure Parthood (α : Type*) where
@@ -62,11 +60,19 @@ structure Parthood (α : Type*) where
 
 namespace Parthood
 
+open Relation
+
+/-- The two dimensions of parthood, the extended-projection complement (1-part) and the specifier
+(2-part). -/
+inductive Dim
+  | one
+  | two
+  deriving DecidableEq, Repr, Fintype
+
 variable {α : Type*} (P : Parthood α)
 
-instance [Fintype α] [DecidableEq α] : DecidableEq (Parthood α) := fun P Q =>
-  decidable_of_iff (P.onePart = Q.onePart ∧ P.twoPart = Q.twoPart)
-    ⟨fun h => Parthood.ext h.1 h.2, fun h => by subst h; exact ⟨rfl, rfl⟩⟩
+instance [Fintype α] [DecidableEq α] : DecidableEq (Parthood α) := fun _ _ ↦
+  decidable_of_iff _ Parthood.ext_iff.symm
 
 /-- The `n`-part of an object, if any. -/
 def part : Dim → α → Option α
@@ -78,94 +84,52 @@ def part : Dim → α → Option α
 /-- `x` is the immediate `n`-part of `y`. -/
 def Imm (n : Dim) (x y : α) : Prop := P.part n y = some x
 
-instance [DecidableEq α] (n : Dim) (x y : α) : Decidable (P.Imm n x y) :=
-  inferInstanceAs (Decidable (_ = _))
-
-/-- `x` is an `n`-part of `y`: parthood is transitive within a dimension. -/
-def NPart (n : Dim) : α → α → Prop := Relation.TransGen (P.Imm n)
-
-/-- `x` is a part of `y` within a single dimension. -/
-def WithinDim (x y : α) : Prop := P.NPart .one x y ∨ P.NPart .two x y
+/-- `x` is an `n`-part of `y`, through a chain of immediate `n`-parts. -/
+def NPart (n : Dim) : α → α → Prop := TransGen (P.Imm n)
 
 /-- `x` is reachable from `y` through parts of either dimension. -/
-def Descendant : α → α → Prop := Relation.TransGen fun x y => P.Imm .one x y ∨ P.Imm .two x y
+def Descendant : α → α → Prop := TransGen fun x y ↦ ∃ n, P.Imm n x y
+
+instance [DecidableEq α] (n : Dim) : DecidableRel (P.Imm n) := fun _ _ ↦
+  inferInstanceAs (Decidable (_ = _))
+
+section Fintype
+
+variable [Fintype α] [DecidableEq α]
+
+instance (n : Dim) : DecidableRel (P.NPart n) := fun x y ↦
+  haveI := ReflTransGen.decidable_TransGen_of_option (P.part n) y x
+  decidable_of_iff _ transGen_swap
+
+instance : DecidableRel P.Descendant := fun x y ↦
+  haveI := ReflTransGen.decidable_TransGen_of_fintype_step
+    (r := Function.swap fun x y ↦ ∃ n, P.Imm n x y)
+    (fun y ↦ Finset.univ.biUnion fun n ↦ (P.part n y).toFinset)
+    (fun _ _ ↦ by simp [Function.swap, Imm]) y x
+  decidable_of_iff _ transGen_swap
+
+end Fintype
 
 variable {P}
 
-theorem NPart.imm {n : Dim} {x y : α} (h : P.Imm n x y) : P.NPart n x y := .single h
-
-theorem NPart.trans {n : Dim} {x y z : α} (h₁ : P.NPart n x y) (h₂ : P.NPart n y z) :
-    P.NPart n x z :=
-  Relation.TransGen.trans h₁ h₂
-
-theorem descendant_of_imm {n : Dim} {x y : α} (h : P.Imm n x y) : P.Descendant x y :=
-  match n, h with
-  | .one, h => .single (.inl h)
-  | .two, h => .single (.inr h)
-
 theorem descendant_of_nPart {n : Dim} {x y : α} (h : P.NPart n x y) : P.Descendant x y :=
-  Relation.TransGen.mono (fun _ _ h => match n, h with
-    | .one, h => .inl h
-    | .two, h => .inr h) _ _ h
-
-theorem descendant_of_withinDim {x y : α} (h : P.WithinDim x y) : P.Descendant x y :=
-  h.elim descendant_of_nPart descendant_of_nPart
+  TransGen.mono (fun _ _ h ↦ ⟨n, h⟩) _ _ h
 
 theorem Descendant.trans {x y z : α} (h₁ : P.Descendant x y) (h₂ : P.Descendant y z) :
     P.Descendant x z :=
-  Relation.TransGen.trans h₁ h₂
+  TransGen.trans h₁ h₂
 
-/-! ### Rank certificates -/
+/-! ### Chains out of domains -/
 
-theorem lt_of_descendant (rank : α → ℕ) (hrank : ∀ n x y, P.Imm n x y → rank x < rank y)
-    {x y : α} (h : P.Descendant x y) : rank x < rank y := by
-  induction h with
-  | single h => exact h.elim (hrank _ _ _) (hrank _ _ _)
-  | tail _ h ih => exact ih.trans (h.elim (hrank _ _ _) (hrank _ _ _))
-
-theorem not_descendant_of_le (rank : α → ℕ) (hrank : ∀ n x y, P.Imm n x y → rank x < rank y)
-    {x y : α} (h : rank y ≤ rank x) : ¬ P.Descendant x y :=
-  fun hd => absurd (lt_of_descendant rank hrank hd) (not_lt.2 h)
-
-/-- An increasing rank certifies that no object is a part of itself. -/
-theorem acyclic_of_rank (rank : α → ℕ) (hrank : ∀ n x y, P.Imm n x y → rank x < rank y)
-    (x : α) : ¬ P.Descendant x x :=
-  not_descendant_of_le rank hrank le_rfl
-
-/-! ### Chains through unique parents and out of domains -/
-
-/-- An `n`-part chain from an object whose only parent is `u`, in dimension `n`, stops at `u` or
-continues from it. -/
-theorem nPart_iff_of_unique {n : Dim} {x u : α} (hu : P.Imm n x u)
-    (hx : ∀ m y, P.Imm m x y → m = n ∧ y = u) {z : α} :
-    P.NPart n x z ↔ z = u ∨ P.NPart n u z := by
-  constructor
-  · intro h
-    obtain ⟨b, hb, hbz⟩ := Relation.TransGen.head'_iff.1 h
-    obtain rfl := (hx n b hb).2
-    exact Relation.reflTransGen_iff_eq_or_transGen.1 hbz
-  · rintro (rfl | h)
-    exacts [.single hu, .head hu h]
-
-/-- An object whose only parent is in dimension `n` is not an `m`-part of anything, `m ≠ n`. -/
-theorem not_nPart_of_unique {n : Dim} {x u : α} (hx : ∀ m y, P.Imm m x y → m = n ∧ y = u)
-    {m : Dim} (hmn : m ≠ n) (z : α) : ¬ P.NPart m x z := fun h =>
-  let ⟨b, hb, _⟩ := Relation.TransGen.head'_iff.1 h
-  hmn (hx m b hb).1
-
-theorem not_nPart_of_no_parent {n : Dim} {x : α} (hx : ∀ y, ¬ P.Imm n x y) (z : α) :
-    ¬ P.NPart n x z := fun h =>
-  let ⟨b, hb, _⟩ := Relation.TransGen.head'_iff.1 h
-  hx b hb
-
-/-- A domain `S` closed under parenthood except at `b`, which is attached only in dimension `d`:
-an `n`-part chain from inside `S` to outside it runs in dimension `d` and reaches `b` first. -/
+/-- If a domain `S` is closed under parenthood except at `b`, and `b` is attached only in
+dimension `d`, then an `n`-part chain from inside `S` to outside it runs in dimension `d` and
+reaches `b` first. -/
 theorem exit_of_nPart {S : Set α} {b : α} {d : Dim}
     (hS : ∀ x ∈ S, x ≠ b → ∀ n y, P.Imm n x y → y ∈ S) (hb : ∀ n y, P.Imm n b y → n = d)
     {n : Dim} {x y : α} (h : P.NPart n x y) (hx : x ∈ S) (hy : y ∉ S) :
     n = d ∧ (x = b ∨ P.NPart d x b) := by
   revert hx
-  induction h using Relation.TransGen.head_induction_on with
+  induction h using TransGen.head_induction_on with
   | @single a h =>
     intro hx
     by_cases hab : a = b
@@ -176,7 +140,24 @@ theorem exit_of_nPart {S : Set α} {b : α} {d : Dim}
     by_cases hab : a = b
     · exact ⟨hb _ _ (hab ▸ h'), .inl hab⟩
     · obtain ⟨rfl, hcb⟩ := ih (hS _ hx hab _ _ h')
-      exact ⟨rfl, .inr (hcb.elim (fun e => e ▸ .single h') (.head h'))⟩
+      exact ⟨rfl, .inr (hcb.elim (fun e ↦ e ▸ .single h') (.head h'))⟩
+
+/-! ### Subjoin -/
+
+variable (P) in
+/-- Subjoin `x` to `y`, as its 1-part if it has none, as its 2-part if it has a 1-part only, and
+not at all if it has both (Dimensionality). -/
+def subjoin [DecidableEq α] (x y : α) : Option (Parthood α) :=
+  match P.onePart y, P.twoPart y with
+  | none, _ => some { P with onePart := Function.update P.onePart y (some x) }
+  | some _, none => some { P with twoPart := Function.update P.twoPart y (some x) }
+  | some _, some _ => none
+
+theorem subjoin_eq_none_of_full [DecidableEq α] {x y : α} (h₁ : (P.onePart y).isSome)
+    (h₂ : (P.twoPart y).isSome) : P.subjoin x y = none := by
+  obtain ⟨a, ha⟩ := Option.isSome_iff_exists.1 h₁
+  obtain ⟨b, hb⟩ := Option.isSome_iff_exists.1 h₂
+  simp [subjoin, ha, hb]
 
 end Parthood
 
