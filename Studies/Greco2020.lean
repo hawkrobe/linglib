@@ -30,7 +30,7 @@ Foc° as CP-phase head gives the derivation, Force° does not.
 The spine (68) is a planar syntactic object over tokens, and `Closed p` reads the Phase
 Impenetrability Condition off it: *non* is outside the interior of the phase headed by
 `p` exactly when `p` merged first. The representation (73) carries the raised TP in the
-specifier of the focus phrase, and the focus-side requirements read `areSistersIn` off it. The
+specifier of the focus phrase, and the focus-side requirements read `Sisters` off it. The
 requirement a construction places on the clause is a feature of its example row, so the
 predictions are stated once over `Requirement` and checked against the rows; the section 3 rows
 carry the diagnostic they test instead, and the embedded-focus rows (83) to (85) the focalized
@@ -257,15 +257,15 @@ def sneg : PlanarSyntacticObject := non * (tp * focBar)
 
 /-- Some constituent occupies the specifier of the unique focus phrase ([rizzi-1997]). -/
 def FocOccupied : Prop :=
-  ∃ x ∈ (sneg : SyntacticObject).accessibleTerms, (sneg : SyntacticObject).areSistersIn x focBar
+  ∃ x ∈ (sneg : SyntacticObject).accessibleTerms, (sneg : SyntacticObject).Sisters x focBar
 
 instance : Decidable FocOccupied := Multiset.decidableExistsMultiset
 
 /-- The whole TP is focalized. -/
-def WholeTPFocused : Prop := (sneg : SyntacticObject).areSistersIn tp focBar
+def WholeTPFocused : Prop := (sneg : SyntacticObject).Sisters tp focBar
 
 instance : Decidable WholeTPFocused :=
-  inferInstanceAs (Decidable ((sneg : SyntacticObject).areSistersIn _ _))
+  inferInstanceAs (Decidable ((sneg : SyntacticObject).Sisters _ _))
 
 /-- Whether the representation meets a requirement, under CP-phase head `p`. A phrasal negator
 is excluded because the negator of (59) selects the focus phrase, which only a head does. -/

@@ -52,18 +52,18 @@ variable {root probe goal : SyntacticObject} {pred : SyntacticObject → Prop}
 satisfying `pred` that no other `pred`-node of the domain asymmetrically c-commands. Mutually
 c-commanding candidates are equidistant and do not block each other. -/
 def isClosestGoalIn (root probe goal : SyntacticObject) (pred : SyntacticObject → Prop) : Prop :=
-  goal ∈ domainIn root probe ∧ pred goal ∧
-    ∀ x ∈ domainIn root probe, pred x → ¬ asymCCommandsIn root x goal
+  goal ∈ cCommandDomain root probe ∧ pred goal ∧
+    ∀ x ∈ cCommandDomain root probe, pred x → ¬ AsymmCCommands root x goal
 
 instance [DecidablePred pred] (root probe goal : SyntacticObject) :
     Decidable (isClosestGoalIn root probe goal pred) :=
-  inferInstanceAs (Decidable (_ ∧ _ ∧ ∀ x ∈ domainIn root probe, _))
+  inferInstanceAs (Decidable (_ ∧ _ ∧ ∀ x ∈ cCommandDomain root probe, _))
 
 /-- A probe's search over an enumeration of its domain sorted by c-command finds one of its
 closest visible goals. -/
 theorem isClosestGoalIn_of_search_eq_some {p : Probe SyntacticObject} {dom : List SyntacticObject}
-    (hdom : (dom : Multiset SyntacticObject) = domainIn root probe)
-    (hord : dom.Pairwise λ x y => ¬ asymCCommandsIn root y x)
+    (hdom : (dom : Multiset SyntacticObject) = cCommandDomain root probe)
+    (hord : dom.Pairwise λ x y => ¬ AsymmCCommands root y x)
     (h : p.search dom = some goal) :
     isClosestGoalIn root probe goal (p.sat ·) := by
   refine ⟨?_, Probe.sat_of_search_eq_some h, λ x hx hvx hasym => ?_⟩
@@ -77,10 +77,10 @@ theorem isClosestGoalIn_of_search_eq_some {p : Probe SyntacticObject} {dom : Lis
 c-commands it. -/
 theorem isClosestGoalIn_iff_forall_not_sister :
     isClosestGoalIn root probe goal pred ↔
-      goal ∈ domainIn root probe ∧ pred goal ∧ ∀ x ∈ domainIn root probe, pred x →
-        ¬ areSistersIn root x goal → ¬ asymCCommandsIn root x goal :=
+      goal ∈ cCommandDomain root probe ∧ pred goal ∧ ∀ x ∈ cCommandDomain root probe, pred x →
+        ¬ Sisters root x goal → ¬ AsymmCCommands root x goal :=
   and_congr_right λ _ => and_congr_right λ _ => forall₂_congr λ _ _ => imp_congr_right λ _ =>
-    ⟨λ h _ => h, λ h hasym => (em _).elim (λ hs => not_asymCCommandsIn_of_areSistersIn hs hasym)
+    ⟨λ h _ => h, λ h hasym => (em _).elim (λ hs => Sisters.not_asymmCCommands hs hasym)
       (λ hs => h hs hasym)⟩
 
 /-! ### Horizons -/
@@ -90,7 +90,7 @@ theorem isClosestGoalIn_iff_forall_not_sister :
 ([keine-2019]). With N a horizon for the wh-probe on C, the D head of `[DP D [PossP Psr N]]`
 stays visible while the possessor, c-commanded by N, does not ([aissen-polian-2025]). -/
 def behindHorizonIn (root probe target : SyntacticObject) (c : Cat) : Prop :=
-  ∃ n ∈ domainIn root probe, isLeafOf c n ∧ cCommandsIn root n target
+  ∃ n ∈ cCommandDomain root probe, isLeafOf c n ∧ CCommands root n target
 
 instance (root probe target : SyntacticObject) (c : Cat) :
     Decidable (behindHorizonIn root probe target c) :=

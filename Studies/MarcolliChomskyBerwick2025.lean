@@ -630,7 +630,7 @@ noncomputable def triedToRead : SyntacticObject :=
 /-- The two inscriptions of *the man* are repetitions, structurally identical distinct tokens. -/
 theorem theMan_isRepetition : IsRepetition theMan theMan' := by
   refine ⟨by simp [StructurallyIdentical, theMan, theMan', tok], fun h ↦ ?_⟩
-  have : immediatelyContains theMan' (leaf (tok .D [.N] "the" 0)) := h ▸ by simp [theMan]
+  have : ImmediatelyContains theMan' (leaf (tok .D [.N] "the" 0)) := h ▸ by simp [theMan]
   simp [theMan', tok] at this
 
 /-- Form Copy relates the controller to the controlled subject, the restriction of (3.8.4) to

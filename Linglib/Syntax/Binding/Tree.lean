@@ -49,11 +49,11 @@ variable {C W : Type*} (t : Tree C W) {P Q : TreePath → Set TreePath}
 /-- The binding configuration of `t` bounded by `P` takes c-command as its command relation and
 gives a position `b` the domain that every node of `P b` properly dominating it dominates. -/
 def configuration (P : TreePath → Set TreePath) : Binding.Configuration TreePath where
-  commands := CCommands t
+  commands := t.CCommands
   domain b := {a | (b, a) ∈ commandRelation (P b)}
 
 instance : DecidableRel (t.configuration P).commands :=
-  inferInstanceAs (DecidableRel (CCommands t))
+  inferInstanceAs (DecidableRel t.CCommands)
 
 instance [∀ b, DecidablePred (· ∈ P b)] (b : TreePath) :
     DecidablePred (· ∈ (t.configuration P).domain b) :=

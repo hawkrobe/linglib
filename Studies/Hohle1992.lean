@@ -50,6 +50,7 @@ verbs, relative and interrogative pronouns without a particle, and verb-final ve
 namespace Hohle1992
 
 open Core.Order PhraseStructure
+open RoseTree (cCommand)
 
 /-! ### The peripheral structure of (76) -/
 
@@ -113,7 +114,7 @@ def finalClause : Tree Node String :=
 /-- The relation SR of (60), read as c-command with reconstruction (footnote 7). `k₁` stands
 in SR to `k₂` in `t` when `k₂` c-commands `k₁` or a trace that `k₁` binds. -/
 def SR (t : Tree Node String) (binds : List (TreePath × TreePath)) (k₁ k₂ : TreePath) : Prop :=
-  (k₂, k₁) ∈ cCommandAt t ∨ ∃ b ∈ binds, b.1 = k₁ ∧ (k₂, b.2) ∈ cCommandAt t
+  (k₂, k₁) ∈ cCommand t ∨ ∃ b ∈ binds, b.1 = k₁ ∧ (k₂, b.2) ∈ cCommand t
 
 instance (t : Tree Node String) (binds : List (TreePath × TreePath)) (k₁ k₂ : TreePath) :
     Decidable (SR t binds k₁ k₂) := by

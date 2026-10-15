@@ -32,7 +32,7 @@ embedding with a total head function, which extends the raising head.
 
 * `PlanarSyntacticObject.immediatelyContains_termAt`, `PlanarSyntacticObject.containsOrEq_termAt`:
   terms contain one another as their positions dominate one another.
-* `PlanarSyntacticObject.cCommandsIn_termAt_iff`: c-command by a term occurring once is c-command
+* `PlanarSyntacticObject.cCommands_termAt_iff`: c-command by a term occurring once is c-command
   from its position.
 * `Minimalist.exists_headIndex?_of_treeRaisingHead`: the head daughter carries the raising head
   wherever there is one.
@@ -83,7 +83,7 @@ def termAt (p : t.val.Positions) : SyntacticObject := ⟨_, isSyntacticObject_su
 
 /-- The term at a position immediately contains the terms at its covers. -/
 theorem immediatelyContains_termAt :
-    immediatelyContains (t.termAt p) y ↔ ∃ q, p ⋖ q ∧ t.termAt q = y := by
+    ImmediatelyContains (t.termAt p) y ↔ ∃ q, p ⋖ q ∧ t.termAt q = y := by
   show y.val ∈ (UnorderedTree.mk p.subtree).children ↔ _
   rw [UnorderedTree.children_mk, Multiset.mem_coe, List.mem_map]
   constructor
@@ -94,7 +94,7 @@ theorem immediatelyContains_termAt :
     exact ⟨q.subtree, Positions.mem_children_subtree.2 ⟨q, hpq, rfl⟩, rfl⟩
 
 /-- The term at a position contains or equals the terms at the positions below it. -/
-theorem containsOrEq_termAt : containsOrEq (t.termAt p) y ↔ ∃ q, p ≤ q ∧ t.termAt q = y := by
+theorem containsOrEq_termAt : ContainsOrEq (t.termAt p) y ↔ ∃ q, p ≤ q ∧ t.termAt q = y := by
   rw [← mem_terms, ← Multiset.mem_map_of_injective Subtype.val_injective, map_val_terms]
   show y.val ∈ unorderedSubtrees p.subtree ↔ _
   simp only [unorderedSubtrees_eq_map, Multiset.mem_coe, List.mem_map, mem_subtrees,
@@ -127,8 +127,8 @@ theorem isBranchingAt_parent (ha : a ≠ ⊥) : IsBranchingAt t.val a.val.parent
     grind [arity, List.length_eq_zero_iff, children_node]
 
 /-- C-command by a term occurring only at `a` is c-command from `a`. -/
-theorem cCommandsIn_termAt_iff (hu : ∀ q, t.termAt q = t.termAt a → q = a) :
-    t.toSyntacticObject.cCommandsIn (t.termAt a) x ↔
+theorem cCommands_termAt_iff (hu : ∀ q, t.termAt q = t.termAt a → q = a) :
+    t.toSyntacticObject.CCommands (t.termAt a) x ↔
       ∃ q : t.val.Positions, CCommands t.val a q ∧ t.termAt q = x := by
   constructor
   · rintro ⟨z, -, ⟨w, hw, haw, hwz, hne⟩, hzx⟩
@@ -162,7 +162,7 @@ theorem cCommandsIn_termAt_iff (hu : ∀ q, t.termAt q = t.termAt a → q = a) :
 parent. -/
 theorem eq_termAt_pred_of_immediatelyContains (hu : ∀ q, t.termAt q = t.termAt a → q = a)
     {m : SyntacticObject} (hm : m ∈ t.toSyntacticObject.terms)
-    (h : immediatelyContains m (t.termAt a)) : m = t.termAt (Order.pred a) := by
+    (h : ImmediatelyContains m (t.termAt a)) : m = t.termAt (Order.pred a) := by
   obtain ⟨m, rfl⟩ := mem_terms_iff.1 hm
   obtain ⟨c, hmc, hca⟩ := immediatelyContains_termAt.1 h
   obtain rfl := hu c hca

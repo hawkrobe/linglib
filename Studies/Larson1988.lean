@@ -94,10 +94,10 @@ def obliqueDativeTree : PlanarSyntacticObject :=
   tok_john * (tok_letter * (tok_send * ppToMaryP))
 
 theorem oblique_do_ccommands_goal :
-    cCommandsIn obliqueDativeTree DP_letter DP_mary := by decide
+    CCommands obliqueDativeTree DP_letter DP_mary := by decide
 
 theorem oblique_goal_not_ccommands_do :
-    ¬ cCommandsIn obliqueDativeTree DP_mary DP_letter := by decide
+    ¬ CCommands obliqueDativeTree DP_mary DP_letter := by decide
 
 /-! ### Dative shift
 
@@ -122,11 +122,11 @@ def docDativeShiftTree : PlanarSyntacticObject :=
 
 /-- In the double object construction the indirect object c-commands the theme. -/
 theorem doc_io_ccommands_do :
-    cCommandsIn docDativeShiftTree DP_mary DP_letter := by decide
+    CCommands docDativeShiftTree DP_mary DP_letter := by decide
 
 /-- And the theme does not c-command the indirect object. -/
 theorem doc_do_not_ccommands_io :
-    ¬ cCommandsIn docDativeShiftTree DP_letter DP_mary := by decide
+    ¬ CCommands docDativeShiftTree DP_letter DP_mary := by decide
 
 /-- Dative shift is one internal merge, of the indirect object. -/
 theorem dativeShift_has_one_im :
@@ -150,10 +150,10 @@ def standardPassiveTree : PlanarSyntacticObject :=
   tok_ball * (tok_john * (tok_kick * PlanarSyntacticObject.trace))
 
 theorem passive_object_ccommands_subject :
-    cCommandsIn standardPassiveTree DP_ball DP_john := by decide
+    CCommands standardPassiveTree DP_ball DP_john := by decide
 
 theorem passive_subject_not_ccommands_object :
-    ¬ cCommandsIn standardPassiveTree DP_john DP_ball := by decide
+    ¬ CCommands standardPassiveTree DP_john DP_ball := by decide
 
 /-- Passive is one internal merge, of the object. -/
 theorem passive_has_one_im :
@@ -230,7 +230,7 @@ def indirectPassiveTree : PlanarSyntacticObject :=
     PlanarSyntacticObject.trace))))
 
 theorem indirect_passive_io_ccommands_do :
-    cCommandsIn indirectPassiveTree DP_mary2 DP_letter2 := by decide
+    CCommands indirectPassiveTree DP_mary2 DP_letter2 := by decide
 
 /-- The indirect passive is two internal merges. -/
 theorem indirect_passive_two_im :

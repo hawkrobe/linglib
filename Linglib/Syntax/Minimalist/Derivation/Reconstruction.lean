@@ -26,7 +26,7 @@ at some stage is monotone under extending the derivation; binding at the surface
 
 ## Main results
 
-* `Minimalist.Derivation.CCommandsAt.cCommandsIn_stageAt`: the predicate speaks
+* `Minimalist.Derivation.CCommandsAt.cCommands_stageAt`: the predicate speaks
   of the derivation's own stage.
 * `Minimalist.Derivation.cCommandsAt_append_of_le`, `BindsAtSomeStage.append`.
 
@@ -46,15 +46,15 @@ variable {d : Derivation} {steps : List Step} {n : Nat} {x y : SyntacticObject}
 /-- `x` c-commands `y` at stage `n` of `d`: in the ordered object the replay reaches after `n`
 steps. -/
 def CCommandsAt (d : Derivation) (n : Nat) (x y : SyntacticObject) : Prop :=
-  ∃ p ∈ (d.take n).externalize?, cCommandsIn p x y
+  ∃ p ∈ (d.take n).externalize?, CCommands p x y
 
 instance (d : Derivation) (n : Nat) (x y : SyntacticObject) :
     Decidable (d.CCommandsAt n x y) := by
   unfold CCommandsAt; infer_instance
 
 /-- The stage the predicate looks at is the derivation's own. -/
-theorem CCommandsAt.cCommandsIn_stageAt (h : d.CCommandsAt n x y) :
-    cCommandsIn (d.stageAt n) x y :=
+theorem CCommandsAt.cCommands_stageAt (h : d.CCommandsAt n x y) :
+    CCommands (d.stageAt n) x y :=
   let ⟨_, hp, hc⟩ := h
   d.externalize?_take_faithful n hp ▸ hc
 

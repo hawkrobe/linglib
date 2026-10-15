@@ -106,14 +106,14 @@ def tree : PlanarSyntacticObject := mittie * (voice * (little_v * (fed * theDog)
 
 /-- The external argument c-commands the internal argument, and not conversely. -/
 theorem mittie_cCommands_theDog :
-    cCommandsIn tree (leaf mittie) (leaf theDog) ∧
-      ¬ cCommandsIn tree (leaf theDog) (leaf mittie) := by
+    CCommands tree (leaf mittie) (leaf theDog) ∧
+      ¬ CCommands tree (leaf theDog) (leaf mittie) := by
   constructor <;> decide
 
 /-- Voice c-commands the verb phrase, and the external argument c-commands Voice, so the external
 argument sits above the head that introduces it. -/
 theorem voice_between :
-    cCommandsIn tree (leaf voice) (leaf fed) ∧ cCommandsIn tree (leaf mittie) (leaf voice) := by
+    CCommands tree (leaf voice) (leaf fed) ∧ CCommands tree (leaf mittie) (leaf voice) := by
   constructor <;> decide
 
 /-- Agentive Voice assigns the external θ-role. -/

@@ -57,7 +57,7 @@ variable {d : Derivation} {steps : List Step} {i : Nat}
 
 /-- Step `i` of `d` fronts a remnant: its mover contains the trace left by an earlier mover. -/
 def IsRemnantStep (d : Derivation) (i : Nat) : Prop :=
-  ∃ m ∈ d.mover? i, ∃ x ∈ (d.take i).movedItems, contains m x.headTrace
+  ∃ m ∈ d.mover? i, ∃ x ∈ (d.take i).movedItems, Contains m x.headTrace
 
 instance (d : Derivation) (i : Nat) : Decidable (d.IsRemnantStep i) := by
   unfold IsRemnantStep; infer_instance

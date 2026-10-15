@@ -124,10 +124,10 @@ instance : DecidableRel IsRepetition := fun _ _ ↦ inferInstanceAs (Decidable (
 /-- The copy relation Form Copy assigns in `s` holds of a pair of structurally identical
 inscriptions, the first c-commanding the second. -/
 def copyRel (s : SyntacticObject) : SetRel SyntacticObject SyntacticObject :=
-  {p | cCommandsIn s p.1 p.2 ∧ StructurallyIdentical p.1 p.2}
+  {p | CCommands s p.1 p.2 ∧ StructurallyIdentical p.1 p.2}
 
 @[simp]
-theorem mem_copyRel : (x, y) ∈ s.copyRel ↔ cCommandsIn s x y ∧ StructurallyIdentical x y :=
+theorem mem_copyRel : (x, y) ∈ s.copyRel ↔ CCommands s x y ∧ StructurallyIdentical x y :=
   Iff.rfl
 
 instance (s : SyntacticObject) (p : SyntacticObject × SyntacticObject) :
@@ -135,20 +135,20 @@ instance (s : SyntacticObject) (p : SyntacticObject × SyntacticObject) :
   inferInstanceAs (Decidable (_ ∧ _))
 
 /-- An object merged with a term c-commands everything that term reflexively contains. -/
-theorem cCommandsIn_merge (hne : x ≠ t) (h : containsOrEq t y) : cCommandsIn (merge x t) x y :=
+theorem cCommands_merge (hne : x ≠ t) (h : ContainsOrEq t y) : CCommands (merge x t) x y :=
   ⟨t, mem_terms.2 (.single (by simp)), ⟨merge x t, self_mem_terms _, by simp, by simp, hne⟩, h⟩
 
 /-- Form Copy relates an object merged with a term to every structurally identical inscription
 inside that term: the configuration of control, where the lower inscription is a repetition. -/
-theorem mk_mem_copyRel_merge (h : contains t y) (hxy : StructurallyIdentical x y) :
+theorem mk_mem_copyRel_merge (h : Contains t y) (hxy : StructurallyIdentical x y) :
     (x, y) ∈ (merge x t).copyRel := by
-  refine ⟨cCommandsIn_merge ?_ (containsOrEq_iff_eq_or_contains.2 (.inr h)), hxy⟩
+  refine ⟨cCommands_merge ?_ (containsOrEq_iff_eq_or_contains.2 (.inr h)), hxy⟩
   rintro rfl
   exact (numNodes_lt_of_contains h).ne hxy.numNodes_eq.symm
 
 /-- The copy Internal Merge leaves is related to its antecedent: an object merged with a term
 containing it c-commands its own lower occurrence. -/
-theorem self_mem_copyRel_merge (h : contains t x) : (x, x) ∈ (merge x t).copyRel :=
+theorem self_mem_copyRel_merge (h : Contains t x) : (x, x) ∈ (merge x t).copyRel :=
   mk_mem_copyRel_merge h rfl
 
 end Minimalist.SyntacticObject
