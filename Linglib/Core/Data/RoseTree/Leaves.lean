@@ -17,8 +17,7 @@ public import Mathlib.Algebra.Order.Group.Nat
 `RoseTree.leavesWithDepth` collects the leaves of a rose tree as a multiset of pairs of a label
 and its distance from the root. `RoseTree.leaves` forgets the distances, which leaves the
 frontier `RoseTree.leafList` without its order. The number of leaves satisfying a predicate is
-`Multiset.countP` on `leaves`, and their depth-weighted count is a sum over the filtered
-`leavesWithDepth`.
+`Multiset.countP` on `leaves`.
 
 ## Main definitions
 
@@ -62,7 +61,7 @@ def leaves (t : RoseTree α) : Multiset α := t.leavesWithDepth.map Prod.fst
 
 @[simp] theorem leaves_leaf : leaves (node a []) = {a} := rfl
 
-/-- Depth-forgetting collapses the shift: the leaf labels of a node are the children's
+/-- Forgetting depths collapses the shift, so the leaf labels of a node are the children's
 leaf labels. -/
 @[simp] theorem leaves_node_cons :
     leaves (node a (c :: cs)) = ((c :: cs).map leaves).sum := by
@@ -126,7 +125,7 @@ theorem numLeaves_le_numNodes (t : RoseTree α) : t.numLeaves ≤ t.numNodes := 
 
 /-! ### `Perm` invariance -/
 
-/-- `leavesWithDepth` is a `Perm`-invariant: the fold algebra reads its arguments only
+/-- `leavesWithDepth` is `Perm`-invariant, since the fold algebra reads its arguments only
 through a nil test and a sum. -/
 theorem leavesWithDepth_perm {t s : RoseTree α} (h : Perm t s) :
     t.leavesWithDepth = s.leavesWithDepth := by
@@ -181,39 +180,6 @@ theorem countP_leaves_eq_numLeaves {t : RoseTree α} :
     Multiset.card (t.leavesWithDepth.filter fun q : α × ℕ ↦ p q.1) = t.leaves.countP p := by
   rw [leaves, Multiset.countP_map]
 
-theorem sum_map_snd_filter_leavesWithDepth_leaf (a : α) :
-    Multiset.sum (((leavesWithDepth (node a [])).filter fun q : α × ℕ ↦ p q.1).map Prod.snd)
-      = 0 := by
-  rw [leavesWithDepth_leaf, Multiset.filter_singleton]
-  split_ifs <;> rfl
-
-/-- The counted leaves of a node are the children's, each one edge deeper. -/
-theorem filter_leavesWithDepth_node_cons (a : α) (c : RoseTree α) (cs : List (RoseTree α)) :
-    (leavesWithDepth (node a (c :: cs))).filter (fun q : α × ℕ ↦ p q.1)
-      = ((c :: cs).map fun t ↦
-          (t.leavesWithDepth.filter fun q : α × ℕ ↦ p q.1).map
-            fun q ↦ (q.1, q.2 + 1)).sum := by
-  rw [leavesWithDepth_node_cons]
-  refine (map_list_sum (⟨⟨Multiset.filter fun q : α × ℕ ↦ p q.1, Multiset.filter_zero _⟩,
-    Multiset.filter_add _⟩ : Multiset (α × ℕ) →+ Multiset (α × ℕ)) _).trans ?_
-  rw [List.map_map]
-  refine congrArg List.sum (List.map_congr_left fun t _ ↦ ?_)
-  simp only [Function.comp_def, AddMonoidHom.coe_mk, ZeroHom.coe_mk, Multiset.filter_map]
-
-/-- Each child contributes its own depth-weighted count plus one per counted leaf it
-carries (the extra edge from the node to the child). -/
-@[simp] theorem sum_map_snd_filter_leavesWithDepth_node (a : α) (cs : List (RoseTree α)) :
-    Multiset.sum (((leavesWithDepth (node a cs)).filter fun q : α × ℕ ↦ p q.1).map Prod.snd)
-      = (cs.map fun c ↦
-          Multiset.sum ((c.leavesWithDepth.filter fun q : α × ℕ ↦ p q.1).map Prod.snd)
-            + c.leaves.countP p).sum := by
-  rcases cs with _ | ⟨c, cs⟩
-  · exact sum_map_snd_filter_leavesWithDepth_leaf p a
-  · rw [filter_leavesWithDepth_node_cons, ← Multiset.coe_mapAddMonoidHom, map_list_sum,
-      ← Multiset.coe_sumAddMonoidHom, map_list_sum, List.map_map, List.map_map]
-    refine congrArg List.sum (List.map_congr_left fun t _ ↦ ?_)
-    simp [Function.comp_def, Multiset.map_map, Multiset.sum_map_add]
-
 /-- The children's counted leaves are bounded by the node's. -/
 theorem sum_map_countP_leaves_le_node (a : α) (cs : List (RoseTree α)) :
     (cs.map fun t ↦ t.leaves.countP p).sum ≤ (leaves (node a cs)).countP p := by
@@ -232,16 +198,6 @@ theorem countP_leaves_lt_numNodes_of_not {a : α} (cs : List (RoseTree α)) (h :
   have := List.sum_le_sum (l := cs) (f := fun t ↦ t.leaves.countP p) (g := numNodes)
     fun c _ ↦ countP_leaves_le_numNodes p c
   omega
-
-/-- A root failing `p` puts every counted leaf at depth at least `1`, so the depth-weighted
-count dominates the plain count. -/
-theorem countP_leaves_le_sum_map_snd_filter_leavesWithDepth_of_not {a : α}
-    (cs : List (RoseTree α)) (h : ¬p a) :
-    (leaves (node a cs)).countP p
-      ≤ Multiset.sum
-          (((leavesWithDepth (node a cs)).filter fun q : α × ℕ ↦ p q.1).map Prod.snd) := by
-  rw [countP_leaves_node_of_not p cs h, sum_map_snd_filter_leavesWithDepth_node]
-  exact List.sum_le_sum fun c _ ↦ Nat.le_add_left _ _
 
 end Statistics
 

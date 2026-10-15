@@ -84,6 +84,9 @@ The book's algebra lives in `Core/` and in `Syntax/Minimalist/{Workspace,Merge,E
   `Minimalist.Derivation.mergeOpList_initial`.
 * Lemmas 1.4.4 and 1.4.5: `Minimalist.Merge.mergeOpG_sideward_2b`, `mergeOpG_sideward_3b`,
   `mergeOpG_sideward_3a`.
+* (1.5.1) and the weights of §1.5.2: `Minimalist.Merge.comulEps`, `mergeOpEps`, with
+  `comulEps_one` and `comulEps_zero` (the primitive coproduct); Proposition 1.5.1 at `ε = 0`:
+  `mergeOpEps_zero_of'_of_not_le`, `mergeOpEps_zero_pair_add`, `mergeOpEps_zero_im_composition`.
 * Definition 1.6.1 and Proposition 1.6.4: `Minimalist.MinimalYield` over a counting,
   `MinimalYield.em_pair`, `em_pair_accessibleCount`, `im_accessibleCount_of_cut`.
 * Definition 1.6.2 and Proposition 1.6.10: `Minimalist.NoComplexityLoss`,
@@ -570,10 +573,10 @@ tree's selection head, and `inconsistent` when the tree has no well-defined head
 def headProbeTree (Υ : LexicalItem.Token → Consistency) (T : UnorderedTree Vertex) : Consistency :=
   (selCheckN T).head.elim Consistency.inconsistent Υ
 
-/-- The head-following feature character `ϕ_{Υ,s,h}` of Lemma 3.2.5 as an algebra homomorphism:
-`Υ_{s,h}` extended multiplicatively to forests, so that a workspace is consistent iff each of its
-trees is. The unrenormalized feature assignment whose Birkhoff renormalization is the consistency
-map. -/
+/-- The head-following feature character `ϕ_{Υ,s,h}` of Lemma 3.2.5 is the algebra homomorphism
+extending `Υ_{s,h}` multiplicatively to forests, so that a workspace is consistent iff each of its
+trees is. It is the unrenormalized feature assignment whose Birkhoff renormalization is the
+consistency map. -/
 noncomputable def headProbeChar (Υ : LexicalItem.Token → Consistency) :
     ConnesKreimer ℕ (UnorderedTree Vertex) →ₐ[ℕ] Consistency :=
   aeval (headProbeTree Υ)
@@ -623,8 +626,8 @@ noncomputable def theMan' : SyntacticObject :=
 noncomputable def aBook : SyntacticObject :=
   merge (leaf (tok .D [.N] "a" 7)) (leaf (tok .N [] "book" 8))
 
-/-- The syntactic object (3.8.4) of *the man tried to read a book*, built by External Merge
-alone: the controller merges into the theta position of *tried* and the controlled subject into
+/-- The syntactic object (3.8.4) of *the man tried to read a book* is built by External Merge
+alone. The controller merges into the theta position of *tried* and the controlled subject into
 that of *read*, since Internal Merge into a theta position would break the dichotomy of §3.8.1. -/
 noncomputable def triedToRead : SyntacticObject :=
   merge theMan (merge (leaf (tok .V [.T] "tried" 2)) (merge (leaf (tok .T [.V] "to" 3))

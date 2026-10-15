@@ -61,8 +61,8 @@ theorem card_leaves (t : UnorderedTree α) : Multiset.card t.leaves = t.numLeave
 theorem numLeaves_le_numNodes (t : UnorderedTree α) : t.numLeaves ≤ t.numNodes :=
   Quotient.inductionOn t fun p => RoseTree.numLeaves_le_numNodes p
 
-/-- The leaf labels of a branching node are the concatenation of its
-children's: `UnorderedTree` counterpart of `RoseTree.leaves_node_cons`. -/
+/-- The leaf labels of a branching node are the concatenation of its children's, as in
+`RoseTree.leaves_node_cons`. -/
 theorem leaves_node_cons (T : UnorderedTree α) (cs : Multiset (UnorderedTree α)) :
     (node a (T ::ₘ cs)).leaves = T.leaves + (cs.map leaves).sum := by
   refine forest_inductionOn cs fun ps => ?_
@@ -81,30 +81,12 @@ theorem countP_leaves_leaf (a : α) :
     (leaf a : UnorderedTree α).leaves.countP p = if p a then 1 else 0 :=
   RoseTree.countP_leaves_leaf p a
 
-/-- A root failing `p` contributes nothing: the count is the children's total. -/
+/-- A root failing `p` contributes nothing, so the count is the children's total. -/
 theorem countP_leaves_node_of_not (a : α) (F : Multiset (UnorderedTree α)) (h : ¬p a) :
     (node a F).leaves.countP p = (F.map fun T => T.leaves.countP p).sum := by
   induction F using forest_inductionOn with
   | h cs =>
     rw [node_mk_tree_list, leaves_mk, RoseTree.countP_leaves_node_of_not p cs h,
-      Multiset.map_coe, Multiset.sum_coe, List.map_map]
-    rfl
-
-theorem sum_map_snd_filter_leavesWithDepth_leaf (a : α) :
-    Multiset.sum (((leaf a : UnorderedTree α).leavesWithDepth.filter
-      fun q : α × ℕ => p q.1).map Prod.snd) = 0 :=
-  RoseTree.sum_map_snd_filter_leavesWithDepth_leaf p a
-
-/-- Each child contributes its own depth-weighted count plus one per counted leaf it
-    carries. -/
-@[simp] theorem sum_map_snd_filter_leavesWithDepth_node (a : α) (F : Multiset (UnorderedTree α)) :
-    Multiset.sum (((node a F).leavesWithDepth.filter fun q : α × ℕ => p q.1).map Prod.snd)
-      = (F.map fun T =>
-          Multiset.sum ((T.leavesWithDepth.filter fun q : α × ℕ => p q.1).map Prod.snd)
-            + T.leaves.countP p).sum := by
-  induction F using forest_inductionOn with
-  | h cs =>
-    rw [node_mk_tree_list, leavesWithDepth_mk, RoseTree.sum_map_snd_filter_leavesWithDepth_node,
       Multiset.map_coe, Multiset.sum_coe, List.map_map]
     rfl
 
@@ -115,16 +97,6 @@ theorem countP_leaves_lt_numNodes_of_not_root (t : UnorderedTree α) (h : ¬p t.
   | h t₀ =>
     cases t₀ with
     | node x cs => exact RoseTree.countP_leaves_lt_numNodes_of_not p cs h
-
-/-- A root failing `p` puts every counted leaf at depth at least `1`. -/
-theorem countP_leaves_le_sum_map_snd_filter_leavesWithDepth_of_not_root (t : UnorderedTree α)
-    (h : ¬p t.value) :
-    t.leaves.countP p
-      ≤ Multiset.sum ((t.leavesWithDepth.filter fun q : α × ℕ => p q.1).map Prod.snd) := by
-  induction t using Quotient.inductionOn with
-  | h t₀ =>
-    cases t₀ with
-    | node x cs => exact RoseTree.countP_leaves_le_sum_map_snd_filter_leavesWithDepth_of_not p cs h
 
 end Statistics
 

@@ -19,14 +19,11 @@ open RoseTree UnorderedTree
 The size bookkeeping of the trace cuts `cutSummandsCN` of Marcolli, Chomsky and Berwick. A trace is
 a `Sum.inr`-labelled leaf; a cut splits a tree into a crown forest and a trunk carrying one trace
 per cut. Vertices are conserved up to the new traces, traces up to one per cut, and lexical
-vertices exactly; the trunk's traces sit at positive depth, which is the depth measure of Minimal
-Search.
+vertices exactly.
 
 ## Main definitions
 
-* `RoseTree.traceLeafCount`, `UnorderedTree.traceLeafCount`, `traceDepthSum`: the number of traces
-  and their summed depth.
-* `ConnesKreimer.Cut.numContractions`, `ConnesKreimer.Cut.depthC`: per-cut measures.
+* `RoseTree.traceLeafCount`, `UnorderedTree.traceLeafCount`: the number of traces.
 
 ## Main results
 
@@ -35,7 +32,6 @@ Search.
 * `ConnesKreimer.cutSummandsCN_traceLeafCount`: traces are conserved up to one per cut.
 * `ConnesKreimer.cutSummandsCN_lexical_conservation`: lexical vertices are conserved exactly.
 * `ConnesKreimer.cutSummandsCN_crown_numEdges_lt`: a nonempty crown has fewer edges than the tree.
-* `ConnesKreimer.Cut.depthC_pos`: a proper cut of a lexical-rooted tree has positive depth.
 
 ## References
 
@@ -48,10 +44,6 @@ variable {α β : Type*}
 
 /-- The number of `Sum.inr`-labeled (trace-marker) leaves in a tree. -/
 def traceLeafCount (t : RoseTree (α ⊕ β)) : ℕ := t.leaves.countP (·.isRight = true)
-
-/-- Sum of root-distances of the `Sum.inr`-labeled (trace-marker) leaves. -/
-def traceDepthSum (t : RoseTree (α ⊕ β)) : ℕ :=
-  Multiset.sum ((t.leavesWithDepth.filter fun q => q.1.isRight = true).map Prod.snd)
 
 @[simp] theorem traceLeafCount_leaf_inr (b : β) :
     traceLeafCount (.node (Sum.inr b) [] : RoseTree (α ⊕ β)) = 1 := by
@@ -74,26 +66,9 @@ theorem traceLeafCount_node_of_ne_nil (v : α ⊕ β) (cs : List (RoseTree (α �
     traceLeafCount (.node (Sum.inl a) cs) = (cs.map traceLeafCount).sum :=
   countP_leaves_node_of_not _ cs (by simp)
 
-@[simp] theorem traceDepthSum_leaf_inl (a : α) :
-    traceDepthSum (.node (Sum.inl a) [] : RoseTree (α ⊕ β)) = 0 :=
-  sum_map_snd_filter_leavesWithDepth_leaf (fun x : α ⊕ β => x.isRight = true) _
-
-@[simp] theorem traceDepthSum_leaf_inr (b : β) :
-    traceDepthSum (.node (Sum.inr b) [] : RoseTree (α ⊕ β)) = 0 :=
-  sum_map_snd_filter_leavesWithDepth_leaf (fun x : α ⊕ β => x.isRight = true) _
-
-@[simp] theorem traceDepthSum_node (v : α ⊕ β) (cs : List (RoseTree (α ⊕ β))) :
-    traceDepthSum (.node v cs)
-      = (cs.map fun c => traceDepthSum c + traceLeafCount c).sum :=
-  sum_map_snd_filter_leavesWithDepth_node (fun x : α ⊕ β => x.isRight = true) v cs
-
 theorem traceLeafCount_perm {t s : RoseTree (α ⊕ β)} (h : Perm t s) :
     t.traceLeafCount = s.traceLeafCount :=
   congrArg (Multiset.countP _) (leaves_perm h)
-
-theorem traceDepthSum_perm {t s : RoseTree (α ⊕ β)} (h : Perm t s) :
-    t.traceDepthSum = s.traceDepthSum :=
-  by unfold traceDepthSum; rw [leavesWithDepth_perm h]
 
 theorem traceLeafCount_le_node (v : α ⊕ β) (cs : List (RoseTree (α ⊕ β))) :
     (cs.map traceLeafCount).sum ≤ traceLeafCount (.node v cs) :=
@@ -107,11 +82,6 @@ theorem traceLeafCount_lt_numNodes_of_inl (a : α) (cs : List (RoseTree (α ⊕ 
     traceLeafCount (RoseTree.node (Sum.inl a) cs) <
       numNodes (RoseTree.node (Sum.inl a) cs) :=
   countP_leaves_lt_numNodes_of_not _ cs (by simp)
-
-theorem traceLeafCount_le_traceDepthSum_of_inl (a : α) (cs : List (RoseTree (α ⊕ β))) :
-    traceLeafCount (.node (Sum.inl a) cs) ≤ traceDepthSum (.node (Sum.inl a) cs) :=
-  countP_leaves_le_sum_map_snd_filter_leavesWithDepth_of_not (fun x : α ⊕ β => x.isRight = true)
-    cs (by simp)
 
 end RoseTree
 
@@ -139,34 +109,9 @@ def traceLeafCount (t : UnorderedTree (α ⊕ β)) : ℕ := t.leaves.countP (·.
       = (F.map UnorderedTree.traceLeafCount).sum :=
   countP_leaves_node_of_not _ _ F (by simp)
 
-/-- The depth-weighted trace-marker count of a nonplanar tree. -/
-def traceDepthSum (t : UnorderedTree (α ⊕ β)) : ℕ :=
-  Multiset.sum ((t.leavesWithDepth.filter fun q => q.1.isRight = true).map Prod.snd)
-
-@[simp] theorem traceDepthSum_mk (t : RoseTree (α ⊕ β)) :
-    (mk t).traceDepthSum = t.traceDepthSum := rfl
-
-@[simp] theorem traceDepthSum_leaf_inl (a : α) :
-    (leaf (Sum.inl a) : UnorderedTree (α ⊕ β)).traceDepthSum = 0 := by
-  simp [traceDepthSum, Multiset.filter_singleton]
-
-@[simp] theorem traceDepthSum_leaf_inr (b : β) :
-    (leaf (Sum.inr b) : UnorderedTree (α ⊕ β)).traceDepthSum = 0 := by
-  simp [traceDepthSum, Multiset.filter_singleton]
-
-@[simp] theorem traceDepthSum_node_inl (a : α) (F : Multiset (UnorderedTree (α ⊕ β))) :
-    (UnorderedTree.node (Sum.inl a) F).traceDepthSum
-      = (F.map (fun c => c.traceDepthSum + c.traceLeafCount)).sum :=
-  sum_map_snd_filter_leavesWithDepth_node (fun x : α ⊕ β => x.isRight = true) _ F
-
 theorem traceLeafCount_lt_numNodes_of_rootInl (t : UnorderedTree (α ⊕ β)) (x : α)
     (h : t.value = Sum.inl x) : t.traceLeafCount < t.numNodes :=
   countP_leaves_lt_numNodes_of_not_root _ t (by rw [h]; simp)
-
-theorem traceLeafCount_le_traceDepthSum_of_rootInl (t : UnorderedTree (α ⊕ β)) (x : α)
-    (h : t.value = Sum.inl x) : t.traceLeafCount ≤ t.traceDepthSum :=
-  countP_leaves_le_sum_map_snd_filter_leavesWithDepth_of_not_root
-    (fun x : α ⊕ β => x.isRight = true) t (by rw [h]; simp)
 
 end UnorderedTree
 
@@ -431,24 +376,8 @@ theorem cutSummandsCN_numNodes (τ : UnorderedTree (α ⊕ β) → β)
         Multiset.map_congr rfl (fun x _ => UnorderedTree.numNodes_mk x)]
   rwa [one_mul] at hcons
 
-/-- The number of contractions in a Δ^c cut summand is its number of extracted crown
-    components. -/
-def Cut.numContractions (p : Multiset (UnorderedTree (α ⊕ β)) × UnorderedTree (α ⊕ β)) : ℕ :=
-  Multiset.card p.1
-
-/-- The Minimal-Search depth of a Δ^c cut summand ([marcolli-chomsky-berwick-2025] §1.5.2) is
-    the total extraction depth `Σ d_{v_i}`, read off the trunk's trace markers. The Δ^c
-    quotient places a trace leaf at each cut site at *exactly* the cut depth, so
-    the trunk's `traceDepthSum` is the signed `+d` extraction cost of MCB rule 1.
-    Under Internal Merge the matching `−d` quotient term (rule 2) references this
-    same value and cancels it (cost 0); Sideward Merge incurs it uncancelled
-    (cost > 0, `Cut.depthC_pos`). Depends only on the trunk `p.2`, like
-    `Cut.numContractions` depends only on the crown. -/
-def Cut.depthC (p : Multiset (UnorderedTree (α ⊕ β)) × UnorderedTree (α ⊕ β)) : ℕ :=
-  p.2.traceDepthSum
-
-/-- Non-trace vertices are conserved exactly by the Δ^c cuts: the trace leaf added at each cut
-    replaces the root of the extracted subtree. Stated additively to avoid truncated subtraction. -/
+/-- Non-trace vertices are conserved exactly by the Δ^c cuts, since the trace leaf added at each
+    cut replaces the root of the extracted subtree. Stated additively to avoid truncated subtraction. -/
 theorem cutSummandsCN_lexical_conservation (τ : UnorderedTree (α ⊕ β) → β)
     (T : UnorderedTree (α ⊕ β)) :
     ∀ p ∈ cutSummandsCN τ T,
@@ -565,7 +494,7 @@ theorem cutSummandsCN_crown_traceLeafCount_lt_numNodes (τ : UnorderedTree (α �
   rw [UnorderedTree.traceLeafCount_mk, UnorderedTree.numNodes_mk]
   exact RoseTree.traceLeafCount_lt_numNodes_of_inl a cs
 
-/-- A Δ^c cut never touches the root: the trunk keeps the tree's root label. -/
+/-- A Δ^c cut never touches the root, so the trunk keeps the tree's root label. -/
 theorem cutSummandsCN_trunk_value (τ : UnorderedTree (α ⊕ β) → β)
     (T : UnorderedTree (α ⊕ β)) :
     ∀ p ∈ cutSummandsCN τ T, p.2.value = T.value := by
@@ -626,26 +555,6 @@ theorem cutSummandsCN_crown_numEdges_lt (τ : UnorderedTree (α ⊕ β) → β)
   have hw := cutSummandsCN_numEdges τ T p hp
   have := cutSummandsCN_two_le_trunk_numNodes τ T p hp h
   have := T.numEdges_add_one
-  omega
-
-/-! ### Minimal-Search depth of a proper cut -/
-
-/-- A proper Δ^c cut of a lexical-rooted tree has trunk trace-depth at least one: the trunk keeps
-    the lexical root, so each of its fresh trace markers sits at depth at least one. -/
-theorem Cut.depthC_pos (τ : UnorderedTree (α ⊕ β) → β) (T : UnorderedTree (α ⊕ β)) (a₀ : α)
-    (hT : T.value = Sum.inl a₀)
-    (p : Multiset (UnorderedTree (α ⊕ β)) × UnorderedTree (α ⊕ β)) (hp : p ∈ cutSummandsCN τ T)
-    (hproper : p.1 ≠ 0) :
-    1 ≤ Cut.depthC p := by
-  have htrunk_root : p.2.value = Sum.inl a₀ :=
-    (cutSummandsCN_trunk_value τ T p hp).trans hT
-  have h1 : Multiset.card p.1 ≤ p.2.traceLeafCount :=
-    cutSummandsCN_trunk_traceLeafCount_ge_card τ T p hp
-  have h2 : p.2.traceLeafCount ≤ p.2.traceDepthSum :=
-    UnorderedTree.traceLeafCount_le_traceDepthSum_of_rootInl p.2 a₀ htrunk_root
-  have h3 : 1 ≤ Multiset.card p.1 := by
-    rw [Nat.one_le_iff_ne_zero, Ne, Multiset.card_eq_zero]; exact hproper
-  show 1 ≤ p.2.traceDepthSum
   omega
 
 end ConnesKreimer

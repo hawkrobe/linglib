@@ -409,9 +409,8 @@ end DecidableEq
 
 /-! ### Merge at the trace cuts -/
 
-/-- The trace Merge operator, Merge at the trace cuts `cutSummandsCN τ`. Its trunks carry a trace
-    leaf at each cut site, at the cut depth, so the Minimal-Search cost `Cut.depthC` is read off
-    them. -/
+/-- The trace Merge operator is Merge at the trace cuts `cutSummandsCN τ`, whose trunks carry a
+    trace leaf at each cut site. -/
 noncomputable def mergeOpC {β : Type*} [DecidableEq (UnorderedTree (α ⊕ β))]
     (τ : UnorderedTree (α ⊕ β) → β) (lbl : α ⊕ β) (S S' : UnorderedTree (α ⊕ β)) :
     ConnesKreimer R (UnorderedTree (α ⊕ β)) →ₗ[R] ConnesKreimer R (UnorderedTree (α ⊕ β)) :=

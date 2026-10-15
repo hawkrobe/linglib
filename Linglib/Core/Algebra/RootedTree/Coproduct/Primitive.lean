@@ -6,6 +6,7 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Core.Algebra.BigOperators.Multiset
+public import Linglib.Core.Algebra.RootedTree.Coproduct.WithCuts
 public import Linglib.Core.Algebra.RootedTree.Homogeneous
 public import Linglib.Core.Algebra.RootedTree.SymmetricAlgebra
 public import Linglib.Core.Data.Multiset.Antidiagonal
@@ -23,6 +24,8 @@ admissible-cut coproducts of the sibling files.
 
 * `ConnesKreimer.comulPrim`: the primitive coproduct, as an algebra homomorphism.
 * `ConnesKreimer.comulPrim_of'`: `Δ_P(F) = ∑_{A + B = F} A ⊗ B`.
+* `ConnesKreimer.comulAlgHomNG_emptyCuts`: `Δ_P` is the admissible-cut coproduct whose only cut
+  is the empty one.
 * `ConnesKreimer.rTensor_homogeneousComponent_comulPrim_of'`: the terms whose left factor has
   `k` trees are indexed by the `k`-tree subforests.
 * `ConnesKreimer.comulPrim_coassoc`, `ConnesKreimer.rTensor_counit_comp_comulPrim`,
@@ -68,6 +71,11 @@ theorem comulPrim_unique
       ofTree t ⊗ₜ[R] (1 : ConnesKreimer R T) + (1 : ConnesKreimer R T) ⊗ₜ[R] ofTree t) :
     φ = comulPrim :=
   algHom_ext_ofTree fun t ↦ by rw [h, comulPrim_ofTree]
+
+/-- The admissible-cut coproduct at the empty-cut enumeration is primitive. -/
+theorem comulAlgHomNG_emptyCuts {α : Type*} :
+    comulAlgHomNG (R := R) (α := α) emptyCuts = comulPrim :=
+  comulPrim_unique _ fun t ↦ by simp [comulTreeNG, emptyCuts]
 
 private theorem prod_map_tmul_one (A : Forest T) :
     (A.map fun t ↦ (ofTree t : ConnesKreimer R T) ⊗ₜ[R] (1 : ConnesKreimer R T)).prod =
