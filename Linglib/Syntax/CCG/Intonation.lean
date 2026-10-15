@@ -133,7 +133,8 @@ instance : PartialUnify InfoFeature where
 /-! ### Projecting information structure through a derivation -/
 
 /-- The information marking an accent slot contributes. In [steedman-2000] L+H* marks the
-theme, unaccented material is unmarked, and H* and the remaining accents mark the rheme. -/
+theme and H* and H*+L the rheme, and unaccented material is unmarked. The book classes no other
+accent, and the rest are grouped with the rheme here. -/
 def accentInfo : Option PitchAccent → InfoFeature
   | some (.leading .L .H) => .θ
   | none => .unmarked

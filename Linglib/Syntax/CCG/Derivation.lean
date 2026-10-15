@@ -152,6 +152,20 @@ def yield {c : Cat α} : Derivation T R c → List T
   | .lex f _ => [f]
   | .node _ d₁ d₂ => d₁.yield ++ d₂.yield
 
+theorem yield_ne_nil {c : Cat α} (d : Derivation T R c) : d.yield ≠ [] := by
+  induction d with
+  | lex => simp [yield]
+  | node _ d₁ d₂ ih₁ _ => simp [yield, ih₁]
+
+/-- A derivation spelling out a single token is that token's leaf. -/
+theorem eq_lex_of_yield_eq_singleton {c : Cat α} {d : Derivation T R c} {t : T}
+    (h : d.yield = [t]) : d = .lex t c := by
+  cases d with
+  | lex => simp_all [yield]
+  | node _ d₁ d₂ =>
+    simp only [yield, List.append_eq_singleton_iff] at h
+    exact h.elim (fun h ↦ absurd h.1 d₁.yield_ne_nil) fun h ↦ absurd h.2 d₂.yield_ne_nil
+
 /-- The number of combinatory rule applications in a derivation. -/
 def opCount {c : Cat α} : Derivation T R c → Nat
   | .lex _ _ => 0
