@@ -60,8 +60,77 @@ final head.
 
 namespace WordOrder.Arrangement
 
-variable {α : Type*} [Fintype α] [DecidableEq α] {n : ℕ} (a : Arrangement α n) (ℓ : α → ℕ)
-  (x y : α)
+open Finset
+
+variable {α : Type*} {n : ℕ}
+
+section Monovary
+
+variable {a : Arrangement α n} (ℓ : α → ℕ)
+
+/-- Mirroring an arrangement swaps monovariation and antivariation of a weight with rank. -/
+theorem monovaryOn_mirror_iff {s : Set α} : MonovaryOn ℓ a.mirror s ↔ AntivaryOn ℓ a s := by
+  simp only [MonovaryOn, AntivaryOn, mirror, Equiv.trans_apply, Fin.revPerm_apply, Fin.rev_lt_rev]
+  exact ⟨fun h i hi j hj hij ↦ h hj hi hij, fun h i hi j hj hij ↦ h hj hi hij⟩
+
+private theorem antivaryOn_rank_iff_monovaryOn {s : Set α} :
+    AntivaryOn ℓ (fun d ↦ n - 1 - a d) s ↔ MonovaryOn ℓ a s := by
+  constructor <;> intro h i hi j hj hij <;> refine h hj hi ?_ <;>
+    · have := (a j).isLt
+      have := (a i).isLt
+      simp only [Fin.lt_def] at hij ⊢
+      omega
+
+end Monovary
+
+section Fintype
+
+variable [Fintype α]
+
+section after
+
+variable {a : Arrangement α n} {x : α}
+
+/-- The number of elements after `d` is its rank from the end. -/
+theorem card_after (d : α) : #(a.after d) = n - 1 - a d := by
+  rw [← Fin.card_Ioi, ← card_map a.toEmbedding]
+  congr 1; ext j
+  simp only [mem_map, mem_after, Precedes, Equiv.coe_toEmbedding, mem_Ioi]
+  exact ⟨fun ⟨c, hc, hj⟩ ↦ hj ▸ hc, fun h ↦ ⟨a.symm j, by simpa using h, by simp⟩⟩
+
+variable {σ : Equiv.Perm α} (hσ : {c | σ c ≠ c} ⊆ ↑(a.after x))
+include hσ
+
+theorem apply_eq_self_of_notMem_after {c : α} (hc : c ∉ a.after x) : σ c = c := by
+  by_contra h
+  exact hc (hσ h)
+
+theorem mem_after_apply_of_mem {c : α} (hc : c ∈ a.after x) : σ c ∈ a.after x := by
+  by_cases h : σ c = c
+  · rwa [h]
+  · exact hσ fun h' ↦ h (σ.injective h')
+
+/-- Rearranging the elements after `x` keeps precedence relative to anything not after `x`. -/
+theorem precedes_trans_iff_of_notMem_after {c d : α} (hc : c ∉ a.after x) :
+    (Precedes (σ.trans a) c d ↔ a.Precedes c d) ∧ (Precedes (σ.trans a) d c ↔ a.Precedes d c) := by
+  simp only [Precedes, Equiv.trans_apply, apply_eq_self_of_notMem_after hσ hc]
+  by_cases hd : d ∈ a.after x
+  · have h₁ := mem_after.1 (mem_after_apply_of_mem hσ hd)
+    have h₂ := mem_after.1 hd
+    simp only [mem_after, Precedes, Fin.lt_def, not_lt] at h₁ h₂ hc
+    simp only [Fin.lt_def]
+    constructor <;> constructor <;> intro <;> omega
+  · rw [apply_eq_self_of_notMem_after hσ hd]; exact ⟨Iff.rfl, Iff.rfl⟩
+
+/-- Rearranging the elements after `x` leaves the set of them unchanged. -/
+theorem after_trans : after (σ.trans a) x = a.after x := by
+  ext c
+  simp only [mem_after]
+  exact (precedes_trans_iff_of_notMem_after hσ notMem_after_self).1
+
+end after
+
+variable [DecidableEq α] (a : Arrangement α n) (ℓ : α → ℕ) (x y : α)
 
 /-- The distance in words between the closest boundaries of `x` and `y` when each element `c` is
 `ℓ c` words long, which is one more than the words of the elements between them and zero from an
@@ -79,61 +148,9 @@ theorem boundaryDist_comm : a.boundaryDist ℓ x y = a.boundaryDist ℓ y x := b
 @[simp] theorem boundaryDist_mirror : a.mirror.boundaryDist ℓ x y = a.boundaryDist ℓ x y := by
   simp only [boundaryDist, precedes_mirror, and_comm, or_comm]
 
-
 section Behaghel
 
-open Finset
-
-/-- The elements after `x`. -/
-def after : Finset α := {c | a.Precedes x c}
-
-/-- The elements before `x`. -/
-def before : Finset α := {c | a.Precedes c x}
-
 variable {a x}
-
-omit [DecidableEq α] in
-@[simp] theorem mem_after {c : α} : c ∈ a.after x ↔ a.Precedes x c := by simp [after]
-
-omit [DecidableEq α] in
-@[simp] theorem mem_before {c : α} : c ∈ a.before x ↔ a.Precedes c x := by simp [before]
-
-omit [DecidableEq α] in
-theorem notMem_after_self : x ∉ a.after x := by simp [Precedes]
-
-omit [DecidableEq α] in
-theorem before_eq_after_mirror : a.before x = a.mirror.after x := by
-  ext c; simp [precedes_mirror]
-
-omit [Fintype α] [DecidableEq α] in
-theorem Precedes.trans {y z : α} (h₁ : a.Precedes x y) (h₂ : a.Precedes y z) : a.Precedes x z :=
-  lt_trans h₁ h₂
-
-omit [Fintype α] [DecidableEq α] in
-theorem Precedes.asymm {y : α} (h₁ : a.Precedes x y) : ¬ a.Precedes y x := lt_asymm h₁
-
-omit [DecidableEq α] in
-/-- The number of elements after `d` is its rank from the end. -/
-theorem card_after (d : α) : #(a.after d) = n - 1 - a d := by
-  rw [← Fin.card_Ioi, ← card_map a.toEmbedding]
-  congr 1; ext j
-  simp only [mem_map, mem_after, Precedes, Equiv.coe_toEmbedding, mem_Ioi]
-  exact ⟨fun ⟨c, hc, hj⟩ ↦ hj ▸ hc, fun h ↦ ⟨a.symm j, by simpa using h, by simp⟩⟩
-
-omit [Fintype α] [DecidableEq α] in
-/-- Mirroring an arrangement swaps monovariation and antivariation of a weight with rank. -/
-theorem monovaryOn_mirror_iff {s : Set α} : MonovaryOn ℓ a.mirror s ↔ AntivaryOn ℓ a s := by
-  simp only [MonovaryOn, AntivaryOn, mirror, Equiv.trans_apply, Fin.revPerm_apply, Fin.rev_lt_rev]
-  exact ⟨fun h i hi j hj hij ↦ h hj hi hij, fun h i hi j hj hij ↦ h hj hi hij⟩
-
-omit [Fintype α] [DecidableEq α] in
-private theorem antivaryOn_rank_iff_monovaryOn {s : Set α} :
-    AntivaryOn ℓ (fun d ↦ n - 1 - a d) s ↔ MonovaryOn ℓ a s := by
-  constructor <;> intro h i hi j hj hij <;> refine h hj hi ?_ <;>
-    · have := (a j).isLt
-      have := (a i).isLt
-      simp only [Fin.lt_def] at hij ⊢
-      omega
 
 /-- Summed over the elements after `x`, the distances from `x` weigh each element's length by the
 number of elements farther out, which cross its words. -/
@@ -177,30 +194,6 @@ section perm
 variable {σ : Equiv.Perm α} (hσ : {c | σ c ≠ c} ⊆ ↑(a.after x))
 include hσ
 
-omit [DecidableEq α] in
-theorem apply_eq_self_of_notMem_after {c : α} (hc : c ∉ a.after x) : σ c = c := by
-  by_contra h
-  exact hc (hσ h)
-
-omit [DecidableEq α] in
-theorem mem_after_apply_of_mem {c : α} (hc : c ∈ a.after x) : σ c ∈ a.after x := by
-  by_cases h : σ c = c
-  · rwa [h]
-  · exact hσ fun h' ↦ h (σ.injective h')
-
-omit [DecidableEq α] in
-/-- Rearranging the elements after `x` keeps precedence relative to anything not after `x`. -/
-theorem precedes_trans_iff_of_notMem_after {c d : α} (hc : c ∉ a.after x) :
-    (Precedes (σ.trans a) c d ↔ a.Precedes c d) ∧ (Precedes (σ.trans a) d c ↔ a.Precedes d c) := by
-  simp only [Precedes, Equiv.trans_apply, apply_eq_self_of_notMem_after hσ hc]
-  by_cases hd : d ∈ a.after x
-  · have h₁ := mem_after.1 (mem_after_apply_of_mem hσ hd)
-    have h₂ := mem_after.1 hd
-    simp only [mem_after, Precedes, Fin.lt_def, not_lt] at h₁ h₂ hc
-    simp only [Fin.lt_def]
-    constructor <;> constructor <;> intro <;> omega
-  · rw [apply_eq_self_of_notMem_after hσ hd]; exact ⟨Iff.rfl, Iff.rfl⟩
-
 /-- Rearranging the elements after `x` leaves the distance from `x` to anything not after it. -/
 theorem boundaryDist_trans_of_notMem_after {c : α} (hc : c ∉ a.after x) :
     boundaryDist (σ.trans a) ℓ x c = a.boundaryDist ℓ x c := by
@@ -208,13 +201,6 @@ theorem boundaryDist_trans_of_notMem_after {c : α} (hc : c ∉ a.after x) :
   simp only [boundaryDist, (precedes_trans_iff_of_notMem_after hσ hx).1,
     (precedes_trans_iff_of_notMem_after hσ hx).2, (precedes_trans_iff_of_notMem_after hσ hc).1,
     (precedes_trans_iff_of_notMem_after hσ hc).2]
-
-omit [DecidableEq α] in
-/-- Rearranging the elements after `x` leaves the set of them unchanged. -/
-theorem after_trans : after (σ.trans a) x = a.after x := by
-  ext c
-  simp only [mem_after]
-  exact (precedes_trans_iff_of_notMem_after hσ notMem_after_self).1
 
 /-- Behaghel's law of growing constituents ([behaghel-1909]). When the lengths of the elements
 after `x` grow outward (`ℓ` monovaries with rank, short before long), no rearrangement of them
@@ -287,6 +273,8 @@ theorem sum_boundaryDist_before_le (h : AntivaryOn ℓ a (a.before x)) :
 end before
 
 end Behaghel
+
+end Fintype
 
 end WordOrder.Arrangement
 

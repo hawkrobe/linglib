@@ -21,7 +21,7 @@ on one side, and the reverse conjugation that exchanges the two edges on string 
 
 ## Main definitions
 
-* `Edge`: the left or right end of a word.
+* `Edge`, `Edge.swap`: the left or right end of a word, and the other one.
 * `Edge.takeAt`: the length-`k` prefix or suffix of a word.
 * `Edge.window`: the positions not far from a target on one side.
 * `List.revConj`: conjugation of a string function by reversal.
@@ -39,6 +39,19 @@ inductive Edge | left | right
   deriving DecidableEq, Repr
 
 namespace Edge
+
+/-- The other edge. -/
+def swap : Edge → Edge
+  | left => right
+  | right => left
+
+@[simp] theorem swap_left : left.swap = right := rfl
+
+@[simp] theorem swap_right : right.swap = left := rfl
+
+@[simp] theorem swap_swap (e : Edge) : e.swap.swap = e := by cases e <;> rfl
+
+theorem swap_involutive : Function.Involutive swap := swap_swap
 
 /-! ### Edge substrings -/
 
