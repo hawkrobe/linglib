@@ -1,46 +1,46 @@
 module
 
-public import Linglib.Core.Algebra.RootedTree.Bud
+public import Linglib.Core.Computability.Bud
 public import Linglib.Semantics.ArgumentStructure.EntailmentProfile.ThetaRole
 
 /-!
 # Theta theory as a coloring algorithm
 
-[marcolli-larson-2025] implements theta theory in the mathematical model
-of Minimalism ([marcolli-chomsky-berwick-2025] §3.8) as a coloring
-algorithm: structures freely formed by Merge are filtered by membership in
-the language of a bud generating system ([giraudo-2019],
-`Core/Algebra/RootedTree/Bud.lean`) whose colors are theta grids — tuples
-of giver- or receiver-marked roles — and whose generators are the local
-theta-discharge configurations. A grid injected at a predicate's leaf
-propagates up the tree like a conserved quantity: at each generator node
-one receiver peels off to the sister position, and the residue continues
-toward the maximal projection.
+Marcolli and Larson implement theta theory in the mathematical model of Minimalism as a coloring
+algorithm: structures freely formed by Merge are filtered by membership in the language of a bud
+generating system whose colors are theta grids, tuples of giver- or receiver-marked roles, and
+whose generators are the local theta-discharge configurations. A grid injected at a predicate's
+leaf propagates up the tree like a conserved quantity: at each generator one receiver peels off
+to the sister position, and the residue continues toward the maximal projection.
 
-## Main declarations
+## Main definitions
 
-* `PolarizedRole`, `Color` — giver/receiver-marked roles, and the color
-  set: bare grids (nonterminal; `[]` is the non-theta marker), lexically
-  anchored grids (terminal), and the empty-tree marker.
-* `IsGen`, `rules`, `system` — the generating set: external-role closure,
-  hierarchy-ordered internal discharge, adjunct attachment, and movement
-  landing ([marcolli-larson-2025]'s complete theta bud system).
-* `IsGen.conservation` — the local conservation law each generator
-  satisfies; `derives_thetaLocal` — every vertex of every derivable
-  structure is a generator instance, hence conserves theta roles.
-* `comb`, `comb_derivable` — the bare theta combs (complete grids
-  discharged one role per node) are derivable in the complete system:
-  the generator half of [marcolli-larson-2025]'s comparison of bare and
-  complete systems.
-* `rules_emptyTree_out` — a generator with an empty-tree input has a
-  non-theta output: movement lands only in non-theta positions, the
-  External/Internal Merge dichotomy at generator level.
-* `SatisfiesCriterion`, `comb_satisfiesCriterion` — the theta criterion
-  (a head grid matched bijectively by single receivers at the other
-  positions) and its verification on the bare combs.
-* `derives_soleReceiver` — the sole-role invariant: in a movement-free
-  derivable structure with a sole-receiver root, every position receives
-  at most one role.
+* `PolarizedRole`, `Color`: giver- and receiver-marked roles, and the colors, which are bare grids
+  (nonterminal; the empty grid marks a non-theta position), lexically anchored grids (terminal),
+  and the empty-tree marker.
+* `IsGen`, `ThetaLocal`, `system`: the generator shapes, the cherries they license, and the
+  complete theta bud system.
+* `comb`: the bare theta combs, a complete grid discharged one role per vertex.
+* `SatisfiesCriterion`: the theta criterion on a colored operation.
+
+## Main statements
+
+* `IsGen.conservation`: each generator conserves theta roles.
+* `ThetaLocal.eq_nontheta`: movement lands only in non-theta positions.
+* `comb_derivable`: the bare combs are derivable in the complete system.
+* `derives_soleReceiver`: in a movement-free derivable structure with a sole-receiver root, every
+  position receives at most one role.
+
+## Implementation notes
+
+The trees are planar, so each generator shape licenses its children in either order, and the
+theta criterion compares received roles with the head's grid as multisets.
+
+## References
+
+* [marcolli-larson-2025]
+* [marcolli-chomsky-berwick-2025]
+* [giraudo-2019]
 -/
 
 @[expose] public section
@@ -49,8 +49,7 @@ open ArgumentStructure
 
 namespace Minimalist.Theta
 
-/-- Whether a role occurrence gives or receives: [marcolli-larson-2025]'s
-    `θ↑` and `θ↓` marks. -/
+/-- Whether a role occurrence gives or receives, [marcolli-larson-2025]'s marks `θ↑` and `θ↓`. -/
 inductive Polarity where
   | giver
   | receiver
@@ -68,8 +67,7 @@ def PolarizedRole.up (ρ : ThetaRole) : PolarizedRole := ⟨ρ, .giver⟩
 /-- The receiver occurrence `θ↓`. -/
 def PolarizedRole.down (ρ : ThetaRole) : PolarizedRole := ⟨ρ, .receiver⟩
 
-/-- A grid of giver occurrences: the undischarged residue a predicate
-    carries. -/
+/-- A grid of giver occurrences, the undischarged residue a predicate carries. -/
 def upGrid (g : List ThetaRole) : List PolarizedRole := g.map .up
 
 @[simp] theorem upGrid_nil : upGrid [] = [] := rfl
@@ -83,19 +81,18 @@ def upGrid (g : List ThetaRole) : List PolarizedRole := g.map .up
 
 variable {L : Type*}
 
-/-- The color set: a bare grid (nonterminal; the empty grid is the
-    non-theta marker `θ0`), a lexically anchored grid (terminal), or the
-    empty-tree marker `(1, θ0)`. -/
+/-- A color is a bare grid (nonterminal, the empty grid being the non-theta marker `θ0`), a
+lexically anchored grid (terminal), or the empty-tree marker `(1, θ0)`. -/
 inductive Color (L : Type*) where
   | free (g : List PolarizedRole)
   | lex (item : L) (g : List PolarizedRole)
   | emptyTree
   deriving DecidableEq, Repr
 
-/-- The non-theta marker `θ0`: the empty grid. -/
+/-- The non-theta marker `θ0`, the empty grid. -/
 abbrev Color.nontheta : Color L := .free []
 
-/-- Terminal colors: lexically anchored grids and the empty-tree marker. -/
+/-- The terminal colors are the lexically anchored grids and the empty-tree marker. -/
 def Color.IsTerminal : Color L → Prop
   | .free _ => False
   | .lex _ _ => True
@@ -104,8 +101,7 @@ def Color.IsTerminal : Color L → Prop
 @[simp] theorem Color.isTerminal_free {g : List PolarizedRole} :
     ¬ (Color.free g : Color L).IsTerminal := id
 
-/-- The grid a color carries, if any: lexical anchoring is transparent to
-    theta structure. -/
+/-- The grid a color carries, if any; lexical anchoring is transparent to theta structure. -/
 def Color.grid? : Color L → Option (List PolarizedRole)
   | .free g => some g
   | .lex _ g => some g
@@ -131,19 +127,14 @@ section Rules
 
 variable (hier : ThetaRole → ThetaRole → Prop)
 
-/-- The generator shapes of the theta bud system, as a relation between
-    the root grid and the two children's colors (children unordered; the
-    rule set closes under swapping). The four cases are
-    [marcolli-larson-2025]'s complete-system generators:
+/-- The generator shapes of the theta bud system, as a relation between the root grid and the
+two children's colors. The four cases are [marcolli-larson-2025]'s complete-system generators:
 
-    * `close` — the external role discharges and the maximal projection is
-      recolored arbitrarily;
-    * `discharge` — one internal role, next in the hierarchy, peels off to
-      the sister while the residue propagates;
-    * `adjunct` — a non-theta position attaches without disturbing the
-      color;
-    * `move` — a movement landing site: the empty-tree marker attaches
-      under a non-theta root. -/
+* `close`: the external role discharges and the maximal projection is recolored arbitrarily;
+* `discharge`: one internal role, next in the hierarchy, peels off to the sister while the
+  residue propagates;
+* `adjunct`: a non-theta position attaches without disturbing the color;
+* `move`: a movement landing site, the empty-tree marker attached under a non-theta root. -/
 inductive IsGen : List PolarizedRole → Color L → Color L → Prop
   | close (g₀ : List PolarizedRole) (ρE : ThetaRole) {a b : Color L}
       (ha : a.Matches [.down ρE]) (hb : b.Matches [.up ρE]) :
@@ -155,26 +146,22 @@ inductive IsGen : List PolarizedRole → Color L → Color L → Prop
   | adjunct (g₀ : List PolarizedRole) : IsGen g₀ (.free g₀) .nontheta
   | move (c' : Color L) (hc' : c' ≠ .emptyTree) : IsGen [] c' .emptyTree
 
-/-- A one-node colored operation. -/
-def gen (c a b : Color L) : Bud.Tree (Color L) := .node c (.leaf a) (.leaf b)
+/-- The cherries of the theta bud system: a bare grid at the root over children forming a
+generator in either order, [marcolli-larson-2025]'s compatibility relation for colored Merge. -/
+def ThetaLocal (c a b : Color L) : Prop :=
+  ∃ g₀, c = .free g₀ ∧ (IsGen hier g₀ a b ∨ IsGen hier g₀ b a)
 
-/-- The rule set: the generator shapes in either orientation, rooted at a
-    nonterminal color. -/
-def rules : Set (Bud.Tree (Color L)) :=
-  {t | ∃ g₀ a b, IsGen hier g₀ a b ∧
-    (t = gen (.free g₀) a b ∨ t = gen (.free g₀) b a)}
+/-- The complete theta bud system: the theta cherries, with the bare grids initial and the
+anchored grids and the empty-tree marker terminal. -/
+abbrev system : Bud.System (Color L) :=
+  .ofCherries (ThetaLocal hier) {c | ¬ c.IsTerminal} {c | c.IsTerminal}
 
-/-- The complete theta bud system. -/
-def system : Bud.System (Color L) := ⟨rules hier, {c | c.IsTerminal}⟩
+variable {hier} {g₀ : List PolarizedRole} {c a b : Color L}
 
-variable {hier}
-
-/-- The local conservation law: at every generator, either one child
-    receives the last role of the other child's giver grid while the root
-    keeps the residue, or the node is an adjunct attachment, or a movement
-    landing under a non-theta root. -/
-theorem IsGen.conservation {g₀ : List PolarizedRole} {a b : Color L}
-    (h : IsGen (L := L) hier g₀ a b) :
+/-- The local conservation law: at every generator, either one child receives the last role of
+the other child's giver grid while the root keeps the residue, or the node is an adjunct
+attachment, or a movement landing under a non-theta root. -/
+theorem IsGen.conservation (h : IsGen (L := L) hier g₀ a b) :
     (∃ ρ g, a.Matches [.down ρ] ∧ b.Matches (upGrid g ++ [.up ρ]) ∧
       (g₀ = upGrid g ∨ g = [])) ∨
     (a = .free g₀ ∧ b = .nontheta) ∨
@@ -186,51 +173,20 @@ theorem IsGen.conservation {g₀ : List PolarizedRole} {a b : Color L}
   | adjunct g₀ => exact .inr (.inl ⟨rfl, rfl⟩)
   | move c' hc' => exact .inr (.inr ⟨rfl, rfl⟩)
 
-/-- The vertex-local law of the theta system: the vertex is a generator
-    instance in some orientation. -/
-def ThetaLocal (hier : ThetaRole → ThetaRole → Prop)
-    (c a b : Color L) : Prop :=
-  ∃ g₀, c = .free g₀ ∧ (IsGen hier g₀ a b ∨ IsGen hier g₀ b a)
+theorem IsGen.eq_nil_of_emptyTree (h : IsGen hier g₀ a b)
+    (he : a = .emptyTree ∨ b = .emptyTree) : g₀ = [] := by
+  cases h with
+  | close _ _ ha hb | discharge _ _ _ _ ha hb => rcases he with rfl | rfl <;> simp at ha hb
+  | adjunct => simp at he
+  | move => rfl
 
-theorem rules_nodeLocal {r : Bud.Tree (Color L)} (hr : r ∈ rules hier) :
-    r.NodeLocal (ThetaLocal hier) := by
-  obtain ⟨g₀, a, b, hg, hor⟩ := hr
-  rcases hor with rfl | rfl
-  · exact ⟨⟨g₀, rfl, .inl hg⟩, trivial, trivial⟩
-  · exact ⟨⟨g₀, rfl, .inr hg⟩, trivial, trivial⟩
-
-/-- Every vertex of every derivable structure is a generator instance:
-    filtering by the coloring rules is checkable vertex-locally, the
-    engine of [marcolli-larson-2025]'s recursive theta criterion. -/
-theorem derives_thetaLocal {c : Color L} {x : Bud.Tree (Color L)}
-    (h : (system (L := L) hier).Derives c x) :
-    x.NodeLocal (ThetaLocal hier) :=
-  h.nodeLocal fun _ hr => rules_nodeLocal hr
-
-/-- Movement lands only in non-theta positions: a generator with an
-    empty-tree input has the non-theta output. The External/Internal Merge
-    dichotomy of theta theory, derived from the generator shapes. -/
-theorem rules_emptyTree_out {r : Bud.Tree (Color L)} (hr : r ∈ rules hier)
-    (h : Color.emptyTree ∈ r.inputs) : r.out = Color.nontheta := by
-  obtain ⟨g₀, a, b, hg, hor⟩ := hr
-  have hab : Color.emptyTree = a ∨ Color.emptyTree = b := by
-    rcases hor with rfl | rfl <;>
-      simpa [gen, or_comm] using h
-  suffices hs : g₀ = [] by
-    rcases hor with rfl | rfl <;> simp [gen, hs, Color.nontheta]
-  cases hg with
-  | close g₀' ρE ha hb =>
-    rcases hab with rfl | rfl
-    · exact absurd ha (Color.not_matches_emptyTree)
-    · exact absurd hb (Color.not_matches_emptyTree)
-  | discharge g ρ hg' hchain ha hb =>
-    rcases hab with rfl | rfl
-    · exact absurd ha (Color.not_matches_emptyTree)
-    · exact absurd hb (Color.not_matches_emptyTree)
-  | adjunct g₀' =>
-    rcases hab with h' | h' <;> exact absurd h' (by simp [Color.nontheta])
-  | move c' hc' =>
-    rfl
+/-- Movement lands only in non-theta positions: a generator with an empty-tree child has the
+non-theta root. The External/Internal Merge dichotomy of theta theory, at generator level. -/
+theorem ThetaLocal.eq_nontheta (h : ThetaLocal hier c a b)
+    (he : a = .emptyTree ∨ b = .emptyTree) : c = .nontheta := by
+  obtain ⟨g₀, rfl, hg | hg⟩ := h
+  · rw [hg.eq_nil_of_emptyTree he]
+  · rw [hg.eq_nil_of_emptyTree he.symm]
 
 end Rules
 
@@ -238,95 +194,59 @@ section Comb
 
 variable {hier : ThetaRole → ThetaRole → Prop}
 
-/-- The spine of a bare theta comb: the residue grid grows by one role per
-    node on the path to the head leaf, which carries the complete grid. -/
+/-- The spine of a bare theta comb: the residue grid grows by one role per node on the path to
+the head leaf, which carries the complete grid. -/
 def combSpine (g : List ThetaRole) : List ThetaRole → Bud.Tree (Color L)
   | [] => .leaf (.free (upGrid g))
-  | ρ :: rest =>
-      .node (.free (upGrid g)) (.leaf (.free [.down ρ]))
-        (combSpine (g ++ [ρ]) rest)
+  | ρ :: rest => .node (.free (upGrid g)) (.leaf (.free [.down ρ])) (combSpine (g ++ [ρ]) rest)
 
-/-- A bare theta comb ([marcolli-larson-2025]'s bare-system generators):
-    an external role, hierarchy-ordered internal roles, one receiver per
-    node, the full giver grid at the head leaf, and an arbitrary root
-    recoloring. -/
-def comb (g₀ : List PolarizedRole) (ρE : ThetaRole)
-    (ρIs : List ThetaRole) : Bud.Tree (Color L) :=
+/-- A bare theta comb ([marcolli-larson-2025]'s bare-system generators): an external role,
+hierarchy-ordered internal roles, one receiver per node, the full giver grid at the head leaf,
+and an arbitrary root recoloring. -/
+def comb (g₀ : List PolarizedRole) (ρE : ThetaRole) (ρIs : List ThetaRole) :
+    Bud.Tree (Color L) :=
   .node (.free g₀) (.leaf (.free [.down ρE])) (combSpine [ρE] ρIs)
 
-theorem combSpine_derivable (g : List ThetaRole) (hg : g ≠ [])
-    (rest : List ThetaRole)
-    (hchain : ((g ++ rest).tail).IsChain hier) :
-    (system (L := L) hier).Derives (.free (upGrid g)) (combSpine g rest) := by
+@[simp] theorem out_combSpine (g rest : List ThetaRole) :
+    (combSpine (L := L) g rest).out = .free (upGrid g) := by
+  cases rest <;> rfl
+
+theorem combSpine_nodeLocal {g : List ThetaRole} (hg : g ≠ []) {rest : List ThetaRole}
+    (hchain : (g ++ rest).tail.IsChain hier) :
+    (combSpine (L := L) g rest).NodeLocal (ThetaLocal hier) := by
   induction rest generalizing g with
-  | nil => exact .unit (by simp [system, Color.IsTerminal])
+  | nil => trivial
   | cons ρ rest ih =>
-    have hstep : ((g ++ [ρ]).tail).IsChain hier := by
-      refine List.IsChain.prefix hchain ?_
-      cases g with
-      | nil => exact absurd rfl hg
-      | cons a g' =>
-        exact ⟨rest, by simp⟩
-    have hrule : gen (.free (upGrid g)) (.free [.down ρ])
-        (.free (upGrid (g ++ [ρ]))) ∈ rules (L := L) hier :=
-      ⟨upGrid g, _, _,
-        .discharge g ρ hg hstep (by simp) (by simp), .inl rfl⟩
-    have hunit : (system (L := L) hier).Derives (.free (upGrid g))
-        (.leaf (.free (upGrid g))) :=
-      .unit (by simp [system, Color.IsTerminal])
-    have hgen := hunit.graft 0 hrule (by simp [gen])
-    have hgraft : (Bud.Tree.leaf ((Color.free (upGrid g) : Color L))).graft 0
-        (gen (.free (upGrid g)) (.free [.down ρ])
-          (.free (upGrid (g ++ [ρ])))) =
-        gen (.free (upGrid g)) (.free [.down ρ])
-          (.free (upGrid (g ++ [ρ]))) := rfl
-    rw [hgraft] at hgen
-    have hchain' : ((g ++ [ρ] ++ rest).tail).IsChain hier := by
-      simpa [List.append_assoc] using hchain
-    have hcomp := hgen.compose (i := 1) (by simp [gen])
-      (by simp [gen]) (ih (g ++ [ρ]) (by simp) hchain')
-    simpa [combSpine, gen, Bud.Tree.graft] using hcomp
+    have hstep : (g ++ [ρ]).tail.IsChain hier := by
+      obtain ⟨a, g', rfl⟩ := List.exists_cons_of_ne_nil hg
+      exact hchain.prefix ⟨rest, by simp⟩
+    exact ⟨⟨_, rfl, .inl (.discharge g ρ hg hstep (by simp) (by simp))⟩, trivial,
+      ih (by simp) (by simpa using hchain)⟩
 
-/-- The bare theta combs are derivable in the complete system, provided
-    the internal roles descend the hierarchy: the generator half of
-    [marcolli-larson-2025]'s reduction of the bare system to the complete
-    one. -/
-theorem comb_derivable (g₀ : List PolarizedRole) (ρE : ThetaRole)
-    (ρIs : List ThetaRole) (hchain : ρIs.IsChain hier) :
-    (system (L := L) hier).Derives (.free g₀) (comb g₀ ρE ρIs) := by
-  have hrule : gen (.free g₀) (.free [.down ρE]) (.free (upGrid [ρE]))
-      ∈ rules (L := L) hier :=
-    ⟨g₀, _, _, .close g₀ ρE (by simp) (by simp [upGrid]), .inl rfl⟩
-  have hunit : (system (L := L) hier).Derives (.free g₀)
-      (.leaf (.free g₀)) :=
-    .unit (by simp [system, Color.IsTerminal])
-  have hgen := hunit.graft 0 hrule (by simp [gen])
-  have hgraft : (Bud.Tree.leaf ((Color.free g₀ : Color L))).graft 0
-      (gen (.free g₀) (.free [.down ρE]) (.free (upGrid [ρE]))) =
-      gen (.free g₀) (.free [.down ρE]) (.free (upGrid [ρE])) := rfl
-  rw [hgraft] at hgen
-  have hspine := combSpine_derivable (L := L) (hier := hier) [ρE]
-    (by simp) ρIs (by simpa using hchain)
-  have hcomp := hgen.compose (i := 1) (by simp [gen]) (by simp [gen]) hspine
-  simpa [comb, gen, Bud.Tree.graft] using hcomp
+/-- The bare theta combs are derivable in the complete system, provided the internal roles
+descend the hierarchy: the generator half of [marcolli-larson-2025]'s reduction of the bare
+system to the complete one. -/
+theorem comb_derivable (g₀ : List PolarizedRole) (ρE : ThetaRole) (ρIs : List ThetaRole)
+    (hchain : ρIs.IsChain hier) :
+    (system (L := L) hier).Derives (.leaf (.free g₀)) (comb g₀ ρE ρIs) :=
+  Bud.System.ofCherries_derives_leaf_iff.2
+    ⟨rfl, ⟨_, rfl, .inl (.close g₀ ρE (by simp) (by simp [upGrid]))⟩, trivial,
+      combSpine_nodeLocal (by simp) (by simpa using hchain)⟩
 
-/-- The inputs of a comb spine: one receiver per internal role, then the
-    head carrying the accumulated grid. -/
-theorem combSpine_inputs (g : List ThetaRole) (rest : List ThetaRole) :
+/-- The inputs of a comb spine: one receiver per internal role, then the head carrying the
+accumulated grid. -/
+theorem combSpine_inputs (g rest : List ThetaRole) :
     (combSpine (L := L) g rest).inputs =
-      rest.map (fun ρ => Color.free [.down ρ]) ++
-        [.free (upGrid (g ++ rest))] := by
+      rest.map (fun ρ ↦ Color.free [.down ρ]) ++ [.free (upGrid (g ++ rest))] := by
   induction rest generalizing g with
   | nil => simp [combSpine]
-  | cons ρ rest ih =>
-    simp [combSpine, ih (g ++ [ρ])]
+  | cons ρ rest ih => simp [combSpine, ih (g ++ [ρ])]
 
-/-- The inputs of a comb: the external receiver, one receiver per internal
-    role, and the head carrying the complete grid. -/
-theorem comb_inputs (g₀ : List PolarizedRole) (ρE : ThetaRole)
-    (ρIs : List ThetaRole) :
+/-- The inputs of a comb: the external receiver, one receiver per internal role, and the head
+carrying the complete grid. -/
+theorem comb_inputs (g₀ : List PolarizedRole) (ρE : ThetaRole) (ρIs : List ThetaRole) :
     (comb (L := L) g₀ ρE ρIs).inputs =
-      .free [.down ρE] :: ρIs.map (fun ρ => Color.free [.down ρ]) ++
+      .free [.down ρE] :: ρIs.map (fun ρ ↦ Color.free [.down ρ]) ++
         [.free (upGrid (ρE :: ρIs))] := by
   simp [comb, combSpine_inputs]
 
@@ -335,7 +255,7 @@ end Comb
 /-! ### The theta criterion -/
 
 /-- The role a color receives, when it is a single receiver. -/
-def Color.receiver? : Color L → Option ThetaRole := fun c =>
+def Color.receiver? : Color L → Option ThetaRole := fun c ↦
   match c.grid? with
   | some [⟨ρ, .receiver⟩] => some ρ
   | _ => none
@@ -343,17 +263,15 @@ def Color.receiver? : Color L → Option ThetaRole := fun c =>
 @[simp] theorem Color.receiver?_free_down (ρ : ThetaRole) :
     (Color.free [.down ρ] : Color L).receiver? = some ρ := rfl
 
-/-- The theta criterion on a colored operation: some input (the head)
-    carries an all-giver grid, every other input is a single receiver, and
-    the received roles match the head's grid bijectively — as multisets,
-    since the trees are nonplanar. -/
+/-- The theta criterion on a colored operation. Some input, the head, carries an all-giver grid,
+every other input is a single receiver, and the received roles match the head's grid
+bijectively, as multisets. -/
 def SatisfiesCriterion (x : Bud.Tree (Color L)) : Prop :=
   ∃ i c g, x.inputs[i]? = some c ∧ c.Matches (upGrid g) ∧
     (↑((x.inputs.eraseIdx i).map Color.receiver?) : Multiset (Option ThetaRole))
       = ↑(g.map some)
 
-/-- The bare theta combs satisfy the theta criterion: the head's grid is
-    matched exactly by the receivers at the other positions. -/
+/-- The bare theta combs satisfy the theta criterion. -/
 theorem comb_satisfiesCriterion (g₀ : List PolarizedRole) (ρE : ThetaRole)
     (ρIs : List ThetaRole) :
     SatisfiesCriterion (comb (L := L) g₀ ρE ρIs) := by
@@ -362,10 +280,10 @@ theorem comb_satisfiesCriterion (g₀ : List PolarizedRole) (ρE : ThetaRole)
     simp
   · rw [comb_inputs,
       show Color.free [PolarizedRole.down ρE] ::
-          ρIs.map (fun ρ => Color.free [.down ρ]) ++
+          ρIs.map (fun ρ ↦ Color.free [.down ρ]) ++
           [Color.free (upGrid (ρE :: ρIs))] =
         (Color.free [PolarizedRole.down ρE] ::
-          ρIs.map (fun ρ => Color.free (L := L) [.down ρ])) ++
+          ρIs.map (fun ρ ↦ Color.free (L := L) [.down ρ])) ++
           [Color.free (upGrid (ρE :: ρIs))] by simp,
       List.eraseIdx_append_of_length_le (by simp)]
     simp [List.map_map, Function.comp_def]
@@ -374,7 +292,7 @@ theorem comb_satisfiesCriterion (g₀ : List PolarizedRole) (ρE : ThetaRole)
 
 /-- The number of receiver occurrences in a grid. -/
 def receiverCount (g : List PolarizedRole) : ℕ :=
-  g.countP (fun p => p.polarity == .receiver)
+  g.countP (fun p ↦ p.polarity == .receiver)
 
 @[simp] theorem receiverCount_upGrid (g : List ThetaRole) :
     receiverCount (upGrid g) = 0 := by
@@ -384,15 +302,9 @@ def receiverCount (g : List PolarizedRole) : ℕ :=
 @[simp] theorem receiverCount_down_singleton (ρ : ThetaRole) :
     receiverCount [.down ρ] = 1 := rfl
 
-/-- The color receives at most one role: its grid, if any, has at most one
-    receiver occurrence. -/
+/-- The color receives at most one role, its grid having at most one receiver occurrence. -/
 def Color.SoleReceiver (c : Color L) : Prop :=
   ∀ g, c.grid? = some g → receiverCount g ≤ 1
-
-theorem Color.soleReceiver_emptyTree :
-    (Color.emptyTree : Color L).SoleReceiver := by
-  intro g hg
-  simp [Color.grid?] at hg
 
 theorem Color.soleReceiver_of_receiverCount_le {c : Color L}
     {g : List PolarizedRole} (hc : c.grid? = some g)
@@ -403,65 +315,56 @@ theorem Color.soleReceiver_of_receiverCount_le {c : Color L}
 
 section SoleRole
 
-variable {hier : ThetaRole → ThetaRole → Prop} {c : Color L}
+variable {hier : ThetaRole → ThetaRole → Prop} {g₀ : List PolarizedRole} {c a b : Color L}
   {x : Bud.Tree (Color L)}
 
-/-- The sole-role invariant: in a movement-free derivable structure whose
-    root color receives at most one role, every argument position receives
-    at most one role. Adding a dual-receiver generator — as *se*-marked
-    parasitic assignment does — is the only way to violate it. -/
-theorem derives_soleReceiver (h : (system (L := L) hier).Derives c x)
+/-- A generator passes a sole receiver at its root down to its children, unless the second child
+is a movement landing site. -/
+theorem IsGen.soleReceiver (h : IsGen hier g₀ a b)
+    (hc : (Color.free g₀ : Color L).SoleReceiver) (hb : b ≠ .emptyTree) :
+    a.SoleReceiver ∧ b.SoleReceiver := by
+  cases h with
+  | close _ _ ha hb' =>
+    exact ⟨Color.soleReceiver_of_receiverCount_le ha (by simp),
+      Color.soleReceiver_of_receiverCount_le hb' (by simp [receiverCount, PolarizedRole.up])⟩
+  | discharge _ _ _ _ ha hb' =>
+    exact ⟨Color.soleReceiver_of_receiverCount_le ha (by simp),
+      Color.soleReceiver_of_receiverCount_le hb' (by simp [-upGrid_append])⟩
+  | adjunct =>
+    exact ⟨hc, Color.soleReceiver_of_receiverCount_le (g := []) rfl (by simp [receiverCount])⟩
+  | move => exact absurd rfl hb
+
+theorem ThetaLocal.soleReceiver (h : ThetaLocal hier c a b) (hc : c.SoleReceiver)
+    (ha : a ≠ .emptyTree) (hb : b ≠ .emptyTree) : a.SoleReceiver ∧ b.SoleReceiver := by
+  obtain ⟨g₀, rfl, hg | hg⟩ := h
+  exacts [hg.soleReceiver hc hb, (hg.soleReceiver hc ha).symm]
+
+/-- In a theta structure, only a leaf can carry the empty-tree marker. -/
+theorem out_ne_emptyTree (hx : x.NodeLocal (ThetaLocal hier))
+    (hmove : Color.emptyTree ∉ x.inputs) : x.out ≠ .emptyTree := by
+  cases x with
+  | leaf c => simpa [eq_comm] using hmove
+  | node c l r =>
+    obtain ⟨⟨g₀, rfl, -⟩, -⟩ := hx
+    simp
+
+/-- The sole-role invariant: in a movement-free derivable structure whose root color receives at
+most one role, every argument position receives at most one role. Adding a dual-receiver
+generator, as *se*-marked parasitic assignment does, is the only way to violate it. -/
+theorem derives_soleReceiver (h : (system (L := L) hier).Derives (.leaf c) x)
     (hroot : c.SoleReceiver) (hmove : Color.emptyTree ∉ x.inputs) :
     ∀ d ∈ x.inputs, d.SoleReceiver := by
-  induction h with
-  | unit hc =>
-    intro d hd
-    exact (by simpa using hd : d = c) ▸ hroot
-  | @graft y r i hy hr hm ih =>
-    have hout : ∃ g₀ : List PolarizedRole, r.out = .free g₀ := by
-      obtain ⟨g₀, a, b, -, hor⟩ := hr
-      rcases hor with rfl | rfl <;> exact ⟨g₀, rfl⟩
-    have hmove' : Color.emptyTree ∉ y.inputs := by
-      intro hmem
-      rcases Bud.Tree.mem_inputs_graft_of_mem hm _ hmem with hmem' | hmem'
-      · exact hmove hmem'
-      · obtain ⟨g₀, hg₀⟩ := hout
-        simp [hg₀] at hmem'
-    have ihy := ih hmove'
-    intro d hd
-    rcases Bud.Tree.mem_inputs_graft hm d hd with hd' | hd'
-    · exact ihy d hd'
-    · obtain ⟨g₀, a, b, hg, hor⟩ := hr
-      have hd'' : d = a ∨ d = b := by
-        rcases hor with rfl | rfl <;>
-          simpa [gen, or_comm] using hd'
-      have hroot' : (Color.free g₀ : Color L).SoleReceiver := by
-        have : Color.free g₀ ∈ y.inputs := by
-          have := hm
-          rcases hor with rfl | rfl <;>
-            exact List.mem_of_getElem? (by simpa [gen] using this)
-        exact ihy _ this
-      cases hg with
-      | close g₀' ρE ha hb =>
-        rcases hd'' with rfl | rfl
-        · exact Color.soleReceiver_of_receiverCount_le ha (by simp)
-        · exact Color.soleReceiver_of_receiverCount_le hb
-            (by simp [receiverCount, PolarizedRole.up])
-      | discharge g ρ hg' hchain ha hb =>
-        rcases hd'' with rfl | rfl
-        · exact Color.soleReceiver_of_receiverCount_le ha (by simp)
-        · exact Color.soleReceiver_of_receiverCount_le hb
-            (by rw [receiverCount_upGrid]; exact Nat.zero_le _)
-      | adjunct g₀' =>
-        rcases hd'' with rfl | rfl
-        · exact hroot'
-        · exact Color.soleReceiver_of_receiverCount_le (g := []) rfl
-            (by simp [receiverCount])
-      | move c' hc' =>
-        exfalso
-        apply hmove
-        refine Bud.Tree.mem_inputs_graft_of_mem_right hm Color.emptyTree ?_
-        rcases hor with rfl | rfl <;> simp [gen]
+  obtain ⟨rfl, hx⟩ := Bud.System.ofCherries_derives_leaf_iff.1 h
+  clear h
+  induction x with
+  | leaf c => simpa using hroot
+  | node c l r ihl ihr =>
+    obtain ⟨hc, hl, hr⟩ := hx
+    simp only [Bud.Tree.inputs_node, List.mem_append, not_or] at hmove ⊢
+    obtain ⟨hl', hr'⟩ :=
+      hc.soleReceiver hroot (out_ne_emptyTree hl hmove.1) (out_ne_emptyTree hr hmove.2)
+    rintro d (hd | hd)
+    exacts [ihl hmove.1 hl hl' d hd, ihr hmove.2 hr hr' d hd]
 
 end SoleRole
 
