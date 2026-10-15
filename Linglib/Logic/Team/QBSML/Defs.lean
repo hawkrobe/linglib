@@ -291,7 +291,7 @@ theorem State.supClosed_univ [Fintype Domain] (hP : SupClosed P) :
   hP.preimage (State.extendUniversalHom x)
 
 theorem State.empty_mem_univ [Fintype Domain] (hP : ∅ ∈ P) : ∅ ∈ State.univ x P :=
-  bot_mem_preimage (State.extendUniversalHom x) hP
+  by rw [State.univ, Set.mem_preimage, ← Finset.bot_eq_empty, map_bot]; exact hP
 
 theorem State.isLowerSet_exi (hP : IsLowerSet P) : IsLowerSet (State.exi x P) := by
   rintro s t hts ⟨h, hne, hs⟩

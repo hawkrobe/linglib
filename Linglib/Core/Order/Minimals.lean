@@ -68,15 +68,8 @@ theorem minimals_congr {q : Preorder α} (h : ∀ a ∈ s, ∀ b ∈ s, p.le a b
 /-- The minimal elements of a set depend only on the strict order. -/
 theorem minimals_eq_of_lt_iff {q : Preorder α} (h : ∀ a b, p.lt a b ↔ q.lt a b) :
     p.minimals s = q.minimals s :=
-  Set.ext fun a ↦
-    ⟨fun ha ↦ ⟨ha.1, fun b hb hba ↦ by_contra fun hab ↦
-      ((p.lt_iff_le_not_ge b a).1 ((h b a).2 ((q.lt_iff_le_not_ge b a).2 ⟨hba, hab⟩))).2
-        (ha.2 hb ((p.lt_iff_le_not_ge b a).1 ((h b a).2 ((q.lt_iff_le_not_ge b a).2
-          ⟨hba, hab⟩))).1)⟩,
-      fun ha ↦ ⟨ha.1, fun b hb hba ↦ by_contra fun hab ↦
-      ((q.lt_iff_le_not_ge b a).1 ((h b a).1 ((p.lt_iff_le_not_ge b a).2 ⟨hba, hab⟩))).2
-        (ha.2 hb ((q.lt_iff_le_not_ge b a).1 ((h b a).1 ((p.lt_iff_le_not_ge b a).2
-          ⟨hba, hab⟩))).1)⟩⟩
+  Set.ext fun _ ↦ (@minimal_iff_forall_lt α _ _ p).trans <| by
+    simp only [h]; exact (@minimal_iff_forall_lt α _ _ q).symm
 
 /-- Under the preorder that relates every two elements, every element of a set is minimal. -/
 @[simp] theorem minimals_top (s : Set α) : (⊤ : Preorder α).minimals s = s :=

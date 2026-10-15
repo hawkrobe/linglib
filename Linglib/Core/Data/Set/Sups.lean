@@ -8,18 +8,70 @@ module
 public import Mathlib.Data.Set.Sups
 public import Mathlib.Order.CompleteLattice.Basic
 public import Mathlib.Order.UpperLower.CompleteLattice
+public import Mathlib.Order.SupClosed
+public import Mathlib.Order.Interval.Set.OrdConnected
 
 /-!
 # Suprema of pointwise sups
 
-Mirror of `Mathlib/Data/Set/Sups.lean`. In a complete lattice, the supremum of `s ⊻ t` is the join
-of the suprema of two nonempty sets. The indexed form of `s ⊻ t` is `Set.iSups s`, the set of
-suprema of choices of an element from each member of a family `s`. [UPSTREAM]
+Mirror of `Mathlib/Data/Set/Sups.lean`. Pointwise sups preserve sup-closure and the bottom element
+in any semilattice, and downward closure and order-convexity (the latter given sup-closure) in a
+distributive lattice, where `c ≤ a ⊔ b` splits as `c = (c ⊓ a) ⊔ (c ⊓ b)`. In a complete lattice,
+the supremum of `s ⊻ t` is the join of the suprema of two nonempty sets. The indexed form of
+`s ⊻ t` is `Set.iSups s`, the set of suprema of choices of an element from each member of a family
+`s`. [UPSTREAM]
 -/
 
 @[expose] public section
 
 open SetFamily
+
+section Closure
+
+variable {α : Type*}
+
+section SemilatticeSup
+
+variable [SemilatticeSup α] {s t : Set α}
+
+theorem SupClosed.sups (hs : SupClosed s) (ht : SupClosed t) : SupClosed (s ⊻ t) := by
+  intro x hx y hy
+  obtain ⟨a, ha, b, hb, rfl⟩ := Set.mem_sups.mp hx
+  obtain ⟨c, hc, d, hd, rfl⟩ := Set.mem_sups.mp hy
+  exact Set.mem_sups.mpr ⟨a ⊔ c, hs ha hc, b ⊔ d, ht hb hd, (sup_sup_sup_comm a b c d).symm⟩
+
+theorem Set.bot_mem_sups [OrderBot α] (hs : ⊥ ∈ s) (ht : ⊥ ∈ t) : ⊥ ∈ s ⊻ t :=
+  Set.mem_sups.mpr ⟨⊥, hs, ⊥, ht, bot_sup_eq ⊥⟩
+
+end SemilatticeSup
+
+section DistribLattice
+
+variable [DistribLattice α] {s t : Set α}
+
+theorem IsLowerSet.sups (hs : IsLowerSet s) (ht : IsLowerSet t) : IsLowerSet (s ⊻ t) := by
+  intro x c hc hx
+  obtain ⟨a, ha, b, hb, rfl⟩ := Set.mem_sups.mp hx
+  exact Set.mem_sups.mpr ⟨c ⊓ a, hs inf_le_right ha, c ⊓ b, ht inf_le_right hb,
+    by rw [← inf_sup_left, inf_eq_left.mpr hc]⟩
+
+/-- Pointwise sups of convex sets are convex when both sets are sup-closed: an element
+    `x` between `a ⊔ b` and `c ⊔ d` splits as `(a ⊔ c) ⊓ x ⊔ (b ⊔ d) ⊓ x`, each part lying
+    between `a` and `a ⊔ c`, respectively `b` and `b ⊔ d`. -/
+theorem Set.OrdConnected.sups (hs : s.OrdConnected) (ht : t.OrdConnected) (hs' : SupClosed s)
+    (ht' : SupClosed t) : (s ⊻ t).OrdConnected := by
+  rw [Set.ordConnected_iff]
+  intro y hy z hz hle x ⟨hx₁, hx₂⟩
+  obtain ⟨a, ha, b, hb, rfl⟩ := Set.mem_sups.mp hy
+  obtain ⟨c, hc, d, hd, rfl⟩ := Set.mem_sups.mp hz
+  refine Set.mem_sups.mpr ⟨(a ⊔ c) ⊓ x, hs.out ha (hs' ha hc)
+      ⟨le_inf le_sup_left (le_sup_left.trans hx₁), inf_le_left⟩, (b ⊔ d) ⊓ x,
+      ht.out hb (ht' hb hd) ⟨le_inf le_sup_left (le_sup_right.trans hx₁), inf_le_left⟩, ?_⟩
+  rw [← inf_sup_right, sup_sup_sup_comm, sup_eq_right.mpr hle, inf_eq_right.mpr hx₂]
+
+end DistribLattice
+
+end Closure
 
 namespace Set
 

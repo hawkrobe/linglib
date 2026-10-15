@@ -12,17 +12,16 @@ public import Linglib.Syntax.Gender.Decomposition
 # The domains of φ-features
 
 Following Sauerland, a φ-feature is a presuppositional partial identity function on entities: it
-asserts nothing and is defined on a domain, so it denotes that domain, a `Set` of entities. A
-bundle denotes the intersection of its features' domains (`Finset.inf`) and the empty bundle
-everything, so over well-formed bundles the domains nest by specification
-(`IsLowerSet.inf_le_inf_of_card_le`), the Feature-Subset Principle as a consequence of the
-privative geometry. Person is read at parthood of the agent and the addressee of the context of
-utterance, number at atomicity, and gender at the gender a referent is socially assigned
-(`Gendered`). For gender Sauerland makes masculine the unmarked value, the one coordinations of
-mixed gender take, with feminine presupposing non-masculinity and neuter genderlessness, so the
-neuter domain lies inside the feminine one. The person domains are the participant-set extents
-of `Person.Bears` pulled back along the participants of a referent, and a tripartition value
-denotes the referents in its domain and in no stronger one.
+asserts nothing and is defined on a domain, so it denotes that domain, a `Set` of entities. A bundle
+denotes the intersection of its features' domains (`Finset.inf`) and the empty bundle everything, so
+over well-formed bundles the domains nest by specification (`IsLowerSet.subset_or_subset` with
+`Finset.inf_mono`), the Feature-Subset Principle as a consequence of the privative geometry. Person
+is read at parthood of the agent and the addressee of the context of utterance, number at atomicity,
+and gender at the gender a referent is socially assigned (`Gendered`). For gender Sauerland makes
+masculine the unmarked value, the one coordinations of mixed gender take, with feminine presupposing
+non-masculinity and neuter genderlessness, so the neuter domain lies inside the feminine one. The
+person domains are the participant-set extents of `Person.Bears` pulled back along the participants
+of a referent, and a tripartition value denotes the referents in its domain and in no stronger one.
 
 ## Main definitions
 

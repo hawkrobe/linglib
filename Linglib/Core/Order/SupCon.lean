@@ -30,8 +30,6 @@ are unions of its classes.
 
 ## Main statements
 
-* `SupCon.r_iff_forall_supHom`: two elements are congruent iff every sup-homomorphism to `Prop`
-  whose kernel contains the congruence agrees on them.
 * `SupCon.r_iff_forall_le`: in a finite join-semilattice, two elements are congruent iff they lie
   in the same down-sets `Iic a` among those that are unions of classes.
 
@@ -87,27 +85,11 @@ def sepHom (y : α) : SupHom α Prop where
 
 @[simp] theorem sepHom_apply (y z : α) : c.sepHom y z ↔ ¬ c.r (z ⊔ y) y := Iff.rfl
 
-theorem sepHom_self (y : α) : ¬ c.sepHom y y := by
-  rw [sepHom_apply, sup_idem, not_not]
-
 /-- The congruence is contained in the kernel of each separating homomorphism. -/
 theorem le_ker_sepHom (y : α) : c.toSetoid ≤ Setoid.ker (c.sepHom y) := fun a b h ↦ by
   have hab := c.sup h (c.iseqv.refl y)
   refine Setoid.ker_def.mpr (propext ?_)
   exact not_congr ⟨fun h' ↦ c.iseqv.trans (c.iseqv.symm hab) h', fun h' ↦ c.iseqv.trans hab h'⟩
-
-/-- Two elements are congruent iff every sup-homomorphism to `Prop` whose kernel contains the
-congruence agrees on them. -/
-theorem r_iff_forall_supHom :
-    c.r x y ↔ ∀ f : SupHom α Prop, c.toSetoid ≤ Setoid.ker f → (f x ↔ f y) := by
-  refine ⟨fun h f hf ↦ eq_iff_iff.mp (hf h), fun h ↦ ?_⟩
-  have hy := (h (c.sepHom y) (c.le_ker_sepHom y)).mp
-  have hx := (h (c.sepHom x) (c.le_ker_sepHom x)).mpr
-  simp only [sepHom_apply, sup_idem] at hy hx
-  have hy' : c.r (x ⊔ y) y := by_contra fun h' ↦ hy h' (c.iseqv.refl y)
-  have hx' : c.r (y ⊔ x) x := by_contra fun h' ↦ hx h' (c.iseqv.refl x)
-  rw [sup_comm] at hx'
-  exact c.iseqv.trans (c.iseqv.symm hx') hy'
 
 /-- In a finite join-semilattice, the elements whose join with `y` stays in the class of `y` are
 the down-set of some element. -/

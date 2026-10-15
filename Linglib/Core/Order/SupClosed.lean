@@ -29,6 +29,7 @@ section SemilatticeSup
 
 variable [SemilatticeSup α] {f : ι → α} {s : Set ι} {a : α}
 
+@[to_dual]
 theorem mem_supClosure_image :
     a ∈ supClosure (f '' s) ↔ ∃ (t : Finset ι) (ht : t.Nonempty), ↑t ⊆ s ∧ t.sup' ht f = a := by
   classical
@@ -41,35 +42,10 @@ theorem mem_supClosure_image :
 
 end SemilatticeSup
 
-section SemilatticeInf
-
-variable [SemilatticeInf α] {f : ι → α} {s : Set ι} {a : α}
-
-theorem mem_infClosure_image :
-    a ∈ infClosure (f '' s) ↔ ∃ (t : Finset ι) (ht : t.Nonempty), ↑t ⊆ s ∧ t.inf' ht f = a := by
-  classical
-  constructor
-  · rintro ⟨T, hT, hTs, rfl⟩
-    obtain ⟨t, hts, rfl⟩ := Finset.subset_set_image_iff.1 hTs
-    exact ⟨t, Finset.image_nonempty.1 hT, hts, by simp [Finset.inf'_image]⟩
-  · rintro ⟨t, ht, hts, rfl⟩
-    exact finsetInf'_mem_infClosure ht fun i hi ↦ Set.mem_image_of_mem f (hts hi)
-
-end SemilatticeInf
-
-section CompleteLattice
-
-variable [CompleteLattice α]
-
-theorem sInf_supClosure (s : Set α) : sInf (supClosure s) = sInf s :=
+@[to_dual]
+theorem sInf_supClosure [CompleteLattice α] (s : Set α) : sInf (supClosure s) = sInf s :=
   le_antisymm (sInf_le_sInf subset_supClosure) <| le_sInf <| supClosure_min
     (fun _ ↦ sInf_le) fun _ ha _ _ ↦ le_sup_of_le_left ha
-
-theorem sSup_infClosure (s : Set α) : sSup (infClosure s) = sSup s :=
-  le_antisymm (sSup_le <| infClosure_min (fun _ ↦ le_sSup) fun _ ha _ _ ↦ inf_le_of_left_le ha)
-    (sSup_le_sSup subset_infClosure)
-
-end CompleteLattice
 
 namespace Set
 
@@ -105,8 +81,5 @@ theorem infClosure_range_eq_image :
 
 theorem sInter_supClosure (S : Set (Set W)) : ⋂₀ supClosure S = ⋂₀ S :=
   _root_.sInf_supClosure S
-
-theorem sUnion_infClosure (S : Set (Set W)) : ⋃₀ infClosure S = ⋃₀ S :=
-  _root_.sSup_infClosure S
 
 end Set
