@@ -96,11 +96,11 @@ example : transTree.SatisfiesFrames (.ofList [(1, citationValency English.Verbs.
 example : ditransTree.SatisfiesFrames (.ofList [(1, citationValency English.Verbs.give)]) := by
   decide
 
-/-- *John sleeps book: an intransitive with a spurious object. -/
+/-- *John sleeps book, an intransitive with a spurious object. -/
 def intransWithObj : Graph 3 :=
   .ofArcs [john, sleeps, book] 1 [(1, 0, .nsubj), (1, 2, .obj)]
 
-/-- *John devours: a transitive missing its object. -/
+/-- *John devours, a transitive missing its object. -/
 def transNoObj : Graph 2 := .ofArcs [john, devours] 1 [(1, 0, .nsubj)]
 
 example :
@@ -118,19 +118,20 @@ realizes the participant it denucleativizes. The intransitive use of an ergative
 opened*, also makes the object the subject, but it suppresses the agent, and no *by*-phrase
 expresses it. -/
 
-/-- The valency of the construction a voice derives: its derived frame's valency and an
+/-- The valency of the construction a voice derives, its derived frame's valency and an
 optional *by*-phrase for each initial core term the voice denucleativizes. -/
 def voiceValency (v : Voice) : Valency :=
   Valency.ofFrame v.derived.toArgumentFrame ++
-    (v.initial.coreSlots.filter (v.fate · = .denucleativized)).map fun _ ↦ ⟨.obl, .right, false⟩
+    (v.initial.coreSlots.filter (v.fate · = .denucleativized)).map
+      fun _ ↦ ⟨.obl, .headInitial, false⟩
 
-/-- (8a): the English passive has the subject and an optional *by*-phrase. -/
+/-- In (8a) the English passive has the subject and an optional *by*-phrase. -/
 theorem voiceValency_passive : voiceValency English.Verbs.passive = Valency.passiveTransitive := by
   decide
 
-/-- (8b): the passive of the double-object frame keeps the second object. -/
+/-- In (8b) the passive of the double-object frame keeps the second object. -/
 theorem voiceValency_passive_np_np : voiceValency (Voice.passive .np_np) =
-    [⟨.nsubj, .left, true⟩, ⟨.obj, .right, true⟩, ⟨.obl, .right, false⟩] := by
+    [⟨.nsubj, .headFinal, true⟩, ⟨.obj, .headInitial, true⟩, ⟨.obl, .headInitial, false⟩] := by
   decide
 
 /-- *Open* alternates by the anticausative, whose valency has no *by*-phrase. -/
@@ -155,7 +156,7 @@ example : passiveTree.SatisfiesFrames (.ofList [(3, passiveValency English.Verbs
 example : longPassiveTree.SatisfiesFrames (.ofList [(3, passiveValency English.Verbs.kick)]) := by
   decide
 
-/-- *The ball was kicked the pizza: a passive with a leftover object. -/
+/-- *The ball was kicked the pizza, a passive with a leftover object. -/
 def passiveWithObj : Graph 6 :=
   .ofArcs [the_, ball, was_, kickedPass, the_, pizza] 3
     [(1, 0, .det), (3, 1, .nsubj), (3, 2, .auxPass), (3, 5, .obj), (5, 4, .det)]
@@ -163,12 +164,12 @@ def passiveWithObj : Graph 6 :=
 example : ¬ passiveWithObj.SatisfiesFrames (.ofList [(3, passiveValency English.Verbs.kick)]) := by
   decide
 
-/-- *Mary was given a book*: the passive of a double-object verb keeps its second object. -/
+/-- In *Mary was given a book* the passive of a double-object verb keeps its second object. -/
 def ditransPassiveTree : Graph 5 :=
   .ofArcs [mary, was_, givenPass, a_, book] 2
     [(2, 0, .nsubj), (2, 1, .auxPass), (2, 4, .obj), (4, 3, .det)]
 
-/-- *Mary was given: the second object is missing. -/
+/-- *Mary was given, with the second object missing. -/
 def ditransPassiveNoObj : Graph 3 :=
   .ofArcs [mary, was_, givenPass] 2 [(2, 0, .nsubj), (2, 1, .auxPass)]
 

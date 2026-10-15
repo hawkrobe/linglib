@@ -128,6 +128,35 @@ def dependentEdge : HeadDirection → Edge
 
 theorem dependentEdge_injective : Function.Injective dependentEdge := by decide
 
+section Orders
+
+variable {α : Type*} {d : HeadDirection} {head dep : α}
+
+/-- `d.Orders head dep` holds when the dependent at `dep` lies in direction `d` of the head at
+`head`, after it for a head-initial head and before it for a head-final one. Unlike `ofLT`, it
+fails when the two positions coincide. -/
+def Orders [LT α] : HeadDirection → α → α → Prop
+  | headInitial, head, dep => head < dep
+  | headFinal, head, dep => dep < head
+
+instance [LT α] [DecidableLT α] :
+    ∀ (d : HeadDirection) (head dep : α), Decidable (d.Orders head dep)
+  | headInitial, _, _ => inferInstanceAs (Decidable (_ < _))
+  | headFinal, _, _ => inferInstanceAs (Decidable (_ < _))
+
+@[simp] theorem headInitial_orders [LT α] : headInitial.Orders head dep ↔ head < dep := Iff.rfl
+
+@[simp] theorem headFinal_orders [LT α] : headFinal.Orders head dep ↔ dep < head := Iff.rfl
+
+/-- `Orders` is `ofLT` on distinct positions. -/
+theorem orders_iff_ofLT [LinearOrder α] : d.Orders head dep ↔ head ≠ dep ∧ ofLT head dep = d := by
+  cases d
+  · exact ⟨fun h ↦ ⟨h.ne, ofLT_eq_headInitial.2 h⟩, fun h ↦ ofLT_eq_headInitial.1 h.2⟩
+  · refine ⟨fun h ↦ ⟨h.ne', ofLT_eq_headFinal.2 (not_lt.2 h.le)⟩, fun ⟨hne, h⟩ ↦ ?_⟩
+    exact lt_of_le_of_ne (not_lt.1 (ofLT_eq_headFinal.1 h)) hne.symm
+
+end Orders
+
 section nearest
 
 variable {α β : Type*}
