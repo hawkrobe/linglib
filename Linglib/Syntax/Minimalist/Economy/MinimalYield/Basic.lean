@@ -8,10 +8,10 @@ public import Mathlib.Order.OrderDual
 /-!
 # Minimal Yield
 
-Minimal Yield ([marcolli-chomsky-berwick-2025] Definition 1.6.1) is a condition on a transformation
-`F → F'` of workspaces: the number `b₀` of components does not grow (no divergence), the number
-`α` of accessible terms does not fall (no information loss), and the size `σ = b₀ + α` grows by
-exactly one (minimality of yield). `MinimalYieldWeak` is the first two bounds and `MinimalYield`
+Minimal Yield (Definition 1.6.1 of Marcolli, Chomsky and Berwick) is a condition on a
+transformation `F → F'` of workspaces. The number `b₀` of components does not grow (no
+divergence), the number `α` of accessible terms does not fall (no information loss), and the size
+`σ = b₀ + α` grows by exactly one (minimality of yield). `MinimalYieldWeak` is the first two bounds and `MinimalYield`
 all three. Both take the count of accessible terms of a component as a parameter, since
 Proposition 1.6.4 evaluates the one condition under two countings: the deletion coproduct counts
 every non-root vertex (`UnorderedTree.numEdges`), the trace coproduct every non-root vertex but its
@@ -21,8 +21,9 @@ trace leaves (`UnorderedTree.accessibleCount`). The weak form is monotonicity of
 On the carrier `UnorderedTree (α ⊕ β)`, with `Sum.inr` marking a trace, External Merge satisfies
 Minimal Yield under both countings. Internal Merge through a trace cut satisfies it under trace
 counting; under deletion counting it preserves all three measures and satisfies only the weak
-form. The divergent Sideward cases 3(a) and 3(b), which raise the number of components, violate
-both forms under any counting.
+form. A term of Merge whose two objects are both accessible terms rather than components, the
+Sideward cases 3(a) and 3(b), raises the number of components and violates both forms under any
+counting, as does the unit stage on its own.
 
 ## Main definitions
 
@@ -36,8 +37,10 @@ both forms under any counting.
 * `Minimalist.MinimalYield.im_accessibleCount_of_cut`: Internal Merge through a trace cut
   satisfies it under trace counting.
 * `Minimalist.MinimalYield.add_right`: spectators preserve it.
-* `Minimalist.MinimalYield.not_sideward_3a`, `not_sideward_3b`: the divergent Sideward cases do
-  not satisfy it.
+* `Minimalist.card_singleton_add_trunk_add_countP`: each component a term of Merge takes whole
+  lowers the number of components by one.
+* `Minimalist.MinimalYieldWeak.not_of_forall_notMem`: a term whose crown has no component of the
+  workspace violates it.
 
 ## References
 
@@ -217,74 +220,50 @@ theorem MinimalYield.im_accessibleCount_of_cut (lbl a₀ : α) (τ : UnorderedTr
   simp only [Forest.accessibleCount] at h2
   exact ⟨⟨h1.le, by omega⟩, by omega⟩
 
-/-! ### Sideward Merge -/
+/-! ### Terms of Merge and of its unit stage
 
-/-- Sideward Merge of type 2(b) leaves the component count `b₀` unchanged. -/
-theorem sideward_2b_b₀_preserved (T_i T_j Tnode T_j_q : UnorderedTree (α ⊕ β)) :
-    Multiset.card ({Tnode, T_j_q} : Forest (UnorderedTree (α ⊕ β)))
-      = Multiset.card ({T_i, T_j} : Forest (UnorderedTree (α ⊕ β))) := by
-  simp only [Multiset.insert_eq_cons, Multiset.card_cons, Multiset.card_singleton]
+A term of Merge or of its unit stage on `F` chooses a cut for each component of `F`
+(`mergeOpG_apply_of'_eq_sum`, `mergeOpUnitG_apply_of'_eq_sum`). Its workspace holds the object `X`
+built from the crown and the trunk of each component that was cut rather than taken whole. -/
 
-/-- Sideward Merge of type 3(a) increases the component count `b₀` by one. -/
-theorem sideward_3a_b₀_increases (T_i Tnode T_iq : UnorderedTree (α ⊕ β)) :
-    Multiset.card ({Tnode, T_iq} : Forest (UnorderedTree (α ⊕ β)))
-      = Multiset.card ({T_i} : Forest (UnorderedTree (α ⊕ β))) + 1 := by
-  simp only [Multiset.insert_eq_cons, Multiset.card_cons, Multiset.card_singleton]
+section Terms
 
-/-- Sideward Merge of type 3(b) increases the component count `b₀` by one. -/
-theorem sideward_3b_b₀_increases (T_i T_j Tnode T_iq T_jq : UnorderedTree (α ⊕ β)) :
-    Multiset.card ({Tnode, T_iq, T_jq} : Forest (UnorderedTree (α ⊕ β)))
-      = Multiset.card ({T_i, T_j} : Forest (UnorderedTree (α ⊕ β))) + 1 := by
-  simp only [Multiset.insert_eq_cons, Multiset.card_cons, Multiset.card_singleton]
+variable [DecidableEq (UnorderedTree α)]
+  {cuts : UnorderedTree α → Multiset (Forest (UnorderedTree α) × UnorderedTree α)}
+  {F : Forest (UnorderedTree α)}
+  {s : Multiset (UnorderedTree α × (Forest (UnorderedTree α) × Forest (UnorderedTree α)))}
 
-/-- Sideward Merge of type 3(a) violates the weak Minimal Yield principle (Δb₀ > 0). -/
-theorem MinimalYieldWeak.not_sideward_3a (acc : UnorderedTree (α ⊕ β) → ℕ)
-    (T_i Tnode T_iq : UnorderedTree (α ⊕ β)) :
-    ¬ MinimalYieldWeak acc ({T_i} : Forest (UnorderedTree (α ⊕ β)))
-                       ({Tnode, T_iq} : Forest (UnorderedTree (α ⊕ β))) := by
+/-- A term has one component for the object built from the crown and one for each component that
+    was cut, so each component taken whole lowers `b₀` by one. -/
+theorem card_singleton_add_trunk_add_countP (hs : s ∈ forestCutChoicesG cuts F)
+    (X : UnorderedTree α) :
+    Multiset.card ({X} + (s.map Prod.snd).sum.2) + s.countP (·.2.2 = 0) =
+      Multiset.card F + 1 := by
+  rw [Multiset.card_add, Multiset.card_singleton, add_assoc,
+    card_add_countP_of_mem_forestCutChoicesG hs, add_comm]
+
+/-- A term whose crown contains no component of the workspace raises `b₀` by one, so it violates
+    Minimal Yield under any counting. These are the Sideward cases 3(a) and 3(b)
+    ([marcolli-chomsky-berwick-2025] Proposition 1.6.8) and the unit stage on its own
+    (Remark 1.6.7). -/
+theorem MinimalYieldWeak.not_of_forall_notMem (acc : UnorderedTree α → ℕ)
+    (hs : s ∈ forestCutChoicesG cuts F) (hK : ∀ T ∈ (s.map Prod.snd).sum.1, T ∉ F)
+    (X : UnorderedTree α) : ¬ MinimalYieldWeak acc F ({X} + (s.map Prod.snd).sum.2) := by
   intro h
-  have hd := h.noDivergence
-  rw [sideward_3a_b₀_increases T_i Tnode T_iq] at hd
+  have h0 : s.countP (·.2.2 = 0) = 0 := Multiset.countP_eq_zero.mpr fun x hx hx0 ↦
+    hK x.1 (mem_fst_sum_map_snd_iff.mpr
+      ⟨x, hx, by simp [snd_eq_of_mem_forestCutChoicesG hs hx hx0]⟩)
+      (map_fst_of_mem_forestCutChoicesG hs ▸ Multiset.mem_map_of_mem Prod.fst hx)
+  have := card_singleton_add_trunk_add_countP hs X
+  have := h.noDivergence
   omega
 
-/-- Sideward Merge of type 3(b) violates the weak Minimal Yield principle (Δb₀ > 0). -/
-theorem MinimalYieldWeak.not_sideward_3b (acc : UnorderedTree (α ⊕ β) → ℕ)
-    (T_i T_j Tnode T_iq T_jq : UnorderedTree (α ⊕ β)) :
-    ¬ MinimalYieldWeak acc ({T_i, T_j} : Forest (UnorderedTree (α ⊕ β)))
-                       ({Tnode, T_iq, T_jq} : Forest (UnorderedTree (α ⊕ β))) := by
-  intro h
-  have hd := h.noDivergence
-  rw [sideward_3b_b₀_increases T_i T_j Tnode T_iq T_jq] at hd
-  omega
+/-- Strong-form corollary of `MinimalYieldWeak.not_of_forall_notMem`. -/
+theorem MinimalYield.not_of_forall_notMem (acc : UnorderedTree α → ℕ)
+    (hs : s ∈ forestCutChoicesG cuts F) (hK : ∀ T ∈ (s.map Prod.snd).sum.1, T ∉ F)
+    (X : UnorderedTree α) : ¬ MinimalYield acc F ({X} + (s.map Prod.snd).sum.2) :=
+  fun h ↦ MinimalYieldWeak.not_of_forall_notMem acc hs hK X h.toMinimalYieldWeak
 
-/-- Strong-form corollary of `MinimalYieldWeak.not_sideward_3a`. -/
-theorem MinimalYield.not_sideward_3a (acc : UnorderedTree (α ⊕ β) → ℕ)
-    (T_i Tnode T_iq : UnorderedTree (α ⊕ β)) :
-    ¬ MinimalYield acc ({T_i} : Forest (UnorderedTree (α ⊕ β)))
-                   ({Tnode, T_iq} : Forest (UnorderedTree (α ⊕ β))) :=
-  fun h ↦ MinimalYieldWeak.not_sideward_3a acc T_i Tnode T_iq h.toMinimalYieldWeak
-
-/-- Strong-form corollary of `MinimalYieldWeak.not_sideward_3b`. -/
-theorem MinimalYield.not_sideward_3b (acc : UnorderedTree (α ⊕ β) → ℕ)
-    (T_i T_j Tnode T_iq T_jq : UnorderedTree (α ⊕ β)) :
-    ¬ MinimalYield acc ({T_i, T_j} : Forest (UnorderedTree (α ⊕ β)))
-                   ({Tnode, T_iq, T_jq} : Forest (UnorderedTree (α ⊕ β))) :=
-  fun h ↦ MinimalYieldWeak.not_sideward_3b acc T_i T_j Tnode T_iq T_jq h.toMinimalYieldWeak
-
-/-! ### Unit merge -/
-
-/-- The unit-merge stage `{T} → {β, T/β}` violates weak Minimal Yield (Δb₀ > 0). -/
-theorem MinimalYieldWeak.not_unitMerge (acc : UnorderedTree (α ⊕ β) → ℕ)
-    (T β_t Q : UnorderedTree (α ⊕ β)) :
-    ¬ MinimalYieldWeak acc ({T} : Forest (UnorderedTree (α ⊕ β)))
-                       ({β_t, Q} : Forest (UnorderedTree (α ⊕ β))) :=
-  MinimalYieldWeak.not_sideward_3a acc T β_t Q
-
-/-- Strong-form corollary of `MinimalYieldWeak.not_unitMerge`. -/
-theorem MinimalYield.not_unitMerge (acc : UnorderedTree (α ⊕ β) → ℕ)
-    (T β_t Q : UnorderedTree (α ⊕ β)) :
-    ¬ MinimalYield acc ({T} : Forest (UnorderedTree (α ⊕ β)))
-                   ({β_t, Q} : Forest (UnorderedTree (α ⊕ β))) :=
-  MinimalYield.not_sideward_3a acc T β_t Q
+end Terms
 
 end Minimalist
