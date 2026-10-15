@@ -57,6 +57,12 @@ def maxAt : Constraint (Finset ℕ) := fun D ↦ (D.filter P).card
 @[simp] theorem maxAt_true (D : Finset ℕ) : maxAt (fun _ ↦ True) D = D.card := by
   simp [maxAt]
 
+/-- Deleting one more position adds a violation exactly when the position lies in `P`. -/
+theorem maxAt_insert {k : ℕ} {D : Finset ℕ} (hk : k ∉ D) :
+    maxAt P (insert k D) = maxAt P D + if P k then 1 else 0 := by
+  simp only [maxAt, Finset.filter_insert]
+  split_ifs <;> simp [Finset.card_insert_of_notMem (fun h ↦ hk (Finset.mem_filter.1 h).1)]
+
 /-- On the deletion of one position from a string, `maxAt P` counts the input segments in `P`
 that have no correspondent in the output. -/
 theorem maxAt_singleton_eq_maxViolAt {α : Type*} {s : List α} {k : ℕ} (hk : k < s.length) :
