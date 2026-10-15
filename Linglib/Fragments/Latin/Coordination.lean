@@ -35,9 +35,10 @@ namespace Latin.Coordination
 def et : Coordinator :=
   { morph := .free "et", gloss := "and", role := .conjunctive }
 
-/-- *-que* 'and', enclitic in the second coordinand, also in *quisque* 'each'. -/
+/-- *-que* 'and', enclitic in the second coordinand, also the particle of *quisque* 'each',
+`Latin.Determiners.quisque`. -/
 def que : Coordinator :=
-  { morph := .encl "que", gloss := "and", role := .conjunctive, alsoQuantifier := true }
+  { morph := .encl "que", gloss := "and", role := .conjunctive }
 
 /-- *atque*, before consonants *ac*, 'and also'. -/
 def atque : Coordinator :=

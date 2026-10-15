@@ -27,8 +27,9 @@ coordinands that its semantic type fixes, is `Coordinator.denote` in
 ## Implementation notes
 
 * A comitative use is a relation to a comitative marker of the language, an adposition or a case
-  with its exponents, not a field. The additive and quantifier uses are flags until the library
-  has entries for additive particles and for the quantifiers a particle builds.
+  with its exponents, not a field, and a quantifier use is an `IndeterminateQuantifier` of the
+  language whose particle is the coordinator. The additive use is a flag until the library has
+  entries for additive particles.
 * Analyses that divide the conjunctive coordinators further, such as the two conjunction heads
   of [mitrovic-sauerland-2016], classify the entries in their own studies.
 
@@ -69,9 +70,6 @@ structure Coordinator where
   role : Coordinator.Role
   /-- The form is also the additive focus particle 'also, too'. -/
   alsoAdditive : Bool := false
-  /-- The form also builds quantifiers, as Japanese *mo* and *ka* do on indeterminate
-  pronouns. -/
-  alsoQuantifier : Bool := false
   deriving DecidableEq, Repr
 
 /-- An emphatic coordination with correlative coordinators, English *both … and*, records the
@@ -93,7 +91,7 @@ variable (c : Coordinator)
 notation. -/
 def toWord : Morphology.Word := { form := toString c.morph, cat := .CCONJ }
 
-/-- `c.IsAlsoComitative ms fs`: the coordinator's morph is one of the forms `ms` of a marker whose
+/-- A coordinator is also comitative when its morph is one of the forms `ms` of a marker whose
 case values `fs` include the comitative, so that 'and' is 'with', [stassen-2000]'s lexical
 identity of the coordinator with the comitative marker. The marker is an adposition, with its
 morphs and functions, or a case of the language, with its exponents and functions. -/

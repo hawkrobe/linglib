@@ -7,6 +7,7 @@ public import Linglib.Fragments.Japanese.Determiners
 public import Linglib.Fragments.Hungarian.Coordination
 public import Linglib.Fragments.Georgian.Coordination
 public import Linglib.Fragments.Latin.Coordination
+public import Linglib.Fragments.Latin.Determiners
 public import Linglib.Fragments.Korean.Coordination
 public import Mathlib.Data.Fintype.Sigma
 public import Mathlib.Tactic.DeriveFintype
@@ -19,11 +20,11 @@ that Mitrović and Sauerland propose. The head μ combines with a predicate and 
 subset relation, (12a), and the head J′ intersects two quantifiers, (12b); an individual reaches
 μ through the shift to its characteristic property. The subset relation is the generalized
 quantifier *every* (`mu_eq_every`), which is why a μ particle on an indeterminate, Japanese
-*dare-mo*, is a universal quantifier (`dare_mo_denotes_mu`), and μ of a shifted individual is its
-Montague lift (`mu_shift`). The structure J′(μ(↑a))(μ(↑b)) of (13) therefore denotes the meet of
-the two lifts (`conjunction_eq`), true of a predicate that holds of each conjunct
-(`conjunction_apply`), with no collective reading. Both μ heads are needed: J′ applied to the
-shifted individuals directly is contradictory unless the conjuncts are identical
+*dare-mo* or Latin *quis-que*, is a universal quantifier (`mu_of_conjunctive_particle`), and μ of
+a shifted individual is its Montague lift (`mu_shift`). The structure J′(μ(↑a))(μ(↑b)) of (13)
+therefore denotes the meet of the two lifts (`conjunction_eq`), true of a predicate that holds of
+each conjunct (`conjunction_apply`), with no collective reading. Both μ heads are needed: J′
+applied to the shifted individuals directly is contradictory unless the conjuncts are identical
 (`shift_inf_shift_eq_bot_iff`).
 
 The structure has three heads, J and a μ head on each conjunct (`Head`), and a conjunction strategy
@@ -40,9 +41,9 @@ the paper attests in Southeastern Macedonian, Hungarian, and Avar (`hasAllThreeS
 ## Implementation notes
 
 Which coordinator of a language is J and which is μ is the paper's classification, recorded in
-the language records here; the Fragment entries they point to carry only the descriptive facts
-the generalizations are checked against, whether a form is also an additive particle or builds
-quantifiers. Georgian, Korean, and Slovenian follow [mitrovic-2021], and Southeastern
+the language records here; the generalizations are checked against the descriptive facts of the
+Fragments, whether a form is also an additive particle and which indeterminate quantifiers have
+it as their particle. Georgian, Korean, and Slovenian follow [mitrovic-2021], and Southeastern
 Macedonian, Avar, and Serbo-Croatian are not in the sample. The typological table of languages
 with distinct nominal and verbal conjunctions is not formalized.
 
@@ -104,12 +105,23 @@ theorem shift_inf_shift_eq_bot_iff {a b : α} : shift a ⊓ shift b = ⊥ ↔ a 
 
 end Semantics
 
-/-- The universal reading of Japanese *dare-mo* 'everyone' is μ, (1a) and (15). -/
-theorem dare_mo_denotes_mu {α : Type} [Fintype α] {d : GQ.Family}
-    (h : d ∈ ⟦Japanese.Determiners.dare_mo⟧) : d α = mu := by
-  rw [Japanese.Determiners.denote_dare_mo] at h
-  obtain rfl : d = GQ.Family.every := h
+/-- An indeterminate quantifier whose particle is conjunctive denotes μ, (15). -/
+theorem mu_of_conjunctive_particle {q : IndeterminateQuantifier}
+    (hq : q.particle.role = .conjunctive) {α : Type} [Fintype α] {d : GQ.Family}
+    (h : d ∈ ⟦q⟧) : d α = mu := by
+  obtain rfl : d = q.reading := h
+  rw [IndeterminateQuantifier.reading_of_conjunctive hq]
   rfl
+
+/-- The universal reading of Japanese *dare-mo* 'everyone' is μ, (1a). -/
+theorem dare_mo_denotes_mu {α : Type} [Fintype α] {d : GQ.Family}
+    (h : d ∈ ⟦Japanese.Determiners.dare_mo⟧) : d α = mu :=
+  mu_of_conjunctive_particle rfl h
+
+/-- Latin *quis-que* 'each' is μ on the indeterminate *quis*, (40). -/
+theorem quisque_denotes_mu {α : Type} [Fintype α] {d : GQ.Family}
+    (h : d ∈ ⟦Latin.Determiners.quisque⟧) : d α = mu :=
+  mu_of_conjunctive_particle rfl h
 
 /-! ### Exponence -/
 
@@ -151,14 +163,14 @@ theorem exists_pronounced_eq_iff (h : Finset Head) :
     revert h
     decide
 
-/-- A language's exponents of the two heads, which the paper classifies, and the strategies it
-allows. -/
+/-- A language's exponents of the two heads, which the paper classifies, the strategies it
+allows, and its indeterminate quantifiers in the Fragments. -/
 structure ConjunctionSystem where
   language : String
   j : Option Coordinator
   mu : Option Coordinator
   strategies : List ConjunctionStrategy
-  deriving Repr
+  quantifiers : List IndeterminateQuantifier := []
 
 /-- English has only J, *and*. -/
 def english : ConjunctionSystem :=
@@ -168,7 +180,8 @@ def english : ConjunctionSystem :=
 /-- Japanese *to* is J and *mo* is μ. -/
 def japanese : ConjunctionSystem :=
   { language := "Japanese", j := some Japanese.Coordination.to_,
-    mu := some Japanese.Coordination.mo, strategies := [.jOnly, .muOnly] }
+    mu := some Japanese.Coordination.mo, strategies := [.jOnly, .muOnly],
+    quantifiers := Japanese.Determiners.indefinites }
 
 /-- Hungarian *és* is J and *is* is μ; the language pronounces J and the two μ heads at once,
 *Kati is és Mari is*, (28). -/
@@ -184,7 +197,7 @@ def georgian : ConjunctionSystem :=
 /-- Latin *et* is J and the enclitic *-que* is μ, §3.3. -/
 def latin : ConjunctionSystem :=
   { language := "Latin", j := some Latin.Coordination.et, mu := some Latin.Coordination.que,
-    strategies := [.jOnly, .muOnly] }
+    strategies := [.jOnly, .muOnly], quantifiers := [Latin.Determiners.quisque] }
 
 /-- Korean *-(i)rang* is J and *-do* is μ, following [mitrovic-2021]. -/
 def korean : ConjunctionSystem :=
@@ -223,14 +236,14 @@ theorem strategies_exponent : ∀ sys ∈ msLanguages, ∀ st ∈ sys.strategies
 theorem hungarian_triadic : hasAllThreeStrategies hungarian := by decide
 
 /-- Every μ coordinator of the sample has a use outside conjunction, as an additive particle or
-in quantifiers, §3. -/
+as the particle of an indeterminate quantifier, §3. -/
 theorem mu_has_other_use : ∀ sys ∈ msLanguages, ∀ c ∈ sys.mu,
-    c.alsoAdditive = true ∨ c.alsoQuantifier = true := by
+    c.alsoAdditive = true ∨ ∃ q ∈ sys.quantifiers, q.particle = c := by
   decide
 
 /-- No J coordinator of the sample has an additive or a quantificational use, §3. -/
 theorem j_has_no_other_use : ∀ sys ∈ msLanguages, ∀ c ∈ sys.j,
-    c.alsoAdditive = false ∧ c.alsoQuantifier = false := by
+    c.alsoAdditive = false ∧ ∀ q ∈ sys.quantifiers, q.particle ≠ c := by
   decide
 
 /-- Every coordinator the paper classifies as J or μ is conjunctive in the Fragments. -/

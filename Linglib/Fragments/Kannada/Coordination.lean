@@ -31,13 +31,12 @@ namespace Kannada.Coordination
 /-- *-uu* 'and', enclitic on each coordinand, also the additive 'also' and the marker of the
 *-uu* series of indefinites, `Kannada.Indefinites.uuEntry`. -/
 def uu : Coordinator :=
-  { morph := .encl "uu", gloss := "and; also", role := .conjunctive, alsoAdditive := true,
-    alsoQuantifier := true }
+  { morph := .encl "uu", gloss := "and; also", role := .conjunctive, alsoAdditive := true }
 
 /-- *-oo* 'or', enclitic, also the marker of the *-oo* series of indefinites,
 `Kannada.Indefinites.ooEntry`. -/
 def oo : Coordinator :=
-  { morph := .encl "oo", gloss := "or", role := .disjunctive, alsoQuantifier := true }
+  { morph := .encl "oo", gloss := "or", role := .disjunctive }
 
 /-- The coordinators. -/
 def allEntries : List Coordinator := [uu, oo]
