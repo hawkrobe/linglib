@@ -11,39 +11,37 @@ public import Linglib.Semantics.Modality.Basic
 /-!
 # The speech event and its content
 
-[hacquard-2006] (pp. 141–3) adopts [speas-tenny-2003]'s Speech Act
-Phrase — every matrix clause is headed by a SAP whose head introduces
-a speech event `e*` and encodes illocutionary force — and adds one
-assumption: the speech event has *content*, varying with the type of
-speech act. For a declarative, `CON(e*)` is the speaker's beliefs;
-for an imperative, the addressee's To-Do List ([portner-2004]). A
-modal bound by `e*` reads `CON(e*)` as its conversational background,
-so the speech act type determines the modal's flavor with no lexical
-ambiguity. Here `CON(e*)` enters the mood state through the
-force-targeted update — declarative content is `assert`ed, imperative
-content `promote`d — and the licensed modal and flavor are read off
-the targeted component.
+Hacquard (pp. 141–3) adopts the Speech Act Phrase of Speas and Tenny, whose head introduces a
+speech event `e*` and encodes illocutionary force, and adds that the speech event has content
+`CON(e*)`: the speaker's beliefs for a declarative, the addressee's To-Do List for an
+imperative. A modal bound by `e*` reads `CON(e*)` as its conversational background, so the
+speech act fixes the modal's flavor without lexical ambiguity. Here `CON(e*)` enters the mood
+state through the update of the force's component, and the licensed modal and flavor are read
+off that component.
 
-## Main declarations
+## Main definitions
 
-* `SpeechEvent` — a force together with `CON(e*)`.
-* `SpeechEvent.toState`, `SpeechEvent.modal` — the induced state and
-  its licensed necessity modal.
-* `Component.flavor`, `Discourse.SpeechAct.Force.primaryFlavor` — Hacquard's
-  flavor assignment, derived from component targeting.
-* `HasTarget ModalFlavor` — the third instance of [portner-2018]'s
-  classification.
+* `Mood.SpeechEvent`: a force together with `CON(e*)`.
+* `Mood.SpeechEvent.toState`, `Mood.SpeechEvent.modal`: the induced state and its modal.
+* `Discourse.SpeechAct.Force.primaryFlavor`: Hacquard's flavor of a speech act, read off its
+  component.
 
 ## Implementation notes
 
-[speas-tenny-2003] grammaticalize exactly four speech acts
-(declarative, interrogative, imperative, subjunctive). `SpeechEvent`
-uses the library-wide five-way `Discourse.SpeechAct.Force` — no subjunctive;
-promissive and exclamative are conjectural linglib extensions — and
-Hacquard gives content clauses only for declaratives and imperatives,
-so the inquisitive route induces the initial state. Binding height
-(*which* event a modal is bound by) is
-`Semantics/Modality/EventRelativity`'s territory.
+* Speas and Tenny derive four speech acts, declarative, interrogative, imperative and
+  subjunctive; `Discourse.SpeechAct.Force` has no subjunctive and adds the promissive and the
+  exclamative.
+* Hacquard gives content only to declaratives and imperatives, so an interrogative induces the
+  initial state.
+* Which event binds a modal is the business of `Semantics/Modality/EventRelativity.lean`.
+
+## References
+
+* [hacquard-2006]
+* [speas-tenny-2003]
+* [portner-2004]
+* [portner-2018]
+* [kratzer-1981]
 -/
 
 @[expose] public section
@@ -106,15 +104,14 @@ theorem SpeechEvent.mem_toState_declarative_info
   rw [SpeechEvent.toState_declarative, ExpState.mem_foldl_assert_info]
   simp [ExpState.init]
 
-/-- An imperative's ordering prefers TDL-compliant worlds — the
-[kratzer-1981] ordering-source construction, arrived at by
-promotion. -/
+/-- An imperative ranks `w` at least as high as `v` when `w` complies with every item on the
+To-Do List that `v` complies with, the ordering source of [kratzer-1981] reached by promotion. -/
 theorem SpeechEvent.toState_imperative_le
     (todo : W → List (W → Prop)) (w₀ w v : W) :
     ((SpeechEvent.imperative todo).toState w₀).order.le w v ↔
       ∀ p ∈ todo w₀, p v → p w := by
   rw [SpeechEvent.toState_imperative, ExpState.foldl_promote_order_le]
-  exact ⟨And.right, fun h => ⟨trivial, h⟩⟩
+  exact ⟨And.right, fun h ↦ ⟨trivial, h⟩⟩
 
 /-- The To-Do List ranks worlds; it does not eliminate them. -/
 theorem SpeechEvent.toState_imperative_info
@@ -155,11 +152,9 @@ theorem SpeechEvent.modal_declarative_iff
 
 /-! ### Flavor factors through the component classification -/
 
-/-- Modal flavors target the component their Kratzer parameter feeds:
-modal-base flavors the informational, ordering-source flavors the
-preferential ([kratzer-1981]'s parameter roles; [portner-2018],
-p. 233). The third instance of the one classification, beside
-sentence and verbal mood. -/
+/-- A modal flavor targets the component its Kratzer parameter feeds, the informational one for
+the modal-base flavors and the preferential one for the ordering-source flavors, as in Portner's
+gloss of his (3) ([portner-2018], p. 234). -/
 instance : HasTarget Modality.ModalFlavor where
   target
     | .epistemic      => .informational
@@ -180,9 +175,8 @@ the targeted component's flavor. -/
 def _root_.Discourse.SpeechAct.Force.primaryFlavor (f : Force) : ModalFlavor :=
   (target f).flavor
 
-/-- `Component.flavor` is a section of the modal-flavor targeting on
-the two POSW components: the representative flavor of a component
-targets that component back. -/
+/-- On the informational and preferential components the flavor of a component targets that
+component back. -/
 theorem target_flavor (c : Component) (h : c ≠ .inquisitive) :
     target c.flavor = c := by
   cases c <;> first | rfl | exact absurd rfl h
@@ -193,8 +187,8 @@ theorem target_flavor (c : Component) (h : c ≠ .inquisitive) :
 @[simp] theorem primaryFlavor_imperative :
     Force.imperative.primaryFlavor = .deontic := rfl
 
-/-- Different speech acts, different flavors — the "must" ambiguity
-without lexical ambiguity. -/
+/-- The declarative and the imperative license different flavors, so *must* varies in flavor
+without being lexically ambiguous. -/
 theorem speech_act_determines_flavor :
     Force.declarative.primaryFlavor ≠ Force.imperative.primaryFlavor := by decide
 
@@ -210,11 +204,11 @@ inductive LeaveWorld where | leave | stay
 
 /-- In the declarative context the speaker's evidence is compatible with both outcomes. -/
 def declarativeEvidence : SpeechEvent LeaveWorld :=
-  .declarative (fun _ => [])
+  .declarative (fun _ ↦ [])
 
 /-- In the imperative context *leave* is on the addressee's To-Do List. -/
 def imperativePermission : SpeechEvent LeaveWorld :=
-  .imperative (fun _ => [(· = .leave)])
+  .imperative (fun _ ↦ [(· = .leave)])
 
 /-- Under the declarative, the speaker's evidence leaves staying
 open. -/
@@ -234,12 +228,12 @@ theorem imperative_leave_required :
     have hle : (imperativePermission.toState LeaveWorld.leave).order.le
         LeaveWorld.leave v :=
       (SpeechEvent.toState_imperative_le _ LeaveWorld.leave LeaveWorld.leave v).mpr
-        (fun p hp _ => by rw [List.mem_singleton] at hp; subst hp; rfl)
+        (fun p hp _ ↦ by rw [List.mem_singleton] at hp; subst hp; rfl)
     have hmem : LeaveWorld.leave ∈ (imperativePermission.toState LeaveWorld.leave).info :=
       (SpeechEvent.toState_imperative_info _ LeaveWorld.leave) ▸ Set.mem_univ _
     have hvl := hv.2 hmem hle
     exact hstay ((SpeechEvent.toState_imperative_le _ LeaveWorld.leave v
       LeaveWorld.leave).mp hvl (· = LeaveWorld.leave) (List.mem_singleton_self _) rfl)
-  exact fun v hv => hchar v hv
+  exact hchar
 
 end Mood
