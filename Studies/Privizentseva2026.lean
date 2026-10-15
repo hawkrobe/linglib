@@ -2,6 +2,7 @@ module
 
 public import Linglib.Syntax.Minimalist.LateMerger
 public import Linglib.Syntax.Minimalist.SyntacticObject.Label
+public import Linglib.Syntax.Minimalist.Derivation.Licensing
 public import Linglib.Syntax.Case.Basic
 public import Linglib.Syntax.Clause.Relative
 public import Linglib.Data.Examples.Privizentseva2026
@@ -24,10 +25,12 @@ above some merge point, and Condition C a merge point above the pronoun
 whose case was valued in the relative clause has no active case probe for main-clause selection,
 so it is displaced (section 5.3), which the labeling algorithm, labeling the verb and its object
 whatever the object's case, does not force. Merging the relative determiner with a noun that
-still selects the relative clause is outside triggered Merge, where one factor is saturated. The
-appositive and restrictive readings of relatives with ICA rule out a correlative or internally
-headed placement (section 3.3.1), and attraction is not ordered by a case hierarchy (section
-3.5).
+still selects the relative clause is outside triggered Merge, where one factor is saturated; the
+book lets a phrase be selected before it is saturated (section 5.5), which licenses every stage
+of the raising derivation; triggered Merge rejects the stages before the noun moves, though it
+accepts the derived object, which holds only the noun's trace. The appositive and restrictive
+readings of relatives with ICA rule out a correlative or internally headed placement (section
+3.3.1), and attraction is not ordered by a case hierarchy (section 3.5).
 
 ## Main statements
 
@@ -35,7 +38,9 @@ headed placement (section 3.3.1), and attraction is not ordered by a case hierar
 * `no_uniform_derivation`, `raising_only_fails`: the rivals the book rejects fail on the rows.
 * `inSitu_rows`: a relative stays in its base position exactly when its head's case probe is
   still active there.
-* `fits_ica_iff`: only an externally headed placement fits the readings of relatives with ICA.
+* `raisingRelative_licensed`, `triggeredMerge_rejects_raisingRelative`: selection before
+  saturation licenses the raising derivation at every stage, which triggered Merge rejects though
+  it accepts the derived object.
 
 ## Implementation notes
 
@@ -53,6 +58,12 @@ headed placement (section 3.3.1), and attraction is not ordered by a case hierar
   chain of the head's restrictor does not model; the rows ch. 6 (11) and (12) record the data.
 * The merge positions that section 5.4.4 gives the head inside a postpositional phrase are not
   modelled; `konaRows_case` records the pattern they derive.
+* `raisingRelative` leaves *kona*'s phrase in situ. Moved to Spec,CP it would leave a trace without
+  a token, since a moved phrase's trace takes its head from `selHead`, triggered selection, under
+  which *kona* selecting a still-selecting noun has no head. The book's own order, copying the
+  noun and *kona*'s phrase to a stack in the workspace (the book's (14)–(16)), would need the
+  extraction stage of Internal Merge as a derivation step: replayed in sequence, the noun would
+  leave a moved phrase, against Freezing, as footnote 14 of the article notes.
 
 ## References
 
@@ -342,6 +353,107 @@ theorem selCheck_merge_eq_zero_of_sel_ne_nil {d n : Minimalist.LexicalItem.Token
   simp_all [Minimalist.SelectionState.IsSaturated, Minimalist.SelectionState.residual,
     Minimalist.SelectionState.of]
 
+/-! ### Projecting movement (section 5.2.2) -/
+
+section ProjectingMovement
+
+open Minimalist
+
+/-- A selection state that lets an item still selecting be selected, the second implication the
+book draws (section 5.5): the head, its remaining selectors, and the selectors pending from items
+selected before they were saturated. -/
+structure PendingState where
+  toOption : Option (LexicalItem.Token × List Cat × Multiset Cat)
+  deriving DecidableEq
+
+namespace PendingState
+
+instance : Zero PendingState := ⟨⟨none⟩⟩
+
+/-- One factor selects the other, which need not be saturated; the selectee's remaining selectors
+become pending. -/
+def combine : PendingState → PendingState → PendingState
+  | ⟨some (a, ra, p)⟩, ⟨some (b, rb, q)⟩ =>
+    if ra.head? = some b.item.cat ∧ rb.head? ≠ some a.item.cat then ⟨some (a, ra.tail, p + q + rb)⟩
+    else if rb.head? = some a.item.cat ∧ ra.head? ≠ some b.item.cat then
+      ⟨some (b, rb.tail, p + q + ra)⟩
+    else ⟨none⟩
+  | _, _ => ⟨none⟩
+
+instance : MulZeroClass PendingState where
+  mul := combine
+  zero_mul _ := rfl
+  mul_zero x := by rcases x with ⟨_ | ⟨a, ra, p⟩⟩ <;> rfl
+
+theorem mul_def (x y : PendingState) : x * y = combine x y := rfl
+
+instance : CommMagma PendingState where
+  mul_comm x y := by
+    rcases x with ⟨_ | ⟨a, ra, p⟩⟩ <;> rcases y with ⟨_ | ⟨b, rb, q⟩⟩ <;>
+      simp only [mul_def, combine]
+    split_ifs <;> simp_all [add_comm]
+
+instance : Head PendingState where
+  head x := x.toOption.map (·.1)
+  head_zero := rfl
+  mem_head_or_mem_head_of_mem_head_mul {x y t} h := by
+    rcases x with ⟨_ | ⟨a, ra, p⟩⟩ <;> rcases y with ⟨_ | ⟨b, rb, q⟩⟩ <;>
+      simp only [Option.mem_def, mul_def, combine] at h ⊢
+    all_goals first | cases h | (split_ifs at h <;> simp_all)
+
+end PendingState
+
+/-- Selection before saturation as a licensing: a token with its selectors, a trace a saturated
+copy of the phrase its token heads. -/
+noncomputable def pendingHom : SyntacticObject →ₙ* PendingState :=
+  SyntacticObject.lift (fun tok ↦ ⟨some (tok, tok.item.sel, 0)⟩)
+    (fun u ↦ ⟨some (u.getD .bareTrace, [], 0)⟩)
+
+/-- The head noun, selecting the relative CP. -/
+def headNoun : LexicalItem.Token := ⟨.of .N [.C], 1⟩
+
+/-- The relative pronoun *kona*, selecting the noun. -/
+def kona : LexicalItem.Token := ⟨.of .D [.N] (phonForm := "kona"), 2⟩
+
+/-- The verb of the relative clause, selecting *kona*'s phrase. -/
+def rcVerb : LexicalItem.Token := ⟨.of .V [.D], 3⟩
+
+/-- Tense, selecting the verb phrase. -/
+def rcTense : LexicalItem.Token := ⟨.of .T [.V], 4⟩
+
+/-- The relative complementizer, selecting tense. -/
+def relC : LexicalItem.Token := ⟨.of .C [.T], 5⟩
+
+/-- The external determiner, selecting the noun. -/
+def externalD : LexicalItem.Token := ⟨.of .D [.N], 6⟩
+
+/-- The raising relative of section 5.2.2: the noun merges with *kona* while it still selects the
+relative CP, which is built over them; the noun then moves, selects the CP and projects, and the
+external determiner selects it. -/
+def raisingRelative : Minimalist.Derivation :=
+  ⟨headNoun, [.em .left kona, .em .left rcVerb, .em .left rcTense, .em .left relC, .im headNoun,
+    .em .left externalD]⟩
+
+/-- Selection before saturation licenses every stage of the raising relative, and the derived
+object leaves nothing pending: the noun's selector, pending since *kona* selected it, is checked
+once the noun moves and selects the relative CP. -/
+theorem raisingRelative_licensed :
+    raisingRelative.LicensedBy pendingHom ∧
+      ∃ p ∈ raisingRelative.externalize?, pendingHom p.toSyntacticObject =
+        ⟨some (externalD, [], 0)⟩ := by
+  decide
+
+/-- Triggered Merge accepts the derived relative but rejects its derivation: it fails exactly at
+the stages from *kona*'s Merge with the still-selecting noun to the noun's movement, which the
+derived object, holding only the noun's trace inside the relative clause, no longer shows. -/
+theorem triggeredMerge_rejects_raisingRelative :
+    raisingRelative.LicensedAt SyntacticObject.selCheckHom raisingRelative.length ∧
+      ∀ n ≤ raisingRelative.length,
+        (¬ raisingRelative.LicensedAt SyntacticObject.selCheckHom n ↔ n ∈ [1, 2, 3, 4]) := by
+  decide
+
+end ProjectingMovement
+
 /-! ### The attracted case (section 3.5) -/
 
 /-- The cases the rows name, read as the comparative cases of `Case`. -/
@@ -443,6 +555,7 @@ def konaRows : List (Case × Case × Bool) := Examples.all.filterMap fun ex ↦ 
 
 example : konaRows.length = 34 := by decide
 
+attribute [local instance high] List.decidableBAll in
 /-- In an accepted relative with ICA the head and *kona* share their case exactly when *kona* has
 it, and *kona* inflected for a case it lacks is rejected. -/
 theorem konaRows_case :
@@ -461,6 +574,7 @@ def islandRows : List (Option Strategy × Bool) := Examples.all.filterMap fun ex
 
 example : islandRows.length = 8 := by decide
 
+attribute [local instance high] List.decidableBAll in
 /-- Section 3.3.2: a plain noun phrase and both kinds of externally headed relative are rejected
 at the left edge when their base position is inside an island, and correlatives are not, so the
 first reach the left edge by movement and correlatives are generated there. -/
