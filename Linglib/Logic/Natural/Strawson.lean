@@ -365,8 +365,8 @@ theorem isStrawsonUE_glad : IsStrawsonUE (glad dox base g) :=
 `0` or `1` holds but not that `0` does. -/
 theorem not_isStrawsonDE_glad :
     ¬ IsStrawsonDE (glad (fun _ : Fin 3 ↦ {0}) (fun _ ↦ .univ) (fun _ ↦ {(· = 1)})) := by
-  have hb : bestAmong (Set.univ : Set (Fin 3)) {(· = 1)} = {1} := by
-    rw [bestAmong_eq_of_exists ⟨1, Set.mem_univ _, by simp⟩]
+  have hb : (premisePreorder {(· = 1)}).minimals (Set.univ : Set (Fin 3)) = {1} := by
+    rw [Preorder.minimals_ofCriteria_eq ⟨1, Set.mem_univ _, by simp⟩]
     ext
     simp
   intro h
@@ -397,8 +397,8 @@ theorem not_antitone_truthSet_regret :
   refine not_antitone_truthSet (p := ∅) (q := {true}) (w := true) (Set.empty_subset _)
     ⟨⟨subset_rfl, Set.subset_univ _, ⟨true, trivial, rfl⟩, ⟨false, trivial, by simp⟩⟩, ?_⟩
     fun h ↦ h.1 rfl
-  show bestAmong .univ {(· = false)} ⊆ {true}ᶜ
-  rw [bestAmong_eq_of_exists ⟨false, Set.mem_univ _, by simp⟩]
+  show (premisePreorder {(· = false)}).minimals .univ ⊆ {true}ᶜ
+  rw [Preorder.minimals_ofCriteria_eq ⟨false, Set.mem_univ _, by simp⟩]
   intro x hx
   simp_all
 

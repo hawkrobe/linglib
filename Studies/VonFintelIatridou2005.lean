@@ -85,8 +85,8 @@ abbrev goals : Background Hoboken := λ _ => {goHoboken}
 ordered by the actual goals, makes the Harlem sentence false, since the best *want-Harlem*
 world takes the PATH train. -/
 theorem not_obvious : ¬ conditionalNecessity ⊥ goals wantHarlem takeA wantA := by
-  simp only [conditionalNecessity, necessity_iff, bestWorlds, mem_bestAmong,
-    Background.mem_accessibleWorlds, Background.restrict, atLeastAsGoodAs_iff,
+  simp only [conditionalNecessity, necessity_iff, bestWorlds, Preorder.mem_minimals_iff,
+    Background.mem_accessibleWorlds, Background.restrict, Preorder.ofCriteria_le_iff,
     Set.mem_insert_iff, Set.mem_singleton_iff, forall_eq_or_imp, forall_eq, Pi.bot_apply,
     Set.bot_eq_empty, Set.mem_empty_iff_false, false_imp_iff, implies_true, and_true,
     ]
@@ -116,8 +116,9 @@ abbrev saebo : Background Conflict := λ _ => {goHoboken, goHarlem}
 /-- Sæbø's analysis makes the Harlem sentence false, since with the two goals inconsistent the
 best worlds achieve either, and not all take the A train. -/
 theorem not_saebo : ¬ necessity ⊥ saebo takeA aTrain := by
-  simp only [necessity_iff, bestWorlds, mem_bestAmong, Background.mem_accessibleWorlds,
-    atLeastAsGoodAs_iff, Set.mem_insert_iff, Set.mem_singleton_iff, forall_eq_or_imp, forall_eq,
+  simp only [necessity_iff, bestWorlds, Preorder.mem_minimals_iff, Background.mem_accessibleWorlds,
+    Preorder.ofCriteria_le_iff, Set.mem_insert_iff, Set.mem_singleton_iff,
+    forall_eq_or_imp, forall_eq,
     Pi.bot_apply,
     Set.bot_eq_empty, Set.mem_empty_iff_false, false_imp_iff,
     implies_true]
@@ -160,8 +161,8 @@ the Hoboken goal survives and the PATH train is among the best worlds. -/
 theorem not_nested :
     ¬ conditionalNecessity ⊥ closeness wantHarlem
       (λ w' => necessity ⊥ goals takeA w') actual := by
-  simp only [conditionalNecessity, necessity_iff, bestWorlds, mem_bestAmong,
-    Background.mem_accessibleWorlds, Background.restrict, atLeastAsGoodAs_iff,
+  simp only [conditionalNecessity, necessity_iff, bestWorlds, Preorder.mem_minimals_iff,
+    Background.mem_accessibleWorlds, Background.restrict, Preorder.ofCriteria_le_iff,
     Set.mem_insert_iff, Set.mem_singleton_iff, forall_eq_or_imp, forall_eq, Pi.bot_apply,
     Set.bot_eq_empty, Set.mem_empty_iff_false, false_imp_iff, implies_true, and_true,
     ]
@@ -193,7 +194,7 @@ considerations. -/
 theorem oughtTo_of_haveTo (h : haveTo f p q w) : oughtTo f g p q w := by
   rw [oughtTo, conditionalNecessity, necessity_iff]
   intro v hv
-  have hv' := Background.mem_accessibleWorlds.1 (bestAmong_subset _ _ hv)
+  have hv' := Background.mem_accessibleWorlds.1 (Preorder.minimals_subset _ _ hv)
   exact haveTo_iff.1 h v (Background.mem_accessibleWorlds.2 λ r hr =>
     hv' r (Set.mem_insert_of_mem _ hr)) (hv' p (Set.mem_insert _ _))
 
@@ -208,8 +209,9 @@ theorem exists_oughtTo_not_haveTo :
     oughtTo (⊥ : Background Bool) (λ _ => {(· = true)}) (λ _ => True) (· = true) true ∧
       ¬ haveTo (⊥ : Background Bool) (λ _ => True) (· = true) true := by
   simp only [oughtTo, conditionalNecessity, haveTo_iff, necessity_iff, bestWorlds,
-    mem_bestAmong, Background.mem_accessibleWorlds, Background.restrict,
-    atLeastAsGoodAs_iff, Set.mem_insert_iff, Set.mem_singleton_iff, forall_eq_or_imp, forall_eq,
+    Preorder.mem_minimals_iff, Background.mem_accessibleWorlds, Background.restrict,
+    Preorder.ofCriteria_le_iff, Set.mem_insert_iff, Set.mem_singleton_iff,
+    forall_eq_or_imp, forall_eq,
     Pi.bot_apply,
     Set.bot_eq_empty, Set.mem_empty_iff_false, false_imp_iff, implies_true,
     and_true]
@@ -237,8 +239,9 @@ theorem not_haveTo_and_oughtTo :
     ¬ haveTo ⊥ (λ _ => True) takeA aTrain ∧
       oughtTo ⊥ (λ _ => {meetRuud}) (λ _ => True) takeA aTrain := by
   simp only [oughtTo, conditionalNecessity, haveTo_iff, necessity_iff, bestWorlds,
-    mem_bestAmong, Background.mem_accessibleWorlds, Background.restrict,
-    atLeastAsGoodAs_iff, Set.mem_insert_iff, Set.mem_singleton_iff, forall_eq_or_imp, forall_eq,
+    Preorder.mem_minimals_iff, Background.mem_accessibleWorlds, Background.restrict,
+    Preorder.ofCriteria_le_iff, Set.mem_insert_iff, Set.mem_singleton_iff,
+    forall_eq_or_imp, forall_eq,
     Pi.bot_apply,
     Set.bot_eq_empty, Set.mem_empty_iff_false, false_imp_iff, implies_true,
     and_true]
@@ -264,8 +267,8 @@ abbrev kissPedro : Pedro → Prop := (· = cTrainKiss)
 /-- The designated-goal semantics predicts *to go to Harlem, you ought to kiss Pedro Martinez*
 true, contrary to fact. -/
 theorem oughtTo_kissPedro : oughtTo ⊥ (λ _ => {kissPedro}) goHarlem kissPedro aTrain := by
-  simp only [oughtTo, conditionalNecessity, necessity_iff, bestWorlds, mem_bestAmong,
-    Background.mem_accessibleWorlds, Background.restrict, atLeastAsGoodAs_iff,
+  simp only [oughtTo, conditionalNecessity, necessity_iff, bestWorlds, Preorder.mem_minimals_iff,
+    Background.mem_accessibleWorlds, Background.restrict, Preorder.ofCriteria_le_iff,
     Set.mem_insert_iff, Set.mem_singleton_iff, forall_eq_or_imp, forall_eq, Pi.bot_apply,
     Set.bot_eq_empty, Set.mem_empty_iff_false, false_imp_iff, implies_true, and_true,
     ]

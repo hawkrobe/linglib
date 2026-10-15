@@ -54,7 +54,7 @@ ordering source induces. -/
 theorem conditionalNecessity_iff_mem_orderingImp :
     conditionalNecessity f g α β w ↔
       w ∈ orderingImp (f.accessibleWorlds) (fun w ↦ premisePreorder (g w)) {v | α v} {v | β v} := by
-  rw [conditionalNecessity, necessity_iff, mem_orderingImp, bestWorlds, bestAmong,
+  rw [conditionalNecessity, necessity_iff, mem_orderingImp, bestWorlds,
     Background.accessibleWorlds_restrict]
   rfl
 

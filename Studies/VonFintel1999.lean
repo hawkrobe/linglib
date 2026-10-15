@@ -95,7 +95,7 @@ theorem not_gladBetter_of_want :
       (w : Fin 3), dox w ⊆ p ∧ (want rel g p).assertion w ∧
         ¬ (gladBetter dox rel g p).assertion w :=
   ⟨fun _ ↦ {0}, fun _ ↦ Set.univ, fun _ ↦ {(· = 1)}, {0, 1}, 0, by simp, by
-    simp only [want, Want, Set.subset_def, mem_bestAmong, atLeastAsGoodAs_iff,
+    simp only [want, Want, Set.subset_def, Preorder.mem_minimals_iff, Preorder.ofCriteria_le_iff,
       Set.mem_singleton_iff, forall_eq, Set.mem_univ, Set.mem_insert_iff]
     decide, by
     simp only [gladBetter, Better, strictlyBetter_iff, atLeastAsGoodAs_iff,
@@ -168,8 +168,9 @@ theorem not_antitone_conditionalNecessity :
       {w | Restrictor.conditionalNecessity (fun _ ↦ ∅) (fun _ ↦ {(· = 0)}) α (· = 0) w} :=
   fun h ↦ by
     have := @h (· = 1) (fun _ ↦ True) (fun _ _ ↦ trivial) 0
-    simp only [Restrictor.conditionalNecessity, necessity_iff, bestWorlds, mem_bestAmong,
-      Background.mem_accessibleWorlds, Background.restrict, atLeastAsGoodAs_iff,
+    simp only [Restrictor.conditionalNecessity, necessity_iff, bestWorlds,
+      Preorder.mem_minimals_iff,
+      Background.mem_accessibleWorlds, Background.restrict, Preorder.ofCriteria_le_iff,
       Set.mem_insert_iff, Set.mem_singleton_iff, forall_eq_or_imp, forall_eq,
       Set.mem_empty_iff_false, false_imp_iff, implies_true, and_true,
       Set.mem_ofPred_eq] at this

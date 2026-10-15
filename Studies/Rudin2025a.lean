@@ -24,8 +24,9 @@ formalized.
 ## Implementation notes
 
 Epistemic states are sets of worlds, and the ordering version pairs a base with a Kratzer ordering
-source, its best worlds being `bestAmong`. Commensurativity is stated as the paper states it,
-membership of the update in the meta-intensionalized set on every compatible context;
+source, its best worlds being the minimal worlds of the base. Commensurativity is stated as
+the paper states it, membership of the update in the meta-intensionalized set on every
+compatible context;
 conservativity, quantified over sentences, is rendered for the simple version by the update being
 the largest refinement in the set. The commensurativity of the ordering update for *might* uses a
 finite frame, the paper's limit assumption. The ordering update for *must* adds the prejacent and
@@ -198,7 +199,7 @@ structure OrdState (W : Type*) where
 
 /-- The best worlds of a state are the worlds of the base that no other world of the base betters
 under the ordering source. -/
-def OrdState.best (i : OrdState W) : Set W := bestAmong i.base i.ordering
+def OrdState.best (i : OrdState W) : Set W := (premisePreorder i.ordering).minimals i.base
 
 /-- A denotation relative to a state with an ordering source. -/
 abbrev OrdDenotation (W : Type*) := OrdState W → W → Prop
@@ -246,14 +247,15 @@ theorem mightOrdUpdate_commensurate [Finite W] {p : Set W} {c : OrdState W}
     (h : (c.base ∩ p).Nonempty) : mightOrdUpdate p c ∈ MIOrd (mightOrd p) := by
   rw [mightOrdUpdate_of_compatible h]
   intro _ _
-  obtain ⟨m, hm⟩ := exists_mem_bestAmong (worlds := c.base ∩ p) (A := insert (· ∈ p) c.ordering) h
-  refine ⟨m, ?_, (bestAmong_subset _ _ hm).2⟩
-  rw [mem_bestAmong] at hm
-  show m ∈ bestAmong c.base (insert (· ∈ p) c.ordering)
-  rw [mem_bestAmong]
-  refine ⟨hm.1.1, fun v hv hvm ↦ ?_⟩
+  obtain ⟨m, hm⟩ := Preorder.minimals_nonempty (premisePreorder (insert (· ∈ p) c.ordering))
+    (s := c.base ∩ p) h
+  refine ⟨m, ?_, (Preorder.minimals_subset _ _ hm).2⟩
+  rw [Preorder.mem_minimals_iff] at hm
+  show m ∈ (premisePreorder (insert (· ∈ p) c.ordering)).minimals c.base
+  rw [Preorder.mem_minimals_iff]
+  refine ⟨hm.1.1, fun ⦃v⦄ hv hvm ↦ ?_⟩
   by_cases hvp : v ∈ p
-  · exact hm.2 v ⟨hv, hvp⟩ hvm
+  · exact hm.2 ⟨hv, hvp⟩ hvm
   · exact absurd (hvm (· ∈ p) (Set.mem_insert _ _) hm.1.2) hvp
 
 /-- Compatibility with *might* under the ordering semantics is again having a prejacent world in the
@@ -264,11 +266,11 @@ theorem compatibleOrd_might {p : Set W} {c : OrdState W} :
   constructor
   · rintro ⟨c', hc'c, ⟨v, hv⟩, hMI⟩
     obtain ⟨m, hmb, hmp⟩ := hMI v hv
-    exact ⟨m, hc'c (bestAmong_subset _ _ hmb), hmp⟩
+    exact ⟨m, hc'c (Preorder.minimals_subset _ _ hmb), hmp⟩
   · rintro ⟨w, hwb, hwp⟩
     refine ⟨⟨c.base, {(· ∈ p)}⟩, subset_rfl, ⟨w, hwb⟩, fun _ _ ↦ ⟨w, ?_, hwp⟩⟩
-    show w ∈ bestAmong c.base {(· ∈ p)}
-    rw [bestAmong_eq_of_exists ⟨w, hwb, by simpa using hwp⟩]
+    show w ∈ (premisePreorder {(· ∈ p)}).minimals c.base
+    rw [Preorder.minimals_ofCriteria_eq ⟨w, hwb, by simpa using hwp⟩]
     exact ⟨hwb, by simpa using hwp⟩
 
 /-- Rejection of *might* is licensed, as before, by the rejector's lack of a prejacent
@@ -293,8 +295,8 @@ theorem mustOrd_singleton {p : Set W} {c : OrdState W} (h : (c.base ∩ p).Nonem
     (⟨c.base, {(· ∈ p)}⟩ : OrdState W) ∈ MIOrd (mustOrd p) := by
   obtain ⟨w, hwb, hwp⟩ := h
   intro _ _ v hv
-  change v ∈ bestAmong c.base {(· ∈ p)} at hv
-  rw [bestAmong_eq_of_exists ⟨w, hwb, by simpa using hwp⟩] at hv
+  change v ∈ (premisePreorder {(· ∈ p)}).minimals c.base at hv
+  rw [Preorder.minimals_ofCriteria_eq ⟨w, hwb, by simpa using hwp⟩] at hv
   simpa using hv.2
 
 /-- Compatibility with *must* under the ordering semantics is having a prejacent world in
@@ -303,14 +305,15 @@ theorem compatibleOrd_must [Finite W] {p : Set W} {c : OrdState W} :
     CompatibleOrd (mustOrd p) c ↔ (c.base ∩ p).Nonempty := by
   constructor
   · rintro ⟨c', hc'c, ⟨v, hv⟩, hMI⟩
-    obtain ⟨m, hm⟩ := exists_mem_bestAmong (worlds := c'.base) (A := c'.ordering) ⟨v, hv⟩
-    exact ⟨m, hc'c (bestAmong_subset _ _ hm), hMI v hv hm⟩
+    obtain ⟨m, hm⟩ := Preorder.minimals_nonempty (premisePreorder (c'.ordering))
+      (s := c'.base) ⟨v, hv⟩
+    exact ⟨m, hc'c (Preorder.minimals_subset _ _ hm), hMI v hv hm⟩
   · intro h
     exact ⟨⟨c.base, {(· ∈ p)}⟩, subset_rfl, h.mono Set.inter_subset_left, mustOrd_singleton h⟩
 
 /-- Decide a claim about a three-world state by unfolding the operators. -/
 scoped macro "decide_states" : tactic =>
-  `(tactic| (simp only [MIOrd, mustOrd, OrdState.best, bestAmong, Preorder.mem_minimals_iff,
+  `(tactic| (simp only [MIOrd, mustOrd, OrdState.best, Preorder.mem_minimals_iff,
       premisePreorder, Preorder.ofCriteria_le_iff,
       Set.mem_ofPred_eq, Set.mem_univ, Set.mem_insert_iff, Set.mem_singleton_iff, Set.subset_def,
       Set.mem_inter_iff, Set.Nonempty, forall_eq_or_imp, forall_eq, Set.mem_empty_iff_false,
@@ -381,7 +384,8 @@ theorem relational_must {f : W → Set W} {p i : Set W} (hf : Closed f i) :
 theorem relational_ordering {f : W → Set W} {g : W → Set (W → Prop)} {p : Set W}
     {i : OrdState W} (hf : Closed f i.base) (hg : ∀ w ∈ i.base, g w = i.ordering)
     (hi : i.base.Nonempty) :
-    (∀ w ∈ i.base, (bestAmong (f w) (g w) ∩ p).Nonempty) ↔ i ∈ MIOrd (mightOrd p) := by
+    (∀ w ∈ i.base, ((premisePreorder (g w)).minimals (f w) ∩ p).Nonempty) ↔
+      i ∈ MIOrd (mightOrd p) := by
   obtain ⟨v, hv⟩ := hi
   constructor
   · intro h _ _
