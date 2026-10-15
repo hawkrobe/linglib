@@ -5,6 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
+public import Linglib.Syntax.Minimalist.Head
 public import Linglib.Syntax.Minimalist.Linearization.Replay
 
 /-!
@@ -16,7 +17,8 @@ the licensing's domain. A licensing that judges only the derived object misses w
 held: a moved item leaves a trace, so whether it was merged before it was saturated shows only at
 the stages before it moved. Stages are read off the replay, as `Derivation.CCommandsAt` reads
 c-command, so licensing decides, and `LicensedAt.map_stageAt_ne_zero` returns the derivation's own
-stage.
+stage. A licensing reads the derivation with its own heads: a moved phrase leaves the trace of the
+item the licensing takes to head it.
 
 ## Main definitions
 
@@ -33,18 +35,20 @@ stage.
 
 namespace Minimalist.Derivation
 
-variable {β : Type*} [Mul β] [Zero β] (φ : SyntacticObject →ₙ* β) {d : Derivation} {n : ℕ}
+variable {β : Type*} [Mul β] [Zero β] [Head β] (φ : SyntacticObject →ₙ* β) {d : Derivation}
+  {n : ℕ}
 
-/-- `φ` licenses stage `n` of `d`: the ordered object the replay reaches after `n` steps is in its
-domain. -/
+/-- `φ` licenses stage `n` of `d`: the ordered object the replay reaches after `n` steps, its
+movers leaving the traces of their heads under `φ`, is in its domain. -/
 def LicensedAt (d : Derivation) (n : ℕ) : Prop :=
-  ∃ p ∈ (d.take n).externalize?, φ p.toSyntacticObject ≠ 0
+  ∃ p ∈ (d.take n).externalize? (head ∘ φ), φ p.toSyntacticObject ≠ 0
 
 instance [DecidableEq β] (d : Derivation) (n : ℕ) : Decidable (d.LicensedAt φ n) := by
   unfold LicensedAt; infer_instance
 
 /-- The stage licensing looks at is the derivation's own. -/
-theorem LicensedAt.map_stageAt_ne_zero (h : d.LicensedAt φ n) : φ (d.stageAt n) ≠ 0 :=
+theorem LicensedAt.map_stageAt_ne_zero (h : d.LicensedAt φ n) :
+    φ (d.stageAt n (head ∘ φ)) ≠ 0 :=
   let ⟨_, hp, hc⟩ := h
   d.externalize?_take_faithful n hp ▸ hc
 

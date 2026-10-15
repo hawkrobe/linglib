@@ -14,7 +14,9 @@ public import Linglib.Syntax.Minimalist.Merge.SyntacticObject
 An ordered derivation is an initial syntactic object with a sequence of Merge steps, each placing
 its new daughter on a side. External Merge adds an item, and Internal Merge raises a mover: the
 step re-merges the mover with the remainder `deleteAccessible mover current`, the current object
-with the mover's occurrences replaced by the trace of the mover's head. Each step is the algebraic
+with the mover's occurrences replaced by the trace of the mover's head. Which item heads the mover
+is a theory's choice, so the steps and stages take the trace encoder as a parameter, by default
+the head by selection. Each step is the algebraic
 Merge on the workspace of the current object, the items it introduces, and the items still to
 come, when it matches no accessible term of those items and an Internal Merge raises a uniquely
 accessible term (`Step.mergeOp_workspace`); an admissible derivation is then the iterated
@@ -68,7 +70,8 @@ inductive Side where
   | right
   deriving DecidableEq, Repr, Fintype
 
-/-- A derivation step. `im` records only the mover; the trace it leaves is that of its head. -/
+/-- A derivation step. `im` records only the mover; the trace it leaves is that of its head under
+the trace encoder the step is applied with. -/
 inductive Step where
   /-- External Merge, the new item as the daughter on `side`. -/
   | em (side : Side) (item : SyntacticObject)
@@ -77,25 +80,28 @@ inductive Step where
   | im (mover : SyntacticObject) (side : Side := .left)
 
 /-- A step builds a node: External Merge with the item on the given side, Internal Merge of the
-    remainder and the mover. -/
-noncomputable def Step.apply (step : Step) (current : SyntacticObject) : SyntacticObject :=
+    remainder and the mover, which leaves the trace of its head under `τ`. -/
+noncomputable def Step.apply (step : Step) (current : SyntacticObject)
+    (τ : SyntacticObject → Option LexicalItem.Token := selHead) : SyntacticObject :=
   match step with
   | .em .left item => merge item current
   | .em .right item => merge current item
-  | .im mover _ => merge (deleteAccessible mover current) mover
+  | .im mover _ => merge (deleteAccessible mover current τ) mover
+
+variable {τ : SyntacticObject → Option LexicalItem.Token}
 
 theorem Step.apply_em_left (item current : SyntacticObject) :
-    (Step.em .left item).apply current = merge item current := rfl
+    (Step.em .left item).apply current τ = merge item current := rfl
 
 theorem Step.apply_em_right (item current : SyntacticObject) :
-    (Step.em .right item).apply current = merge current item := rfl
+    (Step.em .right item).apply current τ = merge current item := rfl
 
 theorem Step.apply_im (mover : SyntacticObject) (side : Side) (current : SyntacticObject) :
-    (Step.im mover side).apply current = merge (deleteAccessible mover current) mover := rfl
+    (Step.im mover side).apply current τ = merge (deleteAccessible mover current τ) mover := rfl
 
 /-- The sides build the same object; they differ only at externalization. -/
 theorem Step.apply_em (side : Side) (item current : SyntacticObject) :
-    (Step.em side item).apply current = merge item current := by
+    (Step.em side item).apply current τ = merge item current := by
   cases side
   · rfl
   · exact merge_comm current item
@@ -129,7 +135,7 @@ def Step.leftward : Step → Step
 
 /-- A step and its leftward form build the same object. -/
 theorem Step.apply_leftward (step : Step) (current : SyntacticObject) :
-    step.leftward.apply current = step.apply current := by
+    step.leftward.apply current τ = step.apply current τ := by
   cases step with
   | em side item => rw [Step.leftward_em, Step.apply_em, Step.apply_em]
   | im _ _ => rfl
@@ -229,13 +235,15 @@ structure Derivation where
 
 namespace Derivation
 
-/-- The object after every step. -/
-noncomputable def final (d : Derivation) : SyntacticObject :=
-  d.steps.foldl (fun so step => step.apply so) d.initial
+/-- The object after every step, under the trace encoder `τ`. -/
+noncomputable def final (d : Derivation)
+    (τ : SyntacticObject → Option LexicalItem.Token := selHead) : SyntacticObject :=
+  d.steps.foldl (fun so step => step.apply so τ) d.initial
 
-/-- The object after the first `n` steps. -/
-noncomputable def stageAt (d : Derivation) (n : Nat) : SyntacticObject :=
-  (d.steps.take n).foldl (fun so step => step.apply so) d.initial
+/-- The object after the first `n` steps, under the trace encoder `τ`. -/
+noncomputable def stageAt (d : Derivation) (n : Nat)
+    (τ : SyntacticObject → Option LexicalItem.Token := selHead) : SyntacticObject :=
+  (d.steps.take n).foldl (fun so step => step.apply so τ) d.initial
 
 /-- The number of derivation steps. -/
 def length (d : Derivation) : Nat := d.steps.length
@@ -252,13 +260,13 @@ def take (d : Derivation) (n : Nat) : Derivation := ⟨d.initial, d.steps.take n
 /-- The derivation continued by `steps`. -/
 def append (d : Derivation) (steps : List Step) : Derivation := ⟨d.initial, d.steps ++ steps⟩
 
-@[simp] theorem stageAt_zero (d : Derivation) : d.stageAt 0 = d.initial := by
+@[simp] theorem stageAt_zero (d : Derivation) : d.stageAt 0 τ = d.initial := by
   simp [stageAt]
 
-theorem stageAt_length (d : Derivation) : d.stageAt d.steps.length = d.final := by
+theorem stageAt_length (d : Derivation) : d.stageAt d.steps.length τ = d.final τ := by
   simp [stageAt, final, List.take_length]
 
-@[simp] theorem final_take (d : Derivation) (n : Nat) : (d.take n).final = d.stageAt n := rfl
+@[simp] theorem final_take (d : Derivation) (n : Nat) : (d.take n).final τ = d.stageAt n τ := rfl
 
 /-! ### Extension
 
@@ -283,11 +291,11 @@ theorem take_append_of_le {d : Derivation} {n : Nat} (h : n ≤ d.length) (steps
   rw [length, List.take_left]
 
 theorem stageAt_append_of_le {d : Derivation} {n : Nat} (h : n ≤ d.length) (steps : List Step) :
-    (d.append steps).stageAt n = d.stageAt n := by
+    (d.append steps).stageAt n τ = d.stageAt n τ := by
   rw [← final_take, ← final_take, take_append_of_le h]
 
 theorem final_append (d : Derivation) (steps : List Step) :
-    (d.append steps).final = steps.foldl (fun so step => step.apply so) d.final := by
+    (d.append steps).final τ = steps.foldl (fun so step => step.apply so τ) (d.final τ) := by
   simp [final, append, List.foldl_append]
 
 @[simp] theorem movedItems_append (d : Derivation) (steps : List Step) :
@@ -322,10 +330,10 @@ are those of its normal form. -/
 def leftward (d : Derivation) : Derivation := ⟨d.initial, d.steps.map Step.leftward⟩
 
 @[simp] theorem stageAt_leftward (d : Derivation) (n : Nat) :
-    d.leftward.stageAt n = d.stageAt n := by
+    d.leftward.stageAt n τ = d.stageAt n τ := by
   simp only [stageAt, leftward, ← List.map_take, List.foldl_map, Step.apply_leftward]
 
-@[simp] theorem final_leftward (d : Derivation) : d.leftward.final = d.final := by
+@[simp] theorem final_leftward (d : Derivation) : d.leftward.final τ = d.final τ := by
   simp only [final, leftward, List.foldl_map, Step.apply_leftward]
 
 @[simp] theorem movedItems_leftward (d : Derivation) : d.leftward.movedItems = d.movedItems := by

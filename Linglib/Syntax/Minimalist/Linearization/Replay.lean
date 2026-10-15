@@ -203,28 +203,31 @@ theorem toSyntacticObject_replaceWhere (target : SyntacticObject) (rep acc : Pla
 end PlanarSyntacticObject
 
 /-- The ordered trace a moved object leaves, `SyntacticObject.headTrace` with its order. -/
-def SyntacticObject.tracePlanar (s : SyntacticObject) : PlanarSyntacticObject :=
-  s.selHead.elim PlanarSyntacticObject.trace PlanarSyntacticObject.traceOf
+def SyntacticObject.tracePlanar (s : SyntacticObject)
+    (τ : SyntacticObject → Option LexicalItem.Token := selHead) : PlanarSyntacticObject :=
+  (τ s).elim PlanarSyntacticObject.trace PlanarSyntacticObject.traceOf
 
-@[simp] theorem SyntacticObject.toSyntacticObject_tracePlanar (s : SyntacticObject) :
-    s.tracePlanar.toSyntacticObject = s.headTrace := by
-  unfold tracePlanar headTrace; cases s.selHead <;> rfl
+@[simp] theorem SyntacticObject.toSyntacticObject_tracePlanar (s : SyntacticObject)
+    (τ : SyntacticObject → Option LexicalItem.Token) :
+    (s.tracePlanar τ).toSyntacticObject = s.headTrace τ := by
+  unfold tracePlanar headTrace; cases τ s <;> rfl
 
 namespace PlanarSyntacticObject
 
 /-- Internal Merge on the ordered accumulator raises the leftmost subtree projecting to `mover`
-    to the edge on `side`, leaving the trace of its head; `none` if absent. -/
-def move (side : Side) (acc : PlanarSyntacticObject) (mover : SyntacticObject) :
-    Option PlanarSyntacticObject :=
+    to the edge on `side`, leaving the trace of its head under `τ`; `none` if absent. -/
+def move (side : Side) (acc : PlanarSyntacticObject) (mover : SyntacticObject)
+    (τ : SyntacticObject → Option LexicalItem.Token := selHead) : Option PlanarSyntacticObject :=
   (find? mover acc).map fun s => match side with
-    | .left => merge s (replaceWhere mover mover.tracePlanar acc)
-    | .right => merge (replaceWhere mover mover.tracePlanar acc) s
+    | .left => merge s (replaceWhere mover (mover.tracePlanar τ) acc)
+    | .right => merge (replaceWhere mover (mover.tracePlanar τ) acc) s
 
 /-- Internal Merge on the ordered accumulator forgets to Internal Merge on the object. -/
 theorem toSyntacticObject_move {side : Side} {acc p' : PlanarSyntacticObject}
-    {mover : SyntacticObject} (h : move side acc mover = some p') :
+    {mover : SyntacticObject} {τ : SyntacticObject → Option LexicalItem.Token}
+    (h : move side acc mover τ = some p') :
     p'.toSyntacticObject = SyntacticObject.merge
-      (deleteAccessible mover acc.toSyntacticObject) mover := by
+      (deleteAccessible mover acc.toSyntacticObject τ) mover := by
   unfold move at h
   rcases hf : find? mover acc with _ | s
   · rw [hf, Option.map_none] at h; exact absurd h (by simp)
@@ -241,19 +244,20 @@ theorem toSyntacticObject_move {side : Side} {acc p' : PlanarSyntacticObject}
 end PlanarSyntacticObject
 
 /-- One replay step, mirroring `SyntacticObject.Step.apply`. -/
-def externStep (acc? : Option PlanarSyntacticObject) (step : Step) :
-    Option PlanarSyntacticObject :=
+def externStep (τ : SyntacticObject → Option LexicalItem.Token)
+    (acc? : Option PlanarSyntacticObject) (step : Step) : Option PlanarSyntacticObject :=
   acc?.bind fun acc => match step with
     | .em .left item => item.toPlanarLeaf?.map (PlanarSyntacticObject.merge · acc)
     | .em .right item => item.toPlanarLeaf?.map (PlanarSyntacticObject.merge acc ·)
-    | .im mover side => acc.move side mover
+    | .im mover side => acc.move side mover τ
 
 namespace Derivation
 
-/-- The derivation's ordered object, MCB's `σ_L` for this derivation, or `none` if a merged
-    item is complex or a mover is absent. -/
-def externalize? (d : Derivation) : Option PlanarSyntacticObject :=
-  d.initial.toPlanarLeaf?.bind fun init => d.steps.foldl externStep (some init)
+/-- The derivation's ordered object under the trace encoder `τ`, MCB's `σ_L` for this derivation,
+    or `none` if a merged item is complex or a mover is absent. -/
+def externalize? (d : Derivation) (τ : SyntacticObject → Option LexicalItem.Token := selHead) :
+    Option PlanarSyntacticObject :=
+  d.initial.toPlanarLeaf?.bind fun init => d.steps.foldl (externStep τ) (some init)
 
 /-- The pronounced tokens, left to right; empty if externalization fails. -/
 def surfaceTokens (d : Derivation) : List LexicalItem.Token :=
@@ -298,9 +302,9 @@ private theorem toPlanarLeaf?_toSyntacticObject {s : SyntacticObject} {ip : Plan
     exact absurd h (by simp)
 
 /-- A successful replay step forgets to `Step.apply`. -/
-private theorem externStep_toSyntacticObject {acc p' : PlanarSyntacticObject} {step : Step}
-    (h : externStep (some acc) step = some p') :
-    p'.toSyntacticObject = step.apply acc.toSyntacticObject := by
+private theorem externStep_toSyntacticObject {τ : SyntacticObject → Option LexicalItem.Token}
+    {acc p' : PlanarSyntacticObject} {step : Step} (h : externStep τ (some acc) step = some p') :
+    p'.toSyntacticObject = step.apply acc.toSyntacticObject τ := by
   cases step with
   | em side item =>
     cases side with
@@ -321,47 +325,52 @@ private theorem externStep_toSyntacticObject {acc p' : PlanarSyntacticObject} {s
         rw [Step.apply_em_right, PlanarSyntacticObject.toSyntacticObject_merge,
           toPlanarLeaf?_toSyntacticObject hip]
   | im mover side =>
-    change acc.move side mover = some p' at h
+    change acc.move side mover τ = some p' at h
     rw [Step.apply]; exact PlanarSyntacticObject.toSyntacticObject_move h
 
 /-- `none` is absorbing for the replay fold. -/
-private theorem foldl_externStep_none (steps : List Step) :
-    steps.foldl externStep none = none := by
+private theorem foldl_externStep_none (τ : SyntacticObject → Option LexicalItem.Token)
+    (steps : List Step) :
+    steps.foldl (externStep τ) none = none := by
   induction steps with
   | nil => rfl
-  | cons st rest ih => rw [List.foldl_cons, show externStep none st = none from rfl]; exact ih
+  | cons st rest ih => rw [List.foldl_cons, show externStep τ none st = none from rfl]; exact ih
 
 /-- A successful replay fold forgets to the fold of `Step.apply`. -/
-private theorem foldl_externStep_toSyntacticObject :
+private theorem foldl_externStep_toSyntacticObject
+    (τ : SyntacticObject → Option LexicalItem.Token) :
     ∀ (steps : List Step) {acc p : PlanarSyntacticObject},
-    steps.foldl externStep (some acc) = some p →
-    p.toSyntacticObject = steps.foldl (fun so st => st.apply so) acc.toSyntacticObject
+    steps.foldl (externStep τ) (some acc) = some p →
+    p.toSyntacticObject = steps.foldl (fun so st => st.apply so τ) acc.toSyntacticObject
   | [], acc, p, h => by
       rw [List.foldl_nil] at h ⊢; obtain rfl := Option.some.inj h; rfl
   | st :: rest, acc, p, h => by
       rw [List.foldl_cons] at h ⊢
-      rcases hstep : externStep (some acc) st with _ | acc'
+      rcases hstep : externStep τ (some acc) st with _ | acc'
       · rw [hstep, foldl_externStep_none] at h; exact absurd h (by simp)
       · rw [hstep] at h
-        rw [foldl_externStep_toSyntacticObject rest h, externStep_toSyntacticObject hstep]
+        rw [foldl_externStep_toSyntacticObject τ rest h, externStep_toSyntacticObject hstep]
 
 /-- By **faithfulness** ([marcolli-chomsky-berwick-2025] §1.12), a successful replay forgets to
     the derived object, so the surface readouts are the word order of `final` itself. -/
 theorem Derivation.externalize?_faithful (d : Derivation)
-    {p : PlanarSyntacticObject} (h : d.externalize? = some p) : p.toSyntacticObject = d.final := by
+    {τ : SyntacticObject → Option LexicalItem.Token} {p : PlanarSyntacticObject}
+    (h : d.externalize? τ = some p) :
+    p.toSyntacticObject = d.final τ := by
   rw [Derivation.externalize?] at h
   rcases hinit : d.initial.toPlanarLeaf? with _ | init
   · rw [hinit] at h; exact absurd h (by simp [Option.bind])
   · rw [hinit] at h
-    change d.steps.foldl externStep (some init) = some p at h
-    rw [foldl_externStep_toSyntacticObject d.steps h, toPlanarLeaf?_toSyntacticObject hinit]
+    change d.steps.foldl (externStep τ) (some init) = some p at h
+    rw [foldl_externStep_toSyntacticObject τ d.steps h, toPlanarLeaf?_toSyntacticObject hinit]
     rfl
 
 /-- Faithfulness holds for prefixes, since a successful replay of the first `n` steps forgets to
     stage `n`. -/
 theorem Derivation.externalize?_take_faithful (d : Derivation) (n : Nat)
-    {p : PlanarSyntacticObject} (h : (d.take n).externalize? = some p) :
-    p.toSyntacticObject = d.stageAt n :=
+    {τ : SyntacticObject → Option LexicalItem.Token} {p : PlanarSyntacticObject}
+    (h : (d.take n).externalize? τ = some p) :
+    p.toSyntacticObject = d.stageAt n τ :=
   externalize?_faithful (d.take n) h
 
 /-! ### The [cinque-2005] pied-piping contrast
