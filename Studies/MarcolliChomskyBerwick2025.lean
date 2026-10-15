@@ -88,7 +88,8 @@ The book's algebra lives in `Core/` and in `Syntax/Minimalist/{Workspace,Merge,E
   `mergeOpG_sideward_3a`.
 * (1.5.1) and the weights of §1.5.2: `Minimalist.Merge.comulEps`, `mergeOpEps`, with
   `comulEps_one` and `comulEps_zero` (the primitive coproduct); Proposition 1.5.1 at `ε = 0`:
-  `mergeOpEps_zero_of'_of_not_le`, `mergeOpEps_zero_pair_add`, `mergeOpEps_zero_im_composition`.
+  `mergeOpEps_zero_of'_of_not_le`, `mergeOpEps_zero_pair_add`; at every `ε`: `mergeOpEps_pair`,
+  `mergeOpEps_im_composition`, `mergeOpEps_of'_eq_smul_of_not_le`.
 * Definition 1.6.1 and Proposition 1.6.4: `Minimalist.MinimalYield` over a counting,
   `MinimalYield.em_pair`, `em_pair_accessibleCount`, `im_accessibleCount_of_cut`.
 * Lemma 1.6.3 (1.6.8) and (1.6.10): `ConnesKreimer.cutSummandsCN_accessibleCount`,
@@ -314,6 +315,12 @@ example :
       (of' ({eaten.val, theApple.val} : Forest (UnorderedTree Vertex))) = 0 :=
   Merge.mergeOpEps_zero_of'_of_not_le _ (by decide)
 
+/-- At every `ε` it is a multiple of `ε`, so Sideward Merge costs at least one
+    (Proposition 1.5.1). -/
+example (ε : ℤ) : ∃ y, Merge.mergeOpEps ε Vertex.bare eaten.val theD.val
+    (of' ({eaten.val, theApple.val} : Forest (UnorderedTree Vertex))) = ε • y :=
+  Merge.mergeOpEps_of'_eq_smul_of_not_le ε _ (by decide)
+
 /-- At `ε = 0` External Merge of the two components survives. -/
 example :
     Merge.mergeOpEps (R := ℤ) 0 Vertex.bare eaten.val theApple.val
@@ -329,7 +336,7 @@ example :
         (Merge.mergeOpUnit theD.val (of' ({theApple.val} : Forest (UnorderedTree Vertex)))) =
       of' ({UnorderedTree.node Vertex.bare
         {UnorderedTree.node Vertex.bare {appleN.val}, theD.val}} : Forest (UnorderedTree Vertex)) :=
-  Merge.mergeOpEps_zero_im_composition _ _ _ _ _ filter_cutSummandsN_theApple rfl
+  Merge.mergeOpEps_im_composition _ _ _ _ _ _ filter_cutSummandsN_theApple rfl
     (fun h ↦ (by decide : theApple ≠ theD) (Subtype.ext h))
 
 private theorem mem_cutSummandsCN_theApple :
