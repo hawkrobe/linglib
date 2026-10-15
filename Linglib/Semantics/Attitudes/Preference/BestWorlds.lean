@@ -65,11 +65,9 @@ section Want
 
 /-- `Want A dom p` holds when every best world of `dom` under the ordering source `A` is a
 `p`-world. -/
-def Want (A : Set (W → Prop)) (dom p : Set W) : Prop := bestAmong dom A ⊆ p
+def Want (A : Set (W → Prop)) (dom p : Set W) : Prop := (premisePreorder A).minimals dom ⊆ p
 
 variable {A : Set (W → Prop)} {dom p q : Set W}
-
-theorem want_iff_forall : Want A dom p ↔ ∀ w ∈ bestAmong dom A, w ∈ p := Iff.rfl
 
 theorem want_iff : Want A dom p ↔ ∀ w ∈ dom, (∀ z ∈ dom, (z ≤[A] w) → (w ≤[A] z)) → w ∈ p :=
   ⟨fun h _ hw hb ↦ h ⟨hw, hb⟩, fun h w hw ↦ h w hw.1 hw.2⟩
@@ -82,10 +80,6 @@ instance [Fintype W] [DecidableRel (atLeastAsGoodAs A)] [DecidablePred (· ∈ d
 theorem want_inter_iff : Want A dom (p ∩ q) ↔ Want A dom p ∧ Want A dom q :=
   Set.subset_inter_iff
 
-/-- Wanting `p` false is having no best world be a `p`-world. -/
-theorem want_compl_iff : Want A dom pᶜ ↔ Disjoint (bestAmong dom A) p :=
-  Set.subset_compl_iff_disjoint_right
-
 /-- What is wanted is wanted under every consequence it has in the domain, the doxastic-closure
 problem of [villalta-2008]. -/
 theorem Want.mono_on (hpq : ∀ w ∈ dom, w ∈ p → w ∈ q) (h : Want A dom p) : Want A dom q :=
@@ -95,7 +89,7 @@ theorem Want.mono (hpq : p ⊆ q) (h : Want A dom p) : Want A dom q := h.trans h
 
 theorem Want.not_compl [Finite W] (h : dom.Nonempty) (hp : Want A dom p) : ¬ Want A dom pᶜ :=
   fun hnp ↦
-    let ⟨_, hw⟩ := exists_mem_bestAmong (A := A) h
+    let ⟨_, hw⟩ := Preorder.minimals_nonempty (premisePreorder A) h
     hnp hw (hp hw)
 
 end Want

@@ -108,7 +108,7 @@ theorem tests_covered :
         (e.feature? "force").isSome := by
   decide
 
-/-- The chapter's English tests: `□₁ φ ∧ ¬□₂ φ` is contradictory and `□₁ φ ∧ □₂ φ` trivial
+/-- In the chapter's English tests, `□₁ φ ∧ ¬□₂ φ` is contradictory and `□₁ φ ∧ □₂ φ` trivial
 exactly when the first force entails the second. -/
 theorem tests_predicted :
     ∀ e ∈ Examples.all, ∀ f₁ ∈ e.parse? "first" forceTable, ∀ f₂ ∈ e.parse? "second" forceTable,
@@ -135,9 +135,9 @@ neg-raising: a library observation, where the chapter's §2.5 only remarks that 
 non-quantificational semantics may fare better on the neg-raising facts. -/
 theorem vfiWeak_negRaises_iff (f g g' : Background W) (w : W) :
     (∀ p : W → Prop, ¬ weakNecessity f g g' p w → weakNecessity f g g' (fun w' ↦ ¬ p w') w) ↔
-      (bestAmong (bestWorlds f g w) (g' w)).Subsingleton :=
+      ((premisePreorder (g' w)).minimals (bestWorlds f g w)).Subsingleton :=
   ModalLogic.box_not_of_not_box_at_iff
-    (R := .ofSuccessors fun _ ↦ bestAmong (bestWorlds f g w) (g' w)) (w := w)
+    (R := .ofSuccessors fun _ ↦ (premisePreorder (g' w)).minimals (bestWorlds f g w)) (w := w)
 
 /-! ### Scope under negation ((18)–(20)) -/
 

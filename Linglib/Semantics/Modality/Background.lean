@@ -26,8 +26,7 @@ modal base at `w` fix the worlds accessible from `w`, and those of an ordering s
 * `Background.IsRealistic`, `Background.IsTotallyRealistic`.
 * `Background.restrict f α`: `f` with the premise `α` added at every world.
 * `premisePreorder A`, `w ≤[A] z`, `w <[A] z`: the ordering a premise set induces.
-* `bestAmong worlds A`, `bestWorlds f g w`: the minimal worlds of a domain, and of the worlds
-  accessible under `f` ranked by `g`.
+* `bestWorlds f g w`: the minimal worlds accessible under `f` ranked by `g`.
 
 ## References
 
@@ -150,48 +149,14 @@ theorem strictlyBetter_iff (A : Set (W → Prop)) (w z : W) :
 
 /-! ### Best worlds -/
 
-/-- The best worlds among a domain are the members that no other member strictly betters, the
-minimal elements of the domain under the ordering. The dominance form, at least as good as every
-member, is empty on an ordering that is not total, such as Kratzer's practical-inference example, so
-minimality is the faithful reading. -/
-def bestAmong (worlds : Set W) (A : Set (W → Prop)) : Set W :=
-  (premisePreorder A).minimals worlds
-
-variable {worlds : Set W} {A : Set (W → Prop)} {w : W}
-
-theorem mem_bestAmong :
-    w ∈ bestAmong worlds A ↔ w ∈ worlds ∧ ∀ v ∈ worlds, (v ≤[A] w) → (w ≤[A] v) :=
-  Iff.rfl
-
-theorem bestAmong_subset (worlds : Set W) (A : Set (W → Prop)) : bestAmong worlds A ⊆ worlds :=
-  fun _ h ↦ h.1
-
-/-- With an empty ordering source every world of the domain is best. -/
-theorem bestAmong_empty (worlds : Set W) : bestAmong worlds ∅ = worlds := by
-  simp [bestAmong]
-
-/-- A best world of a domain is best in any subdomain it belongs to, since a world unbettered among
-more competitors is unbettered among fewer. -/
-theorem bestAmong_superset {sub sup : Set W} (hSub : sub ⊆ sup) (hBest : w ∈ bestAmong sup A)
-    (hMem : w ∈ sub) : w ∈ bestAmong sub A :=
-  Preorder.mem_minimals_of_subset hSub hBest hMem
-
-/-- When some member of the domain verifies every proposition of the ordering source, the best
-worlds are exactly the members that do. -/
-theorem bestAmong_eq_of_exists (hex : ∃ w ∈ worlds, ∀ p ∈ A, p w) :
-    bestAmong worlds A = {w ∈ worlds | ∀ p ∈ A, p w} :=
-  Preorder.minimals_ofCriteria_eq hex
-
-/-- On a finite frame every nonempty domain has a best world. -/
-theorem exists_mem_bestAmong [Finite W] (h : worlds.Nonempty) : (bestAmong worlds A).Nonempty :=
-  let _ := premisePreorder A
-  Set.Finite.exists_minimal (Set.toFinite worlds) h
-
-/-- The best accessible worlds from `w` are the best among the accessible worlds under the ordering
-source at `w`. Kratzer's official necessity is the limit-free `humanNecessity`, which quantifies
-over exactly this set under the Limit Assumption (`humanNecessity_iff_necessity`). -/
+/-- The best accessible worlds from `w` are the minimal accessible worlds under the ordering
+source at `w`, the members that no other member strictly betters. The dominance form, at least as
+good as every member, is empty on an ordering that is not total, such as Kratzer's
+practical-inference example, so minimality is the faithful reading. Kratzer's official necessity
+is the limit-free `humanNecessity`, which quantifies over exactly this set under the Limit
+Assumption (`humanNecessity_iff_necessity`). -/
 def bestWorlds (f g : Background W) (w : W) : Set W :=
-  bestAmong (f.accessibleWorlds w) (g w)
+  (premisePreorder (g w)).minimals (f.accessibleWorlds w)
 
 theorem mem_bestWorlds {f g : Background W} {w u : W} :
     u ∈ bestWorlds f g w ↔
@@ -200,8 +165,8 @@ theorem mem_bestWorlds {f g : Background W} {w u : W} :
 
 /-- With the empty ordering source the best worlds are the accessible ones. -/
 @[simp] theorem bestWorlds_bot (f : Background W) (w : W) :
-    bestWorlds f ⊥ w = f.accessibleWorlds w :=
-  bestAmong_empty _
+    bestWorlds f ⊥ w = f.accessibleWorlds w := by
+  simp [bestWorlds]
 
 /-- When some accessible world verifies every premise of the ordering source, the best worlds are
 the worlds accessible under the two backgrounds together. -/
@@ -209,7 +174,7 @@ theorem bestWorlds_eq_accessibleWorlds_sup {f g : Background W} {w : W}
     (h : ((f ⊔ g).accessibleWorlds w).Nonempty) :
     bestWorlds f g w = (f ⊔ g).accessibleWorlds w := by
   rw [Background.accessibleWorlds_sup] at h ⊢
-  exact bestAmong_eq_of_exists h
+  exact Preorder.minimals_ofCriteria_eq h
 
 /-- A best world verifying a member of the ordering source that excludes `p` stays best when `p` is
 added, because no `p`-world is at least as good, since it fails the member, and the other worlds are
@@ -229,6 +194,6 @@ under. -/
 theorem mem_bestWorlds_of_subset {f f' g : Background W} {w u : W}
     (h : f'.accessibleWorlds w ⊆ f.accessibleWorlds w) (hu : u ∈ bestWorlds f g w)
     (hu' : u ∈ f'.accessibleWorlds w) : u ∈ bestWorlds f' g w :=
-  bestAmong_superset h hu hu'
+  Preorder.mem_minimals_of_subset h hu hu'
 
 end Modality

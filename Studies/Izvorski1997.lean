@@ -95,7 +95,7 @@ theorem necessity_of_beliefs (hex : ∃ u ∈ f.accessibleWorlds w, ∀ q ∈ g 
     (h : ∀ u ∈ f.accessibleWorlds w, (∀ q ∈ g w, q u) → p u) : necessity f g p w := by
   rw [necessity_iff]
   intro u hu
-  rw [bestWorlds, bestAmong_eq_of_exists hex] at hu
+  rw [bestWorlds, Preorder.minimals_ofCriteria_eq hex] at hu
   exact h u hu.1 hu.2
 
 /-- The domain of quantification lies within the epistemically accessible worlds, where the

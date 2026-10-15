@@ -95,12 +95,12 @@ variable {W : Type*}
 
 /-! ### ∗-revision of a modal base (79) -/
 
-/-- (79): the ∗-revision of `f` for `p` under the similarity ordering `sim`, the modal base
+/-- The ∗-revision (79) of `f` for `p` under the similarity ordering `sim`, the modal base
 whose domain at `w` is the domain of `f` together with the `p`-worlds most similar to some world
 of it. -/
 def revise (sim f : Background W) (p : W → Prop) : Background W :=
   fun w ↦ {fun w' ↦ w' ∈ f.accessibleWorlds w ∨
-    ∃ w'' ∈ f.accessibleWorlds w, w' ∈ bestAmong {v | p v} (sim w'')}
+    ∃ w'' ∈ f.accessibleWorlds w, w' ∈ (premisePreorder (sim w'')).minimals {v | p v}}
 
 section
 
@@ -111,7 +111,8 @@ theorem accessibleWorlds_revise (sim f : Background W) (p : W → Prop)
     (w : W) :
     (revise sim f p).accessibleWorlds w =
       f.accessibleWorlds w ∪
-        {w' | ∃ w'' ∈ f.accessibleWorlds w, w' ∈ bestAmong {v | p v} (sim w'')} := by
+        {w' | ∃ w'' ∈ f.accessibleWorlds w,
+          w' ∈ (premisePreorder (sim w'')).minimals {v | p v}} := by
   ext w'
   simp [Background.mem_accessibleWorlds, revise]
 
@@ -126,7 +127,7 @@ theorem prop_of_mem_accessibleWorlds_revise {w' : W}
   rw [accessibleWorlds_revise] at h
   rcases h with h | ⟨_, _, h⟩
   · exact absurd h hn
-  · exact bestAmong_subset _ _ h
+  · exact Preorder.minimals_subset _ _ h
 
 /-- A best world of a domain is a `p`-world when nothing adds to it: the ∗-revision for the
 prejacent preserves strong necessity. -/
@@ -134,7 +135,7 @@ theorem strongNecessity_revise (sim : Background W) (h : strongNecessity f g q w
     strongNecessity (revise sim f q) g q w := by
   intro w' hw'
   by_cases hmem : w' ∈ f.accessibleWorlds w
-  · exact h w' (bestAmong_superset (subset_accessibleWorlds_revise sim f q w) hw' hmem)
+  · exact h w' (Preorder.mem_minimals_of_subset (subset_accessibleWorlds_revise sim f q w) hw' hmem)
   · exact prop_of_mem_accessibleWorlds_revise hw'.1 hmem
 
 /-! ### ∗∗-revision of an ordering source (130)–(131) -/
@@ -145,21 +146,24 @@ def bestOf (R : W → W → Prop) (D : Set W) : Set W := {u | u ∈ D ∧ ∀ v 
 
 /-- Under the betterness of an ordering source (130), the best worlds are the substrate's. -/
 theorem bestOf_strictlyBetter (A : Set (W → Prop)) (D : Set W) :
-    bestOf (fun u v ↦ u <[A] v) D = bestAmong D A :=
+    bestOf (fun u v ↦ u <[A] v) D = (premisePreorder A).minimals D :=
   Set.ext fun _ ↦ and_congr_right fun _ ↦ forall₂_congr fun _ _ ↦ not_and_not_right
 
-/-- (131): the ∗∗-revision of the betterness of `g w` on `D` for `p`: in addition, every best
-`p`-world betters every best non-`p`-world. -/
+/-- The ∗∗-revision (131) of the betterness of `g w` on `D` for `p`, under which in addition every
+best `p`-world betters every best non-`p`-world. -/
 def starstar (g : Background W) (p : W → Prop) (w : W) (D : Set W) (u v : W) : Prop :=
-  (u <[g w] v) ∨ (p u ∧ ¬ p v ∧ u ∈ bestAmong D (g w) ∧ v ∈ bestAmong D (g w))
+  (u <[g w] v) ∨ (p u ∧ ¬ p v ∧
+    u ∈ (premisePreorder (g w)).minimals D ∧ v ∈ (premisePreorder (g w)).minimals D)
 
 /-- The best worlds under the ∗∗-revision are the `p`-best of the best, the lexicographic
 refinement of (129b). -/
 theorem bestOf_starstar (g : Background W) (p : W → Prop) (w : W) (D : Set W) :
-    bestOf (starstar g p w D) D = bestAmong (bestAmong D (g w)) {p} := by
+    bestOf (starstar g p w D) D =
+      (premisePreorder {p}).minimals ((premisePreorder (g w)).minimals D) := by
   ext u
-  simp only [bestOf, starstar, strictlyBetter_iff, mem_bestAmong, atLeastAsGoodAs_iff,
-    Set.mem_singleton_iff, forall_eq, Set.mem_ofPred_eq]
+  simp only [bestOf, starstar, strictlyBetter_iff, Preorder.mem_minimals_iff,
+    Preorder.ofCriteria_le_iff, atLeastAsGoodAs_iff, Set.mem_singleton_iff, forall_eq,
+    Set.mem_ofPred_eq]
   grind
 
 /-- (131) asks for one betterness relation whose restriction to every domain is the ∗∗-revision
@@ -169,12 +173,12 @@ def DomainIndependent (F : Set W → W → W → Prop) : Prop :=
 
 /-- The ∗∗-revision is domain-independent exactly when a `p`-world and a non-`p`-world that are
 both best in a domain stay best in every larger domain. Bestness is stable under shrinking a
-domain (`bestAmong_superset`); (131) presupposes stability under widening. -/
+domain (`Preorder.mem_minimals_of_subset`); (131) presupposes stability under widening. -/
 theorem domainIndependent_starstar_iff (g : Background W) (p : W → Prop) (w : W) :
     DomainIndependent (starstar g p w) ↔
       ∀ ⦃D D' : Set W⦄, D ⊆ D' → ∀ ⦃u v⦄, p u → ¬ p v →
-        u ∈ bestAmong D (g w) → v ∈ bestAmong D (g w) →
-          u ∈ bestAmong D' (g w) ∧ v ∈ bestAmong D' (g w) := by
+        u ∈ (premisePreorder (g w)).minimals D → v ∈ (premisePreorder (g w)).minimals D →
+          u ∈ (premisePreorder (g w)).minimals D' ∧ v ∈ (premisePreorder (g w)).minimals D' := by
   constructor
   · rintro ⟨R, hR⟩ D D' hD u v hu hv hbu hbv
     rcases (hR D' u v (hD hbu.1) (hD hbv.1)).1
@@ -191,8 +195,8 @@ theorem domainIndependent_starstar_iff (g : Background W) (p : W → Prop) (w : 
       · exact Or.inr ⟨hpu, hpv, (h hp hpu hpv hbu hbv).1, (h hp hpu hpv hbu hbv).2⟩
     · rintro (hlt | ⟨hpu, hpv, hbu, hbv⟩)
       · exact Or.inl hlt
-      · exact Or.inr ⟨hpu, hpv, bestAmong_superset hp hbu (by simp),
-          bestAmong_superset hp hbv (by simp)⟩
+      · exact Or.inr ⟨hpu, hpv, Preorder.mem_minimals_of_subset hp hbu (by simp),
+          Preorder.mem_minimals_of_subset hp hbv (by simp)⟩
 
 /-! ### A three-world frame
 
@@ -206,18 +210,20 @@ better one of them. -/
 abbrev g₃ : Background (Fin 3) := fun _ ↦ {(· = 0), fun x ↦ x = 1 ∨ x = 2, (· = 2)}
 
 /-- Both worlds of the pair are best in it. -/
-theorem bestAmong_pair_g₃ : bestAmong ({0, 1} : Set (Fin 3)) (g₃ 0) = {0, 1} := by
+theorem minimals_pair_g₃ : (premisePreorder (g₃ 0)).minimals ({0, 1} : Set (Fin 3)) = {0, 1} := by
   ext u
-  simp only [mem_bestAmong, atLeastAsGoodAs_iff, Set.mem_insert_iff, Set.mem_singleton_iff,
+  simp only [Preorder.mem_minimals_iff, Preorder.ofCriteria_le_iff,
+    Set.mem_insert_iff, Set.mem_singleton_iff,
       forall_eq_or_imp, forall_eq,
     implies_true]
   revert u
   decide
 
 /-- Over the whole frame `2` betters `1`. -/
-theorem bestAmong_univ_g₃ : bestAmong Set.univ (g₃ 0) = {0, 2} := by
+theorem minimals_univ_g₃ : (premisePreorder (g₃ 0)).minimals Set.univ = {0, 2} := by
   ext u
-  simp only [mem_bestAmong, atLeastAsGoodAs_iff, Set.mem_univ, true_and, Set.mem_insert_iff,
+  simp only [Preorder.mem_minimals_iff, Preorder.ofCriteria_le_iff,
+    Set.mem_univ, true_and, Set.mem_insert_iff,
     Set.mem_singleton_iff, forall_eq_or_imp, forall_eq,
     ]
   revert u
@@ -228,13 +234,13 @@ the pair, and `1` is not best in the whole frame. -/
 theorem not_domainIndependent_starstar : ¬ DomainIndependent (starstar g₃ (· = 1) 0) := by
   intro h
   have h₁ := (domainIndependent_starstar_iff g₃ (· = 1) 0).1 h (D := {0, 1}) (D' := Set.univ)
-    (Set.subset_univ _) (u := 1) (v := 0) rfl (by decide) (by rw [bestAmong_pair_g₃]; simp)
-    (by rw [bestAmong_pair_g₃]; simp)
-  rw [bestAmong_univ_g₃] at h₁
+    (Set.subset_univ _) (u := 1) (v := 0) rfl (by decide) (by rw [minimals_pair_g₃]; simp)
+    (by rw [minimals_pair_g₃]; simp)
+  rw [minimals_univ_g₃] at h₁
   simp only [Set.mem_insert_iff, Set.mem_singleton_iff] at h₁
   exact absurd h₁.1 (by decide)
 
-/-- In the paper's terms: no ordering source is a ∗∗-revision of `g₃` for `(· = 1)`. -/
+/-- In the paper's terms, no ordering source is a ∗∗-revision of `g₃` for `(· = 1)`. -/
 theorem not_exists_starstar_orderingSource :
     ¬ ∃ g' : Background (Fin 3), ∀ (D : Set (Fin 3)) (u v : Fin 3), u ∈ D → v ∈ D →
       ((u <[g' 0] v) ↔ starstar g₃ (· = 1) 0 D u v) :=
@@ -242,17 +248,17 @@ theorem not_exists_starstar_orderingSource :
 
 /-! ### The square of necessities (132)–(134) -/
 
-/-- (132b): strong necessity with the ordering source ∗∗-revised for `p`. -/
+/-- Strong necessity with the ordering source ∗∗-revised for `p` (132b). -/
 def snXg (f g : Background W) (p q : W → Prop) (w : W) : Prop :=
   ∀ w' ∈ bestOf (starstar g p w (f.accessibleWorlds w)) (f.accessibleWorlds w), q w'
 
-/-- (133): weak necessity is strong necessity with an X-marked ordering source, the secondary
+/-- Weak necessity (133) is strong necessity with an X-marked ordering source, the secondary
 ordering source of [von-fintel-iatridou-2008] being the revision's target. -/
 theorem snXg_iff_weakNecessity (f g : Background W) (p q : W → Prop)
     (w : W) : snXg f g p q w ↔ weakNecessity f g (fun _ ↦ {p}) q w := by
   rw [snXg, bestOf_starstar, weakNecessity, bestWorlds]
 
-/-- A vertex of the square (134): whether the modal base and the ordering source are
+/-- A vertex of the square (134) records whether the modal base and the ordering source are
 X-marked. -/
 structure Vertex where
   /-- The modal base is ∗-revised for the prejacent. -/
@@ -264,12 +270,12 @@ structure Vertex where
 instance : Fintype Vertex :=
   Fintype.ofEquiv (Bool × Bool) ⟨fun x ↦ ⟨x.1, x.2⟩, fun v ↦ (v.xf, v.xg), fun _ ↦ rfl, fun _ ↦ rfl⟩
 
-/-- The modal base at a vertex: `f`, or its ∗-revision for the prejacent `q` (78), (84). -/
+/-- The modal base at a vertex is `f` or its ∗-revision for the prejacent `q` (78), (84). -/
 def Vertex.base (v : Vertex) (sim f : Background W) (q : W → Prop) :
     Background W :=
   if v.xf then revise sim f q else f
 
-/-- (134): the necessity at a vertex, over the vertex's base and the betterness of `g`,
+/-- The necessity at a vertex (134), over the vertex's base and the betterness of `g`,
 ∗∗-revised for `p` when the ordering source is X-marked. -/
 def Vertex.necessity (v : Vertex) (sim f : Background W)
     (g : Background W) (p q : W → Prop) (w : W) : Prop :=
@@ -292,7 +298,7 @@ theorem Vertex.necessity_xg_true (xf : Bool) :
 
 /-! ### The entailment order of the square ((29), (82)) -/
 
-/-- Entailment between vertices: over every model whose similarity ordering is totally
+/-- Entailment between vertices, over every model whose similarity ordering is totally
 realistic (41a). -/
 def Vertex.Entails (v v' : Vertex) : Prop :=
   ∀ (W : Type) (sim : Background W), sim.IsTotallyRealistic →
@@ -305,7 +311,7 @@ theorem Vertex.Entails.trans {u v x : Vertex} (h₁ : u.Entails v) (h₂ : v.Ent
     u.Entails x :=
   fun _ sim hc f g p q w h ↦ h₂ _ sim hc f g p q w (h₁ _ sim hc f g p q w h)
 
-/-- (29): X-marking the ordering source weakens, at either value of the other parameter. -/
+/-- X-marking the ordering source weakens, at either value of the other parameter (29). -/
 theorem Vertex.entails_xg (xf : Bool) : Vertex.Entails ⟨xf, false⟩ ⟨xf, true⟩ :=
   fun _ _ _ _ _ _ _ _ h ↦ (Vertex.necessity_xg_true xf).2
     (strong_entails_weak _ _ _ _ _ ((Vertex.necessity_xg_false xf).1 h))
@@ -324,14 +330,15 @@ theorem Vertex.entails_of_sn : ∀ v, Vertex.Entails ⟨false, false⟩ v
 
 section countermodels
 
-private theorem bestAmong_singleton (a : W) (A : Set (W → Prop)) : bestAmong {a} A = {a} :=
+private theorem minimals_singleton (a : W) (A : Set (W → Prop)) :
+    (premisePreorder A).minimals {a} = {a} :=
   Set.ext fun _ ↦ ⟨fun h ↦ h.1, fun h ↦ ⟨h, fun _ hv _ ↦ by
     rw [Set.mem_singleton_iff.mp hv, Set.mem_singleton_iff.mp h]
     exact atLeastAsGoodAs_refl _ _⟩⟩
 
-private theorem bestAmong_eq_singleton {S : Set W} {b : W} (hb : b ∈ S) :
-    bestAmong S {(· = b)} = {b} := by
-  rw [bestAmong_eq_of_exists ⟨b, hb, by simp⟩]
+private theorem minimals_eq_singleton {S : Set W} {b : W} (hb : b ∈ S) :
+    (premisePreorder {(· = b)}).minimals S = {b} := by
+  rw [Preorder.minimals_ofCriteria_eq ⟨b, hb, by simp⟩]
   ext v
   simp only [Set.mem_singleton_iff, forall_eq, Set.mem_sep_iff,
     and_iff_right_iff_imp]
@@ -363,7 +370,7 @@ private theorem M1_iff (sim : Background Bool) (v : Vertex) :
     simp only [Bool.false_eq_true, iff_false, not_forall]
     exact ⟨false, Set.mem_univ _, Bool.false_ne_true⟩
   · rw [Vertex.necessity_xg_true, weakNecessity, bestWorlds_bot, M1_acc,
-      bestAmong_eq_singleton (Set.mem_univ _)]
+      minimals_eq_singleton (Set.mem_univ _)]
     simp
 
 /-! The second countermodel: only the non-prejacent world is accessible, and the ordering
@@ -391,13 +398,13 @@ private theorem M2_iff (v : Vertex) :
       (fun _ ↦ {(· = true)}) (· = true) (· = true) true := by
     rw [Vertex.necessity_xg_true, weakNecessity, bestWorlds]
     simp only [Vertex.base, Bool.false_eq_true, ↓reduceIte]
-    rw [M2_acc, bestAmong_singleton, bestAmong_singleton]
+    rw [M2_acc, minimals_singleton, minimals_singleton]
     simp
   have htf : Vertex.necessity ⟨true, false⟩ simB (fun _ ↦ {(· = false)})
       (fun _ ↦ {(· = true)}) (· = true) (· = true) true := by
     rw [Vertex.necessity_xg_false, strongNecessity, necessity_iff, bestWorlds]
     simp only [Vertex.base, ↓reduceIte]
-    rw [bestAmong_eq_of_exists ⟨true, M2_mem, by simp⟩]
+    rw [Preorder.minimals_ofCriteria_eq ⟨true, M2_mem, by simp⟩]
     exact fun w' hw' ↦ hw'.2 _ (Set.mem_singleton _)
   obtain ⟨_ | _, _ | _⟩ := v
   · exact iff_of_false
@@ -428,24 +435,25 @@ private theorem accessibleWorlds_revise_f₃ :
   rw [accessibleWorlds_revise, accessibleWorlds_f₃]
   ext u
   simp only [Set.mem_union, Set.mem_insert_iff, Set.mem_singleton_iff, Set.mem_ofPred_eq,
-    mem_bestAmong, atLeastAsGoodAs_iff, forall_eq, Set.mem_univ, iff_true]
+    Preorder.mem_minimals_iff, Preorder.ofCriteria_le_iff, forall_eq, Set.mem_univ, iff_true]
   revert u
   decide
 
 private theorem M3_ft : Vertex.necessity ⟨false, true⟩ sim₃ f₃ g₃ (· = 1) q₃ 0 := by
   rw [Vertex.necessity_xg_true, weakNecessity, bestWorlds]
   simp only [Vertex.base, Bool.false_eq_true, ↓reduceIte]
-  rw [accessibleWorlds_f₃, bestAmong_pair_g₃,
-    bestAmong_eq_singleton (S := {0, 1}) (b := 1) (by simp)]
+  rw [accessibleWorlds_f₃, minimals_pair_g₃,
+    minimals_eq_singleton (S := {0, 1}) (b := 1) (by simp)]
   rintro _ rfl
   exact Or.inl rfl
 
 private theorem M3_not_tt : ¬ Vertex.necessity ⟨true, true⟩ sim₃ f₃ g₃ (· = 1) q₃ 0 := by
   rw [Vertex.necessity_xg_true, weakNecessity, bestWorlds]
   simp only [Vertex.base, ↓reduceIte]
-  rw [accessibleWorlds_revise_f₃, bestAmong_univ_g₃]
-  have h0 : (0 : Fin 3) ∈ bestAmong ({0, 2} : Set (Fin 3)) {(· = 1)} := by
-    simp only [mem_bestAmong, atLeastAsGoodAs_iff, Set.mem_insert_iff, Set.mem_singleton_iff,
+  rw [accessibleWorlds_revise_f₃, minimals_univ_g₃]
+  have h0 : (0 : Fin 3) ∈ (premisePreorder {(· = 1)}).minimals ({0, 2} : Set (Fin 3)) := by
+    simp only [Preorder.mem_minimals_iff, Preorder.ofCriteria_le_iff,
+      Set.mem_insert_iff, Set.mem_singleton_iff,
         forall_eq]
     decide
   exact fun h ↦ absurd (h 0 h0) (by decide)
@@ -462,7 +470,7 @@ private theorem M3_iff (v : Vertex) :
 
 end countermodels
 
-/-- The entailment order of the square (134): strong necessity entails every vertex, *tinha
+/-- In the entailment order of the square (134), strong necessity entails every vertex, *tinha
 que* entails *devia*, and nothing else entails anything. -/
 theorem Vertex.entails_iff (v v' : Vertex) :
     v.Entails v' ↔ v = v' ∨ v = ⟨false, false⟩ ∨ (v = ⟨true, false⟩ ∧ v' = ⟨true, true⟩) := by
@@ -479,7 +487,7 @@ theorem Vertex.entails_iff (v v' : Vertex) :
   · rintro (rfl | rfl | ⟨rfl, rfl⟩)
     exacts [.refl _, entails_of_sn _, entails_xg true]
 
-/-- (82): the X-marked weak necessity and its unmarked counterpart are independent, and the
+/-- In (82), the X-marked weak necessity and its unmarked counterpart are independent, and the
 X-marked strong necessity does not entail its unmarked counterpart; the unmarked strong
 necessity does entail the marked one, against the paper's first line of (82b). -/
 theorem entails_82 :
@@ -491,8 +499,8 @@ theorem entails_82 :
 
 /-! ### Forces as operators -/
 
-/-- A force as a Kratzer operator over a modal base and an ordering source: possibility and
-necessity over the best worlds, weak necessity through the ∗∗-revision for `p` (132b). -/
+/-- A force as a Kratzer operator over a modal base and an ordering source, possibility and
+necessity over the best worlds and weak necessity through the ∗∗-revision for `p` (132b). -/
 def interpret (φ : ModalForce) (f g : Background W) (p q : W → Prop)
     (w : W) : Prop :=
   match φ with
@@ -500,7 +508,7 @@ def interpret (φ : ModalForce) (f g : Background W) (p q : W → Prop)
   | .weakNecessity => snXg f g p q w
   | .necessity => strongNecessity f g q w
 
-/-- (135): the Portuguese necessity modal at each vertex. X-marking the ordering source is
+/-- The Portuguese necessity modal at each vertex (135). X-marking the ordering source is
 lexical, from *ter que* to *dever*, and X-marking the modal base is the past imperfect. -/
 def modalAt : Vertex → Auxiliary
   | ⟨false, false⟩ => Portuguese.Modals.terQue
@@ -511,17 +519,17 @@ def modalAt : Vertex → Auxiliary
 /-- The modal item at a vertex. -/
 def square (v : Vertex) : ModalItem := (modalAt v).toModalItem
 
-/-- (135): the fragment's modal at a vertex is in the past imperfect exactly when the modal
-base is X-marked. -/
+/-- The fragment's modal at a vertex is in the past imperfect exactly when the modal base is
+X-marked (135). -/
 theorem tense_square : ∀ v : Vertex, (modalAt v).tense = some .Imp ↔ v.xf = true := by decide
 
-/-- (83), (135): the fragment's force at a vertex is weak necessity exactly when the ordering
-source is X-marked. -/
+/-- The fragment's force at a vertex is weak necessity exactly when the ordering source is
+X-marked (83), (135). -/
 theorem forces_square :
     ∀ v : Vertex, (square v).forces = {if v.xg then .weakNecessity else .necessity} := by
   decide
 
-/-- (135) semantically: the necessity at a vertex is the operator of the force the fragment
+/-- Semantically (135), the necessity at a vertex is the operator of the force the fragment
 gives the vertex's modal, over the vertex's base. -/
 theorem necessity_iff_interpret {φ : ModalForce} (v : Vertex) (hφ : φ ∈ (square v).forces) :
     v.necessity sim f g p q w ↔ interpret φ (v.base sim f q) g p q w := by
@@ -535,7 +543,7 @@ theorem necessity_iff_interpret {φ : ModalForce} (v : Vertex) (hφ : φ ∈ (sq
 
 /-! ### The conjunctions of §2 -/
 
-/-- A conjunct: a modal of some force over the prejacent or its negation, possibly negated. -/
+/-- A conjunct is a modal of some force over the prejacent or its negation, possibly negated. -/
 structure Conjunct where
   /-- The force of the modal. -/
   force : ModalForce
@@ -552,8 +560,8 @@ def Conjunct.holds (c : Conjunct) (f g : Background W) (p q : W → Prop)
   let m := interpret c.force f g p (if c.negPrejacent then fun v ↦ ¬ q v else q) w
   if c.negModal then ¬ m else m
 
-/-- Entailment between conjuncts, over every model with nonempty best worlds: the conclusion
-of a deliberation, (27ii). -/
+/-- Entailment between conjuncts over every model with nonempty best worlds, the conclusion of
+a deliberation (27ii). -/
 def Conjunct.Entails (c₁ c₂ : Conjunct) : Prop :=
   ∀ (W : Type) (f g : Background W) (p q : W → Prop) (w : W),
     (bestWorlds f g w).Nonempty → c₁.holds f g p q w → c₂.holds f g p q w
@@ -603,11 +611,11 @@ noncomputable def profile (f g : Background W) (p q : W → Prop) (w : W) :
     Profile :=
   open Classical in
   ⟨decide (∃ u ∈ bestWorlds f g w, q u), decide (∃ u ∈ bestWorlds f g w, ¬ q u),
-    decide (∃ u ∈ bestAmong (bestWorlds f g w) {p}, q u),
-    decide (∃ u ∈ bestAmong (bestWorlds f g w) {p}, ¬ q u)⟩
+    decide (∃ u ∈ (premisePreorder {p}).minimals (bestWorlds f g w), q u),
+    decide (∃ u ∈ (premisePreorder {p}).minimals (bestWorlds f g w), ¬ q u)⟩
 
-/-- The profiles of models with nonempty best worlds: the `p`-best of the best worlds are
-nonempty and best. -/
+/-- A profile is valid when it is the profile of a model with nonempty best worlds, whose
+`p`-best best worlds are nonempty and best. -/
 def Profile.Valid (π : Profile) : Prop :=
   (π.topQ = true ∨ π.topNotQ = true) ∧ (π.topQ = true → π.bestQ = true) ∧
     (π.topNotQ = true → π.bestNotQ = true)
@@ -617,18 +625,19 @@ instance : DecidablePred Profile.Valid := fun π ↦
     (π.topQ = true → π.bestQ = true) ∧ (π.topNotQ = true → π.bestNotQ = true)))
 
 /-- The `p`-best of a nonempty set are nonempty: a `p`-member if there is one, else all. -/
-theorem bestAmong_singleton_nonempty {S : Set W} (hS : S.Nonempty) (p : W → Prop) :
-    (bestAmong S {p}).Nonempty := by
+theorem minimals_singleton_nonempty {S : Set W} (hS : S.Nonempty) (p : W → Prop) :
+    ((premisePreorder {p}).minimals S).Nonempty := by
   by_cases hp : ∃ v ∈ S, p v
   · obtain ⟨v, hv, hpv⟩ := hp
-    exact ⟨v, hv, fun _ _ _ _ hq _ ↦ Set.mem_singleton_iff.mp hq ▸ hpv⟩
+    exact ⟨v, hv, fun ⦃_⦄ _ _ _ hq _ ↦ Set.mem_singleton_iff.mp hq ▸ hpv⟩
   · push Not at hp
     obtain ⟨u, hu⟩ := hS
-    exact ⟨u, hu, fun u' hu' _ _ hq hqu' ↦ absurd (Set.mem_singleton_iff.mp hq ▸ hqu') (hp u' hu')⟩
+    exact ⟨u, hu, fun ⦃u'⦄ hu' _ _ hq hqu' ↦
+      absurd (Set.mem_singleton_iff.mp hq ▸ hqu') (hp u' hu')⟩
 
 theorem profile_valid (hne : (bestWorlds f g w).Nonempty) : (profile f g p q w).Valid := by
-  obtain ⟨u, hu⟩ := bestAmong_singleton_nonempty hne p
-  have hsub := bestAmong_subset (bestWorlds f g w) {p}
+  obtain ⟨u, hu⟩ := minimals_singleton_nonempty hne p
+  have hsub := Preorder.minimals_subset (premisePreorder {p}) (bestWorlds f g w)
   simp only [Profile.Valid, profile, decide_eq_true_eq]
   refine ⟨?_, fun ⟨v, hv, hq⟩ ↦ ⟨v, hsub hv, hq⟩, fun ⟨v, hv, hq⟩ ↦ ⟨v, hsub hv, hq⟩⟩
   by_cases hq : q u
@@ -665,7 +674,7 @@ private def accList : Option Bool → List Bool
   | none => [false, true]
   | some b => [b]
 
-/-- The ordering revision's target in the family: a tie, or a preference for one world. -/
+/-- The ordering revision's target in the family, a tie or a preference for one world. -/
 private def ofRev : Option Bool → Bool → Prop
   | none => fun _ ↦ True
   | some b => (· = b)
@@ -681,11 +690,11 @@ private theorem bestWorlds_ofAcc (acc : Option Bool) (w : Bool) :
   ext v
   cases acc <;> cases v <;> simp [Background.mem_accessibleWorlds, ofAcc, accList]
 
-private theorem bestAmong_ofRev (acc rev : Option Bool) :
-    bestAmong {v | v ∈ accList acc} {ofRev rev} = {v | v ∈ topList acc rev} := by
+private theorem minimals_ofRev (acc rev : Option Bool) :
+    (premisePreorder {ofRev rev}).minimals {v | v ∈ accList acc} = {v | v ∈ topList acc rev} := by
   ext u
   rcases acc with _ | _ | _ <;> rcases rev with _ | _ | _ <;> cases u <;>
-    simp [mem_bestAmong, atLeastAsGoodAs_iff, accList, topList, ofRev]
+    simp [Preorder.mem_minimals_iff, Preorder.ofCriteria_le_iff, accList, topList, ofRev]
 
 private def famProfile (acc rev : Option Bool) (q : Bool → Bool) : Profile :=
   ⟨(accList acc).any q, (accList acc).any (!q ·), (topList acc rev).any q,
@@ -693,7 +702,7 @@ private def famProfile (acc rev : Option Bool) (q : Bool → Bool) : Profile :=
 
 private theorem profile_ofAcc (acc rev : Option Bool) (q : Bool → Bool) :
     profile (ofAcc acc) ⊥ (ofRev rev) (q · = true) true = famProfile acc rev q := by
-  simp only [profile, famProfile, bestWorlds_ofAcc, bestAmong_ofRev]
+  simp only [profile, famProfile, bestWorlds_ofAcc, minimals_ofRev]
   rcases acc with _ | _ | _ <;> rcases rev with _ | _ | _ <;> simp [accList, topList]
 
 private theorem exists_famProfile :
@@ -771,13 +780,13 @@ theorem Pattern.consistent_iff_not_contradictory (pat : Pattern) :
   push Not
   rfl
 
-/-- (28)–(29): the scale of forces is the entailment order, the prejacent held fixed, and no
+/-- The scale of forces (28)–(29) is the entailment order, the prejacent held fixed, and no
 entailment runs up the scale. -/
 theorem scale : ∀ (φ ψ : ModalForce) (n : Bool),
     (φ ≤ ψ ↔ Conjunct.Entails ⟨ψ, false, n⟩ ⟨φ, false, n⟩) := by
   decide
 
-/-- (27): *dever* passes Rubinstein's test for weak necessity. It is entailed by *ter que* and
+/-- *Dever* passes Rubinstein's test for weak necessity (27). It is entailed by *ter que* and
 not conversely, and *dever p* and *dever ¬p* are contradictory. -/
 theorem rubinstein :
     (Conjunct.Entails ⟨.necessity, false, false⟩ ⟨.weakNecessity, false, false⟩ ∧
@@ -795,7 +804,7 @@ def conjunctTable : List (String × Conjunct) :=
    ("not_pos_p", ⟨.possibility, true, false⟩), ("not_wn_p", ⟨.weakNecessity, true, false⟩),
    ("not_sn_p", ⟨.necessity, true, false⟩)]
 
-/-- A row: the conjunction and the paper's judgment. -/
+/-- A row pairs a conjunction with the paper's judgment. -/
 structure Row where
   /-- The conjunction. -/
   pattern : Pattern
@@ -817,7 +826,7 @@ theorem row_ofDatum_isSome :
 /-- The conjunctions of §2. -/
 def rows : List Row := Examples.all.filterMap Row.ofDatum
 
-/-- (16)–(25), (30), (32): a conjunction is judged `#` exactly when it is contradictory. -/
+/-- A conjunction of (16)–(25), (30) or (32) is judged `#` exactly when it is contradictory. -/
 theorem rows_unacceptable_iff :
     ∀ r ∈ rows, (r.judgment = .unacceptable ↔ r.pattern.Contradictory) := by
   decide
@@ -826,7 +835,7 @@ end
 
 /-! ### (80)–(81): suspending the knowledge that Peter is not in his office -/
 
-/-- A world of the dialogues: whether Peter is in his office and whether the day is a
+/-- A world of the dialogues records whether Peter is in his office and whether the day is a
 holiday. -/
 @[ext]
 structure Day where
@@ -852,21 +861,21 @@ theorem sim_isTotallyRealistic : sim.IsTotallyRealistic := by
   simp only [Background.mem_accessibleWorlds, sim, Set.mem_insert_iff, Set.mem_singleton_iff,
     forall_eq_or_imp, forall_eq, Day.ext_iff]
 
-/-- Normality: people are in the office on workdays and not on holidays. -/
+/-- Normally people are in the office on workdays and not on holidays. -/
 def normal : Background Day :=
   fun _ ↦ {fun v ↦ v.holiday = true → v.office = false,
     fun v ↦ v.holiday = false → v.office = true}
 
-/-- The prejacent: Peter is in his office. -/
+/-- The prejacent, that Peter is in his office. -/
 def atOffice (v : Day) : Prop := v.office = true
 
-/-- The target of the ordering revision: the day is a workday. -/
+/-- The target of the ordering revision, that the day is a workday. -/
 def workday (v : Day) : Prop := v.holiday = false
 
-/-- (81): A has checked, and Peter is not in his office. -/
+/-- A has checked, and Peter is not in his office (81). -/
 def checked : Background Day := fun _ ↦ {fun v ↦ v.office = false}
 
-/-- (80): A has said that the day is a holiday. -/
+/-- A has said that the day is a holiday (80). -/
 def holidayInfo : Background Day := fun _ ↦ {fun v ↦ v.holiday = true}
 
 private theorem accessibleWorlds_checked (w : Day) :
@@ -884,64 +893,67 @@ private theorem accessibleWorlds_holidayInfo (w : Day) :
     ]
 
 /-- The office-world most similar to a world keeps its holiday value. -/
-private theorem bestAmong_atOffice_sim (w : Day) :
-    bestAmong {v | atOffice v} (sim w) = {⟨true, w.holiday⟩} := by
+private theorem minimals_atOffice_sim (w : Day) :
+    (premisePreorder (sim w)).minimals {v | atOffice v} = {⟨true, w.holiday⟩} := by
   ext ⟨o, h⟩
   obtain ⟨o', h'⟩ := w
-  simp only [mem_bestAmong, atLeastAsGoodAs_iff, sim, atOffice, Set.mem_ofPred_eq,
+  simp only [Preorder.mem_minimals_iff, Preorder.ofCriteria_le_iff,
+    sim, atOffice, Set.mem_ofPred_eq,
     Set.mem_singleton_iff, Set.mem_insert_iff, forall_eq_or_imp, forall_eq,
     ]
   cases o <;> cases h <;> cases o' <;> cases h' <;> decide
 
 /-- The workday-world most similar to a world keeps its office value. -/
-private theorem bestAmong_workday_sim (w : Day) :
-    bestAmong {v | workday v} (sim w) = {⟨w.office, false⟩} := by
+private theorem minimals_workday_sim (w : Day) :
+    (premisePreorder (sim w)).minimals {v | workday v} = {⟨w.office, false⟩} := by
   ext ⟨o, h⟩
   obtain ⟨o', h'⟩ := w
-  simp only [mem_bestAmong, atLeastAsGoodAs_iff, sim, workday, Set.mem_ofPred_eq,
+  simp only [Preorder.mem_minimals_iff, Preorder.ofCriteria_le_iff, sim, workday, Set.mem_ofPred_eq,
     Set.mem_singleton_iff, Set.mem_insert_iff, forall_eq_or_imp, forall_eq,
     ]
   cases o <;> cases h <;> cases o' <;> cases h' <;> decide
 
-/-- (81): suspending that Peter is not in his office makes every world accessible. -/
+/-- In (81), suspending that Peter is not in his office makes every world accessible. -/
 private theorem accessibleWorlds_revise_checked (w : Day) :
     (revise sim checked atOffice).accessibleWorlds w = Set.univ := by
   rw [accessibleWorlds_revise, accessibleWorlds_checked]
   ext ⟨o, h⟩
-  simp only [Set.mem_union, Set.mem_ofPred_eq, bestAmong_atOffice_sim, Set.mem_singleton_iff,
+  simp only [Set.mem_union, Set.mem_ofPred_eq, minimals_atOffice_sim, Set.mem_singleton_iff,
     Set.mem_univ, iff_true]
   cases o <;> cases h <;> decide
 
-/-- (80): suspending that Peter is not in his office on a holiday adds only holiday worlds. -/
+/-- In (80), suspending that Peter is not in his office on a holiday adds only holiday
+worlds. -/
 private theorem accessibleWorlds_revise_holidayInfo (w : Day) :
     (revise sim holidayInfo atOffice).accessibleWorlds w = {v | v.holiday = true} := by
   rw [accessibleWorlds_revise, accessibleWorlds_holidayInfo]
   ext ⟨o, h⟩
-  simp only [Set.mem_union, Set.mem_ofPred_eq, bestAmong_atOffice_sim, Set.mem_singleton_iff]
+  simp only [Set.mem_union, Set.mem_ofPred_eq, minimals_atOffice_sim, Set.mem_singleton_iff]
   cases o <;> cases h <;> decide
 
-/-- Footnote 18: suspending the holiday information instead makes every world accessible. -/
+/-- Suspending the holiday information instead makes every world accessible (footnote 18). -/
 private theorem accessibleWorlds_revise_workday (w : Day) :
     (revise sim holidayInfo workday).accessibleWorlds w = Set.univ := by
   rw [accessibleWorlds_revise, accessibleWorlds_holidayInfo]
   ext ⟨o, h⟩
-  simp only [Set.mem_union, Set.mem_ofPred_eq, bestAmong_workday_sim, Set.mem_singleton_iff,
+  simp only [Set.mem_union, Set.mem_ofPred_eq, minimals_workday_sim, Set.mem_singleton_iff,
     Set.mem_univ, iff_true]
   cases o <;> cases h <;> decide
 
-/-- Normality among all worlds: the office-workday and the holiday away from the office. -/
-private theorem bestAmong_normal_univ (w : Day) :
-    bestAmong Set.univ (normal w) = {⟨true, false⟩, ⟨false, true⟩} := by
+/-- The most normal worlds are the office-workday and the holiday away from the office. -/
+private theorem minimals_normal_univ (w : Day) :
+    (premisePreorder (normal w)).minimals Set.univ = {⟨true, false⟩, ⟨false, true⟩} := by
   ext ⟨o, h⟩
-  simp only [mem_bestAmong, atLeastAsGoodAs_iff, normal, Set.mem_univ, true_and,
+  simp only [Preorder.mem_minimals_iff, Preorder.ofCriteria_le_iff, normal, Set.mem_univ, true_and,
     Set.mem_insert_iff, Set.mem_singleton_iff, forall_eq_or_imp, forall_eq,
     ]
   cases o <;> cases h <;> decide
 
-/-- Normality among the worlds where Peter is away: the holiday. -/
-private theorem bestAmong_normal_away (w : Day) :
-    bestAmong {v | v.office = false} (normal w) = {⟨false, true⟩} := by
-  rw [bestAmong_eq_of_exists (worlds := {v | v.office = false}) (A := normal w)
+/-- The most normal world where Peter is away is the holiday. -/
+private theorem minimals_normal_away (w : Day) :
+    (premisePreorder (normal w)).minimals {v | v.office = false} = {⟨false, true⟩} := by
+  rw [Preorder.minimals_ofCriteria_eq (s := ({v | v.office = false} : Set Day))
+    (criteria := normal w)
     ⟨⟨false, true⟩, by simp, by simp [normal]⟩]
   ext ⟨o, h⟩
   simp only [normal, Set.mem_ofPred_eq, Set.mem_singleton_iff, Set.mem_insert_iff,
@@ -949,10 +961,11 @@ private theorem bestAmong_normal_away (w : Day) :
     ]
   cases o <;> cases h <;> decide
 
-/-- Normality among the holiday worlds: away from the office. -/
-private theorem bestAmong_normal_holiday (w : Day) :
-    bestAmong {v | v.holiday = true} (normal w) = {⟨false, true⟩} := by
-  rw [bestAmong_eq_of_exists (worlds := {v | v.holiday = true}) (A := normal w)
+/-- The most normal holiday world is the one away from the office. -/
+private theorem minimals_normal_holiday (w : Day) :
+    (premisePreorder (normal w)).minimals {v | v.holiday = true} = {⟨false, true⟩} := by
+  rw [Preorder.minimals_ofCriteria_eq (s := ({v | v.holiday = true} : Set Day))
+    (criteria := normal w)
     ⟨⟨false, true⟩, by simp, by simp [normal]⟩]
   ext ⟨o, h⟩
   simp only [normal, Set.mem_ofPred_eq, Set.mem_singleton_iff, Set.mem_insert_iff,
@@ -961,25 +974,26 @@ private theorem bestAmong_normal_holiday (w : Day) :
   cases o <;> cases h <;> decide
 
 /-- The workday tie-breaker keeps the office-workday. -/
-private theorem bestAmong_workday_pair :
-    bestAmong ({⟨true, false⟩, ⟨false, true⟩} : Set Day) {workday} = {⟨true, false⟩} := by
+private theorem minimals_workday_pair :
+    (premisePreorder {workday}).minimals ({⟨true, false⟩, ⟨false, true⟩} : Set Day) =
+      {⟨true, false⟩} := by
   ext ⟨o, h⟩
-  simp only [mem_bestAmong, atLeastAsGoodAs_iff, workday, Set.mem_insert_iff,
+  simp only [Preorder.mem_minimals_iff, Preorder.ofCriteria_le_iff, workday, Set.mem_insert_iff,
     Set.mem_singleton_iff, forall_eq_or_imp, forall_eq,
     implies_true,
     ]
   cases o <;> cases h <;> decide
 
-/-- B's guess: with nothing known, normality on a workday puts Peter in his office. -/
+/-- B guesses that, with nothing known, normality on a workday puts Peter in his office. -/
 theorem deve_guess (w : Day) :
     Vertex.necessity ⟨false, true⟩ sim ⊥ normal workday atOffice w := by
   rw [Vertex.necessity_xg_true, weakNecessity, bestWorlds]
   simp only [Vertex.base, Bool.false_eq_true, ↓reduceIte]
-  rw [Background.accessibleWorlds_bot, bestAmong_normal_univ, bestAmong_workday_pair]
+  rw [Background.accessibleWorlds_bot, minimals_normal_univ, minimals_workday_pair]
   rintro _ rfl
   rfl
 
-/-- (81): after A has checked, *deve* is false and *devia* is true. Suspending the knowledge
+/-- After A has checked (81), *deve* is false and *devia* is true. Suspending the knowledge
 that Peter is not in his office reinstates the bias towards his being there. -/
 theorem devia_81 (w : Day) :
     ¬ Vertex.necessity ⟨false, true⟩ sim checked normal workday atOffice w ∧
@@ -987,39 +1001,39 @@ theorem devia_81 (w : Day) :
   constructor
   · rw [Vertex.necessity_xg_true, weakNecessity, bestWorlds]
     simp only [Vertex.base, Bool.false_eq_true, ↓reduceIte]
-    rw [accessibleWorlds_checked, bestAmong_normal_away, bestAmong_singleton]
+    rw [accessibleWorlds_checked, minimals_normal_away, minimals_singleton]
     exact fun h ↦ Bool.false_ne_true (h _ rfl)
   · rw [Vertex.necessity_xg_true, weakNecessity, bestWorlds]
     simp only [Vertex.base, ↓reduceIte]
-    rw [accessibleWorlds_revise_checked, bestAmong_normal_univ, bestAmong_workday_pair]
+    rw [accessibleWorlds_revise_checked, minimals_normal_univ, minimals_workday_pair]
     rintro _ rfl
     rfl
 
-/-- (80): on a holiday the suspension adds only holiday worlds, and *devia* is false. -/
+/-- On a holiday (80) the suspension adds only holiday worlds, and *devia* is false. -/
 theorem not_devia_80 (w : Day) :
     ¬ Vertex.necessity ⟨true, true⟩ sim holidayInfo normal workday atOffice w := by
   rw [Vertex.necessity_xg_true, weakNecessity, bestWorlds]
   simp only [Vertex.base, ↓reduceIte]
-  rw [accessibleWorlds_revise_holidayInfo, bestAmong_normal_holiday, bestAmong_singleton]
+  rw [accessibleWorlds_revise_holidayInfo, minimals_normal_holiday, minimals_singleton]
   exact fun h ↦ Bool.false_ne_true (h _ rfl)
 
-/-- Footnote 18: revising the base of (80) for the salient proposition, the workday, instead of
-the prejacent would wrongly make *devia* true. -/
+/-- Revising the base of (80) for the salient proposition, the workday, instead of the prejacent
+would wrongly make *devia* true (footnote 18). -/
 theorem revise_workday_80 (w : Day) :
     Vertex.necessity ⟨false, true⟩ sim (revise sim holidayInfo workday) normal workday atOffice
       w := by
   rw [Vertex.necessity_xg_true, weakNecessity, bestWorlds]
   simp only [Vertex.base, Bool.false_eq_true, ↓reduceIte]
-  rw [accessibleWorlds_revise_workday, bestAmong_normal_univ, bestAmong_workday_pair]
+  rw [accessibleWorlds_revise_workday, minimals_normal_univ, minimals_workday_pair]
   rintro _ rfl
   rfl
 
-/-- The modal base of each dialogue, keyed as in the JSON: what A has said. -/
+/-- The modal base of each dialogue, keyed as in the JSON, is what A has said. -/
 def baseTable : List (String × Background Day) :=
   [("checked", checked), ("holiday", holidayInfo)]
 
-/-- (80)–(81): *devia* is judged true exactly when the X-marked weak necessity holds over what
-A has said. -/
+/-- In (80)–(81), *devia* is judged true exactly when the X-marked weak necessity holds over
+what A has said. -/
 theorem dialogues_predicted :
     ∀ ex ∈ [Examples.ex_80, Examples.ex_81], ∃ b ∈ ex.parse? "base" baseTable,
       (ex.judgment = .acceptable ↔

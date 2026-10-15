@@ -160,7 +160,7 @@ effective-preference source of (88) instead varies from world to world, footnote
 theorem designatedGoal_eq {f : Background W} {p : W → Prop}
     (h : ∃ v ∈ f.accessibleWorlds w, p v) :
     bestWorlds f (λ _ => {p}) w = (f.restrict p).accessibleWorlds w := by
-  rw [Background.accessibleWorlds_restrict, bestWorlds, bestAmong_eq_of_exists]
+  rw [Background.accessibleWorlds_restrict, bestWorlds, Preorder.minimals_ofCriteria_eq]
   · ext u
     simp
   · obtain ⟨v, hv, hp⟩ := h

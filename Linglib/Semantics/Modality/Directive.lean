@@ -36,7 +36,7 @@ def strongNecessity (f g : Background W) (p : W → Prop) (w : W) : Prop :=
 /-- Weak necessity, *ought φ*, is necessity over the `g'`-best of the `g`-best accessible
 worlds. -/
 def weakNecessity (f g g' : Background W) (p : W → Prop) (w : W) : Prop :=
-  ∀ w' ∈ bestAmong (bestWorlds f g w) (g' w), p w'
+  ∀ w' ∈ (premisePreorder (g' w)).minimals (bestWorlds f g w), p w'
 
 /-- Strong necessity entails weak necessity: the `g'`-best of the `g`-best worlds are
 `g`-best. -/
@@ -44,7 +44,7 @@ theorem strong_entails_weak (f g g' : Background W) (p : W → Prop) (w : W)
     (h : strongNecessity f g p w) : weakNecessity f g g' p w := by
   rw [strongNecessity, necessity_iff] at h
   intro w' hw'
-  exact h w' (bestAmong_subset _ _ hw')
+  exact h w' (Preorder.minimals_subset _ _ hw')
 
 /-- Weak necessity does not entail strong necessity: with two tied accessible worlds and a
 secondary ordering source singling out the one where `p` holds, *ought p* is true and *must p*
@@ -80,8 +80,8 @@ theorem weak_not_entails_strong :
 theorem weak_eq_strong_no_secondary (f g : Background W) (p : W → Prop)
     (w : W) : weakNecessity f g (⊥ : Background W) p w ↔ strongNecessity f g p w := by
   unfold weakNecessity strongNecessity
-  rw [show bestAmong (bestWorlds f g w) ((⊥ : Background W) w) =
-    bestWorlds f g w from bestAmong_empty _]
+  rw [show (premisePreorder ((⊥ : Background W) w)).minimals (bestWorlds f g w) =
+    bestWorlds f g w by simp]
   exact (necessity_iff f g p w).symm
 
 end Modality.Directive

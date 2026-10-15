@@ -94,8 +94,8 @@ omit [MeasurableSpace W] [DiscreteMeasurableSpace W] in
     countTrue R a = (Finset.univ.filter (a ∈ R ·)).card := by
   simp [countTrue, Set.indicator_apply, Finset.sum_boole]
 
-/-- The expected value of `φ`, the conditional expectation of `μ_EVAL` given `φ` (5): expected
-utility read deontically, explanatory value read epistemically. -/
+/-- The expected value of `φ` is the conditional expectation of `μ_EVAL` given `φ` (5), expected
+utility read deontically and explanatory value read epistemically. -/
 noncomputable def expectedValue (p : Measure W) (R : ι → Set W) (φ : Set W) : ℝ≥0∞ :=
   ∫⁻ w, countTrue R w ∂p[|φ]
 
@@ -468,8 +468,8 @@ example :
 /-! The classical account, run on the same scenario. -/
 
 open Modality in
-/-- The paper's proof sketch (16): over any modal base whose accessible worlds locate the miners
-in one of the two shafts and any ordering source with best worlds — the paper's limit
+/-- Following the paper's proof sketch (16), over any modal base whose accessible worlds locate
+the miners in one of the two shafts and any ordering source with best worlds — the paper's limit
 assumption, its fn 1 — the three *ought* claims of (15) are jointly unsatisfiable on Kratzer's
 account [kratzer-1991], the if-clauses restricting the modal base. -/
 theorem kratzer_miners_unsatisfiable {V : Type*} (f g : Background V)
@@ -481,9 +481,10 @@ theorem kratzer_miners_unsatisfiable {V : Type*} (f g : Background V)
         necessity (f.restrict inB) g bB w) := by
   rintro ⟨hN, hAB, hBB⟩
   obtain ⟨v, hv⟩ := hbest
-  have hacc : v ∈ f.accessibleWorlds w := bestAmong_subset _ _ hv
+  have hacc : v ∈ f.accessibleWorlds w := Preorder.minimals_subset _ _ hv
   have key : ∀ α : V → Prop, α v → v ∈ bestWorlds (f.restrict α) g w := fun α hα ↦
-    bestAmong_superset (fun _ hu ↦ (Background.mem_accessibleWorlds_restrict.1 hu).1) hv
+    Preorder.mem_minimals_of_subset (fun _ hu ↦ (Background.mem_accessibleWorlds_restrict.1 hu).1)
+      hv
       (Background.mem_accessibleWorlds_restrict.2 ⟨hacc, hα⟩)
   rcases hcover v hacc with h | h
   · exact hA v (hAB v (key inA h)) (hN v hv)
@@ -495,7 +496,7 @@ end Miners
 
 namespace ModalLinda
 
-/-- The modal conjunction fallacy ((30)–(34)): for every measure realizing the printed
+/-- In the modal conjunction fallacy ((30)–(34)), for every measure realizing the printed
 conditional probabilities and any threshold in `[0.5, 1.5)`, *Linda must be a feminist bank
 teller* is true and *Linda must be a bank teller* false, although the feminist tellers are a
 subset of the tellers and so no more probable. The expected values are (32) and (33); by
