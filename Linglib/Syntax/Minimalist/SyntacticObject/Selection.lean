@@ -6,6 +6,7 @@ Authors: Robert Hawkins
 module
 
 public import Mathlib.Algebra.GroupWithZero.Defs
+public import Linglib.Syntax.Minimalist.Head
 public import Linglib.Syntax.Minimalist.SyntacticObject.Lift
 
 /-!
@@ -38,8 +39,11 @@ head functions it is partial: `0` at exocentric nodes.
 
 * `mul_comm` (via `CommMagma SelectionState`) and `Minimalist.selSide_comm`:
   order-independence — the formal content of Merge's unordered output.
-* `Minimalist.SyntacticObject.selHead_node`: endocentricity — a node's head is one
-  of its daughters' heads.
+* `Head SelectionState`: the head of a selection product is a factor's head, so `selHead` is
+  endocentric (`Minimalist.mem_head_or_mem_head_of_mem_head_map_mul`).
+* `Minimalist.SelectionState.isSaturated_iff_not_isSaturated_of_mul_ne_zero`,
+  `Minimalist.SelectionState.head_mul_of_not_isSaturated`: Merge is triggered, one factor
+  selecting and the other saturated, and the selecting factor projects.
 
 ## Implementation notes
 
@@ -54,6 +58,13 @@ trace remembers no token and gets the saturated dummy `.of .bareTrace []`. `selC
 reads only the token's category and `sel`. Two saturated sisters have no head, as in
 [marcolli-chomsky-berwick-2025]'s partial head functions: a specifier and its sister are
 labeled, if at all, by the labeling algorithm (`SyntacticObject/Label.lean`).
+
+## References
+
+* [adger-2003]
+* [chomsky-1995-bare]
+* [marcolli-chomsky-berwick-2025]
+* [collins-stabler-2016]
 -/
 
 @[expose] public section
@@ -153,14 +164,16 @@ theorem selCombine_eq_some {b : Bool} {hd : LexicalItem.Token} {res : List Cat}
   | ⟨some (_, [])⟩, ⟨some (_, [])⟩ | ⟨some (_, _ :: _)⟩, ⟨some (_, _ :: _)⟩
   | ⟨none⟩, _ | ⟨some _⟩, ⟨none⟩ => simp [selCombine] at h
 
-/-- The head of `x * y` (when defined) is one of `x`/`y`'s heads. -/
-theorem SelectionState.head_mul {r : LexicalItem.Token}
-    (h : (x * y).head = some r) : x.head = some r ∨ y.head = some r := by
-  simp only [SelectionState.mul_def, SelectionState.head, Option.map_map,
-    Option.map_eq_some_iff] at h
-  obtain ⟨⟨b, _, _⟩, hproj, rfl⟩ := h
-  cases b
-  exacts [Or.inr (selCombine_eq_some hproj), Or.inl (selCombine_eq_some hproj)]
+/-- The head of a selection product is one of its factors' heads. -/
+instance : Head SelectionState where
+  head := SelectionState.head
+  head_zero := rfl
+  mem_head_or_mem_head_of_mem_head_mul {x y r} h := by
+    simp only [Option.mem_def, SelectionState.mul_def, SelectionState.head, Option.map_map,
+      Option.map_eq_some_iff] at h
+    obtain ⟨⟨b, _, _⟩, hproj, rfl⟩ := h
+    cases b
+    exacts [Or.inr (selCombine_eq_some hproj), Or.inl (selCombine_eq_some hproj)]
 
 /-- A saturated state never projects, so the head of its product is the other factor's head. -/
 theorem SelectionState.head_of_mul_of {a r : LexicalItem.Token} {y : SelectionState}
@@ -170,6 +183,35 @@ theorem SelectionState.head_of_mul_of {a r : LexicalItem.Token} {y : SelectionSt
   · cases h
   · simp only [SelectionState.mul_def, SelectionState.of, selCombine] at h
     split_ifs at h <;> simp_all [SelectionState.head]
+
+/-! ### Triggered Merge -/
+
+/-- A selection state is saturated when its head selects nothing further. -/
+def SelectionState.IsSaturated (x : SelectionState) : Prop := x.residual = some []
+
+instance : DecidablePred SelectionState.IsSaturated :=
+  fun x ↦ inferInstanceAs (Decidable (x.residual = some []))
+
+/-- [collins-stabler-2016]'s triggered Merge (Definition 27): of the factors of a defined
+selection product exactly one is saturated, the other still selecting. -/
+theorem SelectionState.isSaturated_iff_not_isSaturated_of_mul_ne_zero (h : x * y ≠ 0) :
+    x.IsSaturated ↔ ¬ y.IsSaturated := by
+  rcases x with ⟨_ | ⟨hx, _ | ⟨cx, sx⟩⟩⟩ <;> rcases y with ⟨_ | ⟨hy, _ | ⟨cy, sy⟩⟩⟩ <;>
+    first
+    | exact absurd rfl h
+    | simp [SelectionState.IsSaturated, SelectionState.residual]
+
+/-- [collins-stabler-2016], Theorem 13: the factor whose selection Merge checks projects. -/
+theorem SelectionState.head_mul_of_not_isSaturated (h : x * y ≠ 0) (hx : ¬ x.IsSaturated) :
+    (x * y).head = x.head := by
+  rcases x with ⟨_ | ⟨a, _ | ⟨c, rest⟩⟩⟩ <;> rcases y with ⟨_ | ⟨b, _ | ⟨c', rest'⟩⟩⟩ <;>
+    first
+    | exact absurd rfl h
+    | exact absurd rfl hx
+    | skip
+  by_cases hc : b.item.cat = c
+  · simp [SelectionState.mul_def, selCombine, hc, SelectionState.head]
+  · exact absurd (by simp [SelectionState.mul_def, selCombine, hc]; rfl) h
 
 /-! ### Selection check on the carriers -/
 
@@ -251,15 +293,6 @@ noncomputable def selCheckHom : SyntacticObject →ₙ* SelectionState :=
 @[simp] theorem selCheckHom_apply : selCheckHom s = s.selCheck := rfl
 
 @[simp] theorem selHead_leaf : (SyntacticObject.leaf tok).selHead = some tok := rfl
-
-/-- A node's projecting head is one of its daughters' heads (endocentricity), the
-    bare-phrase-structure projection ([chomsky-1995-bare] §4, abstracted as
-    [marcolli-chomsky-berwick-2025] Definition 1.13.6 / Lemma 1.13.7). -/
-theorem selHead_node {l r : SyntacticObject} {h : LexicalItem.Token}
-    (hlr : (merge l r).selHead = some h) :
-    l.selHead = some h ∨ r.selHead = some h := by
-  simp only [selHead, selCheck_node] at hlr ⊢
-  exact SelectionState.head_mul hlr
 
 /-- An object merged with itself has no head. -/
 @[simp] theorem selHead_merge_self (x : SyntacticObject) : (merge x x).selHead = none := by

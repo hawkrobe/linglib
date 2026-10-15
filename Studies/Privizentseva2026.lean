@@ -23,9 +23,11 @@ above some merge point, and Condition C a merge point above the pronoun
 (`Minimalist.LateMergerBleeds`). The same order explains the left-periphery restriction: a head
 whose case was valued in the relative clause has no active case probe for main-clause selection,
 so it is displaced (section 5.3), which the labeling algorithm, labeling the verb and its object
-whatever the object's case, does not force. The appositive and restrictive readings of relatives
-with ICA rule out a correlative or internally headed placement (section 3.3.1), and attraction is
-not ordered by a case hierarchy (section 3.5).
+whatever the object's case, does not force. Merging the relative determiner with a noun that
+still selects the relative clause is outside triggered Merge, where one factor is saturated. The
+appositive and restrictive readings of relatives with ICA rule out a correlative or internally
+headed placement (section 3.3.1), and attraction is not ordered by a case hierarchy (section
+3.5).
 
 ## Main statements
 
@@ -326,6 +328,19 @@ theorem label_merge_object {v d : Minimalist.LexicalItem.Token} {x : Minimalist.
   · intro tok h
     have := congrArg (·.val.numNodes) h
     simp at this
+
+/-- Section 5.2.2: the relative determiner selects the head noun while the noun still selects the
+relative clause, so the two merge with selection pending on both, which triggered Merge never
+licenses: of the factors of a defined selection product one is saturated. -/
+theorem selCheck_merge_eq_zero_of_sel_ne_nil {d n : Minimalist.LexicalItem.Token}
+    (hd : d.item.sel ≠ []) (hn : n.item.sel ≠ []) :
+    (Minimalist.SyntacticObject.merge (.leaf d) (.leaf n)).selCheck = 0 := by
+  by_contra h
+  rw [Minimalist.SyntacticObject.selCheck_node, Minimalist.SyntacticObject.selCheck_leaf,
+    Minimalist.SyntacticObject.selCheck_leaf] at h
+  have := Minimalist.SelectionState.isSaturated_iff_not_isSaturated_of_mul_ne_zero h
+  simp_all [Minimalist.SelectionState.IsSaturated, Minimalist.SelectionState.residual,
+    Minimalist.SelectionState.of]
 
 /-! ### The attracted case (section 3.5) -/
 

@@ -127,22 +127,24 @@ def label : LabelState → Option LexicalItem.Token
     rw [SelectionState.mul_self]
   · rfl
 
-/-- The head of a labeling product is a daughter's head. -/
-theorem label_mul {x y : LabelState} {h : LexicalItem.Token} (hxy : (x * y).label = some h) :
-    x.label = some h ∨ y.label = some h := by
-  rcases x with x | a <;> rcases y with y | b
-  · exact SelectionState.head_mul hxy
-  · rw [sel_mul_copy] at hxy
-    split_ifs at hxy with h0
-    · exact .inl hxy
-    · change (x * SelectionState.of b []).head = some h at hxy
-      rw [_root_.mul_comm x] at hxy
-      exact .inl (SelectionState.head_of_mul_of hxy)
-  · rw [copy_mul_sel] at hxy
-    split_ifs at hxy with h0
-    · exact .inr hxy
-    · exact .inr (SelectionState.head_of_mul_of hxy)
-  · cases hxy
+/-- The label of a labeling product is a factor's label. -/
+instance : Head LabelState where
+  head := label
+  head_zero := rfl
+  mem_head_or_mem_head_of_mem_head_mul {x y h} hxy := by
+    rcases x with x | a <;> rcases y with y | b
+    · exact mem_head_or_mem_head_of_mem_head_mul (β := SelectionState) hxy
+    · rw [sel_mul_copy] at hxy
+      split_ifs at hxy with h0
+      · exact .inl hxy
+      · change (x * SelectionState.of b []).head = some h at hxy
+        rw [_root_.mul_comm x] at hxy
+        exact .inl (SelectionState.head_of_mul_of hxy)
+    · rw [copy_mul_sel] at hxy
+      split_ifs at hxy with h0
+      · exact .inr hxy
+      · exact .inr (SelectionState.head_of_mul_of hxy)
+    · cases hxy
 
 end LabelState
 
@@ -265,6 +267,24 @@ theorem raise_comm (x y : RaisingState) : raise x y = raise y x := by
 instance : CommMagma RaisingState where
   mul_comm x y := by simp only [mul_def, raise_comm, add_comm]
 
+/-- The raising head of a product is a factor's raising head. -/
+instance : Head RaisingState where
+  head x := x.label.label
+  head_zero := rfl
+  mem_head_or_mem_head_of_mem_head_mul {x y t} h := by
+    simp only [mul_def, raise] at h
+    split_ifs at h with h0
+    · exact mem_head_or_mem_head_of_mem_head_mul (β := LabelState) h
+    · rcases hx : x.label.label with _ | a <;> rcases hy : y.label.label with _ | b <;>
+        simp only [hx, hy] at h ⊢
+      · cases h
+      · cases h
+      · cases h
+      · split_ifs at h
+        · right; simp_all
+        · left; simp_all
+        · exact absurd (show (none : Option LexicalItem.Token) = some t from h) (by simp)
+
 end RaisingState
 
 /-- A trace's raising state is the lower copy of the phrase its token heads, with the token recorded
@@ -316,22 +336,15 @@ theorem raisingHead_eq_of_label {a : LexicalItem.Token} (hs : s.label = some a) 
     exact absurd (show (none : Option LexicalItem.Token) = some a from hs)
       (Option.some_ne_none a).symm
 
+/-- `raisingCheck` as a morphism of magmas. -/
+noncomputable def raisingCheckHom : SyntacticObject →ₙ* RaisingState :=
+  lift (fun tok ↦ ⟨.sel (.of tok tok.item.sel), 0⟩) raisingTraceState
+
 /-- The raising head of a merge is a daughter's raising head
 ([marcolli-chomsky-berwick-2025] Lemma 1.13.7). -/
 theorem raisingHead_merge {l r : SyntacticObject} {h : LexicalItem.Token}
-    (hlr : (merge l r).raisingHead = some h) : l.raisingHead = some h ∨ r.raisingHead = some h := by
-  simp only [raisingHead, raisingCheck_merge, RaisingState.mul_def, RaisingState.raise] at hlr ⊢
-  split_ifs at hlr with h0
-  · exact LabelState.label_mul hlr
-  · rcases hx : l.raisingCheck.label.label with _ | a <;>
-      rcases hy : r.raisingCheck.label.label with _ | b <;> simp only [hx, hy] at hlr ⊢
-    · cases hlr
-    · cases hlr
-    · cases hlr
-    · split_ifs at hlr
-      · right; simp_all
-      · left; simp_all
-      · exact absurd (show (none : Option LexicalItem.Token) = some h from hlr) (by simp)
+    (hlr : (merge l r).raisingHead = some h) : l.raisingHead = some h ∨ r.raisingHead = some h :=
+  mem_head_or_mem_head_of_mem_head_map_mul raisingCheckHom (x := l) (y := r) hlr
 
 /-- An object merged with itself has no raising head. -/
 @[simp] theorem raisingHead_merge_self (x : SyntacticObject) : (merge x x).raisingHead = none := by
