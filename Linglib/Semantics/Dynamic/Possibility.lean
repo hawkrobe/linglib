@@ -76,7 +76,7 @@ def domain (p : Possibility W V (Flat M)) : Set V :=
 
 /-- Descent grows the domain. -/
 theorem domain_mono (h : p ≤ q) : p.domain ⊆ q.domain := fun v =>
-  Flat.ne_bot_of_le (h.2 v)
+  (ne_bot_of_le_ne_bot · (h.2 v))
 
 /-- On a shared domain, descent is equality — there is no room to grow. -/
 theorem eq_of_le_of_domain_eq (h : p ≤ q) (hdom : p.domain = q.domain) : p = q :=

@@ -123,7 +123,7 @@ theorem le_iff_eqOn_domain : g ≤ h ↔ Set.EqOn g h g.domain := by
   · exact (hx hne).le
 
 theorem domain_mono (hgh : g ≤ h) : g.domain ⊆ h.domain :=
-  fun x hx ↦ Flat.ne_bot_of_le (hgh x) hx
+  fun x hx ↦ ne_bot_of_le_ne_bot hx (hgh x)
 
 /-- `h` covers `g` exactly when `h` values one variable that `g` leaves unvalued and agrees with
 `g` on all others. -/

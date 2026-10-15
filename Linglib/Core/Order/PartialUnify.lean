@@ -29,7 +29,6 @@ join.
 * `PartialUnify.unify_comm`, `PartialUnify.unify_assoc`, `PartialUnify.unify_self`,
   `PartialUnify.bot_unify`, `PartialUnify.unify_mono`: the unification laws.
 * `Compat`: the consistency relation, a common upper bound.
-* `PartialUnify.unifyList`: the unification of a list.
 * The Pi instance: pointwise unification over a `Fintype` index.
 
 ## Implementation notes
@@ -188,36 +187,6 @@ variable [OrderBot α]
 @[simp] theorem unify_bot (a : α) : unify a ⊥ = a := by
   rw [← coe_sup_coe, WithTop.coe_bot, sup_bot_eq]
 
-/-! ### List unification -/
-
-/-- The unification of a list is the join of its members over `⊥`, `⊤` when they are not jointly
-bounded. -/
-def unifyList (l : List α) : WithTop α := l.foldr (fun a x ↦ ↑a ⊔ x) ⊥
-
-@[simp] theorem unifyList_nil : unifyList ([] : List α) = ⊥ := rfl
-
-@[simp] theorem unifyList_cons (a : α) (l : List α) : unifyList (a :: l) = ↑a ⊔ unifyList l :=
-  rfl
-
-@[simp] theorem unifyList_pair (a b : α) : unifyList [a, b] = unify a b := by simp
-
-theorem isLUB_unifyList (l : List α) :
-    IsLUB ((↑) '' {x | x ∈ l} : Set (WithTop α)) (unifyList l) := by
-  induction l with
-  | nil => simp
-  | cons a l ih =>
-    rw [unifyList_cons, show {x | x ∈ a :: l} = insert a {x | x ∈ l} from
-      Set.ext fun _ ↦ List.mem_cons, Set.image_insert_eq]
-    exact ih.insert _
-
-theorem unifyList_eq_coe_iff_isLUB {l : List α} : unifyList l = c ↔ IsLUB {x | x ∈ l} c := by
-  rw [← WithTop.isLUB_image_coe_iff]
-  exact ⟨fun h ↦ h ▸ isLUB_unifyList l, (isLUB_unifyList l).unique⟩
-
-theorem unifyList_eq_top_iff {l : List α} : unifyList l = ⊤ ↔ ¬ BddAbove {x | x ∈ l} := by
-  rw [← WithTop.isLUB_image_coe_top_iff]
-  exact ⟨fun h ↦ h ▸ isLUB_unifyList l, (isLUB_unifyList l).unique⟩
-
 end OrderBot
 
 /-! ### Pointwise unification on Pi types -/
@@ -309,11 +278,6 @@ theorem not_compat_iff_of_forall_isMax [PartialOrder α] [OrderBot α]
   · rintro ⟨ha, hb, hab⟩ ⟨u, hu⟩
     obtain ⟨hau, hbu⟩ := mem_upperBounds_pair.mp hu
     exact hab ((le_antisymm (h a ha hau) hau).symm.trans (le_antisymm (h b hb hbu) hbu))
-
-/-- Compatibility is decided by unification. -/
-theorem compat_iff_unify_ne_top [PartialOrder α] [PartialUnify α] {a b : α} :
-    Compat a b ↔ PartialUnify.unify a b ≠ ⊤ :=
-  PartialUnify.unify_ne_top_iff_bddAbove.symm
 
 instance [PartialOrder α] [PartialUnify α] (a b : α) : Decidable (Compat a b) :=
   decidable_of_iff _ PartialUnify.unify_ne_top_iff_bddAbove
