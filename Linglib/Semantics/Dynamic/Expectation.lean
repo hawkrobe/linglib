@@ -1,6 +1,7 @@
 module
 
 public import Linglib.Core.Order.Minimals
+public import Linglib.Semantics.Modality.OrderingSemantics
 public import Linglib.Semantics.Dynamic.Consequence
 
 /-!
@@ -27,9 +28,9 @@ Read at the level of discourse, assertion and promotion are the two updates of P
 of mood, on the context set and on the To-Do List. Informational necessity `□_cs` is truth
 throughout the information and preferential necessity `□_≤` is truth at the optimal worlds, and
 a state accepts an assertion or a presumption exactly when the corresponding necessity holds.
-Local necessity, the force Portner and Rubinstein give the subjunctive, is truth at every world
-at least as normal as some world of the information; it is preferential necessity when the
-information has a most normal world.
+Local necessity, the force Portner and Rubinstein give the subjunctive, is good possibility in
+ordering semantics over the information ranked by the pattern; it is preferential necessity when
+the information has a most normal world.
 
 ## Main definitions
 
@@ -219,7 +220,7 @@ def boxLe (σ : ExpState W) (p : W → Prop) : Prop :=
 worlds of the information at least as normal as itself, so that `p` holds throughout a branch of
 the pattern. This is Portner and Rubinstein's force of the subjunctive. -/
 def localNecessity (σ : ExpState W) (p : W → Prop) : Prop :=
-  ∃ w ∈ σ.info, ∀ v ∈ σ.info, σ.order.le v w → p v
+  OrderingSemantics.IsGoodPossibility σ.order σ.info {v | p v}
 
 /-! ### Update operations -/
 
@@ -535,17 +536,16 @@ theorem boxLe_of_respects (σ : ExpState W) (p : W → Prop)
 
 theorem localNecessity_mono (σ : ExpState W) (p q : W → Prop)
     (h : ∀ w, p w → q w) : σ.localNecessity p → σ.localNecessity q :=
-  fun ⟨w, hw, hp⟩ ↦ ⟨w, hw, fun v hv hvw ↦ h v (hp v hv hvw)⟩
+  fun hp ↦ hp.mono fun w ↦ h w
 
 /-- When the information has a world at least as normal as all of its worlds, local necessity is
 preferential necessity. Without one they come apart: two incomparable optimal worlds can each
 make a different proposition locally necessary while neither is preferentially necessary. -/
 theorem localNecessity_iff_boxLe {σ : ExpState W} {b : W} (hb : b ∈ σ.info)
     (hleast : ∀ v ∈ σ.info, σ.order.le b v) (p : W → Prop) :
-    σ.localNecessity p ↔ σ.boxLe p := by
-  refine ⟨fun ⟨_, hu, hp⟩ o ho ↦ hp o ho.1 ?_, fun h ↦ ⟨b, hb, fun v hv hvb ↦ h v ⟨hv, ?_⟩⟩⟩
-  · exact σ.order.le_trans _ _ _ (ho.2 hb (hleast o ho.1)) (hleast _ hu)
-  · exact fun ⦃_⦄ hx _ ↦ σ.order.le_trans _ _ _ hvb (hleast _ hx)
+    σ.localNecessity p ↔ σ.boxLe p :=
+  (OrderingSemantics.isGoodPossibility_iff_of_least hb hleast).trans
+    (OrderingSemantics.minimals_subset_iff_of_least hb hleast).symm
 
 end ExpState
 

@@ -92,12 +92,12 @@ def ifThen (A B : Set W) (w : W) : Prop :=
 
 theorem must_iff (A : Set W) (w : W) :
     must O A w ↔ ∀ u, ∃ v, (v ≤[O] u) ∧ ∀ z, (z ≤[O] v) → z ∈ A := by
-  simp [must, humanNecessity, Background.accessibleWorlds_bot]
+  simp [must, humanNecessity_iff, Background.accessibleWorlds_bot]
 
 theorem ifThen_iff (A B : Set W) (w : W) :
     ifThen O A B w ↔
       ∀ u ∈ A, ∃ v ∈ A, (v ≤[O] u) ∧ ∀ z ∈ A, (z ≤[O] v) → z ∈ B := by
-  simp only [ifThen, humanNecessity, Background.mem_accessibleWorlds_restrict,
+  simp only [ifThen, humanNecessity_iff, Background.mem_accessibleWorlds_restrict,
     Background.accessibleWorlds_bot, Set.mem_univ, true_and]
 
 theorem kratzer_V1 : ProbablyToNotProbablyNot (likelihood O) := probablyToNotProbablyNot
@@ -422,11 +422,12 @@ end Hamblin
 
 section Probability
 
-variable {W : Type*} [MeasurableSpace W] [DiscreteMeasurableSpace W] (P : Measure W)
-  [IsProbabilityMeasure P]
+variable {W : Type*} [MeasurableSpace W] (P : Measure W)
 
-omit [DiscreteMeasurableSpace W] [IsProbabilityMeasure P] in
 theorem prob_V1 : ProbablyToNotProbablyNot P.inducedGe := probablyToNotProbablyNot
+
+variable [DiscreteMeasurableSpace W] [IsProbabilityMeasure P]
+
 theorem prob_V2 : ProbablyDistribInf P.inducedGe := probablyDistribInf
 theorem prob_V3 : ChancyDisjunctionIntro P.inducedGe := chancyDisjunctionIntro
 theorem prob_V4 : Minimality P.inducedGe := minimality
