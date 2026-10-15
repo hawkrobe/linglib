@@ -32,7 +32,7 @@ maximal elements (`Flag.forall_mem_iff`) and so makes it decidable.
 
 ## Main results
 
-* `IsLeftLinear.isChain_Iic`, `IsLeftLinear.isChain_Iio`: every principal down-set is a chain.
+* `IsLeftLinear.isChain_Iic`: every principal down-set is a chain.
 * `Flag.exists_mem_gt_of_lt`: a flag cannot stop at an element with a strict successor; this
   holds in any order.
 * `Flag.exists_isMax_eq_ofIsMax`, `Flag.forall_mem_iff`: on a finite left-linear order the
@@ -70,11 +70,6 @@ variable {M : Type*} [PartialOrder M] [IsLeftLinear M]
 theorem isChain_Iic (m : M) : IsChain (· ≤ ·) (Set.Iic m) := by
   intro a ha b hb _
   exact comparable_of_le_common (Set.mem_Iic.mp ha) (Set.mem_Iic.mp hb)
-
-/-- In a left-linear order the strict down-set `Iio m` is a chain. -/
-theorem isChain_Iio (m : M) : IsChain (· ≤ ·) (Set.Iio m) := by
-  intro a ha b hb _
-  exact comparable_of_le_common (le_of_lt (Set.mem_Iio.mp ha)) (le_of_lt (Set.mem_Iio.mp hb))
 
 /-- In a left-linear order everything strictly below an element is below the element it covers,
 its mother in a tree. -/

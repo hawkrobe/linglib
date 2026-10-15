@@ -42,7 +42,7 @@ inference follows.
 * Truth values are trivalent, as in the paper: a sentence is a `PartialProp`, defined when it is
   true or false. The existential closure (58) and the past tense (60) are both the strong Kleene
   existential `PartialProp.existsPartialStrong`, the tense over the past times `t' < t`
-  (`t'.precedes t`) within the contextual interval `g(1)` (`t' ≤ g₁`).
+  (`t'.Precedes t`) within the contextual interval `g(1)` (`t' ≤ g₁`).
 * The simplification from (57) and (58) to (59) assumes a nonempty domain of events, as the
   paper's fn. 36 says, and (62) follows from (61) only for a nonempty contextual past: over an
   empty one the falsity condition of (61) holds vacuously and the sentence is defined whatever
@@ -89,14 +89,14 @@ def thetaTh (τ : X → NonemptyInterval T) (about : E → X) (P : W → Nonempt
 existentially closed (58) θTh-report (57). -/
 def report (τ : X → NonemptyInterval T) (about : E → X) (P : W → NonemptyInterval T → E → Prop)
     (Q : W → NonemptyInterval T → X → Prop) (g₁ t : NonemptyInterval T) : PartialProp W :=
-  existsPartialStrong (fun t' ↦ t'.precedes t ∧ t' ≤ g₁) fun t' ↦
+  existsPartialStrong (fun t' ↦ t'.Precedes t ∧ t' ≤ g₁) fun t' ↦
     existsPartialStrong (fun _ ↦ True) (thetaTh τ about P Q t')
 
 /-- A report with a CP, (29), is the past tense (28) over a thinking event whose content the
 complementizer (25) fixes as `p`. -/
 def reportThat [Anchor E I] (P : W → NonemptyInterval T → E → Prop) (p : I → Prop)
     (g₁ t : NonemptyInterval T) : PartialProp W :=
-  existsPartialStrong (fun t' ↦ t'.precedes t ∧ t' ≤ g₁) fun t' ↦
+  existsPartialStrong (fun t' ↦ t'.Precedes t ∧ t' ≤ g₁) fun t' ↦
     ofProp fun w ↦ ∃ e, P w t' e ∧ Anchor.comp p e
 
 variable {τ : X → NonemptyInterval T} {about : E → X} {P : W → NonemptyInterval T → E → Prop}
@@ -126,22 +126,22 @@ theorem presup_closure_thetaTh [Nonempty E] :
 
 /-- Over a nonempty contextual past, the report presupposes that the complement describes
 something that started before a past thinking time, (62). -/
-theorem exists_preExists_of_report_presup [Nonempty E] (hpast : ∃ t', t'.precedes t ∧ t' ≤ g₁)
+theorem exists_preExists_of_report_presup [Nonempty E] (hpast : ∃ t', t'.Precedes t ∧ t' ≤ g₁)
     (h : (report τ about P Q g₁ t).presup w) :
-    ∃ t', t'.precedes t ∧ t' ≤ g₁ ∧ PreExists τ (Q w t') t'.fst := by
+    ∃ t', t'.Precedes t ∧ t' ≤ g₁ ∧ PreExists τ (Q w t') t'.fst := by
   obtain ⟨t', ⟨hprec, hle⟩, hp⟩ := exists_presup_of_existsPartialStrong hpast h
   exact ⟨t', hprec, hle, presup_closure_thetaTh.1 hp⟩
 
 /-- Over an empty contextual past the report is defined whatever the complement describes, so
 (62) needs the past to be nonempty. -/
-theorem report_presup_of_not_exists (hpast : ¬ ∃ t', t'.precedes t ∧ t' ≤ g₁) :
+theorem report_presup_of_not_exists (hpast : ¬ ∃ t', t'.Precedes t ∧ t' ≤ g₁) :
     (report τ about P Q g₁ t).presup w :=
   existsPartialStrong_presup_of_not_exists hpast
 
 /-- The report presupposes that the complement describes something in the world of evaluation,
 the factive inference (2b), (3). -/
-theorem exists_of_report_presup [Nonempty E] (hpast : ∃ t', t'.precedes t ∧ t' ≤ g₁)
-    (h : (report τ about P Q g₁ t).presup w) : ∃ t' x, t'.precedes t ∧ Q w t' x :=
+theorem exists_of_report_presup [Nonempty E] (hpast : ∃ t', t'.Precedes t ∧ t' ≤ g₁)
+    (h : (report τ about P Q g₁ t).presup w) : ∃ t' x, t'.Precedes t ∧ Q w t' x :=
   let ⟨t', hprec, _, hpre⟩ := exists_preExists_of_report_presup hpast h
   let ⟨x, hx⟩ := hpre.exists
   ⟨t', x, hprec, hx⟩

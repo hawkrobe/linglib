@@ -118,7 +118,7 @@ interval, Kamp and Reyle's P, so *used to* is imperfective and retrospective by 
 the description lies wholly before it, (19b). -/
 def retro {W T : Type*} [LinearOrder T] (A : W → Set (NonemptyInterval T)) :
     W → Set (NonemptyInterval T) :=
-  fun w ↦ {p | ∃ i ∈ A w, i.isBefore p}
+  fun w ↦ {p | ∃ i ∈ A w, i.IsBefore p}
 
 /-- *Used to* is the retrospective over the imperfective, (18). -/
 def usedToOp {W T E : Type*} [LinearOrder T] [Event.TemporalTrace E T] (P : W → E → Prop) :
@@ -129,7 +129,7 @@ def usedToOp {W T E : Type*} [LinearOrder T] [Event.TemporalTrace E T] (P : W �
 instantaneous perspective, (32)–(34). The two form the Horn scale behind the retrospectivity
 implicature (31)–(33). -/
 theorem retro_perfect_forces_point {T : Type*} [LinearOrder T]
-    {i p : NonemptyInterval T} (hb : i.isBefore p) (hf : p.finalSubinterval i) :
+    {i p : NonemptyInterval T} (hb : i.IsBefore p) (hf : p.FinalSubinterval i) :
     p.IsPoint :=
   le_antisymm p.fst_le_snd (hf.2.trans_le hb)
 
@@ -138,7 +138,7 @@ the imperfective (19a) bounds only the reference interval, so a state whose run 
 contains a reference interval before the perspective satisfies *used to* however far it runs. -/
 theorem usedTo_of_persisting_state {W T E : Type*} [LinearOrder T] [Event.TemporalTrace E T]
     {P : W → E → Prop} {w : W} {e : E} (hP : P w e)
-    {i p : NonemptyInterval T} (hie : i < τ e) (hip : i.isBefore p) :
+    {i p : NonemptyInterval T} (hie : i < τ e) (hip : i.IsBefore p) :
     p ∈ usedToOp P w :=
   ⟨i, ⟨e, hie, hP⟩, hip⟩
 

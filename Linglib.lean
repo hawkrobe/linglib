@@ -141,14 +141,10 @@ import Linglib.Logic.Temporal.Defs
 import Linglib.Logic.Temporal.Soundness
 import Linglib.Core.Data.UnorderedTree.Basic
 import Linglib.Logic.Trivalent.Propositional
-import Linglib.Core.Order.AllenRelation
 import Linglib.Core.Order.Antichain
 import Linglib.Core.Order.Argmax
 import Linglib.Core.Order.DeMorganAlgebra.Basic
 import Linglib.Core.Order.Flat
-import Linglib.Core.Order.GaloisConnection
-import Linglib.Core.Order.Interval
-import Linglib.Core.Order.IterateFixedPoint
 import Linglib.Core.Order.LeftLinear
 import Linglib.Core.Order.Monotone.Monovary
 import Linglib.Core.Order.OfCriteria

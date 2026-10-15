@@ -96,7 +96,7 @@ theorem durative_unbounded : durative (UNBOUNDED P) = UNBOUNDED P :=
 
 /-- An unbounded eventuality in the span, (44b), is one event whose run time overlaps it. -/
 theorem inclusive_unbounded_iff :
-    i ∈ inclusive (UNBOUNDED P) w ↔ ∃ e, P w e ∧ (τ e).overlaps i := by
+    i ∈ inclusive (UNBOUNDED P) w ↔ ∃ e, P w e ∧ (τ e).Overlaps i := by
   constructor
   · rintro ⟨j, ⟨e, he, hP⟩, hj⟩
     obtain ⟨hj₁, hj₂⟩ := NonemptyInterval.le_def.1 hj

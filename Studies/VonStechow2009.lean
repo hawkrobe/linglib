@@ -43,7 +43,7 @@ says that `P` held at some time before `s`.
 
 The tense entries, relative clauses, attitudes and adjunct clauses are stated on moments, the
 arguments about the perfective, frame adverbials and the extended now on intervals, where
-*before* is `NonemptyInterval.precedes`; *on* and *in* are `≤`, *at* is equality. The
+*before* is `NonemptyInterval.Precedes`; *on* and *in* are `≤`, *at* is equality. The
 referential Past (47), which von Stechow takes from Heim, is the presupposition
 `Perspective.Presup ⟦past⟧`; the Perfective (50) and the extended-now perfect (28) are
 `Aspect.PRFV` and `Aspect.PERF`, and quantization (12) is Krifka's `Mereology.QUA`. The printed
@@ -207,7 +207,7 @@ theorem past_time_on_every_sunday
 /-- With the quantifier over the Past (44b) it entails that every Sunday contains a past time. -/
 theorem every_sunday_contains_past_time
     (h : ∀ t', sunday t' → ◇[Perspective.toSetRel ⟦past⟧] (fun t ↦ t ≤ t' ∧ work t) σ) :
-    ∀ t', sunday t' → ∃ t, t.precedes σ ∧ t ≤ t' :=
+    ∀ t', sunday t' → ∃ t, t.Precedes σ ∧ t ≤ t' :=
   fun t' ht' ↦ let ⟨t, hts, h⟩ := h t' ht'; ⟨t, Perspective.presup_past.1 hts, h.1⟩
 
 end Quantified
@@ -220,7 +220,7 @@ reading restricted to past Sundays (45), and false with the quantifier under the
 Sundays sharing no time, and with the quantifier over the Past (44b), a Sunday being in the
 future. -/
 theorem every_sunday :
-    (∀ t', sunday t' ∧ t'.precedes (.pure 10) →
+    (∀ t', sunday t' ∧ t'.Precedes (.pure 10) →
       ◇[Perspective.toSetRel ⟦past⟧] (fun t ↦ t ≤ t' ∧ sunday t) (.pure 10)) ∧
     ¬ ◇[Perspective.toSetRel ⟦past⟧]
       (fun t ↦ ∀ t', sunday t' → t ≤ t' ∧ sunday t) (.pure 10) ∧
@@ -299,7 +299,7 @@ theorem exists_not_prfv_past :
 
 /-- With the reference time as long as possible, containing every past subinterval of today,
 the referential analysis (59) is the indefinite one (58). -/
-theorem not_prfv_iff_not_past (hmax : ∀ t ≤ today, t.precedes σ → t ≤ t₅)
+theorem not_prfv_iff_not_past (hmax : ∀ t ≤ today, t.Precedes σ → t ≤ t₅)
     (h₅ : Perspective.Presup ⟦past⟧ σ t₅) (h₅' : t₅ ≤ today) :
     t₅ ∉ PRFV rain w ↔ ¬ ◇[Perspective.toSetRel ⟦past⟧] (fun t ↦ t ≤ today ∧ rain w t) σ :=
   ⟨fun h ⟨t, ht, hle, hr⟩ ↦ h ⟨t, hmax t hle (Perspective.presup_past.1 ht), hr⟩,

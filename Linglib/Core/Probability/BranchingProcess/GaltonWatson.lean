@@ -8,7 +8,7 @@ module
 public import Linglib.Core.Data.RoseTree.Encodable
 public import Linglib.Core.Data.RoseTree.Get
 public import Linglib.Core.MeasureTheory.Constructions.List
-public import Linglib.Core.Order.IterateFixedPoint
+public import Mathlib.Order.Iterate
 public import Linglib.Core.Probability.Kernel.Basic
 public import Linglib.Core.Probability.Kernel.Composition.Lemmas
 public import Mathlib.Probability.Kernel.IonescuTulcea.Traj
@@ -364,7 +364,7 @@ theorem law_eq_iSup_iterate : ⇑(law ξ) = ⨆ n, ⇑((expand ξ)^[n] 0) := by
 
 theorem monotone_iterate_expand : Monotone fun n => ⇑((expand ξ)^[n] 0) := by
   simp_rw [coe_iterate_expand]
-  exact (expandHom ξ).iterate_bot_mono
+  exact (expandHom ξ).monotone.monotone_iterate_of_le_map bot_le
 
 theorem law_singleton_of_ne {t : RoseTree ι} {i : ι} (h : t.value ≠ i) : law ξ i {t} = 0 := by
   rw [← expand_law, expand_apply']

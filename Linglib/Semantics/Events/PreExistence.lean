@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Core.Order.Interval
+public import Linglib.Core.Order.Interval.Basic
 
 /-!
 # Pre-existence
@@ -79,12 +79,12 @@ end PreExists
   ⟨fun ⟨_, hx, hlt⟩ ↦ hx ▸ hlt, fun h ↦ ⟨x, rfl, h⟩⟩
 
 /-- An individual preceding an interval pre-exists it. -/
-theorem preExists_of_precedes {x : X} (hx : Q x) (h : (τ x).precedes t) : PreExists τ Q t.fst :=
+theorem preExists_of_precedes {x : X} (hx : Q x) (h : (τ x).Precedes t) : PreExists τ Q t.fst :=
   ⟨x, hx, (τ x).fst_le_snd.trans_lt h⟩
 
 /-- A description of individuals preceding an interval pre-exists it exactly when it describes
 something. -/
-theorem preExists_iff_exists_of_precedes (h : ∀ x, Q x → (τ x).precedes t) :
+theorem preExists_iff_exists_of_precedes (h : ∀ x, Q x → (τ x).Precedes t) :
     PreExists τ Q t.fst ↔ ∃ x, Q x :=
   ⟨PreExists.exists, fun ⟨x, hx⟩ ↦ preExists_of_precedes hx (h x hx)⟩
 

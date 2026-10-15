@@ -13,9 +13,7 @@ This file defines the composition of two comparison results. In a linear order t
 compose to `lt`, `eq` is an identity, and `lt` followed by `gt` leaves the result open.
 `Ordering.comp o₁ o₂` is the set of results compatible with `o₁` followed by `o₂`, and
 `compare_mem_comp` shows that the actual comparison lies in it. In a dense linear order without
-endpoints the table is exact: every result it allows is realized by some intermediate point. It
-is the point case of the composition of Allen's interval relations in
-`Core/Order/AllenRelation.lean`.
+endpoints the table is exact: every result it allows is realized by some intermediate point.
 
 ## Main declarations
 
@@ -43,10 +41,6 @@ def comp : Ordering → Ordering → Finset Ordering
 @[simp] theorem eq_comp (o : Ordering) : eq.comp o = {o} := rfl
 
 @[simp] theorem comp_eq (o : Ordering) : o.comp eq = {o} := by cases o <;> rfl
-
-/-- Reversing both comparisons reverses the composition. -/
-theorem image_swap_comp (o₁ o₂ : Ordering) : (o₁.comp o₂).image swap = o₂.swap.comp o₁.swap := by
-  revert o₁ o₂; decide
 
 variable {α : Type*} [LinearOrder α]
 

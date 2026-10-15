@@ -56,7 +56,7 @@ def Past (n : ℕ) (P : NonemptyInterval T → Prop) (σ : NonemptyInterval T) :
     Assignment (NonemptyInterval T) → Prop :=
   fun g ↦ Perspective.Presup ⟦past⟧ σ (interpPronoun n g) ∧ P (interpPronoun n g)
 
-theorem past_iff : Past n P σ g ↔ (g n).precedes σ ∧ P (g n) := by
+theorem past_iff : Past n P σ g ↔ (g n).Precedes σ ∧ P (g n) := by
   simp [Past]
 
 /-- A past tense is free in its clause, which depends on the context only for the time of the

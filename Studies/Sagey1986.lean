@@ -7,7 +7,7 @@ public import Linglib.Phonology.FeatureGeometry
 public import Mathlib.Data.List.Iterate
 public import Linglib.Phonology.Segmental.FeatureClass
 public import Linglib.Phonology.Autosegmental.NonCrossing
-public import Linglib.Core.Order.Interval
+public import Linglib.Core.Order.Interval.Basic
 public import Mathlib.Data.Set.Pairwise.Basic
 
 /-!
@@ -215,15 +215,15 @@ structure Association (T : Type*) [LinearOrder T] where
 
 /-- An association line represents overlap in time: some instant of the melody is simultaneous
 with some instant of the timing position. -/
-def Association.Valid (a : Association T) : Prop := a.timing.overlaps a.melody
+def Association.Valid (a : Association T) : Prop := a.timing.Overlaps a.melody
 
 instance (a : Association T) : Decidable a.Valid :=
-  inferInstanceAs (Decidable (a.timing.overlaps a.melody))
+  inferInstanceAs (Decidable (a.timing.Overlaps a.melody))
 
 /-- Two associations cross when their timing positions are ordered one way and their melodies
 the other. -/
 def Association.Crosses (a b : Association T) : Prop :=
-  a.timing.precedes b.timing ∧ b.melody.precedes a.melody
+  a.timing.Precedes b.timing ∧ b.melody.Precedes a.melody
 
 /-- Valid associations do not cross: the two precedences and the two overlaps would chain
 into an instant preceding itself, so the relations a crossing encodes are contradictory. -/
@@ -246,8 +246,8 @@ melodic elements and each tier's order realised as precedence. -/
 structure TierRealization (T : Type*) [LinearOrder T] where
   timing : ℕ → NonemptyInterval T
   melody : ℕ → NonemptyInterval T
-  timing_precedes : ∀ {i j : ℕ}, i < j → (timing i).precedes (timing j)
-  melody_precedes : ∀ {k l : ℕ}, k < l → (melody k).precedes (melody l)
+  timing_precedes : ∀ {i j : ℕ}, i < j → (timing i).Precedes (timing j)
+  melody_precedes : ∀ {k l : ℕ}, k < l → (melody k).Precedes (melody l)
 
 /-- The association realising the link of melodic element `k` to timing position `i`. -/
 def TierRealization.assoc (R : TierRealization T) (k i : ℕ) : Association T :=
@@ -267,14 +267,14 @@ theorem isNonCrossing_of_valid (R : TierRealization T) {links : Finset (ℕ × �
 def TierRealization.canonical : TierRealization ℤ where
   timing n := ⟨⟨2 * n, 2 * n + 1⟩, by omega⟩
   melody n := ⟨⟨2 * n, 2 * n + 1⟩, by omega⟩
-  timing_precedes h := by simp only [NonemptyInterval.precedes]; omega
-  melody_precedes h := by simp only [NonemptyInterval.precedes]; omega
+  timing_precedes h := by simp only [NonemptyInterval.Precedes]; omega
+  melody_precedes h := by simp only [NonemptyInterval.Precedes]; omega
 
 /-- Every diagonal link is valid under the canonical realisation, so the hypothesis of
 `isNonCrossing_of_valid` is satisfiable. -/
 theorem canonical_diagonal_valid (n : ℕ) : (TierRealization.canonical.assoc n n).Valid := by
   simp only [Association.Valid, TierRealization.canonical, TierRealization.assoc,
-    NonemptyInterval.overlaps]
+    NonemptyInterval.Overlaps]
   omega
 
 end Association

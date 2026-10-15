@@ -7,7 +7,7 @@ module
 
 public import Mathlib.Computability.MyhillNerode
 public import Mathlib.Data.Nat.Find
-public import Linglib.Core.Order.WellFoundedSet
+public import Linglib.Core.Order.WellQuasiOrder
 
 /-!
 # Shuffle ideals and sublist-closed languages

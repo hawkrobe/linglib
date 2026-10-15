@@ -52,7 +52,7 @@ variable {T E : Type*} [LinearOrder T] [Event.TemporalTrace E T] {L : Type*}
 
 /-- Two events are temporally disjoint when their temporal traces do not overlap, the first
 disjunct of Definition 24. -/
-def temporallyDisjoint (e₁ e₂ : E) : Prop := ¬ (τ e₁).overlaps (τ e₂)
+def temporallyDisjoint (e₁ e₂ : E) : Prop := ¬ (τ e₁).Overlaps (τ e₂)
 
 /-- Two events are spatiotemporally distant, Definition 24, when they do not overlap in time or
 occur at different locations. -/
@@ -60,7 +60,7 @@ def spatiotemporallyDistant (loc : E → L) (e₁ e₂ : E) : Prop :=
   temporallyDisjoint e₁ e₂ ∨ loc e₁ ≠ loc e₂
 
 instance [DecidableEq T] (e₁ e₂ : E) : Decidable (temporallyDisjoint e₁ e₂) :=
-  inferInstanceAs (Decidable (¬ (τ e₁).overlaps (τ e₂)))
+  inferInstanceAs (Decidable (¬ (τ e₁).Overlaps (τ e₂)))
 
 instance [DecidableEq T] [DecidableEq L] (loc : E → L) (e₁ e₂ : E) :
     Decidable (spatiotemporallyDistant loc e₁ e₂) :=
@@ -68,7 +68,7 @@ instance [DecidableEq T] [DecidableEq L] (loc : E → L) (e₁ e₂ : E) :
 
 /-- An event that precedes another is temporally disjoint from it, as in standard indirect
 evidence, where the described event is over before the learning event begins. -/
-theorem temporallyDisjoint_of_precedes {e₁ e₂ : E} (h : (τ e₁).precedes (τ e₂)) :
+theorem temporallyDisjoint_of_precedes {e₁ e₂ : E} (h : (τ e₁).Precedes (τ e₂)) :
     temporallyDisjoint e₁ e₂ :=
   NonemptyInterval.precedes_not_overlaps h
 
@@ -159,8 +159,8 @@ theorem direct_not_distant (loc : Ev → L) (h : loc direct.described = loc dire
 the learning event in the indirect scenario, while the smoke scenario satisfies the distance
 condition with the two events simultaneous. -/
 theorem smoke_no_tense_ordering :
-    (τ indirect.described).precedes (τ indirect.learning) ∧
-      ¬ (τ smoke.described).precedes (τ smoke.learning) ∧
+    (τ indirect.described).Precedes (τ indirect.learning) ∧
+      ¬ (τ smoke.described).Precedes (τ smoke.learning) ∧
       temporallyDisjoint indirect.described indirect.learning ∧
       ¬ temporallyDisjoint smoke.described smoke.learning := by
   decide

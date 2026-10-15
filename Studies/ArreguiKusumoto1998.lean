@@ -103,7 +103,7 @@ variable {T : Type} [LinearOrder T] {M : Model T} {X : NonemptyInterval T → Pr
 
 /-- *Before* (19) holds of the times that precede every time of its clause. -/
 def before (X : NonemptyInterval T → Prop) (t : NonemptyInterval T) : Prop :=
-  ∀ t', X t' → t.precedes t'
+  ∀ t', X t' → t.Precedes t'
 
 /-- The semantic type of a word. -/
 def Word.ty : Word → Ty
@@ -190,7 +190,7 @@ theorem holds_present : M.Holds (clause presentVariable (.leaf (.vp k))) ↔ M.v
 
 /-- A past clause is true when its verb phrase holds at a time before the speech time (13). -/
 theorem holds_past :
-    M.Holds (clause pastOperator (.leaf (.vp k))) ↔ ∃ t, t.precedes M.speechTime ∧ M.vp k t :=
+    M.Holds (clause pastOperator (.leaf (.vp k))) ↔ ∃ t, t.Precedes M.speechTime ∧ M.vp k t :=
   Perspective.diamond_toSetRel_past
 
 /-- The speech time does not combine with a present clause, which is a truth value. -/
@@ -217,7 +217,7 @@ attribute [local simp] Model.Holds Model.extension Model.lex Model.denote Word.t
 holds, whatever clause it modifies (16b). -/
 theorem extension_relative :
     M.extension (relative pastOperator (atTrace (.leaf (.vp k)))) t ↔
-      t.precedes M.speechTime ∧ M.vp k t := by
+      t.Precedes M.speechTime ∧ M.vp k t := by
   simp [Diamond]
 
 /-- In *Satoshi left after Junko came* (24) both events precede the speech time, and the
@@ -225,23 +225,23 @@ connective alone orders them. -/
 theorem holds_after_relative :
     M.Holds (matrix (.leaf (.vp k))
         (.bin (.leaf .after) (relative pastOperator (atTrace (.leaf (.vp l)))))) ↔
-      ∃ t, t.precedes M.speechTime ∧ M.vp k t ∧
-        ∃ t', t'.precedes M.speechTime ∧ M.vp l t' ∧ t'.precedes t := by
+      ∃ t, t.Precedes M.speechTime ∧ M.vp k t ∧
+        ∃ t', t'.Precedes M.speechTime ∧ M.vp l t' ∧ t'.Precedes t := by
   simp [Diamond, and_comm, and_left_comm]
 
 /-- In *Satoshi left before Junko came* (25) the leaving precedes every past coming. -/
 theorem holds_before_relative :
     M.Holds (matrix (.leaf (.vp k))
         (.bin (.leaf .before) (relative pastOperator (atTrace (.leaf (.vp l)))))) ↔
-      ∃ t, t.precedes M.speechTime ∧ M.vp k t ∧
-        ∀ t', t'.precedes M.speechTime → M.vp l t' → t.precedes t' := by
+      ∃ t, t.Precedes M.speechTime ∧ M.vp k t ∧
+        ∀ t', t'.Precedes M.speechTime → M.vp l t' → t.Precedes t' := by
   simp [Diamond, before]
 
 /-- With a past *when*-clause, *Junko was in her room when Satoshi came* (33) reports an episode
 at one past time. -/
 theorem holds_when_relative :
     M.Holds (matrix (.leaf (.vp k)) (relative pastOperator (atTrace (.leaf (.vp l))))) ↔
-      ∃ t, t.precedes M.speechTime ∧ M.vp k t ∧ M.vp l t := by
+      ∃ t, t.Precedes M.speechTime ∧ M.vp k t ∧ M.vp l t := by
   simp [Diamond, and_left_comm]
 
 /-- An *after*-sentence entails that its clause held (18b). -/
@@ -284,19 +284,19 @@ theorem holds_before_present_relative :
 the absorbed form at the root of (27) without comment. -/
 theorem extension_after_past [DenselyOrdered T] :
     M.extension (.bin (.leaf .after) (.bin pastOperator (.leaf (.vp k)))) t ↔
-      ∃ t', t'.precedes t ∧ M.vp k t' := by
+      ∃ t', t'.Precedes t ∧ M.vp k t' := by
   simp [↓Perspective.diamond_past_diamond_past]
 
 /-- On discrete time *after* does not absorb the past operator, since no time lies between an
 event and the next moment. -/
 theorem not_extension_after_past_int :
-    ∃ (M : Model ℤ) (t : NonemptyInterval ℤ), (∃ t', t'.precedes t ∧ M.vp 0 t') ∧
+    ∃ (M : Model ℤ) (t : NonemptyInterval ℤ), (∃ t', t'.Precedes t ∧ M.vp 0 t') ∧
       ¬ M.extension (.bin (.leaf .after) (.bin pastOperator (.leaf (.vp 0)))) t := by
   have key (t' : NonemptyInterval ℤ) (h : t'.snd < 1) : ¬ 0 < t'.fst := by
     have := t'.fst_le_snd
     omega
   exact ⟨⟨fun _ t ↦ t = .pure 0, fun _ X ↦ X, .pure 0⟩, .pure 1, ⟨.pure 0, by decide, rfl⟩,
-    by simpa [Diamond, NonemptyInterval.precedes] using key⟩
+    by simpa [Diamond, NonemptyInterval.Precedes] using key⟩
 
 /-- *Before* binds the present variable of the clause it selects (30). -/
 theorem extension_before_present :
@@ -319,7 +319,7 @@ theorem interpretable_selected :
 the paper's truth conditions, which hold of the logical form on dense time. -/
 theorem holds_after_selected [DenselyOrdered T] :
     M.Holds (matrix (.leaf (.vp k)) (.bin (.leaf .after) (.bin pastOperator (.leaf (.vp l))))) ↔
-      ∃ t, t.precedes M.speechTime ∧ M.vp k t ∧ ∃ t', t'.precedes t ∧ M.vp l t' := by
+      ∃ t, t.Precedes M.speechTime ∧ M.vp k t ∧ ∃ t', t'.Precedes t ∧ M.vp l t' := by
   simp [↓Perspective.diamond_past_diamond_past, Diamond]
 
 /-- In Japanese, *Satoshi left before Junko came* (29) says that the leaving precedes every
@@ -327,7 +327,7 @@ coming. -/
 theorem holds_before_selected :
     M.Holds (matrix (.leaf (.vp k))
         (.bin (.leaf .before) (.binder 0 (.bin presentVariable (.leaf (.vp l)))))) ↔
-      ∃ t, t.precedes M.speechTime ∧ M.vp k t ∧ ∀ t', M.vp l t' → t.precedes t' := by
+      ∃ t, t.Precedes M.speechTime ∧ M.vp k t ∧ ∀ t', M.vp l t' → t.Precedes t' := by
   simp [Diamond, before]
 
 /-- On dense time an *after*-sentence has the same truth conditions whether its clause is a
@@ -362,7 +362,7 @@ theorem extension_upstairs_downstairs :
       (.bin (.leaf (.attitude 0)) (.bin pastOperator (atTrace (.leaf (.vp 0)))))
     (amherst.extension upstairs (.pure 15) ∧ ¬ amherst.extension upstairs (.pure 10)) ∧
       amherst.extension downstairs (.pure 10) ∧ ¬ amherst.extension downstairs (.pure 15) := by
-  simp [amherst, Diamond, NonemptyInterval.precedes]
+  simp [amherst, Diamond, NonemptyInterval.Precedes]
 
 /-- In a clause that a connective selects, the trace of a relative pronoun is free. -/
 theorem mem_freeIndices_selected :
@@ -380,13 +380,13 @@ def quantificational (τ vp : LF) : LF := .bin (.leaf .adverb) (.binder 0 (.bin 
 which the *when*-clause restricts, binds the present variable of the clause. -/
 theorem holds_whenever :
     M.Holds (matrix (.leaf (.vp k)) (quantificational presentVariable (.leaf (.vp l)))) ↔
-      ∃ t, t.precedes M.speechTime ∧ ∀ t' ≤ t, M.vp l t' → ∃ t'' ≤ t', M.vp k t'' :=
+      ∃ t, t.Precedes M.speechTime ∧ ∀ t' ≤ t, M.vp l t' → ∃ t'' ≤ t', M.vp k t'' :=
   Perspective.diamond_toSetRel_past
 
 /-- The truth conditions (34b) hold as soon as some past time contains no time of the
 *when*-clause, the past tense quantifying over the domain of the adverb. The paper does not
 remark on this. -/
-theorem holds_whenever_of_forall_not (ht : t.precedes M.speechTime)
+theorem holds_whenever_of_forall_not (ht : t.Precedes M.speechTime)
     (h : ∀ t' ≤ t, ¬ M.vp l t') :
     M.Holds (matrix (.leaf (.vp k)) (quantificational presentVariable (.leaf (.vp l)))) :=
   holds_whenever.2 ⟨t, ht, fun t' ht' hl ↦ absurd hl (h t' ht')⟩

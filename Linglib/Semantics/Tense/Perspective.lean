@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Core.Order.Interval
+public import Linglib.Core.Order.Interval.Basic
 public import Linglib.Semantics.Tense.Defs
 
 /-!
@@ -84,18 +84,18 @@ def Presup (C : Finset Ordering) (π ref : NonemptyInterval T) : Prop := ref.pos
 instance : Decidable (Presup C π r) := inferInstanceAs (Decidable (_ ∈ C))
 
 /-- PRES presupposes that its reference overlaps the perspective. -/
-@[simp] theorem presup_present : Presup ⟦present⟧ π r ↔ r.overlaps π := by
+@[simp] theorem presup_present : Presup ⟦present⟧ π r ↔ r.Overlaps π := by
   simp [Presup, denote_present]
 
 /-- PAST presupposes that its reference precedes the perspective. -/
-@[simp] theorem presup_past : Presup ⟦past⟧ π r ↔ r.precedes π := by
+@[simp] theorem presup_past : Presup ⟦past⟧ π r ↔ r.Precedes π := by
   simp [Presup, denote_past]
 
-@[simp] theorem presup_future : Presup ⟦future⟧ π r ↔ π.precedes r := by
+@[simp] theorem presup_future : Presup ⟦future⟧ π r ↔ π.Precedes r := by
   simp [Presup, denote_future]
 
 /-- ⌈then⌉ presupposes that its reference is disjoint from the perspective. -/
-@[simp] theorem presup_compl_present : Presup ⟦present⟧ᶜ π r ↔ ¬ r.overlaps π := by
+@[simp] theorem presup_compl_present : Presup ⟦present⟧ᶜ π r ↔ ¬ r.Overlaps π := by
   simp [Presup, denote_present]
 
 /-- A pronoun with the full cell, such as a deleted tense, presupposes nothing. -/

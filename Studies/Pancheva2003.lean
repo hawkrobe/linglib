@@ -81,7 +81,7 @@ variable {W T E S : Type*} [LinearOrder T] [Event.TemporalTrace E T] [Event.Temp
 
 /-- `OverlapsFromBefore i j`, the relation of the neutral aspect, holds when the two intervals
 overlap and `i` begins strictly before `j`. -/
-def OverlapsFromBefore (i j : NonemptyInterval T) : Prop := i.overlaps j ∧ i.fst < j.fst
+def OverlapsFromBefore (i j : NonemptyInterval T) : Prop := i.Overlaps j ∧ i.fst < j.fst
 
 /-- `OverlapsInto i j`, the relation of the resultative aspect, holds when `i` begins strictly
 before `j`, the two overlap, and `j` ends strictly after `i`. -/
@@ -91,7 +91,7 @@ def OverlapsInto (i j : NonemptyInterval T) : Prop :=
 /-- The neutral relation is the paper's, the intervals overlapping and `i` having a point before
 every point of `j`. -/
 theorem overlapsFromBefore_iff (i j : NonemptyInterval T) :
-    OverlapsFromBefore i j ↔ i.overlaps j ∧ ∃ t ∈ i, t ∉ j ∧ ∀ t' ∈ j, t < t' := by
+    OverlapsFromBefore i j ↔ i.Overlaps j ∧ ∃ t ∈ i, t ∉ j ∧ ∀ t' ∈ j, t < t' := by
   refine and_congr_right fun _ ↦ ⟨fun h ↦ ⟨i.fst, ?_, ?_, fun t' ht' ↦ ?_⟩, ?_⟩
   · exact NonemptyInterval.mem_def.2 ⟨le_rfl, i.fst_le_snd⟩
   · exact fun hm ↦ h.not_ge (NonemptyInterval.mem_def.1 hm).1
@@ -104,7 +104,7 @@ theorem overlapsFromBefore_iff (i j : NonemptyInterval T) :
 `j`, and `j` having a later point outside `i`. -/
 theorem overlapsInto_iff (i j : NonemptyInterval T) :
     OverlapsInto i j ↔
-      i.overlaps j ∧ ∃ t t', t ∈ i ∧ t ∉ j ∧ t' ∈ j ∧ t' ∉ i ∧ t < t' := by
+      i.Overlaps j ∧ ∃ t t', t ∈ i ∧ t ∉ j ∧ t' ∈ j ∧ t' ∉ i ∧ t < t' := by
   constructor
   · rintro ⟨h₁, h₂, h₃⟩
     refine ⟨⟨h₁.le.trans j.fst_le_snd, h₂⟩, i.fst, j.snd, ?_, ?_, ?_, ?_, ?_⟩
@@ -146,7 +146,7 @@ theorem bounded_subset_prfv (P : W → E → Prop) (w : W) : BOUNDED P w ⊆ PRF
 admits a reference interval that starts with the event. -/
 theorem neutral_subset_smith_neutral (P : W → E → Prop) (w : W) :
     NEUTRAL P w ⊆ ViewpointType.neutral.denote P w :=
-  ofRel_mono (fun _ _ h ↦ ⟨h.1, NonemptyInterval.mem_def.2 ⟨h.2.le, h.1.2⟩⟩) P w
+  ofRel_mono (fun _ _ h ↦ NonemptyInterval.mem_def.2 ⟨h.2.le, h.1.2⟩) P w
 
 /-! ### What each perfect asserts at the reference interval -/
 
@@ -180,7 +180,7 @@ omit [Event.TemporalTrace E T] in
 /-- The resultative perfect, (18), asserts the result state at the right boundary of the
 reference interval, overlapping the reference interval and continuing past it. -/
 theorem resultative_state_at_rb (h : i ∈ perfect (RESULTATIVE Q) w) :
-    ∃ e s, Q w s e ∧ i.snd ∈ τ s ∧ (τ s).overlaps i ∧ i.snd < (τ s).snd :=
+    ∃ e s, Q w s e ∧ i.snd ∈ τ s ∧ (τ s).Overlaps i ∧ i.snd < (τ s).snd :=
   let ⟨_, ⟨e, s, hrel, hQ⟩, hf⟩ := h
   have h₁ : (τ s).fst ≤ i.snd := hf.2 ▸ hrel.2.1
   have h₂ : i.snd < (τ s).snd := hf.2 ▸ hrel.2.2
@@ -198,7 +198,7 @@ variable [NoMinOrder T]
 
 /-- Some span ending with the reference interval starts before any given time. -/
 private theorem exists_span (i : NonemptyInterval T) (a : T) :
-    ∃ pts : NonemptyInterval T, i.finalSubinterval pts ∧ pts.fst < a := by
+    ∃ pts : NonemptyInterval T, i.FinalSubinterval pts ∧ pts.fst < a := by
   obtain ⟨b, hb⟩ := exists_lt (min i.fst a)
   exact ⟨⟨(b, i.snd), (hb.le.trans (min_le_left _ _)).trans i.fst_le_snd⟩,
     ⟨NonemptyInterval.le_def.2 ⟨hb.le.trans (min_le_left _ _), le_rfl⟩, rfl⟩,
@@ -322,14 +322,14 @@ theorem universal_iff_durative_unbounded :
 /-- A perfect over the neutral aspect never has its span inside the run time of its eventuality,
 so a perfect that cannot embed the unbounded aspect, as in Greek, has no universal reading. -/
 theorem neutral_span_not_covered (h : i ∈ perfect (NEUTRAL P) w) :
-    ∃ pts, i.finalSubinterval pts ∧ ∃ e, P w e ∧ ¬ pts ≤ τ e :=
+    ∃ pts, i.FinalSubinterval pts ∧ ∃ e, P w e ∧ ¬ pts ≤ τ e :=
   let ⟨pts, ⟨e, hrel, hP⟩, hf⟩ := h
   ⟨pts, hf, e, hP, fun hle ↦ hrel.2.not_ge (NonemptyInterval.le_def.1 hle).1⟩
 
 /-- A perfect over the bounded aspect never has its span inside the run time of its eventuality.
 -/
 theorem bounded_span_not_covered (h : i ∈ perfect (BOUNDED P) w) :
-    ∃ pts, i.finalSubinterval pts ∧ ∃ e, P w e ∧ ¬ pts ≤ τ e :=
+    ∃ pts, i.FinalSubinterval pts ∧ ∃ e, P w e ∧ ¬ pts ≤ τ e :=
   let ⟨pts, ⟨e, hlt, hP⟩, hf⟩ := h
   ⟨pts, hf, e, hP, hlt.not_ge⟩
 
