@@ -96,9 +96,11 @@ inductive Placement where
   | postNominal
   /-- The clause precedes the head, Japanese "[ _ kaetta] hito". -/
   | preNominal
-  /-- The head sits inside the clause, as in Bambara. -/
+  /-- The head sits inside the clause, as in Washo ([hanink-2021]). -/
   | internallyHeaded
-  /-- The head appears both inside and outside the clause, Hindi-Urdu *jo … vo*. -/
+  /-- The clause, with the head inside it, stands outside the main clause and is linked
+  anaphorically to a noun phrase there ([dryer-2013-wals]), as Hindi-Urdu *jo … vo* and Bambara
+  relatives are. -/
   | correlative
   deriving DecidableEq, Repr, Fintype
 
