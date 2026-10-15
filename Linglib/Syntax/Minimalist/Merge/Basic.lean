@@ -10,8 +10,8 @@ public import Mathlib.RingTheory.TensorProduct.Maps
 /-!
 # The Merge operator on workspaces
 
-The Merge operator of [marcolli-chomsky-berwick-2025] (Definition 1.3.4) on the workspace algebra
-`ConnesKreimer R (UnorderedTree α)`: for a pair `S, S'` of accessible terms,
+The Merge operator of Marcolli, Chomsky and Berwick (their Definition 1.3.4) acts on the workspace
+algebra `ConnesKreimer R (UnorderedTree α)`. For a pair `S, S'` of accessible terms,
 
   M_{S,S'} = ⊔ ∘ (B ⊗ id) ∘ δ_{S,S'} ∘ Δ,
 
@@ -21,6 +21,10 @@ channel is the forest `{S, S'}` (Definition 1.3.1), `B` grafts that forest under
 on how accessible terms are cut out, so the operator is defined over an arbitrary cut enumeration
 `cuts` (`mergeOpG`), with the pruning instance `mergeOp` and the trace instance `mergeOpC`. The
 unit stage `M_{β,1}` of Internal Merge (Proposition 1.4.2) has no grafting step (`mergeOpUnitG`).
+
+On a workspace `F`, Merge grafts `{S, S'}` beside the trunk of each forest cut of `F` whose crown
+is `{S, S'}`, summed over all such cuts (`mergeOpG_apply_of'`, the book's (1.3.11)). Each form of
+Merge in their §1.4 is this sum on a particular workspace.
 
 External, Internal and Sideward Merge are in `Merge/External.lean`, `Merge/Internal.lean` and
 `Merge/Sideward.lean`; the Minimal-Search weighting is in `Merge/MinimalSearch.lean`.
@@ -35,7 +39,7 @@ External, Internal and Sideward Merge are in `Merge/External.lean`, `Merge/Inter
 
 ## Main results
 
-* `Minimalist.Merge.mergePost_basis_tensor`: the post-coproduct chain on a basis tensor.
+* `Minimalist.Merge.mergeOpG_apply_of'`: Merge on a workspace is a sum over its forest cuts.
 * `Minimalist.Merge.mergeOpG_comm`: Merge does not depend on the order of the pair.
 
 ## Implementation notes
@@ -56,21 +60,50 @@ namespace Minimalist.Merge
 open scoped TensorProduct
 open RoseTree UnorderedTree ConnesKreimer
 
-variable {R : Type*} [CommSemiring R] {α : Type*} [DecidableEq (UnorderedTree α)]
+variable {R : Type*} [CommSemiring R] {α : Type*}
 
-/-! ### The matching projections -/
+/-! ### Cut enumerations that admit Merge -/
 
-/-- The projection onto the basis element `F₀` keeps its coefficient and sends every other basis
-    element to zero. -/
-noncomputable def forestProj (F₀ : Forest (UnorderedTree α)) :
-    ConnesKreimer R (UnorderedTree α) →ₗ[R] ConnesKreimer R (UnorderedTree α) :=
-  ConnesKreimer.linearLift (fun F => if F = F₀ then of' F else 0)
+/-- A cut enumeration admits Merge when its crowns are subtrees with fewer edges in total than
+    their tree, and its only empty cut is the tree itself. The edge bound makes External Merge of
+    a pair exact (`mergeOpG_pair`); the other two let a spectator component pass through
+    (`mergeOpG_factor_out_singleton`). -/
+class IsMergeCuts
+    (cuts : UnorderedTree α → Multiset (Forest (UnorderedTree α) × UnorderedTree α)) : Prop where
+  crown_numEdges_lt {T : UnorderedTree α} {p : Forest (UnorderedTree α) × UnorderedTree α} :
+    p ∈ cuts T → p.1 ≠ 0 → (p.1.map numEdges).sum < T.numEdges
+  mem_subtrees_of_mem_crown {T : UnorderedTree α} {p : Forest (UnorderedTree α) × UnorderedTree α}
+    {x : UnorderedTree α} : p ∈ cuts T → x ∈ p.1 → x ∈ T.subtrees
+  filter_empty (T : UnorderedTree α) : (cuts T).filter (fun p ↦ p.1.card = 0) = {(0, T)}
 
-theorem forestProj_apply_of' (F₀ F : Forest (UnorderedTree α)) :
-    forestProj (R := R) F₀ (of' F) = if F = F₀ then of' F else 0 := by
-  rw [forestProj, ConnesKreimer.linearLift_of']
+namespace IsMergeCuts
 
-omit [DecidableEq (UnorderedTree α)] in
+variable {cuts : UnorderedTree α → Multiset (Forest (UnorderedTree α) × UnorderedTree α)}
+  [IsMergeCuts cuts] {T : UnorderedTree α}
+
+/-- No cut of an enumeration admitting Merge has its own tree in the crown. -/
+theorem notMem_crown {p : Forest (UnorderedTree α) × UnorderedTree α} (hp : p ∈ cuts T) :
+    T ∉ p.1 := fun h ↦
+  (crown_numEdges_lt hp (by rintro h0; simp [h0] at h)).not_ge
+    (Multiset.le_sum_of_mem (Multiset.mem_map_of_mem _ h))
+
+/-- No cut of an enumeration admitting Merge extracts the whole tree. -/
+theorem crown_ne_singleton {p : Forest (UnorderedTree α) × UnorderedTree α} (hp : p ∈ cuts T) :
+    p.1 ≠ {T} := fun h ↦ notMem_crown hp (h ▸ Multiset.mem_singleton_self T)
+
+/-- Every crown member of a cut in `treeCutsG cuts T`, the whole tree included, is a subtree of
+    `T`. -/
+theorem mem_subtrees_of_mem_treeCutsG {a : Forest (UnorderedTree α) × Forest (UnorderedTree α)}
+    (ha : a ∈ treeCutsG cuts T) {x : UnorderedTree α} (hx : x ∈ a.1) : x ∈ T.subtrees := by
+  rcases Multiset.mem_cons.mp ha with rfl | ha
+  · rw [Multiset.mem_singleton.mp hx]; exact T.self_mem_subtrees
+  · obtain ⟨p, hp, rfl⟩ := Multiset.mem_map.mp ha
+    exact mem_subtrees_of_mem_crown hp hx
+
+end IsMergeCuts
+
+/-! ### Products in the two channels -/
+
 private theorem of'_mul_single (F G : Forest (UnorderedTree α)) (r : R) :
     of' (R := R) F * single G r = single (F + G) r := by
   rw [smul_single_one G r, mul_smul_comm]
@@ -78,19 +111,6 @@ private theorem of'_mul_single (F G : Forest (UnorderedTree α)) (r : R) :
   rw [← of'_add]
   exact (smul_single_one (F + G) r).symm
 
-/-- The projection onto `F₀` kills every product with a forest that does not fit inside `F₀`. -/
-theorem forestProj_mul_eq_zero_of_not_le {F₀ F : Forest (UnorderedTree α)} (hF : ¬ F ≤ F₀)
-    (a : ConnesKreimer R (UnorderedTree α)) : forestProj F₀ (of' F * a) = 0 := by
-  induction a using ConnesKreimer.induction_linear with
-  | zero => rw [mul_zero, map_zero]
-  | add g h hg hh => rw [mul_add, map_add, hg, hh, add_zero]
-  | single G r =>
-    have hne : F + G ≠ F₀ := fun heq => hF (heq ▸ Multiset.le_add_right F G)
-    rw [of'_mul_single, forestProj]
-    simp only [ConnesKreimer.linearLift_single]
-    rw [ite_eq_right hne, smul_zero]
-
-omit [DecidableEq (UnorderedTree α)] in
 /-- A chain `⊔ ∘ (f ⊗ id)` kills every term whose left channel is a product with `x` that `f`
     kills. -/
 private theorem mul'_map_tmul_mul_eq_zero
@@ -106,7 +126,6 @@ private theorem mul'_map_tmul_mul_eq_zero
       TensorProduct.zero_tmul, map_zero]
   | add z₁ z₂ h₁ h₂ => rw [mul_add, map_add, h₁, h₂, add_zero]
 
-omit [DecidableEq (UnorderedTree α)] in
 /-- A chain `⊔ ∘ (f ⊗ id)` commutes with right multiplication by a right-channel factor `1 ⊗ y`. -/
 private theorem mul'_map_mul_one_tmul
     (f : ConnesKreimer R (UnorderedTree α) →ₗ[R] ConnesKreimer R (UnorderedTree α))
@@ -122,6 +141,34 @@ private theorem mul'_map_mul_one_tmul
       TensorProduct.map_tmul, TensorProduct.map_tmul, LinearMap.id_apply, LinearMap.id_apply,
       LinearMap.mul'_apply, LinearMap.mul'_apply, mul_assoc]
   | add z₁ z₂ h₁ h₂ => rw [add_mul, map_add, map_add, h₁, h₂, add_mul]
+
+section DecidableEq
+
+variable [DecidableEq (UnorderedTree α)]
+
+/-! ### The matching projections -/
+
+/-- The projection onto the basis element `F₀` keeps its coefficient and sends every other basis
+    element to zero. -/
+noncomputable def forestProj (F₀ : Forest (UnorderedTree α)) :
+    ConnesKreimer R (UnorderedTree α) →ₗ[R] ConnesKreimer R (UnorderedTree α) :=
+  ConnesKreimer.linearLift (fun F => if F = F₀ then of' F else 0)
+
+theorem forestProj_apply_of' (F₀ F : Forest (UnorderedTree α)) :
+    forestProj (R := R) F₀ (of' F) = if F = F₀ then of' F else 0 := by
+  rw [forestProj, ConnesKreimer.linearLift_of']
+
+/-- The projection onto `F₀` kills every product with a forest that does not fit inside `F₀`. -/
+theorem forestProj_mul_eq_zero_of_not_le {F₀ F : Forest (UnorderedTree α)} (hF : ¬ F ≤ F₀)
+    (a : ConnesKreimer R (UnorderedTree α)) : forestProj F₀ (of' F * a) = 0 := by
+  induction a using ConnesKreimer.induction_linear with
+  | zero => rw [mul_zero, map_zero]
+  | add g h hg hh => rw [mul_add, map_add, hg, hh, add_zero]
+  | single G r =>
+    have hne : F + G ≠ F₀ := fun heq => hF (heq ▸ Multiset.le_add_right F G)
+    rw [of'_mul_single, forestProj]
+    simp only [ConnesKreimer.linearLift_single]
+    rw [ite_eq_right hne, smul_zero]
 
 /-- The matching projection `γ_{S,S'}` ([marcolli-chomsky-berwick-2025] Definition 1.3.1) is the
     projection onto `{S, S'}`. -/
@@ -331,13 +378,26 @@ theorem mergeOp_eq_G (lbl : α) (S S' : UnorderedTree α) :
 theorem mergeOpUnit_eq_G (β : UnorderedTree α) :
     mergeOpUnit (R := R) β = mergeOpUnitG (R := R) cutSummandsN β := rfl
 
+/-- Merge on a workspace `F` grafts `{S, S'}` beside the trunk of each forest cut of `F` with crown
+    `{S, S'}` ([marcolli-chomsky-berwick-2025] (1.3.11)). -/
+theorem mergeOpG_apply_of' (cuts : UnorderedTree α → Multiset (Forest
+    (UnorderedTree α) × UnorderedTree α)) (lbl : α) (S S' : UnorderedTree α)
+    (F : Forest (UnorderedTree α)) :
+    mergeOpG (R := R) cuts lbl S S' (of' F) = of' {UnorderedTree.node lbl {S, S'}} *
+      (((forestCutsG cuts F).filter (·.1 = {S, S'})).map fun p ↦ of' (R := R) p.2).sum := by
+  rw [mergeOpG, LinearMap.comp_apply, AlgHom.toLinearMap_apply, comulAlgHomNG_apply_of',
+    comulForestNG_eq_sum, map_multiset_sum, Multiset.map_map, Multiset.sum_map_filter,
+    ← Multiset.sum_map_mul_left]
+  refine congrArg Multiset.sum (Multiset.map_congr rfl fun p _ ↦ ?_)
+  rw [Function.comp_apply, cutTensor, mergePost_basis_tensor, mul_ite, mul_zero]
+
 /-- Merge does not depend on the order of the pair. -/
 theorem mergeOpG_comm (cuts : UnorderedTree α → Multiset (Forest
     (UnorderedTree α) × UnorderedTree α)) (lbl : α) (S S' : UnorderedTree α) :
     mergeOpG (R := R) cuts lbl S S' = mergeOpG cuts lbl S' S := by
   simp only [mergeOpG, mergePost, deltaMatch, gammaMatch, graftBinaryAt, Multiset.pair_comm S S']
 
-/-- The unit stage vanishes on the empty workspace: it needs `β` to be present. -/
+/-- The unit stage vanishes on the empty workspace, which has no `β` to extract. -/
 theorem mergeOpUnitG_one (cuts : UnorderedTree α → Multiset (Forest
     (UnorderedTree α) × UnorderedTree α)) (β : UnorderedTree α) :
     mergeOpUnitG (R := R) cuts β 1 = 0 := by
@@ -345,7 +405,10 @@ theorem mergeOpUnitG_one (cuts : UnorderedTree α → Multiset (Forest
     Algebra.TensorProduct.one_def, ← of'_zero, mergePostUnit_basis_tensor,
     ite_eq_right (Multiset.singleton_ne_zero β).symm]
 
-omit [DecidableEq (UnorderedTree α)] in
+end DecidableEq
+
+/-! ### Merge at the trace cuts -/
+
 /-- The trace Merge operator, Merge at the trace cuts `cutSummandsCN τ`. Its trunks carry a trace
     leaf at each cut site, at the cut depth, so the Minimal-Search cost `Cut.depthC` is read off
     them. -/
@@ -354,34 +417,10 @@ noncomputable def mergeOpC {β : Type*} [DecidableEq (UnorderedTree (α ⊕ β))
     ConnesKreimer R (UnorderedTree (α ⊕ β)) →ₗ[R] ConnesKreimer R (UnorderedTree (α ⊕ β)) :=
   mergeOpG (R := R) (cutSummandsCN τ) lbl S S'
 
-omit [DecidableEq (UnorderedTree α)] in
 /-- The unit stage `M_{S,1}` at the trace cuts `cutSummandsCN τ`. -/
 noncomputable def mergeOpUnitC {β : Type*} [DecidableEq (UnorderedTree (α ⊕ β))]
     (τ : UnorderedTree (α ⊕ β) → β) (S : UnorderedTree (α ⊕ β)) :
     ConnesKreimer R (UnorderedTree (α ⊕ β)) →ₗ[R] ConnesKreimer R (UnorderedTree (α ⊕ β)) :=
   mergeOpUnitG (R := R) (cutSummandsCN τ) S
-
-/-! ### Cut enumerations that admit Merge -/
-
-omit [DecidableEq (UnorderedTree α)] in
-/-- A cut enumeration admits Merge when its crowns are subtrees with fewer edges in total than
-    their tree, and its only empty cut is the tree itself. The edge bound makes External Merge of
-    a pair exact (`mergeOpG_pair`); the other two let a spectator component pass through
-    (`mergeOpG_factor_out_singleton`). -/
-class IsMergeCuts
-    (cuts : UnorderedTree α → Multiset (Forest (UnorderedTree α) × UnorderedTree α)) : Prop where
-  crown_numEdges_lt {T : UnorderedTree α} {p : Forest (UnorderedTree α) × UnorderedTree α} :
-    p ∈ cuts T → p.1 ≠ 0 → (p.1.map numEdges).sum < T.numEdges
-  mem_subtrees_of_mem_crown {T : UnorderedTree α} {p : Forest (UnorderedTree α) × UnorderedTree α}
-    {x : UnorderedTree α} : p ∈ cuts T → x ∈ p.1 → x ∈ T.subtrees
-  filter_empty (T : UnorderedTree α) : (cuts T).filter (fun p ↦ p.1.card = 0) = {(0, T)}
-
-omit [DecidableEq (UnorderedTree α)] in
-/-- No cut of an enumeration admitting Merge extracts the whole tree. -/
-theorem IsMergeCuts.crown_ne_singleton
-    {cuts : UnorderedTree α → Multiset (Forest (UnorderedTree α) × UnorderedTree α)}
-    [IsMergeCuts cuts] {T : UnorderedTree α} {p : Forest (UnorderedTree α) × UnorderedTree α}
-    (hp : p ∈ cuts T) : p.1 ≠ {T} := fun h ↦ by
-  simpa [h] using IsMergeCuts.crown_numEdges_lt hp (by simp [h])
 
 end Minimalist.Merge

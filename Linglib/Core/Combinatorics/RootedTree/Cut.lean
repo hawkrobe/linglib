@@ -355,6 +355,19 @@ theorem forestCutsG_cons
       (treeCutsG cuts T ×ˢ forestCutsG cuts F).map combinerProjG := by
   rw [forestCutsG, Multiset.map_cons, Multiset.foldr_cons, forestCutsG]
 
+theorem forestCutsG_singleton
+    (cuts : UnorderedTree α → Multiset (Multiset (UnorderedTree α) × UnorderedTree α))
+    (T : UnorderedTree α) : forestCutsG cuts {T} = treeCutsG cuts T := by
+  rw [← Multiset.cons_zero, forestCutsG_cons, forestCutsG_zero, ← Multiset.cons_zero,
+    Multiset.product_cons, Multiset.product_zero, add_zero, Multiset.map_map]
+  exact (Multiset.map_congr rfl fun p _ ↦ by simp [combinerProjG]).trans (Multiset.map_id _)
+
+theorem forestCutsG_pair
+    (cuts : UnorderedTree α → Multiset (Multiset (UnorderedTree α) × UnorderedTree α))
+    (T T' : UnorderedTree α) :
+    forestCutsG cuts {T, T'} = (treeCutsG cuts T ×ˢ treeCutsG cuts T').map combinerProjG := by
+  rw [Multiset.insert_eq_cons, forestCutsG_cons, forestCutsG_singleton]
+
 /-! ### The empty cut -/
 
 mutual
