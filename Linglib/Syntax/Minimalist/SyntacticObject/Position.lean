@@ -32,8 +32,10 @@ embedding with a total head function, which extends the raising head.
 
 * `PlanarSyntacticObject.immediatelyContains_termAt`, `PlanarSyntacticObject.containsOrEq_termAt`:
   terms contain one another as their positions dominate one another.
-* `PlanarSyntacticObject.cCommands_termAt_iff`: c-command by a term occurring once is c-command
-  from its position.
+* `PlanarSyntacticObject.exists_cCommands_termAt_of_cCommands`,
+  `PlanarSyntacticObject.cCommands_termAt_of_cCommands`: c-command between terms is witnessed by
+  c-command between occurrences, and conversely when sister terms are distinct: Collins and
+  Stabler's theorem relating c-command between objects to c-command between occurrences.
 * `Minimalist.exists_headIndex?_of_treeRaisingHead`: the head daughter carries the raising head
   wherever there is one.
 
@@ -54,6 +56,7 @@ embedding with a total head function, which extends the raising head.
 
 * [marcolli-chomsky-berwick-2025]
 * [chomsky-2013]
+* [collins-stabler-2016]
 -/
 
 @[expose] public section
@@ -126,37 +129,50 @@ theorem isBranchingAt_parent (ha : a ≠ ⊥) : IsBranchingAt t.val a.val.parent
   rcases length_eq_zero_or_two hso with h0 | h2 <;>
     grind [arity, List.length_eq_zero_iff, children_node]
 
+/-- C-command between terms is witnessed by c-command between occurrences of them, with no
+condition on how often they occur. -/
+theorem exists_cCommands_termAt_of_cCommands (h : t.toSyntacticObject.CCommands x y) :
+    ∃ p q : t.val.Positions, t.val.CCommands p q ∧ t.termAt p = x ∧ t.termAt q = y := by
+  obtain ⟨z, -, ⟨w, hw, hwx, hwz, hne⟩, hzy⟩ := h
+  obtain ⟨m, rfl⟩ := mem_terms_iff.1 hw
+  obtain ⟨c, hmc, rfl⟩ := immediatelyContains_termAt.1 hwx
+  obtain ⟨d, hmd, rfl⟩ := immediatelyContains_termAt.1 hwz
+  obtain ⟨q, hdq, rfl⟩ := containsOrEq_termAt.1 hzy
+  have hc : c ≠ ⊥ := ne_bot_of_gt hmc.lt
+  have hm : m.val = c.val.parent := by rw [← Positions.pred_val, Order.pred_eq_of_covBy hmc]
+  refine ⟨c, q, (cCommands_iff_parent_lt (fun h ↦ hc (Subtype.ext h)) (isBranchingAt_parent hc)).2
+    ⟨hm ▸ Subtype.coe_lt_coe.2 (hmd.lt.trans_le hdq), fun hcq ↦ hne ?_⟩, rfl, rfl⟩
+  have hcd : c = d := by
+    rcases IsLeftLinear.comparable_of_le_common hcq (Subtype.coe_le_coe.2 hdq) with h | h
+    · exact (hmd.eq_or_eq hmc.le (Subtype.coe_le_coe.1 h)).resolve_left hmc.ne'
+    · exact ((hmc.eq_or_eq hmd.le (Subtype.coe_le_coe.1 h)).resolve_left hmd.ne').symm
+  rw [hcd]
+
+/-- C-command between occurrences is c-command between their terms when the commander's term
+differs from those of its sisters, [collins-stabler-2016]'s Theorem 3; their Merge applies only to
+distinct objects, which secures the condition. -/
+theorem cCommands_termAt_of_cCommands {p q : t.val.Positions}
+    (hs : ∀ d, Order.pred p ⋖ d → d ≠ p → t.termAt d ≠ t.termAt p)
+    (h : t.val.CCommands p q) : t.toSyntacticObject.CCommands (t.termAt p) (t.termAt q) := by
+  have hp : p ≠ ⊥ := fun h' ↦ h.2.1 (h' ▸ bot_le)
+  obtain ⟨hpq, hnpq⟩ :=
+    (cCommands_iff_parent_lt (fun h' ↦ hp (Subtype.ext h')) (isBranchingAt_parent hp)).1 h
+  obtain ⟨d, hpd, hdq⟩ := exists_covBy_le_of_lt (show Order.pred p < q from hpq)
+  have hdp : d ≠ p := by rintro rfl; exact hnpq hdq
+  exact ⟨t.termAt d, mem_terms_iff.2 ⟨d, rfl⟩, ⟨_, mem_terms_iff.2 ⟨Order.pred p, rfl⟩,
+    immediatelyContains_termAt.2
+      ⟨p, Order.pred_covBy_of_not_isMin (by simpa [isMin_iff_eq_bot] using hp), rfl⟩,
+    immediatelyContains_termAt.2 ⟨d, hpd, rfl⟩, (hs d hpd hdp).symm⟩,
+    containsOrEq_termAt.2 ⟨q, hdq, rfl⟩⟩
+
 /-- C-command by a term occurring only at `a` is c-command from `a`. -/
 theorem cCommands_termAt_iff (hu : ∀ q, t.termAt q = t.termAt a → q = a) :
     t.toSyntacticObject.CCommands (t.termAt a) x ↔
-      ∃ q : t.val.Positions, CCommands t.val a q ∧ t.termAt q = x := by
-  constructor
-  · rintro ⟨z, -, ⟨w, hw, haw, hwz, hne⟩, hzx⟩
-    obtain ⟨m, rfl⟩ := mem_terms_iff.1 hw
-    obtain ⟨c, hmc, hca⟩ := immediatelyContains_termAt.1 haw
-    obtain ⟨d, hmd, rfl⟩ := immediatelyContains_termAt.1 hwz
-    obtain ⟨q, hdq, rfl⟩ := containsOrEq_termAt.1 hzx
-    obtain rfl := hu c hca
-    have ha : c ≠ ⊥ := ne_bot_of_gt hmc.lt
-    have hm : m.val = c.val.parent := by rw [← Positions.pred_val, Order.pred_eq_of_covBy hmc]
-    refine ⟨q, (cCommands_iff_parent_lt (fun h ↦ ha (Subtype.ext h)) (isBranchingAt_parent ha)).2
-      ⟨hm ▸ Subtype.coe_lt_coe.2 (hmd.lt.trans_le hdq), fun hcq ↦ hne ?_⟩, rfl⟩
-    have hcd : c = d := by
-      rcases IsLeftLinear.comparable_of_le_common hcq (Subtype.coe_le_coe.2 hdq) with h | h
-      · exact (hmd.eq_or_eq hmc.le (Subtype.coe_le_coe.1 h)).resolve_left hmc.ne'
-      · exact ((hmc.eq_or_eq hmd.le (Subtype.coe_le_coe.1 h)).resolve_left hmd.ne').symm
-    rw [hcd]
-  · rintro ⟨q, hq, rfl⟩
-    have ha : a ≠ ⊥ := fun h ↦ hq.2.1 (h ▸ bot_le)
-    obtain ⟨hpq, haq⟩ :=
-      (cCommands_iff_parent_lt (fun h ↦ ha (Subtype.ext h)) (isBranchingAt_parent ha)).1 hq
-    obtain ⟨d, hpd, hdq⟩ := exists_covBy_le_of_lt (show Order.pred a < q from hpq)
-    refine ⟨t.termAt d, mem_terms_iff.2 ⟨d, rfl⟩, ⟨_, mem_terms_iff.2 ⟨Order.pred a, rfl⟩,
-      immediatelyContains_termAt.2
-        ⟨a, Order.pred_covBy_of_not_isMin (by simpa [isMin_iff_eq_bot] using ha), rfl⟩,
-      immediatelyContains_termAt.2 ⟨d, hpd, rfl⟩, fun h ↦ ?_⟩, containsOrEq_termAt.2 ⟨q, hdq, rfl⟩⟩
-    obtain rfl := hu d h.symm
-    exact haq hdq
+      ∃ q : t.val.Positions, t.val.CCommands a q ∧ t.termAt q = x := by
+  refine ⟨fun h ↦ ?_, fun ⟨q, hq, hqx⟩ ↦ hqx ▸ cCommands_termAt_of_cCommands
+    (fun d _ hd he ↦ hd (hu d he)) hq⟩
+  obtain ⟨p, q, hpq, hpa, rfl⟩ := exists_cCommands_termAt_of_cCommands h
+  exact ⟨q, hu p hpa ▸ hpq, rfl⟩
 
 /-- A term immediately containing the term at `a`, which occurs only there, is the term at its
 parent. -/
