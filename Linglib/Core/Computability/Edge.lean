@@ -6,6 +6,7 @@ Authors: Robert Hawkins
 module
 
 public import Mathlib.Computability.Language
+public import Mathlib.Tactic.DeriveFintype
 public import Mathlib.Data.Set.Finite.List
 public import Mathlib.Order.Interval.Set.Defs
 public import Mathlib.Order.Nat
@@ -36,7 +37,7 @@ named by the edge it starts from, so the `left` scan reads a word from its begin
 `right` scan from its end. The two scans give function classes that are mirror images under
 reversal but differ as classes of functions on unreversed strings. -/
 inductive Edge | left | right
-  deriving DecidableEq, Repr
+  deriving DecidableEq, Repr, Fintype
 
 namespace Edge
 

@@ -217,14 +217,14 @@ namespace PlanarSyntacticObject
 
 /-- Internal Merge on the ordered accumulator raises the leftmost subtree projecting to `mover`
     to the edge on `side`, leaving the trace of its head under `τ`; `none` if absent. -/
-def move (side : Side) (acc : PlanarSyntacticObject) (mover : SyntacticObject)
+def move (side : Edge) (acc : PlanarSyntacticObject) (mover : SyntacticObject)
     (τ : SyntacticObject → Option LexicalItem.Token := selHead) : Option PlanarSyntacticObject :=
   (find? mover acc).map fun s => match side with
     | .left => merge s (replaceWhere mover (mover.tracePlanar τ) acc)
     | .right => merge (replaceWhere mover (mover.tracePlanar τ) acc) s
 
 /-- Internal Merge on the ordered accumulator forgets to Internal Merge on the object. -/
-theorem toSyntacticObject_move {side : Side} {acc p' : PlanarSyntacticObject}
+theorem toSyntacticObject_move {side : Edge} {acc p' : PlanarSyntacticObject}
     {mover : SyntacticObject} {τ : SyntacticObject → Option LexicalItem.Token}
     (h : move side acc mover τ = some p') :
     p'.toSyntacticObject = SyntacticObject.merge
@@ -245,7 +245,8 @@ theorem toSyntacticObject_move {side : Side} {acc p' : PlanarSyntacticObject}
 end PlanarSyntacticObject
 
 open Derivation (Cfg) in
-/-- One replay step, mirroring `Step.run`: an extraction stacks the ordered copy it finds. -/
+/-- One replay step, mirroring `Step.run`, where an extraction stacks the ordered copy it
+finds. -/
 def externStep (τ : SyntacticObject → Option LexicalItem.Token) :
     Option (Cfg PlanarSyntacticObject) → Step → Option (Cfg PlanarSyntacticObject)
   | some ⟨acc, st⟩, .em .left item => item.toPlanarLeaf?.map fun i ↦ ⟨.merge i acc, st⟩
@@ -325,19 +326,19 @@ private theorem externStep_map {τ : SyntacticObject → Option LexicalItem.Toke
     rcases hip : item.toPlanarLeaf? with _ | ip
     · cases side <;> simp [externStep, hip] at h
     · have hi := toPlanarLeaf?_toSyntacticObject hip
-      cases side <;> simp only [externStep, hip, Option.bind_some, Option.map_some,
+      cases side <;> simp only [externStep, hip, Option.map_some,
         Option.some.injEq] at h <;> subst h <;>
         simp [Cfg.map, Step.run, Step.apply, PlanarSyntacticObject.toSyntacticObject_merge, hi]
   | im mover side =>
     rcases hm : acc.move side mover τ with _ | p'
     · simp [externStep, hm] at h
-    · simp only [externStep, hm, Option.bind_some, Option.map_some, Option.some.injEq] at h
+    · simp only [externStep, hm, Option.map_some, Option.some.injEq] at h
       subst h
       simp [Cfg.map, Step.run, Step.apply, PlanarSyntacticObject.toSyntacticObject_move hm]
   | extract mover =>
     rcases hf : PlanarSyntacticObject.find? mover acc with _ | f
     · simp [externStep, hf] at h
-    · simp only [externStep, hf, Option.bind_some, Option.map_some, Option.some.injEq] at h
+    · simp only [externStep, hf, Option.map_some, Option.some.injEq] at h
       subst h
       simp [Cfg.map, Step.run, Step.apply, deleteAccessible,
         PlanarSyntacticObject.toSyntacticObject_find? hf,
@@ -345,7 +346,7 @@ private theorem externStep_map {τ : SyntacticObject → Option LexicalItem.Toke
   | remerge side =>
     rcases st with _ | ⟨m, st⟩
     · cases side <;> simp [externStep] at h
-    · cases side <;> simp only [externStep, Option.bind_some, Option.some.injEq] at h <;>
+    · cases side <;> simp only [externStep, Option.some.injEq] at h <;>
         subst h <;>
         simp [Cfg.map, Step.run, Step.apply, PlanarSyntacticObject.toSyntacticObject_merge]
 

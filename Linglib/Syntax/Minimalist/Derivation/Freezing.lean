@@ -82,12 +82,12 @@ theorem obeysFreezing_append_iff :
   grind
 
 /-- A further movement obeys Freezing exactly when its mover is not frozen. -/
-@[simp] theorem obeysFreezing_append_im_iff {m : SyntacticObject} {side : Side} :
+@[simp] theorem obeysFreezing_append_im_iff {m : SyntacticObject} {side : Edge} :
     (d.append [.im m side]).ObeysFreezing ↔ d.ObeysFreezing ∧ ¬ d.Frozen m := by
   simp [obeysFreezing_append_iff]
 
 /-- A further External Merge obeys Freezing exactly when the derivation does. -/
-@[simp] theorem obeysFreezing_append_em_iff {item : SyntacticObject} {side : Side} :
+@[simp] theorem obeysFreezing_append_em_iff {item : SyntacticObject} {side : Edge} :
     (d.append [.em side item]).ObeysFreezing ↔ d.ObeysFreezing := by
   simp [obeysFreezing_append_iff]
 

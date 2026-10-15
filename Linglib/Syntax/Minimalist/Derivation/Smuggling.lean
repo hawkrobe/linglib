@@ -42,8 +42,8 @@ open SyntacticObject
 
 variable {d : Derivation} {steps : List Step} {i : Nat} {xp w : SyntacticObject}
 
-/-- Step `i` of `d` smuggles `xp` past `w`: its mover contains `xp`, which `w` c-commands before
-the step, and after it the mover c-commands `w` and `w` no longer c-commands `xp`. -/
+/-- Step `i` of `d` smuggles `xp` past `w` when its mover contains `xp`, which `w` c-commands
+before the step, and after it the mover c-commands `w` and `w` no longer c-commands `xp`. -/
 def IsSmugglingStep (d : Derivation) (i : Nat) (xp w : SyntacticObject) : Prop :=
   ∃ m ∈ d.mover? i,
     Contains m xp ∧ d.CCommandsAt i w xp ∧ d.CCommandsAt (i + 1) m w ∧
@@ -68,7 +68,7 @@ theorem IsSmugglingStep.frozen (h : d.IsSmugglingStep i xp w) : d.Frozen xp :=
 
 /-- Moving the smuggled phrase on violates Freezing. -/
 theorem IsSmugglingStep.not_obeysFreezing_append_im (h : d.IsSmugglingStep i xp w)
-    (side : Side) : ¬ (d.append [.im xp side]).ObeysFreezing :=
+    (side : Edge) : ¬ (d.append [.im xp side]).ObeysFreezing :=
   fun h' ↦ (obeysFreezing_append_im_iff.1 h').2 h.frozen
 
 end Minimalist.Derivation
