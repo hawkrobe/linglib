@@ -8,9 +8,10 @@ module
 public import Linglib.Core.Probability.Kernel.IonescuTulcea.PartialTraj
 public import Mathlib.Algebra.BigOperators.Fin
 public import Mathlib.Data.Fin.Tuple.Take
-public import Mathlib.Probability.Kernel.Composition.MeasureComp
 public import Mathlib.Probability.Kernel.Composition.IntegralCompProd
+public import Mathlib.Probability.Kernel.Composition.MeasureComp
 public import Mathlib.Probability.Kernel.Composition.MeasureCompProd
+public import Mathlib.Probability.Kernel.IonescuTulcea.Traj
 
 /-!
 # Sequences drawn from a prediction rule
@@ -29,6 +30,8 @@ form of the Ionescu–Tulcea partial trajectory: after the first draw, the law o
 ## Main definitions
 
 * `ProbabilityTheory.seqLaw κ n`: the law of the first `n` draws of the prediction rule `κ`.
+* `ProbabilityTheory.seqTrajectory κ`: the law of the whole sequence of draws, the Ionescu–Tulcea
+  trajectory measure started at the first draw.
 
 ## Main results
 
@@ -38,6 +41,8 @@ form of the Ionescu–Tulcea partial trajectory: after the first draw, the law o
   rule on a countable space.
 * `ProbabilityTheory.integral_seqLaw_succ`: the chain rule for expectations.
 * `ProbabilityTheory.seqLaw_succ_eq_map_partialTraj`: the law as a partial trajectory.
+* `ProbabilityTheory.seqTrajectory_map_frestrictLe`: the first draws of the whole sequence have
+  the law of the first draws.
 
 ## References
 
@@ -46,7 +51,7 @@ form of the Ionescu–Tulcea partial trajectory: after the first draw, the law o
 
 @[expose] public section
 
-open MeasureTheory Finset
+open MeasureTheory Finset Preorder
 open scoped ENNReal
 
 namespace ProbabilityTheory
@@ -200,6 +205,23 @@ theorem seqLaw_succ_eq_map_partialTraj (n : ℕ) :
     obtain ⟨z, rfl⟩ := (trajEquivFin n).surjective y
     rw [MeasurableEquiv.map_apply, show trajEquivFin n ⁻¹' {trajEquivFin n z} = {z} from
       Set.ext fun _ ↦ (trajEquivFin n).injective.eq_iff, partialTraj_comp_singleton]
+
+variable (κ) in
+/-- The law of the whole sequence of draws of the prediction rule `κ`: the Ionescu–Tulcea
+trajectory measure started at the first draw. -/
+noncomputable def seqTrajectory : Measure (ℕ → α) :=
+  Kernel.trajMeasure (κ 0 default) (trajRule κ)
+
+instance : IsProbabilityMeasure (seqTrajectory κ) := by
+  unfold seqTrajectory; infer_instance
+
+/-- The first `n + 1` draws of the whole sequence have the law of the first `n + 1` draws. -/
+theorem seqTrajectory_map_frestrictLe (n : ℕ) :
+    (seqTrajectory κ).map (trajEquivFin n ∘ frestrictLe n) = seqLaw κ (n + 1) := by
+  rw [seqLaw_succ_eq_map_partialTraj, seqTrajectory, Kernel.trajMeasure,
+    ← Measure.map_map (trajEquivFin n).measurable (measurable_frestrictLe n),
+    Measure.map_comp _ _ (measurable_frestrictLe n), Kernel.traj_map_frestrictLe]
+  rfl
 
 end Traj
 
