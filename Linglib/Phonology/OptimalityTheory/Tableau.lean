@@ -51,6 +51,9 @@ the structural optimality theorems.
   the other.
 * `Tableau.notMem_optimal_of_lt` / `Tableau.ofPerm_notMem_optimal_of_lt` — harmonic
   bounding: a candidate beaten pointwise never wins.
+* `Tableau.forall_ofPerm_profile_lt_iff` / `Tableau.exists_mem_ofPerm_optimal_iff_pair` — a
+  candidate beats a competitor under every ranking iff it bounds it, so a candidate wins against
+  its only competitor under some ranking iff it is not bounded.
 * `Tableau.ofPerm_zero_mem_optimal` / `Tableau.ofRanking_zero_mem_optimal` — a candidate with
   no violations wins under every ranking, and `Tableau.ofPerm_eq_zero_of_mem_optimal` — then
   every winner has no violations.
@@ -82,7 +85,7 @@ theorem ViolationProfile.le_apply_zero {n : Nat}
 
 /-! ### The tableau vocabulary -/
 
-/-- An OT tableau: a finite candidate set scored by a fixed-length violation profile, with a
+/-- An OT tableau is a finite candidate set scored by a fixed-length violation profile, with a
 witness that there is a candidate. -/
 structure Tableau (C : Type*) [DecidableEq C] (n : Nat) where
   /-- The candidates. -/
@@ -163,6 +166,11 @@ theorem optimal_eq_singleton_iff_pair {d : C} (hcand : t.candidates = {c, d}) (h
     t.optimal = {c} ↔ t.profile c < t.profile d := by
   rw [optimal_eq_singleton_iff (by rw [hcand]; exact Finset.mem_insert_self _ _), hcand]
   simp [hne.symm]
+
+/-- In a two-candidate tableau, `c` wins iff `d` does not strictly lex-dominate it. -/
+theorem mem_optimal_iff_pair {d : C} (hcand : t.candidates = {c, d}) :
+    c ∈ t.optimal ↔ ¬ t.profile d < t.profile c := by
+  simp [mem_optimal_iff, hcand]
 
 /-- A candidate strictly lex-dominated by a competitor is no winner. -/
 theorem notMem_optimal_of_lt {d : C} (hc : c ∈ t.candidates) (h : t.profile c < t.profile d) :
@@ -305,13 +313,51 @@ theorem ofPerm_profile_lt_of_forall_dominates {d : C} {i : ι} (hi : con i c < c
     (ofPerm con r candidates h).profile c < (ofPerm con r candidates h).profile d :=
   ofPerm_profile_lt_iff_exists_dominates.2 ⟨i, hi, fun j hj ↦ hr j fun hji ↦ (hji ▸ hj).asymm hi⟩
 
-/-- A candidate that some constraint prefers to a competitor beats it under some ranking, the
-converse of harmonic bounding for a pair. -/
-theorem exists_ofPerm_profile_lt {con : ConstraintSet C (Fin n)} {d : C} {i : Fin n}
-    (hi : con i c < con i d) :
-    ∃ r : Ranking (Fin n) n,
-      (ofPerm con r candidates h).profile c < (ofPerm con r candidates h).profile d :=
-  (Ranking.exists_forall_dominates i).imp fun _ hr ↦ ofPerm_profile_lt_of_forall_dominates hi hr
+section Bounding
+
+variable [Fintype ι] (hn : Fintype.card ι = n) {d : C}
+include hn
+
+/-- A candidate beats a competitor under some ranking iff some constraint prefers it. -/
+theorem exists_ofPerm_profile_lt_iff :
+    (∃ r : Ranking ι n,
+      (ofPerm con r candidates h).profile c < (ofPerm con r candidates h).profile d) ↔
+      ∃ i, con i c < con i d := by
+  refine ⟨fun ⟨_, hr⟩ ↦ ?_, fun ⟨i, hi⟩ ↦ ?_⟩
+  · obtain ⟨i, hi, -⟩ := ofPerm_profile_lt_iff_exists_dominates.1 hr
+    exact ⟨i, hi⟩
+  · obtain ⟨r, hr⟩ := Ranking.exists_forall_dominates i hn
+    exact ⟨r, ofPerm_profile_lt_of_forall_dominates hi hr⟩
+
+/-- A candidate beats a competitor under every ranking iff it harmonically bounds it, beating
+it pointwise on the constraint set. -/
+theorem forall_ofPerm_profile_lt_iff :
+    (∀ r : Ranking ι n,
+      (ofPerm con r candidates h).profile c < (ofPerm con r candidates h).profile d) ↔
+      (con · c) < (con · d) := by
+  refine ⟨fun hr ↦ Pi.lt_def.2 ⟨fun i ↦ not_lt.1 fun hi ↦ ?_, ?_⟩,
+    fun hlt _ ↦ ofPerm_profile_lt_of_lt hlt⟩
+  · obtain ⟨r, hr'⟩ := (exists_ofPerm_profile_lt_iff (candidates := candidates) (h := h) hn).2
+      ⟨i, hi⟩
+    exact (hr r).asymm hr'
+  · exact (exists_ofPerm_profile_lt_iff hn).1 ⟨_, hr (Fintype.equivFinOfCardEq hn).symm⟩
+
+/-- A candidate wins against its only competitor under some ranking iff the competitor does not
+harmonically bound it. -/
+theorem exists_mem_ofPerm_optimal_iff_pair (hcand : candidates.toFinset = {c, d}) :
+    (∃ r : Ranking ι n, c ∈ (ofPerm con r candidates h).optimal) ↔ ¬ (con · d) < (con · c) := by
+  rw [← forall_ofPerm_profile_lt_iff (candidates := candidates) (h := h) hn, not_forall]
+  exact exists_congr fun _ ↦ mem_optimal_iff_pair hcand
+
+/-- A candidate is the sole winner against its only competitor under some ranking iff some
+constraint prefers it. -/
+theorem exists_ofPerm_optimal_eq_singleton_iff_pair (hcand : candidates.toFinset = {c, d})
+    (hne : c ≠ d) :
+    (∃ r : Ranking ι n, (ofPerm con r candidates h).optimal = {c}) ↔ ∃ i, con i c < con i d := by
+  rw [← exists_ofPerm_profile_lt_iff (candidates := candidates) (h := h) hn]
+  exact exists_congr fun _ ↦ optimal_eq_singleton_iff_pair hcand hne
+
+end Bounding
 
 /-! ### Top-constraint optimality -/
 
