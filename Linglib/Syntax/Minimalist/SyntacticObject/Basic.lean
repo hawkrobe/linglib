@@ -133,9 +133,8 @@ theorem eq_bare_of_ne_nil {a : Vertex} {cs : List (RoseTree Vertex)}
 end SyntacticObject
 
 /-- The vertices of a syntactic object have zero or two children. -/
-theorem IsSyntacticObject.licensed_card {t : UnorderedTree SyntacticObject.Vertex}
-    (h : IsSyntacticObject t) :
-    t.Licensed fun _ ks ↦ Multiset.card ks = 0 ∨ Multiset.card ks = 2 :=
+theorem IsSyntacticObject.isFullBinary {t : UnorderedTree SyntacticObject.Vertex}
+    (h : IsSyntacticObject t) : t.IsFullBinary :=
   UnorderedTree.Licensed.mono (R := SyntacticObject.Vertex.Licenses) (fun
     | .inl (some _), _, h | .inr _, _, h => .inl (congrArg Multiset.card h)
     | .inl none, _, h => .inr h) h

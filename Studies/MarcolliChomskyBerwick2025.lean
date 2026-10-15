@@ -95,12 +95,14 @@ The book's algebra lives in `Core/` and in `Syntax/Minimalist/{Workspace,Merge,E
 * Lemma 1.6.3 (1.6.8) and (1.6.10): `ConnesKreimer.cutSummandsCN_accessibleCount`,
   `cutSummandsCN_accessibleSize`. Proposition 1.6.8 and
   Remark 1.6.7, on the terms of Merge (`Minimalist.Merge.mergeOpG_apply_of'_eq_sum`):
-  `Minimalist.card_singleton_add_trunk_add_countP`, `accessibleCount_merge_term`,
+  `Minimalist.card_singleton_add_trunk_add_numWhole`, `accessibleCount_merge_term`,
   `accessibleSize_merge_term`, `MinimalYield.merge_term_accessibleCount_iff`,
   `accessibleCount_unit_term` for `Δ^c`, and `MinimalYield.merge_term_numEdges_iff` for `Δ^d`.
 * Lemma 1.6.3 (1.6.7): `ConnesKreimer.cutSummandsDN_numEdges`, from the unary vertices a cut
   leaves (`ConnesKreimer.cutSummandsN_numUnary`); for Internal Merge,
-  `Minimalist.im_pair_size_deltas_deletion_of_cut`.
+  `Minimalist.numEdges_im_of_cut`, `MinimalYieldWeak.im_numEdges_of_cut`,
+  `MinimalYield.not_im_numEdges_of_cut`. Each cut's cost over a workspace:
+  `ConnesKreimer.CutChoice.HasExtractionCost`.
 * Definition 1.6.2 and Proposition 1.6.10: `Minimalist.NoComplexityLoss`, met by every admissible
   derivation step (`Minimalist.Step.noComplexityLoss`); along the induced map of a term of Merge
   (`Minimalist.componentMap`, `NoComplexityLoss.of_componentMap`),
@@ -374,14 +376,12 @@ private theorem mem_cutSummandsCN_theApple :
 
 /-- The term of Sideward Merge of type 2(b) at the trace cuts takes *eaten* whole and cuts *the*
     out of *the apple*. -/
-private noncomputable def sidewardTermC : Multiset (UnorderedTree Vertex ×
-    (Forest (UnorderedTree Vertex) × Forest (UnorderedTree Vertex))) :=
+private noncomputable def sidewardTermC : CutChoice Vertex :=
   {(eaten.val, ({eaten.val}, 0)),
     (theApple.val, ({theD.val}, {(deleteAccessible theD theApple).val}))}
 
 /-- The same term at the pruning cuts. -/
-private noncomputable def sidewardTermN : Multiset (UnorderedTree Vertex ×
-    (Forest (UnorderedTree Vertex) × Forest (UnorderedTree Vertex))) :=
+private noncomputable def sidewardTermN : CutChoice Vertex :=
   {(eaten.val, ({eaten.val}, 0)),
     (theApple.val, ({theD.val}, {UnorderedTree.node Vertex.bare {appleN.val}}))}
 
@@ -422,7 +422,7 @@ example : MinimalYield UnorderedTree.accessibleCount {eaten.val, theApple.val}
 example : ¬ NoComplexityLoss.Map UnorderedTree.numNodes
     (componentMap (UnorderedTree.node Vertex.bare {eaten.val, theD.val}) sidewardTermN) :=
   NoComplexityLoss.not_map_componentMap_merge sidewardTermN_mem
-    (fun x _ p hp _ ↦ cutSummandsN_numNodes x.1 p hp) UnorderedTree.numNodes_pos
+    (hasExtractionCost_numNodes_cutSummandsN sidewardTermN_mem) UnorderedTree.numNodes_pos
     (S := eaten.val) (S' := theD.val) (by simp [sidewardTermN]) (by decide) (by decide)
     (.inr (by decide))
 
@@ -444,14 +444,13 @@ example : ¬ NoComplexityLoss.Map (fun T ↦ Forest.accessibleSize {T})
     (S := eaten.val) (S' := theD.val) (by simp [sidewardTermC]) (.inr (by decide))
 
 /-- The term of Sideward Merge of type 3(a) of *the* and *apple* cuts both out of *the apple*. -/
-private noncomputable def sideward3a : Multiset (UnorderedTree Vertex ×
-    (Forest (UnorderedTree Vertex) × Forest (UnorderedTree Vertex))) :=
+private noncomputable def sideward3a : CutChoice Vertex :=
   {(theApple.val, ({theD.val, appleN.val}, {UnorderedTree.leaf Vertex.bare}))}
 
 /-- It raises the number of components, so it violates Minimal Yield under any counting
     (Proposition 1.6.8). -/
 example (acc : UnorderedTree Vertex → ℕ) (X : UnorderedTree Vertex) :
-    ¬ MinimalYieldWeak acc {theApple.val} ({X} + (sideward3a.map Prod.snd).sum.2) := by
+    ¬ MinimalYieldWeak acc {theApple.val} ({X} + sideward3a.trunk) := by
   have hs : sideward3a ∈ forestCutChoicesG cutSummandsN {theApple.val} := by
     rw [← Multiset.cons_zero, forestCutChoicesG_cons, forestCutChoicesG_zero]
     exact Multiset.mem_bind.mpr ⟨_, Multiset.mem_cons_of_mem (Multiset.mem_map_of_mem
@@ -465,7 +464,7 @@ example (acc : UnorderedTree Vertex → ℕ) (X : UnorderedTree Vertex) :
     table lowers it by two (Proposition 1.6.8): *the* and *apple* are sisters, so deleting both
     leaves their parent a leaf with nothing to contract. -/
 example : sideward3a ∈ forestCutChoicesG cutSummandsDN {theApple.val} ∧
-    (({(merge theD appleN).val} + (sideward3a.map Prod.snd).sum.2).map
+    (({(merge theD appleN).val} + sideward3a.trunk).map
       UnorderedTree.numEdges).sum =
     (({theApple.val} : Forest (UnorderedTree Vertex)).map UnorderedTree.numEdges).sum := by
   refine ⟨?_, by decide⟩
@@ -478,8 +477,7 @@ example : sideward3a ∈ forestCutChoicesG cutSummandsDN {theApple.val} ∧
     Multiset.mem_map.mpr ⟨0, Multiset.mem_singleton_self _, rfl⟩⟩
 
 /-- The 2(b) term at the deletion cuts, which contract the trunk `{apple}` to *apple*. -/
-private def sidewardTermD : Multiset (UnorderedTree Vertex ×
-    (Forest (UnorderedTree Vertex) × Forest (UnorderedTree Vertex))) :=
+private def sidewardTermD : CutChoice Vertex :=
   {(eaten.val, ({eaten.val}, 0)), (theApple.val, ({theD.val}, {appleN.val}))}
 
 private theorem sidewardTermD_mem :
@@ -500,18 +498,18 @@ example : MinimalYieldWeak UnorderedTree.numEdges {eaten.val, theApple.val}
     ¬ MinimalYield UnorderedTree.numEdges {eaten.val, theApple.val}
       {(merge eaten theD).val, appleN.val} := by
   have hF : ∀ T ∈ ({eaten.val, theApple.val} : Forest (UnorderedTree Vertex)),
-      T.Licensed fun _ ks ↦ Multiset.card ks = 0 ∨ Multiset.card ks = 2 := by
+      T.IsFullBinary := by
     simp only [Multiset.insert_eq_cons, Multiset.mem_cons, Multiset.mem_singleton]
     rintro _ (rfl | rfl)
-    exacts [eaten.2.licensed_card, theApple.2.licensed_card]
-  have hK : (sidewardTermD.map Prod.snd).sum.1 = {eaten.val, theD.val} := by simp [sidewardTermD]
+    exacts [eaten.2.isFullBinary, theApple.2.isFullBinary]
+  have hK : sidewardTermD.crown = {eaten.val, theD.val} := by simp [sidewardTermD]
   have hX : (merge eaten theD).val.numEdges = eaten.val.numEdges + theD.val.numEdges + 2 := by
     rw [merge_val]; exact UnorderedTree.numEdges_node_pair _ _ _
   rw [show ({(merge eaten theD).val, appleN.val} : Forest (UnorderedTree Vertex)) =
-      {(merge eaten theD).val} + (sidewardTermD.map Prod.snd).sum.2 by simp [sidewardTermD],
+      {(merge eaten theD).val} + sidewardTermD.trunk by simp [sidewardTermD],
     MinimalYieldWeak.merge_term_numEdges_iff hF sidewardTermD_mem hK hX,
     MinimalYield.merge_term_numEdges_iff hF sidewardTermD_mem hK hX,
-    show sidewardTermD.countP (·.2.2 = 0) = 1 by decide]
+    show sidewardTermD.numWhole = 1 by decide]
   decide
 
 /-! ### The core computational structure of Merge (§1.10) -/

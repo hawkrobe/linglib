@@ -19,6 +19,7 @@ multiset, it licenses every ordered representative of the tree alike
 ## Main definitions
 
 * `UnorderedTree.Licensed R u`: every subtree of `u` satisfies `R` at its root.
+* `UnorderedTree.IsFullBinary u`: every vertex of `u` has zero or two children.
 -/
 
 @[expose] public section
@@ -46,5 +47,12 @@ instance (R : α → Multiset α → Prop) [∀ a ks, Decidable (R a ks)] (u : U
     Decidable (u.Licensed R) :=
   Quotient.recOnSubsingleton u fun t ↦
     inferInstanceAs (Decidable (t.Licensed fun a ks ↦ R a (ks : Multiset α)))
+
+/-- A tree is full binary when each of its vertices has zero or two children. -/
+def IsFullBinary (u : UnorderedTree α) : Prop :=
+  u.Licensed fun _ ks ↦ Multiset.card ks = 0 ∨ Multiset.card ks = 2
+
+instance (u : UnorderedTree α) : Decidable u.IsFullBinary :=
+  inferInstanceAs (Decidable (u.Licensed _))
 
 end UnorderedTree

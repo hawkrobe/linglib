@@ -398,8 +398,8 @@ theorem mergeOpG_apply_of'_eq_sum (cuts : UnorderedTree α → Multiset (Forest
     (UnorderedTree α) × UnorderedTree α)) (lbl : α) (S S' : UnorderedTree α)
     (F : Forest (UnorderedTree α)) :
     mergeOpG (R := R) cuts lbl S S' (of' F) =
-      (((forestCutChoicesG cuts F).filter fun s ↦ (s.map Prod.snd).sum.1 = {S, S'}).map
-        fun s ↦ of' ({UnorderedTree.node lbl {S, S'}} + (s.map Prod.snd).sum.2)).sum := by
+      (((forestCutChoicesG cuts F).filter (·.crown = {S, S'})).map
+        fun s ↦ of' ({UnorderedTree.node lbl {S, S'}} + s.trunk)).sum := by
   rw [mergeOpG_apply_of', forestCutsG_eq_map_forestCutChoicesG, Multiset.filter_map,
     Multiset.map_map, ← Multiset.sum_map_mul_left]
   simp only [Function.comp_def, of'_add]
@@ -409,8 +409,8 @@ theorem mergeOpG_apply_of'_eq_sum (cuts : UnorderedTree α → Multiset (Forest
 theorem mergeOpUnitG_apply_of'_eq_sum (cuts : UnorderedTree α → Multiset (Forest
     (UnorderedTree α) × UnorderedTree α)) (β : UnorderedTree α) (F : Forest (UnorderedTree α)) :
     mergeOpUnitG (R := R) cuts β (of' F) =
-      (((forestCutChoicesG cuts F).filter fun s ↦ (s.map Prod.snd).sum.1 = {β}).map
-        fun s ↦ of' ({β} + (s.map Prod.snd).sum.2)).sum := by
+      (((forestCutChoicesG cuts F).filter (·.crown = {β})).map
+        fun s ↦ of' ({β} + s.trunk)).sum := by
   rw [mergeOpUnitG, LinearMap.comp_apply, AlgHom.toLinearMap_apply, comulAlgHomNG_apply_of',
     comulForestNG_eq_sum, forestCutsG_eq_map_forestCutChoicesG, Multiset.map_map,
     map_multiset_sum, Multiset.map_map, Multiset.sum_map_filter]

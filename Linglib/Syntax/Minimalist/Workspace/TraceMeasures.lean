@@ -28,7 +28,9 @@ cut.
 ## Main results
 
 * `ConnesKreimer.cutSummandsCN_accessibleCount`, `cutSummandsCN_accessibleSize`: the extraction
-  identities for the accessible terms and for the size.
+  identities for the accessible terms and for the size; over a forest,
+  `hasExtractionCost_accessibleCount_cutSummandsCN` and
+  `hasExtractionCost_accessibleSize_cutSummandsCN`.
 
 ## References
 
@@ -181,17 +183,17 @@ theorem cutSummandsCN_accessibleSize (τ : UnorderedTree (α ⊕ β) → β)
   rw [hsum, Forest.accessibleSize_singleton, Forest.accessibleSize_singleton]
   omega
 
+section CutChoice
+
+variable {τ : UnorderedTree (α ⊕ β) → β} {F : Multiset (UnorderedTree (α ⊕ β))}
+  {s : CutChoice (α ⊕ β)}
+
 /-- A tree in the crown of a choice of trace cuts is not a trace, when the trees cut or taken whole
     are not traces. -/
-theorem traceLeafCount_lt_numNodes_of_mem_crown {τ : UnorderedTree (α ⊕ β) → β}
-    {F : Multiset (UnorderedTree (α ⊕ β))}
-    {s : Multiset (UnorderedTree (α ⊕ β) ×
-      (Multiset (UnorderedTree (α ⊕ β)) × Multiset (UnorderedTree (α ⊕ β))))}
-    (hs : s ∈ forestCutChoicesG (cutSummandsCN τ) F)
+theorem traceLeafCount_lt_numNodes_of_mem_crown (hs : s ∈ forestCutChoicesG (cutSummandsCN τ) F)
     (hF : ∀ x ∈ s, x.2.1 ≠ 0 → ∃ a, x.1.value = Sum.inl a)
-    {S : UnorderedTree (α ⊕ β)} (hS : S ∈ (s.map Prod.snd).sum.1) :
-    S.traceLeafCount < S.numNodes := by
-  obtain ⟨x, hx, hSx⟩ := mem_fst_sum_map_snd_iff.mp hS
+    {S : UnorderedTree (α ⊕ β)} (hS : S ∈ s.crown) : S.traceLeafCount < S.numNodes := by
+  obtain ⟨x, hx, hSx⟩ := CutChoice.mem_crown.mp hS
   rcases mem_treeCutsG.mp (mem_treeCutsG_of_mem_forestCutChoicesG hs hx) with h | ⟨p, hp, h⟩
   · obtain ⟨a, ha⟩ := hF x hx (by rw [h]; exact Multiset.singleton_ne_zero _)
     rw [h, Multiset.mem_singleton] at hSx
@@ -199,15 +201,26 @@ theorem traceLeafCount_lt_numNodes_of_mem_crown {τ : UnorderedTree (α ⊕ β) 
   · rw [← h] at hSx
     exact cutSummandsCN_crown_traceLeafCount_lt_numNodes τ x.1 p hp S hSx
 
-/-- Each trace cut a choice makes splits the accessible terms of its tree, when the trees it cuts
-    or takes whole are not traces. -/
-theorem cutSummandsCN_accessibleCount_of_choice {τ : UnorderedTree (α ⊕ β) → β}
-    {s : Multiset (UnorderedTree (α ⊕ β) ×
-      (Multiset (UnorderedTree (α ⊕ β)) × Multiset (UnorderedTree (α ⊕ β))))}
+/-- Merging the two trees of the crown of a choice of trace cuts adds two accessible terms, when
+    the trees cut or taken whole are not traces. -/
+theorem accessibleCount_merge_of_crown_eq (a : α) (hs : s ∈ forestCutChoicesG (cutSummandsCN τ) F)
+    (hF : ∀ x ∈ s, x.2.1 ≠ 0 → ∃ a, x.1.value = Sum.inl a) {S S' : UnorderedTree (α ⊕ β)}
+    (hK : s.crown = {S, S'}) :
+    (UnorderedTree.node (Sum.inl a) {S, S'}).accessibleCount =
+      S.accessibleCount + S'.accessibleCount + 2 :=
+  UnorderedTree.accessibleCount_merge a S S'
+    (traceLeafCount_lt_numNodes_of_mem_crown hs hF (hK ▸ Multiset.mem_cons_self _ _))
+    (traceLeafCount_lt_numNodes_of_mem_crown hs hF
+      (hK ▸ Multiset.mem_cons_of_mem (Multiset.mem_singleton_self _)))
+
+/-- A choice of trace cuts costs one accessible term for each tree it extracts, when the trees it
+    cuts or takes whole are not traces. -/
+theorem hasExtractionCost_accessibleCount_cutSummandsCN
+    (hs : s ∈ forestCutChoicesG (cutSummandsCN τ) F)
     (hF : ∀ x ∈ s, x.2.1 ≠ 0 → ∃ a, x.1.value = Sum.inl a) :
-    ∀ x ∈ s, ∀ p ∈ cutSummandsCN τ x.1, (p.1, {p.2}) = x.2 → x.1.accessibleCount =
-      (p.1.map UnorderedTree.accessibleCount).sum + p.2.accessibleCount + Multiset.card p.1 := by
-  intro x hx p hp hpx
+    s.HasExtractionCost UnorderedTree.accessibleCount 1 := by
+  refine .of_mem_forestCutChoicesG hs fun x hx p hp hpx ↦ ?_
+  rw [one_mul]
   by_cases h0 : p.1 = 0
   · have : p = (0, x.1) := Multiset.mem_singleton.mp <| cutSummandsCN_filter_empty τ x.1 ▸
       Multiset.mem_filter.mpr ⟨hp, by rw [h0, Multiset.card_zero]⟩
@@ -215,21 +228,21 @@ theorem cutSummandsCN_accessibleCount_of_choice {τ : UnorderedTree (α ⊕ β) 
     simp
   · exact cutSummandsCN_accessibleCount τ (hF x hx (by rw [← hpx]; exact h0)).choose_spec hp
 
-/-- Each trace cut a choice makes splits the size `σ` of its tree, when the trees it cuts or takes
-    whole are not traces. -/
-theorem cutSummandsCN_accessibleSize_of_choice {τ : UnorderedTree (α ⊕ β) → β}
-    {s : Multiset (UnorderedTree (α ⊕ β) ×
-      (Multiset (UnorderedTree (α ⊕ β)) × Multiset (UnorderedTree (α ⊕ β))))}
+/-- A choice of trace cuts conserves the size `σ`, when the trees it cuts or takes whole are not
+    traces. -/
+theorem hasExtractionCost_accessibleSize_cutSummandsCN
+    (hs : s ∈ forestCutChoicesG (cutSummandsCN τ) F)
     (hF : ∀ x ∈ s, x.2.1 ≠ 0 → ∃ a, x.1.value = Sum.inl a) :
-    ∀ x ∈ s, ∀ p ∈ cutSummandsCN τ x.1, (p.1, {p.2}) = x.2 →
-      (p.1.map fun c ↦ Forest.accessibleSize {c}).sum + Forest.accessibleSize {p.2} =
-        Forest.accessibleSize {x.1} := by
-  intro x hx p hp hpx
+    s.HasExtractionCost (fun T ↦ Forest.accessibleSize {T}) 0 := by
+  refine .of_mem_forestCutChoicesG hs fun x hx p hp hpx ↦ ?_
+  rw [Nat.zero_mul, Nat.add_zero]
   by_cases h0 : p.1 = 0
   · have : p = (0, x.1) := Multiset.mem_singleton.mp <| cutSummandsCN_filter_empty τ x.1 ▸
       Multiset.mem_filter.mpr ⟨hp, by rw [h0, Multiset.card_zero]⟩
     subst this
     simp
-  · exact cutSummandsCN_accessibleSize τ (hF x hx (by rw [← hpx]; exact h0)).choose_spec hp
+  · exact (cutSummandsCN_accessibleSize τ (hF x hx (by rw [← hpx]; exact h0)).choose_spec hp).symm
+
+end CutChoice
 
 end ConnesKreimer
