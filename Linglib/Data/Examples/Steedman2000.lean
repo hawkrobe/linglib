@@ -197,8 +197,8 @@ def ch7_21 : Datum :=
     readings := []
     paperFeatures := [("phenomenon", "gapping"), ("wordOrder", "VSO"), ("gappingDirection", "forward")] }
 
-def ch7_41 : Datum :=
-  { id := "steedman2000_ch7_41"
+def ch7_62 : Datum :=
+  { id := "steedman2000_ch7_62"
     source := ⟨"steedman-2000", "ch. 7 (62)"⟩
     reportedIn := none
     language := "stan1293"
@@ -223,6 +223,6 @@ def ch7_63 : Datum :=
     readings := []
     paperFeatures := [("phenomenon", "gapping"), ("wordOrder", "SVO"), ("gappingDirection", "backward")] }
 
-def all : List Datum := [ex_96, ex_97, ex_98a, ex_98b, ex_99a, ex_99b, ex_100a, ex_100b, ch7_4, ch7_5, ch7_11, ch7_19, ch7_20, ch7_21, ch7_41, ch7_63]
+def all : List Datum := [ex_96, ex_97, ex_98a, ex_98b, ex_99a, ex_99b, ex_100a, ex_100b, ch7_4, ch7_5, ch7_11, ch7_19, ch7_20, ch7_21, ch7_62, ch7_63]
 
 end Steedman2000.Examples

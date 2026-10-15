@@ -8,6 +8,7 @@ public import Linglib.Syntax.CCG.Derivation
 public import Linglib.Syntax.CCG.Grammar
 public import Linglib.Syntax.CCG.Interface
 public import Linglib.Syntax.CCG.Intonation
+public import Linglib.Syntax.WordOrder
 public import Studies.BeckmanPierrehumbert1986
 
 /-!
@@ -20,44 +21,37 @@ coordination, gapping, Dutch cross-serial dependencies, scope in verb clusters a
 intonational phrasing over the library's CCG, and interprets the derivations over a toy
 English model.
 
-## Main results
+## Main statements
 
 * `nonConstituentCoord_eq_spelledOut`: "John sees and Mary eats pizza" has the truth
   conditions of its spelled-out paraphrase.
-* `coord_role_load_bearing`: the coordinator's role, not a rule of the grammar, fixes the
-  Boolean operation of a coordination.
-* `cluster_sov`, `cluster_vso`, `cluster_svo`: the arguments of a verb-final verb form a
-  rightward-looking cluster, those of a verb-initial verb a leftward-looking one, and those
-  of a verb-medial verb none, so verb-final languages gap backward and verb-initial ones
-  forward, Ross's generalization.
-* `english_gap`: English gaps forward, since the revealing rule exposes a virtual
-  verb-initial verb whose cluster is the gapped conjunct.
-* `dutch_main_cluster`, `dutch_sub_cluster`: Dutch main clauses gap forward and subordinate
-  clauses backward.
-* `three_np_sub_derives`: forward crossed composition derives the Dutch cross-serial order.
-* `inverse_acceptable_iff_hasComp`: in the book's examples an inverse scope reading is
-  acceptable exactly when the verb cluster is built by composition.
-* `theme_rheme_clash`, `annaMannyUtterance_infoStructure`: a theme accent and a rheme accent
-  do not unify, so the tune forces the phrasing "(ANNA married)(MANNY)".
+* `gapping_acceptable_iff`: Ross's generalization over the book's gapping examples. The raised
+  arguments of a verb-final verb compose into a rightward-looking cluster and those of a
+  verb-initial verb into a leftward-looking one, so verb-final clauses gap backward and the
+  others forward, SVO clauses over the verb-initial verb the revealing rule exposes.
+* `inverse_acceptable_iff_available`: an inverse scope reading is acceptable in the book's
+  examples exactly when some derivation lets the quantified object combine with a constituent
+  containing the tensed verb.
+* `theme_rheme_clash`: a theme accent and a rheme accent do not unify, so the tune forces the
+  phrasing "(ANNA married)(MANNY)".
 
 ## Implementation notes
 
-Type-raising is lexical in the library's CCG, so the book's syntactic raising rule appears as
-raised lexical entries. A raised name denotes the book's type-raising combinator `T` applied
-to the name, which at result category `S` is the Montague lift `Quantifier.NP.individual`,
-and coordination at `S/NP` is Partee and Rooth's generalized conjunction. The order-preserving
-raising of an argument is computed at the plain modality. The toy `Cat` drops the book's
-features (subordination, antecedent government, agreement), so the Dutch fragment carries
-only the categories its derivations use, and the restriction of forward crossed composition
-to bare infinitival complements is not encoded. The book's tunes follow Pierrehumbert's
-decomposition of an intonation phrase into pitch accent, phrase accent and boundary tone,
-which Beckman and Pierrehumbert supply (`ipToTune`).
+* Type-raising and coordination are lexical in the library's CCG, so the book's raising rules
+  appear as raised entries and its coordination rule `<Φ>` as a conjunction of category
+  `(X\⋆X)/⋆X`. A raised name denotes the Montague lift, and coordination at `S/NP` is Partee and
+  Rooth's generalized conjunction.
+* The toy categories drop the book's features (subordination, case, agreement), so Dutch
+  crossed composition is restricted to `VP` complements rather than the book's `VP_{-SUB}`.
+* The revealing rule (61) is a unary decomposition outside the binary derivations, so it enters
+  only as the condition on the categories it reveals (`RevealedResidue`).
+* The tunes follow Pierrehumbert's decomposition of an intonation phrase into pitch accent,
+  phrase accent and boundary tone, which Beckman and Pierrehumbert supply (`ipToTune`).
 
 ## References
 
 * [steedman-2000]
 * [ross-1970]
-* [bresnan-etal-1982]
 * [bayer-1996]
 * [kayne-1998]
 * [haegeman-van-riemsdijk-1986]
@@ -87,7 +81,7 @@ def S : Cat Atom := .atom .S
 
 def NP : Cat Atom := .atom .NP
 
-/-- The intransitive verb category `S\NP`. -/
+/-- The intransitive verb category `S\NP`, the book's `VP`. -/
 def IV : Cat Atom := S \ NP
 
 /-- The transitive verb category `(S\NP)/NP`. -/
@@ -104,9 +98,6 @@ example : TV.toTy atomTy = (.e ⇒ .e ⇒ .t) := rfl
 
 Slash direction encodes word order: `TV = (S\NP)/NP` looks right for the object and the
 resulting `S\NP` left for the subject, which enforces SVO. -/
-
-def mary_eats_pizza : Derivation String .multimodal S :=
-  .bapp (.lex "Mary" NP) (.fapp (.lex "eats" TV) (.lex "pizza" NP))
 
 def john_sleeps : Derivation String .multimodal S :=
   .bapp (.lex "John" NP) (.lex "sleeps" IV)
@@ -235,9 +226,17 @@ theorem coord_role_load_bearing :
 
 end Coordination
 
-/-! ### Gapping -/
+/-! ### Gapping
+
+The arguments of a verb, raised order-preservingly over the functions that seek them, compose
+into a cluster that coordinates with other clusters and then combines with the verb. Over a
+verb-final verb the cluster looks rightward for it, so the verb follows the coordinated clusters
+(backward gapping); over a verb-initial verb it looks leftward (forward gapping); over a
+verb-medial verb the arguments raise in opposite directions and form no cluster. -/
 
 section Gapping
+
+open WordOrder
 
 /-- `raiseArg c` raises the argument of the function category `c` order-preservingly over
 `c`. The argument of `X\A` raises to `X/(X\A)` and that of `X/A` to `X\(X/A)`. -/
@@ -263,40 +262,83 @@ def cluster (v : Cat Atom) : Option (Cat Atom) :=
       hcomp r₁ r₂ <|> hcomp r₂ r₁
   | .atom _ => none
 
-/-- A Japanese transitive verb is verb-final, of category `(S\NP)\NP`. -/
-def japaneseTV : Cat Atom := (S \ NP) \ NP
+/-- The verb-final transitive verb category `(S\NP)\NP`, the book's `tazuneta` (chapter 7
+(2)). -/
+def sovTV : Cat Atom := (S \ NP) \ NP
 
-/-- An Irish transitive verb is verb-initial, of category `(S/NP)/NP`. -/
-def irishTV : Cat Atom := (S / NP) / NP
+/-- The verb-initial transitive verb category `(S/NP)/NP`, the book's `chonaic` (chapter 7
+(17)), which Dutch main-clause verbs share and which English gapping reveals. -/
+def vsoTV : Cat Atom := (S / NP) / NP
 
-/-- Over a verb-final verb the cluster looks rightward for the verb, since the arguments
-raise and compose forward. The verb therefore follows the coordinated clusters, which is
-backward gapping (the book's chapter 7 (4)). -/
-theorem cluster_sov : cluster japaneseTV = some (S / japaneseTV) := by decide
+/-- Over a verb-final verb the cluster looks rightward for the verb (chapter 7 (3b)). -/
+theorem cluster_sov : cluster sovTV = some (S / sovTV) := by decide
 
-/-- Over a verb-initial verb the cluster looks leftward, so the verb precedes the clusters,
-forward gapping (chapter 7 (19)). -/
-theorem cluster_vso : cluster irishTV = some (S \ irishTV) := by decide
+/-- Over a verb-initial verb the cluster looks leftward (chapter 7 (18b)). -/
+theorem cluster_vso : cluster vsoTV = some (S \ vsoTV) := by decide
 
 /-- A verb-medial verb has no cluster, since its arguments raise in opposite directions and no
 harmonic rule composes them. -/
 theorem cluster_svo : cluster TV = none := by decide
 
-/-- The backward-gapped conjunct "Ken-ga Naomi-o" is derived by forward raising and forward
-composition. -/
-def backwardGappedConjunct : Derivation String .multimodal (S / japaneseTV) :=
-  .fcomp (.lex "Ken-ga" (S / (S \ NP)))
-    (.lex "Naomi-o" ((S \ NP) / japaneseTV))
+/-- The backward-gapped conjunct "Ken-ga Naomi-o" of chapter 7 (3b), by forward raising and
+forward composition. -/
+def backwardGappedConjunct : Derivation String .multimodal (S / sovTV) :=
+  .fcomp (.lex "Ken-ga" (S / (S \ NP))) (.lex "Naomi-o" ((S \ NP) / sovTV))
 
 theorem backwardGappedConjunct_yield :
     backwardGappedConjunct.yield = ["Ken-ga", "Naomi-o"] := rfl
 
-/-- The forward-gapped conjunct "Warren, potatoes" is derived by backward raising and backward
-composition over a verb-initial verb. -/
-def gappedConjunct : Derivation String .multimodal (S \ irishTV) :=
-  .bcomp (.lex "Warren" ((S / NP) \ irishTV)) (.lex "potatoes" (S \ (S / NP)))
+/-- The forward-gapped English conjunct "Warren, potatoes" of chapter 7 (67), a cluster over a
+virtual verb-initial verb, by backward raising and backward composition. -/
+def gappedConjunct : Derivation String .multimodal (S \ vsoTV) :=
+  .bcomp (.lex "Warren" ((S / NP) \ vsoTV)) (.lex "potatoes" (S \ (S / NP)))
 
 theorem gappedConjunct_yield : gappedConjunct.yield = ["Warren", "potatoes"] := rfl
+
+/-! #### Ross's generalization over the basic orders -/
+
+/-- The side of the verb on which the order `a` puts the argument `x`, where the verb's slash
+for `x` looks. -/
+def argSide (a : Arrangement Constituent 3) (x : Constituent) : Edge :=
+  if a.Precedes .verb x then .right else .left
+
+/-- The transitive verb category of the basic order `a`, seeking each argument on the side `a`
+puts it, the object first as in the English `(S\NP)/NP`. Which argument comes first matters to
+the category only when the two slashes look different ways. -/
+def transitiveCat (a : Arrangement Constituent 3) : Cat Atom :=
+  (S.push ⟨argSide a .subject, .dot, NP⟩).push ⟨argSide a .object, .dot, NP⟩
+
+theorem transitiveCat_sov : transitiveCat .sov = sovTV := by decide
+
+theorem transitiveCat_vso : transitiveCat .vso = vsoTV := by decide
+
+theorem transitiveCat_svo : transitiveCat .svo = TV := by decide
+
+/-- The two directions of gapping. Forward gapping keeps the verb in the first conjunct and
+backward gapping in the last. -/
+inductive GappingDirection where
+  | forward
+  | backward
+  deriving DecidableEq, Repr
+
+/-- The direction of gapping over the verb category `v`, read off the cluster of its arguments,
+is backward when the cluster looks rightward for the verb and forward when it looks leftward. -/
+def gappingDirection (v : Cat Atom) : Option GappingDirection :=
+  (cluster v).map fun
+    | .rslash .. => .backward
+    | _ => .forward
+
+/-- Ross's generalization for every basic order. As chapter 7 (77) restates it, the direction of
+gapping follows the direction in which the verb combines, so verb-final orders gap backward and
+verb-initial orders forward, while a verb-medial verb has no argument cluster. -/
+theorem gappingDirection_transitiveCat (a : Arrangement Constituent 3) :
+    gappingDirection (transitiveCat a) =
+      if a.Precedes .subject .verb ∧ a.Precedes .object .verb then some .backward
+      else if a.Precedes .verb .subject ∧ a.Precedes .verb .object then some .forward
+      else none := by
+  revert a; decide
+
+/-! #### The revealing rule -/
 
 /-- `RightwardInto t c` holds when `c` is `t` or a rightward function into `t`, a member of the
 book's `t/$`. -/
@@ -314,125 +356,144 @@ def RightwardInto.decidable (t : Cat Atom) : ∀ c, Decidable (RightwardInto t c
 
 instance (t : Cat Atom) : DecidablePred (RightwardInto t) := RightwardInto.decidable t
 
-/-- `reveal x y` is the virtual-conjunct revealing rule of chapter 7 (61). It decomposes a
-left conjunct of category `x` into a rightward function `y` into `S` and the residue `x \ y`,
-so the residue looks leftward whatever `y` is. -/
-def reveal (x y : Cat Atom) : Cat Atom × Cat Atom := (y, x \ y)
+/-- The virtual conjunct-revealing rule of chapter 7 (61) decomposes a sentence into a revealed
+`Y = S/$` and the residue `S\Y`. `RevealedResidue c` says `c` is such a residue. -/
+def RevealedResidue : Cat Atom → Prop
+  | .lslash x _ y => x = S ∧ RightwardInto S y
+  | _ => False
 
-/-- In English gapping (chapter 7 (62)) the left conjunct reveals a virtual verb-initial verb
-and a residue that is the cluster over it, with which the gapped right conjunct coordinates.
-No verb-final verb can be revealed, so English gaps forward only. -/
-theorem english_gap :
-    RightwardInto S irishTV ∧ (reveal S irishTV).2 = (S \ irishTV) ∧
-      cluster irishTV = some (S \ irishTV) ∧ ¬ RightwardInto S japaneseTV := by
+instance : DecidablePred RevealedResidue
+  | .lslash x _ y => inferInstanceAs (Decidable (x = S ∧ RightwardInto S y))
+  | .rslash .. | .atom _ => isFalse id
+
+/-- The revealing rule exposes exactly the verb-initial transitive verbs, since its revealed
+category is `S/$`. An SVO clause, whose own verb has no argument cluster, therefore gaps over a
+virtual verb-initial verb, as English does in chapter 7 (62). -/
+theorem rightwardInto_transitiveCat_iff (a : Arrangement Constituent 3) :
+    RightwardInto S (transitiveCat a) ↔ a.Precedes .verb .subject ∧ a.Precedes .verb .object := by
+  revert a; decide
+
+/-- A clause of basic order `a` gaps in the direction of the cluster over its verb, or, when the
+verb has none, in that of the cluster over the verb-initial verb the revealing rule exposes. -/
+def predictedDirection (a : Arrangement Constituent 3) : Option GappingDirection :=
+  gappingDirection (transitiveCat a) <|> gappingDirection vsoTV
+
+/-- The basic orders by the names the data files give them. -/
+def basicOrders : List (String × Arrangement Constituent 3) :=
+  [("SOV", .sov), ("SVO", .svo), ("VSO", .vso), ("VOS", .vos), ("OVS", .ovs), ("OSV", .osv)]
+
+/-- The gapping examples of chapter 7. -/
+def gappingData : List Datum := Examples.all.filter (·.feature? "phenomenon" = some "gapping")
+
+/-- In every gapping example of chapter 7, the construction is acceptable exactly when it gaps in
+the direction its clause's basic order predicts. -/
+theorem gapping_acceptable_iff :
+    ∀ ex ∈ gappingData, ex.judgment = .acceptable ↔
+      ex.parse? "gappingDirection" [("forward", .forward), ("backward", .backward)] =
+        (ex.parse? "wordOrder" basicOrders).bind predictedDirection := by
   decide
 
-/-- Dutch main-clause transitive verbs take both arguments rightward, so main clauses gap
-forward (chapter 7 (21)). -/
-theorem dutch_main_cluster : cluster ((S / NP) / NP) = some (S \ ((S / NP) / NP)) := by
-  decide
+/-! #### Other elliptical constructions -/
 
-/-- Dutch subordinate-clause transitive verbs take both arguments leftward, so subordinate
-clauses gap backward (chapter 7 (11)). -/
-theorem dutch_sub_cluster : cluster ((S \ NP) \ NP) = some (S / ((S \ NP) \ NP)) := by
-  decide
-
-/-- A stripped conjunct is a single remnant, one backward-raised subject of category
-`S\(S/NP)`. -/
-def strippedConjunct : Derivation String .multimodal (S \ (S / NP)) := .lex "Warren" (S \ (S / NP))
-
-/-- `EllipsisType` enumerates the book's elliptical constructions. -/
+/-- The book's elliptical constructions. -/
 inductive EllipsisType
-  /-- "Dexter eats bread, and Warren, potatoes" -/
+  /-- "Dexter eats bread, and Warren, potatoes" (chapter 7 (62)). -/
   | gapping
-  /-- "Dexter ran away, and Warren (too)" -/
+  /-- "Dexter ran away, and Warren (too)" (chapter 7 (78a)). -/
   | stripping
-  /-- "Dexter ate bread, and Warren did too" -/
-  | vpEllipsis
-  /-- "Dexter did something, but I don't know what" -/
+  /-- "Dexter did something with the beans, but I don't know what" (chapter 7 (84a)). -/
   | sluicing
+  /-- "Somebody has to do the job, but I know that I won't" (chapter 7 (84b)). -/
+  | vpEllipsis
   deriving DecidableEq, Repr
 
-/-- Gapping and stripping are mediated by the combinatory syntax, and VP ellipsis and
-sluicing by a separate anaphoric mechanism, since their categories are not otherwise in the
-grammar. -/
-def SyntacticallyMediated : EllipsisType → Prop
-  | .gapping | .stripping => True
-  | .vpEllipsis | .sluicing => False
+/-- The category of the right conjunct each construction coordinates with a full sentence, as in
+the gapped "Warren, potatoes" (67), the stripped "Warren" (81), and the sluiced and VP-elided
+conjuncts (84). -/
+def elidedConjunct : EllipsisType → Cat Atom
+  | .gapping => S \ vsoTV
+  | .stripping => S \ (S / NP)
+  | .sluicing => S / (S / NP)
+  | .vpEllipsis => S / IV
 
-instance : DecidablePred SyntacticallyMediated := fun x ↦ by
-  cases x <;> unfold SyntacticallyMediated <;> infer_instance
+/-- Gapping and stripping are mediated by the combinatory syntax, since the revealing rule
+decomposes the left conjunct into a residue of their right conjunct's category to coordinate
+with. Sluicing and VP ellipsis are not, since their conjuncts look rightward, and the book
+leaves them to an anaphoric mechanism. -/
+theorem revealedResidue_elidedConjunct_iff (e : EllipsisType) :
+    RevealedResidue (elidedConjunct e) ↔ e = .gapping ∨ e = .stripping := by
+  cases e <;> decide
 
 end Gapping
 
 /-! ### Cross-serial dependencies
 
-Dutch verb clusters ([bresnan-etal-1982]) over a target-restricted grammar: subordinate-clause
-verbs take NP arguments leftward and infinitival complements rightward, and the cluster forms
-by forward crossed composition, so the NPs precede the whole cluster in the attested order
-"Jan Piet (Marie) zag (helpen) zwemmen". -/
+In the Dutch fragment of chapter 6 a subordinate-clause raising verb takes its NP arguments
+leftward and its infinitival complement rightward (12), and the one crossing rule, forward
+crossed composition restricted to VP complements (14), builds the verb cluster, so the NPs
+precede the whole cluster in the cross-serial order. -/
 
 section CrossSerial
 
-/-- An infinitival verb phrase has category `S\NP`. -/
-def VP : Cat Atom := S \ NP
+/-- The rules of the Dutch fragment are application and the Dutch forward crossed composition
+of chapter 6 (14), `X/Y (Y\Z)$ ⇒ (X\Z)$` with `Y = VP`. -/
+def dutchRules : RuleSystem Atom := fun _ a β ↦
+  β = [] ∨ (a.side = .right ∧ a.cat = IV ∧ β.head?.map (·.side) = some .left)
 
-/-- A subordinate-clause perception verb has category `((S\NP)\NP)/VP`, taking its
-infinitival complement to the right and its object and subject to the left. -/
-def PercVSub : Cat Atom := ((S \ NP) \ NP) / VP
+instance (x : Cat Atom) (a : Cat.Arg Atom) (β : List (Cat.Arg Atom)) :
+    Decidable (dutchRules x a β) :=
+  inferInstanceAs (Decidable (β = [] ∨
+    (a.side = .right ∧ a.cat = IV ∧ β.head?.map (·.side) = some .left)))
 
-/-- An infinitival head with a raised object has category `(VP\NP)/VP`. -/
-def InfHeadSub : Cat Atom := (VP \ NP) / VP
+/-- The lexicon of chapter 6 (12), without the book's subordination feature. `zag` 'saw' and
+`helpen` 'help' take their infinitival complement rightward and their NP arguments leftward. -/
+def dutchLexicon : List (String × Cat Atom) :=
+  [("ik", NP), ("Cecilia", NP), ("Henk", NP), ("de nijlpaarden", NP),
+   ("zag", ((S \ NP) \ NP) / IV), ("helpen", (IV \ NP) / IV), ("voeren", IV \ NP)]
 
-/-- `dutchGrammar` is the Dutch fragment as a target-restricted grammar with target `S` and
-degree bound 2. -/
-def dutchGrammar : Grammar String Atom :=
-  .targetRestricted
-    [("Jan", NP), ("Piet", NP), ("Marie", NP), ("zag", PercVSub), ("helpen", InfHeadSub),
-     ("zwemmen", VP)]
-    .S 2
+/-- In "(dat) ik Cecilia de nijlpaarden zag voeren" (chapter 6 (15)) `zag` crossed-composes with
+`voeren`, and the NPs combine with the cluster by backward application. -/
+def zagVoeren : Derivation String dutchRules S :=
+  .bapp (.lex "ik" NP) (.bapp (.lex "Cecilia" NP) (.bapp (.lex "de nijlpaarden" NP)
+    (.fcompx (.lex "zag" (((S \ NP) \ NP) / IV)) (.lex "voeren" (IV \ NP)))))
 
-theorem jan_derives : dutchGrammar.Derives NP ["Jan"] := .lex (by decide)
-theorem piet_derives : dutchGrammar.Derives NP ["Piet"] := .lex (by decide)
-theorem marie_derives : dutchGrammar.Derives NP ["Marie"] := .lex (by decide)
-theorem zag_derives : dutchGrammar.Derives PercVSub ["zag"] := .lex (by decide)
-theorem helpen_derives : dutchGrammar.Derives InfHeadSub ["helpen"] := .lex (by decide)
-theorem zwemmen_derives : dutchGrammar.Derives VP ["zwemmen"] := .lex (by decide)
+/-- In "(dat) ik Cecilia Henk de nijlpaarden zag helpen voeren" (chapter 6 (16)) `helpen`
+crossed-composes with `voeren` and `zag` with the result at degree 2, so each NP is the argument
+of the verb in the same position of the cluster, the cross-serial dependency. -/
+def zagHelpenVoeren : Derivation String dutchRules S :=
+  .bapp (.lex "ik" NP) (.bapp (.lex "Cecilia" NP) (.bapp (.lex "Henk" NP)
+    (.bapp (.lex "de nijlpaarden" NP)
+      (.node (r := (IV \ NP) \ NP) (c := (((S \ NP) \ NP) \ NP) \ NP)
+        (.forward [⟨.left, .dot, NP⟩, ⟨.left, .dot, NP⟩] (by decide))
+        (.lex "zag" (((S \ NP) \ NP) / IV))
+        (.fcompx (.lex "helpen" ((IV \ NP) / IV)) (.lex "voeren" (IV \ NP)))))))
 
-/-- The crossed cluster "zag helpen zwemmen" is a leftward-seeking three-place predicate. -/
-theorem crossed_cluster_derives :
-    dutchGrammar.Derives (((S \ NP) \ NP) \ NP) ["zag", "helpen", "zwemmen"] :=
-  .forward [⟨.left, .dot, NP⟩] zag_derives
-    (.forward [] helpen_derives zwemmen_derives ⟨by decide, rfl⟩) ⟨by decide, rfl⟩
+/-- Both cross-serial sentences are derived from the lexicon. -/
+theorem crossSerial_derived :
+    (zagVoeren.LexIn dutchLexicon ∧
+      zagVoeren.yield = ["ik", "Cecilia", "de nijlpaarden", "zag", "voeren"]) ∧
+    (zagHelpenVoeren.LexIn dutchLexicon ∧
+      zagHelpenVoeren.yield =
+        ["ik", "Cecilia", "Henk", "de nijlpaarden", "zag", "helpen", "voeren"]) := by
+  decide
 
-/-- In "(dat) Jan Piet zag zwemmen" the two-verb cluster needs no composition and the NPs
-attach leftward. -/
-theorem two_np_sub_derives : dutchGrammar.Derives S ["Jan", "Piet", "zag", "zwemmen"] :=
-  .backward [] jan_derives
-    (.backward [] piet_derives (.forward [] zag_derives zwemmen_derives ⟨by decide, rfl⟩)
-      ⟨by decide, rfl⟩)
-    ⟨by decide, rfl⟩
-
-/-- In "(dat) Jan Piet Marie zag helpen zwemmen" the three NPs attach leftward to the crossed
-cluster, Marie to the slot of "helpen", Piet to the object slot of "zag", Jan as subject, the
-cross-serial binding in the attested order. -/
-theorem three_np_sub_derives :
-    dutchGrammar.Derives S ["Jan", "Piet", "Marie", "zag", "helpen", "zwemmen"] :=
-  .backward [] jan_derives
-    (.backward [] piet_derives
-      (.backward [] marie_derives crossed_cluster_derives ⟨by decide, rfl⟩) ⟨by decide, rfl⟩)
-    ⟨by decide, rfl⟩
+/-- The restriction of crossed composition to VP complements keeps a raised argument from
+crossed-composing into a verb, as chapter 6 notes of (14). -/
+theorem not_dutchRules_raised :
+    ¬ dutchRules (S \ NP) ⟨.right, .dot, (S \ NP) \ NP⟩ [⟨.left, .dot, NP⟩] := by
+  decide
 
 end CrossSerial
 
 /-! ### Verb clusters and quantifier scope
 
-In the verb-raising order the cluster forms by composition, so a quantified argument combines
-with a function containing the tensed verb and can take scope over it; in the
-verb-projection-raising order it combines with the embedded verb alone. -/
+A quantified argument takes scope over the tensed verb when it combines, as a functor, with a
+constituent containing that verb (chapter 6, on (96) and (97)). In the verb-raising order the
+verbs compose into such a constituent first. In the verb-projection-raising order the quantified
+object must combine with the embedded verb before anything combines with the tensed one, so it
+never takes the tensed verb in its scope, though the tensed verb can still compose. -/
 
 section Quantification
-
 
 /-- `VerbOrder` is the word order of a West Germanic verb cluster. -/
 inductive VerbOrder
@@ -442,51 +503,155 @@ inductive VerbOrder
   | verbProjectionRaising
   deriving DecidableEq, Repr, Inhabited
 
-/-- In the Dutch verb-raising order (99a) the cluster "probeert te zingen" forms by crossed
-composition before taking the object to its left. -/
+variable {R : RuleSystem Atom}
+
+/-- The node `ru` over daughters spelling out `u` and `w` has a primary functor spelling out `q`
+and a secondary containing `v`. -/
+def FunctorOver {l r c : Cat Atom} (q : List String) (v : String) :
+    Rule R l r c → List String → List String → Prop
+  | .forward .., u, w => u = q ∧ v ∈ w
+  | .backward .., u, w => w = q ∧ v ∈ u
+
+instance {l r c : Cat Atom} (q : List String) (v : String) :
+    ∀ (ru : Rule R l r c) (u w : List String), Decidable (FunctorOver q v ru u w)
+  | .forward .., u, w => inferInstanceAs (Decidable (u = q ∧ v ∈ w))
+  | .backward .., u, w => inferInstanceAs (Decidable (w = q ∧ v ∈ u))
+
+/-- `ScopesOver q v d` holds when some node of `d` combines a functor spelling out `q` with a
+constituent containing `v`, the configuration in which `q` takes scope over `v`. -/
+def ScopesOver (q : List String) (v : String) : {c : Cat Atom} → Derivation String R c → Prop
+  | _, .lex _ _ => False
+  | _, .node ru d₁ d₂ =>
+    FunctorOver q v ru d₁.yield d₂.yield ∨ ScopesOver q v d₁ ∨ ScopesOver q v d₂
+
+instance ScopesOver.decidable (q : List String) (v : String) :
+    ∀ {c : Cat Atom} (d : Derivation String R c), Decidable (ScopesOver q v d)
+  | _, .lex _ _ => isFalse id
+  | _, .node _ d₁ d₂ =>
+    have := ScopesOver.decidable q v d₁
+    have := ScopesOver.decidable q v d₂
+    inferInstanceAs (Decidable (_ ∨ _ ∨ _))
+
+/-- `ScopesOver q v d` needs both `q` and `v` among the words of `d`. -/
+theorem ScopesOver.mem_yield {q : List String} {v : String} {c : Cat Atom}
+    {d : Derivation String R c} (h : ScopesOver q v d) :
+    (∀ x ∈ q, x ∈ d.yield) ∧ v ∈ d.yield := by
+  induction d with
+  | lex => exact h.elim
+  | node ru d₁ d₂ ih₁ ih₂ =>
+    simp only [Derivation.yield, List.mem_append]
+    rcases h with h | h | h
+    · cases ru <;> obtain ⟨rfl, hv⟩ := h <;> exact ⟨fun x hx ↦ by simp [hx], by simp [hv]⟩
+    · exact ⟨fun x hx ↦ .inl ((ih₁ h).1 x hx), .inl (ih₁ h).2⟩
+    · exact ⟨fun x hx ↦ .inr ((ih₂ h).1 x hx), .inr (ih₂ h).2⟩
+
+/-- The verbs and the quantified object of the Dutch examples (99). The tensed equi verb
+"probeert" 'tries' takes its infinitival complement rightward, "te zingen" 'to sing' its object
+leftward, and "veel liederen" 'many songs' is raised order-preservingly over the verbs that take
+it leftward. -/
+def scopeLexicon : List (String × Cat Atom) :=
+  [("probeert", IV / IV), ("veel liederen", NP.forwardTypeRaise IV), ("te zingen", IV \ NP)]
+
+/-- The string of the example (99) in each verb order. -/
+def orderString : VerbOrder → List String
+  | .verbRaising => ["veel liederen", "probeert", "te zingen"]
+  | .verbProjectionRaising => ["probeert", "veel liederen", "te zingen"]
+
+/-- The quantified object takes scope over the tensed verb "probeert". -/
+abbrev ObjectOutscopesTense {c : Cat Atom} (d : Derivation String R c) : Prop :=
+  ScopesOver ["veel liederen"] "probeert" d
+
+/-- The inverse reading of the order `o` is available when some derivation of its string over
+the lexicon lets the quantified object take scope over the tensed verb. -/
+def InverseAvailable (o : VerbOrder) : Prop :=
+  ∃ e : Derivation String .multimodal IV,
+    e.LexIn scopeLexicon ∧ e.yield = orderString o ∧ ObjectOutscopesTense e
+
+/-- In the verb-raising order (99a) the cluster "probeert te zingen" forms by crossed
+composition and the raised object applies to it. -/
 def verbRaisingDeriv : Derivation String .multimodal IV :=
-  .bapp (.lex "veel liederen" NP)
+  .fapp (.lex "veel liederen" (NP.forwardTypeRaise IV))
     (.fcompx (.lex "probeert" (IV / IV)) (.lex "te zingen" (IV \ NP)))
 
-/-- In the Dutch verb-projection-raising order (99b) the matrix verb applies to a saturated
-embedded VP, so the quantified object never combines with a function containing the tensed
-verb. -/
-def verbProjectionRaisingDeriv : Derivation String .multimodal IV :=
-  .fapp (.lex "probeert" (IV / IV))
-    (.bapp (.lex "veel liederen" NP) (.lex "te zingen" (IV \ NP)))
+/-- In the verb-projection-raising order (99b) the tensed verb can compose with the raised
+object, but then the object is the tensed verb's secondary, not a functor over it. -/
+def verbProjectionRaisingComposed : Derivation String .multimodal IV :=
+  .fapp (.fcomp (.lex "probeert" (IV / IV)) (.lex "veel liederen" (NP.forwardTypeRaise IV)))
+    (.lex "te zingen" (IV \ NP))
 
-/-- `schematicDeriv o` is the derivation shape that the verb order `o` forces. -/
-def schematicDeriv : VerbOrder → Derivation String .multimodal IV
-  | .verbRaising => verbRaisingDeriv
-  | .verbProjectionRaising => verbProjectionRaisingDeriv
+/-- Composition is not what licenses wide scope: the composed verb-projection-raising
+derivation has a composition node, yet the object does not take scope over the tensed verb. -/
+theorem verbProjectionRaisingComposed_hasComp_not_outscopes :
+    verbProjectionRaisingComposed.LexIn scopeLexicon ∧
+      verbProjectionRaisingComposed.yield = orderString .verbProjectionRaising ∧
+      verbProjectionRaisingComposed.HasComp ∧
+      ¬ ObjectOutscopesTense verbProjectionRaisingComposed := by
+  decide
 
-theorem verbRaisingDeriv_hasComp : verbRaisingDeriv.HasComp := by decide
+private theorem eq_or_eq_of_append_eq {a b c : String} {l₁ l₂ : List String}
+    (h : l₁ ++ l₂ = [a, b, c]) (h₁ : l₁ ≠ []) (h₂ : l₂ ≠ []) :
+    (l₁ = [a] ∧ l₂ = [b, c]) ∨ (l₁ = [a, b] ∧ l₂ = [c]) := by
+  rcases l₁ with _ | ⟨x, _ | ⟨y, _ | ⟨z, r⟩⟩⟩ <;> simp_all
 
-theorem verbProjectionRaisingDeriv_applicationOnly :
-    ¬verbProjectionRaisingDeriv.HasComp := by decide
+/-- In the verb-projection-raising order no derivation, in any rule system, lets the quantified
+object take scope over the tensed verb: the object can be a functor only over "te zingen", since
+its category looks rightward. -/
+theorem not_outscopes_of_verbProjectionRaising {c : Cat Atom} (e : Derivation String R c)
+    (hl : e.LexIn scopeLexicon) (hy : e.yield = orderString .verbProjectionRaising) :
+    ¬ ObjectOutscopesTense e := by
+  rcases e with ⟨t, c⟩ | ⟨ru, d₁, d₂⟩
+  · simp [Derivation.yield, orderString] at hy
+  simp only [Derivation.yield, orderString] at hy
+  have hs := eq_or_eq_of_append_eq hy d₁.yield_ne_nil d₂.yield_ne_nil
+  rintro (h | h | h)
+  · cases ru <;> obtain ⟨h₁, -⟩ := h <;> rcases hs with ⟨hd₁, hd₂⟩ | ⟨hd₁, hd₂⟩ <;> simp_all
+  · rcases hs with ⟨hd₁, -⟩ | ⟨hd₁, -⟩
+    · simpa [hd₁] using h.mem_yield.1
+    rcases d₁ with ⟨t, c⟩ | ⟨ru', a, b⟩
+    · simp [Derivation.yield] at hd₁
+    simp only [Derivation.yield] at hd₁
+    have hab : a.yield = ["probeert"] ∧ b.yield = ["veel liederen"] := by
+      rcases ha : a.yield with _ | ⟨x, _ | ⟨y, r⟩⟩
+      · exact absurd ha a.yield_ne_nil
+      · simp_all
+      · have := b.yield_ne_nil
+        simp_all
+    rcases h with h | h | h
+    · cases ru' with
+      | forward => simp_all [FunctorOver]
+      | backward =>
+        obtain rfl := Derivation.eq_lex_of_yield_eq_singleton hab.2
+        simp [Derivation.LexIn, scopeLexicon, Cat.forwardTypeRaise, IV] at hl
+    · simpa [hab.1] using h.mem_yield.1
+    · simpa [hab.2] using h.mem_yield.2
+  · rcases hs with ⟨-, hd₂⟩ | ⟨-, hd₂⟩ <;> simpa [hd₂] using h.mem_yield.2
 
-/-- `wordOrderOf ex` reads the verb order of the example `ex` off its features. -/
-def wordOrderOf (ex : Datum) : Option VerbOrder :=
-  match ex.paperFeatures.lookup "wordOrder" with
-  | some "verbRaising" => some .verbRaising
-  | some "verbProjectionRaising" => some .verbProjectionRaising
-  | _ => none
+/-- The inverse reading is available in the verb-raising order and in no other. -/
+theorem inverseAvailable_iff (o : VerbOrder) : InverseAvailable o ↔ o = .verbRaising := by
+  cases o
+  · exact iff_of_true ⟨verbRaisingDeriv, by decide, rfl, by decide⟩ rfl
+  · exact iff_of_false (fun ⟨e, hl, hy, h⟩ ↦ not_outscopes_of_verbProjectionRaising e hl hy h)
+      (by decide)
 
 /-- `scopeData` pairs each scope example's word order with the judgment on its inverse
 reading, on which the quantified object outscopes the tensed verb. -/
 def scopeData : List (VerbOrder × Judgment) :=
   Examples.all.filterMap fun ex ↦
-    (wordOrderOf ex).bind fun vo ↦ (ex.readings.lookup "inverse").map (vo, ·)
+    (ex.parse? "wordOrder" [("verbRaising", .verbRaising),
+      ("verbProjectionRaising", .verbProjectionRaising)]).bind
+      fun vo ↦ (ex.readings.lookup "inverse").map (vo, ·)
 
-/-- The inverse reading is acceptable exactly where the cluster is built with composition, in
-every judgment of the book's examples (96) to (100), credited in the data to [bayer-1996],
-[kayne-1998], [haegeman-van-riemsdijk-1986] and [haegeman-1992]. -/
-theorem inverse_acceptable_iff_hasComp :
-    ∀ d ∈ scopeData, d.2 = .acceptable ↔ (schematicDeriv d.1).HasComp := by
-  decide
+/-- The inverse reading is acceptable exactly where some derivation lets the quantified object
+combine with a constituent containing the tensed verb, in every judgment of the book's examples
+(96) to (100), credited in the data to [bayer-1996], [kayne-1998],
+[haegeman-van-riemsdijk-1986] and [haegeman-1992]. -/
+theorem inverse_acceptable_iff_available :
+    ∀ d ∈ scopeData, d.2 = .acceptable ↔ InverseAvailable d.1 := by
+  have key : ∀ d ∈ scopeData, d.2 = .acceptable ↔ d.1 = .verbRaising := by decide
+  exact fun d hd ↦ (key d hd).trans (inverseAvailable_iff d.1).symm
 
 /-- The data hold a verb-projection-raising example whose inverse reading is rejected, so the
-account's restriction to composed clusters is tested. -/
+account's restriction is tested. -/
 theorem exists_verbProjectionRaising_unacceptable :
     ∃ d ∈ scopeData, d.1 = .verbProjectionRaising ∧ d.2 = .unacceptable := by
   decide
@@ -496,9 +661,10 @@ end Quantification
 /-! ### Intonation and information structure
 
 Alternative derivations of one string are alternative information structures, disambiguated
-by tune: "(ANNA married)(MANNY)" carves the composed derivation into a theme and a rheme, and
-prosodic phrases are tune-marked constituents, so only constituents of the grammar can be
-phrases, the Sense Unit Condition of [selkirk-1984]. -/
+by tune: "(ANNA married)(MANNY)" (chapter 5 (14)) carves the composed derivation into a theme and
+a rheme, and its mirror "(ANNA)(married MANNY)" (13) the applicative one. Prosodic phrases are
+tune-marked constituents, so only constituents of the grammar can be phrases, the Sense Unit
+Condition of [selkirk-1984]. -/
 
 section Intonation
 
@@ -531,6 +697,22 @@ single marking, so the tune forces the phrasing "[Anna married][Manny]". -/
 theorem theme_rheme_clash :
     (Derivation.fapp anna_married (.lex "Manny" NP)).infoFeature annaMannyAccents
       = none := rfl
+
+/-- The mirror answer "(ANNA)(married MANNY)" of chapter 5 (13) has a rheme accent on "Anna"
+and a theme accent on "Manny". -/
+def mannyThemeAccents : AccentAssignment String := fun w ↦
+  match w with
+  | "Anna" => some (.mono .H)
+  | "Manny" => some (.leading .L .H)
+  | _ => none
+
+/-- Under the mirror tune the theme is the applicative constituent "married MANNY", while the
+composed "ANNA married" of (14) carries the rheme, so the tune selects the derivation. -/
+theorem married_manny_theme :
+    (Derivation.fapp (R := .multimodal) (.lex "married" TV) (.lex "Manny" NP)).infoFeature
+        mannyThemeAccents = some .θ ∧
+      anna_married.infoFeature mannyThemeAccents = some .ρ :=
+  ⟨rfl, rfl⟩
 
 /-- The utterance consists of two tune-marked phrases. -/
 def annaMannyUtterance : List (ProsodicPhrase String (RuleSystem.multimodal (α := Atom))) :=
@@ -574,9 +756,6 @@ final phrase accent and boundary tone of the intonation phrase `ip`. -/
 def ipToTune (ip : IntonationPhrase) (accent : PitchAccent) : Tune :=
   ⟨accent, ip.terminalContour⟩
 
-theorem ipToTune_terminal (ip : IntonationPhrase) (accent : PitchAccent) :
-    (ipToTune ip accent).terminal = ip.terminalContour := rfl
-
 /-- A declarative intonation phrase has an L phrase accent and an L% boundary. -/
 def declarativeIP : IntonationPhrase :=
   { ips := [{ aps := [accentedAP], phraseAccent := .L }], boundaryTone := .L }
@@ -585,11 +764,12 @@ def declarativeIP : IntonationPhrase :=
 def continuationIP : IntonationPhrase :=
   { ips := [{ aps := [accentedAP], phraseAccent := .L }], boundaryTone := .H }
 
-/-- The declarative phrase carries the rheme tune's terminal and the continuation-rise phrase
-the theme tune's. -/
-theorem bp_terminals_match_tunes :
-    declarativeIP.terminalContour = rhemeTune.terminal ∧
-      continuationIP.terminalContour = themeTune.terminal := by decide
+/-- A declarative intonation phrase with an H* accent is the rheme tune, and a continuation-rise
+phrase with an L+H* accent the theme tune. -/
+theorem ipToTune_eq_tunes :
+    ipToTune declarativeIP (.mono .H) = rhemeTune ∧
+      ipToTune continuationIP (.leading .L .H) = themeTune := by
+  decide
 
 end BPTerminal
 
