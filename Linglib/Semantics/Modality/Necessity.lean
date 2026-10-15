@@ -12,17 +12,23 @@ modal base makes accessible, and necessity over the best of them under an orderi
 Kratzer's own definition, human necessity, needs no Limit Assumption: each accessible world must
 see, at least as good, a witness below which only `p`-worlds occur. It is universal
 quantification over the best worlds exactly under the Limit Assumption, which every finite frame
-satisfies.
+satisfies. Good possibility asks for one such witness, so `p` may hold on one branch of the
+ordering and its rival on another; Portner and Rubinstein call it local necessity. When the
+ordering source is consistent with the modal base, the two backgrounds unify into one and both
+forces become simple necessity over their union.
 
 ## Main definitions
 
 * `simpleNecessity f`, `simplePossibility f`: the box and diamond of `f.accessible`.
 * `necessity f g`, `possibility f g`: the box and diamond of `bestAccessible f g`.
 * `humanNecessity f g`, `humanPossibility f g`, `LimitAssumption f g w`.
+* `goodPossibility f g`: some accessible world sees only `p`-worlds at least as good.
 
 ## Main statements
 
 * `humanNecessity_iff_necessity`: under the Limit Assumption, human necessity is necessity.
+* `goodPossibility_iff_simpleNecessity_sup`: with the ordering source consistent with the modal
+  base, good possibility is simple necessity over the unified backgrounds.
 * `isRealistic_iff_simpleNecessity_le_id`: a modal base is realistic exactly when simple
   necessity over it is veridical.
 * `simpleNecessity_iff_sInf_le`: simple necessity is consequence from the premises at the world.
@@ -31,14 +37,15 @@ satisfies.
 
 `necessity` quantifies over `bestWorlds` directly, so studies that treat `necessity` and
 `possibility` as the Kratzer pair inherit the Limit Assumption; `humanNecessity` is the
-limit-free form. Kratzer's comparative possibility, good possibility, weak necessity and slight
-possibility are not formalized here.
+limit-free form. Kratzer's comparative possibility, weak necessity and slight possibility are
+not formalized here.
 
 ## References
 
 * [kratzer-1977]
 * [kratzer-1981]
 * [kratzer-2012]
+* [portner-rubinstein-2020]
 -/
 
 @[expose] public section
@@ -94,8 +101,8 @@ def necessity (f g : Background W) (p : W → Prop) (w : W) : Prop :=
 def possibility (f g : Background W) (p : W → Prop) (w : W) : Prop :=
   ◇[bestAccessible f g] p w
 
-/-- Necessity is monotone in the prejacent: Kratzer's *must* is closed under entailment,
-`box_mono` over the best accessible worlds. -/
+/-- Necessity is monotone in the prejacent, so Kratzer's *must* is closed under entailment
+(`box_mono` over the best accessible worlds). -/
 theorem necessity_mono {f g : Background W} {p q : W → Prop} {w : W}
     (hpq : p ≤ q) (h : necessity f g p w) : necessity f g q w :=
   box_mono (bestAccessible f g) hpq w h
@@ -187,6 +194,94 @@ theorem humanNecessity_bot_iff (f : Background W) (p : W → Prop) (w : W) :
   · intro h u hu
     exact ⟨u, hu, atLeastAsGoodAs_empty u u, fun z hz _ ↦ h z hz⟩
 
+/-! ### Good possibility -/
+
+section GoodPossibility
+
+variable {f g : Background W} {p q : W → Prop} {w : W}
+
+/-- Good possibility holds when some accessible world sees only `p`-worlds among the accessible
+worlds at least as good as itself, so that `p` holds throughout a branch of the ordering. -/
+def goodPossibility (f g : Background W) (p : W → Prop) (w : W) : Prop :=
+  ∃ u ∈ f.accessibleWorlds w, ∀ v ∈ f.accessibleWorlds w, atLeastAsGoodAs (g w) v u → p v
+
+theorem goodPossibility_mono (h : ∀ v, p v → q v) :
+    goodPossibility f g p w → goodPossibility f g q w :=
+  fun ⟨u, hu, hp⟩ ↦ ⟨u, hu, fun v hv hvu ↦ h v (hp v hv hvu)⟩
+
+/-- Over a modal base with an accessible world, human necessity implies good possibility. -/
+theorem goodPossibility_of_humanNecessity (hne : (f.accessibleWorlds w).Nonempty)
+    (h : humanNecessity f g p w) : goodPossibility f g p w :=
+  let ⟨_, hu⟩ := hne
+  let ⟨v, hv, _, hall⟩ := h _ hu
+  ⟨v, hv, hall⟩
+
+/-- With the empty ordering source, good possibility is simple necessity over a modal base with
+an accessible world. -/
+theorem goodPossibility_bot_iff (f : Background W) (p : W → Prop) (w : W) :
+    goodPossibility f ⊥ p w ↔ (f.accessibleWorlds w).Nonempty ∧ simpleNecessity f p w :=
+  ⟨fun ⟨u, hu, h⟩ ↦ ⟨⟨u, hu⟩, fun v hv ↦ h v hv (atLeastAsGoodAs_empty v u)⟩,
+    fun ⟨⟨u, hu⟩, h⟩ ↦ ⟨u, hu, fun v hv _ ↦ h v hv⟩⟩
+
+/-! ### Unified backgrounds
+
+When some accessible world verifies every premise of the ordering source, the modal base and
+the ordering source can be unified into the single background `f ⊔ g`, and the forces that read
+the ordering collapse to simple necessity over it. -/
+
+/-- Good possibility implies simple necessity over the unified backgrounds. -/
+theorem simpleNecessity_sup_of_goodPossibility (h : goodPossibility f g p w) :
+    simpleNecessity (f ⊔ g) p w := by
+  obtain ⟨u, -, hp⟩ := h
+  show ∀ v ∈ (f ⊔ g).accessibleWorlds w, p v
+  intro v hv
+  rw [Background.accessibleWorlds_sup] at hv
+  exact hp v hv.1 ((atLeastAsGoodAs_iff _ _ _).2 fun r hr _ ↦ hv.2 r hr)
+
+/-- Human necessity implies simple necessity over the unified backgrounds. -/
+theorem simpleNecessity_sup_of_humanNecessity (h : humanNecessity f g p w) :
+    simpleNecessity (f ⊔ g) p w := by
+  show ∀ v ∈ (f ⊔ g).accessibleWorlds w, p v
+  intro v hv
+  rw [Background.accessibleWorlds_sup] at hv
+  obtain ⟨_, -, -, hall⟩ := h v hv.1
+  exact hall v hv.1 ((atLeastAsGoodAs_iff _ _ _).2 fun r hr _ ↦ hv.2 r hr)
+
+variable (h : ((f ⊔ g).accessibleWorlds w).Nonempty)
+include h
+
+/-- When the ordering source is consistent with the modal base, good possibility is simple
+necessity over the unified backgrounds. -/
+theorem goodPossibility_iff_simpleNecessity_sup :
+    goodPossibility f g p w ↔ simpleNecessity (f ⊔ g) p w := by
+  refine ⟨simpleNecessity_sup_of_goodPossibility, fun hs ↦ ?_⟩
+  obtain ⟨b, hb⟩ := h
+  rw [Background.accessibleWorlds_sup] at hb
+  refine ⟨b, hb.1, fun v hv hvb ↦ hs v ?_⟩
+  show v ∈ (f ⊔ g).accessibleWorlds w
+  rw [Background.accessibleWorlds_sup]
+  exact ⟨hv, fun r hr ↦ (atLeastAsGoodAs_iff _ _ _).1 hvb r hr (hb.2 r hr)⟩
+
+/-- When the ordering source is consistent with the modal base, human necessity is simple
+necessity over the unified backgrounds. -/
+theorem humanNecessity_iff_simpleNecessity_sup :
+    humanNecessity f g p w ↔ simpleNecessity (f ⊔ g) p w := by
+  refine ⟨simpleNecessity_sup_of_humanNecessity, fun hs u hu ↦ ?_⟩
+  obtain ⟨b, hb⟩ := h
+  rw [Background.accessibleWorlds_sup] at hb
+  refine ⟨b, hb.1, (atLeastAsGoodAs_iff _ _ _).2 fun r hr _ ↦ hb.2 r hr, fun z hz hzb ↦ hs z ?_⟩
+  show z ∈ (f ⊔ g).accessibleWorlds w
+  rw [Background.accessibleWorlds_sup]
+  exact ⟨hz, fun r hr ↦ (atLeastAsGoodAs_iff _ _ _).1 hzb r hr (hb.2 r hr)⟩
+
+/-- When the ordering source is consistent with the modal base, good possibility is human
+necessity. -/
+theorem goodPossibility_iff_humanNecessity :
+    goodPossibility f g p w ↔ humanNecessity f g p w :=
+  (goodPossibility_iff_simpleNecessity_sup h).trans (humanNecessity_iff_simpleNecessity_sup h).symm
+
+end GoodPossibility
+
 /-! ### Characterization lemmas -/
 
 @[simp]
@@ -261,7 +356,7 @@ theorem isRealistic_iff_simpleNecessity_le_id {f : Background W} :
     f.IsRealistic ↔ simpleNecessity f ≤ id :=
   isRealistic_iff_refl.trans box_T_iff.symm
 
-/-- A modal base is realistic exactly when what is actual is possible over it: read
+/-- A modal base is realistic exactly when what is actual is possible over it. Read
 epistemically, an asserted fact can be a *might*; read deontically, everything actual is
 permitted. -/
 theorem isRealistic_iff_id_le_simplePossibility {f : Background W} :

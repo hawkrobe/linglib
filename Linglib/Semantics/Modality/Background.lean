@@ -63,6 +63,13 @@ theorem accessibleWorlds_anti (h : f w ⊆ f' w) : f'.accessibleWorlds w ⊆ f.a
 @[simp] theorem accessibleWorlds_bot (w : W) : (⊥ : Background W).accessibleWorlds w = .univ :=
   Set.eq_univ_of_forall fun _ ↦ by simp [accessibleWorlds]
 
+/-- The worlds accessible under two backgrounds together are those accessible under the first
+that verify every premise of the second. -/
+theorem accessibleWorlds_sup (f g : Background W) (w : W) :
+    (f ⊔ g).accessibleWorlds w = {v ∈ f.accessibleWorlds w | ∀ p ∈ g w, p v} := by
+  ext v
+  simp [or_imp, forall_and]
+
 /-- A background is realistic when every world is accessible from itself, verifying its own
 premises. -/
 def IsRealistic (f : Background W) : Prop := ∀ w, w ∈ f.accessibleWorlds w
@@ -195,6 +202,14 @@ theorem mem_bestWorlds {f g : Background W} {w u : W} :
 @[simp] theorem bestWorlds_bot (f : Background W) (w : W) :
     bestWorlds f ⊥ w = f.accessibleWorlds w :=
   bestAmong_empty _
+
+/-- When some accessible world verifies every premise of the ordering source, the best worlds are
+the worlds accessible under the two backgrounds together. -/
+theorem bestWorlds_eq_accessibleWorlds_sup {f g : Background W} {w : W}
+    (h : ((f ⊔ g).accessibleWorlds w).Nonempty) :
+    bestWorlds f g w = (f ⊔ g).accessibleWorlds w := by
+  rw [Background.accessibleWorlds_sup] at h ⊢
+  exact bestAmong_eq_of_exists h
 
 /-- A best world verifying a member of the ordering source that excludes `p` stays best when `p` is
 added, because no `p`-world is at least as good, since it fails the member, and the other worlds are

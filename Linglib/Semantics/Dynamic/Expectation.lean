@@ -27,6 +27,9 @@ Read at the level of discourse, assertion and promotion are the two updates of P
 of mood, on the context set and on the To-Do List. Informational necessity `□_cs` is truth
 throughout the information and preferential necessity `□_≤` is truth at the optimal worlds, and
 a state accepts an assertion or a presumption exactly when the corresponding necessity holds.
+Local necessity, the force Portner and Rubinstein give the subjunctive, is truth at every world
+at least as normal as some world of the information; it is preferential necessity when the
+information has a most normal world.
 
 ## Main definitions
 
@@ -36,8 +39,8 @@ a state accepts an assertion or a presumption exactly when the corresponding nec
 * `DynamicSemantics.ExpState`: a pattern together with the agent's information, with `init`,
   `optimal`, `assert` and `promote`.
 * `DynamicSemantics.ExpState.presumablyTest`, `DynamicSemantics.ExpState.mightTest`: the tests.
-* `DynamicSemantics.ExpState.boxCs`, `DynamicSemantics.ExpState.boxLe`: informational and
-  preferential necessity.
+* `DynamicSemantics.ExpState.boxCs`, `DynamicSemantics.ExpState.boxLe`,
+  `DynamicSemantics.ExpState.localNecessity`: informational, preferential and local necessity.
 
 ## Main results
 
@@ -53,6 +56,8 @@ a state accepts an assertion or a presumption exactly when the corresponding nec
 * `conflicting_defaults_iff_agree`, `compatible_defaults_optimal`: conflicting defaults yield
   agnosticism, and compatible ones reinforce each other.
 * `promote_respects_idempotent`, `promote_comm`: promotion is idempotent and commutative.
+* `localNecessity_iff_boxLe`: with a most normal world, local necessity is preferential
+  necessity.
 
 ## Implementation notes
 
@@ -77,6 +82,7 @@ ordering of worlds here, and states built on them consume `PreferenceStructure.m
 * [D. F. Farkas, *Assertion, belief and mood choice* (2003)][farkas-2003]
 * [C. Condoravdi and S. Lauer, *Imperatives: Meaning and Illocutionary Force*
   (2012)][condoravdi-lauer-2012]
+* [portner-rubinstein-2020]
 -/
 
 @[expose] public section
@@ -209,6 +215,12 @@ and bouletic necessity, and the condition that *presumably* tests. -/
 def boxLe (σ : ExpState W) (p : W → Prop) : Prop :=
   ∀ w ∈ σ.optimal, p w
 
+/-- Local necessity holds of `p` when some world of the information sees only `p`-worlds among the
+worlds of the information at least as normal as itself, so that `p` holds throughout a branch of
+the pattern. This is Portner and Rubinstein's force of the subjunctive. -/
+def localNecessity (σ : ExpState W) (p : W → Prop) : Prop :=
+  ∃ w ∈ σ.info, ∀ v ∈ σ.info, σ.order.le v w → p v
+
 /-! ### Update operations -/
 
 /-- Assertion eliminates the worlds outside `φ` and leaves the pattern alone. -/
@@ -281,7 +293,7 @@ theorem le_iff {σ τ : ExpState W} :
 
 theorem top_eq_init : (⊤ : ExpState W) = init := rfl
 
-/-- Assertion is additive: asserting `φ` meets the state with the assertion of `φ` in the
+/-- Assertion is additive, since asserting `φ` meets the state with the assertion of `φ` in the
 minimal state. -/
 theorem isAdditive_assert (φ : W → Prop) : IsAdditive (ExpState.assert · φ) := fun _ ↦
   ExpState.ext (Set.ext fun _ ↦ ⟨fun ⟨hw, hφ⟩ ↦ ⟨hw, trivial, hφ⟩, fun ⟨hw, _, hφ⟩ ↦ ⟨hw, hφ⟩⟩)
@@ -520,6 +532,20 @@ theorem boxLe_of_respects (σ : ExpState W) (p : W → Prop)
     (hresp : Respects σ.order p) (hconn : Std.Total σ.order.le)
     (hex : ∃ w ∈ σ.info, p w) : σ.boxLe p :=
   fun _ hw ↦ (minimals_subset_of_respects hresp hconn hex hw).2
+
+theorem localNecessity_mono (σ : ExpState W) (p q : W → Prop)
+    (h : ∀ w, p w → q w) : σ.localNecessity p → σ.localNecessity q :=
+  fun ⟨w, hw, hp⟩ ↦ ⟨w, hw, fun v hv hvw ↦ h v (hp v hv hvw)⟩
+
+/-- When the information has a world at least as normal as all of its worlds, local necessity is
+preferential necessity. Without one they come apart: two incomparable optimal worlds can each
+make a different proposition locally necessary while neither is preferentially necessary. -/
+theorem localNecessity_iff_boxLe {σ : ExpState W} {b : W} (hb : b ∈ σ.info)
+    (hleast : ∀ v ∈ σ.info, σ.order.le b v) (p : W → Prop) :
+    σ.localNecessity p ↔ σ.boxLe p := by
+  refine ⟨fun ⟨_, hu, hp⟩ o ho ↦ hp o ho.1 ?_, fun h ↦ ⟨b, hb, fun v hv hvb ↦ h v ⟨hv, ?_⟩⟩⟩
+  · exact σ.order.le_trans _ _ _ (ho.2 hb (hleast o ho.1)) (hleast _ hu)
+  · exact fun ⦃_⦄ hx _ ↦ σ.order.le_trans _ _ _ hvb (hleast _ hx)
 
 end ExpState
 

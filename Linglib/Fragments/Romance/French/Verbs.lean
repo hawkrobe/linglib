@@ -5,7 +5,8 @@ public import Linglib.Syntax.Category.Verb.Basic
 /-!
 # French verbs
 
-This file defines the French verb entries: the causatives *faire* and *laisser*, the
+This file defines the French verb entries: the causatives *faire* and *laisser*, the attitude
+verbs *vouloir*, *espérer* and *croire* with the mood of the clause each selects, the
 anticausatives of the causative alternation whose *se* is optional, and the transitive verbs
 whose passive agent is marked by *par* or *de*. An entry is a `Verb` with its argument frames
 and the proto-role entailments of its arguments in the sense of Dowty. Martin, Schäfer and
@@ -47,6 +48,7 @@ inflectional forms.
 * [authier-revuz-1972]
 * [grevisse-goosse-2008]
 * [sorace-2000]
+* [portner-rubinstein-2020]
 -/
 
 @[expose] public section
@@ -411,9 +413,42 @@ express the state that results; and *avoir* for the others (§811). -/
 *courir*, which it leaves as it is. -/
 example : courir.withPath Adposition.into = courir := rfl
 
+/-! ### Attitude verbs
+
+The attitude verbs record the mood of the finite complement each selects in an affirmative
+declarative clause. -/
+
+/-- *vouloir* 'want' takes a *que* clause in the subjunctive and an infinitive under subject
+control. -/
+def vouloir : Verb where
+  morphs := [.root "vouloir"]
+  valency := .of [(ArgumentFrame.subjunctiveClause, [0, 1]), (ArgumentFrame.infinitival, [0, 1])]
+  readings := [{ frame := ArgumentFrame.infinitival, control := some .subjectControl }]
+  passivizable := false
+  opaqueContext := true
+  attitude := some (.preferential .positive true)
+
+/-- *espérer* 'hope' takes a *que* clause in the indicative and an infinitive under subject
+control. Some speakers also accept the subjunctive in a complement about the future, a use this
+entry does not cover. -/
+def esperer : Verb where
+  morphs := [.root "espérer"]
+  valency := .of [(ArgumentFrame.finiteClause, [0, 1]), (ArgumentFrame.infinitival, [0, 1])]
+  readings := [{ frame := ArgumentFrame.infinitival, control := some .subjectControl }]
+  passivizable := false
+  opaqueContext := true
+  attitude := some (.preferential .positive true)
+
+/-- *croire* 'believe' takes a *que* clause in the indicative. -/
+def croire : Verb where
+  morphs := [.root "croire"]
+  valency := .of [(ArgumentFrame.finiteClause, [0, 1])]
+  opaqueContext := true
+  attitude := some (.doxastic .nonVeridical)
+
 /-- `allVerbs` lists the entries. -/
 def allVerbs : List Verb :=
-  [faire, laisser,
+  [faire, laisser, vouloir, esperer, croire,
    brunir, noircir, palir, rajeunir, rougir, approcher, durcir, plier, radoucir, refroidir,
    laver, briser, ecrire, construire, tuer, aimer, adorer, respecter, accompagner,
    suivreDyn, suivreStat, preceder, abandonner, abandonnerStat, delaisser, delaisserStat,
@@ -421,14 +456,15 @@ def allVerbs : List Verb :=
    naitre, rester, aboutir, atterrir, disparaitre, paraitre, grandir, survivre, exister,
    travailler, courir, nager]
 
-/-- Grevisse's gloss holds of the list: every verb whose perfect takes *être* alone is telic or
-continues a state. -/
+/-- Grevisse's gloss holds of the list, since every verb whose perfect takes *être* alone is
+telic or continues a state. -/
 theorem telic_or_continuation_of_perfectAuxiliaries_eq_be :
     ∀ v ∈ allVerbs, v.perfectAuxiliaries = {.be} →
       v.vendlerClass.map (·.telicity) = some .telic ∨ v.phasal = some .continuation := by
   decide
 
-/-- Telicity does not bring *être* with it: a telic verb of §813a takes *avoir* for the action. -/
+/-- Telicity does not bring *être* with it, since a telic verb of §813a takes *avoir* for the
+action. -/
 theorem exists_telic_and_have_mem :
     ∃ v ∈ allVerbs,
       .have ∈ v.perfectAuxiliaries ∧ v.vendlerClass.map (·.telicity) = some .telic := by

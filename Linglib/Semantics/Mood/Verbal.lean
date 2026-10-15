@@ -10,28 +10,34 @@ public import Linglib.Semantics.Mood.State
 /-!
 # Verbal mood as component selection
 
-Verbal mood is the contrast between indicative and subjunctive in complement clauses. Portner's
-synthesis states it as two principles (p. 235): a clause operated on by the informational modal
-is indicative, and a clause operated on by the preference modal is subjunctive. Quantification
-over the context set (`boxCs`) is the Truth intuition of Farkas and of Portner's earlier work,
-and quantification over the best worlds (`boxLe`) the Comparison intuition of Giorgi and
-Pianesi. Here each grammatical mood targets its component and is interpreted as that
-component's modal.
+Verbal mood is the contrast between indicative and subjunctive in complement clauses. On the
+comparison-based theory the subjunctive marks a clause whose embedding attitude ranks worlds by
+an ordering. Portner states it as two principles (p. 235): a clause operated on by the
+informational modal is indicative, and a clause operated on by the preference modal is
+subjunctive. Portner and Rubinstein refine the subjunctive's force to local necessity, truth
+throughout a branch of the ordering, which lets an agent want incompatible things and agrees
+with the preference modal when the context set has a most normal world. Here the indicative is
+simple necessity over the context set, the Truth intuition of Farkas and of Portner's earlier
+work, and the subjunctive local necessity under the ordering, the Comparison intuition of
+Giorgi and Pianesi.
 
 Portner leaves question-embedding predicates open (p. 237): Italian *chiedere* takes the
 indicative when it means 'ask' and the subjunctive when it means 'wonder'.
 
 ## Main definitions
 
-* `Mood.Grammatical.interp`: a grammatical mood interpreted as the modal of its component.
+* `Mood.Grammatical.interp`: a grammatical mood interpreted as the force of its component.
 
 ## Main statements
 
+* `Mood.Grammatical.interp_iff_boxOn`: with a most normal world in the context set, each mood
+  is the necessity modal of its component.
 * `Mood.Grammatical.indicative_ne_subjunctive`: the two moods disagree on some state.
 
 ## References
 
 * [portner-2018]
+* [portner-rubinstein-2020]
 * [farkas-1985]
 * [portner-1997]
 * [giorgi-pianesi-1997]
@@ -59,15 +65,26 @@ namespace Grammatical
 
 @[simp] theorem target_subjunctive : target subjunctive = .preferential := rfl
 
-/-- A grammatical mood is interpreted as the necessity modal of its target. -/
-def interp (m : Grammatical) : State W → (W → Prop) → Prop :=
-  (target m).boxOn
+/-- The indicative is simple necessity over the context set and the subjunctive is local
+necessity under the ordering. -/
+def interp : Grammatical → State W → (W → Prop) → Prop
+  | .indicative, c, p => c.toExpState.boxCs p
+  | .subjunctive, c, p => c.toExpState.localNecessity p
 
 @[simp] theorem interp_indicative (c : State W) (p : W → Prop) :
     indicative.interp c p = c.toExpState.boxCs p := rfl
 
 @[simp] theorem interp_subjunctive (c : State W) (p : W → Prop) :
-    subjunctive.interp c p = c.toExpState.boxLe p := rfl
+    subjunctive.interp c p = c.toExpState.localNecessity p := rfl
+
+/-- When the context set has a world at least as normal as all of its worlds, each mood is the
+necessity modal of the component it targets. -/
+theorem interp_iff_boxOn {c : State W} {b : W} (hb : b ∈ c.info)
+    (hleast : ∀ v ∈ c.info, c.order.le b v) (m : Grammatical) (p : W → Prop) :
+    m.interp c p ↔ (target m).boxOn c p := by
+  cases m
+  · exact Iff.rfl
+  · exact ExpState.localNecessity_iff_boxLe hb hleast p
 
 /-- Every world is in the context set, and `false`, the one `sepProp`-world, is the one optimal
 world. -/
@@ -77,7 +94,7 @@ def sepState : State Bool :=
 /-- The indicative and the subjunctive disagree on some state and proposition. -/
 theorem indicative_ne_subjunctive :
     ∃ (c : State Bool) (p : Bool → Prop), subjunctive.interp c p ∧ ¬ indicative.interp c p :=
-  ⟨sepState, State.sepProp, fun _ hw ↦ hw.2 (Set.mem_univ false) (fun _ ↦ rfl) rfl,
+  ⟨sepState, State.sepProp, ⟨false, Set.mem_univ false, fun _ _ hv ↦ hv rfl⟩,
     fun h ↦ Bool.noConfusion (h true (Set.mem_univ true))⟩
 
 /-- Targeting is injective. Portner states his principles from the modal to the form; the

@@ -324,6 +324,10 @@ theorem necessity_iff_boxLe (p : W → Prop) (w : W) :
     necessity f g p w ↔ (stateAt f g w).boxLe p :=
   Iff.rfl
 
+theorem goodPossibility_iff_localNecessity (p : W → Prop) (w : W) :
+    goodPossibility f g p w ↔ (stateAt f g w).localNecessity p :=
+  Iff.rfl
+
 /-- The induced state accepts the assertion of `p` exactly when `p` is a simple necessity. -/
 theorem le_assert_iff_simpleNecessity (p : W → Prop) (w : W) :
     stateAt f g w ≤ (stateAt f g w).assert p ↔ simpleNecessity f p w :=
