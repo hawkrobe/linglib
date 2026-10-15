@@ -1,6 +1,6 @@
 module
 
-public import Mathlib.Data.Finset.Prod
+public import Mathlib.Data.Fintype.Prod
 public import Linglib.Semantics.Degree.Antonymy
 public import Linglib.Pragmatics.Bidirectional
 
@@ -25,16 +25,19 @@ yields Krifka's assignment.
   *not happy* for another, so the two have no fixed border between them.
 * `superoptimal_mccawley`: weak optimality pairs *kill* with direct and *cause to die* with
   indirect killing.
+* `superoptimal_quadruplet`: in each half of the quadruplet the simpler form takes the safe
+  region and the more complex form the border region.
 
 ## Implementation notes
 
 * Literal meanings are the substrate's single-threshold `AntonymForm.contradictoryDenotation`;
   the admissible borders form a set of thresholds on a linear order, and the diagrams are read
   relative to a speaker's border within that set.
-* Bidirectional evaluation is the substrate's `superoptimal`, the weak optimality of (14).
-  The quadruplet game is built from the literal semantics (a form and a region on the same
-  side of the border), form complexity (`AntonymForm.complexity`) and the markedness of the
-  border regions.
+* Bidirectional evaluation is the substrate's weak optimality, (14), which compares two pairs
+  only when they share a form or an interpretation, by the preference ordering on the other: the
+  product of the two orderings, with no ranking between them. The quadruplet game is built from
+  the literal semantics (a form and a region on the same side of the border), form complexity
+  (`AntonymForm.complexity`) and the markedness of the border regions.
 * The other uses of double negatives the paper sets aside (denial, irony, amplification) and
   the local strengthening of *neither happy nor unhappy* are not formalized.
 
@@ -120,37 +123,57 @@ theorem marked_both (h₁ : θ₁ ∈ Θ) (h₂ : θ₂ ∈ Θ) (hlt : θ₁ < �
 
 /-! ### The M principle in bidirectional optimality theory -/
 
-/-- The two forms of (13). -/
+/-- The two forms of (13), *Black Bart killed the sheriff* and *Black Bart caused the sheriff
+to die*. -/
 inductive Form
   | killed
   | causedToDie
-  deriving DecidableEq, Repr
+  deriving DecidableEq, Fintype, Repr
 
-/-- The two interpretations of (13). -/
+/-- The two interpretations of (13), direct and indirect killing. -/
 inductive Interp
   | direct
   | indirect
-  deriving DecidableEq, Repr
+  deriving DecidableEq, Fintype, Repr
 
-/-- The four form-interpretation pairs of (13). -/
-def mccawleyPairs : Finset (Form × Interp) :=
-  {(.killed, .direct), (.killed, .indirect), (.causedToDie, .direct), (.causedToDie, .indirect)}
+/-- The preference for the shorter form, F1 over F2. -/
+def Form.complexity : Form → ℕ
+  | .killed => 0
+  | .causedToDie => 1
 
-/-- The preference for the simpler form. -/
-def formCost : Form × Interp → ℕ
-  | (.killed, _) => 0
-  | (.causedToDie, _) => 1
+/-- The preference for the stereotypical interpretation, I1 over I2. -/
+def Interp.markedness : Interp → ℕ
+  | .direct => 0
+  | .indirect => 1
 
-/-- The preference for the stereotypical interpretation. -/
-def interpCost : Form × Interp → ℕ
-  | (_, .direct) => 0
-  | (_, .indirect) => 1
+instance : LinearOrder Form := LinearOrder.lift' Form.complexity (by decide)
 
-/-- Under weak optimality ((14), (15)) *kill* pairs with direct killing and *cause to die* with
-indirect killing, the M principle. -/
+instance : LinearOrder Interp := LinearOrder.lift' Interp.markedness (by decide)
+
+/-- The M principle pairs the shorter form with the stereotypical interpretation and the longer
+form with the other. -/
+def mPairing : Form ≃o Interp where
+  toFun | .killed => .direct | .causedToDie => .indirect
+  invFun | .direct => .killed | .indirect => .causedToDie
+  left_inv a := by cases a <;> rfl
+  right_inv b := by cases b <;> rfl
+  map_rel_iff' {a b} := by cases a <;> cases b <;> decide
+
+/-- Under weak optimality ((14), (15)) *kill* pairs with direct and *cause to die* with
+indirect killing, the M principle. Two pairs are compared only when they share a form or an
+interpretation, by the preference ordering on the other, so the harmony is the product of the
+two orderings. -/
 theorem superoptimal_mccawley :
-    superoptimal mccawleyPairs (profile [formCost, interpCost]) =
+    superoptimalSet Set.univ (Prod.map Form.complexity Interp.markedness) =
       {(.killed, .direct), (.causedToDie, .indirect)} := by
+  have hF : StrictMono Form.complexity := fun _ _ h ↦ h
+  have hI : StrictMono Interp.markedness := fun _ _ h ↦ h
+  rw [superoptimalSet_eq_graphOn _ mPairing (hF.prodMap hI) Set.finite_univ.isWF
+    (Set.subset_univ _)]
+  ext ⟨a, b⟩
+  simp only [Set.mem_graphOn, Set.mem_univ, true_and, Set.mem_insert_iff, Set.mem_singleton_iff,
+    Prod.mk.injEq]
+  revert a b
   decide
 
 /-- After strengthening ((18)–(20)) the scale divides into the regions safely happy, mildly
@@ -199,13 +222,14 @@ def krifkaQuadruplet : Finset (AntonymForm × Region) :=
   {(.positive, .positive), (.notNegative, .plateauHigh),
     (.negative, .negative), (.notPositive, .plateauLow)}
 
-/-- Weak optimality over the quadruplet, with markedness and form complexity in either order,
-yields Krifka's assignment. -/
+local instance : DecidableLT (ℕ × ℕ) := fun _ _ ↦ decidable_of_iff _ Prod.lt_iff.symm
+
+/-- Weak optimality over the quadruplet, comparing pairs by form complexity and region markedness
+as (14) compares McCawley's pairs, yields Krifka's assignment: in each half the simpler form
+takes the safe region and the more complex form the border region ((18)–(20)). -/
 theorem superoptimal_quadruplet :
-    superoptimal quadrupletPairs (profile [(·.2.markedness), (·.1.complexity)]) =
-        krifkaQuadruplet ∧
-      superoptimal quadrupletPairs (profile [(·.1.complexity), (·.2.markedness)]) =
-        krifkaQuadruplet := by
+    superoptimal quadrupletPairs (Prod.map AntonymForm.complexity Region.markedness) =
+      krifkaQuadruplet := by
   decide
 
 end Krifka2007b
