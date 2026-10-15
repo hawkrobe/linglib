@@ -99,9 +99,10 @@ The book's algebra lives in `Core/` and in `Syntax/Minimalist/{Workspace,Merge,E
   `accessibleSize_merge_term`, `MinimalYield.merge_term_accessibleCount_iff`,
   `accessibleCount_unit_term` for `Δ^c`, and `MinimalYield.merge_term_iff_of_extraction_two` for
   `Δ^d`.
-* Definition 1.6.2 and Proposition 1.6.10: `Minimalist.NoComplexityLoss`,
-  `NoComplexityLoss.em_case1`, `im_residual`; along the induced map of a term of Merge
-  (`Minimalist.componentMap`), `NoComplexityLoss.map_componentMap_merge_iff`,
+* Definition 1.6.2 and Proposition 1.6.10: `Minimalist.NoComplexityLoss`, met by every admissible
+  derivation step (`Minimalist.Step.noComplexityLoss`); along the induced map of a term of Merge
+  (`Minimalist.componentMap`, `NoComplexityLoss.of_componentMap`),
+  `NoComplexityLoss.map_componentMap_merge_iff`,
   `not_map_componentMap_merge`, `not_map_componentMap_unit`, and at the trace cuts graded by `σ`,
   `not_map_accessibleSize_componentMap_merge`.
 * Definition 1.6.2's degree `#L`: `UnorderedTree.numLeaves`; Lemma 1.6.3:
@@ -228,6 +229,16 @@ example :
   exact Step.minimalYield (step := .im theApple) (W := 0)
     ⟨by decide, by decide, by decide, by simp⟩ (by decide) (by simp [Step.items])
 
+/-- It loses no complexity graded by the size `σ`: *was eaten the apple* goes to the Merge of
+    *the apple* with the remainder, of one greater size (Proposition 1.6.10). -/
+example :
+    NoComplexityLoss (fun T ↦ Forest.accessibleSize {T})
+      (({wasEatenTheApple} : Workspace).map Subtype.val)
+      (({merge wasEatenTrace theApple} : Workspace).map Subtype.val) := by
+  rw [show wasEatenTrace = deleteAccessible theApple wasEatenTheApple by decide]
+  exact Step.noComplexityLoss (step := .im theApple) (W := 0)
+    ⟨by decide, by decide, by decide, by simp⟩ (by decide) (by simp [Step.items])
+
 /-! ### Sideward Merge, Minimal Search and economy on the workspace of §1.3.4
 
 The workspace `{eaten, {the, apple}}` of §1.3.4 also admits Sideward Merge of type 2(b), which
@@ -250,6 +261,15 @@ private def appleN : SyntacticObject :=
 /-- *eaten*, the other component of the workspace of §1.3.4. -/
 private def eaten : SyntacticObject :=
   (PlanarSyntacticObject.leaf (tok .V [.D] "eaten" 3)).toSyntacticObject
+
+/-- External Merge of *the apple* with *eaten* loses no complexity graded by the size `σ`: its term
+    of Merge takes both whole (Proposition 1.6.10). -/
+example :
+    NoComplexityLoss (fun T ↦ Forest.accessibleSize {T})
+      (({eaten, theApple} : Workspace).map Subtype.val)
+      (({merge theApple eaten} : Workspace).map Subtype.val) :=
+  Step.noComplexityLoss (step := .em .left theApple) (W := 0) (by simp [Step.Admissible])
+    (by decide) (by simp only [Step.items, Multiset.mem_singleton, forall_eq]; decide)
 
 /-- The four pruning cuts of *the apple*. -/
 private theorem cutSummandsN_theApple : cutSummandsN theApple.val =
@@ -384,10 +404,9 @@ example : MinimalYield UnorderedTree.accessibleCount {eaten.val, theApple.val}
     {(merge eaten theD).val, (deleteAccessible theD theApple).val} := by
   have := (MinimalYield.merge_term_accessibleCount_iff none sidewardTermC_mem
     (S := eaten.val) (S' := theD.val)
-    (fun T hT ↦ by
-      rcases Multiset.mem_cons.mp hT with rfl | hT
-      · exact ⟨_, rfl⟩
-      · rw [Multiset.mem_singleton.mp hT]; exact ⟨_, rfl⟩)
+    (fun x hx _ ↦ by
+      rw [sidewardTermC, Multiset.insert_eq_cons, Multiset.mem_cons, Multiset.mem_singleton] at hx
+      rcases hx with rfl | rfl <;> exact ⟨_, rfl⟩)
     (by simp [sidewardTermC])).mpr (by simp [sidewardTermC])
   simpa [sidewardTermC] using this
 
@@ -396,7 +415,7 @@ example : MinimalYield UnorderedTree.accessibleCount {eaten.val, theApple.val}
 example : ¬ NoComplexityLoss.Map UnorderedTree.numNodes
     (componentMap (UnorderedTree.node Vertex.bare {eaten.val, theD.val}) sidewardTermN) :=
   NoComplexityLoss.not_map_componentMap_merge sidewardTermN_mem
-    (fun T _ p hp ↦ cutSummandsN_numNodes T p hp) UnorderedTree.numNodes_pos
+    (fun x _ p hp _ ↦ cutSummandsN_numNodes x.1 p hp) UnorderedTree.numNodes_pos
     (S := eaten.val) (S' := theD.val) (by simp [sidewardTermN]) (by decide) (by decide)
     (.inr (by decide))
 
@@ -412,10 +431,9 @@ example : NoComplexityLoss.Map UnorderedTree.numNodes
 example : ¬ NoComplexityLoss.Map (fun T ↦ Forest.accessibleSize {T})
     (componentMap (UnorderedTree.node Vertex.bare {eaten.val, theD.val}) sidewardTermC) :=
   NoComplexityLoss.not_map_accessibleSize_componentMap_merge none sidewardTermC_mem
-    (fun T hT ↦ by
-      rcases Multiset.mem_cons.mp hT with rfl | hT
-      · exact ⟨_, rfl⟩
-      · rw [Multiset.mem_singleton.mp hT]; exact ⟨_, rfl⟩)
+    (fun x hx _ ↦ by
+      rw [sidewardTermC, Multiset.insert_eq_cons, Multiset.mem_cons, Multiset.mem_singleton] at hx
+      rcases hx with rfl | rfl <;> exact ⟨_, rfl⟩)
     (S := eaten.val) (S' := theD.val) (by simp [sidewardTermC]) (.inr (by decide))
 
 /-- The term of Sideward Merge of type 3(a) of *the* and *apple* cuts both out of *the apple*. -/

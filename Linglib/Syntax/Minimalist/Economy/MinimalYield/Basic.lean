@@ -266,8 +266,8 @@ theorem card_singleton_add_trunk_add_countP (hs : s ∈ forestCutChoicesG cuts F
     whole as extracting itself. -/
 theorem sum_map_add_countP_of_extraction {acc : UnorderedTree α → ℕ} {k : ℕ}
     (hs : s ∈ forestCutChoicesG cuts F)
-    (hext : ∀ T ∈ F, ∀ p ∈ cuts T,
-      acc T = (p.1.map acc).sum + acc p.2 + k * Multiset.card p.1) :
+    (hext : ∀ x ∈ s, ∀ p ∈ cuts x.1, (p.1, {p.2}) = x.2 →
+      acc x.1 = (p.1.map acc).sum + acc p.2 + k * Multiset.card p.1) :
     (F.map acc).sum + k * s.countP (·.2.2 = 0) =
       ((s.map Prod.snd).sum.1.map acc).sum + ((s.map Prod.snd).sum.2.map acc).sum +
         k * Multiset.card (s.map Prod.snd).sum.1 := by
@@ -277,7 +277,7 @@ theorem sum_map_add_countP_of_extraction {acc : UnorderedTree α → ℕ} {k : �
     rw [forestCutChoicesG_cons, Multiset.mem_bind] at hs
     obtain ⟨a, ha, hs⟩ := hs
     obtain ⟨s', hs', rfl⟩ := Multiset.mem_map.mp hs
-    have := ih hs' fun U hU ↦ hext U (Multiset.mem_cons_of_mem hU)
+    have := ih hs' fun x hx ↦ hext x (Multiset.mem_cons_of_mem hx)
     have e : (fun x ↦ acc x) = acc := rfl
     rcases mem_treeCutsG.mp ha with rfl | ⟨p, hp, rfl⟩
     · rw [Multiset.countP_cons_of_pos (p := fun x : UnorderedTree α ×
@@ -287,7 +287,8 @@ theorem sum_map_add_countP_of_extraction {acc : UnorderedTree α → ℕ} {k : �
         Multiset.sum_singleton, Multiset.card_singleton, Multiset.map_zero, Multiset.sum_zero, e,
         mul_add, mul_one]
       omega
-    · have h := hext T (Multiset.mem_cons_self _ _) p hp
+    · have h := hext _ (Multiset.mem_cons_self _ _) p hp rfl
+      dsimp only at h
       rw [Multiset.countP_cons_of_neg (p := fun x : UnorderedTree α ×
         (Forest (UnorderedTree α) × Forest (UnorderedTree α)) ↦ x.2.2 = 0) _
         (Multiset.singleton_ne_zero _)]
@@ -300,8 +301,8 @@ theorem sum_map_add_countP_of_extraction {acc : UnorderedTree α → ℕ} {k : �
     objects, and `k` fewer for each object it extracts rather than takes whole. -/
 theorem sum_map_merge_term_add {acc : UnorderedTree α → ℕ} {k : ℕ}
     (hs : s ∈ forestCutChoicesG cuts F)
-    (hext : ∀ T ∈ F, ∀ p ∈ cuts T,
-      acc T = (p.1.map acc).sum + acc p.2 + k * Multiset.card p.1)
+    (hext : ∀ x ∈ s, ∀ p ∈ cuts x.1, (p.1, {p.2}) = x.2 →
+      acc x.1 = (p.1.map acc).sum + acc p.2 + k * Multiset.card p.1)
     {S S' X : UnorderedTree α} (hK : (s.map Prod.snd).sum.1 = {S, S'})
     (hX : acc X = acc S + acc S' + 2) :
     (({X} + (s.map Prod.snd).sum.2).map acc).sum + 2 * k =
@@ -318,7 +319,8 @@ theorem sum_map_merge_term_add {acc : UnorderedTree α → ℕ} {k : ℕ}
     Its size `σ` always grows by one, and it diverges otherwise. -/
 theorem MinimalYield.merge_term_iff_of_extraction_one {acc : UnorderedTree α → ℕ}
     (hs : s ∈ forestCutChoicesG cuts F)
-    (hext : ∀ T ∈ F, ∀ p ∈ cuts T, acc T = (p.1.map acc).sum + acc p.2 + Multiset.card p.1)
+    (hext : ∀ x ∈ s, ∀ p ∈ cuts x.1, (p.1, {p.2}) = x.2 →
+      acc x.1 = (p.1.map acc).sum + acc p.2 + Multiset.card p.1)
     {S S' X : UnorderedTree α} (hK : (s.map Prod.snd).sum.1 = {S, S'})
     (hX : acc X = acc S + acc S' + 2) :
     MinimalYield acc F ({X} + (s.map Prod.snd).sum.2) ↔ s.countP (·.2.2 = 0) ≠ 0 := by
@@ -332,7 +334,8 @@ theorem MinimalYield.merge_term_iff_of_extraction_one {acc : UnorderedTree α �
     term of Merge satisfies Minimal Yield exactly when it takes both of its objects whole. -/
 theorem MinimalYield.merge_term_iff_of_extraction_two {acc : UnorderedTree α → ℕ}
     (hs : s ∈ forestCutChoicesG cuts F)
-    (hext : ∀ T ∈ F, ∀ p ∈ cuts T, acc T = (p.1.map acc).sum + acc p.2 + 2 * Multiset.card p.1)
+    (hext : ∀ x ∈ s, ∀ p ∈ cuts x.1, (p.1, {p.2}) = x.2 →
+      acc x.1 = (p.1.map acc).sum + acc p.2 + 2 * Multiset.card p.1)
     {S S' X : UnorderedTree α} (hK : (s.map Prod.snd).sum.1 = {S, S'})
     (hX : acc X = acc S + acc S' + 2) :
     MinimalYield acc F ({X} + (s.map Prod.snd).sum.2) ↔ s.countP (·.2.2 = 0) = 2 := by
@@ -346,7 +349,8 @@ theorem MinimalYield.merge_term_iff_of_extraction_two {acc : UnorderedTree α �
     Minimal Yield exactly when it takes at least one of its objects whole. -/
 theorem MinimalYieldWeak.merge_term_iff_of_extraction_two {acc : UnorderedTree α → ℕ}
     (hs : s ∈ forestCutChoicesG cuts F)
-    (hext : ∀ T ∈ F, ∀ p ∈ cuts T, acc T = (p.1.map acc).sum + acc p.2 + 2 * Multiset.card p.1)
+    (hext : ∀ x ∈ s, ∀ p ∈ cuts x.1, (p.1, {p.2}) = x.2 →
+      acc x.1 = (p.1.map acc).sum + acc p.2 + 2 * Multiset.card p.1)
     {S S' X : UnorderedTree α} (hK : (s.map Prod.snd).sum.1 = {S, S'})
     (hX : acc X = acc S + acc S' + 2) :
     MinimalYieldWeak acc F ({X} + (s.map Prod.snd).sum.2) ↔ s.countP (·.2.2 = 0) ≠ 0 := by
@@ -360,8 +364,8 @@ theorem MinimalYieldWeak.merge_term_iff_of_extraction_two {acc : UnorderedTree �
     it extracts unless it takes it whole. -/
 theorem sum_map_unit_term_add {acc : UnorderedTree α → ℕ} {k : ℕ}
     (hs : s ∈ forestCutChoicesG cuts F)
-    (hext : ∀ T ∈ F, ∀ p ∈ cuts T,
-      acc T = (p.1.map acc).sum + acc p.2 + k * Multiset.card p.1)
+    (hext : ∀ x ∈ s, ∀ p ∈ cuts x.1, (p.1, {p.2}) = x.2 →
+      acc x.1 = (p.1.map acc).sum + acc p.2 + k * Multiset.card p.1)
     {β : UnorderedTree α} (hK : (s.map Prod.snd).sum.1 = {β}) :
     (({β} + (s.map Prod.snd).sum.2).map acc).sum + k =
       (F.map acc).sum + k * s.countP (·.2.2 = 0) := by
@@ -404,21 +408,17 @@ variable {τ : UnorderedTree (α ⊕ β) → β} {F : Forest (UnorderedTree (α 
   {s : Multiset (UnorderedTree (α ⊕ β) ×
     (Forest (UnorderedTree (α ⊕ β)) × Forest (UnorderedTree (α ⊕ β))))}
 
-private theorem extraction_accessibleCount (hF : ∀ T ∈ F, ∃ a, T.value = Sum.inl a) :
-    ∀ T ∈ F, ∀ p ∈ cutSummandsCN τ T, T.accessibleCount =
-      (p.1.map UnorderedTree.accessibleCount).sum + p.2.accessibleCount + Multiset.card p.1 :=
-  fun T hT _ hp ↦ cutSummandsCN_accessibleCount τ (hF T hT).choose_spec hp
-
 variable [DecidableEq (UnorderedTree (α ⊕ β))]
 
 /-- Under trace counting a term of Merge gains one accessible term for each object it takes whole
     ([marcolli-chomsky-berwick-2025] Propositions 1.6.4 and 1.6.8, for `Δ^c`). -/
 theorem accessibleCount_merge_term (a : α) (hs : s ∈ forestCutChoicesG (cutSummandsCN τ) F)
-    (hF : ∀ T ∈ F, ∃ a, T.value = Sum.inl a) {S S' : UnorderedTree (α ⊕ β)}
+    (hF : ∀ x ∈ s, x.2.1 ≠ 0 → ∃ a, x.1.value = Sum.inl a) {S S' : UnorderedTree (α ⊕ β)}
     (hK : (s.map Prod.snd).sum.1 = {S, S'}) :
     Forest.accessibleCount ({UnorderedTree.node (Sum.inl a) {S, S'}} + (s.map Prod.snd).sum.2) =
       Forest.accessibleCount F + s.countP (·.2.2 = 0) := by
-  have h := sum_map_merge_term_add (k := 1) hs (by simpa using extraction_accessibleCount hF) hK
+  have h := sum_map_merge_term_add (k := 1) hs
+    (by simpa using cutSummandsCN_accessibleCount_of_choice hF) hK
     (UnorderedTree.accessibleCount_merge a S S'
       (traceLeafCount_lt_numNodes_of_mem_crown hs hF (hK ▸ Multiset.mem_cons_self _ _))
       (traceLeafCount_lt_numNodes_of_mem_crown hs hF
@@ -428,7 +428,7 @@ theorem accessibleCount_merge_term (a : α) (hs : s ∈ forestCutChoicesG (cutSu
 
 /-- Under trace counting every term of Merge grows the size `σ` of the workspace by exactly one. -/
 theorem accessibleSize_merge_term (a : α) (hs : s ∈ forestCutChoicesG (cutSummandsCN τ) F)
-    (hF : ∀ T ∈ F, ∃ a, T.value = Sum.inl a) {S S' : UnorderedTree (α ⊕ β)}
+    (hF : ∀ x ∈ s, x.2.1 ≠ 0 → ∃ a, x.1.value = Sum.inl a) {S S' : UnorderedTree (α ⊕ β)}
     (hK : (s.map Prod.snd).sum.1 = {S, S'}) :
     Forest.accessibleSize ({UnorderedTree.node (Sum.inl a) {S, S'}} + (s.map Prod.snd).sum.2) =
       Forest.accessibleSize F + 1 := by
@@ -441,12 +441,13 @@ theorem accessibleSize_merge_term (a : α) (hs : s ∈ forestCutChoicesG (cutSum
     one of its objects whole. External Merge and the Sideward case 2(b) satisfy it, and the
     Sideward cases 3(a) and 3(b) do not ([marcolli-chomsky-berwick-2025] Proposition 1.6.8). -/
 theorem MinimalYield.merge_term_accessibleCount_iff (a : α)
-    (hs : s ∈ forestCutChoicesG (cutSummandsCN τ) F) (hF : ∀ T ∈ F, ∃ a, T.value = Sum.inl a)
+    (hs : s ∈ forestCutChoicesG (cutSummandsCN τ) F)
+    (hF : ∀ x ∈ s, x.2.1 ≠ 0 → ∃ a, x.1.value = Sum.inl a)
     {S S' : UnorderedTree (α ⊕ β)} (hK : (s.map Prod.snd).sum.1 = {S, S'}) :
     MinimalYield UnorderedTree.accessibleCount F
         ({UnorderedTree.node (Sum.inl a) {S, S'}} + (s.map Prod.snd).sum.2) ↔
       s.countP (·.2.2 = 0) ≠ 0 :=
-  MinimalYield.merge_term_iff_of_extraction_one hs (extraction_accessibleCount hF) hK
+  MinimalYield.merge_term_iff_of_extraction_one hs (cutSummandsCN_accessibleCount_of_choice hF) hK
     (UnorderedTree.accessibleCount_merge a S S'
       (traceLeafCount_lt_numNodes_of_mem_crown hs hF (hK ▸ Multiset.mem_cons_self _ _))
       (traceLeafCount_lt_numNodes_of_mem_crown hs hF
@@ -455,12 +456,13 @@ theorem MinimalYield.merge_term_accessibleCount_iff (a : α)
 /-- Under trace counting a term of the unit stage loses one accessible term unless it takes `β`
     whole, and keeps the size `σ` ([marcolli-chomsky-berwick-2025] Remark 1.6.7, for `Δ^c`). -/
 theorem accessibleCount_unit_term (hs : s ∈ forestCutChoicesG (cutSummandsCN τ) F)
-    (hF : ∀ T ∈ F, ∃ a, T.value = Sum.inl a) {β' : UnorderedTree (α ⊕ β)}
+    (hF : ∀ x ∈ s, x.2.1 ≠ 0 → ∃ a, x.1.value = Sum.inl a) {β' : UnorderedTree (α ⊕ β)}
     (hK : (s.map Prod.snd).sum.1 = {β'}) :
     Forest.accessibleCount ({β'} + (s.map Prod.snd).sum.2) + 1 =
         Forest.accessibleCount F + s.countP (·.2.2 = 0) ∧
       Forest.accessibleSize ({β'} + (s.map Prod.snd).sum.2) = Forest.accessibleSize F := by
-  have h := sum_map_unit_term_add (k := 1) hs (by simpa using extraction_accessibleCount hF) hK
+  have h := sum_map_unit_term_add (k := 1) hs
+    (by simpa using cutSummandsCN_accessibleCount_of_choice hF) hK
   have := card_singleton_add_trunk_add_countP hs β'
   simp only [Forest.accessibleSize, Forest.accessibleCount, one_mul] at *
   omega

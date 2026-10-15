@@ -13,10 +13,12 @@ public import Linglib.Syntax.Minimalist.Economy.MinimalYield.Basic
 # Economy of derivations
 
 An admissible derivation step relates the workspace of the current object, its items and the
-items still to come to the workspace of the object it builds and those items. That transformation
-satisfies No Complexity Loss, and Minimal Yield under trace counting when its operands are not
-traces ([marcolli-chomsky-berwick-2025] §1.6). Along an admissible derivation the workspaces of its
-stages therefore form a chain of economical transformations.
+items still to come to the workspace of the object it builds and those items. When its operands
+are not traces, that transformation satisfies No Complexity Loss graded by the size `σ` and
+Minimal Yield under trace counting (§1.6 of Marcolli, Chomsky and Berwick). An External Merge step
+is the term of Merge taking both objects whole and leaving the spectators uncut, so its component
+map loses no complexity. Along an admissible derivation the workspaces of its stages therefore
+form a chain of economical transformations.
 
 ## Main definitions
 
@@ -24,8 +26,8 @@ stages therefore form a chain of economical transformations.
 
 ## Main results
 
-* `Minimalist.Step.noComplexityLoss`, `Step.minimalYield`: an admissible step is
-  economical.
+* `Minimalist.Step.noComplexityLoss`, `Step.minimalYield`: an admissible step whose operands are
+  not traces is economical.
 * `Minimalist.Derivation.isChain_noComplexityLoss`, `isChain_minimalYield`: so is
   every step of an admissible derivation.
 
@@ -73,6 +75,48 @@ private theorem traceLeafCount_lt_numNodes {S : SyntacticObject} (h : S.val.valu
   obtain ⟨a, ha⟩ := Sum.isLeft_iff.mp h
   exact UnorderedTree.traceLeafCount_lt_numNodes_of_rootInl _ a ha
 
+/-! ### External Merge as a term of Merge
+
+External Merge of `S` and `S'` beside spectators `W` is the term of Merge taking `S` and `S'`
+whole and leaving every spectator uncut. -/
+
+section ExternalMerge
+
+variable (S S' : UnorderedTree Vertex) (W : Multiset (UnorderedTree Vertex))
+
+/-- The term of Merge taking `S` and `S'` whole and leaving the spectators uncut. -/
+private def emTerm :
+    Multiset (UnorderedTree Vertex × (Multiset (UnorderedTree Vertex) ×
+      Multiset (UnorderedTree Vertex))) :=
+  ({S, S'} : Multiset (UnorderedTree Vertex)).map (fun T ↦ (T, ({T}, 0))) +
+    W.map fun T ↦ (T, (0, {T}))
+
+private theorem emTerm_mem :
+    emTerm S S' W ∈ forestCutChoicesG (cutSummandsCN traceEncoder) ({S, S'} + W) :=
+  add_mem_forestCutChoicesG (map_whole_mem_forestCutChoicesG _)
+    (map_uncut_mem_forestCutChoicesG fun T _ ↦ zero_mem_cutSummandsCN _ T)
+
+private theorem emTerm_sum : ((emTerm S S' W).map Prod.snd).sum = ({S, S'}, W) := by
+  rw [emTerm, Multiset.map_add, Multiset.sum_add, sum_map_snd_map_whole, sum_map_snd_map_uncut]
+  exact Prod.ext (add_zero _) (zero_add _)
+
+private theorem emTerm_whole_or_uncut : ∀ x ∈ emTerm S S' W, x.2.1 = 0 ∨ x.2.2 = 0 := by
+  simp only [emTerm, Multiset.mem_add, Multiset.mem_map]
+  rintro x (⟨T, -, rfl⟩ | ⟨T, -, rfl⟩)
+  exacts [.inr rfl, .inl rfl]
+
+variable {S S'} in
+private theorem emTerm_lexical (hS : S.value.isLeft) (hS' : S'.value.isLeft) :
+    ∀ x ∈ emTerm S S' W, x.2.1 ≠ 0 → ∃ a, x.1.value = Sum.inl a := by
+  simp only [emTerm, Multiset.mem_add, Multiset.mem_map]
+  rintro x (⟨T, hT, rfl⟩ | ⟨T, -, rfl⟩) h
+  · rcases Multiset.mem_cons.mp hT with rfl | hT
+    · exact Sum.isLeft_iff.mp hS
+    · exact Multiset.mem_singleton.mp hT ▸ Sum.isLeft_iff.mp hS'
+  · exact absurd rfl h
+
+end ExternalMerge
+
 variable {step : Step} {current : SyntacticObject} {W : Workspace}
 
 /-- The trace cut extracting the mover of an admissible Internal Merge. -/
@@ -83,22 +127,55 @@ private theorem mem_cutSummandsCN_mover {mover : SyntacticObject} (hm : mover.va
     rw [cutSummandsCN_filter_mover hm h hne]
     exact Multiset.mem_singleton_self _
 
-/-- An admissible step satisfies No Complexity Loss. -/
-theorem Step.noComplexityLoss (h : step.Admissible current W) :
-    NoComplexityLoss (({current} + step.items + W).map Subtype.val)
+/-- An admissible step whose operands are not traces satisfies No Complexity Loss, graded by the
+    size `σ`. External Merge is a term of Merge taking both objects whole, and Internal Merge sends
+    the current object to the Merge of the mover and the remainder, whose sizes sum to its own
+    (the book's (1.6.10)). -/
+theorem Step.noComplexityLoss (h : step.Admissible current W) (hcur : current.val.value.isLeft)
+    (hitems : ∀ i ∈ step.items, i.val.value.isLeft) :
+    NoComplexityLoss (fun T ↦ Forest.accessibleSize {T})
+      (({current} + step.items + W).map Subtype.val)
       (({step.apply current} + W).map Subtype.val) := by
   cases step with
   | em side item =>
+    simp only [Step.items, Multiset.mem_singleton, forall_eq] at hitems
+    have hs := emTerm_mem current.val item.val (W.map Subtype.val)
+    have hm := UnorderedTree.accessibleCount_merge none current.val item.val
+      (traceLeafCount_lt_numNodes hcur) (traceLeafCount_lt_numNodes hitems)
+    have := NoComplexityLoss.of_componentMap hs
+      (X := UnorderedTree.node Vertex.bare {current.val, item.val})
+      ((NoComplexityLoss.map_componentMap_merge_iff hs
+        (cutSummandsCN_accessibleSize_of_choice (emTerm_lexical _ hcur hitems)) (fun T ↦ by simp)
+        (by rw [emTerm_sum]) (by simp only [Forest.accessibleSize_singleton, hm]; omega)
+        (by simp only [Forest.accessibleSize_singleton, hm]; omega)).mpr
+        (emTerm_whole_or_uncut _ _ _))
+    rw [emTerm_sum] at this
     rw [Step.apply_em, merge_comm]
     simp only [Step.items, Multiset.map_add, Multiset.map_singleton, merge_val]
-    exact NoComplexityLoss.em_case1 Vertex.bare current.val item.val _
+    rwa [Multiset.singleton_add]
   | im mover _ =>
     obtain ⟨hm, hc, hne, -⟩ := h
-    have hw := cutSummandsCN_numNodes traceEncoder current.val _ (mem_cutSummandsCN_mover hm hc hne)
-    simp only [Multiset.map_singleton, Multiset.sum_singleton, Multiset.card_singleton] at hw
-    simp only [Step.items, add_zero, Step.apply_im, Multiset.map_add, Multiset.map_singleton,
-      merge_val]
-    exact NoComplexityLoss.im_residual Vertex.bare (by omega) _
+    have hp := mem_cutSummandsCN_mover hm hc hne
+    have hσ := cutSummandsCN_accessibleSize traceEncoder (Sum.isLeft_iff.mp hcur).choose_spec hp
+    have hmerge := UnorderedTree.accessibleCount_merge none (deleteAccessible mover current).val
+      mover.val (traceLeafCount_lt_numNodes (by
+        rw [cutSummandsCN_trunk_value traceEncoder _ _ hp]; exact hcur))
+      (traceLeafCount_lt_numNodes hm)
+    simp only [Multiset.map_singleton, Multiset.sum_singleton,
+      Forest.accessibleSize_singleton] at hσ
+    refine ⟨{(current.val, (merge (deleteAccessible mover current) mover).val)} +
+      (W.map Subtype.val).map fun U ↦ (U, U), ?_, ?_, ?_⟩
+    · simp [Step.items, Multiset.map_map]
+    · simp only [Step.apply_im, Multiset.map_add, Multiset.map_singleton, Multiset.mem_add,
+        Multiset.mem_singleton, Multiset.mem_map]
+      rintro x (rfl | ⟨U, hU, rfl⟩)
+      exacts [.inl rfl, .inr hU]
+    · simp only [NoComplexityLoss.Map, Multiset.mem_add, Multiset.mem_singleton,
+        Multiset.mem_map]
+      rintro x (rfl | ⟨U, -, rfl⟩)
+      · simp only [merge_val, Forest.accessibleSize_singleton, hmerge]
+        omega
+      · exact le_rfl
   | extract _ | remerge _ => exact h.elim
 
 /-- An admissible step whose operands are not traces satisfies Minimal Yield under trace
@@ -156,12 +233,15 @@ namespace Derivation
 noncomputable def workspaces (d : Derivation) : List Workspace :=
   ({d.initial} + d.items) :: Step.workspacesAfter d.steps d.initial
 
-/-- Every step of an admissible derivation satisfies No Complexity Loss. -/
-theorem isChain_noComplexityLoss {d : Derivation} (hd : d.Admissible) :
-    d.workspaces.IsChain
-      (fun W W' : Workspace ↦ NoComplexityLoss (W.map Subtype.val) (W'.map Subtype.val)) :=
-  isChain_of_step (P := fun _ ↦ True) (fun h _ _ ↦ Step.noComplexityLoss h) (fun _ ↦ trivial)
-    d.steps d.initial hd trivial fun _ _ ↦ trivial
+/-- Every step of an admissible derivation whose initial object and items are not traces satisfies
+    No Complexity Loss, graded by the size `σ`. -/
+theorem isChain_noComplexityLoss {d : Derivation} (hd : d.Admissible)
+    (hinit : d.initial.val.value.isLeft) (hitems : ∀ i ∈ d.items, i.val.value.isLeft) :
+    d.workspaces.IsChain (fun W W' : Workspace ↦ NoComplexityLoss
+      (fun T ↦ Forest.accessibleSize {T}) (W.map Subtype.val) (W'.map Subtype.val)) :=
+  isChain_of_step (P := fun S ↦ S.val.value.isLeft)
+    (fun h hcur hi ↦ Step.noComplexityLoss h hcur hi) Step.value_isLeft_apply d.steps d.initial hd
+    hinit hitems
 
 /-- Every step of an admissible derivation whose initial object and items are not traces satisfies
     Minimal Yield under trace counting. -/
