@@ -6,40 +6,41 @@ public import Linglib.Core.Order.PartialUnify
 public import Mathlib.Tactic.DeriveFintype
 
 /-!
-# CCG Intonation and Information Structure
+# CCG intonation and information structure
 
-This file defines [steedman-2000]'s alignment of prosodic structure with CCG
-derivations: the INFORMATION feature (theme/rheme) as a unification lattice, the
-projection of that feature through a derivation from its leaves' pitch accents, and
-prosodic phrases as tune-marked constituents.
-
-CCG's "spurious ambiguity" is the engine: alternative derivations of one string are
-alternative information structures, disambiguated by intonation — "Anna married
-Manny" derives both [Anna][married Manny] and, via composition, [Anna married]
-[Manny], and the theme tune on "ANNA married" selects the latter. Because a
-`ProsodicPhrase` carries an intrinsically typed `Derivation`, only CCG constituents
-can be prosodic phrases — [selkirk-1984]'s Sense Unit Condition holds by
-construction ([steedman-2000] ch. 2).
+Steedman aligns prosodic structure with CCG derivations through an INFORMATION feature, theme or
+rheme, that pitch accents mark on words and that combination unifies up the derivation. CCG's
+spurious ambiguity is the engine: alternative derivations of one string are alternative
+information structures, disambiguated by intonation, so "Anna married Manny" derives both
+[Anna][married Manny] and, by composition, [Anna married][Manny], and the theme tune on
+"ANNA married" selects the latter. Because a `ProsodicPhrase` carries a `Derivation`, only CCG
+constituents can be prosodic phrases, which is Selkirk's Sense Unit Condition by construction.
 
 ## Main definitions
 
-* `InfoFeature`: the INFORMATION feature — theme `θ`, rheme `ρ`, `unmarked` (the `⊥`
-  of a flat subsumption order), and phrasal `φ`; `InfoFeature.unify` is its partial
+* `CCG.Intonation.InfoFeature`: the INFORMATION feature, with `InfoFeature.unify` its partial
   join, a `PartialUnify` instance.
-* `accentInfo`: the marking an accent slot contributes (L+H* ⇒ `θ`, no accent ⇒
-  `unmarked`, other accents ⇒ `ρ`).
-* `Derivation.infoFeature`: the feature a derivation projects under an accent
-  assignment for its leaf forms — combination unifies, type-raising preserves;
+* `CCG.Intonation.accentInfo`: the marking an accent slot contributes.
+* `CCG.Derivation.infoFeature`: the feature a derivation projects under an accent assignment,
   `none` on a theme/rheme clash.
-* `Tune`, `themeTune`, `rhemeTune`: pitch accent plus terminal contour.
-* `ProsodicPhrase`, `extractInfoStructure`: tune-marked constituents and the
-  theme/rheme partition of an utterance ([pierrehumbert-hirschberg-1990]).
+* `CCG.Intonation.Tune`, `CCG.Intonation.themeTune`, `CCG.Intonation.rhemeTune`: pitch accent
+  plus terminal contour.
+* `CCG.Intonation.ProsodicPhrase`, `CCG.Intonation.extractInfoStructure`: tune-marked
+  constituents and the theme/rheme partition of an utterance.
 
 ## Implementation notes
 
-The prosodic vocabulary comes from `Prosody`'s autosegmental-metrical types.
-Relating these phrases to the phonology-side prosodic hierarchy
-(`Phonology/Prosody/Phrase`) is left to future study-level work.
+The prosodic vocabulary comes from `Prosody`'s autosegmental-metrical types. Relating these
+phrases to the phonology-side prosodic hierarchy (`Phonology/Prosody/Phrase`) is left to
+study-level work.
+
+## References
+
+* [steedman-2000]
+* [selkirk-1984]
+* [pierrehumbert-hirschberg-1990]
+* [carpenter-1992]
+* [kuroda-1972]
 -/
 
 @[expose] public section
@@ -51,14 +52,19 @@ open Prosody
 
 /-! ### The INFORMATION feature -/
 
+/-- The INFORMATION feature of [steedman-2000]. -/
 inductive InfoFeature where
-  | θ         -- Theme
-  | ρ         -- Rheme
-  | unmarked  -- Unspecified
-  | φ         -- Phrasal (boundary applied)
+  /-- Theme. -/
+  | θ
+  /-- Rheme. -/
+  | ρ
+  /-- Unspecified, unifying with either theme or rheme. -/
+  | unmarked
+  /-- Phrasal, after a boundary has applied. -/
+  | φ
   deriving Repr, DecidableEq, Inhabited, Fintype
 
-/-- Unify two info features: the partial join in the subsumption order below
+/-- The unification of two info features, their partial join in the subsumption order below
 (`PartialUnify`). -/
 def InfoFeature.unify : InfoFeature → InfoFeature → WithTop InfoFeature
   | .unmarked, f => f
@@ -104,8 +110,8 @@ instance : SemilatticeInf InfoFeature :=
     inf_le_right := by decide
     le_inf := by decide }
 
-/-- The two `PartialUnify` axioms in decidable form: a successful unification is the
-least upper bound, and unification succeeds on bounded-above pairs. -/
+/-- The two `PartialUnify` axioms in decidable form. A successful unification is the least
+upper bound, and unification succeeds on bounded-above pairs. -/
 private theorem InfoFeature.unify_spec (a b : InfoFeature) :
     (∀ c : InfoFeature, InfoFeature.unify a b = ↑c →
         (a ≤ c ∧ b ≤ c) ∧ ∀ u, a ≤ u → b ≤ u → c ≤ u) ∧
@@ -126,9 +132,8 @@ instance : PartialUnify InfoFeature where
 
 /-! ### Projecting information structure through a derivation -/
 
-/-- The information marking an accent slot contributes ([steedman-2000]: L+H* marks
-the theme, unaccented material is unmarked, and H* with the remaining accents mark
-the rheme). -/
+/-- The information marking an accent slot contributes. In [steedman-2000] L+H* marks the
+theme, unaccented material is unmarked, and H* and the remaining accents mark the rheme. -/
 def accentInfo : Option PitchAccent → InfoFeature
   | some (.leading .L .H) => .θ
   | none => .unmarked
@@ -138,45 +143,46 @@ def accentInfo : Option PitchAccent → InfoFeature
 unaccented form. -/
 def AccentAssignment := String → Option PitchAccent
 
-/-- The INFORMATION feature a derivation projects under an accent assignment: leaves
-contribute `accentInfo` of their accent, combination unifies the daughters' features,
-and type-raising preserves. `none` on a theme/rheme clash — the prosodic analogue of
-`Derivation.interp`'s reading of the same tree. -/
-def _root_.CCG.Derivation.infoFeature (acc : AccentAssignment) :
-    {c : Cat Atom} → Derivation Atom c → Option InfoFeature
+/-- The INFORMATION feature a derivation projects under an accent assignment. Leaves contribute
+the `accentInfo` of their accent and combination unifies the daughters' features, with `none` on
+a theme/rheme clash, the prosodic analogue of `Derivation.interp`'s reading of the same tree. -/
+def _root_.CCG.Derivation.infoFeature {α : Type*} (acc : AccentAssignment) :
+    {c : Cat α} → Derivation α c → Option InfoFeature
   | _, .lex f _ => some (accentInfo (acc f))
   | _, .node _ d₁ d₂ => do (← d₁.infoFeature acc).unify (← d₂.infoFeature acc)
 
 /-! ### Tunes and prosodic phrases -/
 
-/-- An intonational tune: pitch accent plus terminal contour. The two main tunes of
-English ([steedman-2000]): L+H* LH% marks the theme, H* LL% the rheme. -/
+/-- An intonational tune is a pitch accent plus a terminal contour. Of the two main tunes of
+English in [steedman-2000], L+H* LH% marks the theme and H* LL% the rheme. -/
 structure Tune where
+  /-- The pitch accent. -/
   accent : PitchAccent
+  /-- The phrase accent and boundary tone. -/
   terminal : TerminalContour
   deriving Repr, DecidableEq
 
-/-- The theme tune: L+H* with the rise LH%. -/
+/-- The theme tune, L+H* with the rise LH%. -/
 def themeTune : Tune := ⟨.leading .L .H, ⟨.L, .H⟩⟩
 
-/-- The rheme tune: H* with the fall LL%. -/
+/-- The rheme tune, H* with the fall LL%. -/
 def rhemeTune : Tune := ⟨.mono .H, ⟨.L, .L⟩⟩
 
-/-- A prosodic phrase: a tune-marked CCG constituent. Because `deriv` is an
-intrinsically typed derivation, only constituents can be phrases — the Sense Unit
-Condition ([selkirk-1984]) by construction. -/
-structure ProsodicPhrase where
-  cat : Cat Atom
-  deriv : Derivation Atom cat
+/-- A prosodic phrase is a tune-marked CCG constituent. Because `deriv` is a derivation, only
+constituents can be phrases, the Sense Unit Condition of [selkirk-1984] by construction. -/
+structure ProsodicPhrase (α : Type*) where
+  /-- The category of the constituent. -/
+  cat : Cat α
+  /-- The constituent's derivation. -/
+  deriv : Derivation α cat
+  /-- The tune the phrase carries. -/
   tune : Tune
 
-/-- An information-structure analysis as a theme/rheme partition,
-following [steedman-2000]: the theme is what the utterance is about
-(the λ-abstract presupposing a QUD, marked by the L+H* LH% theme tune
-in English per [pierrehumbert-hirschberg-1990]); the rheme is what is
-asserted about it (marked H* LL%). `theme := none` encodes an
-all-rheme (thetic, in [kuroda-1972]'s sense) structure with no theme
-constituent. -/
+/-- An information-structure analysis is a theme/rheme partition, following [steedman-2000].
+The theme is what the utterance is about (the λ-abstract presupposing a QUD, marked in English by
+the L+H* LH% tune per [pierrehumbert-hirschberg-1990]) and the rheme is what is asserted about it
+(marked H* LL%). `theme := none` encodes an all-rheme structure, thetic in [kuroda-1972]'s sense,
+with no theme constituent. -/
 structure InfoStructure (P : Type*) where
   /-- The theme (λ-abstract, presupposed QUD); `none` for all-rheme
   (thetic) structures. -/
@@ -188,12 +194,11 @@ structure InfoStructure (P : Type*) where
   /-- Background elements (given). -/
   background : List P := []
 
-/-- Extract the information structure of a sequence of prosodic phrases: the phrase
-with the theme tune becomes the theme, the phrase with the rheme tune the rheme, and
-a theme-less utterance is all-rheme. `none` when the phrase list yields no coherent
-partition. -/
-def extractInfoStructure (phrases : List ProsodicPhrase) :
-    Option (InfoStructure ProsodicPhrase) :=
+/-- The information structure of a sequence of prosodic phrases takes the phrase with the theme
+tune as theme and the phrase with the rheme tune as rheme, and a theme-less utterance is
+all-rheme. It is `none` when the phrases yield no coherent partition. -/
+def extractInfoStructure {α : Type*} (phrases : List (ProsodicPhrase α)) :
+    Option (InfoStructure (ProsodicPhrase α)) :=
   let themes := phrases.filter (·.tune == themeTune)
   let rhemes := phrases.filter (·.tune == rhemeTune)
   match themes, rhemes with

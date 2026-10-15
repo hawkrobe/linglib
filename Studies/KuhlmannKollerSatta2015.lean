@@ -68,9 +68,9 @@ abbrev Bcat : Cat Atom := .atom .B
 abbrev Ccat : Cat Atom := .atom .C
 abbrev Scat : Cat Atom := .atom .S
 
-/-- The grammar `G₁` of Example 2: the six lexical entries, target restriction and
-start at `S`, degree bound 2 — an instance of the modern capacity object
-([schiffer-maletti-2021]: ε-free, degree at most 2). -/
+/-- The grammar `G₁` of Example 2 has six lexical entries, its target restriction and start
+at `S`, and degree bound 2, an instance of the ε-free degree-2 normal form of
+[schiffer-maletti-2021]. -/
 def exampleGrammar : Grammar Atom :=
   .targetRestricted
     [("a", Acat), ("c", Ccat \ Acat),
@@ -84,28 +84,15 @@ def clusterCat : Nat → Cat Atom
   | n + 1 => (clusterCat n) / Ccat
 
 /-- The cluster category always has target `S`. -/
-theorem target_clusterCat (n : Nat) : (clusterCat n).target = Atom.S := by
+@[simp] theorem target_clusterCat (n : Nat) : (clusterCat n).target = Atom.S := by
   induction n with
   | zero => rfl
   | succ n ih => simpa [clusterCat] using ih
 
-/-- No non-`S` atom is a cluster category: targets differ. -/
-@[simp] theorem acat_ne_clusterCat (k : Nat) : Acat ≠ clusterCat k := fun h ↦ by
-  have := congrArg Cat.target h
-  simp [target_clusterCat] at this
-
-@[simp] theorem bcat_ne_clusterCat (k : Nat) : Bcat ≠ clusterCat k := fun h ↦ by
-  have := congrArg Cat.target h
-  simp [target_clusterCat] at this
-
-@[simp] theorem ccat_ne_clusterCat (k : Nat) : Ccat ≠ clusterCat k := fun h ↦ by
-  have := congrArg Cat.target h
-  simp [target_clusterCat] at this
-
 /-! ### The construction, as `Derives` inductions -/
 
-/-- Chain of degree-2 compositions: `b₁ = S/C/B` composed with `j` copies of
-`B/C/B` derives `bʲ⁺¹` at `S/Cʲ⁺¹/B`. -/
+/-- Composing `b₁ = S/C/B` with `j` copies of `B/C/B` at degree 2 derives `bʲ⁺¹` at
+`S/Cʲ⁺¹/B`. -/
 theorem fc2Chain_derives (j : Nat) :
     exampleGrammar.Derives ((clusterCat (j + 1)).rslash .dot Bcat)
       (List.replicate (j + 1) "b") := by
@@ -118,7 +105,7 @@ theorem fc2Chain_derives (j : Nat) :
           ⟨by decide, by simp [target_clusterCat]⟩ rfl
       simpa [List.replicate_succ'] using h
 
-/-- The `b`-cluster: `G₁` derives `bⁿ` at category `clusterCat n`, for `n ≥ 1`. -/
+/-- `G₁` derives the `b`-cluster `bⁿ` at category `clusterCat n`, for `n ≥ 1`. -/
 theorem cluster_derives : ∀ {n : Nat}, 1 ≤ n →
     exampleGrammar.Derives (clusterCat n) (List.replicate n "b")
   | 1, _ => .lex (by decide)
@@ -135,8 +122,8 @@ private theorem replicate_cons_comm {α : Type*} (k : Nat) (a : α) (X : List α
   | zero => rfl
   | succ k ih => simp [List.replicate_succ, List.cons_append, ih]
 
-/-- Peeling: from a derivation of `w` at `clusterCat k`, crossed-composing a `c` and
-backward-applying an `a` `k` times derives `aᵏ w cᵏ` at `S`. -/
+/-- From a derivation of `w` at `clusterCat k`, crossed-composing a `c` and backward-applying
+an `a` `k` times derives `aᵏ w cᵏ` at `S`. -/
 theorem peel_derives : ∀ (k : Nat) {w : List String},
     exampleGrammar.Derives (clusterCat k) w →
     exampleGrammar.Derives Scat
@@ -157,8 +144,8 @@ theorem peel_derives : ∀ (k : Nat) {w : List String},
 The converse induction: every pair the grammar derives has one of the shapes of the
 completeness construction, so the language contains nothing beyond `aⁿbⁿcⁿ`. -/
 
-/-- The derivable category/string pairs of `G₁`: the six lexical shapes, the degree-2
-chain categories, the clusters (wrapped by `i` peels), and the peel intermediates. -/
+/-- The category/string pairs that `G₁` derives, namely the six lexical shapes, the degree-2
+chain categories, the clusters wrapped by `i` peels, and the peel intermediates. -/
 def Reachable : Cat Atom → List String → Prop := fun c w ↦
   (c = Acat ∧ w = ["a"]) ∨
   (c = (Ccat \ Acat) ∧ w = ["c"]) ∨
@@ -172,9 +159,10 @@ def Reachable : Cat Atom → List String → Prop := fun c w ↦
     w = List.replicate i "a" ++ List.replicate (k + 1 + i) "b" ++
       List.replicate (i + 1) "c")
 
-/-- Every pair `G₁` derives is `Reachable`: the rule induction. The target gate kills
-every primary whose target is not `S`; the schema equation then forces one of the
-four rule instances of the completeness construction. -/
+/-- Every pair `G₁` derives is `Reachable`, by rule induction. The target gate admits only
+primaries with target `S`, and a secondary `Yβ` over an atom `Y` has `Y` as its target and `β` as
+its arguments, so each rule step is one of the four instances of the completeness
+construction. -/
 theorem reachable_of_derives {c : Cat Atom} {w : List String}
     (h : exampleGrammar.Derives c w) : Reachable c w := by
   induction h with
@@ -191,208 +179,88 @@ theorem reachable_of_derives {c : Cat Atom} {w : List String}
         ⟨1, 0, by omega, rfl, rfl⟩)))))
     · exact Or.inr (Or.inr (Or.inr (Or.inl ⟨rfl, rfl⟩)))
   | @fc n a b c u v _ _ hgate hc iha ihb =>
-    obtain ⟨hn, hta⟩ := hgate
-    rcases iha with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ |
-      ⟨j, rfl, rfl⟩ | ⟨k, i, hki, rfl, rfl⟩ | ⟨k, i, rfl, rfl⟩
-    · exact absurd hta (by decide)
-    · exact absurd hta (by decide)
-    · exact absurd hta (by decide)
-    · exact absurd hta (by decide)
-    · -- primary is the chain category `(S/Cʲ⁺¹)/B`
-      rcases n with _ | _ | _ | n
-      · rcases ihb with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ |
-          ⟨j', rfl, rfl⟩ | ⟨k', i', hki', rfl, rfl⟩ | ⟨k', i', rfl, rfl⟩
-        · simp [Cat.generalizedForwardComp] at hc
-        · simp [Cat.generalizedForwardComp] at hc
-        · simp [Cat.generalizedForwardComp] at hc
-        · simp [Cat.generalizedForwardComp] at hc
-        · simp [Cat.generalizedForwardComp] at hc
-        · rcases k' with _ | k' <;> simp [clusterCat, Cat.generalizedForwardComp] at hc
-        · simp [Cat.generalizedForwardComp] at hc
-      · rcases ihb with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ |
-          ⟨j', rfl, rfl⟩ | ⟨k', i', hki', rfl, rfl⟩ | ⟨k', i', rfl, rfl⟩
-        · simp [Cat.generalizedForwardComp] at hc
-        · simp [Cat.generalizedForwardComp] at hc
-        · simp [Cat.generalizedForwardComp] at hc
-        · -- live: chain ∘¹ B/C ⇒ next cluster
-          simp [Cat.generalizedForwardComp] at hc
-          subst hc
-          refine Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inl
-            ⟨j + 2, 0, by omega, rfl, ?_⟩)))))
-          simp [List.replicate_succ']
-        · rcases j' with _ | j' <;>
-            simp [clusterCat, Cat.generalizedForwardComp] at hc
-        · rcases k' with _ | k'
-          · simp [clusterCat] at hc
-          · rcases k' with _ | k' <;>
-              simp [clusterCat, Cat.generalizedForwardComp] at hc
-        · rcases k' with _ | k' <;>
-            simp [clusterCat, Cat.generalizedForwardComp] at hc
-      · rcases ihb with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ |
-          ⟨j', rfl, rfl⟩ | ⟨k', i', hki', rfl, rfl⟩ | ⟨k', i', rfl, rfl⟩
-        · simp [Cat.generalizedForwardComp] at hc
-        · simp [Cat.generalizedForwardComp] at hc
-        · -- live: chain ∘² (B/C)/B ⇒ next chain
-          simp [Cat.generalizedForwardComp] at hc
-          subst hc
-          exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inl
-            ⟨j + 1, rfl, by simp [List.replicate_succ']⟩))))
-        · simp [Cat.generalizedForwardComp] at hc
-        · rcases j' with _ | j' <;>
-            simp [clusterCat, Cat.generalizedForwardComp] at hc
-        · rcases k' with _ | k'
-          · simp [clusterCat] at hc
-          · rcases k' with _ | k' <;>
-              simp [clusterCat, Cat.generalizedForwardComp] at hc
-        · rcases k' with _ | k' <;>
-            simp [clusterCat, Cat.generalizedForwardComp] at hc
-      · exact absurd hn (by omega)
-    · -- primary is a cluster `S/Cᵏ`
-      rcases k with _ | k
-      · simp [clusterCat] at hc
-      · rcases n with _ | _ | _ | n
-        · rcases ihb with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ |
-            ⟨j', rfl, rfl⟩ | ⟨k', i', hki', rfl, rfl⟩ | ⟨k', i', rfl, rfl⟩
-          · simp [clusterCat, Cat.generalizedForwardComp] at hc
-          · simp [clusterCat, Cat.generalizedForwardComp] at hc
-          · simp [clusterCat, Cat.generalizedForwardComp] at hc
-          · simp [clusterCat, Cat.generalizedForwardComp] at hc
-          · simp [clusterCat, Cat.generalizedForwardComp] at hc
-          · rcases k' with _ | k' <;>
-              simp [clusterCat, Cat.generalizedForwardComp] at hc
-          · simp [clusterCat, Cat.generalizedForwardComp] at hc
-        · rcases ihb with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ |
-            ⟨j', rfl, rfl⟩ | ⟨k', i', hki', rfl, rfl⟩ | ⟨k', i', rfl, rfl⟩
-          · simp [Cat.generalizedForwardComp] at hc
-          · -- live: cluster ∘¹ C\A ⇒ peel intermediate
-            simp [clusterCat, Cat.generalizedForwardComp] at hc
-            subst hc
-            refine Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr
-              ⟨k, i, rfl, ?_⟩)))))
-            have : k + 1 + i = k + i + 1 := by omega
-            simp [this, List.replicate_succ', List.append_assoc]
-          · simp [clusterCat, Cat.generalizedForwardComp] at hc
-          · simp [clusterCat, Cat.generalizedForwardComp] at hc
-          · rcases j' with _ | j' <;>
-              simp [clusterCat, Cat.generalizedForwardComp] at hc
-          · rcases k' with _ | k'
-            · simp [clusterCat] at hc
-            · rcases k' with _ | k' <;>
-                simp [clusterCat, Cat.generalizedForwardComp] at hc
-          · rcases k' with _ | k' <;>
-              simp [clusterCat, Cat.generalizedForwardComp] at hc
-        · rcases ihb with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ |
-            ⟨j', rfl, rfl⟩ | ⟨k', i', hki', rfl, rfl⟩ | ⟨k', i', rfl, rfl⟩
-          · simp [Cat.generalizedForwardComp] at hc
-          · simp [Cat.generalizedForwardComp] at hc
-          · simp [clusterCat, Cat.generalizedForwardComp] at hc
-          · simp [Cat.generalizedForwardComp] at hc
-          · rcases j' with _ | j' <;>
-              simp [clusterCat, Cat.generalizedForwardComp] at hc
-          · rcases k' with _ | k'
-            · simp [clusterCat] at hc
-            · rcases k' with _ | k' <;>
-                simp [clusterCat, Cat.generalizedForwardComp] at hc
-          · rcases k' with _ | k' <;>
-              simp [clusterCat, Cat.generalizedForwardComp] at hc
-        · exact absurd hn (by omega)
-    · -- primary is a peel intermediate `S/Cᵏ\A`: leftward, forward composition fails
-      simp at hc
+    obtain ⟨x, m, y, β, rfl, rfl, rfl, rfl⟩ := Cat.generalizedForwardComp_eq_some_iff.mp hc
+    obtain ⟨-, hx⟩ : _ ∧ x.target = .S := hgate
+    rcases iha with ⟨h, -⟩ | ⟨h, -⟩ | ⟨h, -⟩ | ⟨h, -⟩ | ⟨j, h, rfl⟩ | ⟨_ | k, i, -, h, rfl⟩ |
+      ⟨_, _, h, -⟩
+    · cases h
+    · cases h
+    · cases h; simp at hx
+    · cases h; simp at hx
+    · -- the chain `(S/Cʲ⁺¹)/B` composes with `(B/C)/B` into the next chain, or with `B/C`
+      cases h
+      rcases ihb with ⟨h, -⟩ | ⟨h, -⟩ | ⟨h, rfl⟩ | ⟨h, rfl⟩ | ⟨_, h, -⟩ | ⟨_, _, -, h, -⟩ |
+        ⟨_, _, h, -⟩ <;> simp [Cat.atom_pushArgs_eq_iff] at h <;> subst h
+      · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inl
+          ⟨j + 1, rfl, by simp [List.replicate_succ']⟩))))
+      · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inl
+          ⟨j + 2, 0, by omega, rfl, by simp [List.replicate_succ']⟩)))))
+    · cases h
+    · -- the cluster `S/Cᵏ⁺¹` crossed-composes with `C\A` into a peel intermediate
+      cases h
+      rcases ihb with ⟨h, -⟩ | ⟨h, rfl⟩ | ⟨h, -⟩ | ⟨h, -⟩ | ⟨_, h, -⟩ | ⟨_, _, -, h, -⟩ |
+        ⟨_, _, h, -⟩ <;> simp [Cat.atom_pushArgs_eq_iff] at h
+      subst h
+      refine Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr ⟨k, i, rfl, ?_⟩)))))
+      simp [show k + 1 + i = k + i + 1 by omega, List.replicate_succ']
+    · cases h
   | @bc n a b c u v _ _ hgate hc iha ihb =>
-    obtain ⟨hn, htb⟩ := hgate
-    rcases ihb with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ |
-      ⟨j, rfl, rfl⟩ | ⟨k, i, hki, rfl, rfl⟩ | ⟨k, i, rfl, rfl⟩
-    · exact absurd htb (by decide)
-    · exact absurd htb (by decide)
-    · exact absurd htb (by decide)
-    · exact absurd htb (by decide)
-    · simp at hc
-    · rcases k with _ | k
-      · simp [clusterCat] at hc
-      · simp [clusterCat] at hc
-    · -- primary is a peel intermediate: only an `a` may backward-apply
-      rcases n with _ | _ | _ | n
-      · rcases iha with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ |
-          ⟨j', rfl, rfl⟩ | ⟨k', i', hki', rfl, rfl⟩ | ⟨k', i', rfl, rfl⟩
-        · -- live: A ∘⁰ peel intermediate ⇒ cluster
-          simp [Cat.generalizedBackwardComp] at hc
-          subst hc
-          refine Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inl
-            ⟨k, i + 1, by omega, rfl, ?_⟩)))))
-          have : k + (i + 1) = k + 1 + i := by omega
-          simp [this, List.replicate_succ, List.append_assoc]
-        · simp [Cat.generalizedBackwardComp] at hc
-        · simp [Cat.generalizedBackwardComp] at hc
-        · simp [Cat.generalizedBackwardComp] at hc
-        · simp [Cat.generalizedBackwardComp] at hc
-        · rcases k' with _ | k' <;>
-            simp [clusterCat, Cat.generalizedBackwardComp] at hc
-        · simp [Cat.generalizedBackwardComp] at hc
-      · rcases iha with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ |
-          ⟨j', rfl, rfl⟩ | ⟨k', i', hki', rfl, rfl⟩ | ⟨k', i', rfl, rfl⟩
-        · simp [Cat.generalizedBackwardComp] at hc
-        · simp [Cat.generalizedBackwardComp] at hc
-        · simp [Cat.generalizedBackwardComp] at hc
-        · simp [Cat.generalizedBackwardComp] at hc
-        · simp [clusterCat, Cat.generalizedBackwardComp] at hc
-        · rcases k' with _ | k'
-          · simp [clusterCat] at hc
-          · simp [clusterCat, Cat.generalizedBackwardComp] at hc
-        · simp [Cat.generalizedBackwardComp] at hc
-      · rcases iha with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ |
-          ⟨j', rfl, rfl⟩ | ⟨k', i', hki', rfl, rfl⟩ | ⟨k', i', rfl, rfl⟩
-        · simp [Cat.generalizedBackwardComp] at hc
-        · simp [Cat.generalizedBackwardComp] at hc
-        · simp [Cat.generalizedBackwardComp] at hc
-        · simp [Cat.generalizedBackwardComp] at hc
-        · simp [clusterCat, Cat.generalizedBackwardComp] at hc
-        · rcases k' with _ | k'
-          · simp [clusterCat] at hc
-          · rcases k' with _ | k' <;>
-              simp [clusterCat, Cat.generalizedBackwardComp] at hc
-        · rcases k' with _ | k' <;>
-            simp [clusterCat, Cat.generalizedBackwardComp] at hc
-      · exact absurd hn (by omega)
+    obtain ⟨x, m, y, β, rfl, rfl, rfl, rfl⟩ := Cat.generalizedBackwardComp_eq_some_iff.mp hc
+    obtain ⟨-, hx⟩ : _ ∧ x.target = .S := hgate
+    rcases ihb with ⟨h, -⟩ | ⟨h, -⟩ | ⟨h, -⟩ | ⟨h, -⟩ | ⟨_, h, -⟩ | ⟨_ | _, _, -, h, -⟩ |
+      ⟨k, i, h, rfl⟩
+    · cases h
+    · cases h; simp at hx
+    · cases h
+    · cases h
+    · cases h
+    · cases h
+    · cases h
+    · -- an `a` backward-applies to a peel intermediate, giving the next cluster
+      cases h
+      rcases iha with ⟨h, rfl⟩ | ⟨h, -⟩ | ⟨h, -⟩ | ⟨h, -⟩ | ⟨_, h, -⟩ | ⟨_, _, -, h, -⟩ |
+        ⟨_, _, h, -⟩ <;> simp [Cat.atom_pushArgs_eq_iff] at h
+      subst h
+      refine Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inl ⟨k, i + 1, by omega, rfl, ?_⟩)))))
+      simp [show k + (i + 1) = k + 1 + i by omega, List.replicate_succ]
 
 /-! ### Rule restrictions (§3.1, §3.3) -/
 
-/-- A category with its outermost `k` arguments removed: from `Y|ₙYₙ ⋯ |₁Y₁` to
-`Y|ₙYₙ ⋯ |ₖ₊₁Yₖ₊₁`. -/
-def prefixCat {α : Type*} : ℕ → Cat α → Cat α
-  | 0, c => c
-  | k + 1, .rslash c _ _ => prefixCat k c
-  | k + 1, .lslash c _ _ => prefixCat k c
-  | _ + 1, c => c
-
-/-- Definition 2: a grammar is prefix-closed when every permitted instance of composition
-stays permitted with the outermost arguments of the secondary input removed and the degree
-lowered accordingly. -/
+/-- A grammar is prefix-closed (Definition 2) when every permitted instance `X/Y Yβ ⇒ Xβ` of
+composition stays permitted for every prefix `β'` of the argument sequence `β`, that is, with the
+outermost arguments of the secondary input already consumed, at the lowered degree. -/
 def PrefixClosed {α : Type*} (G : Grammar α) : Prop :=
-  (∀ n a b, G.allowsFwd n a b → ∀ k ≤ n, G.allowsFwd (n - k) a (prefixCat k b)) ∧
-  (∀ n a b, G.allowsBwd n a b → ∀ k ≤ n, G.allowsBwd (n - k) (prefixCat k a) b)
+  (∀ x m y (β β' : List (Cat.Arg α)), β' <+: β →
+    G.allowsFwd β.length (.rslash x m y) (y.pushArgs β) →
+      G.allowsFwd β'.length (.rslash x m y) (y.pushArgs β')) ∧
+  (∀ x m y (β β' : List (Cat.Arg α)), β' <+: β →
+    G.allowsBwd β.length (y.pushArgs β) (.lslash x m y) →
+      G.allowsBwd β'.length (y.pushArgs β') (.lslash x m y))
 
-/-- Definition 3: a grammar is without target restrictions when every permitted instance
-stays permitted under any change of the primary input's result category. -/
+/-- A grammar is without target restrictions (Definition 3) when every permitted instance
+`X/Y Yβ ⇒ Xβ` stays permitted under any change of the primary input's result category `X`. -/
 def WithoutTargetRestrictions {α : Type*} (G : Grammar α) : Prop :=
-  (∀ n x x' m y b, G.allowsFwd n (.rslash x m y) b → G.allowsFwd n (.rslash x' m y) b) ∧
-  (∀ n a x x' m y, G.allowsBwd n a (.lslash x m y) → G.allowsBwd n a (.lslash x' m y))
+  (∀ x x' m y (β : List (Cat.Arg α)), G.allowsFwd β.length (.rslash x m y) (y.pushArgs β) →
+    G.allowsFwd β.length (.rslash x' m y) (y.pushArgs β)) ∧
+  (∀ x x' m y (β : List (Cat.Arg α)), G.allowsBwd β.length (y.pushArgs β) (.lslash x m y) →
+    G.allowsBwd β.length (y.pushArgs β) (.lslash x' m y))
 
 /-- A target-restricted grammar is prefix-closed: its gates look only at the degree and the
 primary input's target. -/
 theorem targetRestricted_prefixClosed {α : Type*} (L : List (String × Cat α)) (s : α)
     (d : ℕ) : PrefixClosed (Grammar.targetRestricted L s d) :=
-  ⟨fun _ _ _ h k _ ↦ ⟨(Nat.sub_le _ k).trans h.1, h.2⟩,
-   fun _ _ _ h k _ ↦ ⟨(Nat.sub_le _ k).trans h.1, h.2⟩⟩
+  ⟨fun _ _ _ _ _ hβ h ↦ ⟨hβ.length_le.trans h.1, h.2⟩,
+   fun _ _ _ _ _ hβ h ↦ ⟨hβ.length_le.trans h.1, h.2⟩⟩
 
-/-- Example 6: `G₁` is prefix-closed. -/
+/-- `G₁` is prefix-closed (Example 6). -/
 theorem exampleGrammar_prefixClosed : PrefixClosed exampleGrammar :=
   targetRestricted_prefixClosed _ _ _
 
-/-- Example 8: `G₁` is not without target restrictions, since application of `S/C` to `C`
+/-- `G₁` is not without target restrictions (Example 8), since application of `S/C` to `C`
 is permitted but application of `B/C` to `C` is not. -/
 theorem exampleGrammar_not_withoutTargetRestrictions :
     ¬ WithoutTargetRestrictions exampleGrammar :=
-  fun h ↦ absurd (h.1 0 Scat Bcat .dot Ccat Ccat ⟨Nat.zero_le _, rfl⟩).2 (by decide)
+  fun h ↦ absurd (h.1 Scat Bcat .dot Ccat [] ⟨Nat.zero_le _, rfl⟩).2 (by decide)
 
 /-! ### Generative-capacity result -/
 
@@ -400,15 +268,13 @@ theorem exampleGrammar_not_withoutTargetRestrictions :
 def anbncStrings : Set (List String) :=
   {w | ∃ n, 1 ≤ n ∧ w = List.replicate n "a" ++ List.replicate n "b" ++ List.replicate n "c"}
 
-/-- **`G₁` generates `aⁿbⁿcⁿ`** ([kuhlmann-koller-satta-2015], Ex. 2): every string
-in the non-context-free language is in the grammar's language. This is the
-completeness half of CCG ⊋ CFG; the language it covers is not context-free
-(`not_isContextFree_language`). -/
+/-- `G₁` generates every string of `aⁿbⁿcⁿ` ([kuhlmann-koller-satta-2015], Example 2), the
+completeness half of the example. -/
 theorem ccg_generates_anbnc : anbncStrings ⊆ exampleGrammar.language := by
   rintro w ⟨n, hn, rfl⟩
   exact peel_derives n (cluster_derives hn)
 
-/-- **Soundness**: `G₁` derives nothing beyond `aⁿbⁿcⁿ`. -/
+/-- `G₁` derives nothing beyond `aⁿbⁿcⁿ`. -/
 theorem language_subset_anbnc : exampleGrammar.language ⊆ anbncStrings := by
   rintro w hw
   rcases reachable_of_derives hw with ⟨h, _⟩ | ⟨h, _⟩ | ⟨h, _⟩ | ⟨h, _⟩ |
@@ -423,13 +289,12 @@ theorem language_subset_anbnc : exampleGrammar.language ⊆ anbncStrings := by
     · exact absurd h (by simp [clusterCat])
   · exact absurd h (by simp)
 
-/-- **The language of `G₁` is exactly `aⁿbⁿcⁿ`** ([kuhlmann-koller-satta-2015],
-Ex. 2): completeness and soundness together. -/
+/-- The language of `G₁` is exactly `aⁿbⁿcⁿ` ([kuhlmann-koller-satta-2015], Example 2). -/
 theorem language_eq_anbnc : exampleGrammar.language = anbncStrings :=
   Set.Subset.antisymm language_subset_anbnc ccg_generates_anbnc
 
-/-- **The language of `G₁` is not context-free**: it contains `aⁿbⁿcⁿ` for every `n ≥ 1`, and each
-of its words has as many `a` as `b` as `c`. The proof of Theorem 3 of
+/-- The language of `G₁` is not context-free, since it contains `aⁿbⁿcⁿ` for every `n ≥ 1` and
+each of its words has as many `a` as `b` as `c`. The proof of Theorem 3 of
 [kuhlmann-koller-satta-2015] invokes this standard fact (p. 202) without proving it. -/
 theorem not_isContextFree_language :
     ¬ Language.IsContextFree (exampleGrammar.language : Language String) := by
