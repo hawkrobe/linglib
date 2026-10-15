@@ -20,7 +20,8 @@ from check_module_frontier import as_module_if_possible, import_stmt  # noqa: E4
 ROOT = Path(__file__).resolve().parent.parent
 DATA_DIR = ROOT / "Linglib" / "Data" / "Hiatus"
 
-JUNCTURES = {"lexicalLexical", "lexicalFunction", "prefixRoot", "rootSuffix"}
+JUNCTURES = {"lexicalLexical", "lexicalFunction", "prefixRoot", "rootSuffix", "suffixSuffix",
+             "cliticClitic"}
 ELIDED = {"first", "second"}
 
 

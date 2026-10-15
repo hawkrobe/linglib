@@ -1,0 +1,25 @@
+{
+  "paper": "Mkochi2021",
+  "bibkey": "mkochi-2021",
+  "description": "The kinds of juncture at which the paper reports elision of the second vowel in Malawian CiTonga: a verb root and a final vowel or extension, two suffixes (two final vowels, or an extension and a final vowel), and two enclitics.",
+  "groups": [
+    {
+      "juncture": "rootSuffix",
+      "elided": "second",
+      "languages": ["CiTonga"],
+      "tentative": []
+    },
+    {
+      "juncture": "suffixSuffix",
+      "elided": "second",
+      "languages": ["CiTonga"],
+      "tentative": []
+    },
+    {
+      "juncture": "cliticClitic",
+      "elided": "second",
+      "languages": ["CiTonga"],
+      "tentative": []
+    }
+  ]
+}
