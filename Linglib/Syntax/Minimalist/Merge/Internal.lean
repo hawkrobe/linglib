@@ -5,7 +5,7 @@ public import Linglib.Syntax.Minimalist.Merge.External
 /-!
 # Internal Merge
 
-Internal Merge ([marcolli-chomsky-berwick-2025] Proposition 1.4.2) is the composition
+Internal Merge (Proposition 1.4.2 of Marcolli, Chomsky and Berwick) is the composition
 `M_{T/β,β} ∘ M_{β,1}`. The unit stage selects a cut of `T` with crown `{β}`, giving the two-object
 workspace `{β, T/β}`, and External Merge then merges `β` with the quotient. When one cut extracts
 `β`, the composition yields `node lbl {T/β, β}` over every cut enumeration admitting Merge
@@ -41,7 +41,11 @@ namespace Minimalist.Merge
 open scoped TensorProduct
 open RoseTree UnorderedTree ConnesKreimer
 
-variable {R : Type*} [CommSemiring R] {α : Type*} [DecidableEq (UnorderedTree α)]
+variable {R : Type*} [CommSemiring R] {α : Type*}
+
+section DecidableEq
+
+variable [DecidableEq (UnorderedTree α)]
   {cuts : UnorderedTree α → Multiset (Forest (UnorderedTree α) × UnorderedTree α)}
 
 /-- On one tree `T`, the primitive term of the unit stage contributes `β` if `T = β`, and each
@@ -172,9 +176,10 @@ theorem mergeOp_im_composition (lbl : α) (β T Q : UnorderedTree α)
       = of' ({UnorderedTree.node lbl {Q, β}} : Forest (UnorderedTree α)) :=
   mergeOpG_im_composition lbl β T Q p0 h_filter h_remainder hTβ
 
-omit [DecidableEq (UnorderedTree α)] in
-/-- Internal Merge at the trace cuts: the mover `m` is merged with the trunk `Q`, which keeps a
-    trace in its place. -/
+end DecidableEq
+
+/-- At the trace cuts Internal Merge merges the mover `m` with the trunk `Q`, which keeps a trace
+    in its place. -/
 theorem mergeOpC_im_composition {β : Type*} [DecidableEq (UnorderedTree (α ⊕ β))]
     (τ : UnorderedTree (α ⊕ β) → β) (lbl : α ⊕ β) (m T Q : UnorderedTree (α ⊕ β))
     (p0 : Forest (UnorderedTree (α ⊕ β)) × UnorderedTree (α ⊕ β))
