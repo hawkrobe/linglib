@@ -7,6 +7,7 @@ module
 
 public import Mathlib.Order.Minimal
 public import Mathlib.Tactic.DeriveFintype
+public import Studies.BelkNeelemanPhilip2023
 public import Studies.CitkoGracaninYuksek2020
 
 /-!
@@ -31,15 +32,16 @@ when*) shares its whole C′ and elides it once, which hides the vP edge both wh
   [E].
 * `convergesIn_multipleSluice_iff`: multiple sluicing converges exactly where the CP edge may host
   several wh-phrases, as in German, Greek and one variety of English.
-* `rnrShareHigherVP_lt`: in right node raising with matching verbs, sharing the whole verb phrase
-  is cheaper than eliding part of it, so the derivations Belk, Neeleman and Philip also allow are
-  blocked.
+* `rnr56_economy`: in right node raising with matching verbs, sharing the whole verb phrase is
+  cheaper than eliding part of it, so economy blocks two of the three derivations Belk, Neeleman
+  and Philip license.
 
 ## Implementation notes
 
 * A candidate is a planar syntactic object spelled out by `Linearization/Spellout.lean`: a token at
   two positions is shared, a moved wh-phrase leaves traces at the vP edge and its base position, and
-  the coordinator is left out, so a string is its conjuncts' words.
+  the coordinator is left out, so a string is its conjuncts' words. A right node raising candidate
+  is a pruning derivation of Belk, Neeleman and Philip, each free pruning an ellipsis.
 * The paired reading and Pronunciation Economy are the it reading and the ban on vacuous ellipsis
   of the authors' earlier paper (`CitkoGracaninYuksek2020`).
 * As the paper's footnote on the parameter allows, every edge with several wh-specifiers receives
@@ -445,14 +447,21 @@ theorem multipleQuestion_multipleSluice :
 
 /-! ### Right node raising (§6.2) -/
 
+/-- The cost of a derivation of right node raising counts the lexical items and Merges of its
+structure, and each free pruning as an application of ellipsis. -/
+def rnrCost (d : BelkNeelemanPhilip2023.Derivation) : DerivationCost
+  | .lexicalItems => planarCost d.input .lexicalItems
+  | .mergeOps => planarCost d.input .mergeOps
+  | .ellipsisOps => d.free.length
+
 def alice := tok 21 .D (phon := "Alice")
 def iris := tok 22 .D (phon := "Iris")
 def must := tok 23 .T [.V] "must"
-/-- `must` bearing [E]. -/
-def mustE := tok 24 .T [.V] "must" (ellipsis := true)
 def oughtToBe := tok 25 .T [.V] "ought to be"
 def shouldRNR := tok 26 .T [.V] "should"
+/-- *Work*, a second *work*, and *working*. -/
 def work := tok 27 .V [.P] "work"
+def work' := tok 35 .V [.P] "work"
 def working := tok 28 .V [.P] "working"
 def on := tok 29 .P [.N] "on"
 def different := tok 30 .A (phon := "different")
@@ -468,79 +477,50 @@ def pivot : PlanarSyntacticObject := on * (different * topics)
 def tp (subj T : LexicalItem.Token) (VP : PlanarSyntacticObject) : PlanarSyntacticObject :=
   subj * (T * VP)
 
-/-- Example (53b), after the pruning of [belk-neeleman-philip-2023] that removes the shared pivot
-from the first conjunct, elides the first verb phrase, the bare verb, under [E] on `must`. -/
-def rnrMixed : PlanarSyntacticObject :=
-  (tp alice mustE (leaf work)) * (tp iris oughtToBe (working * pivot))
+/-- In example (53b), Belk, Neeleman and Philip's analysis of Larson's mixed pivot, the pivot is
+multidominated and its first branch pruned, and then the first verb phrase, by then the bare verb,
+is pruned freely. -/
+def rnrMixed : BelkNeelemanPhilip2023.Derivation :=
+  ⟨(tp alice must (work * pivot)) * (tp iris oughtToBe (working * pivot)),
+    [(⟨[0, 1, 1, 1]⟩, ⟨[1, 1, 1, 1]⟩)], [(⟨[0, 1, 1]⟩, ⟨[1, 1, 1]⟩)]⟩
 /-- Example (54) builds the first verb phrase with its own pivot and elides it. -/
-def rnrElided : PlanarSyntacticObject :=
-  (tp alice mustE (work * (on' * (different' * topics')))) * (tp iris oughtToBe (working * pivot))
-/-- Example (55b) shares the verb phrase, the verbs matching. -/
-def rnrShared : PlanarSyntacticObject :=
+def rnrElided : BelkNeelemanPhilip2023.Derivation :=
+  ⟨(tp alice must (work * (on' * (different' * topics')))) * (tp iris oughtToBe (working * pivot)),
+    [], [(⟨[0, 1, 1]⟩, ⟨[1, 1, 1]⟩)]⟩
+/-- Example (55b) multidominates the verb phrase, the verbs matching. -/
+def rnrShared : BelkNeelemanPhilip2023.Derivation :=
   let VP := work * pivot
-  (tp alice must VP) * (tp iris shouldRNR VP)
-/-- The rival of (55b) with the shape of (53b). -/
-def rnrMatchedMixed : PlanarSyntacticObject :=
-  (tp alice mustE (leaf work)) * (tp iris shouldRNR (working * pivot))
+  ⟨(tp alice must VP) * (tp iris shouldRNR VP), [(⟨[0, 1, 1]⟩, ⟨[1, 1, 1]⟩)], []⟩
+/-- The rival of (55b) with the shape of (53b), each conjunct with its own *work*. -/
+def rnrMatchedMixed : BelkNeelemanPhilip2023.Derivation :=
+  ⟨(tp alice must (work * pivot)) * (tp iris shouldRNR (work' * pivot)),
+    [(⟨[0, 1, 1, 1]⟩, ⟨[1, 1, 1, 1]⟩)], [(⟨[0, 1, 1]⟩, ⟨[1, 1, 1]⟩)]⟩
 
-theorem rnrMixed_pf : pfPhon rnrMixed =
+theorem rnrMixed_phon : rnrMixed.phon =
     ["Alice", "must", "Iris", "ought to be", "working", "on", "different", "topics"] := by decide
-/-- With mismatched verbs, sharing the pivot beats building it twice. -/
+/-- With mismatched verbs, multidominating the pivot beats building it twice. -/
 theorem rnrMixed_lt_elided :
-    pfPhon rnrElided = pfPhon rnrMixed ∧ planarCost rnrMixed < planarCost rnrElided := by
+    rnrMixed.Licensed ∧ rnrElided.Licensed ∧ rnrElided.phon = rnrMixed.phon ∧
+      rnrCost rnrMixed < rnrCost rnrElided := by
   decide
 
-theorem rnrShared_pf : pfPhon rnrShared =
+theorem rnrShared_phon : rnrShared.phon =
     ["Alice", "must", "Iris", "should", "work", "on", "different", "topics"] := by decide
-theorem rnrShared_isShared : IsShared rnrShared work := by decide
 /-- With matching verbs, ellipsis is no longer an option. -/
-theorem rnrShared_lt_mixed : planarCost rnrShared < planarCost rnrMatchedMixed := by decide
-
-def she := tok 35 .D (phon := "she")
-def she' := tok 36 .D (phon := "she")
-def willT := tok 37 .T [.V] "will"
-/-- `will` bearing [E]. -/
-def willTE := tok 38 .T [.V] "will" (ellipsis := true)
-def could := tok 39 .T [.V] "could"
-/-- The perfect auxiliary *have*, and a second one. -/
-def haveAux := tok 40 .V [.V] "have"
-def haveAux' := tok 41 .V [.V] "have"
-def traveled := tok 42 .V [.P] "traveled"
-def traveled' := tok 43 .V [.P] "traveled"
-def toP := tok 44 .P [.D] "to"
-def the := tok 45 .D [.N] "the"
-def same := tok 46 .A (phon := "same")
-def country := tok 47 .N (phon := "country")
-
-/-- The pivot of (56), `to the same country`, whose internal reading requires it to be shared. -/
-def samePivot : PlanarSyntacticObject := toP * (the * (same * country))
-
-/-- Example (57) shares the pivot alone and elides the rest of the first verb phrase. -/
-def rnrSharePivot : PlanarSyntacticObject :=
-  (tp she willTE (haveAux * (traveled : PlanarSyntacticObject))) *
-    (tp she' could (haveAux' * (traveled' * samePivot)))
-/-- Example (58) shares the lower verb phrase and elides the first auxiliary. -/
-def rnrShareLowerVP : PlanarSyntacticObject :=
-  (tp she willTE (leaf haveAux)) * (tp she' could (haveAux' * (traveled * samePivot)))
-/-- Example (59) shares the higher verb phrase, with no ellipsis. -/
-def rnrShareHigherVP : PlanarSyntacticObject :=
-  let VP := haveAux * (traveled * samePivot)
-  (tp she willT VP) * (tp she' could VP)
-
-theorem rnrShareHigherVP_pf : pfPhon rnrShareHigherVP =
-    ["she", "will", "she", "could", "have", "traveled", "to", "the", "same", "country"] := by
-  decide
-theorem pfPhon_rnrShare :
-    pfPhon rnrSharePivot = pfPhon rnrShareHigherVP ∧
-      pfPhon rnrShareLowerVP = pfPhon rnrShareHigherVP := by
+theorem rnrShared_lt_mixed :
+    rnrShared.Licensed ∧ rnrMatchedMixed.Licensed ∧ rnrMatchedMixed.phon = rnrShared.phon ∧
+      rnrCost rnrShared < rnrCost rnrMatchedMixed := by
   decide
 
-/-- Sharing the higher verb phrase is cheaper than sharing less and eliding the rest, so economy
-blocks the derivations of (57) and (58) that Belk, Neeleman and Philip also allow, and predicts
-the prosodic break before *have*. -/
-theorem rnrShareHigherVP_lt :
-    planarCost rnrShareHigherVP < planarCost rnrShareLowerVP ∧
-      planarCost rnrShareHigherVP < planarCost rnrSharePivot := by
-  decide
+/-- Belk, Neeleman and Philip license three derivations of (56), their (51), with the prosodic
+break before *have*, *traveled* or *to*. Multidominating the whole auxiliary phrase is cheaper
+than either derivation that elides, so economy blocks those (the paper's (57) and (58)) and
+leaves the break before *have* (59). -/
+theorem rnr56_economy :
+    (∀ d ∈ BelkNeelemanPhilip2023.derivations51, d.Licensed) ∧
+      BelkNeelemanPhilip2023.shareAuxP.pivotOnset = some "have" ∧
+      rnrCost BelkNeelemanPhilip2023.shareAuxP < rnrCost BelkNeelemanPhilip2023.shareVP ∧
+      rnrCost BelkNeelemanPhilip2023.shareAuxP < rnrCost BelkNeelemanPhilip2023.sharePP :=
+  ⟨BelkNeelemanPhilip2023.pivotOnset_nonfinite.1, by decide, by decide, by decide⟩
 
 end CitkoGracaninYuksek2025
