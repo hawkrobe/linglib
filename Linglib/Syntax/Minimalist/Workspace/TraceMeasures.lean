@@ -27,7 +27,7 @@ cut.
 
 ## Main results
 
-* `ConnesKreimer.cutSummandsCN_accessibleCount_single`, `_pair`: the extraction identities.
+* `ConnesKreimer.cutSummandsCN_accessibleCount`: the extraction identity.
 
 ## References
 
@@ -121,60 +121,42 @@ namespace ConnesKreimer
 
 variable {α β : Type*}
 
-/-- Contracting one accessible subtree `Tv` out of a lexical-rooted object splits its accessible
-    terms as `accessibleCount T = accessibleCount Tv + accessibleCount (T/Tv) + 1`, the `+1`
-    being the contraction itself. -/
-theorem cutSummandsCN_accessibleCount_single (τ : UnorderedTree (α ⊕ β) → β)
-    (T : UnorderedTree (α ⊕ β)) (a₀ : α) (F₀ : Multiset (UnorderedTree (α ⊕ β)))
-    (hT : T = UnorderedTree.node (Sum.inl a₀) F₀)
-    (p : Multiset (UnorderedTree (α ⊕ β)) × UnorderedTree (α ⊕ β)) (hp : p ∈ cutSummandsCN τ T)
-    (Tv : UnorderedTree (α ⊕ β)) (hcard : p.1 = {Tv}) :
-    T.accessibleCount = Tv.accessibleCount + p.2.accessibleCount + 1 := by
-  have hw := cutSummandsCN_numNodes τ T p hp
-  have hl := cutSummandsCN_traceLeafCount τ T p hp
-  have hTv_lt : Tv.traceLeafCount < Tv.numNodes :=
-    cutSummandsCN_crown_traceLeafCount_lt_numNodes τ T p hp Tv
-      (by rw [hcard]; exact Multiset.mem_singleton_self Tv)
-  have hT_root : T.value = Sum.inl a₀ := by
-    rw [hT, UnorderedTree.value_node]
-  have hT_lt : T.traceLeafCount < T.numNodes :=
-    UnorderedTree.traceLeafCount_lt_numNodes_of_rootInl T a₀ hT_root
-  have hp2_lt : p.2.traceLeafCount < p.2.numNodes :=
-    UnorderedTree.traceLeafCount_lt_numNodes_of_rootInl p.2 a₀
-      ((cutSummandsCN_trunk_value τ T p hp).trans hT_root)
-  rw [hcard] at hw hl
-  simp only [Multiset.map_singleton, Multiset.sum_singleton, Multiset.card_singleton] at hw hl
+/-- A tree that is not a single trace splits its vertices into the root, its accessible terms and
+    its trace leaves. -/
+private theorem accessibleCount_add_traceLeafCount_add_one {t : UnorderedTree (α ⊕ β)}
+    (h : t.traceLeafCount < t.numNodes) :
+    t.accessibleCount + t.traceLeafCount + 1 = t.numNodes := by
   simp only [UnorderedTree.accessibleCount, UnorderedTree.numEdges]
   omega
 
-/-- Contracting two accessible subtrees adds two contractions: `accessibleCount T` is
-    `accessibleCount Tv + accessibleCount Tw + accessibleCount (T/{Tv,Tw}) + 2`. -/
-theorem cutSummandsCN_accessibleCount_pair (τ : UnorderedTree (α ⊕ β) → β)
-    (T : UnorderedTree (α ⊕ β)) (a₀ : α) (F₀ : Multiset (UnorderedTree (α ⊕ β)))
-    (hT : T = UnorderedTree.node (Sum.inl a₀) F₀)
-    (p : Multiset (UnorderedTree (α ⊕ β)) × UnorderedTree (α ⊕ β)) (hp : p ∈ cutSummandsCN τ T)
-    (Tv Tw : UnorderedTree (α ⊕ β)) (hcard : p.1 = {Tv, Tw}) :
-    T.accessibleCount = Tv.accessibleCount + Tw.accessibleCount + p.2.accessibleCount + 2 := by
+/-- Each tree a Δ^c cut extracts from a lexical-rooted object takes its accessible terms with it,
+    and its root becomes a trace ([marcolli-chomsky-berwick-2025] (1.6.8)), so
+    `accessibleCount T` is the crown's and the trunk's accessible terms plus one per extracted
+    tree. -/
+theorem cutSummandsCN_accessibleCount (τ : UnorderedTree (α ⊕ β) → β)
+    {T : UnorderedTree (α ⊕ β)} {a₀ : α} (hT : T.value = Sum.inl a₀)
+    {p : Multiset (UnorderedTree (α ⊕ β)) × UnorderedTree (α ⊕ β)} (hp : p ∈ cutSummandsCN τ T) :
+    T.accessibleCount =
+      (p.1.map UnorderedTree.accessibleCount).sum + p.2.accessibleCount + Multiset.card p.1 := by
   have hw := cutSummandsCN_numNodes τ T p hp
   have hl := cutSummandsCN_traceLeafCount τ T p hp
-  have hTv_lt : Tv.traceLeafCount < Tv.numNodes :=
-    cutSummandsCN_crown_traceLeafCount_lt_numNodes τ T p hp Tv
-      (by rw [hcard]; exact Multiset.mem_cons_self Tv {Tw})
-  have hTw_lt : Tw.traceLeafCount < Tw.numNodes :=
-    cutSummandsCN_crown_traceLeafCount_lt_numNodes τ T p hp Tw
-      (by rw [hcard]; exact Multiset.mem_cons_of_mem (Multiset.mem_singleton_self Tw))
-  have hT_root : T.value = Sum.inl a₀ := by
-    rw [hT, UnorderedTree.value_node]
-  have hT_lt : T.traceLeafCount < T.numNodes :=
-    UnorderedTree.traceLeafCount_lt_numNodes_of_rootInl T a₀ hT_root
-  have hp2_lt : p.2.traceLeafCount < p.2.numNodes :=
-    UnorderedTree.traceLeafCount_lt_numNodes_of_rootInl p.2 a₀
-      ((cutSummandsCN_trunk_value τ T p hp).trans hT_root)
-  rw [hcard] at hw hl
-  simp only [Multiset.insert_eq_cons, Multiset.map_cons, Multiset.sum_cons,
-    Multiset.map_singleton, Multiset.sum_singleton, Multiset.card_cons,
-    Multiset.card_singleton] at hw hl
-  simp only [UnorderedTree.accessibleCount, UnorderedTree.numEdges]
+  have hT' := accessibleCount_add_traceLeafCount_add_one
+    (UnorderedTree.traceLeafCount_lt_numNodes_of_rootInl T a₀ hT)
+  have hp2 := accessibleCount_add_traceLeafCount_add_one
+    (UnorderedTree.traceLeafCount_lt_numNodes_of_rootInl p.2 a₀
+      ((cutSummandsCN_trunk_value τ T p hp).trans hT))
+  have hcrown : ∀ m : Multiset (UnorderedTree (α ⊕ β)), (∀ c ∈ m, c.traceLeafCount < c.numNodes) →
+      (m.map UnorderedTree.accessibleCount).sum + (m.map UnorderedTree.traceLeafCount).sum +
+        Multiset.card m = (m.map UnorderedTree.numNodes).sum := by
+    intro m hm
+    induction m using Multiset.induction with
+    | empty => simp
+    | cons c m ih =>
+      have := accessibleCount_add_traceLeafCount_add_one (hm c (Multiset.mem_cons_self _ _))
+      have := ih fun d hd ↦ hm d (Multiset.mem_cons_of_mem hd)
+      simp only [Multiset.map_cons, Multiset.sum_cons, Multiset.card_cons]
+      omega
+  have := hcrown p.1 fun c hc ↦ cutSummandsCN_crown_traceLeafCount_lt_numNodes τ T p hp c hc
   omega
 
 end ConnesKreimer
