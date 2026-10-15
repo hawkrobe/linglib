@@ -76,16 +76,16 @@ def rumor : World → Prop := (·.2 = true)
 /-- As evidence of things, the rumor makes the background at `w` record its status in `w`, so
 the accessible worlds are those with a counterpart of the actual rumor, or with none if there is
 none. -/
-def evidence : ConvBackground World := fun w ↦ {fun v ↦ v.2 = w.2}
+def evidence : Background World := fun w ↦ {fun v ↦ v.2 = w.2}
 
 /-- As a source of information, the rumor makes the background list its content. -/
-def content : ConvBackground World := Function.const World {chief}
+def content : Background World := Function.const World {chief}
 
 /-- Decide a claim about the backgrounds over the four worlds. -/
 scoped macro "decide_worlds" : tactic =>
   `(tactic| ((try simp only [simpleNecessity, simplePossibility, ModalLogic.Box,
-      ModalLogic.Diamond, ConvBackground.mem_accessible, ConvBackground.mem_accessibleWorlds,
-      ConvBackground.IsRealistic, evidence, content, chief, rumor, Function.const_apply,
+      ModalLogic.Diamond, Background.mem_accessible, Background.mem_accessibleWorlds,
+      Background.IsRealistic, evidence, content, chief, rumor, Function.const_apply,
       Set.mem_singleton_iff, forall_eq, false_implies, implies_true, and_true]) <;>
       decide))
 
@@ -114,11 +114,11 @@ theorem can_chief (w : World) (h : rumor w) : simplePossibility evidence chief w
 /-- From a reliable source (8a) holds. If the background also records that the rumor is
 reliable, a proposition entailing its content wherever the rumor exists, then Roger must have
 been elected chief, for any worlds and backgrounds. -/
-theorem must_of_reliable {W : Type*} (rumor chief reliable : W → Prop) (f : ConvBackground W)
+theorem must_of_reliable {W : Type*} (rumor chief reliable : W → Prop) (f : Background W)
     (hf : ∀ w, rumor w → rumor ∈ f w ∧ reliable ∈ f w)
     (hrel : ∀ v, reliable v → rumor v → chief v) (w : W) (hw : rumor w) :
     simpleNecessity f chief w := fun v hv ↦
-  have hv := ConvBackground.mem_accessibleWorlds.1 hv
+  have hv := Background.mem_accessibleWorlds.1 hv
   hrel v (hv reliable (hf w hw).2) (hv rumor (hf w hw).1)
 
 /-! ### Grades of possibility (§2.4–§2.5)
@@ -203,7 +203,7 @@ end Measures
 
 /-- Under the Limit Assumption, necessity and possibility coincide when no two accessible worlds
 are tied or incomparable, since there is then a single best world (§2.5). -/
-theorem humanNecessity_iff_humanPossibility {W : Type*} {f g : ConvBackground W}
+theorem humanNecessity_iff_humanPossibility {W : Type*} {f g : Background W}
     {w : W} (p : W → Prop) (hlim : LimitAssumption f g w) (hne : (f.accessibleWorlds w).Nonempty)
     (htot : ∀ u ∈ f.accessibleWorlds w, ∀ v ∈ f.accessibleWorlds w, (u ≤[g w] v) ∨ (v ≤[g w] u))
     (hanti : ∀ u ∈ f.accessibleWorlds w, ∀ v ∈ f.accessibleWorlds w,
@@ -226,7 +226,7 @@ abbrev World := Fin 4
 
 /-- The ordering source of §2.4, `{w₃}`, `{w₂, w₃}` and `{w₁, w₂, w₃}` at every world, which
 induces the ranking `O₁` of §2.5. -/
-def ideal : ConvBackground World := fun _ ↦ {(3 ≤ ·), (2 ≤ ·), (1 ≤ ·)}
+def ideal : Background World := fun _ ↦ {(3 ≤ ·), (2 ≤ ·), (1 ≤ ·)}
 
 /-- The ranking `w₃ < w₂ < w₁ < w₀` is connected and has no ties, one world being at least as
 good as another exactly when its index is at least the other's. -/
@@ -276,16 +276,16 @@ theorem betterPossibility_iff (p q : Set World) : BetterPossibility p q ↔ prob
 
 /-- The ordering source `{w₂}`, `{w₂, w₃}`, `{w₁, w₂, w₃}`, which induces the ranking `O₂`,
 `w₂ < w₃ < w₁ < w₀`. -/
-def swapped : ConvBackground World := fun _ ↦ {(· = 2), (2 ≤ ·), (1 ≤ ·)}
+def swapped : Background World := fun _ ↦ {(· = 2), (2 ≤ ·), (1 ≤ ·)}
 
 /-- The ordering source `{w₂, w₃}`, `{w₁, w₂, w₃}` of p. 46, which induces the ranking `O₃`,
 `w₂, w₃ < w₁ < w₀`, with a tie. -/
-def tied : ConvBackground World := fun _ ↦ {(2 ≤ ·), (1 ≤ ·)}
+def tied : Background World := fun _ ↦ {(2 ≤ ·), (1 ≤ ·)}
 
 /-- `w₃` is the best world under `O₁`. -/
 theorem bestWorlds_ideal : bestWorlds ⊥ ideal 0 = {3} := by
   ext x
-  simp only [mem_bestWorlds, ConvBackground.accessibleWorlds_bot, Set.mem_univ, true_and,
+  simp only [mem_bestWorlds, Background.accessibleWorlds_bot, Set.mem_univ, true_and,
     forall_const, atLeastAsGoodAs_ideal_iff, Set.mem_singleton_iff]
   revert x
   decide
@@ -293,7 +293,7 @@ theorem bestWorlds_ideal : bestWorlds ⊥ ideal 0 = {3} := by
 /-- `w₂` is the best world under `O₂`. -/
 theorem bestWorlds_swapped : bestWorlds ⊥ swapped 0 = {2} := by
   ext x
-  simp only [mem_bestWorlds, ConvBackground.accessibleWorlds_bot, Set.mem_univ, true_and,
+  simp only [mem_bestWorlds, Background.accessibleWorlds_bot, Set.mem_univ, true_and,
     forall_const, atLeastAsGoodAs_iff, swapped, Set.mem_insert_iff, Set.mem_singleton_iff,
     forall_eq_or_imp,
     forall_eq]
@@ -303,18 +303,18 @@ theorem bestWorlds_swapped : bestWorlds ⊥ swapped 0 = {2} := by
 /-- `w₂` and `w₃` are the best worlds under `O₃`. -/
 theorem bestWorlds_tied : bestWorlds ⊥ tied 0 = {2, 3} := by
   ext x
-  simp only [mem_bestWorlds, ConvBackground.accessibleWorlds_bot, Set.mem_univ, true_and,
+  simp only [mem_bestWorlds, Background.accessibleWorlds_bot, Set.mem_univ, true_and,
     forall_const, atLeastAsGoodAs_iff, tied, Set.mem_insert_iff, Set.mem_singleton_iff,
     forall_eq_or_imp,
     forall_eq]
   revert x
   decide
 
-private theorem humanNecessity_iff_forall {g : ConvBackground World} (p : World → Prop) :
+private theorem humanNecessity_iff_forall {g : Background World} (p : World → Prop) :
     humanNecessity ⊥ g p 0 ↔ ∀ v ∈ bestWorlds ⊥ g 0, p v := by
   rw [humanNecessity_iff_necessity (.of_finite _ _ _), necessity_iff]
 
-private theorem humanPossibility_iff_exists {g : ConvBackground World} (p : World → Prop) :
+private theorem humanPossibility_iff_exists {g : Background World} (p : World → Prop) :
     humanPossibility ⊥ g p 0 ↔ ∃ v ∈ bestWorlds ⊥ g 0, p v := by
   rw [humanPossibility_iff_possibility (.of_finite _ _ _), possibility_iff]
 
@@ -334,7 +334,7 @@ probability is at least `8/15` (§2.5). -/
 theorem humanPossibility_iff (p : World → Prop) :
     humanPossibility ⊥ ideal p 0 ↔ 8 / 15 ≤ prob {w | p w} := by
   refine (humanNecessity_iff_humanPossibility p (.of_finite _ _ _)
-    ⟨0, by simp [ConvBackground.accessibleWorlds_bot]⟩ (fun u _ v _ ↦ ?_)
+    ⟨0, by simp [Background.accessibleWorlds_bot]⟩ (fun u _ v _ ↦ ?_)
     (fun u _ v _ h h' ↦ ?_)).symm.trans (humanNecessity_iff p)
   · simp only [atLeastAsGoodAs_ideal_iff]
     exact le_total v u

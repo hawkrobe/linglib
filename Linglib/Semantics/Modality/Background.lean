@@ -20,11 +20,11 @@ modal base at `w` fix the worlds accessible from `w`, and those of an ordering s
 
 ## Main definitions
 
-* `ConvBackground W`: the backgrounds over `W`, a complete lattice pointwise, with `⊥` the empty
+* `Background W`: the backgrounds over `W`, a complete lattice pointwise, with `⊥` the empty
   background.
-* `ConvBackground.accessibleWorlds f w`: the worlds verifying every premise of `f w`.
-* `ConvBackground.IsRealistic`, `ConvBackground.IsTotallyRealistic`.
-* `ConvBackground.restrict f α`: `f` with the premise `α` added at every world.
+* `Background.accessibleWorlds f w`: the worlds verifying every premise of `f w`.
+* `Background.IsRealistic`, `Background.IsTotallyRealistic`.
+* `Background.restrict f α`: `f` with the premise `α` added at every world.
 * `premisePreorder A`, `w ≤[A] z`, `w <[A] z`: the ordering a premise set induces.
 * `bestAmong worlds A`, `bestWorlds f g w`: the minimal worlds of a domain, and of the worlds
   accessible under `f` ranked by `g`.
@@ -43,15 +43,15 @@ namespace Modality
 variable {W : Type*}
 
 /-- A conversational background assigns each world a premise set. -/
-abbrev ConvBackground (W : Type*) := W → Set (W → Prop)
+abbrev Background (W : Type*) := W → Set (W → Prop)
 
-namespace ConvBackground
+namespace Background
 
-variable {f f' : ConvBackground W} {w v : W}
+variable {f f' : Background W} {w v : W}
 
 /-- The worlds accessible from `w` under `f` are those verifying every premise of `f w`,
 Kratzer's `⋂f(w)`. -/
-def accessibleWorlds (f : ConvBackground W) (w : W) : Set W := {v | sInf (f w) v}
+def accessibleWorlds (f : Background W) (w : W) : Set W := {v | sInf (f w) v}
 
 @[simp] theorem mem_accessibleWorlds : v ∈ f.accessibleWorlds w ↔ ∀ p ∈ f w, p v := by
   simp [accessibleWorlds]
@@ -60,25 +60,25 @@ def accessibleWorlds (f : ConvBackground W) (w : W) : Set W := {v | sInf (f w) v
 theorem accessibleWorlds_anti (h : f w ⊆ f' w) : f'.accessibleWorlds w ⊆ f.accessibleWorlds w :=
   fun v hv ↦ sInf_le_sInf h v hv
 
-@[simp] theorem accessibleWorlds_bot (w : W) : (⊥ : ConvBackground W).accessibleWorlds w = .univ :=
+@[simp] theorem accessibleWorlds_bot (w : W) : (⊥ : Background W).accessibleWorlds w = .univ :=
   Set.eq_univ_of_forall fun _ ↦ by simp [accessibleWorlds]
 
 /-- A background is realistic when every world is accessible from itself, verifying its own
 premises. -/
-def IsRealistic (f : ConvBackground W) : Prop := ∀ w, w ∈ f.accessibleWorlds w
+def IsRealistic (f : Background W) : Prop := ∀ w, w ∈ f.accessibleWorlds w
 
 /-- A background is totally realistic when its premises at a world single out that world. -/
-def IsTotallyRealistic (f : ConvBackground W) : Prop := ∀ w, f.accessibleWorlds w = {w}
+def IsTotallyRealistic (f : Background W) : Prop := ∀ w, f.accessibleWorlds w = {w}
 
 /-- The background `f` restricted by `α`, the premise a conditional antecedent adds, so that
 *if α, must β* is `must_{f + α} β`. -/
-def restrict (f : ConvBackground W) (α : W → Prop) : ConvBackground W := fun w ↦ insert α (f w)
+def restrict (f : Background W) (α : W → Prop) : Background W := fun w ↦ insert α (f w)
 
 @[simp] theorem mem_accessibleWorlds_restrict {α : W → Prop} :
     v ∈ (f.restrict α).accessibleWorlds w ↔ v ∈ f.accessibleWorlds w ∧ α v := by
   simp [restrict, and_comm]
 
-theorem accessibleWorlds_restrict (f : ConvBackground W) (α : W → Prop) (w : W) :
+theorem accessibleWorlds_restrict (f : Background W) (α : W → Prop) (w : W) :
     (f.restrict α).accessibleWorlds w = {v ∈ f.accessibleWorlds w | α v} :=
   Set.ext fun _ ↦ mem_accessibleWorlds_restrict
 
@@ -88,7 +88,7 @@ theorem accessibleWorlds_restrict_mono {α₁ α₂ : W → Prop} (h : α₂ ≤
   mem_accessibleWorlds_restrict.2 ⟨(mem_accessibleWorlds_restrict.1 hv).1,
     h v (mem_accessibleWorlds_restrict.1 hv).2⟩
 
-end ConvBackground
+end Background
 
 /-! ### The ordering -/
 
@@ -183,23 +183,23 @@ theorem exists_mem_bestAmong [Finite W] (h : worlds.Nonempty) : (bestAmong world
 /-- The best accessible worlds from `w` are the best among the accessible worlds under the ordering
 source at `w`. Kratzer's official necessity is the limit-free `humanNecessity`, which quantifies
 over exactly this set under the Limit Assumption (`humanNecessity_iff_necessity`). -/
-def bestWorlds (f g : ConvBackground W) (w : W) : Set W :=
+def bestWorlds (f g : Background W) (w : W) : Set W :=
   bestAmong (f.accessibleWorlds w) (g w)
 
-theorem mem_bestWorlds {f g : ConvBackground W} {w u : W} :
+theorem mem_bestWorlds {f g : Background W} {w u : W} :
     u ∈ bestWorlds f g w ↔
       u ∈ f.accessibleWorlds w ∧ ∀ v ∈ f.accessibleWorlds w, (v ≤[g w] u) → (u ≤[g w] v) :=
   Iff.rfl
 
 /-- With the empty ordering source the best worlds are the accessible ones. -/
-@[simp] theorem bestWorlds_bot (f : ConvBackground W) (w : W) :
+@[simp] theorem bestWorlds_bot (f : Background W) (w : W) :
     bestWorlds f ⊥ w = f.accessibleWorlds w :=
   bestAmong_empty _
 
 /-- A best world verifying a member of the ordering source that excludes `p` stays best when `p` is
 added, because no `p`-world is at least as good, since it fails the member, and the other worlds are
 ordered as before. -/
-theorem mem_bestWorlds_insert {f g : ConvBackground W} {p q : W → Prop} {w u : W}
+theorem mem_bestWorlds_insert {f g : Background W} {p q : W → Prop} {w u : W}
     (hq : q ∈ g w) (hpq : ∀ v, q v → ¬ p v) (hu : u ∈ bestWorlds f g w) (huq : q u) :
     u ∈ bestWorlds f (fun v ↦ insert p (g v)) w := by
   refine ⟨hu.1, fun v hv hvu ↦ ?_⟩
@@ -211,7 +211,7 @@ theorem mem_bestWorlds_insert {f g : ConvBackground W} {p q : W → Prop} {w u :
 
 /-- A best world of a modal base is a best world of any narrower modal base it is accessible
 under. -/
-theorem mem_bestWorlds_of_subset {f f' g : ConvBackground W} {w u : W}
+theorem mem_bestWorlds_of_subset {f f' g : Background W} {w u : W}
     (h : f'.accessibleWorlds w ⊆ f.accessibleWorlds w) (hu : u ∈ bestWorlds f g w)
     (hu' : u ∈ f'.accessibleWorlds w) : u ∈ bestWorlds f' g w :=
   bestAmong_superset h hu hu'

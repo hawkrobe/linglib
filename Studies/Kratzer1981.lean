@@ -77,15 +77,15 @@ abbrev World := Bool × Bool
 def w₀ : World := (false, false)
 
 /-- The relevant circumstances are that the speaker becomes mayor only by going to the pub. -/
-def circumstances : ConvBackground World := Function.const World {fun w ↦ w.1 = true → w.2 = true}
+def circumstances : Background World := Function.const World {fun w ↦ w.1 = true → w.2 = true}
 
 /-- The speaker wants to become mayor and to avoid the pub. -/
-def desires : ConvBackground World :=
+def desires : Background World :=
   Function.const World {fun w ↦ w.1 = true, fun w ↦ w.2 = false}
 
 /-- Decide a claim about the backgrounds and the ordering over the four worlds. -/
 scoped macro "decide_worlds" : tactic =>
-  `(tactic| (simp only [ConvBackground.mem_accessibleWorlds, atLeastAsGoodAs_iff,
+  `(tactic| (simp only [Background.mem_accessibleWorlds, atLeastAsGoodAs_iff,
       circumstances, desires, Function.const_apply, Set.mem_insert_iff, Set.mem_singleton_iff,
       forall_eq_or_imp, forall_eq, false_implies, implies_true, and_true]; decide))
 
@@ -161,7 +161,7 @@ differ in the settings of the two backgrounds. -/
 open Conditional.Restrictor
 
 /-- A totally realistic modal base and an empty ordering source give material implication. -/
-theorem material_implication {W : Type*} {f : ConvBackground W} (hf : f.IsTotallyRealistic)
+theorem material_implication {W : Type*} {f : Background W} (hf : f.IsTotallyRealistic)
     (α β : W → Prop) (w : W) :
     conditionalNecessity f ⊥ α β w ↔ (α w → β w) :=
   material_from_restrictor f α β w (hf w)
@@ -170,12 +170,12 @@ theorem material_implication {W : Type*} {f : ConvBackground W} (hf : f.IsTotall
 holding iff the antecedent logically implies the consequent. -/
 theorem strict_implication {W : Type*} (α β : W → Prop) (w : W) :
     conditionalNecessity ⊥ ⊥ α β w ↔ ∀ v, α v → β v := by
-  rw [restrictor_eq_strict, Conditional.mem_strictImp_forall, ConvBackground.accessibleWorlds_bot]
+  rw [restrictor_eq_strict, Conditional.mem_strictImp_forall, Background.accessibleWorlds_bot]
   simp
 
 /-- Under an analysis of conditionals as modalized material implications, a necessity that
 the antecedent fail makes every conditional with that antecedent vacuously true. -/
-theorem traditional_vacuous {W : Type*} (f : ConvBackground W) (α β : W → Prop) (w : W)
+theorem traditional_vacuous {W : Type*} (f : Background W) (α β : W → Prop) (w : W)
     (h : simpleNecessity f (fun v ↦ ¬ α v) w) : simpleNecessity f (fun v ↦ α v → β v) w :=
   fun v hv hα ↦ absurd hα (h v hv)
 
@@ -207,20 +207,20 @@ instance : DecidablePred rewarded := fun s ↦ inferInstanceAs (Decidable (s = s
 /-- What is morally good is that there be no injustice and that any injustice be amended for. A
 situation with amended injustice is not good, but it is closer to the good than one where the
 injustice is rewarded or unredressed. -/
-def morallyGood : ConvBackground Situation :=
+def morallyGood : Background Situation :=
   Function.const Situation {fun s ↦ ¬ injustice s, fun s ↦ injustice s → amended s}
 
 /-- The morally accessible situations of the traditional analysis are those without injustice. -/
-def morallyAccessible : ConvBackground Situation := Function.const Situation {fun s ↦ ¬ injustice s}
+def morallyAccessible : Background Situation := Function.const Situation {fun s ↦ ¬ injustice s}
 
 /-- Decide a claim about the backgrounds and the ordering over the four situations. -/
 scoped macro "decide_situations" : tactic =>
-  `(tactic| (simp only [ConvBackground.mem_accessibleWorlds,
-      ConvBackground.mem_accessibleWorlds_restrict, ConvBackground.accessibleWorlds_bot,
+  `(tactic| (simp only [Background.mem_accessibleWorlds,
+      Background.mem_accessibleWorlds_restrict, Background.accessibleWorlds_bot,
       Set.mem_univ, true_and, atLeastAsGoodAs_iff, morallyGood, morallyAccessible,
       Function.const_apply, Set.mem_insert_iff, Set.mem_singleton_iff, forall_eq_or_imp,
       forall_eq, false_implies, implies_true, and_true, injustice, amended, rewarded,
-      ConvBackground.restrict, Pi.bot_apply, Set.bot_eq_empty, Set.mem_empty_iff_false,
+      Background.restrict, Pi.bot_apply, Set.bot_eq_empty, Set.mem_empty_iff_false,
       or_false]; decide))
 
 /-- With an empty base, the situation closest to the good is the one without injustice. -/
@@ -233,7 +233,7 @@ theorem mem_bestWorlds_good_iff (s : Situation) :
 /-- Among the situations with injustice, the one closest to the good is the one where it is
 amended for. -/
 theorem mem_bestWorlds_injustice_iff (s : Situation) :
-    s ∈ bestWorlds (ConvBackground.restrict ⊥ injustice) morallyGood none ↔
+    s ∈ bestWorlds (Background.restrict ⊥ injustice) morallyGood none ↔
       s = some .amended := by
   revert s
   simp only [mem_bestWorlds]
@@ -242,7 +242,7 @@ theorem mem_bestWorlds_injustice_iff (s : Situation) :
 /-- The restricted base satisfies the Limit Assumption, so the verdicts below are those of the
 paper's human necessity as well. -/
 theorem limitAssumption_injustice :
-    LimitAssumption (ConvBackground.restrict ⊥ injustice) morallyGood none :=
+    LimitAssumption (Background.restrict ⊥ injustice) morallyGood none :=
   .of_finite _ _ _
 
 /-- Justice must be done (59), there being no injustice in the situations closest to the

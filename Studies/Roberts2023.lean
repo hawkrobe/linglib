@@ -35,7 +35,7 @@ each addressee not to move, `realizes_nobody_move`.
 ## Implementation notes
 
 A goal-based ordering source assigns each circumstance its goals in priority order, whose set
-is a Kratzer ordering source over circumstances (`ConvBackground`), and possible futures are
+is a Kratzer ordering source over circumstances (`Background`), and possible futures are
 the substrate's `futureHistoryBase`; a goal held at a circumstance remains in force at a later
 one when it is among the goals held there. The goal profile of a circumstance is the
 list of its goals' truth values in priority order, so goal-relative preference is `<` on
@@ -122,7 +122,7 @@ theorem timelyFut_subset (c : Index W T) :
     timelyFut history g c ⊆ futureHistoryBase history c :=
   fun _ h ↦ h.1
 
-variable (f : ConvBackground (Index W T)) (P : Index W T → E → Prop) (a : E)
+variable (f : Background (Index W T)) (P : Index W T → E → Prop) (a : E)
 
 /-- A futurate circumstantial modal base (51) for the realization of `P` by `a`: every
 circumstance compatible with the base at a circumstance lies in its world, later than it, and
@@ -180,12 +180,12 @@ theorem not_mem_applic_of_strictlyBetter {c c' c₁ c₂ : Index W T}
 circumstances. -/
 theorem applic_restrict_subset (q : Index W T → Prop) (c : Index W T) :
     applic history g (f.restrict q) P a c ⊆ applic history g f P a c :=
-  fun _ h ↦ ⟨ConvBackground.accessibleWorlds_anti (Set.subset_insert _ _) h.1, h.2⟩
+  fun _ h ↦ ⟨Background.accessibleWorlds_anti (Set.subset_insert _ _) h.1, h.2⟩
 
 /-- A futurate modal base stays futurate under an if-clause. -/
 theorem IsFuturate.restrict (hf : IsFuturate history g f P a) (q : Index W T → Prop) :
     IsFuturate history g (f.restrict q) P a :=
-  fun c c' h ↦ hf c c' (ConvBackground.accessibleWorlds_anti (Set.subset_insert _ _) h)
+  fun c c' h ↦ hf c c' (Background.accessibleWorlds_anti (Set.subset_insert _ _) h)
 
 /-- Imperatives are conditional: a direction entails its restriction by an if-clause, which
 only makes explicit some of the conditions on applicability. -/
@@ -299,7 +299,7 @@ theorem nobody_livesOn (addr : E → Prop) : NP.LivesOn (nobody addr) addr :=
 applicable circumstance there is a timely later time at which none of them moves, so each of
 them is directed not to move in the applicable circumstances. -/
 theorem realizes_nobody_move [Preorder T] {history : HistoricalAlternatives W T}
-    {g : Index W T → List (Index W T → Prop)} {f : ConvBackground (Index W T)}
+    {g : Index W T → List (Index W T → Prop)} {f : Background (Index W T)}
     {addr : E → Prop}
     {move : Index W T → E → Prop} {c c' : Index W T} {x y : E}
     (h : realizes history g f (fun c _ ↦ nobody addr (move c)) x c)

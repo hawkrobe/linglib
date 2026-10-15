@@ -57,7 +57,7 @@ namespace Tsiakmakis2025
 
 open Modality Negation
 
-variable {W : Type*} (f g : ConvBackground W)
+variable {W : Type*} (f g : Background W)
 
 /-! ### The two negators (section 2) -/
 

@@ -246,7 +246,7 @@ theorem coherent_iff [Nontrivial W] {u : Use} {d : Denial} :
 
 /-- [schwager-2006]'s ordering-source affirmation, (19), read as a bouletic necessity of the
 content, predicts the consistency requirement: two affirmed contents share a best world. -/
-theorem affirmation_consistent {f g : ConvBackground W}
+theorem affirmation_consistent {f g : Background W}
     (hne : (bestWorlds f g w).Nonempty) (hp : necessity f g (· ∈ p) w)
     (hq : necessity f g (· ∈ q) w) : (p ∩ q).Nonempty :=
   let ⟨u, hu⟩ := hne; ⟨u, hp u hu, hq u hu⟩
@@ -255,7 +255,7 @@ theorem affirmation_consistent {f g : ConvBackground W}
 not follow from what is optimal, does not: whenever the speaker's wishes leave the content open,
 a content and its negation are both weakly affirmed, so (20) admits the incompatible
 imperatives of (15). -/
-theorem weak_affirmation_compl {f g : ConvBackground W}
+theorem weak_affirmation_compl {f g : Background W}
     (hp : ∃ u ∈ bestWorlds f g w, u ∈ p) (hq : ∃ u ∈ bestWorlds f g w, u ∉ p) :
     possibility f g (· ∈ p) w ∧ possibility f g (· ∈ pᶜ) w :=
   ⟨hp, hq⟩
@@ -265,7 +265,7 @@ theorem weak_affirmation_compl {f g : ConvBackground W}
 /-- [portner-2007]'s secondary update adds the content to the modal ordering source; when the
 source already holds a proposition incompatible with the content, a best world verifying it
 stays best, so the common ground does not come to entail *must p*, §5.2. -/
-theorem todo_not_must {f g : ConvBackground W} {φ ψ : W → Prop} {u : W}
+theorem todo_not_must {f g : Background W} {φ ψ : W → Prop} {u : W}
     (hψ : ψ ∈ g w) (hφψ : ∀ v, ψ v → ¬ φ v) (hu : u ∈ bestWorlds f g w) (huψ : ψ u) :
     ¬ necessity f (λ v => insert φ (g v)) φ w :=
   not_necessity_insert hψ hφψ hu huψ (hφψ u huψ)

@@ -78,11 +78,11 @@ variable {W : Type*}
 /-- Modal backgrounds with the ordering source split by negotiability. -/
 structure Backgrounds (W : Type*) where
   /-- The circumstances, the modal base proper. -/
-  circumstances : ConvBackground W
+  circumstances : Background W
   /-- The non-negotiable priorities, promoted to the modal base. -/
-  nonNegotiable : ConvBackground W
+  nonNegotiable : Background W
   /-- The negotiable priorities, which remain an ordering source. -/
-  negotiable : ConvBackground W
+  negotiable : Background W
 
 /-- A set of priorities is consistent with the circumstances at `w` when some accessible world
 verifies all of them. -/
@@ -254,11 +254,11 @@ def reportAll (v : Revenue) : Prop := v.1 = true ∧ v.2 = true
 private theorem favoredWorlds_ofIdeals (h g : List Ideal) (w : Revenue) :
     favoredWorlds (ofIdeals h g) w = {v | ∀ i ∈ h, i.holds v} := by
   have hall : (true, true) ∈ (ofIdeals h g).circumstances.accessibleWorlds w := by
-    show (true, true) ∈ ConvBackground.accessibleWorlds ⊥ w
-    rw [ConvBackground.accessibleWorlds_bot]; exact Set.mem_univ _
+    show (true, true) ∈ Background.accessibleWorlds ⊥ w
+    rw [Background.accessibleWorlds_bot]; exact Set.mem_univ _
   rw [favoredWorlds_eq_bestWorlds, bestWorlds, bestAmong_eq_of_exists ⟨(true, true), hall, ?_⟩]
   · ext v
-    simp only [ofIdeals, ConvBackground.accessibleWorlds_bot, Set.mem_univ, true_and,
+    simp only [ofIdeals, Background.accessibleWorlds_bot, Set.mem_univ, true_and,
       Set.forall_mem_image, Set.mem_ofPred_eq]
   · rintro q ⟨i, -, rfl⟩
     cases i <;> rfl

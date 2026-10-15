@@ -39,7 +39,7 @@ namespace Conditional.Restrictor
 
 open Modality
 
-variable {W : Type*} (f g : ConvBackground W) (α β : W → Prop) (w : W)
+variable {W : Type*} (f g : Background W) (α β : W → Prop) (w : W)
 
 /-- *If α, must β* on the restrictor analysis is necessity over the modal base restricted by
 α. -/
@@ -55,7 +55,7 @@ theorem conditionalNecessity_iff_mem_orderingImp :
     conditionalNecessity f g α β w ↔
       w ∈ orderingImp (f.accessibleWorlds) (fun w ↦ premisePreorder (g w)) {v | α v} {v | β v} := by
   rw [conditionalNecessity, necessity_iff, mem_orderingImp, bestWorlds, bestAmong,
-    ConvBackground.accessibleWorlds_restrict]
+    Background.accessibleWorlds_restrict]
   rfl
 
 /-- *If α, might β* is the *might* of the conditional over the best accessible α-worlds. -/

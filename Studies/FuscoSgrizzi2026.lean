@@ -73,21 +73,21 @@ variable {I V W : Type*}
 worlds, the best worlds of a circumstantial base under an inertial ordering ([dowty-1979],
 [kratzer-2013]), with the eventuality argument of its complement closed over what the state
 causes. -/
-def aP (circumstances : V → ConvBackground W) (inertia : V → ConvBackground W)
+def aP (circumstances : V → Background W) (inertia : V → Background W)
     (causeStar : V → V → W → Prop) (P : W → V → Prop) (s : V) (w : W) : Prop :=
   necessity (circumstances s) (inertia s) (causedClosure causeStar s P) w
 
 /-- The head *a* is the causal subjunctive of [grano-2024]'s (134) with an inertial ordering
 added: with no ordering it is simple necessity of the same prejacent over the circumstantially
 accessible worlds. -/
-theorem aP_bot (circumstances : V → ConvBackground W) (causeStar : V → V → W → Prop)
+theorem aP_bot (circumstances : V → Background W) (causeStar : V → V → W → Prop)
     (P : W → V → Prop) (s : V) (w : W) :
     aP circumstances (fun _ ↦ ⊥) causeStar P s w ↔
       Grano2024.sbjvCausal (fun s w' ↦ w ~[(circumstances s).accessible] w') causeStar P s :=
   necessity_bot_iff ..
 
 /-- The head *di* (26) is necessity over the state's content worlds of a proposition. -/
-def diP (content : V → ConvBackground W) (Q : W → Prop) (s : V) (w : W) : Prop :=
+def diP (content : V → Background W) (Q : W → Prop) (s : V) (w : W) : Prop :=
   simpleNecessity (content s) Q w
 
 /-- The relations the denotation (24) draws on, convincing events, the thematic relations,
@@ -106,8 +106,8 @@ def Frame.convincere (F : Frame I V W) (P : V → Prop) (x y : I) (e : V) (w : W
   ∃ s, F.convince e w ∧ F.agent e y w ∧ F.patient e x w ∧ F.cause e s ∧ F.rationalAttitude s ∧
     F.experiencer x s ∧ P s
 
-variable (F : Frame I V W) (content circumstances : V → ConvBackground W)
-  (inertia : V → ConvBackground W)
+variable (F : Frame I V W) (content circumstances : V → Background W)
+  (inertia : V → Background W)
   (causeStar : V → V → W → Prop) (P : W → V → Prop) (x y : I) (e : V) (w : W)
 
 /-- The belief report is *convincere* with the *di*-complement, whose closure head (23b) turns the

@@ -89,7 +89,7 @@ inductive Word where
   | deontic
   deriving DecidableEq, Repr
 
-variable {W : Type} (f g : ConvBackground W)
+variable {W : Type} (f g : Background W)
 
 /-- The operator a word denotes. A polarity head acts on propositions, so that Σ is the identity
 and NEG complementation, and the deontic modal is necessity over the modal base and ordering

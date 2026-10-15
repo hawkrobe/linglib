@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Semantics.Modality.ConvBackground
+public import Linglib.Semantics.Modality.Background
 
 /-!
 # Rudin (2025): Asserting epistemic modals

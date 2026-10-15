@@ -45,7 +45,7 @@ namespace BonehDoron2013
 open Event (τ)
 
 open Aspect (Perfectivity IMPF)
-open Modality (ConvBackground)
+open Modality (Background)
 
 /-! ### Hab against Gen ((4)–(8), (13)–(15))
 
@@ -71,7 +71,7 @@ theorem same_object_infelicity {E C : Type*} [SemilatticeSup E]
 /-- Gen holds at the interval `i` and world `w` when every `Q`-individual temporally included in
 `i` is a `P`-individual throughout the gnomic modal base of `i` at `w`, (21). It is GEN with
 every case normal and its modality in the matrix. -/
-def gen {W Z T : Type*} (P Q : Z → W → Prop) (τ : Z → Set T) (mb : Set T → ConvBackground W)
+def gen {W Z T : Type*} (P Q : Z → W → Prop) (τ : Z → Set T) (mb : Set T → Background W)
     (i : Set T) (w : W) : Prop :=
   (i, w) ∈ (⊤ : Genericity.Normality (Set T × W) Z).gen {z | τ z ⊆ i ∧ Q z w}
     {z | Modality.simpleNecessity (mb i) (P z) w}
@@ -88,14 +88,14 @@ theorem gen_admits_fresh_objects :
 and an iteration occurs in every accessible world of the gnomic modal base, (13), (15). The paper
 leaves "indicating a disposition" unanalyzed, so it is a parameter, and the temporal anchoring
 `τ(s) ⊆ τ(e)` is dropped with the event times. -/
-def hab {W E : Type*} [SemilatticeSup E] (P : E → W → Prop) (mb : ConvBackground W)
+def hab {W E : Type*} [SemilatticeSup E] (P : E → W → Prop) (mb : Background W)
     (indicatesDisposition : W → Prop) (w : W) : Prop :=
   indicatesDisposition w ∧ ∀ w' ∈ mb.accessibleWorlds w, ∃ e, Mereology.IsPlural (P · w') e
 
 /-- Hab is dispositional, holding on a single actual initiating event with the iteration only in
 the accessible worlds, (16)–(17), (42a–b). -/
 theorem hab_without_actual_iteration :
-    ∃ (P : Finset ℕ → Bool → Prop) (mb : ConvBackground Bool),
+    ∃ (P : Finset ℕ → Bool → Prop) (mb : Background Bool),
       hab P mb (· = false) false ∧ ¬ ∃ e, Mereology.IsPlural (P · false) e := by
   refine ⟨fun e w' => match w' with | true => e.Nonempty ∧ e ⊆ {0, 1} | false => e = {0},
     fun _ => {(· = true)}, ⟨rfl, ?_⟩, ?_⟩

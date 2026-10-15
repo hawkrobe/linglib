@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Semantics.Modality.ConvBackground
+public import Linglib.Semantics.Modality.Background
 public import Linglib.Semantics.Presupposition.Defs
 public import Linglib.Semantics.Attitudes.Preference.Conditional
 
