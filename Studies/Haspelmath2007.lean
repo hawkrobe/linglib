@@ -2,6 +2,7 @@ module
 
 public import Mathlib.Data.Fintype.Basic
 public import Mathlib.Tactic.DeriveFintype
+public import Linglib.Data.Examples.Haspelmath2007
 public import Linglib.Syntax.Category.Coordinator
 public import Linglib.Fragments.English.Coordination
 public import Linglib.Fragments.Finnish.Coordination
@@ -24,45 +25,46 @@ public import Linglib.Fragments.Yoruba.Coordination
 /-!
 # Haspelmath (2007): Coordination
 
-This file formalizes the typology of coordinators in Haspelmath's chapter: the patterns of
-coordinator placement in binary coordination, (17), and the two derivations built on them. The
-first is diachronic, §1.2: a conjunctive coordinator descends from a comitative modifier 'A with
-B' or from an additive focus particle 'A, also B', `DiachronicSource.pattern` gives the pattern
-of each source construction, and `coAB_unsourced` derives that the one logically possible
-monosyndetic pattern no language attests, co-A B, is the one no source yields. The second is
-Table 1.1, §1.4: the full n-ary pattern repeats the binary marking on every coordinand but the
-one bare in the binary construction (`full`) and coordinator omission keeps only the last
-coordinator (`omitted`); `table_1_1` recovers the table's five rows. `attestations` are the
-constructions the chapter cites with their patterns, over which `bisyndetic_normal_postpositive`
-states the observation of §1.3 and §2.1 that non-emphatic bisyndesis is postpositive with two
-coordinators of the same shape and `prepositive_bisyndetic_emphatic` Stassen's, that
-prepositive bisyndesis is an emphatic variant. The emphatic correlatives of (45) are classified
-from their forms by `CorrelativeShape.classify`, and Payne's implicational sequence of
-coordinand types, §3, is `Contiguous`, with Tinrin the counterexample the chapter records.
-The chapter's examples are the rows of `Data/Examples/Haspelmath2007.json`.
+Haspelmath's chapter classifies coordinate constructions by where their coordinators go. A
+binary pattern, (17), is the pair of the markings of the two coordinands. The two diachronic
+sources of conjunction, §1.2, a comitative modifier 'A with B' and an additive focus particle
+'A, also B', yield patterns from the order of their parts, and no source whose modifier order and
+adposition order are harmonic yields co-A B, the pattern no language attests. Table 1.1 derives
+the patterns of multiple coordination from the binary one.
+
+The chapter's examples are the rows of `Data/Examples/Haspelmath2007.json`. Each construction is
+analysed by its coordinators, one coordinator or a correlative pair. Of the binary examples, the
+chapter calls emphatic exactly the correlative ones, and the bisyndetic ones that are not
+correlative are postpositive, §1.3 and §2.1. The file also classifies the correlatives of (45) by
+their forms and states Payne's implicational sequence of coordinand types, §3, with the
+counterexample from Tinrin the chapter records.
+
+## Main statements
+
+* `coAB_unsourced`: no harmonic source yields co-A B.
+* `emphatic_iff_correlative`: the emphatic constructions are the correlative ones.
+* `normal_bisyndetic_postpositive`: normal bisyndesis is postpositive.
 
 ## Implementation notes
 
-The chapter's exemplar languages with Fragment coordination entries use them, in the attestations
-and in the correlative pairs of (45), conjunctive and disjunctive; the others carry their
-coordinator inline. A binary pattern is the pair of its coordinands' markings, so syndesis is the
-number of marked coordinands, and `marking_agrees_with_side` checks the patterns against the
-attachment side the Fragments record for each coordinator. Whether a construction is emphatic is
-recorded only where the chapter says so, and a diachronic source only where the chapter states one,
-so Classical Tibetan *-daŋ* and Turkish *-le*, which the chapter says "come from a former
-case-marker" without naming the case, have none; the Fragments record, after Beyer and after Göksel
-and Kerslake, that both are still comitative markers
-(`former_case_marker_isAlsoComitative`). The word-order half of the comitative derivation,
-adposition order following modifier order, is taken as the `CoordinatorPosition` argument of
-`DiachronicSource.pattern`. The comitative-sourced attestations include Tauya *-sou*, doubled on
-both conjuncts, the extension §5.1 notes, so `comitative_patterns` admits the postpositive
-bisyndetic pattern beside the two source patterns.
+* A construction's coordinators are its language's Fragment entries where they exist, and are
+  written inline otherwise. A pair of coordinators is a `Coordinator.Correlative`; the single
+  coordinator of a mixed pair, (27) and (28), is taken to be its second, as in (45b).
+* The rows record emphasis only where the chapter states it. Keeping every coordinator of a
+  multiple coordination is emphatic in European languages, p. 12, which is not emphasis by
+  correlatives, so `emphatic_iff_correlative` is about binary coordination.
+* Classical Tibetan *-daŋ* and Turkish *-le*, which the chapter says "come from a former
+  case-marker" without naming the case, have no source in the rows; the Fragments record, after
+  Beyer and after Göksel and Kerslake, that both are still comitative markers
+  (`former_case_marker_isAlsoComitative`).
 
 ## References
 
 * [haspelmath-2007]
 * [beyer-1992]
+* [dryer-1992]
 * [goksel-kerslake-2005]
+* [greenberg-1963]
 * [stassen-2000]
 -/
 
@@ -70,62 +72,86 @@ bisyndetic pattern beside the two source patterns.
 
 namespace Haspelmath2007
 
+open Morphology (Morph)
+
 /-! ### Binary patterns, (17) -/
 
-/-- The marking of a coordinand: bare, or carrying a prepositive coordinator, co-A, or a
-postpositive one, A-co. -/
+/-- A coordinand is bare or carries a prepositive coordinator, co-A, or a postpositive one,
+A-co. -/
 inductive Slot where
   | bare
   | pre
   | post
   deriving DecidableEq, Repr
 
-/-- A binary pattern, (17): the markings of the two coordinands, so that A co-B is
-`(.bare, .pre)` and A-co B-co is `(.post, .post)`. -/
+/-- The marking of a coordinand by a coordinator on the given side of it. -/
+def Slot.ofSide : Morph.Side → Slot
+  | .before => .pre
+  | .after => .post
+
+/-- A binary pattern, (17), is the pair of the markings of the two coordinands, so that A co-B
+is `(.bare, .pre)` and A-co B-co is `(.post, .post)`. -/
 abbrev Pattern := Slot × Slot
 
-/-- The number of coordinators in a pattern: none in asyndetic, one in monosyndetic and two in
-bisyndetic coordination, §1. -/
+/-- The syndesis of a pattern is its number of coordinators, none in asyndetic, one in
+monosyndetic and two in bisyndetic coordination, §1. -/
 def Pattern.syndesis (p : Pattern) : ℕ := [p.1, p.2].countP (· ≠ .bare)
 
-/-- Monosyndetic coordination is universally asymmetric, §1.2: one coordinand is bare. -/
+/-- Monosyndetic coordination is universally asymmetric, §1.2, with one coordinand bare. -/
 theorem monosyndetic_bare (p : Pattern) (h : p.syndesis = 1) : p.1 = .bare ∨ p.2 = .bare := by
   revert h; rcases p with ⟨_ | _ | _, _ | _ | _⟩ <;> decide
 
-/-- The position of a coordinator relative to its coordinand, §1.2. -/
-inductive CoordinatorPosition where
-  | prepositive
-  | postpositive
-  deriving DecidableEq, Repr
+/-! ### Diachronic sources, §1.2 -/
 
-/-- The source construction of a conjunctive coordinator, §1.2 and §5.1: a comitative modifier
-'A with B' or an additive focus particle 'A, also B'. -/
+/-- A conjunctive coordinator comes from a comitative modifier 'A with B', given by the side of
+B its adposition goes on and the side of the noun the modifier goes on, or from an additive focus
+particle 'A, also B', given by the side of B it goes on, §1.2 and §5.1. -/
 inductive DiachronicSource where
-  | comitative
-  | focusParticle
+  | comitative (adposition modifier : Morph.Side)
+  | focusParticle (particle : Morph.Side)
   deriving DecidableEq, Repr
 
-/-- The binary pattern of a source construction, §1.2: a comitative modifier 'A with B' is A-co B
-in a language with postpositions and A co-B in one with prepositions, and an additive focus
-particle marks the second conjunct, 'A, B too' giving A B-co and 'A, also B' giving A co-B. -/
-def DiachronicSource.pattern : DiachronicSource → CoordinatorPosition → Pattern
-  | .comitative, .postpositive => (.post, .bare)
-  | .comitative, .prepositive => (.bare, .pre)
-  | .focusParticle, .postpositive => (.bare, .post)
-  | .focusParticle, .prepositive => (.bare, .pre)
+namespace DiachronicSource
 
-/-- No source construction has the pattern co-A B, §1.2: the explanation of its absence in
-[stassen-2000]'s sample of 260 languages. -/
-theorem coAB_unsourced (s : DiachronicSource) (pos : CoordinatorPosition) :
-    s.pattern pos ≠ (.pre, .bare) := by
-  cases s <;> cases pos <;> decide
+/-- The binary pattern of a source construction, §1.2. The comitative phrase is the first
+coordinand when modifiers precede the noun and the second when they follow it, marked on the side
+of its adposition, and the focus particle marks the second conjunct on its own side, so that
+'A, B too' gives A B-co and 'A, also B' gives A co-B. -/
+def pattern : DiachronicSource → Pattern
+  | .comitative adposition .before => (.ofSide adposition, .bare)
+  | .comitative adposition .after => (.bare, .ofSide adposition)
+  | .focusParticle particle => (.bare, .ofSide particle)
+
+/-- A comitative source is harmonic when modifiers precede the noun in a language with
+postpositions or follow it in one with prepositions, the orders that go together
+[greenberg-1963] [dryer-1992]; a focus particle is not a modifier. -/
+def Harmonic : DiachronicSource → Prop
+  | .comitative adposition modifier => adposition ≠ modifier
+  | .focusParticle _ => True
+
+instance : DecidablePred Harmonic
+  | .comitative adposition modifier => inferInstanceAs (Decidable (adposition ≠ modifier))
+  | .focusParticle _ => inferInstanceAs (Decidable True)
+
+/-- The only source with the pattern co-A B is a prepositional comitative phrase before its
+noun. -/
+theorem pattern_eq_coAB_iff {s : DiachronicSource} :
+    s.pattern = (.pre, .bare) ↔ s = .comitative .before .before := by
+  rcases s with ⟨_ | _, _ | _⟩ | (_ | _) <;> decide
+
+/-- No harmonic source has the pattern co-A B, which §1.2 offers as the explanation of its
+absence from [stassen-2000]'s sample of 260 languages. -/
+theorem coAB_unsourced {s : DiachronicSource} (h : s.Harmonic) : s.pattern ≠ (.pre, .bare) :=
+  fun h' ↦ by rw [pattern_eq_coAB_iff.1 h'] at h; exact h rfl
+
+end DiachronicSource
 
 /-! ### Multiple coordination, Table 1.1 -/
 
-/-- The full n-ary pattern, §1.4: a bisyndetic pattern of one shape marks every coordinand,
-and a monosyndetic pattern leaves bare the coordinand bare in the binary construction and
-marks every other one as its marked coordinand is marked; the mixed patterns have no full
-pattern in the chapter. -/
+/-- The full n-ary pattern of a binary one, §1.4. A bisyndetic pattern of one shape marks every
+coordinand, and a monosyndetic pattern leaves bare the coordinand bare in the binary
+construction and marks every other one as its marked coordinand is marked; the mixed patterns
+have no full pattern in the chapter. -/
 def full (p : Pattern) (n : ℕ) : Option (List Slot) :=
   match p with
   | (.bare, s) => some (.bare :: List.replicate (n - 1) s)
@@ -138,12 +164,12 @@ def keepLastRev : List Slot → List Slot
   | .bare :: l => .bare :: keepLastRev l
   | s :: l => s :: l.map fun _ ↦ .bare
 
-/-- Coordinator omission, §1.4: all but the last coordinator are eliminated. -/
+/-- Coordinator omission, §1.4, eliminates all but the last coordinator. -/
 def omitted (p : Pattern) (n : ℕ) : Option (List Slot) :=
   (full p n).map fun l ↦ (keepLastRev l.reverse).reverse
 
-/-- Table 1.1 for four coordinands: the full pattern and the pattern with coordinator omission
-of each of the five binary patterns the table lists. -/
+/-- Table 1.1 for four coordinands gives the full pattern and the pattern with coordinator
+omission of each of the five binary patterns it lists. -/
 theorem table_1_1 :
     full (.bare, .pre) 4 = some [.bare, .pre, .pre, .pre] ∧
       omitted (.bare, .pre) 4 = some [.bare, .bare, .bare, .pre] ∧
@@ -157,108 +183,147 @@ theorem table_1_1 :
       omitted (.bare, .post) 4 = some [.bare, .bare, .bare, .post] := by
   decide
 
-/-! ### The chapter's attestations -/
+/-! ### The chapter's examples -/
 
-/-- A coordinate construction the chapter cites: its coordinator, the second coordinator of a
-mixed pattern, the binary pattern, whether the chapter presents the construction as emphatic,
-and the diachronic source when the chapter states one. -/
-structure Attestation where
-  language : String
-  coordinator : Coordinator
-  second : Option Coordinator := none
-  pattern : Pattern
-  emphatic : Option Bool := none
-  source : Option DiachronicSource := none
+/-- The labels of the patterns in the rows, A co-B as `a_co_b`. -/
+def Pattern.labels : List (String × Pattern) :=
+  [("asyndetic", (.bare, .bare)), ("a_co_b", (.bare, .pre)), ("a'co_b", (.post, .bare)),
+    ("a_b'co", (.bare, .post)), ("co'a_b", (.pre, .bare)), ("co'a_co'b", (.pre, .pre)),
+    ("a'co_b'co", (.post, .post)), ("co'a_b'co", (.pre, .post)), ("a'co_co'b", (.post, .pre))]
+
+/-- The binary pattern of a row, for a multiple coordination that of its binary construction. -/
+def pattern? (d : Datum) : Option Pattern := d.parse? "pattern" Pattern.labels
+
+/-- Whether the chapter presents a row as emphatic, where it says. -/
+def emphatic? (d : Datum) : Option Bool := d.parse? "emphatic" [("yes", true), ("no", false)]
+
+/-- Every pattern label of the rows is one of (17). -/
+theorem pattern?_isSome :
+    ∀ d ∈ Examples.all, (d.feature? "pattern").isSome → (pattern? d).isSome := by
+  decide
+
+/-- The pattern co-A B is absent from the chapter's examples, as from Stassen's sample. -/
+theorem pattern?_ne_coAB : ∀ d ∈ Examples.all, pattern? d ≠ some (.pre, .bare) := by decide
+
+/-- Prepositive bisyndesis occurs only as emphatic coordination, §1.3 after [stassen-2000]. -/
+theorem prepositive_bisyndetic_emphatic :
+    ∀ d ∈ Examples.all, pattern? d = some (.pre, .pre) → emphatic? d = some true := by
+  decide
+
+/-- The comitative-sourced coordinators of the rows have the patterns of a harmonic comitative
+source, A co-B and A-co B, except Tauya *-sou*, (85b), doubled on both conjuncts as §5.1
+describes, and Amele *ca*, (81), and Huallaga Quechua *-wan*, (86), postpositive on the second
+conjunct, A B-co, the pattern of a postpositional comitative after its noun. -/
+theorem comitative_patterns : ∀ d ∈ Examples.all, d.feature? "source" = some "comitative" →
+    ∀ p ∈ pattern? d,
+      (∃ a m, (DiachronicSource.comitative a m).Harmonic ∧
+        (DiachronicSource.comitative a m).pattern = p) ∨
+      d.source.paperLabel = "(85b)" ∧ p = (.post, .post) ∨
+      d.source.paperLabel ∈ ["(81)", "(86)"] ∧
+        p = (DiachronicSource.comitative .after .after).pattern := by
+  decide
+
+/-! ### The coordinators of the constructions -/
+
+/-- A construction has one coordinator, on each coordinand its pattern marks, or a pair of
+correlative coordinators. -/
+inductive Coordinators where
+  | plain (c : Coordinator)
+  | correlative (k : Coordinator.Correlative)
   deriving Repr
 
+/-- The coordinators are a correlative pair. -/
+def Coordinators.IsCorrelative : Coordinators → Prop
+  | .plain _ => False
+  | .correlative _ => True
+
+instance : DecidablePred Coordinators.IsCorrelative
+  | .plain _ => inferInstanceAs (Decidable False)
+  | .correlative _ => inferInstanceAs (Decidable True)
+
+/-- The forms on the coordinands a pattern marks, each with its marking. -/
+def Coordinators.marking : Coordinators → Pattern → List (Slot × Morph)
+  | .plain c, (s, t) => [(s, c.morph), (t, c.morph)].filter (·.1 ≠ .bare)
+  | .correlative k, (s, t) => k.first.map (s, ·) ++ k.second.map (t, ·)
+
+/-- A coordinate construction the chapter cites, a row with its coordinators. -/
+structure Attestation where
+  datum : Datum
+  coordinators : Coordinators
+
 /-- A conjunctive coordinator with no Fragment entry. -/
-def co (morph : Morphology.Morph) : Coordinator := { morph, gloss := "and", role := .conjunctive }
+def co (morph : Morph) : Coordinator := { morph, gloss := "and", role := .conjunctive }
 
-/-- The constructions of (5), (6), (12), (20)–(37), (59), (77)–(79) and (85). -/
+/-- A disjunctive coordinator with no Fragment entry. -/
+def dis (form : String) : Coordinator :=
+  { morph := .free form, gloss := "or", role := .disjunctive }
+
+open Examples in
+/-- The constructions of the rows with a coordinator. -/
 def attestations : List Attestation :=
-  [ { language := "Kannada", coordinator := Kannada.Coordination.uu, pattern := (.post, .post),
-      emphatic := some false },
-    { language := "English", coordinator := English.Coordination.and_, pattern := (.bare, .pre),
-      emphatic := some false },
-    { language := "English", coordinator := co (.free "both"),
-      second := some English.Coordination.and_, pattern := (.pre, .pre), emphatic := some true },
-    { language := "Hausa", coordinator := Hausa.Coordination.da, pattern := (.bare, .pre),
-      emphatic := some false, source := some .comitative },
-    { language := "Lango", coordinator := Lango.Coordination.kede, pattern := (.bare, .pre),
-      emphatic := some false, source := some .comitative },
-    { language := "Classical Tibetan", coordinator := ClassicalTibetan.Coordination.dang,
-      pattern := (.post, .bare), emphatic := some false },
-    { language := "Latin", coordinator := Latin.Coordination.que, pattern := (.bare, .post),
-      emphatic := some false },
-    { language := "Turkish", coordinator := Turkish.Coordination.de, pattern := (.bare, .post) },
-    { language := "Kanuri", coordinator := co (.suff "a"),
-      pattern := (.post, .post), emphatic := some false },
-    { language := "Yoruba", coordinator := Yoruba.Coordination.ati, pattern := (.pre, .pre),
-      emphatic := some true },
-    { language := "Yoruba", coordinator := Yoruba.Coordination.ati, pattern := (.bare, .pre),
-      emphatic := some false },
-    { language := "Martuthunira", coordinator := co (.suff "thurti"),
-      pattern := (.post, .post), emphatic := some false },
-    { language := "Homeric Greek", coordinator := co (.encl "te"),
-      second := some (co (.free "kaì")), pattern := (.post, .pre) },
-    { language := "Latin", coordinator := Latin.Coordination.et,
-      second := some Latin.Coordination.que, pattern := (.pre, .post), emphatic := some true },
-    { language := "Nivkh", coordinator := co (.suff "ɣo"),
-      pattern := (.post, .post), emphatic := some false },
-    { language := "Polish", coordinator := co (.free "i"), pattern := (.bare, .pre),
-      emphatic := some false },
-    { language := "Lezgian", coordinator := co (.suff "ni"),
-      pattern := (.post, .bare), emphatic := some false },
-    { language := "West Greenlandic", coordinator := co (.encl "lu"),
-      pattern := (.bare, .post), emphatic := some false },
-    { language := "Amharic", coordinator := co (.suff "nna"),
-      pattern := (.post, .bare), emphatic := some false },
-    { language := "Ponapean", coordinator := co (.free "oh"), pattern := (.bare, .pre),
-      emphatic := some false },
-    { language := "Samoan", coordinator := co (.free "ma"), pattern := (.bare, .pre),
-      source := some .comitative },
-    { language := "Retuarã", coordinator := co (.suff "ka"),
-      pattern := (.post, .bare), source := some .comitative },
-    { language := "Russian", coordinator := co (.free "s"), pattern := (.bare, .pre),
-      source := some .comitative },
-    { language := "Tauya", coordinator := co (.suff "sou"),
-      pattern := (.post, .post), emphatic := some false, source := some .comitative } ]
+  [ ⟨ex5, .plain Kannada.Coordination.uu⟩,
+    ⟨ex6a, .correlative English.Coordination.bothAnd⟩,
+    ⟨ex6b, .plain English.Coordination.and_⟩,
+    ⟨ex7a, .correlative English.Coordination.neitherNor⟩,
+    ⟨ex12b, .plain Hausa.Coordination.da⟩,
+    ⟨ex20, .plain Lango.Coordination.kede⟩,
+    ⟨ex21, .plain ClassicalTibetan.Coordination.dang⟩,
+    ⟨ex22, .plain Latin.Coordination.que⟩,
+    ⟨ex23, .plain Turkish.Coordination.de⟩,
+    ⟨ex24a, .plain (co (.suff "a"))⟩,
+    ⟨ex24b, .plain (dis "râ")⟩,
+    ⟨ex25, .correlative Yoruba.Coordination.atiAti⟩,
+    ⟨ex26, .plain (co (.suff "thurti"))⟩,
+    ⟨ex27, .correlative ⟨[.encl "te"], [.free "kaì"], co (.free "kaì")⟩⟩,
+    ⟨ex28, .correlative ⟨[Latin.Coordination.et.morph], [Latin.Coordination.que.morph],
+      Latin.Coordination.que⟩⟩,
+    ⟨ex29, .plain (co (.suff "ɣo"))⟩,
+    ⟨ex30, .correlative ⟨[.free "ou"], [.free "ou"], dis "ou"⟩⟩,
+    ⟨ex31, .plain (co (.free "i"))⟩,
+    ⟨ex32, .plain (co (.suff "ni"))⟩,
+    ⟨ex33, .plain (co (.encl "lu"))⟩,
+    ⟨ex34, .plain (co (.encl "lu"))⟩,
+    ⟨ex35, .plain (co (.suff "nna"))⟩,
+    ⟨ex36a, .plain ClassicalTibetan.Coordination.dang⟩,
+    ⟨ex36b, .plain (co (.suff "nna"))⟩,
+    ⟨ex37, .plain (co (.free "oh"))⟩,
+    ⟨ex43, .correlative English.Coordination.bothAnd⟩,
+    ⟨ex57a, .plain Korean.Coordination.gwa⟩,
+    ⟨ex58a, .plain Turkish.Coordination.ile⟩,
+    ⟨ex59a, .plain Yoruba.Coordination.ati⟩,
+    ⟨ex60a, .plain (co (.free "iyo"))⟩,
+    ⟨ex62b, .plain (co (.free "di"))⟩,
+    ⟨ex63b, .plain (co (.free "kɛ"))⟩,
+    ⟨ex77b, .plain (co (.free "ma"))⟩,
+    ⟨ex78b, .plain (co (.suff "ka"))⟩,
+    ⟨ex79, .plain (co (.free "s"))⟩,
+    ⟨ex81, .plain (co (.free "ca"))⟩,
+    ⟨ex85b, .plain (co (.suff "sou"))⟩,
+    ⟨ex86, .plain (co (.suff "wan"))⟩ ]
 
-/-- The marked coordinands of a construction, each with its coordinator: the first coordinator
-marks the first marked coordinand, and the second coordinator of a mixed pattern the second. -/
-def Attestation.marking (a : Attestation) : List (Slot × Coordinator) :=
-  [(a.pattern.1, a.coordinator), (a.pattern.2, a.second.getD a.coordinator)].filter
-    (·.1 ≠ .bare)
-
-/-- The patterns agree with the morphology of the coordinators: a coordinator that attaches
-after its host is postpositive in every construction, and one that attaches before it
-prepositive. -/
-theorem marking_agrees_with_side : ∀ a ∈ attestations, ∀ m ∈ a.marking,
-    (m.2.morph.kind.side? = some .after → m.1 = .post) ∧
-      (m.2.morph.kind.side? = some .before → m.1 = .pre) := by
+/-- The attestations are the rows with a coordinator, in order. -/
+theorem attestations_label : attestations.map (·.datum.source.paperLabel) =
+    (Examples.all.filter fun d ↦ (pattern? d).any (·.syndesis ≠ 0)).map
+      (·.source.paperLabel) := by
   decide
 
-/-- The pattern co-A B is absent from the chapter's attestations, as from Stassen's sample. -/
-theorem attested_ne_coAB : ∀ a ∈ attestations, a.pattern ≠ (.pre, .bare) := by decide
-
-/-- Where bisyndesis is the normal, non-emphatic construction, the coordinators are
-postpositive and of the same shape, §1.3 and §2.1. -/
-theorem bisyndetic_normal_postpositive :
-    ∀ a ∈ attestations, a.pattern.syndesis = 2 → a.emphatic = some false →
-      a.pattern = (.post, .post) ∧ a.second = none := by
+/-- The patterns agree with the morphology of the coordinators, since a coordinator that
+attaches on a side of its host marks its coordinand on that side. -/
+theorem marking_agrees_with_side : ∀ a ∈ attestations, ∀ p ∈ pattern? a.datum,
+    ∀ m ∈ a.coordinators.marking p, ∀ s ∈ m.2.kind.side?, m.1 = .ofSide s := by
   decide
 
-/-- Prepositive bisyndesis occurs only as an emphatic variant of prepositive monosyndesis,
-§1.3 after [stassen-2000]. -/
-theorem prepositive_bisyndetic_emphatic :
-    ∀ a ∈ attestations, a.pattern = (.pre, .pre) → a.emphatic = some true := by
+/-- The chapter presents a binary coordination as emphatic exactly when its coordinators are
+correlative, §2.1. -/
+theorem emphatic_iff_correlative : ∀ a ∈ attestations, a.datum.nat? "coordinands" = none →
+    ∀ e ∈ emphatic? a.datum, (e = true ↔ a.coordinators.IsCorrelative) := by
   decide
 
-/-- A comitative-sourced coordinator has one of the two source patterns of §1.2 or, doubled on
-each conjunct as §5.1 describes, the postpositive bisyndetic one. -/
-theorem comitative_patterns :
-    ∀ a ∈ attestations, a.source = some .comitative →
-      a.pattern = (.bare, .pre) ∨ a.pattern = (.post, .bare) ∨ a.pattern = (.post, .post) := by
+/-- Normal bisyndesis is postpositive with one coordinator, §2.1 and §1.3. A construction whose
+coordinators are not correlative and mark both coordinands marks them after them, so that by
+`emphatic_iff_correlative` prepositive bisyndesis is emphatic, as [stassen-2000] finds. -/
+theorem normal_bisyndetic_postpositive : ∀ a ∈ attestations, ¬ a.coordinators.IsCorrelative →
+    ∀ p ∈ pattern? a.datum, p.syndesis = 2 → p = (.post, .post) := by
   decide
 
 /-- The comitative-sourced coordinators with Fragment entries, Hausa *dà* and Lango *kèdè*, are
@@ -271,7 +336,7 @@ theorem comitative_source_isAlsoComitative :
   decide
 
 /-- Classical Tibetan *-daŋ* and Turkish *-le*, which come from a former case-marker, (41), are
-still comitative markers: the accompaniment role particle and the comitative postposition. -/
+still comitative markers, the accompaniment role particle and the comitative postposition. -/
 theorem former_case_marker_isAlsoComitative :
     ClassicalTibetan.Coordination.dang.IsAlsoComitative
         (ClassicalTibetan.Case.exponents .accompaniment)
@@ -282,9 +347,9 @@ theorem former_case_marker_isAlsoComitative :
 
 /-! ### Emphatic correlatives, (45) -/
 
-/-- The shape of a pair of correlative coordinators against the single coordinator, (45):
-both identical to it, only the second identical to it, identical to each other but not to it,
-or all three different. -/
+/-- A pair of correlative coordinators, (45), has both identical to the single coordinator, only
+its second identical to it, its two identical to each other but not to it, or all three
+different. -/
 inductive CorrelativeShape where
   | bothSingle
   | secondSingle
@@ -298,10 +363,6 @@ def CorrelativeShape.classify (c : Coordinator.Correlative) : CorrelativeShape :
   else if c.second = [c.single.morph] then .secondSingle
   else if c.first = c.second then .sameNotSingle
   else .allDifferent
-
-/-- A disjunctive coordinator with no Fragment entry. -/
-def dis (form : String) : Coordinator :=
-  { morph := .free form, gloss := "or", role := .disjunctive }
 
 /-- The rows of (45), each with its language and the letter the chapter files it under; Polish
 *tak (i)* is recorded without its optional *i*. -/
