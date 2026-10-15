@@ -83,6 +83,16 @@ theorem mem_positions_iff {β : Type*} {f : Vertex → Option β} {t : RoseTree 
   exact ⟨fun ⟨_, s, hs, _, hb, rfl, rfl⟩ ↦ ⟨s, hs, hb⟩,
     fun ⟨s, hs, hb⟩ ↦ ⟨p, s, hs, b, hb, rfl, rfl⟩⟩
 
+theorem nodup_map_fst_positions {β : Type*} (f : Vertex → Option β) (t : RoseTree Vertex) :
+    ((positions f t).map Prod.fst).Nodup := by
+  rw [positions, List.map_filterMap]
+  refine (List.pairwise_map.1 t.nodup_map_fst_positionedSubtrees).filterMap _
+    fun _ _ hne b hb b' hb' ↦ ?_
+  simp only [Option.map_map, Function.comp_def, Option.map_eq_some_iff] at hb hb'
+  obtain ⟨-, -, rfl⟩ := hb
+  obtain ⟨-, -, rfl⟩ := hb'
+  exact hne
+
 /-- The pronounced copies, left to right. -/
 def tokenList : RoseTree Vertex → List (TreePath × LexicalItem.Token) :=
   positions (Sum.elim id fun _ ↦ none)

@@ -12,15 +12,19 @@ public import Linglib.Syntax.Minimalist.SyntacticObject.Chain
 
 PF pronounces the pronounced copies of a planar syntactic object (`Chain.lean`) and nothing
 else, so a deleted copy, a trace, is silent wherever it stands. A shared token is one token,
-pronounced once, at its last occurrence ([wilder-1999], [de-vries-2009]), so that material two
-conjuncts share is pronounced in the second. An [E] feature on a head silences the head's
-complement ([merchant-2001]), and since a shared token is one token, eliding either of its
+pronounced once, at its last occurrence, as Wilder and de Vries linearize multidominance, so that
+material two conjuncts share is pronounced in the second. An [E] feature on a head silences the
+head's complement, after Merchant, and since a shared token is one token, eliding either of its
 occurrences silences it everywhere. An [E] head applies once per distinct complement.
 
 ## Main definitions
 
 * `pronouncedAt`, `elidedDomains`, `IsSilenced`: pronunciation under [E].
 * `pfYield`, `pfPhon`: the pronounced tokens and forms, left to right.
+
+## Main statements
+
+* `nodup_pfYield`: a token is pronounced once at most, however many mothers dominate it.
 
 ## References
 
@@ -70,5 +74,13 @@ def pfYield : List LexicalItem.Token :=
 
 /-- The pronounced forms, left to right. -/
 def pfPhon : List String := (pfYield t).filterMap (·.item.phonForm?)
+
+/-- A token is pronounced once at most, however many mothers dominate it. -/
+theorem nodup_pfYield : (pfYield t).Nodup := by
+  refine ((nodup_map_fst_positions _ t.val).of_map Prod.fst).filterMap fun x y tok hx hy ↦ ?_
+  simp only [Option.mem_def, Option.ite_none_right_eq_some, Option.some.injEq] at hx hy
+  obtain ⟨⟨hx, -⟩, rfl⟩ := hx
+  obtain ⟨⟨hy, -⟩, hxy⟩ := hy
+  exact Prod.ext (Option.some_injective _ (hx.symm.trans (hxy ▸ hy))) hxy.symm
 
 end Minimalist
