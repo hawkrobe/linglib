@@ -169,7 +169,7 @@ a phase from its interior; the Specificity Condition (13) when a variable inside
 bound from outside, whatever the binder. -/
 def Constraint.Violated : Constraint → Config → Prop
   | .pic, c => c.ViolatesPIC c.tree
-  | .specificity, c => ∃ d ∈ c.specific, d.contains wh
+  | .specificity, c => ∃ d ∈ c.specific, d.Contains wh
 
 instance (k : Constraint) : DecidablePred k.Violated := fun _ ↦ by
   cases k <;> unfold Constraint.Violated <;> infer_instance

@@ -12,7 +12,7 @@ Langacker, when neither dominates the other and the S node most immediately domi
 dominates the second; the received domain of a node consists of the nodes it precedes and
 commands, `PrecedesAndCommands`, and two noun phrases can corefer just in case, if either is in
 the domain of the other, the one in the domain is a pronoun, `Permits`. The dissertation's
-domain is instead the nodes a node c-commands (36), `PhraseStructure.CCommands`: neither dominates
+domain is instead the nodes a node c-commands (36), `RoseTree.CCommands`: neither dominates
 the other and the first branching node dominating the first dominates the second, so a domain is
 a constituent and linear order plays no part. Both domains are computed for the abstract tree
 (37), and the restriction under each is checked against the examples, `permits_rows`: the Rosa
@@ -45,6 +45,7 @@ reflexive environments that (10) sets aside do not arise in the rows.
 namespace Reinhart1976
 
 open Core.Order PhraseStructure PhraseStructure.Tree
+open RoseTree (IsBranchingAt cCommand CCommands)
 
 variable {C W : Type*}
 
@@ -72,8 +73,8 @@ theorem cCommands_commands {t : Tree Cat W} {a b : TreePath}
 
 /-- The c-command domain is a constituent (38). With `m` the first branching node dominating
 `a`, the nodes `a` c-commands, dominance aside, are those `m` dominates. -/
-theorem cCommandAt_eq_Ici {t : Tree C W} {a m : TreePath} (hm : m < a) (hb : IsBranchingAt t m)
-    (hmax : ∀ x < a, IsBranchingAt t x → x ≤ m) : {b | (a, b) ∈ cCommandAt t} = Set.Ici m :=
+theorem cCommand_eq_Ici {t : Tree C W} {a m : TreePath} (hm : m < a) (hb : IsBranchingAt t m)
+    (hmax : ∀ x < a, IsBranchingAt t x → x ≤ m) : {b | (a, b) ∈ cCommand t} = Set.Ici m :=
   Set.ext fun _ ↦ mem_commandRelation_iff_le ⟨⟨hb, hm⟩, fun x hx ↦ hmax x hx.2 hx.1⟩
 
 /-- In type I of (50), `a` c-commands `b` but `b` precedes `a`. -/

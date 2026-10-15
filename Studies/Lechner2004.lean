@@ -63,6 +63,7 @@ surface Principle B account of (24) are not formalized.
 namespace Lechner2004
 
 open Core.Order PhraseStructure PhraseStructure.Tree Binding
+open RoseTree (IsBranchingAt CCommands cCommands_replaceAt_of_le cCommands_replaceAt_self)
 
 /-! ### Trees and coreference -/
 

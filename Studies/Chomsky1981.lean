@@ -65,6 +65,7 @@ namespace Chomsky1981
 
 open Morphology (Word)
 open Core.Order PhraseStructure PhraseStructure.Tree Binding
+open RoseTree (CCommands)
 
 /-! ### Clauses and their noun phrases -/
 

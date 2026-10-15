@@ -56,8 +56,8 @@ variable {root probe goal : SyntacticObject} {pred : SyntacticObject → Prop}
 uninterpretable `probe` and is the closest such element, no other `pred`-node c-commanding the
 probe being asymmetrically c-commanded by it. -/
 def IsUpwardGoalIn (root probe goal : SyntacticObject) (pred : SyntacticObject → Prop) : Prop :=
-  cCommandsIn root goal probe ∧ pred goal ∧
-    ∀ x ∈ root.terms, cCommandsIn root x probe → pred x → ¬ asymCCommandsIn root goal x
+  CCommands root goal probe ∧ pred goal ∧
+    ∀ x ∈ root.terms, CCommands root x probe → pred x → ¬ AsymmCCommands root goal x
 
 instance [DecidablePred pred] (root probe goal : SyntacticObject) :
     Decidable (IsUpwardGoalIn root probe goal pred) :=
@@ -116,7 +116,7 @@ private instance : DecidablePred uPast := fun _ ↦ inferInstanceAs (Decidable (
 theorem sot_multipleAgree : MultipleAgree sot opPast [said, was] iPast := by decide
 
 /-- Neither verb c-commands the operator, so no downward-probing Agree relates them. -/
-theorem sot_not_downward : ¬ cCommandsIn sot said opPast ∧ ¬ cCommandsIn sot was opPast := by
+theorem sot_not_downward : ¬ CCommands sot said opPast ∧ ¬ CCommands sot was opPast := by
   decide
 
 /-- Sequence of Tense crosses the clause boundary: the subordinate verb sits in the interior of

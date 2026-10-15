@@ -30,7 +30,7 @@ clause into the second argument of the nonconservative *-er* and yield a contrad
 ## Implementation notes
 
 * LFs are category-free trees at the paper's bracketing, `PhraseStructure.Tree Unit String`, with
-  non-branching and elided material written as one leaf; scope is `Branching.cCommandAt` and the
+  non-branching and elided material written as one leaf; scope is `Branching.cCommand` and the
   constraint `Degree.IsHeimKennedy` on it.
 * The comparative of (84) is `erSem`, proper inclusion of degree sets, and (85) is its value on
   [kennedy-1999]'s positive extents; Trace Conversion itself is not formalized, only the second
@@ -53,6 +53,7 @@ clause into the second argument of the nonconservative *-er* and yield a contrad
 namespace BhattPancheva2004
 
 open Core.Order Degree Set PhraseStructure PhraseStructure.Tree
+open RoseTree (cCommand)
 
 /-! ### The Heim–Kennedy constraint (Section 4.1) -/
 
@@ -71,8 +72,8 @@ def lf22b : Tree Unit String :=
 /-- (24) admits (22a) and excludes (22b), where the quantifier's scope contains the degree trace
 but not the DegP, the configuration (25). -/
 theorem hkc_22 :
-    IsHeimKennedy (cCommandAt lf22a) ⟨[0]⟩ ⟨[1, 0, 0]⟩ ⟨[1, 0, 1, 0, 1, 0]⟩ ∧
-      ¬ IsHeimKennedy (cCommandAt lf22b) ⟨[1, 0, 0]⟩ ⟨[0]⟩ ⟨[1, 0, 1, 0, 1, 0]⟩ := by
+    IsHeimKennedy (cCommand lf22a) ⟨[0]⟩ ⟨[1, 0, 0]⟩ ⟨[1, 0, 1, 0, 1, 0]⟩ ∧
+      ¬ IsHeimKennedy (cCommand lf22b) ⟨[1, 0, 0]⟩ ⟨[0]⟩ ⟨[1, 0, 1, 0, 1, 0]⟩ := by
   constructor <;> decide
 
 /-! ### The Extraposition-Scope Generalization (Section 5.2) -/
@@ -94,8 +95,8 @@ comparison over the *before*-clause, in which the *before*-clause's scope contai
 trace but not the DegP; (44), whose clause is merged above the *before*-clause, has only the LF
 (43b). -/
 theorem hkc_43 :
-    IsHeimKennedy (cCommandAt lf43a) ⟨[1]⟩ ⟨[0, 1, 1]⟩ ⟨[0, 1, 0, 1, 0]⟩ ∧
-      ¬ IsHeimKennedy (cCommandAt lf43b) ⟨[0, 1]⟩ ⟨[1]⟩ ⟨[0, 0, 1, 1, 0]⟩ := by
+    IsHeimKennedy (cCommand lf43a) ⟨[1]⟩ ⟨[0, 1, 1]⟩ ⟨[0, 1, 0, 1, 0]⟩ ∧
+      ¬ IsHeimKennedy (cCommand lf43b) ⟨[0, 1]⟩ ⟨[1]⟩ ⟨[0, 0, 1, 1, 0]⟩ := by
   constructor <;> decide
 
 /-- The site of an extraposed clause relative to the operator the comparison may scope over. -/
@@ -182,16 +183,16 @@ def high : TellLF where
 contains the embedded VP at either site and the matrix VP only at the high site, so the reading
 (62b), the clause merged low with the matrix VP elided, is the one missing. -/
 theorem ellipsisScope :
-    (∀ lf ∈ [low, high], (lf.degP, lf.embeddedVP) ∈ cCommandAt lf.tree) ∧
-      (low.degP, low.matrixVP) ∉ cCommandAt low.tree ∧
-      (high.degP, high.matrixVP) ∈ cCommandAt high.tree := by
+    (∀ lf ∈ [low, high], (lf.degP, lf.embeddedVP) ∈ cCommand lf.tree) ∧
+      (low.degP, low.matrixVP) ∉ cCommand low.tree ∧
+      (high.degP, high.matrixVP) ∈ cCommand high.tree := by
   refine ⟨?_, ?_, ?_⟩ <;> decide
 
 /-- The Condition C–Scope Generalization, (69) and (70), holds, since the pronoun c-commands the
 name in the degree clause exactly when the comparison does not scope over the matrix predicate. -/
 theorem conditionC_scope :
     ∀ lf ∈ [low, high],
-      (lf.pronoun, lf.clause) ∈ cCommandAt lf.tree ↔ (lf.degP, lf.tells) ∉ cCommandAt lf.tree := by
+      (lf.pronoun, lf.clause) ∈ cCommand lf.tree ↔ (lf.degP, lf.tells) ∉ cCommand lf.tree := by
   decide
 
 /-! ### Nonconservativity forces late merger (Section 7) -/

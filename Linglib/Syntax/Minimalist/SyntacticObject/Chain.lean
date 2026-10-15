@@ -25,7 +25,7 @@ come apart without a separate choice of the copy to spell out. A token with two 
 is shared, dominated by two mothers, Citko's Parallel Merge.
 
 A copy is linked to the nearest copy above it, the one whose projection c-commands it with no
-other copy's projection in between, c-command being Barker and Pullum's `PhraseStructure.CCommands`.
+other copy's projection in between, c-command being Reinhart's (`RoseTree.CCommands`).
 A token with one copy has no link (`links_eq_nil_of_length_le_one`). The locality conditions on
 links are in `SyntacticObject/Locality.lean`.
 

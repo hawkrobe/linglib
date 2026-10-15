@@ -41,9 +41,9 @@ variable {tree head x y : SyntacticObject} {qs : List SyntacticObject}
 
 /-- A quantifier the P-feature-bearing head can attract is one in its c-command domain. The
 subject, merged in the head's specifier, is not among them. -/
-def Attractable (tree head x : SyntacticObject) : Prop := cCommandsIn tree head x
+def Attractable (tree head x : SyntacticObject) : Prop := CCommands tree head x
 
-instance : Decidable (Attractable tree head x) := inferInstanceAs (Decidable (cCommandsIn _ _ _))
+instance : Decidable (Attractable tree head x) := inferInstanceAs (Decidable (CCommands _ _ _))
 
 /-- Shortest licenses attracting `x` first only when no other candidate asymmetrically c-commands
 it, since such a candidate would form a smaller well-formed pair with the attractor. Thus `x` is
@@ -65,21 +65,21 @@ instance : Decidable (Ambiguous tree head qs) := inferInstanceAs (Decidable (∃
 /-- A candidate that some other candidate asymmetrically c-commands is never attracted first,
 whatever interpretation moving it first would produce. -/
 theorem not_licensedFirst_of_asymCCommand (hy : y ∈ qs) (hattr : Attractable tree head y)
-    (hasym : asymCCommandsIn tree y x) : ¬ LicensedFirst tree head qs x :=
-  fun ⟨_, _, h⟩ => h y (mem_domainIn.2 hattr) hy hasym
+    (hasym : AsymmCCommands tree y x) : ¬ LicensedFirst tree head qs x :=
+  fun ⟨_, _, h⟩ => h y (mem_cCommandDomain.2 hattr) hy hasym
 
 /-- Two candidates that c-command each other both satisfy Shortest, since the pairs they form with
 the attractor are equivalent, so either may be attracted first. -/
 theorem ambiguous_of_mutual_cCommand (hx : x ∈ qs) (hy : y ∈ qs) (hne : x ≠ y)
     (hattrx : Attractable tree head x) (hattry : Attractable tree head y)
-    (hxy : cCommandsIn tree x y) (hyx : cCommandsIn tree y x)
+    (hxy : CCommands tree x y) (hyx : CCommands tree y x)
     (hother : ∀ z ∈ qs, z = x ∨ z = y) : Ambiguous tree head qs := by
-  have key : ∀ a ∈ qs, ∀ b ∈ qs, Attractable tree head a → ¬ asymCCommandsIn tree b a := by
+  have key : ∀ a ∈ qs, ∀ b ∈ qs, Attractable tree head a → ¬ AsymmCCommands tree b a := by
     rintro a ha b hb - ⟨hba, hab⟩
     rcases hother a ha with rfl | rfl <;> rcases hother b hb with rfl | rfl
     exacts [hab hba, hab hxy, hab hyx, hab hba]
-  exact ⟨x, hx, y, hy, hne, ⟨mem_domainIn.2 hattrx, hx, fun b _ hb => key x hx b hb hattrx⟩,
-    ⟨mem_domainIn.2 hattry, hy, fun b _ hb => key y hy b hb hattry⟩⟩
+  exact ⟨x, hx, y, hy, hne, ⟨mem_cCommandDomain.2 hattrx, hx, fun b _ hb => key x hx b hb hattrx⟩,
+    ⟨mem_cCommandDomain.2 hattry, hy, fun b _ hb => key y hy b hb hattry⟩⟩
 
 /-! ### The double object construction -/
 
@@ -105,7 +105,7 @@ def doc : PlanarSyntacticObject := {ozzy, {v, {gave, {aGirl, {appl, everyTelesco
 def docQuantifiers : List SyntacticObject := [aGirl, everyTelescope]
 
 /-- The first object asymmetrically c-commands the second ([barss-lasnik-1986]). -/
-theorem doc_goal_asym_theme : asymCCommandsIn doc aGirl everyTelescope := by decide
+theorem doc_goal_asym_theme : AsymmCCommands doc aGirl everyTelescope := by decide
 
 /-- Only the first object may be attracted first, so the derivation fixes the base order and the
 second object cannot come to scope over the first: *I gave a (#different) child each doll*. -/
@@ -131,7 +131,7 @@ def locativeQuantifiers : List SyntacticObject := [everyTelescope, toAGirl]
 
 /-- Direct object and PP c-command each other, so neither asymmetrically c-commands the other. -/
 theorem locative_mutual_cCommand :
-    cCommandsIn locative everyTelescope toAGirl ∧ cCommandsIn locative toAGirl everyTelescope := by
+    CCommands locative everyTelescope toAGirl ∧ CCommands locative toAGirl everyTelescope := by
   constructor <;> decide
 
 /-- Either candidate may be attracted first, so the locative is ambiguous: *I gave a doll to each

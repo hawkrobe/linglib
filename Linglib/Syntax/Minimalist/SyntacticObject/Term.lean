@@ -20,20 +20,20 @@ a well-founded strict order and decides it.
 
 ## Main definitions
 
-* `SyntacticObject.immediatelyContains`: `x` immediately contains `y` when `y` is a
+* `SyntacticObject.ImmediatelyContains`: `x` immediately contains `y` when `y` is a
   root daughter of `x`.
-* `SyntacticObject.contains`: the transitive closure of immediate containment.
-* `SyntacticObject.containsOrEq`: the reflexive transitive closure of immediate
+* `SyntacticObject.Contains`: the transitive closure of immediate containment.
+* `SyntacticObject.ContainsOrEq`: the reflexive transitive closure of immediate
   containment.
 * `SyntacticObject.terms`: the terms of an object, itself included, one per vertex.
 * `SyntacticObject.accessibleTerms`: the terms at the non-root vertices, the
   accessible terms of [marcolli-chomsky-berwick-2025].
-* `SyntacticObject.areSistersIn`: `x` and `y` are sisters in `root` when they are
+* `SyntacticObject.Sisters`: `x` and `y` are sisters in `root` when they are
   distinct daughters of one term of `root`.
-* `SyntacticObject.cCommandsIn`: `x` c-commands `y` in `root` when a sister of `x`
+* `SyntacticObject.CCommands`: `x` c-commands `y` in `root` when a sister of `x`
   reflexively contains `y` ([reinhart-1976]).
-* `SyntacticObject.asymCCommandsIn`: c-command in one direction only.
-* `SyntacticObject.domainIn`: the c-command domain of `x` in `root`, the terms it
+* `SyntacticObject.AsymmCCommands`: c-command in one direction only.
+* `SyntacticObject.cCommandDomain`: the c-command domain of `x` in `root`, the terms it
   c-commands.
 
 ## Main results
@@ -69,104 +69,104 @@ variable {x y z l r : SyntacticObject}
 /-! ### Immediate containment -/
 
 /-- `y` is one of `x`'s root daughters. -/
-def immediatelyContains (x y : SyntacticObject) : Prop := y.val ∈ children x.val
+def ImmediatelyContains (x y : SyntacticObject) : Prop := y.val ∈ children x.val
 
-instance (x y : SyntacticObject) : Decidable (immediatelyContains x y) :=
+instance (x y : SyntacticObject) : Decidable (ImmediatelyContains x y) :=
   inferInstanceAs (Decidable (_ ∈ _))
 
 @[simp] theorem immediatelyContains_leaf (tok : LexicalItem.Token) (y : SyntacticObject) :
-    ¬ immediatelyContains (leaf tok) y := by
-  simp [immediatelyContains]
+    ¬ ImmediatelyContains (leaf tok) y := by
+  simp [ImmediatelyContains]
 
 @[simp] theorem immediatelyContains_trace (y : SyntacticObject) :
-    ¬ immediatelyContains trace y := by
-  simp [immediatelyContains]
+    ¬ ImmediatelyContains trace y := by
+  simp [ImmediatelyContains]
 
 @[simp] theorem immediatelyContains_traceOf (tok : LexicalItem.Token) (y : SyntacticObject) :
-    ¬ immediatelyContains (traceOf tok) y := by
-  simp [immediatelyContains]
+    ¬ ImmediatelyContains (traceOf tok) y := by
+  simp [ImmediatelyContains]
 
 @[simp] theorem immediatelyContains_merge (l r y : SyntacticObject) :
-    immediatelyContains (merge l r) y ↔ y = l ∨ y = r := by
-  simp only [immediatelyContains, merge_val, children_node, Multiset.insert_eq_cons,
+    ImmediatelyContains (merge l r) y ↔ y = l ∨ y = r := by
+  simp only [ImmediatelyContains, merge_val, children_node, Multiset.insert_eq_cons,
     Multiset.mem_cons, Multiset.mem_singleton]
   exact or_congr Subtype.val_inj Subtype.val_inj
 
 /-! ### Containment -/
 
 /-- Containment, the transitive closure of immediate containment. -/
-def contains : SyntacticObject → SyntacticObject → Prop := TransGen immediatelyContains
+def Contains : SyntacticObject → SyntacticObject → Prop := TransGen ImmediatelyContains
 
 /-- Reflexive containment, the reflexive transitive closure of immediate containment. -/
-def containsOrEq : SyntacticObject → SyntacticObject → Prop := ReflTransGen immediatelyContains
+def ContainsOrEq : SyntacticObject → SyntacticObject → Prop := ReflTransGen ImmediatelyContains
 
-theorem contains_of_immediatelyContains (h : immediatelyContains x y) : contains x y :=
+theorem ImmediatelyContains.Contains (h : ImmediatelyContains x y) : Contains x y :=
   TransGen.single h
 
-theorem contains_trans (hxy : contains x y) (hyz : contains y z) : contains x z :=
+theorem Contains.trans (hxy : Contains x y) (hyz : Contains y z) : Contains x z :=
   TransGen.trans hxy hyz
 
-instance : IsPreorder SyntacticObject containsOrEq :=
+instance : IsPreorder SyntacticObject ContainsOrEq :=
   inferInstanceAs (IsPreorder _ (ReflTransGen _))
 
-theorem containsOrEq_iff_eq_or_contains : containsOrEq x y ↔ y = x ∨ contains x y :=
+theorem containsOrEq_iff_eq_or_contains : ContainsOrEq x y ↔ y = x ∨ Contains x y :=
   reflTransGen_iff_eq_or_transGen
 
 theorem contains_iff_exists_immediatelyContains :
-    contains x y ↔ ∃ z, immediatelyContains x z ∧ containsOrEq z y :=
+    Contains x y ↔ ∃ z, ImmediatelyContains x z ∧ ContainsOrEq z y :=
   TransGen.head'_iff
 
 @[simp] theorem contains_leaf (tok : LexicalItem.Token) (y : SyntacticObject) :
-    ¬ contains (leaf tok) y := by
+    ¬ Contains (leaf tok) y := by
   simp [contains_iff_exists_immediatelyContains]
 
-@[simp] theorem contains_trace (y : SyntacticObject) : ¬ contains trace y := by
+@[simp] theorem contains_trace (y : SyntacticObject) : ¬ Contains trace y := by
   simp [contains_iff_exists_immediatelyContains]
 
 @[simp] theorem contains_traceOf (tok : LexicalItem.Token) (y : SyntacticObject) :
-    ¬ contains (traceOf tok) y := by
+    ¬ Contains (traceOf tok) y := by
   simp [contains_iff_exists_immediatelyContains]
 
 @[simp] theorem contains_merge :
-    contains (merge l r) y ↔ containsOrEq l y ∨ containsOrEq r y := by
+    Contains (merge l r) y ↔ ContainsOrEq l y ∨ ContainsOrEq r y := by
   simp [contains_iff_exists_immediatelyContains, or_and_right, exists_or]
 
 @[simp] theorem containsOrEq_leaf (tok : LexicalItem.Token) :
-    containsOrEq (leaf tok) y ↔ y = leaf tok :=
+    ContainsOrEq (leaf tok) y ↔ y = leaf tok :=
   reflTransGen_iff_eq (immediatelyContains_leaf tok)
 
-@[simp] theorem containsOrEq_trace : containsOrEq trace y ↔ y = trace :=
+@[simp] theorem containsOrEq_trace : ContainsOrEq trace y ↔ y = trace :=
   reflTransGen_iff_eq immediatelyContains_trace
 
 @[simp] theorem containsOrEq_traceOf (tok : LexicalItem.Token) :
-    containsOrEq (traceOf tok) y ↔ y = traceOf tok :=
+    ContainsOrEq (traceOf tok) y ↔ y = traceOf tok :=
   reflTransGen_iff_eq (immediatelyContains_traceOf tok)
 
 @[simp] theorem containsOrEq_merge :
-    containsOrEq (merge l r) y ↔ y = merge l r ∨ containsOrEq l y ∨ containsOrEq r y := by
+    ContainsOrEq (merge l r) y ↔ y = merge l r ∨ ContainsOrEq l y ∨ ContainsOrEq r y := by
   rw [containsOrEq_iff_eq_or_contains, contains_merge]
 
 /-! ### The vertex count grades containment -/
 
-theorem numNodes_lt_of_immediatelyContains (h : immediatelyContains x y) :
+theorem numNodes_lt_of_immediatelyContains (h : ImmediatelyContains x y) :
     y.val.numNodes < x.val.numNodes := by
   obtain ⟨tok, rfl⟩ | rfl | ⟨tok, rfl⟩ | ⟨l, r, rfl⟩ := exists_form x <;> simp at h
   obtain rfl | rfl := h <;> simp <;> omega
 
-theorem numNodes_lt_of_contains (h : contains x y) : y.val.numNodes < x.val.numNodes :=
+theorem numNodes_lt_of_contains (h : Contains x y) : y.val.numNodes < x.val.numNodes :=
   transGen_minimal (r' := InvImage (· > ·) fun s : SyntacticObject ↦ s.val.numNodes)
     (fun _ _ ↦ numNodes_lt_of_immediatelyContains) x y h
 
 /-- Being a proper term is well-founded: an object has finitely many terms. -/
-theorem wellFounded_flip_contains : WellFounded (flip contains) :=
+theorem wellFounded_flip_contains : WellFounded (flip Contains) :=
   Subrelation.wf (fun h ↦ numNodes_lt_of_contains h)
     (InvImage.wf (fun s : SyntacticObject ↦ s.val.numNodes) wellFounded_lt)
 
-instance : IsStrictOrder SyntacticObject contains where
+instance : IsStrictOrder SyntacticObject Contains where
   irrefl _ h := lt_irrefl _ (numNodes_lt_of_contains h)
   trans _ _ _ := TransGen.trans
 
-theorem contains_irrefl (x : SyntacticObject) : ¬ contains x x := irrefl x
+theorem contains_irrefl (x : SyntacticObject) : ¬ Contains x x := irrefl x
 
 end SyntacticObject
 
@@ -221,7 +221,7 @@ def terms (s : SyntacticObject) : Multiset SyntacticObject :=
       UnorderedTree.subtrees_node_pair]
 
 /-- The terms of `x` are the objects it reflexively contains. -/
-@[simp] theorem mem_terms : y ∈ x.terms ↔ containsOrEq x y := by
+@[simp] theorem mem_terms : y ∈ x.terms ↔ ContainsOrEq x y := by
   induction x using ind with
   | leaf tok => simp
   | trace => simp
@@ -231,14 +231,14 @@ def terms (s : SyntacticObject) : Multiset SyntacticObject :=
 theorem self_mem_terms (s : SyntacticObject) : s ∈ s.terms :=
   mem_terms.2 ReflTransGen.refl
 
-theorem terms_subset_terms (h : containsOrEq x y) : y.terms ⊆ x.terms :=
+theorem terms_subset_terms (h : ContainsOrEq x y) : y.terms ⊆ x.terms :=
   fun _ hz ↦ mem_terms.2 (ReflTransGen.trans h (mem_terms.1 hz))
 
 /-- One term per vertex. -/
 theorem card_terms (s : SyntacticObject) : s.terms.card = s.val.numNodes := by
   rw [terms, Multiset.card_pmap, UnorderedTree.card_subtrees]
 
-instance (x y : SyntacticObject) : Decidable (containsOrEq x y) :=
+instance (x y : SyntacticObject) : Decidable (ContainsOrEq x y) :=
   decidable_of_iff _ mem_terms
 
 /-! ### Accessible terms -/
@@ -265,7 +265,7 @@ theorem cons_accessibleTerms (s : SyntacticObject) : s ::ₘ s.accessibleTerms =
   simp [accessibleTerms]
 
 /-- The accessible terms of `x` are the objects it contains. -/
-@[simp] theorem mem_accessibleTerms : y ∈ x.accessibleTerms ↔ contains x y := by
+@[simp] theorem mem_accessibleTerms : y ∈ x.accessibleTerms ↔ Contains x y := by
   induction x using ind with
   | leaf tok => simp
   | trace => simp
@@ -277,7 +277,7 @@ theorem card_accessibleTerms (s : SyntacticObject) :
     s.accessibleTerms.card = s.val.numEdges := by
   rw [accessibleTerms, Multiset.card_erase_of_mem (self_mem_terms s), card_terms]; rfl
 
-instance (x y : SyntacticObject) : Decidable (contains x y) :=
+instance (x y : SyntacticObject) : Decidable (Contains x y) :=
   decidable_of_iff _ mem_accessibleTerms
 
 /-! ### C-command -/
@@ -286,54 +286,55 @@ variable {root : SyntacticObject}
 
 /-- `x` and `y` are sisters in `root` when they are distinct daughters of some term of
 `root`. -/
-def areSistersIn (root x y : SyntacticObject) : Prop :=
-  ∃ z ∈ root.terms, immediatelyContains z x ∧ immediatelyContains z y ∧ x ≠ y
+def Sisters (root x y : SyntacticObject) : Prop :=
+  ∃ z ∈ root.terms, ImmediatelyContains z x ∧ ImmediatelyContains z y ∧ x ≠ y
 
-instance (root x y : SyntacticObject) : Decidable (areSistersIn root x y) :=
+instance (root x y : SyntacticObject) : Decidable (Sisters root x y) :=
   Multiset.decidableExistsMultiset
 
-theorem areSistersIn.symm (h : areSistersIn root x y) : areSistersIn root y x :=
+theorem Sisters.symm (h : Sisters root x y) : Sisters root y x :=
   let ⟨z, hz, hx, hy, hne⟩ := h; ⟨z, hz, hy, hx, hne.symm⟩
 
-theorem areSistersIn.mem_left (h : areSistersIn root x y) : x ∈ root.terms :=
+theorem Sisters.mem_left (h : Sisters root x y) : x ∈ root.terms :=
   let ⟨_, hz, hx, _, _⟩ := h; mem_terms.2 (ReflTransGen.tail (mem_terms.1 hz) hx)
 
-theorem areSistersIn.mem_right (h : areSistersIn root x y) : y ∈ root.terms :=
+theorem Sisters.mem_right (h : Sisters root x y) : y ∈ root.terms :=
   h.symm.mem_left
 
 /-- `x` c-commands `y` in `root` when a sister of `x` contains or equals `y`. -/
-def cCommandsIn (root x y : SyntacticObject) : Prop :=
-  ∃ z ∈ root.terms, areSistersIn root x z ∧ containsOrEq z y
+def CCommands (root x y : SyntacticObject) : Prop :=
+  ∃ z ∈ root.terms, Sisters root x z ∧ ContainsOrEq z y
 
-instance (root x y : SyntacticObject) : Decidable (cCommandsIn root x y) :=
+instance (root x y : SyntacticObject) : Decidable (CCommands root x y) :=
   Multiset.decidableExistsMultiset
 
 /-- Sisters c-command each other. -/
-theorem cCommandsIn_of_areSistersIn (h : areSistersIn root x y) : cCommandsIn root x y :=
+theorem Sisters.cCommands (h : Sisters root x y) : CCommands root x y :=
   ⟨y, h.mem_right, h, ReflTransGen.refl⟩
 
 /-- A c-commanded object is a term of the root. -/
-theorem mem_terms_of_cCommandsIn (h : cCommandsIn root x y) : y ∈ root.terms :=
-  let ⟨_, hz, _, hzy⟩ := h; terms_subset_terms (mem_terms.1 hz) (mem_terms.2 hzy)
+theorem CCommands.mem_terms (h : CCommands root x y) : y ∈ root.terms :=
+  let ⟨_, hz, _, hzy⟩ := h
+  terms_subset_terms (SyntacticObject.mem_terms.1 hz) (SyntacticObject.mem_terms.2 hzy)
 
 /-- The c-command domain of `x` in `root`, the search space of a probe sitting at `x`. -/
-def domainIn (root x : SyntacticObject) : Multiset SyntacticObject :=
-  root.terms.filter (cCommandsIn root x)
+def cCommandDomain (root x : SyntacticObject) : Multiset SyntacticObject :=
+  root.terms.filter (CCommands root x)
 
-@[simp] theorem mem_domainIn : y ∈ domainIn root x ↔ cCommandsIn root x y :=
-  Multiset.mem_filter.trans (and_iff_right_of_imp mem_terms_of_cCommandsIn)
+@[simp] theorem mem_cCommandDomain : y ∈ cCommandDomain root x ↔ CCommands root x y :=
+  Multiset.mem_filter.trans (and_iff_right_of_imp CCommands.mem_terms)
 
 /-- `x` c-commands `y` in `root` and `y` does not c-command `x`. -/
-def asymCCommandsIn (root x y : SyntacticObject) : Prop :=
-  cCommandsIn root x y ∧ ¬ cCommandsIn root y x
+def AsymmCCommands (root x y : SyntacticObject) : Prop :=
+  CCommands root x y ∧ ¬ CCommands root y x
 
-instance (root x y : SyntacticObject) : Decidable (asymCCommandsIn root x y) :=
+instance (root x y : SyntacticObject) : Decidable (AsymmCCommands root x y) :=
   inferInstanceAs (Decidable (_ ∧ _))
 
 /-- Sisters never asymmetrically c-command each other. -/
-theorem not_asymCCommandsIn_of_areSistersIn (h : areSistersIn root x y) :
-    ¬ asymCCommandsIn root x y :=
-  fun h' ↦ h'.2 (cCommandsIn_of_areSistersIn h.symm)
+theorem Sisters.not_asymmCCommands (h : Sisters root x y) :
+    ¬ AsymmCCommands root x y :=
+  fun h' ↦ h'.2 (Sisters.cCommands h.symm)
 
 end SyntacticObject
 

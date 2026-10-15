@@ -46,7 +46,7 @@ variable {d : Derivation} {steps : List Step} {i : Nat} {xp w : SyntacticObject}
 the step, and after it the mover c-commands `w` and `w` no longer c-commands `xp`. -/
 def IsSmugglingStep (d : Derivation) (i : Nat) (xp w : SyntacticObject) : Prop :=
   ∃ m ∈ d.mover? i,
-    contains m xp ∧ d.CCommandsAt i w xp ∧ d.CCommandsAt (i + 1) m w ∧
+    Contains m xp ∧ d.CCommandsAt i w xp ∧ d.CCommandsAt (i + 1) m w ∧
       ¬ d.CCommandsAt (i + 1) w xp
 
 instance (d : Derivation) (i : Nat) (xp w : SyntacticObject) :

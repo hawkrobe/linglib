@@ -36,8 +36,8 @@ outside its interior.
 * `SyntacticObject.isPhaseHead_iff_phaseInterior_ne_zero`: a head projects exactly when its phase
   has a nonempty interior.
 * `SyntacticObject.phaseInterior_add_phaseEdge`: the interior and the edge partition the phase.
-* `SyntacticObject.phaseInterior_eq_domainIn`: the interior of a head that projects wherever it
-  occurs is its c-command domain.
+* `SyntacticObject.phaseInterior_eq_cCommandDomain`: the interior of a head that projects
+  wherever it occurs is its c-command domain.
 * `SyntacticObject.Accessible.nextPhase_of_phase`: [chomsky-2000]'s condition is the stronger.
 
 ## Implementation notes
@@ -83,24 +83,24 @@ open Relation
 variable (T : SyntacticObject) (ℓ : LexicalItem.Token) (x z : SyntacticObject)
 
 /-- `ℓ` heads a phase of `T` when it projects, heading a mother of its leaf. -/
-def IsPhaseHead : Prop := ∃ m ∈ T.terms, m.raisingHead = some ℓ ∧ immediatelyContains m (leaf ℓ)
+def IsPhaseHead : Prop := ∃ m ∈ T.terms, m.raisingHead = some ℓ ∧ ImmediatelyContains m (leaf ℓ)
 
 instance : Decidable (IsPhaseHead T ℓ) := Multiset.decidableExistsMultiset
 
 /-- `z` is the complement of `ℓ` in `T` when `ℓ` projects over its sister `z`. -/
 def IsComplementOf : Prop :=
-  ∃ m ∈ T.terms, m.raisingHead = some ℓ ∧ immediatelyContains m (leaf ℓ) ∧
-    immediatelyContains m z ∧ z ≠ leaf ℓ
+  ∃ m ∈ T.terms, m.raisingHead = some ℓ ∧ ImmediatelyContains m (leaf ℓ) ∧
+    ImmediatelyContains m z ∧ z ≠ leaf ℓ
 
 instance : Decidable (IsComplementOf T ℓ z) := Multiset.decidableExistsMultiset
 
 /-- `x` lies within the projection of `ℓ` in `T` when a term of `T` that `ℓ` heads contains it. -/
-def WithinProjection : Prop := ∃ p ∈ T.terms, p.raisingHead = some ℓ ∧ containsOrEq p x
+def WithinProjection : Prop := ∃ p ∈ T.terms, p.raisingHead = some ℓ ∧ ContainsOrEq p x
 
 instance : Decidable (WithinProjection T ℓ x) := Multiset.decidableExistsMultiset
 
 /-- `x` lies within the complement of `ℓ` in `T` when a complement of `ℓ` contains it. -/
-def WithinComplement : Prop := ∃ z ∈ T.terms, IsComplementOf T ℓ z ∧ containsOrEq z x
+def WithinComplement : Prop := ∃ z ∈ T.terms, IsComplementOf T ℓ z ∧ ContainsOrEq z x
 
 instance : Decidable (WithinComplement T ℓ x) := Multiset.decidableExistsMultiset
 
@@ -132,19 +132,19 @@ theorem WithinComplement.withinProjection (h : WithinComplement T ℓ x) : Withi
 theorem WithinComplement.mem_terms (h : WithinComplement T ℓ x) : x ∈ T.terms :=
   h.withinProjection.mem_terms
 
-theorem WithinProjection.trans (hx : WithinProjection T ℓ x) (hxy : containsOrEq x y) :
+theorem WithinProjection.trans (hx : WithinProjection T ℓ x) (hxy : ContainsOrEq x y) :
     WithinProjection T ℓ y :=
   let ⟨p, hp, hℓ, hpx⟩ := hx
   ⟨p, hp, hℓ, hpx.trans hxy⟩
 
 /-- Whatever a frozen term contains is frozen. -/
-theorem WithinComplement.trans (hx : WithinComplement T ℓ x) (hxy : containsOrEq x y) :
+theorem WithinComplement.trans (hx : WithinComplement T ℓ x) (hxy : ContainsOrEq x y) :
     WithinComplement T ℓ y :=
   let ⟨z, hz, hc, hzx⟩ := hx
   ⟨z, hz, hc, hzx.trans hxy⟩
 
 /-- The head c-commands what lies within its complement. -/
-theorem WithinComplement.cCommandsIn (h : WithinComplement T ℓ x) : T.cCommandsIn (leaf ℓ) x :=
+theorem WithinComplement.cCommands (h : WithinComplement T ℓ x) : T.CCommands (leaf ℓ) x :=
   let ⟨z, hz, ⟨m, hm, _, hmℓ, hmz, hne⟩, hzx⟩ := h
   ⟨z, hz, ⟨m, hm, hmℓ, hmz, hne.symm⟩, hzx⟩
 
@@ -191,15 +191,15 @@ theorem phaseInterior_add_phaseEdge : T.phaseInterior ℓ + T.phaseEdge ℓ = T.
   exact Multiset.filter_congr fun _ _ ↦ by
     grind [mem_phaseInterior, WithinComplement.withinProjection]
 
-theorem phaseInterior_le_domainIn : T.phaseInterior ℓ ≤ T.domainIn (leaf ℓ) :=
-  Multiset.monotone_filter_right _ fun _ h ↦ h.cCommandsIn
+theorem phaseInterior_le_cCommandDomain : T.phaseInterior ℓ ≤ T.cCommandDomain (leaf ℓ) :=
+  Multiset.monotone_filter_right _ fun _ h ↦ h.cCommands
 
 /-- The interior of a head that projects wherever it occurs is its c-command domain. -/
-theorem phaseInterior_eq_domainIn
-    (h : ∀ m ∈ T.terms, immediatelyContains m (leaf ℓ) → m.raisingHead = some ℓ) :
-    T.phaseInterior ℓ = T.domainIn (leaf ℓ) :=
+theorem phaseInterior_eq_cCommandDomain
+    (h : ∀ m ∈ T.terms, ImmediatelyContains m (leaf ℓ) → m.raisingHead = some ℓ) :
+    T.phaseInterior ℓ = T.cCommandDomain (leaf ℓ) :=
   Multiset.filter_congr fun _ _ ↦ by
-    grind [WithinComplement, IsComplementOf, cCommandsIn, areSistersIn]
+    grind [WithinComplement, IsComplementOf, CCommands, Sisters]
 
 /-! ### The Phase Impenetrability Condition -/
 

@@ -404,11 +404,11 @@ theorem ditransitives_licensed :
 properly dominating `a` dominates `b` and `b` does not c-command `a`. Binding is not restricted to
 a domain. -/
 def configuration (t : XTree) : Binding.Configuration TreePath where
-  commands a b := (a, b) ∈ PhraseStructure.Tree.maxCommandAt t ∧ ¬ PhraseStructure.CCommands t b a
+  commands a b := (a, b) ∈ PhraseStructure.Tree.maxCommand t ∧ ¬ RoseTree.CCommands t b a
   domain _ := Set.univ
 
 instance (t : XTree) : DecidableRel (configuration t).commands := fun a b ↦
-  inferInstanceAs (Decidable ((a, b) ∈ PhraseStructure.Tree.maxCommandAt t ∧ _))
+  inferInstanceAs (Decidable ((a, b) ∈ PhraseStructure.Tree.maxCommand t ∧ _))
 
 /-- `leafPaths t` pairs each leaf of `t` with its position. -/
 def leafPaths (t : XTree) : List (Leaf × TreePath) :=
@@ -438,7 +438,7 @@ theorem canBind_dobj_iobj :
 /-- With the indirect object in v's complement neither object c-commands the other. -/
 theorem highXP_not_cCommands :
     ∃ a ∈ (leafPaths highXP).lookup .dobj, ∃ b ∈ (leafPaths highXP).lookup .iobj,
-      ¬ PhraseStructure.CCommands highXP a b ∧ ¬ PhraseStructure.CCommands highXP b a := by
+      ¬ RoseTree.CCommands highXP a b ∧ ¬ RoseTree.CCommands highXP b a := by
   decide
 
 /-- **Word order and binding.** When the indirect object precedes the direct object, the direct

@@ -47,15 +47,15 @@ open SyntacticObject
 variable {d : Derivation} {steps : List Step} {x : SyntacticObject}
 
 /-- `x` sits inside a constituent `d` has moved. -/
-def Frozen (d : Derivation) (x : SyntacticObject) : Prop := ∃ m ∈ d.movedItems, contains m x
+def Frozen (d : Derivation) (x : SyntacticObject) : Prop := ∃ m ∈ d.movedItems, Contains m x
 
 instance (d : Derivation) (x : SyntacticObject) : Decidable (d.Frozen x) :=
-  inferInstanceAs (Decidable (∃ m ∈ d.movedItems, contains m x))
+  inferInstanceAs (Decidable (∃ m ∈ d.movedItems, Contains m x))
 
 /-- Extending a derivation freezes what its new movers contain and nothing else. -/
 theorem frozen_append_iff :
     (d.append steps).Frozen x ↔
-      d.Frozen x ∨ ∃ m ∈ steps.filterMap Step.mover?, contains m x := by
+      d.Frozen x ∨ ∃ m ∈ steps.filterMap Step.mover?, Contains m x := by
   simp [Frozen, movedItems_append, or_and_right, exists_or]
 
 /-- Freezing is monotone under extension. -/
@@ -69,14 +69,14 @@ theorem Frozen.append (h : d.Frozen x) : (d.append steps).Frozen x :=
 /-- A derivation obeys Freezing when no step moves a constituent that an earlier mover
 contains. -/
 def ObeysFreezing (d : Derivation) : Prop :=
-  d.movedItems.Pairwise fun m m' ↦ ¬ contains m m'
+  d.movedItems.Pairwise fun m m' ↦ ¬ Contains m m'
 
 instance (d : Derivation) : Decidable d.ObeysFreezing :=
   inferInstanceAs (Decidable (d.movedItems.Pairwise _))
 
 theorem obeysFreezing_append_iff :
     (d.append steps).ObeysFreezing ↔ d.ObeysFreezing ∧
-      (steps.filterMap Step.mover?).Pairwise (fun m m' ↦ ¬ contains m m') ∧
+      (steps.filterMap Step.mover?).Pairwise (fun m m' ↦ ¬ Contains m m') ∧
         ∀ m ∈ steps.filterMap Step.mover?, ¬ d.Frozen m := by
   simp only [ObeysFreezing, movedItems_append, List.pairwise_append, Frozen]
   grind
