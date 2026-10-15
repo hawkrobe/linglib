@@ -69,6 +69,10 @@ theorem total_eq_of_le {α : Type*} {r s : α → α → Prop}
 
 namespace Ranking
 
+/-- A ranking enumerates all the constraints, so their number is the number of rank positions. -/
+theorem card_eq [Fintype ι] (r : Ranking ι n) : Fintype.card ι = n := by
+  simpa using Fintype.card_congr r.symm
+
 variable (r : Ranking ι n)
 
 /-- Constraint `i` dominates constraint `j` under `r` when it sits at a lower, more dominant,
@@ -83,11 +87,6 @@ instance : IsStrictTotalOrder ι r.Dominates := InvImage.isStrictTotalOrder r.sy
 /-- Dominance between ranked positions is position order. -/
 @[simp] theorem dominates_apply_iff {p q : Fin n} : r.Dominates (r p) (r q) ↔ p < q := by
   simp [Dominates]
-
-omit r in
-/-- A ranking enumerates all the constraints, so their number is the number of rank positions. -/
-theorem card_eq [Fintype ι] (r : Ranking ι n) : Fintype.card ι = n := by
-  simpa using Fintype.card_congr r.symm
 
 /-- Reading two vectors in rank order and comparing them lexicographically is `Pi.Lex` under
 dominance. -/
@@ -122,12 +121,15 @@ theorem exists_dominates {i j : Fin n} (hij : i ≠ j) :
   · exact ⟨Equiv.swap i j, by simpa [Dominates] using h⟩
 
 /-- Any constraint can be ranked above all the others. -/
-theorem exists_forall_dominates (i : Fin n) :
-    ∃ r : Ranking (Fin n) n, ∀ j, j ≠ i → r.Dominates i j := by
-  refine ⟨Equiv.swap ⟨0, i.pos⟩ i, fun j hj ↦ ?_⟩
-  have hi : (Equiv.swap ⟨0, i.pos⟩ i).symm i = ⟨0, i.pos⟩ := by simp
+theorem exists_forall_dominates [Fintype ι] (i : ι) (h : Fintype.card ι = n := by simp) :
+    ∃ r : Ranking ι n, ∀ j, j ≠ i → r.Dominates i j := by
+  classical
+  let e : Ranking ι n := (Fintype.equivFinOfCardEq h).symm
+  let r : Ranking ι n := (Equiv.swap ⟨0, (e.symm i).pos⟩ (e.symm i)).trans e
+  have hi : r.symm i = ⟨0, (e.symm i).pos⟩ := by simp [r]
+  refine ⟨r, fun j hj ↦ ?_⟩
   rw [Dominates, hi, Fin.lt_def]
-  exact Nat.pos_of_ne_zero fun h0 ↦ hj <| (Equiv.swap ⟨0, i.pos⟩ i).symm.injective <|
+  exact Nat.pos_of_ne_zero fun h0 ↦ hj <| r.symm.injective <|
     Fin.ext (h0.trans (congrArg Fin.val hi).symm)
 
 /-! ### The top constraints of a ranking -/
