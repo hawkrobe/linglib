@@ -1,5 +1,7 @@
 module
 
+public import Mathlib.Algebra.Order.Field.Basic
+public import Mathlib.Algebra.Order.Field.Rat
 public import Mathlib.Algebra.Order.Ring.Abs
 public import Mathlib.Data.Rat.Defs
 public import Mathlib.Tactic.DeriveFintype
@@ -35,6 +37,16 @@ namespace Decimal
 
 /-- The printed value. -/
 def toRat (d : Decimal) : ℚ := d.mantissa / 10 ^ d.exponent
+
+@[simp] theorem toRat_pos (d : Decimal) : 0 < d.toRat ↔ 0 < d.mantissa := by
+  simp [toRat, pow_pos]
+
+@[simp] theorem toRat_neg (d : Decimal) : d.toRat < 0 ↔ d.mantissa < 0 := by
+  simp [toRat, div_neg_iff, pow_pos]
+
+instance (d : Decimal) : Decidable (0 < d.toRat) := decidable_of_iff' _ (toRat_pos d)
+
+instance (d : Decimal) : Decidable (d.toRat < 0) := decidable_of_iff' _ (toRat_neg d)
 
 /-- The printed value in hundredths, exact when at most two places are printed: a proportion
 printed to two places, in percent. -/
