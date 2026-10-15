@@ -90,6 +90,10 @@ theorem Licensed.induction {motive : (t : RoseTree α) → t.Licensed R → Prop
   induction t with
   | node a cs ih => exact node a cs ht.rel_root (fun _ ↦ ht.of_mem) fun c hc ↦ ih c hc _
 
+theorem Licensed.mono {R' : α → List α → Prop} (h : ∀ a ks, R a ks → R' a ks) {t : RoseTree α}
+    (ht : t.Licensed R) : t.Licensed R' :=
+  fun s hs ↦ h _ _ (ht s hs)
+
 theorem Licensed.of_isSubtree {s t : RoseTree α} (ht : t.Licensed R) (hs : IsSubtree s t) :
     s.Licensed R :=
   fun r hr ↦ ht r (hr.trans hs)
