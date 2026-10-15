@@ -1,28 +1,31 @@
+/-
+Copyright (c) 2026 Robert Hawkins. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Robert Hawkins
+-/
 module
 
 public import Linglib.Core.Order.Bilattice.Involution
 public import Linglib.Core.Order.InvolutiveCompl
 public import Mathlib.Data.Fintype.Prod
+public import Mathlib.Order.SupClosed
 
 /-!
 # The Ginsberg–Fitting product bilattice
 
-The fundamental bilattice construction ([avron-1996] Def 2.4): the product `L ⊙ R` of two
-lattices carries pairs `(a, b)` recording evidence for (`a ∈ L`) and against (`b ∈ R`) a
-proposition, ordered two ways.
+The product `L ⊙ R` of two lattices, the fundamental bilattice construction, carries pairs
+`(a, b)` recording evidence for (`a ∈ L`) and against (`b ∈ R`) a proposition, ordered two ways.
 
-* The truth order, more for and less against, is the carrier's `≤`. As a type
+* The truth order, more for and less against, is the carrier's `≤`. The type is
   `L ⊙ R := L × Rᵒᵈ`, so the `Prod` and `OrderDual` instances provide the truth lattice, its
   bounds `t = (⊤, ⊥)` and `f = (⊥, ⊤)`, and distributivity.
 * The knowledge order, more evidence both ways, is the plain `Prod` order, installed on the
   synonym `Know (L ⊙ R)`.
 
-The `IsInterlaced (L ⊙ R)` instance packages the four monotonicity laws ([avron-1996]
-Def 2.1(3)), so the product is an interlaced bilattice ([avron-1996] Thm 2.5). On the diagonal
-`L ⊙ L`, swapping the coordinates is Ginsberg's negation ([ginsberg-1988]; [avron-1996]
-Thm 2.5(2)). The construction "was
-essentially introduced by Ginsberg [ginsberg-1988], and further generalized by Fitting"
-([avron-1996]). `[UPSTREAM]` candidate: mathlib has no bilattices.
+The `IsInterlaced (L ⊙ R)` instance packages the four monotonicity laws, so the product is an
+interlaced bilattice. On the diagonal `L ⊙ L`, swapping the coordinates is Ginsberg's negation.
+Avron credits the construction to Ginsberg, generalized by Fitting. `[UPSTREAM]` candidate:
+mathlib has no bilattices.
 
 ## Main definitions
 
@@ -38,8 +41,6 @@ essentially introduced by Ginsberg [ginsberg-1988], and further generalized by F
 
 * `Bilattice.Product.isExact_iff`, `Bilattice.Product.isConsistent_iff`,
   `Bilattice.Product.isAnticonsistent_iff`: the three classes in coordinates.
-* `Bilattice.Product.disjoint_pro_con_inf`, `Bilattice.Product.disjoint_pro_con_sup`: pairs with
-  disjoint coordinates are closed under the truth operations.
 
 ## References
 
@@ -53,10 +54,9 @@ essentially introduced by Ginsberg [ginsberg-1988], and further generalized by F
 
 namespace Bilattice
 
-/-- The Ginsberg–Fitting product `L ⊙ R` ([avron-1996] Def 2.4): pairs of
-evidence for/against. The carrier order is the *truth* order (`L × Rᵒᵈ`: more
-for, less against); the *knowledge* order lives on `Know (L ⊙ R)` (`L × R`:
-more evidence both ways). -/
+/-- The Ginsberg–Fitting product `L ⊙ R` of pairs of evidence for and against ([avron-1996]
+Def 2.4). Its order is the truth order of `L × Rᵒᵈ`, more for and less against; the knowledge
+order, more evidence both ways, is that of `L × R` on `Know (L ⊙ R)`. -/
 def Product (L R : Type*) : Type _ := L × Rᵒᵈ
 
 @[inherit_doc] scoped infixl:70 " ⊙ " => Product
@@ -65,7 +65,7 @@ namespace Product
 
 variable {L R : Type*}
 
-/-- Build `L ⊙ R` from plain coordinates: evidence `a` for, `b` against. -/
+/-- The pair with evidence `a` for and `b` against. -/
 def mk (a : L) (b : R) : L ⊙ R := (a, OrderDual.toDual b)
 
 /-- The evidence-for coordinate. -/
@@ -83,10 +83,10 @@ def con (x : L ⊙ R) : R := OrderDual.ofDual x.2
 
 /-! ### The truth order
 
-The carrier instances, transported from `L × Rᵒᵈ`: `≤` is the truth order
-([avron-1996] Def 2.4(ii)), `⊓`/`⊔` the truth meet/join (ibid. Def 2.4(iv),
-(iii)), `⊤ = t`/`⊥ = f` the truth bounds (ibid. Def 2.4(vii)), and the product
-of distributive lattices is distributive (ibid. Thm 2.5). -/
+The carrier instances are transported from `L × Rᵒᵈ`. Its `≤` is the truth order
+([avron-1996] Def 2.4(ii)), `⊓` and `⊔` the truth meet and join (ibid. Def 2.4(iv), (iii)),
+`⊤ = t` and `⊥ = f` the truth bounds (ibid. Def 2.4(vii)), and the product of distributive
+lattices is distributive (ibid. Thm 2.5). -/
 
 instance [Preorder L] [Preorder R] : Preorder (L ⊙ R) :=
   inferInstanceAs (Preorder (L × Rᵒᵈ))
@@ -107,20 +107,23 @@ instance [DecidableEq L] [DecidableEq R] : DecidableEq (L ⊙ R) :=
 instance [Fintype L] [Fintype R] : Fintype (L ⊙ R) :=
   inferInstanceAs (Fintype (L × Rᵒᵈ))
 
-/-- The truth order in plain coordinates: more for, less against
+/-- In the truth order a pair lies higher with more evidence for and less against
 ([avron-1996] Def 2.4(ii)). -/
 @[simp] theorem mk_le_mk [Preorder L] [Preorder R] {a₁ a₂ : L} {b₁ b₂ : R} :
     mk a₁ b₁ ≤ mk a₂ b₂ ↔ a₁ ≤ a₂ ∧ b₂ ≤ b₁ := Iff.rfl
 
-/-- Truth meet `∧` in plain coordinates ([avron-1996] Def 2.4(iv)). -/
+/-- The truth meet meets the evidence for and joins the evidence against ([avron-1996]
+Def 2.4(iv)). -/
 @[simp] theorem mk_inf_mk [Lattice L] [Lattice R] {a₁ a₂ : L} {b₁ b₂ : R} :
     mk a₁ b₁ ⊓ mk a₂ b₂ = mk (a₁ ⊓ a₂) (b₁ ⊔ b₂) := rfl
 
-/-- Truth join `∨` in plain coordinates ([avron-1996] Def 2.4(iii)). -/
+/-- The truth join joins the evidence for and meets the evidence against ([avron-1996]
+Def 2.4(iii)). -/
 @[simp] theorem mk_sup_mk [Lattice L] [Lattice R] {a₁ a₂ : L} {b₁ b₂ : R} :
     mk a₁ b₁ ⊔ mk a₂ b₂ = mk (a₁ ⊔ a₂) (b₁ ⊓ b₂) := rfl
 
-/-- The truth order on the projections. -/
+/-- A pair lies below another in the truth order when it has less evidence for and more
+against. -/
 theorem le_def [Preorder L] [Preorder R] {x y : L ⊙ R} :
     x ≤ y ↔ x.pro ≤ y.pro ∧ y.con ≤ x.con := Iff.rfl
 
@@ -148,9 +151,9 @@ end ProjBounds
 
 /-! ### The knowledge order
 
-The instances on the synonym `Know (L ⊙ R)`, transported from the plain
-`Prod` order on `L × R`; `⊓ₖ`/`⊔ₖ`/`≤ₖ` are then the generic knowledge
-operations of `Core.Order.Bilattice.Defs`. -/
+The instances on the synonym `Know (L ⊙ R)` are transported from the plain `Prod` order on
+`L × R`, so `⊓ₖ`, `⊔ₖ` and `≤ₖ` are the generic knowledge operations of
+`Core.Order.Bilattice.Defs`. -/
 
 instance [Preorder L] [Preorder R] : Preorder (Know (L ⊙ R)) :=
   inferInstanceAs (Preorder (L × R))
@@ -167,18 +170,18 @@ instance [Preorder L] [Preorder R] [DecidableLE L] [DecidableLE R] :
     DecidableLE (Know (L ⊙ R)) :=
   inferInstanceAs (DecidableLE (L × R))
 
-/-- The knowledge order in plain coordinates: more evidence both ways
-([avron-1996] Def 2.4). -/
+/-- In the knowledge order a pair lies higher with more evidence both ways ([avron-1996]
+Def 2.4). -/
 @[simp] theorem mk_kLE_mk [Preorder L] [Preorder R] {a₁ a₂ : L} {b₁ b₂ : R} :
     mk a₁ b₁ ≤ₖ mk a₂ b₂ ↔ a₁ ≤ a₂ ∧ b₁ ≤ b₂ := Iff.rfl
 
-/-- Knowledge meet `⊓ₖ` (consensus) in plain coordinates ([avron-1996] Def 2.4). -/
+/-- The knowledge meet, consensus, meets both coordinates ([avron-1996] Def 2.4). -/
 @[simp] theorem mk_kInf_mk [Lattice L] [Lattice R] {a₁ a₂ : L} {b₁ b₂ : R} :
     mk a₁ b₁ ⊓ₖ mk a₂ b₂ = mk (a₁ ⊓ a₂) (b₁ ⊓ b₂) := rfl
 
-/-- Knowledge join `⊔ₖ` (gullibility) in plain coordinates ([avron-1996] Def 2.4). -/
+/-- The knowledge join, gullibility, joins both coordinates ([avron-1996] Def 2.4). -/
 @[simp] theorem mk_kSup_mk [Lattice L] [Lattice R] {a₁ a₂ : L} {b₁ b₂ : R} :
-    (mk a₁ b₁ ⊔ₖ mk a₂ b₂) = mk (a₁ ⊔ a₂) (b₁ ⊔ b₂) := rfl
+    mk a₁ b₁ ⊔ₖ mk a₂ b₂ = mk (a₁ ⊔ a₂) (b₁ ⊔ b₂) := rfl
 
 section KProj
 
@@ -191,8 +194,8 @@ variable [Lattice L] [Lattice R] (x y : L ⊙ R)
 
 end KProj
 
-/-- **The product is an interlaced bilattice** ([avron-1996] Thm 2.5): each
-order's meet and join are monotone for the other order. -/
+/-- The product is an interlaced bilattice, each order's meet and join being monotone for the
+other order ([avron-1996] Thm 2.5). -/
 instance [Lattice L] [Lattice R] : IsInterlaced (L ⊙ R) where
   inf_kmono h _ := ⟨inf_le_inf h.1 le_rfl, sup_le_sup h.2 le_rfl⟩
   sup_kmono h _ := ⟨sup_le_sup h.1 le_rfl, inf_le_inf h.2 le_rfl⟩
@@ -212,8 +215,8 @@ section Negation
 /-- Ginsberg negation on `L ⊙ L` swaps the evidence for and the evidence against. -/
 instance : Compl (L ⊙ L) := ⟨fun x ↦ mk x.con x.pro⟩
 
-@[simp] theorem pro_compl (x : L ⊙ L) : (xᶜ).pro = x.con := rfl
-@[simp] theorem con_compl (x : L ⊙ L) : (xᶜ).con = x.pro := rfl
+@[simp] theorem pro_compl (x : L ⊙ L) : xᶜ.pro = x.con := rfl
+@[simp] theorem con_compl (x : L ⊙ L) : xᶜ.con = x.pro := rfl
 @[simp] theorem mk_compl (a b : L) : (mk a b)ᶜ = mk b a := rfl
 @[simp] protected theorem compl_compl (x : L ⊙ L) : xᶜᶜ = x := rfl
 
@@ -236,9 +239,9 @@ end Negation
 /-! ### Conflation
 
 Swapping the coordinates and applying an order-reversing involution of the factor to each is a
-conflation of `L ⊙ L` ([fitting-1994] §7, [fitting-2021] §8.8). The involution of a
-involution of the factor (`InvolutiveCompl`) gives the conflation instance, which commutes with
-Ginsberg negation, and the exact, consistent and anticonsistent values read off the coordinates. -/
+conflation of `L ⊙ L` ([fitting-1994] §7, [fitting-2021] §8.8). An involutive complement of the
+factor gives the conflation instance, which commutes with Ginsberg negation, and the exact,
+consistent and anticonsistent values read off the coordinates. -/
 
 section Conflation
 
@@ -266,11 +269,12 @@ theorem isExact_iff (x : L ⊙ L) : IsExact x ↔ x.con = x.proᶜ :=
   ⟨fun h ↦ (congrArg con h.eq).symm,
     fun h ↦ ext (by simp [h, InvolutiveCompl.compl_compl]) h.symm⟩
 
-/-- The consistent values: the evidence against is below the complement of the evidence for. -/
+/-- A pair is consistent when its evidence against lies below the complement of its evidence
+for. -/
 theorem isConsistent_iff (x : L ⊙ L) : IsConsistent x ↔ x.con ≤ x.proᶜ :=
   ⟨And.right, fun h ↦ ⟨InvolutiveCompl.le_compl_comm.1 h, h⟩⟩
 
-/-- The anticonsistent values: the complement of the evidence for is below the evidence
+/-- A pair is anticonsistent when the complement of its evidence for lies below its evidence
 against. -/
 theorem isAnticonsistent_iff (x : L ⊙ L) : IsAnticonsistent x ↔ x.proᶜ ≤ x.con :=
   ⟨And.right, fun h ↦ ⟨(InvolutiveCompl.compl_le_compl h).trans
@@ -280,25 +284,30 @@ end Conflation
 
 /-! ### Disjoint coordinates
 
-The pairs whose evidence for and against are disjoint are closed under the truth operations over
-a distributive factor, and under negation by the symmetry of `Disjoint`: they are Kalman's
-construction, whose carrier `Kalman L` (`Core/Order/DeMorganAlgebra/Kalman.lean`) is
-definitionally `{x : L ⊙ L // Disjoint x.pro x.con}`, a Kleene lattice under the truth operations
-and Ginsberg negation. Over a Boolean factor disjointness is Fitting's consistency; over a De Morgan
-factor it is stronger (`⟨indet, indet⟩` in `Trivalent ⊙ Trivalent` is consistent), and over a
-Heyting factor, whose pseudocomplement is no involution, it is the only notion available. -/
+The pairs whose evidence for and against are disjoint are closed under negation by the symmetry
+of `Disjoint` and, over a distributive factor, under the truth operations, and negation satisfies
+the Kleene law on them: they form Kalman's construction `Kalman L`
+(`Core/Order/DeMorganAlgebra/Kalman.lean`). Over a Boolean factor disjointness is Fitting's
+consistency. Over a De Morgan factor neither implies the other: `⟨indet, indet⟩` in
+`Trivalent ⊙ Trivalent` is consistent but not disjoint, and the pair of the glut and the gap in
+`FOUR ⊙ FOUR` is disjoint but not consistent. Over a Heyting factor, whose pseudocomplement is no
+involution, disjointness is the only notion available. -/
 
 section Disjoint
 
-variable [DistribLattice L] [OrderBot L] {x y : L ⊙ L}
+/-- On pairs with disjoint coordinates negation satisfies the Kleene law, since a contradiction
+`x ⊓ xᶜ` has no evidence for and an excluded middle `y ⊔ yᶜ` no evidence against. -/
+theorem inf_compl_le_sup_compl_of_disjoint [Lattice L] [OrderBot L] {x y : L ⊙ L}
+    (hx : Disjoint x.pro x.con) (hy : Disjoint y.pro y.con) : x ⊓ xᶜ ≤ y ⊔ yᶜ :=
+  ⟨hx.le_bot.trans bot_le, hy.symm.le_bot.trans bot_le⟩
 
-theorem disjoint_pro_con_inf (hx : Disjoint x.pro x.con) (hy : Disjoint y.pro y.con) :
-    Disjoint (x ⊓ y).pro (x ⊓ y).con :=
-  (hx.inf_left _).sup_right (hy.inf_left' _)
+variable [DistribLattice L] [OrderBot L]
 
-theorem disjoint_pro_con_sup (hx : Disjoint x.pro x.con) (hy : Disjoint y.pro y.con) :
-    Disjoint (x ⊔ y).pro (x ⊔ y).con :=
-  (hx.inf_right _).sup_left (hy.inf_right' _)
+theorem supClosed_disjoint_pro_con : SupClosed {x : L ⊙ L | Disjoint x.pro x.con} :=
+  fun _ hx _ hy ↦ (hx.inf_right _).sup_left (hy.inf_right' _)
+
+theorem infClosed_disjoint_pro_con : InfClosed {x : L ⊙ L | Disjoint x.pro x.con} :=
+  fun _ hx _ hy ↦ (hx.inf_left _).sup_right (hy.inf_left' _)
 
 end Disjoint
 
