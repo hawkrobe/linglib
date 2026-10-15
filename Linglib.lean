@@ -96,7 +96,6 @@ import Linglib.Logic.Aristotelian.Square
 import Linglib.Logic.Assignment
 import Linglib.Logic.BeliefRevision.Iterated
 import Linglib.Core.Order.Bilattice.Product
-import Linglib.Core.Order.Bilattice.Representation
 import Linglib.Logic.ComparativeProbability.Defs
 import Linglib.Logic.Consequence
 import Linglib.Logic.CylindricAlgebra

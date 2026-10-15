@@ -145,15 +145,6 @@ def Conflation.orderIso : B ≃o B where
   right_inv := conf_conf
   map_rel_iff' := conf_le_conf_iff
 
-/-- Conflation as an antitone automorphism of the knowledge order,
-`Know B ≃o (Know B)ᵒᵈ`. -/
-def Conflation.knowDualIso : Know B ≃o (Know B)ᵒᵈ where
-  toFun X := OrderDual.toDual (toKnow (conf (ofKnow X)))
-  invFun X := toKnow (conf (ofKnow (OrderDual.ofDual X)))
-  left_inv _ := congrArg toKnow (conf_conf _)
-  right_inv _ := congrArg (OrderDual.toDual ∘ toKnow) (conf_conf _)
-  map_rel_iff' := conf_kLE_conf_iff
-
 end Defs
 
 section Bounds
@@ -162,12 +153,10 @@ variable [PartialOrder B] [Preorder (Know B)] [BoundedOrder B] [Conflation B]
 
 /-- Conflation fixes the truth top, `−t = t` (note following
 [fitting-2021] Def 8.5.1). -/
-@[simp] theorem conf_top : conf (⊤ : B) = ⊤ :=
-  le_antisymm le_top (by simpa only [conf_conf] using conf_le_conf (le_top : conf (⊤ : B) ≤ ⊤))
+@[simp] theorem conf_top : conf (⊤ : B) = ⊤ := Conflation.orderIso.map_top
 
 /-- Conflation fixes the truth bottom, `−f = f`. -/
-@[simp] theorem conf_bot : conf (⊥ : B) = ⊥ :=
-  le_antisymm (by simpa only [conf_conf] using conf_le_conf (bot_le : (⊥ : B) ≤ conf ⊥)) bot_le
+@[simp] theorem conf_bot : conf (⊥ : B) = ⊥ := Conflation.orderIso.map_bot
 
 end Bounds
 
@@ -216,16 +205,6 @@ instance [DecidableRel (kLE (B := B))] : DecidablePred (IsAnticonsistent (B := B
   fun a ↦ inferInstanceAs (Decidable (conf a ≤ₖ a))
 
 end Classes
-
-section ClassesBounds
-
-variable [PartialOrder B] [Preorder (Know B)] [BoundedOrder B] [Conflation B]
-
-/-- The truth bounds are exact ([fitting-2021] Prop 8.5.2). -/
-theorem isExact_top : IsExact (⊤ : B) := conf_top
-theorem isExact_bot : IsExact (⊥ : B) := conf_bot
-
-end ClassesBounds
 
 section ClassesClosure
 

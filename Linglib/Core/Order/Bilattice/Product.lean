@@ -1,8 +1,7 @@
 module
 
-public import Linglib.Core.Order.Bilattice.Representation
+public import Linglib.Core.Order.Bilattice.Involution
 public import Linglib.Core.Order.InvolutiveCompl
-public import Linglib.Core.Order.Hom.Basic
 public import Mathlib.Data.Fintype.Prod
 
 /-!
@@ -19,9 +18,9 @@ proposition, ordered two ways.
   synonym `Know (L ⊙ R)`.
 
 The `IsInterlaced (L ⊙ R)` instance packages the four monotonicity laws ([avron-1996]
-Def 2.1(3)), so the product is an interlaced bilattice ([avron-1996] Thm 2.5); the converse is
-`Bilattice.decompose` (ibid. Thm 4.3). On the diagonal `L ⊙ L`, swapping the coordinates is
-Ginsberg's negation ([ginsberg-1988]; [avron-1996] Thm 2.5(2)). The construction "was
+Def 2.1(3)), so the product is an interlaced bilattice ([avron-1996] Thm 2.5). On the diagonal
+`L ⊙ L`, swapping the coordinates is Ginsberg's negation ([ginsberg-1988]; [avron-1996]
+Thm 2.5(2)). The construction "was
 essentially introduced by Ginsberg [ginsberg-1988], and further generalized by Fitting"
 ([avron-1996]). `[UPSTREAM]` candidate: mathlib has no bilattices.
 
@@ -40,11 +39,7 @@ essentially introduced by Ginsberg [ginsberg-1988], and further generalized by F
 * `Bilattice.Product.isExact_iff`, `Bilattice.Product.isConsistent_iff`,
   `Bilattice.Product.isAnticonsistent_iff`: the three classes in coordinates.
 * `Bilattice.Product.disjoint_pro_con_inf`, `Bilattice.Product.disjoint_pro_con_sup`: pairs with
-  disjoint coordinates are closed under the truth operations;
-  `Bilattice.Product.isConsistent_iff_disjoint` identifies them with the consistent pairs over a
-  Boolean factor.
-* `Bilattice.Product.decomposeProdIso`: the representation theorem applied to a product recovers
-  its factors.
+  disjoint coordinates are closed under the truth operations.
 
 ## References
 
@@ -125,14 +120,6 @@ instance [Fintype L] [Fintype R] : Fintype (L ⊙ R) :=
 @[simp] theorem mk_sup_mk [Lattice L] [Lattice R] {a₁ a₂ : L} {b₁ b₂ : R} :
     mk a₁ b₁ ⊔ mk a₂ b₂ = mk (a₁ ⊔ a₂) (b₁ ⊓ b₂) := rfl
 
-/-- The truth top `t = (⊤, ⊥)` ([avron-1996] Def 2.4(vii)). -/
-theorem top_eq [Preorder L] [Preorder R] [BoundedOrder L] [BoundedOrder R] :
-    (⊤ : L ⊙ R) = mk ⊤ ⊥ := rfl
-
-/-- The truth bottom `f = (⊥, ⊤)` ([avron-1996] Def 2.4(vii)). -/
-theorem bot_eq [Preorder L] [Preorder R] [BoundedOrder L] [BoundedOrder R] :
-    (⊥ : L ⊙ R) = mk ⊥ ⊤ := rfl
-
 /-- The truth order on the projections. -/
 theorem le_def [Preorder L] [Preorder R] {x y : L ⊙ R} :
     x ≤ y ↔ x.pro ≤ y.pro ∧ y.con ≤ x.con := Iff.rfl
@@ -192,18 +179,6 @@ instance [Preorder L] [Preorder R] [DecidableLE L] [DecidableLE R] :
 /-- Knowledge join `⊔ₖ` (gullibility) in plain coordinates ([avron-1996] Def 2.4). -/
 @[simp] theorem mk_kSup_mk [Lattice L] [Lattice R] {a₁ a₂ : L} {b₁ b₂ : R} :
     (mk a₁ b₁ ⊔ₖ mk a₂ b₂) = mk (a₁ ⊔ a₂) (b₁ ⊔ b₂) := rfl
-
-/-- The knowledge top `⊤ = (⊤, ⊤)` ([avron-1996] Def 2.4(vii)). -/
-theorem know_top_eq [Preorder L] [Preorder R] [BoundedOrder L] [BoundedOrder R] :
-    (⊤ : Know (L ⊙ R)) = toKnow (mk ⊤ ⊤) := rfl
-
-/-- The knowledge bottom `⊥ = (⊥, ⊥)` ([avron-1996] Def 2.4(vii)). -/
-theorem know_bot_eq [Preorder L] [Preorder R] [BoundedOrder L] [BoundedOrder R] :
-    (⊥ : Know (L ⊙ R)) = toKnow (mk ⊥ ⊥) := rfl
-
-/-- The knowledge order on the projections. -/
-theorem kLE_iff [Preorder L] [Preorder R] {x y : L ⊙ R} :
-    x ≤ₖ y ↔ x.pro ≤ y.pro ∧ x.con ≤ y.con := Iff.rfl
 
 section KProj
 
@@ -326,52 +301,6 @@ theorem disjoint_pro_con_sup (hx : Disjoint x.pro x.con) (hy : Disjoint y.pro y.
   (hx.inf_right _).sup_left (hy.inf_right' _)
 
 end Disjoint
-
-/-- Over a Boolean factor, Fitting's consistency is disjointness of the evidence for and against. -/
-theorem isConsistent_iff_disjoint [BooleanAlgebra L] (x : L ⊙ L) :
-    IsConsistent x ↔ Disjoint x.pro x.con :=
-  (isConsistent_iff x).trans le_compl_iff_disjoint_left
-
-/-! ### Recovering the factors
-
-The abstract decomposition applied to a product recovers its factors: the
-knowledge ideals below the truth bounds are order-isomorphic to `L` and `R`
-(`iicKTopIso`/`iicKBotIso`), so `Bilattice.decompose` closes the representation
-loop, `Know (L ⊙ R) ≃o L × R` (`decomposeProdIso`) — the concrete half of
-[avron-1996] Thm 4.3's uniqueness clause. -/
-
-section FactorRecovery
-
-variable [PartialOrder L] [PartialOrder R] [BoundedOrder L] [BoundedOrder R]
-
-/-- The knowledge ideal below the truth top is the evidence-for factor,
-`L_{L ⊙ R} ≃o L`. -/
-def iicKTopIso : Set.Iic (toKnow (⊤ : L ⊙ R)) ≃o L where
-  toFun x := (ofKnow x.1).pro
-  invFun a := ⟨toKnow (mk a ⊥), ⟨le_top, le_rfl⟩⟩
-  left_inv x := Subtype.ext (ext rfl
-    (le_bot_iff.mp (show (ofKnow x.1).con ≤ ⊥ from x.2.2)).symm)
-  right_inv _ := rfl
-  map_rel_iff' {x _} := ⟨fun h => ⟨h, (le_bot_iff.mp x.2.2).le.trans bot_le⟩, And.left⟩
-
-/-- The knowledge ideal below the truth bottom is the evidence-against factor,
-`R_{L ⊙ R} ≃o R`. -/
-def iicKBotIso : Set.Iic (toKnow (⊥ : L ⊙ R)) ≃o R where
-  toFun x := (ofKnow x.1).con
-  invFun b := ⟨toKnow (mk ⊥ b), ⟨le_rfl, le_top⟩⟩
-  left_inv x := Subtype.ext (ext
-    (le_bot_iff.mp (show (ofKnow x.1).pro ≤ ⊥ from x.2.1)).symm rfl)
-  right_inv _ := rfl
-  map_rel_iff' {x _} := ⟨fun h => ⟨(le_bot_iff.mp x.2.1).le.trans bot_le, h⟩, And.right⟩
-
-end FactorRecovery
-
-/-- **The representation loop closed**: `Bilattice.decompose` applied to a
-product recovers the factors, `Know (L ⊙ R) ≃o L × R` — the concrete half of
-[avron-1996] Thm 4.3's uniqueness clause. -/
-def decomposeProdIso [Lattice L] [Lattice R] [BoundedOrder L] [BoundedOrder R] :
-    Know (L ⊙ R) ≃o L × R :=
-  decompose.trans (iicKTopIso.prodCongr iicKBotIso)
 
 end Product
 

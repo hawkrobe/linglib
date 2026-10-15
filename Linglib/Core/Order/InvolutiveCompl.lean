@@ -69,27 +69,39 @@ section LE
 
 variable [LE α] [InvolutiveCompl α] {a b : α}
 
-@[simp] protected theorem compl_le_compl_iff_le : aᶜ ≤ bᶜ ↔ b ≤ a :=
-  ⟨fun h ↦ InvolutiveCompl.compl_compl b ▸ InvolutiveCompl.compl_compl a ▸
-    InvolutiveCompl.compl_le_compl h, InvolutiveCompl.compl_le_compl⟩
+protected theorem compl_involutive : Function.Involutive (compl : α → α) :=
+  InvolutiveCompl.compl_compl
 
-protected theorem compl_injective : Function.Injective (compl : α → α) := fun a b h ↦ by
-  rw [← InvolutiveCompl.compl_compl a, h, InvolutiveCompl.compl_compl]
+protected theorem compl_injective : Function.Injective (compl : α → α) :=
+  InvolutiveCompl.compl_involutive.injective
+
+protected theorem compl_surjective : Function.Surjective (compl : α → α) :=
+  InvolutiveCompl.compl_involutive.surjective
 
 @[simp] protected theorem compl_inj_iff : aᶜ = bᶜ ↔ a = b :=
   InvolutiveCompl.compl_injective.eq_iff
 
-protected theorem compl_surjective : Function.Surjective (compl : α → α) :=
-  fun a ↦ ⟨aᶜ, InvolutiveCompl.compl_compl a⟩
-
 protected theorem compl_eq_iff_eq_compl : aᶜ = b ↔ a = bᶜ :=
-  ⟨fun h ↦ by rw [← h, InvolutiveCompl.compl_compl],
-    fun h ↦ by rw [h, InvolutiveCompl.compl_compl]⟩
+  InvolutiveCompl.compl_involutive.eq_iff
+
+@[simp] protected theorem compl_le_compl_iff_le : aᶜ ≤ bᶜ ↔ b ≤ a :=
+  ⟨fun h ↦ InvolutiveCompl.compl_compl b ▸ InvolutiveCompl.compl_compl a ▸
+    InvolutiveCompl.compl_le_compl h, InvolutiveCompl.compl_le_compl⟩
 
 /-- Orthogonality is symmetric, `a ≤ bᶜ ↔ b ≤ aᶜ`. -/
 protected theorem le_compl_comm : a ≤ bᶜ ↔ b ≤ aᶜ :=
   ⟨fun h ↦ InvolutiveCompl.compl_compl b ▸ InvolutiveCompl.compl_le_compl h,
     fun h ↦ InvolutiveCompl.compl_compl a ▸ InvolutiveCompl.compl_le_compl h⟩
+
+variable (α) in
+/-- The involution bundled as an order isomorphism onto the order dual. Upstream this is mathlib's
+`OrderIso.compl`, generalized from `BooleanAlgebra` to `InvolutiveCompl`. -/
+def complOrderIso : α ≃o αᵒᵈ where
+  toFun a := toDual aᶜ
+  invFun a := (ofDual a)ᶜ
+  left_inv := InvolutiveCompl.compl_compl
+  right_inv a := congrArg toDual (InvolutiveCompl.compl_compl (ofDual a))
+  map_rel_iff' := InvolutiveCompl.compl_le_compl_iff_le
 
 end LE
 
@@ -97,23 +109,18 @@ end LE
 protected theorem compl_anti [Preorder α] [InvolutiveCompl α] : Antitone (compl : α → α) :=
   fun _ _ h ↦ InvolutiveCompl.compl_le_compl h
 
+/-! The De Morgan laws and the exchange of the bounds are `complOrderIso` preserving the lattice
+operations: they follow from involution and antitonicity alone. -/
+
 section Lattice
 
 variable [Lattice α] [InvolutiveCompl α]
 
-/-- The complement of a join is the meet of the complements, a De Morgan law that follows from
-involution and antitonicity alone. -/
 @[simp] protected theorem compl_sup (a b : α) : (a ⊔ b)ᶜ = aᶜ ⊓ bᶜ :=
-  le_antisymm
-    (le_inf (InvolutiveCompl.compl_le_compl le_sup_left)
-      (InvolutiveCompl.compl_le_compl le_sup_right))
-    (InvolutiveCompl.le_compl_comm.1 (sup_le (InvolutiveCompl.le_compl_comm.1 inf_le_left)
-      (InvolutiveCompl.le_compl_comm.1 inf_le_right)))
+  (complOrderIso α).map_sup a b
 
-/-- The complement of a meet is the join of the complements. -/
-@[simp] protected theorem compl_inf (a b : α) : (a ⊓ b)ᶜ = aᶜ ⊔ bᶜ := by
-  rw [← InvolutiveCompl.compl_compl (aᶜ ⊔ bᶜ), InvolutiveCompl.compl_sup,
-    InvolutiveCompl.compl_compl, InvolutiveCompl.compl_compl]
+@[simp] protected theorem compl_inf (a b : α) : (a ⊓ b)ᶜ = aᶜ ⊔ bᶜ :=
+  (complOrderIso α).map_inf a b
 
 end Lattice
 
@@ -121,22 +128,11 @@ section BoundedOrder
 
 variable [PartialOrder α] [BoundedOrder α] [InvolutiveCompl α]
 
-@[simp] protected theorem compl_bot : (⊥ : α)ᶜ = ⊤ :=
-  le_antisymm le_top (InvolutiveCompl.le_compl_comm.1 bot_le)
+@[simp] protected theorem compl_bot : (⊥ : α)ᶜ = ⊤ := (complOrderIso α).map_bot
 
-@[simp] protected theorem compl_top : (⊤ : α)ᶜ = ⊥ := by
-  rw [← InvolutiveCompl.compl_bot, InvolutiveCompl.compl_compl]
+@[simp] protected theorem compl_top : (⊤ : α)ᶜ = ⊥ := (complOrderIso α).map_top
 
 end BoundedOrder
-
-/-- The involution bundled as an order isomorphism onto the order dual. Upstream this is mathlib's
-`OrderIso.compl`, generalized from `BooleanAlgebra` to `InvolutiveCompl`. -/
-def complOrderIso (α : Type*) [LE α] [InvolutiveCompl α] : α ≃o αᵒᵈ where
-  toFun a := toDual aᶜ
-  invFun a := (ofDual a)ᶜ
-  left_inv := InvolutiveCompl.compl_compl
-  right_inv a := congrArg toDual (InvolutiveCompl.compl_compl (ofDual a))
-  map_rel_iff' {a b} := InvolutiveCompl.compl_le_compl_iff_le (α := α) (a := b) (b := a)
 
 end InvolutiveCompl
 
