@@ -132,14 +132,14 @@ section Relational
 
 /-- With an ordering source, actuality entails best-worlds possibility when the actual world
 also verifies the ordering source at itself. -/
-theorem possibility_of_isRealistic {f g : ConvBackground W} {p : W → Prop}
+theorem possibility_of_isRealistic {f g : Background W} {p : W → Prop}
     {w : W} (hf : f.IsRealistic) (hw : ∀ q ∈ g w, q w) (hp : p w) : possibility f g p w :=
   ⟨w, ⟨hf w, fun _ _ _ q hq _ ↦ hw q hq⟩, hp⟩
 
 /-- Realism of the base alone does not make best-worlds possibility veridical, so (14) needs
 more than (14b): the actual world must be among the best-ranked. -/
 theorem exists_not_possibility :
-    ∃ (f g : ConvBackground Bool) (p : Bool → Prop) (w : Bool),
+    ∃ (f g : Background Bool) (p : Bool → Prop) (w : Bool),
       f.IsRealistic ∧ p w ∧ ¬ possibility f g p w :=
   ⟨⊥, fun _ ↦ {(· = true)}, (· = false), false, fun _ ↦ by simp, rfl,
     fun ⟨v, hvb, hv⟩ ↦ by

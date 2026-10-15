@@ -287,7 +287,7 @@ omit [DecidableEq W] in
 open Modality ModalLogic in
 /-- The classic entry (59), Kratzer necessity over the best worlds, agglomerates
 unconditionally, so it cannot fit The Office for any modal base and ordering source. -/
-theorem classic_agglomerates {f g : ConvBackground W} {φ ψ : W → Prop} {w : W}
+theorem classic_agglomerates {f g : Background W} {φ ψ : W → Prop} {w : W}
     (hφ : necessity f g φ w) (hψ : necessity f g ψ w) : necessity f g (φ ⊓ ψ) w := by
   rw [necessity, box_inf]; exact ⟨hφ, hψ⟩
 

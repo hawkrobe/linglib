@@ -48,7 +48,7 @@ open Modality
 
 section Definitions
 
-variable {W : Type*} {f : ConvBackground W} {φ : W → Prop} {i : W}
+variable {W : Type*} {f : Background W} {φ : W → Prop} {i : W}
 
 /-- The consistent subsets of a premise set, `X_A = {B ⊆ A : ⋂B ≠ ∅}`, over which the revised
 definitions quantify. -/
@@ -57,13 +57,13 @@ def consistentSubsets (A : Set (W → Prop)) : Set (Set (W → Prop)) := {B | B 
 /-- Definition 7: *must φ in view of f* holds at `i` when every consistent subset of `f i`
 extends to a consistent subset from which `φ` follows,
 `ν(φ, f) = {i : ∀B[B ∈ X_{f(i)} → ∃C[C ∈ X_{f(i)} ∧ B ⊆ C ∧ ⋂C ⊆ φ]]}`. -/
-def MustInView (f : ConvBackground W) (φ : W → Prop) (i : W) : Prop :=
+def MustInView (f : Background W) (φ : W → Prop) (i : W) : Prop :=
   ∀ B ∈ consistentSubsets (f i), ∃ C ∈ consistentSubsets (f i), B ⊆ C ∧ sInf C ≤ φ
 
 /-- Definition 8: *can φ in view of f* holds at `i` when some consistent subset of `f i` has
 `φ` compatible with each of its consistent extensions,
 `μ(φ, f) = {i : ∃B[B ∈ X_{f(i)} ∧ ∀C[(C ∈ X_{f(i)} ∧ B ⊆ C) → consistent(C ∪ {φ})]]}`. -/
-def CanInView (f : ConvBackground W) (φ : W → Prop) (i : W) : Prop :=
+def CanInView (f : Background W) (φ : W → Prop) (i : W) : Prop :=
   ∃ B ∈ consistentSubsets (f i), ∀ C ∈ consistentSubsets (f i), B ⊆ C → ¬ Disjoint (sInf C) φ
 
 /-- On a consistent premise set the revised necessity is Definition 5: the premise set is
@@ -84,13 +84,13 @@ theorem canInView_iff_of_consistent (h : sInf (f i) ≠ ⊥) :
 
 /-- *Can* is the negation of *must not*, since compatibility with a premise set is the failure
 of the negation to follow from it. -/
-theorem canInView_iff_not_mustInView_not (f : ConvBackground W) (φ : W → Prop) (i : W) :
+theorem canInView_iff_not_mustInView_not (f : Background W) (φ : W → Prop) (i : W) :
     CanInView f φ i ↔ ¬ MustInView f (fun j ↦ ¬ φ j) i := by
   have h (C : Set (W → Prop)) : (sInf C ≤ fun j ↦ ¬ φ j) ↔ Disjoint (sInf C) φ :=
     le_compl_iff_disjoint_right
   simp only [CanInView, MustInView, h, not_forall, not_exists, not_and, exists_prop]
 
-theorem mustInView_iff_not_canInView_not (f : ConvBackground W) (φ : W → Prop) (i : W) :
+theorem mustInView_iff_not_canInView_not (f : Background W) (φ : W → Prop) (i : W) :
     MustInView f φ i ↔ ¬ CanInView f (fun j ↦ ¬ φ j) i := by
   rw [canInView_iff_not_mustInView_not, not_not]
   simp only [not_not]

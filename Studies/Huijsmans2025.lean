@@ -98,23 +98,23 @@ theorem not_inferentialPresup_empty (p : T → W → Prop) (w : W) :
 /-! ### The at-issue content -/
 
 /-- The modal base at a reference time, as the world-propositions of the untensed ones. -/
-def modalBaseAt (mb : Set (T → W → Prop)) (t : T) : ConvBackground W :=
+def modalBaseAt (mb : Set (T → W → Prop)) (t : T) : Background W :=
   fun _ ↦ (fun q w ↦ q t w) '' mb
 
 /-- The at-issue content of *səm* and *will*, (62), is that the prejacent holds at or after the
 reference time in every best world. -/
-def futureClaim (mb : Set (T → W → Prop)) (h : ConvBackground W) (p : T → W → Prop)
+def futureClaim (mb : Set (T → W → Prop)) (h : Background W) (p : T → W → Prop)
     (t : T) (w : W) : Prop :=
   necessity (modalBaseAt mb t) h (fun w' ↦ ∃ t', t ≤ t' ∧ p t' w') w
 
 /-- The at-issue content of *č̓ɛ* and *must*, (87) and (96), is that the prejacent holds at the
 reference time in every best world. -/
-def necessityClaim (mb : Set (T → W → Prop)) (h : ConvBackground W) (p : T → W → Prop)
+def necessityClaim (mb : Set (T → W → Prop)) (h : Background W) (p : T → W → Prop)
     (t : T) (w : W) : Prop :=
   necessity (modalBaseAt mb t) h (fun w' ↦ p t w') w
 
 /-- Present orientation is a case of the future morphemes' non-past orientation. -/
-theorem futureClaim_of_necessityClaim {mb : Set (T → W → Prop)} {h : ConvBackground W}
+theorem futureClaim_of_necessityClaim {mb : Set (T → W → Prop)} {h : Background W}
     {p : T → W → Prop} {t : T} {w : W} (hc : necessityClaim mb h p t w) :
     futureClaim mb h p t w :=
   fun w' hw' ↦ ⟨t, le_rfl, hc w' hw'⟩

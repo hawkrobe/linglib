@@ -304,7 +304,7 @@ world-indexed family of expectation states. -/
 
 open Modality
 
-variable (f g : ConvBackground W)
+variable (f g : Background W)
 
 /-- The expectation state that a modal base and an ordering source induce at a world. -/
 def stateAt (w : W) : ExpState W :=

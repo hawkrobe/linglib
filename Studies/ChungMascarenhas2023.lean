@@ -472,7 +472,7 @@ open Modality in
 in one of the two shafts and any ordering source with best worlds — the paper's limit
 assumption, its fn 1 — the three *ought* claims of (15) are jointly unsatisfiable on Kratzer's
 account [kratzer-1991], the if-clauses restricting the modal base. -/
-theorem kratzer_miners_unsatisfiable {V : Type*} (f g : ConvBackground V)
+theorem kratzer_miners_unsatisfiable {V : Type*} (f g : Background V)
     (w : V) (inA inB bA bB bN : V → Prop)
     (hbest : (bestWorlds f g w).Nonempty)
     (hcover : ∀ v ∈ f.accessibleWorlds w, inA v ∨ inB v)
@@ -483,8 +483,8 @@ theorem kratzer_miners_unsatisfiable {V : Type*} (f g : ConvBackground V)
   obtain ⟨v, hv⟩ := hbest
   have hacc : v ∈ f.accessibleWorlds w := bestAmong_subset _ _ hv
   have key : ∀ α : V → Prop, α v → v ∈ bestWorlds (f.restrict α) g w := fun α hα ↦
-    bestAmong_superset (fun _ hu ↦ (ConvBackground.mem_accessibleWorlds_restrict.1 hu).1) hv
-      (ConvBackground.mem_accessibleWorlds_restrict.2 ⟨hacc, hα⟩)
+    bestAmong_superset (fun _ hu ↦ (Background.mem_accessibleWorlds_restrict.1 hu).1) hv
+      (Background.mem_accessibleWorlds_restrict.2 ⟨hacc, hα⟩)
   rcases hcover v hacc with h | h
   · exact hA v (hAB v (key inA h)) (hN v hv)
   · exact hB v (hBB v (key inB h)) (hN v hv)

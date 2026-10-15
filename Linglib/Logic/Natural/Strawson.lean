@@ -4,7 +4,7 @@ public import Linglib.Logic.Natural.Additivity
 public import Linglib.Semantics.Presupposition.Basic
 public import Linglib.Semantics.Conditionals.Horizon
 public import Linglib.Semantics.Degree.Superlative
-public import Linglib.Semantics.Modality.ConvBackground
+public import Linglib.Semantics.Modality.Background
 public import Linglib.Semantics.Focus.Particles
 public import Linglib.Semantics.Attitudes.Preference.BestWorlds
 

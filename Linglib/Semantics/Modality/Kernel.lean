@@ -59,7 +59,7 @@ def base : Set W := {w | sInf k.props w}
   simp [base]
 
 /-- The kernel as a context-independent modal base. -/
-def toConvBackground : ConvBackground W := fun _ ↦ k.props
+def toBackground : Background W := fun _ ↦ k.props
 
 /-- `K` is consistent iff `B_K ≠ ∅`. -/
 def IsConsistent : Prop := k.base.Nonempty
@@ -147,14 +147,14 @@ theorem empty_kernel_always_defined : (kernelMust ⟨∅⟩ φ).presup w :=
 /-- The assertion of kernel must is Kratzer simple necessity over the induced
     modal base. -/
 theorem kernelMust_iff_simpleNecessity :
-    (kernelMust k φ).assertion w ↔ simpleNecessity k.toConvBackground φ w :=
+    (kernelMust k φ).assertion w ↔ simpleNecessity k.toBackground φ w :=
   Iff.rfl
 
 /-- The assertion of kernel must is Kratzer necessity with the empty ordering
     source. -/
 theorem kernelMust_iff_necessity :
-    (kernelMust k φ).assertion w ↔ necessity k.toConvBackground ⊥ φ w :=
+    (kernelMust k φ).assertion w ↔ necessity k.toBackground ⊥ φ w :=
   (kernelMust_iff_simpleNecessity k φ w).trans
-    (necessity_bot_iff k.toConvBackground φ w).symm
+    (necessity_bot_iff k.toBackground φ w).symm
 
 end Modality

@@ -1,7 +1,7 @@
 module
 
 public import Studies.UegakiSudo2019
-public import Linglib.Semantics.Modality.ConvBackground
+public import Linglib.Semantics.Modality.Background
 public import Linglib.Fragments.English.Verbs.Inventory
 public import Linglib.Fragments.Mandarin.Verbs
 public import Linglib.Fragments.Japanese.Verbs

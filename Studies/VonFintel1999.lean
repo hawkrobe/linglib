@@ -169,7 +169,7 @@ theorem not_antitone_conditionalNecessity :
   fun h ↦ by
     have := @h (· = 1) (fun _ ↦ True) (fun _ _ ↦ trivial) 0
     simp only [Restrictor.conditionalNecessity, necessity_iff, bestWorlds, mem_bestAmong,
-      ConvBackground.mem_accessibleWorlds, ConvBackground.restrict, atLeastAsGoodAs_iff,
+      Background.mem_accessibleWorlds, Background.restrict, atLeastAsGoodAs_iff,
       Set.mem_insert_iff, Set.mem_singleton_iff, forall_eq_or_imp, forall_eq,
       Set.mem_empty_iff_false, false_imp_iff, implies_true, and_true,
       Set.mem_ofPred_eq] at this

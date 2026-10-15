@@ -98,25 +98,25 @@ variable {W : Type*}
 /-- (79): the ∗-revision of `f` for `p` under the similarity ordering `sim`, the modal base
 whose domain at `w` is the domain of `f` together with the `p`-worlds most similar to some world
 of it. -/
-def revise (sim f : ConvBackground W) (p : W → Prop) : ConvBackground W :=
+def revise (sim f : Background W) (p : W → Prop) : Background W :=
   fun w ↦ {fun w' ↦ w' ∈ f.accessibleWorlds w ∨
     ∃ w'' ∈ f.accessibleWorlds w, w' ∈ bestAmong {v | p v} (sim w'')}
 
 section
 
-variable {sim f g : ConvBackground W} {p q : W → Prop}
+variable {sim f g : Background W} {p q : W → Prop}
   {w : W}
 
-theorem accessibleWorlds_revise (sim f : ConvBackground W) (p : W → Prop)
+theorem accessibleWorlds_revise (sim f : Background W) (p : W → Prop)
     (w : W) :
     (revise sim f p).accessibleWorlds w =
       f.accessibleWorlds w ∪
         {w' | ∃ w'' ∈ f.accessibleWorlds w, w' ∈ bestAmong {v | p v} (sim w'')} := by
   ext w'
-  simp [ConvBackground.mem_accessibleWorlds, revise]
+  simp [Background.mem_accessibleWorlds, revise]
 
 /-- The revision widens the domain. -/
-theorem subset_accessibleWorlds_revise (sim f : ConvBackground W)
+theorem subset_accessibleWorlds_revise (sim f : Background W)
     (p : W → Prop) (w : W) : f.accessibleWorlds w ⊆ (revise sim f p).accessibleWorlds w := by
   rw [accessibleWorlds_revise]; exact Set.subset_union_left
 
@@ -130,7 +130,7 @@ theorem prop_of_mem_accessibleWorlds_revise {w' : W}
 
 /-- A best world of a domain is a `p`-world when nothing adds to it: the ∗-revision for the
 prejacent preserves strong necessity. -/
-theorem strongNecessity_revise (sim : ConvBackground W) (h : strongNecessity f g q w) :
+theorem strongNecessity_revise (sim : Background W) (h : strongNecessity f g q w) :
     strongNecessity (revise sim f q) g q w := by
   intro w' hw'
   by_cases hmem : w' ∈ f.accessibleWorlds w
@@ -150,12 +150,12 @@ theorem bestOf_strictlyBetter (A : Set (W → Prop)) (D : Set W) :
 
 /-- (131): the ∗∗-revision of the betterness of `g w` on `D` for `p`: in addition, every best
 `p`-world betters every best non-`p`-world. -/
-def starstar (g : ConvBackground W) (p : W → Prop) (w : W) (D : Set W) (u v : W) : Prop :=
+def starstar (g : Background W) (p : W → Prop) (w : W) (D : Set W) (u v : W) : Prop :=
   (u <[g w] v) ∨ (p u ∧ ¬ p v ∧ u ∈ bestAmong D (g w) ∧ v ∈ bestAmong D (g w))
 
 /-- The best worlds under the ∗∗-revision are the `p`-best of the best, the lexicographic
 refinement of (129b). -/
-theorem bestOf_starstar (g : ConvBackground W) (p : W → Prop) (w : W) (D : Set W) :
+theorem bestOf_starstar (g : Background W) (p : W → Prop) (w : W) (D : Set W) :
     bestOf (starstar g p w D) D = bestAmong (bestAmong D (g w)) {p} := by
   ext u
   simp only [bestOf, starstar, strictlyBetter_iff, mem_bestAmong, atLeastAsGoodAs_iff,
@@ -170,7 +170,7 @@ def DomainIndependent (F : Set W → W → W → Prop) : Prop :=
 /-- The ∗∗-revision is domain-independent exactly when a `p`-world and a non-`p`-world that are
 both best in a domain stay best in every larger domain. Bestness is stable under shrinking a
 domain (`bestAmong_superset`); (131) presupposes stability under widening. -/
-theorem domainIndependent_starstar_iff (g : ConvBackground W) (p : W → Prop) (w : W) :
+theorem domainIndependent_starstar_iff (g : Background W) (p : W → Prop) (w : W) :
     DomainIndependent (starstar g p w) ↔
       ∀ ⦃D D' : Set W⦄, D ⊆ D' → ∀ ⦃u v⦄, p u → ¬ p v →
         u ∈ bestAmong D (g w) → v ∈ bestAmong D (g w) →
@@ -203,7 +203,7 @@ are needed: a `p`-world and a non-`p`-world must both be best somewhere, and a t
 better one of them. -/
 
 /-- The ordering source of the three-world frame. -/
-abbrev g₃ : ConvBackground (Fin 3) := fun _ ↦ {(· = 0), fun x ↦ x = 1 ∨ x = 2, (· = 2)}
+abbrev g₃ : Background (Fin 3) := fun _ ↦ {(· = 0), fun x ↦ x = 1 ∨ x = 2, (· = 2)}
 
 /-- Both worlds of the pair are best in it. -/
 theorem bestAmong_pair_g₃ : bestAmong ({0, 1} : Set (Fin 3)) (g₃ 0) = {0, 1} := by
@@ -236,19 +236,19 @@ theorem not_domainIndependent_starstar : ¬ DomainIndependent (starstar g₃ (·
 
 /-- In the paper's terms: no ordering source is a ∗∗-revision of `g₃` for `(· = 1)`. -/
 theorem not_exists_starstar_orderingSource :
-    ¬ ∃ g' : ConvBackground (Fin 3), ∀ (D : Set (Fin 3)) (u v : Fin 3), u ∈ D → v ∈ D →
+    ¬ ∃ g' : Background (Fin 3), ∀ (D : Set (Fin 3)) (u v : Fin 3), u ∈ D → v ∈ D →
       ((u <[g' 0] v) ↔ starstar g₃ (· = 1) 0 D u v) :=
   fun ⟨g', h⟩ ↦ not_domainIndependent_starstar ⟨fun u v ↦ u <[g' 0] v, h⟩
 
 /-! ### The square of necessities (132)–(134) -/
 
 /-- (132b): strong necessity with the ordering source ∗∗-revised for `p`. -/
-def snXg (f g : ConvBackground W) (p q : W → Prop) (w : W) : Prop :=
+def snXg (f g : Background W) (p q : W → Prop) (w : W) : Prop :=
   ∀ w' ∈ bestOf (starstar g p w (f.accessibleWorlds w)) (f.accessibleWorlds w), q w'
 
 /-- (133): weak necessity is strong necessity with an X-marked ordering source, the secondary
 ordering source of [von-fintel-iatridou-2008] being the revision's target. -/
-theorem snXg_iff_weakNecessity (f g : ConvBackground W) (p q : W → Prop)
+theorem snXg_iff_weakNecessity (f g : Background W) (p q : W → Prop)
     (w : W) : snXg f g p q w ↔ weakNecessity f g (fun _ ↦ {p}) q w := by
   rw [snXg, bestOf_starstar, weakNecessity, bestWorlds]
 
@@ -265,14 +265,14 @@ instance : Fintype Vertex :=
   Fintype.ofEquiv (Bool × Bool) ⟨fun x ↦ ⟨x.1, x.2⟩, fun v ↦ (v.xf, v.xg), fun _ ↦ rfl, fun _ ↦ rfl⟩
 
 /-- The modal base at a vertex: `f`, or its ∗-revision for the prejacent `q` (78), (84). -/
-def Vertex.base (v : Vertex) (sim f : ConvBackground W) (q : W → Prop) :
-    ConvBackground W :=
+def Vertex.base (v : Vertex) (sim f : Background W) (q : W → Prop) :
+    Background W :=
   if v.xf then revise sim f q else f
 
 /-- (134): the necessity at a vertex, over the vertex's base and the betterness of `g`,
 ∗∗-revised for `p` when the ordering source is X-marked. -/
-def Vertex.necessity (v : Vertex) (sim f : ConvBackground W)
-    (g : ConvBackground W) (p q : W → Prop) (w : W) : Prop :=
+def Vertex.necessity (v : Vertex) (sim f : Background W)
+    (g : Background W) (p q : W → Prop) (w : W) : Prop :=
   let D := (v.base sim f q).accessibleWorlds w
   ∀ w' ∈ bestOf (if v.xg then starstar g p w D else fun u v ↦ u <[g w] v) D, q w'
 
@@ -295,8 +295,8 @@ theorem Vertex.necessity_xg_true (xf : Bool) :
 /-- Entailment between vertices: over every model whose similarity ordering is totally
 realistic (41a). -/
 def Vertex.Entails (v v' : Vertex) : Prop :=
-  ∀ (W : Type) (sim : ConvBackground W), sim.IsTotallyRealistic →
-    ∀ (f g : ConvBackground W) (p q : W → Prop) (w : W),
+  ∀ (W : Type) (sim : Background W), sim.IsTotallyRealistic →
+    ∀ (f g : Background W) (p q : W → Prop) (w : W),
       v.necessity sim f g p q w → v'.necessity sim f g p q w
 
 theorem Vertex.Entails.refl (v : Vertex) : v.Entails v := fun _ _ _ _ _ _ _ _ ↦ id
@@ -340,22 +340,22 @@ private theorem bestAmong_eq_singleton {S : Set W} {b : W} (hb : b ∈ S) :
 
 /-- The similarity ordering that singles each world out by identity. -/
 private theorem isTotallyRealistic_eq :
-    ConvBackground.IsTotallyRealistic (fun w ↦ {(· = w)} : ConvBackground W) := by
+    Background.IsTotallyRealistic (fun w ↦ {(· = w)} : Background W) := by
   intro w; ext v; simp
 
 /-! The first countermodel: nothing excluded, nothing ordered. The Xg vertices hold, since the
 `p`-best world is the prejacent-world, and the others fail. -/
 
-private theorem M1_acc (sim : ConvBackground Bool) (v : Vertex) :
+private theorem M1_acc (sim : Background Bool) (v : Vertex) :
     (v.base sim ⊥ (· = true)).accessibleWorlds true = Set.univ := by
   unfold Vertex.base
   split
   · exact Set.eq_univ_of_univ_subset
-      (ConvBackground.accessibleWorlds_bot (W := Bool) true ▸
+      (Background.accessibleWorlds_bot (W := Bool) true ▸
         subset_accessibleWorlds_revise _ _ _ _)
-  · exact ConvBackground.accessibleWorlds_bot _
+  · exact Background.accessibleWorlds_bot _
 
-private theorem M1_iff (sim : ConvBackground Bool) (v : Vertex) :
+private theorem M1_iff (sim : Background Bool) (v : Vertex) :
     v.necessity sim ⊥ ⊥ (· = true) (· = true) true ↔ v.xg = true := by
   obtain ⟨xf, _ | _⟩ := v
   · rw [Vertex.necessity_xg_false, strongNecessity, necessity_iff, bestWorlds_bot,
@@ -370,15 +370,15 @@ private theorem M1_iff (sim : ConvBackground Bool) (v : Vertex) :
 prefers the prejacent-world. The revision adds the prejacent-world, which is then best, so the
 Xf vertices hold and the others fail. -/
 
-private abbrev simB : ConvBackground Bool := fun w ↦ {(· = w)}
+private abbrev simB : Background Bool := fun w ↦ {(· = w)}
 
 private theorem M2_acc :
-    ConvBackground.accessibleWorlds (fun _ ↦ {(· = false)} : ConvBackground Bool) true =
+    Background.accessibleWorlds (fun _ ↦ {(· = false)} : Background Bool) true =
       {false} := by
   ext v; simp
 
 private theorem M2_mem :
-    true ∈ ConvBackground.accessibleWorlds (revise simB (fun _ ↦ {(· = false)}) (· = true))
+    true ∈ Background.accessibleWorlds (revise simB (fun _ ↦ {(· = false)}) (· = true))
       true := by
   rw [accessibleWorlds_revise, M2_acc]
   exact Or.inr ⟨false, rfl, rfl, fun v hv _ ↦ by
@@ -411,13 +411,13 @@ private theorem M2_iff (v : Vertex) :
 excludes `2`, the revision for the prejacent puts it back, and `2` unseats `1`, the only
 `p`-world. Only *deve* holds. -/
 
-private abbrev f₃ : ConvBackground (Fin 3) := fun _ ↦ {fun w ↦ w ≠ 2}
+private abbrev f₃ : Background (Fin 3) := fun _ ↦ {fun w ↦ w ≠ 2}
 private abbrev q₃ : Fin 3 → Prop := fun w ↦ w = 1 ∨ w = 2
-private abbrev sim₃ : ConvBackground (Fin 3) := fun w ↦ {(· = w)}
+private abbrev sim₃ : Background (Fin 3) := fun w ↦ {(· = w)}
 
 private theorem accessibleWorlds_f₃ : f₃.accessibleWorlds 0 = {0, 1} := by
   ext u
-  simp only [ConvBackground.mem_accessibleWorlds, Set.mem_insert_iff,
+  simp only [Background.mem_accessibleWorlds, Set.mem_insert_iff,
     Set.mem_singleton_iff, forall_eq,
     ]
   revert u
@@ -493,7 +493,7 @@ theorem entails_82 :
 
 /-- A force as a Kratzer operator over a modal base and an ordering source: possibility and
 necessity over the best worlds, weak necessity through the ∗∗-revision for `p` (132b). -/
-def interpret (φ : ModalForce) (f g : ConvBackground W) (p q : W → Prop)
+def interpret (φ : ModalForce) (f g : Background W) (p q : W → Prop)
     (w : W) : Prop :=
   match φ with
   | .possibility => possibility f g q w
@@ -547,7 +547,7 @@ structure Conjunct where
 
 /-- The conjunct's truth at `w`, `p` the target of weak necessity's ordering revision and `q`
 the prejacent. -/
-def Conjunct.holds (c : Conjunct) (f g : ConvBackground W) (p q : W → Prop)
+def Conjunct.holds (c : Conjunct) (f g : Background W) (p q : W → Prop)
     (w : W) : Prop :=
   let m := interpret c.force f g p (if c.negPrejacent then fun v ↦ ¬ q v else q) w
   if c.negModal then ¬ m else m
@@ -555,7 +555,7 @@ def Conjunct.holds (c : Conjunct) (f g : ConvBackground W) (p q : W → Prop)
 /-- Entailment between conjuncts, over every model with nonempty best worlds: the conclusion
 of a deliberation, (27ii). -/
 def Conjunct.Entails (c₁ c₂ : Conjunct) : Prop :=
-  ∀ (W : Type) (f g : ConvBackground W) (p q : W → Prop) (w : W),
+  ∀ (W : Type) (f g : Background W) (p q : W → Prop) (w : W),
     (bestWorlds f g w).Nonempty → c₁.holds f g p q w → c₂.holds f g p q w
 
 /-- A conjunction of two modal claims about one prejacent, with one target for the ordering
@@ -570,12 +570,12 @@ structure Pattern where
 /-- The conjunction is contradictory as the conclusion of a deliberation: false in every model
 with nonempty best worlds. -/
 def Pattern.Contradictory (pat : Pattern) : Prop :=
-  ∀ (W : Type) (f g : ConvBackground W) (p q : W → Prop) (w : W),
+  ∀ (W : Type) (f g : Background W) (p q : W → Prop) (w : W),
     (bestWorlds f g w).Nonempty → ¬ (pat.first.holds f g p q w ∧ pat.second.holds f g p q w)
 
 /-- The conjunction has a model with nonempty best worlds. -/
 def Pattern.Consistent (pat : Pattern) : Prop :=
-  ∃ (W : Type) (f g : ConvBackground W) (p q : W → Prop) (w : W),
+  ∃ (W : Type) (f g : Background W) (p q : W → Prop) (w : W),
     (bestWorlds f g w).Nonempty ∧ pat.first.holds f g p q w ∧ pat.second.holds f g p q w
 
 /-! ### Profiles: the four bits of a model that decide the conjunctions -/
@@ -599,7 +599,7 @@ instance : Fintype Profile :=
       fun _ ↦ rfl, fun _ ↦ rfl⟩
 
 /-- The profile of a model at `w`. -/
-noncomputable def profile (f g : ConvBackground W) (p q : W → Prop) (w : W) :
+noncomputable def profile (f g : Background W) (p q : W → Prop) (w : W) :
     Profile :=
   open Classical in
   ⟨decide (∃ u ∈ bestWorlds f g w, q u), decide (∃ u ∈ bestWorlds f g w, ¬ q u),
@@ -647,7 +647,7 @@ def Conjunct.evalP (π : Profile) (c : Conjunct) : Bool :=
   if c.negModal then !m else m
 
 /-- A conjunct's truth depends on the model only through its profile. -/
-theorem Conjunct.holds_iff_evalP (c : Conjunct) (f g : ConvBackground W)
+theorem Conjunct.holds_iff_evalP (c : Conjunct) (f g : Background W)
     (p q : W → Prop) (w : W) : c.holds f g p q w ↔ c.evalP (profile f g p q w) = true := by
   obtain ⟨φ, m, n⟩ := c
   cases φ <;> cases m <;> cases n <;>
@@ -657,7 +657,7 @@ theorem Conjunct.holds_iff_evalP (c : Conjunct) (f g : ConvBackground W)
 section twoWorlds
 
 /-- The modal base of the two-world family: nothing excluded, or one world accessible. -/
-private def ofAcc : Option Bool → ConvBackground Bool
+private def ofAcc : Option Bool → Background Bool
   | none => fun _ ↦ ∅
   | some b => fun _ ↦ {(· = b)}
 
@@ -679,7 +679,7 @@ private theorem bestWorlds_ofAcc (acc : Option Bool) (w : Bool) :
     bestWorlds (ofAcc acc) ⊥ w = {v | v ∈ accList acc} := by
   rw [bestWorlds_bot]
   ext v
-  cases acc <;> cases v <;> simp [ConvBackground.mem_accessibleWorlds, ofAcc, accList]
+  cases acc <;> cases v <;> simp [Background.mem_accessibleWorlds, ofAcc, accList]
 
 private theorem bestAmong_ofRev (acc rev : Option Bool) :
     bestAmong {v | v ∈ accList acc} {ofRev rev} = {v | v ∈ topList acc rev} := by
@@ -710,7 +710,7 @@ private theorem bestWorlds_ofAcc_nonempty (acc : Option Bool) (w : Bool) :
 
 /-- Every valid profile is the profile of a two-world model. -/
 theorem Profile.Valid.exists_model {π : Profile} (hπ : π.Valid) :
-    ∃ (f g : ConvBackground Bool) (p q : Bool → Prop),
+    ∃ (f g : Background Bool) (p q : Bool → Prop),
       (bestWorlds f g true).Nonempty ∧ profile f g p q true = π :=
   let ⟨acc, rev, q, h⟩ := exists_famProfile π hπ
   ⟨ofAcc acc, ⊥, ofRev rev, (q · = true), bestWorlds_ofAcc_nonempty acc true,
@@ -843,17 +843,17 @@ instance : Fintype Day :=
 namespace Day
 
 /-- Similarity by agreement on each coordinate, a totally realistic ordering source (41a). -/
-def sim : ConvBackground Day :=
+def sim : Background Day :=
   fun w ↦ {fun v ↦ v.office = w.office, fun v ↦ v.holiday = w.holiday}
 
 theorem sim_isTotallyRealistic : sim.IsTotallyRealistic := by
   intro w
   ext v
-  simp only [ConvBackground.mem_accessibleWorlds, sim, Set.mem_insert_iff, Set.mem_singleton_iff,
+  simp only [Background.mem_accessibleWorlds, sim, Set.mem_insert_iff, Set.mem_singleton_iff,
     forall_eq_or_imp, forall_eq, Day.ext_iff]
 
 /-- Normality: people are in the office on workdays and not on holidays. -/
-def normal : ConvBackground Day :=
+def normal : Background Day :=
   fun _ ↦ {fun v ↦ v.holiday = true → v.office = false,
     fun v ↦ v.holiday = false → v.office = true}
 
@@ -864,22 +864,22 @@ def atOffice (v : Day) : Prop := v.office = true
 def workday (v : Day) : Prop := v.holiday = false
 
 /-- (81): A has checked, and Peter is not in his office. -/
-def checked : ConvBackground Day := fun _ ↦ {fun v ↦ v.office = false}
+def checked : Background Day := fun _ ↦ {fun v ↦ v.office = false}
 
 /-- (80): A has said that the day is a holiday. -/
-def holidayInfo : ConvBackground Day := fun _ ↦ {fun v ↦ v.holiday = true}
+def holidayInfo : Background Day := fun _ ↦ {fun v ↦ v.holiday = true}
 
 private theorem accessibleWorlds_checked (w : Day) :
     checked.accessibleWorlds w = {v | v.office = false} := by
   ext v
-  simp only [ConvBackground.mem_accessibleWorlds, checked, Set.mem_ofPred_eq,
+  simp only [Background.mem_accessibleWorlds, checked, Set.mem_ofPred_eq,
     Set.mem_singleton_iff, forall_eq,
     ]
 
 private theorem accessibleWorlds_holidayInfo (w : Day) :
     holidayInfo.accessibleWorlds w = {v | v.holiday = true} := by
   ext v
-  simp only [ConvBackground.mem_accessibleWorlds, holidayInfo, Set.mem_ofPred_eq,
+  simp only [Background.mem_accessibleWorlds, holidayInfo, Set.mem_ofPred_eq,
     Set.mem_singleton_iff, forall_eq,
     ]
 
@@ -975,7 +975,7 @@ theorem deve_guess (w : Day) :
     Vertex.necessity ⟨false, true⟩ sim ⊥ normal workday atOffice w := by
   rw [Vertex.necessity_xg_true, weakNecessity, bestWorlds]
   simp only [Vertex.base, Bool.false_eq_true, ↓reduceIte]
-  rw [ConvBackground.accessibleWorlds_bot, bestAmong_normal_univ, bestAmong_workday_pair]
+  rw [Background.accessibleWorlds_bot, bestAmong_normal_univ, bestAmong_workday_pair]
   rintro _ rfl
   rfl
 
@@ -1015,7 +1015,7 @@ theorem revise_workday_80 (w : Day) :
   rfl
 
 /-- The modal base of each dialogue, keyed as in the JSON: what A has said. -/
-def baseTable : List (String × ConvBackground Day) :=
+def baseTable : List (String × Background Day) :=
   [("checked", checked), ("holiday", holidayInfo)]
 
 /-- (80)–(81): *devia* is judged true exactly when the X-marked weak necessity holds over what

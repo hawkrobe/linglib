@@ -63,7 +63,7 @@ abbrev ObjectControlVerb (E W : Type*) := ControlVerb E W (E × E)
 
 /-- A control verb from a modal base and an ordering source, [kratzer-1991]'s form of the
 background: the controller has the property throughout the best accessible worlds. -/
-def ControlVerb.ofKratzer (base ordering : ConvBackground W)
+def ControlVerb.ofKratzer (base ordering : Background W)
     (controller : Args → E) : ControlVerb E W Args where
   sem P args w := necessity base ordering (P (controller args)) w
   controller := controller

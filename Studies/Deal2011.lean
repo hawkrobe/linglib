@@ -54,7 +54,7 @@ open Modality
 
 section Claims
 
-variable {W : Type*} (f : ConvBackground W) (p : W → Prop)
+variable {W : Type*} (f : Background W) (p : W → Prop)
 
 /-- The claim a modal of force `fo` makes about `p` over the base `f`: simple possibility, or
 simple necessity for the universal forces. -/
@@ -102,7 +102,7 @@ end Claims
 the force `g` when, in every consistent model, it is appropriate wherever a modal of force `g`
 with a scale, as in English, is. -/
 def ServesFor (π : Polarity) (fo : ModalForce) (s : Prop) (g : ModalForce) : Prop :=
-  ∀ (W : Type) (f : ConvBackground W), ModalLogic.IsSerial f.accessible → ∀ p : W → Prop,
+  ∀ (W : Type) (f : Background W), ModalLogic.IsSerial f.accessible → ∀ p : W → Prop,
     Appropriate f p π g True ⊆ Appropriate f p π fo s
 
 /-- A modal serves for its own force, and without a scalemate for any force whose claim is
@@ -114,14 +114,14 @@ instance (π : Polarity) (fo : ModalForce) (s : Prop) [Decidable s] (g : ModalFo
     Decidable (Usable π fo s g) :=
   inferInstanceAs (Decidable (_ ∨ _))
 
-variable {W : Type*} {f : ConvBackground W} {p : W → Prop}
+variable {W : Type*} {f : Background W} {p : W → Prop}
 
 theorem appropriate_classical (π : Polarity) (fo : ModalForce) (s : Prop) :
     Appropriate f p π fo.classical s = Appropriate f p π fo s := by
   cases fo <;> cases π <;> rfl
 
 /-- The two-world model in which both worlds are accessible from each. -/
-private def bothAccessible : ConvBackground Bool := ⊥
+private def bothAccessible : Background Bool := ⊥
 
 private theorem isSerial_bothAccessible : ModalLogic.IsSerial bothAccessible.accessible :=
   ⟨fun _ ↦ ⟨true, by simp [bothAccessible]⟩⟩

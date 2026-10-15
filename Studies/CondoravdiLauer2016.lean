@@ -157,10 +157,10 @@ theorem threeWay_pairwise_not_consistent :
 single proposition `p` has the effect of adding `p` to the modal base, as long as the two are
 compatible, so the analysis amounts to adding the internal antecedent to the modal base; the
 effective-preference source of (88) instead varies from world to world, footnote 46. -/
-theorem designatedGoal_eq {f : ConvBackground W} {p : W → Prop}
+theorem designatedGoal_eq {f : Background W} {p : W → Prop}
     (h : ∃ v ∈ f.accessibleWorlds w, p v) :
     bestWorlds f (λ _ => {p}) w = (f.restrict p).accessibleWorlds w := by
-  rw [ConvBackground.accessibleWorlds_restrict, bestWorlds, bestAmong_eq_of_exists]
+  rw [Background.accessibleWorlds_restrict, bestWorlds, bestAmong_eq_of_exists]
   · ext u
     simp
   · obtain ⟨v, hv, hp⟩ := h
@@ -173,29 +173,29 @@ antecedent in the form [kaufmann-schwager-2009] reject, §6.2: *if A, must C* an
 must not C* together entail that no best *A*-world is a *B*-world, a preference against *B*
 that (81) to (83) do not carry. The double-modal structure (76b) escapes, since each
 conditional's inner modal is evaluated in its own typical antecedent worlds. -/
-theorem single_modal_strengthening {f g : ConvBackground W} {α β γ : W → Prop}
+theorem single_modal_strengthening {f g : Background W} {α β γ : W → Prop}
     (h₁ : conditionalNecessity f g α γ w)
     (h₂ : conditionalNecessity f g (λ v => α v ∧ β v) (λ v => ¬ γ v) w) :
     ∀ u ∈ bestWorlds (f.restrict α) g w, ¬ β u := by
   intro u hu hβ
-  have hu' := ConvBackground.mem_accessibleWorlds_restrict.1 hu.1
+  have hu' := Background.mem_accessibleWorlds_restrict.1 hu.1
   exact h₂ u (mem_bestWorlds_of_subset
-    (fun v hv ↦ ConvBackground.accessibleWorlds_restrict_mono (fun _ h ↦ h.1) hv)
-    hu (ConvBackground.mem_accessibleWorlds_restrict.2 ⟨hu'.1, hu'.2, hβ⟩)) (h₁ u hu)
+    (fun v hv ↦ Background.accessibleWorlds_restrict_mono (fun _ h ↦ h.1) hv)
+    hu (Background.mem_accessibleWorlds_restrict.2 ⟨hu'.1, hu'.2, hβ⟩)) (h₁ u hu)
 
 /-! ### The analysis -/
 
 /-- On the teleological construal of the priority modal, §7.1, the prejacent holds throughout the
 worlds of the modal base that best realize the agent's effective preferences at the world of
 evaluation, the ordering source `g_epA(v) = max[EP(a, v)]`. -/
-def Teleological (f : ConvBackground W) (P : A → W → PreferenceStructure W) (a : A) (q : Set W)
+def Teleological (f : Background W) (P : A → W → PreferenceStructure W) (a : A) (q : Set W)
     (v : W) : Prop :=
   (P a v).best (f.accessibleWorlds v) ⊆ q
 
 /-- (88) is the covert necessity over the speaker's beliefs, ordered by stereotypicality and
 restricted by the effective preference for `p`, with the teleological modal over the historical
 alternatives in its scope. -/
-def Anankastic (f₁ g₁ f₂ : ConvBackground W)
+def Anankastic (f₁ g₁ f₂ : Background W)
     (P : A → W → PreferenceStructure W) (a : A) (p q : Set W) (w : W) : Prop :=
   conditionalNecessity f₁ g₁ (Want P a p) (Teleological f₂ P a q) w
 
@@ -208,14 +208,14 @@ theorem want_disjoint (hC : ∀ w, (P a w).Consistent (B w)) (h : ∀ w, B w ∩
 
 /-- The antecedent's restriction removes every world with a conflicting effective preference,
 §7.1.1, so an actual preference for Hoboken never reaches the priority modal. -/
-theorem not_want_of_mem_restricted {f : ConvBackground W} (hC : ∀ w, (P a w).Consistent (B w))
+theorem not_want_of_mem_restricted {f : Background W} (hC : ∀ w, (P a w).Consistent (B w))
     (h : ∀ w, B w ∩ (p ∩ q) = ∅) {v : W}
     (hv : v ∈ (f.restrict (Want P a p)).accessibleWorlds w) : ¬ Want P a q v :=
-  Set.disjoint_left.1 (want_disjoint hC h) (ConvBackground.mem_accessibleWorlds_restrict.1 hv).2
+  Set.disjoint_left.1 (want_disjoint hC h) (Background.mem_accessibleWorlds_restrict.1 hv).2
 
 /-- An anankastic conditional whose antecedent the speaker's beliefs exclude is vacuously
 true, §7.1.1; the indicative is then infelicitous and the subjunctive required, (91). -/
-theorem anankastic_of_not_want {f₁ f₂ g₁ : ConvBackground W}
+theorem anankastic_of_not_want {f₁ f₂ g₁ : Background W}
     (h : ∀ v ∈ f₁.accessibleWorlds w, ¬ Want P a p v) : Anankastic f₁ g₁ f₂ P a p q w :=
   vacuous_conditional f₁ g₁ _ _ w h
 
@@ -224,7 +224,7 @@ typicality restriction: when in every belief world where the agent effectively p
 effective preferences are jointly realizable among the historical alternatives and realizing
 `p` there requires `q`, the conditional holds. Compatible goals such as comfort in (92) stay in
 the ordering; conflicting ones are gone by `not_want_of_mem_restricted`. -/
-theorem anankastic_of_subset {f₁ f₂ g₁ : ConvBackground W}
+theorem anankastic_of_subset {f₁ f₂ g₁ : Background W}
     (hreal : ∀ v ∈ (f₁.restrict (Want P a p)).accessibleWorlds w,
       (f₂.accessibleWorlds v ∩ ⋂₀ (P a v).maxElts).Nonempty)
     (hfacts : ∀ v ∈ (f₁.restrict (Want P a p)).accessibleWorlds w,
@@ -233,7 +233,7 @@ theorem anankastic_of_subset {f₁ f₂ g₁ : ConvBackground W}
   intro v hv
   rw [Teleological, (P a v).best_eq_of_nonempty (hreal v hv.1)]
   exact λ u ⟨hu, hmax⟩ => hfacts v hv.1
-    ⟨hu, Set.mem_sInter.1 hmax p (ConvBackground.mem_accessibleWorlds_restrict.1 hv.1).2⟩
+    ⟨hu, Set.mem_sInter.1 hmax p (Background.mem_accessibleWorlds_restrict.1 hv.1).2⟩
 
 end General
 
@@ -292,11 +292,11 @@ def ep : Unit → World → PreferenceStructure World :=
 def belief : World → Set World := λ _ => {v | v.facts = true}
 
 /-- The speaker believes that the facts hold. -/
-def fBelS : ConvBackground World := λ _ => {λ v => v.facts = true}
+def fBelS : Background World := λ _ => {λ v => v.facts = true}
 
 /-- In the historical alternatives before boarding the goal and the facts are settled and the
 train is not. -/
-def fHist : ConvBackground World := λ v => {λ u => u.goal = v.goal, λ u => u.facts = v.facts}
+def fHist : Background World := λ v => {λ u => u.goal = v.goal, λ u => u.facts = v.facts}
 
 /-- The world where the facts hold and the addressee is heading for Hoboken. -/
 def w₀ : World := ⟨.hoboken, .path, true⟩
@@ -324,7 +324,7 @@ the speaker's belief state and out of the antecedent's restriction of it, §7.1.
 actual preference never reaches the priority modal. -/
 theorem w₀_excluded :
     w₀ ∈ fBelS.accessibleWorlds w₀ ∧
-      w₀ ∉ ConvBackground.accessibleWorlds (fBelS.restrict (Want ep () harlem)) w₀ :=
+      w₀ ∉ Background.accessibleWorlds (fBelS.restrict (Want ep () harlem)) w₀ :=
   ⟨mem_fBelS.2 rfl, λ h => not_want_of_mem_restricted consistent_ep belief_inter_harlem_hoboken h
     (show hoboken ∈ (PreferenceStructure.single hoboken).maxElts from
       ⟨Set.mem_singleton _, λ _ _ h => h⟩)⟩
@@ -336,13 +336,13 @@ private theorem anankastic_dest {d t : Set World}
     (hne : ∀ g, ∃ u : World, u.goal = g ∧ u.facts = true ∧ u ∈ d) :
     Anankastic fBelS ⊥ fHist ep () d t w := by
   refine anankastic_of_subset (λ v hv => ?_) (λ v hv u ⟨hu, hd'⟩ => ?_)
-  · have hv' := ConvBackground.mem_accessibleWorlds_restrict.1 hv
+  · have hv' := Background.mem_accessibleWorlds_restrict.1 hv
     have hw : d = v.goal.dest := by simpa [Want, ep] using hv'.2
     obtain ⟨u, hg, hf, hu⟩ := hne v.goal
     refine ⟨u, mem_fHist.2 ⟨hg, hf.trans (mem_fBelS.1 hv'.1).symm⟩, ?_⟩
     simp only [ep, PreferenceStructure.maxElts_single, Set.sInter_singleton]
     exact hw ▸ hu
-  · have hv' := ConvBackground.mem_accessibleWorlds_restrict.1 hv
+  · have hv' := Background.mem_accessibleWorlds_restrict.1 hv
     exact (hd u ((mem_fHist.1 hu).2.trans (mem_fBelS.1 hv'.1))).1 hd'
 
 /-- The Harlem sentence (1) is true at every world, the Hoboken world included, §7.1.1. -/

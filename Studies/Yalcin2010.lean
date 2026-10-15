@@ -88,17 +88,17 @@ def might (A : Set W) (w : W) : Prop :=
 /-- The indicative *if A, B*, with its tacit *must*, is human necessity over the base
 restricted by the antecedent, as in Kratzer's restrictor analysis. -/
 def ifThen (A B : Set W) (w : W) : Prop :=
-  humanNecessity (ConvBackground.restrict ⊥ (· ∈ A)) (fun _ ↦ O) (· ∈ B) w
+  humanNecessity (Background.restrict ⊥ (· ∈ A)) (fun _ ↦ O) (· ∈ B) w
 
 theorem must_iff (A : Set W) (w : W) :
     must O A w ↔ ∀ u, ∃ v, (v ≤[O] u) ∧ ∀ z, (z ≤[O] v) → z ∈ A := by
-  simp [must, humanNecessity, ConvBackground.accessibleWorlds_bot]
+  simp [must, humanNecessity, Background.accessibleWorlds_bot]
 
 theorem ifThen_iff (A B : Set W) (w : W) :
     ifThen O A B w ↔
       ∀ u ∈ A, ∃ v ∈ A, (v ≤[O] u) ∧ ∀ z ∈ A, (z ≤[O] v) → z ∈ B := by
-  simp only [ifThen, humanNecessity, ConvBackground.mem_accessibleWorlds_restrict,
-    ConvBackground.accessibleWorlds_bot, Set.mem_univ, true_and]
+  simp only [ifThen, humanNecessity, Background.mem_accessibleWorlds_restrict,
+    Background.accessibleWorlds_bot, Set.mem_univ, true_and]
 
 theorem kratzer_V1 : ProbablyToNotProbablyNot (likelihood O) := probablyToNotProbablyNot
 theorem kratzer_V2 : ProbablyDistribInf (likelihood O) := probablyDistribInf
