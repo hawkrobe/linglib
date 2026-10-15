@@ -141,7 +141,7 @@ def F (i : ℕ) : LexicalItem.Token := ⟨.of .T [], 6 + i⟩
 def c₀ : LexicalItem.Token := ⟨.of .C [], 0⟩
 
 /-- The side at which each of the five base Merges attaches its item. -/
-abbrev Sides := Fin 5 → Side
+abbrev Sides := Fin 5 → Edge
 
 namespace Clause
 
@@ -183,10 +183,10 @@ def base (σ : Sides) : List Step :=
   c.goal.toList.map (Step.em (σ 0)) ++
     [.em (σ 1) c.patient, .em (σ 2) v₀, .em (σ 3) c.agent, .em (σ 4) c.voiceHead]
 
-/-- The verb adjoins to Voice, (51)–(52): the verb raises and Voice raises over it. -/
+/-- The verb adjoins to Voice, (51)–(52), as the verb raises and Voice raises over it. -/
 def verbToVoice : List Step := [.im c.verb, .im c.voiceHead]
 
-/-- The goal, then the pivot, raise to specifiers of F, (59)–(60), (63)–(64), (72)–(73): the
+/-- The goal, then the pivot, raise to specifiers of F, (59)–(60), (63)–(64), (72)–(73), the
 order of extraction that places the goal after the subject. -/
 def evacuate : List Step :=
   (c.goal.toList.flatMap fun pp => [.em .left (F 1), .im pp]) ++ [.em .left (F 2), .im c.pivot]
@@ -370,7 +370,7 @@ def ofRow (row : Datum) : Option Extraction := do
 
 end Extraction
 
-/-- Only the VOS Hypothesis fits the extraction data ((7)–(10), (43)–(44), (85)–(88)): the
+/-- Only the VOS Hypothesis fits the extraction data ((7)–(10), (43)–(44), (85)–(88)). The
 direct object and the passive agent, frozen in the fronted VoiceP, cannot be fronted in either
 order, the goal, evacuated before VoiceP raises, can, and with VoiceP in place the object of an
 SVO clause would be free. -/
@@ -458,7 +458,7 @@ theorem BindingTheory.Licenses.derivational {th : BindingTheory} {a : Reflexiviz
   | semanticHierarchy => exact absurd rfl hth
 
 /-- Only c-command at some stage fits the binding data of Table 1 ((17), (21), (37), (62),
-(66)–(68)): surface c-command loses every VOS antecedent, (62) and both passive orders
+(66)–(68)). Surface c-command loses every VOS antecedent, (62) and both passive orders
 (67)–(68), reconstruction to the last SVO stage loses the passive agent (67), and the Semantic
 Hierarchy loses the passive subject ((37), (68)). -/
 theorem derivational_only (th : BindingTheory) :

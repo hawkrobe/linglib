@@ -6,6 +6,7 @@ Authors: Robert Hawkins
 module
 
 public import Mathlib.Tactic.DeriveFintype
+public import Linglib.Core.Computability.Edge
 public import Linglib.Syntax.Minimalist.Merge.SyntacticObject
 
 /-!
@@ -34,7 +35,7 @@ changes no stage and no mover.
 
 ## Main definitions
 
-* `Minimalist.Side`, `Minimalist.Step`, `Step.apply`, `Step.run`, `Step.mover?`, `Step.mergeOp`,
+* `Minimalist.Step`, `Step.apply`, `Step.run`, `Step.mover?`, `Step.mergeOp`,
   `Step.Admissible`
 * `Minimalist.Derivation`, `Derivation.Cfg`, `Derivation.run`, `final`, `stageAt`, `movedItems`,
   `mover?`, `take`, `append`, `leftward`, `items`, `Admissible`
@@ -72,30 +73,25 @@ open RoseTree UnorderedTree SyntacticObject
 
 /-! ### Steps -/
 
-/-- A Merge step attaches its new daughter on a side, a planarization datum that externalization
-    reads and the derived object ignores. -/
-inductive Side where
-  | left
-  | right
-  deriving DecidableEq, Repr, Fintype
-
-/-- A derivation step. `im` records only the mover; the trace it leaves is that of its head under
-the trace encoder the step is applied with. Internal Merge is also available in its two stages,
-`extract` and `remerge` ([marcolli-chomsky-berwick-2025] Proposition 1.4.2), so that several
-copies can wait on the stack of the workspace. -/
+/-- A derivation step. A Merge step attaches its new daughter on an `Edge` of the mother, a
+planarization datum that externalization reads and the derived object ignores. `im` records only
+the mover; the trace it leaves is that of its head under the trace encoder the step is applied
+with. Internal Merge is also available in its two stages, `extract` and `remerge`
+([marcolli-chomsky-berwick-2025] Proposition 1.4.2), so that several copies can wait on the stack
+of the workspace. -/
 inductive Step where
   /-- External Merge, the new item as the daughter on `side`. -/
-  | em (side : Side) (item : SyntacticObject)
+  | em (side : Edge) (item : SyntacticObject)
   /-- Internal Merge raises `mover` to the daughter on `side`, the left unless stated otherwise,
   leaving the trace of its head in its place. -/
-  | im (mover : SyntacticObject) (side : Side := .left)
-  /-- The unit stage of Internal Merge: a copy of `mover` goes on top of the stack, leaving the
+  | im (mover : SyntacticObject) (side : Edge := .left)
+  /-- The unit stage of Internal Merge puts a copy of `mover` on top of the stack, leaving the
   trace of its head in its place. -/
   | extract (mover : SyntacticObject)
   /-- The copy on top of the stack merges back as the daughter on `side`. -/
-  | remerge (side : Side := .left)
+  | remerge (side : Edge := .left)
 
-/-- A configuration of a derivation: the object under construction and the stack of copies
+/-- A configuration of a derivation is the object under construction and the stack of copies
 extracted from it, the top first. -/
 structure Derivation.Cfg (α : Type*) where
   /-- The object under construction. -/
@@ -116,9 +112,9 @@ def map (f : α → β) (c : Cfg α) : Cfg β := ⟨f c.current, c.stack.map f�
 
 end Derivation.Cfg
 
-/-- The object a step builds from the current one, the copies on the stack aside: External Merge
-    with the item on the given side, Internal Merge of the remainder and the mover, which leaves
-    the trace of its head under `τ`, and the remainder of an extraction. `remerge` needs the
+/-- The object a step builds from the current one, the copies on the stack aside. External Merge
+    adds the item on the given side, Internal Merge merges the remainder and the mover, leaving
+    the trace of its head under `τ`, and an extraction leaves the remainder. `remerge` needs the
     stack (`Step.run`). -/
 noncomputable def Step.apply (step : Step) (current : SyntacticObject)
     (τ : SyntacticObject → Option LexicalItem.Token := selHead) : SyntacticObject :=
@@ -129,7 +125,7 @@ noncomputable def Step.apply (step : Step) (current : SyntacticObject)
   | .extract mover => deleteAccessible mover current τ
   | .remerge _ => current
 
-/-- A step on a configuration: an extraction pushes the mover's copy onto the stack, `remerge`
+/-- A step on a configuration. An extraction pushes the mover's copy onto the stack, `remerge`
     merges the copy on top back by External Merge, and the other steps leave the stack alone. -/
 noncomputable def Step.run (step : Step) (c : Derivation.Cfg SyntacticObject)
     (τ : SyntacticObject → Option LexicalItem.Token := selHead) : Derivation.Cfg SyntacticObject :=
@@ -146,11 +142,11 @@ theorem Step.apply_em_left (item current : SyntacticObject) :
 theorem Step.apply_em_right (item current : SyntacticObject) :
     (Step.em .right item).apply current τ = merge current item := rfl
 
-theorem Step.apply_im (mover : SyntacticObject) (side : Side) (current : SyntacticObject) :
+theorem Step.apply_im (mover : SyntacticObject) (side : Edge) (current : SyntacticObject) :
     (Step.im mover side).apply current τ = merge (deleteAccessible mover current τ) mover := rfl
 
 /-- The sides build the same object; they differ only at externalization. -/
-theorem Step.apply_em (side : Side) (item current : SyntacticObject) :
+theorem Step.apply_em (side : Edge) (item current : SyntacticObject) :
     (Step.em side item).apply current τ = merge item current := by
   cases side
   · rfl
@@ -161,10 +157,10 @@ def Step.mover? : Step → Option SyntacticObject
   | .im mover _ | .extract mover => some mover
   | .em _ _ | .remerge _ => none
 
-@[simp] theorem Step.mover?_em (side : Side) (item : SyntacticObject) :
+@[simp] theorem Step.mover?_em (side : Edge) (item : SyntacticObject) :
     (Step.em side item).mover? = none := rfl
 
-@[simp] theorem Step.mover?_im (mover : SyntacticObject) (side : Side) :
+@[simp] theorem Step.mover?_im (mover : SyntacticObject) (side : Edge) :
     (Step.im mover side).mover? = some mover :=
   rfl
 
@@ -175,10 +171,10 @@ def Step.leftward : Step → Step
   | .extract mover => .extract mover
   | .remerge _ => .remerge
 
-@[simp] theorem Step.leftward_em (side : Side) (item : SyntacticObject) :
+@[simp] theorem Step.leftward_em (side : Edge) (item : SyntacticObject) :
     (Step.em side item).leftward = .em .left item := rfl
 
-@[simp] theorem Step.leftward_im (mover : SyntacticObject) (side : Side) :
+@[simp] theorem Step.leftward_im (mover : SyntacticObject) (side : Edge) :
     (Step.im mover side).leftward = .im mover :=
   rfl
 
@@ -200,7 +196,7 @@ theorem Step.run_leftward (step : Step) (c : Derivation.Cfg SyntacticObject) :
 
 /-- Internal Merge is an extraction followed by merging the copy back
     ([marcolli-chomsky-berwick-2025] Proposition 1.4.2). -/
-theorem Step.run_im (mover : SyntacticObject) (side : Side) (c : Derivation.Cfg SyntacticObject) :
+theorem Step.run_im (mover : SyntacticObject) (side : Edge) (c : Derivation.Cfg SyntacticObject) :
     (Step.im mover side).run c τ = (Step.remerge side).run ((Step.extract mover).run c τ) τ := by
   obtain ⟨cur, st⟩ := c
   show (⟨_, st⟩ : Derivation.Cfg SyntacticObject) = ⟨_, st⟩
@@ -232,7 +228,7 @@ def Step.itemsList (steps : List Step) : Workspace :=
     Step.itemsList (step :: steps) = step.items + Step.itemsList steps := by
   simp [Step.itemsList]
 
-/-- A step applies an algebraic Merge at the current object: External Merge with the item, or the
+/-- A step applies an algebraic Merge at the current object, External Merge with the item or the
     unit stage followed by External Merge of the remainder with the mover. -/
 noncomputable def Step.mergeOp (step : Step)
     (current : SyntacticObject) :
