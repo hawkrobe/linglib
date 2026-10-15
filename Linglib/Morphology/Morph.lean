@@ -30,8 +30,9 @@ side of Haspelmath's form–content pairing, never zero and never discontinuous.
   projections of a bound kind; an infix is bound inside its host, on no side.
 * `Morph.Side.attach`: attachment of an element on a side of a sequence, the
   linear shadow of attachment on a word tree.
+* `Morph.Kind.JoinsAt`: adjacent morphs of two kinds are in one word at an attachment.
 * `Morph.wordsAt`, `Morph.surface`: the words of a sequence of morphs at an
-  attachment, read off the positions of adjacent morphs, and its surface form in
+  attachment, read off the kinds of adjacent morphs, and its surface form in
   boundary notation.
 * `Morph.IsBoundary`, `Morph.wordsOf`: the morph boundaries of that notation, and the words of a
   text in it as their morph forms.
@@ -268,16 +269,26 @@ end Attachment
 
 variable {l l' : Attachment}
 
-/-- Adjacent morphs `m₁ m₂` are in one word at the attachment `l` when `m₁` is bound before its
-host or `m₂` after or inside it, no more loosely than `l`. -/
-def JoinsAt (l : Attachment) (m₁ m₂ : Morph) : Prop :=
-  (∃ a ≤ l, m₁.kind = .bound .before a) ∨ ∃ p ≠ .before, ∃ a ≤ l, m₂.kind = .bound p a
+/-- Adjacent morphs of kinds `k₁ k₂` are in one word at the attachment `l` when the first is
+bound before its host or the second after or inside it, no more loosely than `l`. -/
+def Kind.JoinsAt (l : Attachment) (k₁ k₂ : Kind) : Prop :=
+  (∃ a ≤ l, k₁ = .bound .before a) ∨ ∃ p ≠ .before, ∃ a ≤ l, k₂ = .bound p a
 
-instance (l : Attachment) : DecidableRel (JoinsAt l) := fun _ _ ↦
+instance (l : Attachment) : DecidableRel (Kind.JoinsAt l) := fun _ _ ↦
   inferInstanceAs (Decidable (_ ∨ _))
 
-theorem JoinsAt.mono (h : l ≤ l') {m₁ m₂ : Morph} : JoinsAt l m₁ m₂ → JoinsAt l' m₁ m₂ :=
+theorem Kind.JoinsAt.mono (h : l ≤ l') {k₁ k₂ : Kind} :
+    k₁.JoinsAt l k₂ → k₁.JoinsAt l' k₂ :=
   Or.imp (fun ⟨a, ha, e⟩ ↦ ⟨a, ha.trans h, e⟩) fun ⟨p, hp, a, ha, e⟩ ↦ ⟨p, hp, a, ha.trans h, e⟩
+
+/-- Adjacent morphs are in one word at the attachment `l` when their kinds are. -/
+def JoinsAt (l : Attachment) (m₁ m₂ : Morph) : Prop := m₁.kind.JoinsAt l m₂.kind
+
+instance (l : Attachment) : DecidableRel (JoinsAt l) := fun m₁ m₂ ↦
+  inferInstanceAs (Decidable (m₁.kind.JoinsAt l m₂.kind))
+
+theorem JoinsAt.mono (h : l ≤ l') {m₁ m₂ : Morph} : JoinsAt l m₁ m₂ → JoinsAt l' m₁ m₂ :=
+  Kind.JoinsAt.mono h
 
 /-- The words of a sequence of morphs at the attachment `l` are its maximal runs of morphs
 joined at `l`. -/

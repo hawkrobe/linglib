@@ -117,10 +117,10 @@ checked against the section numbers.
 
 ### Hiatus resolution samples
 
-A paper's survey of which vowel elides where two vowels meet: for each language of the sample,
+A paper's report of which vowel elides where two vowels meet: for each language it reports on,
 the kind of juncture (two lexical words, a lexical word before a function word, a prefix before
-a root, a root before a suffix) and the vowel that elides there, with the reports the paper
-marks as uncertain flagged.
+a root, a root before a suffix, two suffixes, two enclitics) and the vowel that elides there,
+with the reports the paper marks as uncertain flagged.
 
 - **Schema**: `Linglib/Data/Hiatus/Schema.lean`
 - **Generator**: `scripts/gen_hiatus.py` (`--check` verifies sync)
