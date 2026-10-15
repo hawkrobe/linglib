@@ -266,6 +266,39 @@
     "verified": "page-image"
   },
   {
+    "id": "adger2025_ch51b",
+    "source": {
+      "bibkey": "adger-2025",
+      "paperLabel": "ch. 5 (1b)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "(Guess) what you asked who bought?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "configuration",
+        "wh-island"
+      ],
+      [
+        "mover",
+        "what"
+      ],
+      [
+        "C 2-part",
+        "who"
+      ]
+    ],
+    "comment": "The embedded C already has who as its 2-part, so what, the object of buy, cannot reach the matrix C.",
+    "verified": "page-image"
+  },
+  {
     "id": "adger2025_ch630",
     "source": {
       "bibkey": "adger-2025",
