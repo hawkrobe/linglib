@@ -36,6 +36,27 @@ jobs:
       - name: Check generated verb class data
         run: python3 scripts/gen_verb_classes.py --check
 
+      - name: Check generated form data
+        run: python3 scripts/gen_forms.py --check
+
+      - name: Check generated word order data
+        run: python3 scripts/gen_word_order.py --check
+
+      - name: Check generated word order corpus data
+        run: python3 scripts/gen_word_order_corpus.py --check
+
+      - name: Check generated complementation data
+        run: python3 scripts/gen_complementation.py --check
+
+      - name: Check generated hiatus data
+        run: python3 scripts/gen_hiatus.py --check
+
+      - name: Check generated treebank coverage data
+        run: python3 scripts/gen_treebank_coverage.py --check
+
+      - name: Check generated dependency length data
+        run: python3 scripts/gen_ud_deplength.py --check
+
       - name: Check example literals in studies
         run: python3 scripts/check_examples.py
 
