@@ -2,6 +2,7 @@ module
 
 public import Mathlib.Data.Set.Basic
 public import Linglib.Logic.Nonmonotonic.Preferential
+public import Linglib.Semantics.Modality.OrderingSemantics
 
 /-!
 # Conditional operators
@@ -276,9 +277,10 @@ theorem IsCentered.minimals_eq_singleton (hc : IsCentered ord) (hw : w ∈ p) :
 
 /-- The variably strict conditional of [lewis-1973] §2.3 for a universal system, one in which
 every world is accessible. It is vacuously true without antecedent-worlds, and otherwise true
-when the consequent holds at every antecedent-world at least as close as some antecedent-world. -/
+when the consequent holds at every antecedent-world at least as close as some antecedent-world,
+that is, when the consequent is a good possibility over the antecedent-worlds. -/
 def variablyStrictImp (ord : W → Preorder W) (p q : Set W) : Set W :=
-  {w | p = ∅ ∨ ∃ v ∈ p, ∀ u ∈ p, (ord w).le u v → u ∈ q}
+  {w | p = ∅ ∨ OrderingSemantics.IsGoodPossibility (ord w) p q}
 
 @[simp]
 theorem mem_variablyStrictImp :
@@ -310,9 +312,9 @@ instance [Fintype W] [DecidableRel (ord w).le] [DecidablePred (· ∈ p)] [Decid
 antecedent-worlds. -/
 theorem variablyStrictImp_subset_closestImp (htot : ∀ w, Std.Total (ord w).le) :
     variablyStrictImp ord p q ⊆ closestImp ord p q := by
-  rintro w (rfl | ⟨v, hv, h⟩) u hu
+  rintro w (rfl | h) u hu
   · exact absurd hu.1 id
-  · exact h u hu.1 (((Preorder.mem_minimals_iff_forall_le (htot _)).1 hu).2 v hv)
+  · exact (h.isNecessity_of_total (htot w)).minimals_subset hu
 
 /-- On a total ordering satisfying the Limit Assumption for `p`, the two conditionals coincide
 ([lewis-1973] §1.4). -/
@@ -324,9 +326,8 @@ theorem closestImp_eq_variablyStrictImp (htot : ∀ w, Std.Total (ord w).le)
   · exact .inl hp
   obtain ⟨v, hv⟩ := hlim w hp
   rw [Preorder.mem_minimals_iff_forall_le (htot _)] at hv
-  refine .inr ⟨v, hv.1, fun u hu huv ↦ hw ?_⟩
-  exact (Preorder.mem_minimals_iff_forall_le (htot _)).2
-    ⟨hu, fun x hx ↦ (ord w).le_trans u v x huv (hv.2 x hx)⟩
+  exact .inr ((OrderingSemantics.isGoodPossibility_iff_of_least hv.1 hv.2).2
+    ((OrderingSemantics.minimals_subset_iff_of_least hv.1 hv.2).1 hw))
 
 /-- On a total ordering the two conditionals coincide for a finite antecedent, which satisfies
 the Limit Assumption. -/

@@ -1,6 +1,7 @@
 module
 
 public import Linglib.Semantics.Modality.Background
+public import Linglib.Semantics.Modality.OrderingSemantics
 public import Linglib.Logic.Modal.Basic
 
 /-!
@@ -13,9 +14,10 @@ Kratzer's own definition, human necessity, needs no Limit Assumption: each acces
 see, at least as good, a witness below which only `p`-worlds occur. It is universal
 quantification over the best worlds exactly under the Limit Assumption, which every finite frame
 satisfies. Good possibility asks for one such witness, so `p` may hold on one branch of the
-ordering and its rival on another; Portner and Rubinstein call it local necessity. When the
-ordering source is consistent with the modal base, the two backgrounds unify into one and both
-forces become simple necessity over their union.
+ordering and its rival on another; Portner and Rubinstein call it local necessity. Both are the
+forces of ordering semantics (`OrderingSemantics`) over the accessible worlds ranked by the
+ordering source. When the ordering source is consistent with the modal base, the two
+backgrounds unify into one and both forces become simple necessity over their union.
 
 ## Main definitions
 
@@ -126,22 +128,24 @@ theorem necessity_and_left {f g : Background W} {p q : W → Prop} {w : W}
 /-! ### Human necessity
 
 [kratzer-1981]'s official definition needs no Limit Assumption, asking each accessible world to
-see, at least as good, a witness below which only `p`-worlds occur. `necessity`, universal
-quantification over `bestWorlds`, is its Limit Assumption collapse. -/
+see, at least as good, a witness below which only `p`-worlds occur. It is the necessity of
+ordering semantics over the accessible worlds ranked by the ordering source, and `necessity`,
+universal quantification over `bestWorlds`, is its Limit Assumption collapse. -/
 
 /-- Human necessity holds when every accessible world has an accessible world at least as good,
-below which `p` holds throughout ([kratzer-1981], restated as necessity in [kratzer-2012]). It is
-neutral with respect to the Limit Assumption, after Lewis's counterfactual semantics. -/
+below which `p` holds throughout ([kratzer-1981], restated as necessity in [kratzer-2012]). -/
 def humanNecessity (f g : Background W) (p : W → Prop) (w : W) : Prop :=
-  ∀ u ∈ f.accessibleWorlds w, ∃ v ∈ f.accessibleWorlds w,
-    atLeastAsGoodAs (g w) v u ∧ ∀ z ∈ f.accessibleWorlds w, atLeastAsGoodAs (g w) z v → p z
+  OrderingSemantics.IsNecessity (premisePreorder (g w)) (f.accessibleWorlds w) {v | p v}
+
+theorem humanNecessity_iff {f g : Background W} {p : W → Prop} {w : W} :
+    humanNecessity f g p w ↔ ∀ u ∈ f.accessibleWorlds w, ∃ v ∈ f.accessibleWorlds w,
+      atLeastAsGoodAs (g w) v u ∧ ∀ z ∈ f.accessibleWorlds w, atLeastAsGoodAs (g w) z v → p z :=
+  Iff.rfl
 
 /-- Human necessity implies best-worlds necessity, unconditionally. -/
 theorem necessity_of_humanNecessity {f g : Background W} {p : W → Prop}
-    {w : W} (h : humanNecessity f g p w) : necessity f g p w := by
-  rintro w' ⟨hacc, hmin⟩
-  obtain ⟨v, hvacc, hvle, hall⟩ := h w' hacc
-  exact hall w' hacc (hmin hvacc hvle)
+    {w : W} (h : humanNecessity f g p w) : necessity f g p w :=
+  fun _ hv ↦ h.minimals_subset hv
 
 /-- The Limit Assumption holds at `w` when every accessible world sees a best world at least as
 good. -/
@@ -157,11 +161,8 @@ theorem LimitAssumption.of_finite [Finite W] (f g : Background W) (w : W) :
 /-- Under the Limit Assumption, best-worlds necessity implies human necessity. -/
 theorem humanNecessity_of_necessity {f g : Background W} {p : W → Prop}
     {w : W} (hlim : LimitAssumption f g w) (h : necessity f g p w) :
-    humanNecessity f g p w := by
-  intro u hu
-  obtain ⟨v, hvbest, hvle⟩ := hlim u hu
-  refine ⟨v, hvbest.1, hvle, fun z hz hzv ↦ h z ⟨hz, fun z' hz' hz'z ↦ ?_⟩⟩
-  exact atLeastAsGoodAs_trans hzv (hvbest.2 hz' (atLeastAsGoodAs_trans hz'z hzv))
+    humanNecessity f g p w :=
+  OrderingSemantics.isNecessity_of_minimals_subset hlim fun _ hv ↦ h _ hv
 
 /-- Under the Limit Assumption, [kratzer-1981]'s human necessity is exactly universal
 quantification over the best worlds. -/
@@ -203,18 +204,20 @@ variable {f g : Background W} {p q : W → Prop} {w : W}
 /-- Good possibility holds when some accessible world sees only `p`-worlds among the accessible
 worlds at least as good as itself, so that `p` holds throughout a branch of the ordering. -/
 def goodPossibility (f g : Background W) (p : W → Prop) (w : W) : Prop :=
-  ∃ u ∈ f.accessibleWorlds w, ∀ v ∈ f.accessibleWorlds w, atLeastAsGoodAs (g w) v u → p v
+  OrderingSemantics.IsGoodPossibility (premisePreorder (g w)) (f.accessibleWorlds w) {v | p v}
+
+theorem goodPossibility_iff : goodPossibility f g p w ↔
+    ∃ u ∈ f.accessibleWorlds w, ∀ v ∈ f.accessibleWorlds w, atLeastAsGoodAs (g w) v u → p v :=
+  Iff.rfl
 
 theorem goodPossibility_mono (h : ∀ v, p v → q v) :
     goodPossibility f g p w → goodPossibility f g q w :=
-  fun ⟨u, hu, hp⟩ ↦ ⟨u, hu, fun v hv hvu ↦ h v (hp v hv hvu)⟩
+  fun hp ↦ hp.mono fun v ↦ h v
 
 /-- Over a modal base with an accessible world, human necessity implies good possibility. -/
 theorem goodPossibility_of_humanNecessity (hne : (f.accessibleWorlds w).Nonempty)
     (h : humanNecessity f g p w) : goodPossibility f g p w :=
-  let ⟨_, hu⟩ := hne
-  let ⟨v, hv, _, hall⟩ := h _ hu
-  ⟨v, hv, hall⟩
+  h.isGoodPossibility hne
 
 /-- With the empty ordering source, good possibility is simple necessity over a modal base with
 an accessible world. -/
@@ -225,9 +228,10 @@ theorem goodPossibility_bot_iff (f : Background W) (p : W → Prop) (w : W) :
 
 /-! ### Unified backgrounds
 
-When some accessible world verifies every premise of the ordering source, the modal base and
-the ordering source can be unified into the single background `f ⊔ g`, and the forces that read
-the ordering collapse to simple necessity over it. -/
+When some accessible world verifies every premise of the ordering source, it is at least as good
+as every accessible world, the worlds at least as good as it are those accessible under the
+unified background `f ⊔ g`, and the forces that read the ordering collapse to simple necessity
+over the unified background. -/
 
 /-- Good possibility implies simple necessity over the unified backgrounds. -/
 theorem simpleNecessity_sup_of_goodPossibility (h : goodPossibility f g p w) :
@@ -247,32 +251,46 @@ theorem simpleNecessity_sup_of_humanNecessity (h : humanNecessity f g p w) :
   obtain ⟨_, -, -, hall⟩ := h v hv.1
   exact hall v hv.1 ((atLeastAsGoodAs_iff _ _ _).2 fun r hr _ ↦ hv.2 r hr)
 
+section Unified
+
+variable {b : W} (hb : b ∈ (f ⊔ g).accessibleWorlds w)
+include hb
+
+private theorem mem_of_mem_sup : b ∈ f.accessibleWorlds w :=
+  ((Background.accessibleWorlds_sup f g w).subset hb).1
+
+private theorem le_of_mem_sup (v : W) : atLeastAsGoodAs (g w) b v :=
+  fun r hr _ ↦ ((Background.accessibleWorlds_sup f g w).subset hb).2 r hr
+
+private theorem simpleNecessity_sup_iff_of_mem :
+    simpleNecessity (f ⊔ g) p w ↔
+      ∀ v ∈ f.accessibleWorlds w, atLeastAsGoodAs (g w) v b → v ∈ {v | p v} := by
+  have hb' := (Background.accessibleWorlds_sup f g w).subset hb
+  show (∀ v ∈ (f ⊔ g).accessibleWorlds w, p v) ↔ _
+  rw [Background.accessibleWorlds_sup]
+  exact ⟨fun h v hv hvb ↦ h v ⟨hv, fun r hr ↦ hvb r hr (hb'.2 r hr)⟩,
+    fun h v hv ↦ h v hv.1 fun r hr _ ↦ hv.2 r hr⟩
+
+end Unified
+
 variable (h : ((f ⊔ g).accessibleWorlds w).Nonempty)
 include h
 
 /-- When the ordering source is consistent with the modal base, good possibility is simple
 necessity over the unified backgrounds. -/
 theorem goodPossibility_iff_simpleNecessity_sup :
-    goodPossibility f g p w ↔ simpleNecessity (f ⊔ g) p w := by
-  refine ⟨simpleNecessity_sup_of_goodPossibility, fun hs ↦ ?_⟩
-  obtain ⟨b, hb⟩ := h
-  rw [Background.accessibleWorlds_sup] at hb
-  refine ⟨b, hb.1, fun v hv hvb ↦ hs v ?_⟩
-  show v ∈ (f ⊔ g).accessibleWorlds w
-  rw [Background.accessibleWorlds_sup]
-  exact ⟨hv, fun r hr ↦ (atLeastAsGoodAs_iff _ _ _).1 hvb r hr (hb.2 r hr)⟩
+    goodPossibility f g p w ↔ simpleNecessity (f ⊔ g) p w :=
+  let ⟨_, hb⟩ := h
+  (OrderingSemantics.isGoodPossibility_iff_of_least (mem_of_mem_sup hb)
+    fun v _ ↦ le_of_mem_sup hb v).trans (simpleNecessity_sup_iff_of_mem hb).symm
 
 /-- When the ordering source is consistent with the modal base, human necessity is simple
 necessity over the unified backgrounds. -/
 theorem humanNecessity_iff_simpleNecessity_sup :
-    humanNecessity f g p w ↔ simpleNecessity (f ⊔ g) p w := by
-  refine ⟨simpleNecessity_sup_of_humanNecessity, fun hs u hu ↦ ?_⟩
-  obtain ⟨b, hb⟩ := h
-  rw [Background.accessibleWorlds_sup] at hb
-  refine ⟨b, hb.1, (atLeastAsGoodAs_iff _ _ _).2 fun r hr _ ↦ hb.2 r hr, fun z hz hzb ↦ hs z ?_⟩
-  show z ∈ (f ⊔ g).accessibleWorlds w
-  rw [Background.accessibleWorlds_sup]
-  exact ⟨hz, fun r hr ↦ (atLeastAsGoodAs_iff _ _ _).1 hzb r hr (hb.2 r hr)⟩
+    humanNecessity f g p w ↔ simpleNecessity (f ⊔ g) p w :=
+  let ⟨_, hb⟩ := h
+  (OrderingSemantics.isNecessity_iff_of_least (mem_of_mem_sup hb)
+    fun v _ ↦ le_of_mem_sup hb v).trans (simpleNecessity_sup_iff_of_mem hb).symm
 
 /-- When the ordering source is consistent with the modal base, good possibility is human
 necessity. -/

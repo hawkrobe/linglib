@@ -22,7 +22,8 @@ so the correspondence exhausts both classes of frames.
 
 Section 6 replaces OF by a truth condition that needs neither the Limit Assumption nor
 comparability: every antecedent-world of the field has one at least as close, all of whose
-antecedent-worlds at least as close are consequent-worlds (`neutralImp`). It entails OF
+antecedent-worlds at least as close are consequent-worlds (`neutralImp`), the necessity of
+ordering semantics over the antecedent-worlds of the field. It entails OF
 (`neutralImp_subset_orderingImp`), follows from OF under the Limit Assumption
 (`orderingImp_subset_neutralImp`), and on a universal frame is [lewis-1973]'s truth condition
 under comparability (`neutralImp_univ_eq_variablyStrictImp`).
@@ -88,12 +89,12 @@ variable (H : W → Set (Set W)) (A C : Set W)
 /-- An `A`-consistent premise set for `i`: a set of premises for `i` consistent with `A`. -/
 def IsConsistentPremiseSet (i : W) (J : Set (Set W)) : Prop := J ⊆ H i ∧ (A ∩ ⋂₀ J).Nonempty
 
-/-- Truth condition PF: every nonempty maximal `A`-consistent premise set for `i` implies `C`
-together with `A`. -/
+/-- Truth condition PF holds when every nonempty maximal `A`-consistent premise set for `i`
+implies `C` together with `A`. -/
 def premiseImp : Set W :=
   {i | ∀ J, Maximal (IsConsistentPremiseSet H A i) J → J.Nonempty → A ∩ ⋂₀ J ⊆ C}
 
-/-- The ordering a premise frame induces at `i`: `j` is at least as close as `k` when every
+/-- In the ordering a premise frame induces at `i`, `j` is at least as close as `k` when every
 premise for `i` that holds at `k` holds at `j`. -/
 abbrev premiseOrder (i : W) : Preorder W := Preorder.ofCriteria (· ∈ ·) (H i)
 
@@ -128,7 +129,7 @@ theorem premiseImp_eq_orderingImp :
       hJ.2 (hcons hk.2) (hJF.trans fun q hq ↦ ⟨hq.1, hkj q hq.1 hq.2⟩)
     exact fun q hq hkq ↦ hjJ q (hkJ ⟨hq, hkq⟩)
 
-/-- The premise frame an ordering frame induces: the premises for `i` say that a world of the
+/-- In the premise frame an ordering frame induces, the premises for `i` say that a world of the
 field is at least as close as some given world of it. -/
 def ofOrdering (S : W → Set W) (ord : W → Preorder W) (i : W) : Set (Set W) :=
   (fun k ↦ {j ∈ S i | (ord i).le j k}) '' S i
@@ -187,49 +188,44 @@ theorem premiseImp_tied_iff_split (A C : Set (Fin 3)) :
 
 variable {S : W → Set W} {ord : W → Preorder W}
 
-/-- Truth condition O: every antecedent-world `h` of the field has an antecedent-world `j` of the
-field at least as close, all of whose antecedent-worlds of the field at least as close are
-consequent-worlds. -/
+/-- Truth condition O holds when every antecedent-world `h` of the field has an antecedent-world
+`j` of the field at least as close, all of whose antecedent-worlds of the field at least as close
+are consequent-worlds. It is necessity in ordering semantics over the antecedent-worlds of the
+field. -/
 def neutralImp (S : W → Set W) (ord : W → Preorder W) (A C : Set W) : Set W :=
-  {i | ∀ h ∈ S i ∩ A, ∃ j ∈ S i ∩ A, (ord i).le j h ∧ ∀ k ∈ S i ∩ A, (ord i).le k j → k ∈ C}
+  {i | OrderingSemantics.IsNecessity (ord i) (S i ∩ A) C}
 
 /-- The neutral truth condition entails OF. -/
-theorem neutralImp_subset_orderingImp : neutralImp S ord A C ⊆ orderingImp S ord A C := by
-  intro i hi h hh
-  obtain ⟨j, hj, hjh, hC⟩ := hi h hh.1
-  exact hC h hh.1 (hh.2 hj hjh)
+theorem neutralImp_subset_orderingImp : neutralImp S ord A C ⊆ orderingImp S ord A C :=
+  fun _ hi ↦ OrderingSemantics.IsNecessity.minimals_subset hi
 
 /-- Under the Limit Assumption OF entails the neutral truth condition. -/
 theorem orderingImp_subset_neutralImp {i : W}
     (hlim : ∀ B : Set W, (S i ∩ B).Nonempty → ((ord i).minimals (S i ∩ B)).Nonempty)
     (hi : i ∈ orderingImp S ord A C) : i ∈ neutralImp S ord A C := by
   let := ord i
-  intro h hh
+  refine OrderingSemantics.isNecessity_of_minimals_subset (fun h hh ↦ ?_) hi
   obtain ⟨j, ⟨hjS, hjA, hjh⟩, hmin⟩ := hlim {g ∈ A | g ≤ h} ⟨h, hh.1, hh.2, le_rfl⟩
-  have hjm : j ∈ (ord i).minimals (S i ∩ A) :=
-    ⟨⟨hjS, hjA⟩, fun f hf hfj ↦ hmin ⟨hf.1, hf.2, hfj.trans hjh⟩ hfj⟩
-  refine ⟨j, ⟨hjS, hjA⟩, hjh, fun k hk hkj ↦ hi ⟨hk, fun f hf hfk ↦ ?_⟩⟩
-  exact hkj.trans (hjm.2 hf (hfk.trans hkj))
+  exact ⟨j, ⟨⟨hjS, hjA⟩, fun f hf hfj ↦ hmin ⟨hf.1, hf.2, hfj.trans hjh⟩ hfj⟩, hjh⟩
 
 /-- On a universal frame the neutral truth condition entails [lewis-1973]'s. -/
 theorem neutralImp_univ_subset_variablyStrictImp :
     neutralImp (fun _ ↦ Set.univ) ord A C ⊆ variablyStrictImp ord A C := by
   intro i hi
-  rcases A.eq_empty_or_nonempty with hA | ⟨h, hh⟩
-  · exact .inl hA
-  obtain ⟨j, ⟨-, hjA⟩, -, hC⟩ := hi h ⟨trivial, hh⟩
-  exact .inr ⟨j, hjA, fun k hk ↦ hC k ⟨trivial, hk⟩⟩
+  have hi' : OrderingSemantics.IsNecessity (ord i) A C := by
+    simpa only [neutralImp, Set.mem_ofPred_eq, Set.univ_inter] using hi
+  rcases A.eq_empty_or_nonempty with hA | hA
+  exacts [.inl hA, .inr (hi'.isGoodPossibility hA)]
 
 /-- On a universal frame satisfying comparability the neutral truth condition is
 [lewis-1973]'s. -/
 theorem neutralImp_univ_eq_variablyStrictImp (htot : ∀ w, Std.Total (ord w).le) :
     neutralImp (fun _ ↦ Set.univ) ord A C = variablyStrictImp ord A C := by
-  refine subset_antisymm neutralImp_univ_subset_variablyStrictImp fun i hi h hh ↦ ?_
-  rcases hi with hA | ⟨v, hvA, hC⟩
-  · exact absurd hh.2 (hA ▸ Set.notMem_empty h)
-  by_cases hvh : (ord i).le v h
-  · exact ⟨v, ⟨trivial, hvA⟩, hvh, fun k hk ↦ hC k hk.2⟩
-  · refine ⟨h, hh, (ord i).le_refl h, fun k hk hkh ↦ hC k hk.2 ?_⟩
-    exact (ord i).le_trans _ _ _ hkh (((htot i).total v h).resolve_left hvh)
+  refine subset_antisymm neutralImp_univ_subset_variablyStrictImp fun i hi ↦ ?_
+  show OrderingSemantics.IsNecessity (ord i) (Set.univ ∩ A) C
+  rw [Set.univ_inter]
+  rcases hi with rfl | h
+  · exact fun u hu ↦ absurd hu (Set.notMem_empty u)
+  · exact h.isNecessity_of_total (htot i)
 
 end Lewis1981
