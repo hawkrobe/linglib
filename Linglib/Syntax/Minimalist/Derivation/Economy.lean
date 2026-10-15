@@ -85,9 +85,7 @@ section ExternalMerge
 variable (S S' : UnorderedTree Vertex) (W : Multiset (UnorderedTree Vertex))
 
 /-- The term of Merge taking `S` and `S'` whole and leaving the spectators uncut. -/
-private def emTerm :
-    Multiset (UnorderedTree Vertex × (Multiset (UnorderedTree Vertex) ×
-      Multiset (UnorderedTree Vertex))) :=
+private def emTerm : CutChoice Vertex :=
   ({S, S'} : Multiset (UnorderedTree Vertex)).map (fun T ↦ (T, ({T}, 0))) +
     W.map fun T ↦ (T, (0, {T}))
 
@@ -96,9 +94,9 @@ private theorem emTerm_mem :
   add_mem_forestCutChoicesG (map_whole_mem_forestCutChoicesG _)
     (map_uncut_mem_forestCutChoicesG fun T _ ↦ zero_mem_cutSummandsCN _ T)
 
-private theorem emTerm_sum : ((emTerm S S' W).map Prod.snd).sum = ({S, S'}, W) := by
-  rw [emTerm, Multiset.map_add, Multiset.sum_add, sum_map_snd_map_whole, sum_map_snd_map_uncut]
-  exact Prod.ext (add_zero _) (zero_add _)
+private theorem emTerm_crown : (emTerm S S' W).crown = {S, S'} := by simp [emTerm]
+
+private theorem emTerm_trunk : (emTerm S S' W).trunk = W := by simp [emTerm]
 
 private theorem emTerm_whole_or_uncut : ∀ x ∈ emTerm S S' W, x.2.1 = 0 ∨ x.2.2 = 0 := by
   simp only [emTerm, Multiset.mem_add, Multiset.mem_map]
@@ -145,11 +143,12 @@ theorem Step.noComplexityLoss (h : step.Admissible current W) (hcur : current.va
     have := NoComplexityLoss.of_componentMap hs
       (X := UnorderedTree.node Vertex.bare {current.val, item.val})
       ((NoComplexityLoss.map_componentMap_merge_iff hs
-        (cutSummandsCN_accessibleSize_of_choice (emTerm_lexical _ hcur hitems)) (fun T ↦ by simp)
-        (by rw [emTerm_sum]) (by simp only [Forest.accessibleSize_singleton, hm]; omega)
+        (hasExtractionCost_accessibleSize_cutSummandsCN hs (emTerm_lexical _ hcur hitems))
+        (fun T ↦ by simp) (emTerm_crown ..)
+        (by simp only [Forest.accessibleSize_singleton, hm]; omega)
         (by simp only [Forest.accessibleSize_singleton, hm]; omega)).mpr
         (emTerm_whole_or_uncut _ _ _))
-    rw [emTerm_sum] at this
+    rw [emTerm_trunk] at this
     rw [Step.apply_em, merge_comm]
     simp only [Step.items, Multiset.map_add, Multiset.map_singleton, merge_val]
     rwa [Multiset.singleton_add]

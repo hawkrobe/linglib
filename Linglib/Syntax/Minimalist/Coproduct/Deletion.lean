@@ -38,8 +38,8 @@ without traces.
   trace coproduct leaves gives the pruning coproduct.
 * `ConnesKreimer.contractUnary_eraseTraces_comulCAlgHomN`: erasing them and contracting the unary
   vertices gives the deletion coproduct.
-* `ConnesKreimer.cutSummandsDN_numEdges`: in a tree whose vertices have zero or two children,
-  deleting one accessible term costs two accessible terms besides its own, the book's (1.6.7).
+* `ConnesKreimer.cutSummandsDN_numEdges`: in a full binary tree, deleting one accessible term
+  costs two accessible terms besides its own, the book's (1.6.7).
 
 ## Implementation notes
 
@@ -129,10 +129,9 @@ section Cost
 
 variable {T : UnorderedTree α} {p : Multiset (UnorderedTree α) × UnorderedTree α}
 
-/-- A deletion cut of a tree whose vertices have zero or two children, extracting at most one
-    tree, costs two edges for it besides the tree's own. -/
-theorem cutSummandsDN_numEdges_of_card_le_one
-    (hT : T.Licensed fun _ ks ↦ Multiset.card ks = 0 ∨ Multiset.card ks = 2)
+/-- A deletion cut of a full binary tree extracting at most one tree costs two edges for it
+    besides the tree's own. -/
+theorem cutSummandsDN_numEdges_of_card_le_one (hT : T.IsFullBinary)
     (hp : p ∈ cutSummandsDN T) (h : Multiset.card p.1 ≤ 1) :
     T.numEdges = (p.1.map UnorderedTree.numEdges).sum + p.2.numEdges + 2 * Multiset.card p.1 := by
   obtain ⟨q, hq, rfl⟩ := Multiset.mem_map.mp hp
@@ -143,11 +142,20 @@ theorem cutSummandsDN_numEdges_of_card_le_one
 
 /-- Deleting one accessible term costs two accessible terms besides its own
     ([marcolli-chomsky-berwick-2025] (1.6.7)). -/
-theorem cutSummandsDN_numEdges
-    (hT : T.Licensed fun _ ks ↦ Multiset.card ks = 0 ∨ Multiset.card ks = 2)
-    (hp : p ∈ cutSummandsDN T) {v : UnorderedTree α} (hv : p.1 = {v}) :
-    T.numEdges = v.numEdges + p.2.numEdges + 2 := by
+theorem cutSummandsDN_numEdges (hT : T.IsFullBinary) (hp : p ∈ cutSummandsDN T)
+    {v : UnorderedTree α} (hv : p.1 = {v}) : T.numEdges = v.numEdges + p.2.numEdges + 2 := by
   simpa [hv] using cutSummandsDN_numEdges_of_card_le_one hT hp (by simp [hv])
+
+/-- A choice of deletion cuts of full binary trees, extracting at most one tree from each tree it
+    cuts, costs two edges for each tree it extracts. -/
+theorem hasExtractionCost_numEdges_cutSummandsDN {F : Multiset (UnorderedTree α)}
+    {s : CutChoice α} (hF : ∀ T ∈ F, T.IsFullBinary) (hs : s ∈ forestCutChoicesG cutSummandsDN F)
+    (h : ∀ x ∈ s, x.2.2 ≠ 0 → Multiset.card x.2.1 ≤ 1) :
+    s.HasExtractionCost UnorderedTree.numEdges 2 :=
+  .of_mem_forestCutChoicesG hs fun x hx p hp hpx ↦
+    cutSummandsDN_numEdges_of_card_le_one (hF x.1 (fst_mem_of_mem_forestCutChoicesG hs hx)) hp <| by
+      have := h x hx (by rw [← hpx]; exact Multiset.singleton_ne_zero _)
+      rwa [← hpx] at this
 
 end Cost
 

@@ -21,14 +21,14 @@ vertex for each.
 
 ## Main results
 
-* `ConnesKreimer.cutSummandsN_numNodes`: vertex conservation for the nonplanar pruning cuts.
+* `ConnesKreimer.cutSummandsN_numNodes`, `hasExtractionCost_numNodes_cutSummandsN`: vertex
+  conservation for the nonplanar pruning cuts, and for a choice of them over a forest.
 * `ConnesKreimer.cutSummandsN_crown_numNodes_lt`, `ConnesKreimer.cutSummandsN_trunk_numNodes_lt`:
   crowns and proper trunks are smaller than the tree.
 * `ConnesKreimer.cutSummandsN_numEdges_contractUnary`: the edges of the tree, of the crown and of
   the contracted trunk.
-* `ConnesKreimer.cutSummandsN_numUnary`: in a tree whose vertices have zero or two children, a cut
-  leaves a unary vertex for each tree it extracts, less two for each vertex both of whose children
-  it extracts.
+* `ConnesKreimer.cutSummandsN_numUnary`: in a full binary tree a cut leaves a unary vertex for each
+  tree it extracts, less two for each vertex both of whose children it extracts.
 
 ## References
 
@@ -54,6 +54,12 @@ theorem cutSummandsN_numNodes (T : UnorderedTree α) :
     obtain ⟨q, hq, rfl⟩ := Multiset.mem_map.mp hp
     simpa [projSummand, Multiset.map_map, Function.comp_def] using
       cutSummandsG_numNodes pruning (k := 0) (fun _ _ h ↦ by cases h; rfl) t q hq
+
+/-- A choice of pruning cuts conserves vertices. -/
+theorem hasExtractionCost_numNodes_cutSummandsN {F : Multiset (UnorderedTree α)} {s : CutChoice α}
+    (hs : s ∈ forestCutChoicesG cutSummandsN F) :
+    s.HasExtractionCost UnorderedTree.numNodes 0 :=
+  .of_mem_forestCutChoicesG hs fun x _ p hp _ ↦ by simpa using (cutSummandsN_numNodes x.1 p hp).symm
 
 /-- No pruning cut extracts the whole tree as its crown; the full-tree extraction is the
     separate primitive term of the coproduct. -/
@@ -105,10 +111,9 @@ theorem cutSummandsN_self_not_mem_crown (T : UnorderedTree α)
 
 /-! ### Unary vertices left by a pruning cut
 
-The deletion coproduct contracts the vertices a pruning cut leaves with a single child. In a tree
-whose vertices have zero or two children, the cut leaves the parent of each tree it extracts with
-a single child, unless it extracts both of the parent's children, which leaves the parent a
-leaf. -/
+The deletion coproduct contracts the vertices a pruning cut leaves with a single child. In a full
+binary tree the cut leaves the parent of each tree it extracts with a single child, unless it
+extracts both of the parent's children, which leaves the parent a leaf. -/
 
 /-- Deleting the crown of a pruning cut and contracting the unary vertices of its trunk removes,
     besides the crown's own edges, one edge for each crown component and one for each unary
@@ -187,10 +192,9 @@ private theorem augActionG_pruning_numUnary : ∀ (t : RoseTree α),
 
 end
 
-/-- In a tree whose vertices have zero or two children, a pruning cut leaves a unary vertex for
-    each tree it extracts, less two for each vertex both of whose children it extracts. -/
-theorem cutSummandsN_numUnary {T : UnorderedTree α}
-    (hT : T.Licensed fun _ ks ↦ Multiset.card ks = 0 ∨ Multiset.card ks = 2)
+/-- In a full binary tree a pruning cut leaves a unary vertex for each tree it extracts, less two
+    for each vertex both of whose children it extracts. -/
+theorem cutSummandsN_numUnary {T : UnorderedTree α} (hT : T.IsFullBinary)
     {p : Multiset (UnorderedTree α) × UnorderedTree α} (hp : p ∈ cutSummandsN T) :
     ∃ k, Multiset.card p.1 = p.2.numUnary + 2 * k := by
   induction T using Quotient.inductionOn with
