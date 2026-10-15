@@ -36,16 +36,15 @@ def to_ : Coordinator :=
   { morph := .encl "to", gloss := "and", role := .conjunctive }
 
 /-- *mo* 'and', enclitic on each conjunct, also the additive 'too' and the universal particle
-of the indeterminates. -/
+of the indeterminates, `Japanese.Determiners.dare_mo`. -/
 def mo : Coordinator :=
   { morph := .encl "mo", gloss := "also, too; and; every", role := .conjunctive,
-    alsoAdditive := true, alsoQuantifier := true }
+    alsoAdditive := true }
 
 /-- *ka* 'or', enclitic, also the question particle and the existential particle of the
-indeterminates. -/
+indeterminates, `Japanese.Determiners.dare_ka`. -/
 def ka : Coordinator :=
-  { morph := .encl "ka", gloss := "or; question; some", role := .disjunctive,
-    alsoQuantifier := true }
+  { morph := .encl "ka", gloss := "or; question; some", role := .disjunctive }
 
 /-- The coordinators. -/
 def allEntries : List Coordinator := [to_, mo, ka]

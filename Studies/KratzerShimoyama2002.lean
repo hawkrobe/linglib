@@ -134,10 +134,10 @@ theorem opNeg_eq_denote {c : Coordinator} (hc : c.role = .negative) (A : Set (W 
   rw [opNeg, Coordinator.denote_of_negative hc]; congr 1; ext w; simp [sSup_apply]
 
 /-- The coordination an indeterminate's particle applies to the propositions a predicate yields
-from a set of individuals is, at each world, the indeterminate's reading in
-`Fragments/Japanese/Determiners.lean`, so the fragment's determiner readings are the special case
-of the paper's closure with individual alternatives (§2). -/
-theorem denote_image_eq_reading [Fintype E] (q : Japanese.Determiners.Indefinite)
+from a set of individuals is, at each world, the indeterminate quantifier's reading,
+`IndeterminateQuantifier.reading`, so the determiner readings are the special case of the paper's
+closure with individual alternatives (§2). -/
+theorem denote_image_eq_reading [Fintype E] (q : IndeterminateQuantifier)
     (P : E → W → Prop) (A : Set E) :
     q.particle.denote (P '' A) = fun w ↦ q.reading E (· ∈ A) (P · w) := by
   funext w
