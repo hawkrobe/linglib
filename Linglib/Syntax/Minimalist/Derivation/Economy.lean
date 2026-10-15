@@ -61,11 +61,12 @@ namespace Minimalist
 
 open SyntacticObject ConnesKreimer
 
-theorem Step.value_isLeft_apply (step : Step) (current : SyntacticObject) :
-    (step.apply current).val.value.isLeft := by
+theorem Step.value_isLeft_apply {step : Step} {current : SyntacticObject} {W : Workspace}
+    (h : step.Admissible current W) : (step.apply current).val.value.isLeft := by
   cases step with
   | em side item => cases side <;> simp [Step.apply]
   | im mover _ => simp [Step.apply]
+  | extract _ | remerge _ => exact h.elim
 
 private theorem traceLeafCount_lt_numNodes {S : SyntacticObject} (h : S.val.value.isLeft) :
     S.val.traceLeafCount < S.val.numNodes := by
@@ -98,6 +99,7 @@ theorem Step.noComplexityLoss (h : step.Admissible current W) :
     simp only [Step.items, add_zero, Step.apply_im, Multiset.map_add, Multiset.map_singleton,
       merge_val]
     exact NoComplexityLoss.im_residual Vertex.bare (by omega) _
+  | extract _ | remerge _ => exact h.elim
 
 /-- An admissible step whose operands are not traces satisfies Minimal Yield under trace
     counting. -/
@@ -120,6 +122,7 @@ theorem Step.minimalYield (h : step.Admissible current W) (hcur : current.val.va
       merge_val, Multiset.pair_comm (deleteAccessible mover (merge l r)).val] at hp ⊢
     exact (MinimalYield.im_accessibleCount_of_cut none none traceEncoder _ _ hp mover.val
       rfl).add_right _
+  | extract _ | remerge _ => exact h.elim
 
 /-- The workspaces after each of a list of steps hold the object built so far beside the items
     still to come. -/
@@ -133,14 +136,15 @@ private theorem isChain_of_step {R : Workspace → Workspace → Prop} {P : Synt
     (hR : ∀ {step : Step} {current : SyntacticObject} {W : Workspace}, step.Admissible current W →
       P current → (∀ i ∈ step.items, P i) →
         R ({current} + step.items + W) ({step.apply current} + W))
-    (hP : ∀ step current, P (Step.apply step current)) :
+    (hP : ∀ {step : Step} {current : SyntacticObject} {W : Workspace},
+      step.Admissible current W → P (step.apply current)) :
     ∀ (steps : List Step) (current : SyntacticObject), Step.AdmissibleList steps current →
       P current → (∀ i ∈ Step.itemsList steps, P i) →
       List.IsChain R (({current} + Step.itemsList steps) :: Step.workspacesAfter steps current)
   | [], _, _, _, _ => .singleton _
   | step :: steps, current, ⟨h, hs⟩, hcur, hitems => by
     rw [Step.itemsList_cons] at hitems ⊢
-    refine .cons_cons ?_ (isChain_of_step hR hP steps _ hs (hP step current)
+    refine .cons_cons ?_ (isChain_of_step hR hP steps _ hs (hP h)
       fun i hi ↦ hitems i (Multiset.mem_add.mpr (.inr hi)))
     rw [← add_assoc]
     exact hR h hcur fun i hi ↦ hitems i (Multiset.mem_add.mpr (.inl hi))
@@ -156,7 +160,7 @@ noncomputable def workspaces (d : Derivation) : List Workspace :=
 theorem isChain_noComplexityLoss {d : Derivation} (hd : d.Admissible) :
     d.workspaces.IsChain
       (fun W W' : Workspace ↦ NoComplexityLoss (W.map Subtype.val) (W'.map Subtype.val)) :=
-  isChain_of_step (P := fun _ ↦ True) (fun h _ _ ↦ Step.noComplexityLoss h) (fun _ _ ↦ trivial)
+  isChain_of_step (P := fun _ ↦ True) (fun h _ _ ↦ Step.noComplexityLoss h) (fun _ ↦ trivial)
     d.steps d.initial hd trivial fun _ _ ↦ trivial
 
 /-- Every step of an admissible derivation whose initial object and items are not traces satisfies

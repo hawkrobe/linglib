@@ -52,12 +52,13 @@ namespace Minimalist
 
 open SyntacticObject
 
-/-- Inside a constituent built earlier, External Merge does nothing, and Internal Merge replaces
-the mover by its trace, unless the constituent is itself the mover, which then moves intact. -/
+/-- Inside a constituent built earlier, External Merge and merging back do nothing, and Internal
+Merge and extraction replace the mover by its trace, unless the constituent is itself the mover,
+which then moves intact. -/
 def Step.applyInside (step : Step) (D : PlanarSyntacticObject) : PlanarSyntacticObject :=
   match step with
-  | .em _ _ => D
-  | .im mover _ =>
+  | .em _ _ | .remerge _ => D
+  | .im mover _ | .extract mover =>
     if D.toSyntacticObject = mover then D
     else PlanarSyntacticObject.replaceWhere mover mover.tracePlanar D
 
@@ -80,7 +81,7 @@ def spellout : List LexicalItem.Token := ((d.spelloutDomain m n).map (planarYiel
 def mergeStage? (item : SyntacticObject) : Option ℕ :=
   (d.steps.findIdx? fun step ↦ match step with
     | .em _ x => decide (x = item)
-    | .im _ _ => false).map (· + 1)
+    | _ => false).map (· + 1)
 
 /-- A derivation linearizes under a schedule of Spell-outs, each the stage at which a domain is
 built and the stage at which it is spelled out, when their snapshots cohere. -/

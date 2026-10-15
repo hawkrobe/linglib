@@ -29,12 +29,14 @@ so it is displaced (section 5.3), which the labeling algorithm, labeling the ver
 whatever the object's case, does not force. Merging the relative determiner with a noun that
 still selects the relative clause is outside triggered Merge, where one factor is saturated; the
 book lets a phrase be selected before it is saturated (section 5.5), which licenses every stage
-of the raising derivation; triggered Merge rejects the stages before the noun moves, though it
-accepts the derived object, which holds only the noun's trace. Moving *kona*'s phrase first and
-subextracting the noun, the alternative footnote 14 of the article weighs, is licensed as well,
-but violates Freezing and leaves the complementizer and the noun out of c-command. The appositive
-and restrictive readings of relatives with ICA rule out a correlative or internally headed
-placement (section 3.3.1), and attraction is not ordered by a case hierarchy (section 3.5).
+of the raising derivation; triggered Merge rejects the stages before the noun is copied out,
+though it accepts the derived object, which holds only the noun's trace. The derivation copies
+the noun and *kona*'s phrase onto a stack and merges them back in the reverse order. Moving
+*kona*'s phrase first and subextracting the noun, the alternative footnote 14 of the article
+weighs, is licensed as well, but violates Freezing, which the stack derivation obeys, and leaves
+the complementizer and the noun out of c-command. The appositive and restrictive readings of
+relatives with ICA rule out a correlative or internally headed placement (section 3.3.1), and
+attraction is not ordered by a case hierarchy (section 3.5).
 
 ## Main statements
 
@@ -62,10 +64,6 @@ placement (section 3.3.1), and attraction is not ordered by a case hierarchy (se
   chain of the head's restrictor does not model; the rows ch. 6 (11) and (12) record the data.
 * The merge positions that section 5.4.4 gives the head inside a postpositional phrase are not
   modelled; `konaRows_case` records the pattern they derive.
-* `raisingRelative` leaves *kona*'s phrase in situ. The book's own order, copying the noun and
-  *kona*'s phrase to a stack in the workspace (the book's (14)–(16)), needs the extraction stage
-  of Internal Merge as a derivation step; replayed in sequence it is the subextraction of
-  footnote 14 of the article (`subextractionRelative`).
 
 ## References
 
@@ -423,39 +421,42 @@ def rcVerb : LexicalItem.Token := ⟨.of .V [.D], 3⟩
 /-- Tense, selecting the verb phrase. -/
 def rcTense : LexicalItem.Token := ⟨.of .T [.V], 4⟩
 
-/-- The relative complementizer, selecting tense. -/
-def relC : LexicalItem.Token := ⟨.of .C [.T], 5⟩
+/-- The relative complementizer, selecting tense and then *kona*'s phrase. -/
+def relC : LexicalItem.Token := ⟨.of .C [.T, .D], 5⟩
 
 /-- The external determiner, selecting the noun. -/
 def externalD : LexicalItem.Token := ⟨.of .D [.N], 6⟩
 
-/-- The raising relative of section 5.2.2: the noun merges with *kona* while it still selects the
-relative CP, which is built over them; the noun then moves, selects the CP and projects, and the
-external determiner selects it. -/
-def raisingRelative : Minimalist.Derivation :=
-  ⟨headNoun, [.em .left kona, .em .left rcVerb, .em .left rcTense, .em .left relC, .im headNoun,
-    .em .left externalD]⟩
+/-- *Kona*'s phrase once the noun is copied out of it, the noun's trace in its place. -/
+def konaRemnant : SyntacticObject :=
+  (PlanarSyntacticObject.merge (.leaf kona) (.traceOf headNoun)).toSyntacticObject
 
-/-- Selection before saturation licenses every stage of the raising relative, and the derived
-object leaves nothing pending: the noun's selector, pending since *kona* selected it, is checked
-once the noun moves and selects the relative CP. -/
+/-- The raising relative of section 5.2.2. The noun merges with *kona* while it still selects the
+relative CP, which is built over them. Once the complementizer is merged, the noun and then
+*kona*'s phrase are copied onto the stack (the book's (14)); *kona*'s phrase merges back first, at
+the edge of the CP (15), and the noun last, selecting the CP and projecting (16); the external
+determiner selects it (17). -/
+def raisingRelative : Minimalist.Derivation :=
+  ⟨headNoun, [.em .left kona, .em .left rcVerb, .em .left rcTense, .em .left relC,
+    .extract headNoun, .extract konaRemnant, .remerge, .remerge, .em .left externalD]⟩
+
+/-- Selection before saturation licenses every stage of the raising relative, which obeys Freezing
+and ends with an empty stack and nothing pending: the noun's selector, pending since *kona*
+selected it, is checked once the noun merges back and selects the relative CP. -/
 theorem raisingRelative_licensed :
-    raisingRelative.LicensedBy pendingHom ∧
-      ∃ p ∈ raisingRelative.externalize? (head ∘ pendingHom), pendingHom p.toSyntacticObject =
-        ⟨some (externalD, [], 0)⟩ := by
+    raisingRelative.LicensedBy pendingHom ∧ raisingRelative.ObeysFreezing ∧
+      ∃ c ∈ raisingRelative.replay? (head ∘ pendingHom), c.stack = [] ∧
+        pendingHom c.current.toSyntacticObject = ⟨some (externalD, [], 0)⟩ := by
   decide
 
 /-- Triggered Merge accepts the derived relative but rejects its derivation: it fails exactly at
-the stages from *kona*'s Merge with the still-selecting noun to the noun's movement, which the
-derived object, holding only the noun's trace inside the relative clause, no longer shows. -/
+the stages where the noun, still selecting, sits inside *kona*'s phrase, before it is copied out,
+which the derived object, holding only the noun's trace there, no longer shows. -/
 theorem triggeredMerge_rejects_raisingRelative :
     raisingRelative.LicensedAt SyntacticObject.selCheckHom raisingRelative.length ∧
       ∀ n ≤ raisingRelative.length,
         (¬ raisingRelative.LicensedAt SyntacticObject.selCheckHom n ↔ n ∈ [1, 2, 3, 4]) := by
   decide
-
-/-- The relative complementizer of the alternative, selecting tense and then *kona*'s phrase. -/
-def relCWh : LexicalItem.Token := ⟨.of .C [.T, .D], 7⟩
 
 /-- *Kona*'s phrase, *kona* selecting the noun. -/
 def konaPhrase : SyntacticObject :=
@@ -464,18 +465,19 @@ def konaPhrase : SyntacticObject :=
 /-- The alternative footnote 14 of the article reports: *kona*'s phrase moves to the edge of the
 relative CP, and the noun is then subextracted from it to select the CP. -/
 def subextractionRelative : Minimalist.Derivation :=
-  ⟨headNoun, [.em .left kona, .em .left rcVerb, .em .left rcTense, .em .left relCWh,
+  ⟨headNoun, [.em .left kona, .em .left rcVerb, .em .left rcTense, .em .left relC,
     .im konaPhrase, .im headNoun, .em .left externalD]⟩
 
 /-- Footnote 14 of the article: selection before saturation licenses the subextraction too, *kona*'s
 phrase leaving the trace of *kona*, but the noun then moves out of a moved phrase, against
 Freezing, and once *kona*'s phrase has moved neither the noun nor the complementizer c-commands
-the other, so the complementizer's search no longer finds the noun. -/
+the other, so the complementizer's search no longer finds the noun, which the book's derivation
+copies while the complementizer still c-commands it. -/
 theorem subextractionRelative_costs :
     subextractionRelative.LicensedBy pendingHom ∧ ¬ subextractionRelative.ObeysFreezing ∧
-      raisingRelative.ObeysFreezing ∧ subextractionRelative.CCommandsAt 4 relCWh headNoun ∧
-      ¬ subextractionRelative.CCommandsAt 5 relCWh headNoun ∧
-      ¬ subextractionRelative.CCommandsAt 5 headNoun relCWh := by
+      subextractionRelative.CCommandsAt 4 relC headNoun ∧
+      ¬ subextractionRelative.CCommandsAt 5 relC headNoun ∧
+      ¬ subextractionRelative.CCommandsAt 5 headNoun relC := by
   decide
 
 /-- Read with the heads of triggered Merge, *kona*'s phrase, which has none there, leaves the bare

@@ -14,26 +14,27 @@ public import Linglib.Syntax.Minimalist.Derivation.Basic
 object, so the surface left-to-right order is not recoverable from it, but a `Derivation`
 records the planarization choices, each step placing its new daughter on the left or the right
 edge, MCB's externalization section `σ_L` fixed by the derivation rather
-than by a noncanonical choice of representative. `Derivation.externalize?` replays the steps on
-an ordered accumulator, a `PlanarSyntacticObject`, so surface orders `decide`; it is partial by
-design, `none` when a merged item is complex or a mover is absent. Traces are unpronounced,
-dropped by the yield. The faithfulness theorem `externalize?_faithful` says the replay commutes
-with forgetting the order: whenever it succeeds, its result is the derived object itself, so the
-surface readouts `surfaceTokens`, `surfaceCats` and `surfacePhon` are the word order of the
-actual derived syntactic object. Sibling accounts of linearization: the selection-induced
-harmonic order (`Linearization/Externalization.lean`) and Fox–Pesetsky cyclic linearization
-(`Linearization/Cyclic.lean`).
+than by a noncanonical choice of representative. `Derivation.replay?` replays the steps on an
+ordered configuration, a `PlanarSyntacticObject` with the ordered copies extracted from it, so
+surface orders `decide`; it is partial by design, `none` when a merged item is complex, a mover is
+absent, or nothing is left to merge back. `Derivation.externalize?` is its object. Traces are
+unpronounced, dropped by the yield. The faithfulness theorem `replay?_faithful` says the replay
+commutes with forgetting the order: whenever it succeeds, its result is the derivation's own
+configuration, so the surface readouts `surfaceTokens`, `surfaceCats` and `surfacePhon` are the
+word order of the actual derived syntactic object. Sibling accounts of linearization: the
+selection-induced harmonic order (`Linearization/Externalization.lean`) and Fox–Pesetsky cyclic
+linearization (`Linearization/Cyclic.lean`).
 
 ## Main definitions
 
 * `Minimalist.PlanarSyntacticObject.move`, `Minimalist.externStep`,
-  `Minimalist.Derivation.externalize?`: the replay.
+  `Minimalist.Derivation.replay?`, `externalize?`: the replay.
 * `Minimalist.Derivation.surfaceTokens`, `surfaceCats`, `surfacePhon`.
 
 ## Main results
 
-* `Minimalist.Derivation.externalize?_faithful`: a successful replay forgets to
-  `final`.
+* `Minimalist.Derivation.replay?_faithful`, `externalize?_faithful`: a successful replay forgets
+  to `run` and `final`.
 
 ## References
 
@@ -243,21 +244,32 @@ theorem toSyntacticObject_move {side : Side} {acc p' : PlanarSyntacticObject}
 
 end PlanarSyntacticObject
 
-/-- One replay step, mirroring `SyntacticObject.Step.apply`. -/
-def externStep (τ : SyntacticObject → Option LexicalItem.Token)
-    (acc? : Option PlanarSyntacticObject) (step : Step) : Option PlanarSyntacticObject :=
-  acc?.bind fun acc => match step with
-    | .em .left item => item.toPlanarLeaf?.map (PlanarSyntacticObject.merge · acc)
-    | .em .right item => item.toPlanarLeaf?.map (PlanarSyntacticObject.merge acc ·)
-    | .im mover side => acc.move side mover τ
+open Derivation (Cfg) in
+/-- One replay step, mirroring `Step.run`: an extraction stacks the ordered copy it finds. -/
+def externStep (τ : SyntacticObject → Option LexicalItem.Token) :
+    Option (Cfg PlanarSyntacticObject) → Step → Option (Cfg PlanarSyntacticObject)
+  | some ⟨acc, st⟩, .em .left item => item.toPlanarLeaf?.map fun i ↦ ⟨.merge i acc, st⟩
+  | some ⟨acc, st⟩, .em .right item => item.toPlanarLeaf?.map fun i ↦ ⟨.merge acc i, st⟩
+  | some ⟨acc, st⟩, .im mover side => (acc.move side mover τ).map fun p ↦ ⟨p, st⟩
+  | some ⟨acc, st⟩, .extract mover => (PlanarSyntacticObject.find? mover acc).map fun s ↦
+      ⟨PlanarSyntacticObject.replaceWhere mover (mover.tracePlanar τ) acc, s :: st⟩
+  | some ⟨acc, m :: st⟩, .remerge .left => some ⟨.merge m acc, st⟩
+  | some ⟨acc, m :: st⟩, .remerge .right => some ⟨.merge acc m, st⟩
+  | some ⟨_, []⟩, .remerge _ | none, _ => none
 
 namespace Derivation
 
-/-- The derivation's ordered object under the trace encoder `τ`, MCB's `σ_L` for this derivation,
-    or `none` if a merged item is complex or a mover is absent. -/
+/-- The derivation's ordered configuration under the trace encoder `τ`, or `none` if a merged item
+    is complex, a mover is absent, or `remerge` finds the stack empty. -/
+def replay? (d : Derivation) (τ : SyntacticObject → Option LexicalItem.Token := selHead) :
+    Option (Cfg PlanarSyntacticObject) :=
+  d.initial.toPlanarLeaf?.bind fun init => d.steps.foldl (externStep τ) (some ⟨init, []⟩)
+
+/-- The derivation's ordered object under the trace encoder `τ`, MCB's `σ_L` for this derivation;
+    copies still on the stack are not part of it. -/
 def externalize? (d : Derivation) (τ : SyntacticObject → Option LexicalItem.Token := selHead) :
     Option PlanarSyntacticObject :=
-  d.initial.toPlanarLeaf?.bind fun init => d.steps.foldl (externStep τ) (some init)
+  (d.replay? τ).map (·.current)
 
 /-- The pronounced tokens, left to right; empty if externalization fails. -/
 def surfaceTokens (d : Derivation) : List LexicalItem.Token :=
@@ -301,69 +313,89 @@ private theorem toPlanarLeaf?_toSyntacticObject {s : SyntacticObject} {ip : Plan
     rw [toPlanarLeaf?, token?_merge, ite_eq_right (merge_ne_trace l r)] at h
     exact absurd h (by simp)
 
-/-- A successful replay step forgets to `Step.apply`. -/
-private theorem externStep_toSyntacticObject {τ : SyntacticObject → Option LexicalItem.Token}
-    {acc p' : PlanarSyntacticObject} {step : Step} (h : externStep τ (some acc) step = some p') :
-    p'.toSyntacticObject = step.apply acc.toSyntacticObject τ := by
+open Derivation (Cfg) in
+/-- A successful replay step forgets to `Step.run`. -/
+private theorem externStep_map {τ : SyntacticObject → Option LexicalItem.Token}
+    {c c' : Cfg PlanarSyntacticObject} {step : Step} (h : externStep τ (some c) step = some c') :
+    c'.map PlanarSyntacticObject.toSyntacticObject
+      = step.run (c.map PlanarSyntacticObject.toSyntacticObject) τ := by
+  obtain ⟨acc, st⟩ := c
   cases step with
   | em side item =>
-    cases side with
-    | left =>
-      change item.toPlanarLeaf?.map (PlanarSyntacticObject.merge · acc) = some p' at h
-      rcases hip : item.toPlanarLeaf? with _ | ip
-      · rw [hip, Option.map_none] at h; exact absurd h (by simp)
-      · rw [hip, Option.map_some] at h
-        obtain rfl := Option.some.inj h
-        rw [Step.apply_em_left, PlanarSyntacticObject.toSyntacticObject_merge,
-          toPlanarLeaf?_toSyntacticObject hip]
-    | right =>
-      change item.toPlanarLeaf?.map (PlanarSyntacticObject.merge acc ·) = some p' at h
-      rcases hip : item.toPlanarLeaf? with _ | ip
-      · rw [hip, Option.map_none] at h; exact absurd h (by simp)
-      · rw [hip, Option.map_some] at h
-        obtain rfl := Option.some.inj h
-        rw [Step.apply_em_right, PlanarSyntacticObject.toSyntacticObject_merge,
-          toPlanarLeaf?_toSyntacticObject hip]
+    rcases hip : item.toPlanarLeaf? with _ | ip
+    · cases side <;> simp [externStep, hip] at h
+    · have hi := toPlanarLeaf?_toSyntacticObject hip
+      cases side <;> simp only [externStep, hip, Option.bind_some, Option.map_some,
+        Option.some.injEq] at h <;> subst h <;>
+        simp [Cfg.map, Step.run, Step.apply, PlanarSyntacticObject.toSyntacticObject_merge, hi]
   | im mover side =>
-    change acc.move side mover τ = some p' at h
-    rw [Step.apply]; exact PlanarSyntacticObject.toSyntacticObject_move h
+    rcases hm : acc.move side mover τ with _ | p'
+    · simp [externStep, hm] at h
+    · simp only [externStep, hm, Option.bind_some, Option.map_some, Option.some.injEq] at h
+      subst h
+      simp [Cfg.map, Step.run, Step.apply, PlanarSyntacticObject.toSyntacticObject_move hm]
+  | extract mover =>
+    rcases hf : PlanarSyntacticObject.find? mover acc with _ | f
+    · simp [externStep, hf] at h
+    · simp only [externStep, hf, Option.bind_some, Option.map_some, Option.some.injEq] at h
+      subst h
+      simp [Cfg.map, Step.run, Step.apply, deleteAccessible,
+        PlanarSyntacticObject.toSyntacticObject_find? hf,
+        PlanarSyntacticObject.toSyntacticObject_replaceWhere]
+  | remerge side =>
+    rcases st with _ | ⟨m, st⟩
+    · cases side <;> simp [externStep] at h
+    · cases side <;> simp only [externStep, Option.bind_some, Option.some.injEq] at h <;>
+        subst h <;>
+        simp [Cfg.map, Step.run, Step.apply, PlanarSyntacticObject.toSyntacticObject_merge]
 
+open Derivation (Cfg) in
 /-- `none` is absorbing for the replay fold. -/
 private theorem foldl_externStep_none (τ : SyntacticObject → Option LexicalItem.Token)
     (steps : List Step) :
-    steps.foldl (externStep τ) none = none := by
+    steps.foldl (externStep τ) (none : Option (Cfg PlanarSyntacticObject)) = none := by
   induction steps with
   | nil => rfl
   | cons st rest ih => rw [List.foldl_cons, show externStep τ none st = none from rfl]; exact ih
 
-/-- A successful replay fold forgets to the fold of `Step.apply`. -/
-private theorem foldl_externStep_toSyntacticObject
-    (τ : SyntacticObject → Option LexicalItem.Token) :
-    ∀ (steps : List Step) {acc p : PlanarSyntacticObject},
-    steps.foldl (externStep τ) (some acc) = some p →
-    p.toSyntacticObject = steps.foldl (fun so st => st.apply so τ) acc.toSyntacticObject
-  | [], acc, p, h => by
+open Derivation (Cfg) in
+/-- A successful replay fold forgets to the fold of `Step.run`. -/
+private theorem foldl_externStep_map (τ : SyntacticObject → Option LexicalItem.Token) :
+    ∀ (steps : List Step) {c p : Cfg PlanarSyntacticObject},
+    steps.foldl (externStep τ) (some c) = some p →
+    p.map PlanarSyntacticObject.toSyntacticObject
+      = steps.foldl (fun c st ↦ st.run c τ) (c.map PlanarSyntacticObject.toSyntacticObject)
+  | [], c, p, h => by
       rw [List.foldl_nil] at h ⊢; obtain rfl := Option.some.inj h; rfl
-  | st :: rest, acc, p, h => by
+  | st :: rest, c, p, h => by
       rw [List.foldl_cons] at h ⊢
-      rcases hstep : externStep τ (some acc) st with _ | acc'
+      rcases hstep : externStep τ (some c) st with _ | c'
       · rw [hstep, foldl_externStep_none] at h; exact absurd h (by simp)
       · rw [hstep] at h
-        rw [foldl_externStep_toSyntacticObject τ rest h, externStep_toSyntacticObject hstep]
+        rw [foldl_externStep_map τ rest h, externStep_map hstep]
 
 /-- By **faithfulness** ([marcolli-chomsky-berwick-2025] §1.12), a successful replay forgets to
-    the derived object, so the surface readouts are the word order of `final` itself. -/
+    the derivation's configuration, the object and every copy on the stack. -/
+theorem Derivation.replay?_faithful (d : Derivation)
+    {τ : SyntacticObject → Option LexicalItem.Token} {c : Cfg PlanarSyntacticObject}
+    (h : d.replay? τ = some c) :
+    c.map PlanarSyntacticObject.toSyntacticObject = d.run τ := by
+  rw [Derivation.replay?] at h
+  rcases hinit : d.initial.toPlanarLeaf? with _ | init
+  · rw [hinit] at h; exact absurd h (by simp [Option.bind])
+  · rw [hinit] at h
+    change d.steps.foldl (externStep τ) (some ⟨init, []⟩) = some c at h
+    rw [foldl_externStep_map τ d.steps h]
+    simp [Derivation.run, Cfg.map, toPlanarLeaf?_toSyntacticObject hinit]
+
+/-- A successful externalization forgets to the derived object, so the surface readouts are the
+    word order of `final` itself. -/
 theorem Derivation.externalize?_faithful (d : Derivation)
     {τ : SyntacticObject → Option LexicalItem.Token} {p : PlanarSyntacticObject}
     (h : d.externalize? τ = some p) :
     p.toSyntacticObject = d.final τ := by
-  rw [Derivation.externalize?] at h
-  rcases hinit : d.initial.toPlanarLeaf? with _ | init
-  · rw [hinit] at h; exact absurd h (by simp [Option.bind])
-  · rw [hinit] at h
-    change d.steps.foldl (externStep τ) (some init) = some p at h
-    rw [foldl_externStep_toSyntacticObject τ d.steps h, toPlanarLeaf?_toSyntacticObject hinit]
-    rfl
+  obtain ⟨c, hc, rfl⟩ := Option.map_eq_some_iff.1 h
+  rw [Derivation.final, ← d.replay?_faithful hc, Cfg.map_current]
 
 /-- Faithfulness holds for prefixes, since a successful replay of the first `n` steps forgets to
     stage `n`. -/
