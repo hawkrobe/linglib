@@ -5,10 +5,9 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Syntax.Minimalist.Linearization.Spellout
-public import Mathlib.Data.Finset.Union
 public import Mathlib.Order.Minimal
 public import Mathlib.Tactic.DeriveFintype
+public import Studies.CitkoGracaninYuksek2020
 
 /-!
 # Citko and Gračanin-Yuksek (2025): Economy in PF Reduction: Why and When (Not) to Elide Multidominant Structures
@@ -27,8 +26,9 @@ when*) shares its whole C′ and elides it once, which hides the vP edge both wh
 * `optimal_cwh_iff`: in English the coordinated wh-question has one optimal derivation, which shares
   heads and leaves each wh-phrase in its own conjunct.
 * `optimal_cs_iff`: in every language the coordinated sluice has two optimal derivations, the
-  elided shared C′ of the paired reading and, for the nonpaired reading, shared heads under two
-  complementizers of which only one bears [E].
+  elided shared C′ of the paired reading, which displaces the authors' earlier double ellipsis,
+  and, for the nonpaired reading, shared heads under two complementizers of which only one bears
+  [E].
 * `convergesIn_multipleSluice_iff`: multiple sluicing converges exactly where the CP edge may host
   several wh-phrases, as in German, Greek and one variety of English.
 * `rnrShareHigherVP_lt`: in right node raising with matching verbs, sharing the whole verb phrase
@@ -40,8 +40,8 @@ when*) shares its whole C′ and elides it once, which hides the vP edge both wh
 * A candidate is a planar syntactic object spelled out by `Linearization/Spellout.lean`: a token at
   two positions is shared, a moved wh-phrase leaves traces at the vP edge and its base position, and
   the coordinator is left out, so a string is its conjuncts' words.
-* The paired reading is a deleted copy of the first wh-phrase without an antecedent in the second
-  conjunct, the copy vehicle change reads as an E-type pronoun.
+* The paired reading and Pronunciation Economy are the it reading and the ban on vacuous ellipsis
+  of the authors' earlier paper (`CitkoGracaninYuksek2020`).
 * As the paper's footnote on the parameter allows, every edge with several wh-specifiers receives
   an asterisk, and a language is the set of categories whose asterisks PF cannot interpret.
 * The candidates are the derivations the paper compares; optimality is minimality among them
@@ -51,6 +51,8 @@ when*) shares its whole C′ and elides it once, which hides the vP edge both wh
 
 * [B. Citko and M. Gračanin-Yuksek, *Economy in PF Reduction: Why and When (Not) to Elide
   Multidominant Structures* (2025)][citko-gracanin-yuksek-2025]
+* [B. Citko and M. Gračanin-Yuksek, *Conjunction saves multiple sluicing: How \*(and) why?*
+  (2020)][citko-gracanin-yuksek-2020]
 * [N. Chomsky, *Some notes on economy of derivation and representation* (1991)][chomsky-1991]
 * [J. Merchant, *The Syntax of Silence* (2001)][merchant-2001]
 * [M. Marcolli, N. Chomsky and R. C. Berwick, *Mathematical Structure of Syntactic Merge: An
@@ -65,13 +67,9 @@ namespace CitkoGracaninYuksek2025
 
 open Minimalist Minimalist.PlanarSyntacticObject RoseTree
 open Minimalist.SyntacticObject (Vertex)
+open CitkoGracaninYuksek2020 (tok tokens ItReading NoVacuousEllipsis)
 
 /-! ### The lexicon -/
-
-/-- `tok` builds a token from a category, its selection, its form, and the wh and [E] features. -/
-def tok (id : ℕ) (cat : Cat) (sel : SelStack := []) (phon : String := "") (wh : Bool := false)
-    (ellipsis : Bool := false) : LexicalItem.Token :=
-  ⟨LexicalItem.of cat sel phon wh ellipsis, id⟩
 
 def what := tok 1 .D (phon := "what") (wh := true)
 def when := tok 2 .P (phon := "when") (wh := true)
@@ -130,9 +128,9 @@ def cwhEllipsis : PlanarSyntacticObject :=
   (what * (cE * (you * (shouldT * (traceOf what * (v * (teach * traceOf what))))))) *
     (clause when should you' T' v' (teach' * traceOf when))
 
-/-- The double-ellipsis analysis of the coordinated sluice (19b) builds two clauses from separate
-tokens and elides both; the second clause's object is a deleted copy of *what*, which vehicle
-change reads as *it*. -/
+/-- The double-ellipsis analysis of the coordinated sluice (19b), the authors' earlier one, builds
+two clauses from separate tokens and elides both; the second clause's object is a deleted copy of
+*what*, which vehicle change reads as *it*. -/
 def csEllipsis : PlanarSyntacticObject :=
   (clause what cE you T v (teach * traceOf what)) *
     (clause when cE' you' T' v' ((teach' * traceOf what) * traceOf when))
@@ -174,16 +172,6 @@ abbrev csnr := nonBulk cE c
 /-- Its rival in which both complementizers bear [E], set aside after (46b). -/
 abbrev csnrTwoE := nonBulk cE cE'
 
-/-! ### The paired reading -/
-
-/-- The paired reading holds when the second conjunct holds a deleted copy of the first
-conjunct's wh-phrase without an antecedent, the copy that vehicle change reads as an E-type
-pronoun (footnote 20). -/
-def Paired (t : PlanarSyntacticObject) : Prop :=
-  ∃ x ∈ orphanTraces t, x.2 = what ∧ (⟨[1]⟩ : Core.Order.TreePath) ≤ x.1
-
-instance : DecidablePred Paired := fun _ ↦ inferInstanceAs (Decidable (∃ _ ∈ _, _))
-
 /-! ### Cost -/
 
 /-- A derivation's cost has three dimensions, the lexical items drawn, the Merges, and the
@@ -207,10 +195,6 @@ instance : DecidableLE DerivationCost := fun _ _ ↦
 
 instance : DecidableLT DerivationCost := decidableLTOfDecidableLE
 
-/-- The tokens of `t`, each once. -/
-def tokens (t : PlanarSyntacticObject) : Finset LexicalItem.Token :=
-  ((tokenList t.val).map (·.2)).toFinset
-
 /-- The cost of an object counts its tokens as the lexical items drawn, its internal terms as the
 Merges, a shared constituent being built once, and its elided domains as the applications of
 ellipsis. The terms are [marcolli-chomsky-berwick-2025]'s subtrees, each taken once. -/
@@ -218,27 +202,6 @@ def planarCost (t : PlanarSyntacticObject) : DerivationCost
   | .lexicalItems => (tokens t).card
   | .mergeOps => (t.val.subtrees.filter (·.arity ≠ 0)).dedup.length
   | .ellipsisOps => (elidedDomains t).length
-
-/-! ### Pronunciation Economy (39) -/
-
-/-- The pronounceable tokens the application of ellipsis at the domain `K` silences. -/
-def silencedBy (t : PlanarSyntacticObject) (K : Core.Order.TreePath) : Finset LexicalItem.Token :=
-  (tokens t).filter fun s ↦ s.item.phonForm?.isSome ∧ (occurrences t s).any (decide <| K ≤ ·)
-
-/-- The application at `K` is vacuous when the earlier applications already silenced every token
-it silences. -/
-def IsVacuous (t : PlanarSyntacticObject) (K : Core.Order.TreePath) : Prop :=
-  silencedBy t K ⊆ ((elidedDomains t).takeWhile (· ≠ K)).toFinset.biUnion (silencedBy t)
-
-instance (t : PlanarSyntacticObject) (K : Core.Order.TreePath) : Decidable (IsVacuous t K) :=
-  inferInstanceAs (Decidable (silencedBy t K ⊆ _))
-
-/-- Pronunciation Economy (39) requires that no application of ellipsis be vacuous. -/
-def PronunciationEconomy (t : PlanarSyntacticObject) : Prop :=
-  ∀ K ∈ elidedDomains t, ¬ IsVacuous t K
-
-instance (t : PlanarSyntacticObject) : Decidable (PronunciationEconomy t) :=
-  inferInstanceAs (Decidable (∀ _ ∈ _, _))
 
 /-! ### The multiple-wh-fronting parameter (27) -/
 
@@ -306,16 +269,17 @@ def romanian : Finset Cat := ∅
 
 /-! ### Optimality -/
 
-/-- A derivation is admissible in a language when none of its ellipses is vacuous and it
-converges at PF. -/
+/-- A derivation is admissible in a language when none of its ellipses is vacuous, Pronunciation
+Economy (39), and it converges at PF. -/
 def Admissible (mwf : Finset Cat) (t : PlanarSyntacticObject) : Prop :=
-  PronunciationEconomy t ∧ ConvergesIn mwf t
+  NoVacuousEllipsis t ∧ ConvergesIn mwf t
 
 instance (mwf : Finset Cat) (t : PlanarSyntacticObject) : Decidable (Admissible mwf t) :=
   inferInstanceAs (Decidable (_ ∧ _))
 
 /-- `s` competes with `t` when it yields the same string with the same reading. -/
-def Competes (s t : PlanarSyntacticObject) : Prop := pfPhon s = pfPhon t ∧ (Paired s ↔ Paired t)
+def Competes (s t : PlanarSyntacticObject) : Prop :=
+  pfPhon s = pfPhon t ∧ (ItReading s ↔ ItReading t)
 
 instance (s t : PlanarSyntacticObject) : Decidable (Competes s t) :=
   inferInstanceAs (Decidable (_ ∧ _))
@@ -341,7 +305,7 @@ instance : Decidable (Optimal mwf l t) := decidable_of_iff _ optimal_iff.symm
 language. -/
 theorem optimal_congr (h : ∀ s ∈ l, pfAsterisks s = ∅) : Optimal mwf l t ↔ Optimal mwf' l t := by
   have key (m : Finset Cat) : (fun s ↦ s ∈ l ∧ Competes s t ∧ Admissible m s) =
-      fun s ↦ s ∈ l ∧ Competes s t ∧ PronunciationEconomy s := by
+      fun s ↦ s ∈ l ∧ Competes s t ∧ NoVacuousEllipsis s := by
     funext s
     simp +contextual [Admissible, convergesIn_of_pfAsterisks_eq_empty, h]
   simp only [Optimal, key]
@@ -365,7 +329,7 @@ theorem cwhTwoAux_pf : pfPhon cwhTwoAux = ["what", "should", "when", "will", "yo
 /-- Each wh-phrase is interpreted in its own conjunct. -/
 theorem cwh_nonpaired : orphanTraces cwh = [] := by decide
 /-- The shared C′ carries a copy of each wh-phrase into the other conjunct. -/
-theorem cwhBulk_paired : Paired cwhBulk := by decide
+theorem cwhBulk_paired : ItReading cwhBulk := by decide
 
 /-- Bulk sharing is cheaper than non-bulk sharing. -/
 theorem cwhBulk_lt_cwh : planarCost cwhBulk < planarCost cwh := by decide
@@ -408,7 +372,7 @@ theorem cs_pf : pfPhon cs = ["what", "when"] := by decide
 theorem pfPhon_csCandidates : ∀ t ∈ csCandidates, pfPhon t = pfPhon cs := by decide
 /-- The paired candidates are bulk sharing, its shared-TP rival and the double ellipsis. -/
 theorem paired_csCandidates :
-    ∀ t ∈ csCandidates, Paired t ↔ t = cs ∨ t = csEllipsis ∨ t = csTwoC := by
+    ∀ t ∈ csCandidates, ItReading t ↔ t = cs ∨ t = csEllipsis ∨ t = csTwoC := by
   decide
 
 /-- The shared vP edge hosts two wh-specifiers, the asterisk of (26b). -/
@@ -416,12 +380,13 @@ theorem v_mem_asterisked_cs : v ∈ asterisked cs := by decide
 /-- Elided, it never reaches PF, and neither does any other candidate's asterisk. -/
 theorem pfAsterisks_csCandidates : ∀ t ∈ csCandidates, pfAsterisks t = ∅ := by decide
 
-/-- With one shared [E] complementizer over two TPs, the second deletion silences nothing new. -/
-theorem csSharedC_vacuous : ¬ PronunciationEconomy csSharedC := by decide
+/-- With one shared [E] complementizer over two TPs, the second deletion silences nothing new, the
+authors' earlier argument (`CitkoGracaninYuksek2020.csFromCWH_vacuous`). -/
+theorem csSharedC_vacuous : ¬ NoVacuousEllipsis csSharedC := by decide
 /-- Two [E] complementizers are excluded twice over, since they elide the shared material twice
 and sharing the complementizer would be cheaper. -/
 theorem csnrTwoE_excluded :
-    ¬ PronunciationEconomy csnrTwoE ∧ planarCost csSharedC < planarCost csnrTwoE := by
+    ¬ NoVacuousEllipsis csnrTwoE ∧ planarCost csSharedC < planarCost csnrTwoE := by
   decide
 
 /-- In every language the coordinated sluice has two optimal derivations. For the paired
@@ -435,6 +400,13 @@ theorem optimal_cs_iff (mwf : Finset Cat) :
   rw [optimal_congr pfAsterisks_csCandidates (mwf' := ∅)]
   revert t
   decide
+
+/-- The authors' earlier double ellipsis is admissible in every language but not optimal, since
+bulk sharing yields the same string with the same reading more cheaply. -/
+theorem csEllipsis_admissible_not_optimal (mwf : Finset Cat) :
+    Admissible mwf csEllipsis ∧ ¬ Optimal mwf csCandidates csEllipsis :=
+  ⟨⟨by decide, convergesIn_of_pfAsterisks_eq_empty (pfAsterisks_csCandidates _ (by decide)) _⟩,
+    fun h ↦ absurd ((optimal_cs_iff mwf csEllipsis (by decide)).1 h) (by decide)⟩
 
 /-- The shared verb occurs in the second conjunct outside the elided TP and is silenced all the
 same, so the nonpaired sluice cannot surface as a coordinated wh-question (footnote 30). -/
