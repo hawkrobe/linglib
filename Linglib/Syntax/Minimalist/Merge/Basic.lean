@@ -39,7 +39,8 @@ External, Internal and Sideward Merge are in `Merge/External.lean`, `Merge/Inter
 
 ## Main results
 
-* `Minimalist.Merge.mergeOpG_apply_of'`: Merge on a workspace is a sum over its forest cuts.
+* `Minimalist.Merge.mergeOpG_apply_of'`, `mergeOpG_apply_of'_eq_sum`: Merge on a workspace is a sum
+  over its forest cuts, or over a choice of cut for each of its trees.
 * `Minimalist.Merge.mergeOpG_comm`: Merge does not depend on the order of the pair.
 
 ## Implementation notes
@@ -390,6 +391,34 @@ theorem mergeOpG_apply_of' (cuts : UnorderedTree α → Multiset (Forest
     ← Multiset.sum_map_mul_left]
   refine congrArg Multiset.sum (Multiset.map_congr rfl fun p _ ↦ ?_)
   rw [Function.comp_apply, cutTensor, mergePost_basis_tensor, mul_ite, mul_zero]
+
+/-- Merge on a workspace `F` is a sum of workspaces, one for each choice of a cut of each tree of
+    `F` whose crowns together are `{S, S'}`. -/
+theorem mergeOpG_apply_of'_eq_sum (cuts : UnorderedTree α → Multiset (Forest
+    (UnorderedTree α) × UnorderedTree α)) (lbl : α) (S S' : UnorderedTree α)
+    (F : Forest (UnorderedTree α)) :
+    mergeOpG (R := R) cuts lbl S S' (of' F) =
+      (((forestCutChoicesG cuts F).filter fun s ↦ (s.map Prod.snd).sum.1 = {S, S'}).map
+        fun s ↦ of' ({UnorderedTree.node lbl {S, S'}} + (s.map Prod.snd).sum.2)).sum := by
+  rw [mergeOpG_apply_of', forestCutsG_eq_map_forestCutChoicesG, Multiset.filter_map,
+    Multiset.map_map, ← Multiset.sum_map_mul_left]
+  simp only [Function.comp_def, of'_add]
+
+/-- The unit stage on a workspace `F` is a sum of workspaces, one for each choice of a cut of each
+    tree of `F` whose crowns together are `{β}`. -/
+theorem mergeOpUnitG_apply_of'_eq_sum (cuts : UnorderedTree α → Multiset (Forest
+    (UnorderedTree α) × UnorderedTree α)) (β : UnorderedTree α) (F : Forest (UnorderedTree α)) :
+    mergeOpUnitG (R := R) cuts β (of' F) =
+      (((forestCutChoicesG cuts F).filter fun s ↦ (s.map Prod.snd).sum.1 = {β}).map
+        fun s ↦ of' ({β} + (s.map Prod.snd).sum.2)).sum := by
+  rw [mergeOpUnitG, LinearMap.comp_apply, AlgHom.toLinearMap_apply, comulAlgHomNG_apply_of',
+    comulForestNG_eq_sum, forestCutsG_eq_map_forestCutChoicesG, Multiset.map_map,
+    map_multiset_sum, Multiset.map_map, Multiset.sum_map_filter]
+  refine congrArg Multiset.sum (Multiset.map_congr rfl fun s _ ↦ ?_)
+  simp only [Function.comp_apply, cutTensor, mergePostUnit_basis_tensor]
+  split_ifs
+  · rw [← of'_add]
+  · simp
 
 /-- Merge does not depend on the order of the pair. -/
 theorem mergeOpG_comm (cuts : UnorderedTree α → Multiset (Forest

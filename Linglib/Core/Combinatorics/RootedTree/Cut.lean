@@ -12,6 +12,7 @@ public import Linglib.Core.Data.Multiset.Bind
 public import Linglib.Core.Data.RoseTree.Basic
 public import Mathlib.Algebra.BigOperators.Group.Multiset.Basic
 public import Mathlib.Data.Multiset.Antidiagonal
+public import Mathlib.Data.Multiset.Sections
 
 /-!
 # Admissible-cut enumeration on rose trees
@@ -36,6 +37,7 @@ policy `pruning`, which always leaves nothing, gives the cuts of the Connes–Kr
 * `ConnesKreimer.pruning`, `ConnesKreimer.cutSummandsN`: the pruning policy and its cuts on
   `UnorderedTree`.
 * `ConnesKreimer.emptyCuts`: the enumeration with only the empty cut.
+* `ConnesKreimer.forestCutChoicesG cuts F`: a cut chosen for each tree of a forest.
 * `ConnesKreimer.countSingleCutsRho`: the number of single cuts with given crown and trunk.
 
 ## Main results
@@ -369,6 +371,108 @@ theorem forestCutsG_pair
     (T T' : UnorderedTree α) :
     forestCutsG cuts {T, T'} = (treeCutsG cuts T ×ˢ treeCutsG cuts T').map combinerProjG := by
   rw [Multiset.insert_eq_cons, forestCutsG_cons, forestCutsG_singleton]
+
+/-! ### Cuts chosen tree by tree
+
+`forestCutChoicesG cuts F` records, for each tree of `F`, the cut chosen for it beside the tree.
+Summing the choices gives the forest cuts of `F` (`forestCutsG_eq_map_forestCutChoicesG`), and the
+record says where each tree went: into the crown whole, or cut and left as a trunk. -/
+
+section CutChoices
+
+/-- The ways of choosing one cut of `treeCutsG cuts T` for each tree `T` of a forest, each choice
+    paired with its tree. -/
+def forestCutChoicesG
+    (cuts : UnorderedTree α → Multiset (Multiset (UnorderedTree α) × UnorderedTree α))
+    (F : Multiset (UnorderedTree α)) :
+    Multiset (Multiset
+      (UnorderedTree α × (Multiset (UnorderedTree α) × Multiset (UnorderedTree α)))) :=
+  Multiset.Sections (F.map fun T ↦ (treeCutsG cuts T).map (Prod.mk T))
+
+variable (cuts : UnorderedTree α → Multiset (Multiset (UnorderedTree α) × UnorderedTree α))
+
+theorem forestCutChoicesG_zero : forestCutChoicesG cuts 0 = {0} := by
+  simp [forestCutChoicesG, Multiset.sections_zero]
+
+theorem forestCutChoicesG_cons (T : UnorderedTree α) (F : Multiset (UnorderedTree α)) :
+    forestCutChoicesG cuts (T ::ₘ F) =
+      (treeCutsG cuts T).bind fun a ↦ (forestCutChoicesG cuts F).map ((T, a) ::ₘ ·) := by
+  rw [forestCutChoicesG, Multiset.map_cons, Multiset.sections_cons, Multiset.bind_map]
+  rfl
+
+/-- Summing a choice of cuts gives a forest cut, and every forest cut arises this way. -/
+theorem forestCutsG_eq_map_forestCutChoicesG (F : Multiset (UnorderedTree α)) :
+    forestCutsG cuts F = (forestCutChoicesG cuts F).map fun s ↦ (s.map Prod.snd).sum := by
+  induction F using Multiset.induction with
+  | empty => simp [forestCutsG_zero, forestCutChoicesG_zero]
+  | cons T F ih =>
+    rw [forestCutsG_cons, ih, forestCutChoicesG_cons, Multiset.map_bind]
+    simp only [Multiset.product, SProd.sprod, Multiset.map_bind, Multiset.map_map,
+      Function.comp_def, Multiset.map_cons, Multiset.sum_cons]
+    have h (x y : Multiset (UnorderedTree α) × Multiset (UnorderedTree α)) :
+        combinerProjG (x, y) = x + y := rfl
+    simp only [h]
+
+variable {cuts}
+
+/-- A cut of a tree takes the whole tree into the crown, or cuts it and leaves one trunk. -/
+theorem mem_treeCutsG {T : UnorderedTree α}
+    {a : Multiset (UnorderedTree α) × Multiset (UnorderedTree α)} :
+    a ∈ treeCutsG cuts T ↔ a = ({T}, 0) ∨ ∃ p ∈ cuts T, (p.1, {p.2}) = a := by
+  simp [treeCutsG]
+
+theorem map_fst_of_mem_forestCutChoicesG {F : Multiset (UnorderedTree α)} {s}
+    (hs : s ∈ forestCutChoicesG cuts F) : s.map Prod.fst = F := by
+  induction F using Multiset.induction generalizing s with
+  | empty => rw [forestCutChoicesG_zero, Multiset.mem_singleton] at hs; rw [hs, Multiset.map_zero]
+  | cons T F ih =>
+    rw [forestCutChoicesG_cons, Multiset.mem_bind] at hs
+    obtain ⟨a, -, hs⟩ := hs
+    obtain ⟨s', hs', rfl⟩ := Multiset.mem_map.mp hs
+    rw [Multiset.map_cons, ih hs']
+
+theorem mem_treeCutsG_of_mem_forestCutChoicesG {F : Multiset (UnorderedTree α)} {s x}
+    (hs : s ∈ forestCutChoicesG cuts F) (hx : x ∈ s) : x.2 ∈ treeCutsG cuts x.1 := by
+  induction F using Multiset.induction generalizing s with
+  | empty =>
+    rw [forestCutChoicesG_zero, Multiset.mem_singleton] at hs
+    exact absurd (hs ▸ hx) (Multiset.notMem_zero x)
+  | cons T F ih =>
+    rw [forestCutChoicesG_cons, Multiset.mem_bind] at hs
+    obtain ⟨a, ha, hs⟩ := hs
+    obtain ⟨s', hs', rfl⟩ := Multiset.mem_map.mp hs
+    rcases Multiset.mem_cons.mp hx with rfl | hx
+    exacts [ha, ih hs' hx]
+
+/-- A tree that leaves no trunk was taken whole into the crown. -/
+theorem snd_eq_of_mem_forestCutChoicesG {F : Multiset (UnorderedTree α)} {s x}
+    (hs : s ∈ forestCutChoicesG cuts F) (hx : x ∈ s) (h : x.2.2 = 0) : x.2 = ({x.1}, 0) := by
+  rcases mem_treeCutsG.mp (mem_treeCutsG_of_mem_forestCutChoicesG hs hx) with h' | ⟨p, -, h'⟩
+  · exact h'
+  · rw [← h'] at h; exact absurd h (Multiset.singleton_ne_zero _)
+
+/-- A tree is in the crown of a choice of cuts when it is in the crown chosen for one tree. -/
+theorem mem_fst_sum_map_snd_iff
+    {s : Multiset (UnorderedTree α × (Multiset (UnorderedTree α) × Multiset (UnorderedTree α)))}
+    {T : UnorderedTree α} : T ∈ (s.map Prod.snd).sum.1 ↔ ∃ x ∈ s, T ∈ x.2.1 := by
+  induction s using Multiset.induction with
+  | empty => simp
+  | cons x s ih => simp [ih]
+
+/-- Every tree of a forest leaves one trunk, except the trees taken whole into the crown. -/
+theorem card_add_countP_of_mem_forestCutChoicesG [DecidableEq (UnorderedTree α)]
+    {F : Multiset (UnorderedTree α)} {s} (hs : s ∈ forestCutChoicesG cuts F) :
+    Multiset.card (s.map Prod.snd).sum.2 + s.countP (·.2.2 = 0) = Multiset.card F := by
+  induction F using Multiset.induction generalizing s with
+  | empty => rw [forestCutChoicesG_zero, Multiset.mem_singleton] at hs; simp [hs]
+  | cons T F ih =>
+    rw [forestCutChoicesG_cons, Multiset.mem_bind] at hs
+    obtain ⟨a, ha, hs⟩ := hs
+    obtain ⟨s', hs', rfl⟩ := Multiset.mem_map.mp hs
+    have := ih hs'
+    rcases mem_treeCutsG.mp ha with rfl | ⟨p, -, rfl⟩ <;> simp <;> omega
+
+end CutChoices
 
 /-! ### The empty cut -/
 

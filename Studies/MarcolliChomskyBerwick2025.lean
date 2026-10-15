@@ -89,8 +89,13 @@ The book's algebra lives in `Core/` and in `Syntax/Minimalist/{Workspace,Merge,E
   `mergeOpEps_zero_of'_of_not_le`, `mergeOpEps_zero_pair_add`, `mergeOpEps_zero_im_composition`.
 * Definition 1.6.1 and Proposition 1.6.4: `Minimalist.MinimalYield` over a counting,
   `MinimalYield.em_pair`, `em_pair_accessibleCount`, `im_accessibleCount_of_cut`.
+* The `b₀` column of Proposition 1.6.8 and Remark 1.6.7, on the terms of Merge
+  (`Minimalist.Merge.mergeOpG_apply_of'_eq_sum`): `Minimalist.card_singleton_add_trunk_add_countP`,
+  `MinimalYieldWeak.not_of_forall_notMem`.
 * Definition 1.6.2 and Proposition 1.6.10: `Minimalist.NoComplexityLoss`,
-  `NoComplexityLoss.em_case1`, `im_residual`, `not_map_sideward_2b`.
+  `NoComplexityLoss.em_case1`, `im_residual`; along the induced map of a term of Merge
+  (`Minimalist.componentMap`), `NoComplexityLoss.map_componentMap_merge_iff`,
+  `not_map_componentMap_merge`, `not_map_componentMap_unit`.
 * Definition 1.6.2's degree `#L`: `UnorderedTree.numLeaves`; Lemma 1.6.3:
   `ConnesKreimer.cutSummandsCN_numNodes`.
 * The functionals of (1.7.5) and their Lie algebra: `Bialgebra.IsDualPrimitive` and
