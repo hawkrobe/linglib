@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Syntax.CCG.Derivation
-public import Mathlib.Data.Set.Defs
+public import Mathlib.Computability.Language
 
 /-!
 # CCG grammars and their languages
@@ -21,15 +21,15 @@ Kuhlmann, Koller and Satta show that with target restrictions the classical form
 equivalent to tree-adjoining grammar and without them strictly weaker, and that the multimodal
 formalism is likewise less expressive than TAG. Schiffer and Maletti upgrade the equivalence to
 strong equivalence for grammars without empty lexical entries and with rules of degree at most 2.
-Strings here are token lists, so empty lexical entries are inexpressible.
+Strings are lists over the token alphabet `T`, so empty lexical entries are inexpressible.
 
 ## Main definitions
 
 * `CCG.Grammar`: a lexicon, a start atom, and rule-permission gates.
 * `CCG.Grammar.targetRestricted`, `CCG.Grammar.multimodal`: the two rule systems of the
   literature, as gate choices.
-* `CCG.Grammar.Derives`: the derivability relation, with `Grammar.language` the set of strings
-  derived at the start atom.
+* `CCG.Grammar.Derives`: the derivability relation, with `Grammar.language` the language of
+  token strings derived at the start atom.
 
 ## Main statements
 
@@ -41,7 +41,8 @@ Strings here are token lists, so empty lexical entries are inexpressible.
 Derivability is an inductive `Prop`, mathlib's form for grammar formalisms
 (`ContextFreeGrammar.Derives`), in contrast to the intrinsically typed `CCG.Derivation` of the
 interpreted theory: capacity arguments quantify over all derivations, and induction on `Derives`
-is exactly that quantification.
+is exactly that quantification. As with mathlib's `ContextFreeGrammar T`, a grammar is parameterized
+by its token alphabet, and its language is a `Language T`.
 
 ## References
 
@@ -57,16 +58,16 @@ is exactly that quantification.
 
 namespace CCG
 
-variable {α : Type*}
+variable {T α : Type*}
 
 /-! ### Grammars and their languages -/
 
 /-- A CCG grammar has a finite lexicon, a distinguished start atom, and a rule system given as
 permission gates, where `allowsFwd n a b` says forward composition of degree `n` may combine
 primary `a` with secondary `b` (mirrored by `allowsBwd`). -/
-structure Grammar (α : Type*) where
+structure Grammar (T α : Type*) where
   /-- Lexical entries, pairing a token with a category. -/
-  lexicon : List (String × Cat α)
+  lexicon : List (T × Cat α)
   /-- The distinguished atom, at which the language collects derivations. -/
   start : α
   /-- May forward composition of degree `n` combine primary `a` with secondary `b`? -/
@@ -77,8 +78,8 @@ structure Grammar (α : Type*) where
 /-- A target-restricted (VW-CCG) grammar ([vijay-shanker-weir-1994],
 [kuhlmann-koller-satta-2015]) admits rules up to a degree bound whose primary input has the start
 atom as target. The normal form of [schiffer-maletti-2021] has `degree = 2`. -/
-def Grammar.targetRestricted (lexicon : List (String × Cat α)) (start : α)
-    (degree : Nat) : Grammar α where
+def Grammar.targetRestricted (lexicon : List (T × Cat α)) (start : α)
+    (degree : Nat) : Grammar T α where
   lexicon := lexicon
   start := start
   allowsFwd := fun n a _ => n ≤ degree ∧ Cat.target a = start
@@ -107,7 +108,7 @@ def Multimodal.allowsBwd : Nat → Cat α → Cat α → Prop
 /-- A multimodal grammar, in the radically lexicalized formalism of [steedman-2019], is a
 lexicon and a start atom under the universal modality-controlled rule system. It is strictly less
 expressive than the target-restricted grammars ([kuhlmann-koller-satta-2015]). -/
-def Grammar.multimodal (lexicon : List (String × Cat α)) (start : α) : Grammar α where
+def Grammar.multimodal (lexicon : List (T × Cat α)) (start : α) : Grammar T α where
   lexicon := lexicon
   start := start
   allowsFwd := Multimodal.allowsFwd
@@ -116,26 +117,33 @@ def Grammar.multimodal (lexicon : List (String × Cat α)) (start : α) : Gramma
 /-- `G.Derives c w` says the grammar derives the token string `w` at category `c`, by a lexical
 entry or by a generalized composition of two adjacent derivations that the grammar's gates
 permit. -/
-inductive Grammar.Derives [DecidableEq α] (G : Grammar α) :
-    Cat α → List String → Prop where
+inductive Grammar.Derives [DecidableEq α] (G : Grammar T α) :
+    Cat α → List T → Prop where
   /-- A lexical entry derives its token. -/
-  | lex {w : String} {c : Cat α} : (w, c) ∈ G.lexicon → G.Derives c [w]
+  | lex {t : T} {c : Cat α} : (t, c) ∈ G.lexicon → G.Derives c [t]
   /-- Forward composition of degree `n` (`>Bⁿ`; degree 0 is application), if the
   grammar's gate permits it. -/
-  | fc (n : Nat) {a b c : Cat α} {u v : List String} :
+  | fc (n : Nat) {a b c : Cat α} {u v : List T} :
       G.Derives a u → G.Derives b v → G.allowsFwd n a b →
       Cat.generalizedForwardComp n a b = some c → G.Derives c (u ++ v)
   /-- Backward composition of degree `n` (`<Bⁿ`; degree 0 is application), if the
   grammar's gate permits it. -/
-  | bc (n : Nat) {a b c : Cat α} {u v : List String} :
+  | bc (n : Nat) {a b c : Cat α} {u v : List T} :
       G.Derives a u → G.Derives b v → G.allowsBwd n a b →
       Cat.generalizedBackwardComp n a b = some c → G.Derives c (u ++ v)
 
-/-- The string language of a grammar is the set of token strings derived at the start atom.
-Strings are token lists, so the ε-freeness of [schiffer-maletti-2021]'s normal form holds by
-construction. -/
-def Grammar.language [DecidableEq α] (G : Grammar α) : Set (List String) :=
+/-- The string language of a grammar is the set of token strings derived at the start atom. -/
+def Grammar.language [DecidableEq α] (G : Grammar T α) : Language T :=
   { w | G.Derives (.atom G.start) w }
+
+/-- Every derivable string is nonempty, since a lexical entry is a single token, so grammars are
+ε-free as in the normal form of [schiffer-maletti-2021]. -/
+theorem Grammar.Derives.ne_nil [DecidableEq α] {G : Grammar T α} {c : Cat α} {w : List T}
+    (h : G.Derives c w) : w ≠ [] := by
+  induction h with
+  | lex => exact List.cons_ne_nil _ _
+  | fc _ _ _ _ _ ih => exact List.append_ne_nil_of_left_ne_nil ih _
+  | bc _ _ _ _ _ ih => exact List.append_ne_nil_of_left_ne_nil ih _
 
 /-! ### The multimodal gate and the tree calculus
 
@@ -144,8 +152,8 @@ typed `Derivation` tree over its lexicon: the trees are the proof-relevant calcu
 (what `Derivation.interp` consumes), the relation is its string-language shadow. -/
 
 /-- Every `Derivation` tree over the lexicon witnesses multimodal derivability. -/
-theorem Derivation.derives_multimodal [DecidableEq α] {L : List (String × Cat α)}
-    {s : α} : {c : Cat α} → (d : Derivation α c) → d.LexIn L →
+theorem Derivation.derives_multimodal [DecidableEq α] {L : List (T × Cat α)}
+    {s : α} : {c : Cat α} → (d : Derivation T α c) → d.LexIn L →
     (Grammar.multimodal L s).Derives c d.yield
   | _, .lex f c, h => .lex h
   | _, .node ru d₁ d₂, h => by
@@ -166,10 +174,10 @@ theorem Derivation.derives_multimodal [DecidableEq α] {L : List (String × Cat 
 
 /-- Multimodal derivability yields a `Derivation` tree over the lexicon, since the gate and
 the argument sequence of the secondary input force a rule of the modern inventory. -/
-theorem Grammar.Derives.to_derivation [DecidableEq α] {L : List (String × Cat α)}
-    {s : α} {c₀ : Cat α} {w : List String}
+theorem Grammar.Derives.to_derivation [DecidableEq α] {L : List (T × Cat α)}
+    {s : α} {c₀ : Cat α} {w : List T}
     (h : (Grammar.multimodal L s).Derives c₀ w) :
-    ∃ d : Derivation α c₀, d.LexIn L ∧ d.yield = w := by
+    ∃ d : Derivation T α c₀, d.LexIn L ∧ d.yield = w := by
   induction h with
   | @lex w' c' hmem => exact ⟨.lex w' c', hmem, rfl⟩
   | @fc n a b c u v _ _ hgate hc iha ihb =>
@@ -199,10 +207,10 @@ theorem Grammar.Derives.to_derivation [DecidableEq α] {L : List (String × Cat 
 
 /-- Multimodal derivability is the tree calculus: a multimodal grammar derives `w` at `c` iff
 some derivation over its lexicon has yield `w`. -/
-theorem Grammar.multimodal_derives_iff [DecidableEq α] {L : List (String × Cat α)}
-    {s : α} {c : Cat α} {w : List String} :
+theorem Grammar.multimodal_derives_iff [DecidableEq α] {L : List (T × Cat α)}
+    {s : α} {c : Cat α} {w : List T} :
     (Grammar.multimodal L s).Derives c w ↔
-      ∃ d : Derivation α c, d.LexIn L ∧ d.yield = w :=
+      ∃ d : Derivation T α c, d.LexIn L ∧ d.yield = w :=
   ⟨Grammar.Derives.to_derivation, fun ⟨d, hl, hy⟩ => hy ▸ d.derives_multimodal hl⟩
 
 end CCG

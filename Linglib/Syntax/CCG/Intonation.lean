@@ -139,15 +139,15 @@ def accentInfo : Option PitchAccent → InfoFeature
   | none => .unmarked
   | some _ => .ρ
 
-/-- An assignment of pitch accents to the leaf forms of a derivation, `none` for an
-unaccented form. -/
-def AccentAssignment := String → Option PitchAccent
+/-- An assignment of pitch accents to the tokens of a derivation, `none` for an unaccented
+token. -/
+def AccentAssignment (T : Type*) := T → Option PitchAccent
 
 /-- The INFORMATION feature a derivation projects under an accent assignment. Leaves contribute
 the `accentInfo` of their accent and combination unifies the daughters' features, with `none` on
 a theme/rheme clash, the prosodic analogue of `Derivation.interp`'s reading of the same tree. -/
-def _root_.CCG.Derivation.infoFeature {α : Type*} (acc : AccentAssignment) :
-    {c : Cat α} → Derivation α c → Option InfoFeature
+def _root_.CCG.Derivation.infoFeature {T α : Type*} (acc : AccentAssignment T) :
+    {c : Cat α} → Derivation T α c → Option InfoFeature
   | _, .lex f _ => some (accentInfo (acc f))
   | _, .node _ d₁ d₂ => do (← d₁.infoFeature acc).unify (← d₂.infoFeature acc)
 
@@ -170,11 +170,11 @@ def rhemeTune : Tune := ⟨.mono .H, ⟨.L, .L⟩⟩
 
 /-- A prosodic phrase is a tune-marked CCG constituent. Because `deriv` is a derivation, only
 constituents can be phrases, the Sense Unit Condition of [selkirk-1984] by construction. -/
-structure ProsodicPhrase (α : Type*) where
+structure ProsodicPhrase (T α : Type*) where
   /-- The category of the constituent. -/
   cat : Cat α
   /-- The constituent's derivation. -/
-  deriv : Derivation α cat
+  deriv : Derivation T α cat
   /-- The tune the phrase carries. -/
   tune : Tune
 
@@ -197,8 +197,8 @@ structure InfoStructure (P : Type*) where
 /-- The information structure of a sequence of prosodic phrases takes the phrase with the theme
 tune as theme and the phrase with the rheme tune as rheme, and a theme-less utterance is
 all-rheme. It is `none` when the phrases yield no coherent partition. -/
-def extractInfoStructure {α : Type*} (phrases : List (ProsodicPhrase α)) :
-    Option (InfoStructure (ProsodicPhrase α)) :=
+def extractInfoStructure {T α : Type*} (phrases : List (ProsodicPhrase T α)) :
+    Option (InfoStructure (ProsodicPhrase T α)) :=
   let themes := phrases.filter (·.tune == themeTune)
   let rhemes := phrases.filter (·.tune == rhemeTune)
   match themes, rhemes with
