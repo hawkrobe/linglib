@@ -9,11 +9,12 @@ public import Linglib.Core.Algebra.RootedTree.HopfAlgebra
 /-!
 # External Merge
 
-External Merge ([marcolli-chomsky-berwick-2025] Lemma 1.4.1): Merge of two components `S, S'` of
-a workspace replaces them by `node lbl {S, S'}` and leaves the rest unchanged. For a two-object
-workspace this holds over every cut enumeration admitting Merge (`mergeOpG_pair`), in particular
-at the pruning and trace cuts. With a residual workspace `F̂` it holds when no component of `F̂`
-has `S` or `S'` as a subtree (`mergeOpG_pair_residual`).
+External Merge (Lemma 1.4.1 of Marcolli, Chomsky and Berwick) is Merge of two components `S, S'`
+of a workspace. It replaces them by `node lbl {S, S'}` and leaves the rest unchanged. For a
+two-object workspace this holds over every cut enumeration admitting Merge (`mergeOpG_pair`), in
+particular at the pruning and trace cuts. With a residual workspace `F̂` it holds when no component
+of `F̂` has `S` or `S'` as a subtree (`mergeOpG_pair_residual`), since such a workspace passes
+through Merge unchanged (`mergeOpG_of'_mul`).
 
 The proof of `mergeOpG_pair` expands the coproduct of `{S, S'}` into four cross-terms of the
 primitive terms and the cut sums of `S` and `S'`. Only the primitive term survives: a cut of `S'`
@@ -24,6 +25,7 @@ both are ruled out by the edge bound of `IsMergeCuts`.
 
 * `Minimalist.Merge.mergeOpG_pair`, `mergeOp_pair`, `mergeOpC_pair`: External Merge on a
   two-object workspace.
+* `Minimalist.Merge.mergeOpG_of'_mul`: Merge commutes with a spectator workspace.
 * `Minimalist.Merge.mergeOpG_pair_residual`, `mergeOp_pair_residual`, `mergeOpC_pair_residual`:
   External Merge with a residual workspace.
 
@@ -39,15 +41,18 @@ namespace Minimalist.Merge
 open scoped TensorProduct
 open RoseTree UnorderedTree ConnesKreimer
 
-variable {R : Type*} [CommSemiring R] {α : Type*} [DecidableEq (UnorderedTree α)]
+variable {R : Type*} [CommSemiring R] {α : Type*}
 
-omit [DecidableEq (UnorderedTree α)] in
 private theorem sum_map_ite_eq_zero {ι M : Type*} [AddCommMonoid M] {s : Multiset ι}
     {P : ι → Prop} [DecidablePred P] {f : ι → M} (h : ∀ i ∈ s, ¬ P i) :
     (s.map fun i ↦ if P i then f i else 0).sum = 0 :=
   Multiset.sum_eq_zero fun _ hx ↦ by
     obtain ⟨i, hi, rfl⟩ := Multiset.mem_map.mp hx
     exact ite_eq_right (h i hi)
+
+section DecidableEq
+
+variable [DecidableEq (UnorderedTree α)]
 
 instance : IsMergeCuts (cutSummandsN (α := α)) where
   crown_numEdges_lt := cutSummandsN_crown_numEdges_lt
@@ -108,14 +113,6 @@ theorem mergeOp_pair (lbl : α) (S S' : UnorderedTree α) :
       = of' ({UnorderedTree.node lbl {S, S'}} : Forest (UnorderedTree α)) :=
   mergeOpG_pair lbl S S'
 
-omit [DecidableEq (UnorderedTree α)] in
-/-- External Merge of a two-object workspace at the trace cuts. -/
-theorem mergeOpC_pair {β : Type*} [DecidableEq (UnorderedTree (α ⊕ β))]
-    (τ : UnorderedTree (α ⊕ β) → β) (lbl : α ⊕ β) (S S' : UnorderedTree (α ⊕ β)) :
-    mergeOpC (R := R) τ lbl S S' (of' ({S, S'} : Forest (UnorderedTree (α ⊕ β))))
-      = of' ({UnorderedTree.node lbl {S, S'}} : Forest (UnorderedTree (α ⊕ β))) :=
-  mergeOpG_pair lbl S S'
-
 /-- Merge commutes with a spectator component `T` that has neither `S` nor `S'` as a subtree
     ([marcolli-chomsky-berwick-2025] Lemma 1.4.1). The primitive term of `T` does not fit inside
     `{S, S'}`, no nonempty cut of `T` extracts `S` or `S'`, and the empty cut passes `T` through to
@@ -163,6 +160,23 @@ theorem mergeOpG_factor_out_singleton
     exacts [hT_S (IsMergeCuts.mem_subtrees_of_mem_crown hp hx_mem),
       hT_S' (IsMergeCuts.mem_subtrees_of_mem_crown hp hx_mem)]
 
+/-- Merge commutes with a spectator workspace `F` none of whose components has `S` or `S'` as a
+    subtree. -/
+theorem mergeOpG_of'_mul
+    {cuts : UnorderedTree α → Multiset (Forest (UnorderedTree α) × UnorderedTree α)}
+    [IsMergeCuts cuts] (lbl : α) {S S' : UnorderedTree α} {F : Forest (UnorderedTree α)}
+    (hF : ∀ T ∈ F, Disjoint ({S, S'} : Forest (UnorderedTree α)) T.subtrees)
+    (w : ConnesKreimer R (UnorderedTree α)) :
+    mergeOpG (R := R) cuts lbl S S' (of' F * w) = of' F * mergeOpG (R := R) cuts lbl S S' w := by
+  induction F using Multiset.induction generalizing w with
+  | empty => rw [of'_zero, one_mul, one_mul]
+  | cons T F ih =>
+    have hT := hF T (Multiset.mem_cons_self _ _)
+    rw [← Multiset.singleton_add, of'_add, mul_assoc,
+      mergeOpG_factor_out_singleton lbl (Multiset.disjoint_left.mp hT (by simp))
+        (Multiset.disjoint_left.mp hT (by simp)),
+      ih (fun U hU ↦ hF U (Multiset.mem_cons_of_mem hU)), mul_assoc]
+
 /-- Merge at the pruning cuts commutes with a spectator component that has neither `S` nor `S'`
     as a subtree. -/
 theorem mergeOp_factor_out_singleton (lbl : α) {S S' T : UnorderedTree α}
@@ -181,20 +195,7 @@ theorem mergeOpG_pair_residual
     (hF : ∀ T ∈ Fhat, Disjoint ({S, S'} : Forest (UnorderedTree α)) T.subtrees) :
     mergeOpG (R := R) cuts lbl S S' (of' (({S, S'} : Forest (UnorderedTree α)) + Fhat))
       = of' (({UnorderedTree.node lbl {S, S'}} : Forest (UnorderedTree α)) + Fhat) := by
-  induction Fhat using Multiset.induction with
-  | empty =>
-    rw [add_zero, add_zero]
-    exact mergeOpG_pair lbl S S'
-  | cons T Fhat' ih =>
-    have hT_S : S ∉ T.subtrees :=
-      Multiset.disjoint_left.mp (hF T (Multiset.mem_cons_self _ _)) (by simp)
-    have hT_S' : S' ∉ T.subtrees :=
-      Multiset.disjoint_left.mp (hF T (Multiset.mem_cons_self _ _)) (by simp)
-    have ih' := ih fun U hU ↦ hF U (Multiset.mem_cons_of_mem hU)
-    rw [Multiset.add_cons, Multiset.add_cons, ← Multiset.singleton_add, ← Multiset.singleton_add,
-      of'_add (R := R) ({T} : Forest (UnorderedTree α)),
-      of'_add (R := R) ({T} : Forest (UnorderedTree α)),
-      mergeOpG_factor_out_singleton lbl hT_S hT_S', ih']
+  rw [add_comm, of'_add, mergeOpG_of'_mul lbl hF, mergeOpG_pair, ← of'_add, add_comm]
 
 /-- External Merge at the pruning cuts with a residual workspace. -/
 theorem mergeOp_pair_residual (lbl : α) {S S' : UnorderedTree α}
@@ -204,7 +205,17 @@ theorem mergeOp_pair_residual (lbl : α) {S S' : UnorderedTree α}
       = of' (({UnorderedTree.node lbl {S, S'}} : Forest (UnorderedTree α)) + Fhat) :=
   mergeOpG_pair_residual lbl hF
 
-omit [DecidableEq (UnorderedTree α)] in
+end DecidableEq
+
+/-! ### External Merge at the trace cuts -/
+
+/-- External Merge of a two-object workspace at the trace cuts. -/
+theorem mergeOpC_pair {β : Type*} [DecidableEq (UnorderedTree (α ⊕ β))]
+    (τ : UnorderedTree (α ⊕ β) → β) (lbl : α ⊕ β) (S S' : UnorderedTree (α ⊕ β)) :
+    mergeOpC (R := R) τ lbl S S' (of' ({S, S'} : Forest (UnorderedTree (α ⊕ β))))
+      = of' ({UnorderedTree.node lbl {S, S'}} : Forest (UnorderedTree (α ⊕ β))) :=
+  mergeOpG_pair lbl S S'
+
 /-- External Merge at the trace cuts with a residual workspace. -/
 theorem mergeOpC_pair_residual {β : Type*} [DecidableEq (UnorderedTree (α ⊕ β))]
     (τ : UnorderedTree (α ⊕ β) → β) (lbl : α ⊕ β) {S S' : UnorderedTree (α ⊕ β)}

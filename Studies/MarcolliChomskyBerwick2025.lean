@@ -76,11 +76,14 @@ The book's algebra lives in `Core/` and in `Syntax/Minimalist/{Workspace,Merge,E
   `UnorderedTree.contractUnary`, `ConnesKreimer.comulDAlgHomN`,
   `ConnesKreimer.eraseTraces_comulCAlgHomN`, `contractUnary_eraseTraces_comulCAlgHomN`.
 * Definition 1.3.4: `Minimalist.Merge.mergeOpG` over a cut enumeration, with `mergeOp` at `Δ^ρ`
-  and `mergeOpC` at `Δ^c`.
-* Lemma 1.4.1: `Minimalist.Merge.mergeOpG_pair`, `mergeOpG_pair_residual`.
+  and `mergeOpC` at `Δ^c`; (1.3.11): `Minimalist.Merge.mergeOpG_apply_of'`.
+* Lemma 1.4.1: `Minimalist.Merge.mergeOpG_pair`, `mergeOpG_pair_residual`, with the residual
+  workspace passing through by `mergeOpG_of'_mul`.
 * Proposition 1.4.2: `Minimalist.Merge.mergeOpG_im_composition`; on syntactic objects
   `Minimalist.SyntacticObject.mergeOpC_im`, and for a derivation
   `Minimalist.Derivation.mergeOpList_initial`.
+* Lemmas 1.4.4 and 1.4.5: `Minimalist.Merge.mergeOpG_sideward_2b`, `mergeOpG_sideward_3b`,
+  `mergeOpG_sideward_3a`.
 * Definition 1.6.1 and Proposition 1.6.4: `Minimalist.MinimalYield` over a counting,
   `MinimalYield.em_pair`, `em_pair_accessibleCount`, `im_accessibleCount_of_cut`.
 * Definition 1.6.2 and Proposition 1.6.10: `Minimalist.NoComplexityLoss`,
