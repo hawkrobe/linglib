@@ -27,7 +27,8 @@ cut.
 
 ## Main results
 
-* `ConnesKreimer.cutSummandsCN_accessibleCount`: the extraction identity.
+* `ConnesKreimer.cutSummandsCN_accessibleCount`, `cutSummandsCN_accessibleSize`: the extraction
+  identities for the accessible terms and for the size.
 
 ## References
 
@@ -158,5 +159,43 @@ theorem cutSummandsCN_accessibleCount (τ : UnorderedTree (α ⊕ β) → β)
       omega
   have := hcrown p.1 fun c hc ↦ cutSummandsCN_crown_traceLeafCount_lt_numNodes τ T p hp c hc
   omega
+
+/-- A Δ^c cut of a lexical-rooted object splits its size `σ` exactly between its crown and its
+    trunk ([marcolli-chomsky-berwick-2025] (1.6.10)). -/
+theorem cutSummandsCN_accessibleSize (τ : UnorderedTree (α ⊕ β) → β)
+    {T : UnorderedTree (α ⊕ β)} {a₀ : α} (hT : T.value = Sum.inl a₀)
+    {p : Multiset (UnorderedTree (α ⊕ β)) × UnorderedTree (α ⊕ β)} (hp : p ∈ cutSummandsCN τ T) :
+    (p.1.map fun c ↦ Forest.accessibleSize {c}).sum + Forest.accessibleSize {p.2} =
+      Forest.accessibleSize {T} := by
+  have h := cutSummandsCN_accessibleCount τ hT hp
+  have hsum : ∀ m : Multiset (UnorderedTree (α ⊕ β)),
+      (m.map fun c ↦ Forest.accessibleSize {c}).sum =
+        (m.map UnorderedTree.accessibleCount).sum + Multiset.card m := by
+    intro m
+    induction m using Multiset.induction with
+    | empty => simp
+    | cons c m ih =>
+      rw [Multiset.map_cons, Multiset.sum_cons, Multiset.map_cons, Multiset.sum_cons,
+        Multiset.card_cons, ih, Forest.accessibleSize_singleton]
+      omega
+  rw [hsum, Forest.accessibleSize_singleton, Forest.accessibleSize_singleton]
+  omega
+
+/-- A tree in the crown of a choice of trace cuts of lexical-rooted trees is not a trace. -/
+theorem traceLeafCount_lt_numNodes_of_mem_crown {τ : UnorderedTree (α ⊕ β) → β}
+    {F : Multiset (UnorderedTree (α ⊕ β))}
+    {s : Multiset (UnorderedTree (α ⊕ β) ×
+      (Multiset (UnorderedTree (α ⊕ β)) × Multiset (UnorderedTree (α ⊕ β))))}
+    (hs : s ∈ forestCutChoicesG (cutSummandsCN τ) F) (hF : ∀ T ∈ F, ∃ a, T.value = Sum.inl a)
+    {S : UnorderedTree (α ⊕ β)} (hS : S ∈ (s.map Prod.snd).sum.1) :
+    S.traceLeafCount < S.numNodes := by
+  obtain ⟨x, hx, hSx⟩ := mem_fst_sum_map_snd_iff.mp hS
+  rcases mem_treeCutsG.mp (mem_treeCutsG_of_mem_forestCutChoicesG hs hx) with h | ⟨p, hp, h⟩
+  · rw [h, Multiset.mem_singleton] at hSx
+    obtain ⟨a, ha⟩ := hF x.1 (map_fst_of_mem_forestCutChoicesG hs ▸
+      Multiset.mem_map_of_mem Prod.fst hx)
+    exact hSx ▸ UnorderedTree.traceLeafCount_lt_numNodes_of_rootInl _ a ha
+  · rw [← h] at hSx
+    exact cutSummandsCN_crown_traceLeafCount_lt_numNodes τ x.1 p hp S hSx
 
 end ConnesKreimer

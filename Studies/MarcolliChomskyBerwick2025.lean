@@ -91,7 +91,8 @@ The book's algebra lives in `Core/` and in `Syntax/Minimalist/{Workspace,Merge,E
   `mergeOpEps_zero_of'_of_not_le`, `mergeOpEps_zero_pair_add`, `mergeOpEps_zero_im_composition`.
 * Definition 1.6.1 and Proposition 1.6.4: `Minimalist.MinimalYield` over a counting,
   `MinimalYield.em_pair`, `em_pair_accessibleCount`, `im_accessibleCount_of_cut`.
-* Lemma 1.6.3 (1.6.8): `ConnesKreimer.cutSummandsCN_accessibleCount`. Proposition 1.6.8 and
+* Lemma 1.6.3 (1.6.8) and (1.6.10): `ConnesKreimer.cutSummandsCN_accessibleCount`,
+  `cutSummandsCN_accessibleSize`. Proposition 1.6.8 and
   Remark 1.6.7, on the terms of Merge (`Minimalist.Merge.mergeOpG_apply_of'_eq_sum`):
   `Minimalist.card_singleton_add_trunk_add_countP`, `accessibleCount_merge_term`,
   `accessibleSize_merge_term`, `MinimalYield.merge_term_accessibleCount_iff`,
@@ -100,7 +101,8 @@ The book's algebra lives in `Core/` and in `Syntax/Minimalist/{Workspace,Merge,E
 * Definition 1.6.2 and Proposition 1.6.10: `Minimalist.NoComplexityLoss`,
   `NoComplexityLoss.em_case1`, `im_residual`; along the induced map of a term of Merge
   (`Minimalist.componentMap`), `NoComplexityLoss.map_componentMap_merge_iff`,
-  `not_map_componentMap_merge`, `not_map_componentMap_unit`.
+  `not_map_componentMap_merge`, `not_map_componentMap_unit`, and at the trace cuts graded by `σ`,
+  `not_map_accessibleSize_componentMap_merge`.
 * Definition 1.6.2's degree `#L`: `UnorderedTree.numLeaves`; Lemma 1.6.3:
   `ConnesKreimer.cutSummandsCN_numNodes`.
 * The functionals of (1.7.5) and their Lie algebra: `Bialgebra.IsDualPrimitive` and
@@ -142,11 +144,6 @@ the number of planar embeddings that the proof says the coefficient counts: the 
 trees with four leaves split as four and one.
 
 ## TODO
-
-No Complexity Loss is graded by vertices, which agrees with the book's degree, the number of lexical
-items, at the pruning cuts but not at the trace cuts: on the workspace of §1.3.4 the trace-cut term
-of Sideward Merge 2(b) loses no vertices. Stating Proposition 1.6.10 at the trace cuts, as
-derivations need, takes the lexical-item grading.
 
 §1.17 reads (1.10.1) as the quadratic case of the combinatorial Dyson–Schwinger equation
 `X = B(P(X))` of (1.17.2), with the grafting operator `B` of Definition 1.3.2 and the recursive
@@ -237,8 +234,9 @@ merges *eaten* with *the* cut out of *the apple*, and *the apple* alone admits I
 *the* and Sideward Merge of type 3(a) of *the* and *apple*. On these the general results of §1.4–1.6
 give Sideward Merge a nonzero term, which Minimal Search removes at `ε = 0` while it keeps
 External and Internal Merge. The 2(b) term satisfies Minimal Yield under trace counting, as
-Remark 1.6.9 says. No Complexity Loss excludes it at the pruning cuts. At the trace cuts, graded by
-vertices, it does not, because the trace of *the* takes the place of *the*. -/
+Remark 1.6.9 says. No Complexity Loss excludes it at the pruning cuts graded by vertices, and at
+the trace cuts graded by the size `σ`. At the trace cuts the vertex count does not exclude it,
+because the trace of *the* takes the place of *the*. -/
 
 /-- *the*, a term of *the apple*. -/
 private def theD : SyntacticObject :=
@@ -388,25 +386,30 @@ example : MinimalYield UnorderedTree.accessibleCount {eaten.val, theApple.val}
 
 /-- At the pruning cuts the 2(b) term loses complexity along its component map, since *the apple*
     goes to the lighter trunk `{apple}` (Proposition 1.6.10). -/
-example : ¬ NoComplexityLoss.Map
+example : ¬ NoComplexityLoss.Map UnorderedTree.numNodes
     (componentMap (UnorderedTree.node Vertex.bare {eaten.val, theD.val}) sidewardTermN) :=
-  NoComplexityLoss.not_map_componentMap_merge Vertex.bare sidewardTermN_mem
-    (by simp [sidewardTermN]) (.inr (by decide))
+  NoComplexityLoss.not_map_componentMap_merge sidewardTermN_mem
+    (fun T _ p hp ↦ cutSummandsN_numNodes T p hp) UnorderedTree.numNodes_pos
+    (S := eaten.val) (S' := theD.val) (by simp [sidewardTermN]) (by decide) (by decide)
+    (.inr (by decide))
 
 /-- At the trace cuts the 2(b) term loses no vertices along its component map, since the trace of
-    *the* takes its place in *the apple*. Graded by vertices, No Complexity Loss excludes Sideward
-    Merge only at the pruning cuts. -/
-example : NoComplexityLoss.Map
+    *the* takes its place in *the apple*. -/
+example : NoComplexityLoss.Map UnorderedTree.numNodes
     (componentMap (UnorderedTree.node Vertex.bare {eaten.val, theD.val}) sidewardTermC) := by
   simp [NoComplexityLoss.Map, componentMap, sidewardTermC]
   decide
 
-/-- The book's degree counts leaves (Definition 1.6.2) and is conserved because no lexical item is
-    ever removed. Counting the lexical items, it does drop at the trace cuts, since the remainder
-    of *the apple* keeps only *apple*. -/
-example : (deleteAccessible theD theApple).val.leaves.countP (·.isLeft) <
-    theApple.val.leaves.countP (·.isLeft) := by
-  decide
+/-- Graded by the size `σ`, which the trace cuts conserve, the 2(b) term at the trace cuts does
+    lose complexity (Proposition 1.6.10). -/
+example : ¬ NoComplexityLoss.Map (fun T ↦ Forest.accessibleSize {T})
+    (componentMap (UnorderedTree.node Vertex.bare {eaten.val, theD.val}) sidewardTermC) :=
+  NoComplexityLoss.not_map_accessibleSize_componentMap_merge none sidewardTermC_mem
+    (fun T hT ↦ by
+      rcases Multiset.mem_cons.mp hT with rfl | hT
+      · exact ⟨_, rfl⟩
+      · rw [Multiset.mem_singleton.mp hT]; exact ⟨_, rfl⟩)
+    (S := eaten.val) (S' := theD.val) (by simp [sidewardTermC]) (.inr (by decide))
 
 /-- The term of Sideward Merge of type 3(a) of *the* and *apple* cuts both out of *the apple*. -/
 private noncomputable def sideward3a : Multiset (UnorderedTree Vertex ×
