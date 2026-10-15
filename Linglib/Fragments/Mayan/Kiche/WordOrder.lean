@@ -25,8 +25,7 @@ found. -/
 def clauseOrders : Finset (WordOrder.Arrangement WordOrder.Constituent 3) := {.vos, .vso}
 
 /-- Every order is verb-initial. -/
-theorem verb_initial :
-    ∀ a ∈ clauseOrders, a.Precedes .verb .subject ∧ a.Precedes .verb .object := by
+theorem verb_initial : ∀ a ∈ clauseOrders, a.IsInitial .verb := by
   decide
 
 end Kiche

@@ -22,11 +22,11 @@ the closest boundary of each argument: on its sentences, the yield distance of d
 (`Graph.yieldDist`), and on arrangements of subject, object and verb, the boundary distance of
 constituents of given lengths (`Arrangement.boundaryDist`), which agree on Fig. 1 as the
 substrate's bridge theorem predicts. The measure is invariant under mirroring, and with the verb
-at an edge it is two plus the length of the argument next to the verb. A learner's productions are a probability measure on pairs of the
-scene's long argument and the order used. Their mean dependency length is affine in the
-probability of the symmetric difference of "the subject is long" and "the subject comes first",
-which places every learner in the diamond of Fig. 5 and ties Fig. 5 to the order proportions of
-Fig. 4.
+at an edge it is two plus the length of the argument next to the verb. A learner's productions
+are a probability measure on pairs of the scene's long argument and the order used. Their mean
+dependency length is affine in the probability of the symmetric difference of "the subject is
+long" and "the subject comes first", which places every learner in the diamond of Fig. 5 and ties
+Fig. 5 to the order proportions of Fig. 4.
 
 ## Main statements
 
@@ -75,8 +75,7 @@ theorem verbDependencyLength_mirror (a : Arrangement Constituent 3) (ℓ : Const
 
 /-- `language d` holds the orders of the miniature language whose verb has direction `d`
 towards both arguments. -/
-def language (d : HeadDirection) : Finset (Arrangement Constituent 3) :=
-  {a | a.headDirection .verb .subject = d ∧ a.headDirection .verb .object = d}
+def language (d : HeadDirection) : Finset (Arrangement Constituent 3) := {a | a.IsEnd .verb d}
 
 theorem language_headFinal : language .headFinal = {.sov, .osv} := by decide
 
@@ -95,8 +94,8 @@ theorem verbDependencyLength_eq {d : HeadDirection} {a : Arrangement Constituent
     have hu : (Finset.univ : Finset Constituent) = {.subject, .object, .verb} := by decide
     simp only [language_headFinal, Finset.mem_insert, Finset.mem_singleton]
     rintro b (rfl | rfl) <;>
-    · simp [verbDependencyLength, Arrangement.boundaryDist, hu, Finset.sum_filter, Arrangement.Precedes,
-        Arrangement.sov, Arrangement.osv]
+    · simp [verbDependencyLength, Arrangement.boundaryDist, hu, Finset.sum_filter,
+        Arrangement.Precedes, Arrangement.sov, Arrangement.osv]
       omega
   cases d with
   | headFinal => exact key a ha
@@ -124,8 +123,9 @@ theorem short_before_long_head_initial (ℓ : Constituent → ℕ) :
 
 /-- With arguments of equal length the measure makes no ordering prediction (the baseline of
 Fig. 4). -/
-theorem verbDependencyLength_eq_of_subject_eq_object {d : HeadDirection} {a b : Arrangement Constituent 3}
-    (ha : a ∈ language d) (hb : b ∈ language d) {ℓ : Constituent → ℕ}
+theorem verbDependencyLength_eq_of_subject_eq_object {d : HeadDirection}
+    {a b : Arrangement Constituent 3} (ha : a ∈ language d) (hb : b ∈ language d)
+    {ℓ : Constituent → ℕ}
     (h : ℓ .subject = ℓ .object) : verbDependencyLength a ℓ = verbDependencyLength b ℓ := by
   have hm : ∀ c ∈ language d, c.symm 1 = .subject ∨ c.symm 1 = .object := by
     cases d <;> decide
@@ -168,7 +168,7 @@ theorem fig1_yieldDist :
     fig1Vos.yieldDist 0 1 = Arrangement.vos.boundaryDist ℓ .verb .object := by
   decide +kernel
 
-/-- The printed numbers: 5 and 1, 1 and 2, 1 and 2, 5 and 1. -/
+/-- The printed numbers are 5 and 1, 1 and 2, 1 and 2, and 5 and 1. -/
 theorem fig1_yieldDist_eq :
     fig1Sov.yieldDist 5 0 = 5 ∧ fig1Sov.yieldDist 5 4 = 1 ∧ fig1Osv.yieldDist 5 4 = 1 ∧
     fig1Osv.yieldDist 5 3 = 2 ∧ fig1Vso.yieldDist 0 1 = 1 ∧ fig1Vso.yieldDist 0 2 = 2 ∧
@@ -228,38 +228,31 @@ def subjectFirst : Set Production := {x | x.2.Precedes .subject .object}
 def long (c : Constituent) : Set Production := Prod.fst ⁻¹' {c}
 
 /-- A production is in `longAdjacent` when its long argument is next to the verb. -/
-def longAdjacent : Set Production := {x | x.2.symm 1 = x.1}
+def longAdjacent : Set Production := {x | x.2.Adjacent .verb x.1}
+
+/-- With the verb at an edge, an argument is next to it exactly when it stands in the middle. -/
+theorem symm_one_eq_iff_adjacent {d : HeadDirection} {a : Arrangement Constituent 3}
+    (ha : a ∈ language d) (c : Constituent) : a.symm 1 = c ↔ a.Adjacent .verb c := by
+  revert c ha a
+  cases d <;> decide
 
 /-- `dependencyLength L x` is the verb's dependency length in the production `x` when its long
 argument has `L` words and its other argument is a bare noun. -/
 def dependencyLength (L : ℕ) (x : Production) : ℝ :=
   verbDependencyLength x.2 (Function.update 1 x.1 L)
 
-variable {P : Measure Production} [IsProbabilityMeasure P] {d : HeadDirection} {L : ℕ}
+variable {P : Measure Production} {d : HeadDirection} {L : ℕ}
 
-/-- The mean dependency length is three plus `L - 1` times the probability that the long
-argument is next to the verb. -/
-theorem integral_dependencyLength (hlang : ∀ᵐ x ∂P, x.2 ∈ language d) :
-    ∫ x, dependencyLength L x ∂P = 3 + ((L : ℝ) - 1) * P.real longAdjacent := by
-  have h : dependencyLength L =ᵐ[P] fun x ↦ 3 + ((L : ℝ) - 1) * longAdjacent.indicator 1 x := by
-    filter_upwards [hlang] with x hx
-    rw [dependencyLength, verbDependencyLength_eq hx, Function.update_apply]
-    by_cases h : x.2.symm 1 = x.1 <;> simp [longAdjacent, h]
-    ring
-  rw [integral_congr_ae h, integral_add (integrable_const _) .of_finite, integral_const,
-    integral_const_mul, integral_indicator_one (.of_discrete)]
-  simp
+section Marginal
 
 variable (hscene : P.fst = uniformOn {.subject, .object})
 include hscene
 
-omit [IsProbabilityMeasure P] in
 theorem measureReal_long {c : Constituent} (hc : c ≠ .verb) : P.real (long c) = 1 / 2 := by
   rw [long, measureReal_def, ← Measure.fst_apply (measurableSet_singleton _), hscene,
     ← Finset.coe_pair, ← Finset.coe_singleton, uniformOn_apply_finset]
   cases c <;> simp +decide at hc ⊢
 
-omit [IsProbabilityMeasure P] in
 theorem ae_fst_ne_verb : ∀ᵐ x ∂P, x.1 ≠ .verb := by
   have : P (long .verb) = 0 := by
     rw [long, ← Measure.fst_apply (measurableSet_singleton _), hscene,
@@ -267,7 +260,6 @@ theorem ae_fst_ne_verb : ∀ᵐ x ∂P, x.1 ≠ .verb := by
     ext c; simp +decide
   exact measure_mono_null (fun x hx ↦ by simpa [long] using hx) this
 
-omit [IsProbabilityMeasure P] in
 /-- In the verb-final language the long argument is next to the verb exactly when either the
 subject is long or it comes first, but not both. -/
 theorem longAdjacent_ae_eq_headFinal (hlang : ∀ᵐ x ∂P, x.2 ∈ language .headFinal) :
@@ -277,7 +269,6 @@ theorem longAdjacent_ae_eq_headFinal (hlang : ∀ᵐ x ∂P, x.2 ∈ language .h
   rcases hx with rfl | rfl <;> cases c <;>
     simp_all +decide [longAdjacent, long, subjectFirst, Set.mem_symmDiff]
 
-omit [IsProbabilityMeasure P] in
 theorem longAdjacent_ae_eq_headInitial (hlang : ∀ᵐ x ∂P, x.2 ∈ language .headInitial) :
     longAdjacent =ᵐ[P] ((long .subject ∆ subjectFirst)ᶜ : Set Production) := by
   filter_upwards [hlang, ae_fst_ne_verb hscene] with ⟨c, a⟩ hx hv
@@ -286,6 +277,34 @@ theorem longAdjacent_ae_eq_headInitial (hlang : ∀ᵐ x ∂P, x.2 ∈ language 
     Finset.mem_singleton] at hx
   rcases hx with rfl | rfl <;> cases c <;>
     simp_all +decide [longAdjacent, long, subjectFirst]
+
+theorem measureReal_cond_long {c : Constituent} (hc : c ≠ .verb) (s : Set Production) :
+    (P[|long c]).real s = 2 * P.real (long c ∩ s) := by
+  rw [measureReal_def, cond_apply (.of_discrete), ENNReal.toReal_mul,
+    ENNReal.toReal_inv, ← measureReal_def, ← measureReal_def, measureReal_long hscene hc]
+  norm_num
+
+end Marginal
+
+variable [IsProbabilityMeasure P]
+
+/-- The mean dependency length is three plus `L - 1` times the probability that the long
+argument is next to the verb. -/
+theorem integral_dependencyLength (hlang : ∀ᵐ x ∂P, x.2 ∈ language d) :
+    ∫ x, dependencyLength L x ∂P = 3 + ((L : ℝ) - 1) * P.real longAdjacent := by
+  have h : dependencyLength L =ᵐ[P] fun x ↦ 3 + ((L : ℝ) - 1) * longAdjacent.indicator 1 x := by
+    filter_upwards [hlang] with x hx
+    rw [dependencyLength, verbDependencyLength_eq hx, Function.update_apply]
+    by_cases h : x.2.Adjacent .verb x.1 <;> simp [longAdjacent, h, symm_one_eq_iff_adjacent hx]
+    ring
+  rw [integral_congr_ae h, integral_add (integrable_const _) .of_finite, integral_const,
+    integral_const_mul, integral_indicator_one (.of_discrete)]
+  simp
+
+section Prediction
+
+variable (hscene : P.fst = uniformOn {.subject, .object})
+include hscene
 
 private theorem abs_integral_sub (hlang : ∀ᵐ x ∂P, x.2 ∈ language d) :
     |∫ x, dependencyLength L x ∂P - ((L : ℝ) + 5) / 2| =
@@ -325,8 +344,9 @@ theorem abs_integral_dependencyLength_sub_le (hL : 1 ≤ L) (hlang : ∀ᵐ x �
     (measureReal_long hscene (by decide))) hL'
 
 /-- The least mean length, 3, needs perfectly flexible order. -/
-theorem measureReal_subjectFirst_eq_half_of_integral_eq_three (hL : 1 < L) (hlang : ∀ᵐ x ∂P, x.2 ∈ language d)
-    (h : ∫ x, dependencyLength L x ∂P = 3) : P.real subjectFirst = 1 / 2 := by
+theorem measureReal_subjectFirst_eq_half_of_integral_eq_three (hL : 1 < L)
+    (hlang : ∀ᵐ x ∂P, x.2 ∈ language d) (h : ∫ x, dependencyLength L x ∂P = 3) :
+    P.real subjectFirst = 1 / 2 := by
   have := abs_integral_dependencyLength_sub_le hscene hL.le hlang
   have hL' : (0 : ℝ) < L - 1 := by rw [sub_pos]; exact_mod_cast hL
   rw [h, abs_of_neg (by linarith), show -(3 - ((L : ℝ) + 5) / 2) = ((L : ℝ) - 1) * (1 / 2) by
@@ -340,13 +360,6 @@ theorem integral_dependencyLength_of_fixed (hL : 1 ≤ L) (hlang : ∀ᵐ x ∂P
     ∫ x, dependencyLength L x ∂P = ((L : ℝ) + 5) / 2 := by
   have := abs_integral_dependencyLength_sub_le hscene hL hlang
   rcases h with h | h <;> rw [h] at this <;> norm_num at this <;> linarith
-
-omit [IsProbabilityMeasure P] in
-theorem measureReal_cond_long {c : Constituent} (hc : c ≠ .verb) (s : Set Production) :
-    (P[|long c]).real s = 2 * P.real (long c ∩ s) := by
-  rw [measureReal_def, cond_apply (.of_discrete), ENNReal.toReal_mul,
-    ENNReal.toReal_inv, ← measureReal_def, ← measureReal_def, measureReal_long hscene hc]
-  norm_num
 
 /-- The overall subject-first proportion averages those on the two kinds of scene. -/
 theorem measureReal_subjectFirst : P.real subjectFirst =
@@ -407,7 +420,7 @@ theorem integral_dependencyLength_eq_lower_iff (hL : 1 < L)
   have h₄ : 0 ≤ (P[|long .object]).real subjectFirst := measureReal_nonneg
   grind
 
-omit hscene
+end Prediction
 
 /-- Every point of the lower lines of Fig. 5 is reached, at subject-first frequency `p` by a
 verb-final learner who spends subject-first order on long-subject scenes first. -/

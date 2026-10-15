@@ -86,7 +86,7 @@ open WordOrder
 /-! ### Encodings -/
 
 /-- The features of the coordinate strategy, the paper's (83), each opposed to a feature of the
-comitative strategy: the two NPs have the same structural rank, form a constituent, govern dual
+comitative strategy. The two NPs have the same structural rank, form a constituent, govern dual
 or plural agreement, and are linked by an item distinct from the comitative marker. An encoding
 is the `Finset` of the features it has. -/
 inductive Feature
@@ -98,7 +98,8 @@ inductive Feature
 
 /-! ### AND-languages and WITH-languages -/
 
-/-- A language: whether its verbs agree with their subject, and its encodings of the domain. -/
+/-- A language records whether its verbs agree with their subject, and its encodings of the
+domain. -/
 structure Language where
   /-- The verbs agree with their subject in person, number and gender. -/
   Agrees : Prop
@@ -112,7 +113,7 @@ namespace Language
 
 variable (l : Language)
 
-/-- The coordinate features relevant to the language: plural agreement only where its verbs
+/-- The coordinate features relevant to the language, plural agreement only where its verbs
 agree. -/
 def relevant : Finset Feature := if l.Agrees then ⊤ else {.pluralAgreement}ᶜ
 
@@ -132,7 +133,7 @@ theorem isAnd_iff_top_mem (h : l.Agrees) : l.IsAnd ↔ ⊤ ∈ l.encodings := by
 theorem distinctMarker_mem_relevant : .distinctMarker ∈ l.relevant := by
   unfold relevant; split_ifs <;> simp
 
-/-- The paper's guideline for rating: a language whose every encoding links with the comitative
+/-- The paper's guideline for rating. A language whose every encoding links with the comitative
 marker is a WITH-language, however far its hybrids have grammaticalized. -/
 theorem not_isAnd_of_forall_notMem (h : ∀ e ∈ l.encodings, .distinctMarker ∉ e) : ¬ l.IsAnd :=
   fun ⟨e, he, hle⟩ ↦ h e he (hle distinctMarker_mem_relevant)
@@ -191,23 +192,7 @@ theorem yakut_lin_isAlsoComitative :
 
 /-! ### Pattern schemes -/
 
-/-- `x` and `y` are adjacent in the arrangement `a`. -/
-def Adjacent {α : Type*} {n : ℕ} (a : Arrangement α n) (x y : α) : Prop :=
-  (a x : ℕ) + 1 = a y ∨ (a y : ℕ) + 1 = a x
-
-instance {α : Type*} {n : ℕ} (a : Arrangement α n) (x y : α) : Decidable (Adjacent a x y) :=
-  inferInstanceAs (Decidable (_ ∨ _))
-
-/-- Of three elements arranged over three ranks, two are adjacent exactly when the third is not
-medial. -/
-theorem adjacent_iff {α : Type*} {a : Arrangement α 3} {x y z : α} (hxy : x ≠ y) (hxz : x ≠ z)
-    (hyz : y ≠ z) : Adjacent a x y ↔ a z ≠ 1 := by
-  have := a.injective.ne hxy; have := a.injective.ne hxz; have := a.injective.ne hyz
-  have := (a x).isLt; have := (a y).isLt; have := (a z).isLt
-  simp only [Adjacent, ne_eq, Fin.ext_iff, Fin.val_one] at *
-  omega
-
-/-- The elements of a pattern scheme with an intransitive predicate: the subject, the verb, and
+/-- The elements of a pattern scheme with an intransitive predicate are the subject, the verb, and
 the comitative phrase. -/
 inductive Slot
   | subject
@@ -223,7 +208,7 @@ def Slot.equivConstituent : Slot ≃ Constituent where
   left_inv := by decide
   right_inv := by decide
 
-/-- The pattern scheme of a basic word order, the paper's (107), (123) and (124): the comitative
+/-- The pattern scheme of a basic word order, the paper's (107), (123) and (124). The comitative
 phrase stands in the canonical position of adverbial phrases, which in these schemes is the
 object's. -/
 def scheme (a : Arrangement Constituent 3) : Arrangement Slot 3 := Slot.equivConstituent.trans a
@@ -231,27 +216,32 @@ def scheme (a : Arrangement Constituent 3) : Arrangement Slot 3 := Slot.equivCon
 /-- The subject and the comitative phrase of a scheme are contiguous exactly when the verb is not
 medial. -/
 theorem adjacent_scheme_iff (a : Arrangement Constituent 3) :
-    Adjacent (scheme a) .subject .comitative ↔ a .verb ≠ 1 :=
-  adjacent_iff (z := Slot.verb) (by decide) (by decide) (by decide)
+    (scheme a).Adjacent .subject .comitative ↔ ¬ a.IsMedial .verb :=
+  Arrangement.adjacent_iff_not_isMedial (z := Slot.verb) (by decide) (by decide) (by decide)
 
 /-- In an SVO language the verb separates the two NPs, (107). -/
-theorem not_adjacent_scheme_svo : ¬ Adjacent (scheme .svo) .subject .comitative := by decide
+theorem not_adjacent_scheme_svo : ¬ (scheme .svo).Adjacent .subject .comitative := by decide
 
 /-- SOV and VSO schemes are contiguous already, (123) and (124). -/
-theorem adjacent_scheme_sov : Adjacent (scheme .sov) .subject .comitative := by decide
+theorem adjacent_scheme_sov : (scheme .sov).Adjacent .subject .comitative := by decide
 
-theorem adjacent_scheme_vso : Adjacent (scheme .vso) .subject .comitative := by decide
+theorem adjacent_scheme_vso : (scheme .vso).Adjacent .subject .comitative := by decide
 
-/-- The shift of the comitative phrase, the paper's (108): the transposition of the verb and the
-comitative phrase, which moves the comitative phrase across a medial verb. -/
+/-- The shift of the comitative phrase, the paper's (108), is the transposition of the verb and
+the comitative phrase, which moves the comitative phrase across a medial verb. -/
 def shift (s : Arrangement Slot 3) : Arrangement Slot 3 := (Equiv.swap .verb .comitative).trans s
 
 /-- Where the verb is medial, the shift makes the subject and the comitative phrase contiguous,
 so that the string can be reanalyzed as a constituent. -/
-theorem adjacent_shift {s : Arrangement Slot 3} (h : s .verb = 1) :
-    Adjacent (shift s) .subject .comitative :=
-  (adjacent_iff (z := Slot.verb) (by decide) (by decide) (by decide)).2 <| by
-    simpa [shift, h] using s.injective.ne (show Slot.comitative ≠ .verb by decide)
+theorem adjacent_shift {s : Arrangement Slot 3} (h : s.IsMedial .verb) :
+    (shift s).Adjacent .subject .comitative := by
+  refine (Arrangement.adjacent_iff_not_isMedial (z := Slot.verb) (by decide) (by decide)
+    (by decide)).2 ?_
+  have := s.injective.ne (show Slot.comitative ≠ .verb by decide)
+  have := (s .comitative).isLt
+  simp only [Arrangement.IsMedial, Arrangement.IsEnd, shift, Equiv.trans_apply,
+    Equiv.swap_apply_left] at h this ⊢
+  omega
 
 /-- The shifted SVO scheme is the SOV scheme: (108) has the order of (123). -/
 theorem shift_scheme_svo : shift (scheme .svo) = scheme .sov := Equiv.ext (by decide)

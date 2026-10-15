@@ -1,8 +1,10 @@
 module
 
+public import Linglib.Core.Computability.Edge
 public import Mathlib.Data.Fin.Rev
 public import Mathlib.Data.Fintype.Perm
 public import Mathlib.Data.List.Forall2
+public import Mathlib.Order.Cover
 public import Mathlib.Logic.Function.Basic
 public import Mathlib.Tactic.DeriveFintype
 
@@ -14,25 +16,31 @@ set of constituents, in particular of the subject, object and verb of a clause.
 
 `HeadDirection` is the two-valued order of a head and a dependent, head-initial when the head
 precedes; `HeadDirection.swap` is the opposite direction, `HeadDirection.ofLT` the direction read
-off two positions, and `HeadDirection.nearest` picks, from dependents in linear order on one side of
-their head, the one next to it. `WordOrder.Arrangement α n` is a linear arrangement of the elements
-of `α` over `n` ranks, a bijection onto `Fin n`, so that precedence, the head direction of any pair
-and the mirror image are read off the ranks. `Arrangement Constituent 3` arranges the three clausal
-constituents, and its six values are the basic word orders of the typological literature
-([greenberg-1963], [dryer-2013-wals]), `Arrangement.sov` and its siblings.
+off two positions, `HeadDirection.dependentEdge` the side of the head on which its dependents lie,
+and `HeadDirection.nearest` picks, from dependents in linear order on one side of their head, the
+one next to it. `WordOrder.Arrangement α n` is a linear arrangement of the elements of `α` over
+`n` ranks, a bijection onto `Fin n`, so that precedence, adjacency, the head direction of any pair,
+the ends and the mirror image are read off the ranks. `Arrangement Constituent 3` arranges the
+three clausal constituents, and its six values are the basic word orders of the typological
+literature, `Arrangement.sov` and its siblings, each labelled by its list of constituents.
 
 ## Main declarations
 
-* `HeadDirection`, `HeadDirection.swap`, `HeadDirection.ofLT`: the two directions, the
-  involution exchanging them, and the direction of a head and a dependent at given positions.
+* `HeadDirection`, `HeadDirection.swap`, `HeadDirection.ofLT`, `HeadDirection.dependentEdge`: the
+  two directions, the involution exchanging them, the direction of a head and a dependent at given
+  positions, and the edge of the head on which the dependents lie.
 * `HeadDirection.nearest`: the dependent next to the head, such as the conjunct of a
   coordination that a selector or a probe next to it sees.
-* `WordOrder.Arrangement`, `Arrangement.Precedes`, `Arrangement.headDirection`,
-  `Arrangement.mirror`: an arrangement of a finite type over ranks, precedence of two elements,
-  the head direction of a pair, and the reversed arrangement, which reverses every precedence
-  and every head direction.
-* `WordOrder.Constituent`, `Arrangement.sov` and its siblings: the subject, object and verb,
-  and their six arrangements.
+* `WordOrder.Arrangement`, `Arrangement.Precedes`, `Arrangement.Adjacent`,
+  `Arrangement.headDirection`, `Arrangement.mirror`: an arrangement of a finite type over ranks,
+  precedence and adjacency of two elements, the head direction of a pair, and the reversed
+  arrangement.
+* `Arrangement.IsEnd`, `Arrangement.IsInitial`, `Arrangement.IsFinal`, `Arrangement.IsMedial`: an
+  element that heads every other in one direction, standing first or last, or neither.
+* `Arrangement.toList`: the elements of an arrangement in their order.
+* `WordOrder.Constituent`, `Arrangement.sov` and its siblings, `Arrangement.label`,
+  `Arrangement.ofLabel?`: the subject, object and verb, their six arrangements, and the labels
+  "SOV", … that name them.
 
 ## Implementation notes
 
@@ -40,7 +48,8 @@ The WALS classification of a language's dominant orders, with its "no dominant o
 data (WALS Feature 81A and its siblings). A fragment records the arrangements a
 language admits as a `Finset (Arrangement Constituent 3)`; the pairwise orders the language
 fixes are the ones every member agrees on, so no separate consistency invariant is needed. The
-rank count is a parameter rather than `Fintype.card α`, so that numerals and `decide` reduce.
+rank count is a parameter rather than `Fintype.card α`, so that numerals and `decide` reduce, and
+the ends are defined by rank for the same reason.
 
 ## References
 
@@ -102,6 +111,22 @@ end ofLT
 theorem ofLT_swap {α : Type*} [LinearOrder α] {head dep : α} (h : head ≠ dep) :
     ofLT dep head = (ofLT head dep).swap := by
   rcases lt_or_gt_of_ne h with hlt | hlt <;> simp [ofLT, hlt, lt_asymm hlt]
+
+/-- The edge of a head on which its dependents lie, the right one for a head-initial head. -/
+def dependentEdge : HeadDirection → Edge
+  | headInitial => .right
+  | headFinal => .left
+
+@[simp] theorem dependentEdge_headInitial : headInitial.dependentEdge = .right := rfl
+
+@[simp] theorem dependentEdge_headFinal : headFinal.dependentEdge = .left := rfl
+
+/-- The opposite direction puts the dependents on the other edge. -/
+@[simp] theorem dependentEdge_swap :
+    ∀ d : HeadDirection, d.swap.dependentEdge = d.dependentEdge.swap := by
+  decide
+
+theorem dependentEdge_injective : Function.Injective dependentEdge := by decide
 
 section nearest
 
@@ -169,20 +194,54 @@ def Precedes : Prop := a x < a y
 
 instance : Decidable (a.Precedes x y) := inferInstanceAs (Decidable (_ < _))
 
+/-- `x` and `y` stand next to each other, one rank covering the other. -/
+def Adjacent : Prop := a x ⋖ a y ∨ a y ⋖ a x
+
 /-- The direction of the head `x` with respect to its dependent `y`. -/
 def headDirection : HeadDirection := .ofLT (a x) (a y)
 
 /-- The mirror image, every rank reversed. -/
 def mirror : Arrangement α n := a.trans Fin.revPerm
 
+/-- `a.IsEnd x d` holds when `x` is a head in direction `d` of every other element: `x` stands
+first when `d` is head-initial and last when it is head-final. -/
+def IsEnd : HeadDirection → Prop
+  | .headInitial => (a x : ℕ) = 0
+  | .headFinal => (a x : ℕ) + 1 = n
+
+/-- `x` stands first. -/
+abbrev IsInitial : Prop := a.IsEnd x .headInitial
+
+/-- `x` stands last. -/
+abbrev IsFinal : Prop := a.IsEnd x .headFinal
+
+/-- `x` stands neither first nor last. -/
+def IsMedial : Prop := ¬ a.IsInitial x ∧ ¬ a.IsFinal x
+
+instance : ∀ d, Decidable (a.IsEnd x d)
+  | .headInitial => inferInstanceAs (Decidable ((a x : ℕ) = 0))
+  | .headFinal => inferInstanceAs (Decidable ((a x : ℕ) + 1 = n))
+
+instance : Decidable (a.IsMedial x) := inferInstanceAs (Decidable (_ ∧ _))
+
 variable {a x y}
 
-theorem headDirection_eq_headInitial :
+@[simp] theorem headDirection_eq_headInitial :
     a.headDirection x y = .headInitial ↔ a.Precedes x y :=
   HeadDirection.ofLT_eq_headInitial
 
-theorem headDirection_eq_headFinal : a.headDirection x y = .headFinal ↔ ¬ a.Precedes x y :=
+@[simp] theorem headDirection_eq_headFinal :
+    a.headDirection x y = .headFinal ↔ ¬ a.Precedes x y :=
   HeadDirection.ofLT_eq_headFinal
+
+theorem Precedes.trans {z : α} (h₁ : a.Precedes x y) (h₂ : a.Precedes y z) : a.Precedes x z :=
+  lt_trans h₁ h₂
+
+theorem Precedes.asymm (h : a.Precedes x y) : ¬ a.Precedes y x := lt_asymm h
+
+/-! ### The mirror image -/
+
+@[simp] theorem mirror_apply : a.mirror x = (a x).rev := rfl
 
 @[simp] theorem mirror_mirror (a : Arrangement α n) : a.mirror.mirror = a := by
   ext c; simp [mirror]
@@ -201,6 +260,140 @@ theorem headDirection_mirror (h : x ≠ y) :
   rw [← HeadDirection.ofLT_swap (a.injective.ne h)]
   simp [mirror, HeadDirection.ofLT]
 
+/-! ### Adjacency -/
+
+private theorem fin_covBy_iff {i j : Fin n} : i ⋖ j ↔ (i : ℕ) + 1 = j := by
+  refine ⟨fun ⟨hlt, h⟩ ↦ ?_, fun h ↦ ⟨Fin.lt_def.2 (by omega), fun c hc hcj ↦ ?_⟩⟩
+  · by_contra hne
+    have : (i : ℕ) < j := hlt
+    exact h (c := ⟨i + 1, by omega⟩) (Fin.lt_def.2 (by simp)) (Fin.lt_def.2 (by simp; omega))
+  · simp only [Fin.lt_def] at hc hcj
+    omega
+
+theorem adjacent_iff_val : a.Adjacent x y ↔ (a x : ℕ) + 1 = a y ∨ (a y : ℕ) + 1 = a x := by
+  simp only [Adjacent, fin_covBy_iff]
+
+instance : Decidable (a.Adjacent x y) := decidable_of_iff _ adjacent_iff_val.symm
+
+theorem adjacent_comm : a.Adjacent x y ↔ a.Adjacent y x := or_comm
+
+theorem Adjacent.ne (h : a.Adjacent x y) : x ≠ y := by
+  rintro rfl
+  simp [adjacent_iff_val] at h
+
+/-- The mirror image keeps every adjacency. -/
+@[simp] theorem adjacent_mirror : a.mirror.Adjacent x y ↔ a.Adjacent x y := by
+  have := (a x).isLt
+  have := (a y).isLt
+  simp only [adjacent_iff_val, mirror_apply, Fin.val_rev]
+  omega
+
+/-! ### Ends -/
+
+theorem isInitial_iff_val : a.IsInitial x ↔ (a x : ℕ) = 0 := Iff.rfl
+
+theorem isFinal_iff_val : a.IsFinal x ↔ (a x : ℕ) + 1 = n := Iff.rfl
+
+/-- The first element precedes every other. -/
+theorem isInitial_iff : a.IsInitial x ↔ ∀ y, y ≠ x → a.Precedes x y := by
+  rw [isInitial_iff_val]
+  refine ⟨fun h y hy ↦ ?_, fun h ↦ ?_⟩
+  · have := a.injective.ne hy
+    simp only [Precedes, Fin.lt_def, h]
+    exact Nat.pos_of_ne_zero fun h0 ↦ this (Fin.ext (h0.trans h.symm))
+  · by_contra hx
+    have := h (a.symm ⟨0, (a x).pos⟩) fun h0 ↦ hx (by rw [← h0]; simp)
+    simp [Precedes, Fin.lt_def] at this
+
+/-- The last element follows every other. -/
+theorem isFinal_iff : a.IsFinal x ↔ ∀ y, y ≠ x → a.Precedes y x := by
+  rw [isFinal_iff_val]
+  have hx := (a x).isLt
+  refine ⟨fun h y hy ↦ ?_, fun h ↦ ?_⟩
+  · have hne : (a y : ℕ) ≠ a x := fun h' ↦ a.injective.ne hy (Fin.ext h')
+    have := (a y).isLt
+    simp only [Precedes, Fin.lt_def]
+    omega
+  · by_contra hn
+    have := h (a.symm ⟨n - 1, by omega⟩) fun h0 ↦ hn (by rw [← h0]; simp; omega)
+    simp only [Precedes, Fin.lt_def, Equiv.apply_symm_apply] at this
+    omega
+
+/-- `x` stands at the `d` end exactly when it is a `d`-head of every other element. -/
+theorem isEnd_iff {d : HeadDirection} : a.IsEnd x d ↔ ∀ y, y ≠ x → a.headDirection x y = d := by
+  cases d
+  · simpa only [headDirection_eq_headInitial] using isInitial_iff
+  · simp only [headDirection_eq_headFinal]
+    refine isFinal_iff.trans (forall₂_congr fun y hy ↦ ?_)
+    have : a y ≠ a x := a.injective.ne hy
+    simp only [Precedes, not_lt]
+    exact ⟨le_of_lt, fun h ↦ lt_of_le_of_ne h this⟩
+
+/-- The mirror image exchanges the two ends. -/
+theorem isEnd_mirror {d : HeadDirection} : a.mirror.IsEnd x d ↔ a.IsEnd x d.swap := by
+  have := (a x).isLt
+  cases d <;> simp only [IsEnd, mirror_apply, Fin.val_rev, HeadDirection.swap_headInitial,
+    HeadDirection.swap_headFinal] <;> omega
+
+theorem isInitial_mirror : a.mirror.IsInitial x ↔ a.IsFinal x := isEnd_mirror
+
+theorem isFinal_mirror : a.mirror.IsFinal x ↔ a.IsInitial x := isEnd_mirror
+
+theorem isMedial_mirror : a.mirror.IsMedial x ↔ a.IsMedial x := by
+  simp only [IsMedial, isInitial_mirror, isFinal_mirror, and_comm]
+
+/-- Of three elements over three ranks, two are adjacent exactly when the third is not
+medial. -/
+theorem adjacent_iff_not_isMedial {a : Arrangement α 3} {x y z : α} (hxy : x ≠ y) (hxz : x ≠ z)
+    (hyz : y ≠ z) : a.Adjacent x y ↔ ¬ a.IsMedial z := by
+  have := a.injective.ne hxy
+  have := a.injective.ne hxz
+  have := a.injective.ne hyz
+  have := (a x).isLt
+  have := (a y).isLt
+  have := (a z).isLt
+  simp only [adjacent_iff_val, IsMedial, IsEnd, ne_eq, Fin.ext_iff] at *
+  omega
+
+/-! ### The elements before and after an element -/
+
+section Fintype
+
+variable [Fintype α] (a x)
+
+/-- The elements after `x`. -/
+def after : Finset α := {c | a.Precedes x c}
+
+/-- The elements before `x`. -/
+def before : Finset α := {c | a.Precedes c x}
+
+variable {a x}
+
+@[simp] theorem mem_after {c : α} : c ∈ a.after x ↔ a.Precedes x c := by simp [after]
+
+@[simp] theorem mem_before {c : α} : c ∈ a.before x ↔ a.Precedes c x := by simp [before]
+
+theorem notMem_after_self : x ∉ a.after x := by simp [Precedes]
+
+theorem before_eq_after_mirror : a.before x = a.mirror.after x := by
+  ext c
+  simp [precedes_mirror]
+
+end Fintype
+
+/-! ### Lists -/
+
+/-- The elements in their order. -/
+def toList (a : Arrangement α n) : List α := (List.finRange n).map a.symm
+
+@[simp] theorem length_toList (a : Arrangement α n) : a.toList.length = n := by simp [toList]
+
+theorem toList_nodup (a : Arrangement α n) : a.toList.Nodup :=
+  (List.nodup_finRange n).map a.symm.injective
+
+theorem mem_toList (a : Arrangement α n) (x : α) : x ∈ a.toList := by
+  simpa [toList] using ⟨a x, by simp⟩
+
 end Arrangement
 
 /-- The three constituents of a transitive clause. -/
@@ -209,6 +402,12 @@ inductive Constituent where
   | object
   | verb
   deriving DecidableEq, Repr, Fintype
+
+/-- The letter of a constituent in the labels "SOV", "SVO", … of the typological literature. -/
+def Constituent.letter : Constituent → Char
+  | .subject => 'S'
+  | .object => 'O'
+  | .verb => 'V'
 
 namespace Arrangement
 
@@ -241,6 +440,21 @@ def ovs : Arrangement Constituent 3 :=
 def osv : Arrangement Constituent 3 :=
   ⟨fun | .object => 0 | .subject => 1 | .verb => 2,
     fun | 0 => .object | 1 => .subject | 2 => .verb, by decide, by decide⟩
+
+/-- The six basic orders. -/
+def basicOrders : List (Arrangement Constituent 3) := [sov, svo, vso, vos, ovs, osv]
+
+/-- Every arrangement of the three constituents is a basic order. -/
+theorem mem_basicOrders : ∀ a : Arrangement Constituent 3, a ∈ basicOrders := by decide
+
+/-- The label of an arrangement of the three constituents, "SOV" for `sov`. -/
+def label (a : Arrangement Constituent 3) : String := .ofList (a.toList.map Constituent.letter)
+
+/-- The basic order with the label `s`, if any. -/
+def ofLabel? (s : String) : Option (Arrangement Constituent 3) := basicOrders.find? (·.label = s)
+
+@[simp] theorem ofLabel?_label : ∀ a : Arrangement Constituent 3, ofLabel? a.label = some a := by
+  decide
 
 end Arrangement
 

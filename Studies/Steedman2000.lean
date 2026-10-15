@@ -297,16 +297,12 @@ theorem gappedConjunct_yield : gappedConjunct.yield = ["Warren", "potatoes"] := 
 
 /-! #### Ross's generalization over the basic orders -/
 
-/-- The side of the verb on which the order `a` puts the argument `x`, where the verb's slash
-for `x` looks. -/
-def argSide (a : Arrangement Constituent 3) (x : Constituent) : Edge :=
-  if a.Precedes .verb x then .right else .left
-
-/-- The transitive verb category of the basic order `a`, seeking each argument on the side `a`
-puts it, the object first as in the English `(S\NP)/NP`. Which argument comes first matters to
-the category only when the two slashes look different ways. -/
+/-- The transitive verb category of the basic order `a`, whose slash for each argument looks to
+the edge of the verb on which `a` puts it, the object first as in the English `(S\NP)/NP`. Which
+argument comes first matters to the category only when the two slashes look different ways. -/
 def transitiveCat (a : Arrangement Constituent 3) : Cat Atom :=
-  (S.push ⟨argSide a .subject, .dot, NP⟩).push ⟨argSide a .object, .dot, NP⟩
+  (S.push ⟨(a.headDirection .verb .subject).dependentEdge, .dot, NP⟩).push
+    ⟨(a.headDirection .verb .object).dependentEdge, .dot, NP⟩
 
 theorem transitiveCat_sov : transitiveCat .sov = sovTV := by decide
 
@@ -333,8 +329,7 @@ gapping follows the direction in which the verb combines, so verb-final orders g
 verb-initial orders forward, while a verb-medial verb has no argument cluster. -/
 theorem gappingDirection_transitiveCat (a : Arrangement Constituent 3) :
     gappingDirection (transitiveCat a) =
-      if a.Precedes .subject .verb ∧ a.Precedes .object .verb then some .backward
-      else if a.Precedes .verb .subject ∧ a.Precedes .verb .object then some .forward
+      if a.IsFinal .verb then some .backward else if a.IsInitial .verb then some .forward
       else none := by
   revert a; decide
 
@@ -370,17 +365,13 @@ instance : DecidablePred RevealedResidue
 category is `S/$`. An SVO clause, whose own verb has no argument cluster, therefore gaps over a
 virtual verb-initial verb, as English does in chapter 7 (62). -/
 theorem rightwardInto_transitiveCat_iff (a : Arrangement Constituent 3) :
-    RightwardInto S (transitiveCat a) ↔ a.Precedes .verb .subject ∧ a.Precedes .verb .object := by
+    RightwardInto S (transitiveCat a) ↔ a.IsInitial .verb := by
   revert a; decide
 
 /-- A clause of basic order `a` gaps in the direction of the cluster over its verb, or, when the
 verb has none, in that of the cluster over the verb-initial verb the revealing rule exposes. -/
 def predictedDirection (a : Arrangement Constituent 3) : Option GappingDirection :=
   gappingDirection (transitiveCat a) <|> gappingDirection vsoTV
-
-/-- The basic orders by the names the data files give them. -/
-def basicOrders : List (String × Arrangement Constituent 3) :=
-  [("SOV", .sov), ("SVO", .svo), ("VSO", .vso), ("VOS", .vos), ("OVS", .ovs), ("OSV", .osv)]
 
 /-- The gapping examples of chapter 7. -/
 def gappingData : List Datum := Examples.all.filter (·.feature? "phenomenon" = some "gapping")
@@ -390,7 +381,7 @@ the direction its clause's basic order predicts. -/
 theorem gapping_acceptable_iff :
     ∀ ex ∈ gappingData, ex.judgment = .acceptable ↔
       ex.parse? "gappingDirection" [("forward", .forward), ("backward", .backward)] =
-        (ex.parse? "wordOrder" basicOrders).bind predictedDirection := by
+        ((ex.feature? "wordOrder").bind Arrangement.ofLabel?).bind predictedDirection := by
   decide
 
 /-! #### Other elliptical constructions -/
