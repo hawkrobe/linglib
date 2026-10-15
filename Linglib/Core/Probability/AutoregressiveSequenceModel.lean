@@ -46,8 +46,13 @@ by a divergent series suffices.
   ([du-etal-2023], Proposition 4.3).
 * `survival_le_pow`: a constant lower bound makes survival decay geometrically.
 * `isTight_iff_of_next_none_eq`: the criterion when the end probability depends only on length.
-* `tsum_length_mul_stringProb_le`, `tsum_length_mul_stringProb_le_div`: expected length is at
-  most total survival, and at most `(1 - c) / c` under an end probability of at least `c`.
+* `stringMeasure_setOf_length_le`, `IsTight.stringMeasure_setOf_length_le`: survival is at
+  least, and in a tight model exactly, the probability of a string of at least that length.
+* `lintegral_length_le`, `IsTight.lintegral_length`, `lintegral_length_le_div`: the expected
+  length is at most, and in a tight model exactly, the total survival after the first step, and
+  at most `(1 - c) / c` under an end probability of at least `c`.
+* `IsTight.tsum_prefixProb`: in a tight model the prefix probabilities sum to the expected
+  length plus one ([opedal-chodroff-cotterell-wilcox-2024]).
 * `stringProb_append`, `IsTight.after`, `IsTight.stringMeasure_setOf_prefix`: a string's
   probability factors through the model after its prefix, which inherits tightness, so in a tight
   model the strings extending a prefix have total probability its prefix probability.
@@ -68,6 +73,7 @@ by a divergent series suffices.
 ## References
 
 * [du-etal-2023]
+* [opedal-chodroff-cotterell-wilcox-2024]
 -/
 
 @[expose] public section
@@ -131,6 +137,11 @@ noncomputable def stringMeasure : Measure (List α) :=
 
 theorem stringMeasure_univ : M.stringMeasure Set.univ = ∑' x, M.stringProb x := by
   simp [stringMeasure, Measure.sum_apply _ MeasurableSet.univ]
+
+/-- An integral against the law of the string is a sum weighted by the string probabilities. -/
+theorem lintegral_stringMeasure (f : List α → ℝ≥0∞) :
+    ∫⁻ x, f x ∂M.stringMeasure = ∑' x, M.stringProb x * f x := by
+  simp [stringMeasure, lintegral_sum_measure, lintegral_smul_measure]
 
 /-- A model is tight when its string probabilities sum to one: no mass leaks to sequences that
 never end. -/
@@ -368,52 +379,6 @@ theorem survival_le_pow {c : ℝ≥0∞} (hc : ∀ x : List α, c ≤ M.next x {
         rw [ENNReal.mul_sub fun _ _ ↦ M.survival_ne_top n, mul_one, mul_comm]
       _ ≤ (1 - c) ^ n * (1 - c) := by gcongr
 
-/-! ### Expected length -/
-
-/-- The strings of length at least `m` have total probability at most survival to `m`. -/
-theorem tsum_stopProb_add_le (m : ℕ) : ∑' k, M.stopProb (k + m) ≤ M.survival m := by
-  refine ENNReal.tsum_le_of_sum_range_le fun N ↦ ?_
-  have (N : ℕ) : ∑ k ∈ range N, M.stopProb (k + m) + M.survival (N + m) = M.survival m := by
-    induction N with
-    | zero => simp
-    | succ N ih => rw [sum_range_succ, add_assoc, add_comm (M.stopProb _), Nat.succ_add,
-        survival_succ_add_stopProb, ih]
-  exact (this N).le.trans' le_self_add
-
-/-- The expected length of the generated string is at most the total survival after the first
-step. -/
-theorem tsum_length_mul_stringProb_le :
-    ∑' x, (x.length : ℝ≥0∞) * M.stringProb x ≤ ∑' n, M.survival (n + 1) := by
-  have hlen : ∑' x, (x.length : ℝ≥0∞) * M.stringProb x =
-      ∑' n : ℕ, (n : ℝ≥0∞) * M.stopProb n := by
-    rw [← (Equiv.sigmaFiberEquiv List.length).tsum_eq, ENNReal.tsum_sigma']
-    refine tsum_congr fun n ↦ ?_
-    rw [stopProb, ← ENNReal.tsum_mul_left]
-    exact tsum_congr fun x ↦ by simp [Equiv.sigmaFiberEquiv, x.2]
-  have hcount (n : ℕ) : (n : ℝ≥0∞) * M.stopProb n =
-      ∑' j, if j < n then M.stopProb n else 0 := by
-    rw [tsum_eq_sum (s := range n) fun j hj ↦ by simp_all, sum_ite_of_true fun j hj ↦
-      mem_range.1 hj, sum_const, card_range, nsmul_eq_mul]
-  rw [hlen, tsum_congr hcount, ENNReal.tsum_comm]
-  refine ENNReal.tsum_le_tsum fun j ↦ ?_
-  rw [← ENNReal.summable.sum_add_tsum_nat_add' (k := j + 1),
-    sum_eq_zero fun k hk ↦ by rw [mem_range] at hk; simp [show ¬ j < k by omega], zero_add]
-  have hpos (k : ℕ) : j < k + (j + 1) := by omega
-  simp only [hpos, ite_true]
-  exact M.tsum_stopProb_add_le (j + 1)
-
-/-- An end probability of at least `c` after every prefix bounds the expected length by
-`(1 - c) / c`. -/
-theorem tsum_length_mul_stringProb_le_div {c : ℝ≥0∞} (hc : ∀ x : List α, c ≤ M.next x {none}) :
-    ∑' x, (x.length : ℝ≥0∞) * M.stringProb x ≤ (1 - c) / c := by
-  have hc1 : c ≤ 1 := (hc []).trans prob_le_one
-  calc ∑' x, (x.length : ℝ≥0∞) * M.stringProb x
-      ≤ ∑' n, M.survival (n + 1) := M.tsum_length_mul_stringProb_le
-    _ ≤ ∑' n, (1 - c) ^ (n + 1) := ENNReal.tsum_le_tsum fun n ↦ M.survival_le_pow hc (n + 1)
-    _ = (1 - c) / c := by
-        simp_rw [pow_succ', ENNReal.tsum_mul_left, ENNReal.tsum_geometric,
-          ENNReal.sub_sub_cancel ENNReal.one_ne_top hc1, div_eq_mul_inv]
-
 /-- The string probabilities of any model sum to at most one. -/
 theorem tsum_stringProb_le_one : ∑' x, M.stringProb x ≤ 1 := by
   rw [tsum_stringProb, ENNReal.tsum_eq_iSup_nat]
@@ -452,5 +417,59 @@ theorem IsTight.stringMeasure_setOf_prefix {M : AutoregressiveSequenceModel α} 
   by_cases hx : M.prefixProb x = 0
   · rw [hx, zero_mul]
   · rw [hM.after hx, mul_one]
+
+/-! ### Expected length
+
+The law of the generated string is a sum of point masses, so an integral against it is a sum
+weighted by the string probabilities. Survival to `n` is at least the probability of a string of
+length at least `n`, with equality in a tight model, so the tail-sum formula bounds the expected
+length by the total survival after the first step. -/
+
+/-- Survival to `n` is at least the probability of a string of length at least `n`. -/
+theorem stringMeasure_setOf_length_le (n : ℕ) :
+    M.stringMeasure {y | n ≤ y.length} ≤ M.survival n := by
+  rw [← Measure.tsum_measure_setOf_prefix_length, survival]
+  refine ENNReal.tsum_le_tsum fun x ↦ ?_
+  rw [M.stringMeasure_setOf_prefix]
+  exact mul_le_of_le_one_right' (M.after x.1).tsum_stringProb_le_one
+
+/-- In a tight model survival to `n` is the probability of a string of length at least `n`. -/
+theorem IsTight.stringMeasure_setOf_length_le {M : AutoregressiveSequenceModel α}
+    (hM : M.IsTight) (n : ℕ) : M.stringMeasure {y | n ≤ y.length} = M.survival n := by
+  rw [← Measure.tsum_measure_setOf_prefix_length, survival]
+  exact tsum_congr fun x ↦ hM.stringMeasure_setOf_prefix x.1
+
+/-- The expected length of the generated string is at most the total survival after the first
+step. -/
+theorem lintegral_length_le :
+    ∫⁻ x, (x.length : ℝ≥0∞) ∂M.stringMeasure ≤ ∑' n, M.survival (n + 1) := by
+  rw [lintegral_natCast_eq_tsum_measure_lt .of_discrete]
+  exact ENNReal.tsum_le_tsum fun n ↦ M.stringMeasure_setOf_length_le (n + 1)
+
+/-- In a tight model the expected length is the total survival after the first step. -/
+theorem IsTight.lintegral_length {M : AutoregressiveSequenceModel α} (hM : M.IsTight) :
+    ∫⁻ x, (x.length : ℝ≥0∞) ∂M.stringMeasure = ∑' n, M.survival (n + 1) := by
+  rw [lintegral_natCast_eq_tsum_measure_lt .of_discrete]
+  exact tsum_congr fun n ↦ hM.stringMeasure_setOf_length_le (n + 1)
+
+/-- In a tight model the prefix probabilities sum to the expected length plus one, the
+normalizing constant of the prefix distribution ([opedal-chodroff-cotterell-wilcox-2024],
+Proposition 1). -/
+theorem IsTight.tsum_prefixProb {M : AutoregressiveSequenceModel α} (hM : M.IsTight) :
+    ∑' x, M.prefixProb x = ∫⁻ x, (x.length : ℝ≥0∞) + 1 ∂M.stringMeasure := by
+  rw [← Measure.tsum_measure_setOf_prefix]
+  exact tsum_congr fun x ↦ (hM.stringMeasure_setOf_prefix x).symm
+
+/-- An end probability of at least `c` after every prefix bounds the expected length by
+`(1 - c) / c`. -/
+theorem lintegral_length_le_div {c : ℝ≥0∞} (hc : ∀ x : List α, c ≤ M.next x {none}) :
+    ∫⁻ x, (x.length : ℝ≥0∞) ∂M.stringMeasure ≤ (1 - c) / c := by
+  have hc1 : c ≤ 1 := (hc []).trans prob_le_one
+  calc ∫⁻ x, (x.length : ℝ≥0∞) ∂M.stringMeasure
+      ≤ ∑' n, M.survival (n + 1) := M.lintegral_length_le
+    _ ≤ ∑' n, (1 - c) ^ (n + 1) := ENNReal.tsum_le_tsum fun n ↦ M.survival_le_pow hc (n + 1)
+    _ = (1 - c) / c := by
+        simp_rw [pow_succ', ENNReal.tsum_mul_left, ENNReal.tsum_geometric,
+          ENNReal.sub_sub_cancel ENNReal.one_ne_top hc1, div_eq_mul_inv]
 
 end AutoregressiveSequenceModel
