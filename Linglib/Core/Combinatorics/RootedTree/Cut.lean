@@ -11,6 +11,7 @@ public import Linglib.Core.Data.UnorderedTree.DecEq
 public import Linglib.Core.Data.Multiset.Bind
 public import Linglib.Core.Data.RoseTree.Basic
 public import Mathlib.Algebra.BigOperators.Group.Multiset.Basic
+public import Mathlib.Data.Multiset.Antidiagonal
 
 /-!
 # Admissible-cut enumeration on rose trees
@@ -34,6 +35,7 @@ policy `pruning`, which always leaves nothing, gives the cuts of the Connes–Kr
 * `ConnesKreimer.ExtractInvariant`: the policies that descend along `RoseTree.Perm`.
 * `ConnesKreimer.pruning`, `ConnesKreimer.cutSummandsN`: the pruning policy and its cuts on
   `UnorderedTree`.
+* `ConnesKreimer.emptyCuts`: the enumeration with only the empty cut.
 * `ConnesKreimer.countSingleCutsRho`: the number of single cuts with given crown and trunk.
 
 ## Main results
@@ -471,6 +473,22 @@ private theorem forestCutsG_cutSummandsN_coe (ps : List (RoseTree α)) :
     rw [forestCutsG_cutSummandsN_coe, UnorderedTree.node_mk_tree_list, cutSummandsN_mk,
       cutSummandsG_node, Multiset.map_map, Multiset.map_map]
     exact Multiset.map_congr rfl fun p _ ↦ projSummand_node a p
+
+/-- The enumeration whose only cut is the empty cut. Its coproduct makes every tree primitive. -/
+def emptyCuts (T : UnorderedTree α) : Multiset (Multiset (UnorderedTree α) × UnorderedTree α) :=
+  {(0, T)}
+
+/-- The forest cuts of the empty-cut enumeration split a forest into two subforests. -/
+theorem forestCutsG_emptyCuts (F : Multiset (UnorderedTree α)) :
+    forestCutsG emptyCuts F = Multiset.antidiagonal F := by
+  induction F using Multiset.induction with
+  | empty => rw [forestCutsG_zero, Multiset.antidiagonal_zero]
+  | cons T F ih =>
+    rw [forestCutsG_cons, ih, Multiset.antidiagonal_cons, treeCutsG, emptyCuts,
+      Multiset.map_singleton, ← Multiset.cons_zero (0, _), Multiset.cons_product,
+      Multiset.cons_product, Multiset.zero_product, add_zero, Multiset.map_add, Multiset.map_map,
+      Multiset.map_map, add_comm]
+    congr 1 <;> exact Multiset.map_congr rfl fun x _ ↦ by simp [combinerProjG, Prod.map]
 
 /-- The empty cut is the unique pruning cut with empty crown. -/
 theorem cutSummandsN_filter_empty (T : UnorderedTree α) :
