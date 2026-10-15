@@ -9,6 +9,8 @@ public import Linglib.Core.Algebra.RootedTree.BirkhoffFactorizationSemiring
 public import Linglib.Core.Algebra.RootedTree.Coproduct.Primitive
 public import Linglib.Syntax.Minimalist.Linearization.Externalization
 public import Linglib.Syntax.Minimalist.Derivation.Economy
+public import Linglib.Syntax.Minimalist.Merge.MinimalSearch
+public import Linglib.Syntax.Minimalist.Merge.Sideward
 public import Linglib.Syntax.Minimalist.SyntacticObject.Selection
 public import Linglib.Syntax.Minimalist.SyntacticObject.FormCopy
 public import Mathlib.Combinatorics.Enumerative.Catalan.Tree
@@ -141,6 +143,11 @@ trees with four leaves split as four and one.
 
 ## TODO
 
+No Complexity Loss is graded by vertices, which agrees with the book's degree, the number of lexical
+items, at the pruning cuts but not at the trace cuts: on the workspace of §1.3.4 the trace-cut term
+of Sideward Merge 2(b) loses no vertices. Stating Proposition 1.6.10 at the trace cuts, as
+derivations need, takes the lexical-item grading.
+
 §1.17 reads (1.10.1) as the quadratic case of the combinatorial Dyson–Schwinger equation
 `X = B(P(X))` of (1.17.2), with the grafting operator `B` of Definition 1.3.2 and the recursive
 solution (1.17.3), which the book cites rather than proves. Stating it needs `B` on formal series
@@ -222,6 +229,202 @@ example :
   rw [show wasEatenTrace = deleteAccessible theApple wasEatenTheApple by decide]
   exact Step.minimalYield (step := .im theApple) (W := 0)
     ⟨by decide, by decide, by decide, by simp⟩ (by decide) (by simp [Step.items])
+
+/-! ### Sideward Merge, Minimal Search and economy on the workspace of §1.3.4
+
+The workspace `{eaten, {the, apple}}` of §1.3.4 also admits Sideward Merge of type 2(b), which
+merges *eaten* with *the* cut out of *the apple*, and *the apple* alone admits Internal Merge of
+*the* and Sideward Merge of type 3(a) of *the* and *apple*. On these the general results of §1.4–1.6
+give Sideward Merge a nonzero term, which Minimal Search removes at `ε = 0` while it keeps
+External and Internal Merge. The 2(b) term satisfies Minimal Yield under trace counting, as
+Remark 1.6.9 says. No Complexity Loss excludes it at the pruning cuts. At the trace cuts, graded by
+vertices, it does not, because the trace of *the* takes the place of *the*. -/
+
+/-- *the*, a term of *the apple*. -/
+private def theD : SyntacticObject :=
+  (PlanarSyntacticObject.leaf (tok .D [.N] "the" 0)).toSyntacticObject
+
+/-- *apple*, the other term of *the apple*. -/
+private def appleN : SyntacticObject :=
+  (PlanarSyntacticObject.leaf (tok .N [] "apple" 1)).toSyntacticObject
+
+/-- *eaten*, the other component of the workspace of §1.3.4. -/
+private def eaten : SyntacticObject :=
+  (PlanarSyntacticObject.leaf (tok .V [.D] "eaten" 3)).toSyntacticObject
+
+/-- The four pruning cuts of *the apple*. -/
+private theorem cutSummandsN_theApple : cutSummandsN theApple.val =
+    {({theD.val, appleN.val}, UnorderedTree.leaf Vertex.bare),
+      ({theD.val}, UnorderedTree.node Vertex.bare {appleN.val}),
+      ({appleN.val}, UnorderedTree.node Vertex.bare {theD.val}),
+      (0, theApple.val)} := by
+  rw [show theApple.val = UnorderedTree.node Vertex.bare {theD.val, appleN.val} from
+      congrArg Subtype.val (by decide : theApple = merge theD appleN),
+    cutSummandsN_node, forestCutsG_pair,
+    show theD.val = UnorderedTree.leaf (Vertex.lex (tok .D [.N] "the" 0)) from rfl,
+    show appleN.val = UnorderedTree.leaf (Vertex.lex (tok .N [] "apple" 1)) from rfl,
+    treeCutsG, treeCutsG, cutSummandsN_leaf, cutSummandsN_leaf]
+  simp [combinerProjG, Multiset.cons_product, -cutSummandsN_mk]
+  exact Multiset.cons_swap _ _ _
+
+/-- The pruning cut extracting *the* from *the apple* is the only one with crown `{the}`. -/
+private theorem filter_cutSummandsN_theApple :
+    (cutSummandsN theApple.val).filter (·.1 = {theD.val}) =
+      {({theD.val}, UnorderedTree.node Vertex.bare {appleN.val})} := by
+  have hne : (UnorderedTree.leaf (Vertex.lex (tok .N [] "apple" 1)) : UnorderedTree Vertex) ≠
+      UnorderedTree.leaf (Vertex.lex (tok .D [.N] "the" 0)) :=
+    fun h ↦ (by decide : appleN ≠ theD) (Subtype.ext h)
+  have hcard (a b : UnorderedTree Vertex) : a ::ₘ {b} ≠ {a} := fun h ↦ by
+    simpa using congrArg Multiset.card h
+  rw [show theApple.val = UnorderedTree.node Vertex.bare {theD.val, appleN.val} from
+      congrArg Subtype.val (by decide : theApple = merge theD appleN),
+    cutSummandsN_node, forestCutsG_pair,
+    show theD.val = UnorderedTree.leaf (Vertex.lex (tok .D [.N] "the" 0)) from rfl,
+    show appleN.val = UnorderedTree.leaf (Vertex.lex (tok .N [] "apple" 1)) from rfl,
+    treeCutsG, treeCutsG, cutSummandsN_leaf, cutSummandsN_leaf]
+  simp [combinerProjG, Multiset.cons_product, Multiset.filter_singleton, hne, hcard,
+    -cutSummandsN_mk]
+
+/-- Sideward Merge of type 2(b) at the trace cuts merges *eaten* with *the* beside the remainder
+    of *the apple* (Lemma 1.4.4). -/
+example :
+    Merge.mergeOpC (R := ℤ) traceEncoder Vertex.bare eaten.val theD.val
+        (of' ({eaten.val, theApple.val} : Forest (UnorderedTree Vertex))) =
+      of' ({(merge eaten theD).val, (deleteAccessible theD theApple).val} :
+        Forest (UnorderedTree Vertex)) := by
+  rw [Merge.mergeOpC, Merge.mergeOpG_sideward_2b Vertex.bare
+      (by rw [val_mem_subtrees]; decide) (fun h ↦ (by decide : theD ≠ theApple) (Subtype.ext h)),
+    cutSummandsCN_filter_mover (by decide) (by decide) (by decide), Multiset.map_singleton,
+    Multiset.sum_singleton, merge_val, ← of'_singleton, ← of'_add]
+  rfl
+
+/-- At `ε = 1` weighted Sideward Merge of type 2(b) is Sideward Merge at the pruning cuts. -/
+example :
+    Merge.mergeOpEps (R := ℤ) 1 Vertex.bare eaten.val theD.val
+        (of' ({eaten.val, theApple.val} : Forest (UnorderedTree Vertex))) =
+      of' ({(merge eaten theD).val, UnorderedTree.node Vertex.bare {appleN.val}} :
+        Forest (UnorderedTree Vertex)) := by
+  rw [Merge.mergeOpEps_one, Merge.mergeOp_eq_G, Merge.mergeOpG_sideward_2b Vertex.bare
+      (by rw [val_mem_subtrees]; decide) (fun h ↦ (by decide : theD ≠ theApple) (Subtype.ext h)),
+    filter_cutSummandsN_theApple, Multiset.map_singleton, Multiset.sum_singleton, merge_val,
+    ← of'_singleton, ← of'_add]
+  rfl
+
+/-- At `ε = 0` Minimal Search removes it (Proposition 1.5.1). -/
+example :
+    Merge.mergeOpEps (R := ℤ) 0 Vertex.bare eaten.val theD.val
+      (of' ({eaten.val, theApple.val} : Forest (UnorderedTree Vertex))) = 0 :=
+  Merge.mergeOpEps_zero_of'_of_not_le _ (by decide)
+
+/-- At `ε = 0` External Merge of the two components survives. -/
+example :
+    Merge.mergeOpEps (R := ℤ) 0 Vertex.bare eaten.val theApple.val
+        (of' ({eaten.val, theApple.val} : Forest (UnorderedTree Vertex))) =
+      of' ({(merge eaten theApple).val} : Forest (UnorderedTree Vertex)) := by
+  simpa using Merge.mergeOpEps_zero_pair_add (R := ℤ) (F := 0) Vertex.bare
+    (S := eaten.val) (S' := theApple.val) (Multiset.notMem_zero _) (Multiset.notMem_zero _)
+
+/-- At `ε = 0` Internal Merge of *the* inside *the apple* survives, while Sideward Merge of the
+    same *the* does not. -/
+example :
+    Merge.mergeOpEps (R := ℤ) 0 Vertex.bare (UnorderedTree.node Vertex.bare {appleN.val}) theD.val
+        (Merge.mergeOpUnit theD.val (of' ({theApple.val} : Forest (UnorderedTree Vertex)))) =
+      of' ({UnorderedTree.node Vertex.bare
+        {UnorderedTree.node Vertex.bare {appleN.val}, theD.val}} : Forest (UnorderedTree Vertex)) :=
+  Merge.mergeOpEps_zero_im_composition _ _ _ _ _ filter_cutSummandsN_theApple rfl
+    (fun h ↦ (by decide : theApple ≠ theD) (Subtype.ext h))
+
+private theorem mem_cutSummandsCN_theApple :
+    ({theD.val}, (deleteAccessible theD theApple).val) ∈ cutSummandsCN traceEncoder theApple.val :=
+  Multiset.mem_of_mem_filter (p := fun p ↦ p.1 = {theD.val}) (by
+    rw [cutSummandsCN_filter_mover (by decide) (by decide) (by decide)]
+    exact Multiset.mem_singleton_self _)
+
+/-- The term of Sideward Merge of type 2(b) at the trace cuts takes *eaten* whole and cuts *the*
+    out of *the apple*. -/
+private noncomputable def sidewardTermC : Multiset (UnorderedTree Vertex ×
+    (Forest (UnorderedTree Vertex) × Forest (UnorderedTree Vertex))) :=
+  {(eaten.val, ({eaten.val}, 0)),
+    (theApple.val, ({theD.val}, {(deleteAccessible theD theApple).val}))}
+
+/-- The same term at the pruning cuts. -/
+private noncomputable def sidewardTermN : Multiset (UnorderedTree Vertex ×
+    (Forest (UnorderedTree Vertex) × Forest (UnorderedTree Vertex))) :=
+  {(eaten.val, ({eaten.val}, 0)),
+    (theApple.val, ({theD.val}, {UnorderedTree.node Vertex.bare {appleN.val}}))}
+
+private theorem sidewardTermC_mem :
+    sidewardTermC ∈ forestCutChoicesG (cutSummandsCN traceEncoder) {eaten.val, theApple.val} := by
+  rw [Multiset.insert_eq_cons, forestCutChoicesG_cons, ← Multiset.cons_zero, forestCutChoicesG_cons,
+    forestCutChoicesG_zero]
+  exact Multiset.mem_bind.mpr ⟨({eaten.val}, 0), Multiset.mem_cons_self _ _,
+    Multiset.mem_map.mpr ⟨_, Multiset.mem_bind.mpr ⟨_,
+      Multiset.mem_cons_of_mem (Multiset.mem_map_of_mem _ mem_cutSummandsCN_theApple),
+      Multiset.mem_map.mpr ⟨0, Multiset.mem_singleton_self _, rfl⟩⟩, rfl⟩⟩
+
+private theorem sidewardTermN_mem :
+    sidewardTermN ∈ forestCutChoicesG cutSummandsN {eaten.val, theApple.val} := by
+  rw [Multiset.insert_eq_cons, forestCutChoicesG_cons, ← Multiset.cons_zero, forestCutChoicesG_cons,
+    forestCutChoicesG_zero]
+  exact Multiset.mem_bind.mpr ⟨({eaten.val}, 0), Multiset.mem_cons_self _ _,
+    Multiset.mem_map.mpr ⟨_, Multiset.mem_bind.mpr ⟨_,
+      Multiset.mem_cons_of_mem (Multiset.mem_map_of_mem (fun p ↦ (p.1, {p.2}))
+        (show ({theD.val}, UnorderedTree.node Vertex.bare {appleN.val}) ∈ cutSummandsN theApple.val
+          by rw [cutSummandsN_theApple]; simp)),
+      Multiset.mem_map.mpr ⟨0, Multiset.mem_singleton_self _, rfl⟩⟩, rfl⟩⟩
+
+/-- The 2(b) term satisfies Minimal Yield under trace counting, so Minimal Yield does not tell it
+    apart from Internal Merge (Remark 1.6.9). -/
+example : MinimalYield UnorderedTree.accessibleCount {eaten.val, theApple.val}
+    {(merge eaten theD).val, (deleteAccessible theD theApple).val} := by
+  have := (MinimalYield.merge_term_accessibleCount_iff none sidewardTermC_mem
+    (S := eaten.val) (S' := theD.val)
+    (fun T hT ↦ by
+      rcases Multiset.mem_cons.mp hT with rfl | hT
+      · exact ⟨_, rfl⟩
+      · rw [Multiset.mem_singleton.mp hT]; exact ⟨_, rfl⟩)
+    (by simp [sidewardTermC])).mpr (by simp [sidewardTermC])
+  simpa [sidewardTermC] using this
+
+/-- At the pruning cuts the 2(b) term loses complexity along its component map, since *the apple*
+    goes to the lighter trunk `{apple}` (Proposition 1.6.10). -/
+example : ¬ NoComplexityLoss.Map
+    (componentMap (UnorderedTree.node Vertex.bare {eaten.val, theD.val}) sidewardTermN) :=
+  NoComplexityLoss.not_map_componentMap_merge Vertex.bare sidewardTermN_mem
+    (by simp [sidewardTermN]) (.inr (by decide))
+
+/-- At the trace cuts the 2(b) term loses no vertices along its component map, since the trace of
+    *the* takes its place in *the apple*. Graded by vertices, No Complexity Loss excludes Sideward
+    Merge only at the pruning cuts. -/
+example : NoComplexityLoss.Map
+    (componentMap (UnorderedTree.node Vertex.bare {eaten.val, theD.val}) sidewardTermC) := by
+  simp [NoComplexityLoss.Map, componentMap, sidewardTermC]
+  decide
+
+/-- The book's degree counts leaves (Definition 1.6.2) and is conserved because no lexical item is
+    ever removed. Counting the lexical items, it does drop at the trace cuts, since the remainder
+    of *the apple* keeps only *apple*. -/
+example : (deleteAccessible theD theApple).val.leaves.countP (·.isLeft) <
+    theApple.val.leaves.countP (·.isLeft) := by
+  decide
+
+/-- The term of Sideward Merge of type 3(a) of *the* and *apple* cuts both out of *the apple*. -/
+private noncomputable def sideward3a : Multiset (UnorderedTree Vertex ×
+    (Forest (UnorderedTree Vertex) × Forest (UnorderedTree Vertex))) :=
+  {(theApple.val, ({theD.val, appleN.val}, {UnorderedTree.leaf Vertex.bare}))}
+
+/-- It raises the number of components, so it violates Minimal Yield under any counting
+    (Proposition 1.6.8). -/
+example (acc : UnorderedTree Vertex → ℕ) (X : UnorderedTree Vertex) :
+    ¬ MinimalYieldWeak acc {theApple.val} ({X} + (sideward3a.map Prod.snd).sum.2) := by
+  have hs : sideward3a ∈ forestCutChoicesG cutSummandsN {theApple.val} := by
+    rw [← Multiset.cons_zero, forestCutChoicesG_cons, forestCutChoicesG_zero]
+    exact Multiset.mem_bind.mpr ⟨_, Multiset.mem_cons_of_mem (Multiset.mem_map_of_mem
+      (fun p ↦ (p.1, {p.2}))
+      (show ({theD.val, appleN.val}, UnorderedTree.leaf Vertex.bare) ∈ cutSummandsN theApple.val
+        by rw [cutSummandsN_theApple]; exact Multiset.mem_cons_self _ _)),
+      Multiset.mem_map.mpr ⟨0, Multiset.mem_singleton_self _, rfl⟩⟩
+  exact MinimalYieldWeak.not_of_forall_notMem acc hs (by simp [sideward3a]; decide) X
 
 /-! ### The core computational structure of Merge (§1.10) -/
 

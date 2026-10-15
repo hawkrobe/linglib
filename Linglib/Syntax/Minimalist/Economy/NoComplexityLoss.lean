@@ -24,7 +24,10 @@ grading: the deletion coproduct conserves it exactly (`cutSummandsN_numNodes`) f
 with none of the nullary-node corrections leaf count incurs when a node loses all its children
 under a multi-edge cut. The condition is a nondecreasing one, and vertex count delivers every
 conclusion leaf count would: the Merge node's weight strictly exceeds each operand's, and every
-deletion quotient's weight is strictly smaller than its source.
+deletion quotient's weight is strictly smaller than its source. This holds at the pruning cuts the
+theorems use. Under the trace cuts a trace leaf takes the place of each extracted tree, so
+extracting a single lexical item keeps the vertex count, and there only the book's degree, the
+number of lexical items, drops.
 
 ## Main definitions
 
