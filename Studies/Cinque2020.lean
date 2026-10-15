@@ -1,83 +1,193 @@
 module
 
-public import Linglib.Syntax.Clause.Relative
+public import Studies.Cinque2005
 public import Linglib.Fragments.English.Relativization
 public import Linglib.Fragments.Hebrew.Relativization
 
 /-!
-# Cinque 2020: The Syntax of Relative Clauses
+# Cinque (2020): The Syntax of Relative Clauses
 
-Every attested type of relative clause — externally headed post-nominal and pre-nominal,
-internally headed, double-headed, headless, correlative and adjoined — derives from one
-double-headed structure, the clause merged pre-nominally with an external Head, the indefinite
-chunk `dP` of the modified noun's extended projection, and an internal Head, by movement,
-deletion under identity and replacement by a proform (Introduction, §1.5). In a raising
-derivation the internal Head raises to Spec,CP, is the overt Head and licenses deletion of the
-external one ([kayne-1994]), so reconstruction and island effects are detectable; in a matching
-derivation the external Head raises and is overt, and the internal Head is deleted or replaced.
-Deletion is under identity: it is possible only when the internal Head is an exact match of the
-external `dP`, as with the invariant relativizers *that* and *che*, while an internal Head that
-is bigger, a DP or KP or one inside a PP, is categorially distinct and is represented by a
-wh-pronoun or a resumptive (§1.5, Chapter 2). The types merge at increasing heights of the
-nominal extended projection, participial below maximalizing below restrictive below
-kind-defining below non-restrictive (§3.5), and Chapter 4 surveys the six strategies for the
-internal Head: a gap with an invariant relativizer, a relative pronoun, a resumptive, PRO,
-non-reduction and verb-coding.
+Cinque derives every type of relative clause from one double-headed structure: the clause is merged
+in a specifier of the nominal extended projection, the part of that projection below it is the
+external Head, and the clause contains an internal Head. Movement, deletion under identity and
+replacement by a proform do the rest (Introduction, §1.5). In a raising derivation the internal Head
+raises to Spec,CP and deletes the external one, so the overt Head reconstructs into the clause; in a
+matching derivation the external Head is overt and the internal one is deleted or replaced. Which
+options a relative clause has depends on its type, through the height at which the type is merged,
+and on whether the two Heads match (Introduction): a type merged higher has a bigger external Head
+(`externalHead_mono`), and a Head is deleted only under identity with the other, so an internal Head
+bigger than the external one is neither a gap nor raised (`RC.WellFormed.not_reconstructs_of_lt`).
 
-`RC` is the double-headed structure with its derivation, the category `Head` of its internal
-Head, the strategy realizing it, the relativized position and the clause's position;
-`RC.overtHead` and `RC.Reconstructs` follow from the derivation, and `RC.WellFormed` is deletion
-under identity, from which `bigger_head_no_gap_deletion` derives the wh-pronoun or resumptive for
-a Head bigger than `dP`. The three worked examples — English *that* on an object, English *to
-whom* on an oblique and Hebrew *she-* with a resumptive on a genitive — each realize their
-position with an NP_rel type the English and Hebrew Fragments' relativizers record there. The
-tree geometry of Spec,CP and the `dP`/DP cartography is not modelled, and PRO and verb-coding
-are approximated in the substrate's inventory of NP_rel types.
+`RCType.externalHead` reads the external Head off the order of external Merge (205): the
+indefinite `dP` for restrictives, merged between the demonstrative and the cardinal numeral, a
+full DP for non-restrictives, merged above the demonstrative. A restrictive with a relative
+pronoun, a DP, is therefore derived by matching and does not reconstruct
+(`RC.WellFormed.not_reconstructs_of_relativePronoun`), and maximalizing relatives, which force
+raising, take no relative pronoun (`RC.WellFormed.strategy_ne_relativePronoun_of_maximalizing`).
+The derivations of Universal 20 in `Cinque2005` linearize (205), before the noun without
+movement and after it in the mirror order when the noun's phrase raises past each modifier,
+which gives the orders of the rigid head-final and head-initial languages of §3.5
+(`unmarkedOrders_restrictive`, `unmarkedOrders_participial`).
+
+## Implementation notes
+
+* A DP with or without its case layer is one size of Head, as in Chapter 4; a DP inside an
+  adposition's or a possessor's phrase is bigger.
+* (205) is taken without the universal quantifier; the non-integrated non-restrictives above it
+  belong to discourse grammar (§3.1) and are left out.
+* Verb-coding is not a strategy for the internal Head: §4.6 analyses it as marking on the verb
+  alongside deletion or pronoun retention, under the same size condition.
+
+## TODO
+
+* Chapter 2 derives each syntactic type (internally headed, double-headed, headless,
+  correlative) from which Heads are pronounced and where they move; only the two derivations of
+  externally headed relatives are modelled.
+* The ordering contrasts between stacked relatives that motivate (205), (176)–(177) and
+  (183)–(191), are not rows, and §2.2.3's account of the absence of relative pronouns in
+  prenominal relatives, by R-binding under the linear correspondence axiom, needs a
+  linearization the substrate lacks.
 
 ## References
 
-* [G. Cinque, *The Syntax of Relative Clauses: A Unified Analysis* (2020)][cinque-2020]
-* [R. S. Kayne, *The Antisymmetry of Syntax* (1994)][kayne-1994]
+* [cinque-2020]
+* [cinque-2005]
 -/
 
 @[expose] public section
 
 namespace Cinque2020
 
-open Relativization
+open Relativization Cinque2005
 
-/-! ### The two derivations (§1.5) -/
+/-! ### The order of external Merge (§3.5) -/
 
-/-- Which Head raises and is overt. -/
+/-- The types of relative clause, by the position of their external Merge. -/
+inductive RCType
+  /-- Participial, of an individual-level property (§3.5.7). -/
+  | participialIndividual
+  /-- Participial, of a stage-level property. -/
+  | participialStage
+  | infinitival
+  /-- Amount and other maximalizing relatives, whose Head is interpreted inside the clause
+  (§1.2). -/
+  | maximalizing
+  /-- Finite restrictive, with Italian *che* or *cui*. -/
+  | restrictive
+  /-- Finite restrictive with Italian *il quale*, merged above the unmarked one (§3.5.4). -/
+  | restrictiveMarked
+  | kindDefining
+  /-- Integrated non-restrictive (§3.1). -/
+  | nonRestrictive
+  deriving DecidableEq, Repr, Fintype
+
+/-- A position in the nominal extended projection, held by the noun, one of its modifiers of
+Universal 20 or a relative clause. -/
+inductive Slot
+  | N | A | Num | Dem
+  | rc (t : RCType)
+  deriving DecidableEq, Repr
+
+/-- The order of external Merge (205), bottom up from the noun, without the universal
+quantifier. -/
+def hierarchy : List Slot :=
+  [.A, .rc .participialIndividual, .rc .participialStage, .Num, .rc .infinitival,
+    .rc .maximalizing, .rc .restrictive, .rc .restrictiveMarked, .rc .kindDefining, .Dem,
+    .rc .nonRestrictive]
+
+/-- The height of a type's external Merge. -/
+def RCType.height (t : RCType) : ℕ := hierarchy.idxOf (.rc t)
+
+/-- A type is below another when it is merged lower. -/
+instance : LinearOrder RCType := LinearOrder.lift' RCType.height (by decide)
+
+/-! ### Linearization (§1.4, §3.5) -/
+
+/-- The lexical item at a slot in the derivations of `Cinque2005`, a relative clause being a
+`C`. -/
+def Slot.token : Slot → Minimalist.LexicalItem.Token
+  | .N => tokN
+  | .A => tokA
+  | .Num => tokNum
+  | .Dem => tokDem
+  | .rc t => ⟨.of .C [], t.height + 5⟩
+
+/-- The surface orders of the unmarked derivations of `Cinque2005`, without movement or raising
+the noun's phrase past each modifier with whose-picture pied-piping, from the noun and the slots
+`s` merged in the order of (205). -/
+def unmarkedOrders (s : List Slot) : List (List Minimalist.LexicalItem.Token) :=
+  (((stagesOf ((hierarchy.filter (· ∈ s)).map Slot.token)).filter (·.marked = [])).map
+    (·.derivation.surfaceTokens)).eraseDups
+
+/-- A finite restrictive, merged between the demonstrative and the cardinal numeral, surfaces
+as Dem RC Num A N in rigid head-final languages (181) and N A Num RC Dem in rigid head-initial
+ones (182). -/
+theorem unmarkedOrders_restrictive :
+    unmarkedOrders [.A, .Num, .rc .restrictive, .Dem] =
+      [[.Dem, .rc .restrictive, .Num, .A, .N], [.N, .A, .Num, .rc .restrictive, .Dem]].map
+        (·.map Slot.token) := by
+  decide +kernel
+
+/-- A relative merged where participials are, between the cardinal numeral and the adjectives,
+surfaces as Dem Num RC A N, in Karata and Mandarin (200a–b) and the participials of German,
+English and Bulgarian (192)–(197), and as N A RC Num Dem in T'in (200c). -/
+theorem unmarkedOrders_participial :
+    unmarkedOrders [.A, .Num, .rc .participialStage, .Dem] =
+      [[.Dem, .Num, .rc .participialStage, .A, .N],
+        [.N, .A, .rc .participialStage, .Num, .Dem]].map (·.map Slot.token) := by
+  decide +kernel
+
+/-- Restrictives are merged below the demonstrative and non-restrictives above it, as the orders
+of (171)–(175) show, Dem RC N and N RC Dem for restrictives and RC Dem N and N Dem RC for
+non-restrictives. -/
+theorem unmarkedOrders_dem :
+    unmarkedOrders [.rc .restrictive, .Dem] =
+        [[.Dem, .rc .restrictive, .N], [.N, .rc .restrictive, .Dem]].map (·.map Slot.token) ∧
+      unmarkedOrders [.Dem, .rc .nonRestrictive] =
+        [[.rc .nonRestrictive, .Dem, .N], [.N, .Dem, .rc .nonRestrictive]].map
+          (·.map Slot.token) := by
+  decide +kernel
+
+/-! ### The two Heads and the two derivations (§1.5) -/
+
+/-- The size of a Head, a chunk of the nominal extended projection or a phrase around one. From
+the smallest, a Head is the noun with its adjectives, the indefinite `dP` up to the cardinal
+numeral, the full `DP`, or a DP inside a larger phrase, an adposition's or a possessor's. -/
+inductive Size
+  | NP | dP | DP | embedded
+  deriving DecidableEq, Repr, Fintype
+
+/-- Sizes are ordered by containment. -/
+instance : LinearOrder Size := LinearOrder.lift' Size.ctorIdx (by decide)
+
+/-- The external Head is the part of the nominal extended projection below the relative clause
+(§1.4). It is a DP if it contains the demonstrative and the indefinite `dP` if it contains the
+cardinal numeral. -/
+def RCType.externalHead (t : RCType) : Size :=
+  if .Dem ∈ hierarchy.take t.height then .DP
+  else if .Num ∈ hierarchy.take t.height then .dP else .NP
+
+/-- A type merged higher has a bigger external Head. A non-restrictive's contains the strong
+determiners, a restrictive's only the weak ones and a participial's neither (Introduction,
+fn. 3). -/
+theorem externalHead_mono : Monotone RCType.externalHead := by decide
+
+/-- The two derivations, which differ in which Head is overt. -/
 inductive Derivation
-  /-- The internal Head raises to Spec,CP and is overt; the external Head is deleted. -/
+  /-- The internal Head raises to Spec,CP, is overt and deletes the external Head. -/
   | raising
   /-- The external Head is overt; the internal Head is deleted or replaced by a proform. -/
   | matching
   deriving DecidableEq, Repr
 
-/-- The two Heads. -/
-inductive HeadChoice
-  | internal | external
-  deriving DecidableEq, Repr
+/-- The derivations a type admits. Maximalizing relatives, whose Head is interpreted inside the
+clause, force raising (§2.1.1); kind-defining and non-restrictive relatives have only matching
+(§2.1.1 fn. 12, §3.1.8). -/
+def RCType.Admits (t : RCType) (d : Derivation) : Prop :=
+  (t = .maximalizing → d = .raising) ∧ (t = .kindDefining ∨ t = .nonRestrictive → d = .matching)
 
-/-- The overt Head of a derivation. -/
-def Derivation.overtHead : Derivation → HeadChoice
-  | .raising => .internal
-  | .matching => .external
-
-/-- A Head as a chunk of the relativized noun's extended projection: the indefinite `dP`, with
-weak determiners only, a DP or KP above it, or either inside a larger phrase such as a PP. -/
-inductive Head
-  | dP
-  | DP
-  | KP
-  /-- A DP or KP inside a larger phrase. -/
-  | inside (h : Head)
-  deriving DecidableEq, Repr
-
-/-- The external Head is the indefinite `dP`. -/
-def externalHead : Head := .dP
+instance (t : RCType) (d : Derivation) : Decidable (t.Admits d) :=
+  inferInstanceAs (Decidable (_ ∧ _))
 
 /-! ### Strategies for the internal Head (Chapter 4) -/
 
@@ -85,122 +195,124 @@ def externalHead : Head := .dP
 inductive Strategy
   /-- A gap with an invariant relativizer, English *that*, Italian *che*. -/
   | invariantRelativizer
-  /-- A relative pronoun or adjective, *who* and *which*, Italian *cui*. -/
+  /-- A relative pronoun or adjective, *who* and *which*, Italian *cui* and *il quale*. -/
   | relativePronoun
   /-- A resumptive pronoun or epithet. -/
   | resumptive
-  /-- PRO, in participial relative clauses. -/
+  /-- PRO, in participial relative clauses (§4.4). -/
   | pro
-  /-- Full repetition of the Head. -/
+  /-- The internal Head pronounced as well as the external one (§4.5). -/
   | nonReduction
-  /-- Verb-coding. -/
-  | verbCoding
   deriving DecidableEq, Repr
 
-/-- The strategy deletes the internal Head under identity with the external one, the gap with an
-invariant relativizer; PRO replaces the Head by a null proform rather than deleting it. -/
-def Strategy.DeletesInternalHead (s : Strategy) : Prop := s = .invariantRelativizer
-
-instance (s : Strategy) : Decidable s.DeletesInternalHead := by
-  unfold Strategy.DeletesInternalHead; infer_instance
-
-/-- The strategy's NP_rel type in the substrate's inventory, which has no PRO or verb-coding:
-PRO as a gap, verb-coding as non-reduction. -/
+/-- What the strategy leaves at the relativized position, in the substrate's inventory, where
+PRO counts as a gap. -/
 def Strategy.toNPRel : Strategy → NPRel
-  | .invariantRelativizer => .gap
+  | .invariantRelativizer | .pro => .gap
   | .relativePronoun => .relPronoun
   | .resumptive => .resumptive
-  | .pro => .gap
   | .nonReduction => .nonReduction
-  | .verbCoding => .nonReduction
-
-/-! ### Types and merge height (§3.5) -/
-
-/-- The types of relative clause, by increasing height of external merge. -/
-inductive RCType
-  | participial | maximalizing | restrictive | kindDefining | nonRestrictive
-  deriving DecidableEq, Repr
-
-/-- The height of external merge in the nominal extended projection, a bigger external Head
-merging higher: maximalizing below restrictive by the refinement of §3.5.5, kind-defining
-between restrictive and non-restrictive by §3.5.3. -/
-def RCType.mergeHeight : RCType → ℕ
-  | .participial => 0
-  | .maximalizing => 1
-  | .restrictive => 2
-  | .kindDefining => 3
-  | .nonRestrictive => 4
 
 /-! ### The relative clause -/
 
-/-- A relative clause in the double-headed structure: its type, derivation, internal Head and
-the strategy realizing it, the relativized position and the clause's position. -/
+/-- A relative clause in the double-headed structure, with its type, its derivation, its
+internal Head and the strategy realizing it, and the relativized position. -/
 structure RC where
-  rcType : RCType
+  type : RCType
   derivation : Derivation
-  internalHead : Head
+  internalHead : Size
   strategy : Strategy
   position : Position
-  placement : Placement
   deriving Repr
 
-/-- The overt Head. -/
-def RC.overtHead (r : RC) : HeadChoice := r.derivation.overtHead
+/-- The overt Head reconstructs into the clause when it is in a chain with the clause-internal
+position, in raising (§1.5). -/
+def RC.Reconstructs (r : RC) : Prop := r.derivation = .raising
 
-/-- Reconstruction and island effects are detectable iff the overt Head is the internal one, in
-a chain with the clause-internal position. -/
-def RC.Reconstructs (r : RC) : Prop := r.overtHead = .internal
+instance (r : RC) : Decidable r.Reconstructs := inferInstanceAs (Decidable (_ = _))
 
-instance (r : RC) : Decidable r.Reconstructs := by
-  unfold RC.Reconstructs; infer_instance
+/-- A relative clause is well formed when its type admits the derivation, a Head is deleted
+only under identity with the other, the external Head in raising (§4.1) and the internal Head
+under the gap strategy (§1.5), and a relative pronoun, a DP, realizes an internal Head at least
+that big (§2.1.2). -/
+structure RC.WellFormed (r : RC) : Prop where
+  admits : r.type.Admits r.derivation
+  deletion : r.Reconstructs ∨ r.strategy = .invariantRelativizer →
+    r.internalHead = r.type.externalHead
+  relativePronoun : r.strategy = .relativePronoun → .DP ≤ r.internalHead
 
-/-- Deletion under identity: the internal Head may be deleted only when it is an exact match of
-the external Head. -/
-def RC.WellFormed (r : RC) : Prop :=
-  r.strategy.DeletesInternalHead → r.internalHead = externalHead
+theorem RC.wellFormed_iff (r : RC) : r.WellFormed ↔ r.type.Admits r.derivation ∧
+    (r.Reconstructs ∨ r.strategy = .invariantRelativizer →
+      r.internalHead = r.type.externalHead) ∧
+    (r.strategy = .relativePronoun → .DP ≤ r.internalHead) :=
+  ⟨fun ⟨a, d, p⟩ ↦ ⟨a, d, p⟩, fun ⟨a, d, p⟩ ↦ ⟨a, d, p⟩⟩
 
-instance (r : RC) : Decidable r.WellFormed := by
-  unfold RC.WellFormed; infer_instance
+instance (r : RC) : Decidable r.WellFormed := decidable_of_iff _ r.wellFormed_iff.symm
 
-/-- An internal Head bigger than the external `dP` is categorially distinct from it and cannot be
-deleted, so it is a wh-pronoun or a resumptive. -/
-theorem bigger_head_no_gap_deletion (r : RC) (h : r.WellFormed)
-    (hbig : r.internalHead ≠ externalHead) : r.strategy ≠ .invariantRelativizer :=
-  fun hs => hbig (h hs)
+variable {r : RC}
+
+/-- The gap strategy realizes exactly an internal Head the size of the external one, a `dP` in
+a restrictive and a DP in a non-restrictive (§4.2). -/
+theorem RC.wellFormed_iff_of_invariantRelativizer (hs : r.strategy = .invariantRelativizer) :
+    r.WellFormed ↔ r.type.Admits r.derivation ∧ r.internalHead = r.type.externalHead := by
+  simp [RC.wellFormed_iff, hs]
+
+/-- An internal Head bigger than the external one is categorially distinct from it, so neither
+Head deletes the other, and the relative clause neither reconstructs nor has a gap (§1.5,
+§2.1.2). -/
+theorem RC.WellFormed.not_reconstructs_of_lt (h : r.WellFormed)
+    (hlt : r.type.externalHead < r.internalHead) :
+    ¬ r.Reconstructs ∧ r.strategy ≠ .invariantRelativizer :=
+  not_or.1 (mt h.deletion hlt.ne')
+
+/-- Below the demonstrative, a relative pronoun is bigger than the external Head, so the
+relative clause does not reconstruct (§2.1.2.2 (43), §2.1.1 fn. 13). -/
+theorem RC.WellFormed.not_reconstructs_of_relativePronoun (h : r.WellFormed)
+    (hext : r.type.externalHead < .DP) (hs : r.strategy = .relativePronoun) :
+    ¬ r.Reconstructs :=
+  (h.not_reconstructs_of_lt (hext.trans_le (h.relativePronoun hs))).1
+
+/-- Maximalizing relatives take no relative pronoun (§2.1.1 (8)), since they force raising, which
+needs the internal Head to match the external `dP`. -/
+theorem RC.WellFormed.strategy_ne_relativePronoun_of_maximalizing (h : r.WellFormed)
+    (ht : r.type = .maximalizing) : r.strategy ≠ .relativePronoun := fun hs ↦
+  h.not_reconstructs_of_relativePronoun (by rw [ht]; decide) hs (h.admits.1 ht)
 
 /-! ### Worked examples -/
 
-/-- *The book that John read*: matching, the internal Head an exact match, deleted under the
-invariant relativizer. -/
-def englishThatObject : RC :=
-  ⟨.restrictive, .matching, .dP, .invariantRelativizer, .directObject, .postNominal⟩
+/-- *The book that John read*, by matching. -/
+def englishThatObject : RC := ⟨.restrictive, .matching, .dP, .invariantRelativizer, .directObject⟩
 
-/-- Its realization, a direct-object gap, is what the English Fragment's *that* attests. -/
-theorem englishThatObject_attested :
-    englishThatObject.WellFormed ∧ ¬ englishThatObject.Reconstructs ∧
-      englishThatObject.strategy.toNPRel ∈
-        English.Relativization.relThat.realize englishThatObject.position := by
+/-- *The champagne that they spilled*, on its amount reading, by raising. -/
+def englishThatAmount : RC := ⟨.maximalizing, .raising, .dP, .invariantRelativizer, .directObject⟩
+
+/-- *The man to whom I spoke*, whose internal Head, a DP inside a PP, is a relative pronoun. -/
+def englishWhomOblique : RC :=
+  ⟨.restrictive, .matching, .embedded, .relativePronoun, .oblique⟩
+
+/-- Hebrew *she-* with a resumptive at the genitive, the internal Head a DP inside a DP. -/
+def hebrewResumptiveGenitive : RC :=
+  ⟨.restrictive, .matching, .embedded, .resumptive, .genitive⟩
+
+/-- The gap realizations are what the English Fragment's *that* records at the direct object;
+the amount relative reconstructs, the other does not. -/
+theorem englishThat_attested :
+    englishThatObject.WellFormed ∧ englishThatAmount.WellFormed ∧
+      ¬ englishThatObject.Reconstructs ∧ englishThatAmount.Reconstructs ∧
+      Strategy.invariantRelativizer.toNPRel ∈
+        English.Relativization.relThat.realize .directObject := by
   decide
 
-/-- *The man to whom I spoke*: the internal Head, a DP inside a PP, is bigger than `dP`, so it is
-a relative pronoun. -/
-def englishWhomOblique : RC :=
-  ⟨.restrictive, .matching, .inside .DP, .relativePronoun, .oblique, .postNominal⟩
-
-/-- Its realization, an oblique relative pronoun, is what the English Fragment's *whom*
-attests. -/
+/-- The oblique relative pronoun is what the English Fragment's *whom* records, and the
+pied-piped Head is no gap. -/
 theorem englishWhomOblique_attested :
     englishWhomOblique.WellFormed ∧
+      ¬ { englishWhomOblique with strategy := .invariantRelativizer }.WellFormed ∧
       englishWhomOblique.strategy.toNPRel ∈
         English.Relativization.relWhom.realize englishWhomOblique.position := by
   decide
 
-/-- Hebrew *she-* with a resumptive at the genitive: the internal Head, a DP inside a DP, is
-replaced by a proform. -/
-def hebrewResumptiveGenitive : RC :=
-  ⟨.restrictive, .matching, .inside .DP, .resumptive, .genitive, .postNominal⟩
-
-/-- Its realization, a genitive resumptive, is what the Hebrew Fragment's *she-* attests. -/
+/-- The genitive resumptive is what the Hebrew Fragment's *she-* records. -/
 theorem hebrewResumptiveGenitive_attested :
     hebrewResumptiveGenitive.WellFormed ∧
       hebrewResumptiveGenitive.strategy.toNPRel ∈

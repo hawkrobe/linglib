@@ -6,19 +6,19 @@ public import Linglib.Syntax.Minimalist.Linearization.Replay
 # Cinque 2005: Deriving Greenberg's Universal 20 and its exceptions
 
 Of the 24 orders of demonstrative, numeral, adjective and noun, 14 are attested, in very
-unequal numbers of languages, and [greenberg-1963]'s Universal 20 in [hawkins-1983]'s revision
-(1) misdescribes the postnominal ones. The paper derives exactly the attested orders from one
+unequal numbers of languages, and Greenberg's Universal 20 in Hawkins's revision (1)
+misdescribes the postnominal ones. The paper derives exactly the attested orders from one
 order of Merge, `[Dem [Num [A [N]]]]` (7a), and leftward movement of the NP alone or of a phrase
 containing it past each modifier in turn (7b): no movement and pied-piping of the whose-picture
 type, `[NP [XP]]`, are unmarked; movement without pied-piping, pied-piping of the picture-of-who
 type, `[XP [NP]]`, and partial rather than total raising are marked; head movement and movement
-of a phrase without the overt NP are excluded, the asymmetry [kayne-1994] imposes. Each
+of a phrase without the overt NP are excluded, the asymmetry Kayne's antisymmetry imposes. Each
 attested order has such a derivation and each unattested one would need a wrong order of Merge
 (6a–x), and the number of marked options a derivation uses tracks frequency: none for the two
 orders of very many languages, two for orders of few or very few.
 
 `table` is (6) with each order's frequency and the count of marked options the paper's analysis
-of it states; `stages` enumerates the derivations of (7) on the substrate's `Derivation`, an
+of it states; `stagesOf` enumerates the derivations of (7) on the substrate's `Derivation`, an
 optional raise of any subtree containing the overt noun after each Merge, with the orders read
 by the substrate's externalization, and `u20_reachable_iff_attested` is the paper's result. The
 marked options are derived from the derivations rather than transcribed: raising the modifier's
@@ -144,12 +144,14 @@ def step (m : LexicalItem.Token) (st : Stage) : List Stage :=
             (markOf st.planar.val s).toList ++ st.marks, st.raises + 1⟩
       else none
 
-/-- The derivations (7) allows Merge the noun with A, Num and Dem in turn, with an optional
-raise after each. -/
-def stages : List Stage :=
-  [⟨⟨leaf tokN, []⟩, PlanarSyntacticObject.leaf tokN, [], 0⟩].flatMap (step tokA) |>.flatMap
-    (step tokNum)
-    |>.flatMap (step tokDem)
+/-- The derivations (7) allows from the noun and the modifiers `ms`, merged in turn, with an
+optional raise after each Merge. -/
+def stagesOf (ms : List LexicalItem.Token) : List Stage :=
+  ms.foldl (fun sts m ↦ sts.flatMap (step m))
+    [⟨⟨leaf tokN, []⟩, PlanarSyntacticObject.leaf tokN, [], 0⟩]
+
+/-- The derivations of A, Num and Dem. -/
+def stages : List Stage := stagesOf [tokA, tokNum, tokDem]
 
 /-- The surface order of a stage, read by the substrate's externalization. -/
 def Stage.order (st : Stage) : List Cat := st.derivation.surfaceCats
@@ -157,8 +159,8 @@ def Stage.order (st : Stage) : List Cat := st.derivation.surfaceCats
 /-- The orders some derivation reaches. -/
 def reachableOrders : List (List Cat) := (stages.map Stage.order).eraseDups
 
-/-- Universal 20 is derived: an order is reachable iff it is attested, so the 14 attested orders
-have derivations and the 10 unattested do not. -/
+/-- Universal 20 is derived, an order being reachable iff it is attested, so the 14 attested
+orders have derivations and the 10 unattested do not. -/
 theorem u20_reachable_iff_attested :
     table.all fun r => decide (r.order ∈ reachableOrders) = decide r.Attested := by decide
 
@@ -188,7 +190,7 @@ theorem markedOptions_w : markedOptions [.A, .N, .Num, .Dem] = some 2 := by deci
 extraction of the noun past Dem. -/
 theorem markedOptions_p : markedOptions [.N, .Dem, .A, .Num] = some 1 := by decide
 
-/-- Marked options predict the extremes of frequency: an attested order has no marked option iff
+/-- Marked options predict the extremes of frequency. An attested order has no marked option iff
 it is found in very many languages, and an order with two is found in few or very few. -/
 theorem markedness_extremes :
     (table.filter fun r => decide r.Attested).all fun r =>

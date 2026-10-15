@@ -409,12 +409,12 @@ theorem Derivation.externalize?_take_faithful (d : Derivation) (n : Nat)
 
 Phrasal pied-piping preserves the moved constituent's internal order: raising N around A and
 pied-piping `[N A]` around Num gives Dem-N-A-Num, pied-piping `[A N]` around Num gives
-Dem-A-N-Num. `.D` stands in for the demonstrative. -/
+Dem-A-N-Num. -/
 
 private def xN : SyntacticObject := mkLeaf .N [] 1
 private def xA : SyntacticObject := mkLeaf .A [] 2
 private def xNum : SyntacticObject := mkLeaf .Num [] 3
-private def xD : SyntacticObject := mkLeaf .D [] 4
+private def xDem : SyntacticObject := mkLeaf .Dem [] 4
 /-- The pied-piped `[N [A t]]` mover. -/
 private def xNAt : SyntacticObject :=
   (PlanarSyntacticObject.merge (PlanarSyntacticObject.leaf ⟨.of .N [], 1⟩)
@@ -426,16 +426,16 @@ private def xAN : SyntacticObject :=
     (PlanarSyntacticObject.leaf ⟨.of .N [], 1⟩)).toSyntacticObject
 
 /-- Without movement the order is `Dem Num A N`. -/
-private def xDerivBase : Derivation := ⟨xN, [.em .left xA, .em .left xNum, .em .left xD]⟩
+private def xDerivBase : Derivation := ⟨xN, [.em .left xA, .em .left xNum, .em .left xDem]⟩
 /-- Raising N around A and pied-piping `[N A]` around Num gives `Dem N A Num`. -/
 private def xDerivO : Derivation :=
-  ⟨xN, [.em .left xA, .im xN, .em .left xNum, .im xNAt, .em .left xD]⟩
+  ⟨xN, [.em .left xA, .im xN, .em .left xNum, .im xNAt, .em .left xDem]⟩
 /-- Pied-piping `[A N]` around Num without a sub-raise gives `Dem A N Num`. -/
-private def xDerivN : Derivation := ⟨xN, [.em .left xA, .em .left xNum, .im xAN, .em .left xD]⟩
+private def xDerivN : Derivation := ⟨xN, [.em .left xA, .em .left xNum, .im xAN, .em .left xDem]⟩
 
-example : xDerivBase.surfaceCats = [.D, .Num, .A, .N] := by decide
-example : xDerivO.surfaceCats = [.D, .N, .A, .Num] := by decide
-example : xDerivN.surfaceCats = [.D, .A, .N, .Num] := by decide
+example : xDerivBase.surfaceCats = [.Dem, .Num, .A, .N] := by decide
+example : xDerivO.surfaceCats = [.Dem, .N, .A, .Num] := by decide
+example : xDerivN.surfaceCats = [.Dem, .A, .N, .Num] := by decide
 example : xDerivO.surfaceCats ≠ xDerivN.surfaceCats := by decide
 
 end Minimalist
