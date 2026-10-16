@@ -17,7 +17,7 @@ namespace ArnoldEtAl2000.Examples
 
 def ex_1 : Datum :=
   { id := "arnoldetal2000_1"
-    source := ⟨"arnold-wasow-losongco-ginstrom-2000", "(1)"⟩
+    source := ⟨"arnold-losongco-wasow-ginstrom-2000", "(1)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "The waiter brought the wine we had ordered to the table"
@@ -30,7 +30,7 @@ def ex_1 : Datum :=
 
 def ex_2 : Datum :=
   { id := "arnoldetal2000_2"
-    source := ⟨"arnold-wasow-losongco-ginstrom-2000", "(2)"⟩
+    source := ⟨"arnold-losongco-wasow-ginstrom-2000", "(2)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "Chris gave a bowl of Mom's traditional cranberry sauce to Terry"
@@ -43,7 +43,7 @@ def ex_2 : Datum :=
 
 def ex_3 : Datum :=
   { id := "arnoldetal2000_3"
-    source := ⟨"arnold-wasow-losongco-ginstrom-2000", "(3)"⟩
+    source := ⟨"arnold-losongco-wasow-ginstrom-2000", "(3)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "Sandy picked the freshly baked apple pie up."
@@ -56,7 +56,7 @@ def ex_3 : Datum :=
 
 def ex_5 : Datum :=
   { id := "arnoldetal2000_5"
-    source := ⟨"arnold-wasow-losongco-ginstrom-2000", "(5)"⟩
+    source := ⟨"arnold-losongco-wasow-ginstrom-2000", "(5)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "I gave to Mary the valuable book that was extremely difficult to find"
@@ -69,7 +69,7 @@ def ex_5 : Datum :=
 
 def ex_6 : Datum :=
   { id := "arnoldetal2000_6"
-    source := ⟨"arnold-wasow-losongco-ginstrom-2000", "(6)"⟩
+    source := ⟨"arnold-losongco-wasow-ginstrom-2000", "(6)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "The Informativeness account shares with the processing account the claim that a subjectless sentence is not a grammatical option for the child, and that the omission is due to some aspect of performance"
@@ -82,7 +82,7 @@ def ex_6 : Datum :=
 
 def ex_8 : Datum :=
   { id := "arnoldetal2000_8"
-    source := ⟨"arnold-wasow-losongco-ginstrom-2000", "(8)"⟩
+    source := ⟨"arnold-losongco-wasow-ginstrom-2000", "(8)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "That brings to the plate Barry Bonds."
@@ -95,7 +95,7 @@ def ex_8 : Datum :=
 
 def ex_9 : Datum :=
   { id := "arnoldetal2000_9"
-    source := ⟨"arnold-wasow-losongco-ginstrom-2000", "(9)"⟩
+    source := ⟨"arnold-losongco-wasow-ginstrom-2000", "(9)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "to take as input a grammar and to associate with it, as output, an optimal structure"
@@ -108,7 +108,7 @@ def ex_9 : Datum :=
 
 def ex_10 : Datum :=
   { id := "arnoldetal2000_10"
-    source := ⟨"arnold-wasow-losongco-ginstrom-2000", "(10)"⟩
+    source := ⟨"arnold-losongco-wasow-ginstrom-2000", "(10)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "If you want to identify in the inner city the fifth graders who could really take off"
@@ -121,7 +121,7 @@ def ex_10 : Datum :=
 
 def ex_11 : Datum :=
   { id := "arnoldetal2000_11"
-    source := ⟨"arnold-wasow-losongco-ginstrom-2000", "(11)"⟩
+    source := ⟨"arnold-losongco-wasow-ginstrom-2000", "(11)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "When Kennedy announced last July his plans to quit"
@@ -134,7 +134,7 @@ def ex_11 : Datum :=
 
 def t1_bring : Datum :=
   { id := "arnoldetal2000_t1_bring"
-    source := ⟨"arnold-wasow-losongco-ginstrom-2000", "Table 1"⟩
+    source := ⟨"arnold-losongco-wasow-ginstrom-2000", "Table 1"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "It is enough to bring tears to the eyes of the Statue of Justice that stands silently in front of the Supreme Court of Canada."
@@ -147,7 +147,7 @@ def t1_bring : Datum :=
 
 def t1_take : Datum :=
   { id := "arnoldetal2000_t1_take"
-    source := ⟨"arnold-wasow-losongco-ginstrom-2000", "Table 1"⟩
+    source := ⟨"arnold-losongco-wasow-ginstrom-2000", "Table 1"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "It takes into account the need not to be overtaken by the constant evolution of the labour market."
@@ -160,7 +160,7 @@ def t1_take : Datum :=
 
 def t1_give : Datum :=
   { id := "arnoldetal2000_t1_give"
-    source := ⟨"arnold-wasow-losongco-ginstrom-2000", "Table 1"⟩
+    source := ⟨"arnold-losongco-wasow-ginstrom-2000", "Table 1"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "The bank was told it should give its business to a friend of the Government."
@@ -173,7 +173,7 @@ def t1_give : Datum :=
 
 def ex_12 : Datum :=
   { id := "arnoldetal2000_12"
-    source := ⟨"arnold-wasow-losongco-ginstrom-2000", "(12)"⟩
+    source := ⟨"arnold-losongco-wasow-ginstrom-2000", "(12)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "A: What about the yellow duck? B: Give it the small green crayon. A: What about the. . . ."
@@ -186,7 +186,7 @@ def ex_12 : Datum :=
 
 def ex_13 : Datum :=
   { id := "arnoldetal2000_13"
-    source := ⟨"arnold-wasow-losongco-ginstrom-2000", "(13)"⟩
+    source := ⟨"arnold-losongco-wasow-ginstrom-2000", "(13)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "Object-mover: What about the red dog, the yellow dog, and the purple dog? Director: Um, you should look for the tic tacs and find the box with the white and green tic tacs and give that to the red dog."
@@ -199,7 +199,7 @@ def ex_13 : Datum :=
 
 def ex_14 : Datum :=
   { id := "arnoldetal2000_14"
-    source := ⟨"arnold-wasow-losongco-ginstrom-2000", "(14)"⟩
+    source := ⟨"arnold-losongco-wasow-ginstrom-2000", "(14)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "You are going to give the ducks objects. You are going to give the yellow duck A key. 'Kay. You're going to give a du- the red duck, um, a melon. And you're going to give THE um pink duck A um rectangular eraser, it's black."
@@ -212,7 +212,7 @@ def ex_14 : Datum :=
 
 def ex_16 : Datum :=
   { id := "arnoldetal2000_16"
-    source := ⟨"arnold-wasow-losongco-ginstrom-2000", "(16)"⟩
+    source := ⟨"arnold-losongco-wasow-ginstrom-2000", "(16)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "Give the pink giraffe the plum, the green giraffe the pear ... and the yellow giraffe the tur er uhh plum."
@@ -225,7 +225,7 @@ def ex_16 : Datum :=
 
 def ex_17 : Datum :=
   { id := "arnoldetal2000_17"
-    source := ⟨"arnold-wasow-losongco-ginstrom-2000", "(17)"⟩
+    source := ⟨"arnold-losongco-wasow-ginstrom-2000", "(17)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "Having given much consideration and attention to it ..."
@@ -238,7 +238,7 @@ def ex_17 : Datum :=
 
 def t4_do : Datum :=
   { id := "arnoldetal2000_t4_do"
-    source := ⟨"arnold-wasow-losongco-ginstrom-2000", "Table 4"⟩
+    source := ⟨"arnold-losongco-wasow-ginstrom-2000", "Table 4"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "Give the white rabbit the carrot."
@@ -251,7 +251,7 @@ def t4_do : Datum :=
 
 def t4_hnps : Datum :=
   { id := "arnoldetal2000_t4_hnps"
-    source := ⟨"arnold-wasow-losongco-ginstrom-2000", "Table 4"⟩
+    source := ⟨"arnold-losongco-wasow-ginstrom-2000", "Table 4"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "Give to the white rabbit the carrot."
@@ -264,7 +264,7 @@ def t4_hnps : Datum :=
 
 def t4_passg : Datum :=
   { id := "arnoldetal2000_t4_passg"
-    source := ⟨"arnold-wasow-losongco-ginstrom-2000", "Table 4"⟩
+    source := ⟨"arnold-losongco-wasow-ginstrom-2000", "Table 4"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "The white rabbit should be given the carrot."
@@ -277,7 +277,7 @@ def t4_passg : Datum :=
 
 def t4_dotop : Datum :=
   { id := "arnoldetal2000_t4_dotop"
-    source := ⟨"arnold-wasow-losongco-ginstrom-2000", "Table 4"⟩
+    source := ⟨"arnold-losongco-wasow-ginstrom-2000", "Table 4"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "The white rabbit, give the carrot."
@@ -290,7 +290,7 @@ def t4_dotop : Datum :=
 
 def t4_preptop : Datum :=
   { id := "arnoldetal2000_t4_preptop"
-    source := ⟨"arnold-wasow-losongco-ginstrom-2000", "Table 4"⟩
+    source := ⟨"arnold-losongco-wasow-ginstrom-2000", "Table 4"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "To the white rabbit, give the carrot."
@@ -303,7 +303,7 @@ def t4_preptop : Datum :=
 
 def t4_prep : Datum :=
   { id := "arnoldetal2000_t4_prep"
-    source := ⟨"arnold-wasow-losongco-ginstrom-2000", "Table 4"⟩
+    source := ⟨"arnold-losongco-wasow-ginstrom-2000", "Table 4"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "Give the carrot to the white rabbit."
@@ -316,7 +316,7 @@ def t4_prep : Datum :=
 
 def t4_passt : Datum :=
   { id := "arnoldetal2000_t4_passt"
-    source := ⟨"arnold-wasow-losongco-ginstrom-2000", "Table 4"⟩
+    source := ⟨"arnold-losongco-wasow-ginstrom-2000", "Table 4"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "The carrot should be given to the white rabbit."
@@ -329,7 +329,7 @@ def t4_passt : Datum :=
 
 def t4_prepttop : Datum :=
   { id := "arnoldetal2000_t4_prepttop"
-    source := ⟨"arnold-wasow-losongco-ginstrom-2000", "Table 4"⟩
+    source := ⟨"arnold-losongco-wasow-ginstrom-2000", "Table 4"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "The carrot, give to the white rabbit."
