@@ -18,7 +18,9 @@ the enclitic =(y)a', and which classes of adjunct license the marker varies.
 
 Each language's `Extraction.realize` records the reflexes an extraction from each site licenses,
 as a finite set of `Reflex Mayan.Host`. The reflex of transitive-subject extraction is the
-marker of the voice the verb switches to, Agent Focus or the antipassive.
+marker of the voice the verb switches to, Agent Focus or the antipassive. A fragment whose
+sources leave some sites undescribed gives its values in `Option`, `none` at those sites and
+`some ∅` where an extraction is documented as unmarked.
 
 ## Main declarations
 
@@ -32,7 +34,9 @@ marker of the voice the verb switches to, Agent Focus or the antipassive.
 The argument sites are the comparative roles, so a recipient is `.argument .R` however a
 language codes it. The K'ichean languages and Mam code it as an oblique introduced by a relational
 noun, the indirect object or dative of Mendes and Ranero and of Elkins, Torrence and Brown, and
-its extraction is marked as a low adjunct's is.
+its extraction is marked as a low adjunct's is. Chol and the Tseltalan languages make it the
+primary object of the applicative *-be*, cross-referenced by Set B, and it extracts as the patient
+does.
 
 ## References
 
@@ -66,8 +70,7 @@ inductive Adjunct where
   deriving DecidableEq, Repr, Fintype
 
 /-- An extraction site is an argument, by its role, or an adjunct, by its class, the granularity
-the marking distinguishes. A fragment whose sources document only the reflexes on the verb
-indexes `realize` by `ArgumentRole`. -/
+the marking distinguishes. -/
 inductive ExtractionSite where
   | argument (r : ArgumentRole)
   | adjunct (a : Adjunct)

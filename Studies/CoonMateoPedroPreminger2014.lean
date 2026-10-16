@@ -10,6 +10,8 @@ public import Linglib.Fragments.Mayan.Kaqchikel.Extraction
 public import Linglib.Fragments.Mayan.Tseltal.Agreement
 public import Linglib.Fragments.Mayan.Tsotsil.Agreement
 public import Linglib.Fragments.Mayan.Tsotsil.Extraction
+public import Linglib.Fragments.Mayan.Chol.Extraction
+public import Linglib.Fragments.Mayan.Tseltal.Extraction
 public import Linglib.Fragments.Mayan.Mam.Agreement
 public import Linglib.Fragments.Mayan.Mam.Extraction
 public import Linglib.Fragments.Mayan.Kiche.Agreement
@@ -416,21 +418,22 @@ def IsErgativePerfective (L : Language) : Prop := Alignment.IsErgative (L.assign
 instance : DecidablePred IsErgativePerfective := fun _ ↦
   inferInstanceAs (Decidable (Alignment.IsErgative _))
 
-/-- The fragment marks the extraction of an argument on some verb, with third-person arguments
-where the marking depends on their person. The Yukatek fragment records no extraction reflexes,
-and its value is a junk `False`. -/
+/-- The fragment records a reflex for the extraction of an argument on some verb, with
+third-person arguments where the marking depends on their person. The Yukatek fragment records
+no extraction reflexes, and its value is a junk `False`. -/
 def MarksExtraction : Language → ArgumentRole → Prop
-  | .chol, r => (Chol.Extraction.realize r).Nonempty
-  | .qanjobal, r => (Qanjobal.Extraction.realize .third r).Nonempty
+  | .chol, r => ∃ m ∈ Chol.Extraction.realize (.argument r), m.Nonempty
+  | .qanjobal, r => ∃ m ∈ Qanjobal.Extraction.realize .third (.argument r), m.Nonempty
   | .kaqchikel, r => ∃ c, (Kaqchikel.Extraction.realize c .third .third (.argument r)).Nonempty
-  | .tseltal, r => (Tseltal.Extraction.realize r).Nonempty
-  | .tsotsil, r => (Tsotsil.Extraction.realize r).Nonempty
+  | .tseltal, r => ∃ m ∈ Tseltal.Extraction.realize (.argument r), m.Nonempty
+  | .tsotsil, r => ∃ m ∈ Tsotsil.Extraction.realize (.argument r), m.Nonempty
   | .mam, r => (Mam.Extraction.realize (.argument r)).Nonempty
   | .kiche, r => ∃ c, (Kiche.Extraction.realize c (.argument r)).Nonempty
   | .yukatek, _ => False
 
 instance : ∀ L r, Decidable (MarksExtraction L r)
-  | .chol, _ | .qanjobal, _ | .tseltal, _ | .tsotsil, _ | .mam, _ => Finset.decidableNonempty
+  | .chol, _ | .qanjobal, _ | .tseltal, _ | .tsotsil, _ => Option.decidableExistsMem _
+  | .mam, _ => Finset.decidableNonempty
   | .kaqchikel, _ | .kiche, _ => Fintype.decidableExistsFintype
   | .yukatek, _ => inferInstanceAs (Decidable False)
 

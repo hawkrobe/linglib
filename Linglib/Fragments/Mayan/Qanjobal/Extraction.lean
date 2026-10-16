@@ -26,8 +26,9 @@ Antipassive and which is found in the Q'anjob'alan branch alone.
   each form.
 * `Qanjobal.verbForm`: the form of a transitive verb by the finiteness of its clause, the
   argument extracted from it and the person of its agent.
-* `Qanjobal.Extraction.realize`: the reflexes extraction from each argument role licenses
-  with an agent of each person, the Agent Focus form where it replaces the transitive.
+* `Qanjobal.Extraction.realize`: the reflexes extraction from each argument and from a temporal
+  licenses with an agent of each person, the Agent Focus form where it replaces the
+  transitive.
 
 ## Main results
 
@@ -35,8 +36,8 @@ Antipassive and which is found in the Q'anjob'alan branch alone.
   absence of Set A.
 * `Qanjobal.verbForm_eq_agentFocus_iff`: Agent Focus is the form of every non-finite
   transitive and of a finite one whose third-person subject is extracted.
-* `Qanjobal.Extraction.mem_realize_iff`: the Agent Focus reflex appears exactly under the
-  extraction of a third-person transitive subject.
+* `Qanjobal.Extraction.agentFocus_mem_realize_iff`: the Agent Focus reflex appears exactly under
+  the extraction of a third-person transitive subject.
 
 ## References
 
@@ -107,24 +108,34 @@ theorem verbForm_true_of_isSAP {agent : Person} (h : agent.IsSAP)
 
 namespace Extraction
 
-/-- Extraction is marked when it changes the form of a finite verb, by the suffixes of the
-form it selects; with an agent of the given person, only a third-person transitive subject
-switches the verb to Agent Focus. -/
-def realize (agent : Person) (r : ArgumentRole) : Finset (Reflex Mayan.Host) :=
-  if verbForm true (some r) agent = verbForm true none agent then ∅
-  else {.morpheme .verb (suffixes (verbForm true (some r) agent))}
+/-- The extraction of an argument is marked when it changes the form of a finite verb, by the
+suffixes of the form it selects, so that with an agent of the given person only a third-person
+transitive subject switches the verb to Agent Focus; a temporal fronts with no change to the
+verb ([coon-mateo-pedro-preminger-2014] (85), (88a)). Q'anjob'al has no double-object
+construction, and whether its obliques front by extraction the sources leave open (§5.3), so the
+recipient and the other adjuncts are unrecorded; a fronted manner adverb takes the clause as its
+complement rather than extracting from it. -/
+def realize (agent : Person) : Mayan.ExtractionSite → Option (Finset (Reflex Mayan.Host))
+  | .argument .R => none
+  | .argument r => some <|
+      if verbForm true (some r) agent = verbForm true none agent then ∅
+      else {.morpheme .verb (suffixes (verbForm true (some r) agent))}
+  | .adjunct .temporal => some ∅
+  | .adjunct _ => none
 
 /-- The Agent Focus reflex appears exactly under the extraction of a third-person transitive
 subject. -/
-theorem mem_realize_iff (agent : Person) (r : ArgumentRole) :
-    Reflex.morpheme .verb (suffixes .agentFocus) ∈ realize agent r ↔
-      r = .A ∧ ¬ agent.IsSAP := by
+theorem agentFocus_mem_realize_iff (agent : Person) (s : Mayan.ExtractionSite) :
+    (∃ m ∈ realize agent s, Reflex.morpheme .verb (suffixes .agentFocus) ∈ m) ↔
+      s = .argument .A ∧ ¬ agent.IsSAP := by
   decide +revert
 
-/-- Extraction by a speech-act-participant agent is unmarked. -/
-theorem realize_of_isSAP {agent : Person} (h : agent.IsSAP) (r : ArgumentRole) :
-    realize agent r = ∅ := by
-  simp [realize, verbForm_true_of_isSAP h]
+/-- Every extraction recorded with a speech-act-participant agent is unmarked. -/
+theorem eq_empty_of_mem_realize_of_isSAP {agent : Person} (h : agent.IsSAP)
+    {s : Mayan.ExtractionSite} {m : Finset (Reflex Mayan.Host)} (hm : m ∈ realize agent s) :
+    m = ∅ := by
+  rcases s with (_ | _ | _ | _ | _) | (_ | _ | _ | _ | _ | _ | _) <;>
+    simp_all [realize, verbForm_true_of_isSAP h]
 
 end Extraction
 
