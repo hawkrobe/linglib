@@ -72,25 +72,25 @@ def PRES (now : T) (Q : SortedProperty W E T) (w : W) : Prop := At (Interval.pur
 
 /-- The perfect instantiates the property at some interval preceding the reference interval. -/
 def PERF (Q : SortedProperty W E T) : SortedProperty W E T :=
-  .temporal λ w t => ∃ t' : NonemptyInterval (WithTop T), Interval.Precedes ↑t' t ∧ At ↑t' w Q
+  .temporal fun w t ↦ ∃ t' : NonemptyInterval (WithTop T), Interval.Precedes ↑t' t ∧ At ↑t' w Q
 
 /-- MAY and MIGHT instantiate the property in some world of the modal base at the start of the
 reference interval, throughout the interval expanded forward to the end of time. -/
 def MAY (MB : W → T → Set W) (Q : SortedProperty W E T) : SortedProperty W E T :=
-  .temporal λ w t => ∃ t₀ : T, IsLeast (t : Set (WithTop T)) ↑t₀ ∧
+  .temporal fun w t ↦ ∃ t₀ : T, IsLeast (t : Set (WithTop T)) ↑t₀ ∧
     ∃ w' ∈ MB w t₀, At (Interval.Ici ↑t₀) w' Q
 
 /-- WOLL, the untensed modal of *will* and *would*, instantiates the property in every world of the
 modal base at the start of the reference interval, throughout the forward interval. -/
 def WOLL (MB : W → T → Set W) (Q : SortedProperty W E T) : SortedProperty W E T :=
-  .temporal λ w t => ∃ t₀ : T, IsLeast (t : Set (WithTop T)) ↑t₀ ∧
+  .temporal fun w t ↦ ∃ t₀ : T, IsLeast (t : Set (WithTop T)) ↑t₀ ∧
     ∀ w' ∈ MB w t₀, At (Interval.Ici ↑t₀) w' Q
 
 /-- A frame adverbial such as *yesterday* instantiates a property of eventualities within
 the intersection of the reference interval with the period named. The paper leaves it undefined
 on properties of times, which the theorems carry as `IsEventuality`. -/
 def frame (period : Interval (WithTop T)) (Q : SortedProperty W E T) : SortedProperty W E T :=
-  .temporal λ w t => At (t ⊓ period) w Q
+  .temporal fun w t ↦ At (t ⊓ period) w Q
 
 /-- *Already*, *yet* and *still* are the identity on properties of states and of times and undefined
 on properties of events. -/
@@ -105,8 +105,8 @@ variable {MB : W → T → Set W} {now : T}
 /-- At a nonempty interval, MAY takes its modal base at the interval's start. -/
 theorem at_coe_may_iff {i : NonemptyInterval (WithTop T)} :
     At ↑i w (MAY MB Q) ↔ ∃ t₀ : T, i.fst = ↑t₀ ∧ ∃ w' ∈ MB w t₀, At (Interval.Ici ↑t₀) w' Q :=
-  exists_congr λ _ => and_congr_left λ _ =>
-    ⟨λ h => (h.unique Interval.isLeast_coe_fst).symm, λ h => h ▸ Interval.isLeast_coe_fst⟩
+  exists_congr fun _ ↦ and_congr_left fun _ ↦
+    ⟨fun h ↦ (h.unique Interval.isLeast_coe_fst).symm, fun h ↦ h ▸ Interval.isLeast_coe_fst⟩
 
 /-- At the present, MAY holds when some world of the base at the present has the property throughout
 the forward interval. -/
@@ -117,7 +117,7 @@ the forward interval. -/
   · rintro ⟨t₀, ht₀, h⟩
     obtain rfl : t₀ = now := (WithTop.coe_eq_coe.1 ht₀).symm
     exact h
-  · exact λ h => ⟨now, rfl, h⟩
+  · exact fun h ↦ ⟨now, rfl, h⟩
 
 /-- The perfect of an event holds at a ray when the event ended before the ray starts. -/
 @[simp] theorem at_Ici_perf_eventive_iff {t : T} :
@@ -207,7 +207,7 @@ presupposition is a prior negative phase, cannot, *he may already win*; read bac
 may win this game* is false once he has lost. -/
 theorem may_antitone {history : HistoricalAlternatives W T}
     (hBC : ∀ w, Antitone (metaphysicalBase history w)) (hQ : Q.IsEventuality) :
-    Antitone λ t : T => PRES t (MAY (metaphysicalBase history) Q) w := by
+    Antitone fun t : T ↦ PRES t (MAY (metaphysicalBase history) Q) w := by
   simp only [pres_may_iff]
   rintro t' t h ⟨w', hw', hat⟩
   exact ⟨w', hBC w h hw', hat.mono hQ (Interval.antitone_Ici (WithTop.coe_le_coe.2 h))⟩
@@ -224,7 +224,7 @@ theorem not_already_may {history : HistoricalAlternatives W T}
     (hBC : ∀ w, Antitone (metaphysicalBase history w)) (hQ : Q.IsEventuality)
     (h : PRES now (MAY (metaphysicalBase history) Q) w) :
     ¬ AlreadyPresup (MAY (metaphysicalBase history) Q) w now :=
-  λ ⟨_, ht', hn⟩ => hn (may_antitone hBC hQ ht'.le h)
+  fun ⟨_, ht', hn⟩ ↦ hn (may_antitone hBC hQ ht'.le h)
 
 /-- In *he may still win*, the presupposition of *still* over a metaphysical possibility is not
 merely consistent with the shrinking of possibilities, as the paper puts it, but entailed by
@@ -246,43 +246,45 @@ def FixesPast (history : HistoricalAlternatives W T) (Q : SortedProperty W E T) 
 /-- Worlds agreeing on the events that have begun agree on which events lie within an interval
 of the past. -/
 theorem fixesPast_eventive :
-    FixesPast (ofDatedFacts (λ e : E => (τ e).fst) P) (.eventive P) := by
+    FixesPast (Temporal.TWFrame.ofDatedFacts (fun e : E ↦ (τ e).fst) P).alternatives
+      (.eventive P) := by
   intro t w w' h r hr
-  have key : ∀ e : E, ↑(τ e).withTop ≤ r → (τ e).fst ≤ t := λ e he =>
+  have key : ∀ e : E, ↑(τ e).withTop ≤ r → (τ e).fst ≤ t := fun e he ↦
     WithTop.coe_le_coe.1 (hr _ (Interval.coe_le_iff.1 he).1)
-  exact ⟨λ ⟨e, he, hle⟩ => ⟨e, (h e (key e hle)).1 he, hle⟩,
-    λ ⟨e, he, hle⟩ => ⟨e, (h e (key e hle)).2 he, hle⟩⟩
+  exact ⟨fun ⟨e, he, hle⟩ ↦ ⟨e, (h e (key e hle)).1 he, hle⟩,
+    fun ⟨e, he, hle⟩ ↦ ⟨e, (h e (key e hle)).2 he, hle⟩⟩
 
 /-- Worlds agreeing on the states that have begun agree on which states overlap an interval of
 the past. -/
 theorem fixesPast_stative :
-    FixesPast (ofDatedFacts (λ e : E => (τ e).fst) P) (.stative P) := by
+    FixesPast (Temporal.TWFrame.ofDatedFacts (fun e : E ↦ (τ e).fst) P).alternatives
+      (.stative P) := by
   intro t w w' h r hr
-  have key : ∀ e : E, ¬ Disjoint (↑(τ e).withTop) r → (τ e).fst ≤ t := λ e hd => by
+  have key : ∀ e : E, ¬ Disjoint (↑(τ e).withTop) r → (τ e).fst ≤ t := fun e hd ↦ by
     obtain ⟨x, hx, hx'⟩ := Interval.not_disjoint_iff.1 hd
     rw [NonemptyInterval.mem_coe_interval, NonemptyInterval.mem_withTop] at hx
     exact WithTop.coe_le_coe.1 (le_trans hx.1 (hr x hx'))
-  exact ⟨λ ⟨e, he, hd⟩ => ⟨e, (h e (key e hd)).1 he, hd⟩,
-    λ ⟨e, he, hd⟩ => ⟨e, (h e (key e hd)).2 he, hd⟩⟩
+  exact ⟨fun ⟨e, he, hd⟩ ↦ ⟨e, (h e (key e hd)).1 he, hd⟩,
+    fun ⟨e, he, hd⟩ ↦ ⟨e, (h e (key e hd)).2 he, hd⟩⟩
 
 /-- Instantiation in the past of the perspective, the modal over the perfect, is settled in
 every common ground. -/
 theorem settled_perf {history : HistoricalAlternatives W T} (h : FixesPast history Q)
-    (cg : Set W) (t : T) : settled history cg t (λ w => At (Interval.Ici ↑t) w (PERF Q)) := by
+    (cg : Set W) (t : T) : settled history cg t (fun w ↦ At (Interval.Ici ↑t) w (PERF Q)) := by
   intro w _ w' hw'
-  refine exists_congr λ r => and_congr_right λ hr => h t w w' hw' r λ x hx => ?_
+  refine exists_congr fun r ↦ and_congr_right fun hr ↦ h t w w' hw' r fun x hx ↦ ?_
   exact (hr hx (Interval.mem_Ici.2 le_rfl)).le
 
 /-- Instantiation at the present, a stative with *now*, is settled in every common ground, since the
 forward interval restricted to the present is the present. -/
 theorem settled_present {history : HistoricalAlternatives W T} (h : FixesPast history Q)
     (cg : Set W) (t : T) :
-    settled history cg t (λ w => At (Interval.Ici ↑t) w (frame (Interval.pure ↑t) Q)) :=
-  λ w _ w' hw' => h t w w' hw' _ λ _ hx => (Interval.mem_pure.1 (Interval.mem_inf.1 hx).2).le
+    settled history cg t (fun w ↦ At (Interval.Ici ↑t) w (frame (Interval.pure ↑t) Q)) :=
+  fun w _ w' hw' ↦ h t w w' hw' _ fun _ hx ↦ (Interval.mem_pure.1 (Interval.mem_inf.1 hx).2).le
 
 omit [LinearOrder T] in
 /-- A common ground that settles a property fails the diversity condition for the metaphysical
-base, so a context cannot assign that base to a possibility modal applying to it: the modal
+base, so a context cannot assign that base to a possibility modal applying to it, and the modal
 over the perfect and the present-referring stative are epistemic. -/
 theorem not_diverse_of_settled {history : HistoricalAlternatives W T} {cg : Set W} {t : T}
     {R : W → Prop} (h : settled history cg t R) : ¬ diverse (metaphysicalBase history) cg t R :=
@@ -297,7 +299,7 @@ def PastAlternativesOutside (history : HistoricalAlternatives W T) (cg : Set W) 
   ∀ w ∈ cg, ∀ t' ≤ t₀, ∀ w' ∈ metaphysicalBase history w t',
     w' ∉ metaphysicalBase history w t₀ → w' ∉ cg
 
-/-- The counterfactual implication holds: when no present alternative verifies the past
+/-- The counterfactual implication holds. When no present alternative verifies the past
 possibility, the world that does lies outside the common ground, which is what the speaker's
 backtracking to a past perspective signals. -/
 theorem counterfactual_outside_cg {history : HistoricalAlternatives W T} {cg : Set W} {t₀ : T}
@@ -306,7 +308,7 @@ theorem counterfactual_outside_cg {history : HistoricalAlternatives W T} {cg : S
     (hnow : ∀ t' < t₀, ∀ w' ∈ metaphysicalBase history w t₀, ¬ At (Interval.Ici ↑t') w' Q) :
     ∃ t' < t₀, ∃ w' ∉ cg, w' ∈ metaphysicalBase history w t' ∧ At (Interval.Ici ↑t') w' Q := by
   obtain ⟨t', hlt, w', hw', hat⟩ := pres_perf_may_iff.1 hcf
-  exact ⟨t', hlt, w', h w hw t' hlt.le w' hw' (λ hmem => hnow t' hlt w' hmem hat), hw', hat⟩
+  exact ⟨t', hlt, w', h w hw t' hlt.le w' hw' (fun hmem ↦ hnow t' hlt w' hmem hat), hw', hat⟩
 
 /-! ### Perspective and orientation -/
 
@@ -347,10 +349,10 @@ theorem Scope.orientation_of_perspective_past :
 /-! ### A model -/
 
 /-- `winOn d` is the predicate of a winning on day `d`, in a one-world model over integer days. -/
-def winOn (d : ℤ) : Unit → NonemptyInterval ℤ → Prop := λ _ e => e = .pure d
+def winOn (d : ℤ) : Unit → NonemptyInterval ℤ → Prop := fun _ e ↦ e = .pure d
 
 /-- The unrestricted modal base admits every world. -/
-def anyWorld : Unit → ℤ → Set Unit := λ _ _ => Set.univ
+def anyWorld : Unit → ℤ → Set Unit := fun _ _ ↦ Set.univ
 
 /-- A `Zone` says where a period sits relative to the present. -/
 inductive Zone
@@ -388,7 +390,7 @@ sentence about that period can be true, the deviant cells being `frame_modal_pas
 theorem zones_iff : ∀ s : Scope, ∀ z : Zone, z ∈ s.zones ↔ s.Sat z := by
   intro s z
   cases s <;> cases z <;> simp only [Scope.Sat, Scope.lf]
-  · refine iff_of_false (by decide) (frame_modal_past ?_ λ x hx y hy => ?_)
+  · refine iff_of_false (by decide) (frame_modal_past ?_ fun x hx y hy ↦ ?_)
     · trivial
     · exact lt_of_le_of_lt (Interval.mem_pure.1 hx).le
         (lt_of_lt_of_le (WithTop.coe_lt_coe.2 (by decide)) (Interval.mem_Ici.1 hy))
@@ -487,8 +489,8 @@ inductive Complement
 
 /-- `c.property` is a representative property of the sort of the complement `c`. -/
 def Complement.property : Complement → SortedProperty Unit (NonemptyInterval Unit) Unit
-  | .eventive => .eventive λ _ _ => True
-  | .perfect => PERF (.eventive λ _ _ => True)
+  | .eventive => .eventive fun _ _ ↦ True
+  | .perfect => PERF (.eventive fun _ _ ↦ True)
 
 /-- A sortal row records the complement of *already* or *yet*. -/
 def Complement.ofRow (row : Datum) : Option Complement := do

@@ -56,8 +56,9 @@ open Reference
 
 /-! ### The per-language strategy record (§2–§4.2) -/
 
-/-- The felicitous Anderson marking per language: English X (§2, ex. 1a), Japanese O
-    (§3, ex. 4a -ru), Mandarin O (§4.2, ex. 13a without le); `none` outside the sample. -/
+/-- The felicitous Anderson marking of each language is X for English (§2, ex. 1a), O for
+Japanese (§3, ex. 4a *-ru*) and O for Mandarin (§4.2, ex. 13a without *le*), and `none` outside
+the sample. -/
 def andersonStrategy : Glottocode → Option MarkingStrategy
   | "stan1293" => some .xMarking
   | "nucl1643" => some .oMarking
@@ -90,10 +91,10 @@ def xExponentOf : Glottocode → Option XMarkingExponent
   | "mand1415" => some ⟨"le", [.perfective]⟩
   | _ => none
 
-/-- The inventory-driven prediction: X-mark wherever the inventory provides X-marking
-    (§2; a fortiori under fn 14's [chierchia-1998]-style blocking). -/
+/-- The inventory-driven prediction X-marks wherever the inventory provides X-marking (§2; a
+fortiori under the blocking of fn 14, after [chierchia-1998]). -/
 def inventoryPrediction (lang : Glottocode) : Option MarkingStrategy :=
-  (xExponentOf lang).map (λ _ => .xMarking)
+  (xExponentOf lang).map (fun _ ↦ .xMarking)
 
 /-- English validates the inventory prediction. -/
 theorem inventory_prediction_holds_english :
@@ -121,7 +122,7 @@ def ofStrategyTag? : String → Option MarkingStrategy
   | "o-marking" => some .oMarking
   | _ => none
 
-/-- An Anderson row against the record: the primary judgment matches strategy `m` and each
+/-- An Anderson row matches the record when its primary judgment matches strategy `m` and each
 alternative matches the other strategy, O-marking being the absence of X-marking. -/
 def AndersonRowOK (e : Datum) : Prop :=
   e.feature? "construction" = some "anderson" →
@@ -162,12 +163,13 @@ alternatives. `D` = the domain at `utteranceIdx`; `D⁺` via X-marking (larger b
 index: `xMarkedBase`) or via HP (same base, earlier index: `hpIdx`) — same operator,
 same two conclusions on each route: §4.1's uniformity of meaning under varying use. -/
 
-/-- The Anderson consequent: Jones shows the symptoms. -/
+/-- The Anderson consequent, that Jones shows the symptoms. -/
 def showsSymptoms : Set Bool := {w | w = true}
 
-/-- A backward-closed history: live iff the index's own world, or its time is ≤ 0. -/
+/-- A backward-closed history, on which a world is live at an index iff it is the index's own
+world or the index's time is at most `0`. -/
 def historyJones : HistoricalAlternatives Bool ℤ :=
-  λ s => { w | w = s.world ∨ s.time ≤ 0 }
+  fun s ↦ { w | w = s.world ∨ s.time ≤ 0 }
 
 @[simp]
 theorem mem_historyJones {w : Bool} {s : Index Bool ℤ} :
@@ -182,21 +184,21 @@ def utteranceIdx : Index Bool ℤ := ⟨true, 1⟩
 /-- The HP-shifted index (§3.3); its domain is `D⁺` on the O-marking route. -/
 def hpIdx : Index Bool ℤ := ⟨true, 0⟩
 
-/-- The X-marked base: every world live at every index (§2, fn 6) — `D⁺` on the
-    X-marking route. -/
-def xMarkedBase : HistoricalAlternatives Bool ℤ := λ _ => Set.univ
+/-- The X-marked base makes every world live at every index (§2, fn 6), the `D⁺` of the
+X-marking route. -/
+def xMarkedBase : HistoricalAlternatives Bool ℤ := fun _ ↦ Set.univ
 
-/-- Over `D` the consequent is trivial: only the symptom world is live (§2). -/
+/-- Over `D` the consequent is trivial, since only the symptom world is live (§2). -/
 theorem consequent_trivial_at_utterance :
     historyJones utteranceIdx ⊆ showsSymptoms :=
-  λ _ hw => Or.resolve_right hw (by decide)
+  fun _ hw ↦ Or.resolve_right hw (by decide)
 
 /-- The symptom-absent world is not live at the utterance index. -/
 theorem false_not_live : false ∉ historyJones utteranceIdx :=
-  λ h => absurd (Or.resolve_left h Bool.false_ne_true) (by decide)
+  fun h ↦ absurd (Or.resolve_left h Bool.false_ne_true) (by decide)
 
-/-- O-marking without expansion: trivially true for any antecedent — the infelicity
-    of ex. (2). -/
+/-- O-marking without expansion is trivially true for any antecedent, the infelicity of
+ex. (2). -/
 theorem oMarking_anderson_trivial (antecedent : Set Bool) :
     utteranceIdx ∈ strictImp historyJones antecedent showsSymptoms :=
   mem_strictImp_of_subset consequent_trivial_at_utterance
@@ -210,13 +212,13 @@ theorem xMarking_expands :
 /-- Over the X-marked `D⁺` the consequent is left open (§2). -/
 theorem consequent_open_over_xMarkedBase :
     ¬ xMarkedBase utteranceIdx ⊆ showsSymptoms :=
-  λ h => Bool.false_ne_true (h (Set.mem_univ false))
+  fun h ↦ Bool.false_ne_true (h (Set.mem_univ false))
 
 /-! ### Japanese O-marking: HP expansion under branching time
 
 §3.3: the HP shift moves the evaluation index backward; live possibilities shrink
-monotonically over time (the substrate's `HistoricalProperties.antitone`, anchored on
-[condoravdi-2002]), so the earlier index has a larger domain. -/
+monotonically over time (`historyJones_antitone`, the backward closure of [condoravdi-2002]), so
+the earlier index has a larger domain. -/
 
 /-- The HP shift strictly enlarges the live domain (§3.3): subset by antitonicity,
     strictness by the newly live symptom-absent world. -/
@@ -230,11 +232,10 @@ theorem hp_expands_jones_domain :
     `consequent_open_over_xMarkedBase` reaches by enlarging the base (§3.3, §4.1). -/
 theorem consequent_open_after_hp :
     ¬ historyJones hpIdx ⊆ showsSymptoms :=
-  λ h => Bool.false_ne_true (h (Or.inr le_rfl))
+  fun h ↦ Bool.false_ne_true (h (Or.inr le_rfl))
 
-/-- The payoff (§2: "one can make a meaningful, contingent claim"): a true Anderson
-    conditional at the HP index excludes a live world (`Set.not_subset` for the
-    witness form). -/
+/-- A true Anderson conditional at the HP index excludes a live world (`Set.not_subset` for the
+witness form), so "one can make a meaningful, contingent claim" (§2). -/
 theorem expanded_anderson_informative (antecedent : Set Bool)
     (h : hpIdx ∈ strictImp historyJones antecedent showsSymptoms) :
     ¬ historyJones hpIdx ⊆ antecedent :=
