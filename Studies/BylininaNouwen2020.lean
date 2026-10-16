@@ -1,8 +1,7 @@
 module
 
-public import Linglib.Semantics.Degree.Quantifier
 public import Mathlib.Data.Fintype.EquivFin
-public import Mathlib.Data.Set.Card
+public import Studies.BylininaNouwen2018
 public import Studies.Partee1987
 public import Studies.Spector2013
 
@@ -20,46 +19,44 @@ so the lowered numeral, interpreted in situ, has an at least reading.
 The views differ in where the exactly reading comes from. On the predicate and number views a
 numeral with a distributive predicate is lower-bounded ((29)) and an exhaustivity operator
 strengthens it ((32), (34)); on Kennedy's view the numeral is doubly bounded and takes scope by QR
-((43)–(46)). At each scope site the two coincide, since exhaustifying the lower bound against the
-higher numerals says that the numeral is the greatest degree of the property abstracted there,
-which is what Kennedy's quantifier says of it. Above a possibility modal both give the strong
-reading (36-b), Kennedy's (46), and above *some students* both give (39), a reading the sentence is
-reported to lack (fn. 9 flags the judgement). The accounts differ in which sites they reach: the
-Heim-Kennedy generalization (42) keeps degree operators below nominal quantifiers, and nothing keeps
-a propositional `EXH` there.
+((43)–(46)). At each scope site the two coincide, as Bylinina and Nouwen (2018) observed for
+*zero*: exhaustifying the lower bound against the higher numerals says that the numeral is the
+greatest degree of the property abstracted there, which is what Kennedy's quantifier says of it.
+Above a possibility modal both give the strong reading (36-b), Kennedy's (46), and above *some
+students* both give (39), a reading the sentence is reported to lack (fn. 9 flags the judgement).
+The accounts differ in which sites they reach: the Heim-Kennedy generalization (42) keeps degree
+operators below nominal quantifiers, and nothing keeps a propositional `EXH` there.
 
 The survey's proposal keeps the quantifier type and the lower bound: the numeral is the Montague
 lift of the number ((52)), and an operator `MAX` turns it into Kennedy's quantifier ((53), (54)).
 At the numeral's landing site `MAX` is exhaustification, so the strengthening moves with the
-numeral and obeys (42). The lower bound has to be basic because of *zero* ((51)): with the empty
-plurality in the domain, the lower-bound *zero A B* is a tautology, while Kennedy's *zero A B* is
-*no A B*, which licenses negative polarity items that *zero* does not.
+numeral and obeys (42). The lower bound has to be basic because of *zero* ((51)), the argument of
+Bylinina and Nouwen (2018): Kennedy's *zero A B* is *no A B* and licenses the negative polarity
+items that *zero* does not, while with `MAX` apart from the numeral *zero* is a tautology below
+`MAX` and *no* above it, and licenses none.
 
 ## Main results
 
-* `maxIn_singleton_iff_exhAgainst`: Kennedy's quantifier at a degree property is the exhaustified
-  lower bound there, at every scope site (`exhAgainst_iff_highScope`, `exhAgainst_iff_lowScope`).
 * `exh_poss_iff_highScope`: the exhaustified possibility reading of Spector is Kennedy's (46).
+* `lowScope_some_not_highScope`: over *some students* the high reading (39) is strictly stronger.
 * `MAX_individual_iff_exhAgainst`: `MAX` of the lifted number is exhaustification at its site.
-* `maxIn_zero_countDegrees_iff`: Kennedy's *zero* is *no*.
+* `not_licenses_MAX_zero`: with `MAX`, *zero* licenses no negative polarity item.
 
 ## Implementation notes
 
 * Degrees are natural numbers, a degree property is a `Set ℕ` and a degree quantifier a predicate
   on them. Kennedy's numeral is the substrate's `Degree.MaxIn {n}`, and its scope relative to a
   modal or nominal quantifier `Q` over a count `μ` is `Degree.LowScope` or `Degree.HighScope`.
-* Pluralities are the finite sets of atoms, so the domain has the empty plurality: it is the full
-  lattice `×Z` of Bylinina and Nouwen (2018), of which Link's `*Z` ((12)) is the nonempty part.
-  The two agree on every numeral but *zero*.
-* `EXH` is `Exhaustification.exhAgainst (· < ·)`, denying every higher numeral. On the lower sets
-  that distributive predicates give (`isLowerSet_countDegrees_plural`) the higher numerals are the
-  stronger alternatives of (32).
+* Pluralities, degree properties and licensing are those of `BylininaNouwen2018`: the finite sets
+  of atoms, with the empty plurality, so `plural Z` is the full lattice `×Z` and Link's `*Z` ((12))
+  its nonempty part. The lower bound (29) is `isLowerSet_countDegrees_plural`, and its failure with
+  a collective predicate (fn. 8) `countDegrees_singleton`.
+* `EXH` is `Exhaustification.exhAgainst (· < ·)`, denying every higher numeral, which on those
+  lower sets are the stronger alternatives of (32).
 
 ## TODO
 
-The determiner view (Section 2), the Dutch *hoeven* data (26)–(28), and the polarity account of
-*zero* in Bylinina and Nouwen (2018), which needs non-trivial downward entailment, are not
-formalized.
+The determiner view (Section 2) and the Dutch *hoeven* data (26)–(28) are not formalized.
 
 ## References
 
@@ -75,7 +72,8 @@ formalized.
 @[expose] public section
 namespace BylininaNouwen2020
 
-open Reference Degree Exhaustification Quantifier Quantifier.GQ Quantifier.NP Set
+open BylininaNouwen2018 Reference Degree Exhaustification Quantifier Quantifier.GQ
+  Quantifier.NP Set
 
 variable {α : Type*}
 
@@ -108,69 +106,15 @@ theorem MANY_injective_iff : Function.Injective (MANY (α := α)) ↔ Infinite �
     exact absurd (h ((key 0).trans (key 1).symm)) (by omega)
   · exact (preimage_injective.2 (Infinite.exists_subset_card_eq α)).comp singleton_injective
 
-/-! ### Pluralities and the lower bound
-
-A numeral with a distributive predicate is lower-bounded ((29)), since the degrees `d` such that
-some `d` atoms of `A` are `B` form a lower set; with a collective predicate they need not
-(fn. 8). -/
-
-/-- The pluralities of members of `Z`, the sums `⊔X` of the subsets `X ⊆ Z`. -/
-def plural (Z : Set α) : Set (Finset α) := {x | ↑x ⊆ Z}
-
-/-- The degree property `λd. ∃x[#x = d ∧ ×A(x) ∧ C(x)]` that the numeral of *n A C* quantifies
-over after QR. -/
-def countDegrees (A : Set α) (C : Set (Finset α)) : Set ℕ :=
-  {d | ∃ x ∈ MANY d, x ∈ plural A ∩ C}
-
-theorem isLowerSet_countDegrees_plural (A B : Set α) : IsLowerSet (countDegrees A (plural B)) := by
-  rintro d e hed ⟨x, rfl, hA, hB⟩
-  obtain ⟨y, hyx, rfl⟩ := Finset.exists_subset_card_eq hed
-  exact ⟨y, rfl, (Finset.coe_subset.2 hyx).trans hA, (Finset.coe_subset.2 hyx).trans hB⟩
-
-/-- If only the plurality `s` lifted the piano together, the degree property holds at `#s`
-alone, so the numeral is not lower-bounded (fn. 8). -/
-theorem countDegrees_singleton {A : Set α} {s : Finset α} (hs : ↑s ⊆ A) :
-    countDegrees A {s} = {s.card} :=
-  Set.ext fun _ ↦ ⟨fun ⟨_, hx, _, hxs⟩ ↦ (hxs ▸ hx : s.card = _).symm,
-    fun h ↦ ⟨s, h.symm, hs, rfl⟩⟩
-
-/-- With finitely many atoms in `A ∩ B` the degree property is the lower closure of their number,
-the measured degree property of `Degree.LowScope`. -/
-theorem countDegrees_plural_eq_Iic {A B : Set α} (h : (A ∩ B).Finite) :
-    countDegrees A (plural B) = Iic (A ∩ B).ncard := by
-  ext d
-  simp only [countDegrees, plural, MANY, mem_inter_iff, mem_ofPred_eq, mem_preimage,
-    mem_singleton_iff, mem_Iic, ← subset_inter_iff, ← h.subset_toFinset, ncard_eq_toFinset_card _ h]
-  exact ⟨fun ⟨x, hx, hs⟩ ↦ hx ▸ Finset.card_le_card hs,
-    fun hd ↦ let ⟨y, hy, hc⟩ := Finset.exists_subset_card_eq hd; ⟨y, hc, hy⟩⟩
-
 /-! ### Exhaustification and degree quantifiers
 
-Exhaustifying the lower bound at a scope site and raising Kennedy's quantifier to that site give
-the same reading, so the accounts differ only in the sites available to them. -/
-
-/-- Kennedy's quantifier holds of a degree property when the lower bound, exhaustified against the
-higher numerals, does: both say that `n` is its greatest degree. -/
-theorem maxIn_singleton_iff_exhAgainst {D : Type*} [LinearOrder D] {P : Set D} {n : D} :
-    MaxIn {n} P ↔ exhAgainst (· < ·) (· ∈ P) n :=
-  maxIn_singleton.trans <| and_congr_right' ⟨fun h _ hm hmP ↦ (h hmP).not_gt hm,
-    fun h m hmP ↦ not_lt.1 fun hm ↦ h m hm hmP⟩
+Exhaustifying the lower bound at a site and raising Kennedy's quantifier there give the same reading
+(`BylininaNouwen2018.exhAgainst_iff_highScope`, `BylininaNouwen2018.exhAgainst_iff_lowScope`), so
+the accounts differ only in the sites available to them. -/
 
 section Scope
 
-variable {Q : NP α} {μ : α → ℕ} {n : ℕ}
-
-/-- `EXH` above `Q` is the numeral raised over `Q`: (36-b) and Kennedy's (46) over a possibility
-modal, (39) over *some students*. -/
-theorem exhAgainst_iff_highScope :
-    exhAgainst (· < ·) (fun m ↦ Q fun x ↦ m ≤ μ x) n ↔ HighScope (MaxIn {n}) Q μ :=
-  maxIn_singleton_iff_exhAgainst.symm
-
-/-- `EXH` below `Q` is the numeral in situ under `Q`: (36-a) under a possibility modal, and the
-reading that *some students answered exactly `n` questions* under *some students* ((38)). -/
-theorem exhAgainst_iff_lowScope :
-    (Q fun x ↦ exhAgainst (· < ·) (· ≤ μ x) n) ↔ LowScope (MaxIn {n}) Q μ := by
-  simp only [LowScope, maxIn_singleton_iff_exhAgainst]; rfl
+variable {n : ℕ}
 
 /-- Spector's wide-scope exhaustification over a possibility modal, the reading (36-b), is
 Kennedy's numeral raised over the modal ((46)). -/
@@ -233,8 +177,8 @@ def MAX (D : Set (Set ℕ)) : Set ℕ → Prop := MaxIn (⋂₀ D)
 
 /-- `MAX` takes the lower-bound quantifier to Kennedy's ((54)), since the properties containing
 `n` intersect to `{n}`. -/
-theorem MAX_individual (n : ℕ) : MAX (individual n) = MaxIn {n} := by
-  rw [MAX, sInter_individual]
+theorem MAX_individual (n : ℕ) : MAX (individual n) = MaxIn {n} :=
+  congrArg MaxIn (sInter_individual n)
 
 /-- At its landing site `MAX` of the lower-bound quantifier is its exhaustification against the
 higher numerals, a strengthening that moves with the numeral. -/
@@ -248,21 +192,18 @@ theorem maxIn_singleton_lt_individual (n : ℕ) : MaxIn {n} < (individual n : Se
   lt_of_le_not_ge (fun _ h ↦ (maxIn_singleton.1 h).1) fun h ↦
     absurd ((maxIn_singleton.1 (h {n, n + 1} (Or.inl rfl))).2 (Or.inr rfl)) (by omega)
 
-/-- At its lower bound *zero A B* is a tautology, the empty plurality having zero atoms and being
-a plurality of every predicate. -/
-theorem individual_zero_countDegrees (A B : Set α) : individual 0 (countDegrees A (plural B)) :=
-  ⟨∅, Finset.card_empty, by simp [plural]⟩
+/-- `MAX` of the lower-bound *zero A B* is Kennedy's *zero A B*, which is *no A B* ((51)). -/
+theorem MAX_individual_zero_iff {A B : Set α} :
+    MAX (individual 0) (countDegrees A (plural B)) ↔ GQ.no A B := by
+  rw [MAX_individual]; exact maxIn_zero_countDegrees_iff
 
-/-- Kennedy's *zero A B*, and so `MAX` of the lower-bound *zero*, is *no A B* ((51)). -/
-theorem maxIn_zero_countDegrees_iff {A B : Set α} :
-    MaxIn {0} (countDegrees A (plural B)) ↔ GQ.no A B := by
-  refine maxIn_singleton.trans ⟨fun h a ha hb ↦ ?_, fun h ↦ ⟨individual_zero_countDegrees A B, ?_⟩⟩
-  · have : 1 ≤ 0 := h.2 ⟨{a}, Finset.card_singleton a, by
-      simp only [plural, mem_inter_iff, mem_ofPred_eq, Finset.coe_singleton, singleton_subset_iff]
-      exact ⟨ha, hb⟩⟩
-    omega
-  · rintro _ ⟨x, rfl, hA, hB⟩
-    exact Nat.le_zero.2 <| Finset.card_eq_zero.2 <|
-      Finset.eq_empty_of_forall_notMem fun a hx ↦ h a (hA hx) (hB hx)
+/-- With `MAX` apart from the numeral, *zero* keeps the split of [bylinina-nouwen-2018]: below
+`MAX` it is a tautology and above it *no*, so it licenses no polarity item, where Kennedy's *zero*
+licenses both (`BylininaNouwen2018.kennedy_zero_licenses`). -/
+theorem not_licenses_MAX_zero {E : Type*} (A : E → Prop) (s : Gajewski2011.Strength) :
+    ¬ Licenses (fun B ↦ individual 0 (countDegrees A (plural B)))
+      (fun B ↦ MAX (individual 0) (countDegrees A (plural B))) s := by
+  cases s
+  exacts [not_nonTriviallyAntitone_plain_zero A, fun h ↦ not_nonTriviallyAntitone_plain_zero A h.1]
 
 end BylininaNouwen2020

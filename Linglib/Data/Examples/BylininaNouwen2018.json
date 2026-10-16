@@ -1,0 +1,306 @@
+[
+  {
+    "id": "bylininanouwen2018_ex12",
+    "source": {
+      "bibkey": "bylinina-nouwen-2018",
+      "paperLabel": "(12)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "No student has visited me in years.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "licenser",
+        "no"
+      ],
+      [
+        "strength",
+        "strong"
+      ],
+      [
+        "npi",
+        "in years"
+      ]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "bylininanouwen2018_ex13",
+    "source": {
+      "bibkey": "bylinina-nouwen-2018",
+      "paperLabel": "(13)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Zero students have visited me in years.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "licenser",
+        "zero"
+      ],
+      [
+        "strength",
+        "strong"
+      ],
+      [
+        "npi",
+        "in years"
+      ]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "bylininanouwen2018_ex14",
+    "source": {
+      "bibkey": "bylinina-nouwen-2018",
+      "paperLabel": "(14)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "No student ever said anything.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "licenser",
+        "no"
+      ],
+      [
+        "strength",
+        "weak"
+      ],
+      [
+        "npi",
+        "ever"
+      ],
+      [
+        "npi",
+        "anything"
+      ]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "bylininanouwen2018_ex15",
+    "source": {
+      "bibkey": "gajewski-2011",
+      "paperLabel": "(112)"
+    },
+    "reportedIn": {
+      "bibkey": "bylinina-nouwen-2018",
+      "paperLabel": "(15)"
+    },
+    "language": "stan1293",
+    "primaryText": "Zero students said anything.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "marginal",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "licenser",
+        "zero"
+      ],
+      [
+        "strength",
+        "weak"
+      ],
+      [
+        "npi",
+        "anything"
+      ]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "bylininanouwen2018_ex16",
+    "source": {
+      "bibkey": "bylinina-nouwen-2018",
+      "paperLabel": "(16)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Zero students bought any car.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "licenser",
+        "zero"
+      ],
+      [
+        "strength",
+        "weak"
+      ],
+      [
+        "npi",
+        "any"
+      ]
+    ],
+    "comment": "Bylinina and Nouwen report the star from Zeijlstra (2007); its example number there is unchecked.",
+    "verified": "page-image"
+  },
+  {
+    "id": "bylininanouwen2018_ex46_no",
+    "source": {
+      "bibkey": "bylinina-nouwen-2018",
+      "paperLabel": "(46)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "No students read any books by Auster.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "licenser",
+        "no"
+      ],
+      [
+        "strength",
+        "weak"
+      ],
+      [
+        "npi",
+        "any"
+      ]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "bylininanouwen2018_ex46_few",
+    "source": {
+      "bibkey": "bylinina-nouwen-2018",
+      "paperLabel": "(46)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Few students read any books by Auster.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "licenser",
+        "few"
+      ],
+      [
+        "strength",
+        "weak"
+      ],
+      [
+        "npi",
+        "any"
+      ]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "bylininanouwen2018_ex47_no",
+    "source": {
+      "bibkey": "bylinina-nouwen-2018",
+      "paperLabel": "(47)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "No students have visited me in years.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "licenser",
+        "no"
+      ],
+      [
+        "strength",
+        "strong"
+      ],
+      [
+        "npi",
+        "in years"
+      ]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "bylininanouwen2018_ex47_few",
+    "source": {
+      "bibkey": "bylinina-nouwen-2018",
+      "paperLabel": "(47)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Few students have visited me in years.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "licenser",
+        "few"
+      ],
+      [
+        "strength",
+        "strong"
+      ],
+      [
+        "npi",
+        "in years"
+      ]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  }
+]
