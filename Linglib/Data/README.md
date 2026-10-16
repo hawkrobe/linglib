@@ -48,8 +48,11 @@ Per-paper word forms in the Cross-Linguistic Data Formats Wordlist shape: a
 for the paradigmatic pairs a paper asserts (stem and past, adjective and
 comparative, base and reduplicant). A `FormTable` row may carry custom
 columns, which CLDF permits in any table, for the per-form codes a paper
-assigns; they are emitted into the form's `columns`. The morphological
-counterpart of `Examples/`, whose datum is a sentence and its gloss.
+assigns; they are emitted into the form's `columns`. A relation is emitted
+with its two forms, its foreign keys resolved. The `Comment` column and the
+`ParameterTable` are validated but not emitted, since no theorem reads them.
+The morphological counterpart of `Examples/`, whose datum is a sentence and
+its gloss.
 
 - **Schema**: `Linglib/Data/Forms/Schema.lean`
 - **Generator**: `scripts/gen_forms.py` (`--check` verifies sync, `--fmt` canonical JSON)

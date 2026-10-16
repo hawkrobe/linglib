@@ -23,7 +23,6 @@ def belarusian_plain_lform : Form :=
     parameterId := "abolish"
     form := "kas-av-a-l-a"
     segments := ["kas", "av", "a", "l", "a"]
-    comment := "orthographic <av>; the paper takes the vowel to be /o/ reduced to [a]"
     source := [
       ⟨"stojkovic-2026", "Table 1"⟩
     ]
@@ -35,7 +34,6 @@ def belarusian_plain_prs : Form :=
     parameterId := "abolish"
     form := "kas-u-je-ʃ"
     segments := ["kas", "u", "je", "ʃ"]
-    comment := ""
     source := [
       ⟨"stojkovic-2026", "Table 1"⟩
     ]
@@ -47,7 +45,6 @@ def bos_cro_mon_ser_plain_lform : Form :=
     parameterId := "care_for"
     form := "ɲeg-ov-a-l-a"
     segments := ["ɲeg", "ov", "a", "l", "a"]
-    comment := ""
     source := [
       ⟨"stojkovic-2026", "Table 1"⟩
     ]
@@ -59,7 +56,6 @@ def bos_cro_mon_ser_plain_prs : Form :=
     parameterId := "care_for"
     form := "ɲeg-u-je-ʃ"
     segments := ["ɲeg", "u", "je", "ʃ"]
-    comment := ""
     source := [
       ⟨"stojkovic-2026", "Table 1"⟩
     ]
@@ -71,7 +67,6 @@ def bulgarian_plain_lform : Form :=
     parameterId := "kiss"
     form := "tsel-uv-a-l-a"
     segments := ["tsel", "uv", "a", "l", "a"]
-    comment := ""
     source := [
       ⟨"stojkovic-2026", "Table 1"⟩
     ]
@@ -83,7 +78,6 @@ def bulgarian_plain_prs : Form :=
     parameterId := "kiss"
     form := "tsel-uv-a-ʃ"
     segments := ["tsel", "uv", "a", "ʃ"]
-    comment := ""
     source := [
       ⟨"stojkovic-2026", "Table 1"⟩
     ]
@@ -95,7 +89,6 @@ def bunyev_ac_plain_lform : Form :=
     parameterId := "swear_at_god"
     form := "bog-ov-a-l-a"
     segments := ["bog", "ov", "a", "l", "a"]
-    comment := ""
     source := [
       ⟨"stojkovic-2026", "Table 1"⟩
     ]
@@ -107,7 +100,6 @@ def bunyev_ac_plain_prs : Form :=
     parameterId := "swear_at_god"
     form := "bog-u-je-ʃ"
     segments := ["bog", "u", "je", "ʃ"]
-    comment := ""
     source := [
       ⟨"stojkovic-2026", "Table 1"⟩
     ]
@@ -119,7 +111,6 @@ def carpathian_rusyn_plain_lform : Form :=
     parameterId := "talk"
     form := "bisid-ov-a-l-a"
     segments := ["bisid", "ov", "a", "l", "a"]
-    comment := ""
     source := [
       ⟨"stojkovic-2026", "Table 1"⟩
     ]
@@ -131,7 +122,6 @@ def carpathian_rusyn_plain_prs : Form :=
     parameterId := "talk"
     form := "bisid-u-je-ʃ"
     segments := ["bisid", "u", "je", "ʃ"]
-    comment := ""
     source := [
       ⟨"stojkovic-2026", "Table 1"⟩
     ]
@@ -143,7 +133,6 @@ def czech_plain_lform : Form :=
     parameterId := "buy"
     form := "kup-ov-a-l-a"
     segments := ["kup", "ov", "a", "l", "a"]
-    comment := ""
     source := [
       ⟨"stojkovic-2026", "Table 1"⟩
     ]
@@ -155,7 +144,6 @@ def czech_plain_prs : Form :=
     parameterId := "buy"
     form := "kup-u-je-ʃ"
     segments := ["kup", "u", "je", "ʃ"]
-    comment := ""
     source := [
       ⟨"stojkovic-2026", "Table 1"⟩
     ]
@@ -167,7 +155,6 @@ def kashubian_plain_lform : Form :=
     parameterId := "get_engaged"
     form := "brutk-ov-a-w-a"
     segments := ["brutk", "ov", "a", "w", "a"]
-    comment := ""
     source := [
       ⟨"stojkovic-2026", "Table 1"⟩
     ]
@@ -179,7 +166,6 @@ def kashubian_plain_prs : Form :=
     parameterId := "get_engaged"
     form := "brutk-u-je-ʃ"
     segments := ["brutk", "u", "je", "ʃ"]
-    comment := ""
     source := [
       ⟨"stojkovic-2026", "Table 1"⟩
     ]
@@ -191,7 +177,6 @@ def lemko_rusyn_plain_lform : Form :=
     parameterId := "draw"
     form := "rɨs-uv-a-l-a"
     segments := ["rɨs", "uv", "a", "l", "a"]
-    comment := ""
     source := [
       ⟨"stojkovic-2026", "Table 1"⟩
     ]
@@ -203,7 +188,6 @@ def lemko_rusyn_plain_prs : Form :=
     parameterId := "draw"
     form := "rɨs-u-je-ʃ"
     segments := ["rɨs", "u", "je", "ʃ"]
-    comment := ""
     source := [
       ⟨"stojkovic-2026", "Table 1"⟩
     ]
@@ -215,7 +199,6 @@ def lower_sorbian_plain_lform : Form :=
     parameterId := "paint"
     form := "mol-ov-a-w-a"
     segments := ["mol", "ov", "a", "w", "a"]
-    comment := ""
     source := [
       ⟨"stojkovic-2026", "Table 1"⟩
     ]
@@ -227,7 +210,6 @@ def lower_sorbian_plain_prs : Form :=
     parameterId := "paint"
     form := "mol-u-je-ʃ"
     segments := ["mol", "u", "je", "ʃ"]
-    comment := ""
     source := [
       ⟨"stojkovic-2026", "Table 1"⟩
     ]
@@ -239,7 +221,6 @@ def macedonian_plain_lform : Form :=
     parameterId := "believe"
     form := "ver-uv-a-l-a"
     segments := ["ver", "uv", "a", "l", "a"]
-    comment := ""
     source := [
       ⟨"stojkovic-2026", "Table 1"⟩
     ]
@@ -251,7 +232,6 @@ def macedonian_plain_prs : Form :=
     parameterId := "believe"
     form := "ver-uv-a-ʃ"
     segments := ["ver", "uv", "a", "ʃ"]
-    comment := ""
     source := [
       ⟨"stojkovic-2026", "Table 1"⟩
     ]
@@ -263,7 +243,6 @@ def pannonian_rusyn_plain_lform : Form :=
     parameterId := "serve"
     form := "rab-ov-a-l-a"
     segments := ["rab", "ov", "a", "l", "a"]
-    comment := ""
     source := [
       ⟨"stojkovic-2026", "Table 1"⟩
     ]
@@ -275,7 +254,6 @@ def pannonian_rusyn_plain_prs : Form :=
     parameterId := "serve"
     form := "rab-u-je-ʃ"
     segments := ["rab", "u", "je", "ʃ"]
-    comment := ""
     source := [
       ⟨"stojkovic-2026", "Table 1"⟩
     ]
@@ -287,7 +265,6 @@ def podlachian_plain_lform : Form :=
     parameterId := "aim"
     form := "tsil-ov-a-w-a"
     segments := ["tsil", "ov", "a", "w", "a"]
-    comment := ""
     source := [
       ⟨"stojkovic-2026", "Table 1"⟩
     ]
@@ -299,7 +276,6 @@ def podlachian_plain_prs : Form :=
     parameterId := "aim"
     form := "tsil-u-je-ʃ"
     segments := ["tsil", "u", "je", "ʃ"]
-    comment := ""
     source := [
       ⟨"stojkovic-2026", "Table 1"⟩
     ]
@@ -311,7 +287,6 @@ def polish_plain_lform : Form :=
     parameterId := "work"
     form := "prats-ov-a-w-a"
     segments := ["prats", "ov", "a", "w", "a"]
-    comment := ""
     source := [
       ⟨"stojkovic-2026", "Table 1"⟩
     ]
@@ -323,7 +298,6 @@ def polish_plain_prs : Form :=
     parameterId := "work"
     form := "prats-u-je-ʃ"
     segments := ["prats", "u", "je", "ʃ"]
-    comment := ""
     source := [
       ⟨"stojkovic-2026", "Table 1"⟩
     ]
@@ -335,7 +309,6 @@ def russian_plain_lform : Form :=
     parameterId := "complain"
     form := "ʒal-ov-a-l-a-sʲ"
     segments := ["ʒal", "ov", "a", "l", "a", "sʲ"]
-    comment := "orthographic form, which the paper uses to infer the quality before vowel reduction"
     source := [
       ⟨"stojkovic-2026", "Table 1"⟩
     ]
@@ -347,7 +320,6 @@ def russian_plain_prs : Form :=
     parameterId := "complain"
     form := "ʒal-u-je-ʃ-sʲ"
     segments := ["ʒal", "u", "je", "ʃ", "sʲ"]
-    comment := ""
     source := [
       ⟨"stojkovic-2026", "Table 1"⟩
     ]
@@ -359,7 +331,6 @@ def silesian_plain_lform : Form :=
     parameterId := "darn"
     form := "ɕtop-ov-a-w-a"
     segments := ["ɕtop", "ov", "a", "w", "a"]
-    comment := ""
     source := [
       ⟨"stojkovic-2026", "Table 1"⟩
     ]
@@ -371,7 +342,6 @@ def silesian_plain_prs : Form :=
     parameterId := "darn"
     form := "ɕtop-u-je-ʃ"
     segments := ["ɕtop", "u", "je", "ʃ"]
-    comment := ""
     source := [
       ⟨"stojkovic-2026", "Table 1"⟩
     ]
@@ -383,7 +353,6 @@ def slovak_plain_lform : Form :=
     parameterId := "battle"
     form := "boj-ov-a-l-a"
     segments := ["boj", "ov", "a", "l", "a"]
-    comment := ""
     source := [
       ⟨"stojkovic-2026", "Table 1"⟩
     ]
@@ -395,7 +364,6 @@ def slovak_plain_prs : Form :=
     parameterId := "battle"
     form := "boj-u-je-ʃ"
     segments := ["boj", "u", "je", "ʃ"]
-    comment := ""
     source := [
       ⟨"stojkovic-2026", "Table 1"⟩
     ]
@@ -407,7 +375,6 @@ def slovenian_plain_lform : Form :=
     parameterId := "travel"
     form := "pot-ov-a-l-a"
     segments := ["pot", "ov", "a", "l", "a"]
-    comment := ""
     source := [
       ⟨"stojkovic-2026", "Table 1"⟩
     ]
@@ -419,7 +386,6 @@ def slovenian_plain_prs : Form :=
     parameterId := "travel"
     form := "pot-u-je-ʃ"
     segments := ["pot", "u", "je", "ʃ"]
-    comment := ""
     source := [
       ⟨"stojkovic-2026", "Table 1"⟩
     ]
@@ -431,7 +397,6 @@ def ukrainian_plain_lform : Form :=
     parameterId := "squeeze"
     form := "stis-uv-a-l-a"
     segments := ["stis", "uv", "a", "l", "a"]
-    comment := ""
     source := [
       ⟨"stojkovic-2026", "Table 1"⟩
     ]
@@ -443,7 +408,6 @@ def ukrainian_plain_prs : Form :=
     parameterId := "squeeze"
     form := "stis-u-jeʃ"
     segments := ["stis", "u", "jeʃ"]
-    comment := ""
     source := [
       ⟨"stojkovic-2026", "Table 1"⟩
     ]
@@ -455,7 +419,6 @@ def upper_sorbian_plain_lform : Form :=
     parameterId := "buy"
     form := "kup-ov-a-w-a"
     segments := ["kup", "ov", "a", "w", "a"]
-    comment := ""
     source := [
       ⟨"stojkovic-2026", "Table 1"⟩
     ]
@@ -467,7 +430,6 @@ def upper_sorbian_plain_prs : Form :=
     parameterId := "buy"
     form := "kup-u-je-ʃ"
     segments := ["kup", "u", "je", "ʃ"]
-    comment := ""
     source := [
       ⟨"stojkovic-2026", "Table 1"⟩
     ]
@@ -479,7 +441,6 @@ def belarusian_palatal_lform : Form :=
     parameterId := "battle"
     form := "vaj-av-a-l-a"
     segments := ["vaj", "av", "a", "l", "a"]
-    comment := "orthographic <av>; the paper takes the vowel to be /o/ reduced to [a]"
     source := [
       ⟨"stojkovic-2026", "Table 2"⟩
     ]
@@ -491,7 +452,6 @@ def belarusian_palatal_prs : Form :=
     parameterId := "battle"
     form := "vaj-u-je-ʃ"
     segments := ["vaj", "u", "je", "ʃ"]
-    comment := ""
     source := [
       ⟨"stojkovic-2026", "Table 2"⟩
     ]
@@ -503,7 +463,6 @@ def bunyev_ac_palatal_lform : Form :=
     parameterId := "prune"
     form := "katʃ-ov-a-l-a"
     segments := ["katʃ", "ov", "a", "l", "a"]
-    comment := ""
     source := [
       ⟨"stojkovic-2026", "Table 2"⟩
     ]
@@ -515,7 +474,6 @@ def bunyev_ac_palatal_prs : Form :=
     parameterId := "prune"
     form := "katʃ-u-je-ʃ"
     segments := ["katʃ", "u", "je", "ʃ"]
-    comment := ""
     source := [
       ⟨"stojkovic-2026", "Table 2"⟩
     ]
@@ -527,7 +485,6 @@ def czech_palatal_lform : Form :=
     parameterId := "whip"
     form := "bitʃ-ov-a-l-a"
     segments := ["bitʃ", "ov", "a", "l", "a"]
-    comment := ""
     source := [
       ⟨"stojkovic-2026", "Table 2"⟩
     ]
@@ -539,7 +496,6 @@ def czech_palatal_prs : Form :=
     parameterId := "whip"
     form := "bitʃ-u-je-ʃ"
     segments := ["bitʃ", "u", "je", "ʃ"]
-    comment := ""
     source := [
       ⟨"stojkovic-2026", "Table 2"⟩
     ]
@@ -551,7 +507,6 @@ def kashubian_palatal_lform : Form :=
     parameterId := "date"
     form := "vrəj-ov-a-w-a"
     segments := ["vrəj", "ov", "a", "w", "a"]
-    comment := ""
     source := [
       ⟨"stojkovic-2026", "Table 2"⟩
     ]
@@ -563,7 +518,6 @@ def kashubian_palatal_prs : Form :=
     parameterId := "date"
     form := "vrəj-u-je-ʃ"
     segments := ["vrəj", "u", "je", "ʃ"]
-    comment := ""
     source := [
       ⟨"stojkovic-2026", "Table 2"⟩
     ]
@@ -575,7 +529,6 @@ def lower_sorbian_palatal_lform : Form :=
     parameterId := "wander"
     form := "puɕ-ov-a-w-a"
     segments := ["puɕ", "ov", "a", "w", "a"]
-    comment := ""
     source := [
       ⟨"stojkovic-2026", "Table 2"⟩
     ]
@@ -587,7 +540,6 @@ def lower_sorbian_palatal_prs : Form :=
     parameterId := "wander"
     form := "puɕ-u-je-ʃ"
     segments := ["puɕ", "u", "je", "ʃ"]
-    comment := ""
     source := [
       ⟨"stojkovic-2026", "Table 2"⟩
     ]
@@ -599,7 +551,6 @@ def pannonian_rusyn_palatal_lform : Form :=
     parameterId := "reign"
     form := "kraʎ-ov-a-l-a"
     segments := ["kraʎ", "ov", "a", "l", "a"]
-    comment := ""
     source := [
       ⟨"stojkovic-2026", "Table 2"⟩
     ]
@@ -611,7 +562,6 @@ def pannonian_rusyn_palatal_prs : Form :=
     parameterId := "reign"
     form := "kraʎ-u-je-ʃ"
     segments := ["kraʎ", "u", "je", "ʃ"]
-    comment := ""
     source := [
       ⟨"stojkovic-2026", "Table 2"⟩
     ]
@@ -623,7 +573,6 @@ def podlachian_palatal_lform : Form :=
     parameterId := "grub"
     form := "kartʃ-ov-a-w-a"
     segments := ["kartʃ", "ov", "a", "w", "a"]
-    comment := ""
     source := [
       ⟨"stojkovic-2026", "Table 2"⟩
     ]
@@ -635,7 +584,6 @@ def podlachian_palatal_prs : Form :=
     parameterId := "grub"
     form := "kartʃ-u-je-ʃ"
     segments := ["kartʃ", "u", "je", "ʃ"]
-    comment := ""
     source := [
       ⟨"stojkovic-2026", "Table 2"⟩
     ]
@@ -647,7 +595,6 @@ def polish_palatal_lform : Form :=
     parameterId := "accommodate"
     form := "hotel'-ov-a-w-a"
     segments := ["hotel'", "ov", "a", "w", "a"]
-    comment := ""
     source := [
       ⟨"stojkovic-2026", "Table 2"⟩
     ]
@@ -659,7 +606,6 @@ def polish_palatal_prs : Form :=
     parameterId := "accommodate"
     form := "hotel'-u-je-ʃ"
     segments := ["hotel'", "u", "je", "ʃ"]
-    comment := ""
     source := [
       ⟨"stojkovic-2026", "Table 2"⟩
     ]
@@ -671,7 +617,6 @@ def slovak_palatal_lform : Form :=
     parameterId := "battle"
     form := "boj-ov-a-l-a"
     segments := ["boj", "ov", "a", "l", "a"]
-    comment := ""
     source := [
       ⟨"stojkovic-2026", "Table 2"⟩
     ]
@@ -683,7 +628,6 @@ def slovak_palatal_prs : Form :=
     parameterId := "battle"
     form := "boj-u-je-ʃ"
     segments := ["boj", "u", "je", "ʃ"]
-    comment := ""
     source := [
       ⟨"stojkovic-2026", "Table 2"⟩
     ]
@@ -695,7 +639,6 @@ def silesian_palatal_lform : Form :=
     parameterId := "whip"
     form := "pajtɕ-ov-a-w-a"
     segments := ["pajtɕ", "ov", "a", "w", "a"]
-    comment := ""
     source := [
       ⟨"stojkovic-2026", "Table 2"⟩
     ]
@@ -707,7 +650,6 @@ def silesian_palatal_prs : Form :=
     parameterId := "whip"
     form := "pajtɕ-u-je-ʃ"
     segments := ["pajtɕ", "u", "je", "ʃ"]
-    comment := ""
     source := [
       ⟨"stojkovic-2026", "Table 2"⟩
     ]
@@ -719,7 +661,6 @@ def upper_sorbian_palatal_lform : Form :=
     parameterId := "translate"
     form := "preloʒ-ov-a-w-a"
     segments := ["preloʒ", "ov", "a", "w", "a"]
-    comment := ""
     source := [
       ⟨"stojkovic-2026", "Table 2"⟩
     ]
@@ -731,7 +672,6 @@ def upper_sorbian_palatal_prs : Form :=
     parameterId := "translate"
     form := "preloʒ-u-je-ʃ"
     segments := ["preloʒ", "u", "je", "ʃ"]
-    comment := ""
     source := [
       ⟨"stojkovic-2026", "Table 2"⟩
     ]
@@ -743,7 +683,6 @@ def bos_cro_mon_ser_palatal_lform : Form :=
     parameterId := "be_teacher"
     form := "utʃiteʎ-ev-a-l-a"
     segments := ["utʃiteʎ", "ev", "a", "l", "a"]
-    comment := ""
     source := [
       ⟨"stojkovic-2026", "Table 2"⟩
     ]
@@ -755,7 +694,6 @@ def bos_cro_mon_ser_palatal_prs : Form :=
     parameterId := "be_teacher"
     form := "utʃiteʎ-u-je-ʃ"
     segments := ["utʃiteʎ", "u", "je", "ʃ"]
-    comment := ""
     source := [
       ⟨"stojkovic-2026", "Table 2"⟩
     ]
@@ -767,7 +705,6 @@ def carpathian_rusyn_palatal_lform : Form :=
     parameterId := "compare"
     form := "stupɲ-ev-a-l-a"
     segments := ["stupɲ", "ev", "a", "l", "a"]
-    comment := ""
     source := [
       ⟨"stojkovic-2026", "Table 2"⟩
     ]
@@ -779,7 +716,6 @@ def carpathian_rusyn_palatal_prs : Form :=
     parameterId := "compare"
     form := "stupɲ-u-je-ʃ"
     segments := ["stupɲ", "u", "je", "ʃ"]
-    comment := ""
     source := [
       ⟨"stojkovic-2026", "Table 2"⟩
     ]
@@ -791,7 +727,6 @@ def russian_palatal_lform : Form :=
     parameterId := "swindle"
     form := "muxlʲ-ev-a-l-a"
     segments := ["muxlʲ", "ev", "a", "l", "a"]
-    comment := "orthographic form, which the paper uses to infer the quality before vowel reduction"
     source := [
       ⟨"stojkovic-2026", "Table 2"⟩
     ]
@@ -803,7 +738,6 @@ def russian_palatal_prs : Form :=
     parameterId := "swindle"
     form := "muxlʲ-u-je-ʃ"
     segments := ["muxlʲ", "u", "je", "ʃ"]
-    comment := ""
     source := [
       ⟨"stojkovic-2026", "Table 2"⟩
     ]
@@ -815,7 +749,6 @@ def slovenian_palatal_lform : Form :=
     parameterId := "rain"
     form := "deʒ-ev-a-l-a"
     segments := ["deʒ", "ev", "a", "l", "a"]
-    comment := ""
     source := [
       ⟨"stojkovic-2026", "Table 2"⟩
     ]
@@ -827,7 +760,6 @@ def slovenian_palatal_prs : Form :=
     parameterId := "rain"
     form := "deʒ-u-je-ʃ"
     segments := ["deʒ", "u", "je", "ʃ"]
-    comment := ""
     source := [
       ⟨"stojkovic-2026", "Table 2"⟩
     ]
@@ -839,7 +771,6 @@ def bulgarian_palatal_lform : Form :=
     parameterId := "jitter"
     form := "najeʒ-uv-a-l-a"
     segments := ["najeʒ", "uv", "a", "l", "a"]
-    comment := ""
     source := [
       ⟨"stojkovic-2026", "Table 2"⟩
     ]
@@ -851,7 +782,6 @@ def bulgarian_palatal_prs : Form :=
     parameterId := "jitter"
     form := "najeʒ-uv-a-ʃ"
     segments := ["najeʒ", "uv", "a", "ʃ"]
-    comment := ""
     source := [
       ⟨"stojkovic-2026", "Table 2"⟩
     ]
@@ -863,7 +793,6 @@ def lemko_rusyn_palatal_lform : Form :=
     parameterId := "adore"
     form := "oboʒ-uv-a-l-a"
     segments := ["oboʒ", "uv", "a", "l", "a"]
-    comment := ""
     source := [
       ⟨"stojkovic-2026", "Table 2"⟩
     ]
@@ -875,7 +804,6 @@ def lemko_rusyn_palatal_prs : Form :=
     parameterId := "adore"
     form := "oboʒ-u-je-ʃ"
     segments := ["oboʒ", "u", "je", "ʃ"]
-    comment := ""
     source := [
       ⟨"stojkovic-2026", "Table 2"⟩
     ]
@@ -887,7 +815,6 @@ def macedonian_palatal_lform : Form :=
     parameterId := "spend_night"
     form := "noc-uv-a-l-a"
     segments := ["noc", "uv", "a", "l", "a"]
-    comment := ""
     source := [
       ⟨"stojkovic-2026", "Table 2"⟩
     ]
@@ -899,7 +826,6 @@ def macedonian_palatal_prs : Form :=
     parameterId := "spend_night"
     form := "noc-uv-a-ʃ"
     segments := ["noc", "uv", "a", "ʃ"]
-    comment := ""
     source := [
       ⟨"stojkovic-2026", "Table 2"⟩
     ]
@@ -911,7 +837,6 @@ def ukrainian_palatal_lform : Form :=
     parameterId := "be_late"
     form := "zapizɲ-uv-a-l-a"
     segments := ["zapizɲ", "uv", "a", "l", "a"]
-    comment := ""
     source := [
       ⟨"stojkovic-2026", "Table 2"⟩
     ]
@@ -923,50 +848,12 @@ def ukrainian_palatal_prs : Form :=
     parameterId := "be_late"
     form := "zapizɲ-u-je-ʃ"
     segments := ["zapizɲ", "u", "je", "ʃ"]
-    comment := ""
     source := [
       ⟨"stojkovic-2026", "Table 2"⟩
     ]
     columns := [("Variety", "Ukrainian"), ("Root", "palatal"), ("Cell", "2sg.prs")] }
 
 def all : List Form := [belarusian_plain_lform, belarusian_plain_prs, bos_cro_mon_ser_plain_lform, bos_cro_mon_ser_plain_prs, bulgarian_plain_lform, bulgarian_plain_prs, bunyev_ac_plain_lform, bunyev_ac_plain_prs, carpathian_rusyn_plain_lform, carpathian_rusyn_plain_prs, czech_plain_lform, czech_plain_prs, kashubian_plain_lform, kashubian_plain_prs, lemko_rusyn_plain_lform, lemko_rusyn_plain_prs, lower_sorbian_plain_lform, lower_sorbian_plain_prs, macedonian_plain_lform, macedonian_plain_prs, pannonian_rusyn_plain_lform, pannonian_rusyn_plain_prs, podlachian_plain_lform, podlachian_plain_prs, polish_plain_lform, polish_plain_prs, russian_plain_lform, russian_plain_prs, silesian_plain_lform, silesian_plain_prs, slovak_plain_lform, slovak_plain_prs, slovenian_plain_lform, slovenian_plain_prs, ukrainian_plain_lform, ukrainian_plain_prs, upper_sorbian_plain_lform, upper_sorbian_plain_prs, belarusian_palatal_lform, belarusian_palatal_prs, bunyev_ac_palatal_lform, bunyev_ac_palatal_prs, czech_palatal_lform, czech_palatal_prs, kashubian_palatal_lform, kashubian_palatal_prs, lower_sorbian_palatal_lform, lower_sorbian_palatal_prs, pannonian_rusyn_palatal_lform, pannonian_rusyn_palatal_prs, podlachian_palatal_lform, podlachian_palatal_prs, polish_palatal_lform, polish_palatal_prs, slovak_palatal_lform, slovak_palatal_prs, silesian_palatal_lform, silesian_palatal_prs, upper_sorbian_palatal_lform, upper_sorbian_palatal_prs, bos_cro_mon_ser_palatal_lform, bos_cro_mon_ser_palatal_prs, carpathian_rusyn_palatal_lform, carpathian_rusyn_palatal_prs, russian_palatal_lform, russian_palatal_prs, slovenian_palatal_lform, slovenian_palatal_prs, bulgarian_palatal_lform, bulgarian_palatal_prs, lemko_rusyn_palatal_lform, lemko_rusyn_palatal_prs, macedonian_palatal_lform, macedonian_palatal_prs, ukrainian_palatal_lform, ukrainian_palatal_prs]
-
-def parameters : List Parameter := [
-  { id := "abolish", name := "abolish", description := "" },
-  { id := "accommodate", name := "accommodate", description := "" },
-  { id := "adore", name := "adore", description := "" },
-  { id := "aim", name := "aim", description := "" },
-  { id := "battle", name := "battle", description := "" },
-  { id := "be_late", name := "be late", description := "" },
-  { id := "be_teacher", name := "be teacher", description := "" },
-  { id := "believe", name := "believe", description := "" },
-  { id := "buy", name := "buy", description := "" },
-  { id := "care_for", name := "care for", description := "" },
-  { id := "compare", name := "compare", description := "" },
-  { id := "complain", name := "complain", description := "" },
-  { id := "darn", name := "darn", description := "" },
-  { id := "date", name := "date", description := "" },
-  { id := "draw", name := "draw", description := "" },
-  { id := "get_engaged", name := "get engaged", description := "" },
-  { id := "grub", name := "grub", description := "" },
-  { id := "jitter", name := "jitter", description := "" },
-  { id := "kiss", name := "kiss", description := "" },
-  { id := "paint", name := "paint", description := "" },
-  { id := "prune", name := "prune", description := "" },
-  { id := "rain", name := "rain", description := "" },
-  { id := "reign", name := "reign", description := "" },
-  { id := "serve", name := "serve", description := "" },
-  { id := "spend_night", name := "spend night", description := "" },
-  { id := "squeeze", name := "squeeze", description := "" },
-  { id := "swear_at_god", name := "swear at god", description := "" },
-  { id := "swindle", name := "swindle", description := "" },
-  { id := "talk", name := "talk", description := "" },
-  { id := "translate", name := "translate", description := "" },
-  { id := "travel", name := "travel", description := "" },
-  { id := "wander", name := "wander", description := "" },
-  { id := "whip", name := "whip", description := "" },
-  { id := "work", name := "work", description := "" }
-]
 
 def relations : List FormRelation := []
 

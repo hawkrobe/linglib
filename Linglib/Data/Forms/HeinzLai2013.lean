@@ -23,7 +23,6 @@ def ipin : Form :=
     parameterId := "rope_gen"
     form := "ipin"
     segments := ["i", "p", "i", "n"]
-    comment := "Table 1 cites Nevins (2010: 32)."
     source := [
       ⟨"heinz-lai-2013", "Table 1a"⟩,
       ⟨"heinz-lai-2013", "Table 2a"⟩
@@ -36,7 +35,6 @@ def elin : Form :=
     parameterId := "hand_gen"
     form := "elin"
     segments := ["e", "l", "i", "n"]
-    comment := "Table 1 prints the gloss as 'and'. Table 1 cites Nevins (2010: 32)."
     source := [
       ⟨"heinz-lai-2013", "Table 1b"⟩,
       ⟨"heinz-lai-2013", "Table 2a"⟩
@@ -49,7 +47,6 @@ def sonun : Form :=
     parameterId := "end_gen"
     form := "sonun"
     segments := ["s", "o", "n", "u", "n"]
-    comment := "Table 1 cites Nevins (2010: 32)."
     source := [
       ⟨"heinz-lai-2013", "Table 1c"⟩,
       ⟨"heinz-lai-2013", "Table 2a"⟩
@@ -62,7 +59,6 @@ def pulun : Form :=
     parameterId := "stamp_gen"
     form := "pulun"
     segments := ["p", "u", "l", "u", "n"]
-    comment := "Table 1 cites Nevins (2010: 32)."
     source := [
       ⟨"heinz-lai-2013", "Table 1d"⟩,
       ⟨"heinz-lai-2013", "Table 2a"⟩
@@ -70,13 +66,6 @@ def pulun : Form :=
     columns := [("Underlying", "/pul-un/")] }
 
 def all : List Form := [ipin, elin, sonun, pulun]
-
-def parameters : List Parameter := [
-  { id := "rope_gen", name := "rope-GEN", description := "" },
-  { id := "hand_gen", name := "hand-GEN", description := "" },
-  { id := "end_gen", name := "end-GEN", description := "" },
-  { id := "stamp_gen", name := "stamp-GEN", description := "" }
-]
 
 def relations : List FormRelation := []
 

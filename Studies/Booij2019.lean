@@ -116,8 +116,7 @@ def xabbaazAssoc (i : Fin 6) : Option (AssocSource × Nat) :=
   (xabbaazMatch.associations.find? (·.slotIndex == i.val)).map fun a ↦ (a.source, a.melodyIndex)
 
 /-- The association lines spell out *xabbaaz*. -/
-theorem xabbaazMatch_spellout :
-    xabbaazMatch.spellout.map ((↑) : String → Flat String) = List.ofFn Forms.xabbaaz.slots := by
+theorem xabbaazMatch_spellout : xabbaazMatch.spellout = Forms.xabbaaz.segments := by
   decide
 
 /-- The subscripting and the association agree: two slots carry the same part exactly when

@@ -233,27 +233,27 @@ instance : Exponence.Rule DiagOp Root String where
   Applies := DiagOp.Applies
 
 instance : DecidableRel (Exponence.Applies : DiagOp → Root → Prop) :=
-  λ op r => op.decApplies r
+  fun op r ↦ op.decApplies r
 
 @[simp] theorem applies_iff (op : DiagOp) (r : Root) :
     Exponence.Applies op r ↔ op.Applies r := Iff.rfl
 
 /-- Affective *=t*: transitivises an agent-salient root by adding a patient argument. -/
 def affectiveT : DiagOp :=
-  ⟨"=t", {.internal}, λ r => IsAgentSalient r.kinds (valency r), inferInstance⟩
+  ⟨"=t", {.internal}, fun r ↦ IsAgentSalient r.kinds (valency r), inferInstance⟩
 
 /-- Zero derivation *=∅*: the root alone supports a transitive stem. -/
 def zeroDeriv : DiagOp :=
-  ⟨"=∅", ∅, λ r => .internal ∈ valency r, inferInstance⟩
+  ⟨"=∅", ∅, fun r ↦ .internal ∈ valency r, inferInstance⟩
 
 /-- Causative *=s*: transitivises a patient-salient root by adding an agent argument. -/
 def causativeS : DiagOp :=
-  ⟨"=s", {.external}, λ r => IsPatientSalient r.kinds (valency r), inferInstance⟩
+  ⟨"=s", {.external}, fun r ↦ IsPatientSalient r.kinds (valency r), inferInstance⟩
 
 /-- The positional derivation, realized *=lah* ~ *=tal* by status, the *=tal* incompletive
 apparently compounding with *tàal* 'come' (p. 643). -/
 def positionalLah : DiagOp :=
-  ⟨"=lah", ∅, λ r => IsPositional r.kinds, inferInstance⟩
+  ⟨"=lah", ∅, fun r ↦ IsPositional r.kinds, inferInstance⟩
 
 /-- The diagnostic inventory, in the paper's order: the three transitivisers of (1), then the
 positional derivation. -/
@@ -267,14 +267,10 @@ def predictedExponents (r : Root) : List String :=
 
 /-! ### Predicted against attested derivations -/
 
-/-- The form row with a given identifier. -/
-def form? (id : String) : Option Form := Forms.all.find? (·.id == id)
-
 /-- The derivations the paper attests for a root: the final segment of each form the root's row
 is related to, a derived stem or the bare derivational morpheme. -/
 def attested (r : Root) : List String :=
-  (Forms.relations.filter λ rel => (form? rel.formId).any (·.form == r.name)).filterMap
-    λ rel => (form? rel.targetId).bind (·.segments.getLast?)
+  (Forms.relations.filter (·.form.form == r.name)).filterMap (·.target.segments.getLast?)
 
 /-- The derivations predicted from signature and valency reproduce every derivation the paper
 attests. -/

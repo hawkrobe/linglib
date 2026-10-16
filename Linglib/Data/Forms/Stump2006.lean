@@ -23,7 +23,6 @@ def room_nom_sg : Form :=
     parameterId := "room"
     form := "pokoj"
     segments := ["p", "o", "k", "o", "j"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 1"⟩
     ]
@@ -35,7 +34,6 @@ def room_gen_sg : Form :=
     parameterId := "room"
     form := "pokoje"
     segments := ["p", "o", "k", "o", "j", "e"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 1"⟩
     ]
@@ -47,7 +45,6 @@ def room_dat_sg : Form :=
     parameterId := "room"
     form := "pokoji"
     segments := ["p", "o", "k", "o", "j", "i"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 1"⟩
     ]
@@ -59,7 +56,6 @@ def room_acc_sg : Form :=
     parameterId := "room"
     form := "pokoj"
     segments := ["p", "o", "k", "o", "j"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 1"⟩
     ]
@@ -71,7 +67,6 @@ def room_voc_sg : Form :=
     parameterId := "room"
     form := "pokoji"
     segments := ["p", "o", "k", "o", "j", "i"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 1"⟩
     ]
@@ -83,7 +78,6 @@ def room_loc_sg : Form :=
     parameterId := "room"
     form := "pokoji"
     segments := ["p", "o", "k", "o", "j", "i"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 1"⟩
     ]
@@ -95,7 +89,6 @@ def room_ins_sg : Form :=
     parameterId := "room"
     form := "pokojem"
     segments := ["p", "o", "k", "o", "j", "e", "m"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 1"⟩
     ]
@@ -107,7 +100,6 @@ def room_nom_pl : Form :=
     parameterId := "room"
     form := "pokoje"
     segments := ["p", "o", "k", "o", "j", "e"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 1"⟩
     ]
@@ -119,7 +111,6 @@ def room_gen_pl : Form :=
     parameterId := "room"
     form := "pokojů"
     segments := ["p", "o", "k", "o", "j", "ů"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 1"⟩
     ]
@@ -131,7 +122,6 @@ def room_dat_pl : Form :=
     parameterId := "room"
     form := "pokojům"
     segments := ["p", "o", "k", "o", "j", "ů", "m"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 1"⟩
     ]
@@ -143,7 +133,6 @@ def room_acc_pl : Form :=
     parameterId := "room"
     form := "pokoje"
     segments := ["p", "o", "k", "o", "j", "e"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 1"⟩
     ]
@@ -155,7 +144,6 @@ def room_voc_pl : Form :=
     parameterId := "room"
     form := "pokoje"
     segments := ["p", "o", "k", "o", "j", "e"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 1"⟩
     ]
@@ -167,7 +155,6 @@ def room_loc_pl : Form :=
     parameterId := "room"
     form := "pokojích"
     segments := ["p", "o", "k", "o", "j", "í", "ch"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 1"⟩
     ]
@@ -179,7 +166,6 @@ def room_ins_pl : Form :=
     parameterId := "room"
     form := "pokoji"
     segments := ["p", "o", "k", "o", "j", "i"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 1"⟩
     ]
@@ -191,7 +177,6 @@ def spring_nom_sg : Form :=
     parameterId := "spring"
     form := "pramen"
     segments := ["p", "r", "a", "m", "e", "n"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 1"⟩
     ]
@@ -203,7 +188,6 @@ def spring_gen_sg : Form :=
     parameterId := "spring"
     form := "pramene"
     segments := ["p", "r", "a", "m", "e", "n", "e"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 1"⟩
     ]
@@ -215,7 +199,6 @@ def spring_dat_sg : Form :=
     parameterId := "spring"
     form := "prameni"
     segments := ["p", "r", "a", "m", "e", "n", "i"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 1"⟩
     ]
@@ -227,7 +210,6 @@ def spring_acc_sg : Form :=
     parameterId := "spring"
     form := "pramen"
     segments := ["p", "r", "a", "m", "e", "n"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 1"⟩
     ]
@@ -239,7 +221,6 @@ def spring_voc_sg : Form :=
     parameterId := "spring"
     form := "prameni"
     segments := ["p", "r", "a", "m", "e", "n", "i"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 1"⟩
     ]
@@ -251,7 +232,6 @@ def spring_loc_sg : Form :=
     parameterId := "spring"
     form := "prameni"
     segments := ["p", "r", "a", "m", "e", "n", "i"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 1"⟩
     ]
@@ -263,7 +243,6 @@ def spring_ins_sg : Form :=
     parameterId := "spring"
     form := "pramenem"
     segments := ["p", "r", "a", "m", "e", "n", "e", "m"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 1"⟩
     ]
@@ -275,7 +254,6 @@ def spring_nom_pl : Form :=
     parameterId := "spring"
     form := "prameny"
     segments := ["p", "r", "a", "m", "e", "n", "y"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 1"⟩
     ]
@@ -287,7 +265,6 @@ def spring_gen_pl : Form :=
     parameterId := "spring"
     form := "pramenů"
     segments := ["p", "r", "a", "m", "e", "n", "ů"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 1"⟩
     ]
@@ -299,7 +276,6 @@ def spring_dat_pl : Form :=
     parameterId := "spring"
     form := "pramenům"
     segments := ["p", "r", "a", "m", "e", "n", "ů", "m"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 1"⟩
     ]
@@ -311,7 +287,6 @@ def spring_acc_pl : Form :=
     parameterId := "spring"
     form := "prameny"
     segments := ["p", "r", "a", "m", "e", "n", "y"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 1"⟩
     ]
@@ -323,7 +298,6 @@ def spring_voc_pl : Form :=
     parameterId := "spring"
     form := "prameny"
     segments := ["p", "r", "a", "m", "e", "n", "y"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 1"⟩
     ]
@@ -335,7 +309,6 @@ def spring_loc_pl : Form :=
     parameterId := "spring"
     form := "pramenech"
     segments := ["p", "r", "a", "m", "e", "n", "e", "ch"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 1"⟩
     ]
@@ -347,7 +320,6 @@ def spring_ins_pl : Form :=
     parameterId := "spring"
     form := "prameny"
     segments := ["p", "r", "a", "m", "e", "n", "y"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 1"⟩
     ]
@@ -359,7 +331,6 @@ def bridge_nom_sg : Form :=
     parameterId := "bridge"
     form := "most"
     segments := ["m", "o", "s", "t"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 1"⟩
     ]
@@ -371,7 +342,6 @@ def bridge_gen_sg : Form :=
     parameterId := "bridge"
     form := "mostu"
     segments := ["m", "o", "s", "t", "u"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 1"⟩
     ]
@@ -383,7 +353,6 @@ def bridge_dat_sg : Form :=
     parameterId := "bridge"
     form := "mostu"
     segments := ["m", "o", "s", "t", "u"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 1"⟩
     ]
@@ -395,7 +364,6 @@ def bridge_acc_sg : Form :=
     parameterId := "bridge"
     form := "most"
     segments := ["m", "o", "s", "t"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 1"⟩
     ]
@@ -407,7 +375,6 @@ def bridge_voc_sg : Form :=
     parameterId := "bridge"
     form := "moste"
     segments := ["m", "o", "s", "t", "e"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 1"⟩
     ]
@@ -419,7 +386,6 @@ def bridge_loc_sg : Form :=
     parameterId := "bridge"
     form := "mostě"
     segments := ["m", "o", "s", "t", "ě"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 1"⟩
     ]
@@ -431,7 +397,6 @@ def bridge_ins_sg : Form :=
     parameterId := "bridge"
     form := "mostem"
     segments := ["m", "o", "s", "t", "e", "m"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 1"⟩
     ]
@@ -443,7 +408,6 @@ def bridge_nom_pl : Form :=
     parameterId := "bridge"
     form := "mosty"
     segments := ["m", "o", "s", "t", "y"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 1"⟩
     ]
@@ -455,7 +419,6 @@ def bridge_gen_pl : Form :=
     parameterId := "bridge"
     form := "mostů"
     segments := ["m", "o", "s", "t", "ů"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 1"⟩
     ]
@@ -467,7 +430,6 @@ def bridge_dat_pl : Form :=
     parameterId := "bridge"
     form := "mostům"
     segments := ["m", "o", "s", "t", "ů", "m"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 1"⟩
     ]
@@ -479,7 +441,6 @@ def bridge_acc_pl : Form :=
     parameterId := "bridge"
     form := "mosty"
     segments := ["m", "o", "s", "t", "y"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 1"⟩
     ]
@@ -491,7 +452,6 @@ def bridge_voc_pl : Form :=
     parameterId := "bridge"
     form := "mosty"
     segments := ["m", "o", "s", "t", "y"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 1"⟩
     ]
@@ -503,7 +463,6 @@ def bridge_loc_pl : Form :=
     parameterId := "bridge"
     form := "mostech"
     segments := ["m", "o", "s", "t", "e", "ch"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 1"⟩
     ]
@@ -515,7 +474,6 @@ def bridge_ins_pl : Form :=
     parameterId := "bridge"
     form := "mosty"
     segments := ["m", "o", "s", "t", "y"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 1"⟩
     ]
@@ -527,7 +485,6 @@ def woman_nom_sg : Form :=
     parameterId := "woman"
     form := "žena"
     segments := ["ž", "e", "n", "a"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 6"⟩
     ]
@@ -539,7 +496,6 @@ def woman_gen_sg : Form :=
     parameterId := "woman"
     form := "ženy"
     segments := ["ž", "e", "n", "y"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 6"⟩
     ]
@@ -551,7 +507,6 @@ def woman_dat_sg : Form :=
     parameterId := "woman"
     form := "ženě"
     segments := ["ž", "e", "n", "ě"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 6"⟩
     ]
@@ -563,7 +518,6 @@ def woman_acc_sg : Form :=
     parameterId := "woman"
     form := "ženu"
     segments := ["ž", "e", "n", "u"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 6"⟩
     ]
@@ -575,7 +529,6 @@ def woman_voc_sg : Form :=
     parameterId := "woman"
     form := "ženo"
     segments := ["ž", "e", "n", "o"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 6"⟩
     ]
@@ -587,7 +540,6 @@ def woman_loc_sg : Form :=
     parameterId := "woman"
     form := "ženě"
     segments := ["ž", "e", "n", "ě"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 6"⟩
     ]
@@ -599,7 +551,6 @@ def woman_ins_sg : Form :=
     parameterId := "woman"
     form := "ženou"
     segments := ["ž", "e", "n", "o", "u"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 6"⟩
     ]
@@ -611,7 +562,6 @@ def woman_nom_pl : Form :=
     parameterId := "woman"
     form := "ženy"
     segments := ["ž", "e", "n", "y"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 6"⟩
     ]
@@ -623,7 +573,6 @@ def woman_gen_pl : Form :=
     parameterId := "woman"
     form := "žen"
     segments := ["ž", "e", "n"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 6"⟩
     ]
@@ -635,7 +584,6 @@ def woman_dat_pl : Form :=
     parameterId := "woman"
     form := "ženám"
     segments := ["ž", "e", "n", "á", "m"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 6"⟩
     ]
@@ -647,7 +595,6 @@ def woman_acc_pl : Form :=
     parameterId := "woman"
     form := "ženy"
     segments := ["ž", "e", "n", "y"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 6"⟩
     ]
@@ -659,7 +606,6 @@ def woman_voc_pl : Form :=
     parameterId := "woman"
     form := "ženy"
     segments := ["ž", "e", "n", "y"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 6"⟩
     ]
@@ -671,7 +617,6 @@ def woman_loc_pl : Form :=
     parameterId := "woman"
     form := "ženách"
     segments := ["ž", "e", "n", "á", "ch"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 6"⟩
     ]
@@ -683,7 +628,6 @@ def woman_ins_pl : Form :=
     parameterId := "woman"
     form := "ženami"
     segments := ["ž", "e", "n", "a", "m", "i"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 6"⟩
     ]
@@ -695,7 +639,6 @@ def president_nom_sg : Form :=
     parameterId := "president"
     form := "předseda"
     segments := ["p", "ř", "e", "d", "s", "e", "d", "a"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 6"⟩
     ]
@@ -707,7 +650,6 @@ def president_gen_sg : Form :=
     parameterId := "president"
     form := "předsedy"
     segments := ["p", "ř", "e", "d", "s", "e", "d", "y"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 6"⟩
     ]
@@ -719,7 +661,6 @@ def president_dat_sg : Form :=
     parameterId := "president"
     form := "předsedovi"
     segments := ["p", "ř", "e", "d", "s", "e", "d", "o", "v", "i"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 6"⟩
     ]
@@ -731,7 +672,6 @@ def president_acc_sg : Form :=
     parameterId := "president"
     form := "předsedu"
     segments := ["p", "ř", "e", "d", "s", "e", "d", "u"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 6"⟩
     ]
@@ -743,7 +683,6 @@ def president_voc_sg : Form :=
     parameterId := "president"
     form := "předsedo"
     segments := ["p", "ř", "e", "d", "s", "e", "d", "o"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 6"⟩
     ]
@@ -755,7 +694,6 @@ def president_loc_sg : Form :=
     parameterId := "president"
     form := "předsedovi"
     segments := ["p", "ř", "e", "d", "s", "e", "d", "o", "v", "i"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 6"⟩
     ]
@@ -767,7 +705,6 @@ def president_ins_sg : Form :=
     parameterId := "president"
     form := "předsedou"
     segments := ["p", "ř", "e", "d", "s", "e", "d", "o", "u"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 6"⟩
     ]
@@ -779,7 +716,6 @@ def president_nom_pl : Form :=
     parameterId := "president"
     form := "předsedové"
     segments := ["p", "ř", "e", "d", "s", "e", "d", "o", "v", "é"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 6"⟩
     ]
@@ -791,7 +727,6 @@ def president_gen_pl : Form :=
     parameterId := "president"
     form := "předsedů"
     segments := ["p", "ř", "e", "d", "s", "e", "d", "ů"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 6"⟩
     ]
@@ -803,7 +738,6 @@ def president_dat_pl : Form :=
     parameterId := "president"
     form := "předsedům"
     segments := ["p", "ř", "e", "d", "s", "e", "d", "ů", "m"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 6"⟩
     ]
@@ -815,7 +749,6 @@ def president_acc_pl : Form :=
     parameterId := "president"
     form := "předsedy"
     segments := ["p", "ř", "e", "d", "s", "e", "d", "y"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 6"⟩
     ]
@@ -827,7 +760,6 @@ def president_voc_pl : Form :=
     parameterId := "president"
     form := "předsedové"
     segments := ["p", "ř", "e", "d", "s", "e", "d", "o", "v", "é"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 6"⟩
     ]
@@ -839,7 +771,6 @@ def president_loc_pl : Form :=
     parameterId := "president"
     form := "předsedech"
     segments := ["p", "ř", "e", "d", "s", "e", "d", "e", "ch"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 6"⟩
     ]
@@ -851,7 +782,6 @@ def president_ins_pl : Form :=
     parameterId := "president"
     form := "předsedy"
     segments := ["p", "ř", "e", "d", "s", "e", "d", "y"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 6"⟩
     ]
@@ -863,7 +793,6 @@ def philosopher_nom_sg : Form :=
     parameterId := "philosopher"
     form := "filosof"
     segments := ["f", "i", "l", "o", "s", "o", "f"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 6"⟩
     ]
@@ -875,7 +804,6 @@ def philosopher_gen_sg : Form :=
     parameterId := "philosopher"
     form := "filosofa"
     segments := ["f", "i", "l", "o", "s", "o", "f", "a"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 6"⟩
     ]
@@ -887,7 +815,6 @@ def philosopher_dat_sg : Form :=
     parameterId := "philosopher"
     form := "filosofovi"
     segments := ["f", "i", "l", "o", "s", "o", "f", "o", "v", "i"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 6"⟩
     ]
@@ -899,7 +826,6 @@ def philosopher_dat_sg_u : Form :=
     parameterId := "philosopher"
     form := "filosofu"
     segments := ["f", "i", "l", "o", "s", "o", "f", "u"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 6"⟩
     ]
@@ -911,7 +837,6 @@ def philosopher_acc_sg : Form :=
     parameterId := "philosopher"
     form := "filosofa"
     segments := ["f", "i", "l", "o", "s", "o", "f", "a"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 6"⟩
     ]
@@ -923,7 +848,6 @@ def philosopher_voc_sg : Form :=
     parameterId := "philosopher"
     form := "filosofe"
     segments := ["f", "i", "l", "o", "s", "o", "f", "e"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 6"⟩
     ]
@@ -935,7 +859,6 @@ def philosopher_loc_sg : Form :=
     parameterId := "philosopher"
     form := "filosofovi"
     segments := ["f", "i", "l", "o", "s", "o", "f", "o", "v", "i"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 6"⟩
     ]
@@ -947,7 +870,6 @@ def philosopher_loc_sg_u : Form :=
     parameterId := "philosopher"
     form := "filosofu"
     segments := ["f", "i", "l", "o", "s", "o", "f", "u"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 6"⟩
     ]
@@ -959,7 +881,6 @@ def philosopher_ins_sg : Form :=
     parameterId := "philosopher"
     form := "filosofem"
     segments := ["f", "i", "l", "o", "s", "o", "f", "e", "m"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 6"⟩
     ]
@@ -971,7 +892,6 @@ def philosopher_nom_pl : Form :=
     parameterId := "philosopher"
     form := "filosofové"
     segments := ["f", "i", "l", "o", "s", "o", "f", "o", "v", "é"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 6"⟩
     ]
@@ -983,7 +903,6 @@ def philosopher_gen_pl : Form :=
     parameterId := "philosopher"
     form := "filosofů"
     segments := ["f", "i", "l", "o", "s", "o", "f", "ů"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 6"⟩
     ]
@@ -995,7 +914,6 @@ def philosopher_dat_pl : Form :=
     parameterId := "philosopher"
     form := "filosofům"
     segments := ["f", "i", "l", "o", "s", "o", "f", "ů", "m"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 6"⟩
     ]
@@ -1007,7 +925,6 @@ def philosopher_acc_pl : Form :=
     parameterId := "philosopher"
     form := "filosofy"
     segments := ["f", "i", "l", "o", "s", "o", "f", "y"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 6"⟩
     ]
@@ -1019,7 +936,6 @@ def philosopher_voc_pl : Form :=
     parameterId := "philosopher"
     form := "filosofové"
     segments := ["f", "i", "l", "o", "s", "o", "f", "o", "v", "é"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 6"⟩
     ]
@@ -1031,7 +947,6 @@ def philosopher_loc_pl : Form :=
     parameterId := "philosopher"
     form := "filosofech"
     segments := ["f", "i", "l", "o", "s", "o", "f", "e", "ch"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 6"⟩
     ]
@@ -1043,7 +958,6 @@ def philosopher_ins_pl : Form :=
     parameterId := "philosopher"
     form := "filosofy"
     segments := ["f", "i", "l", "o", "s", "o", "f", "y"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 6"⟩
     ]
@@ -1055,7 +969,6 @@ def servant_nom_sg : Form :=
     parameterId := "servant"
     form := "sluha"
     segments := ["s", "l", "u", "h", "a"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 8"⟩
     ]
@@ -1067,7 +980,6 @@ def servant_gen_sg : Form :=
     parameterId := "servant"
     form := "sluhy"
     segments := ["s", "l", "u", "h", "y"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 8"⟩
     ]
@@ -1079,7 +991,6 @@ def servant_dat_sg : Form :=
     parameterId := "servant"
     form := "sluhovi"
     segments := ["s", "l", "u", "h", "o", "v", "i"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 8"⟩
     ]
@@ -1091,7 +1002,6 @@ def servant_acc_sg : Form :=
     parameterId := "servant"
     form := "sluhu"
     segments := ["s", "l", "u", "h", "u"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 8"⟩
     ]
@@ -1103,7 +1013,6 @@ def servant_voc_sg : Form :=
     parameterId := "servant"
     form := "sluho"
     segments := ["s", "l", "u", "h", "o"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 8"⟩
     ]
@@ -1115,7 +1024,6 @@ def servant_loc_sg : Form :=
     parameterId := "servant"
     form := "sluhovi"
     segments := ["s", "l", "u", "h", "o", "v", "i"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 8"⟩
     ]
@@ -1127,7 +1035,6 @@ def servant_ins_sg : Form :=
     parameterId := "servant"
     form := "sluhou"
     segments := ["s", "l", "u", "h", "o", "u"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 8"⟩
     ]
@@ -1139,7 +1046,6 @@ def servant_nom_pl : Form :=
     parameterId := "servant"
     form := "sluhové"
     segments := ["s", "l", "u", "h", "o", "v", "é"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 8"⟩
     ]
@@ -1151,7 +1057,6 @@ def servant_gen_pl : Form :=
     parameterId := "servant"
     form := "sluhů"
     segments := ["s", "l", "u", "h", "ů"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 8"⟩
     ]
@@ -1163,7 +1068,6 @@ def servant_dat_pl : Form :=
     parameterId := "servant"
     form := "sluhům"
     segments := ["s", "l", "u", "h", "ů", "m"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 8"⟩
     ]
@@ -1175,7 +1079,6 @@ def servant_acc_pl : Form :=
     parameterId := "servant"
     form := "sluhy"
     segments := ["s", "l", "u", "h", "y"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 8"⟩
     ]
@@ -1187,7 +1090,6 @@ def servant_voc_pl : Form :=
     parameterId := "servant"
     form := "sluhové"
     segments := ["s", "l", "u", "h", "o", "v", "é"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 8"⟩
     ]
@@ -1199,7 +1101,6 @@ def servant_loc_pl : Form :=
     parameterId := "servant"
     form := "sluzích"
     segments := ["s", "l", "u", "z", "í", "ch"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 8"⟩
     ]
@@ -1211,7 +1112,6 @@ def servant_ins_pl : Form :=
     parameterId := "servant"
     form := "sluhy"
     segments := ["s", "l", "u", "h", "y"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 8"⟩
     ]
@@ -1223,7 +1123,6 @@ def philologist_nom_sg : Form :=
     parameterId := "philologist"
     form := "filolog"
     segments := ["f", "i", "l", "o", "l", "o", "g"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 8"⟩
     ]
@@ -1235,7 +1134,6 @@ def philologist_gen_sg : Form :=
     parameterId := "philologist"
     form := "filologa"
     segments := ["f", "i", "l", "o", "l", "o", "g", "a"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 8"⟩
     ]
@@ -1247,7 +1145,6 @@ def philologist_dat_sg : Form :=
     parameterId := "philologist"
     form := "filologovi"
     segments := ["f", "i", "l", "o", "l", "o", "g", "o", "v", "i"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 8"⟩
     ]
@@ -1259,7 +1156,6 @@ def philologist_dat_sg_u : Form :=
     parameterId := "philologist"
     form := "filologu"
     segments := ["f", "i", "l", "o", "l", "o", "g", "u"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 8"⟩
     ]
@@ -1271,7 +1167,6 @@ def philologist_acc_sg : Form :=
     parameterId := "philologist"
     form := "filologa"
     segments := ["f", "i", "l", "o", "l", "o", "g", "a"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 8"⟩
     ]
@@ -1283,7 +1178,6 @@ def philologist_voc_sg : Form :=
     parameterId := "philologist"
     form := "filologu"
     segments := ["f", "i", "l", "o", "l", "o", "g", "u"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 8"⟩
     ]
@@ -1295,7 +1189,6 @@ def philologist_loc_sg : Form :=
     parameterId := "philologist"
     form := "filologovi"
     segments := ["f", "i", "l", "o", "l", "o", "g", "o", "v", "i"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 8"⟩
     ]
@@ -1307,7 +1200,6 @@ def philologist_loc_sg_u : Form :=
     parameterId := "philologist"
     form := "filologu"
     segments := ["f", "i", "l", "o", "l", "o", "g", "u"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 8"⟩
     ]
@@ -1319,7 +1211,6 @@ def philologist_ins_sg : Form :=
     parameterId := "philologist"
     form := "filologem"
     segments := ["f", "i", "l", "o", "l", "o", "g", "e", "m"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 8"⟩
     ]
@@ -1331,7 +1222,6 @@ def philologist_nom_pl : Form :=
     parameterId := "philologist"
     form := "filologové"
     segments := ["f", "i", "l", "o", "l", "o", "g", "o", "v", "é"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 8"⟩
     ]
@@ -1343,7 +1233,6 @@ def philologist_gen_pl : Form :=
     parameterId := "philologist"
     form := "filologů"
     segments := ["f", "i", "l", "o", "l", "o", "g", "ů"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 8"⟩
     ]
@@ -1355,7 +1244,6 @@ def philologist_dat_pl : Form :=
     parameterId := "philologist"
     form := "filologům"
     segments := ["f", "i", "l", "o", "l", "o", "g", "ů", "m"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 8"⟩
     ]
@@ -1367,7 +1255,6 @@ def philologist_acc_pl : Form :=
     parameterId := "philologist"
     form := "filology"
     segments := ["f", "i", "l", "o", "l", "o", "g", "y"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 8"⟩
     ]
@@ -1379,7 +1266,6 @@ def philologist_voc_pl : Form :=
     parameterId := "philologist"
     form := "filologové"
     segments := ["f", "i", "l", "o", "l", "o", "g", "o", "v", "é"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 8"⟩
     ]
@@ -1391,7 +1277,6 @@ def philologist_loc_pl : Form :=
     parameterId := "philologist"
     form := "filolozích"
     segments := ["f", "i", "l", "o", "l", "o", "z", "í", "ch"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 8"⟩
     ]
@@ -1403,7 +1288,6 @@ def philologist_ins_pl : Form :=
     parameterId := "philologist"
     form := "filology"
     segments := ["f", "i", "l", "o", "l", "o", "g", "y"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 8"⟩
     ]
@@ -1415,7 +1299,6 @@ def man_nom_sg : Form :=
     parameterId := "man"
     form := "muž"
     segments := ["m", "u", "ž"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 8"⟩
     ]
@@ -1427,7 +1310,6 @@ def man_gen_sg : Form :=
     parameterId := "man"
     form := "muže"
     segments := ["m", "u", "ž", "e"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 8"⟩
     ]
@@ -1439,7 +1321,6 @@ def man_dat_sg : Form :=
     parameterId := "man"
     form := "mužovi"
     segments := ["m", "u", "ž", "o", "v", "i"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 8"⟩
     ]
@@ -1451,7 +1332,6 @@ def man_dat_sg_i : Form :=
     parameterId := "man"
     form := "muži"
     segments := ["m", "u", "ž", "i"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 8"⟩
     ]
@@ -1463,7 +1343,6 @@ def man_acc_sg : Form :=
     parameterId := "man"
     form := "muže"
     segments := ["m", "u", "ž", "e"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 8"⟩
     ]
@@ -1475,7 +1354,6 @@ def man_voc_sg : Form :=
     parameterId := "man"
     form := "muži"
     segments := ["m", "u", "ž", "i"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 8"⟩
     ]
@@ -1487,7 +1365,6 @@ def man_loc_sg : Form :=
     parameterId := "man"
     form := "mužovi"
     segments := ["m", "u", "ž", "o", "v", "i"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 8"⟩
     ]
@@ -1499,7 +1376,6 @@ def man_loc_sg_i : Form :=
     parameterId := "man"
     form := "muži"
     segments := ["m", "u", "ž", "i"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 8"⟩
     ]
@@ -1511,7 +1387,6 @@ def man_ins_sg : Form :=
     parameterId := "man"
     form := "mužem"
     segments := ["m", "u", "ž", "e", "m"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 8"⟩
     ]
@@ -1523,7 +1398,6 @@ def man_nom_pl : Form :=
     parameterId := "man"
     form := "muži"
     segments := ["m", "u", "ž", "i"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 8"⟩
     ]
@@ -1535,7 +1409,6 @@ def man_nom_pl_ove : Form :=
     parameterId := "man"
     form := "mužové"
     segments := ["m", "u", "ž", "o", "v", "é"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 8"⟩
     ]
@@ -1547,7 +1420,6 @@ def man_gen_pl : Form :=
     parameterId := "man"
     form := "mužů"
     segments := ["m", "u", "ž", "ů"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 8"⟩
     ]
@@ -1559,7 +1431,6 @@ def man_dat_pl : Form :=
     parameterId := "man"
     form := "mužům"
     segments := ["m", "u", "ž", "ů", "m"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 8"⟩
     ]
@@ -1571,7 +1442,6 @@ def man_acc_pl : Form :=
     parameterId := "man"
     form := "muže"
     segments := ["m", "u", "ž", "e"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 8"⟩
     ]
@@ -1583,7 +1453,6 @@ def man_voc_pl : Form :=
     parameterId := "man"
     form := "muži"
     segments := ["m", "u", "ž", "i"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 8"⟩
     ]
@@ -1595,7 +1464,6 @@ def man_voc_pl_ove : Form :=
     parameterId := "man"
     form := "mužové"
     segments := ["m", "u", "ž", "o", "v", "é"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 8"⟩
     ]
@@ -1607,7 +1475,6 @@ def man_loc_pl : Form :=
     parameterId := "man"
     form := "mužích"
     segments := ["m", "u", "ž", "í", "ch"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 8"⟩
     ]
@@ -1619,7 +1486,6 @@ def man_ins_pl : Form :=
     parameterId := "man"
     form := "muži"
     segments := ["m", "u", "ž", "i"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 8"⟩
     ]
@@ -1631,7 +1497,6 @@ def westerly_masc_nom_sg : Form :=
     parameterId := "westerly"
     form := "pratyaṅ"
     segments := ["pratyaṅ"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 9"⟩
     ]
@@ -1643,7 +1508,6 @@ def westerly_masc_voc_sg : Form :=
     parameterId := "westerly"
     form := "pratyaṅ"
     segments := ["pratyaṅ"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 9"⟩
     ]
@@ -1655,7 +1519,6 @@ def westerly_masc_acc_sg : Form :=
     parameterId := "westerly"
     form := "pratyañcam"
     segments := ["pratyañc", "am"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 9"⟩
     ]
@@ -1667,7 +1530,6 @@ def westerly_masc_ins_sg : Form :=
     parameterId := "westerly"
     form := "pratīcā"
     segments := ["pratīc", "ā"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 9"⟩
     ]
@@ -1679,7 +1541,6 @@ def westerly_masc_dat_sg : Form :=
     parameterId := "westerly"
     form := "pratīce"
     segments := ["pratīc", "e"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 9"⟩
     ]
@@ -1691,7 +1552,6 @@ def westerly_masc_abl_sg : Form :=
     parameterId := "westerly"
     form := "pratīcas"
     segments := ["pratīc", "as"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 9"⟩
     ]
@@ -1703,7 +1563,6 @@ def westerly_masc_gen_sg : Form :=
     parameterId := "westerly"
     form := "pratīcas"
     segments := ["pratīc", "as"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 9"⟩
     ]
@@ -1715,7 +1574,6 @@ def westerly_masc_loc_sg : Form :=
     parameterId := "westerly"
     form := "pratīci"
     segments := ["pratīc", "i"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 9"⟩
     ]
@@ -1727,7 +1585,6 @@ def westerly_masc_nom_du : Form :=
     parameterId := "westerly"
     form := "pratyañcau"
     segments := ["pratyañc", "au"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 9"⟩
     ]
@@ -1739,7 +1596,6 @@ def westerly_masc_voc_du : Form :=
     parameterId := "westerly"
     form := "pratyañcau"
     segments := ["pratyañc", "au"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 9"⟩
     ]
@@ -1751,7 +1607,6 @@ def westerly_masc_acc_du : Form :=
     parameterId := "westerly"
     form := "pratyañcau"
     segments := ["pratyañc", "au"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 9"⟩
     ]
@@ -1763,7 +1618,6 @@ def westerly_masc_ins_du : Form :=
     parameterId := "westerly"
     form := "pratyagbhyām"
     segments := ["pratyag", "bhyām"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 9"⟩
     ]
@@ -1775,7 +1629,6 @@ def westerly_masc_dat_du : Form :=
     parameterId := "westerly"
     form := "pratyagbhyām"
     segments := ["pratyag", "bhyām"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 9"⟩
     ]
@@ -1787,7 +1640,6 @@ def westerly_masc_abl_du : Form :=
     parameterId := "westerly"
     form := "pratyagbhyām"
     segments := ["pratyag", "bhyām"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 9"⟩
     ]
@@ -1799,7 +1651,6 @@ def westerly_masc_gen_du : Form :=
     parameterId := "westerly"
     form := "pratīcos"
     segments := ["pratīc", "os"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 9"⟩
     ]
@@ -1811,7 +1662,6 @@ def westerly_masc_loc_du : Form :=
     parameterId := "westerly"
     form := "pratīcos"
     segments := ["pratīc", "os"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 9"⟩
     ]
@@ -1823,7 +1673,6 @@ def westerly_masc_nom_pl : Form :=
     parameterId := "westerly"
     form := "pratyañcas"
     segments := ["pratyañc", "as"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 9"⟩
     ]
@@ -1835,7 +1684,6 @@ def westerly_masc_voc_pl : Form :=
     parameterId := "westerly"
     form := "pratyañcas"
     segments := ["pratyañc", "as"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 9"⟩
     ]
@@ -1847,7 +1695,6 @@ def westerly_masc_acc_pl : Form :=
     parameterId := "westerly"
     form := "pratīcas"
     segments := ["pratīc", "as"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 9"⟩
     ]
@@ -1859,7 +1706,6 @@ def westerly_masc_ins_pl : Form :=
     parameterId := "westerly"
     form := "pratyagbhis"
     segments := ["pratyag", "bhis"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 9"⟩
     ]
@@ -1871,7 +1717,6 @@ def westerly_masc_dat_pl : Form :=
     parameterId := "westerly"
     form := "pratyagbhyas"
     segments := ["pratyag", "bhyas"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 9"⟩
     ]
@@ -1883,7 +1728,6 @@ def westerly_masc_abl_pl : Form :=
     parameterId := "westerly"
     form := "pratyagbhyas"
     segments := ["pratyag", "bhyas"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 9"⟩
     ]
@@ -1895,7 +1739,6 @@ def westerly_masc_gen_pl : Form :=
     parameterId := "westerly"
     form := "pratīcām"
     segments := ["pratīc", "ām"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 9"⟩
     ]
@@ -1907,7 +1750,6 @@ def westerly_masc_loc_pl : Form :=
     parameterId := "westerly"
     form := "pratyakṣu"
     segments := ["pratyak", "ṣu"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 9"⟩
     ]
@@ -1919,7 +1761,6 @@ def westerly_neut_nom_sg : Form :=
     parameterId := "westerly"
     form := "pratyak"
     segments := ["pratyak"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 9"⟩
     ]
@@ -1931,7 +1772,6 @@ def westerly_neut_voc_sg : Form :=
     parameterId := "westerly"
     form := "pratyak"
     segments := ["pratyak"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 9"⟩
     ]
@@ -1943,7 +1783,6 @@ def westerly_neut_acc_sg : Form :=
     parameterId := "westerly"
     form := "pratyak"
     segments := ["pratyak"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 9"⟩
     ]
@@ -1955,7 +1794,6 @@ def westerly_neut_ins_sg : Form :=
     parameterId := "westerly"
     form := "pratīcā"
     segments := ["pratīc", "ā"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 9"⟩
     ]
@@ -1967,7 +1805,6 @@ def westerly_neut_dat_sg : Form :=
     parameterId := "westerly"
     form := "pratīce"
     segments := ["pratīc", "e"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 9"⟩
     ]
@@ -1979,7 +1816,6 @@ def westerly_neut_abl_sg : Form :=
     parameterId := "westerly"
     form := "pratīcas"
     segments := ["pratīc", "as"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 9"⟩
     ]
@@ -1991,7 +1827,6 @@ def westerly_neut_gen_sg : Form :=
     parameterId := "westerly"
     form := "pratīcas"
     segments := ["pratīc", "as"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 9"⟩
     ]
@@ -2003,7 +1838,6 @@ def westerly_neut_loc_sg : Form :=
     parameterId := "westerly"
     form := "pratīci"
     segments := ["pratīc", "i"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 9"⟩
     ]
@@ -2015,7 +1849,6 @@ def westerly_neut_nom_du : Form :=
     parameterId := "westerly"
     form := "pratīcī"
     segments := ["pratīc", "ī"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 9"⟩
     ]
@@ -2027,7 +1860,6 @@ def westerly_neut_voc_du : Form :=
     parameterId := "westerly"
     form := "pratīcī"
     segments := ["pratīc", "ī"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 9"⟩
     ]
@@ -2039,7 +1871,6 @@ def westerly_neut_acc_du : Form :=
     parameterId := "westerly"
     form := "pratīcī"
     segments := ["pratīc", "ī"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 9"⟩
     ]
@@ -2051,7 +1882,6 @@ def westerly_neut_ins_du : Form :=
     parameterId := "westerly"
     form := "pratyagbhyām"
     segments := ["pratyag", "bhyām"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 9"⟩
     ]
@@ -2063,7 +1893,6 @@ def westerly_neut_dat_du : Form :=
     parameterId := "westerly"
     form := "pratyagbhyām"
     segments := ["pratyag", "bhyām"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 9"⟩
     ]
@@ -2075,7 +1904,6 @@ def westerly_neut_abl_du : Form :=
     parameterId := "westerly"
     form := "pratyagbhyām"
     segments := ["pratyag", "bhyām"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 9"⟩
     ]
@@ -2087,7 +1915,6 @@ def westerly_neut_gen_du : Form :=
     parameterId := "westerly"
     form := "pratīcos"
     segments := ["pratīc", "os"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 9"⟩
     ]
@@ -2099,7 +1926,6 @@ def westerly_neut_loc_du : Form :=
     parameterId := "westerly"
     form := "pratīcos"
     segments := ["pratīc", "os"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 9"⟩
     ]
@@ -2111,7 +1937,6 @@ def westerly_neut_nom_pl : Form :=
     parameterId := "westerly"
     form := "pratyañci"
     segments := ["pratyañc", "i"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 9"⟩
     ]
@@ -2123,7 +1948,6 @@ def westerly_neut_voc_pl : Form :=
     parameterId := "westerly"
     form := "pratyañci"
     segments := ["pratyañc", "i"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 9"⟩
     ]
@@ -2135,7 +1959,6 @@ def westerly_neut_acc_pl : Form :=
     parameterId := "westerly"
     form := "pratyañci"
     segments := ["pratyañc", "i"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 9"⟩
     ]
@@ -2147,7 +1970,6 @@ def westerly_neut_ins_pl : Form :=
     parameterId := "westerly"
     form := "pratyagbhis"
     segments := ["pratyag", "bhis"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 9"⟩
     ]
@@ -2159,7 +1981,6 @@ def westerly_neut_dat_pl : Form :=
     parameterId := "westerly"
     form := "pratyagbhyas"
     segments := ["pratyag", "bhyas"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 9"⟩
     ]
@@ -2171,7 +1992,6 @@ def westerly_neut_abl_pl : Form :=
     parameterId := "westerly"
     form := "pratyagbhyas"
     segments := ["pratyag", "bhyas"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 9"⟩
     ]
@@ -2183,7 +2003,6 @@ def westerly_neut_gen_pl : Form :=
     parameterId := "westerly"
     form := "pratīcām"
     segments := ["pratīc", "ām"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 9"⟩
     ]
@@ -2195,7 +2014,6 @@ def westerly_neut_loc_pl : Form :=
     parameterId := "westerly"
     form := "pratyakṣu"
     segments := ["pratyak", "ṣu"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 9"⟩
     ]
@@ -2207,7 +2025,6 @@ def name_nom_sg : Form :=
     parameterId := "name"
     form := "nāma"
     segments := ["nāma"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 10"⟩
     ]
@@ -2219,7 +2036,6 @@ def name_voc_sg : Form :=
     parameterId := "name"
     form := "nāma"
     segments := ["nāma"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 10"⟩
     ]
@@ -2231,7 +2047,6 @@ def name_acc_sg : Form :=
     parameterId := "name"
     form := "nāma"
     segments := ["nāma"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 10"⟩
     ]
@@ -2243,7 +2058,6 @@ def name_ins_sg : Form :=
     parameterId := "name"
     form := "nāmnā"
     segments := ["nāmn", "ā"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 10"⟩
     ]
@@ -2255,7 +2069,6 @@ def name_dat_sg : Form :=
     parameterId := "name"
     form := "nāmne"
     segments := ["nāmn", "e"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 10"⟩
     ]
@@ -2267,7 +2080,6 @@ def name_abl_sg : Form :=
     parameterId := "name"
     form := "nāmnas"
     segments := ["nāmn", "as"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 10"⟩
     ]
@@ -2279,7 +2091,6 @@ def name_gen_sg : Form :=
     parameterId := "name"
     form := "nāmnas"
     segments := ["nāmn", "as"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 10"⟩
     ]
@@ -2291,7 +2102,6 @@ def name_loc_sg : Form :=
     parameterId := "name"
     form := "nāmni"
     segments := ["nāmn", "i"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 10"⟩
     ]
@@ -2303,7 +2113,6 @@ def name_nom_du : Form :=
     parameterId := "name"
     form := "nāmnī"
     segments := ["nāmn", "ī"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 10"⟩
     ]
@@ -2315,7 +2124,6 @@ def name_voc_du : Form :=
     parameterId := "name"
     form := "nāmnī"
     segments := ["nāmn", "ī"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 10"⟩
     ]
@@ -2327,7 +2135,6 @@ def name_acc_du : Form :=
     parameterId := "name"
     form := "nāmnī"
     segments := ["nāmn", "ī"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 10"⟩
     ]
@@ -2339,7 +2146,6 @@ def name_ins_du : Form :=
     parameterId := "name"
     form := "nāmabhyām"
     segments := ["nāma", "bhyām"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 10"⟩
     ]
@@ -2351,7 +2157,6 @@ def name_dat_du : Form :=
     parameterId := "name"
     form := "nāmabhyām"
     segments := ["nāma", "bhyām"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 10"⟩
     ]
@@ -2363,7 +2168,6 @@ def name_abl_du : Form :=
     parameterId := "name"
     form := "nāmabhyām"
     segments := ["nāma", "bhyām"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 10"⟩
     ]
@@ -2375,7 +2179,6 @@ def name_gen_du : Form :=
     parameterId := "name"
     form := "nāmnos"
     segments := ["nāmn", "os"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 10"⟩
     ]
@@ -2387,7 +2190,6 @@ def name_loc_du : Form :=
     parameterId := "name"
     form := "nāmnos"
     segments := ["nāmn", "os"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 10"⟩
     ]
@@ -2399,7 +2201,6 @@ def name_nom_pl : Form :=
     parameterId := "name"
     form := "nāmāni"
     segments := ["nāmān", "i"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 10"⟩
     ]
@@ -2411,7 +2212,6 @@ def name_voc_pl : Form :=
     parameterId := "name"
     form := "nāmāni"
     segments := ["nāmān", "i"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 10"⟩
     ]
@@ -2423,7 +2223,6 @@ def name_acc_pl : Form :=
     parameterId := "name"
     form := "nāmāni"
     segments := ["nāmān", "i"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 10"⟩
     ]
@@ -2435,7 +2234,6 @@ def name_ins_pl : Form :=
     parameterId := "name"
     form := "nāmabhis"
     segments := ["nāma", "bhis"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 10"⟩
     ]
@@ -2447,7 +2245,6 @@ def name_dat_pl : Form :=
     parameterId := "name"
     form := "nāmabhyas"
     segments := ["nāma", "bhyas"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 10"⟩
     ]
@@ -2459,7 +2256,6 @@ def name_abl_pl : Form :=
     parameterId := "name"
     form := "nāmabhyas"
     segments := ["nāma", "bhyas"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 10"⟩
     ]
@@ -2471,7 +2267,6 @@ def name_gen_pl : Form :=
     parameterId := "name"
     form := "nāmnām"
     segments := ["nāmn", "ām"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 10"⟩
     ]
@@ -2483,7 +2278,6 @@ def name_loc_pl : Form :=
     parameterId := "name"
     form := "nāmasu"
     segments := ["nāma", "su"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 10"⟩
     ]
@@ -2495,7 +2289,6 @@ def day_nom_sg : Form :=
     parameterId := "day"
     form := "ahas"
     segments := ["ahas"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 10"⟩
     ]
@@ -2507,7 +2300,6 @@ def day_voc_sg : Form :=
     parameterId := "day"
     form := "ahas"
     segments := ["ahas"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 10"⟩
     ]
@@ -2519,7 +2311,6 @@ def day_acc_sg : Form :=
     parameterId := "day"
     form := "ahas"
     segments := ["ahas"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 10"⟩
     ]
@@ -2531,7 +2322,6 @@ def day_ins_sg : Form :=
     parameterId := "day"
     form := "ahnā"
     segments := ["ahn", "ā"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 10"⟩
     ]
@@ -2543,7 +2333,6 @@ def day_dat_sg : Form :=
     parameterId := "day"
     form := "ahne"
     segments := ["ahn", "e"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 10"⟩
     ]
@@ -2555,7 +2344,6 @@ def day_abl_sg : Form :=
     parameterId := "day"
     form := "ahnas"
     segments := ["ahn", "as"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 10"⟩
     ]
@@ -2567,7 +2355,6 @@ def day_gen_sg : Form :=
     parameterId := "day"
     form := "ahnas"
     segments := ["ahn", "as"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 10"⟩
     ]
@@ -2579,7 +2366,6 @@ def day_loc_sg : Form :=
     parameterId := "day"
     form := "ahni"
     segments := ["ahn", "i"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 10"⟩
     ]
@@ -2591,7 +2377,6 @@ def day_nom_du : Form :=
     parameterId := "day"
     form := "ahnī"
     segments := ["ahn", "ī"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 10"⟩
     ]
@@ -2603,7 +2388,6 @@ def day_voc_du : Form :=
     parameterId := "day"
     form := "ahnī"
     segments := ["ahn", "ī"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 10"⟩
     ]
@@ -2615,7 +2399,6 @@ def day_acc_du : Form :=
     parameterId := "day"
     form := "ahnī"
     segments := ["ahn", "ī"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 10"⟩
     ]
@@ -2627,7 +2410,6 @@ def day_ins_du : Form :=
     parameterId := "day"
     form := "ahobhyām"
     segments := ["aho", "bhyām"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 10"⟩
     ]
@@ -2639,7 +2421,6 @@ def day_dat_du : Form :=
     parameterId := "day"
     form := "ahobhyām"
     segments := ["aho", "bhyām"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 10"⟩
     ]
@@ -2651,7 +2432,6 @@ def day_abl_du : Form :=
     parameterId := "day"
     form := "ahobhyām"
     segments := ["aho", "bhyām"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 10"⟩
     ]
@@ -2663,7 +2443,6 @@ def day_gen_du : Form :=
     parameterId := "day"
     form := "ahnos"
     segments := ["ahn", "os"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 10"⟩
     ]
@@ -2675,7 +2454,6 @@ def day_loc_du : Form :=
     parameterId := "day"
     form := "ahnos"
     segments := ["ahn", "os"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 10"⟩
     ]
@@ -2687,7 +2465,6 @@ def day_nom_pl : Form :=
     parameterId := "day"
     form := "ahāni"
     segments := ["ahān", "i"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 10"⟩
     ]
@@ -2699,7 +2476,6 @@ def day_voc_pl : Form :=
     parameterId := "day"
     form := "ahāni"
     segments := ["ahān", "i"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 10"⟩
     ]
@@ -2711,7 +2487,6 @@ def day_acc_pl : Form :=
     parameterId := "day"
     form := "ahāni"
     segments := ["ahān", "i"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 10"⟩
     ]
@@ -2723,7 +2498,6 @@ def day_ins_pl : Form :=
     parameterId := "day"
     form := "ahobhis"
     segments := ["aho", "bhis"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 10"⟩
     ]
@@ -2735,7 +2509,6 @@ def day_dat_pl : Form :=
     parameterId := "day"
     form := "ahobhyas"
     segments := ["aho", "bhyas"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 10"⟩
     ]
@@ -2747,7 +2520,6 @@ def day_abl_pl : Form :=
     parameterId := "day"
     form := "ahobhyas"
     segments := ["aho", "bhyas"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 10"⟩
     ]
@@ -2759,7 +2531,6 @@ def day_gen_pl : Form :=
     parameterId := "day"
     form := "ahnām"
     segments := ["ahn", "ām"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 10"⟩
     ]
@@ -2771,7 +2542,6 @@ def day_loc_pl : Form :=
     parameterId := "day"
     form := "ahaḥsu"
     segments := ["ahaḥ", "su"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 10"⟩
     ]
@@ -2783,7 +2553,6 @@ def mind_nom_sg : Form :=
     parameterId := "mind"
     form := "manas"
     segments := ["manas"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 10"⟩
     ]
@@ -2795,7 +2564,6 @@ def mind_voc_sg : Form :=
     parameterId := "mind"
     form := "manas"
     segments := ["manas"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 10"⟩
     ]
@@ -2807,7 +2575,6 @@ def mind_acc_sg : Form :=
     parameterId := "mind"
     form := "manas"
     segments := ["manas"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 10"⟩
     ]
@@ -2819,7 +2586,6 @@ def mind_ins_sg : Form :=
     parameterId := "mind"
     form := "manasā"
     segments := ["manas", "ā"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 10"⟩
     ]
@@ -2831,7 +2597,6 @@ def mind_dat_sg : Form :=
     parameterId := "mind"
     form := "manase"
     segments := ["manas", "e"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 10"⟩
     ]
@@ -2843,7 +2608,6 @@ def mind_abl_sg : Form :=
     parameterId := "mind"
     form := "manasas"
     segments := ["manas", "as"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 10"⟩
     ]
@@ -2855,7 +2619,6 @@ def mind_gen_sg : Form :=
     parameterId := "mind"
     form := "manasas"
     segments := ["manas", "as"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 10"⟩
     ]
@@ -2867,7 +2630,6 @@ def mind_loc_sg : Form :=
     parameterId := "mind"
     form := "manasi"
     segments := ["manas", "i"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 10"⟩
     ]
@@ -2879,7 +2641,6 @@ def mind_nom_du : Form :=
     parameterId := "mind"
     form := "manasī"
     segments := ["manas", "ī"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 10"⟩
     ]
@@ -2891,7 +2652,6 @@ def mind_voc_du : Form :=
     parameterId := "mind"
     form := "manasī"
     segments := ["manas", "ī"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 10"⟩
     ]
@@ -2903,7 +2663,6 @@ def mind_acc_du : Form :=
     parameterId := "mind"
     form := "manasī"
     segments := ["manas", "ī"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 10"⟩
     ]
@@ -2915,7 +2674,6 @@ def mind_ins_du : Form :=
     parameterId := "mind"
     form := "manobhyām"
     segments := ["mano", "bhyām"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 10"⟩
     ]
@@ -2927,7 +2685,6 @@ def mind_dat_du : Form :=
     parameterId := "mind"
     form := "manobhyām"
     segments := ["mano", "bhyām"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 10"⟩
     ]
@@ -2939,7 +2696,6 @@ def mind_abl_du : Form :=
     parameterId := "mind"
     form := "manobhyām"
     segments := ["mano", "bhyām"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 10"⟩
     ]
@@ -2951,7 +2707,6 @@ def mind_gen_du : Form :=
     parameterId := "mind"
     form := "manasos"
     segments := ["manas", "os"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 10"⟩
     ]
@@ -2963,7 +2718,6 @@ def mind_loc_du : Form :=
     parameterId := "mind"
     form := "manasos"
     segments := ["manas", "os"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 10"⟩
     ]
@@ -2975,7 +2729,6 @@ def mind_nom_pl : Form :=
     parameterId := "mind"
     form := "manāṃsi"
     segments := ["manāṃs", "i"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 10"⟩
     ]
@@ -2987,7 +2740,6 @@ def mind_voc_pl : Form :=
     parameterId := "mind"
     form := "manāṃsi"
     segments := ["manāṃs", "i"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 10"⟩
     ]
@@ -2999,7 +2751,6 @@ def mind_acc_pl : Form :=
     parameterId := "mind"
     form := "manāṃsi"
     segments := ["manāṃs", "i"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 10"⟩
     ]
@@ -3011,7 +2762,6 @@ def mind_ins_pl : Form :=
     parameterId := "mind"
     form := "manobhis"
     segments := ["mano", "bhis"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 10"⟩
     ]
@@ -3023,7 +2773,6 @@ def mind_dat_pl : Form :=
     parameterId := "mind"
     form := "manobhyas"
     segments := ["mano", "bhyas"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 10"⟩
     ]
@@ -3035,7 +2784,6 @@ def mind_abl_pl : Form :=
     parameterId := "mind"
     form := "manobhyas"
     segments := ["mano", "bhyas"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 10"⟩
     ]
@@ -3047,7 +2795,6 @@ def mind_gen_pl : Form :=
     parameterId := "mind"
     form := "manasām"
     segments := ["manas", "ām"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 10"⟩
     ]
@@ -3059,29 +2806,12 @@ def mind_loc_pl : Form :=
     parameterId := "mind"
     form := "manaḥsu"
     segments := ["manaḥ", "su"]
-    comment := ""
     source := [
       ⟨"stump-2006", "Table 10"⟩
     ]
     columns := [("Gender", "neut"), ("Case", "loc"), ("Number", "pl")] }
 
 def all : List Form := [room_nom_sg, room_gen_sg, room_dat_sg, room_acc_sg, room_voc_sg, room_loc_sg, room_ins_sg, room_nom_pl, room_gen_pl, room_dat_pl, room_acc_pl, room_voc_pl, room_loc_pl, room_ins_pl, spring_nom_sg, spring_gen_sg, spring_dat_sg, spring_acc_sg, spring_voc_sg, spring_loc_sg, spring_ins_sg, spring_nom_pl, spring_gen_pl, spring_dat_pl, spring_acc_pl, spring_voc_pl, spring_loc_pl, spring_ins_pl, bridge_nom_sg, bridge_gen_sg, bridge_dat_sg, bridge_acc_sg, bridge_voc_sg, bridge_loc_sg, bridge_ins_sg, bridge_nom_pl, bridge_gen_pl, bridge_dat_pl, bridge_acc_pl, bridge_voc_pl, bridge_loc_pl, bridge_ins_pl, woman_nom_sg, woman_gen_sg, woman_dat_sg, woman_acc_sg, woman_voc_sg, woman_loc_sg, woman_ins_sg, woman_nom_pl, woman_gen_pl, woman_dat_pl, woman_acc_pl, woman_voc_pl, woman_loc_pl, woman_ins_pl, president_nom_sg, president_gen_sg, president_dat_sg, president_acc_sg, president_voc_sg, president_loc_sg, president_ins_sg, president_nom_pl, president_gen_pl, president_dat_pl, president_acc_pl, president_voc_pl, president_loc_pl, president_ins_pl, philosopher_nom_sg, philosopher_gen_sg, philosopher_dat_sg, philosopher_dat_sg_u, philosopher_acc_sg, philosopher_voc_sg, philosopher_loc_sg, philosopher_loc_sg_u, philosopher_ins_sg, philosopher_nom_pl, philosopher_gen_pl, philosopher_dat_pl, philosopher_acc_pl, philosopher_voc_pl, philosopher_loc_pl, philosopher_ins_pl, servant_nom_sg, servant_gen_sg, servant_dat_sg, servant_acc_sg, servant_voc_sg, servant_loc_sg, servant_ins_sg, servant_nom_pl, servant_gen_pl, servant_dat_pl, servant_acc_pl, servant_voc_pl, servant_loc_pl, servant_ins_pl, philologist_nom_sg, philologist_gen_sg, philologist_dat_sg, philologist_dat_sg_u, philologist_acc_sg, philologist_voc_sg, philologist_loc_sg, philologist_loc_sg_u, philologist_ins_sg, philologist_nom_pl, philologist_gen_pl, philologist_dat_pl, philologist_acc_pl, philologist_voc_pl, philologist_loc_pl, philologist_ins_pl, man_nom_sg, man_gen_sg, man_dat_sg, man_dat_sg_i, man_acc_sg, man_voc_sg, man_loc_sg, man_loc_sg_i, man_ins_sg, man_nom_pl, man_nom_pl_ove, man_gen_pl, man_dat_pl, man_acc_pl, man_voc_pl, man_voc_pl_ove, man_loc_pl, man_ins_pl, westerly_masc_nom_sg, westerly_masc_voc_sg, westerly_masc_acc_sg, westerly_masc_ins_sg, westerly_masc_dat_sg, westerly_masc_abl_sg, westerly_masc_gen_sg, westerly_masc_loc_sg, westerly_masc_nom_du, westerly_masc_voc_du, westerly_masc_acc_du, westerly_masc_ins_du, westerly_masc_dat_du, westerly_masc_abl_du, westerly_masc_gen_du, westerly_masc_loc_du, westerly_masc_nom_pl, westerly_masc_voc_pl, westerly_masc_acc_pl, westerly_masc_ins_pl, westerly_masc_dat_pl, westerly_masc_abl_pl, westerly_masc_gen_pl, westerly_masc_loc_pl, westerly_neut_nom_sg, westerly_neut_voc_sg, westerly_neut_acc_sg, westerly_neut_ins_sg, westerly_neut_dat_sg, westerly_neut_abl_sg, westerly_neut_gen_sg, westerly_neut_loc_sg, westerly_neut_nom_du, westerly_neut_voc_du, westerly_neut_acc_du, westerly_neut_ins_du, westerly_neut_dat_du, westerly_neut_abl_du, westerly_neut_gen_du, westerly_neut_loc_du, westerly_neut_nom_pl, westerly_neut_voc_pl, westerly_neut_acc_pl, westerly_neut_ins_pl, westerly_neut_dat_pl, westerly_neut_abl_pl, westerly_neut_gen_pl, westerly_neut_loc_pl, name_nom_sg, name_voc_sg, name_acc_sg, name_ins_sg, name_dat_sg, name_abl_sg, name_gen_sg, name_loc_sg, name_nom_du, name_voc_du, name_acc_du, name_ins_du, name_dat_du, name_abl_du, name_gen_du, name_loc_du, name_nom_pl, name_voc_pl, name_acc_pl, name_ins_pl, name_dat_pl, name_abl_pl, name_gen_pl, name_loc_pl, day_nom_sg, day_voc_sg, day_acc_sg, day_ins_sg, day_dat_sg, day_abl_sg, day_gen_sg, day_loc_sg, day_nom_du, day_voc_du, day_acc_du, day_ins_du, day_dat_du, day_abl_du, day_gen_du, day_loc_du, day_nom_pl, day_voc_pl, day_acc_pl, day_ins_pl, day_dat_pl, day_abl_pl, day_gen_pl, day_loc_pl, mind_nom_sg, mind_voc_sg, mind_acc_sg, mind_ins_sg, mind_dat_sg, mind_abl_sg, mind_gen_sg, mind_loc_sg, mind_nom_du, mind_voc_du, mind_acc_du, mind_ins_du, mind_dat_du, mind_abl_du, mind_gen_du, mind_loc_du, mind_nom_pl, mind_voc_pl, mind_acc_pl, mind_ins_pl, mind_dat_pl, mind_abl_pl, mind_gen_pl, mind_loc_pl]
-
-def parameters : List Parameter := [
-  { id := "room", name := "room", description := "POKOJ" },
-  { id := "spring", name := "spring", description := "PRAMEN" },
-  { id := "bridge", name := "bridge", description := "MOST" },
-  { id := "woman", name := "woman", description := "ŽENA" },
-  { id := "president", name := "president", description := "PŘEDSEDA" },
-  { id := "philosopher", name := "philosopher", description := "FILOSOF" },
-  { id := "servant", name := "servant", description := "SLUHA" },
-  { id := "philologist", name := "philologist", description := "FILOLOG" },
-  { id := "man", name := "man", description := "MUŽ" },
-  { id := "westerly", name := "westerly", description := "PRATYAÑC" },
-  { id := "name", name := "name", description := "NĀMAN" },
-  { id := "day", name := "day", description := "AHAN" },
-  { id := "mind", name := "mind", description := "MANAS" }
-]
 
 def relations : List FormRelation := []
 

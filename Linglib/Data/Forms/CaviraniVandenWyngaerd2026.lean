@@ -23,7 +23,6 @@ def louka : Form :=
     parameterId := "meadow"
     form := "louka"
     segments := ["lou", "k", "a"]
-    comment := ""
     source := [
       ⟨"cavirani-vandenwyngaerd-2026", "Table 1"⟩
     ] }
@@ -34,7 +33,6 @@ def louce : Form :=
     parameterId := "meadow_locdat"
     form := "louce"
     segments := ["lou", "c", "e"]
-    comment := ""
     source := [
       ⟨"cavirani-vandenwyngaerd-2026", "Table 1"⟩
     ]
@@ -46,7 +44,6 @@ def liga : Form :=
     parameterId := "league"
     form := "liga"
     segments := ["li", "g", "a"]
-    comment := ""
     source := [
       ⟨"cavirani-vandenwyngaerd-2026", "Table 1"⟩
     ] }
@@ -57,7 +54,6 @@ def lize : Form :=
     parameterId := "league_locdat"
     form := "lize"
     segments := ["li", "z", "e"]
-    comment := ""
     source := [
       ⟨"cavirani-vandenwyngaerd-2026", "Table 1"⟩
     ]
@@ -69,7 +65,6 @@ def strecha : Form :=
     parameterId := "roof"
     form := "střecha"
     segments := ["stře", "ch", "a"]
-    comment := ""
     source := [
       ⟨"cavirani-vandenwyngaerd-2026", "Table 1"⟩
     ] }
@@ -80,7 +75,6 @@ def strese : Form :=
     parameterId := "roof_locdat"
     form := "střeše"
     segments := ["stře", "š", "e"]
-    comment := ""
     source := [
       ⟨"cavirani-vandenwyngaerd-2026", "Table 1"⟩
     ]
@@ -92,7 +86,6 @@ def kniha : Form :=
     parameterId := "book"
     form := "kniha"
     segments := ["kni", "h", "a"]
-    comment := ""
     source := [
       ⟨"cavirani-vandenwyngaerd-2026", "Table 1"⟩
     ] }
@@ -103,7 +96,6 @@ def knize : Form :=
     parameterId := "book_locdat"
     form := "knize"
     segments := ["kni", "z", "e"]
-    comment := ""
     source := [
       ⟨"cavirani-vandenwyngaerd-2026", "Table 1"⟩
     ]
@@ -115,7 +107,6 @@ def mata : Form :=
     parameterId := "mint"
     form := "máta"
     segments := ["má", "t", "a"]
-    comment := ""
     source := [
       ⟨"cavirani-vandenwyngaerd-2026", "Table 1"⟩
     ] }
@@ -126,7 +117,6 @@ def mate : Form :=
     parameterId := "mint_locdat"
     form := "mátě"
     segments := ["má", "t", "ě"]
-    comment := ""
     source := [
       ⟨"cavirani-vandenwyngaerd-2026", "Table 1"⟩
     ]
@@ -138,7 +128,6 @@ def vlada : Form :=
     parameterId := "government"
     form := "vláda"
     segments := ["vlá", "d", "a"]
-    comment := ""
     source := [
       ⟨"cavirani-vandenwyngaerd-2026", "Table 1"⟩
     ] }
@@ -149,7 +138,6 @@ def vlade : Form :=
     parameterId := "government_locdat"
     form := "vládě"
     segments := ["vlá", "d", "ě"]
-    comment := ""
     source := [
       ⟨"cavirani-vandenwyngaerd-2026", "Table 1"⟩
     ]
@@ -161,7 +149,6 @@ def bystrica : Form :=
     parameterId := "bystrica"
     form := "Bystrica"
     segments := ["Bystri", "c", "a"]
-    comment := "parenthesised in the table"
     source := [
       ⟨"cavirani-vandenwyngaerd-2026", "Table 1"⟩
     ] }
@@ -172,7 +159,6 @@ def bystrice : Form :=
     parameterId := "bystrica_locdat"
     form := "Bystrice"
     segments := ["Bystri", "c", "e"]
-    comment := "parenthesised in the table"
     source := [
       ⟨"cavirani-vandenwyngaerd-2026", "Table 1"⟩
     ]
@@ -184,7 +170,6 @@ def misa : Form :=
     parameterId := "bowl"
     form := "mísa"
     segments := ["mí", "s", "a"]
-    comment := ""
     source := [
       ⟨"cavirani-vandenwyngaerd-2026", "Table 1"⟩
     ] }
@@ -195,7 +180,6 @@ def mise : Form :=
     parameterId := "bowl_locdat"
     form := "míse"
     segments := ["mí", "s", "e"]
-    comment := ""
     source := [
       ⟨"cavirani-vandenwyngaerd-2026", "Table 1"⟩
     ]
@@ -207,7 +191,6 @@ def koza : Form :=
     parameterId := "goat"
     form := "koza"
     segments := ["ko", "z", "a"]
-    comment := ""
     source := [
       ⟨"cavirani-vandenwyngaerd-2026", "Table 1"⟩
     ] }
@@ -218,7 +201,6 @@ def koze : Form :=
     parameterId := "goat_locdat"
     form := "koze"
     segments := ["ko", "z", "e"]
-    comment := ""
     source := [
       ⟨"cavirani-vandenwyngaerd-2026", "Table 1"⟩
     ]
@@ -230,7 +212,6 @@ def vina : Form :=
     parameterId := "guilt"
     form := "vina"
     segments := ["vi", "n", "a"]
-    comment := ""
     source := [
       ⟨"cavirani-vandenwyngaerd-2026", "Table 1"⟩
     ] }
@@ -241,7 +222,6 @@ def vine : Form :=
     parameterId := "guilt_locdat"
     form := "vině"
     segments := ["vi", "n", "ě"]
-    comment := ""
     source := [
       ⟨"cavirani-vandenwyngaerd-2026", "Table 1"⟩
     ]
@@ -253,7 +233,6 @@ def sestra : Form :=
     parameterId := "sister"
     form := "sestra"
     segments := ["sest", "r", "a"]
-    comment := ""
     source := [
       ⟨"cavirani-vandenwyngaerd-2026", "Table 1"⟩
     ] }
@@ -264,7 +243,6 @@ def sestre : Form :=
     parameterId := "sister_locdat"
     form := "sestře"
     segments := ["sest", "ř", "e"]
-    comment := ""
     source := [
       ⟨"cavirani-vandenwyngaerd-2026", "Table 1"⟩
     ]
@@ -276,7 +254,6 @@ def vila : Form :=
     parameterId := "fairy"
     form := "víla"
     segments := ["ví", "l", "a"]
-    comment := ""
     source := [
       ⟨"cavirani-vandenwyngaerd-2026", "Table 1"⟩
     ] }
@@ -287,7 +264,6 @@ def vile : Form :=
     parameterId := "fairy_locdat"
     form := "víle"
     segments := ["ví", "l", "e"]
-    comment := ""
     source := [
       ⟨"cavirani-vandenwyngaerd-2026", "Table 1"⟩
     ]
@@ -299,7 +275,6 @@ def stoupa : Form :=
     parameterId := "rise"
     form := "stoupa"
     segments := ["stou", "p", "a"]
-    comment := ""
     source := [
       ⟨"cavirani-vandenwyngaerd-2026", "Table 1"⟩
     ] }
@@ -310,7 +285,6 @@ def stoupe : Form :=
     parameterId := "rise_locdat"
     form := "stoupě"
     segments := ["stou", "p", "ě"]
-    comment := ""
     source := [
       ⟨"cavirani-vandenwyngaerd-2026", "Table 1"⟩
     ]
@@ -322,7 +296,6 @@ def ryba : Form :=
     parameterId := "fish"
     form := "ryba"
     segments := ["ry", "b", "a"]
-    comment := ""
     source := [
       ⟨"cavirani-vandenwyngaerd-2026", "Table 1"⟩
     ] }
@@ -333,7 +306,6 @@ def rybe : Form :=
     parameterId := "fish_locdat"
     form := "rybě"
     segments := ["ry", "b", "ě"]
-    comment := ""
     source := [
       ⟨"cavirani-vandenwyngaerd-2026", "Table 1"⟩
     ]
@@ -345,7 +317,6 @@ def karafa : Form :=
     parameterId := "decanter"
     form := "karafa"
     segments := ["kara", "f", "a"]
-    comment := ""
     source := [
       ⟨"cavirani-vandenwyngaerd-2026", "Table 1"⟩
     ] }
@@ -356,7 +327,6 @@ def karafe : Form :=
     parameterId := "decanter_locdat"
     form := "karafě"
     segments := ["kara", "f", "ě"]
-    comment := ""
     source := [
       ⟨"cavirani-vandenwyngaerd-2026", "Table 1"⟩
     ]
@@ -368,7 +338,6 @@ def hlava : Form :=
     parameterId := "head"
     form := "hlava"
     segments := ["hla", "v", "a"]
-    comment := ""
     source := [
       ⟨"cavirani-vandenwyngaerd-2026", "Table 1"⟩
     ] }
@@ -379,7 +348,6 @@ def hlave : Form :=
     parameterId := "head_locdat"
     form := "hlavě"
     segments := ["hla", "v", "ě"]
-    comment := ""
     source := [
       ⟨"cavirani-vandenwyngaerd-2026", "Table 1"⟩
     ]
@@ -391,7 +359,6 @@ def zima : Form :=
     parameterId := "winter"
     form := "zima"
     segments := ["zi", "m", "a"]
-    comment := ""
     source := [
       ⟨"cavirani-vandenwyngaerd-2026", "Table 1"⟩
     ] }
@@ -402,7 +369,6 @@ def zime : Form :=
     parameterId := "winter_locdat"
     form := "zimě"
     segments := ["zi", "m", "ě"]
-    comment := ""
     source := [
       ⟨"cavirani-vandenwyngaerd-2026", "Table 1"⟩
     ]
@@ -414,7 +380,6 @@ def zatknout : Form :=
     parameterId := "arrested_base"
     form := "zatknout"
     segments := ["zat", "k", "nout"]
-    comment := ""
     source := [
       ⟨"cavirani-vandenwyngaerd-2026", "Table 1"⟩
     ] }
@@ -425,7 +390,6 @@ def zatcen : Form :=
     parameterId := "arrested"
     form := "zatčen"
     segments := ["zat", "č", "en"]
-    comment := ""
     source := [
       ⟨"cavirani-vandenwyngaerd-2026", "Table 1"⟩
     ]
@@ -437,7 +401,6 @@ def olga : Form :=
     parameterId := "olga"
     form := "Olga"
     segments := ["Ol", "g", "a"]
-    comment := "parenthesised in the table"
     source := [
       ⟨"cavirani-vandenwyngaerd-2026", "Table 1"⟩
     ] }
@@ -448,7 +411,6 @@ def olzin : Form :=
     parameterId := "olga_poss"
     form := "Olžin"
     segments := ["Ol", "ž", "in"]
-    comment := "parenthesised in the table"
     source := [
       ⟨"cavirani-vandenwyngaerd-2026", "Table 1"⟩
     ]
@@ -460,7 +422,6 @@ def nadchnout : Form :=
     parameterId := "excited_base"
     form := "nadchnout"
     segments := ["nad", "ch", "nout"]
-    comment := ""
     source := [
       ⟨"cavirani-vandenwyngaerd-2026", "Table 1"⟩
     ] }
@@ -471,7 +432,6 @@ def nadsen : Form :=
     parameterId := "excited"
     form := "nadšen"
     segments := ["nad", "š", "en"]
-    comment := ""
     source := [
       ⟨"cavirani-vandenwyngaerd-2026", "Table 1"⟩
     ]
@@ -483,7 +443,6 @@ def tahnout : Form :=
     parameterId := "pulled_base"
     form := "táhnout"
     segments := ["tá", "h", "nout"]
-    comment := ""
     source := [
       ⟨"cavirani-vandenwyngaerd-2026", "Table 1"⟩
     ] }
@@ -494,7 +453,6 @@ def tazen : Form :=
     parameterId := "pulled"
     form := "tažen"
     segments := ["ta", "ž", "en"]
-    comment := ""
     source := [
       ⟨"cavirani-vandenwyngaerd-2026", "Table 1"⟩
     ]
@@ -506,7 +464,6 @@ def nutit : Form :=
     parameterId := "forced_base"
     form := "nutit"
     segments := ["nu", "t", "it"]
-    comment := ""
     source := [
       ⟨"cavirani-vandenwyngaerd-2026", "Table 1"⟩
     ] }
@@ -517,7 +474,6 @@ def nucen : Form :=
     parameterId := "forced"
     form := "nucen"
     segments := ["nu", "c", "en"]
-    comment := ""
     source := [
       ⟨"cavirani-vandenwyngaerd-2026", "Table 1"⟩
     ]
@@ -529,7 +485,6 @@ def uklidit : Form :=
     parameterId := "cleaned_up_base"
     form := "uklidit"
     segments := ["ukli", "d", "it"]
-    comment := ""
     source := [
       ⟨"cavirani-vandenwyngaerd-2026", "Table 1"⟩
     ] }
@@ -540,7 +495,6 @@ def uklizen : Form :=
     parameterId := "cleaned_up"
     form := "uklizen"
     segments := ["ukli", "z", "en"]
-    comment := ""
     source := [
       ⟨"cavirani-vandenwyngaerd-2026", "Table 1"⟩
     ]
@@ -552,7 +506,6 @@ def peci : Form :=
     parameterId := "baked_base"
     form := "péci"
     segments := ["pé", "c", "i"]
-    comment := ""
     source := [
       ⟨"cavirani-vandenwyngaerd-2026", "Table 1"⟩
     ] }
@@ -563,7 +516,6 @@ def pecen : Form :=
     parameterId := "baked"
     form := "pečen"
     segments := ["pe", "č", "en"]
-    comment := ""
     source := [
       ⟨"cavirani-vandenwyngaerd-2026", "Table 1"⟩
     ]
@@ -575,7 +527,6 @@ def hlasit : Form :=
     parameterId := "reported_base"
     form := "hlásit"
     segments := ["hlá", "s", "it"]
-    comment := ""
     source := [
       ⟨"cavirani-vandenwyngaerd-2026", "Table 1"⟩
     ] }
@@ -586,7 +537,6 @@ def hlasen : Form :=
     parameterId := "reported"
     form := "hlášen"
     segments := ["hlá", "š", "en"]
-    comment := ""
     source := [
       ⟨"cavirani-vandenwyngaerd-2026", "Table 1"⟩
     ]
@@ -598,7 +548,6 @@ def ohrozit : Form :=
     parameterId := "endangered_base"
     form := "ohrozit"
     segments := ["ohro", "z", "it"]
-    comment := ""
     source := [
       ⟨"cavirani-vandenwyngaerd-2026", "Table 1"⟩
     ] }
@@ -609,7 +558,6 @@ def ohrozen : Form :=
     parameterId := "endangered"
     form := "ohrožen"
     segments := ["ohro", "ž", "en"]
-    comment := ""
     source := [
       ⟨"cavirani-vandenwyngaerd-2026", "Table 1"⟩
     ]
@@ -621,7 +569,6 @@ def ranit : Form :=
     parameterId := "wounded_base"
     form := "ranit"
     segments := ["ra", "n", "it"]
-    comment := ""
     source := [
       ⟨"cavirani-vandenwyngaerd-2026", "Table 1"⟩
     ] }
@@ -632,7 +579,6 @@ def ranen : Form :=
     parameterId := "wounded"
     form := "raněn"
     segments := ["ra", "n", "ěn"]
-    comment := ""
     source := [
       ⟨"cavirani-vandenwyngaerd-2026", "Table 1"⟩
     ]
@@ -644,7 +590,6 @@ def vera : Form :=
     parameterId := "vera"
     form := "Věra"
     segments := ["Vě", "r", "a"]
-    comment := "parenthesised in the table"
     source := [
       ⟨"cavirani-vandenwyngaerd-2026", "Table 1"⟩
     ] }
@@ -655,7 +600,6 @@ def verin : Form :=
     parameterId := "vera_poss"
     form := "Věřin"
     segments := ["Vě", "ř", "in"]
-    comment := "parenthesised in the table"
     source := [
       ⟨"cavirani-vandenwyngaerd-2026", "Table 1"⟩
     ]
@@ -667,7 +611,6 @@ def zvolit : Form :=
     parameterId := "elected_base"
     form := "zvolit"
     segments := ["zvo", "l", "it"]
-    comment := ""
     source := [
       ⟨"cavirani-vandenwyngaerd-2026", "Table 1"⟩
     ] }
@@ -678,7 +621,6 @@ def zvolen : Form :=
     parameterId := "elected"
     form := "zvolen"
     segments := ["zvo", "l", "en"]
-    comment := ""
     source := [
       ⟨"cavirani-vandenwyngaerd-2026", "Table 1"⟩
     ]
@@ -690,7 +632,6 @@ def zatopit : Form :=
     parameterId := "flooded_base"
     form := "zatopit"
     segments := ["zato", "p", "it"]
-    comment := ""
     source := [
       ⟨"cavirani-vandenwyngaerd-2026", "Table 1"⟩
     ] }
@@ -701,7 +642,6 @@ def zatopen : Form :=
     parameterId := "flooded"
     form := "zatopen"
     segments := ["zato", "p", "en"]
-    comment := ""
     source := [
       ⟨"cavirani-vandenwyngaerd-2026", "Table 1"⟩
     ]
@@ -713,7 +653,6 @@ def rozzlobit : Form :=
     parameterId := "angered_base"
     form := "rozzlobit"
     segments := ["rozzlo", "b", "it"]
-    comment := ""
     source := [
       ⟨"cavirani-vandenwyngaerd-2026", "Table 1"⟩
     ] }
@@ -724,7 +663,6 @@ def rozzloben : Form :=
     parameterId := "angered"
     form := "rozzloben"
     segments := ["rozzlo", "b", "en"]
-    comment := ""
     source := [
       ⟨"cavirani-vandenwyngaerd-2026", "Table 1"⟩
     ]
@@ -736,7 +674,6 @@ def trefit : Form :=
     parameterId := "hit_base"
     form := "trefit"
     segments := ["tre", "f", "it"]
-    comment := ""
     source := [
       ⟨"cavirani-vandenwyngaerd-2026", "Table 1"⟩
     ] }
@@ -747,7 +684,6 @@ def trefen : Form :=
     parameterId := "hit"
     form := "trefen"
     segments := ["tre", "f", "en"]
-    comment := ""
     source := [
       ⟨"cavirani-vandenwyngaerd-2026", "Table 1"⟩
     ]
@@ -759,7 +695,6 @@ def obarvit : Form :=
     parameterId := "dyed_base"
     form := "obarvit"
     segments := ["obar", "v", "it"]
-    comment := ""
     source := [
       ⟨"cavirani-vandenwyngaerd-2026", "Table 1"⟩
     ] }
@@ -770,7 +705,6 @@ def obarven : Form :=
     parameterId := "dyed"
     form := "obarven"
     segments := ["obar", "v", "en"]
-    comment := ""
     source := [
       ⟨"cavirani-vandenwyngaerd-2026", "Table 1"⟩
     ]
@@ -782,7 +716,6 @@ def zlomit : Form :=
     parameterId := "broken_base"
     form := "zlomit"
     segments := ["zlo", "m", "it"]
-    comment := ""
     source := [
       ⟨"cavirani-vandenwyngaerd-2026", "Table 1"⟩
     ] }
@@ -793,7 +726,6 @@ def zlomen : Form :=
     parameterId := "broken"
     form := "zlomen"
     segments := ["zlo", "m", "en"]
-    comment := ""
     source := [
       ⟨"cavirani-vandenwyngaerd-2026", "Table 1"⟩
     ]
@@ -805,7 +737,6 @@ def divoky : Form :=
     parameterId := "wild"
     form := "divoký"
     segments := ["divo", "k", "ý"]
-    comment := ""
     source := [
       ⟨"cavirani-vandenwyngaerd-2026", "Table 2"⟩
     ] }
@@ -816,7 +747,6 @@ def divocejsi : Form :=
     parameterId := "wild_cmpr"
     form := "divočejší"
     segments := ["divo", "č", "ejší"]
-    comment := ""
     source := [
       ⟨"cavirani-vandenwyngaerd-2026", "Table 2"⟩
     ]
@@ -828,7 +758,6 @@ def plachy : Form :=
     parameterId := "timid"
     form := "plachý"
     segments := ["pla", "ch", "ý"]
-    comment := ""
     source := [
       ⟨"cavirani-vandenwyngaerd-2026", "Table 2"⟩
     ] }
@@ -839,7 +768,6 @@ def plasejsi : Form :=
     parameterId := "timid_cmpr"
     form := "plašejší"
     segments := ["pla", "š", "ejší"]
-    comment := ""
     source := [
       ⟨"cavirani-vandenwyngaerd-2026", "Table 2"⟩
     ]
@@ -851,7 +779,6 @@ def strohy : Form :=
     parameterId := "austere"
     form := "strohý"
     segments := ["stro", "h", "ý"]
-    comment := ""
     source := [
       ⟨"cavirani-vandenwyngaerd-2026", "Table 2"⟩
     ] }
@@ -862,7 +789,6 @@ def strozejsi : Form :=
     parameterId := "austere_cmpr"
     form := "strožejší"
     segments := ["stro", "ž", "ejší"]
-    comment := ""
     source := [
       ⟨"cavirani-vandenwyngaerd-2026", "Table 2"⟩
     ]
@@ -874,7 +800,6 @@ def kulaty : Form :=
     parameterId := "round"
     form := "kulatý"
     segments := ["kula", "t", "ý"]
-    comment := ""
     source := [
       ⟨"cavirani-vandenwyngaerd-2026", "Table 2"⟩
     ] }
@@ -885,7 +810,6 @@ def kulatejsi : Form :=
     parameterId := "round_cmpr"
     form := "kulatější"
     segments := ["kula", "t", "ější"]
-    comment := ""
     source := [
       ⟨"cavirani-vandenwyngaerd-2026", "Table 2"⟩
     ]
@@ -897,7 +821,6 @@ def hrdy : Form :=
     parameterId := "proud"
     form := "hrdý"
     segments := ["hr", "d", "ý"]
-    comment := ""
     source := [
       ⟨"cavirani-vandenwyngaerd-2026", "Table 2"⟩
     ] }
@@ -908,7 +831,6 @@ def hrdejsi : Form :=
     parameterId := "proud_cmpr"
     form := "hrdější"
     segments := ["hr", "d", "ější"]
-    comment := ""
     source := [
       ⟨"cavirani-vandenwyngaerd-2026", "Table 2"⟩
     ]
@@ -920,7 +842,6 @@ def domaci : Form :=
     parameterId := "homemade"
     form := "domácí"
     segments := ["domá", "c", "í"]
-    comment := "base parenthesised in the table"
     source := [
       ⟨"cavirani-vandenwyngaerd-2026", "Table 2"⟩
     ] }
@@ -931,7 +852,6 @@ def domacejsi : Form :=
     parameterId := "homemade_cmpr"
     form := "domácejší"
     segments := ["domá", "c", "ejší"]
-    comment := ""
     source := [
       ⟨"cavirani-vandenwyngaerd-2026", "Table 2"⟩
     ]
@@ -943,7 +863,6 @@ def lysy : Form :=
     parameterId := "bald"
     form := "lysý"
     segments := ["ly", "s", "ý"]
-    comment := ""
     source := [
       ⟨"cavirani-vandenwyngaerd-2026", "Table 2"⟩
     ] }
@@ -954,7 +873,6 @@ def lysejsi : Form :=
     parameterId := "bald_cmpr"
     form := "lysejší"
     segments := ["ly", "s", "ejší"]
-    comment := ""
     source := [
       ⟨"cavirani-vandenwyngaerd-2026", "Table 2"⟩
     ]
@@ -966,7 +884,6 @@ def drzy : Form :=
     parameterId := "cheeky"
     form := "drzý"
     segments := ["dr", "z", "ý"]
-    comment := ""
     source := [
       ⟨"cavirani-vandenwyngaerd-2026", "Table 2"⟩
     ] }
@@ -977,7 +894,6 @@ def drzejsi : Form :=
     parameterId := "cheeky_cmpr"
     form := "drzejší"
     segments := ["dr", "z", "ejší"]
-    comment := ""
     source := [
       ⟨"cavirani-vandenwyngaerd-2026", "Table 2"⟩
     ]
@@ -989,7 +905,6 @@ def levny : Form :=
     parameterId := "cheap"
     form := "levný"
     segments := ["lev", "n", "ý"]
-    comment := ""
     source := [
       ⟨"cavirani-vandenwyngaerd-2026", "Table 2"⟩,
       ⟨"cavirani-vandenwyngaerd-2026", "Table 3"⟩
@@ -1001,7 +916,6 @@ def levnejsi : Form :=
     parameterId := "cheap_cmpr"
     form := "levnější"
     segments := ["lev", "n", "ější"]
-    comment := ""
     source := [
       ⟨"cavirani-vandenwyngaerd-2026", "Table 2"⟩
     ]
@@ -1013,7 +927,6 @@ def bujary : Form :=
     parameterId := "merry"
     form := "bujarý"
     segments := ["buja", "r", "ý"]
-    comment := ""
     source := [
       ⟨"cavirani-vandenwyngaerd-2026", "Table 2"⟩
     ] }
@@ -1024,7 +937,6 @@ def bujarejsi : Form :=
     parameterId := "merry_cmpr"
     form := "bujařejší"
     segments := ["buja", "ř", "ejší"]
-    comment := ""
     source := [
       ⟨"cavirani-vandenwyngaerd-2026", "Table 2"⟩
     ]
@@ -1036,7 +948,6 @@ def rychly : Form :=
     parameterId := "fast"
     form := "rychlý"
     segments := ["rych", "l", "ý"]
-    comment := ""
     source := [
       ⟨"cavirani-vandenwyngaerd-2026", "Table 2"⟩,
       ⟨"cavirani-vandenwyngaerd-2026", "Table 3"⟩
@@ -1048,7 +959,6 @@ def rychlejsi : Form :=
     parameterId := "fast_cmpr"
     form := "rychlejší"
     segments := ["rych", "l", "ejší"]
-    comment := ""
     source := [
       ⟨"cavirani-vandenwyngaerd-2026", "Table 2"⟩
     ]
@@ -1060,7 +970,6 @@ def hloupy : Form :=
     parameterId := "stupid"
     form := "hloupý"
     segments := ["hlou", "p", "ý"]
-    comment := ""
     source := [
       ⟨"cavirani-vandenwyngaerd-2026", "Table 2"⟩
     ] }
@@ -1071,7 +980,6 @@ def hloupejsi : Form :=
     parameterId := "stupid_cmpr"
     form := "hloupější"
     segments := ["hlou", "p", "ější"]
-    comment := ""
     source := [
       ⟨"cavirani-vandenwyngaerd-2026", "Table 2"⟩
     ]
@@ -1083,7 +991,6 @@ def blby : Form :=
     parameterId := "stupid"
     form := "blbý"
     segments := ["bl", "b", "ý"]
-    comment := ""
     source := [
       ⟨"cavirani-vandenwyngaerd-2026", "Table 2"⟩
     ] }
@@ -1094,7 +1001,6 @@ def blbejsi : Form :=
     parameterId := "stupid_cmpr"
     form := "blbější"
     segments := ["bl", "b", "ější"]
-    comment := ""
     source := [
       ⟨"cavirani-vandenwyngaerd-2026", "Table 2"⟩
     ]
@@ -1106,7 +1012,6 @@ def hravy : Form :=
     parameterId := "playful"
     form := "hravý"
     segments := ["hra", "v", "ý"]
-    comment := ""
     source := [
       ⟨"cavirani-vandenwyngaerd-2026", "Table 2"⟩
     ] }
@@ -1117,7 +1022,6 @@ def hravejsi : Form :=
     parameterId := "playful_cmpr"
     form := "hravější"
     segments := ["hra", "v", "ější"]
-    comment := ""
     source := [
       ⟨"cavirani-vandenwyngaerd-2026", "Table 2"⟩
     ]
@@ -1129,7 +1033,6 @@ def lakomy : Form :=
     parameterId := "stingy"
     form := "lakomý"
     segments := ["lako", "m", "ý"]
-    comment := ""
     source := [
       ⟨"cavirani-vandenwyngaerd-2026", "Table 2"⟩
     ] }
@@ -1140,7 +1043,6 @@ def lakomejsi : Form :=
     parameterId := "stingy_cmpr"
     form := "lakomější"
     segments := ["lako", "m", "ější"]
-    comment := ""
     source := [
       ⟨"cavirani-vandenwyngaerd-2026", "Table 2"⟩
     ]
@@ -1152,7 +1054,6 @@ def trpky : Form :=
     parameterId := "bitter"
     form := "trpký"
     segments := ["trp", "k", "ý"]
-    comment := ""
     source := [
       ⟨"cavirani-vandenwyngaerd-2026", "Table 3"⟩
     ] }
@@ -1163,7 +1064,6 @@ def ztrpcil : Form :=
     parameterId := "bitter_caus"
     form := "ztrpčil"
     segments := ["ztrp", "č", "il"]
-    comment := ""
     source := [
       ⟨"cavirani-vandenwyngaerd-2026", "Table 3"⟩
     ]
@@ -1175,7 +1075,6 @@ def tichy : Form :=
     parameterId := "silent"
     form := "tichý"
     segments := ["ti", "ch", "ý"]
-    comment := ""
     source := [
       ⟨"cavirani-vandenwyngaerd-2026", "Table 3"⟩
     ] }
@@ -1186,7 +1085,6 @@ def tisil : Form :=
     parameterId := "silent_caus"
     form := "tišil"
     segments := ["ti", "š", "il"]
-    comment := ""
     source := [
       ⟨"cavirani-vandenwyngaerd-2026", "Table 3"⟩
     ]
@@ -1198,7 +1096,6 @@ def drahy : Form :=
     parameterId := "expensive"
     form := "drahý"
     segments := ["dra", "h", "ý"]
-    comment := ""
     source := [
       ⟨"cavirani-vandenwyngaerd-2026", "Table 3"⟩
     ] }
@@ -1209,7 +1106,6 @@ def zdrazil : Form :=
     parameterId := "expensive_caus"
     form := "zdražil"
     segments := ["zdra", "ž", "il"]
-    comment := ""
     source := [
       ⟨"cavirani-vandenwyngaerd-2026", "Table 3"⟩
     ]
@@ -1221,7 +1117,6 @@ def nejisty : Form :=
     parameterId := "unsure"
     form := "nejistý"
     segments := ["nejis", "t", "ý"]
-    comment := ""
     source := [
       ⟨"cavirani-vandenwyngaerd-2026", "Table 3"⟩
     ] }
@@ -1232,7 +1127,6 @@ def znejistil : Form :=
     parameterId := "unsure_caus"
     form := "znejistil"
     segments := ["znejis", "t", "il"]
-    comment := ""
     source := [
       ⟨"cavirani-vandenwyngaerd-2026", "Table 3"⟩
     ]
@@ -1244,7 +1138,6 @@ def hnedy : Form :=
     parameterId := "brown"
     form := "hnědý"
     segments := ["hně", "d", "ý"]
-    comment := ""
     source := [
       ⟨"cavirani-vandenwyngaerd-2026", "Table 3"⟩
     ] }
@@ -1255,7 +1148,6 @@ def zahnedil : Form :=
     parameterId := "brown_caus"
     form := "zahnědil"
     segments := ["zahně", "d", "il"]
-    comment := ""
     source := [
       ⟨"cavirani-vandenwyngaerd-2026", "Table 3"⟩
     ]
@@ -1267,7 +1159,6 @@ def kosy : Form :=
     parameterId := "slanting"
     form := "kosý"
     segments := ["ko", "s", "ý"]
-    comment := ""
     source := [
       ⟨"cavirani-vandenwyngaerd-2026", "Table 3"⟩
     ] }
@@ -1278,7 +1169,6 @@ def zkosil : Form :=
     parameterId := "slanting_caus"
     form := "zkosil"
     segments := ["zko", "s", "il"]
-    comment := ""
     source := [
       ⟨"cavirani-vandenwyngaerd-2026", "Table 3"⟩
     ]
@@ -1290,7 +1180,6 @@ def mraz : Form :=
     parameterId := "frost"
     form := "mráz"
     segments := ["mrá", "z"]
-    comment := ""
     source := [
       ⟨"cavirani-vandenwyngaerd-2026", "Table 3"⟩
     ] }
@@ -1301,7 +1190,6 @@ def zmrazil : Form :=
     parameterId := "frost_caus"
     form := "zmrazil"
     segments := ["zmra", "z", "il"]
-    comment := ""
     source := [
       ⟨"cavirani-vandenwyngaerd-2026", "Table 3"⟩
     ]
@@ -1313,7 +1201,6 @@ def zlevnil : Form :=
     parameterId := "cheap_caus"
     form := "zlevnil"
     segments := ["zlev", "n", "il"]
-    comment := ""
     source := [
       ⟨"cavirani-vandenwyngaerd-2026", "Table 3"⟩
     ]
@@ -1325,7 +1212,6 @@ def moudry : Form :=
     parameterId := "wise"
     form := "moudrý"
     segments := ["moud", "r", "ý"]
-    comment := ""
     source := [
       ⟨"cavirani-vandenwyngaerd-2026", "Table 3"⟩
     ] }
@@ -1336,7 +1222,6 @@ def zmoudril : Form :=
     parameterId := "wise_caus"
     form := "zmoudřil"
     segments := ["zmoud", "ř", "il"]
-    comment := ""
     source := [
       ⟨"cavirani-vandenwyngaerd-2026", "Table 3"⟩
     ]
@@ -1348,7 +1233,6 @@ def zrychlil : Form :=
     parameterId := "fast_caus"
     form := "zrychlil"
     segments := ["zrych", "l", "il"]
-    comment := ""
     source := [
       ⟨"cavirani-vandenwyngaerd-2026", "Table 3"⟩
     ]
@@ -1360,7 +1244,6 @@ def tupy : Form :=
     parameterId := "blunt"
     form := "tupý"
     segments := ["tu", "p", "ý"]
-    comment := ""
     source := [
       ⟨"cavirani-vandenwyngaerd-2026", "Table 3"⟩
     ] }
@@ -1371,7 +1254,6 @@ def tupil : Form :=
     parameterId := "blunt_caus"
     form := "tupil"
     segments := ["tu", "p", "il"]
-    comment := ""
     source := [
       ⟨"cavirani-vandenwyngaerd-2026", "Table 3"⟩
     ]
@@ -1383,7 +1265,6 @@ def chaby : Form :=
     parameterId := "weak"
     form := "chabý"
     segments := ["cha", "b", "ý"]
-    comment := ""
     source := [
       ⟨"cavirani-vandenwyngaerd-2026", "Table 3"⟩
     ] }
@@ -1394,7 +1275,6 @@ def ochabil : Form :=
     parameterId := "weak_caus"
     form := "ochabil"
     segments := ["ocha", "b", "il"]
-    comment := ""
     source := [
       ⟨"cavirani-vandenwyngaerd-2026", "Table 3"⟩
     ]
@@ -1406,7 +1286,6 @@ def osklivy : Form :=
     parameterId := "ugly"
     form := "ošklivý"
     segments := ["oškli", "v", "ý"]
-    comment := ""
     source := [
       ⟨"cavirani-vandenwyngaerd-2026", "Table 3"⟩
     ] }
@@ -1417,7 +1296,6 @@ def zosklivil : Form :=
     parameterId := "ugly_caus"
     form := "zošklivil"
     segments := ["zoškli", "v", "il"]
-    comment := ""
     source := [
       ⟨"cavirani-vandenwyngaerd-2026", "Table 3"⟩
     ]
@@ -1429,7 +1307,6 @@ def chromy : Form :=
     parameterId := "lame"
     form := "chromý"
     segments := ["chro", "m", "ý"]
-    comment := ""
     source := [
       ⟨"cavirani-vandenwyngaerd-2026", "Table 3"⟩
     ] }
@@ -1440,7 +1317,6 @@ def ochromil : Form :=
     parameterId := "lame_caus"
     form := "ochromil"
     segments := ["ochro", "m", "il"]
-    comment := ""
     source := [
       ⟨"cavirani-vandenwyngaerd-2026", "Table 3"⟩
     ]
@@ -1448,324 +1324,196 @@ def ochromil : Form :=
 
 def all : List Form := [louka, louce, liga, lize, strecha, strese, kniha, knize, mata, mate, vlada, vlade, bystrica, bystrice, misa, mise, koza, koze, vina, vine, sestra, sestre, vila, vile, stoupa, stoupe, ryba, rybe, karafa, karafe, hlava, hlave, zima, zime, zatknout, zatcen, olga, olzin, nadchnout, nadsen, tahnout, tazen, nutit, nucen, uklidit, uklizen, peci, pecen, hlasit, hlasen, ohrozit, ohrozen, ranit, ranen, vera, verin, zvolit, zvolen, zatopit, zatopen, rozzlobit, rozzloben, trefit, trefen, obarvit, obarven, zlomit, zlomen, divoky, divocejsi, plachy, plasejsi, strohy, strozejsi, kulaty, kulatejsi, hrdy, hrdejsi, domaci, domacejsi, lysy, lysejsi, drzy, drzejsi, levny, levnejsi, bujary, bujarejsi, rychly, rychlejsi, hloupy, hloupejsi, blby, blbejsi, hravy, hravejsi, lakomy, lakomejsi, trpky, ztrpcil, tichy, tisil, drahy, zdrazil, nejisty, znejistil, hnedy, zahnedil, kosy, zkosil, mraz, zmrazil, zlevnil, moudry, zmoudril, zrychlil, tupy, tupil, chaby, ochabil, osklivy, zosklivil, chromy, ochromil]
 
-def parameters : List Parameter := [
-  { id := "meadow", name := "meadow", description := "" },
-  { id := "meadow_locdat", name := "meadow (LOC/DAT.F.SG)", description := "" },
-  { id := "league", name := "league", description := "" },
-  { id := "league_locdat", name := "league (LOC/DAT.F.SG)", description := "" },
-  { id := "roof", name := "roof", description := "" },
-  { id := "roof_locdat", name := "roof (LOC/DAT.F.SG)", description := "" },
-  { id := "book", name := "book", description := "" },
-  { id := "book_locdat", name := "book (LOC/DAT.F.SG)", description := "" },
-  { id := "mint", name := "mint", description := "" },
-  { id := "mint_locdat", name := "mint (LOC/DAT.F.SG)", description := "" },
-  { id := "government", name := "government", description := "" },
-  { id := "government_locdat", name := "government (LOC/DAT.F.SG)", description := "" },
-  { id := "bystrica", name := "Bystrica", description := "" },
-  { id := "bystrica_locdat", name := "Bystrica (LOC/DAT.F.SG)", description := "" },
-  { id := "bowl", name := "bowl", description := "" },
-  { id := "bowl_locdat", name := "bowl (LOC/DAT.F.SG)", description := "" },
-  { id := "goat", name := "goat", description := "" },
-  { id := "goat_locdat", name := "goat (LOC/DAT.F.SG)", description := "" },
-  { id := "guilt", name := "guilt", description := "" },
-  { id := "guilt_locdat", name := "guilt (LOC/DAT.F.SG)", description := "" },
-  { id := "sister", name := "sister", description := "" },
-  { id := "sister_locdat", name := "sister (LOC/DAT.F.SG)", description := "" },
-  { id := "fairy", name := "fairy", description := "" },
-  { id := "fairy_locdat", name := "fairy (LOC/DAT.F.SG)", description := "" },
-  { id := "rise", name := "rise", description := "" },
-  { id := "rise_locdat", name := "rise (LOC/DAT.F.SG)", description := "" },
-  { id := "fish", name := "fish", description := "" },
-  { id := "fish_locdat", name := "fish (LOC/DAT.F.SG)", description := "" },
-  { id := "decanter", name := "decanter", description := "" },
-  { id := "decanter_locdat", name := "decanter (LOC/DAT.F.SG)", description := "" },
-  { id := "head", name := "head", description := "" },
-  { id := "head_locdat", name := "head (LOC/DAT.F.SG)", description := "" },
-  { id := "winter", name := "winter", description := "" },
-  { id := "winter_locdat", name := "winter (LOC/DAT.F.SG)", description := "" },
-  { id := "arrested_base", name := "base of 'arrested'", description := "" },
-  { id := "arrested", name := "arrested", description := "" },
-  { id := "olga", name := "Olga", description := "" },
-  { id := "olga_poss", name := "of Olga", description := "" },
-  { id := "excited_base", name := "base of 'excited'", description := "" },
-  { id := "excited", name := "excited", description := "" },
-  { id := "pulled_base", name := "base of 'pulled'", description := "" },
-  { id := "pulled", name := "pulled", description := "" },
-  { id := "forced_base", name := "base of 'forced'", description := "" },
-  { id := "forced", name := "forced", description := "" },
-  { id := "cleaned_up_base", name := "base of 'cleaned up'", description := "" },
-  { id := "cleaned_up", name := "cleaned up", description := "" },
-  { id := "baked_base", name := "base of 'baked'", description := "" },
-  { id := "baked", name := "baked", description := "" },
-  { id := "reported_base", name := "base of 'reported'", description := "" },
-  { id := "reported", name := "reported", description := "" },
-  { id := "endangered_base", name := "base of 'endangered'", description := "" },
-  { id := "endangered", name := "endangered", description := "" },
-  { id := "wounded_base", name := "base of 'wounded'", description := "" },
-  { id := "wounded", name := "wounded", description := "" },
-  { id := "vera", name := "Vera", description := "" },
-  { id := "vera_poss", name := "of Vera", description := "" },
-  { id := "elected_base", name := "base of 'elected'", description := "" },
-  { id := "elected", name := "elected", description := "" },
-  { id := "flooded_base", name := "base of 'flooded'", description := "" },
-  { id := "flooded", name := "flooded", description := "" },
-  { id := "angered_base", name := "base of 'angered'", description := "" },
-  { id := "angered", name := "angered", description := "" },
-  { id := "hit_base", name := "base of 'hit'", description := "" },
-  { id := "hit", name := "hit", description := "" },
-  { id := "dyed_base", name := "base of 'dyed'", description := "" },
-  { id := "dyed", name := "dyed", description := "" },
-  { id := "broken_base", name := "base of 'broken'", description := "" },
-  { id := "broken", name := "broken", description := "" },
-  { id := "wild", name := "wild", description := "" },
-  { id := "wild_cmpr", name := "wild (comparative)", description := "" },
-  { id := "timid", name := "timid", description := "" },
-  { id := "timid_cmpr", name := "timid (comparative)", description := "" },
-  { id := "austere", name := "austere", description := "" },
-  { id := "austere_cmpr", name := "austere (comparative)", description := "" },
-  { id := "round", name := "round", description := "" },
-  { id := "round_cmpr", name := "round (comparative)", description := "" },
-  { id := "proud", name := "proud", description := "" },
-  { id := "proud_cmpr", name := "proud (comparative)", description := "" },
-  { id := "homemade", name := "homemade", description := "" },
-  { id := "homemade_cmpr", name := "homemade (comparative)", description := "" },
-  { id := "bald", name := "bald", description := "" },
-  { id := "bald_cmpr", name := "bald (comparative)", description := "" },
-  { id := "cheeky", name := "cheeky", description := "" },
-  { id := "cheeky_cmpr", name := "cheeky (comparative)", description := "" },
-  { id := "cheap", name := "cheap", description := "" },
-  { id := "cheap_cmpr", name := "cheap (comparative)", description := "" },
-  { id := "merry", name := "merry", description := "" },
-  { id := "merry_cmpr", name := "merry (comparative)", description := "" },
-  { id := "fast", name := "fast", description := "" },
-  { id := "fast_cmpr", name := "fast (comparative)", description := "" },
-  { id := "stupid", name := "stupid", description := "" },
-  { id := "stupid_cmpr", name := "stupid (comparative)", description := "" },
-  { id := "playful", name := "playful", description := "" },
-  { id := "playful_cmpr", name := "playful (comparative)", description := "" },
-  { id := "stingy", name := "stingy", description := "" },
-  { id := "stingy_cmpr", name := "stingy (comparative)", description := "" },
-  { id := "bitter", name := "bitter", description := "" },
-  { id := "bitter_caus", name := "bitter (causative)", description := "" },
-  { id := "silent", name := "silent", description := "" },
-  { id := "silent_caus", name := "silent (causative)", description := "" },
-  { id := "expensive", name := "expensive", description := "" },
-  { id := "expensive_caus", name := "expensive (causative)", description := "" },
-  { id := "unsure", name := "unsure", description := "" },
-  { id := "unsure_caus", name := "unsure (causative)", description := "" },
-  { id := "brown", name := "brown", description := "" },
-  { id := "brown_caus", name := "brown (causative)", description := "" },
-  { id := "slanting", name := "slanting", description := "" },
-  { id := "slanting_caus", name := "slanting (causative)", description := "" },
-  { id := "frost", name := "frost", description := "" },
-  { id := "frost_caus", name := "frost (causative)", description := "" },
-  { id := "cheap_caus", name := "cheap (causative)", description := "" },
-  { id := "wise", name := "wise", description := "" },
-  { id := "wise_caus", name := "wise (causative)", description := "" },
-  { id := "fast_caus", name := "fast (causative)", description := "" },
-  { id := "blunt", name := "blunt", description := "" },
-  { id := "blunt_caus", name := "blunt (causative)", description := "" },
-  { id := "weak", name := "weak", description := "" },
-  { id := "weak_caus", name := "weak (causative)", description := "" },
-  { id := "ugly", name := "ugly", description := "" },
-  { id := "ugly_caus", name := "ugly (causative)", description := "" },
-  { id := "lame", name := "lame", description := "" },
-  { id := "lame_caus", name := "lame (causative)", description := "" }
-]
-
 def relations : List FormRelation := [
-  { id := "caviranivandenwyngaerd2026_louka_louce", formId := "caviranivandenwyngaerd2026_louka", targetId := "caviranivandenwyngaerd2026_louce", relation := "locDatFSg", source := [
+  { id := "caviranivandenwyngaerd2026_louka_louce", form := louka, target := louce, relation := "locDatFSg", source := [
       ⟨"cavirani-vandenwyngaerd-2026", "Table 1"⟩
     ] },
-  { id := "caviranivandenwyngaerd2026_liga_lize", formId := "caviranivandenwyngaerd2026_liga", targetId := "caviranivandenwyngaerd2026_lize", relation := "locDatFSg", source := [
+  { id := "caviranivandenwyngaerd2026_liga_lize", form := liga, target := lize, relation := "locDatFSg", source := [
       ⟨"cavirani-vandenwyngaerd-2026", "Table 1"⟩
     ] },
-  { id := "caviranivandenwyngaerd2026_strecha_strese", formId := "caviranivandenwyngaerd2026_strecha", targetId := "caviranivandenwyngaerd2026_strese", relation := "locDatFSg", source := [
+  { id := "caviranivandenwyngaerd2026_strecha_strese", form := strecha, target := strese, relation := "locDatFSg", source := [
       ⟨"cavirani-vandenwyngaerd-2026", "Table 1"⟩
     ] },
-  { id := "caviranivandenwyngaerd2026_kniha_knize", formId := "caviranivandenwyngaerd2026_kniha", targetId := "caviranivandenwyngaerd2026_knize", relation := "locDatFSg", source := [
+  { id := "caviranivandenwyngaerd2026_kniha_knize", form := kniha, target := knize, relation := "locDatFSg", source := [
       ⟨"cavirani-vandenwyngaerd-2026", "Table 1"⟩
     ] },
-  { id := "caviranivandenwyngaerd2026_mata_mate", formId := "caviranivandenwyngaerd2026_mata", targetId := "caviranivandenwyngaerd2026_mate", relation := "locDatFSg", source := [
+  { id := "caviranivandenwyngaerd2026_mata_mate", form := mata, target := mate, relation := "locDatFSg", source := [
       ⟨"cavirani-vandenwyngaerd-2026", "Table 1"⟩
     ] },
-  { id := "caviranivandenwyngaerd2026_vlada_vlade", formId := "caviranivandenwyngaerd2026_vlada", targetId := "caviranivandenwyngaerd2026_vlade", relation := "locDatFSg", source := [
+  { id := "caviranivandenwyngaerd2026_vlada_vlade", form := vlada, target := vlade, relation := "locDatFSg", source := [
       ⟨"cavirani-vandenwyngaerd-2026", "Table 1"⟩
     ] },
-  { id := "caviranivandenwyngaerd2026_bystrica_bystrice", formId := "caviranivandenwyngaerd2026_bystrica", targetId := "caviranivandenwyngaerd2026_bystrice", relation := "locDatFSg", source := [
+  { id := "caviranivandenwyngaerd2026_bystrica_bystrice", form := bystrica, target := bystrice, relation := "locDatFSg", source := [
       ⟨"cavirani-vandenwyngaerd-2026", "Table 1"⟩
     ] },
-  { id := "caviranivandenwyngaerd2026_misa_mise", formId := "caviranivandenwyngaerd2026_misa", targetId := "caviranivandenwyngaerd2026_mise", relation := "locDatFSg", source := [
+  { id := "caviranivandenwyngaerd2026_misa_mise", form := misa, target := mise, relation := "locDatFSg", source := [
       ⟨"cavirani-vandenwyngaerd-2026", "Table 1"⟩
     ] },
-  { id := "caviranivandenwyngaerd2026_koza_koze", formId := "caviranivandenwyngaerd2026_koza", targetId := "caviranivandenwyngaerd2026_koze", relation := "locDatFSg", source := [
+  { id := "caviranivandenwyngaerd2026_koza_koze", form := koza, target := koze, relation := "locDatFSg", source := [
       ⟨"cavirani-vandenwyngaerd-2026", "Table 1"⟩
     ] },
-  { id := "caviranivandenwyngaerd2026_vina_vine", formId := "caviranivandenwyngaerd2026_vina", targetId := "caviranivandenwyngaerd2026_vine", relation := "locDatFSg", source := [
+  { id := "caviranivandenwyngaerd2026_vina_vine", form := vina, target := vine, relation := "locDatFSg", source := [
       ⟨"cavirani-vandenwyngaerd-2026", "Table 1"⟩
     ] },
-  { id := "caviranivandenwyngaerd2026_sestra_sestre", formId := "caviranivandenwyngaerd2026_sestra", targetId := "caviranivandenwyngaerd2026_sestre", relation := "locDatFSg", source := [
+  { id := "caviranivandenwyngaerd2026_sestra_sestre", form := sestra, target := sestre, relation := "locDatFSg", source := [
       ⟨"cavirani-vandenwyngaerd-2026", "Table 1"⟩
     ] },
-  { id := "caviranivandenwyngaerd2026_vila_vile", formId := "caviranivandenwyngaerd2026_vila", targetId := "caviranivandenwyngaerd2026_vile", relation := "locDatFSg", source := [
+  { id := "caviranivandenwyngaerd2026_vila_vile", form := vila, target := vile, relation := "locDatFSg", source := [
       ⟨"cavirani-vandenwyngaerd-2026", "Table 1"⟩
     ] },
-  { id := "caviranivandenwyngaerd2026_stoupa_stoupe", formId := "caviranivandenwyngaerd2026_stoupa", targetId := "caviranivandenwyngaerd2026_stoupe", relation := "locDatFSg", source := [
+  { id := "caviranivandenwyngaerd2026_stoupa_stoupe", form := stoupa, target := stoupe, relation := "locDatFSg", source := [
       ⟨"cavirani-vandenwyngaerd-2026", "Table 1"⟩
     ] },
-  { id := "caviranivandenwyngaerd2026_ryba_rybe", formId := "caviranivandenwyngaerd2026_ryba", targetId := "caviranivandenwyngaerd2026_rybe", relation := "locDatFSg", source := [
+  { id := "caviranivandenwyngaerd2026_ryba_rybe", form := ryba, target := rybe, relation := "locDatFSg", source := [
       ⟨"cavirani-vandenwyngaerd-2026", "Table 1"⟩
     ] },
-  { id := "caviranivandenwyngaerd2026_karafa_karafe", formId := "caviranivandenwyngaerd2026_karafa", targetId := "caviranivandenwyngaerd2026_karafe", relation := "locDatFSg", source := [
+  { id := "caviranivandenwyngaerd2026_karafa_karafe", form := karafa, target := karafe, relation := "locDatFSg", source := [
       ⟨"cavirani-vandenwyngaerd-2026", "Table 1"⟩
     ] },
-  { id := "caviranivandenwyngaerd2026_hlava_hlave", formId := "caviranivandenwyngaerd2026_hlava", targetId := "caviranivandenwyngaerd2026_hlave", relation := "locDatFSg", source := [
+  { id := "caviranivandenwyngaerd2026_hlava_hlave", form := hlava, target := hlave, relation := "locDatFSg", source := [
       ⟨"cavirani-vandenwyngaerd-2026", "Table 1"⟩
     ] },
-  { id := "caviranivandenwyngaerd2026_zima_zime", formId := "caviranivandenwyngaerd2026_zima", targetId := "caviranivandenwyngaerd2026_zime", relation := "locDatFSg", source := [
+  { id := "caviranivandenwyngaerd2026_zima_zime", form := zima, target := zime, relation := "locDatFSg", source := [
       ⟨"cavirani-vandenwyngaerd-2026", "Table 1"⟩
     ] },
-  { id := "caviranivandenwyngaerd2026_zatknout_zatcen", formId := "caviranivandenwyngaerd2026_zatknout", targetId := "caviranivandenwyngaerd2026_zatcen", relation := "passPtcp", source := [
+  { id := "caviranivandenwyngaerd2026_zatknout_zatcen", form := zatknout, target := zatcen, relation := "passPtcp", source := [
       ⟨"cavirani-vandenwyngaerd-2026", "Table 1"⟩
     ] },
-  { id := "caviranivandenwyngaerd2026_olga_olzin", formId := "caviranivandenwyngaerd2026_olga", targetId := "caviranivandenwyngaerd2026_olzin", relation := "possessive", source := [
+  { id := "caviranivandenwyngaerd2026_olga_olzin", form := olga, target := olzin, relation := "possessive", source := [
       ⟨"cavirani-vandenwyngaerd-2026", "Table 1"⟩
     ] },
-  { id := "caviranivandenwyngaerd2026_nadchnout_nadsen", formId := "caviranivandenwyngaerd2026_nadchnout", targetId := "caviranivandenwyngaerd2026_nadsen", relation := "passPtcp", source := [
+  { id := "caviranivandenwyngaerd2026_nadchnout_nadsen", form := nadchnout, target := nadsen, relation := "passPtcp", source := [
       ⟨"cavirani-vandenwyngaerd-2026", "Table 1"⟩
     ] },
-  { id := "caviranivandenwyngaerd2026_tahnout_tazen", formId := "caviranivandenwyngaerd2026_tahnout", targetId := "caviranivandenwyngaerd2026_tazen", relation := "passPtcp", source := [
+  { id := "caviranivandenwyngaerd2026_tahnout_tazen", form := tahnout, target := tazen, relation := "passPtcp", source := [
       ⟨"cavirani-vandenwyngaerd-2026", "Table 1"⟩
     ] },
-  { id := "caviranivandenwyngaerd2026_nutit_nucen", formId := "caviranivandenwyngaerd2026_nutit", targetId := "caviranivandenwyngaerd2026_nucen", relation := "passPtcp", source := [
+  { id := "caviranivandenwyngaerd2026_nutit_nucen", form := nutit, target := nucen, relation := "passPtcp", source := [
       ⟨"cavirani-vandenwyngaerd-2026", "Table 1"⟩
     ] },
-  { id := "caviranivandenwyngaerd2026_uklidit_uklizen", formId := "caviranivandenwyngaerd2026_uklidit", targetId := "caviranivandenwyngaerd2026_uklizen", relation := "passPtcp", source := [
+  { id := "caviranivandenwyngaerd2026_uklidit_uklizen", form := uklidit, target := uklizen, relation := "passPtcp", source := [
       ⟨"cavirani-vandenwyngaerd-2026", "Table 1"⟩
     ] },
-  { id := "caviranivandenwyngaerd2026_peci_pecen", formId := "caviranivandenwyngaerd2026_peci", targetId := "caviranivandenwyngaerd2026_pecen", relation := "passPtcp", source := [
+  { id := "caviranivandenwyngaerd2026_peci_pecen", form := peci, target := pecen, relation := "passPtcp", source := [
       ⟨"cavirani-vandenwyngaerd-2026", "Table 1"⟩
     ] },
-  { id := "caviranivandenwyngaerd2026_hlasit_hlasen", formId := "caviranivandenwyngaerd2026_hlasit", targetId := "caviranivandenwyngaerd2026_hlasen", relation := "passPtcp", source := [
+  { id := "caviranivandenwyngaerd2026_hlasit_hlasen", form := hlasit, target := hlasen, relation := "passPtcp", source := [
       ⟨"cavirani-vandenwyngaerd-2026", "Table 1"⟩
     ] },
-  { id := "caviranivandenwyngaerd2026_ohrozit_ohrozen", formId := "caviranivandenwyngaerd2026_ohrozit", targetId := "caviranivandenwyngaerd2026_ohrozen", relation := "passPtcp", source := [
+  { id := "caviranivandenwyngaerd2026_ohrozit_ohrozen", form := ohrozit, target := ohrozen, relation := "passPtcp", source := [
       ⟨"cavirani-vandenwyngaerd-2026", "Table 1"⟩
     ] },
-  { id := "caviranivandenwyngaerd2026_ranit_ranen", formId := "caviranivandenwyngaerd2026_ranit", targetId := "caviranivandenwyngaerd2026_ranen", relation := "passPtcp", source := [
+  { id := "caviranivandenwyngaerd2026_ranit_ranen", form := ranit, target := ranen, relation := "passPtcp", source := [
       ⟨"cavirani-vandenwyngaerd-2026", "Table 1"⟩
     ] },
-  { id := "caviranivandenwyngaerd2026_vera_verin", formId := "caviranivandenwyngaerd2026_vera", targetId := "caviranivandenwyngaerd2026_verin", relation := "possessive", source := [
+  { id := "caviranivandenwyngaerd2026_vera_verin", form := vera, target := verin, relation := "possessive", source := [
       ⟨"cavirani-vandenwyngaerd-2026", "Table 1"⟩
     ] },
-  { id := "caviranivandenwyngaerd2026_zvolit_zvolen", formId := "caviranivandenwyngaerd2026_zvolit", targetId := "caviranivandenwyngaerd2026_zvolen", relation := "passPtcp", source := [
+  { id := "caviranivandenwyngaerd2026_zvolit_zvolen", form := zvolit, target := zvolen, relation := "passPtcp", source := [
       ⟨"cavirani-vandenwyngaerd-2026", "Table 1"⟩
     ] },
-  { id := "caviranivandenwyngaerd2026_zatopit_zatopen", formId := "caviranivandenwyngaerd2026_zatopit", targetId := "caviranivandenwyngaerd2026_zatopen", relation := "passPtcp", source := [
+  { id := "caviranivandenwyngaerd2026_zatopit_zatopen", form := zatopit, target := zatopen, relation := "passPtcp", source := [
       ⟨"cavirani-vandenwyngaerd-2026", "Table 1"⟩
     ] },
-  { id := "caviranivandenwyngaerd2026_rozzlobit_rozzloben", formId := "caviranivandenwyngaerd2026_rozzlobit", targetId := "caviranivandenwyngaerd2026_rozzloben", relation := "passPtcp", source := [
+  { id := "caviranivandenwyngaerd2026_rozzlobit_rozzloben", form := rozzlobit, target := rozzloben, relation := "passPtcp", source := [
       ⟨"cavirani-vandenwyngaerd-2026", "Table 1"⟩
     ] },
-  { id := "caviranivandenwyngaerd2026_trefit_trefen", formId := "caviranivandenwyngaerd2026_trefit", targetId := "caviranivandenwyngaerd2026_trefen", relation := "passPtcp", source := [
+  { id := "caviranivandenwyngaerd2026_trefit_trefen", form := trefit, target := trefen, relation := "passPtcp", source := [
       ⟨"cavirani-vandenwyngaerd-2026", "Table 1"⟩
     ] },
-  { id := "caviranivandenwyngaerd2026_obarvit_obarven", formId := "caviranivandenwyngaerd2026_obarvit", targetId := "caviranivandenwyngaerd2026_obarven", relation := "passPtcp", source := [
+  { id := "caviranivandenwyngaerd2026_obarvit_obarven", form := obarvit, target := obarven, relation := "passPtcp", source := [
       ⟨"cavirani-vandenwyngaerd-2026", "Table 1"⟩
     ] },
-  { id := "caviranivandenwyngaerd2026_zlomit_zlomen", formId := "caviranivandenwyngaerd2026_zlomit", targetId := "caviranivandenwyngaerd2026_zlomen", relation := "passPtcp", source := [
+  { id := "caviranivandenwyngaerd2026_zlomit_zlomen", form := zlomit, target := zlomen, relation := "passPtcp", source := [
       ⟨"cavirani-vandenwyngaerd-2026", "Table 1"⟩
     ] },
-  { id := "caviranivandenwyngaerd2026_divoky_divocejsi", formId := "caviranivandenwyngaerd2026_divoky", targetId := "caviranivandenwyngaerd2026_divocejsi", relation := "comparative", source := [
+  { id := "caviranivandenwyngaerd2026_divoky_divocejsi", form := divoky, target := divocejsi, relation := "comparative", source := [
       ⟨"cavirani-vandenwyngaerd-2026", "Table 2"⟩
     ] },
-  { id := "caviranivandenwyngaerd2026_plachy_plasejsi", formId := "caviranivandenwyngaerd2026_plachy", targetId := "caviranivandenwyngaerd2026_plasejsi", relation := "comparative", source := [
+  { id := "caviranivandenwyngaerd2026_plachy_plasejsi", form := plachy, target := plasejsi, relation := "comparative", source := [
       ⟨"cavirani-vandenwyngaerd-2026", "Table 2"⟩
     ] },
-  { id := "caviranivandenwyngaerd2026_strohy_strozejsi", formId := "caviranivandenwyngaerd2026_strohy", targetId := "caviranivandenwyngaerd2026_strozejsi", relation := "comparative", source := [
+  { id := "caviranivandenwyngaerd2026_strohy_strozejsi", form := strohy, target := strozejsi, relation := "comparative", source := [
       ⟨"cavirani-vandenwyngaerd-2026", "Table 2"⟩
     ] },
-  { id := "caviranivandenwyngaerd2026_kulaty_kulatejsi", formId := "caviranivandenwyngaerd2026_kulaty", targetId := "caviranivandenwyngaerd2026_kulatejsi", relation := "comparative", source := [
+  { id := "caviranivandenwyngaerd2026_kulaty_kulatejsi", form := kulaty, target := kulatejsi, relation := "comparative", source := [
       ⟨"cavirani-vandenwyngaerd-2026", "Table 2"⟩
     ] },
-  { id := "caviranivandenwyngaerd2026_hrdy_hrdejsi", formId := "caviranivandenwyngaerd2026_hrdy", targetId := "caviranivandenwyngaerd2026_hrdejsi", relation := "comparative", source := [
+  { id := "caviranivandenwyngaerd2026_hrdy_hrdejsi", form := hrdy, target := hrdejsi, relation := "comparative", source := [
       ⟨"cavirani-vandenwyngaerd-2026", "Table 2"⟩
     ] },
-  { id := "caviranivandenwyngaerd2026_domaci_domacejsi", formId := "caviranivandenwyngaerd2026_domaci", targetId := "caviranivandenwyngaerd2026_domacejsi", relation := "comparative", source := [
+  { id := "caviranivandenwyngaerd2026_domaci_domacejsi", form := domaci, target := domacejsi, relation := "comparative", source := [
       ⟨"cavirani-vandenwyngaerd-2026", "Table 2"⟩
     ] },
-  { id := "caviranivandenwyngaerd2026_lysy_lysejsi", formId := "caviranivandenwyngaerd2026_lysy", targetId := "caviranivandenwyngaerd2026_lysejsi", relation := "comparative", source := [
+  { id := "caviranivandenwyngaerd2026_lysy_lysejsi", form := lysy, target := lysejsi, relation := "comparative", source := [
       ⟨"cavirani-vandenwyngaerd-2026", "Table 2"⟩
     ] },
-  { id := "caviranivandenwyngaerd2026_drzy_drzejsi", formId := "caviranivandenwyngaerd2026_drzy", targetId := "caviranivandenwyngaerd2026_drzejsi", relation := "comparative", source := [
+  { id := "caviranivandenwyngaerd2026_drzy_drzejsi", form := drzy, target := drzejsi, relation := "comparative", source := [
       ⟨"cavirani-vandenwyngaerd-2026", "Table 2"⟩
     ] },
-  { id := "caviranivandenwyngaerd2026_levny_levnejsi", formId := "caviranivandenwyngaerd2026_levny", targetId := "caviranivandenwyngaerd2026_levnejsi", relation := "comparative", source := [
+  { id := "caviranivandenwyngaerd2026_levny_levnejsi", form := levny, target := levnejsi, relation := "comparative", source := [
       ⟨"cavirani-vandenwyngaerd-2026", "Table 2"⟩
     ] },
-  { id := "caviranivandenwyngaerd2026_bujary_bujarejsi", formId := "caviranivandenwyngaerd2026_bujary", targetId := "caviranivandenwyngaerd2026_bujarejsi", relation := "comparative", source := [
+  { id := "caviranivandenwyngaerd2026_bujary_bujarejsi", form := bujary, target := bujarejsi, relation := "comparative", source := [
       ⟨"cavirani-vandenwyngaerd-2026", "Table 2"⟩
     ] },
-  { id := "caviranivandenwyngaerd2026_rychly_rychlejsi", formId := "caviranivandenwyngaerd2026_rychly", targetId := "caviranivandenwyngaerd2026_rychlejsi", relation := "comparative", source := [
+  { id := "caviranivandenwyngaerd2026_rychly_rychlejsi", form := rychly, target := rychlejsi, relation := "comparative", source := [
       ⟨"cavirani-vandenwyngaerd-2026", "Table 2"⟩
     ] },
-  { id := "caviranivandenwyngaerd2026_hloupy_hloupejsi", formId := "caviranivandenwyngaerd2026_hloupy", targetId := "caviranivandenwyngaerd2026_hloupejsi", relation := "comparative", source := [
+  { id := "caviranivandenwyngaerd2026_hloupy_hloupejsi", form := hloupy, target := hloupejsi, relation := "comparative", source := [
       ⟨"cavirani-vandenwyngaerd-2026", "Table 2"⟩
     ] },
-  { id := "caviranivandenwyngaerd2026_blby_blbejsi", formId := "caviranivandenwyngaerd2026_blby", targetId := "caviranivandenwyngaerd2026_blbejsi", relation := "comparative", source := [
+  { id := "caviranivandenwyngaerd2026_blby_blbejsi", form := blby, target := blbejsi, relation := "comparative", source := [
       ⟨"cavirani-vandenwyngaerd-2026", "Table 2"⟩
     ] },
-  { id := "caviranivandenwyngaerd2026_hravy_hravejsi", formId := "caviranivandenwyngaerd2026_hravy", targetId := "caviranivandenwyngaerd2026_hravejsi", relation := "comparative", source := [
+  { id := "caviranivandenwyngaerd2026_hravy_hravejsi", form := hravy, target := hravejsi, relation := "comparative", source := [
       ⟨"cavirani-vandenwyngaerd-2026", "Table 2"⟩
     ] },
-  { id := "caviranivandenwyngaerd2026_lakomy_lakomejsi", formId := "caviranivandenwyngaerd2026_lakomy", targetId := "caviranivandenwyngaerd2026_lakomejsi", relation := "comparative", source := [
+  { id := "caviranivandenwyngaerd2026_lakomy_lakomejsi", form := lakomy, target := lakomejsi, relation := "comparative", source := [
       ⟨"cavirani-vandenwyngaerd-2026", "Table 2"⟩
     ] },
-  { id := "caviranivandenwyngaerd2026_trpky_ztrpcil", formId := "caviranivandenwyngaerd2026_trpky", targetId := "caviranivandenwyngaerd2026_ztrpcil", relation := "causative", source := [
+  { id := "caviranivandenwyngaerd2026_trpky_ztrpcil", form := trpky, target := ztrpcil, relation := "causative", source := [
       ⟨"cavirani-vandenwyngaerd-2026", "Table 3"⟩
     ] },
-  { id := "caviranivandenwyngaerd2026_tichy_tisil", formId := "caviranivandenwyngaerd2026_tichy", targetId := "caviranivandenwyngaerd2026_tisil", relation := "causative", source := [
+  { id := "caviranivandenwyngaerd2026_tichy_tisil", form := tichy, target := tisil, relation := "causative", source := [
       ⟨"cavirani-vandenwyngaerd-2026", "Table 3"⟩
     ] },
-  { id := "caviranivandenwyngaerd2026_drahy_zdrazil", formId := "caviranivandenwyngaerd2026_drahy", targetId := "caviranivandenwyngaerd2026_zdrazil", relation := "causative", source := [
+  { id := "caviranivandenwyngaerd2026_drahy_zdrazil", form := drahy, target := zdrazil, relation := "causative", source := [
       ⟨"cavirani-vandenwyngaerd-2026", "Table 3"⟩
     ] },
-  { id := "caviranivandenwyngaerd2026_nejisty_znejistil", formId := "caviranivandenwyngaerd2026_nejisty", targetId := "caviranivandenwyngaerd2026_znejistil", relation := "causative", source := [
+  { id := "caviranivandenwyngaerd2026_nejisty_znejistil", form := nejisty, target := znejistil, relation := "causative", source := [
       ⟨"cavirani-vandenwyngaerd-2026", "Table 3"⟩
     ] },
-  { id := "caviranivandenwyngaerd2026_hnedy_zahnedil", formId := "caviranivandenwyngaerd2026_hnedy", targetId := "caviranivandenwyngaerd2026_zahnedil", relation := "causative", source := [
+  { id := "caviranivandenwyngaerd2026_hnedy_zahnedil", form := hnedy, target := zahnedil, relation := "causative", source := [
       ⟨"cavirani-vandenwyngaerd-2026", "Table 3"⟩
     ] },
-  { id := "caviranivandenwyngaerd2026_kosy_zkosil", formId := "caviranivandenwyngaerd2026_kosy", targetId := "caviranivandenwyngaerd2026_zkosil", relation := "causative", source := [
+  { id := "caviranivandenwyngaerd2026_kosy_zkosil", form := kosy, target := zkosil, relation := "causative", source := [
       ⟨"cavirani-vandenwyngaerd-2026", "Table 3"⟩
     ] },
-  { id := "caviranivandenwyngaerd2026_mraz_zmrazil", formId := "caviranivandenwyngaerd2026_mraz", targetId := "caviranivandenwyngaerd2026_zmrazil", relation := "causative", source := [
+  { id := "caviranivandenwyngaerd2026_mraz_zmrazil", form := mraz, target := zmrazil, relation := "causative", source := [
       ⟨"cavirani-vandenwyngaerd-2026", "Table 3"⟩
     ] },
-  { id := "caviranivandenwyngaerd2026_levny_zlevnil", formId := "caviranivandenwyngaerd2026_levny", targetId := "caviranivandenwyngaerd2026_zlevnil", relation := "causative", source := [
+  { id := "caviranivandenwyngaerd2026_levny_zlevnil", form := levny, target := zlevnil, relation := "causative", source := [
       ⟨"cavirani-vandenwyngaerd-2026", "Table 3"⟩
     ] },
-  { id := "caviranivandenwyngaerd2026_moudry_zmoudril", formId := "caviranivandenwyngaerd2026_moudry", targetId := "caviranivandenwyngaerd2026_zmoudril", relation := "causative", source := [
+  { id := "caviranivandenwyngaerd2026_moudry_zmoudril", form := moudry, target := zmoudril, relation := "causative", source := [
       ⟨"cavirani-vandenwyngaerd-2026", "Table 3"⟩
     ] },
-  { id := "caviranivandenwyngaerd2026_rychly_zrychlil", formId := "caviranivandenwyngaerd2026_rychly", targetId := "caviranivandenwyngaerd2026_zrychlil", relation := "causative", source := [
+  { id := "caviranivandenwyngaerd2026_rychly_zrychlil", form := rychly, target := zrychlil, relation := "causative", source := [
       ⟨"cavirani-vandenwyngaerd-2026", "Table 3"⟩
     ] },
-  { id := "caviranivandenwyngaerd2026_tupy_tupil", formId := "caviranivandenwyngaerd2026_tupy", targetId := "caviranivandenwyngaerd2026_tupil", relation := "causative", source := [
+  { id := "caviranivandenwyngaerd2026_tupy_tupil", form := tupy, target := tupil, relation := "causative", source := [
       ⟨"cavirani-vandenwyngaerd-2026", "Table 3"⟩
     ] },
-  { id := "caviranivandenwyngaerd2026_chaby_ochabil", formId := "caviranivandenwyngaerd2026_chaby", targetId := "caviranivandenwyngaerd2026_ochabil", relation := "causative", source := [
+  { id := "caviranivandenwyngaerd2026_chaby_ochabil", form := chaby, target := ochabil, relation := "causative", source := [
       ⟨"cavirani-vandenwyngaerd-2026", "Table 3"⟩
     ] },
-  { id := "caviranivandenwyngaerd2026_osklivy_zosklivil", formId := "caviranivandenwyngaerd2026_osklivy", targetId := "caviranivandenwyngaerd2026_zosklivil", relation := "causative", source := [
+  { id := "caviranivandenwyngaerd2026_osklivy_zosklivil", form := osklivy, target := zosklivil, relation := "causative", source := [
       ⟨"cavirani-vandenwyngaerd-2026", "Table 3"⟩
     ] },
-  { id := "caviranivandenwyngaerd2026_chromy_ochromil", formId := "caviranivandenwyngaerd2026_chromy", targetId := "caviranivandenwyngaerd2026_ochromil", relation := "causative", source := [
+  { id := "caviranivandenwyngaerd2026_chromy_ochromil", form := chromy, target := ochromil, relation := "causative", source := [
       ⟨"cavirani-vandenwyngaerd-2026", "Table 3"⟩
     ] }
 ]
-
-/-- The form and the target of each relation, in the order of `relations`. -/
-def relationForms : List (Form × Form) := [(louka, louce), (liga, lize), (strecha, strese), (kniha, knize), (mata, mate), (vlada, vlade), (bystrica, bystrice), (misa, mise), (koza, koze), (vina, vine), (sestra, sestre), (vila, vile), (stoupa, stoupe), (ryba, rybe), (karafa, karafe), (hlava, hlave), (zima, zime), (zatknout, zatcen), (olga, olzin), (nadchnout, nadsen), (tahnout, tazen), (nutit, nucen), (uklidit, uklizen), (peci, pecen), (hlasit, hlasen), (ohrozit, ohrozen), (ranit, ranen), (vera, verin), (zvolit, zvolen), (zatopit, zatopen), (rozzlobit, rozzloben), (trefit, trefen), (obarvit, obarven), (zlomit, zlomen), (divoky, divocejsi), (plachy, plasejsi), (strohy, strozejsi), (kulaty, kulatejsi), (hrdy, hrdejsi), (domaci, domacejsi), (lysy, lysejsi), (drzy, drzejsi), (levny, levnejsi), (bujary, bujarejsi), (rychly, rychlejsi), (hloupy, hloupejsi), (blby, blbejsi), (hravy, hravejsi), (lakomy, lakomejsi), (trpky, ztrpcil), (tichy, tisil), (drahy, zdrazil), (nejisty, znejistil), (hnedy, zahnedil), (kosy, zkosil), (mraz, zmrazil), (levny, zlevnil), (moudry, zmoudril), (rychly, zrychlil), (tupy, tupil), (chaby, ochabil), (osklivy, zosklivil), (chromy, ochromil)]
 
 end CaviraniVandenWyngaerd2026.Forms

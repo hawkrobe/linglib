@@ -11,20 +11,20 @@ public import Linglib.Core.Order.Flat
 /-!
 # CLDF word forms
 
-This file defines the types for word-level data, aligned with the Wordlist module of the
+This file defines the rows of a paper's word-level data, aligned with the Wordlist module of the
 Cross-Linguistic Data Formats of Forkel and colleagues, version 1.3, and the lookups a study
-makes on a paper's forms. It is the morphological counterpart of the Examples component in
-`Data/Examples/`: the datum is a word and its parts rather than an utterance and its gloss.
+makes on them. It is the morphological counterpart of `Data/Examples/`: the datum is a word and
+its parts rather than an utterance and its gloss.
 
 ## Main definitions
 
 * `Data.Forms.Form`: a row of the `FormTable`, a form of a language expressing a concept, with
   its segmentation.
-* `Data.Forms.Parameter`: a row of the `ParameterTable`, the concept.
-* `Data.Forms.FormRelation`: a row of `FormRelationTable`, a linglib extension table for the
+* `Data.Forms.FormRelation`: a row of the `FormRelationTable`, a linglib extension table for the
   paradigmatic pairs a paper asserts between forms (a stem and its past, an adjective and its
   comparative, a base and its reduplicant); CLDF has no standard component for these and permits
   custom tables.
+* `Data.Forms.Form.slots`: the segments as a slot-indexed item on the flat carrier.
 * `Data.Forms.Form.column?`, `Data.Forms.Form.columnAs?`: the value of a custom column, as
   printed or read through a table of labels.
 * `Data.Forms.matching`: every form of a list that expresses a concept and carries given values
@@ -35,19 +35,21 @@ makes on a paper's forms. It is the morphological counterpart of the Examples co
 * Per-paper data lives in `Linglib/Data/Forms/{AuthorYear}.json`, an object whose keys are CLDF
   table names holding arrays of rows under the CLDF column names, and is compiled by
   `scripts/gen_forms.py` into `Linglib/Data/Forms/{AuthorYear}.lean`, declaring
-  `namespace {AuthorYear}.Forms`.
+  `namespace {AuthorYear}.Forms` with a `def` for each form, their list `all`, and `relations`.
+* A row carries the columns that theorems read. The `Comment` column and the `ParameterTable`
+  are the source's record, as the unread keys of `Data/Examples/` are: the generator validates
+  them, and that every `Parameter_ID` names a concept of the `ParameterTable`.
+* A relation carries its two forms rather than their identifiers: the generator resolves the
+  `Form_ID` and `Target_ID` foreign keys, so a study reads a relation's forms without a lookup.
 * `Language_ID` is a Glottocode rather than a foreign key into a `LanguageTable`, as in
   `Data/Examples/`. `Source` follows the CLDF reference syntax `bibkey[label]` in JSON and is
   parsed into `SourceRef` values.
 * `Segments` is the paper's own tokenization of the form, which may be coarser than a
   phonemic segmentation: a long vowel as one segment, or a residue the paper treats as one
-  variable. `Form.slots` reads the segments as a slot-indexed item on the flat carrier, the
-  shape the schema substrate consumes.
+  variable.
 * CLDF lets any table carry custom columns. A form's are kept as `columns`, name-value pairs
   under the column names of the JSON, for the per-form codes a paper assigns (a case, a
   canonicity judgment, a tone class).
-* `matching` returns every matching row rather than the first, so a cell a paper fills with two
-  alternants yields both.
 * Identifiers follow the CLDF `id` format `[a-zA-Z0-9_-]+`, enforced by the generator.
 
 ## References
@@ -59,7 +61,6 @@ makes on a paper's forms. It is the morphological counterpart of the Examples co
 @[expose] public section
 
 namespace Data.Forms
-
 
 /-- A `Form` is a row of a CLDF `FormTable`, a word form of a language expressing a concept,
 with its segmentation. -/
@@ -74,29 +75,33 @@ structure Form where
   form : String
   /-- The `Segments` column holds the form's segmentation. -/
   segments : List String
-  /-- The `Comment` column holds a free-text comment. -/
-  comment : String := ""
   /-- The `Source` column holds the references, each a bibkey with a locator. -/
   source : List SourceRef := []
   /-- The custom columns of the table hold further values of the form, by column name. -/
   columns : List (String × String) := []
   deriving DecidableEq, Repr
 
-/-- `f.slots` reads the segments of `f` as a slot-indexed item on the flat carrier. -/
-def Form.slots (f : Form) (i : Fin f.segments.length) : Flat String := ↑(f.segments.get i)
+namespace Form
+
+variable (f : Form) (name : String)
+
+/-- `f.slots` reads the segments of `f` as a slot-indexed item on the flat carrier, the shape
+the schemas of `Morphology/ConstructionMorphology/` match. -/
+def slots (i : Fin f.segments.length) : Flat String := ↑f.segments[i]
 
 /-- `f.column? name` is the value of `f` in the custom column `name`, if `f` has one. -/
-def Form.column? (f : Form) (name : String) : Option String := f.columns.lookup name
+def column? : Option String := f.columns.lookup name
 
 /-- `f.columnAs? name table` is the entry of `table` under the value of `f` in the custom column
 `name`, if `f` has that column and `table` lists its value. -/
-def Form.columnAs? {α : Type*} (f : Form) (name : String) (table : List (String × α)) :
-    Option α :=
+def columnAs? {α : Type*} (table : List (String × α)) : Option α :=
   (f.column? name).bind (List.lookup · table)
+
+end Form
 
 /-- `matching forms pid cols` is the list of every form in `forms` that expresses the concept
 `pid` and has the value `v` in the custom column `c` for each pair `(c, v)` of `cols`, in the
-order of `forms`. -/
+order of `forms`; a cell a paper fills with two alternants yields both. -/
 def matching (forms : List Form) (pid : String) (cols : List (String × String)) : List Form :=
   forms.filter fun f ↦ f.parameterId == pid && cols.all fun c ↦ f.column? c.1 == some c.2
 
@@ -106,25 +111,15 @@ theorem mem_matching {forms : List Form} {pid : String} {cols : List (String × 
       f ∈ forms ∧ f.parameterId = pid ∧ ∀ c ∈ cols, f.column? c.1 = some c.2 := by
   simp [matching]
 
-/-- A `Parameter` is a row of a CLDF `ParameterTable`, a concept that forms express. -/
-structure Parameter where
-  /-- The `ID` column holds the concept's identifier. -/
-  id : String
-  /-- The `Name` column holds the concept's name. -/
-  name : String
-  /-- The `Description` column holds a description of the concept. -/
-  description : String := ""
-  deriving DecidableEq, Repr
-
 /-- A `FormRelation` is a row of the `FormRelationTable`, a paradigmatic relation that a paper
 asserts from one form to another, named by the paper's term for it. -/
 structure FormRelation where
   /-- The `ID` column holds the relation's identifier. -/
   id : String
-  /-- The `Form_ID` column names the first form. -/
-  formId : String
-  /-- The `Target_ID` column names the second form. -/
-  targetId : String
+  /-- The form that the `Form_ID` column names. -/
+  form : Form
+  /-- The form that the `Target_ID` column names. -/
+  target : Form
   /-- The `Relation` column holds the paper's name for the relation. -/
   relation : String
   /-- The `Source` column holds the references, each a bibkey with a locator. -/

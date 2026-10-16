@@ -23,7 +23,6 @@ def hordonk : Form :=
     parameterId := "our_barrel"
     form := "hordónk"
     segments := ["h", "o", "r", "d", "ó", "n", "k"]
-    comment := ""
     source := [
       ⟨"vago-2017", "Table 1"⟩
     ]
@@ -35,7 +34,6 @@ def erdesz : Form :=
     parameterId := "forester"
     form := "erdész"
     segments := ["e", "r", "d", "é", "sz"]
-    comment := ""
     source := [
       ⟨"vago-2017", "(7a), Table 2"⟩
     ]
@@ -47,7 +45,6 @@ def eszperantoul : Form :=
     parameterId := "in_esperanto"
     form := "eszperantóul"
     segments := ["e", "sz", "p", "e", "r", "a", "n", "t", "ó", "u", "l"]
-    comment := ""
     source := [
       ⟨"vago-2017", "Table 3"⟩
     ]
@@ -59,7 +56,6 @@ def tanulnunk : Form :=
     parameterId := "we_have_to_study"
     form := "tanulnunk"
     segments := ["t", "a", "n", "u", "l", "n", "u", "n", "k"]
-    comment := ""
     source := [
       ⟨"vago-2017", "(20c), Table 4"⟩
     ]
@@ -71,7 +67,6 @@ def hoznank : Form :=
     parameterId := "we_would_bring"
     form := "hoznánk"
     segments := ["h", "o", "z", "n", "á", "n", "k"]
-    comment := ""
     source := [
       ⟨"vago-2017", "(17), (21a)"⟩
     ]
@@ -83,7 +78,6 @@ def kapujan : Form :=
     parameterId := "on_his_gate"
     form := "kapuján"
     segments := ["k", "a", "p", "u", "j", "á", "n"]
-    comment := ""
     source := [
       ⟨"vago-2017", "(18a), (21b)"⟩
     ]
@@ -95,7 +89,6 @@ def kapuink : Form :=
     parameterId := "our_gates"
     form := "kapuink"
     segments := ["k", "a", "p", "u", "i", "n", "k"]
-    comment := ""
     source := [
       ⟨"vago-2017", "(18b), (23a)"⟩
     ]
@@ -107,24 +100,12 @@ def nyomozonk : Form :=
     parameterId := "our_detective"
     form := "nyomozónk"
     segments := ["ny", "o", "m", "o", "z", "ó", "n", "k"]
-    comment := ""
     source := [
       ⟨"vago-2017", "(19), (23b)"⟩
     ]
     columns := [("Before", "nyomoz"), ("BeforeKind", "root"), ("Left", "ó"), ("LeftKind", "suffix"), ("Right", "unk"), ("RightKind", "suffix"), ("Deleted", "second"), ("Hierarchy", "regular")] }
 
 def all : List Form := [hordonk, erdesz, eszperantoul, tanulnunk, hoznank, kapujan, kapuink, nyomozonk]
-
-def parameters : List Parameter := [
-  { id := "our_barrel", name := "our barrel", description := "1pl possessive of hordó 'barrel'" },
-  { id := "forester", name := "forester", description := "erdő 'forest' with the profession suffix -ész" },
-  { id := "in_esperanto", name := "in Esperanto", description := "eszperantó 'Esperanto' with the adverbial suffix -ul" },
-  { id := "we_have_to_study", name := "we (have to) study", description := "inflected infinitive of tanul 'study', 1pl" },
-  { id := "we_would_bring", name := "we would bring", description := "conditional of hoz 'bring', 1pl" },
-  { id := "on_his_gate", name := "on his/her gate", description := "superessive of the 3sg possessive of kapu 'gate'" },
-  { id := "our_gates", name := "our gates", description := "1pl possessive of the plural possessed kapu 'gate'" },
-  { id := "our_detective", name := "our detective", description := "1pl possessive of nyomozó 'detective'" }
-]
 
 def relations : List FormRelation := []
 
