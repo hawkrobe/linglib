@@ -1,0 +1,375 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Projection Scoreboard · linglib</title>
+<meta name="description" content="Theories of presupposition projection formalized in linglib, scored against recorded experiments. Every verdict is a theorem.">
+<link rel="icon" href="../docs/favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&family=Newsreader:opsz,wght@6..72,400;6..72,560&display=swap">
+<style>
+/* Layout: one reading column; the scoreboard, a ledger of verdicts, breaks out to full width. */
+:root {
+  --bg: #f6f7f9;
+  --surface: #ffffff;
+  --ink: #171b24;
+  --muted: #5d6576;
+  --rule: #dfe3ea;
+  --accent: #3048c9;
+  --right: #17784f;
+  --right-bg: #dff2e8;
+  --wrong: #b3342b;
+  --wrong-bg: #fbe4e0;
+  --silent: #8b92a2;
+  --silent-bg: #eef0f4;
+  --lab: #7a4fc2;
+  --lab-bg: #efe8fb;
+  --serif: "Newsreader", "Iowan Old Style", Georgia, serif;
+  --sans: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0f1217; --surface: #161a21; --ink: #e6e9ef; --muted: #9ba3b4; --rule: #2a303b;
+    --accent: #93a6ff; --right: #5cc995; --right-bg: #143224; --wrong: #ff8a7d; --wrong-bg: #3b1915;
+    --silent: #737b8d; --silent-bg: #1d222b; --lab: #c2a5f5; --lab-bg: #2a2140;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0f1217; --surface: #161a21; --ink: #e6e9ef; --muted: #9ba3b4; --rule: #2a303b;
+  --accent: #93a6ff; --right: #5cc995; --right-bg: #143224; --wrong: #ff8a7d; --wrong-bg: #3b1915;
+  --silent: #737b8d; --silent-bg: #1d222b; --lab: #c2a5f5; --lab-bg: #2a2140;
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0; background: var(--bg); color: var(--ink);
+  font: 15px/1.55 var(--sans);
+}
+a { color: var(--accent); text-underline-offset: 2px; }
+a:focus-visible, .v:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+code, .mono { font-family: var(--mono); font-size: 0.86em; }
+.wrap {
+  max-width: 76rem; margin: 0 auto;
+  padding-inline: clamp(16px, 4vw, 40px); padding-block: 40px 72px;
+  display: grid; gap: 56px;
+}
+.prose { max-width: 66ch; }
+
+/* Header */
+header { display: grid; gap: 14px; }
+.eyebrow { font: 500 12px/1 var(--sans); letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+.eyebrow a { color: inherit; text-decoration: none; }
+h1 {
+  font: 560 clamp(34px, 5vw, 50px)/1.05 var(--serif); letter-spacing: -0.01em;
+  margin: 0; text-wrap: balance;
+}
+h2 { font: 560 26px/1.2 var(--serif); margin: 0; text-wrap: balance; }
+h3 { font: 600 15px/1.3 var(--sans); margin: 0; }
+.lede { font-size: 17px; margin: 0; }
+.meta { color: var(--muted); font-size: 13px; display: flex; flex-wrap: wrap; gap: 4px 16px; }
+.legend { display: flex; flex-wrap: wrap; gap: 8px 20px; align-items: center; font-size: 13px; color: var(--muted); }
+.legend span { display: inline-flex; align-items: center; gap: 8px; }
+section { display: grid; gap: 18px; }
+.section-head { display: grid; gap: 6px; }
+.section-head p { margin: 0; color: var(--muted); }
+
+/* Verdict marks */
+.v {
+  display: inline-grid; place-items: center; width: 30px; height: 30px; border-radius: 7px;
+  font: 600 15px/1 var(--sans); text-decoration: none;
+}
+.v-correct { background: var(--right-bg); color: var(--right); }
+.v-wrong { background: var(--wrong-bg); color: var(--wrong); }
+.v-silent {
+  color: var(--silent);
+  background: repeating-linear-gradient(135deg, var(--silent-bg) 0 4px, transparent 4px 8px);
+  box-shadow: inset 0 0 0 1px var(--rule);
+}
+.legend .v { width: 22px; height: 22px; font-size: 12px; border-radius: 5px; }
+a.v:hover { filter: brightness(0.94); }
+
+/* Scoreboard */
+.board-scroll {
+  overflow-x: auto; background: var(--surface); border: 1px solid var(--rule); border-radius: 10px;
+}
+table.board { border-collapse: separate; border-spacing: 0; width: 100%; font-size: 13px; }
+.board th, .board td { padding: 6px 8px; text-align: center; vertical-align: middle; }
+.board thead th { font-weight: 500; color: var(--muted); white-space: nowrap; }
+.board thead tr.datasets th { font: 560 16px/1.2 var(--serif); color: var(--ink); padding-top: 16px; }
+.board thead tr.datasets th small { display: block; font: 400 12px/1.4 var(--sans); color: var(--muted); margin-top: 2px; white-space: normal; }
+.board thead tr.groups th { border-bottom: 1px solid var(--rule); }
+.board thead tr.observed th, .board thead tr.observed td { border-bottom: 1px solid var(--rule); font-size: 12px; color: var(--muted); padding-bottom: 12px; }
+.board .obs { display: inline-block; padding: 2px 7px; border-radius: 999px; background: var(--bg); color: var(--ink); white-space: nowrap; }
+.board .obs.none { color: var(--muted); background: transparent; font-style: italic; }
+.board .split { border-left: 1px solid var(--rule); }
+.board .stip { display: block; font: 400 11px/1.3 var(--sans); color: var(--muted); }
+.board .stip b { color: var(--ink); font-weight: 600; }
+.board th[scope="row"], .board .corner {
+  position: sticky; left: 0; z-index: 1; background: var(--surface); text-align: left;
+  min-width: 15rem; max-width: 22rem; border-right: 1px solid var(--rule);
+}
+.board th[scope="row"] { font-weight: 400; padding: 9px 14px; }
+.board th[scope="row"] .name { font-weight: 600; color: var(--ink); text-decoration: none; }
+.board th[scope="row"] .name:hover { text-decoration: underline; }
+.board th[scope="row"] .desc { display: block; color: var(--muted); font-size: 12px; line-height: 1.4; margin-top: 2px; }
+.board tbody tr:hover th[scope="row"], .board tbody tr:hover td { background: var(--bg); }
+.board tbody tr.group th {
+  text-align: left; font: 500 11px/1 var(--sans); letter-spacing: 0.08em; text-transform: uppercase;
+  color: var(--muted); padding: 18px 14px 8px; background: var(--surface); border-top: 1px solid var(--rule);
+}
+.board tbody tr.group:first-child th { border-top: 0; }
+.pill {
+  display: inline-block; font: 500 10px/1 var(--sans); letter-spacing: 0.06em; text-transform: uppercase;
+  padding: 3px 6px; border-radius: 4px; background: var(--lab-bg); color: var(--lab); margin-left: 6px; vertical-align: 2px;
+}
+
+/* Observations */
+.cards { display: grid; gap: 18px; grid-template-columns: repeat(auto-fit, minmax(min(100%, 24rem), 1fr)); }
+.card { background: var(--surface); border: 1px solid var(--rule); border-radius: 10px; padding: 20px; display: grid; gap: 12px; min-width: 0; align-content: start; }
+.card .cite { font: 400 17px/1.35 var(--serif); }
+.card .cite em { font-style: italic; }
+.card p { margin: 0; }
+.card .small { font-size: 13px; color: var(--muted); }
+.card svg { width: 100%; height: auto; display: block; }
+.card svg text { fill: var(--muted); font: 11px var(--sans); }
+.card svg .label { fill: var(--ink); font-size: 12px; }
+.card svg .grid { stroke: var(--rule); stroke-width: 1; }
+.card svg .link { stroke: var(--muted); stroke-width: 1.5; }
+.card svg .cond { fill: var(--accent); }
+.card svg .uncond { fill: var(--surface); stroke: var(--accent); stroke-width: 1.5; }
+.card svg .bar { fill: var(--accent); }
+.card svg .value { fill: var(--ink); font-weight: 600; }
+.key { display: flex; gap: 16px; font-size: 12px; color: var(--muted); align-items: center; flex-wrap: wrap; }
+.key i { display: inline-block; width: 9px; height: 9px; border-radius: 50%; margin-right: 6px; vertical-align: 0; }
+.key i.cond { background: var(--accent); }
+.key i.uncond { border: 1.5px solid var(--accent); }
+.parsers { display: grid; gap: 10px; margin: 0; padding: 0; list-style: none; }
+.parsers li { display: grid; gap: 2px; padding-left: 12px; border-left: 2px solid var(--rule); }
+.parsers .count { font-family: var(--mono); font-size: 12px; color: var(--muted); }
+
+/* Pipeline */
+ol.steps { list-style: none; margin: 0; padding: 0; display: grid; gap: 12px; grid-template-columns: repeat(auto-fit, minmax(min(100%, 11rem), 1fr)); counter-reset: step; }
+ol.steps li { counter-increment: step; display: grid; gap: 6px; align-content: start; padding: 14px; background: var(--surface); border: 1px solid var(--rule); border-radius: 10px; min-width: 0; }
+ol.steps li::before { content: counter(step); font: 560 22px/1 var(--serif); color: var(--accent); }
+ol.steps p { margin: 0; font-size: 13px; color: var(--muted); }
+ol.steps code { color: var(--ink); }
+
+/* Theorems */
+dl.theorems { margin: 0; display: grid; gap: 14px; }
+dl.theorems div { display: grid; gap: 3px; min-width: 0; }
+dl.theorems dt a { font-family: var(--mono); font-size: 13px; overflow-wrap: anywhere; }
+dl.theorems dd { margin: 0; color: var(--ink); max-width: 72ch; }
+
+@media (max-width: 640px) {
+  .board th[scope="row"], .board .corner { min-width: 8.5rem; max-width: 10rem; }
+  .board th[scope="row"] .desc { display: none; }
+}
+footer { color: var(--muted); font-size: 13px; border-top: 1px solid var(--rule); padding-top: 18px; display: grid; gap: 6px; }
+footer p { margin: 0; }
+@media (prefers-reduced-motion: no-preference) { a.v { transition: filter 0.12s; } }
+</style>
+</head>
+<body>
+<div class="wrap" id="app">
+  <header>
+    <div class="eyebrow"><a href="../docs/">linglib</a> · Eval</div>
+    <h1>Projection scoreboard</h1>
+    <p class="lede prose">The theories of presupposition projection that linglib formalizes, scored against
+      recorded experiments. Every mark is the right-hand side of a theorem, reduced by Lean when this
+      page was built; follow a mark to its theorem.</p>
+    <div class="legend" aria-label="Legend">
+      <span><b class="v v-correct">✓</b>right: the prediction matches the observation</span>
+      <span><b class="v v-wrong">✗</b>wrong: it does not</span>
+      <span><b class="v v-silent">–</b>silent: the theory predicts nothing here, or nothing was observed</span>
+    </div>
+    <div class="meta" id="meta"></div>
+  </header>
+
+  <section aria-labelledby="board-h">
+    <div class="section-head">
+      <h2 id="board-h">Verdicts</h2>
+      <p class="prose">Rows are theories, columns the observations. On Chemla (2009) each column is a different
+        way for a theory to parse the same sentences, with the number of sentences whose parse it stipulates.</p>
+    </div>
+    <div class="board-scroll"><table class="board" id="board"></table></div>
+  </section>
+
+  <section aria-labelledby="obs-h">
+    <div class="section-head">
+      <h2 id="obs-h">The observations</h2>
+      <p class="prose">As printed in the papers and recorded in <code>Linglib/Data/Experiments</code>.</p>
+    </div>
+    <div class="cards" id="cards"></div>
+  </section>
+
+  <section aria-labelledby="how-h">
+    <div class="section-head">
+      <h2 id="how-h">How a mark is computed</h2>
+      <p class="prose">Each step is a named declaration, so a disagreement with a verdict can be traced to the step
+        it comes from.</p>
+    </div>
+    <ol class="steps">
+      <li><h3>Fact</h3><p>A judgment as printed, with its table and page: <code>Data.<wbr>Experiments</code>.</p></li>
+      <li><h3>Shared parse</h3><p>The sentence in the fragment every theory reads: <code>Presupposition.<wbr>Formula</code>, <code>Presupposition.<wbr>QuantifiedClause</code>.</p></li>
+      <li><h3>Theory's parse</h3><p>By a rule on the shared parse, or stipulated sentence by sentence, at a counted cost: <code>Eval.<wbr>Parser</code>.</p></li>
+      <li><h3>Acceptance</h3><p>Which contexts accept the parse; a theory without a condition for a sentence is silent on it: <code>Eval.<wbr>Projection.<wbr>Theory</code>.</p></li>
+      <li><h3>Linking hypothesis</h3><p>A stated rule from acceptance to the judgment subjects give: <code>Theory.<wbr>Predicts</code>, <code>Chemla2009a.<wbr>PredictsUniversal</code>.</p></li>
+      <li><h3>Verdict</h3><p>The prediction against the observation: <code>Eval.<wbr>Verdict</code>.</p></li>
+    </ol>
+  </section>
+
+  <section aria-labelledby="thm-h">
+    <div class="section-head">
+      <h2 id="thm-h">The theorems</h2>
+      <p class="prose">The statements behind the marks, as their docstrings put them.</p>
+    </div>
+    <dl class="theorems" id="theorems"></dl>
+  </section>
+
+  <footer id="footer"></footer>
+</div>
+
+<script type="application/json" id="eval-data">/*EVAL_DATA*/{}</script>
+<script>
+(function () {
+  "use strict";
+  const data = JSON.parse(document.getElementById("eval-data").textContent);
+  const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+  const strip = (h) => { const d = document.createElement("div"); d.innerHTML = h; return d.textContent; };
+  const WORD = { correct: "Right", wrong: "Wrong", silent: "Silent" };
+  const MARK = { correct: "✓", wrong: "✗", silent: "–" };
+  const byId = Object.fromEntries(data.datasets.map((d) => [d.id, d]));
+  const cs = byId["chemla-schlenker-2012"];
+  const ch = byId["chemla-2009a"];
+  const cite = (d) => `${esc(d.cite.who)} (${esc(d.cite.year)})`;
+
+  // Header meta.
+  const meta = document.getElementById("meta");
+  meta.innerHTML = `<span>${data.theories.length} theories · ${Object.keys(data.cells).length} verdicts</span>` +
+    (data.commit.sha ? `<span>built from <a href="${esc(data.commit.href)}"><code>${esc(data.commit.short)}</code></a> on ${esc(data.built)}</span>` : "");
+
+  // Scoreboard.
+  const columns = [];
+  for (const g of cs.groups) for (const c of g.cols) columns.push({ ds: cs, col: c });
+  for (const g of ch.groups) for (const c of g.cols) columns.push({ ds: ch, col: c });
+  const csCount = cs.groups.reduce((n, g) => n + g.cols.length, 0);
+  const chCount = ch.groups.reduce((n, g) => n + g.cols.length, 0);
+  const split = (i) => (i === 0 || i === csCount ? " split" : "");
+
+  let h = "<thead>";
+  h += `<tr class="datasets"><th class="corner" rowspan="3" scope="col">Theory</th>` +
+    `<th class="split" colspan="${csCount}">${cite(cs)}<small>which presupposition is endorsed more</small></th>` +
+    `<th class="split" colspan="${chCount}">${cite(ch)}<small>universal inference after <i>each</i>, <i>no</i> vs. the numerals</small></th></tr>`;
+  h += `<tr class="groups">` +
+    cs.groups.map((g, i) => `<th colspan="${g.cols.length}" class="${i === 0 ? "split" : ""}"><i>${esc(g.label)}</i></th>`).join("") +
+    `<th class="split" colspan="${chCount}">how the theory parses the sentences</th></tr>`;
+  h += `<tr>` + columns.map((c, i) => {
+    if (c.ds === cs) return `<th scope="col" class="${split(i).trim()}">${esc(c.col.label)}</th>`;
+    const n = c.col.stipulations.length;
+    return `<th scope="col" class="${split(i).trim()}"><a href="${esc(c.col.decl.href)}" title="${esc(strip(c.col.decl.doc))}">${esc(c.col.label)}</a>` +
+      `<span class="stip"><b>${n}</b> stipulated</span></th>`;
+  }).join("") + `</tr>`;
+  h += `<tr class="observed"><th class="corner" scope="row" style="font-weight:500;color:var(--muted)">Observed</th>` +
+    cs.groups.flatMap((g) => g.cols).map((c, i) => {
+      if (!c.observed) return `<td class="${split(i).trim()}"><span class="obs none">not tested</span></td>`;
+      const t = c.means.map((m) => `Experiment ${m.experiment}: conditional ${m.conditional}, unconditional ${m.unconditional}`).join("; ");
+      return `<td class="${split(i).trim()}"><span class="obs" title="${esc(t)}">${esc(c.observed)}</span></td>`;
+    }).join("") +
+    `<td class="split" colspan="${chCount}"><span class="obs" title="${esc(ch.rates.map((r) => r.group + ": " + r.acceptance + "%").join("; "))}">` +
+    `<i>each</i>, <i>no</i> ${esc(ch.rates[0].acceptance)}% &gt; numerals ${esc(ch.rates[1].acceptance)}%</span></td></tr>`;
+  h += "</thead><tbody>";
+
+  const groups = [
+    ["Registered accounts", data.theories.filter((t) => t.source === "registered")],
+    ["Lab: theories under development", data.theories.filter((t) => t.source === "lab")],
+  ];
+  const span = columns.length + 1;
+  for (const [label, rows] of groups) {
+    if (!rows.length) continue;
+    h += `<tr class="group"><th colspan="${span}" scope="colgroup">${esc(label)}</th></tr>`;
+    for (const t of rows) {
+      h += `<tr><th scope="row"><a class="name" href="${esc(t.decl.href)}">${esc(t.label)}</a>` +
+        (t.source === "lab" ? `<span class="pill">Lab</span>` : "") +
+        `<span class="desc">${t.decl.doc}</span></th>`;
+      columns.forEach((c, i) => {
+        const cell = data.cells[`${c.ds.id}|${t.id}|${c.col.id}`];
+        if (!cell) { h += `<td class="${split(i).trim()}"></td>`; return; }
+        const what = `${WORD[cell.verdict]}: ${t.label}, ${c.ds.cite.who} ${c.ds.cite.year}, ${c.col.id}. By ${cell.theorem.name}`;
+        h += `<td class="${split(i).trim()}"><a class="v v-${esc(cell.verdict)}" href="${esc(cell.theorem.href)}" ` +
+          `title="${esc(what)}" aria-label="${esc(what)}">${MARK[cell.verdict] || "?"}</a></td>`;
+      });
+      h += "</tr>";
+    }
+  }
+  h += "</tbody>";
+  document.getElementById("board").innerHTML = h;
+
+  // Observations, drawn to scale on 0 to 100.
+  function dotPlot(ds) {
+    const items = ds.groups.flatMap((g) => g.cols.filter((c) => c.means.length).map((c) => ({ label: `${g.label}, ${c.label}`, means: c.means })));
+    const W = 420, L = 118, R = 404, rowH = 18, gap = 12;
+    const x = (v) => L + (R - L) * (Number(v) / 100);
+    let y = 8, body = "";
+    for (const it of items) {
+      body += `<text class="label" x="0" y="${y + rowH * it.means.length / 2 + 4}">${esc(it.label)}</text>`;
+      for (const m of it.means) {
+        const yc = y + rowH / 2;
+        body += `<text x="${L - 26}" y="${yc + 4}">E${esc(m.experiment)}</text>` +
+          `<line class="link" x1="${x(m.unconditional)}" x2="${x(m.conditional)}" y1="${yc}" y2="${yc}"/>` +
+          `<circle class="uncond" cx="${x(m.unconditional)}" cy="${yc}" r="4.5"><title>Experiment ${esc(m.experiment)}, unconditional: ${esc(m.unconditional)}</title></circle>` +
+          `<circle class="cond" cx="${x(m.conditional)}" cy="${yc}" r="4.5"><title>Experiment ${esc(m.experiment)}, conditional: ${esc(m.conditional)}</title></circle>`;
+        y += rowH;
+      }
+      y += gap;
+    }
+    let grid = "";
+    for (const t of [0, 25, 50, 75, 100]) grid += `<line class="grid" x1="${x(t)}" x2="${x(t)}" y1="0" y2="${y - gap + 4}"/><text x="${x(t)}" y="${y + 8}" text-anchor="middle">${t}</text>`;
+    return `<svg viewBox="0 0 ${W} ${y + 14}" role="img" aria-label="Mean ratings of the conditional and unconditional inference in each tested cell">${grid}${body}</svg>`;
+  }
+  function bars(ds) {
+    const W = 420, L = 118, R = 380, rowH = 26;
+    const x = (v) => L + (R - L) * (Number(v) / 100);
+    const labels = { "each, no": "each, no", "less than 3, more than 3, exactly 3": "numerals" };
+    let body = "", y = 6;
+    for (const r of ds.rates) {
+      body += `<text class="label" x="0" y="${y + 15}">${esc(labels[r.group] || r.group)}</text>` +
+        `<rect class="bar" x="${L}" y="${y + 4}" width="${x(r.acceptance) - L}" height="15" rx="3"><title>${esc(r.group)}: ${esc(r.acceptance)}%</title></rect>` +
+        `<text class="value" x="${x(r.acceptance) + 6}" y="${y + 15}">${esc(r.acceptance)}%</text>`;
+      y += rowH;
+    }
+    let grid = "";
+    for (const t of [0, 50, 100]) grid += `<line class="grid" x1="${x(t)}" x2="${x(t)}" y1="0" y2="${y}"/><text x="${x(t)}" y="${y + 12}" text-anchor="middle">${t}%</text>`;
+    return `<svg viewBox="0 0 ${W} ${y + 18}" role="img" aria-label="Acceptance of the universal inference by group of quantifiers">${grid}${body}</svg>`;
+  }
+  const source = (ds) => `<p class="small">${ds.locators.map(esc).join("; ")}; ${ds.verified === "page-image" ? "checked against the page images" : esc(ds.verified)}. ` +
+    `The order of the observations: <a href="${esc(ds.observedTheorem.href)}"><code>${esc(ds.observedTheorem.short)}</code></a>.</p>`;
+  const header = (ds) => `<p class="cite">${cite(ds)}, <em>${esc(ds.cite.title)}</em>` +
+    (ds.cite.doi ? `. <a href="https://doi.org/${esc(ds.cite.doi)}">doi</a>` : "") + `</p><p>${esc(ds.task)}</p>`;
+  document.getElementById("cards").innerHTML =
+    `<article class="card">${header(cs)}${dotPlot(cs)}` +
+    `<div class="key"><span><i class="cond"></i>conditional</span><span><i class="uncond"></i>unconditional</span><span>mean rating, as a percentage of the scale from no to yes; E1 and E4 are Experiments 1 and 4</span></div>${source(cs)}</article>` +
+    `<article class="card">${header(ch)}${bars(ch)}` +
+    `<h3>Three ways to parse the sentences</h3><ul class="parsers">` +
+    ch.groups[0].cols.map((p) => `<li><span><a href="${esc(p.decl.href)}">${esc(p.label)}</a> <span class="count">${p.stipulations.length} stipulated${p.stipulations.length ? ": " + p.stipulations.map(esc).join(", ") : ""}</span></span><span>${p.decl.doc}</span></li>`).join("") +
+    `</ul><p class="small">The rule reproduces the stipulations: <a href="${esc(ch.graduation.href)}"><code>${esc(ch.graduation.short)}</code></a>. ${ch.graduation.doc}</p>${source(ch)}</article>`;
+
+  // Theorems.
+  const thms = [...data.theorems, ch.graduation];
+  document.getElementById("theorems").innerHTML = thms.map((t) =>
+    `<div><dt><a href="${esc(t.href)}">${esc(t.name)}</a></dt><dd>${t.doc || "<i>No docstring.</i>"}</dd></div>`).join("");
+
+  // Footer.
+  document.getElementById("footer").innerHTML =
+    `<p>Generated by <code>scripts/gen_eval_page.py</code> from <code>scripts/eval_page/Export.lean</code>, which reduces each verdict theorem with Lean.</p>` +
+    `<p>Regenerate: <code>lake build Lab &amp;&amp; python3 scripts/gen_eval_page.py --export</code>.</p>`;
+})();
+</script>
+</body>
+</html>

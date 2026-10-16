@@ -35,7 +35,7 @@ negation, these are the two parse points above (`clauseLS_trigger_iff`, `clauseL
 With Kalomoiros's constraint on formulas, this makes a theory that `Eval` scores like a registered
 account (`limitedSymmetry`). It is right on every tested cell of Chemla and Schlenker's inferential
 experiments, and on Chemla's first experiment it shares Transparency's verdicts: wrong with every
-presupposition accommodated in the context, right by Chemla's one-step rule
+presupposition accommodated in the context, right by Chemla's stipulations and by his one-step rule
 (`verdict_chemla2009a`).
 
 ## Main statements
@@ -398,12 +398,14 @@ theorem verdict_chemlaSchlenker2012 (k : _root_.ChemlaSchlenker2012.Construction
   simp [ChemlaSchlenker2012.incremental]
 
 /-- On Chemla's first experiment, Limited Symmetry is wrong with every presupposition accommodated
-in the context and right by the one-step rule. -/
+in the context, and right by §4.1.2's stipulations and by the one-step rule. -/
 theorem verdict_chemla2009a :
     Chemla2009a.verdict limitedSymmetry Chemla2009a.global = .wrong ∧
-      Chemla2009a.verdict limitedSymmetry Chemla2009a.oneStep = .correct :=
-  ⟨Chemla2009a.verdict_global_of rfl fun _ _ _ _ _ _ h ↦ ClauseLS.transpS _ h,
-    Chemla2009a.verdict_oneStep_of rfl (fun _ _ _ _ _ _ h ↦ ClauseLS.transpS _ h)
-      fun _ _ _ _ _ _ hc o ho ↦ by simp [hc] at ho⟩
+      Chemla2009a.verdict limitedSymmetry Chemla2009a.stipulated = .correct ∧
+      Chemla2009a.verdict limitedSymmetry Chemla2009a.oneStep = .correct := by
+  have h := Chemla2009a.verdict_oneStep_of (T := limitedSymmetry) rfl
+    (fun _ _ _ _ _ _ h ↦ ClauseLS.transpS _ h) fun _ _ _ _ _ _ hc o ho ↦ by simp [hc] at ho
+  exact ⟨Chemla2009a.verdict_global_of rfl fun _ _ _ _ _ _ h ↦ ClauseLS.transpS _ h,
+    (Chemla2009a.verdict_stipulated_eq _).trans h, h⟩
 
 end Lab.Colinguistics
