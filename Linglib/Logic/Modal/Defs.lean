@@ -211,7 +211,8 @@ theorem box_five_iff : Diamond R ≤ Box R ∘ Diamond R ↔ IsEuclidean R where
 Excluded middle and non-contradiction for necessity at a world, read for every prejacent, each
 define a condition on the successors of the world, and Negation Swap defines their conjunction:
 `□p ∨ □¬p` holds for every `p` iff the world sees at most one world (Alt₁), `¬(□p ∧ □¬p)` iff it
-sees at least one (D), and `□¬p ↔ ¬□p` iff it sees exactly one. A relation satisfying Negation
+sees at least one (D), and `□¬p ↔ ¬□p` iff it sees exactly one. For possibility the two
+conditions trade places. A relation satisfying Negation
 Swap at every world is the graph of a function, and necessity along a graph is precomposition
 with the function. -/
 
@@ -265,6 +266,25 @@ theorem box_not_iff_not_box_at_iff :
   · rintro ⟨v, hv, hu⟩ p
     have key (q : W → Prop) : □[R] q w ↔ q v := ⟨fun h ↦ h v hv, fun hq u hwu ↦ hu u hwu ▸ hq⟩
     rw [key, key]
+
+/-- The excluded middle for possibility, `◇p ∨ ◇¬p` for every `p` at `w`, holds iff `w` sees
+some world. -/
+theorem diamond_or_diamond_not_at_iff :
+    (∀ p : W → Prop, ◇[R] p w ∨ ◇[R] (fun v ↦ ¬ p v) w) ↔ ∃ v, w ~[R] v := by
+  refine ⟨fun h ↦ ?_, fun ⟨v, hv⟩ p ↦ ?_⟩
+  · rcases h fun _ ↦ True with ⟨v, hv, -⟩ | ⟨v, hv, -⟩ <;> exact ⟨v, hv⟩
+  · by_cases hp : p v
+    exacts [.inl ⟨v, hv, hp⟩, .inr ⟨v, hv, hp⟩]
+
+/-- Non-contradiction for possibility, `¬(◇p ∧ ◇¬p)` for every `p` at `w`, holds iff `w` sees
+at most one world. -/
+theorem not_diamond_and_diamond_not_at_iff :
+    (∀ p : W → Prop, ¬ (◇[R] p w ∧ ◇[R] (fun v ↦ ¬ p v) w)) ↔
+      ∀ ⦃v⦄, w ~[R] v → ∀ ⦃u⦄, w ~[R] u → v = u := by
+  rw [← box_or_box_not_at_iff]
+  refine forall_congr' fun p ↦ ?_
+  rw [not_and_or, not_diamond, not_diamond, or_comm]
+  simp only [not_not]
 
 /-- Necessity along the graph of a function is precomposition with the function. -/
 @[simp] theorem box_graph (f : W' → W) (p : W → Prop) : □[Function.graph f] p = p ∘ f :=
