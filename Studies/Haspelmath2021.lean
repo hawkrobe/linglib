@@ -637,13 +637,27 @@ def awtuwP : Scenario Animacy → ℕ := below .downstream ∘ Scenario.kind
 (49). -/
 def bauleT : Scenario Nominality → ℕ := below .downstream ∘ Scenario.kind
 
+/-- Kashmiri's full probe ranks a person by the segments it bears, one more than its rank on the
+ternary person scale. -/
+theorem kashmiri_rank :
+    BejarRezac2009.kashmiri.rank = (fun r : PersonRank ↦ r.rank + 1) ∘ PersonRank.ofPerson := by
+  funext p; cases p <;> decide
+
+open Minimalist.CyclicAgree in
 /-- Kashmiri's dative P of (47) falls on the scenarios that the cyclic Agree of [bejar-rezac-2009]
 makes inverse, where their Table 11 puts the internal argument in R-Case, so the relative split and
-the failed licensing of the external argument pick out the same scenarios. -/
-theorem kashmiriP_iff_isInverse :
-    ∀ ea ia : Person, kashmiriP ((Scenario.mk ea ia).map PersonRank.ofPerson) = 1 ↔
-      BejarRezac2009.kashmiri.IsInverse ea ia := by
-  decide +kernel
+the failed licensing of the external argument pick out the same scenarios, those that are not
+downstream on the person scale, by which the full probe ranks persons. -/
+theorem kashmiriP_iff_isInverse (s : Scenario Person) :
+    kashmiriP (s.map PersonRank.ofPerson) = 1 ↔ BejarRezac2009.kashmiri.IsInverse s := by
+  have hm : StrictMono fun r : PersonRank ↦ r.rank + 1 := fun _ _ h ↦ Nat.succ_lt_succ h
+  have hs : s.map ((fun r : PersonRank ↦ r.rank + 1) ∘ PersonRank.ofPerson) =
+      (s.map PersonRank.ofPerson).map fun r ↦ r.rank + 1 := rfl
+  rw [AgreementSystem.IsInverse, AgreementSystem.isDirect_iff_kind_eq_downstream _ _
+    PersonGeometry.standard_isChain, kashmiri_rank, hs, Scenario.kind_map hm]
+  simp only [kashmiriP, Function.comp_apply]
+  generalize (s.map PersonRank.ofPerson).kind = k
+  revert k; decide
 
 /-- The relative scenario splits are relative and obey Universal 10 (§8). -/
 theorem universal10_relative :
