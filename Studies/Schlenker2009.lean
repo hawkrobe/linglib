@@ -1,6 +1,7 @@
 module
 
 public import Linglib.Semantics.Presupposition.SyntacticEnvironment
+public import Linglib.Semantics.Presupposition.QuantifiedLocalContext
 public import Studies.Heim1983
 public import Studies.Heim1992
 
@@ -32,6 +33,10 @@ published appendix shortens.
 * `kleeneI_iff_superI`, `TranspI.kleeneI`, `transpS_not_kleeneS_not_superS`: checked
   incrementally, Kleene and supervaluation acceptability coincide and follow from Transparency,
   and checked symmetrically, Transparency accepts a sentence that both reject.
+* `transparent_scope_iff_universal`, `not_exists_isLocalContext_infinitelyMany`,
+  `scopeDefined_not_transparent_no`: in a quantified sentence Transparency gives universal
+  projection under Non-Triviality, the scope of *infinitely many* has no local context, and with
+  *no* Strong Kleene accepts a sentence that Transparency rejects.
 
 ## Implementation notes
 
@@ -50,9 +55,10 @@ published appendix shortens.
 
 ## TODO
 
-* The results that need quantifiers are not formalized (Theorem 2 of C.9, C.23, and Theorems 38b
-  and 39b of the manuscript). The conditions on quantificational clauses and domains in the
-  equivalence with dynamic semantics hold trivially in the propositional fragment and are omitted.
+* Theorem 2 of C.9 is formalized for a single quantified clause, against the universal
+  presupposition rather than a dynamic semantics for quantifiers, which linglib does not define.
+  The conditions on quantificational clauses and domains in the equivalence with dynamic semantics
+  hold trivially in the propositional fragment and are omitted there.
 
 ## References
 
@@ -823,5 +829,98 @@ theorem transpS_not_kleeneS_not_superS {p p' q q' : Atom} {w₁ w₂ : W} (hp₁
     simp [resolve, Connective.eval, hp₁, hq₁] at this
 
 end Trivalent
+
+/-! ### Quantified sentences (C.9, C.23 and items 38–39 of [schlenker-2008b]) -/
+
+section Quantified
+
+open Quantifier
+
+variable {E : Type*} {q : NumberTree} {A : W → E → Prop} {C : Set W} {P : Set (W × E)}
+
+/-- Where `q` is not constant on the row of the restrictor's size at any world of the context, as
+C.9's Non-Triviality and Constancy together guarantee, a presupposition triggered in the nuclear
+scope is transparent iff every individual of the restrictor satisfies it at every world of the
+context. This is universal projection, the consequence of Theorem 2 of C.9 for a quantified
+clause. -/
+theorem transparent_scope_iff_universal [Finite E]
+    (hNT : ∀ w ∈ C, ¬ q.ConstantOnRow {x | A w x}.ncard) :
+    Transparent C {scopeTruth q A} P ↔ ∀ w ∈ C, ∀ e, A w e → (w, e) ∈ P := by
+  rw [transparent_scopeTruth_iff]
+  exact ⟨fun h w hw ↦ h w hw (hNT w hw), fun h w hw _ ↦ h w hw⟩
+
+/-- `(Q A. _)`, with a scope that presupposes `π` and asserts `a`, is defined at `w` when every
+resolution of the scope's undefined individuals gives the sentence the same value (items 25 and
+27–28; with one trigger, Kleene and supervaluation definedness coincide). -/
+def ScopeDefined (q : NumberTree) (A : W → E → Prop) (π a : Set (W × E)) (w : W) : Prop :=
+  ∀ D D' : E → Prop, (∀ e, (w, e) ∈ π → (D e ↔ (w, e) ∈ a)) →
+    (∀ e, (w, e) ∈ π → (D' e ↔ (w, e) ∈ a)) → (q.toGQ (A w) D ↔ q.toGQ (A w) D')
+
+/-- A presupposition in the nuclear scope is transparent iff the sentence is defined at every world
+of the context whatever the scope asserts. Transparency quantifies over the assertion that Kleene
+and supervaluation acceptability hold fixed. -/
+theorem transparent_scopeTruth_iff_forall_scopeDefined :
+    Transparent C {scopeTruth q A} P ↔ ∀ a, ∀ w ∈ C, ScopeDefined q A P a w := by
+  classical
+  rw [transparent_iff_dependsOn]
+  simp only [Set.mem_singleton_iff, forall_eq]
+  refine ⟨fun h a w hw D D' hD hD' ↦ Iff.of_eq ?_, fun h w hw d d' hd ↦ propext ?_⟩
+  · have := h w hw (x := {p | p.1 = w ∧ D p.2}) (y := {p | p.1 = w ∧ D' p.2})
+      fun ⟨u, e⟩ hp ↦ by
+        by_cases hu : u = w
+        · subst hu
+          exact propext (and_congr_right fun _ ↦ (hD e hp).trans (hD' e hp).symm)
+        · exact propext ⟨fun h ↦ (hu h.1).elim, fun h ↦ (hu h.1).elim⟩
+    simpa [scopeTruth] using this
+  · exact h d w hw _ _ (fun _ _ ↦ Iff.rfl) fun e he ↦ Iff.of_eq (hd (w, e) he).symm
+
+/-- The truth set of `(Infinitely-many P. _)` at a single world where every natural number is a
+`P`, as a function of its scope. -/
+def infinitelyMany (d : Set (Unit × ℕ)) : Set Unit := {u | {n | (u, n) ∈ d}.Infinite}
+
+/-- A presupposition that fails of finitely many individuals is transparent in the scope of
+*infinitely many*, which does not then presuppose that every individual satisfies it (C.23ii). -/
+theorem transparent_infinitelyMany_of_finite {P : Set (Unit × ℕ)}
+    (hP : {n | ((), n) ∉ P}.Finite) : Transparent Set.univ {infinitelyMany} P := by
+  rintro f rfl d ⟨⟩ -
+  change {n | ((), n) ∈ P ∩ d}.Infinite ↔ {n | ((), n) ∈ d}.Infinite
+  exact ⟨fun h ↦ h.mono fun _ hn ↦ hn.2,
+    fun h ↦ (h.sdiff hP).mono fun _ hn ↦ ⟨by simpa using hn.2, hn.1⟩⟩
+
+/-- The scope of *infinitely many* has no local context. Leaving out any one individual is
+transparent, so a least transparent restriction would contain no individual, but the empty
+restriction is not transparent (C.23i). -/
+theorem not_exists_isLocalContext_infinitelyMany :
+    ¬ ∃ x, IsLocalContext Set.univ {infinitelyMany} x := by
+  rintro ⟨x, hx, hle⟩
+  obtain rfl : x = ∅ := Set.eq_empty_of_forall_notMem fun ⟨_, n⟩ h ↦
+    hle (transparent_infinitelyMany_of_finite (P := {p | p.2 ≠ n})
+      ((Set.finite_singleton n).subset fun m hm ↦ by simpa using hm)) h rfl
+  have := hx infinitelyMany rfl Set.univ () trivial
+  simp [infinitelyMany, Set.infinite_univ] at this
+
+/-- With one world and two individuals, the first not `Q` and the second `Q` and `Q'`, the sentence
+`(No P. QQ')` is false however the first individual is resolved, so it is Kleene and supervaluation
+acceptable, but Transparency rejects it, since for a scope false of the second individual the
+first decides (Theorems 38b and 39b; the trigger is final, so the incremental and symmetric
+versions coincide). -/
+theorem scopeDefined_not_transparent_no :
+    ScopeDefined NumberTree.no (fun _ _ ↦ True) {p : Unit × Fin 2 | p.2 = 1} Set.univ () ∧
+      ¬ Transparent {()} {scopeTruth NumberTree.no fun (_ : Unit) (_ : Fin 2) ↦ True}
+        {p | p.2 = 1} := by
+  refine ⟨fun D D' hD hD' ↦ ?_, fun h ↦ ?_⟩
+  · have h1 : D 1 := (hD 1 rfl).2 trivial
+    have h1' : D' 1 := (hD' 1 rfl).2 trivial
+    simp only [NumberTree.toGQ_apply, NumberTree.no, true_and]
+    refine iff_of_false (fun h ↦ ?_) fun h ↦ ?_
+    · exact (Set.ncard_eq_zero (s := {x | D x}).1 h).subset (Set.mem_ofPred.2 h1) |>.elim
+    · exact (Set.ncard_eq_zero (s := {x | D' x}).1 h).subset (Set.mem_ofPred.2 h1') |>.elim
+  · have := (transparent_scopeTruth_iff NumberTree.no).1 h () rfl (fun hc ↦ ?_) 0 trivial
+    · exact absurd this (by decide)
+    · have h2 : {_x : Fin 2 | True}.ncard = 2 := by simp
+      have := hc 2 0 1 1 h2.symm h2.symm
+      simp [NumberTree.no] at this
+
+end Quantified
 
 end Schlenker2009

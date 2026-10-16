@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Semantics.Presupposition.SyntacticEnvironment
+public import Studies.Schlenker2009
 public import Mathlib.Tactic.IntervalCases
 
 /-!
@@ -11,8 +11,13 @@ of the parse after a trigger. At a parse point a sentence is stably true (false)
 every good final of the string up to that point makes it true (false) there. The constraint
 requires, at every trigger, every parse point after it and every assertion, that the worlds of
 the context where the sentence is stably true (false) stay so when the trigger is replaced by its
-assertion. This file covers the dissertation's first system, over the propositional fragment of
-Schlenker's language.
+assertion: the presupposition is stably transparent for the good finals at each parse point
+(`Presupposition.StablyTransparent`). This file covers the dissertation's first system, over the
+propositional fragment of Schlenker's language.
+
+The good finals at the first parse point after a trigger are all of Schlenker's incremental ones,
+and at the last only the sentence itself, so Limited Symmetry lies between Schlenker's
+incremental and symmetric Transparency (`TranspLS.of_transpI`, `TranspLS.transpS`).
 
 ## Main statements
 
@@ -25,6 +30,8 @@ Schlenker's language.
 * `transpLSAt_iff`, `transpLSAt_iff_funs`: the constraint is checked world by world, on the truth
   functions the good finals realize there, which makes each of the dissertation's facts a
   computation.
+* `TranspLS.of_transpI`, `TranspLS.transpS`: incremental Transparency implies Limited Symmetry,
+  which implies symmetric Transparency.
 
 ## Implementation notes
 
@@ -63,23 +70,16 @@ variable {Atom W : Type*} (I : Atom → Set W)
 
 /-! ### The constraint -/
 
-/-- The worlds of `C` at which the sentence up to parse point `n` after the gap of `K`, with `X`
-in the gap, is true whatever follows. -/
-def stablyTrue (C : Set W) (n : ℕ) (K : SyntacticEnvironment Atom) (X : Set W) : Set W :=
-  {w ∈ C | ∀ K', AgreeUpTo n K K' → w ∈ K'.truth I X}
-
-/-- The worlds of `C` at which the sentence up to parse point `n` after the gap of `K`, with `X`
-in the gap, is false whatever follows. -/
-def stablyFalse (C : Set W) (n : ℕ) (K : SyntacticEnvironment Atom) (X : Set W) : Set W :=
-  {w ∈ C | ∀ K', AgreeUpTo n K K' → w ∉ K'.truth I X}
+/-- The continuations at parse point `n` after the gap of `K` are the truth functions of the good
+finals that agree with the sentence up to that point. -/
+def parsePoint (n : ℕ) (K : SyntacticEnvironment Atom) : Set (Set W → Set W) :=
+  (·.truth I) '' {K' | AgreeUpTo n K K'}
 
 /-- The constraint of Definition 3.4.4 at one trigger, with presupposition `p` at the gap of `K`. At
 every parse point after the trigger and for every assertion `D`, the worlds where the sentence is
 stably true (false) are worlds where it is stably true (false) with the presupposition deleted. -/
 def TranspLSAt (C : Set W) (K : SyntacticEnvironment Atom) (p : Atom) : Prop :=
-  ∀ n ≤ K.rightItems, ∀ D : Set W,
-    stablyTrue I C n K (I p ∩ D) ⊆ stablyTrue I C n K D ∧
-      stablyFalse I C n K (I p ∩ D) ⊆ stablyFalse I C n K D
+  ∀ n ≤ K.rightItems, StablyTransparent C (parsePoint I n K) (I p)
 
 /-- A formula is acceptable in `C` when the constraint holds at every trigger (Definition 3.4.4). -/
 def TranspLS (C : Set W) (F : Formula Atom) : Prop :=
@@ -94,30 +94,30 @@ theorem transpLSAt_iff (C : Set W) (K : SyntacticEnvironment Atom) (p : Atom) :
           ∀ K', AgreeUpTo n K K' → w ∈ K'.truth I Set.univ) ∧
         ((∀ K', AgreeUpTo n K K' → w ∉ K'.truth I ∅) →
           ∀ K', AgreeUpTo n K K' → w ∉ K'.truth I Set.univ) := by
-  have tf (K' : SyntacticEnvironment Atom) := isTruthFunctional_truth I K'
-  refine ⟨fun h w hw hp n hn ↦ ⟨fun h₀ ↦ ?_, fun h₀ ↦ ?_⟩, fun h n hn D ↦ ⟨?_, ?_⟩⟩
-  · refine ((h n hn Set.univ).1 ⟨hw, fun K' hK ↦ ?_⟩).2
-    exact ((tf K').mem_iff_of_notMem (by simp [hp])).2 (h₀ K' hK)
-  · refine ((h n hn Set.univ).2 ⟨hw, fun K' hK ↦ ?_⟩).2
-    exact mt ((tf K').mem_iff_of_notMem (by simp [hp])).1 (h₀ K' hK)
-  · rintro w ⟨hw, hs⟩
-    refine ⟨hw, fun K' hK ↦ ?_⟩
-    by_cases hp : w ∈ I p
-    · exact (tf K' w _ _ (by simp [hp])).1 (hs K' hK)
-    · by_cases hd : w ∈ D
-      · exact ((tf K').mem_iff_of_mem hd).2 ((h w hw hp n hn).1 (fun K'' hK'' ↦
-          ((tf K'').mem_iff_of_notMem (by simp [hp])).1 (hs K'' hK'')) K' hK)
-      · exact ((tf K').mem_iff_of_notMem hd).2
-          (((tf K').mem_iff_of_notMem (by simp [hp])).1 (hs K' hK))
-  · rintro w ⟨hw, hs⟩
-    refine ⟨hw, fun K' hK ↦ ?_⟩
-    by_cases hp : w ∈ I p
-    · exact mt (tf K' w _ _ (by simp [hp])).2 (hs K' hK)
-    · by_cases hd : w ∈ D
-      · exact mt ((tf K').mem_iff_of_mem hd).1 ((h w hw hp n hn).2 (fun K'' hK'' ↦
-          mt ((tf K'').mem_iff_of_notMem (by simp [hp])).2 (hs K'' hK'')) K' hK)
-      · exact mt ((tf K').mem_iff_of_notMem hd).1
-          (mt ((tf K').mem_iff_of_notMem (by simp [hp])).2 (hs K' hK))
+  have tf (n : ℕ) : ∀ f ∈ parsePoint I n K, IsTruthFunctional f :=
+    Set.forall_mem_image.2 fun K' _ ↦ isTruthFunctional_truth I K'
+  refine ⟨fun h w hw hp n hn ↦ ?_, fun h n hn ↦ (stablyTransparent_iff (tf n)).2 fun w hw hp ↦ ?_⟩
+  · simpa only [parsePoint, Set.forall_mem_image, Set.mem_ofPred_eq] using
+      (stablyTransparent_iff (tf n)).1 (h n hn) w hw hp
+  · simpa only [parsePoint, Set.forall_mem_image, Set.mem_ofPred_eq] using h w hw hp n hn
+
+/-! ### Between incremental and symmetric Transparency -/
+
+/-- Incremental Transparency implies Limited Symmetry, since the good finals at every parse point
+are among the incremental theory's. -/
+theorem TranspLS.of_transpI {C : Set W} {F : Formula Atom} (h : Schlenker2009.TranspI I C F) :
+    TranspLS I C F := fun o ho n _ ↦
+  ((h o ho).anti (Set.image_mono fun _ hK ↦ agreeUpTo_zero_iff.1 (hK.mono (Nat.zero_le n)))
+    ).stablyTransparent
+
+/-- Limited Symmetry implies symmetric Transparency, since at the last parse point the only good
+final is the sentence itself. -/
+theorem TranspLS.transpS {C : Set W} {F : Formula Atom} (h : TranspLS I C F) :
+    Schlenker2009.TranspS I C F := fun o ho ↦ by
+  have hlast := h o ho _ le_rfl
+  rwa [parsePoint, show {K' | AgreeUpTo o.1.rightItems o.1 K'} = {o.1} from
+    Set.ext fun _ ↦ agreeUpTo_iff_eq le_rfl, Set.image_singleton,
+    stablyTransparent_singleton_iff] at hlast
 
 /-! ### The truth functions of the good finals -/
 

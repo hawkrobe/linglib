@@ -3,6 +3,7 @@ module
 public import Linglib.Semantics.Quantification.Defs
 public import Linglib.Core.Data.Fintype.EquivFin
 public import Linglib.Core.Data.Set.Card
+public import Linglib.Core.Logic.Function.DependsOn
 public import Mathlib.Data.Finset.NatAntidiagonal
 public import Mathlib.Algebra.BigOperators.Intervals
 public import Mathlib.Tactic.Ring
@@ -596,6 +597,155 @@ sets of points in rows `0` to `n` of the tree. -/
 theorem card_powerset_points (n : ℕ) :
     (points n).powerset.card = 2 ^ ((n + 1) * (n + 2) / 2) := by
   rw [Finset.card_powerset, card_points]
+
+/-! ### Constant rows and the individuals a quantifier depends on -/
+
+/-- A quantifier is constant on the `n`-th row when whether it holds of an `n`-element restrictor
+does not depend on the scope. -/
+def ConstantOnRow (q : NumberTree) (n : ℕ) : Prop :=
+  ∀ a b a' b', a + b = n → a' + b' = n → (q a b ↔ q a' b')
+
+/-- A quantifier is constant on rows `0` to `n` when, on a universe of `n` individuals, it does
+not depend on its arguments at all. -/
+def ConstantBelow (q : NumberTree) (n : ℕ) : Prop :=
+  ∀ a b a' b', a + b ≤ n → a' + b' ≤ n → (q a b ↔ q a' b')
+
+/-- A row is constant unless two adjacent points of it differ. -/
+theorem not_constantOnRow_iff {n : ℕ} :
+    ¬ q.ConstantOnRow n ↔ ∃ a b, a + b + 1 = n ∧ ¬ (q (a + 1) b ↔ q a (b + 1)) := by
+  refine ⟨fun h ↦ by_contra fun hn ↦ h ?_,
+    fun ⟨a, b, hab, h⟩ hc ↦ h (hc _ _ _ _ (by omega) (by omega))⟩
+  simp only [not_exists, not_and, not_not] at hn
+  have key : ∀ b ≤ n, (q (n - b) b ↔ q n 0) := fun b hb ↦ by
+    induction b with
+    | zero => rfl
+    | succ b ih =>
+      have := hn (n - (b + 1)) b (by omega)
+      rw [show n - (b + 1) + 1 = n - b by omega] at this
+      exact this.symm.trans (ih (by omega))
+  intro a b a' b' h h'
+  rw [show a = n - b by omega, show a' = n - b' by omega, key b (by omega), key b' (by omega)]
+
+/-- Rows `0` to `n` are constant unless two adjacent points among them differ. -/
+theorem not_constantBelow_iff {n : ℕ} :
+    ¬ q.ConstantBelow n ↔
+      ∃ a b, a + b + 1 ≤ n ∧ (¬ (q (a + 1) b ↔ q a b) ∨ ¬ (q a (b + 1) ↔ q a b)) := by
+  refine ⟨fun h ↦ by_contra fun hn ↦ h ?_, fun ⟨a, b, hab, h⟩ hc ↦ h.elim
+    (· (hc _ _ _ _ (by omega) (by omega))) (· (hc _ _ _ _ (by omega) (by omega)))⟩
+  simp only [not_exists, not_and, not_or, not_not] at hn
+  have h0 : ∀ b ≤ n, (q 0 b ↔ q 0 0) := fun b hb ↦ by
+    induction b with
+    | zero => rfl
+    | succ b ih => exact (hn 0 b (by omega)).2.trans (ih (by omega))
+  have ha : ∀ a b, a + b ≤ n → (q a b ↔ q 0 b) := fun a b h ↦ by
+    induction a with
+    | zero => rfl
+    | succ a ih => exact (hn a b (by omega)).1.trans (ih (by omega))
+  intro a b a' b' h h'
+  rw [ha a b h, ha a' b' h', h0 b (by omega), h0 b' (by omega)]
+
+section Dependence
+
+variable {α : Type*} [Finite α]
+
+private theorem ncard_and_not_add_ncard_and (A B : α → Prop) :
+    {x | A x ∧ ¬ B x}.ncard + {x | A x ∧ B x}.ncard = {x | A x}.ncard := by
+  rw [add_comm]; exact Set.ncard_inter_add_ncard_sdiff_eq_ncard {x | A x} {x | B x}
+
+/-- The quantifier of a tree holds of a restrictor of size `n` and a scope sharing `b` of its
+individuals iff the tree holds of `(n - b, b)`. -/
+private theorem toGQ_iff_of_ncard {A B : α → Prop} {n b : ℕ} (hA : {x | A x}.ncard = n)
+    (hAB : {x | A x ∧ B x}.ncard = b) : q.toGQ A B ↔ q (n - b) b := by
+  have := ncard_and_not_add_ncard_and A B
+  rw [toGQ_apply, hAB, show {x | A x ∧ ¬ B x}.ncard = n - b by omega]
+
+private theorem ncard_or_eq {T : Set α} {e : α} (he : e ∉ T) :
+    {x | x ∈ T ∨ x = e}.ncard = T.ncard + 1 := by
+  rw [show {x | x ∈ T ∨ x = e} = insert e T from Set.ext fun _ ↦ or_comm,
+    Set.ncard_insert_of_notMem he]
+
+/-- The quantifier of a tree depends on whether an individual is in its scope only if the
+individual is in its restrictor and the tree is not constant on the restrictor's row. -/
+theorem dependsOn_toGQ_compl_singleton_iff (A : α → Prop) (e : α) :
+    DependsOn (q.toGQ A) {e}ᶜ ↔ (A e → q.ConstantOnRow {x | A x}.ncard) := by
+  refine ⟨fun hdep hA ↦ by_contra fun hc ↦ ?_, fun h D D' hD ↦ propext ?_⟩
+  · obtain ⟨a, b, hab, hq⟩ := not_constantOnRow_iff.1 hc
+    have hmem : e ∈ {x | A x} := hA
+    obtain ⟨S, hS, hSb⟩ := Set.exists_subset_card_eq (s := {x | A x} \ {e}) (n := b)
+      (by have := Set.ncard_sdiff_singleton_add_one hmem; omega)
+    have heS : e ∉ S := fun h ↦ (hS h).2 rfl
+    have h₁ : {x | A x ∧ x ∈ S}.ncard = b := by
+      rw [show {x | A x ∧ x ∈ S} = S from Set.ext fun _ ↦ ⟨And.right, fun h ↦ ⟨(hS h).1, h⟩⟩, hSb]
+    have h₂ : {x | A x ∧ (x ∈ S ∨ x = e)}.ncard = b + 1 := by
+      rw [show {x | A x ∧ (x ∈ S ∨ x = e)} = {x | x ∈ S ∨ x = e} from Set.ext fun x ↦
+        ⟨And.right, fun h ↦ ⟨h.elim (fun h ↦ (hS h).1) (· ▸ hA), h⟩⟩, ncard_or_eq heS, hSb]
+    have hagree : ∀ i ∈ ({e}ᶜ : Set α), (i ∈ S) = (i ∈ S ∨ i = e) :=
+      fun i hi ↦ propext (or_iff_left hi).symm
+    have e₁ : q.toGQ A (· ∈ S) ↔ q (a + 1) b := by
+      rw [toGQ_iff_of_ncard rfl h₁, ← hab, show a + b + 1 - b = a + 1 by omega]
+    have e₂ : q.toGQ A (fun x ↦ x ∈ S ∨ x = e) ↔ q a (b + 1) := by
+      rw [toGQ_iff_of_ncard rfl h₂, ← hab, show a + b + 1 - (b + 1) = a by omega]
+    exact hq (e₁.symm.trans ((Iff.of_eq (hdep hagree)).trans e₂))
+  · by_cases hA : A e
+    · rw [toGQ_apply, toGQ_apply]
+      exact h hA _ _ _ _ (ncard_and_not_add_ncard_and A D) (ncard_and_not_add_ncard_and A D')
+    · have hs : ∀ P : Prop → Prop, {x | A x ∧ P (D x)} = {x | A x ∧ P (D' x)} := fun P ↦
+        Set.ext fun x ↦ by
+          by_cases hx : x = e
+          · subst hx; simp [hA]
+          · simp only [Set.mem_ofPred_eq, hD x hx]
+      rw [toGQ_apply, toGQ_apply]
+      exact Iff.of_eq (congrArg₂ q (congrArg Set.ncard (hs Not)) (congrArg Set.ncard (hs id)))
+
+/-- The quantifier of a tree, as a function of its restrictor, depends for some scope on whether
+an individual is in the restrictor iff the tree is not constant below the size of the universe. -/
+theorem exists_not_dependsOn_toGQ_restrictor_iff (e : α) :
+    (∃ B, ¬ DependsOn (fun A ↦ q.toGQ A B) {e}ᶜ) ↔ ¬ q.ConstantBelow (Nat.card α) := by
+  refine ⟨fun ⟨B, hB⟩ hc ↦ hB fun A A' _ ↦ propext ?_, fun hc ↦ ?_⟩
+  · show q.toGQ A B ↔ q.toGQ A' B
+    rw [toGQ_apply, toGQ_apply]
+    have := ncard_and_not_add_ncard_and A B
+    have := ncard_and_not_add_ncard_and A' B
+    have := Set.ncard_le_card {x | A x}
+    have := Set.ncard_le_card {x | A' x}
+    exact hc _ _ _ _ (by omega) (by omega)
+  obtain ⟨a, b, hab, hq⟩ := not_constantBelow_iff.1 hc
+  have hmem : e ∈ (Set.univ : Set α) := Set.mem_univ e
+  obtain ⟨T, hT, hTn⟩ := Set.exists_subset_card_eq (s := Set.univ \ {e}) (n := a + b)
+    (by have := Set.ncard_sdiff_singleton_add_one hmem; rw [Set.ncard_univ] at this; omega)
+  obtain ⟨S, hST, hSb⟩ := Set.exists_subset_card_eq (s := T) (n := b) (by omega)
+  have heT : e ∉ T := fun h ↦ (hT h).2 rfl
+  have heS : e ∉ S := fun h ↦ heT (hST h)
+  have hA : {x | x ∈ T}.ncard = a + b := hTn
+  have hA' : {x | x ∈ T ∨ x = e}.ncard = a + b + 1 := by rw [ncard_or_eq heT, hTn]
+  have hagree : ∀ i ∈ ({e}ᶜ : Set α), (i ∈ T) = (i ∈ T ∨ i = e) :=
+    fun i hi ↦ propext (or_iff_left hi).symm
+  rcases hq with hq | hq
+  · refine ⟨(· ∈ S), fun hdep ↦ hq ?_⟩
+    have h₁ : {x | x ∈ T ∧ x ∈ S}.ncard = b := by
+      rw [show {x | x ∈ T ∧ x ∈ S} = S from Set.ext fun _ ↦ ⟨And.right, fun h ↦ ⟨hST h, h⟩⟩, hSb]
+    have h₂ : {x | (x ∈ T ∨ x = e) ∧ x ∈ S}.ncard = b := by
+      rw [show {x | (x ∈ T ∨ x = e) ∧ x ∈ S} = S from
+        Set.ext fun _ ↦ ⟨And.right, fun h ↦ ⟨.inl (hST h), h⟩⟩, hSb]
+    have e₁ : q.toGQ (· ∈ T) (· ∈ S) ↔ q a b := by
+      rw [toGQ_iff_of_ncard hA h₁, show a + b - b = a by omega]
+    have e₂ : q.toGQ (fun x ↦ x ∈ T ∨ x = e) (· ∈ S) ↔ q (a + 1) b := by
+      rw [toGQ_iff_of_ncard hA' h₂, show a + b + 1 - b = a + 1 by omega]
+    exact e₂.symm.trans ((Iff.of_eq (hdep hagree)).symm.trans e₁)
+  · refine ⟨fun x ↦ x ∈ S ∨ x = e, fun hdep ↦ hq ?_⟩
+    have h₁ : {x | x ∈ T ∧ (x ∈ S ∨ x = e)}.ncard = b := by
+      rw [show {x | x ∈ T ∧ (x ∈ S ∨ x = e)} = S from Set.ext fun x ↦
+        ⟨fun h ↦ h.2.resolve_right fun hx ↦ heT (hx ▸ h.1), fun h ↦ ⟨hST h, .inl h⟩⟩, hSb]
+    have h₂ : {x | (x ∈ T ∨ x = e) ∧ (x ∈ S ∨ x = e)}.ncard = b + 1 := by
+      rw [show {x | (x ∈ T ∨ x = e) ∧ (x ∈ S ∨ x = e)} = {x | x ∈ S ∨ x = e} from
+        Set.ext fun x ↦ ⟨And.right, fun h ↦ ⟨h.imp_left (hST ·), h⟩⟩, ncard_or_eq heS, hSb]
+    have e₁ : q.toGQ (· ∈ T) (fun x ↦ x ∈ S ∨ x = e) ↔ q a b := by
+      rw [toGQ_iff_of_ncard hA h₁, show a + b - b = a by omega]
+    have e₂ : q.toGQ (fun x ↦ x ∈ T ∨ x = e) (fun x ↦ x ∈ S ∨ x = e) ↔ q a (b + 1) := by
+      rw [toGQ_iff_of_ncard hA' h₂, show a + b + 1 - (b + 1) = a by omega]
+    exact e₂.symm.trans ((Iff.of_eq (hdep hagree)).symm.trans e₁)
+
+end Dependence
 
 end NumberTree
 

@@ -14,14 +14,17 @@ accounts' own definitions, taken from the study that proves it; a pair in neithe
 
 In the propositional fragment the incremental accounts coincide: dynamic semantics, filtering,
 incremental Transparency, incremental local satisfaction, and incremental Kleene and supervaluation
-acceptability are edges in both directions ([schlenker-2009]'s Theorem 1, C.21 and C.22, and
-its manuscript's Theorem 36). Each incremental account is stronger than its symmetric counterpart
+acceptability are edges in both directions (Theorem 1, C.21 and C.22 of Local Contexts, and
+Theorem 36 of its manuscript). Each incremental account is stronger than its symmetric counterpart
 (item 20), and symmetric Kleene is stronger than symmetric supervaluation (Lemma 8). Symmetric
 Transparency is incomparable with symmetric Kleene and supervaluation in one direction (Theorem
 39a) and supervaluation is not stronger than Kleene (Lemma 11); the symmetric accounts are not
-stronger than the incremental ones ([chemla-schlenker-2012]'s (13b)). Limited Symmetry
-([kalomoiros-2023]) is not stronger than incremental Transparency (Fact 3.4.3), and symmetric
-supervaluation is not stronger than Limited Symmetry (Fact 3.4.1).
+stronger than the incremental ones (Chemla and Schlenker's (13b)). Kalomoiros's Limited
+Symmetry lies strictly between the two Transparencies: incremental Transparency is
+stronger than it and it is stronger than symmetric Transparency, since the good finals it consults
+shrink from the incremental theory's to the sentence itself, and it is not stronger than
+incremental Transparency (Fact 3.4.3). Symmetric supervaluation is not stronger than Limited
+Symmetry (Fact 3.4.1).
 
 ## References
 
@@ -103,9 +106,19 @@ theorem kleeneSymmetric_stronger_supervaluationSymmetric :
     kleeneSymmetric.Stronger supervaluationSymmetric :=
   fun _ _ I _ _ h ↦ KleeneS.superS I h
 
+/-- Limited Symmetry consults at each parse point only incremental good finals. -/
+theorem transparencyIncremental_stronger_limitedSymmetry :
+    transparencyIncremental.Stronger limitedSymmetry :=
+  fun _ _ I _ _ h ↦ Kalomoiros2023.TranspLS.of_transpI I h
+
+/-- At its last parse point Limited Symmetry consults the sentence itself. -/
+theorem limitedSymmetry_stronger_transparencySymmetric :
+    limitedSymmetry.Stronger transparencySymmetric :=
+  fun _ _ I _ _ h ↦ Kalomoiros2023.TranspLS.transpS I h
+
 /-! ### Cuts -/
 
-/-- Theorem 39a's context: a world where `p` and `q` fail and one where both hold. -/
+/-- The context of Theorem 39a has a world where `p` and `q` fail and one where both hold. -/
 private def interp39 : Fin 4 → Set Bool := fun a ↦ if a = 0 ∨ a = 2 then {true} else Set.univ
 
 private theorem theorem39a :
@@ -123,14 +136,14 @@ theorem not_transparencySymmetric_stronger_supervaluationSymmetric :
     ¬ transparencySymmetric.Stronger supervaluationSymmetric :=
   fun h ↦ theorem39a.2.2 (h _ _ interp39 _ _ theorem39a.1)
 
-/-- Lemma 11: `(pp' or (not pp'))` where `p` fails somewhere. -/
+/-- By Lemma 11, `(pp' or (not pp'))` separates the two where `p` fails somewhere. -/
 theorem not_supervaluationSymmetric_stronger_kleeneSymmetric :
     ¬ supervaluationSymmetric.Stronger kleeneSymmetric := by
   let I : Fin 2 → Set Bool := fun _ ↦ {true}
   have := superS_not_kleeneS I (p := 0) (p' := 1) (w₀ := false) (by decide)
   exact fun h ↦ this.2 (h _ _ I _ _ this.1)
 
-/-- The empty interpretation: every atom false at the one world. -/
+/-- The empty interpretation makes every atom false at the one world. -/
 private def interpEmpty : Fin 3 → Set Unit := fun _ ↦ ∅
 
 /-- [chemla-schlenker-2012]'s (13b): `qq' or (not p)` where `p` and `q` fail. -/
@@ -153,7 +166,7 @@ theorem not_kleeneSymmetric_stronger_kleeneIncremental :
   exact fun h ↦ inverseOr.2 ((ChemlaSchlenker2012.superI_inverse interpEmpty .orSentence).1
     ((kleeneI_iff_superI interpEmpty _ _).1 (h _ _ interpEmpty _ _ hK)))
 
-/-- Fact 3.4.3: `(pp' or q)` where `p` fails and `q` holds. -/
+/-- By Fact 3.4.3, `(pp' or q)` separates the two where `p` fails and `q` holds. -/
 theorem not_limitedSymmetry_stronger_transparencyIncremental :
     ¬ limitedSymmetry.Stronger transparencyIncremental := by
   let I : Fin 3 → Set Unit := fun a ↦ if a = 2 then Set.univ else ∅
@@ -165,7 +178,7 @@ theorem not_limitedSymmetry_stronger_transparencyIncremental :
   simp [I, Formula.filter, Connective.filter, PartialProp.orFilter] at this
   exact this
 
-/-- Fact 3.4.1: `(pp' and q)` where `p` and `q` fail. -/
+/-- By Fact 3.4.1, `(pp' and q)` separates the two where `p` and `q` fail. -/
 theorem not_supervaluationSymmetric_stronger_limitedSymmetry :
     ¬ supervaluationSymmetric.Stronger limitedSymmetry := by
   let I : Fin 3 → Set Unit := fun _ ↦ ∅
@@ -180,7 +193,7 @@ end Account
 
 open Account
 
-/-- The comparisons the library proves: `(a, b)` when `a` is stronger than `b`. -/
+/-- The comparisons the library proves, `(a, b)` when `a` is stronger than `b`. -/
 def edges : List (Account × Account) :=
   [(dynamic, filtering), (filtering, dynamic),
     (transparencyIncremental, dynamic), (dynamic, transparencyIncremental),
@@ -194,7 +207,8 @@ def edges : List (Account × Account) :=
     (satisfactionIncremental, satisfactionSymmetric),
     (kleeneIncremental, kleeneSymmetric),
     (supervaluationIncremental, supervaluationSymmetric),
-    (kleeneSymmetric, supervaluationSymmetric)]
+    (kleeneSymmetric, supervaluationSymmetric),
+    (transparencyIncremental, limitedSymmetry), (limitedSymmetry, transparencySymmetric)]
 
 theorem edges_sound : ∀ e ∈ edges, e.1.Stronger e.2 := by
   simp only [edges, List.forall_mem_cons, List.not_mem_nil, IsEmpty.forall_iff, implies_true,
@@ -211,7 +225,9 @@ theorem edges_sound : ∀ e ∈ edges, e.1.Stronger e.2 := by
     satisfactionIncremental_stronger_satisfactionSymmetric,
     kleeneIncremental_stronger_kleeneSymmetric,
     supervaluationIncremental_stronger_supervaluationSymmetric,
-    kleeneSymmetric_stronger_supervaluationSymmetric⟩
+    kleeneSymmetric_stronger_supervaluationSymmetric,
+    transparencyIncremental_stronger_limitedSymmetry,
+    limitedSymmetry_stronger_transparencySymmetric⟩
 
 /-- The non-comparisons the library proves: `(a, b)` when `a` is not stronger than `b`. -/
 def cuts : List (Account × Account) :=
