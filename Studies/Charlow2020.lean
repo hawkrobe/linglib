@@ -102,7 +102,7 @@ def plusWh (Q : NP α) (f : α → Set β) : Set β := {y | Q fun x ↦ y ∈ f 
 /-- Partee's `A`, existential closure over a set, sends a singleton to the Montague lift,
 `A ∘ η = LIFT` (24). -/
 theorem some_pure (x : α) : GQ.some (pure x : Set α) = individual x :=
-  some_eq_individual_iff.2 rfl
+  some_ident x
 
 /-- Binding a singleton is the Montague lift at result type `Set β`, `(≫=) ∘ η = LIFT` (28). -/
 theorem bind_pure_left (x : α) : (fun f : α → Set β ↦ pure x >>= f) = fun f ↦ f x :=

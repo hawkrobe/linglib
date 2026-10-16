@@ -92,8 +92,8 @@ theorem sieve_principalFilter (hB : ∃ x, B x) : Sieve (principalFilter B) :=
 /-- A mixed conjunction of an increasing and a decreasing quantifier, *John and no woman*, is
 neither increasing nor decreasing (§4.10). -/
 theorem not_monotone_mixed_conjunction :
-    ¬ Monotone (individual true ⊓ restrict no (· = false)) ∧
-    ¬ Antitone (individual true ⊓ restrict no (· = false)) := by
+    ¬ Monotone (individual true ⊓ no (· = false)) ∧
+    ¬ Antitone (individual true ⊓ no (· = false)) := by
   constructor
   · intro h
     have := h (a := (· = true)) (b := fun _ ↦ True) (fun x hx ↦ trivial)

@@ -2,7 +2,6 @@ module
 
 public import Linglib.Semantics.Quantification.NP
 public import Linglib.Semantics.Reference.Iota
-public import Mathlib.Data.Finset.Lattice.Fold
 
 /-!
 # Partee (1987): Noun Phrase Interpretation and Type-shifting Principles
@@ -13,29 +12,33 @@ mappings between the three types come in inverse pairs, the paper's Figure 1: `l
 substrate's `Quantifier.NP.individual`, and `lower`, the total injection of an entity into
 its principal ultrafilter and its partial inverse; `ident` and `iota`, the singleton property
 of an entity and the unique member of a property; and `nom` and `pred`, the correlates of
-properties and entities after [chierchia-1984] (`lower_lift`, `Reference.iota_ident`). The definite
-article has a partial entity meaning, `iota`, and a total quantifier meaning, `THE`, related
-by `THE(king') = lift(iota(king'))` whenever the latter is defined, and the predicative reading
-of *the king* is `BE(THE(king'))`, so that the three readings of Figure 2 cohere,
-`BE(THE(king')) = ident(iota(king'))`, and coincide with the common noun when there is exactly
-one king, which is why the article can be dropped in *John is (the) president*
-(`THE_eq_lift_iota`, `lower_THE`, `BE_THE`, `BE_THE_eq_of_unique`). The functor `BE`,
-Montague's translation of *be* reconceived as a type shifter, is a homomorphism of the Boolean
-structures, Fact 1 of §3.3, the substrate's `Quantifier.NP.beHom`, and the unique
-homomorphism making Figure 3 commute, `BE(lift(j)) = ident(j)`, Fact 2 (`BE_lift`,
-`BE_natural`); the indefinite article `A` is natural as its inverse, `BE(A(P)) = P`, so *be a
-man* comes out as *man* (`BE_A`). English *be* itself is then predicate application, the
-predicative reading having moved into the noun phrase.
+properties and entities after [chierchia-1984] (`lower_lift`, `Reference.iota_ident`). The
+definite article has a partial entity meaning, `iota`, and a total quantifier meaning, `THE`,
+which is the determiner `GQ.the`. Whenever `iota(king')` is defined `THE(king')` is its lift,
+and otherwise the empty set of properties, so `lower(THE(king')) = iota(king')` either way. The
+predicative reading of *the king* is `BE(THE(king'))`, the singleton of the unique king, which
+is `ident(iota(king'))` when the latter is defined and coincides with the common noun when there
+is at most one king; this is why the article can be dropped in *John is (the) president*
+(`the_eq_individual`, `lower_the`, `BE_the_eq_ident`, `BE_the_eq_self`).
+
+The functor `BE`, Montague's translation of *be* reconceived as a type shifter, is a
+homomorphism of the Boolean structures, Fact 1, which the substrate builds into `NP.BE`, and
+the unique homomorphism making Figure 3 commute, `BE(lift(j)) = ident(j)`, Fact 2
+(`BE_natural`). The indefinite article `A` is `GQ.some`, natural as an inverse of `BE`
+(`NP.BE_some`), so *be a man* comes out as *man*, and *be no man* as the complement of *be a
+man* (`BE_no`), while *be every man* holds only of the only man (`BE_every_apply`). English
+*be* itself is then predicate application, the predicative reading having moved into the noun
+phrase.
 
 ## Implementation notes
 
-The setting is extensional, so `pred` is `ident`, `nom` and `iota` are both the Russellian
-`Reference.iota`, and `THE` is the partial composite `lift ∘ iota` the paper offers as the
-alternative to its total, presuppositionless quantifier meaning. Fact 2 is proved after
-[keenan-faltz-1985]: the homomorphism is pinned on the atom at each singleton property, a meet
-of the lifts and their complements, and monotonicity decides it everywhere else. The mappings
-to and from kinds of §3.4 onward and the analysis of the Williams counterexample are not
-formalized.
+* The setting is extensional, so `pred` is `ident` and `nom` and `iota` are both the Russellian
+  `Reference.iota`.
+* Fact 2 is read with complete homomorphisms, the homomorphisms of [keenan-faltz-1985]'s result
+  that the individuals generate the quantifiers, which the paper invokes for it; on an infinite
+  domain a merely Boolean homomorphism need not preserve the infinite meets the argument uses.
+* The mappings to and from kinds of §3.4 onward and the analysis of the Williams counterexample
+  are not formalized.
 
 ## References
 
@@ -52,9 +55,6 @@ open Quantifier Quantifier.GQ Quantifier.NP Reference
 
 variable {E : Type*} (j : E) (P : E → Prop)
 
-/-- `THE P` is the presuppositional definite article, the Montague lift of the unique `P`. -/
-noncomputable def THE : Option (NP E) := (iota P).map individual
-
 /-- `lower Q` is the entity whose Montague lift is `Q`, when `Q` is a principal ultrafilter. -/
 noncomputable def lower (Q : NP E) : Option E := iota fun j ↦ Q = individual j
 
@@ -64,84 +64,55 @@ noncomputable def lower (Q : NP E) : Option E := iota fun j ↦ Q = individual j
 theorem lower_lift : lower (individual j) = some j :=
   (iota_eq_some_iff _).2 ⟨rfl, fun _ h ↦ (individual_injective h).symm⟩
 
-/-- Lowering a lifted entity through `BE` and `iota` returns it (48). -/
+/-- Lowering a lifted entity through `BE` and `iota` returns it. -/
 theorem iota_BE_lift : iota (BE (individual j)) = some j := by
-  rw [BE_individual_eq_ident]; exact iota_ident j
+  rw [BE_individual]; exact iota_ident j
 
 /-! ### Figure 2: *the king* in three types (§3.2) -/
 
-/-- The article applied to a singleton property lifts its member, `THE(ident(j)) = lift(j)`. -/
-theorem THE_ident : THE (ident j) = some (individual j) := by
-  rw [THE, iota_ident]; rfl
-
-/-- The determiner *the* is the quantifier `THE` applied to its scope. -/
-theorem the_sem_iff_THE (S : E → Prop) : the P S ↔ ∃ Q ∈ THE P, Q S :=
-  (the_sem_iff_iota P S).trans
-    ⟨fun ⟨x, hx, hS⟩ ↦ ⟨individual x, Option.map_eq_some_iff.2 ⟨x, hx, rfl⟩, hS⟩,
-      fun ⟨_, hQ, hS⟩ ↦
-        let ⟨x, hx, hxQ⟩ := Option.map_eq_some_iff.1 hQ; ⟨x, hx, (hxQ ▸ hS : individual x S)⟩⟩
-
 /-- Whenever `iota` is defined, `THE(king') = lift(iota(king'))`. -/
-theorem THE_eq_lift_iota (h : iota P = some j) : THE P = some (individual j) := by
-  simp [THE, h]
+theorem the_eq_individual (h : iota P = some j) : the P = individual j :=
+  funext fun S ↦ propext <| (the_sem_iff_iota P S).trans <| by simp [h, individual]
 
-/-- Whenever `iota` is defined, `lower(THE(king')) = iota(king')`. -/
-theorem lower_THE (h : iota P = some j) : (THE P).bind lower = some j := by
-  simp [THE_eq_lift_iota j P h, lower_lift]
+/-- Whenever `iota` is undefined, `THE(king')` is the empty set of properties. -/
+theorem the_eq_bot (h : iota P = none) : the P = ⊥ :=
+  funext fun S ↦ propext <| (the_sem_iff_iota P S).trans <| by simp [h]
 
-/-- The predicative reading `BE(THE(king'))` is `ident(iota(king'))`: the diagram commutes. -/
-theorem BE_THE (h : iota P = some j) : ∃ Q ∈ THE P, BE Q = ident j :=
-  ⟨individual j, by simp [THE, h], BE_individual_eq_ident j⟩
+/-- `lower(THE(king')) = iota(king')`, whether or not `iota(king')` is defined. -/
+theorem lower_the : lower (the P) = iota P := by
+  cases h : iota P with
+  | some j => rw [the_eq_individual j P h, lower_lift]
+  | none =>
+    rw [the_eq_bot P h, lower, iota_eq_none_iff]
+    exact fun ⟨j, hj, _⟩ ↦ (congrFun hj ⊤).mpr trivial
 
-/-- With exactly one king the predicative *the king* is the common noun *king*, the
+/-- `BE(THE(king'))` holds of `x` when `x` is the only king. -/
+theorem BE_the_apply (x : E) : BE (the P) x ↔ ∀ y, P y ↔ y = x :=
+  ⟨fun ⟨_, hz, hzx⟩ ↦ hzx ▸ hz, fun h ↦ ⟨x, h, rfl⟩⟩
+
+/-- When `iota(king')` is defined, `BE(THE(king')) = ident(iota(king'))`: the diagram commutes. -/
+theorem BE_the_eq_ident (h : iota P = some j) : BE (the P) = ident j := by
+  rw [the_eq_individual j P h, BE_individual]
+
+/-- With at most one king the predicative *the king* is the common noun *king*, the
 equivalence that lets the article drop in *John is (the) president* (12). -/
-theorem BE_THE_eq_of_unique (h : iota P = some j) (hP : ∀ x, P x ↔ x = j) :
-    ∃ Q ∈ THE P, BE Q = P :=
-  ⟨individual j, by simp [THE, h],
-    by rw [BE_individual_eq_ident]; exact funext λ x => propext (hP x).symm⟩
+theorem BE_the_eq_self (hP : {x | P x}.Subsingleton) : BE (the P) = P :=
+  funext fun x ↦ propext <| (BE_the_apply P x).trans
+    ⟨fun h ↦ (h x).2 rfl, fun hx _ ↦ ⟨fun hy ↦ hP hy hx, fun e ↦ e ▸ hx⟩⟩
 
 /-! ### `A` and `BE` as natural functors (§3.3) -/
 
-/-- Figure 3 commutes: `BE(lift(j)) = ident(j)`. -/
-theorem BE_lift : BE (individual j) = ident j :=
-  BE_individual_eq_ident j
+/-- Fact 2: `BE` is the unique homomorphism making Figure 3 commute, `BE(lift(j)) = ident(j)`. -/
+theorem BE_natural (f : CompleteLatticeHom (NP E) (E → Prop))
+    (hcomm : ∀ j : E, f (individual j) = ident j) : f = BE :=
+  completeLatticeHom_ext fun j ↦ (hcomm j).trans (BE_individual j).symm
 
-/-- By Fact 2, `BE` is the unique Boolean homomorphism making Figure 3 commute; Fact 1, that it
-is one, is `Quantifier.NP.beHom`. -/
-theorem BE_natural [Fintype E] [DecidableEq E] (f : BoundedLatticeHom (NP E) (E → Prop))
-    (hcomm : ∀ j : E, f (individual j) = ident j) (Q : NP E) : f Q = BE Q := by
-  funext x
-  show f Q x = Q (ident x)
-  -- the atom of the quantifier algebra at `{x}`, as a meet of literals
-  let lit : E → NP E := λ j => if j = x then individual j else (individual j)ᶜ
-  let atom : NP E := Finset.univ.inf lit
-  have hf_lit : ∀ j, f (lit j) = if j = x then ident j else (ident j)ᶜ := λ j => by
-    simp only [lit]; split
-    · exact hcomm j
-    · rw [map_compl' f, hcomm j]
-  have hf_atom : f atom x := by
-    show f (Finset.univ.inf lit) x
-    rw [map_finset_inf, Finset.inf_apply]
-    refine Finset.le_inf (λ j _ => show ⊤ ≤ f (lit j) x from λ _ => ?_) trivial
-    rw [hf_lit]; split
-    · exact ‹j = x›.symm
-    · exact λ e : x = j => ‹¬ j = x› e.symm
-  have hatom_point : ∀ R, atom R → R = ident x := λ R hR => by
-    funext j
-    have hj : lit j R := (Finset.inf_le (Finset.mem_univ j) : atom ≤ lit j) R hR
-    simp only [lit] at hj; split at hj
-    · exact propext ⟨λ _ => ‹j = x›, λ _ => hj⟩
-    · exact propext ⟨λ hr => absurd hr hj, λ e => absurd e ‹¬ j = x›⟩
-  have hatom_le : ∀ S : NP E, S (ident x) → atom ≤ S :=
-    λ S hS R hR => hatom_point R hR ▸ hS
-  by_cases hQ : Q (ident x)
-  · exact propext ⟨λ _ => hQ, λ _ => OrderHomClass.mono f (hatom_le Q hQ) x hf_atom⟩
-  · have hfQc : f Qᶜ x := OrderHomClass.mono f (hatom_le Qᶜ hQ) x hf_atom
-    rw [map_compl' f] at hfQc
-    exact propext ⟨λ h => absurd h hfQc, λ h => absurd h hQ⟩
+/-- *Every man* contains a singleton only if there is just one man. -/
+theorem BE_every_apply (x : E) : BE (every P) x ↔ ∀ y, P y → y = x :=
+  .rfl
 
-/-- `A` is an inverse of `BE`: `BE(A(man')) = man'`, so *be a man* is *man*. -/
-theorem BE_A (domain : List E) (hcomplete : ∀ x : E, x ∈ domain) : BE (A domain P) = P :=
-  BE_A_id domain P hcomplete
+/-- `BE(no man) = not(BE(a man))`, by Fact 1. -/
+theorem BE_no : BE (no P) = (BE (GQ.some P))ᶜ :=
+  (congrArg BE (congrFun compl_some P)).symm.trans (map_compl' BE _)
 
 end Partee1987

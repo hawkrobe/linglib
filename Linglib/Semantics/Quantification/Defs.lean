@@ -256,9 +256,6 @@ so that *tall student* is *student* and *tall*. -/
 def adjRestrict (q : GQ α) (adj : α → Prop) : GQ α :=
   fun R S => q (fun x => R x ∧ adj x) S
 
-/-- The type ⟨1⟩ quantifier a determiner and a restrictor denote, `restrict Q A B = Q A B`. -/
-def restrict (q : GQ α) (A : α → Prop) : NP α := q A
-
 end GQ
 
 /-! ### Type ⟨1⟩ quantifiers -/
@@ -268,10 +265,6 @@ namespace NP
 /-- A type ⟨1⟩ quantifier lives on `A` when `Q(B) ↔ Q(A ∩ B)` for every `B`. -/
 def LivesOn (Q : NP α) (A : α → Prop) : Prop :=
   ∀ B, Q B ↔ Q (fun x => A x ∧ B x)
-
-/-- A conservative quantifier lives on its restrictor. -/
-theorem _root_.Quantifier.GQ.Conservative.livesOn {q : GQ α} (h : GQ.Conservative q)
-    (A : α → Prop) : LivesOn (q A) A := h A
 
 /-- The Montague lift of an entity is the principal ultrafilter it generates, the type ⟨1⟩
 quantifier of the properties it has; it is Partee's LIFT and the continuation `pure`. -/

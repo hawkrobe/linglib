@@ -189,9 +189,8 @@ theorem symm_not_positive_strong (q : GQ α) (hCons : Conservative q)
 /-- Conservativity of a GQ is equivalent to its restricted quantifiers
     living on their restrictors (P&W §3.2.2). -/
 theorem conservative_iff_livesOn (q : GQ α) :
-    Conservative q ↔ ∀ A, LivesOn (restrict q A) A := by
-  unfold Conservative LivesOn restrict
-  exact ⟨fun h A B => h A B, fun h R S => h R S⟩
+    Conservative q ↔ ∀ A, LivesOn (q A) A :=
+  .rfl
 
 /-- A conservative quantifier's value at a restrictor depends only on the scope's meet with it. -/
 theorem Conservative.iff_of_inf_eq {q : GQ α} (hq : Conservative q) {R S S' : α → Prop}
