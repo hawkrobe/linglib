@@ -4,6 +4,7 @@ public import Linglib.Semantics.Degree.Quantifier
 public import Linglib.Semantics.Exhaustification.Pointwise
 public import Linglib.Data.Examples.BylininaNouwen2018
 public import Mathlib.Data.Set.Card
+public import Linglib.Semantics.Plurality.Algebra
 public import Linglib.Fragments.English.PolarityItems
 public import Linglib.Semantics.Polarity.Licensing
 
@@ -42,12 +43,15 @@ the Heim-Kennedy generalization ((80)).
 * `kennedyZero_eq_nobody`: Kennedy's *zero* is the context of *no*.
 * `antitone_maxIn_countDegrees`, `not_antitone_maxIn_countDegrees_sdiff`: *fewer than ten* is
   downward monotone with `×` and not with `*`.
+* `countDegrees_plural_eq_Iic_comp`: a count's measured degree property is that of its
+  pluralities under `×`.
 
 ## Implementation notes
 
-* Pluralities are the finite sets of atoms, so `plural Z`, the pluralities of members of `Z`, is
-  the full lattice `×Z`, and Link's `*Z` is `plural Z \ {∅}`. A distributive predicate `B` holds of
-  a plurality that is in `plural B`.
+* Pluralities are the finite sets of atoms, and `plural Z` is `Mereology.FullAlgClosure` of
+  the singletons of `Z`, the full lattice `×Z`; without the empty sum it is Link's `*Z`,
+  `Mereology.AlgClosure` of them (`plural_sdiff_empty`). A distributive predicate `B` holds of a
+  plurality that is in `plural B`.
 * Degrees are natural numbers; Kennedy's numeral is `Degree.MaxIn {n}` and its two scopes are
   `Degree.LowScope` and `Degree.HighScope`. Exhaustification against the higher numerals is
   `Exhaustification.exhAgainst (· < ·)`.
@@ -75,45 +79,56 @@ let the de-Fregean analysis do without `⊥` (Section 6.1) are not formalized.
 @[expose] public section
 namespace BylininaNouwen2018
 
-open Degree Exhaustification Quantifier Quantifier.GQ Set
+open Degree Exhaustification Quantifier Quantifier.GQ Set Mereology Plurality.Algebra
 
-variable {α : Type*}
+variable {α : Type*} [DecidableEq α]
 
 /-! ### Pluralities and numerals -/
 
-/-- The pluralities of members of `Z`, the sums `⊔X` of the subsets `X ⊆ Z` ((30)), the empty sum
-`⊥` among them. -/
-def plural (Z : Set α) : Set (Finset α) := {x | ↑x ⊆ Z}
+/-- The pluralities of members of `Z`, the full closure `×Z` of its singletons ((30)): the sums
+`⊔X` of the subsets `X ⊆ Z`, the empty sum `⊥` among them. -/
+def plural (Z : Set α) : Set (Finset α) := {x | FullAlgClosure (· ∈ ({·} : α → Finset α) '' Z) x}
+
+@[simp] theorem mem_plural {Z : Set α} {x : Finset α} : x ∈ plural Z ↔ ↑x ⊆ Z :=
+  fullAlgClosure_image_singleton Z x
+
+/-- Without the empty sum `×Z` is Link's `*Z` ((29)). -/
+theorem plural_sdiff_empty (Z : Set α) :
+    plural Z \ {∅} = {x | AlgClosure (· ∈ ({·} : α → Finset α) '' Z) x} := by
+  ext x
+  simp only [mem_sdiff, mem_plural, mem_singleton_iff, mem_ofPred_eq, algClosure_image_singleton,
+    Finset.nonempty_iff_ne_empty]
+  exact and_comm
+
+theorem plural_inter (A B : Set α) : plural A ∩ plural B = plural (A ∩ B) := by
+  ext
+  simp [subset_inter_iff]
 
 /-- The degree property `λi. ∃x[#x = i ∧ A(x) ∧ C(x)]` of the pluralities of members of `A` that
 are `C`, which a numeral `n` holds of at its lower bound ((27)) and Kennedy's numeral quantifies
 over ((71)). -/
-def countDegrees (A : Set α) (C : Set (Finset α)) : Set ℕ :=
-  {n | ∃ x : Finset α, x.card = n ∧ x ∈ plural A ∩ C}
+def countDegrees (A : Set α) (C : Set (Finset α)) : Set ℕ := Finset.card '' (plural A ∩ C)
 
 /-- With a distributive predicate the degree property is a lower set, so the numeral has an at
 least reading ((20), (22)). -/
 theorem isLowerSet_countDegrees_plural (A B : Set α) : IsLowerSet (countDegrees A (plural B)) := by
-  rintro d e hed ⟨x, rfl, hA, hB⟩
+  rw [countDegrees, plural_inter]
+  rintro d e hed ⟨x, hx, rfl⟩
   obtain ⟨y, hyx, rfl⟩ := Finset.exists_subset_card_eq hed
-  exact ⟨y, rfl, (Finset.coe_subset.2 hyx).trans hA, (Finset.coe_subset.2 hyx).trans hB⟩
+  exact ⟨y, mem_plural.2 ((Finset.coe_subset.2 hyx).trans (mem_plural.1 hx)), rfl⟩
 
 /-- With a collective predicate true of the plurality `s` alone, the degree property holds at `#s`
 alone, so the numeral has no at least reading. -/
 theorem countDegrees_singleton {A : Set α} {s : Finset α} (hs : ↑s ⊆ A) :
-    countDegrees A {s} = {s.card} :=
-  Set.ext fun _ ↦ ⟨fun ⟨_, hx, _, hxs⟩ ↦ (hxs ▸ hx : s.card = _).symm,
-    fun h ↦ ⟨s, h.symm, hs, rfl⟩⟩
+    countDegrees A {s} = {s.card} := by
+  rw [countDegrees, inter_eq_right.2 (singleton_subset_iff.2 (mem_plural.2 hs)), image_singleton]
 
 /-- With finitely many members of `A ∩ B` the degree property under `×` is `{0, …, n}` for their
 number `n` ((73)), the measured degree property of `Degree.LowScope`. -/
 theorem countDegrees_plural_eq_Iic {A B : Set α} (h : (A ∩ B).Finite) :
     countDegrees A (plural B) = Iic (A ∩ B).ncard := by
-  ext d
-  simp only [countDegrees, plural, mem_inter_iff, mem_ofPred_eq, mem_Iic, ← subset_inter_iff,
-    ← h.subset_toFinset, ncard_eq_toFinset_card _ h]
-  exact ⟨fun ⟨x, hx, hs⟩ ↦ hx ▸ Finset.card_le_card hs,
-    fun hd ↦ let ⟨y, hy, hc⟩ := Finset.exists_subset_card_eq hd; ⟨y, hc, hy⟩⟩
+  rw [countDegrees, plural_inter]
+  exact card_image_fullAlgClosure h
 
 /-! ### *Zero*
 
@@ -123,11 +138,11 @@ against the higher numerals turns the tautology into *no*. -/
 /-- Under `*`, *zero A B* is a contradiction ((36)). -/
 theorem zero_notMem_countDegrees_sdiff (A B : Set α) :
     0 ∉ countDegrees A (plural B \ {∅}) :=
-  fun ⟨_, hx, _, _, hne⟩ ↦ hne (Finset.card_eq_zero.1 hx)
+  fun ⟨_, ⟨_, _, hne⟩, hx⟩ ↦ hne (Finset.card_eq_zero.1 hx)
 
 /-- Under `×`, *zero A B* is a tautology ((37), (39)). -/
 theorem zero_mem_countDegrees (A B : Set α) : 0 ∈ countDegrees A (plural B) :=
-  ⟨∅, Finset.card_empty, by simp [plural]⟩
+  ⟨∅, ⟨mem_plural.2 (by simp), mem_plural.2 (by simp)⟩, Finset.card_empty⟩
 
 /-- Kennedy's quantifier holds of a degree property when the lower bound, exhaustified against the
 higher numerals, does: both say that `n` is its greatest degree. -/
@@ -140,13 +155,12 @@ theorem maxIn_singleton_iff_exhAgainst {D : Type*} [LinearOrder D] {P : Set D} {
 theorem maxIn_zero_countDegrees_iff {A B : Set α} :
     MaxIn {0} (countDegrees A (plural B)) ↔ GQ.no A B := by
   refine maxIn_singleton.trans ⟨fun h a ha hb ↦ ?_, fun h ↦ ⟨zero_mem_countDegrees A B, ?_⟩⟩
-  · have : 1 ≤ 0 := h.2 ⟨{a}, Finset.card_singleton a, by
-      simp only [plural, mem_inter_iff, mem_ofPred_eq, Finset.coe_singleton, singleton_subset_iff]
-      exact ⟨ha, hb⟩⟩
+  · have : 1 ≤ 0 := h.2 ⟨{a}, ⟨mem_plural.2 (Finset.coe_singleton a ▸ singleton_subset_iff.2 ha),
+      mem_plural.2 (Finset.coe_singleton a ▸ singleton_subset_iff.2 hb)⟩, Finset.card_singleton a⟩
     omega
-  · rintro _ ⟨x, rfl, hA, hB⟩
-    exact Nat.le_zero.2 <| Finset.card_eq_zero.2 <|
-      Finset.eq_empty_of_forall_notMem fun a hx ↦ h a (hA hx) (hB hx)
+  · rintro _ ⟨x, ⟨hA, hB⟩, rfl⟩
+    exact Nat.le_zero.2 <| Finset.card_eq_zero.2 <| Finset.eq_empty_of_forall_notMem
+      fun a hx ↦ h a (mem_plural.1 hA hx) (mem_plural.1 hB hx)
 
 /-- Under `*`, Kennedy's *zero A B* is never true ((72)): the degree property lacks `0`. -/
 theorem not_maxIn_zero_countDegrees_sdiff (A B : Set α) :
@@ -168,6 +182,7 @@ section Polarity
 
 open PolarityItem (LicensingContext NonemptyPredicate)
 open PolarityItem.LicensingContext
+open scoped Classical
 
 /-- *Zero* NP over a restrictor, the at least numeral and its exhaustification against the higher
 numerals ((39), (40)). -/
@@ -265,38 +280,48 @@ theorem antitone_maxIn_countDegrees {U : Set ℕ} (hU : IsLowerSet U) {A : Set �
 theorem not_antitone_maxIn_countDegrees_sdiff :
     ¬ Antitone fun B : Set Unit ↦ MaxIn (Iio 10) (countDegrees univ (plural B \ {∅})) := by
   intro h
-  obtain ⟨_, -, ⟨x, -, -, hx, hne⟩, -⟩ := h (empty_subset univ) ⟨1, by decide,
-    ⟨{()}, rfl, subset_univ _, subset_univ _, by simp⟩,
-    fun _ ⟨x, hx, _⟩ ↦ hx ▸ Finset.card_le_univ x⟩
-  exact hne (Finset.eq_empty_of_forall_notMem fun a ha ↦ hx ha)
+  obtain ⟨_, -, ⟨x, ⟨-, hx, hne⟩, -⟩, -⟩ := h (empty_subset univ) ⟨1, by decide,
+    ⟨{()}, ⟨mem_plural.2 (subset_univ _), mem_plural.2 (subset_univ _), by simp⟩, rfl⟩,
+    fun _ ⟨x, _, hx⟩ ↦ hx ▸ Finset.card_le_univ x⟩
+  exact hne (Finset.eq_empty_of_forall_notMem fun a ha ↦ mem_plural.1 hx ha)
 
 /-! ### Scope
 
 Exhaustifying the lower bound at a site and raising Kennedy's quantifier to that site give the same
-reading ((75), (76)), so the analyses differ only in the sites they reach. -/
+reading ((75), (76)), whatever degree property the scope abstracts, so the analyses differ only in
+the sites they reach. -/
 
 section Scope
 
-variable {Q : NP α} {μ : α → ℕ} {n : ℕ}
+variable {ι : Type*} {Q : NP ι} {P : ι → Set ℕ} {n : ℕ}
 
 /-- Exhaustification above `Q` is the numeral raised over `Q`. -/
 theorem exhAgainst_iff_highScope :
-    exhAgainst (· < ·) (fun m ↦ Q fun x ↦ m ≤ μ x) n ↔ HighScope (MaxIn {n}) Q μ :=
+    exhAgainst (· < ·) (fun m ↦ Q fun x ↦ m ∈ P x) n ↔ HighScope (MaxIn {n}) Q P :=
   maxIn_singleton_iff_exhAgainst.symm
 
 /-- Exhaustification below `Q` is the numeral in situ under `Q`. -/
 theorem exhAgainst_iff_lowScope :
-    (Q fun x ↦ exhAgainst (· < ·) (· ≤ μ x) n) ↔ LowScope (MaxIn {n}) Q μ := by
-  simp only [LowScope, maxIn_singleton_iff_exhAgainst]; rfl
+    (Q fun x ↦ exhAgainst (· < ·) (· ∈ P x) n) ↔ LowScope (MaxIn {n}) Q P := by
+  simp only [LowScope, maxIn_singleton_iff_exhAgainst]
 
 end Scope
+
+/-- A count's measured degree property is that of its full pluralities: with finitely many
+members of each `A ∩ B i`, the pluralities of `A` that are `B i` have the degrees `Iic` of their
+number, so `Degree.LowScope` and `Degree.HighScope` at `Iic ∘` the count are the readings of the
+plural model. -/
+theorem countDegrees_plural_eq_Iic_comp {ι : Type*} {A : Set α} {B : ι → Set α}
+    (h : ∀ i, (A ∩ B i).Finite) :
+    (fun i ↦ countDegrees A (plural (B i))) = Iic ∘ fun i ↦ (A ∩ B i).ncard :=
+  funext fun i ↦ countDegrees_plural_eq_Iic (h i)
 
 /-- Over *every student* the split-scope reading (77b), that not every student read a book, is
 true when one student read none and another four, while the reading (77a), that every student
 read none, is false: the continuation (78) separates them. -/
 theorem highScope_every_not_lowScope :
-    HighScope (MaxIn {0}) (every fun _ ↦ True) (fun i : Fin 2 ↦ 4 * (i : ℕ)) ∧
-      ¬ LowScope (MaxIn {0}) (every fun _ ↦ True) (fun i : Fin 2 ↦ 4 * (i : ℕ)) :=
+    HighScope (MaxIn {0}) (every fun _ ↦ True) (Iic ∘ fun i : Fin 2 ↦ 4 * (i : ℕ)) ∧
+      ¬ LowScope (MaxIn {0}) (every fun _ ↦ True) (Iic ∘ fun i : Fin 2 ↦ 4 * (i : ℕ)) :=
   ⟨highScope_maxIn_singleton_every.2 ⟨fun _ _ ↦ Nat.zero_le _, fun _ hb ↦ hb ⟨0, trivial, rfl⟩⟩,
     fun h ↦ absurd (lowScope_maxIn.1 h 1 trivial) (by simp)⟩
 

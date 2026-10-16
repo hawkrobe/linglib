@@ -99,26 +99,26 @@ variable {W : Type*} (R : W → Prop) (count : W → ℕ) (m : ℕ)
 /-- Under a modal the bare numeral keeps its two-sided content in each accessible
 world ((33a), (34a)). -/
 theorem narrow_scope_two_sided (Q : NP W) :
-    LowScope (MaxIn {m}) Q count ↔ Q λ w => count w = m :=
+    LowScope (MaxIn {m}) Q (Iic ∘ count) ↔ Q fun w ↦ count w = m :=
   lowScope_maxIn
 
 /-- In `ℕ` an infimum is attained. -/
 private theorem isGLB_iff_isLeast {s : Set ℕ} : IsGLB s m ↔ IsLeast s m :=
-  ⟨λ h => h.isLeast <| by_contra λ hm => absurd
+  ⟨fun h ↦ h.isLeast <| by_contra fun hm ↦ absurd
       (h.2 (show m + 1 ∈ lowerBounds s from
-        λ x hx => Nat.lt_of_le_of_ne (h.1 hx) λ e => hm (e ▸ hx))) (by omega),
+        fun x hx ↦ Nat.lt_of_le_of_ne (h.1 hx) fun e ↦ hm (e ▸ hx))) (by omega),
     IsLeast.isGLB⟩
 
 /-- Over a necessity modal the bare numeral is lower-bounded (33b), `m` being the least count the
 modal requires. -/
 theorem necessity_wide_iff :
-    HighScope (MaxIn {m}) (every R) count ↔ IsLeast (count '' {w | R w}) m :=
+    HighScope (MaxIn {m}) (every R) (Iic ∘ count) ↔ IsLeast (count '' {w | R w}) m :=
   highScope_maxIn_singleton_every.trans (isGLB_iff_isLeast m)
 
 /-- Over a possibility modal the bare numeral is upper-bounded (34b), `m` being the greatest count
 the modal allows. -/
 theorem possibility_wide_iff :
-    HighScope (MaxIn {m}) (GQ.some R) count ↔ IsGreatest (count '' {w | R w}) m :=
+    HighScope (MaxIn {m}) (GQ.some R) (Iic ∘ count) ↔ IsGreatest (count '' {w | R w}) m :=
   highScope_maxIn_singleton_some
 
 end Modals
@@ -141,7 +141,7 @@ private theorem interval_subset_iff (c c' : Comparison) {m : ℕ} (hm : 0 < m) :
       (c.Rel 0 m → c'.Rel 0 m) ∧ (c.Rel m m → c'.Rel m m) ∧
         (c.Rel (m + 1) m → c'.Rel (m + 1) m) := by
   simp only [Set.subset_def, Comparison.mem_interval]
-  refine ⟨λ h => ⟨h 0, h m, h (m + 1)⟩, λ ⟨h0, hm', h1⟩ x hx => ?_⟩
+  refine ⟨fun h ↦ ⟨h 0, h m, h (m + 1)⟩, fun ⟨h0, hm', h1⟩ x hx ↦ ?_⟩
   cases c <;> cases c' <;>
     simp only [Comparison.Rel, imp_iff_not_or, not_true_eq_false, false_or] at h0 hm' h1 hx ⊢ <;>
     omega
@@ -196,13 +196,13 @@ theorem not_isSecondaryImplicature_ge (m : ℕ) :
         (Comparison.eq.interval m) ∧
       ¬ IsSecondaryImplicature (Comparison.ge.interval m) (alternatives m)
         (Comparison.gt.interval m) := by
-  refine ⟨λ h => ?_, λ h => ?_⟩
+  refine ⟨fun h ↦ ?_, fun h ↦ ?_⟩
   · refine (isSecondaryImplicature_iff.mp h).2 (Comparison.gt.interval m)
-      ⟨_, rfl⟩ λ n ⟨h1, h2⟩ => ?_
+      ⟨_, rfl⟩ fun n ⟨h1, h2⟩ ↦ ?_
     simp only [Comparison.mem_interval, Comparison.Rel] at *
     omega
   · refine (isSecondaryImplicature_iff.mp h).2 (Comparison.eq.interval m)
-      ⟨_, rfl⟩ λ n ⟨h1, h2⟩ => ?_
+      ⟨_, rfl⟩ fun n ⟨h1, h2⟩ ↦ ?_
     simp only [Comparison.mem_interval, Comparison.Rel] at *
     omega
 
@@ -212,13 +212,13 @@ theorem not_isSecondaryImplicature_le (m : ℕ) :
         (Comparison.eq.interval m) ∧
       ¬ IsSecondaryImplicature (Comparison.le.interval m) (alternatives m)
         (Comparison.lt.interval m) := by
-  refine ⟨λ h => ?_, λ h => ?_⟩
+  refine ⟨fun h ↦ ?_, fun h ↦ ?_⟩
   · refine (isSecondaryImplicature_iff.mp h).2 (Comparison.lt.interval m)
-      ⟨_, rfl⟩ λ n ⟨h1, h2⟩ => ?_
+      ⟨_, rfl⟩ fun n ⟨h1, h2⟩ ↦ ?_
     simp only [Comparison.mem_interval, Comparison.Rel] at *
     omega
   · refine (isSecondaryImplicature_iff.mp h).2 (Comparison.eq.interval m)
-      ⟨_, rfl⟩ λ n ⟨h1, h2⟩ => ?_
+      ⟨_, rfl⟩ fun n ⟨h1, h2⟩ ↦ ?_
     simp only [Comparison.mem_interval, Comparison.Rel] at *
     omega
 

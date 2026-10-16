@@ -111,9 +111,12 @@ theorem derivation_eq_comparativeTruth {Measured : Type*} (role : Ent → α →
         matrixClause role P (fun e ↦ μ (extract e)) a δ) ↔
       comparativeTruth role P extract μ a b := by
   have : thanClause role P (fun e ↦ μ (extract e)) b =
-      Degree.scopeDegrees (Quantifier.GQ.some fun e ↦ role b e ∧ P e) fun e ↦ μ (extract e) := by
-    ext; simp [thanClause, absDegP, Degree.scopeDegrees, Quantifier.GQ.some, and_assoc]
-  rw [this, Degree.scopeDegrees_some]
+      Degree.scopeDegrees (Quantifier.GQ.some fun e ↦ role b e ∧ P e)
+        (Set.Iic ∘ fun e ↦ μ (extract e)) := by
+    ext
+    simp [thanClause, absDegP, Degree.scopeDegrees, Quantifier.GQ.some, and_assoc,
+      Function.comp_apply]
+  rw [this, Degree.scopeDegrees_some_Iic]
   simp only [comparativeTruth, MaxComparative, isGreatest_lowerClosure_iff, matrixClause,
     matrixDegP, Degree.Comparison.Rel, and_assoc]
 
