@@ -195,121 +195,8 @@ theorem comulAlgHomN_bPlusLin_cocycle (a : α) (F : Forest (UnorderedTree α)) :
 
 /-! ## Counit laws
 
-`(ε ⊗ id) ∘ Δ^ρ = lid⁻¹` and `(id ⊗ ε) ∘ Δ^ρ = rid⁻¹`: reduce to `of' F`
-via `ConnesKreimer.algHom_ext`, then close the tree case by strong induction
-on height through the cocycle `comulTreeN_node_cocycle`.
-
-Coassociativity (`comulRhoN_coassoc`, Foissy's subalgebra argument) and
-the `Bialgebra` instance follow below. -/
-
-/-! ### Counit ⊗ id commutation with `lTensor (bPlusLin a)`
-
-The factor-wise commutation `(counit ⊗ id) ∘ (id ⊗ B+_a) = (id ⊗ B+_a) ∘ (counit ⊗ id)`
-(where the right `id` is on different domains: `H` on the left, `R` on the right).
-Pure `TensorProduct.inductionOn` calculation; both sides reduce to
-`counit x ⊗ B+_a y` on simple tensors. Used in the tree-level counit law. -/
-
-private theorem counit_rTensor_lTensor_bPlus_apply (a : α)
-    (z : ConnesKreimer R (UnorderedTree α) ⊗[R] ConnesKreimer R (UnorderedTree α)) :
-    (Algebra.TensorProduct.map (counit (R := R))
-        (AlgHom.id R (ConnesKreimer R (UnorderedTree α))))
-      ((LinearMap.lTensor _ (bPlusLin (R := R) a)) z) =
-    (LinearMap.lTensor R (bPlusLin (R := R) a))
-      ((Algebra.TensorProduct.map (counit (R := R))
-        (AlgHom.id R (ConnesKreimer R (UnorderedTree α)))) z) := by
-  induction z using TensorProduct.inductionOn with
-  | tmul x y =>
-    rw [LinearMap.lTensor_tmul, Algebra.TensorProduct.map_tmul,
-        Algebra.TensorProduct.map_tmul, AlgHom.id_apply, AlgHom.id_apply,
-        LinearMap.lTensor_tmul]
-  | add z₁ z₂ ih₁ ih₂ => rw [map_add, map_add, ih₁, ih₂, map_add, map_add]
-
-/-! ### Tree-level counit law (height induction)
-
-`(counit ⊗ id)(Δ T) = 1 ⊗ T` for every nonplanar tree `T`. Strong induction
-on `T.height`: present `T` as `UnorderedTree.node a F` via a planar rep, then the
-cocycle `comulTreeN_node_cocycle`, the commutation
-`counit_rTensor_lTensor_bPlus_apply`, and the forest law on the strictly
-shallower children close the goal. -/
-
-private theorem comulForestN_counit_rTensor (F : Forest (UnorderedTree α))
-    (hF : ∀ T ∈ F, (Algebra.TensorProduct.map (counit (R := R))
-        (AlgHom.id R (ConnesKreimer R (UnorderedTree α)))) (comulTreeN T) =
-      (1 : R) ⊗ₜ ofTree T) :
-    (Algebra.TensorProduct.map (counit (R := R))
-        (AlgHom.id R (ConnesKreimer R (UnorderedTree α))))
-      (comulForestN F) = (1 : R) ⊗ₜ of' F := by
-  induction F using Multiset.induction with
-  | empty =>
-    rw [comulForestN_zero, map_one, of'_zero, Algebra.TensorProduct.one_def]
-  | cons T F' ih =>
-    have ih' := ih (fun T' hT' => hF T' (Multiset.mem_cons_of_mem hT'))
-    have hT := hF T (Multiset.mem_cons_self T F')
-    rw [comulForestN_cons, map_mul, hT, ih',
-        Algebra.TensorProduct.tmul_mul_tmul, mul_one,
-        ← of'_cons]
-
-private theorem comulForestN_counit_lTensor (F : Forest (UnorderedTree α))
-    (hF : ∀ T ∈ F, (Algebra.TensorProduct.map (AlgHom.id R (ConnesKreimer R (UnorderedTree α)))
-        (counit (R := R))) (comulTreeN T) =
-      ofTree T ⊗ₜ (1 : R)) :
-    (Algebra.TensorProduct.map (AlgHom.id R (ConnesKreimer R (UnorderedTree α)))
-        (counit (R := R)))
-      (comulForestN F) = of' F ⊗ₜ (1 : R) := by
-  induction F using Multiset.induction with
-  | empty =>
-    rw [comulForestN_zero, map_one, of'_zero, Algebra.TensorProduct.one_def]
-  | cons T F' ih =>
-    have ih' := ih (fun T' hT' => hF T' (Multiset.mem_cons_of_mem hT'))
-    have hT := hF T (Multiset.mem_cons_self T F')
-    rw [comulForestN_cons, map_mul, hT, ih',
-        Algebra.TensorProduct.tmul_mul_tmul, one_mul,
-        ← of'_cons]
-
-private theorem comulTreeN_counit_rTensor (T : UnorderedTree α) :
-    (Algebra.TensorProduct.map (counit (R := R))
-        (AlgHom.id R (ConnesKreimer R (UnorderedTree α))))
-      (comulTreeN T) = (1 : R) ⊗ₜ ofTree T := by
-  -- Strong induction on T.height.
-  suffices aux : ∀ n : ℕ, ∀ T : UnorderedTree α, T.height = n →
-      (Algebra.TensorProduct.map (counit (R := R))
-          (AlgHom.id R (ConnesKreimer R (UnorderedTree α))))
-        (comulTreeN T) = (1 : R) ⊗ₜ ofTree T by
-    exact aux T.height T rfl
-  intro n
-  induction n using Nat.strong_induction_on with
-  | _ n IH =>
-    intro T hT
-    -- Pick a tree-level rep T = mk (.node a children).
-    obtain ⟨T₀, rfl⟩ : ∃ T₀ : RoseTree α, T = UnorderedTree.mk T₀ :=
-      ⟨Quotient.out T, (Quotient.out_eq T).symm⟩
-    obtain ⟨a, children⟩ := T₀
-    rw [show (UnorderedTree.mk (RoseTree.node a children) : UnorderedTree α) =
-        UnorderedTree.node a (Multiset.ofList (children.map UnorderedTree.mk))
-        from (UnorderedTree.node_mk_tree_list a children).symm]
-    -- Use cocycle.
-    rw [comulTreeN_node_cocycle, map_add]
-    -- First summand vanishes via counit_ofTree.
-    rw [show (Algebra.TensorProduct.map (counit (R := R))
-            (AlgHom.id R (ConnesKreimer R (UnorderedTree α))))
-          (ofTree (UnorderedTree.node a (Multiset.ofList (children.map UnorderedTree.mk))) ⊗ₜ
-            (1 : ConnesKreimer R (UnorderedTree α))) = 0 from by
-      rw [Algebra.TensorProduct.map_tmul, AlgHom.id_apply, counit_ofTree,
-          TensorProduct.zero_tmul], zero_add]
-    -- Second summand: commutation + forest law.
-    rw [counit_rTensor_lTensor_bPlus_apply,
-        comulForestN_counit_rTensor (R := R)
-          (Multiset.ofList (children.map UnorderedTree.mk))
-          (fun T' hT' => by
-            apply IH T'.height ?_ T' rfl
-            have hlt := UnorderedTree.height_lt_of_mem T' _ hT' a
-            rw [show (UnorderedTree.node a (Multiset.ofList (children.map UnorderedTree.mk)) :
-                  UnorderedTree α) =
-                UnorderedTree.mk (RoseTree.node a children) from
-                UnorderedTree.node_mk_tree_list a children] at hlt
-            rw [hT] at hlt
-            exact hlt),
-        LinearMap.lTensor_tmul, bPlusLin_of']
+`(ε ⊗ id) ∘ Δ^ρ = lid⁻¹` and `(id ⊗ ε) ∘ Δ^ρ = rid⁻¹`, checked on trees through the cocycle
+`comulTreeN_node_cocycle`. The left law needs induction on the tree. -/
 
 /-- The counit kills the image of `B+_a`, which is spanned by single trees. -/
 private theorem counit_bPlusLin (a : α) (y : ConnesKreimer R (UnorderedTree α)) :
@@ -318,70 +205,30 @@ private theorem counit_bPlusLin (a : α) (y : ConnesKreimer R (UnorderedTree α)
     ConnesKreimer.lhom_ext' fun F ↦ by simp
   exact congr($h y)
 
-private theorem comulTreeN_counit_lTensor (T : UnorderedTree α) :
-    (Algebra.TensorProduct.map (AlgHom.id R (ConnesKreimer R (UnorderedTree α)))
-        (counit (R := R)))
-      (comulTreeN T) = ofTree T ⊗ₜ (1 : R) := by
-  obtain ⟨T₀, rfl⟩ : ∃ T₀ : RoseTree α, T = UnorderedTree.mk T₀ :=
-    ⟨Quotient.out T, (Quotient.out_eq T).symm⟩
-  obtain ⟨a, children⟩ := T₀
-  rw [show (UnorderedTree.mk (RoseTree.node a children) : UnorderedTree α) =
-      UnorderedTree.node a (Multiset.ofList (children.map UnorderedTree.mk))
-      from (UnorderedTree.node_mk_tree_list a children).symm]
-  -- Use cocycle: comulTreeN T = ofTree T ⊗ 1 + (id ⊗ bPlusLin a)(comulForestN F).
-  rw [comulTreeN_node_cocycle, map_add]
-  -- First summand: (id ⊗ counit)(ofTree T ⊗ 1) = ofTree T ⊗ counit(1) = ofTree T ⊗ 1.
-  rw [show (Algebra.TensorProduct.map
-            (AlgHom.id R (ConnesKreimer R (UnorderedTree α)))
-            (counit (R := R)))
-        (ofTree (UnorderedTree.node a (Multiset.ofList (children.map UnorderedTree.mk))) ⊗ₜ
-          (1 : ConnesKreimer R (UnorderedTree α))) =
-      ofTree (UnorderedTree.node a (Multiset.ofList (children.map UnorderedTree.mk))) ⊗ₜ
-        (1 : R) from by
-    rw [Algebra.TensorProduct.map_tmul, AlgHom.id_apply, map_one]]
-  -- Second summand: (id ⊗ counit) ∘ (lTensor (bPlusLin a)) z is zero,
-  -- because counit ∘ bPlusLin a = 0 (any tree from B+_a has counit 0).
-  rw [show (Algebra.TensorProduct.map
-            (AlgHom.id R (ConnesKreimer R (UnorderedTree α)))
-            (counit (R := R)))
-        ((LinearMap.lTensor _ (bPlusLin (R := R) a))
-          (comulForestN (Multiset.ofList (children.map UnorderedTree.mk)))) = 0 from by
-    generalize comulForestN (R := R)
-      (Multiset.ofList (children.map UnorderedTree.mk)) = z
-    induction z using TensorProduct.inductionOn with
-    | tmul x y =>
-      rw [LinearMap.lTensor_tmul, Algebra.TensorProduct.map_tmul,
-          AlgHom.id_apply, counit_bPlusLin, TensorProduct.tmul_zero]
-    | add z₁ z₂ ih₁ ih₂ => rw [map_add, map_add, ih₁, ih₂, add_zero]]
-  rw [add_zero]
-
-/-! ### Counit laws (algebra-hom level)
-
-Reduce to `of' F` via `ConnesKreimer.algHom_ext`; the forest laws
-`comulForestN_counit_rTensor` and `comulForestN_counit_lTensor` close from
-the tree-level laws. -/
-
 theorem counit_rTensor_comulAlgHomN :
     (Algebra.TensorProduct.map (counit (R := R)) (AlgHom.id R _)).comp comulAlgHomN =
       (Algebra.TensorProduct.lid R (ConnesKreimer R (UnorderedTree α))).symm.toAlgHom := by
-  apply ConnesKreimer.algHom_ext
-  intro F
-  show (Algebra.TensorProduct.map (counit (R := R))
-          (AlgHom.id R (ConnesKreimer R (UnorderedTree α)))) (comulAlgHomN (of' F)) =
-       (Algebra.TensorProduct.lid R (ConnesKreimer R (UnorderedTree α))).symm (of' F)
-  rw [comulAlgHomN_apply_of', Algebra.TensorProduct.lid_symm_apply]
-  exact comulForestN_counit_rTensor F (fun T _ => comulTreeN_counit_rTensor T)
+  refine algHom_ext_ofTree fun T ↦ ?_
+  induction T with
+  | node a F ih =>
+    have hF := algHom_of'_eq_of_ofTree ih
+    have h (z : ConnesKreimer R (UnorderedTree α) ⊗[R] ConnesKreimer R (UnorderedTree α)) :
+        Algebra.TensorProduct.map counit (AlgHom.id R _)
+          (LinearMap.lTensor _ (bPlusLin (R := R) a) z) =
+        LinearMap.lTensor R (bPlusLin a) (Algebra.TensorProduct.map counit (AlgHom.id R _) z) := by
+      induction z using TensorProduct.inductionOn <;> simp_all
+    simp [comulTreeN_node_cocycle, h, by simpa using hF]
 
 theorem counit_lTensor_comulAlgHomN :
     (Algebra.TensorProduct.map (AlgHom.id R _) (counit (R := R))).comp comulAlgHomN =
       (Algebra.TensorProduct.rid R R (ConnesKreimer R (UnorderedTree α))).symm.toAlgHom := by
-  apply ConnesKreimer.algHom_ext
-  intro F
-  show (Algebra.TensorProduct.map (AlgHom.id R (ConnesKreimer R (UnorderedTree α)))
-          (counit (R := R))) (comulAlgHomN (of' F)) =
-       (Algebra.TensorProduct.rid R R (ConnesKreimer R (UnorderedTree α))).symm (of' F)
-  rw [comulAlgHomN_apply_of', Algebra.TensorProduct.rid_symm_apply]
-  exact comulForestN_counit_lTensor F (fun T _ => comulTreeN_counit_lTensor T)
+  refine algHom_ext_ofTree fun T ↦ ?_
+  obtain ⟨a, F, rfl⟩ : ∃ a F, T = UnorderedTree.node a F := ⟨_, _, (node_eta T).symm⟩
+  have h (z : ConnesKreimer R (UnorderedTree α) ⊗[R] ConnesKreimer R (UnorderedTree α)) :
+      Algebra.TensorProduct.map (AlgHom.id R _) counit
+        (LinearMap.lTensor _ (bPlusLin (R := R) a) z) = 0 := by
+    induction z using TensorProduct.inductionOn <;> simp_all [counit_bPlusLin]
+  simp [comulTreeN_node_cocycle, h]
 
 section CoassocFoissy
 -- The nested tensor squares `CK ⊗ (CK ⊗ CK)` of the coassociativity statement

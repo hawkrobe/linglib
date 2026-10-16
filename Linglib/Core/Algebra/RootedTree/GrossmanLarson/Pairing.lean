@@ -8,7 +8,6 @@ module
 public import Linglib.Core.Algebra.RootedTree.GrossmanLarson.Basic
 public import Mathlib.RingTheory.TensorProduct.Basic
 public import Linglib.Core.Combinatorics.RootedTree.Aut
-public import Mathlib.Tactic.Ring
 
 /-!
 # The symmetry-weighted pairing on forests
@@ -146,112 +145,14 @@ theorem pairing_of'_mul_of' (W C₁ C₂ : Forest (UnorderedTree α)) :
       ((Multiset.antidiagonal W).map (fun p =>
         pairing (R := R) (ConnesKreimer.of' p.1) (ConnesKreimer.of' C₁) *
         pairing (R := R) (ConnesKreimer.of' p.2) (ConnesKreimer.of' C₂))).sum := by
-  -- Step 1: collapse `of' C₁ * of' C₂` to `of' (C₁ + C₂)`, then evaluate
-  -- the pairing on the diagonal.
-  rw [← ConnesKreimer.of'_add, pairing_of'_of']
-  -- Step 2: simplify each term on the RHS via `pairing_of'_of'`.
-  have h_rhs_simp :
-      ((Multiset.antidiagonal W).map (fun p =>
-          pairing (R := R) (ConnesKreimer.of' p.1) (ConnesKreimer.of' C₁) *
-          pairing (R := R) (ConnesKreimer.of' p.2) (ConnesKreimer.of' C₂))).sum =
-      ((Multiset.antidiagonal W).map (fun p =>
-          (if p.1 = C₁ then (forestAutCard p.1 : R) else 0) *
-          (if p.2 = C₂ then (forestAutCard p.2 : R) else 0))).sum := by
-    congr 1
-    refine Multiset.map_congr rfl ?_
-    intro p _
-    rw [pairing_of'_of', pairing_of'_of']
-  rw [h_rhs_simp]
-  -- Step 3: split on whether `W = C₁ + C₂` using `split_ifs` to handle the
-  by_cases hW : W = C₁ + C₂
-  · -- W = C₁ + C₂. LHS = forestAutCard W.
-    rw [ite_eq_left hW]
-    -- Use `filter_eq'` to extract the (C₁, C₂) summand.
-    -- Each term: nonzero only when p = (C₁, C₂).
-    -- Rewrite via filter (· = (C₁,C₂)) + filter (· ≠ ...).
-    have h_partition :
-        ((Multiset.antidiagonal W).map (fun p =>
-            (if p.1 = C₁ then (forestAutCard p.1 : R) else 0) *
-            (if p.2 = C₂ then (forestAutCard p.2 : R) else 0))).sum =
-        ((((Multiset.antidiagonal W).filter (· = (C₁, C₂))).map (fun p =>
-            (if p.1 = C₁ then (forestAutCard p.1 : R) else 0) *
-            (if p.2 = C₂ then (forestAutCard p.2 : R) else 0))).sum) +
-        ((((Multiset.antidiagonal W).filter (· ≠ (C₁, C₂))).map (fun p =>
-            (if p.1 = C₁ then (forestAutCard p.1 : R) else 0) *
-            (if p.2 = C₂ then (forestAutCard p.2 : R) else 0))).sum) := by
-      rw [← Multiset.sum_add, ← Multiset.map_add]
-      congr 1
-      rw [Multiset.filter_add_not]
-    rw [h_partition]
-    -- Vanishing piece: every p ≠ (C₁, C₂) in antidiagonal W gives a 0 term.
-    have h_vanish :
-        ((((Multiset.antidiagonal W).filter (· ≠ (C₁, C₂))).map (fun p =>
-            (if p.1 = C₁ then (forestAutCard p.1 : R) else 0) *
-            (if p.2 = C₂ then (forestAutCard p.2 : R) else 0))).sum) = 0 := by
-      rw [show ((((Multiset.antidiagonal W).filter (· ≠ (C₁, C₂))).map (fun p =>
-              (if p.1 = C₁ then (forestAutCard p.1 : R) else 0) *
-              (if p.2 = C₂ then (forestAutCard p.2 : R) else 0))).sum)
-            = ((((Multiset.antidiagonal W).filter (· ≠ (C₁, C₂))).map (fun _ =>
-              (0 : R))).sum) from ?_]
-      · simp
-      refine congr_arg _ (Multiset.map_congr rfl ?_)
-      intro p hp
-      rw [Multiset.mem_filter] at hp
-      obtain ⟨hp_mem, hp_ne⟩ := hp
-      have hp_sum : p.1 + p.2 = W := Multiset.mem_antidiagonal.mp hp_mem
-      -- If p.1 = C₁ then p.1 + p.2 = W = C₁ + C₂, so p.2 = C₂, contradicting `p ≠ (C₁, C₂)`.
-      by_cases h1 : p.1 = C₁
-      · have h2 : p.2 = C₂ := by
-          have heq : p.1 + p.2 = C₁ + C₂ := hp_sum.trans hW
-          rw [h1] at heq
-          exact add_left_cancel heq
-        exact absurd (Prod.ext h1 h2) hp_ne
-      · rw [ite_eq_right h1, zero_mul]
-    rw [h_vanish, add_zero]
-    -- Surviving piece: `filter (· = (C₁,C₂)) (antidiagonal W) = replicate (count ...) (C₁,C₂)`.
-    subst hW
-    rw [Multiset.filter_eq']
-    rw [Multiset.map_replicate, Multiset.sum_replicate]
-    -- Goal: forestAutCard (C₁+C₂) = count • ((if True then ... else 0) * (if True then ... else 0))
-    simp only [↓reduceIte]
-    rw [nsmul_eq_mul]
-    -- Goal: ↑(forestAutCard (C₁+C₂)) = ↑(count ...) * (↑(forestAutCard C₁) * ↑(forestAutCard C₂))
-    -- Use S1 cast to R.
-    have hS1 := UnorderedTree.forestAutCard_add C₁ C₂
-    have hcast := congr_arg (Nat.cast (R := R)) hS1
-    push_cast at hcast
-    -- hcast : ↑forestAutCard (C₁+C₂) = ↑count * (↑forestAutCard C₁ * ↑forestAutCard C₂)
-    -- `forestAutCard` here is the GL re-export of `UnorderedTree.forestAutCard`.
-    show (UnorderedTree.forestAutCard (C₁ + C₂) : R) =
-        ((Multiset.count (C₁, C₂) (Multiset.antidiagonal (C₁ + C₂)) : ℕ) : R) *
-          ((UnorderedTree.forestAutCard C₁ : R) * (UnorderedTree.forestAutCard C₂ : R))
-    -- Decidable instances on Forest = Multiset (UnorderedTree α) are unique up to
-    -- propositional equality; `convert` closes the residual.
-    convert hcast using 4
-  · -- W ≠ C₁ + C₂. LHS = 0. The if now uses the ambient instance.
-    simp only [ite_eq_right hW]
-    -- Every p ∈ antidiagonal W has p.1 + p.2 = W ≠ C₁ + C₂. So at every p, the term is 0.
-    symm
-    -- Rewrite the map via map_congr so each term becomes 0; then sum of all-zeros = 0.
-    have h_each_zero :
-        ((Multiset.antidiagonal W).map (fun p =>
-            (if p.1 = C₁ then (forestAutCard p.1 : R) else 0) *
-            (if p.2 = C₂ then (forestAutCard p.2 : R) else 0))).sum =
-          ((Multiset.antidiagonal W).map (fun _ => (0 : R))).sum := by
-      congr 1
-      refine Multiset.map_congr rfl ?_
-      intro p hp_mem
-      have hp_sum : p.1 + p.2 = W := Multiset.mem_antidiagonal.mp hp_mem
-      by_cases h1 : p.1 = C₁
-      · by_cases h2 : p.2 = C₂
-        · exfalso
-          apply hW
-          rw [← hp_sum, h1, h2]
-        · rw [ite_eq_left h1, ite_eq_right h2, mul_zero]
-      · rw [ite_eq_right h1, zero_mul]
-    rw [h_each_zero]
-    -- Sum of all-zeros = 0.
-    simp [Multiset.map_const']
+  rw [Multiset.sum_map_eq_nsmul_single (C₁, C₂) fun p hp _ ↦ ?_, ← ConnesKreimer.of'_add]
+  · simp only [pairing_of'_of', ite_true, nsmul_eq_mul]
+    split_ifs with hW
+    · rw [hW, ← Nat.cast_mul, ← Nat.cast_mul, forestAutCard_add]
+    · rw [Multiset.count_eq_zero.mpr (mt (Multiset.mem_antidiagonal (x := (C₁, C₂))).mp
+        (Ne.symm hW)), Nat.cast_zero, zero_mul]
+  · rw [pairing_of'_of', pairing_of'_of']
+    split_ifs with h₁ h₂ <;> simp_all [Prod.ext_iff]
 
 /-- Pairing a basis forest against a product splits the forest over its antidiagonal. -/
 theorem pairing_of'_mul (W : Forest (UnorderedTree α))

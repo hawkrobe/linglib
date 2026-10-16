@@ -88,47 +88,15 @@ private lemma pairing₂_of'_of'_mul (A B : Forest (UnorderedTree α))
         pairing₂ (R := R)
             (ConnesKreimer.of' pq.2.2 ⊗ₜ[R] ConnesKreimer.of' pq.1.2) V)).sum := by
   induction U using TensorProduct.inductionOn with
-  | add U₁ U₂ ih₁ ih₂ =>
-    rw [add_mul, map_add, ih₁, ih₂, ← Multiset.sum_map_add]
-    refine congrArg Multiset.sum (Multiset.map_congr rfl fun pq _ => ?_)
-    rw [map_add, add_mul]
+  | add U₁ U₂ ih₁ ih₂ => simp only [add_mul, map_add, ih₁, ih₂, Multiset.sum_map_add]
   | tmul u₁ u₂ =>
     induction V using TensorProduct.inductionOn with
-    | add V₁ V₂ ih₁ ih₂ =>
-      rw [mul_add, map_add, ih₁, ih₂, ← Multiset.sum_map_add]
-      refine congrArg Multiset.sum (Multiset.map_congr rfl fun pq _ => ?_)
-      rw [map_add, mul_add]
+    | add V₁ V₂ ih₁ ih₂ => simp only [mul_add, map_add, ih₁, ih₂, Multiset.sum_map_add]
     | tmul v₁ v₂ =>
-      rw [Algebra.TensorProduct.tmul_mul_tmul, pairing₂_tmul_tmul,
-          pairing_of'_mul B u₁ v₁,
-          pairing_of'_mul A u₂ v₂]
-      rw [show ((Multiset.antidiagonal A ×ˢ Multiset.antidiagonal B).map (fun pq =>
-            pairing₂ (R := R)
-                (ConnesKreimer.of' pq.2.1 ⊗ₜ[R] ConnesKreimer.of' pq.1.1)
-                (u₁ ⊗ₜ[R] u₂) *
-            pairing₂ (R := R)
-                (ConnesKreimer.of' pq.2.2 ⊗ₜ[R] ConnesKreimer.of' pq.1.2)
-                (v₁ ⊗ₜ[R] v₂))) =
-          ((Multiset.antidiagonal A ×ˢ Multiset.antidiagonal B).map (fun pq =>
-            (pairing (R := R)
-                (ConnesKreimer.of' pq.1.1) u₂ *
-             pairing (R := R)
-                (ConnesKreimer.of' pq.1.2) v₂) *
-            (pairing (R := R)
-                (ConnesKreimer.of' pq.2.1) u₁ *
-             pairing (R := R)
-                (ConnesKreimer.of' pq.2.2) v₁))) from
-        Multiset.map_congr rfl fun pq _ => by
-          rw [pairing₂_tmul_tmul, pairing₂_tmul_tmul]; ring]
-      rw [Multiset.sum_map_product_mul (Multiset.antidiagonal A)
-          (Multiset.antidiagonal B)
-          (fun pa => pairing (R := R)
-              (ConnesKreimer.of' pa.1) u₂ *
-            pairing (R := R) (ConnesKreimer.of' pa.2) v₂)
-          (fun pb => pairing (R := R)
-              (ConnesKreimer.of' pb.1) u₁ *
-            pairing (R := R) (ConnesKreimer.of' pb.2) v₁)]
-      ring
+      rw [Algebra.TensorProduct.tmul_mul_tmul, pairing₂_tmul_tmul, pairing_of'_mul B u₁ v₁,
+        pairing_of'_mul A u₂ v₂, mul_comm, ← Multiset.sum_map_product_mul]
+      exact congrArg Multiset.sum <| Multiset.map_congr rfl fun _ _ ↦ by
+        simp only [pairing₂_tmul_tmul]; ring
 
 /-! ### The duality theorem -/
 
@@ -155,119 +123,38 @@ theorem pairing_gl_eq_pairing_coproduct_Rho (x y z : ConnesKreimer R (UnorderedT
   | _ n IH =>
     intro C hC x y
     rcases Multiset.empty_or_exists_mem C with hC0 | ⟨T, hT⟩
-    · -- Base: C = 0, both sides are counits.
+    · -- No trees: both sides are counits.
       subst hC0
-      rw [ConnesKreimer.of'_zero,
-          show comulAlgHomN (R := R) (1 : ConnesKreimer R (UnorderedTree α)) = 1 from
-            map_one _,
-          show (1 : ConnesKreimer R (UnorderedTree α) ⊗[R]
-              ConnesKreimer R (UnorderedTree α)) =
-            (1 : ConnesKreimer R (UnorderedTree α)) ⊗ₜ[R]
-              (1 : ConnesKreimer R (UnorderedTree α)) from
-            Algebra.TensorProduct.one_def,
-          pairing₂_tmul_tmul, pairing_one_right, pairing_one_right,
-          pairing_one_right]
-      rw [counit_product]
-      exact mul_comm _ _
+      simp [Algebra.TensorProduct.one_def, pairing_one_right, counit_product, mul_comm]
     · obtain ⟨C', rfl⟩ := Multiset.exists_cons_of_mem hT
       rcases Multiset.empty_or_exists_mem C' with hC'0 | ⟨T₂, hT₂⟩
-      · -- Single tree: C = {T}, T = B⁺_a W; the B⁻ recurrences match.
+      · -- One tree `B⁺_a W`: the `B⁻` recurrence on the left, the cocycle on the right.
         subst hC'0
-        -- Weight bookkeeping: (children T) is one lighter than T.
-        have hwT : ((T ::ₘ (0 : Forest (UnorderedTree α))).map
-            UnorderedTree.numNodes).sum = T.numNodes := by
-          rw [Multiset.map_cons, Multiset.map_zero, Multiset.sum_cons,
-              Multiset.sum_zero]
-          omega
-        have hTn : T.numNodes = n := by rw [← hwT, hC]
-        have hwW : T.numNodes =
-            ((UnorderedTree.children T).map UnorderedTree.numNodes).sum + 1 := by
-          conv_lhs => rw [← UnorderedTree.node_eta T]
-          rw [UnorderedTree.numNodes_node]
-        have hWlt : ((UnorderedTree.children T).map UnorderedTree.numNodes).sum < n := by
-          omega
-        -- Convert `of' {T}` to `B⁺_a (of' W)`.
-        have hofT : (ConnesKreimer.of' (R := R) (T ::ₘ (0 : Forest (UnorderedTree α))) :
-            ConnesKreimer R (UnorderedTree α)) =
-            bPlusLin (R := R) (UnorderedTree.value T)
-              (ConnesKreimer.of' (UnorderedTree.children T)) := by
-          rw [bPlusLin_of', UnorderedTree.node_eta]
-          rfl
-        rw [hofT]
-        -- LHS: the B⁺/B⁻ recurrence.
-        rw [pairing_apply_bPlus_gl_mul]
-        -- RHS: the Hochschild cocycle + adjoint.
-        rw [show comulAlgHomN (R := R)
-              (bPlusLin (R := R) (UnorderedTree.value T)
-                (ConnesKreimer.of' (UnorderedTree.children T))) =
-            comulTreeN (R := R)
-              (UnorderedTree.node (UnorderedTree.value T)
-                (UnorderedTree.children T)) from by
-          rw [bPlusLin_of', comulAlgHomN_apply_ofTree]]
-        rw [comulTreeN_node_cocycle, map_add, pairing₂_tmul_tmul,
-            pairing₂_lTensor_bPlusLin]
-        -- Term 1: adjoint identity; Term 2: induction hypothesis.
-        rw [show comulForestN (R := R) (UnorderedTree.children T) =
-            comulAlgHomN (R := R)
-              (ConnesKreimer.of' (UnorderedTree.children T)) from
-          (comulAlgHomN_apply_of' _).symm]
-        rw [← IH _ hWlt (UnorderedTree.children T) rfl
-            (bMinusLin (R := R) (UnorderedTree.value T) x) y]
-        rw [show (ConnesKreimer.ofTree (R := R)
-              (UnorderedTree.node (UnorderedTree.value T)
-                (UnorderedTree.children T)) :
-              ConnesKreimer R (UnorderedTree α)) =
-            bPlusLin (R := R) (UnorderedTree.value T)
-              (ConnesKreimer.of' (UnorderedTree.children T)) from
-          (bPlusLin_of' _ _).symm]
-        rw [← bMinusLin_pairing_adjoint, pairing_one_right]
+        obtain ⟨a, W, rfl⟩ : ∃ a W, T = UnorderedTree.node a W := ⟨_, _, (node_eta T).symm⟩
+        have hW : (W.map UnorderedTree.numNodes).sum < n := by simp at hC; omega
+        rw [Multiset.cons_zero, of'_singleton, ← bPlusLin_of', pairing_apply_bPlus_gl_mul,
+          comulAlgHomN_bPlusLin_cocycle, map_add, pairing₂_tmul_tmul, pairing₂_lTensor_bPlusLin,
+          ← IH _ hW W rfl, ← bMinusLin_pairing_adjoint, pairing_one_right]
         ring
-      · -- Multi-tree: C = T ::ₘ C' with C' ≠ 0; split and use both
-        -- product rules + the induction hypothesis at both factors.
-        -- Weight bookkeeping.
-        have hsum : T.numNodes + (C'.map UnorderedTree.numNodes).sum = n := by
-          rw [← hC, Multiset.map_cons, Multiset.sum_cons]
-        have hT2pos : 0 < UnorderedTree.numNodes T₂ := UnorderedTree.numNodes_pos T₂
-        have hC'ge : UnorderedTree.numNodes T₂ ≤ (C'.map UnorderedTree.numNodes).sum :=
-          Multiset.single_le_sum (fun _ _ => Nat.zero_le _) _
-            (Multiset.mem_map_of_mem _ hT₂)
-        have hTpos : 0 < T.numNodes := UnorderedTree.numNodes_pos T
-        have hTlt : ((({T} : Forest (UnorderedTree α))).map UnorderedTree.numNodes).sum < n := by
-          rw [Multiset.map_singleton, Multiset.sum_singleton]
-          omega
+      · -- Several trees `T ::ₘ C'`, both lighter than `C`.
+        have hsum : T.numNodes + (C'.map UnorderedTree.numNodes).sum = n := by simpa using hC
+        have hT := UnorderedTree.numNodes_pos T
+        have hC' := (UnorderedTree.numNodes_pos T₂).trans_le
+          (Multiset.single_le_sum (fun _ _ ↦ Nat.zero_le _) _ (Multiset.mem_map_of_mem _ hT₂))
+        have hTlt : (({T} : Forest (UnorderedTree α)).map UnorderedTree.numNodes).sum < n := by
+          simp only [Multiset.map_singleton, Multiset.sum_singleton]; omega
         have hC'lt : (C'.map UnorderedTree.numNodes).sum < n := by omega
-        -- Reduce x, y to basis vectors (both sides are bilinear in (x, y)).
-        refine ConnesKreimer.induction_linear x ?_ ?_ ?_
-        · simp only [TensorProduct.tmul_zero, map_zero, LinearMap.zero_apply]
-        · intro a b iha ihb
-          simp only [TensorProduct.tmul_add, map_add, LinearMap.add_apply]
-          exact congrArg₂ (· + ·) iha ihb
-        · intro A rA
-          rw [← ConnesKreimer.smul_of']
-          simp only [TensorProduct.tmul_smul, map_smul, LinearMap.smul_apply]
-          refine congrArg (rA • ·) ?_
-          refine ConnesKreimer.induction_linear y ?_ ?_ ?_
-          · simp only [TensorProduct.zero_tmul, map_zero, LinearMap.zero_apply]
-          · intro a b iha ihb
-            simp only [TensorProduct.add_tmul, map_add, LinearMap.add_apply]
-            exact congrArg₂ (· + ·) iha ihb
-          · intro B rB
-            rw [← ConnesKreimer.smul_of']
-            simp only [← TensorProduct.smul_tmul', map_smul, LinearMap.smul_apply]
-            refine congrArg (rB • ·) ?_
-            -- Basis case: split off the head tree and use both product rules.
-            have hsplit : (ConnesKreimer.of' (R := R) (T ::ₘ C') :
-                ConnesKreimer R (UnorderedTree α)) =
-                ConnesKreimer.of' ({T} : Forest (UnorderedTree α)) *
-                  ConnesKreimer.of' C' := by
-              rw [← ConnesKreimer.of'_add, Multiset.singleton_add]
-            rw [hsplit, pairing_product_of'_mul_of',
-                map_mul, pairing₂_of'_of'_mul]
-            refine congrArg Multiset.sum (Multiset.map_congr rfl fun pq _ => ?_)
-            rw [IH _ hTlt ({T} : Forest (UnorderedTree α)) rfl
-                  (ConnesKreimer.of' pq.1.1) (ConnesKreimer.of' pq.2.1),
-                IH _ hC'lt C' rfl
-                  (ConnesKreimer.of' pq.1.2) (ConnesKreimer.of' pq.2.2)]
+        -- Both sides are bilinear in `(x, y)`: split off the head tree on basis forests.
+        have h : (product (R := R)).compr₂ (pairing.flip (of' (T ::ₘ C'))) =
+            (TensorProduct.mk R _ _).flip.compr₂
+              (pairing₂.flip (comulAlgHomN (R := R) (of' (T ::ₘ C')))) :=
+          lhom_ext' fun A ↦ lhom_ext' fun B ↦ by
+            simp only [LinearMap.compr₂_apply, LinearMap.flip_apply, TensorProduct.mk_apply]
+            rw [← Multiset.singleton_add, of'_add, pairing_product_of'_mul_of', map_mul,
+              pairing₂_of'_of'_mul]
+            exact congrArg Multiset.sum <| Multiset.map_congr rfl fun pq _ ↦ by
+              rw [IH _ hTlt {T} rfl, IH _ hC'lt C' rfl]
+        exact LinearMap.congr_fun₂ h x y
 
 /-! ### The pairing as a map to the convolution algebra -/
 
