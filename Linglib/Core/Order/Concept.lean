@@ -53,7 +53,7 @@ namespace Concept
 variable {S : Type*} (r : S → S → Prop)
 
 /-- The orthocomplement of a concept is the concept whose extent is its intent, well defined
-    because `r` is symmetric. -/
+because `r` is symmetric. -/
 instance instCompl [Std.Symm r] : Compl (Concept S S r) where
   compl c := .ofIsExtent r c.intent <| c.upperPolar_extent ▸ Order.isExtent_upperPolar r c.extent
 
@@ -63,14 +63,14 @@ instance instCompl [Std.Symm r] : Compl (Concept S S r) where
     cᶜ.intent = upperPolar r c.intent := rfl
 
 /-- A concept of a single-sorted relation is determined by its extent, so concepts
-    form a `SetLike` family with `↑c = c.extent`. (No `PartialOrder` diamond: `SetLike`
-    supplies only `Membership`/coercions, and `Concept`'s order is already `extent`-lifted.) -/
+form a `SetLike` family with `↑c = c.extent`. (No `PartialOrder` diamond: `SetLike`
+supplies only `Membership`/coercions, and `Concept`'s order is already `extent`-lifted.) -/
 instance instSetLike {r : S → S → Prop} : SetLike (Concept S S r) S where
   coe c := c.extent
   coe_injective _ _ h := extent_injective h
 
 /-- For an irreflexive relation the bottom concept has empty extent (no point is
-    orthogonal to everything, including itself). -/
+orthogonal to everything, including itself). -/
 theorem extent_bot_eq_empty [Std.Irrefl r] : (⊥ : Concept S S r).extent = ∅ := by
   rw [Concept.extent_bot]
   ext x
@@ -78,7 +78,7 @@ theorem extent_bot_eq_empty [Std.Irrefl r] : (⊥ : Concept S S r).extent = ∅ 
   exact fun hx ↦ Std.Irrefl.irrefl x (hx (Set.mem_univ x))
 
 /-- For a symmetric relation the orthocomplement is an involution of the concept lattice
-    ([holliday-mandelkern-2024] Proposition 4.8). -/
+([holliday-mandelkern-2024] Proposition 4.8). -/
 instance instInvolutiveCompl [Std.Symm r] : InvolutiveCompl (Concept S S r) where
   compl_compl c := Concept.ext <| by simp [Order.upperPolar_eq_lowerPolar]
   compl_le_compl {c d} h := by
@@ -86,8 +86,8 @@ instance instInvolutiveCompl [Std.Symm r] : InvolutiveCompl (Concept S S r) wher
     rw [← c.upperPolar_extent, ← d.upperPolar_extent]; exact upperPolar_anti r h
 
 /-- The concepts of a symmetric, irreflexive relation form an orthocomplemented
-    lattice ([holliday-mandelkern-2024] Proposition 4.8). The lattice structure
-    is mathlib's concept lattice; only the orthocomplement and its axioms are new. -/
+lattice ([holliday-mandelkern-2024] Proposition 4.8). The lattice structure
+is mathlib's concept lattice; only the orthocomplement and its axioms are new. -/
 instance instIsOrtholattice [Std.Symm r] [Std.Irrefl r] :
     IsOrtholattice (Concept S S r) where
   inf_compl_le_bot _ := fun x hx ↦ absurd (rel_extent_intent hx.1 hx.2) (Std.Irrefl.irrefl x)
