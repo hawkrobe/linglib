@@ -13,8 +13,8 @@ import all Init.Data.String.Defs  -- for unfolding `String.intercalate`
 /-!
 # Muñoz Pérez (2026): Stylistic Applicatives
 
-This file formalizes the analysis of the stylistic applicative of Chilean Spanish in
-[munoz-perez-2026]. A marked anticausative with an affected dative surfaces in General Spanish
+This file formalizes Muñoz Pérez's analysis of the stylistic applicative of Chilean Spanish. A
+marked anticausative with an affected dative surfaces in General Spanish
 with the cluster *se me*. Chilean Spanish also has *me le* and *se me le*, with an invariable
 *le* that refers to nothing, and the three are synonymous. The alternation is confined to first
 and second person singular datives and to predicates that take the anticausative marker.
@@ -56,9 +56,9 @@ head, they do not differ in meaning.
 ## Implementation notes
 
 The verbal heads of a marked anticausative are a change and a result state and those of an
-unmarked one a change alone, after the structures the paper adopts from [cuervo-2003]; the
-applicative head merges as low as the structure allows, taking the result state as its complement
-where there is one, [cuervo-2003]'s affected applicative, and the theme otherwise (`Clause.site`);
+unmarked one a change alone, after the structures the paper adopts from Cuervo; the applicative
+head merges as low as the structure allows, taking the result state as its complement where there
+is one, Cuervo's affected applicative, and the theme otherwise (`Clause.site`);
 the context of the fission rule, the change head over the applicative over the state head, is
 that the site is affected. The paper leaves the structure of unmarked anticausatives open; all
 that matters here is that they lack the result state and a Voice head that asks for a marker.
@@ -68,7 +68,7 @@ The clauses given to *quejarse* and to impersonal *dar* say only that they are n
 
 ## TODO
 
-The paper's comparison with the two-flavour Voice of [martin-schaefer-kastner-2025] is not
+The paper's comparison with the two-flavour Voice of Martin, Schäfer and Kastner is not
 formalized.
 
 ## References
@@ -96,9 +96,9 @@ structure Clause where
   /-- The bundle of the high applicative head, if the clause has an affected dative. -/
   appl : Option Category
 
-/-- The site of the applicative head: it takes the result state as its complement where there is
-one, the affected applicative of [cuervo-2003] the paper adopts for marked anticausatives, and
-the theme otherwise, as under an unmarked anticausative, which lacks the state. -/
+/-- The applicative head takes as its complement the result state where there is one, the
+affected applicative of [cuervo-2003] the paper adopts for marked anticausatives, and the theme
+otherwise, as under an unmarked anticausative, which lacks the state. -/
 def Clause.site (k : Clause) : ApplSite :=
   ⟨k.heads.takeWhile (· != .vBE), k.heads.dropWhile (· != .vBE)⟩
 
@@ -315,16 +315,16 @@ theorem causer_reading_rows : ∀ e ∈ Examples.all,
 same person, so no such constraint separates *me le* from *nos le*. -/
 theorem isLicit_me_iff_nos (g : PCC.Grammar) :
     (∃ io ∈ Spanish.Clitics.le.person, ∃ do_ ∈ Spanish.Clitics.me_acc.person,
-        PCC.IsLicit g io do_) ↔
+        PCC.IsLicit g ⟨io, do_⟩) ↔
       ∃ io ∈ Spanish.Clitics.le.person, ∃ do_ ∈ Spanish.Clitics.nos_acc.person,
-        PCC.IsLicit g io do_ :=
+        PCC.IsLicit g ⟨io, do_⟩ :=
   Iff.rfl
 
 /-- The weak constraint bans a third-person dative over a first-person accusative, as in the
 ditransitive examples, so it would ban stylistic *me le* as well. -/
 theorem weak_pcc_bans :
     ∃ io ∈ Spanish.Clitics.le.person, ∃ do_ ∈ Spanish.Clitics.me_acc.person,
-      ¬ PCC.IsLicit PCC.weakGrammar io do_ := by
+      ¬ PCC.IsLicit PCC.weakGrammar ⟨io, do_⟩ := by
   decide
 
 /-- The fission rule does separate the two. -/
@@ -338,8 +338,8 @@ On the reflexivization analysis of [koontz-garboden-2009] extended with a null r
 alternating verb has a reflexive in its anticausative, overt or silent, and an overt one is
 always possible. -/
 
-/-- The prediction of the null-reflexive extension for a verb: if it alternates, its
-intransitive can take the clitic. -/
+/-- The null-reflexive extension predicts that if a verb alternates, its intransitive can take
+the clitic. -/
 def seMarkedIfAlternating (v : SpanishVerbEntry) : Prop :=
   v.Alternates → v.anticausativeMarking ≠ some .unmarked
 

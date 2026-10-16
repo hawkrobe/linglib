@@ -43,8 +43,8 @@ root `π`, [PART] `participant`, [SPKR] `speaker` and [ADDR] `addressee`, so a s
 inclusive first person bear [ADDR]. The interaction condition is the set of features copied so
 far, a goal being visible when it bears them all, which is the set conception the paper's
 footnote 10 allows; the paper's single interaction feature is the most specific one copied.
-Table (1) has no reflexive cells, so the classification of grammars ranges over its six cells;
-the mechanism's verdicts on reflexive combinations are not stated.
+Table (1) has no reflexive cells, so the classification of grammars ranges over its six cells,
+`PCC.distinctPairs`; the mechanism's verdicts on reflexive combinations are not stated.
 
 ## References
 
@@ -59,6 +59,7 @@ the mechanism's verdicts on reflexive combinations are not stated.
 namespace Deal2024
 
 open Minimalist PersonSegment
+open Clause (Scenario)
 
 /-! ### Probes and their runs -/
 
@@ -123,10 +124,10 @@ theorem step_of_satisfied (g : Grammar) (st : ProbeState) (t : Person × ℕ)
 /-- A clitic combination ⟨IO, DO⟩ is licit when the probe, meeting the direct object first,
 interacts with both objects, section 3.1; the reverse PCC of section 6.2, where the probe meets
 the indirect object first, is licitness of the swapped pair. -/
-def Licit (g : Grammar) (io do_ : Person) : Prop := (runProbe g [do_, io]).agreed = [0, 1]
+def Licit (g : Grammar) (s : Scenario Person) : Prop :=
+  (runProbe g [s.low, s.high]).agreed = [0, 1]
 
-instance (g : Grammar) (io do_ : Person) : Decidable (Licit g io do_) :=
-  inferInstanceAs (Decidable (_ = _))
+instance (g : Grammar) : DecidablePred (Licit g) := fun _ ↦ inferInstanceAs (Decidable (_ = _))
 
 /-! ### The grammars -/
 
@@ -153,13 +154,6 @@ def aDescending : Grammar := ⟨some .addressee, {.participant}⟩
 
 /-! ### The typology -/
 
-open Clause (Scenario)
-
-/-- The six cells of table (1), the IO–DO combinations as scenarios. -/
-def cells : List (Scenario Person) :=
-  [⟨.first, .third⟩, ⟨.first, .second⟩, ⟨.second, .first⟩, ⟨.second, .third⟩,
-    ⟨.third, .first⟩, ⟨.third, .second⟩]
-
 /-- The rank of a person on the hierarchy 2 > 1 > 3 of the A-descending PCC. -/
 def addresseeRank : Person → ℕ
   | .second => 2
@@ -183,46 +177,44 @@ person; that if there is a first person, it must be the indirect object; that th
 must outrank the direct object on 1 > 2 > 3; that if there is a second person, it must be the
 indirect object; that the indirect object must outrank the direct object on 2 > 1 > 3; and
 nothing. -/
-def PCCType.Licit : PCCType → Person → Person → Prop
-  | .strong, _, do_ => ¬ do_.IsSAP
-  | .weak, io, do_ => ¬ io.IsSAP → ¬ do_.IsSAP
-  | .meFirst, _, do_ => ¬ do_.IncludesSpeaker
-  | .strictlyDescending, io, do_ => do_.prominence < io.prominence
-  | .youFirst, _, do_ => addressee ∉ spec do_
-  | .aDescending, io, do_ => addresseeRank do_ < addresseeRank io
-  | .none, _, _ => True
+def PCCType.Licit : PCCType → Scenario Person → Prop
+  | .strong, s => ¬ s.low.IsSAP
+  | .weak, s => ¬ s.high.IsSAP → ¬ s.low.IsSAP
+  | .meFirst, s => ¬ s.low.IncludesSpeaker
+  | .strictlyDescending, s => s.low.prominence < s.high.prominence
+  | .youFirst, s => addressee ∉ spec s.low
+  | .aDescending, s => addresseeRank s.low < addresseeRank s.high
+  | .none, _ => True
 
-instance : (t : PCCType) → (io do_ : Person) → Decidable (t.Licit io do_)
-  | .strong, _, _ => inferInstanceAs (Decidable (¬ _))
-  | .weak, _, _ => inferInstanceAs (Decidable (_ → _))
-  | .meFirst, _, _ => inferInstanceAs (Decidable (¬ _))
-  | .strictlyDescending, _, _ => inferInstanceAs (Decidable (_ < _))
-  | .youFirst, _, _ => inferInstanceAs (Decidable (¬ _))
-  | .aDescending, _, _ => inferInstanceAs (Decidable (_ < _))
-  | .none, _, _ => inferInstanceAs (Decidable True)
+instance : (t : PCCType) → DecidablePred t.Licit
+  | .strong, _ => inferInstanceAs (Decidable (¬ _))
+  | .weak, _ => inferInstanceAs (Decidable (_ → _))
+  | .meFirst, _ => inferInstanceAs (Decidable (¬ _))
+  | .strictlyDescending, _ => inferInstanceAs (Decidable (_ < _))
+  | .youFirst, _ => inferInstanceAs (Decidable (¬ _))
+  | .aDescending, _ => inferInstanceAs (Decidable (_ < _))
+  | .none, _ => inferInstanceAs (Decidable True)
 
 /-- The strictly descending PCC holds of an IO–DO combination exactly when the scenario is
 downstream on 1 > 2 > 3. -/
-theorem strictlyDescending_iff_downstream (io do_ : Person) :
-    PCCType.Licit .strictlyDescending io do_ ↔
-      ((Scenario.mk io do_).map Person.prominence).kind = .downstream :=
-  (Scenario.kind_eq_downstream_iff (s := (Scenario.mk io do_).map Person.prominence)).symm
+theorem strictlyDescending_iff_downstream (s : Scenario Person) :
+    PCCType.Licit .strictlyDescending s ↔ (s.map Person.prominence).kind = .downstream :=
+  (Scenario.kind_eq_downstream_iff (s := s.map Person.prominence)).symm
 
 /-- The A-descending PCC holds exactly when the scenario is downstream on 2 > 1 > 3. -/
-theorem aDescending_iff_downstream (io do_ : Person) :
-    PCCType.Licit .aDescending io do_ ↔
-      ((Scenario.mk io do_).map addresseeRank).kind = .downstream :=
-  (Scenario.kind_eq_downstream_iff (s := (Scenario.mk io do_).map addresseeRank)).symm
+theorem aDescending_iff_downstream (s : Scenario Person) :
+    PCCType.Licit .aDescending s ↔ (s.map addresseeRank).kind = .downstream :=
+  (Scenario.kind_eq_downstream_iff (s := s.map addresseeRank)).symm
 
 /-- A variety codes a combination as the clitic cluster where it is licit and as the longer
 repair where it is not. -/
 def PCCType.coding (t : PCCType) (s : Scenario Person) : ℕ :=
-  if t.Licit s.high s.low then 0 else 1
+  if t.Licit s then 0 else 1
 
 /-- Under a person ranking, a cell of table (1) is more usual than another when its kind is
 higher. -/
 def MoreUsualOn {β : Type*} [LinearOrder β] (rank : Person → β) (s t : Scenario Person) : Prop :=
-  s ∈ cells ∧ t ∈ cells ∧ (t.map rank).kind < (s.map rank).kind
+  s ∈ PCC.distinctPairs ∧ t ∈ PCC.distinctPairs ∧ (t.map rank).kind < (s.map rank).kind
 
 instance {β : Type*} [LinearOrder β] (rank : Person → β) (s t : Scenario Person) :
     Decidable (MoreUsualOn rank s t) :=
@@ -248,22 +240,21 @@ theorem universal5_addressee (t : PCCType) :
 /-- Every variety allows a participant IO with a third-person DO, the `⟨⊤, ⊥⟩` of the binary
 person scale, as the person-role universal 9b of [haspelmath-2021] requires. -/
 theorem participant_third_licit (t : PCCType) (io : Person) (h : io.IsSAP) :
-    t.Licit io .third := by
+    t.Licit ⟨io, .third⟩ := by
   revert h; cases t <;> cases io <;> decide
 
 /-- The strong PCC is Modern Greek's T coding in [haspelmath-2021]'s (45), the clitic being
 available exactly where the DO is aliophoric. -/
-theorem strong_iff_greekT (io do_ : Person) :
-    PCCType.Licit .strong io do_ ↔
-      Haspelmath2021.greekT ((Scenario.mk io do_).map Person.toClass) = 0 := by
-  revert io do_; decide
+theorem strong_iff_greekT (s : Scenario Person) :
+    PCCType.Licit .strong s ↔ Haspelmath2021.greekT (s.map Person.toClass) = 0 := by
+  revert s; decide
 
 def PCCType.all : List PCCType :=
   [.strong, .weak, .meFirst, .strictlyDescending, .youFirst, .aDescending, .none]
 
 /-- The variety a grammar derives is the one whose statement it matches on the six cells. -/
 def Grammar.pattern (g : Grammar) : Option PCCType :=
-  PCCType.all.find? fun t ↦ decide (∀ c ∈ cells, Licit g c.high c.low ↔ t.Licit c.high c.low)
+  PCCType.all.find? fun t ↦ decide (∀ s ∈ PCC.distinctPairs, Licit g s ↔ t.Licit s)
 
 /-- Table (57), the typology by satisfaction condition and dynamic interaction features, with
 table (53) as its rows and columns without [ADDR]; a probe satisfied by [φ] Agrees with the
@@ -295,17 +286,17 @@ theorem typology (g : Grammar) : g.pattern = table57 g := by
 /-- Satisfaction by [PART] absorbs dynamic interaction. A direct object bearing a dynamic
 feature bears [PART] and satisfies the probe first, so every column-one grammar of the table
 licenses exactly what the strong PCC does, for every pair of persons. -/
-theorem licit_of_sat_part (d : Finset PersonSegment) (io do_ : Person) :
-    Licit ⟨some .participant, d⟩ io do_ ↔ Licit strong io do_ := by
-  revert d io do_
+theorem licit_of_sat_part (d : Finset PersonSegment) (s : Scenario Person) :
+    Licit ⟨some .participant, d⟩ s ↔ Licit strong s := by
+  revert d s
   decide +kernel
 
 /-- Off the diagonal, for objects of distinct person, the strictly descending PCC requires the
 indirect object to outrank the direct object on 1 > 2 > 3. -/
-theorem sd_off_diagonal_iff_outranks (io do_ : Person)
-    (h : io.prominence ≠ do_.prominence) :
-    Licit strictlyDescending io do_ ↔ do_.prominence < io.prominence := by
-  revert io do_
+theorem sd_off_diagonal_iff_outranks (s : Scenario Person)
+    (h : s.high.prominence ≠ s.low.prominence) :
+    Licit strictlyDescending s ↔ s.low.prominence < s.high.prominence := by
+  revert s
   decide +kernel
 
 /-! ### The competitors (section 7) -/
@@ -313,27 +304,23 @@ theorem sd_off_diagonal_iff_outranks (io do_ : Person)
 /-- On the six cells of table (1) the four varieties coincide with the P-Constraint grammars of
 [pancheva-zubizarreta-2018], strictly descending with ultra-strong. -/
 theorem agrees_with_pConstraint :
-    ∀ c ∈ cells,
-      (Licit strong c.high c.low ↔ PCC.IsLicit PCC.strongGrammar c.high c.low) ∧
-        (Licit weak c.high c.low ↔ PCC.IsLicit PCC.weakGrammar c.high c.low) ∧
-        (Licit meFirst c.high c.low ↔ PCC.IsLicit PCC.meFirstGrammar c.high c.low) ∧
-        (Licit strictlyDescending c.high c.low ↔
-          PCC.IsLicit PCC.ultraStrongGrammar c.high c.low) := by
+    ∀ s ∈ PCC.distinctPairs,
+      (Licit strong s ↔ PCC.IsLicit PCC.strongGrammar s) ∧
+        (Licit weak s ↔ PCC.IsLicit PCC.weakGrammar s) ∧
+        (Licit meFirst s ↔ PCC.IsLicit PCC.meFirstGrammar s) ∧
+        (Licit strictlyDescending s ↔ PCC.IsLicit PCC.ultraStrongGrammar s) := by
   decide +kernel
 
 /-- On the six cells the four varieties coincide with the gluttony probes of
 [coon-keine-2021], so a probe that stops too early and one that agrees too much draw the same
 lines there. -/
 theorem agrees_with_gluttony :
-    ∀ c ∈ cells,
-      (Licit strong c.high c.low ↔
-          ¬ CoonKeine2021.PCCViolation CoonKeine2021.weakProbe true c.high c.low) ∧
-        (Licit weak c.high c.low ↔
-          ¬ CoonKeine2021.PCCViolation CoonKeine2021.weakProbe false c.high c.low) ∧
-        (Licit meFirst c.high c.low ↔
-          ¬ CoonKeine2021.PCCViolation CoonKeine2021.meFirstProbe false c.high c.low) ∧
-        (Licit strictlyDescending c.high c.low ↔
-          ¬ CoonKeine2021.PCCViolation CoonKeine2021.ultrastrongProbe false c.high c.low) := by
+    ∀ s ∈ PCC.distinctPairs,
+      (Licit strong s ↔ ¬ CoonKeine2021.PCCViolation CoonKeine2021.weakProbe true s) ∧
+        (Licit weak s ↔ ¬ CoonKeine2021.PCCViolation CoonKeine2021.weakProbe false s) ∧
+        (Licit meFirst s ↔ ¬ CoonKeine2021.PCCViolation CoonKeine2021.meFirstProbe false s) ∧
+        (Licit strictlyDescending s ↔
+          ¬ CoonKeine2021.PCCViolation CoonKeine2021.ultrastrongProbe false s) := by
   decide +kernel
 
 /-! ### The rows -/
@@ -362,7 +349,7 @@ Adyghe and of Slovenian with the direct object clitic first. -/
 theorem rows :
     ∀ e ∈ Examples.all, ∀ g ∈ grammarsOf e, ∀ io ∈ personOf e "io", ∀ do_ ∈ personOf e "do",
       (e.judgment = .acceptable ↔
-        if e.feature? "preference" = some "io" then Licit g do_ io else Licit g io do_) := by
+        if e.feature? "preference" = some "io" then Licit g ⟨do_, io⟩ else Licit g ⟨io, do_⟩) := by
   decide +kernel
 
 end Deal2024

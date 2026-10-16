@@ -38,9 +38,11 @@ constraint. A Person Case Constraint is a monotone map from the reduced dual per
 The person hierarchy is `Person.prominence`, Zwicky's order 1 > 2 > 3, which on the three persons
 is the inclusion order of Nevins's privative bundles, as the paper observes
 (`Person.prominence_le_iff_subset`). Table 2's paradigms index the persons ascending from the
-first, the dual order, equivalent for feasible monotonicity by the paper's footnote 1. A constraint
-is six truth values, one per off-diagonal combination of indirect and direct object, the diagonal
-excluded as the paper does; Table 4's constraints are those of Pancheva and Zubizarreta's
+first, the dual order, equivalent for feasible monotonicity by the paper's footnote 1. A
+combination of indirect and direct object is a scenario (`Clause.Scenario`), the diagonal
+excluded as the paper does, so the reduced dual hierarchy (27) is the order on scenarios read on
+the person hierarchy and the naive one (23) the product order. A constraint is a map from the six
+combinations to the truth values; Table 4's constraints are those of Pancheva and Zubizarreta's
 grammars.
 
 ## TODO
@@ -158,131 +160,86 @@ theorem aab_not_groundedly_realizable {v : RuleSet (SpanRule 3 ℕ)}
 
 /-! ### Section 4: the Person Case Constraint as a monotone map -/
 
-/-- A clitic combination pairs the persons of the indirect and the direct object, the diagonal
-excluded. -/
-inductive Combination where
-  | io1do2
-  | io1do3
-  | io2do1
-  | io2do3
-  | io3do1
-  | io3do2
-  deriving DecidableEq, Fintype
+open Clause (Scenario)
 
-/-- The indirect object's person. -/
-def Combination.io : Combination → Person
-  | .io1do2 | .io1do3 => .first
-  | .io2do1 | .io2do3 => .second
-  | .io3do1 | .io3do2 => .third
+/-- A clitic combination is a scenario of the indirect over the direct object on two distinct
+persons of the tripartition. -/
+def Combination : Type := {s : Scenario Person // s ∈ PCC.distinctPairs}
 
-/-- The direct object's person. -/
-def Combination.do : Combination → Person
-  | .io2do1 | .io3do1 => .first
-  | .io1do2 | .io3do2 => .second
-  | .io1do3 | .io2do3 => .third
+instance : Fintype Combination := inferInstanceAs (Fintype {s // s ∈ PCC.distinctPairs})
 
-/-- In the reduced dual person hierarchy (27) a combination is below another when its indirect
-object is at most as prominent and its direct object at least as prominent, the product of the
-person hierarchy with its dual, so that `1, 3` is the top and `3, 1` the bottom. -/
-def Combination.Below (p q : Combination) : Prop :=
-  p.io.prominence ≤ q.io.prominence ∧ q.do.prominence ≤ p.do.prominence
+instance : DecidableEq Combination := inferInstanceAs (DecidableEq {s // s ∈ PCC.distinctPairs})
 
-/-- The naive reduced hierarchy (23), which the paper rejects, is the product of the person
-hierarchy with itself. -/
-def Combination.BelowNaive (p q : Combination) : Prop :=
-  p.io.prominence ≤ q.io.prominence ∧ p.do.prominence ≤ q.do.prominence
+/-- The reduced dual person hierarchy (27) orders combinations as scenarios on the person
+hierarchy, the product of the hierarchy with its dual, so a combination is below another when its
+indirect object is at most as prominent and its direct object at least as prominent, `1, 3` being
+the top and `3, 1` the bottom. -/
+instance : PartialOrder Combination :=
+  PartialOrder.lift (fun p ↦ p.1.map Person.prominence) (by decide)
 
-instance (p q : Combination) : Decidable (p.Below q) := inferInstanceAs (Decidable (_ ∧ _))
-instance (p q : Combination) : Decidable (p.BelowNaive q) := inferInstanceAs (Decidable (_ ∧ _))
+instance : DecidableLE Combination := fun p q ↦
+  inferInstanceAs (Decidable (p.1.map Person.prominence ≤ q.1.map Person.prominence))
 
-/-- A Person Case Constraint says which of the six combinations are well-formed, Table 4's
-cells. -/
-structure PCC where
-  io1do2 : Bool
-  io1do3 : Bool
-  io2do1 : Bool
-  io2do3 : Bool
-  io3do1 : Bool
-  io3do2 : Bool
-  deriving DecidableEq, Repr
+/-- The combinations under the naive reduced hierarchy (23), which the paper rejects. -/
+def NaiveCombination : Type := Combination
 
-/-- A constraint is six truth values. -/
-def PCC.equivProd : PCC ≃ Bool × Bool × Bool × Bool × Bool × Bool where
-  toFun c := (c.io1do2, c.io1do3, c.io2do1, c.io2do3, c.io3do1, c.io3do2)
-  invFun c := ⟨c.1, c.2.1, c.2.2.1, c.2.2.2.1, c.2.2.2.2.1, c.2.2.2.2.2⟩
-  left_inv _ := rfl
-  right_inv _ := rfl
+instance : Fintype NaiveCombination := inferInstanceAs (Fintype Combination)
 
-instance : Fintype PCC := Fintype.ofEquiv _ PCC.equivProd.symm
+/-- The naive hierarchy is the product of the person hierarchy with itself. -/
+instance : PartialOrder NaiveCombination :=
+  PartialOrder.lift (fun p : Combination ↦ (p.1.high.prominence, p.1.low.prominence)) (by decide)
 
-/-- `c.allows p` is the constraint's verdict on a combination. -/
-def PCC.allows (c : PCC) : Combination → Bool
-  | .io1do2 => c.io1do2
-  | .io1do3 => c.io1do3
-  | .io2do1 => c.io2do1
-  | .io2do3 => c.io2do3
-  | .io3do1 => c.io3do1
-  | .io3do2 => c.io3do2
+instance : DecidableLE NaiveCombination := fun p q ↦
+  inferInstanceAs (Decidable ((p.1.high.prominence, p.1.low.prominence) ≤
+    ((q : Combination).1.high.prominence, (q : Combination).1.low.prominence)))
 
-/-- `PCC.ofPred f` is the constraint the verdict function `f` defines. -/
-def PCC.ofPred (f : Combination → Bool) : PCC :=
-  ⟨f .io1do2, f .io1do3, f .io2do1, f .io2do3, f .io3do1, f .io3do2⟩
+/-- A Person Case Constraint is a map from the combinations to the truth values, true on the
+well-formed ones, Table 4's cells. -/
+abbrev PCC := Combination → Bool
 
 /-- There are sixty-four conceivable constraints. -/
 theorem card_pcc : Fintype.card PCC = 64 := by decide
 
-/-- A constraint is monotone over a hierarchy when well-formedness never decreases upward, its
-map to the algebra of truth values being monotonic. -/
-def PCC.MonotoneOver (r : Combination → Combination → Prop) (c : PCC) : Prop :=
-  ∀ p q, r p q → c.allows p = true → c.allows q = true
-
-instance (r : Combination → Combination → Prop) [∀ p q, Decidable (r p q)] (c : PCC) :
-    Decidable (c.MonotoneOver r) :=
-  inferInstanceAs (Decidable (∀ _ _, _ → _ → _))
-
-/-- `c.reverse` reverses the verdicts, the other order of the truth values. -/
-def PCC.reverse (c : PCC) : PCC := .ofPred fun p ↦ !c.allows p
-
 /-- `PCC.ofGrammar g` is the constraint a grammar of the P-Constraint family predicts. -/
-def PCC.ofGrammar (g : PCC.Grammar) : PCC := .ofPred fun p ↦ decide (PCC.IsLicit g p.io p.do)
+def PCC.ofGrammar (g : _root_.PCC.Grammar) : PCC := fun p ↦ decide (_root_.PCC.IsLicit g p.1)
 
 /-- `sPCC` is the Strong constraint (19a). -/
-def sPCC : PCC := .ofGrammar PCC.strongGrammar
+def sPCC : PCC := .ofGrammar _root_.PCC.strongGrammar
 
 /-- `uPCC` is the Ultrastrong constraint (19b). -/
-def uPCC : PCC := .ofGrammar PCC.ultraStrongGrammar
+def uPCC : PCC := .ofGrammar _root_.PCC.ultraStrongGrammar
 
 /-- `wPCC` is the Weak constraint (19c). -/
-def wPCC : PCC := .ofGrammar PCC.weakGrammar
+def wPCC : PCC := .ofGrammar _root_.PCC.weakGrammar
 
 /-- `mPCC` is the Me-first constraint (19d). -/
-def mPCC : PCC := .ofGrammar PCC.meFirstGrammar
+def mPCC : PCC := .ofGrammar _root_.PCC.meFirstGrammar
 
 /-- Table 4 states, in the paper's words (19), that the direct object must be third person, that
 it is less prominent than the indirect object, that a third-person indirect object combines only
 with a third-person direct object, and that a second- or third-person indirect object excludes a
 first-person direct object. -/
 theorem table4 :
-    (∀ p, sPCC.allows p = true ↔ p.do = .third) ∧
-      (∀ p, uPCC.allows p = true ↔ p.do.prominence < p.io.prominence) ∧
-      (∀ p, wPCC.allows p = true ↔ (p.io = .third → p.do = .third)) ∧
-      ∀ p, mPCC.allows p = true ↔ (p.io ≠ .first → p.do ≠ .first) := by
+    (∀ p, sPCC p = true ↔ p.1.low = .third) ∧
+      (∀ p, uPCC p = true ↔ p.1.low.prominence < p.1.high.prominence) ∧
+      (∀ p, wPCC p = true ↔ (p.1.high = .third → p.1.low = .third)) ∧
+      ∀ p, mPCC p = true ↔ (p.1.high ≠ .first → p.1.low ≠ .first) := by
   decide
 
 /-- `fPCC` allows free combination, as in German. -/
-def fPCC : PCC := .ofPred fun _ ↦ true
+def fPCC : PCC := fun _ ↦ true
 
 /-- `iPCC` is indiscriminate, no clitics combining, as in Cairene Arabic. -/
-def iPCC : PCC := .ofPred fun _ ↦ false
+def iPCC : PCC := fun _ ↦ false
 
 /-- In Choctaw as reanalyzed in (31) only a first-person indirect object combines. -/
-def cPCC : PCC := .ofPred fun p ↦ p.io = .first
+def cPCC : PCC := fun p ↦ p.1.high = .first
 
 /-- In the first constraint of (32) only `1, 3` is licit. -/
-def only13 : PCC := .ofPred fun p ↦ p = .io1do3
+def only13 : PCC := fun p ↦ p.1 = ⟨.first, .third⟩
 
 /-- In the second constraint of (32) only `3, 1` is illicit. -/
-def allBut31 : PCC := .ofPred fun p ↦ p ≠ .io3do1
+def allBut31 : PCC := fun p ↦ p.1 ≠ ⟨.third, .first⟩
 
 /-- The constraints with an attested pattern are Table 4's, the free and indiscriminate ones of
 (28), and Choctaw's. -/
@@ -291,23 +248,22 @@ def attested : List PCC := [sPCC, uPCC, wPCC, mPCC, fPCC, iPCC, cPCC]
 /-- Exactly nine constraints are monotone over the hierarchy (27), the seven attested ones and
 the two of (32) (section 4.3). -/
 theorem monotone_iff :
-    ∀ c : PCC, c.MonotoneOver Combination.Below ↔ c ∈ attested ++ [only13, allBut31] := by
+    ∀ c : PCC, Monotone c ↔ c ∈ attested ++ [only13, allBut31] := by
   decide
 
 /-- The two monotone constraints without an attested pattern are exactly those whose class of
 well-formed or of ill-formed combinations is a singleton. -/
 theorem unattested_singleton_class :
-    ∀ c : PCC, c.MonotoneOver Combination.Below →
-      (c ∉ attested ↔ (Finset.univ.filter fun p ↦ c.allows p = true).card = 1 ∨
-        (Finset.univ.filter fun p ↦ c.allows p = false).card = 1) := by
+    ∀ c : PCC, Monotone c →
+      (c ∉ attested ↔ (Finset.univ.filter fun p ↦ c p = true).card = 1 ∨
+        (Finset.univ.filter fun p ↦ c p = false).card = 1) := by
   decide
 
-/-- Over the naive hierarchy (23) the ultrastrong constraint is not monotone, nor is its reversal,
-so no order of the truth values rescues it, while the weak constraint is (25). -/
+/-- Over the naive hierarchy (23) the ultrastrong constraint is neither monotone nor antitone, so
+no order of the truth values rescues it, while the weak constraint is monotone (25). -/
 theorem uPCC_not_monotone_naive :
-    ¬ uPCC.MonotoneOver Combination.BelowNaive ∧
-      ¬ uPCC.reverse.MonotoneOver Combination.BelowNaive ∧
-      wPCC.MonotoneOver Combination.BelowNaive := by
+    ¬ Monotone (α := NaiveCombination) uPCC ∧ ¬ Antitone (α := NaiveCombination) uPCC ∧
+      Monotone (α := NaiveCombination) wPCC := by
   decide
 
 end Graf2019
