@@ -24,7 +24,8 @@ exact-match reading.
 ## Main definitions
 
 * `PreferenceStructure`, with `maxElts`, `Consistent` and `Realistic`.
-* `PreferenceStructure.discrete`: the unranked structure on a set of preferences.
+* `PreferenceStructure.discrete`, `PreferenceStructure.rankBelow`: the unranked structure on a
+  set of preferences, and the one that ranks a single preference below another.
 * `Desire.Preferential.Want`, `Desire.Preferential.WantSufficient`,
   `Desire.Preferential.WantNecessary`: the exact-match, success-oriented and Quine–Hintikka
   readings of *want*.
@@ -100,6 +101,10 @@ def Realistic (B : Set W) : Prop :=
 section Consistent
 
 variable {P} {B : Set W}
+
+/-- Consistency relative to an information state persists to any weaker one. -/
+theorem Consistent.mono {H : Set W} (hC : P.Consistent B) (h : B ⊆ H) : P.Consistent H :=
+  fun X hX hXH ↦ hC X hX (Set.subset_eq_empty (Set.inter_subset_inter_left _ h) hXH)
 
 /-- Consistency entails realism, by the singleton subfamilies and irreflexivity. -/
 theorem Consistent.realistic (hC : P.Consistent B) : P.Realistic B := by
@@ -177,6 +182,34 @@ abbrev single (p : Set W) : PreferenceStructure W := discrete {p}
 
 theorem consistent_single {p B : Set W} (h : (p ∩ B).Nonempty) : (single p).Consistent B :=
   consistent_discrete (by rwa [Set.sInter_singleton, Set.inter_comm])
+
+/-! ### Ranking one preference below another -/
+
+/-- The structure on `S` that ranks `p` strictly below `q` and leaves the rest unranked. -/
+def rankBelow (S : Set (Set W)) {p q : Set W} (h : p ≠ q) : PreferenceStructure W where
+  prefs := S
+  prec r s := r = p ∧ s = q
+  isStrictOrder :=
+    { irrefl := fun _ hr ↦ h (hr.1.symm.trans hr.2)
+      trans := fun _ _ _ hr hs ↦ absurd (hr.2.symm.trans hs.1) h.symm }
+
+variable {S : Set (Set W)} {p q : Set W} (h : p ≠ q)
+
+/-- Once `q` is a preference, everything but `p` is maximal. -/
+theorem maxElts_rankBelow (hq : q ∈ S) : (rankBelow S h).maxElts = S \ {p} :=
+  Set.ext fun _ ↦ ⟨fun hr ↦ ⟨hr.1, fun hrp ↦ hr.2 q hq ⟨hrp, rfl⟩⟩,
+    fun hr ↦ ⟨hr.1, fun _ _ hs ↦ hr.2 hs.1⟩⟩
+
+/-- Ranking `p` below `q` resolves every conflict when the preferences without `p` and those
+without `q` are each jointly compatible with the information. -/
+theorem consistent_rankBelow {B : Set W} (hp : (B ∩ ⋂₀ (S \ {p})).Nonempty)
+    (hq : (B ∩ ⋂₀ (S \ {q})).Nonempty) : (rankBelow S h).Consistent B := by
+  intro X hX hXB
+  have mem {r : Set W} (hr : (B ∩ ⋂₀ (S \ {r})).Nonempty) : r ∈ X := by
+    by_contra hrX
+    refine hr.ne_empty (Set.subset_eq_empty (Set.inter_subset_inter_right _ ?_) hXB)
+    exact Set.sInter_subset_sInter fun x hx ↦ ⟨hX hx, fun hxr ↦ hrX (hxr ▸ hx)⟩
+  exact ⟨p, mem hp, q, mem hq, rfl, rfl⟩
 
 end PreferenceStructure
 

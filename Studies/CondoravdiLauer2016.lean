@@ -28,13 +28,16 @@ cases.
 
 ## Main statements
 
-* `anankastic_of_subset`: (88) holds when the effective preferences are consistent and realizing
-  the goal among the historical alternatives requires the prejacent.
+* `conditionalNecessity_orderingSource_iff`: under consistent effective preferences the
+  paraphrase (89) of (88) is exact.
 * `HobokenScenario.anankastic_harlem`, `HobokenScenario.not_possibility_path`: in the Hoboken
   scenario the Harlem sentence (1) is true and (14) false, where Sæbø's analysis makes (1) false
-  and (14) true, `HobokenScenario.saebo_harlem`, `HobokenScenario.saebo_path`.
-* `HobokenScenario.not_anankastic_desire`: on the mere-desire construal of *want* the Harlem
-  sentence is false at the Hoboken world.
+  and (14) true, and the mere-desire construal makes (1) false.
+* `VladivostokScenario.haveTo_chinese_comfortFirst`, `VaccineScenario.should_vaccine`: compatible
+  goals enter the ordering, so the ranking of comfort and cost decides (92), and a second maximal
+  preference makes the near-anankastic (29b) true.
+* `AirportScenario.should_train`, `AirportScenario.should_ride`: the double-modal readings of
+  (83a) and (83b) are both true, where single-modal ones cannot be.
 
 ## Implementation notes
 
@@ -42,20 +45,19 @@ cases.
   `orderingSource P a`, the maximal preferences of `P a v` at each world `v`, so an anankastic is
   `conditionalNecessity` with no operator of its own, and Sæbø's rival restricts the same
   ordering source where the paper restricts the outer modal base.
-* The sufficient condition for (88) quantifies over every antecedent world of the speaker's
-  beliefs rather than the typical ones, and takes the effective preferences consistent relative to
-  the historical alternatives, which keeps out the atypical continuations the paper leaves to a
-  separate mechanism.
-* The Hoboken scenario is a model in which the speaker is uncertain about the addressee's goal,
-  with an empty stereotypical ordering, so the Harlem sentence is true through its antecedent
-  worlds rather than vacuously.
+* The effective preferences are taken consistent relative to the historical alternatives, which
+  (66) relative to the agent's beliefs gives when those beliefs lie among them; it keeps out the
+  atypical continuations the paper leaves to a separate mechanism.
+* Each scenario is a small model with its own world type. In the Hoboken scenario the speaker is
+  uncertain about the addressee's goal, with an empty stereotypical ordering, so the Harlem
+  sentence is true through its antecedent worlds rather than vacuously.
 
 ## TODO
 
 * Informal in the paper and not formalized: the temporal interpretation of the internal
   antecedent and the prejacent, the pragmatic derivation of the means-of implication, the
   strong/weak modal contrast of (96) and (97), purpose constructions, informational asymmetry,
-  the consistency of the double-modal readings of (81) to (83), and the closure condition that
+  the consistency of the double-modal readings of (81) and (82), and the closure condition that
   would validate conjunction introduction for effective preferences.
 
 ## References
@@ -197,6 +199,11 @@ theorem bestWorlds_orderingSource {f : Background W} {v : W}
     rfl
   rw [bestWorlds_eq_accessibleWorlds_sup (h ▸ hC.inter_sInter_maxElts_nonempty), h]
 
+private theorem mem_bestWorlds_bot_restrict {α : W → Prop} {v : W} (hα : α v) :
+    v ∈ bestWorlds ((⊥ : Background W).restrict α) ⊥ w := by
+  rw [bestWorlds_bot, Background.mem_accessibleWorlds_restrict]
+  exact ⟨by simp, hα⟩
+
 /-- By (90), under consistency, an effective preference for `p` excludes one for any `q` the agent
 believes incompatible with `p`. -/
 theorem want_disjoint (hC : ∀ w, (P a w).Consistent (B w)) (h : ∀ w, B w ∩ (p ∩ q) = ∅) :
@@ -211,20 +218,21 @@ theorem not_want_of_mem_restricted {f : Background W} (hC : ∀ w, (P a w).Consi
     (hv : v ∈ (f.restrict (Want P a p)).accessibleWorlds w) : ¬ Want P a q v :=
   Set.disjoint_left.1 (want_disjoint hC h) (Background.mem_accessibleWorlds_restrict.1 hv).2
 
-/-- The conditional (88) holds when at every belief world where the agent effectively prefers `p`
-the effective preferences are consistent relative to the historical alternatives and realizing `p`
-there requires `q`, a condition stronger than the paraphrase (89) in bypassing the typicality
-restriction. The antecedent's preference enters the ordering source
-because *want* and the modal read the same background; compatible goals such as comfort in (92)
-stay in the ordering, and conflicting ones are gone by `not_want_of_mem_restricted`. -/
-theorem anankastic_of_subset {f₁ g₁ f₂ : Background W}
-    (hC : ∀ v ∈ (f₁.restrict (Want P a p)).accessibleWorlds w,
-      (P a v).Consistent (f₂.accessibleWorlds v))
-    (hq : ∀ v ∈ (f₁.restrict (Want P a p)).accessibleWorlds w, f₂.accessibleWorlds v ∩ p ⊆ q) :
-    conditionalNecessity f₁ g₁ (Want P a p) (necessity f₂ (orderingSource P a) (· ∈ q)) w := by
-  intro v hv u hu
-  rw [mem_bestAccessible, bestWorlds_orderingSource (hC v hv.1)] at hu
-  exact hq v hv.1 ⟨hu.1, hu.2 p (Background.mem_accessibleWorlds_restrict.1 hv.1).2⟩
+/-- Under consistency the paraphrase (89) is exact: the conditional (88) holds when, at every
+most typical belief world where the antecedent holds, the historical alternatives that realize all
+of the agent's maximal effective preferences are `q`-worlds. With *want* in the antecedent the
+hypothesized preference is among them, since *want* and the modal read the same background, and
+compatible goals such as comfort in (92) stay beside it. Consistency relative to the historical
+alternatives follows from (66) relative to the agent's beliefs whenever those beliefs lie among
+them, `PreferenceStructure.Consistent.mono`. -/
+theorem conditionalNecessity_orderingSource_iff {f₁ g₁ f₂ : Background W} {α : W → Prop}
+    (hC : ∀ v ∈ bestWorlds (f₁.restrict α) g₁ w, (P a v).Consistent (f₂.accessibleWorlds v)) :
+    conditionalNecessity f₁ g₁ α (necessity f₂ (orderingSource P a) (· ∈ q)) w ↔
+      ∀ v ∈ bestWorlds (f₁.restrict α) g₁ w, f₂.accessibleWorlds v ∩ ⋂₀ (P a v).maxElts ⊆ q := by
+  simp only [conditionalNecessity, necessity_iff]
+  refine forall₂_congr fun v hv ↦ ?_
+  rw [bestWorlds_orderingSource (hC v hv)]
+  rfl
 
 end General
 
@@ -343,10 +351,11 @@ Harlem, is true at every world, the Hoboken world included. -/
 private theorem anankastic_dest {d t : Set World}
     (hd : ∀ u : World, u.harlemTrain = .aTrain → (u ∈ d ↔ u ∈ t)) :
     conditionalNecessity fBelS ⊥ (Want ep () d) (necessity fHist (orderingSource ep ()) (· ∈ t))
-      w :=
-  anankastic_of_subset (fun v _ ↦ consistent_ep v) fun _ hv u ⟨hu, hdu⟩ ↦
-    (hd u ((mem_fHist.1 hu).2.trans
-      (mem_fBelS.1 (Background.mem_accessibleWorlds_restrict.1 hv).1))).1 hdu
+      w := by
+  refine (conditionalNecessity_orderingSource_iff fun v _ ↦ consistent_ep v).2
+    fun v hv u ⟨hu, hdu⟩ ↦ ?_
+  have hv' := Background.mem_accessibleWorlds_restrict.1 hv.1
+  exact (hd u ((mem_fHist.1 hu).2.trans (mem_fBelS.1 hv'.1))).1 (hdu d hv'.2)
 
 /-- The Harlem sentence (1) is true at every world, the Hoboken world included, §7.1.1. -/
 theorem anankastic_harlem :
@@ -385,9 +394,8 @@ theorem not_anankastic_desire :
 
 /-- The Hoboken world is a best world under the addressee's actual goal alone. -/
 private theorem w₀_mem_bestWorlds : w₀ ∈ bestWorlds fBelS (orderingSource ep ()) w₀ := by
-  have hC : (ep () w₀).Consistent (fBelS.accessibleWorlds w₀) :=
-    PreferenceStructure.consistent_single ⟨w₀, nofun, mem_fBelS.2 rfl⟩
-  rw [bestWorlds_orderingSource hC]
+  rw [bestWorlds_orderingSource
+    ((consistent_ep w₀).mono fun _ hu ↦ mem_fBelS.2 (mem_fHist.1 hu).2)]
   exact ⟨mem_fBelS.2 rfl, by simp [ep, w₀]; exact nofun⟩
 
 /-- Sæbø's analysis, §2.3, adds the internal antecedent to the bouletic ordering source, the
@@ -406,6 +414,310 @@ theorem saebo_path :
     (fun _ h h' ↦ h h') w₀_mem_bestWorlds nofun, rfl⟩
 
 end HobokenScenario
+
+/-! ### Compatible goals and their ranking
+
+Von Stechow, Krasikova and Penka's two trains to Vladivostok, (92): the Chinese train is the more
+comfortable and here also the dearer. Going, comfort and economy are pairwise compatible but not
+jointly realizable, so by (66) an effective structure ranks comfort and cost, and the ranking
+decides whether *you have to take the Chinese train* is true, §7.1.1. -/
+
+namespace VladivostokScenario
+
+/-- What the addressee does. -/
+inductive World
+  | russian | chinese | home
+  deriving DecidableEq
+
+variable {w : World}
+
+/-- The addressee goes to Vladivostok. -/
+def vladivostok : Set World := {w | w ≠ .home}
+
+/-- The addressee does not ride the uncomfortable Russian train. -/
+def comfort : Set World := {w | w ≠ .russian}
+
+/-- The addressee does not pay for the Chinese train. -/
+def cheap : Set World := {w | w ≠ .chinese}
+
+/-- The addressee takes the Chinese train. -/
+def takeChinese : Set World := {.chinese}
+
+/-- The addressee takes the Russian train. -/
+def takeRussian : Set World := {.russian}
+
+theorem vladivostok_ne_comfort : vladivostok ≠ comfort :=
+  fun h ↦ (Set.ext_iff.1 h .home).2 nofun rfl
+
+theorem vladivostok_ne_cheap : vladivostok ≠ cheap :=
+  fun h ↦ (Set.ext_iff.1 h .home).2 nofun rfl
+
+theorem comfort_ne_cheap : comfort ≠ cheap :=
+  fun h ↦ (Set.ext_iff.1 h .russian).2 nofun rfl
+
+/-- The addressee's preferences. -/
+def prefs : Set (Set World) := {vladivostok, comfort, cheap}
+
+/-- Unranked, the three preferences are inconsistent, so an effective structure must rank them. -/
+theorem not_consistent_discrete : ¬ (PreferenceStructure.discrete prefs).Consistent Set.univ :=
+  fun h ↦ by
+    obtain ⟨u, -, hu⟩ := h.inter_sInter_maxElts_nonempty
+    rw [PreferenceStructure.maxElts_discrete] at hu
+    have h₁ : u ∈ vladivostok := hu _ (.inl rfl)
+    have h₂ : u ∈ comfort := hu _ (.inr (.inl rfl))
+    have h₃ : u ∈ cheap := hu _ (.inr (.inr rfl))
+    cases u <;> simp_all [vladivostok, comfort, cheap]
+
+/-- The effective preferences when comfort outranks cost. -/
+def comfortFirst (_ : Unit) (_ : World) : PreferenceStructure World :=
+  .rankBelow prefs comfort_ne_cheap.symm
+
+/-- The effective preferences when cost outranks comfort, which is then a mere desire. -/
+def costFirst (_ : Unit) (_ : World) : PreferenceStructure World :=
+  .rankBelow prefs comfort_ne_cheap
+
+private theorem maxElts_comfortFirst : (comfortFirst () w).maxElts = prefs \ {cheap} :=
+  PreferenceStructure.maxElts_rankBelow _ (show comfort ∈ prefs from .inr (.inl rfl))
+
+private theorem maxElts_costFirst : (costFirst () w).maxElts = prefs \ {comfort} :=
+  PreferenceStructure.maxElts_rankBelow _ (show cheap ∈ prefs from .inr (.inr rfl))
+
+private theorem chinese_mem : World.chinese ∈ ⋂₀ (prefs \ {cheap}) := by
+  rintro _ ⟨ht | ht | ht, htc⟩
+  exacts [ht ▸ nofun, ht ▸ nofun, absurd ht htc]
+
+private theorem russian_mem : World.russian ∈ ⋂₀ (prefs \ {comfort}) := by
+  rintro _ ⟨ht | ht | ht, htc⟩
+  exacts [ht ▸ nofun, absurd ht htc, ht ▸ nofun]
+
+private theorem consistent_comfortFirst (v : World) :
+    (comfortFirst () w).Consistent ((⊥ : Background World).accessibleWorlds v) := by
+  rw [Background.accessibleWorlds_bot]
+  exact PreferenceStructure.consistent_rankBelow _ ⟨_, trivial, chinese_mem⟩
+    ⟨_, trivial, russian_mem⟩
+
+private theorem consistent_costFirst (v : World) :
+    (costFirst () w).Consistent ((⊥ : Background World).accessibleWorlds v) := by
+  rw [Background.accessibleWorlds_bot]
+  exact PreferenceStructure.consistent_rankBelow _ ⟨_, trivial, russian_mem⟩
+    ⟨_, trivial, chinese_mem⟩
+
+/-- With comfort ranked over cost, (92) is true: the only comfortable way to Vladivostok is the
+Chinese train. -/
+theorem haveTo_chinese_comfortFirst :
+    conditionalNecessity ⊥ ⊥ (Want comfortFirst () vladivostok)
+      (necessity ⊥ (orderingSource comfortFirst ()) (· ∈ takeChinese)) w := by
+  refine (conditionalNecessity_orderingSource_iff fun v _ ↦ consistent_comfortFirst v).2
+    fun _ _ u ⟨_, hu⟩ ↦ ?_
+  rw [maxElts_comfortFirst] at hu
+  have h₁ : u ∈ vladivostok := hu _ ⟨.inl rfl, vladivostok_ne_cheap⟩
+  have h₂ : u ∈ comfort := hu _ ⟨.inr (.inl rfl), comfort_ne_cheap⟩
+  cases u <;> simp_all [vladivostok, comfort, takeChinese]
+
+/-- With cost ranked over comfort the addressee has to take the Russian train instead. -/
+theorem haveTo_russian_costFirst :
+    conditionalNecessity ⊥ ⊥ (Want costFirst () vladivostok)
+      (necessity ⊥ (orderingSource costFirst ()) (· ∈ takeRussian)) w := by
+  refine (conditionalNecessity_orderingSource_iff fun v _ ↦ consistent_costFirst v).2
+    fun _ _ u ⟨_, hu⟩ ↦ ?_
+  rw [maxElts_costFirst] at hu
+  have h₁ : u ∈ vladivostok := hu _ ⟨.inl rfl, vladivostok_ne_comfort⟩
+  have h₃ : u ∈ cheap := hu _ ⟨.inr (.inr rfl), comfort_ne_cheap.symm⟩
+  cases u <;> simp_all [vladivostok, cheap, takeRussian]
+
+/-- So with cost ranked over comfort (92) is false, the judgment von Fintel and Iatridou report,
+§7.1.1. -/
+theorem not_haveTo_chinese_costFirst :
+    ¬ conditionalNecessity ⊥ ⊥ (Want costFirst () vladivostok)
+      (necessity ⊥ (orderingSource costFirst ()) (· ∈ takeChinese)) w := fun h ↦ by
+  have hw : Want costFirst () vladivostok w := by
+    rw [Want, maxElts_costFirst]
+    exact ⟨.inl rfl, vladivostok_ne_comfort⟩
+  have := (conditionalNecessity_orderingSource_iff fun v _ ↦ consistent_costFirst v).1 h w
+    (mem_bestWorlds_bot_restrict hw) ⟨by simp, maxElts_costFirst (w := w) ▸ russian_mem⟩
+  exact nomatch this
+
+end VladivostokScenario
+
+/-! ### Strengthened goals
+
+The near-anankastic (29b), *if you want to travel to that place, you should get a vaccine*, §4.1
+and §7.1.2: the vaccine is not a precondition for travelling, but with being safe a second maximal
+effective preference beside travelling, the analysis of (88) makes the conditional true. -/
+
+namespace VaccineScenario
+
+/-- Whether the addressee travels there. -/
+inductive Trip
+  | go | stay
+  deriving DecidableEq
+
+/-- Whether the addressee gets the vaccine. -/
+inductive Shot
+  | vaccine | none
+  deriving DecidableEq
+
+/-- A world records the trip and the shot. -/
+structure World where
+  /-- Whether the addressee travels. -/
+  trip : Trip
+  /-- Whether the addressee is vaccinated. -/
+  shot : Shot
+  deriving DecidableEq
+
+variable {w : World}
+
+/-- The addressee travels to that place. -/
+def travel : Set World := {w | w.trip = .go}
+
+/-- The addressee is safe, never travelling unvaccinated. -/
+def safe : Set World := {w | w.trip = .go → w.shot = .vaccine}
+
+/-- The addressee gets the vaccine. -/
+def vaccinated : Set World := {w | w.shot = .vaccine}
+
+/-- The addressee effectively prefers both to travel and to be safe, unranked. -/
+def ep (_ : Unit) (_ : World) : PreferenceStructure World := .discrete {travel, safe}
+
+/-- Travelling as the only maximal preference, the strong construal of the antecedent in
+[huitink-2008] that a singleton `max` would derive, footnote 31. -/
+def strong (_ : Unit) (_ : World) : PreferenceStructure World := .single travel
+
+/-- (29b) is true: every continuation realizing both preferences is vaccinated. -/
+theorem should_vaccine :
+    conditionalNecessity ⊥ ⊥ (Want ep () travel)
+      (necessity ⊥ (orderingSource ep ()) (· ∈ vaccinated)) w := by
+  refine (conditionalNecessity_orderingSource_iff fun _ _ ↦
+    PreferenceStructure.consistent_discrete ⟨⟨.go, .vaccine⟩, by simp, ?_⟩).2
+      fun _ _ u ⟨_, hu⟩ ↦ ?_
+  · rintro _ (rfl | rfl)
+    exacts [rfl, fun _ ↦ rfl]
+  · exact (hu safe ⟨.inr rfl, fun _ _ h ↦ h⟩) (hu travel ⟨.inl rfl, fun _ _ h ↦ h⟩)
+
+/-- On the strong construal (29b) is false, since some way of travelling skips the vaccine. -/
+theorem not_should_vaccine_strong :
+    ¬ conditionalNecessity ⊥ ⊥ (Want strong () travel)
+      (necessity ⊥ (orderingSource strong ()) (· ∈ vaccinated)) w := fun h ↦
+  nomatch h w (mem_bestWorlds_bot_restrict (α := Want strong () travel) ⟨rfl, fun _ _ h ↦ h⟩)
+    ⟨.go, .none⟩
+    (by
+      rw [mem_bestAccessible, bestWorlds_orderingSource
+        (PreferenceStructure.consistent_single (p := travel)
+          (B := (⊥ : Background World).accessibleWorlds w) ⟨⟨.go, .none⟩, rfl, by simp⟩)]
+      exact ⟨by simp, by simp [strong, travel]⟩)
+
+end VaccineScenario
+
+/-! ### The double-modal structure at work
+
+The airport sequence (83) of §6.2, where getting a ride is the preferred way and the speaker will
+not drive while the trains run on time. On the double-modal structure both conditionals are true,
+the outer modal evaluating (83a) in typical worlds without track repairs; a single modal ordered
+by the addressee's goals cannot make both true. The addressee's preference for a ride is left out,
+since the single-modal readings conflict without it. -/
+
+namespace AirportScenario
+
+/-- Whether there is repair work on the tracks. -/
+inductive Tracks
+  | clear | repairs
+  deriving DecidableEq
+
+/-- How the addressee gets to the airport. -/
+inductive Way
+  | train | ride | stay
+  deriving DecidableEq
+
+/-- A world records the state of the tracks and the way the addressee goes. -/
+structure World where
+  /-- The state of the tracks. -/
+  tracks : Tracks
+  /-- The way the addressee goes. -/
+  way : Way
+  deriving DecidableEq
+
+variable {w : World}
+
+/-- The addressee gets to the airport by noon, by a ride or by train on clear tracks. -/
+def noon : Set World := {w | w.way = .ride ∨ w.way = .train ∧ w.tracks = .clear}
+
+/-- The addressee takes the train. -/
+def byTrain : Set World := {w | w.way = .train}
+
+/-- The speaker gives the addressee a ride. -/
+def byRide : Set World := {w | w.way = .ride}
+
+/-- There is repair work on the tracks. -/
+def repairs : Set World := {w | w.tracks = .repairs}
+
+/-- The addressee's effective preference is to get to the airport by noon. -/
+def ep (_ : Unit) (_ : World) : PreferenceStructure World := .single noon
+
+/-- The stereotypical ordering source, by which the trains typically run on time. -/
+def gNorm : Background World := fun _ ↦ {fun v ↦ v.tracks = .clear}
+
+/-- In the historical alternatives the state of the tracks is settled, and the speaker gives no
+ride while the trains run on time. -/
+def fHist : Background World :=
+  fun v ↦ {fun u ↦ u.tracks = v.tracks, fun u ↦ u.tracks = .clear → u.way ≠ .ride}
+
+private theorem mem_fHist {u v : World} :
+    u ∈ fHist.accessibleWorlds v ↔ u.tracks = v.tracks ∧ (u.tracks = .clear → u.way ≠ .ride) := by
+  simp [fHist]
+
+private theorem consistent_ep (v : World) : (ep () v).Consistent (fHist.accessibleWorlds v) := by
+  refine PreferenceStructure.consistent_single ?_
+  obtain ⟨t, _⟩ := v
+  cases t
+  exacts [⟨⟨.clear, .train⟩, .inr ⟨rfl, rfl⟩, mem_fHist.2 ⟨rfl, nofun⟩⟩,
+    ⟨⟨.repairs, .ride⟩, .inl rfl, mem_fHist.2 ⟨rfl, nofun⟩⟩]
+
+/-- (83a) is true: in the typical worlds the trains run on time, and without a ride the train is
+the only way to be there by noon. -/
+theorem should_train :
+    conditionalNecessity ⊥ gNorm (Want ep () noon)
+      (necessity fHist (orderingSource ep ()) (· ∈ byTrain)) w := by
+  refine (conditionalNecessity_orderingSource_iff fun v _ ↦ consistent_ep v).2
+    fun v hv u ⟨hu, hn⟩ ↦ ?_
+  have hc : ((((⊥ : Background World).restrict (Want ep () noon)) ⊔ gNorm).accessibleWorlds
+      w).Nonempty := by
+    refine ⟨⟨.clear, .train⟩, ?_⟩
+    rw [Background.accessibleWorlds_sup]
+    exact ⟨Background.mem_accessibleWorlds_restrict.2 ⟨by simp, rfl, fun _ _ h ↦ h⟩,
+      fun _ hp ↦ by rw [Set.mem_singleton_iff.1 hp]⟩
+  rw [bestWorlds_eq_accessibleWorlds_sup hc, Background.accessibleWorlds_sup] at hv
+  obtain ⟨ht, hr⟩ := mem_fHist.1 hu
+  rcases hn noon ⟨rfl, fun _ _ h ↦ h⟩ with h | ⟨h, -⟩
+  · exact absurd h (hr (ht.trans (hv.2 _ rfl)))
+  · exact h
+
+/-- (83b) is true: with repairs on the tracks only a ride gets the addressee there by noon. -/
+theorem should_ride :
+    conditionalNecessity ⊥ gNorm (fun v ↦ Want ep () noon v ∧ v ∈ repairs)
+      (necessity fHist (orderingSource ep ()) (· ∈ byRide)) w := by
+  refine (conditionalNecessity_orderingSource_iff fun v _ ↦ consistent_ep v).2
+    fun v hv u ⟨hu, hn⟩ ↦ ?_
+  have hvr : v.tracks = .repairs := (Background.mem_accessibleWorlds_restrict.1 hv.1).2.2
+  rcases hn noon ⟨rfl, fun _ _ h ↦ h⟩ with h | ⟨-, h⟩
+  · exact h
+  · exact nomatch h.symm.trans ((mem_fHist.1 hu).1.trans hvr)
+
+/-- On a single modal restricted by both antecedents and ordered by the addressee's goals, (83a)
+and (83b) are not both true, since by `single_modal_strengthening` they would leave no best world
+with track repairs, and a ride on repaired tracks is one. -/
+theorem not_single_modal :
+    ¬ (conditionalNecessity ⊥ (orderingSource ep ()) (Want ep () noon) (· ∈ byTrain) w ∧
+      conditionalNecessity ⊥ (orderingSource ep ()) (fun v ↦ Want ep () noon v ∧ v ∈ repairs)
+        (· ∈ byRide) w) := fun ⟨h₁, h₂⟩ ↦ by
+  refine single_modal_strengthening h₁
+    (necessity_mono (fun _ hr ht ↦ nomatch hr.symm.trans ht) h₂) ⟨.repairs, .ride⟩ ?_ rfl
+  rw [bestWorlds_orderingSource
+    (PreferenceStructure.consistent_single ⟨⟨.repairs, .ride⟩, .inl rfl,
+      Background.mem_accessibleWorlds_restrict.2 ⟨by simp, rfl, fun _ _ h ↦ h⟩⟩)]
+  exact ⟨Background.mem_accessibleWorlds_restrict.2 ⟨by simp, rfl, fun _ _ h ↦ h⟩,
+    fun _ ht ↦ ht.1 ▸ .inl rfl⟩
+
+end AirportScenario
 
 /-! ### The rows
 
@@ -470,7 +782,8 @@ theorem anankastic_rows : ∀ row ∈ Examples.all, row.feature? "construction" 
 
 /-- By §7.1.2, with that setting fixed, anankastics and the near-anankastics of §4 differ only in
 the implication the temporal relation of goal and prejacent invites, a means or a precondition
-for the former, a strengthened goal, a consequence or a specialization for the latter. -/
+for the former, a strengthened goal, a consequence or a specialization for the latter. The truth
+conditions are the same, `VaccineScenario.should_vaccine`. -/
 theorem implication_rows : ∀ row ∈ Examples.all, row.feature? "construction" = some "construal" →
     ∃ c ∈ Construal.ofRow row, c.want = .effective → c.modal = .teleological →
       (c.interpretation = .anankastic ↔
