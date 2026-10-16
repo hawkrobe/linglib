@@ -229,16 +229,18 @@ structure Row where
   item : PolarityItem
   judgment : Judgment
 
-def Row.ofDatum (ex : Datum) : Option Row :=
+/-- A sentence gives a row for each of its polarity items, as entries of the English fragment. -/
+def Row.ofDatum (ex : Datum) : List Row :=
   match ex.parse? "licenser"
-      ([("no", .no), ("few", .few), ("zero", .zero)] : List (String × BylininaNouwen2018.Licenser)),
-    ex.parse? "npi" [("in years", English.PolarityItems.inYears),
-      ("ever", English.PolarityItems.ever), ("anything", English.PolarityItems.any),
-      ("any", English.PolarityItems.any)] with
-  | some L, some e => some ⟨L, e, ex.judgment⟩
-  | _, _ => none
+      ([("no", .no), ("few", .few), ("zero", .zero)] :
+        List (String × BylininaNouwen2018.Licenser)) with
+  | some L => (ex.features "npi").filterMap fun npi ↦
+      ((List.lookup npi [("in years", English.PolarityItems.inYears),
+        ("ever", English.PolarityItems.ever), ("anything", English.PolarityItems.any),
+        ("any", English.PolarityItems.any)]).map fun e ↦ ⟨L, e, ex.judgment⟩)
+  | none => []
 
-def rows : List Row := Examples.all.filterMap Row.ofDatum
+def rows : List Row := Examples.all.flatMap Row.ofDatum
 
 /-- Every judgment is the library's verdict: a sentence is acceptable exactly when its licenser
 licenses its item. -/
