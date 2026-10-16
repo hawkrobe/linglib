@@ -14,23 +14,27 @@ precludes entitlement to the other.
 Represented by its incompatibles, a content is a concept of the incompatibility relation: the
 concept order is incompatibility entailment and a negation has the orthocomplement content. A
 scorecard records acknowledged commitments and prima facie entitlements, and the deontic statuses
-are its closure under a role, in which committive inference preserves entitlement when the role is
-coherent.
+are its closure under a role. Read back off that scorekeeping, a role confers commitment
+entailment and preclusion. The role is coherent, so that entitlement passes along commitment
+entailment, exactly when the preclusion it confers is its own incompatibility.
 
 ## Main definitions
 
 * `InferentialRole`: committive inference, permissive inference and incompatibility.
 * `InferentialRole.content`, `InferentialRole.IsNegation`: content and negation.
 * `Scorecard.Committed`, `Scorecard.Entitled`: the deontic statuses a scorecard settles.
+* `InferentialRole.CommitmentEntails`, `InferentialRole.Precludes`: the relations scorekeeping
+  confers.
 * `Score`, `assert`, `challenge`, `defer`, `disavow`: the scorekeeping moves.
 
 ## Main statements
 
-* `Scorecard.Entitled.of_committive`: in a coherent role committive inference preserves
+* `Scorecard.Entitled.of_commitmentEntails`: in a coherent role commitment entailment preserves
   entitlement.
+* `InferentialRole.coherent_iff_precludes_eq`: coherence is incompatibility as scorekeeping
+  confers it.
 * `InferentialRole.IsNegation.content_eq_compl`: a negation's content is the orthocomplement.
 * `barn_entitled`: entitlement to each of two incompatible claims, with commitment to neither.
-* `challenge_committed_not_entitled`: a challenged assertion is a commitment without entitlement.
 
 ## Implementation notes
 
@@ -242,6 +246,60 @@ theorem entitled_avow_iff : (c.avow p).Entitled R p ↔ ¬ (c.avow p).Precluded 
   ⟨Entitled.not_precluded, .primaFacie (Set.mem_insert p _)⟩
 
 end Scorecard
+
+/-! ### Conferral -/
+
+namespace InferentialRole
+
+variable (R : InferentialRole P) {p q r : P}
+
+/-- Scorekeeping by `R` treats the inference from `p` to `q` as good, so that `p` commitment-entails
+`q`, when every scorecard committed to `p` is committed to `q` (p. 186). -/
+def CommitmentEntails (p q : P) : Prop := ∀ c : Scorecard P, c.Committed R p → c.Committed R q
+
+/-- Scorekeeping by `R` treats commitment to `p` as precluding entitlement to `q` when every
+scorecard committed to `p` withholds entitlement to `q` (p. 186). -/
+def Precludes (p q : P) : Prop := ∀ c : Scorecard P, c.Committed R p → ¬ c.Entitled R q
+
+theorem commitmentEntails_eq : R.CommitmentEntails = ReflTransGen R.committive := by
+  ext p q
+  refine ⟨fun h ↦ ?_, fun h c ⟨r, hr, hrp⟩ ↦ ⟨r, hr, hrp.trans h⟩⟩
+  obtain ⟨r, rfl, hrq⟩ := h ⟨{p}, ∅⟩ (Scorecard.committed_of_mem rfl)
+  exact hrq
+
+theorem precludes_eq : R.Precludes = Relation.Comp (ReflTransGen R.committive) R.incompatible := by
+  ext p q
+  refine ⟨fun h ↦ ?_, fun ⟨r, hpr, hrq⟩ c ⟨s, hs, hsp⟩ ↦
+    Scorecard.not_entitled_of_incompatible ⟨s, hs, hsp.trans hpr⟩ hrq⟩
+  by_contra hq
+  exact h ⟨{p}, {q}⟩ (Scorecard.committed_of_mem rfl)
+    (.primaFacie rfl fun ⟨r, ⟨s, hs, hsr⟩, hrq⟩ ↦ hq ⟨r, hs ▸ hsr, hrq⟩)
+
+/-- A role is coherent exactly when its incompatibility is the one its own scorekeeping confers. -/
+theorem coherent_iff_precludes_eq : R.Coherent ↔ R.Precludes = R.incompatible := by
+  rw [precludes_eq]
+  refine ⟨fun hR ↦ funext₂ fun p q ↦ propext ⟨fun ⟨r, hpr, hrq⟩ ↦
+    R.mem_content_iff.1 (R.content_le_iff.1 (hR.content_le hpr)) hrq, fun h ↦ ⟨p, .refl, h⟩⟩,
+    fun h p q hpq ↦ R.content_le_iff.2 <| R.mem_content_iff.2 fun r hqr ↦ ?_⟩
+  exact (congrFun₂ h p r).mp ⟨q, .single hpq, hqr⟩
+
+variable {R} in
+/-- The relations scorekeeping confers are coherent, since whatever a commitment-consequence
+precludes, its premise precludes (p. 673 n. 27). -/
+theorem Precludes.of_commitmentEntails (hpq : R.CommitmentEntails p q) (hqr : R.Precludes q r) :
+    R.Precludes p r :=
+  fun c hp ↦ hqr c (hpq c hp)
+
+end InferentialRole
+
+/-- In a coherent role entitlement is inherited by whatever a claim commitment-entails (p. 674
+n. 43). -/
+theorem Scorecard.Entitled.of_commitmentEntails {R : InferentialRole P} {c : Scorecard P} {p q : P}
+    (hR : R.Coherent) (h : c.Entitled R p) (hpq : R.CommitmentEntails p q) : c.Entitled R q := by
+  rw [InferentialRole.commitmentEntails_eq] at hpq
+  induction hpq with
+  | refl => exact h
+  | tail _ hqr ih => exact ih.of_committive hR hqr
 
 /-! ### The barn -/
 
