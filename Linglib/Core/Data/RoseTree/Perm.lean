@@ -6,7 +6,8 @@ Authors: Linglib contributors
 module
 
 public import Linglib.Core.Data.RoseTree.Basic
-public import Linglib.Core.Data.Multiset.Rel
+public import Mathlib.Data.List.Perm.Basic
+public import Mathlib.Data.Multiset.ZeroCons
 
 /-!
 # Permutation of rose trees
@@ -95,6 +96,11 @@ end
 instance : Trans (Perm (α := α)) Perm Perm := ⟨.trans⟩
 instance : Trans (PermList (α := α)) PermList PermList := ⟨.trans⟩
 
+instance : IsEquiv (RoseTree α) Perm where
+  refl := .refl
+  symm _ _ := .symm
+  trans _ _ _ := .trans
+
 protected theorem Perm.eqv : Equivalence (Perm (α := α)) :=
   ⟨.refl, .symm, .trans⟩
 
@@ -122,9 +128,13 @@ theorem PermList.of_perm {cs ds : List (RoseTree α)} (h : cs.Perm ds) :
 
 /-- `Multiset.Rel Perm` between coerced children lists gives `PermList`. -/
 theorem PermList.of_rel {cs ds : List (RoseTree α)}
-    (h : Multiset.Rel (Perm (α := α)) ↑cs ↑ds) : PermList cs ds :=
-  let ⟨_, hf, hp⟩ := Multiset.rel_coe_iff.mp h
-  (PermList.of_forall₂ hf).trans (PermList.of_perm hp)
+    (h : Multiset.Rel (Perm (α := α)) ↑cs ↑ds) : PermList cs ds := by
+  induction cs generalizing ds with
+  | nil => exact .of_perm (Multiset.coe_eq_coe.1 (Multiset.rel_zero_left.1 h).symm)
+  | cons c cs ih =>
+    obtain ⟨d, ds', hcd, hr, he⟩ := Multiset.rel_cons_left.1 (Multiset.cons_coe c cs ▸ h)
+    induction ds' using Quotient.inductionOn
+    exact (PermList.cons hcd (ih hr)).trans (.of_perm (Multiset.coe_eq_coe.1 he).symm)
 
 /-- A plain `List.Perm` of the children relates the nodes. -/
 theorem Perm.node_of_perm {a : α} {cs ds : List (RoseTree α)} (h : cs.Perm ds) :
@@ -146,8 +156,7 @@ private theorem PermList.rel : ∀ {cs ds : List (RoseTree α)}, PermList cs ds 
     rw [show (↑(d :: c :: cs) : Multiset (RoseTree α)) = ↑(c :: d :: cs) from
       Quot.sound (List.Perm.swap c d cs)]
     exact Multiset.rel_refl_of_refl_on fun t _ ↦ Perm.refl t
-  | _, _, .trans h₁ h₂ =>
-    Multiset.rel_trans_of_trans_on (fun _ _ _ _ _ _ ↦ Perm.trans) h₁.rel h₂.rel
+  | _, _, .trans h₁ h₂ => .trans _ h₁.rel h₂.rel
 
 /-- `PermList` is `Multiset.Rel Perm` on the coerced lists. -/
 theorem permList_iff_rel {cs ds : List (RoseTree α)} :
@@ -159,8 +168,7 @@ private theorem Perm.value_children : ∀ {t s : RoseTree α}, Perm t s →
   | _, _, .node h => ⟨rfl, h.rel⟩
   | _, _, .trans h₁ h₂ =>
     ⟨h₁.value_children.1.trans h₂.value_children.1,
-     Multiset.rel_trans_of_trans_on (fun _ _ _ _ _ _ ↦ Perm.trans)
-       h₁.value_children.2 h₂.value_children.2⟩
+     .trans _ h₁.value_children.2 h₂.value_children.2⟩
 
 /-- Two nodes are related exactly when their labels are equal and their children are related by
 `Multiset.Rel Perm`. -/
@@ -186,9 +194,10 @@ theorem PermList.length_eq {cs ds : List (RoseTree α)} (h : PermList cs ds) :
 
 /-- `PermList [c] [d]` is `Perm c d`. -/
 theorem PermList.singleton_inv {c d : RoseTree α} (h : PermList [c] [d]) : Perm c d := by
-  obtain ⟨l, hf, hp⟩ := Multiset.rel_coe_iff.mp (permList_iff_rel.mp h)
-  rw [List.perm_singleton.mp hp] at hf
-  exact (List.forall₂_cons.mp hf).1
+  obtain ⟨b, hb, hcb⟩ :=
+    Multiset.exists_mem_of_rel_of_mem h.rel (Multiset.mem_coe.2 (List.mem_singleton_self c))
+  obtain rfl : b = d := by simpa using hb
+  exact hcb
 
 /-! ### Functoriality -/
 
@@ -220,43 +229,37 @@ inductions, relational so that tree-valued folds descend too. `fold_perm` is the
 `S := Eq` case; the counts below are such folds. -/
 
 mutual
-/-- A `fold` whose algebra is congruent along `Multiset.Rel S` carries `Perm` to any
-reflexive transitive `S`. -/
-theorem fold_rel {β : Type*} {S : β → β → Prop} {g : α → List β → β}
-    (hrefl : ∀ b, S b b) (htrans : ∀ {b₁ b₂ b₃}, S b₁ b₂ → S b₂ b₃ → S b₁ b₃)
+/-- A `fold` whose algebra is congruent along `Multiset.Rel S` carries `Perm` to any preorder
+`S`. -/
+theorem fold_rel {S : β → β → Prop} [IsPreorder β S] {g : α → List β → β}
     (hg : ∀ (a : α) {l₁ l₂ : List β}, Multiset.Rel S ↑l₁ ↑l₂ → S (g a l₁) (g a l₂)) :
     ∀ {t s : RoseTree α}, Perm t s → S (fold g t) (fold g s)
   | _, _, .node h => by
     rw [fold_node, fold_node]
-    exact hg _ (foldList_rel hrefl htrans hg h)
-  | _, _, .trans h₁ h₂ =>
-    htrans (fold_rel hrefl htrans hg h₁) (fold_rel hrefl htrans hg h₂)
+    exact hg _ (foldList_rel hg h)
+  | _, _, .trans h₁ h₂ => trans_of S (fold_rel hg h₁) (fold_rel hg h₂)
 
 /-- Folded children of `PermList`-related lists are `Multiset.Rel S`-related. -/
-theorem foldList_rel {β : Type*} {S : β → β → Prop} {g : α → List β → β}
-    (hrefl : ∀ b, S b b) (htrans : ∀ {b₁ b₂ b₃}, S b₁ b₂ → S b₂ b₃ → S b₁ b₃)
+theorem foldList_rel {S : β → β → Prop} [IsPreorder β S] {g : α → List β → β}
     (hg : ∀ (a : α) {l₁ l₂ : List β}, Multiset.Rel S ↑l₁ ↑l₂ → S (g a l₁) (g a l₂)) :
     ∀ {cs ds : List (RoseTree α)}, PermList cs ds →
       Multiset.Rel S ↑(cs.map (fold g)) ↑(ds.map (fold g))
-  | _, _, .nil => Multiset.Rel.zero
+  | _, _, .nil => .zero
   | _, _, .cons h hs => by
     simp only [List.map_cons, ← Multiset.cons_coe]
-    exact Multiset.Rel.cons (fold_rel hrefl htrans hg h) (foldList_rel hrefl htrans hg hs)
+    exact .cons (fold_rel hg h) (foldList_rel hg hs)
   | _, _, .swap c d cs => by
     simp only [List.map_cons, ← Multiset.cons_coe]
     rw [Multiset.cons_swap]
-    exact .cons (hrefl _) (.cons (hrefl _) (Multiset.rel_refl_of_refl_on fun _ _ ↦ hrefl _))
-  | _, _, .trans h₁ h₂ =>
-    Multiset.rel_trans_of_trans_on (fun _ _ _ _ _ _ h₁' h₂' ↦ htrans h₁' h₂')
-      (foldList_rel hrefl htrans hg h₁) (foldList_rel hrefl htrans hg h₂)
+    exact Multiset.rel_refl_of_refl_on fun _ _ ↦ refl_of S _
+  | _, _, .trans h₁ h₂ => .trans S (foldList_rel hg h₁) (foldList_rel hg h₂)
 end
 
 /-- A `fold` with a permutation-invariant algebra is `Perm`-invariant. -/
-theorem fold_perm {β : Type*} {g : α → List β → β}
+theorem fold_perm {g : α → List β → β}
     (hg : ∀ (a : α) (l₁ l₂ : List β), l₁.Perm l₂ → g a l₁ = g a l₂) :
     ∀ {t s : RoseTree α}, Perm t s → fold g t = fold g s :=
-  fold_rel (fun _ ↦ rfl) (fun h₁ h₂ ↦ h₁.trans h₂)
-    (fun a {l₁ l₂} h ↦ hg a l₁ l₂ (Multiset.coe_eq_coe.mp (Multiset.rel_eq.mp h)))
+  fold_rel fun a {l₁ l₂} h ↦ hg a l₁ l₂ (Multiset.coe_eq_coe.mp (Multiset.rel_eq.mp h))
 
 /-- `numNodes` is a `Perm`-invariant (`List.Perm.sum_eq`). -/
 theorem numNodes_perm {t s : RoseTree α} (h : Perm t s) : t.numNodes = s.numNodes :=

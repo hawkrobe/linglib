@@ -6,7 +6,6 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Core.Algebra.RootedTree.PreLie.Graft
-public import Linglib.Core.Data.List.Perm
 public import Linglib.Core.Data.List.Sections
 public import Linglib.Core.Data.List.Sublists
 public import Linglib.Core.Data.Multiset.Powerset
@@ -678,9 +677,12 @@ theorem insertionForest_msform_invariance_guests
         (fun L => (↑(L.map UnorderedTree.mk) : Multiset (UnorderedTree α))) =
       (insertionForest host gs2).map
         (fun L => (↑(L.map UnorderedTree.mk) : Multiset (UnorderedTree α))) := by
-  obtain ⟨gs_mid, hperm, hF⟩ := List.exists_perm_forall₂_of_map_perm h
-  have h_forall : List.Forall₂ RoseTree.Perm gs_mid gs2 :=
-    hF.imp fun a b (h : UnorderedTree.mk a = UnorderedTree.mk b) => UnorderedTree.mk_eq_mk_iff.mp h
+  obtain ⟨gs_mid, hmap, hperm⟩ : Relation.Comp (· = List.map UnorderedTree.mk ·) List.Perm
+      (gs1.map UnorderedTree.mk) gs2 := by
+    rwa [List.eq_map_comp_perm]
+  have h_forall : List.Forall₂ RoseTree.Perm gs1 gs_mid := by
+    rw [← List.forall₂_eq_eq_eq, List.forall₂_map_left_iff, List.forall₂_map_right_iff] at hmap
+    exact hmap.imp fun _ _ ↦ UnorderedTree.mk_eq_mk_iff.mp
   have hwrap : ∀ s : Multiset (List (RoseTree α)),
       s.map (fun L => (↑(L.map UnorderedTree.mk) : Multiset (UnorderedTree α))) =
         (s.map (List.map UnorderedTree.mk)).map
@@ -688,8 +690,8 @@ theorem insertionForest_msform_invariance_guests
     intro s
     rw [Multiset.map_map]
     rfl
-  rw [hwrap, hwrap, insertionForest_perm_guests host hperm,
-    insertionForest_forall₂_perm_guests host h_forall]
+  rw [hwrap, hwrap, insertionForest_forall₂_perm_guests host h_forall,
+    insertionForest_perm_guests host hperm]
 
 /-! ## Singleton hosts and empty guest lists -/
 

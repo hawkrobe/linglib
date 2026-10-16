@@ -143,8 +143,7 @@ theorem numUnary_perm {t s : RoseTree α} (h : Perm t s) : t.numUnary = s.numUna
     (`fold_rel` at `S := Perm`; the algebra congruence is the inline match). -/
 theorem Perm.contractUnary {t s : RoseTree α} (h : Perm t s) :
     Perm t.contractUnary s.contractUnary :=
-  fold_rel Perm.refl (fun h₁ h₂ => h₁.trans h₂)
-    (fun a {L₁ L₂} h' =>
+  fold_rel (fun a {L₁ L₂} h' =>
       match L₁, L₂, (PermList.of_rel h').length_eq, PermList.of_rel h' with
       | [], [], _, _ => .refl _
       | [_], [_], _, h => h.singleton_inv

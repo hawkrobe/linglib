@@ -5,7 +5,6 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Core.Data.List.Perm
 public import Linglib.Core.Data.UnorderedTree.Basic
 
 /-!
@@ -31,10 +30,14 @@ so concrete `UnorderedTree` equalities close by `decide`.
 ## Implementation notes
 
 `eqv` must recurse structurally for kernel reduction (`decide` needs `brecOn`, not
-`WellFounded.fix`), and passing `eqv` to `List.isPermBy` is not structural, so the greedy matcher
-is inlined as `eqv.go`. `go_eq_isPermBy` reconnects the two, and `List.isPermBy_iff_perm_map`
-then reduces `eqv_iff_perm` to one structural induction: by the inductive hypothesis, `eqv`
-computes equality of `mk`-images on the children.
+`WellFounded.fix`), so the greedy matcher is inlined as `eqv.go` rather than passed to a list
+function. It finds each match with `findIdx?` and removes it with `eraseIdx`, evaluating `eqv` once
+per comparison, where the `contains`-then-`erase` shape of `List.isPerm` would evaluate it twice at
+every level of the tree.
+
+`List.isPerm_iff` needs a lawful `BEq` on the whole type. `go_iff` needs `eqv` to compute
+`mk`-equality only on the pairs `eqv.go` compares, which is what the inductive hypothesis of
+`eqv_iff_perm` provides.
 
 `[UPSTREAM]` candidate.
 -/
@@ -54,7 +57,8 @@ variable {α : Type*} [DecidableEq α] {t s : RoseTree α}
 def eqv : RoseTree α → RoseTree α → Bool
   | .node a cs, .node b ds => decide (a = b) && go cs ds
 where
-  /-- Greedy multiset matching of child lists: `List.isPermBy eqv`. -/
+  /-- Greedy matching of child lists, pairing each child of the first list with the first
+  `eqv`-related child of the second still unmatched. -/
   go : List (RoseTree α) → List (RoseTree α) → Bool
     | [], ds => ds.isEmpty
     | c :: cs, ds =>
@@ -62,14 +66,26 @@ where
       | some i => go cs (ds.eraseIdx i)
       | none => false
 
-private theorem go_eq_isPermBy :
-    ∀ cs ds : List (RoseTree α), eqv.go cs ds = List.isPermBy eqv cs ds
-  | [], _ => rfl
-  | c :: cs, ds => by
-    rw [eqv.go, List.isPermBy]
-    cases ds.findIdx? (eqv c) with
-    | none => rfl
-    | some i => exact go_eq_isPermBy cs (ds.eraseIdx i)
+/-- If `eqv` computes `mk`-equality on the pairs `eqv.go` compares, then `eqv.go` decides
+permutation of the `mk`-images. -/
+private theorem go_iff : ∀ {cs ds : List (RoseTree α)},
+    (∀ c ∈ cs, ∀ d ∈ ds, eqv c d ↔ mk c = mk d) →
+      (eqv.go cs ds ↔ (cs.map mk).Perm (ds.map mk))
+  | [], ds, _ => by simp [eqv.go]
+  | c :: cs, ds, h => by
+    rw [eqv.go]
+    split
+    · next i hi =>
+      obtain ⟨hil, hci, -⟩ := List.findIdx?_eq_some_iff_getElem.1 hi
+      have := (List.getElem_cons_eraseIdx_perm hil).map mk
+      rw [List.map_cons, ← (h c List.mem_cons_self _ (List.getElem_mem hil)).1 hci] at this
+      rw [go_iff fun x hx y hy ↦
+        h x (List.mem_cons_of_mem _ hx) y ((List.eraseIdx_sublist _ _).subset hy), List.map_cons,
+        ← rel_congr_right this, List.perm_cons]
+    · next hi =>
+      refine iff_of_false Bool.false_ne_true fun hp ↦ ?_
+      obtain ⟨d, hd, hcd⟩ := List.mem_map.1 (hp.subset List.mem_cons_self)
+      simpa [(h c List.mem_cons_self d hd).2 hcd.symm] using List.findIdx?_eq_none_iff.1 hi d hd
 
 /-- Two ordered trees are `eqv`-related iff they are equal up to reordering the children of
 every vertex. -/
@@ -78,8 +94,8 @@ theorem eqv_iff_perm : eqv t s ↔ Perm t s := by
   induction t generalizing s with
   | node a cs ih =>
     obtain ⟨b, ds⟩ := s
-    rw [eqv, Bool.and_eq_true, decide_eq_true_eq, go_eq_isPermBy, mk_node_eq_mk_node_iff,
-      Multiset.coe_eq_coe, List.isPermBy_iff_perm_map fun x hx _ _ ↦ ih x hx]
+    rw [eqv, Bool.and_eq_true, decide_eq_true_eq, mk_node_eq_mk_node_iff, Multiset.coe_eq_coe,
+      go_iff fun x hx _ _ ↦ ih x hx]
 
 /-- `Perm` is decided by `eqv`, which reduces in the kernel. -/
 instance instDecidableRelPerm : DecidableRel (Perm (α := α)) :=
