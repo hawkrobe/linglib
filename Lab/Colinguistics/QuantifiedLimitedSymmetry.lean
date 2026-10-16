@@ -48,7 +48,7 @@ symmetric predictions, and where it departs from incremental Transparency.
 ## References
 
 * [kalomoiros-2023]
-* [schlenker-2025-kalomoiros]
+* [schlenker-2025]
 * [chemla-spector-kalomoiros-schlenker-2026]
 * [schlenker-2009]
 -/
@@ -289,8 +289,9 @@ theorem every_table :
     transparent_neg_iff.trans transparent_every_iff⟩
 
 /-- In a negated restrictor of *some*, the theories make a crucial prediction. A context where
-every individual in the scope satisfies the presupposition but another individual does not is accepted by Limited
-Symmetry and rejected by incremental Transparency. -/
+every individual in the scope satisfies the presupposition but another individual does not is
+accepted by Limited Symmetry and rejected by incremental Transparency. No experiment recorded in
+the library tests a negated restrictor; Chemla's restrictor items are positive. -/
 theorem restrictorLS_neg_not_transparent_some :
     RestrictorLS (negRestrictorTruth NumberTree.some) (fun (_ : Unit) (e : Bool) ↦ e = true) {()}
         {p | p.2 = true} ∧

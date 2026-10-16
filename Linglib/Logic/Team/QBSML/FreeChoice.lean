@@ -38,7 +38,7 @@ composite is the shape behind Yan's Asher and Heim solutions.
 * [aloni-vanormondt-2023] Aloni and van Ormondt, Modified Numerals and Split Disjunction: The
   First-Order Case
 * [aloni-2022] Aloni, Logic and Conversation: The Case of Free Choice
-* [chemla-2009] Chemla, Universal implicatures and free choice effects: Experimental data
+* [chemla-2009b] Chemla, Universal implicatures and free choice effects: Experimental data
 * [yan-2023] Yan, Monotonicity in Intensional Contexts: Weakening and Pragmatic Effects under
   Modals and Attitudes
 -/

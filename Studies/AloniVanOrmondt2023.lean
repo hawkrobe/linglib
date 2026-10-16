@@ -31,7 +31,7 @@ The example rows record the inference profile the analysis answers to.
 
 * [aloni-vanormondt-2023]
 * [aloni-2022]
-* [chemla-2009]
+* [chemla-2009b]
 -/
 
 @[expose] public section
@@ -134,7 +134,7 @@ theorem diamondFreeChoice (h : support M (Formula.enrich (.poss (threeOrMore c))
   QBSML.narrowScopeFC M (.predc _ _) (.predc _ _) h
 
 /-- Universal free choice (63), Fact 9, is `[∀x◇(three(x) ∨ more(x))]⁺ ⊨
-    ∀x◇three(x) ∧ ∀x◇more(x)`, the inference [chemla-2009] attests. -/
+    ∀x◇three(x) ∧ ∀x◇more(x)`, the inference [chemla-2009b] attests. -/
 theorem universalFreeChoice
     (h : support M (Formula.univ .x (.poss (.disj three more))).enrich s) :
     support M (.univ .x (.poss three)) s ∧ support M (.univ .x (.poss more)) s :=

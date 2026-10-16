@@ -32,7 +32,7 @@ existential is the Strong Kleene family (`eval_existsPartialStrong`). Only
 
 ## References
 
-* [chemla-2009-quantified]
+* [chemla-2009a]
 * [mayr-sauerland-2015]
 * [spector-sudo-2017]
 * [kleene-1952]
