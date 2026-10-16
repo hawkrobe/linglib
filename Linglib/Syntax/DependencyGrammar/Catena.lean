@@ -8,6 +8,7 @@ module
 public import Linglib.Syntax.DependencyGrammar.Dominance
 public import Mathlib.Combinatorics.SimpleGraph.Connectivity.Finite
 public import Mathlib.Combinatorics.SimpleGraph.Connectivity.Subgraph
+public import Mathlib.Combinatorics.SimpleGraph.Acyclic
 
 /-!
 # Catenae
@@ -26,6 +27,8 @@ one of several dependents is a catena that is not a constituent.
 * `DependencyGrammar.IsConstituent.isCatena`: every constituent is a catena.
 * `DependencyGrammar.not_isConstituent_pair`: in a forest, a head with one of two dependents is
   not a constituent.
+* `DependencyGrammar.Graph.IsTree.isTree_toSimpleGraph`: the undirected view of a dependency tree
+  is a tree.
 
 ## References
 
@@ -105,5 +108,38 @@ theorem isConstituent_univ {g : Graph n} (hT : g.IsTree) :
 /-- The whole sentence is a catena. -/
 theorem isCatena_univ {g : Graph n} (hT : g.IsTree) : IsCatena g Finset.univ :=
   (isConstituent_univ hT).isCatena
+
+/-- The undirected view of a dependency tree is a tree: it is connected, the whole sentence being
+a catena, and its edges are the links from each position other than the root to its head. -/
+theorem Graph.IsTree.isTree_toSimpleGraph {g : Graph n} (hT : g.IsTree) :
+    g.toSimpleGraph.IsTree := by
+  have hhead {w : Fin n} (hw : w ≠ g.root) : g.Adj (g.headOf w) w :=
+    have ⟨_, h⟩ := hT.exists_adj hw
+    hT.headOf_eq h ▸ h
+  refine SimpleGraph.isTree_iff_connected_and_card.2 ⟨?_, ?_⟩
+  · have h := isCatena_univ hT
+    rw [IsCatena, Finset.coe_univ] at h
+    exact g.toSimpleGraph.induceUnivIso.connected_iff.1 h
+  rw [Nat.card_eq_fintype_card, ← SimpleGraph.edgeFinset_card, Nat.card_eq_fintype_card]
+  refine .trans (congrArg (· + 1) ?_) (Finset.card_erase_add_one (Finset.mem_univ g.root))
+  refine (Finset.card_bij (fun w _ ↦ s(g.headOf w, w)) (fun w hw ↦ ?_) (fun w hw w' hw' h ↦ ?_)
+    fun e he ↦ ?_).symm
+  · have hw := hhead (Finset.ne_of_mem_erase hw)
+    simpa using ⟨fun h ↦ hT.not_adj_self (h ▸ hw), Or.inl hw⟩
+  · rcases Sym2.eq_iff.1 h with ⟨-, h⟩ | ⟨h₁, h₂⟩
+    · exact h
+    · have h₁' := hhead (Finset.ne_of_mem_erase hw)
+      have h₂' := hhead (Finset.ne_of_mem_erase hw')
+      rw [h₁] at h₁'
+      rw [← h₂] at h₂'
+      exact absurd (Relation.ReflTransGen.single h₂') (hT.not_dominates_of_adj h₁')
+  · induction e using Sym2.ind with
+    | _ a b =>
+    obtain ⟨-, hl⟩ := (g.toSimpleGraph_adj a b).1 (SimpleGraph.mem_edgeFinset.1 he)
+    rcases hl with h | h
+    · exact ⟨b, Finset.mem_erase.2 ⟨fun hb ↦ hT.not_adj_root a (hb ▸ h), Finset.mem_univ _⟩,
+        by rw [hT.headOf_eq h]⟩
+    · exact ⟨a, Finset.mem_erase.2 ⟨fun ha ↦ hT.not_adj_root b (ha ▸ h), Finset.mem_univ _⟩,
+        by rw [hT.headOf_eq h, Sym2.eq_swap]⟩
 
 end DependencyGrammar
