@@ -73,13 +73,13 @@ inductive Hoboken
 
 namespace Hoboken
 
-abbrev wantHarlem : Hoboken → Prop := λ w => w = wantA ∨ w = wantPath
-abbrev takeA : Hoboken → Prop := λ w => w = wantA ∨ w = otherA
-abbrev goHoboken : Hoboken → Prop := λ w => w = wantPath ∨ w = otherPath
+abbrev wantHarlem : Hoboken → Prop := fun w ↦ w = wantA ∨ w = wantPath
+abbrev takeA : Hoboken → Prop := fun w ↦ w = wantA ∨ w = otherA
+abbrev goHoboken : Hoboken → Prop := fun w ↦ w = wantPath ∨ w = otherPath
 abbrev goHarlem : Hoboken → Prop := takeA
 
 /-- The actual goal in every world is to go to Hoboken. -/
-abbrev goals : Background Hoboken := λ _ => {goHoboken}
+abbrev goals : Background Hoboken := fun _ ↦ {goHoboken}
 
 /-- On (11), the obvious analysis, the *if*-clause restricting the circumstantial base of a modal
 ordered by the actual goals, makes the Harlem sentence false, since the best *want-Harlem*
@@ -88,8 +88,7 @@ theorem not_obvious : ¬ conditionalNecessity ⊥ goals wantHarlem takeA wantA :
   simp only [conditionalNecessity, necessity_iff, bestWorlds, Preorder.mem_minimals_iff,
     Background.mem_accessibleWorlds, Background.restrict, Preorder.ofCriteria_le_iff,
     Set.mem_insert_iff, Set.mem_singleton_iff, forall_eq_or_imp, forall_eq, Pi.bot_apply,
-    Set.bot_eq_empty, Set.mem_empty_iff_false, false_imp_iff, implies_true, and_true,
-    ]
+    Set.bot_eq_empty, Set.mem_empty_iff_false, false_imp_iff, implies_true, and_true]
   decide
 
 end Hoboken
@@ -111,7 +110,7 @@ abbrev goHoboken : Conflict → Prop := (· = pathTrain)
 
 /-- Sæbø's ordering source (14) is the actual goal of going to Hoboken with the hypothetical
 goal of going to Harlem added. -/
-abbrev saebo : Background Conflict := λ _ => {goHoboken, goHarlem}
+abbrev saebo : Background Conflict := fun _ ↦ {goHoboken, goHarlem}
 
 /-- Sæbø's analysis makes the Harlem sentence false, since with the two goals inconsistent the
 best worlds achieve either, and not all take the A train. -/
@@ -141,9 +140,9 @@ inductive Nested
 
 namespace Nested
 
-abbrev wantHarlem : Nested → Prop := λ w => w = bothPath ∨ w = bothA
+abbrev wantHarlem : Nested → Prop := fun w ↦ w = bothPath ∨ w = bothA
 abbrev takeA : Nested → Prop := (· = bothA)
-abbrev goHoboken : Nested → Prop := λ w => w = actual ∨ w = bothPath
+abbrev goHoboken : Nested → Prop := fun w ↦ w = actual ∨ w = bothPath
 abbrev goHarlem : Nested → Prop := takeA
 
 /-- The goals of each world are Hoboken in the actual world and both in the others. -/
@@ -153,23 +152,21 @@ def goals : Background Nested
 
 /-- The closeness ordering of the higher modal is agreement with the actual world on wanting
 Hoboken. -/
-abbrev closeness : Background Nested := λ _ => {goHoboken}
+abbrev closeness : Background Nested := fun _ ↦ {goHoboken}
 
 /-- On (16), the nested analysis, a closeness modal restricted by the *if*-clause over the
 teleological modal, makes the Harlem sentence false, since in the closest *want-Harlem* world
 the Hoboken goal survives and the PATH train is among the best worlds. -/
 theorem not_nested :
     ¬ conditionalNecessity ⊥ closeness wantHarlem
-      (λ w' => necessity ⊥ goals takeA w') actual := by
+      (fun w' ↦ necessity ⊥ goals takeA w') actual := by
   simp only [conditionalNecessity, necessity_iff, bestWorlds, Preorder.mem_minimals_iff,
     Background.mem_accessibleWorlds, Background.restrict, Preorder.ofCriteria_le_iff,
     Set.mem_insert_iff, Set.mem_singleton_iff, forall_eq_or_imp, forall_eq, Pi.bot_apply,
-    Set.bot_eq_empty, Set.mem_empty_iff_false, false_imp_iff, implies_true, and_true,
-    ]
+    Set.bot_eq_empty, Set.mem_empty_iff_false, false_imp_iff, implies_true, and_true]
   intro h
   have := h bothPath (by decide) bothPath
-  simp only [goals, Set.mem_insert_iff, Set.mem_singleton_iff, forall_eq_or_imp, forall_eq,
-    ] at this
+  simp only [goals, Set.mem_insert_iff, Set.mem_singleton_iff, forall_eq_or_imp, forall_eq] at this
   exact absurd (this (by decide)) (by decide)
 
 end Nested
@@ -195,19 +192,19 @@ theorem oughtTo_of_haveTo (h : haveTo f p q w) : oughtTo f g p q w := by
   rw [oughtTo, conditionalNecessity, necessity_iff]
   intro v hv
   have hv' := Background.mem_accessibleWorlds.1 (Preorder.minimals_subset _ _ hv)
-  exact haveTo_iff.1 h v (Background.mem_accessibleWorlds.2 λ r hr =>
+  exact haveTo_iff.1 h v (Background.mem_accessibleWorlds.2 fun r hr ↦
     hv' r (Set.mem_insert_of_mem _ hr)) (hv' p (Set.mem_insert _ _))
 
 /-- A necessary condition of the goal is trivially something you have to do (34). -/
 theorem haveTo_of_imp (h : ∀ v, p v → q v) : haveTo f p q w :=
-  haveTo_iff.2 λ v _ hp => h v hp
+  haveTo_iff.2 fun v _ hp ↦ h v hp
 
 /-- In Sloman's London example (23) the train is the best means without being the only one, so
 *you ought to take the train, but you don't have to*. World `true` goes by train, `false` by
 bus; both arrive by noon, and only the train is comfortable. -/
 theorem exists_oughtTo_not_haveTo :
-    oughtTo (⊥ : Background Bool) (λ _ => {(· = true)}) (λ _ => True) (· = true) true ∧
-      ¬ haveTo (⊥ : Background Bool) (λ _ => True) (· = true) true := by
+    oughtTo (⊥ : Background Bool) (fun _ ↦ {(· = true)}) (fun _ ↦ True) (· = true) true ∧
+      ¬ haveTo (⊥ : Background Bool) (fun _ ↦ True) (· = true) true := by
   simp only [oughtTo, conditionalNecessity, haveTo_iff, necessity_iff, bestWorlds,
     Preorder.mem_minimals_iff, Background.mem_accessibleWorlds, Background.restrict,
     Preorder.ofCriteria_le_iff, Set.mem_insert_iff, Set.mem_singleton_iff,
@@ -220,7 +217,7 @@ theorem exists_oughtTo_not_haveTo :
 /-- By (25), with going to Harlem the designated goal the Hoboken problem does not arise; you have
 to take the A train whatever your actual goals. -/
 theorem Hoboken.haveTo_takeA : haveTo ⊥ Hoboken.goHarlem Hoboken.takeA Hoboken.wantA :=
-  haveTo_of_imp λ _ h => h
+  haveTo_of_imp fun _ h ↦ h
 
 /-- In Huitink's van Nistelrooy scenario (27) both the A and the C train reach Harlem, and Ruud
 rides the A train. -/
@@ -236,8 +233,8 @@ abbrev meetRuud : Ruud → Prop := takeA
 
 /-- You do not have to take the A train, but given that you want to meet Ruud you ought to. -/
 theorem not_haveTo_and_oughtTo :
-    ¬ haveTo ⊥ (λ _ => True) takeA aTrain ∧
-      oughtTo ⊥ (λ _ => {meetRuud}) (λ _ => True) takeA aTrain := by
+    ¬ haveTo ⊥ (fun _ ↦ True) takeA aTrain ∧
+      oughtTo ⊥ (fun _ ↦ {meetRuud}) (fun _ ↦ True) takeA aTrain := by
   simp only [oughtTo, conditionalNecessity, haveTo_iff, necessity_iff, bestWorlds,
     Preorder.mem_minimals_iff, Background.mem_accessibleWorlds, Background.restrict,
     Preorder.ofCriteria_le_iff, Set.mem_insert_iff, Set.mem_singleton_iff,
@@ -261,17 +258,16 @@ inductive Pedro
 
 namespace Pedro
 
-abbrev goHarlem : Pedro → Prop := λ w => w = aTrain ∨ w = cTrainKiss
+abbrev goHarlem : Pedro → Prop := fun w ↦ w = aTrain ∨ w = cTrainKiss
 abbrev kissPedro : Pedro → Prop := (· = cTrainKiss)
 
 /-- The designated-goal semantics predicts *to go to Harlem, you ought to kiss Pedro Martinez*
 true, contrary to fact. -/
-theorem oughtTo_kissPedro : oughtTo ⊥ (λ _ => {kissPedro}) goHarlem kissPedro aTrain := by
+theorem oughtTo_kissPedro : oughtTo ⊥ (fun _ ↦ {kissPedro}) goHarlem kissPedro aTrain := by
   simp only [oughtTo, conditionalNecessity, necessity_iff, bestWorlds, Preorder.mem_minimals_iff,
     Background.mem_accessibleWorlds, Background.restrict, Preorder.ofCriteria_le_iff,
     Set.mem_insert_iff, Set.mem_singleton_iff, forall_eq_or_imp, forall_eq, Pi.bot_apply,
-    Set.bot_eq_empty, Set.mem_empty_iff_false, false_imp_iff, implies_true, and_true,
-    ]
+    Set.bot_eq_empty, Set.mem_empty_iff_false, false_imp_iff, implies_true, and_true]
   decide
 
 end Pedro
@@ -287,7 +283,7 @@ premise that either the goal holds or the prejacent fails doing the work. -/
 theorem isEssentialPart_of_exists (h : ∃ v ∈ f.accessibleWorlds w, ¬ q v ∧ ¬ p v) :
     IsEssentialPart f p q w := by
   obtain ⟨v, hv, hq, hp⟩ := h
-  refine ⟨{λ u => p u ∨ ¬ q u}, λ u hu => ?_, λ hall => hp (hall v ?_)⟩
+  refine ⟨{fun u ↦ p u ∨ ¬ q u}, fun u hu ↦ ?_, fun hall ↦ hp (hall v ?_)⟩
   · simp only [sInf_insert, sInf_union, sInf_singleton, Pi.inf_apply, inf_Prop_eq] at hu
     exact hu.2.2.resolve_right (not_not.2 hu.1)
   · simp only [sInf_union, sInf_singleton, Pi.inf_apply, inf_Prop_eq]
