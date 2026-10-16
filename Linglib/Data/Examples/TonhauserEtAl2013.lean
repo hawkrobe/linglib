@@ -17,7 +17,7 @@ namespace TonhauserEtAl2013.Examples
 
 def ex_1a : Datum :=
   { id := "tonhauseretal2013_1a"
-    source := ⟨"chierchia-mcconnell-ginet-1990", "p. 28"⟩
+    source := ⟨"chierchia-mcconnell-ginet-1990", "(28a)"⟩
     reportedIn := some ⟨"tonhauser-beaver-roberts-simons-2013", "(1a)"⟩
     language := "stan1293"
     primaryText := "The present queen of France lives in Ithaca."
@@ -30,7 +30,7 @@ def ex_1a : Datum :=
 
 def ex_1b : Datum :=
   { id := "tonhauseretal2013_1b"
-    source := ⟨"chierchia-mcconnell-ginet-1990", "p. 28"⟩
+    source := ⟨"chierchia-mcconnell-ginet-1990", "(28b)"⟩
     reportedIn := some ⟨"tonhauser-beaver-roberts-simons-2013", "(1b)"⟩
     language := "stan1293"
     primaryText := "It is not the case that the present queen of France lives in Ithaca."
@@ -43,7 +43,7 @@ def ex_1b : Datum :=
 
 def ex_1c : Datum :=
   { id := "tonhauseretal2013_1c"
-    source := ⟨"chierchia-mcconnell-ginet-1990", "p. 28"⟩
+    source := ⟨"chierchia-mcconnell-ginet-1990", "(28c)"⟩
     reportedIn := some ⟨"tonhauser-beaver-roberts-simons-2013", "(1c)"⟩
     language := "stan1293"
     primaryText := "Does the present queen of France live in Ithaca?"
@@ -56,7 +56,7 @@ def ex_1c : Datum :=
 
 def ex_1d : Datum :=
   { id := "tonhauseretal2013_1d"
-    source := ⟨"chierchia-mcconnell-ginet-1990", "p. 28"⟩
+    source := ⟨"chierchia-mcconnell-ginet-1990", "(28d)"⟩
     reportedIn := some ⟨"tonhauser-beaver-roberts-simons-2013", "(1d)"⟩
     language := "stan1293"
     primaryText := "If the present queen of France lives in Ithaca, she has probably met Nelly."

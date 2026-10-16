@@ -69,7 +69,7 @@ has no universal perfect, except where an activity fills the span exactly.
 * [mittwoch-1988]
 * [vlach-1993]
 * [dowty-1979]
-* [smith-1991]
+* [smith-1997]
 -/
 
 @[expose] public section
