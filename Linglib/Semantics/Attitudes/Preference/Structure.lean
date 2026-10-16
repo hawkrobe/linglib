@@ -3,7 +3,6 @@ module
 public import Mathlib.Order.Defs.Unbundled
 public import Mathlib.Order.Preorder.Chain
 public import Mathlib.Data.Set.Lattice.Bounded
-public import Linglib.Core.Order.Minimals
 
 /-!
 # Preference structures
@@ -12,8 +11,7 @@ A preference structure, in the sense of Condoravdi and Lauer, is a set of propos
 strict ranking by importance. A structure is consistent with an information state when any family
 of its preferences that the information rules out jointly contains a strictly ranked pair, and
 realistic when each preference is compatible with the information. Consistency entails realism and
-makes the maximal preferences jointly realizable. The maximal preferences also order worlds, as an
-ordering source does for Kratzer.
+makes the maximal preferences jointly realizable.
 
 *Want* relates an agent to the maximal elements of the effective preference structure its context
 supplies, which plays the role of a Kratzerian conversational background. Its readings differ in
@@ -26,8 +24,6 @@ exact-match reading.
 ## Main definitions
 
 * `PreferenceStructure`, with `maxElts`, `Consistent` and `Realistic`.
-* `PreferenceStructure.maxPreorder`, `PreferenceStructure.best`: the world order of the maximal
-  preferences and its best worlds.
 * `PreferenceStructure.discrete`: the unranked structure on a set of preferences.
 * `Desire.Preferential.Want`, `Desire.Preferential.WantSufficient`,
   `Desire.Preferential.WantNecessary`: the exact-match, success-oriented and Quine–Hintikka
@@ -157,26 +153,6 @@ theorem consistent_of_realistic_of_isChain (hR : P.Realistic B) (hc : IsChain P.
     exact hR p (hX (Set.mem_singleton p)) hXB
 
 end Consistent
-
-/-! ### The world preorder induced by maximal preferences -/
-
-/-- The world preorder induced by the maximal preferences ranks `w` below `v` when `w` verifies
-every maximal preference that `v` verifies. It is the ordering-source construction with `maxElts` as
-the source. -/
-@[reducible] def maxPreorder : Preorder W := Preorder.ofCriteria (· ∈ ·) P.maxElts
-
-theorem maxPreorder_le_iff {w v : W} :
-    P.maxPreorder.le w v ↔ ∀ p ∈ P.maxElts, v ∈ p → w ∈ p :=
-  Iff.rfl
-
-/-- The worlds of `F` that best realize the maximal preferences. -/
-def best (F : Set W) : Set W := P.maxPreorder.minimals F
-
-/-- When some world of `F` realizes every maximal preference, the best worlds of `F` are exactly
-those. -/
-theorem best_eq_of_nonempty {F : Set W} (h : (F ∩ ⋂₀ P.maxElts).Nonempty) :
-    P.best F = F ∩ ⋂₀ P.maxElts :=
-  Preorder.minimals_ofCriteria_eq h
 
 /-! ### Unranked preferences -/
 

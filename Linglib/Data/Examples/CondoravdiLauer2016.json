@@ -125,7 +125,7 @@
       ["construction", "hoboken"],
       ["truth", "false"]
     ],
-    "comment": "Intuitively false in the Hoboken scenario; Sæbø's augmented ordering source predicts it true, `HobokenScenario.saebo_path`.",
+    "comment": "Intuitively false in the Hoboken scenario, as Condoravdi and Lauer predict, `HobokenScenario.not_possibility_path`; Sæbø's augmented ordering source predicts it true, `HobokenScenario.saebo_path`.",
     "verified": "page-image"
   },
   {
@@ -1068,7 +1068,7 @@
       ["construction", "mood"],
       ["mood", "indicative"]
     ],
-    "comment": "An indicative anankastic is out when the speaker knows of an incompatible effective preference: the antecedent is epistemically impossible, `anankastic_of_not_want`. The paper prints \"go Harlem\".",
+    "comment": "An indicative anankastic is out when the speaker knows of an incompatible effective preference: the antecedent is epistemically impossible and the conditional vacuously true, `Conditional.Restrictor.vacuous_conditional`. The paper prints \"go Harlem\".",
     "verified": "page-image"
   },
   {

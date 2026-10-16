@@ -70,7 +70,7 @@ than as a crash. The crashing update is the rule update of the section 4 system 
 live.
 
 The preference structures of Condoravdi and Lauer order propositions, one type level above the
-ordering of worlds here, and states built on them consume `PreferenceStructure.maxPreorder`.
+ordering of worlds here.
 
 ## References
 
